@@ -89,6 +89,14 @@ GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 | `PeriphRefs.java` | lists the functions that touch given peripheral register ranges (T05) |
 | `DumpListing.java` | dumps disassembly (and optionally the decompile) for addresses or functions (T05) |
 | `ProgramStats.java` | function/instruction/data coverage and the largest undefined ROM gaps (T05) |
+| `DumpFuncs.java` | decompiles a few functions (by address or name) into one text file, without a full export (T07) |
+| `IfdspM33Setup.java` | pre-script for the IFDSP Cortex-M33 image: RT685 memory map, MCUXpresso copy-down block, .bss, vector table → Thumb functions (T07) |
+| `IfdspFindFuncs.java` | post-script: finds missed Thumb `push {…,lr}` prologues in the M33 code ranges and defines rodata strings (T07) |
+| `IfdspM33Names.java` | reproducible function names for the IFDSP M33 program (T07) |
+| `IfdspHifi4Setup.java` | pre-script for the carved HiFi4 images: maps each one at its DSP load address and seeds the vectors (T07) |
+| `IfdspHifi4FindFuncs.java` | post-script: creates functions at 4-aligned `entry a1,N` prologues and drops artifacts in uninitialized memory (T07) |
+
+`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
 
 MAIN full rebuild (from the repo root; ~1 minute in total):
 ```sh

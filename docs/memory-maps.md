@@ -147,3 +147,83 @@ Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs
 
 Peripheral bases follow the RX651 hardware manual from memory **[inference]**. SCI0–7 are confirmed by the vector numbers of the ISRs that use them **[fact]**.
 The RAM size of 256 KB is the R5F56514 part-number decode **[inference]**. The highest RAM address used is ~0x25E60 **[fact]**.
+
+## IFDSP (ID image, `FT-710_IFDSP_V0101.SFL`) — T07
+
+Part: NXP i.MX RT685 (Q2002), Cortex-M33 + Cadence HiFi4 DSP. The decoded image `build/FT-710_IFDSP_V0101.bin`
+(414,444 bytes, raw) is an RT600 FlexSPI-NOR boot image. File offset 0 = **XIP address 0x08000000** (FlexSPI A). It holds a
+small M33 flash stub, three HiFi4 images, and the M33 application, which runs entirely from SRAM after the copy-down.
+
+### Ghidra programs (project `ghidra/FT710_IFDSP`)
+
+| Program | Language | Source file | Built by |
+|---|---|---|---|
+| `FT-710_IFDSP_V0101.bin` | `ARM:LE:32:v8-m` (the only ARMv8-M language in Ghidra 12.1.4; Thumb-only `ARMCortex.pspec`) | `build/FT-710_IFDSP_V0101.bin`, BinaryLoader base 0x08000000 | `tools/ghidra/IfdspM33Setup.java` (pre), `IfdspFindFuncs.java`, `IfdspM33Names.java` (post) |
+| `FT-710_IFDSP_V0101_hifi4.bin` | `Xtensa:LE:32:default` | `build/FT-710_IFDSP_V0101_hifi4.bin` from `tools/ifdsp_dsp_images.py` | `tools/ghidra/IfdspHifi4Setup.java` (pre), `IfdspHifi4FindFuncs.java` (post) |
+
+The exact commands are in `decomp/ifdsp/INDEX.md`.
+
+### Flash image layout (file offset = address − 0x08000000)
+
+| File offset | Size | Contents | Evidence |
+|---|---|---|---|
+| 0x000000 | 0x400 | zeros | **[fact]** |
+| 0x000400 | 0x200 | FlexSPI NOR config block (`FCFB` tag) | **[fact]** |
+| 0x001000 | 0x130 | M33 vector table: 16 system + 60 IRQ words. SP = 0x00200000, reset = 0x080011A9. Words +0x20 (0x000642EC = image length − 0x1000), +0x24 (image type 0) and +0x34 (load address 0x08001000) are the RT600 boot-header fields | **[fact]** |
+| 0x001130 | 0x48 | `__data_section_table` (6 × src,dst,len) | **[fact]** |
+| 0x001178 | 0x30 | `__bss_section_table` (6 × dst,len) | **[fact]** |
+| 0x0011A8 | ~0x690 | M33 flash code: `ResetISR`, `SystemInit` (0x08001540: enables the CP10/CP11 FPU, sets SYSCTL0 0x4000200C=1 (DSP stall), configures CACHE64 at 0x40033000), default IRQ stubs, `call_main` | **[fact]** |
+| 0x001844 | 0x20644 | **HiFi4 image 0 → 0x24000000** (DSP DTCM 0x24000000 + ITCM 0x24020000; only 12 bytes of DTCM and 0x644 bytes of ITCM are non-zero) | loader `BOARD_DSP_Init` 0x00084AD8 **[fact]** |
+| 0x021E88 | 0x383B4 | **HiFi4 image 1 → 0x00200000** (SRAM: rodata/literals, text, .data) | same **[fact]** |
+| 0x05A23C | 0x31E0 | **HiFi4 image 2 → 0x20040000** (all zero bytes; a shared/non-cached area) | same **[fact]** |
+| 0x05D41C | 12 | the three DSP image sizes (0x20644, 0x383B4, 0x31E0) | **[fact]** |
+| 0x05D428 | 0x7EC4 | load image of M33 SRAM 0x00080000..0x00087EC4 (code + rodata + .data), to EOF (0x652EC) | copy table entry 0 **[fact]** |
+
+### M33 copy-down (MCUXpresso `ResetISR`)
+
+`__data_section_table` has six entries but only the first has a non-zero length: 0x0805D428 → **0x00080000**, 0x7EC4 bytes.
+The other five (dst 0x0, 0x20000, 0x200000, 0x40140000, 0x70000) have length 0. `__bss_section_table`: **0x00087EC4, 0x1A034 bytes**
+(to 0x000A1EF8), and five empty entries. **[fact]**. Within the copied block, 0x80000..~0x87B4C is Thumb code with literal pools,
+0x87B4C..0x87EBC is rodata (console strings, ctype table, printf digits), and the last 8 bytes (0xAAAAAAAA and 12,000,000 =
+`SystemCoreClock` initial value) are writable .data **[inference]**. HardFault/SVC/PendSV/SysTick and the FLEXCOMM0 and MU_A IRQ
+vectors point into this RAM code directly. VTOR = 0x08001000, MSP = 0x00200000, MSPLIM = 0x001FF000. **[fact]**
+
+### M33 memory map used in Ghidra
+
+| Range | Block | Notes |
+|---|---|---|
+| 0x00000000–0x0007FFFF | `sram_lo` | SRAM, code-bus alias (unused by the image) |
+| 0x00080000–0x00087EBB | `sram_text_rodata` | file-backed copy-down, **read-only in Ghidra** so the decompiler resolves literal pools |
+| 0x00087EBC–0x00087EC3 | `sram_data` | .data |
+| 0x00087EC4–0x000A1EF7 | `sram_bss` | .bss (FreeRTOS heap/stacks, UART rings, rpmsg state) |
+| 0x000A1EF8–0x0047FFFF | `sram_hi` | rest of the 4.5 MB SRAM. **0x00200000+ is the DSP's** (MSP top = 0x00200000) |
+| 0x08000000–0x08001843 | `flexspi_xip` | flash code (executable) |
+| 0x08001844–0x0805D41B | `flexspi_dsp_images` | HiFi4 images (non-executable for ARM) |
+| 0x0805D41C–0x080652EB | `flexspi_data_lma` | DSP sizes + .data load image (non-executable) |
+| 0x20000000–0x2047FFFF | `sram_data_alias` | SRAM data-bus alias |
+| 0x24000000 / 0x24020000 | `dsp_dtcm` / `dsp_itcm` | HiFi4 TCMs as seen from the M33, 64 KB each |
+| 0x40000000–0x4015FFFF | `periph` | APB/AHB peripherals, non-secure alias (the one the image uses) |
+| 0x50000000–0x5015FFFF | `periph_s` | secure alias (unused) |
+| 0xE0000000–0xE00FFFFF | `ppb` | SCB/NVIC/SysTick/MPU |
+
+Peripherals the M33 touches (pages from the decompile **[fact]**, names from the RT685 reference map **[inference]**): RSTCTL0 0x40000000,
+CLKCTL0 0x40001000, SYSCTL0 0x40002000 (incl. DSPSTALL 0x4000200C), IOPCTL 0x40004000, RSTCTL1 0x40020000, CLKCTL1 0x40021000,
+INPUTMUX 0x40026000, CACHE64 0x40033000, GPIO 0x40100000, DMA0/DMA1 0x40104000/0x40105000, **FLEXCOMM0 0x40106000 (USART)**,
+**MU-A 0x40110000**, 0x40112000 (probably SEMA42), FlexSPI 0x40134000, PMC 0x40135000, 0x40146000 (unidentified). The M33 does **not**
+touch FLEXCOMM1–5 or the codec. The I2S/SPI/codec work is on the DSP side (see below).
+
+### HiFi4 DSP memory map (the DSP's view = load addresses above)
+
+| Range | Ghidra block | Contents |
+|---|---|---|
+| 0x24000000–0x2400FFFF | `dsp_dtcm` | image 0, first 64 KB. The first 3 words are pointers into SRAM (0x00228818, 0x002354E0, 0x00228834), and the rest is zeros |
+| 0x24020000–0x24020643 | `dsp_itcm` | `_ResetVector` @0x24020000 (J over literals → 0x24020044: sets INTENABLE=0, **VECBASE=0x24020400**, ATOMCTL, invalidates caches). Window vectors @0x24020400+n·0x40; level/exception vectors at 0x2402057C, 0x2402059C, 0x240205BC, 0x240205DC, 0x2402061C, 0x2402063C |
+| 0x00200000–~0x00206FFF | `sram_dsp_text` | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
+| ~0x00207000–0x002367FF | `sram_dsp_text` | `.text`: 1081 4-aligned `entry a1,N` prologues |
+| 0x00236800–0x002383B3 | `sram_dsp_data` | `.data`: float tables (biquad/filter coefficients, e.g. near 0x236D00) **[inference]** |
+| 0x002383B4–~0x002FFFFF | `sram_dsp_bss` | .bss (pointers up to ~0x2F7xxx appear in literals) |
+| 0x20040000–0x200431DF | `sram_shared` | image 2 (zeros): shared/non-cached buffer area |
+| 0x40000000–0x4015FFFF | `periph` | the DSP literal pools hold the SDK base-address tables for FLEXCOMM0–7 (0x40106000–0x40109000, 0x40122000–0x40125000), DMA0/1, GPIO, MU and others, so the DSP drives the I2S/SPI blocks **[inference]** |
+
+Literal 0x00236800 in the reset-vector pool matches the .data start. The DSP→M33 boot handshake uses MU-A status bits (main waits for
+`MU_SR & 7 == 1`, then `== 3`) **[fact: main @0x000872AE]**.

@@ -1,0 +1,92 @@
+# IFDSP decompile index (FT-710_IFDSP_V0101, NXP i.MX RT685)
+
+Ghidra 12.1.4 output for the IF DSP image (T07). There are two programs in the Ghidra project `ghidra/FT710_IFDSP`:
+
+| Dir | Program | Core / language | Functions exported | Decompile failures | Notes |
+|---|---|---|---|---|---|
+| `m33/` | `FT-710_IFDSP_V0101.bin` | Cortex-M33, `ARM:LE:32:v8-m` | 376 (268 in SRAM, 108 in flash, mostly IRQ stubs) | 0 (2 small FreeRTOS port asm stubs @0x80A24/0x80A90 contain an undecodable instruction) | 25.6 KB of the 31.5 KB SRAM code range is in function bodies. The rest is literal pools and rodata |
+| `hifi4/` | `FT-710_IFDSP_V0101_hifi4.bin` | Cadence HiFi4, `Xtensa:LE:32:default` | 1148 | 1 (`FUN_0020bb74`, the decompiler process died) | **Low quality:** 955 functions hit HiFi4 FLIX bundles or bad data. See "HiFi4 limitations" |
+
+Each `*.c` file holds 50 functions and is named `<first>_<last>.c` by entry address. `functions.tsv` lists entry, name, size, callers and file.
+Memory map and derivation: `docs/memory-maps.md`, IFDSP section. Claims are tagged **[fact]** (seen in code or data) or **[inference]**.
+
+## How to regenerate
+
+```sh
+python3 -I tools/sfl_decode.py Firmware/FT-710_IFDSP_V0101.SFL build/FT-710_IFDSP_V0101.bin
+python3 -I tools/ifdsp_dsp_images.py build/FT-710_IFDSP_V0101.bin build      # carves the 3 HiFi4 images
+# Cortex-M33
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0101.bin -overwrite \
+  -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 -scriptPath tools/ghidra \
+  -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java \
+  -postScript ExportDecomp.java decomp/ifdsp/m33 50 -analysisTimeoutPerFile 3600
+# HiFi4
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0101_hifi4.bin -overwrite \
+  -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 -scriptPath tools/ghidra \
+  -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java \
+  -postScript ExportDecomp.java decomp/ifdsp/hifi4 50 -analysisTimeoutPerFile 3600
+# Inspect a few functions without a full export:
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly \
+  -scriptPath tools/ghidra -postScript DumpFuncs.java build/ifdsp_funcs.c main 0x00084ad8
+```
+
+## Architecture in one paragraph
+
+The M33 runs a small **FreeRTOS** application entirely from SRAM (copied to 0x00080000 by `ResetISR`). `main` sets up clocks, pins and
+GPIO, loads the three **HiFi4 images** (`BOARD_DSP_Init`), releases the DSP stall, and handshakes over **MU-A**. It then starts three tasks:
+**Command Task** (a text console on **FLEXCOMM0 USART** with a `>> ` prompt), and **IpcRecvTask/IpcSendTask** (rpmsg-lite over MU-A to the DSP). **[fact]**
+The DSP image runs **Cadence XOS** threads `Thread_Main`, `Thread_Ipc`, `Thread_Rx_Audio`, `Thread_Spi`, `Thread_Rx_Path` and `Thread_Tx_Path`
+**[inference from strings at DSP 0x206370]**, and it holds the peripheral base tables for FLEXCOMM0–7, DMA and GPIO. The M33 never touches
+FLEXCOMM1–5, so the RX-IF/TX-AF I2S, the codec I2S and the FFT/REC/PLAY SPI to the DISPLAY CPU (docs/hardware.md Q2002) are all **driven by the DSP** **[inference]**.
+
+## Cortex-M33: notable functions (`m33/`)
+
+| Address | Name | File | What it does |
+|---|---|---|---|
+| 0x080011A8 | `ResetISR` | 00087470_080012ec.c | VTOR=0x08001000, MSP=0x200000, MSPLIM=0x1FF000, calls `SystemInit`, walks `__data_section_table`/`__bss_section_table`, then `call_main` **[fact]** |
+| 0x08001222 / 0x08001234 | `data_init` / `bss_init` | 00087470_080012ec.c | memcpy / memset loops for the copy tables **[fact]** |
+| 0x08001540 | `SystemInit` | 080012f4_08001668.c | FPU enable (CPACR/NSACR), SYSCTL0 DSPSTALL=1, CACHE64 (0x40033000) setup **[fact]** |
+| 0x080017A8 | `call_main` | 08001678_08001808.c | → `main` |
+| 0x000872AE | `main` | 000865ba_00087418.c | board init (clock/pins/GPIO port 0–2, INPUTMUX 0x40026000), `BOARD_DSP_Init`, then MU-A handshake: polls `MU_SR (0x40110060) & 7` for 1 and then 3, enables things via 0x40112000. Creates the tasks and starts the scheduler **[fact]** |
+| 0x00084AD8 | `BOARD_DSP_Init` | 00082f70_00084e24.c | **DSP loader**: clock/reset setup (`FUN_00083b04`, `FUN_00086e1c`, `FUN_00086e58`, `FUN_00083e48`), 3× `DSP_CopyImage({src,dst,size})`: 0x08001844→0x24000000 (0x20644), 0x08021E88→0x00200000 (0x383B4), 0x0805A23C→0x20040000 (0x31E0), then `SYSCTL0 DSPSTALL (0x4000200C) = 0` **[fact]** |
+| 0x00086EAA | `DSP_CopyImage` | 000865ba_00087418.c | memcpy wrapper taking the {src,dst,size} struct **[fact]** |
+| 0x00080D0C | `uart0_init` | 0008000c_000819b4.c | FLEXCOMM0 (0x40106000) USART setup **[fact: base]** |
+| 0x00080E50 | `FLEXCOMM0_IRQHandler` | 0008000c_000819b4.c | **USART link**: RX into a 1 KB ring (0x87EC8) and notifies the Command Task. TX drains a 1 KB ring (0x882D4) to FIFOWR **[fact]** |
+| 0x00080CA4 | `uart0_write` | 0008000c_000819b4.c | queues bytes into the TX ring and enables the TX interrupt **[inference]** |
+| 0x00080D78 | `CommandTask` | 0008000c_000819b4.c | waits on a notification, pulls RX bytes, calls `console_rx_char` **[fact]** |
+| 0x00081430 | `console_rx_char` | 0008000c_000819b4.c | line editor + command interpreter (Ctrl+C, echo, `d`/`D` hex dump of 0x40 16-bit words via `FUN_00080c30`, `r`, `?` error reply, `>> ` prompt) **[fact: strings]**. FC0 carries `DSP_UMISO/UMOSI`, which also go to the J2009 debug header (docs/hardware.md). Whether the MAIN CPU uses this console as its control link or it is only a debug port is **open** **[inference, medium]**. See T12 |
+| 0x000813B4 / 0x000812FE | `console_print_reg` / `console_dump` | 0008000c_000819b4.c | print `r %04X %04X` / ` %04X` dumps **[fact]** |
+| 0x00080FE8 | `ipc_print_dsp_reply` | 0008000c_000819b4.c | formats DSP replies by category/command: 0 = "Component versions from DSP", 1 = Mute on/off/error, 3 = "DSP Version %04X" **[fact]** |
+| 0x00080F80 | `create_IpcTasks` | 0008000c_000819b4.c | creates `IpcRecvTask` (0x85FC6) and `IpcSendTask` (0x80F50), stack 0x1800 each **[fact]** |
+| 0x00080E20 | `create_CommandTask` | 0008000c_000819b4.c | `xTaskCreate(CommandTask, "Command Task", 0x1800, …)` **[fact]** |
+| 0x000818B8 | `MU_A_IRQHandler` | 0008000c_000819b4.c | dispatches MU-A interrupts to registered callbacks (table at 0x88720) **[fact]** |
+| 0x00081C28 | `rpmsg_virtqueues_init` | 000819e8_00082db0.c | rpmsg-lite `rx_vq`/`tx_vq` setup **[inference]** |
+| 0x00082278 / 0x00082418 / 0x00082DB0 | `xTaskCreate` / `vTaskStartScheduler` / `prvTimerTask` | 000819e8_00082db0.c | FreeRTOS kernel (`Tmr Svc`, `TmrQ`) **[inference]** |
+| 0x00080AC0 / 0x00080B20 / 0x00086558 | PendSV / SVC / SysTick | | FreeRTOS ARM_CM33 port handlers (in SRAM) **[inference]** |
+| 0x00084EB0 | `vsnprintf_core` | 00084e38_000865ac.c | printf engine (`0123456789abcdef`, `(null)`) used by `snprintf`/`sprintf` **[inference]** |
+
+String-referencing functions: `console_rx_char`, `console_dump`, `console_print_reg`, `ipc_print_dsp_reply`, `create_*Task*`,
+`rpmsg_virtqueues_init`, `FUN_00082bec` (`TmrQ`), `xTimerCreateTimerTask` (`Tmr Svc`), `FUN_00084e04` (`*** _Csys_alloc failed`), `vsnprintf_core`.
+Grep `"` in `m33/*.c` to find them.
+
+Not present on the M33: no I2S, SPI, I2C or codec register access (FLEXCOMM1–7 pages are never referenced) **[fact]**.
+
+## HiFi4: notable addresses (`hifi4/`)
+
+| Address | Name | What |
+|---|---|---|
+| 0x24020000 | `_ResetVector` | J → 0x24020044 (thunk, so not in the export) |
+| 0x24020044 | `FUN_24020044` | reset handler: INTENABLE=0, VECBASE=0x24020400, ATOMCTL=0x15, I/D cache invalidate, then a bad instruction (unsupported in Ghidra's Xtensa module) |
+| 0x24020400–0x24020540 | `_WindowOverflow4` … `_WindowUnderflow12` | register-window vectors |
+| 0x2402057C–0x2402063C | `_Vector_57c` … `_Vector_63c` | interrupt-level / exception vectors (levels not yet assigned) |
+| 0x002062D4.. / 0x00206370.. | strings | `rx_vq`, `tx_vq`, the rpmsg `VQ: %s - size=%d…` debug format; XOS thread names; XOS thread states (`suspend`, `delay`, `exited`, `event`, `mutex`) |
+| 0x00206498.. | `.literal` | L32R literal pools: SRAM pointers, peripheral bases |
+| 0x00207000–0x002367FF | `.text` | 1081 `entry` prologues (all seeded as functions) |
+| 0x00236800–0x002383B3 | `.data` | float coefficient tables (filters) **[inference]** |
+
+### HiFi4 limitations
+Ghidra's Xtensa module decodes the base ISA only. It maps every `op0=0xE` word to a 3-byte `FLIX` placeholder, but HiFi4 FLIX bundles
+are wider (64-bit and up), so disassembly desynchronises inside any DSP kernel. Most function bodies are truncated at the first bundle
+(the average exported body is 26 bytes). Control code (XOS, rpmsg, drivers) decompiles partly. The signal-processing code does not.
+Function **entries** are still reliable, because they come from 4-aligned `entry a1,N` prologues. A correct decode needs the
+RT685 HiFi4 core configuration (see the T07 follow-ups).
