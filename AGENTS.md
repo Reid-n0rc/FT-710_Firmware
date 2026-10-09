@@ -61,6 +61,7 @@ What we know so far about the SFL format: an ASCII `*` comment box, then one lin
 - Ghidra 12.1.4 (Homebrew formula) + `openjdk@21`. Always run headless through `tools/ghidra-headless.sh`, which sets the JAVA_HOME Ghidra needs (the system default Java 11 won't work). Put projects under `ghidra/`. Details are in `docs/tooling.md`.
 - Python 3 for the decoding tools. Run scripts that read firmware data with `python3 -I`.
 - Record installed versions in `docs/tooling.md`.
+- The owner authorizes installing community tooling (Ghidra extensions/processor modules, Homebrew/pip packages, source builds) when a task needs it. Prefer reputable sources, avoid sudo and system-wide default changes, and record each install (source, version, method, location) in `docs/tooling.md`.
 
 ## Task sizing
 
