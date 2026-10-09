@@ -1,0 +1,91 @@
+# FT-710 DISPLAY (FT-710_DISPLAY_V0108.bin) function names, applied with ApplyNames.java (T06).
+# Names are inferences from strings, registers and call patterns unless the comment says otherwise;
+# T11 refines them. Keep docs/code/display/ and decomp/display/INDEX.md in sync with this file.
+# --- startup / armcc runtime
+2010002c	Reset_Handler	vector 0; copies image to 0x20100000 if not running there
+20100080	reset_in_ram	SPIBSC init, boot-bank select, copies rest of image
+20100194	SVC_Handler
+201001d8	IRQ_Handler	GIC dispatch via 0x201176b4
+20100828	spibsc0_init	writes SPIBSC0 regs 0x3FEFA0xx
+20100abc	boot_select_bank	first boot: checks 0x183E0000/0x183F0000 flags, jumps to 0x18400000 or 0x18A00000
+20100a14	crc32_make_table	reflected poly 0xEDB88320
+20100a5c	crc32_update
+20100bc0	__main
+20100bc8	__scatterload
+20100bfc	__decompress	armcc LZ decompressor for RW regions
+20100c60	__scatterload_zeroinit
+20100cdc	__rt_entry
+20117294	main	called from __rt_entry; creates tasks then idles
+20155180	memcpy
+201552c0	memclr
+2015538c	strcmp
+2014e2a4	strncmp
+20154a08	sprintf
+20155480	__aeabi_uidivmod
+# --- uITRON-style kernel (error codes E_ID -18, E_NOEXS -42, E_CTX -25)
+201500f4	itron_acre_tsk	create task, id 0 = auto-assign; TCB table 0x208DBBA0
+20151768	itron_sta_tsk
+20150740	itron_dly_tsk
+2014ff2c	itron_acre_sem
+2014e584	os_create_sem_named	wrapper around itron_acre_sem with a name string
+2014effc	itron_acre_flg
+20150f00	itron_set_flg
+20152988	itron_twai_flg
+# --- SFL container (firmware files on SD)
+2011497c	sfl_decode	byte-wise key subtraction, see docs/sfl-format.md
+20114a64	sfl_crc	salted CRC-32 over the file
+20114a44	sfl_stream_init
+20114ca0	sfl_read_header	reads the 0x40-byte header block
+2010f81c	sfl_load_file	reads an SFL file and decodes it with sfl_decode
+2010ddd8	fwfile_check_versions	matches FT-710_{MAIN,DISPLAY,IFDSP,SDR}_V* files on SD
+2010dfd0	fwfile_status_text	Ready / (Broken file) / (No such file)
+# --- firmware update of the other CPUs and of itself
+2010ea90	update_main_cpu	sends I:\AH076H_HEW.mot to the RX651 (boot-mode link)
+2010d92c	update_dsp	I:\AH076H_IFDSP.dat, I:\rom_writer.dat, AFDSP
+2010da78	dsp_debug_cmd	dsp1up..dsp3up commands
+20110ab8	sdr_flash_write	streams the SDR image over SPI in 0x2000-byte blocks
+20110834	sdr_spi_xfer_block
+20110c3c	sdr_debug_cmd	sdrup/sdr1up/sdr2up/sdrchk*/sdrspi/sdrfile/delta
+2011249c	sdr_spi_stats_print	CS_POLL / MOSI_OK/NG / MISO_OK/NG / FRAMES
+2015f62c	update_display_self	I:\AH076H_DISPLAY.bin, I:\AH068_DISPLAY_Loader.bin
+2015f1f0	display_flash_write_bank	writes the new image to the 0x18400000 bank
+2015938c	bootloader_screen	YAESU FT-710 BOOT LOADER V01-02
+201322b4	fwupdate_screen	MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2
+# --- MAIN CPU link (SCIF5) and other UARTs
+201148b4	scif5_get	UART object @0x208DB280 on SCIF5 (0xE8009800), MAIN link
+201148d8	scif4_get	UART object on SCIF4 (0xE8009000)
+201148fc	scif3_get	UART object on SCIF3 (0xE8008800)
+20162fac	uart_obj_init
+201163a0	mainlink_init	cmd_interval_sem / cmd_waiting_sem, binds SCIF5
+20116560	mainlink_send_cmd	looks up the 0x2B-entry command table at 0x20450074
+20115494	mainlink_queue_frame
+20134fdc	debug_recv_cmd_log	I:\FT-710\DEBUG_RECV_CMD\RECV_CMD.TXT
+# --- SD card / file system
+20103b68	sd_task_create	"sdTask"
+201400d4	sdhi_init	SDINT_INI
+20148fcc	fat_mount	FAT12/16/32/EXFAT detection
+2014e000	fsys_init_sem	fsys_sem
+20141abc	fs_fopen
+20142a58	fs_fread
+2014367c	fs_fwrite
+20143750	fs_fseek
+20110034	sd_info_screen	FREE SPACE / CAPACITY
+2010fb90	sd_make_dirs	I:\FT-710\Capture, MemList, Menu, PlayList
+# --- USB host (keyboard / mouse)
+2013b5bc	usbh_create_objects	m596* / udevtsk%d names
+2013b928	usbh_hid_init	UHHID
+20107efc	vk_key_name	USB keyboard VK_* names
+# --- GUI / display
+201326fc	fb_get_layer_addr	800x480 RGB565 frame buffers at 0x60000000 + n*0xBB800
+201355bc	fb_copy_rect
+20135658	fb_fill_rect	stride 0x640 (800 px * 2)
+201358d0	gui_draw_runs
+20133a8c	gui_update_layers
+2011a394	vdc5_config	writes VDC5 ch0 registers 0xFCFF7400+
+20125e78	touch_calibration	TOUCH THE CROSS
+20134644	screen_capture_bmp	I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp
+2013059c	screen_shot_menu
+# --- misc peripherals
+201177e4	ostm_init	OSTM 0xFCFEC000 (system tick)
+20120224	riic_init	RIIC 0xFCFEE000 (touch controller TSC2003)
+201033e8	intc_irq_setup	INTC 0xFCFEF800

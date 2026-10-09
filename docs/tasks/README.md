@@ -9,7 +9,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T03 | [SFL container header format](T03-sfl-container.md) | — | done (checksum → T04) |
 | T04 | [SFL payload decoding + `tools/sfl_decode.py`](T04-sfl-decode.md) | T03 | done |
 | T05 | [MAIN image: arch/base address, Ghidra import, decomp export](T05-decomp-main.md) | T01 T02 T04 | in progress |
-| T06 | [DISPLAY image: same as T05](T06-decomp-display.md) | T01 T02 T04 | in progress |
+| T06 | [DISPLAY image: same as T05](T06-decomp-display.md) | T01 T02 T04 | done |
 | T07 | [IFDSP image: same as T05 (DSP — check Ghidra support)](T07-decomp-ifdsp.md) | T01 T02 T04 | in progress |
 | T08 | [SDR image: split code vs FPGA bitstream, decomp code](T08-decomp-sdr.md) | T01 T02 T04 | done |
 | T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | todo |
