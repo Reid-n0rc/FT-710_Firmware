@@ -13,7 +13,7 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 ## Ground rules
 
 - **Analyze and plan before acting.** Before you change anything, read the task file, check what the previous tasks produced, and write your approach into the task file's `## Plan` section.
-- **One task per session.** Each task in `docs/tasks/` is sized to fit in one context window. Don't start a second task in the same session. If a task grows, split it into sub-task files (`T13a`, `T13b`, ...). The session may go on to work through those sub-tasks, finishing and committing each one before starting the next.
+- **Tasks and sub-tasks.** A session may work through as many tasks and sub-tasks as needed, but plan first: write the approach into the task file before executing. Split any task that won't fit in one context window into sub-task files (`T13a`, `T13b`, ...), and add each one as a row on the board so it is tracked as a GitHub sub-issue. Finish, document and commit each (sub-)task before starting the next.
 - **Record findings as you go.** Facts go in `docs/` (hardware, formats, memory maps). Status goes in the task file. Never leave a finding only in chat.
 - **Keep the repo private.** This repo holds output derived from Yaesu's copyrighted firmware. Never make it public, and never publish decoded binaries or decompiled code anywhere else.
 - **Git:** make incremental commits with clear messages. The owner has authorized pushing `main` to the **private** `origin` (github.com/Reid-n0rc/FT-710_Firmware) after commits. Before pushing, check that the repo is still private (`gh repo view --json isPrivate`). Never change the repo's visibility, and never tag, release, or push to any other remote.
