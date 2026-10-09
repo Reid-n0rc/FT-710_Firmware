@@ -117,3 +117,16 @@ Ghidra writes per-user state to `~/Library/ghidra/ghidra_12.1.4_PUBLIC/` (settin
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
+
+## Project X-Ray (T13, Xilinx 7-series bitstream database)
+
+Used by `tools/xc7_db.py` (stdlib) to map the SDR bitstream (XC7A50T) onto tiles, decode BRAM INIT contents and find used
+sites. Nothing is built or installed system-wide; both are plain git checkouts read as data files.
+
+| Item | Source | Version | Method | Location |
+|---|---|---|---|---|
+| prjxray (Python utilities, docs) | https://github.com/f4pga/prjxray | commit `c9f02d8` (2025-06-05) | `git clone` (no C++ build, no pip install) | `~/.local/share/ft710-tools/prjxray/` |
+| prjxray-db | https://github.com/f4pga/prjxray-db | commit `0a0adde` (2021-12-14) | `git clone --filter=blob:none` + sparse checkout of `artix7/*.db`, `*.json`, `*.yaml`, `mask_*`, `xc7a50t*/` (~78 MB) | `~/.local/share/ft710-tools/prjxray-db/` |
+
+`tools/xc7_db.py` defaults to `~/.local/share/ft710-tools/prjxray-db/artix7` (override with `--db` or `$PRJXRAY_DB`) and
+part `xc7a50tcpg236-1` (the frame layout is the same for every XC7A50T package; only IOB bonding differs).
