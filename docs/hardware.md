@@ -38,7 +38,7 @@ documented anywhere in the manual (p6: it appears only as a box; none of its par
 | Q1001 | Renesas **R5F56514ADFB** (block diagram: "R5F56514AFFB") | MAIN | "MAIN CPU" (p6) | Renesas **RX651** (RXv2 core with FPU, 144-pin LFQFP) | **MC** (MAIN) |
 | Q6009 | Renesas **R7S721001VCBG** | DISPLAY | "CPU" (p6) | Renesas **RZ/A1H**: ARM **Cortex-A9** (ARMv7-A) with 10 MB on-chip SRAM [guess for the specs] | **PC** (DISPLAY) |
 | Q2002 | NXP **MIMXRT685SFVKB** | MAIN | "DSP MAIN/TX" (p6) | NXP **i.MX RT685**: ARM **Cortex-M33** (ARMv8-M) + Cadence **Tensilica HiFi 4** DSP (Xtensa) [core types are a guess from the part number] | **ID** (IFDSP) |
-| (none) | ADC + FPGA, part numbers not given | SDR module (plugs into MAIN J2002/J3003) | "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6) | FPGA of unknown vendor | **SR** (SDR) |
+| (none) | ADC + FPGA, part numbers not given | SDR module (plugs into MAIN J2002/J3003) | "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6) | Xilinx Artix-7 **XC7A50T** (IDCODE 0x0362C093, from bitstream, T08) | **SR** (SDR) |
 | Q1805 | Explore **EPF021M-YM** | MAIN | "MICRO CNTL" in the DVI/HDMI chain (p6) | small MCU of unknown core [guess] | none known (probably mask/OTP) |
 
 No processors were found on the PA or JACK units (their IC lists contain only regulators, op-amps, a DAC and shift
@@ -117,8 +117,8 @@ registers: p56–57, p74).
   `SDR_RESET`, `SDR_UPDATE`, `SDR_PGD`, `SDR_DET`, `SDR_OVF`, `DSP_CLK`, `TX_AF_CLK/FRM/DAT`, `RX_IF_CLK/FRM/DAT`,
   `FRM_CLK/FRM/DAT` ("FFT/FRM" data), `FADC0/1`, `FSK_SHIFT`, `SEND_A`, `TX`, plus JTAG `SDR_TDI/TDO/TMS/TCK/VDD`.
 - **JTAG header J2001, "SDR JTAG"** (P1091255, 6-pin 06FLT-SM2, p35, p19): 1 GND, 2 VDD, 3 TCK, 4 TDO, 5 TMS, 6 TDI. This is plain FPGA JTAG. **[fact]**
-- Update path: `SDR_UPDATE` and `SDR_RESET` are MAIN CPU outputs (p17), so **the MAIN CPU probably programs the SDR module's config flash over UART5
-  or SPI** **[inference, medium]**.
+- **FPGA identified (T08):** Xilinx Artix-7 **XC7A50T**: IDCODE 0x0362C093 in the bitstream, and the length matches the 7A35T/50T die **[fact]**. The bitstream sets BSPI 0x26B, so the FPGA **self-boots in master-SPI x4 mode from a QSPI flash on the module** (read opcode 0x6B) **[fact]**. The package and speed grade are not in the bitstream.
+- Update path (revised after T08): the SDR SPI bus (`SDR_SCLK/SS/MOSI/MISO`, P8_3..P8_6) is on the **DISPLAY** CPU, and DISPLAY holds `sdrup`/`sdrspi`/`sdrchk` debug commands and the `FT-710_SDR_V` filename. So **DISPLAY most likely writes the module's config flash over SPI, while MAIN drives `SDR_UPDATE`/`SDR_RESET` (p17)** **[inference, medium]**. To be confirmed in T06/T11.
 
 ### USB / CAT path (MAIN, AF sheet p20)
 - J2602: USB **Type-B** jack (SUB-110HB-B2N, p35) → Q2607 **Cypress/Infineon CY7C65631-56LTXIT** USB 2.0 4-port hub (HX2VL),
@@ -206,7 +206,7 @@ registers: p56–57, p74).
 | FT-710_MAIN | MC | Q1001 RX651 R5F56514ADFB | Labelled "MAIN CPU" (p6). It is the only CPU with the CAT UARTs (p17, p20). The update manual calls it "MAIN". The RX boot-mode-over-display-UART wiring (p17, p62) explains why the update manual says to update DISPLAY first. | High |
 | FT-710_DISPLAY | PC | Q6009 RZ/A1H R7S721001VCBG | It is the only processor on the DISPLAY unit (p67). It owns the SD card that the update reads from. | High |
 | FT-710_IFDSP | ID | Q2002 i.MX RT685 | Labelled "DSP MAIN/TX". It takes the RX_IF / TX_AF I2S streams (p6, p19). It is the only DSP. Its 16 MB QSPI flash and FlexSPI boot need an image. | High |
-| FT-710_SDR | SR | FPGA in the SDR module | Labelled "SDR MODULE ADC/FPGA" (p6). It has `SDR_UPDATE` and its own JTAG (p19). The large 4.39 MB file suits an FPGA bitstream. The FPGA vendor is unknown. | High for "SDR module", unknown for the exact device |
+| FT-710_SDR | SR | FPGA in the SDR module | Labelled "SDR MODULE ADC/FPGA" (p6). It has `SDR_UPDATE` and its own JTAG (p19). Decoded as a Xilinx XC7A50T bitstream (T08). | High |
 
 Side note for T03/T04 **[guess]**: each SFL header's length field equals the file size. MAIN is 1,355,160 bytes, about 2.6× the guessed
 512 KB code flash. That ratio fits a text encoding (for example Motorola S-records with 32-byte data lines, about 2.4×) better than raw binary.
@@ -224,7 +224,7 @@ Ghidra 12.1.4 as installed (Homebrew) ships **ARM, Xtensa**, M16C, SuperH, V850,
 | T08 | SDR (SR) | FPGA bitstream, probably **not CPU code**. If there is a soft core (Nios II / MicroBlaze / RISC-V), use the matching language later. | Not applicable | First identify the FPGA vendor from bitstream sync words (Xilinx `AA 99 55 66`, Intel/Altera, Lattice `FF FF BD B3`, and so on) after decoding. |
 
 ## Unresolved / not in the manual
-- The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented). **Update from T04:** the decoded SR bitstream is Xilinx 7-series (sync `AA995566`) with IDCODE 0x0362C093, which is the **Artix-7 XC7A50T** [fact for the IDCODE, inference for the part]. The ADC and flash parts are still unknown.
+- The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented). The FPGA is now known: **XC7A50T** (T04/T08). The ADC and flash parts are still unknown.
 - Exactly which RZ/A1H boot-mode straps are fitted (BOOT0..2 resistors marked "***") (p62).
 - Pins 7 and 8 of J1005 (TP1029/TP1030).
 - The C4 bus endpoint: the mapping C4 = RT685 is an inference.
