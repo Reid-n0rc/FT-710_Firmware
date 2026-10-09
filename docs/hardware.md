@@ -224,7 +224,7 @@ Ghidra 12.1.4 as installed (Homebrew) ships **ARM, Xtensa**, M16C, SuperH, V850,
 | T08 | SDR (SR) | FPGA bitstream, probably **not CPU code**. If there is a soft core (Nios II / MicroBlaze / RISC-V), use the matching language later. | Not applicable | First identify the FPGA vendor from bitstream sync words (Xilinx `AA 99 55 66`, Intel/Altera, Lattice `FF FF BD B3`, and so on) after decoding. |
 
 ## Unresolved / not in the manual
-- The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented).
+- The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented). **Update from T04:** the decoded SR bitstream is Xilinx 7-series (sync `AA995566`) with IDCODE 0x0362C093, which is the **Artix-7 XC7A50T** [fact for the IDCODE, inference for the part]. The ADC and flash parts are still unknown.
 - Exactly which RZ/A1H boot-mode straps are fitted (BOOT0..2 resistors marked "***") (p62).
 - Pins 7 and 8 of J1005 (TP1029/TP1030).
 - The C4 bus endpoint: the mapping C4 = RT685 is an inference.

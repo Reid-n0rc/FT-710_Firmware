@@ -54,7 +54,7 @@ ghidra/              (ignored) Ghidra projects
 | FT-710_IFDSP_V0101.SFL | ID | V01-01 | 2023-03-23 | IF DSP |
 | FT-710_SDR_V0104.SFL | SR | V01-04 | 2023-03-24 | SDR unit (may include an FPGA bitstream) |
 
-What we know so far about the SFL format: an ASCII `*` comment box, then one line with `<tag> <length> <hex checksum>`, then the payload. The payload is **obfuscated**: runs of erased flash show up as a repeating 32-byte pattern, not `FF`/`00`. Full details live in `docs/sfl-format.md`.
+What we know so far about the SFL format: an ASCII `*` comment box, then one line with `<tag> <length> <hex checksum>`, then the payload. The payload is obfuscated by byte-wise subtraction of a fixed 43-byte key, with a salted CRC-32 in the header. It is fully decoded by `tools/sfl_decode.py` (T04). Full details live in `docs/sfl-format.md`.
 
 ## Tooling
 
