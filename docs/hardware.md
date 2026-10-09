@@ -1,0 +1,232 @@
+# FT-710 hardware survey
+
+Source: `Manuals/FT-710_serv_2022.pdf` ("FT-710 Technical Supplement", ©2022, EH080H90A, 75 pages).
+Page numbers below are **PDF page numbers** (1-based). The manual's own labels are in brackets, for example p17 [MAIN-1].
+
+The schematic, block diagram and layout pages are vector drawings with no extractable text. They were read from
+cropped renders (`pdftoppm`). The parts lists (p24–46, p50–61, p64–71, p74) are text.
+
+Confidence tags: **[fact]** = printed in the manual; **[inference]** = follows from what is printed;
+**[guess]** = from outside knowledge or weak evidence, so verify it.
+
+## Manual layout (p1)
+
+| Pages | Content |
+|---|---|
+| 2–3 | Specifications |
+| 4–5 | Exploded view |
+| 6 | Block diagram (whole radio, including the "SDR MODULE" box) |
+| 7 | Connection diagram |
+| 8–16 | Alignment |
+| 17–21 | MAIN unit schematics: CNTL (p17), DVI (p18), DSP, titled "SDR-DSP" (p19), AF (p20), RX (p21) |
+| 22–23 | MAIN parts layout, sides A and B |
+| 24–46 | MAIN parts list |
+| 47–49 | PA unit schematic and layout |
+| 50–61 | PA parts list |
+| 62–63 | DISPLAY unit schematic and layout |
+| 64–71 | DISPLAY parts list |
+| 72–74 | JACK unit schematic, layout and parts list |
+
+The manual lists four boards: **MAIN, PA, DISPLAY, JACK** (p1). There is no separate IF-DSP board: the IF DSP is
+on the MAIN unit. The **SDR module** (ADC + FPGA) is a plug-in module on the MAIN unit. Its internals are **not**
+documented anywhere in the manual (p6: it appears only as a box; none of its parts are in the MAIN parts list).
+
+## Summary: programmable devices
+
+| Ref | Part | Board | Role (manual label) | Architecture | SFL image |
+|---|---|---|---|---|---|
+| Q1001 | Renesas **R5F56514ADFB** (block diagram: "R5F56514AFFB") | MAIN | "MAIN CPU" (p6) | Renesas **RX651** (RXv2 core with FPU, 144-pin LFQFP) | **MC** (MAIN) |
+| Q6009 | Renesas **R7S721001VCBG** | DISPLAY | "CPU" (p6) | Renesas **RZ/A1H**: ARM **Cortex-A9** (ARMv7-A) with 10 MB on-chip SRAM [guess for the specs] | **PC** (DISPLAY) |
+| Q2002 | NXP **MIMXRT685SFVKB** | MAIN | "DSP MAIN/TX" (p6) | NXP **i.MX RT685**: ARM **Cortex-M33** (ARMv8-M) + Cadence **Tensilica HiFi 4** DSP (Xtensa) [core types are a guess from the part number] | **ID** (IFDSP) |
+| (none) | ADC + FPGA, part numbers not given | SDR module (plugs into MAIN J2002/J3003) | "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6) | FPGA of unknown vendor | **SR** (SDR) |
+| Q1805 | Explore **EPF021M-YM** | MAIN | "MICRO CNTL" in the DVI/HDMI chain (p6) | small MCU of unknown core [guess] | none known (probably mask/OTP) |
+
+No processors were found on the PA or JACK units (their IC lists contain only regulators, op-amps, a DAC and shift
+registers: p56–57, p74).
+
+---
+
+## MAIN unit
+
+### Q1001: main CPU, Renesas RX651 (image MC)
+- Part: **R5F56514ADFB** in the parts list, Yaesu P/N G1095803, side A, D3 (p36). The schematic also says R5F56514ADFB (p17).
+  The block diagram prints "R5F56514AFFB" (p6), which is probably a drawing typo or a variant. **[fact]**
+- Package: 144-pin, with pin numbers up to 144 on the schematic (p17) **[fact]**. "FB" = 144-pin LFQFP **[guess, Renesas naming]**.
+- Memory (Renesas part-number decode): "565**1**" = RX651 group, "**4**" = 512 KB code flash, plus 256 KB RAM and 32 KB data flash **[guess. Check against the Renesas RX651 datasheet]**.
+- Clock: X1001 **24.000 MHz** crystal DSX321G, connected to P37/XTAL and P36/EXTAL (pins 20/22) (p46, p6, p17). **[fact]**
+- External EEPROM: Q1008 **ROHM BR25G256FVT-3GE2**, a 256 Kbit SPI EEPROM (p36, labelled "EEPROM" on p6). It shares the CPU SPI bus
+  (`C4_SPI_MISO`/`C4_SPI_CLK` on pins 109/110) with chip-select `E2P_SS` on pin 111 (p17). **[fact]**
+- Other peripherals: Q1005 BU2505FV 10-bit DAC on `SDATA`, used for `FADJ` (reference oscillator trim) (p6, p17). PA-unit control goes
+  through serial shift registers (`SCLK`/`SDAT`/`/SST4`/`/STT6`/`SST5` on J1002) (p17). ADC inputs: PA_IDD, PA_VDD, ALC, FWD/REV, and so on (p17).
+- **UARTs (SCI)** on Q1001 (p17, pin labels read from the schematic):
+
+  | Q1001 pins | SCI | Net | Goes to |
+  |---|---|---|---|
+  | 26 UART0_MI / 27 UART0_MO | SCI0 | `USBSS_UMISO/UMOSI` | CP2105 **SCI** port ("Standard" CAT COM port) (p20) |
+  | 32 UART3_MI / 34 UART3_MO | SCI3 | `USBSE_UMISO/UMOSI` | CP2105 **ECI** port ("Enhanced" CAT COM port) (p20) |
+  | 29 P30/RXD1 / 31 P26/TXD1 | SCI1 | `DISP_UMISO/UMOSI` | DISPLAY CPU (J1009 pins 10–11 → J6001 20–21) **and** the debug header J1005 (p17, p62) |
+  | ~70 UART5_MI / 67 UART5_MO | SCI5 | `SDR_UMISO/UMOSI` | SDR module (J2002) (p17, p19) |
+  | 45 UART2_MI / 44 UART2_MO | SCI2 | `ETUN_UMISO/UMOSI` | external tuner (ATAS/FC-40 type), DIN on the rear panel (p17) |
+  | 128 AN116(UART7) / 131 AN114(UART7) | SCI7 | `C4_UMISO/C4_UMOSI` | the "C4" peripheral, see below |
+
+- **"C4" bus** (p17): `C4_SPI_MISO/CLK`, `C4_SS1..SS5`, `C4_RQST`, `C4_BUSY_DSP`, `C4_TRX`, `C4_RESET`, `C4_BOOT`, `C4_PON`,
+  plus UART7. The name `C4_BUSY_DSP` and the `C4_BOOT`/`C4_RESET` lines suggest that "C4" is the RT685 DSP
+  (whose page has `DSP_UPDATE`, `DSP_RESET18`, `DSP_UMISO/UMOSI` on FC0 UART, p19) **[inference, medium]**. I could not
+  trace the C4 nets to the DSP page in the renders, so this pairing is not confirmed.
+- On-chip USB (pins 47/48 USB_DM/DP) goes only to test points TP1053/TP1054 (p17). The RX USB port is not used for CAT. **[fact]**
+- Boot / update: MD pin 16 is labelled `MD/FINED`, net `MD_FINE`. Transistor Q1012 (DTC114YUA) pulls MD_FINE low when
+  `RX_UPDATE` is high, and the drawing is annotated "RX_UPDATE: Update is High" (p17). `RX_UPDATE` and `RX_RESET` are driven by the
+  DISPLAY CPU (J1009 pins 12–13 → RZ/A1H P4_3 and P7_10) (p17, p62). SCI1 (P30/P26) is the RX boot-mode SCI.
+  **So the DISPLAY CPU reflashes the MAIN CPU through the Renesas serial boot mode over the DISP UART** **[inference, high]**.
+  This matches the update manual: firmware comes from the SD card, which is on the DISPLAY CPU, and "update DISPLAY first".
+- **Debug header J1005, "RX-CPU DEBUG"** (P1091201, an 8-pin 08FLT-SM2 FFC, p35, p17):
+  pin 1 GND, 2 `MD_FINE`, 3 `E1_RESET`, 4 `UB`, 5 `DISP_UMOSI` (TXD1), 6 `DISP_UMISO` (RXD1), 7 → TP1029, 8 → TP1030
+  (pins 7 and 8 are not labelled; one probably carries the 3.3 V reference) **[fact for pins 1–6]**.
+  This header gives both the Renesas **FINE** single-wire debug (E1/E2 emulator) and SCI1 boot-mode programming
+  (Renesas Flash Programmer over UART) **[inference]**.
+- Test points: TP1002, TP1004, TP1006, TP1024, TP1028 on CPU pins (p17). TP1005 is the reference-oscillator check point (p9, p46).
+
+### Q2002: IF DSP, NXP i.MX RT685 (image ID)
+- Part: **MIMXRT685SFVKB**, Yaesu P/N G1095805, side A, F3 (p37). The block diagram labels it "DSP MAIN/TX" (p6), and the schematic sheet is "MAIN-UNIT/SDR-DSP" (p19). **[fact]**
+- Flash: Q2008 **Winbond W25Q128JVSIM**, 128 Mbit (16 MB) QSPI NOR (parts list p37 and schematic p19). The block diagram instead
+  shows "MT25QL128ABA1ESE" (Micron, also 128 Mbit) (p6), so the two are probably alternate parts. It connects to **FlexSPI A** (PIO1_18 SCLK, PIO1_19 SS0_N,
+  PIO1_20..23 DATA0..3; nets `QFLS_*`) (p19). **[fact]**
+- No external RAM. The RT685 has 4.5 MB of on-chip SRAM **[guess]**.
+- Boot configuration (p19, printed note): `BootConf_ISP[2:0]` on PIO1_15..17 (pins N3/M4/N4): "111 Serial Master Boot,
+  110 Serial ISP, **011 FlexSPI A**". The `DSP_UPDATE` signal (through Q2010/Q2006) selects "L: Normal (FlexSPI) / H: Update (Serial ISP)". **[fact]**
+  So in normal operation the code runs from the QSPI flash. For an update, the RT685 ROM serial ISP is used (UART on FC0) **[inference]**.
+- Clock: `DSP_CLK` from the SDR module (J2002 pin 22) into PIO2_30/CLKIN (p19). The X2002 crystal footprint is marked "***" and
+  does not appear in the parts list (p46), so it is not fitted **[fact/inference]**.
+- Flexcomm assignment (printed on p19): **FC0: UART** (`DSP_UMISO/DSP_UMOSI`, also brought out to J2009),
+  **FC1: FFT/REC/PLAY data** (SPI, probably the display's `DSP_SCLK/SS/MOSI/MISO` link), **FC2: TX AF I2S** (to the SDR module),
+  **FC3: RX IF I2S** (`RX_IF_DAT` from the SDR module), **FC4: codec I2S out**, **FC5: codec I2S in**, GPIO: AIC (codec) setting. **[fact]**
+- Codec: Q2001 **TI TLV320AIC3204** (I2S + SPI control) (p37, p19).
+- USB1 pins go only to test points TP2069–2072 (p19).
+- **Debug header J2009, "DSP_JTAG"** (P1091201, 8-pin, p35, p19): 1 RESETn (`JTAG_RESET`), 2 SWO, 3 SWCLK, 4 SWDIO,
+  5 UART TX (`JLINK_OUT`), 6 UART RX (`DSP_UMISO`), 7 VCC 3.3 V OUT, 8 GND. This is **ARM SWD + UART** (J-Link). **[fact]**
+- Test points: TP2005, TP2017–2021, TP2030, TP2043–2048, TP2074 (p19).
+
+### SDR module (image SR)
+- Shown only as the "SDR MODULE" box on the block diagram, containing "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6). The module's parts are **not in the
+  parts list**, so the FPGA and ADC part numbers are **unknown** from this manual. **[fact]**
+- Clock: X1002 **35.7142 MHz VCTCXO** (DSA211SDN) → Q1011/Q1010 oscillator/buffer → **250 MHz** sampling clock into the module.
+  The FPGA runs at 125 MHz (p6, p46). **[fact]**
+- Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
+  TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
+  `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),
+  `SDR_RESET`, `SDR_UPDATE`, `SDR_PGD`, `SDR_DET`, `SDR_OVF`, `DSP_CLK`, `TX_AF_CLK/FRM/DAT`, `RX_IF_CLK/FRM/DAT`,
+  `FRM_CLK/FRM/DAT` ("FFT/FRM" data), `FADC0/1`, `FSK_SHIFT`, `SEND_A`, `TX`, plus JTAG `SDR_TDI/TDO/TMS/TCK/VDD`.
+- **JTAG header J2001, "SDR JTAG"** (P1091255, 6-pin 06FLT-SM2, p35, p19): 1 GND, 2 VDD, 3 TCK, 4 TDO, 5 TMS, 6 TDI. This is plain FPGA JTAG. **[fact]**
+- Update path: `SDR_UPDATE` and `SDR_RESET` are MAIN CPU outputs (p17), so **the MAIN CPU probably programs the SDR module's config flash over UART5
+  or SPI** **[inference, medium]**.
+
+### USB / CAT path (MAIN, AF sheet p20)
+- J2602: USB **Type-B** jack (SUB-110HB-B2N, p35) → Q2607 **Cypress/Infineon CY7C65631-56LTXIT** USB 2.0 4-port hub (HX2VL),
+  with its own X2601 24 MHz crystal (p37, p46, p20). The printed port map (p20) is:
+  **PORT1: CP2105, PORT2: CM119B, PORT3: FT4222, PORT4: N/A**. **[fact]**
+- Q2614 **Silicon Labs CP2105-F01-GMR**, a dual USB-UART bridge (p37). Its **SCI ("Standard") port → `USBSS_*` → RX SCI0**, and its
+  **ECI ("Enhanced") port → `USBSE_*` → RX SCI3**. RTS/DTR are routed to the CPU through UMD5N buffers (`USBSS_RTS/DTR`, `USBSE_RTS`; used
+  for PTT/keying) (p20, p17). The note on p20 reads: "SCI(Standard)=SS, ECI(Extend)=SE". **So CAT goes from the PC through CP2105 to the RX651 SCI0/SCI3.** **[fact]**
+- Q2624 **C-Media CM119B**, the USB audio codec (p37, p6).
+- Hub PORT3 goes over J1801 → J6002 (`FT4222_DP/DM`) to the **FTDI FT4222HQ** on the DISPLAY unit (p20, p62).
+- The 8-pin mini-DIN/RTTY and other rear-panel data lines are not covered here. No RS-232 level shifter (MAX232-type) is in the parts list, so the radio has
+  **no DB-9 RS-232 port**: CAT is USB only, plus the ACC/DATA connectors at logic level. **[inference]**
+
+### DVI/HDMI external display (MAIN, DVI sheet p18)
+- Q1801 **EP102C** ("LVDS RCV"), Q1803 **EP952** ("HDMI TRX"), Q1805 **EPF021M-YM** ("MICRO CNTL") with X1801 24 MHz (p37, p46, p6).
+  The output connector is J1803 DVIR-25SIAAABH0, the "DISPLAY" DVI-type jack (p35, p6). LVDS from the DISPLAY CPU arrives over J6002/J1801 (p62). **[fact]**
+- The EPF021M is a small controller with its own firmware, which is not in any SFL image as far as we know **[guess]**.
+
+### MAIN power / reset
+- Q2013 BU4228FVE reset IC for the DSP (p6, p37). Q2011 MP5470GL PMIC for the DSP rails: 1.1 V VCORE, D1.8 V, D3.3 V, D5 V (p6). Q1028 NJM2835 → CPU3.3V (p6).
+
+---
+
+## DISPLAY unit (p62; parts p64–71)
+
+### Q6009: display CPU, Renesas RZ/A1H (image PC)
+- Part: **R7S721001VCBG** (Yaesu P/N G1095582, side B, f2) (p67). The block diagram labels it "CPU" (p6). R7S7210**01** = RZ/A1H, "BG" = BGA (324-pin) **[guess for the decode]**.
+- External memory: **no SDRAM is in the parts list**, so the CPU runs from on-chip SRAM (10 MB on RZ/A1H) **[inference + guess]**.
+- Flash: Q6018 **Winbond W25Q128JVFIQ**, 128 Mbit (16 MB) SPI NOR (two lot codes listed, -YR2340 / -YR2513) (p67). It connects to the
+  SPI multi-I/O bus controller (SPIBSC0) pins P9_2..P9_7 (`QF_CLK`, `QF_CSn`, `QF_DAT0..3`), plus `QF_RESETn` on P11_2 (p62). **[fact]**
+- Boot pins: `BOOT0`/`BOOT1` (P0_0/P0_1), `BOOT2`, `MD_CLK`, `MD_CLKS` set by resistor straps R6084–R6104. Some of these are marked
+  "***" (not fitted), and the drawing notes "MD_CLK:1" (p62). I could not resolve exactly which straps are fitted. Because the flash is on SPIBSC0, the board most likely uses
+  **RZ/A1 boot mode 1, serial flash boot**, which maps the flash at 0x18000000 **[inference/guess]**.
+- Clocks: X6001 **48 MHz** on USB_X1/X2 (also the CPU clock source in clock mode MD_CLK=1), X6002 **27 MHz** on VIDEO_X1/X2,
+  X6003 **32.768 kHz** for the RTC, X6004 **12 MHz** for the FT4222H (p71, p62). EXTAL is not connected (p62). **[fact]**
+- Peripherals: Q6015 **ABLIC S-35190A** RTC (3-wire `RTC_DT/CK/CS` on P1_0..P1_2) with BT6001 ML614 lithium cell. Q6008 **TI TSC2003**
+  touch-screen controller (I2C `TSCL/TSDA`, `TINT` on P1_3..P1_5). Q6010 MP3301 backlight driver. SD card (`SD_*` on P11_x, the SDHI) and
+  rotary encoders/keys (p62, p67). The TFT is driven over the parallel RGB pins (R/G/B on P3/P4). LVDS output goes to the MAIN DVI chain (p62).
+- **Buses to the rest of the radio** (J6001, 30-pin, to MAIN J1009) (p62, p17):
+  - `SDR_SCLK/SS/MOSI/MISO` (RZ P8_3..P8_6): **SPI to the SDR module** (spectrum/scope data)
+  - `DSP_SCLK/SS/MOSI/MISO` (RZ P2_8..P2_11): **SPI to the RT685** (probably FC1, "FFT/REC/PLAY data")
+  - `DISP_UMOSI/UMISO` (RZ P6_6/P6_7): **UART to the RX651 SCI1**, the main command link and also the RX boot-mode programming link
+  - `RX_UPDATE` (P4_3) and `RX_RESET` (P7_10): **control the MAIN CPU's boot mode and reset**
+  - `PWR_SW`, `RX_PWR_ON`, `USB_DET`
+  - `ACC_CLK/FS/MISO/MOSI/UMOSI/UMISO`: an accessory bus, unpopulated on the DISPLAY side (resistors marked "***")
+- **USB on DISPLAY**: Q6020 **FTDI FT4222HQ** (USB 2.0 → SPI/I2C/GPIO bridge, p67). Its USB comes from hub PORT3. Its SPI master pins
+  (`ACC_MOSI/MISO/SCLK`, `ACC_FS`) go to the RZ/A1H SPI on P2_12..P2_15, and the RZ drives `FT4222_RESET` (P2_7) (p62). So a PC can talk to the
+  display CPU over USB through SPI. The purpose (screen capture or remote display?) is **unknown** **[fact for the wiring, guess for the purpose]**.
+  The RZ/A1H's own USB0/USB1 (`USB0_DP/DM`, `D+1/D-1`) also run through J6002 to the MAIN unit (p62). Where they end up is not resolved.
+- **JTAG header J6003** (P1091201, 8-pin, p66, p62): 1 3.3 V, 2 TMS, 3 TCK, 4 TDO, 5 TDI, 6 TRST, 7 nRZRST, 8 GND.
+  This is plain ARM JTAG for the Cortex-A9 (`JT_*` nets on the RZ TCK/TMS/TDI/TDO/TRST pins). **[fact]**
+
+---
+
+## PA unit (p47–61) and JACK unit (p72–74)
+- PA: no programmable devices. It holds regulators (NJM7808/7805, TAR5S30), an LM2902/2904 op-amp, BU2505FV DAC, BU2152FS serial-in shift registers (×2),
+  INA180 current sense, and an F2255 RF attenuator (p56–57). It is controlled by the MAIN CPU's serial shift-register bus over J1002/J4002 (p17).
+- JACK: front-panel phones/mic jacks only. No ICs except a 2SC4116 mic amplifier (p6, p74).
+
+---
+
+## Inter-processor topology
+
+```
+ PC (USB-B) ── CY7C65631 hub ─┬─ P1: CP2105 ─ SCI port ─ RX651 SCI0   ("Standard" CAT)
+                              │              └ ECI port ─ RX651 SCI3   ("Enhanced" CAT)
+                              ├─ P2: CM119B (USB audio)
+                              └─ P3: FT4222H ─ SPI ─ RZ/A1H (DISPLAY)
+
+ RZ/A1H (DISPLAY, PC image) ── UART ── RX651 SCI1 (MAIN, MC image)   + RX_UPDATE/RX_RESET (RZ flashes RX)
+        │  SD card (firmware files)
+        ├── SPI ── SDR module (FPGA, SR image)
+        └── SPI ── RT685 FC1 (IF DSP, ID image)
+
+ RX651 ── UART5 + SDR_UPDATE/RESET ── SDR module
+ RX651 ── UART7 + SPI + C4_BOOT/RESET ── (probably) RT685 ("C4" bus)
+ SDR module ── I2S RX_IF / TX_AF + DSP_CLK ── RT685 ── I2S ── TLV320AIC3204 codec
+ RX651 ── SPI ── BR25G256 EEPROM;  ── shift registers ── PA unit
+```
+
+## Image → processor mapping
+
+| Image | Tag | Processor | Evidence | Confidence |
+|---|---|---|---|---|
+| FT-710_MAIN | MC | Q1001 RX651 R5F56514ADFB | Labelled "MAIN CPU" (p6). It is the only CPU with the CAT UARTs (p17, p20). The update manual calls it "MAIN". The RX boot-mode-over-display-UART wiring (p17, p62) explains why the update manual says to update DISPLAY first. | High |
+| FT-710_DISPLAY | PC | Q6009 RZ/A1H R7S721001VCBG | It is the only processor on the DISPLAY unit (p67). It owns the SD card that the update reads from. | High |
+| FT-710_IFDSP | ID | Q2002 i.MX RT685 | Labelled "DSP MAIN/TX". It takes the RX_IF / TX_AF I2S streams (p6, p19). It is the only DSP. Its 16 MB QSPI flash and FlexSPI boot need an image. | High |
+| FT-710_SDR | SR | FPGA in the SDR module | Labelled "SDR MODULE ADC/FPGA" (p6). It has `SDR_UPDATE` and its own JTAG (p19). The large 4.39 MB file suits an FPGA bitstream. The FPGA vendor is unknown. | High for "SDR module", unknown for the exact device |
+
+Side note for T03/T04 **[guess]**: each SFL header's length field equals the file size. MAIN is 1,355,160 bytes, about 2.6× the guessed
+512 KB code flash. That ratio fits a text encoding (for example Motorola S-records with 32-byte data lines, about 2.4×) better than raw binary.
+
+## Implications for Ghidra (T05–T08)
+
+Ghidra 12.1.4 as installed (Homebrew) ships **ARM, Xtensa**, M16C, SuperH, V850, and other processors, but **no Renesas RX processor module**
+(checked under `Ghidra/Processors/`).
+
+| Task | Image | Language ID | Probable load / flash base | Notes |
+|---|---|---|---|---|
+| T05 | MAIN (MC) | **none in stock Ghidra.** RX needs a third-party SLEIGH module (community "RX" / RXv2 extensions exist) **[guess]** | RX651 code flash is mapped at the top of the 32-bit space. For 512 KB that is **0xFFF80000–0xFFFFFFFF**, with the reset vector at 0xFFFFFFFC and the data flash at 0x00100000 **[guess, from the RX65N/651 memory map]** | Little-endian instructions. Get an RX module first (follow-up). Fallback: the RX disassembler in Renesas CC-RX/GNU binutils `rx-elf-objdump`. |
+| T06 | DISPLAY (PC) | **`ARM:LE:32:v7`** (ARM + Thumb-2, Cortex-A9) | If the image is a raw flash dump: the SPI XIP window at **0x18000000** (RZ/A1 boot mode 1). The application is probably copied into on-chip SRAM at **0x20000000** (10 MB) by a loader **[guess]** | Look for an ARM vector table / `LDR PC` branches at offset 0, and a loader at the start of the flash. |
+| T07 | IFDSP (ID) | **`ARM:LE:32:v8-m`** (Cortex-M33) for the M33 code. Any HiFi4 DSP code inside is **`Xtensa:LE:32:default`** | FlexSPI A XIP: **0x08000000** (non-secure alias; secure alias 0x18000000). The RT600 boot ROM expects the FCB at flash offset 0x400 and the image vector table at the start of the image **[guess, from the RT600 boot ROM docs]** | The file is small (415 KB), so it may be just the application. Check for an initial SP/reset vector pair in the first 8 bytes. |
+| T08 | SDR (SR) | FPGA bitstream, probably **not CPU code**. If there is a soft core (Nios II / MicroBlaze / RISC-V), use the matching language later. | Not applicable | First identify the FPGA vendor from bitstream sync words (Xilinx `AA 99 55 66`, Intel/Altera, Lattice `FF FF BD B3`, and so on) after decoding. |
+
+## Unresolved / not in the manual
+- The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented).
+- Exactly which RZ/A1H boot-mode straps are fitted (BOOT0..2 resistors marked "***") (p62).
+- Pins 7 and 8 of J1005 (TP1029/TP1030).
+- The C4 bus endpoint: the mapping C4 = RT685 is an inference.
+- The purpose of the FT4222H USB-to-SPI link into the display CPU, and where the RZ USB0/USB1 lines finally go.
+- The exact flash/RAM sizes are decoded from part numbers, not printed in the manual.
