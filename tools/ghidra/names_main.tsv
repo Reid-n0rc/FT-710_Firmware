@@ -1,0 +1,182 @@
+# FT-710 MAIN V01-12 function names (applied with ApplyNames.java). address<TAB>name<TAB>plate comment
+# --- boot / runtime
+fff8fbdb	PowerON_Reset	Reset: sets USP=0x1004 ISP=0x1404 INTB=0xFFF8E6DC EXTB=0xFFFFFF80 FPSW=0x100, calls init chain, then main
+fffededa	_INITSCT	CC-RX section init: BTBL 0xFFF8E6C4..DC zero-fill, DTBL 0xFFF8E6A0..C4 copy ROM->RAM
+fff913d7	hw_init_clock	Called first from PowerON_Reset; writes SYSTEM regs (PRCR 0x803FE=0xA50B ...) [inference: clock/system setup]
+# --- CAT
+fffa347c	cat_parse	CAT command parser: looks up the 2-char mnemonic in cat_mnemonics (0xFFF805EC, 104 entries) then cat_ext_mnemonics (0xFFF806BC, 10 entries), calls cat_dispatch / cat_dispatch_ext
+fffa3b6e	cat_dispatch	CAT dispatch switch: index -> case via 16-bit offset table 0xFFF8F014 (BRA.L at 0xFFFA3B8A); each case checks parameter length (query vs set) then calls cat_XX
+fffa3a2a	cat_dispatch_ext	Dispatch for the extended/hidden mnemonic table (EO E8 FD PE ZZ VE JP; E9/KT no case here)
+fffa36f2	cat_ext_SP	Extended command SP (index 0 of 0xFFF806BC table)
+fffa5985	cat_ext_E9	Extended E9, reached only from the second input path in cat_parse
+fffb1f42	sci_tx_end	Returns SSR.TEND for CAT port id (1=SCI3, 2=SCI0, other=SCI2)
+fffb1b50	cat_rx_complete	Receive-complete callback from SCI ISRs (arg1=port id, arg2=len)
+# --- SCI drivers (Renesas Code Generator r_cg_sci style)
+fff9321f	R_SCI0_Create	SCI0 init (USB "Standard" CAT via CP2105)
+fff932c2	R_SCI0_Start
+fff93302	R_SCI0_Stop
+fff9336a	R_SCI0_Serial_Receive
+fff933ae	R_SCI0_Serial_Send
+fff9340e	r_sci0_transmit_interrupt
+fff9347f	r_sci0_receive_interrupt
+fff9351d	r_sci0_callback_receiveend
+fffb1645	sci0_set_baud	Re-configures SCI0 SMR/BRR/SEMR from table 0xFFF80FF4 (4 bytes x 5) by CAT RATE setting
+fff9354e	R_SCI1_Create	SCI1 init (DISPLAY link / boot SCI)
+fff93697	R_SCI1_Serial_Receive
+fff936db	R_SCI1_Serial_Send
+fff9373b	r_sci1_transmit_interrupt
+fff937ac	r_sci1_receive_interrupt
+fffb176b	sci1_tx_end
+fff93a86	R_SCI2_Create	SCI2 init (external tuner / ETUN port)
+fff93b69	R_SCI2_Stop
+fff93bd1	R_SCI2_Serial_Receive
+fff93c15	R_SCI2_Serial_Send
+fff93c7c	r_sci2_transmit_interrupt
+fff93ced	r_sci2_receive_interrupt
+fffb177e	sci2_configure	Selects SCI2 mode/pins by tuner/port setting and re-creates SCI2
+fff93f0d	R_SCI3_Create	SCI3 init (USB "Enhanced" CAT via CP2105)
+fff93ff0	R_SCI3_Stop
+fff94058	R_SCI3_Serial_Receive
+fff9409c	R_SCI3_Serial_Send
+fff940fc	r_sci3_transmit_interrupt
+fff9416d	r_sci3_receive_interrupt
+fffb198f	sci3_set_baud	Re-configures SCI3 baud from table 0xFFF80FF4
+fff9423c	R_SCI4_Create
+fff94387	R_SCI4_Serial_Receive
+fff943cb	R_SCI4_Serial_Send
+fff9442b	r_sci4_transmit_interrupt
+fff9449c	r_sci4_receive_interrupt
+fff94662	R_SCI5_Create	SCI5 init (SDR module FPGA link)
+fff94745	R_SCI5_Stop
+fff947ad	R_SCI5_Serial_Receive
+fff947f1	R_SCI5_Serial_Send
+fff94851	r_sci5_transmit_interrupt
+fff948c2	r_sci5_receive_interrupt
+fffc91b3	R_SCI6_Create_IIC	SCI6 in simple-I2C mode (SIMR3/SISR used)
+fffc9311	sci6_iic_condition	Writes SIMR3 (start/stop condition generation)
+fffc93a4	r_sci6_iic_txi
+fffc9467	r_sci6_iic_rxi
+fffc95b1	R_SCI7_Create	SCI7 init ("C4" peripheral link, probably the RT685 DSP)
+fffc97a0	r_sci7_transmit_interrupt
+fffc9811	r_sci7_receive_interrupt
+# --- EEPROM (BR25G256, bit-banged SPI on port E: PE0=/CS PE5=SCK PE6=MOSI PE7=MISO)
+fffb14a4	eeprom_read	SPI READ (0x03) + 16-bit address, reads n bytes
+fffb14ed	eeprom_write	64-byte page writes: RDSR(0x05) poll WIP, WREN(0x06), WRITE(0x02)+addr+data
+fffb15aa	eeprom_spi_tx	Shift one byte out MSB first on PE6, clock PE5
+fffb15ef	eeprom_spi_rx	Shift one byte in from PE7 (PIDR bit 7)
+# --- CAT command handlers (from CatDispatch.java)
+fffa646d	cat_AB
+fffa65d4	cat_AC
+fffa6867	cat_AG
+fffa6946	cat_AI
+fffa6a26	cat_AM
+fffa6b6f	cat_AO
+fffa6c9d	cat_AS
+fffa6edc	cat_AV
+fffa7018	cat_BA
+fffa717f	cat_BC
+fffa72d9	cat_BD
+fffa77ec	cat_BI
+fffa7928	cat_BM
+fffa7a71	cat_BP
+fffa7db5	cat_BS
+fffa756c	cat_BU
+fffa7fa1	cat_CF
+fffa8375	cat_CH
+fffa8513	cat_CN
+fffa8698	cat_CO
+fffa8b98	cat_CS
+fffa8c79	cat_CT
+fffa8d8a	cat_DA
+fffa9029	cat_DN
+fffa9281	cat_DT
+fffa9648	cat_EM
+fffa9928	cat_EN
+fffa9937	cat_EX
+fffa99bd	cat_FA_FB
+fffa9c96	cat_FN
+fffa9d3d	cat_FS
+fffa9d4e	cat_FT
+fffa9f23	cat_GT
+fffaa21f	cat_GP
+fffaa365	cat_ID
+fffaa39c	cat_IF_OI
+fffaa6e3	cat_IS
+fffaa905	cat_KM
+fffaac36	cat_KP
+fffaad52	cat_KR
+fffaadea	cat_KS
+fffaaf19	cat_KY
+fffab09f	cat_LK
+fffab16f	cat_LM
+fffab3fd	cat_MA
+fffab478	cat_MB
+fffab4f3	cat_MC
+fffab7d1	cat_MD
+fffaba64	cat_MG
+fffabbfa	cat_ML
+fffabea5	cat_MR
+fffac4b6	cat_MS
+fffac285	cat_MT
+fffac534	cat_MW
+fffac9ad	cat_MX
+fffaca47	cat_NA
+fffacc65	cat_NB
+fffacce8	cat_NL
+ffface21	cat_NR
+fffacebe	cat_OS
+fffad001	cat_PA
+fffad0a2	cat_PB
+fffad241	cat_PC
+fffad467	cat_PL
+fffad595	cat_PR
+fffad696	cat_PS
+fffad704	cat_QI
+fffad709	cat_QR
+fffad70e	cat_QS
+fffad718	cat_RA
+fffad7ae	cat_RG
+fffad8e3	cat_RI
+fffada46	cat_RL
+fffadb7d	cat_RM
+fffadcd6	cat_SC
+fffadd9a	cat_SD
+fffadeb6	cat_SF
+fffae2ca	cat_SH
+fffae64b	cat_SM
+fffae6cc	cat_SQ
+fffae850	cat_SS
+fffaf3b5	cat_ST
+fffaf46e	cat_SV
+fffaf5c7	cat_TS
+fffaf7b8	cat_TX
+fffa9155	cat_UP
+fffaf874	cat_VD
+fffaf9c0	cat_VG
+fffafadb	cat_VM
+fffafdbd	cat_VS
+fffaffa0	cat_VX
+fffb006e	cat_ZI
+fffa5c90	cat_ext_EO
+fffa53a4	cat_ext_E8
+fffa5a51	cat_ext_FD
+fffa5fdf	cat_ext_PE
+fffa58a1	cat_ext_ZZ
+fffa54b3	cat_ext_VE
+fffa556b	cat_ext_JP
+# --- main / runtime (added after export review)
+fff8f658	main	Called from PowerON_Reset after BSP init; calls app_main
+fff8f9dd	_CLOSEALL	CC-RX runtime: closes the 20 stdio slots at 0x1FF74 (reached only if main returns)
+fff8f8f5	_INIT_IOLIB	CC-RX runtime: sets up stdin/stdout/stderr FILE structs at 0x25D80
+fff94afa	app_main	Init sequence, waits for power-on (flag 0x20B3A) while still serving cat_parse (so PS works when off), then subsystem init and main_loop
+fff94b8b	main_loop	Super-loop (no RTOS): polls ~16 tasks incl. cat_parse each pass
+fffb1b2b	sdr_send_cmd	R_SCI5_Serial_Send(buf,len) then arm a 7-byte reply receive into 0xA2AC
+fffb73a6	power_off_io	Power-down: clears several port bits, stops SCI5 [inference]
+# --- data labels
+fff805ec	@cat_mnemonics	104 two-char CAT mnemonics "ABACAG...VXXTZI" (index = cat_dispatch case)
+fff806bc	@cat_ext_mnemonics	10 extra two-char mnemonics "SPEOE8E9FDKTPEZZVEJP" (cat_dispatch_ext)
+fff806d0	@cat_mode_codes	"12735D4B8CAF69EF01253F11..." mode/code character map used by cat_IF_OI [inference]
+fff8f014	@cat_switch_table	104 x int16 offsets relative to 0xFFFA3B8A (BRA.L) -> cat_dispatch cases
+fff80ff4	@sci_baud_table	5 x 4 bytes {SEMR.ABCS,SEMR.BGDM,SMR.CKS,BRR} for CAT RATE [inference on field order]
+fff8e6a0	@DTBL	C runtime ROM->RAM copy table (3 x {src,end,dst})
+fff8e6c4	@BTBL	C runtime zero-fill table (3 x {start,end})

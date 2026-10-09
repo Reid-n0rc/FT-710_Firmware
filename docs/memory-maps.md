@@ -111,3 +111,39 @@ start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as
   and code-pointer tables at 0x20420090, 0x20420544 and 0x20427FAC. No distinct font table has been isolated yet. Glyphs are probably among these bitmaps **[guess]**.
 - **0x20427ED4–0x204286A0:** UI and update-screen strings (`YAESU FT-710 BOOT LOADER V01-02`, `INSERT FIRMWARE SD CARD.`, …).
 - `.rodata` is a non-executable block, and the `DisplayReport.java` check finds 1 stray instruction there (at 0x20165178) and none elsewhere.
+
+## MAIN (MC image, `FT-710_MAIN_V0112.SFL`) — T05
+
+CPU: Q1001 Renesas **RX651** R5F56514 (RXv2 core, 512 KB code flash, 256 KB RAM, 32 KB data flash), little-endian.
+Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs/tooling.md`), loaded with BinaryLoader at
+**base 0xFFF80000**. Setup script: `tools/ghidra/SetupRX651.java`.
+
+### How it was derived
+- The S-records cover 0xFFF80000..0xFFFFFFFF (a 512 KB code-flash window ending at the fixed vector table) plus 116 bytes at 0xFE7F5D00 (option-setting memory, all 0xFF) **[fact, T04]**.
+- Fixed vectors at 0xFFFFFFD0..FC point into the image. Reset = 0xFFF8FBDB, NMI = 0xFFF9061B, and the others go to 0xFFF905AD.. / 0xFFF90802 **[fact]**.
+- The reset code sets **USP = 0x00001004, ISP = 0x00001404, INTB = 0xFFF8E6DC, EXTB = 0xFFFFFF80, FPSW = 0x100** **[fact, 0xFFF8FBDB..FBFF]**.
+- `_INITSCT` (0xFFFEDEDA) reads the CC-RX section tables: DTBL 0xFFF8E6A0 (3 × {src, end, dst}) and BTBL 0xFFF8E6C4 (3 × {start, end}) **[fact]**.
+
+### Map
+| Range | Size | Contents | Ghidra block |
+|---|---|---|---|
+| 0x00000000..0x00000FFF | 4 KB | user stack (USP top 0x1004; the low bound is an inference) | RAM_0 |
+| 0x00001004..0x00001403 | 1 KB | interrupt stack (ISP top 0x1404) [inference: 1 KB] | RAM_0 |
+| 0x00001404..0x0001B3CB | 0x19FC8 | .bss (BTBL #3) | RAM_0 |
+| 0x0001B3CC..0x0001B5FB | 0x230 | .data, copied from ROM 0xFFF8EC1C..0xFFF8EE4C | RAM_data_0001B3CC |
+| 0x0001B5FC..0x0001FF19 | 0x491E | .bss (BTBL #2) | RAM_1 |
+| 0x0001FF1A..0x0001FF71 | 0x58 | .data, copied from ROM 0xFFF8EE4C..0xFFF8EEA4 | RAM_data_0001FF1A |
+| 0x0001FF74..0x00025D1F | 0x5DAC | .bss (BTBL #1). Includes the stdio FILE table 0x1FF74 and FILE structs 0x25D80.. | RAM_2 |
+| 0x00025D20..0x00025E5F | 0x140 | .data, copied from ROM 0xFFF8EADC..0xFFF8EC1C | RAM_data_00025D20 |
+| 0x00025E60..0x0003FFFF | ~105 KB | unused RAM | RAM_3 |
+| 0x00080000..0x000FFFFF | 512 KB | peripheral I/O (volatile): SYSTEM 0x80000, ICU 0x87000, CMT 0x88000, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI0–7 0x8A000–0x8A0FF, ports 0x8C000 (PDR) / 0x8C020 (PODR) / 0x8C040 (PIDR), MPC 0x8C100 | IO_periph |
+| 0x00100000..0x00107FFF | 32 KB | E2 data flash (referenced, contents unknown) | DataFlash |
+| 0x007FC000..0x007FFFFF | 16 KB | flash control registers (volatile) | IO_flash |
+| 0xFE7F5D00..0xFE7F5D73 | 116 B | option-setting memory (all 0xFF = defaults) | not loaded |
+| 0xFFF80000..0xFFF8FFFF | | const data: strings (menus, CAT tables at 0xFFF805EC, reply templates at 0xFFF8F480), the large pointer table at 0xFFF89D94, the relocatable vector table at **0xFFF8E6DC** (256 × 4), DTBL/BTBL, .data images | ROM |
+| 0xFFF8FBDB.. | | code (PowerON_Reset at 0xFFF8FBDB; code reaches ~0xFFFEE1BE, then 0xFF fill) | ROM |
+| 0xFFFFFF00 | | version string `V01-12` | ROM |
+| 0xFFFFFF80..0xFFFFFFFF | | fixed vector table (EXTB). Entries 0xD0..0xFC are used | ROM |
+
+Peripheral bases follow the RX651 hardware manual from memory **[inference]**. SCI0–7 are confirmed by the vector numbers of the ISRs that use them **[fact]**.
+The RAM size of 256 KB is the R5F56514 part-number decode **[inference]**. The highest RAM address used is ~0x25E60 **[fact]**.
