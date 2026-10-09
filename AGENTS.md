@@ -80,6 +80,10 @@ The owner wants **full documentation of all the code**, with figures wherever th
 - Mark each claim **[fact]** (seen in code/data, cite the address), **[inference]** or **[guess]**.
 - When you name functions in Ghidra, keep the project as the source of truth, re-export `decomp/<image>/` with `tools/ghidra/ExportDecomp.java`, and use the same names in the docs.
 
+## Issue tracking (owner requirement)
+
+Every task is mirrored as a GitHub issue in the private repo: epic #1, one issue per task, and sub-tasks (`T10a`...) as sub-issues of their parent. `docs/tasks/` stays the source of truth. After any change to the board or a task file's status/findings, the parent agent runs `python3 -I tools/issues_sync.py`. It updates titles, bodies and status labels, comments on status changes, closes done tasks, and keeps `docs/tasks/issues.json`, which is committed along with the change. Background task agents don't run it, because the parent does. When you split a task, add the sub-task rows to the board (`T10a`, `T10b`, ...) so the sync creates the sub-issues.
+
 ## Watchdog / long-running work
 
 - Give every long command a hard timeout. Ghidra headless runs take `-analysisTimeoutPerFile <sec>`, and the decompiler has a 60 s per-function limit inside `ExportDecomp.java`.

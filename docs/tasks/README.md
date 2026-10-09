@@ -1,6 +1,6 @@
 # Task board
 
-One task per session (see AGENTS.md → Task sizing). Update the status here when you start or finish a task.
+Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `tools/issues_sync.py`. One task per session (see AGENTS.md → Task sizing). Update the status here when you start or finish a task.
 
 | ID | Task | Depends on | Status |
 |---|---|---|---|
