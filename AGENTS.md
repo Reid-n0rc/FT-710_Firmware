@@ -16,7 +16,7 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 - **One task per session.** Each task in `docs/tasks/` is sized to fit in one context window. Don't start a second task in the same session. If a task grows, split it into new task files and stop.
 - **Record findings as you go.** Facts go in `docs/` (hardware, formats, memory maps). Status goes in the task file. Never leave a finding only in chat.
 - **Keep the repo private.** This repo holds output derived from Yaesu's copyrighted firmware. Never make it public, and never publish decoded binaries or decompiled code anywhere else.
-- **Git:** commit locally with clear messages. Don't push, tag, or release without the owner's explicit go-ahead.
+- **Git:** make incremental commits with clear messages. The owner has authorized pushing `main` to the **private** `origin` (github.com/Reid-n0rc/FT-710_Firmware) after commits. Before pushing, check that the repo is still private (`gh repo view --json isPrivate`). Never change the repo's visibility, and never tag, release, or push to any other remote.
 - **Don't touch the radio.** Anything that writes to the radio (flashing, EEPROM writes, untested CAT set-commands) needs the owner's explicit approval each time.
 
 ## Sources (not in git)
