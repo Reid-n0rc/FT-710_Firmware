@@ -1,0 +1,22 @@
+# Yaesu copyrighted inputs — never commit (see AGENTS.md "Sources")
+Firmware/
+Manuals/
+
+# Decoded/raw binaries derived from Yaesu firmware — regenerate locally with tools/
+build/
+*.bin
+*.SFL
+*.sfl
+
+# Ghidra project databases (large, binary, machine-specific)
+ghidra/
+*.gpr
+*.rep/
+*.lock
+*.lock~
+
+# OS / editor
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
