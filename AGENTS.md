@@ -68,3 +68,19 @@ What we know so far about the SFL format: an ASCII `*` comment box, then one lin
 - Never read a whole PDF or a whole decompile dump into context. Use `pdftotext` with page ranges, `grep`, and targeted reads.
 - Process one firmware image per task. For huge output (decomp), commit it file by file and summarize it in docs. Don't paste it into chat.
 - Finish each task with: the task file updated (status, findings, follow-ups), docs updated, and a local commit.
+
+## Documentation standard (owner requirement)
+
+The owner wants **full documentation of all the code**, with figures wherever they show how things connect. Raw decomp output alone is not a deliverable.
+
+- Code documentation lives in `docs/code/<image>/` (`main`, `display`, `ifdsp`, `sdr`) plus `docs/code/system.md` for the whole radio.
+- Each image has an `README.md` overview (purpose, boot flow, memory map summary, task/main-loop structure, subsystem list with links) and one page per subsystem (for example CAT parser, band/VFO control, SD/update loader, UI, inter-CPU link, audio path). Each subsystem page has function tables (address, Ghidra name, inferred name, purpose), data structures and globals.
+- **Figures:** use Mermaid in Markdown (it renders on GitHub). Use `flowchart` for module and call structure, `sequenceDiagram` for protocols and boot/update flows, and `stateDiagram-v2` for modes. Every overview needs at least a block diagram and a boot/control-flow figure. Keep each figure readable (around 25 nodes or fewer); split it rather than cram.
+- Mark each claim **[fact]** (seen in code/data, cite the address), **[inference]** or **[guess]**.
+- When you name functions in Ghidra, keep the project as the source of truth, re-export `decomp/<image>/` with `tools/ghidra/ExportDecomp.java`, and use the same names in the docs.
+
+## Watchdog / long-running work
+
+- Give every long command a hard timeout. Ghidra headless runs take `-analysisTimeoutPerFile <sec>`, and the decompiler has a 60 s per-function limit inside `ExportDecomp.java`.
+- Background agents write a heartbeat: append `<ISO time> <task> <step>` to `$HB_DIR/<task>` (the parent gives you `HB_DIR`) after each major step, at least every ~10 minutes of work. The parent's watchdog treats a heartbeat older than 30 minutes as stalled.
+- If a tool or connection fails, retry with backoff before giving up. Record unrecoverable failures in the task file.

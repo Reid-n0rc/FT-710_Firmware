@@ -3,13 +3,13 @@ Firmware/
 Manuals/
 
 # Decoded/raw binaries derived from Yaesu firmware — regenerate locally with tools/
-build/
+/build/
 *.bin
 *.SFL
 *.sfl
 
 # Ghidra project databases (large, binary, machine-specific)
-ghidra/
+/ghidra/
 *.gpr
 *.rep/
 *.lock
