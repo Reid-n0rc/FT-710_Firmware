@@ -16,7 +16,7 @@ One task per session (see AGENTS.md → Task sizing). Update the status here whe
 | T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | todo |
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | todo |
 | T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | todo |
-| T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | todo |
+| T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | in progress |
 | T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | todo |
 
 Later (don't plan these in detail yet): the inter-CPU protocol, the update/flash protocol plus re-encoding, and custom firmware feasibility.
