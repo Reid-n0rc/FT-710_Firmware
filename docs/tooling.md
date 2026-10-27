@@ -114,6 +114,22 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin
 
 Ghidra writes per-user state to `~/Library/ghidra/ghidra_12.1.4_PUBLIC/` (settings, logs) and `/var/tmp/<user>-ghidra/` (caches). Both are safe to delete. T05 also added the per-user RX extension in `~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX/` (see above).
 
+## Linux container setup (2026-10-27)
+
+The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is installed under the persistent home, so nothing here needs a container-image change.
+
+| Component | Version | Source / verification | Location |
+|---|---|---|---|
+| Ghidra | 12.1.4 PUBLIC 20260921 | GitHub release `Ghidra_12.1.4_build`; SHA-256 `ddac49f9…d4db` matches the release notes | `~/opt/ghidra_12.1.4_PUBLIC` |
+| JDK 21 | Temurin 21.0.13+9 | Adoptium API; SHA-256 matches Adoptium's published checksum | `~/opt/jdk-21.0.13+9` |
+| RX module | stefan00lpf/rx-proc-ghidra `ea4cd204` (same commit as T05) | six `data/languages/rx62t.*` files only, plus an empty `Module.manifest`; `sleigh` compile shows the same 8 NOP warnings | `~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX/` (inside this Ghidra copy, so the REA MCP server sees it too) |
+| REA MCP | `rea-agents` 6.8.0 (npm, maintainer morluto; upstream github.com/morluto/rea) | `npm install --global --prefix ~/.local`; `rea setup --client claude_code` installed the skill, then the user-scope MCP entry was re-added with `env` set to `GHIDRA_INSTALL_DIR`, `JAVA_HOME` and `GHIDRA_HEADLESS_MAXMEM=6G` | `~/.local/bin/rea`, `~/.claude.json` (`mcpServers.rea`), `~/.claude/skills/reverse-engineer-anything` |
+
+- `tools/ghidra-headless.sh` uses the Homebrew paths when `/opt/homebrew/opt/ghidra` exists, else the `~/opt` paths above.
+- Ghidra's per-user state on Linux is `~/.config/ghidra/ghidra_12.1.4_PUBLIC/`.
+- The first JVM start after install takes over 10 s while it reads files from the array share for the first time, which can trip REA's doctor timeout. Re-run it.
+- Remove REA: `claude mcp remove --scope user rea; rm -rf ~/.claude/skills/reverse-engineer-anything; npm uninstall -g --prefix ~/.local rea-agents`.
+
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
