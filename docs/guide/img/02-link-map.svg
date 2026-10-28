@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Every link between the FT-710 chips</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .n { font-size: 18px; font-weight: bold; }
+    .s { fill: #4B5563; }
+    .main { fill: #DBEAFE; stroke: #2563EB; stroke-width: 3; }
+    .disp { fill: #DCFCE7; stroke: #16A34A; stroke-width: 3; }
+    .dsp { fill: #F3E8FF; stroke: #9333EA; stroke-width: 3; }
+    .sdr { fill: #FFEDD5; stroke: #EA580C; stroke-width: 3; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .uart { stroke: #2563EB; stroke-width: 4; fill: none; marker-end: url(#ab); }
+    .uart2 { stroke: #2563EB; stroke-width: 4; fill: none; marker-end: url(#ab); marker-start: url(#ab); }
+    .spi { stroke: #16A34A; stroke-width: 4; fill: none; marker-end: url(#ag); }
+    .spi2 { stroke: #16A34A; stroke-width: 4; fill: none; marker-end: url(#ag); marker-start: url(#ag); }
+    .wire { stroke: #1F2937; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#ak); }
+    .sig { stroke: #9CA3AF; stroke-width: 4; fill: none; marker-end: url(#ay); marker-start: url(#ay); }
+  </style>
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#2563EB"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#16A34A"/></marker>
+    <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1F2937"/></marker>
+    <marker id="ay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9CA3AF"/></marker>
+  </defs>
+  <rect width="960" height="660" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Who talks to whom</text>
+
+  <!-- chips -->
+  <rect x="360" y="64" width="240" height="96" rx="8" class="disp"/>
+  <text x="480" y="94" text-anchor="middle" class="n">DISPLAY (RZ/A1H)</text>
+  <text x="480" y="118" text-anchor="middle">boss of power, panel,</text>
+  <text x="480" y="138" text-anchor="middle">SD card and updates</text>
+
+  <rect x="360" y="290" width="240" height="96" rx="8" class="main"/>
+  <text x="480" y="320" text-anchor="middle" class="n">MAIN (RX651)</text>
+  <text x="480" y="344" text-anchor="middle">boss of the radio state;</text>
+  <text x="480" y="364" text-anchor="middle">master of both UART links</text>
+
+  <rect x="40" y="490" width="250" height="96" rx="8" class="sdr"/>
+  <text x="165" y="520" text-anchor="middle" class="n">SDR FPGA (XC7A50T)</text>
+  <text x="165" y="544" text-anchor="middle">register-file slave</text>
+  <text x="165" y="564" text-anchor="middle">on its UART</text>
+
+  <rect x="670" y="490" width="250" height="96" rx="8" class="dsp"/>
+  <text x="795" y="520" text-anchor="middle" class="n">IFDSP (RT685)</text>
+  <text x="795" y="544" text-anchor="middle">register-file slave</text>
+  <text x="795" y="564" text-anchor="middle">on its UART</text>
+
+  <rect x="120" y="300" width="160" height="76" rx="8" class="grey"/>
+  <text x="200" y="332" text-anchor="middle" class="b">PC</text>
+  <text x="200" y="354" text-anchor="middle" class="s">over USB</text>
+
+  <!-- DISPLAY <-> MAIN -->
+  <path d="M440 168 V282" class="uart2"/>
+  <text x="430" y="206" text-anchor="end" class="b">UART, ~345 kbit/s</text>
+  <text x="430" y="226" text-anchor="end">binary frames</text>
+  <text x="430" y="246" text-anchor="end">both ways, ACK each</text>
+  <path d="M520 162 V286" class="wire"/>
+  <text x="532" y="206">power, reset and</text>
+  <text x="532" y="226">boot-mode wires</text>
+
+  <!-- MAIN -> FPGA -->
+  <path d="M360 386 L250 484" class="uart"/>
+  <path d="M396 388 L292 520" class="wire"/>
+  <text x="282" y="420" text-anchor="end" class="b">UART 115200</text>
+  <text x="282" y="440" text-anchor="end">ASCII r / w</text>
+
+  <!-- MAIN -> DSP -->
+  <path d="M600 386 L710 484" class="uart"/>
+  <path d="M564 388 L668 520" class="wire"/>
+  <text x="684" y="420" class="b">UART 115200</text>
+  <text x="684" y="440">ASCII r / w</text>
+  <text x="480" y="470" text-anchor="middle" class="s">reset + update</text>
+  <text x="480" y="488" text-anchor="middle" class="s">wires (dashed)</text>
+
+  <!-- FPGA -> DISPLAY SPI -->
+  <path d="M70 486 V100 H354" class="spi"/>
+  <text x="84" y="88" class="b">SPI: scope data</text>
+  <text x="84" y="128">FPGA is the master</text>
+
+  <!-- DSP <-> DISPLAY SPI -->
+  <path d="M890 486 V100 H606" class="spi2"/>
+  <text x="876" y="88" text-anchor="end" class="b">SPI: audio scope, recorder</text>
+  <text x="876" y="128" text-anchor="end">DSP is the master</text>
+
+  <!-- PC links -->
+  <path d="M286 338 H354" class="uart2"/>
+  <text x="320" y="328" text-anchor="middle" class="s">CAT</text>
+  <path d="M354 150 H200 V294" class="spi"/>
+  <text x="190" y="200" text-anchor="end" class="s">FT4222H</text>
+  <text x="190" y="218" text-anchor="end" class="s">data to PC</text>
+
+  <!-- FPGA <-> DSP signal -->
+  <path d="M296 548 H664" class="sig"/>
+  <text x="480" y="538" text-anchor="middle">I2S audio both ways + DSP clock</text>
+
+  <!-- legend -->
+  <line x1="40" y1="620" x2="80" y2="620" stroke="#2563EB" stroke-width="4"/>
+  <text x="88" y="625">control UART</text>
+  <line x1="210" y1="620" x2="250" y2="620" stroke="#16A34A" stroke-width="4"/>
+  <text x="258" y="625">SPI data</text>
+  <line x1="350" y1="620" x2="390" y2="620" stroke="#1F2937" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="398" y="625">control wire</text>
+  <line x1="520" y1="620" x2="560" y2="620" stroke="#9CA3AF" stroke-width="4"/>
+  <text x="568" y="625">signal</text>
+  <text x="640" y="625" class="s">arrow = direction of control or data</text>
+</svg>
