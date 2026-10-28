@@ -27,10 +27,10 @@
 <text x="480.0" y="349.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">save settings: RAM mirror → EEPROM</text>
 <line x1="480" y1="290" x2="480" y2="318" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
 <rect x="300" y="400" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
-<text x="480.0" y="429.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">send 0x7F “going off” to the DISPLAY</text>
+<text x="480.0" y="429.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PS0, low voltage: 0x7F “going off”</text>
 <line x1="480" y1="370" x2="480" y2="398" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
 <rect x="300" y="480" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
-<text x="480.0" y="509.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">wait until the UART has drained</text>
+<text x="480.0" y="509.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">power key: wait for the UART to drain</text>
 <line x1="480" y1="450" x2="480" y2="478" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
 <rect x="300" y="560" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
 <text x="480.0" y="589.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">software reset → radio-off loop</text>

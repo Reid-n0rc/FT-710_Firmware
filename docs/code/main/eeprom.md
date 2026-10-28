@@ -181,7 +181,7 @@ sequenceDiagram
 
 - **Restart is a CPU reset.** "Power off" and "restart" are both an RX651 **software reset** (`sw_reset` writes SWRR = 0xA501). After the reset, `app_main` waits for power-on, as on a cold boot. 0x9DC5, which is saved in the opstate block, tells the DISPLAY-link startup (`displink_rx_F0_hello` case 0x10) whether to power straight back on. **[fact]** for the reset, **[inference]** for the meaning of 0x9DC5.
 - **Power fail** (`supply_undervolt_check`, `supply_undervolt_check`):
-  - It fires when ADC result 0x20B08 (AN002 in the `SPIR` order) drops below **0x7DD**. That channel is most likely the supply voltage **[inference]**.
+  - It fires when ADC result 0x20B08 drops below **0x7DD**. 0x20B08 is **AN003 `PA_VDD`**, the 13.8 V supply: `adc0_store` 0xFFFB27FB stores `R_S12AD0_Get_ValueResult(3, 0x20B08)` **[fact]**, and the p17 schematic names AN003 `PA_VDD` ([peripherals.md](peripherals.md#adc-s12ad-unit-0-at-0x89000-unit-1-at-0x89100)). (Corrected by T19h: this line used to say "AN002 in the `SPIR` order"; AN002 is `MCUP_FOR` at 0x20B06, and 0x20B08 is SPIR field 4.)
   - It acts only once, latched by 0x20B43.
   - It calls `power_off_io`, sets 0x9DC5 = 1, calls `FUN_fffd3d03` and saves the opstate block. The save runs only if soft timer 0x13 has expired; `trx_init` starts that timer with 2.5 s at power-on.
   - Then it requests the reset with code 0x90.

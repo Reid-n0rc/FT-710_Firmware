@@ -238,20 +238,27 @@ stateDiagram-v2
   Off --> Off: power-off loop (DISPLAY link + cat_parse, IWDT refresh)
   Off --> On: 0x20B3A set via DISPLAY link (PS1 → `power_on_request` sets link flag [0x98])
   On --> OffReq: PS0 (0x20F4B=1, 0x20B39=0x10)
-  On --> Restart: JP / ZZ / dest change (0x20B39=0x11)
+  On --> OffReq: JP / ZZ / dest change (0x20F4B=1, 0x20B39=0x11)
+  On --> KeyOff: power key 0x300 held (key_event_filter sets 0x20B30=2)
   On --> PowerFail: AN003 PA_VDD < 0x7DD (supply_undervolt_check)
-  PowerFail --> OffReq: power_off_io, save settings, 0x20B39=0x90
-  OffReq --> Reset: io_task: 0x20B30==2 → save, wait SCI1 idle, sw_reset (SWRR=0xA501)
-  Restart --> Reset
+  PowerFail --> OffReq: power_off_io, eeprom_save_opstate, 0x20F4B=1, 0x20B39=0x90
+  OffReq --> Reset: displink_tx_schedule sees 0x20F4B=1 → power_down_save: 0x7F frame, eeprom_save_all (0x90: 2 s wait, no save), sw_reset
+  KeyOff --> Reset: io_task sees 0x20B30==2 → eeprom_save_opstate (not in ZZ00 mode), wait SCI1 idle, sw_reset (SWRR=0xA501)
 ```
+
+- Two exits **[fact]**: the request flag 0x20F4B is read only by `displink_tx_schedule` 0xFFF95F58, which calls `power_down_save`
+  0xFFF98797 (sends the 11-byte `0x7F` frame with 0x20B39 as the reason, then `eeprom_save_all`, or for 0x90 a 2 s wait, then
+  `sw_reset`). The power key instead sets 0x20B30 = 2, which `io_task` 0xFFFB6D56 handles itself (operating-state save, SCI1 drain,
+  `sw_reset`) without a `0x7F` frame. (Corrected by T19h: this diagram used to send PS0 through the `io_task` 0x20B30 exit;
+  [eeprom.md](eeprom.md) and [README.md](README.md#power-states) had it right.)
 
 - `power_off_io` (0xFFFB73A6) runs only from `supply_undervolt_check` **[fact]**. It clears PA_PON (PC0), SDR_UPDATE (P76) and TUN_LIN_SEL (P83).
   It also clears FSK_SHIFT (PC4) and SDR_UMOSI (PC3) and stops SCI5, so that no current flows into the unpowered SDR module **[inference]**.
   Finally it clears the shift-register strobes /SST2 (P67), /SST4 (PB5) and /SST6 (PA7).
 - `supply_undervolt_check` also runs at the start of every EEPROM save (`eeprom_save_memch` and others), so a brown-out does not
   corrupt a write **[inference]**.
-- 0x20B39 and 0x20F4B are only written in MAIN. They are presumably carried to the DISPLAY CPU by the DISPLAY link status
-  block (T10b) **[inference]**. The DISPLAY link handles power-up (`displink_rx_F0_hello`, start-mode byte, see tx-protection.md).
+- 0x20B39 and 0x20F4B are only written in MAIN. 0x20B39 reaches the DISPLAY CPU as byte 1 of the `0x7F` frame sent by
+  `power_down_save` ([display-link.md](display-link.md)) **[fact]**; 0x20F4B itself is not sent **[fact: its only reader is `displink_tx_schedule`]**. The DISPLAY link handles power-up (`displink_rx_F0_hello`, start-mode byte, see tx-protection.md).
 - PA_PON is set to 1 by `shreg_bus_init` when the radio turns on **[fact]**.
 
 ## Function table

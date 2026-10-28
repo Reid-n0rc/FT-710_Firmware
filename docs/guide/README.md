@@ -575,19 +575,21 @@ starts receiving `0x20` status frames and draws the main screen.
 
 ![Three triggers (power key, CAT PS0, supply too low) converge on MAIN, which saves to EEPROM, tells the DISPLAY, waits for the UART and resets itself](img/03-power-off.svg)
 
-*Figure 3.2 — The three ways to switch off all end in the same place: MAIN saves, tells the DISPLAY and resets itself. The exact order of
-the save and the `0x7F` frame on the power-key path is an inference.*
+*Figure 3.2 — The three ways to switch off all end in the same place: MAIN saves and resets itself. The `0x7F` "going off" frame to the
+DISPLAY is sent on the PS0 and low-voltage paths only; the power-key path skips it.*
 
 There are three ways to switch the radio off:
 
 - **The power key.** Holding LOCK/PWR for about a second reaches MAIN as a "held" key event (key code 0x300). MAIN saves its operating
   state to the EEPROM, waits for the DISPLAY UART to drain and then resets itself.
-- **CAT `PS0;`.** MAIN records "power off" as the reason, saves its settings and resets.
-- **Supply too low.** MAIN measures the supply with its ADC. When the reading drops below a fixed threshold, it switches off the PA power
-  and the lines to the SDR module, saves its operating state once, and then follows the same path with a "low voltage" reason.
+- **CAT `PS0;`.** MAIN records "power off" as the reason and raises a "shut down" request. On its next pass, the DISPLAY-link sender sees
+  the request, sends a `0x7F` frame that tells the DISPLAY why it is going down, saves all settings to the EEPROM and resets.
+- **Supply too low.** MAIN measures the 13.8 V supply on one input of its ADC. When the reading drops below a fixed threshold, it switches
+  off the PA power and the lines to the SDR module, saves its operating state once, and then raises the same request as `PS0;` with a
+  "low voltage" reason. That path sends the `0x7F` frame too, but waits two seconds instead of saving a second time.
 
-In each case MAIN sends a `0x7F` frame that tells the DISPLAY why it is going down. The DISPLAY's GUI then leaves its drawing loop and waits
-for the power key. MAIN's "power off" is really a CPU **software reset**. After the reset, MAIN is back in the "radio off" loop of
+The `0x7F` frame makes the DISPLAY's GUI leave its drawing loop and wait for the power key. The power-key path does not send it: the key
+press came from the DISPLAY in the first place *(inference for how the DISPLAY copes without it)*. MAIN's "power off" is really a CPU **software reset**. After the reset, MAIN is back in the "radio off" loop of
 section 3.1 and waits for the next hello. A **restart** (after a region change, a factory reset and similar) takes the same path. The only
 difference is a saved "power back on" flag, so the next hello switches the radio straight back on *(inference for the flag's meaning)*.
 

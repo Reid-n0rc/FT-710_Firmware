@@ -186,8 +186,10 @@ stateDiagram-v2
   **[fact]**, which is the RX65x software-reset register SWRR **[inference]**. The CPU then restarts in `PowerON_Reset`
   and waits in the power-off loop again **[inference]**. The front-panel power key is key code 0x300 with event type 2
   in `key_event_filter` **[fact for 0x300 → 0x20B30 = 2; inference that it is the power key]**.
-- The PS0 path (0x20F4B / 0x20B39 = 0x10) and the low-voltage path (0x20B39 = 0x90) record a reason code; who
-  consumes 0x20F4B is left to [tx-protection.md](tx-protection.md) / [display-link.md](display-link.md).
+- The PS0 path (0x20F4B / 0x20B39 = 0x10) and the low-voltage path (0x20B39 = 0x90) record a reason code. 0x20F4B is read only by
+  `displink_tx_schedule` 0xFFF95F58, which calls `power_down_save` 0xFFF98797: `0x7F` frame to the DISPLAY, `eeprom_save_all`
+  (for 0x90 a 2 s wait instead), `sw_reset` **[fact, T19h]**. The power-key path is handled in `io_task` and sends no `0x7F`
+  ([peripherals.md](peripherals.md#power-on--off)).
 
 ## Soft timers and interrupts
 
@@ -255,7 +257,7 @@ To find all users of a field, search for both forms. Other pointers there: 0x25D
 
 | Address | Offset | Meaning |
 |---|---|---|
-| 0x20B04..0x20B16 | +0x00 | ADC results written by the S12AD ISRs (0x20B08 = supply voltage channel **[inference]**, 0x20B10 = key ladder) **[fact]** |
+| 0x20B04..0x20B16 | +0x00 | ADC results written by the S12AD ISRs (0x20B08 = AN003 `PA_VDD` supply voltage, stored by `adc0_store` 0xFFFB27FB; 0x20B10 = key ladder) **[fact]** |
 | 0x20B18 | +0x14 | TX/RX sequencer state (0..8) **[fact; meaning in tx-protection.md]** |
 | 0x20B20..0x20B22 | +0x1C | CAT AI flags per port **[fact]** |
 | 0x20B30 | +0x2C | 2 = power-off requested by the power key **[fact]** |

@@ -242,22 +242,23 @@ sequenceDiagram
     U->>D: hold LOCK/PWR
     D->>M: E0 code 0x300, event 2
     M->>M: 0x20B30 = 2
-  else CAT PS0
-    U->>M: PS0#59;
-    M->>M: 0x20B39 = 0x10, 0x20F4B = 1
-  else supply below threshold
-    M->>M: ADC 0x20B08 < 0x7DD: power_off_io, 0x20B39 = 0x90
+    M->>M: io_task: eeprom_save_opstate, wait for SCI1 to drain, sw_reset
+  else CAT PS0 or supply below threshold
+    U->>M: PS0#59; (or ADC 0x20B08 < 0x7DD: power_off_io, save opstate)
+    M->>M: 0x20F4B = 1, 0x20B39 = 0x10 (PS0) / 0x90 (low voltage)
+    M->>D: power_down_save: 0x7F sub (0x10 / 0x90) + 8-byte key
+    D->>D: GUI leaves its loop, link frozen, waits for power-on
+    M->>M: eeprom_save_all (0x90: 2 s wait instead), sw_reset
   end
-  M->>D: 0x7F sub (0x10 off / 0x90 low voltage) + 8-byte key
-  D->>D: GUI leaves its loop, link frozen, waits for power-on
-  M->>M: eeprom_save_opstate, wait for SCI1 to drain, sw_reset
   Note over M: restarts in PowerON_Reset, back in the radio-off loop
 ```
 
-**[fact]** for each MAIN step ([main/README.md](main/README.md#power-states), [main/display-link.md](main/display-link.md#main--display-frames)) and
-the DISPLAY's handling of a keyed `0x7F` ([display/mainlink.md](display/mainlink.md#8-how-the-gui-is-driven)). The exact order of the `0x7F`
-frame and the EEPROM save for the power-key path is **[inference]** (the `0x7F` builder is triggered by +0x447, and the pages do not trace who
-sets it for each path).
+**[fact]** for each MAIN step ([main/README.md](main/README.md#power-states), [main/display-link.md](main/display-link.md#main--display-frames),
+[main/peripherals.md](main/peripherals.md#power-on--off)) and the DISPLAY's handling of a keyed `0x7F`
+([display/mainlink.md](display/mainlink.md#8-how-the-gui-is-driven)). T19h traced both exits: 0x20F4B is read only by `displink_tx_schedule`
+0xFFF95F58, which calls `power_down_save` 0xFFF98797 (the only builder of `0x7F`); the power key's 0x20B30 = 2 is handled in `io_task`
+0xFFFB6D56, which saves and resets without a `0x7F` frame **[fact]**. (This replaces an earlier note that left the power-key order open.)
+How the DISPLAY learns about a power-key shutdown is then its own key handling, not a MAIN frame **[inference]**.
 
 ## 5. Firmware update
 
