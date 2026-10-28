@@ -25,7 +25,8 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 |---|---|---|
 | `Firmware/` | `FT-710_{MAIN,DISPLAY,IFDSP,SDR}_V*.SFL` + update manual | https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip (unzip into `Firmware/`) |
 | `Manuals/` | Operating manual, CAT manual, firmware update manual | https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers ("Files" tab) |
-| `Manuals/FT-710_CAT_OM_ENG_2211-A.pdf` | CAT manual, English rev 2211-A (the newer rev 2306-C is on yaesu.com, which resets connections from the Linux container) | https://www.simarud.no/files/simarud/Documents/FT-710_CAT_OM_ENG_2211-A.pdf |
+| `Manuals/FT-710_CAT_OM_ENG_2306-C.pdf` | CAT manual, English rev 2306-C (current; the primary reference). yaesu.com resets connections from the Linux container, so the owner downloads it in a browser | https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_CAT_OM_ENG_2306-C.pdf |
+| `Manuals/FT-710_CAT_OM_ENG_2211-A.pdf` | CAT manual, English rev 2211-A (older; still lists `EO`, and `VE` without a parameter) | https://www.simarud.no/files/simarud/Documents/FT-710_CAT_OM_ENG_2211-A.pdf |
 | `Manuals/FT-710_CAT_OM_JPN_exseli.pdf`, `Manuals/FT-710_OM_JPN_exseli.pdf` | CAT manual (Japanese rev 2212-B) and operating manual (Japanese) | https://www.exseli.com/pdf/uploaded/manual_trn_809495519.pdf, https://www.exseli.com/pdf/uploaded/manual_trn_453178882.pdf |
 | `Manuals/FT-710_serv_2022.pdf` | Service manual / Technical Supplement (schematics, ICs) | https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf |
 
