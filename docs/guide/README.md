@@ -189,8 +189,8 @@ Follow a signal from the antenna to your ears:
    "RX-IN 0.03–75MHz": the whole band, from 30 kHz to 75 MHz, goes straight to the ADC. This is a **direct-sampling** receiver. A
    separate "DITHER" line from the SDR module is high-pass filtered and added to the ADC input. Dither is a small noise signal outside
    the wanted band that makes a direct-sampling ADC's errors behave like noise rather than spurs *(inference for its purpose)*.
-2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds the 250 MHz
-   sampling clock, and the FPGA runs at half that, 125 MHz. The ADC's part number is not in the service manual, so its exact sample
+2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds a 250 MHz
+   clock into the module, which is divided by 2: the FPGA, and most likely the ADC, run at 125 MHz. The ADC's part number is not in the service manual, so its exact sample
    rate is not proven yet. The service manual's module box reads "Operating clock 125MHz, Divide 250MHz
    by 2", and MAIN treats 62.5 MHz (half of 125) as a boundary: it flips an FPGA control bit there and mirrors the scope frequency about
    it. So **125 million samples per second is the most likely rate** *(inference, strong)*. Signals above 62.5 MHz (for example the
