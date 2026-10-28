@@ -152,9 +152,9 @@ sequenceDiagram
   participant M as menu engine
   participant R as RAM 0x9A2A..
   participant S as sync loops (main_loop)
-  H->>P: EX0101040300;
+  H->>P: EX0101040300#59;
   P->>X: text, is_set=1
-  X->>X: ex_parse_key "010104" -> {0,0,3}
+  X->>X: ex_parse_key "010104" → {0,0,3}
   X->>M: menu_find / menu_get_limits
   X->>X: length 9+4, 0300 in 20..4000, 300/20-1 = 14
   X->>M: menu_value_set(key, 14)
@@ -162,7 +162,7 @@ sequenceDiagram
   X->>M: menu_apply_from_cat: 0x15DFC=1, on_step() (no-op), state[0x40B]=1
   P-->>H: (no reply on a good set)
   S->>R: next pass: desired AGC delay = 14*20+20
-  S->>S: differs from shadow -> DSP register write (T10d)
+  S->>S: differs from shadow → DSP register write (T10d)
 ```
 
 (T19h: the set example used to read `EX010104300;`, a 3-digit value that the length check 9 + 4 would reject; the item has 4 digits.)
@@ -179,11 +179,11 @@ item's `on_step` hook run with 0x15DFC = 1, and the state+0x40B flag. Almost eve
 flowchart TD
   SET["EX set / front-panel dial"] --> RAMV[("menu value in RAM<br/>(+ EEPROM image)")]
   SET --> FLAG["state+0x40B = 1"]
-  FLAG --> FREQ["`freq_cache_update`: recompute<br/>displayed frequencies"]
-  RAMV --> DSPS["`dsp_link_poll` DSP sync chain<br/>(one change per pass, 0x1C5E)"]
-  DSPS --> DSPW["e.g. `dsp_set_agc` AGC delay:<br/>by mode (0x9A2D.. or preset 0x20B5B..)<br/>!= shadow 0x1B6CA -> `dsp_send_frame`"]
+  FLAG --> FREQ["freq_cache_update: recompute<br/>displayed frequencies"]
+  RAMV --> DSPS["dsp_link_poll DSP sync chain<br/>(one change per pass, 0x1C5E)"]
+  DSPS --> DSPW["e.g. dsp_set_agc AGC delay:<br/>by mode (0x9A2D.. or preset 0x20B5B..)<br/>!= shadow 0x1B6CA -> dsp_send_frame"]
   DSPW --> IFDSP["IF DSP register write (T10d)"]
-  RAMV --> OTHER["direct readers: sci3_set_baud (CAT-1 RATE 0x9AB9),<br/>LED DIMMER 0x9B10 -> `displink_build_24`,<br/>MAX POWER 0x9AEE.. -> TX power (T10h)"]
+  RAMV --> OTHER["direct readers: sci3_set_baud (CAT-1 RATE 0x9AB9),<br/>LED DIMMER 0x9B10 -> displink_build_24,<br/>MAX POWER 0x9AEE.. -> TX power (T10h)"]
   RAMV --> PAGE["menu_page_serialize<br/>-> DISPLAY frame type 0x40"]
   SAVE["eeprom_save_opstate FFFB02CF<br/>(callers FFFB4B28, FFFB6D56)"] --> EEP[("EEPROM 0x53DB.., 0x45C bytes")]
   RAMV --> SAVE

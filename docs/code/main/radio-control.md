@@ -52,12 +52,12 @@ flowchart LR
   MEM -->|"V/M, MC, MA/MB"| REC
   REC -->|"MW / M>MEM"| MEM
   QMB <-->|"QI / QR"| REC
-  REC --> CACHE["freq cache 0x20F50..5C<br/>`freq_cache_update`"]
+  REC --> CACHE["freq cache 0x20F50..5C<br/>freq_cache_update"]
   BM --> CACHE
-  REC --> SDRP["sdr_task `sdr_task`<br/>reg 8/9, 0x18/19, 0x20/21"]
+  REC --> SDRP["sdr_task sdr_task<br/>reg 8/9, 0x18/19, 0x20/21"]
   SDRP -->|"SCI5 'w'"| SDR["SDR FPGA"]
-  CACHE --> DISP["DISPLAY status frame<br/>`displink_build_status` (SCI1)"]
-  REC --> DSP["dev4 reg 99 by freq range<br/>`dsp_set_freq_range_param` (SCI4)"]
+  CACHE --> DISP["DISPLAY status frame<br/>displink_build_status (SCI1)"]
+  REC --> DSP["dev4 reg 99 by freq range<br/>dsp_set_freq_range_param (SCI4)"]
 ```
 
 ## The 0x5A-byte channel record
@@ -116,16 +116,16 @@ stateDiagram-v2
   PMS: 4 PMS (tune inside P-pair limits)
   QMB: 5 QMB recall
   LOCKED: 7/8 memory, no tuning
-  VFO --> MEM: V/M (`vm_toggle_core`)
+  VFO --> MEM: V/M (vm_toggle_core)
   MEM --> VFO: V/M
-  MEM --> MT: dial / FA / FB (`vfo_mem_to_memtune`, not a P-pair)
+  MEM --> MT: dial / FA / FB (vfo_mem_to_memtune, not a P-pair)
   MEM --> PMS: dial / FA on a valid P-pair channel
   MT --> MEM: V/M (FUN_fffc28eb)
   PMS --> MEM: V/M (FUN_fffc28eb)
-  MT --> VFO: band key (`band_select_memtune`)
-  PMS --> VFO: band key (`band_select_pms`)
-  VFO --> QMB: QR (`qmb_recall`)
-  QMB --> VFO: edit, band key, A/B (`qmb_exit_to_vfo`)
+  MT --> VFO: band key (band_select_memtune)
+  PMS --> VFO: band key (band_select_pms)
+  VFO --> QMB: QR (qmb_recall)
+  QMB --> VFO: edit, band key, A/B (qmb_exit_to_vfo)
   MEM --> LOCKED: entry not traced
 ```
 
@@ -195,21 +195,21 @@ Related ROM tables **[fact]**:
 
 ```mermaid
 flowchart TD
-  BS["CAT BS / BU / BD<br/>(front-panel band key)"] --> SEL["`band_select_on`(band, side)<br/>temporarily sets 0x9DBD"]
-  SEL --> BSEL["`band_select` band_select<br/>0x20F28 = min(band,11), clar flags 0"]
-  BSEL --> STORE["`vfo_store_back` vfo_store_back<br/>(old record to band stack)"]
-  BSEL -->|"state 1 / 5"| V["`band_select_vfo`"]
-  BSEL -->|"state 2"| M["`band_select_mem`<br/>(not on 5MHz/EMG ch)"]
-  BSEL -->|"state 3"| MT["`band_select_memtune`"]
-  BSEL -->|"state 4"| P["`band_select_pms`"]
-  M --> TOVFO["`vfo_enter_vfo_state`: state=1"]
+  BS["CAT BS / BU / BD<br/>(front-panel band key)"] --> SEL["band_select_on(band, side)<br/>temporarily sets 0x9DBD"]
+  SEL --> BSEL["band_select band_select<br/>0x20F28 = min(band,11), clar flags 0"]
+  BSEL --> STORE["vfo_store_back vfo_store_back<br/>(old record to band stack)"]
+  BSEL -->|"state 1 / 5"| V["band_select_vfo"]
+  BSEL -->|"state 2"| M["band_select_mem<br/>(not on 5MHz/EMG ch)"]
+  BSEL -->|"state 3"| MT["band_select_memtune"]
+  BSEL -->|"state 4"| P["band_select_pms"]
+  M --> TOVFO["vfo_enter_vfo_state: state=1"]
   MT --> TOVFO
   P --> M
   TOVFO --> STK
-  V --> STK["`band_select_stack` band_select_stack<br/>same band: level=(level+1)%3"]
-  STK --> RL["`vfo_reload` vfo_reload"]
-  RL --> LD["`bandstack_load` bandstack_load<br/>slot to 0x9D09/0x9D63"]
-  LD --> RT["`vfo_retune` vfo_retune<br/>freq_clamp"]
+  V --> STK["band_select_stack band_select_stack<br/>same band: level=(level+1)%3"]
+  STK --> RL["vfo_reload vfo_reload"]
+  RL --> LD["bandstack_load bandstack_load<br/>slot to 0x9D09/0x9D63"]
+  LD --> RT["vfo_retune vfo_retune<br/>freq_clamp"]
   RL --> F["0x20F0F = 1<br/>(freq cache refresh)"]
 ```
 
@@ -311,7 +311,7 @@ sequenceDiagram
   participant S as sdr_task
   participant FPGA as SDR FPGA (SCI5)
   participant D as DISPLAY (SCI1)
-  PC->>H: FA014074000;
+  PC->>H: FA014074000#59;
   H->>H: freq_in_range, vfo_tune_locked, freq_clamp
   H->>R: +0x4A = f, +0x48 = 0
   H->>H: 0x20F10 = 1, vfo_mark_edited, vfo_store_back

@@ -40,15 +40,15 @@ The Ghidra names are the current ones in `ghidra/FT710_MAIN`. Function names are
 ```mermaid
 flowchart LR
   subgraph MAIN["MAIN RX651"]
-    ML["main_loop"] --> POLL["`dsp_link_poll`<br/>dsp_link_poll"]
+    ML["main_loop"] --> POLL["dsp_link_poll<br/>dsp_link_poll"]
     POLL --> SET["~65 setters<br/>0xFFF9D9A7..0xFFF9FFB1"]
-    SET --> TXF["`dsp_send_frame`<br/>frame builder"]
-    POLL --> RXF["`dsp_check_reply`<br/>reply check"]
+    SET --> TXF["dsp_send_frame<br/>frame builder"]
+    POLL --> RXF["dsp_check_reply<br/>reply check"]
     RXF --> SH[("shadows<br/>0x1B634..0x1B6DD")]
     SET -. compare .-> SH
     CAT["CAT SPD<br/>cat_SP_dev4_reg"] --> ACC["dsp_reg_access"]
     ACC --> TXF
-    DL["DISPLAY link<br/>`displink_rx_F1_sys` sub 2"] --> BR["`dsp_isp_bridge`<br/>ISP bridge"]
+    DL["DISPLAY link<br/>displink_rx_F1_sys sub 2"] --> BR["dsp_isp_bridge<br/>ISP bridge"]
     TXF --> S4["SCI4<br/>PB0/PB1"]
     BR --> S4
     S4 --> RXF
@@ -150,7 +150,7 @@ the DSP answers later. **[fact]** The M33 sets reg[1] |= 1 after the DSP is up (
 
 ```mermaid
 flowchart TD
-  S["`dsp_link_poll`"] --> W{"write busy?"}
+  S["dsp_link_poll"] --> W{"write busy?"}
   W -->|yes| WA{"ACK 0x06?"} -->|no / waiting| X["return"]
   WA -->|yes| WS["shadow = data"]
   W -->|no| R
@@ -158,7 +158,7 @@ flowchart TD
   R -->|yes| RA{"valid reply?"} -->|no / waiting| X
   RA -->|yes| RS["shadow + status filter"]
   R -->|no| U
-  RS --> U{"0x1C63?"} -->|yes| BR["`dsp_isp_bridge` ISP bridge"]
+  RS --> U{"0x1C63?"} -->|yes| BR["dsp_isp_bridge ISP bridge"]
   U -->|no| P{"0x20B18 in 3,8 and<br/>timer 0xB expired?"}
   P -->|yes| PR["read reg 1,2,3,4 (one per pass),<br/>after reg 4 restart 20 ms"] --> X
   P -->|no| T{"PTT changed and<br/>PB7/P73 still set?"} -->|yes| X

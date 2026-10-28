@@ -69,6 +69,10 @@ after the first page is created in the web UI. The owner enables it, then the pa
   - Glossary duplicates written by different chapters were merged. `DSP_CLK` is worded as open, because the reference pages disagree.
 - The draft parts and the one-shot assembler were removed after assembly. From now on, edit `docs/guide/README.md` directly.
 - **Wiki:** `tools/guide_to_wiki.py` produces `build/wiki/` (Home, 9 chapter pages, `_Sidebar` table of contents, images); tested.
+- **T19h (done):** of the 26 reference issues, 21 are settled, 3 are left open as O7–O9 in `docs/code/system.md` §8, and 2 needed no
+  change. The guide was corrected where it was affected (for example, the power key skips the 0x7F frame).
+- **All Mermaid diagrams in the repository render** (115 blocks, checked with mmdc on 2026-10-28). 10 older blocks in the reference
+  pages failed on GitHub's parser and were fixed: backticks inside node labels, and `;` / `->` inside sequence message text.
 - **The chapter writers found 26 issues in the reference pages** (stale text, two pages disagreeing, small slips). They are listed
   under "Reference issues" in T19a–T19g and are fixed in T19h.
 

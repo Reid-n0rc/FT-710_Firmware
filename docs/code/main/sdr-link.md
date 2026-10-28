@@ -46,15 +46,15 @@ data or the schematic at the address or page given.
 ```mermaid
 flowchart LR
   subgraph MAIN["MAIN RX651"]
-    ML["main_loop"] --> TASK["`sdr_task`<br/>sdr_task"]
+    ML["main_loop"] --> TASK["sdr_task<br/>sdr_task"]
     TASK --> UPD["~30 updaters<br/>0xFFFA15A0..0xFFFA2C03"]
-    UPD --> SF["`sdr_send_frame`<br/>sdr_send_frame"]
+    UPD --> SF["sdr_send_frame<br/>sdr_send_frame"]
     CATSP["cat_SP_sdr_reg<br/>(SPSR/SPSW)"] --> RA["sdr_reg_access"]
     RA --> SF
     BR["sdr_bridge_mode"] --> SF
     SF --> SC["sdr_send_cmd<br/>R_SCI5_Serial_Send"]
-    RX["SCI5 RXI ISR<br/>1 or 7 bytes to 0xA2AC"] --> POLL["`sdr_poll_reply`<br/>sdr_poll_reply"]
-    POLL --> SH["`sdr_shadow_update`<br/>shadow 0x1B736.."]
+    RX["SCI5 RXI ISR<br/>1 or 7 bytes to 0xA2AC"] --> POLL["sdr_poll_reply<br/>sdr_poll_reply"]
+    POLL --> SH["sdr_shadow_update<br/>shadow 0x1B736.."]
     GP["P77 SDR_RESET<br/>P76 SDR_UPDATE<br/>P71 DSP_RESET"]
   end
   DISP["DISPLAY RZ/A1H"] -- "SCI1 link,<br/>sub-cmd 1 + bridge frames" --> BR
@@ -152,9 +152,9 @@ Called from `main_loop` (0xFFF94B8B) on every pass, right after `io_task` **[fac
 ```mermaid
 flowchart TD
   A["sdr_task pass"] --> P{"write pending<br/>0x1C8B?"}
-  P -->|yes| R["`sdr_poll_reply`('w')"] --> RQ{"ACK?"}
+  P -->|yes| R["sdr_poll_reply('w')"] --> RQ{"ACK?"}
   RQ -->|no| X["return (wait / retry later)"]
-  RQ -->|yes| SH["`sdr_shadow_update`: shadow update"]
+  RQ -->|yes| SH["sdr_shadow_update: shadow update"]
   P -->|no| B
   SH --> B{"0x1C8D bridge<br/>request?"}
   B -->|yes| BR["sdr_bridge_mode (blocks)"]

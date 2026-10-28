@@ -109,7 +109,7 @@ sequenceDiagram
     D->>M: FD frames: reg 0x30/0x31 = 0x240000 + i·0x1000, reg 0x32 = 3, 1 [fact]
     M->>F: relayed register writes (UART5) [fact]
     D->>F: 4 KiB over RSPI2 master on the FFT pins [fact]
-    D->>M: reg 0x32 = 4, 5; FE read 0x32 status, 0x33 CRC-16 [fact]
+    D->>M: reg 0x32 = 4, 5#59; FE read 0x32 status, 0x33 CRC-16 [fact]
     F->>Q: erase / program [inference]
   end
   D->>F: 4 KiB header block last, at 0x480000 [fact for the address]

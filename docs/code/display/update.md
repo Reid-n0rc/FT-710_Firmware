@@ -176,7 +176,7 @@ sequenceDiagram
   D->>D: sfl_read_header (CRC), optional #UP0 check
   D->>M: F1 03 frame (SCIF5 345600), wait 06
   D->>D: RX_UPDATE low, P7_9/P7_11 high, RX_RESET high
-  Note over D: target = other bank (running 1 -> bank 2, else bank 1); loader mode -> offset 0, flag 0x3C0000
+  Note over D: target = other bank (running 1 → bank 2, else bank 1)#59; loader mode → offset 0, flag 0x3C0000
   D->>F: erase target flag block, erase image area (payload length)
   loop 256-byte chunks
     D->>F: write decoded chunk, CRC-32 over plain bytes
@@ -266,7 +266,7 @@ sequenceDiagram
     D->>M: FD 0032 0003, poll 0032, FD 0032 0001
     D->>F: 4 KiB over RSPI2 (FFT pins)
     D->>M: poll 0032, FD 0032 0004, poll, FD 0032 0005, poll
-    D->>M: FE 0033 -> CRC-16, compare with own CRC
+    D->>M: FE 0033 → CRC-16, compare with own CRC
     F->>Q: erase / program [inference]
   end
   D->>F: header block last, block index 0x240, i.e. address 0x240000 + 0x240 × 0x1000 = 0x480000

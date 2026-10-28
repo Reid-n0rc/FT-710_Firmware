@@ -79,16 +79,16 @@ sequenceDiagram
   participant P as cat_parse (main loop)
   participant H as cat_XX handler
   participant AI as cat_ai_poll
-  PC->>ISR: "FA;" (bytes)
+  PC->>ISR: "FA#59;" (bytes)
   ISR->>RX: frame complete (port id, len)
   RX->>RX: copy into ring slot, head++
   RX->>ISR: re-arm R_SCIn_Serial_Receive
   P->>P: next main-loop pass: take slot, tail++
   P->>H: cat_dispatch idx 32, len 3 → cat_FA_FB(text, 0)
-  H-->>P: 0x1C8E = "FA014250000;", len 12
+  H-->>P: 0x1C8E = "FA014250000#59;", len 12
   P->>PC: R_SCIn_Serial_Send(0x1C8E, 12) on the same port
   P->>AI: cat_ai_poll()
-  AI-->>PC: changed-item frame (e.g. "MD02;") to every port with AI on
+  AI-->>PC: changed-item frame (e.g. "MD02#59;") to every port with AI on
 ```
 
 ## Extended and service commands (summary)

@@ -30,7 +30,7 @@ flowchart LR
   JP["CAT JP"] --> DST
   ZZ["CAT ZZ 99/01"] --> DEF["settings_defaults"]
   DEF --> RAM
-  PD["power-down / restart<br/>`power_down_save`"] -->|eeprom_save_all| DRV
+  PD["power-down / restart<br/>power_down_save"] -->|eeprom_save_all| DRV
 ```
 
 ## EEPROM driver **[fact]**
@@ -119,8 +119,8 @@ Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200
 
 ```mermaid
 flowchart TD
-  A["app_main"] --> I["`eeprom_init` eeprom_init<br/>WRSR 0x80"]
-  I --> L["`eeprom_load_all`: read header<br/>EE 0..9 → 0x464F"]
+  A["app_main"] --> I["eeprom_init eeprom_init<br/>WRSR 0x80"]
+  I --> L["eeprom_load_all: read header<br/>EE 0..9 → 0x464F"]
   L --> F{"header byte 9<br/>(0x4658)"}
   F -->|1 clean| ALL["read EE 0..0x5836<br/>→ RAM 0x464F (whole mirror)"]
   F -->|0 save was interrupted| PART["read cal 0x000A + dest 0x010F only<br/>settings_defaults(0)"]
@@ -130,7 +130,7 @@ flowchart TD
   ALL --> WAIT["wait for power-on (0x20B3A)"]
   MARK --> WAIT
   WAIT --> Q{"0x20B45 == 1?"}
-  Q -->|yes| SAVE["`eeprom_save_all` eeprom_save_all<br/>(writes the defaults)"]
+  Q -->|yes| SAVE["eeprom_save_all eeprom_save_all<br/>(writes the defaults)"]
   Q -->|no| RUN["subsystem init, main_loop"]
   SAVE --> RUN
 ```
