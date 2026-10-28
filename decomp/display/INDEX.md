@@ -17,7 +17,7 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
 - Code coverage of `.text` (0x20100000–0x20165177, 414,072 B): about 95% instructions and 4% data (literal pools, tables). About 2.7 KB of small
   unreferenced fragments remain undefined.
 - T21e (#97 B6–B8; measured on a scratch rebuild, the committed export here is not yet regenerated): 86 ARM jump-table sites, all
-  switches with every case (before: 81, the five RSPI helpers `rspi_open/start/stop/reset_buffers/wait_tx_end` were not: they
+  switches with every case (before: 80 of the 85 then disassembled; the five RSPI helpers `rspi_open/start/stop/reset_buffers/wait_tx_end` were not: they
   carried a RETURN flow override and stray references from a table guessed one word early). 137 new entries in
   `entries_display.tsv` (dead helpers after a return, tail-branch targets that analysis had merged into another function, one
   Thumb function reached from a .data table): 2210 functions exported (was 2087), 0 decompile failures, no call target inside a
