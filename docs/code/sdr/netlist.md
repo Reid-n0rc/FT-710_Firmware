@@ -359,7 +359,7 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 | Line (last characters before CR) | Reply |
 |---|---|
 | `r` aaaa ss | `r` vvvv ss, 7 bytes, no CR; ss = 8-bit sum of `r`vvvv in upper-case hex |
-| `w` aaaa vvvv ss | ACK 0x06, **one byte** (MAIN arms a 7-byte receive and checks only byte 0) |
+| `w` aaaa vvvv ss | ACK 0x06, **one byte** (MAIN arms a 7-byte receive, but its `sci5_rx_byte_hook` 0xFFF94962 shortens it to 1 byte when byte 0 is 0x06 or `?` [fact, T19h]) |
 | anything else, including `x...`, upper-case `R`, missing or wrong checksum, wrong length | `?` 0x3F |
 
 - **Window, not a parser.** The receiver shifts every character except CR into an 11-character window (88 FFs,

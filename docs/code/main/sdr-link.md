@@ -22,8 +22,10 @@ data or the schematic at the address or page given.
   the SCI0 CAT baud table at 0xFFF80FF4. So the SDR link runs at **115 385 baud, i.e. 115200 (+0.16 %)** **[fact]**.
 - **Protocol.** The protocol is ASCII and strictly one request at a time, always started by MAIN. A request is `r` + 4 hex
   digits of register (8 bytes) or `w` + register + 4 hex digits of value (12 bytes), followed by a 2-hex-digit additive
-  checksum and CR. The FPGA always answers with **7 bytes**, received into 0xA2AC. A write is accepted when reply byte 0
-  is ACK 0x06. A read answer carries the value as 4 hex digits plus a checksum **[fact]**, see [Frame format](#frame-format).
+  checksum and CR. The FPGA answers a write with **one byte**, ACK 0x06, and a read with **7 bytes** `r` + 4 hex digits of value +
+  2-hex checksum, received into 0xA2AC; MAIN's `sci5_rx_byte_hook` 0xFFF94962 sets the receive length from the first byte
+  (0x06 or `?` → 1, `r` → 7) **[fact, T19h; agrees with the T15e simulation]**, see [Frame format](#frame-format).
+  (Superseded: this bullet used to say the FPGA "always answers with 7 bytes".)
 - **Register model.** The register space is 16 bits wide, and every value is a 16-bit word. MAIN keeps a **shadow copy of
   every register it writes** (0x1B736..0x1B780). A register is written only when the value computed from the radio state
   differs from its shadow, and the shadow is updated only after the FPGA ACKs **[fact]** (`sdr_shadow_update`).
@@ -51,7 +53,7 @@ flowchart LR
     RA --> SF
     BR["sdr_bridge_mode"] --> SF
     SF --> SC["sdr_send_cmd<br/>R_SCI5_Serial_Send"]
-    RX["SCI5 RXI ISR<br/>7 bytes to 0xA2AC"] --> POLL["`sdr_poll_reply`<br/>sdr_poll_reply"]
+    RX["SCI5 RXI ISR<br/>1 or 7 bytes to 0xA2AC"] --> POLL["`sdr_poll_reply`<br/>sdr_poll_reply"]
     POLL --> SH["`sdr_shadow_update`<br/>shadow 0x1B736.."]
     GP["P77 SDR_RESET<br/>P76 SDR_UPDATE<br/>P71 DSP_RESET"]
   end
@@ -110,12 +112,16 @@ After sending, `sdr_send_cmd` (0xFFFB1B2B) clears the ready flag 0xA2B3 and arms
 `sdr_send_frame` sets the pending flag (0x1C8C for a read, 0x1C8B for a write) and starts **timer 2 with 6** (6 ms, using
 the same units as `cat_ai_holdoff`'s 200 = 200 ms) **[fact for the call; inference for the unit]**.
 
-### Reply (FPGA → MAIN), always 7 bytes [fact: `sdr_poll_reply`, `sdr_wait_reply`]
+### Reply (FPGA → MAIN): 1 byte for a write, 7 bytes for a read [fact: `sci5_rx_byte_hook`, `sdr_poll_reply`, `sdr_wait_reply`]
+
+`sdr_send_cmd` arms a receive of up to 7 bytes, but `sci5_rx_byte_hook` 0xFFF94962 (called by the SCI5 RXI ISR for each byte) looks at the
+first byte: 0x06 or `?` sets the length to 1, `r` keeps 7, and any other first byte is dropped **[fact]**. (Corrected by T19h: this section
+used to say "always 7 bytes" and guessed byte 0 was an echo; T15e's simulation and this code agree.)
 
 | Request | Reply layout | Check |
 |---|---|---|
-| read | byte 0 (not checked; probably an echo [guess]), bytes 1..4 = value in hex, bytes 5..6 = hex of sum8(bytes 0..4) | `sdr_check_hex_sum`(buf,5)`; value = `hex2word(buf+1)` (disassembly 0xFFFA301B) |
-| write | byte 0 = **0x06 ACK**, bytes 1..6 ignored | any other byte 0 = failure |
+| read | byte 0 = `r`, bytes 1..4 = value in hex, bytes 5..6 = hex of sum8(bytes 0..4), no CR (e.g. `r010437`) | `sdr_check_hex_sum`(buf,5)`; value = `hex2word(buf+1)` (disassembly 0xFFFA301B) |
+| write | one byte **0x06 ACK** (or `?` 0x3F if the FPGA rejected the frame) | any byte other than 0x06 = failure |
 
 `sdr_poll_reply` returns 1 for a good reply. When the reply is in (0xA2B3=1), both pending flags are
 cleared whatever the result. If no reply arrives before timer 2 runs out, the flags are cleared and the frame counts as
@@ -132,7 +138,7 @@ sequenceDiagram
   T->>F: updater: reg 0x1E value differs from shadow 0x1B764
   F->>U: "w001E" + value + sum + CR, 0x1C8B=1, timer 2 = 6
   U->>S: 12 bytes at 115200 baud
-  S-->>U: 7 bytes, byte 0 = 0x06
+  S-->>U: 1 byte 0x06
   U-->>T2: RXI ISR fills 0xA2AC, 0xA2B3 = 1
   T2->>T2: `sdr_poll_reply`('w'): ACK, clear 0x1C8B
   T2->>T2: `sdr_shadow_update`: shadow[0x1E] = value
@@ -343,7 +349,7 @@ What the bridge tells us about the update **[inference unless marked]**:
 | 0xFFFB1B06 | `sdr_rx_ready` | `sdr_rx_ready` | Returns 0xA2B3 **[fact]** |
 | 0xFFFB1B15 | `sdr_rx_done_cb` | `sdr_rx_done_cb` | 0xA2B3 = 1 **[fact]** |
 | 0xFFFB1B1F | `sdr_rx_buf` | `sdr_rx_buf` | Returns 0xA2AC (`MOV.L #0xA2AC,R1`; the decompile lost the return) **[fact]** |
-| 0xFFFB1B2B | `sdr_send_cmd` | | Send, then arm a 7-byte receive into 0xA2AC **[fact]** |
+| 0xFFFB1B2B | `sdr_send_cmd` | | Send, then arm a receive of up to 7 bytes into 0xA2AC; `sci5_rx_byte_hook` 0xFFF94962 trims it to 1 byte for 0x06/`?` **[fact]** |
 | 0xFFFA30F9 | `sdr_send_frame` | `sdr_send_frame` | Builds and sends an `r`/`w` frame; sets a pending flag; timer 2 = 6 **[fact]** |
 | 0xFFFA3083 | `sdr_poll_reply` | `sdr_poll_reply` | Non-blocking reply check with timeout **[fact]** |
 | 0xFFFA2FF7 | `sdr_wait_reply` | `sdr_wait_reply` | Blocking reply wait, used by boot, CAT and the bridge **[fact]** |
@@ -418,4 +424,4 @@ bridge offsets above were checked in the disassembly.
 
 ## Note from the FPGA side (T15e)
 
-The FPGA answers a write with **one byte** (ACK 0x06), not 7, and answers a rejected frame with one byte `?` (0x3F). MAIN's 7-byte receive therefore completes only for reads. For writes, the SCI5 reply handling must be reading byte 0 before the receive count is reached; this is worth checking in the SCI5 code. Register 0 reads 0x0104 and register 1 reads 0x000F after reset. **[fact for the FPGA side, from the T15e netlist simulation, see [netlist.md §5](../sdr/netlist.md)]**
+The FPGA answers a write with **one byte** (ACK 0x06), not 7, and answers a rejected frame with one byte `?` (0x3F). MAIN's 7-byte receive therefore completes only for reads. For writes, the SCI5 reply handling must be reading byte 0 before the receive count is reached. **Checked by T19h:** `sci5_rx_byte_hook` 0xFFF94962 sets the count to 1 when the first byte is 0x06 or `?` and to 7 when it is `r` **[fact]**, so both sides agree. Register 0 reads 0x0104 and register 1 reads 0x000F after reset. **[fact for the FPGA side, from the T15e netlist simulation, see [netlist.md §5](../sdr/netlist.md)]**
