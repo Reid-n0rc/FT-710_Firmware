@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="682" viewBox="0 0 960 682" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Risk ladder of the 22 undocumented CAT commands</title>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="682" fill="#FFFFFF"/>
+  <text x="480" y="36" font-size="20" font-weight="bold" text-anchor="middle">The 22 undocumented commands, by risk</text>
+  <rect x="70" y="60" width="866" height="156" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="86" y="86" font-size="16" font-weight="bold">Dangerous: never send without the owner's approval</text>
+  <rect x="86" y="100" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+  <text x="112" y="129" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">ZZ</text>
+  <text x="148" y="118" font-size="14">factory reset (ZZPE071099;) or</text>
+  <text x="148" y="138" font-size="14">partial reset (…01;), then restart</text>
+  <rect x="516" y="100" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+  <text x="542" y="129" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">JP</text>
+  <text x="578" y="118" font-size="14">region (destination) code: write</text>
+  <text x="578" y="138" font-size="14">resets settings, may change TX bands</text>
+  <rect x="86" y="158" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+  <text x="112" y="187" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">E9</text>
+  <text x="148" y="176" font-size="14">restores a whole settings image</text>
+  <text x="148" y="196" font-size="14">into EEPROM; a bad one corrupts it</text>
+  <rect x="516" y="158" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+  <text x="542" y="187" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SP</text>
+  <text x="578" y="176" font-size="14">service family: writes FPGA/DSP</text>
+  <text x="578" y="196" font-size="14">registers, raw EEPROM, calibration</text>
+  <rect x="70" y="228" width="866" height="156" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="86" y="254" font-size="16" font-weight="bold">Changes settings (FD and PE also have a harmless read form)</text>
+  <rect x="86" y="268" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+  <text x="112" y="297" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">FD</text>
+  <text x="148" y="286" font-size="14">scope start frequency; a set writes</text>
+  <text x="148" y="306" font-size="14">the band memory of the current band</text>
+  <rect x="516" y="268" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+  <text x="542" y="297" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">PE</text>
+  <text x="578" y="286" font-size="14">18 EQ-like bytes; a bad selector</text>
+  <text x="578" y="306" font-size="14">can make a set write anywhere in RAM</text>
+  <rect x="86" y="326" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+  <text x="112" y="355" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">EO</text>
+  <text x="148" y="344" font-size="14">turns the dial or a knob by n steps</text>
+  <text x="148" y="364" font-size="14">(was in the 2211-A manual)</text>
+  <rect x="516" y="326" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+  <text x="542" y="355" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">EM</text>
+  <text x="578" y="344" font-size="14">five 50-character text slots</text>
+  <text x="578" y="364" font-size="14">in RAM, purpose unknown (guess)</text>
+  <rect x="70" y="396" width="866" height="98" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="86" y="422" font-size="16" font-weight="bold">Read-only</text>
+  <rect x="86" y="436" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <text x="112" y="465" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">E8</text>
+  <text x="148" y="454" font-size="14">dumps the settings image, 10674 bytes</text>
+  <text x="148" y="474" font-size="14">obfuscated; changes nothing, floods the port</text>
+  <rect x="70" y="506" width="866" height="156" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="2"/>
+  <text x="86" y="532" font-size="16" font-weight="bold">Does nothing: always ?; (or no reply at all for KT)</text>
+  <rect x="86" y="546" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+  <text x="112" y="575" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">9×</text>
+  <text x="148" y="564" font-size="14">BY ED EK EU RC RD RS RT RU:</text>
+  <text x="148" y="584" font-size="14">in the table, no code behind them</text>
+  <rect x="516" y="546" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+  <text x="542" y="575" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">3×</text>
+  <text x="578" y="564" font-size="14">EN FS QS: a stub that</text>
+  <text x="578" y="584" font-size="14">only sets the error flag</text>
+  <rect x="86" y="604" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+  <text x="112" y="633" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">KT</text>
+  <text x="148" y="622" font-size="14">in the table, no case:</text>
+  <text x="148" y="642" font-size="14">silently ignored</text>
+  <line x1="34" y1="652" x2="34" y2="70" stroke="#1F2937" stroke-width="3" marker-end="url(#a)"/>
+  <text x="26" y="361" font-size="16" font-weight="bold" text-anchor="middle" transform="rotate(-90 26 361)">more risk</text>
+</svg>
