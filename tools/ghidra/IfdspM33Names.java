@@ -1,4 +1,5 @@
-// Applies function names to the IFDSP Cortex-M33 program (T07 starting set, extended in T12) and creates the
+// Applies function names (and plate comments) to the IFDSP Cortex-M33 program (T07 starting set, extended in T12,
+// merged from names_ifdsp.T12{b,c,d}.tsv in T17 with tools/ifdsp_names_java.py) and creates the
 // functions Ghidra misses: FreeRTOS task entries only referenced as pointers, the real application main, the
 // SCTimer callback, and the console command handlers whose first instruction (`cmp r1,#argc`) sits before the
 // `push` that Ghidra's prologue search starts at. Names are inferences from strings, call structure, register
@@ -9,6 +10,7 @@
 // @category FT710
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.listing.CodeUnit;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.symbol.SourceType;
 
@@ -17,6 +19,12 @@ public class IfdspM33Names extends GhidraScript {
     static final long[][] FIX_START = {
         {0x000812C4L, 0x000812C6L},
         {0x000812FCL, 0x000812FEL},
+    };
+
+    // {true entry, function Ghidra started inside it (removed; the true entry is re-created and owns the body)} (T12d)
+    static final long[][] MERGE_INTO = {
+        {0x000800E8L, 0x000800EEL},   // POWER_CalculateSafetyCount; 0x800EE was a prologue hit 6 bytes in
+        {0x00080A18L, 0x00080A24L},   // OTFAD_Init; 0x80A24 was 12 bytes in (the "undecodable" word is 0xFFFFFFFF padding)
     };
 
     static final Object[][] NAMES = {
@@ -86,12 +94,12 @@ public class IfdspM33Names extends GhidraScript {
         {0x00081BE8L, "rpmsg_queue_nocopy_free"},
         {0x000861DAL, "rpmsg_queue_create"},
         {0x000862B2L, "rpmsg_lite_create_ept"},
-        {0x000819E8L, "platform_init"},
-        {0x000819B4L, "platform_init_interrupt"},
-        {0x00081A60L, "platform_register_isr"},
-        {0x000818D0L, "platform_interrupt_enable"},
-        {0x00081958L, "env_enable_interrupt"},
-        {0x00081980L, "env_disable_interrupt"},
+        {0x000819E8L, "env_init", "rename (was platform_init): first call creates binary sema 0x8871C, clears isr_table 0x88720, calls platform_init"},
+        {0x000819B4L, "platform_init", "rename (was platform_init_interrupt): MU_Init(MUA), NVIC IPR[34]=0x60, ISER1 bit2 (MU_A IRQ 34), create platform_lock 0x88714"},
+        {0x00081A60L, "env_register_isr", "rename (was platform_register_isr): isr_table[vector] = vq (32 entries at 0x88720)"},
+        {0x000818D0L, "platform_init_interrupt", "rename (was platform_interrupt_enable): env_register_isr, then on first use MU-A CR |= RIE1 (bit 26), refcount 0x88710"},
+        {0x00081958L, "platform_interrupt_enable", "rename (was env_enable_interrupt; env wrapper inlined): disable_counter 0x8870C--, at 0 NVIC ISER1=4 (MU_A)"},
+        {0x00081980L, "platform_interrupt_disable", "rename (was env_disable_interrupt; env wrapper inlined): at 0 NVIC ICER1=4, disable_counter++"},
         {0x000818B8L, "MU_A_IRQHandler"},
         {0x000860A0L, "env_create_mutex"},
         {0x000860C4L, "env_lock_mutex"},
@@ -112,14 +120,13 @@ public class IfdspM33Names extends GhidraScript {
         {0x00086E58L, "CLOCK_SetClkDiv"},
         {0x000837A8L, "CLOCK_GetFreq"},
         {0x00083470L, "CLOCK_GetFlexCommClkFreq"},
-        {0x000809A0L, "CLOCK_SetDiv_0x620"},
+        {0x000809A0L, "BOARD_SetFlexspiClock", "Replaces CLOCK_SetDiv_0x620. board.c: if FLEXSPIFCLKSEL/DIV (CLKCTL0 0x620/0x624) differ: BOARD_DeinitXip, PSCCTL0_CLR FlexSPI, set sel/div, PSCCTL0_SET, BOARD_InitXip [inference]"},
         {0x0008702CL, "USART_GetDefaultConfig"},
         {0x00087100L, "USART_Init"},
         {0x0008034CL, "POWER_EnterSleep_mode1"},
         {0x00080414L, "POWER_EnterSleep_mode2"},
         {0x000804DCL, "POWER_EnterSleep_mode3"},
         {0x0008059CL, "POWER_EnterDeepSleep"},
-        {0x000800EEL, "POWER_CalcSafetyCount"},
         // FreeRTOS kernel + ARM_CM33 port + heap_4
         {0x00082278L, "xTaskCreate"},
         {0x00082418L, "vTaskStartScheduler"},
@@ -168,8 +175,194 @@ public class IfdspM33Names extends GhidraScript {
         {0x000873C2L, "strncmp"},
         {0x000878CCL, "memcpy"},
         {0x00087900L, "memset"},
-        {0x00084D3CL, "redlib_malloc"},
-        {0x00084E04L, "_Csys_alloc_failed"},
+        {0x00084D3CL, "malloc", "Replaces redlib_malloc: Redlib heap malloc, free-list blocks tagged 0x10000000 (free) / 0x20000000 (used), grows with _sbrk 0x85D48 [inference]"},
+        {0x00084E04L, "_Csys_alloc", "Replaces _Csys_alloc_failed: malloc wrapper; on NULL writes \"*** _Csys_alloc failed\" via __sys_write and calls __sys_appexit (hang) [fact]"},
+        // merged from T12b.m33.tsv (T17)
+        {0x0008138CL, "console_printf", "vsprintf into 0x88DF0 then console_puts; tail-called by console_cmd_r"},
+        {0x00085F88L, "aic3204_select_right_input", "codec P1 R55 = 0x10 (arg 1, IN2R) or 0x40 (arg 0, IN1R); called by regfile_write for reg 10"},
+        // merged from T12c.m33.tsv (T17)
+        {0x00081914L, "platform_notify", "create: if vector<2: lock platform_lock, MU_SendMsg(MUA, 1, vector<<16), unlock"},
+        {0x00086EFEL, "MU_SendMsg", "Wait TE bit in SR (0x60), write TR[n] [inference]"},
+        {0x00086106L, "env_create_queue", "[inference]"},
+        {0x00086120L, "env_put_queue", "Queue send, ISR-aware [inference]"},
+        {0x0008616EL, "env_get_queue", "Queue receive, ISR-aware [inference]"},
+        {0x00086086L, "env_mb", "DSB [inference]"},
+        {0x0008608CL, "env_rmb", "DSB [inference]"},
+        {0x00086092L, "env_wmb", "DSB [inference]"},
+        {0x0008606AL, "env_map_vatopa", "Identity (also used as env_map_patova through a thunk) [inference]"},
+        {0x00086542L, "vPortYield", "ICSR = PENDSVSET, DSB, ISB [inference]"},
+        {0x00083E48L, "DSP_Init", "fsl_dsp.c: if PDRUNCFG1 DSP cache/TCM bits set, clear them (PDRUNCFG1_CLR), POWER_ApplyPD, release DSP reset [inference]"},
+        {0x000861B8L, "rpmsg_queue_rx_cb", "create: endpoint callback of ept 0x28; env_put_queue(q, {src, data, len}); returns RL_HOLD (1)"},
+        {0x00086200L, "add_to_list", "rpmsg_lite endpoint list [inference]"},
+        {0x00086248L, "rpmsg_lite_get_endpoint_from_addr", "[inference]"},
+        {0x00086258L, "rpmsg_lite_rx_callback", "Virtqueue rx callback, dispatches to endpoint callbacks [inference]"},
+        {0x0008621EL, "rpmsg_lite_tx_callback", "create: tx_vq callback, sets rl->link_state = 1"},
+        {0x0008622AL, "virtqueue_notify", "create: vq notify hook, platform_notify(vq->vq_queue_index)"},
+        {0x00086232L, "vq_tx_master", "create: master_vq_ops[0] (table 0x879AC): virtqueue_add_buffer, assert on error"},
+        {0x00086244L, "vq_tx_alloc_master", "create: master_vq_ops[1]: virtqueue_get_buffer(tvq)"},
+        {0x000862AEL, "vq_rx_master", "create: master_vq_ops[2]: virtqueue_get_buffer(rvq)"},
+        {0x00086240L, "vq_rx_free_master", "create: master_vq_ops[3]: tail call vq_tx_master (virtqueue_add_buffer)"},
+        {0x00086342L, "vq_ring_update_avail", "[inference]"},
+        {0x00086370L, "vq_ring_update_used", "[inference]"},
+        {0x00086396L, "virtqueue_add_buffer", "[inference]"},
+        {0x000863ACL, "virtqueue_fill_avail_buffers", "[inference]"},
+        {0x000863FEL, "virtqueue_get_buffer", "[inference]"},
+        {0x00086456L, "virtqueue_get_buffer_length", "[inference]"},
+        {0x00086460L, "virtqueue_fill_used_buffers", "[inference]"},
+        {0x000864AAL, "virtqueue_disable_cb", "[inference]"},
+        {0x000864D2L, "virtqueue_kick", "[inference]"},
+        {0x00086518L, "vq_ring_init", "Chains the descriptors, last = 0x8000 [inference]"},
+        // merged from T12d.m33.tsv (T17)
+        {0x000800E8L, "POWER_CalculateSafetyCount", "Real entry (movw r1,#0x21A; ldr r2,=SYSCTL0) that falls into 0x800EE; fsl_power.c deep-sleep wake-up safety count from PDRUNCFG/PDSLEEPCFG [inference]"},
+        {0x0008000CL, "rom_api_1c_guarded_call", "Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers [guess]"},
+        {0x00080030L, "power_set_deepsleep_pmc_cfg", "PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep [guess]"},
+        {0x00080050L, "delay", "fsl_power.c busy loop (count iterations) [inference]"},
+        {0x0008005EL, "deinitXip", "fsl_power.c: if running XIP (PC in 0x08xxxxxx) wait FlexSPI idle, MDIS, PSCCTL0_CLR FlexSPI clock [inference]"},
+        {0x0008009CL, "power_sram_pd_differs", "Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess]"},
+        {0x000802AAL, "initFlexSPI", "fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) [inference]"},
+        {0x0008032CL, "initXip", "fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra) [inference]"},
+        {0x0008448CL, "POWER_UpdateOscSettlingTime", "Stores osc settling time (us) at 0x80A58, read by POWER_EnterDeepSleep [inference]"},
+        {0x00084470L, "POWER_ApplyPD", "Wait PMC STATUS busy, PMC CTRL |= APPLYCFG, wait [inference]"},
+        {0x00080914L, "BOARD_DeinitXip", "Wait FlexSPI STS0 ARBIDLE+SEQIDLE, MCR0 |= MDIS [inference]"},
+        {0x0008092EL, "BOARD_InitXip", "MCR0 &= ~MDIS, SWRESET, wait DLL lock if DLLCR0 enabled, 100 NOPs [inference]"},
+        {0x00087234L, "BOARD_FlexspiClockSafeConfig", "BOARD_SetFlexspiClock(3 = FFRO, /1) before the main clock switch [inference]"},
+        {0x00087240L, "BOARD_InitDebugConsole", "Empty stub called from app_main right after BOARD_BootClockRUN [guess]"},
+        {0x00087242L, "BOARD_InitPins_flexcomm", "IOPCTL: PIO0_1/2 FC0 USART, PIO0_7..10 FC1 SPI, PIO1_10 MCLK, PIO2_2 SCT0_OUT0, PIO2_30 CLKIN [fact]"},
+        {0x0008726CL, "BOARD_InitPins_i2s", "IOPCTL: PIO0_14..16 FC2 (SCK input inverted), PIO0_23 FC3 data in, PIO0_30 FC4 data in, PIO1_3..5 FC5 [fact]"},
+        {0x00084C90L, "BOARD_InitPins_debug_gpio", "NEW (tail call from BOARD_InitPins). GPIO outputs low: PIO0_28/29/31 (TP2043/2046/2044), PIO2_4/5/6 (TP2007/2008/2009) [fact]"},
+        {0x00082F70L, "CLOCK_GetOsc32KFreq", "OSC32KHZCTL0 bit0 ? 32768 : 0 [inference]"},
+        {0x00082F88L, "CLOCK_GetXtalInClkFreq", "SYSOSCBYPASS 0 -> g_xtalFreq (0x88930), 1 -> g_clkinFreq (0x88928) [inference]"},
+        {0x00082FB4L, "CLOCK_GetFFroFreq", "FFROCTL0 trim range: 48 or 60 MHz [inference]"},
+        {0x00082FDCL, "CLOCK_GetSysPllFreq", "SYSPLL0 source (SFRO/SYSOSC/FFRO/2) x (MULT + NUM/DENOM) [inference]"},
+        {0x00083038L, "CLOCK_GetSysPfdFreq", "SYSPLL x 18 / PFDn [inference]"},
+        {0x00083098L, "CLOCK_GetMainPllClkFreq", "PFD0 / MAINPLLCLKDIV [inference]"},
+        {0x000830B4L, "CLOCK_GetAux0PllClkFreq", "PFD2 / AUX0PLLCLKDIV [inference]"},
+        {0x000830D0L, "CLOCK_GetAux1PllClkFreq", "PFD3 / AUX1PLLCLKDIV [inference]"},
+        {0x000830ECL, "CLOCK_GetAudioPllFreq", "CLKCTL1 AUDIOPLL0 (bypass returns the input) [inference]"},
+        {0x00083148L, "CLOCK_GetAudioPfdFreq", "AUDIOPLL x 18 / PFDn unless bypassed [inference]"},
+        {0x000831A8L, "CLOCK_GetAudioPllClkFreq", "Audio PFD0 / AUDIOPLLCLKDIV [inference]"},
+        {0x000831C4L, "CLOCK_GetMainClkFreq", "MAINCLKSELA/B [inference]"},
+        {0x0008322CL, "CLOCK_GetDspMainClkFreq", "DSPCPUCLKSELA/B (CLKCTL1 0x430/0x434) [inference]"},
+        {0x000838A8L, "CLOCK_SetFRGClock", "FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15 [inference]"},
+        {0x000838F4L, "CLOCK_EnableFfroClk", "FFRO trim from OTP via ROM otp_init/otp_fuse_read/otp_deinit (0x13009FF9/0x1300A057/0x1300A047) [inference]"},
+        {0x000839B4L, "CLOCK_EnableSfroClk", "SFRO enable, OTP fuse 0x0D settling delay [inference]"},
+        {0x000839FCL, "CLOCK_InitSysPll", "Power SYSPLL, set source/NUM/DENOM/MULT, lock-time delays [inference]"},
+        {0x00083B04L, "CLOCK_InitSysPfd", "SYSPLL0PFD n: set divider, wait stable [inference]"},
+        {0x00083B4CL, "CLOCK_InitAudioPll", "Same for AUDIOPLL0 (CLKCTL1) [inference]"},
+        {0x00083C54L, "CLOCK_InitAudioPfd", "AUDIOPLL0PFD n [inference]"},
+        {0x00083C9CL, "CLOCK_EnableSysOscClk", "SYSOSCCTL0 = mode, SYSOSCBYPASS = 0, delay [inference]"},
+        {0x00083CC4L, "SDK_DelayAtLeastUs", "Busy loop: us x 300 MHz / 4e6 iterations [inference]"},
+        {0x00084150L, "CLOCK_EnableClock", "PSCCTLn_SET from (reg << 8 | bit) [inference]"},
+        {0x00084498L, "RESET_SetPeripheralReset", "PRSTCTLn_SET and wait [inference]"},
+        {0x00083EA0L, "FLEXCOMM_GetInstance", "Search of 10 FLEXCOMM bases at 0x879D0 [fact]"},
+        {0x00083EBCL, "FLEXCOMM_Init", "Clock enable + reset release from table 0x87B28, PSELID (base+0xFF8) [inference]"},
+        {0x0008704EL, "USART_SetBaudRate", "OSR/BRG search, returns 0x1651 kStatus_USART_BaudrateNotSupport [inference]"},
+        {0x00083D40L, "DMA_GetInstance", "0x40104000 -> 0, 0x40105000 -> 1 [fact]"},
+        {0x00083D5CL, "DMA_IRQHandle", "NEW. fsl_dma.c channel interrupt dispatcher (33 channels); unused (DMA IRQs never enabled by the M33) [inference]"},
+        {0x00084670L, "SCTIMER_CreateAndScheduleEvent", "Used by SCTIMER_SetupPwm; s_currentEvent/Match at 0x88AEC.. [inference]"},
+        {0x00086F2EL, "PINT_PatternMatchResetDetectLogic", "PMCTRL PMAT != 0 -> PMSRC = PMSRC [inference]"},
+        {0x00086F3CL, "PINT_PinInterruptClrStatus", "NEW [inference]"},
+        {0x00086EC4L, "hashcrypt_get_digest", "Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the HASHCRYPT IRQ handler [guess]"},
+        {0x00080A18L, "OTFAD_Init", "NEW true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE; unused [guess]"},
+        {0x00080A44L, "OTFAD_Deinit", "NEW: OTFAD CR &= ~GE; unused [guess]"},
+        {0x00083E10L, "DMA0_DriverIRQHandler", "IRQ1 -> DMA_IRQHandle(DMA0) [fact: vector]"},
+        {0x00083E1CL, "DMA1_DriverIRQHandler", "IRQ54 [fact: vector]"},
+        {0x00083E28L, "DMIC0_DriverIRQHandler", "IRQ25 [fact: vector]"},
+        {0x00083E38L, "HWVAD0_DriverIRQHandler", "IRQ29 [fact: vector]"},
+        {0x00083F88L, "FLEXCOMM1_DriverIRQHandler", "IRQ15, generic fsl_flexcomm handler [fact: vector]"},
+        {0x00083FB8L, "FLEXCOMM2_DriverIRQHandler", "IRQ16 [fact: vector]"},
+        {0x00083FE8L, "FLEXCOMM3_DriverIRQHandler", "IRQ17 [fact: vector]"},
+        {0x00084018L, "FLEXCOMM4_DriverIRQHandler", "IRQ18 [fact: vector]"},
+        {0x00084048L, "FLEXCOMM5_DriverIRQHandler", "IRQ19 [fact: vector]"},
+        {0x00084078L, "FLEXCOMM6_DriverIRQHandler", "IRQ43 [fact: vector]"},
+        {0x000840A8L, "FLEXCOMM7_DriverIRQHandler", "IRQ44 [fact: vector]"},
+        {0x000840D8L, "FLEXCOMM14_DriverIRQHandler", "IRQ20 [fact: vector]"},
+        {0x00084108L, "FLEXCOMM15_DriverIRQHandler", "IRQ21 [fact: vector]"},
+        {0x00084138L, "FLEXSPI_DriverIRQHandler", "IRQ42 [fact: vector]"},
+        {0x00084228L, "HASHCRYPT_DriverIRQHandler", "IRQ59, base 0x40158000 [fact: vector]"},
+        {0x00084280L, "I3C0_DriverIRQHandler", "IRQ49, base 0x40036000 [fact: vector]"},
+        {0x000842D8L, "OS_EVENT_DriverIRQHandler", "IRQ41, OSTIMER 0x40113000 [fact: vector]"},
+        {0x000842F0L, "PIN_INT0_DriverIRQHandler", "IRQ4, PINT 0x40025000 [fact: vector]"},
+        {0x00084320L, "PIN_INT1_DriverIRQHandler", "IRQ5 [fact: vector]"},
+        {0x00084350L, "PIN_INT2_DriverIRQHandler", "IRQ6 [fact: vector]"},
+        {0x00084380L, "PIN_INT3_DriverIRQHandler", "IRQ7 [fact: vector]"},
+        {0x000843B0L, "PIN_INT4_DriverIRQHandler", "IRQ35 [fact: vector]"},
+        {0x000843E0L, "PIN_INT5_DriverIRQHandler", "IRQ36 [fact: vector]"},
+        {0x00084410L, "PIN_INT6_DriverIRQHandler", "IRQ37 [fact: vector]"},
+        {0x00084440L, "PIN_INT7_DriverIRQHandler", "IRQ38 [fact: vector]"},
+        {0x000848E4L, "SCT0_DriverIRQHandler", "IRQ12: calls the callback at 0x88B3C with SCT0 (sct0_pwm_callback); the only active one of these [fact]"},
+        {0x00084904L, "USDHC0_DriverIRQHandler", "IRQ45 [fact: vector]"},
+        {0x0008491CL, "USDHC1_DriverIRQHandler", "IRQ46 [fact: vector]"},
+        {0x00084934L, "UTICK0_DriverIRQHandler", "IRQ8 [fact: vector]"},
+        {0x00086E8CL, "CTIMER0_DriverIRQHandler", "IRQ10 [fact: vector]"},
+        {0x00086E92L, "CTIMER1_DriverIRQHandler", "IRQ11 [fact: vector]"},
+        {0x00086E98L, "CTIMER2_DriverIRQHandler", "IRQ39 [fact: vector]"},
+        {0x00086E9EL, "CTIMER3_DriverIRQHandler", "IRQ13 [fact: vector]"},
+        {0x00086EA4L, "CTIMER4_DriverIRQHandler", "IRQ40 [fact: vector]"},
+        {0x000821D0L, "prvIdleTask", "NEW: \"IDLE\" task entry (vTaskStartScheduler, stack 0x80 words, prio 0) [fact]"},
+        {0x00082254L, "prvResetNextTaskUnblockTime", "xNextTaskUnblockTime 0x888AC [inference]"},
+        {0x00082494L, "xTaskGetTickCount", "xTickCount 0x888E4 [inference]"},
+        {0x000824A0L, "xTaskIncrementTick", "[inference]"},
+        {0x00082700L, "vTaskPlaceOnEventList", "[inference]"},
+        {0x00082728L, "vTaskPlaceOnUnorderedEventList", "[inference]"},
+        {0x00082768L, "vTaskPlaceOnEventListRestricted", "[inference]"},
+        {0x0008279CL, "xTaskRemoveFromEventList", "[inference]"},
+        {0x00082818L, "vTaskRemoveFromUnorderedEventList", "[inference]"},
+        {0x0008288CL, "vTaskInternalSetTimeOutState", "[inference]"},
+        {0x000828A4L, "xTaskCheckForTimeOut", "[inference]"},
+        {0x00082904L, "vTaskMissedYield", "xYieldPending 0x888E8 [inference]"},
+        {0x00082910L, "xTaskGetSchedulerState", "[inference]"},
+        {0x00082930L, "xTaskPriorityInherit", "[inference]"},
+        {0x000829B4L, "xTaskPriorityDisinherit", "[inference]"},
+        {0x00082A24L, "vTaskPriorityDisinheritAfterTimeout", "[inference]"},
+        {0x00082AB0L, "uxTaskResetEventItemValue", "[inference]"},
+        {0x00082AC8L, "pvTaskIncrementMutexHeldCount", "[inference]"},
+        {0x00082C44L, "prvInsertTimerInActiveList", "[inference]"},
+        {0x00082CC4L, "xTimerGenericCommand", "Posts to TmrQ 0x88920 [inference]"},
+        {0x00082D10L, "prvSampleTimeNow", "With prvSwitchTimerLists inlined [inference]"},
+        {0x000866A4L, "xEventGroupSetBits", "[inference]"},
+        {0x00086716L, "vListInitialise", "[inference]"},
+        {0x0008672CL, "vListInitialiseItem", "[inference]"},
+        {0x00086732L, "vListInsertEnd", "[inference]"},
+        {0x0008674AL, "vListInsert", "[inference]"},
+        {0x00086778L, "uxListRemove", "[inference]"},
+        {0x00086798L, "prvIsQueueEmpty", "[inference]"},
+        {0x000867AEL, "prvCopyDataToQueue", "[inference]"},
+        {0x00086818L, "prvCopyDataFromQueue", "[inference]"},
+        {0x00086844L, "prvUnlockQueue", "[inference]"},
+        {0x000868B4L, "xQueueGenericReset", "[inference]"},
+        {0x00086952L, "xQueueCreateCountingSemaphore", "[inference]"},
+        {0x00086DBCL, "vQueueDelete", "[inference]"},
+        {0x00086DD6L, "vQueueWaitForMessageRestricted", "[inference]"},
+        {0x00080A60L, "vRestoreContextOfFirstTask", "NEW: PSPLIM/CONTROL=2/PSP from pxCurrentTCB (0x88800), bx to task; reached from vPortSVCHandler_C [inference]"},
+        {0x00085BDCL, "_Cdigit_value", "ctype-table digit value for strtoul [inference]"},
+        {0x00085C0CL, "_strtoul_core", "Base detection (0x / 0), overflow -> errno 34 (0x88B74) [inference]"},
+        {0x00085D48L, "_sbrk", "Heap 0xA1EF8..0xA2EF8 (4 KB), errno 12 on overflow [fact: addresses]"},
+        {0x00085F70L, "__check_heap_overflow", "new_end >= 0xA2EF8 [fact]"},
+        {0x00085D84L, "_Cwrite_buffer", "Flush FILE buffer through __sys_write [inference]"},
+        {0x00085DF0L, "fflush", "NULL -> all three streams at 0x88B78 (0x3C bytes each) [inference]"},
+        {0x00085E2CL, "fseek", "[inference]"},
+        {0x00085F2CL, "ftell", "[inference]"},
+        {0x000872C4L, "free", "Marks block 0x10000000 and merges free successors [inference]"},
+        {0x000872F8L, "setvbuf", "_IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 [inference]"},
+        {0x00087418L, "strncpy", "[inference]"},
+        {0x00087470L, "_Cflush_read", "[guess]"},
+        {0x000874B0L, "fputc", "FILE output slow path, 19 callers (printf engine) [inference]"},
+        {0x000875F0L, "_Cfdopen", "Opens fd with mode \"r\"/\"w\"/\"a\"[+][b] into a FILE (used by stdio_init) [inference]"},
+        {0x00087658L, "_Cflush_write", "[guess]"},
+        {0x000876AAL, "_Cfclose", "[inference]"},
+        {0x00087702L, "remove", "Stub: strlen then return -1 [guess]"},
+        {0x00087716L, "_Cfflush1", "[inference]"},
+        {0x00087756L, "__aeabi_uldivmod", "64-bit unsigned divide (also reached by the flash veneer 0x08001618) [inference]"},
+        {0x00087850L, "__udivmoddi_core", "[guess]"},
+        {0x00087932L, "__sys_appexit", "b . (hang) [fact]"},
+        {0x00087934L, "__sys_close", "returns -1 (no host) [fact]"},
+        {0x0008793AL, "__sys_flen", "returns -1 [fact]"},
+        {0x00087940L, "__sys_istty", "returns -1 [fact]"},
+        {0x00087946L, "__sys_readc", "NEW: returns -1 [guess: name]"},
+        {0x0008794CL, "__sys_seek", "returns -1 [fact]"},
+        {0x00087952L, "__sys_tmpnam", "returns -1 [guess: name]"},
+        {0x00087958L, "__sys_write", "returns len (nothing written: stdio goes nowhere) [fact]"},
     };
 
     @Override
@@ -179,6 +372,14 @@ public class IfdspM33Names extends GhidraScript {
             if (late != null) removeFunction(late);
             clearListing(toAddr(fx[0]), toAddr(fx[0] + 1));
             disassemble(toAddr(fx[0]));
+        }
+        for (long[] mi : MERGE_INTO) {
+            Function inner = getFunctionAt(toAddr(mi[1]));
+            if (inner != null) removeFunction(inner);
+            Function outer = getFunctionAt(toAddr(mi[0]));
+            if (outer != null) removeFunction(outer);
+            if (getInstructionAt(toAddr(mi[0])) == null) disassemble(toAddr(mi[0]));
+            createFunction(toAddr(mi[0]), null);
         }
         int n = 0;
         for (Object[] e : NAMES) {
@@ -190,6 +391,7 @@ public class IfdspM33Names extends GhidraScript {
                 if (f == null) { printerr("no function at " + ad); continue; }
             }
             f.setName((String) e[1], SourceType.USER_DEFINED);
+            if (e.length > 2) currentProgram.getListing().setComment(ad, CodeUnit.PLATE_COMMENT, (String) e[2]);
             n++;
         }
         analyzeChanges(currentProgram);

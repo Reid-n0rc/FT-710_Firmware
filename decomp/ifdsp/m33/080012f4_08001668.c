@@ -1,35 +1,5 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== FLEXCOMM14_IRQHandler @ 080012dc (8 bytes)
-
-void FLEXCOMM14_IRQHandler(void)
-
-{
-  FUN_08001768();
-  return;
-}
-
-
-// ===== FLEXCOMM15_IRQHandler @ 080012e4 (8 bytes)
-
-void FLEXCOMM15_IRQHandler(void)
-
-{
-  FUN_080016a8();
-  return;
-}
-
-
-// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
-
-void ADC0_IRQHandler(void)
-
-{
-  FUN_08001220();
-  return;
-}
-
-
 // ===== Reserved39_IRQHandler @ 080012f4 (8 bytes)
 
 void Reserved39_IRQHandler(void)
@@ -543,7 +513,7 @@ void FUN_080015d4(void)
 void FUN_080015d8(undefined4 param_1)
 
 {
-  (*(code *)0x83fb9)(param_1);
+  FLEXCOMM2_DriverIRQHandler(param_1);
   return;
 }
 
@@ -553,7 +523,7 @@ void FUN_080015d8(undefined4 param_1)
 void FUN_080015e8(undefined4 param_1)
 
 {
-  (*(code *)0x84905)(param_1);
+  USDHC0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -563,7 +533,7 @@ void FUN_080015e8(undefined4 param_1)
 void FUN_080015f8(undefined4 param_1)
 
 {
-  (*(code *)0x842d9)(param_1);
+  OS_EVENT_DriverIRQHandler(param_1);
   return;
 }
 
@@ -573,7 +543,7 @@ void FUN_080015f8(undefined4 param_1)
 void FUN_08001608(undefined4 param_1)
 
 {
-  (*(code *)0x86e93)(param_1);
+  CTIMER1_DriverIRQHandler(param_1);
   return;
 }
 
@@ -583,7 +553,7 @@ void FUN_08001608(undefined4 param_1)
 void FUN_08001618(undefined4 param_1)
 
 {
-  FUN_00087756(param_1);
+  __aeabi_uldivmod(param_1);
   return;
 }
 
@@ -593,7 +563,7 @@ void FUN_08001618(undefined4 param_1)
 void FUN_08001628(undefined4 param_1)
 
 {
-  (*(code *)0x84229)(param_1);
+  HASHCRYPT_DriverIRQHandler(param_1);
   return;
 }
 
@@ -603,7 +573,37 @@ void FUN_08001628(undefined4 param_1)
 void FUN_08001638(undefined4 param_1)
 
 {
-  (*(code *)0x8491d)(param_1);
+  USDHC1_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== FUN_08001648 @ 08001648 (10 bytes)
+
+void FUN_08001648(undefined4 param_1)
+
+{
+  PIN_INT2_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== FUN_08001658 @ 08001658 (10 bytes)
+
+void FUN_08001658(undefined4 param_1)
+
+{
+  CTIMER0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== FUN_08001668 @ 08001668 (10 bytes)
+
+void FUN_08001668(undefined4 param_1)
+
+{
+  UTICK0_DriverIRQHandler(param_1);
   return;
 }
 

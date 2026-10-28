@@ -1,10 +1,11 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0008000c @ 0008000c (32 bytes)
+// ===== rom_api_1c_guarded_call @ 0008000c (32 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers [guess] */
 
-void FUN_0008000c(undefined4 param_1,undefined4 param_2)
+void rom_api_1c_guarded_call(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -20,9 +21,12 @@ void FUN_0008000c(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00080030 @ 00080030 (24 bytes)
+// ===== power_set_deepsleep_pmc_cfg @ 00080030 (24 bytes)
 
-void FUN_00080030(void)
+/* PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep
+   [guess] */
+
+void power_set_deepsleep_pmc_cfg(void)
 
 {
   int iVar1;
@@ -39,9 +43,11 @@ void FUN_00080030(void)
 }
 
 
-// ===== FUN_00080050 @ 00080050 (14 bytes)
+// ===== delay @ 00080050 (14 bytes)
 
-void FUN_00080050(int param_1)
+/* fsl_power.c busy loop (count iterations) [inference] */
+
+void delay(int param_1)
 
 {
   int iVar1;
@@ -52,23 +58,27 @@ void FUN_00080050(int param_1)
 }
 
 
-// ===== FUN_0008005e @ 0008005e (48 bytes)
+// ===== deinitXip @ 0008005e (48 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0008006a) */
 /* WARNING: Removing unreachable block (ram,0x0008006c) */
 /* WARNING: Removing unreachable block (ram,0x00080074) */
 /* WARNING: Removing unreachable block (ram,0x0008007c) */
+/* fsl_power.c: if running XIP (PC in 0x08xxxxxx) wait FlexSPI idle, MDIS, PSCCTL0_CLR FlexSPI clock
+   [inference] */
 
-void FUN_0008005e(void)
+void deinitXip(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0008009c @ 0008009c (68 bytes)
+// ===== power_sram_pd_differs @ 0008009c (68 bytes)
 
-bool FUN_0008009c(void)
+/* Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess] */
+
+bool power_sram_pd_differs(void)
 
 {
   uint uVar1;
@@ -89,14 +99,16 @@ bool FUN_0008009c(void)
 }
 
 
-// ===== FUN_000800e8 @ 000800e8 (6 bytes)
+// ===== POWER_CalculateSafetyCount @ 000800e8 (424 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0008022a) */
 /* WARNING: Removing unreachable block (ram,0x00080232) */
 /* WARNING: Removing unreachable block (ram,0x00080244) */
 /* WARNING: Removing unreachable block (ram,0x00080246) */
+/* Real entry (movw r1,#0x21A; ldr r2,=SYSCTL0) that falls into 0x800EE; fsl_power.c deep-sleep
+   wake-up safety count from PDRUNCFG/PDSLEEPCFG [inference] */
 
-uint FUN_000800e8(int param_1)
+uint POWER_CalculateSafetyCount(int param_1)
 
 {
   uint uVar1;
@@ -158,7 +170,7 @@ uint FUN_000800e8(int param_1)
     iVar14 = 0x1cd;
     puVar8 = &DAT_00006590;
   }
-  iVar5 = FUN_0008009c();
+  iVar5 = power_sram_pd_differs();
   iVar11 = DAT_40002604;
   if (iVar11 < 0) {
     iVar11 = 8000;
@@ -215,131 +227,11 @@ uint FUN_000800e8(int param_1)
 }
 
 
-// ===== POWER_CalcSafetyCount @ 000800ee (418 bytes)
+// ===== initFlexSPI @ 000802aa (124 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x0008022a) */
-/* WARNING: Removing unreachable block (ram,0x00080232) */
-/* WARNING: Removing unreachable block (ram,0x00080244) */
-/* WARNING: Removing unreachable block (ram,0x00080246) */
+/* fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) [inference] */
 
-uint POWER_CalcSafetyCount(int param_1,int param_2,int param_3)
-
-{
-  int iVar1;
-  uint uVar2;
-  int iVar3;
-  int iVar4;
-  undefined *puVar5;
-  int iVar6;
-  undefined *puVar7;
-  int iVar8;
-  int iVar9;
-  int iVar10;
-  uint uVar11;
-  int iVar12;
-  int iVar13;
-  bool bVar14;
-  
-  bVar14 = (*(uint *)(param_3 + 0x600) & 0x10017d0) == 0x10017d0;
-  if (bVar14) {
-    param_1 = param_2;
-  }
-  iVar8 = 9000;
-  if (!bVar14) {
-    param_1 = 0x4c;
-    iVar8 = 0;
-  }
-  uVar11 = DAT_40135010;
-  uVar2 = DAT_40135014;
-  iVar9 = (uVar11 & 0x3f) - (uVar2 & 0x3f);
-  uVar11 = DAT_40002610;
-  if ((*(uint *)(param_3 + 0x600) & 0x10) == 0) {
-    iVar3 = 0x4c;
-    iVar12 = 0;
-  }
-  else {
-    iVar12 = 1000;
-    iVar3 = 0xe1f;
-  }
-  iVar6 = 0xceb;
-  if ((uVar11 & 0x10) == 0) {
-    iVar6 = 0x4c;
-  }
-  iVar13 = DAT_40002600;
-  if (iVar13 << 0x14 < 0) {
-    uVar11 = DAT_40002600;
-    if ((uVar11 & 0x1000) == 0) {
-      iVar13 = 0x1a71;
-      puVar7 = (undefined *)0x0;
-    }
-    else {
-      iVar13 = 0x4c;
-      puVar7 = (undefined *)0x0;
-    }
-  }
-  else {
-    iVar13 = 0x1cd;
-    puVar7 = &DAT_00006590;
-  }
-  iVar4 = FUN_0008009c();
-  iVar10 = DAT_40002604;
-  if (iVar10 < 0) {
-    iVar10 = 8000;
-  }
-  else {
-    iVar10 = 1000;
-  }
-  iVar1 = DAT_40002610;
-  iVar8 = (uint)(iVar10 * (1 - iVar4) + iVar4 * 47000 + 1000) / 0xd +
-          iVar13 + iVar9 * 600 + (iVar9 * 32000 + 1000U) / 0xd + iVar8 + param_1 + iVar12 + iVar3 +
-                   iVar6 + 0x1f9;
-  puVar5 = puVar7 + iVar8 + 0x4c;
-  if ((iVar1 << 0x14 < 0) &&
-     ((iVar9 = DAT_40002600, iVar9 << 0x14 < 0 || (iVar9 = DAT_40002660, -1 < iVar9 << 0x1f)))) {
-    iVar8 = DAT_40002610;
-    if (iVar8 << 0x13 < 0) {
-      iVar8 = DAT_40002600;
-      if (iVar8 << 0x13 < 0) {
-        uVar11 = 1000;
-      }
-      else {
-        uVar2 = DAT_40002660;
-        uVar11 = 0x4c2c0;
-        if ((uVar2 & 2) == 0) {
-          uVar11 = 1000;
-        }
-      }
-    }
-    else {
-      uVar11 = 0x4c2c0;
-    }
-  }
-  else {
-    uVar11 = 5000;
-    puVar5 = puVar7 + iVar8 + 0x3d4c4;
-  }
-  uVar2 = DAT_40002610;
-  if (((~uVar2 & 0x10017d0) == 0) &&
-     ((iVar8 = DAT_40002600, iVar8 << 0x13 < 0 || (iVar8 = DAT_40002660, -1 < iVar8 << 0x1e)))) {
-    iVar8 = uVar11 / 0xd + 0x298;
-  }
-  else {
-    iVar8 = uVar11 / 0xd + 0x98;
-  }
-  uVar11 = DAT_40001100;
-  if ((uVar11 & 0xc0000) == 0) {
-    iVar9 = 0xc;
-  }
-  else {
-    iVar9 = 0xf;
-  }
-  return (iVar9 * (int)(puVar5 + iVar8) + 999U) / 1000;
-}
-
-
-// ===== FUN_000802aa @ 000802aa (124 bytes)
-
-void FUN_000802aa(void)
+void initFlexSPI(void)
 
 {
   uint uVar1;
@@ -389,7 +281,7 @@ void FUN_000802aa(void)
 }
 
 
-// ===== FUN_0008032c @ 0008032c (26 bytes)
+// ===== initXip @ 0008032c (26 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x000802a8) */
 /* WARNING: Removing unreachable block (ram,0x000802bc) */
@@ -411,8 +303,10 @@ void FUN_000802aa(void)
 /* WARNING: Removing unreachable block (ram,0x0008030e) */
 /* WARNING: Removing unreachable block (ram,0x00080318) */
 /* WARNING: Removing unreachable block (ram,0x00080312) */
+/* fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra)
+   [inference] */
 
-void FUN_0008032c(void)
+void initXip(void)
 
 {
   return;
@@ -436,7 +330,7 @@ void POWER_EnterSleep_mode1(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = FUN_00080030(uVar4);
+  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
   uVar2 = DAT_e000ed10;
   DAT_e000ed10 = uVar2 | 4;
   iVar3 = DAT_e000e104;
@@ -494,7 +388,7 @@ void POWER_EnterSleep_mode2(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = FUN_00080030(uVar4);
+  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
   uVar2 = DAT_e000ed10;
   DAT_e000ed10 = uVar2 | 4;
   iVar3 = DAT_e000e104;
@@ -627,7 +521,7 @@ void POWER_EnterDeepSleep(void)
     uVar13 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  puVar8 = (uint *)FUN_00080030();
+  puVar8 = (uint *)power_set_deepsleep_pmc_cfg();
   uVar3 = DAT_e000ed10;
   DAT_e000ed10 = uVar3 | 4;
   uVar3 = DAT_40001430;
@@ -668,17 +562,17 @@ void POWER_EnterDeepSleep(void)
   bVar18 = iVar10 << 0xf < 0;
   if (bVar18) {
     DAT_40002630 = 0x10000;
-    FUN_00080050(0x960);
+    delay(0x960);
   }
   iVar10 = DAT_40002600;
   if (iVar10 << 0xf < 0) {
     DAT_40002710 = 0;
   }
   else {
-    uVar9 = FUN_000800e8();
+    uVar9 = POWER_CalculateSafetyCount();
     DAT_40002710 = uVar9;
   }
-  FUN_0008005e();
+  deinitXip();
   DAT_40001430 = 0;
   DAT_40001434 = 0;
   DAT_40021430 = 0;
@@ -738,7 +632,7 @@ LAB_00080716:
     else {
       iVar10 = 4;
     }
-    FUN_00080050(DAT_00080a58 * iVar10);
+    delay(DAT_00080a58 * iVar10);
     uVar11 = extraout_r1;
   }
   if (uVar11 != 0) {
@@ -751,7 +645,7 @@ LAB_00080716:
     else {
       iVar10 = 4;
     }
-    FUN_00080050(iVar10 * ((uVar11 & 0xffff) >> 1));
+    delay(iVar10 * ((uVar11 & 0xffff) >> 1));
     *(uint *)(extraout_r1_00 + 0x204) = *(uint *)(extraout_r1_00 + 0x204) & ~(uVar17 & 2);
     uVar14 = DAT_40021204;
     DAT_40021204 = uVar14 & ~(uVar16 & 2);
@@ -761,7 +655,7 @@ LAB_00080716:
     else {
       iVar10 = 4;
     }
-    FUN_00080050(iVar10 * ((*(uint *)(extraout_r1_00 + 0x20c) & 0xffff) / 6));
+    delay(iVar10 * ((*(uint *)(extraout_r1_00 + 0x20c) & 0xffff) / 6));
     iVar10 = 3;
     *(uint *)(extraout_r1_01 + 0x204) = *(uint *)(extraout_r1_01 + 0x204) & ~(uVar17 & 0x2000);
     uVar14 = DAT_40021204;
@@ -769,7 +663,7 @@ LAB_00080716:
     if ((*(uint *)(extraout_r1_01 + 0x100) & 0xc0000) != 0) {
       iVar10 = 4;
     }
-    FUN_00080050(iVar10 * ((*(uint *)(extraout_r1_01 + 0x20c) & 0xffff) / 3));
+    delay(iVar10 * ((*(uint *)(extraout_r1_01 + 0x20c) & 0xffff) / 3));
     if (uVar12 != 0) {
       *(uint *)(extraout_r1_02 + 0x218) = *(uint *)(extraout_r1_02 + 0x218) & ~uVar12;
       do {
@@ -794,7 +688,7 @@ LAB_00080716:
   if (bVar18) {
     DAT_40002620 = 0x10000;
   }
-  FUN_0008032c();
+  initXip();
   DAT_4013500c = uVar5;
   if (bVar15) {
     uVar3 = DAT_4000200c;
@@ -810,9 +704,11 @@ LAB_00080716:
 }
 
 
-// ===== FUN_00080914 @ 00080914 (26 bytes)
+// ===== BOARD_DeinitXip @ 00080914 (26 bytes)
 
-void FUN_00080914(uint *param_1)
+/* Wait FlexSPI STS0 ARBIDLE+SEQIDLE, MCR0 |= MDIS [inference] */
+
+void BOARD_DeinitXip(uint *param_1)
 
 {
   do {
@@ -824,9 +720,11 @@ void FUN_00080914(uint *param_1)
 }
 
 
-// ===== FUN_0008092e @ 0008092e (114 bytes)
+// ===== BOARD_InitXip @ 0008092e (114 bytes)
 
-void FUN_0008092e(uint *param_1)
+/* MCR0 &= ~MDIS, SWRESET, wait DLL lock if DLLCR0 enabled, 100 NOPs [inference] */
+
+void BOARD_InitXip(uint *param_1)
 
 {
   uint uVar1;
@@ -877,12 +775,14 @@ void FUN_0008092e(uint *param_1)
 }
 
 
-// ===== CLOCK_SetDiv_0x620 @ 000809a0 (108 bytes)
+// ===== BOARD_SetFlexspiClock @ 000809a0 (108 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x000809c8) */
 /* WARNING: Removing unreachable block (ram,0x00080a00) */
+/* Replaces CLOCK_SetDiv_0x620. board.c: if FLEXSPIFCLKSEL/DIV (CLKCTL0 0x620/0x624) differ:
+   BOARD_DeinitXip, PSCCTL0_CLR FlexSPI, set sel/div, PSCCTL0_SET, BOARD_InitXip [inference] */
 
-void CLOCK_SetDiv_0x620(uint param_1,int param_2)
+void BOARD_SetFlexspiClock(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -904,14 +804,67 @@ void CLOCK_SetDiv_0x620(uint param_1,int param_2)
 }
 
 
-// ===== FUN_00080a24 @ 00080a24 (32 bytes)
+// ===== OTFAD_Init @ 00080a18 (44 bytes)
 
-void FUN_00080a24(int param_1,int param_2,uint param_3,int param_4)
+/* NEW true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE;
+   unused [guess] */
+
+void OTFAD_Init(int param_1,int param_2)
 
 {
   do {
   } while ((*(uint *)(*(int *)(param_2 + 4) + 0xe0) & 3) != 3);
-  *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) | param_3 | param_4 << 0x1f;
+  *(uint *)(param_1 + 0xc00) =
+       *(uint *)(param_1 + 0xc00) |
+       (uint)*(byte *)(param_2 + 2) << 7 | (uint)*(byte *)(param_2 + 1) << 3 |
+       (uint)*(byte *)(param_2 + 3) << 0x1f;
+  return;
+}
+
+
+// ===== OTFAD_Deinit @ 00080a44 (14 bytes)
+
+/* NEW: OTFAD CR &= ~GE; unused [guess] */
+
+void OTFAD_Deinit(int param_1)
+
+{
+  *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0x7fffffff;
+  return;
+}
+
+
+// ===== vRestoreContextOfFirstTask @ 00080a60 (30 bytes)
+
+/* NEW: PSPLIM/CONTROL=2/PSP from pxCurrentTCB (0x88800), bx to task; reached from vPortSVCHandler_C
+   [inference] */
+
+void vRestoreContextOfFirstTask(void)
+
+{
+  bool bVar1;
+  char cVar2;
+  undefined4 *puVar3;
+  
+  puVar3 = (undefined4 *)*DAT_00088800;
+  setProcStackPointerLimit(*puVar3);
+  bVar1 = (bool)isCurrentModePrivileged();
+  if (bVar1) {
+    setThreadModePrivileged(1);
+    bVar1 = (bool)isThreadMode();
+    if (bVar1) {
+      cVar2 = isUsingMainStack();
+      setStackMode(cVar2 == '\x01');
+    }
+  }
+  bVar1 = (bool)isCurrentModePrivileged();
+  if (bVar1) {
+    setProcessStackPointer(puVar3 + 10);
+  }
+  InstructionSynchronizationBarrier(0xf);
+                    /* WARNING: Could not recover jumptable at 0x00080a7c. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  (*(code *)puVar3[1])(puVar3 + 10,2);
   return;
 }
 
@@ -1117,24 +1070,14 @@ undefined2 regfile_read(int param_1)
 }
 
 
-// ===== regfile_write @ 00080c4c (78 bytes)
+// ===== regfile_write @ 00080c4c (40 bytes)
 
 void regfile_write(int param_1,ushort param_2)
 
 {
-  undefined4 uVar1;
-  
   if ((&DAT_20070000 + param_1 * 2 < (ushort *)0x20080000) &&
      (*(ushort *)(&DAT_20070000 + param_1 * 2) = param_2, param_1 == 10)) {
-    if ((param_2 & 0xf) == 1) {
-      uVar1 = 0x40;
-    }
-    else {
-      uVar1 = 0x10;
-    }
-    aic3204_spi_write(0,1);
-    aic3204_spi_write(0x37,uVar1);
-    aic3204_spi_write(0);
+    aic3204_select_right_input((param_2 & 0xf) != 1);
     return;
   }
   return;
@@ -1203,7 +1146,7 @@ void uart0_init(void)
   undefined2 local_14;
   
   local_20 = 0xff0100;
-  FUN_000838a8(&local_20);
+  CLOCK_SetFRGClock(&local_20);
   CLOCK_AttachClk(0x80004508);
   USART_GetDefaultConfig(local_1c);
   local_1c[0] = &DAT_0001c200;
@@ -1467,7 +1410,7 @@ undefined4 app_main(void)
   GPIO_PortInit(&DAT_40100000,2);
   BOARD_InitPins();
   BOARD_BootClockRUN();
-  FUN_00087240();
+  BOARD_InitDebugConsole();
   regfile_clear();
   DAT_40021048 = 0x80000000;
   INPUTMUX_AttachSignal(&DAT_40026000,1,0x14000015);
@@ -1674,18 +1617,38 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
 }
 
 
-// ===== console_cmd_r @ 000813b4 (84 bytes)
+// ===== console_printf @ 0008138c (36 bytes)
+
+/* vsprintf into 0x88DF0 then console_puts; tail-called by console_cmd_r */
+
+void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 uStack_c;
+  undefined4 uStack_8;
+  undefined4 uStack_4;
+  
+  uStack_c = param_2;
+  uStack_8 = param_3;
+  uStack_4 = param_4;
+  sprintf(&DAT_00088df0,param_1,&uStack_c,param_4,param_1,&uStack_c);
+  console_puts(&DAT_00088df0);
+  return;
+}
+
+
+// ===== console_cmd_r @ 000813b4 (48 bytes)
 
 void console_cmd_r(int param_1,int param_2)
 
 {
   undefined2 uVar1;
+  undefined4 uVar2;
   
   if (param_2 == 2) {
     uVar1 = strtoul(*(undefined4 *)(param_1 + 4),0,0x10);
-    regfile_read(uVar1);
-    sprintf(&DAT_00088df0,"\r\nr %04X %04X\r\n>> ");
-    console_puts(&DAT_00088df0);
+    uVar2 = regfile_read(uVar1);
+    console_printf("\r\nr %04X %04X\r\n>> ",uVar1,uVar2);
     return;
   }
   console_puts("\r\n?\r\n>> ");
@@ -2042,41 +2005,5 @@ void MU_A_IRQHandler(void)
     return;
   }
   return;
-}
-
-
-// ===== platform_interrupt_enable @ 000818d0 (54 bytes)
-
-undefined4 platform_interrupt_enable(void)
-
-{
-  uint uVar1;
-  
-  platform_register_isr();
-  env_lock_mutex(DAT_00088714);
-  if (DAT_00088710 < 0) {
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if (DAT_00088710 == 0) {
-    uVar1 = DAT_40110064;
-    DAT_40110064 = uVar1 & 0xfff0ffff | 0x4000000;
-  }
-  DAT_00088710 = DAT_00088710 + 1;
-  env_unlock_mutex(DAT_00088714);
-  return 0;
-}
-
-
-// ===== xPortIsInsideInterrupt @ 00081944 (16 bytes)
-
-bool xPortIsInsideInterrupt(void)
-
-{
-  uint uVar1;
-  
-  uVar1 = DAT_e000ed04;
-  return (uVar1 & 0x1ff) != 0;
 }
 

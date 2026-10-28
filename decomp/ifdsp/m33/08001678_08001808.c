@@ -1,41 +1,11 @@
-// FT-710_IFDSP_V0101.bin — Ghidra decompile, 29 functions
-
-// ===== FUN_08001648 @ 08001648 (10 bytes)
-
-void FUN_08001648(undefined4 param_1)
-
-{
-  (*(code *)0x84351)(param_1);
-  return;
-}
-
-
-// ===== FUN_08001658 @ 08001658 (10 bytes)
-
-void FUN_08001658(undefined4 param_1)
-
-{
-  (*(code *)0x86e8d)(param_1);
-  return;
-}
-
-
-// ===== FUN_08001668 @ 08001668 (10 bytes)
-
-void FUN_08001668(undefined4 param_1)
-
-{
-  (*(code *)0x84935)(param_1);
-  return;
-}
-
+// FT-710_IFDSP_V0101.bin — Ghidra decompile, 26 functions
 
 // ===== FUN_08001678 @ 08001678 (10 bytes)
 
 void FUN_08001678(undefined4 param_1)
 
 {
-  (*(code *)0x842f1)(param_1);
+  PIN_INT0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -45,7 +15,7 @@ void FUN_08001678(undefined4 param_1)
 void FUN_08001688(undefined4 param_1)
 
 {
-  (*(code *)0x86ea5)(param_1);
+  CTIMER4_DriverIRQHandler(param_1);
   return;
 }
 
@@ -55,7 +25,7 @@ void FUN_08001688(undefined4 param_1)
 void FUN_08001698(undefined4 param_1)
 
 {
-  (*(code *)0x83e11)(param_1);
+  DMA0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -65,7 +35,7 @@ void FUN_08001698(undefined4 param_1)
 void FUN_080016a8(undefined4 param_1)
 
 {
-  (*(code *)0x84109)(param_1);
+  FLEXCOMM15_DriverIRQHandler(param_1);
   return;
 }
 
@@ -75,7 +45,7 @@ void FUN_080016a8(undefined4 param_1)
 void FUN_080016b8(undefined4 param_1)
 
 {
-  (*(code *)0x843e1)(param_1);
+  PIN_INT5_DriverIRQHandler(param_1);
   return;
 }
 
@@ -85,7 +55,7 @@ void FUN_080016b8(undefined4 param_1)
 void FUN_080016c8(undefined4 param_1)
 
 {
-  (*(code *)0x83e39)(param_1);
+  HWVAD0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -95,7 +65,7 @@ void FUN_080016c8(undefined4 param_1)
 void FUN_080016d8(undefined4 param_1)
 
 {
-  (*(code *)0x83f89)(param_1);
+  FLEXCOMM1_DriverIRQHandler(param_1);
   return;
 }
 
@@ -105,7 +75,7 @@ void FUN_080016d8(undefined4 param_1)
 void FUN_080016e8(undefined4 param_1)
 
 {
-  (*(code *)0x84049)(param_1);
+  FLEXCOMM5_DriverIRQHandler(param_1);
   return;
 }
 
@@ -115,7 +85,7 @@ void FUN_080016e8(undefined4 param_1)
 void FUN_080016f8(undefined4 param_1)
 
 {
-  (*(code *)0x86e9f)(param_1);
+  CTIMER3_DriverIRQHandler(param_1);
   return;
 }
 
@@ -125,7 +95,7 @@ void FUN_080016f8(undefined4 param_1)
 void FUN_08001708(undefined4 param_1)
 
 {
-  (*(code *)0x84079)(param_1);
+  FLEXCOMM6_DriverIRQHandler(param_1);
   return;
 }
 
@@ -135,7 +105,7 @@ void FUN_08001708(undefined4 param_1)
 void FUN_08001718(undefined4 param_1)
 
 {
-  (*(code *)0x843b1)(param_1);
+  PIN_INT4_DriverIRQHandler(param_1);
   return;
 }
 
@@ -145,7 +115,7 @@ void FUN_08001718(undefined4 param_1)
 void FUN_08001728(undefined4 param_1)
 
 {
-  (*(code *)0x84381)(param_1);
+  PIN_INT3_DriverIRQHandler(param_1);
   return;
 }
 
@@ -155,7 +125,7 @@ void FUN_08001728(undefined4 param_1)
 void FUN_08001738(undefined4 param_1)
 
 {
-  (*(code *)0x86e99)(param_1);
+  CTIMER2_DriverIRQHandler(param_1);
   return;
 }
 
@@ -165,7 +135,7 @@ void FUN_08001738(undefined4 param_1)
 void FUN_08001748(undefined4 param_1)
 
 {
-  (*(code *)0x84139)(param_1);
+  FLEXSPI_DriverIRQHandler(param_1);
   return;
 }
 
@@ -175,7 +145,7 @@ void FUN_08001748(undefined4 param_1)
 void FUN_08001758(undefined4 param_1)
 
 {
-  (*(code *)0x83e1d)(param_1);
+  DMA1_DriverIRQHandler(param_1);
   return;
 }
 
@@ -185,7 +155,7 @@ void FUN_08001758(undefined4 param_1)
 void FUN_08001768(undefined4 param_1)
 
 {
-  (*(code *)0x840d9)(param_1);
+  FLEXCOMM14_DriverIRQHandler(param_1);
   return;
 }
 
@@ -195,7 +165,7 @@ void FUN_08001768(undefined4 param_1)
 void FUN_08001778(undefined4 param_1)
 
 {
-  (*(code *)0x840a9)(param_1);
+  FLEXCOMM7_DriverIRQHandler(param_1);
   return;
 }
 
@@ -205,7 +175,7 @@ void FUN_08001778(undefined4 param_1)
 void FUN_08001788(undefined4 param_1)
 
 {
-  (*(code *)0x84411)(param_1);
+  PIN_INT6_DriverIRQHandler(param_1);
   return;
 }
 
@@ -215,7 +185,7 @@ void FUN_08001788(undefined4 param_1)
 void FUN_08001798(undefined4 param_1)
 
 {
-  (*(code *)0x84321)(param_1);
+  PIN_INT1_DriverIRQHandler(param_1);
   return;
 }
 
@@ -235,7 +205,7 @@ void call_main(undefined4 param_1)
 void FUN_080017b8(undefined4 param_1)
 
 {
-  (*(code *)0x83e29)(param_1);
+  DMIC0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -245,7 +215,7 @@ void FUN_080017b8(undefined4 param_1)
 void FUN_080017c8(undefined4 param_1)
 
 {
-  (*(code *)0x84281)(param_1);
+  I3C0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -255,7 +225,7 @@ void FUN_080017c8(undefined4 param_1)
 void FUN_080017d8(undefined4 param_1)
 
 {
-  (*(code *)0x84441)(param_1);
+  PIN_INT7_DriverIRQHandler(param_1);
   return;
 }
 
@@ -265,7 +235,7 @@ void FUN_080017d8(undefined4 param_1)
 void FUN_080017e8(undefined4 param_1)
 
 {
-  (*(code *)0x83fe9)(param_1);
+  FLEXCOMM3_DriverIRQHandler(param_1);
   return;
 }
 
@@ -275,7 +245,7 @@ void FUN_080017e8(undefined4 param_1)
 void FUN_080017f8(undefined4 param_1)
 
 {
-  (*(code *)0x848e5)(param_1);
+  SCT0_DriverIRQHandler(param_1);
   return;
 }
 
@@ -285,7 +255,7 @@ void FUN_080017f8(undefined4 param_1)
 void FUN_08001808(undefined4 param_1)
 
 {
-  (*(code *)0x84019)(param_1);
+  FLEXCOMM4_DriverIRQHandler(param_1);
   return;
 }
 

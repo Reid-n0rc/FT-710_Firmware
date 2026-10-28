@@ -19,7 +19,8 @@ import sys
 
 def norm(a):
     a = a.strip().lower()
-    return a[2:] if a.startswith('0x') else a
+    a = a[2:] if a.startswith('0x') else a
+    return a.zfill(8)
 
 
 def read(path):

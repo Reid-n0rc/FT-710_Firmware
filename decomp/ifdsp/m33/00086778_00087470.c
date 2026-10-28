@@ -1,323 +1,10 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== vPortSVCHandler_C @ 0008657c (56 bytes)
+// ===== uxListRemove @ 00086778 (32 bytes)
 
-void vPortSVCHandler_C(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* [inference] */
 
-{
-  bool bVar1;
-  char cVar2;
-  undefined4 *puVar3;
-  
-  if (*(char *)(*(int *)(param_1 + 0x18) + -2) == '\x02') {
-    puVar3 = (undefined4 *)*DAT_00088800;
-    setProcStackPointerLimit(*puVar3);
-    bVar1 = (bool)isCurrentModePrivileged();
-    if (bVar1) {
-      setThreadModePrivileged(1);
-      bVar1 = (bool)isThreadMode();
-      if (bVar1) {
-        cVar2 = isUsingMainStack();
-        setStackMode(cVar2 == '\x01');
-      }
-    }
-    bVar1 = (bool)isCurrentModePrivileged();
-    if (bVar1) {
-      setProcessStackPointer(puVar3 + 10);
-    }
-    InstructionSynchronizationBarrier(0xf);
-                    /* WARNING: Could not recover jumptable at 0x00080a7c. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    (*(code *)puVar3[1])(puVar3 + 10,2,(code *)puVar3[1],param_4);
-    return;
-  }
-  vPortRaiseBASEPRI();
-  do {
-                    /* WARNING: Do nothing block with infinite loop */
-  } while( true );
-}
-
-
-// ===== vPortRaiseBASEPRI @ 00086596 (22 bytes)
-
-undefined8 vPortRaiseBASEPRI(void)
-
-{
-  bool bVar1;
-  undefined4 uVar2;
-  
-  uVar2 = 0;
-  bVar1 = (bool)isCurrentModePrivileged();
-  if (bVar1) {
-    uVar2 = getBasePriority();
-  }
-  bVar1 = (bool)isCurrentModePrivileged();
-  if (bVar1) {
-    setBasePriority(0x40);
-  }
-  DataSynchronizationBarrier(0xf);
-  InstructionSynchronizationBarrier(0xf);
-  return CONCAT44(0x40,uVar2);
-}
-
-
-// ===== vPortClearBASEPRI @ 000865ac (14 bytes)
-
-void vPortClearBASEPRI(undefined4 param_1)
-
-{
-  bool bVar1;
-  
-  bVar1 = (bool)isCurrentModePrivileged();
-  if (bVar1) {
-    setBasePriority(param_1);
-  }
-  DataSynchronizationBarrier(0xf);
-  InstructionSynchronizationBarrier(0xf);
-  return;
-}
-
-
-// ===== xEventGroupCreate @ 000865ba (26 bytes)
-
-undefined4 * xEventGroupCreate(void)
-
-{
-  undefined4 *puVar1;
-  
-  puVar1 = (undefined4 *)pvPortMalloc(0x1c);
-  if (puVar1 != (undefined4 *)0x0) {
-    *puVar1 = 0;
-    FUN_00086716(puVar1 + 1);
-  }
-  return puVar1;
-}
-
-
-// ===== xEventGroupWaitBits @ 000865d4 (208 bytes)
-
-uint xEventGroupWaitBits(uint *param_1,uint param_2,int param_3,int param_4,int param_5)
-
-{
-  int iVar1;
-  uint uVar2;
-  
-  if (param_1 == (uint *)0x0) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if ((param_2 & 0xff000000) != 0) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if (param_2 == 0) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  iVar1 = FUN_00082910();
-  if ((iVar1 == 0) && (param_5 != 0)) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  vTaskSuspendAll();
-  uVar2 = *param_1;
-  if (param_4 == 0) {
-    if ((param_2 & uVar2) != 0) goto LAB_00086652;
-LAB_00086624:
-    if (param_5 != 0) {
-      if (param_3 == 0) {
-        uVar2 = 0;
-      }
-      else {
-        uVar2 = 0x1000000;
-      }
-      if (param_4 != 0) {
-        uVar2 = uVar2 | 0x4000000;
-      }
-      FUN_00082728(param_1 + 1,uVar2 | param_2,param_5);
-      uVar2 = 0;
-    }
-  }
-  else {
-    if (param_2 != (param_2 & uVar2)) goto LAB_00086624;
-LAB_00086652:
-    param_5 = 0;
-    if (param_3 != 0) {
-      *param_1 = uVar2 & ~param_2;
-    }
-  }
-  iVar1 = xTaskResumeAll();
-  if (param_5 == 0) {
-    return uVar2;
-  }
-  if (iVar1 == 0) {
-    FUN_00086542();
-  }
-  uVar2 = FUN_00082ab0();
-  if ((int)(uVar2 << 6) < 0) goto LAB_0008668a;
-  vPortEnterCritical();
-  uVar2 = *param_1;
-  if (param_4 == 0) {
-    if ((param_2 & uVar2) != 0) {
-LAB_00086698:
-      if (param_3 != 0) {
-        *param_1 = uVar2 & ~param_2;
-      }
-    }
-  }
-  else if (param_2 == (param_2 & uVar2)) goto LAB_00086698;
-  vPortExitCritical();
-LAB_0008668a:
-  return uVar2 & 0xffffff;
-}
-
-
-// ===== FUN_000866a4 @ 000866a4 (110 bytes)
-
-uint FUN_000866a4(uint *param_1,uint param_2)
-
-{
-  uint *puVar1;
-  uint uVar2;
-  uint uVar3;
-  uint uVar4;
-  uint uVar5;
-  uint *puVar6;
-  
-  if (param_1 == (uint *)0x0) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if ((param_2 & 0xff000000) != 0) {
-    vPortRaiseBASEPRI();
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  vTaskSuspendAll();
-  *param_1 = *param_1 | param_2;
-  uVar5 = 0;
-  puVar6 = (uint *)param_1[4];
-LAB_000866d0:
-  do {
-    puVar1 = puVar6;
-    uVar2 = *param_1;
-    if (param_1 + 3 == puVar1) {
-      *param_1 = uVar2 & ~uVar5;
-      xTaskResumeAll();
-      return *param_1;
-    }
-    uVar3 = *puVar1;
-    puVar6 = (uint *)puVar1[1];
-    uVar4 = uVar3 & 0xffffff;
-    if ((uVar3 & 0x4000000) != 0) goto LAB_000866fe;
-  } while ((uVar4 & uVar2) == 0);
-  goto LAB_00086702;
-LAB_000866fe:
-  if (uVar4 == (uVar4 & uVar2)) {
-LAB_00086702:
-    if ((int)(uVar3 << 7) < 0) {
-      uVar5 = uVar5 | uVar4;
-    }
-    FUN_00082818(puVar1,uVar2 | 0x2000000);
-  }
-  goto LAB_000866d0;
-}
-
-
-// ===== FUN_00086716 @ 00086716 (22 bytes)
-
-void FUN_00086716(undefined4 *param_1)
-
-{
-  undefined4 *puVar1;
-  
-  puVar1 = param_1 + 2;
-  param_1[2] = 0xffffffff;
-  param_1[3] = puVar1;
-  param_1[1] = puVar1;
-  param_1[4] = puVar1;
-  *param_1 = 0;
-  return;
-}
-
-
-// ===== FUN_0008672c @ 0008672c (6 bytes)
-
-void FUN_0008672c(int param_1)
-
-{
-  *(undefined4 *)(param_1 + 0x10) = 0;
-  return;
-}
-
-
-// ===== FUN_00086732 @ 00086732 (24 bytes)
-
-void FUN_00086732(int *param_1,int param_2)
-
-{
-  undefined4 uVar1;
-  int iVar2;
-  
-  iVar2 = param_1[1];
-  uVar1 = *(undefined4 *)(iVar2 + 8);
-  *(int *)(param_2 + 4) = iVar2;
-  *(undefined4 *)(param_2 + 8) = uVar1;
-  *(int *)(*(int *)(iVar2 + 8) + 4) = param_2;
-  *(int *)(iVar2 + 8) = param_2;
-  iVar2 = *param_1;
-  *(int **)(param_2 + 0x10) = param_1;
-  *param_1 = iVar2 + 1;
-  return;
-}
-
-
-// ===== FUN_0008674a @ 0008674a (46 bytes)
-
-void FUN_0008674a(int *param_1,uint *param_2)
-
-{
-  uint *puVar1;
-  uint uVar2;
-  uint *puVar3;
-  int iVar4;
-  
-  if (*param_2 == 0xffffffff) {
-    puVar3 = (uint *)param_1[4];
-  }
-  else {
-    puVar1 = (uint *)(param_1 + 2);
-    do {
-      puVar3 = puVar1;
-      puVar1 = (uint *)puVar3[1];
-    } while (*(uint *)puVar3[1] <= *param_2);
-  }
-  uVar2 = puVar3[1];
-  param_2[1] = uVar2;
-  *(uint **)(uVar2 + 8) = param_2;
-  param_2[2] = (uint)puVar3;
-  puVar3[1] = (uint)param_2;
-  iVar4 = *param_1;
-  param_2[4] = (uint)param_1;
-  *param_1 = iVar4 + 1;
-  return;
-}
-
-
-// ===== FUN_00086778 @ 00086778 (32 bytes)
-
-int FUN_00086778(int param_1)
+int uxListRemove(int param_1)
 
 {
   int iVar1;
@@ -338,9 +25,11 @@ int FUN_00086778(int param_1)
 }
 
 
-// ===== FUN_00086798 @ 00086798 (22 bytes)
+// ===== prvIsQueueEmpty @ 00086798 (22 bytes)
 
-bool FUN_00086798(int param_1)
+/* [inference] */
+
+bool prvIsQueueEmpty(int param_1)
 
 {
   int iVar1;
@@ -352,9 +41,11 @@ bool FUN_00086798(int param_1)
 }
 
 
-// ===== FUN_000867ae @ 000867ae (106 bytes)
+// ===== prvCopyDataToQueue @ 000867ae (106 bytes)
 
-undefined4 FUN_000867ae(uint *param_1,undefined4 param_2,int param_3)
+/* [inference] */
+
+undefined4 prvCopyDataToQueue(uint *param_1,undefined4 param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -364,7 +55,7 @@ undefined4 FUN_000867ae(uint *param_1,undefined4 param_2,int param_3)
   uVar3 = param_1[0xe];
   if (param_1[0x10] == 0) {
     if (*param_1 == 0) {
-      uVar1 = FUN_000829b4(param_1[2]);
+      uVar1 = xTaskPriorityDisinherit(param_1[2]);
       param_1[2] = 0;
       goto LAB_000867c8;
     }
@@ -401,9 +92,11 @@ LAB_000867c8:
 }
 
 
-// ===== FUN_00086818 @ 00086818 (44 bytes)
+// ===== prvCopyDataFromQueue @ 00086818 (44 bytes)
 
-void FUN_00086818(uint *param_1,undefined4 param_2)
+/* [inference] */
+
+void prvCopyDataFromQueue(uint *param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -428,9 +121,11 @@ void FUN_00086818(uint *param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00086844 @ 00086844 (112 bytes)
+// ===== prvUnlockQueue @ 00086844 (112 bytes)
 
-void FUN_00086844(int param_1)
+/* [inference] */
+
+void prvUnlockQueue(int param_1)
 
 {
   char cVar1;
@@ -439,9 +134,9 @@ void FUN_00086844(int param_1)
   vPortEnterCritical();
   cVar1 = *(char *)(param_1 + 0x45);
   while (('\0' < cVar1 && (*(int *)(param_1 + 0x24) != 0))) {
-    iVar2 = FUN_0008279c(param_1 + 0x24);
+    iVar2 = xTaskRemoveFromEventList(param_1 + 0x24);
     if (iVar2 != 0) {
-      FUN_00082904();
+      vTaskMissedYield();
     }
     cVar1 = cVar1 + -1;
   }
@@ -450,9 +145,9 @@ void FUN_00086844(int param_1)
   vPortEnterCritical();
   cVar1 = *(char *)(param_1 + 0x44);
   while (('\0' < cVar1 && (*(int *)(param_1 + 0x10) != 0))) {
-    iVar2 = FUN_0008279c(param_1 + 0x10);
+    iVar2 = xTaskRemoveFromEventList(param_1 + 0x10);
     if (iVar2 != 0) {
-      FUN_00082904();
+      vTaskMissedYield();
     }
     cVar1 = cVar1 + -1;
   }
@@ -462,9 +157,11 @@ void FUN_00086844(int param_1)
 }
 
 
-// ===== FUN_000868b4 @ 000868b4 (98 bytes)
+// ===== xQueueGenericReset @ 000868b4 (98 bytes)
 
-undefined4 FUN_000868b4(int *param_1,int param_2)
+/* [inference] */
+
+undefined4 xQueueGenericReset(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -486,13 +183,13 @@ undefined4 FUN_000868b4(int *param_1,int param_2)
   *(undefined1 *)(param_1 + 0x11) = 0xff;
   *(undefined1 *)((int)param_1 + 0x45) = 0xff;
   if (param_2 == 0) {
-    if ((param_1[4] != 0) && (iVar1 = FUN_0008279c(param_1 + 4), iVar1 != 0)) {
-      FUN_00086542();
+    if ((param_1[4] != 0) && (iVar1 = xTaskRemoveFromEventList(param_1 + 4), iVar1 != 0)) {
+      vPortYield();
     }
   }
   else {
-    FUN_00086716(param_1 + 4);
-    FUN_00086716(param_1 + 9);
+    vListInitialise(param_1 + 4);
+    vListInitialise(param_1 + 9);
   }
   vPortExitCritical();
   return 1;
@@ -517,7 +214,7 @@ int xQueueGenericCreate(int param_1,int param_2,undefined1 param_3)
       piVar1[0xf] = param_1;
       piVar1[0x10] = param_2;
       *piVar1 = (int)piVar2;
-      FUN_000868b4(piVar1,1);
+      xQueueGenericReset(piVar1,1);
       *(undefined1 *)(piVar1 + 0x13) = param_3;
     }
     return (int)piVar1;
@@ -529,9 +226,11 @@ int xQueueGenericCreate(int param_1,int param_2,undefined1 param_3)
 }
 
 
-// ===== FUN_00086952 @ 00086952 (36 bytes)
+// ===== xQueueCreateCountingSemaphore @ 00086952 (36 bytes)
 
-void FUN_00086952(uint param_1,uint param_2)
+/* [inference] */
+
+void xQueueCreateCountingSemaphore(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -585,7 +284,7 @@ undefined4 xQueueGenericSend(int param_1,int param_2,int param_3,int param_4)
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  iVar2 = FUN_00082910();
+  iVar2 = xTaskGetSchedulerState();
   if ((iVar2 == 0) && (local_2c != 0)) {
     vPortRaiseBASEPRI();
     do {
@@ -596,12 +295,12 @@ undefined4 xQueueGenericSend(int param_1,int param_2,int param_3,int param_4)
   while( true ) {
     vPortEnterCritical();
     if ((*(uint *)(param_1 + 0x38) < *(uint *)(param_1 + 0x3c)) || (param_4 == 2)) {
-      iVar2 = FUN_000867ae(param_1,param_2,param_4);
+      iVar2 = prvCopyDataToQueue(param_1,param_2,param_4);
       if (*(int *)(param_1 + 0x24) != 0) {
-        iVar2 = FUN_0008279c(param_1 + 0x24);
+        iVar2 = xTaskRemoveFromEventList(param_1 + 0x24);
       }
       if (iVar2 != 0) {
-        FUN_00086542();
+        vPortYield();
       }
       vPortExitCritical();
       return 1;
@@ -611,7 +310,7 @@ undefined4 xQueueGenericSend(int param_1,int param_2,int param_3,int param_4)
       return 0;
     }
     if (!bVar1) {
-      FUN_0008288c(auStack_28);
+      vTaskInternalSetTimeOutState(auStack_28);
     }
     vPortExitCritical();
     vTaskSuspendAll();
@@ -623,26 +322,26 @@ undefined4 xQueueGenericSend(int param_1,int param_2,int param_3,int param_4)
       *(undefined1 *)(param_1 + 0x45) = 0;
     }
     vPortExitCritical();
-    iVar2 = FUN_000828a4(auStack_28,&local_2c);
+    iVar2 = xTaskCheckForTimeOut(auStack_28,&local_2c);
     if (iVar2 != 0) break;
     vPortEnterCritical();
     if (*(int *)(param_1 + 0x38) == *(int *)(param_1 + 0x3c)) {
       vPortExitCritical();
-      FUN_00082700(param_1 + 0x10,local_2c);
-      FUN_00086844(param_1);
+      vTaskPlaceOnEventList(param_1 + 0x10,local_2c);
+      prvUnlockQueue(param_1);
       iVar2 = xTaskResumeAll();
       if (iVar2 == 0) {
-        FUN_00086542();
+        vPortYield();
       }
     }
     else {
       vPortExitCritical();
-      FUN_00086844(param_1);
+      prvUnlockQueue(param_1);
       xTaskResumeAll();
     }
     bVar1 = true;
   }
-  FUN_00086844(param_1);
+  prvUnlockQueue(param_1);
   xTaskResumeAll();
   return 0;
 }
@@ -679,9 +378,10 @@ undefined4 xQueueGenericSendFromISR(int param_1,int param_2,undefined4 *param_3,
   uVar2 = vPortRaiseBASEPRI();
   if ((*(uint *)(param_1 + 0x38) < *(uint *)(param_1 + 0x3c)) || (param_4 == 2)) {
     cVar1 = *(char *)(param_1 + 0x45);
-    FUN_000867ae(param_1,param_2,param_4,*(undefined4 *)(param_1 + 0x38));
+    prvCopyDataToQueue(param_1,param_2,param_4,*(undefined4 *)(param_1 + 0x38));
     if (cVar1 == -1) {
-      if (((*(int *)(param_1 + 0x24) != 0) && (iVar3 = FUN_0008279c(param_1 + 0x24), iVar3 != 0)) &&
+      if (((*(int *)(param_1 + 0x24) != 0) &&
+          (iVar3 = xTaskRemoveFromEventList(param_1 + 0x24), iVar3 != 0)) &&
          (param_3 != (undefined4 *)0x0)) {
         uVar4 = 1;
         *param_3 = 1;
@@ -728,7 +428,7 @@ undefined4 xQueueReceive(int param_1,int param_2,int param_3,undefined4 param_4)
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  iVar2 = FUN_00082910();
+  iVar2 = xTaskGetSchedulerState();
   if ((iVar2 == 0) && (local_24 != 0)) {
     vPortRaiseBASEPRI();
     do {
@@ -740,17 +440,18 @@ undefined4 xQueueReceive(int param_1,int param_2,int param_3,undefined4 param_4)
     vPortEnterCritical();
     iVar2 = *(int *)(param_1 + 0x38);
     if (iVar2 != 0) {
-      FUN_00086818(param_1,param_2);
+      prvCopyDataFromQueue(param_1,param_2);
       *(int *)(param_1 + 0x38) = iVar2 + -1;
-      if ((*(int *)(param_1 + 0x10) != 0) && (iVar2 = FUN_0008279c(param_1 + 0x10), iVar2 != 0)) {
-        FUN_00086542();
+      if ((*(int *)(param_1 + 0x10) != 0) &&
+         (iVar2 = xTaskRemoveFromEventList(param_1 + 0x10), iVar2 != 0)) {
+        vPortYield();
       }
       vPortExitCritical();
       return 1;
     }
     if (local_24 == 0) break;
     if (!bVar1) {
-      FUN_0008288c(&iStack_20);
+      vTaskInternalSetTimeOutState(&iStack_20);
     }
     vPortExitCritical();
     vTaskSuspendAll();
@@ -762,26 +463,26 @@ undefined4 xQueueReceive(int param_1,int param_2,int param_3,undefined4 param_4)
       *(undefined1 *)(param_1 + 0x45) = 0;
     }
     vPortExitCritical();
-    iVar2 = FUN_000828a4(&iStack_20,&local_24);
+    iVar2 = xTaskCheckForTimeOut(&iStack_20,&local_24);
     if (iVar2 == 0) {
-      iVar2 = FUN_00086798(param_1);
+      iVar2 = prvIsQueueEmpty(param_1);
       if (iVar2 == 0) {
-        FUN_00086844(param_1);
+        prvUnlockQueue(param_1);
         xTaskResumeAll();
       }
       else {
-        FUN_00082700(param_1 + 0x24,local_24);
-        FUN_00086844(param_1);
+        vTaskPlaceOnEventList(param_1 + 0x24,local_24);
+        prvUnlockQueue(param_1);
         iVar2 = xTaskResumeAll();
         if (iVar2 == 0) {
-          FUN_00086542();
+          vPortYield();
         }
       }
     }
     else {
-      FUN_00086844(param_1);
+      prvUnlockQueue(param_1);
       xTaskResumeAll();
-      iVar2 = FUN_00086798(param_1);
+      iVar2 = prvIsQueueEmpty(param_1);
       if (iVar2 != 0) {
         return 0;
       }
@@ -811,7 +512,7 @@ undefined4 xQueueSemaphoreTake(int *param_1,int param_2)
     } while( true );
   }
   if (param_1[0x10] == 0) {
-    iVar1 = FUN_00082910();
+    iVar1 = xTaskGetSchedulerState();
     if ((iVar1 == 0) && (local_24 != 0)) {
       vPortRaiseBASEPRI();
       do {
@@ -825,18 +526,18 @@ undefined4 xQueueSemaphoreTake(int *param_1,int param_2)
       if (param_1[0xe] != 0) {
         param_1[0xe] = param_1[0xe] + -1;
         if (*param_1 == 0) {
-          iVar1 = FUN_00082ac8();
+          iVar1 = pvTaskIncrementMutexHeldCount();
           param_1[2] = iVar1;
         }
-        if ((param_1[4] != 0) && (iVar1 = FUN_0008279c(param_1 + 4), iVar1 != 0)) {
-          FUN_00086542();
+        if ((param_1[4] != 0) && (iVar1 = xTaskRemoveFromEventList(param_1 + 4), iVar1 != 0)) {
+          vPortYield();
         }
         vPortExitCritical();
         return 1;
       }
       if (local_24 == 0) break;
       if (iVar1 == 0) {
-        FUN_0008288c(auStack_20);
+        vTaskInternalSetTimeOutState(auStack_20);
       }
       vPortExitCritical();
       vTaskSuspendAll();
@@ -848,31 +549,31 @@ undefined4 xQueueSemaphoreTake(int *param_1,int param_2)
         *(undefined1 *)((int)param_1 + 0x45) = 0;
       }
       vPortExitCritical();
-      iVar1 = FUN_000828a4(auStack_20,&local_24);
+      iVar1 = xTaskCheckForTimeOut(auStack_20,&local_24);
       if (iVar1 == 0) {
-        iVar1 = FUN_00086798(param_1);
+        iVar1 = prvIsQueueEmpty(param_1);
         if (iVar1 == 0) {
-          FUN_00086844(param_1);
+          prvUnlockQueue(param_1);
           xTaskResumeAll();
         }
         else {
           if (*param_1 == 0) {
             vPortEnterCritical();
-            iVar2 = FUN_00082930(param_1[2]);
+            iVar2 = xTaskPriorityInherit(param_1[2]);
             vPortExitCritical();
           }
-          FUN_00082700(param_1 + 9,local_24);
-          FUN_00086844(param_1);
+          vTaskPlaceOnEventList(param_1 + 9,local_24);
+          prvUnlockQueue(param_1);
           iVar1 = xTaskResumeAll();
           if (iVar1 == 0) {
-            FUN_00086542();
+            vPortYield();
           }
         }
       }
       else {
-        FUN_00086844(param_1);
+        prvUnlockQueue(param_1);
         xTaskResumeAll();
-        iVar1 = FUN_00086798(param_1);
+        iVar1 = prvIsQueueEmpty(param_1);
         if (iVar1 != 0) {
           if (iVar2 == 0) {
             return 0;
@@ -882,7 +583,7 @@ undefined4 xQueueSemaphoreTake(int *param_1,int param_2)
           if (param_1[9] != 0) {
             iVar1 = 5 - *(int *)param_1[0xc];
           }
-          FUN_00082a24(param_1[2],iVar1);
+          vTaskPriorityDisinheritAfterTimeout(param_1[2],iVar1);
           vPortExitCritical();
           return 0;
         }
@@ -932,10 +633,11 @@ undefined4 xQueueReceiveFromISR(int param_1,int param_2,undefined4 *param_3)
   uVar4 = 0;
   if (iVar3 != 0) {
     cVar1 = *(char *)(param_1 + 0x44);
-    FUN_00086818(param_1,param_2);
+    prvCopyDataFromQueue(param_1,param_2);
     *(int *)(param_1 + 0x38) = iVar3 + -1;
     if (cVar1 == -1) {
-      if (((*(int *)(param_1 + 0x10) != 0) && (iVar3 = FUN_0008279c(param_1 + 0x10), iVar3 != 0)) &&
+      if (((*(int *)(param_1 + 0x10) != 0) &&
+          (iVar3 = xTaskRemoveFromEventList(param_1 + 0x10), iVar3 != 0)) &&
          (param_3 != (undefined4 *)0x0)) {
         uVar4 = 1;
         *param_3 = 1;
@@ -953,9 +655,11 @@ LAB_00086da6:
 }
 
 
-// ===== FUN_00086dbc @ 00086dbc (26 bytes)
+// ===== vQueueDelete @ 00086dbc (26 bytes)
 
-void FUN_00086dbc(int param_1)
+/* [inference] */
+
+void vQueueDelete(int param_1)
 
 {
   if (param_1 == 0) {
@@ -970,9 +674,11 @@ void FUN_00086dbc(int param_1)
 }
 
 
-// ===== FUN_00086dd6 @ 00086dd6 (70 bytes)
+// ===== vQueueWaitForMessageRestricted @ 00086dd6 (70 bytes)
 
-void FUN_00086dd6(int param_1,undefined4 param_2,undefined4 param_3)
+/* [inference] */
+
+void vQueueWaitForMessageRestricted(int param_1,undefined4 param_2,undefined4 param_3)
 
 {
   vPortEnterCritical();
@@ -984,9 +690,9 @@ void FUN_00086dd6(int param_1,undefined4 param_2,undefined4 param_3)
   }
   vPortExitCritical();
   if (*(int *)(param_1 + 0x38) == 0) {
-    FUN_00082768(param_1 + 0x24,param_2,param_3);
+    vTaskPlaceOnEventListRestricted(param_1 + 0x24,param_2,param_3);
   }
-  FUN_00086844(param_1);
+  prvUnlockQueue(param_1);
   return;
 }
 
@@ -1049,6 +755,171 @@ void CLOCK_SetClkDiv(uint param_1,int param_2)
 }
 
 
+// ===== CTIMER0_DriverIRQHandler @ 00086e8c (86 bytes)
+
+/* IRQ10 [fact: vector] */
+
+void CTIMER0_DriverIRQHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = DAT_40028000;
+  DAT_40028000 = uVar1;
+  if (DAT_000a1ef0 == '\0') {
+    if ((code *)*DAT_00088934 != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*(code *)*DAT_00088934)(uVar1);
+      return;
+    }
+  }
+  else {
+    uVar2 = 0;
+    do {
+      if (((1 << (uVar2 & 0xff) & uVar1) != 0) && ((code *)DAT_00088934[uVar2] != (code *)0x0)) {
+        (*(code *)DAT_00088934[uVar2])(uVar1);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 7);
+  }
+  return;
+}
+
+
+// ===== CTIMER1_DriverIRQHandler @ 00086e92 (6 bytes)
+
+/* IRQ11 [fact: vector] */
+
+void CTIMER1_DriverIRQHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = Ram40029000;
+  Ram40029000 = uVar1;
+  if (cRam000a1ef1 == '\0') {
+    if ((code *)*puRam00088938 != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*(code *)*puRam00088938)(uVar1);
+      return;
+    }
+  }
+  else {
+    uVar2 = 0;
+    do {
+      if (((1 << (uVar2 & 0xff) & uVar1) != 0) && ((code *)puRam00088938[uVar2] != (code *)0x0)) {
+        (*(code *)puRam00088938[uVar2])(uVar1);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 7);
+  }
+  return;
+}
+
+
+// ===== CTIMER2_DriverIRQHandler @ 00086e98 (6 bytes)
+
+/* IRQ39 [fact: vector] */
+
+void CTIMER2_DriverIRQHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = Ram4002a000;
+  Ram4002a000 = uVar1;
+  if (cRam000a1ef2 == '\0') {
+    if ((code *)*puRam0008893c != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*(code *)*puRam0008893c)(uVar1);
+      return;
+    }
+  }
+  else {
+    uVar2 = 0;
+    do {
+      if (((1 << (uVar2 & 0xff) & uVar1) != 0) && ((code *)puRam0008893c[uVar2] != (code *)0x0)) {
+        (*(code *)puRam0008893c[uVar2])(uVar1);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 7);
+  }
+  return;
+}
+
+
+// ===== CTIMER3_DriverIRQHandler @ 00086e9e (6 bytes)
+
+/* IRQ13 [fact: vector] */
+
+void CTIMER3_DriverIRQHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = Ram4002b000;
+  Ram4002b000 = uVar1;
+  if (cRam000a1ef3 == '\0') {
+    if ((code *)*puRam00088940 != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*(code *)*puRam00088940)(uVar1);
+      return;
+    }
+  }
+  else {
+    uVar2 = 0;
+    do {
+      if (((1 << (uVar2 & 0xff) & uVar1) != 0) && ((code *)puRam00088940[uVar2] != (code *)0x0)) {
+        (*(code *)puRam00088940[uVar2])(uVar1);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 7);
+  }
+  return;
+}
+
+
+// ===== CTIMER4_DriverIRQHandler @ 00086ea4 (6 bytes)
+
+/* IRQ40 [fact: vector] */
+
+void CTIMER4_DriverIRQHandler(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  uVar1 = Ram4002c000;
+  Ram4002c000 = uVar1;
+  if (cRam000a1ef4 == '\0') {
+    if ((code *)*puRam00088944 != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (*(code *)*puRam00088944)(uVar1);
+      return;
+    }
+  }
+  else {
+    uVar2 = 0;
+    do {
+      if (((1 << (uVar2 & 0xff) & uVar1) != 0) && ((code *)puRam00088944[uVar2] != (code *)0x0)) {
+        (*(code *)puRam00088944[uVar2])(uVar1);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 7);
+  }
+  return;
+}
+
+
 // ===== DSP_CopyImage @ 00086eaa (26 bytes)
 
 void DSP_CopyImage(undefined4 *param_1)
@@ -1069,9 +940,12 @@ void DSP_CopyImage(undefined4 *param_1)
 }
 
 
-// ===== FUN_00086ec4 @ 00086ec4 (44 bytes)
+// ===== hashcrypt_get_digest @ 00086ec4 (44 bytes)
 
-void FUN_00086ec4(int param_1,int param_2)
+/* Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the
+   HASHCRYPT IRQ handler [guess] */
+
+void hashcrypt_get_digest(int param_1,int param_2)
 
 {
   undefined4 *puVar1;
@@ -1109,9 +983,11 @@ void INPUTMUX_AttachSignal(int param_1,int param_2,uint param_3)
 }
 
 
-// ===== FUN_00086efe @ 00086efe (22 bytes)
+// ===== MU_SendMsg @ 00086efe (22 bytes)
 
-void FUN_00086efe(int param_1,uint param_2,undefined4 param_3)
+/* Wait TE bit in SR (0x60), write TR[n] [inference] */
+
+void MU_SendMsg(int param_1,uint param_2,undefined4 param_3)
 
 {
   do {
@@ -1133,13 +1009,32 @@ void MU_SetFlags(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00086f2e @ 00086f2e (14 bytes)
+// ===== PINT_PatternMatchResetDetectLogic @ 00086f2e (14 bytes)
 
-void FUN_00086f2e(int param_1)
+/* PMCTRL PMAT != 0 -> PMSRC = PMSRC [inference] */
+
+void PINT_PatternMatchResetDetectLogic(int param_1)
 
 {
   if (*(uint *)(param_1 + 0x28) >> 0x18 != 0) {
     *(undefined4 *)(param_1 + 0x2c) = *(undefined4 *)(param_1 + 0x2c);
+  }
+  return;
+}
+
+
+// ===== PINT_PinInterruptClrStatus @ 00086f3c (22 bytes)
+
+/* NEW [inference] */
+
+void PINT_PinInterruptClrStatus(uint *param_1,uint param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = 1 << (param_2 & 0xff);
+  if (((*param_1 & uVar1) == 0) && ((uVar1 & param_1[9]) != 0)) {
+    param_1[9] = uVar1;
   }
   return;
 }
@@ -1153,7 +1048,7 @@ void RESET_ClearPeripheralReset(uint param_1)
   uint uVar1;
   uint uVar2;
   
-  FUN_00084498();
+  RESET_SetPeripheralReset();
   uVar2 = 1 << (param_1 & 0xff);
   switch(param_1 >> 8) {
   case 0:
@@ -1241,7 +1136,7 @@ void SCTIMER_UpdatePwmDutycycle(int param_1,undefined4 param_2,uint param_3,int 
   }
   else {
     lVar1 = (ulonglong)param_3 * (ulonglong)uVar4;
-    uVar3 = FUN_00087756((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),100,0,param_4);
+    uVar3 = __aeabi_uldivmod((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),100,0,param_4);
   }
   iVar5 = param_1 + (uVar6 & 0xf) * 4;
   *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 4;
@@ -1303,9 +1198,11 @@ void USART_GetDefaultConfig(undefined4 *param_1)
 }
 
 
-// ===== FUN_0008704e @ 0008704e (178 bytes)
+// ===== USART_SetBaudRate @ 0008704e (178 bytes)
 
-undefined * FUN_0008704e(uint *param_1,uint param_2,uint param_3)
+/* OSR/BRG search, returns 0x1651 kStatus_USART_BaudrateNotSupport [inference] */
+
+undefined * USART_SetBaudRate(uint *param_1,uint param_2,uint param_3)
 
 {
   undefined *puVar1;
@@ -1385,7 +1282,7 @@ undefined * USART_Init(uint *param_1,uint *param_2,int param_3,undefined4 param_
     puVar2 = (undefined *)0x4;
   }
   else {
-    puVar2 = (undefined *)FUN_00083ebc(param_1,1,param_3,param_4,param_4);
+    puVar2 = (undefined *)FLEXCOMM_Init(param_1,1,param_3,param_4,param_4);
     if (puVar2 == (undefined *)0x0) {
       if (*(char *)((int)param_2 + 9) != '\0') {
         param_1[0x380] = param_1[0x380] | 0x10001;
@@ -1407,7 +1304,7 @@ undefined * USART_Init(uint *param_1,uint *param_2,int param_3,undefined4 param_
                  (*(byte *)((int)param_2 + 6) & 3) << 2 | (*(byte *)((int)param_2 + 0xf) & 1) << 0xe
                  | ((byte)param_2[4] & 1) << 0xc | 1;
       if (bVar1 == 0) {
-        puVar3 = (undefined *)FUN_0008704e(param_1,uVar4,param_3);
+        puVar3 = (undefined *)USART_SetBaudRate(param_1,uVar4,param_3);
         if (puVar3 != (undefined *)0x0) {
           return puVar3;
         }
@@ -1431,28 +1328,35 @@ undefined * USART_Init(uint *param_1,uint *param_2,int param_3,undefined4 param_
 }
 
 
-// ===== FUN_00087234 @ 00087234 (8 bytes)
+// ===== BOARD_FlexspiClockSafeConfig @ 00087234 (8 bytes)
 
-void FUN_00087234(void)
+/* BOARD_SetFlexspiClock(3 = FFRO, /1) before the main clock switch [inference] */
+
+void BOARD_FlexspiClockSafeConfig(void)
 
 {
-  CLOCK_SetDiv_0x620(3,1);
+  BOARD_SetFlexspiClock(3,1);
   return;
 }
 
 
-// ===== FUN_00087240 @ 00087240 (2 bytes)
+// ===== BOARD_InitDebugConsole @ 00087240 (2 bytes)
 
-void FUN_00087240(void)
+/* Empty stub called from app_main right after BOARD_BootClockRUN [guess] */
+
+void BOARD_InitDebugConsole(void)
 
 {
   return;
 }
 
 
-// ===== FUN_00087242 @ 00087242 (42 bytes)
+// ===== BOARD_InitPins_flexcomm @ 00087242 (42 bytes)
 
-void FUN_00087242(void)
+/* IOPCTL: PIO0_1/2 FC0 USART, PIO0_7..10 FC1 SPI, PIO1_10 MCLK, PIO2_2 SCT0_OUT0, PIO2_30 CLKIN
+   [fact] */
+
+void BOARD_InitPins_flexcomm(void)
 
 {
   DAT_40004004 = 1;
@@ -1468,9 +1372,12 @@ void FUN_00087242(void)
 }
 
 
-// ===== FUN_0008726c @ 0008726c (40 bytes)
+// ===== BOARD_InitPins_i2s @ 0008726c (40 bytes)
 
-void FUN_0008726c(void)
+/* IOPCTL: PIO0_14..16 FC2 (SCK input inverted), PIO0_23 FC3 data in, PIO0_30 FC4 data in, PIO1_3..5
+   FC5 [fact] */
+
+void BOARD_InitPins_i2s(void)
 
 {
   DAT_40004038 = 0x941;
@@ -1485,54 +1392,16 @@ void FUN_0008726c(void)
 }
 
 
-// ===== BOARD_InitPins @ 00087294 (190 bytes)
+// ===== BOARD_InitPins @ 00087294 (26 bytes)
 
 void BOARD_InitPins(void)
 
 {
-  undefined1 local_28;
-  undefined1 local_27;
-  undefined1 local_24;
-  undefined1 local_23;
-  undefined1 local_20;
-  undefined1 local_1f;
-  undefined1 local_1c;
-  undefined1 local_1b;
-  undefined1 local_18;
-  undefined1 local_17;
-  undefined1 local_14;
-  undefined1 local_13;
-  
-  FUN_00087242();
+  BOARD_InitPins_flexcomm();
   BOARD_InitPins_P0();
   BOARD_InitPins_codec_spi();
-  FUN_0008726c();
-  DAT_40021044 = 1;
-  DAT_40021044 = 4;
-  local_28 = 1;
-  local_27 = 0;
-  GPIO_PinInit(&DAT_40100000,0,0x1c,&local_28);
-  local_24 = 1;
-  local_23 = 0;
-  GPIO_PinInit(&DAT_40100000,0,0x1d,&local_24);
-  local_20 = 1;
-  local_1f = 0;
-  GPIO_PinInit(&DAT_40100000,0,0x1f,&local_20);
-  local_1c = 1;
-  local_1b = 0;
-  GPIO_PinInit(&DAT_40100000,2,4,&local_1c);
-  local_18 = 1;
-  local_17 = 0;
-  GPIO_PinInit(&DAT_40100000,2,5,&local_18);
-  local_14 = 1;
-  local_13 = 0;
-  GPIO_PinInit(&DAT_40100000,2,6,&local_14);
-  DAT_40004070 = 0;
-  DAT_40004074 = 0;
-  DAT_4000407c = 0;
-  DAT_40004110 = 0;
-  DAT_40004114 = 0;
-  DAT_40004118 = 0;
+  BOARD_InitPins_i2s();
+  BOARD_InitPins_debug_gpio();
   return;
 }
 
@@ -1548,9 +1417,11 @@ void main(void)
 }
 
 
-// ===== FUN_000872c4 @ 000872c4 (48 bytes)
+// ===== free @ 000872c4 (48 bytes)
 
-void FUN_000872c4(int param_1)
+/* Marks block 0x10000000 and merges free successors [inference] */
+
+void free(int param_1)
 
 {
   int *piVar1;
@@ -1566,9 +1437,11 @@ void FUN_000872c4(int param_1)
 }
 
 
-// ===== FUN_000872f8 @ 000872f8 (62 bytes)
+// ===== setvbuf @ 000872f8 (62 bytes)
 
-undefined4 FUN_000872f8(int *param_1,int *param_2,uint param_3,int param_4)
+/* _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 [inference] */
+
+undefined4 setvbuf(int *param_1,int *param_2,uint param_3,int param_4)
 
 {
   undefined4 uVar1;
@@ -1629,5 +1502,139 @@ int strcmp(uint *param_1,uint *param_2)
     puVar2 = (uint *)((int)puVar2 + 1);
   } while (uVar3 != 0);
   return 0;
+}
+
+
+// ===== strlen @ 0008737a (72 bytes)
+
+int strlen(uint *param_1)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  uint uVar3;
+  uint *puVar4;
+  
+  puVar1 = param_1;
+  do {
+    if (((uint)puVar1 & 3) == 0) goto LAB_00087384;
+    puVar2 = (uint *)((int)puVar1 + 1);
+    uVar3 = *puVar1;
+    puVar1 = puVar2;
+  } while ((char)uVar3 != '\0');
+LAB_000873b6:
+  return (int)puVar2 - (int)((int)param_1 + 1);
+LAB_00087384:
+  do {
+    puVar4 = puVar1;
+    puVar2 = puVar4 + 1;
+    uVar3 = *puVar4;
+    puVar1 = puVar2;
+  } while ((uVar3 + 0xfefefeff & ~uVar3 & 0x80808080) == 0);
+  if ((uVar3 & 0xff) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 1);
+  }
+  else if ((uVar3 & 0xff00) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 2);
+  }
+  else if ((uVar3 & 0xff0000) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 3);
+  }
+  goto LAB_000873b6;
+}
+
+
+// ===== strncmp @ 000873c2 (86 bytes)
+
+int strncmp(uint *param_1,uint *param_2,uint param_3)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    for (; 3 < param_3; param_3 = param_3 - 4) {
+      uVar2 = *param_2;
+      if ((uVar2 != *param_1) || ((uVar2 + 0xfefefeff & ~uVar2 & 0x80808080) != 0)) break;
+      param_1 = param_1 + 1;
+      param_2 = param_2 + 1;
+    }
+  }
+  puVar1 = param_1;
+  while( true ) {
+    if (puVar1 == (uint *)(param_3 + (int)param_1)) {
+      return 0;
+    }
+    uVar2 = (uint)(byte)*puVar1;
+    if (uVar2 != (byte)*param_2) break;
+    puVar1 = (uint *)((int)puVar1 + 1);
+    param_2 = (uint *)((int)param_2 + 1);
+    if (uVar2 == 0) {
+      return 0;
+    }
+  }
+  return uVar2 - (byte)*param_2;
+}
+
+
+// ===== strncpy @ 00087418 (88 bytes)
+
+/* [inference] */
+
+void strncpy(uint *param_1,uint *param_2,uint param_3)
+
+{
+  char cVar1;
+  char *pcVar2;
+  uint *puVar3;
+  uint *puVar4;
+  uint uVar5;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    for (; 3 < param_3; param_3 = param_3 - 4) {
+      uVar5 = *param_2;
+      if ((uVar5 + 0xfefefeff & ~uVar5 & 0x80808080) != 0) break;
+      *param_1 = uVar5;
+      param_1 = param_1 + 1;
+      param_2 = param_2 + 1;
+    }
+  }
+  pcVar2 = (char *)((int)param_2 - 1);
+  do {
+    param_3 = param_3 - 1;
+    if (param_3 == 0xffffffff) {
+      return;
+    }
+    pcVar2 = pcVar2 + 1;
+    cVar1 = *pcVar2;
+    puVar4 = (uint *)((int)param_1 + 1);
+    *(char *)param_1 = cVar1;
+    param_1 = puVar4;
+  } while (cVar1 != '\0');
+  puVar3 = (uint *)(param_3 + (int)puVar4);
+  for (; puVar4 != puVar3; puVar4 = (uint *)((int)puVar4 + 1)) {
+    *(char *)puVar4 = '\0';
+  }
+  return;
+}
+
+
+// ===== _Cflush_read @ 00087470 (64 bytes)
+
+/* [guess] */
+
+void _Cflush_read(undefined4 *param_1)
+
+{
+  param_1[3] = param_1[3] & 0xffffffdf;
+  if (param_1[6] != param_1[10]) {
+    _Cflush_write();
+    param_1[3] = param_1[3] & 0xffffcfef | 0x10;
+    param_1[6] = param_1[10];
+    param_1[0xb] = param_1[4];
+    *param_1 = param_1[4];
+  }
+  param_1[3] = param_1[3] & 0xffffbfbf;
+  return;
 }
 

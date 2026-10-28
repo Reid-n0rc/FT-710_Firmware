@@ -189,11 +189,11 @@ void FUN_0022313c(void)
 }
 
 
-// ===== FUN_00223250 @ 00223250 (5 bytes)
+// ===== nlms_51tap_update @ 00223250 (5 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00223250(void)
+void nlms_51tap_update(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -500,10 +500,10 @@ void FUN_00224604(void)
 }
 
 
-// ===== FUN_002246c0 @ 002246c0 (18 bytes)
+// ===== codec_out_fill_dma @ 002246c0 (18 bytes)
 
-void FUN_002246c0(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+void codec_out_fill_dma(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                       undefined4 param_5)
 
 {
   flix();
@@ -512,11 +512,11 @@ void FUN_002246c0(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_00224734 @ 00224734 (9 bytes)
+// ===== codec_in_from_dma @ 00224734 (9 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00224734(void)
+void codec_in_from_dma(void)
 
 {
   flix();
@@ -578,7 +578,7 @@ void FUN_002248d8(uint param_1,undefined4 param_2,int param_3)
   if ((byte)DAT_00263cd0 != param_1) {
     if (param_1 == 0) goto LAB_002248f9;
     flix();
-    DAT_00263cdc = FUN_002340fc();
+    DAT_00263cdc = iir_cascade_init();
   }
   if (param_1 != 0) {
     flix();
@@ -648,12 +648,12 @@ void FUN_002249d0(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00224a10 @ 00224a10 (97 bytes)
+// ===== create_Thread_Spi @ 00224a10 (97 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void FUN_00224a10(void)
+void create_Thread_Spi(void)
 
 {
   uint uVar1;
@@ -686,11 +686,11 @@ void FUN_00224a10(void)
 }
 
 
-// ===== FUN_00224aa4 @ 00224aa4 (14 bytes)
+// ===== Thread_Spi_entry @ 00224aa4 (14 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00224aa4(void)
+void Thread_Spi_entry(void)
 
 {
   FUN_002210a4();
@@ -701,9 +701,9 @@ void FUN_00224aa4(void)
 }
 
 
-// ===== FUN_00224d40 @ 00224d40 (23 bytes)
+// ===== spi_post_tx_done @ 00224d40 (23 bytes)
 
-void FUN_00224d40(void)
+void spi_post_tx_done(void)
 
 {
   int unaff_a8;
@@ -711,16 +711,16 @@ void FUN_00224d40(void)
   
   flix();
   *(undefined1 **)(unaff_a8 + 0x34) = auStack_30;
-  FUN_00226b38(&PTR_DAT_002374f4);
+  xos_msgq_put(&PTR_DAT_002374f4);
   return;
 }
 
 
-// ===== FUN_00224d58 @ 00224d58 (41 bytes)
+// ===== spi_fifo_push @ 00224d58 (41 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00224d58(void)
+void spi_fifo_push(void)
 
 {
   flix();

@@ -583,18 +583,22 @@ void FUN_0021ab8c(void)
 }
 
 
-// ===== FUN_0021ab94 @ 0021ab94 (5 bytes)
+// ===== env_lock_mutex @ 0021ab94 (5 bytes)
 
-void FUN_0021ab94(void)
+/* [inference: paired with env_unlock_mutex around MU-B CR access] */
+
+void env_lock_mutex(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021ab9c @ 0021ab9c (5 bytes)
+// ===== env_unlock_mutex @ 0021ab9c (5 bytes)
 
-void FUN_0021ab9c(void)
+/* [inference] */
+
+void env_unlock_mutex(void)
 
 {
   return;
@@ -606,14 +610,16 @@ void FUN_0021ab9c(void)
 void FUN_0021aba4(undefined4 param_1)
 
 {
-  FUN_0021ad44(param_1);
+  platform_time_delay(param_1);
   return;
 }
 
 
-// ===== FUN_0021abb0 @ 0021abb0 (19 bytes)
+// ===== env_register_isr @ 0021abb0 (19 bytes)
 
-void FUN_0021abb0(uint param_1,undefined4 param_2)
+/* isr_table entry store [inference] */
+
+void env_register_isr(uint param_1,undefined4 param_2)
 
 {
   if (0xb < param_1) {

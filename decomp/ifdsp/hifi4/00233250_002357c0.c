@@ -153,13 +153,15 @@ void FUN_002333e0(void)
 }
 
 
-// ===== FUN_00233410 @ 00233410 (12 bytes)
+// ===== xthal_set_region_attribute @ 00233410 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: Instruction at (ram,0x00233417) overlaps instruction at (ram,0x00233416)
     */
+/* (vaddr, size, cattr, flags): called by the DSP main with (0x20060000, 0x31E0, 2, 0) and
+   (0x20070000, 0x10000, 2, 0); T12c proposed memset, but memset is 0x235EB0 [inference] */
 
-void FUN_00233410(void)
+void xthal_set_region_attribute(void)
 
 {
   int unaff_retaddr;
@@ -533,9 +535,9 @@ int FUN_002340f0(int param_1)
 }
 
 
-// ===== FUN_002340fc @ 002340fc (11 bytes)
+// ===== iir_cascade_init @ 002340fc (11 bytes)
 
-void FUN_002340fc(void)
+void iir_cascade_init(void)
 
 {
   flix();
@@ -544,9 +546,9 @@ void FUN_002340fc(void)
 }
 
 
-// ===== FUN_002341c0 @ 002341c0 (11 bytes)
+// ===== iir_cascade_process @ 002341c0 (11 bytes)
 
-void FUN_002341c0(undefined4 *param_1)
+void iir_cascade_process(undefined4 *param_1)
 
 {
   flix();

@@ -315,11 +315,12 @@ void FUN_00213c58(void)
 }
 
 
-// ===== FUN_00213d10 @ 00213d10 (11 bytes)
+// ===== SEMA42_GetInstance @ 00213d10 (11 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* base -> index via table 0x2004E0 */
 
-void FUN_00213d10(void)
+void SEMA42_GetInstance(void)
 
 {
   flix();
@@ -328,9 +329,11 @@ void FUN_00213d10(void)
 }
 
 
-// ===== FUN_00213d24 @ 00213d24 (116 bytes)
+// ===== SEMA42_Init @ 00213d24 (116 bytes)
 
-void FUN_00213d24(int param_1)
+/* CLOCK_EnableClock(SEMA42) inlined (CLKCTL PSCCTL SET) */
+
+void SEMA42_Init(int param_1)
 
 {
   int iVar1;
@@ -338,7 +341,7 @@ void FUN_00213d24(int param_1)
   int in_a12;
   int in_t0;
   
-  iVar1 = FUN_00213d10(param_1);
+  iVar1 = SEMA42_GetInstance(param_1);
   uVar2 = *(uint *)(&DAT_002004e4 + iVar1 * 4);
   flix();
   cust0();
@@ -367,9 +370,11 @@ void FUN_00213d24(int param_1)
 }
 
 
-// ===== FUN_00213dbc @ 00213dbc (116 bytes)
+// ===== SEMA42_Deinit @ 00213dbc (116 bytes)
 
-void FUN_00213dbc(undefined4 param_1,undefined4 param_2,int param_3)
+/* CLOCK_DisableClock(SEMA42) inlined (CLKCTL PSCCTL CLR) */
+
+void SEMA42_Deinit(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
   int iVar1;
@@ -377,7 +382,7 @@ void FUN_00213dbc(undefined4 param_1,undefined4 param_2,int param_3)
   int in_a12;
   int in_t0;
   
-  iVar1 = FUN_00213d10(param_1);
+  iVar1 = SEMA42_GetInstance(param_1);
   uVar2 = *(uint *)(&DAT_002004e4 + iVar1 * 4);
   flix();
   cust0();
@@ -406,9 +411,11 @@ void FUN_00213dbc(undefined4 param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_00213e54 @ 00213e54 (45 bytes)
+// ===== SEMA42_TryLock @ 00213e54 (45 bytes)
 
-ulonglong FUN_00213e54(int param_1,uint param_2,undefined4 param_3,int param_4,int param_5)
+/* gate byte at base + (gate ^ 3) = proc+1, read back */
+
+ulonglong SEMA42_TryLock(int param_1,uint param_2,undefined4 param_3,int param_4,int param_5)
 
 {
   int unaff_retaddr;
@@ -431,11 +438,12 @@ ulonglong FUN_00213e54(int param_1,uint param_2,undefined4 param_3,int param_4,i
 }
 
 
-// ===== FUN_00213e84 @ 00213e84 (11 bytes)
+// ===== SEMA42_Lock @ 00213e84 (11 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* spin until gate free, then lock */
 
-void FUN_00213e84(void)
+void SEMA42_Lock(void)
 
 {
   flix();
@@ -444,9 +452,11 @@ void FUN_00213e84(void)
 }
 
 
-// ===== FUN_00213ed0 @ 00213ed0 (45 bytes)
+// ===== SEMA42_ResetGate @ 00213ed0 (45 bytes)
 
-undefined2 FUN_00213ed0(int param_1,uint param_2)
+/* RSTGT = 0xE200 then 0x1D00 | gate */
+
+undefined2 SEMA42_ResetGate(int param_1,uint param_2)
 
 {
   memw();
@@ -513,11 +523,11 @@ undefined * FUN_00213f48(undefined4 param_1)
 }
 
 
-// ===== FUN_00213f58 @ 00213f58 (16 bytes)
+// ===== SPI_MasterGetDefaultConfig @ 00213f58 (16 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00213f58(void)
+void SPI_MasterGetDefaultConfig(void)
 
 {
   flix();
@@ -526,11 +536,11 @@ void FUN_00213f58(void)
 }
 
 
-// ===== FUN_00213f9c @ 00213f9c (67 bytes)
+// ===== SPI_MasterInit @ 00213f9c (67 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-undefined4 FUN_00213f9c(int param_1,int param_2,int param_3)
+undefined4 SPI_MasterInit(int param_1,int param_2,int param_3)
 
 {
   uint unaff_a9;

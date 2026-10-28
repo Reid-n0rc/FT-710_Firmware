@@ -10,9 +10,9 @@ undefined8 FUN_002358e0(uint param_1,int param_2,uint param_3,int param_4)
 }
 
 
-// ===== FUN_00235900 @ 00235900 (28 bytes)
+// ===== __udivdi3 @ 00235900 (28 bytes)
 
-void FUN_00235900(void)
+void __udivdi3(void)
 
 {
   undefined1 in_LBEG;
@@ -73,11 +73,11 @@ void FUN_00235c8c(void)
 }
 
 
-// ===== FUN_00235d30 @ 00235d30 (12 bytes)
+// ===== memcpy @ 00235d30 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00235d30(void)
+void memcpy(void)
 
 {
   flix();
@@ -88,11 +88,11 @@ void FUN_00235d30(void)
 }
 
 
-// ===== FUN_00235eb0 @ 00235eb0 (129 bytes)
+// ===== memset @ 00235eb0 (129 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00235eb0(uint *param_1,uint param_2,uint param_3,uint *param_4)
+void memset(uint *param_1,uint param_2,uint param_3,uint *param_4)
 
 {
   undefined1 extraout_a3;

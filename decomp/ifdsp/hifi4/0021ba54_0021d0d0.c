@@ -194,11 +194,13 @@ void FUN_0021bd24(int param_1)
 }
 
 
-// ===== FUN_0021bd40 @ 0021bd40 (9 bytes)
+// ===== ipc_handle_msg @ 0021bd40 (9 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* checks version byte, dispatch on category (+8): 0 general, 1 audio, else error at +0x14; if type
+   (+0xB) == request, reply with rpmsg_lite_send under mutex */
 
-void FUN_0021bd40(void)
+void ipc_handle_msg(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -206,9 +208,12 @@ void FUN_0021bd40(void)
 }
 
 
-// ===== FUN_0021bdcc @ 0021bdcc (25 bytes)
+// ===== handle_msg_general @ 0021bdcc (25 bytes)
 
-undefined1 FUN_0021bdcc(undefined4 param_1,int param_2)
+/* category 0: command (+0xC); system info fills param[] with 9 component versions (0x00020000,
+   0x00010003, ...) */
+
+undefined1 handle_msg_general(undefined4 param_1,int param_2)
 
 {
   flix();
@@ -232,11 +237,12 @@ int FUN_0021be20(int param_1)
 }
 
 
-// ===== FUN_0021be54 @ 0021be54 (22 bytes)
+// ===== handle_msg_audio @ 0021be54 (22 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* category 1 (M33 prints it as Mute on/off): command (+0xC), result in +0x14/+0x18 */
 
-void FUN_0021be54(void)
+void handle_msg_audio(void)
 
 {
   flix();
@@ -245,11 +251,12 @@ void FUN_0021be54(void)
 }
 
 
-// ===== FUN_0021be80 @ 0021be80 (12 bytes)
+// ===== regfile_set_defaults @ 0021be80 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* writes the default of every DSP register (all but 0, 1, 0x4000) */
 
-void FUN_0021be80(void)
+void regfile_set_defaults(void)
 
 {
   flix();
@@ -258,16 +265,17 @@ void FUN_0021be80(void)
 }
 
 
-// ===== FUN_0021c060 @ 0021c060 (30 bytes)
+// ===== tx_gpio_to_reg4004 @ 0021c060 (30 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* reg 0x4004 = (f()<<2) | (GPIO P0_21<<1) | GPIO P0_22; called from Thread_Main loop 0x0021C360 */
 
-void FUN_0021c060(void)
+void tx_gpio_to_reg4004(void)
 
 {
   undefined1 uVar1;
   
-  FUN_0021c5cc();
+  regfile_gpio_sel();
   memw();
   uVar1 = DAT_40100015;
   memw();
@@ -278,11 +286,12 @@ void FUN_0021c060(void)
 }
 
 
-// ===== FUN_0021c090 @ 0021c090 (18 bytes)
+// ===== regfile_capture_init @ 0021c090 (18 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* capture block table 0x2390E0 = {0x2007E000, 0x2007F000} (regs 0x7000/0x7800), memset 4 KB each */
 
-void FUN_0021c090(void)
+void regfile_capture_init(void)
 
 {
   DAT_002390e0 = &DAT_2007e000;
@@ -292,11 +301,12 @@ void FUN_0021c090(void)
 }
 
 
-// ===== FUN_0021c0b8 @ 0021c0b8 (22 bytes)
+// ===== regfile_capture_clear @ 0021c0b8 (22 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* memset(block[idx], 0, 0x1000) */
 
-void FUN_0021c0b8(uint param_1)
+void regfile_capture_clear(uint param_1)
 
 {
   int in_a14;
@@ -311,11 +321,12 @@ void FUN_0021c0b8(uint param_1)
 }
 
 
-// ===== FUN_0021c0d4 @ 0021c0d4 (16 bytes)
+// ===== regfile_capture_set_ctrl @ 0021c0d4 (16 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* *(u16 *)block[idx] = v (control word); no caller */
 
-void FUN_0021c0d4(uint param_1)
+void regfile_capture_set_ctrl(uint param_1)
 
 {
   if (1 < param_1) {
@@ -326,11 +337,12 @@ void FUN_0021c0d4(uint param_1)
 }
 
 
-// ===== FUN_0021c0e8 @ 0021c0e8 (16 bytes)
+// ===== regfile_capture_append @ 0021c0e8 (16 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* append u32 if ctrl bit 0, count at +2 (max 0x3FE), wrap if ctrl bit 1; no caller */
 
-void FUN_0021c0e8(uint param_1)
+void regfile_capture_append(uint param_1)
 
 {
   if (param_1 < 2) {
@@ -363,11 +375,11 @@ void FUN_0021c21c(void)
 }
 
 
-// ===== FUN_0021c230 @ 0021c230 (30 bytes)
+// ===== cpu_load_to_regs_2000 @ 0021c230 (30 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0021c230(void)
+void cpu_load_to_regs_2000(void)
 
 {
   flix();
@@ -391,25 +403,27 @@ void FUN_0021c314(void)
 }
 
 
-// ===== FUN_0021c360 @ 0021c360 (26 bytes)
+// ===== Thread_Main_entry @ 0021c360 (26 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* XOS thread "Thread_Main" (entry from literal 0x206CD0) */
 
-void FUN_0021c360(void)
+void Thread_Main_entry(void)
 
 {
-  FUN_002260d8();
+  audio_i2s_fc3_fc4_fc5_init();
   flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
 }
 
 
-// ===== FUN_0021c398 @ 0021c398 (18 bytes)
+// ===== ipc_ept_rx_cb @ 0021c398 (18 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* rpmsg ept callback: if len == 0x98 xos_msgq_put(msg); return RL_RELEASE (NXP my_ept_read_cb) */
 
-undefined4 FUN_0021c398(undefined4 param_1,int param_2)
+undefined4 ipc_ept_rx_cb(undefined4 param_1,int param_2)
 
 {
   if (param_2 != 0x98) {
@@ -421,11 +435,13 @@ undefined4 FUN_0021c398(undefined4 param_1,int param_2)
 }
 
 
-// ===== FUN_0021c3b4 @ 0021c3b4 (58 bytes)
+// ===== Thread_Ipc_entry @ 0021c3b4 (58 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* XOS thread "Thread_Ipc": MU_Init(MUB), msgq, rpmsg_lite_remote_init(0x20020000), wait link up,
+   ept 0x1E, MU flag/SEMA42 boot handshake, then loop xos_msgq_get -> handle_srtm_msg */
 
-void FUN_0021c3b4(void)
+void Thread_Ipc_entry(void)
 
 {
   int unaff_retaddr;
@@ -435,13 +451,13 @@ void FUN_0021c3b4(void)
   uint in_a15;
   int in_t0;
   
-  FUN_00212d00(&DAT_40111000);
+  MU_Init(&DAT_40111000);
   flix();
   puVar1 = (undefined4 *)(in_a14 >> 5 & 0x1fff);
   unaff_retaddr = (int)puVar1 + unaff_retaddr;
   if (in_t0 < 1) {
     while (unaff_retaddr == 0) {
-      unaff_retaddr = FUN_0021b078(*puVar1);
+      unaff_retaddr = rpmsg_lite_is_link_up(*puVar1);
     }
     flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -457,11 +473,13 @@ void FUN_0021c3b4(void)
 }
 
 
-// ===== FUN_0021c498 @ 0021c498 (12 bytes)
+// ===== xos_create_main_ipc_threads @ 0021c498 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* XOS main: zero DMA area 0x20060000..0x200631E0, regfile_init_defaults, clock globals (24 MHz,
+   18.432 MHz), creates Thread_Main, Thread_Ipc, others, xos_start */
 
-void FUN_0021c498(void)
+void xos_create_main_ipc_threads(void)
 
 {
   flix();
@@ -499,9 +517,11 @@ void FUN_0021c598(void)
 }
 
 
-// ===== FUN_0021c5cc @ 0021c5cc (42 bytes)
+// ===== regfile_gpio_sel @ 0021c5cc (42 bytes)
 
-undefined1 FUN_0021c5cc(void)
+/* (reg 0xC & 0xF000) == 0x1000 -> GPIO P0_4 byte */
+
+undefined1 regfile_gpio_sel(void)
 
 {
   undefined1 uVar1;

@@ -49,11 +49,12 @@ void FUN_0021d234(void)
 }
 
 
-// ===== FUN_0021d270 @ 0021d270 (41 bytes)
+// ===== status_reg4_update @ 0021d270 (41 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* reg 4 = rounded value or 0x7FFF (CW zero-in offset [inference]) */
 
-void FUN_0021d270(void)
+void status_reg4_update(void)
 
 {
   int in_a7;
@@ -537,12 +538,13 @@ void FUN_0021f2d0(void)
 }
 
 
-// ===== FUN_0021f348 @ 0021f348 (67 bytes)
+// ===== meter_to_reg4005 @ 0021f348 (67 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: This function may have set the stack pointer */
+/* reg 0x4005 = 0..99 level for the M33 PWM; also level byte for reg 3 */
 
-void FUN_0021f348(undefined4 param_1,uint param_2)
+void meter_to_reg4005(undefined4 param_1,uint param_2)
 
 {
   int in_a14;
@@ -570,11 +572,12 @@ void FUN_0021f348(undefined4 param_1,uint param_2)
 }
 
 
-// ===== FUN_0021f388 @ 0021f388 (6 bytes)
+// ===== status_reg3_update @ 0021f388 (6 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* reg 3 = level<<8 | (255 - x) */
 
-void FUN_0021f388(void)
+void status_reg3_update(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */

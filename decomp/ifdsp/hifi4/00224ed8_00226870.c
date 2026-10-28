@@ -284,9 +284,9 @@ void FUN_002259e4(void)
   uVar4 = *(uint *)(in_a14 + 0x38);
   *(undefined4 *)(iVar3 + 0x38) = DAT_001e9038;
   uVar5 = 0;
-  FUN_00235d30();
+  memcpy();
   flix();
-  FUN_0022678c(in_a6,in_a7,0xf9e);
+  xos_interrupt_enable(in_a6,in_a7,0xf9e);
   puVar2 = *(undefined4 **)(in_a12 + 0x30);
   *(short *)(uVar1 + 0xf8) = (short)in_a12;
   *(short *)(uVar1 + 0xfa) = in_a15 + 1;
@@ -390,11 +390,11 @@ void FUN_00225be8(void)
 }
 
 
-// ===== FUN_00225c9c @ 00225c9c (30 bytes)
+// ===== txaf_fifo_pop_to_dma @ 00225c9c (30 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00225c9c(void)
+void txaf_fifo_pop_to_dma(void)
 
 {
   if (DAT_002c7644 != '\0') {
@@ -408,11 +408,11 @@ void FUN_00225c9c(void)
 }
 
 
-// ===== FUN_00225cf8 @ 00225cf8 (8 bytes)
+// ===== rxif_dma_to_fifo @ 00225cf8 (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00225cf8(void)
+void rxif_dma_to_fifo(void)
 
 {
   flix();
@@ -454,11 +454,11 @@ void FUN_00225dc4(void)
 }
 
 
-// ===== FUN_00225e40 @ 00225e40 (30 bytes)
+// ===== create_rx_tx_path_threads @ 00225e40 (30 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00225e40(void)
+void create_rx_tx_path_threads(void)
 
 {
   flix();
@@ -467,18 +467,18 @@ void FUN_00225e40(void)
     halt_baddata();
   }
   FUN_00213910(&DAT_40026000);
-  FUN_00208600(0x80001740);
+  CLOCK_AttachClk(0x80001740);
   flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
 }
 
 
-// ===== FUN_002260d8 @ 002260d8 (27 bytes)
+// ===== audio_i2s_fc3_fc4_fc5_init @ 002260d8 (27 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_002260d8(void)
+void audio_i2s_fc3_fc4_fc5_init(void)
 
 {
   flix();
@@ -487,11 +487,11 @@ void FUN_002260d8(void)
 }
 
 
-// ===== FUN_00226224 @ 00226224 (10 bytes)
+// ===== fc2_txaf_dma_done @ 00226224 (10 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00226224(void)
+void fc2_txaf_dma_done(void)
 
 {
   flix();
@@ -500,11 +500,11 @@ void FUN_00226224(void)
 }
 
 
-// ===== FUN_00226254 @ 00226254 (10 bytes)
+// ===== fc3_rxif_dma_done @ 00226254 (10 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00226254(void)
+void fc3_rxif_dma_done(void)
 
 {
   flix();
@@ -513,11 +513,11 @@ void FUN_00226254(void)
 }
 
 
-// ===== FUN_00226284 @ 00226284 (10 bytes)
+// ===== fc5_codec_out_dma_done @ 00226284 (10 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00226284(void)
+void fc5_codec_out_dma_done(void)
 
 {
   flix();
@@ -526,11 +526,11 @@ void FUN_00226284(void)
 }
 
 
-// ===== FUN_002262c0 @ 002262c0 (10 bytes)
+// ===== fc4_codec_in_dma_done @ 002262c0 (10 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_002262c0(void)
+void fc4_codec_in_dma_done(void)
 
 {
   flix();
@@ -539,11 +539,11 @@ void FUN_002262c0(void)
 }
 
 
-// ===== FUN_002262fc @ 002262fc (46 bytes)
+// ===== Thread_Rx_Path_entry @ 002262fc (46 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_002262fc(void)
+void Thread_Rx_Path_entry(void)
 
 {
   undefined4 extraout_a3;
@@ -560,9 +560,9 @@ void FUN_002262fc(void)
 }
 
 
-// ===== FUN_0022647c @ 0022647c (24 bytes)
+// ===== Thread_Tx_Path_entry @ 0022647c (24 bytes)
 
-void FUN_0022647c(void)
+void Thread_Tx_Path_entry(void)
 
 {
   undefined4 in_a5;
@@ -635,9 +635,11 @@ void FUN_002266b6(void)
 }
 
 
-// ===== FUN_002266fc @ 002266fc (29 bytes)
+// ===== xos_register_interrupt_handler @ 002266fc (29 bytes)
 
-undefined ** FUN_002266fc(uint param_1,undefined *param_2)
+/* called with MU_B_IRQHandler [inference] */
+
+undefined ** xos_register_interrupt_handler(uint param_1,undefined *param_2)
 
 {
   if (0x1f < param_1) {
@@ -687,7 +689,7 @@ undefined4 FUN_00226744(int param_1,int param_2)
     halt_baddata();
   }
   if (param_2 == 0) {
-    FUN_00224d58();
+    spi_fifo_push();
     uVar1 = FUN_00226562(param_1,0,in_a14 >> 0x1e);
     return uVar1;
   }
@@ -697,9 +699,9 @@ undefined4 FUN_00226744(int param_1,int param_2)
 }
 
 
-// ===== FUN_0022678c @ 0022678c (57 bytes)
+// ===== xos_interrupt_enable @ 0022678c (57 bytes)
 
-void FUN_0022678c(void)
+void xos_interrupt_enable(void)
 
 {
   int iVar1;

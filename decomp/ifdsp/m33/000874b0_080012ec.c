@@ -1,138 +1,10 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== strlen @ 0008737a (72 bytes)
+// ===== fputc @ 000874b0 (320 bytes)
 
-int strlen(uint *param_1)
+/* FILE output slow path, 19 callers (printf engine) [inference] */
 
-{
-  uint *puVar1;
-  uint *puVar2;
-  uint uVar3;
-  uint *puVar4;
-  
-  puVar1 = param_1;
-  do {
-    if (((uint)puVar1 & 3) == 0) goto LAB_00087384;
-    puVar2 = (uint *)((int)puVar1 + 1);
-    uVar3 = *puVar1;
-    puVar1 = puVar2;
-  } while ((char)uVar3 != '\0');
-LAB_000873b6:
-  return (int)puVar2 - (int)((int)param_1 + 1);
-LAB_00087384:
-  do {
-    puVar4 = puVar1;
-    puVar2 = puVar4 + 1;
-    uVar3 = *puVar4;
-    puVar1 = puVar2;
-  } while ((uVar3 + 0xfefefeff & ~uVar3 & 0x80808080) == 0);
-  if ((uVar3 & 0xff) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 1);
-  }
-  else if ((uVar3 & 0xff00) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 2);
-  }
-  else if ((uVar3 & 0xff0000) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 3);
-  }
-  goto LAB_000873b6;
-}
-
-
-// ===== strncmp @ 000873c2 (86 bytes)
-
-int strncmp(uint *param_1,uint *param_2,uint param_3)
-
-{
-  uint *puVar1;
-  uint uVar2;
-  
-  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
-    for (; 3 < param_3; param_3 = param_3 - 4) {
-      uVar2 = *param_2;
-      if ((uVar2 != *param_1) || ((uVar2 + 0xfefefeff & ~uVar2 & 0x80808080) != 0)) break;
-      param_1 = param_1 + 1;
-      param_2 = param_2 + 1;
-    }
-  }
-  puVar1 = param_1;
-  while( true ) {
-    if (puVar1 == (uint *)(param_3 + (int)param_1)) {
-      return 0;
-    }
-    uVar2 = (uint)(byte)*puVar1;
-    if (uVar2 != (byte)*param_2) break;
-    puVar1 = (uint *)((int)puVar1 + 1);
-    param_2 = (uint *)((int)param_2 + 1);
-    if (uVar2 == 0) {
-      return 0;
-    }
-  }
-  return uVar2 - (byte)*param_2;
-}
-
-
-// ===== FUN_00087418 @ 00087418 (88 bytes)
-
-void FUN_00087418(uint *param_1,uint *param_2,uint param_3)
-
-{
-  char cVar1;
-  char *pcVar2;
-  uint *puVar3;
-  uint *puVar4;
-  uint uVar5;
-  
-  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
-    for (; 3 < param_3; param_3 = param_3 - 4) {
-      uVar5 = *param_2;
-      if ((uVar5 + 0xfefefeff & ~uVar5 & 0x80808080) != 0) break;
-      *param_1 = uVar5;
-      param_1 = param_1 + 1;
-      param_2 = param_2 + 1;
-    }
-  }
-  pcVar2 = (char *)((int)param_2 - 1);
-  do {
-    param_3 = param_3 - 1;
-    if (param_3 == 0xffffffff) {
-      return;
-    }
-    pcVar2 = pcVar2 + 1;
-    cVar1 = *pcVar2;
-    puVar4 = (uint *)((int)param_1 + 1);
-    *(char *)param_1 = cVar1;
-    param_1 = puVar4;
-  } while (cVar1 != '\0');
-  puVar3 = (uint *)(param_3 + (int)puVar4);
-  for (; puVar4 != puVar3; puVar4 = (uint *)((int)puVar4 + 1)) {
-    *(char *)puVar4 = '\0';
-  }
-  return;
-}
-
-
-// ===== FUN_00087470 @ 00087470 (64 bytes)
-
-void FUN_00087470(undefined4 *param_1)
-
-{
-  param_1[3] = param_1[3] & 0xffffffdf;
-  if (param_1[6] != param_1[10]) {
-    FUN_00087658();
-    param_1[3] = param_1[3] & 0xffffcfef | 0x10;
-    param_1[6] = param_1[10];
-    param_1[0xb] = param_1[4];
-    *param_1 = param_1[4];
-  }
-  param_1[3] = param_1[3] & 0xffffbfbf;
-  return;
-}
-
-
-// ===== FUN_000874b0 @ 000874b0 (320 bytes)
-
-uint FUN_000874b0(byte param_1,uint *param_2)
+uint fputc(byte param_1,uint *param_2)
 
 {
   int iVar1;
@@ -145,7 +17,7 @@ uint FUN_000874b0(byte param_1,uint *param_2)
   uVar3 = param_2[3];
   param_2[3] = uVar3 & 0xfff7ffff;
   if ((int)(uVar3 << 0x1a) < 0) {
-    FUN_00087470(param_2);
+    _Cflush_read(param_2);
   }
   uVar3 = param_2[3];
   if (((int)param_2[2] < -1) && (-1 < (int)(uVar3 << 0x16))) {
@@ -160,18 +32,18 @@ LAB_000874ee:
   else {
     if ((uVar3 & 0x108a) == 2) {
       if ((uVar3 & 0xa010) == 0x8000) {
-        FUN_00085e2c(param_2,0);
+        fseek(param_2,0);
         if ((int)(param_2[3] << 0x1a) < 0) {
-          FUN_00087470(param_2);
+          _Cflush_read(param_2);
         }
         uVar3 = param_2[3];
       }
       uVar5 = uVar3 | 0x12000;
       param_2[3] = uVar5;
       if ((uVar3 & 0xf00) == 0) {
-        iVar1 = FUN_00087940(param_2[5]);
+        iVar1 = __sys_istty(param_2[5]);
         if ((iVar1 == 0) || (-1 < (int)(uVar3 << 0x15))) {
-          uVar2 = _Csys_alloc_failed(0x100);
+          uVar2 = _Csys_alloc(0x100);
           param_2[7] = 0x100;
           uVar5 = uVar3 | 0x12800;
           param_2[4] = uVar2;
@@ -205,7 +77,7 @@ LAB_000874ee:
         param_2[0xb] = (uint)pbVar6;
         *param_2 = (uint)pbVar6;
         param_2[2] = 0;
-        iVar1 = FUN_00085d84(pbVar6,iVar1,param_2);
+        iVar1 = _Cwrite_buffer(pbVar6,iVar1,param_2);
         if (iVar1 == 0) {
           return uVar3;
         }
@@ -217,7 +89,7 @@ LAB_000874ee:
         else {
           iVar1 = (int)pbVar4 - (int)pbVar6;
         }
-        if ((iVar1 == 0) || (iVar1 = FUN_00085d84(pbVar6,iVar1,param_2), iVar1 == 0)) {
+        if ((iVar1 == 0) || (iVar1 = _Cwrite_buffer(pbVar6,iVar1,param_2), iVar1 == 0)) {
           param_2[0xb] = (uint)(pbVar6 + 1);
           *param_2 = (uint)(pbVar6 + 1);
           param_2[2] = param_2[7] - 1;
@@ -237,16 +109,18 @@ LAB_000874ee:
 }
 
 
-// ===== FUN_000875f0 @ 000875f0 (104 bytes)
+// ===== _Cfdopen @ 000875f0 (104 bytes)
 
-int FUN_000875f0(undefined4 param_1,char *param_2,int param_3)
+/* Opens fd with mode "r"/"w"/"a"[+][b] into a FILE (used by stdio_init) [inference] */
+
+int _Cfdopen(undefined4 param_1,char *param_2,int param_3)
 
 {
   char cVar1;
   undefined *puVar2;
   uint uVar3;
   
-  FUN_000876aa(param_3);
+  _Cfclose(param_3);
   cVar1 = *param_2;
   if (cVar1 == 'r') {
     uVar3 = 0;
@@ -277,15 +151,17 @@ int FUN_000875f0(undefined4 param_1,char *param_2,int param_3)
   *(undefined **)(param_3 + 0xc) = puVar2;
   *(undefined4 *)(param_3 + 0x14) = param_1;
   if ((int)(uVar3 << 0x1c) < 0) {
-    FUN_00085e2c(param_3,0,2);
+    fseek(param_3,0,2);
   }
   return param_3;
 }
 
 
-// ===== FUN_00087658 @ 00087658 (82 bytes)
+// ===== _Cflush_write @ 00087658 (82 bytes)
 
-undefined4 FUN_00087658(uint *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* [guess] */
+
+undefined4 _Cflush_write(uint *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   uint uVar1;
@@ -306,7 +182,7 @@ undefined4 FUN_00087658(uint *param_1,undefined4 param_2,undefined4 param_3,unde
       uVar1 = uVar3;
     }
     if ((uVar4 == uVar1) ||
-       (iVar2 = FUN_00085d84(uVar4,uVar1 - uVar4,param_1,uVar3,param_4), iVar2 == 0)) {
+       (iVar2 = _Cwrite_buffer(uVar4,uVar1 - uVar4,param_1,uVar3,param_4), iVar2 == 0)) {
       param_1[0xb] = uVar4;
       *param_1 = uVar4;
       param_1[2] = 0;
@@ -318,9 +194,11 @@ undefined4 FUN_00087658(uint *param_1,undefined4 param_2,undefined4 param_3,unde
 }
 
 
-// ===== FUN_000876aa @ 000876aa (88 bytes)
+// ===== _Cfclose @ 000876aa (88 bytes)
 
-undefined4 FUN_000876aa(int param_1)
+/* [inference] */
+
+undefined4 _Cfclose(int param_1)
 
 {
   uint uVar1;
@@ -336,14 +214,14 @@ undefined4 FUN_000876aa(int param_1)
     if (-1 < (int)(uVar1 << 0x1c)) {
       uVar2 = *(undefined4 *)(param_1 + 0x10);
       uVar3 = *(undefined4 *)(param_1 + 0x14);
-      FUN_00085df0();
-      FUN_00087934(uVar3);
+      fflush();
+      __sys_close(uVar3);
       if ((int)(uVar1 << 0x14) < 0) {
-        FUN_000872c4(uVar2);
+        free(uVar2);
       }
       if ((uVar1 & 0xffc00000) == 0xad800000) {
-        FUN_00087952(auStack_38,*(undefined4 *)(param_1 + 0x20),0x20);
-        FUN_00087702(auStack_38);
+        __sys_tmpnam(auStack_38,*(undefined4 *)(param_1 + 0x20),0x20);
+        remove(auStack_38);
       }
     }
     memset(param_1,0,0x3c);
@@ -353,21 +231,26 @@ undefined4 FUN_000876aa(int param_1)
 }
 
 
-// ===== FUN_00087702 @ 00087702 (26 bytes)
+// ===== remove @ 00087702 (20 bytes)
 
-undefined8 FUN_00087702(void)
+/* Stub: strlen then return -1 [guess] */
+
+void remove(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
   uVar1 = strlen();
-  return CONCAT44(uVar1,0xffffffff);
+  __sys_readc(param_1,uVar1);
+  return;
 }
 
 
-// ===== FUN_00087716 @ 00087716 (64 bytes)
+// ===== _Cfflush1 @ 00087716 (64 bytes)
 
-undefined4 FUN_00087716(int *param_1)
+/* [inference] */
+
+undefined4 _Cfflush1(int *param_1)
 
 {
   undefined4 uVar1;
@@ -377,22 +260,24 @@ undefined4 FUN_00087716(int *param_1)
   if ((param_1[3] & 3U) != 0) {
     if (param_1[3] << 0x1a < 0) {
       iVar2 = param_1[10];
-      FUN_00087470();
+      _Cflush_read();
     }
     else {
       iVar2 = (*param_1 + param_1[6]) - param_1[4];
     }
     param_1[3] = param_1[3] & 0xffffcfff;
-    uVar1 = FUN_00087658(param_1);
-    FUN_00085e2c(param_1,iVar2,0);
+    uVar1 = _Cflush_write(param_1);
+    fseek(param_1,iVar2,0);
   }
   return uVar1;
 }
 
 
-// ===== FUN_00087756 @ 00087756 (252 bytes)
+// ===== __aeabi_uldivmod @ 00087756 (252 bytes)
 
-undefined8 FUN_00087756(uint param_1,uint param_2,uint param_3,uint param_4)
+/* 64-bit unsigned divide (also reached by the flash veneer 0x08001618) [inference] */
+
+undefined8 __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   longlong lVar1;
@@ -413,9 +298,9 @@ undefined8 FUN_00087756(uint param_1,uint param_2,uint param_3,uint param_4)
     }
     iVar2 = 0;
     if (param_3 <= param_2) {
-      iVar2 = FUN_00087850(param_2,0);
+      iVar2 = __udivmoddi_core(param_2,0);
     }
-    uVar3 = FUN_00087850(param_1);
+    uVar3 = __udivmoddi_core(param_1);
     uVar6 = extraout_r12;
   }
   else if ((int)param_4 < 0) {
@@ -446,8 +331,8 @@ undefined8 FUN_00087756(uint param_1,uint param_2,uint param_3,uint param_4)
       param_4 = param_4 << 1;
     }
     uVar3 = 0x20 - uVar6;
-    uVar8 = FUN_00087850(param_1 >> (uVar3 & 0xff) | param_2 << uVar6,param_2 >> (uVar3 & 0xff),
-                         param_4 | param_3 >> (uVar3 & 0xff));
+    uVar8 = __udivmoddi_core(param_1 >> (uVar3 & 0xff) | param_2 << uVar6,param_2 >> (uVar3 & 0xff),
+                             param_4 | param_3 >> (uVar3 & 0xff));
     uVar4 = (uint)(uVar8 >> 0x20);
     uVar3 = (uint)uVar8;
     lVar1 = (ulonglong)(param_3 << uVar6) * (uVar8 & 0xffffffff);
@@ -473,9 +358,11 @@ undefined8 FUN_00087756(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_00087850 @ 00087850 (122 bytes)
+// ===== __udivmoddi_core @ 00087850 (122 bytes)
 
-void FUN_00087850(uint param_1,uint param_2,uint param_3)
+/* [guess] */
+
+void __udivmoddi_core(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -662,9 +549,11 @@ void memset(uint *param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_00087932 @ 00087932 (2 bytes)
+// ===== __sys_appexit @ 00087932 (2 bytes)
 
-void FUN_00087932(void)
+/* b . (hang) [fact] */
+
+void __sys_appexit(void)
 
 {
   do {
@@ -673,54 +562,77 @@ void FUN_00087932(void)
 }
 
 
-// ===== FUN_00087934 @ 00087934 (6 bytes)
+// ===== __sys_close @ 00087934 (6 bytes)
 
-undefined4 FUN_00087934(void)
+/* returns -1 (no host) [fact] */
 
-{
-  return 0xffffffff;
-}
-
-
-// ===== FUN_0008793a @ 0008793a (6 bytes)
-
-undefined4 FUN_0008793a(void)
+undefined4 __sys_close(void)
 
 {
   return 0xffffffff;
 }
 
 
-// ===== FUN_00087940 @ 00087940 (6 bytes)
+// ===== __sys_flen @ 0008793a (6 bytes)
 
-undefined4 FUN_00087940(void)
+/* returns -1 [fact] */
 
-{
-  return 0xffffffff;
-}
-
-
-// ===== FUN_0008794c @ 0008794c (6 bytes)
-
-undefined4 FUN_0008794c(void)
+undefined4 __sys_flen(void)
 
 {
   return 0xffffffff;
 }
 
 
-// ===== FUN_00087952 @ 00087952 (6 bytes)
+// ===== __sys_istty @ 00087940 (6 bytes)
 
-undefined4 FUN_00087952(void)
+/* returns -1 [fact] */
+
+undefined4 __sys_istty(void)
 
 {
   return 0xffffffff;
 }
 
 
-// ===== FUN_00087958 @ 00087958 (4 bytes)
+// ===== __sys_readc @ 00087946 (6 bytes)
 
-undefined4 FUN_00087958(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* NEW: returns -1 [guess: name] */
+
+undefined4 __sys_readc(void)
+
+{
+  return 0xffffffff;
+}
+
+
+// ===== __sys_seek @ 0008794c (6 bytes)
+
+/* returns -1 [fact] */
+
+undefined4 __sys_seek(void)
+
+{
+  return 0xffffffff;
+}
+
+
+// ===== __sys_tmpnam @ 00087952 (6 bytes)
+
+/* returns -1 [guess: name] */
+
+undefined4 __sys_tmpnam(void)
+
+{
+  return 0xffffffff;
+}
+
+
+// ===== __sys_write @ 00087958 (4 bytes)
+
+/* returns len (nothing written: stdio goes nowhere) [fact] */
+
+undefined4 __sys_write(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   return param_3;
@@ -1050,6 +962,36 @@ void FLEXCOMM5_IRQHandler(void)
 
 {
   FUN_080016e8();
+  return;
+}
+
+
+// ===== FLEXCOMM14_IRQHandler @ 080012dc (8 bytes)
+
+void FLEXCOMM14_IRQHandler(void)
+
+{
+  FUN_08001768();
+  return;
+}
+
+
+// ===== FLEXCOMM15_IRQHandler @ 080012e4 (8 bytes)
+
+void FLEXCOMM15_IRQHandler(void)
+
+{
+  FUN_080016a8();
+  return;
+}
+
+
+// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
+
+void ADC0_IRQHandler(void)
+
+{
+  FUN_08001220();
   return;
 }
 
