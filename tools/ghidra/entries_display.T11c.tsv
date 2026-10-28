@@ -1,0 +1,2 @@
+# FT-710 DISPLAY: function entries missed by analysis (T11c). Same format as entries_display.tsv.
+2015f0e0		task entry built by fwdbg_task_create (FUN_2015f55c): mov r4,r0; bl update_display_self

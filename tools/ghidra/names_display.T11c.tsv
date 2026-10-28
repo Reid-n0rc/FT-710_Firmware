@@ -1,0 +1,112 @@
+# FT-710 DISPLAY: T11c name proposals (update / SD / debug paths). Same format as names_display.tsv; see docs/code/display/update.md.
+# --- update objects (C++, vtables in .rodata 0x20428070-0x204280A0)
+2010dd24	fwobj_create_all	builds the 4 update objects at 0x2081166C (MAIN, DISPLAY, IFDSP, SDR)
+201604f4	fwobj_base_ctor	base update-object constructor, vtable 0x2042807C
+201606a4	fwobj_main_ctor	MAIN object, vtable 0x20428088
+20160c10	fwobj_display_ctor	DISPLAY object, vtable 0x204280A0
+201607c8	fwobj_ifdsp_ctor	IFDSP object, vtable 0x20428094, +0xAB flag
+201603d4	fwobj_sdr_ctor	SDR object, vtable 0x20428070, +0xAB flag
+201605ac	fwobj_main_run	vtbl[0]: CRC check, then RX boot mode entry + rx_boot_program
+201607e8	fwobj_display_run	vtbl[0]: CRC check, then decoded write to the other bank (or loader) + flag
+201606bc	fwobj_ifdsp_run	vtbl[0]: CRC check, then dsp_isp_program
+201602ac	fwobj_sdr_run	vtbl[0]: size == 0x43075A, CRC check, then sdr_flash_write
+20160418	fwobj_match_name	keeps the highest matching file name per object
+20163600	fwname_pattern_match	prefix + 4 chars + ".sfl", case-insensitive, exact length
+20160558	fwname_pattern_init	builds the name pattern (prefix, "NNNN", suffix)
+201604c8	fwobj_version_from_name	"0108" in the name -> "01-08"
+2016049c	fwobj_set_status	status text (Ready, failed, ...)
+201604dc	fwobj_select	marks the object selected for update
+201603f4	fwobj_build_path	"%s%s" dir + file name
+2010e2d4	fwupdate_poll	starts task_fwupdate once, then 0 running / 1 all OK / 2 any failed
+2010dfc4	fwupdate_set_hotkey	stores the held USB key usage (0x3A = F1 enables #UP0 loader files)
+20107e90	usbkbd_last_key	first key usage of the last USB keyboard report
+# --- MAIN-link control during updates
+2010e514	mainlink_fw_mode_cmd	F1 <code> frame to MAIN on SCIF5 at 345600, waits for 0x06
+2010a974	isp_relay_mode_cmd	same F1 <code> frame (DSP 02/82)
+201109fc	sdr_relay_mode_cmd	same F1 <code> frame (SDR 01/81)
+20116518	mainlink_pause	flag 0x8000/0x4000 to the MAIN-link task (take over / give back SCIF5)
+20158f28	mainlink_send_ui_c3	0xC3 UI state frame to MAIN
+20158ec0	mainlink_send_ui_e2	0xE2 UI frame to MAIN
+# --- MAIN (RX651 boot mode)
+2010d50c	rx_boot_program	RX651 boot-mode programming of the decoded S-record
+2010d3e4	rx_boot_sync	0x00 / 0x55 auto-baud at 9600
+2010d224	rx_boot_signature	boot cmd 0x38
+2010d134	rx_boot_endian	boot cmd 0x36 (01)
+2010cf48	rx_boot_set_freq	boot cmd 0x32: 16 MHz input, 120 MHz system
+2010ce54	rx_boot_set_baud	boot cmd 0x34: 345600 bps
+2010cd64	rx_boot_sync_cmd	boot cmd 0x00
+2010cbd4	rx_boot_cmd_2c	boot cmd 0x2C, 1-byte answer
+2010cab4	rx_boot_id_auth	boot cmd 0x30 with 16 x 0xFF ID code
+2010c918	rx_boot_area_count	boot cmd 0x53
+2010c6ac	rx_boot_area_info	boot cmd 0x54 per area: type, start, end, unit sizes
+2010c564	rx_boot_erase	boot cmd 0x50 (argument 0)
+2010c2f4	rx_boot_write_areas	boot cmd 0x13 (512-byte blocks) / 0x51 (config area)
+2010bca0	rx_boot_verify_areas	boot cmd 0x15 / 0x52 read-back and compare
+2010c14c	rx_boot_write_start	command packet 01 00 09 <cmd> start end
+2010bb00	rx_boot_read_start	command packet for read-back
+2010bf9c	rx_boot_data_packet	data packet 81 LNH LNL <cmd> data SUM 03/17
+2010b95c	rx_boot_read_compare	reads a block and memcmp with the expected data
+2010e970	srec_find_range	min/max S-record address inside an area
+2010e868	srec_load_range	S-records inside [start,end] into a buffer
+2010e7b0	srec_load_image	S-records into a 512 KiB buffer (uptest)
+2010e670	srec_parse_line	one S0..S9 record, checksum checked
+2010e624	hex2_parse	two uppercase hex digits
+2010ea74	uptest_program_stub	empty programmer used by uptest (returns 0)
+2010ec44	uptest_line	debug commands uptest, uptest2, mrst, rf0, rf1
+# --- IFDSP (RT685 ROM ISP through MAIN)
+2010b81c	dsp_isp_program	IFDSP: NXP ROM ISP over the MAIN relay
+2010aa7c	dsp_isp_ping	5A A6 ping -> 5A A7
+2010b5bc	dsp_isp_fill_option	FillMemory 0x1C000, 4, 0xC0000002
+2010b360	dsp_isp_configure_memory	ConfigureMemory 9 (FlexSPI NOR), 0x1C000
+2010b0f4	dsp_isp_erase_region	FlashEraseRegion 0x08000000, 0xA0000, 9
+2010ab74	dsp_isp_write_image	WriteMemory 256 B per packet from 0x08000000
+2010aa30	crc16_xmodem	CRC-16 poly 0x1021 init 0 (NXP framing)
+2010a940	sum8_neg_append	appends the negated 8-bit sum
+2010a918	be_bytes_to_u32	big-endian bytes to integer
+# --- SDR (FPGA registers through MAIN, data over RSPI channel 2)
+20110548	sdr_relay_xfer	binary register frame to MAIN, waits for 06 or a 7D reply
+2011064c	sdr_reg_write	FD 00 "%04X%04X" sum: FPGA register write via MAIN
+20110584	sdr_reg_read	FE 00 "%04X" sum: FPGA register read via MAIN
+201106f8	sdr_set_flash_addr	regs 0x30 / 0x31 = flash address
+20110750	sdr_wait_ready	polls reg 0x32 until the top nibble is 0 or 8
+201107c0	sdr_spi_send_block	4 KiB block over RSPI channel 2
+201103f4	hex_to_bin	ASCII hex to bytes
+201009dc	crc16_a001	CRC-16 reflected 0xA001, init/xorout 0xFFFF
+20100990	crc16_a001_table_init	table at 0x208D9560
+# --- USB-keyboard chain-1 handlers
+20110da8	sdr_debug_init	chain-1 handler 7: registers sdr_debug_cmd, flag 0x208001B8 (no task waits on it)
+2010a8f8	kbdmap_init	chain-1 handler 8: keyboard layout tables, returns kbdmap_handler
+2010a898	kbdmap_handler	maps HID usage + Shift/AltGr to a character, debug overlay
+2010a630	kbdmap_tables_init	fills the keyboard layout tables 0x20450290 / 0x2045C290
+2015f55c	fwdbg_task_create	creates the self-update debug task (entry 0x2015F0E0, pri 5, 0x2000)
+2015f0e0	task_fwdbg	task entry: loops on update_display_self
+2015f348	fwdbg_write_other_bank	fw1up: raw I:\AH076H_DISPLAY.bin to the non-running bank + flag
+2015f1f0	fwdbg_verify_bank1	fw1chk: compares a file with bank 1 (0x18400000), forever (was display_flash_write_bank)
+20111224	usbkbd_set_leds	keyboard LED status bits (progress / result display)
+# --- flash, GPIO, reset
+20103e74	spiflash_erase	erases 64 KiB blocks
+20103dd0	spiflash_write	writes, then checks against the XIP window 0x18000000
+20114df4	update_finish_reset	end of update: GPIOs, MAIN held in reset, watchdog reset
+20100268	wdt_system_reset	WTCSR/WRCSR writes, system reset
+20101ca4	gpio_rx_update	P4_3 = RX_UPDATE
+20101c74	gpio_rx_update_2	P4_3 = RX_UPDATE (second copy)
+20101d2c	gpio_rx_update_off	RX_UPDATE low when arg != 0
+20101c8c	gpio_p8_5	P8_5
+20101cbc	gpio_qf_reset	P11_2 = QF_RESETn
+# --- GUI side
+2015b134	fwupdate_progress_screen	progress rows, error screen, update_finish_reset
+2015a500	fwupdate_menu_screen	file list, CRC check, pre-marks newer versions
+20159158	update_error_screen	"UPDATE ERROR", waits for a touch
+20159cb0	bootloader_unlock_wait	key-6 mode: > 4 encoder steps -> loader-install mode
+201322bc	fw_installed_versions_set	installed versions from the MAIN 0x60 frame
+# --- SFL helpers
+201149e0	sfl_encode	byte-wise key addition (inverse of sfl_decode)
+2010f370	sfl_write_file	writes an SFL container (blank box, tag line, payload)
+2010f60c	backup_save_dat	MemList / Menu backup as SFL .dat
+20114bfc	sfl_stream_read	fread + decode
+20114b3c	sfl_stream_gets	line read with decode
+20114ae0	sfl_stream_getc	one decoded byte
+201140d0	progress_set	progress percent 0x20800364
+201140dc	progress_get	progress percent
+201140e8	progress_range_init	{from, to} range
+201140f4	progress_scale	maps a fraction into the range
