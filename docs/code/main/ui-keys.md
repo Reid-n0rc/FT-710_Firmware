@@ -169,7 +169,9 @@ in +0xA1 and dispatches **[fact]**:
 | 4 | — | if `FUN_fffc519d(0, 1)` allows: +0xA3 = step (ignored on some +0x3FD screens) | `FUN_fffc89ef` |
 | 5 | — | +0xA4 = step | `FUN_fffc8a90` |
 
-So id 1 is the main tuning dial **[fact: it tunes]**. Id 6 looks like the main dial in a high-resolution or alternate mode, and ids 2/3 the
+So id 1 is the main tuning dial **[fact: it tunes]**. Id 6 is the **USB mouse wheel on the main screen**: the DISPLAY's `mouse_wheel_event`
+0x2015FAC4 sends id 6 only when its screen id is 0x20 **[fact, DISPLAY code; see [display/input.md](../display/input.md#rotary-encoders-and-pots)]**, and MAIN
+tunes with it like the main dial. (Corrected by T19h: this page used to guess "the main dial in a high-resolution or alternate mode".) Ids 2/3 are the
 multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs of the front panel needs the DISPLAY side (T11f).
 
 ## Other input-related frames

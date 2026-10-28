@@ -607,6 +607,7 @@ You turn the VFO knob by a few clicks. Here is what happens:
 
 1. **The DISPLAY counts.** The knob is a quadrature encoder wired to a hardware counter in the DISPLAY chip. Every 8 ms a task reads the
    counter and works out the signed change since the last read. The DISPLAY applies no acceleration and no step size. It sends the raw count.
+   (A USB mouse wheel on the main screen is sent as its own knob number, and MAIN tunes with it just like the main dial.)
 2. **An `E1` frame goes to MAIN.** The frame carries the knob number and the step count. MAIN must ACK it before the DISPLAY sends the next
    one. If you spin the knob while an ACK is still pending, the DISPLAY adds the new steps to a queue and merges them (up to ±127), so no
    steps are lost. They are only combined.

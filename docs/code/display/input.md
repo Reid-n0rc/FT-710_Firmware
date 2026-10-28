@@ -213,13 +213,15 @@ flowchart LR
   `pot_resend_all` (0x20112CC4) re-sends both pots when the GUI link comes up, so MAIN learns their positions **[fact]**.
 - **No acceleration and no resolution scaling on the DISPLAY side:** raw counter deltas go to MAIN every 8 ms **[fact]**. Dial acceleration,
   FINE/FAST and step size must be in MAIN (T10b/T10g) **[inference]**.
-- **Frame:** `mainlink_send_enc` (0x20115780) builds `AA 00 | 07 00 | E1 id val b2 b3 b4 | checksum` (16-bit marker and length, then the 5-byte
-  record and a byte sum). Only one E1 frame is in flight (0x2045002A). Up to 10 records per id are queued in the meantime (0x2045F0C5,
+- **Frame:** `mainlink_send_enc` (0x20115780) builds a buffer `AA 00 | 07 00 | E1 id val b2 b3 b4 | checksum` (16-bit marker and length, then the 5-byte
+  record and a byte sum). The marker and length are only the in-memory buffer header; the wire carries the 7 bytes `E1 id val b2 b3 b4 sum`
+  ([mainlink.md](mainlink.md#1-summary)) **[fact]** (wording clarified by T19h). Only one E1 frame is in flight (0x2045002A). Up to 10 records per id are queued in the meantime (0x2045F0C5,
   counts 0x2045F224). Deltas of ids 1–3 merge into the last slot, clamped to ±127, and ids 4–5 keep the latest value **[fact]**. The ack that
   clears 0x2045002A is in the RX side ([mainlink.md](mainlink.md)).
 - **Which knob is which [inference]:** id 1 (hardware quadrature counter, ×4 mode) = main dial (REL20-50LD). id 2 = [FUNC] (MULTI) knob, because
   the mouse wheel sends id 2 on the menu-type screens. id 3 = [STEP/MCH (DSP)] knob. ids 4/5 = the two front pots VR6001/VR6002 (AF gain and
-  RF/SQL) **[guess for which is which]**. id 6 = mouse wheel on the main screen (0x20).
+  RF/SQL) **[guess for which is which]**. id 6 = mouse wheel on the main screen: `mouse_wheel_event` 0x2015FAC4 sends id 6 when the
+  screen id 0x208F0B2A is 0x20, id 2 or 3 on other screens **[fact]**.
 
 ## Touch panel (TSC2003, driver named "tsc2007")
 
