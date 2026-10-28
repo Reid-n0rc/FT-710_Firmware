@@ -1,0 +1,93 @@
+# FT-710 IFDSP V01-01 name proposals from T12c (M33<->HiFi4 IPC). address<TAB>name<TAB>plate comment
+# Two programs: "# program: m33" (FT-710_IFDSP_V0101.bin, Cortex-M33) and "# program: hifi4" (FT-710_IFDSP_V0101_hifi4.bin).
+# Names follow rpmsg-lite / NXP MCUXpresso SDK / Cadence XOS where the code matches; see docs/code/ifdsp/ipc.md.
+# Lines marked "create" have no Ghidra function yet (only a label or nothing); create the function before naming.
+# Lines marked "rename" replace a name from IfdspM33Names.java (T12a) that matched the wrong rpmsg-lite layer.
+# program: m33
+# --- rpmsg-lite env/platform layer (FreeRTOS env, imxrt600_m33 platform); renames of the T12a names
+000819e8	env_init	rename (was platform_init): first call creates binary sema 0x8871C, clears isr_table 0x88720, calls platform_init
+000819b4	platform_init	rename (was platform_init_interrupt): MU_Init(MUA), NVIC IPR[34]=0x60, ISER1 bit2 (MU_A IRQ 34), create platform_lock 0x88714
+000818d0	platform_init_interrupt	rename (was platform_interrupt_enable): env_register_isr, then on first use MU-A CR |= RIE1 (bit 26), refcount 0x88710
+00081958	platform_interrupt_enable	rename (was env_enable_interrupt; env wrapper inlined): disable_counter 0x8870C--, at 0 NVIC ISER1=4 (MU_A)
+00081980	platform_interrupt_disable	rename (was env_disable_interrupt; env wrapper inlined): at 0 NVIC ICER1=4, disable_counter++
+00081a60	env_register_isr	rename (was platform_register_isr): isr_table[vector] = vq (32 entries at 0x88720)
+00081914	platform_notify	create: if vector<2: lock platform_lock, MU_SendMsg(MUA, 1, vector<<16), unlock
+00086efe	MU_SendMsg	wait SR TEn (0x800000>>reg), TR[reg] = msg
+00086106	env_create_queue	xQueueGenericCreate(len, size), stores handle
+00086120	env_put_queue	xQueueSend / xQueueSendFromISR (+ yield) depending on xPortIsInsideInterrupt
+0008616e	env_get_queue	xQueueReceive / xQueueReceiveFromISR depending on xPortIsInsideInterrupt
+00086086	env_mb	DSB
+0008608c	env_rmb	DSB
+00086092	env_wmb	DSB
+0008606a	env_map_vatopa	identity address map (empty body, returns arg)
+00086542	vPortYield	ICSR PENDSVSET + DSB/ISB
+# --- DSP bring-up (also T12d territory; listed here because ipc.md cites it)
+00083e48	DSP_Init	BOARD_DSP_Init helper: if PDRUNCFG1 & 0x0F000000 power up DSP memories (PDRUNCFG1_CLR, POWER_ApplyPD) and RESET_ClearPeripheralReset(1); else if RSTCTL0 PRSTCTL0 bit 1 set, PRSTCTL0_CLR = 2 and wait [inference: NXP fsl_dsp DSP_Init]
+# --- rpmsg-lite core / queue
+000861b8	rpmsg_queue_rx_cb	create: endpoint callback of ept 0x28; env_put_queue(q, {src, data, len}); returns RL_HOLD (1)
+00086200	add_to_list	llist insert at head (endpoint list rl+8)
+00086248	rpmsg_lite_get_endpoint_from_addr	walks the endpoint list for addr
+00086258	rpmsg_lite_rx_callback	rx_vq callback: vq_rx, find ept by dst, call ept->rx_cb, else vq_rx_free
+0008621e	rpmsg_lite_tx_callback	create: tx_vq callback, sets rl->link_state = 1
+0008622a	virtqueue_notify	create: vq notify hook, platform_notify(vq->vq_queue_index)
+00086232	vq_tx_master	create: master_vq_ops[0] (table 0x879AC): virtqueue_add_buffer, assert on error
+00086244	vq_tx_alloc_master	create: master_vq_ops[1]: virtqueue_get_buffer(tvq)
+000862ae	vq_rx_master	create: master_vq_ops[2]: virtqueue_get_buffer(rvq)
+00086240	vq_rx_free_master	create: master_vq_ops[3]: tail call vq_tx_master (virtqueue_add_buffer)
+# --- rpmsg-lite virtqueue
+00086342	vq_ring_update_avail	avail->ring[idx & (num-1)] = desc; wmb; avail->idx++
+00086370	vq_ring_update_used	used->ring[] = {id, len}; wmb; used->idx++
+00086396	virtqueue_add_buffer	vq_ring_update_avail, returns 0
+000863ac	virtqueue_fill_avail_buffers	init: desc[n] = {buf, len 0x200, flags 2 (WRITE)}, add to avail ring (rx_vq)
+000863fe	virtqueue_get_buffer	consume used ring entry, return desc buffer, len, idx
+00086456	virtqueue_get_buffer_length	desc[idx].len
+00086460	virtqueue_fill_used_buffers	init: desc[n] = {buf, 0x200}, add to used ring (tx_vq)
+000864aa	virtqueue_disable_cb	avail.flags |= NO_INTERRUPT (or event idx)
+000864d2	virtqueue_kick	env_mb; if host must be notified, vq->notify(vq)
+00086518	vq_ring_init	chain desc[i].next = i+1, last = 0x8000
+# program: hifi4
+# --- XOS main and IPC thread (NXP dsp_xaf-style SRTM handler)
+0021c498	main	XOS main: zero DMA area 0x20060000..0x200631E0, regfile_init_defaults, clock globals (24 MHz, 18.432 MHz), creates Thread_Main, Thread_Ipc, others, xos_start
+0021c360	Thread_Main	XOS thread "Thread_Main" (entry from literal 0x206CD0)
+0021c3b4	Thread_Ipc	XOS thread "Thread_Ipc": MU_Init(MUB), msgq, rpmsg_lite_remote_init(0x20020000), wait link up, ept 0x1E, MU flag/SEMA42 boot handshake, then loop xos_msgq_get -> handle_srtm_msg
+0021c398	ipc_ept_rx_cb	rpmsg ept callback: if len == 0x98 xos_msgq_put(msg); return RL_RELEASE (NXP my_ept_read_cb)
+0021bd40	handle_srtm_msg	checks version byte, dispatch on category (+8): 0 general, 1 audio, else error at +0x14; if type (+0xB) == request, reply with rpmsg_lite_send under mutex
+0021bdcc	handle_msg_general	category 0: command (+0xC); system info fills param[] with 9 component versions (0x00020000, 0x00010003, ...)
+0021be54	handle_msg_audio	category 1 (M33 prints it as Mute on/off): command (+0xC), result in +0x14/+0x18
+0021be80	regfile_init_defaults	memset(0x20070000, 0, 0x10000) then default values via bases 0x2006FF00 (regs 0..) and 0x20077F00 (regs 0x4000..)
+# --- NXP SDK drivers (DSP side)
+00212d00	MU_Init	clock enable for MU (base 0x40111000 MU-B passed by Thread_Ipc)
+00212e58	MU_SendMsg	wait SR TEn, TR[reg] (+0x20)
+00212e88	MU_ReceiveMsg	wait SR RFn, RR[reg] (+0x40)
+00212eb8	MU_SetFlags	wait SR FUP (bit 8) clear, CR Fn = flags
+00213d10	SEMA42_GetInstance	base -> index via table 0x2004E0
+00213d24	SEMA42_Init	CLOCK_EnableClock(SEMA42) inlined (CLKCTL PSCCTL SET)
+00213dbc	SEMA42_Deinit	CLOCK_DisableClock(SEMA42) inlined (CLKCTL PSCCTL CLR)
+00213e54	SEMA42_TryLock	gate byte at base + (gate ^ 3) = proc+1, read back
+00213e84	SEMA42_Lock	spin until gate free, then lock
+00213ed0	SEMA42_ResetGate	RSTGT = 0xE200 then 0x1D00 | gate
+# --- rpmsg-lite (remote side) + xtensa/XOS env and platform
+0021b544	rpmsg_lite_remote_init	called by Thread_Ipc; init_interrupt x2, disable/enable x2 [inference]
+0021b078	rpmsg_lite_is_link_up	returns rl->link_state (+0x10)
+0021b088	rpmsg_lite_send	called by handle_srtm_msg and rpmsg_ns_announce
+0021af9c	rpmsg_lite_create_ept	called by Thread_Ipc (callback ipc_ept_rx_cb) and rpmsg_ns_bind
+0021b734	rpmsg_ns_bind	creates an endpoint (no callers found) [inference]
+0021b778	rpmsg_ns_announce	sends via rpmsg_lite_send, error 0xFFFFEC75 (no callers found) [inference]
+0021ac14	env_isr	isr_table[vector] -> virtqueue_notification
+0021ac30	MU_B_IRQHandler	rpmsg platform ISR: if MU-B SR RF1 (bit 26): env_isr(RR1 >> 16)
+0021ac58	platform_init_interrupt	env_register_isr, first use: MU-B CR |= RIE1, xos_register_interrupt_handler(MU_B_IRQHandler)
+0021acb4	platform_deinit_interrupt	last use: MU-B CR &= ~RIE1, unregister handler
+0021ad04	platform_notify	wait MU-B SR TE1 (bit 22), TR1 = vector << 16
+0021ad44	platform_time_delay	busy-wait on CCOUNT (0x1F40 cycles per unit)
+0021abb0	env_register_isr	isr_table entry store [inference]
+0021ab94	env_lock_mutex	[inference: paired with env_unlock_mutex around MU-B CR access]
+0021ab9c	env_unlock_mutex	[inference]
+002266fc	xos_register_interrupt_handler	called with MU_B_IRQHandler [inference]
+00226a50	xos_msgq_create	called by Thread_Ipc and the other thread creators [inference]
+00226b38	xos_msgq_put	called from ipc_ept_rx_cb [inference]
+00226cec	xos_msgq_get	Thread_Ipc main loop [inference]
+002270d4	xos_mutex_lock	around the reply rpmsg_lite_send [inference]
+00227230	xos_mutex_unlock	[inference]
+002274e0	xos_thread_create	called with thread entry, name, stack [inference]
+002277f0	xos_start	last call of main, arg 0 [inference]
+00233410	memset	(dst, 0, len) at main and regfile_init_defaults [inference]
