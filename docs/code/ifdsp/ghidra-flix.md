@@ -3,7 +3,7 @@
 Ghidra 12.1.4 cannot decode most of the IF DSP's HiFi4 code, so `decomp/ifdsp/hifi4/` is close to useless and the DSP is known
 mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). This page measures the gap, says exactly what is missing, and
 proposes how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
-[#102](https://github.com/Reid-n0rc/FT-710_Firmware/issues/102) (RADE in the DSP, which needs this code understood). Claims are
+[FT-710_Custom_Firmware#1](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/1) (RADE in the DSP, formerly #102, which needs this code understood). Claims are
 tagged **[fact]**, **[inference]** or **[guess]**; counts come from `flix.dis` (V01-01, 1,065 functions) and the core's ISA
 description, and are reproducible with the commands at the end.
 

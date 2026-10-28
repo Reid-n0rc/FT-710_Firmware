@@ -218,7 +218,7 @@ clarifier (RIT) is not in it**, so RIT never affects whether TX is allowed. Cons
 
 **2026 US rules.** Since 13 February 2026 the US has a 5351.5–5366.5 kHz segment (9.15 W ERP) and four 100 W channels (5332, 5348,
 5373, 5405 kHz). V01-12 predates this: with 0x315B the segment cannot be used from the VFO, and the old 5357.0/5358.5 channels now
-fall inside the segment. Issue [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103) plans a MAIN patch. A segment row added
+fall inside the segment. Issue [FT-710_Custom_Firmware#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2) (formerly #103) plans a MAIN patch. A segment row added
 to the US table must not fall at index ≥ 10 unless the `9 < row` memory test is changed with it: inserting it before row 10 would push
 the 6 m row to index 10 and put 6 m under the memory condition.
 

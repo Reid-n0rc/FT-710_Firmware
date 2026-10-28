@@ -2,6 +2,10 @@
 
 An analysis of the Yaesu FT-710 firmware. The goals are to understand the radio, find undocumented CAT commands, and eventually build custom firmware.
 
+**Custom firmware** (projects that change the radio: designs, patches, tests) lives in
+**[Reid-n0rc/FT-710_Custom_Firmware](https://github.com/Reid-n0rc/FT-710_Custom_Firmware)**, which builds on this repository
+(pinned as a submodule) and follows it automatically. This repository stays the place for facts about the stock firmware.
+
 **Agents and contributors: start with [AGENTS.md](AGENTS.md).** The task board is in [docs/tasks/README.md](docs/tasks/README.md).
 
 ## New here? Read the illustrated guide
