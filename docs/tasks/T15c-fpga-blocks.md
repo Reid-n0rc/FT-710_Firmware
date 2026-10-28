@@ -31,7 +31,6 @@ Documented in [`docs/code/sdr/netlist.md` section 3](../code/sdr/netlist.md#3-re
   through LUTs **[fact for links, inference for roles]**.
 - **No DISPLAY scope SPI slave found yet** among the bank 14/15 inputs: candidates are the 3.3 V inputs into LUTs
   without a synchronizer; open.
-
 - **UART B (V12/U12) is most likely MAIN's UART5** (it buffers a ~10-character line, MAIN's frame length) and
   **UART A (M18/L18) the debug console** (character-at-a-time, answers each character) **[inference]**.
 

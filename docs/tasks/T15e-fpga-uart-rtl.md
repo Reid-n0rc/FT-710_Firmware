@@ -29,4 +29,4 @@ structural slice. In `hdl/sdr/` with a short README.
 ## Follow-ups
 - Parser state machine and reply generation (the `x` command, the 7-byte read reply format, ACK/NAK), then the
   register bank interface; compare against a larger netlist slice once its boundary inputs are understood.
-- Decide which of the two UART instances is MAIN's UART5.
+- Confirm that UART B (V12/U12, line buffer) is MAIN's UART5 (T15c inference); the receiver RTL fits both instances.
