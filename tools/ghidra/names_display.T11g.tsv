@@ -1,0 +1,136 @@
+# FT-710 DISPLAY: T11g name proposals (misc peripherals, GIC, RTC, WAV recorder, SD user files). Same format as names_display.tsv.
+# Merge into names_display.tsv after the parent's rename pass. Evidence: docs/code/display/peripherals.md.
+# Entries marked "NEW ENTRY" need the function created first (tools/ghidra/entries_display.T11g.tsv).
+# --- GPIO / PFC pin configuration (port base table at 0x20800000: Pn; +0x300 PM, +0x400 PMC, +0x500 PFC, +0x600 PFCE, +0xA00 PFCAE, +0x4000 PIBC, +0x4100 PBDC, +0x4200 PIPC)
+201003a0	gpio_cfg_reset	(port,pin): PIBC/PBDC/PMC/PIPC = 0, PM = 1
+20100414	gpio_cfg_out_low	(port,pin): port mode, output, level 0
+20100838	gpio_cfg_out_high	(port,pin): port mode, output, level 1
+2010087c	gpio_cfg_input	(port,pin): port mode, input buffer on (PIBC)
+20100534	gpio_set_alt_func	(port,pin,func 1..8): PFC/PFCE/PFCAE bits = func-1
+20100658	gpio_cfg_alt	(port,pin,func,mode): PMC=1, alt function; mode 0 PIPC, 1 in, 2 out, 3 bidir
+201002ac	gpio_cfg_mask	(Pn ptr, mask|value<<16, flag): bulk port-mode pin set-up
+2010079c	spibsc0_pins_init	P9_2..P9_7 alt 2 (QF_CLK/CSn/DAT0..3)
+20100458	gpio_early_init	from cpg_early_init: P7_11 (RZ_PWR_ON) output low
+20101bbc	lcd_pins_enable	P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5 (or inputs)
+20101c10	lcd_power	lcd_pins_enable + P4_6 LCD_STBY + P10_14 LCD_PWR_EN
+20101c74	gpio_rx_update	P4_3 = RX_UPDATE (MAIN boot mode)
+20101ca4	gpio_rx_update_b	identical copy of gpio_rx_update
+20101c8c	gpio_p8_5	P8_5 (SDR_MOSI) port level, used by the reboot sequence
+20101cbc	gpio_qf_reset	P11_2 = QF_RESETn (W25Q128 reset)
+20101d14	gpio_p2_4_5_clear	P2_4, P2_5 and P10_1 low
+20101d70	sd_power	P7_12 = SDPWS (SD card power switch), 1-tick delay on power-up
+20101d94	sd_card_detect	P11_4 = SD_CD level
+20101dc4	gpio_dvr	P5_9 DVR0 / P5_8 DVR1 (lines to the MAIN DVI chain)
+20101dec	lvds_pins_enable	P5_0..P5_7 LVDS (RA..RCK pairs) alt1, or output low
+20101f44	rtc_dt_output	P1_0 (RTC_DT) back to output
+20101f50	rtc_dt_input	P1_0 (RTC_DT) as input for reading
+20101f5c	gpio_p2_15	P2_15 (ACC_MOSI) port level
+20101f8c	gpio_ft4222_reset	P2_7 = FT4222_RESET
+20101fa4	led_set_one	one front LED (P6 pin table) on/off
+20102040	led_set_mask	8 front LEDs from a bit mask (D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX)
+20101b60	backlight_enable	P4_7 BLPWM alt3 (MTU2 out) + P10_4 level, or input
+# --- clocks, reset, timers
+20116ccc	cpg_early_init	Reset_Handler: PL310 power ctrl, FRQCR 0x0035, FRQCR2 1, SYSCR3 0x0F, STBCR2..12
+20132320	vdc5_clock_on	STBCR9 VDC5 bits + STBREQ2/STBACK2 handshake (wake)
+20132398	vdc5_clock_off	STBREQ2/STBACK2 handshake, then STBCR9 bit (module stop)
+2013fe50	sdhi0_clock_on	STBCR12 &= 0xF3
+20100268	wdt_system_reset	WDT reset mode, WTCNT=0xFF: resets the chip almost at once
+20100348	system_reset_select	1: WDT reset; 2: P0 pin set-up then WDT reset
+20114df4	system_reboot	FS off, LCD/LVDS off, MAIN reset pulse, flash reset, wdt_system_reset
+20117860	ostm_time_us	system time (us) interpolated from the OSTM0 counter
+201178f4	delay_us	busy-wait on ostm_time_us
+# --- GIC
+20117300	gic_set_priority	GICD_IPRIORITYR byte = prio << 3
+2011733c	gic_init	distributor/CPU interface set-up, 587 handler slots = gic_default_handler
+20117728	gic_irq_exit	pops nesting stack, EOIR + PMR restore
+201177a0	gic_disable_irq	GICD_ICENABLER bit
+201175dc	gic_install_isr_stub	copies a 0x58-byte ISR stub, sets priority and handler slot
+2011761c	gic_get_handler
+2011762c	gic_def_inh	(intno, {attr, handler, prio}) direct handler, no stub
+201175b4	isr_desc_check	intno < 0x24B, prio < 0x20
+201568e0	gic_default_handler	unregistered interrupt IDs
+# --- RTC S-35190A (3-wire bit-bang on P1_0 DT, P1_1 CK, P1_2 CS via PSR1 0xFCFE3104; LSB first)
+20114144	rtc_delay	~20-loop spin
+20114168	rtc_send_byte
+201141c0	rtc_send_bytes
+201141e4	rtc_recv_byte
+20114244	rtc_recv_bytes
+20114268	rtc_read_reg	cmd 0x86|reg: status 1/2, INT1/INT2 registers
+201142cc	rtc_write_reg	cmd 0x06|reg + 1 data byte
+20114328	rtc_port_idle	CK high, CS low
+20114340	rtc_write_datetime_raw	cmd 0x26 + 7 BCD bytes
+201143a0	rtc_write_time_raw	cmd 0x66 + 3 BCD bytes
+20114400	rtc_read_datetime_raw	cmd 0xA6, 7 BCD bytes (hour bit 6 masked)
+2011446c	rtc_read_time_raw	cmd 0xE6
+201144d8	rtc_minutes_of_day
+20114528	rtc_get_date	(y, m, d) BCD
+20114564	rtc_set_date
+2011459c	rtc_get_time	(h, m, s) BCD
+201145d8	rtc_set_time
+20114608	rtc_set_datetime
+20114658	rtc_get_datetime
+201146b4	rtc_get_tm	struct tm (year+100, mon-1); used by the FAT layer for time stamps
+20114778	rtc_read_status	status1, status2, INT1, INT2
+201147b4	rtc_int_setup	writes status2 = 1 and INT1 = 1 (from MAIN message 0x62)
+201147d4	rtc_init	port idle, status1 = 2 (24 h), status2 = 0, creates the RTC mutex 0x20800368
+# --- backlight / LED dimmer (MTU2)
+2010261c	backlight_pwm_init	MTU2 ch3/ch4 reset-synchronised PWM, period 320 counts, TIOC4D out
+20102698	backlight_set_pct	NEW ENTRY; duty = pct*320/100 -> TGRD_4
+201026e0	backlight_set	thunk: backlight_set_pct
+201026e8	backlight_init	backlight_pwm_init + 60 %
+20113d20	dimmer_pwm_init	MTU2 ch0 PWM mode 1, P0/16, period 20000 (100 Hz), TIOC0A out
+20113d6c	dimmer_set_pct	NEW ENTRY; duty = pct*20000/100 -> TGRB_0
+20113db8	dimmer_set	thunk: dimmer_set_pct
+20113dc0	dimmer_init	dimmer_pwm_init + 60 %
+20102708	flashcfg_load	48-byte block at 0x183D0000, magic 0xA5C30001 + CRC-32
+20102774	flashcfg_save	erases/writes SPI-flash sector 0x3D0000
+# --- ADC
+201110cc	adc_read_all	ADDRA..ADDRH (AN0..AN7) >> 4
+2011115c	adc_start_scan	ADCSR = 0x20FF (start, continuous scan)
+# --- voice recorder / player (task "audio_codec"): WAV files in I:\FT-710\MESSAGE (kind 2) and \PlayList (kind 1)
+20105550	wav_list_dir	scans the folder for *.wav, up to 255 entries of 0x34 bytes, sorted
+20105790	audio_state	0 idle, 2 recording, 4 playing, 8 paused, 0x10/0x20 seeking
+2010579c	play_stop
+201057d8	wav_delete	deletes <dir>\<name>.wav and rescans
+201058c0	audio_error
+201058cc	audio_clear_error
+201058dc	rec_start	(name16, freq digits, mode index, kind): sets event flag 2
+20105a20	rec_stop
+20105a54	play_start	(name16, kind): sets event flag 4
+20105ae8	play_resume
+20105b28	play_pause
+20105b68	play_ffwd	+5 s (320000 bytes)
+20105ba8	play_rewind	-5 s
+20105be8	play_progress	"%02d:%02d:%02d" + percent
+20105d24	play_read_block	reads 0xC80 bytes, keeps the left channel, header {count/2, 0x1234}
+20105ee0	play_advance
+20105f2c	play_seek	fseek(pos + 0x5C)
+20105fa0	play_prime
+20106018	rec_close_abort
+20106060	rec_finish	pads to 4 bytes, rewrites the 0x5C-byte header sizes
+201061c8	rec_write
+20106248	rec_open_wav	writes RIFF/WAVE/fmt/LIST-ICMT/data header (0x5C bytes)
+20106588	sd_is_full	drive 'I' free space == 0
+20106dc8	audio_post_block	sends (type, buffer) to the audio mailbox 0x208000C4
+201052b0	wav_open_read
+20105158	wav_check_header
+2010508c	play_close
+# --- SD user files: MemList / Menu backups (task sdmenu)
+2010f0dc	sdmenu_default_name	"20YY_MM_DD_NN" from the RTC date
+2010f1e0	sdmenu_file_exists
+2010f240	sdmenu_req_save	MAIN transfer code 0x41 (MemList) / 0x43 (Menu)
+2010f284	sdmenu_req_load	MAIN transfer code 0x42 (MemList) / 0x44 (Menu)
+2010f2c8	sdmenu_xfer_len
+2010f2e8	sdmenu_select
+2010f300	sdmenu_select_load
+2010f35c	sd_present
+2010f370	sdmenu_write_dat	9 x 64-byte text lines ("MemList  n  CRC") + 0x7D10 encoded bytes
+2010f60c	sdmenu_save_file	<dir>\<name>.dat, sfl_encode, salted CRC-32
+2010f81c	sdmenu_load_file	RENAME (was sfl_load_file): loads a MemList/Menu .dat (size 0x7F50), checks CRC, type and model word
+2010fcf0	fmt_size_str	"%.2f KB" ... "%d TB"
+201101e8	sdmenu_request	starts save (flag 1) or load (flag 2), polls result
+20110278	sd_format_request	flag 3 (sd_make_dirs), progress percent
+20110368	sd_format_done
+201149e0	sfl_encode	inverse of sfl_decode (adds the 43-byte key)
+20101da4	gpio_usb0_en	NEW ENTRY; (port, on): P8_10 USB0_EN
+20101cd4	gpio_p2_4_5_select	NEW ENTRY; 3-way select on P2_4/P2_5/P10_1
