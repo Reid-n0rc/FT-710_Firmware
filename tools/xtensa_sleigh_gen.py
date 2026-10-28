@@ -763,9 +763,13 @@ class Emitter:
             return f"if ({cond}) goto {tgt};", ""
         if o["flags"] & 4 and name in LOOP:
             body = (f"LCOUNT = {r['r0']} - 1; LBEG = inst_next; LEND = &{r['r1']}; " + LOOP[name].format(**r))
-            return "", body if self.staged_ctx else body
+            return ("", body) if self.staged_ctx else (body, "")
         if name in SEM:
             return SEM[name].format(**r, **w), "\n".join(commit)
+        ls = ldst_template(name, [M.operands[oid]["name"] for oid, _ in M.iclasses[o["iclass"]]["ops"]], inouts)
+        if ls:
+            self.pcodeops |= ls[1]
+            return ls[0].format(**r, **w), "\n".join(commit)
         return self.generic(opc, opnames, inouts, regsizes, wnames), "\n".join(commit)
 
     def generic(self, opc, opnames, inouts, regsizes, wnames):
@@ -855,7 +859,10 @@ class Emitter:
                     pat = self.constraint(length, {slot["map"][b]: v for b, v in cube.items()})
                     text, opnames, compute, commit = self.opcode_parts(si, opc, pos, self.staged)
                     pat_all = " & ".join([p for p in [pat] if p] + list(dict.fromkeys(opnames))) or "epsilon"
-                    lines.append(f"{tname}: {text} is {pat_all} {{ {compute} }}")
+                    act = ""
+                    if M.opcodes[opc]["flags"] & 4:  # zero-overhead loop: same context trick as the stock module
+                        act = f" [ loopMode=1; loopEnd=1; globalset({opnames[1]}, loopEnd); ]"
+                    lines.append(f"{tname}: {text} is {pat_all}{act} {{ {compute} }}")
                     if self.staged:
                         wpat = " & ".join([p for p in [pat] if p] + list(dict.fromkeys(opnames))) or "epsilon"
                         wlines.append(f"{tname}w: is {wpat} {{ {commit} }}")
@@ -985,6 +992,49 @@ def decode_expr(od, raw, width):
                 e = f"({e} + {c})" if c > 0 else f"({e} - {-c})"
             return e
     return None
+
+
+LDST_FORMS = {"i": ("off", None), "x": ("off", None), "iu": ("off", "ea"), "xu": ("off", "ea"),
+              "ip": ("base", "add"), "xp": ("base", "add"), "xc": ("base", "ae_circ0"), "xc1": ("base", "ae_circ1")}
+
+
+def ldst_template(name, opnd_names, inouts):
+    """Real memory access for the simple HiFi4 loads/stores ae_l*/ae_s* (forms .i .x .iu .xu .ip .xp .xc .xc1, also
+    with the .l/.0 lane prefix). The data conversion (lane layout, f24, rounding) stays a named p-code operation:
+    load: data = op(*:N ea); store: *:N ea = op(data). Returns (template, pcodeops) or None."""
+    mm = re.match(r"^ae_([ls])(\d+)(?:x(\d+))?(f24|m|f|rng|ra64s)?(?:\.(?:l|0))?\.(i|x|iu|xu|ip|xp|xc|xc1)$", name)
+    if not mm or len(opnd_names) != 3 or opnd_names[1] != "ars":
+        return None
+    kind, bits, count, mod, form = mm.groups()
+    nbytes = int(bits) * int(count or 1) // 8
+    if mod == "f24" and not count:
+        nbytes = 4
+    if mod == "ra64s":
+        nbytes = 4 if bits == "32" else 4
+    if nbytes not in (1, 2, 4, 8):
+        return None
+    src, upd = LDST_FORMS[form]
+    op = pcodeop_name(name)
+    ops = {op}
+    t = "local ea:4 = {r1}" + (" + {r2};" if src == "off" else ";")
+    if kind == "l":
+        if inouts[0] != "o":
+            return None
+        t += f" {{w0}} = {op}(*:{nbytes} ea);"
+    else:
+        if inouts[0] != "i":
+            return None
+        t += f" *:{nbytes} ea = {op}({{r0}});"
+    if upd == "ea":
+        t += " {w1} = ea;"
+    elif upd == "add":
+        t += " {w1} = {r1} + {r2};"
+    elif upd:
+        t += f" {{w1}} = {upd}({{r1}}, {{r2}});"
+        ops.add(upd)
+    if upd and inouts[1] != "m":
+        return None
+    return t, ops
 
 
 def pcodeop_name(mnem):

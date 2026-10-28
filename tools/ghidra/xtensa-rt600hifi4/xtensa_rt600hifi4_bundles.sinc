@@ -10,16 +10,16 @@
 
 # FLIX bundle (format) constructors.
 # ae_format88: 11 bytes, 4 slots
-:"{ "^S6^"; "^S5^"; "^S4^"; "^S3^" }" is x88_0_4=31 & S6 & S5 & S4 & S3 { build S6; build S5; build S4; build S3; }
+:"{ "^S6^"; "^S5^"; "^S4^"; "^S3^" }" is x88_0_4=31 & S6 & S5 & S4 & S3 & S6w & S5w & S4w & S3w { build S6; build S5; build S4; build S3; build S6w; build S5w; build S4w; build S3w; }
 # ae_format88_2: 11 bytes, 3 slots
-:"{ "^S9^"; "^S8^"; "^S7^" }" is x88_0_5=15 & x88_80_87=0 & S9 & S8 & S7 { build S9; build S8; build S7; }
+:"{ "^S9^"; "^S8^"; "^S7^" }" is x88_0_5=15 & x88_80_87=0 & S9 & S8 & S7 & S9w & S8w & S7w { build S9; build S8; build S7; build S8w; build S7w; build S9w; }
 # ae_format48: 6 bytes, 2 slots
-:"{ "^S11^"; "^S10^" }" is x48_0_3=14 & x48_46_47=3 & S11 & S10 { build S11; build S10; }
+:"{ "^S11^"; "^S10^" }" is x48_0_3=14 & x48_46_47=3 & S11 & S10 & S11w & S10w { build S11; build S10; build S10w; build S11w; }
 # ae_format48_2: 6 bytes, 2 slots
-:"{ "^S13^"; "^S12^" }" is x48_0_3=14 & x48_46_47=2 & S13 & S12 { build S13; build S12; }
+:"{ "^S13^"; "^S12^" }" is x48_0_3=14 & x48_46_47=2 & S13 & S12 & S13w & S12w { build S13; build S12; build S12w; build S13w; }
 # ae_format48_3: 6 bytes, 3 slots
-:"{ "^S16^"; "^S14^"; "^S15^" }" is x48_0_3=14 & x48_47_47=0 & S16 & S14 & S15 { build S16; build S14; build S15; }
+:"{ "^S16^"; "^S14^"; "^S15^" }" is x48_0_3=14 & x48_47_47=0 & S16 & S14 & S15 & S16w & S14w & S15w { build S16; build S14; build S15; build S14w; build S15w; build S16w; }
 # ae_format88_3: 11 bytes, 4 slots
-:"{ "^S20^"; "^S19^"; "^S18^"; "^S17^" }" is x88_0_5=15 & x88_69_87=2176 & S20 & S19 & S18 & S17 { build S20; build S19; build S18; build S17; }
+:"{ "^S20^"; "^S19^"; "^S18^"; "^S17^" }" is x88_0_5=15 & x88_69_87=2176 & S20 & S19 & S18 & S17 & S20w & S19w & S18w & S17w { build S20; build S19; build S18; build S17; build S20w; build S19w; build S18w; build S17w; }
 # ae_format88_4: 11 bytes, 4 slots
-:"{ "^S24^"; "^S21^"; "^S23^"; "^S22^" }" is x88_0_5=15 & x88_76_87=16 & S24 & S21 & S23 & S22 { build S24; build S21; build S23; build S22; }
+:"{ "^S24^"; "^S21^"; "^S23^"; "^S22^" }" is x88_0_5=15 & x88_76_87=16 & S24 & S21 & S23 & S22 & S24w & S21w & S23w & S22w { build S24; build S21; build S23; build S22; build S24w; build S21w; build S23w; build S22w; }

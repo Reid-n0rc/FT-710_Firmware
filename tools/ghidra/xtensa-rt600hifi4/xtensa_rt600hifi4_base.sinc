@@ -297,15 +297,15 @@
 :ae_movab4 o0_4^", "^o0_56 is b24_0_5=20 & b24_8_11=8 & b24_16_23=47 & o0_4 & o0_56 { local ot0:4 = ae_movab4(o0_56); o0_4 = ot0; }
 :ae_movab2 o0_4^", "^o0_53 is b24_0_4=4 & b24_8_11=8 & b24_16_23=47 & o0_4 & o0_53 { local ot0:4 = ae_movab2(o0_53); o0_4 = ot0; }
 :ae_movb4 o0_58^", "^o0_56 is b24_0_5=52 & b24_8_13=8 & b24_16_23=47 & o0_58 & o0_56 { local ot0:4 = ae_movb4(o0_56); o0_58 = ot0; }
-:ae_l64.ip o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=70 & o0_94 & o0_5 & o0_77 { local ot0:8 = ae_l64_ip(o0_5, o0_77); local ot1:4 = ae_l64_ip_1(o0_5, o0_77); o0_94 = ot0; o0_5 = ot1; }
+:ae_l64.ip o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=70 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5; o0_94 = ae_l64_ip(*:8 ea); o0_5 = o0_5 + o0_77; }
 :ae_movb2 o0_55^", "^o0_53 is b24_0_4=4 & b24_8_12=8 & b24_16_23=104 & o0_55 & o0_53 { local ot0:2 = ae_movb2(o0_53); o0_55 = ot0; }
 :ae_pksrf32 o0_105^", "^o0_106^", "^o0_74 is b24_0_3=4 & b24_8_9=1 & b24_16_23=104 & o0_105 & o0_106 & o0_74 { local ot0:8 = ae_pksrf32(o0_105, o0_106, o0_74, st_AE_OVERFLOW); local ot1:1 = ae_pksrf32_1(o0_105, o0_106, o0_74, st_AE_OVERFLOW); o0_105 = ot0; st_AE_OVERFLOW = ot1; }
 :mula.dd.ll.ldinc o0_43^", "^o0_5^", "^o0_41^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_15_23=16 & o0_43 & o0_5 & o0_41 & o0_42 { local ot0:4 = mula_dd_ll_ldinc(o0_5, o0_41, o0_42, ACC); local ot1:4 = mula_dd_ll_ldinc_1(o0_5, o0_41, o0_42, ACC); local ot2:8 = mula_dd_ll_ldinc_2(o0_5, o0_41, o0_42, ACC); o0_43 = ot0; o0_5 = ot1; ACC = ot2; }
 :mula.dd.hl.ldinc o0_43^", "^o0_5^", "^o0_41^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_15_23=18 & o0_43 & o0_5 & o0_41 & o0_42 { local ot0:4 = mula_dd_hl_ldinc(o0_5, o0_41, o0_42, ACC); local ot1:4 = mula_dd_hl_ldinc_1(o0_5, o0_41, o0_42, ACC); local ot2:8 = mula_dd_hl_ldinc_2(o0_5, o0_41, o0_42, ACC); o0_43 = ot0; o0_5 = ot1; ACC = ot2; }
 :mula.dd.lh.ldinc o0_43^", "^o0_5^", "^o0_41^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_15_23=20 & o0_43 & o0_5 & o0_41 & o0_42 { local ot0:4 = mula_dd_lh_ldinc(o0_5, o0_41, o0_42, ACC); local ot1:4 = mula_dd_lh_ldinc_1(o0_5, o0_41, o0_42, ACC); local ot2:8 = mula_dd_lh_ldinc_2(o0_5, o0_41, o0_42, ACC); o0_43 = ot0; o0_5 = ot1; ACC = ot2; }
 :mula.dd.hh.ldinc o0_43^", "^o0_5^", "^o0_41^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_15_23=22 & o0_43 & o0_5 & o0_41 & o0_42 { local ot0:4 = mula_dd_hh_ldinc(o0_5, o0_41, o0_42, ACC); local ot1:4 = mula_dd_hh_ldinc_1(o0_5, o0_41, o0_42, ACC); local ot2:8 = mula_dd_hh_ldinc_2(o0_5, o0_41, o0_42, ACC); o0_43 = ot0; o0_5 = ot1; ACC = ot2; }
-:ae_s64.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=1 & o0_94 & o0_5 & o0_77 { ae_s64_i(o0_94, o0_5, o0_77); }
-:ae_s64.ip o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=2 & o0_94 & o0_5 & o0_77 { local ot0:4 = ae_s64_ip(o0_94, o0_5, o0_77); o0_5 = ot0; }
+:ae_s64.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=1 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; *:8 ea = ae_s64_i(o0_94); }
+:ae_s64.ip o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=2 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5; *:8 ea = ae_s64_ip(o0_94); o0_5 = o0_5 + o0_77; }
 :ae_la32x2.ic o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=2 & b24_16_23=13 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la32x2_ic(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot1:8 = ae_la32x2_ic_1(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot2:4 = ae_la32x2_ic_2(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
 :ae_la32x2.ip o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=3 & b24_16_23=13 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la32x2_ip(o0_98, o0_5); local ot1:8 = ae_la32x2_ip_1(o0_98, o0_5); local ot2:4 = ae_la32x2_ip_2(o0_98, o0_5); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
 :ae_la32x2f24.ic o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=0 & b24_16_23=12 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la32x2f24_ic(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot1:8 = ae_la32x2f24_ic_1(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot2:4 = ae_la32x2f24_ic_2(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
@@ -314,7 +314,7 @@
 :ae_la24x2.ip o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=1 & b24_16_23=13 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la24x2_ip(o0_98, o0_5); local ot1:8 = ae_la24x2_ip_1(o0_98, o0_5); local ot2:4 = ae_la24x2_ip_2(o0_98, o0_5); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
 :ae_sa32x2.ip o0_94^", "^o0_99^", "^o0_5 is b24_0_3=4 & b24_6_7=3 & b24_16_23=12 & o0_94 & o0_99 & o0_5 { local ot0:8 = ae_sa32x2_ip(o0_94, o0_99, o0_5); local ot1:4 = ae_sa32x2_ip_1(o0_94, o0_99, o0_5); o0_99 = ot0; o0_5 = ot1; }
 :ae_sa16x4.ip o0_94^", "^o0_99^", "^o0_5 is b24_0_3=4 & b24_6_7=2 & b24_16_23=12 & o0_94 & o0_99 & o0_5 { local ot0:8 = ae_sa16x4_ip(o0_94, o0_99, o0_5); local ot1:4 = ae_sa16x4_ip_1(o0_94, o0_99, o0_5); o0_99 = ot0; o0_5 = ot1; }
-:ae_s32ra64s.xp o0_96^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=4 & o0_96 & o0_5 & o0_7 { local ot0:4 = ae_s32ra64s_xp(o0_96, o0_5, o0_7, st_AE_OVERFLOW); local ot1:1 = ae_s32ra64s_xp_1(o0_96, o0_5, o0_7, st_AE_OVERFLOW); o0_5 = ot0; st_AE_OVERFLOW = ot1; }
+:ae_s32ra64s.xp o0_96^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=4 & o0_96 & o0_5 & o0_7 { local ea:4 = o0_5; *:4 ea = ae_s32ra64s_xp(o0_96); o0_5 = o0_5 + o0_7; }
 :ae_s32x2ra64s.ip o0_97^", "^o0_96^", "^o0_5 is b24_0_3=4 & b24_16_23=0 & o0_97 & o0_96 & o0_5 { local ot0:4 = ae_s32x2ra64s_ip(o0_97, o0_96, o0_5, st_AE_OVERFLOW); local ot1:1 = ae_s32x2ra64s_ip_1(o0_97, o0_96, o0_5, st_AE_OVERFLOW); o0_5 = ot0; st_AE_OVERFLOW = ot1; }
 :ae_s24x2ra64s.ip o0_97^", "^o0_96^", "^o0_5 is b24_0_3=4 & b24_16_23=3 & o0_97 & o0_96 & o0_5 { local ot0:4 = ae_s24x2ra64s_ip(o0_97, o0_96, o0_5, st_AE_OVERFLOW); local ot1:1 = ae_s24x2ra64s_ip_1(o0_97, o0_96, o0_5, st_AE_OVERFLOW); o0_5 = ot0; st_AE_OVERFLOW = ot1; }
 :ae_sraa32 o0_107^", "^o0_108^", "^o0_5 is b24_0_3=4 & b24_16_23=7 & o0_107 & o0_108 & o0_5 { local ot0:8 = ae_sraa32(o0_108, o0_5); o0_107 = ot0; }
@@ -340,7 +340,7 @@
 :muls.dd.hl o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=90 & o0_41 & o0_42 { local ot0:8 = muls_dd_hl(o0_41, o0_42, ACC); ACC = ot0; }
 :muls.dd.lh o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=92 & o0_41 & o0_42 { local ot0:8 = muls_dd_lh(o0_41, o0_42, ACC); ACC = ot0; }
 :muls.dd.hh o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=94 & o0_41 & o0_42 { local ot0:8 = muls_dd_hh(o0_41, o0_42, ACC); ACC = ot0; }
-:ae_l32x2f24.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=44 & o0_94 & o0_5 & o0_78 { local ot0:8 = ae_l32x2f24_ip(o0_5, o0_78); local ot1:4 = ae_l32x2f24_ip_1(o0_5, o0_78); o0_94 = ot0; o0_5 = ot1; }
+:ae_l32x2f24.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=44 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; o0_94 = ae_l32x2f24_ip(*:8 ea); o0_5 = o0_5 + o0_78; }
 :ae_zalign64 o0_101 is b24_0_5=4 & b24_8_23=10259 & o0_101 { local ot0:8 = ae_zalign64(); o0_101 = ot0; }
 :ae_movalign o0_101^", "^o0_100 is b24_0_3=4 & b24_8_23=10243 & o0_101 & o0_100 { local ot0:8 = ae_movalign(o0_100); o0_101 = ot0; }
 :ae_sat48s o0_85^", "^o0_87 is b24_0_3=4 & b24_8_11=10 & b24_16_23=43 & o0_85 & o0_87 { local ot0:8 = ae_sat48s(o0_87, st_AE_OVERFLOW); local ot1:1 = ae_sat48s_1(o0_87, st_AE_OVERFLOW); o0_85 = ot0; st_AE_OVERFLOW = ot1; }
@@ -378,7 +378,7 @@
 :muls.ad.hl o0_5^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_12_23=976 & o0_5 & o0_42 { local ot0:8 = muls_ad_hl(o0_5, o0_42, ACC); ACC = ot0; }
 :muls.ad.lh o0_5^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_12_23=992 & o0_5 & o0_42 { local ot0:8 = muls_ad_lh(o0_5, o0_42, ACC); ACC = ot0; }
 :muls.ad.hh o0_5^", "^o0_42 is b24_0_5=4 & b24_7_7=0 & b24_12_23=1008 & o0_5 & o0_42 { local ot0:8 = muls_ad_hh(o0_5, o0_42, ACC); ACC = ot0; }
-:ae_l32x2.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=62 & o0_94 & o0_5 & o0_78 { local ot0:8 = ae_l32x2_ip(o0_5, o0_78); local ot1:4 = ae_l32x2_ip_1(o0_5, o0_78); o0_94 = ot0; o0_5 = ot1; }
+:ae_l32x2.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=62 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; o0_94 = ae_l32x2_ip(*:8 ea); o0_5 = o0_5 + o0_78; }
 :ae_la16x4.ic o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=2 & b24_16_23=55 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la16x4_ic(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot1:8 = ae_la16x4_ic_1(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); local ot2:4 = ae_la16x4_ic_2(o0_98, o0_5, st_AE_CEND0, st_AE_CBEGIN0); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
 :ae_la16x4.ip o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=3 & b24_16_23=55 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la16x4_ip(o0_98, o0_5); local ot1:8 = ae_la16x4_ip_1(o0_98, o0_5); local ot2:4 = ae_la16x4_ip_2(o0_98, o0_5); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
 :ae_la16x4.rip o0_95^", "^o0_98^", "^o0_5 is b24_0_3=4 & b24_6_7=2 & b24_16_23=53 & o0_95 & o0_98 & o0_5 { local ot0:8 = ae_la16x4_rip(o0_98, o0_5); local ot1:8 = ae_la16x4_rip_1(o0_98, o0_5); local ot2:4 = ae_la16x4_rip_2(o0_98, o0_5); o0_95 = ot0; o0_98 = ot1; o0_5 = ot2; }
@@ -438,8 +438,8 @@
 :wur.ae_searchdone o0_7 is b24_0_3=4 & b24_8_23=26617 & o0_7 { local ot0:1 = wur_ae_searchdone(o0_7); st_AE_SEARCHDONE = ot0; }
 :rur.ae_cwrap o0_7 is b24_0_3=4 & b24_8_23=26618 & o0_7 { local ot0:4 = rur_ae_cwrap(st_AE_CWRAP); o0_7 = ot0; }
 :wur.ae_cwrap o0_7 is b24_0_3=4 & b24_8_23=26619 & o0_7 { local ot0:1 = wur_ae_cwrap(o0_7); st_AE_CWRAP = ot0; }
-:ae_s32x2f24.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=98 & o0_94 & o0_5 & o0_78 { local ot0:4 = ae_s32x2f24_ip(o0_94, o0_5, o0_78); o0_5 = ot0; }
-:ae_s32x2.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=0 & b24_16_23=98 & o0_94 & o0_5 & o0_78 { local ot0:4 = ae_s32x2_ip(o0_94, o0_5, o0_78); o0_5 = ot0; }
+:ae_s32x2f24.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=98 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; *:8 ea = ae_s32x2f24_ip(o0_94); o0_5 = o0_5 + o0_78; }
+:ae_s32x2.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=0 & b24_16_23=98 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; *:8 ea = ae_s32x2_ip(o0_94); o0_5 = o0_5 + o0_78; }
 :ae_movt64 o0_103^", "^o0_104^", "^o0_50 is b24_0_3=4 & b24_16_23=96 & o0_103 & o0_104 & o0_50 { local ot0:8 = ae_movt64(o0_103, o0_104, o0_50); o0_103 = ot0; }
 :ae_srlaq56 o0_107^", "^o0_108^", "^o0_5 is b24_0_3=4 & b24_16_23=97 & o0_107 & o0_108 & o0_5 { local ot0:8 = ae_srlaq56(o0_108, o0_5); o0_107 = ot0; }
 :ae_lb o0_4^", "^o0_7 is b24_0_3=4 & b24_8_11=2 & b24_16_23=105 & o0_4 & o0_7 { local ot0:4 = ae_lb(o0_7, st_AE_BITPTR, st_AE_BITHEAD); o0_4 = ot0; }
@@ -472,14 +472,14 @@
 :ae_sb.ip o0_5^", "^o0_7 is b24_0_3=4 & b24_12_23=1916 & o0_5 & o0_7 { local ot0:4 = ae_sb_ip(o0_5, o0_7, st_AE_BITSUSED, st_AE_BITPTR, st_AE_BITHEAD); local ot1:1 = ae_sb_ip_1(o0_5, o0_7, st_AE_BITSUSED, st_AE_BITPTR, st_AE_BITHEAD); local ot2:4 = ae_sb_ip_2(o0_5, o0_7, st_AE_BITSUSED, st_AE_BITPTR, st_AE_BITHEAD); o0_5 = ot0; st_AE_BITPTR = ot1; st_AE_BITHEAD = ot2; }
 :ae_vles16c.ip o0_5 is b24_0_7=68 & b24_12_23=1918 & o0_5 { local ot0:4 = ae_vles16c_ip(o0_5, st_AE_BITPTR, st_AE_BITHEAD, st_AE_NEXTOFFSET, st_AE_BITSUSED); local ot1:1 = ae_vles16c_ip_1(o0_5, st_AE_BITPTR, st_AE_BITHEAD, st_AE_NEXTOFFSET, st_AE_BITSUSED); local ot2:4 = ae_vles16c_ip_2(o0_5, st_AE_BITPTR, st_AE_BITHEAD, st_AE_NEXTOFFSET, st_AE_BITSUSED); o0_5 = ot0; st_AE_BITPTR = ot1; st_AE_BITHEAD = ot2; }
 :ae_sbf.ip o0_5 is b24_0_7=84 & b24_12_23=1918 & o0_5 { local ot0:4 = ae_sbf_ip(o0_5, st_AE_BITPTR, st_AE_BITHEAD); local ot1:4 = ae_sbf_ip_1(o0_5, st_AE_BITPTR, st_AE_BITHEAD); o0_5 = ot0; st_AE_BITHEAD = ot1; }
-:ae_s16x4.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=128 & o0_94 & o0_5 & o0_78 { local ot0:4 = ae_s16x4_ip(o0_94, o0_5, o0_78); o0_5 = ot0; }
+:ae_s16x4.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=128 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; *:8 ea = ae_s16x4_ip(o0_94); o0_5 = o0_5 + o0_78; }
 :ae_sraa32s o0_107^", "^o0_108^", "^o0_5 is b24_0_3=4 & b24_16_23=130 & o0_107 & o0_108 & o0_5 { local ot0:8 = ae_sraa32s(o0_108, o0_5, st_AE_OVERFLOW); local ot1:1 = ae_sraa32s_1(o0_108, o0_5, st_AE_OVERFLOW); o0_107 = ot0; st_AE_OVERFLOW = ot1; }
 :ae_slai64 o0_107^", "^o0_108^", "^o0_76 is b24_0_3=4 & b24_18_23=34 & o0_107 & o0_108 & o0_76 { local ot0:8 = ae_slai64(o0_108, o0_76); o0_107 = ot0; }
 :ae_srai64 o0_107^", "^o0_108^", "^o0_76 is b24_0_3=4 & b24_18_23=35 & o0_107 & o0_108 & o0_76 { local ot0:8 = ae_srai64(o0_108, o0_76); o0_107 = ot0; }
 :ae_sraa64 o0_107^", "^o0_108^", "^o0_5 is b24_0_3=4 & b24_16_23=129 & o0_107 & o0_108 & o0_5 { local ot0:8 = ae_sraa64(o0_108, o0_5); o0_107 = ot0; }
 :ae_slaisq56s o0_107^", "^o0_108^", "^o0_76 is b24_0_3=4 & b24_18_23=33 & o0_107 & o0_108 & o0_76 { local ot0:8 = ae_slaisq56s(o0_108, o0_76, st_AE_OVERFLOW); local ot1:1 = ae_slaisq56s_1(o0_108, o0_76, st_AE_OVERFLOW); o0_107 = ot0; st_AE_OVERFLOW = ot1; }
 :ae_lbk o0_4^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=131 & o0_4 & o0_5 & o0_7 { local ot0:4 = ae_lbk(o0_5, o0_7, st_AE_BITPTR, st_AE_BITHEAD); o0_4 = ot0; }
-:ae_l16x4.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=144 & o0_94 & o0_5 & o0_78 { local ot0:8 = ae_l16x4_ip(o0_5, o0_78); local ot1:4 = ae_l16x4_ip_1(o0_5, o0_78); o0_94 = ot0; o0_5 = ot1; }
+:ae_l16x4.ip o0_94^", "^o0_5^", "^o0_78 is b24_0_3=4 & b24_7_7=1 & b24_16_23=144 & o0_94 & o0_5 & o0_78 { local ea:4 = o0_5; o0_94 = ae_l16x4_ip(*:8 ea); o0_5 = o0_5 + o0_78; }
 :ae_slai24 o0_107^", "^o0_108^", "^o0_75 is b24_0_3=4 & b24_17_23=74 & o0_107 & o0_108 & o0_75 { local ot0:8 = ae_slai24(o0_108, o0_75); o0_107 = ot0; }
 :ae_srai24 o0_107^", "^o0_108^", "^o0_75 is b24_0_3=4 & b24_17_23=78 & o0_107 & o0_108 & o0_75 { local ot0:8 = ae_srai24(o0_108, o0_75); o0_107 = ot0; }
 :ae_slai32 o0_107^", "^o0_108^", "^o0_75 is b24_0_3=4 & b24_17_23=75 & o0_107 & o0_108 & o0_75 { local ot0:8 = ae_slai32(o0_108, o0_75); o0_107 = ot0; }
@@ -489,70 +489,70 @@
 :ae_slai32s o0_107^", "^o0_108^", "^o0_75 is b24_0_3=4 & b24_17_23=77 & o0_107 & o0_108 & o0_75 { local ot0:8 = ae_slai32s(o0_108, o0_75, st_AE_OVERFLOW); local ot1:1 = ae_slai32s_1(o0_108, o0_75, st_AE_OVERFLOW); o0_107 = ot0; st_AE_OVERFLOW = ot1; }
 :ae_sraaq56 o0_107^", "^o0_108^", "^o0_5 is b24_0_3=4 & b24_16_23=145 & o0_107 & o0_108 & o0_5 { local ot0:8 = ae_sraaq56(o0_108, o0_5); o0_107 = ot0; }
 :ae_sel16i o0_91^", "^o0_92^", "^o0_93^", "^o0_82 is b24_0_3=4 & b24_20_23=10 & o0_91 & o0_92 & o0_93 & o0_82 { local ot0:8 = ae_sel16i(o0_92, o0_93, o0_82); o0_91 = ot0; }
-:ae_l16m.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=177 & o0_94 & o0_5 & o0_80 { local ot0:8 = ae_l16m_i(o0_5, o0_80); o0_94 = ot0; }
-:ae_l16m.iu o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=178 & o0_94 & o0_5 & o0_80 { local ot0:8 = ae_l16m_iu(o0_5, o0_80); local ot1:4 = ae_l16m_iu_1(o0_5, o0_80); o0_94 = ot0; o0_5 = ot1; }
-:ae_l16m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=179 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l16m_xu(o0_5, o0_7); local ot1:4 = ae_l16m_xu_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l16.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=176 & o0_94 & o0_5 & o0_80 { local ot0:8 = ae_l16_i(o0_5, o0_80); o0_94 = ot0; }
-:ae_l16.ip o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=180 & o0_94 & o0_5 & o0_80 { local ot0:8 = ae_l16_ip(o0_5, o0_80); local ot1:4 = ae_l16_ip_1(o0_5, o0_80); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=181 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32f24_xc(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); local ot1:4 = ae_l32f24_xc_1(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32f24.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=182 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32f24_i(o0_5, o0_79); o0_94 = ot0; }
-:ae_l32f24.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=183 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32f24_ip(o0_5, o0_79); local ot1:4 = ae_l32f24_ip_1(o0_5, o0_79); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=188 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32_xc(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); local ot1:4 = ae_l32_xc_1(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=189 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32_i(o0_5, o0_79); o0_94 = ot0; }
-:ae_l32.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=190 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32_ip(o0_5, o0_79); local ot1:4 = ae_l32_ip_1(o0_5, o0_79); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=191 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32_x(o0_5, o0_7); o0_94 = ot0; }
-:ae_l16x2m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=184 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l16x2m_i(o0_5, o0_79); o0_94 = ot0; }
-:ae_l16x2m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=185 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l16x2m_iu(o0_5, o0_79); local ot1:4 = ae_l16x2m_iu_1(o0_5, o0_79); o0_94 = ot0; o0_5 = ot1; }
-:ae_l16x2m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=186 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l16x2m_x(o0_5, o0_7); o0_94 = ot0; }
-:ae_l16x2m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=187 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l16x2m_xu(o0_5, o0_7); local ot1:4 = ae_l16x2m_xu_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=200 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32m_i(o0_5, o0_79); o0_94 = ot0; }
-:ae_l32m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=201 & o0_94 & o0_5 & o0_79 { local ot0:8 = ae_l32m_iu(o0_5, o0_79); local ot1:4 = ae_l32m_iu_1(o0_5, o0_79); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=202 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32m_x(o0_5, o0_7); o0_94 = ot0; }
-:ae_l32m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=203 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32m_xu(o0_5, o0_7); local ot1:4 = ae_l32m_xu_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32x2f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=196 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2f24_xc(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); local ot1:4 = ae_l32x2f24_xc_1(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32x2f24.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=197 & o0_94 & o0_5 & o0_77 { local ot0:8 = ae_l32x2f24_i(o0_5, o0_77); o0_94 = ot0; }
-:ae_l32x2f24.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=198 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2f24_x(o0_5, o0_7); o0_94 = ot0; }
-:ae_l32x2f24.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=199 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2f24_xp(o0_5, o0_7); local ot1:4 = ae_l32x2f24_xp_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32x2.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=192 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2_xc(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); local ot1:4 = ae_l32x2_xc_1(o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_94 = ot0; o0_5 = ot1; }
-:ae_l32x2.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=193 & o0_94 & o0_5 & o0_77 { local ot0:8 = ae_l32x2_i(o0_5, o0_77); o0_94 = ot0; }
-:ae_l32x2.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=194 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2_x(o0_5, o0_7); o0_94 = ot0; }
-:ae_l32x2.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=195 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l32x2_xp(o0_5, o0_7); local ot1:4 = ae_l32x2_xp_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l16x4.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=204 & o0_94 & o0_5 & o0_77 { local ot0:8 = ae_l16x4_i(o0_5, o0_77); o0_94 = ot0; }
-:ae_l16x4.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=205 & o0_94 & o0_5 & o0_7 { local ot0:8 = ae_l16x4_xp(o0_5, o0_7); local ot1:4 = ae_l16x4_xp_1(o0_5, o0_7); o0_94 = ot0; o0_5 = ot1; }
-:ae_l64.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=207 & o0_94 & o0_5 & o0_77 { local ot0:8 = ae_l64_i(o0_5, o0_77); o0_94 = ot0; }
+:ae_l16m.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=177 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; o0_94 = ae_l16m_i(*:2 ea); }
+:ae_l16m.iu o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=178 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; o0_94 = ae_l16m_iu(*:2 ea); o0_5 = ea; }
+:ae_l16m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=179 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l16m_xu(*:2 ea); o0_5 = ea; }
+:ae_l16.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=176 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; o0_94 = ae_l16_i(*:2 ea); }
+:ae_l16.ip o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=180 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5; o0_94 = ae_l16_ip(*:2 ea); o0_5 = o0_5 + o0_80; }
+:ae_l32f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=181 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32f24_xc(*:4 ea); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_l32f24.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=182 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l32f24_i(*:4 ea); }
+:ae_l32f24.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=183 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5; o0_94 = ae_l32f24_ip(*:4 ea); o0_5 = o0_5 + o0_79; }
+:ae_l32.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=188 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32_xc(*:4 ea); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_l32.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=189 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l32_i(*:4 ea); }
+:ae_l32.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=190 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5; o0_94 = ae_l32_ip(*:4 ea); o0_5 = o0_5 + o0_79; }
+:ae_l32.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=191 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l32_x(*:4 ea); }
+:ae_l16x2m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=184 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l16x2m_i(*:4 ea); }
+:ae_l16x2m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=185 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l16x2m_iu(*:4 ea); o0_5 = ea; }
+:ae_l16x2m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=186 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l16x2m_x(*:4 ea); }
+:ae_l16x2m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=187 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l16x2m_xu(*:4 ea); o0_5 = ea; }
+:ae_l32m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=200 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l32m_i(*:4 ea); }
+:ae_l32m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=201 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; o0_94 = ae_l32m_iu(*:4 ea); o0_5 = ea; }
+:ae_l32m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=202 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l32m_x(*:4 ea); }
+:ae_l32m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=203 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l32m_xu(*:4 ea); o0_5 = ea; }
+:ae_l32x2f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=196 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32x2f24_xc(*:8 ea); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_l32x2f24.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=197 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; o0_94 = ae_l32x2f24_i(*:8 ea); }
+:ae_l32x2f24.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=198 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l32x2f24_x(*:8 ea); }
+:ae_l32x2f24.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=199 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32x2f24_xp(*:8 ea); o0_5 = o0_5 + o0_7; }
+:ae_l32x2.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=192 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32x2_xc(*:8 ea); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_l32x2.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=193 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; o0_94 = ae_l32x2_i(*:8 ea); }
+:ae_l32x2.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=194 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; o0_94 = ae_l32x2_x(*:8 ea); }
+:ae_l32x2.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=195 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l32x2_xp(*:8 ea); o0_5 = o0_5 + o0_7; }
+:ae_l16x4.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=204 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; o0_94 = ae_l16x4_i(*:8 ea); }
+:ae_l16x4.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=205 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; o0_94 = ae_l16x4_xp(*:8 ea); o0_5 = o0_5 + o0_7; }
+:ae_l64.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=207 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; o0_94 = ae_l64_i(*:8 ea); }
 :ae_lbki o0_4^", "^o0_5^", "^o0_71 is b24_0_3=4 & b24_16_23=206 & o0_4 & o0_5 & o0_71 { local ot0:4 = ae_lbki(o0_5, o0_71, st_AE_BITPTR, st_AE_BITHEAD); o0_4 = ot0; }
-:ae_s16x2m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=216 & o0_94 & o0_5 & o0_79 { ae_s16x2m_i(o0_94, o0_5, o0_79); }
-:ae_s16x2m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=217 & o0_94 & o0_5 & o0_79 { local ot0:4 = ae_s16x2m_iu(o0_94, o0_5, o0_79); o0_5 = ot0; }
-:ae_s16x2m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=218 & o0_94 & o0_5 & o0_7 { ae_s16x2m_x(o0_94, o0_5, o0_7); }
-:ae_s16x2m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=219 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s16x2m_xu(o0_94, o0_5, o0_7); o0_5 = ot0; }
-:ae_s16x4.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=220 & o0_94 & o0_5 & o0_77 { ae_s16x4_i(o0_94, o0_5, o0_77); }
-:ae_s16m.l.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=213 & o0_94 & o0_5 & o0_80 { ae_s16m_l_i(o0_94, o0_5, o0_80); }
-:ae_s16m.l.iu o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=214 & o0_94 & o0_5 & o0_80 { local ot0:4 = ae_s16m_l_iu(o0_94, o0_5, o0_80); o0_5 = ot0; }
-:ae_s16m.l.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=215 & o0_94 & o0_5 & o0_7 { ae_s16m_l_x(o0_94, o0_5, o0_7); }
-:ae_s32f24.l.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=222 & o0_94 & o0_5 & o0_79 { ae_s32f24_l_i(o0_94, o0_5, o0_79); }
-:ae_s32f24.l.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=223 & o0_94 & o0_5 & o0_79 { local ot0:4 = ae_s32f24_l_ip(o0_94, o0_5, o0_79); o0_5 = ot0; }
-:ae_s16.0.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=210 & o0_94 & o0_5 & o0_80 { ae_s16_0_i(o0_94, o0_5, o0_80); }
-:ae_s16.0.ip o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=211 & o0_94 & o0_5 & o0_80 { local ot0:4 = ae_s16_0_ip(o0_94, o0_5, o0_80); o0_5 = ot0; }
-:ae_s16.0.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=212 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s16_0_xp(o0_94, o0_5, o0_7); o0_5 = ot0; }
-:ae_s24ra64s.xp o0_96^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=221 & o0_96 & o0_5 & o0_7 { local ot0:4 = ae_s24ra64s_xp(o0_96, o0_5, o0_7, st_AE_OVERFLOW); local ot1:1 = ae_s24ra64s_xp_1(o0_96, o0_5, o0_7, st_AE_OVERFLOW); o0_5 = ot0; st_AE_OVERFLOW = ot1; }
+:ae_s16x2m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=216 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s16x2m_i(o0_94); }
+:ae_s16x2m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=217 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s16x2m_iu(o0_94); o0_5 = ea; }
+:ae_s16x2m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=218 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:4 ea = ae_s16x2m_x(o0_94); }
+:ae_s16x2m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=219 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:4 ea = ae_s16x2m_xu(o0_94); o0_5 = ea; }
+:ae_s16x4.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=220 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; *:8 ea = ae_s16x4_i(o0_94); }
+:ae_s16m.l.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=213 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; *:2 ea = ae_s16m_l_i(o0_94); }
+:ae_s16m.l.iu o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=214 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; *:2 ea = ae_s16m_l_iu(o0_94); o0_5 = ea; }
+:ae_s16m.l.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=215 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:2 ea = ae_s16m_l_x(o0_94); }
+:ae_s32f24.l.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=222 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s32f24_l_i(o0_94); }
+:ae_s32f24.l.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=223 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5; *:4 ea = ae_s32f24_l_ip(o0_94); o0_5 = o0_5 + o0_79; }
+:ae_s16.0.i o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=210 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5 + o0_80; *:2 ea = ae_s16_0_i(o0_94); }
+:ae_s16.0.ip o0_94^", "^o0_5^", "^o0_80 is b24_0_3=4 & b24_16_23=211 & o0_94 & o0_5 & o0_80 { local ea:4 = o0_5; *:2 ea = ae_s16_0_ip(o0_94); o0_5 = o0_5 + o0_80; }
+:ae_s16.0.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=212 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:2 ea = ae_s16_0_xp(o0_94); o0_5 = o0_5 + o0_7; }
+:ae_s24ra64s.xp o0_96^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=221 & o0_96 & o0_5 & o0_7 { local ea:4 = o0_5; *:4 ea = ae_s24ra64s_xp(o0_96); o0_5 = o0_5 + o0_7; }
 :ae_vlel32t o0_52^", "^o0_7^", "^o0_5 is b24_0_3=4 & b24_16_23=208 & o0_52 & o0_7 & o0_5 { local ot0:1 = ae_vlel32t(o0_7, o0_5); local ot1:4 = ae_vlel32t_1(o0_7, o0_5); local ot2:1 = ae_vlel32t_2(o0_7, o0_5); local ot3:4 = ae_vlel32t_3(o0_7, o0_5); o0_52 = ot0; o0_7 = ot1; st_AE_BITSUSED = ot2; st_AE_NEXTOFFSET = ot3; }
 :ae_vlel16t o0_52^", "^o0_7^", "^o0_5 is b24_0_3=4 & b24_16_23=209 & o0_52 & o0_7 & o0_5 { local ot0:1 = ae_vlel16t(o0_7, o0_5); local ot1:4 = ae_vlel16t_1(o0_7, o0_5); local ot2:1 = ae_vlel16t_2(o0_7, o0_5); local ot3:4 = ae_vlel16t_3(o0_7, o0_5); o0_52 = ot0; o0_7 = ot1; st_AE_BITSUSED = ot2; st_AE_NEXTOFFSET = ot3; }
-:ae_s32x2f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=236 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32x2f24_xc(o0_94, o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_5 = ot0; }
-:ae_s32x2f24.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=237 & o0_94 & o0_5 & o0_77 { ae_s32x2f24_i(o0_94, o0_5, o0_77); }
-:ae_s32x2f24.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=238 & o0_94 & o0_5 & o0_7 { ae_s32x2f24_x(o0_94, o0_5, o0_7); }
-:ae_s32x2f24.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=239 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32x2f24_xp(o0_94, o0_5, o0_7); o0_5 = ot0; }
-:ae_s32x2.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=232 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32x2_xc(o0_94, o0_5, o0_7, st_AE_CEND0, st_AE_CBEGIN0); o0_5 = ot0; }
-:ae_s32x2.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=233 & o0_94 & o0_5 & o0_77 { ae_s32x2_i(o0_94, o0_5, o0_77); }
-:ae_s32x2.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=234 & o0_94 & o0_5 & o0_7 { ae_s32x2_x(o0_94, o0_5, o0_7); }
-:ae_s32x2.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=235 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32x2_xp(o0_94, o0_5, o0_7); o0_5 = ot0; }
-:ae_s32.l.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=224 & o0_94 & o0_5 & o0_79 { ae_s32_l_i(o0_94, o0_5, o0_79); }
-:ae_s32.l.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=225 & o0_94 & o0_5 & o0_79 { local ot0:4 = ae_s32_l_ip(o0_94, o0_5, o0_79); o0_5 = ot0; }
-:ae_s32.l.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=226 & o0_94 & o0_5 & o0_7 { ae_s32_l_x(o0_94, o0_5, o0_7); }
-:ae_s32.l.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=227 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32_l_xp(o0_94, o0_5, o0_7); o0_5 = ot0; }
-:ae_s32m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=228 & o0_94 & o0_5 & o0_79 { ae_s32m_i(o0_94, o0_5, o0_79); }
-:ae_s32m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=229 & o0_94 & o0_5 & o0_79 { local ot0:4 = ae_s32m_iu(o0_94, o0_5, o0_79); o0_5 = ot0; }
-:ae_s32m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=230 & o0_94 & o0_5 & o0_7 { ae_s32m_x(o0_94, o0_5, o0_7); }
-:ae_s32m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=231 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32m_xu(o0_94, o0_5, o0_7); o0_5 = ot0; }
+:ae_s32x2f24.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=236 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:8 ea = ae_s32x2f24_xc(o0_94); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_s32x2f24.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=237 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; *:8 ea = ae_s32x2f24_i(o0_94); }
+:ae_s32x2f24.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=238 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:8 ea = ae_s32x2f24_x(o0_94); }
+:ae_s32x2f24.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=239 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:8 ea = ae_s32x2f24_xp(o0_94); o0_5 = o0_5 + o0_7; }
+:ae_s32x2.xc o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=232 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:8 ea = ae_s32x2_xc(o0_94); o0_5 = ae_circ0(o0_5, o0_7); }
+:ae_s32x2.i o0_94^", "^o0_5^", "^o0_77 is b24_0_3=4 & b24_16_23=233 & o0_94 & o0_5 & o0_77 { local ea:4 = o0_5 + o0_77; *:8 ea = ae_s32x2_i(o0_94); }
+:ae_s32x2.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=234 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:8 ea = ae_s32x2_x(o0_94); }
+:ae_s32x2.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=235 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:8 ea = ae_s32x2_xp(o0_94); o0_5 = o0_5 + o0_7; }
+:ae_s32.l.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=224 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s32_l_i(o0_94); }
+:ae_s32.l.ip o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=225 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5; *:4 ea = ae_s32_l_ip(o0_94); o0_5 = o0_5 + o0_79; }
+:ae_s32.l.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=226 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:4 ea = ae_s32_l_x(o0_94); }
+:ae_s32.l.xp o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=227 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5; *:4 ea = ae_s32_l_xp(o0_94); o0_5 = o0_5 + o0_7; }
+:ae_s32m.i o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=228 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s32m_i(o0_94); }
+:ae_s32m.iu o0_94^", "^o0_5^", "^o0_79 is b24_0_3=4 & b24_16_23=229 & o0_94 & o0_5 & o0_79 { local ea:4 = o0_5 + o0_79; *:4 ea = ae_s32m_iu(o0_94); o0_5 = ea; }
+:ae_s32m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=230 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:4 ea = ae_s32m_x(o0_94); }
+:ae_s32m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=231 & o0_94 & o0_5 & o0_7 { local ea:4 = o0_5 + o0_7; *:4 ea = ae_s32m_xu(o0_94); o0_5 = ea; }
 :ae_trunca32x2f64s o0_107^", "^o0_108^", "^o0_109^", "^o0_5 is b24_0_3=4 & b24_20_23=15 & o0_107 & o0_108 & o0_109 & o0_5 { local ot0:8 = ae_trunca32x2f64s(o0_108, o0_109, o0_5, st_AE_OVERFLOW); local ot1:1 = ae_trunca32x2f64s_1(o0_108, o0_109, o0_5, st_AE_OVERFLOW); o0_107 = ot0; st_AE_OVERFLOW = ot1; }
 :bltui o0_5^", "^o0_19^", "^o0_31 is b24_0_7=182 & o0_5 & o0_19 & o0_31 { if (o0_5 < o0_19) goto o0_31; }
 :bgeui o0_5^", "^o0_19^", "^o0_31 is b24_0_7=246 & o0_5 & o0_19 & o0_31 { if (o0_5 >= o0_19) goto o0_31; }
