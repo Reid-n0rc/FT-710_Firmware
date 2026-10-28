@@ -27,7 +27,7 @@ through the fork's CLI build until the MCP server is restarted.
 ## Sub-task status
 
 ### T22c
-**Status:** in progress (2026-10-28). IFDSP HiFi4.
+**Status:** done (2026-10-28). IFDSP HiFi4.
 
 Plan (resumed 2026-10-28 after steps 1–2):
 1. done: base ISA outside bundles vs rizin.
@@ -199,6 +199,34 @@ canonical function** **[fact]**: 0x209DB8 (`entry a1, 48`), 0x20D530 (`entry a1,
 interrupt-registration function from step 2), 0x226A24, 0x228FDC, 0x2291C0, 0x2291D8 (`rsr.cpenable` first: an XOS coprocessor
 context routine **[inference]**), 0x2291FC, 0x22C4A0. Follow-up for `entries_hifi4.tsv` (T21b/T21g owners): add them after a
 check of each. Per-function table: scratchpad `t22c/runA/cmp.tsv`, script `t22c/cmp.py`.
+
+Run B, the same with `REA_GHIDRA_SEED_FILE` = the 1,067 SRAM entries of `entries_hifi4.tsv` (all 1,067 seeds decoded, 0
+failed) — the like-for-like comparison **[fact]**:
+
+| | canonical (SRAM part) | REA run B |
+|---|---:|---:|
+| functions | 1,067 | 1,075 (all written, **0 failures**) |
+| same entry / same entry and body size | | **1,065 / 1,059** |
+| canonical only | | 2: 0x218480 (inside REA's `0x217D10` body), 0x233818 (REA's `0x233670` is 768 bytes = canonical 631 + 137) |
+| REA only | | 10: the 9 of run A plus 0x22C3E0 (inside canonical `FUN_0022c3bc`) |
+| warnings (functions) | 255 (96) | 266 (55) |
+| `halt_baddata` | 1 (`FUN_00218480`) | **0** |
+
+So with the same entries REA reproduces the canonical function list to 99.8 % and decompiles everything; the canonical project's
+only `halt_baddata` is a 3-byte seed fragment inside `FUN_00217d10` that REA's Ghidra does not keep as a function. Warning
+differences **[fact]**: the canonical-only ones are 26 "Globals starting with '_'" (from canonical names) and the one bad
+instruction in 0x218480; REA has 5 more "Could not recover jumptable" (+5 "indirect jump as call", +35 "Removing unreachable
+block") at 0x2095A1, 0x220F1D, 0x2231EA, 0x22C735, 0x231167. Those are the 6 functions whose bodies differ (`0x209590`
+24 vs 264 bytes, `0x220EE0`, `0x22313C`, `0x22C5B0` 3,098 vs 8,131 with 0x22D1CA..0x22E573 in no function, `0x231040`,
+`0x233670`). Cause **[fact: setup; inference: effect]**: the canonical project makes 0x200000.. (rodata/literals) non-writable
+(`IfdspHifi4Setup.java` line 58) so the decompiler folds `l32r` table bases; REA maps the raw file as one writable block. Not a
+language problem: the decode is identical. REA gap filed for T22f: scratchpad `rea-requests/T22c-raw-readonly-range.md`
+(read-only ranges for raw images). Table: scratchpad `t22c/runB/cmp.tsv`.
+
+**T22c result.** The generated language holds up in a third and fourth decoder (rizin for the base ISA, the hand decoder for
+everything) and in an independent tool chain (REA): B9 decompiles in REA, and REA's seeded function list and decompile match
+the canonical `decomp/ifdsp/hifi4` except for the read-only-literal effect above. Follow-ups: the 9 REA-found functions for
+`entries_hifi4.tsv` (above), and the REA read-only-range request.
 
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
