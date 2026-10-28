@@ -117,3 +117,7 @@ sequenceDiagram
    whether MAIN takes part in the update.
 3. Readable labels on J2002 pins 14 and 37 at a higher scan resolution.
 4. Whether the module's `MISO/MOSI/SCLK` pins (9/11/13) are a factory flash-programming port.
+5. The FPGA side of these signals is now partly known from the netlist ([netlist.md](netlist.md#33-pin-map-by-bank)):
+   two identical UARTs (M18/L18 and V12/U12, 115,200 8N1), a QSPI master on the configuration-flash pins, the LVDS
+   ADC input (bank 35) and an LVDS DDR output bus (bank 34). Which UART is UART5 and which is UART_DBG, and the
+   other control lines, still need the module-side pin path, which the service manual does not show.
