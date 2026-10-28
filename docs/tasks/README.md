@@ -49,7 +49,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | done |
 | T17 | [Integration: names, RX decoder fix, re-exports, shared-file edits](T17-integration.md) | T09–T12 | done |
 | T18 | [Check the docs against the Renesas RX651 documentation](T18-renesas-docs-check.md) | T05 T10 T17 | done |
-| T19 | [Illustrated guide for people](T19-illustrated-guide.md) | T01–T18 | in progress |
+| T19 | [Illustrated guide for people](T19-illustrated-guide.md) | T01–T18 | done |
 | T19a | [Guide: The radio and how the chips talk](T19a-guide-the-radio-and-how-the-chips-talk.md) | T19 | done |
 | T19b | [Guide: A day in the life (power-on, tuning, transmit, scope)](T19b-guide-a-day-in-the-life-power-on-tuning-transmit-scope.md) | T19 | done |
 | T19c | [Guide: Firmware files and updates](T19c-guide-firmware-files-and-updates.md) | T19 | done |

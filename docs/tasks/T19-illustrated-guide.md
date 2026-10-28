@@ -1,6 +1,6 @@
 # T19 — Illustrated guide for people
 
-**Status:** in progress · **Depends on:** T01–T18
+**Status:** done · **Depends on:** T01–T18
 
 ## Goal
 The reference pages (`docs/code/**`, `docs/*.md`) are complete but written for reverse engineers: dense, address-heavy, no pictures. Write
@@ -80,4 +80,7 @@ after the first page is created in the web UI. The owner enables it, then the pa
 - **Blocked (2026-10-28):** the owner enabled the wiki, and the repository is now **public** (it was private at every earlier push).
   Pushing `main`, running `issues_sync.py` (which posts issue bodies) and pushing the wiki are all paused until the owner restores
   private visibility, per AGENTS.md. The wiki also needs a first page created in the web UI before its git repo exists.
+- **Wiki published (2026-10-28):** https://github.com/Reid-n0rc/FT-710_Firmware/wiki (wiki commit 59c8ea1): Home, 8 chapter pages,
+  Glossary, `_Sidebar` table of contents, 59 images (checked: the pages serve and the SVGs load). To update it, edit
+  `docs/guide/README.md`, run `python3 -I tools/guide_to_wiki.py`, copy `build/wiki/` into a clone of the wiki repo, and push.
 - **Unblocked (2026-10-28):** the owner said "Leave it public". Pushes, the issue sync and the wiki are allowed again (AGENTS.md updated).
