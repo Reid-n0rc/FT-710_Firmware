@@ -1,0 +1,24 @@
+name: Correction
+description: Something in the docs, decomp names or tools is wrong
+labels: ["correction"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: File and section (or address / function name)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong, and what is right
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Decomp lines, addresses, manual pages, measurements
+    validations:
+      required: true

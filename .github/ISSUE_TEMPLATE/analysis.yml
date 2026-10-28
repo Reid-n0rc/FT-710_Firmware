@@ -1,0 +1,26 @@
+name: New analysis or tool
+description: Propose new reverse-engineering work, a tool, or a doc
+labels: ["proposal"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One clear deliverable you can verify (see "Task sizing" in AGENTS.md)
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: How you will do it, and what it builds on (task IDs, docs)
+  - type: dropdown
+    id: radio
+    attributes:
+      label: Does it need a real radio?
+      options:
+        - "No: static analysis or simulation only"
+        - "Read-only access (CAT queries, measurements)"
+        - "Writes to a radio (flashing, EEPROM, set-commands): needs the radio owner's explicit approval"
+    validations:
+      required: true
