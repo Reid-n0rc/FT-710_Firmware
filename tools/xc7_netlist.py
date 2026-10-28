@@ -663,8 +663,9 @@ def bram36_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
 
 
 def iob_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
-    keys = list(f)
-    if not any(("IN" in k or "DRIVE" in k or "OUT" in k) for k in keys):
+    # used = an input buffer or an output driver is configured; unused pins only carry
+    # IN_TERM / PULLTYPE (Vivado's default PULLDOWN on unused pins) / SLEW / STEPDOWN
+    if not any(k.endswith((".IN", ".IN_ONLY", ".IN_DIFF", ".OUT")) or ".DRIVE." in k for k in f):
         return
     params = dict(f)
     pins = {k: v for k, v in bus_pins(pk, dirs).items() if k in ("I", "O", "T")}
@@ -699,8 +700,8 @@ def ologic_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
 
 
 def idelay_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
-    if not any(k != "IDELAY_TYPE_FIXED" for k in f) and not f:
-        return
+    if set(f) <= {"IDELAY_TYPE_FIXED"}:
+        return      # Vivado default on every IOI: delay not used, IDATAIN passes to the ILOGIC
     params = dict(f)
     params.update({"#w:" + k: v for k, v in fw.items()})
     nl.cell(site, "IDELAYE2", site, params, bus_pins(pk, dirs), ["taps not decoded"])
