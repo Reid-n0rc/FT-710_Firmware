@@ -20,7 +20,9 @@
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
-#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared).
+#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared), and
+#           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
+#           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
 #           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
 #
@@ -356,7 +358,7 @@ step_export() {
   headless FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/m33" 50
   headless FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/hifi4" 50
   local d; for d in main display ifdsp/m33 ifdsp/hifi4; do
-    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure"
+    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure, $(awk -F'\t' '$1=="warnings"{print $2}' "$DECOMP_OUT/$d/quality.tsv" 2>/dev/null) warnings (quality.tsv)"
   done
 }
 
@@ -377,21 +379,36 @@ step_flix() {
 }
 step_verify() {
   log "verify: $DECOMP_OUT against the committed decomp/"
-  local rc=0 noflix=""
+  local rc=0 qrc=0 noflix="" d old
   [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
+  # quality.tsv is not diffed byte for byte: it is compared metric by metric below (T21f, #97 B11).
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
-    git -C "$REPO" diff --stat -- decomp/ | tail -n 5
-    git -C "$REPO" diff --quiet -- decomp/ && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/)" ] || rc=1
+    git -C "$REPO" diff --stat -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' | tail -n 5
+    git -C "$REPO" diff --quiet -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' \
+      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ ':(exclude,glob)decomp/**/quality.tsv')" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
-  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"
-  else die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"; fi
+  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"; fi
+  # Decompile-quality regression check: no count in the fresh quality.tsv may be higher than in the committed one.
+  for d in main display ifdsp/m33 ifdsp/hifi4; do
+    [ -f "$DECOMP_OUT/$d/quality.tsv" ] || { info "$d: no quality.tsv in the export (old ExportDecomp?)"; qrc=1; continue; }
+    old=$OUT/logs/quality_committed_${d//\//_}.tsv
+    if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
+      git -C "$REPO" show "HEAD:decomp/$d/quality.tsv" > "$old" 2>/dev/null || { info "$d: no committed quality.tsv; skipped"; continue; }
+    else
+      [ -f "$REPO/decomp/$d/quality.tsv" ] || { info "$d: no committed quality.tsv; skipped"; continue; }
+      cp "$REPO/decomp/$d/quality.tsv" "$old"
+    fi
+    py "$REPO/tools/decomp_quality.py" compare "$old" "$DECOMP_OUT/$d/quality.tsv" "$d" | sed 's/^/   /' || qrc=1  # pipefail
+  done
+  [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
+  [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
 }
 
 # ---------------------------------------------------------------- sdr
@@ -440,7 +457,7 @@ step_sdr() {
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,44p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in

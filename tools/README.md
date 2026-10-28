@@ -89,6 +89,7 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 | `names_merge.py` | `report`/`merge` per-sub-task name and entry TSVs into the shared ones, conflicts resolved with `--picks` | `tools/ghidra/names_*.T*.tsv` → `names_*.tsv` | T17 |
 | `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
+| `decomp_quality.py` | Decompile-quality regression check (#97 B11): `compare old new` exits 1 if any count in `quality.tsv` went up (run by `bootstrap.sh verify`); `index INDEX.md LABEL=quality.tsv ...` renders the counts as a table between `<!-- quality:begin/end -->` | `decomp/*/quality.tsv` → exit code / `INDEX.md` | T21f |
 
 ## tools/ghidra/ (Ghidra scripts and their data)
 
@@ -105,7 +106,7 @@ the exact command line for every program.
 | `names_*.T*.tsv`, `entries_display.T*.tsv` | data | the per-sub-task proposals, kept as the merge inputs | names_merge.py | T10/T11/T12 |
 | `names_{main,display,ifdsp}.picks.tsv` | data | T17 resolutions of name conflicts | names_merge.py | T17 |
 | `CatDispatch.java` | postScript | Dumps the CAT mnemonic → switch case → handler table with each length test (`len==N`, `len>N`, ...) | `decomp/main/cat_dispatch.tsv` | T05, fixed T20 |
-| `ExportDecomp.java` | postScript | Decompiled C in 50-function files + `functions.tsv` (60 s per-function limit) | all | T01/T05 |
+| `ExportDecomp.java` | postScript | Decompiled C in 50-function files + `functions.tsv` (60 s per-function limit) + `quality.tsv` (decompile-quality counts from the same pass, T21f) | all | T01/T05 |
 | `DisplaySetup.java` | preScript | DISPLAY RZ/A1H map: `.text`/`.rodata`/scatter area split, armcc LZ decompression of RW data, ZI blocks, I/O, vectors | DISPLAY | T06 |
 | `DisplayFindCode.java` | postScript | Second code-discovery pass: pointer tables, `push {..,lr}` prologues, orphan code (run twice; the 2nd finds nothing new) | DISPLAY | T06 |
 | `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames) | DISPLAY | T11 |
