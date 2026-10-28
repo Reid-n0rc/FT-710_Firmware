@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>The SP service command family: which sub-command reaches which chip, and the two frame styles</title>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="700" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">The SP service family</text>
+  <rect x="24" y="234" width="100" height="80" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="74" y="276" font-size="28" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SP</text>
+  <text x="74" y="300" font-size="14" text-anchor="middle">3rd letter</text>
+  <path d="M124,274 C150,274 150,90 176,90 L176,90" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="70" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="96" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPSR</text>
+  <rect x="276" y="70" width="116" height="40" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="334.0" y="96" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPSW</text>
+  <line x1="394" y1="90" x2="414" y2="90" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="70" width="520" height="48" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="428" y="90" font-size="14">SDR FPGA register (16 bit), over the</text>
+  <text x="428" y="110" font-size="14">FPGA link; a write lasts until MAIN rewrites it</text>
+  <path d="M124,274 C150,274 150,150 176,150 L176,150" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="130" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="156" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPDR</text>
+  <rect x="276" y="130" width="116" height="40" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="334.0" y="156" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPDW</text>
+  <line x1="394" y1="150" x2="414" y2="150" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="130" width="520" height="48" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="428" y="150" font-size="14">IF-DSP register file (113 registers),</text>
+  <text x="428" y="170" font-size="14">over the DSP link; same "until rewritten" rule</text>
+  <path d="M124,274 C150,274 150,210 176,210 L176,210" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="190" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="216" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPIR</text>
+  <line x1="268" y1="210" x2="414" y2="210" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="190" width="520" height="48" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="428" y="210" font-size="14">12 raw ADC readings: forward and reflected</text>
+  <text x="428" y="230" font-size="14">power, PA voltage and current, ALC, PA temperature</text>
+  <path d="M124,274 C150,274 150,270 176,270 L176,270" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="250" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="276" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPM</text>
+  <line x1="268" y1="270" x2="414" y2="270" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="250" width="520" height="48" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="428" y="280" font-size="14">8 bytes of meter values (inference)</text>
+  <path d="M124,274 C150,274 150,330 176,330 L176,330" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="310" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="336" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPR</text>
+  <rect x="276" y="310" width="116" height="40" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="334.0" y="336" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPW</text>
+  <line x1="394" y1="330" x2="414" y2="330" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="310" width="520" height="48" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="428" y="330" font-size="14">one EEPROM byte at any address;</text>
+  <text x="428" y="350" font-size="14">a write also updates MAIN's RAM copy</text>
+  <path d="M124,274 C150,274 150,390 176,390 L176,390" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="178" y="370" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="223.0" y="396" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPNR</text>
+  <rect x="276" y="370" width="116" height="40" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="334.0" y="396" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPNW SPNS</text>
+  <line x1="394" y1="390" x2="414" y2="390" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="370" width="520" height="48" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="428" y="390" font-size="14">calibration table, 261 bytes (inference), incl.</text>
+  <text x="428" y="410" font-size="14">per-band TX power; SPNR also loads a preset into the VFO</text>
+  <path d="M124,274 C150,274 150,450 176,450 L274,450" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <rect x="276" y="430" width="116" height="40" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="334.0" y="456" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SPAWE</text>
+  <line x1="394" y1="450" x2="414" y2="450" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="416" y="430" width="520" height="48" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="428" y="450" font-size="14">commits the whole calibration table</text>
+  <text x="428" y="470" font-size="14"> to EEPROM</text>
+  <text x="223" y="60" font-size="14" font-weight="bold" text-anchor="middle">read</text>
+  <text x="334" y="60" font-size="14" font-weight="bold" text-anchor="middle">write</text>
+  <text x="676" y="60" font-size="14" font-weight="bold" text-anchor="middle">what it reaches</text>
+  <text x="24" y="520" font-size="16" font-weight="bold">Two frame styles</text>
+  <text x="24" y="556" font-size="15" font-weight="bold">ASCII</text>
+  <text x="24" y="576" font-size="14" fill="#6B7280">SPS, SPD, SPIR</text>
+  <rect x="220" y="536" width="34" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="237.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">S</text>
+  <rect x="258" y="536" width="34" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="275.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">P</text>
+  <rect x="296" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="313.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">S</text>
+  <rect x="334" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="351.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">R</text>
+  <rect x="372" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="389.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">0</text>
+  <rect x="410" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="427.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">0</text>
+  <rect x="448" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="465.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">0</text>
+  <rect x="486" y="536" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="503.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">0</text>
+  <rect x="524" y="536" width="34" height="44" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="541.0" y="565" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">;</text>
+  <text x="574" y="564" font-size="14">→ answer SPSR0104; (4 hex digits)</text>
+  <text x="24" y="620" font-size="15" font-weight="bold">binary</text>
+  <text x="24" y="640" font-size="14" fill="#6B7280">SPR SPW SPN SPM SPA</text>
+  <rect x="220" y="600" width="34" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="237.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">S</text>
+  <rect x="258" y="600" width="34" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="275.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">P</text>
+  <rect x="296" y="600" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="313.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">R</text>
+  <rect x="334" y="600" width="48" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="358.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">aH</text>
+  <rect x="386" y="600" width="48" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="410.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">aL</text>
+  <rect x="438" y="600" width="34" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="455.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">x</text>
+  <rect x="476" y="600" width="56" height="44" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="504.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">sum</text>
+  <rect x="536" y="600" width="34" height="44" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="553.0" y="629" font-size="16" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">;</text>
+  <text x="586" y="620" font-size="14">sum = 8-bit sum of every</text>
+  <text x="586" y="638" font-size="14">byte before it</text>
+  <rect x="24" y="666" width="22" height="18" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="54" y="681" font-size="14">read form</text>
+  <rect x="154" y="666" width="22" height="18" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="184" y="681" font-size="14">write form: high risk</text>
+  <rect x="380" y="666" width="22" height="18" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="410" y="681" font-size="14">SDR FPGA</text>
+  <rect x="502" y="666" width="22" height="18" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="532" y="681" font-size="14">IF-DSP</text>
+  <rect x="608" y="666" width="22" height="18" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="638" y="681" font-size="14">MAIN</text>
+  <rect x="698" y="666" width="22" height="18" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="728" y="681" font-size="14">EEPROM</text>
+</svg>
