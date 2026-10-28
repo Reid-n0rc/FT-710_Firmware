@@ -19,7 +19,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T10a | [MAIN overview, boot, main loop and memory map](T10a-main-overview.md) | T05 | done |
 | T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | in progress |
 | T10c | [MAIN SDR link (SCI5) and SDR control GPIOs](T10c-main-sdr-link.md) | T05 T13 | done |
-| T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | in progress |
+| T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | done |
 | T10e | [MAIN EEPROM, data flash and settings persistence](T10e-main-eeprom.md) | T05 T09 | done |
 | T10f | [MAIN menu engine (EX) and hidden menu items](T10f-main-menu.md) | T05 T09 | done |
 | T10g | [MAIN band, VFO, mode, frequency and memory control](T10g-main-radio-control.md) | T05 T09 | done |
