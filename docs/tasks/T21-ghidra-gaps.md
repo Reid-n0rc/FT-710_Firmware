@@ -85,6 +85,61 @@ Ghidra copy (not the shared install): full MAIN export, spacebase warnings 8 →
 into the RX step of `tools/bootstrap.sh` together with T21c's patch (the step checks the patched `rx62t.sinc` SHA-256, so the two patches
 must be applied in one place); T21d does not edit that step.
 
+**Measurement setup.** T21c patched the shared RX module in place on 2026-10-28 11:20 (sinc SHA-256 `9eadf83b…6a11`), so every number
+below comes from a private Ghidra copy (`~/opt/t21d-ghidra-tmp`, hard links to the shared install with its own RX module: T21c's
+`rx62t.sinc` + `rx62t-rtsd-fix.patch`, SHA-256 `618938bb…4b36`), on a copy of the canonical project, exported to scratch. "Base" is that
+SLEIGH without signatures.
+
+**B3 (dropped arguments / lost returns): counter, signatures, fixed.**
+- `tools/ghidra/CallArgCheck.java <mismatch.tsv> [<protos.tsv>]` (read-only). For each of the 6,010 direct call sites it compares the
+  disassembly with the CALL op in the caller's decompile. Disassembly view [inference: heuristic]: arguments = R1..R4 written in the
+  call's basic block and not read again before the call (string instructions excluded, their R1–R3 outputs are side effects; PUSHM/POPM/
+  RTSD use their register range, not Ghidra's input objects, which name every register); `dropped_arg` also needs the callee to read
+  the missing register at its entry (block liveness). Return = R1 read before written in up to 8 fall-through instructions after the
+  call. `protos.tsv` has, per function, the live-in registers with the first spill size, how many sites read R1/R2 and with what size,
+  the decompiler's prototype, the entry instruction, and the -O0 return idiom before each RTS/RTSD.
+- Counts [fact]:
+
+| | canonical project (T17 SLEIGH) | base (T21c + RTSD SLEIGH) | with `signatures_main.tsv` |
+|---|---:|---:|---:|
+| dropped arguments (callees) | 130 (36) | 116 (35) | **0** (0) |
+| lost returns (callees) | 65 (28) | 91 (29) | 42 (8), all at callees with a signature |
+| 64-bit return candidates | 1 | 1 | 0 (`FUN_fffede41` gets `uint64`, a runtime helper) |
+| `quality.tsv`: functions with `in_`/`unaff_`/`extraout_` | 61 | 23 | **6** |
+| `quality.tsv`: warnings (functions) | 1,294 (347) | 1,217 (341) | 1,226 (350) |
+
+  The 9 extra warnings are "Removing unreachable block" in byte-parameter setters (`gpo_a_set`, `hex2word`, …) whose parameter is now
+  known to be a byte. The base column has more lost returns because T21c's string pcodeops make some results dead (next point).
+- The 42 left are not missing signatures [fact, read in the listings]: 16 are results the source stores into a local that is never read
+  again (`cat_AC` 0xFFFA65E1 `MOV.L R1,0x8[SP]` after `vfo_rec_ptr`, `ptt_arbiter` 0xFFFB8707 after `vfo_mode`, …), 26 are
+  **a regression from T21c's B4 change**: a value stored into a stack buffer that a string instruction then copies is dropped, because
+  the `smovf()` pcodeop has no memory effect for the decompiler. Example `FUN_fffdebd1` 0xFFFDEC12: `nib2hex()` result goes into
+  `local_6[2]` and `SMOVF` copies the reply to 0x15E06; the C now shows `builtin_strncpy(local_6,"CS0;",4); nib2hex(DAT_00020f0b);
+  smovf(...)` with the digit lost (all 24 `nib2hex` sites in the AI reply builders 0xFFFDEBD1..0xFFFE1774, and the 16-byte limits block in
+  `ex_read_or_write` → `in_stack_ffffffcc`). **For T21c/T21g:** give the pcodeops a memory effect (e.g. keep the T17 copy loop for
+  SMOVF/SMOVB/SSTR and use pcodeops only for the compare/search ops, or copy through a `*[ram]` loop after the call), then re-run
+  `CallArgCheck.java`: the 26 should go away.
+- `tools/ghidra/signatures_main.tsv`: 1,212 rows = every named function in `names_main.tsv` (1,121) + 91 unnamed `FUN_` callees/callers
+  listed by the baseline mismatch file. 33 rows are `doc` (checked against the listing and `docs/code/main/`): `eeprom_read/write/
+  read_raw/spi_tx/spi_rx`, `vfo_freq`, `vfo_freq_clar`, `vfo_rec_ptr`, `vfo_mode`, `tx_freq_allowed`, `dest_code_get`, `band_of_freq`,
+  `freq_range_index`, `gen_subband_of_freq` (the #103 path), the hex helpers, `menu_*`, and the `ex_*` EX parser with CC-RX's packed stack
+  arguments (`ex_parse_byte`: byte at SP+4, byte at SP+5, word at SP+6; `ex_read_value`/`ex_write_value`: a 16-byte limits block by
+  value at SP+4). The rest are `asm` rows drafted by `tools/signatures_draft.py` from `protos.tsv` (rules in its docstring: entry
+  liveness and spill size for parameters; the `MOVU.B/W|MOV.x dsp[SP],R1` or `MOV.x R1,dsp[SP]` return idiom, else callers' use of R1, for
+  the return; interrupt handlers `void(void)`). Drafted parameters are unnamed (`param_N`), so no made-up name spreads into callers.
+- `tools/ghidra/ApplySignatures.java <tsv>`: sets each prototype with `SourceType.USER_DEFINED` and the cspec's `__fastcall`
+  (without a named convention every function got "Unknown calling convention -- yet parameter storage is locked"), dynamic storage
+  except for `@stack:N` parameters or a 64-bit return (custom storage, return R2:R1), and stack purge 0 (CC-RX callers pop their stack
+  arguments; with the purge left unknown, callers of custom-storage functions lost track of SP: `unaff_R6` in `ex_write_value`).
+  Locked prototypes are not overridden by the decompiler's parameter ID (B3 step 3).
+- Test [fact]: `eeprom_read` → `void eeprom_read(ushort addr,byte *buf,ushort n)` with `eeprom_spi_tx(3); eeprom_spi_tx((byte)(addr >> 8));
+  eeprom_spi_tx((byte)addr)`; `vfo_freq` → `uint vfo_freq(byte which,byte side)` that builds and returns the big-endian u32 (it
+  decompiled as `void` with an empty loop); `tx_freq_allowed` → `bool tx_freq_allowed(uint freq)`; float arguments now show
+  (`tone_set(880.0,100)`); 0 decompile failures.
+- Regenerate: run `CallArgCheck.java` on a project **without** signatures for `protos.tsv`/`mismatch.tsv`, then
+  `python3 -I tools/signatures_draft.py protos.tsv tools/ghidra/names_main.tsv tools/ghidra/signatures_main.tsv mismatch.tsv` (keeps the
+  `doc` rows), then `ApplySignatures.java`.
+
 ## Findings
 
 ## Follow-ups
