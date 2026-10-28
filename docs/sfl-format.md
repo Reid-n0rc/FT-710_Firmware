@@ -74,7 +74,7 @@ KEY = 1E 27 1B 12 11 16 19 17 24 25 29 1C 0D 0B 06 04 03 01 02 05 07 0C 0E 0F
 - The same key is used for all four images, with no drift over the whole file. Phase 0 is the first payload byte. The radio's encoder is the same loop with `+`.
 
 ### How it was derived
-1. Small hexdumps of each payload showed a repeating run at the start of IFDSP and SDR. Its period is 43 bytes, and it repeats again at payload offset 0x2B. IFDSP's first 43 bytes are exactly a permutation of 1..43. SDR's run is the same sequence plus a constant 0x66 per byte, which means additive (not XOR) with plaintext `0x00` (IFDSP) and `0x66` (SDR, ASCII `f`).
+1. Small hexdumps of each payload showed a repeating run near the start of IFDSP and SDR. Its period is 43 bytes, and it repeats again at payload offset 0x2B. IFDSP's first 43 bytes are exactly a permutation of 1..43. In SDR the run starts at payload offset 8: the payload begins with the ASCII text `993966c2`, and the `ffff…` padding after it gives the same sequence plus a constant 0x66 per byte (wording corrected by T19h; checked by subtracting the key from SDR payload bytes 0..95). This means additive (not XOR) with plaintext `0x00` (IFDSP) and `0x66` (SDR, ASCII `f`).
 2. Taking KEY = IFDSP payload[0:43] and subtracting it from MAIN gave `S00E0000…\r\nS311FE7F5D00FFFF…`, a Motorola S-record. All four images then decoded cleanly.
 3. Confirmed in code: the key is the first object of DISPLAY's `.data` (file offset 0x328840, VMA 0x20428840). The routine at VMA **0x2011497C** (DISPLAY V01-08, load base 0x20100000) does `pos %= 43; buf[i] -= KEY[pos]; pos = (pos+1) & 0xFF` and returns the updated position, so it can stream in chunks. Its twin at 0x201149E0 does the `+=` (encode).
 
