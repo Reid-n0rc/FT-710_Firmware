@@ -259,3 +259,11 @@ CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dep
   in `~/.cache/puppeteer`. Browser libraries were installed with `persist-apt` (libgbm1 libnss3 libatk1.0-0 libatk-bridge2.0-0
   libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2). Run it as `mmdc -p pp.json`
   with `{"args":["--no-sandbox"]}`, because the container has no user namespaces. Used to check that every Mermaid block renders.
+
+## Commit signing (2026-10-28)
+
+The owner wants commits signed, but not required. `ssh-keygen -t ed25519` created `~/.ssh/ft710_signing_ed25519` (no passphrase, so
+agents can sign unattended). The repo-local git config sets `gpg.format ssh`, `user.signingkey ~/.ssh/ft710_signing_ed25519.pub`,
+`commit.gpgsign true` and `gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`, and the wiki clone uses the same settings. For GitHub to
+show "Verified", the public key must be added to the owner's account as a **signing** key (`gh ssh-key add --type signing`, which needs
+the `admin:ssh_signing_key` scope).

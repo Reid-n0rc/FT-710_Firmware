@@ -26,6 +26,19 @@ flowchart LR
 The repository owner and admins may commit to `main` directly (the branch ruleset lets them bypass it). That includes AI agents working
 on the owner's behalf with the owner's credentials.
 
+## Signed commits (please, but not required)
+
+Please sign your commits so GitHub shows them as **Verified**. SSH signing is the simplest option:
+
+```sh
+git config gpg.format ssh
+git config user.signingkey ~/.ssh/id_ed25519.pub   # any SSH key; add it on GitHub as a *signing* key
+git config commit.gpgsign true
+```
+
+Add the same public key under GitHub → Settings → SSH and GPG keys → **New SSH key → Key type: Signing key**. GPG keys work too.
+Unsigned commits are still accepted: the branch ruleset does not require signatures.
+
 ## What a good change looks like
 
 Read [AGENTS.md](AGENTS.md): it is the rule book for humans and AI agents alike. In short:
