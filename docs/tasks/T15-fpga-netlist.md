@@ -1,6 +1,6 @@
 # T15 — FPGA netlist recovery (SDR)
 
-**Status:** todo · **Depends on:** T13
+**Status:** in progress · **Depends on:** T13
 
 ## Goal
 Turn the SDR bitstream (XC7A50T, `build/FT-710_SDR_V0104.bin`) into a gate-level netlist and identify its main blocks, so
@@ -20,7 +20,26 @@ the design's interfaces can be re-implemented or extended (see [custom firmware 
 - Never commit bitstream bytes or large derived dumps.
 
 ## Plan
-_(fill in before starting)_
+Split into three sub-tasks, done in order (each finished, documented and committed before the next):
+
+| Sub-task | Deliverable | Status |
+|---|---|---|
+| [T15a](T15a-fpga-fasm.md) | `tools/xc7_fasm.py`: bitstream -> prjxray `.bits` (stdlib) -> FASM via prjxray's `FasmDisassembler` (venv); FASM summary per tile type; FASM section of `docs/code/sdr/netlist.md` | todo |
+| [T15b](T15b-fpga-netlist-cells.md) | `tools/xc7_netlist.py` (stdlib): FASM -> cells (LUT INIT, FF, CARRY4, DSP48E1, BRAM, IOB, MMCM, BUFG) + nets from active PIPs walked over `tileconn.json`; self-test on a hand-built FASM case | todo |
+| [T15c](T15c-fpga-blocks.md) | Block recognition in `docs/code/sdr/netlist.md`: clock domains, IOB groups, DSP48 cascades and BRAM<->DSP links (DDC/filter chain), UART5 and scope SPI candidates, TX path | todo |
+
+Approach:
+1. No C++ build: prjxray's `bitread` is replaced by a stdlib writer of the same `bit_FFFFFFFF_WWW_BB` lines (frames from
+   `tools/xc7_db.py`'s FAR walk). prjxray's own Python `FasmDisassembler` (+ `fasm`, `simplejson`, `intervaltree`,
+   `pyyaml` in a venv under `~/.local/share/ft710-tools/venv`) turns that into FASM, so the feature decode is the
+   reference implementation, not ours. Output: `build/sdr/FT-710_SDR_V0104.fasm` (gitignored).
+2. The netlist tool reads FASM text only (stdlib). Nodes are found lazily: from each (tile, wire) used by an active PIP
+   or a site pin, follow `tileconn.json` wire pairs to the other tiles of the node; nets are the union of nodes joined
+   by active PIPs (and always-on pseudo-PIPs from `ppips_*.db`). Site pins come from `tile_type_*.json`.
+3. Block recognition works on the net graph: fanout and driver/sink cell types, DSP PCOUT->PCIN/ACOUT->ACIN cascades,
+   BRAM DO -> DSP A/B, MMCM -> BUFG -> clock domains, IOB -> ISERDES/IDELAY -> fabric.
+4. Limits: 4 worker processes, < 2.5 GB RAM, timeouts on every long command. Nothing derived is committed except
+   summaries in docs.
 
 ## Findings
 _(fill in as you go)_
