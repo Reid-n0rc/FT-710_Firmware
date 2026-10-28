@@ -43,7 +43,7 @@ The four chips split the work cleanly:
   tasks in turn, over and over. MAIN owns everything that defines "the radio": [VFO](#glossary) frequencies, modes, filters, menus and
   memories. It keeps all settings in a 32 KB EEPROM and answers CAT commands on three serial ports. It also switches the radio between
   receive and transmit, and it tells the FPGA and the DSP what to do. It does not process the radio signal itself.
-- **DISPLAY (RZ/A1H)** is an ARM Cortex-A9 with 10 MB of on-chip RAM. It runs a small real-time OS (µITRON, about 32 tasks). It draws the
+- **DISPLAY (RZ/A1H)** is an ARM Cortex-A9 with 10 MB of on-chip RAM. It runs a small [real-time OS](#glossary) (µITRON, about 32 tasks). It draws the
   touch screen and reads the keys, the knobs and the power button. It owns the SD card and the real-time clock. Because it has the SD card,
   it is also the chip that **updates the firmware of all four chips**. It switches the MAIN CPU on and off.
 - **IFDSP (i.MX RT685)** holds two different processors in one chip. A Cortex-M33 (198 MHz, FreeRTOS) is the helper: it starts the DSP,
@@ -93,7 +93,7 @@ Follow a signal from the antenna to your ears:
    The FPGA also has the noise blanker controls *(inference)* and computes the spectrum-scope data. The scope data goes **straight to the
    DISPLAY** over its own SPI link and never passes through MAIN.
 4. **HiFi4 DSP.** The narrow, slow stream reaches the RT685 over [I2S](#glossary), a standard serial audio bus. The HiFi4 demodulates
-   (SSB, CW, AM, FM, data) and runs the filters, AGC, noise reduction, notch and contour. It works on blocks of about 12 kHz sample rate
+   (SSB, CW, AM, FM, data) and runs the filters, AGC, noise reduction, notch and contour. It works at a sample rate of about 12 kHz
    *(inference, strong)*. It also sends an audio spectrum ("AF-FFT") and the voice-recorder audio to the DISPLAY over a second SPI link.
 5. **Audio codec.** A TI TLV320AIC3204 turns the numbers back into an analog voltage.
 6. **AF amplifier and speaker.** The audio is amplified and sent to the speaker or phones.
@@ -115,10 +115,10 @@ On transmit the chain runs backwards:
 3. **FPGA up-converter.** The audio goes back over I2S to the FPGA. A second digital oscillator, set to the transmit frequency, moves it up
    to RF. The FPGA also sets the drive level and shapes the start and end of each CW element with a smooth "raised-cosine" ramp
    *(inference from the FPGA's tables)*.
-4. **DAC.** The FPGA drives a fast LVDS output bus, which most likely feeds a DAC on the SDR module *(inference; the part is unknown)*.
+4. **DAC.** The FPGA drives a fast [LVDS](#glossary) output bus, which most likely feeds a DAC on the SDR module *(inference; the part is unknown)*.
 5. **PA unit.** The low-level RF goes to the PA unit. MAIN selects the band relays there and keys the amplifier.
 
-MAIN decides *when* the radio transmits. A [PTT](#glossary) can come from the mic key, the MOX button, a CAT `TX1;` command, the rear DATA
+MAIN decides *when* the radio transmits. A [PTT](#glossary) can come from the mic key, the [MOX](#glossary) button, a CAT `TX1;` command, the rear DATA
 jack, or the RTS/DTR lines of the USB serial port. MAIN then checks that the frequency is allowed for the radio's region, re-programs the FPGA and
 the DSP for transmit, switches the RX/TX lines and keys the amplifier last. Chapter 3 walks through that sequence step by step.
 
@@ -130,12 +130,12 @@ the DSP for transmit, switches the RX/TX lines and keys the amplifier last. Chap
 
 Plug a USB cable into the rear USB-B jack and the PC finds a 4-port hub (Cypress CY7C65631) with three devices behind it:
 
-- **CP2105**, a dual USB-to-serial bridge. It shows up as **two COM ports**. The "Enhanced" port goes to MAIN's CAT port 1 (38400 baud
+- **[CP2105](#glossary)**, a dual USB-to-serial bridge. It shows up as **two COM ports**. The "Enhanced" port goes to MAIN's CAT port 1 (38400 baud
   after a reset), the "Standard" port to CAT port 2 (4800 baud after a reset). You can change both rates in the menu. The RTS and DTR lines
   of the Standard port can key the radio (PTT) or key CW/RTTY, if the PC KEYING menu setting says so.
 - **CM119B**, a USB sound card. A menu setting (MOD SOURCE) can select USB audio as the transmit audio. How its analog side is wired was
   not traced in the schematic, and no firmware touches the chip.
-- **FT4222H**, a USB-to-SPI bridge on the DISPLAY unit. Through it the DISPLAY streams 4 KB frames to the PC: a copy of the spectrum
+- **[FT4222H](#glossary)**, a USB-to-SPI bridge on the DISPLAY unit. Through it the DISPLAY streams 4 KB frames to the PC: a copy of the spectrum
   scope, the audio spectrum and a 151-byte status block. The DISPLAY holds the bridge in reset until a setting from MAIN switches it on.
   Which PC program reads this stream is not known.
 

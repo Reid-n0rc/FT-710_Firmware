@@ -5,7 +5,7 @@ control links to the FPGA and the DSP. It sends short ASCII commands like `r0000
 to register 0x22"), and the other side only answers. The DISPLAY and MAIN talk as equals over a binary link where every frame is
 acknowledged. The bulk data (spectrum scope, audio scope, voice recorder audio) goes over SPI straight to the DISPLAY and never passes
 through MAIN. A handful of reset and boot-mode wires let the DISPLAY restart MAIN, and MAIN restart the FPGA and the DSP. This chapter
-takes each link apart down to the byte. It also shows the trick MAIN uses to keep the other chips in step (shadow registers) and what
+takes each link apart down to the byte. It also shows the trick MAIN uses to keep the other chips in step ([shadow registers](#glossary)) and what
 happens when a link breaks.
 
 ### 2.1 Who is the boss
@@ -21,7 +21,7 @@ There are two bosses, each in charge of something different:
 - **MAIN is the boss of the radio state.** Everything that tunes, keys or configures the radio goes through MAIN. MAIN pushes that state to
   the FPGA, the DSP and the DISPLAY. It works out what each one should be showing or doing, and sends only what has changed.
 
-The FPGA and the DSP are pure slaves on their control links. Each holds a file of 16-bit registers that MAIN reads and writes, and neither
+The FPGA and the DSP are pure slaves on their control links. Each holds a [register file](#glossary) of 16-bit words that MAIN reads and writes, and neither
 ever speaks first. On their SPI data links the roles flip: the FPGA and the DSP drive the clock and push their data into the DISPLAY,
 which listens as an SPI slave.
 
@@ -45,12 +45,12 @@ DISPLAY UART has set-up code that is never called. The CAT ports from the PC are
 
 *Figure 2.2 — Anatomy of a DISPLAY ↔ MAIN frame, using the DISPLAY's power-on "hello" as the example.*
 
-This is the busiest control link. It runs at an unusual 345,600 bit/s nominal, 8 data bits, no parity and **two** stop bits (8N2).
+This is the busiest control link. It runs at an unusual 345,600 bit/s nominal, 8 data bits, no parity and **two** stop bits ([8N2](#glossary)).
 MAIN's clock divider actually lands on 340,900 bit/s, 1.4 % low, which is well within what a UART tolerates.
 
 **Frame format.** A frame is just `command, payload, sum8`. There is no start byte and no length byte. Both sides know from a table how
 many payload bytes each command has: 43 commands, from 1 byte up to 574 bytes. The last byte is the low byte of the sum of all the bytes
-before it. Two single bytes stand alone: **ACK = 0x06** and **NAK = 0x15**. If a frame is cut off, MAIN starts over: a byte that arrives
+before it, a [sum8](#glossary) checksum. Two single bytes stand alone: **[ACK](#glossary) = 0x06** and **[NAK](#glossary) = 0x15**. If a frame is cut off, MAIN starts over: a byte that arrives
 more than about 10 ms after the previous one is taken as the start of a new frame.
 
 **Worked example.** At power-on the DISPLAY sends `F0 01 08 20 23 06 29 00 6B`: command F0 ("hello"), its own version 01-08, its build
@@ -128,7 +128,7 @@ kHz, so MAIN sends `w0022006405` CR, and the FPGA answers `06`.
 Some differences between the two links:
 
 - **The DSP needs a wake-up line first.** The RT685's M33 core runs a small text console on this UART, meant for humans, with echo and
-  prompts. MAIN first sends `i DB00` CR, which switches the console into "machine mode" with no echo and no prompt. After that the frames
+  prompts. MAIN first sends `i DB00` CR, which switches the console into "[machine mode](#glossary)" with no echo and no prompt. After that the frames
   are the same. The DSP's register 0 answers 0x0101 (V01-01). Register 1 bit 0 says "DSP ready".
 - **The DSP's registers live in shared memory.** The M33 stores each value in a 32K-word register file in on-chip RAM, and the HiFi4
   reads its settings from there.
@@ -138,7 +138,7 @@ Some differences between the two links:
   steady receive or transmit, status registers 1–4 every 20 ms. Those carry the S-meter level, the compression level, the CW tuning
   offset, VOX and CTCSS detection *(inference for the meanings)*.
 
-The service CAT commands `SPSR`/`SPSW` (FPGA) and `SPDR`/`SPDW` (DSP) send these same frames from a PC. The write forms change the
+The [service CAT commands](#glossary) `SPSR`/`SPSW` (FPGA) and `SPDR`/`SPDW` (DSP) send these same frames from a PC. The write forms change the
 radio's hardware settings live, so this guide never sends them; see chapter 5.
 
 ### 2.4 The shadow-register idea
@@ -178,7 +178,7 @@ arrives unasked from the FPGA or the DSP. Everything MAIN learns from them, it p
 *Figure 2.6 — The three SPI frames the DISPLAY handles, drawn to the same byte scale.*
 
 The control links are slow. The real data travels over SPI, and in normal running the DISPLAY is the **slave** on all three SPI links.
-The other side drives the clock and the frame-select line, and the DISPLAY moves each frame into memory with a DMA channel. There is no
+The other side drives the clock and the frame-select line, and the DISPLAY moves each frame into memory with a [DMA](#glossary) channel. There is no
 checksum and no acknowledge on any of them.
 
 - **Scope from the FPGA.** The FPGA pushes 1700-byte frames. The DISPLAY keeps the first 850 bytes: a 25-byte header, 800 one-byte
@@ -189,7 +189,7 @@ checksum and no acknowledge on any of them.
   a 600-byte audio spectrum (AF-FFT) record plus 4000 bytes of 16 kHz stereo audio for the voice recorder, saved as WAV on the SD card.
   Towards the DSP: playback audio from a WAV file, or silence. At 16 kHz stereo, 4000 bytes last 62.5 ms, so the DSP must send about 16
   frames a second *(inference)*.
-- **Copy to the PC.** The FT4222H USB bridge is the master on this link. Every 4 ms the DISPLAY refreshes a 4096-byte block with copies of
+- **Copy to the PC.** The [FT4222H](#glossary) USB bridge is the master on this link. Every 4 ms the DISPLAY refreshes a 4096-byte block with copies of
   the scope record, the AF-FFT record and a 151-byte status block, ending in a fixed trailer. The block is not double-buffered, so the PC
   can get a frame that mixes two refreshes *(inference)*.
 
@@ -206,7 +206,7 @@ Next to the data links run a few plain wires. Each chip that can be updated has 
 drives both:
 
 - **DISPLAY → MAIN.** `RX_PWR_ON` is MAIN's power latch, set as soon as the DISPLAY program starts. `RX_RESET` holds MAIN in reset while
-  low. `RX_UPDATE` high at reset starts the RX651 in its built-in serial boot mode, which is how the DISPLAY rewrites MAIN's flash over the
+  low. `RX_UPDATE` high at reset starts the RX651 in its built-in [serial boot mode](#glossary), which is how the DISPLAY rewrites MAIN's flash over the
   same UART they normally talk on.
 - **MAIN → FPGA.** `SDR_RESET` holds the FPGA in reset while low. MAIN releases it at power-on and gives the FPGA 1 s to load. `SDR_UPDATE`
   is high in normal running and low only during an SDR update. The module pin it drives is labelled `WP`, but MAIN holds it low exactly
