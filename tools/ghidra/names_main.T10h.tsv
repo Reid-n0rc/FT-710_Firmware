@@ -1,0 +1,148 @@
+# T10h proposals: MAIN TX control, protection, meters, timers, ADC/DAC, GPIO. address<TAB>name<TAB>plate comment
+# --- BSP / peripheral drivers (Renesas Code Generator style)
+fff8f65e	R_Systeminit	BSP hardware setup: pins, IWDT, DA, S12AD0/1, SCI0-5, TPU0/1/3, MTU2, SCI6, SCI7, TPU2, vector registration
+fff92e49	R_Pins_Create	Port init: PDR/PODR/PCR/DSCR/ODR for P0..PJ (see docs/code/main/peripherals.md GPIO map)
+fff927a9	R_IWDT_Create	IWDTCR=0x3350, IWDTRCR=0 (underflow -> NMI), NMIER.IWDTEN
+fff927ce	iwdt_refresh	IWDTRR <- 0x00, 0xFF
+fff927e5	R_DA_Create	DA0 on P03 (net DA_OUT -> TONE_BEEP)
+fff92826	R_DA0_Start	DACR.DAOE0=1
+fff9283d	dac0_write	DADR0 = v & 0xFFF
+fff92851	R_S12AD0_Create	Unit 0: AN001 AN002 AN003 AN005 AN006 AN007, 4x average on AN003/5/6/7, scan-end IRQ vec186
+fff929f7	R_S12AD0_Start	ADCSR.ADST=1
+fff92a13	R_S12AD0_Stop
+fff92a31	R_S12AD0_Get_ValueResult	(channel, *dst)
+fff92b17	R_S12AD1_Create	Unit 1: AN108 AN109 AN115 AN117, 4x average, scan-end IRQ vec189
+fff92c74	R_S12AD1_Start
+fff92c90	R_S12AD1_Stop
+fff92cae	R_S12AD1_Get_ValueResult	(channel, *dst)
+fff92b01	r_s12ad0_scan_end_isr	vec186: stop unit 0, copy results to 0x20B04.., set 0x1203E
+fff92e0f	r_s12ad1_scan_end_isr	vec189: stop unit 1, copy results to 0x20B10.., set 0x1203F
+fff949b4	R_TPU0_Create	TPU0 PCLKB/16, TGRA=374: 10 kHz (0.1 ms) tick, vec130
+fff94a38	R_TPU0_Start
+fff94a57	r_tpu0_tgia_isr	vec130 -> swtimer_tick
+fff94a65	R_TPU1_Create	TPU1 PCLKB/1, TGRA set by tone_set: tone sample clock, vec144
+fff94acd	R_TPU1_Start
+fff94adc	R_TPU1_Stop
+fff94aec	r_tpu1_tgia_isr	vec144 -> tone_sample_isr
+fffedd07	R_TPU2_Create	TPU2 PCLKB/4, TGRA=74: 5 us, vec138 (speaker-switch soft start)
+fffedd6d	R_TPU2_Start
+fffedd7c	R_TPU2_Stop
+fffedd8c	r_tpu2_tgia_isr	vec138 -> spk_softstart_isr
+fffb2734	R_TPU3_Create	TPU3 PCLKB/256, TGRA=23437: 100 ms tick, vec142
+fffb27b2	R_TPU3_Start
+fffb27d1	r_tpu3_tgia_isr	vec142 -> slowtimer_tick
+fffc913b	R_MTU2_Create	MTU2 PWM on P27/MTIOC2B (TGRA=11999); never started (no TSTR.CST2 write)
+fffb3e55	sw_reset	SWRR (0x800C2) = 0xA501: software reset
+# --- software timers
+fffb2228	timers_init	Marks all timers expired, sets blink timers, starts TPU0 and TPU3
+fffb2288	swtimer_tick	TPU0 ISR body: 75 one-shot timers (flags 0x11FED) + 2 blink timers (0x12038)
+fffb237a	swtimer_start	(id, ms): limit = ms*10 ticks of 0.1 ms
+fffb23f3	swtimer_expired	returns flag 0x11FED[id]
+fffb2406	blink_phase	returns 0x12038[id]
+fffb2419	blink_set	(id, on_ms, off_ms) [inference]
+fffb259c	slowtimer_tick	TPU3 ISR body: 4 timers in 100 ms units (flags 0x1203A)
+fffb268e	tot_start	TX time-out timer from setting 0x9AC3 (minutes) [inference for units]
+fffb26bf	tot_expired
+fffb26e5	tot_prewarn
+# --- tone / beep (DAC)
+fffb2469	tone_sample_isr	TPU1 ISR body: next sample of the table at *0x20B00 -> DADR0
+fffb24a3	tone_play	(table, n): start TPU1 playback
+fffb24ca	tone_stop	[inference]
+fffb2e1e	tone_set	(freq_Hz float, ms): TPU1 TGRA = 60e6/(36*f)-1, 36-sample table 0x1FF1C
+fffb28d1	dac_init_idle	DADR0 = table[0]; DA0 output on
+fffb2e0d	tone_idle
+fffb28e2	beep_task	main loop: plays beep pattern 0x12041 (880 Hz / 1046.5 Hz)
+fffb2da6	beep_request	(pattern)
+fffb2df4	beep_stop
+fffb24d8	spk_softstart_isr	TPU2 ISR body: pulses the selected speaker switch with a shrinking duty cycle [inference: pop suppression]
+# --- ADC, meters, protection
+fffb27e0	adc_scan_start	start both units
+fffb289e	adc_scan_done
+fffb741e	adc_scan_blocking
+fffb27fb	adc0_store	AN001->0x20B04 AN002->0x20B06 AN003->0x20B08 AN005->0x20B0C AN006->0x20B0A AN007->0x20B0E
+fffb2858	adc1_store	AN108->0x20B10 AN109->0x20B12 AN115->0x20B14 AN117->0x20B16
+fffb284e	adc0_done
+fffb2894	adc1_done
+fffb73dd	meter_task	5 ms: ADC scan + SWR; 10 ms: VDD IDD ALC PO COMP S remote-keypad
+fffb7545	swr_meter_protect	SWR=(1+r)/(1-r), r=AN001/AN002; outside [1,5) for 9 passes while TX -> 0x20B6D (HI-SWR)
+fffb742b	vdd_scale_calc	cal 0x4659, 0x4667
+fffb747c	meter_vdd	AN003 -> 0x12043
+fffb74b8	meter_idd	AN007 -> 0x12044 (cal 0x475D)
+fffb74ff	meter_alc	AN005 -> 0x12045 (cal 0x474E)
+fffb7772	meter_po	AN002 -> 0x12048 (table 0xFFF88C74)
+fffb7869	meter_comp	DSP value -> 0x12049 [inference]
+fffb7959	meter_s	DSP value vs cal 0x4681 -> 0x1204A
+fffb7a40	remote_keypad_scan	AN108 REM_KEY: 12 voltage windows (0xFFF815AB) -> key 0x1204C
+fffb6e03	meter_get_vdd
+fffb6e12	meter_get_idd
+fffb6e21	meter_get_alc
+fffb6e30	meter_get_swr
+fffb6e3f	meter_get_swr_raw
+fffb6e6a	meter_get_po
+fffb6e98	meter_get_comp
+fffb6ea7	meter_get_s
+fffb6eb6	remote_key_get
+fffb4b28	supply_undervolt_check	AN003 < 0x7DD -> power_off_io, save, shutdown request 0x20B39=0x90
+# --- PTT / TX sequencing
+fffb6cde	trx_init	trx_state=4, timer 0x13 2.5 s, AF_MUTE on
+fffb6d56	io_task	main loop: AF mute, meters, io_poll, power checks
+fffb7b43	io_poll	after timer 0x13: PTT inputs, TRX sequencer, TX audio select, speaker route, AF mute, band data, keying
+fffb7f6f	ptt_inputs_read	DATA_PTT/RTS/DTR/EXTPA_TXREQ/VOX -> 0x20B24..0x20B29
+fffb85a2	ptt_source_select	priority CAT TX1 > EXTPA > DATA > RTS > DTR > ... > VOX -> 0x1204D
+fffb86e8	ptt_arbiter	TX allowed check, TXINH line, debounce, hang/delay, trx_state 0 or 4
+fffb80f9	trx_sequencer	trx_state 0x20B18 machine: RX->TX (0..3), TX->RX (4..8)
+fffb9774	pc_keying	CW keying from DAKY/RTS/DTR: SEND lines + sidetone beep
+fffb37fe	tx_freq_allowed	(freq): destination-code band table 0xFFF8884C.., inhibit flags
+fffb3ba6	dest_jumper_apply	JP_P51 strap: switch destination code between restricted/wide pairs
+fffb6ec5	ptt_source_get	returns 0x1204D (CAT TX read: 0->TX0, 5->TX1, else TX2)
+fffb8a02	tx_audio_select	TX_SEL_A/B (P81/P82) from mode/setting
+fffb8a8c	speaker_route	EXT_SP_DET/EAR_DET -> 0x20FCC route 0..4
+fffb7322	speaker_switch_set	route 0:INT_SP_SW 1:EAR_SW 2:INT+EXT 3:EXT_SP_SW
+fffb7243	af_mute_set	AF_MUTE (PB3)
+fffb7b65	af_mute_update
+fffb8f7d	linear_band_data	TUN/LIN=LINEAR: band code on P13/P12/P50/P22
+fffb1900	tunlin_port_mode	setting 0x9AB7: 0 EXT-TUNER 1 LINEAR 2 CAT-3 3 GPO
+# --- GPIO helpers
+fffb6fd2	send_a_set	PA2 SEND_A, forced 0 if ETUN_TXINH_REQ or TX line low
+fffb7011	send_b_set	PB4 SEND_B, same gating
+fffb6fac	tx_line_get	P73 TX
+fffb721a	rx_line_get	PB7 RX
+fffb722b	af_mute_get	PB3
+fffb6fbf	send_a_get
+fffb730a	ear_det	PF5 low
+fffb6ed4	ckey_det	P87
+fffb6ef3	ckey_dot	P16 low
+fffb6f0b	ckey_dash	P17 low
+fffb6f2a	jp_p51_get	P51 strap
+fffb6f76	atas_det	P55
+fffb7051	sdr_reset_set	P77
+fffb7067	sdr_update_set	P76
+fffb7080	dsp_reset_set	P71
+fffb7098	dsp_update_set	P72
+fffb70b0	af_reset_set	P74
+fffb70c9	pa_pon_set	PC0 PA_PON
+fffb70df	tun_lin_sel_set	P83
+fffb70f7	rem_key_sel_set	P86
+fffb7110	gpo_a_dir_out	PDR P13
+fffb711c	gpo_b_dir_out	PDR P12
+fffb7128	gpo_c_dir	PDR P50
+fffb714d	gpo_a_set	P13
+fffb7165	gpo_b_set	P12
+fffb717d	gpo_c_set	P50
+fffb7193	gpo_d_set	P22
+fffb71ab	gpo_a_get
+fffb71be	gpo_b_get
+fffb71d1	gpo_c_get
+fffb71e2	gpo_d_get
+fffb71ff	etun_reset_set	P22 inverted
+# --- serial shift registers / DACs on the PA and RF units
+fffb1f83	shreg_bus_init	idle levels of SDAT0/SCLK0/strobes, PA_PON=1, AF_RESET pulse
+fffb1fef	bu2505_write	(dev 0:Q1005 via SST1 | 4:PA Q4041 via SST5, ch, 10-bit) 14 bits LSB first
+fffb208d	sst2_write12	/SST2 (P67): 12 bits MSB first, high nibble = band code
+fffb214c	shreg_write24	(dev 2:/SST3 PA0 | 3:/SST4 PB5 | 5:/SST6 PA7, 24 bits MSB first)
+fffb55c2	rf_ctrl_task	main loop: updates all shift registers and DACs when values change
+fffb55eb	pa_relay_update	/SST4: TX band one-hot + tuner/AM/RX/band-10 bits [inference]
+fffb56a5	rf_bpf_update	/SST3: RX/TX band one-hot + preamp/ATT bits [inference]
+fffb5786	atu_relay_update	/SST6: internal tuner relay bytes, SEND dropped 15 ms while switching [inference]
+fffb5874	main_dac_update	Q1005 ch3 (FADJ) and ch5
+fffb5976	pa_dac_update	PA BU2505 ch1..7,10: per-band cal, drive level, fan (ch6 from PA_HF_TH) [inference]
