@@ -325,7 +325,7 @@ was written: no set form, no `SPSR`/`SPDR`. `ID;` answered `ID0800;`.
 | `SPIR;` | `SPIR000004002C3400000800003223B2BFFEDCC6;` | 41 chars; field values in [peripherals.md](code/main/peripherals.md#the-12-spir-fields) |
 | `E8;` | 10674 bytes | header `00 07 90 00 00` after removing k; sum correct |
 
-All replies match the formats decoded from V01-12 **[fact, radio]**. The settings image is the owner's data and is not committed.
+All replies match the formats decoded from V01-12 **[fact, radio]**. The `E8` dump itself is not in the repo.
 
 ## Undocumented primary-table commands
 | Command | What the firmware does | Risk |

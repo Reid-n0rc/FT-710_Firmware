@@ -28,7 +28,7 @@ calibration to ROM defaults. Those defaults are generic, not your radio's alignm
 
 ## 2. Back up before you experiment
 
-Do all three. Keep the files private: they hold your memory channels, call-sign related settings and calibration.
+Do all three, and keep a copy of the files off the radio.
 
 ### 2.1 SD card: memories and menus (Yaesu's own method, recommended)
 
@@ -136,5 +136,5 @@ Know yours before you start: `JP0710;` (section 2.2).
 
 ## 5. Sharing results
 
-Report findings on a GitHub issue, but **don't attach** `e8_*.bin`, `eeprom.bin` or SD-card files: they contain your memory channels
-and your radio's calibration. A region code and firmware versions are fine to share if you are comfortable with that.
+Report findings on a GitHub issue. Attach `info.txt`, `e8_*.bin` or `eeprom.bin` if they help; dumps from more radios make it easier to
+tell fixed values from per-radio ones (calibration, region, date stamp).

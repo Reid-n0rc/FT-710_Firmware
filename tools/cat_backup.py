@@ -11,7 +11,7 @@ menu CAT-1 RATE. OUTDIR defaults to backup-<date>. Everything this script sends 
   SPR<aH><aL>\\0<sum>;         -> eeprom.bin, eeprom_missing.txt   only with --eeprom; NOT YET TESTED on a radio
 The E8 image holds the memory channels only (docs/code/main/eeprom.md). The EEPROM dump holds everything, including the
 calibration table (EEPROM 0x000A..0x010E) and the region code (0x010F), which nothing else can back up.
-It never sends a set form. The files contain your memory channels and settings: keep them private.
+It never sends a set form.
 See docs/cat-undocumented.md for what to back up, why, and how to restore.
 """
 import datetime
@@ -129,7 +129,7 @@ def main():
         open(os.path.join(out, "eeprom_missing.txt"), "w").write("".join(f"0x{a:04X}\n" for a in missing))
         print(f"EEPROM: {len(image)} bytes, {len(missing)} addresses unread (see eeprom_missing.txt)")
     s.close()
-    print(f"Saved in {out}/ - keep it private (memory channels, settings, calibration).")
+    print(f"Saved in {out}/")
     return 0
 
 
