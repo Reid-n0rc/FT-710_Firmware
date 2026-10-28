@@ -97,4 +97,5 @@ are wider (T12c: the op0=0xE bundles in this image look 6 bytes long, `tools/ifd
 Function **entries** are still reliable, because they come from 4-aligned `entry a1,N` prologues. For the real instruction stream use
 the FLIX-aware listing [`hifi4/flix.dis`](hifi4/flix.dis) (about 52,000 lines, 1065 functions with names), made with the Zephyr SDK RT600
 HiFi4 objdump (`tools/ifdsp_hifi4_dis.py`, command above; T12e, `docs/code/ifdsp/hifi4.md`). It is committed (issue #87) and
-rebuilt and compared by `tools/bootstrap.sh` (step `flix`).
+rebuilt and compared by `tools/bootstrap.sh` (step `flix`). What Ghidra itself would need to decode the bundles (and the size of the gap: 891 of 1065 functions, 46 % of the code
+bytes) is in [`docs/code/ifdsp/ghidra-flix.md`](../../docs/code/ifdsp/ghidra-flix.md).

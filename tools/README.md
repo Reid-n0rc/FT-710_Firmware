@@ -55,6 +55,7 @@ Conventions:
 | `ifdsp_l32r.py` | Heuristic per-function L32R literal scan | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_regscan.py` | Heuristic HiFi4 accesses to the shared register file (base ISA only) | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_hifi4_dis.py` | Per-function FLIX-aware HiFi4 listing with the Zephyr SDK RT600 objdump, names from `IfdspHifi4Names.java` | objdump + SRAM image + `functions.tsv` → `decomp/ifdsp/hifi4/flix.dis` (committed; bootstrap step `flix`) | T12e |
+| `flix_stats.py` | Counts what Ghidra cannot represent in the HiFi4 code: functions with FLIX bundles, bundle sizes and slots, branch slots, unknown and wrong-register ops | `decomp/ifdsp/hifi4/flix.dis` (+ Ghidra's Xtensa `.sinc` files) → stdout | #97 |
 | `ifdsp_hifi4_regscan.py` | Register-file accesses in a FLIX-aware objdump listing | listing + `functions.tsv` → stdout | T12b |
 | `ifdsp_coef_tables.py` | Finds and classifies numeric tables (filters, windows, sin/cos, gain curves) | SRAM image → stdout | T12e |
 | `ifdsp_names_java.py` | Converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV, splits proposals by program | Java ↔ TSV | T17 |
