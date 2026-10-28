@@ -31,3 +31,22 @@ INDEX.md if names change, commit. Order:
 | [T11e](T11e-display-gui.md) | `gui.md` | VDC5, frame-buffer layers, draw primitives, sprite/bitmap descriptors and fonts in `.rodata`, screen/menu framework, screen capture |
 | [T11f](T11f-display-input.md) | `input.md` | Touch (TSC2003 over RIIC), front-panel keys/encoders, USB-host HID keyboard/mouse |
 | [T11g](T11g-display-misc.md) | `peripherals.md` | RTC S-35190A, OSTM tick, INTC/GIC, GPIO, backlight, DVI/LVDS, voice-message / play-list / MemList files |
+
+### Rebuild / re-export recipe used (Linux host, run from the main checkout, output into the worktree)
+```sh
+export GHIDRA_HEADLESS_MAXMEM=3G   # shared box: also -max-cpu 5
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -import build/FT-710_DISPLAY_V0108.bin -overwrite -max-cpu 5 \
+  -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
+  -scriptPath tools/ghidra -preScript DisplaySetup.java -analysisTimeoutPerFile 3600
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -max-cpu 5 \
+  -analysisTimeoutPerFile 3600 -scriptPath tools/ghidra -postScript DisplayFindCode.java          # twice
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -max-cpu 5 -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.tsv -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -max-cpu 5 \
+  -analysisTimeoutPerFile 3600 -scriptPath tools/ghidra -postScript ExportDecomp.java <worktree>/decomp/display 50
+```
+Import + analysis + FindCode take about 3 minutes; each names + export round takes about 2 minutes. The export re-buckets the 50-function files, so
+the "File" column of `decomp/display/INDEX.md` has to be refreshed from `functions.tsv` after each export.
+
+## Status
+- 2026-10-27: T11a done (README + boot-rtos pages, FixFuncEntries, 151 names). T11b–T11g handed back to the parent for parallel agents.
