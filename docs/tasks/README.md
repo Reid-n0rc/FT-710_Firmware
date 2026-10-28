@@ -12,10 +12,18 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T06 | [DISPLAY image: same as T05](T06-decomp-display.md) | T01 T02 T04 | done |
 | T07 | [IFDSP image: same as T05 (DSP — check Ghidra support)](T07-decomp-ifdsp.md) | T01 T02 T04 | done |
 | T08 | [SDR image: split code vs FPGA bitstream, decomp code](T08-decomp-sdr.md) | T01 T02 T04 | done |
-| T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | in progress |
+| T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | done |
 | T09a | [CAT core, reply/AI path, extended + hidden commands](T09a-cat-core-ext.md) | T05 | done |
 | T09b | [CAT primary 104-command table, Ghidra names, re-export](T09b-cat-primary.md) | T09a | done |
-| T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | todo |
+| T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | in progress |
+| T10a | [MAIN overview, boot, main loop and memory map](T10a-main-overview.md) | T05 | todo |
+| T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | todo |
+| T10c | [MAIN SDR link (SCI5) and SDR control GPIOs](T10c-main-sdr-link.md) | T05 T13 | todo |
+| T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | todo |
+| T10e | [MAIN EEPROM, data flash and settings persistence](T10e-main-eeprom.md) | T05 T09 | todo |
+| T10f | [MAIN menu engine (EX) and hidden menu items](T10f-main-menu.md) | T05 T09 | todo |
+| T10g | [MAIN band, VFO, mode, frequency and memory control](T10g-main-radio-control.md) | T05 T09 | todo |
+| T10h | [MAIN TX control, protection, meters and other peripherals](T10h-main-tx-peripherals.md) | T05 T09 | todo |
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
 | T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |
 | T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | todo |

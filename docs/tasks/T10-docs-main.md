@@ -1,6 +1,6 @@
 # T10 — Document MAIN code
 
-**Status:** todo · **Depends on:** T05
+**Status:** in progress · **Depends on:** T05
 
 ## Goal
 Full documentation of the MAIN (RX651) firmware per the AGENTS.md documentation standard → `docs/code/main/`.
@@ -12,3 +12,8 @@ Full documentation of the MAIN (RX651) firmware per the AGENTS.md documentation 
 
 ## Notes / hints
 - Too big for one context. Split into T10a/T10b/... sub-task files by subsystem as the first step, and do one per session.
+
+## Plan
+Split by the parent (2026-10-27) into T10a–T10h (see the board), run in parallel, one agent per sub-task. Each sub-task
+proposes names in `tools/ghidra/names_main.T10x.tsv`; the parent merges them into `names_main.tsv`, applies them with
+ApplyNames.java and re-exports `decomp/main` once, then the pages are updated to the final names.
