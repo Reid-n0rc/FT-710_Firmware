@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>How the 43-byte key was recovered</title>
+  <rect width="960" height="620" fill="#FFFFFF"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">The key-recovery trick: a file that starts with zeros gives the key away</text>
+<text x="30" y="70" font-size="16" font-weight="bold">1. IFDSP file, first payload bytes</text>
+<text x="30" y="96" font-size="14">encoded</text>
+<rect x="220" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="246" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">1E</text>
+<rect x="278" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="304" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">27</text>
+<rect x="336" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="362" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">1B</text>
+<rect x="394" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="420" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">12</text>
+<rect x="452" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="478" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">11</text>
+<rect x="510" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="536" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">16</text>
+<rect x="568" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="594" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">19</text>
+<rect x="626" y="76" width="52" height="34" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="652" y="99" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">17</text>
+<text x="700" y="90" font-size="14">The IFDSP image starts with</text><text x="700" y="110" font-size="14">1024 zero bytes, and 0 + key = key,</text><text x="700" y="130" font-size="14">so these bytes ARE the key.</text>
+<text x="30" y="150" font-size="14">= KEY</text>
+<rect x="220" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="246" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">1E</text>
+<rect x="278" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="304" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">27</text>
+<rect x="336" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="362" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">1B</text>
+<rect x="394" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="420" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">12</text>
+<rect x="452" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="478" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">11</text>
+<rect x="510" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="536" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">16</text>
+<rect x="568" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="594" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">19</text>
+<rect x="626" y="130" width="52" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="652" y="153" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">17</text>
+<text x="220" y="190" font-size="14" font-style="italic">… 43 bytes in all, then the pattern repeats: a shuffle of 1…43</text>
+<text x="30" y="232" font-size="16" font-weight="bold">2. Subtract the same key from the other files</text>
+<text x="30" y="265" font-size="15" font-weight="bold">MAIN</text>
+<text x="30" y="285" font-size="14">encoded</text>
+<rect x="220" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="246" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">71</text>
+<rect x="278" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="304" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">57</text>
+<rect x="336" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="362" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">4B</text>
+<rect x="394" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="420" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">57</text>
+<rect x="452" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="478" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">41</text>
+<rect x="510" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="536" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">46</text>
+<rect x="568" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="594" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">49</text>
+<rect x="626" y="266" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="652" y="289" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">47</text>
+<text x="30" y="334" font-size="14">− KEY =</text>
+<rect x="220" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="246" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">S</text>
+<rect x="278" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="304" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<rect x="336" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="362" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<rect x="394" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="420" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">E</text>
+<rect x="452" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="478" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<rect x="510" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="536" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<rect x="568" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="594" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<rect x="626" y="312" width="52" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="652" y="335" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">0</text>
+<text x="700" y="292" font-size="15" font-weight="bold">“S00E0000…”</text>
+<text x="700" y="314" font-size="14">a Motorola S-record!</text>
+<text x="30" y="385" font-size="15" font-weight="bold">SDR</text>
+<text x="30" y="405" font-size="14">encoded</text>
+<rect x="220" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="246" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">57</text>
+<rect x="278" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="304" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">60</text>
+<rect x="336" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="362" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">4E</text>
+<rect x="394" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="420" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">4B</text>
+<rect x="452" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="478" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">47</text>
+<rect x="510" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="536" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">4C</text>
+<rect x="568" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="594" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">7C</text>
+<rect x="626" y="386" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="652" y="409" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">49</text>
+<text x="30" y="454" font-size="14">− KEY =</text>
+<rect x="220" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="246" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">9</text>
+<rect x="278" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="304" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">9</text>
+<rect x="336" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="362" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">3</text>
+<rect x="394" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="420" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">9</text>
+<rect x="452" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="478" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">6</text>
+<rect x="510" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="536" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">6</text>
+<rect x="568" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="594" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">c</text>
+<rect x="626" y="432" width="52" height="34" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="652" y="455" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">2</text>
+<text x="700" y="412" font-size="15" font-weight="bold">“993966c2ffff…”</text>
+<text x="700" y="434" font-size="14">hex digits as ASCII text</text>
+<text x="30" y="505" font-size="15" font-weight="bold">DISPLAY</text>
+<text x="30" y="525" font-size="14">encoded</text>
+<rect x="220" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="246" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">27</text>
+<rect x="278" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="304" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">27</text>
+<rect x="336" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="362" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">1B</text>
+<rect x="394" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="420" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">FC</text>
+<rect x="452" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="478" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">96</text>
+<rect x="510" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="536" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">16</text>
+<rect x="568" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="594" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">19</text>
+<rect x="626" y="506" width="52" height="34" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="652" y="529" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">01</text>
+<text x="30" y="574" font-size="14">− KEY =</text>
+<rect x="220" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="246" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">09</text>
+<rect x="278" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="304" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">00</text>
+<rect x="336" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="362" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">00</text>
+<rect x="394" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="420" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">EA</text>
+<rect x="452" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="478" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">85</text>
+<rect x="510" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="536" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">00</text>
+<rect x="568" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="594" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">00</text>
+<rect x="626" y="552" width="52" height="34" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="652" y="575" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace" fill="#1F2937">EA</text>
+<text x="700" y="532" font-size="15" font-weight="bold">xx 00 00 EA = ARM “B”</text>
+<text x="700" y="554" font-size="14">(branch): ARM vector table</text>
+</svg>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="850" viewBox="0 0 960 850" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>MAIN update: Renesas RX serial boot command sequence</title>
+<rect width="960" height="850" fill="#FFFFFF"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">Reprogramming MAIN: the Renesas serial boot conversation</text>
+<text x="40" y="74" font-size="15" font-weight="bold">Command packet</text>
+<rect x="200" y="52" width="54" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="227.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">01</text>
+<text x="227.0" y="106" text-anchor="middle" font-size="14">start</text>
+<rect x="260" y="52" width="104" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="312.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">LNH LNL</text>
+<text x="312.0" y="106" text-anchor="middle" font-size="14">length</text>
+<rect x="370" y="52" width="64" height="34" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="402.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">CMD</text>
+<text x="402.0" y="106" text-anchor="middle" font-size="14">command</text>
+<rect x="440" y="52" width="94" height="34" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="487.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">data …</text>
+<text x="487.0" y="106" text-anchor="middle" font-size="14">arguments</text>
+<rect x="540" y="52" width="64" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="572.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">SUM</text>
+<text x="572.0" y="106" text-anchor="middle" font-size="14">checksum</text>
+<rect x="610" y="52" width="54" height="34" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="637.0" y="75" text-anchor="middle" font-size="15" font-family="DejaVu Sans Mono, monospace">03</text>
+<text x="637.0" y="106" text-anchor="middle" font-size="14">end</text>
+<text x="680" y="68" font-size="14">replies start 81;</text>
+<text x="680" y="88" font-size="14">data packets end 17 / 03</text>
+<rect x="240" y="150" width="180" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="330" y="176" text-anchor="middle" font-size="15" font-weight="bold">DISPLAY</text>
+<rect x="690" y="150" width="220" height="40" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="800" y="176" text-anchor="middle" font-size="15" font-weight="bold">MAIN boot ROM (RX651)</text>
+<rect x="30" y="214" width="170" height="32" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="115" y="235.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563EB">wake</text>
+<rect x="30" y="260" width="170" height="32" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="115" y="281.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#6B7280">find baud</text>
+<rect x="30" y="306" width="170" height="72" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="115" y="347.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563EB">set up</text>
+<rect x="30" y="392" width="170" height="32" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+<text x="115" y="413.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#D97706">unlock</text>
+<rect x="30" y="438" width="170" height="32" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="115" y="459.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563EB">map</text>
+<rect x="30" y="484" width="170" height="32" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+<text x="115" y="505.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#DC2626">erase</text>
+<rect x="30" y="530" width="170" height="72" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="115" y="571.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563EB">program</text>
+<rect x="30" y="616" width="170" height="72" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+<text x="115" y="657.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#16A34A">verify</text>
+<rect x="30" y="702" width="170" height="72" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="115" y="743.0" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563EB">restart</text>
+<line x1="330" y1="190" x2="330" y2="784" stroke="#16A34A" stroke-width="2" stroke-dasharray="3,4"/>
+<line x1="800" y1="190" x2="800" y2="784" stroke="#2563EB" stroke-width="2" stroke-dasharray="3,4"/>
+<line x1="330" y1="236" x2="800" y2="236" stroke="#2563EB" stroke-width="2" stroke-dasharray="7,4" marker-end="url(#ah)"/>
+<text x="565.0" y="229" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">RX_RESET low, RX_UPDATE high, release reset</text>
+<line x1="330" y1="282" x2="798" y2="282" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="275" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">00 … until 00, then 55 → C2   (9600 baud)</text>
+<line x1="330" y1="328" x2="798" y2="328" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="321" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">38 device type · 36 endian · 32 clocks</text>
+<line x1="330" y1="368" x2="798" y2="368" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="361" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">34 bit rate → switch to 345 600 baud</text>
+<line x1="330" y1="414" x2="798" y2="414" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="407" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">00 sync · 2C · 30 ID code = 16 × FF</text>
+<line x1="330" y1="460" x2="798" y2="460" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="453" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">53 area count · 54 area info (per area)</text>
+<line x1="330" y1="506" x2="798" y2="506" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="499" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">50 erase</text>
+<line x1="330" y1="552" x2="798" y2="552" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="545" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">13 start,end + 512-byte data packets</text>
+<line x1="330" y1="592" x2="798" y2="592" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="585" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">51 option-setting memory (protection settings)</text>
+<line x1="332" y1="638" x2="800" y2="638" stroke="#16A34A" stroke-width="2" marker-start="url(#ah)"/>
+<text x="565.0" y="631" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">15 read back each area, compare</text>
+<line x1="332" y1="678" x2="800" y2="678" stroke="#16A34A" stroke-width="2" marker-start="url(#ah)"/>
+<text x="565.0" y="671" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">52 read option memory (not compared)</text>
+<line x1="330" y1="724" x2="800" y2="724" stroke="#2563EB" stroke-width="2" stroke-dasharray="7,4" marker-end="url(#ah)"/>
+<text x="565.0" y="717" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">RX_UPDATE low, reset pulse, wait 500 ms</text>
+<line x1="330" y1="764" x2="798" y2="764" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="565.0" y="757" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, DejaVu Sans, monospace">new MAIN: F0 hello at 345 600, wait for 06</text>
+<text x="40" y="812" font-size="14">Dashed blue = pin changes; black = boot command; green = data read back.</text>
+<text x="40" y="832" font-size="14">Any failure shows "failed"; MAIN then stays in boot mode, and the update can simply be repeated (inference).</text>
+</svg>

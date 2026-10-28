@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="714" viewBox="0 0 960 714" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>DISPLAY self-update: two banks and their flags</title>
+<rect width="960" height="714" fill="#FFFFFF"/>
+<text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">DISPLAY updates itself: write the spare bank, then move the flag</text>
+<text x="40" y="64" font-size="15" font-weight="bold">16 MB SPI flash (W25Q128), drawn to scale</text>
+<rect x="40" y="76" width="178.75" height="56" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="129.375" y="100" text-anchor="middle" font-size="14" font-weight="bold">boot loader</text>
+<text x="129.375" y="120" text-anchor="middle" font-size="14">3.25 MB</text>
+<rect x="246.25" y="76" width="13.75" height="56" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<rect x="260" y="76" width="330" height="56" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="425.0" y="100" text-anchor="middle" font-size="14" font-weight="bold">bank 1 image</text>
+<text x="425.0" y="120" text-anchor="middle" font-size="14">6 MB</text>
+<rect x="590" y="76" width="330" height="56" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="755.0" y="100" text-anchor="middle" font-size="14" font-weight="bold">bank 2 image</text>
+<text x="755.0" y="120" text-anchor="middle" font-size="14">6 MB</text>
+<text x="40" y="150" text-anchor="start" font-size="14">0</text>
+<text x="260" y="150" text-anchor="middle" font-size="14">4 MB</text>
+<text x="590" y="150" text-anchor="middle" font-size="14">10 MB</text>
+<text x="920" y="150" text-anchor="end" font-size="14">16 MB</text>
+<path d="M246.25,132 L166.25,172 M260,132 L526.25,172" stroke="#D97706" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+<rect x="166.25" y="172" width="360" height="62" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<rect x="176.25" y="182" width="106" height="42" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+<text x="229.25" y="209" text-anchor="middle" font-size="14">loader flag</text>
+<rect x="290.25" y="182" width="106" height="42" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+<text x="343.25" y="209" text-anchor="middle" font-size="14">bank 1 flag</text>
+<rect x="404.25" y="182" width="106" height="42" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+<text x="457.25" y="209" text-anchor="middle" font-size="14">bank 2 flag</text>
+<text x="546.25" y="198" font-size="14">three 64 KB blocks just below 4 MB;</text>
+<text x="546.25" y="218" font-size="14">each holds one 20-byte flag record</text>
+<text x="40" y="272" font-size="15" font-weight="bold">Flag record</text>
+<text x="40" y="292" font-size="14">(20 bytes)</text>
+<rect x="200" y="250" width="120" height="34" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="260.0" y="272" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, monospace">11111111</text>
+<text x="260.0" y="302" text-anchor="middle" font-size="14">"valid"</text>
+<rect x="326" y="250" width="120" height="34" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="386.0" y="272" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, monospace">length</text>
+<text x="386.0" y="302" text-anchor="middle" font-size="14">bytes</text>
+<rect x="452" y="250" width="120" height="34" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="512.0" y="272" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, monospace">0</text>
+<rect x="578" y="250" width="120" height="34" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="638.0" y="272" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, monospace">0</text>
+<rect x="704" y="250" width="120" height="34" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="764.0" y="272" text-anchor="middle" font-size="14" font-family="DejaVu Sans Mono, monospace">~CRC-32</text>
+<text x="764.0" y="302" text-anchor="middle" font-size="14">of the image</text>
+<text x="40" y="330" font-size="14">At power-on the loader runs the first bank whose flag reads 11111111 with a non-zero length (bank 1 first).</text>
+<text x="40" y="350" font-size="14">It does not check the CRC.</text>
+<text x="40" y="388" font-size="15" font-weight="bold">An update while bank 1 is running</text>
+<circle cx="54" cy="422" r="13" fill="#16A34A"/><text x="54" y="427" text-anchor="middle" font-size="14" fill="#FFFFFF" font-weight="bold">1</text>
+<text x="78" y="427" font-size="14">before</text>
+<rect x="370" y="406" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="430" y="427" text-anchor="middle" font-size="14">flag 1: valid</text>
+<rect x="500" y="406" width="130" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="565" y="427" text-anchor="middle" font-size="14">bank 1: old</text>
+<rect x="650" y="406" width="120" height="32" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+<text x="710" y="427" text-anchor="middle" font-size="14">flag 2: none</text>
+<rect x="780" y="406" width="140" height="32" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/><text x="850" y="427" text-anchor="middle" font-size="14">bank 2: stale</text>
+<circle cx="54" cy="470" r="13" fill="#16A34A"/><text x="54" y="475" text-anchor="middle" font-size="14" fill="#FFFFFF" font-weight="bold">2</text>
+<text x="78" y="475" font-size="14">erase bank 2 flag and area</text>
+<rect x="370" y="454" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="430" y="475" text-anchor="middle" font-size="14">flag 1: valid</text>
+<rect x="500" y="454" width="130" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="565" y="475" text-anchor="middle" font-size="14">bank 1: old</text>
+<rect x="650" y="454" width="120" height="32" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+<text x="710" y="475" text-anchor="middle" font-size="14">flag 2: none</text>
+<rect x="780" y="454" width="140" height="32" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/><text x="850" y="475" text-anchor="middle" font-size="14">bank 2: erased</text>
+<circle cx="54" cy="518" r="13" fill="#16A34A"/><text x="54" y="523" text-anchor="middle" font-size="14" fill="#FFFFFF" font-weight="bold">3</text>
+<text x="78" y="523" font-size="14">write new image, 256 B at a time</text>
+<rect x="370" y="502" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="430" y="523" text-anchor="middle" font-size="14">flag 1: valid</text>
+<rect x="500" y="502" width="130" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="565" y="523" text-anchor="middle" font-size="14">bank 1: old</text>
+<rect x="650" y="502" width="120" height="32" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+<text x="710" y="523" text-anchor="middle" font-size="14">flag 2: none</text>
+<rect x="780" y="502" width="140" height="32" rx="6" fill="#FEF3C7" stroke="#16A34A" stroke-width="2"/><text x="850" y="523" text-anchor="middle" font-size="14">bank 2: new…</text>
+<circle cx="54" cy="566" r="13" fill="#16A34A"/><text x="54" y="571" text-anchor="middle" font-size="14" fill="#FFFFFF" font-weight="bold">4</text>
+<text x="78" y="571" font-size="14">write bank 2 flag</text>
+<rect x="370" y="550" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="430" y="571" text-anchor="middle" font-size="14">flag 1: valid</text>
+<rect x="500" y="550" width="130" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="565" y="571" text-anchor="middle" font-size="14">bank 1: old</text>
+<rect x="650" y="550" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="710" y="571" text-anchor="middle" font-size="14">flag 2: valid</text>
+<rect x="780" y="550" width="140" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="850" y="571" text-anchor="middle" font-size="14">bank 2: new</text>
+<circle cx="54" cy="614" r="13" fill="#16A34A"/><text x="54" y="619" text-anchor="middle" font-size="14" fill="#FFFFFF" font-weight="bold">5</text>
+<text x="78" y="619" font-size="14">erase bank 1 flag</text>
+<rect x="370" y="598" width="120" height="32" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+<text x="430" y="619" text-anchor="middle" font-size="14">flag 1: none</text>
+<rect x="500" y="598" width="130" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="565" y="619" text-anchor="middle" font-size="14">bank 1: old</text>
+<rect x="650" y="598" width="120" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="710" y="619" text-anchor="middle" font-size="14">flag 2: valid</text>
+<rect x="780" y="598" width="140" height="32" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><text x="850" y="619" text-anchor="middle" font-size="14">bank 2: new</text>
+<rect x="40" y="648" width="880" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="56" y="669" font-size="14">Power lost during steps 2–3? Flag 1 is still valid, so the old firmware boots (inference from the order).</text>
+<text x="56" y="689" font-size="14">The next update goes the other way: bank 2 running → write bank 1.</text>
+</svg>

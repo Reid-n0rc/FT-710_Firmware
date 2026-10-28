@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="630" viewBox="0 0 960 630" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>SDR update: bitstream blocks into the FPGA configuration flash</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="630" fill="#FFFFFF"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">SDR update: 4 KiB blocks into the FPGA's flash, header last</text>
+
+  <!-- SFL file -->
+  <rect x="30" y="60" width="250" height="84" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="155" y="86" text-anchor="middle" font-size="15" font-weight="bold">FT-710_SDR_V0104.SFL</text>
+  <text x="155" y="108" text-anchor="middle" font-size="14">must be exactly</text>
+  <text x="155" y="130" text-anchor="middle" font-size="15" font-weight="bold" fill="#DC2626">0x43075A = 4 392 794 bytes</text>
+  <line x1="155" y1="146" x2="155" y2="178" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="166" y="168" font-size="14">decode, hex → binary</text>
+
+  <!-- binary, block strip -->
+  <text x="30" y="200" font-size="14" font-weight="bold">decoded bitstream file (2.2 MB)</text>
+  <rect x="30" y="210" width="250" height="34" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="155" y="232" text-anchor="middle" font-size="14">header: CRC-32/BZIP2 + FF</text>
+  <g stroke="#EA580C" stroke-width="2" fill="#FFEDD5">
+    <rect x="30" y="248" width="250" height="34" rx="4"/>
+    <rect x="30" y="286" width="250" height="34" rx="4"/>
+    <rect x="30" y="400" width="250" height="34" rx="4"/>
+    <rect x="30" y="438" width="250" height="34" rx="4"/>
+  </g>
+  <text x="155" y="270" text-anchor="middle" font-size="14">block 0</text>
+  <text x="155" y="308" text-anchor="middle" font-size="14">block 1</text>
+  <text x="155" y="346" text-anchor="middle" font-size="16">⋮</text>
+  <text x="155" y="372" text-anchor="middle" font-size="14">4 KiB each</text>
+  <text x="155" y="422" text-anchor="middle" font-size="14">…</text>
+  <text x="155" y="460" text-anchor="middle" font-size="14">block 535</text>
+  <!-- per-block recipe -->
+  <rect x="320" y="200" width="300" height="250" rx="8" fill="#F9FAFB" stroke="#6B7280" stroke-width="2"/>
+  <text x="470" y="224" text-anchor="middle" font-size="15" font-weight="bold">For every block (≤ 30 tries)</text>
+  <text x="336" y="252" font-size="14">1. via MAIN: flash address</text>
+  <text x="352" y="272" font-size="14">→ FPGA registers 0x30/0x31</text>
+  <text x="336" y="298" font-size="14">2. via MAIN: commands 3, 1</text>
+  <text x="352" y="318" font-size="14">to register 0x32, wait ready</text>
+  <text x="336" y="344" font-size="14">3. 4 KiB straight over SPI</text>
+  <text x="336" y="370" font-size="14">4. via MAIN: commands 4, 5</text>
+  <text x="336" y="396" font-size="14">5. read CRC-16 from register</text>
+  <text x="352" y="416" font-size="14">0x33; compare with own CRC</text>
+  <text x="336" y="440" font-size="14" font-style="italic">meaning of 3/1/4/5: open</text>
+  <line x1="284" y1="265" x2="316" y2="265" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="620" y1="330" x2="676" y2="330" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="648" y="318" text-anchor="middle" font-size="14">FPGA</text>
+  <text x="648" y="352" text-anchor="middle" font-size="14">writes</text>
+
+  <!-- flash map -->
+  <text x="690" y="70" font-size="15" font-weight="bold">SDR config flash</text>
+  <text x="690" y="88" font-size="14" font-style="italic">(not to scale)</text>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14">
+    <text x="910" y="114" text-anchor="end">0x000000</text>
+    <text x="910" y="250" text-anchor="end">0x240000</text>
+    <text x="910" y="460" text-anchor="end">0x480000</text>
+  </g>
+  <rect x="690" y="120" width="220" height="110" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="800" y="160" text-anchor="middle" font-size="14">image the FPGA</text>
+  <text x="800" y="180" text-anchor="middle" font-size="14">boots from at 0;</text>
+  <text x="800" y="200" text-anchor="middle" font-size="14">not written here</text>
+  <rect x="690" y="256" width="220" height="186" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="800" y="320" text-anchor="middle" font-size="15" font-weight="bold">bitstream</text>
+  <text x="800" y="342" text-anchor="middle" font-size="14">blocks 0…535</text>
+  <text x="800" y="364" text-anchor="middle" font-size="14">written first,</text>
+  <text x="800" y="384" text-anchor="middle" font-size="14">0x1000 apart</text>
+  <rect x="690" y="466" width="220" height="50" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="800" y="489" text-anchor="middle" font-size="14" font-weight="bold">header block</text>
+  <text x="800" y="508" text-anchor="middle" font-size="14">written LAST</text>
+  <path d="M30,227 L16,227 L16,570 L800,570 L800,522" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="7,4" marker-end="url(#ah)"/>
+  <text x="40" y="560" font-size="14" fill="#D97706">the header goes last: a cut-off update leaves no valid header (inference)</text>
+  <text x="30" y="610" font-size="14">Whether the FPGA then boots the new copy at 0x240000 directly, or via the image at 0, is still open (guess).</text>
+</svg>
