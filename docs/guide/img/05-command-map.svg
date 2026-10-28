@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="702" viewBox="0 0 960 702" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Map of all 114 CAT mnemonics in MAIN V01-12: 92 documented, 22 undocumented, coloured by risk</title>
+  <rect width="960" height="702" fill="#FFFFFF"/>
+  <text x="480" y="36" font-size="20" font-weight="bold" text-anchor="middle">Every command MAIN V01-12 knows: 114 mnemonics</text>
+  <text x="55" y="80" font-size="16" font-weight="bold">Main table: 104 commands, tried first</text>
+  <rect x="55" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AB</text>
+  <rect x="121" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AC</text>
+  <rect x="187" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AG</text>
+  <rect x="253" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AI</text>
+  <rect x="319" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AM</text>
+  <rect x="385" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AO</text>
+  <rect x="451" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AS</text>
+  <rect x="517" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">AV</text>
+  <rect x="583" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BA</text>
+  <rect x="649" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BC</text>
+  <rect x="715" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BD</text>
+  <rect x="781" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BI</text>
+  <rect x="847" y="94" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="120" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BM</text>
+  <rect x="55" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BP</text>
+  <rect x="121" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BS</text>
+  <rect x="187" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">BU</text>
+  <rect x="253" y="140" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="282.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">BY</text>
+  <rect x="319" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CF</text>
+  <rect x="385" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CH</text>
+  <rect x="451" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CN</text>
+  <rect x="517" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CO</text>
+  <rect x="583" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CS</text>
+  <rect x="649" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">CT</text>
+  <rect x="715" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">DA</text>
+  <rect x="781" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">DN</text>
+  <rect x="847" y="140" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="166" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">DT</text>
+  <rect x="55" y="186" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="84.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">ED</text>
+  <rect x="121" y="186" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="150.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">EK</text>
+  <rect x="187" y="186" width="58" height="38" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="216.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">EM</text>
+  <rect x="253" y="186" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="282.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">EN</text>
+  <rect x="319" y="186" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="348.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">EU</text>
+  <rect x="385" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">EX</text>
+  <rect x="451" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">FA</text>
+  <rect x="517" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">FB</text>
+  <rect x="583" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">FN</text>
+  <rect x="649" y="186" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="678.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">FS</text>
+  <rect x="715" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">FT</text>
+  <rect x="781" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">GT</text>
+  <rect x="847" y="186" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="212" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">GP</text>
+  <rect x="55" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">ID</text>
+  <rect x="121" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">IF</text>
+  <rect x="187" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">IS</text>
+  <rect x="253" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">KM</text>
+  <rect x="319" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">KP</text>
+  <rect x="385" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">KR</text>
+  <rect x="451" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">KS</text>
+  <rect x="517" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">KY</text>
+  <rect x="583" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">LK</text>
+  <rect x="649" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">LM</text>
+  <rect x="715" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MA</text>
+  <rect x="781" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MB</text>
+  <rect x="847" y="232" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="258" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MC</text>
+  <rect x="55" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MD</text>
+  <rect x="121" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MG</text>
+  <rect x="187" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">ML</text>
+  <rect x="253" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MR</text>
+  <rect x="319" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MS</text>
+  <rect x="385" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MT</text>
+  <rect x="451" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MW</text>
+  <rect x="517" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">MX</text>
+  <rect x="583" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">NA</text>
+  <rect x="649" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">NB</text>
+  <rect x="715" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">NL</text>
+  <rect x="781" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">NR</text>
+  <rect x="847" y="278" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="304" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">OI</text>
+  <rect x="55" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">OS</text>
+  <rect x="121" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PA</text>
+  <rect x="187" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PB</text>
+  <rect x="253" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PC</text>
+  <rect x="319" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PL</text>
+  <rect x="385" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PR</text>
+  <rect x="451" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PS</text>
+  <rect x="517" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">QI</text>
+  <rect x="583" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">QR</text>
+  <rect x="649" y="324" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="678.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">QS</text>
+  <rect x="715" y="324" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">RA</text>
+  <rect x="781" y="324" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="810.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">RC</text>
+  <rect x="847" y="324" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="876.0" y="350" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">RD</text>
+  <rect x="55" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">RG</text>
+  <rect x="121" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">RI</text>
+  <rect x="187" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">RL</text>
+  <rect x="253" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">RM</text>
+  <rect x="319" y="370" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="348.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">RS</text>
+  <rect x="385" y="370" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="414.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">RT</text>
+  <rect x="451" y="370" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="480.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">RU</text>
+  <rect x="517" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SC</text>
+  <rect x="583" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SD</text>
+  <rect x="649" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SF</text>
+  <rect x="715" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SH</text>
+  <rect x="781" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="810.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SM</text>
+  <rect x="847" y="370" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="396" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SQ</text>
+  <rect x="55" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="84.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SS</text>
+  <rect x="121" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="150.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">ST</text>
+  <rect x="187" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="216.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SV</text>
+  <rect x="253" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="282.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">TS</text>
+  <rect x="319" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="348.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">TX</text>
+  <rect x="385" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="414.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">UP</text>
+  <rect x="451" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="480.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VD</text>
+  <rect x="517" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="546.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VG</text>
+  <rect x="583" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VM</text>
+  <rect x="649" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="678.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VS</text>
+  <rect x="715" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="744.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VX</text>
+  <rect x="781" y="416" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="810.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">XT</text>
+  <line x1="791" y1="446" x2="829" y2="424" stroke="#DC2626" stroke-width="2"/>
+  <rect x="847" y="416" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="876.0" y="442" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">ZI</text>
+  <text x="55" y="492" font-size="16" font-weight="bold">Extended table: 10 more, tried only if the main table has no match</text>
+  <rect x="55" y="506" width="58" height="38" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="84.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">SP</text>
+  <rect x="121" y="506" width="58" height="38" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="150.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">EO</text>
+  <rect x="187" y="506" width="58" height="38" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="216.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">E8</text>
+  <rect x="253" y="506" width="58" height="38" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="282.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">E9</text>
+  <rect x="319" y="506" width="58" height="38" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="348.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">FD</text>
+  <rect x="385" y="506" width="58" height="38" rx="8" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="414.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#9CA3AF">KT</text>
+  <rect x="451" y="506" width="58" height="38" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="480.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">PE</text>
+  <rect x="517" y="506" width="58" height="38" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="546.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">ZZ</text>
+  <rect x="583" y="506" width="58" height="38" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="612.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">VE</text>
+  <rect x="649" y="506" width="58" height="38" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="678.0" y="532" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#1F2937">JP</text>
+  <text x="719" y="522" font-size="14">VE needs a digit:</text>
+  <text x="719" y="540" font-size="14">VE0; works, VE; → ?;</text>
+  <rect x="55" y="584" width="34" height="22" rx="5" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="99" y="601" font-size="15">documented in the manual (92 with XT)</text>
+  <rect x="485" y="584" width="34" height="22" rx="5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="491" y1="602" x2="513" y2="588" stroke="#DC2626" stroke-width="2"/>
+  <text x="529" y="601" font-size="15">XT: in the manual, not implemented</text>
+  <rect x="55" y="618" width="34" height="22" rx="5" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="99" y="635" font-size="15">undocumented, does nothing</text>
+  <rect x="485" y="618" width="34" height="22" rx="5" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="529" y="635" font-size="15">undocumented, read-only</text>
+  <rect x="55" y="652" width="34" height="22" rx="5" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="99" y="669" font-size="15">undocumented, changes settings</text>
+  <rect x="485" y="652" width="34" height="22" rx="5" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="529" y="669" font-size="15">undocumented, dangerous</text>
+</svg>

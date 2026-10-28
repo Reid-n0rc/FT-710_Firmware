@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="630" viewBox="0 0 960 630" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Anatomy of a CAT command: mnemonic, parameters and the semicolon, in set, read, answer and error form</title>
+  <rect width="960" height="630" fill="#FFFFFF"/>
+  <text x="480" y="36" font-size="20" font-weight="bold" text-anchor="middle">Anatomy of a CAT command</text>
+  <text x="24" y="90" font-size="17" font-weight="bold">Set</text>
+  <text x="24" y="110" font-size="14" fill="#6B7280">PC → radio</text>
+  <text x="24" y="128" font-size="14" fill="#6B7280">no reply if OK</text>
+  <rect x="232" y="70" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="256.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">F</text>
+  <rect x="284" y="70" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="308.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">A</text>
+  <rect x="336" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="360.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="388" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="412.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">1</text>
+  <rect x="440" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="464.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">4</text>
+  <rect x="492" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="516.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="544" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="568.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">7</text>
+  <rect x="596" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="620.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">4</text>
+  <rect x="648" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="672.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="700" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="724.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="752" y="70" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="776.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="804" y="70" width="48" height="52" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="828.0" y="105" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">;</text>
+  <path d="M234,128 v8 H330 v-8" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <text x="282.0" y="156" font-size="14" text-anchor="middle">mnemonic</text>
+  <text x="282.0" y="174" font-size="14" text-anchor="middle">2 letters</text>
+  <path d="M338,128 v8 H798 v-8" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <text x="568.0" y="156" font-size="14" text-anchor="middle">parameter: 9 digits, the frequency in Hz</text>
+  <text x="568.0" y="174" font-size="14" text-anchor="middle">014 074 000 Hz = 14.074 MHz</text>
+  <path d="M806,128 v8 H850 v-8" fill="none" stroke="#1F2937" stroke-width="2"/>
+  <text x="828.0" y="156" font-size="14" text-anchor="middle">end</text>
+  <text x="24" y="250" font-size="17" font-weight="bold">Read</text>
+  <text x="24" y="270" font-size="14" fill="#6B7280">PC → radio</text>
+  <text x="24" y="288" font-size="14" fill="#6B7280">“what is VFO-A?”</text>
+  <rect x="232" y="230" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="256.0" y="265" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">F</text>
+  <rect x="284" y="230" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="308.0" y="265" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">A</text>
+  <rect x="336" y="230" width="48" height="52" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="360.0" y="265" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">;</text>
+  <text x="24" y="330" font-size="17" font-weight="bold">Answer</text>
+  <text x="24" y="350" font-size="14" fill="#6B7280">radio → PC</text>
+  <text x="24" y="368" font-size="14" fill="#6B7280">same shape as set</text>
+  <rect x="232" y="310" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="256.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">F</text>
+  <rect x="284" y="310" width="48" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="308.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">A</text>
+  <rect x="336" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="360.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="388" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="412.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">1</text>
+  <rect x="440" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="464.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">4</text>
+  <rect x="492" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="516.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="544" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="568.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">7</text>
+  <rect x="596" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="620.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">4</text>
+  <rect x="648" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="672.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="700" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="724.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="752" y="310" width="48" height="52" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="776.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">0</text>
+  <rect x="804" y="310" width="48" height="52" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="828.0" y="345" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">;</text>
+  <text x="24" y="410" font-size="17" font-weight="bold">Error</text>
+  <text x="24" y="430" font-size="14" fill="#6B7280">radio → PC</text>
+  <text x="24" y="448" font-size="14" fill="#6B7280">for any mistake</text>
+  <rect x="232" y="390" width="48" height="52" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="256.0" y="425" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">?</text>
+  <rect x="284" y="390" width="48" height="52" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="308.0" y="425" font-size="24" font-family="DejaVu Sans Mono, monospace" font-weight="bold" text-anchor="middle">;</text>
+  <text x="420" y="262" font-size="15">a read is just the mnemonic and the end mark</text>
+  <text x="360" y="422" font-size="15">the only error reply: unknown command, wrong length, bad digit</text>
+  <rect x="24" y="470" width="912" height="104" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+  <text x="44" y="500" font-size="15">• Only the two letters are case-insensitive: fa; works, but parameters are case-sensitive.</text>
+  <text x="44" y="528" font-size="15">• MAIN first checks the total length (FA: 3 or 12 characters), then the handler checks the digits.</text>
+  <text x="44" y="556" font-size="15">• A set normally gives no reply on success. A read answers with the value, or with ?;.</text>
+  <rect x="230" y="596" width="22" height="18" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="260" y="611" font-size="14">mnemonic</text>
+  <rect x="400" y="596" width="22" height="18" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/><text x="430" y="611" font-size="14">parameters</text>
+  <rect x="570" y="596" width="22" height="18" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/><text x="600" y="611" font-size="14">terminator ;</text>
+  <rect x="740" y="596" width="22" height="18" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/><text x="770" y="611" font-size="14">error</text>
+</svg>

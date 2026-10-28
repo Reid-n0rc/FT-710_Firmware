@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>The journey of FA014074000; from the PC through MAIN's queue and parser to the FPGA, the display and back to the PC</title>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="640" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">The journey of FA014074000;</text>
+
+  <!-- step numbers row label -->
+  <text x="24" y="70" font-size="15" font-weight="bold" fill="#6B7280">IN: the command arrives (main-loop pass n)</text>
+
+  <!-- 1 PC -->
+  <rect x="24" y="84" width="128" height="116" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="88" y="110" font-size="16" font-weight="bold" text-anchor="middle">PC</text>
+  <rect x="34" y="122" width="108" height="30" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="88" y="142" font-size="13" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">FA014074000;</text>
+  <text x="88" y="176" font-size="14" text-anchor="middle">12 bytes</text>
+  <text x="88" y="194" font-size="14" text-anchor="middle">on COM port</text>
+  <line x1="152" y1="142" x2="176" y2="142" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- 2 CP2105 -->
+  <rect x="178" y="84" width="118" height="116" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="237" y="112" font-size="16" font-weight="bold" text-anchor="middle">CP2105</text>
+  <text x="237" y="136" font-size="14" text-anchor="middle">USB in,</text>
+  <text x="237" y="156" font-size="14" text-anchor="middle">serial bytes</text>
+  <text x="237" y="176" font-size="14" text-anchor="middle">out</text>
+  <line x1="296" y1="142" x2="320" y2="142" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- MAIN outline -->
+  <rect x="316" y="76" width="628" height="290" rx="12" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="930" y="358" font-size="16" font-weight="bold" text-anchor="end" fill="#2563EB">MAIN CPU</text>
+
+  <!-- 3 UART interrupt -->
+  <rect x="324" y="84" width="128" height="116" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="388" y="110" font-size="15" font-weight="bold" text-anchor="middle">UART</text>
+  <text x="388" y="132" font-size="14" text-anchor="middle">interrupt</text>
+  <text x="388" y="152" font-size="14" text-anchor="middle">stores each</text>
+  <text x="388" y="172" font-size="14" text-anchor="middle">byte, notes</text>
+  <text x="388" y="192" font-size="14" text-anchor="middle">port 1</text>
+  <line x1="452" y1="142" x2="476" y2="142" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- 4 queue -->
+  <rect x="478" y="84" width="140" height="116" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="548" y="110" font-size="15" font-weight="bold" text-anchor="middle">queue</text>
+  <g stroke="#2563EB" stroke-width="1.5" fill="#FFFFFF">
+    <rect x="492" y="122" width="16" height="22" rx="2"/><rect x="510" y="122" width="16" height="22" rx="2"/>
+    <rect x="528" y="122" width="16" height="22" rx="2" fill="#93C5FD"/><rect x="546" y="122" width="16" height="22" rx="2"/>
+    <rect x="564" y="122" width="16" height="22" rx="2"/><rect x="582" y="122" width="16" height="22" rx="2"/>
+  </g>
+  <text x="600" y="139" font-size="14">…</text>
+  <text x="548" y="170" font-size="14" text-anchor="middle">60 slots, one</text>
+  <text x="548" y="190" font-size="14" text-anchor="middle">per command</text>
+  <line x1="618" y1="142" x2="642" y2="142" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- 5 parser -->
+  <rect x="644" y="84" width="140" height="116" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="714" y="110" font-size="15" font-weight="bold" text-anchor="middle">parser</text>
+  <text x="714" y="132" font-size="14" text-anchor="middle">one command</text>
+  <text x="714" y="152" font-size="14" text-anchor="middle">per loop pass;</text>
+  <text x="714" y="172" font-size="14" text-anchor="middle">finds "FA" in</text>
+  <text x="714" y="192" font-size="14" text-anchor="middle">the table</text>
+  <line x1="784" y1="142" x2="808" y2="142" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- 6 handler -->
+  <rect x="810" y="84" width="126" height="116" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="873" y="110" font-size="15" font-weight="bold" text-anchor="middle">FA handler</text>
+  <text x="873" y="132" font-size="14" text-anchor="middle">length 12?</text>
+  <text x="873" y="152" font-size="14" text-anchor="middle">9 digits?</text>
+  <text x="873" y="172" font-size="14" text-anchor="middle">in 30k–75M Hz?</text>
+  <text x="873" y="192" font-size="14" text-anchor="middle">not locked?</text>
+
+  <!-- fail branch -->
+  <line x1="873" y1="200" x2="873" y2="226" stroke="#DC2626" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="826" y="228" width="94" height="32" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="873" y="249" font-size="14" text-anchor="middle">no → ?;</text>
+
+  <!-- yes: VFO record -->
+  <line x1="836" y1="200" x2="760" y2="252" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <text x="826" y="226" font-size="14" text-anchor="end">yes</text>
+  <rect x="580" y="236" width="180" height="76" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="670" y="260" font-size="15" font-weight="bold" text-anchor="middle">VFO-A record</text>
+  <text x="670" y="282" font-size="14" text-anchor="middle">in RAM = 14074000</text>
+  <text x="670" y="302" font-size="14" text-anchor="middle">"refresh" flag set</text>
+  <text x="336" y="242" font-size="14">A set sends no reply.</text>
+  <text x="336" y="264" font-size="14">A read (FA;) just copies the</text>
+  <text x="336" y="286" font-size="14">frequency into the reply, which</text>
+  <text x="336" y="308" font-size="14">goes back on the same port.</text>
+
+  <!-- OUT row -->
+  <text x="24" y="250" font-size="15" font-weight="bold" fill="#6B7280">OUT: the change</text>
+  <text x="24" y="270" font-size="15" font-weight="bold" fill="#6B7280">spreads in later</text>
+  <text x="24" y="290" font-size="15" font-weight="bold" fill="#6B7280">passes n+1, n+2, …</text>
+  <text x="24" y="314" font-size="14" fill="#6B7280">one frame per link</text>
+  <text x="24" y="334" font-size="14" fill="#6B7280">per pass</text>
+  <line x1="610" y1="312" x2="150" y2="424" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="660" y1="312" x2="470" y2="424" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="720" y1="312" x2="790" y2="424" stroke="#1F2937" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- FPGA -->
+  <rect x="24" y="426" width="290" height="130" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="169" y="452" font-size="16" font-weight="bold" text-anchor="middle" fill="#EA580C">SDR FPGA</text>
+  <text x="169" y="476" font-size="14" text-anchor="middle">SDR task writes the receive</text>
+  <text x="169" y="496" font-size="14" text-anchor="middle">oscillator (NCO): high word,</text>
+  <text x="169" y="516" font-size="14" text-anchor="middle">then low word, in two frames</text>
+  <text x="169" y="542" font-size="14" text-anchor="middle">→ the receiver is on 14.074</text>
+
+  <!-- DISPLAY -->
+  <rect x="334" y="426" width="290" height="130" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="479" y="452" font-size="16" font-weight="bold" text-anchor="middle" fill="#16A34A">DISPLAY</text>
+  <text x="479" y="476" font-size="14" text-anchor="middle">display link sends a status</text>
+  <text x="479" y="496" font-size="14" text-anchor="middle">frame with the new frequency</text>
+  <rect x="404" y="512" width="150" height="32" rx="4" fill="#1F2937"/>
+  <text x="479" y="534" font-size="16" font-family="DejaVu Sans Mono, monospace" text-anchor="middle" fill="#DCFCE7">14.074.000</text>
+
+  <!-- AI -->
+  <rect x="644" y="426" width="292" height="130" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="790" y="452" font-size="16" font-weight="bold" text-anchor="middle">AI broadcast</text>
+  <text x="790" y="476" font-size="14" text-anchor="middle">after a 200 ms hold-off,</text>
+  <text x="790" y="496" font-size="14" text-anchor="middle">to every port with AI on:</text>
+  <rect x="716" y="512" width="148" height="30" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="790" y="532" font-size="13" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">FA014074000;</text>
+
+  <text x="24" y="596" font-size="14" fill="#6B7280">The FPGA and DISPLAY hops are drawn from the main-dial path, which ends in the same "refresh" flag (inference).</text>
+  <text x="24" y="618" font-size="14" fill="#6B7280">No DSP or FPGA register is read to answer a normal read: MAIN answers from its own RAM.</text>
+</svg>
