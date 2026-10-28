@@ -327,8 +327,14 @@ def monotonic_words(b, a):
             while j < len(ws) and (ws[j] - ws[j - 1]) * sign > 0:
                 j += 1
             if j - i >= 8:
-                out.append((k + 4 * i, 4 * (j - i), 'int_table', 'u32 %s 0x%08x..0x%08x, %d words' % (
-                    'rising' if sign > 0 else 'falling', ws[i], ws[j - 1], j - i)))
+                fl = [struct.unpack('<f', struct.pack('<I', w))[0] for w in ws[i:j]]
+                good = sum(1 for w, f in zip(ws[i:j], fl) if w == 0 or (math.isfinite(f) and 1e-6 <= abs(f) <= 1e7))
+                if good >= 0.75 * (j - i):
+                    out.append((k + 4 * i, 4 * (j - i), 'float_table', 'float32 %s %g..%g, %d words' % (
+                        'rising' if sign > 0 else 'falling', fl[0], fl[-1], j - i)))
+                else:
+                    out.append((k + 4 * i, 4 * (j - i), 'int_table', 'u32 %s 0x%08x..0x%08x, %d words' % (
+                        'rising' if sign > 0 else 'falling', ws[i], ws[j - 1], j - i)))
                 i = j - 1
                 break
         i += 1
