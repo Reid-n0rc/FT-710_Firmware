@@ -14,7 +14,8 @@
 #   inputs  check Firmware/ against docs/inputs.sha256; unpacks the Yaesu zip first if only the zip is there.
 #   decode  SFL -> build/*.bin (tools/sfl_decode.py), carve the HiFi4 images (tools/ifdsp_dsp_images.py), check hashes.
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
-#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch and compile it. Skipped when already installed and patched.
+#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17) and tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
+#           compile it. Skipped when already installed and patched.
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
@@ -103,7 +104,8 @@ JDK_SHA=d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c
 RX_GIT=https://github.com/stefan00lpf/rx-proc-ghidra
 RX_COMMIT=ea4cd20403c2e359f0de0cead2850d6be173b67a
 RX_SINC_ORIG=42f51c2cc890cb4b396b1e1dce2dc85048ceaa3124c217088d58b5cba0758f12
-RX_SINC_FIXED=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_T17=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_FIXED=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -277,7 +279,13 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-movu-fix.patch")
     info "applied tools/ghidra/rx62t-movu-fix.patch (T17)"
   fi
-  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor the T17-patched file"
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_T17" ]; then
+    [ -f "$lang/rx62t.sinc.t17" ] || cp "$lang/rx62t.sinc" "$lang/rx62t.sinc.t17"
+    [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.t17" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.t17"
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rxv2-fix.patch")
+    info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, SCCnd, string ops as pcodeops)"
+  fi
+  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
@@ -330,7 +338,7 @@ build_ifdsp() {
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
-  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/IfdspHifi4Names.java")
+  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java")
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
     info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:default @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"

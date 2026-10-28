@@ -74,7 +74,7 @@ Ghidra 12.1.4 ships no Renesas RX language. T05 installed a **community SLEIGH m
 | Remove | `rm -rf ~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX` |
 | Re-install | `git clone https://github.com/stefan00lpf/rx-proc-ghidra && git -C rx-proc-ghidra checkout ea4cd20403c2e359f0de0cead2850d6be173b67a`, then copy the six `data/languages/rx62t.*` files and create the two small files as above. |
 
-Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) are modelled as p-code loops, so the decompiler renders them as loops instead of `strncmp`/`memcpy`/`memset`/`memchr`; the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+Known module limitations: the PSW flag bits are modelled as bit-ranges of PSW. Until T21c the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) were p-code loops that decompiled as loops; since T21c they are named pcodeops (see below).
 
 ### Local SLEIGH fix (T17, 2026-10-27): `tools/ghidra/rx62t-movu-fix.patch`
 
@@ -99,7 +99,95 @@ SHA-256 of `rx62t.sinc`: original `42f51c2c…0f12`, patched `d32178a9…011b`. 
 instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo: copy the two `.orig-ea4cd204` files back.
 The fix is local; it is not sent upstream.
 
-GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
+GNU binutils `rx-elf` (the fallback route) was not needed in T17; T21c built it as the reference disassembler (below).
+
+### RXv2 coverage check and second SLEIGH fix (T21c, 2026-10-28, #97 B1/B4): `tools/ghidra/rx62t-rxv2-fix.patch`
+
+**Reference disassembler.** No Debian package targets RX, so GNU binutils was built from source:
+
+| Item | Value |
+|---|---|
+| Source | https://ftp.gnu.org/gnu/binutils/binutils-2.47.tar.xz (latest release on 2026-10-28), SHA-256 `154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff`; `.sig` verified with key `3A24BC1E8FB409FA9F14371813FCEF89DD9E3C4F` (Nick Clifton, binutils maintainer) |
+| Build | `configure --target=rx-elf --prefix=$HOME/opt/rx-binutils-2.47 --disable-nls --disable-werror --disable-gdb --disable-gprofng --disable-sim`, `make -j$(nproc) MAKEINFO=true`, `make install MAKEINFO=true` (tarball and build tree in `~/opt/dl/binutils-2.47`, `~/opt/build/`) |
+| Location | `~/opt/rx-binutils-2.47/bin/rx-elf-objdump` (`GNU objdump (GNU Binutils) 2.47.20260726`) |
+| RXv2 support | **[fact]** the 2.47 RX disassembler (`opcodes/rx-decode.opc`) decodes the RXv2 set (EMACA, EMSBA, EMULA, MACLH, MSBHI/LH/LO, MULLH, MVFACGU, MVTACGU, RACL, RDACL/RDACW, FSQRT, FTOU, UTOF, MOVCO/MOVLI) and the RXv3 additions |
+| Remove | `rm -rf ~/opt/rx-binutils-2.47 ~/opt/build/binutils-2.47* ~/opt/dl/binutils-2.47` |
+
+**Method.** `tools/ghidra/ListingExport.java` writes every Ghidra instruction (address, length, bytes, mnemonic, operands,
+function) plus any undefined hole inside a function body. `tools/rx_compare.py` re-disassembles every run of back-to-back
+Ghidra instructions with `rx-elf-objdump -D -b binary -m rx --adjust-vma=0xFFF80000 --start-address --stop-address` and
+compares each instruction on length, mnemonic and operands after notation-only normalisation (rules N1–N10 in its
+docstring: case, SP = R0, `#`, numbers as integers with two's-complement for negatives, objdump's 3-operand `OP src,Rn,Rn`,
+zero displacement, `.L` memex, C/NC condition synonyms, register ranges, SETPSW/CLRPSW flag operand).
+
+```sh
+tools/ghidra-headless.sh <projdir> FT710_MAIN -process -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ListingExport.java /tmp/main_listing.tsv
+python3 -I tools/rx_compare.py /tmp/main_listing.tsv build/FT-710_MAIN_V0112.bin --all --diffs /tmp/diffs.tsv
+```
+
+**Result [fact].** All 129,938 instructions (384,437 code bytes; 112,045 of them in function bodies) were compared, plus
+a check that no flow runs into undecoded bytes (none does):
+
+| | `ea4cd204` + T17 patch | + T21c patch |
+|---|---|---|
+| same | 129,881 | 129,936 (all) |
+| different | **57** (56 in functions): all `MUL dsp[Rs].UB,Rd` (`4C`–`4E`) | 0 |
+| missing / bad (objdump cannot decode) / undefined holes | 0 / 0 / 0 | 0 / 0 / 0 |
+
+- **The firmware uses no RXv2-only instruction that the module lacks.** The only RXv2-only instruction in MAIN is `FTOU`
+  (12 sites), which the module decodes identically to objdump. No DSP accumulator op (EMACA etc.) occurs in disassembled
+  code, and no code flow stops at an undecodable instruction. The single "Bad Instruction" bookmark (0xFFF88FE5,
+  `BRA.A 0xFFD88FE5`) is data in the 0xFFF80000..0xFFF8FFFF constant area that analysis disassembled, not a decoder gap (B5).
+- The 57 differences were a module bug, not an RXv2 gap: the `MUL` memory forms always loaded `.L`, so
+  `MUL 25[R0].UB,R1` (`4D 01 19`) read a 32-bit word from SP+100. Example **[fact]**: `cat_ext_EO` (0xFFFA5C90) multiplies
+  the digits by a byte power of ten held on the stack; before the fix the C showed `sVar4 * in_stack_00000044`, after it
+  `sVar4 * bStack_7` with `bStack_7 = 100; … bStack_7 /= 10`.
+
+The listing diff only checks decoding. Reading the decompile of the changed functions found two **semantic** bugs that
+the diff cannot see, also fixed in the patch:
+
+| Instruction | Defect in `ea4cd204` (+T17) | Manual R01US0071EJ0100 | Sites in MAIN | Fix |
+|---|---|---|---|---|
+| `MUL dsp[Rs].memex,Rd` (`4C`–`4F`, `06 0C`–`06 CF`) | always `.L`; the UB form scaled dsp by 4 | MUL (2)/(3) | 57 UB (+6 memex .L, unchanged) | as ADD/SUB/CMP: UB = zero-extended byte, `06` forms use memex `mi` |
+| `XCHG [Rs].memex,Rd` | `unimpl`: 3 functions decompiled to `halt_unimplemented()` | p. 204 | 3 (`06 A0 10 xx`) | memory and LSB byte/word/long of Rd swapped, memex extension |
+| `SCCnd.size dest` | used `COND` (skips the store when the condition is false) and, for `SCCnd.L Rd`, stored to **memory at [Rd]** | p. 182: dest = 1 or 0, always written | 56 `.L Rd` | always writes; `.L Rd` writes the register |
+
+**String instructions (B4) [fact].** Uses in MAIN: `SMOVF` 689 (634 in 498 functions), `SSTR.B` 21, `SUNTIL.B` 6,
+`SCMPU` 6, `SMOVB`/`SMOVU`/`SWHILE` 0. The T17 loops were exact but decompiled as loops; the patch replaces them with named
+pcodeops (the decompiler prints a call), keeping every register and flag effect the manual defines:
+
+| Instruction | p-code | Manual |
+|---|---|---|
+| `SCMPU` | if R3≠0: `d = scmpu(R1,R2,R3)` (last `*R1 − *R2`, unsigned bytes); Z = (d = 0), C = (d ≥ 0); R1/R2 undefined (left) | p. 184 |
+| `SMOVF` / `SMOVB` | `smovf(R1,R2,R3)` / `smovb(…)`; R1, R2 ± R3; R3 = 0 | pp. 190, 189 |
+| `SMOVU` | if R3≠0: `R3 = smovu(R1,R2,R3)`; R1/R2 undefined (left) | p. 191 |
+| `SSTR.B/W/L` | `sstr(R1, R2:size, R3)`; R1 += R3 × size; R3 = 0 | p. 192 |
+| `SUNTIL.sz` / `SWHILE.sz` | if R3≠0: `p = suntil(R1,R2,R3,size)` (new R1); R3 −= (p − R1)/size; Z/C from `zext(*(p − size)) − R2` | pp. 196, 198 |
+
+`cat_parse` (0xFFFA347C) now reads `iVar3 = scmpu(&uStack_d,&cat_mnemonics + (uint)bStack_e * 2,2); if (-1 < iVar3 == iVar3 < 1)`
+(that is `strncmp(cmd, cat_mnemonics + 2*i, 2) == 0`); before, a byte loop compared with `puVar4 + -0x1fe51` and the
+`SCGEU`/`SCLEU` result showed as stores through registers. Memory clears read `sstr(0x4761,0,0x1968)`, copies `smovf(dst,src,n)`.
+
+**Decompile check [fact]** (fresh MAIN imports with the canonical recipe, old vs new module, `ExportDecomp.java`): 2268
+functions, 0 failures in both. 586 functions' C changed: 570 contain a patched instruction (SMOVF 498, SCCnd 36, MUL 42,
+SSTR 15, SUNTIL 6, XCHG 3, SCMPU 2), 16 others changed only in types or global names propagated from those (e.g.
+`(&DAT_000120bc)[i]` instead of `*(byte *)((int)&DAT_000120bc + i)`, `DAT_00015e06` instead of `_DAT_00015e06`).
+`quality.tsv` (`tools/decomp_quality.py compare`): warnings 1294 → 1218, unreachable-block 1226 → 1167, unimplemented 3 → 0,
+`in_` variables 51 → 6 functions, in/unaff/extraout 61 → 22; worse: `extraout_` 14 → 17 functions (callers of patched
+functions, parameter inference, see B3) and undefined non-0xFF bytes 20,622 → 20,688 (the loops' byte reads used to create
+64 one-byte `undefined1` items at copy sources such as 0xFFF80016; these placeholders are gone, the strings remain for B5).
+
+Apply (on top of the T17 patch; `tools/bootstrap.sh --only rx` does this):
+```sh
+cd ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX
+cp data/languages/rx62t.sinc data/languages/rx62t.sinc.t17; cp data/languages/rx62t.sla data/languages/rx62t.sla.t17
+patch -p1 < /workspace/FT-710_Firmware/tools/ghidra/rx62t-rxv2-fix.patch
+JAVA_HOME=~/opt/jdk-21.0.13+9 ~/opt/ghidra_12.1.4_PUBLIC/support/sleigh data/languages/rx62t.slaspec   # 8 NOP warnings
+```
+SHA-256 of `rx62t.sinc`: T17 `d32178a9…011b`, T21c `9eadf83b…6a11` (`rx62t.sla` `2581e5e3…6ed3`). Installed in the
+container's Ghidra on 2026-10-28. Undo: copy the two `.t17` files back. Re-import MAIN to get the new instructions (T21g).
+Not fixed (unused by this firmware): `UTOF` memory .UB form (`szldu_src` has no UB case), `SATR` (`unimpl`).
 
 ## Bootstrap (T20)
 
@@ -126,7 +214,7 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 | `IfdspFindFuncs.java` | post-script: finds missed Thumb `push {…,lr}` prologues in the M33 code ranges and defines rodata strings (T07) |
 | `IfdspM33Names.java` | reproducible function names for the IFDSP M33 program (T07) |
 | `IfdspHifi4Setup.java` | pre-script for the carved HiFi4 images: maps each one at its DSP load address and seeds the vectors (T07) |
-| `IfdspHifi4FindFuncs.java` | post-script: creates functions at 4-aligned `entry a1,N` prologues and drops artifacts in uninitialized memory (T07) |
+| `IfdspHifi4FindFuncs.java` | post-script: makes the SRAM function list exactly `tools/ghidra/entries_hifi4.tsv` (the `flix.dis` functions plus 2 documented extras; T07, reworked in T21b) |
 | `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
 | `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
 | `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
