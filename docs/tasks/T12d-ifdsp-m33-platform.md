@@ -1,12 +1,21 @@
 # T12d — IFDSP M33 platform (boot, DSP loader, RTOS)
 
-**Status:** todo · **Parent:** T12 · **Depends on:** T12a
+**Status:** in progress (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
 
 ## Goal
 `docs/code/ifdsp/m33-platform.md`: reset and copy-down, clock/pin/GPIO init, BOARD_DSP_Init, codec init, SCT0 PWM, FreeRTOS kernel, heap and libc; full M33 function table; remaining `FUN_` names.
 
 ## Plan
-See T12 plan. Starting notes from T12a below.
+See T12 plan. Starting notes from T12a below. T12d approach:
+1. Private Ghidra copy `FT710_IFDSP_T12d`; export the current decompile to the scratchpad (one file) and read every SRAM `FUN_`
+   body plus the raw SRAM/flash disassembly (`build/ifdsp_m33_*.dis`) for code Ghidra did not turn into functions.
+2. Identify FUN_ by matching NXP MCUXpresso SDK (fsl_clock/power/reset/flexcomm/usart/sctimer/pint/dma), board.c/pin_mux.c,
+   FreeRTOS kernel (tasks/queue/list/timers/event_groups, ARM_CM33 port, heap_4), rpmsg-lite virtqueue/env and Redlib.
+   Review the three uncertain T12a names.
+3. Decode: boot (FCFB, boot header, ResetISR/SystemInit, copy tables), clock tree (PLL config structs, divider calls →
+   frequencies), pin mux (IOPCTL writes → pins/functions, cross-checked against service manual p19 renders), IRQ vector →
+   flash stub → veneer → SRAM handler map, DSP loader, FreeRTOS objects, fault handling, watchdog.
+4. Write `tools/ghidra/names_ifdsp.T12d.tsv` and `docs/code/ifdsp/m33-platform.md`; record shared-file edits here.
 
 ## Starting notes (from T12a)
 - 140 M33 functions are named in `tools/ghidra/IfdspM33Names.java` (171 SRAM `FUN_` remain, mostly FreeRTOS internals, clock driver internals and Redlib). Group names by subsystem comment in that file.
