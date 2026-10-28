@@ -1,0 +1,4 @@
+# T11f (DISPLAY input): function entries that analysis missed. Same format as entries_display.tsv.
+201127d4		renc_poll_mtu1: `ldr r0,=0xFCFF0300` before the push; FUN_201127d8 is a late start (called from task_detect_renc 0x20112AE0)
+20112830		renc_poll_mtu2: `ldr r0,=0xFCFF0000` before the push; FUN_20112834 is a late start (called from task_detect_renc 0x20112AE4)
+2015f0e0		task_fwdbg: entry of the self-update debug task built on the stack by fwdbg_task_create (0x2015F55C); `mov r4,r0; bl update_display_self`

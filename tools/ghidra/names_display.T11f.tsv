@@ -1,0 +1,118 @@
+# T11f (DISPLAY input: keys, encoders, touch, USB HID, debug console) name proposals. Format as names_display.tsv.
+# Names are inferences from registers, tables and call patterns; details in docs/code/display/input.md.
+# --- key scan (task "key", 1 ms)
+20112f3c	key_held_list_update	replace old code by new in the 4-entry held-key list 0x2080023C (0 = add/remove)
+20112fe0	key_combo_match	boot key combination n (table 0x20165678, 3 codes each) held? 2 or 3 keys
+20113104	key_matrix_press_check	matrix press pass (subset of task_key)
+201131a8	key_set_power_level	powon task stores the P2_0 level as direct key 0 (0x300 LOCK/PWR)
+201131b4	adc_key_level	8-bit ADC value -> level 0..5 (count of thresholds below it)
+201131e8	gpio_read_port_bit	read PPRn bit for ports 2,3,7,8,9,10
+20113294	key_event_send	(code, state 0 release/1 press/2 held 1 s) -> MAIN-link frame E0 state hi lo 00
+201134d0	key_matrix_drive_col	drive one of P8_1/P8_2/P8_7/P8_8 low, the other three high
+20113558	key_sample_all	sample 5 direct keys, PTT, 4x4 matrix, ADC AN3/AN4
+20113614	key_debounce_all	3 equal samples -> changed flags; ADC pair -> code index 0x2080021A
+20113c6c	key_func_is_held	direct key 3 (0x30F FUNC) is in its hold phase
+20113d00	key_task_pause	sets 0x20800217: task_key skips scans
+20113d10	key_task_resume	clears 0x20800217
+# --- encoders and pots (tasks "renc", "ad renc", "detect renc")
+2011275c	renc_rec_set	record 0x208D99A4 + id*5 = {id, delta/value}
+201127d4	renc_poll_mtu1	MTU2 ch1 TCNT (0xFCFF0386) delta -> encoder id 1
+20112830	renc_poll_mtu2	MTU2 ch2 TCNT (0xFCFF0006) delta -> encoder id 2
+20112894	adc_ring_average	average of the ad renc ring buffer (returns double)
+201128d8	adc_hysteresis	keep the old value unless it moved by more than 7
+2011296c	pot_detect	AN0/AN1 averages -> 8-bit pot values (ids 5/4) after 2 changed polls
+20112aec	renc_mtu2_init	MTU2 ch1 phase-count mode 1, ch2 mode 4, start CST1/CST2
+20112b40	renc_irq4_isr	IRQ4 (both edges): P3_3 vs P3_5 -> +-1, encoder id 3
+20112cc4	pot_resend_all	re-send pot ids 4/5 when the GUI link comes up
+20112da4	hid_usage_to_ascii	HID usage -> ASCII for the debug line editor (lowercase, JIS '=' on Shift+'-')
+20115b04	renc_event_send	encoder/pot record -> MAIN (E1 frame) unless screen 0x7B (then E4 wake-up)
+20115780	renc_frame_queue	build the AA/len 7/E1/record/checksum frame; queue 10 per id while one is in flight
+2011598c	pot5_filter	pot id 5 jitter filter (last 4 values span > 2, value 3..252)
+20115a48	pot4_filter	pot id 4 jitter filter
+# --- touch (TSC2007/TSC2003 on RIIC2, TINT = IRQ3)
+201022c8	touch_set_down	pen sample (x, y) -> pointer source "touch"
+2010231c	touch_set_up	pen released
+20102348	mouse_set_down	left button down at (x, y) -> pointer source "mouse"
+2010239c	mouse_set_up	left button released
+20102478	mouse_right_down
+201024b4	mouse_right_up
+2010256c	mouse_middle_down
+201025b4	mouse_middle_up
+20102138	pointer_get_event	(evt, src 1 touch/0 mouse): 0 none 1 release 2 press 3 held 4 re-press 5 tap 6 release+tap
+201023bc	mouse_right_get_event
+201024c4	mouse_middle_get_event
+201025c4	mouse_middle_is_func	middle button held on a FUNC-type screen (blocks direct key events)
+20102708	touch_cal_load	flash 0x183D0000: magic 0xA5C30001, 6 doubles, ~CRC-32
+20102774	touch_cal_save	erase + write the 0x40-byte calibration record at flash 0x3D0000
+201027f8	touch_cal_fit	least-squares affine fit of 5 measured vs 5 reference points
+20102f34	touch_cal_init	boot: measured := reference points, load the record from flash
+20102f8c	touch_cal_set_point
+20102fd0	touch_cal_store_points	set 4 points (ref set 0 / measured set 1); set 1 -> fit + save
+20103060	touch_cal_apply	(x, y) -> calibrated pixel, clamp 0..799 / 0..479
+20103164	touch_cal_selftest	apply to (100,100) after init (result unused)
+20103198	tsc2007_write_cmd	RIIC2 write of one command byte to 0x48
+201031f8	tsc2007_read12	command byte, then read 2 bytes -> 12-bit result (-1/-2 on bus error)
+201032f0	tsc2007_pressure	Rtouch = 400 * X/4096 * (Z2/Z1 - 1)
+201033e8	tsc2007_tint_isr	IRQ3 (TINT falling): wake task_tsc2007 (was intc_irq_setup)
+201037ec	tsc2007_irq_flag	dly 20 ms, return 0x20800090
+2013071c	touch_cal_hit	touch inside the 70x70 window of calibration cross n
+20130768	touch_cal_step	calibration screen 0x7C: 5 crosses, store, send E5 to MAIN
+# --- USB HID host side
+20106e0c	usbkbd_attach
+20106eb4	usbkbd_detach
+20106f58	usbkbd_queue_key	(modifier, first usage) -> per-keyboard FIFO 0x20811108
+2010709c	usbkbd_active
+201070e0	usbkbd_get_device
+2010713c	usbkbd_pop_key
+201071c8	usbkbd_flush_all
+20107210	usbkbd_get_char	FIFO -> char via the KEYBOARD LANGUAGE layout (0x2080010E)
+201072d8	kbd_text_append	text buffer 0x20811240 (64 chars)
+201072fc	kbd_text_backspace
+20107324	kbd_text_clear
+20107378	usbkbd_set_layout	0..10 (JPN US UK FRA(AZ) FRA(QW) DEU POR POR(BR) ESP ESP(LA) ITA)
+2010738c	usbkbd_reset
+201073a4	usbkbd_capslock_for_mode	CapsLock LED on for text modes 0,3,5,8,10
+201166cc	usbhid_attach_event	usage 6 keyboard / 2 mouse attach, -1 detach
+20116728	usbhid_report_event	report -> usbkbd_report (6) or mouse_report_post (2)
+20113e4c	mouse_attach_post	message type 1 to the mouse_cursor task
+20113ea0	mouse_detach_post	message type 0
+20113ef0	mouse_report_post	message type 2 (32-byte report)
+20113f38	mouse_cursor_set_pos
+20113f50	mouse_cursor_visible
+20113f60	mouse_cursor_get_pos
+2015eff4	mouse_cursor_task_create
+2015fa54	mouse_cursor_move
+2015fac4	mouse_wheel_event	wheel -> encoder id 6/2/3 or list scroll by screen id
+2015fcc4	mouse_cursor_obj_init	cursor at (400,240), sem "mouse_cursor_sem"
+2015fd64	mouse_cursor_run	attach/detach/report loop: buttons -> pointer sources, dx/dy * speed
+20120e9c	gui_key_send	GUI soft key (press 1/release 0, code) -> E0 frame
+20120fe4	gui_middle_key	0x30F (FUNC) on menu-type screens, else 0xFFFF
+20121160	gui_right_key	right button -> screen-dependent key code
+# --- debug console (chain 1)
+20111218	kbd_set_current	keyboard device used for the LED status
+20111224	kbd_led_status	set the 3 keyboard LEDs (value, mask): debug progress display
+2015f55c	fwdbg_task_create	event flag + task (entry 0x2015F0E0, pri 5, stack 0x2000)
+2015f0e0	task_fwdbg
+2015f348	display_flash_write_other_bank	fw1up: write I:\AH076H_DISPLAY.bin to the non-running bank + flag
+2015f1f0	display_flash_verify_bank1	fw1chk: compare the file with flash 0x18400000 (was display_flash_write_bank)
+2010ec44	uptest_line	uptest, uptest2, mrst, rf0, rf1
+20110da8	sdrdbg_init	event flag 0x208001B8; returns sdr_debug_cmd
+2010a8f8	kbdtest_init	returns kbdtest_line
+2010a630	kbd_layout_tables_init
+2010a898	kbdtest_line	record last usage + modifier class for the F12 overlay
+2010a864	kbdtest_record
+2010a758	vk_name_lookup
+2010a79c	kbdtest_draw	F12 overlay: layout, usage hex, VK name
+20111ab0	keycode_line	F1..F12 toggle debug bits 0x20808A84; date, time, dsp, reset, wdr, sndc
+201112b4	hex_parse	up to n hex digits
+20111410	dbglog_toggle	F6: enable the 2048 x 256-byte log in frame-buffer layer 4
+20111468	dbglog_pause	F7: toggle recording
+20111480	dbglog_write	append one record (us timestamp + 252 bytes)
+2011158c	dbglog_dump	F8: write I:\debug_1.log
+20114df4	system_reset_all	keycode "reset": reset MAIN (RX_RESET) etc., then WDT reset
+20100268	wdt_reset	keycode "wdr"
+20114e88	dsp_queue_frame	keycode "dsp XX YYYY": 3-byte AA frame on queue 0x20450020+0x938
+201165f4	powerup_send_combo	F0 frame with the boot key combo (or 0x10), repeated until MAIN acks
+201162a4	powerup_frame	F0 01 08 20 23 06 29 <n> 00
+201367b4	debug_overlay_draw	F-key overlays (needs debug_enabled)
+201121a8	spi_slave_test_enable	boot combo 4 (MODE+SPLIT): SDR SPI test statistics on screen
