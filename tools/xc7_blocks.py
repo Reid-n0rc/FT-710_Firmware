@@ -28,7 +28,7 @@ DEFAULT_DB = os.environ.get(
 FF = ("FDRE", "FDSE", "FDCE", "FDPE", "LDCE", "LDPE")
 CLKPIN = {"FDRE": "C", "FDSE": "C", "FDCE": "C", "FDPE": "C", "SRLC32E": "CLK", "RAMD64E": "CLK",
           "RAMD32": "CLK", "DSP48E1": "CLK", "RAMB18E1": "CLKARDCLK", "IDDR": "CLK", "ODDR": "CLK"}
-BUF_IN = {"BUFHCE": "I", "BUFGCTRL": "I0", "BUFR": "I"}
+BUF_IN = {"BUFHCE": "I", "BUFGCTRL": "I0", "BUFR": "I", "BUFIO": "I"}
 
 
 class G:
@@ -63,7 +63,10 @@ class G:
         d = self.driver(net)
         while d and self.ctype(d[0]) in BUF_IN:
             path.append(d[0])
-            d = self.driver(self.net(d[0], BUF_IN[self.ctype(d[0])]))
+            nd = self.driver(self.net(d[0], BUF_IN[self.ctype(d[0])]))
+            if nd is None:      # buffer input not decodable (e.g. BUFR fed by a CMT PERF clock)
+                return (d[0], "O(input undecoded)")
+            d = nd
         return d
 
     def clk_of(self, cell):

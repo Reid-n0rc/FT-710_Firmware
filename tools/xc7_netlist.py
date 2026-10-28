@@ -152,6 +152,9 @@ class DB:
                             continue    # a path through a site (BUFHCE I->O etc.), not a wire join
                         m[dst].append(src)
                         m[src].append(dst)
+            for dst, src in HIDDEN_PIPS.get(ty, ()):
+                m[dst].append(src)
+                m[src].append(dst)
             self._always[ty] = m
         return self._always[ty]
 
@@ -315,6 +318,10 @@ class Netlist:
 
 VCC, GND = ("c", 1), ("c", 0)
 LAST_ROUTER = None
+# PIPs in tile_type_*.json with neither segbits nor a ppips entry that the design evidently uses
+# (the FASM selects their source mux): treated as always on. [inference]
+HIDDEN_PIPS = {"HCLK_IOI3": [("HCLK_IOI_IO_PLL_CLK%d" % i, "HCLK_IOI_IO_PLL_CLK%d_DMUX" % i) for i in range(4)]
+               + [("HCLK_IOI_RCLK%d" % i, "HCLK_IOI_IO_PLL_CLK%d_DMUX" % i) for i in range(4)]}
 
 
 def build(fasm_lines, db, progress=False):
@@ -338,13 +345,24 @@ def build(fasm_lines, db, progress=False):
             else:
                 rest[f] = v
         site_feats[tile] = rest
+    # HCLK_IOI3: a BUFIO whose input mux (IO_PLL_CLKn_DMUX) has no FASM PIP is fed by the bank's
+    # clock-capable pin (I2IOCLK); that PIP has no segbits in prjxray-db. [inference]
+    for ti, ty in enumerate(db.ttype):
+        if ty != "HCLK_IOI3":
+            continue
+        fs = feats.get(db.tiles[ti], {})
+        for i, src in ((0, "TOP0"), (1, "TOP1"), (2, "BOT0"), (3, "BOT1")):
+            dmux = "HCLK_IOI_IO_PLL_CLK%d_DMUX" % i
+            if not any(f.startswith(dmux + ".") for f in fs):
+                r.add_pip(ti, dmux, "HCLK_IOI_I2IOCLK_" + src)
     if progress:
         print("pips: %d, nodes: %d" % (r.npips, len(r.nodes)), file=sys.stderr)
     # 2. sites
     nsites = collections.Counter()
-    for tile in sorted(site_feats):
-        fs = site_feats[tile]
-        if not fs:
+    hclk_ioi = set(t for t, ty in zip(db.tiles, db.ttype) if ty == "HCLK_IOI3")  # BUFIOs carry no features
+    for tile in sorted(set(site_feats) | hclk_ioi):
+        fs = site_feats.get(tile, {})
+        if not fs and tile not in hclk_ioi:
             continue
         ti = db.tidx[tile]
         for st, name, sty in db.sites_of(tile):
@@ -358,7 +376,7 @@ def build(fasm_lines, db, progress=False):
                     pinkey[pin] = ("n", r.node(ti, w))
             dirs = {p: v.get("direction") for p, v in db.site_type(sty).items()}
             fn = SITE_HANDLERS.get(st["prefix"])
-            if fn and sf:
+            if fn and (sf or st["prefix"] in ("BUFIO", "BUFR")):
                 fn(nl, name, sty, sf, sfw, pinkey, dirs, tile, fs)
                 nsites[sty] += 1
     if progress:
@@ -366,7 +384,8 @@ def build(fasm_lines, db, progress=False):
     return finish(nl, db)
 
 
-PRUNE = {"CARRY4": ("O[0]", "O[1]", "O[2]", "O[3]", "CO[3]"), "MUXF7": ("O",), "MUXF8": ("O",)}
+PRUNE = {"CARRY4": ("O[0]", "O[1]", "O[2]", "O[3]", "CO[3]"), "MUXF7": ("O",), "MUXF8": ("O",),
+         "BUFIO": ("O",), "BUFR": ("O",)}
 
 
 def finish(nl, db):
@@ -721,6 +740,7 @@ SITE_HANDLERS = {
     "BUFGCTRL": generic_handler("BUFGCTRL", "IN_USE"),
     "BUFHCE": generic_handler("BUFHCE", "IN_USE"),
     "BUFR": generic_handler("BUFR"),
+    "BUFIO": generic_handler("BUFIO"),
 }
 
 
