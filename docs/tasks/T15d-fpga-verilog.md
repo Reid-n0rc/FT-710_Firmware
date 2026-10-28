@@ -28,14 +28,14 @@ Documented in [`docs/code/sdr/netlist.md` section 4](../code/sdr/netlist.md#4-st
   the whole bitstream-to-Verilog chain on a real block.
 - No STARTUPE2/ICAP/BSCAN instance is emitted: prjxray decodes only routing in `CFG_CENTER_MID`, so whether
   STARTUPE2 (flash clock `USRCCLKO`) is used stays open, although the QSPI master in fabric (T15c) needs it.
-- A full-design Icarus run (UART A frames, all other inputs 0) was started; see Follow-ups for the result.
+- A full-design Icarus run compiles (195 MB image) but simulates under 5 us per minute here; a UART exchange would
+  take over ten hours, so it was stopped **[fact]**.
 
 Installs (owner-authorized community tooling; see T15 "Proposed shared-file edits"): `persist-apt iverilog yosys`
 (Debian bookworm: iverilog 11.0-1.1+b1, yosys 0.23-6, plus their dependencies), recorded by the container in
 `~/.config/claude-container/apt-packages.txt`.
 
 ## Follow-ups
-- Full-design simulation: too slow in Icarus on the shared box for the multi-millisecond UART exchange (see the T15
-  Findings for the run's outcome); Verilator would be the next step.
+- Full-design simulation: try Verilator (needs the DSP/BRAM models in a Verilator-friendly form).
 - RAMB36 pairs are written as two RAMB18E1 halves; write true RAMB36E1 instances where T13's pairing is certain.
 - DSP `USE_MULT` and the OPMODE/ALUMODE pin polarity (netlist.md 3.5) before trusting DSP arithmetic in simulation.

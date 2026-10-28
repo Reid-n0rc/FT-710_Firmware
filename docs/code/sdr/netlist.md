@@ -306,5 +306,7 @@ including senders 2 % slow and fast) **[fact]**.
   after `CR` sends 9-bit frames without a stop bit. That slice ties ~500 boundary nets (register bank, other blocks)
   to 0, so this is **not** the radio's real behaviour, only evidence that the transmitter is driven by the parser
   per character **[inference]**. UART B's slice sends nothing under the same conditions.
-- A full-netlist simulation (63k cells in Icarus, with functional models for IBUFDS/IDDR/ODDR/BUFR/BUFIO/MMCM and the
-  Yosys DSP48E1/RAMB18E1 models) compiles; see the T15d task file for how far it ran.
+- A full-netlist simulation (63k cells in Icarus, with functional models for IBUFDS/IDDR/ODDR/BUFR/BUFIO/MMCM from
+  `simprims` and the Yosys DSP48E1/RAMB18E1 models, the DSP `$fatal` mode checks removed) compiles to a 195 MB image
+  but runs at under 5 us of simulated time per minute on the shared box, so one UART exchange (~3 ms) would take
+  over ten hours; it was stopped **[fact]**. A compiled simulator (Verilator) is the way to run the whole design.
