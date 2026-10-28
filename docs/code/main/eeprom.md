@@ -8,7 +8,7 @@ Names are the current Ghidra names in `ghidra/FT710_MAIN`. Function names are th
 ## Summary
 
 - **One chip, bit-banged.** All settings live in one SPI EEPROM, the BR25G256 from the service manual (32 KB, 64-byte pages). The chip hangs on port E GPIOs, and the CPU clocks it in software, so no RSPI or SCI is involved. **[fact]** for the driver, **[inference]** for the part number.
-- **Data flash is unused.** MAIN never touches the RX651 E2 data flash (0x00100000) or the flash sequencer. **[fact, scalar-reference search]**
+- **No data flash.** The R5F56514 has no E2 data flash at all (datasheet Table 1.3, T18), and MAIN never touches 0x00100000 or the flash sequencer. **[fact, scalar-reference search]**
 - **RAM mirror.** RAM **0x464F..0x9E85** is a byte-for-byte mirror of EEPROM **0x0000..0x5836** (22,583 bytes): `RAM = 0x464F + EEPROM address`. Every save call passes the pair (EEPROM `a`, RAM `0x464F + a`, `n`). Code reaches the mirror through the base 0x464F plus an offset (about 3,650 references to 0x464F). EEPROM 0x5837..0x7FFF is never read or written, except by `SPR`/`SPW`. **[fact]**
 - **No checksum.** The image has no checksum. Its only integrity guard is a "write in progress" flag in the 10-byte header, together with a 32-bit save counter. **[fact]**
 - **No timed autosave.** The firmware writes small blocks when a record changes (memory channel, band stack, QMB, keyer text, tuner memory). It writes the whole image only when the radio is going down: a restart or power-off request, the power switch, or a power fail. **[fact]**

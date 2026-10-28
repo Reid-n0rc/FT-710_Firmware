@@ -36,7 +36,7 @@ Import the decoded MAIN image into Ghidra with the correct language and base add
 - T09: use `decomp/main/cat_dispatch.tsv`. Decode each `cat_XX` and the 10 extended commands (`cat_ext_*`, especially `SP`, `EO`, `E8`, `ZZ`, `JP`, `VE`, `FD`, `PE`, and `E9` on the second input path in `cat_parse`). Read the `len==0` cases in the disassembly (compound length tests). Check whether SCI2 really carries CAT.
 - T10: identify the 4651-entry pointer table at 0xFFF89D94, the SCI4 and SCI6 (I2C) peer devices, the SDR_UPDATE/SDR_RESET GPIOs (candidates are the port-bit helpers 0xFFFB70C9..0xFFFB71A7 and `power_off_io` 0xFFFB73A6), the EEPROM layout (callers of `eeprom_read`/`eeprom_write`), and the data-flash (0x100000) use.
 - The RX module lacks the RXv2 DSP ops (EMACA, etc.) and renders the string instructions badly. If that ever matters, patch the sinc in the per-user extension and record it in `docs/tooling.md`.
-- The relocatable vector names in `SetupRX651.java` come from memory of the RX651 manual. Verify them against the hardware manual (the SCI ones are confirmed by register use).
+- The relocatable vector names in `SetupRX651.java` come from memory of the RX651 manual. Verify them against the hardware manual (the SCI ones are confirmed by register use). **Done in T18: all match HWM Table 15.5.**
 - The image has ~244 B of undefined const data at 0xFFFEE1BE..0xFFFEE2B7 (worth a look), then 0xFF up to the version string and vectors. There is no bootloader in this image; the Renesas boot mode does the updates (see docs/hardware.md).
 
 ## Status

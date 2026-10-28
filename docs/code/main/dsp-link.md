@@ -330,7 +330,7 @@ sequenceDiagram
   M->>DI: 06, return (P72 stays 1)
 ```
 
-**[fact]** 0xFFFA0C79. The loop also calls `wdt_kick` (probably the watchdog refresh **[guess]**). After `F1 82` the function
+**[fact]** 0xFFFA0C79. The loop also calls `wdt_kick` (the IWDT refresh **[fact: HWM §33.2.1, T18]**). After `F1 82` the function
 returns with P72 still high and the DSP in ISP mode; the radio is presumably restarted by the DISPLAY after an update
 **[inference]**. The ping response from the RT685 (`5A A7` + 8 bytes) is not checked by MAIN; it is forwarded.
 

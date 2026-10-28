@@ -33,7 +33,7 @@ Full details with page citations: [`docs/hardware.md`](../hardware.md).
 
 ## Follow-ups
 - T05 needs a Renesas RX (RXv2) SLEIGH processor module for Ghidra 12.1.4, or a fallback disassembler (`rx-elf-objdump`). Add a tooling task.
-- Verify the RX651 R5F56514 memory map (512 KB code flash at 0xFFF80000?) and the RZ/A1H boot mode against the Renesas datasheets.
+- Verify the RX651 R5F56514 memory map (512 KB code flash at 0xFFF80000?) and the RZ/A1H boot mode against the Renesas datasheets. **RX651 part done in T18** (512 KB at 0xFFF80000, no data flash).
 - After T04 decodes the payloads: confirm the vector tables and base addresses. Identify the SDR FPGA vendor from bitstream sync words.
 - The MAIN SFL size (~2.6× 512 KB) hints at a text/S-record-style payload (for T03/T04, guess).
 - Unresolved: the RZ boot-strap population, J1005 pins 7/8, the C4-bus endpoint (probably the RT685), and the FT4222H's purpose.

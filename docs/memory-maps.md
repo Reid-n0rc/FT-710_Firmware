@@ -126,7 +126,7 @@ start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as
 
 ## MAIN (MC image, `FT-710_MAIN_V0112.SFL`) — T05
 
-CPU: Q1001 Renesas **RX651** R5F56514 (RXv2 core, 512 KB code flash, 256 KB RAM, 32 KB data flash), little-endian.
+CPU: Q1001 Renesas **RX651** R5F56514ADFB (RXv2 core, 512 KB code flash, 256 KB RAM, **no data flash**), little-endian **[fact: datasheet R01DS0276EJ0240 Table 1.3; T18]**.
 Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs/tooling.md`), loaded with BinaryLoader at
 **base 0xFFF80000**. Setup script: `tools/ghidra/SetupRX651.java`.
 
@@ -149,16 +149,17 @@ Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs
 | 0x00025D20..0x00025E5F | 0x140 | .data, copied from ROM 0xFFF8EADC..0xFFF8EC1C | RAM_data_00025D20 |
 | 0x00025E60..0x0003FFFF | ~105 KB | unused RAM | RAM_3 |
 | 0x00080000..0x000FFFFF | 512 KB | peripheral I/O (volatile): SYSTEM 0x80000, ICU 0x87000, CMT 0x88000, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI0–7 0x8A000–0x8A0FF, ports 0x8C000 (PDR) / 0x8C020 (PODR) / 0x8C040 (PIDR), MPC 0x8C100 | IO_periph |
-| 0x00100000..0x00107FFF | 32 KB | E2 data flash: **unused** (no references to it or to the flash sequencer, T10e) | DataFlash |
+| 0x00100000..0x00107FFF | 32 KB | E2 data flash on 1.5/2 MB parts only: **not present on the R5F56514** (HWM Figure 4.1 note 5, T18), and never referenced (T10e). The Ghidra block is harmless. | DataFlash |
 | 0x007FC000..0x007FFFFF | 16 KB | flash control registers (volatile) | IO_flash |
-| 0xFE7F5D00..0xFE7F5D73 | 116 B | option-setting memory (all 0xFF = defaults) | not loaded |
+| 0xFE7F5D00..0xFE7F5D73 | 116 B | option-setting memory, all 0xFF: little-endian, linear mode, no watchdog auto-start, serial programmer allowed with ID 16 × 0xFF, no access-window/ROM-code/Trusted-Memory protection **[fact: HWM §7; [T18](tasks/T18-renesas-docs-check.md) finding 3]** | not loaded |
 | 0xFFF80000..0xFFF8FFFF | | const data: strings (menus, CAT tables at 0xFFF805EC, reply templates at 0xFFF8F480), menu defaults 0xFFF80E4A.., menu titles 0xFFF83514 (P1, 6 × 20) / 0xFFF8358C (P2, 27 × 13), key class table 0xFFF83164, the **five 863-entry key handler tables** 0xFFF89D94 / 0xFFF8AB10 / 0xFFF8B88C / 0xFFF8C608 / 0xFFF8D384 (press … release, ending at 0xFFF8E100; [ui-keys.md](code/main/ui-keys.md)), the relocatable vector table at **0xFFF8E6DC** (256 × 4), DTBL/BTBL, .data images | ROM |
 | 0xFFF8FBDB.. | | code (PowerON_Reset at 0xFFF8FBDB; code reaches ~0xFFFEE1BE, then 0xFF fill) | ROM |
 | 0xFFFFFF00 | | version string `V01-12` | ROM |
 | 0xFFFFFF80..0xFFFFFFFF | | fixed vector table (EXTB). Entries 0xD0..0xFC are used | ROM |
 
-Peripheral bases follow the RX651 hardware manual from memory **[inference]**. SCI0–7 are confirmed by the vector numbers of the ISRs that use them **[fact]**.
-The RAM size of 256 KB is the R5F56514 part-number decode **[inference]**. The highest RAM address used is ~0x25E60 **[fact]**.
+Peripheral bases match the RX651 hardware manual I/O register table (r01uh0590 §5, p204 ff.) **[fact, T18]**. 0x000A4000..0x000A5FFF inside the I/O range is the
+8 KB standby RAM, which MAIN does not use **[fact]**. The 256 KB RAM is 0x00000000..0x0003FFFF **[fact: HWM Figure 4.1 p189]**.
+The relocatable vector names in `SetupRX651.java` match HWM Table 15.5 pp461–463 **[fact, T18]**. The highest RAM address used is ~0x25E60 **[fact]**.
 
 ### Global state block 0x20B04 (T10a) [fact]
 Most radio state lives in one RAM block starting at **0x20B04** (about 0x480 bytes). The compiler reaches it through eleven pointer

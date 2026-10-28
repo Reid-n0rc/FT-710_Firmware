@@ -48,6 +48,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | done |
 | T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | done |
 | T17 | [Integration: names, RX decoder fix, re-exports, shared-file edits](T17-integration.md) | T09–T12 | done |
+| T18 | [Check the docs against the Renesas RX651 documentation](T18-renesas-docs-check.md) | T05 T10 T17 | done |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 

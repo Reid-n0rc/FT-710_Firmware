@@ -141,7 +141,7 @@ side **[fact, hifi4.md]**.
 | SD card `I:\FT-710\` | DISPLAY | `.SFL` update files, MemList/Menu backups, screenshots, WAV recordings | user / DISPLAY | [display/update.md](display/update.md), [display/peripherals.md](display/peripherals.md) |
 | RX651 code flash | MAIN | MAIN image | DISPLAY via serial boot mode | [display/update.md](display/update.md#5-main-update-rx651-serial-boot-mode) |
 | BR25G256 EEPROM (32 KB) | MAIN | all settings, memories, band stacks, calibration (`cfg105`) | MAIN (`eeprom_*`), CAT `SPW`/`E9` | [main/eeprom.md](main/eeprom.md) |
-| RX651 data flash | MAIN | unused | — | [main/README.md](main/README.md#memory-map-summary) |
+| RX651 data flash | MAIN | not present on the R5F56514 (T18) | — | [main/README.md](main/README.md#memory-map-summary) |
 | RT685 QSPI flash | IFDSP | IFDSP image (FlexSPI XIP) | DISPLAY via MAIN relay + RT685 ROM ISP | [display/update.md](display/update.md#7-ifdsp-update-rt685-rom-isp-through-main) |
 | SDR module QSPI flash | SDR | bitstream (boots from 0; update writes 0x240000.. and the header at 0x480000) | the FPGA fabric, fed by DISPLAY + MAIN | [sdr/interfaces.md](sdr/interfaces.md#configuration-and-update-sequence) |
 | S-35190A RTC | DISPLAY | date/time, sent to MAIN as `E3` | DISPLAY, or MAIN via `0x65` | [display/peripherals.md](display/peripherals.md) |

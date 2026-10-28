@@ -115,7 +115,9 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
 DISPLAY drives `RX_RESET` (P7_10, `gpio_rx_reset`, 0 = reset asserted) and `RX_UPDATE` (P4_3, `gpio_rx_update_b` `gpio_rx_update_b`,
 high = boot mode, hardware.md p17), and talks over SCIF5, the normal MAIN-link UART wired to the RX651 SCI1 (hardware.md) **[fact for the
 code, inference for the nets]**. The commands follow the Renesas RX "SOD 01 / 81" boot protocol: `01 LNH LNL CMD data SUM 03`, replies
-start `81`, data packets end in `17` (more) or `03` (last) **[fact for the bytes; command meanings inference from the protocol]**.
+start `81`, data packets end in `17` (more) or `03` (last) **[fact for the bytes; command meanings fact: RX651 HWM r01uh0590 §59.13 pp2577–2612, T18]**.
+Commands, in the order the manual requires: `38` device type, `36` endian, `32` frequency, `34` bit rate, `00` sync, `2C` ID mode, `30` ID check,
+`53`/`54` area count/info, `50` area erase, `13` program, `15` read, `51`/`52` configuration (option-setting memory) program/read.
 
 ```mermaid
 sequenceDiagram
@@ -142,7 +144,8 @@ sequenceDiagram
 All steps **[fact]** (`fwobj_main_run` → `rx_boot_program` and the `rx_boot_*` proposals in the table below). The 16 MHz / 120 MHz values are
 the clock arguments of command 0x32 (0x00F42400, 0x07270E00) **[fact]**. The ID code sent is 16 × 0xFF, which matches the all-0xFF
 option-setting memory in the MAIN image (custom-firmware.md) **[fact]**. Area type `' '` (0x20) is skipped when writing, `'@'` when
-sizing **[fact]**; their meaning (data flash / reserved) is **[guess]**. Any failure returns 3 ("failed"); MAIN is then left in boot
+sizing **[fact]**. They are the boot ROM's area kinds (KOA, HWM p2610): 0x20 = data flash (absent on this part), 0x40 = the Trusted Memory window,
+which lies inside code flash; `'0'` (0x30) is the option-setting memory, written with `51`, and 0x00 is code flash **[fact, T18]**. Any failure returns 3 ("failed"); MAIN is then left in boot
 mode until `system_reboot`, and the update can be repeated **[inference]**.
 
 ## 6. DISPLAY self-update (SPI flash banks)

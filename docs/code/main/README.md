@@ -103,7 +103,7 @@ sequenceDiagram
 
 | Phase | Address | Ghidra name | Inferred name | Role |
 |---|---|---|---|---|
-| pre-power | 0xFFFB3E6A | `wdt_kick` | `wdt_kick` | → `iwdt_refresh`: writes 0x00 then 0xFF to 0x88030 (IWDT refresh register) **[fact; IWDT inference from the RX65x map]** |
+| pre-power | 0xFFFB3E6A | `wdt_kick` | `wdt_kick` | → `iwdt_refresh`: writes 0x00 then 0xFF to 0x88030 (IWDTRR, the IWDT refresh sequence) **[fact: code + RX651 HWM r01uh0590 §33.2.1]** |
 | pre-power | 0xFFFB2228 | `timers_init` | `timers_init` | Marks the 75 one-shot soft timers (flags 0x11FED) and the 4 slow timers (0x1203A) as expired, sets two periodic on/off timers (450/250 ms, 1000/1000 ms), starts TPU0 (`R_TPU0_Start`) and TPU3 (`R_TPU3_Start`) **[fact]** |
 | pre-power | 0xFFFB27DF | `FUN_fffb27df` | — | empty stub **[fact]** |
 | pre-power | 0xFFFB01F3 | `eeprom_init` | `eeprom_init` | EEPROM WRSR (0x01) with status 0x80 (bit-banged on port E) **[fact]**. See [eeprom.md](eeprom.md) |
@@ -142,7 +142,7 @@ flowchart TD
 
 | # | Address | Ghidra name | Inferred name | Role | Page |
 |---|---|---|---|---|---|
-| 1 | 0xFFFB3E6A | `wdt_kick` | `wdt_kick` | Independent-watchdog refresh (0x88030 ← 0x00, 0xFF) **[fact; IWDT inference]**. Also called in the power-off loop | [peripherals.md](peripherals.md) |
+| 1 | 0xFFFB3E6A | `wdt_kick` | `wdt_kick` | Independent-watchdog refresh (IWDTRR 0x88030 ← 0x00, 0xFF) **[fact: code + HWM §33.2.1]**. Also called in the power-off loop | [peripherals.md](peripherals.md) |
 | 2 | 0xFFFB6D56 | `io_task` | `io_task` | TX/RX and power supervisor: PB3 vs 0x20B44 with timer 0x2A; four sub-tasks (`meter_task` timers/APO, `io_poll` GPIO/TX state machine on 0x20B18, `FUN_fffb8d77`, `FUN_fffb9605`); **supply monitor** `supply_undervolt_check` (if ADC 0x20B08 < 0x7DD: `power_off_io`, save, 0x20B39 = 0x90); **power-off**: when 0x20B30 == 2 it saves the EEPROM (`eeprom_save_opstate`), waits for SCI1 to drain and calls `sw_reset` (software reset) **[fact]** | [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md) |
 | 3 | 0xFFFA11ED | `sdr_task` | `sdr_task` | SCI5 FPGA link: pending `sdr_reg_access` (flag 0x1C8B), `sdr_bridge_mode` (0x1C8D), then ~30 change detectors that push radio state to the FPGA whenever something changes; aborts the pass when a transfer is pending **[fact for the structure]** | [sdr-link.md](sdr-link.md) |
 | 4 | 0xFFF9D1B9 | `dsp_link_poll` | `dsp_link_poll` | SCI4 DSP link: pending `dsp_reg_access` (0x1C5E/0x1C5F), a 4-step sequence on timer 0x0B while 0x20B18 is 3 or 8, then ~40 change detectors (DSP register writes) **[fact for the structure]** | [dsp-link.md](dsp-link.md) |
@@ -240,7 +240,7 @@ Full table: [docs/memory-maps.md](../../memory-maps.md#main-mc-image-ft-710_main
 | 0x00000000..0x00001403 | user stack (top 0x1004), interrupt stack (top 0x1404) |
 | 0x00001404..0x00025E5F | .bss / .data (three DTBL copies); highest used RAM ~0x25E60 of 256 KB |
 | 0x00080000..0x000FFFFF | peripheral I/O (SYSTEM, ICU 0x87000, IWDT 0x88030, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI 0x8A000.., ports 0x8C000..) |
-| 0x00100000..0x00107FFF | E2 data flash, **unused** (no references; settings live in the SPI EEPROM, [eeprom.md](eeprom.md)) **[fact, T10e]** |
+| 0x00100000..0x00107FFF | E2 data flash: **not present** on the R5F56514 (512 KB parts have none) **[fact: datasheet Table 1.3, T18]**; nothing references it, and settings live in the SPI EEPROM ([eeprom.md](eeprom.md)) **[fact, T10e]** |
 | 0xFFF80000..0xFFF8FFFF | constants: CAT tables (0xFFF805EC), menu strings, **key handler tables 0xFFF89D94..0xFFF8E0FF** (5 × 863, [ui-keys.md](ui-keys.md)), vector table 0xFFF8E6DC, DTBL/BTBL, .data images, CAT switch/reply tables (0xFFF8F014, 0xFFF8F480) |
 | 0xFFF8FBDB..~0xFFFEE1BE | code (2252 functions) |
 | 0xFFFFFF00 / 0xFFFFFF80 | version string `V01-12` / fixed vectors |
@@ -305,7 +305,7 @@ Functions owned by a subsystem page are listed there; this table covers the ones
 | 0xFFF8FFC4 | `bsp_interrupt_open` | `bsp_interrupt_open` | Group callback table = FIT_NO_FUNC, ICU source select |
 | 0xFFF92014 | `icu_select_init` | `icu_select_init` | SLIBXR128.. source mapping |
 | 0xFFF92E49 | `R_Pins_Create` | `R_Pins_Create` | Port PDR/PODR/PMR set-up **[inference]** |
-| 0xFFF927A9 | `R_IWDT_Create` | `R_IWDT_Create` | IWDT registers 0x88032..0x88038 **[inference]** |
+| 0xFFF927A9 | `R_IWDT_Create` | `R_IWDT_Create` | IWDTCR 0x88032 = 0x3350, IWDTRCR = 0 (NMI), IWDTCSTPR = 0x80; timeout ≈2.2 s ([peripherals.md](peripherals.md)) **[fact: HWM §33.2]** |
 | 0xFFF927CE | `iwdt_refresh` | `iwdt_refresh` | Refresh 0x88030 |
 | 0xFFF927E5 | `R_DA_Create` | `R_DA_Create` | DAC registers 0x88044.. |
 | 0xFFF92851 | `R_S12AD0_Create` | `R_S12AD0_Create` | ADC0 (0x89000) and vector 186 |

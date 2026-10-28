@@ -57,6 +57,10 @@ With the 24.000 MHz crystal X1001 (docs/hardware.md) the PLL runs at 24 × 10 = 
 ROMWT = 10b is the setting for 100 MHz < ICLK ≤ 120 MHz, which agrees **[fact: RX651 HWM r01uh0590 §9.2.1 SCKCR p302–303, §9.2.2 ROMWT p304,
 §9.2.3 SCKCR2 p306, §9.2.4 SCKCR3 p307, §9.2.5 PLLCR p308, §9.2.6 PLLCR2 p309]**. `tone_set` hard-codes 60 MHz as the timer clock, which matches.
 All timer periods and baud rates on these pages use PCLKB = 60 MHz.
+Sub-clock: on a cold start (RSTSR1.CWSF 0x8C291 bit 0 = 0) the oscillator part sets RCR4.RCKSEL 0x8C428 ← 0, RCR3.RTCEN 0x8C426 ← 0 and
+SOSCCR 0x80033 ← 1 (sub-clock stopped), then waits for OSCOVFSR.SOOVF = 0. That is the uncorrected "sub-clock not used" flowchart, HWM
+Figure 9.15 **[fact]**. Technical update TN-RX*-A0280A deletes the RCKSEL write, because RCKSEL should be written only once, in the RTC
+procedure. MAIN writes it once and never uses the RTC, so this is harmless **[inference, T18]**.
 
 ## GPIO map [fact unless tagged]
 
@@ -199,7 +203,7 @@ SLIBRn p451, Table 15.3 p452–453; vectors 128–207 are INTB128..INTB207 in Ta
 | TPU2 | /4, TGRA 74 → 5 µs | 138 | `spk_softstart_isr` | started by `speaker_route` when it leaves the "all off" route. It pulses the selected speaker switch with a shrinking duty for about 5 ms **[inference: click/pop suppression]** |
 | TPU3 | /256, TGRA 23437 → **100 ms** | 142 | `slowtimer_tick` | 4 slow timers (flags 0x1203A): TX time-out timer and pre-warning |
 | MTU2 | TGRA 11999, PWM on P27 | – | – | configured but never started; P27 has no net |
-| IWDT | IWDTCR 0x3350, underflow → NMI | NMI | `NMI` 0xFFF9061B | refreshed by `wdt_kick` → `iwdt_refresh` in the power-off loop and `app_main` |
+| IWDT | IWDTCR 0x3350 = 1024 cycles of IWDTCLK/256 → **≈2.2 s** (120 kHz ±10 %), no refresh window; IWDTRCR = 0 → underflow raises NMI, not reset; IWDTCSTPR 0x80 = stop in sleep; NMIER.IWDTEN set **[fact: HWM r01uh0590 §33.2 pp1410–1415, NMIER p438; T18]** | NMI | `NMI` 0xFFF9061B | refreshed by `wdt_kick` → `iwdt_refresh` in the power-off loop and `app_main` |
 
 Soft-timer ids used on this page: 0x09 (5 ms ADC/SWR), 0x0A (10 ms meters), 0x0C..0x12 (TRX sequencing steps), 0x13 (2.5 s I/O start delay),
 0x15/0x1A (PTT hang: VOX delay / CW break-in delay), 0x16 (tone length), 0x2A (AF-mute hold), 0x2C/0x2D (speaker route), 0x2F (VOX holdoff),

@@ -52,7 +52,7 @@ registers: p56–57, p74).
 - Part: **R5F56514ADFB** in the parts list, Yaesu P/N G1095803, side A, D3 (p36). The schematic also says R5F56514ADFB (p17).
   The block diagram prints "R5F56514AFFB" (p6), which is probably a drawing typo or a variant. **[fact]**
 - Package: 144-pin, with pin numbers up to 144 on the schematic (p17) **[fact]**. "FB" = 144-pin LFQFP **[guess, Renesas naming]**.
-- Memory (Renesas part-number decode): "565**1**" = RX651 group, "**4**" = 512 KB code flash, plus 256 KB RAM and 32 KB data flash **[guess. Check against the Renesas RX651 datasheet]**.
+- Memory: R5F56514**ADFB** = 512 KB code flash, 256 KB RAM, **no data flash**, no encryption (TSIP), no SDHI/SDSI, no dual bank, PLQP0144KA-B (144-pin LFQFP), −40 to +85 °C **[fact: datasheet R01DS0276EJ0240 Table 1.3 p19, Table 1.2 p12; T18]**. Data flash and the dual bank exist only on the 1.5/2 MB parts.
 - Clock: X1001 **24.000 MHz** crystal DSX321G, connected to P37/XTAL and P36/EXTAL (pins 20/22) (p46, p6, p17). **[fact]**
 - External EEPROM: Q1008 **ROHM BR25G256FVT-3GE2**, a 256 Kbit SPI EEPROM (p36, labelled "EEPROM" on p6) **[fact]**. It has its own
   nets `E2P_SS/CLK/MOSI/MISO` on **PE0/PE5/PE6/PE7** (pins 111/106/102/101), separate from the C4 SPI on PE1..PE4, and the firmware
@@ -89,7 +89,9 @@ registers: p56–57, p74).
 - Boot / update: MD pin 16 is labelled `MD/FINED`, net `MD_FINE`. Transistor Q1012 (DTC114YUA) pulls MD_FINE low when
   `RX_UPDATE` is high, and the drawing is annotated "RX_UPDATE: Update is High" (p17). `RX_UPDATE` and `RX_RESET` are driven by the
   DISPLAY CPU (J1009 pins 12–13 → RZ/A1H P4_3 and P7_10) (p17, p62). SCI1 (P30/P26) is the RX boot-mode SCI.
-  **So the DISPLAY CPU reflashes the MAIN CPU through the Renesas serial boot mode over the DISP UART** **[inference, high]**.
+  **So the DISPLAY CPU reflashes the MAIN CPU through the Renesas serial boot mode over the DISP UART** **[fact: DISPLAY code (display/update.md §5) +
+  HWM r01uh0590 Table 3.1 p180, Table 59.7 p2564: MD low + PC7/UB low at reset = SCI boot on SCI1 P30/P26; T18]**. MAIN never drives PC7 (`UB`, J1004 pin 4),
+  so it must be held low on the board **[inference]**. MD low, then high 20–100 ms after reset, selects the FINE interface instead (Table 3.1 note 3).
   This matches the update manual: firmware comes from the SD card, which is on the DISPLAY CPU, and "update DISPLAY first".
 - **Debug header J1004, "RX-CPU DEBUG"** (P1091201, an 8-pin 08FLT-SM2 FFC, p35, p17). Earlier versions of this page called it J1005; the
   p17 symbol reads J1004 (T10c) and the p35 parts list gives J1004 = 08FLT-SM2-TB P1091201 (side A, D3). **J1005 is `SB20-08WS` P0090615**,
