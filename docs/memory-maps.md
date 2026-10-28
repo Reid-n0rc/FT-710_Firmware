@@ -148,6 +148,18 @@ Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs
 Peripheral bases follow the RX651 hardware manual from memory **[inference]**. SCI0–7 are confirmed by the vector numbers of the ISRs that use them **[fact]**.
 The RAM size of 256 KB is the R5F56514 part-number decode **[inference]**. The highest RAM address used is ~0x25E60 **[fact]**.
 
+### MAIN RAM and EEPROM areas used by CAT (T09) [fact]
+The full list is in [code/main/cat.md](code/main/cat.md#data-structures-and-globals).
+
+| RAM | EEPROM (BR25G256) | Contents |
+|---|---|---|
+| 0x1C8E.. (up to 0x29B2 bytes) | – | CAT reply buffer; the reply length is at 0x1B788 |
+| 0x1E14C (60 × 0x6A) | – | CAT receive ring (head 0x11FEC, tail 0x11FEB); E1/E9 fast-path slot at 0x1B78C |
+| 0x464F (10 B) | 0x0000 | header with save counter |
+| 0x4659 (0x105 B) | 0x000A | `cfg105` table (CAT `SPN`, `SPAWE`) |
+| 0x475E (3 B) | 0x010F | destination (region) code (CAT `JP`) |
+| 0x60C9 (0x2F49 B saved; 0x29A9 B in E8/E9) | 0x1A7A | settings + memory-channel image (CAT `E8` dump / `E9` restore); memory channels are 0x5A-byte records |
+
 ## IFDSP (ID image, `FT-710_IFDSP_V0101.SFL`) — T07
 
 Part: NXP i.MX RT685 (Q2002), Cortex-M33 + Cadence HiFi4 DSP. The decoded image `build/FT-710_IFDSP_V0101.bin`
