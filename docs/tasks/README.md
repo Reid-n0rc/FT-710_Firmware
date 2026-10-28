@@ -32,7 +32,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | done |
 | T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | in progress |
 | T11g | [DISPLAY misc peripherals and files](T11g-display-misc.md) | T06 | done |
-| T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | in progress |
+| T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | done |
 | T12a | [IFDSP overview + boot/memory map](T12a-ifdsp-overview.md) | T07 | done |
 | T12b | [IFDSP M33 console / command link](T12b-ifdsp-m33-console.md) | T12a | done |
 | T12c | [IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)](T12c-ifdsp-ipc.md) | T12a | done |
