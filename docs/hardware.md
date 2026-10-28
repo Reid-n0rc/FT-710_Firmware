@@ -151,6 +151,12 @@ registers: p56–57, p74).
   comes late, with dither fed into both inputs **[fact: third-party report]**. That explains the 14 DDR-captured LVDS pairs as two
   14-bit channels multiplexed on the two clock edges (channel A on one edge, B on the other) at 125 MSPS each **[inference, strong]**,
   which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
+- **Yaesu's receiver diagram** (reproduced as Figure 1 of the DC4KU report in `Manuals/`): RX unit ATT → BPF → RF AMP → **divider**
+  → **two A/D converters** → FPGA, which **sums** the two channels; a **D/A** in the SDR block makes the dithering signal fed into both
+  ADC inputs **[fact: Yaesu diagram]**. The FT-DX10's diagram (Figure 2) has the same "SDR Block" of two A/Ds + FPGA, but there one ADC
+  takes the narrow-band IF (after mixer, local oscillator and roofing filter) and the other the direct-sampled RF. DC4KU calls it "the
+  same twin ADC as in the FT-DX10". Whether the FT-DX10's SDR module (owner's note: **Q7000958** in its block diagram) is the same board as
+  the FT-710's is **open**: compare the FT-DX10 technical supplement (connectors, clock, J-pin names) or its SDR bitstream.
 - **Physical form (exploded view, p5):** a separate small PCB mounted **under the MAIN unit**, screwed down (screw ⑨) with thermal
   pads RA6334400/RA6334500 and gaskets RA6119900/RA6143800 against the chassis floor, which acts as its heat sink **[fact for the
   drawing]**. It is drawn without its own part number, so it appears to come with the MAIN assembly CS2712704 (USA) / CS2712705 (EU)
