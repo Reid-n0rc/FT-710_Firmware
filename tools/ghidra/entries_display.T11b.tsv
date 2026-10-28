@@ -1,0 +1,19 @@
+# FT-710 DISPLAY: missed / mis-bounded function entries found by T11b (MAIN link). Same format as entries_display.tsv;
+# the parent appends these to entries_display.tsv. Evidence: vtables in .rodata 0x20427FAC-0x20428070, ISR descriptors
+# 0x2016578C-0x201657C8, the cyclic-handler descriptor 0x201658C4, and direct B/BL targets (objdump scan).
+# --- C++ task methods (vtbl[0] run through cpp_task_thunk)
+201600a8		late start (FUN_201600ac): MAIN-link RX dispatcher task, vtbl 0x20428030; starts with ldr r7,=0x2045006D
+# --- SCIF driver (UART object vtbl 0x2042803C) and its ISR stubs
+201632d8		SCIF write into the 1 KB TX ring (vtbl+0x24); not in the T06 function list
+20162f10		SCIF TXI handler, swallowed by FUN_20162dd8 (the RXI handler); target of the *_txi stubs
+20114884		SCIF3 RXI stub (ISR descriptor 0x20165778): r0 = UART object 0x208DA1E0, b 0x20162DD8
+2011488c		SCIF3 TXI stub (ISR descriptor 0x20165764): b 0x20162F10
+20114894		SCIF4 RXI stub (ISR descriptor 0x201657A0, GIC 0xEF)
+2011489c		SCIF4 TXI stub (ISR descriptor 0x2016578C, GIC 0xF0)
+201148a4		SCIF5 RXI stub (ISR descriptor 0x201657C8, GIC 0xF3): MAIN link
+201148ac		SCIF5 TXI stub (ISR descriptor 0x201657B4, GIC 0xF4): MAIN link
+# --- link helpers reached only by tail calls
+20116390		cyclic handler (descriptor 0x201658C4, cyctim 5): set_flg(0x2045004C, 1) = ACK timeout tick
+20160278		post a frame buffer to the RX dispatcher mailbox (obj+0x819C); tail-called from 0x201165EC and 0x2015EA40
+2010ede8		'E' (0x45) frame handler: MAIN writes a block into 0x208116A6, reply C5; tail-called from 0x2015EA4C
+2010eeb4		'D' (0x44) frame handler: MAIN reads a block from 0x208116A6, reply C4; tail-called from 0x2015EA58
