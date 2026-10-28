@@ -101,7 +101,7 @@ address map **[inference from the datasheet map; base addresses were cross-check
 `boot_select_bank` (0x20100ABC) runs only while SPIBSC1 reg 0x3FEFB018 is 0 (first stage). It sets that register, builds a boot-info block at 0x20000000
 (bank 1: flag 0x3E0000, image 0x400000; bank 2: flag 0x3F0000, image 0xA00000), checks the words at 0x183E0000 / 0x183F0000 for 0x11111111
 plus a non-zero valid word, and calls 0x18400000 (bank 1) or 0x18A00000 (bank 2). The same binary therefore serves as the boot loader at the
-start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as the application in a bank. `display_flash_write_bank` writes new images to 0x18400000.
+start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as the application in a bank. `fwdbg_verify_bank1` writes new images to 0x18400000.
 
 ### GUI assets in `.rodata` (not disassembled)
 - **0x20165178–~0x20167400:** constant tables (UART names, jump/pointer tables, scatter of small structs).

@@ -180,7 +180,7 @@ Found by comparing the dispatch length tests and the handlers against the manual
 | `VM` | Set `VM;` only | `VM;` toggles V/M. **Hidden:** `VM0;` reads a 2-hex-digit state code (`00`, `10`, `11`, `20`, `21`, `51`, `91`: VFO / memory / PMS / 5 MHz-channel ranges). `VM000;` forces the mode back to state 1 (VFO). | [fact] 0xFFFAFADB; meanings [inference] |
 | `VD` | Drawn as `VDP1P1P1P1;` (7) with values 00–33 | Read `VD;`, set `VDnn;` (5): **2 digits**, 00–33. The manual drawing is wrong. | [fact] dispatch case 0xFFFA4CD9 |
 | `MT` | Set length 19 (tag of up to 12 characters, padded) | Set accepts lengths 8..19, so shorter, unpadded tags work too. | [fact] dispatch case 0xFFFA4589 |
-| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value). Menu groups `01 02 03 04 06` are accepted, while `05` and `00` give `?;`. | [fact] 0xFFFA4097, `FUN_fffe61e7` |
+| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value). Menu groups `01 02 03 04 06` are accepted, while `05` and `00` give `?;`. | [fact] 0xFFFA4097, `ex_command` |
 | `ID` | `ID0800;` | Constant `ID0800;` | [fact] |
 | `AI` | P1 0/1 | Accepts any character ≤ `'1'`. A character below `'0'` stores 0xFF ("on" for some tests, "off" for others) | [fact] 0xFFFA6946 |
 | `PS` | Read answers `PS0`/`PS1` | Read always answers `PS1;`. While the radio is off, the parser drops `PS;` before the handler runs. | [fact] 0xFFFAD696 |
@@ -204,7 +204,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 |---|---|---|---|
 | `SPSRaaaa;` → `SPSRvvvv;` | read | `cat_SP_sdr_reg` 0xFFFA4E31 → `sdr_reg_access` 0xFFFA1485 | Reads 16-bit register `aaaa` (hex) of the **SDR unit** over SCI5. The SDR link frame is `r` + 4 hex + 2-hex sum + CR. **[fact]** for SCI5; SCI5 = SDR link per T05. |
 | `SPSWaaaavvvv;` | set | same | Writes `vvvv` to SDR register `aaaa`. No reply on success; `?;` if the SDR does not ACK. **High risk**: it writes SDR/FPGA registers directly. |
-| `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dev4_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** (device unknown; perhaps the IF-DSP **[guess]**). High risk for the write. |
+| `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dsp_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** (device unknown; perhaps the IF-DSP **[guess]**). High risk for the write. |
 | `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. |
 | `SPR<aH><aL><x><sum>;` (binary) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes). Upper-case `R` only. |
 | `SPW<aH><aL><byte><sum>;` (binary) | set | same | **Writes one EEPROM byte** and the RAM mirror 0x464F[addr]. Upper-case `W` only. **High risk** (raw EEPROM write, no bounds). |
@@ -223,8 +223,8 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 `EO P1 P2 P3 P4 P5P5P5;` (length 10 exactly), handled by `cat_ext_EO` 0xFFFA5C90. **[fact]**
 - **P1:** 0..2. It is checked, but its value is not used.
 - **P2 = 0, MAIN dial:** retunes the active VFO by ±P5 (000–999) × 1 Hz, 1 kHz or 1 MHz (P4 = 0, 1, 2). The result is clamped to 30 kHz..75 MHz, the same limits as `FD`.
-- **P2 = 1, FUNC knob:** turns it by ±P5 steps (`FUN_fffc64c0`, ±127 max).
-- **P2 = 2, STEP/MCH knob:** turns it by ±P5 steps (`FUN_fffc7daf`) and sets 0x20B74 = 1.
+- **P2 = 1, FUNC knob:** turns it by ±P5 steps (`enc2_step`, ±127 max).
+- **P2 = 2, STEP/MCH knob:** turns it by ±P5 steps (`enc3_step`) and sets 0x20B74 = 1.
 - **Side effect:** before acting, it **clears eight mode flags**: 0x20F3B, 0x20B8A, 0x20B99, 0x20BBE, 0x20B97, 0x20B98, 0x20B9A, 0x20B9B. One of them is the `ZZ` mode flag 0x20BBE, so `EO` also leaves that mode.
 - **No reply.** Medium risk: it changes the frequency, and it can move menu or knob values.
 
@@ -257,7 +257,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
   - n = 0: u32 at 0x20F5C.
   - n = 1: u32 at 0x20F60.
   - n = 2: band-memory frequency of the band that contains the active VFO frequency. Bands come from `band_of_freq` 0xFFFB33E5 (12 ranges at 0xFFF8876C). The value is from 0x9C99 + 4·band, with sub-slots at 0x9CC9 for band 11.
-- **Set `FD002ddddddddd;` (15):** only n = 2. The 9-digit Hz value must satisfy 30000 < f < 75,000,001. It is written into the band memory of the band that contains the active frequency (`FUN_fffb4e18`).
+- **Set `FD002ddddddddd;` (15):** only n = 2. The 9-digit Hz value must satisfy 30000 < f < 75,000,001. It is written into the band memory of the band that contains the active frequency (`bandmem_set`).
 - **AI:** `cat_ai_FD` broadcasts `FD00n<9 digits>;`, with n from 0x9C35, when the value changes. This is the only undocumented AI message.
 - **Meaning:** not known. A per-band "last frequency"/band-stack slot used by `BS` is plausible **[guess]**.
 - **Risk:** medium (persistent band memory).
@@ -303,7 +303,7 @@ See the differences table. `VE0;` → `VE00112;` on V01-12 **[inference from the
 - **Where the code matters:**
   - `FUN_fffb0779` tests the code for 0x020B, 0x4380 and 0x60E6 when it builds per-band tables.
   - The default is 0x8043.
-  - A DISPLAY-link message can set 0xA983 (`FUN_fff957e6`).
+  - A DISPLAY-link message can set 0xA983 (`displink_rx_F1_sys`).
 - **Meaning:** the destination/version code selects the market version. Most likely it sets band limits and TX coverage **[inference]**.
 - **Risk: high.** It changes the radio's region, and with it, likely, its legal TX coverage. It also resets the settings.
 

@@ -51,13 +51,13 @@ FLEXCOMM1–5, so the RX-IF/TX-AF I2S, the codec I2S and the FFT/REC/PLAY SPI to
 | 0x08001540 | `SystemInit` | 080012f4_08001668.c | FPU enable (CPACR/NSACR), SYSCTL0 DSPSTALL=1, CACHE64 (0x40033000) setup **[fact]** |
 | 0x080017A8 | `call_main` | 08001678_08001808.c | → `main` |
 | 0x000872AE / 0x0008106C | `main` / `app_main` | 00086778_00087470.c | `main` calls `stdio_init` and tail-jumps to `app_main` (Ghidra shows both bodies merged under `main`): board init (clock/pins/GPIO port 0–2, INPUTMUX 0x40026000), `BOARD_DSP_Init`, then MU-A handshake: polls `MU_SR (0x40110060) & 7` for 1 and then 3, enables things via 0x40112000. Creates the tasks and starts the scheduler **[fact]** |
-| 0x00084AD8 | `BOARD_DSP_Init` | 00084150_00085e2c.c | **DSP loader**: clock/reset setup (`FUN_00083b04`, `FUN_00086e1c`, `FUN_00086e58`, `FUN_00083e48`), 3× `DSP_CopyImage({src,dst,size})`: 0x08001844→0x24000000 (0x20644), 0x08021E88→0x00200000 (0x383B4), 0x0805A23C→0x20040000 (0x31E0), then `SYSCTL0 DSPSTALL (0x4000200C) = 0` **[fact]** |
+| 0x00084AD8 | `BOARD_DSP_Init` | 00084150_00085e2c.c | **DSP loader**: clock/reset setup (`CLOCK_InitSysPfd`, `CLOCK_AttachClk`, `CLOCK_SetClkDiv`, `DSP_Init`), 3× `DSP_CopyImage({src,dst,size})`: 0x08001844→0x24000000 (0x20644), 0x08021E88→0x00200000 (0x383B4), 0x0805A23C→0x20040000 (0x31E0), then `SYSCTL0 DSPSTALL (0x4000200C) = 0` **[fact]** |
 | 0x00086EAA | `DSP_CopyImage` | 00086778_00087470.c | memcpy wrapper taking the {src,dst,size} struct **[fact]** |
 | 0x00080D0C | `uart0_init` | 0008000c_000818b8.c | FLEXCOMM0 (0x40106000) USART setup **[fact: base]** |
 | 0x00080E50 | `FLEXCOMM0_IRQHandler` | 0008000c_000818b8.c | **USART link**: RX into a 1 KB ring (0x87EC8) and notifies the Command Task. TX drains a 1 KB ring (0x882D4) to FIFOWR **[fact]** |
 | 0x00080CA4 | `uart0_write` | 0008000c_000818b8.c | queues bytes into the TX ring and enables the TX interrupt **[inference]** |
 | 0x00080D78 | `CommandTask` | 0008000c_000818b8.c | waits on a notification, pulls RX bytes, calls `console_rx_char` **[fact]** |
-| 0x00081430 | `console_rx_char` | 0008000c_000818b8.c | line editor + command interpreter (Ctrl+C, echo, `d`/`D` hex dump of 0x40 16-bit words via `FUN_00080c30`, `r`, `?` error reply, `>> ` prompt) **[fact: strings]**. FC0 carries `DSP_UMISO/UMOSI`, which also go to the J2009 debug header (docs/hardware.md). **T12: this is the MAIN↔IFDSP control link** (MAIN sends `i DB00` and `r`/`w` register frames; see `docs/code/ifdsp/control-link.md`) **[fact]** |
+| 0x00081430 | `console_rx_char` | 0008000c_000818b8.c | line editor + command interpreter (Ctrl+C, echo, `d`/`D` hex dump of 0x40 16-bit words via `regfile_read`, `r`, `?` error reply, `>> ` prompt) **[fact: strings]**. FC0 carries `DSP_UMISO/UMOSI`, which also go to the J2009 debug header (docs/hardware.md). **T12: this is the MAIN↔IFDSP control link** (MAIN sends `i DB00` and `r`/`w` register frames; see `docs/code/ifdsp/control-link.md`) **[fact]** |
 | 0x000813B4 / 0x000812FC | `console_cmd_r` / `console_cmd_d` | 0008000c_000818b8.c | print `r %04X %04X` / ` %04X` dumps **[fact]** |
 | 0x00080FE8 | `ipc_print_dsp_reply` | 0008000c_000818b8.c | formats DSP replies by category/command: 0 = "Component versions from DSP", 1 = Mute on/off/error, 3 = "DSP Version %04X" **[fact]** |
 | 0x00080F80 | `create_IpcTasks` | 0008000c_000818b8.c | creates `IpcRecvTask` (0x85FC6) and `IpcSendTask` (0x80F50), stack 0x1800 each **[fact]** |
@@ -69,7 +69,7 @@ FLEXCOMM1–5, so the RX-IF/TX-AF I2S, the codec I2S and the FFT/REC/PLAY SPI to
 | 0x00084EB0 | `vsnprintf_core` | 00084150_00085e2c.c | printf engine (`0123456789abcdef`, `(null)`) used by `snprintf`/`sprintf` **[inference]** |
 
 String-referencing functions: `console_rx_char`, `console_cmd_d`, `console_cmd_r`, `ipc_print_dsp_reply`, `create_*Task*`,
-`rpmsg_lite_master_init`, `prvCheckForValidListAndQueue` (`TmrQ`), `xTimerCreateTimerTask` (`Tmr Svc`), `_Csys_alloc_failed` (`*** _Csys_alloc failed`), `vsnprintf_core`.
+`rpmsg_lite_master_init`, `prvCheckForValidListAndQueue` (`TmrQ`), `xTimerCreateTimerTask` (`Tmr Svc`), `_Csys_alloc` (`*** _Csys_alloc failed`), `vsnprintf_core`.
 Grep `"` in `m33/*.c` to find them.
 
 Not present on the M33: no I2S, SPI or I2C peripheral access (FLEXCOMM1–7 pages are never referenced) **[fact]**. T12 correction: the M33

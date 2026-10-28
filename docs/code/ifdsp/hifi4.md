@@ -2,8 +2,7 @@
 
 Program: `FT-710_IFDSP_V0101_hifi4.bin` (Ghidra project `FT710_IFDSP`, `Xtensa:LE:32:default`), carved by
 `tools/ifdsp_dsp_images.py`. Overview: [README.md](README.md). Sub-task: T12e. Claims are tagged **[fact]** (seen in the
-disassembly or data, address cited), **[inference]** or **[guess]**. Names in *italics* are proposed in
-`tools/ghidra/IfdspHifi4Names.java` (applied to a project copy, not yet to the shared project or `decomp/`).
+disassembly or data, address cited), **[inference]** or **[guess]**. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 
 ## How this page was made: a FLIX-aware disassembler
 
@@ -47,11 +46,11 @@ but working out every algorithm needs more time than T12e had; the tables below 
 
 `xos_create_main_ipc_threads` (0x0021C498, the DSP `main`) runs once **[fact]**:
 
-1. `FUN_00233410(0x20060000, 0x31E0, 2, 0)` and `(0x20070000, 0x10000, 2, 0)` — sets a memory attribute on the DMA buffers
+1. `xthal_set_region_attribute`(0x20060000, 0x31E0, 2, 0)` and `(0x20070000, 0x10000, 2, 0)` — sets a memory attribute on the DMA buffers
    and the register file (both shared with the M33 or DMA) **[fact: args]**; that it is `xthal_mpu_set_region_attribute`
    (making them uncached) is **[inference]**.
 2. `regfile_set_defaults` (0x0021BE80): clears the 64 KB register file and writes defaults (table below) **[fact]**.
-3. `FUN_0021C090` (GPIO setup), `SystemCoreClock` = **594 MHz** (0x2367B880 → 0x2CB680), `xos_start_system_timer(-1, 0)`,
+3. `regfile_capture_init` (GPIO setup), `SystemCoreClock` = **594 MHz** (0x2367B880 → 0x2CB680), `xos_start_system_timer(-1, 0)`,
    `g_xtal = 24 MHz`, `g_clkin = 18.432 MHz` (0x238420 / 0x23841C) **[fact: values]**.
 4. `create_rx_tx_path_threads` (0x00225E40) — audio I/O init, `Thread_Rx_Path`, `Thread_Tx_Path`, then `create_Thread_Rx_Audio`.
 5. `fc1_spi_dma_init` (0x00220FD0), `FUN_0021C140` (sin/cos table init, 2π constants).
@@ -62,12 +61,12 @@ order matches Cadence XOS **[inference]**; the values are **[fact]** from the ca
 
 | Thread | Created in | Entry | Prio | Stack | Wakes on | Role |
 |---|---|---|---|---|---|---|
-| `Thread_Main` | 0x0021C498 | *Thread_Main_entry* 0x0021C360 | 4 | 0x1398 @0x241170 | `xos_thread_sleep(SystemCoreClock·100/1000)` = 100 ms | starts the I2S DMA (`audio_i2s_fc3_fc4_fc5_init`), then every 100 ms `tx_gpio_to_reg4004`, every 1 s `cpu_load_to_regs_2000` **[fact]** |
-| `Thread_Ipc` | 0x0021C498 | *Thread_Ipc_entry* 0x0021C3B4 | 13 | 0x2000 @0x240290 | msgq (10 × 152 B) fed by the rpmsg endpoint callback | MU-B/SEMA42 boot handshake, rpmsg-lite remote on 0x20020000, endpoint 30, `ipc_handle_msg` 0x0021BD40 (see [ipc.md](ipc.md)) **[fact]** |
-| `Thread_Rx_Path` | 0x00225E40 | *Thread_Rx_Path_entry* 0x002262FC | 7 | 0x1398 @0x2C83B0 | msgq 0x23773C[0] (2 × 4 B), posted by the codec-out DMA callback | per 24-sample block: RX IF in → receive chain → codec out; forwards blocks to Rx_Audio and Spi **[fact: calls]**, chain contents **[inference]** |
-| `Thread_Tx_Path` | 0x00225E40 | *Thread_Tx_Path_entry* 0x0022647C | 7 | 0x1398 @0x2C9750 | msgq 0x23773C[1], posted by the codec-in DMA callback | per 24-sample block: mic/codec in → transmit chain → TX AF FIFO for FC2 **[fact: calls]** |
-| `Thread_Rx_Audio` | 0x00220BD0 | *Thread_Rx_Audio_entry* 0x00220F90 | 6 | 0x1398 @0x258A00 | msgq 0x236BC0 (2 × 4 B), posted when 12 blocks are queued | batch processing of 12 × 24 = 288 samples (24 ms): reads most "RX DSP" registers (0x40–0x45, 0x52, 0x56, 0x61, 0x400B–0x400E, 0x4020–0x4026) **[fact]** |
-| `Thread_Spi` | 0x00224A10 | *Thread_Spi_entry* 0x00224AA4 | 5 | 0x1398 @0x2650F0 | msgq 0x2374F4 (4 × 4 B): msg 0 = 7 blocks queued, msg 1 = SPI transfer done | builds spectrum/scope data from tapped blocks (decimate by 7, 128-point buffer, regs 0x5C/0x5D) and sends it to the DISPLAY over FC1 SPI **[fact: calls]**, purpose **[inference]** |
+| `Thread_Main` | 0x0021C498 | `Thread_Main_entry` 0x0021C360 | 4 | 0x1398 @0x241170 | `xos_thread_sleep(SystemCoreClock·100/1000)` = 100 ms | starts the I2S DMA (`audio_i2s_fc3_fc4_fc5_init`), then every 100 ms `tx_gpio_to_reg4004`, every 1 s `cpu_load_to_regs_2000` **[fact]** |
+| `Thread_Ipc` | 0x0021C498 | `Thread_Ipc_entry` 0x0021C3B4 | 13 | 0x2000 @0x240290 | msgq (10 × 152 B) fed by the rpmsg endpoint callback | MU-B/SEMA42 boot handshake, rpmsg-lite remote on 0x20020000, endpoint 30, `ipc_handle_msg` 0x0021BD40 (see [ipc.md](ipc.md)) **[fact]** |
+| `Thread_Rx_Path` | 0x00225E40 | `Thread_Rx_Path_entry` 0x002262FC | 7 | 0x1398 @0x2C83B0 | msgq 0x23773C[0] (2 × 4 B), posted by the codec-out DMA callback | per 24-sample block: RX IF in → receive chain → codec out; forwards blocks to Rx_Audio and Spi **[fact: calls]**, chain contents **[inference]** |
+| `Thread_Tx_Path` | 0x00225E40 | `Thread_Tx_Path_entry` 0x0022647C | 7 | 0x1398 @0x2C9750 | msgq 0x23773C[1], posted by the codec-in DMA callback | per 24-sample block: mic/codec in → transmit chain → TX AF FIFO for FC2 **[fact: calls]** |
+| `Thread_Rx_Audio` | 0x00220BD0 | `Thread_Rx_Audio_entry` 0x00220F90 | 6 | 0x1398 @0x258A00 | msgq 0x236BC0 (2 × 4 B), posted when 12 blocks are queued | batch processing of 12 × 24 = 288 samples (24 ms): reads most "RX DSP" registers (0x40–0x45, 0x52, 0x56, 0x61, 0x400B–0x400E, 0x4020–0x4026) **[fact]** |
+| `Thread_Spi` | 0x00224A10 | `Thread_Spi_entry` 0x00224AA4 | 5 | 0x1398 @0x2650F0 | msgq 0x2374F4 (4 × 4 B): msg 0 = 7 blocks queued, msg 1 = SPI transfer done | builds spectrum/scope data from tapped blocks (decimate by 7, 128-point buffer, regs 0x5C/0x5D) and sends it to the DISPLAY over FC1 SPI **[fact: calls]**, purpose **[inference]** |
 
 XOS priority: higher number = higher priority **[inference from XOS]**, so the IPC thread and the two 2 ms block threads
 pre-empt the batch threads.
@@ -108,10 +107,10 @@ and the AIC3204 (which is I2S master, T12a).
 
 | FLEXCOMM | Base | Direction (SDK call) | DMA1 channel (priority) | Schematic signal (p19) | Callback |
 |---|---|---|---|---|---|
-| FC2 | 0x40108000 | `I2S_TxInit`, `I2S_TxTransferSendDMA` | ch5 (prio 5) | TX AF → SDR | *fc2_txaf_dma_done* 0x00226224 |
-| FC3 | 0x40109000 | `I2S_RxInit`, `I2S_RxTransferReceiveDMA` | ch6 (prio 3) | RX IF ← SDR | *fc3_rxif_dma_done* 0x00226254 |
-| FC4 | 0x40122000 | `I2S_RxInit`, receive | ch8 (prio 2) | codec I2S "out" (ADC data into the DSP) | *fc4_codec_in_dma_done* 0x002262C0 |
-| FC5 | 0x40123000 | `I2S_TxInit`, send | ch11 (prio 4) | codec I2S "in" (DAC data from the DSP) | *fc5_codec_out_dma_done* 0x00226284 |
+| FC2 | 0x40108000 | `I2S_TxInit`, `I2S_TxTransferSendDMA` | ch5 (prio 5) | TX AF → SDR | `fc2_txaf_dma_done` 0x00226224 |
+| FC3 | 0x40109000 | `I2S_RxInit`, `I2S_RxTransferReceiveDMA` | ch6 (prio 3) | RX IF ← SDR | `fc3_rxif_dma_done` 0x00226254 |
+| FC4 | 0x40122000 | `I2S_RxInit`, receive | ch8 (prio 2) | codec I2S "out" (ADC data into the DSP) | `fc4_codec_in_dma_done` 0x002262C0 |
+| FC5 | 0x40123000 | `I2S_TxInit`, send | ch11 (prio 4) | codec I2S "in" (DAC data from the DSP) | `fc5_codec_out_dma_done` 0x00226284 |
 
 The DMA channel numbers follow the RT600 request map (FCn RX = 2n, TX = 2n+1), which agrees with each FLEXCOMM's
 Tx/Rx init call **[fact: both sides]**. So the schematic's "codec I2S out/in" are named from the codec's side **[inference]**.
@@ -146,8 +145,8 @@ towards the DISPLAY CPU (FFT/REC/PLAY on the schematic) **[fact: MasterInit]**. 
 
 ### GPIO, PWM meter
 
-- `tx_gpio_to_reg4004` (0x0021C060), every 100 ms: reg 0x4004 = (`FUN_0021C5CC`() << 2) | (P0_21 << 1) | P0_22 (GPIO byte registers
-  0x40100015/16); `FUN_0021C5CC` returns P0_4 unless reg 0xC & 0xF000 == 0x1000 **[fact]**. MAIN polls these bits **[inference]**.
+- `tx_gpio_to_reg4004` (0x0021C060), every 100 ms: reg 0x4004 = (`regfile_gpio_sel`() << 2) | (P0_21 << 1) | P0_22 (GPIO byte registers
+  0x40100015/16); `regfile_gpio_sel` returns P0_4 unless reg 0xC & 0xF000 == 0x1000 **[fact]**. MAIN polls these bits **[inference]**.
 - `meter_to_reg4005` (0x0021F348, Rx_Path): float level × 65535 → 8 bit → ×100/256 → **reg 0x4005**, which the M33 copies into
   the SCT0 PWM duty (T12d) — an analogue meter output **[fact: code]**, which meter **[guess: S-meter/ALC]**.
 - `cpu_load_to_regs_2000` (0x0021C230), every 1 s: `xos_get_cpu_load(stats[8], &n, reset=1)` and writes each thread's
@@ -283,40 +282,40 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0x0021C498 | FUN_0021c498 | *xos_create_main_ipc_threads* | DSP main: MPU attrs, regfile defaults, clocks, audio init, threads, `xos_start` |
-| 0x0021C360 | FUN_0021c360 | *Thread_Main_entry* | 100 ms loop: GPIO → reg 0x4004, 1 s CPU load → regs 0x2000.. |
-| 0x0021C3B4 | FUN_0021c3b4 | *Thread_Ipc_entry* | MU-B/SEMA42 handshake, rpmsg remote, msg loop |
-| 0x00220BD0 | FUN_00220bd0 | *create_Thread_Rx_Audio* | thread + msgq (2 × 4) |
-| 0x00220F90 | FUN_00220f90 | *Thread_Rx_Audio_entry* | wait msg, copy 12 blocks, `FUN_0021F484` chain, two outputs (`FUN_00220DA4`) |
-| 0x00224A10 | FUN_00224a10 | *create_Thread_Spi* | SPI state init, thread + msgq (4 × 4) |
-| 0x00224AA4 | FUN_00224aa4 | *Thread_Spi_entry* | sine table, then msg 0: 7 blocks → decimate → spectrum (`FUN_00224060`, `FUN_00223C8C`) → SPI; msg 1: next SPI transfer |
-| 0x00225E40 | FUN_00225e40 | *create_rx_tx_path_threads* | I2S/DMA1 init (FC2–5), Rx/Tx path threads, then Rx_Audio |
-| 0x002262FC | FUN_002262fc | *Thread_Rx_Path_entry* | per 2 ms block, receive chain; mode reg 6 |
-| 0x0022647C | FUN_0022647c | *Thread_Tx_Path_entry* | per 2 ms block, transmit chain; reg 0x20 gain |
-| 0x002260D8 | FUN_002260d8 | *audio_i2s_fc3_fc4_fc5_init* | DMA handles and ping-pong transfers for FC2–FC5 |
-| 0x00226224 / 54 / 84 / 0x002262C0 | FUN_… | *fc2_txaf_dma_done* / *fc3_rxif_dma_done* / *fc5_codec_out_dma_done* / *fc4_codec_in_dma_done* | DMA callbacks (above) |
-| 0x00225C9C / 0x00225CF8 | FUN_… | *txaf_fifo_pop_to_dma* / *rxif_dma_to_fifo* | SDR-side FIFOs |
-| 0x002246C0 / 0x00224734 | FUN_… | *codec_out_fill_dma* / *codec_in_from_dma* | codec-side buffers |
-| 0x00220F74 / 0x00220C7C | FUN_… | *rx_audio_push_block* / *rx_audio_fifo_push* | 24-deep block ring, posts Rx_Audio at 12 |
-| 0x00224D58 / 0x00224D40 | FUN_… | *spi_fifo_push* / *spi_post_tx_done* | 14-deep ring, posts Spi at 7 / msg 1 |
-| 0x00220FD0 | FUN_00220fd0 | *fc1_spi_dma_init* | FC1 SPI master 1 MHz + DMA0 ch2/3 |
-| 0x0021BE80 | FUN_0021be80 | *regfile_set_defaults* | clear + defaults |
-| 0x0021C060 | FUN_0021c060 | *tx_gpio_to_reg4004* | GPIO P0_4/21/22 → reg 0x4004 |
-| 0x0021C230 | FUN_0021c230 | *cpu_load_to_regs_2000* | XOS CPU load → regs 0x2000.. |
-| 0x0021F348 | FUN_0021f348 | *meter_to_reg4005* | level → PWM meter reg |
-| 0x002274E0, 0x002277F0, 0x0022835C, 0x0022866C, 0x0022735C | FUN_… | *xos_thread_create*, *xos_start*, *xos_start_system_timer*, *xos_thread_sleep*, *xos_get_cpu_load* | Cadence XOS |
-| 0x00226A50, 0x00226B38, 0x00226CEC | FUN_… | *xos_msgq_create*, *xos_msgq_put*, *xos_msgq_get* | XOS message queues |
-| 0x002266FC, 0x0022678C | FUN_… | *xos_register_interrupt_handler*, *xos_interrupt_enable* | XOS interrupts (IRQ 22 = DMA0, 23 = DMA1) |
-| 0x00235D30, 0x00235EB0, 0x00235900 | FUN_… | *memcpy*, *memset*, *__udivdi3* | runtime |
-| 0x00212684, 0x00208600, 0x00208E90 | FUN_… | *INPUTMUX_AttachSignal*, *CLOCK_AttachClk*, *CLOCK_GetFlexCommClkFreq* | NXP SDK |
-| 0x0020A528, 0x0020AAB4, 0x0020AF38 | FUN_… | *DMA_Init*, *DMA_CreateHandle*, *DMA_IRQHandle* | NXP SDK DMA |
-| 0x0020EDAC, 0x0020EECC, 0x0020EFDC, 0x0020F020 | FUN_… | *I2S_TxInit*, *I2S_RxInit*, *I2S_TxGetDefaultConfig*, *I2S_RxGetDefaultConfig* | NXP SDK I2S |
-| 0x0020FBE4, 0x0020FC7C, 0x0020FE90, 0x0020FEA8 | FUN_… | *I2S_TxTransferCreateHandleDMA*, *I2S_TxTransferSendDMA*, *I2S_RxTransferCreateHandleDMA*, *I2S_RxTransferReceiveDMA* | NXP SDK I2S DMA |
-| 0x00213F58, 0x00213F9C | FUN_… | *SPI_MasterGetDefaultConfig*, *SPI_MasterInit* | NXP SDK SPI |
-| 0x00212EB8, 0x00213E84 | FUN_… | *MU_SetFlags*, *SEMA42_Lock* | MU-B / SEMA42 |
-| 0x0021B544, 0x0021B078, 0x0021AF9C, 0x0021C398, 0x0021BD40 | FUN_… | *rpmsg_lite_remote_init*, *rpmsg_lite_is_link_up*, *rpmsg_lite_create_ept*, *ipc_ept_rx_cb*, *ipc_handle_msg* | rpmsg-lite remote |
-| 0x002340FC, 0x002341C0 | FUN_… | *iir_cascade_init*, *iir_cascade_process* | biquad engine |
-| 0x00223250 | FUN_00223250 | *nlms_51tap_update* | 51-tap normalised LMS (error, power + 1e-12, weight update) |
+| 0x0021C498 | `xos_create_main_ipc_threads` | `xos_create_main_ipc_threads` | DSP main: MPU attrs, regfile defaults, clocks, audio init, threads, `xos_start` |
+| 0x0021C360 | `Thread_Main_entry` | `Thread_Main_entry` | 100 ms loop: GPIO → reg 0x4004, 1 s CPU load → regs 0x2000.. |
+| 0x0021C3B4 | `Thread_Ipc_entry` | `Thread_Ipc_entry` | MU-B/SEMA42 handshake, rpmsg remote, msg loop |
+| 0x00220BD0 | `create_Thread_Rx_Audio` | `create_Thread_Rx_Audio` | thread + msgq (2 × 4) |
+| 0x00220F90 | `Thread_Rx_Audio_entry` | `Thread_Rx_Audio_entry` | wait msg, copy 12 blocks, `FUN_0021F484` chain, two outputs (`FUN_00220DA4`) |
+| 0x00224A10 | `create_Thread_Spi` | `create_Thread_Spi` | SPI state init, thread + msgq (4 × 4) |
+| 0x00224AA4 | `Thread_Spi_entry` | `Thread_Spi_entry` | sine table, then msg 0: 7 blocks → decimate → spectrum (`FUN_00224060`, `FUN_00223C8C`) → SPI; msg 1: next SPI transfer |
+| 0x00225E40 | `create_rx_tx_path_threads` | `create_rx_tx_path_threads` | I2S/DMA1 init (FC2–5), Rx/Tx path threads, then Rx_Audio |
+| 0x002262FC | `Thread_Rx_Path_entry` | `Thread_Rx_Path_entry` | per 2 ms block, receive chain; mode reg 6 |
+| 0x0022647C | `Thread_Tx_Path_entry` | `Thread_Tx_Path_entry` | per 2 ms block, transmit chain; reg 0x20 gain |
+| 0x002260D8 | `audio_i2s_fc3_fc4_fc5_init` | `audio_i2s_fc3_fc4_fc5_init` | DMA handles and ping-pong transfers for FC2–FC5 |
+| 0x00226224 / 54 / 84 / 0x002262C0 | FUN_… | `fc2_txaf_dma_done` / `fc3_rxif_dma_done` / `fc5_codec_out_dma_done` / `fc4_codec_in_dma_done` | DMA callbacks (above) |
+| 0x00225C9C / 0x00225CF8 | FUN_… | `txaf_fifo_pop_to_dma` / `rxif_dma_to_fifo` | SDR-side FIFOs |
+| 0x002246C0 / 0x00224734 | FUN_… | `codec_out_fill_dma` / `codec_in_from_dma` | codec-side buffers |
+| 0x00220F74 / 0x00220C7C | FUN_… | `rx_audio_push_block` / `rx_audio_fifo_push` | 24-deep block ring, posts Rx_Audio at 12 |
+| 0x00224D58 / 0x00224D40 | FUN_… | `spi_fifo_push` / `spi_post_tx_done` | 14-deep ring, posts Spi at 7 / msg 1 |
+| 0x00220FD0 | `fc1_spi_dma_init` | `fc1_spi_dma_init` | FC1 SPI master 1 MHz + DMA0 ch2/3 |
+| 0x0021BE80 | `regfile_set_defaults` | `regfile_set_defaults` | clear + defaults |
+| 0x0021C060 | `tx_gpio_to_reg4004` | `tx_gpio_to_reg4004` | GPIO P0_4/21/22 → reg 0x4004 |
+| 0x0021C230 | `cpu_load_to_regs_2000` | `cpu_load_to_regs_2000` | XOS CPU load → regs 0x2000.. |
+| 0x0021F348 | `meter_to_reg4005` | `meter_to_reg4005` | level → PWM meter reg |
+| 0x002274E0, 0x002277F0, 0x0022835C, 0x0022866C, 0x0022735C | FUN_… | `xos_thread_create`, `xos_start`, `xos_start_system_timer`, `xos_thread_sleep`, `xos_get_cpu_load` | Cadence XOS |
+| 0x00226A50, 0x00226B38, 0x00226CEC | FUN_… | `xos_msgq_create`, `xos_msgq_put`, `xos_msgq_get` | XOS message queues |
+| 0x002266FC, 0x0022678C | FUN_… | `xos_register_interrupt_handler`, `xos_interrupt_enable` | XOS interrupts (IRQ 22 = DMA0, 23 = DMA1) |
+| 0x00235D30, 0x00235EB0, 0x00235900 | FUN_… | `memcpy`, `memset`, `__udivdi3` | runtime |
+| 0x00212684, 0x00208600, 0x00208E90 | FUN_… | `INPUTMUX_AttachSignal`, `CLOCK_AttachClk`, `CLOCK_GetFlexCommClkFreq` | NXP SDK |
+| 0x0020A528, 0x0020AAB4, 0x0020AF38 | FUN_… | `DMA_Init`, `DMA_CreateHandle`, `DMA_IRQHandle` | NXP SDK DMA |
+| 0x0020EDAC, 0x0020EECC, 0x0020EFDC, 0x0020F020 | FUN_… | `I2S_TxInit`, `I2S_RxInit`, `I2S_TxGetDefaultConfig`, `I2S_RxGetDefaultConfig` | NXP SDK I2S |
+| 0x0020FBE4, 0x0020FC7C, 0x0020FE90, 0x0020FEA8 | FUN_… | `I2S_TxTransferCreateHandleDMA`, `I2S_TxTransferSendDMA`, `I2S_RxTransferCreateHandleDMA`, `I2S_RxTransferReceiveDMA` | NXP SDK I2S DMA |
+| 0x00213F58, 0x00213F9C | FUN_… | `SPI_MasterGetDefaultConfig`, `SPI_MasterInit` | NXP SDK SPI |
+| 0x00212EB8, 0x00213E84 | FUN_… | `MU_SetFlags`, `SEMA42_Lock` | MU-B / SEMA42 |
+| 0x0021B544, 0x0021B078, 0x0021AF9C, 0x0021C398, 0x0021BD40 | FUN_… | `rpmsg_lite_remote_init`, `rpmsg_lite_is_link_up`, `rpmsg_lite_create_ept`, `ipc_ept_rx_cb`, `ipc_handle_msg` | rpmsg-lite remote |
+| 0x002340FC, 0x002341C0 | FUN_… | `iir_cascade_init`, `iir_cascade_process` | biquad engine |
+| 0x00223250 | `nlms_51tap_update` | `nlms_51tap_update` | 51-tap normalised LMS (error, power + 1e-12, weight update) |
 
 ## Open points
 

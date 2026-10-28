@@ -24,7 +24,7 @@ All addresses are MAIN ROM/RAM addresses, and the tags follow AGENTS.md: **[fact
   - After a successful AI-relevant set, handlers call `cat_ai_holdoff` @ 0xFFFDDB6A. It starts timer 0x32 for 200 ms and sets 0x187C2, which delays the next AI frame. **[fact]**
   - Reading `AI1` also triggers the holdoff. **[fact]**
 - **Power-off gate.** While the radio is "off" (0x20B3A == 0), `cat_parse` drops every command except `PS1`, primary index 71 with a parameter of `1`. **[fact]**
-- **Global CAT disable.** While 0x20B46 == 1, `cat_parse` returns at once without consuming anything. The DISPLAY link sets this flag: `FUN_fff957e6` sub-command 3. **[fact]** Most likely it is used during firmware update or SD operations **[guess]**.
+- **Global CAT disable.** While 0x20B46 == 1, `cat_parse` returns at once without consuming anything. The DISPLAY link sets this flag: `displink_rx_F1_sys` sub-command 3. **[fact]** Most likely it is used during firmware update or SD operations **[guess]**.
 - **APO reset.** Every command received through the ring restarts the auto-power-off timer (`cat_apo_reset`). The timer is set to 900, 1800 or 3600 units, according to setting 0x9B0F (1, 2 or 3). **[fact]**
 
 ## Parse and dispatch flow
@@ -143,7 +143,7 @@ Binary SP checksum bug **[fact]** (decompile plus disassembly at 0xFFFA3861..0xF
 | 0xFFFB0182 | `cat_checksum_ok` | checksum test | `sum8(buf,n) == buf[n]` **[fact]** |
 | 0xFFFB44F7 | `key_event_filter` | front-panel key gate | Checks a key code against about 20 mode locks (TX, tuning, menus, etc.) and returns 1 if the key may run. Many CAT handlers emulate a key press through it **[fact]** for the structure; it is used by AC CS SV VS VM ZI ST TS UP DN KY LM … |
 | 0xFFFA4E31 | `cat_SP_sdr_reg` | SPS | Parses 4-hex address and 4-hex value, then `sdr_reg_access` **[fact]** |
-| 0xFFFA4E8F | `cat_SP_dev4_reg` | SPD | The same, through `dev4_reg_access` **[fact]** |
+| 0xFFFA4E8F | `cat_SP_dev4_reg` | SPD | The same, through `dsp_reg_access` **[fact]** |
 | 0xFFFA4EED | `cat_SP_adc_dump` | SPIR | 12 × 3 hex digits of ADC results **[fact]** |
 | 0xFFFA520B | `cat_SP_eeprom_byte` | SPR/SPW | Byte read/write at a 16-bit EEPROM address. The write also updates the RAM mirror at 0x464F[addr] **[fact]** |
 | 0xFFFA50F9 | `cat_SP_table` | SPN | Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `FUN_fffbff93` after 500 ms, `R` reads the entry and loads preset idx-1 (`FUN_fffbb567`) **[fact]**; the meaning of the table is not known **[guess]** |
@@ -155,8 +155,8 @@ Binary SP checksum bug **[fact]** (decompile plus disassembly at 0xFFFA3861..0xF
 | 0xFFFB0376 | `eeprom_save_memch` | | Writes the 0x87-byte block plus one 0x5A-byte memory channel **[fact]** |
 | 0xFFFB3B33 / 0xFFFB3B5D | `dest_code_get` / `dest_code_set` | destination code | 0x475E/0x475F. Set writes EEPROM, reloads defaults (`settings_defaults(0)`) and requests a restart (0x20F4B=1, 0x20B39=0x11) **[fact]**; that 0x20B39=0x11 means a reboot is **[inference]** |
 | 0xFFFA1485 | `sdr_reg_access` | SDR register r/w | Waits until idle, then sends an `r`/`w` + hex address [+ value] + 2-hex sum + CR frame over SCI5 (`sdr_send_cmd`) and waits for the 7-byte reply **[fact]** |
-| 0xFFF9D8A4 | `dev4_reg_access` | SCI4 register r/w | The same protocol over **SCI4**, whose device is not yet known (T10) **[fact]** |
-| 0xFFFA3226 | `sdr_bridge_mode` | SDR maintenance bridge | Not CAT. Started by a DISPLAY-link message (`FUN_fff957e6` sub 1 → 0x1C8D=1). Relays binary SDR register requests from the DISPLAY CPU (ACK 0x06 / NAK 0x15) **[fact]** for the structure |
+| 0xFFF9D8A4 | `dsp_reg_access` | SCI4 register r/w | The same protocol over **SCI4**, whose device is not yet known (T10) **[fact]** |
+| 0xFFFA3226 | `sdr_bridge_mode` | SDR maintenance bridge | Not CAT. Started by a DISPLAY-link message (`displink_rx_F1_sys` sub 1 → 0x1C8D=1). Relays binary SDR register requests from the DISPLAY CPU (ACK 0x06 / NAK 0x15) **[fact]** for the structure |
 | 0xFFFB2718 | `cat_rand8` | | Pseudo-random byte from timer counter 0x88116; this is the E8 key **[fact]** |
 
 Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (extended). Their addresses are in [cat-commands.md](../../cat-commands.md) and `decomp/main/cat_dispatch.tsv`.
@@ -189,7 +189,7 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x1E14C | 60×0x6A | `cat_ring` | **[fact]** |
 | 0x15E06 | | `cat_ai_buf` | AI frame buffer **[fact]** |
 | 0x187C2..0x18807 | | AI shadow copies / flags | one per detector **[fact]** |
-| 0x20B04..0x20B16 | 12×u16 | `adc_results` | S12AD/S12AD1 conversions (`FUN_fffb27fb`, `FUN_fffb2858`); `SPIR` reads them **[fact]** |
+| 0x20B04..0x20B16 | 12×u16 | `adc_results` | S12AD/S12AD1 conversions (`adc0_store`, `adc1_store`); `SPIR` reads them **[fact]** |
 | 0x20B20/21/22 | u8 | `cat_ai_on[3]` | AI per port 1/2/3 **[fact]** |
 | 0x20B3A | u8 | `radio_on` | 0 while off, so only `PS1` is accepted **[fact]** |
 | 0x20B46 | u8 | `cat_disabled` | set from the DISPLAY link **[fact]** |

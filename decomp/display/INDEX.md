@@ -49,7 +49,7 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 | 0x2011497C | `sfl_decode` | Byte-wise key subtraction (docs/sfl-format.md) **[fact, T04]** |
 | 0x20114A64 | `sfl_crc` | Salted CRC-32 over the file. It uses `crc32_make_table` 0x20100A14 (reflected poly 0xEDB88320) and `crc32_update` 0x20100A5C **[fact]** |
 | 0x20114A44 / 0x20114CA0 | `sfl_stream_init` / `sfl_read_header` | Reads the 0x40-byte header block. 0x20114AE0–0x20114C44 are the decoding read/write wrappers |
-| 0x2010F81C | `sfl_load_file` | Reads an SFL file and decodes it |
+| 0x2010F81C | `sdmenu_load_file` | Reads an SFL file and decodes it |
 | 0x2010DDD8 / 0x2010DFD0 | `fwfile_check_versions` / `fwfile_status_text` | Matches `FT-710_{MAIN,DISPLAY,IFDSP,SDR}_V` and shows `Ready` / `(Broken file)` / `(No such file)` |
 
 ### Firmware update of the other CPUs and of itself
@@ -59,9 +59,9 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 | 0x2010D92C / 0x2010DA78 | `update_dsp` / `dsp_debug_cmd` | `I:\AH076H_IFDSP.dat`, `I:\rom_writer.dat`, `I:\AH068_AFDSP_V0000.dat`. Commands `dsp1up`…`dsp3up/32/9` |
 | 0x20110AB8 | `sdr_flash_write` | Writes the SDR (FPGA) image over SPI in 0x2000-byte blocks through `sdr_spi_xfer_block` 0x20110834 |
 | 0x20110C3C | `sdr_debug_cmd` | strcmp chain for `sdrup`, `sdr1up`, `sdr2up`, `sdrchk1`, `sdrup/g`, `sdr1up/g`, `sdr2up/g`, `sdrchk1/g`, `sdrchk2/g`, `sdrspi`, `sdrfile`, `delta`. It signals the worker through the event flag held in 0x208001B8 |
-| 0x2011249C | `sdr_spi_stats_print` | `CS_POLL`, `MOSI_OK/NG`, `MISO_OK/NG`, `FRAMES`, `msec` |
+| 0x2011249C | `pclink_stats_print` | `CS_POLL`, `MOSI_OK/NG`, `MISO_OK/NG`, `FRAMES`, `msec` |
 | 0x2015F62C | `update_display_self` | `I:\AH076H_DISPLAY.bin`, `I:\AH068_DISPLAY_Loader.bin` |
-| 0x2015F1F0 | `display_flash_write_bank` | Writes to the bank at 0x18400000 |
+| 0x2015F1F0 | `fwdbg_verify_bank1` | Writes to the bank at 0x18400000 |
 | 0x201322B4 / 0x2015938C | `fwupdate_screen` / `bootloader_screen` | Update UI (`STEP 1 of 2`, `DO NOT TURN OFF POWER`, `BOOT LOADER V01-02`) |
 
 No MSB-first CRC-32 (poly 0x04C11DB7) constant or table is in the image. The only CRC-32 is the reflected 0xEDB88320 table generator. A bitwise
@@ -74,9 +74,9 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 | 0x201148D8 / 0x201148FC | `scif4_get` / `scif3_get` | UART objects on SCIF4 0xE8009000 and SCIF3 0xE8008800 |
 | 0x20162FAC | `uart_obj_init` | Stores the base address, buffers and mailboxes |
 | 0x201163A0 | `mainlink_init` | Creates `cmd_interval_sem`, `cmd_waiting_sem` and tasks, and allocates a 0x103C0-byte context at 0x2045FD40 |
-| 0x20116560 | `mainlink_send_cmd` | Looks up a 43-entry {cmd char, length} table at 0x20450074 (.data) and builds a frame with 0xAA marker + length |
+| 0x20116560 | `mainlink_inject_rx` | Looks up a 43-entry {cmd char, length} table at 0x20450074 (.data) and builds a frame with 0xAA marker + length |
 | 0x20115494 | `mainlink_queue_frame` | |
-| 0x20134FDC | `debug_recv_cmd_log` | Logs received commands to `I:\FT-710\DEBUG_RECV_CMD\RECV_CMD.TXT` |
+| 0x20134FDC | `debug_replay_send_cmd` | Logs received commands to `I:\FT-710\DEBUG_RECV_CMD\RECV_CMD.TXT` |
 
 ### SD card / FAT
 | Address | Name | Notes |
@@ -91,11 +91,11 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 | Address | Name | Notes |
 |---|---|---|
 | 0x201326FC | `fb_get_layer_addr` | 6 frame buffers, 800×480 RGB565, in uncached RAM 0x60000000+ |
-| 0x201355BC / 0x20135658 / 0x201358D0 | `fb_copy_rect` / `fb_fill_rect` / `gui_draw_runs` | Most-called GUI primitives (294 callers for `gui_draw_runs`) |
+| 0x201355BC / 0x20135658 / 0x201358D0 | `fb_clear_rect` / `fb_fill_rect` / `gui_draw_runs` | Most-called GUI primitives (294 callers for `gui_draw_runs`) |
 | 0x20133A8C | `gui_update_layers` | Selects the layer buffers and passes them to the VDC5 (0x20117E5C) |
 | 0x2011A394 | `vdc5_config` | VDC5 ch0 registers |
 | 0x20125E78 | `touch_calibration` | `TOUCH THE CROSS` |
-| 0x20134644 / 0x2013059C | `screen_capture_bmp` / `screen_shot_menu` | `I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` |
+| 0x20134644 / 0x2013059C | `screen_capture_bmp` / `screenshot_popup` | `I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` |
 | 0x2013B5BC / 0x2013B928 / 0x20107EFC | `usbh_create_objects` / `usbh_hid_init` / `vk_key_name` | USB host stack (`m596*`, `udevtsk%d`, `UHHID`): USB keyboard/mouse support |
 
 ### Peripherals
@@ -103,14 +103,14 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 |---|---|---|
 | 0x201177E4 | `ostm_init` | OSTM0 0xFCFEC000 (tick) |
 | 0x20120224 | `riic_init` | RIIC 0xFCFEE000 (touch controller TSC2003 per hardware.md) |
-| 0x201033E8 | `intc_irq_setup` | INTC 0xFCFEF800 |
+| 0x201033E8 | `tsc2007_tint_isr` | INTC 0xFCFEF800 |
 | 0x2011E1F0–0x2011F230 | (unnamed) | RSPI0–4 drivers (SDR SPI, DSP SPI, FT4222 SPI) |
 
 ### Other string-referenced functions (unnamed, good T11 entry points)
-- `FUN_201052b0`, `FUN_20105550`, `FUN_201057d8`, `FUN_20106248`: `I:\FT-710\MESSAGE` / `PlayList` voice-message files.
-- `FUN_2010f370`: `MemList` export (`%s  %d  %08X`). `FUN_2010f1e0`: `%s\%s.dat`.
-- `FUN_2012910c`: `MSG_CH%d`. `FUN_20124c24` / `FUN_2012e744`: clock / timestamp formatting.
+- `wav_open_read`, `wav_list_dir`, `wav_delete`, `rec_open_wav`: `I:\FT-710\MESSAGE` / `PlayList` voice-message files.
+- `sdmenu_write_dat`: `MemList` export (`%s  %d  %08X`). `sdmenu_file_exists`: `%s\%s.dat`.
+- `FUN_2012910c`: `MSG_CH%d`. `scr_playlist` / `rec_start_stop`: clock / timestamp formatting.
 - `FUN_201349cc`, `FUN_20134990`, `FUN_2013499c`, `FUN_201349fc`, `FUN_20134a08`, `FUN_20134978`: SAVING / LOADING / PROCESSING / FORMAT SD CARD message boxes.
-- `FUN_2015b748` (`UPDATE?`), `FUN_2015c278` (`EXTENSION SETTING`), `FUN_2015c2d4` (`FIRMWARE UPDATE`), `FUN_2015f0ec` (`fw1up`/`fw1chk`), `FUN_201607e8` (`#UP0`).
-- `FUN_2015fcc4`: `mouse_cursor_sem` (USB mouse pointer).
-- `FUN_20111ab0`: `reset` debug command. `FUN_2011158c`: hex dump (`%-6d: `, `%02X `).
+- `FUN_2015b748` (`UPDATE?`), `FUN_2015c278` (`EXTENSION SETTING`), `FUN_2015c2d4` (`FIRMWARE UPDATE`), `fwdbg_cmd` (`fw1up`/`fw1chk`), `fwobj_display_run` (`#UP0`).
+- `mouse_cursor_obj_init`: `mouse_cursor_sem` (USB mouse pointer).
+- `keycode_line`: `reset` debug command. `mainlink_trace_dump`: hex dump (`%-6d: `, `%02X `).

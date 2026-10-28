@@ -7,15 +7,14 @@ The DISPLAY CPU owns the SD card, so it updates all four images: itself (SPI-fla
 user path (menu **SD CARD → FIRMWARE UPDATE**), the power-on maintenance and loader modes, the hidden USB-keyboard debug commands, and
 every check a file has to pass. It is a key input for custom-firmware work ([custom-firmware.md](../../custom-firmware.md), T16).
 
-Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidra names. *Italic* names are proposals in
-`tools/ghidra/names_display.T11c.tsv` (not applied yet). Code is in `decomp/display/` (see `functions.tsv`). Claims are tagged
+Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidra names. Function names are the names applied in Ghidra (`tools/ghidra/names_display.tsv`, merged by T17) and match `decomp/display/`; a name still in *italics* is a description that was not applied as a Ghidra name. Code is in `decomp/display/` (see `functions.tsv`). Claims are tagged
 **[fact]** (seen in code, address given), **[inference]** or **[guess]**.
 
 ## 1. Summary for custom firmware
 
 | Check / behaviour | Where | Consequence |
 |---|---|---|
-| File must be in `I:\FT-710\`, name = `FT-710_<IMG>_V` + **4 any chars** + `.sfl` (case-insensitive, exact length), FAT **ARCHIVE** attribute set; the lexicographically highest name wins | `fwfile_status_text` 0x2010DFD0, *fwname_pattern_match* 0x20163600, *fwobj_match_name* 0x20160418 | [fact]. A file copied by a PC has the archive bit set. The 4 chars become the shown version ("0108" → "01-08") |
+| File must be in `I:\FT-710\`, name = `FT-710_<IMG>_V` + **4 any chars** + `.sfl` (case-insensitive, exact length), FAT **ARCHIVE** attribute set; the lexicographically highest name wins | `fwfile_status_text` 0x2010DFD0, `fwname_pattern_match` 0x20163600, `fwobj_match_name` 0x20160418 | [fact]. A file copied by a PC has the archive bit set. The 4 chars become the shown version ("0108" → "01-08") |
 | Header: 9 × 64-byte blocks read; the tag line (block 8) must be exactly 64 chars with no NUL; it is split on spaces; the **3rd token** parsed as hex (≤ 8 digits) must equal the salted CRC-32 of bytes 0x240..EOF | `sfl_read_header` 0x20114CA0, `sfl_crc` 0x20114A64 | [fact]. The **tag (`MC`/`PC`/`ID`/`SR`) and the length field are not checked**. Only the CRC matters ("Ready" vs "(Broken file)") |
 | Comment box: not checked, except block 3 (`[PRODUCT NAME]`) in the DISPLAY file: `" : "` followed by `"#UP0    "` turns the update into a **loader** write — only when F1 is held on a USB keyboard | `fwobj_display_run` 0x201607E8 (*name*), `DAT_20800181` | [fact] (F1 = HID usage 0x3A) |
 | Version: shown, and rows whose file version is higher than the installed one (from MAIN's 0x60 status frame) are pre-marked; any "Ready" row can be ticked | `fwupdate_menu_screen` 0x2015A500 (*name*), format `%04X` | [fact for the pre-mark]; downgrades are allowed **[inference]** (only the Ready bit gates the tick box, `FUN_2015a910`) |
@@ -34,10 +33,10 @@ Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidr
 (opendir/readdir/closedir) **[inference from use]**. Drive letter is `I:`. `FUN_20103bb0`/`FUN_20103ba0` return bits 7/6 of
 `DAT_20800094` (card state); the update screens wait on them **[fact]**, meaning "card present / ready" **[inference]**.
 
-The same SFL container is used for the user's **MemList / Menu backups** (`task_sdmenu` 0x2011010C, `sfl_load_file` 0x2010F81C,
-*backup_save_dat* 0x2010F60C, *sfl_write_file* 0x2010F370). The radio writes a blank comment box, then the tag line
-`"MemList  <n>  <CRC>"` / `"Menu  <n>  <CRC>"`, then the payload encoded with *sfl_encode* 0x201149E0 **[fact]**. On load it checks file size
-0x7F50, the salted CRC and two words (kind, slot) at the start of the decoded payload **[fact]**. *sfl_write_file* is therefore a
+The same SFL container is used for the user's **MemList / Menu backups** (`task_sdmenu` 0x2011010C, `sdmenu_load_file` 0x2010F81C,
+`sdmenu_save_file` 0x2010F60C, `sdmenu_write_dat` 0x2010F370). The radio writes a blank comment box, then the tag line
+`"MemList  <n>  <CRC>"` / `"Menu  <n>  <CRC>"`, then the payload encoded with `sfl_encode` 0x201149E0 **[fact]**. On load it checks file size
+0x7F50, the salted CRC and two words (kind, slot) at the start of the decoded payload **[fact]**. `sdmenu_write_dat` is therefore a
 reference encoder already inside the radio (useful for the T16 round-trip test).
 
 ## 3. SFL reading
@@ -47,9 +46,9 @@ reference encoder already inside the radio (useful for the T16 round-trip test).
 | 0x20114CA0 | `sfl_read_header` | header check (section 1); with a buffer argument also copies block 3 |
 | 0x20114A64 | `sfl_crc` | CRC-32 (table 0x20100A14 / update 0x20100A5C) from the current position to EOF, then the salt 0x139EECA6 |
 | 0x20114A44 | `sfl_stream_init` | stream `{file, buf, pos, chunk/decode, fill, keypos}`; decode is on when word 3 ≠ 0 |
-| 0x20114BFC | `FUN_20114bfc` (*sfl_stream_read*) | `fread` + `sfl_decode` (key phase continues across calls) |
-| 0x20114B3C / 0x20114AE0 | `FUN_20114b3c` (*sfl_stream_gets*) / `FUN_20114ae0` (*sfl_stream_getc*) | decoded line reader (S-records) |
-| 0x2011497C / 0x201149E0 | `sfl_decode` / `FUN_201149e0` (*sfl_encode*) | key subtract / add (docs/sfl-format.md) |
+| 0x20114BFC | `sfl_stream_read` | `fread` + `sfl_decode` (key phase continues across calls) |
+| 0x20114B3C / 0x20114AE0 | `sfl_stream_gets` / `sfl_stream_getc` | decoded line reader (S-records) |
+| 0x2011497C / 0x201149E0 | `sfl_decode` / `sfl_encode` | key subtract / add (docs/sfl-format.md) |
 
 Every `vtbl[0]` "run" method calls `sfl_read_header` first, which reads the whole file once for the CRC, rewinds and leaves the file at
 0x240, so streaming starts at payload offset 0 with key phase 0 **[fact]**. The CRC over the encoded payload matches docs/sfl-format.md;
@@ -57,15 +56,15 @@ the DISPLAY bank flag stores a second CRC-32 over the **decoded** bytes (section
 
 ## 4. User path: update objects and tasks
 
-`fwfile_check_versions` calls *fwobj_create_all* (`FUN_2010dd24`), which builds four C++ objects; pointers are at 0x2081166C..0x20811678
+`fwfile_check_versions` calls `fwobj_create_all`, which builds four C++ objects; pointers are at 0x2081166C..0x20811678
 **[fact]**. Each has a name pattern, status text and a `run(obj, path, do_write)` method at `vtbl[0]`.
 
 | Index | Object | ctor | vtable | `vtbl[0]` run | Writer |
 |---|---|---|---|---|---|
-| 0 | MAIN (`FT-710_MAIN_V`) | `FUN_201606a4` | 0x20428088 | `FUN_201605ac` | `FUN_2010d50c` (*rx_boot_program*) |
-| 1 | DISPLAY (`FT-710_DISPLAY_V`) | `FUN_20160c10` | 0x204280A0 | `FUN_201607e8` | itself (SPI flash) |
-| 2 | IFDSP (`FT-710_IFDSP_V`, label "DSP") | `FUN_201607c8(…,1)` | 0x20428094 | `FUN_201606bc` | `FUN_2010b81c` (*dsp_isp_program*) |
-| 3 | SDR (`FT-710_SDR_V`) | `FUN_201603d4(…,1)` | 0x20428070 | `FUN_201602ac` | `sdr_flash_write` |
+| 0 | MAIN (`FT-710_MAIN_V`) | `fwobj_main_ctor` | 0x20428088 | `fwobj_main_run` | `rx_boot_program` |
+| 1 | DISPLAY (`FT-710_DISPLAY_V`) | `fwobj_display_ctor` | 0x204280A0 | `fwobj_display_run` | itself (SPI flash) |
+| 2 | IFDSP (`FT-710_IFDSP_V`, label "DSP") | `fwobj_ifdsp_ctor`(…,1)` | 0x20428094 | `fwobj_ifdsp_run` | `dsp_isp_program` |
+| 3 | SDR (`FT-710_SDR_V`) | `fwobj_sdr_ctor`(…,1)` | 0x20428070 | `fwobj_sdr_run` | `sdr_flash_write` |
 
 Return codes of `run`: 0 OK, 1 cannot open, 2 bad header/CRC (check mode), 3 write failed **[fact]**.
 
@@ -88,32 +87,32 @@ sequenceDiagram
   end
   G->>G: all done: result 1 OK / 2 any failed
   G->>U: on failure: UPDATE ERROR, wait for a touch
-  G->>G: update_finish_reset: MAIN held in reset, watchdog reset
+  G->>G: system_reboot: MAIN held in reset, watchdog reset
 ```
 
 All **[fact]** (`task_fwupdate` 0x2010E1F8, `fwupdate_poll` 0x2010E2D4, `fwupdate_progress_screen` 0x2015B134, `update_error_screen`
-0x20159158, `update_finish_reset` 0x20114DF4). The GUI also mirrors its state to MAIN in 0xC3 (34-byte) and 0xE2 (6-byte) frames
-(`FUN_20158f28`, `FUN_20158ec0`) **[fact]**; MAIN's use of them is a MAIN-side question. The manual's "the power is automatically turned
-OFF" is this reset: `update_finish_reset` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5, **asserts RX_RESET** (P7_10 low), sets
-`QF_RESETn` (P11_2) and triggers a watchdog reset (`FUN_20100268`, WTCSR 0xFCFE0000) **[fact]**; the radio then comes back in standby
+0x20159158, `system_reboot` 0x20114DF4). The GUI also mirrors its state to MAIN in 0xC3 (34-byte) and 0xE2 (6-byte) frames
+(`mainlink_send_ui_c3`, `mainlink_send_ui_e2`) **[fact]**; MAIN's use of them is a MAIN-side question. The manual's "the power is automatically turned
+OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5, **asserts RX_RESET** (P7_10 low), sets
+`QF_RESETn` (P11_2) and triggers a watchdog reset (`wdt_system_reset`, WTCSR 0xFCFE0000) **[fact]**; the radio then comes back in standby
 **[inference]**. There is no rollback: a failed target stays as written, and the user retries **[fact for the code]**.
 
 ### Other entry points
-- **Power-on with key line 6 held** (`power_on_request` 0x2012FFCC, `FUN_20130188`): boot-info word +8 = 2, then `FUN_201322e4` →
+- **Power-on with key line 6 held** (`power_on_request` 0x2012FFCC, `gui_main_loop`): boot-info word +8 = 2, then `FUN_201322e4` →
   `FUN_20159058` → `bootloader_screen` 0x2015938C **[fact]**. On that screen, more than 4 net steps of the encoder on P3_3/P3_5
-  (ISR `FUN_20112b40` → `DAT_208001e4`) make *bootloader_unlock_wait* (`FUN_20159cb0`) return 1: the title becomes
+  (ISR `renc_irq4_isr` → `DAT_208001e4`) make `bootloader_unlock_wait` return 1: the title becomes
   `YAESU FT-710 BOOT LOADER V01-02`, boot-info word 0 = 0xBBBB and word +8 stays 2, so a DISPLAY update then goes to the **loader**
   region (section 6). Otherwise word +8 is reset to 1 and it is a normal update screen **[fact]**. Which physical key is line 6 is for T11f.
-- **MAIN asks for update mode**: at power-on `FUN_2012f734` reads MAIN's 0x60 status frame; if byte 1 has 0xF0 set it opens
-  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`FUN_201322bc`, *fw_installed_versions_set*:
+- **MAIN asks for update mode**: at power-on `opening_check_main` reads MAIN's 0x60 status frame; if byte 1 has 0xF0 set it opens
+  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set`, `fw_installed_versions_set`:
   BE16 at +0, +2, +4, +10 → 0x208F4BF4..0x208F4BFA) **[fact]**.
-- **MAIN not answering** (`DAT_2045005c` set, `FUN_20115060`): `fwupdate_screen` 0x201322B4, the 2-step recovery screen. It requires
+- **MAIN not answering** (`DAT_2045005c` set, `mainlink_got_esc`): `fwupdate_screen` 0x201322B4, the 2-step recovery screen. It requires
   both the MAIN and the DISPLAY files to be Ready ("MAIN FIRMWARE FILE [ OK ]", "DISPLAY FIRMWARE FILE"), then runs MAIN first
   ("STEP 1 of 2") and DISPLAY second ("STEP 2 of 2") **[fact for the code; the trigger meaning is inference]**.
 
 ## 5. MAIN update (RX651 serial boot mode)
 
-DISPLAY drives `RX_RESET` (P7_10, `gpio_rx_reset`, 0 = reset asserted) and `RX_UPDATE` (P4_3, *gpio_rx_update* `FUN_20101ca4`,
+DISPLAY drives `RX_RESET` (P7_10, `gpio_rx_reset`, 0 = reset asserted) and `RX_UPDATE` (P4_3, `gpio_rx_update_b` `gpio_rx_update_b`,
 high = boot mode, hardware.md p17), and talks over SCIF5, the normal MAIN-link UART wired to the RX651 SCI1 (hardware.md) **[fact for the
 code, inference for the nets]**. The commands follow the Renesas RX "SOD 01 / 81" boot protocol: `01 LNH LNL CMD data SUM 03`, replies
 start `81`, data packets end in `17` (more) or `03` (last) **[fact for the bytes; command meanings inference from the protocol]**.
@@ -122,7 +121,7 @@ start `81`, data packets end in `17` (more) or `03` (last) **[fact for the bytes
 sequenceDiagram
   participant D as DISPLAY (fwobj_main_run)
   participant M as RX651 boot ROM
-  D->>D: mainlink_pause, RX_RESET low, RX_UPDATE high, 5 ms, RX_RESET high, 40 ms
+  D->>D: mainlink_rx_ctrl, RX_RESET low, RX_UPDATE high, 5 ms, RX_RESET high, 40 ms
   D->>M: SCIF5 9600: 00 (x30 max) until 00, then 55 until C2
   D->>M: 38 signature, 36 endian(01), 32 freq 16 MHz / 120 MHz
   D->>M: 34 bit rate 345600, then SCIF5 345600
@@ -140,11 +139,11 @@ sequenceDiagram
   D->>M: new MAIN on SCIF5 345600: F0 01 08 20 23 06 29 06 00 sum, wait 06 (30 tries)
 ```
 
-All steps **[fact]** (`FUN_201605ac` → `FUN_2010d50c` and the `rx_boot_*` proposals in the table below). The 16 MHz / 120 MHz values are
+All steps **[fact]** (`fwobj_main_run` → `rx_boot_program` and the `rx_boot_*` proposals in the table below). The 16 MHz / 120 MHz values are
 the clock arguments of command 0x32 (0x00F42400, 0x07270E00) **[fact]**. The ID code sent is 16 × 0xFF, which matches the all-0xFF
 option-setting memory in the MAIN image (custom-firmware.md) **[fact]**. Area type `' '` (0x20) is skipped when writing, `'@'` when
 sizing **[fact]**; their meaning (data flash / reserved) is **[guess]**. Any failure returns 3 ("failed"); MAIN is then left in boot
-mode until `update_finish_reset`, and the update can be repeated **[inference]**.
+mode until `system_reboot`, and the update can be repeated **[inference]**.
 
 ## 6. DISPLAY self-update (SPI flash banks)
 
@@ -164,7 +163,7 @@ Flag record (20 bytes) **[fact]**: `+0 0x11111111`, `+4 length`, `+8 0`, `+0xC 0
 64 KiB blocks; `spiflash_write` (0x20103DD0) writes and then compares a checksum of the data with the XIP window 0x18000000 + offset
 **[fact]**.
 
-### Write sequence (`FUN_201607e8`, *fwobj_display_run*)
+### Write sequence (`fwobj_display_run`, `fwobj_display_run`)
 
 ```mermaid
 sequenceDiagram
@@ -223,8 +222,8 @@ sequenceDiagram
   D->>M: F1 82, wait 06
 ```
 
-**[fact]** for the packets (`FUN_2010aa7c`, `FUN_2010b5bc`, `FUN_2010b360`, `FUN_2010b0f4`, `FUN_2010ab74`; CRC-16/XMODEM in
-`FUN_2010aa30`). The last chunk is always sent as 256 bytes **[fact]**; the bytes past the file end are left-over buffer data
+**[fact]** for the packets (`dsp_isp_ping`, `dsp_isp_fill_option`, `dsp_isp_configure_memory`, `dsp_isp_erase_region`, `dsp_isp_write_image`; CRC-16/XMODEM in
+`crc16_xmodem`). The last chunk is always sent as 256 bytes **[fact]**; the bytes past the file end are left-over buffer data
 **[inference]**. There is no read-back and no final Reset/Execute command: correctness relies on the per-packet CRC and status
 **[fact]**. The option word 0xC0000002 lets the ROM auto-probe the QSPI flash **[inference from NXP docs]**.
 
@@ -232,12 +231,12 @@ sequenceDiagram
 
 This resolves the T13 question. **Control goes through MAIN, the bitstream goes over the DISPLAY SDR SPI** **[fact]**:
 
-- `sdr_relay_mode_cmd` (`FUN_201109fc`) sends `F1 01` to MAIN (SCIF5 345600). MAIN then runs its SDR bridge (T10c,
+- `sdr_relay_mode_cmd` sends `F1 01` to MAIN (SCIF5 345600). MAIN then runs its SDR bridge (T10c,
   `docs/code/main/sdr-link.md`): DSP_RESET low, `SDR_UPDATE` low, reg 0x37 = 0xBCC5, relaying DISPLAY frames to the FPGA UART.
 - Register writes: `FD 00` + ASCII `"%04X%04X"` (reg, value) + 8-bit sum = 11 bytes; reads: `FE 00` + `"%04X"` + sum = 7 bytes. The reply is
-  `06`, or a frame with `}` and 4 ASCII hex digits (`FUN_20110548`, `FUN_2011064c`, `FUN_20110584`) **[fact]**. These are MAIN's
+  `06`, or a frame with `}` and 4 ASCII hex digits (`sdr_relay_xfer`, `sdr_reg_write`, `sdr_reg_read`) **[fact]**. These are MAIN's
   `FD 00` / `FE 00` bridge frames.
-- Data: each 4 KiB block goes over **RSPI channel 2** (`FUN_201107c0` → `FUN_2011f718(2, buf, 0x1000, 0xFF)`) **[fact]**. T11d found that
+- Data: each 4 KiB block goes over **RSPI channel 2** (`sdr_spi_master_write` → `rspi_write`(2, buf, 0x1000, 0xFF)`) **[fact]**. T11d found that
   RSPI2 is switched to master at about 2 MHz on P8_3..P8_6, the pins that carry the scope stream into the FPGA's FFT port.
 
 FPGA registers used **[fact for the accesses, inference for the names]**:
@@ -272,8 +271,8 @@ sequenceDiagram
   M->>F: SDR_RESET pulse with SDR_UPDATE high (T10c)
 ```
 
-Block data is the decoded hex text converted to binary (`FUN_201103f4`), CRC-16 reflected 0xA001 with init and xorout 0xFFFF
-(`FUN_201009dc`, table 0x208D9560) **[fact]**. The bitstream proper (file binary 0x1000..) is written from flash address 0x240000, and the
+Block data is the decoded hex text converted to binary (`hex_to_bin`), CRC-16 reflected 0xA001 with init and xorout 0xFFFF
+(`crc16_a001`, table 0x208D9560) **[fact]**. The bitstream proper (file binary 0x1000..) is written from flash address 0x240000, and the
 4 KiB header (the CRC-32/BZIP2 word plus 0xFF) is written last at 0x480000 **[fact for the addresses sent]**. So the update writes a second
 image slot and commits it with the header at the end; an interrupted update leaves no valid header **[inference]**. Whether the FPGA
 reads 0x240000 directly or through a multiboot/golden image at 0 (T08 saw the sync at 0x1030 for flash 0) is open **[guess]**.
@@ -286,23 +285,23 @@ programming logic / bridge mode) **[inference]**. Whether it also reaches the fl
 ## 9. Hidden debug commands (USB keyboard)
 
 All of these run from `hid_chain1_dispatch`, which is only called when `debug_enabled()` sees 0xA0B9C8E7 at 0x20450000; in V01-08 that
-word is never set (T11a, README). Status is shown on the **keyboard LEDs** (*usbkbd_set_leds* `FUN_20111224`) **[fact]**.
+word is never set (T11a, README). Status is shown on the **keyboard LEDs** (`kbd_led_status` `kbd_led_status`) **[fact]**.
 
 | Command(s) | Handler → worker | What it does | Live in V01-08? |
 |---|---|---|---|
-| `fw1up` | `fwdbg_cmd` → `update_display_self` → `FUN_2015f348` | raw `I:\AH076H_DISPLAY.bin` (no SFL) to the non-running bank + flag, erase other flag | yes, after unlock |
-| `fw1chk` | → `display_flash_write_bank` (really *fwdbg_verify_bank1*) | compares `I:\AH076H_DISPLAY.bin` with bank 1, repeats forever | yes, after unlock |
+| `fw1up` | `fwdbg_cmd` → `update_display_self` → `fwdbg_write_other_bank` | raw `I:\AH076H_DISPLAY.bin` (no SFL) to the non-running bank + flag, erase other flag | yes, after unlock |
+| `fw1chk` | → `fwdbg_verify_bank1` (really `fwdbg_verify_bank1`) | compares `I:\AH076H_DISPLAY.bin` with bank 1, repeats forever | yes, after unlock |
 | `up0` | → `update_display_self` | raw `I:\AH068_DISPLAY_Loader.bin` to flash 0, no flag | yes, after unlock |
 | `up1` / `up2` | → `update_display_self` | raw `I:\AH076H_DISPLAY.bin` to bank 1 / bank 2, erases both flags first, then writes the target flag | yes, after unlock |
-| `uptest` / `uptest2` | `FUN_2010ec44` → `update_main_cpu` | loads `I:\AH076H_HEW.mot` / `AH068H_HEW.mot`, toggles RX_RESET / RX_UPDATE, then calls *uptest_program_stub* `FUN_2010ea74`, which does nothing and returns 0 | no: the programmer is a stub [fact]; `uptest2` sets flag 2 but the task waits for pattern 1 **[inference]** |
-| `mrst` | `FUN_2010ec44` | pulses MAIN reset | yes |
-| `rf0` / `rf1` | `FUN_2010ec44` | toggle 0x20800194 / 0x20800198, read nowhere else | no effect |
+| `uptest` / `uptest2` | `uptest_line` → `update_main_cpu` | loads `I:\AH076H_HEW.mot` / `AH068H_HEW.mot`, toggles RX_RESET / RX_UPDATE, then calls `uptest_program_stub` `uptest_program_stub`, which does nothing and returns 0 | no: the programmer is a stub [fact]; `uptest2` sets flag 2 but the task waits for pattern 1 **[inference]** |
+| `mrst` | `uptest_line` | pulses MAIN reset | yes |
+| `rf0` / `rf1` | `uptest_line` | toggle 0x20800194 / 0x20800198, read nowhere else | no effect |
 | `dsp1up`..`dsp3up`, `/32`, `/9` variants | `dsp_debug_cmd` → `update_dsp` | raw `I:\AH076H_IFDSP.dat`, `I:\rom_writer.dat`, `I:\AH068_AFDSP_V0000.dat` via the IFDSP ISP writer | no: `dspup_init` has **no caller** (Ghidra xrefs) [fact] |
-| `sdrup`, `sdr1up`, `sdr2up`, `sdrchk1`, `/g` variants, `sdrchk2/g`, `sdrspi…`, `sdrfile`, `delta` | `sdr_debug_cmd` (registered by `FUN_20110da8`) | sets bits in flag 0x208001B8 | no: no task waits on that flag [fact] |
+| `sdrup`, `sdr1up`, `sdr2up`, `sdrchk1`, `/g` variants, `sdrchk2/g`, `sdrspi…`, `sdrfile`, `delta` | `sdr_debug_cmd` (registered by `sdr_debug_init`) | sets bits in flag 0x208001B8 | no: no task waits on that flag [fact] |
 
-The self-update debug task is created by `FUN_2015f55c` (*fwdbg_task_create*) with entry **0x2015F0E0** (pri 5, 0x2000 stack), which was
-not a function in the project (now in `entries_display.T11c.tsv`) **[fact]**. Chain-1 handler 8 (`FUN_2010a8f8`) is not update code: it is a
-keyboard-layout translator (`FUN_2010a898` maps usage + Shift/AltGr to a character and can draw it as an overlay) **[fact]**. The raw `.bin`
+The self-update debug task is created by `fwdbg_task_create` with entry **0x2015F0E0** (pri 5, 0x2000 stack), which was
+not a function in the project (now in `entries_display.T11c.tsv`) **[fact]**. Chain-1 handler 8 (`kbdtest_init`) is not update code: it is a
+keyboard-layout translator (`kbdtest_line` maps usage + Shift/AltGr to a character and can draw it as an overlay) **[fact]**. The raw `.bin`
 debug writes skip SFL decoding, so a plain binary works there **[fact]**. The IFDSP writer always decodes, so the `.dat` files would have to be
 SFL-encoded payloads without a header **[inference]**.
 
@@ -311,36 +310,36 @@ SFL-encoded payloads without a header **[inference]**.
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x2010E1F8 / 0x2010E4AC | `task_fwupdate` / `fwupdate_init` | runs `vtbl[0]` of each selected object |
-| 0x2010E2D4 | `FUN_2010e2d4` (*fwupdate_poll*) | start once, then report 0/1/2 |
+| 0x2010E2D4 | `fwupdate_poll` | start once, then report 0/1/2 |
 | 0x2010DDD8 / 0x2010DFD0 | `fwfile_check_versions` / `fwfile_status_text` | build objects / scan and CRC-check the files |
-| 0x2010DD24 | `FUN_2010dd24` (*fwobj_create_all*) | the 4 objects |
-| 0x201605AC / 0x201607E8 / 0x201606BC / 0x201602AC | `FUN_201605ac` / `FUN_201607e8` / `FUN_201606bc` / `FUN_201602ac` | run: MAIN / DISPLAY / IFDSP / SDR |
-| 0x20163600 / 0x20160418 / 0x201604C8 | `FUN_20163600` / `FUN_20160418` / `FUN_201604c8` | name match / keep highest / version text |
-| 0x2010DFC4 / 0x20107E90 | `FUN_2010dfc4` / `FUN_20107e90` | latch the held USB key (F1 = loader mode) |
-| 0x2010E514 / 0x2010A974 / 0x201109FC | `FUN_2010e514` / `FUN_2010a974` / `FUN_201109fc` | `F1 <code>` mode frames to MAIN |
-| 0x20116518 | `FUN_20116518` (*mainlink_pause*) | MAIN-link task gives up SCIF5 |
-| 0x2010D50C | `FUN_2010d50c` (*rx_boot_program*) | MAIN programming |
+| 0x2010DD24 | `fwobj_create_all` | the 4 objects |
+| 0x201605AC / 0x201607E8 / 0x201606BC / 0x201602AC | `fwobj_main_run` / `fwobj_display_run` / `fwobj_ifdsp_run` / `fwobj_sdr_run` | run: MAIN / DISPLAY / IFDSP / SDR |
+| 0x20163600 / 0x20160418 / 0x201604C8 | `fwname_pattern_match` / `fwobj_match_name` / `fwobj_version_from_name` | name match / keep highest / version text |
+| 0x2010DFC4 / 0x20107E90 | `fwupdate_set_hotkey` / `usbkbd_last_key` | latch the held USB key (F1 = loader mode) |
+| 0x2010E514 / 0x2010A974 / 0x201109FC | `mainlink_fw_mode_cmd` / `isp_relay_mode_cmd` / `sdr_relay_mode_cmd` | `F1 <code>` mode frames to MAIN |
+| 0x20116518 | `mainlink_rx_ctrl` | MAIN-link task gives up SCIF5 |
+| 0x2010D50C | `rx_boot_program` | MAIN programming |
 | 0x2010D3E4, 0x2010D224, 0x2010D134, 0x2010CF48, 0x2010CE54 | `FUN_…` (*rx_boot_sync/signature/endian/set_freq/set_baud*) | boot commands 00/55, 38, 36, 32, 34 |
 | 0x2010CD64, 0x2010CBD4, 0x2010CAB4, 0x2010C918, 0x2010C6AC, 0x2010C564 | `FUN_…` (*rx_boot_sync_cmd/cmd_2c/id_auth/area_count/area_info/erase*) | 00, 2C, 30, 53, 54, 50 |
-| 0x2010C2F4 / 0x2010BCA0 | `FUN_2010c2f4` / `FUN_2010bca0` | write areas (13/51) / verify areas (15/52) |
+| 0x2010C2F4 / 0x2010BCA0 | `rx_boot_write_areas` / `rx_boot_verify_areas` | write areas (13/51) / verify areas (15/52) |
 | 0x2010C14C / 0x2010BB00 / 0x2010BF9C / 0x2010B95C | `FUN_…` | command packet / read start / data packet / read + compare |
 | 0x2010E970 / 0x2010E868 / 0x2010E7B0 / 0x2010E670 | `FUN_…` (*srec_find_range/load_range/load_image/parse_line*) | S-record handling |
-| 0x2010B81C | `FUN_2010b81c` (*dsp_isp_program*) | IFDSP programming |
+| 0x2010B81C | `dsp_isp_program` | IFDSP programming |
 | 0x2010AA7C, 0x2010B5BC, 0x2010B360, 0x2010B0F4, 0x2010AB74 | `FUN_…` (*dsp_isp_ping/fill_option/configure_memory/erase_region/write_image*) | NXP ISP commands |
 | 0x20110AB8 / 0x20110834 | `sdr_flash_write` / `sdr_spi_xfer_block` | SDR loop / one 4 KiB block (address, regs, SPI, CRC) |
 | 0x2011064C / 0x20110584 / 0x20110548 / 0x20110750 / 0x201107C0 | `FUN_…` (*sdr_reg_write/reg_read/relay_xfer/wait_ready/spi_send_block*) | SDR helpers |
 | 0x201009DC / 0x20100990 / 0x201103F4 | `FUN_…` | CRC-16 0xA001 / table / hex → binary |
-| 0x2015F55C / 0x2015F0E0 / 0x2015F62C | `FUN_2015f55c` / (no function) / `update_display_self` | debug task create / entry / body |
-| 0x2015F348 / 0x2015F1F0 / 0x2015F0EC | `FUN_2015f348` / `display_flash_write_bank` / `fwdbg_cmd` | fw1up / fw1chk verify / command parser |
-| 0x2010EA90 / 0x2010ED80 / 0x2010EC44 / 0x2010EA74 | `update_main_cpu` / `uptest_init` / `FUN_2010ec44` / `FUN_2010ea74` | uptest task / init / commands / stub |
+| 0x2015F55C / 0x2015F0E0 / 0x2015F62C | `fwdbg_task_create` / (no function) / `update_display_self` | debug task create / entry / body |
+| 0x2015F348 / 0x2015F1F0 / 0x2015F0EC | `fwdbg_write_other_bank` / `fwdbg_verify_bank1` / `fwdbg_cmd` | fw1up / fw1chk verify / command parser |
+| 0x2010EA90 / 0x2010ED80 / 0x2010EC44 / 0x2010EA74 | `update_main_cpu` / `uptest_init` / `uptest_line` / `uptest_program_stub` | uptest task / init / commands / stub |
 | 0x2010D92C / 0x2010DCBC / 0x2010DA78 | `update_dsp` / `dspup_init` / `dsp_debug_cmd` | dead dspup path |
-| 0x20110C3C / 0x20110DA8 | `sdr_debug_cmd` / `FUN_20110da8` | dead SDR debug commands |
+| 0x20110C3C / 0x20110DA8 | `sdr_debug_cmd` / `sdr_debug_init` | dead SDR debug commands |
 | 0x20110F0C | `loader_selfinstall` | JTAG factory install |
-| 0x20103E74 / 0x20103DD0 | `FUN_20103e74` / `FUN_20103dd0` | SPI flash erase (64 KiB) / write + verify |
-| 0x20114DF4 / 0x20100268 | `FUN_20114df4` / `FUN_20100268` | end-of-update reset / watchdog reset |
-| 0x20101CA4 / 0x20101C74 / 0x20101D2C / 0x20101CBC | `FUN_…` (*gpio_rx_update*, *_2*, *_off*, *gpio_qf_reset*) | P4_3, P11_2 |
-| 0x2015A500 / 0x2015B134 / 0x20159158 / 0x20159CB0 | `FUN_…` (*fwupdate_menu_screen/progress_screen*, *update_error_screen*, *bootloader_unlock_wait*) | GUI |
-| 0x2011010C / 0x2010F81C / 0x2010F60C / 0x2010F370 / 0x201149E0 | `task_sdmenu` / `sfl_load_file` / `FUN_…` | backups in SFL format, encoder |
+| 0x20103E74 / 0x20103DD0 | `spiflash_erase` / `spiflash_write` | SPI flash erase (64 KiB) / write + verify |
+| 0x20114DF4 / 0x20100268 | `system_reboot` / `wdt_system_reset` | end-of-update reset / watchdog reset |
+| 0x20101CA4 / 0x20101C74 / 0x20101D2C / 0x20101CBC | `FUN_…` (`gpio_rx_update_b`, `gpio_rx_update`, *_off*, `gpio_qf_reset`) | P4_3, P11_2 |
+| 0x2015A500 / 0x2015B134 / 0x20159158 / 0x20159CB0 | `FUN_…` (*fwupdate_menu_screen/progress_screen*, `update_error_screen`, `bootloader_unlock_wait`) | GUI |
+| 0x2011010C / 0x2010F81C / 0x2010F60C / 0x2010F370 / 0x201149E0 | `task_sdmenu` / `sdmenu_load_file` / `FUN_…` | backups in SFL format, encoder |
 
 ## 11. Globals and structures
 

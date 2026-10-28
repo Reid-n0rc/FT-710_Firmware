@@ -32,7 +32,7 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 | 0xFFF913D7 | `hw_init_clock` | SYSTEM register setup (PRCR=0xA50B…) **[inference]** |
 | 0xFFFEDEDA | `_INITSCT` | CC-RX runtime: BTBL zero-fill, DTBL ROM→RAM copy |
 | 0xFFF8F658 | `main` | → `app_main` |
-| 0xFFF94AFA | `app_main` | Init. While power is off (flag `0x20B3A`==0) it loops `FUN_fff94d6f`/`cat_parse` so that `PS1;` can power the radio on, then initializes the subsystems and enters `main_loop` |
+| 0xFFF94AFA | `app_main` | Init. While power is off (flag `0x20B3A`==0) it loops `displink_task`/`cat_parse` so that `PS1;` can power the radio on, then initializes the subsystems and enters `main_loop` |
 | 0xFFF94B8B | `main_loop` | Super-loop with no RTOS: ~16 polled tasks per pass, including `cat_parse` |
 
 The vector tables are seeded by `tools/ghidra/SetupRX651.java`. Relocatable vectors are named `vecNNN_<source>` (names from the RX651 vector table **[inference]**; the SCI ones are confirmed by the registers they touch). The fixed vectors are at 0xFFFFFFD0.
@@ -158,7 +158,7 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | primary | 101 | `VX` | fffa4dd1 | len==3:cat_VX (fffaffa0) ; len==4:cat_VX (fffaffa0) |
 | primary | 102 | `XT` | fffa4e26 | *(switch default: error reply)* |
 | primary | 103 | `ZI` | fffa4e0b | len==4:cat_ZI (fffb006e) |
-| secondary | 0 | `SP` | - | special-cased by caller (FUN_fffa36f2) |
+| secondary | 0 | `SP` | - | special-cased by caller (`cat_ext_SP`) |
 | secondary | 1 | `EO` | fffa3b05 | len==10:cat_ext_EO (fffa5c90) |
 | secondary | 2 | `E8` | fffa3a54 | cat_ext_E8 (fffa53a4) |
 | secondary | 3 | `E9` | - | no case |
@@ -166,7 +166,7 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | secondary | 5 | `KT` | - | no case |
 | secondary | 6 | `PE` | fffa3b30 | len==6:cat_ext_PE (fffa5fdf) ; len==9:cat_ext_PE (fffa5fdf) |
 | secondary | 7 | `ZZ` | fffa3ac0 | cat_ext_ZZ (fffa58a1) |
-| secondary | 8 | `VE` | fffa3a64 | FUN_fffb2f07 (fffb2f07) ; cat_ext_VE (fffa54b3) |
+| secondary | 8 | `VE` | fffa3a64 | `hex2nib` (fffb2f07) ; cat_ext_VE (fffa54b3) |
 | secondary | 9 | `JP` | fffa3a84 | len==7:cat_ext_JP (fffa556b) ; len==15:cat_ext_JP (fffa556b) |
 
 ## UART (SCI) drivers  [fact: register use; role per docs/hardware.md]

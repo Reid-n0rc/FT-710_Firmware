@@ -73,7 +73,7 @@ registers: p56–57, p74).
   plus UART7. The name `C4_BUSY_DSP` and the `C4_BOOT`/`C4_RESET` lines suggest that "C4" is the RT685 DSP
   (whose page has `DSP_UPDATE`, `DSP_RESET18`, `DSP_UMISO/UMOSI` on FC0 UART, p19) **[inference, medium]**. I could not
   trace the C4 nets to the DSP page in the renders, so this pairing is not confirmed.
-  T12 (firmware): MAIN talks to the RT685 console on FC0 through **SCI4** (`FUN_fff9d06c` sends `i DB00\r` with
+  T12 (firmware): MAIN talks to the RT685 console on FC0 through **SCI4** (`dsp_link_init` sends `i DB00\r` with
   `R_SCI4_Serial_Send`), not SCI7; see `docs/code/ifdsp/README.md` **[fact: code]**. The SCI4 pins are not in the table above.
 - On-chip USB (pins 47/48 USB_DM/DP) goes only to test points TP1053/TP1054 (p17). The RX USB port is not used for CAT. **[fact]**
 - Boot / update: MD pin 16 is labelled `MD/FINED`, net `MD_FINE`. Transistor Q1012 (DTC114YUA) pulls MD_FINE low when

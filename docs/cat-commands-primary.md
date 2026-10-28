@@ -11,9 +11,9 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none
 - **Class:** action
 - **Behaviour:** Copies the VFO-A data block (0x5A bytes at 0x9D09) into the VFO-B block (0x9D63), sets VFO-B state 0x9DBF=1 and applies it; i.e. A=>B copy [fact for copy, name inference].
-- **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); FUN_fffb4bba(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (settings dirty); callees FUN_fffc2fde(1), FUN_fffc16f6(1)
+- **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (settings dirty); callees `vfo_mark_edited`(1), `vfo_store_back`(1)
 - **Risk:** low-medium: changes VFO-B contents (RAM + dirty flag)
-- **Open (needs disassembly):** FUN_fffc16f6 / FUN_fffc2fde: what exactly is applied (retune?)
+- **Open (needs disassembly):** `vfo_store_back` / `vfo_mark_edited`: what exactly is applied (retune?)
 
 ### AC
 
@@ -57,16 +57,16 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none
 - **Class:** action
 - **Behaviour:** Stores the VFO-A data block into memory channel (number 0x60C9) in RAM (0x6150+ch*0x5A) and writes it to EEPROM; A=>Memory [name inference; copy and EEPROM write are facts].
-- **Globals / callees:** R: 0x60C9 (error if in 0x75..0x84), 0x9DBE state (1,3,4,5,else), 0x9DC3, 0x60B1[], 0x9D09; W: 0x6150+ch*0x5A (0x5A), 0x9D09 (states 1? no: 4 and default), 0x20F10; callees FUN_fffbf41f (state 4), FUN_fffc2fde/fffc16f6(0x9DBD), eeprom_save_memch(ch) = eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(slot,0x5A)
+- **Globals / callees:** R: 0x60C9 (error if in 0x75..0x84), 0x9DBE state (1,3,4,5,else), 0x9DC3, 0x60B1[], 0x9D09; W: 0x6150+ch*0x5A (0x5A), 0x9D09 (states 1? no: 4 and default), 0x20F10; callees `vm_toggle` (state 4), `vfo_mark_edited`/fffc16f6(0x9DBD), eeprom_save_memch(ch) = eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(slot,0x5A)
 - **Risk:** medium: overwrites a memory channel in EEPROM (user data)
-- **Open (needs disassembly):** What source (table at 0x4761 via 9DC3/60B1) is copied in states 3/4/5; FUN_fffbf41f
+- **Open (needs disassembly):** What source (table at 0x4761 via 9DC3/60B1) is copied in states 3/4/5; `vm_toggle`
 
 ### AO
 
 - **Index / handler:** 5, cat_AO @ fffa6b6f; switch case fffa3c62; length tests `len==3:cat_AO@fffa6b6f \| len==6:cat_AO@fffa6b6f` [fact]
 - **Manual 2306-C:** AMC OUTPUT LEVEL. Set `AOP1P1P1;` (6), read `AO;` (3), answer `AOP1P1P1;` (6), AI O. P1 001-100
 - **Read / answer (firmware):** AOnnn; (len 6). nnn = byte 0x9BF2 as 3-digit decimal
-- **Set parameters (firmware):** nnn 3 decimal digits, valid 001-100 (0 or >100 -> error, nothing stored). Stores 0x9BF2; if 0x9ACE==0: 0x20CC6=0x28, FUN_fffc8cbb(0x28)+FUN_fffc8d8c() queue parameter update (FUN_fffb237a(0x39,val)).
+- **Set parameters (firmware):** nnn 3 decimal digits, valid 001-100 (0 or >100 -> error, nothing stored). Stores 0x9BF2; if 0x9ACE==0: 0x20CC6=0x28, FUN_fffc8cbb(0x28)+FUN_fffc8d8c() queue parameter update (`swtimer_start`(0x39,val)).
 - **Class:** read+set
 - **Behaviour:** Level 1-100 stored at 0x9BF2 and pushed to a peripheral/DSP as parameter id 0x28 [fact for plumbing; function unknown].
 - **Globals / callees:** R/W 0x9BF2; 0x9ACE gate; 0x20CC6; fffc8cbb, fffc8d8c, fffb237a(0x39)
@@ -83,7 +83,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Two parameters selected by P1: P1=1 a 0-100 level in steps of 5, P1=2 a 2-state selector (1/2) [fact]; meaning unknown.
 - **Globals / callees:** FUN_fffb54a0, fffb552c (return pointers; decompiler lost them), fffb3196(0), 0x9ACE, 0x20CC6, fffc8cbb(0x33/0x58)
 - **Risk:** low: DSP/audio-style setting
-- **Open (needs disassembly):** fffb54a0/fffb552c return values (pointer into VFO block?): decompile shows only a call to FUN_fffb3196(0); check disassembly at fffb54a0 and fffb552c
+- **Open (needs disassembly):** fffb54a0/fffb552c return values (pointer into VFO block?): decompile shows only a call to `vfo_mode`(0); check disassembly at fffb54a0 and fffb552c
 
 ### AV
 
@@ -103,18 +103,18 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none
 - **Class:** action
 - **Behaviour:** Copies VFO-B data block (0x9D63) into VFO-A block (0x9D09), sets A state 0x9DBE=1 and applies it; B=>A [fact for copy].
-- **Globals / callees:** Guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); FUN_fffb4bba(0)==1 -> error; W 0x9D09..+0x5A, 0x9DBE=1, 0x20F10=1; fffc2fde(0), fffc16f6(0)
+- **Globals / callees:** Guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(0)==1 -> error; W 0x9D09..+0x5A, 0x9DBE=1, 0x20F10=1; fffc2fde(0), fffc16f6(0)
 - **Risk:** low-medium: changes VFO-A contents
 
 ### BC
 
 - **Index / handler:** 9, cat_BC @ fffa717f; switch case fffa3d23; length tests `len==4:cat_BC@fffa717f \| len==5:cat_BC@fffa717f` [fact]
 - **Manual 2306-C:** AUTO NOTCH (DNF). Set `BCP1P2;` (5), read `BCP1;` (4), answer `BCP1P2;` (5), AI O. P1 0 fixed; P2 0 off,1 on
-- **Read / answer (firmware):** BC0n; (len 5). n = bit7 of a per-mode byte in the VFO block (offset by mode index m=FUN_fffb3196(0)&0xF: m2-3 ->+0x15; m4-5 ->+0x33; m12-13 ->+0x1F; m8-9,14 ->+0x29; m0-1 ->+0x0B); m6-7,10-11 -> error
+- **Read / answer (firmware):** BC0n; (len 5). n = bit7 of a per-mode byte in the VFO block (offset by mode index m=`vfo_mode`(0)&0xF: m2-3 ->+0x15; m4-5 ->+0x33; m12-13 ->+0x1F; m8-9,14 ->+0x29; m0-1 ->+0x0B); m6-7,10-11 -> error
 - **Set parameters (firmware):** P1 must be '0'; n via hex-parse: '0' clears bit7, '1' sets bit7, other -> error; same per-mode offsets; modes 6-7 and 10-11 -> error. No dirty flag / no apply call.
 - **Class:** read+set
 - **Behaviour:** Per-mode on/off flag (bit 7) in the VFO data block [fact]; specific feature unknown (supported in modes 0-5,8,9,12-14).
-- **Globals / callees:** FUN_fffb324c(0) (VFO block ptr), fffb3196(0) (mode)
+- **Globals / callees:** `vfo_rec_ptr`(0) (VFO block ptr), fffb3196(0) (mode)
 - **Risk:** low: UI/DSP flag bit
 - **Open (needs disassembly):** Meaning of the mode index values; which VFO fffb324c(0) selects (decompiler lost R14 logic)
 
@@ -125,7 +125,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** none
 - **Set parameters (firmware):** P1 '0' or '1' (len 4 only; no read form)
 - **Class:** action
-- **Behaviour:** Steps the band down one (wraps 0 -> 11) on VFO selected by P1: '0' = currently selected VFO (0x9DBD), '1' = the other VFO [inference]; band index from band_of_freq(freq) (12-entry table) then FUN_fffc4c4e(newBand,vfo) changes band.
+- **Behaviour:** Steps the band down one (wraps 0 -> 11) on VFO selected by P1: '0' = currently selected VFO (0x9DBD), '1' = the other VFO [inference]; band index from band_of_freq(freq) (12-entry table) then `band_select_on`(newBand,vfo) changes band.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. W 0x9C5E=0, 0x9DBE/0x9DBF=1 (VFO state) or restored from 0x20F88/89; callees fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency of the radio
 - **Open (needs disassembly):** Confirm P1 meaning (decompiler artifact *puVar4=1); what fffb357c returns
@@ -138,7 +138,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** n via hex-parse: '0' clears bit1, '1' sets bit1, other -> error. Modes 8,9,12,13,14 -> error. No dirty flag, no apply call.
 - **Class:** read+set
 - **Behaviour:** Per-mode on/off flag (bit 1) in the VFO data block [fact]; feature unknown.
-- **Globals / callees:** FUN_fffb324c(1), fffb3196(1)
+- **Globals / callees:** `vfo_rec_ptr`(1), fffb3196(1)
 - **Risk:** low: UI/DSP flag
 - **Open (needs disassembly):** Which VFO fffb324c(1)/fffb3196(1) select (arg=1 involves 0x9C5E, 0x464F)
 
@@ -161,7 +161,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 must be '0' else error. P2 '0': idx4,5 must be '0','0' (else silently ignored, no error), idx6 '0' clears bit7, '1' sets bit7, else error. P2 '1': idx4-6 3 decimal digits 001-320 (0 or >320 error) stored big-endian. Other P2 -> error. Then 0x20F10=1 and fffc2fde/fffc16f6 apply. Per-mode block offsets (flag byte): m2-3 0x14; m4-5 0x32; m6-7,10-11 0x3C; m12-13 0x1E; m8-9,14 0x28; m0-1 0x0A; value bytes at flag+4,+5.
 - **Class:** read+set
 - **Behaviour:** Per-mode enable bit 7 plus a 1-320 value (16-bit) in VFO block [fact]; feature unknown (value may be x10 Hz) [guess].
-- **Globals / callees:** FUN_fffb324c(0), fffb3196(0); block bytes; 0x20F10; fffc2fde, fffc16f6
+- **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); block bytes; 0x20F10; fffc2fde, fffc16f6
 - **Risk:** low-medium: VFO setting, dirty flag set
 - **Open (needs disassembly):** Digit weights in P2=1 loop (dropped multiplier; expected 100/10/1)
 
@@ -172,7 +172,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** none (len 5 only: BSnn;)
 - **Set parameters (firmware):** nn 2 decimal digits: first '0'/'1', second '0'-'9', value <=12 (else error)
 - **Class:** action
-- **Behaviour:** Selects band number nn (0-12) on the selected VFO via FUN_fffc4c4e(nn,0x9DBD) and puts both VFO states to 1 (VFO mode) [fact].
+- **Behaviour:** Selects band number nn (0-12) on the selected VFO via `band_select_on`(nn,0x9DBD) and puts both VFO states to 1 (VFO mode) [fact].
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. W 0x9C5E=0, 0x9DBE=0x9DBF=1; fffc4c4e
 - **Risk:** medium: changes band/frequency
 
@@ -183,7 +183,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** none
 - **Set parameters (firmware):** P1 '0' or '1' (len 4 only)
 - **Class:** action
-- **Behaviour:** Steps the band up one (wraps after 11 to 0) on VFO selected by P1 ('0' = selected VFO 0x9DBD, '1' = other) via FUN_fffc4c4e; twin of BD.
+- **Behaviour:** Steps the band up one (wraps after 11 to 0) on VFO selected by P1 ('0' = selected VFO 0x9DBD, '1' = other) via `band_select_on`; twin of BD.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. Same state writes as BD; fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency
 - **Open (needs disassembly):** as BD
@@ -203,7 +203,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 17, cat_CF @ fffa7fa1; switch case fffa3e50; length tests `len==6:cat_CF@fffa7fa1 \| len==11:cat_CF@fffa7fa1` [fact]
 - **Manual 2306-C:** CLAR (Clarifier). Set `CFP1P2P3P4P5P6P7P8;` (11), read `CFP1P2P3;` (6), answer `CFP1P2P3P4P5P6P7P8;` (11), AI O. P1 0 main,1 sub; P2 0 fixed; P3 0 clar setting,1 clar freq; P3=0: P4 RX clar 0/1, P5 TX clar 0/1, P6-P8 000 fixed; P3=1: P4 +/-, P5-P8 0000-9999 Hz (read has only P1-P3)
 - **Read / answer (firmware):** CF<P1>0<P3>...; P3=0: CF<P1>00<rx><tx>000; rx=bit0, tx=bit1 of flag byte 0x20F29 (or 0x20F2A); P3=1: CF<P1>01<sign><dddd>; sign '+'/'-' from bit7 of VFO-block byte+0x48, dddd = \|16-bit signed value at +0x48/+0x49\|, 4 decimal digits. len 11
-- **Set parameters (firmware):** P1 '0' = currently selected VFO (0x9DBD), '1' = the other, else error. idx3 ignored (reply shows '0'). P3 (idx4) hex char must be 0 or 1 else error. Set needs key_event_filter(0x306,0)!=0, 0x9C5E!=1, FUN_fffb4bba(vfo)!=1, else error. P3=0 set: idx5 '0'/'1' = flag bit0, idx6 '0'/'1' = flag bit1, idx7-9 must be '000' else error; also sets bits 0x10/0x08 in VFO block byte+1. P3=1 set: idx5 '+' or '-', idx6-9 4 digits (0000-9999, no range check) stored as 16-bit two's complement at block+0x48/+0x49. Sets 0x20F10=1.
+- **Set parameters (firmware):** P1 '0' = currently selected VFO (0x9DBD), '1' = the other, else error. idx3 ignored (reply shows '0'). P3 (idx4) hex char must be 0 or 1 else error. Set needs key_event_filter(0x306,0)!=0, 0x9C5E!=1, `vfo_tune_locked`(vfo)!=1, else error. P3=0 set: idx5 '0'/'1' = flag bit0, idx6 '0'/'1' = flag bit1, idx7-9 must be '000' else error; also sets bits 0x10/0x08 in VFO block byte+1. P3=1 set: idx5 '+' or '-', idx6-9 4 digits (0000-9999, no range check) stored as 16-bit two's complement at block+0x48/+0x49. Sets 0x20F10=1.
 - **Class:** read+set
 - **Behaviour:** Clarifier-style RX/TX on-off flags (P3=0) and signed offset (P3=1, 4 digits) per VFO [inference from sign+4-digit structure; flags are fact].
 - **Globals / callees:** R/W 0x20F29/0x20F2A, block 0x9D09/0x9D63 +1,+0x48,+0x49; 0x9C5E; fffb44f7(0x306,0), fffb4bba; 0x20F10
@@ -241,7 +241,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 idx2 not checked. P2 (idx3): '0': idx7 '0'/'1' -> clear/set bit6 (idx4-6 not validated). '1': idx4-7 4 decimal digits 0010-3200 (else error), stored value/10 as 16-bit at per-mode offset; sets 0x20F10. '2': if per-mode flag pointer is the 0xFF sentinel (modes 4-7,10-11,0-1) -> error, else idx7 '0'/'1' -> clear/set bit5. '3': idx4,5 must be '00', idx6-7 2 digits <=50 -> 0x9C5F = v-25 (signed), 0x20F10=1. else error. Per-mode offsets (flag/value): m2-3 +0x14/+0x16; m4-5 +0x32/+0x34; m6-7,10-11 +0x3C/+0x3E; m12-13 +0x1E/+0x20; m8-9,14 +0x28/+0x2A; m0-1 +0x0A/+0x0C.
 - **Class:** read+set
 - **Behaviour:** Four parameters: two on/off bits (P2=0,2), a 10-3200 value in steps of 10 (P2=1), a global signed -25..+25 value (P2=3) [fact]; feature unknown (resembles contour/APF controls) [guess].
-- **Globals / callees:** FUN_fffb324c(0), fffb3196(0); 0x9C5F; 0x20F10
+- **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); 0x9C5F; 0x20F10
 - **Risk:** low-medium: DSP shaping parameters
 - **Open (needs disassembly):** Digit weights in P2=1/3 loops (dropped multipliers); sentinel logic for P2=2 set (stack var 0xFF)
 
@@ -250,12 +250,12 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 21, cat_CS @ fffa8b98; switch case fffa3f15; length tests `len==3:cat_CS@fffa8b98 \| len==4:cat_CS@fffa8b98` [fact]
 - **Manual 2306-C:** CW SPOT. Set `CSP1;` (4), read `CS;` (3), answer `CSP1;` (4), AI O. P1 0 off,1 on
 - **Read / answer (firmware):** CSn; (len 4). n='1' if 0x20F0B==1 else '0'
-- **Set parameters (firmware):** n '1' -> 0x20F0B=1 and FUN_fffb2da6(4); n '0' -> if 0x20F0B==1: =0 and FUN_fffb2df4(); other -> error. Gates (error): key_event_filter(0x307,2)==0; 0x9C5E==1; FUN_fffc3e3c(fffb324c(1))==0 (needs mode index 2/3, or the 0x9A3C special case).
+- **Set parameters (firmware):** n '1' -> 0x20F0B=1 and `beep_request`(4); n '0' -> if 0x20F0B==1: =0 and `beep_stop`(); other -> error. Gates (error): key_event_filter(0x307,2)==0; 0x9C5E==1; FUN_fffc3e3c(fffb324c(1))==0 (needs mode index 2/3, or the 0x9A3C special case).
 - **Class:** read+set
 - **Behaviour:** On/off flag with a UI state-machine kick (0x12041=4 start, 0x12040=3 stop), valid only for mode index 2 or 3 [fact]; likely a CW-related function [guess].
 - **Globals / callees:** 0x20F0B, 0x12040/0x12041, 0x9A3C, 0x9C5E; fffb44f7(0x307,2), fffc3e3c, fffb2da6, fffb2df4
 - **Risk:** low-medium: UI state; effect of 0x12041=4 unknown
-- **Open (needs disassembly):** What FUN_fffb2da6(4) starts (consumer of 0x12040/0x12041)
+- **Open (needs disassembly):** What `beep_request`(4) starts (consumer of 0x12040/0x12041)
 
 ### CT
 
@@ -358,32 +358,32 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 31, cat_EX @ fffa9937; switch case fffa4097; length tests `len==9:cat_EX@fffa9937 \| len==8:cat_EX@fffa9937` [fact]
 - **Manual 2306-C:** MENU. Set `EXP1P1P2P2P3P3P4xn;` (10-21), read `EXP1P1P2P2P3P3;` (9), answer `EXP1P1P2P2P3P3P4xn;` (10-21), AI O. P1 2 digits group 01-04,06 (manual header says 01-04,05; table shows 06 EXTENSION SETTING); P2 2 digits subgroup 01-05; P3 2 digits item 01-26; P4 value 1-4 digits (12 chars for MY CALL/PRESET NAME), see EX TSV. Set/answer len = 9+len(P4)
-- **Read / answer (firmware):** EX<gg><mm><ii><value>; reply = copy of the 8 command chars + value text (up to 12 chars from FUN_fffd528d) + ';', length value+9 (buffer 0x18878)
-- **Set parameters (firmware):** Menu access by 6-digit address gg mm ii (digits else error): gg 01,02,03,04,06 (others incl. 05 and 00 -> error) maps to menu number = mm + offset (g1 -1, g2 +4, g3 +6, g4 +11, g6 +21), item index = ii-1; looked up via FUN_fffd4ffe table. Set: len>=10, value formatted by FUN_fffe6550 (x10 / x20+20 / raw scaling) or FUN_fffe646c; on success FUN_fffcdddb applies (0x15DFC=1, FUN_fffd49c0, 0x25D60[0x40B]=1). Read needs exactly len 9. Len<9 -> error. After set, if any AI flag (0x20B20-22)==1 -> cat_ai_holdoff.
+- **Read / answer (firmware):** EX<gg><mm><ii><value>; reply = copy of the 8 command chars + value text (up to 12 chars from `menu_string_get`) + ';', length value+9 (buffer 0x18878)
+- **Set parameters (firmware):** Menu access by 6-digit address gg mm ii (digits else error): gg 01,02,03,04,06 (others incl. 05 and 00 -> error) maps to menu number = mm + offset (g1 -1, g2 +4, g3 +6, g4 +11, g6 +21), item index = ii-1; looked up via `menu_get_limits` table. Set: len>=10, value formatted by `ex_write_value` (x10 / x20+20 / raw scaling) or `ex_read_value`; on success `menu_apply_from_cat` applies (0x15DFC=1, `menu_call_step`, 0x25D60[0x40B]=1). Read needs exactly len 9. Len<9 -> error. After set, if any AI flag (0x20B20-22)==1 -> cat_ai_holdoff.
 - **Class:** read+set
 - **Behaviour:** Generic setup-menu get/set by menu number across groups 1-4 and 6 [fact for decode; 'menu' is inference].
-- **Globals / callees:** FUN_fffe61e7, fffe6c27, fffe6299, fffd4ffe, fffd4795, fffe6335/63fb/646c/6550, fffcdddb; buffers 0x18878, 0x1FF10, 0x1B234
+- **Globals / callees:** `ex_command`, fffe6c27, fffe6299, fffd4ffe, fffd4795, fffe6335/63fb/646c/6550, fffcdddb; buffers 0x18878, 0x1FF10, 0x1B234
 - **Risk:** medium-high: menu items include persistent config and probably TX-related settings and port/baud settings
-- **Open (needs disassembly):** Menu table layout (FUN_fffd4795 / fffd528d / fffd49c0), per-item value formats; whether hidden/service items reachable (group 05 rejected, 06 allowed); not analysed
+- **Open (needs disassembly):** Menu table layout (`menu_get_desc` / fffd528d / fffd49c0), per-item value formats; whether hidden/service items reachable (group 05 rejected, 06 allowed); not analysed
 
 ### FA
 
 - **Index / handler:** 32, cat_FA_FB @ fffa99bd (side 0); switch case fffa40d7; length tests `len==3:cat_FA_FB@fffa99bd \| len==12:cat_FA_FB@fffa99bd` [fact]
 - **Manual 2306-C:** FREQUENCY VFO-A. Set `FAP1x9;` (12), read `FA;` (3), answer `FAP1x9;` (12), AI O. P1 000030000-075000000 Hz (9 digits)
 - **Read / answer (firmware):** FAnnnnnnnnn; (12 bytes) 9 decimal digits zero padded = VFO-A frequency in Hz from 0x20F54; if DAT_00020B6B==1 and side==DAT_00009DBD the value comes from 0x20F50 instead. Digits at 0x1C90..0x1C98, ';' at 0x1C99
-- **Set parameters (firmware):** FAnnnnnnnnn; 9 digits '0'..'9' at cmd[2..10] (Hz). Non-digit -> '?;'. Value must satisfy FUN_fffb3aa1: 29999 < f < 75000001 (30000..75000000 Hz) else '?;'. Also '?;' while DAT_00020B8A==1 or DAT_00020F11==1, if FUN_fffb4bba(side)==1 (side state is 7/8, or state 2 with memory-channel byte 117..132 = 501-515/EMG), or if DAT_00020F6D==1 after the tune attempt (state restored)
+- **Set parameters (firmware):** FAnnnnnnnnn; 9 digits '0'..'9' at cmd[2..10] (Hz). Non-digit -> '?;'. Value must satisfy `freq_in_range`: 29999 < f < 75000001 (30000..75000000 Hz) else '?;'. Also '?;' while DAT_00020B8A==1 or DAT_00020F11==1, if `vfo_tune_locked`(side)==1 (side state is 7/8, or state 2 with memory-channel byte 117..132 = 501-515/EMG), or if DAT_00020F6D==1 after the tune attempt (state restored)
 - **Class:** read+set
-- **Behaviour:** Reads/sets the VFO-A frequency in Hz; set stores the 32-bit value big-endian into side-0 record bytes +0x4A..+0x4D of 0x9D09, zeroes +0x48/+0x49 (clarifier offset cleared) and retunes via FUN_fffc10c3 [fact]
-- **Globals / callees:** R: 0x20F54,0x20F50,0x20B6B,0x9DBD. W: 0x9D09[0x48..0x4D],0x9DBE/0x9DBF (restored, or from 0x9DC7 if 0x9C5E==1),0x20F10 (dirty flag=1),0x20F68. callees: FUN_fffb3aa1 range, FUN_fffb4bba lock, FUN_fffc10c3 tune, FUN_fffc5ce0, FUN_fffc2fde+FUN_fffc16f6 UI refresh
+- **Behaviour:** Reads/sets the VFO-A frequency in Hz; set stores the 32-bit value big-endian into side-0 record bytes +0x4A..+0x4D of 0x9D09, zeroes +0x48/+0x49 (clarifier offset cleared) and retunes via `freq_clamp` [fact]
+- **Globals / callees:** R: 0x20F54,0x20F50,0x20B6B,0x9DBD. W: 0x9D09[0x48..0x4D],0x9DBE/0x9DBF (restored, or from 0x9DC7 if 0x9C5E==1),0x20F10 (dirty flag=1),0x20F68. callees: `freq_in_range` range, `vfo_tune_locked` lock, `freq_clamp` tune, `vfo_mem_to_memtune`, `vfo_mark_edited`+`vfo_store_back` UI refresh
 - **Risk:** medium: changes operating frequency (persisted via dirty flag), no direct TX
-- **Open (needs disassembly):** FUN_fffc10c3 tune path internals not followed
+- **Open (needs disassembly):** `freq_clamp` tune path internals not followed
 
 ### FB
 
 - **Index / handler:** 33, cat_FA_FB @ fffa99bd (side 1); switch case fffa40d7; length tests `len==3:cat_FA_FB@fffa99bd \| len==12:cat_FA_FB@fffa99bd` [fact]
 - **Manual 2306-C:** FREQUENCY VFO-B. Set `FBP1x9;` (12), read `FB;` (3), answer `FBP1x9;` (12), AI O. P1 000030000-075000000 Hz (9 digits)
 - **Read / answer (firmware):** FBnnnnnnnnn; same as FA but VFO-B frequency from 0x20F58; the 0x20F50 override applies if DAT_00020B6B==1 and DAT_00009DBD==1
-- **Set parameters (firmware):** same as FA with side=1: record 0x9D63 (+0x4A..0x4D freq, +0x48/49 cleared); state byte tested is 0x9DBF (==2 -> FUN_fffc5ce0(1))
+- **Set parameters (firmware):** same as FA with side=1: record 0x9D63 (+0x4A..0x4D freq, +0x48/49 cleared); state byte tested is 0x9DBF (==2 -> `vfo_mem_to_memtune`(1))
 - **Class:** read+set
 - **Behaviour:** Reads/sets the VFO-B frequency (same validation as FA) [fact]
 - **Globals / callees:** R: 0x20F58,0x20F50,0x20B6B,0x9DBD. W: 0x9D63[0x48..0x4D],0x20F10. callees as FA with side=1
@@ -418,10 +418,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 36, cat_FT @ fffa9d4e; switch case fffa4190; length tests `len==3:cat_FT@fffa9d4e \| len==4:cat_FT@fffa9d4e` [fact]
 - **Manual 2306-C:** FUNCTION TX. Set `FTP1;` (4), read `FT;` (3), answer `FTP1;` (4), AI O. P1 0 main band TX,1 sub band TX
 - **Read / answer (firmware):** FTn; n='1' if DAT_00009C5E==1 else '0'
-- **Set parameters (firmware):** FTn; n '0' or '1' else '?;'. '?;' if any busy flag: 0x20F1C==1, 0x20F70==1, 0x20F0C!=0, 0x20B8A==1, 0x20B3D!=0, 0x20CCE==1, 0x20F1B==1, 0x20CCD==1, 0x20B7C!=0, 0x20CD0==1, 0x20CD1==1, 0x20F11==1, 0x20B98==1. If requested value differs from current 0x9C5E calls FUN_fffbeca5() (toggle); if same, does nothing
+- **Set parameters (firmware):** FTn; n '0' or '1' else '?;'. '?;' if any busy flag: 0x20F1C==1, 0x20F70==1, 0x20F0C!=0, 0x20B8A==1, 0x20B3D!=0, 0x20CCE==1, 0x20F1B==1, 0x20CCD==1, 0x20B7C!=0, 0x20CD0==1, 0x20CD1==1, 0x20F11==1, 0x20B98==1. If requested value differs from current 0x9C5E calls `split_toggle`() (toggle); if same, does nothing
 - **Class:** read+set
-- **Behaviour:** Turns the two-VFO TX/RX state flag DAT_00009C5E off/on: FUN_fffbeca5 toggles 0x9C5E, saves/restores VFO states (0x9DBE/0x9DBF vs 0x9DC7/0x9DC8) and refreshes UI [fact]; calling it split is [inference] because FA/FB also key off 0x9C5E
-- **Globals / callees:** RW 0x9C5E; callee FUN_fffbeca5 (also writes 0x9DBE,0x9DBF,0x9DC7,0x9DC8,0x20F09, PTR_DAT_00025d54 fields)
+- **Behaviour:** Turns the two-VFO TX/RX state flag DAT_00009C5E off/on: `split_toggle` toggles 0x9C5E, saves/restores VFO states (0x9DBE/0x9DBF vs 0x9DC7/0x9DC8) and refreshes UI [fact]; calling it split is [inference] because FA/FB also key off 0x9C5E
+- **Globals / callees:** RW 0x9C5E; callee `split_toggle` (also writes 0x9DBE,0x9DBF,0x9DC7,0x9DC8,0x20F09, PTR_DAT_00025d54 fields)
 - **Risk:** medium: changes TX/RX VFO configuration (no direct key-down)
 - **Open (needs disassembly):** meaning of the busy flags (0x20F1C,0x20F70,0x20B8A,...) unresolved
 
@@ -430,22 +430,22 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 37, cat_GT @ fffa9f23; switch case fffa41c8; length tests `len==4:cat_GT@fffa9f23 \| len==5:cat_GT@fffa9f23` [fact]
 - **Manual 2306-C:** AGC FUNCTION. Set `GTP1P2;` (5), read `GTP1;` (4), answer `GTP1P3;` (5), AI O. Set: P1 0 fixed; P2 0 off,1 fast,2 mid,3 slow,4 auto. Answer: P1 0 fixed; P3 0 off,1 fast,2 mid,3 slow,4 auto-fast,5 auto-mid,6 auto-slow
 - **Read / answer (firmware):** GT0n; (5 bytes) n digit 0..6 derived from a per-mode byte (bit6 = enabled, bits4-5 = field): disabled -> 0; enabled: field 1,2,3 -> 1,2,3; field 0 -> 4, 5 or 6 depending on mode class (see needs_disasm). Digit at 0x1C91
-- **Set parameters (firmware):** GT0n; P1 must be '0' (else '?;'), n = hex-digit value 0..4 (>4 or bad char -> '?;'). Clears bits4..6 of the per-mode byte; n=4 sets bit6 only (field 0); n=1..3 sets bit6 and n<<4; n=0 leaves cleared. Then 0x20F10=1 and FUN_fffc2fde/FUN_fffc16f6 refresh for side DAT_00009DBD
+- **Set parameters (firmware):** GT0n; P1 must be '0' (else '?;'), n = hex-digit value 0..4 (>4 or bad char -> '?;'). Clears bits4..6 of the per-mode byte; n=4 sets bit6 only (field 0); n=1..3 sets bit6 and n<<4; n=0 leaves cleared. Then 0x20F10=1 and `vfo_mark_edited`/`vfo_store_back` refresh for side DAT_00009DBD
 - **Class:** read+set
-- **Behaviour:** Per-mode 5-state setting stored in a byte of the main-side record, indexed by mode class FUN_fffb3196(0): {0,1}->rec+0x0B, {2,3}->+0x15, {4,5}->+0x33, {6,7}->+0x3D, {8,9}->+0x29, {10,11}->+0x3D, {12,13}->+0x1F, {14}->+0x29 (read and set use the same map) [fact]; AGC-like selector [guess]
-- **Globals / callees:** R/W record(FUN_fffb324c(0))+{0x0B,0x15,0x1F,0x29,0x33,0x3D}; W 0x20F10; callees FUN_fffb3196(0), FUN_fffb324c(0), hex2nib, FUN_fffc2fde, FUN_fffc16f6
+- **Behaviour:** Per-mode 5-state setting stored in a byte of the main-side record, indexed by mode class `vfo_mode`(0): {0,1}->rec+0x0B, {2,3}->+0x15, {4,5}->+0x33, {6,7}->+0x3D, {8,9}->+0x29, {10,11}->+0x3D, {12,13}->+0x1F, {14}->+0x29 (read and set use the same map) [fact]; AGC-like selector [guess]
+- **Globals / callees:** R/W record(`vfo_rec_ptr`(0))+{0x0B,0x15,0x1F,0x29,0x33,0x3D}; W 0x20F10; callees `vfo_mode`(0), `vfo_rec_ptr`(0), hex2nib, `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes per-mode radio setting (persisted)
-- **Open (needs disassembly):** READ/SET MISMATCH [fact]: set accepts 0..4 but read can return 5 or 6: field 0 reads 4 in classes {2,3,6,7,10,11}, 5 in {8,9,12,13,14}, 6 in {0,1,4,5}. FUN_fffb324c/FUN_fffb3196 decompile broken (in_R14): check which side record is used
+- **Open (needs disassembly):** READ/SET MISMATCH [fact]: set accepts 0..4 but read can return 5 or 6: field 0 reads 4 in classes {2,3,6,7,10,11}, 5 in {8,9,12,13,14}, 6 in {0,1,4,5}. `vfo_rec_ptr`/`vfo_mode` decompile broken (in_R14): check which side record is used
 
 ### GP
 
 - **Index / handler:** 38, cat_GP @ fffaa21f; switch case fffa4204; length tests `len==3:cat_GP@fffaa21f \| len==7:cat_GP@fffaa21f` [fact]
 - **Manual 2306-C:** GP OUT A/B/C/D. Set `GPP1P2P3P4;` (7), read `GP;` (3), answer `GPP1P2P3P4;` (7), AI X. P1 GP OUT A 0 low,1 high; P2 B; P3 C; P4 D (each 0/1). Requires menu TUN/LIN PORT SELECT = GPO
-- **Read / answer (firmware):** GPabcd; (7 bytes) four chars '0'/'1': a=bit3 of port reg 0x8C021, b=bit2 of 0x8C021, c=bit0 of 0x8C025, d=bit2 of 0x8C022. Answered only if DAT_00009AB7==3 (FUN_fffb1900), else '?;'
+- **Read / answer (firmware):** GPabcd; (7 bytes) four chars '0'/'1': a=bit3 of port reg 0x8C021, b=bit2 of 0x8C021, c=bit0 of 0x8C025, d=bit2 of 0x8C022. Answered only if DAT_00009AB7==3 (`tunlin_port_mode`), else '?;'
 - **Set parameters (firmware):** GPabcd; four chars at cmd[2..5], each must be < 0x32 ('0'/'1'; lower bound NOT checked: chars below '0' give 0xFF from hex2nib and the setter masks bit0 -> 1). '?;' if 0x20F1C==1, 0x20F70==1, 0x20F0C!=0 or DAT_00009AB7!=3. Each value written to one port-data bit: a->0x8C021 b3, b->0x8C021 b2, c->0x8C025 b0, d->0x8C022 b2
 - **Class:** read+set
 - **Behaviour:** Reads/drives four general purpose output pins directly (MCU port data registers 0x8C021/0x8C025/0x8C022), enabled only when config byte 0x9AB7==3 [fact]; 'GP OUT' naming [inference]
-- **Globals / callees:** R/W MMIO 0x8C021 (bits3,2), 0x8C025 (bit0), 0x8C022 (bit2); R 0x9AB7; getters FUN_fffb71ab/be/d1/e2, setters FUN_fffb714d/65/7d/93
+- **Globals / callees:** R/W MMIO 0x8C021 (bits3,2), 0x8C025 (bit0), 0x8C022 (bit2); R 0x9AB7; getters `gpo_a_get`/be/d1/e2, setters `gpo_a_set`/65/7d/93
 - **Risk:** medium: toggles hardware output pins (external equipment), no EEPROM
 - **Open (needs disassembly):** what 0x9AB7==3 means; which physical signals the pins are
 
@@ -464,13 +464,13 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 40, cat_IF_OI @ fffaa39c (arg 0, side 0 = record 0x9D09); switch case fffa4260; length tests `len==3:cat_IF_OI@fffaa39c` [fact]
 - **Manual 2306-C:** INFORMATION (VFO-A). Set `-` (-), read `IF;` (3), answer `IFP1P1P1P2x9P3x5P4P5P6P7P8P9P9P10;` (28), AI O. Answer: P1 3 chars mem ch (000 VFO/MT/QMB,001-099,P1L-P9U PMS,5xx,EMG); P2 9 digit freq Hz; P3 clar dir +/- then 4 digit offset 0000-9990 (5 chars); P4 RX clar 0/1; P5 TX clar 0/1; P6 mode 0-9,A-F; P7 0 VFO,1 mem,2 mem tune,3 QMB,4 -,5 PMS; P8 0 off,1 CTCSS ENC/DEC,2 ENC; P9 00 fixed; P10 0 simplex,1 plus,2 minus. Total 28
-- **Read / answer (firmware):** IF + 26 chars + ';' = 28 bytes (len 0x1C). [0x1C90..92] P1 3 chars memory channel: if chan byte 0x60C9 <99: 3-digit decimal (byte+1, 001..099); else 3-char name from table @0xFFF806E9 (3 bytes/entry, index = byte-99): 99..116 = P1L P1U P2L P2U P3L P3U P4L P4U P5L P5U P6L P6U P7L P7U P8L P8U P9L P9U; 117..131 = 501..515; 132 = EMG; forced to '000' when VFO state 0x9DBE is 1, 3 or 5. [0x1C93..9B] P2 9 digits frequency Hz (from FUN_fffb357c(0,side); see needs_disasm). [0x1C9C] P3 sign: '-' if record byte +0x48 bit7 else '+'; [0x1C9D..A0] 4 digits \|offset\| of 16-bit two's complement value at record +0x48:+0x49 (clarifier offset, no clamp). [0x1CA1] P4 = '1' if DAT_00020F29 in {1,3} else '0'; [0x1CA2] P5 = '1' if 0x20F29 in {2,3} else '0' (0x20F29 0->'00', 1->'10', 2->'01', 3->'11'; other values leave stale bytes). [0x1CA3] P6 mode = cat_mode_codes[rec[0]&0xF] (table @0xFFF806D0, 16 bytes: 0'1',1'2',2'7',3'3',4'5',5'D',6'4',7'B',8'8',9'C',10'A',11'F',12'6',13'9',14'E',15'F'). [0x1CA4] P7 = byte table @0xFFF806DF indexed by VFO state 0x9DBE: 0'F',1'0',2'1',3'2',4'5',5'3',6'F',7'1',8'1',9'F'. [0x1CA5] P8 from rec[3] bits3-5: 1->'2', 2->'1', else '0'. [0x1CA6][0x1CA7] P9 constant '0','0'. [0x1CA8] P10 from rec[2] bits2-3: 0->'2', 2->'1', else '0'. [0x1CA9] ';'
+- **Read / answer (firmware):** IF + 26 chars + ';' = 28 bytes (len 0x1C). [0x1C90..92] P1 3 chars memory channel: if chan byte 0x60C9 <99: 3-digit decimal (byte+1, 001..099); else 3-char name from table @0xFFF806E9 (3 bytes/entry, index = byte-99): 99..116 = P1L P1U P2L P2U P3L P3U P4L P4U P5L P5U P6L P6U P7L P7U P8L P8U P9L P9U; 117..131 = 501..515; 132 = EMG; forced to '000' when VFO state 0x9DBE is 1, 3 or 5. [0x1C93..9B] P2 9 digits frequency Hz (from `vfo_freq`(0,side); see needs_disasm). [0x1C9C] P3 sign: '-' if record byte +0x48 bit7 else '+'; [0x1C9D..A0] 4 digits \|offset\| of 16-bit two's complement value at record +0x48:+0x49 (clarifier offset, no clamp). [0x1CA1] P4 = '1' if DAT_00020F29 in {1,3} else '0'; [0x1CA2] P5 = '1' if 0x20F29 in {2,3} else '0' (0x20F29 0->'00', 1->'10', 2->'01', 3->'11'; other values leave stale bytes). [0x1CA3] P6 mode = cat_mode_codes[rec[0]&0xF] (table @0xFFF806D0, 16 bytes: 0'1',1'2',2'7',3'3',4'5',5'D',6'4',7'B',8'8',9'C',10'A',11'F',12'6',13'9',14'E',15'F'). [0x1CA4] P7 = byte table @0xFFF806DF indexed by VFO state 0x9DBE: 0'F',1'0',2'1',3'2',4'5',5'3',6'F',7'1',8'1',9'F'. [0x1CA5] P8 from rec[3] bits3-5: 1->'2', 2->'1', else '0'. [0x1CA6][0x1CA7] P9 constant '0','0'. [0x1CA8] P10 from rec[2] bits2-3: 0->'2', 2->'1', else '0'. [0x1CA9] ';'
 - **Set parameters (firmware):** none
 - **Class:** read-only
 - **Behaviour:** Answers with the whole state of the VFO-A record 0x9D09 (channel, frequency, clarifier offset and flags, mode, VFO/memory state, two small selectors); always side 0 regardless of the selected VFO [fact]
-- **Globals / callees:** R: 0x60C9,0x9DBE,0x20F29,0x9D09[0,2,3,0x48,0x49,0x4A..0x4D], tables @0xFFF806D0/DF/E9; callees FUN_fffb357c(0,0), nib2hex
+- **Globals / callees:** R: 0x60C9,0x9DBE,0x20F29,0x9D09[0,2,3,0x48,0x49,0x4A..0x4D], tables @0xFFF806D0/DF/E9; callees `vfo_freq`(0,0), nib2hex
 - **Risk:** low: read-only
-- **Open (needs disassembly):** FUN_fffb357c(0,side) decompile is empty (frequency returned in a register); presumed record +0x4A..0x4D big-endian (the bytes FA writes): verify at fffb357c (91 bytes). Meaning of P7 for states 4,6-9 and of rec[2]/rec[3] bit fields unresolved
+- **Open (needs disassembly):** `vfo_freq`(0,side) decompile is empty (frequency returned in a register); presumed record +0x4A..0x4D big-endian (the bytes FA writes): verify at fffb357c (91 bytes). Meaning of P7 for states 4,6-9 and of rec[2]/rec[3] bit fields unresolved
 
 ### IS
 
@@ -479,20 +479,20 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** IS00sNNNN; (10 bytes): 0x1C90..91 constant '0','0'; 0x1C92 sign '+'/'-' (bit15); 0x1C93..96 four digits \|value\| of a signed 16-bit big-endian value in the main-side record
 - **Set parameters (firmware):** ISxxsNNNN; cmd[2..3] ignored, cmd[4] sign '+' or '-' (else '?;'), cmd[5..8] four digits (non-digit -> '?;'); magnitude must be <= 12000 (0x2EE0; unreachable with 4 digits). Stored as signed 16-bit BE; then 0x20F10=1 and refresh for side DAT_00009DBD
 - **Class:** read+set
-- **Behaviour:** Per-mode-class signed 16-bit value in the main-side record at offset by FUN_fffb3196(0): {0,1}->+0x12, {2,3}->+0x1C, {4,5}->+0x3A, {6,7}->+0x44, {8,9}->+0x30, {10,11}->+0x44, {12,13}->+0x26, {14}->+0x30 [fact]; probably IF shift in Hz [guess]
-- **Globals / callees:** R/W record(FUN_fffb324c(0)) offsets above (2 bytes); W 0x20F10; FUN_fffb3196(0), FUN_fffc2fde, FUN_fffc16f6
+- **Behaviour:** Per-mode-class signed 16-bit value in the main-side record at offset by `vfo_mode`(0): {0,1}->+0x12, {2,3}->+0x1C, {4,5}->+0x3A, {6,7}->+0x44, {8,9}->+0x30, {10,11}->+0x44, {12,13}->+0x26, {14}->+0x30 [fact]; probably IF shift in Hz [guess]
+- **Globals / callees:** R/W record(`vfo_rec_ptr`(0)) offsets above (2 bytes); W 0x20F10; `vfo_mode`(0), `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes per-mode DSP setting (persisted)
-- **Open (needs disassembly):** digit weights hidden by decompiler (assumed 1000/100/10/1); FUN_fffb324c/fffb3196 side selection
+- **Open (needs disassembly):** digit weights hidden by decompiler (assumed 1000/100/10/1); `vfo_rec_ptr`/fffb3196 side selection
 
 ### KM
 
 - **Index / handler:** 42, cat_KM @ fffaa905; switch case fffa42c7; length tests `len==4:cat_KM@fffaa905 \| len==0:cat_KM@fffaa905` [fact]
 - **Manual 2306-C:** KEYER MEMORY. Set `KMP1P2xn;` (5-54), read `KMP1;` (4), answer `KMP1P2xn;` (5-54), AI X. P1 1-5 memory ch; P2 message characters up to 50 (set/answer len 5-54)
 - **Read / answer (firmware):** KMn<text>; n=1..5: reply 'KMn' + stored text (length N from 0x969F/0x96D2/0x9705/0x9738/0x976B, text follows) + ';' = N+4 bytes; if N==0 the reply is 'KM;' (3 bytes, the ';' overwrites n). Other n -> '?;'
-- **Set parameters (firmware):** KMn<text>; n '1'..'5' (else '?;'), text = len-4 bytes (1..50) copied verbatim (NO character validation) after the slot is filled with 0x20 x50. '?;' if DAT_00020B94==1 && DAT_00020BC2==2 && n==DAT_00020BC3+1 (slot in use). If FUN_fffb012c finds '}' (0x7D) at start of text, '}' is appended after the text. Stores length byte then FUN_fffb0450(1,n) = EEPROM write of 0x33 bytes
+- **Set parameters (firmware):** KMn<text>; n '1'..'5' (else '?;'), text = len-4 bytes (1..50) copied verbatim (NO character validation) after the slot is filled with 0x20 x50. '?;' if DAT_00020B94==1 && DAT_00020BC2==2 && n==DAT_00020BC3+1 (slot in use). If FUN_fffb012c finds '}' (0x7D) at start of text, '}' is appended after the text. Stores length byte then `eeprom_save_msg`(1,n) = EEPROM write of 0x33 bytes
 - **Class:** read+set
-- **Behaviour:** Reads/writes five 50-char text message memories (CW keyer text, [inference] from KY/LM using the same slots) and saves slot n to EEPROM [fact: eeprom_write in FUN_fffb0450]
-- **Globals / callees:** RW 0x969F+0x33*(n-1) (len), +1 (text); R 0x20B94,0x20BC2,0x20BC3; callees FUN_fffb012c, FUN_fffb0450 -> eeprom_write (addr table @0x5050+0x33*i, 0x33 bytes)
+- **Behaviour:** Reads/writes five 50-char text message memories (CW keyer text, [inference] from KY/LM using the same slots) and saves slot n to EEPROM [fact: eeprom_write in `eeprom_save_msg`]
+- **Globals / callees:** RW 0x969F+0x33*(n-1) (len), +1 (text); R 0x20B94,0x20BC2,0x20BC3; callees FUN_fffb012c, `eeprom_save_msg` -> eeprom_write (addr table @0x5050+0x33*i, 0x33 bytes)
 - **Risk:** medium: EEPROM write of message memory on every set
 - **Open (needs disassembly):** FUN_fffb012c return value lost in decompile: exact meaning of the '}' test (uVar8 == low byte of cmd+3); text length = total-4 though text starts at cmd[3]: confirm no off-by-one
 
@@ -513,10 +513,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 44, cat_KR @ fffaad52; switch case fffa4353; length tests `len==3:cat_KR@fffaad52 \| len==4:cat_KR@fffaad52` [fact]
 - **Manual 2306-C:** KEYER. Set `KRP1;` (4), read `KR;` (3), answer `KRP1;` (4), AI O. P1 0 off,1 on
 - **Read / answer (firmware):** KRn; n = DAT_00009C02 as hex digit (0/1)
-- **Set parameters (firmware):** KRn; first requires key_event_filter(0xE0,0)!=0 (key 0xE0 filter) and FUN_fffe5690()!=0 (mode class FUN_fffb3196(1) is 2 or 3) else '?;'. n '1'->1, '0'->0, else '?;'
+- **Set parameters (firmware):** KRn; first requires key_event_filter(0xE0,0)!=0 (key 0xE0 filter) and FUN_fffe5690()!=0 (mode class `vfo_mode`(1) is 2 or 3) else '?;'. n '1'->1, '0'->0, else '?;'
 - **Class:** read+set
 - **Behaviour:** On/off flag at 0x9C02, set gated to mode class 2/3 (the CW-like pair, [inference]) and key 0xE0 allowed [fact for gating]
-- **Globals / callees:** RW 0x9C02; key_event_filter(0xE0,0), FUN_fffe5690 (FUN_fffb3196(1) in {2,3})
+- **Globals / callees:** RW 0x9C02; key_event_filter(0xE0,0), FUN_fffe5690 (`vfo_mode`(1) in {2,3})
 - **Risk:** low: RAM flag
 - **Open (needs disassembly):** read is ungated; only write is gated
 
@@ -536,7 +536,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 46, cat_KY @ fffaaf19; switch case fffa43c3; length tests `len==5:cat_KY@fffaaf19` [fact]
 - **Manual 2306-C:** CW KEYING. Set `KYP1P2;` (5), read `-` (-), answer `-` (-), AI X. P1 0 CW text memory,1 CW message memory; P2 0 stop,1-5 playback memory 1-5
 - **Read / answer (firmware):** none (read length not accepted)
-- **Set parameters (firmware):** KYab; a=cmd[2] must be <= '1' (0x31) else '?;'; b=cmd[3] hex digit: '0' -> DAT_00020B2F=7 and return (stop/cancel [inference]); 1..5 -> message slot (>5 -> '?;'); a stored into DAT_00009AAC[b]; a=='0' -> DAT_00020CD0=1, a=='1' -> DAT_00020CD1=1. Preconditions: key_event_filter(0x87,0)!=0, FUN_fffe5690()==1 (mode class 2/3), DAT_00020B97 != 1, FUN_fffe564b()!=0 (not busy), FUN_fffe5401(b) nonzero (message non-empty) else flags cleared and '?;' (beep FUN_fffb2da6(3) when empty). If DAT_00020B2F==1 it becomes 5 (queued) else FUN_fffe53c0() and DAT_00020CD6=1
+- **Set parameters (firmware):** KYab; a=cmd[2] must be <= '1' (0x31) else '?;'; b=cmd[3] hex digit: '0' -> DAT_00020B2F=7 and return (stop/cancel [inference]); 1..5 -> message slot (>5 -> '?;'); a stored into DAT_00009AAC[b]; a=='0' -> DAT_00020CD0=1, a=='1' -> DAT_00020CD1=1. Preconditions: key_event_filter(0x87,0)!=0, FUN_fffe5690()==1 (mode class 2/3), DAT_00020B97 != 1, FUN_fffe564b()!=0 (not busy), FUN_fffe5401(b) nonzero (message non-empty) else flags cleared and '?;' (beep `beep_request`(3) when empty). If DAT_00020B2F==1 it becomes 5 (queued) else FUN_fffe53c0() and DAT_00020CD6=1
 - **Class:** set-only
 - **Behaviour:** Starts playback of message slot b (1..5) (source set chosen by a, KM text slots are one source), b=0 stops: selects slot via FUN_fffe538f then FUN_fffe53c0 sets state byte (PTR 0x25D78)+0x2B = 7 [fact]; that this transmits CW is [inference] from slots, CW-class gating and TX-state flags
 - **Globals / callees:** W 0x20CCB=1 (even on early error), 0x9AAC[1..5], 0x20CD0/CD1, 0x20B2F, 0x20CD6; R 0x20B97; PTR 0x25D78 fields (+0x1C8,+0xBF,+0x1CE,+0x1CC,+0x1CD,+0x417,+0x1D1,+0x2B); callees key_event_filter(0x87), FUN_fffe5690, FUN_fffe564b, FUN_fffe5401, FUN_fffe538f, FUN_fffe53c0
@@ -571,7 +571,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 49, cat_MA @ fffab3fd; switch case fffa4450; length tests `len==3:cat_MA@fffab3fd` [fact]
 - **Manual 2306-C:** MEMORY CHANNEL TO VFO-A. Set `MA;` (3), read `-` (-), answer `-` (-), AI X. no parameters
 - **Read / answer (firmware):** none
-- **Set parameters (firmware):** MA; (no params): requires key_event_filter(0x308,0)!=0 and DAT_00020B3D==0 else '?;'. Copies 0x5A-byte memory record #DAT_000060C9 from 0x6150+0x5A*ch into VFO-A record 0x9D09, then FUN_fffc2fde(0)+FUN_fffc16f6(0) refresh, 0x20F10=1
+- **Set parameters (firmware):** MA; (no params): requires key_event_filter(0x308,0)!=0 and DAT_00020B3D==0 else '?;'. Copies 0x5A-byte memory record #DAT_000060C9 from 0x6150+0x5A*ch into VFO-A record 0x9D09, then `vfo_mark_edited`(0)+`vfo_store_back`(0) refresh, 0x20F10=1
 - **Class:** action
 - **Behaviour:** Loads the memory channel currently referenced by VFO-A (0x60C9) into the VFO-A working record (memory-to-VFO copy) [fact: 0x5A-byte copy; naming inference]
 - **Globals / callees:** R 0x6150+0x5A*0x60C9; W 0x9D09 (0x5A bytes); 0x20F10; R 0x20B3D; key_event_filter(0x308,0)
@@ -593,12 +593,12 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 51, cat_MC @ fffab4f3; switch case fffa447a; length tests `len==3:cat_MC@fffab4f3 \| len==6:cat_MC@fffab4f3` [fact]
 - **Manual 2306-C:** MEMORY CHANNEL. Set `MCP1P1P1;` (6), read `MC;` (3), answer `MCP1P1P1;` (6), AI X. P1 001-099, P1L-P9U (PMS), 5xx (5MHz band), EMG (3 chars)
 - **Read / answer (firmware):** MCnnn; (6 bytes) memory channel of the selected side (DAT_00009DBD): byte<99 -> 3-digit decimal byte+1 (001..099); byte>=99 -> 3-char name from table @0xFFF806E9 (P1L..P9U, 501..515, EMG as in IF). No forced '000' for VFO states
-- **Set parameters (firmware):** MCnnn; '?;' if DAT_00020B3D!=0. cmd[2]=='0': three digits cmd[2..4] weights 100/10/1, value must be 1..99 -> idx=v-1. cmd[2]!='0': cmd[2..4] matched (FUN_fffede1d 3-byte compare, after 3x toupper_inplace toupper) against the 34-entry name table (P1L,P1U..P9L,P9U,501..515,EMG) -> idx=99+k; no match -> '?;'. idx 117..131 (501-515) also need FUN_fff9c2cd()==1 and FUN_fffc2e8d(idx)!=1; idx 132 (EMG) needs DAT_00009AF4!=0; then FUN_fffc2e01(idx) must be nonzero. Result: DAT_000060C9 (or 0x60CA for side 1)=idx, state 0x9DBE (0x9DBF)=2, working record FUN_fffb324c(0) backed up 0x5A bytes to 0x9DCE (0x9E28) then overwritten with memory record 0x6150+0x5A*idx; eeprom_save_memch(1); 0x20F10=1
+- **Set parameters (firmware):** MCnnn; '?;' if DAT_00020B3D!=0. cmd[2]=='0': three digits cmd[2..4] weights 100/10/1, value must be 1..99 -> idx=v-1. cmd[2]!='0': cmd[2..4] matched (FUN_fffede1d 3-byte compare, after 3x toupper_inplace toupper) against the 34-entry name table (P1L,P1U..P9L,P9U,501..515,EMG) -> idx=99+k; no match -> '?;'. idx 117..131 (501-515) also need FUN_fff9c2cd()==1 and `memch_dest_blocked`(idx)!=1; idx 132 (EMG) needs DAT_00009AF4!=0; then `memch_valid`(idx) must be nonzero. Result: DAT_000060C9 (or 0x60CA for side 1)=idx, state 0x9DBE (0x9DBF)=2, working record `vfo_rec_ptr`(0) backed up 0x5A bytes to 0x9DCE (0x9E28) then overwritten with memory record 0x6150+0x5A*idx; eeprom_save_memch(1); 0x20F10=1
 - **Class:** read+set
 - **Behaviour:** Selects/recalls a memory channel into the selected VFO (memory state) [fact]
-- **Globals / callees:** R/W 0x60C9,0x60CA,0x9DBD,0x9DBE,0x9DBF,0x9DCE[0x5A],0x9E28[0x5A], record FUN_fffb324c(0) (0x5A), table 0x6150; R 0x20B3D,0x9AF4; callees FUN_fffc2e01,FUN_fffc2e8d,FUN_fff9c2cd,eeprom_save_memch,FUN_fffede1d,toupper_inplace
+- **Globals / callees:** R/W 0x60C9,0x60CA,0x9DBD,0x9DBE,0x9DBF,0x9DCE[0x5A],0x9E28[0x5A], record `vfo_rec_ptr`(0) (0x5A), table 0x6150; R 0x20B3D,0x9AF4; callees `memch_valid`,`memch_dest_blocked`,FUN_fff9c2cd,eeprom_save_memch,FUN_fffede1d,toupper_inplace
 - **Risk:** medium: changes current VFO contents (persisted), no TX
-- **Open (needs disassembly):** FUN_fffb324c(0) working-record selection (decompile broken; backup target chosen by 0x9DBD); FUN_fffc2e01 validity test
+- **Open (needs disassembly):** `vfo_rec_ptr`(0) working-record selection (decompile broken; backup target chosen by 0x9DBD); `memch_valid` validity test
 
 ### MD
 
@@ -619,8 +619,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** MGnnn; nnn=per-mode level byte, 3-digit dec 000-100
 - **Set parameters (firmware):** P1 nnn = 3 dec digits [2..4], each must be '0'..'9' and value <=100 else error; stored as byte into the per-mode variable; also sets 0x20F10=1 and (if 0x9ACE==0) notifies display/panel with param id 0x25 (FUN_fffc8cbb/8d8c) [inference]
 - **Class:** read+set
-- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=FUN_fffb3196(0): m=0,1->0x9BEC; m=2,3->0x9BEE; m=4,6->0x9BEF; m=5,14->0x9BED; any other m -> error '?;' [fact from C, but decompiler removed 7 unreachable blocks]. Mode m is an index into cat_mode_codes @fff806d0.
-- **Globals / callees:** 0x9BEC-0x9BEF (per-mode level), 0x9ACE, 0x20F10, 0x20CC6=0x25; callees FUN_fffb3196 (current VFO mode), FUN_fffc8cbb, FUN_fffc8d8c
+- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=`vfo_mode`(0): m=0,1->0x9BEC; m=2,3->0x9BEE; m=4,6->0x9BEF; m=5,14->0x9BED; any other m -> error '?;' [fact from C, but decompiler removed 7 unreachable blocks]. Mode m is an index into cat_mode_codes @fff806d0.
+- **Globals / callees:** 0x9BEC-0x9BEF (per-mode level), 0x9ACE, 0x20F10, 0x20CC6=0x25; callees `vfo_mode` (current VFO mode), FUN_fffc8cbb, FUN_fffc8d8c
 - **Risk:** medium - TX-related audio level, RAM only in handler (no EEPROM call)
 - **Open (needs disassembly):** mode-to-variable branch tree fffaba64..fffabaef; confirm which variable each mode uses
 
@@ -632,7 +632,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1='0' -> [3][4] must be '00', P4 '0' -> level=0, '1' -> level=0x32 (50), else error; P1='1' -> nnn at [3..5] decimal digits, <=100 else error, stores byte, if 0x9ACE==0 notifies display param 0x2d. Set is REFUSED (error) when mode m in {6,7,10,11}; P1 other than 0/1 -> error
 - **Class:** read+set
 - **Behaviour:** Per-mode monitor-level-like variable: ML0 = on/off view of it (set maps to 0 or 50), ML1 = 0-100 level. Variable by mode m: 0,1->0x9BFC; 2,3->0x9BFD; 4,5->0x9C00; 8,9,14->0x9BFF; 12,13->0x9BFE; 6,7,10,11->0x9C01 (read only, set rejected); other m -> error [fact from C; label 'monitor' is guess].
-- **Globals / callees:** 0x9BFC-0x9C01, 0x9ACE, 0x20CC6=0x2d; FUN_fffb3196, FUN_fffc8cbb/8d8c
+- **Globals / callees:** 0x9BFC-0x9C01, 0x9ACE, 0x20CC6=0x2d; `vfo_mode`, FUN_fffc8cbb/8d8c
 - **Risk:** medium - audio/monitor setting; RAM only in handler
 - **Open (needs disassembly):** decompile garbled around 'pbVar2[0..3]={1,0,0,0}' (really a P1=='0' flag) and the set refusal for m in {6,7,10,11}: check fffabbfa..fffabea5
 
@@ -641,10 +641,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 55, cat_MR @ fffabea5; switch case fffa4562; length tests `len==6:cat_MR@fffabea5` [fact]
 - **Manual 2306-C:** MEMORY READ. Set `-` (-), read `MRP0P0P0;` (6), answer `MRP1P1P1P2x9P3x5P4P5P6P7P8P9P9P10;` (28), AI X. Read: P0 3 chars mem ch (001-099,P1L-P9U,5xx,EMG). Answer (same layout as IF): P1 mem ch 3 chars; P2 freq 9 digits; P3 clar +/- and 4 digits; P4 RX clar; P5 TX clar; P6 mode; P7 0-5; P8 CTCSS; P9 00; P10 shift. Answer 28
 - **Read / answer (firmware):** MRcccFFFFFFFFFsOOOOabMvkhhS; (28 chars): ccc=3-digit channel or 3-char name, F=9-digit freq Hz (rec+0x4A..4D BE), s=+/- and OOOO=4-digit clarifier offset (rec+0x48/49), a=rec[1]b4, b=rec[1]b3, M=cat_mode_codes[rec[0]&0xF], v=table fff806df[0x9DBE or 0x9DBF if 0x9DBD!=0], k=tone '2' if (rec[3]>>3&7)==1,'1' if ==2 else '0', hh='00', S=shift '2' if (rec[2]>>2&3)==0,'1' if ==2 else '0'
-- **Set parameters (firmware):** none (read only, len 6 only). Argument ccc: if [2]=='0' digits 001-099 -> idx ccc-1. Else 3 chars (after toupper) matched against the 34-entry name table @fff806e9: P1L P1U P2L P2U ... P9L P9U 501..515 EMG -> idx 99+i. Channel must be flagged valid (FUN_fffc2e01) and have nonzero freq, else error
+- **Set parameters (firmware):** none (read only, len 6 only). Argument ccc: if [2]=='0' digits 001-099 -> idx ccc-1. Else 3 chars (after toupper) matched against the 34-entry name table @fff806e9: P1L P1U P2L P2U ... P9L P9U 501..515 EMG -> idx 99+i. Channel must be flagged valid (`memch_valid`) and have nonzero freq, else error
 - **Class:** read-only
 - **Behaviour:** Reads one memory channel record (0x5A bytes at 0x6150+idx*0x5A) in the same 28-char layout that MW accepts. No state change.
-- **Globals / callees:** rec 0x6150+idx*0x5A, valid flags 0x60CB+idx, 0x9DBD/9DBE/9DBF, names fff806e9, cat_mode_codes fff806d0; FUN_fffc2e01, toupper_inplace
+- **Globals / callees:** rec 0x6150+idx*0x5A, valid flags 0x60CB+idx, 0x9DBD/9DBE/9DBF, names fff806e9, cat_mode_codes fff806d0; `memch_valid`, toupper_inplace
 - **Risk:** low - read-only
 - **Open (needs disassembly):** numeric channel 000 or >=100 (e.g. MR100) leaves the index variable uninitialised in the decompile (bStack_30): check fffabea5..fffabf90
 
@@ -664,10 +664,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 57, cat_MT @ fffac285; switch case fffa4589; length tests `len==6:cat_MT@fffac285 \| len==0:cat_MT@fffac285` [fact]
 - **Manual 2306-C:** MEMORY CHANNEL TAG WRITE. Set `MTP0P0P0P1P2x12;` (19), read `MTP0P0P0;` (6), answer `MTP0P0P0P1P2x12;` (19), AI X. P0 3 chars mem ch (001-099,P1L-P9U,5xx,EMG); P1 0 tag off,1 tag on; P2 12 tag ASCII chars
 - **Read / answer (firmware):** MTcccf<12 name chars>; (19 chars): ccc echoed from command, f='1' if rec+5 bit7 set else '0', 12 name bytes from rec+0x4E
-- **Set parameters (firmware):** ccc as MR/MW: [2]=='0' -> 001-099 -> idx-1, else 3-char name from table fff806e9 but only idx 99..117 accepted (P1L..P9U and 501); channel must already be valid (FUN_fffc2e01) else error. [5] f must be '0' (clears rec+5 bit7) or '1' (sets it) else error. Name = chars [6..len-2], each 0x20..0x7D else error, padded with 0x20 to 12; name length 1..12 (len 8..19)
+- **Set parameters (firmware):** ccc as MR/MW: [2]=='0' -> 001-099 -> idx-1, else 3-char name from table fff806e9 but only idx 99..117 accepted (P1L..P9U and 501); channel must already be valid (`memch_valid`) else error. [5] f must be '0' (clears rec+5 bit7) or '1' (sets it) else error. Name = chars [6..len-2], each 0x20..0x7D else error, padded with 0x20 to 12; name length 1..12 (len 8..19)
 - **Class:** read+set
 - **Behaviour:** Writes/reads the name tag of an existing memory channel (12 chars + flag bit) and PERSISTS to EEPROM via eeprom_save_memch [fact].
-- **Globals / callees:** rec 0x6150+idx*0x5A (+5 flag bit7, +0x4E name[12]), valid flags 0x60CB; eeprom_save_memch -> eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(chanaddr,rec,0x5A), wrapped by eeprom_hdr_update (EEPROM header write counter @0); skipped if FUN_fffb4b28()==1 (power-fail shutdown state)
+- **Globals / callees:** rec 0x6150+idx*0x5A (+5 flag bit7, +0x4E name[12]), valid flags 0x60CB; eeprom_save_memch -> eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(chanaddr,rec,0x5A), wrapped by eeprom_hdr_update (EEPROM header write counter @0); skipped if `supply_undervolt_check`()==1 (power-fail shutdown state)
 - **Risk:** medium - EEPROM write of channel record on every successful set; RAM flag/name chars already changed if a later name char is invalid
 - **Open (needs disassembly):** EEPROM address table at 0x1B01+idx*0x5A in eeprom_save_memch looks like a dropped multiplier (u16 table, stride 2?): check fffb0376
 
@@ -676,10 +676,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 58, cat_MW @ fffac534; switch case fffa45dd; length tests `len==28:cat_MW@fffac534` [fact]
 - **Manual 2306-C:** MEMORY CHANNEL WRITE. Set `MWP1P1P1P2x9P3x5P4P5P6P7P8P9P9P10;` (28), read `-` (-), answer `-` (-), AI X. Set: P1 000 or 001-099 or P1L-P9U (3 chars); P2 freq 9 digits Hz; P3 clar +/- and 4 digits (5 chars); P4 RX clar 0/1; P5 TX clar 0/1; P6 mode 0-F; P7 0-5; P8 0-2; P9 00; P10 0-2. Set only
 - **Read / answer (firmware):** none (set-only)
-- **Set parameters (firmware):** MWcccFFFFFFFFFsOOOOabMpTzzS (28): ccc chan as MT (001-099 or names idx<=117: P1L..P9U,501); F 9 dec digits Hz, must be 30000..75000000 (FUN_fffb3aa1); s '+' or '-' required; OOOO 4 digits (validated numeric, VALUE DISCARDED, offset stored 0); a,b '0'/'1' (RX/TX clarifier, validated but DISCARDED: rec+1 bits3-4 cleared); M mode char must be in cat_mode_codes[0..14] else error; p ([22]) must be '1' else error; T tone mode '2'->1,'1'->2,'0'->0 (rec+3 bits3-5) else error; zz ([24][25]) must be '00'; S shift '2'->0,'1'->2,'0'->1 (rec+2 bits2-3) else error
+- **Set parameters (firmware):** MWcccFFFFFFFFFsOOOOabMpTzzS (28): ccc chan as MT (001-099 or names idx<=117: P1L..P9U,501); F 9 dec digits Hz, must be 30000..75000000 (`freq_in_range`); s '+' or '-' required; OOOO 4 digits (validated numeric, VALUE DISCARDED, offset stored 0); a,b '0'/'1' (RX/TX clarifier, validated but DISCARDED: rec+1 bits3-4 cleared); M mode char must be in cat_mode_codes[0..14] else error; p ([22]) must be '1' else error; T tone mode '2'->1,'1'->2,'0'->0 (rec+3 bits3-5) else error; zz ([24][25]) must be '00'; S shift '2'->0,'1'->2,'0'->1 (rec+2 bits2-3) else error
 - **Class:** set-only
-- **Behaviour:** Programs a memory channel (freq, mode, tone mode, shift) and writes it to EEPROM. Unlike MT it does NOT require the channel to exist: it marks it valid (0x60CB+idx=1) [fact]. Also makes it the current memory channel of the active VFO (0x60C9/0x60CA) and re-applies it (FUN_fffc2fde/16f6).
-- **Globals / callees:** 0x60C9/0x60CA (current mem ch per VFO, written BEFORE later fields validated), rec 0x6150+idx*0x5A (+0..3 flags, +0x48/49=0, +0x4A..4D freq BE), 0x60CB+idx valid; FUN_fffb01df, eeprom_save_memch (EEPROM), FUN_fffc2fde, FUN_fffc16f6, FUN_fffb3aa1
+- **Behaviour:** Programs a memory channel (freq, mode, tone mode, shift) and writes it to EEPROM. Unlike MT it does NOT require the channel to exist: it marks it valid (0x60CB+idx=1) [fact]. Also makes it the current memory channel of the active VFO (0x60C9/0x60CA) and re-applies it (`vfo_mark_edited`/16f6).
+- **Globals / callees:** 0x60C9/0x60CA (current mem ch per VFO, written BEFORE later fields validated), rec 0x6150+idx*0x5A (+0..3 flags, +0x48/49=0, +0x4A..4D freq BE), 0x60CB+idx valid; FUN_fffb01df, eeprom_save_memch (EEPROM), `vfo_mark_edited`, `vfo_store_back`, `freq_in_range`
 - **Risk:** medium - EEPROM memory-channel write and changes active memory channel; a late validation error still leaves 0x60C9/0x60CA changed
 - **Open (needs disassembly):** meaning of [22]=='1' (selector char table fff806df) and digit weights of freq loop (decompile dropped multiplier, assumed 1e8..1): fffac534..fffac9ad
 
@@ -700,10 +700,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 60, cat_NA @ fffaca47; switch case fffa467a; length tests `len==4:cat_NA@fffaca47 \| len==5:cat_NA@fffaca47` [fact]
 - **Manual 2306-C:** NARROW. Set `NAP1P2;` (5), read `NAP1;` (4), answer `NAP1P2;` (5), AI O. P1 0 fixed; P2 0 off,1 on
 - **Read / answer (firmware):** NA0n; n='0'/'1' narrow flag for current mode (see set)
-- **Set parameters (firmware):** P1 must be '0' else error. Set: key_event_filter(0x30d,0) must pass else error; P2 char must be <=0x31 else error; '0' clears, anything else (incl. chars <'0') sets. By mode m of the active VFO (0x9DBD): m=0,1 -> bit 0x80 of mode-struct byte (struct 0x9D0D or 0x9D67 by VFO); m=2,3 -> bit 0x20; m=8,9,14 -> bit 0x04; m=12,13 -> bit 0x08; m=4,6,10 set '1' -> FUN_fffc4bd5(5/7/0xB) (switch to paired mode), m=5,7,11 set '0' -> FUN_fffc4bd5(4/6/10); read gives 0 for even m / 1 for odd pairs. Then FUN_fffc2fde/16f6 apply and 0x20F10=1
+- **Set parameters (firmware):** P1 must be '0' else error. Set: key_event_filter(0x30d,0) must pass else error; P2 char must be <=0x31 else error; '0' clears, anything else (incl. chars <'0') sets. By mode m of the active VFO (0x9DBD): m=0,1 -> bit 0x80 of mode-struct byte (struct 0x9D0D or 0x9D67 by VFO); m=2,3 -> bit 0x20; m=8,9,14 -> bit 0x04; m=12,13 -> bit 0x08; m=4,6,10 set '1' -> FUN_fffc4bd5(5/7/0xB) (switch to paired mode), m=5,7,11 set '0' -> FUN_fffc4bd5(4/6/10); read gives 0 for even m / 1 for odd pairs. Then `vfo_mark_edited`/16f6 apply and 0x20F10=1
 - **Class:** read+set
 - **Behaviour:** Narrow/wide filter selector: toggles a per-mode narrow bit or swaps between paired modes 4/5, 6/7, 10/11 [inference].
-- **Globals / callees:** 0x9D0D/0x9D67, 0x9DBD, 0x20F10; FUN_fffb3196, key_event_filter(0x30d), FUN_fffc4bd5, FUN_fffc2fde, FUN_fffc16f6
+- **Globals / callees:** 0x9D0D/0x9D67, 0x9DBD, 0x20F10; `vfo_mode`, key_event_filter(0x30d), FUN_fffc4bd5, `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium - changes receive filter and may change operating mode
 - **Open (needs disassembly):** bit-mask path with m=15 or other unlisted m uses uninitialised pointer/mask: fffaca47
 
@@ -712,10 +712,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 61, cat_NB @ fffacc65; switch case fffa46b8; length tests `len==4:cat_NB@fffacc65 \| len==5:cat_NB@fffacc65` [fact]
 - **Manual 2306-C:** NOISE BLANKER. Set `NBP1P2;` (5), read `NBP1;` (4), answer `NBP1P2;` (5), AI O. P1 0 fixed; P2 0 off,1 on
 - **Read / answer (firmware):** NBPn; P1 echoed, n=(struct+2 & 2)>>1
-- **Set parameters (firmware):** Gate key_event_filter(0x303,0) else error; P2 '0' clears / '1' sets bit1 of struct+2 (struct=FUN_fffb324c(0)); other -> error. P1 NOT checked
+- **Set parameters (firmware):** Gate key_event_filter(0x303,0) else error; P2 '0' clears / '1' sets bit1 of struct+2 (struct=`vfo_rec_ptr`(0)); other -> error. P1 NOT checked
 - **Class:** read+set
 - **Behaviour:** Noise blanker on/off bit in current per-band/mode settings struct [inference].
-- **Globals / callees:** struct from FUN_fffb324c(0) +2 bit1; key_event_filter(0x303,0)
+- **Globals / callees:** struct from `vfo_rec_ptr`(0) +2 bit1; key_event_filter(0x303,0)
 - **Risk:** low - DSP setting in RAM
 
 ### NL
@@ -737,7 +737,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 must be '0' else error; gate key_event_filter(0x304,0) else error; P2 '0' clears / '1' sets bit4 of struct+6 else error
 - **Class:** read+set
 - **Behaviour:** Noise reduction on/off bit (same struct byte as RL level) [inference].
-- **Globals / callees:** struct FUN_fffb324c(0)+6 bit4; key_event_filter(0x304,0)
+- **Globals / callees:** struct `vfo_rec_ptr`(0)+6 bit4; key_event_filter(0x304,0)
 - **Risk:** low - DSP setting in RAM
 
 ### OI
@@ -748,7 +748,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none
 - **Class:** read-only
 - **Behaviour:** Same as IF but reports VFO-B (side 1) [fact: dispatch calls cat_IF_OI(1) for table idx 64 '@']
-- **Globals / callees:** R 0x60CA,0x9DBF,0x20F2A,0x9D63[...]; FUN_fffb357c(0,1)
+- **Globals / callees:** R 0x60CA,0x9DBF,0x20F2A,0x9D63[...]; `vfo_freq`(0,1)
 - **Risk:** low: read-only
 - **Open (needs disassembly):** same as IF
 
@@ -760,7 +760,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 '0' -> active-VFO mode struct (0x9D09 or 0x9D63 by 0x9DBD), '1' -> the other one; P1 other -> pointer uninitialised (no error check!). Set errors if 0x9C5E==1, or current mode m not in {6,7,10,11}; P2 '2'->0, '1'->2, '0'->1 into bits2-3 of struct+2; other -> error; 0x20F10=1
 - **Class:** read+set
 - **Behaviour:** Repeater shift direction of the mode struct (set allowed only in modes 6,7,10,11); same bit coding as the shift field of MR/MW [inference].
-- **Globals / callees:** 0x9D09/0x9D63, 0x9DBD, 0x9C5E, 0x20F10; FUN_fffb3196
+- **Globals / callees:** 0x9D09/0x9D63, 0x9DBD, 0x9C5E, 0x20F10; `vfo_mode`
 - **Risk:** medium - changes TX offset direction (FM-type modes only)
 - **Open (needs disassembly):** uninitialised puStack_c when P1 not 0/1: check fffacebe..fffacee0
 
@@ -772,7 +772,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 NOT checked; P2 '0'->0, '1'->2, '2'->3 into low 2 bits of struct+5; other -> error
 - **Class:** read+set
 - **Behaviour:** Front-end selector (IPO/preamp-like) in per-band struct [inference].
-- **Globals / callees:** struct FUN_fffb324c(0)+5 &3
+- **Globals / callees:** struct `vfo_rec_ptr`(0)+5 &3
 - **Risk:** low - RF front-end setting in RAM
 
 ### PB
@@ -795,7 +795,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** 3 digits [2..4]; for modes 4,5 range 0..25 else error; other modes 0..100; value clamped to per-group max (0x9AEE/9AEF/9AF0/9AF1); stores per-group byte; if 0x9ACE==0 notifies display param 0x2C. Group by mode m: 4,5->0x9BFB (max 0x9AF1); 9->0x9BF9 (max 0x9AEF); 10->0x9BFA (max 0x9AF0); else 0x9BF8 (max 0x9AEE)
 - **Class:** read+set
 - **Behaviour:** TX output power setting per mode group (0-25 for modes 4/5) [inference].
-- **Globals / callees:** 0x9BF8-0x9BFB, 0x9AEE-0x9AF1, 0x9ACE, 0x20CC6=0x2C; FUN_fffb357c, FUN_fffb3371, FUN_fffb3196
+- **Globals / callees:** 0x9BF8-0x9BFB, 0x9AEE-0x9AF1, 0x9ACE, 0x20CC6=0x2C; `vfo_freq`, FUN_fffb3371, `vfo_mode`
 - **Risk:** medium - TX power setting (RAM; does not transmit)
 - **Open (needs disassembly):** stray '*puVar7 = (4<val)' writes through a value returned by FUN_fffb3371 (band index 0..10/0xFF), probably a decompiler artifact: check fffad241..fffad467
 
@@ -827,10 +827,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 71, cat_PS @ fffad696; switch case fffa48de; length tests `len==3:cat_PS@fffad696 \| len==4:cat_PS@fffad696` [fact]
 - **Manual 2306-C:** POWER SWITCH. Set `PSP1;` (4), read `PS;` (3), answer `PSP1;` (4), AI X. P1 0 off,1 on
 - **Read / answer (firmware):** PS1;  (constant)
-- **Set parameters (firmware):** P1 '0' -> 0x20F4B=1, 0x20B39=0x10 (power-off request). P1 '1' -> 0x9DC5=1, FUN_fff9cb8e (sets PTR_DAT_00025d38[0x98]=1 and 0x1B3D0=1). other -> error
+- **Set parameters (firmware):** P1 '0' -> 0x20F4B=1, 0x20B39=0x10 (power-off request). P1 '1' -> 0x9DC5=1, `power_on_request` (sets PTR_DAT_00025d38[0x98]=1 and 0x1B3D0=1). other -> error
 - **Class:** read+set
-- **Behaviour:** PS0 requests radio power OFF [inference: the same 0x20F4B/0x20B39 pair is used by the low-voltage shutdown FUN_fffb4b28 after power_off_io(), with code 0x90]. PS1 only sets flags (power-on style notice) [guess]; read always answers PS1.
-- **Globals / callees:** 0x20F4B, 0x20B39, 0x9DC5, 0x1B3D0, PTR_DAT_00025d38[0x98]; FUN_fff9cb8e
+- **Behaviour:** PS0 requests radio power OFF [inference: the same 0x20F4B/0x20B39 pair is used by the low-voltage shutdown `supply_undervolt_check` after power_off_io(), with code 0x90]. PS1 only sets flags (power-on style notice) [guess]; read always answers PS1.
+- **Globals / callees:** 0x20F4B, 0x20B39, 0x9DC5, 0x1B3D0, PTR_DAT_00025d38[0x98]; `power_on_request`
 - **Risk:** high - PS0 switches the radio off (remote loses control)
 - **Open (needs disassembly):** consumer of 0x20F4B/0x20B39=0x10 (power-off sequencer) not traced; what PS1 does downstream
 
@@ -841,8 +841,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** none (no reply)
 - **Set parameters (firmware):** none (command is the action)
 - **Class:** action
-- **Behaviour:** Quick-memory store: pushes the active VFO's 0x5A-byte settings into a ring of up to 10 slots (0x9023+slot*0x5A, bitmask 0x9012/0x9013, count 0x9014, last slot 0x9015); if the memory-type-mode checks both hold it just beeps/aborts (FUN_fffb2da6(3)) [inference].
-- **Globals / callees:** 0x9012-0x9015, 0x9023.., 0x9D09/0x9D63, 0x9DBD; FUN_fffbfac4
+- **Behaviour:** Quick-memory store: pushes the active VFO's 0x5A-byte settings into a ring of up to 10 slots (0x9023+slot*0x5A, bitmask 0x9012/0x9013, count 0x9014, last slot 0x9015); if the memory-type-mode checks both hold it just beeps/aborts (`beep_request`(3)) [inference].
+- **Globals / callees:** 0x9012-0x9015, 0x9023.., 0x9D09/0x9D63, 0x9DBD; `qmb_store`
 - **Risk:** medium - overwrites a quick-memory slot in RAM (no EEPROM call seen in handler chain)
 
 ### QR
@@ -852,8 +852,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** none (no reply)
 - **Set parameters (firmware):** none (command is the action)
 - **Class:** action
-- **Behaviour:** Quick-memory recall: if any slot is occupied (mask 0x9012/13 & 0x3FF != 0) leaves split/dual state, forces the VFO into recall mode and re-applies it; otherwise error beep FUN_fffb2da6(3) [inference].
-- **Globals / callees:** 0x9012/13, 0x9C5E, 0x9DBE/9DBF; FUN_fffbf924
+- **Behaviour:** Quick-memory recall: if any slot is occupied (mask 0x9012/13 & 0x3FF != 0) leaves split/dual state, forces the VFO into recall mode and re-applies it; otherwise error beep `beep_request`(3) [inference].
+- **Globals / callees:** 0x9012/13, 0x9C5E, 0x9DBE/9DBF; `qmb_recall`
 - **Risk:** medium - changes active VFO/memory state and frequency
 
 ### QS
@@ -875,7 +875,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 must be '0' else error; P2 hex digit 0..3 into low 2 bits of struct+3 (else error flag, but 0x20F10 still set); 0x20F10=1
 - **Class:** read+set
 - **Behaviour:** Attenuator-like 2-bit RF front-end selector in per-band struct [inference].
-- **Globals / callees:** struct FUN_fffb324c(0)+3 &3, 0x20F10
+- **Globals / callees:** struct `vfo_rec_ptr`(0)+3 &3, 0x20F10
 - **Risk:** low - RF front-end setting in RAM
 
 ### RC
@@ -909,11 +909,11 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 79, cat_RI @ fffad8e3; switch case fffa49d6; length tests `len==4:cat_RI@fffad8e3` [fact]
 - **Manual 2306-C:** RADIO INFORMATION. Set `-` (-), read `RIP1;` (4), answer `RIP1P2P3P4P5P6P7P8;` (11), AI O. Read RIP1; Answer: P1 0 fixed; P2 0 normal,1 Hi-SWR; P3 0 stop,1 recording,2 playing; P4 0 RX,1 TX,2 TX inhibit; P5 0 fixed; P6 tuner 0 stopped,1 tuning; P7 scan 0 stop,1 scanning,2 pause; P8 0 SQL closed,1 open
-- **Read / answer (firmware):** RI0abc0def; (11 chars): a=0x20B6D!=0; b=hex(FUN_fffe0755()) 0/1/2 (1 if 0x20CCD==1\|\|0x20B7C==2\|\|0x20B96==1; 2 if 0x20CD0/20CD1/20F01/20B7C==1 cases); c=0x20B3D ('0','1', else '2'); literal '0'; d='1' if 0x20B40==2\|\|0x20B41==2\|\|0x20F0C!=0; e=0x20F1C ('0', else '1', or '2' if 0x20F1D==1 && FUN_fffb722b()!=1); f=(0x20B38&0x10)!=0
+- **Read / answer (firmware):** RI0abc0def; (11 chars): a=0x20B6D!=0; b=hex(FUN_fffe0755()) 0/1/2 (1 if 0x20CCD==1\|\|0x20B7C==2\|\|0x20B96==1; 2 if 0x20CD0/20CD1/20F01/20B7C==1 cases); c=0x20B3D ('0','1', else '2'); literal '0'; d='1' if 0x20B40==2\|\|0x20B41==2\|\|0x20F0C!=0; e=0x20F1C ('0', else '1', or '2' if 0x20F1D==1 && `af_mute_get`()!=1); f=(0x20B38&0x10)!=0
 - **Set parameters (firmware):** none (read only; P1 must be '0' else error)
 - **Class:** read-only
 - **Behaviour:** Status snapshot of the radio (TX state, scan state, voice playback, etc.) [inference from the flags]. No state change.
-- **Globals / callees:** 0x20B6D,0x20B3D,0x20B40,0x20B41,0x20F0C,0x20F1C,0x20F1D,0x20B38,0x20CCD,0x20B7C,0x20B96,0x20CD0/1,0x20F01; FUN_fffe0755, FUN_fffb722b
+- **Globals / callees:** 0x20B6D,0x20B3D,0x20B40,0x20B41,0x20F0C,0x20F1C,0x20F1D,0x20B38,0x20CCD,0x20B7C,0x20B96,0x20CD0/1,0x20F01; FUN_fffe0755, `af_mute_get`
 - **Risk:** low - read-only
 - **Open (needs disassembly):** meaning of each flag not traced
 
@@ -925,7 +925,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** P1 must be '0'; nn digits [3..4], value must be 1..15 else error; writes low nibble of struct+6; if 0x9ACE==0 notifies display param 0x39; 0x20F10=1
 - **Class:** read+set
 - **Behaviour:** Level of the feature whose on/off is NR0 (shares byte struct+6: level low nibble, NR bit4) -> noise-reduction level 1-15 [inference].
-- **Globals / callees:** struct FUN_fffb324c(0)+6, 0x9ACE, 0x20CC6=0x39, 0x20F10
+- **Globals / callees:** struct `vfo_rec_ptr`(0)+6, 0x9ACE, 0x20CC6=0x39, 0x20F10
 - **Risk:** low - DSP setting in RAM
 
 ### RM
@@ -936,7 +936,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none (read only). P1 hex digit: 0 -> auto (0x20B3D==1: by 0x9C5B MS value 1->3,2->4,3->8,4->7,5->6, else 5; not TX: 1); valid 1,3,4,5,6,7,8 else error. Sources: 1->0x1204A, 3->0x12049, 4->0x12045, 5->(0x9AF6==0?0x12048:0x1204B), 6->0x12046, 7->0x12044, 8->0x12043. Value forced to 0 for all except 1/8 when 0x20B3D==0, and for P1==1 while 0x20B3D!=0
 - **Class:** read-only
 - **Behaviour:** Reads a live meter value (S-meter / TX meters) [inference].
-- **Globals / callees:** 0x12043-0x1204B, 0x20B3D, 0x9C5B, 0x9AF6; FUN_fffb6e03/6e98/6e21/6e6a/6e30/6e12/6ea7
+- **Globals / callees:** 0x12043-0x1204B, 0x20B3D, 0x9C5B, 0x9AF6; `meter_get_vdd`/6e98/6e21/6e6a/6e30/6e12/6ea7
 - **Risk:** low - read-only
 
 ### RS
@@ -968,10 +968,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 85, cat_SC @ fffadcd6; switch case fffa4a68; length tests `len==3:cat_SC@fffadcd6 \| len==4:cat_SC@fffadcd6` [fact]
 - **Manual 2306-C:** SCAN. Set `SCP1;` (4), read `SC;` (3), answer `SCP1;` (4), AI O. P1 0 off,1 on up,2 on down
 - **Read / answer (firmware):** SCn; n='0' not scanning (0x20F1C!=1), '1' if direction flag 0x18876==0, '2' if !=0
-- **Set parameters (firmware):** Set errors if 0x20B3D!=0 (TX). P1 '0': if 0x20F1C==1 stop scan (FUN_fffe5ce0). P1 '1': if FUN_fffe5aff()==1 start scan dir 0 (FUN_fffe5c7e: 0x18876=0, flag [0x418]=1). P1 '2': same with dir 1 (FUN_fffe5caf). Otherwise silently ignored; other P1 -> error
+- **Set parameters (firmware):** Set errors if 0x20B3D!=0 (TX). P1 '0': if 0x20F1C==1 stop scan (`scan_stop`). P1 '1': if `scan_allowed`()==1 start scan dir 0 (`scan_start_up`: 0x18876=0, flag [0x418]=1). P1 '2': same with dir 1 (`scan_start_down`). Otherwise silently ignored; other P1 -> error
 - **Class:** read+set
 - **Behaviour:** Starts/stops scanning, with a direction flag [inference].
-- **Globals / callees:** 0x20F1C, 0x18876, 0x18877, 0x9AC4, 0x20B3D, PTR_DAT_00025d7c[0x418]; FUN_fffe5aff, FUN_fffe5ce0/5c7e/5caf
+- **Globals / callees:** 0x20F1C, 0x18876, 0x18877, 0x9AC4, 0x20B3D, PTR_DAT_00025d7c[0x418]; `scan_allowed`, `scan_stop`/5c7e/5caf
 - **Risk:** low - scan, no TX
 
 ### SD
@@ -1002,11 +1002,11 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 88, cat_SH @ fffae2ca; switch case fffa4b1a; length tests `len==4:cat_SH@fffae2ca \| len==7:cat_SH@fffae2ca` [fact]
 - **Manual 2306-C:** WIDTH. Set `SHP1P2P3P3;` (7), read `SHP1;` (4), answer `SHP1P2P3P3;` (7), AI O. P1 0 fixed; P2 0 fixed; P3 00-23 bandwidth index (Table 3, mode dependent; 00 default)
-- **Read / answer (firmware):** SH00nn; nn = 2 dec digits: index+1 of the stored width in the per-mode table (wraps to 00 if >23 for modes 0/1, >21 for others); fixed by mode for modes 5->01, 4/7/11->02, 6/10->03. Mode = FUN_fffb3196(0) (active VFO mode). Read only checks P1=='0'
+- **Read / answer (firmware):** SH00nn; nn = 2 dec digits: index+1 of the stored width in the per-mode table (wraps to 00 if >23 for modes 0/1, >21 for others); fixed by mode for modes 5->01, 4/7/11->02, 6/10->03. Mode = `vfo_mode`(0) (active VFO mode). Read only checks P1=='0'
 - **Set parameters (firmware):** P1 '0' required (else error); P2 '0' required on set; nn 2 dec digits at [4..5]. nn=00 -> per-mode default (modes 0/1: 3000 stored at +0x10; modes 2,3: 500 at +0x1a; modes 12,13: 500 at +0x24; modes 8,9,14: 0xc80=3200 at +0x2e); nn>=1 -> u16 = FUN_fffb3775(mode,nn-1) (max nn 23 for modes 0/1, 21 for the others; above max or 0xffff -> error); modes 4-7,10,11 (fixed) -> error on set
 - **Class:** read+set
-- **Behaviour:** Selects a width/bandwidth entry by index for the active VFO's mode; stores the u16 in the per-VFO struct (FUN_fffb324c base), sets DAT_00020b7e=0x1e, DAT_00020b77=1, FUN_fffc89b0(), DAT_00020f10=1, then FUN_fffc2fde and FUN_fffc16f6 (apply) [inference: IF/DSP width]. Mode numbering unknown; 0/1 have 23 steps, 2,3,8,9,12-14 have 21 [fact]
-- **Globals / callees:** FUN_fffb324c, FUN_fffb3196(0), FUN_fffb36ff@fffb36ff (value->index; tables fff882ba (23 entries) / fff882e8 (21 entries)), FUN_fffb3775@fffb3775 (index->value), DAT_00020b7e/b77/20f10 (w), DAT_00009dbd (active VFO), FUN_fffc89b0, FUN_fffc2fde, FUN_fffc16f6
+- **Behaviour:** Selects a width/bandwidth entry by index for the active VFO's mode; stores the u16 in the per-VFO struct (`vfo_rec_ptr` base), sets DAT_00020b7e=0x1e, DAT_00020b77=1, FUN_fffc89b0(), DAT_00020f10=1, then `vfo_mark_edited` and `vfo_store_back` (apply) [inference: IF/DSP width]. Mode numbering unknown; 0/1 have 23 steps, 2,3,8,9,12-14 have 21 [fact]
+- **Globals / callees:** `vfo_rec_ptr`, `vfo_mode`(0), FUN_fffb36ff@fffb36ff (value->index; tables fff882ba (23 entries) / fff882e8 (21 entries)), FUN_fffb3775@fffb3775 (index->value), DAT_00020b7e/b77/20f10 (w), DAT_00009dbd (active VFO), FUN_fffc89b0, `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes RX filter/width setting and applies it live
 - **Open (needs disassembly):** Dump u16 tables at fff882ba / fff882e8 for the real width values
 
@@ -1014,11 +1014,11 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 89, cat_SM @ fffae64b; switch case fffa4b54; length tests `len==4:cat_SM@fffae64b` [fact]
 - **Manual 2306-C:** S METER. Set `-` (-), read `SMP1;` (4), answer `SMP1P2P2P2;` (7), AI X. P1 0 fixed; P2 000-255
-- **Read / answer (firmware):** SM0nnn; nnn = DAT_0001204a (via FUN_fffb6ea7) as 3 dec digits 000-255 (meter value; computed in fffb7128 file from ADC with slope 1.95/offset 177, clamped 0-255, forced 0 when DAT_00020b3d!=0)
+- **Read / answer (firmware):** SM0nnn; nnn = DAT_0001204a (via `meter_get_s`) as 3 dec digits 000-255 (meter value; computed in fffb7128 file from ADC with slope 1.95/offset 177, clamped 0-255, forced 0 when DAT_00020b3d!=0)
 - **Set parameters (firmware):** none: P1 must be '0' else error (len 4 only, no set form)
 - **Class:** read-only
 - **Behaviour:** Returns the current meter reading as 3 digits; 0 while DAT_00020b3d!=0 so it is the RX signal meter [inference]
-- **Globals / callees:** DAT_0001204a (r), FUN_fffb6ea7@fffb6ea7; reply 0x1C8E len 7
+- **Globals / callees:** DAT_0001204a (r), `meter_get_s`@fffb6ea7; reply 0x1C8E len 7
 - **Risk:** low: read-only
 
 ### SQ
@@ -1037,23 +1037,23 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 91, cat_SS @ fffae850; switch case fffa4bb4; length tests `len==5:cat_SS@fffae850 \| len==10:cat_SS@fffae850` [fact]
 - **Manual 2306-C:** SPECTRUM SCOPE. Set `SSP1P2P3P4P5P6P7;` (10), read `SSP1P2;` (5), answer `SSP1P2P3P4P5P6P7;` (10), AI O. P1 0 fixed; P2 0 speed,1 peak,2 marker,3 color,4 level,5 span,6 mode,7 AF-FFT/osc; P3-P7 per P2: 0 speed 0-5; 1 peak 0-4; 2 marker 0/1; 3 color 0-9,A; 4 level P3-P7 = 5 chars +/-nn.n (0.5dB); 5 span 0-9; 6 mode 0-A; 7 P3 AF-FFT att, P4 osc level, P5 osc time 0-5; unused P = 0
-- **Read / answer (firmware):** SS0Sv0000; (len 10): 1c8e..1c91 = 'S','S','0',S copied from request; S=selector hex char 0-8; v=1 char then '0000' filler, except sel 4 = sign + nn.d and sel 7 = four digits + '0'. Sel 0: v=5 if FUN_fffc4f8f()==1 (DAT_0001b4df) else DAT_00009c5a. Sel 1: DAT_00009be6. Sel 2: DAT_00009be7. Sel 3: DAT_00009be8. Sel 4: byte b=*FUN_fffa150c(FUN_fffb357c(DAT_00020b6b,2),DAT_00020b6b): if b<0x3c '-' and (0x3c-b) else '+' and (b-0x3c), halved, printed as 'nn.d' with .0/.5, i.e. -30.0..+30.0 in 0.5 steps (SS04+05.5;). Sel 5: *FUN_fffa1541(FUN_fffb357c(0,2)) (0-9). Sel 6: composed from DAT_00009c35/c36/c38 (see needs_disasm). Sel 7: DAT_00009c39,DAT_00009c3b,DAT_00009c3c,DAT_00009c3a then '0'. Sel 8: DAT_00020f1f
-- **Set parameters (firmware):** P1 must be '0' else error; P2 selector = hex digit (hex2nib), valid 0-8 else error. Set len 10 = 'SS0S' + 5 chars + ';'. Sel 0: [4]=0-5 (5 -> FUN_fffc4f9e(1) sets DAT_0001b4df=1; 0-4 -> DAT_00009c5a=v then FUN_fffc4f9e(0) copies to DAT_0001b4e0 and clears DAT_0001b4df), [5..8] must be '0000'. Sel 1: v 0-4 -> DAT_00009be6. Sel 2: v 0-1 -> DAT_00009be7. Sel 3: v 0-10 (0xA) -> DAT_00009be8. Sel 4: [4] '+'/'-', [5..6] 2 dec digits <=30, [7] '.', [8] '0' or '5'; stored byte=(30+nn)*2 (+1 if .5) for '+', (30-nn)*2 (-1 if .5) for '-', must be <=0x78 -> *FUN_fffa150c(...). Sel 5: v 0-9 -> *FUN_fffa1541(FUN_fffb357c(0,2)), [5..8]=0000. Sel 6: v 0-0xB: 0,1,2 -> DAT_00009c36=1,DAT_00009c35=v; 3 -> c36=0,c35=0,c38=2,c3d=1; 4 -> c36=0,c35=0,c38=1,c3d=0; 6 -> c36=0,c35=1,c38=2,c3d=1; 7 -> c36=0,c35=1,c38=1,c3d=0; 9 -> c36=0,c35=2,c38=2,c3d=1; 10 -> c36=0,c35=2,c38=1,c3d=0; 5,8,11 and >11 -> error; [5..8]=0000. Sel 7: [8] must be '0'; [4],[5] each '0'-'2', [6] '0'-'5', [7] '0'-'2' -> DAT_00009c39,c3b,c3c,c3a. Sel 8: v 0-1 -> DAT_00020f1f, [5..8]=0000. Any [5..8] mismatch for sels 0,1,2,3,5,6,8 -> error
+- **Read / answer (firmware):** SS0Sv0000; (len 10): 1c8e..1c91 = 'S','S','0',S copied from request; S=selector hex char 0-8; v=1 char then '0000' filler, except sel 4 = sign + nn.d and sel 7 = four digits + '0'. Sel 0: v=5 if FUN_fffc4f8f()==1 (DAT_0001b4df) else DAT_00009c5a. Sel 1: DAT_00009be6. Sel 2: DAT_00009be7. Sel 3: DAT_00009be8. Sel 4: byte b=*`scope_level_ptr`(`vfo_freq`(DAT_00020b6b,2),DAT_00020b6b): if b<0x3c '-' and (0x3c-b) else '+' and (b-0x3c), halved, printed as 'nn.d' with .0/.5, i.e. -30.0..+30.0 in 0.5 steps (SS04+05.5;). Sel 5: *`scope_span_ptr`(`vfo_freq`(0,2)) (0-9). Sel 6: composed from DAT_00009c35/c36/c38 (see needs_disasm). Sel 7: DAT_00009c39,DAT_00009c3b,DAT_00009c3c,DAT_00009c3a then '0'. Sel 8: DAT_00020f1f
+- **Set parameters (firmware):** P1 must be '0' else error; P2 selector = hex digit (hex2nib), valid 0-8 else error. Set len 10 = 'SS0S' + 5 chars + ';'. Sel 0: [4]=0-5 (5 -> FUN_fffc4f9e(1) sets DAT_0001b4df=1; 0-4 -> DAT_00009c5a=v then FUN_fffc4f9e(0) copies to DAT_0001b4e0 and clears DAT_0001b4df), [5..8] must be '0000'. Sel 1: v 0-4 -> DAT_00009be6. Sel 2: v 0-1 -> DAT_00009be7. Sel 3: v 0-10 (0xA) -> DAT_00009be8. Sel 4: [4] '+'/'-', [5..6] 2 dec digits <=30, [7] '.', [8] '0' or '5'; stored byte=(30+nn)*2 (+1 if .5) for '+', (30-nn)*2 (-1 if .5) for '-', must be <=0x78 -> *`scope_level_ptr`(...). Sel 5: v 0-9 -> *`scope_span_ptr`(`vfo_freq`(0,2)), [5..8]=0000. Sel 6: v 0-0xB: 0,1,2 -> DAT_00009c36=1,DAT_00009c35=v; 3 -> c36=0,c35=0,c38=2,c3d=1; 4 -> c36=0,c35=0,c38=1,c3d=0; 6 -> c36=0,c35=1,c38=2,c3d=1; 7 -> c36=0,c35=1,c38=1,c3d=0; 9 -> c36=0,c35=2,c38=2,c3d=1; 10 -> c36=0,c35=2,c38=1,c3d=0; 5,8,11 and >11 -> error; [5..8]=0000. Sel 7: [8] must be '0'; [4],[5] each '0'-'2', [6] '0'-'5', [7] '0'-'2' -> DAT_00009c39,c3b,c3c,c3a. Sel 8: v 0-1 -> DAT_00020f1f, [5..8]=0000. Any [5..8] mismatch for sels 0,1,2,3,5,6,8 -> error
 - **Class:** read+set
 - **Behaviour:** Multi-selector settings block: 9 sub-parameters (sel 0..8) in one command, all RAM variables (sel 4 a signed +/-30.0 in 0.5 steps, sel 6 a combo of three fields, sel 7 four small digits). Sel 0 value 5 goes through a separate flag DAT_0001b4df. Parameter shapes suggest spectrum/waterfall-scope style display settings [guess]; no TX, no frequency change, no key event, no EEPROM call in this function [fact]
-- **Globals / callees:** DAT_00009c5a, DAT_0001b4df/b4e0 (FUN_fffc4f9e@fffc4f9e, FUN_fffc4f8f@fffc4f8f), DAT_00009be6/be7/be8, DAT_00020b6b (selects per-VFO row), FUN_fffb357c, FUN_fffa150c@fffa150c, FUN_fffa1541@fffa1541, DAT_00009c35/c36/c38/c3d, DAT_00009c39/c3a/c3b/c3c, DAT_00020f1f
+- **Globals / callees:** DAT_00009c5a, DAT_0001b4df/b4e0 (FUN_fffc4f9e@fffc4f9e, FUN_fffc4f8f@fffc4f8f), DAT_00009be6/be7/be8, DAT_00020b6b (selects per-VFO row), `vfo_freq`, `scope_level_ptr`@fffa150c, `scope_span_ptr`@fffa1541, DAT_00009c35/c36/c38/c3d, DAT_00009c39/c3a/c3b/c3c, DAT_00020f1f
 - **Risk:** low: display-type settings stored in RAM, no TX/key/EEPROM call here
-- **Open (needs disassembly):** Sel 6 read-back arm: decompiler tree mixes c35/c36/c38 and shows junk 'uRam00000000=1' writes, and does not round-trip with the set mapping (set 3 reads back 9): re-check disasm of cat_SS fffae850..fffaf3b5. Also confirm decompiler flag puVar9 == (selector==0), and what FUN_fffa150c/fffa1541/fffb357c index
+- **Open (needs disassembly):** Sel 6 read-back arm: decompiler tree mixes c35/c36/c38 and shows junk 'uRam00000000=1' writes, and does not round-trip with the set mapping (set 3 reads back 9): re-check disasm of cat_SS fffae850..fffaf3b5. Also confirm decompiler flag puVar9 == (selector==0), and what `scope_level_ptr`/fffa1541/fffb357c index
 
 ### ST
 
 - **Index / handler:** 92, cat_ST @ fffaf3b5; switch case fffa4bee; length tests `len==3:cat_ST@fffaf3b5 \| len==4:cat_ST@fffaf3b5` [fact]
 - **Manual 2306-C:** SPLIT. Set `STP1;` (4), read `ST;` (3), answer `STP1;` (4), AI O. P1 0 off,1 on
 - **Read / answer (firmware):** STn; n='0' if DAT_00009c5e==0 else '1'
-- **Set parameters (firmware):** P1 '0' or '1' else error; key_event_filter(0x305,0) must pass and DAT_00020b3d must be 0 else error. '0': if DAT_00009c5e==1 call FUN_fffbeca5() (toggle off); '1': if DAT_00009c5e==0 call FUN_fffbeca5() (toggle on). No-op if already in that state
+- **Set parameters (firmware):** P1 '0' or '1' else error; key_event_filter(0x305,0) must pass and DAT_00020b3d must be 0 else error. '0': if DAT_00009c5e==1 call `split_toggle`() (toggle off); '1': if DAT_00009c5e==0 call `split_toggle`() (toggle on). No-op if already in that state
 - **Class:** read+set
-- **Behaviour:** Turns the state flag DAT_00009c5e on/off. FUN_fffbeca5 saves/restores DAT_00009dbe/dbf (per-VFO mode bytes, mirrored to UI struct offsets 0x484/0x485) and sets DAT_00009dc7/c8; behaves like a split-operation toggle (TS requires c5e==1; VS clears it) [inference]. Emulates front-panel key code 0x305
-- **Globals / callees:** DAT_00009c5e (rw), DAT_00020b3d (r, probably TX-active), key_event_filter(0x305), FUN_fffbeca5@fffbeca5 (calls FUN_fffe3d24, FUN_fffc27ad, FUN_fff9cdb0, FUN_fffc2794 if DAT_00020b9b==1), UI struct PTR_DAT_00025d54
+- **Behaviour:** Turns the state flag DAT_00009c5e on/off. `split_toggle` saves/restores DAT_00009dbe/dbf (per-VFO mode bytes, mirrored to UI struct offsets 0x484/0x485) and sets DAT_00009dc7/c8; behaves like a split-operation toggle (TS requires c5e==1; VS clears it) [inference]. Emulates front-panel key code 0x305
+- **Globals / callees:** DAT_00009c5e (rw), DAT_00020b3d (r, probably TX-active), key_event_filter(0x305), `split_toggle`@fffbeca5 (calls FUN_fffe3d24, `vm_toggle_core`, FUN_fff9cdb0, FUN_fffc2794 if DAT_00020b9b==1), UI struct PTR_DAT_00025d54
 - **Risk:** medium: changes operating state (VFO routing), blocked while DAT_00020b3d!=0
 - **Open (needs disassembly):** What DAT_00020b3d is (TX flag?); FUN_fffe3d24
 
@@ -1064,8 +1064,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** (no reply)
 - **Set parameters (firmware):** none ('SV;' only, dispatched with is_set=1)
 - **Class:** action
-- **Behaviour:** Front-panel key 0x30a action: toggles active VFO A/B (FUN_fffbf4bb: clears DAT_00009c5e, if active-VFO mode is 1 flips DAT_00009dbd, else steps the mode toward 1 first via FUN_fffbf41f / FUN_fffc1c04) [inference]. Error if key filter or any busy flag below blocks it
-- **Globals / callees:** key_event_filter(0x30a,0); key_event_filter key-filter; error if DAT_00020f1c==1 or DAT_00020f70==1 or DAT_00020f0c!=0 or DAT_00020b8a==1 or DAT_00020b3d!=0 or DAT_00020cce==1 or DAT_00020f1b==1 or DAT_00020ccd==1 or DAT_00020b7c!=0 or DAT_00020cd0==1 or DAT_00020cd1==1 or DAT_00020f11==1; FUN_fffbf4bb@fffbf4bb; DAT_00009c5e, DAT_00009dbd, DAT_00009dbe/dbf
+- **Behaviour:** Front-panel key 0x30a action: toggles active VFO A/B (`vfo_ab_toggle`: clears DAT_00009c5e, if active-VFO mode is 1 flips DAT_00009dbd, else steps the mode toward 1 first via `vm_toggle` / `vfo_reload`) [inference]. Error if key filter or any busy flag below blocks it
+- **Globals / callees:** key_event_filter(0x30a,0); key_event_filter key-filter; error if DAT_00020f1c==1 or DAT_00020f70==1 or DAT_00020f0c!=0 or DAT_00020b8a==1 or DAT_00020b3d!=0 or DAT_00020cce==1 or DAT_00020f1b==1 or DAT_00020ccd==1 or DAT_00020b7c!=0 or DAT_00020cd0==1 or DAT_00020cd1==1 or DAT_00020f11==1; `vfo_ab_toggle`@fffbf4bb; DAT_00009c5e, DAT_00009dbd, DAT_00009dbe/dbf
 - **Risk:** medium: changes active VFO / operating state; refused while TX-style flags are set
 - **Open (needs disassembly):** Meaning of the 12 guard flags (known by address only)
 
@@ -1085,13 +1085,13 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 95, cat_TX @ fffaf7b8; switch case fffa4c8a; length tests `len==3:cat_TX@fffaf7b8 \| len==4:cat_TX@fffaf7b8` [fact]
 - **Manual 2306-C:** TX SET. Set `TXP1;` (4), read `TX;` (3), answer `TXP1;` (4), AI O. P1 0 radio TX off/CAT TX off,1 radio TX off/CAT TX on,2 radio TX on/CAT TX off (answer)
-- **Read / answer (firmware):** TXn; n='0' if FUN_fffb6ec5()==0 (DAT_0001204d, TX-source byte), '1' if ==5, else '2'. DAT_0001204d is produced by FUN_fffb85a2 (fffb7128 file): 5 = CAT TX flag DAT_00020b28 is the source; other nonzero codes (1,2,3,4,7,8,9 from DAT_00020b24..2c flags) read as '2'
+- **Read / answer (firmware):** TXn; n='0' if `ptt_source_get`()==0 (DAT_0001204d, TX-source byte), '1' if ==5, else '2'. DAT_0001204d is produced by `ptt_source_select` (fffb7128 file): 5 = CAT TX flag DAT_00020b28 is the source; other nonzero codes (1,2,3,4,7,8,9 from DAT_00020b24..2c flags) read as '2'
 - **Set parameters (firmware):** P1 hex char via hex2nib: '0' -> DAT_00020b28=0 (CAT TX release); '1' -> DAT_00020b28=1 (CAT TX request); other -> error. Error if DAT_00020f1c==1 or DAT_00020f70==1. NO key-filter call (key_event_filter not used)
 - **Class:** read+set
-- **Behaviour:** TX1 raises the CAT transmit flag DAT_00020b28; the TX-source resolver FUN_fffb85a2 (line ~1397) checks DAT_00020b28==1 first (when DAT_00020b97==0) and yields source code 5, so the radio goes to transmit; TX0 clears it. DAT_00020b28 is also cleared by the periodic task in the fffb2fc0 file (~line 698) when DAT_00020b8c==1 or DAT_00020b9e==1 (protection/fault style conditions) [inference]. The handler has no timeout or confirmation [fact]
-- **Globals / callees:** DAT_00020b28 (w; read in FUN_fffb85a2, cleared ~fffb2fc0:698), DAT_0001204d (r via FUN_fffb6ec5@fffb6ec5), DAT_00020f1c, DAT_00020f70 (guards), hex2nib
+- **Behaviour:** TX1 raises the CAT transmit flag DAT_00020b28; the TX-source resolver `ptt_source_select` (line ~1397) checks DAT_00020b28==1 first (when DAT_00020b97==0) and yields source code 5, so the radio goes to transmit; TX0 clears it. DAT_00020b28 is also cleared by the periodic task in the fffb2fc0 file (~line 698) when DAT_00020b8c==1 or DAT_00020b9e==1 (protection/fault style conditions) [inference]. The handler has no timeout or confirmation [fact]
+- **Globals / callees:** DAT_00020b28 (w; read in `ptt_source_select`, cleared ~fffb2fc0:698), DAT_0001204d (r via `ptt_source_get`@fffb6ec5), DAT_00020f1c, DAT_00020f70 (guards), hex2nib
 - **Risk:** high: keys the transmitter via CAT; not routed through the key-event filter
-- **Open (needs disassembly):** Confirm TX-source priority and any interlock in FUN_fffb85a2@fffb85a2; what DAT_00020f1c/DAT_00020f70 are
+- **Open (needs disassembly):** Confirm TX-source priority and any interlock in `ptt_source_select`@fffb85a2; what DAT_00020f1c/DAT_00020f70 are
 
 ### UP
 
@@ -1133,10 +1133,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 99, cat_VM @ fffafadb; switch case fffa4d4d; length tests `len==0:cat_VM@fffafadb` [fact]
 - **Manual 2306-C:** [V/M] KEY FUNCTION. Set `VM;` (3), read `-` (-), answer `-` (-), AI X. no parameters
 - **Read / answer (firmware):** VM0hh; (len 6): hh = byte2hex two hex chars of a code from m = active VFO mode byte (DAT_00009dbe if DAT_00009dbd==0 else DAT_00009dbf) and b = DAT_000060c9/ca: m==2: b<0x63 -> 11, b<0x75 -> 21, b<0x84 -> 51, else 91; m==3 -> 10; m==4 -> 20; else 00
-- **Set parameters (firmware):** Dispatch compound test: len 3, 4 or 6 else error; handler errors if len!=3 and P1!='0'. Set path (len 3 or 6): key_event_filter(0x309,0) + same 12-flag busy guard as SV else error. len 3 'VM;' -> FUN_fffbf41f() (cycle active VFO mode state). len 6: [3],[4] must be '00' else error; if m!=1 -> FUN_fffbf41f(), re-read m, if still !=1 -> FUN_fffbf41f() again (force back to mode 1)
+- **Set parameters (firmware):** Dispatch compound test: len 3, 4 or 6 else error; handler errors if len!=3 and P1!='0'. Set path (len 3 or 6): key_event_filter(0x309,0) + same 12-flag busy guard as SV else error. len 3 'VM;' -> `vm_toggle`() (cycle active VFO mode state). len 6: [3],[4] must be '00' else error; if m!=1 -> `vm_toggle`(), re-read m, if still !=1 -> `vm_toggle`() again (force back to mode 1)
 - **Class:** read+set
 - **Behaviour:** Read returns a hex code describing the VFO/memory-mode state; 'VM;' cycles the mode; 'VM000;' forces mode 1 (probably VFO) [inference: VFO/memory mode control, key code 0x309]
-- **Globals / callees:** DAT_00009dbd (active VFO), DAT_00009dbe/dbf (mode bytes), DAT_000060c9/ca, key_event_filter(0x309), FUN_fffbf41f@fffbf41f (-> FUN_fffe3d24, FUN_fffc27ad, FUN_fffec578 or FUN_fffc2794 when DAT_00020b9b==1), guard flags as SV
+- **Globals / callees:** DAT_00009dbd (active VFO), DAT_00009dbe/dbf (mode bytes), DAT_000060c9/ca, key_event_filter(0x309), `vm_toggle`@fffbf41f (-> FUN_fffe3d24, `vm_toggle_core`, FUN_fffec578 or FUN_fffc2794 when DAT_00020b9b==1), guard flags as SV
 - **Risk:** medium: changes VFO/memory operating mode
 - **Open (needs disassembly):** Which values of DAT_00009dbe/f are VFO/mem etc; only '00' accepted in set
 
@@ -1145,24 +1145,24 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 100, cat_VS @ fffafdbd; switch case fffa4d97; length tests `len==3:cat_VS@fffafdbd \| len==4:cat_VS@fffafdbd` [fact]
 - **Manual 2306-C:** VFO SELECT. Set `VSP1;` (4), read `VS;` (3), answer `VSP1;` (4), AI O. P1 0 main=VFO-A/sub=VFO-B,1 main=VFO-B/sub=VFO-A
 - **Read / answer (firmware):** VSn; n=nib2hex(DAT_00009dbd) ('0'/'1' active VFO)
-- **Set parameters (firmware):** P1 '0' or '1' else error (checked after the guard). key_event_filter(0x30a,0) + 12-flag busy guard (see SV) else error. Clears DAT_00009c5e=0 first, then if requested VFO != DAT_00009dbd calls FUN_fffbf4bb() (swap); sets DAT_00020f10=1
+- **Set parameters (firmware):** P1 '0' or '1' else error (checked after the guard). key_event_filter(0x30a,0) + 12-flag busy guard (see SV) else error. Clears DAT_00009c5e=0 first, then if requested VFO != DAT_00009dbd calls `vfo_ab_toggle`() (swap); sets DAT_00020f10=1
 - **Class:** read+set
-- **Behaviour:** Selects active VFO 0/1 (A/B) [inference from the DAT_00009dbd flip in FUN_fffbf4bb], also drops split state. Key code 0x30a
-- **Globals / callees:** DAT_00009dbd (rw), DAT_00009c5e (w=0), DAT_00020f10 (w=1), FUN_fffbf4bb@fffbf4bb, key_event_filter(0x30a)
-- **Risk:** medium: changes active VFO; clears DAT_00009c5e without FUN_fffbeca5 bookkeeping when target equals current
-- **Open (needs disassembly):** Effect of DAT_00009c5e being cleared without FUN_fffbeca5 restore
+- **Behaviour:** Selects active VFO 0/1 (A/B) [inference from the DAT_00009dbd flip in `vfo_ab_toggle`], also drops split state. Key code 0x30a
+- **Globals / callees:** DAT_00009dbd (rw), DAT_00009c5e (w=0), DAT_00020f10 (w=1), `vfo_ab_toggle`@fffbf4bb, key_event_filter(0x30a)
+- **Risk:** medium: changes active VFO; clears DAT_00009c5e without `split_toggle` bookkeeping when target equals current
+- **Open (needs disassembly):** Effect of DAT_00009c5e being cleared without `split_toggle` restore
 
 ### VX
 
 - **Index / handler:** 101, cat_VX @ fffaffa0; switch case fffa4dd1; length tests `len==3:cat_VX@fffaffa0 \| len==4:cat_VX@fffaffa0` [fact]
 - **Manual 2306-C:** VOX. Set `VXP1;` (4), read `VX;` (3), answer `VXP1;` (4), AI O. P1 0 off,1 on
-- **Read / answer (firmware):** VXn; n='0' if mode (FUN_fffb3196(1)) is 2,3,12 or 13, else hex(DAT_00009c5d)
+- **Read / answer (firmware):** VXn; n='0' if mode (`vfo_mode`(1)) is 2,3,12 or 13, else hex(DAT_00009c5d)
 - **Set parameters (firmware):** P1 '0' -> DAT_00009c5d=0, '1' -> DAT_00009c5d=1, else error; key_event_filter(0x302,0) must pass; error if mode in {2,3,12,13}
 - **Class:** read+set
 - **Behaviour:** On/off flag DAT_00009c5d, forced off/refused in modes 2,3,12,13 (the 500 Hz class in SH); looks like VOX on/off [inference]. Key code 0x302
-- **Globals / callees:** DAT_00009c5d (rw), FUN_fffb3196(1)@fffb3196, key_event_filter(0x302)
+- **Globals / callees:** DAT_00009c5d (rw), `vfo_mode`(1)@fffb3196, key_event_filter(0x302)
 - **Risk:** medium: probably TX-related enable [inference]
-- **Open (needs disassembly):** FUN_fffb3196(1) takes the split-aware path (DAT_00009c5e); confirm which VFO's mode is queried
+- **Open (needs disassembly):** `vfo_mode`(1) takes the split-aware path (DAT_00009c5e); confirm which VFO's mode is queried
 
 ### XT
 
@@ -1180,9 +1180,9 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Index / handler:** 103, cat_ZI @ fffb006e; switch case fffa4e0b; length tests `len==4:cat_ZI@fffb006e` [fact]
 - **Manual 2306-C:** ZERO IN. Set `ZIP1;` (4), read `-` (-), answer `-` (-), AI X. P1 0 fixed
 - **Read / answer (firmware):** (no reply)
-- **Set parameters (firmware):** P1 must be '0' else error. key_event_filter(0x307,0) must pass; error if DAT_00020f1c==1 or DAT_00020f70==1 or DAT_00020f0c!=0; error unless low nibble of the current VFO block byte (FUN_fffb324c(DAT_00020b6b)) is 2 or 3
+- **Set parameters (firmware):** P1 must be '0' else error. key_event_filter(0x307,0) must pass; error if DAT_00020f1c==1 or DAT_00020f70==1 or DAT_00020f0c!=0; error unless low nibble of the current VFO block byte (`vfo_rec_ptr`(DAT_00020b6b)) is 2 or 3
 - **Class:** action
-- **Behaviour:** Zero-in style action for modes 2/3: FUN_fffbf0b6 reads an offset FUN_fff9d895() (short, must be within +/-35), multiplies by 10, adds (subtracts in mode 2) to the stored VFO frequency (bytes +0x4a..0x4d), applies via FUN_fffc10c3 and refreshes (FUN_fffc2efb, FUN_fffc2fde, FUN_fffc16f6). Changes the operating frequency [inference: CW-style zero-in/auto-tune]. Key code 0x307
-- **Globals / callees:** key_event_filter(0x307), FUN_fffb324c, DAT_00020b6b, FUN_fffbf0b6@fffbf0b6, FUN_fff9d895, FUN_fffc10c3 (freq set), VFO block DAT_00009d09/d63 (+0x4a..0x4d)
+- **Behaviour:** Zero-in style action for modes 2/3: FUN_fffbf0b6 reads an offset `dsp_tune_offset`() (short, must be within +/-35), multiplies by 10, adds (subtracts in mode 2) to the stored VFO frequency (bytes +0x4a..0x4d), applies via `freq_clamp` and refreshes (FUN_fffc2efb, `vfo_mark_edited`, `vfo_store_back`). Changes the operating frequency [inference: CW-style zero-in/auto-tune]. Key code 0x307
+- **Globals / callees:** key_event_filter(0x307), `vfo_rec_ptr`, DAT_00020b6b, FUN_fffbf0b6@fffbf0b6, `dsp_tune_offset`, `freq_clamp` (freq set), VFO block DAT_00009d09/d63 (+0x4a..0x4d)
 - **Risk:** medium: retunes the VFO (up to +/-350 Hz) but does not key TX
-- **Open (needs disassembly):** Source/units of FUN_fff9d895 (measured offset?)
+- **Open (needs disassembly):** Source/units of `dsp_tune_offset` (measured offset?)

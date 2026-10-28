@@ -4,8 +4,7 @@ Back to the [MAIN overview](README.md).
 
 Part of T10b. MAIN has no key or encoder hardware of its own: the DISPLAY CPU scans the keys, encoders and touch panel and sends events over the
 SCI1 link ([display-link.md](display-link.md)). This page follows those events from the received frame to the handler that changes the radio. The
-DISPLAY side (scan, debouncing, code assignment) is `docs/code/display/input.md` (T11f). Names in *italics* are proposed in
-`tools/ghidra/names_main.T10b.tsv`. Tags follow AGENTS.md.
+DISPLAY side (scan, debouncing, code assignment) is `docs/code/display/input.md` (T11f). Function names are the names applied in Ghidra (`tools/ghidra/names_main.tsv`, merged by T17) and match `decomp/main/`; a name still in *italics* is a description that was not applied as a Ghidra name. Tags follow AGENTS.md.
 
 ## Overview
 
@@ -35,12 +34,12 @@ All boxes are code paths seen in the decomp **[fact]**.
 
 ## Key events (`E0`)
 
-Frame `E0 b1 code_hi code_lo b4 sum` (6 bytes). *`displink_rx_E0_key`* always ACKs, calls `key_event_filter(code, b1)` and, if that returns 1, stores
+Frame `E0 b1 code_hi code_lo b4 sum` (6 bytes). `displink_rx_E0_key` always ACKs, calls `key_event_filter(code, b1)` and, if that returns 1, stores
 the event in the one-slot mailbox in the UI state struct (0x20B04) **[fact]**:
 
 | Field | Value | Meaning |
 |---|---|---|
-| +0x9C | b1 >> 4 | **event source**. 4 = touch on the scope/tuning area (handled by *`key_touch_scope_tune`*, see below) **[inference]**; the other values are not distinguished on MAIN except by `key_event_filter` |
+| +0x9C | b1 >> 4 | **event source**. 4 = touch on the scope/tuning area (handled by `key_touch_scope_tune`, see below) **[inference]**; the other values are not distinguished on MAIN except by `key_event_filter` |
 | +0x9D | b1 & 0xF | **action**: 1 = press, 0 = release, 2 = hold **[fact for the values: `key_task` branches on them; names are inference]** |
 | +0x9E | u16 | key code (big-endian on the wire) |
 | +0xA0 | u8 | event pending |
@@ -55,7 +54,7 @@ Returns 1 if the event may run. It is also called by the CAT handlers (T09) with
 - **Key assignment.** Codes 0x348, 0x34E, 0x35B, 0x35C, 0x35D, 0x35E look up a slot from settings 0x9ACC, 0x9ACD, 0x9AC8, 0x9AC9, 0x9ACA, 0x9ACB and are
   replaced by `key_assign_map` 0xFFF88312[slot] (15 entries: 0x300, 0x30E, 0x30A, 0x309, 0x301, 0x302, 0x30C, 0x307, 0x305, 0x311, 0x30D, 0x303,
   0x304, 0x348, 0x34E). So these six codes are **user-assignable keys/knob pushes** that act as one of the fixed keys **[fact for the remap,
-  inference for "user-assignable"]**. *`key_assign_slot`* 0xFFFBC225 does the same lookup for `key_task`.
+  inference for "user-assignable"]**. `key_assign_slot` 0xFFFBC225 does the same lookup for `key_task`.
 - Code 0x300 with action 2 (hold) sets 0x20B30 = 2 and is not passed on **[fact]**.
 - Mode gates (each rejects with `beep_request(3)` on a press) **[fact]**:
   - 0x20BBE = 1: rejects source 4 and codes < 8 and 0x16..0x19.
@@ -86,7 +85,7 @@ stateDiagram-v2
   action-2 event. Codes 0x300 and up get their hold event from the DISPLAY **[fact for the branch, inference for the DISPLAY part]**.
 - **Repeat** (table 0xFFF8C608) runs when 0x1B4DC is set and timer 0x40 expires; the code that sets 0x1B4DC is in the handlers **[fact]**.
 - The handler flag +0x409 suppresses the short handler after a press handler that consumed the key **[fact]**.
-- Code 0x340 released with source ≠ 4: *`key_cancel_check`* 0xFFFBC103 clears +0x78 (and 0x20CCC, 0x20B2E), and the event is dropped **[fact]**.
+- Code 0x340 released with source ≠ 4: `key_cancel_check` 0xFFFBC103 clears +0x78 (and 0x20CCC, 0x20B2E), and the event is dropped **[fact]**.
 
 ### Key classes and handler tables
 
@@ -142,31 +141,31 @@ Physical-key handlers (press / short / long / release; `-` = `key_nop`) **[fact]
 | 0x311 | 1 | 0xFFFBFEE9 | 0xFFFBFF22 | 0xFFFBFF57 | - |
 | 0x312 | 2 | 0xFFFBFF93 | 0xFFFC0003 | 0xFFFC0047 | 0xFFFC008F |
 
-Callees of the few handlers that are already functions **[fact]**: 0x302 short → `FUN_fffc2794`, `FUN_fffb3196`, `beep_request`, `soft_timer_start`;
-0x307 short → `FUN_fffc10c3`, `FUN_fffc2efb`, `FUN_fffc16f6` (the same call that follows the VFO write in touch tuning); 0x30E short/long →
-`FUN_fffc34d8`, `FUN_fffc2d93` (also called after the VFO write in touch tuning). Naming each key needs the handler bodies and the DISPLAY's
+Callees of the few handlers that are already functions **[fact]**: 0x302 short → `FUN_fffc2794`, `vfo_mode`, `beep_request`, `swtimer_start`;
+0x307 short → `freq_clamp`, `FUN_fffc2efb`, `vfo_store_back` (the same call that follows the VFO write in touch tuning); 0x30E short/long →
+`FUN_fffc34d8`, `vfo_is_memory` (also called after the VFO write in touch tuning). Naming each key needs the handler bodies and the DISPLAY's
 key-code table (T11f).
 
 ### Touch tuning (source 4)
 
-*`key_touch_scope_tune`* 0xFFFBC464 handles source-4 presses. If a special screen is active (`FUN_fffc8ca8`, `FUN_fffc90ed`) it goes there; otherwise for
+`key_touch_scope_tune` 0xFFFBC464 handles source-4 presses. If a special screen is active (`FUN_fffc8ca8`, `FUN_fffc90ed`) it goes there; otherwise for
 a code below 0x317 it computes **f = start + span · code / 0x316** (span from the table 0xFFF89D24 indexed by the scope span setting, start from the
-VFO record +0x4A..+0x4D minus half the span, or from 0x20F60 / `FUN_fffb4ebe(2)` depending on 0x9C35), checks it with `FUN_fffb3aa1`, writes it to the
-active VFO (0x9D09 or 0x9D63) and calls `FUN_fffc16f6`. Then `beep_request(1)`, or `beep_request(3)` if out of range **[fact]**. So the code is the
+VFO record +0x4A..+0x4D minus half the span, or from 0x20F60 / `bandmem_get`(2)` depending on 0x9C35), checks it with `freq_in_range`, writes it to the
+active VFO (0x9D09 or 0x9D63) and calls `vfo_store_back`. Then `beep_request(1)`, or `beep_request(3)` if out of range **[fact]**. So the code is the
 x pixel on a 790-pixel-wide scope (0x316 = 790) and **touching the spectrum tunes the VFO** there **[inference, high]**. The scope modes 0/1/2 in
 0x9C35 are likely CENTER / FIX / CURSOR **[guess]**.
 
 ## Encoders (`E1`)
 
-Frame `E1 id step 0 0 0 sum` (7 bytes; the DISPLAY builds it in `FUN_20115c74`). *`displink_rx_E1_encoder`* ignores it while +0x80 = 1, stores the id
+Frame `E1 id step 0 0 0 sum` (7 bytes; the DISPLAY builds it in `FUN_20115c74`). `displink_rx_E1_encoder` ignores it while +0x80 = 1, stores the id
 in +0xA1 and dispatches **[fact]**:
 
 | id | Pseudo code for `key_event_filter` | Normal action | In numeric-entry mode (+0x437) |
 |---|---|---|---|
-| 1 | 0xFF0 | *`enc_main_dial`* 0xFFFC52D7(step): accumulates in 0x1FF6A and tunes (`FUN_fffc53dc` or `FUN_fffc5a84` by `FUN_fffc538b`) | `ui_numentry_step` |
+| 1 | 0xFF0 | `enc_main_dial` 0xFFFC52D7(step): accumulates in 0x1FF6A and tunes (`FUN_fffc53dc` or `FUN_fffc5a84` by `FUN_fffc538b`) | `ui_numentry_step` |
 | 6 | 0xFF0 (or as id 3) | as id 1 (×4 when +0x415 = 1); when +0x70 = 1 it is handled as id 3, and the step is negated if +0x74 = 0 | as id 1 |
-| 2 | 0xFF1 | *`enc2_step`* 0xFFFC64C0: dispatches by screen (+0x95, +0xBA, +0x93/+0x94, +0x96, else `FUN_fffc6c20`) | `FUN_fffc670d` |
-| 3 | 0xFF2 | *`enc3_step`* 0xFFFC7DAF: when +0x70 = 1 selects one of 0x1D..0x21 in +0x7A, else other screens | `FUN_fffc82b7` |
+| 2 | 0xFF1 | `enc2_step` 0xFFFC64C0: dispatches by screen (+0x95, +0xBA, +0x93/+0x94, +0x96, else `FUN_fffc6c20`) | `FUN_fffc670d` |
+| 3 | 0xFF2 | `enc3_step` 0xFFFC7DAF: when +0x70 = 1 selects one of 0x1D..0x21 in +0x7A, else other screens | `FUN_fffc82b7` |
 | 4 | — | if `FUN_fffc519d(0, 1)` allows: +0xA3 = step (ignored on some +0x3FD screens) | `FUN_fffc89ef` |
 | 5 | — | +0xA4 = step | `FUN_fffc8a90` |
 
@@ -182,20 +181,20 @@ multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs 
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0xFFF95829 | `FUN_fff95829` | *`displink_rx_E0_key`* | E0 → filter → mailbox |
-| 0xFFF9588B | `FUN_fff9588b` | *`displink_rx_E1_encoder`* | E1 → encoder dispatch |
+| 0xFFF95829 | `displink_rx_E0_key` | `displink_rx_E0_key` | E0 → filter → mailbox |
+| 0xFFF9588B | `displink_rx_E1_encoder` | `displink_rx_E1_encoder` | E1 → encoder dispatch |
 | 0xFFFB44F7 | `key_event_filter` | | mode gates and key remap |
-| 0xFFFBBD58 | `FUN_fffbbd58` | *`key_task`* | key state machine (`main_loop`) |
-| 0xFFFBBD53 | `FUN_fffbbd53` | *`key_task_init`* | called in `app_main` (→ `FUN_fffc4d93`) **[inference]** |
-| 0xFFFBC103 | `FUN_fffbc103` | *`key_cancel_check`* | 0x340 release handling |
-| 0xFFFBC1D0 | `FUN_fffbc1d0` | *`key_class_of`* | class from 0xFFF83164, or by assigned slot |
-| 0xFFFBC225 | `FUN_fffbc225` | *`key_assign_slot`* | assignable code → slot (0xFF if none) |
-| 0xFFFBC35F / 0xFFFBC38E / 0xFFFBC3BD / 0xFFFBC406 / 0xFFFBC435 | `FUN_fffbc35f` … | *`key_call_press`* / *`key_call_short`* / *`key_call_long`* / *`key_call_repeat`* / *`key_call_release`* | JSR through the five tables |
-| 0xFFFBC464 | `FUN_fffbc464` | *`key_touch_scope_tune`* | touch → frequency |
-| 0xFFFC4A8D | `FUN_fffc4a8d` | *`key_nop`* | empty handler |
-| 0xFFFC52D7 | `FUN_fffc52d7` | *`enc_main_dial`* | main dial steps |
-| 0xFFFC64C0 / 0xFFFC7DAF | `FUN_fffc64c0` / `FUN_fffc7daf` | *`enc2_step`* / *`enc3_step`* | knob steps by screen |
-| 0xFFFB2DA6 | `FUN_fffb2da6` | *`beep_request`* | **[inference]** |
+| 0xFFFBBD58 | `key_task` | `key_task` | key state machine (`main_loop`) |
+| 0xFFFBBD53 | `key_task_init` | `key_task_init` | called in `app_main` (→ `FUN_fffc4d93`) **[inference]** |
+| 0xFFFBC103 | `key_cancel_check` | `key_cancel_check` | 0x340 release handling |
+| 0xFFFBC1D0 | `key_class_of` | `key_class_of` | class from 0xFFF83164, or by assigned slot |
+| 0xFFFBC225 | `key_assign_slot` | `key_assign_slot` | assignable code → slot (0xFF if none) |
+| 0xFFFBC35F / 0xFFFBC38E / 0xFFFBC3BD / 0xFFFBC406 / 0xFFFBC435 | `key_call_press` … | `key_call_press` / `key_call_short` / `key_call_long` / `key_call_repeat` / `key_call_release` | JSR through the five tables |
+| 0xFFFBC464 | `key_touch_scope_tune` | `key_touch_scope_tune` | touch → frequency |
+| 0xFFFC4A8D | `key_nop` | `key_nop` | empty handler |
+| 0xFFFC52D7 | `enc_main_dial` | `enc_main_dial` | main dial steps |
+| 0xFFFC64C0 / 0xFFFC7DAF | `enc2_step` / `enc3_step` | `enc2_step` / `enc3_step` | knob steps by screen |
+| 0xFFFB2DA6 | `beep_request` | `beep_request` | **[inference]** |
 
 ## Data
 
@@ -206,7 +205,7 @@ multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs 
 | 0xFFF88534 | 13 × u16 | `@key_assign_codes` | same first 13 codes, used by `key_class_of` for slots < 13 |
 | 0xFFF834B6 | u8[] | | class for slots ≥ 13 |
 | 0xFFF89D94 / 0xFFF8AB10 / 0xFFF8B88C / 0xFFF8C608 / 0xFFF8D384 | 863 × u32 each | `@key_press_table` … `@key_release_table` | handler tables |
-| 0xFFF89D24 | u32[] | `@scope_span_table` | span per scope-span setting (touch tuning, also `FUN_fffbc29f`) **[inference]** |
+| 0xFFF89D24 | u32[] | `@scope_span_table` | span per scope-span setting (touch tuning, also `scope_cursor_follow`) **[inference]** |
 | 0x20B04 + 0x9C..0xA0 | | | key mailbox (source, action, code, pending) |
 | 0x20B04 + 0xA1..0xA4 | | | last encoder id, main-dial step, encoder 4 / 5 values |
 | 0x1216A / 0x1216B / 0x1216C / 0x1FA40 | u8 / u8 / u8 / u16 | | `key_task` source, state, class, code |
