@@ -90,6 +90,7 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 | `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
 | `decomp_quality.py` | Decompile-quality regression check (#97 B11): `compare old new` exits 1 if any count in `quality.tsv` went up (run by `bootstrap.sh verify`); `index INDEX.md LABEL=quality.tsv ...` renders the counts as a table between `<!-- quality:begin/end -->` | `decomp/*/quality.tsv` → exit code / `INDEX.md` | T21f |
+| `hifi4_rizin_compare.py` | Re-decodes every non-FLIX HiFi4 instruction of `flix.dis` with rizin's Capstone Xtensa decoder, driven from `flix.dis`'s own addresses, and classifies each (agree / rizin illegal / mnemonic / operands / standard-FPU layout) | rizin + `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin` + `decomp/ifdsp/hifi4/flix.dis` → stdout summary, per-instruction TSV | T22c |
 | `rx_compare.py` | Diffs Ghidra's MAIN (RX) listing against GNU binutils `rx-elf-objdump` per instruction (length, mnemonic, operands; normalisation rules N1-N10 in the docstring); exit 1 on any difference | `ListingExport.java` TSV + `build/FT-710_MAIN_V0112.bin` (+ `~/opt/rx-binutils-2.47`) → stdout, `--diffs` TSV | T21c |
 
 ## tools/ghidra/ (Ghidra scripts and their data)

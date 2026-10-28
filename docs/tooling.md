@@ -304,6 +304,18 @@ The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is in
 | Not tried | Espressif overlays (ESP32 cores): different core configuration |
 | Remove | `rm -rf ~/opt/zephyr-sdk-0.17.0` |
 
+## rizin (T22a/T22c, 2026-10-28)
+
+rizin **0.9.1** (2026-06-29, commit `c3a90e9`), the official static Linux build `rizin-v0.9.1-static-x86_64.tar.xz` from
+github.com/rizinorg/rizin/releases (SHA-256 `9102249a…e8cf`, matches the release digest), unpacked to `~/opt/rizin-0.9.1/`
+(tarball in `~/opt/dl/rizin-0.9.1/`); installed by T22a, used by T22c too. Not on `PATH`; call `~/opt/rizin-0.9.1/bin/rizin`.
+Its Xtensa plugin is **Capstone-based** (LLVM tables), so it shares no code with GNU libisa / `xtensa-modules.c`.
+Known limits seen on the HiFi4 image (T22c, `tools/hifi4_rizin_compare.py`) **[fact]**: no `beqz.n`/`bnez.n`/`nop.n`
+(returned as invalid), `2cff` (`movi.n a15, 47`) shown as `break.n`, `slli` with shift 32 printed with an empty operand,
+`any8` names the raw `s` field (`b14`) instead of the BR8 group, no HiFi4/`f64*`/cache/MPU/`l32ai`/`s32nb` ops, and the FPU
+decoded with the standard FP-option layout on `f0..f15` (this core's VFPU uses `aed` registers and other fields).
+Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
+
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
