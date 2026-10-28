@@ -60,6 +60,13 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | done |
 | T20 | [Onboarding: rebuild everything from the official downloads + getting-started manual](T20-onboarding.md) | T01–T19 | done |
 | T21 | [Close the Ghidra decompile gaps (#97)](T21-ghidra-gaps.md) | T05, T07, T11, T12e, T17, T20 | in progress |
+| T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | in progress |
+| T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | in progress |
+| T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | in progress |
+| T22c | [HiFi4: rizin base-ISA check, REA decompile with the new language](T22-rea-verification.md) | T21a, T22f | in progress |
+| T22d | [All images: classify the undefined bytes left](T22-rea-verification.md) | T21 | in progress |
+| T22e | [All images: before/after behaviour diff](T22-rea-verification.md) | T21g | todo |
+| T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | in progress |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
