@@ -1,0 +1,115 @@
+# T11e (DISPLAY GUI / VDC5) name proposals for names_display.tsv. See docs/code/display/gui.md.
+# Renesas r_vdc5 driver API: identified from the call shapes, the resource checks and the error codes
+# (9 = ERR_RESOURCE_CLK, 10 = VSYNC, 12 = OUTPUT, 13 = LVDS_CLK, 14 = LAYER); parameter checks are compiled out.
+# --- VDC5 driver (Renesas r_vdc5)
+201179c0	r_vdc5_initialize	(ch, vdc5_init_t*, init_func, user_num)
+20117b0c	r_vdc5_sync_control	(ch, vdc5_sync_ctrl_t*): total raster, H/V sync windows
+20117ba8	r_vdc5_display_output	(ch, vdc5_output_t*): TCON pins, panel output
+20117d8c	vdc5_layer_to_gr	layer id 3..8 -> graphics index 0..5
+20117dec	r_vdc5_read_data_control	(ch, layer, vdc5_read_t*): frame buffer, stride, format, window
+20117e5c	r_vdc5_change_read_process	(ch, layer, {base,...}): new frame-buffer address
+20117ebc	r_vdc5_start_process	(ch, layer, &disp_sel): show a layer (2 current, 3 blend)
+20117f00	r_vdc5_stop_process	(ch, layer): hide a layer
+2011819c	r_vdc5_alpha_blending_rect	(ch, layer, on, {rect, alpha, ...}): alpha window / fades
+20118214	r_vdc5_chromakey	(ch, layer, on, {ck_color, rep_color, rep_alpha}); used with color 0 = transparent
+201182d4	r_vdc5_display_calibration	(ch, vdc5_disp_calibration_t*): used for the LCD contrast setting
+20118364	vdc5_int_callbacks_clear	clears the 23 per-channel interrupt callbacks
+201183b0	r_vdc5_callback_isr	(ch, {type, callback, line}): enable one VDC5 interrupt
+# --- VDC5 / LCD / LVDS set-up (GUI side)
+20132320	vdc5_module_start	init_func passed to r_vdc5_initialize: STBCR9 clock on for ch0/ch1
+20132398	vdc5_module_stop	STBCR9 clock off for ch0/ch1
+201323fc	lcd_tcon_cfg_ch0	TCON pin table for the parallel RGB TFT (ch0)
+20132440	dvi_tcon_cfg_ch1	TCON pin table for the LVDS/DVI channel (ch1), 800x480 or 800x600
+2013249c	lvds_pll_cfg	LVDS PLL: 27 MHz in, FD 175 (800x480) or 207 (800x600), RD 4, OD 2, to ch1
+20132504	vdc5_sync_setup	timing: ch0 1016x525 (800x480); ch1 1088x517 (800x480) or 1056x628 (800x600)
+201325e8	vdc5_output_setup	r_vdc5_display_output wrapper per channel
+20132680	cursor_rect_calc	12x21 mouse-cursor window for graphics 3
+2013276c	vdc5_layers_setup	graphics 0..3 read setup, chroma key, start; then enables the VLINE callback
+20132b58	vdc5_layers_stop	stop all layers and release
+20132b94	vdc5_channel_shutdown	stop layers, terminate the channel, clock off
+20132bc0	dvi_set_resolution	re-initialises VDC5 ch1 for 800x480 (0) or 800x600 (1)
+2013304c	vdc5_vline_int_setup	VLINE interrupt, no callback
+20133068	vdc5_vline_cb_enable	VLINE callback = vdc5_vline_cb
+2013307c	vdc5_vline_cb_disable
+20133014	vdc5_vline_cb	frame counter 0x208085A4, counts down 0x2080859C
+20133090	vdc5_wait_frames	sets 0x2080859C and spins until the VLINE callback clears it
+201330a8	vdc5_isr_create	itron_acre_isr(GIC 78, VDC5 ch0 GR3_VLINE) + enable
+20101dc4	dvi_ctrl_pins	PSR5: P5_9 / P5_8 (P5_8 = 1 for 800x480, 0 for 800x600)
+20101dec	lvds_pins_enable	P5_0..P5_7 between LVDS function and GPIO (DVI output on/off)
+# --- layer helpers
+20132e78	fb_get_front_addr	frame buffer currently shown for a back-buffer index (1<->2, 3<->4)
+20133658	layer_alpha_rect_set	r_vdc5_alpha_blending_rect on ch0+ch1, cached in 0x209080E4[ch][layer]
+20133748	layer_alpha_rect_reapply
+2013376c	layer_alpha_rect_hit	pixel inside a layer's opaque alpha window (screen capture)
+201337f8	layer_alpha_rect_off
+20133870	layer_alpha_rect_opaque	full-screen window, alpha 0xFF
+2013396c	layer_fade	alpha ramp +5 / -5 per frame over the whole layer
+20133a0c	layer_hide	r_vdc5_stop_process on ch0+ch1
+20133a38	layer_show	r_vdc5_start_process on ch0+ch1 (layer 3 current, others blend)
+20133c40	gui_flip_one	flip only graphics 1 (0) or graphics 2 (1); brackets screen capture
+201378b0	dmac0_copy	DMAC ch0 memory-to-memory copy (frame buffer copy-forward)
+# --- drawing primitives (coordinates are (y, x); stride 800 px = 0x640 B)
+20135534	fb_blit_raw	(fb, y, x, src, w, h): raw RGB565 rectangle
+2013558c	fb_rect_in_bounds	(y, x, w, h) inside 800x480
+201355bc	fb_clear_rect	(fb, y, x, w, h): fill with 0 = transparent (was fb_copy_rect)
+20135604	fb_clear_rect_checked
+2013573c	fb_draw_frame	rectangle outline of given thickness
+201359bc	gui_draw_runs32	run sprite with u32 {start, count} runs
+20135aa4	fb_fill_box	(fb, y, x, w, h, color)
+20135ad8	fb_fill_box_t	(fb, y, x, h, w, color)
+20135b0c	sprite_unpack	run sprite -> linear w*h buffer
+20135b6c	gui_draw_hex	hex number in the 10x15 font
+20135c14	gui_draw_dec	decimal number in the 10x15 font
+20135ce8	gui_draw_hex_color	hex number, recoloured
+20135dd4	gui_draw_text	(fb, str, y, x, pitch, font): char -> glyph via map 0x2080173C
+20135ec0	gui_draw_text_words	text with half-width spaces
+20135ff0	gui_draw_text_centered	centred on x
+20136290	fb_draw_round_frame	outline with cut corners
+201353f8	div10_round
+20135458	bcd_to_bin
+20135470	be16_load
+20135498	be32_load
+201354ec	str_rtrim
+# --- GUI loop and screens (screen packets from MAIN)
+20130188	gui_main_loop	runs in task_root after gui_start; one frame per wake-up
+2012ebb8	gui_screen_update	compares the new MAIN screen packet with 0x208F0B2A and dispatches on byte 0
+20130024	mainlink_wait_status	waits up to 5 s for the first MAIN status packet
+2012f8d4	opening_screen	YAESU logo fade-in, waits for MAIN ('`' 0x60 packet); timeout -> error screen
+2012f734	opening_check_main	handles the 0x60 power-on packet
+2012fd94	logo_fade_in	key combo 6 path: logo fade-in before the boot-loader screen
+2012e3e0	scr_main_layout	main screen static parts (scope frame, mode/filter labels)
+20121e88	main_status_icons	REC/MSG/LOCK/... indicator row, scope SPAN/SPEED labels
+20123c04	main_filter_graph	SHIFT/WIDTH/NOTCH/CONTOUR/APF graph
+20134abc	meter_draw	bar meter with peak hold, 181 sprites from 0x2080865C
+20134d24	meter_draw_scale	meter scale + type label on graphics 0
+2012c1b4	scr_select_popup	packet 0x30: METER / MODE selection popups
+2012ade0	scr_value_popup	packet 0x31: setting name + value popup (tables at 0x208026DC..)
+201263e8	scr_info	packet 0x34: information / CERTIFICATIONS, FCC ID K6620801X50
+2012a9ec	scr_func_panel	packet 0x37: FUNC panel (CONTRAST, DIMMER, MIC GAIN, ...)
+2012a6a4	scr_vfo	packet 0x39: frequency digits
+20124c24	scr_playlist	packet 0x3A: voice/REC PLAY LIST
+2012e744	rec_start_stop	packet 0x3F: start/stop recording to SD with a time-stamp name
+20129054	scr_text_list	packet 0x40: text list with LF/CR glyphs, DONE/BACK
+20127b24	scr_memory_list	packet 0x41: MEMORY CH LIST
+201261e0	scr_sd_menu	packet 0x43: SD card load/save/format
+201275e8	scr_keyboard	packet 0x50: on-screen keyboard (Caps, Space, ENT, ABC, #%^)
+20126f28	scr_setup_menu	packet 0x62: MENU list, 8 rows of {5, 20, 3} chars
+20125f6c	scr_lcd_test	packet 0x64: full-screen test colours and 8 colour bars
+2012e8f4	rtc_set_from_main	packet 0x65: BCD date/time -> RTC
+20126ebc	scr_confirm	packet 0x70: OK / CANCEL dialog
+20121c3c	scr_screen_saver	packet 0x7B: YAESU logo hopping between 3 places every 180 frames
+201266ec	gui_apply_display_cfg	packet 0x24: DVI on/off, DVI resolution, LCD contrast
+2013059c	screenshot_popup	"SCREEN SHOT" popup (popup slot 44); was screen_shot_menu
+# --- screen capture and debug
+2013456c	bmp_write_screen	54-byte header + 480 bottom-up 24-bit rows, layers merged
+201344c8	capture_merge_row	overlay one layer row; 0 = transparent unless inside an alpha window
+20134520	rgb565_row_to_bgr24
+20134854	debug_screenshot_root	F10 (debug): I:\20YYMMDD_HHMMSS.bmp
+201367b4	debug_overlay	F-key debug read-outs (needs debug_enabled)
+201121a8	sdr_testmode_set	0x20450004: SDR SPI test overlay (key combo 4 at power-on)
+# --- test_disp: replay of MAIN->DISPLAY packets from SD
+20134e70	sendcmd_parse_line	"NNN XX XX ... DDDD" line of SEND_CMD.TXT
+20134fdc	test_disp_replay	reads I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT and injects the packets (was debug_recv_cmd_log)
+2013518c	test_disp_start	set flag 1 -> task_test_disp runs the replay
+2013519c	test_disp_stop
+201351ac	test_disp_state	1 = running, 2 = idle
