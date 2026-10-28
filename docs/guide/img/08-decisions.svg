@@ -38,9 +38,9 @@
 <text x="818" y="446" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >look only</text>
 <line x1="88" y1="502" x2="876" y2="502" stroke="#E5E7EB" stroke-width="2"/>
 <rect x="88" y="512" width="28" height="28" rx="4" fill="#FFFFFF" stroke="#1F2937" stroke-width="2" />
-<text x="132" y="532" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >US 60 m TX check (possible; not on this radio)</text>
-<text x="132" y="558" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >The code suggests the US table never allows 60 m TX</text>
-<text x="132" y="576" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >(inference). Needs a 0x315B radio; the owner's is 0x50E2.</text>
+<text x="132" y="532" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >US 60 m update for the 2026 rules (issue #103)</text>
+<text x="132" y="558" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >V01-12 knows only the old channels, from the 60 m memories;</text>
+<text x="132" y="576" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >the new segment needs a MAIN patch (with split).</text>
 <rect x="760" y="512" width="116" height="30" rx="15" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
 <text x="818" y="532" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >transmits</text>
 </svg>

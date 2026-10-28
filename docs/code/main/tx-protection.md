@@ -176,24 +176,40 @@ Codes not listed get **no** rows, so they never transmit (except in `zz_mode0`) 
 
 | Code(s) | Table | Rows | TX ranges (kHz) | Region **[inference]** |
 |---|---|---|---|---|
-| 0x315B | 0xFFF888A4 | 21 | 1800–2000, 3500–4000, 7000–7300, 10100–10150, 14000–14350, 18068–18168, 21000–21450, 24890–24990, 28000–29700, 50000–54000, plus 11 single points 5167.5, 5332, 5348, 5358.5, 5373, 5405, 5330.5, 5346.5, 5357, 5371.5, 5403.5 | USA (60 m channels) |
+| 0x315B | 0xFFF888A4 | 21 | 1800–2000, 3500–4000, 7000–7300, 10100–10150, 14000–14350, 18068–18168, 21000–21450, 24890–24990, 28000–29700, 50000–54000, plus 11 one-hertz channel rows (f to f+1) 5167.5, 5332, 5348, 5358.5, 5373, 5405, 5330.5, 5346.5, 5357, 5371.5, 5403.5 | USA (60 m channels) |
 | 0xA983 | 0xFFF889B4 | 11 | 1800–2000, 3500–3800, **5351.5–5366.5**, 7000–7200, 10100–10150, 14000–14350, 18068–18168, 21000–21450, 24890–24990, 28000–29700, 50000–52000 | Europe |
 | 0xD950 | 0xFFF88A0C | 12 | as Europe but **5250–5406.5** and **70000–70500** | UK |
-| 0x4380, 0x60E6, 0x020B | 0xFFF8884C | 11 | US-style 1.8–54 MHz ham bands without 60 m, plus a single point 4630 | ? |
+| 0x4380, 0x60E6, 0x020B | 0xFFF8884C | 11 | US-style 1.8–54 MHz ham bands without 60 m, plus a one-hertz row at 4630 | ? |
 | 0x7753, 0xD32D | 0xFFF88964 | 10 | US-style ham bands, no 60 m | general / Asia |
 | 0x306F, 0x50E2, 0x9CF7, 0xA4C5, 0xB5A7 | 0xFFF8894C | 3 | **1800–30000, 50000–54000, 70000–70500** | "wide" (TX-expanded) |
 | 0x1CB9 | 0xFFF88A6C | 1 | **30–75000** (all frequencies) | fully open (service?) |
 
-**Single-point rows never match [fact].** The compare at 0xFFFB3950..0xFFFB395C is `BGTU` (lo > f → no) followed by `BGEU` (f ≥ hi → no).
-A row with lo == hi can therefore never allow TX. For 0x315B the code also requires, for rows ≥ 10, that the active memory channel be in group 2
-with a number in 0x75..0x84 (the 60 m channel memories). That test is only reached after a match, and a match never happens. As written,
-**60 m TX in the US table and the 4630 kHz point appear never to be allowed** **[inference; needs an on-air check, which must not be done
-without the owner's approval]**.
+**One-hertz rows [fact].** The 60 m channel rows of 0x315B and the 4630 kHz row of 0x4380/0x60E6/0x020B end one hertz above
+their start, for example `5332000–5332001` (ROM 0xFFF888A4, little-endian u32 pairs). The compare at 0xFFFB3950..0xFFFB395C is
+`BGTU` (lo > f → no) followed by `BGEU` (f ≥ hi → no), so such a row matches exactly its channel frequency and nothing else. An earlier
+version of this page read these rows as lo == hi and concluded that US 60 m TX could never be allowed; that was wrong.
+
+**The 60 m memory condition [fact].** For 0x315B, a match in rows ≥ 10 (the eleven 60 m rows; the test is `9 < row`) is then
+accepted only if the **TX side** is in memory mode (state 2 in 0x9DBE/0x9DBF) on a channel 0x75..0x84 (501–515 and EMG, from
+0x60C9/0x60CA). The side is chosen by `FUN_fffb32aa(1)`, which uses the split flag 0x9C5E like `vfo_rec_ptr(1)`. So, as V01-12
+stands, **US 60 m TX works on the eleven exact channel frequencies, from the 60 m memories only, not from the VFO** **[fact from
+code; not tested on air]**. Whether the "locked memory" states 7/8 also pass the `== 2` test is open.
+
+**Split [fact].** `tx_freq_allowed` is called with the TX frequency 0x20F50, which `freq_cache_update` takes from the TX record:
+the other VFO while split is on. So split TX is checked like any other TX. For a range row (all bands, and the Europe 5351.5–5366.5
+segment) split works from the VFO. For the US 60 m rows, the TX side (VFO-B in A/B split) must itself be on a 60 m memory.
+
+**2026 US rules.** Since 13 February 2026 the US has a 5351.5–5366.5 kHz segment (9.15 W ERP) and four 100 W channels (5332, 5348,
+5373, 5405 kHz). V01-12 predates this: with 0x315B the segment cannot be used from the VFO, and the old 5357.0/5358.5 channels now
+fall inside the segment. Issue [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103) plans a MAIN patch. A segment row added
+to the US table must not fall at index ≥ 10 unless the `9 < row` memory test is changed with it: inserting it before row 10 would push
+the 6 m row to index 10 and put 6 m under the memory condition.
 
 **The tested radio** answers `JP0710;` with code **0x50E2** (2026-10-28) **[fact, radio]**: the wide table (1.8–30, 50–54,
-70–70.5 MHz), the strap partner of the US code 0x315B. So the 60 m single-point question above cannot be tested on this radio as it is;
-it would need a US-code (0x315B) radio. Its EEPROM header stamp (2023-06-26 08:56) dates the last `JP` set, and `JP` cannot store
-0x50E2 (it remaps it to 0x315B), so the wide code most likely came from the strap swap below on a later reset **[inference]**.
+70–70.5 MHz), the strap partner of the US code 0x315B. The 60 m channel rules above do not apply to it: its table covers the whole
+of 60 m as one range, from the VFO and in split. Its EEPROM header stamp (2023-06-26 08:56) dates the last `JP` set, and `JP`
+cannot store 0x50E2 (it remaps it to 0x315B), so the wide code most likely came from the strap swap below on a later reset
+**[inference]**.
 
 ### The JP_P51 strap toggles restricted ↔ wide (`dest_jumper_apply` 0xFFFB3BA6) [fact]
 

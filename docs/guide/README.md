@@ -724,14 +724,18 @@ disabled" setting or calibration byte is set, if CAT has been disabled from the 
 TX frequency in the **region table** chosen by the radio's destination code. A row allows TX when `lo <= f < hi`. If TX is refused,
 MAIN raises the `TXINH` line, and if the radio was transmitting, it starts the switch back to RX.
 
-**The US 60 m quirk.** The US table lists the 60 m channels as single frequencies, rows with `lo == hi`. The figure below shows why such a
-row can never pass a `lo <= f < hi` test. The code has an extra check for the 60 m channel memories, but it only runs after a row has
-matched, which never happens. As written, **60 m TX in the US table appears never to be allowed** *(inference)*. This needs an on-air test,
-and that must not be done without the owner's approval.
+**60 m in the US table.** Europe's table has one row for the whole 60 m segment. The US table instead has one row per channel, from
+the channel frequency to one hertz above it, so each row matches exactly that frequency. After such a match MAIN makes one more check:
+the transmitting side must be on one of the 60 m memory channels (501–515 or EMG). So with the US region code, **60 m transmit works
+on the exact channel frequencies, from the 60 m memories only, not from the VFO**. In split, the same check applies to the transmit
+VFO. *(An earlier version of this guide read these rows as zero-width and concluded that 60 m TX could never work; that was wrong.)*
 
-![A frequency axis from 5320 to 5410 kHz: the Europe row is a green bar; the US rows are single points, each marked refused; two boxes work through the test](img/03-us-60m-quirk.svg)
+These channels predate the US rules of February 2026, which add a 5351.5–5366.5 kHz segment that firmware V01-12 doesn't know about.
+Issue [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103) plans the fix.
 
-*Figure 3.6 — A range row passes the test; a single-point row cannot, because no f is both ≥ 5332 and < 5332.*
+![A frequency axis from 5320 to 5410 kHz: the Europe row is a green bar; the US rows are one-hertz channel rows, each allowed at its exact frequency from a 60 m memory; two boxes work through the test](img/03-us-60m-quirk.svg)
+
+*Figure 3.6 — A range row allows the whole segment; a US channel row allows only its exact frequency, and only from a 60 m memory.*
 
 **The sequencer.** Once the request is allowed, the RX/TX sequencer steps through its states. Each step waits for a short soft timer,
 a few milliseconds long:
@@ -2363,7 +2367,7 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
 
 ### 8.6 Decisions waiting for the owner
 
-![A clipboard checklist with five items, each tagged with its risk: read-only CAT tests (ticked, done), debug console step 0 or 1, FPGA hello stage 1, read the FPGA package marking, and a possible US 60 m TX check](img/08-decisions.svg)
+![A clipboard checklist with five items, each tagged with its risk: read-only CAT tests (ticked, done), debug console step 0 or 1, FPGA hello stage 1, read the FPGA package marking, and the US 60 m update for the 2026 rules](img/08-decisions.svg)
 
 *Figure 8.7 — The open decisions. Only the read-only CAT tests have been done.*
 
@@ -2374,10 +2378,9 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
 - **FPGA stage 1.** The no-pin test design over J2001.
 - **Read the FPGA package marking.** The pin usage fits only two packages, CSG324 or FGG484, and the chip ID doesn't
   tell which. The marking under the SDR module's shield must be read before any design that drives a pin.
-- **A possible US 60 m transmit check.** In MAIN's US band table the 60 m channels are single-frequency rows, and the
-  compare can never match a row whose start equals its end. So, as written, 60 m transmit in the US table appears
-  never to be allowed *(inference)*. Only an on-air test would confirm it, and that keys the transmitter. It needs a radio with
-  the US code 0x315B; the tested radio has the wide code 0x50E2, whose table covers 60 m as an ordinary range.
+- **US 60 m update for the 2026 rules.** Firmware V01-12 allows US 60 m transmit only on the old channel frequencies, from the
+  60 m memories. The new 5351.5–5366.5 kHz segment needs a MAIN patch, planned in issue
+  [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103), including split operation in the segment.
 
 Some open questions don't need the radio at all. Two of the project's open contradictions, how `PS1;` powers the radio
 on and the 12 kHz vs 16 kHz audio rate, are code questions. A third, the SDR flash layout (the FPGA boots from flash
@@ -2416,7 +2419,7 @@ copyrighted firmware: they stay local and are never committed or published.
 | Groundwork task: encoder, patches, plans | [tasks/T16-custom-firmware.md](../tasks/T16-custom-firmware.md) |
 | Hidden DISPLAY console and its commands | [code/display/input.md](../code/display/input.md) |
 | Storage and debug access table; open contradictions C6, C7, C9 | [code/system.md](../code/system.md#24-storage-and-debug-access) |
-| US band table and the 60 m single-point rows | [code/main/tx-protection.md](../code/main/tx-protection.md) |
+| US band table and the 60 m channel rows | [code/main/tx-protection.md](../code/main/tx-protection.md) |
 | Candidate read-only CAT queries | [tasks/T09-cat-commands.md](../tasks/T09-cat-commands.md), [cat-commands.md](../cat-commands.md) |
 | FPGA debug console `[IF]>` | [code/sdr/netlist.md](../code/sdr/netlist.md) |
 
