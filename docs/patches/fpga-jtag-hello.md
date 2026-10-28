@@ -16,7 +16,7 @@ just the FPGA **[inference]**. Expected IDCODE 0x0362C093 (XC7A50T) **[fact, T08
 
 **Package: CSG324 or FGG484** **[inference]**. `tools/xc7_package_fit.py` maps the 116 IOB sites the stock bitstream
 configures (input buffer, drive or LVDS features in the T15 FASM) onto each XC7A50T package in prjxray-db. Only CSG324
-(210 user I/O) and FGG484 (250) bond all of them; CPG236 bonds 57, CSG325 82, FTG256 97 **[fact for the counts]**. The
+(210 user I/O) and FGG484 (250) bond all of them; CPG236 bonds 57, CSG325 82, FTG256 97 of the 116, i.e. they lack 59, 34 and 19 (the "19 to 59" of [netlist.md §3.1](../code/sdr/netlist.md#31-package)) **[fact for the counts]**. The
 IDCODE does not encode the package, so the marking on the chip (under the module's shield) must be read before any pin
 constraint is written **[fact]**.
 
@@ -37,6 +37,9 @@ Two readings follow **[inference]**:
   programs its flash during an SDR update, fed by the DISPLAY RSPI2 data and MAIN's register bridge.
 
 **Which J2002 signal sits on which ball is unknown.** That needs the routing walk of T15 (IOB → logic), or probing.
+*(Update, T15/T15e: the routing walk is done. UART A on **M18 in / L18 out** is `UART_DBG`, the stock `[IF]>` debug console; UART B on
+V12/U12 is MAIN's UART5; the fabric clock enters on F4/F3 (`IO_L13_MRCC_35`) at 125 MHz [inference, high]. Ball names are CSG324
+[guess for the package]. See [netlist.md §3.3, §5.3](../code/sdr/netlist.md). Other J2002 signals are still unmapped.)*
 
 ## Stage 1 — JTAG-only hello (no outputs at all)
 
@@ -81,7 +84,8 @@ only the IDCODE) **[inference]**.
 
 ## Stage 2 — one benign output (after T15 maps the pins)
 
-Only after T15 identifies the IOB of a harmless net and the board clock input:
+Only after T15 identifies the IOB of a harmless net and the board clock input. *(T15/T15e have done this: `UART_DBG_TX` is L18 and the
+125 MHz clock is F4/F3, see above. The stock design already has a debug console on that UART, so stage 2 can first just listen to it.)*
 
 - Candidate output: `UART_DBG_TX` (J2002 pin 47 → `SDR_DBG_OUT` on MAIN, through R2088 470 Ω) **[fact for the net]**;
   its MAIN-side load is not known yet, which is the reason to wait. Send `HELLO\r\n` at 115200 baud; observe with a 3.3 V
@@ -97,11 +101,11 @@ Only after T15 identifies the IOB of a harmless net and the board clock input:
 - Writing the config flash (persistent): needs the stock update path (SDR SFL, exact size 0x43075A) or an indirect
   JTAG flash programmer, plus a recovery plan for a non-booting flash image (JTAG load of the stock bitstream, then
   rewrite the flash). Not planned until a functional replacement design exists.
-- Extending the stock design: needs the T15 netlist; the device is nearly full (119/120 DSP48E1).
+- Extending the stock design: needs the T15 netlist (now recovered, [netlist.md](../code/sdr/netlist.md); `hdl/sdr/` has the UART link in RTL); the device is nearly full (119/120 DSP48E1).
 
 ## Follow-ups
 
 - Read the FPGA's package marking (owner, physical inspection of the SDR module).
-- T15: trace `UART_DBG_TX`, the UART5 pins and the clock input from the IOBs; confirm the fabric flash master
-  (D00/FCS_B drivers, STARTUPE2 `USRCCLKO`).
+- ~~T15: trace `UART_DBG_TX`, the UART5 pins and the clock input from the IOBs; confirm the fabric flash master
+  (D00/FCS_B drivers, STARTUPE2 `USRCCLKO`).~~ Done by T15/T15e ([netlist.md](../code/sdr/netlist.md)).
 - Propose to resources.md: 18 LVDS output pairs and 16 input pairs (per IOB tile), not about 9 each.

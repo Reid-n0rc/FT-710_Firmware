@@ -92,7 +92,9 @@ flowchart LR
    must re-implement the ADC capture, DDC/filters, the scope/FFT data link, TX path and the UART protocol to MAIN.
 3. **No HDL source.** The bitstream gives configuration, not a netlist. T15 plans the route: prjxray `bit2fasm` → FASM
    (features) → custom routing walk → gate-level netlist → recognise blocks. Steps 1–2 are tractable; recognising the
-   signal chain in ~27k LUTs is the slow part.
+   signal chain in ~27k LUTs is the slow part. *(Update: T15 recovered the full netlist and T15e the UART link as RTL in `hdl/sdr/`,
+   cycle-exact against the netlist; UART A is the `UART_DBG` debug console `[IF]>` (M18/L18) [fact, simulation]. The DSP chain is still
+   unrecognised, so this stays the hard part, but it is no longer a missing netlist. See [code/sdr/netlist.md](code/sdr/netlist.md).)*
 4. **Update-loader acceptance rules: resolved (T11c), not a blocker.** The only real content check is the salted CRC. The
    full list [fact, [update.md](code/display/update.md) section 1]:
    - The file is in `I:\FT-710\`, named `FT-710_<IMG>_V` + 4 any characters + `.sfl` (case-insensitive, exact length), with
@@ -152,5 +154,5 @@ cable connection ("Connect to J1005 on the MAIN-Unit"). T10c read J1004 on the p
   ([docs/patches/README.md](patches/README.md)); the FPGA JTAG "hello" plan ([fpga-jtag-hello.md](patches/fpga-jtag-hello.md)),
   which also narrows the FPGA package to CSG324 or FGG484; the adapter table above. Owner decisions pending: debug-console
   step 0 (JTAG RAM write) or step 1 (SD update), FPGA stage 1, and reading the FPGA package marking.
-- **T15 (FPGA netlist recovery):** bitstream → FASM → netlist, then targeted recognition of the UART link to MAIN and the
-  ADC/DDC chain.
+- **T15 (FPGA netlist recovery, done):** bitstream → FASM → netlist, the UART link to MAIN and the debug console recognised
+  (T15e, [code/sdr/netlist.md](code/sdr/netlist.md)). Still open: recognising the ADC/DDC chain.
