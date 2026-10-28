@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="664" viewBox="0 0 960 664" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>Risk ladder for experiments on the radio</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="0" y="0" width="960" height="664" fill="#FFFFFF"/>
+<text x="480" y="34" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937" >The risk ladder: climb one rung at a time</text>
+<line x1="106" y1="58" x2="106" y2="586" stroke="#6B7280" stroke-width="8" stroke-linecap="round"/>
+<line x1="914" y1="58" x2="914" y2="586" stroke="#6B7280" stroke-width="8" stroke-linecap="round"/>
+<rect x="120" y="504" width="780" height="76" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="136" y="532" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >0  Paper and simulation</text>
+<text x="136" y="558" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >read the docs, Ghidra, the Verilator model of the FPGA</text>
+<text x="884" y="558" font-size="14" text-anchor="end" font-weight="bold" fill="#1F2937" >the radio is not touched</text>
+<text x="884" y="532" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937" >way back:</text>
+<rect x="120" y="416" width="780" height="76" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="136" y="444" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >1  Read-only CAT queries</text>
+<text x="136" y="470" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >ask the radio, e.g. VE0; (firmware version)</text>
+<text x="884" y="470" font-size="14" text-anchor="end" font-weight="bold" fill="#1F2937" >nothing is written to the radio</text>
+<text x="884" y="444" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937" >way back:</text>
+<rect x="120" y="328" width="780" height="76" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2" />
+<text x="136" y="356" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >2  Volatile JTAG</text>
+<text x="136" y="382" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >RAM write on DISPLAY, or JTAG-only FPGA load</text>
+<text x="884" y="382" font-size="14" text-anchor="end" font-weight="bold" fill="#1F2937" >power cycle: gone at the next power-on</text>
+<text x="884" y="356" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937" >way back:</text>
+<rect x="120" y="240" width="780" height="76" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2" />
+<text x="136" y="268" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >3  SD-card patch of DISPLAY</text>
+<text x="136" y="294" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >patched DISPLAY file through the normal update</text>
+<text x="884" y="294" font-size="14" text-anchor="end" font-weight="bold" fill="#1F2937" >stock file from SD; J6003 if it won't boot</text>
+<text x="884" y="268" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937" >way back:</text>
+<rect x="120" y="152" width="780" height="76" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="136" y="180" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >4  MAIN reflash</text>
+<text x="136" y="206" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >patched MAIN image (SD update or J1004)</text>
+<text x="884" y="206" font-size="14" text-anchor="end" font-weight="bold" fill="#1F2937" >stock file from SD while DISPLAY runs; J1004</text>
+<text x="884" y="180" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937" >way back:</text>
+<rect x="120" y="64" width="780" height="76" rx="8" fill="#DC2626" stroke="#DC2626" stroke-width="2" />
+<text x="136" y="92" font-size="17" text-anchor="start" font-weight="bold" fill="#FFFFFF" >5  Option-setting memory</text>
+<text x="136" y="118" font-size="14" text-anchor="start" font-weight="normal" fill="#FFFFFF" >change any of MAIN's 116 option bytes</text>
+<text x="884" y="118" font-size="14" text-anchor="end" font-weight="bold" fill="#FFFFFF" >NEVER: some changes are permanent</text>
+<text x="884" y="92" font-size="14" text-anchor="end" font-weight="normal" fill="#FFFFFF" >way back:</text>
+<line x1="44" y1="582" x2="44" y2="62" stroke="#1F2937" stroke-width="3" marker-end="url(#ah)"/>
+<text x="30" y="322.0" font-size="16" text-anchor="middle" font-weight="bold" fill="#1F2937" transform="rotate(-90 30 322.0)">more risk</text>
+<rect x="120" y="602" width="22" height="22" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="150" y="618" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >no write to the radio</text>
+<rect x="340" y="602" width="22" height="22" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2" />
+<text x="370" y="618" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >write, with a known way back</text>
+<rect x="620" y="602" width="22" height="22" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="650" y="618" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >serious; red = never</text>
+<text x="480" y="654" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >Every rung from 1 upward needs the owner's explicit approval, each time.</text>
+</svg>

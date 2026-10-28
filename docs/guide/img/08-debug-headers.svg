@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="790" viewBox="0 0 960 790" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>The four debug headers and what plugs in</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="0" y="0" width="960" height="790" fill="#FFFFFF"/>
+<text x="480" y="34" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937" >The four debug headers: pins and the adapter that plugs in</text>
+<rect x="16" y="56" width="456" height="330" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" />
+<rect x="16" y="56" width="456" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="30" y="76" font-size="16" text-anchor="start" font-weight="bold" fill="#2563EB" >J1004 “RX-CPU DEBUG”</text>
+<text x="30" y="94" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >MAIN unit → RX651</text>
+<rect x="36" y="116" width="52" height="236" rx="4" fill="#E5E7EB" stroke="#6B7280" stroke-width="2" />
+<rect x="66" y="128" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="140" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<line x1="82" y1="135" x2="102" y2="135" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="140" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >GND</text>
+<rect x="66" y="156" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="168" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >2</text>
+<line x1="82" y1="163" x2="102" y2="163" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="168" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >MD_FINE (mode)</text>
+<rect x="66" y="184" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="196" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >3</text>
+<line x1="82" y1="191" x2="102" y2="191" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="196" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >E1_RESET</text>
+<rect x="66" y="212" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="224" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >4</text>
+<line x1="82" y1="219" x2="102" y2="219" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="224" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >UB (boot pin)</text>
+<rect x="66" y="240" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="252" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >5</text>
+<line x1="82" y1="247" x2="102" y2="247" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="252" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TXD1 (DISP link)</text>
+<rect x="66" y="268" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="280" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >6</text>
+<line x1="82" y1="275" x2="102" y2="275" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="280" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >RXD1 (DISP link)</text>
+<rect x="66" y="296" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="308" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >7</text>
+<line x1="82" y1="303" x2="102" y2="303" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="308" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TP1029 (?)</text>
+<rect x="66" y="324" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="336" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >8</text>
+<line x1="82" y1="331" x2="102" y2="331" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="336" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TP1030 (?)</text>
+<rect x="278" y="122" width="180" height="153" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="288" y="144" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Renesas E2 Lite:</text>
+<text x="288" y="162" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >FINE debug and</text>
+<text x="288" y="180" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Flash Programmer</text>
+<text x="288" y="198" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" ></text>
+<text x="288" y="216" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >or a 3.3 V USB-UART:</text>
+<text x="288" y="234" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >serial boot mode</text>
+<text x="288" y="252" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >(MD low at reset)</text>
+<line x1="274" y1="198.5" x2="234" y2="198.5" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="244.0" y="372" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" font-style="italic">TXD1/RXD1 are shared with the DISPLAY link</text>
+<rect x="488" y="56" width="456" height="330" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+<rect x="488" y="56" width="456" height="44" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="502" y="76" font-size="16" text-anchor="start" font-weight="bold" fill="#16A34A" >J6003</text>
+<text x="502" y="94" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >DISPLAY board → RZ/A1H</text>
+<rect x="508" y="116" width="52" height="236" rx="4" fill="#E5E7EB" stroke="#6B7280" stroke-width="2" />
+<rect x="538" y="128" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="140" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<line x1="554" y1="135" x2="574" y2="135" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="140" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >3.3 V</text>
+<rect x="538" y="156" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="168" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >2</text>
+<line x1="554" y1="163" x2="574" y2="163" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="168" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TMS</text>
+<rect x="538" y="184" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="196" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >3</text>
+<line x1="554" y1="191" x2="574" y2="191" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="196" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TCK</text>
+<rect x="538" y="212" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="224" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >4</text>
+<line x1="554" y1="219" x2="574" y2="219" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="224" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TDO</text>
+<rect x="538" y="240" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="252" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >5</text>
+<line x1="554" y1="247" x2="574" y2="247" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="252" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TDI</text>
+<rect x="538" y="268" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="280" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >6</text>
+<line x1="554" y1="275" x2="574" y2="275" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="280" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TRST</text>
+<rect x="538" y="296" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="308" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >7</text>
+<line x1="554" y1="303" x2="574" y2="303" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="308" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >nRZRST (reset)</text>
+<rect x="538" y="324" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="336" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >8</text>
+<line x1="554" y1="331" x2="574" y2="331" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="336" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >GND</text>
+<rect x="750" y="122" width="180" height="153" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="760" y="144" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >SEGGER J-Link</text>
+<text x="760" y="162" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >(or any ARM JTAG</text>
+<text x="760" y="180" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >probe + OpenOCD)</text>
+<text x="760" y="198" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" ></text>
+<text x="760" y="216" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >RAM writes, SPI-</text>
+<text x="760" y="234" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >flash bank-flag</text>
+<text x="760" y="252" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >repair</text>
+<line x1="746" y1="198.5" x2="706" y2="198.5" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="716.0" y="372" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" font-style="italic">the route for the debug-console RAM write</text>
+<rect x="16" y="400" width="456" height="330" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2" />
+<rect x="16" y="400" width="456" height="44" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="30" y="420" font-size="16" text-anchor="start" font-weight="bold" fill="#9333EA" >J2009 “DSP_JTAG”</text>
+<text x="30" y="438" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >MAIN unit → RT685</text>
+<rect x="36" y="460" width="52" height="236" rx="4" fill="#E5E7EB" stroke="#6B7280" stroke-width="2" />
+<rect x="66" y="472" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="484" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<line x1="82" y1="479" x2="102" y2="479" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="484" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >RESETn</text>
+<rect x="66" y="500" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="512" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >2</text>
+<line x1="82" y1="507" x2="102" y2="507" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="512" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >SWO</text>
+<rect x="66" y="528" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="540" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >3</text>
+<line x1="82" y1="535" x2="102" y2="535" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="540" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >SWCLK</text>
+<rect x="66" y="556" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="568" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >4</text>
+<line x1="82" y1="563" x2="102" y2="563" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="568" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >SWDIO</text>
+<rect x="66" y="584" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="596" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >5</text>
+<line x1="82" y1="591" x2="102" y2="591" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="596" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >UART TX</text>
+<rect x="66" y="612" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="624" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >6</text>
+<line x1="82" y1="619" x2="102" y2="619" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="624" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >UART RX</text>
+<rect x="66" y="640" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="652" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >7</text>
+<line x1="82" y1="647" x2="102" y2="647" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="652" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >3.3 V out</text>
+<rect x="66" y="668" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="52" y="680" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >8</text>
+<line x1="82" y1="675" x2="102" y2="675" stroke="#6B7280" stroke-width="2"/>
+<text x="108" y="680" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >GND</text>
+<rect x="278" y="466" width="180" height="134" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="288" y="488" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >J-Link, NXP MCU-</text>
+<text x="288" y="506" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Link or CMSIS-DAP</text>
+<text x="288" y="524" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >(pyOCD, LinkServer)</text>
+<text x="288" y="542" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" ></text>
+<text x="288" y="560" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >+ 3.3 V USB-UART</text>
+<text x="288" y="578" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >on pins 5 and 6</text>
+<line x1="274" y1="533.0" x2="234" y2="533.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="244.0" y="716" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" font-style="italic">reading the OTP fuses needs approval</text>
+<rect x="488" y="400" width="456" height="330" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" />
+<rect x="488" y="400" width="456" height="44" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="502" y="420" font-size="16" text-anchor="start" font-weight="bold" fill="#EA580C" >J2001 “SDR JTAG”</text>
+<text x="502" y="438" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >MAIN unit → XC7A50T</text>
+<rect x="508" y="460" width="52" height="180" rx="4" fill="#E5E7EB" stroke="#6B7280" stroke-width="2" />
+<rect x="538" y="472" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="484" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<line x1="554" y1="479" x2="574" y2="479" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="484" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >GND</text>
+<rect x="538" y="500" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="512" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >2</text>
+<line x1="554" y1="507" x2="574" y2="507" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="512" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >VDD (3.3 V ref)</text>
+<rect x="538" y="528" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="540" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >3</text>
+<line x1="554" y1="535" x2="574" y2="535" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="540" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TCK</text>
+<rect x="538" y="556" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="568" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >4</text>
+<line x1="554" y1="563" x2="574" y2="563" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="568" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TDO</text>
+<rect x="538" y="584" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="596" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >5</text>
+<line x1="554" y1="591" x2="574" y2="591" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="596" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TMS</text>
+<rect x="538" y="612" width="16" height="14" rx="2" fill="#D4A017" stroke="#92400E" stroke-width="1"/>
+<text x="524" y="624" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >6</text>
+<line x1="554" y1="619" x2="574" y2="619" stroke="#6B7280" stroke-width="2"/>
+<text x="580" y="624" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >TDI</text>
+<rect x="750" y="466" width="180" height="115" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="760" y="488" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Xilinx Platform</text>
+<text x="760" y="506" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Cable USB II, or</text>
+<text x="760" y="524" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Digilent JTAG-HS2/</text>
+<text x="760" y="542" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >HS3, or FT2232H +</text>
+<text x="760" y="560" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >openFPGALoader</text>
+<line x1="746" y1="523.5" x2="706" y2="523.5" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="716.0" y="716" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" font-style="italic">SRAM loads only: gone at power cycle</text>
+<text x="480" y="764" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >All four are flat-cable (FFC) sockets of the FLT-SM2 family: you need a matching FFC breakout</text>
+<text x="480" y="782" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >board and a short flat cable. Measure the pitch before you order (inference).</text>
+</svg>

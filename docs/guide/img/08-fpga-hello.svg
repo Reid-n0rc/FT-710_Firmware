@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>FPGA hello stage 1: a JTAG-only test design</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="0" y="0" width="960" height="700" fill="#FFFFFF"/>
+<text x="480" y="34" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937" >FPGA “hello”, stage 1: a test design that touches no pin</text>
+<rect x="24" y="110" width="150" height="96" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<rect x="36" y="122" width="126" height="62" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="99" y="148" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >Vivado or</text>
+<text x="99" y="166" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >openFPGALoader</text>
+<path d="M14,212 L184,212 L174,226 L24,226 z" fill="#E5E7EB" stroke="#6B7280" stroke-width="2"/>
+<text x="99" y="248" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >laptop</text>
+<rect x="206" y="136" width="96" height="44" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="254" y="155" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >JTAG</text>
+<text x="254" y="173" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >cable</text>
+<line x1="176" y1="158" x2="204" y2="158" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="330" y="148" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >J2001</text>
+<rect x="356" y="64" width="400" height="360" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2" />
+<rect x="374.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="374.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="397.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="397.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="421.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="421.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="444.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="444.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="468.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="468.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="491.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="491.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="515.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="515.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="538.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="538.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="562.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="562.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="585.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="585.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="609.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="609.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="632.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="632.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="656.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="656.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="679.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="679.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="703.0" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="703.0" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="726.5" y="56" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="726.5" y="424" width="12" height="8" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="86.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="109.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="133.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="156.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="180.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="203.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="227.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="250.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="274.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="297.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="321.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="344.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="368.0" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<rect x="756" y="391.5" width="8" height="12" fill="#D1D5DB" stroke="#6B7280"/>
+<text x="556.0" y="92" font-size="17" text-anchor="middle" font-weight="bold" fill="#EA580C" >XC7A50T (SDR module)</text>
+<rect x="376" y="134" width="170" height="64" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="461" y="160" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >CFGMCLK</text>
+<text x="461" y="178" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >internal ~65 MHz clock</text>
+<rect x="566" y="134" width="170" height="64" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="651" y="160" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >32-bit counter</text>
+<text x="651" y="178" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >(ticks while it runs)</text>
+<line x1="548" y1="166" x2="564" y2="166" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="376" y="224" width="360" height="70" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="556" y="248" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >BSCANE2, USER1: a 64-bit register</text>
+<text x="556" y="274" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">“HELO” (0x48454C4F)  +  counter value</text>
+<line x1="651" y1="200" x2="651" y2="222" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="376" y="314" width="360" height="44" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="556" y="342" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >USERCODE 0x7E570001 = “this is our design”</text>
+<text x="556" y="390" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >no ports: every pin unused, pulled down</text>
+<path d="M304,158 L334,158 L334,259 L374,259" fill="none" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="790" y="120" width="150" height="110" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="865" y="146" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >config flash</text>
+<text x="865" y="164" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >(stock design)</text>
+<text x="865" y="190" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >untouched:</text>
+<text x="865" y="208" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >flash clock off</text>
+<line x1="766" y1="175" x2="788" y2="175" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="865" y="262" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >a power cycle</text>
+<text x="865" y="280" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >reloads the stock</text>
+<text x="865" y="298" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >design from here</text>
+
+<circle cx="40" cy="466" r="14" fill="#EA580C"/>
+<text x="40" y="471" font-size="15" text-anchor="middle" font-weight="bold" fill="#FFFFFF" >1</text>
+<text x="66" y="471" font-size="15" text-anchor="start" font-weight="bold" fill="#1F2937" >Read only</text>
+<text x="200" y="471" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >scan the chain, read the ID (expect 0x0362C093) and the stock USERCODE</text>
+<circle cx="40" cy="512" r="14" fill="#EA580C"/>
+<text x="40" y="517" font-size="15" text-anchor="middle" font-weight="bold" fill="#FFFFFF" >2</text>
+<text x="66" y="517" font-size="15" text-anchor="start" font-weight="bold" fill="#1F2937" >Load to SRAM</text>
+<text x="200" y="517" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >never the flash: no “write flash” option, no flash-programming design</text>
+<circle cx="40" cy="558" r="14" fill="#EA580C"/>
+<text x="40" y="563" font-size="15" text-anchor="middle" font-weight="bold" fill="#FFFFFF" >3</text>
+<text x="66" y="563" font-size="15" text-anchor="start" font-weight="bold" fill="#1F2937" >Check</text>
+<text x="200" y="563" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >USERCODE reads 0x7E570001, and the counter advances between two reads</text>
+<circle cx="40" cy="604" r="14" fill="#EA580C"/>
+<text x="40" y="609" font-size="15" text-anchor="middle" font-weight="bold" fill="#FFFFFF" >4</text>
+<text x="66" y="609" font-size="15" text-anchor="start" font-weight="bold" fill="#1F2937" >Power cycle</text>
+<text x="200" y="609" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >the stock design comes back from flash; read the stock USERCODE again</text>
+<rect x="16" y="642" width="928" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2" />
+<text x="480" y="664" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >While it runs, the radio is deaf: no audio, frozen scope, no DSP clock, MAIN and DSP errors.</text>
+<text x="480" y="683" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >Dummy load on the antenna, no transmit. All of it clears with the power cycle (inference).</text>
+<g transform="rotate(-8 860 360)">
+<rect x="776" y="340" width="168" height="34" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="3"/>
+<text x="860" y="363" font-size="17" text-anchor="middle" font-weight="bold" fill="#DC2626" >PLAN ONLY</text>
+</g>
+</svg>

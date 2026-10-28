@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+<title>The prepared DISPLAY patches, built but not applied</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="0" y="0" width="960" height="720" fill="#FFFFFF"/>
+<text x="480" y="34" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937" >Two small DISPLAY patches and a RAM-only alternative</text>
+<rect x="16" y="56" width="928" height="190" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+<text x="32" y="82" font-size="17" text-anchor="start" font-weight="bold" fill="#16A34A" >Patch 1, “banner”: a harmless text change</text>
+<text x="32" y="106" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >The title of the power-on maintenance screen. The string is never compared, only drawn.</text>
+<text x="32" y="148" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >before</text>
+<text x="32" y="198" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >after</text>
+<text x="96" y="148" font-size="16" text-anchor="start" font-weight="normal" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">YAESU FT-710 BOOT LOADER </text>
+<text x="96" y="198" font-size="16" text-anchor="start" font-weight="normal" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">YAESU FT-710 BOOT LOADER </text>
+<rect x="346" y="124" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="366.0" y="146" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >V</text>
+<rect x="346" y="174" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="366.0" y="196" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >T</text>
+<rect x="390" y="124" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="410.0" y="146" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >0</text>
+<rect x="390" y="174" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="410.0" y="196" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<rect x="434" y="124" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="454.0" y="146" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<rect x="434" y="174" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="454.0" y="196" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >6</text>
+<rect x="478" y="124" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="498.0" y="146" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >-</text>
+<rect x="478" y="174" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="498.0" y="196" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >-</text>
+<rect x="522" y="124" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="542.0" y="146" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >0</text>
+<rect x="522" y="174" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="542.0" y="196" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >0</text>
+<rect x="566" y="124" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="586.0" y="146" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >2</text>
+<rect x="566" y="174" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="586.0" y="196" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >1</text>
+<text x="630" y="148" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >same length, end marker kept</text>
+<text x="630" y="198" font-size="14" text-anchor="start" font-weight="bold" fill="#DC2626" >4 bytes differ (red)</text>
+<g transform="rotate(-8 832 90)">
+<rect x="740" y="72" width="184" height="30" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="3"/>
+<text x="832" y="93" font-size="16" text-anchor="middle" font-weight="bold" fill="#DC2626" >NOT APPLIED</text>
+</g>
+<text x="32" y="232" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >Shows only on the maintenance screen; do not start an update from that screen.</text>
+<rect x="16" y="262" width="928" height="230" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+<text x="32" y="288" font-size="17" text-anchor="start" font-weight="bold" fill="#16A34A" >Patch 2, “debug gate”: switch on the hidden USB-keyboard console</text>
+<text x="32" y="312" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >A tiny check function decides whether the console runs. One instruction makes it say “yes” always:</text>
+<rect x="32" y="332" width="380" height="86" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="46" y="352" font-size="15" text-anchor="start" font-weight="normal" fill="#1F2937" >is the magic word in RAM?</text>
+<text x="46" y="371" font-size="15" text-anchor="start" font-weight="normal" fill="#1F2937" >   yes → return 1 (console on)</text>
+<text x="46" y="390" font-size="15" text-anchor="start" font-weight="normal" fill="#1F2937" >   no  → return 0  ← patched to 1</text>
+<line x1="316" y1="394" x2="316" y2="394"/>
+<text x="446" y="346" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >the “no” instruction (ARM, 4 bytes)</text>
+<rect x="446" y="356" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="466.0" y="378" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >00</text>
+<rect x="492" y="356" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="512.0" y="378" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >00</text>
+<rect x="538" y="356" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="558.0" y="378" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >a0</text>
+<rect x="584" y="356" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="604.0" y="378" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >13</text>
+<text x="642" y="378" font-size="15" text-anchor="start" font-weight="normal" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">movne r0,#0</text>
+<rect x="446" y="402" width="40" height="32" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
+<text x="466.0" y="424" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >01</text>
+<rect x="492" y="402" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="512.0" y="424" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >00</text>
+<rect x="538" y="402" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="558.0" y="424" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >a0</text>
+<rect x="584" y="402" width="40" height="32" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="604.0" y="424" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" >13</text>
+<text x="642" y="424" font-size="15" text-anchor="start" font-weight="bold" fill="#DC2626" font-family="DejaVu Sans Mono, monospace">movne r0,#1</text>
+<text x="642" y="400" font-size="14" text-anchor="start" font-weight="bold" fill="#DC2626" >↓ one byte</text>
+<text x="32" y="458" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Built as an SD-card update file and checked (decode, CRC, the loader's rules, a one-instruction listing diff).</text>
+<text x="32" y="478" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >Persistent: it stays after power-off (rung 3 of the ladder).</text>
+<g transform="rotate(-8 838 390)">
+<rect x="746" y="372" width="184" height="30" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="3"/>
+<text x="838" y="393" font-size="16" text-anchor="middle" font-weight="bold" fill="#DC2626" >NOT APPLIED</text>
+</g>
+<rect x="16" y="508" width="928" height="196" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+<text x="32" y="534" font-size="17" text-anchor="start" font-weight="bold" fill="#B45309" >The RAM-only alternative: plant the magic word over JTAG</text>
+<rect x="40" y="564" width="150" height="70" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
+<text x="115" y="592" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >JTAG probe</text>
+<text x="115" y="610" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >(J-Link)</text>
+<line x1="194" y1="599" x2="266" y2="599" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+<text x="230" y="590" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >J6003</text>
+<rect x="270" y="554" width="300" height="90" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />
+<text x="420" y="578" font-size="15" text-anchor="middle" font-weight="bold" fill="#1F2937" >DISPLAY RZ/A1H (halted)</text>
+<rect x="290" y="590" width="260" height="40" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" />
+<text x="420" y="616" font-size="15" text-anchor="middle" font-weight="normal" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">RAM 0x20450000 ← 0xA0B9C8E7</text>
+<text x="600" y="578" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Halt the CPU after boot, write the word,</text>
+<text x="600" y="596" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >resume. The console runs until the next</text>
+<text x="600" y="614" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >reset. Nothing in flash changes.</text>
+<text x="600" y="632" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937" >Way back: power cycle (rung 2).</text>
+<text x="32" y="678" font-size="14" text-anchor="start" font-weight="bold" fill="#1F2937" >Recommended as step 0, before the SD-card patch, if a JTAG probe is at hand.</text>
+<g transform="rotate(-8 832 664)">
+<rect x="740" y="646" width="184" height="30" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="3"/>
+<text x="832" y="667" font-size="16" text-anchor="middle" font-weight="bold" fill="#DC2626" >NOT APPLIED</text>
+</g>
+</svg>
