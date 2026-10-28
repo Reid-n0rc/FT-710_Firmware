@@ -1109,7 +1109,7 @@ undefined1 FUN_fff9c04a(void)
 {
   short sVar1;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   if ((sVar1 != 0x20b) && (sVar1 != 0x1cb9)) {
     if (sVar1 == 0x315b) {
       return 0x84;
@@ -1176,13 +1176,13 @@ undefined4 * FUN_fff9c089(undefined4 *param_1,byte param_2)
   bVar1 = FUN_fff9c162(param_2);
   if (bVar1 < 10) {
     *(undefined1 *)((int)param_1 + 2) = 0x30;
-    puVar2 = (undefined4 *)FUN_fffb2e9c(bVar1);
+    puVar2 = (undefined4 *)nib2hex(bVar1);
     *(char *)((int)param_1 + 3) = (char)puVar2;
     return puVar2;
   }
   if (bVar1 < 0x14) {
     *(undefined1 *)((int)param_1 + 2) = 0x31;
-    puVar2 = (undefined4 *)FUN_fffb2e9c(*(undefined1 *)(bVar1 - 10));
+    puVar2 = (undefined4 *)nib2hex(*(undefined1 *)(bVar1 - 10));
     *(char *)((int)param_1 + 3) = (char)puVar2;
     return puVar2;
   }
@@ -1285,7 +1285,7 @@ undefined1 FUN_fff9c292(void)
   undefined1 local_2;
   
   local_2 = 1;
-  puVar1 = (undefined *)FUN_fffb3b33();
+  puVar1 = (undefined *)dest_code_get();
   if ((((puVar1 == &DAT_0000306f) || (puVar1 == &DAT_0000a4c5)) || (puVar1 == &DAT_0000a983)) ||
      (((puVar1 == &DAT_0000b5a7 || (puVar1 == &DAT_0000d32d)) || (puVar1 == &DAT_0000d950)))) {
     local_2 = 0;
@@ -1303,7 +1303,7 @@ undefined1 FUN_fff9c2cd(void)
   undefined1 local_2;
   
   local_2 = 0;
-  puVar1 = (undefined *)FUN_fffb3b33();
+  puVar1 = (undefined *)dest_code_get();
   if ((((puVar1 == &DAT_0000315b) || (puVar1 == &DAT_000050e2)) || (puVar1 == &DAT_0000a4c5)) ||
      (puVar1 == &DAT_0000d950)) {
     local_2 = 1;

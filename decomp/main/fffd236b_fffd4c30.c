@@ -1939,7 +1939,7 @@ undefined1 FUN_fffd4a4f(void)
   short sVar1;
   undefined1 uStack_5;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   if (sVar1 == -0x26b0) {
     return 0x10;
   }

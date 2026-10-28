@@ -42,7 +42,7 @@ byte FUN_fffb30b5(byte *param_1)
     bVar1 = true;
   }
   if (bVar1) {
-    cVar2 = FUN_fffb2f07(*param_1);
+    cVar2 = hex2nib(*param_1);
     local_6 = cVar2 << 4;
   }
   if ((*param_1 < 0x30) || (0x39 < *param_1)) {
@@ -52,7 +52,7 @@ byte FUN_fffb30b5(byte *param_1)
     bVar1 = true;
   }
   if (bVar1) {
-    bVar3 = FUN_fffb2f07(param_1[1]);
+    bVar3 = hex2nib(param_1[1]);
     local_6 = bVar3 | local_6;
   }
   return local_6;
@@ -82,9 +82,11 @@ void FUN_fffb311d(char *param_1,uint param_2)
 }
 
 
-// ===== FUN_fffb3168 @ fffb3168 (46 bytes)
+// ===== toupper_inplace @ fffb3168 (46 bytes)
 
-void FUN_fffb3168(byte *param_1)
+/* a-z -> A-Z on one byte in place */
+
+void toupper_inplace(byte *param_1)
 
 {
   bool bVar1;
@@ -284,12 +286,13 @@ byte FUN_fffb33ab(uint param_1)
 }
 
 
-// ===== FUN_fffb33e5 @ fffb33e5 (96 bytes)
+// ===== band_of_freq @ fffb33e5 (96 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb33f4) */
 /* WARNING: Removing unreachable block (ram,0xfffb3403) */
+/* Band index 0..11 of a frequency (ranges at 0xFFF8876C), 0xFF if none */
 
-byte FUN_fffb33e5(uint param_1)
+byte band_of_freq(uint param_1)
 
 {
   bool bVar1;
@@ -568,7 +571,7 @@ undefined1 FUN_fffb37fe(undefined *param_1)
   byte bStack_17;
   undefined **ppuStack_14;
   
-  sVar3 = FUN_fffb3b33();
+  sVar3 = dest_code_get();
   bStack_18 = 0;
   uStack_1a = 0;
   bStack_19 = 0xff;
@@ -750,20 +753,24 @@ void FUN_fffb3aee(void)
 }
 
 
-// ===== FUN_fffb3b33 @ fffb3b33 (42 bytes)
+// ===== dest_code_get @ fffb3b33 (42 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb3b43) */
+/* Returns destination code 0x475E:0x475F */
 
-undefined2 FUN_fffb3b33(void)
+undefined2 dest_code_get(void)
 
 {
   return CONCAT11(DAT_0000475e,DAT_0000475f);
 }
 
 
-// ===== FUN_fffb3b5d @ fffb3b5d (73 bytes)
+// ===== dest_code_set @ fffb3b5d (73 bytes)
 
-void FUN_fffb3b5d(undefined2 param_1)
+/* Sets destination code, writes EEPROM, settings_defaults(0), requests restart (0x20F4B=1,
+   0x20B39=0x11) */
+
+void dest_code_set(undefined2 param_1)
 
 {
   undefined1 local_2;
@@ -772,8 +779,8 @@ void FUN_fffb3b5d(undefined2 param_1)
   DAT_0000475e = (undefined1)((ushort)param_1 >> 8);
   local_2 = (undefined1)param_1;
   DAT_0000475f = local_2;
-  FUN_fffb0544();
-  FUN_fffb0558(0);
+  eeprom_save_dest();
+  settings_defaults(0);
   DAT_00020f4b = 1;
   DAT_00020b39 = 0x11;
   return;
@@ -789,7 +796,7 @@ void FUN_fffb3ba6(void)
   char cVar2;
   short sVar3;
   
-  sVar3 = FUN_fffb3b33();
+  sVar3 = dest_code_get();
   cVar2 = FUN_fffb6f2a();
   if ((sVar3 == 0x315b) && (cVar2 == '\0')) {
     bVar1 = true;
@@ -798,7 +805,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_000050e2);
+    dest_code_set(&DAT_000050e2);
     return;
   }
   if ((sVar3 == 0x50e2) && (cVar2 != '\0')) {
@@ -808,7 +815,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000315b);
+    dest_code_set(&DAT_0000315b);
     return;
   }
   if ((sVar3 == -0x567d) && (cVar2 == '\0')) {
@@ -818,7 +825,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000b5a7);
+    dest_code_set(&DAT_0000b5a7);
     return;
   }
   if ((sVar3 == -0x4a59) && (cVar2 != '\0')) {
@@ -828,7 +835,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000a983);
+    dest_code_set(&DAT_0000a983);
     return;
   }
   if ((sVar3 == -0x26b0) && (cVar2 == '\0')) {
@@ -838,7 +845,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000a4c5);
+    dest_code_set(&DAT_0000a4c5);
     return;
   }
   if ((sVar3 == -0x5b3b) && (cVar2 != '\0')) {
@@ -848,7 +855,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000d950);
+    dest_code_set(&DAT_0000d950);
     return;
   }
   if ((sVar3 == -0x2cd3) && (cVar2 == '\0')) {
@@ -858,7 +865,7 @@ void FUN_fffb3ba6(void)
     bVar1 = false;
   }
   if (bVar1) {
-    FUN_fffb3b5d(&DAT_0000306f);
+    dest_code_set(&DAT_0000306f);
     return;
   }
   if ((sVar3 == 0x306f) && (cVar2 != '\0')) {
@@ -875,7 +882,7 @@ void FUN_fffb3ba6(void)
       bVar1 = false;
     }
     if (bVar1) {
-      FUN_fffb3b5d(&DAT_00009cf7);
+      dest_code_set(&DAT_00009cf7);
       return;
     }
     if ((sVar3 == -0x6309) && (cVar2 != '\0')) {
@@ -885,12 +892,12 @@ void FUN_fffb3ba6(void)
       bVar1 = false;
     }
     if (bVar1) {
-      FUN_fffb3b5d(&DAT_00007753);
+      dest_code_set(&DAT_00007753);
       return;
     }
     return;
   }
-  FUN_fffb3b5d(&DAT_0000d32d);
+  dest_code_set(&DAT_0000d32d);
   return;
 }
 
@@ -1011,7 +1018,7 @@ undefined1 FUN_fffb3e6f(byte param_1)
   short sVar1;
   byte bStack_5;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   if (sVar1 == 0x20b) {
     bStack_5 = 1;
     goto LAB_fffb3ef4;
@@ -1070,7 +1077,7 @@ undefined1 FUN_fffb3f0b(byte param_1)
   short sVar1;
   byte bStack_5;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   if (sVar1 == 0x20b) {
     bStack_5 = 1;
     goto LAB_fffb3f90;
@@ -1126,7 +1133,7 @@ LAB_fffb3f90:
 void FUN_fffb3fa7(void)
 
 {
-  FUN_fffb3b33();
+  dest_code_get();
   return;
 }
 
@@ -1156,7 +1163,7 @@ byte FUN_fffb4062(void)
   }
   if (bVar1) {
     bStack_f = DAT_00009bfb;
-    puVar6 = (undefined *)FUN_fffb3b33();
+    puVar6 = (undefined *)dest_code_get();
     if (puVar6 == &DAT_000060e6) {
       if ((cVar4 == '\t') || (bVar2 < 0xb)) {
         bVar1 = false;
@@ -1326,9 +1333,12 @@ LAB_fffb42a2:
 }
 
 
-// ===== FUN_fffb44f7 @ fffb44f7 (1585 bytes)
+// ===== key_event_filter @ fffb44f7 (1585 bytes)
 
-undefined1 FUN_fffb44f7(ushort param_1,uint param_2)
+/* Front-panel key event gate (key code, action): returns 1 if the key may run now; used by many CAT
+   handlers */
+
+undefined1 key_event_filter(ushort param_1,uint param_2)
 
 {
   uint uVar1;
@@ -1819,7 +1829,7 @@ void FUN_fffb4e18(char param_1,uint param_2)
   byte bStack_b;
   
   FUN_fffb35d7(0,2);
-  bVar1 = FUN_fffb33e5();
+  bVar1 = band_of_freq();
   if (param_1 == '\x02') {
     puStack_10 = &DAT_00009c99 + (uint)bVar1 * 4;
     if (bVar1 == 0xb) {

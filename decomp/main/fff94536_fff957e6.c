@@ -532,7 +532,7 @@ void app_main(void)
   FUN_fffb98c8();
   FUN_fffec46c();
   FUN_fffc98aa();
-  FUN_fffb263d();
+  cat_apo_reset();
   main_loop();
   return;
 }
@@ -566,9 +566,11 @@ void main_loop(void)
 }
 
 
-// ===== FUN_fff94bcd @ fff94bcd (12 bytes)
+// ===== ver_main @ fff94bcd (12 bytes)
 
-undefined4 FUN_fff94bcd(void)
+/* Returns pointer to MAIN version string 0xFFFFFF00 (VE0) */
+
+undefined4 ver_main(void)
 
 {
   return 0xffffff00;
@@ -593,9 +595,11 @@ undefined4 FUN_fff94be5(void)
 }
 
 
-// ===== FUN_fff94bf1 @ fff94bf1 (12 bytes)
+// ===== ver_display @ fff94bf1 (12 bytes)
 
-void FUN_fff94bf1(void)
+/* Returns pointer to DISPLAY version 0x1436 (VE1) */
+
+void ver_display(void)
 
 {
   return;
@@ -633,9 +637,11 @@ void FUN_fff94c1b(undefined4 *param_1)
 }
 
 
-// ===== FUN_fff94c2d @ fff94c2d (12 bytes)
+// ===== ver_dsp @ fff94c2d (12 bytes)
 
-void FUN_fff94c2d(void)
+/* Returns pointer to DSP version 0x1444 (VE3) */
+
+void ver_dsp(void)
 
 {
   return;
@@ -653,9 +659,11 @@ void FUN_fff94c39(undefined4 *param_1)
 }
 
 
-// ===== FUN_fff94c4b @ fff94c4b (12 bytes)
+// ===== ver_sdr @ fff94c4b (12 bytes)
 
-void FUN_fff94c4b(void)
+/* Returns pointer to SDR version 0x144A (VE2) */
+
+void ver_sdr(void)
 
 {
   return;
@@ -678,8 +686,8 @@ void FUN_fff94c57(undefined4 *param_1)
 void FUN_fff94c75(undefined1 *param_1)
 
 {
-  FUN_fffb2eb7(&DAT_00001451,*param_1);
-  FUN_fffb2eb7(&DAT_00001454,param_1[1]);
+  byte2hex(&DAT_00001451,*param_1);
+  byte2hex(&DAT_00001454,param_1[1]);
   DAT_00001450 = 0x56;
   DAT_00001453 = 0x2d;
   return;
@@ -1116,7 +1124,7 @@ void FUN_fff95331(char *param_1)
   }
   cVar1 = *param_1;
   if (((cVar1 != '\x06') && (cVar1 != '\x15')) && (cVar1 != -0x1d)) {
-    FUN_fffb263d();
+    cat_apo_reset();
     return;
   }
   return;
@@ -1274,7 +1282,7 @@ void FUN_fff9546a(int param_1)
         return;
       }
       if (cVar1 == '\a') {
-        sVar4 = FUN_fffb3b33();
+        sVar4 = dest_code_get();
         if ((sVar4 == -0x567d) || (sVar4 == -0x4a59)) {
           bVar2 = true;
         }
@@ -1282,7 +1290,7 @@ void FUN_fff9546a(int param_1)
           bVar2 = false;
         }
         if (bVar2) {
-          FUN_fffb3b5d(&DAT_0000d950);
+          dest_code_set(&DAT_0000d950);
         }
         else {
           if ((sVar4 == -0x26b0) || (sVar4 == -0x5b3b)) {
@@ -1292,14 +1300,14 @@ void FUN_fff9546a(int param_1)
             bVar2 = false;
           }
           if (bVar2) {
-            FUN_fffb3b5d(&DAT_0000a983);
+            dest_code_set(&DAT_0000a983);
           }
         }
         FUN_fffb3ba6();
         return;
       }
       if (cVar1 == '\x01') {
-        FUN_fffb0558(0);
+        settings_defaults(0);
         DAT_00020b45 = 1;
         FUN_fffb3ba6();
         return;

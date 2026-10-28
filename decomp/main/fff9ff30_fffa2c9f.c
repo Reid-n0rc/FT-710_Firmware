@@ -614,10 +614,10 @@ void FUN_fffa0b4c(char param_1)
   byte local_2;
   
   DAT_00001a5e = param_1;
-  FUN_fffb2ee7(&DAT_00001a5f,DAT_0001b6de);
+  word2hex(&DAT_00001a5f,DAT_0001b6de);
   local_2 = 5;
   if (param_1 == 'w') {
-    FUN_fffb2ee7(0x1a63,DAT_0001b6e0);
+    word2hex(0x1a63,DAT_0001b6e0);
     local_2 = 9;
     DAT_00001c5e = 1;
   }
@@ -625,7 +625,7 @@ void FUN_fffa0b4c(char param_1)
     DAT_00001c5f = 1;
   }
   uVar1 = FUN_fffa0c01(&DAT_00001a5e,local_2);
-  FUN_fffb2eb7(&DAT_00001a5e + local_2,uVar1);
+  byte2hex(&DAT_00001a5e + local_2,uVar1);
   (&DAT_00001a5e)[(byte)(local_2 + 2)] = 0xd;
   FUN_fffb1ab4(&DAT_00001a5e,local_2 + 3);
   FUN_fffb237a(3,6);
@@ -663,7 +663,7 @@ undefined1 FUN_fffa0c2e(int param_1,byte param_2)
   local_5 = param_2;
   local_4 = param_1;
   uVar1 = FUN_fffa0c01(param_1,param_2);
-  FUN_fffb2eb7(&cStack_8,uVar1);
+  byte2hex(&cStack_8,uVar1);
   if ((cStack_8 == *(char *)((uint)local_5 + local_4)) &&
      (cStack_7 == *(char *)(local_4 + (uint)local_5 + 1))) {
     uVar1 = 1;
@@ -1071,7 +1071,7 @@ void FUN_fffa1132(void)
     DAT_00020b36 = 3;
     return;
   }
-  FUN_fffb2ee7(&uStack_b,DAT_0001b736);
+  word2hex(&uStack_b,DAT_0001b736);
   local_6 = uStack_b;
   local_5 = uStack_a;
   local_3 = uStack_9;
@@ -1101,7 +1101,7 @@ void FUN_fffa11ed(void)
     FUN_fffa2c9f();
   }
   if (DAT_00001c8d == '\x01') {
-    FUN_fffa3226();
+    sdr_bridge_mode();
   }
   if (DAT_0001b3dd != cVar3) {
     if ((cVar3 == '\x01') && (iVar4 = FUN_fffb721a(), iVar4 != 0)) {
@@ -1171,9 +1171,11 @@ void FUN_fffa11ed(void)
 }
 
 
-// ===== FUN_fffa1485 @ fffa1485 (135 bytes)
+// ===== sdr_reg_access @ fffa1485 (135 bytes)
 
-undefined1 FUN_fffa1485(undefined2 param_1,undefined2 *param_2,char param_3)
+/* SDR register r/w over SCI5 ('r'/'w' + hex addr [+ value] + sum + CR, waits for reply) */
+
+undefined1 sdr_reg_access(undefined2 param_1,undefined2 *param_2,char param_3)
 
 {
   bool bVar1;

@@ -32,9 +32,9 @@ void FUN_fffb1dad(ushort *param_1,short *param_2,char *param_3,int param_4)
     cVar3 = local_c[-2];
     cVar4 = local_c[-1];
     cVar1 = *local_c;
-    FUN_fffb3168();
-    FUN_fffb3168();
-    FUN_fffb3168();
+    toupper_inplace();
+    toupper_inplace();
+    toupper_inplace();
     if ((cVar2 == 'S') && (cVar3 == 'P')) {
       bVar5 = true;
     }
@@ -616,9 +616,11 @@ void FUN_fffb2604(int param_1,short param_2)
 }
 
 
-// ===== FUN_fffb263d @ fffb263d (66 bytes)
+// ===== cat_apo_reset @ fffb263d (66 bytes)
 
-void FUN_fffb263d(void)
+/* Restarts the auto-power-off timer from setting 0x9B0F (called per received command) */
+
+void cat_apo_reset(void)
 
 {
   undefined1 local_3;
@@ -706,11 +708,12 @@ char FUN_fffb26e5(void)
 }
 
 
-// ===== FUN_fffb2718 @ fffb2718 (28 bytes)
+// ===== cat_rand8 @ fffb2718 (28 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb2723) */
+/* Pseudo-random byte from timer counter 0x88116 (E8 obfuscation key) */
 
-char FUN_fffb2718(void)
+char cat_rand8(void)
 
 {
   ushort uVar1;
@@ -1212,18 +1215,22 @@ void FUN_fffb2e1e(float param_1,undefined2 param_2)
 }
 
 
-// ===== FUN_fffb2e9c @ fffb2e9c (27 bytes)
+// ===== nib2hex @ fffb2e9c (27 bytes)
 
-char FUN_fffb2e9c(byte param_1)
+/* Nibble -> ASCII hex digit */
+
+char nib2hex(byte param_1)
 
 {
   return "@0123456789ABCDEF"[(param_1 & 0xf) + 1];
 }
 
 
-// ===== FUN_fffb2eb7 @ fffb2eb7 (48 bytes)
+// ===== byte2hex @ fffb2eb7 (48 bytes)
 
-void FUN_fffb2eb7(char *param_1,byte param_2)
+/* Byte -> 2 ASCII hex chars */
+
+void byte2hex(char *param_1,byte param_2)
 
 {
   *param_1 = "@0123456789ABCDEF"[(param_2 >> 4) + 1];
@@ -1232,20 +1239,24 @@ void FUN_fffb2eb7(char *param_1,byte param_2)
 }
 
 
-// ===== FUN_fffb2ee7 @ fffb2ee7 (32 bytes)
+// ===== word2hex @ fffb2ee7 (32 bytes)
 
-void FUN_fffb2ee7(int param_1,undefined4 param_2)
+/* u16 -> 4 ASCII hex chars */
+
+void word2hex(int param_1,undefined4 param_2)
 
 {
-  FUN_fffb2eb7(param_1,(char)((uint)param_2 >> 8));
-  FUN_fffb2eb7(param_1 + 2,(char)param_2);
+  byte2hex(param_1,(char)((uint)param_2 >> 8));
+  byte2hex(param_1 + 2,(char)param_2);
   return;
 }
 
 
-// ===== FUN_fffb2f07 @ fffb2f07 (114 bytes)
+// ===== hex2nib @ fffb2f07 (114 bytes)
 
-char FUN_fffb2f07(byte param_1)
+/* ASCII hex digit -> value (0xFF if invalid) */
+
+char hex2nib(byte param_1)
 
 {
   bool bVar1;
@@ -1287,32 +1298,35 @@ char FUN_fffb2f07(byte param_1)
 }
 
 
-// ===== FUN_fffb2f79 @ fffb2f79 (37 bytes)
+// ===== hex2byte @ fffb2f79 (37 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb2f86) */
+/* 2 ASCII hex chars -> byte */
 
-byte FUN_fffb2f79(undefined1 *param_1)
+byte hex2byte(undefined1 *param_1)
 
 {
   char cVar1;
   byte bVar2;
   
-  cVar1 = FUN_fffb2f07(*param_1);
-  bVar2 = FUN_fffb2f07(param_1[1]);
+  cVar1 = hex2nib(*param_1);
+  bVar2 = hex2nib(param_1[1]);
   return bVar2 | cVar1 << 4;
 }
 
 
-// ===== FUN_fffb2f9e @ fffb2f9e (34 bytes)
+// ===== hex2word @ fffb2f9e (34 bytes)
 
-ushort FUN_fffb2f9e(int param_1)
+/* 4 ASCII hex chars -> u16 */
+
+ushort hex2word(int param_1)
 
 {
   short sVar1;
   ushort uVar2;
   
-  sVar1 = FUN_fffb2f79();
-  uVar2 = FUN_fffb2f79(param_1 + 2);
+  sVar1 = hex2byte();
+  uVar2 = hex2byte(param_1 + 2);
   return uVar2 | sVar1 << 8;
 }
 

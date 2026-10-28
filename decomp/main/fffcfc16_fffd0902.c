@@ -644,7 +644,7 @@ void FUN_fffd02f4(void)
 void FUN_fffd02f9(void)
 
 {
-  FUN_fffb0558(0);
+  settings_defaults(0);
   return;
 }
 
@@ -1049,7 +1049,7 @@ uint FUN_fffd077e(uint param_1)
         PTR_DAT_00025d60[0x3f7] = 6;
         return uVar4;
       }
-      uVar1 = FUN_fffb3b33();
+      uVar1 = dest_code_get();
       if (DAT_00015de5 == '\0') {
         uVar2 = FUN_fffcf5bd();
         if (uVar1 == (uVar2 & 0xff)) {

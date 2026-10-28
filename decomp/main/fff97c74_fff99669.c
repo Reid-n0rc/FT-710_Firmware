@@ -334,7 +334,7 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,undefined4 param_4)
   undefined1 uStack_19;
   int iStack_14;
   
-  FUN_fffb3b33();
+  dest_code_get();
   iStack_14 = CONCAT31(CONCAT21(CONCAT11(*(undefined1 *)(param_2 + 0x4a),
                                          *(undefined1 *)(param_2 + 0x4b)),
                                 *(undefined1 *)(param_2 + 0x4c)),*(undefined1 *)(param_2 + 0x4d));

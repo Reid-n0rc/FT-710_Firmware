@@ -11,7 +11,7 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - Function names come from `tools/ghidra/names_main.tsv` (applied with `tools/ghidra/ApplyNames.java`). Everything else is `FUN_<addr>`.
 
 ## Numbers
-- 2252 functions exported (non-thunk), **0 decompile failures**. 188 are named so far.
+- 2252 functions exported (non-thunk), **0 decompile failures**. 232 are named so far (T05 + T09 CAT helpers).
 - About 384 KB of the ~451 KB non-0xFF ROM bytes are disassembled as code (129,938 instructions), and about 50 KB are defined data. About 20 KB of non-0xFF bytes remain undefined, mostly string/const areas in 0xFFF80000..0xFFF8FFFF.
 - Decompiler warnings: 1224 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
 - Known decompiler artifacts **[fact]**:
@@ -31,6 +31,7 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 The vector tables are seeded by `tools/ghidra/SetupRX651.java`. Relocatable vectors are named `vecNNN_<source>` (names from the RX651 vector table **[inference]**; the SCI ones are confirmed by the registers they touch). The fixed vectors are at 0xFFFFFFD0.
 
 ## CAT (remote control)  [fact]
+Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), command reference [docs/cat-commands.md](../../docs/cat-commands.md). Note: `cat_dispatch.tsv` shows `len==8` for EX because the case tests `len > 8`; read is len 9, set is any len >= 10.
 - **Parser**: `cat_parse` @ **0xFFFA347C**. It runs from `main_loop` and from `app_main` (power-off loop). It takes a received command buffer (port id byte at +0, length at +2, text at +4), compares the 2-char mnemonic linearly against
   - `cat_mnemonics` @ **0xFFF805EC**: 104 entries `AB AC AG … VX XT ZI`. The index is the switch case.
   - `cat_ext_mnemonics` @ **0xFFF806BC**: 10 entries `SP EO E8 E9 FD KT PE ZZ VE JP`, tried only when the primary lookup fails. **These are not in the primary table, which makes them the prime candidates for undocumented/service commands (T09).**

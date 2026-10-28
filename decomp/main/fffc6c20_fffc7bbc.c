@@ -526,7 +526,7 @@ void FUN_fffc71c7(char param_1)
         FUN_fffc729c(bVar1);
       }
       uVar2 = FUN_fffc2e65(bVar1);
-      FUN_fffb0376(uVar2);
+      eeprom_save_memch(uVar2);
       return;
     }
   }
@@ -578,7 +578,7 @@ void FUN_fffc729c(undefined1 param_1)
     cStack_5 = 0;
   }
   if (bStack_3 == 7) {
-    puVar2 = (undefined *)FUN_fffb3b33();
+    puVar2 = (undefined *)dest_code_get();
     if ((((puVar2 == &DAT_0000315b) || (puVar2 == &DAT_000050e2)) || (puVar2 == &DAT_0000a4c5)) ||
        (puVar2 == &DAT_0000d950)) {
       cStack_4 = FUN_fffc7392();
@@ -651,7 +651,7 @@ void FUN_fffc73df(undefined1 param_1)
   while( true ) {
     while( true ) {
       cStack_3 = cStack_3 + -1;
-      if ((((cStack_3 == '\a') && (puVar2 = (undefined *)FUN_fffb3b33(), puVar2 != &DAT_0000315b))
+      if ((((cStack_3 == '\a') && (puVar2 = (undefined *)dest_code_get(), puVar2 != &DAT_0000315b))
           && (puVar2 != &DAT_000050e2)) && ((puVar2 != &DAT_0000a4c5 && (puVar2 != &DAT_0000d950))))
       {
         cStack_3 = '\x06';
@@ -690,7 +690,7 @@ void FUN_fffc73df(undefined1 param_1)
       FUN_fffc73bf(0x84,uStack_2,local_1);
       return;
     }
-    puVar2 = (undefined *)FUN_fffb3b33();
+    puVar2 = (undefined *)dest_code_get();
     if (((puVar2 == &DAT_0000315b) || (puVar2 == &DAT_000050e2)) ||
        ((puVar2 == &DAT_0000a4c5 || (puVar2 == &DAT_0000d950)))) break;
     cStack_3 = '\a';

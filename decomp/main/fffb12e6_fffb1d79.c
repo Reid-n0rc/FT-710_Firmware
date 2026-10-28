@@ -120,9 +120,11 @@ void FUN_fffb13e2(void)
 }
 
 
-// ===== FUN_fffb142b @ fffb142b (121 bytes)
+// ===== eeprom_hdr_update @ fffb142b (121 bytes)
 
-void FUN_fffb142b(undefined1 param_1)
+/* Increments the save counter in the EEPROM header mirror 0x464F and writes 10 bytes at EEPROM 0 */
+
+void eeprom_hdr_update(undefined1 param_1)
 
 {
   uint local_8;
@@ -825,27 +827,33 @@ LAB_fffb1bbd:
 }
 
 
-// ===== FUN_fffb1c91 @ fffb1c91 (15 bytes)
+// ===== cat_ring_head @ fffb1c91 (15 bytes)
 
-undefined1 FUN_fffb1c91(void)
+/* Returns CAT ring head index 0x11FEC (60 slots of 0x6A at 0x1E14C) */
+
+undefined1 cat_ring_head(void)
 
 {
   return DAT_00011fec;
 }
 
 
-// ===== FUN_fffb1ca0 @ fffb1ca0 (15 bytes)
+// ===== cat_ring_tail @ fffb1ca0 (15 bytes)
 
-undefined1 FUN_fffb1ca0(void)
+/* Returns CAT ring tail index 0x11FEB */
+
+undefined1 cat_ring_tail(void)
 
 {
   return DAT_00011feb;
 }
 
 
-// ===== FUN_fffb1caf @ fffb1caf (35 bytes)
+// ===== cat_ring_unpop @ fffb1caf (35 bytes)
 
-void FUN_fffb1caf(void)
+/* Steps the CAT ring tail back (port TX busy: retry later) */
+
+void cat_ring_unpop(void)
 
 {
   if (DAT_00011feb != '\0') {
@@ -857,11 +865,12 @@ void FUN_fffb1caf(void)
 }
 
 
-// ===== FUN_fffb1cd2 @ fffb1cd2 (52 bytes)
+// ===== cat_ring_pop @ fffb1cd2 (52 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb1cf5) */
+/* Advances the CAT ring tail (mod 60) and returns the slot pointer */
 
-void FUN_fffb1cd2(void)
+void cat_ring_pop(void)
 
 {
   DAT_00011feb = (char)(DAT_00011feb + 1) + (char)((DAT_00011feb + 1) / 0x3c) * -0x3c;
@@ -869,18 +878,22 @@ void FUN_fffb1cd2(void)
 }
 
 
-// ===== FUN_fffb1d06 @ fffb1d06 (12 bytes)
+// ===== cat_e9_slot @ fffb1d06 (12 bytes)
 
-void FUN_fffb1d06(void)
+/* Returns 0x1B78C: single-slot buffer for frames starting E1/E9 (flag, port, len, data) */
+
+void cat_e9_slot(void)
 
 {
   return;
 }
 
 
-// ===== FUN_fffb1d12 @ fffb1d12 (73 bytes)
+// ===== cat_send_reply @ fffb1d12 (73 bytes)
 
-void FUN_fffb1d12(int param_1,undefined4 param_2,undefined2 param_3)
+/* Send buffer on CAT port (1=SCI3, 2=SCI0, else SCI2), sets per-port busy flag */
+
+void cat_send_reply(int param_1,undefined4 param_2,undefined2 param_3)
 
 {
   if (param_1 == 1) {

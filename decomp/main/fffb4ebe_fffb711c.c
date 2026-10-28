@@ -14,7 +14,7 @@ void FUN_fffb4ebe(char param_1)
   byte bStack_e;
   
   uVar2 = FUN_fffb357c(0,2);
-  cVar1 = FUN_fffb33e5(uVar2);
+  cVar1 = band_of_freq(uVar2);
   if ((param_1 == '\x02') && (cVar1 == '\v')) {
     FUN_fffb3445(uVar2);
   }
