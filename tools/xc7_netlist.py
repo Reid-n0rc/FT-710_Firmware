@@ -137,11 +137,18 @@ class DB:
         if ty not in self._always:
             m = collections.defaultdict(list)
             p = os.path.join(self.db, "ppips_%s.db" % ty.lower())
+            spw = set()
+            for st in self.tile_type(ty)["sites"]:
+                for pv in st["site_pins"].values():
+                    if isinstance(pv, dict) and pv.get("wire"):
+                        spw.add(pv["wire"])
             if os.path.exists(p):
                 for line in open(p):
                     f = line.split()
                     if len(f) == 2 and f[1] == "always":
                         _, dst, src = f[0].split(".", 2)
+                        if dst in spw and src in spw:
+                            continue    # a path through a site (BUFHCE I->O etc.), not a wire join
                         m[dst].append(src)
                         m[src].append(dst)
             self._always[ty] = m
@@ -301,11 +308,13 @@ class Netlist:
 
 
 VCC, GND = ("c", 1), ("c", 0)
+LAST_ROUTER = None
 
 
 def build(fasm_lines, db, progress=False):
+    global LAST_ROUTER
     feats = read_fasm(fasm_lines)
-    r = Router(db)
+    r = LAST_ROUTER = Router(db)
     nl = Netlist(r)
     site_feats = {}
     # 1. PIPs
@@ -595,7 +604,8 @@ def iob_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
     if not any(("IN" in k or "DRIVE" in k or "OUT" in k) for k in keys):
         return
     params = dict(f)
-    nl.cell(site, "IOB", site, params, bus_pins(pk, dirs))
+    pins = {k: v for k, v in bus_pins(pk, dirs).items() if k in ("I", "O", "T")}
+    nl.cell(site, "IOB", site, params, pins)
 
 
 def ilogic_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
@@ -607,6 +617,7 @@ def ilogic_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
         # default pass-through: D -> O (ILOGIC combinatorial path)
         if "D" in pk and "O" in pk:
             nl.union(pk["O"], pk["D"])
+        pins = {k: v for k, v in pins.items() if k not in ("D", "O", "DDLY")}
         nl.cell(site, "ILOGIC_BYPASS", site, params, pins, ["pass-through D->O assumed"])
 
 
@@ -620,6 +631,7 @@ def ologic_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
             nl.union(pk["OQ"], pk["D1"])
         if "T1" in pk and "TQ" in pk and f.get("OSERDES.DATA_RATE_TQ.BUF"):
             nl.union(pk["TQ"], pk["T1"])
+        pins = {k: v for k, v in pins.items() if k not in ("D1", "OQ", "T1", "TQ")}
         nl.cell(site, "OLOGIC_BYPASS", site, params, pins, ["pass-through D1->OQ, T1->TQ assumed"])
 
 
@@ -697,23 +709,39 @@ def selftest(db):
     sites = d.sites_of(t0)
     s0 = [s for s in sites if s[0]["x_coord"] == 0][0]
     pinw = {p: v["wire"] for p, v in s0[0]["site_pins"].items()}
-    nAQ = d.conn[("CLBLL_L", pinw["AQ"])]
-    nA1 = d.conn[("CLBLL_L", pinw["A1"])]
-    aq_int = [ow for dx, dy, oty, ow in nAQ if oty == "INT_L"][0]
-    a1_int = [ow for dx, dy, oty, ow in nA1 if oty == "INT_L"][0]
-    # find a two-PIP path aq_int -> X -> a1_int inside the INT tile
-    srcs = {}
+    def int_wire(w):  # site pin wire -> always-ppip -> tileconn -> INT_L wire
+        for w2 in [w] + d.always("CLBLL_L").get(w, []):
+            for dx, dy, oty, ow in d.conn.get(("CLBLL_L", w2), ()):
+                if oty == "INT_L" and (dx, dy) == (1, 0):
+                    return ow
+        raise AssertionError(w)
+    aq_int = int_wire(pinw["AQ"])
+    a1_int = int_wire(pinw["A1"])
+    # shortest PIP path aq_int -> ... -> a1_int inside the INT tile (BFS over its PIPs)
+    dsts = {}
     for dst, src in tt["pips"]:
-        srcs.setdefault(dst, set()).add(src)
-    mid = [w for w in srcs.get(a1_int, ()) if aq_int in srcs.get(w, ())]
-    assert mid, (aq_int, a1_int)
-    mid = sorted(mid)[0]
+        dsts.setdefault(src, set()).add(dst)
+    prev = {aq_int: None}
+    q = [aq_int]
+    while q and a1_int not in prev:
+        nq = []
+        for w in q:
+            for o in sorted(dsts.get(w, ())):
+                if o not in prev:
+                    prev[o] = w
+                    nq.append(o)
+        q = nq
+    assert a1_int in prev, (aq_int, a1_int)
+    path = [a1_int]
+    while prev[path[-1]] is not None:
+        path.append(prev[path[-1]])
+    path.reverse()
+    mid = "->".join(path[1:-1])
     pre = "%s.SLICEL_X0." % t0
     lines = [
         pre + "ALUT.INIT[63:0] = 64'h5555555555555555",   # O6 = !A1
         pre + "AFFMUX.O6", pre + "AFF.ZINI", pre + "AFF.ZRST", pre + "FFSYNC", pre + "NOCLKINV",
-        "%s.%s.%s" % (it, mid, aq_int), "%s.%s.%s" % (it, a1_int, mid),
-    ]
+    ] + ["%s.%s.%s" % (it, path[i + 1], path[i]) for i in range(len(path) - 1)]
     nl = build(lines, d)
     cells = {c["name"]: c for c in nl["cells"]}
     sname = s0[1]
