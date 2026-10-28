@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>The DISPLAY's three SPI data links, frames drawn to scale</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+  </style>
+  <rect width="960" height="640" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">The DISPLAY's SPI links: one frame each, drawn to scale</text>
+<text x="40" y="76" class="b">1. SDR FPGA → DISPLAY: spectrum scope</text>
+<text x="920" y="76" text-anchor="end" class="s">FPGA is master · rate set by the FPGA</text>
+<rect x="40.0" y="88" width="162.6" height="40" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="121.3" y="113" text-anchor="middle">kept: 850 B</text>
+<rect x="202.6" y="88" width="162.6" height="40" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="283.9" y="113" text-anchor="middle">never read</text>
+<line x1="40.0" y1="130" x2="40.0" y2="138" stroke="#1F2937" stroke-width="2"/>
+<text x="40.0" y="154" text-anchor="middle" class="s">0</text>
+<line x1="202.6" y1="130" x2="202.6" y2="138" stroke="#1F2937" stroke-width="2"/>
+<text x="202.6" y="154" text-anchor="middle" class="s">850</text>
+<line x1="365.2" y1="130" x2="365.2" y2="138" stroke="#1F2937" stroke-width="2"/>
+<text x="365.2" y="154" text-anchor="middle" class="s">1700 B</text>
+<text x="40" y="186" class="s">Kept part = 25-byte header + 800 points + 25 bytes; one point per screen column of the 800-pixel display (inference).</text>
+<text x="40" y="232" class="b">2. IF DSP ↔ DISPLAY: audio scope and voice recorder (full duplex)</text>
+<text x="920" y="232" text-anchor="end" class="s">DSP is master · 1 MHz</text>
+<text x="40" y="260" class="s">DSP → DISPLAY</text>
+<rect x="40.0" y="268" width="114.8" height="40" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="97.4" y="293" text-anchor="middle">AF-FFT</text>
+<rect x="154.8" y="268" width="765.2" height="40" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="537.4" y="293" text-anchor="middle">4000 bytes of audio for the recorder (16 kHz stereo, 16-bit)</text>
+<text x="40" y="334" class="s">DISPLAY → DSP</text>
+<rect x="40.0" y="342" width="880.0" height="40" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="480.0" y="367" text-anchor="middle">playback audio from a WAV file on the SD card, otherwise silence</text>
+<line x1="40.0" y1="384" x2="40.0" y2="392" stroke="#1F2937" stroke-width="2"/>
+<text x="40.0" y="408" text-anchor="middle" class="s">0</text>
+<line x1="154.8" y1="384" x2="154.8" y2="392" stroke="#1F2937" stroke-width="2"/>
+<text x="154.8" y="408" text-anchor="middle" class="s">600</text>
+<line x1="920.0" y1="384" x2="920.0" y2="392" stroke="#1F2937" stroke-width="2"/>
+<text x="920.0" y="408" text-anchor="middle" class="s">4600 B</text>
+<text x="40" y="428" class="s">4000 bytes of 16 kHz stereo audio last 62.5 ms, so the DSP must send about 16 frames per second (inference).</text>
+<text x="40" y="470" class="b">3. DISPLAY → PC through the FT4222H</text>
+<text x="40" y="490" class="s">FT4222H is the SPI master · the DISPLAY refreshes the block every 4 ms</text>
+<rect x="40.0" y="498" width="783.6" height="40" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+<rect x="40.0" y="498" width="162.6" height="40" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="121.3" y="523" text-anchor="middle">scope copy</text>
+<rect x="365.2" y="498" width="114.8" height="40" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="422.6" y="523" text-anchor="middle">AF-FFT</text>
+<rect x="597.8" y="498" width="28.9" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<rect x="820.5" y="498" width="3.1" height="40" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<line x1="40.0" y1="540" x2="40.0" y2="548" stroke="#1F2937" stroke-width="2"/>
+<text x="40.0" y="564" text-anchor="middle" class="s">0</text>
+<line x1="365.2" y1="540" x2="365.2" y2="548" stroke="#1F2937" stroke-width="2"/>
+<text x="365.2" y="564" text-anchor="middle" class="s">0x6A4</text>
+<line x1="597.8" y1="540" x2="597.8" y2="548" stroke="#1F2937" stroke-width="2"/>
+<text x="597.8" y="564" text-anchor="middle" class="s">0xB64</text>
+<line x1="823.6" y1="540" x2="823.6" y2="548" stroke="#1F2937" stroke-width="2"/>
+<text x="823.6" y="564" text-anchor="middle" class="s">4096 B</text>
+<text x="612.2" y="490" text-anchor="middle" class="s">status 151 B</text>
+<text x="816.1" y="490" text-anchor="end" class="s">trailer 16 B</text>
+<text x="40" y="596" class="s">The status block is a copy of MAIN's status frame. The PC software that reads this is unknown.</text>
+<text x="40" y="620" class="s">On all three links the DISPLAY is the SPI slave and a DMA channel moves each frame. No checksum, no acknowledge.</text>
+</svg>
