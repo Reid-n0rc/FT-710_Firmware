@@ -41,6 +41,38 @@ def decode_e8(raw):
     return plain, problems
 
 
+class Progress:
+    """One status line: bar, percent, count, elapsed time, time left. On a terminal it redraws in place; otherwise it prints
+    a line every 10 %."""
+
+    def __init__(self, label, total, unit=""):
+        self.label, self.total, self.unit = label, total, unit
+        self.start, self.shown = time.time(), -1
+        self.tty = sys.stdout.isatty()
+
+    @staticmethod
+    def _clock(sec):
+        sec = int(sec)
+        return f"{sec // 60}:{sec % 60:02d}"
+
+    def update(self, done, note=""):
+        pct = 100 * done // self.total if self.total else 100
+        if not self.tty and (pct // 10 == self.shown or pct == 100 and done < self.total):
+            return
+        self.shown = pct // 10
+        elapsed = time.time() - self.start
+        left = elapsed * (self.total - done) / done if done else 0
+        bar = "#" * (pct // 4) + "." * (25 - pct // 4)
+        line = (f"  {self.label} [{bar}] {pct:3d}%  {done:,}/{self.total:,}{self.unit}  "
+                f"elapsed {self._clock(elapsed)}  left {self._clock(left)}{('  ' + note) if note else ''}")
+        print(("\r" + line + "\033[K") if self.tty else line, end="" if self.tty else "\n", flush=True)
+
+    def finish(self, note=""):
+        self.update(self.total, note)
+        if self.tty:
+            print()
+
+
 def query(s, cmd, n=64, wait=0.4):
     s.reset_input_buffer()
     s.write(cmd)
@@ -51,9 +83,15 @@ def query(s, cmd, n=64, wait=0.4):
 def read_e8(s):
     s.reset_input_buffer()
     s.write(b"E8;")
+    bar = Progress("E8", E8_LEN, " B")
     buf, t = b"", time.time()
     while len(buf) < E8_LEN and time.time() - t < 15:
-        buf += s.read(E8_LEN - len(buf))
+        buf += s.read(min(512, E8_LEN - len(buf)))
+        bar.update(len(buf))
+    if len(buf) == E8_LEN:
+        bar.finish()
+    else:
+        print()
     return buf
 
 
@@ -64,10 +102,13 @@ def spr_frame(addr):
     return body + bytes([sum(body) & 0xFF]) + b";"
 
 
-def read_eeprom(s, log):
+def read_eeprom(s):
     image, missing = bytearray(EEPROM_END + 1), []
     s.timeout = 0.3
+    bar = Progress("EEPROM", EEPROM_END + 1, " B")
     for a in range(EEPROM_END + 1):
+        if a % 64 == 0:
+            bar.update(a, f"{len(missing)} unread" if missing else "")
         f = spr_frame(a)
         r = b""
         for _ in range(2):
@@ -80,8 +121,7 @@ def read_eeprom(s, log):
             missing.append(a)
             continue
         image[a] = r[5]
-        if a % 0x400 == 0:
-            log(f"  EEPROM 0x{a:04X} / 0x{EEPROM_END:04X}")
+    bar.finish(f"{len(missing)} unread" if missing else "")
     return bytes(image), missing
 
 
@@ -102,6 +142,8 @@ def main():
     out = pos[1] if len(pos) > 1 else "backup-" + datetime.datetime.now().strftime("%Y%m%d-%H%M")
     os.makedirs(out, exist_ok=True)
     s = serial.Serial(port, baud, timeout=0.6)
+    steps = 3 if "--eeprom" in args else 2
+    print(f"[1/{steps}] Identity and region code")
 
     ident = query(s, b"ID;")
     if not ident.startswith(b"ID0800"):
@@ -111,8 +153,9 @@ def main():
     for c in (b"VE0;", b"VE1;", b"VE2;", b"VE3;", b"JP0710;"):
         info.append(f"{c.decode()} {query(s, c).decode(errors='replace')}")
     open(os.path.join(out, "info.txt"), "w").write("\n".join(info) + "\n")
-    print("\n".join(info))
+    print("\n".join("  " + x for x in info))
 
+    print(f"[2/{steps}] E8 memory-channel image")
     raw = read_e8(s)
     open(os.path.join(out, "e8_raw.bin"), "wb").write(raw)
     plain, problems = decode_e8(raw)
@@ -120,16 +163,16 @@ def main():
         print("E8 problems: " + "; ".join(problems))
         return 1
     open(os.path.join(out, "e8_plain.bin"), "wb").write(plain)
-    print(f"E8: {len(raw)} bytes, signature and checksum OK")
+    print(f"  E8: {len(raw)} bytes, signature and checksum OK")
 
     if "--eeprom" in args:
-        print("Full EEPROM dump (untested on a radio; takes several minutes)")
-        image, missing = read_eeprom(s, print)
+        print(f"[3/{steps}] Full EEPROM dump (untested on a radio; takes several minutes)")
+        image, missing = read_eeprom(s)
         open(os.path.join(out, "eeprom.bin"), "wb").write(image)
         open(os.path.join(out, "eeprom_missing.txt"), "w").write("".join(f"0x{a:04X}\n" for a in missing))
-        print(f"EEPROM: {len(image)} bytes, {len(missing)} addresses unread (see eeprom_missing.txt)")
+        print(f"  EEPROM: {len(image):,} bytes, {len(missing)} addresses unread (see eeprom_missing.txt)")
     s.close()
-    print(f"Saved in {out}/")
+    print(f"Done. Saved in {out}/")
     return 0
 
 

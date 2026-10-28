@@ -65,7 +65,7 @@ python3 -I tools/cat_backup.py /dev/cu.SLAB_USBtoUART --eeprom
 
 This also copies the radio's whole EEPROM into `eeprom.bin`. It is the **only** backup of the factory calibration, and it holds the
 region code as well. Expect it to take several minutes, because the service command it uses (`SPR`) reads one byte at a time
-**[estimate]**.
+**[estimate]**. A progress line shows how far it is, the time left and any bytes that didn't answer.
 
 It only reads, but it **has not been run on a radio yet**. Check the result: bytes 0x010F..0x0110 of `eeprom.bin` should equal the
 region code from `JP0710;`, and `eeprom_missing.txt` lists any addresses that didn't answer (bytes equal to `;` in the request may
