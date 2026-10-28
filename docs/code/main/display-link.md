@@ -130,7 +130,7 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xE1 | 7 | *`displink_rx_E1_encoder`* 0xFFF9588B | **encoder step**: b1 = encoder id, b2 = signed step count ([ui-keys.md](ui-keys.md#encoders)); ignored while +0x80 = 1 **[fact]** | ACK |
 | 0xE2 | 7 | *`displink_rx_E2`* 0xFFF95BF4 | b1 ≠ 0 → +0xA6 = 1 (first frame also sets +0xA7 and +0xA5). Read by 0xFFFCFxxx/0xFFFD3xxx UI code; meaning unknown **[fact for the fields]** | ACK |
 | 0xE3 | 9 | *`displink_rx_E3_clock`* 0xFFF95ED3 | b1..b5 → +0xAD..+0xB1. **Date/time from the DISPLAY RTC** **[inference]**: the clock-set code (0xFFFCD7xx, 0xFFFCDBB8) copies these to +0xB2..+0xB6 and forces fields 2 and 3 (month, day) to ≥ 1, and `0x65` sends +0xB2..+0xB6 back. No APO reset (periodic) | ACK |
-| 0xE4 | 5 | `FUN_fff95c6a` | clears +0x82: the DISPLAY's answer to `0x7B` **[fact]** | ACK |
+| 0xE4 | 5 | *`displink_rx_E4`* 0xFFF95C6A | clears +0x82: the DISPLAY's answer to `0x7B` **[fact]** | ACK |
 | 0xE5 | 5 | *`displink_rx_E5`* 0xFFF95C74 | clears +0x80 (unblocks the scheduler and encoders) **[fact]** | ACK |
 | 0xE6 | 5 | *`displink_rx_E6_beep`* 0xFFF95C8A | b1 = 0/1/2 → *`beep_request`*(1/2/3) 0xFFFB2DA6 (code 3 is also used when `key_event_filter` rejects a key) **[fact; "beep" is inference]** | ACK |
 | 0xE7 | 10 | *`displink_rx_E7`* 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `FUN_fffb2df4`). Consumed by `FUN_fffe2cd0`; looks like the completion status of a DISPLAY-side file operation **[guess]** | ACK |

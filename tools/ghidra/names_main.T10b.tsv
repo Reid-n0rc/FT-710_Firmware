@@ -1,0 +1,173 @@
+# T10b proposals: SCI driver layer, DISPLAY link (SCI1), key/encoder events. Same format as names_main.tsv.
+# --- SCI / BSP (docs/code/main/sci.md)
+fff8f65e	hw_periph_init	Peripheral init (R_Systeminit-like): PRCR unlock, ports, all R_SCIn_Create, GROUPBL0 TEI/ERI callback registration
+fff8fffb	R_BSP_InterruptWrite	Registers a group-interrupt callback by index (0x14..0x23 = TEI0/ERI0..TEI7/ERI7) [inference]
+fff9340d	R_SCI0_Create_UserInit	empty
+fff9345a	r_sci0_transmitend_interrupt	TEI0 (GROUPBL0 cb 0x14): TXD pin to GPIO, clear TIE/TE/TEIE, transmit-end callback
+fff934f1	r_sci0_receiveerror_interrupt	ERI0 (cb 0x15): error callback, clear ORER/FER/PER
+fff93518	r_sci0_callback_transmitend	-> cat_tx_done_sci0
+fff9352c	r_sci0_callback_receiveerror	empty
+fff9352d	r_sci0_rx_byte_hook	cat_rx_byte_hook(&cnt,&len,ptr,timer 5)
+fff935ef	R_SCI1_Start
+fff9373a	R_SCI1_Create_UserInit	empty
+fff93787	r_sci1_transmitend_interrupt	TEI1 (cb 0x16)
+fff9381e	r_sci1_receiveerror_interrupt	ERI1 (cb 0x17)
+fff93845	r_sci1_callback_transmitend	empty
+fff93846	r_sci1_callback_receiveend	-> displink_rx_done
+fff9384b	r_sci1_callback_receiveerror	empty
+fff9384c	displink_rx_frame_len	SCI1 rx byte hook: expected frame length by first byte (06/15=1, Z=len16+4, C3..C5, E0..E8, F0, F1, FD, FE, 'e'), resync on 10-unit gap (timer 1)
+fff93b29	R_SCI2_Start
+fff93c7b	R_SCI2_Create_UserInit	empty
+fff93cc8	r_sci2_transmitend_interrupt	TEI2 (cb 0x18)
+fff93d5f	r_sci2_receiveerror_interrupt	ERI2 (cb 0x19)
+fff93d86	r_sci2_callback_transmitend	CAT mode: 0x11FE9=0, else tuner
+fff93d97	r_sci2_callback_receiveend	CAT mode: cat_rx_complete(3,len), else tuner flag 0xA0A9
+fff93db3	r_sci2_callback_receiveerror	empty
+fff93db4	sci2_rx_byte_hook	CAT framing or tuner framing (first byte 0xA0..0xAF), by sci2_port_mode
+fff93fb0	R_SCI3_Start
+fff940fb	R_SCI3_Create_UserInit	empty
+fff94148	r_sci3_transmitend_interrupt	TEI3 (cb 0x1A)
+fff941df	r_sci3_receiveerror_interrupt	ERI3 (cb 0x1B)
+fff94206	r_sci3_callback_transmitend	-> cat_tx_done_sci3
+fff9420b	r_sci3_callback_receiveend	cat_rx_complete(1,len)
+fff9421a	r_sci3_callback_receiveerror	empty
+fff9421b	sci3_rx_byte_hook	cat_rx_byte_hook(...,timer 4)
+fff942df	R_SCI4_Start
+fff9442a	R_SCI4_Create_UserInit	empty
+fff94477	r_sci4_transmitend_interrupt	TEI4 (cb 0x1C)
+fff9450e	r_sci4_receiveerror_interrupt	ERI4 (cb 0x1D)
+fff94535	r_sci4_callback_transmitend	empty
+fff94536	r_sci4_callback_receiveend	flag 0xA2AB, length 0x1B78A
+fff94547	r_sci4_callback_receiveerror	empty
+fff94548	sci4_rx_byte_hook	NXP ISP (blhost) UART framing 0x5A type len16 crc16, plus 06/'?'/'r' replies
+fff94705	R_SCI5_Start
+fff94850	R_SCI5_Create_UserInit	empty
+fff9489d	r_sci5_transmitend_interrupt	TEI5 (cb 0x1E)
+fff94934	r_sci5_receiveerror_interrupt	ERI5 (cb 0x1F)
+fff9495b	r_sci5_callback_transmitend	empty
+fff9495c	r_sci5_callback_receiveend	flag 0xA2B3
+fff94961	r_sci5_callback_receiveerror	empty
+fff94962	sci5_rx_byte_hook	06/'?' = 1 byte, 'r' = 7 bytes
+fffc93a3	R_SCI6_Create_UserInit	empty
+fffc93ef	r_sci6_iic_tei	TEI6 (cb 0x20), simple-I2C condition handling
+fffc979f	R_SCI7_Create_UserInit	empty
+fffc97ec	r_sci7_transmitend_interrupt	TEI7 (cb 0x22)
+fffc9880	r_sci7_receiveerror_interrupt	ERI7 (cb 0x23)
+fffc98a7	r_sci7_callback_transmitend	empty
+fffc98a8	r_sci7_callback_receiveend	empty (SCI7 is never started)
+fffc98a9	r_sci7_callback_receiveerror	empty
+fffb1632	sci_start_all	From app_main: sci0_set_baud, displink_uart_start, sci2_configure, sci3_set_baud, SCI4/SCI5 start
+fffb1900	sci2_port_mode	Setting 0x9AB7 clamped to 0..3 (2 = CAT, 0 = tuner, 1/3 = off)
+fffb1d5b	cat_tx_done_sci0	0x11FE8 = 0
+fffb1d65	cat_tx_done_sci2	0x11FE9 = 0
+fffb1d6f	cat_tx_done_sci3	0x11FEA = 0
+fffb1dad	cat_rx_byte_hook	CAT framing: ';' end, SPR/SPW/SPNW fixed lengths, E9 bulk, inter-byte timeout from CAT TOT setting
+fffb237a	soft_timer_start	soft_timer_start(id 0..0x4A, n): reload n*10 at 0x209BC, clear expired flag 0x11FED+id
+fffb23f3	soft_timer_expired	returns 0x11FED[id]
+# --- DISPLAY link (docs/code/main/display-link.md)
+fffb1702	displink_uart_start	R_SCI1_Start + arm receive 0x9E86/0x204
+fffb171e	displink_rx_ready	returns 0xA08A
+fffb172d	displink_rx_rearm	0xA08A=0, arm receive again
+fffb1745	displink_rx_done	0xA08A=1
+fffb174f	displink_rx_buf	returns 0x9E86
+fffb175b	displink_uart_send	R_SCI1_Serial_Send(buf,len)
+fff94cab	ui_link_init	UI/link state init before the power-off loop [inference]
+fff94d6f	displink_task	DISPLAY link task (main_loop and power-off loop): rx validate/dispatch, ACK/NAK, gap 2 / ACK-wait 30 units, scheduler, 3 retries
+fff95277	displink_rx_len_of	Frame length by type for received frames (0 = unknown -> NAK)
+fff95331	displink_rx_dispatch	Switch on received type; APO reset for all but 06/15/E3
+fff951ff	displink_tx_poll	Next frame (scheduler) or resend; after 3 retries drop, link down if hello
+fff9541e	displink_rx_ack	ACK: clear outstanding; after the hello reply sets +0x400 (send 0x24)
+fff95469	displink_rx_nak	NAK: no action
+fff9546a	displink_rx_F0_hello	F0: DISPLAY version/date, boot code b7 (1 reset, 2, 4 numeric mode, 5, 6 link down, 7 destination swap, 0x10 warm), link up, power on (+0x36)
+fff957e6	displink_rx_F1_sys	F1 sub: 01 SDR bridge, 02 DSP ISP tunnel, 03 CAT disable (0x20B46), 83 nop
+fff95829	displink_rx_E0_key	E0 key/touch event -> key_event_filter -> mailbox +0x9C..+0xA0
+fff9588b	displink_rx_E1_encoder	E1 encoder id/step -> main dial / knobs / +0xA3/+0xA4
+fff95a64	ui_numentry_step	Signed step on counter 0x25D3C (0..99999999)
+fff95ace	ui_numentry_to_bcd	0x25D3C -> BCD at +0x7C..+0x7F
+fff95bf4	displink_rx_E2	E2: +0xA5..+0xA7 on/off state
+fff95c6a	displink_rx_E4	E4: answer to 0x7B (clears +0x82, set by caller)
+fff95c74	displink_rx_E5	E5: clears +0x80
+fff95c8a	displink_rx_E6_beep	E6: beep_request(b1+1)
+fff95cbc	displink_rx_E7	E7: result code in +0x488
+fff95dad	displink_rx_E8	E8: result code in +0x48C
+fff95e65	displink_rx_C3	C3 reply (to 0x43): payload -> +0x2ED, +0x3F6=1
+fff95e97	displink_rx_C4_C5	C4/C5 replies (to 0x45/0x44): payload -> +0x2ED, +0x3F6=1
+fff95ed3	displink_rx_E3_clock	E3: 5 bytes -> +0xAD..+0xB1 (DISPLAY RTC date/time [inference])
+fff95f26	displink_send_ack	send 0x06
+fff95f3f	displink_send_nak	send 0x15
+fff95f58	displink_tx_schedule	MAIN->DISPLAY frame scheduler (priority list in display-link.md)
+fff96209	displink_tx_resend	resend frame 0x1456 (len 0x1B628)
+fff96225	displink_tx_60_hello	0x60 hello reply (0xB6 bytes)
+fff96241	displink_build_60	versions (MAIN/DISPLAY/DSP/SDR) + status block
+fff96455	displink_build_status	0x97-byte status block at 0x16A1 (used by 0x20 and 0x60)
+fff986e0	displink_tx_64	0x64 (3 bytes): +0xB8 when changed
+fff98797	displink_tx_7F_power	0x7F (11 bytes): power command +0x35 (0x10 off, 0x11 restart, 0x90 low-voltage off) + constant
+fff98869	displink_tx_7C	0x7C (5 bytes)
+fff9889c	displink_tx_7B	0x7B (5 bytes), toggles +0x82
+fff988f2	displink_tx_7A	0x7A (5 bytes)
+fff98925	displink_tx_70	0x70 (0xE3 bytes)
+fff9894f	displink_build_70
+fff98bcd	displink_tx_req	0x43/0x44/0x45 request, type +0x1E0, length +0x1E2
+fff98c1f	displink_build_req
+fff98e39	displink_tx_23	0x23 (0x37 bytes)
+fff98e96	displink_build_23
+fff98ecb	displink_tx_30_31	0x30 (0xA0) or 0x31 (0xA3) by +0x1C2
+fff98fb1	displink_build_30
+fff99297	displink_build_31
+fff98f7c	displink_tx_34	0x34 (0xA3 bytes)
+fff9a06e	displink_build_34
+fff9a0cc	displink_tx_65_clock	0x65 (9 bytes): +0xB2..+0xB6 (clock set [inference])
+fff9a100	displink_build_65
+fff9a17d	displink_tx_24	0x24 (0x9F bytes) settings
+fff9a1a7	displink_build_24
+fff9a2d1	displink_tx_50	0x50 (0xF5 bytes)
+fff9a2fb	displink_build_50
+fff9a89b	displink_tx_3F	0x3F (5 bytes): +0x92
+fff9a8e3	displink_tx_3A	0x3A (0xA2 bytes)
+fff9a925	displink_build_3A
+fff9aaad	displink_tx_40	0x40 (0x1FB bytes), rate-limited 100 units (timer 0x29)
+fff9aaf7	displink_build_40
+fff9ab2a	displink_tx_37	0x37 (0x240 bytes)
+fff9ab57	displink_build_37
+fff9b69e	displink_tx_39	0x39 (0xE9 bytes)
+fff9b6c8	displink_build_39
+fff9bb23	displink_tx_41	0x41 (0x146 bytes)
+fff9bb50	displink_build_41
+fff9c42a	displink_tx_20_status	0x20 (0x99 bytes) status, default frame, sent only when changed
+fff9c454	displink_build_20
+fff9c46d	displink_tx_62	0x62 (0x197 bytes)
+fff9c49a	displink_build_62
+fff9c5b2	displink_tx_start	put sum, mark outstanding, send
+fff9c5d8	displink_put_sum	8-bit sum of bytes 0..len-2 into byte len-1
+fff9c60f	displink_check_sum	verify 8-bit sum
+fff9c655	mem_zero	mem_zero(n, ptr)
+fff9c667	displink_copy_if_changed	copy staging -> 0x1456 and return 1 only if different
+fff9d94d	dsp_tunnel_request	0x1C63 = 1 (F1 02)
+fffa1576	sdr_bridge_request	0x1C8D = 1 (F1 01)
+fffa0c79	dsp_isp_tunnel	DISPLAY<->SCI4 bridge: 'Z' len16 frames <-> RT685 ISP packets; starts with 5A A6 ping; F1 82 exits
+fffb2da6	beep_request	0x12041 = code, 0x12040 = pending [inference: beep]
+# --- keys / encoders (docs/code/main/ui-keys.md)
+fffbbd53	key_task_init	[inference]
+fffbbd58	key_task	Key state machine (main_loop): press/short/long/repeat/release tables by key class
+fffbc103	key_cancel_check	code 0x340 release: clears +0x78 / 0x20CCC / 0x20B2E
+fffbc1d0	key_class_of	class from 0xFFF83164 (or via assignable slot)
+fffbc225	key_assign_slot	assignable code (0x348,0x34E,0x35B..0x35E) -> slot from settings 0x9AC8..0x9ACD
+fffbc35f	key_call_press	JSR key_press_table[code]
+fffbc38e	key_call_short	JSR key_short_table[code]
+fffbc3bd	key_call_long	JSR key_long_table[code]
+fffbc406	key_call_repeat	JSR key_repeat_table[code]
+fffbc435	key_call_release	JSR key_release_table[code]
+fffbc464	key_touch_scope_tune	Touch (source 4) x position (0..0x316) -> VFO frequency in the scope span
+fffc4a8d	key_nop	empty key handler (RTS)
+fffc52d7	enc_main_dial	main dial steps (encoder id 1/6) -> tuning
+fffc64c0	enc2_step	encoder id 2 by screen [inference: multi knob]
+fffc7daf	enc3_step	encoder id 3 by screen [inference: multi knob]
+fff83164	@key_class_table	863 x u8 key class (0 press, 1 short/long, 2 hold/release)
+fff88312	@key_assign_map	15 x u16 slot -> key code
+fff88534	@key_assign_codes	13 x u16 slot -> key code (key_class_of)
+fff89d24	@scope_span_table	u32 span per scope-span setting [inference]
+fff89d94	@key_press_table	863 x code ptr
+fff8ab10	@key_short_table	863 x code ptr
+fff8b88c	@key_long_table	863 x code ptr
+fff8c608	@key_repeat_table	863 x code ptr
+fff8d384	@key_release_table	863 x code ptr
