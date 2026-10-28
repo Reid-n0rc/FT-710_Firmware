@@ -1,0 +1,62 @@
+# T10c proposed MAIN names: SDR link (SCI5), SDR register sync task, SDR/DSP control GPIOs. address<TAB>name<TAB>plate comment
+# See docs/code/main/sdr-link.md. Register numbers are SDR (FPGA) register addresses as used by SPSR/SPSW.
+# --- SCI5 driver glue
+fff94705	R_SCI5_Start	SCI5 start: clears IR/sets IEN for RXI5/TXI5 and group TEI/ERI bits (Code Generator style)
+fff9495c	r_sci5_callback_receiveend	SCI5 receive-end callback: calls sdr_rx_done_cb (0xA2B3=1)
+fffb1af8	sdr_link_start	Clears the SDR reply-ready flag 0xA2B3 and starts SCI5 (called from the SCI start-up chain FUN_fffb1632)
+fffb1b06	sdr_rx_ready	Returns 0xA2B3: 1 when the 7-byte SDR reply has arrived in 0xA2AC
+fffb1b15	sdr_rx_done_cb	Sets 0xA2B3=1 (SCI5 receive end)
+fffb1b1f	sdr_rx_buf	Returns 0xA2AC, the 7-byte SDR reply buffer (MOV.L #0xA2AC,R1; decompile lost the return)
+# --- frame layer
+fffa30f9	sdr_send_frame	Builds 'r'/'w' + 4-hex reg (0x1B784) [+ 4-hex value 0x1B786] + 2-hex sum8 + CR at 0x1C7F, sets pending flag 0x1C8C (r) / 0x1C8B (w), sends via sdr_send_cmd, arms timer 2 = 6 ms
+fffa3083	sdr_poll_reply	Reply poll: if 0xA2B3, clears pending flags; 'r' -> checks 2-hex sum of bytes 0..4, 'w' -> byte 0 must be ACK 0x06; on timer 2 timeout clears the flags and fails
+fffa2ff7	sdr_wait_reply	Blocking wait for the reply of the pending frame; read -> 0x1B786=hex2word(reply+1); calls sdr_shadow_update (arg2=1: reg forced to 0xFFFF so the value lands in 0x1B782)
+fffa31ae	sdr_sum8	8-bit additive sum of n bytes (frame checksum)
+fffa31db	sdr_check_hex_sum	1 if the 2 hex chars after n bytes equal sum8 of those bytes
+fffa2c9f	sdr_shadow_update	After an ACKed frame: copies 0x1B786 into the shadow slot of register 0x1B784 (0x1B736..0x1B780; 0xFFFF -> 0x1B782)
+# --- SDR task (main loop) and boot
+fffa1132	sdr_init	Boot (app_main): SDR_RESET P77=1, wait 1000 ms, clear shadows, read regs 0 and 1 (fail -> 0x20B36=3), build SDR version 'Vxx-yy' from reg 0 into 0x144A (VE P1=2)
+fffa11ed	sdr_task	Main-loop SDR task: completes a pending write, runs sdr_bridge_mode on request, waits for TX/RX line changes, then calls the per-register updaters in order until one sends a frame (one write per pass)
+fffa1576	sdr_bridge_request	DISPLAY-link sub-command 1: sets 0x1C8D so sdr_task enters sdr_bridge_mode
+fffa1580	sdr_req_reg0	Sends a read of SDR register 0 (version)
+fffa1590	sdr_req_reg1	Sends a read of SDR register 1
+fffa150c	scope_level_ptr	Returns the pointer to the scope reference-level byte for a frequency and VFO side (FUN_fffb3480); used by SS sel 4 and SDR reg 0x27 [inference]
+fffa1541	scope_span_ptr	Returns the pointer to the scope span index for a frequency (FUN_fffb3480); used by SS sel 5 and SDR reg 0x20/0x21 [inference]
+# --- per-register updaters (write only when the computed value differs from the shadow)
+fffa15a0	sdr_upd_r03	Reg 0x03 = 0xE63D if TX-side frequency <= 62.5 MHz else 0xE61D
+fffa15f3	sdr_upd_r04	Reg 0x04 = 0xE519 (constant; RX only)
+fffa162c	sdr_upd_r08_tx_freq	Regs 0x08/0x09 = 32-bit operating frequency 0x20F50 in Hz, with PSK tone / CW pitch offsets [inference: TX NCO]
+fffa1738	sdr_upd_r0a_demod	Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while 0x1204D != 0
+fffa17dc	sdr_upd_r0b_band	Reg 0x0B = per-band word from 0xFFF87FFA (RX) / 0xFFF87FFE (TX), 8-byte rows
+fffa183d	sdr_upd_r0c_rtty_shift	Reg 0x0C = (RTTY shift 170/200/425/850 Hz from 0x9A8D)/5 << 8 | 3
+fffa18ae	sdr_upd_r0d	Reg 0x0D = 9/14/19 from setting 0x9AA1 (0..2) [meaning unknown]
+fffa18f8	sdr_upd_r0e	Reg 0x0E = 0x1200 (constant)
+fffa1929	sdr_upd_r0f_band	Reg 0x0F = per-band word 0xFFF87FFC/0xFFF88000, 0 when ADC 0x20B14 >= 0xE8B, unchanged between 0x9B3..0xE8A
+fffa19ac	sdr_upd_r12	Reg 0x12 = 0x8000 (constant; RX only)
+fffa19dd	sdr_upd_r13	Reg 0x13 = 0x8000 (constant; RX only)
+fffa1a0e	sdr_upd_r14_mode	Reg 0x14 = 0x2000/0x3200 (AM)/0x7800 (FM, DATA-FM)/0x3C00 (FM-N, DATA-FM-N) by TX-side mode
+fffa1a8a	sdr_init_r15	Reg 0x15 = 0x2000, sent once after the first full sync
+fffa1abb	sdr_upd_r16_filter	Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A
+fffa1c69	sdr_upd_r18_rx_freq	Regs 0x18/0x19 = 32-bit RX VFO frequency in Hz plus the mode offset (SSB 1500 Hz + shift, CW pitch, RTTY mark/shift, DATA offset, PSK) [inference: RX NCO]
+fffa1fd1	sdr_upd_r1a_nb_level	Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off
+fffa2049	sdr_upd_r1b	Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 [guess: NB parameter]
+fffa20af	sdr_upd_r1c	Reg 0x1C = 2/5/10 from setting 0x9AD2 [guess: NB parameter]
+fffa20f7	sdr_upd_r1d_notch	Reg 0x1D = notch offset/5 Hz (12 bits) | 0x2000 or 0x1000 (width 0x9AD1), 0 when off [inference: manual notch]
+fffa2478	sdr_upd_r1e_passband	Reg 0x1E = signed passband centre / 5 Hz (negated for the upper-side modes) [inference]
+fffa26cf	sdr_upd_r1f_width	Reg 0x1F = filter width in Hz (AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N 9000, else the selected width)
+fffa2758	sdr_upd_r20_scope_freq	Regs 0x20/0x21 = 32-bit scope centre frequency (centre mode: RX freq + offset; fixed/cursor: start + half span); TX: |f - 62.5 MHz|
+fffa28ea	sdr_upd_r22_scope_span	Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000)
+fffa2992	sdr_upd_r23	Reg 0x23 = 0x8000/0x7000/0x5000 from setting 0x9B14 [guess: scope/gain]
+fffa29e5	sdr_init_r24	Reg 0x24 = 0x0317, sent once after the first full sync
+fffa2a16	sdr_upd_r25_tx_drive	Reg 0x25 = TX drive: power setting interpolated (5/10/20/50/100 W) in the per-band calibration in the 0x4659 (SPN) table, << 4
+fffa2b8f	sdr_upd_r26	Reg 0x26 = 0x0610 in RX; in TX 0x0140/0x0610/0x0200/0xFF00 from 0x9C36/0x9B16/0x9B17 [meaning unknown]
+fffa2c03	sdr_upd_r27_scope_level	Reg 0x27 = 0x8000 | -(scope ref level byte + offset) + 0/2/4 (setting 0x9B14) [inference]
+# --- control GPIOs (PODR bit setters/getters; nets from service manual p17)
+fffb7051	gpio_sdr_reset	P77 (pin 68) = SDR_RESET (J2002 pin 52 RST_IN); 0 holds the SDR module in reset
+fffb7067	gpio_sdr_update	P76 (pin 69) = SDR_UPDATE (J2002 pin 53 WP); 1 normally, 0 during sdr_bridge_mode
+fffb7080	gpio_dsp_reset	P71 (pin 86) = DSP_RESET (RT685); held 0 during sdr_bridge_mode
+fffb7098	gpio_dsp_update	P72 (pin 85) = DSP_UPDATE (RT685 serial-ISP boot select)
+fffb70b0	gpio_af_reset	P74 (pin 72) = AF_RESET
+fffb70c9	gpio_pa_pon	PC0 (pin 75) = PA_PON; cleared by power_off_io
+fffb6fac	gpio_tx_line	Reads PODR P73 (pin 77, net TX)
+fffb721a	gpio_rx_line	Reads PODR PB7 (pin 78, net RX)
