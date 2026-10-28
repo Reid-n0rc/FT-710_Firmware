@@ -83,6 +83,31 @@ So against the RXv2 manual Ghidra's decode has **no wrong instruction** in MAIN;
 every rizin difference is a rizin gap or display convention. rizin's `rx` plugin has no ESIL/RzIL (first agent), so it can check
 decoding only, not semantics.
 
+**Step 2 — semantics against the manual [fact].** `rx_semcheck.py gen` on the step 1 listing (40 sites per mnemonic + operand
+shape, 4 random start states each), `RxEmuStep.java` on the scratch copy (0 emulation errors), `rx_semcheck.py check`.
+`BNOT` was added to the model (p68) in this run. **28,748 cases from 286 shapes (7,187 sites): 27,708 ok, 1,040 fail.** RTSD
+now passes (316 cases; the first agent's 8 RTSD failures were the bug T21d fixed). Every failure falls in one of nine classes, all
+**SLEIGH bugs** (the model follows the manual's operation and flag pages; no model bug was found in this run):
+
+| Class | Cases | Sites | SLEIGH (`618938bb`) | Manual |
+|---|---:|---:|---|---|
+| A `SUB`/`CMP`/`AND`/`OR` (`43`/`47`/`53`/`57`), `DIV`/`DIVU`/`ITOF` (`FC 23`/`27`/`47`) **Rs,Rd** | 485 | 167 | `ld_src` with ld = 11 is `szld_src` with the memex of the memory form (UB), so the source is `zext(Rs:1)` | ld = 11b is Rs, 32 bits (p296 SUB (2) "memex == UB or src == Rs"; p195, p75) |
+| B `DIV`/`DIVU` | 264 | 118 | O only ever set, never cleared; `DIV` overflow test has the operands swapped (`src == -2^31 && dest == -1`) | O cleared unless src = 0 (or −2147483648 / −1) (p76, p78) |
+| C `ITOF` | 100 | 37 | Z and S not written | Z = result +0, S = bit 31 (p110) |
+| D `JSR Rs` | 92 | 23 | `PC = Rs`: no branch op, so the emulator falls through **and the decompiler drops the call** | push PC+2, PC = src (p113) |
+| E `SHLL` (`#imm,Rd`, `Rs,Rd`, `#imm,Rs,Rd`) | 70 | 42 | O tests the top n bits of the source | O = 0 iff the result MSB equals all n shifted-out bits, i.e. the top n+1 bits are equal (p187) |
+| F `BSET`/`BCLR Rs,[Rd]` | 8 | 2 | 32-bit read-modify-write, bit = Rs & 31 | byte access, bit = Rs & 7 (p71, p64) |
+| G `ROLC`/`RORC` | 10 | 4 | rotates the old MSB/LSB back in | the old C goes in (p167, p168) |
+| H `ADC`/`SBB` | 9 | 4 | `ADC` adds the C it has just overwritten; `SBB` computes `dest − (src − !C)` with flags on that | dest + src + C, dest − src − !C, flags of the whole operation (p59, p181) |
+| I `SHAR #imm,Rs,Rd` | 2 | 1 | Z/S from Rs | Z/S from dest (p186) |
+
+Impact example, class D: `FUN_fffbba0f` loads a handler from the table at 0xFFF89910 and calls it with `JSR R14` at 0xFFFBBA25;
+the committed C is only `return 1;`. All 23 `JSR` sites in MAIN are indirect calls of this kind. Class A hits the most common
+compare and subtract forms (`CMP Rs,Rd` alone is in 40/40 sampled sites); it fails only when the high bytes matter, which is why
+the decompile reads plausibly. Not used in MAIN, so not checked: `JMP Rs` (same `PC = Rs` construction as `JSR`) and `BNOT Rs,Rd`
+(`Rd ^ (Rs & 31)` instead of `^ (1 << …)`). `BNOT Rs,[Rd].B` (32-bit access, like F) occurs once, at 0xFFF912C3 inside T21h's
+undecoded fragment 0xFFF91295–0xFFF91302: emulated from a synthetic listing row (`fc6c12`), 4 / 4 cases fail as in class F.
+
 ### T22c
 **Status:** done (2026-10-28). IFDSP HiFi4.
 
