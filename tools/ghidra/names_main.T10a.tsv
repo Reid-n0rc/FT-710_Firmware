@@ -1,0 +1,81 @@
+# T10a proposals: MAIN boot, BSP/R_Systeminit, soft timers, ISRs, app_main/main_loop tasks. address<TAB>name<TAB>plate comment
+# --- boot / BSP
+fff8f7ec	hardware_setup	BSP hardware set-up wrapper called from PowerON_Reset: stubs, R_Systeminit, port init, module-stop/ADC reg, reg 0xC5800
+fff8f65e	R_Systeminit	Code Generator init: ports, IWDT, DA, S12AD0/1, SCI0-7, TPU0-3 create, registers 17 interrupt callbacks via R_BSP_InterruptWrite
+fff8fffb	R_BSP_InterruptWrite	Registers an interrupt callback (id, function) [inference: FIT BSP pattern]
+fff90097	R_BSP_InterruptControl	BSP interrupt control; group ISRs call it with (id, 0, FIT_NO_VALUE 0x10000000) to run the callback [inference]
+fff8ff5f	bsp_callbacks_clear	Clears 0x74 words at 0x1FFC4 (BSP interrupt callback table) [inference]
+fff8ffc4	bsp_interrupt_open	Group callback table 0x20194 = FIT_NO_FUNC, icu_select_init, two group set-ups [inference]
+fff92014	icu_select_init	Writes ICU SLIBXR128.. selectable interrupt sources (130<-0x0F TPU0, 138<-0x18 TPU2, 142<-0x1C TPU3, 144<-0x14 TPU1, 186<-0x40 S12ADI0, 189<-0x44 S12ADI1)
+fff92e49	R_PORT_Create	Port PDR/PODR/PMR initial set-up [inference]
+fff927a9	R_IWDT_Create	IWDT registers 0x88032..0x88038 [inference]
+fff927ce	R_IWDT_Restart	IWDT refresh: 0x88030 <- 0x00, 0xFF
+fff927e5	R_DA_Create	DAC set-up (0x88044..) [inference]
+fff92851	R_S12AD0_Create	ADC unit 0 (0x89000) set-up, vector 186
+fff92b17	R_S12AD1_Create	ADC unit 1 (0x89100) set-up, vector 189
+fff949b4	R_TPU0_Create	TPU0 TCR=0x2A (PCLK/16), TGRA=0x176 -> 100 us tick
+fff94a38	R_TPU0_Start	Enable vector 130 and TSTR bit 0
+fff94a65	R_TPU1_Create	TPU1 TCR=0x20 (PCLK/1), TGRA=0x270; tone DAC sample clock
+fff94acd	R_TPU1_Start	TSTR bit 1
+fff94adc	R_TPU1_Stop	Stop TPU1
+fffedd07	R_TPU2_Create	TPU2 TCR=0x29, TGRA=0x4A
+fffedd7c	R_TPU2_Stop	Disable vector 138, clear TSTR bit 2
+fffb2734	R_TPU3_Create	TPU3 TCR=0x2E, TGRA=0x5B8D -> 100 ms slow tick [inference]
+fffb27b2	R_TPU3_Start	Enable vector 142 and TSTR bit 3
+fffb3e55	sw_reset	PRCR=0xA502, SWRR 0x800C2=0xA501: software reset (end of power-off) [inference]
+# --- ISRs
+fff94a57	vec130_TPU0_TGI0A	100 us soft-timer tick -> sw_timer_tick
+fffedd8c	vec138_TPU2_TGI2A	-> tpu2_pulse_isr
+fffb27d1	vec142_TPU3_TGI3A	100 ms slow timers -> sw_timer_slow_tick
+fff94aec	vec144_TPU1_TGI1A	tone DAC sample -> tone_dac_step
+fff92b01	vec186_S12ADI0	ADC0 scan end: ack, adc0_store, flag 0x1203E
+fff92e0f	vec189_S12ADI1	ADC1 scan end: ack, adc1_store, flag 0x1203F
+fffb2288	sw_timer_tick	Ticks 75 one-shot timers (0x11FED/0x20890/0x209BC) and 2 on/off timers (0x20AE8..)
+fffb259c	sw_timer_slow_tick	Ticks 4 slow timers (0x1203A/0x1FA24/0x1FA2C)
+fffb24d8	tpu2_pulse_isr	Pulse train on a port bit selected by 0x20FCC; stops TPU2 when timer 0x2D expires
+fffb2469	tone_dac_step	Next sample of table *0x20B00 (len 0x1FA34) -> DAC
+fff9283d	da_write	DADR0 0x88040 = value & 0xFFF
+fffb27fb	adc0_store	ADC0 channels 1,2,3,5,6,7 -> 0x20B04..0x20B0E
+fffb2858	adc1_store	ADC1 channels 8,9,15,17 -> 0x20B10..0x20B16
+# --- soft timers
+fffb2228	timers_init	Expire all soft timers, set on/off timers 0 (450/250 ms) and 1 (1000/1000 ms), start TPU0 and TPU3
+fffb237a	sw_timer_start	(id 0..0x4A, ms): limit = ms*10 ticks of 100 us, clears expired flag
+fffb23f3	sw_timer_expired	(id) -> expired flag 0x11FED[id]
+fffb2419	sw_blink_set	(id 0..1, on_ms, off_ms) periodic on/off timer
+# --- app_main init
+fffb3e6a	wdt_kick	main_loop task 1 / power-off loop: R_IWDT_Restart
+fffb01f3	eeprom_wrsr_init	EEPROM WRSR (0x01) with 0x80 at boot
+fffb0229	settings_load	Boot: EEPROM header 0x464F; 1=read all, 0=cfg105+dest+defaults(0), else full defaults(1)+save; sets 0x20B45
+fffb02af	eeprom_save_all	First boot after defaults: RAM 0x4761 -> EEPROM 0x0112 (0x5725 B)
+fffb02cf	eeprom_save_state	Power-off save: 0x9A2A (0x45C B) -> EEPROM 0x53DB, 0x60B1 (0x18 B) -> 0x1A62
+fffb1632	sci_rx_start_all	Baud/start SCI0-5 receive at boot
+fff94cab	startup_state_init	Initialises state-block 0x20B04 fields before power-on
+fffb1f83	power_on_io	GPIO outputs for the on state (counterpart of power_off_io)
+fff9cb8e	power_on_request	PS1: 0x20B9C=1, 0x1B3D0=1 (DISPLAY then confirms power-on)
+# --- main_loop tasks
+fffb6cde	txrx_init	0x20B18=4, 0x20B6B=0, timer 0x13 2500 ms, PB3 on
+fffb6d56	txrx_power_task	main_loop task 2: TX/RX sequencer sub-tasks, supply monitor, power-off (save, SCI1 drain, sw_reset)
+fffb4b28	supply_monitor	ADC 0x20B08 < 0x7DD: power_off_io, save, reason 0x90
+fffa1132	sdr_link_init	SDR link init (version placeholder V**-**, timer 0x1F)
+fffa11ed	sdr_link_task	main_loop task 3: SCI5 FPGA link, pending reg access + change detectors
+fff9d06c	dsp_link_init	DSP link init (V**-**, sends i DB00 on SCI4)
+fff9d1b9	dsp_link_task	main_loop task 4: SCI4 DSP link, pending reg access + change detectors
+fffb55b8	portctl_init	0x12042=0
+fffb55c2	portctl_task	main_loop task 5: six port-output sub-tasks (P6/P7/PA/PB)
+fffb28d1	tone_init	DAC initial value, DA control
+fffb28e2	tone_task	main_loop task 6: beep / side-tone pattern sequencer (timer 0x16)
+fffb2e1e	tone_start	(freq Hz, ms): TPU1 TGRA = 60e6/(36 f) - 1, 36-entry table, timer 0x16
+fffe3e2a	ladder_key_task	main_loop task 8: acts on ladder key code 0x1204C
+fffb7a40	ladder_key_decode	ADC 0x20B10 -> 12-level key code 0x1204C (|0xF0 when held)
+fffe587f	scan_task	main_loop task 9: state machine 0x18877, gated by scan flag 0x20F1C
+fffe360e	dispreq_e8_task	main_loop task 10: runs command 0x20F90 posted by DISPLAY frame 0xE8
+fffe2cd0	dispreq_e7_task	main_loop task 11: runs command 0x20F8C posted by DISPLAY frame 0xE7
+fffb98c8	keyer_init	Clears keyer state 0x120BC (0xA0 B)
+fffb98e9	keyer_task	main_loop task 12: CW keyer (speed 0x9C03, 0x20B97) [inference]
+fff94d6f	display_link_task	main_loop task 14 / power-off loop: SCI1 DISPLAY frame rx, ACK/NAK, dispatch, tx queue
+fff95331	display_rx_dispatch	DISPLAY frame dispatch on the first byte (0x06, 0x15, 0xB3, 0xC3-0xC5, 0xE0-0xE8, 0xF0, 0xF1)
+fff9546a	display_power_on_msg	DISPLAY frame 0xF0: stores DISPLAY version (0x1436), reason 0x20B9F, sets radio_on 0x20B3A
+fffbbd58	event_task	main_loop task 15: key/event dispatcher via handler table 0xFFF89D94
+fffbc35f	event_handler_lookup	Returns handler table 0xFFF89D94[event 0x1FA40]
+fffec46c	tuner_init	tuner_task once + FUN_fffec578
+fffec473	tuner_task	main_loop task 16: antenna tuner, dispatch on tuner select 0x9AB8 [inference]
