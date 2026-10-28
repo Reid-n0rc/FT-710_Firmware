@@ -101,8 +101,8 @@
 201020a0	cpg_set_clock_profile	FRQCR + STBCR1..11 from a 2-entry table at 0x2016517C
 20101c5c	gpio_rx_reset	P7_10 (RX_RESET per hardware.md) via PSR7
 20101ba4	gpio_p8_14	P8_14 via PSR8
-20116768	taskmon_register	slot n of the task-monitor table 0x208DBAD0
-201167d8	taskmon_start	OSTM1 1 ms compare, IRQ 0x87, cyclic handler
+20116768	periodic_wakeup_register	(task, slot): slot n of 0x208DBAD0 {tskid, ?, period from 0x20800374[n], count}
+201167d8	periodic_wakeup_start	OSTM1 1 ms compare (31999), ISR on GIC ID 0x87
 20132ccc	gui_start	VDC5 layers + GUI tasks
 20114028	powon_init	IRQ 0x25 (P2_0 edge) + event flag + task "powon"
 20113f88	task_powon	waits for the P2_0 edge flag, passes the level to 0x201131A8
@@ -151,3 +151,14 @@
 2013512c	task_test_disp
 20116ec8	power_on_full_init	standby -> full start: same init list as task_root full branch, run once (flag 0x208003A5)
 2012ffcc	power_on_request	calls power_on_full_init [inference]
+20116d84	mmu_cache_enable	SCTLR |= M|C|W bits (0xD) after setting TTBR/DACR
+20101190	pinmux_init	PFC setup of every port pin (2.5 KB of calls)
+20100480	gpio_p7_9_11	P7_11 and P7_9 via PSR7
+201562b4	kernel_heap_init	heap/kernel memory up to 0x20980000
+2011775c	gic_enable_irq	enable one GIC interrupt ID
+2014f1a8	itron_acre_isr	create an interrupt service routine object (auto-ID counts down from 0x40) [inference]
+201176b4	gic_dispatch	IRQ_Handler -> handler table 0x208DC1E0
+20117838	ostm0_tick_isr	GIC 0x86: system time += 10000 us, kernel tick
+2011678c	periodic_wakeup_isr	GIC 0x87, every 1 ms: per slot count++, at period wake the task (0x20152FAC)
+20113fdc	powon_isr	GIC 0x25 (IRQ5): sets the powon event flag
+20152fac	itron_iwup_tsk	[inference from use in an ISR]
