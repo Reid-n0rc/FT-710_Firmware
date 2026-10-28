@@ -584,9 +584,11 @@ void FUN_2010087c(int param_1,uint param_2)
 }
 
 
-// ===== FUN_201008ac @ 201008ac (180 bytes)
+// ===== gpio_read_bit @ 201008ac (180 bytes)
 
-uint FUN_201008ac(undefined4 param_1,uint param_2)
+/* (port, bit) -> PPRn bit (0xFCFE3200 + 4n) */
+
+uint gpio_read_bit(undefined4 param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -1696,9 +1698,11 @@ void FUN_20101b60(int param_1)
 }
 
 
-// ===== FUN_20101ba4 @ 20101ba4 (24 bytes)
+// ===== gpio_p8_14 @ 20101ba4 (24 bytes)
 
-void FUN_20101ba4(int param_1)
+/* P8_14 via PSR8 */
+
+void gpio_p8_14(int param_1)
 
 {
   undefined4 uVar1;

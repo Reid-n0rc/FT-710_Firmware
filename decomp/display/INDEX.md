@@ -5,9 +5,13 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
 
 ## Export stats
 - Ghidra 12.1.4 project `ghidra/FT710_DISPLAY`. Pipeline: `DisplaySetup.java` (preScript) → auto-analysis → `DisplayFindCode.java` (pointer-table,
-  prologue and orphan-code passes) → `ApplyNames.java tools/ghidra/names_display.tsv` → `ExportDecomp.java decomp/display 50`.
-- **2077 functions** in the program. **2041 were exported** (thunks are skipped), with **0 decompile failures**. Output: 41 `.c` files of 50 functions each, about 78k lines (2.0 MB).
-- 79 functions are named from `names_display.tsv`. All others keep their `FUN_<addr>` names.
+  prologue and orphan-code passes) → `FixFuncEntries.java tools/ghidra/entries_display.tsv` (T11) → `ApplyNames.java tools/ghidra/names_display.tsv` →
+  `ExportDecomp.java decomp/display 50`.
+- T11 (2026-10-27): the project was rebuilt on the Linux host and the re-export matched the T06 commit byte for byte. `FixFuncEntries.java` then
+  created 14 function entries that analysis had missed (RTOS task entries such as `task_root` 0x201170C8, which start with an `ldr` before the
+  `push`, so the prologue pass had started them 4–8 bytes late or the previous function had swallowed them). Detailed docs: `docs/code/display/`.
+- **2077 functions** in the program. **2041 were exported** (thunks are skipped), with **0 decompile failures** (same count after the T11 entry fixes). Output: 41 `.c` files of 50 functions each, about 78k lines (2.0 MB).
+- 140 functions are named from `names_display.tsv` (79 from T06, the rest from T11). All others keep their `FUN_<addr>` names.
 - Code coverage of `.text` (0x20100000–0x20165177, 414,072 B): about 95% instructions and 4% data (literal pools, tables). About 2.7 KB of small
   unreferenced fragments remain undefined.
 - `functions.tsv` lists entry, name, size, reference count, and file for every exported function.
@@ -25,7 +29,7 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 | 0x20100ABC | `boot_select_bank` | Flags at 0x183E0000/0x183F0000 → calls 0x18400000 or 0x18A00000. Uses SPIBSC1 reg 0x3FEFB018 as a "stage ran" marker **[fact]** | 18400000_20101ba4.c |
 | 0x20100828 | `spibsc0_init` | SPI flash controller setup | 18400000_20101ba4.c |
 | 0x20100BC8 / 0x20100BFC / 0x20100C60 | `__scatterload` / `__decompress` / `__scatterload_zeroinit` | armcc runtime **[fact]** | 18400000_20101ba4.c |
-| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20115cfc_2011758c.c |
+| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20115c74_201175b4.c |
 | 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20101ba4.c |
 
 ### RTOS (µITRON 4.0-style kernel; the vendor is not identified)
