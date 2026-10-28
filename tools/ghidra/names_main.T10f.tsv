@@ -1,0 +1,373 @@
+# T10f proposals: EX/setup menu engine (docs/code/main/menu.md). address<TAB>name<TAB>plate comment
+# --- engine
+fffc98aa	menu_subsys_init	app_main init: FUN_fffd405e (menu UI state) then menu_init
+fffd4ff1	menu_init	Calls menu_build_all
+fffd4c30	menu_build_all	Straight list of 314 BSRs to menuitem_* (registration order = table index)
+fffd442f	menu_register	Copy a 0x38-byte item descriptor into RAM table 0x2105C[0x15E]; append index to per-P1 list 0x1FA50+0xC8*P1 (counts 0x1B4F6..FB)
+fffd45a8	menu_group_visible	(P1, global P2): 1 if any item of that group exists for this destination
+fffd4651	menu_find	key {P1,P2,P3} -> table index via per-P1 list, honours dest_mask (+1); 0xFFFF if none
+fffd4795	menu_get_desc	key -> copy of the 0x38-byte descriptor
+fffd47ea	menu_get_name	key -> 21-char item name (desc+6)
+fffd4841	menu_count_items	Number of items in global P2 group (dest-filtered)
+fffd48d1	menu_count_groups	Number of P2 groups in a P1 group (dest-filtered)
+fffd49a0	menu_call_draw	key, buf -> desc.on_draw(buf) (+0x1C): encode value for the DISPLAY menu page
+fffd49c0	menu_call_step	key -> desc.on_step() (+0x20): dial step, or apply hook when 0x15DFC=1 (CAT)
+fffd49da	menu_call_enter	key -> desc.on_enter() (+0x24): action items (SD card, reset, calibration...)
+fffd49f4	menu_p2_global	(P1, local P2) -> global P2 index (bases 0,5,7,12,16,22)
+fffd4a4f	menu_dest_mask	Destination code -> item mask bit (1,2,4,8,0x10,0x20) compared with desc+1
+fffd4ada	menu_cursor_of	Global P2 -> pointer to that group's {top,row} cursor
+fffd4ffe	menu_get_limits	key -> 16 bytes desc+0x28..0x37 (min,max,store,flags)
+fffd504c	menu_value_rw	(key, 0=read/1=write, u16*): byte or big-endian word at desc.store, or FM VFO accessor (desc+0x35 = 1/2/3)
+fffd51a3	menu_value_get	menu_value_rw(key, 0, p)
+fffd51ca	menu_value_set	menu_value_rw(key, 1, p)
+fffd51f1	menu_string_rw	(key, rw, buf, n): copy text item (MY CALL, PRESET NAME)
+fffd528d	menu_string_get	menu_string_rw(key, 0, buf, n)
+fffd52b6	menu_string_set	menu_string_rw(key, 1, buf, n)
+fffd52df	menu_p1_range	P1 -> first/last global P2 (0-4, 5-6, 7-11, 12-15, 16-21, 22-26)
+fffcdddb	menu_apply_from_cat	Set 0x15DFC=1, menu_call_step(key), clear, set state+0x40B (0x20F0F) refresh flag
+fffcdd7e	menu_ui_step	Front panel: dial step on the selected row (timer 3000, sets 0x20F0F, menu_call_step)
+fffcdc1f	menu_ui_enter	Front panel: run the selected row's on_enter [inference]
+fffc98f9	menu_page_serialize	Build the menu page for the DISPLAY (P1 title, P2 tabs, 5 rows of name+value) into frame 0x1741 at +0x98
+fffc9b83	menu_draw_flags	on_draw helper: row flag byte (bit7 if arg==0, bit6 if row being edited 0x12271) + value
+fffcde18	menu_step_s8	Generic signed stepper (min, max, ptr); no-op when 0x15DFC=1 (CAT apply); direction state+0x421
+fffcdfb8	menu_step_u8	Generic unsigned stepper (min, max, ptr) [inference: unsigned twin of menu_step_s8]
+fffce3eb	menu_fm_rptshift_get	EX010317 accessor: (VFO byte+2 >> 2) & 3
+fffce411	menu_fm_rptshift_set	EX010317 accessor (set)
+fffce53c	menu_fm_encdec_get	EX010320 accessor
+fffce562	menu_fm_encdec_set	EX010320 accessor (set)
+fffce5be	menu_fm_tone_get	EX010321 accessor
+fffce5f5	menu_fm_tone_set	EX010321 accessor (set)
+fffb1168	menu_defaults_load	Reset menu value block 0x9A2A.. from ROM 0xFFF80E4A.. (callees below) + 0x9C17<-0xFFF80FD6
+fffb1193	menu_defaults_mode	RADIO SETTING mode groups 0x9A2A..0x9A90 <- ROM
+fffb11f0	menu_defaults_cw	CW SETTING 0x9A91..0x9AB4 <- ROM 0xFFF80EB1
+fffb120d	menu_defaults_operation	OPERATION SETTING 0x9AB5.. <- ROM 0xFFF80ED5, then dest-dependent MAX POWER, KEYBOARD LANGUAGE, TX TOT
+fffb12e6	menu_defaults_display	DISPLAY SETTING 0x9B01.. <- ROM 0xFFF80F21
+fffb1325	menu_defaults_presets	5 x PRESET block 0x9B2E+0x1F*n <- ROM 0xFFF80F4E; names FT-8, PRESET2..5
+fffb02cf	menu_save_eeprom	eeprom_write(0x53DB, 0x9A2A, 0x45C) + (0x1A62, 0x60B1, 0x18)
+fffe61e7	ex_command	EX core: parse key, read or write, on set menu_apply_from_cat, copy reply 0x18878 -> 0x1C8E
+fffe6299	ex_read_or_write	Dispatch on is_set and desc string flag (+0x30)
+fffe6335	ex_read_string	Reply EXkkkkkk + 12-char text
+fffe63fb	ex_write_string	Copy P4 text up to ";" (max 12) into the item
+fffe646c	ex_read_value	Format value: 1 digit, 2/3 digits (+sign), or 4 digits (u16 or scaled x10 / x20+20)
+fffe6550	ex_write_value	Check length/range, parse P4, unscale (/10 or /20-1), menu_value_set
+fffe668a	ex_value_allowed	Rejects EX010113 (SSB TX BPF SEL) value 5 (50-4000Hz)
+fffe66e2	ex_fmt_byte	Byte -> 2/3 decimal digits, or sign + 2 digits
+fffe67f5	ex_fmt_4digits	u16 -> 4 decimal digits
+fffe6869	ex_parse_4digits	4 decimal digits, range check [min,max]
+fffe693b	ex_parse_byte	1-3 digits with optional sign, exact length, range check
+fffe6c27	ex_parse_key	P1P1P2P2P3P3 (decimal) -> internal {P1-1, P2+base, P3-1}; CAT P1 05 and >06 rejected
+# --- per-item registration functions (called once each from menu_build_all)
+fffd5373	menuitem_EX010101	Menu item 0.0.0 RADIO SETTING / MODE SSB / AF TREBLE GAIN
+fffd53e1	menuitem_EX010102	Menu item 0.0.1 RADIO SETTING / MODE SSB / AF MIDDLE TONE GAIN
+fffd544f	menuitem_EX010103	Menu item 0.0.2 RADIO SETTING / MODE SSB / AF BASS GAIN
+fffd54bd	menuitem_EX010104	Menu item 0.0.3 RADIO SETTING / MODE SSB / AGC FAST DELAY
+fffd5529	menuitem_EX010105	Menu item 0.0.4 RADIO SETTING / MODE SSB / AGC MID DELAY
+fffd5595	menuitem_EX010106	Menu item 0.0.5 RADIO SETTING / MODE SSB / AGC SLOW DELY
+fffd5601	menuitem_EX010107	Menu item 0.0.6 RADIO SETTING / MODE SSB / LCUT FREQ
+fffd566d	menuitem_EX010108	Menu item 0.0.7 RADIO SETTING / MODE SSB / LCUT SLOPE
+fffd56d9	menuitem_EX010109	Menu item 0.0.8 RADIO SETTING / MODE SSB / HCUT FREQ
+fffd5745	menuitem_EX010110	Menu item 0.0.9 RADIO SETTING / MODE SSB / HCUT SLOPE
+fffd57b1	menuitem_EX010111	Menu item 0.0.10 RADIO SETTING / MODE SSB / USB OUT LEVEL
+fffd581d	menuitem_EX010112	Menu item 0.0.11 RADIO SETTING / MODE SSB / REAR OUT LEVEL
+fffd5889	menuitem_EX010113	Menu item 0.0.12 RADIO SETTING / MODE SSB / TX BPF SEL
+fffd58f5	menuitem_EX010114	Menu item 0.0.13 RADIO SETTING / MODE SSB / MOD SOURCE
+fffd5961	menuitem_EX010115	Menu item 0.0.14 RADIO SETTING / MODE SSB / USB MOD GAIN
+fffd59cd	menuitem_EX010116	Menu item 0.0.15 RADIO SETTING / MODE SSB / REAR MOD GAIN
+fffd5a39	menuitem_EX010117	Menu item 0.0.16 RADIO SETTING / MODE SSB / RPTT SELECT
+fffd5aa5	menuitem_EX010118	Menu item 0.0.17 RADIO SETTING / MODE SSB / NAR WIDTH
+fffd5b11	menuitem_EX010119	Menu item 0.0.18 RADIO SETTING / MODE SSB / CW AUTO MODE
+fffd5b7d	menuitem_EX010201	Menu item 0.1.0 RADIO SETTING / MODE AM / AF TREBLE GAIN
+fffd5beb	menuitem_EX010202	Menu item 0.1.1 RADIO SETTING / MODE AM / AF MIDDLE TONE GAIN
+fffd5c59	menuitem_EX010203	Menu item 0.1.2 RADIO SETTING / MODE AM / AF BASS GAIN
+fffd5cc7	menuitem_EX010204	Menu item 0.1.3 RADIO SETTING / MODE AM / AGC FAST DELAY
+fffd5d33	menuitem_EX010205	Menu item 0.1.4 RADIO SETTING / MODE AM / AGC MID DELAY
+fffd5d9f	menuitem_EX010206	Menu item 0.1.5 RADIO SETTING / MODE AM / AGC SLOW DELAY
+fffd5e0b	menuitem_EX010207	Menu item 0.1.6 RADIO SETTING / MODE AM / LCUT FREQ
+fffd5e77	menuitem_EX010208	Menu item 0.1.7 RADIO SETTING / MODE AM / LCUT SLOPE
+fffd5ee3	menuitem_EX010209	Menu item 0.1.8 RADIO SETTING / MODE AM / HCUT FREQ
+fffd5f4f	menuitem_EX010210	Menu item 0.1.9 RADIO SETTING / MODE AM / HCUT SLOPE
+fffd5fbb	menuitem_EX010211	Menu item 0.1.10 RADIO SETTING / MODE AM / USB OUT LEVEL
+fffd6027	menuitem_EX010212	Menu item 0.1.11 RADIO SETTING / MODE AM / REAR OUT LEVEL
+fffd6093	menuitem_EX010213	Menu item 0.1.12 RADIO SETTING / MODE AM / TX BPF SEL
+fffd60ff	menuitem_EX010214	Menu item 0.1.13 RADIO SETTING / MODE AM / MOD SOURCE
+fffd616b	menuitem_EX010215	Menu item 0.1.14 RADIO SETTING / MODE AM / USB MOD GAIN
+fffd61d7	menuitem_EX010216	Menu item 0.1.15 RADIO SETTING / MODE AM / REAR MOD GAIN
+fffd6243	menuitem_EX010217	Menu item 0.1.16 RADIO SETTING / MODE AM / RPTT SELECT
+fffd62af	menuitem_EX010301	Menu item 0.2.0 RADIO SETTING / MODE FM / AF TREBLE GAIN
+fffd631d	menuitem_EX010302	Menu item 0.2.1 RADIO SETTING / MODE FM / AF MIDDLE TONE GAIN
+fffd638b	menuitem_EX010303	Menu item 0.2.2 RADIO SETTING / MODE FM / AF BASS GAIN
+fffd63f9	menuitem_EX010304	Menu item 0.2.3 RADIO SETTING / MODE FM / AGC FAST DELAY
+fffd6465	menuitem_EX010305	Menu item 0.2.4 RADIO SETTING / MODE FM / AGC MID DELAY
+fffd64d1	menuitem_EX010306	Menu item 0.2.5 RADIO SETTING / MODE FM / AGC SLOW DELAY
+fffd653d	menuitem_EX010307	Menu item 0.2.6 RADIO SETTING / MODE FM / LCUT FREQ
+fffd65a9	menuitem_EX010308	Menu item 0.2.7 RADIO SETTING / MODE FM / LCUT SLOPE
+fffd6615	menuitem_EX010309	Menu item 0.2.8 RADIO SETTING / MODE FM / HCUT FREQ
+fffd6681	menuitem_EX010310	Menu item 0.2.9 RADIO SETTING / MODE FM / HCUT SLOPE
+fffd66ed	menuitem_EX010311	Menu item 0.2.10 RADIO SETTING / MODE FM / USB OUT LEVEL
+fffd6759	menuitem_EX010312	Menu item 0.2.11 RADIO SETTING / MODE FM / REAR OUT LEVEL
+fffd67c5	menuitem_EX010313	Menu item 0.2.12 RADIO SETTING / MODE FM / MOD SOURCE
+fffd6831	menuitem_EX010314	Menu item 0.2.13 RADIO SETTING / MODE FM / USB MOD GAIN
+fffd689d	menuitem_EX010315	Menu item 0.2.14 RADIO SETTING / MODE FM / REAR MOD GAIN
+fffd6909	menuitem_EX010316	Menu item 0.2.15 RADIO SETTING / MODE FM / RPTT SELECT
+fffd6975	menuitem_EX010317	Menu item 0.2.16 RADIO SETTING / MODE FM / RPT SHIFT
+fffd69d8	menuitem_EX010318	Menu item 0.2.17 RADIO SETTING / MODE FM / RPT SHIFT(28MHz)
+fffd6a44	menuitem_EX010319	Menu item 0.2.18 RADIO SETTING / MODE FM / RPT SHIFT(50MHz)
+fffd6ab2	menuitem_EX010320	Menu item 0.2.19 RADIO SETTING / MODE FM / ENC/DEC
+fffd6b15	menuitem_EX010321	Menu item 0.2.20 RADIO SETTING / MODE FM / TONE FREQ
+fffd6b78	menuitem_EX010401	Menu item 0.3.0 RADIO SETTING / MODE PSK/DATA / AF TREBLE GAIN
+fffd6be6	menuitem_EX010402	Menu item 0.3.1 RADIO SETTING / MODE PSK/DATA / AF MIDDLE TONE GAIN
+fffd6c54	menuitem_EX010403	Menu item 0.3.2 RADIO SETTING / MODE PSK/DATA / AF BASS GAIN
+fffd6cc2	menuitem_EX010404	Menu item 0.3.3 RADIO SETTING / MODE PSK/DATA / AGC FAST DELAY
+fffd6d2e	menuitem_EX010405	Menu item 0.3.4 RADIO SETTING / MODE PSK/DATA / AGC MID DELAY
+fffd6d9a	menuitem_EX010406	Menu item 0.3.5 RADIO SETTING / MODE PSK/DATA / AGC SLOW DELAY
+fffd6e06	menuitem_EX010407	Menu item 0.3.6 RADIO SETTING / MODE PSK/DATA / LCUT FREQ
+fffd6e72	menuitem_EX010408	Menu item 0.3.7 RADIO SETTING / MODE PSK/DATA / LCUT SLOPE
+fffd6ede	menuitem_EX010409	Menu item 0.3.8 RADIO SETTING / MODE PSK/DATA / HCUT FREQ
+fffd6f4a	menuitem_EX010410	Menu item 0.3.9 RADIO SETTING / MODE PSK/DATA / HCUT SLOPE
+fffd6fb6	menuitem_EX010411	Menu item 0.3.10 RADIO SETTING / MODE PSK/DATA / USB OUT LEVEL
+fffd7022	menuitem_EX010412	Menu item 0.3.11 RADIO SETTING / MODE PSK/DATA / REAR OUT LEVEL
+fffd708e	menuitem_EX010413	Menu item 0.3.12 RADIO SETTING / MODE PSK/DATA / TX BPF SEL
+fffd70fa	menuitem_EX010414	Menu item 0.3.13 RADIO SETTING / MODE PSK/DATA / MOD SOURCE
+fffd7166	menuitem_EX010415	Menu item 0.3.14 RADIO SETTING / MODE PSK/DATA / USB MOD GAIN
+fffd71d2	menuitem_EX010416	Menu item 0.3.15 RADIO SETTING / MODE PSK/DATA / REAR MOD GAIN
+fffd723e	menuitem_EX010417	Menu item 0.3.16 RADIO SETTING / MODE PSK/DATA / RPTT SELECT
+fffd72aa	menuitem_EX010418	Menu item 0.3.17 RADIO SETTING / MODE PSK/DATA / NAR WIDTH
+fffd7316	menuitem_EX010419	Menu item 0.3.18 RADIO SETTING / MODE PSK/DATA / PSK TONE
+fffd7382	menuitem_EX010420	Menu item 0.3.19 RADIO SETTING / MODE PSK/DATA / DATA SHIFT (SSB)
+fffd73f0	menuitem_EX010501	Menu item 0.4.0 RADIO SETTING / MODE RTTY / AF TREBLE GAIN
+fffd745e	menuitem_EX010502	Menu item 0.4.1 RADIO SETTING / MODE RTTY / AF MIDDLE TONE GAIN
+fffd74cc	menuitem_EX010503	Menu item 0.4.2 RADIO SETTING / MODE RTTY / AF BASS GAIN
+fffd753a	menuitem_EX010504	Menu item 0.4.3 RADIO SETTING / MODE RTTY / AGC FAST DELAY
+fffd75a6	menuitem_EX010505	Menu item 0.4.4 RADIO SETTING / MODE RTTY / AGC MID DELAY
+fffd7612	menuitem_EX010506	Menu item 0.4.5 RADIO SETTING / MODE RTTY / AGC SLOW DELAY
+fffd767e	menuitem_EX010507	Menu item 0.4.6 RADIO SETTING / MODE RTTY / LCUT FREQ
+fffd76ea	menuitem_EX010508	Menu item 0.4.7 RADIO SETTING / MODE RTTY / LCUT SLOPE
+fffd7756	menuitem_EX010509	Menu item 0.4.8 RADIO SETTING / MODE RTTY / HCUT FREQ
+fffd77c2	menuitem_EX010510	Menu item 0.4.9 RADIO SETTING / MODE RTTY / HCUT SLOPE
+fffd782e	menuitem_EX010511	Menu item 0.4.10 RADIO SETTING / MODE RTTY / USB OUT LEVEL
+fffd789a	menuitem_EX010512	Menu item 0.4.11 RADIO SETTING / MODE RTTY / REAR OUT LEVEL
+fffd7906	menuitem_EX010513	Menu item 0.4.12 RADIO SETTING / MODE RTTY / RPTT SELECT
+fffd7972	menuitem_EX010514	Menu item 0.4.13 RADIO SETTING / MODE RTTY / NAR WIDTH
+fffd79de	menuitem_EX010515	Menu item 0.4.14 RADIO SETTING / MODE RTTY / MARK FREQUENCY
+fffd7a4a	menuitem_EX010516	Menu item 0.4.15 RADIO SETTING / MODE RTTY / SHIFT FREQUENCY
+fffd7ab6	menuitem_EX010517	Menu item 0.4.16 RADIO SETTING / MODE RTTY / POLARITY TX
+fffd7b22	menuitem_EX020101	Menu item 1.5.0 CW SETTING / MODE CW / AF TREBLE GAIN
+fffd7b90	menuitem_EX020102	Menu item 1.5.1 CW SETTING / MODE CW / AF MIDDLE TONE GAIN
+fffd7bfe	menuitem_EX020103	Menu item 1.5.2 CW SETTING / MODE CW / AF BASS GAIN
+fffd7c6c	menuitem_EX020104	Menu item 1.5.3 CW SETTING / MODE CW / AGC FAST DELAY
+fffd7cd8	menuitem_EX020105	Menu item 1.5.4 CW SETTING / MODE CW / AGC MID DELAY
+fffd7d44	menuitem_EX020106	Menu item 1.5.5 CW SETTING / MODE CW / AGC SLOW DELAY
+fffd7db0	menuitem_EX020107	Menu item 1.5.6 CW SETTING / MODE CW / LCUT FREQ
+fffd7e1c	menuitem_EX020108	Menu item 1.5.7 CW SETTING / MODE CW / LCUT SLOPE
+fffd7e88	menuitem_EX020109	Menu item 1.5.8 CW SETTING / MODE CW / HCUT FREQ
+fffd7ef4	menuitem_EX020110	Menu item 1.5.9 CW SETTING / MODE CW / HCUT SLOPE
+fffd7f60	menuitem_EX020111	Menu item 1.5.10 CW SETTING / MODE CW / USB OUT LEVEL
+fffd7fcc	menuitem_EX020112	Menu item 1.5.11 CW SETTING / MODE CW / REAR OUT LEVEL
+fffd8038	menuitem_EX020113	Menu item 1.5.12 CW SETTING / MODE CW / RPTT SELECT
+fffd80a4	menuitem_EX020114	Menu item 1.5.13 CW SETTING / MODE CW / NAR WIDTH
+fffd8110	menuitem_EX020115	Menu item 1.5.14 CW SETTING / MODE CW / PC KEYING
+fffd817c	menuitem_EX020116	Menu item 1.5.15 CW SETTING / MODE CW / CW BK-IN TYPE
+fffd81e8	menuitem_EX020117	Menu item 1.5.16 CW SETTING / MODE CW / CW WAVE SHAPE
+fffd8254	menuitem_EX020118	Menu item 1.5.17 CW SETTING / MODE CW / CW FREQ DISPLAY
+fffd82c0	menuitem_EX020119	Menu item 1.5.18 CW SETTING / MODE CW / QSK DELAY TIME
+fffd832c	menuitem_EX020120	Menu item 1.5.19 CW SETTING / MODE CW / CW INDICATOR
+fffd8398	menuitem_EX020201	Menu item 1.6.0 CW SETTING / KEYER / KEYER TYPE
+fffd8404	menuitem_EX020202	Menu item 1.6.1 CW SETTING / KEYER / KEYER DOT/DASH
+fffd8470	menuitem_EX020203	Menu item 1.6.2 CW SETTING / KEYER / CW WEIGHT
+fffd84dc	menuitem_EX020204	Menu item 1.6.3 CW SETTING / KEYER / NUMBER STYLE
+fffd8548	menuitem_EX020205	Menu item 1.6.4 CW SETTING / KEYER / CONTEST NUMBER
+fffd85b6	menuitem_EX020206	Menu item 1.6.5 CW SETTING / KEYER / CW MEMORY 1
+fffd8622	menuitem_EX020207	Menu item 1.6.6 CW SETTING / KEYER / CW MEMORY 2
+fffd868e	menuitem_EX020208	Menu item 1.6.7 CW SETTING / KEYER / CW MEMORY 3
+fffd86fa	menuitem_EX020209	Menu item 1.6.8 CW SETTING / KEYER / CW MEMORY 4
+fffd8766	menuitem_EX020210	Menu item 1.6.9 CW SETTING / KEYER / CW MEMORY 5
+fffd87d2	menuitem_EX020211	Menu item 1.6.10 CW SETTING / KEYER / REPEAT INTERVAL
+fffd883e	menuitem_EX030101	Menu item 2.7.0 OPERATION SETTING / GENERAL / BEEP LEVEL
+fffd88aa	menuitem_EX030102	Menu item 2.7.1 OPERATION SETTING / GENERAL / RF/SQL VR
+fffd8916	menuitem_EX030103	Menu item 2.7.2 OPERATION SETTING / GENERAL / TUN/LIN PORT SELECT
+fffd8982	menuitem_EX030104	Menu item 2.7.3 OPERATION SETTING / GENERAL / TUNER TYPE SELECT
+fffd89ee	menuitem_EX030105	Menu item 2.7.4 OPERATION SETTING / GENERAL / CAT-1 RATE
+fffd8a5a	menuitem_EX030106	Menu item 2.7.5 OPERATION SETTING / GENERAL / CAT-1 TIME OUT TIMER
+fffd8ac6	menuitem_EX030107	Menu item 2.7.6 OPERATION SETTING / GENERAL / CAT-1 CAT-3 STOP BIT
+fffd8b32	menuitem_EX030108	Menu item 2.7.7 OPERATION SETTING / GENERAL / CAT-2 RATE
+fffd8b9e	menuitem_EX030109	Menu item 2.7.8 OPERATION SETTING / GENERAL / CAT-2 TIME OUT TIMER
+fffd8c0a	menuitem_EX030110	Menu item 2.7.9 OPERATION SETTING / GENERAL / CAT-3 RATE
+fffd8c76	menuitem_EX030111	Menu item 2.7.10 OPERATION SETTING / GENERAL / CAT-3 TIME OUT TIMER
+fffd8ce2	menuitem_EX030112	Menu item 2.7.11 OPERATION SETTING / GENERAL / QMB CH
+fffd8d4e	menuitem_EX030113	Menu item 2.7.12 OPERATION SETTING / GENERAL / BAND STACK
+fffd8dba	menuitem_EX030114	Menu item 2.7.13 OPERATION SETTING / GENERAL / MEM GROUP
+fffd8e26	menuitem_EX030115	Menu item 2.7.14 OPERATION SETTING / GENERAL / TX TIME OUT TIMER
+fffd8e92	menuitem_EX030116	Menu item 2.7.15 OPERATION SETTING / GENERAL / MIC SCAN
+fffd8efe	menuitem_EX030117	Menu item 2.7.16 OPERATION SETTING / GENERAL / MIC SCAN RESUME
+fffd8f6a	menuitem_EX030118	Menu item 2.7.17 OPERATION SETTING / GENERAL / REF FREQ FINE ADJ
+fffd8fd8	menuitem_EX030119	Menu item 2.7.18 OPERATION SETTING / GENERAL / KEYBOARD LANGUAGE
+fffd9044	menuitem_EX030120	Menu item 2.7.19 OPERATION SETTING / GENERAL / MIC P1
+fffd90b0	menuitem_EX030121	Menu item 2.7.20 OPERATION SETTING / GENERAL / MIC P2
+fffd911c	menuitem_EX030122	Menu item 2.7.21 OPERATION SETTING / GENERAL / MIC P3
+fffd9188	menuitem_EX030123	Menu item 2.7.22 OPERATION SETTING / GENERAL / MIC P4
+fffd91f4	menuitem_EX030124	Menu item 2.7.23 OPERATION SETTING / GENERAL / MIC UP
+fffd9260	menuitem_EX030125	Menu item 2.7.24 OPERATION SETTING / GENERAL / MIC DOWN
+fffd92cc	menuitem_EX030126	Menu item 2.7.25 OPERATION SETTING / GENERAL / SCU-LAN10
+fffd9338	menuitem_EX030201	Menu item 2.8.0 OPERATION SETTING / RX DSP / IF NOTCH WIDTH
+fffd93a4	menuitem_EX030202	Menu item 2.8.1 OPERATION SETTING / RX DSP / NB REJECTION
+fffd9410	menuitem_EX030203	Menu item 2.8.2 OPERATION SETTING / RX DSP / NB WIDTH
+fffd947c	menuitem_EX030204	Menu item 2.8.3 OPERATION SETTING / RX DSP / APF WIDTH
+fffd94e8	menuitem_EX030205	Menu item 2.8.4 OPERATION SETTING / RX DSP / CONTOUR LEVEL
+fffd9556	menuitem_EX030206	Menu item 2.8.5 OPERATION SETTING / RX DSP / CONTOUR WIDTH
+fffd95c2	menuitem_EX030301	Menu item 2.9.0 OPERATION SETTING / TX AUDIO / AMC RELEASE TIME
+fffd962e	menuitem_EX030302	Menu item 2.9.1 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 FREQ
+fffd969a	menuitem_EX030303	Menu item 2.9.2 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 LEVEL
+fffd9708	menuitem_EX030304	Menu item 2.9.3 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 BWTH
+fffd9774	menuitem_EX030305	Menu item 2.9.4 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 FREQ
+fffd97e0	menuitem_EX030306	Menu item 2.9.5 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 LEVEL
+fffd984e	menuitem_EX030307	Menu item 2.9.6 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 BWTH
+fffd98ba	menuitem_EX030308	Menu item 2.9.7 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 FREQ
+fffd9926	menuitem_EX030309	Menu item 2.9.8 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 LEVEL
+fffd9994	menuitem_EX030310	Menu item 2.9.9 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 BWTH
+fffd9a00	menuitem_EX030311	Menu item 2.9.10 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 FREQ
+fffd9a6c	menuitem_EX030312	Menu item 2.9.11 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 LEVEL
+fffd9ada	menuitem_EX030313	Menu item 2.9.12 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 BWTH
+fffd9b46	menuitem_EX030314	Menu item 2.9.13 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 FREQ
+fffd9bb2	menuitem_EX030315	Menu item 2.9.14 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 LEVEL
+fffd9c20	menuitem_EX030316	Menu item 2.9.15 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 BWTH
+fffd9c8c	menuitem_EX030317	Menu item 2.9.16 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 FREQ
+fffd9cf8	menuitem_EX030318	Menu item 2.9.17 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 LEVEL
+fffd9d66	menuitem_EX030319	Menu item 2.9.18 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 BWTH
+fffd9dd2	menuitem_EX030401	Menu item 2.10.0 OPERATION SETTING / TX GENERAL / HF MAX POWER
+fffd9e3e	menuitem_EX030402	Menu item 2.10.1 OPERATION SETTING / TX GENERAL / 50M MAX POWER
+fffd9eaa	menuitem_EX030403	Menu item 2.10.2 OPERATION SETTING / TX GENERAL / 70M MAX POWER
+fffd9f16	menuitem_EX030404	Menu item 2.10.3 OPERATION SETTING / TX GENERAL / AM MAX POWER
+fffd9f82	menuitem_EX030405	Menu item 2.10.4 OPERATION SETTING / TX GENERAL / VOX SELECT
+fffd9fee	menuitem_EX030406	Menu item 2.10.5 OPERATION SETTING / TX GENERAL / EMERGENCY FREQ TX
+fffda05a	menuitem_EX030407	Menu item 2.10.6 OPERATION SETTING / TX GENERAL / TX INHITBIT
+fffda0c6	menuitem_EX030408	Menu item 2.10.7 OPERATION SETTING / TX GENERAL / METER DETECTOR
+fffda132	menuitem_EX030501	Menu item 2.11.0 OPERATION SETTING / TUNING / SSB/CW DIAL STEP
+fffda19e	menuitem_EX030502	Menu item 2.11.1 OPERATION SETTING / TUNING / RTTY/PSK DIAL STEP
+fffda20a	menuitem_EX030503	Menu item 2.11.2 OPERATION SETTING / TUNING / CH STEP
+fffda276	menuitem_EX030504	Menu item 2.11.3 OPERATION SETTING / TUNING / AM CH STEP
+fffda2e2	menuitem_EX030505	Menu item 2.11.4 OPERATION SETTING / TUNING / FM CH STEP
+fffda34e	menuitem_EX030506	Menu item 2.11.5 OPERATION SETTING / TUNING / MAIN STEPS PER REV.
+fffda3ba	menuitem_EX040101	Menu item 3.12.0 DISPLAY SETTING / DISPLAY / MY CALL
+fffda426	menuitem_EX040102	Menu item 3.12.1 DISPLAY SETTING / DISPLAY / MY CALL TIME
+fffda492	menuitem_EX040103	Menu item 3.12.2 DISPLAY SETTING / DISPLAY / POP-UP TIME
+fffda4fe	menuitem_EX040104	Menu item 3.12.3 DISPLAY SETTING / DISPLAY / SCREEN SAVER
+fffda56a	menuitem_EX040105	Menu item 3.12.4 DISPLAY SETTING / DISPLAY / LED DIMMER
+fffda5d6	menuitem_EX040106	Menu item 3.12.5 DISPLAY SETTING / DISPLAY / MOUSE POINTER SPEED
+fffda642	menuitem_EX040201	Menu item 3.13.0 DISPLAY SETTING / SCOPE / RBW
+fffda6ae	menuitem_EX040202	Menu item 3.13.1 DISPLAY SETTING / SCOPE / SCOPE CTR
+fffda71a	menuitem_EX040203	Menu item 3.13.2 DISPLAY SETTING / SCOPE / 2D DISP SENSITIVITY
+fffda786	menuitem_EX040204	Menu item 3.13.3 DISPLAY SETTING / SCOPE / 3DSS DISP SENSITIVITY
+fffda7f2	menuitem_EX040301	Menu item 3.14.0 DISPLAY SETTING / VFO IND COLOR / VMI COLOR VFO-A
+fffda85e	menuitem_EX040302	Menu item 3.14.1 DISPLAY SETTING / VFO IND COLOR / VMI COLOR VFO-B
+fffda8ca	menuitem_EX040303	Menu item 3.14.2 DISPLAY SETTING / VFO IND COLOR / VMI COLOR MEMORY
+fffda936	menuitem_EX040304	Menu item 3.14.3 DISPLAY SETTING / VFO IND COLOR / VMI COLOR CLAR
+fffda9a2	menuitem_EX040401	Menu item 3.15.0 DISPLAY SETTING / EXT MONITOR / EXT DISPLAY
+fffdaa0e	menuitem_EX040402	Menu item 3.15.1 DISPLAY SETTING / EXT MONITOR / PIXEL
+fffdaa7a	menuitem_int4_16_00	Menu item 4.16.0 EXTENSION SETTING / DATE&TIME / DAY
+fffdaadd	menuitem_int4_16_01	Menu item 4.16.1 EXTENSION SETTING / DATE&TIME / MONTH
+fffdab40	menuitem_int4_16_02	Menu item 4.16.2 EXTENSION SETTING / DATE&TIME / YEAR
+fffdaba3	menuitem_int4_16_03	Menu item 4.16.3 EXTENSION SETTING / DATE&TIME / HOUR
+fffdac06	menuitem_int4_16_04	Menu item 4.16.4 EXTENSION SETTING / DATE&TIME / MINUTE
+fffdac69	menuitem_int4_17_00	Menu item 4.17.0 EXTENSION SETTING / SD CARD / MEM LIST LOAD
+fffdaccc	menuitem_int4_17_01	Menu item 4.17.1 EXTENSION SETTING / SD CARD / MEM LIST SAVE
+fffdad2f	menuitem_int4_17_02	Menu item 4.17.2 EXTENSION SETTING / SD CARD / MENU LOAD
+fffdad92	menuitem_int4_17_03	Menu item 4.17.3 EXTENSION SETTING / SD CARD / MENU SAVE
+fffdadf5	menuitem_int4_17_04	Menu item 4.17.4 EXTENSION SETTING / SD CARD / INFORMATIONS
+fffdae58	menuitem_int4_17_05	Menu item 4.17.5 EXTENSION SETTING / SD CARD / FIRMWARE UPDATE
+fffdaebb	menuitem_int4_17_06	Menu item 4.17.6 EXTENSION SETTING / SD CARD / FORMAT
+fffdaf1e	menuitem_int4_18_00	Menu item 4.18.0 EXTENSION SETTING / SOFT VERSION / SOFTVERSION
+fffdaf81	menuitem_int4_19_00	Menu item 4.19.0 EXTENSION SETTING / CALIBRATION / CALIBRATION
+fffdafe4	menuitem_int4_20_00	Menu item 4.20.0 EXTENSION SETTING / RESET / MEMORY CLEAR
+fffdb047	menuitem_int4_20_01	Menu item 4.20.1 EXTENSION SETTING / RESET / MENU CLEAR
+fffdb0aa	menuitem_int4_20_02	Menu item 4.20.2 EXTENSION SETTING / RESET / ALL RESET
+fffdb10d	menuitem_int4_21_00	Menu item 4.21.0 EXTENSION SETTING / CERTIFICATION / CERTIFICATION
+fffdb170	menuitem_EX060101	Menu item 5.22.0 PRESET / PRESET1 / PRESET NAME
+fffdb1dc	menuitem_EX060102	Menu item 5.22.1 PRESET / PRESET1 / CAT-1 RATE
+fffdb248	menuitem_EX060103	Menu item 5.22.2 PRESET / PRESET1 / CAT-1 TIME OUT TIMER
+fffdb2b4	menuitem_EX060104	Menu item 5.22.3 PRESET / PRESET1 / CAT-1 CAT-3 STOP BIT
+fffdb320	menuitem_EX060105	Menu item 5.22.4 PRESET / PRESET1 / AGC FAST DELAY
+fffdb38c	menuitem_EX060106	Menu item 5.22.5 PRESET / PRESET1 / AGC MID DELAY
+fffdb3f8	menuitem_EX060107	Menu item 5.22.6 PRESET / PRESET1 / AGC SLOW DELAY
+fffdb464	menuitem_EX060108	Menu item 5.22.7 PRESET / PRESET1 / LCUT FREQ
+fffdb4d0	menuitem_EX060109	Menu item 5.22.8 PRESET / PRESET1 / LCUT SLOPE
+fffdb53c	menuitem_EX060110	Menu item 5.22.9 PRESET / PRESET1 / HCUT FREQ
+fffdb5a8	menuitem_EX060111	Menu item 5.22.10 PRESET / PRESET1 / HCUT SLOPE
+fffdb614	menuitem_EX060112	Menu item 5.22.11 PRESET / PRESET1 / USB OUT LEVEL
+fffdb680	menuitem_EX060113	Menu item 5.22.12 PRESET / PRESET1 / REAR OUT LEVEL
+fffdb6ec	menuitem_EX060114	Menu item 5.22.13 PRESET / PRESET1 / TX BPF SEL
+fffdb758	menuitem_EX060115	Menu item 5.22.14 PRESET / PRESET1 / MOD SOURCE
+fffdb7c4	menuitem_EX060116	Menu item 5.22.15 PRESET / PRESET1 / USB MOD GAIN
+fffdb830	menuitem_EX060117	Menu item 5.22.16 PRESET / PRESET1 / REAR MOD GAIN
+fffdb89c	menuitem_EX060118	Menu item 5.22.17 PRESET / PRESET1 / RPTT SELECT
+fffdb908	menuitem_EX060201	Menu item 5.23.0 PRESET / PRESET2 / PRESET NAME
+fffdb974	menuitem_EX060202	Menu item 5.23.1 PRESET / PRESET2 / CAT-1 RATE
+fffdb9e0	menuitem_EX060203	Menu item 5.23.2 PRESET / PRESET2 / CAT-1 TIME OUT TIMER
+fffdba4c	menuitem_EX060204	Menu item 5.23.3 PRESET / PRESET2 / CAT-1 CAT-3 STOP BIT
+fffdbab8	menuitem_EX060205	Menu item 5.23.4 PRESET / PRESET2 / AGC FAST DELAY
+fffdbb24	menuitem_EX060206	Menu item 5.23.5 PRESET / PRESET2 / AGC MID DELAY
+fffdbb90	menuitem_EX060207	Menu item 5.23.6 PRESET / PRESET2 / AGC SLOW DELAY
+fffdbbfc	menuitem_EX060208	Menu item 5.23.7 PRESET / PRESET2 / LCUT FREQ
+fffdbc68	menuitem_EX060209	Menu item 5.23.8 PRESET / PRESET2 / LCUT SLOPE
+fffdbcd4	menuitem_EX060210	Menu item 5.23.9 PRESET / PRESET2 / HCUT FREQ
+fffdbd40	menuitem_EX060211	Menu item 5.23.10 PRESET / PRESET2 / HCUT SLOPE
+fffdbdac	menuitem_EX060212	Menu item 5.23.11 PRESET / PRESET2 / USB OUT LEVEL
+fffdbe18	menuitem_EX060213	Menu item 5.23.12 PRESET / PRESET2 / REAR OUT LEVEL
+fffdbe84	menuitem_EX060214	Menu item 5.23.13 PRESET / PRESET2 / TX BPF SEL
+fffdbef0	menuitem_EX060215	Menu item 5.23.14 PRESET / PRESET2 / MOD SOURCE
+fffdbf5c	menuitem_EX060216	Menu item 5.23.15 PRESET / PRESET2 / USB MOD GAIN
+fffdbfc8	menuitem_EX060217	Menu item 5.23.16 PRESET / PRESET2 / REAR MOD GAIN
+fffdc034	menuitem_EX060218	Menu item 5.23.17 PRESET / PRESET2 / RPTT SELECT
+fffdc0a0	menuitem_EX060301	Menu item 5.24.0 PRESET / PRESET3 / PRESET NAME
+fffdc10c	menuitem_EX060302	Menu item 5.24.1 PRESET / PRESET3 / CAT-1 RATE
+fffdc178	menuitem_EX060303	Menu item 5.24.2 PRESET / PRESET3 / CAT-1 TIME OUT TIMER
+fffdc1e4	menuitem_EX060304	Menu item 5.24.3 PRESET / PRESET3 / CAT-1 CAT-3 STOP BIT
+fffdc250	menuitem_EX060305	Menu item 5.24.4 PRESET / PRESET3 / AGC FAST DELAY
+fffdc2bc	menuitem_EX060306	Menu item 5.24.5 PRESET / PRESET3 / AGC MID DELAY
+fffdc328	menuitem_EX060307	Menu item 5.24.6 PRESET / PRESET3 / AGC SLOW DELAY
+fffdc394	menuitem_EX060308	Menu item 5.24.7 PRESET / PRESET3 / LCUT FREQ
+fffdc401	menuitem_EX060309	Menu item 5.24.8 PRESET / PRESET3 / LCUT SLOPE
+fffdc46e	menuitem_EX060310	Menu item 5.24.9 PRESET / PRESET3 / HCUT FREQ
+fffdc4db	menuitem_EX060311	Menu item 5.24.10 PRESET / PRESET3 / HCUT SLOPE
+fffdc548	menuitem_EX060312	Menu item 5.24.11 PRESET / PRESET3 / USB OUT LEVEL
+fffdc5b5	menuitem_EX060313	Menu item 5.24.12 PRESET / PRESET3 / REAR OUT LEVEL
+fffdc622	menuitem_EX060314	Menu item 5.24.13 PRESET / PRESET3 / TX BPF SEL
+fffdc68f	menuitem_EX060315	Menu item 5.24.14 PRESET / PRESET3 / MOD SOURCE
+fffdc6fc	menuitem_EX060316	Menu item 5.24.15 PRESET / PRESET3 / USB MOD GAIN
+fffdc769	menuitem_EX060317	Menu item 5.24.16 PRESET / PRESET3 / REAR MOD GAIN
+fffdc7d6	menuitem_EX060318	Menu item 5.24.17 PRESET / PRESET3 / RPTT SELECT
+fffdc843	menuitem_EX060401	Menu item 5.25.0 PRESET / PRESET4 / PRESET NAME
+fffdc8b0	menuitem_EX060402	Menu item 5.25.1 PRESET / PRESET4 / CAT-1 RATE
+fffdc91d	menuitem_EX060403	Menu item 5.25.2 PRESET / PRESET4 / CAT-1 TIME OUT TIMER
+fffdc98a	menuitem_EX060404	Menu item 5.25.3 PRESET / PRESET4 / CAT-1 CAT-3 STOP BIT
+fffdc9f7	menuitem_EX060405	Menu item 5.25.4 PRESET / PRESET4 / AGC FAST DELAY
+fffdca64	menuitem_EX060406	Menu item 5.25.5 PRESET / PRESET4 / AGC MID DELAY
+fffdcad1	menuitem_EX060407	Menu item 5.25.6 PRESET / PRESET4 / AGC SLOW DELAY
+fffdcb3e	menuitem_EX060408	Menu item 5.25.7 PRESET / PRESET4 / LCUT FREQ
+fffdcbab	menuitem_EX060409	Menu item 5.25.8 PRESET / PRESET4 / LCUT SLOPE
+fffdcc18	menuitem_EX060410	Menu item 5.25.9 PRESET / PRESET4 / HCUT FREQ
+fffdcc85	menuitem_EX060411	Menu item 5.25.10 PRESET / PRESET4 / HCUT SLOPE
+fffdccf2	menuitem_EX060412	Menu item 5.25.11 PRESET / PRESET4 / USB OUT LEVEL
+fffdcd5f	menuitem_EX060413	Menu item 5.25.12 PRESET / PRESET4 / REAR OUT LEVEL
+fffdcdcc	menuitem_EX060414	Menu item 5.25.13 PRESET / PRESET4 / TX BPF SEL
+fffdce39	menuitem_EX060415	Menu item 5.25.14 PRESET / PRESET4 / MOD SOURCE
+fffdcea6	menuitem_EX060416	Menu item 5.25.15 PRESET / PRESET4 / USB MOD GAIN
+fffdcf13	menuitem_EX060417	Menu item 5.25.16 PRESET / PRESET4 / REAR MOD GAIN
+fffdcf80	menuitem_EX060418	Menu item 5.25.17 PRESET / PRESET4 / RPTT SELECT
+fffdcfed	menuitem_EX060501	Menu item 5.26.0 PRESET / PRESET5 / PRESET NAME
+fffdd05a	menuitem_EX060502	Menu item 5.26.1 PRESET / PRESET5 / CAT-1 RATE
+fffdd0c7	menuitem_EX060503	Menu item 5.26.2 PRESET / PRESET5 / CAT-1 TIME OUT TIMER
+fffdd134	menuitem_EX060504	Menu item 5.26.3 PRESET / PRESET5 / CAT-1 CAT-3 STOP BIT
+fffdd1a1	menuitem_EX060505	Menu item 5.26.4 PRESET / PRESET5 / AGC FAST DELAY
+fffdd20e	menuitem_EX060506	Menu item 5.26.5 PRESET / PRESET5 / AGC MID DELAY
+fffdd27b	menuitem_EX060507	Menu item 5.26.6 PRESET / PRESET5 / AGC SLOW DELAY
+fffdd2e8	menuitem_EX060508	Menu item 5.26.7 PRESET / PRESET5 / LCUT FREQ
+fffdd355	menuitem_EX060509	Menu item 5.26.8 PRESET / PRESET5 / LCUT SLOPE
+fffdd3c2	menuitem_EX060510	Menu item 5.26.9 PRESET / PRESET5 / HCUT FREQ
+fffdd42f	menuitem_EX060511	Menu item 5.26.10 PRESET / PRESET5 / HCUT SLOPE
+fffdd49c	menuitem_EX060512	Menu item 5.26.11 PRESET / PRESET5 / USB OUT LEVEL
+fffdd509	menuitem_EX060513	Menu item 5.26.12 PRESET / PRESET5 / REAR OUT LEVEL
+fffdd576	menuitem_EX060514	Menu item 5.26.13 PRESET / PRESET5 / TX BPF SEL
+fffdd5e3	menuitem_EX060515	Menu item 5.26.14 PRESET / PRESET5 / MOD SOURCE
+fffdd650	menuitem_EX060516	Menu item 5.26.15 PRESET / PRESET5 / USB MOD GAIN
+fffdd6bd	menuitem_EX060517	Menu item 5.26.16 PRESET / PRESET5 / REAR MOD GAIN
+fffdd72a	menuitem_EX060518	Menu item 5.26.17 PRESET / PRESET5 / RPTT SELECT
