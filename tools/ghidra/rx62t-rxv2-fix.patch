@@ -28,7 +28,32 @@
  }
  
  ### (4) MUL Rs, Rs2, Rd
-@@ -1962,23 +1970,31 @@
+@@ -1945,40 +1953,51 @@
+ 
+ 
+ ## SCCnd - condition setting
++## T21c fix (#97 B1): the module used COND (skip the store when the condition is false) and, for SCCnd.L Rd, stored
++## to memory at [Rd]. Manual R01US0071EJ0100 SCCnd p. 182: dest = 1 if the condition holds, else 0, always written.
++## 56 SCCnd.L Rd sites in MAIN (CC-RX compare idioms, e.g. after SCMPU) decompiled as conditional stores through Rd.
+ ### (1.1) SCCnd.L Rd
+-:SC^COND^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 = 0b11 & ld0_2; (op0_4 & COND & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
+-    *:4 szld_dst = zext(cc);
++:SC^cc^szdsc reg4_4    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 = 0b11 & ld0_2; (op0_4 & cc & reg4_4) [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
++    reg4_4 = zext(cc);
+ }
+ 
+ ### (1.2) SCCnd.B/W/L dsp[Rd]
+-:SC^COND^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b00 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & COND & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
++:SC^cc^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b00 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
+     *:1 szld_dst = cc;
+ }
+-:SC^COND^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b01 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & COND & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
++:SC^cc^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b01 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
+     *:2 szld_dst = zext(cc);
+ }
+-:SC^COND^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & COND & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
++:SC^cc^szdsc szld_dst    is szdsc & op0_8 = 0xFC; op4_4 = 0xD & sz2_2 = 0b10 & sz2_2 & ld0_2 != 0b11 & ld0_2; (op0_4 & cc) ... & szld_dst [ mode_ld = ld0_2; mode_sz = sz2_2; cc_val = op0_4; ] {
+     *:4 szld_dst = zext(cc);
  }
  
  
@@ -75,7 +100,7 @@
      <end>
  }
  
-@@ -2136,48 +2152,26 @@
+@@ -2136,48 +2155,26 @@
  
  ## SMOVB - string move backward p. 189
  :SMOVB    is op0_8 = 0x7F; op0_8 = 0x8B {
@@ -135,7 +160,7 @@
      <end>
  }
  
-@@ -2185,41 +2179,23 @@
+@@ -2185,41 +2182,23 @@
  ## SSTR.size - storing a string p. 192
  ### SSTR.B
  :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
@@ -186,7 +211,7 @@
  }
  
  
-@@ -2286,96 +2262,78 @@
+@@ -2286,96 +2265,78 @@
  }
  
  
@@ -205,7 +230,7 @@
 -        if (tmp == R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = suntil(R1, R2, R3, 1:1);
-+    R3 = R3 - (p - R1) / 1;
++    R3 = R3 - (p - R1);
 +    R1 = p;
 +    local last:4 = zext(*:1 (p - 1));
 +    $(Z_flag) = (last == R2);
@@ -226,7 +251,7 @@
 -        if (tmp == R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = suntil(R1, R2, R3, 2:1);
-+    R3 = R3 - (p - R1) / 2;
++    R3 = R3 - ((p - R1) >> 1);
 +    R1 = p;
 +    local last:4 = zext(*:2 (p - 2));
 +    $(Z_flag) = (last == R2);
@@ -247,7 +272,7 @@
 -        if (tmp == R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = suntil(R1, R2, R3, 4:1);
-+    R3 = R3 - (p - R1) / 4;
++    R3 = R3 - ((p - R1) >> 2);
 +    R1 = p;
 +    local last:4 = *:4 (p - 4);
 +    $(Z_flag) = (last == R2);
@@ -271,7 +296,7 @@
 -        if (tmp != R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = swhile(R1, R2, R3, 1:1);
-+    R3 = R3 - (p - R1) / 1;
++    R3 = R3 - (p - R1);
 +    R1 = p;
 +    local last:4 = zext(*:1 (p - 1));
 +    $(Z_flag) = (last == R2);
@@ -292,7 +317,7 @@
 -        if (tmp != R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = swhile(R1, R2, R3, 2:1);
-+    R3 = R3 - (p - R1) / 2;
++    R3 = R3 - ((p - R1) >> 1);
 +    R1 = p;
 +    local last:4 = zext(*:2 (p - 2));
 +    $(Z_flag) = (last == R2);
@@ -313,7 +338,7 @@
 -        if (tmp != R2) goto <end>;
 -        if (R3 != 0) goto <loop>;
 +    local p:4 = swhile(R1, R2, R3, 4:1);
-+    R3 = R3 - (p - R1) / 4;
++    R3 = R3 - ((p - R1) >> 2);
 +    R1 = p;
 +    local last:4 = *:4 (p - 4);
 +    $(Z_flag) = (last == R2);
@@ -321,13 +346,13 @@
      <end>
  }
  
-@@ -2434,10 +2392,35 @@
+@@ -2434,10 +2395,35 @@
  }
  
  #### XCHG dsp[Rs].UB, Rd
 -:XCHG ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10000 & ld0_2 < 0b11 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] unimpl
 +## T21c (#97 B1): the memory forms were "unimpl" (3 sites in MAIN, all XCHG [Rs].L,Rd). Manual R01US0071EJ0100 XCHG
-+## p. 300: the memory operand and the LSB byte/word/long of Rd are exchanged; the loaded value is extended per memex.
++## p. 204: the memory operand and the LSB byte/word/long of Rd are exchanged; the loaded value is extended per memex.
 +:XCHG ld_dst, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10000 & ld0_2 < 0b11 & ld0_2; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = 4; ] {
 +    local tmp:4 = zext(*:1 ld_dst);
 +    *:1 ld_dst = reg0_4:1;

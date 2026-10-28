@@ -105,7 +105,7 @@ RX_GIT=https://github.com/stefan00lpf/rx-proc-ghidra
 RX_COMMIT=ea4cd20403c2e359f0de0cead2850d6be173b67a
 RX_SINC_ORIG=42f51c2cc890cb4b396b1e1dce2dc85048ceaa3124c217088d58b5cba0758f12
 RX_SINC_T17=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
-RX_SINC_FIXED=b70eb29e383286a30dbe103c354635fd0c3a9ff643e4212a4220532458d576e7
+RX_SINC_FIXED=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -283,7 +283,7 @@ step_rx() {
     [ -f "$lang/rx62t.sinc.t17" ] || cp "$lang/rx62t.sinc" "$lang/rx62t.sinc.t17"
     [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.t17" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.t17"
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rxv2-fix.patch")
-    info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, string ops as pcodeops)"
+    info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, SCCnd, string ops as pcodeops)"
   fi
   [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
