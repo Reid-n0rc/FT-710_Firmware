@@ -18,6 +18,7 @@ it. Labels used:
 | `tooling` | scripts, Ghidra setup, bootstrap |
 | `hardware` | needs the service manual schematics or a part identification |
 | `needs-radio` | needs the physical radio (a capture, a photo, a measurement or a CAT read) and therefore the owner's explicit approval each time; never write to a radio without it |
+| `validate-on-radio` | the work can be done without the radio, but the final result should be confirmed on a radio (with the owner's approval); added 2026-10-28, used on #62 and #67 |
 | `needs-owner` | needs a decision by the repository owner |
 | `good first issue` | small, self-contained, a good way to learn the repo |
 | `main`, `display`, `ifdsp`, `sdr`, `cat` | the image or area |
