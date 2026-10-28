@@ -5,8 +5,8 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
 
 ## Export stats
 - Ghidra 12.1.4 project `ghidra/FT710_DISPLAY`. Pipeline: `DisplaySetup.java` (preScript) → auto-analysis → `DisplayFindCode.java` (pointer-table,
-  prologue and orphan-code passes) → `FixFuncEntries.java tools/ghidra/entries_display.tsv` (T11) → `ApplyNames.java tools/ghidra/names_display.tsv` →
-  `ExportDecomp.java decomp/display 50`.
+  prologue and orphan-code passes) → `FixFuncEntries.java tools/ghidra/entries_display.tsv` (T11) → `DisplayJumpTables.java apply` → `DisplayGaps.java <starts.tsv> <fragments.tsv> .text define`
+  (T21e) → `ApplyNames.java tools/ghidra/names_display.tsv` → `ExportDecomp.java decomp/display 50`. `tools/bootstrap.sh` runs these steps; the commands are below.
 - T11 (2026-10-27): the project was rebuilt on the Linux host and the re-export matched the T06 commit byte for byte. `FixFuncEntries.java` then
   created 14 function entries that analysis had missed (RTOS task entries such as `task_root` 0x201170C8, which start with an `ldr` before the
   `push`, so the prologue pass had started them 4–8 bytes late or the previous function had swallowed them). Detailed docs: `docs/code/display/`.
@@ -16,6 +16,28 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
   50 functions each, about 81k lines (2.0 MB). Before T17: 2041 exported, 151 named.
 - Code coverage of `.text` (0x20100000–0x20165177, 414,072 B): about 95% instructions and 4% data (literal pools, tables). About 2.7 KB of small
   unreferenced fragments remain undefined.
+- T21e (#97 B6–B8; measured on a scratch rebuild, the committed export here is not yet regenerated): 86 ARM jump-table sites, all
+  switches with every case (before: 80 of the 85 then disassembled; the five RSPI helpers `rspi_open/start/stop/reset_buffers/wait_tx_end` were not: they
+  carried a RETURN flow override and stray references from a table guessed one word early). 137 new entries in
+  `entries_display.tsv` (dead helpers after a return, tail-branch targets that analysis had merged into another function, one
+  Thumb function reached from a .data table): 2210 functions exported (was 2087), 0 decompile failures, no call target inside a
+  function body. Undefined non-0xFF bytes in `.text`: 4,258 → 242 (15 fragments, all in the armcc Thumb library: fplib code
+  reached through inline-parameter calls, lookup tables). The other fragments are defined as data (`T21e B8:` EOL comments).
+  Warning counts of the 2076 functions that exist before and after are unchanged; the 134 new functions add 46 warnings.
+- Rebuild commands (from the repo root; `tools/bootstrap.sh --only ghidra` runs the same steps):
+  ```sh
+  H="tools/ghidra-headless.sh $PWD/ghidra FT710_DISPLAY"; P="-process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra"
+  $H -import build/FT-710_DISPLAY_V0108.bin -overwrite -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
+     -scriptPath tools/ghidra -preScript DisplaySetup.java -analysisTimeoutPerFile 3600
+  $H $P -analysisTimeoutPerFile 3600 -postScript DisplayFindCode.java      # twice
+  $H $P -postScript FixFuncEntries.java tools/ghidra/entries_display.tsv
+  $H $P -postScript DisplayJumpTables.java apply /tmp/jumptables.tsv
+  $H $P -postScript DisplayGaps.java /tmp/gaps_starts.tsv /tmp/gaps_fragments.tsv .text define
+  $H $P -postScript ApplyNames.java tools/ghidra/names_display.tsv
+  $H $P -readOnly -postScript ExportDecomp.java decomp/display 50
+  # tests (read only): every jump-table site a full switch; no call target inside a body; remaining fragments
+  $H $P -readOnly -postScript DisplayJumpTables.java check -postScript DisplayGaps.java /tmp/starts.tsv /tmp/fragments.tsv
+  ```
 - `functions.tsv` lists entry, name, size, reference count, and file for every exported function.
 - File names are `<first entry>_<last entry>.c`. The first file starts with two stub "functions" at 0x18400000/0x18A00000. These are the
   jump targets into the flash banks, not real code in this image.

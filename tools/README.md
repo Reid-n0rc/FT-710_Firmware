@@ -18,6 +18,7 @@ Conventions:
 |---|---|---|---|
 | `bootstrap.sh` | One command from the official downloads to the full working tree: input hashes, SFL decode, RX module install + fix, the four Ghidra programs with every name, re-export, the HiFi4 FLIX listing, and diff against `decomp/`, optional SDR netlist/Verilator chain. Steps run alone with `--only`; see `--help` | `Firmware/`, `docs/inputs.sha256`, `tools/ghidra/*` → `$BOOTSTRAP_OUT/{build,ghidra,decomp,logs}` | T20 |
 | `ghidra-headless.sh` | Runs Ghidra's `analyzeHeadless` with JDK 21 (Homebrew paths if present, else `~/opt`); override with `GHIDRA_JAVA_HOME`, `GHIDRA_HEADLESS` | Ghidra args | T01 |
+| `memgate.py` | Memory-based admission for parallel Ghidra/REA runs (AGENTS.md "Hardware use"): starts a command as soon as `MemAvailable` covers its reservation plus a 1 GB margin, counting what running jobs can still grow into; no fixed job limit. State in `$MEMGATE_DIR` (default `~/.cache/ft710-memgate`) | `<reserve_mb> -- <command...>` | T21 |
 | `issues_sync.py` | Mirrors `docs/tasks/` to GitHub issues (epic, sub-issues, labels, status comments) and keeps `docs/tasks/issues.json`. **The parent agent / owner runs it, nobody else** | `docs/tasks/` → GitHub | (board setup) |
 | `cat_backup.py` | Read-only CAT backup: `ID`, `VE0..3`, `JP0710` and the `E8` memory image (tested on a radio), optional full EEPROM dump with `SPR` (`--eeprom`, about 2 minutes; tested on a radio). Logs to `backup.log`. Checks the `JP` complement bytes, the `E8` and `SPR` checksums and the region code in the dump; writes `SHA256SUMS`. `--verify` checks a backup folder against it, `--decode` checks a saved `E8` frame. See [docs/cat-undocumented.md](../docs/cat-undocumented.md) | radio (CAT port) → `backup-<date>/` | radio checks |
 | `guide_to_wiki.py` | Splits `docs/guide/README.md` into GitHub-wiki pages (`Home`, one page per chapter, `_Sidebar`, `img/`) | guide → `build/wiki/` | T19 |
@@ -55,7 +56,11 @@ Conventions:
 | `ifdsp_l32r.py` | Heuristic per-function L32R literal scan | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_regscan.py` | Heuristic HiFi4 accesses to the shared register file (base ISA only) | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_hifi4_dis.py` | Per-function FLIX-aware HiFi4 listing with the Zephyr SDK RT600 objdump, names from `IfdspHifi4Names.java` | objdump + SRAM image + `functions.tsv` → `decomp/ifdsp/hifi4/flix.dis` (committed; bootstrap step `flix`) | T12e |
+| `flix_compare.py` | FLIX test oracle: compares a Ghidra instruction export with `flix.dis` (length, mnemonic, operands per slot; normalisation rules N1–N8 in the docstring), compares function lists (`funcs`), writes the address list (`addrs`) and `entries_hifi4.tsv` (`entries`) | `ExportListing.java` TSV + `flix.dis` → `summary.txt`, `mismatches.tsv`, `by_mnemonic.tsv` | T21b (#97) |
+| `flix_oracle.sh` | End-to-end oracle for one Xtensa language id: scratch import with the HiFi4 setup and function pass, listing + decode export, B9 decompile of `FUN_0020bb74`, all comparisons; env `IMAGE`, `PROJDIR`, `HEADLESS`, `TIMEOUT` | language id → `build/oracle/<lang>/` | T21b (#97) |
 | `flix_stats.py` | Counts what Ghidra cannot represent in the HiFi4 code: functions with FLIX bundles, bundle sizes and slots, branch slots, unknown and wrong-register ops | `decomp/ifdsp/hifi4/flix.dis` (+ Ghidra's Xtensa `.sinc` files) → stdout | #97 |
+| `xtensa_sleigh_gen.py` | Generates the Ghidra language `Xtensa:LE:32:rt600hifi4` from Cadence's `xtensa-modules.c` (`extract`, `check`, `selftest` = its own model vs `flix.dis`, `generate`); compiles the probe `xtensa_isa_dump.c` with `cc` | `xtensa-modules.c` + Ghidra stock Xtensa `.sinc` → `tools/ghidra/xtensa-rt600hifi4/` (committed; bootstrap step `hifi4`) | T21a (#97) |
+| `xtensa_isa_dump.c` | C probe for `xtensa_sleigh_gen.py`: includes `xtensa-modules.c` and dumps slot/field bit maps, opcode encodings, operand decode tables and reloc samples as JSON | built and run by the generator | T21a (#97) |
 | `ifdsp_hifi4_regscan.py` | Register-file accesses in a FLIX-aware objdump listing | listing + `functions.tsv` → stdout | T12b |
 | `ifdsp_coef_tables.py` | Finds and classifies numeric tables (filters, windows, sin/cos, gain curves) | SRAM image → stdout | T12e |
 | `ifdsp_names_java.py` | Converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV, splits proposals by program | Java ↔ TSV | T17 |
@@ -86,6 +91,7 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 
 | Script | What it does | Inputs → outputs | Task |
 |---|---|---|---|
+| `signatures_draft.py` | drafts `signatures_main.tsv` from `CallArgCheck.java`'s `protos.tsv` (keeps the reviewed `doc` rows; rules in its docstring) | `protos.tsv`, `names_main.tsv`, [`mismatch.tsv`] → `tools/ghidra/signatures_main.tsv` | T21d |
 | `names_merge.py` | `report`/`merge` per-sub-task name and entry TSVs into the shared ones, conflicts resolved with `--picks` | `tools/ghidra/names_*.T*.tsv` → `names_*.tsv` | T17 |
 | `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
@@ -103,20 +109,30 @@ the exact command line for every program.
 | `ApplyNames.java` | postScript | Applies `address<TAB>name[<TAB>comment]`; `@name` = data label; creates missing functions | MAIN, DISPLAY | T05 |
 | `names_main.tsv` | data | 1147 MAIN names (T05, T09, T10a–h merged in T17) | ApplyNames | T05/T17 |
 | `names_display.tsv` | data | 768 DISPLAY names (T06, T11a–g merged in T17) | ApplyNames | T06/T17 |
-| `entries_display.tsv` | data | 68 DISPLAY function entries analysis missed or started late (`drop` = old entry was data) | FixFuncEntries | T11/T17 |
+| `entries_display.tsv` | data | 205 DISPLAY function entries analysis missed or started late (`drop` = old entry was data, `thumb` = Thumb entry): 68 from T11/T17, 137 from T21e (`DisplayGaps.java` kinds) | FixFuncEntries | T11/T17/T21e |
+| `DefineRomData.java` | postScript | MAIN ROM bytes analysis left undefined: strings, pointer runs, zero runs; unreferenced code after a return → functions; leftover const-area runs → `float`/`uint16`/`byte` arrays (plate comment: layout guess). `[report.tsv] [code=0xFFF8F658] [dry]`; run after ApplyNames | MAIN | T21d |
+| `ApplySignatures.java` | postScript | Applies `signatures_main.tsv` as locked (USER_DEFINED) prototypes, cspec `__fastcall`, stack purge 0; `type name@stack:N` and 64-bit returns get custom storage; run last | MAIN | T21d |
+| `signatures_main.tsv` | data | 1212 MAIN prototypes: 33 reviewed (`doc`), the rest drafted from the disassembly (`asm`, `tools/signatures_draft.py`) | ApplySignatures | T21d |
+| `CallArgCheck.java` | postScript | Read-only: every call site's R1–R4 set-up and R1/R2 use in the disassembly vs the decompiled CALL → `mismatch.tsv` (dropped_arg / lost_ret / wide_ret + counts); optional `protos.tsv` (per-function asm prototype evidence for `signatures_draft.py`) | MAIN | T21d |
 | `names_*.T*.tsv`, `entries_display.T*.tsv` | data | the per-sub-task proposals, kept as the merge inputs | names_merge.py | T10/T11/T12 |
 | `names_{main,display,ifdsp}.picks.tsv` | data | T17 resolutions of name conflicts | names_merge.py | T17 |
 | `CatDispatch.java` | postScript | Dumps the CAT mnemonic → switch case → handler table with each length test (`len==N`, `len>N`, ...) | `decomp/main/cat_dispatch.tsv` | T05, fixed T20 |
 | `ExportDecomp.java` | postScript | Decompiled C in 50-function files + `functions.tsv` (60 s per-function limit) + `quality.tsv` (decompile-quality counts from the same pass, T21f) | all | T01/T05 |
 | `DisplaySetup.java` | preScript | DISPLAY RZ/A1H map: `.text`/`.rodata`/scatter area split, armcc LZ decompression of RW data, ZI blocks, I/O, vectors | DISPLAY | T06 |
 | `DisplayFindCode.java` | postScript | Second code-discovery pass: pointer tables, `push {..,lr}` prologues, orphan code (run twice; the 2nd finds nothing new) | DISPLAY | T06 |
-| `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames) | DISPLAY | T11 |
+| `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames); the late-start walk stops at a call and keeps called functions (T21e) | DISPLAY | T11 |
+| `DisplayJumpTables.java` | postScript | ARM jump tables (`ldr pc,[pc,rX,lsl #2]`, `add pc,pc,rX,lsl #2`): `scan` lists every site with its length from the `cmp rX,#n`; `apply` repairs the sites the decompiler does not turn into a full switch (stray references, RETURN flow override, table data, case code; switch override as last resort); `check` = the test (every site a switch with all cases) | DISPLAY (any ARM image) | T21e |
+| `DisplayGaps.java` | postScript | Missed function starts (call targets that are no entry, code after a return that nothing reaches, address-taken code, tail-branch targets merged into another function) and undefined fragments in `.text`; `define` defines the non-code fragments as data and disassembles dead code. Prints the B7 test (no call target inside a body) | DISPLAY (any ARM image) | T21e |
 | `DisplayReport.java` | postScript | Read-only report: blocks, strings, I/O references as TSVs | DISPLAY | T06 |
 | `IfdspM33Setup.java` | preScript | RT685 map for the M33 image, MCUXpresso copy-down block, `.bss`, vectors → Thumb functions | IFDSP M33 | T07 |
 | `IfdspFindFuncs.java` | postScript | Missed Thumb `push {…,lr}` prologues in the M33 code ranges; rodata strings | IFDSP M33 | T07 |
 | `IfdspM33Names.java` | postScript | M33 names + plate comments, creates/removes entries (`MERGE_INTO`) | IFDSP M33 | T07/T12/T17 |
 | `IfdspHifi4Setup.java` | preScript | Maps the three carved HiFi4 images at their DSP load addresses, seeds the vectors | IFDSP HiFi4 | T07 |
-| `IfdspHifi4FindFuncs.java` | postScript | Functions at 4-aligned `entry a1,N` prologues; drops artifacts in uninitialized memory | IFDSP HiFi4 | T07 |
+| `IfdspHifi4FindFuncs.java` | postScript | Makes the SRAM function list exactly `entries_hifi4.tsv` (creates missing entries, clears instructions overlapping them, removes every other function outside the ITCM vectors) | IFDSP HiFi4 | T07, T21b |
+| `entries_hifi4.tsv` | data | 1,067 HiFi4 function entries: the 1,065 `flix.dis` functions + 2 real entries without `entry` (`source` = `extra`); regenerate with `flix_compare.py entries` | IfdspHifi4FindFuncs | T21b |
+| `ExportListing.java` | postScript | Every instruction as TSV (addr, len, mnemonic, operands, bytes): `listing` = analysed listing, `decode <addrs>` = flow-independent decode at each address | FLIX oracle | T21b |
+| `ExportFuncList.java` | postScript | Function entries, names, sizes, blocks as TSV | any | T21b |
+| `DecompileBisect.java` | postScript | Finds the instruction that kills a function's decompile: patches `retw.n` from the end backwards, then confirms the candidate alone with a `nop` (read-only session) | any | T21b |
 | `IfdspHifi4Names.java` | postScript | HiFi4 names + plate comments | IFDSP HiFi4 | T12e/T17 |
 | `DumpFuncs.java` | postScript | Decompiles a few functions (by address or name) into one text file | any | T07 |
 | `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
@@ -127,3 +143,4 @@ the exact command line for every program.
 | `T10eMovuRegCount.java` | postScript | Lists every `MOVU.B/W Rs,Rd`; after the T17 fix all 107 print as register forms | MAIN | T10e/T17 |
 | `rx62t-movu-fix.patch` | patch | T17 SLEIGH fix for the RX module (`MOVU` ld=11, `SCMPU`, `SUNTIL`, `SWHILE`); applied by `bootstrap.sh --only rx` | RX module | T17 |
 | `rx62t-rxv2-fix.patch` | patch | T21c SLEIGH fix on top of the T17 patch: `MUL` memory forms (.UB scaling, memex), `XCHG` memory forms (were unimplemented), `SCCnd` (always written; .L Rd went to memory), string ops as named pcodeops (`scmpu`, `smovf`, `smovb`, `smovu`, `sstr`, `suntil`, `swhile`); applied by `bootstrap.sh --only rx` | RX module | T21c |
+| `rx62t-rtsd-fix.patch` | patch | T21d SLEIGH fix: `RTSD #imm,Rd-Rd2` frame size from the register numbers (was the register values; the 8 "Unable to track spacebase" warnings). One line, applies after the T17 patch; T21c/T21g fold it into `bootstrap.sh --only rx` | RX module | T21d |
