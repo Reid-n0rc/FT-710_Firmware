@@ -1,12 +1,26 @@
 # T12e — IFDSP HiFi4 DSP code (threads, audio I/O, tables)
 
-**Status:** todo · **Parent:** T12 · **Depends on:** T12a
+**Status:** in progress (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
 
 ## Goal
 `docs/code/ifdsp/hifi4.md`: XOS threads, peripheral base tables and which FLEXCOMM/DMA each thread uses, audio paths (RX IF, TX AF, codec, SPI to DISPLAY), coefficient tables, what can be learned despite the base-ISA-only Xtensa decode.
 
 ## Plan
-See T12 plan. Starting notes from T12a below. No HiFi4 names script exists yet; create `tools/ghidra/IfdspHifi4Names.java` in the same format as `IfdspM33Names.java`.
+1. Own Ghidra copy `FT710_IFDSP_T12e`; create `tools/ghidra/IfdspHifi4Names.java` (format of `IfdspM33Names.java`), seed with
+   the T12a names after checking each one (thread entry = function pointer passed next to the name literal in the creator's
+   literal pool; verify with the L32R scan and the decomp), apply to the copy only.
+2. Tooling check: look for an open decoder that handles HiFi4 FLIX (binutils xtensa overlays: Espressif `xtensa-overlays`,
+   Zephyr `xtensa` SoC overlays for NXP RT600 `nxp_rt600_adsp`; Zephyr SDK ships prebuilt `xtensa-nxp_rt600_adsp_zephyr-elf`
+   binutils). If installable from a reputable source, install under `~/opt`, run objdump on the carved image, compare.
+3. Threads and drivers: for each creator/entry, list stack size, priority, literal pool (peripherals, buffers, callees);
+   map FLEXCOMM2–5 I2S + DMA channels, buffer sizes, sample rate (clock literals, FCLK dividers), FC1 SPI to DISPLAY.
+4. Register file: scan every L16UI/S16I off the 0x2006FF00 / 0x20077F00 bases (`tools/ifdsp_regscan.py`, plus the better
+   decode if step 2 works) → per-function register reads/writes; cross-reference with the MAIN register list (T12b).
+5. Numeric content: new stdlib scanner `tools/ifdsp_coef_tables.py` over rodata 0x200000–0x206498 and .data 0x236800+:
+   float32 / Q15 / Q31 runs, symmetry (linear-phase FIR), sum (DC gain), biquad-shaped groups (b0 b1 b2 a1 a2, stability),
+   window shapes, sin/cos tables; characterize (taps, cutoff estimate via DFT magnitude) and link to referencing functions.
+6. Write `docs/code/ifdsp/hifi4.md` (function tables, Mermaid thread/audio figures, tables section, decode limits), Findings,
+   proposed shared-file edits, name TSV if useful; commit. Starting notes from T12a below. No HiFi4 names script exists yet; create `tools/ghidra/IfdspHifi4Names.java` in the same format as `IfdspM33Names.java`.
 
 ## Starting notes (from T12a)
 - Method that works despite FLIX: a heuristic L32R scan (byte0 low nibble 1; target = ((pc+3)&~3) + (imm16|0xFFFF0000)<<2) per function range from `functions.tsv`, resolving literal values. Scripts: `tools/ifdsp_l32r.py` and `tools/ifdsp_regscan.py` (args: `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin decomp/ifdsp/hifi4/functions.tsv`); output `build/ifdsp_hifi4_l32r.txt`.
