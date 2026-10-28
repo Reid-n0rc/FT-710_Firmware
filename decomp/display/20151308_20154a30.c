@@ -1157,9 +1157,11 @@ code * FUN_20152df4(uint param_1)
 }
 
 
-// ===== FUN_20152fac @ 20152fac (356 bytes)
+// ===== itron_iwup_tsk @ 20152fac (356 bytes)
 
-code * FUN_20152fac(uint param_1)
+/* [inference from use in an ISR] */
+
+code * itron_iwup_tsk(uint param_1)
 
 {
   char cVar1;

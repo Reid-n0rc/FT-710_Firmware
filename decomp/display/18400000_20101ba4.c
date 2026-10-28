@@ -167,7 +167,7 @@ void IRQ_Handler(void)
   code *pcVar1;
   undefined8 uVar2;
   
-  uVar2 = FUN_201176b4();
+  uVar2 = gic_dispatch();
   if ((int)uVar2 != 0) {
     pcVar1 = (code *)FUN_2015632c((int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
     (*pcVar1)();
@@ -341,9 +341,11 @@ void FUN_20100458(void)
 }
 
 
-// ===== FUN_20100480 @ 20100480 (36 bytes)
+// ===== gpio_p7_9_11 @ 20100480 (36 bytes)
 
-void FUN_20100480(int param_1)
+/* P7_11 and P7_9 via PSR7 */
+
+void gpio_p7_9_11(int param_1)
 
 {
   undefined4 uVar1;
@@ -1509,9 +1511,11 @@ LAB_20101178:
 }
 
 
-// ===== FUN_20101190 @ 20101190 (2512 bytes)
+// ===== pinmux_init @ 20101190 (2512 bytes)
 
-void FUN_20101190(void)
+/* PFC setup of every port pin (2.5 KB of calls) */
+
+void pinmux_init(void)
 
 {
   FUN_2010087c(0);

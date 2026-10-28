@@ -375,7 +375,7 @@ void mainlink_init(void)
     FUN_201511e8();
   }
   iVar1 = itron_acre_tsk(0,&DAT_2016589c);
-  taskmon_register(iVar1,3);
+  periodic_wakeup_register(iVar1,3);
   if (0 < iVar1) {
     itron_sta_tsk(iVar1,0);
     iVar1 = os_create_sem_named(&DAT_20165870,"cmd_waiting_sem");
@@ -574,11 +574,11 @@ void FUN_20116728(undefined4 param_1,int *param_2)
 }
 
 
-// ===== taskmon_register @ 20116768 (28 bytes)
+// ===== periodic_wakeup_register @ 20116768 (28 bytes)
 
-/* slot n of the task-monitor table 0x208DBAD0 */
+/* (task, slot): slot n of 0x208DBAD0 {tskid, ?, period from 0x20800374[n], count} */
 
-void taskmon_register(undefined4 param_1,int param_2)
+void periodic_wakeup_register(undefined4 param_1,int param_2)
 
 {
   (&DAT_208dbad0)[param_2 * 4] = param_1;
@@ -597,9 +597,11 @@ void FUN_20116784(void)
 }
 
 
-// ===== FUN_2011678c @ 2011678c (76 bytes)
+// ===== periodic_wakeup_isr @ 2011678c (76 bytes)
 
-void FUN_2011678c(void)
+/* GIC 0x87, every 1 ms: per slot count++, at period wake the task (0x20152FAC) */
+
+void periodic_wakeup_isr(void)
 
 {
   int iVar1;
@@ -611,7 +613,7 @@ void FUN_2011678c(void)
     iVar1 = (&DAT_208dbadc)[iVar2 * 4];
     (&DAT_208dbadc)[iVar2 * 4] = iVar1 + 1;
     if ((&DAT_208dbad8)[iVar2 * 4] == iVar1 + 1) {
-      FUN_20152fac((&DAT_208dbad0)[iVar2 * 4]);
+      itron_iwup_tsk((&DAT_208dbad0)[iVar2 * 4]);
     }
     FUN_20156260((&DAT_208dbadc)[iVar2 * 4],(&DAT_208dbad8)[iVar2 * 4]);
     iVar1 = iVar2 + 1;
@@ -622,11 +624,11 @@ void FUN_2011678c(void)
 }
 
 
-// ===== taskmon_start @ 201167d8 (92 bytes)
+// ===== periodic_wakeup_start @ 201167d8 (92 bytes)
 
-/* OSTM1 1 ms compare, IRQ 0x87, cyclic handler */
+/* OSTM1 1 ms compare (31999), ISR on GIC ID 0x87 */
 
-int taskmon_start(void)
+int periodic_wakeup_start(void)
 
 {
   byte bVar1;
@@ -636,11 +638,11 @@ int taskmon_start(void)
   bVar1 = UNK_fcfec420;
   UNK_fcfec420 = bVar1 & 0xfd;
   UNK_fcfec420 = 1;
-  iVar2 = FUN_2014f1a8(0,&DAT_20165954);
+  iVar2 = itron_acre_isr(0,&DAT_20165954);
   if (iVar2 < 1) {
     return iVar2;
   }
-  FUN_2011775c(0x87);
+  gic_enable_irq(0x87);
   bVar1 = DAT_fcfec414;
   DAT_fcfec414 = bVar1 | 1;
   return 0;
@@ -908,9 +910,11 @@ void FUN_20116ccc(void)
 }
 
 
-// ===== FUN_20116d84 @ 20116d84 (28 bytes)
+// ===== mmu_cache_enable @ 20116d84 (28 bytes)
 
-undefined4 FUN_20116d84(void)
+/* SCTLR |= M|C|W bits (0xD) after setting TTBR/DACR */
+
+undefined4 mmu_cache_enable(void)
 
 {
   uint uVar1;
@@ -1067,7 +1071,7 @@ void power_on_full_init(void)
   FUN_20116da0(1);
   FUN_20113104();
   if (DAT_208003a5 == '\0') {
-    FUN_20100480(1);
+    gpio_p7_9_11(1);
     gpio_p8_14(1);
     FUN_20101c10(1);
     cpg_set_clock_profile(1);
@@ -1097,7 +1101,7 @@ void power_on_full_init(void)
     DAT_208003a0 = 1;
   }
   else {
-    FUN_20100480(1);
+    gpio_p7_9_11(1);
     gpio_p8_14(1);
     FUN_20101c10(1);
   }
@@ -1130,7 +1134,7 @@ void FUN_20117030(void)
     FUN_20101b60(0);
     FUN_20101c10(0);
   }
-  FUN_20100480(0);
+  gpio_p7_9_11(0);
   gpio_p8_14(0);
   return;
 }
@@ -1167,8 +1171,8 @@ void task_root(void)
     gpio_p8_14(0);
     mainlink_init();
     uVar2 = FUN_2014e710();
-    taskmon_register(uVar2,0);
-    iVar1 = taskmon_start();
+    periodic_wakeup_register(uVar2,0);
+    iVar1 = periodic_wakeup_start();
     if (iVar1 != 0) {
       return;
     }
@@ -1199,8 +1203,8 @@ void task_root(void)
     fwupdate_init();
     sdmenu_init();
     uVar2 = FUN_2014e710();
-    taskmon_register(uVar2,0);
-    iVar1 = taskmon_start();
+    periodic_wakeup_register(uVar2,0);
+    iVar1 = periodic_wakeup_start();
     if (iVar1 != 0) {
       return;
     }
@@ -1268,10 +1272,10 @@ void main(void)
   int iVar1;
   uint uVar2;
   
-  FUN_20116d84();
-  FUN_20101190();
-  FUN_20100480(1);
-  FUN_201562b4();
+  mmu_cache_enable();
+  pinmux_init();
+  gpio_p7_9_11(1);
+  kernel_heap_init();
   iVar1 = itron_acre_tsk(0,&DAT_20165a44);
   if (iVar1 < 1) {
     return;

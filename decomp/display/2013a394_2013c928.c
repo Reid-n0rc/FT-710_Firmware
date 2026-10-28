@@ -908,10 +908,10 @@ void FUN_2013b4cc(void)
 
 {
   FUN_2011762c(0x49,&DAT_204201b8);
-  FUN_2011775c(0x49);
+  gic_enable_irq(0x49);
   FUN_2013ab9c(0,&DAT_e8010000,2,&DAT_20808ac0);
   FUN_2011762c(0x4a,&DAT_204201c4);
-  FUN_2011775c(0x4a);
+  gic_enable_irq(0x4a);
   FUN_2013ab9c(1,&DAT_e8207000,2,&DAT_20808ac0);
   return;
 }

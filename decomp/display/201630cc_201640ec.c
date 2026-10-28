@@ -99,8 +99,8 @@ undefined4 FUN_20163280(int param_1)
   *(undefined2 *)(param_1 + 8) = 0;
   *(undefined2 *)(param_1 + 0x40e) = 0;
   *(undefined2 *)(param_1 + 0x40c) = 0;
-  FUN_2011775c(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  FUN_2011775c(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
   return 0;
 }
 

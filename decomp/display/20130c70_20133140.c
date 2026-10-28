@@ -1916,9 +1916,9 @@ int FUN_201330a8(void)
 {
   int iVar1;
   
-  iVar1 = FUN_2014f1a8(0,&DAT_203a706c);
+  iVar1 = itron_acre_isr(0,&DAT_203a706c);
   if (0 < iVar1) {
-    FUN_2011775c(0x4e);
+    gic_enable_irq(0x4e);
     iVar1 = 0;
   }
   return iVar1;

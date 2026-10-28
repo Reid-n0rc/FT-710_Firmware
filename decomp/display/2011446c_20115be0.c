@@ -557,7 +557,7 @@ void FUN_20114df4(void)
   itron_dly_tsk(5);
   itron_dly_tsk(0x96);
   FUN_20101d2c(0);
-  FUN_20100480(1);
+  gpio_p7_9_11(1);
   itron_dly_tsk(4);
   FUN_20101c74(0);
   gpio_rx_reset(1);

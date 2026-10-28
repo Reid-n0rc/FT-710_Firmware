@@ -624,10 +624,10 @@ undefined4 FUN_2011efc8(void)
   undefined4 in_r3;
   
   FUN_20157138(&DAT_fcfe043c,0,7,0x80,in_r3);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166a84);
-  if ((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166a98), 0 < iVar1)) {
-    FUN_2011775c(0x110);
-    FUN_2011775c(0x10f);
+  iVar1 = itron_acre_isr(0,&DAT_20166a84);
+  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166a98), 0 < iVar1)) {
+    gic_enable_irq(0x110);
+    gic_enable_irq(0x10f);
     return 0;
   }
   return 0xff;
@@ -643,10 +643,10 @@ undefined4 FUN_2011f040(void)
   undefined4 in_r3;
   
   FUN_20157138(&DAT_fcfe043c,0,6,0x40,in_r3);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166aac);
-  if ((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166ac0), 0 < iVar1)) {
-    FUN_2011775c(0x113);
-    FUN_2011775c(0x112);
+  iVar1 = itron_acre_isr(0,&DAT_20166aac);
+  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ac0), 0 < iVar1)) {
+    gic_enable_irq(0x113);
+    gic_enable_irq(0x112);
     return 0;
   }
   return 0xff;
@@ -1143,12 +1143,12 @@ void FUN_2011fc8c(void)
   FUN_20157138(&DAT_fcfe0438,0,7,0x80,in_r3);
   FUN_2011fa90(0);
   FUN_2011f970(0);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166c28);
-  if (((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166c3c), 0 < iVar1)) &&
-     (iVar1 = FUN_2014f1a8(0,&DAT_20166c50), 0 < iVar1)) {
-    FUN_2011775c(0xbf);
-    FUN_2011775c(0xbe);
-    FUN_2011775c(0xbd);
+  iVar1 = itron_acre_isr(0,&DAT_20166c28);
+  if (((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166c3c), 0 < iVar1)) &&
+     (iVar1 = itron_acre_isr(0,&DAT_20166c50), 0 < iVar1)) {
+    gic_enable_irq(0xbf);
+    gic_enable_irq(0xbe);
+    gic_enable_irq(0xbd);
     return;
   }
   return;
@@ -1166,12 +1166,12 @@ void FUN_2011fd1c(void)
   FUN_20157138(&DAT_fcfe0438,0,6,0x40,in_r3);
   FUN_2011fa90(1);
   FUN_2011f970(1);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166c64);
-  if (((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166c78), 0 < iVar1)) &&
-     (iVar1 = FUN_2014f1a8(0,&DAT_20166c8c), 0 < iVar1)) {
-    FUN_2011775c(199);
-    FUN_2011775c(0xc6);
-    FUN_2011775c(0xc5);
+  iVar1 = itron_acre_isr(0,&DAT_20166c64);
+  if (((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166c78), 0 < iVar1)) &&
+     (iVar1 = itron_acre_isr(0,&DAT_20166c8c), 0 < iVar1)) {
+    gic_enable_irq(199);
+    gic_enable_irq(0xc6);
+    gic_enable_irq(0xc5);
     return;
   }
   return;
@@ -1188,12 +1188,12 @@ void FUN_2011fdac(void)
   
   FUN_20157138(&DAT_fcfe0438,0,5,0x20,in_r3);
   FUN_2011f970(2);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166ca0);
-  if (((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166cb4), 0 < iVar1)) &&
-     (iVar1 = FUN_2014f1a8(0,&DAT_20166cc8), 0 < iVar1)) {
-    FUN_2011775c(0xcf);
-    FUN_2011775c(0xce);
-    FUN_2011775c(0xcd);
+  iVar1 = itron_acre_isr(0,&DAT_20166ca0);
+  if (((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166cb4), 0 < iVar1)) &&
+     (iVar1 = itron_acre_isr(0,&DAT_20166cc8), 0 < iVar1)) {
+    gic_enable_irq(0xcf);
+    gic_enable_irq(0xce);
+    gic_enable_irq(0xcd);
     return;
   }
   return;
@@ -1210,12 +1210,12 @@ void FUN_2011fe34(void)
   
   FUN_20157138(&DAT_fcfe0438,0,4,0x10,in_r3);
   FUN_2011f970(3);
-  iVar1 = FUN_2014f1a8(0,&DAT_20166cdc);
-  if (((0 < iVar1) && (iVar1 = FUN_2014f1a8(0,&DAT_20166cf0), 0 < iVar1)) &&
-     (iVar1 = FUN_2014f1a8(0,&DAT_20166d04), 0 < iVar1)) {
-    FUN_2011775c(0xd7);
-    FUN_2011775c(0xd6);
-    FUN_2011775c(0xd5);
+  iVar1 = itron_acre_isr(0,&DAT_20166cdc);
+  if (((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166cf0), 0 < iVar1)) &&
+     (iVar1 = itron_acre_isr(0,&DAT_20166d04), 0 < iVar1)) {
+    gic_enable_irq(0xd7);
+    gic_enable_irq(0xd6);
+    gic_enable_irq(0xd5);
     return;
   }
   return;

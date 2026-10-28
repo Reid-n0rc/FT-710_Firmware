@@ -121,12 +121,12 @@ void FUN_20133440(void)
 {
   int iVar1;
   
-  iVar1 = FUN_2014f1a8(0,&DAT_203a7080);
+  iVar1 = itron_acre_isr(0,&DAT_203a7080);
   if (0 < iVar1) {
-    FUN_2011775c(0x217);
-    iVar1 = FUN_2014f1a8(0,&DAT_203a7094);
+    gic_enable_irq(0x217);
+    iVar1 = itron_acre_isr(0,&DAT_203a7094);
     if (0 < iVar1) {
-      FUN_2011775c(0x1c1);
+      gic_enable_irq(0x1c1);
       return;
     }
   }

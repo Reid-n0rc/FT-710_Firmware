@@ -50,9 +50,11 @@ undefined4 FUN_2011762c(uint param_1,int param_2)
 }
 
 
-// ===== FUN_201176b4 @ 201176b4 (116 bytes)
+// ===== gic_dispatch @ 201176b4 (116 bytes)
 
-undefined4 FUN_201176b4(void)
+/* IRQ_Handler -> handler table 0x208DC1E0 */
+
+undefined4 gic_dispatch(void)
 
 {
   undefined4 uVar1;
@@ -90,9 +92,11 @@ void FUN_20117728(void)
 }
 
 
-// ===== FUN_2011775c @ 2011775c (68 bytes)
+// ===== gic_enable_irq @ 2011775c (68 bytes)
 
-undefined4 FUN_2011775c(uint param_1)
+/* enable one GIC interrupt ID */
+
+undefined4 gic_enable_irq(uint param_1)
 
 {
   undefined4 uVar1;
@@ -144,9 +148,9 @@ int ostm_init(void)
   bVar1 = DAT_fcfec020;
   DAT_fcfec020 = bVar1 & 0xfd;
   DAT_fcfec020 = 1;
-  iVar2 = FUN_2014f1a8(0,&DAT_20165a60);
+  iVar2 = itron_acre_isr(0,&DAT_20165a60);
   if (0 < iVar2) {
-    FUN_2011775c(0x86);
+    gic_enable_irq(0x86);
     bVar1 = DAT_fcfec014;
     DAT_fcfec014 = bVar1 | 1;
     iVar2 = 0;
@@ -155,9 +159,11 @@ int ostm_init(void)
 }
 
 
-// ===== FUN_20117838 @ 20117838 (92 bytes)
+// ===== ostm0_tick_isr @ 20117838 (92 bytes)
 
-void FUN_20117838(void)
+/* GIC 0x86: system time += 10000 us, kernel tick */
+
+void ostm0_tick_isr(void)
 
 {
   FUN_2015686c();

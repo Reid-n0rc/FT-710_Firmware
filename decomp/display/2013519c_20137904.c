@@ -1314,9 +1314,9 @@ void FUN_20137080(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_e82000c4 = param_2;
   DAT_e82000c8 = param_3;
   FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = FUN_2014f1a8(0,&DAT_204200b0);
+  iVar2 = itron_acre_isr(0,&DAT_204200b0);
   if (0 < iVar2) {
-    FUN_2011775c(0x2c);
+    gic_enable_irq(0x2c);
     return;
   }
   return;
@@ -1365,9 +1365,9 @@ void FUN_20137278(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_e8200144 = param_2;
   DAT_e8200148 = param_3;
   FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = FUN_2014f1a8(0,&DAT_204200d8);
+  iVar2 = itron_acre_isr(0,&DAT_204200d8);
   if (0 < iVar2) {
-    FUN_2011775c(0x2e);
+    gic_enable_irq(0x2e);
     FUN_20157160(&DAT_e8200168,1,0);
     return;
   }
@@ -1417,9 +1417,9 @@ void FUN_201374ac(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_e8200104 = param_2;
   DAT_e8200108 = param_3;
   FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = FUN_2014f1a8(0,&DAT_204200c4);
+  iVar2 = itron_acre_isr(0,&DAT_204200c4);
   if (0 < iVar2) {
-    FUN_2011775c(0x2d);
+    gic_enable_irq(0x2d);
     FUN_20157160(&DAT_e8200128,1,0);
     return;
   }
@@ -1491,7 +1491,7 @@ void FUN_201378b0(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 void FUN_20137904(void)
 
 {
-  FUN_2014f1a8(0,&DAT_204200ec);
+  itron_acre_isr(0,&DAT_204200ec);
   return;
 }
 

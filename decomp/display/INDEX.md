@@ -11,7 +11,7 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
   created 14 function entries that analysis had missed (RTOS task entries such as `task_root` 0x201170C8, which start with an `ldr` before the
   `push`, so the prologue pass had started them 4–8 bytes late or the previous function had swallowed them). Detailed docs: `docs/code/display/`.
 - **2077 functions** in the program. **2041 were exported** (thunks are skipped), with **0 decompile failures** (same count after the T11 entry fixes). Output: 41 `.c` files of 50 functions each, about 78k lines (2.0 MB).
-- 140 functions are named from `names_display.tsv` (79 from T06, the rest from T11). All others keep their `FUN_<addr>` names.
+- 151 functions are named from `names_display.tsv` (79 from T06, the rest from T11). All others keep their `FUN_<addr>` names.
 - Code coverage of `.text` (0x20100000–0x20165177, 414,072 B): about 95% instructions and 4% data (literal pools, tables). About 2.7 KB of small
   unreferenced fragments remain undefined.
 - `functions.tsv` lists entry, name, size, reference count, and file for every exported function.

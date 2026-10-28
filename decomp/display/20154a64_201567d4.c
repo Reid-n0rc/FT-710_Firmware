@@ -2741,9 +2741,11 @@ LAB_2015550c:
 }
 
 
-// ===== FUN_201562b4 @ 201562b4 (92 bytes)
+// ===== kernel_heap_init @ 201562b4 (92 bytes)
 
-void FUN_201562b4(void)
+/* heap/kernel memory up to 0x20980000 */
+
+void kernel_heap_init(void)
 
 {
   int iVar1;

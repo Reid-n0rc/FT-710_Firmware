@@ -721,7 +721,7 @@ LAB_2010ea9c:
     }
     itron_dly_tsk(5);
   } while( true );
-  FUN_20100480(1);
+  gpio_p7_9_11(1);
   FUN_20101c74(1);
   gpio_rx_reset(1);
   itron_dly_tsk(1);
@@ -770,7 +770,7 @@ void FUN_2010ec44(undefined4 param_1,undefined4 param_2)
     if (iVar2 != 0) {
       iVar2 = strcmp(&DAT_2010ed70,iVar1);
       if (iVar2 == 0) {
-        FUN_20100480(1);
+        gpio_p7_9_11(1);
         gpio_rx_reset(1);
         itron_dly_tsk(1);
         gpio_rx_reset(0);

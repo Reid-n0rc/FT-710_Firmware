@@ -1092,9 +1092,11 @@ LAB_2014f130:
 }
 
 
-// ===== FUN_2014f1a8 @ 2014f1a8 (536 bytes)
+// ===== itron_acre_isr @ 2014f1a8 (536 bytes)
 
-uint FUN_2014f1a8(uint param_1,int param_2)
+/* create an interrupt service routine object (auto-ID counts down from 0x40) [inference] */
+
+uint itron_acre_isr(uint param_1,int param_2)
 
 {
   int iVar1;

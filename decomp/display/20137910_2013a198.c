@@ -44,7 +44,7 @@ void FUN_20137910(int param_1)
   FUN_20157160(&DAT_e820046c,1,0,7);
   DAT_e8200470 = 0;
   DAT_e8200474 = 0;
-  FUN_2011775c(0x32);
+  gic_enable_irq(0x32);
   return;
 }
 
@@ -54,7 +54,7 @@ void FUN_20137910(int param_1)
 void FUN_20137af8(void)
 
 {
-  FUN_2014f1a8(0,&DAT_20420100);
+  itron_acre_isr(0,&DAT_20420100);
   return;
 }
 
@@ -108,7 +108,7 @@ void FUN_20137b04(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
   DAT_e8200480 = param_2;
   DAT_e8200484 = param_3;
   DAT_e8200488 = param_4;
-  FUN_2011775c(0x33);
+  gic_enable_irq(0x33);
   FUN_20157160(&DAT_e82004a8,1,0);
   return;
 }

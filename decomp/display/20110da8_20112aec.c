@@ -1110,7 +1110,7 @@ void task_renc(void)
     if (DAT_20800495 != '\0') {
       FUN_20115b04(&DAT_208d99b3);
     }
-    FUN_2011775c(0x24);
+    gic_enable_irq(0x24);
   } while( true );
 }
 

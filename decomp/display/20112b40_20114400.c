@@ -58,19 +58,19 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
     FUN_20112aec();
     iVar3 = itron_acre_tsk(0,&DAT_20165594);
     if ((0 < iVar3) && (iVar4 = itron_sta_tsk(iVar3,0), iVar4 == 0)) {
-      taskmon_register(iVar3,1);
+      periodic_wakeup_register(iVar3,1);
       iVar3 = itron_acre_tsk(0,&DAT_201655b0);
       if ((0 < iVar3) && (iVar4 = itron_sta_tsk(iVar3,0), iVar4 == 0)) {
-        taskmon_register(iVar3,2);
+        periodic_wakeup_register(iVar3,2);
         uVar1 = DAT_fcfef802;
         DAT_fcfef802 = uVar1 & 0xfcff;
         uVar2 = DAT_fcfef802;
         uVar6 = CONCAT22(uVar7,uVar2);
         uVar1 = DAT_fcfef802;
         DAT_fcfef802 = uVar1 | 0x300;
-        uVar5 = FUN_2014f1a8(0,&DAT_20165580);
+        uVar5 = itron_acre_isr(0,&DAT_20165580);
         if (0 < (int)uVar5) {
-          FUN_2011775c(0x24,(int)((ulonglong)uVar5 >> 0x20),extraout_r2,uVar6);
+          gic_enable_irq(0x24,(int)((ulonglong)uVar5 >> 0x20),extraout_r2,uVar6);
           return;
         }
       }
@@ -887,7 +887,7 @@ void key_init(void)
   FUN_201131a8(1);
   iVar1 = itron_acre_tsk(0,&DAT_201656a8);
   if ((0 < iVar1) && (iVar2 = itron_sta_tsk(iVar1,0), iVar2 == 0)) {
-    taskmon_register(iVar1,4);
+    periodic_wakeup_register(iVar1,4);
     return;
   }
   return;
@@ -1141,21 +1141,23 @@ void task_powon(void)
     } while (iStack_4 != 1);
     uVar1 = DAT_fcfe3208;
     FUN_201131a8(uVar1 & 1);
-    FUN_2011775c(0x25);
+    gic_enable_irq(0x25);
   } while( true );
 }
 
 
-// ===== FUN_20113fdc @ 20113fdc (76 bytes)
+// ===== powon_isr @ 20113fdc (76 bytes)
 
-void FUN_20113fdc(void)
+/* GIC 0x25 (IRQ5): sets the powon event flag */
+
+void powon_isr(void)
 
 {
   ushort uVar1;
   
   FUN_201177a0(0x25);
   itron_set_flg(DAT_20800358,1);
-  FUN_20152fac(DAT_2080035c);
+  itron_iwup_tsk(DAT_2080035c);
   uVar1 = DAT_fcfef804;
   if ((uVar1 & 0x20) != 0) {
     uVar1 = DAT_fcfef804;
@@ -1187,8 +1189,8 @@ void powon_init(void)
   if (0 < DAT_20800358) {
     DAT_2080035c = itron_acre_tsk(0,&DAT_2016571c);
     if (((0 < DAT_2080035c) && (iVar3 = itron_sta_tsk(DAT_2080035c,0), iVar3 == 0)) &&
-       (uVar4 = FUN_2014f1a8(0,&DAT_20165744), 0 < (int)uVar4)) {
-      FUN_2011775c(0x25,(int)((ulonglong)uVar4 >> 0x20),extraout_r2,uVar2);
+       (uVar4 = itron_acre_isr(0,&DAT_20165744), 0 < (int)uVar4)) {
+      gic_enable_irq(0x25,(int)((ulonglong)uVar4 >> 0x20),extraout_r2,uVar2);
       return;
     }
   }

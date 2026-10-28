@@ -1393,7 +1393,7 @@ void intc_irq_setup(void)
   FUN_201177a0(0x23);
   DAT_20808c40 = DAT_20808c40 + 1;
   DAT_20800074 = DAT_20800074 + 1;
-  FUN_20152fac(DAT_20800088);
+  itron_iwup_tsk(DAT_20800088);
   uVar1 = DAT_fcfef804;
   if ((uVar1 & 8) != 0) {
     uVar1 = DAT_fcfef804;
@@ -1424,10 +1424,10 @@ void task_tsc2007(void)
     local_28 = (uint)uVar1;
     uVar1 = DAT_fcfef802;
     DAT_fcfef802 = uVar1 | 0x40;
-    iVar2 = FUN_2014f1a8(0,&DAT_20165194);
+    iVar2 = itron_acre_isr(0,&DAT_20165194);
     if (0 < iVar2) {
       FUN_20150ba0(&DAT_20800088);
-      FUN_20152fac(DAT_2080008c);
+      itron_iwup_tsk(DAT_2080008c);
       FUN_20103198(0xb0);
       itron_dly_tsk(10);
       do {
@@ -1453,7 +1453,7 @@ void task_tsc2007(void)
         }
         uVar1 = DAT_fcfef804;
         local_28 = (uint)uVar1;
-        FUN_2011775c(0x23);
+        gic_enable_irq(0x23);
         FUN_201525f8(0xffffffff);
         iVar2 = 2;
         do {

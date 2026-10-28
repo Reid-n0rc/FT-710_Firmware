@@ -362,7 +362,7 @@ undefined4 FUN_201602ac(int param_1,int param_2,int param_3)
         }
       }
       else {
-        FUN_20100480(1);
+        gpio_p7_9_11(1);
         gpio_rx_reset(1);
         FUN_20101d2c(1);
         iVar3 = sdr_flash_write(iVar1,1,*(undefined1 *)(param_1 + 0xab));
@@ -625,7 +625,7 @@ undefined4 FUN_201606bc(int param_1,int param_2,int param_3)
       }
     }
     else {
-      FUN_20100480(1);
+      gpio_p7_9_11(1);
       gpio_rx_reset(1);
       local_28 = (uint)*(byte *)(param_1 + 0xab);
       local_20 = 0;
@@ -733,7 +733,7 @@ undefined4 FUN_201607e8(int param_1,int param_2,int param_3)
   if (iVar2 == 0) {
     return 3;
   }
-  FUN_20100480(1);
+  gpio_p7_9_11(1);
   gpio_rx_reset(1);
   FUN_20101d2c(1);
   local_50 = FUN_20111174(0x100);
@@ -1366,8 +1366,8 @@ uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param
     *(undefined4 *)(param_1 + 0x818) = param_5;
     *(undefined4 *)(param_1 + 0x810) = param_3;
     *(undefined4 *)(param_1 + 0x814) = param_4;
-    iVar1 = FUN_2014f1a8(0,param_4);
-    if ((iVar1 < 1) || (iVar1 = FUN_2014f1a8(0,*(undefined4 *)(param_1 + 0x810)), iVar1 < 1)) {
+    iVar1 = itron_acre_isr(0,param_4);
+    if ((iVar1 < 1) || (iVar1 = itron_acre_isr(0,*(undefined4 *)(param_1 + 0x810)), iVar1 < 1)) {
       return 0xffffffff;
     }
   }
@@ -1406,7 +1406,7 @@ int FUN_20163038(int param_1,undefined1 *param_2,int param_3)
     iVar1 = iVar1 + 1;
     param_2 = param_2 + 1;
   }
-  FUN_2011775c(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
   return iVar1;
 }
 
@@ -1421,9 +1421,9 @@ void FUN_20163098(int param_1)
   undefined4 in_stack_00000000;
   
   FUN_201630cc(param_1);
-  FUN_2011775c(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  FUN_2011775c(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8),extraout_r1,extraout_r2,
-               in_stack_00000000);
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8),extraout_r1,extraout_r2,
+                 in_stack_00000000);
   return;
 }
 
