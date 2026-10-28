@@ -31,6 +31,18 @@ Rules for the sub-tasks:
 ## Sub-task status
 (filled in by each sub-task)
 
+### T21d
+Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `ghidra/FT710_MAIN_T21d` (copy of the canonical one).
+
+**B2 (spacebase): cause found, fixed in SLEIGH.** [fact] All 8 functions end in `RTSD #imm,Rd-Rd2` (`displink_build_60` 0xFFF96241,
+`cat_SP_meters` 0xFFFA5284, `eeprom_read` 0xFFFB14A4, `menu_page_serialize` 0xFFFC98F9, `FUN_fffedd9a`, `FUN_fffeddc9`, `FUN_fffedf24`,
+`FUN_fffedfa7`). The module's RTSD form (2) computes `n_regs = reg0_4 - reg4_4 + 1` from the register *values* (R7 − R6 + 1), not the
+register numbers, so SP after the frame release depends on data and the decompiler loses the stack. Fix: `n_regs = rs2 - rs1 + 1`
+(`tools/ghidra/rx62t-rtsd-fix.patch`, one line, applies on top of the T17 patch with `patch -p1` in the RX module dir). Tested in a private
+Ghidra copy (not the shared install): full MAIN export, spacebase warnings 8 → 0, no other line of the C changes. **For T21c/T21g:** fold this
+into the RX step of `tools/bootstrap.sh` together with T21c's patch (the step checks the patched `rx62t.sinc` SHA-256, so the two patches
+must be applied in one place); T21d does not edit that step.
+
 ## Findings
 
 ## Follow-ups
