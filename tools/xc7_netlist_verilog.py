@@ -380,7 +380,7 @@ class Writer:
                 continue
             done.add(site)
             d = r["dir"]
-            if d.startswith("in"):
+            if d.startswith("in") and not d.startswith("inout"):
                 self.ports.append(("input", base))
                 self.inst("IBUF", "ibuf_" + vname(site), [("IOSTANDARD", '"%s"' % std)],
                           [("I", base), ("O", self.w(i[0]) if i else "")])
