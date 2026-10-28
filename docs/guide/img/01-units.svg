@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>FT-710 units and where the four programmable chips sit</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { font-size: 14px; fill: #4B5563; }
+    .unit { fill: #F9FAFB; stroke: #6B7280; stroke-width: 2; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .main { fill: #DBEAFE; stroke: #2563EB; stroke-width: 3; }
+    .disp { fill: #DCFCE7; stroke: #16A34A; stroke-width: 3; }
+    .dsp { fill: #F3E8FF; stroke: #9333EA; stroke-width: 3; }
+    .sdr { fill: #FFEDD5; stroke: #EA580C; stroke-width: 3; }
+    .mod { fill: #FFF7ED; stroke: #EA580C; stroke-width: 2; stroke-dasharray: 8 5; }
+    .wire { stroke: #6B7280; stroke-width: 3; fill: none; }
+  </style>
+  <rect width="960" height="660" fill="#FFFFFF"/>
+  <text x="480" y="32" text-anchor="middle" class="h">Inside the FT-710: units and chips</text>
+  <text x="480" y="54" text-anchor="middle" class="s">placement is a sketch, not the real board layout</text>
+
+  <!-- DISPLAY unit -->
+  <rect x="20" y="70" width="920" height="130" rx="8" class="unit"/>
+  <text x="34" y="92" class="b">DISPLAY unit (front panel)</text>
+  <rect x="34" y="104" width="170" height="80" rx="8" class="disp"/>
+  <text x="119" y="134" text-anchor="middle" class="b">RZ/A1H</text>
+  <text x="119" y="154" text-anchor="middle">DISPLAY CPU</text>
+  <text x="119" y="172" text-anchor="middle" class="s">image PC</text>
+  <rect x="220" y="114" width="130" height="62" rx="8" class="grey"/>
+  <text x="285" y="140" text-anchor="middle">SPI flash</text>
+  <text x="285" y="160" text-anchor="middle" class="s">16 MB</text>
+  <!-- SD card icon -->
+  <path d="M372 114 h48 l14 14 v48 h-62 z" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <line x1="384" y1="114" x2="384" y2="128" stroke="#6B7280" stroke-width="2"/>
+  <line x1="396" y1="114" x2="396" y2="128" stroke="#6B7280" stroke-width="2"/>
+  <line x1="408" y1="114" x2="408" y2="128" stroke="#6B7280" stroke-width="2"/>
+  <text x="403" y="158" text-anchor="middle" class="b">SD</text>
+  <text x="403" y="194" text-anchor="middle" class="s">card</text>
+  <rect x="452" y="114" width="130" height="62" rx="8" class="grey"/>
+  <text x="517" y="140" text-anchor="middle">FT4222H</text>
+  <text x="517" y="160" text-anchor="middle" class="s">USB to SPI</text>
+  <rect x="598" y="114" width="170" height="62" rx="8" class="grey"/>
+  <text x="683" y="140" text-anchor="middle">touch screen,</text>
+  <text x="683" y="160" text-anchor="middle">keys, encoders</text>
+  <rect x="784" y="114" width="140" height="62" rx="8" class="grey"/>
+  <text x="854" y="140" text-anchor="middle">RTC clock</text>
+  <text x="854" y="160" text-anchor="middle" class="s">+ battery</text>
+
+  <!-- ribbon -->
+  <path d="M110 200 v48" class="wire"/>
+  <path d="M130 200 v48" class="wire"/>
+  <path d="M150 200 v48" class="wire"/>
+  <text x="170" y="222">J6001 ↔ J1009: one UART, two SPI links, power and reset/boot wires</text>
+
+  <!-- MAIN unit -->
+  <rect x="20" y="248" width="700" height="342" rx="8" class="unit"/>
+  <text x="34" y="270" class="b">MAIN unit</text>
+  <rect x="34" y="282" width="170" height="80" rx="8" class="main"/>
+  <text x="119" y="312" text-anchor="middle" class="b">RX651</text>
+  <text x="119" y="332" text-anchor="middle">MAIN CPU</text>
+  <text x="119" y="350" text-anchor="middle" class="s">image MC</text>
+  <rect x="34" y="374" width="170" height="54" rx="8" class="grey"/>
+  <text x="119" y="396" text-anchor="middle">EEPROM 32 KB</text>
+  <text x="119" y="416" text-anchor="middle" class="s">all settings</text>
+
+  <rect x="222" y="282" width="180" height="80" rx="8" class="dsp"/>
+  <text x="312" y="312" text-anchor="middle" class="b">i.MX RT685</text>
+  <text x="312" y="332" text-anchor="middle">IF DSP</text>
+  <text x="312" y="350" text-anchor="middle" class="s">image ID</text>
+  <rect x="222" y="374" width="85" height="54" rx="8" class="grey"/>
+  <text x="264" y="396" text-anchor="middle">QSPI</text>
+  <text x="264" y="416" text-anchor="middle" class="s">16 MB</text>
+  <rect x="315" y="374" width="87" height="54" rx="8" class="grey"/>
+  <text x="358" y="396" text-anchor="middle">audio</text>
+  <text x="358" y="416" text-anchor="middle">codec</text>
+
+  <!-- SDR module -->
+  <rect x="420" y="262" width="286" height="176" rx="8" class="mod"/>
+  <text x="434" y="284" class="b">SDR module (plug-in)</text>
+  <rect x="434" y="296" width="80" height="62" rx="8" class="grey"/>
+  <text x="474" y="322" text-anchor="middle">ADC</text>
+  <text x="474" y="342" text-anchor="middle" class="s">fast</text>
+  <rect x="526" y="296" width="166" height="80" rx="8" class="sdr"/>
+  <text x="609" y="324" text-anchor="middle" class="b">Artix-7 FPGA</text>
+  <text x="609" y="344" text-anchor="middle">XC7A50T</text>
+  <text x="609" y="364" text-anchor="middle" class="s">image SR</text>
+  <rect x="434" y="370" width="80" height="54" rx="8" class="grey"/>
+  <text x="474" y="392" text-anchor="middle">QSPI</text>
+  <text x="474" y="412" text-anchor="middle" class="s">flash</text>
+  <text x="609" y="402" text-anchor="middle" class="s">J2002 + J3003</text>
+  <text x="609" y="422" text-anchor="middle" class="s">connectors</text>
+
+  <!-- bottom row of MAIN -->
+  <rect x="34" y="446" width="200" height="62" rx="8" class="grey"/>
+  <text x="134" y="472" text-anchor="middle">RF front end</text>
+  <text x="134" y="492" text-anchor="middle" class="s">RX filters, preamp, ATT</text>
+  <rect x="246" y="446" width="230" height="62" rx="8" class="grey"/>
+  <text x="361" y="472" text-anchor="middle">USB hub + CP2105</text>
+  <text x="361" y="492" text-anchor="middle" class="s">+ CM119B sound chip</text>
+  <rect x="488" y="446" width="218" height="62" rx="8" class="grey"/>
+  <text x="597" y="472" text-anchor="middle">DVI/HDMI chain</text>
+  <text x="597" y="492" text-anchor="middle" class="s">(small MCU, no SFL file)</text>
+  <!-- connectors on the rear -->
+  <rect x="34" y="522" width="672" height="54" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="4 4"/>
+  <text x="370" y="554" text-anchor="middle">rear panel: antenna, USB-B, TUNER/LINEAR, DVI, ACC jacks</text>
+
+  <!-- PA unit -->
+  <rect x="740" y="248" width="200" height="214" rx="8" class="unit"/>
+  <text x="754" y="270" class="b">PA unit</text>
+  <rect x="754" y="282" width="172" height="54" rx="8" class="grey"/>
+  <text x="840" y="304" text-anchor="middle">power amplifier</text>
+  <text x="840" y="324" text-anchor="middle" class="s">+ TX band relays</text>
+  <rect x="754" y="346" width="172" height="54" rx="8" class="grey"/>
+  <text x="840" y="368" text-anchor="middle">shift registers,</text>
+  <text x="840" y="388" text-anchor="middle">DAC, sensors</text>
+  <text x="840" y="430" text-anchor="middle" class="s">no processor: MAIN</text>
+  <text x="840" y="450" text-anchor="middle" class="s">drives it serially</text>
+  <path d="M720 330 h20" class="wire"/>
+
+  <!-- JACK unit -->
+  <rect x="740" y="478" width="200" height="112" rx="8" class="unit"/>
+  <text x="754" y="500" class="b">JACK unit</text>
+  <text x="754" y="526">front phones and</text>
+  <text x="754" y="546">mic jacks</text>
+  <text x="754" y="574" class="s">no processor</text>
+
+  <!-- legend -->
+  <rect x="34" y="608" width="22" height="22" rx="4" class="main"/>
+  <text x="64" y="625">MAIN</text>
+  <rect x="134" y="608" width="22" height="22" rx="4" class="disp"/>
+  <text x="164" y="625">DISPLAY</text>
+  <rect x="254" y="608" width="22" height="22" rx="4" class="dsp"/>
+  <text x="284" y="625">IFDSP</text>
+  <rect x="354" y="608" width="22" height="22" rx="4" class="sdr"/>
+  <text x="384" y="625">SDR FPGA</text>
+  <rect x="484" y="608" width="22" height="22" rx="4" class="grey"/>
+  <text x="514" y="625">other hardware</text>
+  <rect x="654" y="608" width="22" height="22" rx="4" class="mod"/>
+  <text x="684" y="625">plug-in module</text>
+</svg>
