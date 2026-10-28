@@ -11,6 +11,8 @@ Usage:
     python3 -I tools/xc7_blocks.py NETLIST.json cone CELL[.PIN] [DEPTH]   fan-in cone of a pin (cells, types)
     python3 -I tools/xc7_blocks.py NETLIST.json fanout CELL.PIN [DEPTH]   fan-out cone of an output pin
     python3 -I tools/xc7_blocks.py NETLIST.json region SITE-PATTERN       cells and clocks of matching sites
+    python3 -I tools/xc7_blocks.py NETLIST.json logic CELL[,CELL] [DEPTH]  equations (LUTs as minimal SOP) of
+                                                               the cells within DEPTH steps of the seeds
     python3 -I tools/xc7_blocks.py selftest
 
 PKG is a package name such as xc7a50tcsg324-1 (default) for the pin column.
@@ -386,6 +388,166 @@ def cmd_cone(g, ref, depth, forward=False):
                         frontier.append((v[0], d + 1, "%s.%s" % (x[0], p)))
 
 
+# ------------------------------------------------------------------ logic equations
+
+def lut_function(c, out="O"):
+    """(list of (pin, net) of real inputs, truth table over them as int) for a LUT
+    output, with constant inputs folded and inputs it does not depend on removed."""
+    init = c["params"]["INIT"]
+    n6 = c["type"] == "LUT6_2" and out == "O5"
+    pins = ["I%d" % i for i in range(6)]
+    ins = [c["pins"].get(p, ["1'b1"])[0] for p in pins]
+    if n6:
+        init &= 0xFFFFFFFF
+        ins[5] = "1'b0"
+
+    def val(assign):
+        idx = 0
+        for i in range(6):
+            idx |= assign[i] << i
+        return (init >> idx) & 1
+    free = [i for i in range(6) if not ins[i].startswith("1'b")]
+    fixed = {i: int(ins[i][-1]) for i in range(6) if ins[i].startswith("1'b")}
+    # drop inputs the function does not depend on
+    dep = []
+    for i in free:
+        others = [j for j in free if j != i]
+        d = False
+        for m in range(1 << len(others)):
+            a = dict(fixed)
+            for k, j in enumerate(others):
+                a[j] = (m >> k) & 1
+            a0, a1 = dict(a), dict(a)
+            a0[i], a1[i] = 0, 1
+            if val([a0.get(x, 0) for x in range(6)]) != val([a1.get(x, 0) for x in range(6)]):
+                d = True
+                break
+        if d:
+            dep.append(i)
+    tt = 0
+    for m in range(1 << len(dep)):
+        a = dict(fixed)
+        for j in free:
+            a[j] = 0
+        for k, j in enumerate(dep):
+            a[j] = (m >> k) & 1
+        tt |= val([a.get(x, 0) for x in range(6)]) << m
+    return [(pins[i], ins[i]) for i in dep], tt
+
+
+def sop(names, tt):
+    """Minimal-ish sum of products (Quine-McCluskey primes + greedy cover)."""
+    n = len(names)
+    ones = [m for m in range(1 << n) if (tt >> m) & 1]
+    if not ones:
+        return "0"
+    if len(ones) == 1 << n:
+        return "1"
+    terms = set((m, 0) for m in ones)       # (value, dontcare mask)
+    primes = set()
+    while terms:
+        nxt = set()
+        used = set()
+        tl = sorted(terms)
+        for i, (v1, d1) in enumerate(tl):
+            for v2, d2 in tl[i + 1:]:
+                if d1 == d2 and bin(v1 ^ v2).count("1") == 1:
+                    nxt.add((v1 & v2, d1 | (v1 ^ v2)))
+                    used.add((v1, d1))
+                    used.add((v2, d2))
+        primes |= terms - used
+        terms = nxt
+    cover, left = [], set(ones)
+    while left:
+        best = max(primes, key=lambda p: sum(1 for m in left if (m & ~p[1]) == p[0]))
+        cover.append(best)
+        left -= set(m for m in left if (m & ~best[1]) == best[0])
+    out = []
+    for v, d in cover:
+        lits = [("" if (v >> i) & 1 else "~") + names[i] for i in range(n) if not (d >> i) & 1]
+        out.append("&".join(lits) if lits else "1")
+    return " | ".join(out)
+
+
+def short(g, net):
+    if net is None:
+        return "?"
+    if net.startswith("1'b"):
+        return net[-1]
+    d = g.driver(net)
+    if not d:
+        return net
+    c, p = d
+    ty = g.ctype(c)
+    if ty == "IOB":
+        return "PIN_" + g.cells[c]["site"]
+    return c + ("" if p in ("Q", "O") else "." + p)
+
+
+def equation(g, cname):
+    c = g.cells[cname]
+    ty = c["type"]
+    if ty in ("LUT6", "LUT6_2"):
+        res = []
+        for o in (("O",) if ty == "LUT6" else ("O6", "O5")):
+            if not g.sinks(c["pins"][o][0]):
+                continue
+            ins, tt = lut_function(c, o)
+            names = [short(g, n) for _, n in ins]
+            res.append("%s%s = %s" % (cname, "" if o == "O" else "." + o, sop(names, tt)))
+        return res
+    if ty in FF:
+        p = c["pins"]
+        rp = [k for k in ("R", "S", "CLR", "PRE") if k in p][0]
+        s = "%s <= %s" % (cname, short(g, p["D"][0]))
+        ce = short(g, p["CE"][0])
+        rs = short(g, p[rp][0])
+        if ce != "1":
+            s += "  if %s" % ce
+        if rs != "0":
+            s += "  %s=%s" % (rp, rs)
+        return [s + "  (%s INIT=%d)" % (ty, c["params"].get("INIT", 0))]
+    if ty == "CARRY4":
+        p = c["pins"]
+        return ["%s CARRY4 CI=%s CYINIT=%s S=[%s] DI=[%s]" % (
+            cname, short(g, p["CI"][0]), short(g, p["CYINIT"][0]),
+            ",".join(short(g, p["S[%d]" % i][0]) for i in range(4)),
+            ",".join(short(g, p["DI[%d]" % i][0]) for i in range(4)))]
+    return ["%s %s" % (cname, ty)]
+
+
+def cmd_logic(g, seeds, depth):
+    """Print equations for the cells within DEPTH steps (both directions, not through
+    clocks/resets) of the seed cells."""
+    cells = set()
+    frontier = []
+    for s in seeds:
+        if s in g.cells:
+            frontier.append(s)
+    for _ in range(depth + 1):
+        nf = []
+        for c in frontier:
+            if c in cells:
+                continue
+            cells.add(c)
+            cc = g.cells[c]
+            if cc["type"] in ("BUFGCTRL", "BUFHCE", "DSP48E1", "RAMB18E1", "MMCME2_ADV"):
+                continue
+            for p, v in cc["pins"].items():
+                if p in ("C", "CLK", "R", "S", "CLR", "PRE"):
+                    continue
+                if v[1] == "I":
+                    d = g.driver(v[0])
+                    if d:
+                        nf.append(d[0])
+                else:
+                    nf += [x for x, y in g.sinks(v[0])]
+        frontier = nf
+    for c in sorted(cells):
+        for line in equation(g, c):
+            print(line)
+
+
 def cmd_region(g, pat):
     rx = re.compile(pat)
     cnt = collections.Counter()
@@ -450,6 +612,8 @@ def main():
         cmd_cone(g, a[2], int(a[3]) if len(a) > 3 else 3, forward=(cmd == "fanout"))
     elif cmd == "region":
         cmd_region(g, a[2])
+    elif cmd == "logic":
+        cmd_logic(g, a[2].split(","), int(a[3]) if len(a) > 3 else 1)
     else:
         sys.exit(__doc__)
 
