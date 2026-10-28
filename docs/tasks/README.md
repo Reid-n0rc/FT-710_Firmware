@@ -24,13 +24,13 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T10f | [MAIN menu engine (EX) and hidden menu items](T10f-main-menu.md) | T05 T09 | done |
 | T10g | [MAIN band, VFO, mode, frequency and memory control](T10g-main-radio-control.md) | T05 T09 | done |
 | T10h | [MAIN TX control, protection, meters and other peripherals](T10h-main-tx-peripherals.md) | T05 T09 | done |
-| T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
+| T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | done |
 | T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |
 | T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | done |
 | T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | done |
 | T11d | [DISPLAY SPI links (SDR, DSP, FT4222H)](T11d-display-spi.md) | T06 | done |
 | T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | done |
-| T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | in progress |
+| T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | done |
 | T11g | [DISPLAY misc peripherals and files](T11g-display-misc.md) | T06 | done |
 | T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | done |
 | T12a | [IFDSP overview + boot/memory map](T12a-ifdsp-overview.md) | T07 | done |
