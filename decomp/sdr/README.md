@@ -58,6 +58,12 @@ sync word, so the header does not stop the FPGA from booting from flash address 
 
 ## Soft CPU? (MicroBlaze)
 
+> **Update (T13):** with the prjxray database the BRAM contents were decoded in full. Every initialized memory is a
+> DSP table (cosine, raised-cosine ramp, FIR coefficient bank, phase tables); the one 4-lane x9 set is a FIR bank,
+> not code. **No soft CPU [inference, high].** The 30-of-80 slot counts below were T08's empirical estimate; the real
+> figures are 54 RAMB18 halves / 35 logical memories / 25 distinct. See
+> [`docs/code/sdr/bram-tables.md`](../../docs/code/sdr/bram-tables.md).
+
 - There are **no meaningful strings** in the FDRI payload, in either word byte order. The printable runs are LUT-INIT patterns like
   `UUff33ZZ` (0x55/0x66/0x33/0x5A). **[fact]** This is expected even with a soft CPU, because 7-series BRAM INIT bits are
   bit-interleaved across the 128 frames of a BRAM column, so strings would not survive anyway.

@@ -147,3 +147,13 @@ sites. Nothing is built or installed system-wide; both are plain git checkouts r
 
 `tools/xc7_db.py` defaults to `~/.local/share/ft710-tools/prjxray-db/artix7` (override with `--db` or `$PRJXRAY_DB`) and
 part `xc7a50tcpg236-1` (the frame layout is the same for every XC7A50T package; only IOB bonding differs).
+
+**Linux container (T13, 2026-10-27).** Re-installed the same two checkouts on Tower, at the same commits:
+`git clone https://github.com/f4pga/prjxray ~/.local/share/ft710-tools/prjxray` + `checkout c9f02d8576042325425824647ab5555b1bc77833`
+(2025-06-05, 29 MB); `git clone --filter=blob:none --no-checkout https://github.com/f4pga/prjxray-db ~/.local/share/ft710-tools/prjxray-db`,
+`sparse-checkout set --no-cone '/artix7/*.db' '/artix7/*.json' '/artix7/*.yaml' '/artix7/mask_*' '/artix7/xc7a50t*/'`,
+`checkout 0a0addedd73e7e4139d52a6d8db4258763e0f1f3` (2021-12-14, 79 MB). Nothing built, no pip, no sudo; the home is
+persistent, so they survive container rebuilds. Check: `python3 -I tools/xc7_db.py build/FT-710_SDR_V0104.bin frames`
+prints `MATCH`. Remove: `rm -rf ~/.local/share/ft710-tools/prjxray ~/.local/share/ft710-tools/prjxray-db`.
+Tools using them: `tools/xc7_db.py` (`frames`, `bram`, `bramcfg`, `usage`, `sites`, `config`, `tilebits`) and
+`tools/xc7_bram_tables.py` (`tables`, `show`, `lanes`, `halfsym`, `selftest`).
