@@ -27,6 +27,11 @@ python3 -I tools/xc7_db.py build/FT-710_SDR_V0104.bin config CMT_TOP_R_LOWER_B  
 The design nearly fills the device: almost every CLB column has used tiles (33 CLB grid columns), all but one DSP48E1
 are configured, and 70 BRAM sites are in use **[fact]**.
 
+> **Correction (T15b).** prjxray's DSP fuzzer sets a `Z<reg>` feature when the register value is **0**, so the reading
+> below is inverted for the registers: in the FASM decode `ZMREG` is set in 55 DSPs (MREG = 0), `ZPREG` in 9, `ZCREG` in
+> 107, and 12 DSPs use the pre-adder (`USE_DPORT`). The register sets and the 34 A/B cascades are in
+> [netlist.md](netlist.md#35-dsp-and-block-ram-structure).
+
 **DSP48E1 options [fact for the counts, inference for the meaning].** In all 119 used DSPs the "Z" (inverted) bits for
 `MREG`, `PREG`, `CREG`, `OPMODEREG` are clear, i.e. the multiplier, output, C and OPMODE registers are enabled
 (fully pipelined, as Xilinx FIR/DDS/CMult IP generates). `ZAREG_2_ACASCREG_1` and `ZBREG_2_BCASCREG_1` are set in all
