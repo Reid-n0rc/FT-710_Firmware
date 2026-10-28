@@ -41,8 +41,8 @@
 #   JAVA_HOME            JDK 21 [Homebrew openjdk@21 if present, else $OPT_DIR/jdk-21.0.13+9]
 #   RX_MODULE_DIR        where the RX module goes [$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX]
 #   RX_SRC               clone of rx-proc-ghidra [$OPT_DIR/rx-proc-ghidra]
-#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [all: nproc]
-#   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [half the RAM, at most 8G]
+#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [half of nproc: owner cap, AGENTS.md "Hardware use"]
+#   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [a quarter of the RAM, 2G to 3G]; Ghidra runs go through tools/ghidra-cap.sh
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
 #   SDR_OUT              SDR derived files [$BOOTSTRAP_OUT/build/sdr]
@@ -80,11 +80,11 @@ RX_MODULE_DIR=${RX_MODULE_DIR:-$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX}
 RX_SRC=${RX_SRC:-$OPT_DIR/rx-proc-ghidra}
 
 if command -v nproc >/dev/null 2>&1; then ncpu=$(nproc); else ncpu=$(sysctl -n hw.ncpu 2>/dev/null || echo 4); fi
-JOBS=${JOBS:-$ncpu}
+JOBS=${JOBS:-$(( ncpu / 2 > 0 ? ncpu / 2 : 1 ))}
 if [ -z "${GHIDRA_HEADLESS_MAXMEM:-}" ]; then
   if [ -r /proc/meminfo ]; then memk=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
   else memk=$(( $(sysctl -n hw.memsize 2>/dev/null || echo 8589934592) / 1024 )); fi
-  memg=$(( memk / 1024 / 1024 / 2 )); [ "$memg" -gt 8 ] && memg=8; [ "$memg" -lt 2 ] && memg=2
+  memg=$(( memk / 1024 / 1024 / 4 )); [ "$memg" -gt 3 ] && memg=3; [ "$memg" -lt 2 ] && memg=2
   GHIDRA_HEADLESS_MAXMEM=${memg}G
 fi
 export GHIDRA_HEADLESS_MAXMEM
@@ -154,8 +154,10 @@ headless() {  # headless <project> <analyzeHeadless args...>
   [ -x "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" ] || die "no analyzeHeadless in $GHIDRA_INSTALL_DIR (step deps, or set GHIDRA_INSTALL_DIR)"
   mkdir -p "$PROJ" "$OUT/logs"
   local run=$OUT/logs/ghidra_last_run.log rc=0
-  GHIDRA_JAVA_HOME=$JAVA_HOME GHIDRA_HEADLESS=$GHIDRA_INSTALL_DIR/support/analyzeHeadless \
-    "$REPO/tools/ghidra-headless.sh" "$PROJ" "$p" "$@" -max-cpu "$JOBS" -scriptPath "$REPO/tools/ghidra" \
+  local heap=${GHIDRA_HEADLESS_MAXMEM%[GgMm]} reserve
+  case $GHIDRA_HEADLESS_MAXMEM in *[Mm]) reserve=$(( heap + 700 ));; *) reserve=$(( heap * 1024 + 700 ));; esac
+  GHIDRA_JAVA_HOME=$JAVA_HOME GHIDRA_HEADLESS=$GHIDRA_INSTALL_DIR/support/analyzeHeadless CAP_CPUS=$JOBS \
+    "$REPO/tools/ghidra-cap.sh" "$reserve" -- "$REPO/tools/ghidra-headless.sh" "$PROJ" "$p" "$@" -max-cpu "$JOBS" -scriptPath "$REPO/tools/ghidra" \
     > "$run" 2>&1 || rc=$?
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }

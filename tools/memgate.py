@@ -11,7 +11,7 @@ import fcntl, os, signal, subprocess, sys, time
 SP = os.environ.get("MEMGATE_DIR", os.path.expanduser("~/.cache/ft710-memgate"))
 RES = os.path.join(SP, "res")
 MUTEX = os.path.join(SP, "memgate.lock")
-SAFETY_MB = int(os.environ.get("MEMGATE_SAFETY_MB", "1024"))
+SAFETY_MB = int(os.environ.get("MEMGATE_SAFETY_MB", "3072"))
 
 
 def meminfo_avail_mb():
