@@ -51,10 +51,15 @@ def load(path):
 
 
 def order(keys):
-    """Fixed metrics first (in file order of LABELS), then per-block rows, then warning kinds."""
-    fixed = [k for k in LABELS if k in keys]
+    """Fixed metrics in LABELS order (per-block rows right after their total), then other rows, then warning kinds."""
     rest = sorted(k for k in keys if k not in LABELS)
-    return fixed + [k for k in rest if not k.startswith('warning:')] + [k for k in rest if k.startswith('warning:')]
+    out = []
+    for k in LABELS:
+        if k in keys:
+            out.append(k)
+        out += [r for r in rest if r.startswith(k + ':')]
+    out += [r for r in rest if r not in out and not r.startswith('warning:')]
+    return out + [r for r in rest if r.startswith('warning:')]
 
 
 def compare(old_path, new_path, label=''):
