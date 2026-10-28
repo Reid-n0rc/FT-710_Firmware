@@ -27,7 +27,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
 | T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |
 | T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | done |
-| T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | in progress |
+| T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | done |
 | T11d | [DISPLAY SPI links (SDR, DSP, FT4222H)](T11d-display-spi.md) | T06 | done |
 | T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | done |
 | T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | in progress |
@@ -41,7 +41,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | done |
 | T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | todo |
 | T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | in progress |
-| T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | todo |
+| T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | in progress |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
