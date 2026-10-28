@@ -1,0 +1,25 @@
+metric	value
+functions	2268
+decompile_failures	0
+warnings	1294
+functions_with_warnings	347
+spacebase_warnings	8
+unreachable_block_warnings	1226
+halt_baddata	0
+functions_with_halt_baddata	0
+functions_with_in_vars	51
+functions_with_unaff_vars	0
+functions_with_extraout_vars	14
+functions_with_in_unaff_extraout	61
+undefined_nonff_bytes	20622
+undefined_nonff_bytes:ROM	20622
+bookmarks_error	1
+bookmarks_bad_instruction	1
+warning:Control flow encountered unimplemented instructions	3
+warning:Do nothing block with infinite loop	2
+warning:Globals starting with '_' overlap smaller symbols at the same address	35
+warning:Ignoring partial resolution of indirect	16
+warning:Removing unreachable block (#)	1226
+warning:Type propagation algorithm not settling	1
+warning:Unable to track spacebase fully for stack	8
+warning:Unimplemented instruction - Truncating control flow here	3
