@@ -298,6 +298,8 @@ class Netlist:
             a, b = b, a
         if a[0] == "n" and b[0] == "n":
             self.r.union(a[1], b[1])
+        elif a[0] == "n" and b[0] == "c":
+            self.r.const[a[1]] = b[1]
         elif a[0] == "n":           # keep node as representative
             self.parent[b] = a
         else:
@@ -393,15 +395,19 @@ def finish(nl, db):
             out.append(dict(c, pins=pins))
         return out, nets
 
-    cells, nets = resolve(nl.cells)
-    keep = []
-    for c, c2 in zip(nl.cells, cells):
-        outs = PRUNE.get(c["type"])
-        if outs and not any(c2["pins"].get(p, ["1'b0"])[0] in nets and nets[c2["pins"][p][0]]["sinks"]
-                            for p in outs):
-            continue
-        keep.append(c)
-    cells, nets = resolve(keep)
+    keep = nl.cells
+    for _ in range(100):    # iterate: a pruned carry chain frees the COUT of the one below
+        cells, nets = resolve(keep)
+        nk = []
+        for c, c2 in zip(keep, cells):
+            outs = PRUNE.get(c["type"])
+            if outs and not any(c2["pins"].get(p, ["1'b0"])[0] in nets and nets[c2["pins"][p][0]]["sinks"]
+                                for p in outs):
+                continue
+            nk.append(c)
+        if len(nk) == len(keep):
+            break
+        keep = nk
     nconst = 0
     for c in cells:
         for p, v in c["pins"].items():
@@ -478,8 +484,8 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
             used_o5.add(L)
     # carry
     # PRECYINIT.C0 alone is Vivado's default in slices without a carry chain
-    carry_used = any(k in f for k in ("PRECYINIT.CIN", "PRECYINIT.AX", "PRECYINIT.C1")) or any(
-        k.endswith((".XOR", ".CY")) or k.startswith("CARRY4.") for k in f)
+    # always emitted; finish() drops carries whose outputs are not used
+    carry_used = True
     if carry_used:
         if f.get("PRECYINIT.CIN"):
             ci, cyinit = P("CIN"), GND
@@ -540,7 +546,9 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
         small = f.get(L + "LUT.SMALL")
         ins = {"I%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(6)}
         if init is None and not (is_ram or is_srl):
-            # LUT may still be a route-through (no INIT) - nothing to emit
+            # no INIT bits: INIT = 0, so O6/O5 are constant 0 where something uses them
+            nl.union(o5[L], GND)
+            nl.union(o6[L], GND)
             continue
         init = init or 0
         approx = []
@@ -561,8 +569,17 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                 pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(5)}
                 pins.update({"D": (d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
                              "Q": (o6[L], "O"), "Q31": (mc31[L], "O")})
-                nl.cell(S + L + "LUT", "SRLC32E", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
-                                                         "IS_CLK_INVERTED": clkinv}, pins, approx)
+                nl.cell(S + L + "LUT", "SRLC32E", site, {"INIT": (init >> 32) if small else init & 0xFFFFFFFF,
+                                                         "#w:INIT": 32, "IS_CLK_INVERTED": clkinv},
+                        pins, approx)
+                if small:   # second shift register of the pair drives O5, data from DI2 = X bypass pin
+                    pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(4)}
+                    pins["A[4]"] = (GND, "I")
+                    pins.update({"D": (P(L + "X"), "I"), "CE": (we, "I"), "CLK": (clk, "I"),
+                                 "Q": (o5[L], "O")})
+                    nl.cell(S + L + "5LUT", "SRLC32E", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
+                                                              "IS_CLK_INVERTED": clkinv}, pins,
+                            ["SRL16 pair half (O5); DI2 = X bypass assumed"])
             else:
                 pins = {"RADR%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(6)}
                 pins.update({"WADR%d" % i: (P("D%d" % (i + 1)), "I") for i in range(6)})
@@ -573,6 +590,14 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                 pins.update({"I": (d, "I"), "WE": (we, "I"), "CLK": (clk, "I"), "O": (o6[L], "O")})
                 nl.cell(S + L + "LUT", "RAMD64E", site, {"INIT": init, "#w:INIT": 64,
                                                          "IS_CLK_INVERTED": clkinv}, pins, approx)
+                if small:   # RAM32 pair: second 32x1 on O5, data DI2 = X bypass pin
+                    pins = {"RADR%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(5)}
+                    pins.update({"WADR%d" % i: (P("D%d" % (i + 1)), "I") for i in range(5)})
+                    pins.update({"I": (P(L + "X"), "I"), "WE": (we, "I"), "CLK": (clk, "I"),
+                                 "O": (o5[L], "O")})
+                    nl.cell(S + L + "5LUT", "RAMD32", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
+                                                             "IS_CLK_INVERTED": clkinv}, pins,
+                            ["RAM32 pair half (O5); DI2 = X bypass assumed"])
             continue
         if L in used_o5:
             pins = dict(ins, O6=(o6[L], "O"), O5=(o5[L], "O"))
