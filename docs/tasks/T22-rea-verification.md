@@ -150,6 +150,23 @@ tools/ghidra-headless.sh <projdir> <proj> -process FT-710_IFDSP_V0101_hifi4.bin 
   -scriptPath tools/ghidra -postScript PcodeDump.java /tmp/pcode.txt 210ec1 218084 ...
 ```
 
+### T22b
+**Status:** in progress (2026-10-28). DISPLAY: T21e's jump tables, function starts and fragments recovered again independently.
+
+Plan (resumed after the first agent was cut off; its tool commits are kept, the comparison is re-run against the T21g canonical
+`ghidra/FT710_DISPLAY` / `decomp/display/functions.tsv`):
+1. Own analyser: `tools/arm_recover.py` (stdlib A32/Thumb-2 decoder, recursive descent from the vectors, BL/BLX targets, data
+   pointers and prologues; the four jump-table idioms with the bound from the `cmp`; byte classes for the gaps). Shares no code or
+   data with Ghidra, rizin or T21e.
+2. rizin 0.9.1 (`-a arm -b 32 -m 0x20100000`, `aaa; aap; aanr`, `afbj` with `switch_op`) as the second non-Ghidra analyser.
+3. Ghidra as REA runs it: `open_binary` raw-binary, provider `ghidra`, default auto-analysis, none of the T21e scripts
+   (`list_procedures`). REA has no rizin provider for raw images (request `T22b-rizin-raw-arm.md`, T22f).
+4. The canonical project's map (`tools/ghidra/CodeUnitMap.java` on a `-readOnly` scratch copy) plus `functions.tsv` and
+   `DisplayJumpTables.java check` as the T21e result being verified.
+5. `tools/arm_recover_compare.py` lines the four up (jump-table sites and case lists, function starts, bytes no analyser covers);
+   every difference is classed, and each class is settled from the bytes (objdump / own decoder at the address).
+6. Write-up here; real Ghidra misses get the exact `entries_display.tsv` / table fixes for the parent (no canonical rebuild).
+
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
