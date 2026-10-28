@@ -60,6 +60,14 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | done |
 | T20 | [Onboarding: rebuild everything from the official downloads + getting-started manual](T20-onboarding.md) | T01–T19 | done |
 | T21 | [Close the Ghidra decompile gaps (#97)](T21-ghidra-gaps.md) | T05, T07, T11, T12e, T17, T20 | in progress |
+| T21a | [HiFi4: SLEIGH generator and the language Xtensa:LE:32:rt600hifi4](T21-ghidra-gaps.md) | T21 | done |
+| T21b | [HiFi4: test oracle against flix.dis, function list](T21-ghidra-gaps.md) | T21 | done |
+| T21c | [MAIN: RXv2 coverage diff, string ops as pcodeops](T21-ghidra-gaps.md) | T21 | done |
+| T21d | [MAIN: spacebase, call signatures, ROM data definition](T21-ghidra-gaps.md) | T21 | done |
+| T21e | [DISPLAY: jump tables, missed function starts, fragments](T21-ghidra-gaps.md) | T21 | done |
+| T21f | [All images: decompile-quality counts and regression check](T21-ghidra-gaps.md) | T21 | done |
+| T21g | [Integration: rebuild the canonical projects, re-export decomp/](T21-ghidra-gaps.md) | T21a–f | done |
+| T21h | [MAIN: decode the two RX fragments left undefined](T21-ghidra-gaps.md) | T21c, T21g | todo |
 | T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | in progress |
 | T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | in progress |
 | T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | in progress |

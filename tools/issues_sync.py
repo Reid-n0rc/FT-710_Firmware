@@ -11,7 +11,8 @@ Usage: python3 -I tools/issues_sync.py [--dry-run]
   top-level tasks become sub-issues of the epic.
 - A status change posts a comment (with the current HEAD commit) and closes or reopens
   the issue. Done tasks are closed.
-- The issue numbers are stored in docs/tasks/issues.json. Commit that file.
+- The issue numbers are stored in docs/tasks/issues.json. Commit that file. To adopt an issue someone opened by hand,
+  add it to issues.json: text above the marker is kept, only the part below it is synced.
 Requires the gh CLI, authenticated, inside the repo. Refuses to run in any repo other than Reid-n0rc/FT-710_Firmware.
 """
 import json
@@ -119,8 +120,20 @@ def issue_state(num):
     return j["state"], {l["name"] for l in j["labels"]}, j["body"]
 
 
-def set_issue(num, title, body, status, labels_now, state):
+def keep_owner_text(old, body):
+    """Keep what a person wrote above the marker (an issue opened by hand, e.g. #97, #104); sync only the part below it."""
+    prefix = old.split(MARK, 1)[0].rstrip() if old else ""
+    if prefix.endswith("\n---"):
+        prefix = prefix[:-4].rstrip()
+    if not prefix:
+        return body
+    room = 65000 - len(prefix)
+    return prefix + "\n\n---\n" + (body if len(body) < room else body[:room] + "\n\n… (truncated)")
+
+
+def set_issue(num, title, body, status, labels_now, state, old_body=""):
     want = STATUSES[status][0]
+    body = keep_owner_text(old_body, body)
     args = ["issue", "edit", str(num), "--title", title, "--body-file", "-"]
     for lab in labels_now:
         if lab.startswith("status:") and lab != want:
@@ -180,8 +193,8 @@ def main():
         return
     for r in rows:
         num = issue_of[r["id"]]
-        state, labels, _ = issue_state(num)
-        set_issue(num, f"{r['id']}: {r['title']}", task_body(r, issue_of), r["status"], labels, state)
+        state, labels, old_body = issue_state(num)
+        set_issue(num, f"{r['id']}: {r['title']}", task_body(r, issue_of), r["status"], labels, state, old_body)
         if last.get(r["id"]) and last[r["id"]] != r["status"]:
             gh("issue", "comment", str(num), "--body",
                f"Status: **{last[r['id']]} → {r['status']}** ({r['status_text']}) at commit `{head}`. "
@@ -189,9 +202,9 @@ def main():
         last[r["id"]] = r["status"]
         parent = re.match(r"(T\d+)[a-z]$", r["id"])
         ensure_sub(issue_of[parent.group(1)] if parent and parent.group(1) in issue_of else issue_of["EPIC"], num)
-    estate, elabels, _ = issue_state(issue_of["EPIC"])
+    estate, elabels, ebody = issue_state(issue_of["EPIC"])
     set_issue(issue_of["EPIC"], "FT-710 firmware analysis (epic)", epic_body(rows, issue_of),
-              "done" if all(r["status"] == "done" for r in rows) else "in-progress", elabels, estate)
+              "done" if all(r["status"] == "done" for r in rows) else "in-progress", elabels, estate, ebody)
     with open(MAP_FILE, "w") as fh:
         json.dump({**issue_of, "_status": last}, fh, indent=1, sort_keys=True)
         fh.write("\n")

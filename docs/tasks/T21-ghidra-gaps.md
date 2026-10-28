@@ -314,7 +314,7 @@ incremental run on a copy of the canonical project byte for byte.
   they were reviewed with `arm-none-eabi-objdump -M force-thumb`, and only 0x2016385C was added.
 
 ### T21g
-**Status:** in progress (2026-10-28). A step 8 and integration. DISPLAY and IFDSP are done (branch
+**Status:** done (2026-10-28). A step 8 and integration. DISPLAY and IFDSP done first (branch
 `worktree-agent-ad5fb8b0f04061087`, merged): both projects rebuilt with HiFi4 on `Xtensa:LE:32:rt600hifi4`, `decomp/display` and
 `decomp/ifdsp` re-exported, new `quality.tsv` baselines, docs (`ghidra-flix.md`, `hifi4.md`, INDEX quality tables) updated.
 
@@ -324,7 +324,32 @@ shared RX module through that step and recompile `rx62t.sla`. (3) Rebuild the ca
 ghidra` (ApplyNames → DefineRomData → ApplySignatures) and re-export `decomp/main` (`--only export`). (4) Compare the new `quality.tsv`
 with the committed one and with T21d's combined numbers, commit the new baseline, update `decomp/main/INDEX.md` and the docs.
 (5) Close T21: Findings, Follow-ups, board, `issues_sync.py`. Out of scope (follow-ups): memory effect for the string pcodeops, the
-two undecoded fragments at 0xFFF8FEF3 and 0xFFF9129B.
+two undecoded fragments at 0xFFF8FEF3 and 0xFFF9129B (now T21h).
+
+**Results, MAIN [fact].** `bootstrap.sh --only rx,ghidra,export` (MAIN forced by a stale stamp; DISPLAY/IFDSP kept the committed projects
+and re-exported byte-identical): RX module `rx62t.sinc` `618938bb…4b36`; DefineRomData 98 strings, 8 pointers, 130 zero runs, 161 B left
+in 2 runs; ApplySignatures 1,212 applied, 0 failed. Export against the T17 baseline:
+
+| Metric | before | after |
+|---|---:|---:|
+| functions | 2,268 | 2,324 |
+| decompile failures | 0 | 0 |
+| warnings (functions with one) | 1,294 (347) | 1,229 (352) |
+| "Unable to track spacebase" | 8 | 0 |
+| "Removing unreachable block" | 1,226 | 1,187 |
+| unimplemented-instruction warnings | 3 + 3 | 0 |
+| functions with `in_`/`unaff_`/`extraout_` | 61 | 8 |
+| undefined non-0xFF bytes | 20,622 | 161 |
+
+This is T21d's combined result plus T21c: two more functions (2,322 → 2,324) and no unimplemented instructions. `functions_with_warnings`
+347 → 352 is the expected rise from the new functions (T21f leftover), so the new `quality.tsv` was committed as the baseline. The
+export chunks were renamed (50-function boundaries moved); no doc linked to an old chunk name.
+
+### T21h
+**Status:** todo. MAIN: decode the two RX fragments T21d left undefined (161 B), 0xFFF8FEF3 (`FE D1 55 …`, inside an
+`R_BSP_InterruptControl` caller at 0xFFF8FEC0, 2 references) and 0xFFF9129B (`FD 1F 02 …` after `PUSH.L R2`, likely the RXv2 accumulator
+save `MVFACHI/MVFACMI`) **[inference]**. Settle each from the RXv2 software manual and `rx-elf-objdump`; patch the SLEIGH if the
+module lacks the form, fold the patch into `bootstrap.sh --only rx`, rebuild MAIN and re-export.
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
