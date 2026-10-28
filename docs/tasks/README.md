@@ -39,10 +39,10 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T12d | [IFDSP M33 platform (boot, DSP loader, RTOS)](T12d-ifdsp-m33-platform.md) | T12a | done |
 | T12e | [IFDSP HiFi4 DSP code (threads, audio I/O, tables)](T12e-ifdsp-hifi4.md) | T12a | done |
 | T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | done |
-| T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | todo |
+| T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | in progress |
 | T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | in progress |
 | T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | done |
-| T17 | [Integration: names, RX decoder fix, re-exports, shared-file edits](T17-integration.md) | T09–T12 | in progress |
+| T17 | [Integration: names, RX decoder fix, re-exports, shared-file edits](T17-integration.md) | T09–T12 | done |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
