@@ -110,12 +110,26 @@ public class CallArgCheck extends GhidraScript {
     }
 
     // R1/R2 read before written after the call: bit1 = R1, bit2 = R2
+    int lastRetSize; // size the caller gives R1 at its first read after the call: 1/2 from MOV.B/MOV.W R1,..., else 4
+
+    int retSize(Instruction in) {
+        String mn = in.getMnemonicString();
+        if (in.getNumOperands() == 2 && in.getDefaultOperandRepresentation(0).equals("R1")) {
+            if (mn.equals("MOV.B")) return 1;
+            if (mn.equals("MOV.W")) return 2;
+        }
+        return 4;
+    }
+
     int asmRet(Instruction call) {
         int written = 0, used = 0;
+        lastRetSize = 0;
         Instruction in = call.getNext();
         for (int n = 0; in != null && n < 8; n++) {
             if (n > 0 && hasFlowRefTo(in)) break; // a join: other paths reach here
-            used |= uses(in) & ~written & 0x6;
+            int u = uses(in) & ~written & 0x6;
+            if ((u & 2) != 0 && (used & 2) == 0) lastRetSize = retSize(in);
+            used |= u;
             written |= defs(in);
             if (isCall(in) || in.getFlowType().isJump() || in.getFlowType().isTerminal()) break;
             in = in.getNext();
@@ -183,11 +197,12 @@ public class CallArgCheck extends GhidraScript {
                 if (c == null) continue;
                 sites++;
                 int am = asmArgs(in, bm), aa = highest(am), ar = asmRet(in);
-                int[] s = st.computeIfAbsent(c, k -> new int[4]);
+                int[] s = st.computeIfAbsent(c, k -> new int[7]);
                 s[0]++;
                 if ((ar & 2) != 0) s[1]++;
                 if ((ar & 6) == 6) s[2]++;
                 s[3] = Math.max(s[3], aa);
+                if ((ar & 2) != 0) s[lastRetSize == 1 ? 4 : lastRetSize == 2 ? 5 : 6]++;
                 PcodeOpAST op = calls.get(in.getAddress());
                 if (op == null) continue; // call removed (unreachable block)
                 int ca = op.getNumInputs() - 1;
@@ -222,15 +237,39 @@ public class CallArgCheck extends GhidraScript {
 
         if (args.length > 1) {
             try (PrintWriter out = new PrintWriter(args[1], "UTF-8")) {
-                out.println("entry\tname\tsig_source\tasm_params\tsites\tsites_read_R1\tsites_read_R1R2\tmax_site_args\tc_proto");
+                out.println("entry\tname\tsig_source\tasm_params\tsites\tsites_read_R1\tsites_read_R1R2\tmax_site_args\tc_proto\tentry_insn\tret_use_B_W_L\tret_epilogue");
                 for (Function f : funcs) {
-                    int[] s = st.getOrDefault(f, new int[4]);
+                    int[] s = st.getOrDefault(f, new int[7]);
+                    Instruction e = getInstructionAt(f.getEntryPoint());
                     out.println(f.getEntryPoint() + "\t" + f.getName() + "\t" + f.getSignatureSource() + "\t"
                             + asmP.get(f) + "\t" + s[0] + "\t" + s[1] + "\t" + s[2] + "\t" + s[3] + "\t"
-                            + cproto.getOrDefault(f, "?"));
+                            + cproto.getOrDefault(f, "?") + "\t" + (e == null ? "-" : e.toString()) + "\t" + s[4] + "/" + s[5] + "/" + s[6] + "\t" + retEpilogue(f));
                 }
             }
         }
+    }
+
+    // the CC-RX -O0 return idiom: the instruction right before each RTS/RTSD loads R1 from the frame
+    // (MOVU.B/MOVU.W = unsigned 1/2 bytes, MOV.B/MOV.W = signed, MOV.L = 4). "-" if no return has it, "mixed" if they differ.
+    String retEpilogue(Function f) {
+        String res = null;
+        boolean any = false;
+        for (Instruction in : currentProgram.getListing().getInstructions(f.getBody(), true)) {
+            String mn = in.getMnemonicString();
+            if (!mn.equals("RTS") && !mn.equals("RTSD")) continue;
+            if (mn.equals("RTSD") && (rangeMask(in) & 2) != 0) continue; // pops R1 itself
+            Instruction pv = in.getPrevious();
+            String k = "-";
+            if (pv != null && pv.getNumOperands() == 2 && pv.getDefaultOperandRepresentation(1).equals("R1")
+                    && pv.getDefaultOperandRepresentation(0).contains("[")) {
+                String pm = pv.getMnemonicString();
+                k = pm.equals("MOVU.B") ? "UB" : pm.equals("MOVU.W") ? "UW" : pm.equals("MOV.B") ? "B"
+                        : pm.equals("MOV.W") ? "W" : pm.equals("MOV.L") ? "L" : "-";
+            }
+            if (!k.equals("-")) any = true;
+            res = res == null ? k : res.equals(k) ? res : "mixed";
+        }
+        return res == null || !any ? "-" : res;
     }
 
     // live-in R1..R4 at the entry (block-level liveness; calls clobber R1-R5/R14/R15 and use nothing),
