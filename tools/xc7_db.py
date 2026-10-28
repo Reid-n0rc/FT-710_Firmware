@@ -19,6 +19,8 @@ Commands:
     usage               coarse resource picture: per tile type, how many tiles
                         have any configuration bit set; DSP48 / BRAM / IOB / CMT /
                         BUFG sites with non-zero bits; used CLB columns
+    bramcfg             one line per used RAMB18 half / RAMB36: IN_USE, port
+                        widths, SDP/FIFO/ECC/cascade flags, output registers
     tilebits TILE       list the set bits of one tile as FF_BB (prjxray style)
     config [TYPE ...]   for every tile of the given types (default BRAM_L BRAM_R),
                         print the non-routing, non-INIT segbits tags whose bits
@@ -267,6 +269,80 @@ def cmd_config(bs, types):
         print("%s [%s] %d set bits: %s" % (t, sites, len(bits), " ".join(sorted(hits))))
 
 
+def match(bits, tb):
+    return all(((f, o) in bits) != neg for f, o, neg in tb)
+
+
+def best_enum(sb, prefix, bits):
+    """Value of an enum feature PREFIX<value>: the matching value with most positive bits."""
+    best, score = None, -1
+    for tag, tb in sb.items():
+        if tag.startswith(prefix) and match(bits, tb):
+            pos = sum(1 for _, _, n in tb if not n)
+            if pos > score:
+                best, score = tag[len(prefix):], pos
+    return best
+
+
+def bram_config(bs):
+    """Per BRAM tile with set bits: dict of decoded config for Y0, Y1 and RAMB36."""
+    cache, out = {}, []
+    for t in sorted(bs.tilegrid, key=lambda t: (bs.tilegrid[t]["grid_x"], -bs.tilegrid[t]["grid_y"])):
+        ty = bs.tilegrid[t]["type"]
+        if ty not in ("BRAM_L", "BRAM_R"):
+            continue
+        if ty not in cache:
+            cache[ty] = load_segbits(os.path.join(bs.dbdir, "segbits_%s.db" % ty.lower()))
+        sb = cache[ty]
+        bits = bs.tile_bits(t)
+        if not bits:
+            continue
+        rec = {"tile": t, "sites": sorted(bs.tilegrid[t]["sites"])}
+        for h in ("Y0", "Y1"):
+            p = "%s.RAMB18_%s." % (ty, h)
+            flag = lambda n: (p + n) in sb and match(bits, sb[p + n])
+            rec[h] = {
+                "in_use": flag("IN_USE"),
+                "rd_a": best_enum(sb, p + "READ_WIDTH_A_", bits),
+                "rd_b": best_enum(sb, p + "READ_WIDTH_B_", bits),
+                "wr_a": best_enum(sb, p + "WRITE_WIDTH_A_", bits),
+                "wr_b": best_enum(sb, p + "WRITE_WIDTH_B_", bits),
+                "sdp_rd36": flag("SDP_READ_WIDTH_36"), "sdp_wr36": flag("SDP_WRITE_WIDTH_36"),
+                "doa_reg": flag("DOA_REG"), "dob_reg": flag("DOB_REG"),
+                "fifo": flag("FIFO_MODE"),
+            }
+        p = "%s.RAMB36." % ty
+        flag = lambda n: (p + n) in sb and match(bits, sb[p + n])
+        rec["R36"] = {"ecc_rd": flag("EN_ECC_READ"), "ecc_wr": flag("EN_ECC_WRITE"),
+                      "ext_a_lower": flag("RAM_EXTENSION_A_LOWER"),
+                      "ext_b_lower": flag("RAM_EXTENSION_B_LOWER"),
+                      "w1": [n for n in ("READ_WIDTH_A_1", "READ_WIDTH_B_1", "WRITE_WIDTH_A_1",
+                                         "WRITE_WIDTH_B_1") if flag("BRAM36_" + n)]}
+        rec["casc_ard"] = ("%s.CASCOUT_ARD_ACTIVE" % ty) in sb and match(bits, sb["%s.CASCOUT_ARD_ACTIVE" % ty])
+        rec["en_syn"] = ("%s.EN_SYN" % ty) in sb and match(bits, sb["%s.EN_SYN" % ty])
+        out.append(rec)
+    return out
+
+
+def cmd_bramcfg(bs):
+    for r in bram_config(bs):
+        hs = []
+        for h in ("Y0", "Y1"):
+            c = r[h]
+            if not c["in_use"]:
+                hs.append("%s -" % h)
+                continue
+            w = "rd %s/%s wr %s/%s" % (c["rd_a"], c["rd_b"], c["wr_a"], c["wr_b"])
+            fl = [k for k in ("sdp_rd36", "sdp_wr36", "doa_reg", "dob_reg", "fifo") if c[k]]
+            hs.append("%s %s %s" % (h, w, ",".join(fl)))
+        x = r["R36"]
+        fl = [k for k in ("ecc_rd", "ecc_wr", "ext_a_lower", "ext_b_lower") if x[k]] + x["w1"]
+        if r["casc_ard"]:
+            fl.append("CASCOUT")
+        print("%-14s %-13s | %s | R36 %s" % (r["tile"], [s for s in r["sites"] if s.startswith("RAMB36")][0],
+                                          " | ".join(hs), ",".join(fl) or "-"))
+
+
 def cmd_tilebits(bs, tile):
     tv = bs.tilegrid[tile]
     print(json.dumps(tv["bits"]))
@@ -297,6 +373,8 @@ def main():
         cmd_usage(bs)
     elif cmd == "config":
         cmd_config(bs, a[1:] or ["BRAM_L", "BRAM_R"])
+    elif cmd == "bramcfg":
+        cmd_bramcfg(bs)
     elif cmd == "tilebits":
         cmd_tilebits(bs, a[1])
     else:
