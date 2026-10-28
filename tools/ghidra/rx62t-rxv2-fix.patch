@@ -1,0 +1,361 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -1380,14 +1380,22 @@
+ }
+ 
+ ### (3) MUL dsp[Rs], Rd
+-### when memex == UB or src == Rs
+-:MUL ldu_src, reg0_4    is op2_6 = 0b10011 & ld0_2; reg0_4 ... & ldu_src [ mode_ld = ld0_2; mode_mi = 2; ] {
+-    reg0_4 = reg0_4 * ldu_src;
++### T21c fix (#97 B1): the memory forms read .L whatever the memex was, and the UB form scaled dsp by 4
++### (0x4D 01 19 = MUL 25[R0].UB,R1 printed as MUL 0x64[SP].L,R1: 57 sites in MAIN). Now as ADD/SUB/CMP:
++### 0x4C-0x4E memex UB (zero-extended byte, dsp x1), 0x4F register Rs, 0x06 forms use memex mi (B/W/L/UW).
++### when memex == UB
++:MUL ld_src, reg0_4    is op2_6 = 0b10011 & ld0_2 < 0b11 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
++    reg0_4 = reg0_4 * ld_src;
++}
++
++### when src == Rs
++:MUL reg4_4, reg0_4    is op2_6 = 0b10011 & ld0_2 = 0b11; reg0_4 & reg4_4 {
++    reg0_4 = reg0_4 * reg4_4;
+ }
+ 
+ ### when memex != UB
+-:MUL ldu_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0x3 & ld0_2 != 0b11 & ld0_2; reg0_4 ... & ldu_src [ mode_ld = ld0_2; mode_mi = 2; ] {
+-    reg0_4 = reg0_4 * ldu_src;
++:MUL ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0x3 & ld0_2 != 0b11 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++    reg0_4 = reg0_4 * ld_src;
+ }
+ 
+ ### (4) MUL Rs, Rs2, Rd
+@@ -1962,23 +1970,31 @@
+ }
+ 
+ 
+-## SCMPU - string compare until not equal (T17 fix: Z=1 when both strings end in NUL together,
+-## C = unsigned *R1 >= *R2, R3==0 leaves the flags alone; manual R01US0071EJ0100 SCMPU)
++## String instructions as named pcodeops (T21c, #97 B4). The T17 p-code loops were exact but decompiled as loops;
++## the decompiler now shows one call per instruction. Register and flag effects follow the RXv2 software manual
++## R01US0071EJ0100 (SCMPU p. 184, SMOVB p. 189, SMOVF p. 190, SMOVU p. 191, SSTR p. 192, SUNTIL p. 196, SWHILE p. 198):
++##   scmpu(R1, R2, R3)        returns *R1 - *R2 (unsigned bytes, zero-extended) of the last compared pair: 0 when the
++##                            strings matched (Z), >= 0 when C is set. R1/R2 are undefined afterwards (left unchanged).
++##   smovf/smovb(R1, R2, R3)  copies R3 bytes from R2 to R1; R1/R2 end one past (before) the last byte, R3 = 0.
++##   smovu(R1, R2, R3)        copies up to R3 bytes up to and including NUL; returns the new R3. R1/R2 undefined (unchanged).
++##   sstr(R1, R2:size, R3)    stores R2 (.B/.W/.L) R3 times at R1; R1 ends one element past the last store, R3 = 0.
++##   suntil/swhile(R1, R2, R3, size)  returns the new R1 (one element past the last compared one); R3 is reduced by the
++##                            number of compares, Z/C come from that last element - R2 (unsigned).
++## Every instruction is a no-op when R3 = 0 (manual), so the call is skipped then.
++define pcodeop scmpu;
++define pcodeop smovf;
++define pcodeop smovb;
++define pcodeop smovu;
++define pcodeop sstr;
++define pcodeop suntil;
++define pcodeop swhile;
++
++## SCMPU - string compare until not equal
+ :SCMPU    is op0_8 = 0x7F; op0_8 = 0x83 {
+-    local tmp0:1;
+-    local tmp1:1;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp0 = *:1 R1;
+-        tmp1 = *:1 R2;
+-        R1 = R1 + 1;
+-        R2 = R2 + 1;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp0 == tmp1);
+-        $(C_flag) = (tmp0 >= tmp1);
+-        if (tmp0 != tmp1) goto <end>;
+-        if (tmp0 == 0) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local diff:4 = scmpu(R1, R2, R3);
++    $(Z_flag) = (diff == 0);
++    $(C_flag) = (diff s>= 0);
+     <end>
+ }
+ 
+@@ -2136,48 +2152,26 @@
+ 
+ ## SMOVB - string move backward p. 189
+ :SMOVB    is op0_8 = 0x7F; op0_8 = 0x8B {
+-    local check_len:1;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        *:1 R1 = *:1 R2;
+-        R1 = R1 - 1;
+-        R2 = R2 - 1;
+-        R3 = R3 - 1;
+-        goto <loop>;
+-    <end>
++    smovb(R1, R2, R3);
++    R1 = R1 - R3;
++    R2 = R2 - R3;
++    R3 = 0;
+ }
+ 
+ 
+-## SMOVF - string move forward
++## SMOVF - string move forward p. 190
+ :SMOVF    is op0_8 = 0x7F; op0_8 = 0x8F {
+-    local check_len:1;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        *:1 R1 = *:1 R2;
+-        R1 = R1 + 1;
+-        R2 = R2 + 1;
+-        R3 = R3 - 1;
+-        goto <loop>;
+-    <end>
++    smovf(R1, R2, R3);
++    R1 = R1 + R3;
++    R2 = R2 + R3;
++    R3 = 0;
+ }
+ 
+ 
+ ## SMOVU - string move while unequal to zero p. 191
+ :SMOVU    is op0_8 = 0x7F; op0_8 = 0x87 {
+-    local tmp:1;
+-    local check_len:1;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        tmp = *:1 R2;
+-        R2 = R2 + 1;
+-        *:1 R1 = tmp;
+-        R1 = R1 + 1;
+-        R3 = R3 - 1;
+-        if (tmp == 0) goto <end>;
+-    goto <loop>;
++    if (R3 == 0) goto <end>;
++    R3 = smovu(R1, R2, R3);
+     <end>
+ }
+ 
+@@ -2185,41 +2179,23 @@
+ ## SSTR.size - storing a string p. 192
+ ### SSTR.B
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local check_len;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        *:1 R1 = R2;
+-        R1 = R1 + 1;
+-        R3 = R3 - 1;
+-    goto <loop>;
+-    <end>
++    sstr(R1, R2:1, R3);
++    R1 = R1 + R3 * 1;
++    R3 = 0;
+ }
+ 
+ ### SSTR.W
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local check_len;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        *:2 R1 = R2;
+-        R1 = R1 + 2;
+-        R3 = R3 - 1;
+-    goto <loop>;
+-    <end>
++    sstr(R1, R2:2, R3);
++    R1 = R1 + R3 * 2;
++    R3 = 0;
+ }
+ 
+ ### SSTR.L
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local check_len;
+-    <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+-        *:4 R1 = R2;
+-        R1 = R1 + 4;
+-        R3 = R3 - 1;
+-    goto <loop>;
+-    <end>
++    sstr(R1, R2, R3);
++    R1 = R1 + R3 * 4;
++    R3 = 0;
+ }
+ 
+ 
+@@ -2286,96 +2262,78 @@
+ }
+ 
+ 
+-## SUNTIL.size - search until equal string p. 196 (T17 fix: set Z/C from the last *R1 - R2)
++## SUNTIL.size - search until equal string p. 196
+ ### SUNTIL.B
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = zext(*:1 R1);
+-        R1 = R1 + 1;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp == R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = suntil(R1, R2, R3, 1:1);
++    R3 = R3 - (p - R1) / 1;
++    R1 = p;
++    local last:4 = zext(*:1 (p - 1));
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+ ### SUNTIL.W
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = zext(*:2 R1);
+-        R1 = R1 + 2;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp == R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = suntil(R1, R2, R3, 2:1);
++    R3 = R3 - (p - R1) / 2;
++    R1 = p;
++    local last:4 = zext(*:2 (p - 2));
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+ ### SUNTIL.L
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = *:4 R1;
+-        R1 = R1 + 4;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp == R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = suntil(R1, R2, R3, 4:1);
++    R3 = R3 - (p - R1) / 4;
++    R1 = p;
++    local last:4 = *:4 (p - 4);
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+ 
+-## SWHILE.size - search while equal string p. 198 (T17 fix: compare *R1 (not R1) with R2, step R1 by the size, set Z/C)
++## SWHILE.size - search while equal string p. 198
+ ### SWHILE.B
+ :SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = zext(*:1 R1);
+-        R1 = R1 + 1;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp != R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = swhile(R1, R2, R3, 1:1);
++    R3 = R3 - (p - R1) / 1;
++    R1 = p;
++    local last:4 = zext(*:1 (p - 1));
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+ ### SWHILE.W
+ :SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = zext(*:2 R1);
+-        R1 = R1 + 2;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp != R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = swhile(R1, R2, R3, 2:1);
++    R3 = R3 - (p - R1) / 2;
++    R1 = p;
++    local last:4 = zext(*:2 (p - 2));
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+ ### SWHILE.L
+ :SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+-    local tmp:4;
+     if (R3 == 0) goto <end>;
+-    <loop>
+-        tmp = *:4 R1;
+-        R1 = R1 + 4;
+-        R3 = R3 - 1;
+-        $(Z_flag) = (tmp == R2);
+-        $(C_flag) = (tmp >= R2);
+-        if (tmp != R2) goto <end>;
+-        if (R3 != 0) goto <loop>;
++    local p:4 = swhile(R1, R2, R3, 4:1);
++    R3 = R3 - (p - R1) / 4;
++    R1 = p;
++    local last:4 = *:4 (p - 4);
++    $(Z_flag) = (last == R2);
++    $(C_flag) = (last >= R2);
+     <end>
+ }
+ 
+@@ -2434,10 +2392,35 @@
+ }
+ 
+ #### XCHG dsp[Rs].UB, Rd
+-:XCHG ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10000 & ld0_2 < 0b11 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] unimpl
++## T21c (#97 B1): the memory forms were "unimpl" (3 sites in MAIN, all XCHG [Rs].L,Rd). Manual R01US0071EJ0100 XCHG
++## p. 300: the memory operand and the LSB byte/word/long of Rd are exchanged; the loaded value is extended per memex.
++:XCHG ld_dst, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10000 & ld0_2 < 0b11 & ld0_2; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = 4; ] {
++    local tmp:4 = zext(*:1 ld_dst);
++    *:1 ld_dst = reg0_4:1;
++    reg0_4 = tmp;
++}
+ 
+ ### when memex != UB
+-:XCHG ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x10; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] unimpl
++:XCHG ld_dst, reg0_4    is op0_8 = 0x06; mi6_2 = 0 & mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x10; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++    local tmp:4 = sext(*:1 ld_dst);
++    *:1 ld_dst = reg0_4:1;
++    reg0_4 = tmp;
++}
++:XCHG ld_dst, reg0_4    is op0_8 = 0x06; mi6_2 = 1 & mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x10; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++    local tmp:4 = sext(*:2 ld_dst);
++    *:2 ld_dst = reg0_4:2;
++    reg0_4 = tmp;
++}
++:XCHG ld_dst, reg0_4    is op0_8 = 0x06; mi6_2 = 2 & mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x10; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++    local tmp:4 = *:4 ld_dst;
++    *:4 ld_dst = reg0_4;
++    reg0_4 = tmp;
++}
++:XCHG ld_dst, reg0_4    is op0_8 = 0x06; mi6_2 = 3 & mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x10; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++    local tmp:4 = zext(*:2 ld_dst);
++    *:2 ld_dst = reg0_4:2;
++    reg0_4 = tmp;
++}
+ 
+ 
+ ## XOR p .301
