@@ -150,6 +150,30 @@ tools/ghidra-headless.sh <projdir> <proj> -process FT-710_IFDSP_V0101_hifi4.bin 
   -scriptPath tools/ghidra -postScript PcodeDump.java /tmp/pcode.txt 210ec1 218084 ...
 ```
 
+### T22e
+**Status:** in progress (2026-10-28). All images: before/after behaviour diff of the functions the #97 fixes changed.
+
+Plan:
+1. Baselines from git, not re-decompiles (the shared RX module is patched now, so an old project would re-decode with the new SLEIGH):
+   "before" = `decomp/` at `9622a8f^` (MAIN) and `7b1b48b^` (DISPLAY, IFDSP M33, IFDSP HiFi4), whose `.c` files are the pre-T21
+   exports (T21d/T21f touched only `INDEX.md`/`quality.tsv` there); "after" = `9622a8f` (MAIN) and `7b1b48b` (others), the current
+   branch. MAIN numbers are against 9622a8f, before T21h's two fragments.
+2. `tools/decomp_behavior_diff.py`: split every `.c` into functions at the `// ===== name @ addr` markers, key by entry address
+   (chunk files were renamed), pair with `functions.tsv`, and classify each changed function by successive normalisation:
+   renamed/moved only (identical after mapping old→new names of functions/labels and dropping comments), signature/type only
+   (same callees in order, same constants, same control-flow keywords after erasing types and variable names), and then by the
+   evidence of the fix that touched it: spacebase/stack fixed (`in_`/`unaff_`/`extraout_` or spacebase warning gone), new
+   instructions decoded (string pcodeops, XCHG/SCCnd/MUL fixes, `halt_unimplemented` gone), jump table recovered (`switch` gained),
+   function boundary changed (size changed with a new neighbouring entry), HiFi4 bundles decoded (`halt_baddata`/bad-instruction
+   gone), and a residue "real behaviour difference" (callee set, constants or stores differ without one of those reasons, or a call
+   result used before and dropped after). Added/removed functions are counted separately. Output: one TSV per image
+   (`docs/tasks/T22e-<image>-changed.tsv`, if modest).
+3. REA: try `compare_artifacts` on the two decomp trees and `compare_functions`/`find_changed_behavior` on sample functions;
+   record what they can and cannot show for a before state that exists only as exported text (request file if a gap).
+4. Sample the "real difference" class (and the known T21d `smovf` lost-value case) against the disassembly
+   (`rx-elf-objdump`, `arm-none-eabi-objdump`, HiFi4 `flix.dis`) and settle which side is right, with addresses.
+5. Findings and counts here; commit after each step.
+
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
