@@ -1,6 +1,6 @@
 # T12e — IFDSP HiFi4 DSP code (threads, audio I/O, tables)
 
-**Status:** in progress (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
+**Status:** done (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
 
 ## Goal
 `docs/code/ifdsp/hifi4.md`: XOS threads, peripheral base tables and which FLEXCOMM/DMA each thread uses, audio paths (RX IF, TX AF, codec, SPI to DISPLAY), coefficient tables, what can be learned despite the base-ISA-only Xtensa decode.
@@ -30,5 +30,40 @@
 - Strings: only XOS, rpmsg, libm (`powf`, `sqrtf`) and printf tables — no algorithm names. Float tables in rodata 0x200000–0x206000 and .data 0x236800+.
 
 ## Findings
+- **FLIX decode solved**: the Zephyr SDK v0.17.0 toolchain `xtensa-nxp_rt600_adsp_zephyr-elf` (binutils 2.38 with the RT600 HiFi4
+  overlay; official GitHub release, SHA-256 checked) disassembles the whole image, FLIX bundles and HiFi4/FPU ops included. Installed in
+  `~/opt/zephyr-sdk-0.17.0/`. `tools/ifdsp_hifi4_dis.py` makes a per-function listing (1065 functions; 57 bogus Ghidra entries dropped).
+- **Threads [fact]**: Main prio 4 (100 ms poll: GPIO → reg 0x4004, 1 s XOS CPU load → regs 0x2000–0x2007), Ipc prio 13 (rpmsg remote,
+  msgq 10 × 152 B), Rx_Path / Tx_Path prio 7 (2 ms blocks, woken by the codec DAC / ADC DMA callbacks), Rx_Audio prio 6 (12-block
+  batches), Spi prio 5 (scope/spectrum to DISPLAY). All six T12a entry addresses confirmed from the `xos_thread_create` arguments.
+- **Audio I/O [fact]**: FC2 TX (TX AF, DMA1 ch5), FC3 RX (RX IF, ch6), FC4 RX (codec ADC, ch8), FC5 TX (codec DAC, ch11); all I2S
+  slave, 32-bit / 64-bit frame, 24-frame ping-pong DMA (8 × 0xC0 at 0x20062BE0). FC1 = SPI master 1 MHz on DMA0 ch2/3. HiFi4 clock
+  594 MHz. Sample rate **12 kHz** [inference: 1/12000 constants, 5999 Hz clamp].
+- **Register file**: defaults table and a per-register reader/writer table with thread attribution in the page; reg 6 = mode
+  (jump table of 11), reg 0x20 = TX gain in dB, reg 0x45 = type + frequency, reg 0x4020 selects one of four 257-tap FIRs.
+- **Tables**: `tools/ifdsp_coef_tables.py` characterises ~100 referenced tables: four 257-tap linear-phase lowpass FIRs (700/1000 Hz,
+  sharp/gentle), seven IIR voice passbands (35–3199 … 23–4137 Hz; SSB TX BPF-style), CTCSS 50-tone list + 316 Hz subtone lowpass +
+  ~300 Hz highpasses, FFT twiddles (2π/1024, 2π/512), ramps, libm polynomials. All float32; no Q15/Q31 tables.
+- `tools/ghidra/IfdspHifi4Names.java`: 67 names, applied to `ghidra/FT710_IFDSP_T12e` (67/67 ok).
+
+## Follow-ups
+- Per-algorithm documentation of the RX/TX chains (NR, NB, notch, AGC, demod) from the FLIX listing; map reg 6 values to modes with
+  T10/T12b MAIN setters.
+- Parent: apply `IfdspHifi4Names.java` to the shared project, re-export `decomp/ifdsp/hifi4/`, consider committing a FLIX listing.
+
+## Proposed shared-file edits
+- `docs/tooling.md`: add "Zephyr SDK 0.17.0 `xtensa-nxp_rt600_adsp_zephyr-elf` toolchain (GNU binutils 2.38, RT600 HiFi4 core
+  overlay). Source: https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0, asset
+  `toolchain_linux-x86_64_xtensa-nxp_rt600_adsp_zephyr-elf.tar.xz` (SHA-256 2e0a54e20056b82cae12593e5d936d1e22cdb3f90cb9e77d59c500a5ad4abdc2,
+  matches the release sha256.sum), extracted to `~/opt/zephyr-sdk-0.17.0/` (no install script, no sudo). Its objdump decodes the IFDSP
+  HiFi4 FLIX bundles; used by `tools/ifdsp_hifi4_dis.py`." and list `tools/ifdsp_hifi4_dis.py`, `tools/ifdsp_coef_tables.py`,
+  `tools/ghidra/IfdspHifi4Names.java`. Note: Espressif overlays (ESP32 cores) do not match the RT600 config, so they were not tried.
+- `decomp/ifdsp/INDEX.md` "HiFi4 limitations": replace the "correct decode needs the RT685 core configuration" sentence with a pointer
+  to the Zephyr RT600 objdump + `tools/ifdsp_hifi4_dis.py`, and add the regeneration command; add `-postScript IfdspHifi4Names.java` to the
+  HiFi4 import command. Optionally commit the FLIX listing as `decomp/ifdsp/hifi4/flix.dis` (~53k lines, private repo).
+- `docs/code/ifdsp/README.md`: correct "FC4 codec I2S out / FC5 in" wording to "FC4 = codec ADC into the DSP (I2S RX), FC5 = DAC from
+  the DSP (I2S TX)"; add HiFi4 594 MHz, 12 kHz / 24-sample blocks; thread priorities (Main 4, Ipc 13, Rx/Tx_Path 7, Rx_Audio 6, Spi 5).
+- `docs/memory-maps.md` (IFDSP): DSP .bss 0x2383B4–~0x2CC000; DMA buffers 0x20062BE0 + n·0xC0; regs 0x2000–0x2007 = XOS CPU load.
 
 ## Status
+Done 2026-10-27: `docs/code/ifdsp/hifi4.md`, `tools/ifdsp_hifi4_dis.py`, `tools/ifdsp_coef_tables.py`, `tools/ghidra/IfdspHifi4Names.java`.
