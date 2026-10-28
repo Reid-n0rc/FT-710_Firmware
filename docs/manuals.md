@@ -11,6 +11,7 @@ Never read a whole PDF into an AI agent's context: use `pdftotext -f N -l M file
 
 | File (in `Manuals/`) | What it is | Where to get it | Used for | SHA-256 |
 |---|---|---|---|---|
+| `FT-710_OM_ENG_EH080H201_2307N-GS.pdf` | Operating manual, English rev 2307N-GS | https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_OM_ENG_EH080H201_2307N-GS.pdf | SD-card save/load of memories and menus, front-panel resets: the backup steps in [cat-undocumented.md](cat-undocumented.md) | `e1afabe5f292c945d39e9e752b91dab1db2dccbb256c8f8a752c2fe5db4c61af` |
 | `FT-710_CAT_OM_ENG_2306-C.pdf` | CAT Operation Reference Manual, English rev 2306-C (current) | https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_CAT_OM_ENG_2306-C.pdf (yaesu.com resets connections from some hosts; download it in a browser) | **The primary CAT reference.** "Documented" in [cat-commands.md](cat-commands.md) means listed in this revision; menu chart (Table 2) for `tools/main_menu_table.py` (T09, T10f) | `fdf62b8a5c89e321381d69c53292a6ded045f1ceeeaf04ae21ce856e8e2ff8c2` |
 | `FT-710_CAT_OM_ENG_2211-A.pdf` | CAT manual, English rev 2211-A (older) | https://www.simarud.no/files/simarud/Documents/FT-710_CAT_OM_ENG_2211-A.pdf | Still lists `EO` and `VE` without a parameter; revision differences in [cat-commands.md](cat-commands.md) (T09) | `2b71bb61142186f4349f103d99aa439ce57202b16f00898a48c6ba266e7955c8` |
 | `FT-710_CAT_OM_JPN_exseli.pdf` | CAT manual, Japanese rev 2212-B | https://www.exseli.com/pdf/uploaded/manual_trn_809495519.pdf | Cross-check of the English CAT tables (T09) | `173c3cb227df57bc953f49909dae12cece8ec07e847c56c682a25289418bd82f` |
@@ -19,8 +20,8 @@ Never read a whole PDF into an AI agent's context: use `pdftotext -f N -l M file
 | `Firmware_Ver_Up_Manual_ENG_FT-710_2211-A.pdf` | Firmware update manual, English rev 2211-A | inside the firmware zip (see [getting-started.md](getting-started.md)); also on the yaesu.com FT-710 page, Files tab | The official SD-card update procedure behind [display/update.md](code/display/update.md) and the guide's chapter 3 (T11c, T19c) | `6880607aa210afad2989366610d3ba26d5cdc8a2781490945fd361a004677b57` |
 | `FT-710_Test-Report_DC4KU_english.pdf` | Independent lab test report by Werner Schnorrenberg, DC4KU, 30 Oct 2022 (13 pages) | https://dc4ku.darc.de/FT-710_Test-Report_DC4KU_english.pdf | States the receiver is direct-sampling with a **dual-channel 14-bit ADC** (the same twin ADC as the FT-DX10) whose two channels the FPGA combines, with dither into both inputs; settles O7 together with p6 of the service manual (T20 follow-up) | `b924e181b5c31f39037ac9e07cf6d1236264126236e5c6ca6e1fb217983bf24a` |
 
-The English operating manual and other Yaesu documents are on the FT-710 product page:
-https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers (Files tab). The project has not needed them.
+The other language editions and Yaesu documents are on the FT-710 product page:
+https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers (Files tab).
 
 ## Renesas RX651 (MAIN CPU, R5F56514ADFB)
 

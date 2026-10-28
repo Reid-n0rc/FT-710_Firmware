@@ -22,7 +22,7 @@ chapter 5 of the [illustrated guide](guide/README.md#55-the-22-undocumented-comm
 | **Region (destination) code** | EEPROM 0x010F (2 bytes) | `ZZPE071099;` (→ 0x8043), `JP` set, a strap + reset | write down `JP0710;`; EEPROM dump |
 | **Factory calibration** (261-byte alignment table) | EEPROM 0x000A..0x010E | `ZZPE071099;`, `SPAWE`, `SPW`, a key press in `ZZPE071000;` mode, a blank or replaced EEPROM | **EEPROM dump only** |
 
-Two things are worth knowing. The front-panel resets (**EXTENSION SETTING → RESET**: MEMORY CLEAR, MENU CLEAR, ALL RESET) never touch the
+Two things are worth knowing. The front-panel resets (**EXTENSION SETTING → RESET**, [operating manual](https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_OM_ENG_EH080H201_2307N-GS.pdf#page=107) p. 105: MEMORY CLEAR, MENU CLEAR, ALL RESET) never touch the
 calibration or the region code **[fact]** ([eeprom.md](code/main/eeprom.md)). Only `ZZPE071099;` and a blank EEPROM reset the
 calibration to ROM defaults. Those defaults are generic, not your radio's alignment.
 
@@ -32,7 +32,7 @@ Do all three, and keep a copy of the files off the radio.
 
 ### 2.1 SD card: memories and menus (Yaesu's own method, recommended)
 
-From the operating manual (pp. 68–70):
+From Yaesu's [FT-710 operating manual](https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_OM_ENG_EH080H201_2307N-GS.pdf#page=70) (pp. 68–70):
 1. Format the card in the radio once: **FUNC → EXTENSION SETTING → SD CARD → FORMAT → DONE → OK**.
 2. **FUNC → EXTENSION SETTING → SD CARD**, touch **DONE** on the memory save item, **NEW**, name it, **ENT**. Wait for "FILE SAVED".
 3. Do the same for the setting-menu save item.
@@ -63,11 +63,13 @@ python3 -I tools/cat_backup.py /dev/cu.SLAB_USBtoUART     # Windows: COM5 etc.; 
 python3 -I tools/cat_backup.py /dev/cu.SLAB_USBtoUART --eeprom
 ```
 
-This adds about 22,600 `SPR` single-byte reads (EEPROM 0x0000..0x5836) and saves `eeprom.bin`. It is the **only** backup of the
-calibration table. `SPR` is a read and the frame format is decoded (`cat_SP_eeprom_byte` 0xFFFA520B), but it **has not been run on a
-radio yet**. Addresses that don't answer are listed in `eeprom_missing.txt`. A binary frame whose address or checksum byte is 0x3B
-(`;`) may be cut short by the receiver **[guess]**. Run it once and check that bytes 0x010F..0x0110 of `eeprom.bin` equal the code from
-`JP0710;`.
+This also copies the radio's whole EEPROM into `eeprom.bin`. It is the **only** backup of the factory calibration, and it holds the
+region code as well. Expect it to take several minutes, because the service command it uses (`SPR`) reads one byte at a time
+**[estimate]**.
+
+It only reads, but it **has not been run on a radio yet**. Check the result: bytes 0x010F..0x0110 of `eeprom.bin` should equal the
+region code from `JP0710;`, and `eeprom_missing.txt` lists any addresses that didn't answer (bytes equal to `;` in the request may
+confuse the radio's receiver **[guess]**).
 
 ## 3. Every undocumented command: risk and path back
 

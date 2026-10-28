@@ -123,7 +123,7 @@ def main():
     print(f"E8: {len(raw)} bytes, signature and checksum OK")
 
     if "--eeprom" in args:
-        print("EEPROM dump with SPR (untested on a radio; about 22,600 reads)")
+        print("Full EEPROM dump (untested on a radio; takes several minutes)")
         image, missing = read_eeprom(s, print)
         open(os.path.join(out, "eeprom.bin"), "wb").write(image)
         open(os.path.join(out, "eeprom_missing.txt"), "w").write("".join(f"0x{a:04X}\n" for a in missing))
