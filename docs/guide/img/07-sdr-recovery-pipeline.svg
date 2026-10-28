@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>From bitstream to readable Verilog</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="640" fill="#FFFFFF"/>
+<text x="480" y="30" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">From bitstream to readable Verilog, in eight steps</text>
+<rect x="20" y="55" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="44" cy="81" r="14" fill="#EA580C"/>
+<text x="44" y="86" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">1</text>
+<text x="66" y="87" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Decoded SDR image</text>
+<text x="36" y="115" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/sfl_decode.py</text>
+<text x="36" y="143" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">2.2 MB of configuration</text>
+<text x="36" y="163" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">bits, 5,420 frames</text>
+<rect x="335" y="55" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="359" cy="81" r="14" fill="#EA580C"/>
+<text x="359" y="86" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">2</text>
+<text x="381" y="87" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Frames sorted by address</text>
+<text x="351" y="115" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/xc7_db.py</text>
+<text x="351" y="143" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">frame map checked against</text>
+<text x="351" y="163" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">the Project X-Ray database</text>
+<rect x="650" y="55" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="674" cy="81" r="14" fill="#EA580C"/>
+<text x="674" y="86" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+<text x="696" y="87" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">FASM feature list</text>
+<text x="666" y="115" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/xc7_fasm.py</text>
+<text x="666" y="143" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">549k lines of 'this switch</text>
+<text x="666" y="163" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">is on'; 99.98 % of bits explained</text>
+<rect x="650" y="245" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="674" cy="271" r="14" fill="#EA580C"/>
+<text x="674" y="276" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">4</text>
+<text x="696" y="277" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Cell netlist</text>
+<text x="666" y="305" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/xc7_netlist.py</text>
+<text x="666" y="333" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">63,648 cells, 127,648 nets,</text>
+<text x="666" y="353" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">no net with two drivers</text>
+<rect x="335" y="245" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="359" cy="271" r="14" fill="#EA580C"/>
+<text x="359" y="276" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+<text x="381" y="277" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Blocks recognised</text>
+<text x="351" y="305" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/xc7_blocks.py</text>
+<text x="351" y="333" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">clocks, ADC pins, UARTs,</text>
+<text x="351" y="353" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">QSPI flash master</text>
+<rect x="20" y="245" width="290" height="135" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2"/>
+<circle cx="44" cy="271" r="14" fill="#EA580C"/>
+<text x="44" y="276" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">6</text>
+<text x="66" y="277" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Structural Verilog</text>
+<text x="36" y="305" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">tools/xc7_netlist_verilog.py</text>
+<text x="36" y="333" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">63,474 primitives;</text>
+<text x="36" y="353" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">Yosys elaborates it cleanly</text>
+<rect x="20" y="435" width="290" height="135" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<circle cx="44" cy="461" r="14" fill="#EA580C"/>
+<text x="44" y="466" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">7</text>
+<text x="66" y="467" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Whole-chip simulation</text>
+<text x="36" y="495" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">Verilator, hdl/sdr/sim/</text>
+<text x="36" y="523" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">about 15,000 clocks/s; answers</text>
+<text x="36" y="543" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">r000032 with r010437</text>
+<rect x="335" y="435" width="290" height="135" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<circle cx="359" cy="461" r="14" fill="#EA580C"/>
+<text x="359" y="466" font-size="15" font-weight="bold" text-anchor="middle" fill="#FFFFFF">8</text>
+<text x="381" y="467" font-size="16" font-weight="bold" text-anchor="start" fill="#1F2937">Hand-written RTL</text>
+<text x="351" y="495" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280" font-family="DejaVu Sans Mono, monospace">hdl/sdr/uart_link.v</text>
+<text x="351" y="523" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">MAIN link: 0 mismatching</text>
+<text x="351" y="543" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">clocks against the netlist</text>
+<polyline points="310,122 335,122" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="625,122 650,122" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="795,190 795,245" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="650,312 625,312" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="335,312 310,312" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="165,380 165,435" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="310,502 335,502" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<rect x="650" y="435" width="290" height="135" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="660" y="476.5" font-size="15" font-weight="bold" text-anchor="start" fill="#1F2937">Checks along the way</text>
+<text x="660" y="499.5" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">a cut-out UART receiver decodes</text>
+<text x="660" y="518.5" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">real bytes exactly; LUT and FF</text>
+<text x="660" y="537.5" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">counts match the bitstream count</text>
+<text x="480" y="605" font-size="15" font-weight="normal" text-anchor="middle" fill="#1F2937">Steps 1-3 read the chip's configuration; 4-6 rebuild the circuit; 7-8 run it and re-write it by hand.</text>
+<text x="480" y="628" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280" font-style="italic">Everything built from the bitstream stays in build/ (not committed); only tools and hand-written HDL are in git.</text>
+</svg>

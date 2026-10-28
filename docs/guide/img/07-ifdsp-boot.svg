@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="890" viewBox="0 0 960 890" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>IF DSP start-up, step by step</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="890" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">IF DSP start-up: who does what, in order (time runs down)</text>
+<rect x="20" y="50" width="220" height="36" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="130.0" y="74.5" font-size="16" font-weight="normal" text-anchor="middle" fill="#1F2937">Boot ROM + flash</text>
+<polyline points="130,86 130,875" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="7 5"/>
+<rect x="250" y="50" width="220" height="36" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="74.5" font-size="16" font-weight="normal" text-anchor="middle" fill="#1F2937">Cortex-M33</text>
+<polyline points="360,86 360,875" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="7 5"/>
+<rect x="480" y="50" width="220" height="36" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="590.0" y="74.5" font-size="16" font-weight="normal" text-anchor="middle" fill="#1F2937">HiFi4 DSP</text>
+<polyline points="590,86 590,875" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="7 5"/>
+<rect x="710" y="50" width="230" height="36" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="825.0" y="74.5" font-size="16" font-weight="normal" text-anchor="middle" fill="#1F2937">MAIN CPU</text>
+<polyline points="820,86 820,875" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="7 5"/>
+<rect x="25" y="105" width="210" height="75" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="130.0" y="129.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reads the flash config</text>
+<text x="130.0" y="148.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">block (quad SPI), jumps</text>
+<text x="130.0" y="167.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">to the M33 code</text>
+<circle cx="25" cy="105" r="12" fill="#1F2937"/>
+<text x="25" y="110" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">1</text>
+<polyline points="235,160 255,175" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<rect x="255" y="170" width="210" height="75" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="194.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">holds the DSP stalled</text>
+<text x="360.0" y="213.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">copies 32 KB of its</text>
+<text x="360.0" y="232.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">own code into SRAM</text>
+<circle cx="255" cy="170" r="12" fill="#1F2937"/>
+<text x="255" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">2</text>
+<rect x="255" y="260" width="210" height="95" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="284.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">sets clocks from the</text>
+<text x="360.0" y="303.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">SDR's 18.432 MHz</text>
+<text x="360.0" y="322.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP_CLK: CPU 198 MHz,</text>
+<text x="360.0" y="341.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP PLL 594 MHz</text>
+<circle cx="255" cy="260" r="12" fill="#1F2937"/>
+<text x="255" y="265" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+<rect x="255" y="370" width="210" height="95" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="394.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">clears the register file</text>
+<text x="360.0" y="413.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">resets the codec and</text>
+<text x="360.0" y="432.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">sends it 67 settings</text>
+<text x="360.0" y="451.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">starts PWM, rpmsg</text>
+<circle cx="255" cy="370" r="12" fill="#1F2937"/>
+<text x="255" y="375" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">4</text>
+<rect x="255" y="480" width="210" height="55" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="503.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">copies 3 DSP images</text>
+<text x="360.0" y="522.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">releases the DSP</text>
+<circle cx="255" cy="480" r="12" fill="#1F2937"/>
+<text x="255" y="485" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+<polyline points="465,508 485,508" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<rect x="485" y="480" width="210" height="95" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="590.0" y="504.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">writes default values</text>
+<text x="590.0" y="523.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">into the register file</text>
+<text x="590.0" y="542.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">creates its threads,</text>
+<text x="590.0" y="561.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">audio starts</text>
+<circle cx="485" cy="480" r="12" fill="#1F2937"/>
+<text x="485" y="485" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">6</text>
+<rect x="255" y="600" width="440" height="170" rx="8" fill="#FFFBEB" stroke="#D97706" stroke-width="2"/>
+<text x="475" y="622" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">7  MU flag handshake (SEMA42 gate 0 as a token)</text>
+<polyline points="360,652 590,652" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<text x="475" y="645" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">M33 raises flag 1</text>
+<polyline points="590,688 360,688" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<text x="475" y="681" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP answers flag 1</text>
+<polyline points="360,724 590,724" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<text x="475" y="717" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">M33 locks gate 0, flag 2, unlocks</text>
+<polyline points="590,760 360,760" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<text x="475" y="753" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP takes the gate, flag 3</text>
+<rect x="25" y="600" width="210" height="120" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="130.0" y="637.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">no timeout here:</text>
+<text x="130.0" y="656.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">if the DSP never</text>
+<text x="130.0" y="675.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reaches flag 3, the</text>
+<text x="130.0" y="694.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">console never starts</text>
+<rect x="255" y="795" width="210" height="75" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="360.0" y="819.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reg 0 = 0x0101 (V01-01)</text>
+<text x="360.0" y="838.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reg 1 bit 0 = 1 (DSP up)</text>
+<text x="360.0" y="857.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">starts the console task</text>
+<circle cx="255" cy="795" r="12" fill="#1F2937"/>
+<text x="255" y="800" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">8</text>
+<rect x="715" y="105" width="220" height="75" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="825.0" y="129.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">MAIN boots in parallel</text>
+<text x="825.0" y="148.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">and waits a moment</text>
+<text x="825.0" y="167.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">(100 ticks)</text>
+<rect x="715" y="795" width="220" height="75" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+<text x="825.0" y="819.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">i DB00: machine mode on</text>
+<text x="825.0" y="838.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reads reg 0 = 0x0101,</text>
+<text x="825.0" y="857.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">waits for reg 1 bit 0</text>
+<circle cx="715" cy="795" r="12" fill="#1F2937"/>
+<text x="715" y="800" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">9</text>
+<polyline points="715,832 465,832" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#a_main)"/>
+<text x="590" y="825" font-size="14" font-weight="normal" text-anchor="middle" fill="#2563EB">UART</text>
+</svg>

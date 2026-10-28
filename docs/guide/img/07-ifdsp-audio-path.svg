@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>IF DSP audio data path</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="640" fill="#FFFFFF"/>
+<text x="480" y="30" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">Audio through the IF DSP: receive on top, transmit below</text>
+<g stroke="#6B7280" stroke-width="3" fill="none"><line x1="40" y1="175" x2="40" y2="235"/><polyline points="22,175 40,197 58,175"/></g>
+<text x="40" y="255" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">antenna</text>
+<rect x="75" y="70" width="135" height="290" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="142.5" y="161.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">SDR FPGA</text>
+<text x="142.5" y="184.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">digitises the</text>
+<text x="142.5" y="203.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RF and mixes</text>
+<text x="142.5" y="222.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">it down</text>
+<text x="142.5" y="241.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="142.5" y="260.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">makes the</text>
+<text x="142.5" y="279.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">TX signal</text>
+<polyline points="40,235 40,250" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polyline points="55,215 75,215" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)" marker-start="url(#a_grey)"/>
+<rect x="290" y="50" width="400" height="485" rx="8" fill="#FBF7FF" stroke="#9333EA" stroke-width="2"/>
+<text x="490" y="72" font-size="16" font-weight="bold" text-anchor="middle" fill="#9333EA">HiFi4 DSP threads</text>
+<rect x="305" y="95" width="60" height="70" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="335.0" y="126.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FIFO</text>
+<text x="335.0" y="145.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">x2</text>
+<rect x="385" y="85" width="170" height="90" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="470.0" y="114.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">Rx_Path</text>
+<text x="470.0" y="137.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">receive chain</text>
+<text x="470.0" y="156.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">every 2 ms</text>
+<rect x="575" y="95" width="100" height="70" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="625.0" y="126.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">to codec</text>
+<text x="625.0" y="145.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">buffer</text>
+<polyline points="210,130 305,130" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<text x="250" y="120" font-size="14" font-weight="normal" text-anchor="middle" fill="#EA580C">RX IF</text>
+<polyline points="365,130 385,130" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<polyline points="555,130 575,130" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<rect x="305" y="255" width="60" height="70" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="335.0" y="286.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FIFO</text>
+<text x="335.0" y="305.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">x2</text>
+<rect x="385" y="245" width="170" height="90" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="470.0" y="274.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">Tx_Path</text>
+<text x="470.0" y="297.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">transmit chain</text>
+<text x="470.0" y="316.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">every 2 ms</text>
+<rect x="575" y="255" width="100" height="70" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="625.0" y="286.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">from codec</text>
+<text x="625.0" y="305.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">buffer</text>
+<polyline points="305,290 210,290" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<text x="250" y="280" font-size="14" font-weight="normal" text-anchor="middle" fill="#EA580C">TX AF</text>
+<polyline points="385,290 365,290" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<polyline points="575,290 555,290" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<rect x="740" y="70" width="110" height="290" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="795.0" y="161.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">AIC3204</text>
+<text x="795.0" y="184.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">codec</text>
+<text x="795.0" y="203.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="795.0" y="222.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DAC out</text>
+<text x="795.0" y="241.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="795.0" y="260.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="795.0" y="279.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">ADC in</text>
+<polyline points="675,130 740,130" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<polyline points="740,290 675,290" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="707" y="120" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">I2S</text>
+<text x="707" y="280" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">I2S</text>
+<g stroke="#6B7280" stroke-width="3" fill="#F3F4F6"><rect x="875" y="117" width="14" height="22"/><polygon points="889,117 907,105 907,151 889,139"/><path d="M915,117 q10,11 0,22" fill="none"/><path d="M921,109 q18,19 0,38" fill="none"/></g>
+<polyline points="850,130 870,130" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="905" y="170" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">speaker</text>
+<g stroke="#6B7280" stroke-width="3" fill="#F3F4F6"><rect x="890" y="255" width="20" height="34" rx="10"/><path d="M882,277 q18,26 36,0" fill="none"/><line x1="900" y1="301" x2="900" y2="313"/><line x1="888" y1="313" x2="912" y2="313"/></g>
+<polyline points="880,280 850,280" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="900" y="335" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">mic</text>
+<rect x="305" y="370" width="180" height="80" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="395.0" y="393.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Rx_Audio</text>
+<text x="395.0" y="416.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">12 blocks at a time</text>
+<text x="395.0" y="435.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">(24 ms)</text>
+<rect x="500" y="370" width="175" height="80" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="587.5" y="393.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Spi</text>
+<text x="587.5" y="416.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">every 7 blocks:</text>
+<text x="587.5" y="435.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">spectrum data</text>
+<polyline points="400,175 400,205 375,205 375,370" fill="none" stroke="#9333EA" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a_dsp)"/>
+<polyline points="540,175 540,205 565,205 565,370" fill="none" stroke="#9333EA" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a_dsp)"/>
+<polyline points="520,335 520,370" fill="none" stroke="#9333EA" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a_dsp)"/>
+<rect x="740" y="380" width="190" height="70" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="835.0" y="408.0" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">DISPLAY</text>
+<text x="835.0" y="431.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">scope, SPI 1 MHz</text>
+<polyline points="675,410 740,410" fill="none" stroke="#16A34A" stroke-width="2" marker-end="url(#a_disp)"/>
+<rect x="305" y="470" width="370" height="50" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="490.0" y="491.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">register file (set by MAIN):</text>
+<text x="490.0" y="510.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">mode, filter widths, EQ, levels</text>
+<text x="490" y="560" font-size="15" font-weight="normal" text-anchor="middle" fill="#1F2937">One block = 24 samples = 2 ms at 12 kHz.  All the maths is 32-bit floating point.</text>
+<text x="490" y="585" font-size="15" font-weight="normal" text-anchor="middle" fill="#1F2937">The codec's clocks pace Rx_Path and Tx_Path; the two-deep FIFOs absorb the SDR's own timing.</text>
+<rect x="130" y="612" width="22" height="16" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="160" y="625" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">SDR FPGA</text>
+<rect x="241.2" y="612" width="22" height="16" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="271.2" y="625" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">IF DSP</text>
+<rect x="335.6" y="612" width="22" height="16" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="365.6" y="625" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">DISPLAY</text>
+<rect x="438.40000000000003" y="612" width="22" height="16" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="468.40000000000003" y="625" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">other hardware</text>
+<rect x="600.0" y="612" width="22" height="16" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="630.0" y="625" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">buffer</text>
+</svg>

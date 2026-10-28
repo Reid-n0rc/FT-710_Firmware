@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="770" viewBox="0 0 960 770" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>SDR image: a bitstream, not a program</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="770" fill="#FFFFFF"/>
+<text x="480" y="30" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">The SDR image is a bitstream: a wiring plan, not a program</text>
+<rect x="20" y="50" width="440" height="220" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="240" y="75" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">CPU firmware (MAIN, DISPLAY, IF DSP)</text>
+<rect x="45" y="92" width="150" height="28" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="120" y="111" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">instruction 1</text>
+<rect x="45" y="126" width="150" height="28" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="120" y="145" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">instruction 2</text>
+<rect x="45" y="160" width="150" height="28" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="120" y="179" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">instruction 3</text>
+<rect x="45" y="194" width="150" height="28" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="120" y="213" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937" font-family="DejaVu Sans Mono, monospace">...</text>
+<rect x="270" y="110" width="160" height="80" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="350.0" y="134.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">CPU</text>
+<text x="350.0" y="157.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">fetch, execute,</text>
+<text x="350.0" y="176.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">repeat</text>
+<polyline points="195,150 270,150" fill="none" stroke="#1F2937" stroke-width="2" marker-end="url(#a_ink)"/>
+<text x="240" y="255" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">A list of steps that a processor works through.</text>
+<rect x="500" y="50" width="440" height="220" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="720" y="75" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">FPGA firmware (SDR module)</text>
+<rect x="525" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="547" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="569,107 591,107" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="547,122 547,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="591" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="613" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<polyline points="635,107 657,107" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="613,122 613,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="657" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="679" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP</text>
+<polyline points="701,107 723,107" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="679,122 679,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="723" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="745" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RAM</text>
+<polyline points="767,107 789,107" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="745,122 745,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="789" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="811" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="833,107 855,107" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="811,122 811,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="855" y="92" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="877" y="112" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<polyline points="877,122 877,138" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="525" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="547" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<polyline points="569,153 591,153" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="547,168 547,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="591" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="613" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP</text>
+<polyline points="635,153 657,153" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="613,168 613,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="657" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="679" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RAM</text>
+<polyline points="701,153 723,153" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="679,168 679,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="723" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="745" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="767,153 789,153" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="745,168 745,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="789" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="811" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<polyline points="833,153 855,153" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<polyline points="811,168 811,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="855" y="138" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="877" y="158" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="877,168 877,184" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="525" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="547" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DSP</text>
+<polyline points="569,199 591,199" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="591" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="613" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RAM</text>
+<polyline points="635,199 657,199" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="657" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="679" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="701,199 723,199" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="723" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="745" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<polyline points="767,199 789,199" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="789" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="811" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">LUT</text>
+<polyline points="833,199 855,199" fill="none" stroke="#EA580C" stroke-width="1.5"/>
+<rect x="855" y="184" width="44" height="30" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="877" y="204" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">FF</text>
+<text x="720" y="240" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">Bits set every logic table, flip-flop, multiplier,</text>
+<text x="720" y="258" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">memory and wire switch. Loaded once at power-on.</text>
+<text x="480" y="305" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">FT-710_SDR_V0104: about 2.2 MB, read from the module's QSPI flash at power-on</text>
+<rect x="40" y="320" width="64" height="50" rx="0" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="72.0" y="351" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">header</text>
+<rect x="104" y="320" width="36" height="50" rx="0" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<rect x="140" y="320" width="610" height="50" rx="0" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="445.0" y="351" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">block 0: frames 0-4389</text>
+<rect x="750" y="320" width="150" height="50" rx="0" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="825.0" y="351" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">block 1: 4390-5419</text>
+<rect x="900" y="320" width="30" height="50" rx="0" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="72" y="392" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">4 KB:</text>
+<text x="72" y="409" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">CRC-32</text>
+<polyline points="122,418 122,372" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="130" y="433" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">settings: quad-SPI boot, chip ID 7A50T</text>
+<text x="440" y="392" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">logic and routing: 4,390 frames of 101 words</text>
+<text x="825" y="392" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">block-RAM</text>
+<text x="825" y="409" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">contents (tables)</text>
+<polyline points="915,418 915,372" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="910" y="433" font-size="14" font-weight="normal" text-anchor="end" fill="#1F2937">CRC + start</text>
+<text x="480" y="460" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280" font-style="italic">Bar roughly to scale; the header and settings are widened so they can be seen.</text>
+<text x="480" y="505" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">How full the XC7A50T is</text>
+<text x="230" y="549" font-size="15" font-weight="normal" text-anchor="end" fill="#1F2937">logic tables (LUT)</text>
+<rect x="245" y="529" width="500" height="28" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<rect x="245" y="529" width="410.0" height="28" rx="4" fill="#FB923C" stroke="#EA580C" stroke-width="2"/>
+<text x="755" y="549" font-size="15" font-weight="normal" text-anchor="start" fill="#1F2937">82 %   (26,608 of 32,600)</text>
+<text x="230" y="601" font-size="15" font-weight="normal" text-anchor="end" fill="#1F2937">flip-flops</text>
+<rect x="245" y="581" width="500" height="28" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<rect x="245" y="581" width="240.0" height="28" rx="4" fill="#FB923C" stroke="#EA580C" stroke-width="2"/>
+<text x="755" y="601" font-size="15" font-weight="normal" text-anchor="start" fill="#1F2937">48 %   (31,384 of 65,200)</text>
+<text x="230" y="653" font-size="15" font-weight="normal" text-anchor="end" fill="#1F2937">multipliers (DSP48)</text>
+<rect x="245" y="633" width="500" height="28" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<rect x="245" y="633" width="495.0" height="28" rx="4" fill="#FB923C" stroke="#EA580C" stroke-width="2"/>
+<text x="755" y="653" font-size="15" font-weight="normal" text-anchor="start" fill="#1F2937">99 %   (119 of 120)</text>
+<text x="230" y="705" font-size="15" font-weight="normal" text-anchor="end" fill="#1F2937">block RAM (36 Kb)</text>
+<rect x="245" y="685" width="500" height="28" rx="4" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<rect x="245" y="685" width="465.0" height="28" rx="4" fill="#FB923C" stroke="#EA580C" stroke-width="2"/>
+<text x="755" y="705" font-size="15" font-weight="normal" text-anchor="start" fill="#1F2937">93 %   (70 of 75)</text>
+<text x="480" y="750" font-size="15" font-weight="normal" text-anchor="middle" fill="#1F2937">Nearly full, and almost every hardware multiplier is in use: a signal-processing design.</text>
+</svg>

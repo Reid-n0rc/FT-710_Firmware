@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="750" viewBox="0 0 960 750" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>Inside the SDR FPGA</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="750" fill="#FFFFFF"/>
+<text x="480" y="30" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">Inside the SDR FPGA (XC7A50T): what the netlist shows</text>
+<rect x="190" y="50" width="580" height="550" rx="8" fill="#FFFBF7" stroke="#EA580C" stroke-width="2"/>
+<text x="480" y="72" font-size="15" font-weight="bold" text-anchor="middle" fill="#EA580C">XC7A50T fabric</text>
+<rect x="210" y="85" width="260" height="60" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="340.0" y="111.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">125 MHz clock from the ADC,</text>
+<text x="340.0" y="130.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">drives almost everything</text>
+<rect x="490" y="85" width="260" height="60" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="620.0" y="111.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">2 MMCMs: about 28 MHz out</text>
+<text x="620.0" y="130.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">on one pin (role open)</text>
+<rect x="210" y="165" width="540" height="75" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="480.0" y="195.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Receive: mix down and filter (inference)</text>
+<text x="480.0" y="218.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">cosine table, six FIR filters, most of the 119 multipliers</text>
+<rect x="210" y="260" width="540" height="75" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="480.0" y="290.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Transmit path (inference)</text>
+<text x="480.0" y="313.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">raised-cosine keying ramp, DDR output bus</text>
+<rect x="210" y="355" width="250" height="140" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="335.0" y="399.0" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Register bank</text>
+<text x="335.0" y="422.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reg 0 = 0x0104</text>
+<text x="335.0" y="441.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">(version V01-04)</text>
+<text x="335.0" y="460.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">shared by both UARTs</text>
+<rect x="210" y="515" width="250" height="65" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="335.0" y="543.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">QSPI master on the</text>
+<text x="335.0" y="562.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">configuration-flash pins</text>
+<rect x="500" y="355" width="250" height="60" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="625.0" y="381.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">Scope / FFT engine</text>
+<text x="625.0" y="400.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">phase tables x4 (inference)</text>
+<rect x="500" y="435" width="250" height="60" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="625.0" y="461.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">UART B: MAIN link</text>
+<text x="625.0" y="480.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">r / w frames, 115200 baud</text>
+<rect x="500" y="515" width="250" height="65" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="625.0" y="543.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">UART A: debug console</text>
+<text x="625.0" y="562.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">prompt  [IF]&gt;</text>
+<polyline points="460,455 500,455" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)" marker-start="url(#a_sdr)"/>
+<polyline points="460,485 480,485 480,547 500,547" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)" marker-start="url(#a_sdr)"/>
+<rect x="20" y="85" width="140" height="155" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="90.0" y="118.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">ADC</text>
+<text x="90.0" y="141.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">part unknown</text>
+<text x="90.0" y="160.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="90.0" y="179.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">14 LVDS DDR</text>
+<text x="90.0" y="198.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">data pairs</text>
+<text x="90.0" y="217.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">+ clocks</text>
+<polyline points="160,115 210,115" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<polyline points="160,200 210,200" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<rect x="20" y="260" width="140" height="75" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="90.0" y="281.0" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">TX DAC?</text>
+<text x="90.0" y="304.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">17 LVDS DDR</text>
+<text x="90.0" y="323.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">pairs out</text>
+<polyline points="210,297 160,297" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<rect x="210" y="630" width="260" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="340.0" y="653.0" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">QSPI config flash</text>
+<text x="340.0" y="676.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">holds the bitstream</text>
+<polyline points="300,580 300,630" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)" marker-start="url(#a_grey)"/>
+<text x="310" y="615" font-size="14" font-weight="normal" text-anchor="start" fill="#6B7280">boot read; rewritten in an update</text>
+<rect x="800" y="165" width="140" height="170" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="870.0" y="214.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">IF DSP</text>
+<text x="870.0" y="237.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RT685</text>
+<text x="870.0" y="256.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="870.0" y="275.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RX IF (I2S)</text>
+<text x="870.0" y="294.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">TX AF (I2S)</text>
+<polyline points="750,200 800,200" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<polyline points="800,297 750,297" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<rect x="800" y="355" width="140" height="60" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="870.0" y="381.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">DISPLAY</text>
+<text x="870.0" y="400.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">scope SPI</text>
+<polyline points="750,385 800,385" fill="none" stroke="#16A34A" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a_disp)"/>
+<rect x="800" y="435" width="140" height="60" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="870.0" y="461.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">MAIN CPU</text>
+<text x="870.0" y="480.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">UART5</text>
+<polyline points="750,465 800,465" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#a_main)" marker-start="url(#a_main)"/>
+<rect x="800" y="515" width="140" height="65" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="870.0" y="543.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">debug pins</text>
+<text x="870.0" y="562.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">UART_DBG</text>
+<polyline points="750,547 800,547" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)" marker-start="url(#a_grey)"/>
+<rect x="520" y="640" width="30" height="20" rx="4" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+<text x="560" y="655" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">seen in the netlist</text>
+<rect x="520" y="672" width="30" height="20" rx="4" fill="#FFFFFF" stroke="#EA580C" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="560" y="687" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">inferred from tables and counts</text>
+<text x="480" y="730" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280" font-style="italic">The scope SPI and I2S pins are not yet matched to FPGA pins; their arrows are from the connector names.</text>
+</svg>

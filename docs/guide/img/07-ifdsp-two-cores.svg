@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" font-size="14" fill="#1F2937">
+<title>The IF DSP chip: two processors sharing memory</title>
+<defs><marker id="a_main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="a_disp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="a_dsp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="a_sdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker><marker id="a_grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_danger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker><marker id="a_caution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker><marker id="a_white" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="a_ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="700" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" font-weight="bold" text-anchor="middle" fill="#1F2937">Q2002, NXP i.MX RT685: one chip, two processors</text>
+<rect x="200" y="55" width="560" height="480" rx="8" fill="#FBF7FF" stroke="#9333EA" stroke-width="2"/>
+<text x="480" y="80" font-size="16" font-weight="bold" text-anchor="middle" fill="#9333EA">NXP i.MX RT685 (the IF DSP)</text>
+<rect x="225" y="95" width="205" height="235" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="327.5" y="149.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">Cortex-M33</text>
+<text x="327.5" y="172.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">198 MHz, FreeRTOS</text>
+<text x="327.5" y="191.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="327.5" y="210.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">the manager:</text>
+<text x="327.5" y="229.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">text console for MAIN</text>
+<text x="327.5" y="248.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">codec set-up</text>
+<text x="327.5" y="267.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">loads and starts the DSP</text>
+<text x="327.5" y="286.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">meter PWM output</text>
+<rect x="530" y="95" width="205" height="235" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+<text x="632.5" y="149.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">HiFi4 DSP</text>
+<text x="632.5" y="172.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">594 MHz, Cadence XOS</text>
+<text x="632.5" y="191.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937"></text>
+<text x="632.5" y="210.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">the worker:</text>
+<text x="632.5" y="229.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">6 threads</text>
+<text x="632.5" y="248.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">audio blocks at 12 kHz</text>
+<text x="632.5" y="267.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">filters, EQ, tones</text>
+<text x="632.5" y="286.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">scope data for DISPLAY</text>
+<rect x="442" y="170" width="76" height="90" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="480.0" y="201.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">MU</text>
+<text x="480.0" y="220.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">flags</text>
+<text x="480.0" y="239.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">SEMA42</text>
+<polyline points="430,200 442,200" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<polyline points="518,230 530,230" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<polyline points="530,200 518,200" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<polyline points="442,230 430,230" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<text x="480" y="280" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">boot</text>
+<text x="480" y="297" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">hand-</text>
+<text x="480" y="314" font-size="14" font-weight="normal" text-anchor="middle" fill="#6B7280">shake</text>
+<rect x="255" y="350" width="480" height="170" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="495" y="510" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">Shared SRAM (both cores can read and write it)</text>
+<rect x="270" y="362" width="450" height="44" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="495.0" y="380.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">0x20070000  register file, 32K x 16-bit words</text>
+<text x="495.0" y="399.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">the real control path</text>
+<rect x="270" y="414" width="450" height="32" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="495.0" y="435.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">0x20060000  audio DMA buffers: used by the DSP only</text>
+<rect x="270" y="454" width="450" height="32" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="495.0" y="475.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">0x20020000  rpmsg message window: built, but idle</text>
+<polyline points="300,330 300,362" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)"/>
+<text x="308" y="345" font-size="14" font-weight="normal" text-anchor="start" fill="#9333EA">writes</text>
+<polyline points="690,330 690,362" fill="none" stroke="#9333EA" stroke-width="2" marker-end="url(#a_dsp)" marker-start="url(#a_dsp)"/>
+<text x="682" y="345" font-size="14" font-weight="normal" text-anchor="end" fill="#9333EA">reads + writes</text>
+<rect x="20" y="100" width="160" height="70" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="100.0" y="128.5" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">MAIN CPU</text>
+<text x="100.0" y="151.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">RX651</text>
+<polyline points="180,135 225,135" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#a_main)"/>
+<text x="100" y="190" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">UART, 115200 baud</text>
+<text x="100" y="207" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">r / w register frames</text>
+<rect x="20" y="245" width="160" height="70" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="100.0" y="263.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">QSPI flash</text>
+<text x="100.0" y="286.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">16 MB, holds</text>
+<text x="100.0" y="305.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">both programs</text>
+<polyline points="180,280 225,280" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)"/>
+<rect x="790" y="95" width="150" height="90" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="865.0" y="124.0" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">SDR FPGA</text>
+<text x="865.0" y="147.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">XC7A50T</text>
+<text x="865.0" y="166.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">I2S in + out</text>
+<polyline points="790,125 735,125" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<polyline points="735,160 790,160" fill="none" stroke="#EA580C" stroke-width="2" marker-end="url(#a_sdr)"/>
+<rect x="790" y="210" width="150" height="75" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="865.0" y="231.5" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">DISPLAY</text>
+<text x="865.0" y="254.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">CPU, scope</text>
+<text x="865.0" y="273.5" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">via SPI</text>
+<polyline points="735,247 790,247" fill="none" stroke="#16A34A" stroke-width="2" marker-end="url(#a_disp)"/>
+<rect x="255" y="590" width="230" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="370.0" y="613.0" font-size="15" font-weight="bold" text-anchor="middle" fill="#1F2937">TLV320AIC3204</text>
+<text x="370.0" y="636.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">audio codec (ADC + DAC)</text>
+<polyline points="240,330 240,620 255,620" fill="none" stroke="#9333EA" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a_dsp)"/>
+<text x="250" y="565" font-size="14" font-weight="normal" text-anchor="start" fill="#9333EA">codec set-up (M33, bit-banged SPI)</text>
+<polyline points="485,610 775,610 775,300 735,300" fill="none" stroke="#6B7280" stroke-width="2" marker-end="url(#a_grey)" marker-start="url(#a_grey)"/>
+<text x="500" y="600" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">I2S audio, the codec drives the clocks</text>
+<rect x="40" y="672" width="22" height="16" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="70" y="685" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">MAIN</text>
+<rect x="117.6" y="672" width="22" height="16" rx="4" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="147.6" y="685" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">IF DSP</text>
+<rect x="212.0" y="672" width="22" height="16" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="242.0" y="685" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">SDR FPGA</text>
+<rect x="323.2" y="672" width="22" height="16" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="353.2" y="685" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">DISPLAY</text>
+<rect x="426.0" y="672" width="22" height="16" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="456.0" y="685" font-size="14" font-weight="normal" text-anchor="start" fill="#1F2937">other hardware</text>
+</svg>
