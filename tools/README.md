@@ -59,6 +59,8 @@ Conventions:
 | `flix_compare.py` | FLIX test oracle: compares a Ghidra instruction export with `flix.dis` (length, mnemonic, operands per slot; normalisation rules N1–N8 in the docstring), compares function lists (`funcs`), writes the address list (`addrs`) and `entries_hifi4.tsv` (`entries`) | `ExportListing.java` TSV + `flix.dis` → `summary.txt`, `mismatches.tsv`, `by_mnemonic.tsv` | T21b (#97) |
 | `flix_oracle.sh` | End-to-end oracle for one Xtensa language id: scratch import with the HiFi4 setup and function pass, listing + decode export, B9 decompile of `FUN_0020bb74`, all comparisons; env `IMAGE`, `PROJDIR`, `HEADLESS`, `TIMEOUT` | language id → `build/oracle/<lang>/` | T21b (#97) |
 | `flix_stats.py` | Counts what Ghidra cannot represent in the HiFi4 code: functions with FLIX bundles, bundle sizes and slots, branch slots, unknown and wrong-register ops | `decomp/ifdsp/hifi4/flix.dis` (+ Ghidra's Xtensa `.sinc` files) → stdout | #97 |
+| `xtensa_sleigh_gen.py` | Generates the Ghidra language `Xtensa:LE:32:rt600hifi4` from Cadence's `xtensa-modules.c` (`extract`, `check`, `selftest` = its own model vs `flix.dis`, `generate`); compiles the probe `xtensa_isa_dump.c` with `cc` | `xtensa-modules.c` + Ghidra stock Xtensa `.sinc` → `tools/ghidra/xtensa-rt600hifi4/` (committed; bootstrap step `hifi4`) | T21a (#97) |
+| `xtensa_isa_dump.c` | C probe for `xtensa_sleigh_gen.py`: includes `xtensa-modules.c` and dumps slot/field bit maps, opcode encodings, operand decode tables and reloc samples as JSON | built and run by the generator | T21a (#97) |
 | `ifdsp_hifi4_regscan.py` | Register-file accesses in a FLIX-aware objdump listing | listing + `functions.tsv` → stdout | T12b |
 | `ifdsp_coef_tables.py` | Finds and classifies numeric tables (filters, windows, sin/cos, gain curves) | SRAM image → stdout | T12e |
 | `ifdsp_names_java.py` | Converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV, splits proposals by program | Java ↔ TSV | T17 |
@@ -107,14 +109,16 @@ the exact command line for every program.
 | `ApplyNames.java` | postScript | Applies `address<TAB>name[<TAB>comment]`; `@name` = data label; creates missing functions | MAIN, DISPLAY | T05 |
 | `names_main.tsv` | data | 1147 MAIN names (T05, T09, T10a–h merged in T17) | ApplyNames | T05/T17 |
 | `names_display.tsv` | data | 768 DISPLAY names (T06, T11a–g merged in T17) | ApplyNames | T06/T17 |
-| `entries_display.tsv` | data | 68 DISPLAY function entries analysis missed or started late (`drop` = old entry was data) | FixFuncEntries | T11/T17 |
+| `entries_display.tsv` | data | 205 DISPLAY function entries analysis missed or started late (`drop` = old entry was data, `thumb` = Thumb entry): 68 from T11/T17, 137 from T21e (`DisplayGaps.java` kinds) | FixFuncEntries | T11/T17/T21e |
 | `names_*.T*.tsv`, `entries_display.T*.tsv` | data | the per-sub-task proposals, kept as the merge inputs | names_merge.py | T10/T11/T12 |
 | `names_{main,display,ifdsp}.picks.tsv` | data | T17 resolutions of name conflicts | names_merge.py | T17 |
 | `CatDispatch.java` | postScript | Dumps the CAT mnemonic → switch case → handler table with each length test (`len==N`, `len>N`, ...) | `decomp/main/cat_dispatch.tsv` | T05, fixed T20 |
 | `ExportDecomp.java` | postScript | Decompiled C in 50-function files + `functions.tsv` (60 s per-function limit) + `quality.tsv` (decompile-quality counts from the same pass, T21f) | all | T01/T05 |
 | `DisplaySetup.java` | preScript | DISPLAY RZ/A1H map: `.text`/`.rodata`/scatter area split, armcc LZ decompression of RW data, ZI blocks, I/O, vectors | DISPLAY | T06 |
 | `DisplayFindCode.java` | postScript | Second code-discovery pass: pointer tables, `push {..,lr}` prologues, orphan code (run twice; the 2nd finds nothing new) | DISPLAY | T06 |
-| `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames) | DISPLAY | T11 |
+| `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames); the late-start walk stops at a call and keeps called functions (T21e) | DISPLAY | T11 |
+| `DisplayJumpTables.java` | postScript | ARM jump tables (`ldr pc,[pc,rX,lsl #2]`, `add pc,pc,rX,lsl #2`): `scan` lists every site with its length from the `cmp rX,#n`; `apply` repairs the sites the decompiler does not turn into a full switch (stray references, RETURN flow override, table data, case code; switch override as last resort); `check` = the test (every site a switch with all cases) | DISPLAY (any ARM image) | T21e |
+| `DisplayGaps.java` | postScript | Missed function starts (call targets that are no entry, code after a return that nothing reaches, address-taken code, tail-branch targets merged into another function) and undefined fragments in `.text`; `define` defines the non-code fragments as data and disassembles dead code. Prints the B7 test (no call target inside a body) | DISPLAY (any ARM image) | T21e |
 | `DisplayReport.java` | postScript | Read-only report: blocks, strings, I/O references as TSVs | DISPLAY | T06 |
 | `IfdspM33Setup.java` | preScript | RT685 map for the M33 image, MCUXpresso copy-down block, `.bss`, vectors → Thumb functions | IFDSP M33 | T07 |
 | `IfdspFindFuncs.java` | postScript | Missed Thumb `push {…,lr}` prologues in the M33 code ranges; rodata strings | IFDSP M33 | T07 |

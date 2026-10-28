@@ -193,7 +193,7 @@ Not fixed (unused by this firmware): `UTOF` memory .UB form (`szldu_src` has no 
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
 download with SHA-256 checks (`--only deps`, Linux x86_64), the RX module install from `stefan00lpf/rx-proc-ghidra` @ `ea4cd204` plus the
-T17 patch and `sleigh` compile (`--only rx`), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
+T17 patch and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
 venv + SDR netlist/Verilator chain (`--only sdr`). Newcomer walk-through: [getting-started.md](getting-started.md); catalogue of all
 scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` takes `JOBS` (default 16) and `tools/xc7_fasm.py` takes
 `FT710_VENV` (default `~/.local/share/ft710-tools/venv`) since T20.
@@ -218,6 +218,7 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 | `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
 | `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
 | `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
+| `DisplayJumpTables.java` / `DisplayGaps.java` | DISPLAY ARM jump-table repair + check; missed-start and undefined-fragment report, `define` mode for the fragments (T21e, #97 B6–B8); run after FixFuncEntries, before ApplyNames |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | print references to addresses or ranges with the containing function (T10 helpers; one would do, the others are kept for the task logs) |
 | `T10eMovuRegCount.java` | lists every `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11); after the T17 SLEIGH fix all 107 print as register forms |
 | `rx62t-movu-fix.patch` | the T17 SLEIGH fix for the RX module (see above) |
@@ -315,6 +316,18 @@ Known limits seen on the HiFi4 image (T22c, `tools/hifi4_rizin_compare.py`) **[f
 `any8` names the raw `s` field (`b14`) instead of the BR8 group, no HiFi4/`f64*`/cache/MPU/`l32ai`/`s32nb` ops, and the FPU
 decoded with the standard FP-option layout on `f0..f15` (this core's VFPU uses `aed` registers and other fields).
 Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
+
+## HiFi4 SLEIGH language Xtensa:LE:32:rt600hifi4 (T21a, #97)
+
+| Item | Value |
+|---|---|
+| What | A Ghidra language variant for the RT600 HiFi4 DSP core: all 7 FLIX bundle formats (6 and 11 bytes, 2–4 slots), every opcode-in-slot encoding of the core (1,713 opcodes), `aed0..15`, `u0..3`, `aep0..3`, BR groups, the HiFi4 states, the FPU on the `aed` registers. Extends the stock Xtensa module, which stays unchanged (`Xtensa:LE:32:default`) |
+| Input | Cadence `xtensa-modules.c` for this core, MIT-licensed: https://raw.githubusercontent.com/zephyrproject-rtos/sdk-ng/15daabb558517dd735b41542709391fdc254cacc/overlays/xtensa_nxp_rt600_adsp/binutils/bfd/xtensa-modules.c (sdk-ng commit `15daabb558517dd735b41542709391fdc254cacc`, 2023-12-11; 2,996,889 bytes; SHA-256 `9e218b19033b93ad53b042f86a643034033a2322cfd09c138592c6255e53f372`, pinned in `tools/bootstrap.sh` and `tools/xtensa_sleigh_gen.py`). Downloaded to `~/opt/dl/xtensa-modules.c` |
+| Generator | `tools/xtensa_sleigh_gen.py` + `tools/xtensa_isa_dump.c` (a probe compiled with `cc` against `xtensa-modules.c`; own shim headers, no binutils code needed). Output committed in `tools/ghidra/xtensa-rt600hifi4/` (the generated `.sinc` files plus copies of three stock Ghidra files, Apache 2.0) |
+| Check | `python3 -I tools/xtensa_sleigh_gen.py selftest`: the generator's own model disassembles all 49,389 `flix.dis` instructions exactly as objdump does. Ghidra: `tools/flix_oracle.sh Xtensa:LE:32:rt600hifi4` (T21b): decode mode 49,389 / 49,389 = 100 % |
+| Install | `tools/bootstrap.sh --only hifi4` (copies the files into `$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages/` and compiles `xtensa_rt600hifi4.sla` with `support/sleigh`; `HIFI4_REGEN=1` regenerates from the download first). Installed in the container's `~/opt/ghidra_12.1.4_PUBLIC` on 2026-10-28. Use with `-processor Xtensa:LE:32:rt600hifi4` |
+| Remove | `rm ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*` |
+| Details | [docs/code/ifdsp/ghidra-flix.md](code/ifdsp/ghidra-flix.md), "The SLEIGH language" |
 
 ## Python
 

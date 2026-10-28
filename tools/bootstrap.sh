@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # FT-710 firmware project bootstrap (T20): rebuild everything that is not in git from the official downloads.
 #
-#   tools/bootstrap.sh                    # default steps: inputs decode rx ghidra export flix verify
+#   tools/bootstrap.sh                    # default steps: inputs decode rx hifi4 ghidra export flix verify
 #   tools/bootstrap.sh --only decode      # one step (repeat --only for several, or give a comma list)
 #   tools/bootstrap.sh --skip verify      # all default steps but one
 #   tools/bootstrap.sh --all              # default steps + sdr (the slow FPGA netlist chain)
@@ -16,6 +16,10 @@
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
 #           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17) and tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
 #           compile it. Skipped when already installed and patched.
+#   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
+#           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
+#           module and compile it; the stock Xtensa:LE:32:default is not changed. HIFI4_REGEN=1 first downloads
+#           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
@@ -118,8 +122,8 @@ ZEPHYR_SHA_macos_aarch64=31b6072b911d2324443d58ec0176bd560eba3b3095c9aba18c3f40c
 ZEPHYR_SHA_macos_x86_64=f95f8a3fa5fc864a5f731f492dfe8bb96e1c3b3a1ae5455dc68ffddb04c609cd
 VENV_PKGS="fasm==0.0.2.post88 textX==4.4.0 Arpeggio==2.0.3 simplejson==4.2.0 intervaltree==3.2.1 sortedcontainers==2.4.0 PyYAML==6.0.3"
 
-ALL_STEPS="deps inputs decode rx ghidra export flix verify sdr"
-DEFAULT_STEPS="inputs decode rx ghidra export flix verify"
+ALL_STEPS="deps inputs decode rx hifi4 ghidra export flix verify sdr"
+DEFAULT_STEPS="inputs decode rx hifi4 ghidra export flix verify"
 
 log()  { printf '\n== [%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 info() { printf '   %s\n' "$*"; }
@@ -292,6 +296,35 @@ step_rx() {
   info "compiled rx62t.sla (log: $OUT/logs/sleigh.txt; the 8 NOP-constructor warnings are expected)"
 }
 
+# ---------------------------------------------------------------- hifi4
+XTMOD_URL=https://raw.githubusercontent.com/zephyrproject-rtos/sdk-ng/15daabb558517dd735b41542709391fdc254cacc/overlays/xtensa_nxp_rt600_adsp/binutils/bfd/xtensa-modules.c
+XTMOD_SHA=9e218b19033b93ad53b042f86a643034033a2322cfd09c138592c6255e53f372
+step_hifi4() {
+  local src=$REPO/tools/ghidra/xtensa-rt600hifi4 lang=$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages f same=1
+  log "hifi4: SLEIGH language Xtensa:LE:32:rt600hifi4 in $lang"
+  [ -d "$lang" ] || die "no Xtensa module at $lang (step deps, or set GHIDRA_INSTALL_DIR)"
+  if [ "${HIFI4_REGEN:-0}" = 1 ]; then
+    mkdir -p "$DL_DIR/xtensa-rt600"
+    fetch "$XTMOD_URL" "$DL_DIR/xtensa-rt600/xtensa-modules.c" "$XTMOD_SHA"
+    need cc "a C compiler"
+    py "$REPO/tools/xtensa_sleigh_gen.py" generate --modules "$DL_DIR/xtensa-rt600/xtensa-modules.c" \
+      --build "$BUILD/xtensa_sleigh_gen" --stock "$lang" --out "$src"
+    py "$REPO/tools/xtensa_sleigh_gen.py" selftest --modules "$DL_DIR/xtensa-rt600/xtensa-modules.c" \
+      --build "$BUILD/xtensa_sleigh_gen" --dis "$REPO/decomp/ifdsp/hifi4/flix.dis"
+  fi
+  for f in "$src"/xtensa_rt600hifi4*; do
+    cmp -s "$f" "$lang/$(basename "$f")" || same=0
+  done
+  if [ "$same" = 1 ] && [ -f "$lang/xtensa_rt600hifi4.sla" ] && [ "$lang/xtensa_rt600hifi4.sla" -nt "$lang/xtensa_rt600hifi4.slaspec" ]; then
+    info "installed and compiled"; return 0
+  fi
+  cp "$src"/xtensa_rt600hifi4* "$lang/"
+  "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/xtensa_rt600hifi4.slaspec" "$lang/xtensa_rt600hifi4.sla" > "$OUT/logs/sleigh_hifi4.txt" 2>&1 \
+    || { tail -20 "$OUT/logs/sleigh_hifi4.txt" >&2; die "sleigh compile of xtensa_rt600hifi4 failed"; }
+  grep -q "ERROR" "$OUT/logs/sleigh_hifi4.txt" && { tail -20 "$OUT/logs/sleigh_hifi4.txt" >&2; die "sleigh errors (xtensa_rt600hifi4)"; }
+  info "compiled xtensa_rt600hifi4.sla (log: $OUT/logs/sleigh_hifi4.txt; NOP-constructor warnings are expected)"
+}
+
 # ---------------------------------------------------------------- ghidra
 G=$REPO/tools/ghidra
 build_main() {
@@ -308,9 +341,9 @@ build_main() {
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/ApplyNames.java" "$G/names_display.tsv")
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, ApplyNames"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -318,6 +351,11 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.tsv"
+  # T21e (#97 B6, B8): repair the ARM jump tables the decompiler does not turn into switches; then define the undefined
+  # fragments that are not code as data (reports next to the project)
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript DisplayJumpTables.java apply "$PROJ/display_jumptables.tsv"
+  headless FT710_DISPLAY -process "$prog" -noanalysis \
+    -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
