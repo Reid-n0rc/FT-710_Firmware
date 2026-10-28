@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Danger: the MAIN option-setting memory</title>
+  <rect width="960" height="520" fill="#FFFFFF"/>
+  <rect x="20" y="16" width="920" height="488" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="3"/>
+  <!-- warning triangle -->
+  <path d="M66,40 L96,92 L36,92 Z" fill="#DC2626"/>
+  <text x="66" y="86" text-anchor="middle" font-size="30" font-weight="bold" fill="#FFFFFF">!</text>
+  <text x="116" y="58" font-size="20" font-weight="bold" fill="#DC2626">DANGER: MAIN's 116-byte option-setting memory</text>
+  <text x="116" y="84" font-size="14">Every MAIN update rewrites it. In the stock file it is all FF = "no protection". Keep it that way.</text>
+
+  <!-- byte strip -->
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14">
+    <rect x="40" y="108" width="880" height="36" rx="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+    <text x="52" y="132">FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF … (116 bytes)</text>
+  </g>
+  <text x="40" y="164" font-size="14">at 0xFE7F5D00 in the MAIN chip, sent with boot command 51. It holds the RX651's start-up and protection settings.</text>
+
+  <!-- three hazards -->
+  <g>
+    <rect x="40" y="184" width="280" height="200" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+    <text x="56" y="212" font-size="16" font-weight="bold" fill="#DC2626">FAW.FSPR = 0</text>
+    <text x="56" y="240" font-size="14">Locks the flash access</text>
+    <text x="56" y="260" font-size="14">window.</text>
+    <text x="56" y="292" font-size="14" font-weight="bold">Can never be set back</text>
+    <text x="56" y="312" font-size="14" font-weight="bold">to 1: permanent.</text>
+
+    <rect x="340" y="184" width="280" height="200" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+    <text x="356" y="212" font-size="16" font-weight="bold" fill="#DC2626">SPCC.SPE = 0</text>
+    <text x="356" y="240" font-size="14">Turns off the serial</text>
+    <text x="356" y="260" font-size="14">programmer interface.</text>
+    <text x="356" y="292" font-size="14" font-weight="bold">The DISPLAY can no longer</text>
+    <text x="356" y="312" font-size="14" font-weight="bold">update MAIN from the</text>
+    <text x="356" y="332" font-size="14" font-weight="bold">SD card.</text>
+
+    <rect x="640" y="184" width="280" height="200" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+    <text x="656" y="212" font-size="16" font-weight="bold" fill="#DC2626">Control code 0x45</text>
+    <text x="656" y="240" font-size="14">in the ID-code setting:</text>
+    <text x="656" y="260" font-size="14">wrong IDs are punished.</text>
+    <text x="656" y="280" font-size="14">(DISPLAY sends 16 × FF.)</text>
+    <text x="656" y="312" font-size="14" font-weight="bold">After 3 wrong IDs the</text>
+    <text x="656" y="332" font-size="14" font-weight="bold">chip erases its flash.</text>
+  </g>
+
+  <!-- wear limit -->
+  <rect x="40" y="402" width="880" height="86" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="56" y="428" font-size="15" font-weight="bold" fill="#B45309">Wear limit (inference)</text>
+  <text x="56" y="452" font-size="14">Renesas rates the option-setting memory for 1000 program/erase cycles, and every MAIN update rewrites it.</text>
+  <text x="56" y="474" font-size="14">So a MAIN chip is good for roughly 1000 updates. Plenty for normal use, but worth knowing when testing patches.</text>
+</svg>

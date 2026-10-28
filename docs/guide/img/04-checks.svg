@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>What the update loader checks and what it does not</title>
+  <rect width="960" height="560" fill="#FFFFFF"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">What the DISPLAY's update loader really checks</text>
+
+  <!-- checked -->
+  <rect x="20" y="52" width="450" height="372" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="40" y="82" font-size="17" font-weight="bold" fill="#16A34A">Checked</text>
+  <g font-size="14">
+    <circle cx="48" cy="111" r="11" fill="#16A34A"/><path d="M42,111 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="108">File in I:\FT-710\, named</text>
+    <text x="68" y="126" font-family="DejaVu Sans Mono, monospace">FT-710_MAIN_Vxxxx.sfl</text>
+    <text x="68" y="144">(4 free characters = shown version)</text>
+
+    <circle cx="48" cy="177" r="11" fill="#16A34A"/><path d="M42,177 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="174" font-weight="bold">The salted CRC-32 in the tag line</text>
+    <text x="68" y="192">(the 3rd field). This is the only</text>
+    <text x="68" y="210">check on the whole file.</text>
+
+    <circle cx="48" cy="243" r="11" fill="#16A34A"/><path d="M42,243 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="240">MAIN: each S-record's own checksum;</text>
+    <text x="68" y="258">flash read back and compared</text>
+
+    <circle cx="48" cy="291" r="11" fill="#16A34A"/><path d="M42,291 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="288">DISPLAY: decoded byte count matches</text>
+    <text x="68" y="306">the file size</text>
+
+    <circle cx="48" cy="339" r="11" fill="#16A34A"/><path d="M42,339 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="336">SDR: file exactly 4 392 794 bytes;</text>
+    <text x="68" y="354">CRC-16 per 4 KiB block</text>
+
+    <circle cx="48" cy="387" r="11" fill="#16A34A"/><path d="M42,387 l4,5 l8,-10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+    <text x="68" y="384">IFDSP: per-packet CRC and status</text>
+    <text x="68" y="402">(no read-back)</text>
+  </g>
+
+  <!-- not checked -->
+  <rect x="490" y="52" width="450" height="372" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="510" y="82" font-size="17" font-weight="bold" fill="#DC2626">Not checked</text>
+  <g font-size="14">
+    <circle cx="518" cy="111" r="11" fill="#DC2626"/><path d="M513,106 l10,10 M523,106 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="108">The tag (MC / PC / ID / SR)</text>
+    <text x="538" y="126">and the length field</text>
+
+    <circle cx="518" cy="159" r="11" fill="#DC2626"/><path d="M513,154 l10,10 M523,154 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="156">The comment box (model, version,</text>
+    <text x="538" y="174">date), apart from one hidden marker</text>
+
+    <circle cx="518" cy="207" r="11" fill="#DC2626"/><path d="M513,202 l10,10 M523,202 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="204">Any signature, model, region or</text>
+    <text x="538" y="222">serial number: none exists</text>
+
+    <circle cx="518" cy="255" r="11" fill="#DC2626"/><path d="M513,250 l10,10 M523,250 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="252">Version order: older files can be</text>
+    <text x="538" y="270">ticked too (inference)</text>
+
+    <circle cx="518" cy="303" r="11" fill="#DC2626"/><path d="M513,298 l10,10 M523,298 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="300">At boot: DISPLAY runs any bank whose</text>
+    <text x="538" y="318">flag says "valid", without a CRC check</text>
+
+    <circle cx="518" cy="351" r="11" fill="#DC2626"/><path d="M513,346 l10,10 M523,346 l-10,10" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="538" y="348">Image size against the space it goes</text>
+    <text x="538" y="366">into (DISPLAY 6 MB bank, IFDSP 640 KB)</text>
+  </g>
+
+  <rect x="20" y="440" width="920" height="96" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="40" y="466" font-size="15" font-weight="bold">What it means</text>
+  <text x="40" y="490" font-size="14">Anyone who knows the key and the salt can build a file the radio will accept, for any of the four chips.</text>
+  <text x="40" y="510" font-size="14">That makes custom firmware possible (chapter 8). It also means nothing stops a well-formed</text><text x="40" y="528" font-size="14">but faulty image, such as a bad patch.</text>
+</svg>
