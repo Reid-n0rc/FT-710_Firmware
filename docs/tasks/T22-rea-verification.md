@@ -49,6 +49,40 @@ Plan:
 5. Findings into this section and `docs/tooling.md` (RX module facts), commit after each step; REA gaps go to
    `rea-requests/`.
 
+Resumed run (2026-10-28, second resume): Ghidra and REA ran under the owner's 50 % hardware cap for this session (2 machine-wide
+slots, cores 0–9, `-max-cpu 10`, heap 3 G), not the AGENTS.md maximum. The first agent's step 2 outputs were made with the T21c
+module (before RTSD) and an older listing, so steps 1–2 were re-run against the current canonical project.
+
+**Step 1 — three decoders [fact].** Scratch copy of canonical `ghidra/FT710_MAIN` (T21g rebuild, `rx62t.sinc` `618938bb…4b36`;
+before T21h's fragments), `ListingExport.java -readOnly`: 131,211 instructions + 2 holes, 113,307 entries inside function bodies.
+`rx_compare.py --ref both --all` (binutils 2.47 `rx-elf-objdump`, rizin 0.9.1 `rx` plugin raw at 0xFFF80000):
+
+| Pair (all 131,213 entries; inside functions in brackets) | Agree | Differ |
+|---|---:|---:|
+| Ghidra – objdump | **131,209** (113,303) | 4: 2 holes, 2 accumulator naming |
+| Ghidra – rizin | **129,724** (112,102) | 1,489 |
+| objdump – rizin | 129,724 | 1,489 (every rizin difference is also one from objdump) |
+| all three | 129,724 (112,102) | – |
+
+The rizin lane run through the REA fork CLI (`execute-rizin-command --arch rx --bits 32 --base-address 0xFFF80000`, one call per
+run via a shim passed as `--rizin`, evidence `ev_7cbdc876…`, `ev_c80cca79…`, output not truncated) gives a byte-identical
+difference list. Every disagreement is settled from R01US0071EJ0100 (pages are the printed page numbers); per instruction:
+[`T22a-decoder-disagreements.tsv`](T22a-decoder-disagreements.tsv) (three-way class, objdump and rizin text, verdict, pages).
+
+| Class | Count | Verdict (manual) |
+|---|---:|---|
+| `BRA.S`/`BEQ.S`/`BNE.S` with `dsp[2:0]` = 000b–010b, rizin `invalid` | 1,034 | **rizin bug**: those codes are pcdsp 8, 9, 10 (p219 BCnd.S table, p224 BRA.S); rizin accepts only 3–7. Ghidra = objdump |
+| `RTSD #uimm,Rd-Rd2` | 431 | rizin display: prints only Rd2 (`rtsd #24, r5` for `3F 25 06`, p285: `3F rd rd2 uimm`). Ghidra = objdump |
+| `FTOU` (12), 3-operand `FSUB` (1) | 13 | rizin lacks these RXv2 forms (p106/p246, p100/p245) |
+| `MOV.W`/`MOVU.B`/`BSR.W` "missing" | 4 | rizin resyncs after its one-byte `invalid` on the `FTOU` before them |
+| `MVTC R14,EXTB`, `MVFC EXTB,R2` | 3 | rizin lacks RXv2 control register EXTB (cr = 13, p22, p138, p142) |
+| `MVTACHI`/`MVTACLO R1,ACC` (0xFFF9128D/91) | 2 | notation: bit `a` = 0 is A0 (p267); objdump `a0`, Ghidra `ACC` (its `adest7_1` attaches only A0), rizin omits it. All right |
+| `?UNDEF` at 0xFFF8FEC0, 0xFFF912C7 | 2 | not a decoder disagreement: T21h's two undecoded fragments; objdump decodes `sub #8,r0` / `sub #12,r0` there |
+
+So against the RXv2 manual Ghidra's decode has **no wrong instruction** in MAIN; objdump agrees with it everywhere it decodes, and
+every rizin difference is a rizin gap or display convention. rizin's `rx` plugin has no ESIL/RzIL (first agent), so it can check
+decoding only, not semantics.
+
 ### T22c
 **Status:** done (2026-10-28). IFDSP HiFi4.
 
