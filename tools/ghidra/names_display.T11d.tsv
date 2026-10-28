@@ -1,0 +1,130 @@
+# T11d proposals (DISPLAY SPI links); see docs/code/display/spi-links.md. Same format as names_display.tsv.
+2011d9a8	rspi_hw_config	(ch, mode) mode 0 master SPBR=1 BRDV=3, mode 1 slave; 8-bit MSB-first CPOL0 CPHA1; regs table 0x20166B4C
+2011dea4	rspi0_open	STBCR10 bit7, SPTI/SPRI ISRs, GIC 0x110/0x10F, slave config
+2011df20	rspi1_open	master config
+2011df9c	rspi2_open	slave (SDR link)
+2011e018	rspi3_open	slave, also SPEI
+2011e09c	rspi4_open	slave (DSP link)
+2011e118	rspi0_clear_rx_flag
+2011e128	rspi1_clear_rx_flag
+2011e138	rspi2_clear_rx_flag
+2011e148	rspi3_clear_rx_flag
+2011e158	rspi4_clear_rx_flag
+2011e168	rspi0_clear_tx_flag
+2011e178	rspi1_clear_tx_flag
+2011e188	rspi2_clear_tx_flag
+2011e198	rspi3_clear_tx_flag
+2011e1e0	rspi4_clear_tx_flag
+2011e1f0	rspi0_rx_isr	SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418
+2011e240	rspi1_rx_isr
+2011e290	rspi2_rx_isr	clear SPRIE, flag
+2011e2b8	rspi3_rx_isr
+2011e2e0	rspi4_rx_isr
+2011e308	rspi0_tx_isr	clear SPTIE, flag 0x2080041D
+2011e330	rspi1_tx_isr
+2011e358	rspi2_tx_isr
+2011e380	rspi3_tx_isr
+2011e3a8	rspi4_tx_isr
+2011e3d0	rspi0_tx_wait
+2011e544	rspi1_tx_wait
+2011e6b0	rspi2_tx_wait
+2011e824	rspi3_tx_wait
+2011e990	rspi4_tx_wait
+2011e3fc	rspi0_read_burst	dummy 0xFF writes, wait RX
+2011e570	rspi1_read_burst
+2011e6dc	rspi2_read_burst
+2011e850	rspi3_read_burst
+2011e9bc	rspi4_read_burst
+2011eb58	rspi0_wait_tend	SPSR.TEND
+2011eb7c	rspi1_wait_tend
+2011eba0	rspi2_wait_tend
+2011ebc4	rspi3_wait_tend
+2011ebe8	rspi4_wait_tend
+2011ec0c	rspi0_delay
+2011ec34	rspi1_delay
+2011ec5c	rspi2_delay
+2011ec84	rspi3_delay
+2011ecac	rspi4_delay
+2011ecd4	rspi0_spti_isr	stub, needs entries_display.T11d.tsv
+2011ecdc	rspi0_spri_isr	stub
+2011ece4	rspi1_spti_isr	stub
+2011ecec	rspi1_spri_isr	stub
+2011ecf4	rspi2_spti_isr	stub
+2011ecfc	rspi2_spri_isr	stub
+2011ed04	rspi3_spti_isr	stub
+2011ed0c	rspi3_spri_isr	stub
+2011ed14	rspi4_spti_isr	stub
+2011ed1c	rspi4_spri_isr	stub
+2011ed24	rspi_hw_config_master	(ch, spbr, brdv, loopback); no callers
+2011efc8	rspi0_open_irq_only	no callers
+2011f040	rspi1_open_irq_only	no callers
+2011f0cc	rspi_open	jump table to rspiN_open
+2011f128	rspi_spe_set
+2011f138	rspi_start	SPCR.SPE=1
+2011f19c	rspi_spe_clear
+2011f1ac	rspi_stop	SPCR.SPE=0 + delay
+2011f230	rspi_base
+2011f278	rspi_read	PIO read; no callers
+2011f718	rspi_write	PIO write by TX trigger level
+2011f758	rspi_fifo_reset	SPBFCR TXRST/RXRST pulse
+2011f7b4	rspi_reset_buffers
+2011f840	rspi_rx_isr	SPRI dispatch; entry fix (late start FUN_2011f84c)
+2011f89c	rspi_tx_isr	SPTI dispatch; entry fix (late start FUN_2011f8a8)
+2011f8f8	rspi_wait_tx_end
+20137080	dmac3_rspi4_tx_setup	DMARS 0x131
+20137278	dmac5_rspi2_rx_setup	DMARS 0x12A, 0x6A4 B
+201374ac	dmac4_rspi4_rx_setup	DMARS 0x132, 0x11F8 B
+201376d0	dmac8_m2m_init	frame-buffer copy DMA
+201378b0	dmac8_m2m_start
+20137904	dmac9_register_isr
+20137910	dmac9_rspi_tx_setup	arg 1 RSPI0 (0x121), 0 RSPI1
+20137af8	dmac10_register_isr
+20137b04	dmac10_rspi_rx_setup	arg 1 RSPI0 (0x122)
+20137d50	dmac3_enable
+20137d64	dmac3_disable	writes 0 to SETEN (no-op?)
+20137d84	dmac5_enable
+20137d98	dmac5_disable
+20137dac	dmac5_set_callback
+20137db8	dmac4_enable
+20137dcc	dmac4_disable
+20137de0	dmac4_set_callback
+20137e00	dmac9_stop	CHCTRL.CLREN
+20137e34	dmac9_set_callback
+20137e40	dmac10_enable
+20137e54	dmac10_stop
+20137e88	dmac10_set_callback
+20137490	dmac3_isr	stub, entry fix
+201374a0	dmac5_isr	stub -> [0x20808AA8]
+201376c4	dmac4_isr	stub -> [0x20808AA4]
+20137aec	dmac9_isr	stub -> [0x20808AAC]
+20137d1c	dmac10_isr	stub -> [0x20808AB0]
+20112158	pclink_tx_dma_start	DMA ch9 0x60501000 -> SPDR0, 0x1000
+20112144	pclink_tx_trailer_init	0x01EE01FF x4
+20112128	pclink_tx_copy_scope	850 B
+2011210c	pclink_tx_copy_afscope	600 B
+201120fc	pclink_tx_set_status	151 B MAIN status
+20112180	pclink_tx_done_cb
+201121a8	pclink_set_testmode
+201121b4	pclink_rx_parse	magic 0xEEAFCCBA
+20112264	pclink_rx_done_cb
+2011249c	pclink_stats_print	replaces sdr_spi_stats_print: FT4222H link test-mode box
+201120c8	cycle_delta	PMCCNTR delta
+20132fe0	cycle_delta_2	PMCCNTR delta (copy)
+20101f8c	gpio_ft4222_reset	P2_7 via PSR2
+20133484	sdr_dsp_link_init	RSPI2+DMA5, RSPI4+DMA3/4
+20133440	link_ss_irq_init	GIC 535/449
+201333f0	sdr_ss_isr	entry fix (late start FUN_201333f4)
+20133418	dsp_ss_isr	entry fix (late start FUN_2013341c)
+201330d4	sdr_rx_done_cb
+20133140	sdr_link_recover	unreferenced
+201331dc	dsp_rx_done_cb	REC/PLAY
+201331c8	dsp_set_audio_ptr
+20132f74	sdr_rx_buf	0x605C00A0
+20132f7c	dsp_hdr_buf	0x605C0780
+201342ec	scope_store_frame	850 B -> 0x204832BB
+201344a0	scope_frame_buf
+20134348	scope_history_push	800 points -> ring 0x20490894 (inference)
+20120d40	afscope_store_frame	600 B -> 0x208DD73C
+20120dc8	afscope_buf_ptr
+201107c0	sdr_spi_master_write	RSPI2 master for SDR image
+20106dc8	audio_codec_post	8-byte msg to task_audio_codec mailbox
