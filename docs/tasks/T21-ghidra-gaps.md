@@ -140,6 +140,47 @@ SLEIGH without signatures.
   `python3 -I tools/signatures_draft.py protos.tsv tools/ghidra/names_main.tsv tools/ghidra/signatures_main.tsv mismatch.tsv` (keeps the
   `doc` rows), then `ApplySignatures.java`.
 
+**B5 (undefined ROM bytes): `tools/ghidra/DefineRomData.java [report.tsv] [code=0xFFF8F658] [dry]`, run after ApplyNames.**
+- Steps: strings (≥ 3 printable ASCII + NUL), runs of ≥ 2 aligned pointers into ROM (instruction/data starts) or ≥ 4 into labelled or
+  referenced RAM/IO, runs of ≥ 4 NUL bytes → `byte[n]`; repeated until nothing new. In the code area (from `main` 0xFFF8F658) every
+  undefined run after an instruction is disassembled inside the run; a clean flow that reaches RTS/RTSD/RTE becomes a function
+  (unreferenced CC-RX functions: 54, mostly after a `RTS` in the BSP/driver code, e.g. 0xFFF92475, 0xFFFC9654, 0xFFFEE1BE); a flow
+  with a bad instruction is cleared again with its bookmarks. What is left in the const area (0xFFF80000..0xFFF8F657) are numeric tables
+  that no decoded code reads directly: `float[n]` if ≥ 90 % of the words are 0 or normal floats, `uint16[n]` if ≥ 80 % of the
+  half-words have a zero high byte, else `byte[n]`, each with a plate comment that the layout is a guess **[guess for the layouts]**.
+- Test [fact, full re-import with the recipe into scratch, T21c + RTSD SLEIGH, then ApplySignatures and ExportDecomp]:
+
+| | before | after |
+|---|---:|---:|
+| undefined non-0xFF bytes (ROM) | 20,622 | **161** in 2 runs |
+| defined strings | 63 | **161** (98 new, 3,077 B) |
+| pointers / zero runs / const tables | – | 8 (32 B) / 130 (2,328 B) / 221 (11,586 B) |
+| functions | 2,268 | 2,322 (54 unreferenced functions, 3,657 B) |
+| decompile failures, error bookmarks | 0, 1 | 0, 1 |
+
+- The 161 B left are code the RX module cannot decode **(for T21c, B1)**: 0xFFF8FEF3 `FE D1 55 …` inside an `R_BSP_InterruptControl`
+  caller at 0xFFF8FEC0 (2 references; expected a `MOV.W [R1,R5],R5`-type `[Ri,Rb]` form), and 0xFFF9129B `FD 1F 02 …` after
+  `PUSH.L R2` at 0xFFF91295, which looks like the RXv2 accumulator save `MVFACHI/MVFACMI` of an interrupt prologue **[inference]**.
+
+**Combined result (B2 + B3 + B5, full re-import, `quality.tsv` against the committed baseline):** spacebase 8 → 0, functions with
+`in_`/`unaff_`/`extraout_` 61 → 8, undefined non-0xFF bytes 20,622 → 161, warnings 1,294 → 1,229, 0 decompile failures; functions
+2,268 → 2,322. `functions_with_warnings` goes 347 → 352 ("Removing unreachable block" in byte-parameter setters and in the new
+functions), so the committer of the re-export (T21g) must commit the new `quality.tsv` (see T21f's leftover).
+
+**Status:** done (2026-10-28). Commits on `worktree-agent-a1563dabd320e565e`. `tools/bootstrap.sh` MAIN step: ApplyNames →
+DefineRomData → ApplySignatures (stamped on the three new inputs); `docs/tooling.md` "MAIN full rebuild" and `decomp/main/INDEX.md`
+list the order. `decomp/` not re-exported (T21g).
+
+**Leftovers / follow-ups:**
+- T21c/T21g: add `rx62t-rtsd-fix.patch` to the RX step and update `RX_SINC_FIXED`; give the string pcodeops a memory effect (26 lost
+  values, above); decode the two fragments above.
+- 2 dropped arguments remain at 2 of the 54 new functions (no signature; redraft `signatures_main.tsv` from a project that has them).
+- 16 "lost returns" are dead stores in the source and cannot be fixed by a signature; `CallArgCheck` cannot tell them apart.
+- The 1,179 `asm` signatures are drafted, not reviewed: pointer vs integer parameters come from the decompiler's own guess when the
+  size matches, and names are `param_N`. Review more of them by subsystem and mark them `doc`.
+- Const tables are typed by a simple test; their real layout comes with the code that reads them (most are reached through computed
+  addresses, e.g. the band and filter tables in the subsystem pages).
+
 ## Findings
 
 ## Follow-ups
