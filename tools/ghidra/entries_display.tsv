@@ -79,7 +79,6 @@
 # after_return_undef = undefined bytes after a return/tail branch that decode as an ARM function and nothing branches to
 # (dead helpers: getters, CP15/PMU accessors, wrappers); call_inside = a bl target that was no function entry;
 # addr_taken = an instruction loads the address (callbacks; 0x2015677c/0x201567d0 are NORTi kernel resume stubs).
-20100104		after_return_undef: after 20100100 b 0x20100128
 201004a4		after_return_undef: after 201004a0 bx lr
 20100a88		after_return_undef: after 20100a84 bx lr
 20100dc0		after_return_undef: after 20100dbc bx lr
@@ -184,3 +183,38 @@
 20158590		after_return_undef: after 2015858c b 0x201576f4
 2015a8dc		after_return_undef: after 2015a8c0 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}
 2015fd60		after_return_undef: after 2015fd54 ldmia sp!,{r4,r5,r6,r7,r8,pc}
+2016385c	thumb	dataptr (Thumb): push {r4,lr}; bl 0x20155fde; pop -- address in the .data word 0x2042807c (function table)
+# --- T21e (#97 B7): tail_target = an unconditional `b` from one function lands inside another function body, at code that
+# its owner reaches only by a jump: a function that analysis merged into the first function that tail-branched to it.
+20114880		tail_target: jump from 20162f88 in scif_txi_isr@20162f10 into scif_rxi_isr@20162dd8
+20117c14		tail_target: jump from 20133078 in vdc5_vline_cb_enable@20133068 into vdc5_vline_int_setup@2013304c
+2011a110		tail_target: jump from 2011a844 in FUN_2011a800@2011a800 into vdc5_config@2011a394
+2011d860		tail_target: jump from 2011cd84 in FUN_2011cd10@2011cd10 into FUN_2011cfa8@2011cfa8
+2011d8b4		tail_target: jump from 2011cd98 in FUN_2011cd10@2011cd10 into FUN_2011cfa8@2011cfa8
+20120c04		tail_target: jump from 201203d8 in FUN_201203d4@201203d4 into FUN_2012041c@2012041c
+20120c54		tail_target: jump from 201203e0 in FUN_201203dc@201203dc into FUN_20120424@20120424
+20139624		tail_target: b from the new wrapper 0x20139654 into FUN_2013c76c
+20140148		tail_target: jump from 20140bc4 in FUN_20140b9c@20140b9c into FUN_2014030c@2014030c
+20151520		tail_target: jump from 20162d44 in FUN_20162d3c@20162d3c into mainlink_inject_rx@20116560
+20154524		tail_target: jump from 20150d78 in FUN_20150c70@20150c70 into FUN_201526f4@201526f4
+20154538		tail_target: jump from 2014e844 in FUN_2014e73c@2014e73c into itron_iwup_tsk@20152fac
+20154580		tail_target: jump from 20150d80 in FUN_20150c70@20150c70 into FUN_201526f4@201526f4
+201545c8		tail_target: jump from 201507d8 in itron_dly_tsk@20150740 into FUN_201525f8@201525f8
+201545dc		tail_target: jump from 201514a8 in FUN_20151308@20151308 into FUN_20152bb0@20152bb0
+2015460c		tail_target: jump from 20154760 in FUN_20154744@20154744 into FUN_20154790@20154790
+20154a00		tail_target: jump from 201635f8 in FUN_201635e4@201635e4 into fwobj_build_path@201603f4
+201550d4		tail_target: jump from 20124ab4 in FUN_20124a98@20124a98 into FUN_20124ab8@20124ab8
+201552b8		tail_target: jump from 2010605c in rec_close_abort@20106018 into fb_clear_all@20132f84
+201571e8		tail_target: jump from 20120d5c in FUN_20120d58@20120d58 into FUN_20120dc0@20120dc0
+20157d3c		tail_target: b from the wrappers 0x20134414 and 0x20134424 (a function both reach by a tail branch)
+2015ff64		tail_target: jump from 20113eec in mouse_detach_post@20113ea0 into mouse_attach_post@20113e4c
+20164298		tail_target: jump from 20133f54 in FUN_20133f44@20133f44 into FUN_20133f58@20133f58
+2016437c		tail_target: jump from 20157208 in FUN_20120dc0@20120dc0 into FUN_201575f8@201575f8
+2016440c		tail_target: jump from 20162c1c in FUN_20162c18@20162c18 into FUN_20162c20@20162c20
+201644ac		tail_target: jump from 20158638 in mainlink_tx_alloc@20158630 into mainlink_disp_alloc@2016003c
+20164654		tail_target: jump from 201343c0 in FUN_20134398@20134398 into FUN_20163428@20163428
+2016466c		tail_target: jump from 201343b0 in FUN_20134398@20134398 into FUN_20157c50@20157c50
+20164674		tail_target: jump from 201343b8 in FUN_20134398@20134398 into FUN_20163428@20163428
+201646bc		tail_target: jump from 20133ef8 in FUN_20133ee8@20133ee8 into FUN_20133f24@20133f24
+20164714		tail_target: jump from 20133ed0 in FUN_20133ec0@20133ec0 into FUN_20133f10@20133f10
+20164f98		tail_target: jump from 20164938 in FUN_20164888@20164888 into FUN_20164da8@20164da8
