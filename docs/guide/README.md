@@ -728,7 +728,8 @@ MAIN raises the `TXINH` line, and if the radio was transmitting, it starts the s
 the channel frequency to one hertz above it, so each row matches exactly that frequency. After such a match MAIN makes one more check:
 the transmitting side must be on one of the 60 m memory channels (501–515 or EMG). So with the US region code, **60 m transmit works
 on the exact channel frequencies, from the 60 m memories only, not from the VFO**. In split, the same check applies to the transmit
-VFO. *(An earlier version of this guide read these rows as zero-width and concluded that 60 m TX could never work; that was wrong.)*
+VFO. The check uses the transmit frequency including the TX clarifier (XIT), so any XIT offset moves a channel off its exact
+frequency and transmit is refused; the RX clarifier (RIT) has no effect. *(An earlier version of this guide read these rows as zero-width and concluded that 60 m TX could never work; that was wrong.)*
 
 These channels predate the US rules of February 2026, which add a 5351.5–5366.5 kHz segment that firmware V01-12 doesn't know about.
 Issue [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103) plans the fix.

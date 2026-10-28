@@ -198,6 +198,23 @@ code; not tested on air]**. Whether the "locked memory" states 7/8 also pass the
 **Split [fact].** `tx_freq_allowed` is called with the TX frequency 0x20F50, which `freq_cache_update` takes from the TX record:
 the other VFO while split is on. So split TX is checked like any other TX. For a range row (all bands, and the Europe 5351.5–5366.5
 segment) split works from the VFO. For the US 60 m rows, the TX side (VFO-B in A/B split) must itself be on a 60 m memory.
+(Open: `split_toggle` leaves memory/QMB mode on entry ([radio-control.md](radio-control.md#split-clarifier-ab)), so US 60 m
+split may not be reachable at all; to check in the disassembly.)
+
+**Clarifier: RIT and XIT [fact].** The checked frequency 0x20F50 is `tx_freq_repeater_shift(vfo_freq_clar(1, 2))`: the TX
+side's dial frequency plus its **TX clarifier (XIT)** offset when the TX clarifier is on, plus the FM repeater shift. The **RX
+clarifier (RIT) is not in it**, so RIT never affects whether TX is allowed. Consequences:
+- **US 60 m channel rows:** any non-zero XIT moves the carrier off the `[f, f+1)` row, so TX is refused. XIT on with a 0 Hz
+  offset still passes. This keeps the channels exact, as the rules require. Recalling a memory clears both clarifier flags
+  (record +0x01 `&= 0xE7`), and so does a band change (`band_select` clears 0x20F29/0x20F2A).
+- **Range rows** (every band, the Europe segment, the planned US segment): XIT is allowed as long as dial + XIT stays inside
+  the row; XIT cannot carry the checked carrier past an edge. The check is on the carrier only, not the occupied bandwidth,
+  and before the PSK and CW-in-SSB offsets that `sdr_upd_r08_tx_freq` adds to the FPGA TX frequency, so the emission can
+  reach a few kHz beyond the checked value (see #103 for the US segment edge).
+- **Split:** XIT comes from the TX VFO (its offset and its 0x20F29/0x20F2A bit), like the TX frequency.
+- **When it is checked:** the call sites in `FUN_fffb8d77` and `FUN_fffbaa81` skip the check while transmitting (0x20B6B = 1),
+  so it runs when TX starts **[fact for those sites]**. Whether any path re-checks during TX, so that tuning or changing XIT
+  while transmitting is caught, is open.
 
 **2026 US rules.** Since 13 February 2026 the US has a 5351.5–5366.5 kHz segment (9.15 W ERP) and four 100 W channels (5332, 5348,
 5373, 5405 kHz). V01-12 predates this: with 0x315B the segment cannot be used from the VFO, and the old 5357.0/5358.5 channels now
