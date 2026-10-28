@@ -45,3 +45,26 @@ Approach:
 _(fill in as you go)_
 
 ## Follow-ups
+
+## Proposed shared-file edits
+For the parent to apply (this task does not edit shared files).
+
+**docs/tasks/README.md** — add under the T15 row:
+```
+| T15a | [Bitstream to FASM (SDR)](T15a-fpga-fasm.md) | T13 | done |
+| T15b | [FASM to cell-level netlist (SDR)](T15b-fpga-netlist-cells.md) | T15a | todo |
+| T15c | [Block recognition (SDR)](T15c-fpga-blocks.md) | T15b | todo |
+```
+
+**docs/tooling.md** — append to the prjxray section:
+> **T15 (2026-10-27).** prjxray-db sparse checkout extended with `git -C ~/.local/share/ft710-tools/prjxray-db
+> sparse-checkout add '/artix7/mapping/'` (prjxray's `Database` reads `mapping/devices.yaml`). New venv
+> `python3 -m venv ~/.local/share/ft710-tools/venv` (Python 3.11.2) + `pip install fasm simplejson intervaltree pyyaml`
+> from PyPI: `fasm 0.0.2.post88` (pure-Python textX parser; the Antlr fast path is not built), `textX 4.4.0`,
+> `Arpeggio 2.0.3`, `simplejson 4.2.0`, `intervaltree 3.2.1`, `sortedcontainers 2.4.0`, `PyYAML 6.0.3`. No sudo, nothing
+> built. Used only by `tools/xc7_fasm.py fasm` (which re-runs itself under that venv). Remove:
+> `rm -rf ~/.local/share/ft710-tools/venv`.
+
+**docs/code/sdr/README.md** — add a row to the Pages table:
+`| [netlist.md](netlist.md) | T15: FASM decode, cell/net netlist, recognized blocks (clocks, ADC capture, DSP chains, UART, scope SPI) |`
+and add `tools/xc7_fasm.py` to the Tools line.
