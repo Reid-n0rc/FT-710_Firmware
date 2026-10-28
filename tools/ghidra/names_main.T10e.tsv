@@ -1,0 +1,37 @@
+# T10e proposed MAIN names (EEPROM, settings persistence, defaults, resets). Same format as names_main.tsv.
+# --- EEPROM driver / load
+fffb01f3	eeprom_init	Boot: CS high, SCK low, P65 (/WP?) high, WRSR(0x01)=0x80 (SRWD=1, no block protect), P65 low
+fffb0229	eeprom_load_all	Boot load: reads header; flag 1 -> mirror EEPROM 0..0x5836 to RAM 0x464F; 0 -> keep cal+dest, defaults; else factory init
+fffb063e	eeprom_read_raw	Wrapper eeprom_read(addr,buf,n); used by SPR
+fffb0651	eeprom_write_raw	Wrapper eeprom_write(addr,buf,n); used by SPW
+# --- EEPROM save wrappers (all RAM = 0x464F + EEPROM address)
+fffb02af	eeprom_save_all	Writes EEPROM 0x0112..0x5836 (RAM 0x4761, 0x5725 bytes) between header updates: power-down and first-boot save
+fffb02cf	eeprom_save_opstate	Writes 0x53DB (menu/VFO/state block 0x9A2A, 0x45C) and 0x1A62 (band-stack indices 0x60B1, 0x18)
+fffb0303	eeprom_save_bandstack	(vfo, band, slot, rec): one 90-byte band-stack record at 0x0112/0x0DBA + slot*0x438 + band*0x5A
+fffb03c1	eeprom_save_qmb	Writes the whole QMB block 0x49C3 (RAM 0x9012, 0x395 bytes)
+fffb03e1	eeprom_save_qmb_slot	Writes the QMB header (0x11 bytes) and one 90-byte QMB record
+fffb0450	eeprom_save_msg	(type, n=1..5): type 0 = 0x98-byte message 0x93A7, 1 = keyer text 0x969F (KM), 2 = text 0x979E (EM)
+fffb0509	eeprom_save_atu_mem	Writes the 100-entry tuner memory 0x9898 (0x192 bytes) to EEPROM 0x5249
+# --- defaults / resets
+fffb06e5	defaults_vfo	Default VFO-A/B working records 0x9D09/0x9D63 (dest-dependent byte +0x46)
+fffb0a28	defaults_bandstack	Clears 0x4761..0x60C8 and fills 6 band-stack sets (FUN_fffb0779 per set)
+fffb0a7c	defaults_qmb	Clears the QMB block 0x9012 (0x395)
+fffb0a8f	defaults_memch	Clears 0x60C9 (0x2F49), default records for 117 channels, dest-specific 60 m channels
+fffb10a4	defaults_msg	Clears 0x93A7 (0x4F1), keyer texts from ROM 0xFFF80C53..
+fffb1168	defaults_menu	Menu values 0x9A2A.. from ROM 0xFFF80E4A.. (FUN_fffb1193..FUN_fffb13e2), 0x9C17 from 0xFFF80FD6
+fffb0636	reset_memch	-> defaults_memch
+fffb063a	reset_menu	-> defaults_menu
+fffd0279	menu_reset_exec	Runs reset_select(0x20BC0)
+fffd0288	reset_select	0: memory reset (+ch 1 to VFO), 1: menu reset, 2: settings_defaults(0); then restart code 0x20B39=0x11
+# --- power-down / power-fail
+fffb4b28	power_fail_check	ADC 0x20B08 < 0x7DD: once, power_off_io, save opstate if timer 0x13 expired, request reset (0x90). Returns 1 = saves inhibited
+fff98797	power_down_save	Restart/power-off request: notifies DISPLAY; code 0x90 waits 2 s, else eeprom_save_all (0x9DC5=1 if code 0x11); then mcu_software_reset
+fffb3e55	mcu_software_reset	PRCR=0xA502, SWRR=0xA501 (RX651 software reset)
+fffb237a	timer_start	Soft timer n (<=0x4A): period = ms*10 ticks, clears expired flag 0x11FED[n]
+fffb23f3	timer_expired	Returns soft-timer expired flag 0x11FED[n]
+# --- users of the persisted data
+fffc1927	bandstack_store	Copies the active VFO record into its band-stack slot if changed, then eeprom_save_bandstack
+fffecea5	atu_mem_store	Stores (freq key, 0x1B3AF, 0x1B3AD) in the 100-entry tuner memory 0x9898 ring and saves it
+fffbbc0a	cal_adjust	cfg105[0x20CE2] += delta, clamped to [min,max] (alignment value edit, ZZ00 mode)
+fffb3ba6	dest_code_fixup	Swaps the destination code between paired values depending on FUN_fffb6f2a()
+fff94cab	qmb_boot_init	Boot: re-validates QMB recall state (0x9DBE/0x9DBF==5) and saves the QMB block if needed
