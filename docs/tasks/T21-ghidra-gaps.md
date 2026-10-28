@@ -211,6 +211,75 @@ results and the padding annotation.
 3. T21g: re-export `decomp/ifdsp/hifi4` with the new `IfdspHifi4FindFuncs.java`. The expected count is 1,067 SRAM functions plus
    the TCM vectors, against 1,148 today, and 0 decompile failures if `FUN_0020bb74` stays fixed.
 
+### T21e
+**Status: done (2026-10-28).** Items B6, B7, B8 for DISPLAY. Scratch projects only; `decomp/display` is not re-exported (T21g).
+All numbers below are from a fresh rebuild with the new `tools/bootstrap.sh` DISPLAY steps (import → DisplayFindCode ×2 →
+FixFuncEntries → DisplayJumpTables apply → DisplayGaps define → ApplyNames → ExportDecomp into scratch). It matches the
+incremental run on a copy of the canonical project byte for byte.
+
+| Count (DISPLAY) | before (committed) | after T21e |
+|---|---:|---:|
+| ARM jump-table sites (`ldr pc,[pc,rX,lsl #2]` / `add pc,pc,rX,lsl #2`) | 85 found (80 + 5) | 86 (81 + 5; one sat in missed code) |
+| … that decompile to a `switch` with every case | 80 | 86 |
+| `switch(` in the C | 91 | 96 |
+| functions exported | 2,087 | 2,210 |
+| decompile failures | 0 | 0 |
+| call targets that are no function entry (B7 test) | 1 | 0 |
+| undefined non-0xFF bytes in `.text` (`quality.tsv`) | 4,258 (340 fragments) | 242 (15 fragments) |
+
+- **B6 [fact]:** `tools/ghidra/DisplayJumpTables.java` (`scan` / `apply` / `check`) finds every site by its encoding (`c79FF10x`,
+  `c08FF10x`) and takes the length from the `cmp rX,#n` (up to 64 instructions back, no flag or `rX` write in between) and the
+  condition (`cc` → n, `ls` → n+1; with an unconditional jump the earlier `b<cond>` decides). Ghidra already recovered 80 of 85. The
+  five that failed are the RSPI helpers `rspi_open` 0x2011F0CC, `rspi_start` 0x2011F138, `rspi_stop` 0x2011F1AC,
+  `rspi_reset_buffers` 0x2011F7B4, `rspi_wait_tx_end` 0x2011F8F8. Each checks the channel twice (`cmp r0,#5; mvncs r0,#0; bxcs lr;
+  push; cmp r0,#5; ldrcc pc,…`). Auto-analysis guessed their tables one word early, so the site had references to the `b default`
+  word and to 0xEA00000C (that word read as an address), and it set a **RETURN flow override** on the `ldrcc pc`. The decompiler then
+  treated the jump as a return (`return param_1`). A `JumpTable` override on top of that made the decompiler process die.
+  `apply` touches only the sites that `check` fails: it removes the stray references and the flow override and adds the
+  COMPUTED_JUMP references. After that, Ghidra builds the switch by itself, so no override is needed (the override path stays in
+  the script as a fallback, so no "Switch is manually overridden" warning is added). Now all five show `case 0` … `case 4`. The 17
+  "Could not recover jumptable … Too many branches" warnings (16 sites) are a different thing: `bx rN` tail calls through function pointers
+  (14 ARM, 2 Thumb), not tables (leftover 1).
+- **B7 [fact]:** `tools/ghidra/DisplayGaps.java` lists candidate starts by kind. It found these on the committed project, and all
+  were reviewed:
+  - 97 undefined ARM functions after a return that nothing branches to (getters, CP15/PMU accessors, wrappers, guards in front of an
+    existing `push` function). The chain mode finds the next helper in the same gap.
+  - 2 address-taken NORTi resume stubs: 0x2015677C and 0x201567D0.
+  - 1 address-taken function: 0x20138410.
+  - 2 call targets that were no function entry: 0x2012001C (from the `tsc2007` task) and 0x2015632C (the IRQ entry called through
+    `blx ip` from 0x2010020C, inside the stub at 0x20156310).
+  - 30 + 2 **tail targets**: an unconditional `b` from one function lands inside another function body that analysis had merged.
+    Examples: 0x20164654, a library routine absorbed by `FUN_20163428`, and 0x20151520 inside `mainlink_inject_rx`.
+  - 2 late starts found while reviewing B8 (0x20110E68 and 0x2014E044).
+  - 1 Thumb function, 0x2016385C, reached from the .data word 0x2042807C.
+
+  That makes 137 new entries in `entries_display.tsv` (205 in all). One candidate was rejected: 0x20100104 is dead code inside
+  `reset_in_ram`, a jumped-over block that falls back into its body (kind `dead_code`), and making it a function had cut
+  `reset_in_ram` from 216 to 112 bytes. **FixFuncEntries fix:** its late-start walk now stops at a call and keeps functions that have
+  callers. Without that, the entry 0x20103B4C (it ends in `bl` to a task loop that never returns) removed `sd_task_create`. The new
+  column-2 value `thumb` disassembles an entry as Thumb. The rebuild from scratch gives the same result for the 68 older entries.
+- **B8 [fact]:** before: 340 undefined fragments with non-0xFF bytes (4,258 B). About 2.9 KB of that was code; it became the B7
+  functions above. `DisplayGaps … define` defines the rest (237 fragments) as strings, pointers, dwords or bytes with the EOL comment
+  `T21e B8: [unreferenced] <class> fragment`, and it disassembles the one dead-code block without making it a function. Left
+  undefined: 15 fragments, 242 B, all in the armcc Thumb library (0x20154xxx–0x20164fxx). They are fplib code that is reached
+  through inline-parameter calls (`bl` 0x20164EFC reads the halfwords after the call), two 128-byte lookup tables (0x20156D5C,
+  0x20164C00) and padding. They are listed in the fragments report as class `thumb` **[inference: library tables and code; not
+  reviewed one by one]**.
+- **Quality counts:** the 2,076 functions that exist before and after have exactly the same warning, `in_`/`unaff_`/`extraout_`
+  and unreachable-block counts. 136 of them have changed C: smaller bodies where a tail target became its own function, and the
+  five RSPI switches. The 134 new functions bring 46 warnings (43 "Removing unreachable block"), 12 `in_`, 4 `unaff_` and 1
+  `extraout_`. 11 functions are gone: unnamed late starts that the new entries replace. **`tools/decomp_quality.py compare`
+  therefore reports warnings 347 → 393, functions with `in_` 52 → 61 and similar rises as "WORSE" when T21g re-exports. All of
+  them come from the new functions, so the new numbers are the baseline.**
+- **For T21g:** run the DISPLAY steps from `tools/bootstrap.sh` (or the commands in `decomp/display/INDEX.md`), re-export
+  `decomp/display`, refresh the INDEX quality table and the "File" column (`tools/index_refresh.py`).
+- **Leftovers:** (1) the 16 `bx rN` tail calls through function pointers; a CALL_RETURN flow override would turn the "Could not
+  recover jumptable" warnings into calls. (2) 15 other jumps from one function into another's body (kind `jump_inside`): shared
+  tails in hand-written or library code (`__aeabi_uidivmod` internal entries from the unrolled divider at 0x20156260, `memclr`+4,
+  `__rt_entry`, `Reset_Handler` → `reset_in_ram`+0x64, fplib 0x20164888/0x20164FA4); left as they are. (3) The 15 Thumb library
+  fragments above. (4) `DisplayGaps` still reports 11 `after_return_thumb` places; the pseudo-disassembler decodes only ARM, so
+  they were reviewed with `arm-none-eabi-objdump -M force-thumb`, and only 0x2016385C was added.
+
 ## Findings
 
 ## Follow-ups
