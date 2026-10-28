@@ -1,0 +1,98 @@
+# T10g proposals (band/VFO/mode/frequency/memory control). address<TAB>name<TAB>plate comment. See docs/code/main/radio-control.md
+# --- VFO record accessors
+fffb324c	vfo_rec_ptr	(which): 0 = active VFO record (0x9DBD), !=0 = TX record (other VFO while split 0x9C5E); returns 0x9D09/0x9D63 in R1
+fffb3196	vfo_mode	(which): mode nibble (rec+0) of vfo_rec_ptr(which); forced to 2 during tune cycles
+fffb357c	vfo_freq	(which, side): BE u32 at rec+0x4A; side 0=A 1=B 2=vfo_rec_ptr(which)
+fffb35d7	vfo_freq_clar	(which, side): vfo_freq + clar offset rec+0x48 if RX/TX clar bit set in 0x20F29/0x20F2A
+fffb3aa1	freq_in_range	29999 < f < 75000001
+fffb3445	gen_subband_of_freq	GEN sub-slot 0..15 from boundaries at 0xFFF887CC
+fffb3480	freq_range_index	Index of f in boundary table 0xFFF88814
+fffb4bba	vfo_tune_locked	1 if side is in state 7/8 or on 5 MHz/EMG memory (ch 117..132)
+fffb4c45	vfo_display_offset	Mode-dependent signed offset added to dial freq (0x20F5C); 0 if setting 0x9B15 != 0
+fffb4e18	bandmem_set	(kind, f): kind 1 -> 0x9C69[band] (scope CURSOR start), 2 -> 0x9C99[band] / 0x9CC9[GEN sub] (FIX start)
+fffb4ebe	bandmem_get	(kind): read band memory of the band containing the active frequency
+fffb4f52	tx_freq_repeater_shift	FM/DATA-FM repeater shift (rec+2 bits2-3) on 28/50 MHz, x10 kHz settings
+fff97784	range_cmp3	0 if v<lo, 1 if v>hi, else 2
+# --- tuning limits / cache
+fffc10c3	freq_clamp	(side, f): clamp/wrap to 30k..75M (0xFFF89D4C) or PMS limits 0x20F74/78; returns f
+fffc11a8	freq_clamp_pms	PMS-limit variant of freq_clamp
+fffc130b	freq_fix_below	Below-limit handling (clamp, or wrap while scanning)
+fffc1378	freq_fix_above	Above-limit handling (clamp, or wrap while scanning)
+fff9cee1	freq_cache_update	On 0x20F0F/0x20F10: recompute 0x20F50 TX, 0x20F54 A, 0x20F58 B, 0x20F5C dial
+# --- VFO / band stack
+fffc2fde	vfo_mark_edited	rt+0x443/0x445 = 1, QMB state -> VFO
+fffc125a	vfo_mark_tuned	rt+0x444/0x446 = 1, QMB state -> VFO
+fffc127b	qmb_exit_to_vfo	state 5 -> 1
+fffc16f6	vfo_store_back	Store operating record back (band stack / memory-tune backup) according to state
+fffc1927	bandstack_save	Record -> band-stack slot 0x4761/0x5409 + level*0x438 + band*0x5A, EEPROM if changed
+fffc1cd9	bandstack_load	Band-stack slot -> operating record (QMB slot in state 5)
+fffc1b2f	band_select_stack	(side, band): same band steps stack level mod 3 (if 0x9AC1), then vfo_reload
+fffc1c04	vfo_reload	Reload operating record by state (band stack / memory / memory tune)
+fffc1cbe	vfo_reload_bandstack	bandstack_load + vfo_retune, split off
+fffc1dff	vfo_reload_memory	memch_load_to_vfo + vfo_retune
+fffc3287	vfo_retune	freq_clamp the record frequency and apply
+fffc1663	band_select	Band key on the active side; 0x20F28 = min(band,11); dispatch by state
+fffc4c4e	band_select_on	(band, side): band_select with 0x9DBD temporarily = side (CAT BS/BU/BD)
+fffc1ae6	band_select_vfo	Band key in VFO/QMB state
+fffc1aa8	band_select_mem	Band key in memory state
+fffc1acf	band_select_memtune	Band key in memory-tune state
+fffc1a5f	band_select_pms	Band key in PMS state
+fffc3081	vfo_enter_vfo_state	state = 1
+fffc28fb	vfo_enter_mem_state	state = 2
+fffc273e	vfo_clear_tag	Blank tag (+0x4E) and tag flag (+5 bit7) of the operating record
+fffc18ff	memtune_backup_a	0x9D09 -> 0x9DCE
+fffc1913	memtune_backup_b	0x9D63 -> 0x9E28
+fffc1e0f	memtune_restore_a	0x9DCE -> 0x9D09
+fffc1e23	memtune_restore_b	0x9E28 -> 0x9D63
+# --- memory channels / PMS / QMB
+fffc2681	memch_load_to_vfo	0x6150+ch*0x5A -> operating record, clar cleared
+fffc2e65	memch_current	0x60C9 (A) / 0x60CA (B)
+fffc2e01	memch_valid	ch<117: used flag 0x60CB[ch]; 133: valid; else !memch_dest_blocked
+fffc2de9	memch_current_valid
+fffc2e8d	memch_dest_blocked	5 MHz ch 508..515/EMG blocked for dest codes 0xA4C5 0xA983 0xB5A7 0xD950
+fffc2ee1	memch_is_special	ch >= 117 (5 MHz / EMG)
+fffc2ecb	memch_current_is_special
+fffc2d93	vfo_is_memory	state 2, 7 or 8
+fffc5ce0	vfo_mem_to_memtune	state 2 -> 4 (PMS pair) or 3 (memory tune)
+fffc5d13	pms_load_limits	P-pair channel freqs -> 0x20F74/0x20F78 (sorted)
+fffbfac4	qmb_store	QI: operating record -> QMB slot (0x9023+n*0x5A), mask 0x9012
+fffbf924	qmb_recall	QR: leave split, enter state 5, load slot
+fffc316c	qmb_enter	state = 5, load QMB slot, save header
+fffc311a	qmb_set_depth	0x901F/0x9021 = stored count (max 5 if 0x9AC0==0)
+# --- split / V/M / A-B
+fffbeca5	split_toggle	FT/ST: toggle 0x9C5E, save/restore 0x9DBE/0x9DBF
+fffbf41f	vm_toggle	V/M key
+fffc27ad	vm_toggle_core	VFO <-> memory state change and reload
+fffbf4bb	vfo_ab_toggle	SV/VS: flip 0x9DBD in VFO state, else step toward VFO
+# --- scan
+fffe587f	scan_task	Main-loop scan state machine (0x18877), run flag 0x20F1C
+fffe5aff	scan_allowed
+fffe5c7e	scan_start_up	SC1
+fffe5caf	scan_start_down	SC2
+fffe5ce0	scan_stop	SC0
+fffe5d7c	scan_step	One step in direction 0x18876
+# --- outputs (some overlap with T10b/T10c/T10d/T10e; parent decides)
+fffa11ed	sdr_update_poll	Main-loop SDR register refresh: shadow compare, one 'w' per pass, stops while 0x1C8B
+fffa1c69	sdr_set_rx_freq	SDR reg 0x18/0x19 = RX freq + mode offset (RX only)
+fffa162c	sdr_set_tx_freq	SDR reg 8/9 = TX freq 0x20F50 (+PSK/CW offsets)
+fffa2758	sdr_set_scope_center	SDR reg 0x20/0x21 = scope centre
+fffa30f9	sdr_reg_send	Send r/w frame for reg 0x1B784 value 0x1B786
+fffbc29f	scope_cursor_follow	Keep dial inside CURSOR window, update 0x20F60/0x9E82/bandmem 1
+fffbc6e9	scope_cursor_center	CURSOR start = dial - span/2
+fff9772f	scope_span_index	Index into span table 0xFFF89D24
+fff98566	disp_put_op_freq	DISPLAY frame +0x1715: operating frequency
+fff985c5	disp_put_tx_freq	DISPLAY frame +0x1719: TX frequency 0x20F50
+fff985f5	disp_put_dial_freq	DISPLAY frame +0x171D: dial frequency
+fff98691	disp_put_scope_start	DISPLAY frame +0x1721: scope start (0x20F60 or FIX band memory)
+fff9fb6e	dsp_set_freq_range_param	SCI4 reg 99 = cfg105 byte chosen by frequency range (0xFFF88598)
+fffb0303	eeprom_save_bandstack	One band-stack entry to EEPROM 0x112/0xDBA + level*0x438 + band*0x5A
+fffb02cf	eeprom_save_vfo_block	EEPROM 0x53DB <- 0x9A2A (0x45C) and 0x1A62 <- 0x60B1 (0x18)
+fffb03c1	eeprom_save_qmb	EEPROM 0x49C3 <- 0x9012 (0x395)
+fffb03e1	eeprom_save_qmb_slot	QMB header + one slot
+# --- data labels
+fff8876c	@band_table	12 x {lo,hi} u32 Hz (band_of_freq)
+fff887cc	@gen_subband_table	18 x u32 boundaries (gen_subband_of_freq)
+fff88814	@freq_range_table	14 x u32 boundaries (freq_range_index)
+fff88598	@dsp_freq_ranges	5 x u32 (dsp_set_freq_range_param)
+fff89d24	@scope_spans	10 x u32 Hz: 1k..1M
+fff89d4c	@tune_limits	{30000, 75000000}
