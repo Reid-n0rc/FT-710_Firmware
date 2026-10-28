@@ -34,7 +34,7 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 | 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20116ec8_20118598.c |
 | 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20101ba4.c |
 
-### RTOS (µITRON 4.0-style kernel; the vendor is not identified)
+### RTOS (NORTi µITRON 4.0 kernel from MiSPO; string `NORTi(c)MiSPO` at 0x20156290 **[fact]**)
 | Address | Name | Notes |
 |---|---|---|
 | 0x201500F4 | `itron_acre_tsk` | ITRON error codes (E_ID −18, E_NOID −34, E_NOEXS −42). TCB table at 0x208DBBA0 |
@@ -57,11 +57,10 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 |---|---|---|
 | 0x2010EA90 | `update_main_cpu` | Opens `I:\AH076H_HEW.mot` (or `AH068H_HEW.mot`) and programs the RX651 over the boot-mode UART |
 | 0x2010D92C / 0x2010DA78 | `update_dsp` / `dsp_debug_cmd` | `I:\AH076H_IFDSP.dat`, `I:\rom_writer.dat`, `I:\AH068_AFDSP_V0000.dat`. Commands `dsp1up`…`dsp3up/32/9` |
-| 0x20110AB8 | `sdr_flash_write` | Writes the SDR (FPGA) image over SPI in 0x2000-byte blocks through `sdr_spi_xfer_block` 0x20110834 |
+| 0x20110AB8 | `sdr_flash_write` | Writes the SDR (FPGA) image in 4 KiB blocks over RSPI2 (master) through `sdr_spi_xfer_block` 0x20110834, with FPGA regs 0x30–0x33 driven through the MAIN bridge (`docs/code/display/update.md`) |
 | 0x20110C3C | `sdr_debug_cmd` | strcmp chain for `sdrup`, `sdr1up`, `sdr2up`, `sdrchk1`, `sdrup/g`, `sdr1up/g`, `sdr2up/g`, `sdrchk1/g`, `sdrchk2/g`, `sdrspi`, `sdrfile`, `delta`. It signals the worker through the event flag held in 0x208001B8 |
-| 0x2011249C | `pclink_stats_print` | `CS_POLL`, `MOSI_OK/NG`, `MISO_OK/NG`, `FRAMES`, `msec` |
 | 0x2015F62C | `update_display_self` | `I:\AH076H_DISPLAY.bin`, `I:\AH068_DISPLAY_Loader.bin` |
-| 0x2015F1F0 | `fwdbg_verify_bank1` | Writes to the bank at 0x18400000 |
+| 0x2015F1F0 | `fwdbg_verify_bank1` | Compares bank 1 (0x18400000) with the file; it never writes **[fact]** |
 | 0x201322B4 / 0x2015938C | `fwupdate_screen` / `bootloader_screen` | Update UI (`STEP 1 of 2`, `DO NOT TURN OFF POWER`, `BOOT LOADER V01-02`) |
 
 No MSB-first CRC-32 (poly 0x04C11DB7) constant or table is in the image. The only CRC-32 is the reflected 0xEDB88320 table generator. A bitwise
@@ -74,9 +73,9 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 | 0x201148D8 / 0x201148FC | `scif4_get` / `scif3_get` | UART objects on SCIF4 0xE8009000 and SCIF3 0xE8008800 |
 | 0x20162FAC | `uart_obj_init` | Stores the base address, buffers and mailboxes |
 | 0x201163A0 | `mainlink_init` | Creates `cmd_interval_sem`, `cmd_waiting_sem` and tasks, and allocates a 0x103C0-byte context at 0x2045FD40 |
-| 0x20116560 | `mainlink_inject_rx` | Looks up a 43-entry {cmd char, length} table at 0x20450074 (.data) and builds a frame with 0xAA marker + length |
+| 0x20116560 | `mainlink_inject_rx` | Looks up the length in the 43-entry {cmd, length} table at 0x20450074 (.data) and posts a saved frame to the RX dispatcher as if MAIN had sent it (redraws the previous screen) **[fact]** |
 | 0x20115494 | `mainlink_queue_frame` | |
-| 0x20134FDC | `debug_replay_send_cmd` | Logs received commands to `I:\FT-710\DEBUG_RECV_CMD\RECV_CMD.TXT` |
+| 0x20134FDC | `debug_replay_send_cmd` | Task `test_disp`: replays `I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT` into the GUI snapshot ("fake MAIN"). The `RECV_CMD.TXT` writer `debug_log_recv_cmd` 0x201352E8 has no caller **[fact]** |
 
 ### SD card / FAT
 | Address | Name | Notes |
@@ -90,12 +89,12 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 ### GUI framework / display
 | Address | Name | Notes |
 |---|---|---|
-| 0x201326FC | `fb_get_layer_addr` | 6 frame buffers, 800×480 RGB565, in uncached RAM 0x60000000+ |
-| 0x201355BC / 0x20135658 / 0x201358D0 | `fb_clear_rect` / `fb_fill_rect` / `gui_draw_runs` | Most-called GUI primitives (294 callers for `gui_draw_runs`) |
+| 0x201326FC | `fb_get_layer_addr` | 6 frame buffers, 800×480 RGB565, in uncached RAM 0x60000000+, shown on 4 VDC5 graphics layers |
+| 0x201355BC / 0x20135658 / 0x201358D0 | `fb_clear_rect` / `fb_fill_rect` / `gui_draw_runs` | Most-called GUI primitives (294 callers for `gui_draw_runs`). `fb_clear_rect` clears a rectangle to 0 (transparent, the chroma key) **[fact]** |
 | 0x20133A8C | `gui_update_layers` | Selects the layer buffers and passes them to the VDC5 (0x20117E5C) |
 | 0x2011A394 | `vdc5_config` | VDC5 ch0 registers |
 | 0x20125E78 | `touch_calibration` | `TOUCH THE CROSS` |
-| 0x20134644 / 0x2013059C | `screen_capture_bmp` / `screenshot_popup` | `I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` |
+| 0x20134644 / 0x2013059C | `screen_capture_bmp` / `screenshot_popup` | BMP writer (`I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp`) / the capture popup (popup slot 44) that calls it |
 | 0x2013B5BC / 0x2013B928 / 0x20107EFC | `usbh_create_objects` / `usbh_hid_init` / `vk_key_name` | USB host stack (`m596*`, `udevtsk%d`, `UHHID`): USB keyboard/mouse support |
 
 ### Peripherals
@@ -103,8 +102,22 @@ MSB-first CRC with the polynomial built from shifts cannot be ruled out (follow-
 |---|---|---|
 | 0x201177E4 | `ostm_init` | OSTM0 0xFCFEC000 (tick) |
 | 0x20120224 | `riic_init` | RIIC 0xFCFEE000 (touch controller TSC2003 per hardware.md) |
-| 0x201033E8 | `tsc2007_tint_isr` | INTC 0xFCFEF800 |
-| 0x2011E1F0–0x2011F230 | (unnamed) | RSPI0–4 drivers (SDR SPI, DSP SPI, FT4222 SPI) |
+| 0x201033E8 | `tsc2007_tint_isr` | IRQ3 ISR (touch TINT on P1_3, GIC 35): wakes the `tsc2007` IRQ task. Earlier named `intc_irq_setup` **[fact]** |
+| 0x2011D9A8–0x2011F230 | `rspi_*` | RSPI0–4 driver, see "SPI links" below |
+
+### SPI links (T11d, `docs/code/display/spi-links.md`)
+The DISPLAY is the SPI slave on all three links (8-bit, SPI mode 1), each frame moved by DMA **[fact]**.
+
+| Address | Name | Notes |
+|---|---|---|
+| 0x2011D9A8 / 0x2011F0CC / 0x2011F138 | `rspi_hw_config` / `rspi_open` / `rspi_start` | Table-driven RSPI driver (register table 0x20166B4C + n·0x2C). Master mode ≈ 2 MHz, slave otherwise |
+| 0x20133484 / 0x20133440 | `sdr_dsp_link_init` / `link_ss_irq_init` | RSPI2 + DMA ch5 (SDR scope, 1700 B) and RSPI4 + DMA ch3/ch4 (IF DSP, 4600 B); frame-select ISRs on GIC 535 / 449 |
+| 0x201330D4 / 0x201331DC | `sdr_rx_done_cb` / `dsp_rx_done_cb` | Frame complete: scope record / AF-FFT + 16 kHz stereo REC/PLAY PCM |
+| 0x201342EC / 0x20120D40 | `scope_store_frame` / `afscope_store_frame` | 850-byte scope record 0x204832BB, 600-byte AF-FFT record 0x208DD73C |
+| 0x20112450 / 0x20112288 | `spi_slave_init` / `task_spi_slave` | PC link over the FT4222H (RSPI0, DMA ch9 TX / ch10 RX, 4 KiB frames from 0x60501000) |
+| 0x2011249C | `pclink_stats_print` | Test-mode statistics box (`CS_POLL`, `MOSI_OK/NG`, `FRAMES`), boot key combination 4 |
+| 0x201107C0 | `sdr_spi_master_write` | RSPI2 switched to master for the SDR image (update) |
+| 0x201376D0 / 0x201378B0 | `dmac8_m2m_init` / `dmac8_m2m_start` | DMAC **channel 8** (0xE8200400), memory-to-memory frame-buffer copy for the GUI, not SPI |
 
 ### Other string-referenced functions (unnamed, good T11 entry points)
 - `wav_open_read`, `wav_list_dir`, `wav_delete`, `rec_open_wav`: `I:\FT-710\MESSAGE` / `PlayList` voice-message files.

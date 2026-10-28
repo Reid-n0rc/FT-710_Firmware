@@ -1,6 +1,8 @@
 # SFL firmware file format
 
-Applies to the FT-710 firmware package 2024-02 (all four images). Parser and checker: `tools/sfl_header.py`.
+Applies to the FT-710 firmware package 2024-02 (all four images). Parser and checker: `tools/sfl_header.py`. Decoder: `tools/sfl_decode.py` (T04).
+Encoder: `tools/sfl_encode.py` (T16; `--check` runs the DISPLAY loader's acceptance rules), round-trip test `tools/test_sfl_roundtrip.py`
+(decode → encode gives the shipped files byte for byte).
 
 ## Container (T03)
 
@@ -16,7 +18,7 @@ All fields are fixed width, so a parser can slice at 512/576 instead of scanning
 Line 1 is the image title (`MAIN CPU FIRMWARE`, `PANEL CPU FIRMWARE`, `IFDSP FIRMWARE`, `SDR FIRMWARE`). The following lines are `[FILE NAME]`, `[PRODUCT NAME]`, `[FIRM VERSION]` (`Vxx-yy`) and `[DATE]` (`YYYY/MM/DD`), then a copyright line. The radio's update screen shows a per-file version and compares it with the installed version ("Ready" / same version), which probably comes from this box or from the payload.
 
 ### Tag line fields
-- **tag**: `MC` = MAIN, `PC` = DISPLAY ("panel CPU"), `ID` = IFDSP, `SR` = SDR. Field columns: tag at column 0, length at column 16, checksum at column 32.
+- **tag**: `MC` = MAIN, `PC` = DISPLAY ("panel CPU"), `ID` = IFDSP, `SR` = SDR. Field columns: tag at column 0, length at column 16, checksum at column 32, the rest space-padded to 62 chars + CRLF (`f"{tag:<16}{length:<16}{crc:08X}"`, `make_tagline` in `tools/sfl_encode.py`).
 - **length**: decimal, **equals the total file size including the 576-byte header** (verified for all four files).
 - **checksum**: 32-bit, 8 uppercase hex digits. **Solved in T04:** CRC-32 over the *encoded* payload plus a 4-byte salt (see "Payload encoding (T04)" below).
 
@@ -37,6 +39,15 @@ Tested on IFDSP; the cheaper subset was also tested on all four images. No match
 - Target values were matched as-is, bit-reversed and byte-swapped.
 
 ~~Working hypothesis: the checksum covers the decoded payload.~~ Wrong. It covers the encoded payload, plus a salt (see T04).
+
+### What the radio checks (T11c)
+The DISPLAY loader (`sfl_read_header` 0x20114CA0) needs the tag line to be exactly 64 chars with no NUL, splits it on spaces and
+compares only the **3rd token** (hex) with the salted CRC. The **tag and the length field are not checked** **[fact]**. The comment box is
+ignored except for the DISPLAY loader-write trigger `#UP0` in block 3 (only with F1 held on a USB keyboard); the SDR file must also be exactly 0x43075A bytes. Full list:
+[code/display/update.md](code/display/update.md) §1.
+
+The radio's **MemList / Menu backups** on the SD card use the same container: a blank comment box, then the tag line `MemList  <n>  <CRC>` /
+`Menu  <n>  <CRC>`, then the payload encoded with the same key (`sdmenu_save_file` 0x2010F60C, `sfl_encode` 0x201149E0) **[fact]**.
 
 ### Payload length alignment
 The payload lengths mod 32 are 24 (MAIN), 16 (DISPLAY), 12 (IFDSP) and 26 (SDR). SDR's is not even a multiple of 4. No padding to a cipher block size, so the encoding is byte-granular (stream/XOR or substitution), confirmed in T04 as a period-43 additive key.

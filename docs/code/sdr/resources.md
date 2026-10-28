@@ -64,10 +64,19 @@ Counted from `LIOB33`/`RIOB33` features (`config LIOB33 RIOB33`); a site is used
 | bidirectional | 5 |
 | total, left / right banks | 46 / 56 |
 
-18 differential-input sites (counted per P/N site) are about **9 LVDS pairs**, the usual shape of a DDR LVDS ADC
-interface (data pairs plus a clock pair), and 18 differential-output sites about 9 LVDS output pairs, which fits a
-high-speed **TX DAC** **[inference]**. The single-ended I/O covers the J2002 board signals (I2S, SPI, UART, control)
-and the QSPI config flash **[inference]**. The package, so the pin-to-ball mapping, is unknown.
+T13 first read these counts as about 9 pairs each. Counted per IOB tile in the T15 FASM (T16, `tools/xc7_package_fit.py`)
+there are **16 LVDS input pairs in bank 35** and **18 LVDS output pairs in bank 34**, one pair per IOB tile; banks 14/15 are
+LVCMOS33 **[fact for the features per tile]**. The inputs fit a DDR LVDS ADC interface (data pairs plus a clock pair), the
+outputs a high-speed **TX DAC** **[inference]**. The single-ended I/O covers the J2002 board signals (I2S, SPI, UART,
+control) and the QSPI config flash **[inference]**.
+
+**Package: CSG324 or FGG484** **[inference]**. Only these two XC7A50T packages bond all 116 used IOB sites (CPG236 57,
+CSG325 82, FTG256 97) **[fact for the counts]**. The IDCODE does not encode the package, so the chip marking must be read
+to fix the pin-to-ball map (see [docs/patches/fpga-jtag-hello.md](../../patches/fpga-jtag-hello.md)).
+
+**QSPI pins as user I/O** **[fact for the features]**: D00 and FCS_B are driven and D01–D03 are inputs after
+configuration, so the fabric has its own SPI-flash master, the one that writes the flash during an update
+([interfaces.md](interfaces.md#configuration-and-update-sequence)) **[inference]**.
 
 ## Special blocks
 
@@ -76,4 +85,4 @@ and the QSPI config flash **[inference]**. The package, so the pin-to-ball mappi
 | `PCIE_BOT_X71Y115` | 11,970 | Vivado writes default attributes into unused PCIe blocks; no PCIe interface is expected on this module [inference] |
 | `GTP_COMMON` / `GTP_CHANNEL_0..3` | 778 / 286, 170, 106, 52 | same: default attributes, no serial transceiver link seen elsewhere [inference] |
 | `MONITOR_BOT` (XADC) | 2,113 | XADC defaults or a used XADC; not decoded (no segbits in prjxray-db) |
-| `CFG_CENTER_MID` (STARTUPE2, ICAP, BSCAN, USR_ACCESS) | 2,414 | only routing bits matched; whether STARTUPE2 (user access to the config-flash clock) is used is unknown |
+| `CFG_CENTER_MID` (STARTUPE2, ICAP, BSCAN, USR_ACCESS) | 2,414 | only routing bits matched. STARTUPE2 (user access to the config-flash clock `USRCCLKO`) is **likely used**, because the QSPI data/select pins are driven as user I/O (see I/O) [inference]; T15 to confirm |
