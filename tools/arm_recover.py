@@ -802,6 +802,30 @@ def is_prologue(img, a, mode):
     return False
 
 
+def plausible(R, t, mode, limit=64):
+    """Straight-line decode from t: no undefined encoding, no overlap with known code or literals, at least two
+    instructions, and it ends in a return/branch/computed jump within `limit` instructions (calls are passed)."""
+    img = R.img
+    if mode == 'A' and (img.u32(t) >> 28) != 14:
+        return False
+    a, n, it = t, 0, 0
+    while n < limit:
+        if not img.in_text(a) or R.owner[a - img.base] or a in R.lit:
+            return False
+        r = dec(img, a, mode, it > 0)
+        if r['flow'] == 'stop' or a + r['len'] > img.text_end:
+            return False
+        if it > 0:
+            it -= 1
+        if 'it' in r:
+            it = r['it']
+        n += 1
+        if r['flow'] in ('ret', 'jump', 'ijump') or (r['flow'] == 'table' and r.get('cond', 14) == 14):
+            return n >= 2 or (mode == 'A' and r['flow'] == 'jump')
+        a += r['len']
+    return False
+
+
 def a32_like(img, t):
     """True when >= 4 of the 8 aligned words around t have condition AL (top nibble 0xE): A32 code, not Thumb."""
     w0 = (t & ~3) - 16
@@ -900,6 +924,9 @@ def main():
         va = a.base + 4 * i
         R.add_start(va, 'A', 'vector')
         seeds.append((va, 'A', None))
+        vr = dec_a32(img, va)
+        if vr['flow'] == 'jump' and vr['t']:
+            R.add_start(vr['t'][0], 'A', 'vector_target')
     R.run(seeds)
 
     # 2. data pointers to code: literal values, .rodata words, decompressed RW data words
@@ -958,6 +985,8 @@ def main():
             gap_start = (not R.owner[o] and t not in R.lit and (o == 0 or R.owner[o - 1] or (t - 1) in R.lit
                          or any((t - k2) in R.lit for k2 in (1, 2, 4, 8)))
                          and ((mode == 'A' and img.u32(t) >> 28 == 14) or (mode == 'T' and not a32_like(img, t))))
+            # a pointer to the start of an undecoded gap counts only if a straight-line decode from it is plausible
+            gap_start = (gap_start or (not R.owner[o] and t not in R.lit)) and plausible(R, t, mode)
             ok = is_prologue(img, t, mode) or k in R.starts or (k in intable and any(w[1] != 'literal' for w in wh)) \
                 or (any(w[1] == 'literal' for w in wh) and at_code) or gap_start
             if not ok:
@@ -1004,6 +1033,24 @@ def main():
 
     while dataptr_pass() + prologue_pass():
         pass
+    # a prologue that the previous instruction falls into is a mid-function push (e.g. after `ldr`/`add ip,pc`
+    # set-up instructions), not a start: drop it unless something else points at it
+    nr_callees = {p[0] for p in R.pending}
+    dropped = 0
+    for (t, mode) in list(R.starts):
+        src = R.starts[(t, mode)]
+        if src - {'prologue', 'has_prologue'}:
+            continue
+        for q in (t - 4, t - 2) if mode == 'T' else (t - 4,):
+            if q in R.code and R.code[q][0] == mode and q + R.code[q][1] == t:
+                r = R.code[q][2]
+                fl = r['flow']
+                if fl in ('seq', 'cjump', 'cret', 'cijump', 'icall') or (fl == 'call' and (r['t'][0] & ~1) not in nr_callees) \
+                        or (fl == 'table' and r.get('cond', 14) != 14):
+                    del R.starts[(t, mode)]
+                    dropped += 1
+                break
+    R.dropped_prologues = dropped
     # prologue flags for all starts reached by other means
     for (t, mode), src in list(R.starts.items()):
         if is_prologue(img, t, mode):
@@ -1059,9 +1106,23 @@ def main():
         f.write('start\tend\tclass\tbytes\n')
         for s, e, c in cls:
             f.write('%08x\t%08x\t%s\t%d\n' % (s, e, c, e - s))
+    with open(f'{out}/xrefs.tsv', 'w') as f:
+        f.write('from\tto\tkind\n')
+        for ad in sorted(R.code):
+            m, ln, r = R.code[ad]
+            if r['flow'] in ('call', 'jump', 'cjump'):
+                for t in r['t']:
+                    f.write('%08x\t%08x\t%s\n' % (ad, t & ~1, r['flow'] + ('_via_literal' if r.get('tailvia') else '')))
+        for t in R.tables:
+            for x in t['targets']:
+                f.write('%08x\t%08x\t%s\n' % (t['site'], x & ~1, 'table' if t['kind'].startswith(('a32_', 't32_tb'))
+                                              else 'indirect_const'))
+        for (t, mode), wh in sorted(ptr_hits.items()):
+            for where, kind in sorted(wh):
+                f.write('%08x\t%08x\tdataptr_%s\n' % (where, t, kind))
     with open(f'{out}/conflicts.tsv', 'w') as f:
         f.write('addr\tkind\tnote\n')
-        for ad, k, note in sorted(R.conflicts):
+        for ad, k, note in sorted(set(R.conflicts)):
             f.write('%08x\t%s\t%s\n' % (ad, k, note))
         for ad, mode, prev in sorted(R.bad):
             f.write('%08x\tundefined\t%s path reached an undefined encoding (from %s)\n' % (
@@ -1082,8 +1143,8 @@ def main():
         f.write(f'table cases {sum(t["cases"] for t in R.tables if t["kind"].startswith(("a32_", "t32_tb")))}\n')
         f.write(f'bytes by class {dict(sorted(tot.items()))}\n')
         f.write(f'code bytes also loaded as literal {lit_conf}\n')
-        f.write(f'conflicts {len(R.conflicts)}, undefined-encoding stops {len(R.bad)}\n')
-        f.write(f'data-pointer rounds {rounds}\n')
+        f.write(f'conflicts {len(set(R.conflicts))}, undefined-encoding stops {len(R.bad)}\n')
+        f.write(f'data-pointer rounds {rounds}; mid-function prologues dropped {R.dropped_prologues}\n')
         nrf = sorted({p[0] for p in R.pending})
         f.write(f'no-return callees (call fall-throughs not followed) {len(nrf)}: {" ".join("%08x" % x for x in nrf)}\n')
     if a.objdump:
