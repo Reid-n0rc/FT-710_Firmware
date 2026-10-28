@@ -29,6 +29,18 @@ through the fork's CLI build until the MCP server is restarted.
 ### T22c
 **Status:** in progress (2026-10-28). IFDSP HiFi4.
 
+Plan (resumed 2026-10-28 after steps 1–2):
+1. done: base ISA outside bundles vs rizin.
+2. done: `Xtensa:LE:32:rt600hifi4` vs an own decoder. Leftovers to close here: `PcodeDump.java` was committed as WIP but is the
+   script the 10-bundle p-code check used (complete, catalogued in `tools/README.md`); settle the open `ret.n` at 0x22F79D
+   (desync or real) against Ghidra's listing and the flow decode; record 0x22672C (function missing from `entries_hifi4.tsv`)
+   as a follow-up.
+3. REA: once T22f's raw `xtensa-hifi4` lane exists (its CLI command in the scratchpad `t22f-ready.md`), open
+   `build/FT-710_IFDSP_V0101_hifi4.bin` in REA (fork CLI, under `memgate.py 2700`, hard timeout) with the new language;
+   B9 re-check (`FUN_0020bb74` decompiles, `{ l32r a3; and a14, a14, a3 }` uses the old `a3`); compare REA's function list and
+   decompile success with the canonical `decomp/ifdsp/hifi4` (T21g: 1,081 functions, 0 failures, 258 warnings, 1 halt_baddata).
+   If the lane is not ready when steps 1–2 are closed, T22c is recorded as blocked on T22f.
+
 **Step 1 — base ISA outside bundles, third decoder (rizin 0.9.1, Capstone Xtensa).** `tools/hifi4_rizin_compare.py` runs one
 `pdj 1 @ addr` per `flix.dis` instruction start on `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin` (base 0x200000), so the
 bundles cannot desynchronise rizin, and compares mnemonic and operand values (rules in the docstring).
