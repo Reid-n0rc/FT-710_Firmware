@@ -58,7 +58,8 @@ Derived files (FASM, netlist JSON, Verilog, XDC, slices) are in `build/sdr/` onl
 - **Blocks (T15c):** one **125 MHz** fabric clock from an LVDS pair (the ADC clock); 14 LVDS DDR ADC data pairs captured
   by IDDR on a BUFIO; 17 LVDS DDR outputs (TX DAC?); a **QSPI master on the configuration-flash pins** (the FPGA
   rewrites its own flash); **two identical UARTs at 115,200 8N1** (M18/L18, V12/U12) with an ASCII line parser
-  (`r`, `w`, undocumented `x`, hex, `,`, CR/LF/BS); two cascaded MMCMs giving ~28.17 MHz on pin P14 **[fact for wiring,
+  (`r`, `w`, undocumented `x`, hex, `,`, CR/LF/BS); UART B (V12/U12, line buffer) is most likely MAIN's UART5 and
+  UART A (M18/L18, character-at-a-time) the debug console **[inference]**; two cascaded MMCMs giving ~28.17 MHz on pin P14 **[fact for wiring,
   inference for roles]**. Package CSG324 or FGG484 **[fact]**.
 - **Verilog (T15d):** 63,474 UNISIM instances with recovered parameters + XDC; Yosys `hierarchy -check` clean; the UART
   receiver slice decodes real frames in Icarus **[fact]**.

@@ -212,6 +212,13 @@ side of UART5 (`sdr_reg_access` 0xFFFA1485, `FUN_fffa30f9`, `FUN_fffa31ae`, `FUN
 | read | `r` + 4 hex address + 2 hex checksum + `CR` | 7 bytes: 5 characters, then a 2-hex checksum of those 5. MAIN parses the value with `hex2word` |
 | write | `w` + 4 hex address + 4 hex value + 2 hex checksum + `CR` | one byte, `0x06` (ACK) |
 
+**Which UART is which [inference].** Behind the shared receiver and character decoder the two instances differ.
+UART B (V12/U12) copies received bytes into flip-flops right away (7 FFs one stage after the byte register, 83 FFs
+three stages later), i.e. a **line buffer of about ten characters**, the length of MAIN's fixed frames (`w` + 8 hex +
+2 hex sum = 11 characters before CR). UART A (M18/L18) has no buffer: its bytes go only through the character LUTs to
+a small state machine, and in the netlist slice it answers every character at once (section 4.3), which is how an
+interactive console behaves. So **UART B is most likely MAIN's UART5 and UART A the debug UART (`UART_DBG`)**.
+
 The checksum is the 8-bit sum of all the characters before it, written as two upper-case hex digits (`byte2hex`,
 `"0123456789ABCDEF"`) **[fact, MAIN code]**. On the transmit side, `SLICE_X1Y94/A5FF` drives L18 (UART A) and
 `SLICE_X2Y101/AFF` drives U12 (UART B). Within ten register stages the transmit path reaches about 1,400 flip-flops,
