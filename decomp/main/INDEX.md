@@ -23,10 +23,17 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   failures**; 1136 functions carry a name. The 16 extra functions over T05 are entries that ApplyNames created at names the sub-tasks gave to
   code labels (SCI TEI/ERI callbacks, menu item callbacks, tail-call targets).
 - About 384 KB of the ~451 KB non-0xFF ROM bytes are disassembled as code (129,938 instructions, T05 count), and about 50 KB are defined data. About 20 KB of non-0xFF bytes remain undefined, mostly string/const areas in 0xFFF80000..0xFFF8FFFF.
-- Decompiler warnings: 1226 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
+- T17 decompiler warnings: 1226 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
+- T21g rebuild (2026-10-28, #97): full re-import with the RX module patched for T17, T21c (RXv2 ops: `MUL`/`XCHG` memory forms, `SCCnd`,
+  string ops as named pcodeops) and T21d (`RTSD` frame size), then ApplyNames → DefineRomData → ApplySignatures (1,212 locked prototypes).
+  **2,324 functions exported**, 0 decompile failures. Against the T17 export: "Unable to track spacebase" 8 → 0, functions with
+  `in_`/`unaff_`/`extraout_` variables 61 → 8, undefined non-0xFF bytes 20,622 → 161 (two RX fragments the module cannot decode, at
+  0xFFF8FEF3 and 0xFFF9129B), warnings 1,294 → 1,229, unimplemented-instruction warnings 3 → 0. Functions with a warning go 347 → 352
+  because of the 56 new functions and "Removing unreachable block" in byte-parameter setters; this baseline was committed on purpose.
 - Known decompiler artifacts **[fact]**:
   - `SCMPU`/`SMOVF`/`SSTR`/`SUNTIL`/`SWHILE` string instructions are p-code loops, so they decompile as loops (`cat_parse` shows one). The underlying code is `strncmp(cmd, table+2*i, 2)`.
-  - Some call arguments are dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Check the disassembly when an argument count looks wrong.
+  - Some call arguments used to be dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Since
+    T21g the locked signatures fix all but 2 (at functions without a signature); check the disassembly when an argument count looks wrong.
   - **Fixed in T17:** `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11) used to be shown as a memory load `[Rs]` (107 sites in 49 functions, found by T10e with
     `tools/ghidra/T10eMovuRegCount.java`). After the fix all 107 decode as register zero-extends, e.g. `cat_ext_SP` now calls
     `cat_checksum_ok(cmd+4, len-2)` and `displink_tx_req` passes `len-1` instead of loading from address `len-1`.
@@ -40,30 +47,26 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 2,268 |
+| Functions exported (non-thunk) | 2,324 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,294 |
-| Functions with a warning | 347 |
-| "Unable to track spacebase" | 8 |
-| "Removing unreachable block" | 1,226 |
+| Decompiler warnings (all kinds) | 1,229 |
+| Functions with a warning | 352 |
+| "Unable to track spacebase" | 0 |
+| "Removing unreachable block" | 1,187 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
-| Functions with `in_*` variables | 51 |
+| Functions with `in_*` variables | 8 |
 | Functions with `unaff_*` variables | 0 |
-| Functions with `extraout_*` variables | 14 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 61 |
-| Undefined non-0xFF bytes in executable blocks | 20,622 |
-| … in block `ROM` | 20,622 |
+| Functions with `extraout_*` variables | 1 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 8 |
+| Undefined non-0xFF bytes in executable blocks | 161 |
+| … in block `ROM` | 161 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
-| warning: Control flow encountered unimplemented instructions | 3 |
 | warning: Do nothing block with infinite loop | 2 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 35 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 24 |
 | warning: Ignoring partial resolution of indirect | 16 |
-| warning: Removing unreachable block (#) | 1,226 |
-| warning: Type propagation algorithm not settling | 1 |
-| warning: Unable to track spacebase fully for stack | 8 |
-| warning: Unimplemented instruction - Truncating control flow here | 3 |
+| warning: Removing unreachable block (#) | 1,187 |
 <!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]
