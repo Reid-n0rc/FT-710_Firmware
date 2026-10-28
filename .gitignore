@@ -20,3 +20,4 @@ Manuals/
 __pycache__/
 *.pyc
 .venv/
+.claude/worktrees/
