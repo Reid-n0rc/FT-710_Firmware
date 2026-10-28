@@ -1,12 +1,22 @@
 # T12c — IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)
 
-**Status:** todo · **Parent:** T12 · **Depends on:** T12a
+**Status:** in progress (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
 
 ## Goal
 `docs/code/ifdsp/ipc.md`: MU-A boot handshake, rpmsg-lite virtqueues and endpoints, IpcRecvTask/IpcSendTask, message format and the categories in ipc_print_dsp_reply.
 
 ## Plan
-See T12 plan. Starting notes from T12a below.
+See T12 plan. Starting notes from T12a below. Approach:
+1. M33 side from `decomp/ifdsp/m33` + `build/ifdsp_m33_sram.dis`: `app_main` handshake (MU_SetFlags, MU_SR polling, SEMA42 gate
+   encoding), rpmsg-lite master (env/platform layer, virtqueue functions, shared-memory layout computed from the code), IPC tasks
+   and queue 0x886E0 (literal search for writers), message struct (0x98 bytes) vs the NXP SDK DSP-example `srtm_message`.
+2. Identify the unnamed rpmsg-lite / env helpers (0x85F2C..0x86542, 0x81914) by matching rpmsg-lite source; propose names in
+   `tools/ghidra/names_ifdsp.T12c.tsv`.
+3. DSP side (Xtensa base ISA only): Ghidra listing of own project copy `FT710_IFDSP_T12c` for the MU-B / SEMA42 / rpmsg functions
+   (literal pools via `ifdsp_hifi4_l32r.txt`), find the flag handshake partner, rpmsg remote init and endpoint 0x1E, and how the
+   register file is consumed (`tools/ifdsp_regscan.py`). Tag L32R-only evidence as such.
+4. Write `docs/code/ifdsp/ipc.md`: function tables, shared-SRAM map (extended), message format, startup + steady-state sequence
+   diagrams, start/stop/reset sequencing, audio-buffer handoffs, open questions. Shared-file edits go under "Proposed shared-file edits".
 
 ## Starting notes (from T12a)
 - Boot handshake in `app_main` 0x8106C: `SEMA42_Init` 0x848F4, `SEMA42_ResetAllGates` 0x87008, `MU_SetFlags(MUA,1)` 0x86F14, wait `MU_SR & 7 == 1`, `SEMA42_Lock(gate 0)` 0x86FEC, `MU_SetFlags(2)`, write 0 to SEMA42 gate 3 (0x40112003), wait `== 3`.
