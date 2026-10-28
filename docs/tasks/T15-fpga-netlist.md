@@ -20,12 +20,12 @@ the design's interfaces can be re-implemented or extended (see [custom firmware 
 - Never commit bitstream bytes or large derived dumps.
 
 ## Plan
-Split into three sub-tasks, done in order (each finished, documented and committed before the next):
+Split into five sub-tasks (T15d and T15e added on the owner's request), done in order (each finished, documented and committed before the next):
 
 | Sub-task | Deliverable | Status |
 |---|---|---|
 | [T15a](T15a-fpga-fasm.md) | `tools/xc7_fasm.py`: bitstream -> prjxray `.bits` (stdlib) -> FASM via prjxray's `FasmDisassembler` (venv); FASM summary per tile type; FASM section of `docs/code/sdr/netlist.md` | done |
-| [T15b](T15b-fpga-netlist-cells.md) | `tools/xc7_netlist.py` (stdlib): FASM -> cells (LUT INIT, FF, CARRY4, DSP48E1, BRAM, IOB, MMCM, BUFG) + nets from active PIPs walked over `tileconn.json`; self-test on a hand-built FASM case | todo |
+| [T15b](T15b-fpga-netlist-cells.md) | `tools/xc7_netlist.py` (stdlib): FASM -> cells (LUT INIT, FF, CARRY4, DSP48E1, BRAM, IOB, MMCM, BUFG) + nets from active PIPs walked over `tileconn.json`; self-test on a hand-built FASM case | done |
 | [T15c](T15c-fpga-blocks.md) | Block recognition in `docs/code/sdr/netlist.md`: clock domains, IOB groups, DSP48 cascades and BRAM<->DSP links (DDC/filter chain), UART5 and scope SPI candidates, TX path | todo |
 | [T15d](T15d-fpga-verilog.md) | `tools/xc7_netlist_verilog.py`: structural Verilog (UNISIM primitives with recovered parameters, ports named from package pins / J2002 signals) + XDC (LOC, IOSTANDARD) in `build/sdr/`; smoke test with an open tool (Yosys/Icarus/Verilator) against a UNISIM blackbox library; summary only in docs | todo |
 | [T15e](T15e-fpga-uart-rtl.md) | Behavioral RTL of the UART link to MAIN in `hdl/sdr/` (baud generator, framing, `r`/`w` command handling) + README + testbench comparing it against the structural slice | todo |
@@ -57,7 +57,7 @@ For the parent to apply (this task does not edit shared files).
 **docs/tasks/README.md** — add under the T15 row:
 ```
 | T15a | [Bitstream to FASM (SDR)](T15a-fpga-fasm.md) | T13 | done |
-| T15b | [FASM to cell-level netlist (SDR)](T15b-fpga-netlist-cells.md) | T15a | todo |
+| T15b | [FASM to cell-level netlist (SDR)](T15b-fpga-netlist-cells.md) | T15a | done |
 | T15c | [Block recognition (SDR)](T15c-fpga-blocks.md) | T15b | todo |
 | T15d | [Structural Verilog netlist + smoke test (SDR)](T15d-fpga-verilog.md) | T15b | todo |
 | T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | todo |
