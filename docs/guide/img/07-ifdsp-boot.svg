@@ -81,7 +81,7 @@
 <text x="825.0" y="148.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">and waits a moment</text>
 <text x="825.0" y="167.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">(100 ticks)</text>
 <rect x="715" y="795" width="220" height="75" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
-<text x="825.0" y="819.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">sends i DB00 (quiet mode)</text>
+<text x="825.0" y="819.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">i DB00: machine mode on</text>
 <text x="825.0" y="838.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">reads reg 0 = 0x0101,</text>
 <text x="825.0" y="857.0" font-size="14" font-weight="normal" text-anchor="middle" fill="#1F2937">waits for reg 1 bit 0</text>
 <circle cx="715" cy="795" r="12" fill="#1F2937"/>
