@@ -1,0 +1,230 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -327,14 +327,15 @@
+ ldu_src: szldu_src        is mode_ld = 0x3  & szldu_src         [ mode_sz = mode_mi; ] { build szldu_src; export szldu_src; }
+ ldu_src: szldu_src^szdsc  is mode_ld != 0x3 & szldu_src & szdsc [ mode_sz = mode_mi; ] { build szldu_src; export szldu_src; }
+ 
+-## MOVU uses memory source forms; when ld=3 it should be [Rs] (not Rs).
++## MOVU (2) 0x58-0x5F: ld=00/01/10 are [Rs]/dsp:8[Rs]/dsp:16[Rs]; ld=11 is register Rs, zero-extended
++## (RXv2 software manual R01US0071EJ0100, MOVU, sections 3 and 4). T17 fix: ld=11 was decoded as [Rs].
+ movu_ldu_src: szldu_src        is mode_ld < 0x3 & szldu_src { build szldu_src; export szldu_src; }
+-movu_ldu_src: [reg4_4]         is mode_ld = 0x3 & mode_sz = 0x0 & reg4_4 {
+-	local tmp:4 = zext(*:1 reg4_4);
++movu_ldu_src: reg4_4           is mode_ld = 0x3 & mode_sz = 0x0 & reg4_4 {
++	local tmp:4 = zext(reg4_4:1);
+ 	export tmp;
+ }
+-movu_ldu_src: [reg4_4]         is mode_ld = 0x3 & mode_sz = 0x1 & reg4_4 {
+-	local tmp:4 = zext(*:2 reg4_4);
++movu_ldu_src: reg4_4           is mode_ld = 0x3 & mode_sz = 0x1 & reg4_4 {
++	local tmp:4 = zext(reg4_4:2);
+ 	export tmp;
+ }
+ 
+@@ -1961,34 +1962,23 @@
+ }
+ 
+ 
+-## SCMPU - string compare until not equal
++## SCMPU - string compare until not equal (T17 fix: Z=1 when both strings end in NUL together,
++## C = unsigned *R1 >= *R2, R3==0 leaves the flags alone; manual R01US0071EJ0100 SCMPU)
+ :SCMPU    is op0_8 = 0x7F; op0_8 = 0x83 {
+-    local check_len:1;
+     local tmp0:1;
+     local tmp1:1;
+-
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <endloop>;
+         tmp0 = *:1 R1;
+         tmp1 = *:1 R2;
+         R1 = R1 + 1;
+         R2 = R2 + 1;
+         R3 = R3 - 1;
+-        if (tmp0 == 0) goto <compare>;
+-        if (tmp0 != tmp1) goto <compare>;
+-    goto <loop>;
+-
+-    <endloop>
+-    $(Z_flag) = 1:1;
+-    $(C_flag) = 1:1;
+-    goto <end>;
+-
+-    <compare>
+-    local tmp2 = tmp0 - tmp1;
+-    $(C_flag) = (tmp2 s>= 0);
+-    $(Z_flag) = 0;
+-
++        $(Z_flag) = (tmp0 == tmp1);
++        $(C_flag) = (tmp0 >= tmp1);
++        if (tmp0 != tmp1) goto <end>;
++        if (tmp0 == 0) goto <end>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+@@ -2296,126 +2286,96 @@
+ }
+ 
+ 
+-## SUNTIL.size - search until equal string p. 196
++## SUNTIL.size - search until equal string p. 196 (T17 fix: set Z/C from the last *R1 - R2)
+ ### SUNTIL.B
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-    local check_len:1;
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+         tmp = zext(*:1 R1);
+         R1 = R1 + 1;
+         R3 = R3 - 1;
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
+         if (tmp == R2) goto <end>;
+-    goto <loop>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+ ### SUNTIL.W
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-    local check_len:1;
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+         tmp = zext(*:2 R1);
+         R1 = R1 + 2;
+         R3 = R3 - 1;
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
+         if (tmp == R2) goto <end>;
+-    goto <loop>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+ ### SUNTIL.L
+ :SUNTIL^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100000 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-    local check_len:1;
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <end>;
+         tmp = *:4 R1;
+         R1 = R1 + 4;
+         R3 = R3 - 1;
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
+         if (tmp == R2) goto <end>;
+-    goto <loop>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+ 
+-## SWHILE - search while unequal string p. 198
+-:SWHILE^".B"    is op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 0 {
+-    local check_len:1;
++## SWHILE.size - search while equal string p. 198 (T17 fix: compare *R1 (not R1) with R2, step R1 by the size, set Z/C)
++### SWHILE.B
++:SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <endloop>;
+         tmp = zext(*:1 R1);
+         R1 = R1 + 1;
+         R3 = R3 - 1;
+-        if (R1 != R2) goto <unmatch>;
+-    goto <loop>;
+-
+-    <endloop>
+-    $(Z_flag) = 1;
+-    $(C_flag) = 1;
+-    goto <end>;
+-
+-    <unmatch>
+-    $(Z_flag) = 0;
+-    $(C_flag) = ((tmp - R2) s>= 0);
+-
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
++        if (tmp != R2) goto <end>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+-:SWHILE^".W"    is op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 1 {
+-    local check_len:1;
++### SWHILE.W
++:SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <endloop>;
+         tmp = zext(*:2 R1);
+-        R1 = R1 + 1;
++        R1 = R1 + 2;
+         R3 = R3 - 1;
+-        if (R1 != R2) goto <unmatch>;
+-    goto <loop>;
+-
+-    <endloop>
+-    $(Z_flag) = 1;
+-    $(C_flag) = 1;
+-    goto <end>;
+-
+-    <unmatch>
+-    $(Z_flag) = 0;
+-    $(C_flag) = ((tmp - R2) s>= 0);
+-
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
++        if (tmp != R2) goto <end>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 
+-:SWHILE^".L"    is op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 2 {
+-    local check_len:1;
++### SWHILE.L
++:SWHILE^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100001 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+     local tmp:4;
+-
++    if (R3 == 0) goto <end>;
+     <loop>
+-    check_len = (R3 == 0);
+-    if (check_len) goto <endloop>;
+         tmp = *:4 R1;
+-        R1 = R1 + 1;
++        R1 = R1 + 4;
+         R3 = R3 - 1;
+-        if (R1 != R2) goto <unmatch>;
+-    goto <loop>;
+-
+-    <endloop>
+-    $(Z_flag) = 1;
+-    $(C_flag) = 1;
+-    goto <end>;
+-
+-    <unmatch>
+-    $(Z_flag) = 0;
+-    $(C_flag) = ((tmp - R2) s>= 0);
+-
++        $(Z_flag) = (tmp == R2);
++        $(C_flag) = (tmp >= R2);
++        if (tmp != R2) goto <end>;
++        if (R3 != 0) goto <loop>;
+     <end>
+ }
+ 

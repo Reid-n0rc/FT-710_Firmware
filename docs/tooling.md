@@ -74,7 +74,30 @@ Ghidra 12.1.4 ships no Renesas RX language. T05 installed a **community SLEIGH m
 | Remove | `rm -rf ~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX` |
 | Re-install | `git clone https://github.com/stefan00lpf/rx-proc-ghidra && git -C rx-proc-ghidra checkout ea4cd20403c2e359f0de0cead2850d6be173b67a`, then copy the six `data/languages/rx62t.*` files and create the two small files as above. |
 
-Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL) have p-code that the decompiler renders as odd loops, and the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) are modelled as p-code loops, so the decompiler renders them as loops instead of `strncmp`/`memcpy`/`memset`/`memchr`; the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+
+### Local SLEIGH fix (T17, 2026-10-27): `tools/ghidra/rx62t-movu-fix.patch`
+
+Checked against the RXv2 software manual `Manuals/Renesas/REN_r01us0071ej0100_rxv2sm_MAS_20131112_1.pdf` (R01US0071EJ0100):
+
+| Instruction | Defect in `ea4cd204` | Manual | Fix |
+|---|---|---|---|
+| `MOVU.B/W Rs,Rd` (bytes `5B`/`5F` + `rs rd`, format (2), ld = 11) | decoded as the memory load `MOVU.x [Rs],Rd` (the module's comment even says "when ld=3 it should be [Rs]"). Found by T10e: 107 sites in 49 MAIN functions, including the CAT `SP` checksum length | p. 124 (function table: register → register zero-extend), p. 259 (format (2): ld 11b = Rs, 00b = [Rs], 01b = dsp:8, 10b = dsp:16) | `movu_ldu_src` with `mode_ld = 3` exports `zext(Rs:1)` / `zext(Rs:2)` |
+| `SCMPU` | set Z = 0 when both strings ended in NUL together (a match), C used a signed byte difference, and R3 = 0 cleared Z/C | p. 184: Z = strings matched, C = unsigned `*R1 − *R2 ≥ 0`, R3 = 0 has no effect | flags from the last compared pair, loop skipped when R3 = 0 |
+| `SUNTIL.B/W/L` | never set Z/C (code that branches on Z after it was mis-decoded) | p. 196: flags from `*R1 − R2`, Z = match found | Z/C from the last compare |
+| `SWHILE.B/W/L` | compared the pointer `R1` (not `*R1`) with R2, and stepped R1 by 1 for .W/.L | p. 198 | compare `*R1`, step by the size, Z/C from the last compare |
+| `SMOVF`, `SMOVB`, `SSTR` | none (correct p-code, rendered as loops) | pp. 190, 192 | unchanged |
+
+Apply / rebuild (the REA MCP server and the REA CLI use the same installed module, so they get the fix too):
+```sh
+cd ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX
+cp data/languages/rx62t.sinc data/languages/rx62t.sinc.orig-ea4cd204     # original kept next to it (also rx62t.sla.orig-ea4cd204)
+patch -p1 < /workspace/FT-710_Firmware/tools/ghidra/rx62t-movu-fix.patch
+JAVA_HOME=~/opt/jdk-21.0.13+9 ~/opt/ghidra_12.1.4_PUBLIC/support/sleigh data/languages/rx62t.slaspec   # 8 NOP warnings, as before
+```
+SHA-256 of `rx62t.sinc`: original `42f51c2c…0f12`, patched `d32178a9…011b`. Programs analysed before the fix keep the old
+instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo: copy the two `.orig-ea4cd204` files back.
+The fix is local; it is not sent upstream.
 
 GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 
