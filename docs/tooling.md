@@ -196,13 +196,15 @@ return) computed the register count as `reg0_4 - reg4_4 + 1`, i.e. from the **co
 depended on data, and the decompiler gave up on the stack ("Unable to track spacebase fully for stack") in the 8 MAIN functions where it
 mattered (`eeprom_read`, `displink_build_60`, `cat_SP_meters`, `menu_page_serialize` and four runtime functions at 0xFFFEDD9A..0xFFFEDFA7)
 **[fact]**. The patch uses the operand fields (`rs2 - rs1 + 1`). With it the 8 warnings go away and no other line of the MAIN C changes
-**[fact, T21d export]**. It applies on top of the T17 patch (and of T21c's, with an offset); T21c/T21g add it to `bootstrap.sh --only rx`.
+**[fact, T21d export]**. It applies on top of the T17 patch (and of T21c's, with an offset). Since T21g, `bootstrap.sh --only rx` applies it as the third
+stage after T21c's patch: `rx62t.sinc` SHA-256 T21c `9eadf83b…6a11` → `618938bb…4b36` (`RX_SINC_FIXED`); installed in the container's
+Ghidra on 2026-10-28.
 
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
 download with SHA-256 checks (`--only deps`, Linux x86_64), the RX module install from `stefan00lpf/rx-proc-ghidra` @ `ea4cd204` plus the
-T17 patch and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
+T17, T21c and T21d patches and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
 venv + SDR netlist/Verilator chain (`--only sdr`). Newcomer walk-through: [getting-started.md](getting-started.md); catalogue of all
 scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` takes `JOBS` (default 16) and `tools/xc7_fasm.py` takes
 `FT710_VENV` (default `~/.local/share/ft710-tools/venv`) since T20.

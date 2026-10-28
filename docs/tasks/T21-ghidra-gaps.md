@@ -313,6 +313,19 @@ incremental run on a copy of the canonical project byte for byte.
   fragments above. (4) `DisplayGaps` still reports 11 `after_return_thumb` places; the pseudo-disassembler decodes only ARM, so
   they were reviewed with `arm-none-eabi-objdump -M force-thumb`, and only 0x2016385C was added.
 
+### T21g
+**Status:** in progress (2026-10-28). A step 8 and integration. DISPLAY and IFDSP are done (branch
+`worktree-agent-ad5fb8b0f04061087`, merged): both projects rebuilt with HiFi4 on `Xtensa:LE:32:rt600hifi4`, `decomp/display` and
+`decomp/ifdsp` re-exported, new `quality.tsv` baselines, docs (`ghidra-flix.md`, `hifi4.md`, INDEX quality tables) updated.
+
+**Plan (MAIN, parent agent).** (1) Fold `rx62t-rtsd-fix.patch` into `tools/bootstrap.sh`'s RX step as a third stage after T21c's
+patch; the T21c hash becomes `RX_SINC_T21C` and `RX_SINC_FIXED` is the hash with RTSD fixed (T21d measured `618938bb…`). (2) Patch the
+shared RX module through that step and recompile `rx62t.sla`. (3) Rebuild the canonical `ghidra/FT710_MAIN` with `bootstrap.sh --only
+ghidra` (ApplyNames → DefineRomData → ApplySignatures) and re-export `decomp/main` (`--only export`). (4) Compare the new `quality.tsv`
+with the committed one and with T21d's combined numbers, commit the new baseline, update `decomp/main/INDEX.md` and the docs.
+(5) Close T21: Findings, Follow-ups, board, `issues_sync.py`. Out of scope (follow-ups): memory effect for the string pcodeops, the
+two undecoded fragments at 0xFFF8FEF3 and 0xFFF9129B.
+
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
 

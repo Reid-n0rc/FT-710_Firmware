@@ -14,8 +14,8 @@
 #   inputs  check Firmware/ against docs/inputs.sha256; unpacks the Yaesu zip first if only the zip is there.
 #   decode  SFL -> build/*.bin (tools/sfl_decode.py), carve the HiFi4 images (tools/ifdsp_dsp_images.py), check hashes.
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
-#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17) and tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
-#           compile it. Skipped when already installed and patched.
+#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17), tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
+#           tools/ghidra/rx62t-rtsd-fix.patch (T21d) and compile it. Skipped when already installed and patched.
 #   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
 #           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
 #           module and compile it; the stock Xtensa:LE:32:default is not changed. HIFI4_REGEN=1 first downloads
@@ -109,7 +109,8 @@ RX_GIT=https://github.com/stefan00lpf/rx-proc-ghidra
 RX_COMMIT=ea4cd20403c2e359f0de0cead2850d6be173b67a
 RX_SINC_ORIG=42f51c2cc890cb4b396b1e1dce2dc85048ceaa3124c217088d58b5cba0758f12
 RX_SINC_T17=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
-RX_SINC_FIXED=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
+RX_SINC_T21C=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
+RX_SINC_FIXED=618938bbd851134261c441cdfd2d34dca327b261c2c5acb49d63651b219e4b36
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -289,7 +290,11 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rxv2-fix.patch")
     info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, SCCnd, string ops as pcodeops)"
   fi
-  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c-patched file"
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_T21C" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rtsd-fix.patch")
+    info "applied tools/ghidra/rx62t-rtsd-fix.patch (T21d: RTSD frame size from register numbers)"
+  fi
+  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
