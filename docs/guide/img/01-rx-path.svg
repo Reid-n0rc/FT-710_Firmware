@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="510" viewBox="0 0 960 510" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Receive signal path of the FT-710</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .main { fill: #DBEAFE; stroke: #2563EB; stroke-width: 2; }
+    .disp { fill: #DCFCE7; stroke: #16A34A; stroke-width: 2; }
+    .dsp { fill: #F3E8FF; stroke: #9333EA; stroke-width: 2; }
+    .sdr { fill: #FFEDD5; stroke: #EA580C; stroke-width: 2; }
+    .sig { stroke: #1F2937; stroke-width: 3; fill: none; marker-end: url(#ah); }
+    .ctl { stroke: #2563EB; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#ahb); }
+    .dat { stroke: #16A34A; stroke-width: 2; fill: none; marker-end: url(#ahg); }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1F2937"/></marker>
+    <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#2563EB"/></marker>
+    <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#16A34A"/></marker>
+  </defs>
+  <rect width="960" height="510" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Receive: from the antenna to the speaker</text>
+
+  <!-- antenna icon -->
+  <g stroke="#1F2937" stroke-width="3" fill="none">
+    <line x1="50" y1="80" x2="50" y2="150"/>
+    <line x1="50" y1="84" x2="28" y2="64"/>
+    <line x1="50" y1="84" x2="72" y2="64"/>
+    <line x1="50" y1="84" x2="50" y2="60"/>
+    <line x1="36" y1="150" x2="64" y2="150"/>
+  </g>
+  <text x="50" y="176" text-anchor="middle">antenna</text>
+  <path d="M66 116 H106" class="sig"/>
+
+  <rect x="110" y="76" width="180" height="84" rx="8" class="grey"/>
+  <text x="200" y="100" text-anchor="middle" class="b">1 RF front end</text>
+  <text x="200" y="122" text-anchor="middle">band-pass filter,</text>
+  <text x="200" y="142" text-anchor="middle">preamp / attenuator</text>
+  <path d="M290 118 H326" class="sig"/>
+
+  <rect x="330" y="76" width="150" height="84" rx="8" class="grey"/>
+  <text x="405" y="100" text-anchor="middle" class="b">2 ADC</text>
+  <text x="405" y="122" text-anchor="middle">RF in, numbers</text>
+  <text x="405" y="142" text-anchor="middle">out (250 MHz clock)</text>
+  <path d="M480 118 H516" class="sig"/>
+  <text x="498" y="108" text-anchor="middle" class="s">LVDS</text>
+
+  <rect x="520" y="76" width="210" height="84" rx="8" class="sdr"/>
+  <text x="625" y="100" text-anchor="middle" class="b">3 FPGA tuner</text>
+  <text x="625" y="122" text-anchor="middle">digital mixer picks</text>
+  <text x="625" y="142" text-anchor="middle">the frequency, filters</text>
+
+  <!-- display box -->
+  <rect x="790" y="76" width="150" height="270" rx="8" class="disp"/>
+  <text x="865" y="104" text-anchor="middle" class="b">DISPLAY</text>
+  <text x="865" y="130" text-anchor="middle">spectrum</text>
+  <text x="865" y="150" text-anchor="middle">scope and</text>
+  <text x="865" y="170" text-anchor="middle">waterfall</text>
+  <text x="865" y="270" text-anchor="middle">audio scope,</text>
+  <text x="865" y="290" text-anchor="middle">voice recorder</text>
+  <path d="M730 100 H786" class="dat"/>
+  <text x="758" y="92" text-anchor="middle" class="s">SPI</text>
+  <path d="M730 268 H786" class="dat"/>
+  <text x="758" y="260" text-anchor="middle" class="s">SPI</text>
+
+  <!-- down to DSP -->
+  <path d="M625 160 V222" class="sig"/>
+  <text x="635" y="196" class="s">I2S</text>
+
+  <rect x="520" y="226" width="210" height="104" rx="8" class="dsp"/>
+  <text x="625" y="250" text-anchor="middle" class="b">4 HiFi4 DSP</text>
+  <text x="625" y="272" text-anchor="middle">demodulate, filter,</text>
+  <text x="625" y="292" text-anchor="middle">AGC, noise reduction,</text>
+  <text x="625" y="312" text-anchor="middle">notch, contour</text>
+  <path d="M520 278 H484" class="sig"/>
+  <text x="502" y="268" text-anchor="middle" class="s">I2S</text>
+
+  <rect x="300" y="236" width="180" height="84" rx="8" class="grey"/>
+  <text x="390" y="260" text-anchor="middle" class="b">5 audio codec</text>
+  <text x="390" y="282" text-anchor="middle">numbers back to</text>
+  <text x="390" y="302" text-anchor="middle">an analog voltage</text>
+  <path d="M300 278 H264" class="sig"/>
+
+  <rect x="110" y="236" width="150" height="84" rx="8" class="grey"/>
+  <text x="185" y="260" text-anchor="middle" class="b">6 AF amp</text>
+  <text x="185" y="282" text-anchor="middle">volume,</text>
+  <text x="185" y="302" text-anchor="middle">power stage</text>
+  <path d="M110 278 H82" class="sig"/>
+
+  <!-- speaker icon -->
+  <g stroke="#1F2937" stroke-width="3" fill="#F3F4F6">
+    <rect x="58" y="264" width="14" height="28"/>
+    <path d="M58 264 L36 248 V308 L58 292 z"/>
+  </g>
+  <g stroke="#1F2937" stroke-width="2" fill="none">
+    <path d="M28 260 Q18 278 28 296"/>
+    <path d="M20 252 Q6 278 20 304"/>
+  </g>
+  <text x="50" y="336" text-anchor="middle">speaker,</text>
+  <text x="50" y="354" text-anchor="middle">phones</text>
+
+  <!-- MAIN control -->
+  <rect x="110" y="390" width="620" height="100" rx="8" class="main"/>
+  <text x="420" y="416" text-anchor="middle" class="b">MAIN (RX651) sets up every stage marked M</text>
+  <text x="420" y="440" text-anchor="middle">filters and preamp: serial shift registers · FPGA: frequency, filter,</text>
+  <text x="420" y="460" text-anchor="middle">noise blanker, scope span (UART) · DSP: mode, AGC, NR, notch (UART)</text>
+
+  <!-- MAIN badges -->
+  <circle cx="286" cy="80" r="13" fill="#2563EB"/><text x="286" y="85" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <circle cx="726" cy="80" r="13" fill="#2563EB"/><text x="726" y="85" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <circle cx="726" cy="230" r="13" fill="#2563EB"/><text x="726" y="235" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <!-- legend -->
+  <line x1="770" y1="410" x2="810" y2="410" stroke="#1F2937" stroke-width="3"/>
+  <text x="818" y="415">signal</text>
+  <circle cx="790" cy="436" r="11" fill="#2563EB"/><text x="790" y="441" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <text x="818" y="441">set by MAIN</text>
+  <line x1="770" y1="462" x2="810" y2="462" stroke="#16A34A" stroke-width="2"/>
+  <text x="818" y="467">display data</text>
+</svg>
