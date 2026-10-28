@@ -246,3 +246,7 @@ CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dep
   `persist-apt`. Used to validate the guide's SVG figures and render them to PNG for checking.
 - `tools/guide_to_wiki.py` splits `docs/guide/README.md` into GitHub-wiki pages (`Home`, one page per chapter, `_Sidebar` as the table of
   contents, `img/`) under `build/wiki/`. Standard library only.
+- `@mermaid-js/mermaid-cli` 11.4.2 (`mmdc`), installed 2026-10-28 with `npm install -g --prefix ~/.local`. Its headless Chrome is
+  in `~/.cache/puppeteer`. Browser libraries were installed with `persist-apt` (libgbm1 libnss3 libatk1.0-0 libatk-bridge2.0-0
+  libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2). Run it as `mmdc -p pp.json`
+  with `{"args":["--no-sandbox"]}`, because the container has no user namespaces. Used to check that every Mermaid block renders.
