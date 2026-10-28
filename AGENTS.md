@@ -44,8 +44,11 @@ docs/
   memory-maps.md     load addresses / memory maps per image
   cat-commands.md    documented vs firmware-discovered CAT commands
   custom-firmware.md feasibility of custom code/HDL: protections, recovery paths, toolchains, blockers
+  getting-started.md newcomer manual: install, inputs, tools/bootstrap.sh, repo tour, conventions
+  manuals.md         every manual/datasheet used, with source links (no PDFs in git)
+  inputs.sha256      SHA-256 of the firmware download and the decoded images (checked by bootstrap.sh)
   tasks/             one file per task; README.md is the index/status board
-tools/               scripts (Python 3, stdlib preferred) — e.g. sfl_decode.py, Ghidra headless scripts
+tools/               scripts (Python 3, stdlib preferred), catalogued in tools/README.md; bootstrap.sh rebuilds everything
 decomp/<image>/      committed Ghidra decompiled C output per image
 hdl/<image>/         hand-written HDL reconstructions (T15e)
 build/               (ignored) decoded .bin images
