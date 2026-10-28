@@ -10,6 +10,7 @@ usage: python3 -I tools/undefined_classify.py <image> <ranges.tsv> <out.tsv> [--
              (block, start, end); its refs_in/prev/next columns are copied to the output as context and are not used.
 --build      directory with the decoded images (default: build/ of the main checkout)
 --flix       decomp/ifdsp/hifi4/flix.dis (hifi4 only): its call/jump targets count as inbound-branch evidence
+             and bytes covered by a flix.dis instruction that lies wholly inside the range are code (step 0)
 
 Every range is cut into sub-runs, each with one class. Steps, in order, on the raw bytes:
   padding        a run of >= 4 equal bytes (or a range that is only 0x00/0xFF/one repeated byte)
@@ -20,9 +21,12 @@ Every range is cut into sub-runs, each with one class. Steps, in order, on the r
                  (value ranges chosen so small integers do not count). A gap that is only pointers is a pointer table.
   code           decodes completely with a non-Ghidra disassembler (rx-elf-objdump / arm-none-eabi-objdump A32 or T32 /
                  the Zephyr RT600 xtensa objdump), no invalid or out-of-bounds instruction, >= 1 control-flow
-                 instruction, and either >= 8 bytes long or reached by a branch/call or pointer. "code_weak" when it
+                 instruction, at most 1 in 4 instructions all-zero bytes (u32 tables of small values decode as
+                 Thumb "movs r0, r0"), and either >= 8 bytes long or reached by a branch/call or pointer. "code_weak" when it
                  decodes but misses the last condition.
-  float_table    >= 3 aligned words, >= 75 % of them plausible IEEE float32 (0 or 1e-6 <= |x| <= 1e7)
+  float_table    >= 3 aligned words, >= 75 % of them plausible IEEE float32 (0 or 1e-6 <= |x| <= 1e7); inside a
+                 larger gap, a run of >= 8 words with 1e-30 <= |x| <= 1e10 (half of them 1e-6..1e7) is found before
+                 the string pass (word_runs), as is a run of >= 16 u32 byte values (int_table)
   int_table      >= 2 aligned words or halfwords, >= 75 % small values (< 0x10000 for words, < 0x1000 for halfwords)
   padding_short  1..3 bytes of 0x00 (alignment between items)
   unknown        anything else (Shannon entropy in the evidence)
@@ -341,6 +345,46 @@ def monotonic_words(b, a):
     return out
 
 
+def _f32(w):
+    return struct.unpack('<f', struct.pack('<I', w))[0]
+
+
+def word_runs(b, a):
+    """Aligned u32 runs inside a gap, found before the string pass so float and byte tables are not cut into
+    "strings": >= 8 consecutive words that are all 0 or float32 with 1e-30 <= |x| <= 1e10 (at least half of them
+    1e-6..1e7, so hi/lo pairs of libm tables count), or >= 16 words that are all < 0x100 with at least half non-zero
+    (byte values stored as int32, e.g. libm's two_over_pi[])."""
+    out, k, n = [], (-a) % 4, len(b)
+    ws = [struct.unpack_from('<I', b, o)[0] for o in range(k, n - 3, 4)]
+    def fl_ok(w):
+        f = _f32(w)
+        return w == 0 or (math.isfinite(f) and 1e-30 <= abs(f) <= 1e10)
+    def fl_good(w):
+        f = _f32(w)
+        return w != 0 and math.isfinite(f) and 1e-6 <= abs(f) <= 1e7
+    i = 0
+    while i < len(ws):
+        j = i
+        while j < len(ws) and fl_ok(ws[j]):
+            j += 1
+        if j - i >= 8 and 2 * sum(1 for w in ws[i:j] if fl_good(w)) >= j - i:
+            fl = [_f32(w) for w in ws[i:j]]
+            out.append((k + 4 * i, 4 * (j - i), 'float_table', '%d float32 words, e.g. %s' % (
+                j - i, ', '.join('%g' % f for f in fl[:4]))))
+            i = j
+            continue
+        j = i
+        while j < len(ws) and ws[j] < 0x100:
+            j += 1
+        if j - i >= 16 and 2 * sum(1 for w in ws[i:j] if w) >= j - i:
+            out.append((k + 4 * i, 4 * (j - i), 'int_table', '%d u32 byte values, e.g. %s' % (
+                j - i, ' '.join('%02x' % w for w in ws[i:i + 8]))))
+            i = j
+            continue
+        i += 1
+    return out
+
+
 def fill_runs(b):
     out, i, n = [], 0, len(b)
     while i < n:
@@ -386,7 +430,9 @@ class Classifier:
             flow = [x for x in ins if FLOW[self.img.arch].search(x[2])]
             # a direct branch/call to an address outside the executable blocks means this is not code
             wild = [x for x in ins if TARGET.match(x[2]) and not self.img.in_exec(int(TARGET.match(x[2]).group(1), 16))]
-            ok = not bad and not wild and covered == n
+            # word tables with small values decode as Thumb "movs r0, r0" (0000) between other halfwords
+            zero = sum(1 for x in ins if x[1] and not any(self.img.read(x[0], x[1])))
+            ok = not bad and not wild and covered == n and 4 * zero <= len(ins)
             cand = (ok, len(flow), th, ins, bad)
             if best is None or cand[:2] > best[:2]:
                 best = cand
@@ -515,8 +561,9 @@ class Classifier:
         # 0a. hifi4: bytes covered by flix.dis instructions (objdump from the function entries) are code
         if self.img.flix:
             cov = [None] * len(b)
-            # walk back to an instruction that may cover the range start
-            starts = [x for x in range(a - 15, a + len(b)) if x in self.img.flix]
+            # only flix.dis instructions that lie wholly inside the range: one that overlaps a Ghidra instruction is a
+            # flix.dis sweep artefact (T22c: Ghidra's starts are right in all 337 conflict regions)
+            starts = [x for x in range(a, a + len(b)) if x in self.img.flix and x + self.img.flix[x][0] <= a + len(b)]
             for x in starts:
                 ln, bun = self.img.flix[x]
                 for y in range(max(x, a), min(x + ln, a + len(b))):
@@ -572,7 +619,7 @@ class Classifier:
                     (i, len(b) - i, 'string_ascii', repr(core.decode('latin-1')) + ' between NULs')]
         th = self.img.cfg['thumb']
         pointed = lambda x: x in self.img.words or (th and (x | 1) in self.img.words)
-        marks = sorted(ctype_runs(b) + monotonic_words(b, a) + fill_runs(b) + monotonic_runs(b) + find_strings(b, a, pointed),
+        marks = sorted(ctype_runs(b) + word_runs(b, a) + monotonic_words(b, a) + fill_runs(b) + monotonic_runs(b) + find_strings(b, a, pointed),
                        key=lambda m: (m[0], -m[1]))
         # drop overlaps (fill wins over strings that start inside it, first come first served)
         sel, end = [], 0
