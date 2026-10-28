@@ -26,6 +26,29 @@ through the fork's CLI build until the MCP server is restarted.
 
 ## Sub-task status
 
+### T22a
+**Status:** in progress (2026-10-28, resumed after the first agent was cut off; its tools `rx_compare.py --ref rizin` /
+`three-way`, `rx_semcheck.py` and `RxEmuStep.java` are committed). MAIN (RX).
+
+Plan:
+1. **Decoder, third opinion.** Copy canonical `ghidra/FT710_MAIN` (T21g rebuild, RX module `rx62t.sinc` `618938bb…4b36` =
+   T17 + T21c + RTSD) to scratch, export every instruction with `ListingExport.java` (`-readOnly`), and run `rx_compare.py`
+   against `rx-elf-objdump` and rizin 0.9.1 (raw, at the image base; directly and through the REA CLI
+   `execute-rizin-command`). Count agreements per pair; settle each three-way disagreement from the RXv2 manual r01us0071.
+2. **Semantics.** `rx_semcheck.py gen` on that listing (every modelled mnemonic × operand shape, random start states),
+   `RxEmuStep.java` on the scratch copy, `rx_semcheck.py check`. Every failure class is settled from the manual's
+   operation/flag pages: model bug (fix the model) or SLEIGH bug.
+3. **Patch.** Rebase the first agent's uncommitted `rx62t-t22a-semantics.patch` onto `618938bb` (drop its RTSD hunk, now in
+   T21d's patch), keep only hunks backed by a semcheck failure plus a manual page, build it into a private Ghidra copy (hard
+   links, own RX module), re-import MAIN into scratch with the canonical recipe, re-run step 2 (expect 0 SLEIGH failures) and
+   diff the decompile against the base. Commit as `tools/ghidra/rx62t-semantics-fix.patch`; **not** installed into the shared
+   Ghidra or `bootstrap.sh` (T21h owns that step now): the parent folds it in after T21h.
+4. **Signatures.** Re-read T21d's `doc` signatures (and a sample of `asm` ones) through REA (`procedure_info` /
+   `procedure_pseudo_code` / rizin `afi`-style register use on the raw image) and list where REA's view of parameters and
+   return differs from `signatures_main.tsv`; settle each from the listing.
+5. Findings into this section and `docs/tooling.md` (RX module facts), commit after each step; REA gaps go to
+   `rea-requests/`.
+
 ### T22c
 **Status:** in progress (2026-10-28). IFDSP HiFi4.
 
