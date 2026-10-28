@@ -138,18 +138,18 @@ class DB:
         if ty not in self._always:
             m = collections.defaultdict(list)
             p = os.path.join(self.db, "ppips_%s.db" % ty.lower())
-            spw = set()
-            for st in self.tile_type(ty)["sites"]:
+            spw = {}        # site-pin wire -> index of its site in the tile type
+            for si, st in enumerate(self.tile_type(ty)["sites"]):
                 for pv in st["site_pins"].values():
                     if isinstance(pv, dict) and pv.get("wire"):
-                        spw.add(pv["wire"])
+                        spw[pv["wire"]] = si
             if os.path.exists(p):
                 for line in open(p):
                     f = line.split()
                     if len(f) == 2 and f[1] == "always":
                         _, dst, src = f[0].split(".", 2)
-                        if dst in spw and src in spw:
-                            continue    # a path through a site (BUFHCE I->O etc.), not a wire join
+                        if dst in spw and src in spw and spw[dst] == spw[src]:
+                            continue    # a path through one site (BUFHCE I->O etc.), not a wire join
                         m[dst].append(src)
                         m[src].append(dst)
             for dst, src in HIDDEN_PIPS.get(ty, ()):
