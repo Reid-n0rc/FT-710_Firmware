@@ -1358,8 +1358,8 @@ The manual and the firmware also disagree on smaller points: a few digit counts,
 *Figure 5.6 — The 22 undocumented commands on a risk ladder. Only E8 and the read forms are harmless.*
 
 > **Before you try any of them**, read [Undocumented CAT commands: risks, paths back and backups](../cat-undocumented.md). It gives
-> the way back for every command and the backup steps (SD card, `tools/cat_backup.py`). Some changes, like a lost factory
-> calibration, can only be undone from a backup.
+> the way back for every command and the backup steps (SD card, `tools/cat_backup.py`). Some changes, like overwriting the
+> factory calibration, can only be undone from a backup.
 
 **Does nothing (13).** Nine mnemonics, `BY ED EK EU RC RD RS RT RU`, sit in the main table with no code behind them; they answer
 `?;`. Three more, `EN FS QS`, have a stub that only raises the error flag, so they answer `?;` as well. `KT` is in the extended table

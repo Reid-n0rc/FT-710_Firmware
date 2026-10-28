@@ -13,9 +13,9 @@ chapter 5 of the [illustrated guide](guide/README.md#55-the-22-undocumented-comm
 > - You alone are responsible for your radio and for transmitting only where your licence allows. Nothing here is endorsed by Yaesu.
 > - The project rule ([AGENTS.md](../AGENTS.md)): nothing is written to a radio without its owner's explicit approval, each time.
 
-## 1. What is stored where, and what can lose it
+## 1. What the radio stores, and which commands erase or overwrite it
 
-| Data | Where | Lost by | Backed up by |
+| Data | Where | Erased or overwritten by | Backed up by |
 |---|---|---|---|
 | Memory channels | EEPROM 0x1A7A.. (RAM 0x60C9) | `ZZPE071001;`, `ZZPE071099;`, `JP` set, `E9`, front-panel MEMORY CLEAR / ALL RESET | SD card (Yaesu), `E8` |
 | Menu settings, band stacks, VFOs | EEPROM 0x0112.. | `ZZ…01`, `ZZ…99`, `JP` set, front-panel MENU CLEAR / ALL RESET | SD card (Yaesu, menus) |
