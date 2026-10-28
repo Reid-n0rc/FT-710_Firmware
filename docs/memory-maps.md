@@ -87,12 +87,14 @@ CPU: Renesas RZ/A1H (R7S721001), Cortex-A9. Input: `build/FT-710_DISPLAY_V0108.b
 | `.data2` | 0x20800000–0x20808BCF | init (from 0x20428A40) | Region 3 (includes the GPIO port pointer table at 0x20800000) |
 | `.bss2` | 0x20808BD0–0x2091D56F | uninit | Region 5 (zero-init, 0x1149A0 B). Holds the kernel TCB table 0x208DBBA0, the UART objects 0x208DA1E0/0x208DAA30/0x208DB280, the GIC handler table 0x208DC1E0 and the recorder audio slots 0x208F4DE0 (see below) |
 | `ram_hi` | 0x2091D570–0x209FFFFF | uninit | End of the 10 MB RAM. The literal 0x20980000 at 0x2010022C may be a heap limit **[guess]** |
-| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Uncached mirror of RAM. **Frame buffers**: `fb_get_layer_addr` maps index 0–5 to fb0 0x600BB800, fb1 0x605048A0, fb2 0x60177000, fb3 0x60000000, fb4 0x60232800, fb5 0x602EE000 (fb0–fb4 800×480 RGB565 = 0xBB800 B each; fb5 is the mouse-cursor layer). See [code/display/gui.md](code/display/gui.md) |
+| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Uncached mirror of RAM **[guess; see the T19h note below the table]**. **Frame buffers**: `fb_get_layer_addr` maps index 0–5 to fb0 0x600BB800, fb1 0x605048A0, fb2 0x60177000, fb3 0x60000000, fb4 0x60232800, fb5 0x602EE000 (fb0–fb4 800×480 RGB565 = 0xBB800 B each; fb5 is the mouse-cursor layer). See [code/display/gui.md](code/display/gui.md) |
 | `.data_nc` | 0x60500000–0x6050489F | init (from 0x20428960) | Region 2: RW data placed in the uncached mirror (aliases 0x20500000). 0x60500000–0x60503FFF holds SPI DMA buffers (FT4222H RX 0x60500000, PC TX frame 0x60501000, …) |
 | `ram_nc_hi` | 0x605048A0–0x609FFFFF | uninit | Uncached mirror (frame buffer 1 starts at 0x605048A0). SDR scope DMA buffer 0x605C00A0 (0x6A4 B) and its header copy 0x605C0780 |
 | `io_3FE` | 0x3FE00000–0x3FFFFFFF | volatile | RZ/A1H I/O: SPIBSC0 0x3FEFA000, SPIBSC1 0x3FEFB000 (its 0x3FEFB018 reg is used as a "loader already ran" marker), PL310 0x3FFFF000 |
 | `io_E800` | 0xE8000000–0xE82FFFFF | volatile | ADC 0xE8005800, SCIF3/4/5 0xE8008800/0xE8009000/0xE8009800, RSPI0–4 0xE800C800–0xE800E800, USB0 0xE8010000, SDHI 0xE804E000, DMAC 0xE8200000, GIC 0xE8201000/0xE8202000, USB1 0xE8207000 |
 | `io_FCFE` | 0xFCFE0000–0xFCFFFFFF | volatile | WDT 0xFCFE0000, CPG/STBCR 0xFCFE04xx, GPIO 0xFCFE3000, OSTM 0xFCFEC000, RIIC0–3 0xFCFEE000–0xFCFEEC00, INTC 0xFCFEF800, MTU2 0xFCFF0000, VDC5 0xFCFF7400/0xFCFF9400 |
+
+**T19h note on 0x60000000:** the frame-buffer window 0x60000000–0x602FF2FF cannot be a plain alias of 0x20000000–0x202FF2FF: `task_root` 0x201170C8 calls `fb_clear_all`, which zeroes 0x60000000 + 0x2FF300 (`__aeabi_memclr` with literals 0x60000000 / 0x2FF300 at 0x20132B30 / 0x20132FD0), while the code it runs from sits at 0x20100000+ in RAM; and the MMU table at 0x2044C000 is flat (VA = PA, filled by 0x20100D48, never remapped) **[fact for the code, inference for the conclusion]**. What the RZ/A1H decodes at 0x60000000 is therefore **open**; it needs the RZ/A1H hardware manual's address map (not in `Manuals/`). See [code/system.md O9](code/system.md#8-contradictions-and-open-questions).
 
 Other DISPLAY RAM structures found by T11 **[fact]**:
 

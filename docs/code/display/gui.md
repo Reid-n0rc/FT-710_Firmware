@@ -24,7 +24,7 @@ Back to the [DISPLAY overview](README.md). Addresses are CPU addresses (image ba
 
 ```mermaid
 flowchart LR
-  subgraph RAM["uncached RAM 0x60000000+"]
+  subgraph RAM["frame-buffer window 0x60000000+ (see O9)"]
     FB0["fb0 0x600BB800<br/>background"]
     FB12["fb1 0x605048A0 / fb2 0x60177000<br/>main drawing (double)"]
     FB34["fb3 0x60000000 / fb4 0x60232800<br/>overlays, popups (double)"]
@@ -96,6 +96,8 @@ enum meaning]**. Black (0x0000) is the chroma key, so drawing 0 makes a layer tr
 
 `fb_get_layer_addr` (0x201326FC) maps the buffer *index* 0–5 to {0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800, 0x602EE000};
 `fb_get_front_addr` returns the buffer that is on screen for a given back index (1↔2, 3↔4) **[fact]**.
+These buffers cannot sit in a plain mirror of 0x20000000: `fb_clear_all` zeroes 0x60000000–0x602FF2FF while the code runs from 0x20100000+, and the
+MMU map is flat. What memory 0x60000000 really is stays open ([system.md O9](../system.md#8-contradictions-and-open-questions), T19h).
 
 **Buffer flip** (`gui_update_layers` 0x20133A8C, 57 callers): point graphics 1 and 2 of both channels at the current back buffers, swap the
 indices, then copy the buffer just shown into the new back buffer (graphics 1 by `dmac8_m2m_start` = DMAC ch0 memory copy, graphics 2 by `memcpy`),
