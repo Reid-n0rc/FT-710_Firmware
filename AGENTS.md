@@ -28,6 +28,7 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 | `Manuals/FT-710_CAT_OM_ENG_2306-C.pdf` | CAT manual, English rev 2306-C (current; the primary reference). yaesu.com resets connections from the Linux container, so the owner downloads it in a browser | https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_CAT_OM_ENG_2306-C.pdf |
 | `Manuals/FT-710_CAT_OM_ENG_2211-A.pdf` | CAT manual, English rev 2211-A (older; still lists `EO`, and `VE` without a parameter) | https://www.simarud.no/files/simarud/Documents/FT-710_CAT_OM_ENG_2211-A.pdf |
 | `Manuals/FT-710_CAT_OM_JPN_exseli.pdf`, `Manuals/FT-710_OM_JPN_exseli.pdf` | CAT manual (Japanese rev 2212-B) and operating manual (Japanese) | https://www.exseli.com/pdf/uploaded/manual_trn_809495519.pdf, https://www.exseli.com/pdf/uploaded/manual_trn_453178882.pdf |
+| `Manuals/Renesas/` | Renesas RX651/RX65N hardware manual (r01uh0590), datasheet, handbook, RXv2 software manual (instruction set, r01us0071), technical updates | supplied by the owner (renesas.com) |
 | `Manuals/FT-710_serv_2022.pdf` | Service manual / Technical Supplement (schematics, ICs) | https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf |
 
 `Firmware/`, `Manuals/`, `build/` (decoded binaries), and `ghidra/` (project DBs) are gitignored. Never force-add them.
