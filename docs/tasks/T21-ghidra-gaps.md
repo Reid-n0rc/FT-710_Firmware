@@ -351,6 +351,17 @@ export chunks were renamed (50-function boundaries moved); no doc linked to an o
 save `MVFACHI/MVFACMI`) **[inference]**. Settle each from the RXv2 software manual and `rx-elf-objdump`; patch the SLEIGH if the
 module lacks the form, fold the patch into `bootstrap.sh --only rx`, rebuild MAIN and re-export.
 
+**Plan (T21h, worktree branch off `issue-97-ghidra-gaps`).** (1) Disassemble both runs with `rx-elf-objdump` (T21c's binutils 2.47)
+and read the forms in R01US0071EJ0100 (pdftotext, page ranges). (2) Dump Ghidra's listing around them (read-only `ListingExport.java`
+on the canonical project) to see why each run is undefined (missing constructor, wrong length, or flow problem). (3) If the module lacks
+or mis-decodes a form, write `tools/ghidra/rx62t-<name>-fix.patch` (applies after `rx62t-rtsd-fix.patch`) and test it in a private
+Ghidra copy (hard links + own RX module dir, like `~/opt/t21d-ghidra-tmp`): sleigh compile, fresh MAIN import with the bootstrap recipe,
+`ListingExport` + `rx_compare.py --all` (0 differences), `ExportDecomp` and `decomp_quality.py compare`. (4) Add the patch as the fourth
+stage of `step_rx` (`RX_SINC_RTSD` = `618938bb…`, new `RX_SINC_FIXED`), patch the shared install with `bootstrap.sh --only rx`, rebuild
+MAIN (`.stamp_main` stale) and re-export with `--only rx --only ghidra --only export` (DISPLAY/IFDSP must stay byte-identical).
+(5) Commit project + `decomp/main` + new `quality.tsv`; update INDEX.md, tooling.md, tools/README.md and this section. If a run is data,
+define it as data instead and say why.
+
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
 
