@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>DISPLAY boot: from the SPI flash banks into on-chip RAM</title>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+  <rect width="960" height="640" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">DISPLAY boot: one program, three copies, two banks</text>
+  <text x="80" y="76" font-size="16" font-weight="bold">SPI flash (W25Q128) · 16 MB · to scale</text>
+  <rect x="80" y="88" width="162.5" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="161.25" y="114.5" font-size="14" text-anchor="middle" font-weight="bold">boot loader</text>
+  <text x="161.25" y="133.5" font-size="14" text-anchor="middle">(same program)</text>
+  <rect x="242.5" y="88" width="37.5" height="62" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="261.25" y="114.5" font-size="14" text-anchor="middle"></text>
+  <text x="261.25" y="133.5" font-size="14" text-anchor="middle"></text>
+  <rect x="280" y="88" width="300" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="430.0" y="114.5" font-size="14" text-anchor="middle" font-weight="bold">bank 1: application</text>
+  <text x="430.0" y="133.5" font-size="14" text-anchor="middle">(room for 6 MB; image is 3.3 MB)</text>
+  <rect x="580" y="88" width="300" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="730.0" y="114.5" font-size="14" text-anchor="middle" font-weight="bold">bank 2: application</text>
+  <text x="730.0" y="133.5" font-size="14" text-anchor="middle">(the other copy)</text>
+  <rect x="80" y="88" width="800" height="62" rx="6" fill="none" stroke="#16A34A" stroke-width="2"/>
+  <text x="80" y="170" font-size="14" text-anchor="middle">0 MB</text>
+  <text x="280" y="170" font-size="14" text-anchor="middle">4 MB</text>
+  <text x="580" y="170" font-size="14" text-anchor="middle">10 MB</text>
+  <text x="880" y="170" font-size="14" text-anchor="middle">16 MB</text>
+  <line x1="260.0" y1="150" x2="280.0" y2="184" stroke="#1F2937" stroke-width="1.5"/>
+  <text x="284.0" y="198" font-size="14">touch cal + bank flags</text>
+  <rect x="85" y="240" width="190" height="110" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="97" y="266" font-size="14" font-weight="bold">1  Power on</text>
+  <text x="97" y="287" font-size="14">The chip's boot ROM</text>
+  <text x="97" y="308" font-size="14">runs the loader</text>
+  <text x="97" y="329" font-size="14">straight from flash</text>
+  <line x1="277" y1="295.0" x2="303" y2="295.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="305" y="240" width="190" height="110" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="317" y="266" font-size="14" font-weight="bold">2  Pick a bank</text>
+  <text x="317" y="287" font-size="14">Loader reads the</text>
+  <text x="317" y="308" font-size="14">two bank flags:</text>
+  <text x="317" y="329" font-size="14">bank 1, else bank 2</text>
+  <line x1="497" y1="295.0" x2="523" y2="295.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="525" y="240" width="190" height="110" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="537" y="266" font-size="14" font-weight="bold">3  Start over in RAM</text>
+  <text x="537" y="287" font-size="14">The bank copy notices</text>
+  <text x="537" y="308" font-size="14">the loader ran, copies</text>
+  <text x="537" y="329" font-size="14">itself into RAM, unpacks</text>
+  <line x1="717" y1="295.0" x2="743" y2="295.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="745" y="240" width="190" height="110" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="757" y="266" font-size="14" font-weight="bold">4  Start the OS</text>
+  <text x="757" y="287" font-size="14">main starts NORTi</text>
+  <text x="757" y="308" font-size="14">and the root task,</text>
+  <text x="757" y="329" font-size="14">then idles</text>
+  <line x1="160.0" y1="154" x2="180.0" y2="236" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="480" y1="154" x2="620.0" y2="236" stroke="#1F2937" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+  <line x1="730" y1="154" x2="660.0" y2="236" stroke="#1F2937" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+  <line x1="400.0" y1="352" x2="400.0" y2="376" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="80" y="378" width="370" height="48" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="265" y="398" font-size="14" text-anchor="middle">Neither flag valid → stay in the loader:</text>
+  <text x="265" y="417" font-size="14" text-anchor="middle">"BOOT LOADER" screen, update from SD</text>
+  <line x1="620.0" y1="352" x2="360.0" y2="496" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="880" y="486" font-size="16" font-weight="bold" text-anchor="end">On-chip RAM · 10 MB · to scale (no external RAM)</text>
+  <rect x="80" y="500" width="80" height="62" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="120.0" y="526.5" font-size="14" text-anchor="middle">boot info</text>
+  <text x="120.0" y="545.5" font-size="14" text-anchor="middle">+ free</text>
+  <rect x="160" y="500" width="32.0" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="176.0" y="536.0" font-size="14" text-anchor="middle"></text>
+  <rect x="192.0" y="500" width="221.60000000000002" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="302.8" y="526.5" font-size="14" text-anchor="middle" font-weight="bold">GUI bitmaps + fonts</text>
+  <text x="302.8" y="545.5" font-size="14" text-anchor="middle">2.8 MB</text>
+  <rect x="413.6" y="500" width="11.199999999999932" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="419.2" y="536.0" font-size="14" text-anchor="middle"></text>
+  <rect x="424.79999999999995" y="500" width="55.200000000000045" height="62" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="452.4" y="536.0" font-size="14" text-anchor="middle">data</text>
+  <rect x="480" y="500" width="400" height="62" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+  <text x="680.0" y="526.5" font-size="14" text-anchor="middle">more variables, kernel tables, heap,</text>
+  <text x="680.0" y="545.5" font-size="14" text-anchor="middle">screen and DMA buffers</text>
+  <rect x="80" y="500" width="800" height="62" rx="6" fill="none" stroke="#16A34A" stroke-width="2"/>
+  <text x="80" y="582" font-size="14" text-anchor="middle">0 MB</text>
+  <text x="480" y="582" font-size="14" text-anchor="middle">5 MB</text>
+  <text x="880" y="582" font-size="14" text-anchor="middle">10 MB</text>
+  <line x1="176.0" y1="562" x2="206.0" y2="598" stroke="#1F2937" stroke-width="1.5"/>
+  <text x="210.0" y="610" font-size="14">program code (0.4 MB)</text>
+  <line x1="419.20000000000005" y1="562" x2="449.20000000000005" y2="598" stroke="#1F2937" stroke-width="1.5"/>
+  <text x="453.20000000000005" y="610" font-size="14">stacks</text>
+</svg>

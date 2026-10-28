@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>MAIN RX651 peripherals: which UART goes where, ADC inputs, DAC, GPIO, timers and watchdog</title>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+  <rect width="960" height="700" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">What the MAIN CPU is wired to</text>
+  <rect x="370" y="90" width="220" height="520" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="110" x2="370" y2="110" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="110" x2="598" y2="110" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="148" x2="370" y2="148" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="148" x2="598" y2="148" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="186" x2="370" y2="186" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="186" x2="598" y2="186" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="224" x2="370" y2="224" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="224" x2="598" y2="224" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="262" x2="370" y2="262" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="262" x2="598" y2="262" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="300" x2="370" y2="300" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="300" x2="598" y2="300" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="338" x2="370" y2="338" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="338" x2="598" y2="338" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="376" x2="370" y2="376" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="376" x2="598" y2="376" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="414" x2="370" y2="414" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="414" x2="598" y2="414" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="452" x2="370" y2="452" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="452" x2="598" y2="452" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="490" x2="370" y2="490" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="490" x2="598" y2="490" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="528" x2="370" y2="528" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="528" x2="598" y2="528" stroke="#2563EB" stroke-width="3"/>
+  <line x1="362" y1="566" x2="370" y2="566" stroke="#2563EB" stroke-width="3"/>
+  <line x1="590" y1="566" x2="598" y2="566" stroke="#2563EB" stroke-width="3"/>
+  <text x="480" y="130" font-size="20" font-weight="bold" text-anchor="middle" fill="#2563EB">MAIN</text>
+  <text x="480" y="152" font-size="15" text-anchor="middle">RX651, 120 MHz</text>
+  <rect x="390" y="140" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="165" font-size="14" text-anchor="middle">8 UARTs (SCI0–7)</text>
+  <rect x="390" y="200" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="225" font-size="14" text-anchor="middle">2 ADCs, 12-bit</text>
+  <rect x="390" y="260" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="285" font-size="14" text-anchor="middle">DAC (DA0)</text>
+  <rect x="390" y="320" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="345" font-size="14" text-anchor="middle">GPIO ports</text>
+  <rect x="390" y="380" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="405" font-size="14" text-anchor="middle">4 timers (TPU0–3)</text>
+  <rect x="390" y="440" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="480" y="465" font-size="14" text-anchor="middle">watchdog (IWDT)</text>
+  <text x="480" y="525" font-size="14" text-anchor="middle">24 MHz crystal</text>
+  <text x="480" y="545" font-size="14" text-anchor="middle">no RTOS, no data flash</text>
+  <rect x="20" y="86" width="240" height="79" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="140.0" y="111.5" font-size="14" text-anchor="middle" font-weight="bold">USB → CP2105 bridge</text>
+  <text x="140.0" y="130.5" font-size="14" text-anchor="middle">CAT: two COM ports</text>
+  <text x="140.0" y="149.5" font-size="14" text-anchor="middle">(SCI0, SCI3)</text>
+  <line x1="262" y1="125.5" x2="360" y2="125.5" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="20" y="183" width="240" height="79" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="140.0" y="208.5" font-size="14" text-anchor="middle" font-weight="bold">TUNER/LINEAR jack</text>
+  <text x="140.0" y="227.5" font-size="14" text-anchor="middle">tuner, band data,</text>
+  <text x="140.0" y="246.5" font-size="14" text-anchor="middle">CAT-3 or GPO (SCI2)</text>
+  <line x1="262" y1="222.5" x2="360" y2="222.5" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="20" y="280" width="240" height="60" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="140.0" y="305.5" font-size="14" text-anchor="middle" font-weight="bold">DISPLAY CPU</text>
+  <text x="140.0" y="324.5" font-size="14" text-anchor="middle">~340 kbit/s (SCI1)</text>
+  <line x1="262" y1="310.0" x2="360" y2="310.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="20" y="358" width="240" height="60" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="140.0" y="383.5" font-size="14" text-anchor="middle" font-weight="bold">SDR FPGA</text>
+  <text x="140.0" y="402.5" font-size="14" text-anchor="middle">115200 baud (SCI5)</text>
+  <line x1="262" y1="388.0" x2="360" y2="388.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="20" y="436" width="240" height="60" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="140.0" y="461.5" font-size="14" text-anchor="middle" font-weight="bold">IF DSP console</text>
+  <text x="140.0" y="480.5" font-size="14" text-anchor="middle">115200 baud (SCI4)</text>
+  <line x1="262" y1="466.0" x2="360" y2="466.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="20" y="514" width="240" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="140.0" y="539.5" font-size="14" text-anchor="middle" font-weight="bold">SCI6 (I²C) and SCI7</text>
+  <text x="140.0" y="558.5" font-size="14" text-anchor="middle">set up, never used</text>
+  <rect x="700" y="86" width="240" height="98" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="111.5" font-size="14" text-anchor="middle" font-weight="bold">ADC inputs</text>
+  <text x="820.0" y="130.5" font-size="14" text-anchor="middle">fwd / refl power, supply,</text>
+  <text x="820.0" y="149.5" font-size="14" text-anchor="middle">ALC, PA current + temp,</text>
+  <text x="820.0" y="168.5" font-size="14" text-anchor="middle">remote keypad ladder</text>
+  <line x1="698" y1="135.0" x2="600" y2="135.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="700" y="198" width="240" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="223.5" font-size="14" text-anchor="middle" font-weight="bold">DAC → beep / sidetone</text>
+  <text x="820.0" y="242.5" font-size="14" text-anchor="middle">into the audio path</text>
+  <line x1="600" y1="228.0" x2="698" y2="228.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="700" y="272" width="240" height="98" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="297.5" font-size="14" text-anchor="middle" font-weight="bold">GPIO</text>
+  <text x="820.0" y="316.5" font-size="14" text-anchor="middle">TX / RX lines, PA power,</text>
+  <text x="820.0" y="335.5" font-size="14" text-anchor="middle">speaker switches,</text>
+  <text x="820.0" y="354.5" font-size="14" text-anchor="middle">CW key + PTT inputs</text>
+  <line x1="600" y1="321.0" x2="698" y2="321.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="700" y="384" width="240" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="409.5" font-size="14" text-anchor="middle" font-weight="bold">shift-register bus</text>
+  <text x="820.0" y="428.5" font-size="14" text-anchor="middle">→ PA-unit DACs + relays</text>
+  <line x1="600" y1="414.0" x2="698" y2="414.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="700" y="458" width="240" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="483.5" font-size="14" text-anchor="middle" font-weight="bold">bit-banged SPI</text>
+  <text x="820.0" y="502.5" font-size="14" text-anchor="middle">→ settings EEPROM</text>
+  <line x1="600" y1="488.0" x2="698" y2="488.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)" marker-start="url(#ah)"/>
+  <rect x="700" y="532" width="240" height="60" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="820.0" y="557.5" font-size="14" text-anchor="middle" font-weight="bold">reset + update lines</text>
+  <text x="820.0" y="576.5" font-size="14" text-anchor="middle">→ SDR and DSP</text>
+  <line x1="600" y1="562.0" x2="698" y2="562.0" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="250" y="630" width="460" height="56" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="480.0" y="653.5" font-size="14" text-anchor="middle">Watchdog: if job 1 stops kicking it for ≈2.2 s,</text>
+  <text x="480.0" y="672.5" font-size="14" text-anchor="middle">it raises an NMI (non-maskable interrupt)</text>
+  <line x1="480" y1="612" x2="480" y2="628" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+</svg>

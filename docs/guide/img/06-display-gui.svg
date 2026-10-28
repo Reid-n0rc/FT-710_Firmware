@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>How the DISPLAY draws what MAIN sends, and where inputs, SD files and the debug console fit</title>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+  <rect width="960" height="700" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">The DISPLAY is a thin renderer: MAIN says what, DISPLAY draws it</text>
+  <rect x="20" y="62" width="150" height="90" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="95.0" y="93.0" font-size="14" text-anchor="middle" font-weight="bold">MAIN</text>
+  <text x="95.0" y="112.0" font-size="14" text-anchor="middle">owns the radio</text>
+  <text x="95.0" y="131.0" font-size="14" text-anchor="middle">and screen logic</text>
+  <line x1="172" y1="107" x2="222" y2="107" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="226" y="70" font-size="14" font-weight="bold">screen packet over the UART</text>
+  <rect x="226" y="82" width="56" height="40" fill="#BFDBFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="254.0" y="107" font-size="14" text-anchor="middle">20</text>
+  <rect x="282" y="82" width="220" height="40" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="392.0" y="107" font-size="14" text-anchor="middle">text, values, cursor …</text>
+  <rect x="502" y="82" width="50" height="40" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <text x="527.0" y="107" font-size="14" text-anchor="middle">sum</text>
+  <text x="226" y="142" font-size="14">first byte = screen ID, e.g. 20 main screen,</text>
+  <text x="226" y="161" font-size="14">62 menu page, 7C touch calibration, 64 LCD test</text>
+  <line x1="556" y1="102" x2="606" y2="102" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="610" y="62" width="330" height="104" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="775.0" y="90.5" font-size="14" text-anchor="middle" font-weight="bold">GUI loop, every 33 ms</text>
+  <text x="775.0" y="109.5" font-size="14" text-anchor="middle">compare the new packet with the one</text>
+  <text x="775.0" y="128.5" font-size="14" text-anchor="middle">on screen; redraw only what changed,</text>
+  <text x="775.0" y="147.5" font-size="14" text-anchor="middle">using its 2,240 built-in bitmaps</text>
+  <line x1="775" y1="168" x2="775" y2="212" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="640" y="200" font-size="14" text-anchor="end">four layers, stacked:</text>
+  <path d="M 560 220 L 940 220 L 900 256 L 520 256 Z" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="730" y="243" font-size="14" text-anchor="middle">graphics 3: mouse cursor</text>
+  <path d="M 560 264 L 940 264 L 900 300 L 520 300 Z" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="730" y="287" font-size="14" text-anchor="middle">graphics 2: popups, overlays (×2)</text>
+  <path d="M 560 308 L 940 308 L 900 344 L 520 344 Z" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="730" y="331" font-size="14" text-anchor="middle">graphics 1: main drawing (×2)</text>
+  <path d="M 560 352 L 940 352 L 900 388 L 520 388 Z" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="730" y="375" font-size="14" text-anchor="middle">graphics 0: background</text>
+  <text x="730" y="418" font-size="14" text-anchor="middle">(×2 = double-buffered: draw one, show the other)</text>
+  <line x1="645" y1="428" x2="645" y2="470" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="850" y1="428" x2="850" y2="470" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="560" y="474" width="170" height="92" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="645.0" y="506.0" font-size="14" text-anchor="middle" font-weight="bold">VDC5 channel 0</text>
+  <text x="645.0" y="525.0" font-size="14" text-anchor="middle">→ 800×480</text>
+  <text x="645.0" y="544.0" font-size="14" text-anchor="middle">touch-screen TFT</text>
+  <rect x="760" y="474" width="180" height="92" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="850.0" y="506.0" font-size="14" text-anchor="middle" font-weight="bold">VDC5 channel 1</text>
+  <text x="850.0" y="525.0" font-size="14" text-anchor="middle">→ LVDS → DVI jack</text>
+  <text x="850.0" y="544.0" font-size="14" text-anchor="middle">(same buffers)</text>
+  <rect x="575" y="590" width="140" height="84" rx="6" fill="#1F2937"/>
+  <rect x="583" y="598" width="124" height="68" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <text x="645" y="624" font-size="14" text-anchor="middle">14.074.000</text>
+  <polyline points="590,656 610,640 625,650 645,628 662,648 680,636 700,654" fill="none" stroke="#16A34A" stroke-width="2"/>
+  <line x1="645" y1="568" x2="645" y2="588" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <path d="M 800 600 L 900 600 L 890 640 L 810 640 Z" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <rect x="815" y="612" width="6" height="14" fill="#6B7280"/>
+  <rect x="827" y="612" width="6" height="14" fill="#6B7280"/>
+  <rect x="839" y="612" width="6" height="14" fill="#6B7280"/>
+  <rect x="851" y="612" width="6" height="14" fill="#6B7280"/>
+  <rect x="863" y="612" width="6" height="14" fill="#6B7280"/>
+  <rect x="875" y="612" width="6" height="14" fill="#6B7280"/>
+  <text x="850" y="664" font-size="14" text-anchor="middle">DVI out</text>
+  <line x1="850" y1="568" x2="850" y2="596" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="20" y="214" width="440" height="118" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="32" y="249.5" font-size="14" text-anchor="start" font-weight="bold">Input goes the other way</text>
+  <text x="32" y="268.5" font-size="14" text-anchor="start">Keys and knobs: scanned every 1–8 ms, sent as events.</text>
+  <text x="32" y="287.5" font-size="14" text-anchor="start">Touch: TSC2003 controller, 12-bit X/Y, calibrated</text>
+  <text x="32" y="306.5" font-size="14" text-anchor="start">with 5 crosses. USB mouse + keyboard work too.</text>
+  <path d="M 230 212 L 230 190 L 100 190 L 100 156" fill="none" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="236" y="196" font-size="14">events to MAIN</text>
+  <rect x="20" y="352" width="440" height="118" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="32" y="387.5" font-size="14" text-anchor="start" font-weight="bold">SD card (drive I:)</text>
+  <text x="32" y="406.5" font-size="14" text-anchor="start">firmware files for updates (chapter 4), screenshots,</text>
+  <text x="32" y="425.5" font-size="14" text-anchor="start">memory / menu backups, voice recordings (WAV).</text>
+  <text x="32" y="444.5" font-size="14" text-anchor="start">Backups are MAIN's settings, scrambled like SFL.</text>
+  <rect x="20" y="490" width="440" height="118" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="32" y="525.5" font-size="14" text-anchor="start" font-weight="bold">Hidden debug console (chapter 8)</text>
+  <text x="32" y="544.5" font-size="14" text-anchor="start">A USB keyboard could type commands (memory monitor,</text>
+  <text x="32" y="563.5" font-size="14" text-anchor="start">update commands), but one 32-bit word in RAM must hold</text>
+  <text x="32" y="582.5" font-size="14" text-anchor="start">a magic value. It ships as 0, and nothing sets it.</text>
+</svg>

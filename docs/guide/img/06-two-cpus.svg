@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>MAIN and DISPLAY: two CPUs, two programming styles</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="520" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">Two CPUs, two styles</text>
+
+  <!-- MAIN card -->
+  <rect x="24" y="56" width="368" height="440" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="208" y="86" font-size="20" font-weight="bold" text-anchor="middle" fill="#2563EB">MAIN</text>
+  <text x="208" y="110" font-size="15" text-anchor="middle">Renesas RX651 · 120 MHz</text>
+  <text x="208" y="130" font-size="15" text-anchor="middle">512 KB flash · 256 KB RAM</text>
+  <!-- loop icon -->
+  <circle cx="208" cy="200" r="44" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <path d="M 264 200 A 56 56 0 1 1 248 161" fill="none" stroke="#2563EB" stroke-width="3" marker-end="url(#ah)"/>
+  <text x="208" y="196" font-size="15" text-anchor="middle" font-weight="bold">one loop</text>
+  <text x="208" y="214" font-size="14" text-anchor="middle">16 jobs</text>
+  <text x="208" y="270" font-size="15" text-anchor="middle" font-weight="bold">No operating system</text>
+  <text x="40" y="304" font-size="15" font-weight="bold">Owns</text>
+  <text x="40" y="328" font-size="14">• the radio state (VFOs, modes, menus)</text>
+  <text x="40" y="350" font-size="14">• CAT on three serial ports</text>
+  <text x="40" y="372" font-size="14">• settings in the SPI EEPROM</text>
+  <text x="40" y="394" font-size="14">• TX/RX switching, PA, relays, meters</text>
+  <text x="40" y="416" font-size="14">• the links to the SDR FPGA and IF DSP</text>
+  <text x="40" y="452" font-size="14" fill="#2563EB">Has no screen, no keys, no SD card.</text>
+  <text x="40" y="474" font-size="14" fill="#2563EB">It decides; DISPLAY shows.</text>
+
+  <!-- DISPLAY card -->
+  <rect x="568" y="56" width="368" height="440" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="752" y="86" font-size="20" font-weight="bold" text-anchor="middle" fill="#16A34A">DISPLAY</text>
+  <text x="752" y="110" font-size="15" text-anchor="middle">Renesas RZ/A1H · Cortex-A9</text>
+  <text x="752" y="130" font-size="15" text-anchor="middle">10 MB on-chip RAM · 16 MB SPI flash</text>
+  <!-- task stack icon -->
+  <rect x="706" y="160" width="92" height="22" rx="4" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <rect x="706" y="186" width="92" height="22" rx="4" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <rect x="706" y="212" width="92" height="22" rx="4" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <text x="752" y="176" font-size="14" text-anchor="middle">task</text>
+  <text x="752" y="202" font-size="14" text-anchor="middle">task</text>
+  <text x="752" y="228" font-size="14" text-anchor="middle">… ~32</text>
+  <text x="752" y="270" font-size="15" text-anchor="middle" font-weight="bold">NORTi µITRON real-time OS</text>
+  <text x="584" y="304" font-size="15" font-weight="bold">Owns</text>
+  <text x="584" y="328" font-size="14">• the 800×480 touch screen (and DVI out)</text>
+  <text x="584" y="350" font-size="14">• keys, knobs, touch, USB mouse/keyboard</text>
+  <text x="584" y="372" font-size="14">• the SD card</text>
+  <text x="584" y="394" font-size="14">• firmware updates for every CPU</text>
+  <text x="584" y="416" font-size="14">• the PC scope stream (FT4222H)</text>
+  <text x="584" y="452" font-size="14" fill="#16A34A">Forwards keys (except power and</text>
+  <text x="584" y="474" font-size="14" fill="#16A34A">service combos); draws what MAIN says.</text>
+
+  <!-- link -->
+  <line x1="398" y1="214" x2="562" y2="214" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="480" y="204" font-size="14" text-anchor="middle">screen packets</text>
+  <line x1="562" y1="262" x2="398" y2="262" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="480" y="284" font-size="14" text-anchor="middle">key, knob, touch</text>
+  <text x="480" y="302" font-size="14" text-anchor="middle">events</text>
+  <rect x="420" y="320" width="120" height="64" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="480" y="344" font-size="14" text-anchor="middle">one UART</text>
+  <text x="480" y="364" font-size="14" text-anchor="middle">~340 kbit/s</text>
+  <text x="480" y="410" font-size="14" text-anchor="middle">(chapter 2)</text>
+</svg>
