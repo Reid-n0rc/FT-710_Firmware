@@ -51,6 +51,7 @@ FEAT = re.compile(r"^([A-Za-z0-9_]+?_X\d+Y\d+)\.(.+)$")
 VAL = re.compile(r"^(\d+)'([bh])([0-9a-fA-F_]+)$")
 RANGE = re.compile(r"^(.*)\[(\d+)(?::(\d+))?\]$")
 CONST_WIRE = re.compile(r"(^|_)(VCC|GND)(_|$)")
+DEFAULT_VCC = re.compile(r"^(IMUX_L|IMUX|BYP_ALT|FAN_ALT)\d+$")
 
 
 # ------------------------------------------------------------------ FASM
@@ -206,6 +207,7 @@ class Router:
         self.parent = []        # union-find over node ids
         self.npips = 0
         self.const = {}         # node id -> 0/1
+        self.default_vcc = []   # nodes with an INT IMUX/BYP_ALT/FAN_ALT wire (VCC when undriven)
 
     def node(self, ti, wire):
         k = (ti, wire)
@@ -236,6 +238,8 @@ class Router:
             m = CONST_WIRE.search(w)
             if m and not w.startswith(("CLK", "GCLK")):
                 self.const[n] = 1 if m.group(2) == "VCC" else 0
+            if DEFAULT_VCC.match(w) and db.ttype[t] in ("INT_L", "INT_R"):
+                self.default_vcc.append(n)
         # always-on pseudo PIPs reachable from this node
         for t, w in members:
             for ow in db.always(db.ttype[t]).get(w, ()):
@@ -360,33 +364,66 @@ def build(fasm_lines, db, progress=False):
     return finish(nl, db)
 
 
+PRUNE = {"CARRY4": ("O[0]", "O[1]", "O[2]", "O[3]", "CO[3]"), "MUXF7": ("O",), "MUXF8": ("O",)}
+
+
 def finish(nl, db):
+    """Resolve pin keys to named nets. Constants: nets holding a VCC/GND wire,
+    and undriven nets holding an INT IMUX/BYP_ALT/FAN_ALT wire (prjxray 'default'
+    pseudo-PIP to VCC_WIRE). Unused CARRY4/MUXF7/MUXF8 (no routed output) are
+    dropped."""
     r = nl.r
-    # resolve pin keys to net ids, name nets, mark constants and drivers
-    names = {}
+    croots = const_roots(r)
+    droots = set(r.find(n) for n in r.default_vcc)
+
+    def resolve(cells):
+        names, nets, out = {}, collections.defaultdict(lambda: {"drivers": [], "sinks": []}), []
+        for c in cells:
+            pins = {}
+            for p, (k, d) in c["pins"].items():
+                root = nl.find(k)
+                if root[0] == "n" and root[1] in croots:
+                    root = ("c", croots[root[1]])
+                if root[0] == "c":
+                    pins[p] = ["1'b%d" % root[1], d]
+                    continue
+                nm = names.setdefault(root, "n%d" % len(names))
+                pins[p] = [nm, d, root]
+                nets[nm]["drivers" if d == "O" else "sinks"].append("%s.%s" % (c["name"], p))
+            out.append(dict(c, pins=pins))
+        return out, nets
+
+    cells, nets = resolve(nl.cells)
+    keep = []
+    for c, c2 in zip(nl.cells, cells):
+        outs = PRUNE.get(c["type"])
+        if outs and not any(c2["pins"].get(p, ["1'b0"])[0] in nets and nets[c2["pins"][p][0]]["sinks"]
+                            for p in outs):
+            continue
+        keep.append(c)
+    cells, nets = resolve(keep)
+    nconst = 0
+    for c in cells:
+        for p, v in c["pins"].items():
+            if len(v) == 3:
+                nm, d, root = v
+                if not nets[nm]["drivers"] and root[0] == "n" and root[1] in droots:
+                    c["pins"][p] = ["1'b1", d]
+                    nconst += 1
+                else:
+                    c["pins"][p] = [nm, d]
+    for nm in list(nets):
+        v = nets[nm]
+        if not v["drivers"] and all(True for _ in v["sinks"]):
+            pass
+    # rebuild net table without the default-VCC nets
     nets = collections.defaultdict(lambda: {"drivers": [], "sinks": []})
-    cells = []
-    for c in nl.cells:
-        pins = {}
-        for p, (k, d) in c["pins"].items():
-            root = nl.find(k)
-            if root[0] == "n" and root[1] in const_roots(r):
-                root = ("c", const_roots(r)[root[1]])
-            if root[0] == "c":
-                pins[p] = ["1'b%d" % root[1], d]
-                continue
-            if root not in names:
-                names[root] = "n%d" % len(names)
-            nm = names[root]
-            pins[p] = [nm, d]
-            nets[nm]["drivers" if d == "O" else "sinks"].append("%s.%s" % (c["name"], p))
-        c = dict(c, pins=pins)
-        cells.append(c)
-    # drop nets with no driver and a single sink? keep: they show up as undriven
-    for nm, v in nets.items():
-        if len(v["drivers"]) == 1:
-            v["name"] = v["drivers"][0]
-    return {"cells": cells, "nets": nets, "stats": {"pips": r.npips, "nodes": len(r.nodes)}}
+    for c in cells:
+        for p, (nm, d) in c["pins"].items():
+            if not nm.startswith("1'b"):
+                nets[nm]["drivers" if d == "O" else "sinks"].append("%s.%s" % (c["name"], p))
+    return {"cells": cells, "nets": nets,
+            "stats": {"pips": r.npips, "nodes": len(r.nodes), "default_vcc_pins": nconst}}
 
 
 _CR = {}
@@ -440,8 +477,9 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
         if ("CARRY4.%sCY0" % L) in f:
             used_o5.add(L)
     # carry
-    carry_used = any(k.startswith("PRECYINIT.") for k in f) or any(
-        k.endswith((".XOR", ".CY")) for k in f)
+    # PRECYINIT.C0 alone is Vivado's default in slices without a carry chain
+    carry_used = any(k in f for k in ("PRECYINIT.CIN", "PRECYINIT.AX", "PRECYINIT.C1")) or any(
+        k.endswith((".XOR", ".CY")) or k.startswith("CARRY4.") for k in f)
     if carry_used:
         if f.get("PRECYINIT.CIN"):
             ci, cyinit = P("CIN"), GND
