@@ -14,12 +14,12 @@ re-exported decomps identical to `decomp/`, the SDR netlist/Verilog/Verilator mo
    and where the open questions are.
 3. `tools/README.md`: a catalogue of every script in `tools/` and `tools/ghidra/` (what it does, inputs, outputs, which task made it).
 4. `docs/manuals.md`: every manual and datasheet the project uses, with source links and what it was used for.
-   No PDFs are committed.
+   The PDFs themselves are committed in `Manuals/` (owner decision, 2026-10-28).
 5. Open work as GitHub issues: one issue per open question and follow-up, labelled, so newcomers can pick one up.
 
-**Not committed, by decision (2026-10-28):** Yaesu's firmware, the decoded binaries, the Ghidra project databases (which embed the full
-binaries) and third-party manuals. They are complete copyrighted works; the bootstrap reproduces them byte for byte from the official
-downloads instead. The decompiled C in `decomp/` is already committed.
+**Committed by the owner's decision (2026-10-28):** the manual PDFs in `Manuals/` and the three canonical Ghidra projects
+(`ghidra/FT710_{MAIN,DISPLAY,IFDSP}`). Not committed: the firmware download and the decoded binaries (`build/`), which the bootstrap
+rebuilds and checks against `docs/inputs.sha256`. The bootstrap must still be able to rebuild the Ghidra projects from scratch.
 
 ## Plan
 (written by the agent)

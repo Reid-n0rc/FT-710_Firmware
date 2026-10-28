@@ -1,17 +1,28 @@
-# Yaesu copyrighted inputs — never commit (see AGENTS.md "Sources")
+# Yaesu firmware download (the bootstrap fetches/decodes it; see docs/getting-started.md)
 Firmware/
-Manuals/
 
-# Decoded/raw binaries derived from Yaesu firmware — regenerate locally with tools/
+# Decoded/raw binaries derived from Yaesu firmware — regenerate locally with tools/bootstrap.sh
 /build/
 *.bin
 *.SFL
 *.sfl
 
-# Ghidra project databases (large, binary, machine-specific)
-/ghidra/
-*.gpr
-*.rep/
+# Manuals: committed by the owner's decision (2026-10-28). Everything else under Manuals/ stays out.
+Manuals/*
+!Manuals/*.pdf
+!Manuals/Renesas/
+Manuals/Renesas/*
+!Manuals/Renesas/*.pdf
+
+# Ghidra: the three canonical projects are committed by the owner's decision (2026-10-28).
+# Per-task scratch copies (FT710_*_T1x*) and lock files stay out.
+/ghidra/*
+!/ghidra/FT710_MAIN.gpr
+!/ghidra/FT710_MAIN.rep/
+!/ghidra/FT710_DISPLAY.gpr
+!/ghidra/FT710_DISPLAY.rep/
+!/ghidra/FT710_IFDSP.gpr
+!/ghidra/FT710_IFDSP.rep/
 *.lock
 *.lock~
 

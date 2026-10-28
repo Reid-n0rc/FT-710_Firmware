@@ -34,9 +34,10 @@ Read [AGENTS.md](AGENTS.md): it is the rule book for humans and AI agents alike.
 - **Figures.** Use Mermaid in Markdown, about 25 nodes or fewer, and hand-written SVG in `docs/guide/img/` for the guide.
 - **Ghidra names.** Keep the names files in `tools/ghidra/` as the source of truth, and re-export `decomp/<image>/` with
   `tools/ghidra/ExportDecomp.java` when names change.
-- **Don't commit third-party files.** Yaesu's firmware (`Firmware/`), decoded images (`build/`), manuals (`Manuals/`) and Ghidra projects
-  (`ghidra/`) are gitignored. They are rebuilt from the official downloads by [tools/bootstrap.sh](tools/bootstrap.sh). Never force-add
-  them.
+- **What is in the repo.** The manuals (`Manuals/`) and the three canonical Ghidra projects (`ghidra/FT710_{MAIN,DISPLAY,IFDSP}`) are
+  committed. The firmware download (`Firmware/`) and decoded images (`build/`) are not; [tools/bootstrap.sh](tools/bootstrap.sh) rebuilds
+  them. Work in your own copy of a Ghidra project, and send name changes as `tools/ghidra/names_*.tsv` edits plus the `decomp/` re-export.
+  The owner updates the committed projects, because Ghidra databases can't be merged.
 - **Don't touch someone's radio without asking.** Anything that writes to a radio (flashing, EEPROM writes, untested CAT set-commands,
   JTAG loads) needs that radio owner's explicit approval each time. Read the risk ladder in chapter 8 of the guide first.
 - **Licence conditions.** Changes that affect transmit (power, band limits, the TX path) must keep the radio within its operator's

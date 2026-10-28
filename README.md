@@ -28,10 +28,11 @@ Other references: [hardware survey](docs/hardware.md), [memory maps](docs/memory
 [SFL file format](docs/sfl-format.md), [custom-firmware feasibility](docs/custom-firmware.md), [tooling](docs/tooling.md).
 Decompiled code is in `decomp/<image>/`.
 
-## Getting the inputs (not stored in this repo)
+## Getting the inputs
 
 - **Firmware:** download https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip and unzip it into `Firmware/`.
 - **Manuals:** get them from https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers (Files tab) and save them into `Manuals/`.
 - **Service manual (Technical Supplement):** download https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf into `Manuals/`.
 
-`Firmware/` and `Manuals/` are gitignored and must never be committed.
+The manuals (`Manuals/`) and the three Ghidra projects (`ghidra/`) are in the repo. Only the firmware download (`Firmware/`) and the decoded
+images (`build/`) have to be fetched and decoded locally (see [docs/getting-started.md](docs/getting-started.md)).

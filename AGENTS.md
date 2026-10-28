@@ -32,7 +32,7 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 | `Manuals/Renesas/` | Renesas RX651/RX65N hardware manual (r01uh0590), datasheet, handbook, RXv2 software manual (instruction set, r01us0071), technical updates | supplied by the owner (renesas.com) |
 | `Manuals/FT-710_serv_2022.pdf` | Service manual / Technical Supplement (schematics, ICs) | https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf |
 
-`Firmware/`, `Manuals/`, `build/` (decoded binaries), and `ghidra/` (project DBs) are gitignored. Never force-add them.
+By the owner's decision (2026-10-28), the PDFs in `Manuals/` and the three canonical Ghidra projects (`ghidra/FT710_{MAIN,DISPLAY,IFDSP}`) are committed. `Firmware/`, `build/` (decoded binaries), per-task Ghidra copies (`ghidra/FT710_*_T*`) and lock files stay gitignored. Close Ghidra before committing a project, and commit project changes together with the `decomp/` re-export they produce.
 
 ## Repo layout
 
@@ -49,7 +49,7 @@ tools/               scripts (Python 3, stdlib preferred) — e.g. sfl_decode.py
 decomp/<image>/      committed Ghidra decompiled C output per image
 hdl/<image>/         hand-written HDL reconstructions (T15e)
 build/               (ignored) decoded .bin images
-ghidra/              (ignored) Ghidra projects
+ghidra/              canonical Ghidra projects FT710_{MAIN,DISPLAY,IFDSP} (committed; per-task copies ignored)
 ```
 
 ## Firmware images (package 2024-02)
