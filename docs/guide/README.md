@@ -190,9 +190,11 @@ Follow a signal from the antenna to your ears:
    separate "DITHER" line from the SDR module is high-pass filtered and added to the ADC input. Dither is a small noise signal outside
    the wanted band that makes a direct-sampling ADC's errors behave like noise rather than spurs *(inference for its purpose)*.
 2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds the 250 MHz
-   sampling clock, and the FPGA runs at half that, 125 MHz. Whether the ADC takes a sample on every tick of the 250 MHz clock or on
-   every second one is not known yet: the ADC's part number is not in the service manual. A full 0–75 MHz input fits below half of 250 MHz (125 MHz)
-   but not below half of 125 MHz (62.5 MHz), so the 0.03–75 MHz label favours 250 MSPS *(inference)*.
+   sampling clock, and the FPGA runs at half that, 125 MHz. The ADC's part number is not in the service manual, so its exact sample
+   rate is not proven yet. The service manual's module box reads "Operating clock 125MHz, Divide 250MHz
+   by 2", and MAIN treats 62.5 MHz (half of 125) as a boundary: it flips an FPGA control bit there and mirrors the scope frequency about
+   it. So **125 million samples per second is the most likely rate** *(inference, strong)*. Signals above 62.5 MHz (for example the
+   70 MHz band) are then received "folded" from the second Nyquist zone, and the 56–75 MHz band-pass filter keeps out their mirror image.
 3. **FPGA "tuner".** The FPGA multiplies the samples with a digital oscillator ([NCO](#glossary)) set to your frequency. That moves the
    wanted signal down to near zero, where a bank of filters cuts out a narrow slice and drops the sample rate. This is the classic
    digital down-converter ([DDC](#glossary)). The blocks inside the FPGA are recognised from its lookup tables and multiplier use *(inference)*.

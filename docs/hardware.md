@@ -142,8 +142,12 @@ registers: p56–57, p74).
   RL3004 AMP2 select (Q3027 RFAMP2) → Q3028 MMG3H21N RFAMP → LPF → T3006 balun → J3003 `RX-IN 0.03-75MHz` to the ADC. A separate
   `SCOPE-IN 0.03-75MHz` (T3004) taps the same point, and `DITHER` from the module (T3005) goes through an HPF into it. The switches are
   driven by Q3022 BU2152FS (serial-to-parallel: BPFDT, RFDT, ATTDT). The FPGA tunes digitally: MAIN writes the dial frequency in Hz into
-  the RX NCO registers 0x18/0x19 ([code/main/sdr-link.md](code/main/sdr-link.md)) **[fact]**. A 0.03–75 MHz input needs more than
-  150 MSPS for first-Nyquist sampling, which favours 250 MSPS over 125 MSPS for O7 **[inference]**.
+  the RX NCO registers 0x18/0x19 ([code/main/sdr-link.md](code/main/sdr-link.md)) **[fact]**. Sample rate (O7): **125 MSPS is the most
+  likely** **[inference, strong]**: the module box reads "Operating clock 125MHz, Divide 250MHz by 2" (p6), and MAIN treats **62.5 MHz =
+  fs/2** as a boundary (SDR reg 0x03 bit 5 flips there; the TX scope centre is mirrored about 62.5 MHz, [code/main/sdr-link.md](code/main/sdr-link.md)).
+  Above 62.5 MHz the receiver then works in the **second Nyquist zone**; the 56–75 MHz BPF rejects the image of the 70 MHz band
+  (125 − 70 = 55 MHz) **[inference]**. Not yet a fact: "operating clock" may describe only the FPGA, and the 14 DDR-captured LVDS pairs
+  would also fit 250 MSPS. The ADC's marking settles it.
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),
