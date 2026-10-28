@@ -35,7 +35,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | in progress |
 | T12a | [IFDSP overview + boot/memory map](T12a-ifdsp-overview.md) | T07 | done |
 | T12b | [IFDSP M33 console / command link](T12b-ifdsp-m33-console.md) | T12a | done |
-| T12c | [IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)](T12c-ifdsp-ipc.md) | T12a | in progress |
+| T12c | [IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)](T12c-ifdsp-ipc.md) | T12a | done |
 | T12d | [IFDSP M33 platform (boot, DSP loader, RTOS)](T12d-ifdsp-m33-platform.md) | T12a | done |
 | T12e | [IFDSP HiFi4 DSP code (threads, audio I/O, tables)](T12e-ifdsp-hifi4.md) | T12a | done |
 | T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | done |
