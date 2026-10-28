@@ -174,6 +174,79 @@ Plan:
    (`rx-elf-objdump`, `arm-none-eabi-objdump`, HiFi4 `flix.dis`) and settle which side is right, with addresses.
 5. Findings and counts here; commit after each step.
 
+**Results [fact unless marked].** Before = `decomp/` at `9622a8f^` (MAIN) / `7b1b48b^` (others), after = `9622a8f` / `7b1b48b`
+(= the current branch; **MAIN is measured against 9622a8f, before T21h's two fragments**). M33 is byte-identical (426 / 426
+unchanged). Per-function classes and flags: [`T22e-changed-functions.tsv`](T22e-changed-functions.tsv) (image, entry, names,
+sizes, class, flags; unchanged functions left out).
+
+```sh
+git archive 9622a8f^ decomp/main | tar -x -C <s>/before; git archive 9622a8f decomp/main | tar -x -C <s>/after   # likewise 7b1b48b
+python3 -I tools/decomp_behavior_diff.py <s>/before/decomp/main <s>/after/decomp/main main.tsv \
+  --marked main_patched_funcs.txt --locked tools/ghidra/signatures_main.tsv --label MAIN
+```
+`main_patched_funcs.txt` = the 569 MAIN functions whose `rx-elf-objdump` listing (per function, from the after `functions.tsv`)
+has `XCHG`, `SC<cnd>`, `MUL dsp[].UB` or a string op (T21c counted 570).
+
+| Class (first match wins) | MAIN | DISPLAY | HiFi4 | M33 |
+|---|---:|---:|---:|---:|
+| unchanged | 903 | 1,940 | 166 | 426 |
+| renamed/moved only (names, labels, stack-variable names, comments) | 50 | 88 | 0 | 0 |
+| HiFi4 bundles now decoded (`halt_baddata`, bad-instruction warning or stock `flix()` gone) | – | – | 892 | – |
+| new instructions decoded (T21c ops, `halt_unimplemented` gone) | 566 | – | – | – |
+| jump table recovered | 0 | 5 | 0 | – |
+| spacebase / stack fixed (spacebase warning or `in_`/`unaff_`/`extraout_` gone) | 16 | 0 | 5 | – |
+| function boundary (size changed) | 0 | 0 | 10 | – |
+| signature locked (own or a callee's prototype changed or locked) | 707 | 3 | 2 | – |
+| data defined (strings, arrays, labels) | 25 | 37 | 0 | – |
+| other | 1 | 3 | 4 | – |
+| added / removed functions | 56 / 0 | 134 / 11 | 2 / 69 | 0 / 0 |
+
+Checks of the classes (sampled against the disassembly):
+- MAIN `insn`: `FUN_fff90837` was `halt_unimplemented()`; now `old = *p; *p = 1; return old == 0`, which is the `XCHG [R1].L,R2`
+  test-and-set at 0xFFF90845. `FUN_fff97cf7`: before, `*in_R14 = 1` (a store through R14); 0xFFF97D04 is `SCEQ.L R14`, a register
+  set, so the after side (`param_1 == 0` tests) is right. MAIN `other` (`FUN_fffb32fd`) and the `fewer_args` cases are argument fixes
+  from `doc` rows: `ex_command` loses a bogus sixth argument (5 parameters per the doc row), `dsp_send_frame('r')` = `0x72`.
+- MAIN `dropped_result` outside `nib2hex` (`vfo_store_back`, `beep_request`, `swtimer_start`, `FUN_fffc8d8c`, … 19 call sites, 50
+  flags in all): with a scripted R1 check after every such `BSR`, none of them reads R1 again: they are tail calls before `RTSD` or
+  R1 is overwritten. Before, the C passed a leftover R1 back as a fake return (`cat_AO` returned `undefined2 *`); now it is `void`
+  **[inference: the callers of those handlers ignore R1]**. `FUN_fffc8d8c` takes the result of `FUN_fffc8cbb(40)` in R1 as its
+  argument (0xFFFA6C83/0xFFFA6C87); both sides drop it, so it is not new.
+- MAIN `string_as_int` (329 functions): 325 of the 339 sites are the `smovf` source operand (`smovf(local_38 + 6,0xfff85866,0x15)`
+  where the before side printed a truncated literal of a whole string table in a copy loop). Only 5 sites come from drafted `asm`
+  signatures typed `uint32` instead of `char *` (`FUN_fffedd9a` in `_INIT_IOLIB` ×3: `"C:\\stdin"` → `0xfff8f2e9`; `sci4_send`).
+  Readability, not semantics.
+- DISPLAY `other`/`data`: label and type changes (`&DAT_20138410` → `FUN_20138410`, `DWORD_ARRAY_…`, `"RIFF"`/`"WAVE"` now shown in
+  `wav_check_header`). One readability loss: `FUN_20100c7c` (printf core) now shows `&UNK_20154b64`/`DWORD_20154be0` where it
+  showed `""`, `"-"`, `"+"`, `" "`; the T21e B8 data definitions replaced those short strings. The 11 removed functions are T21e's
+  replaced late starts.
+- HiFi4: none of the 69 removed functions is an entry in `entries_hifi4.tsv` (the `flix.dis` function list); 14 lie in SRAM
+  rodata below 0x207000 and 48 lie inside a function that now decodes. The `boundary` class is functions that were cut short by a
+  bad decode: `FUN_00207d58` 26 → 748 B (the next `flix.dis` entry is 0x208050), `FUN_0021b034` 17 → 63 B (before: a false
+  "does not return" after `env_lock_mutex`). `FUN_002128e8` (classed `bundles`): before, a `flix()` placeholder and a call to the
+  non-code address 0x1F65C0, `& extraout_a5`; after, `& 0xfffffffe` and `DAT_40001074 = 0x10000`. HiFi4 `other` = the special
+  register ops: `rsr(CCOUNT)` → `rsr_ccount`, and one `wsr.ps a3` (0x227F4D) becomes six pcodeop calls `wsr_ps` … `wsr_ps_5`,
+  likewise `xsr_excsave1` + `xsr_excsave1_1` (one per output of the iclass). Cosmetic **[inference]**.
+
+**Real regression found (after side wrong, before side right): stores into a buffer that SMOVF copies.** 34 MAIN functions,
+all in 0xFFFDE064–0xFFFE1774 (the CAT/AI reply builders that copy a local reply into 0x15E06 with `SMOVF`): 119 store statements
+into the source buffer are gone (`lost_buffer_stores`, 30 functions), and in 17 functions the `nib2hex` result is called and
+dropped (31 sites; each is followed by `MOV.B R1,n[R0]` or `MOV.B R1,n[R6]`). Example `FUN_fffe0ba1`: the before C builds `"SF00;"`
+and sets `local_9[2]`/`local_9[3]` in a 26-way decision tree; the after C keeps the empty `if` tree and only
+`smovf(0x15e06,local_9,…)`. The disassembly has the stores (0xFFFE0C0D `MOV.B #49,10[R0]` …) and then `SMOVF` from the stack, so
+the before side is right. `FUN_fffdebd1` 0xFFFDEC0E: `BSR nib2hex` then `MOV.B R1,8[R0]`, gone in the after C. Cause: T21c's
+`smovf()` pcodeop has no memory effect, so the decompiler treats those stores as dead. This is the regression T21d recorded
+(26 lost values), but it is wider: it also loses constant stores (reply letters), not only call results. All 34 are classed
+`insn` (the cause is the instruction fix), and the TSV flags them. A load from a buffer that `smovf` filled can be wrong in
+the same way (`FUN_fffdf13a`: `smovf(&local_43,0xfff8f4ef,0x1c)`, then `local_43` becomes a 1-byte variable and the
+`local_43[1]` stores are lost) **[inference for the load side]**. No other class has a semantic regression in the sample.
+
+**REA.** REA 6.8.0 cannot diff a "before" that exists only as exported text: `compare_functions`/`find_changed_behavior` take
+`analyze_function` Evidence from a binary opened now (the current SLEIGH), the CLI has no compare command for functions or
+artifacts, and `rea inspect-artifact` on a tar of the old `decomp/main` did not finish in 300 s. Request:
+scratchpad `rea-requests/T22e-pseudocode-version-diff.md`. The diff was done with `tools/decomp_behavior_diff.py`.
+
+**Status:** done (2026-10-28).
+
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
@@ -194,3 +267,9 @@ REA tools used for cross-checks: `inspect_byte_entropy`, `search_strings`, `sear
 ## Findings
 
 ## Follow-ups
+- T22e → T21/T21h: give the RX string pcodeops (`smovf`/`smovb`/`smovu`/`sstr`) a memory effect (or keep the copy loop for them).
+  Until then 34 MAIN reply builders (0xFFFDE064–0xFFFE1774) lose their reply bytes in the C. Re-run `tools/decomp_behavior_diff.py`
+  after that: `lost_buffer_stores` and `dropped_result=F_fffb2e9c` should go to 0.
+- T22e: optional cosmetic fixes. In the HiFi4 generator, one pcodeop per special-register write instead of one per iclass output
+  (`wsr_ps` ×6, `xsr_excsave1` ×2). In DISPLAY, `0x20154B64`–`0x20154BE0` should be strings again (`""`, `"-"`, `"+"`, `" "`), not
+  dwords.
