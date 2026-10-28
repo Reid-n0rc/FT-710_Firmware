@@ -8,6 +8,12 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `<first>_<last>.c`: decompiled C, 50 functions per file in address order (`tools/ghidra/ExportDecomp.java`).
 - `functions.tsv`: entry, name, size, reference count, file for every function.
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
+- Rebuild (`tools/bootstrap.sh --only ghidra,export` does the same; full command in `docs/tooling.md`, "MAIN full rebuild"): import with
+  `SetupRX651.java`, then the post-scripts in this order: `ApplyNames.java tools/ghidra/names_main.tsv`,
+  `DefineRomData.java <report.tsv> code=0xFFF8F658` (strings, pointer/zero runs, unreferenced functions, const tables; T21d, #97 B5),
+  `ApplySignatures.java tools/ghidra/signatures_main.tsv` (locked prototypes; T21d, #97 B3), `ExportDecomp.java decomp/main 50`.
+  Check call arguments with the read-only `CallArgCheck.java <mismatch.tsv> [<protos.tsv>]`; redraft the signatures with
+  `tools/signatures_draft.py` (see `tools/README.md`).
 - Function names come from `tools/ghidra/names_main.tsv` (T05, T09 and T10a–h, applied with `tools/ghidra/ApplyNames.java` in T17). Everything else is `FUN_<addr>`. Subsystem pages: [docs/code/main/](../../docs/code/main/README.md).
 
 ## Numbers

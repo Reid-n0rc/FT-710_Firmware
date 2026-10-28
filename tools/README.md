@@ -91,6 +91,7 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 
 | Script | What it does | Inputs → outputs | Task |
 |---|---|---|---|
+| `signatures_draft.py` | drafts `signatures_main.tsv` from `CallArgCheck.java`'s `protos.tsv` (keeps the reviewed `doc` rows; rules in its docstring) | `protos.tsv`, `names_main.tsv`, [`mismatch.tsv`] → `tools/ghidra/signatures_main.tsv` | T21d |
 | `names_merge.py` | `report`/`merge` per-sub-task name and entry TSVs into the shared ones, conflicts resolved with `--picks` | `tools/ghidra/names_*.T*.tsv` → `names_*.tsv` | T17 |
 | `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
@@ -109,6 +110,10 @@ the exact command line for every program.
 | `names_main.tsv` | data | 1147 MAIN names (T05, T09, T10a–h merged in T17) | ApplyNames | T05/T17 |
 | `names_display.tsv` | data | 768 DISPLAY names (T06, T11a–g merged in T17) | ApplyNames | T06/T17 |
 | `entries_display.tsv` | data | 205 DISPLAY function entries analysis missed or started late (`drop` = old entry was data, `thumb` = Thumb entry): 68 from T11/T17, 137 from T21e (`DisplayGaps.java` kinds) | FixFuncEntries | T11/T17/T21e |
+| `DefineRomData.java` | postScript | MAIN ROM bytes analysis left undefined: strings, pointer runs, zero runs; unreferenced code after a return → functions; leftover const-area runs → `float`/`uint16`/`byte` arrays (plate comment: layout guess). `[report.tsv] [code=0xFFF8F658] [dry]`; run after ApplyNames | MAIN | T21d |
+| `ApplySignatures.java` | postScript | Applies `signatures_main.tsv` as locked (USER_DEFINED) prototypes, cspec `__fastcall`, stack purge 0; `type name@stack:N` and 64-bit returns get custom storage; run last | MAIN | T21d |
+| `signatures_main.tsv` | data | 1212 MAIN prototypes: 33 reviewed (`doc`), the rest drafted from the disassembly (`asm`, `tools/signatures_draft.py`) | ApplySignatures | T21d |
+| `CallArgCheck.java` | postScript | Read-only: every call site's R1–R4 set-up and R1/R2 use in the disassembly vs the decompiled CALL → `mismatch.tsv` (dropped_arg / lost_ret / wide_ret + counts); optional `protos.tsv` (per-function asm prototype evidence for `signatures_draft.py`) | MAIN | T21d |
 | `names_*.T*.tsv`, `entries_display.T*.tsv` | data | the per-sub-task proposals, kept as the merge inputs | names_merge.py | T10/T11/T12 |
 | `names_{main,display,ifdsp}.picks.tsv` | data | T17 resolutions of name conflicts | names_merge.py | T17 |
 | `CatDispatch.java` | postScript | Dumps the CAT mnemonic → switch case → handler table with each length test (`len==N`, `len>N`, ...) | `decomp/main/cat_dispatch.tsv` | T05, fixed T20 |
@@ -138,3 +143,4 @@ the exact command line for every program.
 | `T10eMovuRegCount.java` | postScript | Lists every `MOVU.B/W Rs,Rd`; after the T17 fix all 107 print as register forms | MAIN | T10e/T17 |
 | `rx62t-movu-fix.patch` | patch | T17 SLEIGH fix for the RX module (`MOVU` ld=11, `SCMPU`, `SUNTIL`, `SWHILE`); applied by `bootstrap.sh --only rx` | RX module | T17 |
 | `rx62t-rxv2-fix.patch` | patch | T21c SLEIGH fix on top of the T17 patch: `MUL` memory forms (.UB scaling, memex), `XCHG` memory forms (were unimplemented), `SCCnd` (always written; .L Rd went to memory), string ops as named pcodeops (`scmpu`, `smovf`, `smovb`, `smovu`, `sstr`, `suntil`, `swhile`); applied by `bootstrap.sh --only rx` | RX module | T21c |
+| `rx62t-rtsd-fix.patch` | patch | T21d SLEIGH fix: `RTSD #imm,Rd-Rd2` frame size from the register numbers (was the register values; the 8 "Unable to track spacebase" warnings). One line, applies after the T17 patch; T21c/T21g fold it into `bootstrap.sh --only rx` | RX module | T21d |
