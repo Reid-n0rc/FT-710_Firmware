@@ -151,7 +151,7 @@ tools/ghidra-headless.sh <projdir> <proj> -process FT-710_IFDSP_V0101_hifi4.bin 
 ```
 
 ### T22d
-**Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
+**Status:** in progress (2026-10-28, resumed). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
 
 Plan:
@@ -164,6 +164,17 @@ Plan:
    pointers to a sub-run from anywhere in the image are recorded as evidence. One TSV per image (range, size, class, evidence).
 3. After T21d/T21e land on `issue-97-ghidra-gaps`: compare their definitions with these classes; list what is still unexplained
    (addresses) as the T21g follow-up.
+
+Plan, revised 2026-10-28 (resumed after the first agent stopped at "classifier v2, T21e compare done"): the baseline above is
+pre-T21. T21g rebuilt and re-exported every program; `decomp/*/quality.tsv` now count **MAIN 161, DISPLAY 242, M33 5,162,
+HiFi4 29,161**. So:
+4. Re-run `UndefinedRanges.java` on scratch copies of the T21g canonical projects (`ghidra/FT710_{MAIN,DISPLAY,IFDSP}`,
+   `-readOnly`, memgate 3G/2G + 700 MB) and check each total against `quality.tsv`.
+5. Finish the classifier (float32 tables from the WIP commit) and classify the four new range lists; cross-check samples with REA
+   (`inspect_byte_entropy`, `search_strings`, `inspect_firmware_regions`) and rizin. MAIN's 161 B are being decoded by T21h:
+   classify only, no deep decode.
+6. Per image: bytes per class, and for each class whether Ghidra should define it (how: script/bootstrap step) or leave it.
+   Commit a modest per-range TSV, document the tools in `tools/README.md`.
 REA tools used for cross-checks: `inspect_byte_entropy`, `search_strings`, `search_bytes`, `inspect_firmware_regions`.
 
 
