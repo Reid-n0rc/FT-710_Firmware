@@ -1,0 +1,63 @@
+# SDR bitstream layout and frame map (T13)
+
+Image: `build/FT-710_SDR_V0104.bin` (decoded from `FT-710_SDR_V0104.SFL`, tag SR, V01-04). The packet stream itself
+(sync, COR0/CTL0, CRC, startup) is documented in [`decomp/sdr/README.md`](../../../decomp/sdr/README.md) (T08); this
+page adds the **frame address (FAR) map** checked against the Project X-Ray database.
+
+Tools: `python3 -I tools/xbit_parse.py IMAGE` (packets), `python3 -I tools/xc7_db.py IMAGE frames` (this page).
+Database: prjxray-db `artix7/xc7a50tcpg236-1/part.json` and `artix7/xc7a50t/tilegrid.json` (see
+[`docs/tooling.md`](../../tooling.md#project-x-ray-t13-xilinx-7-series-bitstream-database)).
+
+## Image layout
+
+| File offset | Size | Content | Tag |
+|---|---|---|---|
+| 0x000000 | 4 | `0x993966C2` = CRC-32/BZIP2 of file[0x1000:EOF] | [fact] (T08) |
+| 0x000004 | 4092 | 0xFF fill to one 4 KiB flash sector | [fact] |
+| 0x001000 | 2,192,012 | Vivado `.bin`: bus-width pattern, sync `AA995566`, config packets | [fact] |
+| 0x0010FC | 547,420 words | single type-2 FDRI write = 5,420 frames x 101 words | [fact] |
+| 0x217A70 | ... | CRC, GRESTORE, DGHIGH, START, trailer, DESYNC | [fact] |
+
+## FAR sequence (step 2)
+
+`xc7_db.py` rebuilds the FAR auto-increment order from `part.json`: for each block type (0 = CLB/IO/CLK, 1 = BRAM
+content), the top-half rows then the bottom-half rows, every configuration column with its `frame_count` minor frames,
+and **two pad frames after each row** (UG470). The rebuilt sequence has 5,408 real frames + 12 pad frames = **5,420,
+exactly the FDRI frame count**, and all 12 pad frames are zero **[fact]**. This replaces T08's empirical layout and
+confirms it.
+
+| FDRI frame | Block type | Half / row | Clock-region row [inference] |
+|---|---|---|---|
+| 0 - 1533 | 0 (CLB_IO_CLK) | top, row 0 | Y1 (middle) |
+| 1534 - 2855 | 0 | top, row 1 | Y2 (top) |
+| 2856 - 4389 | 0 | bottom, row 0 | Y0 (bottom) |
+| 4390 - 4775 | 1 (BLOCK_RAM) | top, row 0 | 3 BRAM columns x 128 + 2 pad |
+| 4776 - 5033 | 1 | top, row 1 | 2 BRAM columns x 128 + 2 pad (column BRAM_R_X37 has no tiles in region Y2 and BRAM_L_X30 only 5, beside the PCIe/GTP corner) [fact from tilegrid] |
+| 5034 - 5419 | 1 | bottom, row 0 | 3 BRAM columns x 128 + 2 pad |
+
+Total device: 75 RAMB36 sites (150 RAMB18 halves) in three BRAM columns (tiles `BRAM_L_X6Y*`, `BRAM_L_X30Y*`, `BRAM_R_X37Y*`; 30 + 25 + 20 RAMB36), 120
+DSP48E1 sites, 8,150 slices (all [fact] from tilegrid.json).
+
+```mermaid
+flowchart LR
+  H["4 KiB header<br/>CRC-32/BZIP2 + FF"] --> P["config packets<br/>BSPI x4, COR0, IDCODE 7A50T"]
+  P --> F0["FDRI block 0<br/>frames 0-4389<br/>logic + routing"]
+  F0 --> F1["FDRI block 1<br/>frames 4390-5419<br/>BRAM INIT"]
+  F1 --> T["CRC + START<br/>+ DESYNC"]
+  F0 -.-> R["resources.md<br/>LUT/FF/DSP/IO/MMCM"]
+  F1 -.-> B["bram-tables.md<br/>35 logical memories"]
+```
+
+## Bit addressing used by the tools [fact, prjxray convention]
+
+A tile owns `frames` consecutive FARs from `baseaddr` and `words` 32-bit words from `offset` inside each frame
+(`tilegrid.json`). A segbits bit `FF_BB` is frame `baseaddr+FF`, word `offset + BB//32`, bit `BB%32` (LSB = bit 0).
+`xc7_db.py tilebits TILE` lists a tile's set bits in this notation; `config TYPE...` prints the matching non-routing
+features; `bramcfg` and `sites` summarize them (see [resources.md](resources.md)).
+
+## Limits
+
+- Routing (PIPs) is not decoded into a netlist. The design is described at the level of placed resources, configured
+  features and BRAM contents only.
+- The package (cpg236/csg324/ftg256/fgg484) is not in the bitstream; IOB tile positions are the same for every
+  XC7A50T package, but the package pin (and so the J2002 pin) behind each used IOB is unknown.
