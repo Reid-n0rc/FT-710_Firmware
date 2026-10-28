@@ -68,8 +68,26 @@ region code as well. Expect it to take several minutes, because the service comm
 **[estimate]**. A progress line shows how far it is, the time left and any bytes that didn't answer.
 
 It only reads, but it **has not been run on a radio yet**. Check the result: bytes 0x010F..0x0110 of `eeprom.bin` should equal the
-region code from `JP0710;`, and `eeprom_missing.txt` lists any addresses that didn't answer (bytes equal to `;` in the request may
-confuse the radio's receiver **[guess]**).
+region code from `JP0710;`, and `eeprom_missing.txt` lists any addresses that didn't answer.
+
+### 2.4 Is the backup really read-only?
+
+Yes, as far as the firmware shows. Three things make sure of it:
+
+- **The script can only send reads.** Every byte goes through one function, `send()`, which accepts only `ID;`, `VE0;`..`VE3;`,
+  `JP0710;`, `E8;` and correctly formed `SPR` reads, and stops the program on anything else.
+- **The firmware only reads for those frames** **[fact, MAIN V01-12]**:
+  - `JP0710;` (7 characters) takes the read branch; a region write needs the 15-character set form (`cat_dispatch_ext`).
+  - `E8;` copies the memory image into the CAT reply buffer (RAM 0x1C8E..0x463F) and nothing else (`cat_ext_E8` 0xFFFA53A4).
+  - `SPR` calls `cat_SP_eeprom_byte` in read mode; EEPROM is written only when the third letter is exactly `W`
+    (`cat_ext_SP` 0xFFFA36F2). The receiver takes `SPR` frames by fixed length, so a data byte equal to `;` cannot cut a frame
+    short (`cat_rx_byte_hook` 0xFFFB1DAD).
+- **The port is opened with RTS and DTR off.** That matters because the radio can key the transmitter from RTS or DTR of its
+  Standard USB port (menus RPTT SELECT and PC KEYING), so a backup run on the wrong port could otherwise transmit.
+
+To check it on your own radio, run the backup twice, with the radio left alone in between. The two `e8_plain.bin` files, and the two
+`eeprom.bin` files if you used `--eeprom`, should be identical. That includes the EEPROM save counter (bytes 0x0005..0x0008), which
+goes up on every save **[fact]** ([eeprom.md](code/main/eeprom.md)).
 
 ## 3. Every undocumented command: risk and path back
 

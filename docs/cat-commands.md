@@ -215,6 +215,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 - **Checksum.** The binary forms call `cat_checksum_ok(text, len-2)`: the 8-bit additive sum of every frame byte before the sum byte (from the `S` of `SP` on, without the sum byte and the `;`) must equal the sum byte **[fact]** (0xFFFA3867, 0xFFFA38C4, 0xFFFA39BB, 0xFFFA510A; `decomp/main/fffa20af_fffa7928.c`).
 - **No checksum bug.** An earlier reading (T09) that the length is loaded from RAM address `len-2` came from a decoder defect: the RX SLEIGH module showed `MOVU.W R2,R2` (bytes `5F 22`) as `MOVU.W [R2],R2`. T10e found it and T17 fixed the decoder and re-exported `decomp/main`. **`SPR`, `SPW`, `SPN`, `SPM` and `SPA` are usable in V01-12, high risk** (they read or write EEPROM and calibration/service data; never send one without the owner's approval). See [cat.md](code/main/cat.md#extended-and-service-commands-summary).
 - **ASCII forms.** `SPS`, `SPD` and `SPIR` have no checksum **[fact]**.
+- **Framing.** The receiver (`cat_rx_byte_hook` 0xFFFB1DAD) gives binary frames a fixed length once it has seen `SPR`, `SPW` or `SPN`, so a `;` byte inside them does not end the frame. Other frames end at `;`, or are dropped after an inter-byte timeout of 10, 100, 1000 or 3000 timer units chosen by the CAT TIME OUT TIMER menu **[fact]** (milliseconds **[inference]**).
 
 <a id="ext-eo"></a>
 ### EO — encoder offset (in 2211-A, removed in 2306-C; medium)

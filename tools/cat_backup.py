@@ -11,7 +11,9 @@ menu CAT-1 RATE. OUTDIR defaults to backup-<date>. Everything this script sends 
   SPR<aH><aL>\\0<sum>;         -> eeprom.bin, eeprom_missing.txt   only with --eeprom; NOT YET TESTED on a radio
 The E8 image holds the memory channels only (docs/code/main/eeprom.md). The EEPROM dump holds everything, including the
 calibration table (EEPROM 0x000A..0x010E) and the region code (0x010F), which nothing else can back up.
-It never sends a set form.
+It never sends a set form: every frame goes through send(), which refuses anything that is not one of the reads above.
+The port is opened with RTS and DTR off, because the radio can be set to key the transmitter from them (RPTT SELECT,
+PC KEYING).
 See docs/cat-undocumented.md for what to back up, why, and how to restore.
 """
 import datetime
@@ -73,16 +75,42 @@ class Progress:
             print()
 
 
+READS = {b"ID;", b"VE0;", b"VE1;", b"VE2;", b"VE3;", b"JP0710;", b"E8;"}
+
+
+def is_spr_read(frame):
+    """An 8-byte SPR read: 'SPR' aH aL x sum ';' with a correct sum. The firmware writes EEPROM only for 'SPW'."""
+    return (len(frame) == 8 and frame[:3] == b"SPR" and frame[7:] == b";"
+            and sum(frame[:6]) & 0xFF == frame[6])
+
+
+def send(s, frame):
+    """The only way this script writes to the port. Anything but the known read frames stops the program."""
+    if frame not in READS and not is_spr_read(frame):
+        raise SystemExit(f"refusing to send {frame!r}: not a read-only frame")
+    s.write(frame)
+
+
+def open_port(port, baud):
+    import serial
+    s = serial.Serial()
+    s.port, s.baudrate, s.timeout = port, baud, 0.6
+    s.rts = False   # set before open, so the lines are never raised: RTS/DTR can be PTT or CW keying on the radio
+    s.dtr = False
+    s.open()
+    return s
+
+
 def query(s, cmd, n=64, wait=0.4):
     s.reset_input_buffer()
-    s.write(cmd)
+    send(s, cmd)
     time.sleep(wait)
     return s.read(n)
 
 
 def read_e8(s):
     s.reset_input_buffer()
-    s.write(b"E8;")
+    send(s, b"E8;")
     bar = Progress("E8", E8_LEN, " B")
     buf, t = b"", time.time()
     while len(buf) < E8_LEN and time.time() - t < 15:
@@ -113,7 +141,7 @@ def read_eeprom(s):
         r = b""
         for _ in range(2):
             s.reset_input_buffer()
-            s.write(f)
+            send(s, f)
             r = s.read(8)
             if len(r) == 8 and r[:5] == f[:5] and r[7:] == b";" and sum(r[:6]) & 0xFF == r[6]:
                 break
@@ -134,14 +162,12 @@ def main():
     if not args or args[0].startswith("-"):
         print(__doc__)
         return 2
-    import serial
-
     baud = int(args[args.index("--baud") + 1]) if "--baud" in args else 38400
     pos = [a for i, a in enumerate(args) if not a.startswith("-") and (i == 0 or args[i - 1] != "--baud")]
     port = pos[0]
     out = pos[1] if len(pos) > 1 else "backup-" + datetime.datetime.now().strftime("%Y%m%d-%H%M")
     os.makedirs(out, exist_ok=True)
-    s = serial.Serial(port, baud, timeout=0.6)
+    s = open_port(port, baud)
     steps = 3 if "--eeprom" in args else 2
     print(f"[1/{steps}] Identity and region code")
 
