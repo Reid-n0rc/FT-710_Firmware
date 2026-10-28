@@ -114,7 +114,7 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 
 | Script | Purpose |
 |---|---|
-| `ExportDecomp.java` | shared export: decompiled C in 50-function files plus `functions.tsv` (T01/T05) |
+| `ExportDecomp.java` | shared export: decompiled C in 50-function files plus `functions.tsv` (T01/T05) and `quality.tsv` (T21f, see below) |
 | `SetupRX651.java` | pre-script for RX651 raw images: RAM/IO/data-flash blocks, `.data` copy-down (`copy=SRC:END:DST`), fixed and relocatable vectors → functions (T05) |
 | `ApplyNames.java` + `names_main.tsv` | reproducible function names and labels for MAIN (T05) |
 | `CatDispatch.java` | dumps the MAIN CAT mnemonic → switch case → handler table (T05) |
@@ -155,7 +155,18 @@ Python helpers in `tools/` (stdlib only; run with `python3 -I`):
 | `ifdsp_names_java.py` | converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV (T17) |
 | `pages_final_names.py` | switches code pages from proposed (italic) names to the applied Ghidra names (T17) |
 | `index_refresh.py` | refreshes the export-file column of a `decomp/*/INDEX.md` from `functions.tsv` (T17) |
+| `decomp_quality.py` | compares two `quality.tsv` files (fails if any count went up) and renders them into `INDEX.md` (T21f) |
 | `issues_sync.py` | mirrors `docs/tasks/` into GitHub issues (run by the parent agent only) |
+
+**Decompile-quality check (T21f, #97 B11).** `ExportDecomp.java` also writes `decomp/<image>/quality.tsv` (`metric<TAB>value`) from
+the same decompile pass: functions, decompile failures, all warnings and each warning kind (the `WARNING:` comment text with
+addresses and numbers replaced by `#`, e.g. "Unable to track spacebase fully for stack", "Removing unreachable block (#)"),
+`halt_baddata()` calls, functions with `in_*`/`unaff_*`/`extraout_*` variables (a proxy for wrong signatures), undefined non-0xFF
+bytes in initialized executable blocks (total and per block), and Error / "Bad Instruction" bookmarks. `tools/bootstrap.sh verify`
+leaves `quality.tsv` out of the byte diff and runs `tools/decomp_quality.py compare <committed> <new>` per image instead: every
+count except `functions` must not go up (lower is better; improvements are printed). When a change makes a count worse on purpose
+(for example more functions found, so more warnings), commit the new `quality.tsv` with the export and refresh the table in
+`INDEX.md` with `tools/decomp_quality.py index`.
 
 `tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
 
