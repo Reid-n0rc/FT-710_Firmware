@@ -136,6 +136,14 @@ registers: p56–57, p74).
 - Clock: X1002 **35.7142 MHz VCTCXO** (DSA211SDN) → Q1011/Q1010 oscillator/buffer → **250 MHz** sampling clock into the module.
   The FPGA runs at 125 MHz (p6, p46). **[fact]** Whether the ADC then samples at 250 MSPS or at 125 MSPS ("Divide 250MHz by 2")
   is open ([code/system.md O7](code/system.md#8-contradictions-and-open-questions), T19h).
+- **RX front end: direct sampling, no mixer or LO** (block diagram p6) **[fact]**. On the MAIN unit: J3001 RX → D3001 protection →
+  RL3001 ATT 6 dB → RL3002 ATT 12 dB → RL3003 IPO → D3031/32 THRU or HPF 1.7 MHz → D3003–15 band-pass switch (LPF 0.03–1.7 MHz, BPFs
+  1.7–48 MHz, 48–75 MHz; 15 ranges 0.3–1.7 … 56–75 MHz) → Q3020 RF amp (48–75 MHz path) → LPF → D3036/37 TRX switch → Q3025 RFAMP1 →
+  RL3004 AMP2 select (Q3027 RFAMP2) → Q3028 MMG3H21N RFAMP → LPF → T3006 balun → J3003 `RX-IN 0.03-75MHz` to the ADC. A separate
+  `SCOPE-IN 0.03-75MHz` (T3004) taps the same point, and `DITHER` from the module (T3005) goes through an HPF into it. The switches are
+  driven by Q3022 BU2152FS (serial-to-parallel: BPFDT, RFDT, ATTDT). The FPGA tunes digitally: MAIN writes the dial frequency in Hz into
+  the RX NCO registers 0x18/0x19 ([code/main/sdr-link.md](code/main/sdr-link.md)) **[fact]**. A 0.03–75 MHz input needs more than
+  150 MSPS for first-Nyquist sampling, which favours 250 MSPS over 125 MSPS for O7 **[inference]**.
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),

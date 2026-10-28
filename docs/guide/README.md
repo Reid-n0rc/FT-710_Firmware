@@ -182,11 +182,17 @@ FPGA data also travels over an SPI link. Chapter 4 tells that story; this chapte
 
 Follow a signal from the antenna to your ears:
 
-1. **RF front end.** The signal passes the band-pass filters and the preamp or attenuator. MAIN picks the filter and switches the preamp
-   and attenuator through a chain of serial shift registers.
+1. **RF front end.** The signal passes a protection diode, the 6 dB and 12 dB attenuators, the IPO switch, a 1.7 MHz high-pass
+   option, one of 15 band-pass filters (0.3–1.7 MHz up to 56–75 MHz), and up to three RF amplifiers, then a final low-pass filter and a
+   balun transformer. MAIN picks the filter and switches the preamps and attenuators through a chain of serial shift registers.
+   **There is no mixer and no local oscillator anywhere in this chain.** The block diagram labels the line into the SDR module
+   "RX-IN 0.03–75MHz": the whole band, from 30 kHz to 75 MHz, goes straight to the ADC. This is a **direct-sampling** receiver. A
+   separate "DITHER" line from the SDR module is high-pass filtered and added to the ADC input. Dither is a small noise signal outside
+   the wanted band that makes a direct-sampling ADC's errors behave like noise rather than spurs *(inference for its purpose)*.
 2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds the 250 MHz
    sampling clock, and the FPGA runs at half that, 125 MHz. Whether the ADC takes a sample on every tick of the 250 MHz clock or on
-   every second one is not known yet: the ADC's part number is not in the service manual.
+   every second one is not known yet: the ADC's part number is not in the service manual. A full 0–75 MHz input fits below half of 250 MHz (125 MHz)
+   but not below half of 125 MHz (62.5 MHz), so the 0.03–75 MHz label favours 250 MSPS *(inference)*.
 3. **FPGA "tuner".** The FPGA multiplies the samples with a digital oscillator ([NCO](#glossary)) set to your frequency. That moves the
    wanted signal down to near zero, where a bank of filters cuts out a narrow slice and drops the sample rate. This is the classic
    digital down-converter ([DDC](#glossary)). The blocks inside the FPGA are recognised from its lookup tables and multiplier use *(inference)*.
