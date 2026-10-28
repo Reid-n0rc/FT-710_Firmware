@@ -19,36 +19,36 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `m33/quality.tsv` and `hi
 
 | Metric | M33 | HiFi4 |
 |---|---:|---:|
-| Functions exported (non-thunk) | 426 | 1,148 |
-| Decompile failures | 0 | 1 |
-| Decompiler warnings (all kinds) | 181 | 2,038 |
-| Functions with a warning | 93 | 861 |
+| Functions exported (non-thunk) | 426 | 1,081 |
+| Decompile failures | 0 | 0 |
+| Decompiler warnings (all kinds) | 181 | 258 |
+| Functions with a warning | 93 | 99 |
 | "Unable to track spacebase" | 0 | 0 |
-| "Removing unreachable block" | 37 | 47 |
-| `halt_baddata()` calls | 1 | 1,054 |
-| Functions with `halt_baddata()` | 1 | 819 |
-| Functions with `in_*` variables | 13 | 246 |
-| Functions with `unaff_*` variables | 3 | 177 |
-| Functions with `extraout_*` variables | 16 | 22 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 25 | 317 |
-| Undefined non-0xFF bytes in executable blocks | 5,162 | 186,167 |
-| … in block `dsp_itcm` | 0 | 1,194 |
+| "Removing unreachable block" | 37 | 187 |
+| `halt_baddata()` calls | 1 | 1 |
+| Functions with `halt_baddata()` | 1 | 1 |
+| Functions with `in_*` variables | 13 | 161 |
+| Functions with `unaff_*` variables | 3 | 14 |
+| Functions with `extraout_*` variables | 16 | 10 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 25 | 171 |
+| Undefined non-0xFF bytes in executable blocks | 5,162 | 29,161 |
+| … in block `dsp_itcm` | 0 | 976 |
 | … in block `flexspi_xip` | 4,211 | 0 |
-| … in block `sram_dsp_text` | 0 | 184,973 |
+| … in block `sram_dsp_text` | 0 | 28,185 |
 | … in block `sram_text_rodata` | 951 | 0 |
-| Error bookmarks | 1 | 1,098 |
-| "Bad Instruction" bookmarks | 1 | 1,098 |
-| warning: Bad instruction - Truncating control flow here | 1 | 1,053 |
-| warning: Control flow encountered bad instruction data | 1 | 819 |
-| warning: Could not recover jumptable at #. Too many branches | 28 | 2 |
-| warning: Do nothing block with infinite loop | 85 | 9 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 1 | 32 |
-| warning: Instruction at (#) overlaps instruction at (#) | 0 | 42 |
-| warning: Removing unreachable block (#) | 37 | 47 |
-| warning: Restarted to delay deadcode elimination for space: register | 0 | 9 |
-| warning: Subroutine does not return | 0 | 19 |
-| warning: This function may have set the stack pointer | 0 | 4 |
-| warning: Treating indirect jump as call | 28 | 2 |
+| Error bookmarks | 1 | 1 |
+| "Bad Instruction" bookmarks | 1 | 1 |
+| warning: Bad instruction - Truncating control flow here | 1 | 1 |
+| warning: Control flow encountered bad instruction data | 1 | 1 |
+| warning: Could not recover jumptable at #. Too many branches | 28 | 4 |
+| warning: Do nothing block with infinite loop | 85 | 20 |
+| warning: Does not return | 0 | 3 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 1 | 26 |
+| warning: Possible PIC construction at #: Changing call to branch | 0 | 4 |
+| warning: Removing unreachable block (#) | 37 | 187 |
+| warning: This function may have set the stack pointer | 0 | 1 |
+| warning: Treating indirect jump as call | 28 | 4 |
+| warning: Type propagation algorithm not settling | 0 | 7 |
 <!-- quality:end -->
 
 ## How to regenerate

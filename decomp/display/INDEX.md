@@ -51,20 +51,20 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | DISPLAY |
 |---|---:|
-| Functions exported (non-thunk) | 2,087 |
+| Functions exported (non-thunk) | 2,210 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 347 |
-| Functions with a warning | 89 |
+| Decompiler warnings (all kinds) | 393 |
+| Functions with a warning | 96 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 224 |
+| "Removing unreachable block" | 267 |
 | `halt_baddata()` calls | 4 |
 | Functions with `halt_baddata()` | 4 |
-| Functions with `in_*` variables | 52 |
-| Functions with `unaff_*` variables | 60 |
-| Functions with `extraout_*` variables | 79 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 170 |
-| Undefined non-0xFF bytes in executable blocks | 4,258 |
-| … in block `.text` | 4,258 |
+| Functions with `in_*` variables | 61 |
+| Functions with `unaff_*` variables | 63 |
+| Functions with `extraout_*` variables | 80 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 182 |
+| Undefined non-0xFF bytes in executable blocks | 242 |
+| … in block `.text` | 242 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Bad instruction - Truncating control flow here | 4 |
@@ -72,8 +72,8 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | warning: Could not find normalized switch variable to match jumptable | 10 |
 | warning: Could not recover jumptable at #. Too many branches | 17 |
 | warning: Do nothing block with infinite loop | 6 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 10 |
-| warning: Removing unreachable block (#) | 224 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 13 |
+| warning: Removing unreachable block (#) | 267 |
 | warning: This code block may not be properly labeled as switch case | 50 |
 | warning: Treating indirect jump as call | 17 |
 | warning: Type propagation algorithm not settling | 5 |
@@ -85,13 +85,13 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 ### Startup / runtime
 | Address | Name | Notes | File |
 |---|---|---|---|
-| 0x2010002C | `Reset_Handler` | Vector 0. Relocates the image to 0x20100000 if it runs elsewhere **[fact]** | 18400000_20101ba4.c |
-| 0x20100080 | `reset_in_ram` | SPIBSC0 init, bank select, copies the rest of the image **[fact]** | 18400000_20101ba4.c |
-| 0x20100ABC | `boot_select_bank` | Flags at 0x183E0000/0x183F0000 → calls 0x18400000 or 0x18A00000. Uses SPIBSC1 reg 0x3FEFB018 as a "stage ran" marker **[fact]** | 18400000_20101ba4.c |
-| 0x20100828 | `spibsc0_init` | SPI flash controller setup | 18400000_20101ba4.c |
-| 0x20100BC8 / 0x20100BFC / 0x20100C60 | `__scatterload` / `__decompress` / `__scatterload_zeroinit` | armcc runtime **[fact]** | 18400000_20101ba4.c |
-| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20116ec8_20118598.c |
-| 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20101ba4.c |
+| 0x2010002C | `Reset_Handler` | Vector 0. Relocates the image to 0x20100000 if it runs elsewhere **[fact]** | 18400000_20100f64.c |
+| 0x20100080 | `reset_in_ram` | SPIBSC0 init, bank select, copies the rest of the image **[fact]** | 18400000_20100f64.c |
+| 0x20100ABC | `boot_select_bank` | Flags at 0x183E0000/0x183F0000 → calls 0x18400000 or 0x18A00000. Uses SPIBSC1 reg 0x3FEFB018 as a "stage ran" marker **[fact]** | 18400000_20100f64.c |
+| 0x20100828 | `spibsc0_init` | SPI flash controller setup | 18400000_20100f64.c |
+| 0x20100BC8 / 0x20100BFC / 0x20100C60 | `__scatterload` / `__decompress` / `__scatterload_zeroinit` | armcc runtime **[fact]** | 18400000_20100f64.c |
+| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20116368_20117728.c |
+| 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20100f64.c |
 
 ### RTOS (NORTi µITRON 4.0 kernel from MiSPO; string `NORTi(c)MiSPO` at 0x20156290 **[fact]**)
 | Address | Name | Notes |

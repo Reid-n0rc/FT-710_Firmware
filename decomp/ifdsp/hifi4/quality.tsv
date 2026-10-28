@@ -1,29 +1,29 @@
 metric	value
-functions	1148
-decompile_failures	1
-warnings	2038
-functions_with_warnings	861
+functions	1081
+decompile_failures	0
+warnings	258
+functions_with_warnings	99
 spacebase_warnings	0
-unreachable_block_warnings	47
-halt_baddata	1054
-functions_with_halt_baddata	819
-functions_with_in_vars	246
-functions_with_unaff_vars	177
-functions_with_extraout_vars	22
-functions_with_in_unaff_extraout	317
-undefined_nonff_bytes	186167
-undefined_nonff_bytes:sram_dsp_text	184973
-undefined_nonff_bytes:dsp_itcm	1194
-bookmarks_error	1098
-bookmarks_bad_instruction	1098
-warning:Bad instruction - Truncating control flow here	1053
-warning:Control flow encountered bad instruction data	819
-warning:Could not recover jumptable at #. Too many branches	2
-warning:Do nothing block with infinite loop	9
-warning:Globals starting with '_' overlap smaller symbols at the same address	32
-warning:Instruction at (#) overlaps instruction at (#)	42
-warning:Removing unreachable block (#)	47
-warning:Restarted to delay deadcode elimination for space: register	9
-warning:Subroutine does not return	19
-warning:This function may have set the stack pointer	4
-warning:Treating indirect jump as call	2
+unreachable_block_warnings	187
+halt_baddata	1
+functions_with_halt_baddata	1
+functions_with_in_vars	161
+functions_with_unaff_vars	14
+functions_with_extraout_vars	10
+functions_with_in_unaff_extraout	171
+undefined_nonff_bytes	29161
+undefined_nonff_bytes:sram_dsp_text	28185
+undefined_nonff_bytes:dsp_itcm	976
+bookmarks_error	1
+bookmarks_bad_instruction	1
+warning:Bad instruction - Truncating control flow here	1
+warning:Control flow encountered bad instruction data	1
+warning:Could not recover jumptable at #. Too many branches	4
+warning:Do nothing block with infinite loop	20
+warning:Does not return	3
+warning:Globals starting with '_' overlap smaller symbols at the same address	26
+warning:Possible PIC construction at #: Changing call to branch	4
+warning:Removing unreachable block (#)	187
+warning:This function may have set the stack pointer	1
+warning:Treating indirect jump as call	4
+warning:Type propagation algorithm not settling	7
