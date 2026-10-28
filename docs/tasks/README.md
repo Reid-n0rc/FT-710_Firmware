@@ -71,7 +71,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | in progress |
 | T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | in progress |
 | T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | in progress |
-| T22c | [HiFi4: rizin base-ISA check, REA decompile with the new language](T22-rea-verification.md) | T21a, T22f | in progress |
+| T22c | [HiFi4: rizin base-ISA check, REA decompile with the new language](T22-rea-verification.md) | T21a, T22f | done |
 | T22d | [All images: classify the undefined bytes left](T22-rea-verification.md) | T21 | in progress |
 | T22e | [All images: before/after behaviour diff](T22-rea-verification.md) | T21g | todo |
 | T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | in progress |
