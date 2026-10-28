@@ -275,11 +275,37 @@ def dsp_params(c):
             "MASK": p.get("MASK", 0), "PATTERN": p.get("PATTERN", 0)}
 
 
+def const_bus(c, base, width):
+    """Integer value of a bus whose pins are all tied to constants, else None."""
+    v = 0
+    for i in range(width):
+        n = c["pins"].get("%s%d" % (base, i), ["1'b0"])[0]
+        if not n.startswith("1'b"):
+            return None
+        v |= int(n[-1]) << i
+    return v
+
+
+def dsp_modes(c):
+    """Static OPMODE/ALUMODE/INMODE (None = driven by logic) and a constant A or B operand."""
+    return {"OPMODE": const_bus(c, "OPMODE", 7), "ALUMODE": const_bus(c, "ALUMODE", 4),
+            "INMODE": const_bus(c, "INMODE", 5), "CARRYINSEL": const_bus(c, "CARRYINSEL", 3),
+            "A": const_bus(c, "A", 30), "B": const_bus(c, "B", 18)}
+
+
 def dsp_chains(g):
     dsps = [c for c in g.cells.values() if c["type"] == "DSP48E1"]
     nxt, prv = {}, {}
     for c in dsps:
+        p = dsp_params(c)
+        op = const_bus(c, "OPMODE", 7)
+        zsel = None if op is None else (op >> 4) & 7
+        used = {"A": p["A_INPUT"] == "CASCADE", "B": p["B_INPUT"] == "CASCADE",
+                # cascade wires are always physically joined; P is used when OPMODE Z selects PCIN
+                "P": zsel in (1, 5) or op is None}
         for pin, kind in (("PCIN0", "P"), ("ACIN0", "A"), ("BCIN0", "B")):
+            if not used[kind]:
+                continue
             n = c["pins"].get(pin, [None])[0]
             d = g.driver(n) if n else None
             if d and g.ctype(d[0]) == "DSP48E1":
@@ -308,7 +334,16 @@ def cmd_dsp(g):
     print("== DSP48E1 register configurations")
     for k, v in cfg.most_common():
         print("%3d  %s" % (v, " ".join("%s=%s" % kv for kv in k)))
-    print("== cascade chains (P = PCOUT->PCIN, A/B = ACOUT/BCOUT)")
+    print("== static modes (OPMODE as ZYX octal digits; None = from logic)")
+    mc = collections.Counter()
+    for c in dsps:
+        m = dsp_modes(c)
+        mc[("OPMODE=%s" % (None if m["OPMODE"] is None else "%03o" % m["OPMODE"]),
+            "ALUMODE=%s" % m["ALUMODE"], "INMODE=%s" % (None if m["INMODE"] is None else format(m["INMODE"], "05b")),
+            "constA" if m["A"] is not None else "", "constB" if m["B"] is not None else "")] += 1
+    for k, v in mc.most_common():
+        print("%3d  %s" % (v, " ".join(x for x in k if x)))
+    print("== cascade chains (P = PCOUT->PCIN when OPMODE Z = PCIN, A/B = ACOUT/BCOUT when *_INPUT = CASCADE)")
     for ch, kinds in sorted(dsp_chains(g), key=lambda x: -len(x[0])):
         head = g.cells[ch[0]]
         clk = clock_name(g, ch[0])
