@@ -12,6 +12,11 @@
  "T10": 11,
  "T11": 12,
  "T12": 13,
+ "T12a": 16,
+ "T12b": 17,
+ "T12c": 18,
+ "T12d": 19,
+ "T12e": 20,
  "T13": 14,
  "T14": 15,
  "_status": {
@@ -27,6 +32,11 @@
   "T10": "todo",
   "T11": "in-progress",
   "T12": "in-progress",
+  "T12a": "done",
+  "T12b": "todo",
+  "T12c": "todo",
+  "T12d": "todo",
+  "T12e": "todo",
   "T13": "in-progress",
   "T14": "todo"
  }
