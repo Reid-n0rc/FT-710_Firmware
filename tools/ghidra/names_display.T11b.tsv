@@ -1,0 +1,119 @@
+# FT-710 DISPLAY: names proposed by T11b (MAIN link over SCIF5). Same format as names_display.tsv (address, name, comment).
+# Lines marked "rename" replace an existing T06/T11a name. Entries 0x201600A8, 0x201632D8, 0x20162F10, 0x2011488x/0x201148Ax,
+# 0x20116390, 0x20160278, 0x2010EDE8, 0x2010EEB4 need entries_display.T11b.tsv first. Details: docs/code/display/mainlink.md.
+# --- link API (C, 0x20114xxx-0x20116xxx)
+20116560	mainlink_inject_rx	rename (was mainlink_send_cmd): builds a frame from the 0x2B-entry table length and posts it to the RX dispatcher mailbox, i.e. replays a frame locally; it does not transmit
+20134fdc	debug_replay_send_cmd	rename (was debug_recv_cmd_log): replays I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT into the GUI frame snapshot (task test_disp)
+201150f8	mainlink_submit	adds checksum; F0/F1 go out at once; other frames go out if no ACK is pending, else are parked in per-type slots 0x2045F240..4B
+20115be0	mainlink_tx_raw	frame = 0xAA tag, length, payload, sum8; posts to the TX task (used for resends)
+20115c74	mainlink_tx_e1_raw	resend of the last E1 (encoder) frame kept at 0x20450068
+20115780	mainlink_send_enc	E1 encoder frame: sent now, or merged into a 7x10 per-encoder queue (0x2045F0C5) while an ACK is pending
+2011593c	minmax4	min or max of 4 bytes
+2011598c	renc_ad5_changed	ADC encoder 5: 4-sample history 0x20450040, reports a change > 2
+20115a48	renc_ad4_changed	ADC encoder 4: 4-sample history 0x20450048, reports a change > 2
+20115b04	mainlink_renc_event	encoder event from the renc tasks -> E4 (leave screen saver) and/or E1
+20115cfc	mainlink_flush_parked	after an ACK: sends the next parked frame (E3,E4,E5,F1,E0 ring,E2,E6,E7,E8,C3,C4,C5 order)
+20115f5c	mainlink_flush_enc	after an ACK: sends the oldest queued encoder event
+2011606c	mainlink_on_ack	0x06 from MAIN: stop timeout, clear wait flag, flush parked frames
+201160b4	mainlink_on_nak	0x15 from MAIN: resend at once (max 3), then give up
+20116140	mainlink_tx_reset	drops the pending/parked state and the encoder queue (0x7F maintenance key, retry task)
+201162a4	mainlink_send_hello	F0 frame: version 01-08, date 2023-06-29, power-up key code
+20116334	mainlink_send_f1	F1 frame with one sub-command byte; no caller in V01-08
+20116368	mainlink_stat_rx_resync	RX task resync counter (obj+0x38)
+2011637c	mainlink_stat_nak_sent	RX task NAK counter (obj+0x48)
+20116518	mainlink_rx_ctrl	set_flg 0x4000/0x8000 on the RX task flag (resets the parser); arg 0 also re-binds the SCIF5 ISR to it (used by the update code)
+201165f4	mainlink_hello_poweron	sends F0 every 5 ms (max 30) with the power-up key code until MAIN ACKs
+2011668c	mainlink_hello_key6	same as mainlink_hello_poweron with key code 6
+20116660	mainlink_clear_status	clears the 0x60 snapshot and the 0x24 settings copy
+20115000	mainlink_get_last_frame	copy of the newest MAIN frame (0x2045F8C0, 0x240 B)
+2011500c	mainlink_get_frame60	copy of the newest 0x60 frame (0x2045FB00)
+2011506c	mainlink_last_frame_differs
+2011508c	mainlink_set_last_frame	writes the 0x2045F8C0 snapshot (debug replay, GUI)
+20115018	mainlink_got_frame60	flag 0x20450026
+20115024	mainlink_get_settings24	copies the 0x24 frame tail (0x2045006D) and returns flag 0x20450024
+20115060	mainlink_got_esc	flag 0x2045005C, set by a 0x1B frame
+201150e0	mainlink_set_wait_cmd	cmd byte of the frame waiting for ACK (0x2045002D)
+201150ec	mainlink_get_wait_cmd
+20116390	mainlink_ack_timeout_cyc	cyclic handler: set_flg(0x2045004C, 1) wakes the retry task
+20114df4	mainlink_fail_reset	3 unanswered tries: pulses RX_RESET / the RX boot pins, then wdt_system_reset
+20100268	wdt_system_reset	WTCSR/WTCNT/WRCSR 0xFCFE0000 sequence: watchdog reset of the DISPLAY CPU
+201309c0	gui_link_error_popup	draws the link error box with the unanswered command as hex
+20130c40	mainlink_set_power_cmd	0x20800492 = 0x7F sub-command (0x10 / 0x11 end the GUI loop)
+20111480	mainlink_trace	ring log (2048 x 256 B at *0x208001D8) of every frame sent and received, with timestamp
+20111410	mainlink_trace_toggle	USB-keyboard key: trace on/off, buffer = frame-buffer layer 4
+20111468	mainlink_trace_pause
+2011158c	mainlink_trace_dump	writes the ring to I:\debug_1.log
+2010ede8	mainlink_rx_block_write	'E' (0x45): MAIN writes into the 32000-byte block 0x208116A6, reply C5
+2010eeb4	mainlink_rx_block_read	'D' (0x44): MAIN reads from the block 0x208116A6, reply C4 (up to 0xFE data bytes)
+# --- frame senders (DISPLAY -> MAIN)
+20113294	mainlink_send_key	E0 key event from the key task (or E4/E5 to leave a MAIN-driven screen)
+20120e9c	mainlink_send_touch_key	E0 touch soft-key press/release (code 0x1016 = special)
+20121858	mainlink_send_e0	E0 with a given flag byte and 16-bit code
+20121d00	mainlink_send_sd_state	E2 SD card present, on change
+20121d90	mainlink_send_rtc	E3 RTC date/time, every 10th GUI pass when the minute changed
+20121830	mainlink_send_e6
+# --- C++ link objects (SCIF5 object 0x2045FD40, vtbl 0x20427FD0)
+20158c10	mainlink_obj_ctor	builds RX (+0x18), dispatcher (+0x58) and TX (+0x8218) sub-objects
+20158b10	mainlink_obj_run	task "uart" pri 7: binds SCIF5, starts the 3 sub-tasks, opens 345600 baud 8N2
+201587ac	mainlink_tx_ctor	vtbl 0x20427FAC
+2015863c	mainlink_tx_init	32 x 0x408 B buffer pool + mailbox
+20158630	mainlink_tx_alloc	gets a free 0x408-byte buffer
+20158744	mainlink_tx_post	waits for the 3 ms pacing counter, posts to the TX mailbox, re-arms cmd_interval
+201586ac	task_mainlink_tx	task "uart" pri 4: mailbox -> scif_write(buf+8, len), then mainlink_trace
+2015869c	mainlink_tx_clear_stats
+2015efe4	mainlink_rx_ctor	vtbl 0x20427FF8
+2015eb74	mainlink_rx_bind	(uart, tx, dispatcher)
+2015eb80	mainlink_rx_clear_stats
+2015ec40	task_mainlink_rx	task "uart" pri 3: reads SCIF5, re-assembles frames, NAK after 3 empty reads
+2015eb90	mainlink_rx_parse	first byte: 06/15/1B single byte; else table lookup 0x20450074
+2015eec8	mainlink_rx_frame	waits for len+2 bytes, validates, ACKs, delivers
+2015e6f4	mainlink_rx_validate	per-command range checks; 0x7F with the 8-byte key enters maintenance mode
+2015e354	mainlink_status_valid	range checks of the 0x97-byte radio status block
+2015e16c	mainlink_valid_7f	byte & 0x7F <= 12 or == 0x7F
+2015eb3c	mainlink_valid_code	small code-set check used by mainlink_status_valid
+2015e9b8	mainlink_rx_deliver	trace, 'D'/'E' block handlers, else post to the dispatcher
+2015ee40	mainlink_send_ack	1-byte 0x06 frame
+2015ee84	mainlink_send_nak	1-byte 0x15 frame
+20160288	mainlink_disp_ctor	vtbl 0x20428030
+20160048	mainlink_disp_init	32 x 0x408 B pool + mailbox
+2016003c	mainlink_disp_alloc
+20160278	mainlink_disp_post
+201600a8	task_mainlink_dispatch	task "uart" pri 4: ACK/NAK -> TX state; copies frames into the GUI snapshots 0x2045F260/0x2045F8C0
+# --- second link object on SCIF4 (never started in V01-08)
+20114f4c	uart4_link_init	creates the SCIF4 object 0x2045D4E0 and task "uart4"; no caller
+20158e8c	uart4_obj_ctor	vtbl 0x20427FE4
+20158c44	uart4_obj_run	38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32
+20158a00	uart4_tx_init
+201589f4	uart4_tx_alloc
+20158adc	uart4_tx_post
+20158a70	task_uart4_tx
+20158930	task_uart4_rx	passes raw bytes to FUN_20131154
+2015fff0	task_uart4_dispatch	only counts
+20114e88	uart4_send	used by task_keycode, FUN_20130c90, FUN_20131638
+20114edc	uart4_wait_ready	waits for 0x2045001C; no caller
+# --- SCIF driver (UART object vtbl 0x2042803C, objects 0x208DA1E0 / 0x208DAA30 / 0x208DB280)
+201630cc	scif_open	(baud, bits, parity, stop): SCSMR, SCBRR (0x16 + SEMR 0x81 for 345600), FIFO reset
+20163098	scif_start	scif_open + enable RXI/TXI in the GIC
+20163014	scif_irq_off
+20163038	scif_read	non-blocking read from the 1 KB RX ring
+20163218	scif_read_timeout	retries every 1 ms up to n times
+201632d8	scif_write	copy into the 1 KB TX ring, enable TIE
+20163280	scif_flush
+20163654	scif_has_flag	RX event flag bound?
+20162dd8	scif_rxi_isr	1 byte -> RX ring, set_flg(obj+0x818, 1)
+20162f10	scif_txi_isr	TX ring -> SCFTDR
+20114884	scif3_rxi_isr
+2011488c	scif3_txi_isr
+20114894	scif4_rxi_isr
+2011489c	scif4_txi_isr
+201148a4	scif5_rxi_isr
+201148ac	scif5_txi_isr
+# --- GUI side of the link
+20130188	gui_main_loop	gui_start's loop: power-up handshake, then every 33 ms gui_apply_frame + the E2/E3 senders; 0x7F power commands
+2012ebb8	gui_apply_frame	compares the newest MAIN frame with the shown one (0x208F0B2A) and redraws by command
+20125f6c	gui_lcd_test_pattern	0x64 frame: full-screen colours / bars
+2012e8f4	gui_rtc_set	0x65 frame: BCD date/time from MAIN, clamped
+20121c3c	gui_screensaver_step	0x7B mode: moves a bitmap every 180 passes
+20134e70	debug_cmd_line_read	parses "NNN:hh hh ...:DDDD" lines
+201351b8	debug_cmd_line_write	writes one such line
+201352e8	debug_log_recv_cmd	appends a frame to RECV_CMD.TXT; no caller in V01-08
