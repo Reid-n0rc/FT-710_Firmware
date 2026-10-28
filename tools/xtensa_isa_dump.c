@@ -184,12 +184,15 @@ int main(void) {
     xtensa_operand_internal *o = &I->operands[i];
     int width = -1, v;
     /* field width: from any slot that has the field */
+    /* field width: the widest over all slots that have the field; tables cover at least 0..31 so that
+       implicit (constant) fields such as ar4 can be decoded too */
     if (o->field_id >= 0)
-      for (s = 0; s < I->num_slots && width < 0; s++)
+      for (s = 0; s < I->num_slots; s++)
         if (I->slots[s].get_field_fns[o->field_id]) {
-          int bits[32];
-          width = probe_field(I->slots[s].get_field_fns[o->field_id], bits);
-          if (width < 0) width = 0;
+          int bits[32], w2;
+          w2 = probe_field(I->slots[s].get_field_fns[o->field_id], bits);
+          if (w2 < 0) w2 = 0;
+          if (w2 > width) width = w2;
         }
     printf("%s\n{\"name\":", i ? "," : ""); jstr(o->name);
     printf(",\"field\":%d,\"regfile\":%d,\"num_regs\":%d,\"flags\":%u,\"width\":%d",
@@ -198,7 +201,7 @@ int main(void) {
     if (!o->decode) printf("null");
     else if (width >= 0 && width <= 20) {
       printf("[");
-      for (v = 0; v < (1 << width); v++) {
+      for (v = 0; v < (1 << (width < 5 ? 5 : width)); v++) {
         uint32 x = (uint32)v;
         int err = o->decode(&x);
         if (err) printf("%snull", v ? "," : "");
