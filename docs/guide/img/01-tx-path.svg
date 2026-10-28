@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="510" viewBox="0 0 960 510" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Transmit signal path of the FT-710</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .main { fill: #DBEAFE; stroke: #2563EB; stroke-width: 2; }
+    .dsp { fill: #F3E8FF; stroke: #9333EA; stroke-width: 2; }
+    .sdr { fill: #FFEDD5; stroke: #EA580C; stroke-width: 2; }
+    .sig { stroke: #1F2937; stroke-width: 3; fill: none; marker-end: url(#ah); }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1F2937"/></marker>
+  </defs>
+  <rect width="960" height="510" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Transmit: from the microphone to the antenna</text>
+
+  <!-- mic icon -->
+  <g stroke="#1F2937" stroke-width="3">
+    <rect x="38" y="70" width="24" height="44" rx="12" fill="#F3F4F6"/>
+    <path d="M30 100 Q30 128 50 128 Q70 128 70 100" fill="none"/>
+    <line x1="50" y1="128" x2="50" y2="146"/>
+    <line x1="36" y1="146" x2="64" y2="146"/>
+  </g>
+  <text x="50" y="172" text-anchor="middle">MIC or</text>
+  <text x="50" y="190" text-anchor="middle">DATA in</text>
+  <path d="M74 112 H106" class="sig"/>
+
+  <rect x="110" y="70" width="180" height="84" rx="8" class="grey"/>
+  <text x="200" y="94" text-anchor="middle" class="b">1 audio codec</text>
+  <text x="200" y="116" text-anchor="middle">analog voltage</text>
+  <text x="200" y="136" text-anchor="middle">to numbers (ADC)</text>
+  <path d="M290 112 H326" class="sig"/>
+  <text x="308" y="102" text-anchor="middle" class="s">I2S</text>
+
+  <rect x="330" y="70" width="230" height="104" rx="8" class="dsp"/>
+  <text x="445" y="94" text-anchor="middle" class="b">2 HiFi4 DSP</text>
+  <text x="445" y="116" text-anchor="middle">mic EQ, speech processor,</text>
+  <text x="445" y="136" text-anchor="middle">level control (AMC), TX</text>
+  <text x="445" y="156" text-anchor="middle">filter, VOX, CTCSS tone</text>
+  <path d="M560 112 H616" class="sig"/>
+  <text x="588" y="102" text-anchor="middle" class="s">I2S</text>
+
+  <rect x="620" y="70" width="230" height="104" rx="8" class="sdr"/>
+  <text x="735" y="94" text-anchor="middle" class="b">3 FPGA up-converter</text>
+  <text x="735" y="116" text-anchor="middle">digital mixer moves the</text>
+  <text x="735" y="136" text-anchor="middle">audio up to the TX frequency,</text>
+  <text x="735" y="156" text-anchor="middle">sets drive, shapes keying</text>
+  <path d="M735 174 V232" class="sig"/>
+  <text x="745" y="208" class="s">LVDS</text>
+
+  <rect x="620" y="236" width="230" height="84" rx="8" class="grey"/>
+  <text x="735" y="260" text-anchor="middle" class="b">4 DAC (inference)</text>
+  <text x="735" y="282" text-anchor="middle">numbers back to RF,</text>
+  <text x="735" y="302" text-anchor="middle">on the SDR module</text>
+  <path d="M620 278 H564" class="sig"/>
+  <text x="592" y="268" text-anchor="middle" class="s">RF</text>
+
+  <rect x="330" y="236" width="230" height="84" rx="8" class="grey"/>
+  <text x="445" y="260" text-anchor="middle" class="b">5 PA unit</text>
+  <text x="445" y="282" text-anchor="middle">power amplifier,</text>
+  <text x="445" y="302" text-anchor="middle">band relays, sensors</text>
+  <path d="M330 278 H106" class="sig"/>
+
+  <!-- antenna icon -->
+  <g stroke="#1F2937" stroke-width="3" fill="none">
+    <line x1="80" y1="250" x2="80" y2="320"/>
+    <line x1="80" y1="254" x2="58" y2="234"/>
+    <line x1="80" y1="254" x2="102" y2="234"/>
+    <line x1="80" y1="254" x2="80" y2="230"/>
+    <line x1="66" y1="320" x2="94" y2="320"/>
+  </g>
+  <text x="80" y="344" text-anchor="middle">antenna</text>
+  <text x="220" y="268" text-anchor="middle" class="s">RF out</text>
+
+  <!-- MAIN badges -->
+  <circle cx="556" cy="74" r="13" fill="#2563EB"/><text x="556" y="79" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <circle cx="846" cy="74" r="13" fill="#2563EB"/><text x="846" y="79" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <circle cx="556" cy="240" r="13" fill="#2563EB"/><text x="556" y="245" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+
+  <!-- MAIN box -->
+  <rect x="110" y="380" width="740" height="110" rx="8" class="main"/>
+  <text x="480" y="406" text-anchor="middle" class="b">MAIN (RX651) runs the show</text>
+  <text x="480" y="430" text-anchor="middle">sees the PTT (mic key, MOX, CAT TX1;, DATA jack, USB RTS/DTR), checks the band,</text>
+  <text x="480" y="452" text-anchor="middle">re-programs the FPGA and the DSP for TX, then switches the RX/TX lines</text>
+  <text x="480" y="474" text-anchor="middle">and keys the amplifier last. Chapter 3 walks through it step by step.</text>
+
+  <!-- legend -->
+  <circle cx="886" cy="250" r="11" fill="#2563EB"/><text x="886" y="255" text-anchor="middle" style="fill:#FFFFFF;font-weight:bold">M</text>
+  <text x="866" y="284">set by</text>
+  <text x="866" y="302">MAIN</text>
+</svg>
