@@ -1,5 +1,7 @@
 # T20 — Open work, as issues to create
 
+**Created as GitHub issues #57–#101 on 2026-10-28** (labels as listed). Track and close them on GitHub; this file is the snapshot they came from.
+
 Collected in T20 (2026-10-28) from [`docs/code/system.md` §8](../code/system.md#8-contradictions-and-open-questions) (C* and O* items),
 every task file's `## Follow-ups`, the per-command "Open (needs disassembly)" notes in
 [cat-commands-primary.md](../cat-commands-primary.md), and the items that wait for the owner's approval. Follow-ups that later tasks
