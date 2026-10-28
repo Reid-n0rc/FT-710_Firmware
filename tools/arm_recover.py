@@ -441,6 +441,7 @@ class Recover:
         self.pending = []       # (callee, fall-through addr, mode, call site) waiting for the callee to return
         self.table_targets = {} # table site -> targets
         self._fs = None
+        self.bound_override = {}  # site -> entries (settled by hand, --bound)
 
     def key(self, a, mode):
         return (a & ~1, mode)
@@ -519,6 +520,7 @@ class Recover:
         work = list(seeds)
         while work:
             a, mode, prev = work.pop()
+            head = (a, prev)
             it = 0
             while True:
                 if not img.in_text(a) or (mode == 'A' and a & 3) or (mode == 'T' and a & 1):
@@ -529,7 +531,8 @@ class Recover:
                     break
                 if a in self.code:
                     if self.code[a][0] != mode:
-                        self.conflicts.append((a, 'mode', f'{mode} path meets {self.code[a][0]} code'))
+                        self.conflicts.append((a, 'mode', f'{mode} path (head {head[0]:08x} from '
+                                               f'{head[1] or 0:08x}) meets {self.code[a][0]} code'))
                     break
                 o = a - img.base
                 r = dec(img, a, mode, it > 0)
@@ -538,11 +541,13 @@ class Recover:
                     break
                 clash = [b for b in range(o, o + ln) if self.owner[b]]
                 if clash:
-                    self.conflicts.append((a, 'overlap', f'{mode} instruction overlaps code at {img.base + clash[0]:08x}'))
+                    self.conflicts.append((a, 'overlap', f'{mode} instruction (path head {head[0]:08x} from '
+                                           f'{head[1] or 0:08x}) overlaps code at {img.base + clash[0]:08x}'))
                     break
                 if r['flow'] == 'stop':
                     self.bad.append((a, mode, prev))
                     break
+                r['head'] = head
                 self.code[a] = (mode, ln, r)
                 if prev is not None:
                     self.history[a] = prev
@@ -625,9 +630,14 @@ class Recover:
         guard = None
         if mode == 'A' and r0['cond'] != 14:
             guard = r0['cond']
-        prevs = self.back(a, 8)
+        if a in self.bound_override:
+            return self.bound_override[a], 'manual'
+        prevs = self.back(a, 32 if mode == 'A' else 8)
         for q in prevs:
             r = self.code[q][2]
+            if mode == 'A' and 'cmp' not in r and r['flow'] == 'seq' and (r['w'] >> 26) & 3 == 0 \
+                    and (r['w'] >> 20) & 1 and not ((r['w'] & 0x0F900000) == 0x01000000):
+                break                    # a flag-setting instruction between the CMP and the jump
             if guard is None and r['flow'] in ('cjump',) and q != a:
                 c = r['cond'] if mode == 'A' else r.get('bcond')
                 if c is None and 'h2' in r:
@@ -871,6 +881,8 @@ def main():
     ap.add_argument('--noreturn', default='', help='comma-separated addresses of functions that never return')
     ap.add_argument('--objdump', default=None, help='cross-check every recovered instruction with this objdump')
     ap.add_argument('--no-prologue-seeds', action='store_true')
+    ap.add_argument('--bound', action='append', default=[],
+                    help='SITE=N: table entry count settled by hand (guards the generic CMP search cannot read)')
     a = ap.parse_args()
     import os
     os.makedirs(a.outdir, exist_ok=True)
@@ -878,6 +890,9 @@ def main():
     img = Img(data, a.base, a.text_end)
     nr = [int(x, 0) for x in a.noreturn.split(',') if x]
     R = Recover(img, nr)
+    for x in a.bound:
+        k, v = x.split('=')
+        R.bound_override[int(k, 16)] = int(v, 0)
 
     # 1. vectors
     seeds = []
@@ -976,7 +991,7 @@ def main():
                     t = a.base + o
                     if R.owner[o] or t in R.lit or (t, mode) in R.starts or not is_prologue(img, t, mode):
                         continue
-                    if mode == 'T' and a32_like(img, t):
+                    if (mode == 'T') == a32_like(img, t):
                         continue
                     R.add_start(t, mode, 'prologue')
                     batch.append((t, mode, None))
