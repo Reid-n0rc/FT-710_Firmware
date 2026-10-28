@@ -14,13 +14,16 @@
 #   inputs  check Firmware/ against docs/inputs.sha256; unpacks the Yaesu zip first if only the zip is there.
 #   decode  SFL -> build/*.bin (tools/sfl_decode.py), carve the HiFi4 images (tools/ifdsp_dsp_images.py), check hashes.
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
-#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch and compile it. Skipped when already installed and patched.
+#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17) and tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
+#           compile it. Skipped when already installed and patched.
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
-#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared).
+#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared), and
+#           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
+#           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
 #           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
 #
@@ -101,7 +104,8 @@ JDK_SHA=d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c
 RX_GIT=https://github.com/stefan00lpf/rx-proc-ghidra
 RX_COMMIT=ea4cd20403c2e359f0de0cead2850d6be173b67a
 RX_SINC_ORIG=42f51c2cc890cb4b396b1e1dce2dc85048ceaa3124c217088d58b5cba0758f12
-RX_SINC_FIXED=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_T17=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_FIXED=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -275,7 +279,13 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-movu-fix.patch")
     info "applied tools/ghidra/rx62t-movu-fix.patch (T17)"
   fi
-  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor the T17-patched file"
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_T17" ]; then
+    [ -f "$lang/rx62t.sinc.t17" ] || cp "$lang/rx62t.sinc" "$lang/rx62t.sinc.t17"
+    [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.t17" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.t17"
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rxv2-fix.patch")
+    info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, SCCnd, string ops as pcodeops)"
+  fi
+  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
@@ -323,7 +333,7 @@ build_ifdsp() {
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
-  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/IfdspHifi4Names.java")
+  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java")
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
     info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:default @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"
@@ -356,7 +366,7 @@ step_export() {
   headless FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/m33" 50
   headless FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/hifi4" 50
   local d; for d in main display ifdsp/m33 ifdsp/hifi4; do
-    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure"
+    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure, $(awk -F'\t' '$1=="warnings"{print $2}' "$DECOMP_OUT/$d/quality.tsv" 2>/dev/null) warnings (quality.tsv)"
   done
 }
 
@@ -377,21 +387,36 @@ step_flix() {
 }
 step_verify() {
   log "verify: $DECOMP_OUT against the committed decomp/"
-  local rc=0 noflix=""
+  local rc=0 qrc=0 noflix="" d old
   [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
+  # quality.tsv is not diffed byte for byte: it is compared metric by metric below (T21f, #97 B11).
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
-    git -C "$REPO" diff --stat -- decomp/ | tail -n 5
-    git -C "$REPO" diff --quiet -- decomp/ && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/)" ] || rc=1
+    git -C "$REPO" diff --stat -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' | tail -n 5
+    git -C "$REPO" diff --quiet -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' \
+      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ ':(exclude,glob)decomp/**/quality.tsv')" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
-  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"
-  else die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"; fi
+  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"; fi
+  # Decompile-quality regression check: no count in the fresh quality.tsv may be higher than in the committed one.
+  for d in main display ifdsp/m33 ifdsp/hifi4; do
+    [ -f "$DECOMP_OUT/$d/quality.tsv" ] || { info "$d: no quality.tsv in the export (old ExportDecomp?)"; qrc=1; continue; }
+    old=$OUT/logs/quality_committed_${d//\//_}.tsv
+    if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
+      git -C "$REPO" show "HEAD:decomp/$d/quality.tsv" > "$old" 2>/dev/null || { info "$d: no committed quality.tsv; skipped"; continue; }
+    else
+      [ -f "$REPO/decomp/$d/quality.tsv" ] || { info "$d: no committed quality.tsv; skipped"; continue; }
+      cp "$REPO/decomp/$d/quality.tsv" "$old"
+    fi
+    py "$REPO/tools/decomp_quality.py" compare "$old" "$DECOMP_OUT/$d/quality.tsv" "$d" | sed 's/^/   /' || qrc=1  # pipefail
+  done
+  [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
+  [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
 }
 
 # ---------------------------------------------------------------- sdr
@@ -440,7 +465,7 @@ step_sdr() {
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,44p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in
