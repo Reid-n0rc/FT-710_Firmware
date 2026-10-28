@@ -90,6 +90,7 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 | `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
 | `decomp_quality.py` | Decompile-quality regression check (#97 B11): `compare old new` exits 1 if any count in `quality.tsv` went up (run by `bootstrap.sh verify`); `index INDEX.md LABEL=quality.tsv ...` renders the counts as a table between `<!-- quality:begin/end -->` | `decomp/*/quality.tsv` → exit code / `INDEX.md` | T21f |
+| `rx_compare.py` | Diffs Ghidra's MAIN (RX) listing against GNU binutils `rx-elf-objdump` per instruction (length, mnemonic, operands; normalisation rules N1-N10 in the docstring); exit 1 on any difference | `ListingExport.java` TSV + `build/FT-710_MAIN_V0112.bin` (+ `~/opt/rx-binutils-2.47`) → stdout, `--diffs` TSV | T21c |
 
 ## tools/ghidra/ (Ghidra scripts and their data)
 
@@ -119,8 +120,10 @@ the exact command line for every program.
 | `IfdspHifi4Names.java` | postScript | HiFi4 names + plate comments | IFDSP HiFi4 | T12e/T17 |
 | `DumpFuncs.java` | postScript | Decompiles a few functions (by address or name) into one text file | any | T07 |
 | `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
+| `ListingExport.java` | postScript | Every instruction as TSV (addr, len, bytes, mnemonic, operands, function) plus undefined holes in function bodies; prints Error bookmarks (input of `rx_compare.py`) | any | T21c |
 | `PeriphRefs.java` | postScript | Functions touching given peripheral register ranges | any | T05 |
 | `ProgramStats.java` | postScript | Function/instruction/data coverage and the largest undefined ROM gaps | any | T05 |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | postScript | References to addresses/ranges with the containing function (one would do; the others are kept for the task logs) | MAIN | T10 |
 | `T10eMovuRegCount.java` | postScript | Lists every `MOVU.B/W Rs,Rd`; after the T17 fix all 107 print as register forms | MAIN | T10e/T17 |
 | `rx62t-movu-fix.patch` | patch | T17 SLEIGH fix for the RX module (`MOVU` ld=11, `SCMPU`, `SUNTIL`, `SWHILE`); applied by `bootstrap.sh --only rx` | RX module | T17 |
+| `rx62t-rxv2-fix.patch` | patch | T21c SLEIGH fix on top of the T17 patch: `MUL` memory forms (.UB scaling, memex), `XCHG` memory forms (were unimplemented), `SCCnd` (always written; .L Rd went to memory), string ops as named pcodeops (`scmpu`, `smovf`, `smovb`, `smovu`, `sstr`, `suntil`, `swhile`); applied by `bootstrap.sh --only rx` | RX module | T21c |
