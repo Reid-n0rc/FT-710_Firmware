@@ -5,7 +5,7 @@ Ghidra 12.1.4 output for the IF DSP image (T07). There are two programs in the G
 | Dir | Program | Core / language | Functions exported | Decompile failures | Notes |
 |---|---|---|---|---|---|
 | `m33/` | `FT-710_IFDSP_V0101.bin` | Cortex-M33, `ARM:LE:32:v8-m` | 426 (318 in SRAM, 108 in flash, mostly IRQ stubs); 387 named (T17) | 0 | The rest of the 31.5 KB SRAM code range is literal pools and rodata. T12d: the "undecodable instruction" T07 saw at 0x80A24/0x80A90 is 0xFFFFFFFF padding after a literal pool; 0x80A24 was the inside of `OTFAD_Init` 0x80A18 (T17 removed that entry and the one at 0x800EE inside `POWER_CalculateSafetyCount` 0x800E8) |
-| `hifi4/` | `FT-710_IFDSP_V0101_hifi4.bin` | Cadence HiFi4, `Xtensa:LE:32:default` | 1148; 111 named (T17, `IfdspHifi4Names.java`) | 1 (`FUN_0020bb74`, the decompiler process died) | **Low quality:** 955 functions hit HiFi4 FLIX bundles or bad data. See "HiFi4 limitations" |
+| `hifi4/` | `FT-710_IFDSP_V0101_hifi4.bin` | Cadence HiFi4, `Xtensa:LE:32:rt600hifi4` (generated, T21a) | 1081 (1067 in SRAM = the `flix.dis` reference list `entries_hifi4.tsv`, 14 in the TCM); 111 named (T17, `IfdspHifi4Names.java`) | 0 | Full bodies since T21g: 982 functions without any warning, 1 `halt_baddata()` (`FUN_00218480`, data). See "HiFi4 decompile quality" |
 
 Each `*.c` file holds 50 functions and is named `<first>_<last>.c` by entry address. `functions.tsv` lists entry, name, size, callers and file.
 Memory map and derivation: `docs/memory-maps.md`, IFDSP section. Claims are tagged **[fact]** (seen in code or data) or **[inference]**.
@@ -61,9 +61,9 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0
   -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 -scriptPath tools/ghidra \
   -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java \
   -postScript ExportDecomp.java decomp/ifdsp/m33 50 -analysisTimeoutPerFile 3600
-# HiFi4
+# HiFi4 (needs the generated language: tools/bootstrap.sh --only hifi4)
 tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0101_hifi4.bin -overwrite \
-  -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 -scriptPath tools/ghidra \
+  -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 -scriptPath tools/ghidra \
   -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
   -postScript ExportDecomp.java decomp/ifdsp/hifi4 50 -analysisTimeoutPerFile 3600
 # HiFi4 FLIX-aware listing decomp/ifdsp/hifi4/flix.dis (T12e; Zephyr SDK RT600 objdump, see docs/tooling.md; bootstrap step flix):
@@ -123,20 +123,44 @@ conflicts in `tools/ghidra/names_ifdsp.picks.tsv`); the full function tables are
 | Address | Name | What |
 |---|---|---|
 | 0x24020000 | `_ResetVector` | J → 0x24020044 (thunk, so not in the export) |
-| 0x24020044 | `FUN_24020044` | reset handler: INTENABLE=0, VECBASE=0x24020400, ATOMCTL=0x15, I/D cache invalidate, then a bad instruction (unsupported in Ghidra's Xtensa module) |
+| 0x24020044 | `FUN_24020044` | reset handler: INTENABLE=0, VECBASE=0x24020400, ATOMCTL=0x15, I/D cache invalidate and init loops (`iiu`/`iii`/`diu`/`dii`), MEMCTL; decompiles in full since T21g (250 bytes; was cut at a bad instruction on the stock language) |
 | 0x24020400–0x24020540 | `_WindowOverflow4` … `_WindowUnderflow12` | register-window vectors |
 | 0x2402057C–0x2402063C | `_Vector_57c` … `_Vector_63c` | interrupt-level / exception vectors (levels not yet assigned) |
 | 0x002062D4.. / 0x00206370.. | strings | `rx_vq`, `tx_vq`, the rpmsg `VQ: %s - size=%d…` debug format; XOS thread names; XOS thread states (`suspend`, `delay`, `exited`, `event`, `mutex`) |
 | 0x00206498.. | `.literal` | L32R literal pools: SRAM pointers, peripheral bases |
-| 0x00207000–0x002367FF | `.text` | 1081 `entry` prologues (all seeded as functions) |
+| 0x00207000–0x002367FF | `.text` | 1081 `entry` prologues; the 1067 SRAM functions are the reference list `tools/ghidra/entries_hifi4.tsv` (T21b) |
 | 0x00236800–0x002383B3 | `.data` | float coefficient tables (filters) **[inference]** |
 
-### HiFi4 limitations
-Ghidra's Xtensa module decodes the base ISA only. It maps every `op0=0xE` word to a 3-byte `FLIX` placeholder, but HiFi4 FLIX bundles
-are wider (T12c: the op0=0xE bundles in this image look 6 bytes long, `tools/ifdsp_xtdis.py`), so disassembly desynchronises inside any DSP kernel. Most function bodies are truncated at the first bundle
-(the average exported body is 26 bytes). Control code (XOS, rpmsg, drivers) decompiles partly. The signal-processing code does not.
-Function **entries** are still reliable, because they come from 4-aligned `entry a1,N` prologues. For the real instruction stream use
-the FLIX-aware listing [`hifi4/flix.dis`](hifi4/flix.dis) (about 52,000 lines, 1065 functions with names), made with the Zephyr SDK RT600
-HiFi4 objdump (`tools/ifdsp_hifi4_dis.py`, command above; T12e, `docs/code/ifdsp/hifi4.md`). It is committed (issue #87) and
-rebuilt and compared by `tools/bootstrap.sh` (step `flix`). What Ghidra itself would need to decode the bundles (and the size of the gap: 891 of 1065 functions, 46 % of the code
-bytes) is in [`docs/code/ifdsp/ghidra-flix.md`](../../docs/code/ifdsp/ghidra-flix.md).
+### HiFi4 decompile quality (T21, #97)
+Until T21g the program used Ghidra's stock `Xtensa:LE:32:default`, which decodes the base ISA only: every FLIX bundle became a 3-byte
+`FLIX` placeholder, disassembly desynchronised inside the DSP kernels and most bodies stopped at the first bundle. Since T21g it uses
+the generated language `Xtensa:LE:32:rt600hifi4` (T21a, [ghidra-flix.md](../../docs/code/ifdsp/ghidra-flix.md)), which decodes all
+49,389 instructions of `flix.dis` exactly (oracle `tools/flix_oracle.sh`, T21b), and the function list comes from the reference
+`tools/ghidra/entries_hifi4.tsv` (`IfdspHifi4FindFuncs.java`). Before → after **[fact: `quality.tsv`, `functions.tsv`]**:
+
+| Count | stock language (T07–T21f) | `rt600hifi4` (T21g) |
+|---|---:|---:|
+| functions exported | 1,148 (84 of them artefacts, 1 real one missing) | 1,081 (1,067 SRAM = reference, 14 TCM) |
+| decompile failures | 1 (`FUN_0020bb74`) | 0 |
+| average body size | 26 B | 167 B |
+| `flix.dis` functions whose Ghidra body is ≥ 90 % of the listing's span | 133 of 1,065 | 860 of 1,065 |
+| bytes of `flix.dis` functions inside a Ghidra body | 27,519 of 191,248 (14 %) | 178,629 (93 %; the rest is padding, literals and unreachable bytes the listing sweeps) |
+| decompiler warnings (functions with one) | 2,038 (861) | 258 (99) |
+| `halt_baddata()` (functions) | 1,054 (819) | 1 (1): `FUN_00218480`, data that objdump cannot decode either |
+| "Bad Instruction" bookmarks | 1,098 | 1 |
+| functions with `in_`/`unaff_`/`extraout_` | 317 | 171 |
+| undefined non-0xFF bytes in executable blocks | 186,167 | 29,161 |
+
+Some warning kinds went **up**, because Ghidra now decompiles code it never reached before **[fact: per-function counts]**: 151 of the
+187 "Removing unreachable block" are in bodies that were truncated before (the other 36 were already there; e.g. `MU_Init` folds a
+switch on a constant rodata clock table); 11 new "Do nothing block with infinite loop" (assert-style `while(1)` traps in the rpmsg
+`env_*`/`platform_*` code, in bodies that were truncated); 3 "Does not return" (`_Vector_57c`, `_Vector_61c`, `FUN_002354e0`: the
+exception vectors now jump to the EXCSAVE1 handler, where the stock language had shown a plain return); 4 "Possible PIC construction"
+in `FUN_0022c3bc` (it shares code with the function before it, `j` across the entry); 2 more "Treating indirect jump as call" /
+"Could not recover jumptable" (`jx` in the XOS context-switch code 0x228C44–0x228D68); 7 "Type propagation algorithm not settling"
+(the large DSP kernels such as `FUN_0022c5b0`, 8 KB). None is a decode error.
+
+What the C still lacks: most `ae_*` HiFi4 operations are named p-code operations (for example `ae_mulafp32x2ras(...)`) with correct
+inputs and outputs but no arithmetic; the aligning loads/stores (`ae_la*`/`ae_sa*`) have no memory access yet; the FPU lane layout
+is a guess. Exact semantics for the kernels that matter are follow-ups (#86, #102). The FLIX-aware objdump listing
+[`hifi4/flix.dis`](hifi4/flix.dis) stays committed as the reference (`tools/ifdsp_hifi4_dis.py`, T12e; bootstrap step `flix`).

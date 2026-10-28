@@ -1,8 +1,11 @@
 # What Ghidra needs to decode the HiFi4 FLIX bundles
 
-Ghidra 12.1.4 cannot decode most of the IF DSP's HiFi4 code, so `decomp/ifdsp/hifi4/` is close to useless and the DSP is known
-mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). This page measures the gap, says exactly what is missing, and
-proposes how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
+**Status: done (T21, 2026-10-28).** The generated language `Xtensa:LE:32:rt600hifi4` (T21a) decodes every instruction of the image,
+and since T21g the canonical project `ghidra/FT710_IFDSP` and `decomp/ifdsp/hifi4/` use it (before → after in
+[the table below](#in-the-canonical-project-t21g)). The first sections are the analysis as written before the work (T21 plan):
+stock Ghidra 12.1.4 could not decode most of the IF DSP's HiFi4 code, so `decomp/ifdsp/hifi4/` was close to useless and the DSP was
+known mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). They measure the gap, say exactly what was missing, and
+propose how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
 [#102](https://github.com/Reid-n0rc/FT-710_Firmware/issues/102) (RADE in the DSP, which needs this code understood). Claims are
 tagged **[fact]**, **[inference]** or **[guess]**; counts come from `flix.dis` (V01-01, 1,065 functions) and the core's ISA
 description, and are reproducible with the commands at the end.
@@ -22,9 +25,9 @@ description, and are reproducible with the commands at the end.
 | … not in Ghidra's Xtensa module | **197**: 158 HiFi4 `ae_*` plus 39 FPU and other ops (`div0.s`, `recip0.s`, `f64*`, `maddn.s`, …); 6,508 of 66,254 operations (9.8 %) **[fact]** |
 | … in Ghidra's module but on the wrong registers | **30 FPU ops** (`mul.s`, `add.s`, `sub.s`, `madd.s`, `wfr`, …), 3,159 uses: this core's FPU works on the 64-bit `aed` registers, Ghidra's on `f0..f15` **[fact]** |
 | Operations Ghidra cannot represent correctly | about **14.6 %** of all operations (the two rows above) **[fact]** |
-| What Ghidra does today | `op0 = 0xE` becomes a 3-byte placeholder `FLIX` (the real bundle is 6 bytes, so the next instructions are decoded from the middle of the bundle); `op0 = 0xF` (the 11-byte bundles) has no constructor, so disassembly stops; one function (`FUN_0020bb74`) crashes the decompiler **[fact: `flix.sinc`, `xtensaArch.sinc`, `decomp/ifdsp/INDEX.md`]** |
+| What stock Ghidra does (before T21) | `op0 = 0xE` becomes a 3-byte placeholder `FLIX` (the real bundle is 6 bytes, so the next instructions are decoded from the middle of the bundle); `op0 = 0xF` (the 11-byte bundles) has no constructor, so disassembly stops; one function (`FUN_0020bb74`) crashes the decompiler **[fact: `flix.sinc`, `xtensaArch.sinc`, `decomp/ifdsp/INDEX.md`]** |
 
-So even with the FLIX listing, the DSP has **no usable decompiled C**: every reading of the audio chain is done from assembly.
+So, before T21, even with the FLIX listing the DSP had **no usable decompiled C**: every reading of the audio chain was done from assembly.
 
 ## What the core is
 
@@ -171,7 +174,31 @@ flowchart TB
   memory access yet.
 - The FPU lane layout (whether the `.s` operations also act on the high half) is a guess; the FP compares write a BR pair (`b0:b1`)
   and are named operations.
-- Canonical `ghidra/FT710_IFDSP` re-import with this language and the `decomp/ifdsp/hifi4` re-export: T21g.
+
+### In the canonical project (T21g)
+
+`tools/bootstrap.sh` (step `ghidra`, `build_ifdsp`) imports the HiFi4 program with `-processor Xtensa:LE:32:rt600hifi4` (after step
+`hifi4` has installed it; the language files are part of the program's rebuild stamp), then `IfdspHifi4Setup.java`,
+`IfdspHifi4FindFuncs.java` with the reference list `entries_hifi4.tsv`, and `IfdspHifi4Names.java`. The canonical
+`ghidra/FT710_IFDSP` was rebuilt that way and `decomp/ifdsp/hifi4/` re-exported **[fact: `quality.tsv`, `functions.tsv`, 2026-10-28]**:
+
+| Count | stock `Xtensa:LE:32:default` | `Xtensa:LE:32:rt600hifi4` |
+|---|---:|---:|
+| functions exported | 1,148 (84 artefacts, 1 missing) | 1,081 (1,067 SRAM = reference, 14 TCM) |
+| decompile failures | 1 (`FUN_0020bb74`) | **0** |
+| average body | 26 B | 167 B |
+| `flix.dis` bytes inside a Ghidra function body | 27,519 of 191,248 (14 %) | 178,629 (93 %) |
+| `flix.dis` functions with a body ≥ 90 % of their listing span | 133 | 860 of 1,065 |
+| warnings (functions with one) | 2,038 (861) | **258 (99)** |
+| `halt_baddata()` (functions) | 1,054 (819) | **1 (1)** |
+| "Bad Instruction" bookmarks | 1,098 | 1 |
+| functions with `in_`/`unaff_`/`extraout_` | 317 | 171 |
+| undefined non-0xFF bytes in executable blocks | 186,167 | 29,161 |
+| names (`IfdspHifi4Names.java`) | 111 | 111 (none lost) |
+
+The warning kinds that went up (unreachable blocks 47 → 187, infinite-loop traps 9 → 20 and a few others) all sit in bodies that the
+stock language had cut short, or are now-correct exception vectors; the per-kind explanation is in `decomp/ifdsp/INDEX.md`
+("HiFi4 decompile quality"). `flix.dis` rebuilt from the new `functions.tsv` is identical except for the list of dropped entries.
 
 ## Reproduce the counts
 

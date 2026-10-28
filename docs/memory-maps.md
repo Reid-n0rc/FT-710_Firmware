@@ -213,7 +213,7 @@ small M33 flash stub, three HiFi4 images, and the M33 application, which runs en
 | Program | Language | Source file | Built by |
 |---|---|---|---|
 | `FT-710_IFDSP_V0101.bin` | `ARM:LE:32:v8-m` (the only ARMv8-M language in Ghidra 12.1.4; Thumb-only `ARMCortex.pspec`) | `build/FT-710_IFDSP_V0101.bin`, BinaryLoader base 0x08000000 | `tools/ghidra/IfdspM33Setup.java` (pre), `IfdspFindFuncs.java`, `IfdspM33Names.java` (post) |
-| `FT-710_IFDSP_V0101_hifi4.bin` | `Xtensa:LE:32:default` | `build/FT-710_IFDSP_V0101_hifi4.bin` from `tools/ifdsp_dsp_images.py` | `tools/ghidra/IfdspHifi4Setup.java` (pre), `IfdspHifi4FindFuncs.java` (post) |
+| `FT-710_IFDSP_V0101_hifi4.bin` | `Xtensa:LE:32:rt600hifi4` (generated FLIX-aware language, T21a; `Xtensa:LE:32:default` until T21g) | `build/FT-710_IFDSP_V0101_hifi4.bin` from `tools/ifdsp_dsp_images.py` | `tools/ghidra/IfdspHifi4Setup.java` (pre), `IfdspHifi4FindFuncs.java` + `entries_hifi4.tsv`, `IfdspHifi4Names.java` (post) |
 
 The exact commands are in `decomp/ifdsp/INDEX.md`.
 

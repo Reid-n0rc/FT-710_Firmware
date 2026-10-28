@@ -1,6 +1,6 @@
 # IFDSP — HiFi4 DSP code (XOS threads, audio I/O, register file, coefficient tables)
 
-Program: `FT-710_IFDSP_V0101_hifi4.bin` (Ghidra project `FT710_IFDSP`, `Xtensa:LE:32:default`), carved by
+Program: `FT-710_IFDSP_V0101_hifi4.bin` (Ghidra project `FT710_IFDSP`, `Xtensa:LE:32:rt600hifi4` since T21g; `Xtensa:LE:32:default` before), carved by
 `tools/ifdsp_dsp_images.py`. Overview: [README.md](README.md). Sub-task: T12e. Claims are tagged **[fact]** (seen in the
 disassembly or data, address cited), **[inference]** or **[guess]**. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 
@@ -14,13 +14,14 @@ from `tools/flix_stats.py` and the files named.
 | Functions | 1,065 (49,389 instructions, 188,006 bytes) in the FLIX listing **[fact]** |
 | Named | **99 (9 %)**, also 9 % of the code bytes; the five largest unnamed functions are 8,320, 5,168, 4,208, 3,376 and 2,224 bytes (`FUN_0022c5b0`, `FUN_00231040`, `FUN_0022e990`, `FUN_0022a6f0`, `FUN_00219800`) **[fact]** |
 | Described in the IFDSP docs | about 96 functions (9 %) mentioned by name or address in this page, [control-link.md](control-link.md) or [ipc.md](ipc.md) **[fact: text search]** |
-| Readable as decompiled C | **none in practice**: 891 functions (84 %) contain FLIX bundles that Ghidra cannot decode, and 14.6 % of all operations are missing from or wrong in Ghidra's Xtensa module **[fact, [ghidra-flix.md](ghidra-flix.md)]** |
+| Readable as decompiled C | **since T21g (2026-10-28): all 1,067 functions decompile**, 0 failures, 982 of 1,081 exported functions without any decompiler warning, 1 `halt_baddata()` (data). Ghidra bodies cover 93 % of the listing's bytes (14 % before). Control flow, base-ISA and FPU operations and the simple HiFi4 loads/stores are real C; most `ae_*` operations are named calls with the right inputs and outputs but no arithmetic. Before T21, with the stock language: **none in practice** (891 functions, 84 %, contain FLIX bundles it could not decode) **[fact: `decomp/ifdsp/hifi4/quality.tsv`, [ghidra-flix.md](ghidra-flix.md)]** |
 | Signal-processing algorithms | the receive and transmit chains are known by call order only; noise reduction, noise blanker, notch, AGC and the demodulators are **not yet understood as algorithms**. Understood: the IIR biquad cascade engine, the 51-tap NLMS update and the FIR/IIR coefficient tables below **[fact: Open points]** |
 | Evidence tags on this page | 47 **[fact]**, 29 **[inference]**, 9 **[guess]** |
 
 ## How this page was made: a FLIX-aware disassembler
 
-Ghidra's Xtensa module decodes only the base ISA, so most HiFi4 bodies stop at the first FLIX bundle (T07). The
+Ghidra's stock Xtensa module decodes only the base ISA, so with it most HiFi4 bodies stopped at the first FLIX bundle (T07; fixed by
+the generated language `Xtensa:LE:32:rt600hifi4`, T21, which this page predates). The
 **Zephyr SDK toolchain for the NXP RT600 ADSP** (`xtensa-nxp_rt600_adsp_zephyr-elf`, GNU binutils 2.38 built with the RT600
 HiFi4 core overlay) decodes this image completely: FLIX bundles (`{ op; op }`, 48- and 88-bit formats), HiFi4 `ae_*`
 opcodes, the FPU (`add.s`, `mul.s`, `wfr`) and the zero-overhead loops (`loop`, `loopgtz`) **[fact: every thread entry,
@@ -339,5 +340,7 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
   with each value (and with 10, which MAIN never sends **[inference]**) is open. The meaning of most RX registers: needs the MAIN-side setter names (T10/T12b) next to this table.
 - The receive and transmit chains are listed by call, not yet by algorithm (NR, NB, notch, AGC, demodulators). The FLIX
   disassembly makes this possible function by function.
-- `decomp/ifdsp/hifi4/` is still Ghidra's base-ISA output. The FLIX listing is committed (`flix.dis`); what a SLEIGH FLIX extension
-  would take is in [ghidra-flix.md](ghidra-flix.md) (#97).
+- Done (T21, #97): `decomp/ifdsp/hifi4/` is decompiled with the generated FLIX-aware language `Xtensa:LE:32:rt600hifi4`
+  ([ghidra-flix.md](ghidra-flix.md); numbers in `decomp/ifdsp/INDEX.md`). Still open: exact arithmetic for the `ae_*` operations of
+  the filter kernels, and memory semantics for the aligning `ae_la*`/`ae_sa*` loads/stores; until then the arithmetic is read from
+  `flix.dis`.

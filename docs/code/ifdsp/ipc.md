@@ -7,7 +7,7 @@ start sequence, and which audio buffers cross the cores (none do). Overview: [RE
 Claims are tagged **[fact]** (seen in code or data, address cited), **[inference]** or **[guess]**. M33 addresses are in
 `decomp/ifdsp/m33` and `build/ifdsp_m33_sram.dis`. HiFi4 addresses are in `decomp/ifdsp/hifi4`. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 
-**HiFi4 evidence levels.** Ghidra's Xtensa module decodes only the base ISA, so the DSP listings break at every FLIX bundle.
+**HiFi4 evidence levels.** When this page was written, Ghidra's stock Xtensa module decoded only the base ISA, so the DSP listings broke at every FLIX bundle (since T21, `decomp/ifdsp/hifi4/` uses the FLIX-aware language `Xtensa:LE:32:rt600hifi4`; the evidence below predates it).
 For this page the DSP code was read with [`tools/ifdsp_xtdis.py`](../../../tools/ifdsp_xtdis.py), a small base-ISA sweep that
 skips bundles. With op0 = 0xE treated as a 6-byte bundle, the sweep stays in sync through the control code (see the tool's
 docstring for the statistics). Operands that sit *inside* a bundle (some call arguments, the shared-memory address, the

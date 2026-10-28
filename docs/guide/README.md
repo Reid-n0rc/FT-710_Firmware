@@ -1944,7 +1944,8 @@ constant 1/12000 converts Hz in about ten places, and a frequency field is clamp
 Because the codec clocks the two path threads, the SDR side is decoupled by small two-block FIFOs.
 
 **What the DSP algorithms are, as far as we know.** The DSP code was read with a Zephyr toolchain disassembler that
-understands the HiFi4's wide instruction bundles, which Ghidra cannot decode. The kernels are listed by call, not yet
+understands the HiFi4's wide instruction bundles, which stock Ghidra could not decode (since 2026-10-28 the project's own
+Ghidra language decodes them too, so the DSP has decompiled C as well). The kernels are listed by call, not yet
 worked out one by one. The filter responses below are measured from the coefficient tables; what each filter is for is
 inferred from its shape and from the registers that select it:
 

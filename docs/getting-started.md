@@ -130,8 +130,10 @@ an empty output directory:
   426, HiFi4 1148) and an identical `cat_dispatch.tsv`; a second run with `FORCE=1` was identical again, so the export is deterministic;
 - the SDR chain reproduced the owner's FASM, `netlist.json`, `ft710_sdr.v`/`.xdc` and primitive files byte for byte.
 
-The expected exceptions: `decomp/*/INDEX.md` and `decomp/sdr/README.md` are hand-written and not compared; the HiFi4 export always has one
-decompile failure (`FUN_0020bb74`, the decompiler process dies on it). A different Ghidra version, JDK or RX module commit can change the
+Those counts are from T20. Since T21 (#97) the pipeline has more steps (T21c RX fixes, T21d MAIN data/signatures, T21e DISPLAY jump
+tables and entries, the HiFi4 language `Xtensa:LE:32:rt600hifi4`), so today's export has DISPLAY 2210 and HiFi4 1081 functions, and no
+decompile failure in any program (the HiFi4 failure `FUN_0020bb74` of the stock language is gone); `decomp/*/quality.tsv` holds the
+current counts. The expected exceptions: `decomp/*/INDEX.md` and `decomp/sdr/README.md` are hand-written and not compared. A different Ghidra version, JDK or RX module commit can change the
 output; then the diff (`<out>/decomp.diff`) shows by how much.
 
 ## 5. Tour of the repo
@@ -173,8 +175,9 @@ committed names file: `tools/ghidra/names_main.tsv`, `names_display.tsv` (+ `ent
 `BOOTSTRAP_OUT` unset it updates `decomp/` in place), and commit the names file, the new `decomp/` and the pages that use the name together.
 `tools/index_refresh.py` fixes the file column in `decomp/*/INDEX.md` afterwards.
 
-Known decompiler limits are listed in each `decomp/*/INDEX.md` (for example RX string instructions shown as loops, and HiFi4 FLIX bundles
-that Ghidra cannot decode; use `tools/ifdsp_hifi4_dis.py` with the Zephyr SDK objdump for those, see [tooling.md](tooling.md)).
+Known decompiler limits are listed in each `decomp/*/INDEX.md` (for example HiFi4 `ae_*` operations that are named p-code calls without arithmetic; the
+FLIX-aware objdump listing `decomp/ifdsp/hifi4/flix.dis`, made by `tools/ifdsp_hifi4_dis.py` with the Zephyr SDK objdump, is the
+reference for those, see [tooling.md](tooling.md)).
 
 ### Optional: REA (an AI-agent reverse-engineering server)
 
