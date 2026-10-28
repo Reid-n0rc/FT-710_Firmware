@@ -239,3 +239,10 @@ CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dep
 (`yosys -s ...` with `+/xilinx/cells_sim.v`, `cells_xtra.v`) and the T15d/T15e simulations (`iverilog -g2012`).
 
 **T15e (2026-10-28).** `persist-apt verilator`: Debian bookworm **verilator 5.006-3**, used by `hdl/sdr/sim/build_full.sh` for the whole-netlist simulation (`-j 16`, about 2.5 min build, about 15,000 clocks/s). Yosys' cell models crash it on CARRY4, so `hdl/sdr/sim/xc7_prims_vl.v` has its own primitive models.
+
+## Guide figures and wiki (T19)
+
+- `librsvg2-bin` 2.54.7 (`rsvg-convert`), `libxml2-utils` 2.9.14 (`xmllint`) and `fonts-dejavu-core`, installed 2026-10-28 with
+  `persist-apt`. Used to validate the guide's SVG figures and render them to PNG for checking.
+- `tools/guide_to_wiki.py` splits `docs/guide/README.md` into GitHub-wiki pages (`Home`, one page per chapter, `_Sidebar` as the table of
+  contents, `img/`) under `build/wiki/`. Standard library only.
