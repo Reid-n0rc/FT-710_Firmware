@@ -29,7 +29,7 @@ If you leave `JAVA_HOME` unset, Ghidra's launcher may find Corretto 11, reject i
 
 ### Sample: import and auto-analyze a binary
 
-Run this from the repo root. Projects go under `ghidra/`, which is gitignored.
+Run this from the repo root. Projects go under `ghidra/`; only the three canonical projects are committed.
 
 ```sh
 JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home \
@@ -100,6 +100,15 @@ instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo
 The fix is local; it is not sent upstream.
 
 GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
+
+## Bootstrap (T20)
+
+`tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
+download with SHA-256 checks (`--only deps`, Linux x86_64), the RX module install from `stefan00lpf/rx-proc-ghidra` @ `ea4cd204` plus the
+T17 patch and `sleigh` compile (`--only rx`), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
+venv + SDR netlist/Verilator chain (`--only sdr`). Newcomer walk-through: [getting-started.md](getting-started.md); catalogue of all
+scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` takes `JOBS` (default 16) and `tools/xc7_fasm.py` takes
+`FT710_VENV` (default `~/.local/share/ft710-tools/venv`) since T20.
 
 ## Ghidra helper scripts (tools/ghidra/)
 

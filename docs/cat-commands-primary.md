@@ -292,7 +292,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### DT
 
-- **Index / handler:** 25, cat_DT @ fffa9281; switch case fffa3fd6; length tests `len==4:cat_DT@fffa9281 \| len==0:cat_DT@fffa9281` [fact]
+- **Index / handler:** 25, cat_DT @ fffa9281; switch case fffa3fd6; length tests `len==4:cat_DT@fffa9281 \| len==10\|\|len==12:cat_DT@fffa9281` [fact]
 - **Manual 2306-C:** DATE AND TIME. Set `DTP1P2x8; (P2 x6 for time)` (12/10), read `DTP1;` (4), answer `DTP1P2x8; (P2 x6 for time)` (12/10), AI X. P1 0 date,1 time(UTC); P2 (P1=0) yyyymmdd 8 digits; (P1=1) hhmmss 6 digits. Len 12 for date, 10 for time
 - **Read / answer (firmware):** P1 '0': DT0 20yymmdd; (len 12) '20'+yy mm dd from 0x20BB1,B2,B3 (2 chars each via FUN_fffb311d; non-decimal nibbles shown as ' '); P1 '1': DT1hhmm00; (len 10) hh=0x20BB4, mm=0x20BB5, seconds '00'. Other P1 on read -> error
 - **Set parameters (firmware):** P1 '0' (needs 12 chars): idx3-10 all digits; idx3-4 must be '20'; month idx7-8 01-12; day idx9-10 1..days(month; Feb 29 if yy%4==0 else 28; 30 for 4,6,9,11; else 31) else error; stores yy,mm,dd (FUN_fffb30b5) into 0x20BB1..B3 and mirrors 0x20BB6..B8, sets 0x20B91=1. P1 '1' (len 10): idx3-8 digits, hh<24, mm<60 (seconds idx7-8 digit-checked but ignored) -> 0x20BB4,0x20BB5, mirrors 0x20BB9/BA, 0x20B91=1. Other P1 -> error. P1 vs length not cross-checked.
@@ -324,7 +324,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### EM
 
-- **Index / handler:** 28, cat_EM @ fffa9648; switch case fffa4023; length tests `len==5:cat_EM@fffa9648 \| len==0:cat_EM@fffa9648` [fact]
+- **Index / handler:** 28, cat_EM @ fffa9648; switch case fffa4023; length tests `len==5:cat_EM@fffa9648 \| len>=6&&len<=55:cat_EM@fffa9648` [fact]
 - **Manual:** not documented (absent from 2211-A and 2306-C).
 - **Read / answer (firmware):** EM0n<text>; (len = textlen+5): text from 5 RAM slots (n=1..5) at 0x979E,0x97D0,0x9802,0x9834,0x9866 (0x32 apart), terminated by 0xFE; max 50 chars
 - **Set parameters (firmware):** P1 must be '0'; n '1'-'5' else error. Set: text = bytes idx4 .. before ';' (len-5 = 1..50 chars), no content validation; copied into slot, terminated with 0xFE (a 50-char text spills the terminator into the next slot's first byte).
@@ -356,7 +356,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### EX
 
-- **Index / handler:** 31, cat_EX @ fffa9937; switch case fffa4097; length tests `len==9:cat_EX@fffa9937 \| len==8:cat_EX@fffa9937` [fact for the tsv line]. *Corrected by T19h:* the second test is really `len > 8` (case code at 0xFFFA4097, `decomp/main/fffa20af_fffa7928.c`: `len == 9` → read, `8 < len` → set), so read is 9 characters and set ≥ 10, as [cat-commands.md](cat-commands.md) says; `ex_write_value` 0xFFFE6550 then wants exactly 9 + the item's digit count
+- **Index / handler:** 31, cat_EX @ fffa9937; switch case fffa4097; length tests `len==9:cat_EX@fffa9937 \| len>8:cat_EX@fffa9937` [fact]. (Before T20 the tsv printed the second test as `len==8`; T19h found it is `len > 8`) (case code at 0xFFFA4097, `decomp/main/fffa20af_fffa7928.c`: `len == 9` → read, `8 < len` → set), so read is 9 characters and set ≥ 10, as [cat-commands.md](cat-commands.md) says; `ex_write_value` 0xFFFE6550 then wants exactly 9 + the item's digit count
 - **Manual 2306-C:** MENU. Set `EXP1P1P2P2P3P3P4xn;` (10-21), read `EXP1P1P2P2P3P3;` (9), answer `EXP1P1P2P2P3P3P4xn;` (10-21), AI O. P1 2 digits group 01-04,06 (manual header says 01-04,05; table shows 06 EXTENSION SETTING); P2 2 digits subgroup 01-05; P3 2 digits item 01-26; P4 value 1-4 digits (12 chars for MY CALL/PRESET NAME), see EX TSV. Set/answer len = 9+len(P4)
 - **Read / answer (firmware):** EX<gg><mm><ii><value>; reply = copy of the 8 command chars + value text (up to 12 chars from `menu_string_get`) + ';', length value+9 (buffer 0x18878)
 - **Set parameters (firmware):** Menu access by 6-digit address gg mm ii (digits else error): gg 01,02,03,04,06 (others incl. 05 and 00 -> error) maps to menu number = mm + offset (g1 -1, g2 +4, g3 +6, g4 +11, g6 +21), item index = ii-1; looked up via `menu_get_limits` table. Set: len>=10, value formatted by `ex_write_value` (x10 / x20+20 / raw scaling) or `ex_read_value`; on success `menu_apply_from_cat` applies (0x15DFC=1, `menu_call_step`, 0x25D60[0x40B]=1). Read needs exactly len 9. Len<9 -> error. After set, if any AI flag (0x20B20-22)==1 -> cat_ai_holdoff.
@@ -486,7 +486,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### KM
 
-- **Index / handler:** 42, cat_KM @ fffaa905; switch case fffa42c7; length tests `len==4:cat_KM@fffaa905 \| len==0:cat_KM@fffaa905` [fact]
+- **Index / handler:** 42, cat_KM @ fffaa905; switch case fffa42c7; length tests `len==4:cat_KM@fffaa905 \| len>=5&&len<=54:cat_KM@fffaa905` [fact]
 - **Manual 2306-C:** KEYER MEMORY. Set `KMP1P2xn;` (5-54), read `KMP1;` (4), answer `KMP1P2xn;` (5-54), AI X. P1 1-5 memory ch; P2 message characters up to 50 (set/answer len 5-54)
 - **Read / answer (firmware):** KMn<text>; n=1..5: reply 'KMn' + stored text (length N from 0x969F/0x96D2/0x9705/0x9738/0x976B, text follows) + ';' = N+4 bytes; if N==0 the reply is 'KM;' (3 bytes, the ';' overwrites n). Other n -> '?;'
 - **Set parameters (firmware):** KMn<text>; n '1'..'5' (else '?;'), text = len-4 bytes (1..50) copied verbatim (NO character validation) after the slot is filled with 0x20 x50. '?;' if DAT_00020B94==1 && DAT_00020BC2==2 && n==DAT_00020BC3+1 (slot in use). If FUN_fffb012c finds '}' (0x7D) at start of text, '}' is appended after the text. Stores length byte then `eeprom_save_msg`(1,n) = EEPROM write of 0x33 bytes
@@ -661,7 +661,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### MT
 
-- **Index / handler:** 57, cat_MT @ fffac285; switch case fffa4589; length tests `len==6:cat_MT@fffac285 \| len==0:cat_MT@fffac285` [fact]
+- **Index / handler:** 57, cat_MT @ fffac285; switch case fffa4589; length tests `len==6:cat_MT@fffac285 \| len>=8&&len<=19:cat_MT@fffac285` [fact]
 - **Manual 2306-C:** MEMORY CHANNEL TAG WRITE. Set `MTP0P0P0P1P2x12;` (19), read `MTP0P0P0;` (6), answer `MTP0P0P0P1P2x12;` (19), AI X. P0 3 chars mem ch (001-099,P1L-P9U,5xx,EMG); P1 0 tag off,1 tag on; P2 12 tag ASCII chars
 - **Read / answer (firmware):** MTcccf<12 name chars>; (19 chars): ccc echoed from command, f='1' if rec+5 bit7 set else '0', 12 name bytes from rec+0x4E
 - **Set parameters (firmware):** ccc as MR/MW: [2]=='0' -> 001-099 -> idx-1, else 3-char name from table fff806e9 but only idx 99..117 accepted (P1L..P9U and 501); channel must already be valid (`memch_valid`) else error. [5] f must be '0' (clears rec+5 bit7) or '1' (sets it) else error. Name = chars [6..len-2], each 0x20..0x7D else error, padded with 0x20 to 12; name length 1..12 (len 8..19)
@@ -1130,7 +1130,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 ### VM
 
-- **Index / handler:** 99, cat_VM @ fffafadb; switch case fffa4d4d; length tests `len==0:cat_VM@fffafadb` [fact]
+- **Index / handler:** 99, cat_VM @ fffafadb; switch case fffa4d4d; length tests `len==4\|\|len==3\|\|len==6:cat_VM@fffafadb` [fact]
 - **Manual 2306-C:** [V/M] KEY FUNCTION. Set `VM;` (3), read `-` (-), answer `-` (-), AI X. no parameters
 - **Read / answer (firmware):** VM0hh; (len 6): hh = byte2hex two hex chars of a code from m = active VFO mode byte (DAT_00009dbe if DAT_00009dbd==0 else DAT_00009dbf) and b = DAT_000060c9/ca: m==2: b<0x63 -> 11, b<0x75 -> 21, b<0x84 -> 51, else 91; m==3 -> 10; m==4 -> 20; else 00
 - **Set parameters (firmware):** Dispatch compound test: len 3, 4 or 6 else error; handler errors if len!=3 and P1!='0'. Set path (len 3 or 6): key_event_filter(0x309,0) + same 12-flag busy guard as SV else error. len 3 'VM;' -> `vm_toggle`() (cycle active VFO mode state). len 6: [3],[4] must be '00' else error; if m!=1 -> `vm_toggle`(), re-read m, if still !=1 -> `vm_toggle`() again (force back to mode 1)

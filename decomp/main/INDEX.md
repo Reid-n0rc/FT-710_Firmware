@@ -40,7 +40,7 @@ Full boot flow, main-loop task table and power states: [docs/code/main/README.md
 The vector tables are seeded by `tools/ghidra/SetupRX651.java`. Relocatable vectors are named `vecNNN_<source>` (names from the RX651 vector table **[inference]**; the SCI ones are confirmed by the registers they touch). The fixed vectors are at 0xFFFFFFD0.
 
 ## CAT (remote control)  [fact]
-Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), command reference [docs/cat-commands.md](../../docs/cat-commands.md). Note: `cat_dispatch.tsv` shows `len==8` for EX because the case tests `len > 8`; read is len 9, set is any len >= 10.
+Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), command reference [docs/cat-commands.md](../../docs/cat-commands.md). `cat_dispatch.tsv` prints each length test with its real relation (T20): EX is `len==9` (read) and `len>8` (set, so any len >= 10), and the compound tests of DT, EM, KM, MT and VM are rebuilt from their compares.
 - **Parser**: `cat_parse` @ **0xFFFA347C**. It runs from `main_loop` and from `app_main` (power-off loop). It takes a received command buffer (port id byte at +0, length at +2, text at +4), compares the 2-char mnemonic linearly against
   - `cat_mnemonics` @ **0xFFF805EC**: 104 entries `AB AC AG … VX XT ZI`. The index is the switch case.
   - `cat_ext_mnemonics` @ **0xFFF806BC**: 10 entries `SP EO E8 E9 FD KT PE ZZ VE JP`, tried only when the primary lookup fails. These are not in the primary table; all are undocumented except `VE` (T09).
@@ -81,13 +81,13 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | primary | 22 | `CT` | fffa3f4d | len==4:cat_CT (fffa8c79) ; len==5:cat_CT (fffa8c79) |
 | primary | 23 | `DA` | fffa3f89 | len==3:cat_DA (fffa8d8a) ; len==11:cat_DA (fffa8d8a) |
 | primary | 24 | `DN` | fffa3fc1 | len==3:cat_DN (fffa9029) |
-| primary | 25 | `DT` | fffa3fd6 | len==4:cat_DT (fffa9281) ; len==0:cat_DT (fffa9281) |
+| primary | 25 | `DT` | fffa3fd6 | len==4:cat_DT (fffa9281) ; len==10\|\|len==12:cat_DT (fffa9281) |
 | primary | 26 | `ED` | fffa4e26 | *(switch default: error reply)* |
 | primary | 27 | `EK` | fffa4e26 | *(switch default: error reply)* |
-| primary | 28 | `EM` | fffa4023 | len==5:cat_EM (fffa9648) ; len==0:cat_EM (fffa9648) |
+| primary | 28 | `EM` | fffa4023 | len==5:cat_EM (fffa9648) ; len>=6&&len<=55:cat_EM (fffa9648) |
 | primary | 29 | `EN` | fffa406f | len==5:cat_EN (fffa9928) |
 | primary | 30 | `EU` | fffa4e26 | *(switch default: error reply)* |
-| primary | 31 | `EX` | fffa4097 | len==9:cat_EX (fffa9937) ; len==8:cat_EX (fffa9937) |
+| primary | 31 | `EX` | fffa4097 | len==9:cat_EX (fffa9937) ; len>8:cat_EX (fffa9937) |
 | primary | 32 | `FA` | fffa40d7 | len==3:cat_FA_FB (fffa99bd) ; len==12:cat_FA_FB (fffa99bd) |
 | primary | 33 | `FB` | fffa40d7 | len==3:cat_FA_FB (fffa99bd) ; len==12:cat_FA_FB (fffa99bd) |
 | primary | 34 | `FN` | fffa4120 | len==3:cat_FN (fffa9c96) ; len==4:cat_FN (fffa9c96) |
@@ -98,7 +98,7 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | primary | 39 | `ID` | fffa423c | len==3:cat_ID (fffaa365) |
 | primary | 40 | `IF` | fffa4260 | len==3:cat_IF_OI (fffaa39c) |
 | primary | 41 | `IS` | fffa428f | len==4:cat_IS (fffaa6e3) ; len==10:cat_IS (fffaa6e3) |
-| primary | 42 | `KM` | fffa42c7 | len==4:cat_KM (fffaa905) ; len==0:cat_KM (fffaa905) |
+| primary | 42 | `KM` | fffa42c7 | len==4:cat_KM (fffaa905) ; len>=5&&len<=54:cat_KM (fffaa905) |
 | primary | 43 | `KP` | fffa431b | len==3:cat_KP (fffaac36) ; len==5:cat_KP (fffaac36) |
 | primary | 44 | `KR` | fffa4353 | len==3:cat_KR (fffaad52) ; len==4:cat_KR (fffaad52) |
 | primary | 45 | `KS` | fffa438b | len==3:cat_KS (fffaadea) ; len==6:cat_KS (fffaadea) |
@@ -113,7 +113,7 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | primary | 54 | `ML` | fffa4526 | len==4:cat_ML (fffabbfa) ; len==7:cat_ML (fffabbfa) |
 | primary | 55 | `MR` | fffa4562 | len==6:cat_MR (fffabea5) |
 | primary | 56 | `MS` | fffa4606 | len==3:cat_MS (fffac4b6) ; len==5:cat_MS (fffac4b6) |
-| primary | 57 | `MT` | fffa4589 | len==6:cat_MT (fffac285) ; len==0:cat_MT (fffac285) |
+| primary | 57 | `MT` | fffa4589 | len==6:cat_MT (fffac285) ; len>=8&&len<=19:cat_MT (fffac285) |
 | primary | 58 | `MW` | fffa45dd | len==28:cat_MW (fffac534) |
 | primary | 59 | `MX` | fffa4640 | len==3:cat_MX (fffac9ad) ; len==4:cat_MX (fffac9ad) |
 | primary | 60 | `NA` | fffa467a | len==4:cat_NA (fffaca47) ; len==5:cat_NA (fffaca47) |
@@ -155,7 +155,7 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | primary | 96 | `UP` | fffa4cc4 | len==3:cat_UP (fffa9155) |
 | primary | 97 | `VD` | fffa4cd9 | len==3:cat_VD (fffaf874) ; len==5:cat_VD (fffaf874) |
 | primary | 98 | `VG` | fffa4d13 | len==3:cat_VG (fffaf9c0) ; len==6:cat_VG (fffaf9c0) |
-| primary | 99 | `VM` | fffa4d4d | len==0:cat_VM (fffafadb) |
+| primary | 99 | `VM` | fffa4d4d | len==4\|\|len==3\|\|len==6:cat_VM (fffafadb) |
 | primary | 100 | `VS` | fffa4d97 | len==3:cat_VS (fffafdbd) ; len==4:cat_VS (fffafdbd) |
 | primary | 101 | `VX` | fffa4dd1 | len==3:cat_VX (fffaffa0) ; len==4:cat_VX (fffaffa0) |
 | primary | 102 | `XT` | fffa4e26 | *(switch default: error reply)* |

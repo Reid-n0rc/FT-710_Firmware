@@ -44,7 +44,7 @@ sys.path.insert(0, HERE)
 DEFAULT_DB = os.environ.get(
     "PRJXRAY_DB", os.path.expanduser("~/.local/share/ft710-tools/prjxray-db/artix7"))
 PRJXRAY = os.environ.get("PRJXRAY", os.path.expanduser("~/.local/share/ft710-tools/prjxray"))
-VENV_PY = os.path.expanduser("~/.local/share/ft710-tools/venv/bin/python")
+VENV_PY = os.path.join(os.environ.get("FT710_VENV", os.path.expanduser("~/.local/share/ft710-tools/venv")), "bin", "python")
 DEFAULT_PART = "xc7a50tcpg236-1"
 
 

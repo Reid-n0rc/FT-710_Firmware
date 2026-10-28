@@ -1,0 +1,20 @@
+# SHA-256 of the project inputs (T20). Paths are relative to the repo root (build/ is relative to BOOTSTRAP_OUT
+# when that is set). Checked by tools/bootstrap.sh (steps inputs and decode), or by hand from the repo root:
+#   grep -v '^#' docs/inputs.sha256 | sha256sum -c -
+# Firmware/: the official Yaesu download FT-710_Firmware_updata_202402.zip and the files it contains.
+96e83bb6c7dbf9b797c8e8d22ce634869c7467fb7cba4c23125f46f75fd59c24  Firmware/FT-710_Firmware_updata_202402.zip
+7decf1c2d594c29d7a70602c309f7e57732110f64c0188137bd2afc85c5990ef  Firmware/FT-710_DISPLAY_V0108.SFL
+81ef6ded9049878daf3c39a4c296930f98f564a768cda6075c491af0f8c38fef  Firmware/FT-710_IFDSP_V0101.SFL
+f310f6adad82b7c8576f29aaffc5803ef130fbb37a271c6d878c2c03a95cb481  Firmware/FT-710_MAIN_V0112.SFL
+76464e3e8a9cbc9e00b6b85ad2f51c67a698eeda7af056c256edef4b7fb3b7d4  Firmware/FT-710_SDR_V0104.SFL
+6880607aa210afad2989366610d3ba26d5cdc8a2781490945fd361a004677b57  Firmware/Firmware_Ver_Up_Manual_ENG_FT-710_2211-A.pdf
+# build/: decoded by tools/sfl_decode.py (T04) and carved by tools/ifdsp_dsp_images.py (T07).
+65a9b65479f0551cde1a68dabf7ac305a555f144be26b6426362d81d4ded77bb  build/FT-710_DISPLAY_V0108.bin
+9cf56a989b9f97895c18788768729fb2e031e9fdd5ce9ed07541179aee74be0d  build/FT-710_IFDSP_V0101.bin
+c830d8f2b5ea738caf4e9ee12420e0931fdd127281744a73e247babd7fe13963  build/FT-710_IFDSP_V0101_hifi4.bin
+e13c640c77588e29e50ad07a0c4233c37cce5de306429d36f082200ac13fd66c  build/FT-710_IFDSP_V0101_hifi4_0_tcm.bin
+ddc5ec3f709486e18523e859c26f7ee2d3597039b4694337a4c79cf30f33e47b  build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin
+0bf93e09e492c2aa80ecd14bf06716ad7fef216aa4f70eedcbf1e8f8fd413d7e  build/FT-710_IFDSP_V0101_hifi4_2_sram_data.bin
+78eef6a12b5564c5771fdf84a4bd0f4202d64b14efe8603ff11c797ce2a58aa0  build/FT-710_MAIN_V0112.bin
+0ac78c2a8932ef08442f30d50a6c3ccd52ad4e92718626a9a207df0ebe33c623  build/FT-710_MAIN_V0112.bin.FE7F5D00.bin
+f4f823db73745ea669addd3815ca629862acf1396a9ea24739cfa3a09009fb77  build/FT-710_SDR_V0104.bin

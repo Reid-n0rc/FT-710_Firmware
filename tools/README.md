@@ -1,0 +1,123 @@
+# tools/
+
+Every script in this directory and in `tools/ghidra/`: what it does, what it reads and writes, and the task that made it (the task
+files in [docs/tasks/](../docs/tasks/README.md) have the full story). Install notes and versions are in [docs/tooling.md](../docs/tooling.md);
+the newcomer walk-through is [docs/getting-started.md](../docs/getting-started.md).
+
+Conventions:
+- Python tools are standard library only (except `xc7_fasm.py fasm`, which re-runs itself in the prjxray venv). Run them from the repo
+  root with `python3 -I tools/<script>.py`; `-I` keeps a planted module next to the firmware data from being imported.
+- Inputs come from the gitignored `Firmware/` and `build/` folders. Outputs that are derived from Yaesu's firmware go to `build/` and are
+  never committed; only `decomp/`, the docs and the hand-written `hdl/` are.
+- Nothing here talks to a radio. `t16_patches.py` and `sfl_encode.py` write SFL files into `build/` only; flashing them needs the
+  radio owner's explicit approval each time (AGENTS.md).
+
+## Setup and orchestration
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `bootstrap.sh` | One command from the official downloads to the full working tree: input hashes, SFL decode, RX module install + fix, the four Ghidra programs with every name, re-export and diff against `decomp/`, optional SDR netlist/Verilator chain. Steps run alone with `--only`; see `--help` | `Firmware/`, `docs/inputs.sha256`, `tools/ghidra/*` → `$BOOTSTRAP_OUT/{build,ghidra,decomp,logs}` | T20 |
+| `ghidra-headless.sh` | Runs Ghidra's `analyzeHeadless` with JDK 21 (Homebrew paths if present, else `~/opt`); override with `GHIDRA_JAVA_HOME`, `GHIDRA_HEADLESS` | Ghidra args | T01 |
+| `issues_sync.py` | Mirrors `docs/tasks/` to GitHub issues (epic, sub-issues, labels, status comments) and keeps `docs/tasks/issues.json`. **The parent agent / owner runs it, nobody else** | `docs/tasks/` → GitHub | (board setup) |
+| `guide_to_wiki.py` | Splits `docs/guide/README.md` into GitHub-wiki pages (`Home`, one page per chapter, `_Sidebar`, `img/`) | guide → `build/wiki/` | T19 |
+
+## Firmware container (SFL)
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `sfl_header.py` | Parses and checks the SFL header (comment box, tag line, length, CRC) | `Firmware/*.SFL` → stdout | T03 |
+| `sfl_decode.py` | Decodes an SFL (43-byte subtraction key, salted CRC-32 check) and converts the payload: MAIN S-records → flat binary (+ `.FE7F5D00.bin` option-setting cluster), SDR hex → bitstream; `--raw` keeps the plaintext | `Firmware/X.SFL` → `build/X.bin` | T04 |
+| `sfl_encode.py` | Inverse of `sfl_decode.py`; `--check` validates SFLs | image → `.SFL` | T16 |
+| `test_sfl_roundtrip.py` | SFL → decode → encode → identical SFL for all four shipped images | `Firmware/` → `build/t16/roundtrip/` | T16 |
+| `t16_patches.py` | Builds and verifies the T16 DISPLAY patch SFLs ([docs/patches/](../docs/patches/README.md)); never flashed | `Firmware/` → `build/t16/` | T16 |
+
+## MAIN (Renesas RX651)
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `main_key_tables.py` | Dumps the front-panel key handler tables | `build/FT-710_MAIN_V0112.bin`, `decomp/main/functions.tsv` → stdout / TSV | T10b |
+| `main_menu_table.py` | Dumps the EX/setup-menu item table and diffs it against the CAT manual's menu chart | MAIN image → stdout | T10f |
+
+## DISPLAY (Renesas RZ/A1H)
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `display_assets.py` | Lists the GUI sprites, fonts, tables and strings (lists only; `--render` is an ASCII preview) | DISPLAY image → stdout | T11e |
+| `t11g_pinmux_decode.py` | Decodes `pinmux_init` 0x20101190 into a port/pin → mode table (needs `arm-none-eabi-objdump`) | DISPLAY image → TSV on stdout | T11g |
+
+## IFDSP (NXP i.MX RT685: Cortex-M33 + HiFi4)
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `ifdsp_dsp_images.py` | Carves the three HiFi4 images out of the decoded IFDSP image (and the contiguous `_hifi4.bin` Ghidra imports) | `build/FT-710_IFDSP_V0101.bin` → `build/FT-710_IFDSP_V0101_hifi4*.bin` | T07 |
+| `ifdsp_xtdis.py` | Minimal Xtensa base-ISA linear disassembler | HiFi4 SRAM image → stdout | T12c |
+| `ifdsp_l32r.py` | Heuristic per-function L32R literal scan | SRAM image + `functions.tsv` → stdout | T12a |
+| `ifdsp_regscan.py` | Heuristic HiFi4 accesses to the shared register file (base ISA only) | SRAM image + `functions.tsv` → stdout | T12a |
+| `ifdsp_hifi4_dis.py` | Per-function FLIX-aware HiFi4 listing with the Zephyr SDK RT600 objdump, names from `IfdspHifi4Names.java` | objdump + SRAM image + `functions.tsv` → `build/ifdsp_hifi4_flix.dis` | T12e |
+| `ifdsp_hifi4_regscan.py` | Register-file accesses in a FLIX-aware objdump listing | listing + `functions.tsv` → stdout | T12b |
+| `ifdsp_coef_tables.py` | Finds and classifies numeric tables (filters, windows, sin/cos, gain curves) | SRAM image → stdout | T12e |
+| `ifdsp_names_java.py` | Converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV, splits proposals by program | Java ↔ TSV | T17 |
+
+## SDR (Xilinx Artix-7 XC7A50T bitstream)
+
+The `xc7_*` tools need the Project X-Ray checkouts (`~/.local/share/ft710-tools/`, set up by `bootstrap.sh --only sdr`). Most have a
+`selftest` command.
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `xbit_parse.py` | Config packet log, register decode, CRC check, leading-word CRC (`--lead`), FDRI and BRAM frame statistics | `build/FT-710_SDR_V0104.bin` → stdout | T08 |
+| `xc7_db.py` | Maps the bitstream onto prjxray tiles: `frames` (prints `MATCH`), `bram`, `bramcfg`, `usage`, `sites`, `config`, `tilebits` | SDR image + prjxray-db → stdout | T13 |
+| `xc7_bram_tables.py` | Rebuilds and characterises the logical BRAM tables (`tables`, `show`, `lanes`, `halfsym`, `selftest`) | SDR image → stdout | T13 |
+| `xc7_package_fit.py` | Which XC7A50T packages bond every used IOB | FASM → stdout | T16 |
+| `xc7_fasm.py` | Bitstream → prjxray `.bits` → FASM (prjxray's `FasmDisassembler`, in the venv), `summary` per tile type | SDR image → `build/sdr/FT-710_SDR_V0104.fasm` | T15a |
+| `xc7_netlist.py` | FASM → cell-level netlist (LUT, FF, CARRY4, DSP48E1, BRAM, IOB, MMCM, BUFG) with nets from active PIPs; `stats`, `net` | FASM → `build/sdr/netlist.json` | T15b |
+| `xc7_blocks.py` | Block recognition: `clocks`, `io`, `package`, `dsp`, `bram`, `logic` (LUT equations around a cell) | netlist → stdout | T15c |
+| `xc7_netlist_verilog.py` | Structural Verilog + XDC (`verilog`), Yosys/sim primitive models (`prims`, `simprims`), sub-netlists (`slice`) | netlist → `build/sdr/ft710_sdr.{v,xdc}` | T15d |
+| `xc7_probe_netlist.py` | Adds a `probe` output port to the netlist to watch internal nets in Verilator | netlist + `.v` → probed `.v` | T15e |
+| `sdr_uart_sim.py` | Drives the Verilator model with MAIN-style UART frames (`b:r0000`) or console text (`a:=...`); `--bin` picks the model | `build/sdr/vl/obj_full/Vft710_sdr` → replies | T15e |
+| `sdr_cosim_check.py` | Compares netlist and RTL TX edges in the co-simulation | co-sim output → stdout | T15e |
+
+The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/README.md) (`build_full.sh`, `cosim_directed.sh`,
+`cosim_random.sh`).
+
+## Integration helpers (T17)
+
+| Script | What it does | Inputs → outputs | Task |
+|---|---|---|---|
+| `names_merge.py` | `report`/`merge` per-sub-task name and entry TSVs into the shared ones, conflicts resolved with `--picks` | `tools/ghidra/names_*.T*.tsv` → `names_*.tsv` | T17 |
+| `pages_final_names.py` | Switches code pages from proposed (italic) names to the applied Ghidra names | config JSON + pages | T17 |
+| `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
+
+## tools/ghidra/ (Ghidra scripts and their data)
+
+Run through `tools/ghidra-headless.sh ... -scriptPath tools/ghidra -preScript|-postScript <Script>.java [args]`. `bootstrap.sh` has
+the exact command line for every program.
+
+| Script / file | Kind | What it does | Used by | Task |
+|---|---|---|---|---|
+| `SetupRX651.java` | preScript | RX651 memory map (RAM, I/O, option-setting), `.data` copy-downs (`copy=SRC:END:DST`), fixed and relocatable vectors → named functions | MAIN | T05 |
+| `ApplyNames.java` | postScript | Applies `address<TAB>name[<TAB>comment]`; `@name` = data label; creates missing functions | MAIN, DISPLAY | T05 |
+| `names_main.tsv` | data | 1147 MAIN names (T05, T09, T10a–h merged in T17) | ApplyNames | T05/T17 |
+| `names_display.tsv` | data | 768 DISPLAY names (T06, T11a–g merged in T17) | ApplyNames | T06/T17 |
+| `entries_display.tsv` | data | 68 DISPLAY function entries analysis missed or started late (`drop` = old entry was data) | FixFuncEntries | T11/T17 |
+| `names_*.T*.tsv`, `entries_display.T*.tsv` | data | the per-sub-task proposals, kept as the merge inputs | names_merge.py | T10/T11/T12 |
+| `names_{main,display,ifdsp}.picks.tsv` | data | T17 resolutions of name conflicts | names_merge.py | T17 |
+| `CatDispatch.java` | postScript | Dumps the CAT mnemonic → switch case → handler table with each length test (`len==N`, `len>N`, ...) | `decomp/main/cat_dispatch.tsv` | T05, fixed T20 |
+| `ExportDecomp.java` | postScript | Decompiled C in 50-function files + `functions.tsv` (60 s per-function limit) | all | T01/T05 |
+| `DisplaySetup.java` | preScript | DISPLAY RZ/A1H map: `.text`/`.rodata`/scatter area split, armcc LZ decompression of RW data, ZI blocks, I/O, vectors | DISPLAY | T06 |
+| `DisplayFindCode.java` | postScript | Second code-discovery pass: pointer tables, `push {..,lr}` prologues, orphan code (run twice; the 2nd finds nothing new) | DISPLAY | T06 |
+| `FixFuncEntries.java` | postScript | Creates or moves function entries from `entries_display.tsv` (run before ApplyNames) | DISPLAY | T11 |
+| `DisplayReport.java` | postScript | Read-only report: blocks, strings, I/O references as TSVs | DISPLAY | T06 |
+| `IfdspM33Setup.java` | preScript | RT685 map for the M33 image, MCUXpresso copy-down block, `.bss`, vectors → Thumb functions | IFDSP M33 | T07 |
+| `IfdspFindFuncs.java` | postScript | Missed Thumb `push {…,lr}` prologues in the M33 code ranges; rodata strings | IFDSP M33 | T07 |
+| `IfdspM33Names.java` | postScript | M33 names + plate comments, creates/removes entries (`MERGE_INTO`) | IFDSP M33 | T07/T12/T17 |
+| `IfdspHifi4Setup.java` | preScript | Maps the three carved HiFi4 images at their DSP load addresses, seeds the vectors | IFDSP HiFi4 | T07 |
+| `IfdspHifi4FindFuncs.java` | postScript | Functions at 4-aligned `entry a1,N` prologues; drops artifacts in uninitialized memory | IFDSP HiFi4 | T07 |
+| `IfdspHifi4Names.java` | postScript | HiFi4 names + plate comments | IFDSP HiFi4 | T12e/T17 |
+| `DumpFuncs.java` | postScript | Decompiles a few functions (by address or name) into one text file | any | T07 |
+| `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
+| `PeriphRefs.java` | postScript | Functions touching given peripheral register ranges | any | T05 |
+| `ProgramStats.java` | postScript | Function/instruction/data coverage and the largest undefined ROM gaps | any | T05 |
+| `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | postScript | References to addresses/ranges with the containing function (one would do; the others are kept for the task logs) | MAIN | T10 |
+| `T10eMovuRegCount.java` | postScript | Lists every `MOVU.B/W Rs,Rd`; after the T17 fix all 107 print as register forms | MAIN | T10e/T17 |
+| `rx62t-movu-fix.patch` | patch | T17 SLEIGH fix for the RX module (`MOVU` ld=11, `SCMPU`, `SUNTIL`, `SWHILE`); applied by `bootstrap.sh --only rx` | RX module | T17 |
