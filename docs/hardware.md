@@ -54,34 +54,47 @@ registers: p56–57, p74).
 - Package: 144-pin, with pin numbers up to 144 on the schematic (p17) **[fact]**. "FB" = 144-pin LFQFP **[guess, Renesas naming]**.
 - Memory (Renesas part-number decode): "565**1**" = RX651 group, "**4**" = 512 KB code flash, plus 256 KB RAM and 32 KB data flash **[guess. Check against the Renesas RX651 datasheet]**.
 - Clock: X1001 **24.000 MHz** crystal DSX321G, connected to P37/XTAL and P36/EXTAL (pins 20/22) (p46, p6, p17). **[fact]**
-- External EEPROM: Q1008 **ROHM BR25G256FVT-3GE2**, a 256 Kbit SPI EEPROM (p36, labelled "EEPROM" on p6). It shares the CPU SPI bus
-  (`C4_SPI_MISO`/`C4_SPI_CLK` on pins 109/110) with chip-select `E2P_SS` on pin 111 (p17). **[fact]**
+- External EEPROM: Q1008 **ROHM BR25G256FVT-3GE2**, a 256 Kbit SPI EEPROM (p36, labelled "EEPROM" on p6) **[fact]**. It has its own
+  nets `E2P_SS/CLK/MOSI/MISO` on **PE0/PE5/PE6/PE7** (pins 111/106/102/101), separate from the C4 SPI on PE1..PE4, and the firmware
+  **bit-bangs** it (`eeprom_spi_tx`/`eeprom_spi_rx`, no RSPI/SCI) **[fact: code, docs/code/main/eeprom.md]**. P65 (pin 100, net `E2P_WP`)
+  is driven high only around the status-register write in `eeprom_init`, so it is probably the chip's /WP **[inference]**.
 - Other peripherals: Q1005 BU2505FV 10-bit DAC on `SDATA`, used for `FADJ` (reference oscillator trim) (p6, p17). PA-unit control goes
-  through serial shift registers (`SCLK`/`SDAT`/`/SST4`/`/STT6`/`SST5` on J1002) (p17). ADC inputs: PA_IDD, PA_VDD, ALC, FWD/REV, and so on (p17).
-- **UARTs (SCI)** on Q1001 (p17, pin labels read from the schematic):
+  through serial shift registers (`SCLK`/`SDAT`/`/SST4`/`/STT6`/`SST5` on J1002) (p17). The on-chip **DA0** (P03) drives `DA_OUT` →
+  `TONE_BEEP`, the beep tone into the AF path (`dac0_write`) **[fact]**. The full pin-by-pin GPIO, ADC and DAC map with the functions
+  that use each pin is in [code/main/peripherals.md#gpio-map](code/main/peripherals.md#gpio-map) (T10h). Pins that matter for the other
+  boards **[fact: code + p17]**: P71 `DSP_RESET` (pin 86) / P72 `DSP_UPDATE` (pin 85, ISP select **[inference]**), P74 `AF_RESET` (pin 72),
+  P75 `USB_DET` (pin 71), P76 `SDR_UPDATE` (pin 69) / P77 `SDR_RESET` (pin 68, R1133 10k pull), PC0 `PA_PON` (pin 75).
+- **UARTs (SCI)** on Q1001 (p17, pin labels read from the schematic; port pins and line formats from the firmware, see
+  [code/main/sci.md](code/main/sci.md)):
 
-  | Q1001 pins | SCI | Net | Goes to |
-  |---|---|---|---|
-  | 26 UART0_MI / 27 UART0_MO | SCI0 | `USBSS_UMISO/UMOSI` | CP2105 **SCI** port ("Standard" CAT COM port) (p20) |
-  | 32 UART3_MI / 34 UART3_MO | SCI3 | `USBSE_UMISO/UMOSI` | CP2105 **ECI** port ("Enhanced" CAT COM port) (p20) |
-  | 29 P30/RXD1 / 31 P26/TXD1 | SCI1 | `DISP_UMISO/UMOSI` | DISPLAY CPU (J1009 pins 10–11 → J6001 20–21) **and** the debug header J1005 (p17, p62) |
-  | ~70 UART5_MI / 67 UART5_MO | SCI5 | `SDR_UMISO/UMOSI` | SDR module (J2002) (p17, p19) |
-  | 45 UART2_MI / 44 UART2_MO | SCI2 | `ETUN_UMISO/UMOSI` | external tuner (ATAS/FC-40 type), DIN on the rear panel (p17) |
-  | 128 AN116(UART7) / 131 AN114(UART7) | SCI7 | `C4_UMISO/C4_UMOSI` | the "C4" peripheral, see below |
+  | Q1001 pins | SCI | Net | Goes to | Firmware (V01-12) |
+  |---|---|---|---|---|
+  | 26 UART0_MI / 27 UART0_MO | SCI0 | `USBSS_UMISO/UMOSI` | CP2105 **SCI** port ("Standard" CAT COM port) (p20) | CAT port id 2, baud set by `sci0_set_baud` |
+  | 32 UART3_MI / 34 UART3_MO | SCI3 | `USBSE_UMISO/UMOSI` | CP2105 **ECI** port ("Enhanced" CAT COM port) (p20) | CAT port id 1, baud set by `sci3_set_baud` |
+  | 29 P30/RXD1 / 31 P26/TXD1 | SCI1 | `DISP_UMISO/UMOSI` | DISPLAY CPU (J1009 pins 10–11 → J6001 20–21) **and** the debug header J1004 (p17, p62) | DISPLAY link, **≈340.9 kbit/s 8N2** ([display-link.md](code/main/display-link.md)) |
+  | 87 PB0/RXD4 / 84 PB1/TXD4 | SCI4 | `DSP_UMISO/UMOSI` | RT685 **FLEXCOMM0** console UART (p19) | 115200 8N1, register access `dsp_reg_access` ([dsp-link.md](code/main/dsp-link.md)) **[fact: `R_SCI4_Create` PFS 0x8C198/0x8C199]** |
+  | ~70 UART5_MI / 67 UART5_MO | SCI5 | `SDR_UMISO/UMOSI` | SDR module (J2002) (p17, p19) | **115200 8N1** register frames ([sdr-link.md](code/main/sdr-link.md)) |
+  | 45 UART2_MI / 44 UART2_MO | SCI2 | `ETUN_UMISO/UMOSI` | external tuner (ATAS/FC-40 type), DIN on the rear panel (p17) | tuner / linear / CAT-3 / GPO, selected by `tunlin_port_mode` |
+  | 8 P00 / 7 P01 (`UART6_MO/MI`) | SCI6 | – | **not connected** on p17 | simple-I2C set-up only, never used |
+  | 131 P90/TXD7 / 128 P92/RXD7 | SCI7 | `C4_UMOSI/C4_UMISO` | the "C4" peripheral, see below | **never started** (no Send/Receive caller) |
 
 - **"C4" bus** (p17): `C4_SPI_MISO/CLK`, `C4_SS1..SS5`, `C4_RQST`, `C4_BUSY_DSP`, `C4_TRX`, `C4_RESET`, `C4_BOOT`, `C4_PON`,
   plus UART7. The name `C4_BUSY_DSP` and the `C4_BOOT`/`C4_RESET` lines suggest that "C4" is the RT685 DSP
   (whose page has `DSP_UPDATE`, `DSP_RESET18`, `DSP_UMISO/UMOSI` on FC0 UART, p19) **[inference, medium]**. I could not
   trace the C4 nets to the DSP page in the renders, so this pairing is not confirmed.
-  T12 (firmware): MAIN talks to the RT685 console on FC0 through **SCI4** (`dsp_link_init` sends `i DB00\r` with
-  `R_SCI4_Serial_Send`), not SCI7; see `docs/code/ifdsp/README.md` **[fact: code]**. The SCI4 pins are not in the table above.
+  T12 (firmware): MAIN talks to the RT685 console on FC0 through **SCI4** on PB0/PB1 (`DSP_UMISO/UMOSI`, row above;
+  `dsp_link_init` sends `i DB00\r` with `R_SCI4_Serial_Send`), not SCI7; SCI7 is configured but never started in V01-12
+  (docs/code/main/dsp-link.md, docs/code/ifdsp/README.md) **[fact: code]**. The C4 GPIO/SPI pins are listed in the GPIO map.
 - On-chip USB (pins 47/48 USB_DM/DP) goes only to test points TP1053/TP1054 (p17). The RX USB port is not used for CAT. **[fact]**
 - Boot / update: MD pin 16 is labelled `MD/FINED`, net `MD_FINE`. Transistor Q1012 (DTC114YUA) pulls MD_FINE low when
   `RX_UPDATE` is high, and the drawing is annotated "RX_UPDATE: Update is High" (p17). `RX_UPDATE` and `RX_RESET` are driven by the
   DISPLAY CPU (J1009 pins 12–13 → RZ/A1H P4_3 and P7_10) (p17, p62). SCI1 (P30/P26) is the RX boot-mode SCI.
   **So the DISPLAY CPU reflashes the MAIN CPU through the Renesas serial boot mode over the DISP UART** **[inference, high]**.
   This matches the update manual: firmware comes from the SD card, which is on the DISPLAY CPU, and "update DISPLAY first".
-- **Debug header J1005, "RX-CPU DEBUG"** (P1091201, an 8-pin 08FLT-SM2 FFC, p35, p17):
+- **Debug header J1004, "RX-CPU DEBUG"** (P1091201, an 8-pin 08FLT-SM2 FFC, p35, p17). Earlier versions of this page called it J1005; the
+  p17 symbol reads J1004 (T10c) and the p35 parts list gives J1004 = 08FLT-SM2-TB P1091201 (side A, D3). **J1005 is `SB20-08WS` P0090615**,
+  an 8-pin wire-to-board connector (side A, A1); the exploded view (p5) has a wire assembly that "Connect[s] to J1005 on the MAIN-Unit" **[fact]**.
+  J1004 pinout:
   pin 1 GND, 2 `MD_FINE`, 3 `E1_RESET`, 4 `UB`, 5 `DISP_UMOSI` (TXD1), 6 `DISP_UMISO` (RXD1), 7 → TP1029, 8 → TP1030
   (pins 7 and 8 are not labelled; one probably carries the 3.3 V reference) **[fact for pins 1–6]**.
   This header gives both the Renesas **FINE** single-wire debug (E1/E2 emulator) and SCI1 boot-mode programming
@@ -96,7 +109,12 @@ registers: p56–57, p74).
 - No external RAM. The RT685 has 4.5 MB of on-chip SRAM **[guess]**.
 - Boot configuration (p19, printed note): `BootConf_ISP[2:0]` on PIO1_15..17 (pins N3/M4/N4): "111 Serial Master Boot,
   110 Serial ISP, **011 FlexSPI A**". The `DSP_UPDATE` signal (through Q2010/Q2006) selects "L: Normal (FlexSPI) / H: Update (Serial ISP)". **[fact]**
-  So in normal operation the code runs from the QSPI flash. For an update, the RT685 ROM serial ISP is used (UART on FC0) **[inference]**.
+  So in normal operation the code runs from the QSPI flash. For an update, the RT685 ROM serial ISP is used (UART on FC0): DISPLAY sends NXP
+  bootloader packets that MAIN relays over SCI4 while it drives `DSP_UPDATE`/`DSP_RESET` (P72/P71) **[fact for the DISPLAY side, inference for
+  MAIN]** ([code/display/update.md](code/display/update.md#7-ifdsp-update-rt685-rom-isp-through-main)).
+- Flash config (FCFB at 0x08000400 in the IFDSP image) **[fact]**: serial NOR, quad pads, `serialClkFreq` 7 (120 MHz **[inference]**), 16 MB,
+  256 B pages, 4 KB sectors, 64 KB blocks; LUT read `0xEB` (quad I/O, 6 dummy cycles), status 0x05, WREN 0x06, erase 0x20/0xD8/0x60,
+  program 0x02. This matches the W25Q128JV. The firmware has no FlexSPI program/erase code ([code/ifdsp/m33-platform.md](code/ifdsp/m33-platform.md)).
 - Clock: `DSP_CLK` from the SDR module (J2002 pin 22) into PIO2_30/CLKIN (p19). The X2002 crystal footprint is marked "***" and
   does not appear in the parts list (p46), so it is not fitted **[fact/inference]**.
 - Flexcomm assignment (printed on p19): **FC0: UART** (`DSP_UMISO/DSP_UMOSI`, also brought out to J2009),
@@ -106,7 +124,9 @@ registers: p56–57, p74).
 - USB1 pins go only to test points TP2069–2072 (p19).
 - **Debug header J2009, "DSP_JTAG"** (P1091201, 8-pin, p35, p19): 1 RESETn (`JTAG_RESET`), 2 SWO, 3 SWCLK, 4 SWDIO,
   5 UART TX (`JLINK_OUT`), 6 UART RX (`DSP_UMISO`), 7 VCC 3.3 V OUT, 8 GND. This is **ARM SWD + UART** (J-Link). **[fact]**
-- Test points: TP2005, TP2017–2021, TP2030, TP2043–2048, TP2074 (p19).
+- Test points: TP2005, TP2017–2021, TP2030, TP2043–2048, TP2074 (p19). The firmware sets **PIO2_4/5/6** (`SCT0_OUT2/OUT3/GPI4` →
+  TP2007/2008/2009, marked "for DEBUG") and **PIO0_28/29/31** (→ TP2043/2046/2044) as GPIO outputs, low. PIO2_5 goes high when the M33
+  `CommandTask` starts **[fact: code]**. Full pin table: [code/ifdsp/m33-platform.md](code/ifdsp/m33-platform.md).
 
 ### SDR module (image SR)
 - Shown only as the "SDR MODULE" box on the block diagram, containing "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6). The module's parts are **not in the
@@ -120,7 +140,15 @@ registers: p56–57, p74).
   `FRM_CLK/FRM/DAT` ("FFT/FRM" data), `FADC0/1`, `FSK_SHIFT`, `SEND_A`, `TX`, plus JTAG `SDR_TDI/TDO/TMS/TCK/VDD`.
 - **JTAG header J2001, "SDR JTAG"** (P1091255, 6-pin 06FLT-SM2, p35, p19): 1 GND, 2 VDD, 3 TCK, 4 TDO, 5 TMS, 6 TDI. This is plain FPGA JTAG. **[fact]**
 - **FPGA identified (T08):** Xilinx Artix-7 **XC7A50T**: IDCODE 0x0362C093 in the bitstream, and the length matches the 7A35T/50T die **[fact]**. The bitstream sets BSPI 0x26B, so the FPGA **self-boots in master-SPI x4 mode from a QSPI flash on the module** (read opcode 0x6B) **[fact]**. The package and speed grade are not in the bitstream.
-- Update path (revised after T08): the SDR SPI bus (`SDR_SCLK/SS/MOSI/MISO`, P8_3..P8_6) is on the **DISPLAY** CPU, and DISPLAY holds `sdrup`/`sdrspi`/`sdrchk` debug commands and the `FT-710_SDR_V` filename. So **DISPLAY most likely writes the module's config flash over SPI, while MAIN drives `SDR_UPDATE`/`SDR_RESET` (p17)** **[inference, medium]**. To be confirmed in T06/T11.
+- J2002 pin map (all 60 pins, read from p19) and what it implies: [code/sdr/interfaces.md](code/sdr/interfaces.md#j2002-pin-map) (T13).
+  The DISPLAY's `SDR_SCLK/SS/MOSI` land on the module's `FFT_CLK/FRM/DAT` pins (FPGA fabric), and `SDR_UPDATE` goes to the module pin labelled
+  `WP` (pin 53) **[fact]**.
+- **Update path (resolved by T10c/T11c/T11d):** DISPLAY sends the SDR image in 4 KiB blocks over **RSPI2 switched to master mode** on the
+  FFT pins P8_3..P8_6 (`sdr_spi_master_write`), while **MAIN bridges the register frames** (flash address regs 0x30/0x31, command 0x32,
+  CRC-16 0x33) between DISPLAY (SCI1) and the FPGA (SCI5) **[fact: code]**. MAIN holds `SDR_UPDATE` (P76) **low** during the update and pulses
+  `SDR_RESET` (P77) with `SDR_UPDATE` high at the end. So the module pin `WP` acts as an "update mode" input to the FPGA rather than a plain
+  flash write-protect, and the FPGA fabric writes its own config flash **[inference]**. Details: [code/main/sdr-link.md](code/main/sdr-link.md),
+  [code/display/update.md](code/display/update.md#8-sdr-update-fpga-registers-through-main-data-over-the-sdr-spi).
 
 ### USB / CAT path (MAIN, AF sheet p20)
 - J2602: USB **Type-B** jack (SUB-110HB-B2N, p35) → Q2607 **Cypress/Infineon CY7C65631-56LTXIT** USB 2.0 4-port hub (HX2VL),
@@ -156,19 +184,36 @@ registers: p56–57, p74).
   **RZ/A1 boot mode 1, serial flash boot**, which maps the flash at 0x18000000 **[inference/guess]**.
 - Clocks: X6001 **48 MHz** on USB_X1/X2 (also the CPU clock source in clock mode MD_CLK=1), X6002 **27 MHz** on VIDEO_X1/X2,
   X6003 **32.768 kHz** for the RTC, X6004 **12 MHz** for the FT4222H (p71, p62). EXTAL is not connected (p62). **[fact]**
+  `AUDIO_X1` and `RTC_X1` of the RZ/A1H are grounded, so the on-chip audio clock and RTC are not used (the S-35190A is the RTC) (p62) **[fact]**.
 - Peripherals: Q6015 **ABLIC S-35190A** RTC (3-wire `RTC_DT/CK/CS` on P1_0..P1_2) with BT6001 ML614 lithium cell. Q6008 **TI TSC2003**
   touch-screen controller (I2C `TSCL/TSDA`, `TINT` on P1_3..P1_5). Q6010 MP3301 backlight driver. SD card (`SD_*` on P11_x, the SDHI) and
   rotary encoders/keys (p62, p67). The TFT is driven over the parallel RGB pins (R/G/B on P3/P4). LVDS output goes to the MAIN DVI chain (p62).
+- **Other DISPLAY nets** (p62, with the firmware's pin set-up; full table in
+  [code/display/peripherals.md](code/display/peripherals.md#2-pin-multiplexing), T11g) **[fact]**: P7_9 `RX_PWR_ON` / P7_11 `RZ_PWR_ON`
+  (power latch, driven high in `main`), P8_14 `5VON`, P7_12 `SDPWS` (SD power), P8_10 `USB0_EN`, P8_11/P8_13 `USB0_PG`/`USB1_PG`,
+  P8_12 `USB_DET`, P4_6 `LCD_STBY`, P4_7 `BLPWM`, P10_4 `LED_DIMR`, P10_14 `LCD_PWR_EN`, P3_4 `LCD_DEN`, P11_15 `LCD_CLK`,
+  P6_4..P6_14 the panel LEDs (`LED_D_*`, `LED_POWER`, `LED_TX`, ...), P5_8/P5_9 `DVR1`/`DVR0`, P5_0..P5_7 LVDS, P11_4..P11_11 SD card (**SDHI0**),
+  ADC AN0..AN4 on P1_8..P1_12.
+- **Front-panel input** (T11f, [code/display/input.md](code/display/input.md)) **[fact: code]**: a 4×4 key matrix with rows (`KDAT0..3`)
+  P7_13, P7_14, P7_15, P8_0 and scan columns (`KSCAN0..3`) P8_1, P8_2, P8_7, P8_8 (`KDAT4` on P8_9); direct keys P2_0 (power, IRQ5), P3_0,
+  P3_6, P8_15, P9_1, P10_5 (MIC PTT), P10_6; ADC AN0/AN1 = the two pots, AN3/AN4 = mic key ladders; encoders 1/2 on MTU2 ch1/ch2 (phase
+  counting), encoder 3 on IRQ4 with P3_3/P3_5. The TSC2003 touch controller is on **RIIC2**, slave **0x48**, pen IRQ `TINT` = IRQ3.
 - **Buses to the rest of the radio** (J6001, 30-pin, to MAIN J1009) (p62, p17):
-  - `SDR_SCLK/SS/MOSI/MISO` (RZ P8_3..P8_6): **SPI to the SDR module** (spectrum/scope data)
-  - `DSP_SCLK/SS/MOSI/MISO` (RZ P2_8..P2_11): **SPI to the RT685** (probably FC1, "FFT/REC/PLAY data")
-  - `DISP_UMOSI/UMISO` (RZ P6_6/P6_7): **UART to the RX651 SCI1**, the main command link and also the RX boot-mode programming link
+  - `SDR_SCLK/SS/MOSI/MISO` (RZ P8_3..P8_6): **SPI to the SDR module**. RSPI2, DISPLAY is the slave receiving the scope stream; it switches
+    to master only to send an SDR update ([code/display/spi-links.md](code/display/spi-links.md)) **[fact: code]**
+  - `DSP_SCLK/SS/MOSI/MISO` (RZ P2_8..P2_11): **SPI to the RT685** FC1 ("FFT/REC/PLAY data"). RSPI4, DISPLAY is the slave: AF-FFT plus
+    16 kHz stereo PCM for the voice recorder each way **[fact: code]**
+  - `DISP_UMOSI/UMISO` (RZ P6_6/P6_7): **UART to the RX651 SCI1** (SCIF5, 345600 8N2 by DISPLAY's clock), the main command link and also the
+    RX boot-mode programming link ([code/display/mainlink.md](code/display/mainlink.md))
   - `RX_UPDATE` (P4_3) and `RX_RESET` (P7_10): **control the MAIN CPU's boot mode and reset**
   - `PWR_SW`, `RX_PWR_ON`, `USB_DET`
   - `ACC_CLK/FS/MISO/MOSI/UMOSI/UMISO`: an accessory bus, unpopulated on the DISPLAY side (resistors marked "***")
 - **USB on DISPLAY**: Q6020 **FTDI FT4222HQ** (USB 2.0 → SPI/I2C/GPIO bridge, p67). Its USB comes from hub PORT3. Its SPI master pins
-  (`ACC_MOSI/MISO/SCLK`, `ACC_FS`) go to the RZ/A1H SPI on P2_12..P2_15, and the RZ drives `FT4222_RESET` (P2_7) (p62). So a PC can talk to the
-  display CPU over USB through SPI. The purpose (screen capture or remote display?) is **unknown** **[fact for the wiring, guess for the purpose]**.
+  (`ACC_MOSI/MISO/SCLK`, `ACC_FS`) go to the RZ/A1H SPI on P2_12..P2_15, and the RZ drives `FT4222_RESET` (P2_7) (p62) **[fact]**.
+  **Purpose (T11d):** RSPI0 with DISPLAY as the **slave** streams 4 KB SPI frames to the PC, each holding the SDR scope record (850 B), the
+  AF-FFT record (600 B) and a 151-byte status block from the MAIN link; PC → DISPLAY data is only parsed in a test mode. A MAIN-side setting
+  switches the bridge on through `FT4222_RESET` ([code/display/spi-links.md](code/display/spi-links.md#link-3-ft4222h-usb-to-spi-bridge-rspi0))
+  **[fact for the code]**. The PC software that reads it is not known.
   The RZ/A1H's own USB0/USB1 (`USB0_DP/DM`, `D+1/D-1`) also run through J6002 to the MAIN unit (p62). Where they end up is not resolved.
 - **JTAG header J6003** (P1091201, 8-pin, p66, p62): 1 3.3 V, 2 TMS, 3 TCK, 4 TDO, 5 TDI, 6 TRST, 7 nRZRST, 8 GND.
   This is plain ARM JTAG for the Cortex-A9 (`JT_*` nets on the RZ TCK/TMS/TDI/TDO/TRST pins). **[fact]**
@@ -192,11 +237,12 @@ registers: p56–57, p74).
 
  RZ/A1H (DISPLAY, PC image) ── UART ── RX651 SCI1 (MAIN, MC image)   + RX_UPDATE/RX_RESET (RZ flashes RX)
         │  SD card (firmware files)
-        ├── SPI ── SDR module (FPGA, SR image)
-        └── SPI ── RT685 FC1 (IF DSP, ID image)
+        ├── SPI (RSPI2) ── SDR module (FPGA, SR image): scope in; image out during an update
+        └── SPI (RSPI4) ── RT685 FC1 (IF DSP, ID image): AF-FFT + REC/PLAY PCM
 
- RX651 ── UART5 + SDR_UPDATE/RESET ── SDR module
- RX651 ── UART7 + SPI + C4_BOOT/RESET ── (probably) RT685 ("C4" bus)
+ RX651 ── SCI5 + SDR_UPDATE/RESET ── SDR module    (register frames; bridges DISPLAY during an SDR update)
+ RX651 ── SCI4 + DSP_UPDATE/RESET ── RT685 FC0     (console/register file; relays ISP during an IFDSP update)
+ RX651 ── SCI7 + SPI + C4_* ── "C4" bus (SCI7 never started in V01-12)
  SDR module ── I2S RX_IF / TX_AF + DSP_CLK ── RT685 ── I2S ── TLV320AIC3204 codec
  RX651 ── SPI ── BR25G256 EEPROM;  ── shift registers ── PA unit
 ```
@@ -228,7 +274,7 @@ Ghidra 12.1.4 as installed (Homebrew) ships **ARM, Xtensa**, M16C, SuperH, V850,
 ## Unresolved / not in the manual
 - The SDR module's FPGA, ADC and config-flash part numbers (the module is undocumented). The FPGA is now known: **XC7A50T** (T04/T08). The ADC and flash parts are still unknown.
 - Exactly which RZ/A1H boot-mode straps are fitted (BOOT0..2 resistors marked "***") (p62).
-- Pins 7 and 8 of J1005 (TP1029/TP1030).
-- The C4 bus endpoint: the mapping C4 = RT685 is an inference.
-- The purpose of the FT4222H USB-to-SPI link into the display CPU, and where the RZ USB0/USB1 lines finally go.
+- Pins 7 and 8 of J1004 (TP1029/TP1030).
+- The C4 bus endpoint: the mapping C4 = RT685 is an inference. The firmware does not use SCI7, and the DSP traffic goes over SCI4.
+- Where the RZ USB0/USB1 lines finally go. (The FT4222H purpose is resolved above, T11d.)
 - The exact flash/RAM sizes are decoded from part numbers, not printed in the manual.
