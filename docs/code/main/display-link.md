@@ -69,7 +69,7 @@ sequenceDiagram
   participant D as DISPLAY (SCIF5)
   participant M as MAIN displink_task
   Note over D,M: radio off: app_main loops displink_task + cat_parse
-  D->>M: F0 01 08 20 23 06 29 code sum (hello, every ~50 ms, up to 30x)
+  D->>M: F0 01 08 20 23 06 29 code sum (hello, every 5 ms = itron_dly_tsk(5), about one 10 ms tick, up to 30x)
   M->>D: 06 (ACK)
   Note over M: state+0x98 = 1 (link up), +0x36 = 1 (power on), 0x1B3D0 = 1
   M->>D: 60 (0xB6 bytes: MAIN/DISPLAY/DSP/SDR versions + status)
@@ -104,9 +104,9 @@ stateDiagram-v2
   Idle --> AckWait: a data frame was sent (0x1B3D5)
   AckWait --> AckWait: send our own ACK/NAK if pending
   AckWait --> Poll: timer 0x3C, 30 units
-  Poll --> Sending: nothing outstanding: next frame from scheduler
-  Poll --> Sending: outstanding and retries < 4: resend (displink_tx_resend)
-  Poll --> Idle: outstanding and 3 retries done: drop; if it was the hello, link down (+0x98 = 0)
+  Poll --> Sending: nothing outstanding, next frame from scheduler
+  Poll --> Sending: outstanding and retries < 4, resend (displink_tx_resend)
+  Poll --> Idle: outstanding and 3 retries done, drop, if it was the hello, link down (+0x98 = 0)
 ```
 
 - 0x1B3D2 = TX busy, 0x1B3D3 = inter-frame gap running, 0x1B3D4/0x1B3D5 = ACK-wait window, 0x1B3CC = send ACK, 0x1B3CD = send NAK,
@@ -126,8 +126,8 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xF0 | 10 | `displink_rx_F0_hello` 0xFFF9546A | b1,b2 → DISPLAY version string `"Vxx-yy"`, b4..b6 → date `"yy-mm-dd"` (stored by 0xFFF94BFD/0xFFF94C1B, read back by `ver_display`), b3 unused (DISPLAY sends 0x20), **b7 = boot code**. Sets link up (+0x98), power on (+0x36), hello reply pending. Boot codes: see below **[fact]** | ACK, then `0x60` |
 | 0xF1 | 8 | `displink_rx_F1_sys` 0xFFF957E6 | b1 = sub-command: 0x01 enter SDR bridge (0x1C8D), 0x02 enter DSP ISP tunnel (0x1C63), 0x03 **disable CAT** (0x20B46 = 1), 0x83 no-op; others → NAK. 0x81 / 0x82 leave the SDR / DSP tunnel (handled inside the tunnel loops) **[fact]** | ACK (0x03, 0x83), none for 0x01/0x02 (the tunnel loop ACKs), NAK otherwise |
 | 0xE0 | 6 | `displink_rx_E0_key` 0xFFF95829 | **key / touch event**: b1 = source (high nibble) and action (low nibble), b2..b3 = key code (big-endian). Passed through `key_event_filter`, then queued at +0x9C..+0xA0 for `key_task` ([ui-keys.md](ui-keys.md)) **[fact]** | ACK (always) |
-| 0xE1 | 7 | `displink_rx_E1_encoder` 0xFFF9588B | **encoder step**: b1 = encoder id, b2 = signed step count ([ui-keys.md](ui-keys.md#encoders)); ignored while +0x80 = 1 **[fact]** | ACK |
-| 0xE2 | 7 | `displink_rx_E2` 0xFFF95BF4 | b1 ≠ 0 → +0xA6 = 1 (first frame also sets +0xA7 and +0xA5). Read by 0xFFFCFxxx/0xFFFD3xxx UI code; meaning unknown **[fact for the fields]** | ACK |
+| 0xE1 | 7 | `displink_rx_E1_encoder` 0xFFF9588B | **encoder step**: b1 = encoder id, b2 = signed step count ([ui-keys.md](ui-keys.md#encoders-e1)); ignored while +0x80 = 1 **[fact]** | ACK |
+| 0xE2 | 7 | `displink_rx_E2` 0xFFF95BF4 | b1 ≠ 0 → +0xA6 = 1 (first frame also sets +0xA7 and +0xA5). Read by 0xFFFCFxxx/0xFFFD3xxx UI code **[fact for the fields]**. **SD-card state**: the DISPLAY sender is `mainlink_send_sd_state` **[inference, T14]** | ACK |
 | 0xE3 | 9 | `displink_rx_E3_clock` 0xFFF95ED3 | b1..b5 → +0xAD..+0xB1. **Date/time from the DISPLAY RTC** **[inference]**: the clock-set code (0xFFFCD7xx, 0xFFFCDBB8) copies these to +0xB2..+0xB6 and forces fields 2 and 3 (month, day) to ≥ 1, and `0x65` sends +0xB2..+0xB6 back. No APO reset (periodic) | ACK |
 | 0xE4 | 5 | `displink_rx_E4` 0xFFF95C6A | clears +0x82: the DISPLAY's answer to `0x7B` **[fact]** | ACK |
 | 0xE5 | 5 | `displink_rx_E5` 0xFFF95C74 | clears +0x80 (unblocks the scheduler and encoders) **[fact]** | ACK |
@@ -150,7 +150,7 @@ code 6 from `FUN_2011668c` **[fact, DISPLAY side]**. MAIN acts on them in `displ
 | 0x02 | +0xBA = 1, `FUN_fffbb567` | a maintenance screen that makes the scheduler send `0x62`/`0x30`/`0x31` **[fact; purpose unknown]** |
 | 0x04 | +0x437 = 1, +0x34 = 0 | a numeric-entry/adjust mode: encoders 2/3/4/5 and the main dial go to the 0x25D3C counter (0..99,999,999) **[fact; purpose guess: service/alignment entry]** |
 | 0x05 | toggles 0x4760; on the second toggle 0x9A36 is limited to ≤ 4 | unknown **[fact]** |
-| 0x06 | link down (+0x98 = 0), no power on | the DISPLAY is going down (sent before its own reset/update) **[inference]** |
+| 0x06 | link down (+0x98 = 0), no power on | the DISPLAY is in its maintenance/loader screen (boot combination 6, `mainlink_hello_key6` from `logo_fade_in`), or this is the first hello after a MAIN update **[fact for the DISPLAY call path, T14]** |
 | 0x07 | swaps the destination code: 0xA983 / 0xB5A7 → 0xD950, 0xD950 / 0xA4C5 → 0xA983 (`dest_code_set`, which also resets settings and restarts) | **region change** at power-on **[fact for the values]** |
 | 0x10 | power on only if 0x9DC5 ≠ 0 | 0x9DC5 is set by `PS1;`, by a low-voltage power-down and by the `0x7F` power frame, so a DISPLAY restart only powers the radio up if it was on **[inference]** |
 
@@ -181,7 +181,7 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 | 18 | 0x3A | 0xA2 | +0x93 | 0xFFF9A8E3 / 0xFFF9A925 | |
 | 19 | 0x39 | 0xE9 | +0x94 | 0xFFF9B69E / 0xFFF9B6C8 | |
 | 20 | 0x3F | 5 | +0x91 | 0xFFF9A89B | b1 = +0x92 **[fact]** |
-| 21 | 0x40 | 0x1FB | +0x95, at most every 100 units (timer 0x29) | 0xFFF9AAAD / 0xFFF9AAF7 | the only rate-limited frame; probably the scope/waterfall or meter data **[guess]** |
+| 21 | 0x40 | 0x1FB | +0x95, at most every 100 units (timer 0x29) | 0xFFF9AAAD / 0xFFF9AAF7 | the only rate-limited frame. Status + menu list (five 0x2D-byte text slots, also the "FIRMWARE UPDATE" entry) **[fact on the DISPLAY side, display/mainlink.md]**; the scope does not use this link ([system.md §6.4](../system.md#64-scope-and-waterfall-data)) |
 | 22 | 0x37 | 0x240 | +0x96 | 0xFFF9AB2A / 0xFFF9AB57 | the largest frame **[fact]** |
 | 23 | 0x41 | 0x146 | +0x97 | 0xFFF9BB23 / 0xFFF9BB50 | |
 | 24 | 0x20 | 0x99 | default | `displink_tx_20_status` 0xFFF9C42A / 0xFFF9C454 → `displink_build_status` | the main status block: VFO A/B record (0x9D09 or 0x9D63 by 0x9DBD), mode, etc. Sent only when changed **[fact]** |

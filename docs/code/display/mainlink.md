@@ -16,7 +16,7 @@ copy of the project to check them: 13 entries created, 1 late start fixed, 110 n
   byte through a 43-entry table (0x20450074). `sum8` is the 8-bit sum of `cmd` and the payload. ACK (0x06), NAK (0x15) and ESC (0x1B) are
   single bytes with no checksum. The 0xAA "marker" is only a tag in the in-memory buffer header (`buf+4`). It is never transmitted:
   `task_mainlink_tx` writes from `buf+8`.
-- **Line [fact]:** 345600 baud, 8 data bits, no parity, 2 stop bits on both sides. DISPLAY: `scif_open(0x54600, 8, 0, 2)`, SCBRR 0x16 with SEMR
+- **Line [fact]:** 345600 baud nominal, 8 data bits, no parity, 2 stop bits. MAIN's SCI1 setting gives 340 909 bit/s, 1.4 % below nominal, which is within UART tolerance **[inference]** ([system.md C1](../system.md#8-contradictions-and-open-questions)). DISPLAY: `scif_open(0x54600, 8, 0, 2)`, SCBRR 0x16 with SEMR
   0x81. MAIN: `R_SCI1_Create` 0xFFF9354E sets SMR 0x08 (STOP = 1) and BRR 10.
 - **Every table frame is acknowledged [fact].** Each side sends one frame and waits for 0x06 before it sends the next. The DISPLAY retries 3
   times. If all 3 fail it either shows an error box or resets MAIN and then itself through the watchdog.
@@ -173,12 +173,12 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 | 0xE3 | 7 | `mainlink_send_rtc` 0x20121D90 | `FUN_fff95ed3` (+0xAD..+0xB1) | **RTC date/time** (S-35190A read), when the minute changes |
 | 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `FUN_201217b0` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
 | 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
-| 0xE6 | 3 | `mainlink_send_e6` 0x20121830 | `FUN_fff95c8a` → `FUN_fffb2da6(1..3)` | 3-way selection **[unknown]** |
+| 0xE6 | 3 | `mainlink_send_e6` 0x20121830 | `FUN_fff95c8a` → `FUN_fffb2da6(1..3)` | **beep request**: MAIN calls `beep_request`(1..3) **[inference from the MAIN handler]** |
 | 0xE7 / 0xE8 | 8 | `FUN_20124744`, `FUN_20124848`, `FUN_201248a4`, `FUN_20124adc`, `FUN_20124bc0` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **SD-card file operation status** (sub 0 / 1 / 0xFF + result) **[inference]**, from the SD menu code |
 | 0xC3 | 0x21 | `FUN_20134978`..`FUN_20134a08`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | 0x21-byte settings/name record **[guess]** |
 | 0xC4 | 0x105 | `mainlink_rx_block_read` | `FUN_fff95e97` | reply to 'D': `id, off, len, data` |
 | 0xC5 | 5 | `mainlink_rx_block_write` | `FUN_fff95e97` | reply to 'E': `id, off, len` |
-| 0xF0 | 8 | `mainlink_send_hello` 0x201162A4 | `FUN_fff9546a` | **Hello**: `01 08` (version V01-08), `20 23 06 29` (date), key code at power-up. MAIN stores the version/date text and answers with 0x60. Key code 1 = `settings_defaults(0)` (**reset**), 7 = `dest_code_set` (swap destination code), 2 = start 0x62 page, 4/5 = other start modes, 6 = normal **[fact for the MAIN branches]** |
+| 0xF0 | 8 | `mainlink_send_hello` 0x201162A4 | `FUN_fff9546a` | **Hello**: `01 08` (version V01-08), `20 23 06 29` (date), key code at power-up. MAIN stores the version/date text and answers with 0x60. Key code 1 = `settings_defaults(0)` (**reset**), 7 = `dest_code_set` (swap destination code), 2 = start 0x62 page, 4/5 = other start modes, 6 = sent only by `mainlink_hello_key6` 0x2011668C from `logo_fade_in` (boot combination 6, maintenance/loader screen) and by the MAIN-update writer to the new MAIN; MAIN then marks the link down and stays off **[fact for the call path; T14]** |
 | 0xF1 | 6 | update code (`0x2010dcbc…` / `0x201090a0…` files, T11c). `mainlink_send_f1` has no caller | `FUN_fff957e6`: sub 1 → `FUN_fffa1576`, 2 → `FUN_fff9d94d`, 3, 0x83 | **Bridge / update control**: switches MAIN into the 'Z'-frame tunnel used to update other CPUs (MAIN `FUN_fffa0c79`, ended by F1 82) **[inference]** |
 | 0xFA | 1 | none found | none (MAIN `FUN_fff95277` has no 0xFA, so a frame would be NAKed) | **[unknown]**, unused |
 | 0xB3 | 0 | `FUN_20131638` (cmd + sum only) | in `FUN_fff95331` (`FUN_fff95ec9`) but `FUN_fff95277` returns length 0 → NAK | not in the DISPLAY table. Probably dead in this firmware pair **[inference]** |

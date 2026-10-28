@@ -548,6 +548,7 @@ spectrum data goes FPGA → DISPLAY directly **[fact]**. The SDR frame rate is n
 ## 8. Contradictions and open questions
 
 "Status" says whether this page settled the point, and how. Points still open name the task or the evidence that would settle them.
+The page fixes proposed for C1, C2, C3, C5, C8 and C10–C13, and the C9 note in ifdsp/hifi4.md, have been applied to the pages named in each row (T14).
 
 | # | Topic | What the pages say | Status / resolution |
 |---|---|---|---|

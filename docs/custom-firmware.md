@@ -16,7 +16,7 @@ header, and free toolchains exist for every core except the HiFi4 DSP.
 
 | Image | CPU / device | Signed / encrypted? | Protection | Recovery / debug path | Free toolchain |
 |---|---|---|---|---|---|
-| MAIN (`MC`) | Renesas RX651 | No: SFL obfuscation + salted CRC-32 only [fact, T04] | ID-code protection off: the option-setting memory written by the update (0xFE7F5D00, 116 bytes) is all `0xFF` [fact] | J1004 "RX-CPU DEBUG" (hardware.md says J1005, see below): FINE (E1/E2) + SCI1 serial boot mode [fact for the pins, inference for use; T02, T16] | GCC for RX, LLVM |
+| MAIN (`MC`) | Renesas RX651 | No: SFL obfuscation + salted CRC-32 only [fact, T04] | ID-code protection off: the option-setting memory written by the update (0xFE7F5D00, 116 bytes) is all `0xFF` [fact] | J1004 "RX-CPU DEBUG": FINE (E1/E2) + SCI1 serial boot mode [fact for the pins, inference for use; T02, T16] | GCC for RX, LLVM |
 | DISPLAY (`PC`) | Renesas RZ/A1H (Cortex-A9) | No [fact, T04/T06] | No secure boot on this part; dual-bank boot loader [fact, T06] | J6003 ARM JTAG [fact, T02] | `arm-none-eabi-gcc` |
 | IFDSP (`ID`) | NXP i.MX RT685 (Cortex-M33 + HiFi4) | No: plain image boots from FlexSPI QSPI [fact, T07] | RT685 signed/encrypted boot is set by its OTP fuses, which can't be seen from the image; the plain image suggests it is off [inference] | J2009 SWD + UART (J-Link) [fact]; RT685 ROM serial ISP selected by `DSP_UPDATE` [fact for the strap, inference for use; T02] | `arm-none-eabi-gcc` for the M33; **HiFi4: none** (see below) |
 | SDR (`SR`) | Xilinx Artix-7 XC7A50T | No: uncompressed, unencrypted Vivado `.bin` behind a CRC-32/BZIP2 header [fact, T08] | No bitstream encryption configured [fact, T08] | J2001 FPGA JTAG [fact, T02]: a JTAG load is volatile and never touches the config flash | Vivado (free edition supports XC7A50T); openXC7 / F4PGA |
@@ -41,12 +41,12 @@ flowchart LR
 
 - **MAIN** is reflashed by DISPLAY through the Renesas serial boot mode over SCI1, using `RX_UPDATE`/`RX_RESET`
   [inference, high; T02, `update_main_cpu` 0x2010EA90, T11].
-- **DISPLAY** updates itself by writing bank 1 at 0x18400000 (`display_flash_write_bank` 0x2015F1F0) and picks the bank at
+- **DISPLAY** updates itself by writing the other bank (running bank 1 → bank 2 at 0x18A00000, else bank 1 at 0x18400000; `display_flash_write_bank` 0x2015F1F0, display/update.md §6) and picks the bank at
   boot (`boot_select_bank` 0x20100ABC) [fact, T06]. `loader_selfinstall` 0x20110F0C rewrites the loader region
   (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11].
 - **IFDSP** update: `dsp_isp_program` (`FUN_2010b81c`) on DISPLAY sends `F1 02` to MAIN, then NXP MCU-bootloader packets
-  wrapped in `5A LEN16 payload SUM8` relay frames; MAIN sets `DSP_UPDATE` and forwards them to the RT685 ROM ISP
-  [fact for DISPLAY, inference for MAIN; T11c, `docs/code/display/update.md` section 7]. (`update_dsp` 0x2010D92C is a dead
+  wrapped in `5A LEN16 payload SUM8` relay frames; MAIN (`dsp_isp_bridge` 0xFFFA0C79) sets `DSP_UPDATE` and forwards them to the RT685 ROM ISP
+  [fact for both sides, main/dsp-link.md; T11c, `docs/code/display/update.md` section 7]. (`update_dsp` 0x2010D92C is a dead
   debug path.)
 - **SDR** [fact for the DISPLAY side, T11c section 8; MAIN side T10c]: DISPLAY sends `F1 01` to MAIN, and MAIN starts its
   SDR bridge (DSP_RESET low, **`SDR_UPDATE` low**, reg 0x37 = 0xBCC5) and relays DISPLAY's `FD 00` / `FE 00` register frames

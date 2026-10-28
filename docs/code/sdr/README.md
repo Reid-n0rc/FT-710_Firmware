@@ -31,8 +31,9 @@ prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
   ([bram-tables.md](bram-tables.md))
 - I/O: about 9 LVDS input pairs (ADC) and 9 LVDS output pairs (DAC?) plus ~66 single-ended pins **[inference]**.
 - J2002: the DISPLAY's SDR SPI goes to the module's **FFT/scope data port**, and MAIN's `SDR_UPDATE` drives the module
-  pin labelled **WP** (flash write-protect) **[fact, p19]**; so the FPGA most likely reprograms its own config flash
-  during an update **[inference]**. ([interfaces.md](interfaces.md))
+  pin labelled **WP** **[fact, p19]**. MAIN holds it **low** during an update ([main/sdr-link.md](../main/sdr-link.md#gpios)), so it acts as an
+  update-mode input to the FPGA rather than a plain flash write-protect, and the FPGA most likely reprograms its own config flash
+  **[inference]**. ([interfaces.md](interfaces.md))
 
 ## Block diagram
 
@@ -78,7 +79,7 @@ sequenceDiagram
   F->>F: IDCODE check 0x0362C093, 5,420 frames, CRC ok [fact]
   F->>F: startup: GTS/GWE/DONE cycles 4/5/3 (COR0) [fact]
   F-->>R: DSP_CLK, I2S RX_IF, scope SPI [inference]
-  M->>F: UART5: version query, settings [inference]
+  M->>F: UART5: MAIN reads reg 0 and reg 1 after a 1 s wait, then settings [fact, main/sdr-link.md]
 ```
 
 For the update sequence (SD card to flash) see [interfaces.md](interfaces.md#configuration-and-update-sequence).
