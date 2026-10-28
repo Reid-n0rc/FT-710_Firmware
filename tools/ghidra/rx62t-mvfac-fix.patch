@@ -1,0 +1,54 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -47,6 +47,7 @@
+    cr0_4     = (0,3)
+ 
+    adest7_1  = (7,7)
++   acci6_1   = (6,6)
+ 
+    mi6_2     = (6,7)
+    li2_2     = (2,3)
+@@ -1407,10 +1408,39 @@
+ ## MULHI
+ ## MULLH
+ ## MULLO
+-## MVFACGU
+-## MVFACHI
+-## MVFACLO
+-## MVFACMI
++## MVFACGU (not modelled: the module's ACC is 64 bits, without the RXv2 guard bits 71..64)
++## MVFACHI/MVFACMI/MVFACLO #imm, A0, Rd (RXv2). T21h fix: no constructor existed, so MAIN's 0xFFF9129B (FD 1F 02) and
++## 0xFFF912AE (FD 1F 22) did not decode. R01US0071EJ0100 pp. 135-137 (operation) and 265-266 (instruction code):
++##   FD | 0001 111 i1 | a i0 op rd     imm = i1:i0: 10 = #0, 11 = #1, 00 = #2, 01 reserved; op 00 HI, 01 LO, 10 MI (11 GU)
++##   tmp = (signed 72-bit) Asrc << imm; HI: Rd = tmp[63:32], MI: Rd = tmp[47:16], LO: Rd = tmp[31:0].
++## With imm <= 2 these bits come from ACC bits 63..0 only, so the 64-bit ACC gives the exact result. A1 (a = 1) is not
++## decoded, as for MVTACHI/MVTACLO (adest7_1 attaches only ACC).
++:MVFACHI "#"^acci6_1, adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 1; adest7_1 & acci6_1 & sz4_2 = 0 & reg0_4 {
++    local t:8 = adest7_1 << acci6_1;
++    reg0_4 = t(4);
++}
++:MVFACHI "#2", adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 0; adest7_1 & acci6_1 = 0 & sz4_2 = 0 & reg0_4 {
++    local t:8 = adest7_1 << 2;
++    reg0_4 = t(4);
++}
++:MVFACMI "#"^acci6_1, adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 1; adest7_1 & acci6_1 & sz4_2 = 2 & reg0_4 {
++    local t:8 = adest7_1 << acci6_1;
++    local u:8 = t >> 16;
++    reg0_4 = u:4;
++}
++:MVFACMI "#2", adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 0; adest7_1 & acci6_1 = 0 & sz4_2 = 2 & reg0_4 {
++    local t:8 = adest7_1 << 2;
++    local u:8 = t >> 16;
++    reg0_4 = u:4;
++}
++:MVFACLO "#"^acci6_1, adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 1; adest7_1 & acci6_1 & sz4_2 = 1 & reg0_4 {
++    local t:8 = adest7_1 << acci6_1;
++    reg0_4 = t:4;
++}
++:MVFACLO "#2", adest7_1, reg0_4    is op0_8 = 0xFD; op1_7 = 0x0F & op0_1 = 0; adest7_1 & acci6_1 = 0 & sz4_2 = 1 & reg0_4 {
++    local t:8 = adest7_1 << 2;
++    reg0_4 = t:4;
++}
+ 
+ 
+ ## MVFC - transfer from control register
