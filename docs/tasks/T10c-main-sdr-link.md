@@ -26,7 +26,7 @@ SCI5 command/reply protocol to the FPGA (`sdr_send_cmd` 0xFFFB1B2B, 7-byte repli
    proposed edits for `docs/code/sdr/interfaces.md` / `docs/hardware.md` / `cat-commands.md`.
 
 ## Findings
-Page: [docs/code/main/sdr-link.md](../code/main/sdr-link.md). Names: `tools/ghidra/names_main.T10c.tsv` (59 proposals).
+Page: [docs/code/main/sdr-link.md](../code/main/sdr-link.md). Names: `tools/ghidra/names_main.T10c.tsv` (55 proposals).
 - SCI5 = 8N1, BRR 0x40, SEMR 0x50 → 115200 baud at PCLKB 60 MHz (PCLKB derived from the SCI0 baud table) [fact/inference].
 - Frames: `r`+4hex+sum+CR / `w`+4hex+4hex+sum+CR (sum8 of ASCII bytes, 2 hex); 7-byte reply, write ACK = 0x06, read =
   x + 4 hex + 2-hex sum; timeout timer 2 = 6 ms (`FUN_fffa30f9`, `FUN_fffa3083`, `FUN_fffa2ff7`) [fact].
