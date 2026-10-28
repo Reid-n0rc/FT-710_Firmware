@@ -193,7 +193,10 @@ Follow a signal from the antenna to your ears:
    clock into the module, which is divided by 2: the FPGA, and most likely the ADC, run at 125 MHz. The ADC's part number is not in the service manual, so its exact sample
    rate is not proven yet. The service manual's module box reads "Operating clock 125MHz, Divide 250MHz
    by 2", and MAIN treats 62.5 MHz (half of 125) as a boundary: it flips an FPGA control bit there and mirrors the scope frequency about
-   it. So **125 million samples per second is the most likely rate** *(inference, strong)*. Signals above 62.5 MHz (for example the
+   it. So **125 million samples per second is the most likely rate** *(inference, strong)*. An independent test report by DC4KU adds that
+   the ADC is a **dual-channel 14-bit** converter, the same one as in the FT-DX10. The FPGA combines its two channels so that the
+   receiver overloads later, and dither goes into both inputs. Two channels sharing the data wires, one on each clock edge, explain the
+   wiring that had looked like a single faster ADC. Signals above 62.5 MHz (for example the
    70 MHz band) are then received "folded" from the second Nyquist zone, and the 56–75 MHz band-pass filter keeps out their mirror image.
 3. **FPGA "tuner".** The FPGA multiplies the samples with a digital oscillator ([NCO](#glossary)) set to your frequency. That moves the
    wanted signal down to near zero, where a bank of filters cuts out a narrow slice and drops the sample rate. This is the classic

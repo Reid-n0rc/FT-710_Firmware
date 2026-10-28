@@ -43,7 +43,7 @@ prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
 ```mermaid
 flowchart LR
   subgraph MOD["SDR module"]
-    ADC["ADC (unknown part)<br/>likely 125 MSPS, see system.md O7"]
+    ADC["ADC (unknown part)<br/>dual 14-bit, likely 125 MSPS (O7)"]
     Q["QSPI config flash<br/>WP = SDR_UPDATE"]
     subgraph F["XC7A50T"]
       DDC["RX DDC<br/>NCO + FIR bank<br/>DSP48 x ~119"]

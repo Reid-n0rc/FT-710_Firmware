@@ -67,7 +67,7 @@ marked "?" were hard to read at the scan resolution.
 
 ```mermaid
 flowchart LR
-  RF["J3003 RX_P/N, TX1_P/N<br/>DITHER, SCOPE_IN"] --> ADC["ADC<br/>(part unknown, likely 125 MSPS)"]
+  RF["J3003 RX_P/N, TX1_P/N<br/>DITHER, SCOPE_IN"] --> ADC["ADC<br/>(dual 14-bit, part unknown,<br/>likely 125 MSPS)"]
   ADC -- "16 LVDS pairs (bank 35) [inference]" --> FPGA
   subgraph FPGA["XC7A50T (SDR image)"]
     DDC["DDC: NCO cos table<br/>+ FIR bank, 119 DSP48"]

@@ -146,8 +146,11 @@ registers: p56–57, p74).
   likely** **[inference, strong]**: the module box reads "Operating clock 125MHz, Divide 250MHz by 2" (p6), and MAIN treats **62.5 MHz =
   fs/2** as a boundary (SDR reg 0x03 bit 5 flips there; the TX scope centre is mirrored about 62.5 MHz, [code/main/sdr-link.md](code/main/sdr-link.md)).
   Above 62.5 MHz the receiver then works in the **second Nyquist zone**; the 56–75 MHz BPF rejects the image of the 70 MHz band
-  (125 − 70 = 55 MHz) **[inference]**. Not yet a fact: "operating clock" may describe only the FPGA, and the 14 DDR-captured LVDS pairs
-  would also fit 250 MSPS. The ADC's marking settles it.
+  (125 − 70 = 55 MHz) **[inference]**. **DC4KU's test report** (`Manuals/FT-710_Test-Report_DC4KU_english.pdf`, p1) says the ADC is a
+  **dual-channel 14-bit** part, "the same twin ADC as in the FT-DX10", and that the FPGA combines the two channels so that overload
+  comes late, with dither fed into both inputs **[fact: third-party report]**. That explains the 14 DDR-captured LVDS pairs as two
+  14-bit channels multiplexed on the two clock edges (channel A on one edge, B on the other) at 125 MSPS each **[inference, strong]**,
+  which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),
