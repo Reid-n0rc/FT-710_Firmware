@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>DISPLAY tasks under the NORTi kernel, grouped by job, with priorities</title>
+  <rect width="960" height="720" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">DISPLAY: about 32 tasks under a real-time kernel</text>
+  <rect x="15" y="56" width="300" height="270" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="27" y="80" font-size="15" font-weight="bold">Start-up, power, screen</text>
+  <rect x="25" y="94" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="113" font-size="14">root: start-up, then GUI (33 ms)</text>
+  <circle cx="291" cy="108" r="11" fill="#16A34A"/>
+  <text x="291" y="113" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">8</text>
+  <rect x="25" y="128" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="147" font-size="14">powon: power key edges</text>
+  <circle cx="291" cy="142" r="11" fill="#16A34A"/>
+  <text x="291" y="147" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <rect x="25" y="162" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="181" font-size="14">audio_codec: WAV rec/play</text>
+  <circle cx="291" cy="176" r="11" fill="#16A34A"/>
+  <text x="291" y="181" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="25" y="196" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="215" font-size="14">sdTask: SD card driver</text>
+  <rect x="25" y="230" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="249" font-size="14">USB host tasks (udevtsk)</text>
+  <rect x="330" y="56" width="300" height="270" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="342" y="80" font-size="15" font-weight="bold">Link to MAIN (UART)</text>
+  <rect x="340" y="94" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="113" font-size="14">rx: bytes → frames</text>
+  <circle cx="606" cy="108" r="11" fill="#16A34A"/>
+  <text x="606" y="113" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <rect x="340" y="128" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="147" font-size="14">dispatch: act on frames</text>
+  <circle cx="606" cy="142" r="11" fill="#16A34A"/>
+  <text x="606" y="147" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">4</text>
+  <rect x="340" y="162" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="181" font-size="14">tx: frames → wire</text>
+  <circle cx="606" cy="176" r="11" fill="#16A34A"/>
+  <text x="606" y="181" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">4</text>
+  <rect x="340" y="196" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="215" font-size="14">retry: resend on timeout</text>
+  <circle cx="606" cy="210" r="11" fill="#16A34A"/>
+  <text x="606" y="215" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">4</text>
+  <rect x="340" y="230" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="249" font-size="14">cmd_interval: 1 ms pacing</text>
+  <circle cx="606" cy="244" r="11" fill="#16A34A"/>
+  <text x="606" y="249" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <rect x="340" y="264" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="350" y="283" font-size="14">uart: owner, opens port</text>
+  <circle cx="606" cy="278" r="11" fill="#16A34A"/>
+  <text x="606" y="283" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">7</text>
+  <rect x="645" y="56" width="300" height="270" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="657" y="80" font-size="15" font-weight="bold">Front-panel input</text>
+  <rect x="655" y="94" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="113" font-size="14">key: scan keys, 1 ms</text>
+  <circle cx="921" cy="108" r="11" fill="#16A34A"/>
+  <text x="921" y="113" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="655" y="128" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="147" font-size="14">ad renc: pots, 1 ms</text>
+  <circle cx="921" cy="142" r="11" fill="#16A34A"/>
+  <text x="921" y="147" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="655" y="162" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="181" font-size="14">detect renc: knobs, 8 ms</text>
+  <circle cx="921" cy="176" r="11" fill="#16A34A"/>
+  <text x="921" y="181" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="655" y="196" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="215" font-size="14">renc: third knob (IRQ)</text>
+  <circle cx="921" cy="210" r="11" fill="#16A34A"/>
+  <text x="921" y="215" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="655" y="230" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="249" font-size="14">tsc2007 + irq: touch</text>
+  <circle cx="921" cy="244" r="11" fill="#16A34A"/>
+  <text x="921" y="249" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="655" y="264" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="665" y="283" font-size="14">mouse_cursor (×2)</text>
+  <circle cx="921" cy="278" r="11" fill="#16A34A"/>
+  <text x="921" y="283" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">7</text>
+  <rect x="15" y="344" width="300" height="202" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="27" y="368" font-size="15" font-weight="bold">SD card, updates, PC</text>
+  <rect x="25" y="382" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="401" font-size="14">fwupdate: update screens</text>
+  <circle cx="291" cy="396" r="11" fill="#16A34A"/>
+  <text x="291" y="401" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">8</text>
+  <rect x="25" y="416" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="435" font-size="14">uptest: flash MAIN</text>
+  <circle cx="291" cy="430" r="11" fill="#16A34A"/>
+  <text x="291" y="435" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <rect x="25" y="450" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="469" font-size="14">sdmenu: save / load / format</text>
+  <circle cx="291" cy="464" r="11" fill="#16A34A"/>
+  <text x="291" y="469" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">8</text>
+  <rect x="25" y="484" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="35" y="503" font-size="14">spi_slave: PC scope stream</text>
+  <circle cx="291" cy="498" r="11" fill="#16A34A"/>
+  <text x="291" y="503" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="330" y="344" width="300" height="202" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="342" y="368" font-size="15" font-weight="bold">Debug console (gated off)</text>
+  <rect x="340" y="382" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5"/>
+  <text x="350" y="401" font-size="14">cli: memory peek / poke</text>
+  <circle cx="606" cy="396" r="11" fill="#D97706"/>
+  <text x="606" y="401" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="340" y="416" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5"/>
+  <text x="350" y="435" font-size="14">keycode, fwdbg</text>
+  <circle cx="606" cy="430" r="11" fill="#D97706"/>
+  <text x="606" y="435" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="340" y="450" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5"/>
+  <text x="350" y="469" font-size="14">test_disp: replay MAIN</text>
+  <circle cx="606" cy="464" r="11" fill="#D97706"/>
+  <text x="606" y="469" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5</text>
+  <rect x="340" y="484" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5"/>
+  <text x="350" y="503" font-size="14">reachable only after unlock</text>
+  <rect x="645" y="344" width="300" height="202" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="657" y="368" font-size="15" font-weight="bold">Described but never created</text>
+  <rect x="655" y="382" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="665" y="401" font-size="14">uart4 (×4): SCIF4 link</text>
+  <rect x="655" y="416" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="665" y="435" font-size="14">dspup: IF DSP update</text>
+  <circle cx="921" cy="430" r="11" fill="#6B7280"/>
+  <text x="921" y="435" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <rect x="655" y="450" width="280" height="28" rx="6" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="665" y="469" font-size="14">(no caller in V01-08)</text>
+  <rect x="15" y="566" width="930" height="96" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="3"/>
+  <text x="480" y="594" font-size="16" font-weight="bold" text-anchor="middle">NORTi µITRON 4.0 kernel (MiSPO)</text>
+  <text x="480" y="618" font-size="14" text-anchor="middle">OSTM0 timer: 10 ms system tick · OSTM1 timer: 1 ms wake-up service for periodic tasks (33, 1, 8, 1, 1 ms slots)</text>
+  <text x="480" y="642" font-size="14" text-anchor="middle">Tasks sleep until a flag, mailbox or timer wakes them.</text>
+  <circle cx="40" cy="690" r="11" fill="#16A34A"/>
+  <text x="40" y="695" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+  <text x="60" y="695" font-size="14">= task priority; lower number = more urgent (µITRON convention, inference).</text>
+</svg>
