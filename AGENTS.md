@@ -41,6 +41,7 @@ docs/
   sfl-format.md      .SFL container + payload encoding
   memory-maps.md     load addresses / memory maps per image
   cat-commands.md    documented vs firmware-discovered CAT commands
+  custom-firmware.md feasibility of custom code/HDL: protections, recovery paths, toolchains, blockers
   tasks/             one file per task; README.md is the index/status board
 tools/               scripts (Python 3, stdlib preferred) — e.g. sfl_decode.py, Ghidra headless scripts
 decomp/<image>/      committed Ghidra decompiled C output per image
