@@ -242,7 +242,7 @@ public class DefineRomData extends GhidraScript {
             currentProgram.getListing().clearCodeUnits(got.getMinAddress(), got.getMaxAddress(), false);
             currentProgram.getBookmarkManager().removeBookmarks(new AddressSet(a, end),
                     BookmarkType.ERROR, monitor);
-            printerr("DefineRomData: " + a + ": does not decode cleanly, left undefined");
+            println("DefineRomData: " + a + ": does not decode cleanly, left undefined (listed in the report)");
             return;
         }
         if (ret && len > 1 && getFunctionContaining(a) == null && createFunction(a, null) != null) { nFunc++; bFunc += len; }

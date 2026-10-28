@@ -99,6 +99,15 @@ SHA-256 of `rx62t.sinc`: original `42f51c2c…0f12`, patched `d32178a9…011b`. 
 instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo: copy the two `.orig-ea4cd204` files back.
 The fix is local; it is not sent upstream.
 
+### Local SLEIGH fix (T21d, 2026-10-28): `tools/ghidra/rx62t-rtsd-fix.patch`
+
+`RTSD #uimm,Rd-Rd2` (bytes `3F rd rd2 uimm`, manual R01US0071EJ0100 RTSD: SP += uimm×4 − (number of registers)×4, then pop Rd..Rd2 and
+return) computed the register count as `reg0_4 - reg4_4 + 1`, i.e. from the **contents** of Rd2 and Rd. SP after the frame release then
+depended on data, and the decompiler gave up on the stack ("Unable to track spacebase fully for stack") in the 8 MAIN functions where it
+mattered (`eeprom_read`, `displink_build_60`, `cat_SP_meters`, `menu_page_serialize` and four runtime functions at 0xFFFEDD9A..0xFFFEDFA7)
+**[fact]**. The patch uses the operand fields (`rs2 - rs1 + 1`). With it the 8 warnings go away and no other line of the MAIN C changes
+**[fact, T21d export]**. It applies on top of the T17 patch (and of T21c's, with an offset); T21c/T21g add it to `bootstrap.sh --only rx`.
+
 GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 
 ## Bootstrap (T20)
@@ -176,7 +185,9 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -import build/FT-710_MAIN_V011
   -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile 3600 \
   -scriptPath tools/ghidra -preScript SetupRX651.java \
     copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
-  -postScript ApplyNames.java tools/ghidra/names_main.tsv -postScript ExportDecomp.java decomp/main 50
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv \
+  -postScript DefineRomData.java build/main_undefined.tsv code=0xFFF8F658 \
+  -postScript ApplySignatures.java tools/ghidra/signatures_main.tsv -postScript ExportDecomp.java decomp/main 50
 tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly \
   -scriptPath tools/ghidra -postScript CatDispatch.java decomp/main/cat_dispatch.tsv \
   0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
