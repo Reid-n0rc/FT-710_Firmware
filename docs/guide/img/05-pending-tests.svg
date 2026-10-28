@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="622" viewBox="0 0 960 622" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Proposed read-only CAT tests waiting for the owner's approval, none tested on the radio yet</title>
+  <rect width="960" height="622" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">Proposed read-only tests, waiting for the owner's approval</text>
+  <text x="480" y="58" font-size="15" text-anchor="middle" fill="#6B7280">Answers are what the firmware analysis predicts. Nothing here has been sent to the radio.</text>
+  <text x="40" y="94" font-size="15" font-weight="bold">send (read only)</text>
+  <text x="290" y="94" font-size="15" font-weight="bold">expected answer</text>
+  <text x="470" y="94" font-size="15" font-weight="bold">what it would show</text>
+  <text x="836" y="94" font-size="15" font-weight="bold" text-anchor="middle">status</text>
+  <rect x="32" y="108" width="896" height="46" rx="8" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="137" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">VE0;</text>
+  <text x="290" y="137" font-size="14" font-family="DejaVu Sans Mono, monospace">VE00112;</text>
+  <text x="470" y="137" font-size="14">MAIN version V01-12 (inference)</text>
+  <rect x="752" y="116" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="136" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="162" width="896" height="46" rx="8" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="191" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">VE1; VE2; VE3;</text>
+  <text x="290" y="191" font-size="14" font-family="DejaVu Sans Mono, monospace">VE1xxxx; …</text>
+  <text x="470" y="191" font-size="14">DISPLAY, SDR, DSP version strings</text>
+  <rect x="752" y="170" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="190" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="216" width="896" height="46" rx="8" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="245" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">JP0710;</text>
+  <text x="290" y="245" font-size="14" font-family="DejaVu Sans Mono, monospace">JP0710 + 19 more</text>
+  <text x="470" y="245" font-size="14">region code and EEPROM header</text>
+  <rect x="752" y="224" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="244" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="270" width="896" height="46" rx="8" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="299" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">FD000; FD001; FD002;</text>
+  <text x="290" y="299" font-size="14" font-family="DejaVu Sans Mono, monospace">FD00n + 9 digits</text>
+  <text x="470" y="299" font-size="14">scope start: dial, CURSOR, FIX (Hz)</text>
+  <rect x="752" y="278" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="298" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="324" width="896" height="46" rx="8" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="353" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">PE000;</text>
+  <text x="290" y="353" font-size="14" font-family="DejaVu Sans Mono, monospace">PE000 + 3 digits</text>
+  <text x="470" y="353" font-size="14">first of the 18 EQ-like values</text>
+  <rect x="752" y="332" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="352" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="378" width="896" height="46" rx="8" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="44" y="407" font-size="15" font-weight="bold" font-family="DejaVu Sans Mono, monospace">SPIR;</text>
+  <text x="290" y="407" font-size="14" font-family="DejaVu Sans Mono, monospace">SPIR + 36 hex</text>
+  <text x="470" y="407" font-size="14">the 12 raw ADC readings</text>
+  <rect x="752" y="386" width="168" height="30" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="836" y="406" font-size="14" text-anchor="middle">not yet tested</text>
+  <rect x="32" y="446" width="896" height="72" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="48" y="474" font-size="15"><tspan font-weight="bold">Also read-only, but noisy:</tspan> E8 dumps the whole settings image as one</text>
+  <text x="48" y="498" font-size="15">10674-byte frame. It changes nothing, but it floods the port.</text>
+  <rect x="32" y="532" width="896" height="72" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="48" y="560" font-size="15" font-weight="bold">Never send (writes):</text>
+  <text x="48" y="586" font-size="15" font-family="DejaVu Sans Mono, monospace">SPSW  SPDW  SPW  SPAWE  E9  ZZ  JP-set</text>
+</svg>
