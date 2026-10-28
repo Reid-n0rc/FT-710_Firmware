@@ -180,3 +180,53 @@ fff8f014	@cat_switch_table	104 x int16 offsets relative to 0xFFFA3B8A (BRA.L) ->
 fff80ff4	@sci_baud_table	5 x 4 bytes {SEMR.ABCS,SEMR.BGDM,SMR.CKS,BRR} for CAT RATE [inference on field order]
 fff8e6a0	@DTBL	C runtime ROM->RAM copy table (3 x {src,end,dst})
 fff8e6c4	@BTBL	C runtime zero-fill table (3 x {start,end})
+# --- CAT core / helpers (T09)
+fffb1c91	cat_ring_head	Returns CAT ring head index 0x11FEC (60 slots of 0x6A at 0x1E14C)
+fffb1ca0	cat_ring_tail	Returns CAT ring tail index 0x11FEB
+fffb1cd2	cat_ring_pop	Advances the CAT ring tail (mod 60) and returns the slot pointer
+fffb1caf	cat_ring_unpop	Steps the CAT ring tail back (port TX busy: retry later)
+fffb1d06	cat_e9_slot	Returns 0x1B78C: single-slot buffer for frames starting E1/E9 (flag, port, len, data)
+fffb1d12	cat_send_reply	Send buffer on CAT port (1=SCI3, 2=SCI0, else SCI2), sets per-port busy flag
+fffb0166	cat_reply_error	Builds the '?;' error reply (len 2)
+fffb263d	cat_apo_reset	Restarts the auto-power-off timer from setting 0x9B0F (called per received command)
+fffdd797	cat_ai_poll	Auto-information broadcaster: runs ~70 change detectors, sends one changed item to every port with AI on (0x20B20..22)
+fffddb6a	cat_ai_holdoff	Arms timer 0x32 (200 ms) and 0x187C2 to hold off the next AI frame after a CAT set
+fffddb7e	cat_ai_FD	AI detector for the undocumented FD command (FD00n + 9 digits)
+fffb2e9c	nib2hex	Nibble -> ASCII hex digit
+fffb2f07	hex2nib	ASCII hex digit -> value (0xFF if invalid)
+fffb2eb7	byte2hex	Byte -> 2 ASCII hex chars
+fffb2ee7	word2hex	u16 -> 4 ASCII hex chars
+fffb2f79	hex2byte	2 ASCII hex chars -> byte
+fffb2f9e	hex2word	4 ASCII hex chars -> u16
+fffb3168	toupper_inplace	a-z -> A-Z on one byte in place
+fffb01af	sum8	8-bit additive checksum of n bytes
+fffb0182	cat_checksum_ok	sum8(buf,n)==buf[n]; NOTE callers in cat_ext_SP pass n read from RAM[len-2] (bug)
+fffb44f7	key_event_filter	Front-panel key event gate (key code, action): returns 1 if the key may run now; used by many CAT handlers
+fffa4e31	cat_SP_sdr_reg	SPS R/W: SDR register read/write (4-hex addr at text+4, 4-hex value at text+8)
+fffa4e8f	cat_SP_dev4_reg	SPD R/W: SCI4 device register read/write
+fffa4eed	cat_SP_adc_dump	SPIR: 12 ADC results (0x20B04..0x20B16) as 3 hex digits each
+fffa520b	cat_SP_eeprom_byte	SPR/SPW (binary): EEPROM byte read/write at 16-bit address
+fffa50f9	cat_SP_table	SPN R/W/S (binary): table 0x4659[1..0x105]
+fffa5284	cat_SP_meters	SPM (binary): 8 meter bytes + checksum
+fffb0532	eeprom_save_cfg105	eeprom_write(0x000A, 0x4659, 0x105)
+fffb0544	eeprom_save_dest	eeprom_write(0x010F, 0x475E, 3): destination code
+fffb0558	settings_defaults	Reload settings RAM from ROM defaults; arg 1 also the 0x4659 table and destination 0x8043
+fffb0356	eeprom_save_image	eeprom_write(0x1A7A, 0x60C9, 0x2F49) bracketed by header update
+fffb0376	eeprom_save_memch	Writes the 0x87-byte block at 0x60C9 and one 0x5A-byte memory channel to EEPROM
+fffb142b	eeprom_hdr_update	Increments the save counter in the EEPROM header mirror 0x464F and writes 10 bytes at EEPROM 0
+fffb3b33	dest_code_get	Returns destination code 0x475E:0x475F
+fffb3b5d	dest_code_set	Sets destination code, writes EEPROM, settings_defaults(0), requests restart (0x20F4B=1, 0x20B39=0x11)
+fffa1485	sdr_reg_access	SDR register r/w over SCI5 ('r'/'w' + hex addr [+ value] + sum + CR, waits for reply)
+fff9d8a4	dev4_reg_access	Same register protocol over SCI4 (device unknown)
+fffa3226	sdr_bridge_mode	SDR maintenance bridge driven by DISPLAY link (ACK 0x06 / NAK 0x15), started via 0x1C8D
+fffb2718	cat_rand8	Pseudo-random byte from timer counter 0x88116 (E8 obfuscation key)
+fffb33e5	band_of_freq	Band index 0..11 of a frequency (ranges at 0xFFF8876C), 0xFF if none
+fff94bcd	ver_main	Returns pointer to MAIN version string 0xFFFFFF00 (VE0)
+fff94bf1	ver_display	Returns pointer to DISPLAY version 0x1436 (VE1)
+fff94c4b	ver_sdr	Returns pointer to SDR version 0x144A (VE2)
+fff94c2d	ver_dsp	Returns pointer to DSP version 0x1444 (VE3)
+fff806df	@cat_vfo_state_codes
+fff806e9	@cat_pms_names
+fff8071b	@cat_5mhz_names
+fff8074f	@cfg105_defaults
+fff8f480	@cat_ai_templates

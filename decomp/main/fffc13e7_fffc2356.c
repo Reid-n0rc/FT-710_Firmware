@@ -404,7 +404,7 @@ void FUN_fffc1927(void)
   local_13 = DAT_00009dbd == '\0';
   if (local_13) {
     uVar1 = FUN_fffb357c(0,0);
-    DAT_00009dc3 = FUN_fffb33e5(uVar1);
+    DAT_00009dc3 = band_of_freq(uVar1);
     puStack_4 = &DAT_00009d09;
     bStack_12 = (&DAT_000060b1)[DAT_00009dc3];
     puStack_c = &DAT_00004761 + (uint)bStack_12 * 0x10e;
@@ -412,7 +412,7 @@ void FUN_fffc1927(void)
   }
   else {
     uVar1 = FUN_fffb357c(0,1);
-    DAT_00009dc4 = FUN_fffb33e5(uVar1);
+    DAT_00009dc4 = band_of_freq(uVar1);
     puStack_4 = &DAT_00009d63;
     bStack_12 = (&DAT_000060bd)[DAT_00009dc4];
     puStack_c = (undefined4 *)(&DAT_00005409 + (uint)bStack_12 * 0x438);
@@ -954,7 +954,7 @@ void FUN_fffc1fb6(byte param_1)
     }
     if (uVar1 == 8) {
       FUN_fffc22de();
-      FUN_fffb0376(PTR_DAT_00025d54[0x43a]);
+      eeprom_save_memch(PTR_DAT_00025d54[0x43a]);
       return;
     }
     if (uVar1 < 4) {

@@ -717,7 +717,7 @@ LAB_fffb7abb:
         return;
       }
       if (DAT_0001b4c8 == 2) {
-        FUN_fffb263d();
+        cat_apo_reset();
         if (DAT_00020b86 == '\0') {
           DAT_0001204c = DAT_0001b4c9;
         }
@@ -1428,7 +1428,7 @@ byte FUN_fffb85a2(void)
       bStack_3 = 6;
     }
     if (bStack_3 != 0) {
-      FUN_fffb263d();
+      cat_apo_reset();
     }
     DAT_00012050 = 0;
     uVar1 = (uint)bStack_3;

@@ -517,7 +517,7 @@ void FUN_fff9cb8e(void)
 void FUN_fff9cba4(void)
 
 {
-  FUN_fffb3b33();
+  dest_code_get();
   return;
 }
 
@@ -814,7 +814,7 @@ void FUN_fff9d06c(void)
     if (DAT_00001c5f != '\x01') goto LAB_fff9d11b;
     iVar2 = FUN_fffa0ad6(0x72);
   } while (iVar2 != 1);
-  DAT_0001b6e0 = FUN_fffb2f9e();
+  DAT_0001b6e0 = hex2word();
   FUN_fffa037a();
   bVar1 = true;
 LAB_fff9d11b:
@@ -822,7 +822,7 @@ LAB_fff9d11b:
     DAT_00020b36 = 2;
     return;
   }
-  FUN_fffb2ee7(&uStack_b,DAT_0001b634);
+  word2hex(&uStack_b,DAT_0001b634);
   local_6 = uStack_b;
   local_5 = uStack_a;
   local_3 = uStack_9;
@@ -835,7 +835,7 @@ LAB_fff9d11b:
       if (DAT_00001c5f != '\x01') goto LAB_fff9d1a6;
       iVar2 = FUN_fffa0ad6(0x72);
     } while (iVar2 != 1);
-    DAT_0001b6e0 = FUN_fffb2f9e();
+    DAT_0001b6e0 = hex2word();
     FUN_fffa037a();
   } while ((DAT_0001b636 & 1) == 0);
   bVar1 = true;
@@ -873,7 +873,7 @@ void FUN_fff9d1b9(void)
     if (iVar4 != 1) {
       return;
     }
-    DAT_0001b6e0 = FUN_fffb2f9e();
+    DAT_0001b6e0 = hex2word();
     FUN_fffa037a();
   }
   if (DAT_00001c63 == '\x01') {
@@ -1097,11 +1097,12 @@ undefined2 FUN_fff9d895(void)
 }
 
 
-// ===== FUN_fff9d8a4 @ fff9d8a4 (169 bytes)
+// ===== dev4_reg_access @ fff9d8a4 (169 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff9d94a) */
+/* Same register protocol over SCI4 (device unknown) */
 
-undefined1 FUN_fff9d8a4(undefined2 param_1,undefined2 *param_2,char param_3)
+undefined1 dev4_reg_access(undefined2 param_1,undefined2 *param_2,char param_3)
 
 {
   bool bVar1;
@@ -1129,7 +1130,7 @@ undefined1 FUN_fff9d8a4(undefined2 param_1,undefined2 *param_2,char param_3)
       }
       iVar3 = FUN_fffa0ad6(0x72);
     } while (iVar3 != 1);
-    uVar2 = FUN_fffb2f9e(iStack_14 + 1);
+    uVar2 = hex2word(iStack_14 + 1);
     *param_2 = uVar2;
     local_15 = 1;
   }

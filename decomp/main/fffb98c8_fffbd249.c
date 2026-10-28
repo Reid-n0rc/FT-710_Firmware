@@ -282,7 +282,7 @@ void FUN_fffb98e9(void)
             }
             uStack_e = uStack_e - (uVar7 * uStack_c & 0xff);
             uStack_c = uStack_c / 10;
-            cVar6 = FUN_fffb2e9c(uVar12 & 0xff);
+            cVar6 = nib2hex(uVar12 & 0xff);
             if ((bStack_11 == 0) && (cVar6 == '0')) {
               bVar3 = true;
             }
@@ -339,7 +339,7 @@ void FUN_fffb98e9(void)
               bVar3 = true;
             }
             if (bVar3) {
-              cVar6 = FUN_fffb2f07(bVar5);
+              cVar6 = hex2nib(bVar5);
               if (bStack_9 != (byte)(cVar6 - 1U)) {
                 FUN_fffbb338(cVar6 - 1U);
               }
@@ -1282,7 +1282,7 @@ undefined4 FUN_fffbb024(char param_1)
   byte local_6;
   
   if (param_1 != '\0') {
-    FUN_fffb263d();
+    cat_apo_reset();
   }
   if (param_1 != '\x02') {
     bVar2 = (byte)(DAT_0001fa38 >> 3);
@@ -1579,7 +1579,7 @@ void FUN_fffbb338(byte param_1)
         }
         uStack_6 = uStack_6 - (uVar8 * uStack_4 & 0xff);
         uStack_4 = uStack_4 / 10;
-        cVar6 = FUN_fffb2e9c(uVar9 & 0xff);
+        cVar6 = nib2hex(uVar9 & 0xff);
         if ((cVar6 != '0') || (bVar4)) {
           bVar3 = true;
         }
@@ -2591,7 +2591,7 @@ undefined4 FUN_fffbc6e9(void)
     local_8 = *(int *)(PTR_DAT_00025d54 + 0x454);
   }
   local_b = DAT_00009dbd != '\0';
-  cVar1 = FUN_fffb33e5(local_8);
+  cVar1 = band_of_freq(local_8);
   if (cVar1 == -1) {
     return 0xff;
   }

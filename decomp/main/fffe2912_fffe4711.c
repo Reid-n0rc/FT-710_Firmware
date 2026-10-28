@@ -924,7 +924,7 @@ void FUN_fffe3e2a(void)
       else {
         bVar1 = true;
       }
-      if ((bVar1) && (iVar3 = FUN_fffb44f7(bVar2 + 0x86,1), iVar3 == 0)) {
+      if ((bVar1) && (iVar3 = key_event_filter(bVar2 + 0x86,1), iVar3 == 0)) {
         return;
       }
       if (DAT_0001b554 == 0xfa) {

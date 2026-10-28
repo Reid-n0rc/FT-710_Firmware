@@ -131,7 +131,7 @@ undefined1 FUN_fffc2426(void)
       local_4 = DAT_000060c9;
     }
   }
-  puVar4 = (undefined *)FUN_fffb3b33();
+  puVar4 = (undefined *)dest_code_get();
   if (puVar4 == &DAT_0000315b) {
     if ((local_4 < 0x75) || (0x83 < local_4)) {
       bVar2 = false;
@@ -430,7 +430,7 @@ void FUN_fffc2a3d(byte param_1)
   char cStack_3;
   byte bStack_2;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   if ((sVar1 != 0x20b) && (sVar1 != 0x1cb9)) {
     if (sVar1 == -0x26b0) {
 LAB_fffc2aa2:
@@ -502,7 +502,7 @@ byte FUN_fffc2b2e(char param_1,char param_2)
   byte local_4;
   
   local_4 = param_1 + param_2;
-  sVar2 = FUN_fffb3b33();
+  sVar2 = dest_code_get();
   if ((sVar2 == 0x4380) || (sVar2 == 0x20b)) {
     bVar1 = true;
   }
@@ -561,7 +561,7 @@ void FUN_fffc2b94(void)
   FUN_fffc273e(bStack_5);
   FUN_fffc2c66(bStack_5);
   FUN_fffc2cc8(bStack_5);
-  FUN_fffb0376(PTR_DAT_00025d54[0x43a]);
+  eeprom_save_memch(PTR_DAT_00025d54[0x43a]);
   FUN_fffc8beb();
   FUN_fffbc638();
   FUN_fffc3c85();
@@ -788,7 +788,7 @@ undefined1 FUN_fffc2e8d(byte param_1)
   short sVar1;
   undefined1 uStack_5;
   
-  sVar1 = FUN_fffb3b33();
+  sVar1 = dest_code_get();
   uStack_5 = 0;
   if (((((sVar1 == -0x5b3b) || (sVar1 == -0x567d)) || (sVar1 == -0x4a59)) || (sVar1 == -0x26b0)) &&
      (6 < (int)(param_1 - 0x75))) {
@@ -915,7 +915,7 @@ char FUN_fffc3006(void)
   undefined1 uStack_9;
   
   uVar1 = FUN_fffb35d7(0,2);
-  uStack_9 = FUN_fffb33e5(uVar1);
+  uStack_9 = band_of_freq(uVar1);
   if (uStack_9 == -1) {
     uStack_9 = '\v';
   }

@@ -889,7 +889,7 @@ void FUN_fffc4064(void)
     FUN_fffc27ad();
   }
   FUN_fffc2cdf(uVar1,PTR_DAT_00025d54[0x43a]);
-  FUN_fffb0376(PTR_DAT_00025d54[0x43a]);
+  eeprom_save_memch(PTR_DAT_00025d54[0x43a]);
   FUN_fffc1c04(uVar1);
   PTR_DAT_00025d54[0x40b] = 1;
   FUN_fffc2794();

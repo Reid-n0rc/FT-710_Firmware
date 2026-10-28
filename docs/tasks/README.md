@@ -13,6 +13,8 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T07 | [IFDSP image: same as T05 (DSP — check Ghidra support)](T07-decomp-ifdsp.md) | T01 T02 T04 | done |
 | T08 | [SDR image: split code vs FPGA bitstream, decomp code](T08-decomp-sdr.md) | T01 T02 T04 | done |
 | T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | in progress |
+| T09a | [CAT core, reply/AI path, extended + hidden commands](T09a-cat-core-ext.md) | T05 | done |
+| T09b | [CAT primary 104-command table, Ghidra names, re-export](T09b-cat-primary.md) | T09a | done |
 | T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | todo |
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
 | T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |

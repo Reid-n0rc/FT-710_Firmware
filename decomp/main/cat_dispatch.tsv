@@ -111,5 +111,5 @@ secondary	4	FD	fffa3ac9	len==6:cat_ext_FD@fffa5a51 | len==15:cat_ext_FD@fffa5a51
 secondary	5	KT	-	no case
 secondary	6	PE	fffa3b30	len==6:cat_ext_PE@fffa5fdf | len==9:cat_ext_PE@fffa5fdf
 secondary	7	ZZ	fffa3ac0	cat_ext_ZZ@fffa58a1
-secondary	8	VE	fffa3a64	FUN_fffb2f07@fffb2f07 | cat_ext_VE@fffa54b3
+secondary	8	VE	fffa3a64	hex2nib@fffb2f07 | cat_ext_VE@fffa54b3
 secondary	9	JP	fffa3a84	len==7:cat_ext_JP@fffa556b | len==15:cat_ext_JP@fffa556b

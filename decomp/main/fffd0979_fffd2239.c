@@ -553,7 +553,7 @@ void FUN_fffd1078(void)
   undefined *puVar5;
   uint uVar6;
   
-  uVar1 = FUN_fffb3b33();
+  uVar1 = dest_code_get();
   if (_DAT_0001ff02 == 0) {
     DAT_00012273 = (undefined1)uVar1;
     DAT_00012274 = (undefined1)((ushort)uVar1 >> 8);

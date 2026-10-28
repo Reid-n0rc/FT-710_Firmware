@@ -443,7 +443,7 @@ undefined2 FUN_fffcf5bd(void)
     local_4 = CONCAT11(DAT_00012274,DAT_00012273);
   }
   else {
-    local_4 = FUN_fffb3b33();
+    local_4 = dest_code_get();
   }
   return local_4;
 }
@@ -460,7 +460,7 @@ undefined4 FUN_fffcf5f9(void)
   ushort uVar2;
   undefined4 uVar3;
   
-  uVar1 = FUN_fffb3b33();
+  uVar1 = dest_code_get();
   if (DAT_00015de5 == '\0') {
     uVar2 = FUN_fffcf5bd();
     if (uVar1 == (uVar2 & 0xff)) {
