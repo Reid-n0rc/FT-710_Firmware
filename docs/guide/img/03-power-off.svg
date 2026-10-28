@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>Power-off: three triggers end in an EEPROM save and a software reset of MAIN</title>
+<defs><marker id="ah16A34A" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="ah2563EB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="ah6B7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="ahD97706" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D97706"/></marker></defs>
+<rect x="0" y="0" width="960" height="640" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">Switching off: every path ends in a save and a reset</text>
+<rect x="30" y="60" width="260" height="70" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="160.0" y="90.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Power key</text>
+<text x="160.0" y="108.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">hold LOCK/PWR about 1 s</text>
+<rect x="350" y="60" width="260" height="70" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="480.0" y="90.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">CAT PS0;</text>
+<text x="480.0" y="108.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">from the PC</text>
+<rect x="670" y="60" width="260" height="70" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="800.0" y="90.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Supply too low</text>
+<text x="800.0" y="108.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">ADC reading below 0x7DD</text>
+<rect x="30" y="160" width="260" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="160.0" y="189.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">DISPLAY sends key 0x300, “held”</text>
+<line x1="160" y1="130" x2="160" y2="159" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<rect x="670" y="160" width="260" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="800.0" y="189.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PA/SDR lines off, quick save</text>
+<line x1="800" y1="130" x2="800" y2="159" stroke="#D97706" stroke-width="2" marker-end="url(#ahD97706)"/>
+<rect x="300" y="240" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="480.0" y="269.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">MAIN notes the reason (off / low voltage)</text>
+<path d="M 160 210 L 160 265 L 298 265" fill="none" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<line x1="480" y1="130" x2="480" y2="238" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<path d="M 800 210 L 800 265 L 662 265" fill="none" stroke="#D97706" stroke-width="2" marker-end="url(#ahD97706)"/>
+<rect x="300" y="320" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="480.0" y="349.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">save settings: RAM mirror → EEPROM</text>
+<line x1="480" y1="290" x2="480" y2="318" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="300" y="400" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="480.0" y="429.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">send 0x7F “going off” to the DISPLAY</text>
+<line x1="480" y1="370" x2="480" y2="398" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="300" y="480" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="480.0" y="509.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">wait until the UART has drained</text>
+<line x1="480" y1="450" x2="480" y2="478" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="300" y="560" width="360" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="480.0" y="589.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">software reset → radio-off loop</text>
+<line x1="480" y1="530" x2="480" y2="558" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="700" y="390" width="240" height="70" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="820.0" y="420.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">DISPLAY: GUI stops,</text>
+<text x="820.0" y="438.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">waits for the power key</text>
+<line x1="660" y1="425" x2="698" y2="425" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="20" y="330" width="250" height="110" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="145.0" y="353.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Restart</text>
+<text x="145.0" y="371.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">(region change, reset)</text>
+<text x="145.0" y="389.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">takes the same path</text>
+<text x="145.0" y="407.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">but sets “power</text>
+<text x="145.0" y="425.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">back on”</text>
+<rect x="20" y="470" width="250" height="140" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+<text x="145.0" y="508.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">If power dies mid-save</text>
+<text x="145.0" y="526.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">the header flag stays 0;</text>
+<text x="145.0" y="544.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">the next boot keeps only</text>
+<text x="145.0" y="562.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">calibration and region</text>
+<text x="145.0" y="580.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">and resets the rest</text>
+<line x1="272" y1="345" x2="298" y2="345" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah6B7280)"/>
+</svg>

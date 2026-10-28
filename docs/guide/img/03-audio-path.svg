@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>Receive and transmit audio through the FPGA, the HiFi4 DSP and the codec</title>
+<defs><marker id="ah16A34A" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="ah1F2937" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ah9333EA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9333EA"/></marker><marker id="ahEA580C" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker></defs>
+<rect x="0" y="0" width="960" height="600" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">Audio: 2 ms blocks through the DSP, both ways</text>
+<line x1="30" y1="180" x2="30" y2="245" stroke="#1F2937" stroke-width="3"/>
+<path d="M 14 180 L 30 204 L 46 180" fill="none" stroke="#1F2937" stroke-width="3"/>
+<text x="30" y="266" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">RX</text>
+<rect x="70" y="178" width="175" height="64" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="157.5" y="205.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">FPGA RX</text>
+<text x="157.5" y="223.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">NCO + filters</text>
+<line x1="34" y1="210" x2="68" y2="210" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<rect x="70" y="96" width="175" height="64" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="157.5" y="123.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">FPGA TX</text>
+<text x="157.5" y="141.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">NCO, keying ramp</text>
+<rect x="10" y="113" width="44" height="30" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="32.0" y="132.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PA</text>
+<line x1="68" y1="128" x2="56" y2="128" stroke="#EA580C" stroke-width="2" marker-end="url(#ahEA580C)"/>
+<rect x="320" y="62" width="310" height="300" rx="10" fill="#F3E8FF" stroke="#9333EA" stroke-width="2" opacity="0.6"/>
+<text x="475" y="84" font-size="14" text-anchor="middle" font-weight="bold" fill="#9333EA">IFDSP: HiFi4 threads</text>
+<rect x="340" y="98" width="270" height="60" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="475.0" y="123.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Tx_Path: one 24-sample</text>
+<text x="475.0" y="141.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">block every 2 ms</text>
+<rect x="340" y="178" width="270" height="64" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="475.0" y="205.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Rx_Path: one 24-sample</text>
+<text x="475.0" y="223.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">block every 2 ms</text>
+<rect x="340" y="264" width="130" height="80" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="405.0" y="290.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Rx_Audio:</text>
+<text x="405.0" y="308.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">12 blocks</text>
+<text x="405.0" y="326.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">= 24 ms</text>
+<rect x="480" y="264" width="130" height="80" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="545.0" y="290.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Spi:</text>
+<text x="545.0" y="308.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">spectrum</text>
+<text x="545.0" y="326.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">+ REC audio</text>
+<line x1="245" y1="210" x2="338" y2="210" stroke="#EA580C" stroke-width="2" marker-end="url(#ahEA580C)"/>
+<text x="292" y="200" font-size="14" text-anchor="middle" font-weight="bold" fill="#EA580C">I2S</text>
+<line x1="338" y1="128" x2="247" y2="128" stroke="#9333EA" stroke-width="2" marker-end="url(#ah9333EA)"/>
+<text x="292" y="118" font-size="14" text-anchor="middle" font-weight="bold" fill="#9333EA">I2S</text>
+<line x1="405" y1="242" x2="405" y2="262" stroke="#9333EA" stroke-width="2" marker-end="url(#ah9333EA)"/>
+<line x1="545" y1="242" x2="545" y2="262" stroke="#9333EA" stroke-width="2" marker-end="url(#ah9333EA)"/>
+<rect x="680" y="90" width="110" height="270" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="735" y="112" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">codec</text>
+<text x="735" y="130" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">AIC3204</text>
+<text x="735" y="155" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">ADC</text>
+<text x="735" y="238" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">DAC</text>
+<line x1="678" y1="128" x2="612" y2="128" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<line x1="610" y1="210" x2="678" y2="210" stroke="#9333EA" stroke-width="2" marker-end="url(#ah9333EA)"/>
+<rect x="858" y="90" width="24" height="40" rx="12" fill="#E5E7EB" stroke="#1F2937" stroke-width="2" />
+<path d="M 850 120 A 20 20 0 0 0 890 120" fill="none" stroke="#1F2937" stroke-width="2"/>
+<line x1="870" y1="140" x2="870" y2="150" stroke="#1F2937" stroke-width="2"/>
+<line x1="846" y1="128" x2="792" y2="128" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<text x="870" y="170" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">MIC, DATA in</text>
+<path d="M 840 218 L 854 218 L 872 202 L 872 258 L 854 242 L 840 242 Z" fill="#E5E7EB" stroke="#1F2937" stroke-width="2"/>
+<path d="M 880 216 A 14 14 0 0 1 880 244" fill="none" stroke="#1F2937" stroke-width="2"/>
+<path d="M 880 204 A 26 26 0 0 1 880 256" fill="none" stroke="#1F2937" stroke-width="2"/>
+<path d="M 792 210 L 815 210 L 815 230 L 836 230" fill="none" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<text x="866" y="282" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">speaker, phones</text>
+<text x="30" y="410" font-size="14" text-anchor="start" font-weight="bold" fill="#1F2937">DSP rate 12 kHz (inference, strong)</text>
+<rect x="30" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="48" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">2</text>
+<rect x="68" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="86" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">4</text>
+<rect x="106" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="124" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">6</text>
+<rect x="144" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="162" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">8</text>
+<rect x="182" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="200" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">10</text>
+<rect x="220" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="238" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">12</text>
+<rect x="258" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="276" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">14</text>
+<rect x="296" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="314" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">16</text>
+<rect x="334" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="352" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">18</text>
+<rect x="372" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="390" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">20</text>
+<rect x="410" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="428" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">22</text>
+<rect x="448" y="422" width="36" height="30" rx="3" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" />
+<text x="466" y="442" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">24</text>
+<text x="30" y="474" font-size="14" text-anchor="start" font-weight="normal" fill="#6B7280">ms: 24 samples = 2 ms; 12 blocks = one Rx_Audio batch</text>
+<line x1="545" y1="344" x2="545" y2="493" stroke="#9333EA" stroke-width="2" marker-end="url(#ah9333EA)"/>
+<text x="553" y="380" font-size="14" text-anchor="start" font-weight="bold" fill="#9333EA">SPI</text>
+<rect x="330" y="495" width="268" height="60" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="464.0" y="520.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">DISPLAY: REC → WAV file</text>
+<text x="464.0" y="538.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">written as 16 kHz stereo</text>
+<path d="M 270 500 L 302 500 L 312 510 L 312 550 L 270 550 Z" fill="#374151" stroke="#1F2937" stroke-width="2"/>
+<text x="291" y="532" font-size="14" text-anchor="middle" font-weight="bold" fill="#FFFFFF">SD</text>
+<line x1="328" y1="525" x2="314" y2="525" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<rect x="690" y="395" width="255" height="165" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="817.5" y="437.4" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Open question</text>
+<text x="817.5" y="455.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">The DSP math uses 12 kHz,</text>
+<text x="817.5" y="473.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">the WAV says 16 kHz.</text>
+<text x="817.5" y="491.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Does the Spi thread</text>
+<text x="817.5" y="509.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">resample, or is the WAV</text>
+<text x="817.5" y="527.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">header only nominal?</text>
+</svg>

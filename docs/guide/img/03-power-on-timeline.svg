@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1060" viewBox="0 0 960 1060" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>Power-on timeline: what each of the four chips does from mains on to a working radio</title>
+<defs><marker id="ah16A34A" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="ah2563EB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="ah2563EBs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#2563EB"/></marker><marker id="ahEA580C" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EA580C"/></marker></defs>
+<rect x="0" y="0" width="960" height="1060" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">Switching on: four chips, one timeline (time runs downwards)</text>
+<rect x="126" y="50" width="198" height="970" rx="10" fill="#DCFCE7" stroke="none" stroke-width="0" opacity="0.45"/>
+<rect x="130" y="54" width="190" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="74.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">DISPLAY</text>
+<text x="225.0" y="92.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">RZ/A1H, front panel</text>
+<rect x="336" y="50" width="198" height="970" rx="10" fill="#DBEAFE" stroke="none" stroke-width="0" opacity="0.45"/>
+<rect x="340" y="54" width="190" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="74.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">MAIN</text>
+<text x="435.0" y="92.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">RX651, radio control</text>
+<rect x="546" y="50" width="198" height="970" rx="10" fill="#FFEDD5" stroke="none" stroke-width="0" opacity="0.45"/>
+<rect x="550" y="54" width="190" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="645.0" y="74.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">SDR FPGA</text>
+<text x="645.0" y="92.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Artix-7, RF samples</text>
+<rect x="756" y="50" width="198" height="970" rx="10" fill="#F3E8FF" stroke="none" stroke-width="0" opacity="0.45"/>
+<rect x="760" y="54" width="190" height="50" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="855.0" y="74.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">IFDSP</text>
+<text x="855.0" y="92.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">i.MX RT685, audio</text>
+<line x1="10" y1="115" x2="950" y2="115" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 4"/>
+<rect x="10" y="123" width="108" height="46" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="64.0" y="141.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">1</text>
+<text x="64.0" y="159.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Mains on</text>
+<line x1="10" y1="245" x2="950" y2="245" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 4"/>
+<rect x="10" y="253" width="108" height="46" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="64.0" y="271.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">2</text>
+<text x="64.0" y="289.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Standby</text>
+<line x1="10" y1="370" x2="950" y2="370" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 4"/>
+<rect x="10" y="378" width="108" height="46" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="64.0" y="396.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">3</text>
+<text x="64.0" y="414.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Power key</text>
+<line x1="10" y1="560" x2="950" y2="560" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 4"/>
+<rect x="10" y="568" width="108" height="46" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="64.0" y="586.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">4</text>
+<text x="64.0" y="604.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Bring-up</text>
+<line x1="10" y1="905" x2="950" y2="905" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 4"/>
+<rect x="10" y="913" width="108" height="46" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
+<text x="64.0" y="931.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">5</text>
+<text x="64.0" y="949.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">Running</text>
+<rect x="135" y="125" width="180" height="70" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="146.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">boot ROM runs the</text>
+<text x="225.0" y="164.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">loader from SPI flash;</text>
+<text x="225.0" y="182.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">it picks bank 1 or 2</text>
+<rect x="135" y="203" width="180" height="34" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="224.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">switches MAIN on</text>
+<line x1="315" y1="220" x2="343" y2="220" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<rect x="345" y="195" width="180" height="45" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="222.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">reset, EEPROM → RAM</text>
+<rect x="555" y="125" width="180" height="50" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="645.0" y="154.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">no power yet</text>
+<rect x="765" y="125" width="180" height="50" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="855.0" y="154.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">no power yet</text>
+<rect x="135" y="258" width="180" height="60" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="283.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">standby: link to</text>
+<text x="225.0" y="301.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">MAIN + screen only</text>
+<rect x="345" y="258" width="180" height="90" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="289.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">radio-off loop:</text>
+<text x="435.0" y="307.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">answers the link;</text>
+<text x="435.0" y="325.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">CAT takes only PS1</text>
+<rect x="555" y="258" width="180" height="60" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="645.0" y="283.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">held in reset</text>
+<text x="645.0" y="301.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">by MAIN</text>
+<rect x="765" y="258" width="180" height="60" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="855.0" y="283.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">held in reset</text>
+<text x="855.0" y="301.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">by MAIN</text>
+<rect x="135" y="378" width="180" height="40" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="225.0" y="402.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">you hold LOCK/PWR 1 s</text>
+<rect x="135" y="428" width="180" height="46" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="446.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">starts all drivers</text>
+<text x="225.0" y="464.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">and tasks</text>
+<rect x="135" y="482" width="180" height="66" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="510.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">sends the F0</text>
+<text x="225.0" y="528.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">hello (up to 30×)</text>
+<line x1="315" y1="497" x2="343" y2="497" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<rect x="345" y="470" width="180" height="82" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="497.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">ACK 06, then 0x60</text>
+<text x="435.0" y="515.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">(versions, status),</text>
+<text x="435.0" y="533.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">0x24 (settings)</text>
+<line x1="343" y1="535" x2="315" y2="535" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="345" y="570" width="180" height="55" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="593.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">radio on: PA power,</text>
+<text x="435.0" y="611.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">TX locked for 2.5 s</text>
+<rect x="345" y="635" width="180" height="55" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="658.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">release SDR_RESET,</text>
+<text x="435.0" y="676.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">wait 1 s</text>
+<line x1="525" y1="662" x2="553" y2="662" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="555" y="625" width="180" height="115" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="645.0" y="660.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">loads its bitstream</text>
+<text x="645.0" y="678.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">from QSPI flash,</text>
+<text x="645.0" y="696.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">starts DSP_CLK,</text>
+<text x="645.0" y="714.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">answers version</text>
+<rect x="345" y="700" width="180" height="45" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="727.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">read version 0x0104</text>
+<line x1="525" y1="722" x2="553" y2="722" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="765" y="625" width="180" height="92" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="855.0" y="648.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">its clock now</text>
+<text x="855.0" y="666.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">arrives from the</text>
+<text x="855.0" y="684.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">FPGA (DSP_CLK,</text>
+<text x="855.0" y="702.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">18.432 MHz)</text>
+<line x1="735" y1="670" x2="763" y2="670" stroke="#EA580C" stroke-width="2" marker-end="url(#ahEA580C)"/>
+<rect x="345" y="760" width="180" height="55" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="783.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">release DSP_RESET,</text>
+<text x="435.0" y="801.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">wait 100 ms</text>
+<line x1="525" y1="787" x2="763" y2="787" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="765" y="760" width="180" height="115" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="855.0" y="795.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">ROM boots QSPI;</text>
+<text x="855.0" y="813.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">M33 starts HiFi4,</text>
+<text x="855.0" y="831.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">sets up the codec,</text>
+<text x="855.0" y="849.4" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">answers version</text>
+<rect x="345" y="825" width="180" height="70" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="846.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">‘i DB00’, read</text>
+<text x="435.0" y="864.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">version 0x0101</text>
+<text x="435.0" y="882.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">and ready bit</text>
+<line x1="525" y1="857" x2="763" y2="857" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)" marker-start="url(#ah2563EBs)"/>
+<rect x="345" y="915" width="180" height="90" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="435.0" y="937.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">main_loop pushes</text>
+<text x="435.0" y="955.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">every register,</text>
+<text x="435.0" y="973.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">one frame per</text>
+<text x="435.0" y="991.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">link per pass</text>
+<rect x="555" y="915" width="180" height="40" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="645.0" y="939.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">register slave</text>
+<line x1="525" y1="935" x2="553" y2="935" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="765" y="963" width="180" height="40" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="855.0" y="987.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">register slave</text>
+<line x1="525" y1="983" x2="763" y2="983" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="135" y="915" width="180" height="80" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="225.0" y="941.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">status frames; the</text>
+<text x="225.0" y="959.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">GUI draws the</text>
+<text x="225.0" y="977.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">main screen</text>
+<line x1="343" y1="955" x2="315" y2="955" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<text x="480" y="1045" font-size="14" text-anchor="middle" font-weight="normal" fill="#4B5563">Arrows: commands or control lines, coloured by the chip that drives them. Dashed boxes: the chip is idle or waiting.</text>
+</svg>

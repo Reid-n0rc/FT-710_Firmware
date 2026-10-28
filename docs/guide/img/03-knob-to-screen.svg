@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>From the VFO knob or a key to the FPGA, the screen and the PC</title>
+<defs><marker id="ah16A34A" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker><marker id="ah1F2937" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ah2563EB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="960" height="600" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">You turn the knob: one step through three chips and back</text>
+<circle cx="72" cy="140" r="40" fill="#E5E7EB" stroke="#1F2937" stroke-width="2"/>
+<line x1="112.0" y1="140.0" x2="118.0" y2="140.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="110.6" y1="150.4" x2="116.4" y2="151.9" stroke="#1F2937" stroke-width="2"/>
+<line x1="106.6" y1="160.0" x2="111.8" y2="163.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="100.3" y1="168.3" x2="104.5" y2="172.5" stroke="#1F2937" stroke-width="2"/>
+<line x1="92.0" y1="174.6" x2="95.0" y2="179.8" stroke="#1F2937" stroke-width="2"/>
+<line x1="82.4" y1="178.6" x2="83.9" y2="184.4" stroke="#1F2937" stroke-width="2"/>
+<line x1="72.0" y1="180.0" x2="72.0" y2="186.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="61.6" y1="178.6" x2="60.1" y2="184.4" stroke="#1F2937" stroke-width="2"/>
+<line x1="52.0" y1="174.6" x2="49.0" y2="179.8" stroke="#1F2937" stroke-width="2"/>
+<line x1="43.7" y1="168.3" x2="39.5" y2="172.5" stroke="#1F2937" stroke-width="2"/>
+<line x1="37.4" y1="160.0" x2="32.2" y2="163.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="33.4" y1="150.4" x2="27.6" y2="151.9" stroke="#1F2937" stroke-width="2"/>
+<line x1="32.0" y1="140.0" x2="26.0" y2="140.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="33.4" y1="129.6" x2="27.6" y2="128.1" stroke="#1F2937" stroke-width="2"/>
+<line x1="37.4" y1="120.0" x2="32.2" y2="117.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="43.7" y1="111.7" x2="39.5" y2="107.5" stroke="#1F2937" stroke-width="2"/>
+<line x1="52.0" y1="105.4" x2="49.0" y2="100.2" stroke="#1F2937" stroke-width="2"/>
+<line x1="61.6" y1="101.4" x2="60.1" y2="95.6" stroke="#1F2937" stroke-width="2"/>
+<line x1="72.0" y1="100.0" x2="72.0" y2="94.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="82.4" y1="101.4" x2="83.9" y2="95.6" stroke="#1F2937" stroke-width="2"/>
+<line x1="92.0" y1="105.4" x2="95.0" y2="100.2" stroke="#1F2937" stroke-width="2"/>
+<line x1="100.3" y1="111.7" x2="104.5" y2="107.5" stroke="#1F2937" stroke-width="2"/>
+<line x1="106.6" y1="120.0" x2="111.8" y2="117.0" stroke="#1F2937" stroke-width="2"/>
+<line x1="110.6" y1="129.6" x2="116.4" y2="128.1" stroke="#1F2937" stroke-width="2"/>
+<circle cx="90" cy="122" r="7" fill="#9CA3AF" stroke="#1F2937" stroke-width="1.5"/>
+<path d="M 42 82 A 60 60 0 0 1 102 82" fill="none" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<text x="72" y="208" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">VFO knob</text>
+<rect x="40" y="270" width="64" height="44" rx="6" fill="#F3F4F6" stroke="#1F2937" stroke-width="2" />
+<rect x="46" y="276" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5" />
+<text x="72" y="297" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">BAND</text>
+<text x="72" y="338" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">a key</text>
+<rect x="150" y="80" width="230" height="120" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="265.0" y="117.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">DISPLAY</text>
+<text x="265.0" y="135.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">quadrature counter,</text>
+<text x="265.0" y="153.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">read every 8 ms</text>
+<text x="265.0" y="171.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">→ signed step count</text>
+<rect x="150" y="240" width="230" height="120" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="265.0" y="277.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">DISPLAY</text>
+<text x="265.0" y="295.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">key scan every 1 ms,</text>
+<text x="265.0" y="313.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">3 equal samples;</text>
+<text x="265.0" y="331.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">press / release / held</text>
+<line x1="122" y1="140" x2="148" y2="140" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<line x1="108" y1="292" x2="148" y2="292" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<rect x="480" y="90" width="270" height="260" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="615.0" y="143.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">MAIN</text>
+<text x="615.0" y="161.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">event filter</text>
+<text x="615.0" y="179.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">(lock, TX, menu gates)</text>
+<text x="615.0" y="197.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937"></text>
+<text x="615.0" y="215.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">dial: step size and</text>
+<text x="615.0" y="233.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">FINE/FAST (inference)</text>
+<text x="615.0" y="251.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937"></text>
+<text x="615.0" y="269.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">VFO record gets the</text>
+<text x="615.0" y="287.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">new frequency;</text>
+<text x="615.0" y="305.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">“refresh” flag set</text>
+<line x1="380" y1="140" x2="478" y2="140" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<text x="429" y="130" font-size="14" text-anchor="middle" font-weight="bold" fill="#16A34A">E1</text>
+<line x1="380" y1="300" x2="478" y2="300" stroke="#16A34A" stroke-width="2" marker-end="url(#ah16A34A)"/>
+<text x="429" y="290" font-size="14" text-anchor="middle" font-weight="bold" fill="#16A34A">E0</text>
+<text x="429" y="162" font-size="14" text-anchor="middle" font-weight="normal" fill="#6B7280">ACKed</text>
+<text x="429" y="322" font-size="14" text-anchor="middle" font-weight="normal" fill="#6B7280">ACKed</text>
+<rect x="800" y="80" width="145" height="130" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="872.5" y="113.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">SDR FPGA</text>
+<text x="872.5" y="131.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">RX NCO:</text>
+<text x="872.5" y="149.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">reg 0x18 (high)</text>
+<text x="872.5" y="167.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">next pass:</text>
+<text x="872.5" y="185.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">reg 0x19 (low)</text>
+<line x1="750" y1="145" x2="798" y2="145" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="800" y="250" width="145" height="100" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="872.5" y="286.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">PC (CAT)</text>
+<text x="872.5" y="304.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">AI on: gets</text>
+<text x="872.5" y="322.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">“FA…;”</text>
+<line x1="750" y1="300" x2="798" y2="300" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="150" y="420" width="400" height="140" rx="8" fill="#111827" stroke="#1F2937" stroke-width="2" />
+<rect x="162" y="432" width="376" height="116" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />
+<text x="350" y="482" font-size="34" text-anchor="middle" font-weight="bold" fill="#1F2937">14.074.000</text>
+<text x="350" y="530" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">redrawn within 33 ms</text>
+<line x1="615" y1="350" x2="552" y2="440" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<text x="640" y="400" font-size="14" text-anchor="start" font-weight="bold" fill="#2563EB">0x20 status frame</text>
+<text x="640" y="420" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">with the new frequencies</text>
+<text x="620" y="470" font-size="14" text-anchor="start" font-weight="bold" fill="#1F2937">An E1 frame on the wire (+3 steps):</text>
+<rect x="620" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="641.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">E1</text>
+<text x="641.0" y="542" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">cmd</text>
+<rect x="666" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="687.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">01</text>
+<text x="687.0" y="542" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">knob</text>
+<rect x="712" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="733.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">03</text>
+<text x="733.0" y="542" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">step</text>
+<rect x="758" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="779.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">00</text>
+<rect x="804" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="825.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">00</text>
+<rect x="850" y="482" width="42" height="40" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="871.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">00</text>
+<rect x="896" y="482" width="42" height="40" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="917.0" y="506.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">E5</text>
+<text x="917.0" y="542" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">sum</text>
+<text x="620" y="580" font-size="14" text-anchor="start" font-weight="normal" fill="#6B7280">sum = E1 + 01 + 03 (8 bits); no start byte</text>
+</svg>

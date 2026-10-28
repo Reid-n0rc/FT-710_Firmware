@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="690" viewBox="0 0 960 690" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>PTT sources, the gates between them and the RF, and the protections</title>
+<defs><marker id="ah2563EB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker><marker id="ah6B7280" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="ahDC2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="0" y="0" width="960" height="690" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">Pressing PTT: eleven sources, a few gates, one sequencer</text>
+<text x="165" y="66" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">PTT sources, highest priority first</text>
+<rect x="20" y="80" width="40" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="40.0" y="104.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">1</text>
+<rect x="66" y="80" width="250" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="191.0" y="104.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">CAT TX1; (any CAT port)</text>
+<line x1="318" y1="100" x2="348" y2="100" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="132" width="40" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="40.0" y="156.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">2</text>
+<rect x="66" y="132" width="250" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="191.0" y="156.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">external amp request line</text>
+<line x1="318" y1="152" x2="348" y2="152" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="184" width="40" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="40.0" y="208.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">3</text>
+<rect x="66" y="184" width="250" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="191.0" y="208.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">DATA jack PTT (PC KEYING DAKY)</text>
+<line x1="318" y1="204" x2="348" y2="204" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="236" width="40" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="40.0" y="260.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">4</text>
+<rect x="66" y="236" width="250" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="191.0" y="260.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">USB RTS (PC KEYING RTS)</text>
+<line x1="318" y1="256" x2="348" y2="256" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="288" width="40" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="40.0" y="312.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5</text>
+<rect x="66" y="288" width="250" height="40" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="191.0" y="312.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">USB DTR (PC KEYING DTR)</text>
+<line x1="318" y1="308" x2="348" y2="308" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="340" width="40" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="40.0" y="364.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">6–10</text>
+<rect x="66" y="340" width="250" height="44" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="191.0" y="357.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">MIC/panel PTT via DISPLAY,</text>
+<text x="191.0" y="375.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">tuner, voice playback</text>
+<line x1="318" y1="360" x2="348" y2="362" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="20" y="392" width="40" height="40" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="40.0" y="416.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">11</text>
+<rect x="66" y="392" width="250" height="40" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<text x="191.0" y="416.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">VOX (voice detect in the DSP)</text>
+<line x1="318" y1="412" x2="348" y2="412" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="350" y="80" width="6" height="356" rx="0" fill="#6B7280" stroke="none" stroke-width="0" />
+<rect x="380" y="200" width="150" height="110" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="455.0" y="223.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">first active</text>
+<text x="455.0" y="241.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">source wins</text>
+<text x="455.0" y="259.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937"></text>
+<text x="455.0" y="277.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">CAT TX1 skips</text>
+<text x="455.0" y="295.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">the key locks</text>
+<line x1="356" y1="255" x2="378" y2="255" stroke="#6B7280" stroke-width="2" marker-end="url(#ah6B7280)"/>
+<rect x="570" y="70" width="230" height="110" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="685.0" y="102.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Arbiter</text>
+<text x="685.0" y="120.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">seen on 2 passes,</text>
+<text x="685.0" y="138.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">time-out timer starts;</text>
+<text x="685.0" y="156.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">tuner line can inhibit</text>
+<path d="M 530 255 L 550 255 L 550 125 L 568 125" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="570" y="205" width="230" height="120" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="685.0" y="242.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Allowed?</text>
+<text x="685.0" y="260.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">TX freq in region table</text>
+<text x="685.0" y="278.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">(lo ≤ f &lt; hi), TX not</text>
+<text x="685.0" y="296.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">disabled, TOT not tripped</text>
+<line x1="685" y1="180" x2="685" y2="203" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<rect x="820" y="225" width="125" height="80" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+<text x="882.5" y="251.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">No</text>
+<text x="882.5" y="269.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">TX refused,</text>
+<text x="882.5" y="287.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">TXINH = 1</text>
+<line x1="800" y1="265" x2="818" y2="265" stroke="#DC2626" stroke-width="2" marker-end="url(#ahDC2626)"/>
+<rect x="570" y="350" width="375" height="90" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="757.5" y="381.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Sequencer</text>
+<text x="757.5" y="399.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">mute → RX off → TX on → SDR + DSP</text>
+<text x="757.5" y="417.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">switched → TX delay → SEND keyed</text>
+<line x1="685" y1="325" x2="685" y2="348" stroke="#2563EB" stroke-width="2" marker-end="url(#ah2563EB)"/>
+<text x="700" y="342" font-size="14" text-anchor="start" font-weight="bold" fill="#2563EB">yes</text>
+<text x="480" y="482" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">While transmitting, MAIN keeps watching</text>
+<rect x="20" y="495" width="220" height="160" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="130.0" y="534.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">High SWR</text>
+<text x="130.0" y="552.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">9 bad samples →</text>
+<text x="130.0" y="570.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">HI-SWR flag, meter;</text>
+<text x="130.0" y="588.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">MAIN does not</text>
+<text x="130.0" y="606.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">drop TX (inference:</text>
+<text x="130.0" y="624.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">fold-back elsewhere)</text>
+<rect x="252" y="495" width="220" height="160" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="362.0" y="543.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">PA heat</text>
+<text x="362.0" y="561.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PA thermistor →</text>
+<text x="362.0" y="579.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">fan DAC on/off</text>
+<text x="362.0" y="597.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">with hysteresis</text>
+<text x="362.0" y="615.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">(fan: inference)</text>
+<rect x="484" y="495" width="220" height="160" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="594.0" y="552.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Time-out timer</text>
+<text x="594.0" y="570.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">pre-warning beep,</text>
+<text x="594.0" y="588.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">then TX stops until</text>
+<text x="594.0" y="606.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PTT is released</text>
+<rect x="716" y="495" width="220" height="160" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+<text x="826.0" y="552.9" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937">Supply too low</text>
+<text x="826.0" y="570.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">PA/SDR lines off,</text>
+<text x="826.0" y="588.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">settings saved,</text>
+<text x="826.0" y="606.9" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">radio switches off</text>
+</svg>

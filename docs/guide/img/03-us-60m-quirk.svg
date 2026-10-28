@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+<title>Why the US 60 m single-frequency rows can never allow TX: the lo &lt;= f &lt; hi test</title>
+<defs><marker id="ah1F2937" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker></defs>
+<rect x="0" y="0" width="960" height="560" fill="#FFFFFF"/>
+<text x="480" y="32" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937">The 60 m quirk: a range test that a single point cannot pass</text>
+<line x1="80" y1="330" x2="920" y2="330" stroke="#1F2937" stroke-width="2" marker-end="url(#ah1F2937)"/>
+<line x1="90.0" y1="324" x2="90.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="90.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5320</text>
+<line x1="180.0" y1="324" x2="180.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="180.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5330</text>
+<line x1="270.0" y1="324" x2="270.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="270.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5340</text>
+<line x1="360.0" y1="324" x2="360.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="360.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5350</text>
+<line x1="450.0" y1="324" x2="450.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="450.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5360</text>
+<line x1="540.0" y1="324" x2="540.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="540.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5370</text>
+<line x1="630.0" y1="324" x2="630.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="630.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5380</text>
+<line x1="720.0" y1="324" x2="720.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="720.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5390</text>
+<line x1="810.0" y1="324" x2="810.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="810.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5400</text>
+<line x1="900.0" y1="324" x2="900.0" y2="336" stroke="#1F2937" stroke-width="2"/>
+<text x="900.0" y="356" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937">5410</text>
+<text x="920" y="378" font-size="14" text-anchor="end" font-weight="normal" fill="#1F2937">kHz</text>
+<text x="80" y="88" font-size="14" text-anchor="start" font-weight="bold" fill="#16A34A">Europe table: one row 5351.5 ≤ f &lt; 5366.5</text>
+<rect x="373.5" y="100" width="135.0" height="20" rx="3" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />
+<circle cx="373.5" cy="110" r="7" fill="#16A34A"/>
+<circle cx="508.5" cy="110" r="7" fill="#FFFFFF" stroke="#16A34A" stroke-width="2.5"/>
+<text x="524.5" y="115" font-size="14" text-anchor="start" font-weight="normal" fill="#16A34A">TX allowed anywhere in the bar</text>
+<text x="80" y="180" font-size="14" text-anchor="start" font-weight="bold" fill="#DC2626">US table: each 60 m channel is a row with lo = hi (a single point)</text>
+<line x1="184.5" y1="220" x2="184.5" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="184.5" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="179.5" y1="215" x2="189.5" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="198.0" y1="220" x2="198.0" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="198.0" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="193.0" y1="215" x2="203.0" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="328.5" y1="220" x2="328.5" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="328.5" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="323.5" y1="215" x2="333.5" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="342.0" y1="220" x2="342.0" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="342.0" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="337.0" y1="215" x2="347.0" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="423.0" y1="220" x2="423.0" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="423.0" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="418.0" y1="215" x2="428.0" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="436.5" y1="220" x2="436.5" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="436.5" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="431.5" y1="215" x2="441.5" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="553.5" y1="220" x2="553.5" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="553.5" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="548.5" y1="215" x2="558.5" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="567.0" y1="220" x2="567.0" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="567.0" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="562.0" y1="215" x2="572.0" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="841.5" y1="220" x2="841.5" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="841.5" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="836.5" y1="215" x2="846.5" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="855.0" y1="220" x2="855.0" y2="330" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="855.0" cy="220" r="6" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.5"/>
+<line x1="850.0" y1="215" x2="860.0" y2="225" stroke="#DC2626" stroke-width="2.5"/>
+<text x="80" y="256" font-size="14" text-anchor="start" font-weight="normal" fill="#6B7280">(plus 5167.5 kHz, off this scale)</text>
+<text x="666.0" y="226" font-size="14" text-anchor="middle" font-weight="normal" fill="#DC2626">every point refused</text>
+<rect x="40" y="400" width="430" height="140" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="50" y="424" font-size="14" text-anchor="start" font-weight="bold" fill="#1F2937">The test, for every row:</text>
+<text x="50" y="442" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">allowed if  lo ≤ f  and  f &lt; hi</text>
+<text x="50" y="460" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937"></text>
+<text x="50" y="478" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">Europe, f = 5360:  5351.5 ≤ 5360 ✓   5360 &lt; 5366.5 ✓</text>
+<rect x="490" y="400" width="430" height="140" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+<text x="500" y="424" font-size="14" text-anchor="start" font-weight="bold" fill="#1F2937">US row 5332 kHz, f = 5332:</text>
+<text x="500" y="442" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">lo ≤ f:  5332 ≤ 5332  ✓</text>
+<text x="500" y="460" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">f &lt; hi:  5332 &lt; 5332  ✗  → refused</text>
+<text x="500" y="478" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937"></text>
+<text x="500" y="496" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">so 60 m TX in the US table appears never</text>
+<text x="500" y="514" font-size="14" text-anchor="start" font-weight="normal" fill="#1F2937">to be allowed (inference, not tested on air)</text>
+</svg>
