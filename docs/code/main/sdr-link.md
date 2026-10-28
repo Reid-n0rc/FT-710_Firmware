@@ -74,9 +74,9 @@ PODR7=0x40 and PDR7=0xDF **[fact]**. So after port init P76 is high, P77 is low 
 |---|---|---|---|---|---|
 | `FUN_fffb7051` | *gpio_sdr_reset* | P77 (68), R1142 470 Ω, pull resistor R1133 10 kΩ | `SDR_RESET` | J2002 pin 52 `RST_IN` (via D2001) | Set to 1 by *sdr_init* (boot); pulsed 0→1 at bridge entry and exit **[fact]** |
 | `FUN_fffb7067` | *gpio_sdr_update* | P76 (69), R1141 4.7 kΩ | `SDR_UPDATE` | J2002 pin 53 `WP` | 1 from port init. 0 at bridge entry, back to 1 at bridge exit, and cleared by `power_off_io` **[fact]** |
-| `FUN_fffb7080` | *gpio_dsp_reset* | P71 (86), R1152 4.7 kΩ | `DSP_RESET` | RT685 | 0 at bridge entry, 1 at exit. Also used by DSP init `FUN_fff9d06c` and the DSP update routine near 0xFFFA0Bxx **[fact]** |
-| `FUN_fffb7098` | *gpio_dsp_update* | P72 (85), R1041 4.7 kΩ | `DSP_UPDATE` | RT685 boot select | DSP update routine only **[fact]** |
-| `FUN_fffb70b0` | *gpio_af_reset* | P74 (72), R1122 4.7 kΩ | `AF_RESET` | AF unit | `FUN_fffb1dad` file, lines near 0xFFFB2xxx **[fact]**; not SDR |
+| `FUN_fffb7080` | *gpio_dsp_reset* | P71 (86), R1152 4.7 kΩ | `DSP_RESET` | RT685 | 0 at bridge entry, 1 at exit. Also used by DSP init `FUN_fff9d06c` and the DSP update routine `FUN_fffa0c79` **[fact]** |
+| `FUN_fffb7098` | *gpio_dsp_update* | P72 (85), R1041 4.7 kΩ | `DSP_UPDATE` | RT685 boot select | DSP update routine `FUN_fffa0c79` only **[fact]** |
+| `FUN_fffb70b0` | *gpio_af_reset* | P74 (72), R1122 4.7 kΩ | `AF_RESET` | AF unit | Set by `FUN_fffb1f83` (boot, `app_main`) **[fact]**; not SDR |
 | `FUN_fffb70c9` | *gpio_pa_pon* | PC0 (75) | `PA_PON` | PA unit power | Cleared by `power_off_io` **[fact]**; not SDR |
 | `FUN_fffb6fac` | *gpio_tx_line* | P73 (77), reads PODR | `TX` | TX switching | *sdr_task* waits for it to drop before RX updates resume **[fact]** |
 | `FUN_fffb721a` | *gpio_rx_line* | PB7 (78), reads PODR | `RX` | RX switching | *sdr_task* waits for it to drop before TX updates start **[fact]** |
@@ -399,6 +399,13 @@ documented on the DSP-link page.
   - `SDR_UPDATE` goes **low**, not high, during the update.
   - The version comes from reading register 0, not from a message the FPGA sends by itself.
   - The UART carries at least the control and status part of the update.
+
+## Decompiler caveat
+
+The RX SLEIGH module decodes `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11) as a memory load (T10e). In this subsystem the stray
+low-RAM accesses in `FUN_fffa1c69` (`_DAT_0000464f = 1`, `*puVar8 = 1`) and in `FUN_fffb3196`/`FUN_fffb324c`
+(`in_R14 = &DAT_0000464f`) look like such artifacts and were **not** used for any claim on this page. The frame and
+bridge offsets above were checked in the disassembly.
 
 ## Open questions
 
