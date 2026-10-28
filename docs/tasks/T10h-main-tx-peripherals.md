@@ -1,6 +1,6 @@
 # T10h — MAIN TX control, protection, meters and other peripherals
 
-**Status:** todo · **Depends on:** T05 T09 · **Parent:** [T10](T10-docs-main.md)
+**Status:** in progress · **Depends on:** T05 T09 · **Parent:** [T10](T10-docs-main.md)
 
 ## Goal
 Document this MAIN (RX651) subsystem per the AGENTS.md documentation standard.
@@ -15,7 +15,15 @@ Document this MAIN (RX651) subsystem per the AGENTS.md documentation standard.
 PTT/TX sequencing (TX1 path), protection (SWR/temp/current/ALC), meters and the 12 ADC channels (SPIR), DAC (0x88040), tuner/linear port SCI2, SCI6 simple-I2C device, timers (CMT/TPU), GPIO map, power on/off (`power_off_io` 0xFFFB73A6), region/TX coverage (JP destination code).
 
 ## Plan
-_(fill in before starting)_
+1. PeriphRefs.java over CMT, DA, TPU, S12AD/S12AD1, SCI2, SCI6, ports (PDR/PODR/PIDR/PMR/ODR), MPC, ICU and any other
+   peripheral range (TMR, MTU, RTC, WDT) on a private project copy `FT710_MAIN_T10h`; list the functions per peripheral.
+2. Read the decomp for: ADC scan/readout (0x20B04, `FUN_fffb27fb`/`FUN_fffb2858`), DAC, CMT/TPU tick and timer service,
+   SCI2 (`sci2_configure`), SCI6 I2C device, `power_off_io` and the port-bit helpers, the PTT/TX path (`cat_TX`,
+   CAT TX1, key-event filter), protection (SWR/temp/current/ALC/fan) and meters (RM/SM/SPM), the destination code
+   (0x475E) TX band-limit tables.
+3. Map ADC channels and GPIOs to schematic nets (service manual p17 MAIN CPU sheet, PA sheets), via pdftotext.
+4. Write `docs/code/main/tx-protection.md` and `docs/code/main/peripherals.md` (tables + Mermaid), propose names in
+   `tools/ghidra/names_main.T10h.tsv`, then Findings/Follow-ups here and commit.
 
 ## Findings
 _(fill in as you go)_
