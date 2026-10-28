@@ -1412,7 +1412,8 @@ is one, picks read or write:
   thermistor, the remote-keypad input, the SDR-module detect voltage and one unused input, with the unconverted slots as zero:
   12 × 3 hex digits. It changes nothing.
 - **`SPM` reads eight bytes of meter values** *(inference that they are meters)*.
-- **`SPR` / `SPW` read and write one EEPROM byte** at any address. The write has no bounds check.
+- **`SPR` / `SPW` read and write one EEPROM byte** at any address. The write has no bounds check. The read is tested on a radio
+  and is how the backup script copies the whole EEPROM, including the factory calibration.
 - **`SPN` reaches a 261-byte table** that is most likely the factory alignment and calibration table *(inference)*, including the
   per-band TX power calibration. `W` changes an entry in RAM, `S` re-applies the table half a second later, and `SPAWE` saves the
   whole table to EEPROM. Even the read, `SPNR`, has a side effect: it also loads a preset into the active VFO.
@@ -1448,6 +1449,9 @@ are on the "never send" list. **Every answer matched the format decoded from the
 - Its region code is **0x50E2**, the wide (TX-expanded) partner of the US code; the `JP` check bytes really are the complements,
   and the EEPROM header carries the stamp 2023-06-26 08:56, most likely the factory programming *(inference)*.
 - `E8` returned the full 10 674-byte frame with a correct signature and checksum.
+- Later the same day, `tools/cat_backup.py --eeprom` read the whole EEPROM, one byte at a time with `SPR`, in about two minutes with
+  no errors. Its memory-channel area matches the `E8` image byte for byte, and its region bytes match `JP0710;`. It also showed
+  that an `SPR` read is 7 bytes, not the 8 first documented: the radio rejected the longer form with `?;` and changed nothing.
 
 The raw replies are in [cat-commands.md](../cat-commands.md#radio-checks).
 

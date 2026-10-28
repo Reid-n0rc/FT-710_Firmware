@@ -206,7 +206,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 | `SPSWaaaavvvv;` | set | same | Writes `vvvv` to SDR register `aaaa`. No reply on success; `?;` if the SDR does not ACK. The write bypasses MAIN's register shadow, so it persists only until the firmware's own value for that register changes (then the updater overwrites it) **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk**: it writes SDR/FPGA registers directly. |
 | `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dsp_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** to the **IF-DSP (RT685) register file** (113 registers, see [code/ifdsp/control-link.md](code/ifdsp/control-link.md) and [code/main/dsp-link.md](code/main/dsp-link.md)) **[fact]** (T12b). A write does not update MAIN's shadow, so the value stays until the setting behind that register changes **[inference]**. High risk for the write. |
 | `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. Seen on the radio: 41 chars, the three constant-0 fields are 0 ([radio checks](#radio-checks)). |
-| `SPR<aH><aL><x><sum>;` (binary) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes). Upper-case `R` only. |
+| `SPR<aH><aL><sum>;` (binary, 7 bytes) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes; sum over the first 6). Upper-case `R` only. The request has no data byte: the receiver ends an `SPR` frame after 7 bytes, so an 8-byte request is split and answered `?;?;`. **[fact, radio 2026-10-28]**: `SPR 01 0F` → `50`, `SPR 01 10` → `E2` (the region code), about 5 ms per read. |
 | `SPW<aH><aL><byte><sum>;` (binary) | set | same | **Writes one EEPROM byte** and the RAM mirror 0x464F[addr]. Upper-case `W` only. **High risk** (raw EEPROM write, no bounds). |
 | `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `FUN_fffbff93` (a re-apply) 500 ms later. `R` also sets 0x20CE2 = idx-1 and calls `FUN_fffbb567`, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. `cfg105` is the factory alignment / calibration table **[inference]** ([code/main/eeprom.md](code/main/eeprom.md)); entries from index 70 (0x469E..0x4734, 15 bytes per band) hold the per-band TX power calibration behind SDR register 0x25 **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk** for `W`/`S`. |
 | `SPM...<sum>;` (binary) | read | `cat_SP_meters` 0xFFFA5284 | Answers `SPM` + 8 binary bytes (0x1204A, 0x12048/0x1204B, and four more meter getters 0xFFFB6E03..0xFFFB6E98) + 3 zero bytes + sum + `;` (16 bytes). These are meter readings **[inference]**. |
@@ -215,7 +215,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 - **Checksum.** The binary forms call `cat_checksum_ok(text, len-2)`: the 8-bit additive sum of every frame byte before the sum byte (from the `S` of `SP` on, without the sum byte and the `;`) must equal the sum byte **[fact]** (0xFFFA3867, 0xFFFA38C4, 0xFFFA39BB, 0xFFFA510A; `decomp/main/fffa20af_fffa7928.c`).
 - **No checksum bug.** An earlier reading (T09) that the length is loaded from RAM address `len-2` came from a decoder defect: the RX SLEIGH module showed `MOVU.W R2,R2` (bytes `5F 22`) as `MOVU.W [R2],R2`. T10e found it and T17 fixed the decoder and re-exported `decomp/main`. **`SPR`, `SPW`, `SPN`, `SPM` and `SPA` are usable in V01-12, high risk** (they read or write EEPROM and calibration/service data; never send one without the owner's approval). See [cat.md](code/main/cat.md#extended-and-service-commands-summary).
 - **ASCII forms.** `SPS`, `SPD` and `SPIR` have no checksum **[fact]**.
-- **Framing.** The receiver (`cat_rx_byte_hook` 0xFFFB1DAD) gives binary frames a fixed length once it has seen `SPR`, `SPW` or `SPN`, so a `;` byte inside them does not end the frame. Other frames end at `;`, or are dropped after an inter-byte timeout of 10, 100, 1000 or 3000 timer units chosen by the CAT TIME OUT TIMER menu **[fact]** (milliseconds **[inference]**).
+- **Framing.** The receiver (`cat_rx_byte_hook` 0xFFFB1DAD) gives binary frames a fixed total length once it has seen `SPR` (7 bytes), `SPW` (8) or `SPNW` (9), so a `;` byte inside them does not end the frame. **[fact; SPR confirmed on a radio]** Other frames end at `;`, or are dropped after an inter-byte timeout of 10, 100, 1000 or 3000 timer units chosen by the CAT TIME OUT TIMER menu **[fact]** (milliseconds **[inference]**).
 
 <a id="ext-eo"></a>
 ### EO — encoder offset (in 2211-A, removed in 2306-C; medium)
@@ -314,7 +314,7 @@ See the differences table. `VE0;` → `VE00112;` on V01-12 (chars 1, 2, 4, 5 of 
 <a id="radio-checks"></a>
 ## Read-only checks on a radio (2026-10-28)
 
-The read-only list of issue #98 was run on an FT-710 over USB (CP210x enhanced port, 38400 baud). Nothing
+The read-only list of issue #98, and later a full EEPROM dump, were run on an FT-710 over USB (CP210x enhanced port, 38400 baud). Nothing
 was written: no set form, no `SPSR`/`SPDR`. `ID;` answered `ID0800;`.
 
 | Sent | Reply | Result |
@@ -325,6 +325,7 @@ was written: no set form, no `SPSR`/`SPDR`. `ID;` answered `ID0800;`.
 | `PE000;` | `PE000003;` | 3-digit unsigned form as decoded |
 | `SPIR;` | `SPIR000004002C3400000800003223B2BFFEDCC6;` | 41 chars; field values in [peripherals.md](code/main/peripherals.md#the-12-spir-fields) |
 | `E8;` | 10674 bytes | header `00 07 90 00 00` after removing k; sum correct |
+| `SPR<aH><aL><sum>;` × 22,583 | 8-byte replies | the whole EEPROM in 122 s (about 5 ms per byte), no failures, with `tools/cat_backup.py --eeprom`. 0x010F..0x0110 = `50 E2` (the `JP` code); header `23 06 26 08 56` + save counter + flag 1; the dump at 0x1A7A equals the `E8` image byte for byte. A second run gave an identical dump, save counter unchanged, so the reads changed nothing |
 
 All replies match the formats decoded from V01-12 **[fact, radio]**. The `E8` dump itself is not in the repo.
 

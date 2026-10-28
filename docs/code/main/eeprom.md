@@ -89,7 +89,7 @@ Sizes check: 0x0112 + 2·0xCA8 = 0x1A62; 0x1B01 + 133·0x5A = 0x49C3; 0x49C3 + 0
 
 ### The E8/E9 image (RAM 0x60C9, 10,665 bytes) **[fact]**
 
-`E8` dumps **0x60C9..0x8A71**. A dump from a radio (2026-10-28) had exactly this length, signature and a correct sum ([cat-commands.md](../../cat-commands.md#radio-checks)). That is the 0x87-byte memory header plus **117 channel records** (001–099 and P1L–P9U): 0x87 + 117·0x5A = 0x29A9.
+`E8` dumps **0x60C9..0x8A71**. A dump from a radio (2026-10-28) had exactly this length, signature and a correct sum, and it is byte for byte the same as EEPROM 0x1A7A.. read with `SPR` on the same radio, which confirms the mirror mapping **[fact, radio]** ([cat-commands.md](../../cat-commands.md#radio-checks)). That is the 0x87-byte memory header plus **117 channel records** (001–099 and P1L–P9U): 0x87 + 117·0x5A = 0x29A9.
 
 `E9` copies the same 10,665 bytes back and calls `eeprom_save_image`. That function writes **0x2F49** bytes (0x60C9..0x9011), so it also rewrites the 16 records of the 60 m/EMG channels (0x8A72..0x9011) from RAM. Those records are not part of the transfer and are left as they were.
 
