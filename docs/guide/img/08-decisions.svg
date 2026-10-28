@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
-<title>Decisions waiting for the owner</title>
+<title>Decisions waiting for the owner; the read-only CAT tests are done</title>
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
 <rect x="0" y="0" width="960" height="640" fill="#FFFFFF"/>
 <rect x="40" y="40" width="880" height="580" rx="14" fill="#F3F4F6" stroke="#6B7280" stroke-width="3" />
@@ -7,11 +7,12 @@
 <circle cx="480" cy="42" r="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
 <rect x="64" y="76" width="832" height="528" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1" />
 <text x="480" y="112" font-size="20" text-anchor="middle" font-weight="bold" fill="#1F2937" >Waiting for the owner's decision</text>
-<text x="480" y="136" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >Nothing on this list has been done yet. Each item is the owner's call.</text>
-<rect x="88" y="168" width="28" height="28" rx="4" fill="#FFFFFF" stroke="#1F2937" stroke-width="2" />
-<text x="132" y="188" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >Read-only CAT tests</text>
-<text x="132" y="214" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >Send a few undocumented query forms, e.g. VE0;…VE3;, JP0710;,</text>
-<text x="132" y="232" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >FD000;, PE000;, SPIR;  (never any of the set forms)</text>
+<text x="480" y="136" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >Each item is the owner's call. The read-only CAT tests were done on 2026-10-28.</text>
+<rect x="88" y="168" width="28" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />
+<path d="M94,182 L100,189 L111,174" fill="none" stroke="#16A34A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="132" y="188" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >Read-only CAT tests (done)</text>
+<text x="132" y="214" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >Sent VE0;…VE3;, JP0710;, FD000;…FD002;, PE000;, SPIR; and E8;</text>
+<text x="132" y="232" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >All answers matched the analysis. No set form was sent.</text>
 <rect x="760" y="168" width="116" height="30" rx="15" fill="#F3F4F6" stroke="#6B7280" stroke-width="2" />
 <text x="818" y="188" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >rung 1</text>
 <line x1="88" y1="244" x2="876" y2="244" stroke="#E5E7EB" stroke-width="2"/>
@@ -37,9 +38,9 @@
 <text x="818" y="446" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >look only</text>
 <line x1="88" y1="502" x2="876" y2="502" stroke="#E5E7EB" stroke-width="2"/>
 <rect x="88" y="512" width="28" height="28" rx="4" fill="#FFFFFF" stroke="#1F2937" stroke-width="2" />
-<text x="132" y="532" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >US 60 m TX check (possible)</text>
+<text x="132" y="532" font-size="17" text-anchor="start" font-weight="bold" fill="#1F2937" >US 60 m TX check (possible; not on this radio)</text>
 <text x="132" y="558" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >The code suggests the US table never allows 60 m TX</text>
-<text x="132" y="576" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >(inference). Only an on-air test would confirm it.</text>
+<text x="132" y="576" font-size="14" text-anchor="start" font-weight="normal" fill="#374151" >(inference). Needs a 0x315B radio; the owner's is 0x50E2.</text>
 <rect x="760" y="512" width="116" height="30" rx="15" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" />
 <text x="818" y="532" font-size="14" text-anchor="middle" font-weight="bold" fill="#1F2937" >transmits</text>
 </svg>

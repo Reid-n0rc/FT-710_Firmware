@@ -171,6 +171,11 @@ boot pins; the DISPLAY CPU does (see docs/hardware.md).
 
 So fields 1–8 are AN000..AN007 in order, with the unused ones reported as 0, and fields 9–12 are unit 1.
 
+**On the radio** (2026-10-28, receiving, no FH-2 fitted) `SPIR;` answered `SPIR000004002C3400000800003223B2BFFEDCC6;` **[fact, radio]**:
+fields 1, 5 and 7 are 0 as decoded; RVS 0x004 and FWD 0x002 (no TX); `PA_VDD` 0xC34, well above the 0x7DD under-voltage trip; ALC 0x008;
+`PA_IDD` 0x032; `SDR_DET` 0x23B; AN117 0x2BF; `REM_KEY` 0xFED (near full scale: the ladder idles high with no keypad
+**[inference]**); `PA_HF_TH` 0xCC6. Volts are not given because the divider ratios are not decoded.
+
 ## DAC (DA0 at 0x88040)
 
 - `R_DA_Create` enables DA0 on P03, and `dac0_write` writes DADR0 (12 bits) **[fact]**. On the schematic, `DA_OUT` → R1099/R1027/C1150 →

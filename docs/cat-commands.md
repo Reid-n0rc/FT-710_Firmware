@@ -205,7 +205,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 | `SPSRaaaa;` → `SPSRvvvv;` | read | `cat_SP_sdr_reg` 0xFFFA4E31 → `sdr_reg_access` 0xFFFA1485 | Reads 16-bit register `aaaa` (hex) of the **SDR unit** over SCI5. The SDR link frame is `r` + 4 hex + 2-hex sum + CR. **[fact]** for SCI5; SCI5 = SDR link per T05. |
 | `SPSWaaaavvvv;` | set | same | Writes `vvvv` to SDR register `aaaa`. No reply on success; `?;` if the SDR does not ACK. The write bypasses MAIN's register shadow, so it persists only until the firmware's own value for that register changes (then the updater overwrites it) **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk**: it writes SDR/FPGA registers directly. |
 | `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dsp_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** to the **IF-DSP (RT685) register file** (113 registers, see [code/ifdsp/control-link.md](code/ifdsp/control-link.md) and [code/main/dsp-link.md](code/main/dsp-link.md)) **[fact]** (T12b). A write does not update MAIN's shadow, so the value stays until the setting behind that register changes **[inference]**. High risk for the write. |
-| `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. |
+| `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. Seen on the radio: 41 chars, the three constant-0 fields are 0 ([radio checks](#radio-checks)). |
 | `SPR<aH><aL><x><sum>;` (binary) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes). Upper-case `R` only. |
 | `SPW<aH><aL><byte><sum>;` (binary) | set | same | **Writes one EEPROM byte** and the RAM mirror 0x464F[addr]. Upper-case `W` only. **High risk** (raw EEPROM write, no bounds). |
 | `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `FUN_fffbff93` (a re-apply) 500 ms later. `R` also sets 0x20CE2 = idx-1 and calls `FUN_fffbb567`, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. `cfg105` is the factory alignment / calibration table **[inference]** ([code/main/eeprom.md](code/main/eeprom.md)); entries from index 70 (0x469E..0x4734, 15 bytes per band) hold the per-band TX power calibration behind SDR register 0x25 **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk** for `W`/`S`. |
@@ -235,7 +235,9 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 - **Data bytes:** each is `settings_image[i] + k`, taken from 0x60C9..0x8A71 (the EEPROM-backed settings and memory-channel image).
 - **Sum:** the 8-bit sum of the plain bytes, plus k.
 
-This is the obfuscated **clone/backup** export: header bytes 07 90 after removing k. It does not change the radio, but it floods the port. Low risk. Note that the reply overwrites RAM 0x1C8E..0x463F, which is the reply buffer.
+This is the obfuscated **clone/backup** export: header bytes 07 90 after removing k. It does not change the radio, but it floods the port. Low risk.
+
+On the radio (2026-10-28) the frame was 10674 bytes, the five header bytes minus k were `00 07 90 00 00`, and the sum matched **[fact, radio]**. The data starts at frame byte 7 (after `E8` and the five header bytes), not at byte 5. Note that the reply overwrites RAM 0x1C8E..0x463F, which is the reply buffer.
 
 <a id="ext-e9"></a>
 ### E9 — settings-image restore (undocumented; high risk)
@@ -258,6 +260,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 - **Set `FD002ddddddddd;` (15):** only n = 2. The 9-digit Hz value must satisfy 30000 < f < 75,000,001. It is written into the band memory of the band that contains the active frequency (`bandmem_set`).
 - **AI:** `cat_ai_FD` broadcasts `FD00n<9 digits>;`, with n from 0x9C35, when the value changes. This is the only undocumented AI message.
 - **Meaning:** scope start frequency (T10g): n = 0 the dial frequency (0x20F5C, active VFO + `vfo_display_offset`), n = 1 the CURSOR-mode start 0x20F60, n = 2 the FIX-mode start of the current band. The AI frame uses n = scope mode 0x9C35. **[fact]** for the variables, **[inference]** (strong) for "scope start". See [code/main/radio-control.md](code/main/radio-control.md#band-memories-and-the-fd-command-scope-start-frequencies).
+- **Radio (2026-10-28):** with the dial on 20 m, `FD000;` → `FD000014037000;`, `FD001;` → `FD001013937000;`, `FD002;` → `FD002014000000;` (FIX start = the band edge) **[fact, radio]**. The values fit the scope-start reading.
 - **Risk:** medium (persistent band memory).
 
 <a id="ext-kt"></a>
@@ -274,6 +277,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 - **Invalid selectors:** if a or b is outside the sets above, the target pointer is uninitialized. **A set can then write to an arbitrary RAM address.**
 - **AI:** if AI is on, the AI holdoff is armed.
 - **Meaning:** the 2 sets × 3 bands × (frequency, ±level, bandwidth) shape matches the 3-band parametric MIC EQ, normal and processor-on **[inference]**. The manual exposes these values only through `EX` menu items.
+- **Radio (2026-10-28):** `PE000;` → `PE000003;`, the 3-digit unsigned form for c = 0 **[fact, radio]**. One value does not settle the EQ meaning.
 - **Risk:** medium, high for invalid selectors.
 
 <a id="ext-zz"></a>
@@ -288,12 +292,13 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 
 <a id="ext-ve"></a>
 ### VE — firmware version (documented)
-See the differences table. `VE0;` → `VE00112;` on V01-12 **[inference from the string at 0xFFFFFF00; chars 1, 2, 4, 5 of "V01-12"]**.
+See the differences table. `VE0;` → `VE00112;` on V01-12 (chars 1, 2, 4, 5 of "V01-12" at 0xFFFFFF00). Confirmed on the radio (2026-10-28): `VE0;`..`VE3;` → `VE00112;`, `VE10108;`, `VE20104;`, `VE30101;`, i.e. MAIN V01-12, DISPLAY V01-08, SDR V01-04, DSP V01-01 **[fact, radio]**. These are the versions in the 2024-02 package, so the radio runs the images this project decompiles.
 
 <a id="ext-jp"></a>
 ### JP — destination (region) code (undocumented; high risk)
 `cat_ext_JP` 0xFFFA556B. Positions 2–5 must be hex `0710`. **[fact]**
-- **Read `JP0710;` (7):** answers `JP0710` + `HHLL` (destination code from 0x475E/0x475F, EEPROM 0x010F) + two inverted bytes (check bytes, ~HH ~LL **[inference: disassembly to confirm]**) + 10 hex digits of the EEPROM header 0x464F..0x4653. Total 25 characters.
+- **Read `JP0710;` (7):** answers `JP0710` + `HHLL` (destination code from 0x475E/0x475F, EEPROM 0x010F) + two inverted bytes (~HH ~LL) + 10 hex digits of the EEPROM header 0x464F..0x4653 (the date/time stamp, BCD yy mm dd hh mm). Total 25 characters.
+  - **Radio (2026-10-28):** `JP071050E2AF1D2306260856;`. Code **0x50E2**, check bytes AF 1D = ~50 ~E2, stamp 2023-06-26 08:56 **[fact, radio]**. 0x50E2 is the wide (TX-expanded) partner of the US code 0x315B ([tx-protection.md](code/main/tx-protection.md#destination-code-and-tx-coverage)). The stamp is written only by a `JP` set. A `JP` set cannot store 0x50E2: `cat_ext_JP` 0xFFFA556B maps 0x50E2 to 0x315B before it calls `dest_code_set` **[fact]**. So the radio was given a code by `JP` on 2023-06-26 (probably at the factory, as 0x315B), and 0x50E2 came later by another path, most likely the P51 strap plus a reset (`dest_jumper_apply`, which does not touch the stamp) **[inference]**.
 - **Set `JP0710hhll~h~l;` (15):**
   - The two bytes must be followed by their complements.
   - Codes 0x306F, 0xB5A7, 0x9CF7, 0xA4C5 and 0x50E2 are remapped to 0xD32D, 0xA983, 0x7753, 0xD950 and 0x315B. Other codes are used as they are.
@@ -304,6 +309,23 @@ See the differences table. `VE0;` → `VE00112;` on V01-12 **[inference from the
   - A DISPLAY-link message can set 0xA983 (`displink_rx_F1_sys`).
 - **Meaning:** the destination/version code selects the market version. Most likely it sets band limits and TX coverage **[inference]**.
 - **Risk: high.** It changes the radio's region, and with it, likely, its legal TX coverage. It also resets the settings.
+
+<a id="radio-checks"></a>
+## Read-only checks on the owner's radio (2026-10-28)
+
+The owner approved the read-only list of issue #98 and ran it on their FT-710 over USB (CP210x enhanced port, 38400 baud). Nothing
+was written: no set form, no `SPSR`/`SPDR`. `ID;` answered `ID0800;`.
+
+| Sent | Reply | Result |
+|---|---|---|
+| `VE0;`..`VE3;` | `VE00112;` `VE10108;` `VE20104;` `VE30101;` | MAIN V01-12, DISPLAY V01-08, SDR V01-04, DSP V01-01: the 2024-02 package. The `VE` inference is confirmed |
+| `JP0710;` | `JP071050E2AF1D2306260856;` | Code 0x50E2 (wide US variant), check bytes are the complements, header stamp 2023-06-26 08:56 |
+| `FD000;` `FD001;` `FD002;` | 14.037000 / 13.937000 / 14.000000 MHz | dial, CURSOR start, FIX start of 20 m |
+| `PE000;` | `PE000003;` | 3-digit unsigned form as decoded |
+| `SPIR;` | `SPIR000004002C3400000800003223B2BFFEDCC6;` | 41 chars; field values in [peripherals.md](code/main/peripherals.md#the-12-spir-fields) |
+| `E8;` | 10674 bytes | header `00 07 90 00 00` after removing k; sum correct |
+
+All replies match the formats decoded from V01-12 **[fact, radio]**. The settings image is the owner's data and is not committed.
 
 ## Undocumented primary-table commands
 | Command | What the firmware does | Risk |

@@ -247,6 +247,8 @@ Three tables of u32 (big-endian) follow the band stack in RAM **[fact]** (`bandm
   - `FD002;` reads, and `FD002ddddddddd;` sets, the FIX-mode start of the band that contains the active VFO frequency.
   - The AI frame `FD00n` uses n = 0x9C35, so it reports the start for the scope mode in use.
   - That FD = "scope edge frequency" is **[inference]** (strong). The range check (30 kHz..75 MHz) is **[fact]**.
+  - On the radio (2026-10-28, 20 m): `FD000` 14.037000, `FD001` 13.937000, `FD002` 14.000000 MHz **[fact, radio]**: the FIX start
+    is the band edge and the CURSOR start sits below the dial, as the reading predicts.
 
 ## Frequency path
 

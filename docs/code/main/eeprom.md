@@ -70,7 +70,7 @@ Derived from every `eeprom_read`/`eeprom_write` call (19 call sites). The blocks
 
 | EEPROM | RAM | Size | Block | Written by |
 |---|---|---|---|---|
-| 0x0000 | 0x464F | 10 | **Header**. Bytes 0..4: a 5-byte date/time stamp (0x20BB1..5 from `DT`), copied in by `JP` set. Bytes 5..8: a big-endian save counter. Byte 9: state flag (0 = write in progress, 1 = clean) | `eeprom_hdr_update` (twice per save) |
+| 0x0000 | 0x464F | 10 | **Header**. Bytes 0..4: a 5-byte date/time stamp (0x20BB1..5 from `DT`, BCD yy mm dd hh mm), copied in by `JP` set; the owner's radio holds 23 06 26 08 56 (`JP0710;` read, 2026-10-28) **[fact, radio]**. Bytes 5..8: a big-endian save counter. Byte 9: state flag (0 = write in progress, 1 = clean) | `eeprom_hdr_update` (twice per save) |
 | 0x000A | 0x4659 | 0x105 | `cfg105`: the **factory alignment / calibration table** **[inference]**. Consumers: TX power interpolation at 100/50/30/10/5 W in `FUN_fffb667a` (15-byte records from 0x469E), SWR/meter maths in `vdd_scale_calc`..`FUN_fffb7cec`. ROM defaults at `cfg105_defaults` 0xFFF8074F | `eeprom_save_cfg105`: SPAWE, ZZ99, first-boot init, a key in ZZ00 mode (0xFFFBFD76) |
 | 0x010F | 0x475E | 3 | **Destination code** (u16 BE 0x475E, default 0x8043) + flag 0x4760, which DISPLAY startup code 5 toggles | `eeprom_save_dest`: JP, ZZ99, `dest_code_set`, first boot |
 | 0x0112 | 0x4761 | 3×0x438 | **Band stack, VFO-A**: 3 slots × 12 bands × 90-byte VFO record. Address = 0x0112 + slot·0x438 + band·0x5A | `eeprom_save_bandstack` `eeprom_save_bandstack` |
@@ -89,7 +89,7 @@ Sizes check: 0x0112 + 2·0xCA8 = 0x1A62; 0x1B01 + 133·0x5A = 0x49C3; 0x49C3 + 0
 
 ### The E8/E9 image (RAM 0x60C9, 10,665 bytes) **[fact]**
 
-`E8` dumps **0x60C9..0x8A71**. That is the 0x87-byte memory header plus **117 channel records** (001–099 and P1L–P9U): 0x87 + 117·0x5A = 0x29A9.
+`E8` dumps **0x60C9..0x8A71**. A dump from the owner's radio (2026-10-28) had exactly this length, signature and a correct sum ([cat-commands.md](../../cat-commands.md#radio-checks)). That is the 0x87-byte memory header plus **117 channel records** (001–099 and P1L–P9U): 0x87 + 117·0x5A = 0x29A9.
 
 `E9` copies the same 10,665 bytes back and calls `eeprom_save_image`. That function writes **0x2F49** bytes (0x60C9..0x9011), so it also rewrites the 16 records of the 60 m/EMG channels (0x8A72..0x9011) from RAM. Those records are not part of the transfer and are left as they were.
 

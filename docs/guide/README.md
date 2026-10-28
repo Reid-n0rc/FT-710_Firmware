@@ -64,7 +64,7 @@ orange for the SDR FPGA and grey for other hardware. Red marks something dangero
   - [5.4 The command map: documented and firmware-only](#54-the-command-map-documented-and-firmware-only)
   - [5.5 The 22 undocumented commands, by risk](#55-the-22-undocumented-commands-by-risk)
   - [5.6 The SP service family](#56-the-sp-service-family)
-  - [5.7 Tests waiting for the owner's approval](#57-tests-waiting-for-the-owners-approval)
+  - [5.7 The read-only tests on the radio](#57-the-read-only-tests-on-the-radio)
   - [5.8 Menu settings over CAT: the EX command](#58-menu-settings-over-cat-the-ex-command)
   - [5.9 Where to look](#59-where-to-look)
 - **[6. Inside MAIN and DISPLAY](#6-inside-main-and-display)**
@@ -1336,7 +1336,7 @@ has 10 more, searched only when the main table has no match. Together that is 11
   - **`XT` (TX clarifier) is not implemented.** The mnemonic is in the table, but there is no code behind it, so it always answers
     `?;`. The clarifier's TX switch is reached through `CF` instead.
   - **`VE` (firmware version) needs a parameter.** The current manual writes it `VEP1;`, with P1 = 0 MAIN, 1 DISPLAY, 2 SDR,
-    3 DSP. The old form from manual 2211-A, `VE;`, answers `?;`. `VE0;` should answer `VE00112;` for V01-12 *(inference)*.
+    3 DSP. The old form from manual 2211-A, `VE;`, answers `?;`. On the owner's radio `VE0;` answers `VE00112;` (V01-12), as the code predicted *(fact, radio check 2026-10-28)*.
 - **22 undocumented:** `BY E8 E9 ED EK EM EN EU EO FD FS JP KT PE QS RC RD RS RT RU SP ZZ`. `EO` was still in the older
   manual 2211-A and was dropped in 2306-C. Section 5.5 sorts them by risk.
 
@@ -1413,14 +1413,15 @@ and calibration data directly.
 
 For what these hooks could mean for experiments, see [chapter 8](#8-hacking-and-custom-firmware).
 
-### 5.7 Tests waiting for the owner's approval
+### 5.7 The read-only tests on the radio
 
-![Proposed read-only tests](img/05-pending-tests.svg)
+![The read-only tests and the radio's answers, all confirmed](img/05-pending-tests.svg)
 
-*Figure 5.8 — The proposed first tests on the real radio. All are reads; none has been sent yet.*
+*Figure 5.8 — The first tests on the real radio (2026-10-28). All are reads, and every answer matched the analysis.*
 
 All of the above comes from reading the firmware. The project's rule is that nothing is sent to the radio without the owner's
-explicit approval, each time. The CAT analysis proposed a short list of **read-only** commands as safe first tests:
+explicit approval, each time. The CAT analysis proposed a short list of **read-only** commands as safe first tests, and on
+2026-10-28 the owner approved them and ran them on their FT-710:
 
 - `VE0;` to `VE3;`: the four firmware versions.
 - `JP0710;`: the region code (the read form only).
@@ -1429,8 +1430,14 @@ explicit approval, each time. The CAT analysis proposed a short list of **read-o
 - `SPIR;`: the 12 ADC readings.
 
 `E8` is also read-only, but its 10 kB answer floods the port. The writes `SPSW`, `SPDW`, `SPW`, `SPAWE`, `E9`, `ZZ` and a `JP` set
-are on the "never send" list. **None of these commands has been tested on the radio yet.** The expected answers in the figure are
-predictions from the code.
+are on the "never send" list. **Every answer matched the format decoded from the code.** A few things were learned:
+
+- The radio runs exactly the firmware this project decompiles: MAIN V01-12, DISPLAY V01-08, SDR V01-04, DSP V01-01.
+- Its region code is **0x50E2**, the wide (TX-expanded) partner of the US code; the `JP` check bytes really are the complements,
+  and the EEPROM header carries the stamp 2023-06-26 08:56, most likely the factory programming *(inference)*.
+- `E8` returned the full 10 674-byte frame with a correct signature and checksum.
+
+The raw replies are in [cat-commands.md](../cat-commands.md#radio-checks).
 
 ### 5.8 Menu settings over CAT: the EX command
 
@@ -2339,20 +2346,21 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
 
 ### 8.6 Decisions waiting for the owner
 
-![A clipboard checklist with five unchecked items: read-only CAT tests, debug console step 0 or 1, FPGA hello stage 1, read the FPGA package marking, and a possible US 60 m TX check, each tagged with its risk](img/08-decisions.svg)
+![A clipboard checklist with five items, each tagged with its risk: read-only CAT tests (ticked, done), debug console step 0 or 1, FPGA hello stage 1, read the FPGA package marking, and a possible US 60 m TX check](img/08-decisions.svg)
 
-*Figure 8.7 — The open decisions. Nothing on this list has been done yet.*
+*Figure 8.7 — The open decisions. Only the read-only CAT tests have been done.*
 
-- **Read-only CAT tests.** Which undocumented query forms may be sent? The suggested candidates are `VE0;`…`VE3;`,
-  `JP0710;`, `FD000;`…`FD002;`, `PE000;` and `SPIR;`. `E8` is read-only too but returns about 10 kB. The set forms
-  that rewrite EEPROM, calibration or the region are never on this list.
+- **Read-only CAT tests (done, 2026-10-28).** The owner ran `VE0;`…`VE3;`, `JP0710;`, `FD000;`…`FD002;`, `PE000;`,
+  `SPIR;` and `E8;`; every answer matched the analysis ([section 5.7](#57-the-read-only-tests-on-the-radio)). The set forms
+  that rewrite EEPROM, calibration or the region were not sent and stay off the list.
 - **Debug console, step 0 or step 1.** The JTAG RAM write first (needs a probe), or straight to the SD-card patch.
 - **FPGA stage 1.** The no-pin test design over J2001.
 - **Read the FPGA package marking.** The pin usage fits only two packages, CSG324 or FGG484, and the chip ID doesn't
   tell which. The marking under the SDR module's shield must be read before any design that drives a pin.
 - **A possible US 60 m transmit check.** In MAIN's US band table the 60 m channels are single-frequency rows, and the
   compare can never match a row whose start equals its end. So, as written, 60 m transmit in the US table appears
-  never to be allowed *(inference)*. Only an on-air test would confirm it, and that keys the transmitter.
+  never to be allowed *(inference)*. Only an on-air test would confirm it, and that keys the transmitter. It needs a radio with
+  the US code 0x315B; the owner's radio has the wide code 0x50E2, whose table covers 60 m as an ordinary range.
 
 Some open questions don't need the radio at all. Two of the project's open contradictions, how `PS1;` powers the radio
 on and the 12 kHz vs 16 kHz audio rate, are code questions. A third, the SDR flash layout (the FPGA boots from flash

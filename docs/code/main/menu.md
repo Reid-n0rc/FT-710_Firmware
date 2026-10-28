@@ -261,7 +261,7 @@ All other ranges, scalings (AGC 20..4000 step 20, RPT SHIFT ×10 kHz, DATA SHIFT
 | 4.18.0 | SOFT VERSION / SOFTVERSION | RTS | Display only |
 | 4.19.0 | CALIBRATION / CALIBRATION | 0xFFFCF9E7 | Action (touch-panel calibration? **[guess]**) |
 | 4.20.0..2 | RESET: MEMORY CLEAR, MENU CLEAR, ALL RESET | 0xFFFCFA17 / 0xFFFCFA74 / 0xFFFCFA83 | Action |
-| 4.21.0 | CERTIFICATION / CERTIFICATION | 0xFFFD3CD5 | **`dest_mask` 2**: only for destination codes 0x315B and 0x50E2 (the only destination-restricted item) |
+| 4.21.0 | CERTIFICATION / CERTIFICATION | 0xFFFD3CD5 | **`dest_mask` 2**: only for destination codes 0x315B and 0x50E2 (the only destination-restricted item). The owner's radio is 0x50E2, so it should show this item **[inference]** |
 
 All of these are visible on the front panel in the standard operating manual, so none of them is a "secret" menu. The
 only hidden content found is the extra SSB TX BPF values above. **[inference]** No other service or hidden items are

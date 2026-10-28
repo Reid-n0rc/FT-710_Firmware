@@ -74,7 +74,7 @@ byte, and checks every file against [docs/inputs.sha256](inputs.sha256).
 
 | What | Where it goes | Source |
 |---|---|---|
-| Firmware package 2024-02 (MAIN V01-12, DISPLAY V01-08, IFDSP V01-01, SDR V01-04) | `Firmware/FT-710_Firmware_updata_202402.zip` (the bootstrap unzips it) | https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip |
+| Firmware package 2024-02 (MAIN V01-12, DISPLAY V01-08, IFDSP V01-01, SDR V01-04; the owner's radio reports the same versions over `VE`) | `Firmware/FT-710_Firmware_updata_202402.zip` (the bootstrap unzips it) | https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip |
 | Manuals and datasheets (only needed for reading, never by the bootstrap) | `Manuals/` (committed) | the list with links is [manuals.md](manuals.md) |
 
 If yaesu.com refuses the connection from your machine, download the zip in a browser. If the hashes don't match, you have a different
