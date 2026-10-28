@@ -69,7 +69,10 @@ Disagreements, settled from the bytes and `xtensa-modules.c` **[fact]**:
   `break.n` is op0 = 0xD. rizin bug.
 - (not counted as a disagreement) `ret.n` at 0x22F79D is `0dfc` with s = 0xC: this core's `Slot_inst16b_decode` does not test
   `s` for `RET.N`, Capstone rejects it. It follows a `.byte 0x93` in `flix.dis`, so it is probably a desync after padding (see
-  the conflict regions below) **[inference]**.
+  the conflict regions below) **[inference]**. Settled in the resumed run **[fact]**: 0x22F79D is the middle of Ghidra's
+  `call8 0x22b874` at 0x22F79C (`650dfc`), in the block 0x22F790 that `{ bltz.w15 a10, 0x22f790; nop }` at 0x22EAFE branches to;
+  conflict region 270 (0x22F791–0x22F79D) is "Ghidra right" in `T22c-hifi4-conflict-regions.tsv`. The `ret.n` is a `flix.dis`
+  sweep artefact, and rizin's refusal of the same bytes is not a rizin gap that matters for this image.
 
 FPU (1,601 uses of 30 ops: `mul.s`, `add.s`, `wfr`, `sub.s`, `olt.s`, `maddn.s`, `const.s`, …): rizin decodes the standard
 Xtensa FP option (`mul.s fr, fs, ft` = bits 12–15, 8–11, 4–7 on `f0..f15`). This core's VFPU is different **[fact]**:
@@ -150,6 +153,11 @@ after the `.byte` at 0x22672A, and the function is missing from `entries_hifi4.t
 Verdicts per region (lo, hi, rows, verdict, near padding, the starts each side has alone, which of them are reached, the decode
 check): [`T22c-hifi4-conflict-regions.tsv`](T22c-hifi4-conflict-regions.tsv). So the listing-mode gap is entirely `flix.dis`
 sweep artefacts: **with Ghidra's starts, Ghidra's listing has no wrong instruction in any conflict region.**
+
+Leftovers closed in the resumed run: `tools/ghidra/PcodeDump.java` (committed as "WIP" in `3a438f3`) is the finished script
+the 10-bundle check above ran (`t22c/pcode10.txt`); no change was needed, it is catalogued in `tools/README.md`. Follow-up for
+the HiFi4 entry list (T21b/T21g owners): add 0x22672C (`entry a1, 32`, registers handler 0x22671C) to
+`tools/ghidra/entries_hifi4.tsv`, as dead code with no caller.
 
 ```sh
 python3 -I tools/hifi4_hand_decode.py build      # needs xtensa-isa.h, xtensa-isa-internal.h, ansidecl.h from binutils (HD_INCLUDE)
