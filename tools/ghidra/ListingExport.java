@@ -5,7 +5,8 @@
 //     -scriptPath tools/ghidra -postScript ListingExport.java <out.tsv>
 // Columns: addr  len  bytes(hex)  mnemonic  operands  function-entry ("-" when outside every function)
 // Holes: lines "addr  len  bytes  ?UNDEF  -  entry" for bytes inside a function body that are not an instruction
-//        (data or not disassembled). Operands are the comma-joined default operand representations,
+//        (data or not disassembled). Error bookmarks (e.g. "Bad Instruction") are printed to the script log.
+//        Operands are the comma-joined default operand representations,
 //        exactly as the listing prints them.
 // @category FT710
 import ghidra.app.script.GhidraScript;
@@ -69,6 +70,11 @@ public class ListingExport extends GhidraScript {
                     nHole++;
                 }
             }
+        }
+        var bit = currentProgram.getBookmarkManager().getBookmarksIterator("Error");
+        while (bit.hasNext()) {
+            var b = bit.next();
+            println("ListingExport: Error bookmark " + b.getAddress() + " [" + b.getCategory() + "] " + b.getComment());
         }
         println("ListingExport: " + nIns + " instructions, " + nHole + " holes in function bodies -> " + args[0]);
     }
