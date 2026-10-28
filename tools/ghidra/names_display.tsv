@@ -36,7 +36,7 @@
 20114a64	sfl_crc	salted CRC-32 over the file
 20114a44	sfl_stream_init
 20114ca0	sfl_read_header	reads the 0x40-byte header block
-2010f81c	sfl_load_file	reads an SFL file and decodes it with sfl_decode
+2010f81c	sdmenu_load_file	RENAME (was sfl_load_file): loads a MemList/Menu .dat (size 0x7F50), checks CRC, type and model word
 2010ddd8	fwfile_check_versions	matches FT-710_{MAIN,DISPLAY,IFDSP,SDR}_V* files on SD
 2010dfd0	fwfile_status_text	Ready / (Broken file) / (No such file)
 # --- firmware update of the other CPUs and of itself
@@ -46,9 +46,9 @@
 20110ab8	sdr_flash_write	streams the SDR image over SPI in 0x2000-byte blocks
 20110834	sdr_spi_xfer_block
 20110c3c	sdr_debug_cmd	sdrup/sdr1up/sdr2up/sdrchk*/sdrspi/sdrfile/delta
-2011249c	sdr_spi_stats_print	CS_POLL / MOSI_OK/NG / MISO_OK/NG / FRAMES
+2011249c	pclink_stats_print	replaces sdr_spi_stats_print: FT4222H link test-mode box
 2015f62c	update_display_self	I:\AH076H_DISPLAY.bin, I:\AH068_DISPLAY_Loader.bin
-2015f1f0	display_flash_write_bank	writes the new image to the 0x18400000 bank
+2015f1f0	fwdbg_verify_bank1	fw1chk: compares a file with bank 1 (0x18400000), forever (was display_flash_write_bank)
 2015938c	bootloader_screen	YAESU FT-710 BOOT LOADER V01-02
 201322b4	fwupdate_screen	MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2
 # --- MAIN CPU link (SCIF5) and other UARTs
@@ -57,9 +57,9 @@
 201148fc	scif3_get	UART object on SCIF3 (0xE8008800)
 20162fac	uart_obj_init
 201163a0	mainlink_init	cmd_interval_sem / cmd_waiting_sem, binds SCIF5
-20116560	mainlink_send_cmd	looks up the 0x2B-entry command table at 0x20450074
+20116560	mainlink_inject_rx	rename (was mainlink_send_cmd): builds a frame from the 0x2B-entry table length and posts it to the RX dispatcher mailbox, i.e. replays a frame locally; it does not transmit
 20115494	mainlink_queue_frame
-20134fdc	debug_recv_cmd_log	I:\FT-710\DEBUG_RECV_CMD\RECV_CMD.TXT
+20134fdc	debug_replay_send_cmd	rename (was debug_recv_cmd_log): replays I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT into the GUI frame snapshot (task test_disp)
 # --- SD card / file system
 20103b68	sd_task_create	"sdTask"
 201400d4	sdhi_init	SDINT_INI
@@ -77,18 +77,18 @@
 20107efc	vk_key_name	USB keyboard VK_* names
 # --- GUI / display
 201326fc	fb_get_layer_addr	800x480 RGB565 frame buffers at 0x60000000 + n*0xBB800
-201355bc	fb_copy_rect
+201355bc	fb_clear_rect	(fb, y, x, w, h): fill with 0 = transparent (was fb_copy_rect)
 20135658	fb_fill_rect	stride 0x640 (800 px * 2)
 201358d0	gui_draw_runs
 20133a8c	gui_update_layers
 2011a394	vdc5_config	writes VDC5 ch0 registers 0xFCFF7400+
 20125e78	touch_calibration	TOUCH THE CROSS
 20134644	screen_capture_bmp	I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp
-2013059c	screen_shot_menu
+2013059c	screenshot_popup	"SCREEN SHOT" popup (popup slot 44); was screen_shot_menu
 # --- misc peripherals
 201177e4	ostm_init	OSTM 0xFCFEC000 (system tick)
 20120224	riic_init	RIIC 0xFCFEE000 (touch controller TSC2003)
-201033e8	intc_irq_setup	INTC 0xFCFEF800
+201033e8	tsc2007_tint_isr	IRQ3 (TINT falling): wake task_tsc2007 (was intc_irq_setup)
 # --- T11a: root task, boot mode, RTOS task entries (see docs/code/display/boot-rtos.md)
 201170c8	task_root	root task (pri 8), created by main; runs the whole init sequence
 20116c4c	bootinfo_load	copies the 0x60-byte boot-info block (pointer in SPIBSC1 reg 0x3FEFB018) or builds defaults
@@ -162,3 +162,626 @@
 2011678c	periodic_wakeup_isr	GIC 0x87, every 1 ms: per slot count++, at period wake the task (0x20152FAC)
 20113fdc	powon_isr	GIC 0x25 (IRQ5): sets the powon event flag
 20152fac	itron_iwup_tsk	[inference from use in an ISR]
+# --- merged from names_display.T11b.tsv (T17)
+201150f8	mainlink_submit	adds checksum; F0/F1 go out at once; other frames go out if no ACK is pending, else are parked in per-type slots 0x2045F240..4B
+20115be0	mainlink_tx_raw	frame = 0xAA tag, length, payload, sum8; posts to the TX task (used for resends)
+20115c74	mainlink_tx_e1_raw	resend of the last E1 (encoder) frame kept at 0x20450068
+20115780	mainlink_send_enc	E1 encoder frame: sent now, or merged into a 7x10 per-encoder queue (0x2045F0C5) while an ACK is pending
+2011593c	minmax4	min or max of 4 bytes
+2011598c	pot5_filter	pot id 5 jitter filter (last 4 values span > 2, value 3..252)
+20115a48	pot4_filter	pot id 4 jitter filter
+20115b04	mainlink_renc_event	encoder event from the renc tasks -> E4 (leave screen saver) and/or E1
+20115cfc	mainlink_flush_parked	after an ACK: sends the next parked frame (E3,E4,E5,F1,E0 ring,E2,E6,E7,E8,C3,C4,C5 order)
+20115f5c	mainlink_flush_enc	after an ACK: sends the oldest queued encoder event
+2011606c	mainlink_on_ack	0x06 from MAIN: stop timeout, clear wait flag, flush parked frames
+201160b4	mainlink_on_nak	0x15 from MAIN: resend at once (max 3), then give up
+20116140	mainlink_tx_reset	drops the pending/parked state and the encoder queue (0x7F maintenance key, retry task)
+201162a4	mainlink_send_hello	F0 frame: version 01-08, date 2023-06-29, power-up key code
+20116334	mainlink_send_f1	F1 frame with one sub-command byte; no caller in V01-08
+20116368	mainlink_stat_rx_resync	RX task resync counter (obj+0x38)
+2011637c	mainlink_stat_nak_sent	RX task NAK counter (obj+0x48)
+20116518	mainlink_rx_ctrl	set_flg 0x4000/0x8000 on the RX task flag (resets the parser); arg 0 also re-binds the SCIF5 ISR to it (used by the update code)
+201165f4	mainlink_hello_poweron	sends F0 every 5 ms (max 30) with the power-up key code until MAIN ACKs
+2011668c	mainlink_hello_key6	same as mainlink_hello_poweron with key code 6
+20116660	mainlink_clear_status	clears the 0x60 snapshot and the 0x24 settings copy
+20115000	mainlink_get_last_frame	copy of the newest MAIN frame (0x2045F8C0, 0x240 B)
+2011500c	mainlink_get_frame60	copy of the newest 0x60 frame (0x2045FB00)
+2011506c	mainlink_last_frame_differs
+2011508c	mainlink_set_last_frame	writes the 0x2045F8C0 snapshot (debug replay, GUI)
+20115018	mainlink_got_frame60	flag 0x20450026
+20115024	mainlink_get_settings24	copies the 0x24 frame tail (0x2045006D) and returns flag 0x20450024
+20115060	mainlink_got_esc	flag 0x2045005C, set by a 0x1B frame
+201150e0	mainlink_set_wait_cmd	cmd byte of the frame waiting for ACK (0x2045002D)
+201150ec	mainlink_get_wait_cmd
+20116390	mainlink_ack_timeout_cyc	cyclic handler: set_flg(0x2045004C, 1) wakes the retry task
+20114df4	system_reboot	FS off, LCD/LVDS off, MAIN reset pulse, flash reset, wdt_system_reset
+20100268	wdt_system_reset	WTCSR/WTCNT/WRCSR 0xFCFE0000 sequence: watchdog reset of the DISPLAY CPU
+201309c0	gui_link_error_popup	draws the link error box with the unanswered command as hex
+20130c40	mainlink_set_power_cmd	0x20800492 = 0x7F sub-command (0x10 / 0x11 end the GUI loop)
+20111480	mainlink_trace	ring log (2048 x 256 B at *0x208001D8) of every frame sent and received, with timestamp
+20111410	mainlink_trace_toggle	USB-keyboard key: trace on/off, buffer = frame-buffer layer 4
+20111468	mainlink_trace_pause	F7: toggle recording
+2011158c	mainlink_trace_dump	writes the ring to I:\debug_1.log
+2010ede8	mainlink_rx_block_write	'E' (0x45): MAIN writes into the 32000-byte block 0x208116A6, reply C5
+2010eeb4	mainlink_rx_block_read	'D' (0x44): MAIN reads from the block 0x208116A6, reply C4 (up to 0xFE data bytes)
+20113294	mainlink_send_key	E0 key event from the key task (or E4/E5 to leave a MAIN-driven screen)
+20120e9c	mainlink_send_touch_key	E0 touch soft-key press/release (code 0x1016 = special)
+20121858	mainlink_send_e0	E0 with a given flag byte and 16-bit code
+20121d00	mainlink_send_sd_state	E2 SD card present, on change
+20121d90	mainlink_send_rtc	E3 RTC date/time, every 10th GUI pass when the minute changed
+20121830	mainlink_send_e6
+20158c10	mainlink_obj_ctor	builds RX (+0x18), dispatcher (+0x58) and TX (+0x8218) sub-objects
+20158b10	mainlink_obj_run	task "uart" pri 7: binds SCIF5, starts the 3 sub-tasks, opens 345600 baud 8N2
+201587ac	mainlink_tx_ctor	vtbl 0x20427FAC
+2015863c	mainlink_tx_init	32 x 0x408 B buffer pool + mailbox
+20158630	mainlink_tx_alloc	gets a free 0x408-byte buffer
+20158744	mainlink_tx_post	waits for the 3 ms pacing counter, posts to the TX mailbox, re-arms cmd_interval
+201586ac	task_mainlink_tx	task "uart" pri 4: mailbox -> scif_write(buf+8, len), then mainlink_trace
+2015869c	mainlink_tx_clear_stats
+2015efe4	mainlink_rx_ctor	vtbl 0x20427FF8
+2015eb74	mainlink_rx_bind	(uart, tx, dispatcher)
+2015eb80	mainlink_rx_clear_stats
+2015ec40	task_mainlink_rx	task "uart" pri 3: reads SCIF5, re-assembles frames, NAK after 3 empty reads
+2015eb90	mainlink_rx_parse	first byte: 06/15/1B single byte; else table lookup 0x20450074
+2015eec8	mainlink_rx_frame	waits for len+2 bytes, validates, ACKs, delivers
+2015e6f4	mainlink_rx_validate	per-command range checks; 0x7F with the 8-byte key enters maintenance mode
+2015e354	mainlink_status_valid	range checks of the 0x97-byte radio status block
+2015e16c	mainlink_valid_7f	byte & 0x7F <= 12 or == 0x7F
+2015eb3c	mainlink_valid_code	small code-set check used by mainlink_status_valid
+2015e9b8	mainlink_rx_deliver	trace, 'D'/'E' block handlers, else post to the dispatcher
+2015ee40	mainlink_send_ack	1-byte 0x06 frame
+2015ee84	mainlink_send_nak	1-byte 0x15 frame
+20160288	mainlink_disp_ctor	vtbl 0x20428030
+20160048	mainlink_disp_init	32 x 0x408 B pool + mailbox
+2016003c	mainlink_disp_alloc
+20160278	mainlink_disp_post
+201600a8	task_mainlink_dispatch	task "uart" pri 4: ACK/NAK -> TX state; copies frames into the GUI snapshots 0x2045F260/0x2045F8C0
+20114f4c	uart4_link_init	creates the SCIF4 object 0x2045D4E0 and task "uart4"; no caller
+20158e8c	uart4_obj_ctor	vtbl 0x20427FE4
+20158c44	uart4_obj_run	38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32
+20158a00	uart4_tx_init
+201589f4	uart4_tx_alloc
+20158adc	uart4_tx_post
+20158a70	task_uart4_tx
+20158930	task_uart4_rx	passes raw bytes to FUN_20131154
+2015fff0	task_uart4_dispatch	only counts
+20114e88	uart4_send	used by task_keycode, FUN_20130c90, FUN_20131638
+20114edc	uart4_wait_ready	waits for 0x2045001C; no caller
+201630cc	scif_open	(baud, bits, parity, stop): SCSMR, SCBRR (0x16 + SEMR 0x81 for 345600), FIFO reset
+20163098	scif_start	scif_open + enable RXI/TXI in the GIC
+20163014	scif_irq_off
+20163038	scif_read	non-blocking read from the 1 KB RX ring
+20163218	scif_read_timeout	retries every 1 ms up to n times
+201632d8	scif_write	copy into the 1 KB TX ring, enable TIE
+20163280	scif_flush
+20163654	scif_has_flag	RX event flag bound?
+20162dd8	scif_rxi_isr	1 byte -> RX ring, set_flg(obj+0x818, 1)
+20162f10	scif_txi_isr	TX ring -> SCFTDR
+20114884	scif3_rxi_isr
+2011488c	scif3_txi_isr
+20114894	scif4_rxi_isr
+2011489c	scif4_txi_isr
+201148a4	scif5_rxi_isr
+201148ac	scif5_txi_isr
+20130188	gui_main_loop	runs in task_root after gui_start; one frame per wake-up
+2012ebb8	gui_screen_update	compares the new MAIN screen packet with 0x208F0B2A and dispatches on byte 0
+20125f6c	scr_lcd_test	packet 0x64: full-screen test colours and 8 colour bars
+2012e8f4	rtc_set_from_main	packet 0x65: BCD date/time -> RTC
+20121c3c	scr_screen_saver	packet 0x7B: YAESU logo hopping between 3 places every 180 frames
+20134e70	debug_cmd_line_read	parses "NNN:hh hh ...:DDDD" lines
+201351b8	debug_cmd_line_write	writes one such line
+201352e8	debug_log_recv_cmd	appends a frame to RECV_CMD.TXT; no caller in V01-08
+# --- merged from names_display.T11c.tsv (T17)
+2010dd24	fwobj_create_all	builds the 4 update objects at 0x2081166C (MAIN, DISPLAY, IFDSP, SDR)
+201604f4	fwobj_base_ctor	base update-object constructor, vtable 0x2042807C
+201606a4	fwobj_main_ctor	MAIN object, vtable 0x20428088
+20160c10	fwobj_display_ctor	DISPLAY object, vtable 0x204280A0
+201607c8	fwobj_ifdsp_ctor	IFDSP object, vtable 0x20428094, +0xAB flag
+201603d4	fwobj_sdr_ctor	SDR object, vtable 0x20428070, +0xAB flag
+201605ac	fwobj_main_run	vtbl[0]: CRC check, then RX boot mode entry + rx_boot_program
+201607e8	fwobj_display_run	vtbl[0]: CRC check, then decoded write to the other bank (or loader) + flag
+201606bc	fwobj_ifdsp_run	vtbl[0]: CRC check, then dsp_isp_program
+201602ac	fwobj_sdr_run	vtbl[0]: size == 0x43075A, CRC check, then sdr_flash_write
+20160418	fwobj_match_name	keeps the highest matching file name per object
+20163600	fwname_pattern_match	prefix + 4 chars + ".sfl", case-insensitive, exact length
+20160558	fwname_pattern_init	builds the name pattern (prefix, "NNNN", suffix)
+201604c8	fwobj_version_from_name	"0108" in the name -> "01-08"
+2016049c	fwobj_set_status	status text (Ready, failed, ...)
+201604dc	fwobj_select	marks the object selected for update
+201603f4	fwobj_build_path	"%s%s" dir + file name
+2010e2d4	fwupdate_poll	starts task_fwupdate once, then 0 running / 1 all OK / 2 any failed
+2010dfc4	fwupdate_set_hotkey	stores the held USB key usage (0x3A = F1 enables #UP0 loader files)
+20107e90	usbkbd_last_key	first key usage of the last USB keyboard report
+2010e514	mainlink_fw_mode_cmd	F1 <code> frame to MAIN on SCIF5 at 345600, waits for 0x06
+2010a974	isp_relay_mode_cmd	same F1 <code> frame (DSP 02/82)
+201109fc	sdr_relay_mode_cmd	same F1 <code> frame (SDR 01/81)
+20158f28	mainlink_send_ui_c3	0xC3 UI state frame to MAIN
+20158ec0	mainlink_send_ui_e2	0xE2 UI frame to MAIN
+2010d50c	rx_boot_program	RX651 boot-mode programming of the decoded S-record
+2010d3e4	rx_boot_sync	0x00 / 0x55 auto-baud at 9600
+2010d224	rx_boot_signature	boot cmd 0x38
+2010d134	rx_boot_endian	boot cmd 0x36 (01)
+2010cf48	rx_boot_set_freq	boot cmd 0x32: 16 MHz input, 120 MHz system
+2010ce54	rx_boot_set_baud	boot cmd 0x34: 345600 bps
+2010cd64	rx_boot_sync_cmd	boot cmd 0x00
+2010cbd4	rx_boot_cmd_2c	boot cmd 0x2C, 1-byte answer
+2010cab4	rx_boot_id_auth	boot cmd 0x30 with 16 x 0xFF ID code
+2010c918	rx_boot_area_count	boot cmd 0x53
+2010c6ac	rx_boot_area_info	boot cmd 0x54 per area: type, start, end, unit sizes
+2010c564	rx_boot_erase	boot cmd 0x50 (argument 0)
+2010c2f4	rx_boot_write_areas	boot cmd 0x13 (512-byte blocks) / 0x51 (config area)
+2010bca0	rx_boot_verify_areas	boot cmd 0x15 / 0x52 read-back and compare
+2010c14c	rx_boot_write_start	command packet 01 00 09 <cmd> start end
+2010bb00	rx_boot_read_start	command packet for read-back
+2010bf9c	rx_boot_data_packet	data packet 81 LNH LNL <cmd> data SUM 03/17
+2010b95c	rx_boot_read_compare	reads a block and memcmp with the expected data
+2010e970	srec_find_range	min/max S-record address inside an area
+2010e868	srec_load_range	S-records inside [start,end] into a buffer
+2010e7b0	srec_load_image	S-records into a 512 KiB buffer (uptest)
+2010e670	srec_parse_line	one S0..S9 record, checksum checked
+2010e624	hex2_parse	two uppercase hex digits
+2010ea74	uptest_program_stub	empty programmer used by uptest (returns 0)
+2010ec44	uptest_line	uptest, uptest2, mrst, rf0, rf1
+2010b81c	dsp_isp_program	IFDSP: NXP ROM ISP over the MAIN relay
+2010aa7c	dsp_isp_ping	5A A6 ping -> 5A A7
+2010b5bc	dsp_isp_fill_option	FillMemory 0x1C000, 4, 0xC0000002
+2010b360	dsp_isp_configure_memory	ConfigureMemory 9 (FlexSPI NOR), 0x1C000
+2010b0f4	dsp_isp_erase_region	FlashEraseRegion 0x08000000, 0xA0000, 9
+2010ab74	dsp_isp_write_image	WriteMemory 256 B per packet from 0x08000000
+2010aa30	crc16_xmodem	CRC-16 poly 0x1021 init 0 (NXP framing)
+2010a940	sum8_neg_append	appends the negated 8-bit sum
+2010a918	be_bytes_to_u32	big-endian bytes to integer
+20110548	sdr_relay_xfer	binary register frame to MAIN, waits for 06 or a 7D reply
+2011064c	sdr_reg_write	FD 00 "%04X%04X" sum: FPGA register write via MAIN
+20110584	sdr_reg_read	FE 00 "%04X" sum: FPGA register read via MAIN
+201106f8	sdr_set_flash_addr	regs 0x30 / 0x31 = flash address
+20110750	sdr_wait_ready	polls reg 0x32 until the top nibble is 0 or 8
+201107c0	sdr_spi_master_write	RSPI2 master for SDR image
+201103f4	hex_to_bin	ASCII hex to bytes
+201009dc	crc16_a001	CRC-16 reflected 0xA001, init/xorout 0xFFFF
+20100990	crc16_a001_table_init	table at 0x208D9560
+20110da8	sdr_debug_init	chain-1 handler 7: registers sdr_debug_cmd, flag 0x208001B8 (no task waits on it)
+2010a8f8	kbdtest_init	returns kbdtest_line
+2010a898	kbdtest_line	record last usage + modifier class for the F12 overlay
+2010a630	kbd_layout_tables_init	fills the keyboard layout tables 0x20450290 / 0x2045C290
+2015f55c	fwdbg_task_create	event flag + task (entry 0x2015F0E0, pri 5, stack 0x2000)
+2015f0e0	task_fwdbg	task entry: loops on update_display_self
+2015f348	fwdbg_write_other_bank	fw1up: raw I:\AH076H_DISPLAY.bin to the non-running bank + flag
+20111224	kbd_led_status	set the 3 keyboard LEDs (value, mask): debug progress display
+20103e74	spiflash_erase	erases 64 KiB blocks
+20103dd0	spiflash_write	writes, then checks against the XIP window 0x18000000
+20101ca4	gpio_rx_update_b	identical copy of gpio_rx_update
+20101c74	gpio_rx_update	P4_3 = RX_UPDATE (MAIN boot mode)
+20101d2c	gpio_rx_update_off	RX_UPDATE low when arg != 0
+20101c8c	gpio_p8_5	P8_5 (SDR_MOSI) port level, used by the reboot sequence
+20101cbc	gpio_qf_reset	P11_2 = QF_RESETn (W25Q128 reset)
+2015b134	fwupdate_progress_screen	progress rows, error screen, update_finish_reset
+2015a500	fwupdate_menu_screen	file list, CRC check, pre-marks newer versions
+20159158	update_error_screen	"UPDATE ERROR", waits for a touch
+20159cb0	bootloader_unlock_wait	key-6 mode: > 4 encoder steps -> loader-install mode
+201322bc	fw_installed_versions_set	installed versions from the MAIN 0x60 frame
+201149e0	sfl_encode	inverse of sfl_decode (adds the 43-byte key)
+2010f370	sdmenu_write_dat	9 x 64-byte text lines ("MemList  n  CRC") + 0x7D10 encoded bytes
+2010f60c	sdmenu_save_file	<dir>\<name>.dat, sfl_encode, salted CRC-32
+20114bfc	sfl_stream_read	fread + decode
+20114b3c	sfl_stream_gets	line read with decode
+20114ae0	sfl_stream_getc	one decoded byte
+201140d0	progress_set	progress percent 0x20800364
+201140dc	progress_get	progress percent
+201140e8	progress_range_init	{from, to} range
+201140f4	progress_scale	maps a fraction into the range
+# --- merged from names_display.T11d.tsv (T17)
+2011d9a8	rspi_hw_config	(ch, mode) mode 0 master SPBR=1 BRDV=3, mode 1 slave; 8-bit MSB-first CPOL0 CPHA1; regs table 0x20166B4C
+2011dea4	rspi0_open	STBCR10 bit7, SPTI/SPRI ISRs, GIC 0x110/0x10F, slave config
+2011df20	rspi1_open	master config
+2011df9c	rspi2_open	slave (SDR link)
+2011e018	rspi3_open	slave, also SPEI
+2011e09c	rspi4_open	slave (DSP link)
+2011e118	rspi0_clear_rx_flag
+2011e128	rspi1_clear_rx_flag
+2011e138	rspi2_clear_rx_flag
+2011e148	rspi3_clear_rx_flag
+2011e158	rspi4_clear_rx_flag
+2011e168	rspi0_clear_tx_flag
+2011e178	rspi1_clear_tx_flag
+2011e188	rspi2_clear_tx_flag
+2011e198	rspi3_clear_tx_flag
+2011e1e0	rspi4_clear_tx_flag
+2011e1f0	rspi0_rx_isr	SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418
+2011e240	rspi1_rx_isr
+2011e290	rspi2_rx_isr	clear SPRIE, flag
+2011e2b8	rspi3_rx_isr
+2011e2e0	rspi4_rx_isr
+2011e308	rspi0_tx_isr	clear SPTIE, flag 0x2080041D
+2011e330	rspi1_tx_isr
+2011e358	rspi2_tx_isr
+2011e380	rspi3_tx_isr
+2011e3a8	rspi4_tx_isr
+2011e3d0	rspi0_tx_wait
+2011e544	rspi1_tx_wait
+2011e6b0	rspi2_tx_wait
+2011e824	rspi3_tx_wait
+2011e990	rspi4_tx_wait
+2011e3fc	rspi0_read_burst	dummy 0xFF writes, wait RX
+2011e570	rspi1_read_burst
+2011e6dc	rspi2_read_burst
+2011e850	rspi3_read_burst
+2011e9bc	rspi4_read_burst
+2011eb58	rspi0_wait_tend	SPSR.TEND
+2011eb7c	rspi1_wait_tend
+2011eba0	rspi2_wait_tend
+2011ebc4	rspi3_wait_tend
+2011ebe8	rspi4_wait_tend
+2011ec0c	rspi0_delay
+2011ec34	rspi1_delay
+2011ec5c	rspi2_delay
+2011ec84	rspi3_delay
+2011ecac	rspi4_delay
+2011ecd4	rspi0_spti_isr	stub, needs entries_display.T11d.tsv
+2011ecdc	rspi0_spri_isr	stub
+2011ece4	rspi1_spti_isr	stub
+2011ecec	rspi1_spri_isr	stub
+2011ecf4	rspi2_spti_isr	stub
+2011ecfc	rspi2_spri_isr	stub
+2011ed04	rspi3_spti_isr	stub
+2011ed0c	rspi3_spri_isr	stub
+2011ed14	rspi4_spti_isr	stub
+2011ed1c	rspi4_spri_isr	stub
+2011ed24	rspi_hw_config_master	(ch, spbr, brdv, loopback); no callers
+2011efc8	rspi0_open_irq_only	no callers
+2011f040	rspi1_open_irq_only	no callers
+2011f0cc	rspi_open	jump table to rspiN_open
+2011f128	rspi_spe_set
+2011f138	rspi_start	SPCR.SPE=1
+2011f19c	rspi_spe_clear
+2011f1ac	rspi_stop	SPCR.SPE=0 + delay
+2011f230	rspi_base
+2011f278	rspi_read	PIO read; no callers
+2011f718	rspi_write	PIO write by TX trigger level
+2011f758	rspi_fifo_reset	SPBFCR TXRST/RXRST pulse
+2011f7b4	rspi_reset_buffers
+2011f840	rspi_rx_isr	SPRI dispatch; entry fix (late start FUN_2011f84c)
+2011f89c	rspi_tx_isr	SPTI dispatch; entry fix (late start FUN_2011f8a8)
+2011f8f8	rspi_wait_tx_end
+20137080	dmac3_rspi4_tx_setup	DMARS 0x131
+20137278	dmac5_rspi2_rx_setup	DMARS 0x12A, 0x6A4 B
+201374ac	dmac4_rspi4_rx_setup	DMARS 0x132, 0x11F8 B
+201376d0	dmac8_m2m_init	frame-buffer copy DMA
+201378b0	dmac8_m2m_start	DMAC ch8 (0xE8200400) memory-to-memory copy, 0xBB800 B (frame buffer copy-forward)
+20137904	dmac9_register_isr
+20137910	dmac9_rspi_tx_setup	arg 1 RSPI0 (0x121), 0 RSPI1
+20137af8	dmac10_register_isr
+20137b04	dmac10_rspi_rx_setup	arg 1 RSPI0 (0x122)
+20137d50	dmac3_enable
+20137d64	dmac3_disable	writes 0 to SETEN (no-op?)
+20137d84	dmac5_enable
+20137d98	dmac5_disable
+20137dac	dmac5_set_callback
+20137db8	dmac4_enable
+20137dcc	dmac4_disable
+20137de0	dmac4_set_callback
+20137e00	dmac9_stop	CHCTRL.CLREN
+20137e34	dmac9_set_callback
+20137e40	dmac10_enable
+20137e54	dmac10_stop
+20137e88	dmac10_set_callback
+20137490	dmac3_isr	stub, entry fix
+201374a0	dmac5_isr	stub -> [0x20808AA8]
+201376c4	dmac4_isr	stub -> [0x20808AA4]
+20137aec	dmac9_isr	stub -> [0x20808AAC]
+20137d1c	dmac10_isr	stub -> [0x20808AB0]
+20112158	pclink_tx_dma_start	DMA ch9 0x60501000 -> SPDR0, 0x1000
+20112144	pclink_tx_trailer_init	0x01EE01FF x4
+20112128	pclink_tx_copy_scope	850 B
+2011210c	pclink_tx_copy_afscope	600 B
+201120fc	pclink_tx_set_status	151 B MAIN status
+20112180	pclink_tx_done_cb
+201121a8	pclink_set_testmode	0x20450004: SDR SPI test overlay (key combo 4 at power-on)
+201121b4	pclink_rx_parse	magic 0xEEAFCCBA
+20112264	pclink_rx_done_cb
+201120c8	cycle_delta	PMCCNTR delta
+20132fe0	cycle_delta_2	PMCCNTR delta (copy)
+20101f8c	gpio_ft4222_reset	P2_7 = FT4222_RESET
+20133484	sdr_dsp_link_init	RSPI2+DMA5, RSPI4+DMA3/4
+20133440	link_ss_irq_init	GIC 535/449
+201333f0	sdr_ss_isr	entry fix (late start FUN_201333f4)
+20133418	dsp_ss_isr	entry fix (late start FUN_2013341c)
+201330d4	sdr_rx_done_cb
+20133140	sdr_link_recover	unreferenced
+201331dc	dsp_rx_done_cb	REC/PLAY
+201331c8	dsp_set_audio_ptr
+20132f74	sdr_rx_buf	0x605C00A0
+20132f7c	dsp_hdr_buf	0x605C0780
+201342ec	scope_store_frame	850 B -> 0x204832BB
+201344a0	scope_frame_buf
+20134348	scope_history_push	800 points -> ring 0x20490894 (inference)
+20120d40	afscope_store_frame	600 B -> 0x208DD73C
+20120dc8	afscope_buf_ptr
+20106dc8	audio_codec_post	8-byte msg to task_audio_codec mailbox
+# --- merged from names_display.T11e.tsv (T17)
+201179c0	r_vdc5_initialize	(ch, vdc5_init_t*, init_func, user_num)
+20117b0c	r_vdc5_sync_control	(ch, vdc5_sync_ctrl_t*): total raster, H/V sync windows
+20117ba8	r_vdc5_display_output	(ch, vdc5_output_t*): TCON pins, panel output
+20117d8c	vdc5_layer_to_gr	layer id 3..8 -> graphics index 0..5
+20117dec	r_vdc5_read_data_control	(ch, layer, vdc5_read_t*): frame buffer, stride, format, window
+20117e5c	r_vdc5_change_read_process	(ch, layer, {base,...}): new frame-buffer address
+20117ebc	r_vdc5_start_process	(ch, layer, &disp_sel): show a layer (2 current, 3 blend)
+20117f00	r_vdc5_stop_process	(ch, layer): hide a layer
+2011819c	r_vdc5_alpha_blending_rect	(ch, layer, on, {rect, alpha, ...}): alpha window / fades
+20118214	r_vdc5_chromakey	(ch, layer, on, {ck_color, rep_color, rep_alpha}); used with color 0 = transparent
+201182d4	r_vdc5_display_calibration	(ch, vdc5_disp_calibration_t*): used for the LCD contrast setting
+20118364	vdc5_int_callbacks_clear	clears the 23 per-channel interrupt callbacks
+201183b0	r_vdc5_callback_isr	(ch, {type, callback, line}): enable one VDC5 interrupt
+20132320	vdc5_module_start	init_func passed to r_vdc5_initialize: STBCR9 clock on for ch0/ch1
+20132398	vdc5_module_stop	STBCR9 clock off for ch0/ch1
+201323fc	lcd_tcon_cfg_ch0	TCON pin table for the parallel RGB TFT (ch0)
+20132440	dvi_tcon_cfg_ch1	TCON pin table for the LVDS/DVI channel (ch1), 800x480 or 800x600
+2013249c	lvds_pll_cfg	LVDS PLL: 27 MHz in, FD 175 (800x480) or 207 (800x600), RD 4, OD 2, to ch1
+20132504	vdc5_sync_setup	timing: ch0 1016x525 (800x480); ch1 1088x517 (800x480) or 1056x628 (800x600)
+201325e8	vdc5_output_setup	r_vdc5_display_output wrapper per channel
+20132680	cursor_rect_calc	12x21 mouse-cursor window for graphics 3
+2013276c	vdc5_layers_setup	graphics 0..3 read setup, chroma key, start; then enables the VLINE callback
+20132b58	vdc5_layers_stop	stop all layers and release
+20132b94	vdc5_channel_shutdown	stop layers, terminate the channel, clock off
+20132bc0	dvi_set_resolution	re-initialises VDC5 ch1 for 800x480 (0) or 800x600 (1)
+2013304c	vdc5_vline_int_setup	VLINE interrupt, no callback
+20133068	vdc5_vline_cb_enable	VLINE callback = vdc5_vline_cb
+2013307c	vdc5_vline_cb_disable
+20133014	vdc5_vline_cb	frame counter 0x208085A4, counts down 0x2080859C
+20133090	vdc5_wait_frames	sets 0x2080859C and spins until the VLINE callback clears it
+201330a8	vdc5_isr_create	itron_acre_isr(GIC 78, VDC5 ch0 GR3_VLINE) + enable
+20101dc4	gpio_dvr	P5_9 DVR0 / P5_8 DVR1 (lines to the MAIN DVI chain; P5_8 = 1 for 800x480, 0 for 800x600)
+20101dec	lvds_pins_enable	P5_0..P5_7 LVDS (RA..RCK pairs) alt1, or output low
+20132e78	fb_get_front_addr	frame buffer currently shown for a back-buffer index (1<->2, 3<->4)
+20133658	layer_alpha_rect_set	r_vdc5_alpha_blending_rect on ch0+ch1, cached in 0x209080E4[ch][layer]
+20133748	layer_alpha_rect_reapply
+2013376c	layer_alpha_rect_hit	pixel inside a layer's opaque alpha window (screen capture)
+201337f8	layer_alpha_rect_off
+20133870	layer_alpha_rect_opaque	full-screen window, alpha 0xFF
+2013396c	layer_fade	alpha ramp +5 / -5 per frame over the whole layer
+20133a0c	layer_hide	r_vdc5_stop_process on ch0+ch1
+20133a38	layer_show	r_vdc5_start_process on ch0+ch1 (layer 3 current, others blend)
+20133c40	gui_flip_one	flip only graphics 1 (0) or graphics 2 (1); brackets screen capture
+20135534	fb_blit_raw	(fb, y, x, src, w, h): raw RGB565 rectangle
+2013558c	fb_rect_in_bounds	(y, x, w, h) inside 800x480
+20135604	fb_clear_rect_checked
+2013573c	fb_draw_frame	rectangle outline of given thickness
+201359bc	gui_draw_runs32	run sprite with u32 {start, count} runs
+20135aa4	fb_fill_box	(fb, y, x, w, h, color)
+20135ad8	fb_fill_box_t	(fb, y, x, h, w, color)
+20135b0c	sprite_unpack	run sprite -> linear w*h buffer
+20135b6c	gui_draw_hex	hex number in the 10x15 font
+20135c14	gui_draw_dec	decimal number in the 10x15 font
+20135ce8	gui_draw_hex_color	hex number, recoloured
+20135dd4	gui_draw_text	(fb, str, y, x, pitch, font): char -> glyph via map 0x2080173C
+20135ec0	gui_draw_text_words	text with half-width spaces
+20135ff0	gui_draw_text_centered	centred on x
+20136290	fb_draw_round_frame	outline with cut corners
+201353f8	div10_round
+20135458	bcd_to_bin
+20135470	be16_load
+20135498	be32_load
+201354ec	str_rtrim
+20130024	mainlink_wait_status	waits up to 5 s for the first MAIN status packet
+2012f8d4	opening_screen	YAESU logo fade-in, waits for MAIN ('`' 0x60 packet); timeout -> error screen
+2012f734	opening_check_main	handles the 0x60 power-on packet
+2012fd94	logo_fade_in	key combo 6 path: logo fade-in before the boot-loader screen
+2012e3e0	scr_main_layout	main screen static parts (scope frame, mode/filter labels)
+20121e88	main_status_icons	REC/MSG/LOCK/... indicator row, scope SPAN/SPEED labels
+20123c04	main_filter_graph	SHIFT/WIDTH/NOTCH/CONTOUR/APF graph
+20134abc	meter_draw	bar meter with peak hold, 181 sprites from 0x2080865C
+20134d24	meter_draw_scale	meter scale + type label on graphics 0
+2012c1b4	scr_select_popup	packet 0x30: METER / MODE selection popups
+2012ade0	scr_value_popup	packet 0x31: setting name + value popup (tables at 0x208026DC..)
+201263e8	scr_info	packet 0x34: information / CERTIFICATIONS, FCC ID K6620801X50
+2012a9ec	scr_func_panel	packet 0x37: FUNC panel (CONTRAST, DIMMER, MIC GAIN, ...)
+2012a6a4	scr_vfo	packet 0x39: frequency digits
+20124c24	scr_playlist	packet 0x3A: voice/REC PLAY LIST
+2012e744	rec_start_stop	packet 0x3F: start/stop recording to SD with a time-stamp name
+20129054	scr_text_list	packet 0x40: text list with LF/CR glyphs, DONE/BACK
+20127b24	scr_memory_list	packet 0x41: MEMORY CH LIST
+201261e0	scr_sd_menu	packet 0x43: SD card load/save/format
+201275e8	scr_keyboard	packet 0x50: on-screen keyboard (Caps, Space, ENT, ABC, #%^)
+20126f28	scr_setup_menu	packet 0x62: MENU list, 8 rows of {5, 20, 3} chars
+20126ebc	scr_confirm	packet 0x70: OK / CANCEL dialog
+201266ec	gui_apply_display_cfg	packet 0x24: DVI on/off, DVI resolution, LCD contrast
+2013456c	bmp_write_screen	54-byte header + 480 bottom-up 24-bit rows, layers merged
+201344c8	capture_merge_row	overlay one layer row; 0 = transparent unless inside an alpha window
+20134520	rgb565_row_to_bgr24
+20134854	debug_screenshot_root	F10 (debug): I:\20YYMMDD_HHMMSS.bmp
+201367b4	debug_overlay_draw	F-key overlays (needs debug_enabled)
+2013518c	test_disp_start	set flag 1 -> task_test_disp runs the replay
+2013519c	test_disp_stop
+201351ac	test_disp_state	1 = running, 2 = idle
+# --- merged from names_display.T11f.tsv (T17)
+20112f3c	key_held_list_update	replace old code by new in the 4-entry held-key list 0x2080023C (0 = add/remove)
+20112fe0	key_combo_match	boot key combination n (table 0x20165678, 3 codes each) held? 2 or 3 keys
+20113104	key_matrix_press_check	matrix press pass (subset of task_key)
+201131a8	key_set_power_level	powon task stores the P2_0 level as direct key 0 (0x300 LOCK/PWR)
+201131b4	adc_key_level	8-bit ADC value -> level 0..5 (count of thresholds below it)
+201131e8	gpio_read_port_bit	read PPRn bit for ports 2,3,7,8,9,10
+201134d0	key_matrix_drive_col	drive one of P8_1/P8_2/P8_7/P8_8 low, the other three high
+20113558	key_sample_all	sample 5 direct keys, PTT, 4x4 matrix, ADC AN3/AN4
+20113614	key_debounce_all	3 equal samples -> changed flags; ADC pair -> code index 0x2080021A
+20113c6c	key_func_is_held	direct key 3 (0x30F FUNC) is in its hold phase
+20113d00	key_task_pause	sets 0x20800217: task_key skips scans
+20113d10	key_task_resume	clears 0x20800217
+2011275c	renc_rec_set	record 0x208D99A4 + id*5 = {id, delta/value}
+201127d4	renc_poll_mtu1	MTU2 ch1 TCNT (0xFCFF0386) delta -> encoder id 1
+20112830	renc_poll_mtu2	MTU2 ch2 TCNT (0xFCFF0006) delta -> encoder id 2
+20112894	adc_ring_average	average of the ad renc ring buffer (returns double)
+201128d8	adc_hysteresis	keep the old value unless it moved by more than 7
+2011296c	pot_detect	AN0/AN1 averages -> 8-bit pot values (ids 5/4) after 2 changed polls
+20112aec	renc_mtu2_init	MTU2 ch1 phase-count mode 1, ch2 mode 4, start CST1/CST2
+20112b40	renc_irq4_isr	IRQ4 (both edges): P3_3 vs P3_5 -> +-1, encoder id 3
+20112cc4	pot_resend_all	re-send pot ids 4/5 when the GUI link comes up
+20112da4	hid_usage_to_ascii	HID usage -> ASCII for the debug line editor (lowercase, JIS '=' on Shift+'-')
+201022c8	touch_set_down	pen sample (x, y) -> pointer source "touch"
+2010231c	touch_set_up	pen released
+20102348	mouse_set_down	left button down at (x, y) -> pointer source "mouse"
+2010239c	mouse_set_up	left button released
+20102478	mouse_right_down
+201024b4	mouse_right_up
+2010256c	mouse_middle_down
+201025b4	mouse_middle_up
+20102138	pointer_get_event	(evt, src 1 touch/0 mouse): 0 none 1 release 2 press 3 held 4 re-press 5 tap 6 release+tap
+201023bc	mouse_right_get_event
+201024c4	mouse_middle_get_event
+201025c4	mouse_middle_is_func	middle button held on a FUNC-type screen (blocks direct key events)
+20102708	touch_cal_load	flash 0x183D0000: magic 0xA5C30001, 6 doubles, ~CRC-32
+20102774	touch_cal_save	erase + write the 0x40-byte calibration record at flash 0x3D0000
+201027f8	touch_cal_fit	least-squares affine fit of 5 measured vs 5 reference points
+20102f34	touch_cal_init	boot: measured := reference points, load the record from flash
+20102f8c	touch_cal_set_point
+20102fd0	touch_cal_store_points	set 4 points (ref set 0 / measured set 1); set 1 -> fit + save
+20103060	touch_cal_apply	(x, y) -> calibrated pixel, clamp 0..799 / 0..479
+20103164	touch_cal_selftest	apply to (100,100) after init (result unused)
+20103198	tsc2007_write_cmd	RIIC2 write of one command byte to 0x48
+201031f8	tsc2007_read12	command byte, then read 2 bytes -> 12-bit result (-1/-2 on bus error)
+201032f0	tsc2007_pressure	Rtouch = 400 * X/4096 * (Z2/Z1 - 1)
+201037ec	tsc2007_irq_flag	dly 20 ms, return 0x20800090
+2013071c	touch_cal_hit	touch inside the 70x70 window of calibration cross n
+20130768	touch_cal_step	calibration screen 0x7C: 5 crosses, store, send E5 to MAIN
+20106e0c	usbkbd_attach
+20106eb4	usbkbd_detach
+20106f58	usbkbd_queue_key	(modifier, first usage) -> per-keyboard FIFO 0x20811108
+2010709c	usbkbd_active
+201070e0	usbkbd_get_device
+2010713c	usbkbd_pop_key
+201071c8	usbkbd_flush_all
+20107210	usbkbd_get_char	FIFO -> char via the KEYBOARD LANGUAGE layout (0x2080010E)
+201072d8	kbd_text_append	text buffer 0x20811240 (64 chars)
+201072fc	kbd_text_backspace
+20107324	kbd_text_clear
+20107378	usbkbd_set_layout	0..10 (JPN US UK FRA(AZ) FRA(QW) DEU POR POR(BR) ESP ESP(LA) ITA)
+2010738c	usbkbd_reset
+201073a4	usbkbd_capslock_for_mode	CapsLock LED on for text modes 0,3,5,8,10
+201166cc	usbhid_attach_event	usage 6 keyboard / 2 mouse attach, -1 detach
+20116728	usbhid_report_event	report -> usbkbd_report (6) or mouse_report_post (2)
+20113e4c	mouse_attach_post	message type 1 to the mouse_cursor task
+20113ea0	mouse_detach_post	message type 0
+20113ef0	mouse_report_post	message type 2 (32-byte report)
+20113f38	mouse_cursor_set_pos
+20113f50	mouse_cursor_visible
+20113f60	mouse_cursor_get_pos
+2015eff4	mouse_cursor_task_create
+2015fa54	mouse_cursor_move
+2015fac4	mouse_wheel_event	wheel -> encoder id 6/2/3 or list scroll by screen id
+2015fcc4	mouse_cursor_obj_init	cursor at (400,240), sem "mouse_cursor_sem"
+2015fd64	mouse_cursor_run	attach/detach/report loop: buttons -> pointer sources, dx/dy * speed
+20120fe4	gui_middle_key	0x30F (FUNC) on menu-type screens, else 0xFFFF
+20121160	gui_right_key	right button -> screen-dependent key code
+20111218	kbd_set_current	keyboard device used for the LED status
+2010a864	kbdtest_record
+2010a758	vk_name_lookup
+2010a79c	kbdtest_draw	F12 overlay: layout, usage hex, VK name
+20111ab0	keycode_line	F1..F12 toggle debug bits 0x20808A84; date, time, dsp, reset, wdr, sndc
+201112b4	hex_parse	up to n hex digits
+# --- merged from names_display.T11g.tsv (T17)
+201003a0	gpio_cfg_reset	(port,pin): PIBC/PBDC/PMC/PIPC = 0, PM = 1
+20100414	gpio_cfg_out_low	(port,pin): port mode, output, level 0
+20100838	gpio_cfg_out_high	(port,pin): port mode, output, level 1
+2010087c	gpio_cfg_input	(port,pin): port mode, input buffer on (PIBC)
+20100534	gpio_set_alt_func	(port,pin,func 1..8): PFC/PFCE/PFCAE bits = func-1
+20100658	gpio_cfg_alt	(port,pin,func,mode): PMC=1, alt function; mode 0 PIPC, 1 in, 2 out, 3 bidir
+201002ac	gpio_cfg_mask	(Pn ptr, mask|value<<16, flag): bulk port-mode pin set-up
+2010079c	spibsc0_pins_init	P9_2..P9_7 alt 2 (QF_CLK/CSn/DAT0..3)
+20100458	gpio_early_init	from cpg_early_init: P7_11 (RZ_PWR_ON) output low
+20101bbc	lcd_pins_enable	P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5 (or inputs)
+20101c10	lcd_power	lcd_pins_enable + P4_6 LCD_STBY + P10_14 LCD_PWR_EN
+20101d14	gpio_p2_4_5_clear	P2_4, P2_5 and P10_1 low
+20101d70	sd_power	P7_12 = SDPWS (SD card power switch), 1-tick delay on power-up
+20101d94	sd_card_detect	P11_4 = SD_CD level
+20101f44	rtc_dt_output	P1_0 (RTC_DT) back to output
+20101f50	rtc_dt_input	P1_0 (RTC_DT) as input for reading
+20101f5c	gpio_p2_15	P2_15 (ACC_MOSI) port level
+20101fa4	led_set_one	one front LED (P6 pin table) on/off
+20102040	led_set_mask	8 front LEDs from a bit mask (D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX)
+20101b60	backlight_enable	P4_7 BLPWM alt3 (MTU2 out) + P10_4 level, or input
+20116ccc	cpg_early_init	Reset_Handler: PL310 power ctrl, FRQCR 0x0035, FRQCR2 1, SYSCR3 0x0F, STBCR2..12
+2013fe50	sdhi0_clock_on	STBCR12 &= 0xF3
+20100348	system_reset_select	1: WDT reset; 2: P0 pin set-up then WDT reset
+20117860	ostm_time_us	system time (us) interpolated from the OSTM0 counter
+201178f4	delay_us	busy-wait on ostm_time_us
+20117300	gic_set_priority	GICD_IPRIORITYR byte = prio << 3
+2011733c	gic_init	distributor/CPU interface set-up, 587 handler slots = gic_default_handler
+20117728	gic_irq_exit	pops nesting stack, EOIR + PMR restore
+201177a0	gic_disable_irq	GICD_ICENABLER bit
+201175dc	gic_install_isr_stub	copies a 0x58-byte ISR stub, sets priority and handler slot
+2011761c	gic_get_handler
+2011762c	gic_def_inh	(intno, {attr, handler, prio}) direct handler, no stub
+201175b4	isr_desc_check	intno < 0x24B, prio < 0x20
+201568e0	gic_default_handler	unregistered interrupt IDs
+20114144	rtc_delay	~20-loop spin
+20114168	rtc_send_byte
+201141c0	rtc_send_bytes
+201141e4	rtc_recv_byte
+20114244	rtc_recv_bytes
+20114268	rtc_read_reg	cmd 0x86|reg: status 1/2, INT1/INT2 registers
+201142cc	rtc_write_reg	cmd 0x06|reg + 1 data byte
+20114328	rtc_port_idle	CK high, CS low
+20114340	rtc_write_datetime_raw	cmd 0x26 + 7 BCD bytes
+201143a0	rtc_write_time_raw	cmd 0x66 + 3 BCD bytes
+20114400	rtc_read_datetime_raw	cmd 0xA6, 7 BCD bytes (hour bit 6 masked)
+2011446c	rtc_read_time_raw	cmd 0xE6
+201144d8	rtc_minutes_of_day
+20114528	rtc_get_date	(y, m, d) BCD
+20114564	rtc_set_date
+2011459c	rtc_get_time	(h, m, s) BCD
+201145d8	rtc_set_time
+20114608	rtc_set_datetime
+20114658	rtc_get_datetime
+201146b4	rtc_get_tm	struct tm (year+100, mon-1); used by the FAT layer for time stamps
+20114778	rtc_read_status	status1, status2, INT1, INT2
+201147b4	rtc_int_setup	writes status2 = 1 and INT1 = 1 (from MAIN message 0x62)
+201147d4	rtc_init	port idle, status1 = 2 (24 h), status2 = 0, creates the RTC mutex 0x20800368
+2010261c	backlight_pwm_init	MTU2 ch3/ch4 reset-synchronised PWM, period 320 counts, TIOC4D out
+20102698	backlight_set_pct	NEW ENTRY; duty = pct*320/100 -> TGRD_4
+201026e0	backlight_set	thunk: backlight_set_pct
+201026e8	backlight_init	backlight_pwm_init + 60 %
+20113d20	dimmer_pwm_init	MTU2 ch0 PWM mode 1, P0/16, period 20000 (100 Hz), TIOC0A out
+20113d6c	dimmer_set_pct	NEW ENTRY; duty = pct*20000/100 -> TGRB_0
+20113db8	dimmer_set	thunk: dimmer_set_pct
+20113dc0	dimmer_init	dimmer_pwm_init + 60 %
+201110cc	adc_read_all	ADDRA..ADDRH (AN0..AN7) >> 4
+2011115c	adc_start_scan	ADCSR = 0x20FF (start, continuous scan)
+20105550	wav_list_dir	scans the folder for *.wav, up to 255 entries of 0x34 bytes, sorted
+20105790	audio_state	0 idle, 2 recording, 4 playing, 8 paused, 0x10/0x20 seeking
+2010579c	play_stop
+201057d8	wav_delete	deletes <dir>\<name>.wav and rescans
+201058c0	audio_error
+201058cc	audio_clear_error
+201058dc	rec_start	(name16, freq digits, mode index, kind): sets event flag 2
+20105a20	rec_stop
+20105a54	play_start	(name16, kind): sets event flag 4
+20105ae8	play_resume
+20105b28	play_pause
+20105b68	play_ffwd	+5 s (320000 bytes)
+20105ba8	play_rewind	-5 s
+20105be8	play_progress	"%02d:%02d:%02d" + percent
+20105d24	play_read_block	reads 0xC80 bytes, keeps the left channel, header {count/2, 0x1234}
+20105ee0	play_advance
+20105f2c	play_seek	fseek(pos + 0x5C)
+20105fa0	play_prime
+20106018	rec_close_abort
+20106060	rec_finish	pads to 4 bytes, rewrites the 0x5C-byte header sizes
+201061c8	rec_write
+20106248	rec_open_wav	writes RIFF/WAVE/fmt/LIST-ICMT/data header (0x5C bytes)
+20106588	sd_is_full	drive 'I' free space == 0
+201052b0	wav_open_read
+20105158	wav_check_header
+2010508c	play_close
+2010f0dc	sdmenu_default_name	"20YY_MM_DD_NN" from the RTC date
+2010f1e0	sdmenu_file_exists
+2010f240	sdmenu_req_save	MAIN transfer code 0x41 (MemList) / 0x43 (Menu)
+2010f284	sdmenu_req_load	MAIN transfer code 0x42 (MemList) / 0x44 (Menu)
+2010f2c8	sdmenu_xfer_len
+2010f2e8	sdmenu_select
+2010f300	sdmenu_select_load
+2010f35c	sd_present
+2010fcf0	fmt_size_str	"%.2f KB" ... "%d TB"
+201101e8	sdmenu_request	starts save (flag 1) or load (flag 2), polls result
+20110278	sd_format_request	flag 3 (sd_make_dirs), progress percent
+20110368	sd_format_done
+20101da4	gpio_usb0_en	NEW ENTRY; (port, on): P8_10 USB0_EN
+20101cd4	gpio_p2_4_5_select	NEW ENTRY; 3-way select on P2_4/P2_5/P10_1
