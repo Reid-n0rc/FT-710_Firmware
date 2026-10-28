@@ -198,10 +198,10 @@ The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is in
 | Item | Value |
 |---|---|
 | What | Zephyr SDK 0.17.0 `xtensa-nxp_rt600_adsp_zephyr-elf` toolchain (GNU binutils 2.38 built with the NXP RT600 HiFi4 core overlay). Its objdump decodes the IFDSP HiFi4 FLIX bundles that Ghidra's Xtensa module cannot |
-| Source | https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0, asset `toolchain_linux-x86_64_xtensa-nxp_rt600_adsp_zephyr-elf.tar.xz` |
-| SHA-256 | `2e0a54e20056b82cae12593e5d936d1e22cdb3f90cb9e77d59c500a5ad4abdc2` (matches the release `sha256.sum`) |
-| Install | extracted only (no `setup.sh`, no sudo) to `~/opt/zephyr-sdk-0.17.0/`; objdump at `~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump` |
-| Used by | `tools/ifdsp_hifi4_dis.py`, `tools/ifdsp_hifi4_regscan.py` (command in `decomp/ifdsp/INDEX.md`) |
+| Source | https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0, asset `toolchain_<platform>_xtensa-nxp_rt600_adsp_zephyr-elf.tar.xz` |
+| SHA-256 | from the release `sha256.sum`: linux-x86_64 `2e0a54e20056b82cae12593e5d936d1e22cdb3f90cb9e77d59c500a5ad4abdc2`, linux-aarch64 `c099e411daec57b6c4e4824d1a1e3ebf2ed607103dc04b66919ae19c14bbfbfa`, macos-aarch64 `31b6072b911d2324443d58ec0176bd560eba3b3095c9aba18c3f40c2de8f5785`, macos-x86_64 `f95f8a3fa5fc864a5f731f492dfe8bb96e1c3b3a1ae5455dc68ffddb04c609cd` (pinned in `tools/bootstrap.sh`) |
+| Install | `tools/bootstrap.sh --only deps`, or by hand: extract only (no `setup.sh`, no sudo) to `~/opt/zephyr-sdk-0.17.0/`; objdump at `~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump`. Installed on macOS arm64 on 2026-10-28 (issue #87); `objdump --version`: GNU objdump (Zephyr SDK 0.17.0) 2.38 |
+| Used by | `tools/ifdsp_hifi4_dis.py` (bootstrap step `flix` → committed `decomp/ifdsp/hifi4/flix.dis`), `tools/ifdsp_hifi4_regscan.py` (command in `decomp/ifdsp/INDEX.md`) |
 | Not tried | Espressif overlays (ESP32 cores): different core configuration |
 | Remove | `rm -rf ~/opt/zephyr-sdk-0.17.0` |
 

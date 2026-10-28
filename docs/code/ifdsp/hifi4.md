@@ -22,8 +22,8 @@ built for, so the decode is exact, not a guess at the FLIX formats.
 ```sh
 OD=~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump
 python3 -I tools/ifdsp_hifi4_dis.py $OD build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin decomp/ifdsp/hifi4/functions.tsv \
-  build/ifdsp_hifi4_flix.dis tools/ghidra/IfdspHifi4Names.java          # 1065 functions, ~53k lines, ~5 s
-python3 -I tools/ifdsp_coef_tables.py build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin --dis build/ifdsp_hifi4_flix.dis
+  decomp/ifdsp/hifi4/flix.dis tools/ghidra/IfdspHifi4Names.java     # 1065 functions, ~52k lines, ~5 s; committed
+python3 -I tools/ifdsp_coef_tables.py build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin --dis decomp/ifdsp/hifi4/flix.dis
 ```
 
 Limit that remains: the disassembly is not decompiled C. The DSP kernels (filters, FFT, NR) are readable as FLIX assembly,

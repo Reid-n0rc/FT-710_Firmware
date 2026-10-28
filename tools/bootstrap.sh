@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # FT-710 firmware project bootstrap (T20): rebuild everything that is not in git from the official downloads.
 #
-#   tools/bootstrap.sh                    # default steps: inputs decode rx ghidra export verify
+#   tools/bootstrap.sh                    # default steps: inputs decode rx ghidra export flix verify
 #   tools/bootstrap.sh --only decode      # one step (repeat --only for several, or give a comma list)
 #   tools/bootstrap.sh --skip verify      # all default steps but one
 #   tools/bootstrap.sh --all              # default steps + sdr (the slow FPGA netlist chain)
 #   tools/bootstrap.sh --list             # print the steps and the resolved settings
 #
 # Steps (in run order):
-#   deps    download and unpack Ghidra 12.1.4 + Temurin JDK 21 into $OPT_DIR (Linux x86_64 only; SHA-256 checked).
-#           Not a default step. On macOS use Homebrew instead (docs/getting-started.md).
+#   deps    download and unpack, SHA-256 checked, into $OPT_DIR: the Zephyr SDK 0.17.0 RT600 HiFi4 toolchain (Linux and
+#           macOS, x86_64 and arm64; for step flix), and Ghidra 12.1.4 + Temurin JDK 21 (Linux x86_64 only; on macOS use
+#           Homebrew instead, docs/getting-started.md). Not a default step.
 #   inputs  check Firmware/ against docs/inputs.sha256; unpacks the Yaesu zip first if only the zip is there.
 #   decode  SFL -> build/*.bin (tools/sfl_decode.py), carve the HiFi4 images (tools/ifdsp_dsp_images.py), check hashes.
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
@@ -17,6 +18,8 @@
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
+#   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
+#           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
 #   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared).
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
 #           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
@@ -36,6 +39,7 @@
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
 #   SDR_OUT              SDR derived files [$BOOTSTRAP_OUT/build/sdr]
+#   ZEPHYR_SDK           Zephyr SDK root for step flix [$OPT_DIR/zephyr-sdk-0.17.0];  ZEPHYR_OBJDUMP  its RT600 objdump
 #
 # Uses only committed scripts (tools/, tools/ghidra/, hdl/sdr/sim/). Never talks to a radio.
 set -euo pipefail
@@ -85,6 +89,9 @@ PRJXRAY_DB=${PRJXRAY_DB:-$FT710_TOOLS/prjxray-db/artix7}
 FT710_VENV=${FT710_VENV:-$FT710_TOOLS/venv}
 export PRJXRAY PRJXRAY_DB FT710_VENV
 SDR_OUT=${SDR_OUT:-$BUILD/sdr}
+ZEPHYR_SDK=${ZEPHYR_SDK:-$OPT_DIR/zephyr-sdk-0.17.0}
+ZEPHYR_OBJDUMP=${ZEPHYR_OBJDUMP:-$ZEPHYR_SDK/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump}
+FLIX_DONE=0
 
 # Pinned versions (docs/tooling.md).
 GHIDRA_URL=https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip
@@ -99,10 +106,16 @@ PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
 PRJXRAY_DB_COMMIT=0a0addedd73e7e4139d52a6d8db4258763e0f1f3
+ZEPHYR_URL=https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.17.0
+ZEPHYR_TC=xtensa-nxp_rt600_adsp_zephyr-elf  # SHA-256 per platform from the release's sha256.sum
+ZEPHYR_SHA_linux_x86_64=2e0a54e20056b82cae12593e5d936d1e22cdb3f90cb9e77d59c500a5ad4abdc2
+ZEPHYR_SHA_linux_aarch64=c099e411daec57b6c4e4824d1a1e3ebf2ed607103dc04b66919ae19c14bbfbfa
+ZEPHYR_SHA_macos_aarch64=31b6072b911d2324443d58ec0176bd560eba3b3095c9aba18c3f40c2de8f5785
+ZEPHYR_SHA_macos_x86_64=f95f8a3fa5fc864a5f731f492dfe8bb96e1c3b3a1ae5455dc68ffddb04c609cd
 VENV_PKGS="fasm==0.0.2.post88 textX==4.4.0 Arpeggio==2.0.3 simplejson==4.2.0 intervaltree==3.2.1 sortedcontainers==2.4.0 PyYAML==6.0.3"
 
-ALL_STEPS="deps inputs decode rx ghidra export verify sdr"
-DEFAULT_STEPS="inputs decode rx ghidra export verify"
+ALL_STEPS="deps inputs decode rx ghidra export flix verify sdr"
+DEFAULT_STEPS="inputs decode rx ghidra export flix verify"
 
 log()  { printf '\n== [%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 info() { printf '   %s\n' "$*"; }
@@ -155,21 +168,37 @@ sha256_stdin() { if command -v sha256sum >/dev/null 2>&1; then sha256sum | cut -
 stamp_of() { local f; for f in "$@"; do sha256 "$f"; done | sha256_stdin; }
 
 # ---------------------------------------------------------------- deps
+fetch() {  # fetch <url> <file> <sha>
+  if [ ! -f "$2" ] || [ "$(sha256 "$2")" != "$3" ]; then
+    info "download $1"; curl -fL --retry 3 -o "$2.part" "$1"; mv "$2.part" "$2"
+  fi
+  [ "$(sha256 "$2")" = "$3" ] || die "SHA-256 mismatch for $2"
+  info "ok  $(basename "$2") ($3)"
+}
 step_deps() {
+  need curl "curl"; need tar "tar"
+  mkdir -p "$OPT_DIR" "$DL_DIR"
+  log "deps: Zephyr SDK 0.17.0 $ZEPHYR_TC toolchain into $ZEPHYR_SDK"
+  local plat sha
+  case "$OS/$ARCH" in
+    Linux/x86_64) plat=linux-x86_64 ;; Linux/aarch64|Linux/arm64) plat=linux-aarch64 ;;
+    Darwin/arm64) plat=macos-aarch64 ;; Darwin/x86_64) plat=macos-x86_64 ;; *) plat="" ;;
+  esac
+  if [ -x "$ZEPHYR_OBJDUMP" ]; then info "Zephyr RT600 objdump present: $ZEPHYR_OBJDUMP"
+  elif [ -z "$plat" ]; then info "No Zephyr SDK build for $OS/$ARCH; step flix will be skipped"
+  else
+    sha=ZEPHYR_SHA_${plat//-/_}
+    fetch "$ZEPHYR_URL/toolchain_${plat}_$ZEPHYR_TC.tar.xz" "$DL_DIR/zephyr_${plat}_$ZEPHYR_TC.tar.xz" "${!sha}"
+    mkdir -p "$ZEPHYR_SDK"; tar -xJf "$DL_DIR/zephyr_${plat}_$ZEPHYR_TC.tar.xz" -C "$ZEPHYR_SDK"
+    [ -x "$ZEPHYR_OBJDUMP" ] || die "unpacked toolchain has no objdump at $ZEPHYR_OBJDUMP"
+    "$ZEPHYR_OBJDUMP" --version | head -1 | sed 's/^/   /'
+  fi
   log "deps: Ghidra 12.1.4 + Temurin JDK 21.0.13+9 into $OPT_DIR"
   if [ "$OS" != Linux ] || [ "$ARCH" != x86_64 ]; then
     info "Not Linux x86_64. Install with Homebrew instead:  brew install ghidra   (pulls openjdk@21)"
     return 0
   fi
-  need curl "curl"; need unzip "unzip"; need tar "tar"
-  mkdir -p "$OPT_DIR" "$DL_DIR"
-  fetch() {  # fetch <url> <file> <sha>
-    if [ ! -f "$2" ] || [ "$(sha256 "$2")" != "$3" ]; then
-      info "download $1"; curl -fL --retry 3 -o "$2.part" "$1"; mv "$2.part" "$2"
-    fi
-    [ "$(sha256 "$2")" = "$3" ] || die "SHA-256 mismatch for $2"
-    info "ok  $(basename "$2") ($3)"
-  }
+  need unzip "unzip"
   if [ -x "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" ]; then info "Ghidra present: $GHIDRA_INSTALL_DIR"
   else
     fetch "$GHIDRA_URL" "$DL_DIR/ghidra.zip" "$GHIDRA_SHA"
@@ -332,17 +361,32 @@ step_export() {
 }
 
 # ---------------------------------------------------------------- verify
+step_flix() {
+  log "flix: FLIX-aware HiFi4 listing -> $DECOMP_OUT/ifdsp/hifi4/flix.dis"
+  if [ ! -x "$ZEPHYR_OBJDUMP" ]; then
+    info "WARNING: no Zephyr RT600 objdump at $ZEPHYR_OBJDUMP (run step deps, or set ZEPHYR_OBJDUMP); skipped"
+    return 0
+  fi
+  local text=$BUILD/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin tsv=$DECOMP_OUT/ifdsp/hifi4/functions.tsv
+  [ -f "$text" ] || die "no $text (run step decode)"
+  [ -f "$tsv" ] || tsv=$REPO/decomp/ifdsp/hifi4/functions.tsv
+  mkdir -p "$DECOMP_OUT/ifdsp/hifi4"
+  py "$REPO/tools/ifdsp_hifi4_dis.py" "$ZEPHYR_OBJDUMP" "$text" "$tsv" "$DECOMP_OUT/ifdsp/hifi4/flix.dis" \
+    "$REPO/tools/ghidra/IfdspHifi4Names.java" 2>&1 | tail -n 1 | sed 's/^/   /'
+  FLIX_DONE=1
+}
 step_verify() {
   log "verify: $DECOMP_OUT against the committed decomp/"
-  local rc=0
+  local rc=0 noflix=""
+  [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
     git -C "$REPO" diff --stat -- decomp/ | tail -n 5
     git -C "$REPO" diff --quiet -- decomp/ && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/)" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x sdr "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x sdr "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
@@ -396,7 +440,7 @@ step_sdr() {
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,44p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -407,7 +451,7 @@ while [ $# -gt 0 ]; do
     --all) steps="$DEFAULT_STEPS sdr" ;;
     --list)
       echo "steps: $ALL_STEPS (default: $DEFAULT_STEPS)"
-      for v in REPO OUT FIRMWARE_DIR BUILD PROJ DECOMP_OUT OPT_DIR GHIDRA_INSTALL_DIR JAVA_HOME RX_MODULE_DIR JOBS GHIDRA_HEADLESS_MAXMEM FT710_TOOLS SDR_OUT; do
+      for v in REPO OUT FIRMWARE_DIR BUILD PROJ DECOMP_OUT OPT_DIR GHIDRA_INSTALL_DIR JAVA_HOME RX_MODULE_DIR JOBS GHIDRA_HEADLESS_MAXMEM FT710_TOOLS SDR_OUT ZEPHYR_OBJDUMP; do
         printf '  %-24s %s\n' "$v" "${!v}"; done
       exit 0 ;;
     -h|--help) usage; exit 0 ;;

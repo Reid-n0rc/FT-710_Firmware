@@ -85,19 +85,20 @@ firmware package: the analysis in this repo is for exactly these versions.
 ```sh
 tools/bootstrap.sh --help             # steps and settings
 tools/bootstrap.sh --list             # what it would use on this machine
-tools/bootstrap.sh                    # inputs decode rx ghidra export verify
+tools/bootstrap.sh                    # inputs decode rx ghidra export flix verify
 tools/bootstrap.sh --only sdr         # the FPGA chain (slow, see below)
 tools/bootstrap.sh --only export,verify   # after you change names: re-export and see the diff
 ```
 
 | Step | What it does | Time (20 cores) |
 |---|---|---|
-| `deps` | Ghidra + JDK download (Linux x86_64; not a default step) | network-bound |
+| `deps` | Zephyr SDK RT600 HiFi4 toolchain (Linux and macOS) and Ghidra + JDK (Linux x86_64) downloads, SHA-256 checked; not a default step | network-bound |
 | `inputs` | unzip the firmware package if needed, check `Firmware/` against `docs/inputs.sha256` | seconds |
 | `decode` | `tools/sfl_decode.py` for the four SFLs, `tools/ifdsp_dsp_images.py` for the HiFi4 images, hash check of `build/*.bin` | seconds |
 | `rx` | install the community Renesas RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ `ea4cd204`, six language data files only) into Ghidra, apply the project's fix `tools/ghidra/rx62t-movu-fix.patch`, compile it with Ghidra's `sleigh`. Skipped when already done | 30 s |
 | `ghidra` | build `ghidra/FT710_MAIN`, `FT710_DISPLAY` and `FT710_IFDSP` (two programs: Cortex-M33 and HiFi4) with the committed setup, code-discovery and names scripts. In a clone, the committed projects are kept as they are; elsewhere a program is rebuilt only when one of its inputs changed (`FORCE=1` rebuilds) | about 3 min |
 | `export` | re-export `decomp/` with `tools/ghidra/ExportDecomp.java` and regenerate `decomp/main/cat_dispatch.tsv` | about 1 min |
+| `flix` | the FLIX-aware HiFi4 listing `decomp/ifdsp/hifi4/flix.dis` with the Zephyr SDK objdump (`tools/ifdsp_hifi4_dis.py`). Skipped with a warning when the objdump is missing; `verify` then leaves `flix.dis` out | about 5 s |
 | `verify` | compare the export with the committed `decomp/` | seconds |
 | `sdr` | Project X-Ray checkouts + venv (pinned commits and versions), bitstream → FASM → cell netlist → structural Verilog/XDC → Verilator model of the whole FPGA, and a UART smoke test | netlist about 1 min, Verilator build several minutes |
 

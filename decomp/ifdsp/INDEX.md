@@ -25,9 +25,9 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0
   -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 -scriptPath tools/ghidra \
   -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
   -postScript ExportDecomp.java decomp/ifdsp/hifi4 50 -analysisTimeoutPerFile 3600
-# HiFi4 FLIX-aware listing (T12e; Zephyr SDK RT600 objdump, see docs/tooling.md), not committed:
+# HiFi4 FLIX-aware listing decomp/ifdsp/hifi4/flix.dis (T12e; Zephyr SDK RT600 objdump, see docs/tooling.md; bootstrap step flix):
 python3 -I tools/ifdsp_hifi4_dis.py ~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump \
-  build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin decomp/ifdsp/hifi4/functions.tsv build/ifdsp_hifi4_flix.dis tools/ghidra/IfdspHifi4Names.java
+  build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin decomp/ifdsp/hifi4/functions.tsv decomp/ifdsp/hifi4/flix.dis tools/ghidra/IfdspHifi4Names.java
 # Inspect a few functions without a full export:
 tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly \
   -scriptPath tools/ghidra -postScript DumpFuncs.java build/ifdsp_funcs.c main 0x00084ad8
@@ -95,4 +95,6 @@ Ghidra's Xtensa module decodes the base ISA only. It maps every `op0=0xE` word t
 are wider (T12c: the op0=0xE bundles in this image look 6 bytes long, `tools/ifdsp_xtdis.py`), so disassembly desynchronises inside any DSP kernel. Most function bodies are truncated at the first bundle
 (the average exported body is 26 bytes). Control code (XOS, rpmsg, drivers) decompiles partly. The signal-processing code does not.
 Function **entries** are still reliable, because they come from 4-aligned `entry a1,N` prologues. For the real instruction stream use
-the FLIX-aware listing from the Zephyr SDK RT600 HiFi4 objdump (`tools/ifdsp_hifi4_dis.py`, command above; T12e, `docs/code/ifdsp/hifi4.md`).
+the FLIX-aware listing [`hifi4/flix.dis`](hifi4/flix.dis) (about 52,000 lines, 1065 functions with names), made with the Zephyr SDK RT600
+HiFi4 objdump (`tools/ifdsp_hifi4_dis.py`, command above; T12e, `docs/code/ifdsp/hifi4.md`). It is committed (issue #87) and
+rebuilt and compared by `tools/bootstrap.sh` (step `flix`).
