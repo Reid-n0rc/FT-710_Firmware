@@ -75,3 +75,112 @@
 20113d6c		dimmer_set_pct; target of FUN_20113db8 and FUN_20113dc0
 20101cd4		P2_4/P2_5/P10_1 3-way select (PSR2/PSR10), no Ghidra function
 20101da4		gpio_usb0_en: (port, on) -> P8_10 USB0_EN via PSR8, no Ghidra function
+# --- T21e (#97 B7/B8): starts found by tools/ghidra/DisplayGaps.java (kind: what flagged it), reviewed by hand.
+# after_return_undef = undefined bytes after a return/tail branch that decode as an ARM function and nothing branches to
+# (dead helpers: getters, CP15/PMU accessors, wrappers); call_inside = a bl target that was no function entry;
+# addr_taken = an instruction loads the address (callbacks; 0x2015677c/0x201567d0 are NORTi kernel resume stubs).
+20100104		after_return_undef: after 20100100 b 0x20100128
+201004a4		after_return_undef: after 201004a0 bx lr
+20100a88		after_return_undef: after 20100a84 bx lr
+20100dc0		after_return_undef: after 20100dbc bx lr
+20100e8c		after_return_undef: after 20100e88 bx lr
+20100efc		after_return_undef: after 20100ef8 bx lr
+20100f20		after_return_undef: after 20100f1c bx lr
+20100f44		after_return_undef: after 20100f40 bx lr
+20100f64		after_return_undef: chained after 20100f44
+20100fd8		after_return_undef: after 20100fd4 bx lr
+20101c44		after_return_undef: after 20101c40 ldmia sp!,{r4,pc}
+20101d40		after_return_undef: after 20101d3c bx lr
+20101d50		after_return_undef: after 20101d4c bx lr
+20101d60		after_return_undef: after 20101d5c bx lr
+20101f00		after_return_undef: after 20101efc b 0x20100414
+20101f74		after_return_undef: after 20101f70 bx lr
+2010233c		after_return_undef: after 20102338 bx lr
+20103a4c		after_return_undef: after 20103a48 ldmia sp!,{r4,r5,r6,pc}
+20103adc		after_return_undef: after 20103ad8 ldmia sp!,{r3,r4,r5,r6,r7,pc}
+20103b4c		after_return_undef: after 20103b48 b 0x20103ae8
+20103bd4		after_return_undef: after 20103bd0 bx lr
+2010414c		after_return_undef: after 20104148 b 0x201040fc
+20110e68		after_return_undef: dead PMU (CP15 c9) init helper after a string/pointer pool (found by review of the B8 fragments)
+201111ac		after_return_undef: after 201111a4 ldmia sp!,{r4,pc}
+201113f8		after_return_undef: after 201113f4 b 0x201113d8
+201120c0		after_return_undef: after 201120b0 b 0x20112068
+20112f34		after_return_undef: after 20112f30 b 0x20112f18
+20113e48		after_return_undef: after 20113e44 ldmia sp!,{r4,pc}
+20114848		after_return_undef: after 20114828 ldr pc,[sp],#0x4
+20114938		after_return_undef: after 20114934 bx lr
+20114fc4		after_return_undef: after 20114fc0 ldmia sp!,{r4,r5,r6,pc}
+2011503c		after_return_undef: after 20115038 ldmia sp!,{r4,pc}
+20116bb0		after_return_undef: after 20116b88 ldmia sp!,{r1,r2,r3,pc}
+20116bfc		after_return_undef: after 20116bf8 b 0x20155180
+20117254		after_return_undef: after 20117250 bx lr
+201179bc		after_return_undef: after 20117928 ldmia sp!,{r4,r5,pc}
+2011834c		after_return_undef: after 20118348 ldmia sp!,{r4,r5,r6,r7,r8,pc}
+2011a288		after_return_undef: after 2011a284 b 0x2011a258
+2011d014		after_return_undef: after 2011d010 b 0x2011d8b4
+2011d59c		after_return_undef: after 2011d598 bx lr
+2011d5dc		after_return_undef: after 2011d5d8 bx lr
+2011d684		after_return_undef: after 2011d680 bx lr
+2011d77c		after_return_undef: after 2011d778 bx lr
+2011dea0		after_return_undef: after 2011de9c b 0x2011d9e0
+2011f494		after_return_undef: after 2011f490 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}
+2012001c		call_inside: called from 20103818
+20120be4		after_return_undef: after 20120be0 ldmia sp!,{r4,pc}
+20120d70		after_return_undef: after 20120d6c b 0x201573bc
+20120dd4		after_return_undef: after 20120dd0 bx lr
+20121980		after_return_undef: after 20121970 bx lr
+20125e74		after_return_undef: after 20125e70 ldmia sp!,{r4,r5,r6,r7,pc}
+201322c8		after_return_undef: after 201322c4 b 0x201595f0
+201322d8		after_return_undef: after 201322d4 b 0x2015a500
+20132ee8		after_return_undef: after 20132ee4 bx lr
+20132f54		after_return_undef: after 20132f50 bx lr
+20132fd8		after_return_undef: after 20132fa0 b 0x201552b8
+2013433c		after_return_undef: after 20134338 b 0x201580e0
+20134390		after_return_undef: after 2013438c b 0x20157c50
+20134424		after_return_undef: after 20134420 b 0x20157d3c
+201344a8		after_return_undef: after 201344a4 bx lr
+20135448		after_return_undef: after 20135444 bx lr
+201354bc		after_return_undef: after 201354b8 bx lr
+20137d78		after_return_undef: after 20137d74 b 0x20157160
+20138410		addr_taken: address taken at 2013b228 in FUN_2013afa4@2013afa4
+2013857c		after_return_undef: after 20138578 b 0x201384d4
+20138660		after_return_undef: after 2013865c ldmia sp!,{r4,r5,r6,r7,r8,pc}
+20138668		after_return_undef: after 20138664 bx lr
+20139654		after_return_undef: after 20139650 bx lr
+201396ac		after_return_undef: after 201396a8 bx lr
+2013aaa0		after_return_undef: after 2013aa9c bx lr
+2013ad50		after_return_undef: after 2013ad4c ldmia sp!,{r4,pc}
+2013ad58		after_return_undef: after 2013ad54 b 0x20138670
+2013b238		after_return_undef: after 2013b234 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}
+2013b34c		after_return_undef: after 2013b348 bx lr
+2013b540		after_return_undef: after 2013b53c b 0x20101da4
+2013b544		after_return_undef: after 2013b540 bx lr
+2013fa60		after_return_undef: after 2013fa48 ldmia sp!,{r4,pc}
+2013fc10		after_return_undef: after 2013fc0c ldmia sp!,{r4,r5,r6,pc}
+2013fd50		after_return_undef: after 2013fd4c b 0x20150740
+2013fde4		after_return_undef: after 2013fde0 b 0x20140b9c
+2013fe64		after_return_undef: after 2013fe60 bx lr
+2013ffdc		after_return_undef: after 2013ffd8 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,pc}
+201447f4		after_return_undef: after 201447f0 b 0x20144800
+20148bb0		after_return_undef: after 20148bac bx lr
+20148c5c		after_return_undef: after 20148c58 ldmia sp!,{r4,pc}
+2014d2cc		after_return_undef: after 2014d2c8 bx lr
+2014d600		after_return_undef: after 2014d5fc ldmia sp!,{r4,r5,r6,pc}
+2014d8b4		after_return_undef: after 2014d8b0 ldmia sp!,{r4,r5,r6,pc}
+2014d8c8		after_return_undef: after 2014d8c4 bx lr
+2014e044		late start: ldr r0,=... before the push of the function at 0x2014e04c (found by review of the B8 fragments)
+2015441c		after_return_undef: after 20154418 bx lr
+201546bc		after_return_undef: after 201546b8 bx lr
+20154710		after_return_undef: after 2015470c b 0x20153b34
+20156310		after_return_undef: after 2015630c ldmia sp!,{r4,pc}
+2015632c		call_inside: called from 2010020c
+201563ec		after_return_undef: after 201563e8 b 0x201563bc
+2015677c		addr_taken: address taken at 201509e8 in FUN_201508ec@201508ec
+201567d0		addr_taken: address taken at 2014ee5c in FUN_2014edf4@2014edf4
+201568b0		after_return_undef: after 201568ac ldmia sp!,{r12,pc}^
+201568b4		after_return_undef: after 201568b0 bx lr
+20157194		after_return_undef: after 20157190 bx lr
+20157604		after_return_undef: after 20157600 b 0x201571e8
+20158590		after_return_undef: after 2015858c b 0x201576f4
+2015a8dc		after_return_undef: after 2015a8c0 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}
+2015fd60		after_return_undef: after 2015fd54 ldmia sp!,{r4,r5,r6,r7,r8,pc}
