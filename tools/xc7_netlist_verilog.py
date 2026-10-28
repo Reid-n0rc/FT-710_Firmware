@@ -72,11 +72,14 @@ class Writer:
         self.counts = collections.Counter()
         self.notes = collections.Counter()
 
+    rename = {}
+
     def w(self, net):
         if net is None:
             return "1'bz"
         if net.startswith("1'b"):
             return net
+        net = self.rename.get(net, net)
         self.wires.add(net)
         return net
 
@@ -554,12 +557,27 @@ def cmd_slice(path, out, seeds, depth, pkg, db):
         for p, v in g.cells[s]["pins"].items():
             if v[1] == "O" and not v[0].startswith("1'b"):
                 outs.append(v[0])
-    body = []
+    # ports are named after the driving pin (stable across netlist rebuilds): i_<cell>_<pin> / o_<cell>_<pin>
+    rename = {}
+    for n in ext:
+        d = g.driver(n)
+        rename[n] = "i_" + vname("%s_%s" % d if d else "undriven_" + n)
+    for n in outs:
+        if n not in rename:
+            d = g.driver(n)
+            rename[n] = "o_" + vname("%s_%s" % d)
+    for c in cells:     # internal nets: w_<driver cell>_<pin>
+        for p, v in c["pins"].items():
+            if v[1] == "O" and not v[0].startswith("1'b") and v[0] not in rename:
+                rename[v[0]] = "w_" + vname("%s_%s" % (c["name"], p))
+    w.rename = rename
     w.lines = []
     for c in cells:
         w.cell(c)
     body = w.lines
     w.lines = []
+    ext = [rename[n] for n in ext]
+    outs = [rename[n] for n in outs]
     portset = set(ext) | set(outs)
     lines = ["// Slice of the recovered FT-710 SDR netlist (tools/xc7_netlist_verilog.py slice). Private.",
              "// seeds: %s, depth %d, %d cells" % (",".join(seeds), depth, len(cells)),
@@ -572,13 +590,8 @@ def cmd_slice(path, out, seeds, depth, pkg, db):
     lines += body
     lines += ["endmodule", "`default_nettype wire"]
     # boundary description for testbenches
-    desc = {}
-    for n in ext:
-        d = g.driver(n)
-        desc[n] = ("%s.%s" % d) if d else "undriven"
     open(out, "w").write("\n".join(lines) + "\n")
-    json.dump({"inputs": desc, "outputs": {n: (g.driver(n) and "%s.%s" % g.driver(n)) for n in outs}},
-              open(out + ".ports.json", "w"), indent=1)
+    json.dump({"inputs": ext, "outputs": outs}, open(out + ".ports.json", "w"), indent=1)
     print("%s: %d cells, %d input ports, %d output ports; %s" % (
         out, len(cells), len(ext), len(set(outs) - set(ext)),
         " ".join("%s=%d" % kv for kv in sorted(w.counts.items()))))
