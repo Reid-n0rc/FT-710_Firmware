@@ -27,7 +27,19 @@ through the fork's CLI build until the MCP server is restarted.
 ## Sub-task status
 
 ### T22c
-**Status:** in progress (2026-10-28). IFDSP HiFi4.
+**Status:** done (2026-10-28). IFDSP HiFi4.
+
+Plan (resumed 2026-10-28 after steps 1–2):
+1. done: base ISA outside bundles vs rizin.
+2. done: `Xtensa:LE:32:rt600hifi4` vs an own decoder. Leftovers to close here: `PcodeDump.java` was committed as WIP but is the
+   script the 10-bundle p-code check used (complete, catalogued in `tools/README.md`); settle the open `ret.n` at 0x22F79D
+   (desync or real) against Ghidra's listing and the flow decode; record 0x22672C (function missing from `entries_hifi4.tsv`)
+   as a follow-up.
+3. REA: once T22f's raw `xtensa-hifi4` lane exists (its CLI command in the scratchpad `t22f-ready.md`), open
+   `build/FT-710_IFDSP_V0101_hifi4.bin` in REA (fork CLI, under `memgate.py 2700`, hard timeout) with the new language;
+   B9 re-check (`FUN_0020bb74` decompiles, `{ l32r a3; and a14, a14, a3 }` uses the old `a3`); compare REA's function list and
+   decompile success with the canonical `decomp/ifdsp/hifi4` (T21g: 1,081 functions, 0 failures, 258 warnings, 1 halt_baddata).
+   If the lane is not ready when steps 1–2 are closed, T22c is recorded as blocked on T22f.
 
 **Step 1 — base ISA outside bundles, third decoder (rizin 0.9.1, Capstone Xtensa).** `tools/hifi4_rizin_compare.py` runs one
 `pdj 1 @ addr` per `flix.dis` instruction start on `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin` (base 0x200000), so the
@@ -57,7 +69,10 @@ Disagreements, settled from the bytes and `xtensa-modules.c` **[fact]**:
   `break.n` is op0 = 0xD. rizin bug.
 - (not counted as a disagreement) `ret.n` at 0x22F79D is `0dfc` with s = 0xC: this core's `Slot_inst16b_decode` does not test
   `s` for `RET.N`, Capstone rejects it. It follows a `.byte 0x93` in `flix.dis`, so it is probably a desync after padding (see
-  the conflict regions below) **[inference]**.
+  the conflict regions below) **[inference]**. Settled in the resumed run **[fact]**: 0x22F79D is the middle of Ghidra's
+  `call8 0x22b874` at 0x22F79C (`650dfc`), in the block 0x22F790 that `{ bltz.w15 a10, 0x22f790; nop }` at 0x22EAFE branches to;
+  conflict region 270 (0x22F791–0x22F79D) is "Ghidra right" in `T22c-hifi4-conflict-regions.tsv`. The `ret.n` is a `flix.dis`
+  sweep artefact, and rizin's refusal of the same bytes is not a rizin gap that matters for this image.
 
 FPU (1,601 uses of 30 ops: `mul.s`, `add.s`, `wfr`, `sub.s`, `olt.s`, `maddn.s`, `const.s`, …): rizin decodes the standard
 Xtensa FP option (`mul.s fr, fs, ft` = bits 12–15, 8–11, 4–7 on `f0..f15`). This core's VFPU is different **[fact]**:
@@ -138,6 +153,11 @@ after the `.byte` at 0x22672A, and the function is missing from `entries_hifi4.t
 Verdicts per region (lo, hi, rows, verdict, near padding, the starts each side has alone, which of them are reached, the decode
 check): [`T22c-hifi4-conflict-regions.tsv`](T22c-hifi4-conflict-regions.tsv). So the listing-mode gap is entirely `flix.dis`
 sweep artefacts: **with Ghidra's starts, Ghidra's listing has no wrong instruction in any conflict region.**
+
+Leftovers closed in the resumed run: `tools/ghidra/PcodeDump.java` (committed as "WIP" in `3a438f3`) is the finished script
+the 10-bundle check above ran (`t22c/pcode10.txt`); no change was needed, it is catalogued in `tools/README.md`. Follow-up for
+the HiFi4 entry list (T21b/T21g owners): add 0x22672C (`entry a1, 32`, registers handler 0x22671C) to
+`tools/ghidra/entries_hifi4.tsv`, as dead code with no caller.
 
 ```sh
 python3 -I tools/hifi4_hand_decode.py build      # needs xtensa-isa.h, xtensa-isa-internal.h, ansidecl.h from binutils (HD_INCLUDE)
@@ -367,6 +387,64 @@ rizin's blocks run over parts of 0x20164C00 (the descending byte table), 0x20154
 4. Not a fix, a note: the reserved vector 0x20100014 (`nop`) and the IRQ vector 0x20100018 are one Ghidra function; harmless.
 
 REA: the raw-ARM rizin gaps are in `T22b-rizin-raw-arm.md` (scratchpad `rea-requests/`, T22f). REA's Ghidra lane was used as filed.
+
+**Step 3 — the HiFi4 image in REA (fork CLI, `Xtensa:LE:32:rt600hifi4`).** REA fork `~/opt/rea` branch `feat-ft710-devices`
+with T22f's raw `xtensa-hifi4` lane (the state T22f's `t22f-ready.md` names), Ghidra 12.1.4, run as
+`python3 -I tools/memgate.py 2700 -- node ~/opt/rea/scripts/rea.mjs <cmd> build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin
+--target-format raw-binary --architecture xtensa-hifi4 --base-address 0x200000 --entry-point <e> --provider ghidra` with
+`JAVA_TOOL_OPTIONS=-Xmx2g`, `GHIDRA_INSTALL_DIR`, `JAVA_HOME` set (REA maps one file, so only the SRAM image: the canonical
+project's 14 TCM functions at 0x2402xxxx are out of scope; compared against the 1,067 canonical SRAM functions).
+
+B9 **[fact]**: `decompile … 0x20bb74` (entry 0x20bb74) returns C for `FUN_0020bb74` with no `halt_baddata`, no `flix()` and no
+warning. After normalising `PTR_DAT_`/`DAT_` names and whitespace it is identical to T21b's oracle decompile `b9.txt` (same
+language, raw SRAM without read-only rodata) except for four `(uint)` casts in front of mask literals. The canonical export
+differs only because its rodata block is read-only, so literals fold (`DAT_40001040` instead of `*(DAT_00206504 + 0x240)`).
+
+Run A, `decompile-all`, entry 0x21C498 (DSP `main`), **no seeds** (REA's own discovery from one entry) **[fact]**:
+
+| | canonical (SRAM part) | REA run A |
+|---|---:|---:|
+| functions | 1,067 | 940 (all written, 0 failures) |
+| same entry / same entry and body size | | 930 / 924 |
+| warnings (functions) | 255 (96) | 215 (48) |
+| `halt_baddata` | 1 (`FUN_00218480`, 3 bytes) | 0 (0x218480 is not a function in REA) |
+
+Warning kinds differ only where the function sets differ (26 "Globals starting with '_'" come from canonical names, which REA
+does not have). Of the 6 common functions with a different body, `0x22C5B0` is the big one: canonical 8,131 bytes / 17
+warnings, REA 3,098 bytes / 150 warnings (147 "Removing unreachable block"), so with only one entry Ghidra cuts this function
+where the seeded project does not **[fact]**. **REA finds 9 functions the canonical project does not have, none inside a
+canonical function** **[fact]**: 0x209DB8 (`entry a1, 48`), 0x20D530 (`entry a1, 32`), 0x22672C (the uncalled
+interrupt-registration function from step 2), 0x226A24, 0x228FDC, 0x2291C0, 0x2291D8 (`rsr.cpenable` first: an XOS coprocessor
+context routine **[inference]**), 0x2291FC, 0x22C4A0. Follow-up for `entries_hifi4.tsv` (T21b/T21g owners): add them after a
+check of each. Per-function table: scratchpad `t22c/runA/cmp.tsv`, script `t22c/cmp.py`.
+
+Run B, the same with `REA_GHIDRA_SEED_FILE` = the 1,067 SRAM entries of `entries_hifi4.tsv` (all 1,067 seeds decoded, 0
+failed) — the like-for-like comparison **[fact]**:
+
+| | canonical (SRAM part) | REA run B |
+|---|---:|---:|
+| functions | 1,067 | 1,075 (all written, **0 failures**) |
+| same entry / same entry and body size | | **1,065 / 1,059** |
+| canonical only | | 2: 0x218480 (inside REA's `0x217D10` body), 0x233818 (REA's `0x233670` is 768 bytes = canonical 631 + 137) |
+| REA only | | 10: the 9 of run A plus 0x22C3E0 (inside canonical `FUN_0022c3bc`) |
+| warnings (functions) | 255 (96) | 266 (55) |
+| `halt_baddata` | 1 (`FUN_00218480`) | **0** |
+
+So with the same entries REA reproduces the canonical function list to 99.8 % and decompiles everything; the canonical project's
+only `halt_baddata` is a 3-byte seed fragment inside `FUN_00217d10` that REA's Ghidra does not keep as a function. Warning
+differences **[fact]**: the canonical-only ones are 26 "Globals starting with '_'" (from canonical names) and the one bad
+instruction in 0x218480; REA has 5 more "Could not recover jumptable" (+5 "indirect jump as call", +35 "Removing unreachable
+block") at 0x2095A1, 0x220F1D, 0x2231EA, 0x22C735, 0x231167. Those are the 6 functions whose bodies differ (`0x209590`
+24 vs 264 bytes, `0x220EE0`, `0x22313C`, `0x22C5B0` 3,098 vs 8,131 with 0x22D1CA..0x22E573 in no function, `0x231040`,
+`0x233670`). Cause **[fact: setup; inference: effect]**: the canonical project makes 0x200000.. (rodata/literals) non-writable
+(`IfdspHifi4Setup.java` line 58) so the decompiler folds `l32r` table bases; REA maps the raw file as one writable block. Not a
+language problem: the decode is identical. REA gap filed for T22f: scratchpad `rea-requests/T22c-raw-readonly-range.md`
+(read-only ranges for raw images). Table: scratchpad `t22c/runB/cmp.tsv`.
+
+**T22c result.** The generated language holds up in a third and fourth decoder (rizin for the base ISA, the hand decoder for
+everything) and in an independent tool chain (REA): B9 decompiles in REA, and REA's seeded function list and decompile match
+the canonical `decomp/ifdsp/hifi4` except for the read-only-literal effect above. Follow-ups: the 9 REA-found functions for
+`entries_hifi4.tsv` (above), and the REA read-only-range request.
 
 ### T22d
 **Status:** done (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
