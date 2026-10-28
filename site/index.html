@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FT-710 Firmware Project</title>
+  <meta name="description" content="An independent reverse-engineering study of the Yaesu FT-710: four chips, four firmware images, 114 CAT commands (22 undocumented), and an illustrated guide.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./">FT-710 Firmware Project</a>
+      <nav>
+        <a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki">Guide (wiki)</a>
+        <a href="cat-undocumented.html">Undocumented CAT</a>
+        <a href="cat-commands.html">CAT reference</a>
+        <a href="https://github.com/Reid-n0rc/FT-710_Firmware">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <h1>Inside the FT-710's firmware</h1>
+      <p class="lead">An independent study of the Yaesu FT-710 HF/50/70 MHz transceiver, done on the owner's own radio. All four
+        firmware images are decoded and decompiled, every CAT command is mapped, and the whole radio is explained in an illustrated guide.</p>
+      <div class="buttons">
+        <a class="btn primary" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki">Read the illustrated guide</a>
+        <a class="btn" href="cat-undocumented.html">Undocumented CAT commands</a>
+        <a class="btn" href="https://github.com/Reid-n0rc/FT-710_Firmware">Source on GitHub</a>
+      </div>
+      <figure>
+        <img src="img/00-guide-map.svg" alt="The FT-710 in one picture: four chips (DISPLAY, MAIN, SDR FPGA, IF DSP) inside the case, the links between them, the antenna, the speaker and the USB connection to a PC" width="960" height="600">
+        <figcaption>The radio in one picture: four chips, each with its own firmware. The numbers are the guide chapters.</figcaption>
+      </figure>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <h2>Highlights</h2>
+        <p class="sub">What the project has found so far. Each card links to the chapter of the guide that explains it.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Four computers, not one</h3>
+            <p>A Renesas RX651 (MAIN) runs the radio and CAT, a Renesas RZ/A1H (DISPLAY) runs the touch screen and SD card, an NXP
+              i.MX RT685 does the audio DSP, and a Xilinx Artix-7 FPGA does the SDR.</p>
+            <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/01-The-radio-at-a-glance">Chapter 1 →</a>
+          </div>
+          <div class="card">
+            <h3>Firmware updates decoded</h3>
+            <p>Each <code>.SFL</code> update file is scrambled with a fixed 43-byte key and protected by a salted CRC-32. All four now
+              decode cleanly, and the DISPLAY CPU is shown to program every other chip.</p>
+            <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/04-Firmware-files-and-how-updates-work">Chapter 4 →</a>
+          </div>
+          <div class="card">
+            <h3>114 CAT commands, 22 undocumented</h3>
+            <p>MAIN firmware V01-12 accepts 114 commands; the manual lists 92. The rest range from harmless reads to factory reset,
+              region change and raw EEPROM access.</p>
+            <a class="more" href="cat-undocumented.html">Risks and backups →</a>
+          </div>
+          <div class="card">
+            <h3>How the chips talk</h3>
+            <p>Three slow control links and three fast SPI data links. MAIN writes numbered registers in the FPGA and the DSP with
+              short ASCII commands; scope and audio data skip MAIN entirely.</p>
+            <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/02-How-the-chips-talk">Chapter 2 →</a>
+          </div>
+          <div class="card">
+            <h3>FPGA bitstream to Verilog</h3>
+            <p>The SDR bitstream was turned into a cell netlist, structural Verilog and a Verilator model of the whole FPGA, with a
+              hand-written model of its UART link.</p>
+            <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/07-Inside-the-IF-DSP-and-the-SDR-FPGA">Chapter 7 →</a>
+          </div>
+          <div class="card">
+            <h3>Custom firmware looks possible</h3>
+            <p>No image is signed or encrypted, and every chip has a debug or boot header. Two small patches and an FPGA test are
+              planned; none has been applied to a radio.</p>
+            <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/08-Hacking-and-custom-firmware">Chapter 8 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Undocumented CAT commands</h2>
+        <p class="sub">The firmware answers commands Yaesu doesn't publish. They are documented here with what each one changes, how
+          risky it is, and how to get back.</p>
+        <div class="feature">
+          <div>
+            <div class="callout danger">
+              <strong>Back up before you experiment</strong>
+              Some commands reset every setting, change the radio's region, or overwrite the factory calibration. A lost calibration
+              comes back only from your own backup or a service alignment.
+            </div>
+            <p><a href="cat-undocumented.html"><strong>Risks, paths back and backups</strong></a>: every undocumented command
+              with its risk and how to undo it, what data lives where, and step-by-step backup and restore (SD card, a read-only
+              backup script, and a full EEPROM dump).</p>
+            <p><a href="cat-commands.html#extended-table"><strong>The firmware reference</strong></a>: the exact formats of
+              <code>SP</code>, <code>E8</code>/<code>E9</code>, <code>ZZ</code>, <code>JP</code>, <code>FD</code>,
+              <code>PE</code>, <code>EO</code> and the rest, with the addresses they were decoded from.</p>
+            <p><a href="cat-commands-primary.html"><strong>All 104 main-table commands</strong></a>: what the firmware really
+              does for each documented command, and where it differs from the manual.</p>
+            <div class="callout ok">
+              <strong>Checked on a real radio</strong>
+              On 2026-10-28 the read-only commands were sent to the owner's FT-710. Every reply matched the decoded format, and the
+              radio reported the firmware versions this project analyses (MAIN V01-12, DISPLAY V01-08, SDR V01-04, DSP V01-01).
+              <a href="cat-commands.html#radio-checks">Results</a>.
+            </div>
+          </div>
+          <figure style="margin-top:0">
+            <img src="img/05-undocumented-risk.svg" alt="Risk ladder of the 22 undocumented commands, from 'does nothing' and read-only at the bottom to dangerous (ZZ, JP, E9, SP) at the top" width="960" height="682">
+            <figcaption>The 22 undocumented commands by risk.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>The illustrated guide</h2>
+        <p class="sub">The whole radio in plain language, with pictures and a glossary. Published in the wiki, one page per chapter.</p>
+        <ol class="chapters">
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/01-The-radio-at-a-glance">The radio at a glance</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/02-How-the-chips-talk">How the chips talk</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/03-A-day-in-the-life-of-the-radio">A day in the life of the radio</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/04-Firmware-files-and-how-updates-work">Firmware files and how updates work</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/05-CAT-remote-control">CAT remote control</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/06-Inside-MAIN-and-DISPLAY">Inside MAIN and DISPLAY</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/07-Inside-the-IF-DSP-and-the-SDR-FPGA">Inside the IF DSP and the SDR FPGA</a></li>
+          <li><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/08-Hacking-and-custom-firmware">Hacking and custom firmware</a></li>
+        </ol>
+        <p><a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/Glossary">Glossary</a> ·
+          <a href="https://github.com/Reid-n0rc/FT-710_Firmware/blob/main/docs/getting-started.md">Getting started: rebuild everything from the official download</a> ·
+          <a href="https://github.com/Reid-n0rc/FT-710_Firmware/blob/main/CONTRIBUTING.md">Contributing</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      An independent study of the owner's own radio. Not affiliated with or endorsed by Yaesu; FT-710 and Yaesu are trademarks of their owner.
+      Nothing here is advice to modify a radio. You are responsible for your equipment and for transmitting only where your licence allows.
+    </div>
+  </footer>
+</body>
+</html>

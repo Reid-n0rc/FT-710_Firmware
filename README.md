@@ -7,7 +7,8 @@ An analysis of the Yaesu FT-710 firmware, done for the owner's own radio. The go
 ## New here? Read the illustrated guide
 
 **[docs/guide/README.md](docs/guide/README.md)** explains the whole radio in plain language, in one document with a table of contents,
-74 pictures and diagrams, and a glossary. It is also published as the [wiki](https://github.com/Reid-n0rc/FT-710_Firmware/wiki), one page per
+74 pictures and diagrams, and a glossary. The project's website, **https://reid-n0rc.github.io/FT-710_Firmware/**, has the highlights and the undocumented CAT command
+documentation. The guide is also published as the [wiki](https://github.com/Reid-n0rc/FT-710_Firmware/wiki), one page per
 chapter. Start there; the reference pages below hold the detail and the evidence.
 
 ## How the radio is built

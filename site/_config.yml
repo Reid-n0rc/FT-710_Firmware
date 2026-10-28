@@ -1,0 +1,11 @@
+title: FT-710 Firmware Project
+description: An independent reverse-engineering study of the Yaesu FT-710's four firmware images.
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  syntax_highlighter_opts:
+    disable: true
+plugins: []
+exclude: [build.py]

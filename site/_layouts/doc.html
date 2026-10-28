@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} · FT-710 Firmware Project</title>
+  <meta name="description" content="{{ page.description }}">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./">FT-710 Firmware Project</a>
+      <nav>
+        <a href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki">Guide (wiki)</a>
+        <a href="cat-undocumented.html">Undocumented CAT</a>
+        <a href="cat-commands.html">CAT reference</a>
+        <a href="https://github.com/Reid-n0rc/FT-710_Firmware">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap doc">
+    <h1>{{ page.title }}</h1>
+    <div class="meta">Generated from <a href="https://github.com/Reid-n0rc/FT-710_Firmware/blob/main/{{ page.source }}">{{ page.source }}</a> in the repository, which is the source of truth.</div>
+    {{ content }}
+  </main>
+  <footer>
+    <div class="wrap">
+      An independent study of the owner's own radio. Not affiliated with or endorsed by Yaesu; FT-710 and Yaesu are trademarks of their owner.
+      Nothing here is advice to modify a radio. You are responsible for your equipment and for transmitting only where your licence allows.
+    </div>
+  </footer>
+</body>
+</html>
