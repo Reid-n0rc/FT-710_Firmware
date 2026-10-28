@@ -170,6 +170,36 @@ tools/ghidra-headless.sh <projdir> <proj> -process FT-710_IFDSP_V0101_hifi4.bin 
   -scriptPath tools/ghidra -postScript PcodeDump.java /tmp/pcode.txt 210ec1 218084 ...
 ```
 
+**Step 3 — the HiFi4 image in REA (fork CLI, `Xtensa:LE:32:rt600hifi4`).** REA fork `~/opt/rea` branch `feat-ft710-devices`
+with T22f's raw `xtensa-hifi4` lane (the state T22f's `t22f-ready.md` names), Ghidra 12.1.4, run as
+`python3 -I tools/memgate.py 2700 -- node ~/opt/rea/scripts/rea.mjs <cmd> build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin
+--target-format raw-binary --architecture xtensa-hifi4 --base-address 0x200000 --entry-point <e> --provider ghidra` with
+`JAVA_TOOL_OPTIONS=-Xmx2g`, `GHIDRA_INSTALL_DIR`, `JAVA_HOME` set (REA maps one file, so only the SRAM image: the canonical
+project's 14 TCM functions at 0x2402xxxx are out of scope; compared against the 1,067 canonical SRAM functions).
+
+B9 **[fact]**: `decompile … 0x20bb74` (entry 0x20bb74) returns C for `FUN_0020bb74` with no `halt_baddata`, no `flix()` and no
+warning. After normalising `PTR_DAT_`/`DAT_` names and whitespace it is identical to T21b's oracle decompile `b9.txt` (same
+language, raw SRAM without read-only rodata) except for four `(uint)` casts in front of mask literals. The canonical export
+differs only because its rodata block is read-only, so literals fold (`DAT_40001040` instead of `*(DAT_00206504 + 0x240)`).
+
+Run A, `decompile-all`, entry 0x21C498 (DSP `main`), **no seeds** (REA's own discovery from one entry) **[fact]**:
+
+| | canonical (SRAM part) | REA run A |
+|---|---:|---:|
+| functions | 1,067 | 940 (all written, 0 failures) |
+| same entry / same entry and body size | | 930 / 924 |
+| warnings (functions) | 255 (96) | 215 (48) |
+| `halt_baddata` | 1 (`FUN_00218480`, 3 bytes) | 0 (0x218480 is not a function in REA) |
+
+Warning kinds differ only where the function sets differ (26 "Globals starting with '_'" come from canonical names, which REA
+does not have). Of the 6 common functions with a different body, `0x22C5B0` is the big one: canonical 8,131 bytes / 17
+warnings, REA 3,098 bytes / 150 warnings (147 "Removing unreachable block"), so with only one entry Ghidra cuts this function
+where the seeded project does not **[fact]**. **REA finds 9 functions the canonical project does not have, none inside a
+canonical function** **[fact]**: 0x209DB8 (`entry a1, 48`), 0x20D530 (`entry a1, 32`), 0x22672C (the uncalled
+interrupt-registration function from step 2), 0x226A24, 0x228FDC, 0x2291C0, 0x2291D8 (`rsr.cpenable` first: an XOS coprocessor
+context routine **[inference]**), 0x2291FC, 0x22C4A0. Follow-up for `entries_hifi4.tsv` (T21b/T21g owners): add them after a
+check of each. Per-function table: scratchpad `t22c/runA/cmp.tsv`, script `t22c/cmp.py`.
+
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
