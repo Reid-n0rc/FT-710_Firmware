@@ -15,8 +15,8 @@ The first milestone is decoding every firmware image and committing Ghidra's dec
 - **Analyze and plan before acting.** Before you change anything, read the task file, check what the previous tasks produced, and write your approach into the task file's `## Plan` section.
 - **Tasks and sub-tasks.** A session may work through as many tasks and sub-tasks as needed, but plan first: write the approach into the task file before executing. Split any task that won't fit in one context window into sub-task files (`T13a`, `T13b`, ...), and add each one as a row on the board so it is tracked as a GitHub sub-issue. Finish, document and commit each (sub-)task before starting the next.
 - **Record findings as you go.** Facts go in `docs/` (hardware, formats, memory maps). Status goes in the task file. Never leave a finding only in chat.
-- **Keep the repo private.** This repo holds output derived from Yaesu's copyrighted firmware. Never make it public, and never publish decoded binaries or decompiled code anywhere else.
-- **Git:** make incremental commits with clear messages. The owner has authorized pushing `main` to the **private** `origin` (github.com/Reid-n0rc/FT-710_Firmware) after commits. Before pushing, check that the repo is still private (`gh repo view --json isPrivate`). Never change the repo's visibility, and never tag, release, or push to any other remote.
+- **Repo visibility: public, by the owner's decision (2026-10-28).** The owner made `origin` public and said "Leave it public". The repo holds output derived from Yaesu's copyrighted firmware (`decomp/`, `hdl/sdr/`, the docs), which the owner accepts. Still never commit raw firmware, decoded binaries, manuals or Ghidra projects (`Firmware/`, `build/`, `Manuals/`, `ghidra/` stay gitignored), and never publish anything from this project anywhere other than `origin` and its wiki.
+- **Git:** make incremental commits with clear messages. The owner has authorized pushing `main` to `origin` (github.com/Reid-n0rc/FT-710_Firmware) after commits, and the guide's generated pages (`tools/guide_to_wiki.py`) to its wiki (`FT-710_Firmware.wiki.git`). Never change the repo's visibility, and never tag, release, or push to any other remote.
 - **Don't touch the radio.** Anything that writes to the radio (flashing, EEPROM writes, untested CAT set-commands) needs the owner's explicit approval each time.
 
 ## Sources (not in git)
@@ -88,7 +88,7 @@ The owner wants **full documentation of all the code**, with figures wherever th
 
 ## Issue tracking (owner requirement)
 
-Every task is mirrored as a GitHub issue in the private repo: epic #1, one issue per task, and sub-tasks (`T10a`...) as sub-issues of their parent. `docs/tasks/` stays the source of truth. After any change to the board or a task file's status/findings, the parent agent runs `python3 -I tools/issues_sync.py`. It updates titles, bodies and status labels, comments on status changes, closes done tasks, and keeps `docs/tasks/issues.json`, which is committed along with the change. Background task agents don't run it, because the parent does. When you split a task, add the sub-task rows to the board (`T10a`, `T10b`, ...) so the sync creates the sub-issues.
+Every task is mirrored as a GitHub issue in the repo: epic #1, one issue per task, and sub-tasks (`T10a`...) as sub-issues of their parent. `docs/tasks/` stays the source of truth. After any change to the board or a task file's status/findings, the parent agent runs `python3 -I tools/issues_sync.py`. It updates titles, bodies and status labels, comments on status changes, closes done tasks, and keeps `docs/tasks/issues.json`, which is committed along with the change. Background task agents don't run it, because the parent does. When you split a task, add the sub-task rows to the board (`T10a`, `T10b`, ...) so the sync creates the sub-issues.
 
 ## Watchdog / long-running work
 

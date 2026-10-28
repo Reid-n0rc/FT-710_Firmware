@@ -2244,8 +2244,8 @@ Experiments differ a lot in what can go wrong and how you get back.
 
 *Figure 8.4 — The two DISPLAY patches and the RAM-only alternative. All are built or planned; none has been applied to the radio.*
 
-The project built two DISPLAY patches as finished update files. They exist only in the project's private `build/`
-folder. **Neither has been flashed.** Both were checked the same way: decode the file again, check the CRC, run every
+The project built two DISPLAY patches as finished update files. They exist only in the project's local `build/`
+folder, which is never committed. **Neither has been flashed.** Both were checked the same way: decode the file again, check the CRC, run every
 rule of the update loader, and compare a full disassembly of the old and new image.
 
 **Patch 1, "banner"**, is a harmless first test. It changes the title of DISPLAY's power-on maintenance screen from
@@ -2359,7 +2359,7 @@ would still need approval.
 
 Two more rules sit beside these. Transmit-path changes (DSP, FPGA TX path, power or band limits) must keep the radio
 within the owner's licence conditions (FCC Part 97 in the US). Patched and decoded images come from Yaesu's
-copyrighted firmware: they stay with the owner's radio and the private repository and are never published.
+copyrighted firmware: they stay on the owner's machine and radio and are never committed or published.
 
 ### 8.8 Where to look
 

@@ -1,6 +1,6 @@
 # FT-710_Firmware
 
-A private analysis of the Yaesu FT-710 firmware, done for the owner's own radio. The goals are to understand the radio, find undocumented CAT commands, and eventually build custom firmware.
+An analysis of the Yaesu FT-710 firmware, done for the owner's own radio. The goals are to understand the radio, find undocumented CAT commands, and eventually build custom firmware.
 
 **Agents and contributors: start with [AGENTS.md](AGENTS.md).** The task board is in [docs/tasks/README.md](docs/tasks/README.md).
 

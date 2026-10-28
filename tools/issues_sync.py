@@ -12,7 +12,7 @@ Usage: python3 -I tools/issues_sync.py [--dry-run]
 - A status change posts a comment (with the current HEAD commit) and closes or reopens
   the issue. Done tasks are closed.
 - The issue numbers are stored in docs/tasks/issues.json. Commit that file.
-Requires the gh CLI, authenticated, inside the repo. Refuses to run unless the repo is private.
+Requires the gh CLI, authenticated, inside the repo. Refuses to run in any repo other than Reid-n0rc/FT-710_Firmware.
 """
 import json
 import os
@@ -154,9 +154,9 @@ def ensure_sub(parent, child):
 
 def main():
     global REPO
-    info = json.loads(gh("repo", "view", "--json", "nameWithOwner,isPrivate"))
-    if not info["isPrivate"]:
-        sys.exit("refusing: repo is not private")
+    info = json.loads(gh("repo", "view", "--json", "nameWithOwner"))
+    if info["nameWithOwner"] != "Reid-n0rc/FT-710_Firmware":
+        sys.exit(f"refusing: unexpected repo {info['nameWithOwner']}")
     REPO = info["nameWithOwner"]
     head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True,
                           text=True).stdout.strip()
