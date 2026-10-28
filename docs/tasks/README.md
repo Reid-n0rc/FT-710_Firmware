@@ -15,9 +15,9 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | done |
 | T09a | [CAT core, reply/AI path, extended + hidden commands](T09a-cat-core-ext.md) | T05 | done |
 | T09b | [CAT primary 104-command table, Ghidra names, re-export](T09b-cat-primary.md) | T09a | done |
-| T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | in progress |
+| T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | done |
 | T10a | [MAIN overview, boot, main loop and memory map](T10a-main-overview.md) | T05 | done |
-| T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | in progress |
+| T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | done |
 | T10c | [MAIN SDR link (SCI5) and SDR control GPIOs](T10c-main-sdr-link.md) | T05 T13 | done |
 | T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | done |
 | T10e | [MAIN EEPROM, data flash and settings persistence](T10e-main-eeprom.md) | T05 T09 | done |
