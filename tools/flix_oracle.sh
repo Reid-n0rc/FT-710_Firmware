@@ -1,6 +1,6 @@
 #!/bin/bash
 # FLIX test oracle, end to end (issue #97, A step 7): import the HiFi4 image with a given Xtensa language into a scratch
-# Ghidra project, run the usual setup and function pass, export the listing, decode every flix.dis address, decompile
+# Ghidra project, run setup, function pass and names as bootstrap does, export the listing, decode every flix.dis address, decompile
 # FUN_0020bb74 (B9), and compare everything with decomp/ifdsp/hifi4/flix.dis (tools/flix_compare.py).
 #
 # Usage: tools/flix_oracle.sh <language-id> [outdir]
@@ -43,7 +43,7 @@ run() {
 python3 -I tools/flix_compare.py addrs > "$OUT/addrs.txt" || exit 2
 echo "== import $IMAGE as $LANG_ID -> $PROJDIR/$PROJ"
 run -import "$IMAGE" -overwrite -processor "$LANG_ID" -loader BinaryLoader -loader-baseAddr 0x0 \
-  -scriptPath "$ROOT/tools/ghidra" -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java \
+  -scriptPath "$ROOT/tools/ghidra" -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
   -postScript ExportListing.java "$OUT/listing.tsv" listing \
   -postScript ExportFuncList.java "$OUT/functions.tsv" \
   -analysisTimeoutPerFile "$TIMEOUT" > "$OUT/import.log" 2>&1 || { echo "import failed, see $OUT/import.log"; exit 2; }

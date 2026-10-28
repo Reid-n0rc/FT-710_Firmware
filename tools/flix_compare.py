@@ -33,9 +33,9 @@ rule is counted in summary.txt, so it is visible how many matches depend on it):
                 content of memory, not part of the instruction, and is dropped. The target itself is compared (N2).
   N5 comments   The `  ; FUN_xxx` name comments tools/ifdsp_hifi4_dis.py appends to call lines are dropped.
   N6 bundles    A FLIX bundle in flix.dis is `{ op1 args; op2 args; ... }`. The Ghidra text (mnemonic + operands) is
-                parsed the same way: the outer braces are removed, slots are split at `;`, and each slot is compared as
-                mnemonic + operands with N1-N3, in slot order. A bundle whose Ghidra text has no braces is compared as a
-                one-slot instruction (so Ghidra's stock 3-byte `FLIX` placeholder is a mnemonic mismatch).
+                parsed the same way: the outer braces (optional on the Ghidra side) are removed, slots are split at `;`,
+                and each slot is compared as mnemonic + operands with N1-N3 and N7/N8, in slot order. Ghidra text without
+                `;` is one slot (so Ghidra's stock 3-byte `FLIX` placeholder is a length/mnemonic mismatch).
 
   N7 sr form   `rsr.ps a8` (objdump) == `rsr a8, PS` (Ghidra): for rsr/wsr/xsr/rur/wur the dotted form is rewritten to
                 the operand form before comparing. The register name itself must still match (case-insensitive), so
@@ -106,8 +106,9 @@ def strip_ref(text, used):
 def slots(text):
     """Split an instruction or bundle into [(mnemonic, [operands])], lower case, N1 layout."""
     t = " ".join(text.lower().split())
-    bundle = t.startswith("{") and t.endswith("}")
-    parts = [p.strip() for p in t[1:-1].split(";")] if bundle else [t]
+    braces = t.startswith("{") and t.endswith("}")
+    bundle = braces or ";" in t
+    parts = [p.strip() for p in (t[1:-1] if braces else t).split(";")] if bundle else [t]
     res = []
     for p in parts:
         if not p:
