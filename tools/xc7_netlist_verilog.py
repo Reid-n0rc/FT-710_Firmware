@@ -460,12 +460,14 @@ def slice_cells(nl, seeds, depth):
     """Seeds + fan-in cones (stop at clocks/resets, IOB, BUF*, hard blocks), DEPTH FF stages."""
     g = xc7_blocks.G(nl)
     keep = set()
-    frontier = [(s, 0) for s in seeds]
+    seen = set()
+    frontier = [(s, 0, None) for s in seeds]
     stop = ("BUFGCTRL", "BUFHCE", "BUFR", "BUFIO", "MMCME2_ADV", "IOB", "DSP48E1", "RAMB18E1")
     while frontier:
-        c, d = frontier.pop()
-        if c in keep:
+        c, d, via = frontier.pop()
+        if (c, via) in seen:
             continue
+        seen.add((c, via))
         keep.add(c)
         cc = g.cells[c]
         if cc["type"] in stop:
@@ -473,12 +475,18 @@ def slice_cells(nl, seeds, depth):
         isff = cc["type"] in xc7_blocks.FF
         if isff and d >= depth:
             continue
+        deps = None
+        if cc["type"] == "LUT6_2" and via in ("O5", "O6"):   # only the inputs the used output depends on
+            deps = set(p for p, _ in xc7_blocks.lut_function(cc, via)[0])
         for p, v in cc["pins"].items():
-            if v[1] != "I" or p in ("C", "CLK"):
+            if v[1] != "I" or p in ("C", "CLK") or (deps is not None and p not in deps):
                 continue
             dr = g.driver(v[0])
+            # resets: follow local reset logic (LUTs), stop at register-driven global resets
+            if p in ("R", "S", "CLR", "PRE") and dr and g.ctype(dr[0]) in xc7_blocks.FF:
+                continue
             if dr and g.ctype(dr[0]) not in stop:
-                frontier.append((dr[0], d + (1 if isff else 0)))
+                frontier.append((dr[0], d + (1 if isff else 0), dr[1]))
     return keep
 
 
