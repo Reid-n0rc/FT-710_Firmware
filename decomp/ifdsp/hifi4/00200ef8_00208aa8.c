@@ -847,11 +847,11 @@ void FUN_002085dc(undefined4 *param_1)
 }
 
 
-// ===== FUN_00208600 @ 00208600 (27 bytes)
+// ===== CLOCK_AttachClk @ 00208600 (27 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00208600(void)
+void CLOCK_AttachClk(void)
 
 {
   uint extraout_a3;

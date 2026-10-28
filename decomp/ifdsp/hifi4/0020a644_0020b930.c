@@ -181,11 +181,11 @@ void FUN_0020aa20(int param_1,undefined4 param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_0020aab4 @ 0020aab4 (11 bytes)
+// ===== DMA_CreateHandle @ 0020aab4 (11 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020aab4(void)
+void DMA_CreateHandle(void)
 
 {
   flix();
@@ -451,11 +451,11 @@ void FUN_0020aed8(undefined4 *param_1)
 }
 
 
-// ===== FUN_0020af38 @ 0020af38 (8 bytes)
+// ===== DMA_IRQHandle @ 0020af38 (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020af38(void)
+void DMA_IRQHandle(void)
 
 {
   undefined4 in_a13;
@@ -473,7 +473,7 @@ void FUN_0020af38(void)
 void FUN_0020b050(void)
 
 {
-  FUN_0020af38(&DAT_40104000);
+  DMA_IRQHandle(&DAT_40104000);
   return;
 }
 
@@ -483,7 +483,7 @@ void FUN_0020b050(void)
 void FUN_0020b05c(void)
 
 {
-  FUN_0020af38(&DAT_40105000);
+  DMA_IRQHandle(&DAT_40105000);
   return;
 }
 

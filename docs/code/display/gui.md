@@ -1,14 +1,12 @@
 # DISPLAY: GUI, VDC5 and LCD/DVI output (T11e)
 
-Back to the [DISPLAY overview](README.md). Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidra names from
-`tools/ghidra/names_display.tsv`; names in *italics* are T11e proposals (`tools/ghidra/names_display.T11e.tsv`) that apply after the next rename
-pass. Function bodies are in `decomp/display/` (look them up in `functions.tsv`). Asset lister: `tools/display_assets.py`.
+Back to the [DISPLAY overview](README.md). Addresses are CPU addresses (image base 0x20100000). Function names are the names applied in Ghidra (`tools/ghidra/names_display.tsv`, merged by T17) and match `decomp/display/`; a name still in *italics* is a description that was not applied as a Ghidra name. Function bodies are in `decomp/display/` (look them up in `functions.tsv`). Asset lister: `tools/display_assets.py`.
 
 ## Summary
 
 - The GUI is a **thin renderer**. The MAIN CPU owns the radio state and the screen logic. It sends "screen packets" over the UART link; byte 0 is the
   screen ID and the rest is the content (text, values, cursor positions). The DISPLAY compares each new packet with the previous one and redraws what
-  changed **[fact: `FUN_2012ebb8` (*gui_screen_update*)]**. Most menu and list text therefore lives in the MAIN firmware, not here **[inference]**.
+  changed **[fact: `gui_screen_update`]**. Most menu and list text therefore lives in the MAIN firmware, not here **[inference]**.
 - **VDC5 channel 0** drives the 800×480 parallel-RGB TFT; **VDC5 channel 1** drives the **LVDS** transmitter, which feeds the DVI chain on the MAIN
   board (EP102C → EP952). Both channels read the **same frame buffers**, so the DVI jack mirrors the panel at 800×480 or 800×600 **[fact for the
   register set-up, inference for "mirror"]**.
@@ -16,7 +14,7 @@ pass. Function bodies are in `decomp/display/` (look them up in `functions.tsv`)
   and a 12×21 mouse-cursor layer **[fact]**.
 - Graphics are **run-length "run sprites"** in `.rodata` (2240 of them, about 2 MB of RGB565 pixels). Fonts are tables of pre-coloured run sprites
   indexed through one character map **[fact]**.
-- The GUI runs in the `root` task: `gui_start` sets up VDC5, then `FUN_20130188` (*gui_main_loop*) draws one frame per 33 ms wake-up and never
+- The GUI runs in the `root` task: `gui_start` sets up VDC5, then `gui_main_loop` draws one frame per 33 ms wake-up and never
   returns **[fact]**.
 - Hidden / service screens found: an **LCD test-pattern screen** (packet 0x64), **key combinations at power-on** (combo 6 → boot-loader / firmware
   update screen, combo 4 → SDR SPI "testmode" counters), the **debug overlays** on F1–F12 of a USB keyboard (only after the debug unlock), and
@@ -42,8 +40,8 @@ flowchart LR
   CH1 --> LVDS["LVDS TX P5_0..P5_7"] --> DVI["MAIN: EP102C → EP952<br/>DVI jack J1803"]
 ```
 
-The layer stack is built twice, once per channel, from the same buffer addresses (`FUN_2013276c` (*vdc5_layers_setup*) is called with ch 0 and
-ch 1, and every buffer flip calls `FUN_20117e5c` for both channels) **[fact]**.
+The layer stack is built twice, once per channel, from the same buffer addresses (`vdc5_layers_setup` is called with ch 0 and
+ch 1, and every buffer flip calls `r_vdc5_change_read_process` for both channels) **[fact]**.
 
 ## VDC5 set-up
 
@@ -54,13 +52,13 @@ codes match it (9 = `ERR_RESOURCE_CLK`, 10 = `VSYNC`, 12 = `OUTPUT`, 13 = `LVDS_
 `gui_start` (0x20132CCC) runs, in order **[fact]**:
 
 1. `FUN_201340A4`, `FUN_201342B4` (scope/waterfall objects, see [spi-links.md](spi-links.md)), `FUN_20120D38`, `FUN_20133620` (scope scale
-   tables), `FUN_201376D0`, `FUN_20133484` (RSPI2/RSPI4 DMA set-up for scope data).
-2. `FUN_201330A8` (*vdc5_isr_create*): `itron_acre_isr` with descriptor 0x203A706C → GIC ID **78** (VDC5 ch0 GR3_VLINE), handler 0x20118638.
-3. **Channel 0** (TFT): *r_vdc5_initialize*(0, {icksel = 4 = peripheral clock, dcdr = 1 = ÷2, no LVDS}, *vdc5_module_start*) →
-   *vdc5_sync_setup*(0) → *vdc5_output_setup*(0) → *vdc5_vline_int_setup*(0).
-4. **Channel 1** (LVDS/DVI): *r_vdc5_initialize*(1, {icksel = 6 = LVDS PLL ÷7, dcdr = 0, lvds = *lvds_pll_cfg*(1, 0)}) → sync and output set-up
-   for 800×480 → *dvi_ctrl_pins*(0, 1) → *vdc5_layers_setup* for ch 0 and ch 1.
-5. `FUN_20130188` (*gui_main_loop*), then `FUN_20132B94` (*vdc5_channel_shutdown*) for both channels if the loop ever returned.
+   tables), `dmac8_m2m_init`, `sdr_dsp_link_init` (RSPI2/RSPI4 DMA set-up for scope data).
+2. `vdc5_isr_create`: `itron_acre_isr` with descriptor 0x203A706C → GIC ID **78** (VDC5 ch0 GR3_VLINE), handler 0x20118638.
+3. **Channel 0** (TFT): `r_vdc5_initialize`(0, {icksel = 4 = peripheral clock, dcdr = 1 = ÷2, no LVDS}, `vdc5_module_start`) →
+   `vdc5_sync_setup`(0) → `vdc5_output_setup`(0) → `vdc5_vline_int_setup`(0).
+4. **Channel 1** (LVDS/DVI): `r_vdc5_initialize`(1, {icksel = 6 = LVDS PLL ÷7, dcdr = 0, lvds = `lvds_pll_cfg`(1, 0)}) → sync and output set-up
+   for 800×480 → `gpio_dvr`(0, 1) → `vdc5_layers_setup` for ch 0 and ch 1.
+5. `gui_main_loop`, then `vdc5_channel_shutdown` for both channels if the loop ever returned.
 
 ### Timings
 
@@ -72,47 +70,47 @@ codes match it (9 = `ERR_RESOURCE_CLK`, 10 = `VSYNC`, 12 = `OUTPUT`, 13 = `LVDS_
 | Dot clock | P1φ ÷ 2 | 27 MHz × 176 / 5 / 4 / 7 = 33.9 MHz | 27 MHz × 208 / 5 / 4 / 7 = 40.1 MHz |
 | Frame rate | ≈62 Hz if P1φ = 66.7 MHz | 60.3 Hz | 60.5 Hz |
 
-Totals and windows are from `FUN_20132504` (*vdc5_sync_setup*) and `FUN_2013276c` **[fact]**. The LVDS PLL fields are from `FUN_2013249C`
-(*lvds_pll_cfg*): input = video clock (27 MHz crystal X6002), IDIV 1, FD 175 or 207, RD 4, OD 2, output to VDC5 ch1 **[fact for the values]**.
+Totals and windows are from `vdc5_sync_setup` and `vdc5_layers_setup` **[fact]**. The LVDS PLL fields are from `lvds_pll_cfg`
+(`lvds_pll_cfg`): input = video clock (27 MHz crystal X6002), IDIV 1, FD 175 or 207, RD 4, OD 2, output to VDC5 ch1 **[fact for the values]**.
 The clock formula and P1φ = 66.7 MHz are **[inference]**; that both DVI modes come out at 60 Hz supports the formula.
 
-`FUN_20132BC0` (*dvi_set_resolution*, caller `FUN_201266EC`) stops ch1, re-runs the ch1 initialise/sync/output/layer set-up with the other
-timing, and drives **P5_8** through `FUN_20101DC4` (*dvi_ctrl_pins*, PSR5 0xFCFE3114): 1 for 800×480, 0 for 800×600. P5_8 is probably a mode line
+`dvi_set_resolution` (`dvi_set_resolution`, caller `gui_apply_display_cfg`) stops ch1, re-runs the ch1 initialise/sync/output/layer set-up with the other
+timing, and drives **P5_8** through `gpio_dvr` (`gpio_dvr`, PSR5 0xFCFE3114): 1 for 800×480, 0 for 800×600. P5_8 is probably a mode line
 to the DVI-side controller (EPF021M) **[inference]**.
 
 ### Layers
 
-`FUN_2013276c` calls *r_vdc5_read_data_control*, *r_vdc5_chromakey* and *layer_alpha_rect_reapply* for layer IDs 3–6 (= graphics 0–3, driver enum
-`VDC5_LAYER_ID_0_RD`…`3_RD`; `FUN_20117D8C` maps 3..8 → 0..5) **[fact]**:
+`vdc5_layers_setup` calls `r_vdc5_read_data_control`, `r_vdc5_chromakey` and `layer_alpha_rect_reapply` for layer IDs 3–6 (= graphics 0–3, driver enum
+`VDC5_LAYER_ID_0_RD`…`3_RD`; `vdc5_layer_to_gr` maps 3..8 → 0..5) **[fact]**:
 
 | Graphics | Buffer(s) | Display mode | Use |
 |---|---|---|---|
-| 0 | fb0 0x600BB800 | current (2) | static background: meter scale, scope frame (`FUN_20134D24`, `FUN_2012EBB8`) |
+| 0 | fb0 0x600BB800 | current (2) | static background: meter scale, scope frame (`meter_draw_scale`, `gui_screen_update`) |
 | 1 | fb1 / fb2, index in 0x208085B8 | blend (3), chroma key 0x0000 | main screen content, drawn every frame |
 | 2 | fb3 / fb4, index in 0x208085BC | blend (3), chroma key 0x0000 | popups, menus, lists, overlays |
-| 3 | fb5 0x602EE000, window 12×21 at (400, 240) | blend, started on demand | mouse cursor (`FUN_20135534(fb5, 0, 0, 0x2016E860, 12, 19)` in the main loop) |
+| 3 | fb5 0x602EE000, window 12×21 at (400, 240) | blend, started on demand | mouse cursor (`fb_blit_raw`(fb5, 0, 0, 0x2016E860, 12, 19)` in the main loop) |
 
 Read set-up per layer: RGB565, line offset 0x640 (800 × 2 B), 32/16-bit swap 6, window = active area **[fact for the values, inference for the
-enum meaning]**. Black (0x0000) is the chroma key, so drawing 0 makes a layer transparent; `fb_copy_rect` really **clears** a rectangle to 0
-(*fb_clear_rect*) **[fact]**.
+enum meaning]**. Black (0x0000) is the chroma key, so drawing 0 makes a layer transparent; `fb_clear_rect` really **clears** a rectangle to 0
+(`fb_clear_rect`) **[fact]**.
 
 `fb_get_layer_addr` (0x201326FC) maps the buffer *index* 0–5 to {0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800, 0x602EE000};
-`FUN_20132E78` (*fb_get_front_addr*) returns the buffer that is on screen for a given back index (1↔2, 3↔4) **[fact]**.
+`fb_get_front_addr` returns the buffer that is on screen for a given back index (1↔2, 3↔4) **[fact]**.
 
 **Buffer flip** (`gui_update_layers` 0x20133A8C, 57 callers): point graphics 1 and 2 of both channels at the current back buffers, swap the
-indices, then copy the buffer just shown into the new back buffer (graphics 1 by `FUN_201378B0` = DMAC ch0 memory copy, graphics 2 by `memcpy`),
-so drawing is always incremental **[fact]**. `FUN_20133C40` flips only one layer and brackets the screen capture.
+indices, then copy the buffer just shown into the new back buffer (graphics 1 by `dmac8_m2m_start` = DMAC ch0 memory copy, graphics 2 by `memcpy`),
+so drawing is always incremental **[fact]**. `gui_flip_one` flips only one layer and brackets the screen capture.
 
-Alpha windows and fades use *r_vdc5_alpha_blending_rect* through `FUN_20133658` (*layer_alpha_rect_set*, state cached at 0x209080E4
-[ch][layer], 0x24 B each). `FUN_2013396C` (*layer_fade*) ramps a layer by ±5 per frame (screen saver, logo fade-in) **[fact]**.
+Alpha windows and fades use `r_vdc5_alpha_blending_rect` through `layer_alpha_rect_set` (`layer_alpha_rect_set`, state cached at 0x209080E4
+[ch][layer], 0x24 B each). `layer_fade` ramps a layer by ±5 per frame (screen saver, logo fade-in) **[fact]**.
 
-The VLINE interrupt callback `FUN_20133014` (*vdc5_vline_cb*) counts frames in 0x208085A4 and decrements 0x2080859C; `FUN_20133090`
-(*vdc5_wait_frames*) waits on it **[fact]**.
+The VLINE interrupt callback `vdc5_vline_cb` counts frames in 0x208085A4 and decrements 0x2080859C; `vdc5_wait_frames`
+(`vdc5_wait_frames`) waits on it **[fact]**.
 
-LCD contrast: packet 0x24 byte 5 (0–20) becomes VDC5 ch0 *r_vdc5_display_calibration* contrast values (10·n + 0x1C, 10·n + 0x11) **[fact for the
+LCD contrast: packet 0x24 byte 5 (0–20) becomes VDC5 ch0 `r_vdc5_display_calibration` contrast values (10·n + 0x1C, 10·n + 0x11) **[fact for the
 call, inference that it is the CONTRAST setting]**. DVI on/off: packet 0x24 byte 0 bit 0 switches P5_0–P5_7 between the LVDS function and GPIO
-(`FUN_20101DEC`, *lvds_pins_enable*) **[fact for the pins, inference for the meaning]**. Backlight dimmer: packet 0x21 → `FUN_20101FA4`
-(table of 9 levels, `FUN_20100414(6, …)`), see [peripherals.md](peripherals.md) **[inference]**.
+(`lvds_pins_enable`, `lvds_pins_enable`) **[fact for the pins, inference for the meaning]**. Backlight dimmer: packet 0x21 → `led_set_one`
+(table of 9 levels, `gpio_cfg_out_low`(6, …)`), see [peripherals.md](peripherals.md) **[inference]**.
 
 ## Frame loop
 
@@ -122,16 +120,16 @@ sequenceDiagram
   participant R as root task: gui_main_loop
   participant V as VDC5 ch0+ch1
   Note over R: wake-up every 33 ms (periodic slot 0), FUN_201525F8 = slp_tsk
-  ML->>R: latest screen packet (FUN_20115000, 0x240 B)
+  ML->>R: latest screen packet (`mainlink_get_last_frame`, 0x240 B)
   R->>R: gui_screen_update: compare with 0x208F0B2A, dispatch on byte 0
   R->>R: per-frame widgets: status icons, filter graph, meter, scope, markers
   R->>R: debug overlays (only if debug_enabled), SDR testmode counters (combo 4)
   R->>V: gui_update_layers: flip graphics 1/2, copy-forward
 ```
 
-Per frame, `FUN_20130188` calls `FUN_2012EBB8` (screen update), then `FUN_2012470C` / `FUN_20124528` + `FUN_201244D8` (RX/TX markers),
-`FUN_201233D4` or `FUN_20123C04` (filter graph), `FUN_20121E88` (status icons), `FUN_20134ABC` (meter), `FUN_20121D90`, `FUN_20121D00`,
-`FUN_201217B0`, `FUN_201218A4` or `FUN_20121C3C` (screen saver), `FUN_20131638`, `sdr_spi_stats_print`, `FUN_201367B4` (debug overlay) and
+Per frame, `gui_main_loop` calls `gui_screen_update` (screen update), then `FUN_2012470C` / `FUN_20124528` + `FUN_201244D8` (RX/TX markers),
+`FUN_201233D4` or `main_filter_graph` (filter graph), `main_status_icons` (status icons), `meter_draw` (meter), `mainlink_send_rtc`, `mainlink_send_sd_state`,
+`FUN_201217B0`, `FUN_201218A4` or `scr_screen_saver` (screen saver), `FUN_20131638`, `pclink_stats_print`, `debug_overlay_draw` (debug overlay) and
 `gui_update_layers` **[fact]**. Before the loop it handles the power-on cases (next section).
 
 ## Screen state machine
@@ -140,7 +138,7 @@ Per frame, `FUN_20130188` calls `FUN_2012EBB8` (screen update), then `FUN_201247
 stateDiagram-v2
   [*] --> BootKey: key combo 6 held
   [*] --> Opening: normal power-on
-  BootKey --> BootLoader: logo fade-in (FUN_2012FD94)
+  BootKey --> BootLoader: logo fade-in (`logo_fade_in`)
   Opening --> BootLoader: no MAIN answer in 5 s<br/>error screen, then loader
   Opening --> FwUpdate: MAIN asks for update
   Opening --> Main: MAIN 0x60 packet OK
@@ -174,43 +172,43 @@ marked.
 
 | ID | Len | Handler | Screen |
 |---|---|---|---|
-| 0x20 ` ` | 0x97 | `FUN_2012E3E0` (*scr_main_layout*), `FUN_2012C4A0` | main operating screen (scope/3DSS, mode, filter, status) |
-| 0x21 `!` | 3 | `FUN_20101FA4` | backlight / dimmer level (no redraw) |
+| 0x20 ` ` | 0x97 | `scr_main_layout`, `FUN_2012C4A0` | main operating screen (scope/3DSS, mode, filter, status) |
+| 0x21 `!` | 3 | `led_set_one` | backlight / dimmer level (no redraw) |
 | 0x23 `#` | 0x35 | `FUN_20131354` | decoder text stream, feeds the 0x40 text screen **[guess]** |
-| 0x24 `$` | 0x9D | `FUN_201266EC` (*gui_apply_display_cfg*), `FUN_201026E0`, `FUN_20113DB8`, `FUN_20101F8C` | display settings: DVI on/off and 800×480/800×600, contrast; byte 0 bit 2 drives P2_7 (`FT4222_RESET`) **[fact for the pins]** |
-| 0x30 `0` | 0x9E | `FUN_2012C1B4` | METER / MODE selection popups (PO, COMP, ALC, VDD, ID, SWR; LSB … DATA-L) |
-| 0x31 `1` | 0xA1 | `FUN_2012ADE0` (*scr_value_popup*) | big value popup: one of 45 setting names (LEVEL, CONTRAST, MIC GAIN, RF POWER, …, LOCK, TUNE, SCREEN SHOT) + value; tables at 0x208026DC–0x20802CE4 |
-| 0x34 `4` | — | `FUN_201263E8` (*scr_info*) | information screen with `CERTIFICATIONS` and `FCC ID : K6620801X50` **[fact for the strings]** |
-| 0x37 `7` | 0x23E | `FUN_2012A9EC` (*scr_func_panel*) | FUNC panel: CONTRAST, DIMMER, M-GROUP, MIC GAIN/EQ, PROC/AMC LEVEL, VOX, RF POWER, MONI, KEYER, BK-IN, CW SPEED/PITCH, AESS, MESSAGE, RECORD, PLAY |
-| 0x39 `9` | 0xE7 | `FUN_2012A6A4` (*scr_vfo*), `FUN_201293F8` | frequency display (large green/white/red digit sprites) |
-| 0x3A `:` | 0xA0 | `FUN_20124C24` (*scr_playlist*) | PLAY LIST / voice messages (`%02d:%02d:%02d`, RX LEVEL, DELETE) |
-| 0x3F `?` | 3 | `FUN_2012E744` (*rec_start_stop*) | start/stop recording to SD, file name `20YYMMDD_HHMMSS` (no screen) |
-| 0x40 `@` | 0x1F9 | `FUN_20129054` (*scr_text_list*) | text list with LF/CR glyphs, DONE/BACK (30-char rows) **[guess: RTTY/PSK text memories or decode]** |
-| 0x41 `A` | 0x144 | `FUN_20127B24` (*scr_memory_list*) | MEMORY CH LIST (NAME, MODE, SCAN, TYPE, ERASE, RESTORE) |
-| 0x43 `C` | 0x21 | `FUN_201261E0` (*scr_sd_menu*) | SD card: MEM LIST LOAD/SAVE, MENU LOAD/SAVE, INFORMATIONS, FORMAT, `FREE SPACE`/`CAPACITY` (shares code with [update.md](update.md)) |
-| 0x50 `P` | 0xF3 | `FUN_201275E8` (*scr_keyboard*) | on-screen keyboard (Caps, Space, ENT, ←/→, ABC, #%^, End) |
-| 0x60 `` ` `` | 0xB4 | `FUN_2012F734` (opening only) | power-on status from MAIN; also carries an error code |
-| 0x62 `b` | 0x195 | `FUN_20126F28` (*scr_setup_menu*) | MENU list: 8 rows × {5, 20, 3} chars at +0x9A, cursor row at +0x98 |
-| 0x64 `d` | 1 | `FUN_20125F6C` (*scr_lcd_test*) | **LCD test pattern** (hidden): byte 1 = 0 black, 1 white, 2 red, 3 green, 4 blue, 5 eight colour bars (white, yellow, cyan, green, magenta, red, blue, black); hides the cursor layer **[fact]** |
-| 0x65 `e` | 7 | `FUN_2012E8F4` | set the RTC from MAIN (BCD YY MM DD hh mm, clamped) **[fact]** |
-| 0x70 `p` | 0xE1 | `FUN_20126EBC` (*scr_confirm*) | OK / CANCEL dialog |
+| 0x24 `$` | 0x9D | `gui_apply_display_cfg`, `backlight_set`, `dimmer_set`, `gpio_ft4222_reset` | display settings: DVI on/off and 800×480/800×600, contrast; byte 0 bit 2 drives P2_7 (`FT4222_RESET`) **[fact for the pins]** |
+| 0x30 `0` | 0x9E | `scr_select_popup` | METER / MODE selection popups (PO, COMP, ALC, VDD, ID, SWR; LSB … DATA-L) |
+| 0x31 `1` | 0xA1 | `scr_value_popup` | big value popup: one of 45 setting names (LEVEL, CONTRAST, MIC GAIN, RF POWER, …, LOCK, TUNE, SCREEN SHOT) + value; tables at 0x208026DC–0x20802CE4 |
+| 0x34 `4` | — | `scr_info` | information screen with `CERTIFICATIONS` and `FCC ID : K6620801X50` **[fact for the strings]** |
+| 0x37 `7` | 0x23E | `scr_func_panel` | FUNC panel: CONTRAST, DIMMER, M-GROUP, MIC GAIN/EQ, PROC/AMC LEVEL, VOX, RF POWER, MONI, KEYER, BK-IN, CW SPEED/PITCH, AESS, MESSAGE, RECORD, PLAY |
+| 0x39 `9` | 0xE7 | `scr_vfo`, `FUN_201293F8` | frequency display (large green/white/red digit sprites) |
+| 0x3A `:` | 0xA0 | `scr_playlist` | PLAY LIST / voice messages (`%02d:%02d:%02d`, RX LEVEL, DELETE) |
+| 0x3F `?` | 3 | `rec_start_stop` | start/stop recording to SD, file name `20YYMMDD_HHMMSS` (no screen) |
+| 0x40 `@` | 0x1F9 | `scr_text_list` | text list with LF/CR glyphs, DONE/BACK (30-char rows) **[guess: RTTY/PSK text memories or decode]** |
+| 0x41 `A` | 0x144 | `scr_memory_list` | MEMORY CH LIST (NAME, MODE, SCAN, TYPE, ERASE, RESTORE) |
+| 0x43 `C` | 0x21 | `scr_sd_menu` | SD card: MEM LIST LOAD/SAVE, MENU LOAD/SAVE, INFORMATIONS, FORMAT, `FREE SPACE`/`CAPACITY` (shares code with [update.md](update.md)) |
+| 0x50 `P` | 0xF3 | `scr_keyboard` | on-screen keyboard (Caps, Space, ENT, ←/→, ABC, #%^, End) |
+| 0x60 `` ` `` | 0xB4 | `opening_check_main` (opening only) | power-on status from MAIN; also carries an error code |
+| 0x62 `b` | 0x195 | `scr_setup_menu` | MENU list: 8 rows × {5, 20, 3} chars at +0x9A, cursor row at +0x98 |
+| 0x64 `d` | 1 | `scr_lcd_test` | **LCD test pattern** (hidden): byte 1 = 0 black, 1 white, 2 red, 3 green, 4 blue, 5 eight colour bars (white, yellow, cyan, green, magenta, red, blue, black); hides the cursor layer **[fact]** |
+| 0x65 `e` | 7 | `rtc_set_from_main` | set the RTC from MAIN (BCD YY MM DD hh mm, clamped) **[fact]** |
+| 0x70 `p` | 0xE1 | `scr_confirm` | OK / CANCEL dialog |
 | 0x7A `z` | 3 | `screen_capture_bmp` | screen capture (below) |
-| 0x7B `{` | 3 | `FUN_20121C3C` (*scr_screen_saver*) | screen saver: graphics 0/1/3 hidden, YAESU logo (486×56) moves between 3 places every 180 frames and fades out after 91 |
+| 0x7B `{` | 3 | `scr_screen_saver` | screen saver: graphics 0/1/3 hidden, YAESU logo (486×56) moves between 3 places every 180 frames and fades out after 91 |
 | 0x7C `\|` | 3 | `touch_calibration` | `TOUCH THE CROSS` calibration ([input.md](input.md)) |
 | 0x42, 0x44, 0x45, 0x71 | | not in the GUI dispatcher | handled by the MAIN-link RX side ([mainlink.md](mainlink.md)) |
 
 The dispatcher keeps the previous packet at 0x208F0B2A (0x240 B) and the previous ID in 0x2080049E. Flags at 0x208F4630–0x208F463C select
 overlay modes (scope expanded, popup open) **[fact for the variables, inference for their meaning]**.
 
-### Power-on and boot-loader path (in `FUN_20130188`)
+### Power-on and boot-loader path (in `gui_main_loop`)
 
 - **Key combination 6** held at power-on (`key_scan_first() == 6`, the same check that forces the full start in [boot-rtos.md](boot-rtos.md)):
-  `FUN_2012FD94` fades the YAESU logo in, then `FUN_201322E4` → `FUN_20159058`: it shows the boot-loader screen if the boot-info status is 2, else
+  `logo_fade_in` fades the YAESU logo in, then `FUN_201322E4` → `FUN_20159058`: it shows the boot-loader screen if the boot-info status is 2, else
   `FIRMWARE BOOT ERROR` forever **[fact]**. Combination 6 is key codes {0x304, 0x30A, 0x30E} all held (table 0x20165678, 3 codes per combo) **[fact]**.
-- **Normal**: `FUN_2012F8D4` (*opening_screen*) fades the logo in on graphics 1 and waits up to about 5 s (`4999 < n·33`) for MAIN's 0x60 packet;
+- **Normal**: `opening_screen` fades the logo in on graphics 1 and waits up to about 5 s (`4999 < n·33`) for MAIN's 0x60 packet;
   if MAIN asks for an update it calls `fwupdate_screen`. On a timeout it calls `FUN_201322AC`, which shows `INSERT FIRMWARE SD CARD.` /
   `TOUCH THE SCREEN TO CONTINUE.` / `ERROR CODE : %03d` and then the boot-loader screen **[fact]**. The update screens belong to [update.md](update.md).
-- **Key combination 4** ({0x30C, 0x305}) held at power-on: each frame calls `FUN_201121A8(1)` (*sdr_testmode_set*), and `sdr_spi_stats_print`
+- **Key combination 4** ({0x30C, 0x305}) held at power-on: each frame calls `pclink_set_testmode`(1)` (`pclink_set_testmode`), and `pclink_stats_print`
   draws a box with `testmode`, `CS_POLL`, `MOSI_OK/NG`, `FRAMES`, `MISO_OK/NG` and `msec` at (y 0x104, x 600). The box is red (0xC800) when any
   counter shows a fault **[fact]**. This is a service screen that needs **no** debug unlock. Which front-panel keys the codes are is in
   [input.md](input.md).
@@ -221,18 +219,18 @@ All take a frame-buffer pointer and **(y, x)** in that order; stride is 800 pixe
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x201355BC | `fb_copy_rect` | *fb_clear_rect*(fb, y, x, w, h): fill with 0 (transparent) |
-| 0x20135658 | `fb_fill_rect` | (fb, color, y, x, w, h); color 0 → `fb_copy_rect` |
-| 0x20135AA4 / 0x20135AD8 | `FUN_20135aa4` / `FUN_20135ad8` | *fb_fill_box* (fb, y, x, w, h, color) / same with w, h swapped |
-| 0x20135534 | `FUN_20135534` | *fb_blit_raw*(fb, y, x, src, w, h): raw RGB565 |
-| 0x2013573C / 0x20136290 | `FUN_2013573c` / `FUN_20136290` | rectangle outline / outline with cut corners |
+| 0x201355BC | `fb_clear_rect` | `fb_clear_rect`(fb, y, x, w, h): fill with 0 (transparent) |
+| 0x20135658 | `fb_fill_rect` | (fb, color, y, x, w, h); color 0 → `fb_clear_rect` |
+| 0x20135AA4 / 0x20135AD8 | `fb_fill_box` / `fb_fill_box_t` | `fb_fill_box` (fb, y, x, w, h, color) / same with w, h swapped |
+| 0x20135534 | `fb_blit_raw` | `fb_blit_raw`(fb, y, x, src, w, h): raw RGB565 |
+| 0x2013573C / 0x20136290 | `fb_draw_frame` / `fb_draw_round_frame` | rectangle outline / outline with cut corners |
 | 0x201358D0 | `gui_draw_runs` | draw a run sprite at (y, x) (294 callers) |
-| 0x201359BC | `FUN_201359bc` | run sprite with u32 runs (*gui_draw_runs32*) |
-| 0x20135B0C | `FUN_20135b0c` | *sprite_unpack* to a w×h buffer |
-| 0x20135DD4 | `FUN_20135dd4` | *gui_draw_text*(fb, str, y, x, pitch, font) |
-| 0x20135EC0 / 0x20135FF0 | `FUN_20135ec0` / `FUN_20135ff0` | text with half-width spaces / centred on x |
-| 0x20135B6C / 0x20135C14 / 0x20135CE8 | `FUN_20135b6c` / `FUN_20135c14` / `FUN_20135ce8` | hex / decimal / recoloured hex numbers in the 10×15 font |
-| 0x201378B0 | `FUN_201378b0` | *dmac0_copy*: DMAC ch0 (0xE8200400) memory copy |
+| 0x201359BC | `gui_draw_runs32` | run sprite with u32 runs (`gui_draw_runs32`) |
+| 0x20135B0C | `sprite_unpack` | `sprite_unpack` to a w×h buffer |
+| 0x20135DD4 | `gui_draw_text` | `gui_draw_text`(fb, str, y, x, pitch, font) |
+| 0x20135EC0 / 0x20135FF0 | `gui_draw_text_words` / `gui_draw_text_centered` | text with half-width spaces / centred on x |
+| 0x20135B6C / 0x20135C14 / 0x20135CE8 | `gui_draw_hex` / `gui_draw_dec` / `gui_draw_hex_color` | hex / decimal / recoloured hex numbers in the 10×15 font |
+| 0x201378B0 | `dmac8_m2m_start` | `dmac8_m2m_start`: DMAC ch0 (0xE8200400) memory copy |
 
 There is no widget object model: each screen handler draws its own sprites and text at coordinates from `.data2` tables (for example the
 popup tables 0x208026DC position, 0x20802C34 frame sprite, 0x208029E8 title sprite, 0x20802AEC/0x20802BF0 title text and length) **[fact]**.
@@ -274,7 +272,7 @@ char − 0x1E (except `` ` `` → 2), 0x7F → 99, 0x80 → 96, 0xFE → 97, 0xF
 | 0x20803730 | 10×15 | 93 | debug overlay and numbers |
 | 0x2080099C / 0x20802394 | various / 26×32 | 12 / 16 | digit sets |
 
-Other sprite tables: big frequency digits (`FUN_2012A6A4`), meter bar frames (187 × 280×46/280×80 at 0x20808644), popup titles
+Other sprite tables: big frequency digits (`scr_vfo`), meter bar frames (187 × 280×46/280×80 at 0x20808644), popup titles
 (0x208029E8), scope labels, 70 tables in all (`display_assets.py … tables`). **String tables** are few, because most text comes from MAIN:
 USB keyboard layouts (0x20800134: JPN, US, UK, FRA(AZ), FRA(QW), DEU, …), popup titles (0x20802AEC), update-screen texts (0x20808538) and the
 SD menu (0x20808600) **[fact]**. Single strings for the boot loader are at 0x20427ED4–0x204286A0 (memory-maps.md).
@@ -282,30 +280,30 @@ SD menu (0x20808600) **[fact]**. Single strings for the boot loader are at 0x204
 ## Screen capture
 
 Packet 0x7A → `screen_capture_bmp` (0x20134644): needs ≥ 0x119436 B free on `I:` (54 + 800·480·3), shows the `SCREEN SHOT` popup
-(`screen_shot_menu` 0x2013059C, popup slot 44), freezes graphics 1, creates `I:\FT-710\Capture` if needed and writes
-`I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` from the RTC **[fact]**. `FUN_2013456C` (*bmp_write_screen*) writes the 54-byte header at 0x208085C4 and
+(`screenshot_popup` 0x2013059C, popup slot 44), freezes graphics 1, creates `I:\FT-710\Capture` if needed and writes
+`I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` from the RTC **[fact]**. `bmp_write_screen` writes the 54-byte header at 0x208085C4 and
 480 rows bottom-up as 24-bit BGR; each row is graphics 0, overlaid by the **front** buffers of graphics 1 and 2 where the pixel is non-zero or
-inside an opaque alpha window (`FUN_201344C8`, `FUN_2013376C`). The cursor layer is not captured **[fact]**.
+inside an opaque alpha window (`capture_merge_row`, `layer_alpha_rect_hit`). The cursor layer is not captured **[fact]**.
 
 ## Debug and test features
 
-**Debug overlays (F-keys).** `FUN_20111AB0` is the `keycode` handler in debug chain 1 ([boot-rtos.md](boot-rtos.md#usb-keyboard-handler-chains)),
+**Debug overlays (F-keys).** `keycode_line` is the `keycode` handler in debug chain 1 ([boot-rtos.md](boot-rtos.md#usb-keyboard-handler-chains)),
 so it only runs after the (unreachable) debug unlock. HID usages 0x3A–0x45 (**F1–F12**) toggle bits 0–11 of **0x20808A84**; typed `date`,
 `time`, `dsp `, `reset`, `wdr` and `sndc` are commands **[fact]**. GUI effects **[fact]**:
 
 | Bit (key) | Effect |
 |---|---|
-| 0 (F1) | `FUN_201367B4` read-out row: firmware `0108`, build word of the running bank (0x183E0010/0x183F0010/0x183C0010), `CPU` load, `M`, `S`, `D`, `t`, `n`, `b` (boot bank/state), `d`, `Ton`/`Toff`, `irq`, touch `x`/`y`, `p`; also the meter's raw value |
+| 0 (F1) | `debug_overlay_draw` read-out row: firmware `0108`, build word of the running bank (0x183E0010/0x183F0010/0x183C0010), `CPU` load, `M`, `S`, `D`, `t`, `n`, `b` (boot bank/state), `d`, `Ton`/`Toff`, `irq`, touch `x`/`y`, `p`; also the meter's raw value |
 | 1 (F2) | dumps changes of two RX buffers (0x2045F260, 0x2045F4A0) on screen |
-| 4 (F5) | copies a scope byte into two other slots of the scope line (`FUN_201330D4`) |
+| 4 (F5) | copies a scope byte into two other slots of the scope line (`sdr_rx_done_cb`) |
 | 5, 6 (F6, F7) | `F6`/`F7` markers; F6 also changes the graphics-1 flip to `memcpy` |
-| 9 (F10) | on change, `FUN_20134854` saves a screenshot to `I:\20YYMMDD_HHMMSS.bmp` |
-| 10 (F11) | `RF` marker; replaces the scope line with the test pattern at 0x203D9B14 (`FUN_201342EC`) |
+| 9 (F10) | on change, `debug_screenshot_root` saves a screenshot to `I:\20YYMMDD_HHMMSS.bmp` |
+| 10 (F11) | `RF` marker; replaces the scope line with the test pattern at 0x203D9B14 (`scope_store_frame`) |
 
 **`test_disp` task** (`test_disp_init` 0x20134E0C, `task_test_disp` 0x2013512C, pri 5). The task waits on its event flag. `sndc` (debug only)
-toggles it through `FUN_2013518C` / `FUN_2013519C`. When started, `debug_recv_cmd_log` (0x20134FDC; really *test_disp_replay*) opens
-**`I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT`** and, per line, `FUN_20134E70` parses `NNN` (byte count), the bytes as hex pairs, and a 4-digit delay in
-ms (default 1000). If the first byte is one of the 26 screen IDs (0x2080893C) it injects the packet with `FUN_2011508C` as if MAIN had sent it,
+toggles it through `test_disp_start` / `test_disp_stop`. When started, `debug_replay_send_cmd` (0x20134FDC; really `debug_replay_send_cmd`) opens
+**`I:\FT-710\DEBUG_RECV_CMD\SEND_CMD.TXT`** and, per line, `debug_cmd_line_read` parses `NNN` (byte count), the bytes as hex pairs, and a 4-digit delay in
+ms (default 1000). If the first byte is one of the 26 screen IDs (0x2080893C) it injects the packet with `mainlink_set_last_frame` as if MAIN had sent it,
 then sleeps the delay. So the screens can be driven from an SD card without MAIN, once debug mode is on **[fact for the code, inference for the
 purpose]**. The T06 name is misleading: the function reads `SEND_CMD.TXT`, it does not log `RECV_CMD.TXT`.
 
@@ -314,33 +312,33 @@ purpose]**. The T06 name is misleading: the function reads `SEND_CMD.TXT`, it do
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x20132CCC | `gui_start` | VDC5 ch0/ch1 set-up, then the GUI loop |
-| 0x20130188 | `FUN_20130188` | *gui_main_loop* |
-| 0x2012EBB8 | `FUN_2012ebb8` | *gui_screen_update*: packet compare and dispatch |
-| 0x201179C0 / 0x20117B0C / 0x20117BA8 | `FUN_201179c0` / `FUN_20117b0c` / `FUN_20117ba8` | *r_vdc5_initialize* / *r_vdc5_sync_control* / *r_vdc5_display_output* |
-| 0x20117DEC / 0x20117E5C | `FUN_20117dec` / `FUN_20117e5c` | *r_vdc5_read_data_control* / *r_vdc5_change_read_process* |
-| 0x20117EBC / 0x20117F00 | `FUN_20117ebc` / `FUN_20117f00` | *r_vdc5_start_process* / *r_vdc5_stop_process* |
-| 0x2011819C / 0x20118214 / 0x201182D4 / 0x201183B0 | `FUN_2011819c` … | *r_vdc5_alpha_blending_rect* / *r_vdc5_chromakey* / *r_vdc5_display_calibration* / *r_vdc5_callback_isr* |
+| 0x20130188 | `gui_main_loop` | `gui_main_loop` |
+| 0x2012EBB8 | `gui_screen_update` | `gui_screen_update`: packet compare and dispatch |
+| 0x201179C0 / 0x20117B0C / 0x20117BA8 | `r_vdc5_initialize` / `r_vdc5_sync_control` / `r_vdc5_display_output` | `r_vdc5_initialize` / `r_vdc5_sync_control` / `r_vdc5_display_output` |
+| 0x20117DEC / 0x20117E5C | `r_vdc5_read_data_control` / `r_vdc5_change_read_process` | `r_vdc5_read_data_control` / `r_vdc5_change_read_process` |
+| 0x20117EBC / 0x20117F00 | `r_vdc5_start_process` / `r_vdc5_stop_process` | `r_vdc5_start_process` / `r_vdc5_stop_process` |
+| 0x2011819C / 0x20118214 / 0x201182D4 / 0x201183B0 | `r_vdc5_alpha_blending_rect` … | `r_vdc5_alpha_blending_rect` / `r_vdc5_chromakey` / `r_vdc5_display_calibration` / `r_vdc5_callback_isr` |
 | 0x2011A394 | `vdc5_config` | driver-internal register writer for ch0 (T06 name) |
-| 0x20132320 / 0x20132398 | `FUN_20132320` / `FUN_20132398` | *vdc5_module_start* / *vdc5_module_stop* (STBCR9 0xFCFE0438) |
-| 0x2013249C | `FUN_2013249c` | *lvds_pll_cfg* |
-| 0x20132504 / 0x201325E8 | `FUN_20132504` / `FUN_201325e8` | *vdc5_sync_setup* / *vdc5_output_setup* |
-| 0x2013276C | `FUN_2013276c` | *vdc5_layers_setup* |
-| 0x20132BC0 | `FUN_20132bc0` | *dvi_set_resolution* |
-| 0x201330A8 / 0x20133014 / 0x20133090 | `FUN_201330a8` / `FUN_20133014` / `FUN_20133090` | *vdc5_isr_create* / *vdc5_vline_cb* / *vdc5_wait_frames* |
-| 0x201326FC / 0x20132E78 | `fb_get_layer_addr` / `FUN_20132e78` | buffer index → address / front buffer |
+| 0x20132320 / 0x20132398 | `vdc5_module_start` / `vdc5_module_stop` | `vdc5_module_start` / `vdc5_module_stop` (STBCR9 0xFCFE0438) |
+| 0x2013249C | `lvds_pll_cfg` | `lvds_pll_cfg` |
+| 0x20132504 / 0x201325E8 | `vdc5_sync_setup` / `vdc5_output_setup` | `vdc5_sync_setup` / `vdc5_output_setup` |
+| 0x2013276C | `vdc5_layers_setup` | `vdc5_layers_setup` |
+| 0x20132BC0 | `dvi_set_resolution` | `dvi_set_resolution` |
+| 0x201330A8 / 0x20133014 / 0x20133090 | `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames` | `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames` |
+| 0x201326FC / 0x20132E78 | `fb_get_layer_addr` / `fb_get_front_addr` | buffer index → address / front buffer |
 | 0x20133A8C | `gui_update_layers` | flip graphics 1/2 on both channels, copy-forward |
 | 0x20132F84 | `fb_clear_all` | clears all frame buffers (T11a) |
-| 0x20133658 / 0x2013396C | `FUN_20133658` / `FUN_2013396c` | *layer_alpha_rect_set* / *layer_fade* |
-| 0x20133A0C / 0x20133A38 | `FUN_20133a0c` / `FUN_20133a38` | *layer_hide* / *layer_show* (both channels) |
-| 0x20101DC4 / 0x20101DEC | `FUN_20101dc4` / `FUN_20101dec` | *dvi_ctrl_pins* (P5_8/P5_9) / *lvds_pins_enable* |
-| 0x2012F8D4 / 0x2012F734 / 0x2012FD94 | `FUN_2012f8d4` / `FUN_2012f734` / `FUN_2012fd94` | *opening_screen* / *opening_check_main* / *logo_fade_in* |
-| 0x20134ABC / 0x20134D24 | `FUN_20134abc` / `FUN_20134d24` | *meter_draw* (181-step bar, peak hold) / *meter_draw_scale* |
+| 0x20133658 / 0x2013396C | `layer_alpha_rect_set` / `layer_fade` | `layer_alpha_rect_set` / `layer_fade` |
+| 0x20133A0C / 0x20133A38 | `layer_hide` / `layer_show` | `layer_hide` / `layer_show` (both channels) |
+| 0x20101DC4 / 0x20101DEC | `gpio_dvr` / `lvds_pins_enable` | `gpio_dvr` (P5_8/P5_9) / `lvds_pins_enable` |
+| 0x2012F8D4 / 0x2012F734 / 0x2012FD94 | `opening_screen` / `opening_check_main` / `logo_fade_in` | `opening_screen` / `opening_check_main` / `logo_fade_in` |
+| 0x20134ABC / 0x20134D24 | `meter_draw` / `meter_draw_scale` | `meter_draw` (181-step bar, peak hold) / `meter_draw_scale` |
 | 0x20125E78 | `touch_calibration` | `TOUCH THE CROSS` |
-| 0x20134644 / 0x2013456C | `screen_capture_bmp` / `FUN_2013456c` | capture / *bmp_write_screen* |
-| 0x2013059C | `screen_shot_menu` | *screenshot_popup* |
-| 0x201367B4 / 0x20134854 | `FUN_201367b4` / `FUN_20134854` | *debug_overlay* / *debug_screenshot_root* |
+| 0x20134644 / 0x2013456C | `screen_capture_bmp` / `bmp_write_screen` | capture / `bmp_write_screen` |
+| 0x2013059C | `screenshot_popup` | `screenshot_popup` |
+| 0x201367B4 / 0x20134854 | `debug_overlay_draw` / `debug_screenshot_root` | `debug_overlay_draw` / `debug_screenshot_root` |
 | 0x20134E0C / 0x2013512C | `test_disp_init` / `task_test_disp` | replay task |
-| 0x20134FDC / 0x20134E70 | `debug_recv_cmd_log` / `FUN_20134e70` | *test_disp_replay* / *sendcmd_parse_line* |
+| 0x20134FDC / 0x20134E70 | `debug_replay_send_cmd` / `debug_cmd_line_read` | `debug_replay_send_cmd` / `debug_cmd_line_read` |
 
 The screen handlers are in the packet table above; all names are in `tools/ghidra/names_display.T11e.tsv` (105 entries).
 

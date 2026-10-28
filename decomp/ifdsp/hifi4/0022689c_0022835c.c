@@ -17,11 +17,12 @@ undefined4 FUN_0022689c(uint param_1)
 }
 
 
-// ===== FUN_00226a50 @ 00226a50 (19 bytes)
+// ===== xos_msgq_create @ 00226a50 (19 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* called by Thread_Ipc and the other thread creators [inference] */
 
-undefined4 FUN_00226a50(int param_1)
+undefined4 xos_msgq_create(int param_1)
 
 {
   if (param_1 != 0) {
@@ -54,11 +55,12 @@ undefined4 FUN_00226aa4(int param_1)
 }
 
 
-// ===== FUN_00226b38 @ 00226b38 (23 bytes)
+// ===== xos_msgq_put @ 00226b38 (23 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* called from ipc_ept_rx_cb [inference] */
 
-undefined4 FUN_00226b38(int param_1,int param_2)
+undefined4 xos_msgq_put(int param_1,int param_2)
 
 {
   if ((param_1 != 0) && (param_2 != 0)) {
@@ -95,11 +97,12 @@ undefined4 FUN_00226bc4(int param_1,int param_2)
 }
 
 
-// ===== FUN_00226cec @ 00226cec (23 bytes)
+// ===== xos_msgq_get @ 00226cec (23 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* Thread_Ipc main loop [inference] */
 
-undefined4 FUN_00226cec(int param_1,int param_2)
+undefined4 xos_msgq_get(int param_1,int param_2)
 
 {
   if ((param_1 != 0) && (param_2 != 0)) {
@@ -254,11 +257,12 @@ undefined4 FUN_00227058(int *param_1)
 }
 
 
-// ===== FUN_002270d4 @ 002270d4 (20 bytes)
+// ===== xos_mutex_lock @ 002270d4 (20 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* around the reply rpmsg_lite_send [inference] */
 
-void FUN_002270d4(void)
+void xos_mutex_lock(void)
 
 {
   uint uVar1;
@@ -296,11 +300,12 @@ undefined4 FUN_00227168(void)
 }
 
 
-// ===== FUN_00227230 @ 00227230 (84 bytes)
+// ===== xos_mutex_unlock @ 00227230 (84 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* [inference] */
 
-undefined4 FUN_00227230(undefined4 *param_1)
+undefined4 xos_mutex_unlock(undefined4 *param_1)
 
 {
   uint uVar1;
@@ -421,11 +426,11 @@ undefined4 FUN_00227300(undefined *param_1,int param_2)
 }
 
 
-// ===== FUN_0022735c @ 0022735c (13 bytes)
+// ===== xos_get_cpu_load @ 0022735c (13 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0022735c(void)
+void xos_get_cpu_load(void)
 
 {
   flix();
@@ -447,9 +452,11 @@ void FUN_002274c8(void)
 }
 
 
-// ===== FUN_002274e0 @ 002274e0 (16 bytes)
+// ===== xos_thread_create @ 002274e0 (16 bytes)
 
-undefined4 FUN_002274e0(void)
+/* called with thread entry, name, stack [inference] */
+
+undefined4 xos_thread_create(void)
 
 {
   flix();
@@ -569,11 +576,12 @@ undefined1 FUN_002277e4(void)
 }
 
 
-// ===== FUN_002277f0 @ 002277f0 (45 bytes)
+// ===== xos_start @ 002277f0 (45 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* last call of main, arg 0 [inference] */
 
-void FUN_002277f0(void)
+void xos_start(void)
 
 {
   int iVar1;
@@ -1047,11 +1055,11 @@ void FUN_00228299(void)
 }
 
 
-// ===== FUN_0022835c @ 0022835c (25 bytes)
+// ===== xos_start_system_timer @ 0022835c (25 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0022835c(void)
+void xos_start_system_timer(void)
 
 {
   uint uVar1;

@@ -4,8 +4,7 @@ Back to the [MAIN overview](README.md).
 
 Part of the MAIN code documentation (T10f). Related pages: [cat.md](cat.md) (CAT parser, which calls `cat_EX`), the
 command reference [docs/cat-commands.md](../../cat-commands.md), and the DSP link page (T10d) for how DSP registers are
-written. Names in *italics* are names that T10f proposes in `tools/ghidra/names_main.T10f.tsv`. They are not yet in the
-Ghidra project, where these functions are still `FUN_<addr>`. All addresses are MAIN ROM/RAM addresses. Tags follow
+written. Function names are the names applied in Ghidra (`tools/ghidra/names_main.tsv`, merged by T17) and match `decomp/main/`; a name still in *italics* is a description that was not applied as a Ghidra name. All addresses are MAIN ROM/RAM addresses. Tags follow
 AGENTS.md.
 
 The tool `tools/main_menu_table.py` rebuilds the whole item table from the decoded image and diffs it against the CAT
@@ -13,25 +12,25 @@ manual (see [Tool](#tool)). All tables on this page come from its output.
 
 ## Summary
 
-- **There is no ROM item table.** The menu is built at boot by `menu_build_all` (FUN_fffd4c30). That function is a
+- **There is no ROM item table.** The menu is built at boot by `menu_build_all`. That function is a
   straight list of 314 `BSR` calls, one per item. Each callee (`menuitem_*`, 0xFFFD5373..0xFFFDCDxx, 109 or 110 bytes
-  each) fills a 0x38-byte descriptor on its stack and passes it to `menu_register` (FUN_fffd442f). That function copies
+  each) fills a 0x38-byte descriptor on its stack and passes it to `menu_register`. That function copies
   the descriptor into the RAM table at **0x2105C** (0x15E = 350 slots of 0x38 bytes). **[fact]**
 - **Items:** 314 in the firmware. 296 of them are reachable by `EX`, which matches the 296 items in the manual's MENU
   chart one to one. The other 18 are the front-panel **EXTENSION SETTING** group (DATE&TIME, SD CARD, SOFT VERSION,
   CALIBRATION, RESET, CERTIFICATION). `EX` cannot reach them: CAT `P1 = 05` is rejected. **[fact]**
 - **Numbering:** internally items are keyed by {P1 0..5, *global* P2 0..26, P3 0..}. EX `P1P1P2P2P3P3` is decimal and
   1-based, and EX P2 is local to its P1. CAT P1 `06` is internal P1 5 (PRESET), and CAT P1 `05` is internal P1 4,
-  which is refused. **[fact]** `ex_parse_key` FUN_fffe6c27.
+  which is refused. **[fact]** `ex_parse_key` `ex_parse_key`.
 - **Values** live in one RAM block at **0x9A2A..0x9E85** (0x45C bytes). It mirrors EEPROM **0x53DB..** (RAM = EEPROM +
-  0x464F, the same mapping as the rest of the settings image) and is saved by `menu_save_eeprom` (FUN_fffb02cf).
+  0x464F, the same mapping as the rest of the settings image) and is saved by `eeprom_save_opstate`.
   Defaults come from ROM **0xFFF80E4A..** as a linear copy. **[fact]**
 - **Differences from the manual (2306-C):** SSB TX BPF SEL has two extra values (5 = "50-4000Hz", 6 = "TTBF"). EX
   refuses 5 but accepts 6. FM TONE FREQ answers 3 digits, not 2. CW WEIGHT is 00..20 on the wire, not 25..45. There
   are also manual typos (RTTY MARK/SHIFT codes), small name differences, and the P1 06 label. See
   [Manual diff](#diff-against-the-cat-manual-2306-c-table-2). **[fact]**
 - **Propagation:** the menu engine only writes the RAM value. DSP, SDR and display state pick it up through polled
-  "desired vs. shadow" sync loops in other subsystems (for example `FUN_fff9d1b9` → `FUN_fffa0b4c` for the IF DSP), and
+  "desired vs. shadow" sync loops in other subsystems (for example `dsp_link_poll` → `dsp_send_frame` for the IF DSP), and
   the DISPLAY sees the menu only as a rendered page. See [Propagation](#how-a-changed-value-propagates).
   **[fact]** for the paths shown; **[inference]** that this covers every item.
 
@@ -60,22 +59,22 @@ flowchart LR
 
 ## Item descriptor (0x38 bytes)
 
-The descriptor is laid out by the `menuitem_*` functions and read through `menu_get_desc` (FUN_fffd4795, full copy),
-`menu_get_limits` (FUN_fffd4ffe, bytes 0x28..0x37) and `menu_get_name` (FUN_fffd47ea). **[fact]** for the layout.
+The descriptor is laid out by the `menuitem_*` functions and read through `menu_get_desc` (`menu_get_desc`, full copy),
+`menu_get_limits` (`menu_get_limits`, bytes 0x28..0x37) and `menu_get_name`. **[fact]** for the layout.
 Field meanings are **[fact]** where the consumer is cited.
 
 | Off | Size | Field | Meaning / consumer |
 |---|---|---|---|
 | 0x00 | u8 | `valid` | Always 1. Lookups skip slots that are not 1 (`menu_find`) |
-| 0x01 | u8 | `dest_mask` | 0 = all destinations. Otherwise it must AND with `menu_dest_mask()` (FUN_fffd4a4f, which maps the destination code to 1/2/4/8/0x10/0x20). Only CERTIFICATION uses it (mask 2 = codes 0x315B, 0x50E2) |
+| 0x01 | u8 | `dest_mask` | 0 = all destinations. Otherwise it must AND with `menu_dest_mask()` (`menu_dest_mask`, which maps the destination code to 1/2/4/8/0x10/0x20). Only CERTIFICATION uses it (mask 2 = codes 0x315B, 0x50E2) |
 | 0x02 | u8 | — | Always 0 |
 | 0x03 | u8 | `p1` | 0..5: RADIO, CW, OPERATION, DISPLAY, EXTENSION, PRESET (titles at ROM 0xFFF83514, 6 × 20 chars) |
 | 0x04 | u8 | `p2` | Global group 0..26 (titles at ROM 0xFFF8358C, 27 × 13 chars: MODE SSB … PRESET5) |
 | 0x05 | u8 | `p3` | Row in the group, 0-based |
 | 0x06 | char[21] | `name` | Space-padded, shown on the menu page |
-| 0x1C | code* | `on_draw` | Formats the value for the DISPLAY menu page (`menu_call_draw` FUN_fffd49a0). Unique per item. Most call `menu_draw_flags` FUN_fffc9b83 plus a label table |
-| 0x20 | code* | `on_step` | Called by `menu_call_step` FUN_fffd49c0: dial step from the front panel, **and** after an EX set, as an apply hook with 0x15DFC = 1 (see below). Most items wrap `menu_step_s8` FUN_fffcde18 / `menu_step_u8` FUN_fffcdfb8 (min, max, ptr) |
-| 0x24 | code* | `on_enter` | `menu_call_enter` FUN_fffd49da. For 296 items this is a bare `RTS` at 0xFFFCDC78. Only the action items (SD card, calibration, reset, certification, PRESET NAME, MY CALL) have real handlers |
+| 0x1C | code* | `on_draw` | Formats the value for the DISPLAY menu page (`menu_call_draw` `menu_call_draw`). Unique per item. Most call `menu_draw_flags` `menu_draw_flags` plus a label table |
+| 0x20 | code* | `on_step` | Called by `menu_call_step` `menu_call_step`: dial step from the front panel, **and** after an EX set, as an apply hook with 0x15DFC = 1 (see below). Most items wrap `menu_step_s8` `menu_step_s8` / `menu_step_u8` `menu_step_u8` (min, max, ptr) |
+| 0x24 | code* | `on_enter` | `menu_call_enter` `menu_call_enter`. For 296 items this is a bare `RTS` at 0xFFFCDC78. Only the action items (SD card, calibration, reset, certification, PRESET NAME, MY CALL) have real handlers |
 | 0x28 | s16 | `min` | Raw (stored) minimum |
 | 0x2A | s16 | `max` | Raw maximum |
 | 0x2C | u8* | `store` | RAM address of the value (0 = no slot: an action, or a VFO accessor) |
@@ -84,7 +83,7 @@ Field meanings are **[fact]** where the consumer is cited.
 | 0x32 | u8 | `signed` | 1 = s8. EX adds a `+`/`-` sign character |
 | 0x33 | u8 | `digits` | EX P4 digit count without the sign (1..4) |
 | 0x34 | u8 | `scale` | EX value = raw (0), raw × 10 (1), raw × 20 + 20 (2, the AGC delays). A set divides back (`/10`, `/20 − 1`, integer) |
-| 0x35 | u8 | `accessor` | 0 = direct `store`. 1/2/3 = FM RPT SHIFT / ENC/DEC / TONE FREQ through `menu_fm_*_get/set` (FUN_fffce3eb … FUN_fffce5f5), which read and write the current VFO (`FUN_fffb324c(1)` + 2) |
+| 0x35 | u8 | `accessor` | 0 = direct `store`. 1/2/3 = FM RPT SHIFT / ENC/DEC / TONE FREQ through `menu_fm_*_get/set` (`menu_fm_rptshift_get` … `menu_fm_tone_set`), which read and write the current VFO (`vfo_rec_ptr`(1)` + 2) |
 
 Other engine state **[fact]**:
 
@@ -96,52 +95,52 @@ Other engine state **[fact]**:
 | 0x1B4F6..0x1B4FB | u8 × 6 | Per-P1 counts |
 | 0x15DFC | u8 | 1 while an EX set runs the item's `on_step` hook, which tells the stepper not to step |
 | state+0x41F / +0x420 / +0x421 | u8 | Current menu P1, local P2, step direction (state = `*(0x25D60)`, the 0x20B04 block) |
-| state+0x40B (0x20F0F) | u8 | "Radio state changed" flag, set after every menu change. `FUN_fff9cee1` consumes it and recomputes the displayed frequencies |
+| state+0x40B (0x20F0F) | u8 | "Radio state changed" flag, set after every menu change. `freq_cache_update` consumes it and recomputes the displayed frequencies |
 
 ## Engine functions
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0xFFFC98AA | `FUN_fffc98aa` | *menu_subsys_init* | Called from `app_main`: `FUN_fffd405e` (UI state), then `menu_init` **[fact]** |
-| 0xFFFD4FF1 | `FUN_fffd4ff1` | *menu_init* | → `menu_build_all` **[fact]** |
-| 0xFFFD4C30 | `FUN_fffd4c30` | *menu_build_all* | 314 `BSR menuitem_*` in order. Registration order = table index **[fact]** |
-| 0xFFFD442F | `FUN_fffd442f` | *menu_register* | Copies the descriptor, appends it to the per-P1 list, count++ (capped at 0x15F) **[fact]** |
-| 0xFFFD4651 | `FUN_fffd4651` | *menu_find* | Key {P1, P2, P3} → index. Scans the 100-entry P1 list, checks `valid` and `dest_mask`. Returns 0xFFFF if not found **[fact]** |
-| 0xFFFD4795 | `FUN_fffd4795` | *menu_get_desc* | Key → 0x38-byte copy **[fact]** |
-| 0xFFFD47EA | `FUN_fffd47ea` | *menu_get_name* | Key → 21-char name **[fact]** |
-| 0xFFFD4FFE | `FUN_fffd4ffe` | *menu_get_limits* | Key → descriptor bytes 0x28..0x37 **[fact]** |
-| 0xFFFD45A8 | `FUN_fffd45a8` | *menu_group_visible* | (P1, P2) has at least one item for this destination **[fact]** |
-| 0xFFFD4841 / 0xFFFD48D1 | `FUN_fffd4841` / `FUN_fffd48d1` | *menu_count_items* / *menu_count_groups* | Rows in a P2 group / groups in a P1 (destination-filtered) **[fact]** |
-| 0xFFFD49F4 | `FUN_fffd49f4` | *menu_p2_global* | (P1, local P2) → global P2, using the bases 0/5/7/12/16/22 **[fact]** |
-| 0xFFFD52DF | `FUN_fffd52df` | *menu_p1_range* | P1 → first and last global P2 **[fact]** |
-| 0xFFFD4ADA | `FUN_fffd4ada` | *menu_cursor_of* | Global P2 → pointer to that group's {top, row} cursor (27-case switch) **[fact]** |
-| 0xFFFD4A4F | `FUN_fffd4a4f` | *menu_dest_mask* | `dest_code_get()` → item mask bit **[fact]** |
-| 0xFFFD49A0 / 0xFFFD49C0 / 0xFFFD49DA | `FUN_fffd49a0` / `FUN_fffd49c0` / `FUN_fffd49da` | *menu_call_draw* / *menu_call_step* / *menu_call_enter* | Fetch the descriptor and `JSR` its +0x1C / +0x20 / +0x24 pointer **[fact]** (disassembly; the decompile loses the call) |
-| 0xFFFD504C | `FUN_fffd504c` | *menu_value_rw* | (key, 0 = read / 1 = write, u16 *). Byte or big-endian word at `store`, or the FM accessors **[fact]** (disassembly; the decompile shows a bogus `uRam00000000 = 1`) |
-| 0xFFFD51A3 / 0xFFFD51CA | `FUN_fffd51a3` / `FUN_fffd51ca` | *menu_value_get* / *menu_value_set* | Wrappers **[fact]** |
-| 0xFFFD51F1, 0xFFFD528D, 0xFFFD52B6 | `FUN_fffd51f1`, `FUN_fffd528d`, `FUN_fffd52b6` | *menu_string_rw / get / set* | Text items. Set clears 12 bytes, then copies **[fact]** |
-| 0xFFFCDE18 / 0xFFFCDFB8 | `FUN_fffcde18` / `FUN_fffcdfb8` | *menu_step_s8* / *menu_step_u8* | (min, max, ptr) ±1 by direction state+0x421. Returns at once when 0x15DFC = 1 **[fact]** for s8; u8 is **[inference]** |
-| 0xFFFCDD7E | `FUN_fffcdd7e` | *menu_ui_step* | Front-panel dial on the selected row: timer 3000, flag 0x20F0F, `menu_call_step` **[fact]** |
-| 0xFFFCDC1F | `FUN_fffcdc1f` | *menu_ui_enter* | Runs the selected row's `on_enter` **[inference]** |
-| 0xFFFC98F9 | `FUN_fffc98f9` | *menu_page_serialize* | Builds the menu page for the DISPLAY into the 0x1741 frame (type byte 0x40) at +0x98: P1 title (20 chars), up to 8 P2 tabs (13 chars each), then up to 5 rows of 45 bytes (name + `on_draw` output). Called by `FUN_fff9aaf7` **[fact]**. The frame protocol is covered on the DISPLAY link page (T10b) |
-| 0xFFFC9B83 | `FUN_fffc9b83` | *menu_draw_flags* | `on_draw` helper. Row flag byte: bit 7 when its argument is 0, bit 6 when the row is being edited (0x12271) **[fact]**; meaning of bit 7 **[inference]** |
-| 0xFFFCE3EB … 0xFFFCE5F5 | `FUN_fffce3eb` … | *menu_fm_rptshift/encdec/tone_get/set* | VFO-backed FM items **[fact]** for the call; that the fields belong to the current VFO is **[inference]** |
-| 0xFFFB1168 | `FUN_fffb1168` | *menu_defaults_load* | Called from `settings_defaults`. Its callees fill 0x9A2A..0x9BC9 (below) **[fact]** |
-| 0xFFFB02CF | `FUN_fffb02cf` | *menu_save_eeprom* | `eeprom_write(0x53DB, 0x9A2A, 0x45C)` plus (0x1A62, 0x60B1, 0x18) **[fact]** |
+| 0xFFFC98AA | `menu_subsys_init` | `menu_subsys_init` | Called from `app_main`: `FUN_fffd405e` (UI state), then `menu_init` **[fact]** |
+| 0xFFFD4FF1 | `menu_init` | `menu_init` | → `menu_build_all` **[fact]** |
+| 0xFFFD4C30 | `menu_build_all` | `menu_build_all` | 314 `BSR menuitem_*` in order. Registration order = table index **[fact]** |
+| 0xFFFD442F | `menu_register` | `menu_register` | Copies the descriptor, appends it to the per-P1 list, count++ (capped at 0x15F) **[fact]** |
+| 0xFFFD4651 | `menu_find` | `menu_find` | Key {P1, P2, P3} → index. Scans the 100-entry P1 list, checks `valid` and `dest_mask`. Returns 0xFFFF if not found **[fact]** |
+| 0xFFFD4795 | `menu_get_desc` | `menu_get_desc` | Key → 0x38-byte copy **[fact]** |
+| 0xFFFD47EA | `menu_get_name` | `menu_get_name` | Key → 21-char name **[fact]** |
+| 0xFFFD4FFE | `menu_get_limits` | `menu_get_limits` | Key → descriptor bytes 0x28..0x37 **[fact]** |
+| 0xFFFD45A8 | `menu_group_visible` | `menu_group_visible` | (P1, P2) has at least one item for this destination **[fact]** |
+| 0xFFFD4841 / 0xFFFD48D1 | `menu_count_items` / `menu_count_groups` | `menu_count_items` / `menu_count_groups` | Rows in a P2 group / groups in a P1 (destination-filtered) **[fact]** |
+| 0xFFFD49F4 | `menu_p2_global` | `menu_p2_global` | (P1, local P2) → global P2, using the bases 0/5/7/12/16/22 **[fact]** |
+| 0xFFFD52DF | `menu_p1_range` | `menu_p1_range` | P1 → first and last global P2 **[fact]** |
+| 0xFFFD4ADA | `menu_cursor_of` | `menu_cursor_of` | Global P2 → pointer to that group's {top, row} cursor (27-case switch) **[fact]** |
+| 0xFFFD4A4F | `menu_dest_mask` | `menu_dest_mask` | `dest_code_get()` → item mask bit **[fact]** |
+| 0xFFFD49A0 / 0xFFFD49C0 / 0xFFFD49DA | `menu_call_draw` / `menu_call_step` / `menu_call_enter` | `menu_call_draw` / `menu_call_step` / `menu_call_enter` | Fetch the descriptor and `JSR` its +0x1C / +0x20 / +0x24 pointer **[fact]** (disassembly; the decompile loses the call) |
+| 0xFFFD504C | `menu_value_rw` | `menu_value_rw` | (key, 0 = read / 1 = write, u16 *). Byte or big-endian word at `store`, or the FM accessors **[fact]** (disassembly; the decompile shows a bogus `uRam00000000 = 1`) |
+| 0xFFFD51A3 / 0xFFFD51CA | `menu_value_get` / `menu_value_set` | `menu_value_get` / `menu_value_set` | Wrappers **[fact]** |
+| 0xFFFD51F1, 0xFFFD528D, 0xFFFD52B6 | `menu_string_rw`, `menu_string_get`, `menu_string_set` | *menu_string_rw / get / set* | Text items. Set clears 12 bytes, then copies **[fact]** |
+| 0xFFFCDE18 / 0xFFFCDFB8 | `menu_step_s8` / `menu_step_u8` | `menu_step_s8` / `menu_step_u8` | (min, max, ptr) ±1 by direction state+0x421. Returns at once when 0x15DFC = 1 **[fact]** for s8; u8 is **[inference]** |
+| 0xFFFCDD7E | `menu_ui_step` | `menu_ui_step` | Front-panel dial on the selected row: timer 3000, flag 0x20F0F, `menu_call_step` **[fact]** |
+| 0xFFFCDC1F | `menu_ui_enter` | `menu_ui_enter` | Runs the selected row's `on_enter` **[inference]** |
+| 0xFFFC98F9 | `menu_page_serialize` | `menu_page_serialize` | Builds the menu page for the DISPLAY into the 0x1741 frame (type byte 0x40) at +0x98: P1 title (20 chars), up to 8 P2 tabs (13 chars each), then up to 5 rows of 45 bytes (name + `on_draw` output). Called by `displink_build_40` **[fact]**. The frame protocol is covered on the DISPLAY link page (T10b) |
+| 0xFFFC9B83 | `menu_draw_flags` | `menu_draw_flags` | `on_draw` helper. Row flag byte: bit 7 when its argument is 0, bit 6 when the row is being edited (0x12271) **[fact]**; meaning of bit 7 **[inference]** |
+| 0xFFFCE3EB … 0xFFFCE5F5 | `menu_fm_rptshift_get` … | *menu_fm_rptshift/encdec/tone_get/set* | VFO-backed FM items **[fact]** for the call; that the fields belong to the current VFO is **[inference]** |
+| 0xFFFB1168 | `menu_defaults_load` | `menu_defaults_load` | Called from `settings_defaults`. Its callees fill 0x9A2A..0x9BC9 (below) **[fact]** |
+| 0xFFFB02CF | `eeprom_save_opstate` | `eeprom_save_opstate` | `eeprom_write(0x53DB, 0x9A2A, 0x45C)` plus (0x1A62, 0x60B1, 0x18) **[fact]** |
 
 ### EX command functions
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
 | 0xFFFA9937 | `cat_EX` | — | Calls `ex_command(text, is_set, len, 0x1C8E, …)`. Sets error flag 0x464A from the result, and after a set calls `cat_ai_holdoff` when AI is on **[fact]** |
-| 0xFFFE61E7 | `FUN_fffe61e7` | *ex_command* | `ex_parse_key` → `ex_read_or_write` → after a set `menu_apply_from_cat` → copies the reply from 0x18878 (length 0x1FF10) **[fact]** |
-| 0xFFFE6C27 | `FUN_fffe6c27` | *ex_parse_key* | Requires 6 decimal digits. P1 internal = P1 − 1. P2 internal = P2 + {−1, +4, +6, +11, —, +21}[P1 − 1]. P3 internal = P3 − 1. **P1 05 and P1 > 06 return 0 (`?;`)** **[fact]** |
-| 0xFFFE6299 | `FUN_fffe6299` | *ex_read_or_write* | String or numeric, read or set **[fact]** |
-| 0xFFFE646C / 0xFFFE6550 | `FUN_fffe646c` / `FUN_fffe6550` | *ex_read_value* / *ex_write_value* | Format or parse P4 using `digits`, `signed`, `is_word` and `scale`. The total length must be exactly 9 + digits (+1 with a sign), and the value must lie within [min, max] scaled. Otherwise `?;` **[fact]** |
-| 0xFFFE6335 / 0xFFFE63FB | `FUN_fffe6335` / `FUN_fffe63fb` | *ex_read_string* / *ex_write_string* | 12-char items **[fact]** |
-| 0xFFFE668A | `FUN_fffe668a` | *ex_value_allowed* | Refuses key {0,0,12} (EX010113, SSB TX BPF SEL) with value 5 **[fact]** |
+| 0xFFFE61E7 | `ex_command` | `ex_command` | `ex_parse_key` → `ex_read_or_write` → after a set `menu_apply_from_cat` → copies the reply from 0x18878 (length 0x1FF10) **[fact]** |
+| 0xFFFE6C27 | `ex_parse_key` | `ex_parse_key` | Requires 6 decimal digits. P1 internal = P1 − 1. P2 internal = P2 + {−1, +4, +6, +11, —, +21}[P1 − 1]. P3 internal = P3 − 1. **P1 05 and P1 > 06 return 0 (`?;`)** **[fact]** |
+| 0xFFFE6299 | `ex_read_or_write` | `ex_read_or_write` | String or numeric, read or set **[fact]** |
+| 0xFFFE646C / 0xFFFE6550 | `ex_read_value` / `ex_write_value` | `ex_read_value` / `ex_write_value` | Format or parse P4 using `digits`, `signed`, `is_word` and `scale`. The total length must be exactly 9 + digits (+1 with a sign), and the value must lie within [min, max] scaled. Otherwise `?;` **[fact]** |
+| 0xFFFE6335 / 0xFFFE63FB | `ex_read_string` / `ex_write_string` | `ex_read_string` / `ex_write_string` | 12-char items **[fact]** |
+| 0xFFFE668A | `ex_value_allowed` | `ex_value_allowed` | Refuses key {0,0,12} (EX010113, SSB TX BPF SEL) with value 5 **[fact]** |
 | 0xFFFE66E2, 0xFFFE67F5, 0xFFFE6869, 0xFFFE693B | … | *ex_fmt_byte, ex_fmt_4digits, ex_parse_4digits, ex_parse_byte* | Decimal format and parse helpers **[fact]** |
-| 0xFFFCDDDB | `FUN_fffcdddb` | *menu_apply_from_cat* | `0x15DFC = 1; menu_call_step(key); 0x15DFC = 0; state[0x40B] = 1` **[fact]** |
+| 0xFFFCDDDB | `menu_apply_from_cat` | `menu_apply_from_cat` | `0x15DFC = 1; menu_call_step(key); 0x15DFC = 0; state[0x40B] = 1` **[fact]** |
 
 ## EX set: control flow
 
@@ -179,43 +178,43 @@ item's `on_step` hook run with 0x15DFC = 1, and the state+0x40B flag. Almost eve
 flowchart TD
   SET["EX set / front-panel dial"] --> RAMV[("menu value in RAM<br/>(+ EEPROM image)")]
   SET --> FLAG["state+0x40B = 1"]
-  FLAG --> FREQ["FUN_fff9cee1: recompute<br/>displayed frequencies"]
-  RAMV --> DSPS["FUN_fff9d1b9 DSP sync chain<br/>(one change per pass, 0x1C5E)"]
-  DSPS --> DSPW["e.g. FUN_fff9f681 AGC delay:<br/>by mode (0x9A2D.. or preset 0x20B5B..)<br/>!= shadow 0x1B6CA -> FUN_fffa0b4c"]
+  FLAG --> FREQ["`freq_cache_update`: recompute<br/>displayed frequencies"]
+  RAMV --> DSPS["`dsp_link_poll` DSP sync chain<br/>(one change per pass, 0x1C5E)"]
+  DSPS --> DSPW["e.g. `dsp_set_agc` AGC delay:<br/>by mode (0x9A2D.. or preset 0x20B5B..)<br/>!= shadow 0x1B6CA -> `dsp_send_frame`"]
   DSPW --> IFDSP["IF DSP register write (T10d)"]
-  RAMV --> OTHER["direct readers: sci3_set_baud (CAT-1 RATE 0x9AB9),<br/>LED DIMMER 0x9B10 -> FUN_fff9a1a7,<br/>MAX POWER 0x9AEE.. -> TX power (T10h)"]
+  RAMV --> OTHER["direct readers: sci3_set_baud (CAT-1 RATE 0x9AB9),<br/>LED DIMMER 0x9B10 -> `displink_build_24`,<br/>MAX POWER 0x9AEE.. -> TX power (T10h)"]
   RAMV --> PAGE["menu_page_serialize<br/>-> DISPLAY frame type 0x40"]
-  SAVE["menu_save_eeprom FFFB02CF<br/>(callers FFFB4B28, FFFB6D56)"] --> EEP[("EEPROM 0x53DB.., 0x45C bytes")]
+  SAVE["eeprom_save_opstate FFFB02CF<br/>(callers FFFB4B28, FFFB6D56)"] --> EEP[("EEPROM 0x53DB.., 0x45C bytes")]
   RAMV --> SAVE
 ```
 
-- **IF DSP.** `FUN_fff9d1b9` runs a chain of per-parameter functions (`FUN_fff9e9a4` CONTOUR LEVEL 0x9AD5,
-  `FUN_fff9ed0e` LCUT 0x9A30.., `FUN_fff9f681` AGC delays 0x9A2D.., …). Each one picks the value for the current mode
+- **IF DSP.** `dsp_link_poll` runs a chain of per-parameter functions (`dsp_set_contour_level` CONTOUR LEVEL 0x9AD5,
+  `dsp_set_lcut` LCUT 0x9A30.., `dsp_set_agc` AGC delays 0x9A2D.., …). Each one picks the value for the current mode
   from the menu block, or from the preset copy at 0x20B5B.. when 0x9DC6 (preset active) is set. It converts the value
   (for example ×20 + 20 ms) and compares it with a shadow (for example 0x1B6CA). If they differ, it queues one register
-  write through `FUN_fffa0b4c`. **[fact]** for the functions read. The register map is T10d's subject.
+  write through `dsp_send_frame`. **[fact]** for the functions read. The register map is T10d's subject.
 - **SDR (FPGA).** No menu item writes the SDR directly. The SDR gets RX/TX parameters from the radio-control code
   (T10c/T10g). **[inference]**
 - **DISPLAY.** The DISPLAY CPU draws the menu from the page built by `menu_page_serialize`. Settings that the DISPLAY
   itself needs (LED DIMMER, colours, scope settings) are read from the menu block by display-link code, for example
-  `FUN_fff970b8` and `FUN_fff9a1a7` reading 0x9B10. **[fact]** for those reads; the full set is T10b's subject.
+  `FUN_fff970b8` and `displink_build_24` reading 0x9B10. **[fact]** for those reads; the full set is T10b's subject.
 - **Other.** `sci3_set_baud` reads CAT-1 RATE (0x9AB9), and `cat_PC` reads the MAX POWER bytes (0x9AEE..0x9AF1).
   **[fact]**
-- **Persistence.** A menu change does not write the EEPROM immediately. `menu_save_eeprom` is called from
-  `FUN_fffb4b28` and `FUN_fffb6d56` (likely the power-off and periodic save paths, T10e) **[inference]**.
+- **Persistence.** A menu change does not write the EEPROM immediately. `eeprom_save_opstate` is called from
+  `supply_undervolt_check` and `io_task` (likely the power-off and periodic save paths, T10e) **[inference]**.
 
 ## Defaults
 
-`settings_defaults` → `menu_defaults_load` (FUN_fffb1168) → **[fact]**:
+`settings_defaults` → `menu_defaults_load` → **[fact]**:
 
 | Function | RAM range | Source | Notes |
 |---|---|---|---|
-| `FUN_fffb1193` *menu_defaults_mode* | 0x9A2A..0x9A90 | ROM 0xFFF80E4A.. | 5 mode groups (copied in 6 chunks) |
-| `FUN_fffb11f0` *menu_defaults_cw* | 0x9A91..0x9AB4 | ROM 0xFFF80EB1 | |
-| `FUN_fffb120d` *menu_defaults_operation* | 0x9AB5..0x9B00 | ROM 0xFFF80ED5 | Then destination-dependent: HF/50M/70M/AM MAX POWER = `FUN_fffb3e6f(0..4)`. KEYBOARD LANGUAGE (0x9AC7) = 0 (JAPANESE) for 0x4380/0x60E6/0x020B, 1 (ENGLISH US) for 0x1CB9/0x306F/0x315B/0x50E2/0x7753/0x9CF7/0xD32D, 2 (ENGLISH UK) + TX TOT 10 min for 0xD950/0xA4C5, else 5 (GERMAN) + TX TOT 10 min |
-| `FUN_fffb12e6` *menu_defaults_display* | 0x9B01..0x9B23 | ROM 0xFFF80F21 | MY CALL default "FT-710" |
+| `menu_defaults_mode` `menu_defaults_mode` | 0x9A2A..0x9A90 | ROM 0xFFF80E4A.. | 5 mode groups (copied in 6 chunks) |
+| `menu_defaults_cw` `menu_defaults_cw` | 0x9A91..0x9AB4 | ROM 0xFFF80EB1 | |
+| `menu_defaults_operation` `menu_defaults_operation` | 0x9AB5..0x9B00 | ROM 0xFFF80ED5 | Then destination-dependent: HF/50M/70M/AM MAX POWER = `FUN_fffb3e6f(0..4)`. KEYBOARD LANGUAGE (0x9AC7) = 0 (JAPANESE) for 0x4380/0x60E6/0x020B, 1 (ENGLISH US) for 0x1CB9/0x306F/0x315B/0x50E2/0x7753/0x9CF7/0xD32D, 2 (ENGLISH UK) + TX TOT 10 min for 0xD950/0xA4C5, else 5 (GERMAN) + TX TOT 10 min |
+| `menu_defaults_display` `menu_defaults_display` | 0x9B01..0x9B23 | ROM 0xFFF80F21 | MY CALL default "FT-710" |
 | `FUN_fffb1303` | 0x9B24..0x9B2D | ROM 0xFFF80F44 | Unused bytes after EXT MONITOR |
-| `FUN_fffb1325` *menu_defaults_presets* | 0x9B2E + 0x1F × n | ROM 0xFFF80F4E (×5) | Names "FT-8", "PRESET2".."PRESET5" patched in |
+| `menu_defaults_presets` `menu_defaults_presets` | 0x9B2E + 0x1F × n | ROM 0xFFF80F4E (×5) | Names "FT-8", "PRESET2".."PRESET5" patched in |
 
 0x9A2A..0x9BC9 is therefore one linear image of ROM 0xFFF80E4A..0xFFF80FE9, apart from the overrides. The tool prints
 these ROM defaults. Each P2 group ends with 2 unused bytes, and 0x9AF2 (between AM MAX POWER and VOX SELECT) is a single
@@ -231,7 +230,7 @@ WIDTH and MIC P1..DOWN code lists), the real differences are:
 
 | EX key | Item | Firmware | Manual | Tag |
 |---|---|---|---|---|
-| `010113` | MODE SSB / TX BPF SEL | Range **0..6**. Labels at ROM 0xFFF83716: 50-3050, 100-2900, 200-2800, 300-2700, 400-2600, **50-4000Hz**, **TTBF**. `ex_value_allowed` refuses 5, so **`EX0101136;` (TTBF) is accepted on every destination**. On the front panel, `on_step` (0xFFFCE013) skips 5 and allows 6 only for destinations 0x315B/0x50E2/0x1CB9 with the hidden flag 0x4760 set; otherwise it clamps to 4. 0x4760 is toggled by a power-on option in `FUN_fff9546a` (case 5), which also resets the value to 1 when it is turned off | 0..4 | **[fact]** (code). What TTBF does is unknown **[guess]**: a wide or flat TX filter |
+| `010113` | MODE SSB / TX BPF SEL | Range **0..6**. Labels at ROM 0xFFF83716: 50-3050, 100-2900, 200-2800, 300-2700, 400-2600, **50-4000Hz**, **TTBF**. `ex_value_allowed` refuses 5, so **`EX0101136;` (TTBF) is accepted on every destination**. On the front panel, `on_step` (0xFFFCE013) skips 5 and allows 6 only for destinations 0x315B/0x50E2/0x1CB9 with the hidden flag 0x4760 set; otherwise it clamps to 4. 0x4760 is toggled by a power-on option in `displink_rx_F0_hello` (case 5), which also resets the value to 1 when it is turned off | 0..4 | **[fact]** (code). What TTBF does is unknown **[guess]**: a wide or flat TX filter |
 | `010321` | MODE FM / TONE FREQ | 3 digits (`digits` = 3) | 2 digits | **[fact]** |
 | `020203` | KEYER / CW WEIGHT | EX P4 = 00..20 (raw, no scale) | "2.5 - 4.5 (P4 = 25 - 45)" | **[fact]** for the wire format. `EX02020325;` would be out of range. That the panel shows 2.5 + raw/10 is **[inference]** |
 | `010515` | MODE RTTY / MARK FREQUENCY | 0..1 | "1: 1275 Hz 2: 2125 Hz" | **[fact]**, manual typo |

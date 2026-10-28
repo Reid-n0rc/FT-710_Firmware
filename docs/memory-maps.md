@@ -85,14 +85,23 @@ CPU: Renesas RZ/A1H (R7S721001), Cortex-A9. Input: `build/FT-710_DISPLAY_V0108.b
 | `.bss` | 0x20450290–0x204FC5F3 | uninit | Region 4 (zero-init, 0xAC364 B) |
 | `ram_mid` | 0x204FC5F4–0x207FFFFF | uninit | Unassigned RAM. 0x20500000+ is used through the uncached mirror (`.data_nc`, frame buffers) |
 | `.data2` | 0x20800000–0x20808BCF | init (from 0x20428A40) | Region 3 (includes the GPIO port pointer table at 0x20800000) |
-| `.bss2` | 0x20808BD0–0x2091D56F | uninit | Region 5 (zero-init, 0x1149A0 B). Holds the kernel TCB table 0x208DBBA0 and the UART objects 0x208DA1E0/0x208DAA30/0x208DB280 |
+| `.bss2` | 0x20808BD0–0x2091D56F | uninit | Region 5 (zero-init, 0x1149A0 B). Holds the kernel TCB table 0x208DBBA0, the UART objects 0x208DA1E0/0x208DAA30/0x208DB280, the GIC handler table 0x208DC1E0 and the recorder audio slots 0x208F4DE0 (see below) |
 | `ram_hi` | 0x2091D570–0x209FFFFF | uninit | End of the 10 MB RAM. The literal 0x20980000 at 0x2010022C may be a heap limit **[guess]** |
-| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Uncached mirror of RAM. **Frame buffers**: `fb_get_layer_addr` returns 0x60000000 + {0, 0xBB800, 0x177000, 0x232800, 0x2EE000} and 0x605048A0, each 800×480 RGB565 (0xBB800 B) |
-| `.data_nc` | 0x60500000–0x6050489F | init (from 0x20428960) | Region 2: RW data placed in the uncached mirror (aliases 0x20500000) |
-| `ram_nc_hi` | 0x605048A0–0x609FFFFF | uninit | Uncached mirror (frame buffer 1 starts at 0x605048A0) |
+| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Uncached mirror of RAM. **Frame buffers**: `fb_get_layer_addr` maps index 0–5 to fb0 0x600BB800, fb1 0x605048A0, fb2 0x60177000, fb3 0x60000000, fb4 0x60232800, fb5 0x602EE000 (fb0–fb4 800×480 RGB565 = 0xBB800 B each; fb5 is the mouse-cursor layer). See [code/display/gui.md](code/display/gui.md) |
+| `.data_nc` | 0x60500000–0x6050489F | init (from 0x20428960) | Region 2: RW data placed in the uncached mirror (aliases 0x20500000). 0x60500000–0x60503FFF holds SPI DMA buffers (FT4222H RX 0x60500000, PC TX frame 0x60501000, …) |
+| `ram_nc_hi` | 0x605048A0–0x609FFFFF | uninit | Uncached mirror (frame buffer 1 starts at 0x605048A0). SDR scope DMA buffer 0x605C00A0 (0x6A4 B) and its header copy 0x605C0780 |
 | `io_3FE` | 0x3FE00000–0x3FFFFFFF | volatile | RZ/A1H I/O: SPIBSC0 0x3FEFA000, SPIBSC1 0x3FEFB000 (its 0x3FEFB018 reg is used as a "loader already ran" marker), PL310 0x3FFFF000 |
 | `io_E800` | 0xE8000000–0xE82FFFFF | volatile | ADC 0xE8005800, SCIF3/4/5 0xE8008800/0xE8009000/0xE8009800, RSPI0–4 0xE800C800–0xE800E800, USB0 0xE8010000, SDHI 0xE804E000, DMAC 0xE8200000, GIC 0xE8201000/0xE8202000, USB1 0xE8207000 |
 | `io_FCFE` | 0xFCFE0000–0xFCFFFFFF | volatile | WDT 0xFCFE0000, CPG/STBCR 0xFCFE04xx, GPIO 0xFCFE3000, OSTM 0xFCFEC000, RIIC0–3 0xFCFEE000–0xFCFEEC00, INTC 0xFCFEF800, MTU2 0xFCFF0000, VDC5 0xFCFF7400/0xFCFF9400 |
+
+Other DISPLAY RAM structures found by T11 **[fact]**:
+
+| Address | Contents | Page |
+|---|---|---|
+| 0x208DC1E0 | GIC handler table, 587 entries (filled with `gic_default_handler` by `gic_init`, 39 sources registered). IDs used: SCIF5 RXI/TXI 0xF3/0xF4 (MAIN link), SCIF4 0xEF/0xF0, IRQ3 = 35 (touch), IRQ4 = 0x24 (encoder 3), IRQ5 = 37 (power key) | [peripherals.md](code/display/peripherals.md#3-interrupts-gic), [mainlink.md](code/display/mainlink.md) |
+| 0x60500000–0x60503FFF, 0x605C00A0, 0x605C0780 | uncached SPI DMA buffers (RSPI0 FT4222H RX/TX, RSPI2 SDR scope) | [spi-links.md](code/display/spi-links.md#dma-channels) |
+| 0x208F4DE0 | recorder/player audio slots, 16 × 0x11F8 (4600 B) | [peripherals.md](code/display/peripherals.md) |
+| 0x183D0000 (SPI flash) | 48-byte settings record (magic 0xA5C30001, CRC-32; probably touch calibration **[guess]**) | [peripherals.md](code/display/peripherals.md) |
 
 The peripheral ranges cover every I/O page the analysis referenced (88 pages, see `tools/ghidra/DisplayReport.java`). The peripheral names come from the RZ/A1H
 address map **[inference from the datasheet map; base addresses were cross-checked against code use]**.
@@ -101,14 +110,17 @@ address map **[inference from the datasheet map; base addresses were cross-check
 `boot_select_bank` (0x20100ABC) runs only while SPIBSC1 reg 0x3FEFB018 is 0 (first stage). It sets that register, builds a boot-info block at 0x20000000
 (bank 1: flag 0x3E0000, image 0x400000; bank 2: flag 0x3F0000, image 0xA00000), checks the words at 0x183E0000 / 0x183F0000 for 0x11111111
 plus a non-zero valid word, and calls 0x18400000 (bank 1) or 0x18A00000 (bank 2). The same binary therefore serves as the boot loader at the
-start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as the application in a bank. `display_flash_write_bank` writes new images to 0x18400000.
+start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as the application in a bank. `fwdbg_verify_bank1` (debug `fw1chk`) compares bank 1
+(0x18400000) with an image file on the SD card; it does not write (T11c, [code/display/update.md](code/display/update.md#6-display-self-update-spi-flash-banks)).
 
 ### GUI assets in `.rodata` (not disassembled)
 - **0x20165178–~0x20167400:** constant tables (UART names, jump/pointer tables, scatter of small structs).
-- **~0x20167400–~0x20427F00 (~2.7 MB):** RGB565 bitmaps. Sprites start with a u16 0 / u16 count header and then pixels (0xFFFF white backgrounds are common).
-  Descriptor tables are interleaved, for example 0x2016DD04 = {u16 w=90, u16 h=22, u32 n, ptr[14]} → sprites at 0x2026676E… **[inference]**.
-  Other pointer tables: 0x2016D338, 0x2016DF94, 0x2016E64C, 0x2016E7E0, 0x2016EABC, 0x2016ECB8, 0x2016ED30, 0x202CA42C, 0x203D9A54/0x203D9ABC,
-  and code-pointer tables at 0x20420090, 0x20420544 and 0x20427FAC. No distinct font table has been isolated yet. Glyphs are probably among these bitmaps **[guess]**.
+- **~0x20167400–~0x20427F00 (~2.7 MB):** RGB565 **run sprites** (T11e) **[fact]**. Each sprite has a 16-byte descriptor
+  {u16 w, u16 h, u32 nruns, runs*, pix*}; runs are {u16 start, u16 count} with start = y·w + x, and the pixels follow the runs
+  (pix = runs + 4·nruns). Pixels outside the runs are transparent. V01-08 has 2243 sprites (2240 here, 3 in `.data2`).
+  **Fonts** are pointer tables of pre-coloured glyph sprites, indexed through the 256-byte character map at **0x2080173C**.
+  The T06 note "0x2016DD04 = {w, h, n, ptr[14]}" was a run sprite followed by more descriptors. List and preview them with
+  `tools/display_assets.py`; formats in [code/display/gui.md](code/display/gui.md#asset-formats).
 - **0x20427ED4–0x204286A0:** UI and update-screen strings (`YAESU FT-710 BOOT LOADER V01-02`, `INSERT FIRMWARE SD CARD.`, …).
 - `.rodata` is a non-executable block, and the `DisplayReport.java` check finds 1 stray instruction there (at 0x20165178) and none elsewhere.
 
@@ -137,16 +149,43 @@ Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs
 | 0x00025D20..0x00025E5F | 0x140 | .data, copied from ROM 0xFFF8EADC..0xFFF8EC1C | RAM_data_00025D20 |
 | 0x00025E60..0x0003FFFF | ~105 KB | unused RAM | RAM_3 |
 | 0x00080000..0x000FFFFF | 512 KB | peripheral I/O (volatile): SYSTEM 0x80000, ICU 0x87000, CMT 0x88000, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI0–7 0x8A000–0x8A0FF, ports 0x8C000 (PDR) / 0x8C020 (PODR) / 0x8C040 (PIDR), MPC 0x8C100 | IO_periph |
-| 0x00100000..0x00107FFF | 32 KB | E2 data flash (referenced, contents unknown) | DataFlash |
+| 0x00100000..0x00107FFF | 32 KB | E2 data flash: **unused** (no references to it or to the flash sequencer, T10e) | DataFlash |
 | 0x007FC000..0x007FFFFF | 16 KB | flash control registers (volatile) | IO_flash |
 | 0xFE7F5D00..0xFE7F5D73 | 116 B | option-setting memory (all 0xFF = defaults) | not loaded |
-| 0xFFF80000..0xFFF8FFFF | | const data: strings (menus, CAT tables at 0xFFF805EC, reply templates at 0xFFF8F480), the large pointer table at 0xFFF89D94, the relocatable vector table at **0xFFF8E6DC** (256 × 4), DTBL/BTBL, .data images | ROM |
+| 0xFFF80000..0xFFF8FFFF | | const data: strings (menus, CAT tables at 0xFFF805EC, reply templates at 0xFFF8F480), menu defaults 0xFFF80E4A.., menu titles 0xFFF83514 (P1, 6 × 20) / 0xFFF8358C (P2, 27 × 13), key class table 0xFFF83164, the **five 863-entry key handler tables** 0xFFF89D94 / 0xFFF8AB10 / 0xFFF8B88C / 0xFFF8C608 / 0xFFF8D384 (press … release, ending at 0xFFF8E100; [ui-keys.md](code/main/ui-keys.md)), the relocatable vector table at **0xFFF8E6DC** (256 × 4), DTBL/BTBL, .data images | ROM |
 | 0xFFF8FBDB.. | | code (PowerON_Reset at 0xFFF8FBDB; code reaches ~0xFFFEE1BE, then 0xFF fill) | ROM |
 | 0xFFFFFF00 | | version string `V01-12` | ROM |
 | 0xFFFFFF80..0xFFFFFFFF | | fixed vector table (EXTB). Entries 0xD0..0xFC are used | ROM |
 
 Peripheral bases follow the RX651 hardware manual from memory **[inference]**. SCI0–7 are confirmed by the vector numbers of the ISRs that use them **[fact]**.
 The RAM size of 256 KB is the R5F56514 part-number decode **[inference]**. The highest RAM address used is ~0x25E60 **[fact]**.
+
+### Global state block 0x20B04 (T10a) [fact]
+Most radio state lives in one RAM block starting at **0x20B04** (about 0x480 bytes). The compiler reaches it through eleven pointer
+constants in `.data` (0x25D38, 0x25D4C, 0x25D54, 0x25D58, 0x25D5C, 0x25D60, 0x25D6C, 0x25D70, 0x25D74, 0x25D78, 0x25D7C, all = 0x20B04),
+so `PTR_DAT_00025d38[off]` in the decomp is the byte at 0x20B04 + off. Search for both forms. Field list:
+[code/main/README.md](code/main/README.md#global-state-block-0x20b04-fact).
+
+### Other MAIN RAM areas (T10) [fact]
+
+| RAM | Size | Contents | Page |
+|---|---|---|---|
+| 0x464F..0x9E85 | 22,583 B | **EEPROM mirror**: RAM = 0x464F + EEPROM address (EEPROM 0x0000..0x5836) | [eeprom.md](code/main/eeprom.md) |
+| 0x4659 | 0x105 | `cfg105`: factory calibration block (EEPROM 0x000A) | [tx-protection.md](code/main/tx-protection.md) |
+| 0x4761 / 0x5409 | 3 × 0x438 each | band stack A / B (3 levels × 12 bands × 0x5A) | [radio-control.md](code/main/radio-control.md#globals) |
+| 0x60B1 / 0x60BD | 12 each | current band-stack level per band, A / B | radio-control.md |
+| 0x60C9 / 0x60CA, 0x60CB | u8, 117 B | current memory channel A / B, channel-used flags | radio-control.md |
+| 0x6150 | 133 × 0x5A | memory channels | radio-control.md |
+| 0x9012 | 0x395 | QMB header + 10 slots (slots at 0x9023 + n × 0x5A) | radio-control.md |
+| 0x9A2A..0x9E85 | 0x45C | menu values and operating state (EEPROM 0x53DB..): VFO-A/B records 0x9D09 / 0x9D63, active VFO 0x9DBD, split 0x9C5E | [menu.md](code/main/menu.md), radio-control.md |
+| 0xA0AB | 0x200 | SCI4 (DSP link) receive buffer | [dsp-link.md](code/main/dsp-link.md) |
+| 0x12043..0x1204C | | meter values | [tx-protection.md](code/main/tx-protection.md) |
+| 0x1204D | u8 | `ptt_source` (0 = none, 1..11) | tx-protection.md |
+| 0x1B634..0x1B6DD | | DSP register shadows | dsp-link.md |
+| 0x1FA50 + 0xC8 × P1 | 6 × 100 × u16 | per-P1 menu index lists | menu.md |
+| 0x20B04..0x20B16 | 10 × u16 | ADC results: AN001, AN002, AN003, AN006, AN005, AN007, AN108, AN109, AN115, AN117 | [peripherals.md](code/main/peripherals.md#data-structures-and-globals) |
+| 0x20B18 | u8 | `trx_state`, TX/RX sequencer state 0..8 | tx-protection.md |
+| 0x2105C | 350 × 0x38 | menu item table | menu.md |
 
 ### MAIN RAM and EEPROM areas used by CAT (T09) [fact]
 The full list is in [code/main/cat.md](code/main/cat.md#data-structures-and-globals).
@@ -204,9 +243,12 @@ vectors point into this RAM code directly. VTOR = 0x08001000, MSP = 0x00200000, 
 
 | Range | Use | Evidence |
 |---|---|---|
-| 0x20020000–0x2003FFFF | rpmsg-lite shared memory (vrings + 512-byte buffers) | `rpmsg_lite_master_init(0x20020000, 0x20000)` in `ipc_init` 0x00084A50; DSP literal 0x20020000 @0x206CA8 **[fact]** |
-| 0x20060000–0x200631DF | DSP buffers (XOS init, I2S DMA buffers) | DSP literals in 0x0021C498, 0x002260D8 **[fact]** |
-| 0x20070000–0x2007FFFF | parameter register file, 32K × 16 bit, written by the MAIN CPU through the M33 console; the DSP addresses it via bases 0x2006FF00 (regs 0..0x7F) and 0x20077F00 (regs 0x4000..0x407F) | `regfile_*` 0x00080C20..0x00080C78; DSP literals **[fact]** |
+| 0x20020000–0x2003FFFF | rpmsg-lite shared memory window | `rpmsg_lite_master_init(0x20020000, 0x20000)` in `ipc_init` 0x00084A50; DSP literal 0x20020000 @0x206CA8 **[fact]** |
+| 0x20020000 / 0x20020400 | vring 0 `rx_vq` (DSP → M33) / vring 1 `tx_vq` (M33 → DSP), 0x400 each, 2 descriptors | **[fact]** |
+| 0x20020800–0x20020FFF | 2 × 512 B rx buffers + 2 × 512 B tx buffers (4 of 252 possible slots are posted) | **[fact: computed]** |
+| 0x20021000–0x2003FFFF | unused part of the rpmsg window | **[inference]**, see [code/ifdsp/ipc.md](code/ifdsp/ipc.md) |
+| 0x20060000–0x200631DF | DSP buffers (XOS init); I2S DMA ping-pong buffers at **0x20062BE0 + n·0xC0** (8 × 0xC0) | DSP literals in 0x0021C498, 0x002260D8 **[fact]** |
+| 0x20070000–0x2007FFFF | parameter register file, 32K × 16 bit, written by the MAIN CPU through the M33 console; the DSP addresses it via bases 0x2006FF00 (regs 0..0x7F) and 0x20077F00 (regs 0x4000..0x407F). Regs **0x2000–0x2007** hold the XOS per-thread CPU load (`cpu_load_to_regs_2000`) | `regfile_*` 0x00080C20..0x00080C78; DSP literals **[fact]**; map in [control-link.md](code/ifdsp/control-link.md) |
 
 See `docs/code/ifdsp/README.md`.
 
@@ -217,8 +259,8 @@ See `docs/code/ifdsp/README.md`.
 | 0x00000000–0x0007FFFF | `sram_lo` | SRAM, code-bus alias (unused by the image) |
 | 0x00080000–0x00087EBB | `sram_text_rodata` | file-backed copy-down, **read-only in Ghidra** so the decompiler resolves literal pools |
 | 0x00087EBC–0x00087EC3 | `sram_data` | .data |
-| 0x00087EC4–0x000A1EF7 | `sram_bss` | .bss (FreeRTOS heap/stacks, UART rings, rpmsg state) |
-| 0x000A1EF8–0x0047FFFF | `sram_hi` | rest of the 4.5 MB SRAM. **0x00200000+ is the DSP's** (MSP top = 0x00200000) |
+| 0x00087EC4–0x000A1EF7 | `sram_bss` | .bss (FreeRTOS heap/stacks, UART rings, rpmsg state). FreeRTOS heap_4 `ucHeap` 0x88EF0..0xA1EE8 **[fact]** |
+| 0x000A1EF8–0x0047FFFF | `sram_hi` | rest of the 4.5 MB SRAM. Redlib heap (stdio buffers only) 0xA1EF8..0xA2EF8 **[fact]**. **0x00200000+ is the DSP's** (MSP top = 0x00200000) |
 | 0x08000000–0x08001843 | `flexspi_xip` | flash code (executable) |
 | 0x08001844–0x0805D41B | `flexspi_dsp_images` | HiFi4 images (non-executable for ARM) |
 | 0x0805D41C–0x080652EB | `flexspi_data_lma` | DSP sizes + .data load image (non-executable) |
@@ -231,7 +273,9 @@ See `docs/code/ifdsp/README.md`.
 Peripherals the M33 touches (pages from the decompile **[fact]**, names from the RT685 reference map **[inference]**): RSTCTL0 0x40000000,
 CLKCTL0 0x40001000, SYSCTL0 0x40002000 (incl. DSPSTALL 0x4000200C), IOPCTL 0x40004000, RSTCTL1 0x40020000, CLKCTL1 0x40021000,
 INPUTMUX 0x40026000, CACHE64 0x40033000, GPIO 0x40100000, DMA0/DMA1 0x40104000/0x40105000, **FLEXCOMM0 0x40106000 (USART)**,
-**MU-A 0x40110000**, 0x40112000 (probably SEMA42), FlexSPI 0x40134000, PMC 0x40135000, 0x40146000 (unidentified). The M33 does **not**
+**MU-A 0x40110000**, 0x40112000 (probably SEMA42), FlexSPI 0x40134000, PMC 0x40135000, **SCT0 0x40146000** (PWM, IRQ12 → `sct0_pwm_callback`, T12d).
+PINT 0x40025000, OSTIMER 0x40113000, I3C0 0x40036000 and HASHCRYPT 0x40158000 are referenced only by SDK IRQ handlers that are never
+enabled **[fact]** ([code/ifdsp/m33-platform.md](code/ifdsp/m33-platform.md)). The M33 does **not**
 touch FLEXCOMM1–5 or the codec. The I2S/SPI/codec work is on the DSP side (see below).
 
 ### HiFi4 DSP memory map (the DSP's view = load addresses above)
@@ -243,7 +287,7 @@ touch FLEXCOMM1–5 or the codec. The I2S/SPI/codec work is on the DSP side (see
 | 0x00200000–~0x00206FFF | `sram_dsp_text` | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
 | ~0x00207000–0x002367FF | `sram_dsp_text` | `.text`: 1081 4-aligned `entry a1,N` prologues |
 | 0x00236800–0x002383B3 | `sram_dsp_data` | `.data`: float tables (biquad/filter coefficients, e.g. near 0x236D00) **[inference]** |
-| 0x002383B4–~0x002FFFFF | `sram_dsp_bss` | .bss (pointers up to ~0x2F7xxx appear in literals) |
+| 0x002383B4–~0x002FFFFF | `sram_dsp_bss` | .bss: thread stacks and TCBs, FIFOs, filter states, used up to ~0x2CC000 (e.g. TCB `Thread_Rx_Path` 0x2C7890) **[fact, T12e]**, see [code/ifdsp/hifi4.md](code/ifdsp/hifi4.md) |
 | 0x20040000–0x200431DF | `sram_shared` | image 2 (zeros): shared/non-cached buffer area |
 | 0x40000000–0x4015FFFF | `periph` | the DSP literal pools hold the SDK base-address tables for FLEXCOMM0–7 (0x40106000–0x40109000, 0x40122000–0x40125000), DMA0/1, GPIO, MU and others, so the DSP drives the I2S/SPI blocks **[inference]** |
 

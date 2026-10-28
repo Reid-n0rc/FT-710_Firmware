@@ -1,10 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0020f020 @ 0020f020 (11 bytes)
+// ===== I2S_RxGetDefaultConfig @ 0020f020 (11 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020f020(void)
+void I2S_RxGetDefaultConfig(void)
 
 {
   flix();
@@ -396,11 +396,11 @@ void FUN_0020fbd0(int *param_1)
 }
 
 
-// ===== FUN_0020fbe4 @ 0020fbe4 (8 bytes)
+// ===== I2S_TxTransferCreateHandleDMA @ 0020fbe4 (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020fbe4(void)
+void I2S_TxTransferCreateHandleDMA(void)
 
 {
   flix();
@@ -409,11 +409,11 @@ void FUN_0020fbe4(void)
 }
 
 
-// ===== FUN_0020fc7c @ 0020fc7c (13 bytes)
+// ===== I2S_TxTransferSendDMA @ 0020fc7c (13 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020fc7c(undefined4 param_1,undefined4 param_2)
+void I2S_TxTransferSendDMA(undefined4 param_1,undefined4 param_2)
 
 {
   FUN_0020fbc0(param_2);
@@ -459,11 +459,11 @@ void FUN_0020fd54(void)
 }
 
 
-// ===== FUN_0020fe90 @ 0020fe90 (10 bytes)
+// ===== I2S_RxTransferCreateHandleDMA @ 0020fe90 (10 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020fe90(void)
+void I2S_RxTransferCreateHandleDMA(void)
 
 {
   flix();
@@ -472,11 +472,11 @@ void FUN_0020fe90(void)
 }
 
 
-// ===== FUN_0020fea8 @ 0020fea8 (13 bytes)
+// ===== I2S_RxTransferReceiveDMA @ 0020fea8 (13 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020fea8(undefined4 param_1,undefined4 param_2)
+void I2S_RxTransferReceiveDMA(undefined4 param_1,undefined4 param_2)
 
 {
   FUN_0020fbc0(param_2);

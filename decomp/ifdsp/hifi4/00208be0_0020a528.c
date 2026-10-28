@@ -46,11 +46,11 @@ void FUN_00208d94(int param_1)
 }
 
 
-// ===== FUN_00208e90 @ 00208e90 (13 bytes)
+// ===== CLOCK_GetFlexCommClkFreq @ 00208e90 (13 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00208e90(void)
+void CLOCK_GetFlexCommClkFreq(void)
 
 {
   flix();
@@ -1121,11 +1121,11 @@ void FUN_0020a500(void)
 }
 
 
-// ===== FUN_0020a528 @ 0020a528 (12 bytes)
+// ===== DMA_Init @ 0020a528 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020a528(void)
+void DMA_Init(void)
 
 {
   flix();

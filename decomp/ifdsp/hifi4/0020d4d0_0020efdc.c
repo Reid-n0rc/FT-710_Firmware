@@ -800,11 +800,11 @@ void FUN_0020ed90(void)
 }
 
 
-// ===== FUN_0020edac @ 0020edac (8 bytes)
+// ===== I2S_TxInit @ 0020edac (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020edac(void)
+void I2S_TxInit(void)
 
 {
   flix();
@@ -813,11 +813,11 @@ void FUN_0020edac(void)
 }
 
 
-// ===== FUN_0020eecc @ 0020eecc (8 bytes)
+// ===== I2S_RxInit @ 0020eecc (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020eecc(void)
+void I2S_RxInit(void)
 
 {
   flix();
@@ -826,11 +826,11 @@ void FUN_0020eecc(void)
 }
 
 
-// ===== FUN_0020efdc @ 0020efdc (8 bytes)
+// ===== I2S_TxGetDefaultConfig @ 0020efdc (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_0020efdc(void)
+void I2S_TxGetDefaultConfig(void)
 
 {
   flix();

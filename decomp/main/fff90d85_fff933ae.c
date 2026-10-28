@@ -507,119 +507,119 @@ undefined4 vec110_GROUPBL0(undefined4 param_1)
   
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1e < 0) {
-    FUN_fff90097(0x15,0,0x10000000);
+    R_BSP_InterruptControl(0x15,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1f < 0) {
-    FUN_fff90097(0x14,0,0x10000000);
+    R_BSP_InterruptControl(0x14,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1c < 0) {
-    FUN_fff90097(0x17,0,0x10000000);
+    R_BSP_InterruptControl(0x17,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1d < 0) {
-    FUN_fff90097(0x16,0,0x10000000);
+    R_BSP_InterruptControl(0x16,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1a < 0) {
-    FUN_fff90097(0x19,0,0x10000000);
+    R_BSP_InterruptControl(0x19,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x1b < 0) {
-    FUN_fff90097(0x18,0,0x10000000);
+    R_BSP_InterruptControl(0x18,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x18 < 0) {
-    FUN_fff90097(0x1b,0,0x10000000);
+    R_BSP_InterruptControl(0x1b,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x19 < 0) {
-    FUN_fff90097(0x1a,0,0x10000000);
+    R_BSP_InterruptControl(0x1a,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x16 < 0) {
-    FUN_fff90097(0x1d,0,0x10000000);
+    R_BSP_InterruptControl(0x1d,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x17 < 0) {
-    FUN_fff90097(0x1c,0,0x10000000);
+    R_BSP_InterruptControl(0x1c,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x14 < 0) {
-    FUN_fff90097(0x1f,0,0x10000000);
+    R_BSP_InterruptControl(0x1f,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x15 < 0) {
-    FUN_fff90097(0x1e,0,0x10000000);
+    R_BSP_InterruptControl(0x1e,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x12 < 0) {
-    FUN_fff90097(0x21,0,0x10000000);
+    R_BSP_InterruptControl(0x21,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x13 < 0) {
-    FUN_fff90097(0x20,0,0x10000000);
+    R_BSP_InterruptControl(0x20,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x10 < 0) {
-    FUN_fff90097(0x23,0,0x10000000);
+    R_BSP_InterruptControl(0x23,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0x11 < 0) {
-    FUN_fff90097(0x22,0,0x10000000);
+    R_BSP_InterruptControl(0x22,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0xe < 0) {
-    FUN_fff90097(0x25,0,0x10000000);
+    R_BSP_InterruptControl(0x25,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0xf < 0) {
-    FUN_fff90097(0x24,0,0x10000000);
+    R_BSP_InterruptControl(0x24,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0xd < 0) {
-    FUN_fff90097(0x26,0,0x10000000);
+    R_BSP_InterruptControl(0x26,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0xc < 0) {
-    FUN_fff90097(0x27,0,0x10000000);
+    R_BSP_InterruptControl(0x27,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 0xb < 0) {
-    FUN_fff90097(0x28,0,0x10000000);
+    R_BSP_InterruptControl(0x28,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 10 < 0) {
-    FUN_fff90097(0x29,0,0x10000000);
+    R_BSP_InterruptControl(0x29,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 7 < 0) {
-    FUN_fff90097(0x2a,0,0x10000000);
+    R_BSP_InterruptControl(0x2a,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 5 < 0) {
-    FUN_fff90097(0x2b,0,0x10000000);
+    R_BSP_InterruptControl(0x2b,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 4 < 0) {
-    FUN_fff90097(0x2c,0,0x10000000);
+    R_BSP_InterruptControl(0x2c,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 3 < 0) {
-    FUN_fff90097(0x2d,0,0x10000000);
+    R_BSP_InterruptControl(0x2d,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 2 < 0) {
-    FUN_fff90097(0x2e,0,0x10000000);
+    R_BSP_InterruptControl(0x2e,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 < 0) {
-    FUN_fff90097(0x30,0,0x10000000);
+    R_BSP_InterruptControl(0x30,0,0x10000000);
   }
   iVar1 = DAT_00087630;
   if (iVar1 << 1 < 0) {
-    FUN_fff90097(0x2f,0,0x10000000);
+    R_BSP_InterruptControl(0x2f,0,0x10000000);
     return param_1;
   }
   return param_1;
@@ -642,99 +642,99 @@ undefined4 vec111_GROUPBL1(undefined4 param_1)
   
   iVar1 = DAT_00087634;
   if (iVar1 << 0x1c < 0) {
-    FUN_fff90097(0x32,0,0x10000000);
+    R_BSP_InterruptControl(0x32,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x1b < 0) {
-    FUN_fff90097(0x33,0,0x10000000);
+    R_BSP_InterruptControl(0x33,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x1a < 0) {
-    FUN_fff90097(0x34,0,0x10000000);
+    R_BSP_InterruptControl(0x34,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x19 < 0) {
-    FUN_fff90097(0x35,0,0x10000000);
+    R_BSP_InterruptControl(0x35,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x18 < 0) {
-    FUN_fff90097(0x36,0,0x10000000);
+    R_BSP_InterruptControl(0x36,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x17 < 0) {
-    FUN_fff90097(0x37,0,0x10000000);
+    R_BSP_InterruptControl(0x37,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x16 < 0) {
-    FUN_fff90097(0x38,0,0x10000000);
+    R_BSP_InterruptControl(0x38,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x15 < 0) {
-    FUN_fff90097(0x39,0,0x10000000);
+    R_BSP_InterruptControl(0x39,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x14 < 0) {
-    FUN_fff90097(0x3a,0,0x10000000);
+    R_BSP_InterruptControl(0x3a,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x13 < 0) {
-    FUN_fff90097(0x3b,0,0x10000000);
+    R_BSP_InterruptControl(0x3b,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x11 < 0) {
-    FUN_fff90097(0x3d,0,0x10000000);
+    R_BSP_InterruptControl(0x3d,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x12 < 0) {
-    FUN_fff90097(0x3c,0,0x10000000);
+    R_BSP_InterruptControl(0x3c,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0xf < 0) {
-    FUN_fff90097(0x3f,0,0x10000000);
+    R_BSP_InterruptControl(0x3f,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0x10 < 0) {
-    FUN_fff90097(0x3e,0,0x10000000);
+    R_BSP_InterruptControl(0x3e,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 0xb < 0) {
-    FUN_fff90097(0x40,0,0x10000000);
+    R_BSP_InterruptControl(0x40,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 10 < 0) {
-    FUN_fff90097(0x41,0,0x10000000);
+    R_BSP_InterruptControl(0x41,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 9 < 0) {
-    FUN_fff90097(0x42,0,0x10000000);
+    R_BSP_InterruptControl(0x42,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 8 < 0) {
-    FUN_fff90097(0x43,0,0x10000000);
+    R_BSP_InterruptControl(0x43,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 6 < 0) {
-    FUN_fff90097(0x45,0,0x10000000);
+    R_BSP_InterruptControl(0x45,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 7 < 0) {
-    FUN_fff90097(0x44,0,0x10000000);
+    R_BSP_InterruptControl(0x44,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 4 < 0) {
-    FUN_fff90097(0x47,0,0x10000000);
+    R_BSP_InterruptControl(0x47,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 5 < 0) {
-    FUN_fff90097(0x46,0,0x10000000);
+    R_BSP_InterruptControl(0x46,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 2 < 0) {
-    FUN_fff90097(0x49,0,0x10000000);
+    R_BSP_InterruptControl(0x49,0,0x10000000);
   }
   iVar1 = DAT_00087634;
   if (iVar1 << 3 < 0) {
-    FUN_fff90097(0x48,0,0x10000000);
+    R_BSP_InterruptControl(0x48,0,0x10000000);
     return param_1;
   }
   return param_1;
@@ -757,7 +757,7 @@ undefined4 vec107_GROUPBL2(undefined4 param_1)
   
   iVar1 = DAT_00087638;
   if (iVar1 << 0x1f < 0) {
-    FUN_fff90097(0x4b,0,0x10000000);
+    R_BSP_InterruptControl(0x4b,0,0x10000000);
     return param_1;
   }
   return param_1;
@@ -780,43 +780,43 @@ undefined4 vec112_GROUPAL0(undefined4 param_1)
   
   iVar1 = DAT_00087830;
   if (iVar1 << 0x16 < 0) {
-    FUN_fff90097(0x4e,0,0x10000000);
+    R_BSP_InterruptControl(0x4e,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0x17 < 0) {
-    FUN_fff90097(0x4d,0,0x10000000);
+    R_BSP_InterruptControl(0x4d,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0x12 < 0) {
-    FUN_fff90097(0x50,0,0x10000000);
+    R_BSP_InterruptControl(0x50,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0x13 < 0) {
-    FUN_fff90097(0x4f,0,0x10000000);
+    R_BSP_InterruptControl(0x4f,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0xe < 0) {
-    FUN_fff90097(0x52,0,0x10000000);
+    R_BSP_InterruptControl(0x52,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0xf < 0) {
-    FUN_fff90097(0x51,0,0x10000000);
+    R_BSP_InterruptControl(0x51,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0xc < 0) {
-    FUN_fff90097(0x54,0,0x10000000);
+    R_BSP_InterruptControl(0x54,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0xd < 0) {
-    FUN_fff90097(0x53,0,0x10000000);
+    R_BSP_InterruptControl(0x53,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 10 < 0) {
-    FUN_fff90097(0x56,0,0x10000000);
+    R_BSP_InterruptControl(0x56,0,0x10000000);
   }
   iVar1 = DAT_00087830;
   if (iVar1 << 0xb < 0) {
-    FUN_fff90097(0x55,0,0x10000000);
+    R_BSP_InterruptControl(0x55,0,0x10000000);
     return param_1;
   }
   return param_1;
@@ -839,23 +839,23 @@ undefined4 vec113_GROUPAL1(undefined4 param_1)
   
   iVar1 = DAT_00087834;
   if (iVar1 << 0x1b < 0) {
-    FUN_fff90097(0x58,0,0x10000000);
+    R_BSP_InterruptControl(0x58,0,0x10000000);
   }
   iVar1 = DAT_00087834;
   if (iVar1 << 0x16 < 0) {
-    FUN_fff90097(0x5a,0,0x10000000);
+    R_BSP_InterruptControl(0x5a,0,0x10000000);
   }
   iVar1 = DAT_00087834;
   if (iVar1 << 0x15 < 0) {
-    FUN_fff90097(0x5b,0,0x10000000);
+    R_BSP_InterruptControl(0x5b,0,0x10000000);
   }
   iVar1 = DAT_00087834;
   if (iVar1 << 0x17 < 0) {
-    FUN_fff90097(0x59,0,0x10000000);
+    R_BSP_InterruptControl(0x59,0,0x10000000);
   }
   iVar1 = DAT_00087834;
   if (iVar1 << 0x14 < 0) {
-    FUN_fff90097(0x5c,0,0x10000000);
+    R_BSP_InterruptControl(0x5c,0,0x10000000);
     return param_1;
   }
   return param_1;
@@ -881,22 +881,25 @@ undefined4 vec106_GROUPBE0(undefined4 param_1)
   if (iVar1 << 0x1f < 0) {
     uVar2 = DAT_00087680;
     DAT_00087680 = uVar2 | 1;
-    FUN_fff90097(0x11,0,0x10000000);
+    R_BSP_InterruptControl(0x11,0,0x10000000);
   }
   iVar1 = DAT_00087600;
   if (iVar1 << 0x1e < 0) {
     uVar2 = DAT_00087680;
     DAT_00087680 = uVar2 | 2;
-    FUN_fff90097(0x12,0,0x10000000);
+    R_BSP_InterruptControl(0x12,0,0x10000000);
     return param_1;
   }
   return param_1;
 }
 
 
-// ===== FUN_fff92014 @ fff92014 (1121 bytes)
+// ===== icu_select_init @ fff92014 (1121 bytes)
 
-void FUN_fff92014(void)
+/* Writes ICU SLIBXR128.. selectable interrupt sources (130<-0x0F TPU0, 138<-0x18 TPU2, 142<-0x1C
+   TPU3, 144<-0x14 TPU1, 186<-0x40 S12ADI0, 189<-0x44 S12ADI1) */
+
+void icu_select_init(void)
 
 {
   DAT_00087780 = 1;
@@ -1026,9 +1029,11 @@ void FUN_fff92014(void)
 }
 
 
-// ===== FUN_fff927a9 @ fff927a9 (37 bytes)
+// ===== R_IWDT_Create @ fff927a9 (37 bytes)
 
-void FUN_fff927a9(void)
+/* IWDTCR=0x3350, IWDTRCR=0 (underflow -> NMI), NMIER.IWDTEN */
+
+void R_IWDT_Create(void)
 
 {
   byte bVar1;
@@ -1043,9 +1048,11 @@ void FUN_fff927a9(void)
 }
 
 
-// ===== FUN_fff927ce @ fff927ce (17 bytes)
+// ===== iwdt_refresh @ fff927ce (17 bytes)
 
-void FUN_fff927ce(void)
+/* IWDTRR <- 0x00, 0xFF */
+
+void iwdt_refresh(void)
 
 {
   DAT_00088030 = 0;
@@ -1063,9 +1070,11 @@ void FUN_fff927df(void)
 }
 
 
-// ===== FUN_fff927e5 @ fff927e5 (65 bytes)
+// ===== R_DA_Create @ fff927e5 (65 bytes)
 
-void FUN_fff927e5(void)
+/* DA0 on P03 (net DA_OUT -> TONE_BEEP) */
+
+void R_DA_Create(void)
 
 {
   uint uVar1;
@@ -1086,9 +1095,11 @@ void FUN_fff927e5(void)
 }
 
 
-// ===== FUN_fff92826 @ fff92826 (15 bytes)
+// ===== R_DA0_Start @ fff92826 (15 bytes)
 
-void FUN_fff92826(void)
+/* DACR.DAOE0=1 */
+
+void R_DA0_Start(void)
 
 {
   byte bVar1;
@@ -1101,9 +1112,11 @@ void FUN_fff92826(void)
 }
 
 
-// ===== FUN_fff9283d @ fff9283d (19 bytes)
+// ===== dac0_write @ fff9283d (19 bytes)
 
-void FUN_fff9283d(ushort param_1)
+/* DADR0 = v & 0xFFF */
+
+void dac0_write(ushort param_1)
 
 {
   DAT_00088040 = param_1 & 0xfff;
@@ -1120,9 +1133,11 @@ void FUN_fff92850(void)
 }
 
 
-// ===== FUN_fff92851 @ fff92851 (422 bytes)
+// ===== R_S12AD0_Create @ fff92851 (422 bytes)
 
-void FUN_fff92851(void)
+/* Unit 0: AN001 AN002 AN003 AN005 AN006 AN007, 4x average on AN003/5/6/7, scan-end IRQ vec186 */
+
+void R_S12AD0_Create(void)
 
 {
   uint uVar1;
@@ -1193,9 +1208,11 @@ void FUN_fff92851(void)
 }
 
 
-// ===== FUN_fff929f7 @ fff929f7 (28 bytes)
+// ===== R_S12AD0_Start @ fff929f7 (28 bytes)
 
-void FUN_fff929f7(void)
+/* ADCSR.ADST=1 */
+
+void R_S12AD0_Start(void)
 
 {
   byte bVar1;
@@ -1211,9 +1228,9 @@ void FUN_fff929f7(void)
 }
 
 
-// ===== FUN_fff92a13 @ fff92a13 (30 bytes)
+// ===== R_S12AD0_Stop @ fff92a13 (30 bytes)
 
-void FUN_fff92a13(void)
+void R_S12AD0_Stop(void)
 
 {
   byte bVar1;
@@ -1229,9 +1246,11 @@ void FUN_fff92a13(void)
 }
 
 
-// ===== FUN_fff92a31 @ fff92a31 (207 bytes)
+// ===== R_S12AD0_Get_ValueResult @ fff92a31 (207 bytes)
 
-void FUN_fff92a31(int param_1,undefined2 *param_2)
+/* (channel, *dst) */
+
+void R_S12AD0_Get_ValueResult(int param_1,undefined2 *param_2)
 
 {
   undefined2 uVar1;
@@ -1309,26 +1328,29 @@ void FUN_fff92b00(void)
 }
 
 
-// ===== vec186_isr @ fff92b01 (22 bytes)
+// ===== r_s12ad0_scan_end_isr @ fff92b01 (22 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff92b11) */
 /* WARNING: Removing unreachable block (ram,0xfff92b01) */
 /* WARNING: Removing unreachable block (ram,0xfff92b03) */
 /* WARNING: Removing unreachable block (ram,0xfff92b13) */
+/* vec186: stop unit 0, copy results to 0x20B04.., set 0x1203E */
 
-undefined4 vec186_isr(undefined4 param_1)
+undefined4 r_s12ad0_scan_end_isr(undefined4 param_1)
 
 {
-  FUN_fff92a13();
-  FUN_fffb27fb();
-  FUN_fffb284e();
+  R_S12AD0_Stop();
+  adc0_store();
+  adc0_done();
   return param_1;
 }
 
 
-// ===== FUN_fff92b17 @ fff92b17 (349 bytes)
+// ===== R_S12AD1_Create @ fff92b17 (349 bytes)
 
-void FUN_fff92b17(void)
+/* Unit 1: AN108 AN109 AN115 AN117, 4x average, scan-end IRQ vec189 */
+
+void R_S12AD1_Create(void)
 
 {
   uint uVar1;
@@ -1386,9 +1408,9 @@ void FUN_fff92b17(void)
 }
 
 
-// ===== FUN_fff92c74 @ fff92c74 (28 bytes)
+// ===== R_S12AD1_Start @ fff92c74 (28 bytes)
 
-void FUN_fff92c74(void)
+void R_S12AD1_Start(void)
 
 {
   byte bVar1;
@@ -1404,9 +1426,9 @@ void FUN_fff92c74(void)
 }
 
 
-// ===== FUN_fff92c90 @ fff92c90 (30 bytes)
+// ===== R_S12AD1_Stop @ fff92c90 (30 bytes)
 
-void FUN_fff92c90(void)
+void R_S12AD1_Stop(void)
 
 {
   byte bVar1;
@@ -1422,9 +1444,11 @@ void FUN_fff92c90(void)
 }
 
 
-// ===== FUN_fff92cae @ fff92cae (352 bytes)
+// ===== R_S12AD1_Get_ValueResult @ fff92cae (352 bytes)
 
-void FUN_fff92cae(undefined4 param_1,undefined2 *param_2)
+/* (channel, *dst) */
+
+void R_S12AD1_Get_ValueResult(undefined4 param_1,undefined2 *param_2)
 
 {
   undefined2 uVar1;
@@ -1553,19 +1577,20 @@ void FUN_fff92e0e(void)
 }
 
 
-// ===== vec189_isr @ fff92e0f (22 bytes)
+// ===== r_s12ad1_scan_end_isr @ fff92e0f (22 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff92e1f) */
 /* WARNING: Removing unreachable block (ram,0xfff92e0f) */
 /* WARNING: Removing unreachable block (ram,0xfff92e11) */
 /* WARNING: Removing unreachable block (ram,0xfff92e21) */
+/* vec189: stop unit 1, copy results to 0x20B10.., set 0x1203F */
 
-undefined4 vec189_isr(undefined4 param_1)
+undefined4 r_s12ad1_scan_end_isr(undefined4 param_1)
 
 {
-  FUN_fff92c90();
-  FUN_fffb2858();
-  FUN_fffb2894();
+  R_S12AD1_Stop();
+  adc1_store();
+  adc1_done();
   return param_1;
 }
 
@@ -1597,9 +1622,11 @@ void FUN_fff92e48(void)
 }
 
 
-// ===== FUN_fff92e49 @ fff92e49 (981 bytes)
+// ===== R_Pins_Create @ fff92e49 (981 bytes)
 
-void FUN_fff92e49(void)
+/* Port init: PDR/PODR/PCR/DSCR/ODR for P0..PJ (see docs/code/main/peripherals.md GPIO map) */
+
+void R_Pins_Create(void)
 
 {
   DAT_0008c080 = 0;
@@ -1758,7 +1785,7 @@ void R_SCI0_Create(void)
   DAT_0008c023 = bVar2 | 4;
   bVar2 = DAT_0008c003;
   DAT_0008c003 = bVar2 | 4;
-  FUN_fff9340d();
+  R_SCI0_Create_UserInit();
   return;
 }
 

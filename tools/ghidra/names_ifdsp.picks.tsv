@@ -1,0 +1,15 @@
+# T17: resolutions of the IFDSP name conflicts (names_ifdsp.T12{b,c,d}.tsv vs IfdspM33Names.java / IfdspHifi4Names.java).
+# address<TAB>chosen name<TAB>reason / losers. M33: the T12b/c/d proposals are deliberate renames of the T07/T12a names and win
+# (no pick needed). HiFi4: IfdspHifi4Names.java (T12e, FLIX-aware disassembly, owner of hifi4.md) wins over T12b/T12c.
+# hifi4
+0021bd40	ipc_handle_msg	T12e owner; loser handle_srtm_msg (T12c)
+0021be80	regfile_set_defaults	T12e + T12b agree; loser regfile_init_defaults (T12c)
+0021c060	tx_gpio_to_reg4004	T12e owner; loser regfile_update_gpio_status (T12b)
+0021c360	Thread_Main_entry	T12e owner (the thread is named "Thread_Main"; this is its entry); loser Thread_Main (T12c)
+0021c3b4	Thread_Ipc_entry	T12e owner; loser Thread_Ipc (T12c)
+0021c498	xos_create_main_ipc_threads	T12e owner (the DSP main); loser main (T12c)
+0021f348	meter_to_reg4005	T12e owner; loser status_level_update (T12b)
+# m33 (dropped, not renamed: T12d found these are not function entries)
+# 000800ee	POWER_CalcSafetyCount / POWER_CalculateSafetyCount_body: removed, 0x800E8 POWER_CalculateSafetyCount owns the body
+# 00080a24	OTFAD_Init_body: removed, 0x80A18 OTFAD_Init owns the body
+00233410	xthal_set_region_attribute	T17: T12c proposed memset, which duplicates memset @ 0x235EB0 (T12e); the calls (0x20060000, 0x31E0, 2, 0) / (0x20070000, 0x10000, 2, 0) from the DSP main match the Xtensa HAL (vaddr, size, cattr, flags) signature [inference] (control-link.md, hifi4.md)

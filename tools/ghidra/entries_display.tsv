@@ -16,3 +16,62 @@
 20114028		late start (FUN_2011402c), powon_init
 201167d8		late start (FUN_201167e0)
 20116c4c		late start (FUN_20116c50), bootinfo_load
+# --- merged from entries_display.T11b.tsv (T17)
+201600a8		late start (FUN_201600ac): MAIN-link RX dispatcher task, vtbl 0x20428030; starts with ldr r7,=0x2045006D
+201632d8		SCIF write into the 1 KB TX ring (vtbl+0x24); not in the T06 function list
+20162f10		SCIF TXI handler, swallowed by FUN_20162dd8 (the RXI handler); target of the *_txi stubs
+20114884		SCIF3 RXI stub (ISR descriptor 0x20165778): r0 = UART object 0x208DA1E0, b 0x20162DD8
+2011488c		SCIF3 TXI stub (ISR descriptor 0x20165764): b 0x20162F10
+20114894		SCIF4 RXI stub (ISR descriptor 0x201657A0, GIC 0xEF)
+2011489c		SCIF4 TXI stub (ISR descriptor 0x2016578C, GIC 0xF0)
+201148a4		SCIF5 RXI stub (ISR descriptor 0x201657C8, GIC 0xF3): MAIN link
+201148ac		SCIF5 TXI stub (ISR descriptor 0x201657B4, GIC 0xF4): MAIN link
+20116390		cyclic handler (descriptor 0x201658C4, cyctim 5): set_flg(0x2045004C, 1) = ACK timeout tick
+20160278		post a frame buffer to the RX dispatcher mailbox (obj+0x819C); tail-called from 0x201165EC and 0x2015EA40
+2010ede8		'E' (0x45) frame handler: MAIN writes a block into 0x208116A6, reply C5; tail-called from 0x2015EA4C
+2010eeb4		'D' (0x44) frame handler: MAIN reads a block from 0x208116A6, reply C4; tail-called from 0x2015EA58
+# --- merged from entries_display.T11c.tsv (T17)
+2015f0e0		task_fwdbg: entry of the self-update debug task built on the stack by fwdbg_task_create (0x2015F55C); `mov r4,r0; bl update_display_self`
+# --- merged from entries_display.T11d.tsv (T17)
+2011f840		late start (FUN_2011f84c), rspi_rx_isr
+2011f89c		late start (FUN_2011f8a8), rspi_tx_isr
+201333f0		late start (FUN_201333f4): ISR GIC 535 (TINT, SDR SPI frame) -> 0x2011F138(2)
+20133418		late start (FUN_2013341c): ISR GIC 449 (TINT, DSP SPI frame) -> 0x2011F138(4)
+2011ecd4		ISR RSPI0 SPTI (GIC 272) -> 0x2011F89C(0)
+2011ecdc		ISR RSPI0 SPRI (GIC 271) -> 0x2011F840(0)
+2011ece4		ISR RSPI1 SPTI (GIC 275)
+2011ecec		ISR RSPI1 SPRI (GIC 274)
+2011ecf4		ISR RSPI2 SPTI (GIC 278)
+2011ecfc		ISR RSPI2 SPRI (GIC 277)
+2011ed04		ISR RSPI3 SPTI (GIC 281)
+2011ed0c		ISR RSPI3 SPRI (GIC 280)
+2011ed14		ISR RSPI4 SPTI (GIC 284)
+2011ed1c		ISR RSPI4 SPRI (GIC 283)
+20137490		ISR DMAC ch3 end (GIC 44): sets a done flag
+201374a0		ISR DMAC ch5 end (GIC 46): calls a callback pointer
+201376c4		ISR DMAC ch4 end (GIC 45): calls a callback pointer
+20137aec		ISR DMAC ch9 end (GIC 50): calls a callback pointer
+20137d1c		ISR DMAC ch10 end (GIC 51): calls a callback pointer
+# --- merged from entries_display.T11f.tsv (T17)
+201127d4		renc_poll_mtu1: `ldr r0,=0xFCFF0300` before the push; FUN_201127d8 is a late start (called from task_detect_renc 0x20112AE0)
+20112830		renc_poll_mtu2: `ldr r0,=0xFCFF0000` before the push; FUN_20112834 is a late start (called from task_detect_renc 0x20112AE4)
+# --- merged from entries_display.T11g.tsv (T17)
+201203d4		ISR RIIC0 RI (GIC 190) -> 0x20120C04(0)
+201203dc		ISR RIIC0 TI (GIC 191) -> 0x20120C54(0)
+201203e4		ISR RIIC0 TEI (GIC 189) -> 0x20120CB0(0)
+201203ec		ISR RIIC1 RI (GIC 198)
+201203f4		ISR RIIC1 TI (GIC 199)
+201203fc		ISR RIIC1 TEI (GIC 197)
+20120404		ISR RIIC2 RI (GIC 206)
+2012040c		ISR RIIC2 TI (GIC 207)
+20120414		ISR RIIC2 TEI (GIC 205)
+2012041c		ISR RIIC3 RI (GIC 214)
+20120424		ISR RIIC3 TI (GIC 215)
+2012042c		ISR RIIC3 TEI (GIC 213)
+2013b58c		def_inh handler USBI0 (GIC 73) -> 0x201396B0(0)
+2013b598		def_inh handler USBI1 (GIC 74) -> 0x201396B0(1)
+2013fde0		def_inh handler SDHI0 (GIC 303) -> 0x20140B9C
+20102698		backlight_set_pct; the tail of FUN_2010261c / target of FUN_201026e0 and FUN_201026e8
+20113d6c		dimmer_set_pct; target of FUN_20113db8 and FUN_20113dc0
+20101cd4		P2_4/P2_5/P10_1 3-way select (PSR2/PSR10), no Ghidra function
+20101da4		gpio_usb0_en: (port, on) -> P8_10 USB0_EN via PSR8, no Ghidra function

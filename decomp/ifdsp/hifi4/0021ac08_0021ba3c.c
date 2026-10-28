@@ -11,9 +11,11 @@ void FUN_0021ac08(void)
 }
 
 
-// ===== FUN_0021ac14 @ 0021ac14 (22 bytes)
+// ===== env_isr @ 0021ac14 (22 bytes)
 
-void FUN_0021ac14(uint param_1)
+/* isr_table[vector] -> virtqueue_notification */
+
+void env_isr(uint param_1)
 
 {
   if (param_1 < 0xc) {
@@ -26,11 +28,12 @@ void FUN_0021ac14(uint param_1)
 }
 
 
-// ===== FUN_0021ac30 @ 0021ac30 (31 bytes)
+// ===== MU_B_IRQHandler @ 0021ac30 (31 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* rpmsg platform ISR: if MU-B SR RF1 (bit 26): env_isr(RR1 >> 16) */
 
-void FUN_0021ac30(void)
+void MU_B_IRQHandler(void)
 
 {
   undefined4 uVar1;
@@ -49,11 +52,12 @@ void FUN_0021ac30(void)
 }
 
 
-// ===== FUN_0021ac58 @ 0021ac58 (8 bytes)
+// ===== platform_init_interrupt @ 0021ac58 (8 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* env_register_isr, first use: MU-B CR |= RIE1, xos_register_interrupt_handler(MU_B_IRQHandler) */
 
-void FUN_0021ac58(void)
+void platform_init_interrupt(void)
 
 {
   flix();
@@ -62,32 +66,38 @@ void FUN_0021ac58(void)
 }
 
 
-// ===== FUN_0021acb4 @ 0021acb4 (12 bytes)
+// ===== platform_deinit_interrupt @ 0021acb4 (12 bytes)
 
-void FUN_0021acb4(void)
+/* last use: MU-B CR &= ~RIE1, unregister handler */
+
+void platform_deinit_interrupt(void)
 
 {
                     /* WARNING: Subroutine does not return */
-  FUN_0021ab94(DAT_002390d0);
+  env_lock_mutex(DAT_002390d0);
 }
 
 
-// ===== FUN_0021ad04 @ 0021ad04 (19 bytes)
+// ===== platform_notify @ 0021ad04 (19 bytes)
 
-void FUN_0021ad04(uint param_1)
+/* wait MU-B SR TE1 (bit 22), TR1 = vector << 16 */
+
+void platform_notify(uint param_1)
 
 {
   if (param_1 >> 1 != 1) {
     return;
   }
                     /* WARNING: Subroutine does not return */
-  FUN_0021ab94(DAT_002390d0);
+  env_lock_mutex(DAT_002390d0);
 }
 
 
-// ===== FUN_0021ad44 @ 0021ad44 (32 bytes)
+// ===== platform_time_delay @ 0021ad44 (32 bytes)
 
-void FUN_0021ad44(int param_1)
+/* busy-wait on CCOUNT (0x1F40 cycles per unit) */
+
+void platform_time_delay(int param_1)
 
 {
   int iVar1;
@@ -119,7 +129,7 @@ void FUN_0021ad6c(void)
 
 {
   if (0 < DAT_002390d8) {
-    FUN_0022678c(6);
+    xos_interrupt_enable(6);
     DAT_002390d8 = DAT_002390d8 + -1;
     return;
   }
@@ -353,21 +363,23 @@ void FUN_0021af7c(void)
 void FUN_0021af90(int param_1)
 
 {
-  FUN_0021ad04(*(undefined2 *)(param_1 + 0x50));
+  platform_notify(*(undefined2 *)(param_1 + 0x50));
   return;
 }
 
 
-// ===== FUN_0021af9c @ 0021af9c (14 bytes)
+// ===== rpmsg_lite_create_ept @ 0021af9c (14 bytes)
 
-undefined4 FUN_0021af9c(int param_1)
+/* called by Thread_Ipc (callback ipc_ept_rx_cb) and rpmsg_ns_bind */
+
+undefined4 rpmsg_lite_create_ept(int param_1)
 
 {
   if (param_1 == 0) {
     return 0;
   }
                     /* WARNING: Subroutine does not return */
-  FUN_0021ab94(*(undefined4 *)(param_1 + 0xc));
+  env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
 }
 
 
@@ -378,15 +390,17 @@ undefined4 FUN_0021b034(int param_1,int param_2)
 {
   if ((param_1 != 0) && (param_2 != 0)) {
                     /* WARNING: Subroutine does not return */
-    FUN_0021ab94(*(undefined4 *)(param_1 + 0xc));
+    env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
   }
   return 0xffffec75;
 }
 
 
-// ===== FUN_0021b078 @ 0021b078 (13 bytes)
+// ===== rpmsg_lite_is_link_up @ 0021b078 (13 bytes)
 
-undefined4 FUN_0021b078(int param_1)
+/* returns rl->link_state (+0x10) */
+
+undefined4 rpmsg_lite_is_link_up(int param_1)
 
 {
   if (param_1 != 0) {
@@ -396,11 +410,12 @@ undefined4 FUN_0021b078(int param_1)
 }
 
 
-// ===== FUN_0021b088 @ 0021b088 (3 bytes)
+// ===== rpmsg_lite_send @ 0021b088 (3 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* called by handle_srtm_msg and rpmsg_ns_announce */
 
-void FUN_0021b088(void)
+void rpmsg_lite_send(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
@@ -419,7 +434,7 @@ void FUN_0021b190(int param_1)
     return;
   }
                     /* WARNING: Subroutine does not return */
-  FUN_0021ab94(*(undefined4 *)(param_1 + 0xc));
+  env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
 }
 
 
@@ -445,7 +460,7 @@ undefined4 FUN_0021b2f8(int param_1,int param_2)
 {
   if ((param_1 != 0) && (param_2 != 0)) {
                     /* WARNING: Subroutine does not return */
-    FUN_0021ab94(*(undefined4 *)(param_1 + 0xc));
+    env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
   }
   return 0xffffec75;
 }
@@ -464,11 +479,12 @@ void FUN_0021b34c(void)
 }
 
 
-// ===== FUN_0021b544 @ 0021b544 (24 bytes)
+// ===== rpmsg_lite_remote_init @ 0021b544 (24 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* called by Thread_Ipc; init_interrupt x2, disable/enable x2 [inference] */
 
-undefined4 FUN_0021b544(int param_1,uint param_2,undefined4 param_3,int param_4)
+undefined4 rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int param_4)
 
 {
   if (((param_2 < 2) && (param_1 != 0)) && (param_4 != 0)) {
@@ -521,11 +537,12 @@ void FUN_0021b6d0(void)
 }
 
 
-// ===== FUN_0021b734 @ 0021b734 (16 bytes)
+// ===== rpmsg_ns_bind @ 0021b734 (16 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* creates an endpoint (no callers found) [inference] */
 
-undefined4 FUN_0021b734(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
+undefined4 rpmsg_ns_bind(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
 
 {
   if ((param_2 != 0) && (param_4 != 0)) {
@@ -550,11 +567,12 @@ void FUN_0021b768(void)
 }
 
 
-// ===== FUN_0021b778 @ 0021b778 (20 bytes)
+// ===== rpmsg_ns_announce @ 0021b778 (20 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* sends via rpmsg_lite_send, error 0xFFFFEC75 (no callers found) [inference] */
 
-undefined4 FUN_0021b778(undefined4 param_1,int param_2,int param_3)
+undefined4 rpmsg_ns_announce(undefined4 param_1,int param_2,int param_3)
 
 {
   if ((param_3 != 0) && (param_2 != 0)) {

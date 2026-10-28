@@ -123,9 +123,9 @@ void FUN_00212670(void)
 }
 
 
-// ===== FUN_00212684 @ 00212684 (12 bytes)
+// ===== INPUTMUX_AttachSignal @ 00212684 (12 bytes)
 
-void FUN_00212684(void)
+void INPUTMUX_AttachSignal(void)
 
 {
   flix();
@@ -361,11 +361,12 @@ void FUN_00212cc8(undefined4 param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_00212d00 @ 00212d00 (23 bytes)
+// ===== MU_Init @ 00212d00 (23 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* clock enable for MU (base 0x40111000 MU-B passed by Thread_Ipc) */
 
-void FUN_00212d00(void)
+void MU_Init(void)
 
 {
   flix();
@@ -389,9 +390,11 @@ void FUN_00212dac(void)
 }
 
 
-// ===== FUN_00212e58 @ 00212e58 (46 bytes)
+// ===== MU_SendMsg @ 00212e58 (46 bytes)
 
-void FUN_00212e58(int param_1,uint param_2,undefined4 param_3)
+/* wait SR TEn, TR[reg] (+0x20) */
+
+void MU_SendMsg(int param_1,uint param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -408,9 +411,11 @@ void FUN_00212e58(int param_1,uint param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00212e88 @ 00212e88 (47 bytes)
+// ===== MU_ReceiveMsg @ 00212e88 (47 bytes)
 
-undefined4 FUN_00212e88(int param_1,uint param_2)
+/* wait SR RFn, RR[reg] (+0x40) */
+
+undefined4 MU_ReceiveMsg(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -426,11 +431,12 @@ undefined4 FUN_00212e88(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00212eb8 @ 00212eb8 (41 bytes)
+// ===== MU_SetFlags @ 00212eb8 (41 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* wait SR FUP (bit 8) clear, CR Fn = flags */
 
-void FUN_00212eb8(int param_1)
+void MU_SetFlags(int param_1)
 
 {
   uint uVar1;

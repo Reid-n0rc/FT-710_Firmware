@@ -51,7 +51,8 @@ Its first word is stored in 0x20800398 (the running bank, used by the update cod
 - `DAT_208003A3 = gpio_read_bit(8, 12)` (P8_12) **[fact]**, meaning unknown.
 - `powon_init` and `key_init` start the power-switch and key tasks.
 - `boot_mode_full()` (0x20116E84) returns 0 (standby) only when the first active key line from `key_scan_first` is not 6, the force flag 0x208003A4 is
-  clear and P2_0 reads 1; otherwise 1 (full) **[fact]**. So holding key line 6 at power-up forces the full start **[inference]**.
+  clear and P2_0 reads 1; otherwise 1 (full) **[fact]**. n = 6 is boot key combination 6 = **DNR + A/B + QMB**, so holding those keys at power-up
+  forces the full start (a service/update mode, see [input.md](input.md#boot-key-combinations)) **[fact for the keys, inference for the purpose]**.
 
 ```mermaid
 stateDiagram-v2
@@ -72,27 +73,27 @@ so the standby → on transition does not reboot the CPU **[fact for the code, i
 |---|---|---|
 | 1 | `bootinfo_load` 0x20116C4C | see section 1 |
 | 2 | `fb_clear_all` 0x20132F84 | clears 0x60000000 + 0x2FF300 and the layer at 0x605048A0 |
-| 3 | `FUN_201147d4` | creates a kernel object from {2,0,0} (event flag or mailbox) into 0x20800368, after `FUN_20114328`/`FUN_201142cc` port set-up |
+| 3 | `rtc_init` | creates a kernel object from {2,0,0} (event flag or mailbox) into 0x20800368, after `rtc_port_idle`/`rtc_write_reg` port set-up |
 | 4 | `sd_fs_init` 0x201039B0 | FAT volume (`FUN_2014a4d0`), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
-| 5 | `fwdbg_init` 0x20111064 | self-update debug task (`FUN_2015f55c`) + `fwdbg_line` handler |
-| 6 | `loader_selfinstall` 0x20110F0C | only when 0xFCFF400C holds 0xAABBCCDD: erases flash 0..0x340000 and the two flag sectors, then writes this running image (from `vec_reset`) to flash 0 and new flags. This is how a new **loader** gets installed **[fact for the code, inference for the purpose]**. Who sets 0xFCFF400C is for T11c |
+| 5 | `fwdbg_init` 0x20111064 | self-update debug task (`fwdbg_task_create`) + `fwdbg_line` handler |
+| 6 | `loader_selfinstall` 0x20110F0C | only when 0xFCFF400C holds 0xAABBCCDD: erases flash 0..0x340000 and the two flag sectors, then writes this running image (from `vec_reset`) to flash 0 and new flags. This is how a new **loader** gets installed **[fact for the code, inference for the purpose]**. No code writes 0xFCFF400C; a JTAG factory script sets it ([update.md](update.md) §6) **[inference]** |
 | 7 | `gpio_p2_0_debounced`, `gpio_read_bit(8,12)` | mode inputs |
 | 8 | `powon_init` 0x20114028, `key_init` 0x20113C84 | tasks `powon`, `key` |
 | 9 | `boot_mode_full` | mode decision |
-| 10 | `cpg_set_clock_profile(0)` 0x201020A0 | FRQCR 0xFCFE0024 and STBCR1..11 (0xFCFE0420–0x444) from a 2-entry table at 0x2016517C; profile 1 is used by `power_on_full_init` **[fact]** |
+| 10 | `cpg_set_clock_profile(0)` 0x201020A0 | STBCR2 0xFCFE0024 and STBCR3..12 (0xFCFE0420–0x444) from a 2-entry table at 0x2016517C; profile 1 is used by `power_on_full_init` **[fact]** ([peripherals.md](peripherals.md)) |
 | 11 | `gpio_rx_reset(1)` 0x20101C5C | sets P7_10 = `RX_RESET` (hardware.md) **[fact for the pin write, inference for the net]** |
 
 ### Full path (in order)
-`gpio_p8_14(1)`, `FUN_20116da0(1)` (force flag), `FUN_20113dc0`, `FUN_20101b60(0)`, `FUN_201026e8`, `FUN_20107e9c`, `mouse_cursor_init`, USB host
-(`FUN_201385b4`, `FUN_2013b97c`, `FUN_2013b4cc`), `FUN_2011115c`, `uptest_init`, `cli_init`, `touch_init`, `keycode_init`, `FUN_2010a8f8`,
-`mainlink_init`, `renc_init`, `FUN_20133440`, `FUN_20110da8`, `spi_slave_init`, `fwupdate_init`, `sdmenu_init`, `periodic_wakeup_register(self, 0)`,
-`periodic_wakeup_start`, `FUN_20102f34`, `audio_codec_init`, `gui_start` **[fact]**. The unnamed ones are for the subsystem sub-tasks.
+`gpio_p8_14(1)`, `FUN_20116da0(1)` (force flag), `dimmer_init`, `backlight_enable`(0)`, `backlight_init`, `FUN_20107e9c`, `mouse_cursor_init`, USB host
+(`FUN_201385b4`, `FUN_2013b97c`, `FUN_2013b4cc`), `adc_start_scan`, `uptest_init`, `cli_init`, `touch_init`, `keycode_init`, `kbdtest_init`,
+`mainlink_init`, `renc_init`, `link_ss_irq_init`, `sdr_debug_init`, `spi_slave_init`, `fwupdate_init`, `sdmenu_init`, `periodic_wakeup_register(self, 0)`,
+`periodic_wakeup_start`, `touch_cal_init`, `audio_codec_init`, `gui_start` **[fact]**. The unnamed ones are for the subsystem sub-tasks.
 
 The standby path only runs `gpio_p8_14(0)`, `mainlink_init`, the periodic wake-up and `gui_start`.
 
 ## 4. Kernel
 
-A µITRON 4.0-style kernel (vendor not identified). Service-call names are inferred from ITRON error codes (E_ID −18, E_NOID −34, E_NOEXS −42) and
+**NORTi**, the µITRON 4.0 kernel from MiSPO: the string `NORTi(c)MiSPO` is at 0x20156290 **[fact]**. Service-call names are inferred from ITRON error codes (E_ID −18, E_NOID −34, E_NOEXS −42) and
 descriptor layouts **[inference]**.
 
 | Address | Name | Notes |
@@ -105,7 +106,7 @@ descriptor layouts **[inference]**.
 | 0x2014EFFC / 0x20150F00 / 0x20152988 | `itron_acre_flg` / `itron_set_flg` / `itron_twai_flg` | |
 | 0x2014F1A8 | `itron_acre_isr` | T_CISR `{attr, exinf, intno, isr}`; IDs count down from 0x40 |
 | 0x2011775C | `gic_enable_irq` | enables one GIC interrupt ID |
-| 0x201176B4 | `gic_dispatch` | `IRQ_Handler` → handler table 0x208DC1E0 (one entry per GIC ID, default `FUN_201568e0`) |
+| 0x201176B4 | `gic_dispatch` | `IRQ_Handler` → handler table 0x208DC1E0 (one entry per GIC ID, default `gic_default_handler`) |
 | 0x20162D04 | `cpp_task_thunk` | task entry for C++ objects: `exinf` = object, calls `obj->vtbl[0]` (tasks `uart`, `uart4`, `mouse_cursor`) |
 
 ### ISRs created with `itron_acre_isr`
@@ -114,6 +115,7 @@ descriptor layouts **[inference]**.
 | 0x20165A60 | 0x86 (134, OSTM0) | `ostm0_tick_isr` 0x20117838 | 10 ms system tick |
 | 0x20165954 | 0x87 (135, OSTM1) | `periodic_wakeup_isr` 0x2011678C | OSTM1 compare 31999 = 1 ms |
 | 0x20165744 | 0x25 (37, IRQ5) | `powon_isr` 0x20113FDC | P2_0 edge → `powon` task |
+| (`touch_init`) | 0x23 (35, IRQ3) | `tsc2007_tint_isr` 0x201033E8 | touch TINT on P1_3 → `tsc2007` IRQ task. Earlier named `intc_irq_setup`; it is the ISR, not a set-up function ([input.md](input.md)) |
 
 ### Periodic wake-up service
 `periodic_wakeup_isr` runs every 1 ms over 5 slots at 0x208DBAD0 (16 bytes each: task ID, ?, period, count). When `count` reaches `period` it wakes
@@ -131,9 +133,9 @@ All descriptors are in `.rodata` 0x201651A8–0x20165A44 (plus `test_disp` at 0x
 | 0x2016589C | cmd_interval | `task_cmd_interval` 0x2011509C | 3 | 0x100 | `mainlink_init` | T11b |
 | 0x20165880 | uart | `cpp_task_thunk` | 7 | 0x2000 | `mainlink_init` | T11b |
 | 0x201658D8 | retry | `task_mainlink_retry` 0x201161BC | 4 | 0x2000 | `mainlink_init` | T11b |
-| 0x20165900 / 0x2016591C / 0x20165938 | uart (x3) | `cpp_task_thunk` | 3 / 4 / 4 | 0x2000 | `FUN_20158b10` | T11b |
-| 0x201657DC | uart4 | `cpp_task_thunk` | 7 | 0x400 | `FUN_20114f4c` | T11b |
-| 0x2016583C / 0x20165820 / 0x20165804 | uart4 (x3) | `cpp_task_thunk` | 4 | 0x400 | `FUN_20158c44` | T11b |
+| 0x20165900 / 0x2016591C / 0x20165938 | uart (x3) | `cpp_task_thunk` → RX `task_mainlink_rx` 0x2015EC40 / dispatcher `task_mainlink_dispatch` 0x201600A8 / TX `task_mainlink_tx` 0x201586AC | 3 / 4 / 4 | 0x2000 | `mainlink_obj_run` | T11b |
+| 0x201657DC | uart4 | `cpp_task_thunk` | 7 | 0x400 | `uart4_link_init` 0x20114F4C (**no caller**, SCIF4 never started) | T11b |
+| 0x2016583C / 0x20165820 / 0x20165804 | uart4 (x3) | `cpp_task_thunk` | 4 | 0x400 | `uart4_obj_run` | T11b |
 | 0x201654A0 | fwupdate | `task_fwupdate` 0x2010E1F8 | 8 | 0x2400 | `fwupdate_init` | T11c |
 | 0x201654C8 | uptest | `update_main_cpu` 0x2010EA90 | 3 | 0x2000 | `uptest_init` | T11c |
 | 0x20165478 | dspup | `update_dsp` 0x2010D92C | 3 | 0x800 | `dspup_init` | T11c |
@@ -141,7 +143,7 @@ All descriptors are in `.rodata` 0x201651A8–0x20165A44 (plus `test_disp` at 0x
 | 0x20165968 | cli | `task_cli` 0x20116AB0 | 5 | 0x2000 | `cli_init` | T11c |
 | 0x20165554 | spi_slave_task | `task_spi_slave` 0x20112288 | 5 | 0x100 | `spi_slave_init` | T11d |
 | 0x20420088 | test_disp | `task_test_disp` 0x2013512C | 5 | 0x2400 | `test_disp_init` | T11e |
-| 0x201656E4 / 0x20165700 | mouse_cursor | `cpp_task_thunk` | 7 | 0x400 | `mouse_cursor_init`, `FUN_2015eff4` | T11f |
+| 0x201656E4 / 0x20165700 | mouse_cursor | `cpp_task_thunk` | 7 | 0x400 | `mouse_cursor_init`, `mouse_cursor_task_create` | T11f |
 | 0x201656A8 | key | `task_key` 0x201137F8 | 5 | 0x400 | `key_init` | T11f |
 | 0x2016552C | keycode | `task_keycode` 0x20111794 | 5 | 0x800 | `keycode_init` | T11f |
 | 0x201655CC | renc | `task_renc` 0x20112774 | 5 | 0x400 | `renc_init` | T11f |
@@ -151,7 +153,8 @@ All descriptors are in `.rodata` 0x201651A8–0x20165A44 (plus `test_disp` at 0x
 | 0x201651A8 | tsc2007 | `task_tsc2007` 0x20103464 | 5 | 0x100 | `touch_init` | T11f |
 | 0x20165314 | audio_codec | `task_audio_codec` 0x201065C4 | 5 | 0x2400 | `audio_codec_init` | T11g |
 
-Plus `sdTask` (`sd_task_create` 0x20103B68), the USB-host tasks `udevtsk%d` (`usbh_create_objects`) and the self-update debug task from `FUN_2015f55c`,
+Plus `sdTask` (`sd_task_create` 0x20103B68), the USB-host tasks `udevtsk%d` (`usbh_create_objects`) and the self-update debug task from `fwdbg_task_create`
+(entry `task_fwdbg` 0x2015F0E0, pri 5, 0x2000 stack),
 which build their descriptors on the stack **[fact]**. The task names say `tsc2007`, while the parts list has a TSC2003 (the two are register-compatible
 **[inference]**).
 
@@ -172,15 +175,18 @@ flowchart LR
   C1 --> H1["uptest_init handler: MAIN update"]
   C1 --> H3["cli_line: memory monitor"]
   C1 --> H5["keycode_init handler"]
-  C1 --> H7["FUN_20110da8 handler<br/>(SDR cmds? guess)"]
-  C1 --> H8["FUN_2010a8f8 handler"]
+  C1 --> H7["sdr_debug_cmd 0x20110C3C<br/>SDR commands"]
+  C1 --> H8["kbdtest_line 0x2010A898<br/>keyboard test"]
   U["debug_unlock 0x20107E68<br/>(no caller)"] -.-> G
 ```
 
+- Slots 0, 1, 3, 5, 7 and 8 are registered, 2, 4 and 6 stay empty. H7 (`sdr_debug_cmd`, registered by `sdr_debug_init`) parses the SDR
+  commands `sdrup`/`sdr1up`/`sdr2up`/`sdrchk1`/…, but no task waits on its event flag 0x208001B8, so they are dead. H8 (`kbdtest_line`, registered by
+  `kbdtest_init`) is the keyboard-layout test behind the F12 overlay **[fact]** ([input.md](input.md), [update.md](update.md)).
 - Handlers collect a line with `hid_line_edit` (0x20112E5C), which works on raw HID usage IDs: 0x28/0x58 Enter, 0x29 Esc (clear), 0x2A Backspace,
   31 characters max **[fact]**.
 - `cli` (`task_cli` 0x20116AB0, `cli_exec_line` 0x20116848): `ADDR` reads a word, `ADDR VAL` writes a word, `b ADDR VAL` / `h ADDR VAL` write a byte /
-  halfword (hex parser `FUN_201112b4`). A line ending in `.txt` runs `I:\<line>` from the SD card line by line (`cli_run_file`) **[fact]**.
+  halfword (hex parser `hex_parse`). A line ending in `.txt` runs `I:\<line>` from the SD card line by line (`cli_run_file`) **[fact]**.
 - `debug_enabled()` (0x20111098) compares 0x20450000 with 0xA0B9C8E7. `.data` initialises that word to 0 **[fact, decompressed region]**. The only
   writer is `debug_unlock` (0x20107E68): when `debug_unlock_check` sees P4_3 and P8_3 low (P4_2 is also sampled) and, after 30 ms, a report with a
   Ctrl modifier (mask 0x11) and Backspace (0x2A) **[fact]**. `debug_unlock` has **no caller**: no B/BL, no literal pointer in `.text`, and REA's
@@ -199,7 +205,7 @@ flowchart LR
 | 0x20116E84 / 0x201130C8 | `boot_mode_full` / `key_scan_first` | mode decision |
 | 0x20116E30 / 0x201008AC | `gpio_p2_0_debounced` / `gpio_read_bit` | GPIO reads (PPRn 0xFCFE3200+4n) |
 | 0x20101C5C / 0x20101BA4 / 0x20100480 | `gpio_rx_reset` / `gpio_p8_14` / `gpio_p7_9_11` | GPIO writes (PSRn 0xFCFE3100+4n) |
-| 0x201020A0 | `cpg_set_clock_profile` | FRQCR + STBCR |
+| 0x201020A0 | `cpg_set_clock_profile` | STBCR2..12 |
 | 0x20116D84 / 0x20101190 / 0x201562B4 | `mmu_cache_enable` / `pinmux_init` / `kernel_heap_init` | `main` set-up |
 | 0x20116768 / 0x201167D8 / 0x2011678C | `periodic_wakeup_register` / `periodic_wakeup_start` / `periodic_wakeup_isr` | 1 ms wake-up service |
 | 0x20117838 / 0x20113FDC | `ostm0_tick_isr` / `powon_isr` | ISRs |

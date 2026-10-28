@@ -1,0 +1,1055 @@
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
+
+// ===== rspi4_open @ 2011e09c (124 bytes)
+
+/* slave (DSP link) */
+
+undefined4 rspi4_open(void)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  FUN_20157138(&DAT_fcfe043c,0,3,8,in_r3);
+  iVar1 = itron_acre_isr(0,&DAT_20166b24);
+  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166b38), 0 < iVar1)) {
+    gic_enable_irq(0x11c);
+    gic_enable_irq(0x11b);
+    uVar2 = rspi_hw_config(4,1);
+    return uVar2;
+  }
+  return 0xff;
+}
+
+
+// ===== rspi0_clear_rx_flag @ 2011e118 (16 bytes)
+
+void rspi0_clear_rx_flag(void)
+
+{
+  DAT_20800418 = 0;
+  return;
+}
+
+
+// ===== rspi1_clear_rx_flag @ 2011e128 (16 bytes)
+
+void rspi1_clear_rx_flag(void)
+
+{
+  DAT_20800419 = 0;
+  return;
+}
+
+
+// ===== rspi2_clear_rx_flag @ 2011e138 (16 bytes)
+
+void rspi2_clear_rx_flag(void)
+
+{
+  DAT_2080041a = 0;
+  return;
+}
+
+
+// ===== rspi3_clear_rx_flag @ 2011e148 (16 bytes)
+
+void rspi3_clear_rx_flag(void)
+
+{
+  DAT_2080041b = 0;
+  return;
+}
+
+
+// ===== rspi4_clear_rx_flag @ 2011e158 (16 bytes)
+
+void rspi4_clear_rx_flag(void)
+
+{
+  DAT_2080041c = 0;
+  return;
+}
+
+
+// ===== rspi0_clear_tx_flag @ 2011e168 (16 bytes)
+
+void rspi0_clear_tx_flag(void)
+
+{
+  DAT_2080041d = 0;
+  return;
+}
+
+
+// ===== rspi1_clear_tx_flag @ 2011e178 (16 bytes)
+
+void rspi1_clear_tx_flag(void)
+
+{
+  DAT_2080041e = 0;
+  return;
+}
+
+
+// ===== rspi2_clear_tx_flag @ 2011e188 (16 bytes)
+
+void rspi2_clear_tx_flag(void)
+
+{
+  DAT_2080041f = 0;
+  return;
+}
+
+
+// ===== rspi3_clear_tx_flag @ 2011e198 (16 bytes)
+
+void rspi3_clear_tx_flag(void)
+
+{
+  DAT_20800420 = 0;
+  return;
+}
+
+
+// ===== rspi4_clear_tx_flag @ 2011e1e0 (16 bytes)
+
+void rspi4_clear_tx_flag(void)
+
+{
+  DAT_20800421 = 0;
+  return;
+}
+
+
+// ===== rspi0_rx_isr @ 2011e1f0 (80 bytes)
+
+/* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 */
+
+void rspi0_rx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800c820,1,6,0x40);
+  FUN_20157138(&DAT_e800c820,0,6,0x40);
+  DAT_208dce28 = DAT_208dce28 + 1;
+  DAT_20800418 = 1;
+  return;
+}
+
+
+// ===== rspi1_rx_isr @ 2011e240 (80 bytes)
+
+void rspi1_rx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800d020,1,6,0x40);
+  FUN_20157138(&DAT_e800d020,0,6,0x40);
+  DAT_208dce2c = DAT_208dce2c + 1;
+  DAT_20800419 = 1;
+  return;
+}
+
+
+// ===== rspi2_rx_isr @ 2011e290 (40 bytes)
+
+/* clear SPRIE, flag */
+
+void rspi2_rx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800d800,0,7,0x80);
+  DAT_2080041a = 1;
+  return;
+}
+
+
+// ===== rspi3_rx_isr @ 2011e2b8 (40 bytes)
+
+void rspi3_rx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800e000,0,7,0x80);
+  DAT_2080041b = 1;
+  return;
+}
+
+
+// ===== rspi4_rx_isr @ 2011e2e0 (40 bytes)
+
+void rspi4_rx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800e800,0,7,0x80);
+  DAT_2080041c = 1;
+  return;
+}
+
+
+// ===== rspi0_tx_isr @ 2011e308 (40 bytes)
+
+/* clear SPTIE, flag 0x2080041D */
+
+void rspi0_tx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800c800,0,5,0x20);
+  DAT_2080041d = 1;
+  return;
+}
+
+
+// ===== rspi1_tx_isr @ 2011e330 (40 bytes)
+
+void rspi1_tx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800d000,0,5,0x20);
+  DAT_2080041e = 1;
+  return;
+}
+
+
+// ===== rspi2_tx_isr @ 2011e358 (40 bytes)
+
+void rspi2_tx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800d800,0,5,0x20);
+  DAT_2080041f = 1;
+  return;
+}
+
+
+// ===== rspi3_tx_isr @ 2011e380 (40 bytes)
+
+void rspi3_tx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800e000,0,5,0x20);
+  DAT_20800420 = 1;
+  return;
+}
+
+
+// ===== rspi4_tx_isr @ 2011e3a8 (40 bytes)
+
+void rspi4_tx_isr(void)
+
+{
+  FUN_20157138(&DAT_e800e800,0,5,0x20);
+  DAT_20800421 = 1;
+  return;
+}
+
+
+// ===== rspi0_tx_wait @ 2011e3d0 (44 bytes)
+
+void rspi0_tx_wait(void)
+
+{
+  FUN_20157138(&DAT_e800c800,1,5,0x20);
+  do {
+  } while (DAT_2080041d == '\0');
+  return;
+}
+
+
+// ===== rspi0_read_burst @ 2011e3fc (328 bytes)
+
+/* dummy 0xFF writes, wait RX */
+
+void rspi0_read_burst(uint param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  
+  uVar3 = param_1;
+  uVar1 = FUN_20157174(&DAT_e800c820,4,0x30);
+  iVar2 = FUN_20157174(&DAT_e800c80b,5,0x60);
+  if (iVar2 == 3) {
+    FUN_20157138(&DAT_e800c820,2,4,0x30,uVar1,uVar3);
+  }
+  else if (iVar2 == 2) {
+    FUN_20157138(&DAT_e800c820,1,4,0x30,uVar1,uVar3);
+  }
+  else {
+    FUN_20157138(&DAT_e800c820,0,4,0x30,uVar1,uVar3);
+  }
+  FUN_20157138(&DAT_e800c800,1,7,0x80,uVar1,uVar3);
+  uVar3 = param_1;
+  while (uVar3 != 0) {
+    rspi0_tx_wait();
+    rspi0_clear_tx_flag();
+    if (iVar2 == 3) {
+      DAT_e800c804 = 0xffffffff;
+      uVar3 = uVar3 - 4;
+    }
+    else if (iVar2 == 2) {
+      DAT_e800c804._0_2_ = 0xffff;
+      uVar3 = uVar3 - 2;
+    }
+    else {
+      DAT_e800c804._0_1_ = 0xff;
+      uVar3 = uVar3 - 1;
+    }
+  }
+  if (param_2 == 1) {
+    do {
+      uVar3 = FUN_20157184(&DAT_e800c822,0,0x3f);
+    } while (uVar3 < param_1);
+    rspi0_rx_isr();
+  }
+  else {
+    do {
+    } while (DAT_20800418 == '\0');
+  }
+  FUN_20157138(&DAT_e800c820,uVar1,4,0x30);
+  return;
+}
+
+
+// ===== rspi1_tx_wait @ 2011e544 (44 bytes)
+
+void rspi1_tx_wait(void)
+
+{
+  FUN_20157138(&DAT_e800d000,1,5,0x20);
+  do {
+  } while (DAT_2080041e == '\0');
+  return;
+}
+
+
+// ===== rspi1_read_burst @ 2011e570 (320 bytes)
+
+void rspi1_read_burst(uint param_1,int param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  
+  uVar1 = FUN_20157174(&DAT_e800d020,4,0x30,param_4,param_4);
+  iVar2 = FUN_20157174(&DAT_e800d00b,5,0x60);
+  if (iVar2 == 3) {
+    FUN_20157138(&DAT_e800d020,2,4,0x30);
+  }
+  else if (iVar2 == 2) {
+    FUN_20157138(&DAT_e800d020,1,4,0x30);
+  }
+  else {
+    FUN_20157138(&DAT_e800d020,0,4,0x30);
+  }
+  FUN_20157138(&DAT_e800d000,1,7,0x80);
+  uVar3 = param_1;
+  while (uVar3 != 0) {
+    rspi1_tx_wait();
+    rspi1_clear_tx_flag();
+    if (iVar2 == 3) {
+      DAT_e800d004 = 0xffffffff;
+      uVar3 = uVar3 - 4;
+    }
+    else if (iVar2 == 2) {
+      DAT_e800d004._0_2_ = 0xffff;
+      uVar3 = uVar3 - 2;
+    }
+    else {
+      DAT_e800d004._0_1_ = 0xff;
+      uVar3 = uVar3 - 1;
+    }
+  }
+  if (param_2 == 1) {
+    do {
+      uVar3 = FUN_20157184(&DAT_e800d022,0,0x3f);
+    } while (uVar3 < param_1);
+    rspi1_rx_isr();
+  }
+  else {
+    do {
+    } while (DAT_20800419 == '\0');
+  }
+  FUN_20157138(&DAT_e800d020,uVar1,4,0x30);
+  return;
+}
+
+
+// ===== rspi2_tx_wait @ 2011e6b0 (44 bytes)
+
+void rspi2_tx_wait(void)
+
+{
+  FUN_20157138(&DAT_e800d800,1,5,0x20);
+  do {
+  } while (DAT_2080041f == '\0');
+  return;
+}
+
+
+// ===== rspi2_read_burst @ 2011e6dc (328 bytes)
+
+void rspi2_read_burst(uint param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  
+  uVar3 = param_1;
+  uVar1 = FUN_20157174(&DAT_e800d820,4,0x30);
+  iVar2 = FUN_20157174(&DAT_e800d80b,5,0x60);
+  if (iVar2 == 3) {
+    FUN_20157138(&DAT_e800d820,2,4,0x30,uVar1,uVar3);
+  }
+  else if (iVar2 == 2) {
+    FUN_20157138(&DAT_e800d820,1,4,0x30,uVar1,uVar3);
+  }
+  else {
+    FUN_20157138(&DAT_e800d820,0,4,0x30,uVar1,uVar3);
+  }
+  FUN_20157138(&DAT_e800d800,1,7,0x80,uVar1,uVar3);
+  uVar3 = param_1;
+  while (uVar3 != 0) {
+    rspi2_tx_wait();
+    rspi2_clear_tx_flag();
+    if (iVar2 == 3) {
+      DAT_e800d804 = 0xffffffff;
+      uVar3 = uVar3 - 4;
+    }
+    else if (iVar2 == 2) {
+      DAT_e800d804._0_2_ = 0xffff;
+      uVar3 = uVar3 - 2;
+    }
+    else {
+      DAT_e800d804._0_1_ = 0xff;
+      uVar3 = uVar3 - 1;
+    }
+  }
+  if (param_2 == 1) {
+    do {
+      uVar3 = FUN_20157184(&DAT_e800d822,0,0x3f);
+    } while (uVar3 < param_1);
+    rspi2_rx_isr();
+  }
+  else {
+    do {
+    } while (DAT_2080041a == '\0');
+  }
+  FUN_20157138(&DAT_e800d820,uVar1,4,0x30);
+  return;
+}
+
+
+// ===== rspi3_tx_wait @ 2011e824 (44 bytes)
+
+void rspi3_tx_wait(void)
+
+{
+  FUN_20157138(&DAT_e800e000,1,5,0x20);
+  do {
+  } while (DAT_20800420 == '\0');
+  return;
+}
+
+
+// ===== rspi3_read_burst @ 2011e850 (320 bytes)
+
+void rspi3_read_burst(uint param_1,int param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  
+  uVar1 = FUN_20157174(&DAT_e800e020,4,0x30,param_4,param_4);
+  iVar2 = FUN_20157174(&DAT_e800e00b,5,0x60);
+  if (iVar2 == 3) {
+    FUN_20157138(&DAT_e800e020,2,4,0x30);
+  }
+  else if (iVar2 == 2) {
+    FUN_20157138(&DAT_e800e020,1,4,0x30);
+  }
+  else {
+    FUN_20157138(&DAT_e800e020,0,4,0x30);
+  }
+  FUN_20157138(&DAT_e800e000,1,7,0x80);
+  uVar3 = param_1;
+  while (uVar3 != 0) {
+    rspi3_tx_wait();
+    rspi3_clear_tx_flag();
+    if (iVar2 == 3) {
+      DAT_e800e004 = 0xffffffff;
+      uVar3 = uVar3 - 4;
+    }
+    else if (iVar2 == 2) {
+      DAT_e800e004._0_2_ = 0xffff;
+      uVar3 = uVar3 - 2;
+    }
+    else {
+      DAT_e800e004._0_1_ = 0xff;
+      uVar3 = uVar3 - 1;
+    }
+  }
+  if (param_2 == 1) {
+    do {
+      uVar3 = FUN_20157184(&DAT_e800e022,0,0x3f);
+    } while (uVar3 < param_1);
+    rspi3_rx_isr();
+  }
+  else {
+    do {
+    } while (DAT_2080041b == '\0');
+  }
+  FUN_20157138(&DAT_e800e020,uVar1,4,0x30);
+  return;
+}
+
+
+// ===== rspi4_tx_wait @ 2011e990 (44 bytes)
+
+void rspi4_tx_wait(void)
+
+{
+  FUN_20157138(&DAT_e800e800,1,5,0x20);
+  do {
+  } while (DAT_20800421 == '\0');
+  return;
+}
+
+
+// ===== rspi4_read_burst @ 2011e9bc (328 bytes)
+
+void rspi4_read_burst(uint param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  
+  uVar3 = param_1;
+  uVar1 = FUN_20157174(&DAT_e800e820,4,0x30);
+  iVar2 = FUN_20157174(&DAT_e800e80b,5,0x60);
+  if (iVar2 == 3) {
+    FUN_20157138(&DAT_e800e820,2,4,0x30,uVar1,uVar3);
+  }
+  else if (iVar2 == 2) {
+    FUN_20157138(&DAT_e800e820,1,4,0x30,uVar1,uVar3);
+  }
+  else {
+    FUN_20157138(&DAT_e800e820,0,4,0x30,uVar1,uVar3);
+  }
+  FUN_20157138(&DAT_e800e800,1,7,0x80,uVar1,uVar3);
+  uVar3 = param_1;
+  while (uVar3 != 0) {
+    rspi4_tx_wait();
+    rspi4_clear_tx_flag();
+    if (iVar2 == 3) {
+      DAT_e800e804 = 0xffffffff;
+      uVar3 = uVar3 - 4;
+    }
+    else if (iVar2 == 2) {
+      DAT_e800e804._0_2_ = 0xffff;
+      uVar3 = uVar3 - 2;
+    }
+    else {
+      DAT_e800e804._0_1_ = 0xff;
+      uVar3 = uVar3 - 1;
+    }
+  }
+  if (param_2 == 1) {
+    do {
+      uVar3 = FUN_20157184(&DAT_e800e822,0,0x3f);
+    } while (uVar3 < param_1);
+    rspi4_rx_isr();
+  }
+  else {
+    do {
+    } while (DAT_2080041c == '\0');
+  }
+  FUN_20157138(&DAT_e800e820,uVar1,4,0x30);
+  return;
+}
+
+
+// ===== rspi0_wait_tend @ 2011eb58 (36 bytes)
+
+/* SPSR.TEND */
+
+void rspi0_wait_tend(void)
+
+{
+  int iVar1;
+  
+  do {
+    iVar1 = FUN_20157174(&DAT_e800c803,6,0x40);
+  } while (iVar1 == 0);
+  return;
+}
+
+
+// ===== rspi1_wait_tend @ 2011eb7c (36 bytes)
+
+void rspi1_wait_tend(void)
+
+{
+  int iVar1;
+  
+  do {
+    iVar1 = FUN_20157174(&DAT_e800d003,6,0x40);
+  } while (iVar1 == 0);
+  return;
+}
+
+
+// ===== rspi2_wait_tend @ 2011eba0 (36 bytes)
+
+void rspi2_wait_tend(void)
+
+{
+  int iVar1;
+  
+  do {
+    iVar1 = FUN_20157174(&DAT_e800d803,6,0x40);
+  } while (iVar1 == 0);
+  return;
+}
+
+
+// ===== rspi3_wait_tend @ 2011ebc4 (36 bytes)
+
+void rspi3_wait_tend(void)
+
+{
+  int iVar1;
+  
+  do {
+    iVar1 = FUN_20157174(&DAT_e800e003,6,0x40);
+  } while (iVar1 == 0);
+  return;
+}
+
+
+// ===== rspi4_wait_tend @ 2011ebe8 (36 bytes)
+
+void rspi4_wait_tend(void)
+
+{
+  int iVar1;
+  
+  do {
+    iVar1 = FUN_20157174(&DAT_e800e803,6,0x40);
+  } while (iVar1 == 0);
+  return;
+}
+
+
+// ===== rspi0_delay @ 2011ec0c (40 bytes)
+
+void rspi0_delay(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = 10;
+  do {
+    bVar1 = 0 < iVar2;
+    iVar2 = iVar2 + -1;
+  } while (bVar1);
+  return;
+}
+
+
+// ===== rspi1_delay @ 2011ec34 (40 bytes)
+
+void rspi1_delay(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = 10;
+  do {
+    bVar1 = 0 < iVar2;
+    iVar2 = iVar2 + -1;
+  } while (bVar1);
+  return;
+}
+
+
+// ===== rspi2_delay @ 2011ec5c (40 bytes)
+
+void rspi2_delay(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = 10;
+  do {
+    bVar1 = 0 < iVar2;
+    iVar2 = iVar2 + -1;
+  } while (bVar1);
+  return;
+}
+
+
+// ===== rspi3_delay @ 2011ec84 (40 bytes)
+
+void rspi3_delay(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = 10;
+  do {
+    bVar1 = 0 < iVar2;
+    iVar2 = iVar2 + -1;
+  } while (bVar1);
+  return;
+}
+
+
+// ===== rspi4_delay @ 2011ecac (40 bytes)
+
+void rspi4_delay(void)
+
+{
+  bool bVar1;
+  int iVar2;
+  
+  iVar2 = 10;
+  do {
+    bVar1 = 0 < iVar2;
+    iVar2 = iVar2 + -1;
+  } while (bVar1);
+  return;
+}
+
+
+// ===== rspi0_spti_isr @ 2011ecd4 (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
+/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
+/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
+/* stub, needs entries_display.T11d.tsv */
+
+undefined4 rspi0_spti_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f8cc) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_tx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_tx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_tx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_tx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_tx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi0_spri_isr @ 2011ecdc (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f844) */
+/* WARNING: Removing unreachable block (ram,0x2011f848) */
+/* WARNING: Removing unreachable block (ram,0x2011f858) */
+/* stub */
+
+undefined4 rspi0_spri_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f870) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_rx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_rx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_rx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_rx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_rx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi1_spti_isr @ 2011ece4 (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
+/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
+/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
+/* stub */
+
+undefined4 rspi1_spti_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f8d4) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_tx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_tx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_tx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_tx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_tx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi1_spri_isr @ 2011ecec (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f844) */
+/* WARNING: Removing unreachable block (ram,0x2011f848) */
+/* WARNING: Removing unreachable block (ram,0x2011f858) */
+/* stub */
+
+undefined4 rspi1_spri_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f878) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_rx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_rx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_rx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_rx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_rx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi2_spti_isr @ 2011ecf4 (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
+/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
+/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
+/* stub */
+
+undefined4 rspi2_spti_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f8dc) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_tx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_tx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_tx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_tx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_tx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi2_spri_isr @ 2011ecfc (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f844) */
+/* WARNING: Removing unreachable block (ram,0x2011f848) */
+/* WARNING: Removing unreachable block (ram,0x2011f858) */
+/* stub */
+
+undefined4 rspi2_spri_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f880) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_rx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_rx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_rx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_rx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_rx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi3_spti_isr @ 2011ed04 (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
+/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
+/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
+/* stub */
+
+undefined4 rspi3_spti_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f8e4) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_tx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_tx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_tx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_tx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_tx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi3_spri_isr @ 2011ed0c (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f844) */
+/* WARNING: Removing unreachable block (ram,0x2011f848) */
+/* WARNING: Removing unreachable block (ram,0x2011f858) */
+/* stub */
+
+undefined4 rspi3_spri_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f888) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_rx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_rx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_rx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_rx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_rx_isr();
+  }
+  return 0;
+}
+
+
+// ===== rspi4_spti_isr @ 2011ed14 (8 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
+/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
+/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
+/* stub */
+
+undefined4 rspi4_spti_isr(void)
+
+{
+                    /* WARNING: Could not find normalized switch variable to match jumptable */
+  switch((undefined *)0x2011f8ec) {
+  case (undefined *)0x0:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi0_tx_isr();
+    break;
+  case (undefined *)0x1:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi1_tx_isr();
+    break;
+  case (undefined *)0x2:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi2_tx_isr();
+    break;
+  case (undefined *)0x3:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi3_tx_isr();
+    break;
+  case (undefined *)0x4:
+                    /* WARNING: This code block may not be properly labeled as switch case */
+    rspi4_tx_isr();
+  }
+  return 0;
+}
+

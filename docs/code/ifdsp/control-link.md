@@ -9,8 +9,7 @@ The M33 itself uses only five registers. It also owns the **TLV320AIC3204 codec*
 register 0x4005 into a PWM output.
 
 Claims are tagged **[fact]** (seen in code, address cited), **[inference]** or **[guess]**. Addresses are M33 SRAM addresses
-(0x000xxxxx) unless the text says HiFi4 (0x002xxxxx) or MAIN (0xFFFxxxxx). Proposed names are in *italics*; they are listed in
-[`tools/ghidra/names_ifdsp.T12b.tsv`](../../../tools/ghidra/names_ifdsp.T12b.tsv). The MAIN side of the link is documented in
+(0x000xxxxx) unless the text says HiFi4 (0x002xxxxx) or MAIN (0xFFFxxxxx). Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name. The MAIN side of the link is documented in
 [`docs/code/main/dsp-link.md`](../main/dsp-link.md) (T10d). This page uses the MAIN Ghidra names as they are now.
 
 ## Overview
@@ -54,7 +53,7 @@ flowchart LR
 | 0x000812C4 | `console_cmd_w` | `console_cmd_w` | `w AAAA DDDD` → `regfile_write`, prints `\r\n>> ` **[fact]** |
 | 0x000812FC | `console_cmd_d` | `console_cmd_d` | `d AAAA` → 8 lines of `\r\n AAAA :` + 8 × ` %04X` (64 words) **[fact]** |
 | 0x000813B4 | `console_cmd_r` | `console_cmd_r` | `r AAAA` → `\r\nr AAAA VVVV\r\n>> ` **[fact]** |
-| 0x0008138C | (none) | *`console_printf`* | `vsprintf` into 0x88DF0, then `console_puts`; tail-called by `console_cmd_r` **[fact]** |
+| 0x0008138C | (none) | `console_printf` | `vsprintf` into 0x88DF0, then `console_puts`; tail-called by `console_cmd_r` **[fact]** |
 | 0x00085FAE | `console_puts` | `console_puts` | `uart0_write(s, strlen(s))` **[fact]** |
 | 0x00086014 | `is_hex_string` | `is_hex_string` | All chars in `0-9A-Fa-f` (empty string counts as hex) **[fact]** |
 | 0x00086044 | `frame_checksum_ok` | `frame_checksum_ok` | 8-bit sum of the first n chars == `strtoul(rest, 16)` **[fact]** |
@@ -62,7 +61,7 @@ flowchart LR
 | 0x00080C30 | `regfile_read` | `regfile_read` | `reg < 0x8000 ? word[reg] : 0` **[fact]** |
 | 0x00080C4C | `regfile_write` | `regfile_write` | Store if `reg < 0x8000`; for reg 10 also call the codec input select **[fact]** |
 | 0x00080C78 | `regfile_set_bits` | `regfile_set_bits` | `word[reg] \|= v` in a critical section (used once: reg 1 bit 0) **[fact]** |
-| 0x00085F88 | (none) | *`aic3204_select_right_input`* | Page 1, R55 = 0x10 (arg 1: IN2R) or 0x40 (arg 0: IN1R), back to page 0 **[fact]** |
+| 0x00085F88 | (none) | `aic3204_select_right_input` | Page 1, R55 = 0x10 (arg 1: IN2R) or 0x40 (arg 0: IN1R), back to page 0 **[fact]** |
 | 0x00080B68 | `aic3204_spi_write` | `aic3204_spi_write` | 16-bit word `reg<<9 \| val` (R/W bit 0 = write), MSB first, CS P1_7, SCLK P2_29, MOSI P1_1, 1 µs half-period, 10 µs after CS high **[fact]** |
 | 0x00080BD0 | `aic3204_init` | `aic3204_init` | Reset P1_0 low 20 ms, high 20 ms, then 67 table entries {reg, val, delay µs} from 0x87A1C **[fact]** |
 | 0x00080B44 | `delay_us` | `delay_us` | Busy loop of `n × core_clock / 1e6` iterations **[fact]** (so the real delay is several times longer **[inference]**) |
@@ -176,7 +175,7 @@ stateDiagram-v2
 - M33: cleared at boot (`regfile_clear`, before the DSP is released), then `reg0 = 0x0101`, `reg 0x4000 = 1`, `reg1 |= 1` after the
   MU handshake (`app_main` 0x0008106C) **[fact]**.
 - HiFi4: `0x0021C498` (DSP main init) sets the region's cache attribute (`call8 0x233410(0x20070000, 0x10000, 2, 0)`, probably
-  `xthal_set_region_attribute` = bypass **[inference]**), calls *`regfile_set_defaults`* 0x0021BE80 and *`regfile_capture_init`*
+  `xthal_set_region_attribute` = bypass **[inference]**), calls `regfile_set_defaults` 0x0021BE80 and `regfile_capture_init`
   0x0021C090 **[fact]**. The defaults function writes every register in the map below except 0, 1 and 0x4000 (the M33's) **[fact]**.
 - The DSP addresses the file through three base literals: `0x2006FF00` (+0x100 + 2n → regs 0x00–0x7F), `0x20073F00` (regs
   0x2000–0x207F) and `0x20077F00` (regs 0x4000–0x407F), because the `l16ui`/`s16i` offset only reaches 510 bytes **[fact]**.

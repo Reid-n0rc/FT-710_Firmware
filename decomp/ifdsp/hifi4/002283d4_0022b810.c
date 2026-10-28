@@ -93,12 +93,12 @@ undefined4 FUN_00228634(int param_1)
 }
 
 
-// ===== FUN_0022866c @ 0022866c (45 bytes)
+// ===== xos_thread_sleep @ 0022866c (45 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: Removing unreachable block (ram,0x0022868f) */
 
-void FUN_0022866c(void)
+void xos_thread_sleep(void)
 
 {
   int unaff_retaddr;
@@ -338,7 +338,7 @@ void FUN_00228df0(void)
   flix();
   DAT_002cd6d0 = in_a12;
   if (in_a12 == 0) {
-    FUN_00227230(&DAT_002cd6b0,in_a7 + 10);
+    xos_mutex_unlock(&DAT_002cd6b0,in_a7 + 10);
   }
   return;
 }
@@ -458,7 +458,7 @@ undefined4 FUN_00229238(int *param_1,code *param_2)
 {
   if ((param_1 != (int *)0x0) && (param_2 != (code *)0x0)) {
     if (*param_1 != 2) {
-      FUN_002270d4(&DAT_002cd6dc);
+      xos_mutex_lock(&DAT_002cd6dc);
       if (*param_1 == 0) {
         *param_1 = 1;
         (*param_2)();
@@ -469,7 +469,7 @@ undefined4 FUN_00229238(int *param_1,code *param_2)
                     /* WARNING: Bad instruction - Truncating control flow here */
         halt_baddata();
       }
-      FUN_00227230(&DAT_002cd6dc);
+      xos_mutex_unlock(&DAT_002cd6dc);
     }
     return 0;
   }

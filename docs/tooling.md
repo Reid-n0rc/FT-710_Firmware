@@ -74,7 +74,30 @@ Ghidra 12.1.4 ships no Renesas RX language. T05 installed a **community SLEIGH m
 | Remove | `rm -rf ~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX` |
 | Re-install | `git clone https://github.com/stefan00lpf/rx-proc-ghidra && git -C rx-proc-ghidra checkout ea4cd20403c2e359f0de0cead2850d6be173b67a`, then copy the six `data/languages/rx62t.*` files and create the two small files as above. |
 
-Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL) have p-code that the decompiler renders as odd loops, and the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) are modelled as p-code loops, so the decompiler renders them as loops instead of `strncmp`/`memcpy`/`memset`/`memchr`; the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+
+### Local SLEIGH fix (T17, 2026-10-27): `tools/ghidra/rx62t-movu-fix.patch`
+
+Checked against the RXv2 software manual `Manuals/Renesas/REN_r01us0071ej0100_rxv2sm_MAS_20131112_1.pdf` (R01US0071EJ0100):
+
+| Instruction | Defect in `ea4cd204` | Manual | Fix |
+|---|---|---|---|
+| `MOVU.B/W Rs,Rd` (bytes `5B`/`5F` + `rs rd`, format (2), ld = 11) | decoded as the memory load `MOVU.x [Rs],Rd` (the module's comment even says "when ld=3 it should be [Rs]"). Found by T10e: 107 sites in 49 MAIN functions, including the CAT `SP` checksum length | p. 124 (function table: register → register zero-extend), p. 259 (format (2): ld 11b = Rs, 00b = [Rs], 01b = dsp:8, 10b = dsp:16) | `movu_ldu_src` with `mode_ld = 3` exports `zext(Rs:1)` / `zext(Rs:2)` |
+| `SCMPU` | set Z = 0 when both strings ended in NUL together (a match), C used a signed byte difference, and R3 = 0 cleared Z/C | p. 184: Z = strings matched, C = unsigned `*R1 − *R2 ≥ 0`, R3 = 0 has no effect | flags from the last compared pair, loop skipped when R3 = 0 |
+| `SUNTIL.B/W/L` | never set Z/C (code that branches on Z after it was mis-decoded) | p. 196: flags from `*R1 − R2`, Z = match found | Z/C from the last compare |
+| `SWHILE.B/W/L` | compared the pointer `R1` (not `*R1`) with R2, and stepped R1 by 1 for .W/.L | p. 198 | compare `*R1`, step by the size, Z/C from the last compare |
+| `SMOVF`, `SMOVB`, `SSTR` | none (correct p-code, rendered as loops) | pp. 190, 192 | unchanged |
+
+Apply / rebuild (the REA MCP server and the REA CLI use the same installed module, so they get the fix too):
+```sh
+cd ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX
+cp data/languages/rx62t.sinc data/languages/rx62t.sinc.orig-ea4cd204     # original kept next to it (also rx62t.sla.orig-ea4cd204)
+patch -p1 < /workspace/FT-710_Firmware/tools/ghidra/rx62t-movu-fix.patch
+JAVA_HOME=~/opt/jdk-21.0.13+9 ~/opt/ghidra_12.1.4_PUBLIC/support/sleigh data/languages/rx62t.slaspec   # 8 NOP warnings, as before
+```
+SHA-256 of `rx62t.sinc`: original `42f51c2c…0f12`, patched `d32178a9…011b`. Programs analysed before the fix keep the old
+instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo: copy the two `.orig-ea4cd204` files back.
+The fix is local; it is not sent upstream.
 
 GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 
@@ -95,6 +118,35 @@ GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 | `IfdspM33Names.java` | reproducible function names for the IFDSP M33 program (T07) |
 | `IfdspHifi4Setup.java` | pre-script for the carved HiFi4 images: maps each one at its DSP load address and seeds the vectors (T07) |
 | `IfdspHifi4FindFuncs.java` | post-script: creates functions at 4-aligned `entry a1,N` prologues and drops artifacts in uninitialized memory (T07) |
+| `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
+| `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
+| `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
+| `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | print references to addresses or ranges with the containing function (T10 helpers; one would do, the others are kept for the task logs) |
+| `T10eMovuRegCount.java` | lists every `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11); after the T17 SLEIGH fix all 107 print as register forms |
+| `rx62t-movu-fix.patch` | the T17 SLEIGH fix for the RX module (see above) |
+| `names_*.picks.tsv` | T17 resolutions of name conflicts between sub-task proposals (input of `tools/names_merge.py`) |
+
+Python helpers in `tools/` (stdlib only; run with `python3 -I`):
+
+| Script | Purpose |
+|---|---|
+| `sfl_decode.py` / `sfl_header.py` | decode an `.SFL` file to the raw image / parse and check its header (T03/T04) |
+| `sfl_encode.py`, `test_sfl_roundtrip.py` | inverse of `sfl_decode.py`; round-trip test SFL → decode → encode → identical SFL for all shipped images (T16) |
+| `t16_patches.py` | builds and verifies the T16 DISPLAY patch SFLs into `build/` (never flashed) |
+| `xbit_parse.py`, `xc7_db.py`, `xc7_bram_tables.py`, `xc7_package_fit.py` | SDR XC7A50T bitstream: config packets, Project X-Ray frame/tile/BRAM decode, BRAM tables, which packages bond every used IOB (T13/T16) |
+| `main_key_tables.py` | dumps the MAIN front-panel key handler tables (T10b, `docs/code/main/ui-keys.md`) |
+| `main_menu_table.py` | dumps (and diffs) the MAIN EX/setup-menu item table (T10f, `docs/code/main/menu.md`) |
+| `display_assets.py` | lists the DISPLAY GUI sprites/fonts (T11e; lists only, extracts nothing) |
+| `t11g_pinmux_decode.py` | decodes DISPLAY `pinmux_init` 0x20101190 into a port/pin → mode table (T11g) |
+| `ifdsp_xtdis.py` | minimal Xtensa base-ISA linear disassembler for the HiFi4 SRAM image (T12c) |
+| `ifdsp_hifi4_dis.py` | per-function FLIX-aware HiFi4 listing with the Zephyr RT600 objdump, names from `IfdspHifi4Names.java` (T12e) |
+| `ifdsp_hifi4_regscan.py` | register-file accesses in a HiFi4 objdump listing (T12b) |
+| `ifdsp_coef_tables.py` | finds and classifies numeric tables (filters, windows, sin/cos) in the HiFi4 image (T12e) |
+| `names_merge.py` | merges/reports per-sub-task name TSVs into the shared ones; conflicts resolved with `--picks` (T17) |
+| `ifdsp_names_java.py` | converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV (T17) |
+| `pages_final_names.py` | switches code pages from proposed (italic) names to the applied Ghidra names (T17) |
+| `index_refresh.py` | refreshes the export-file column of a `decomp/*/INDEX.md` from `functions.tsv` (T17) |
+| `issues_sync.py` | mirrors `docs/tasks/` into GitHub issues (run by the parent agent only) |
 
 `tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
 
@@ -131,6 +183,18 @@ The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is in
 - The first JVM start after install takes over 10 s while it reads files from the array share for the first time, which can trip REA's doctor timeout. Re-run it.
 - **REA and MAIN (Renesas RX).** [fact] Stock rea-agents 6.8.0 cannot take RX: its ELF machines and raw-binary families are hard-coded, and raw-binary cannot reuse a Ghidra project. The fork adds (1) a raw-binary `rx` family bound to the installed `rx62t:LE:32:default` module, refused with `capability_unavailable` if the module is missing, and (2) an optional `base_address` separate from `entry_point`, because MAIN's ROM starts with data, not code. Open MAIN with `open_binary {path: "/workspace/FT-710_Firmware/build/FT-710_MAIN_V0112.bin", format: "raw-binary", architecture: "rx", base_address: "0xFFF80000", entry_point: "0xFFF8FBDB", provider_id: "ghidra"}` (CLI: `--target-format raw-binary --architecture rx --base-address 0xFFF80000 --entry-point 0xFFF8FBDB --provider ghidra`). Checked 2026-10-27: the load image is `verified`, and `cat_parse` @ 0xFFFA347C decompiles the same as the committed `decomp/main`, apart from names. Limits: REA re-imports from scratch, so the RAM/IO blocks, `.data` copy-down, named vectors and `names_main.tsv` names from `SetupRX651.java`/`ApplyNames.java` are absent; RAM globals show as unmapped `DAT_`/`_DAT_`. `REA_GHIDRA_SEED_FILE` works for raw imports (function/label seeds). Keep using `tools/ghidra-headless.sh` and the scripts in `tools/ghidra/` for the canonical, named MAIN project and `decomp/main` exports. Upstream context: morluto/rea#4246 (a generic comment was posted 2026-10-27; it does not mention the fork). Upstream's `src/gpu/GpuPayloadCodec.test.ts` zstd test fails on unmodified `baec375c3` too; it is not caused by the fork. REA hard-codes Ghidra `-XX:ParallelGCThreads=2`, and its vitest config caps workers at 2: pass `--maxWorkers=$(nproc)` to vitest directly.
 - Remove REA: `claude mcp remove --scope user rea; rm -rf ~/.claude/skills/reverse-engineer-anything; npm uninstall -g --prefix ~/.local rea-agents`. Back to stock npm: `npm install -g --prefix ~/.local rea-agents@6.8.0`, then `rea setup --client claude_code --skill-client claude_code --skill --yes`. Update the fork: `git -C ~/opt/rea fetch upstream && git -C ~/opt/rea rebase upstream/main`, rerun the checks and `npm run verify:ghidra:rx`, then repack and reinstall as above.
+
+## Zephyr SDK RT600 HiFi4 toolchain (T12e)
+
+| Item | Value |
+|---|---|
+| What | Zephyr SDK 0.17.0 `xtensa-nxp_rt600_adsp_zephyr-elf` toolchain (GNU binutils 2.38 built with the NXP RT600 HiFi4 core overlay). Its objdump decodes the IFDSP HiFi4 FLIX bundles that Ghidra's Xtensa module cannot |
+| Source | https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0, asset `toolchain_linux-x86_64_xtensa-nxp_rt600_adsp_zephyr-elf.tar.xz` |
+| SHA-256 | `2e0a54e20056b82cae12593e5d936d1e22cdb3f90cb9e77d59c500a5ad4abdc2` (matches the release `sha256.sum`) |
+| Install | extracted only (no `setup.sh`, no sudo) to `~/opt/zephyr-sdk-0.17.0/`; objdump at `~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump` |
+| Used by | `tools/ifdsp_hifi4_dis.py`, `tools/ifdsp_hifi4_regscan.py` (command in `decomp/ifdsp/INDEX.md`) |
+| Not tried | Espressif overlays (ESP32 cores): different core configuration |
+| Remove | `rm -rf ~/opt/zephyr-sdk-0.17.0` |
 
 ## Python
 

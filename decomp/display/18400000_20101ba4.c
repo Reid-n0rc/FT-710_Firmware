@@ -45,7 +45,7 @@ void Reset_Handler(void)
   
   FUN_20101088(0);
   FUN_20100d0c();
-  FUN_20116ccc();
+  cpg_early_init();
   FUN_20100d48();
   FUN_20100e24(vec_reset,0x400000);
   FUN_20100e24(&PTR_DAT_20800000,0x200000);
@@ -224,9 +224,11 @@ void DAbort_Handler(void)
 }
 
 
-// ===== FUN_20100268 @ 20100268 (68 bytes)
+// ===== wdt_system_reset @ 20100268 (68 bytes)
 
-void FUN_20100268(void)
+/* WTCSR/WTCNT/WRCSR 0xFCFE0000 sequence: watchdog reset of the DISPLAY CPU */
+
+void wdt_system_reset(void)
 
 {
   DAT_fcfe0004 = 0xa500;
@@ -239,9 +241,11 @@ void FUN_20100268(void)
 }
 
 
-// ===== FUN_201002ac @ 201002ac (156 bytes)
+// ===== gpio_cfg_mask @ 201002ac (156 bytes)
 
-void FUN_201002ac(ushort *param_1,uint param_2,int param_3)
+/* (Pn ptr, mask|value<<16, flag): bulk port-mode pin set-up */
+
+void gpio_cfg_mask(ushort *param_1,uint param_2,int param_3)
 
 {
   ushort uVar1;
@@ -271,29 +275,33 @@ void FUN_201002ac(ushort *param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_20100348 @ 20100348 (88 bytes)
+// ===== system_reset_select @ 20100348 (88 bytes)
 
-void FUN_20100348(int param_1)
+/* 1: WDT reset; 2: P0 pin set-up then WDT reset */
+
+void system_reset_select(int param_1)
 
 {
   if (param_1 == 1) {
-    FUN_20100268();
+    wdt_system_reset();
     return;
   }
   if (param_1 == 2) {
-    FUN_201002ac(0,0x4000,1);
-    FUN_201002ac(0,0x10,1);
-    FUN_201002ac(&DAT_fcfe302c,0x10004,1);
-    FUN_20100268();
+    gpio_cfg_mask(0,0x4000,1);
+    gpio_cfg_mask(0,0x10,1);
+    gpio_cfg_mask(&DAT_fcfe302c,0x10004,1);
+    wdt_system_reset();
     return;
   }
   return;
 }
 
 
-// ===== FUN_201003a0 @ 201003a0 (116 bytes)
+// ===== gpio_cfg_reset @ 201003a0 (116 bytes)
 
-void FUN_201003a0(int param_1,uint param_2)
+/* (port,pin): PIBC/PBDC/PMC/PIPC = 0, PM = 1 */
+
+void gpio_cfg_reset(int param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -313,14 +321,16 @@ void FUN_201003a0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_20100414 @ 20100414 (68 bytes)
+// ===== gpio_cfg_out_low @ 20100414 (68 bytes)
 
-void FUN_20100414(int param_1,uint param_2)
+/* (port,pin): port mode, output, level 0 */
+
+void gpio_cfg_out_low(int param_1,uint param_2)
 
 {
   ushort uVar1;
   
-  FUN_201003a0(param_1);
+  gpio_cfg_reset(param_1);
   uVar1 = (ushort)(1 << (param_2 & 0xff));
   *(ushort *)(&PTR_DAT_20800000)[param_1] = *(ushort *)(&PTR_DAT_20800000)[param_1] & ~uVar1;
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x300) =
@@ -329,14 +339,16 @@ void FUN_20100414(int param_1,uint param_2)
 }
 
 
-// ===== FUN_20100458 @ 20100458 (40 bytes)
+// ===== gpio_early_init @ 20100458 (40 bytes)
 
-void FUN_20100458(void)
+/* from cpg_early_init: P7_11 (RZ_PWR_ON) output low */
+
+void gpio_early_init(void)
 
 {
-  FUN_20100348(0);
+  system_reset_select(0);
   DAT_2080001c = &DAT_fcfe301c;
-  FUN_20100414(7,0xb);
+  gpio_cfg_out_low(7,0xb);
   return;
 }
 
@@ -368,9 +380,11 @@ void gpio_p7_9_11(int param_1)
 }
 
 
-// ===== FUN_20100534 @ 20100534 (292 bytes)
+// ===== gpio_set_alt_func @ 20100534 (292 bytes)
 
-void FUN_20100534(int param_1,uint param_2,undefined4 param_3)
+/* (port,pin,func 1..8): PFC/PFCE/PFCAE bits = func-1 */
+
+void gpio_set_alt_func(int param_1,uint param_2,undefined4 param_3)
 
 {
   ushort uVar1;
@@ -471,17 +485,19 @@ LAB_20100650:
 }
 
 
-// ===== FUN_20100658 @ 20100658 (324 bytes)
+// ===== gpio_cfg_alt @ 20100658 (324 bytes)
 
-void FUN_20100658(int param_1,uint param_2,undefined4 param_3,int param_4)
+/* (port,pin,func,mode): PMC=1, alt function; mode 0 PIPC, 1 in, 2 out, 3 bidir */
+
+void gpio_cfg_alt(int param_1,uint param_2,undefined4 param_3,int param_4)
 
 {
   ushort *puVar1;
   ushort uVar2;
   
   uVar2 = (ushort)(1 << (param_2 & 0xff));
-  FUN_201003a0(param_1);
-  FUN_20100534(param_1,param_2,param_3);
+  gpio_cfg_reset(param_1);
+  gpio_set_alt_func(param_1,param_2,param_3);
   if (param_4 == 0) {
     *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4200) =
          *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4200) | uVar2;
@@ -522,18 +538,20 @@ void FUN_20100658(int param_1,uint param_2,undefined4 param_3,int param_4)
 }
 
 
-// ===== FUN_2010079c @ 2010079c (140 bytes)
+// ===== spibsc0_pins_init @ 2010079c (140 bytes)
 
-void FUN_2010079c(void)
+/* P9_2..P9_7 alt 2 (QF_CLK/CSn/DAT0..3) */
+
+void spibsc0_pins_init(void)
 
 {
   PTR_DAT_20800024 = &DAT_fcfe3024;
-  FUN_20100658(9,2,2,0);
-  FUN_20100658(9,3,2,0);
-  FUN_20100658(9,4,2,0);
-  FUN_20100658(9,5,2,0);
-  FUN_20100658(9,6,2,0);
-  FUN_20100658(9,7,2,0);
+  gpio_cfg_alt(9,2,2,0);
+  gpio_cfg_alt(9,3,2,0);
+  gpio_cfg_alt(9,4,2,0);
+  gpio_cfg_alt(9,5,2,0);
+  gpio_cfg_alt(9,6,2,0);
+  gpio_cfg_alt(9,7,2,0);
   return;
 }
 
@@ -547,7 +565,7 @@ void spibsc0_init(void)
 {
   uint uVar1;
   
-  FUN_2010079c();
+  spibsc0_pins_init();
   DAT_3fefa008 = 1;
   DAT_3fefa010 = 0xeb0000;
   DAT_3fefa01c = 0x222c780;
@@ -558,14 +576,16 @@ void spibsc0_init(void)
 }
 
 
-// ===== FUN_20100838 @ 20100838 (68 bytes)
+// ===== gpio_cfg_out_high @ 20100838 (68 bytes)
 
-void FUN_20100838(int param_1,uint param_2)
+/* (port,pin): port mode, output, level 1 */
+
+void gpio_cfg_out_high(int param_1,uint param_2)
 
 {
   ushort uVar1;
   
-  FUN_201003a0(param_1);
+  gpio_cfg_reset(param_1);
   uVar1 = (ushort)(1 << (param_2 & 0xff));
   *(ushort *)(&PTR_DAT_20800000)[param_1] = *(ushort *)(&PTR_DAT_20800000)[param_1] | uVar1;
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x300) =
@@ -574,12 +594,14 @@ void FUN_20100838(int param_1,uint param_2)
 }
 
 
-// ===== FUN_2010087c @ 2010087c (48 bytes)
+// ===== gpio_cfg_input @ 2010087c (48 bytes)
 
-void FUN_2010087c(int param_1,uint param_2)
+/* (port,pin): port mode, input buffer on (PIBC) */
+
+void gpio_cfg_input(int param_1,uint param_2)
 
 {
-  FUN_201003a0();
+  gpio_cfg_reset();
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4000) =
        *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4000) | (ushort)(1 << (param_2 & 0xff));
   return;
@@ -652,9 +674,11 @@ uint gpio_read_bit(undefined4 param_1,uint param_2)
 }
 
 
-// ===== FUN_20100990 @ 20100990 (76 bytes)
+// ===== crc16_a001_table_init @ 20100990 (76 bytes)
 
-void FUN_20100990(void)
+/* table at 0x208D9560 */
+
+void crc16_a001_table_init(void)
 
 {
   uint uVar1;
@@ -681,9 +705,11 @@ void FUN_20100990(void)
 }
 
 
-// ===== FUN_201009dc @ 201009dc (56 bytes)
+// ===== crc16_a001 @ 201009dc (56 bytes)
 
-uint FUN_201009dc(uint param_1,int param_2,byte *param_3)
+/* CRC-16 reflected 0xA001, init/xorout 0xFFFF */
+
+uint crc16_a001(uint param_1,int param_2,byte *param_3)
 
 {
   while (param_2 = param_2 + -1, -1 < param_2) {
@@ -1518,183 +1544,185 @@ LAB_20101178:
 void pinmux_init(void)
 
 {
-  FUN_2010087c(0);
-  FUN_2010087c(0,1);
-  FUN_20100414(0,2);
-  FUN_20100414(0,3);
-  FUN_2010087c(0,4);
-  FUN_2010087c(0,5);
-  FUN_20100414(1,0);
-  FUN_20100414(1);
-  FUN_20100414(1,2);
-  FUN_20100658(1,3,4,0);
-  FUN_20100658(1,4,1,3);
-  FUN_20100658(1,5,1,3);
-  FUN_2010087c(1,6);
-  FUN_2010087c(1,7);
-  FUN_20100658(1,8,1,0);
-  FUN_20100658(1,9,1,0);
-  FUN_2010087c(1,10);
-  FUN_20100658(1,0xb,1,0);
-  FUN_20100658(1,0xc,1,0);
-  FUN_2010087c(1,0xd);
-  FUN_20100658(1,0xe,1,0);
-  FUN_2010087c(1,0xf);
-  FUN_20100658(2,0,6);
-  FUN_2010087c(2,1);
-  FUN_2010087c(2);
-  FUN_2010087c(2,3);
-  FUN_2010087c(2,4);
-  FUN_2010087c(2,5);
-  FUN_2010087c(2,6);
-  FUN_20100414(2,7);
-  FUN_20100658(2,8,8,0);
-  FUN_20100658(2,9,8,0);
-  FUN_20100658(2,10,8,0);
-  FUN_20100658(2,0xb,8,0);
-  FUN_20100658(2,0xc,2,0);
-  FUN_20100658(2,0xd,2,0);
-  FUN_20100658(2,0xe,2,0);
-  FUN_20100658(2,0xf,2,0);
-  FUN_2010087c(3,0);
-  FUN_20100658(3,1,3,0);
-  FUN_2010087c(3,2);
-  FUN_20100658(3,3,3,0);
-  FUN_20100658(3,4,1,0);
-  FUN_2010087c(3,5);
-  FUN_2010087c(3,6);
-  FUN_2010087c(3,7);
-  FUN_20100658(3,8,1,0);
-  FUN_20100658(3,9,1,0);
-  FUN_20100658(3,10,1,0);
-  FUN_20100658(3,0xb,1,0);
-  FUN_20100658(3,0xc,1,0);
-  FUN_20100658(3,0xd,1,0);
-  FUN_20100658(3,0xe,1,0);
-  FUN_20100658(3,0xf,1,0);
-  FUN_20100658(4,0,1);
-  FUN_20100658(4,1,1,0);
-  FUN_2010087c(4,2);
-  FUN_20100414(4,3);
-  FUN_2010087c(4);
-  FUN_2010087c(4,5);
-  FUN_20100414(4,6);
-  FUN_20100658(4,7,3,2);
-  FUN_20100658(4,8,1,0);
-  FUN_20100658(4,9,1,0);
-  FUN_20100658(4,10,1,0);
-  FUN_20100658(4,0xb,1,0);
-  FUN_20100658(4,0xc,1,0);
-  FUN_20100658(4,0xd,1,0);
-  FUN_20100658(4,0xe,1,0);
-  FUN_20100658(4,0xf,1,0);
-  FUN_20100414(5,8);
-  FUN_20100414(5,9);
-  FUN_2010087c(5,10);
-  FUN_2010087c(6,0);
-  FUN_2010087c(6,1);
-  FUN_20100658(6,2,7,0);
-  FUN_20100658(6,3,7,0);
-  FUN_20100414(6,4);
-  FUN_20100414(6,5);
-  FUN_20100658(6,6,5,0);
-  FUN_20100658(6,7,5,0);
-  FUN_20100414(6,8);
-  FUN_20100414(6,9);
-  FUN_20100414(6,10);
-  FUN_20100414(6,0xb);
-  FUN_20100414(6,0xc);
-  FUN_20100414(6,0xd);
-  FUN_20100414(6,0xe);
-  FUN_2010087c(6,0xf);
-  FUN_2010087c(7,0);
-  FUN_2010087c(7,1);
-  FUN_2010087c(7,2);
-  FUN_2010087c(7,3);
-  FUN_2010087c(7,4);
-  FUN_2010087c(7,5);
-  FUN_2010087c(7,6);
-  FUN_2010087c(7);
-  FUN_2010087c(7,8);
-  FUN_20100414(7,9);
-  FUN_20100414(7,10);
-  FUN_20100414(7,0xc);
-  FUN_2010087c(7,0xd);
-  FUN_2010087c(7,0xe);
-  FUN_2010087c(7,0xf);
-  FUN_2010087c(8,0);
-  FUN_20100414(8,1);
-  FUN_20100414(8,2);
-  FUN_20100658(8,3,3,0);
-  FUN_20100658(8,4,3,0);
-  FUN_20100658(8,5,3,0);
-  FUN_20100658(8,6,3,0);
-  FUN_20100414(8,7);
-  FUN_20100414(8);
-  FUN_2010087c(8,9);
-  FUN_20100414(8,10);
-  FUN_2010087c(8,0xb);
-  FUN_2010087c(8,0xc);
-  FUN_2010087c(8,0xd);
-  FUN_20100414(8,0xe);
-  FUN_2010087c(8,0xf);
-  FUN_20100658(9,0,4);
-  FUN_2010087c(9,1);
-  FUN_20100658(9,2,2,0);
-  FUN_20100658(9,3,2,0);
-  FUN_20100658(9,4,2,0);
-  FUN_20100658(9,5,2,0);
-  FUN_20100658(9,6,2,0);
-  FUN_20100658(9,7,2,0);
-  FUN_20100658(10,0,2);
-  FUN_20100658(10,1,2,0);
-  FUN_2010087c(10,2);
-  FUN_20100658(10,3,2,0);
-  FUN_20100658(10,4,2);
-  FUN_2010087c(10,5);
-  FUN_2010087c(10,6);
-  FUN_2010087c(10,7);
-  FUN_20100658(10,8,5,0);
-  FUN_20100658(10,9,5,0);
-  FUN_20100658(10,10,5,0);
-  FUN_20100658(10,0xb,5,0);
-  FUN_20100658(10,0xc,5,0);
-  FUN_20100658(10,0xd,5,0);
-  FUN_20100414(10,0xe);
-  FUN_2010087c(10,0xf);
-  FUN_2010087c(0xb,0);
-  FUN_2010087c(0xb,1);
-  FUN_20100838(0xb,2);
-  FUN_2010087c(0xb,3);
-  FUN_20100658(0xb,4,2,0);
-  FUN_20100658(0xb,5,2,0);
-  FUN_20100658(0xb,6,2,0);
-  FUN_20100658(0xb,7,2,0);
-  FUN_20100658(0xb,8,2,0);
-  FUN_20100658(0xb,9,2,0);
-  FUN_20100658(0xb,10,2,0);
-  FUN_20100658(0xb,0xb,2,0);
-  FUN_2010087c(0xb,0xc);
-  FUN_2010087c(0xb,0xd);
-  FUN_2010087c(0xb,0xe);
-  FUN_20100658(0xb,0xf,5,0);
+  gpio_cfg_input(0);
+  gpio_cfg_input(0,1);
+  gpio_cfg_out_low(0,2);
+  gpio_cfg_out_low(0,3);
+  gpio_cfg_input(0,4);
+  gpio_cfg_input(0,5);
+  gpio_cfg_out_low(1,0);
+  gpio_cfg_out_low(1);
+  gpio_cfg_out_low(1,2);
+  gpio_cfg_alt(1,3,4,0);
+  gpio_cfg_alt(1,4,1,3);
+  gpio_cfg_alt(1,5,1,3);
+  gpio_cfg_input(1,6);
+  gpio_cfg_input(1,7);
+  gpio_cfg_alt(1,8,1,0);
+  gpio_cfg_alt(1,9,1,0);
+  gpio_cfg_input(1,10);
+  gpio_cfg_alt(1,0xb,1,0);
+  gpio_cfg_alt(1,0xc,1,0);
+  gpio_cfg_input(1,0xd);
+  gpio_cfg_alt(1,0xe,1,0);
+  gpio_cfg_input(1,0xf);
+  gpio_cfg_alt(2,0,6);
+  gpio_cfg_input(2,1);
+  gpio_cfg_input(2);
+  gpio_cfg_input(2,3);
+  gpio_cfg_input(2,4);
+  gpio_cfg_input(2,5);
+  gpio_cfg_input(2,6);
+  gpio_cfg_out_low(2,7);
+  gpio_cfg_alt(2,8,8,0);
+  gpio_cfg_alt(2,9,8,0);
+  gpio_cfg_alt(2,10,8,0);
+  gpio_cfg_alt(2,0xb,8,0);
+  gpio_cfg_alt(2,0xc,2,0);
+  gpio_cfg_alt(2,0xd,2,0);
+  gpio_cfg_alt(2,0xe,2,0);
+  gpio_cfg_alt(2,0xf,2,0);
+  gpio_cfg_input(3,0);
+  gpio_cfg_alt(3,1,3,0);
+  gpio_cfg_input(3,2);
+  gpio_cfg_alt(3,3,3,0);
+  gpio_cfg_alt(3,4,1,0);
+  gpio_cfg_input(3,5);
+  gpio_cfg_input(3,6);
+  gpio_cfg_input(3,7);
+  gpio_cfg_alt(3,8,1,0);
+  gpio_cfg_alt(3,9,1,0);
+  gpio_cfg_alt(3,10,1,0);
+  gpio_cfg_alt(3,0xb,1,0);
+  gpio_cfg_alt(3,0xc,1,0);
+  gpio_cfg_alt(3,0xd,1,0);
+  gpio_cfg_alt(3,0xe,1,0);
+  gpio_cfg_alt(3,0xf,1,0);
+  gpio_cfg_alt(4,0,1);
+  gpio_cfg_alt(4,1,1,0);
+  gpio_cfg_input(4,2);
+  gpio_cfg_out_low(4,3);
+  gpio_cfg_input(4);
+  gpio_cfg_input(4,5);
+  gpio_cfg_out_low(4,6);
+  gpio_cfg_alt(4,7,3,2);
+  gpio_cfg_alt(4,8,1,0);
+  gpio_cfg_alt(4,9,1,0);
+  gpio_cfg_alt(4,10,1,0);
+  gpio_cfg_alt(4,0xb,1,0);
+  gpio_cfg_alt(4,0xc,1,0);
+  gpio_cfg_alt(4,0xd,1,0);
+  gpio_cfg_alt(4,0xe,1,0);
+  gpio_cfg_alt(4,0xf,1,0);
+  gpio_cfg_out_low(5,8);
+  gpio_cfg_out_low(5,9);
+  gpio_cfg_input(5,10);
+  gpio_cfg_input(6,0);
+  gpio_cfg_input(6,1);
+  gpio_cfg_alt(6,2,7,0);
+  gpio_cfg_alt(6,3,7,0);
+  gpio_cfg_out_low(6,4);
+  gpio_cfg_out_low(6,5);
+  gpio_cfg_alt(6,6,5,0);
+  gpio_cfg_alt(6,7,5,0);
+  gpio_cfg_out_low(6,8);
+  gpio_cfg_out_low(6,9);
+  gpio_cfg_out_low(6,10);
+  gpio_cfg_out_low(6,0xb);
+  gpio_cfg_out_low(6,0xc);
+  gpio_cfg_out_low(6,0xd);
+  gpio_cfg_out_low(6,0xe);
+  gpio_cfg_input(6,0xf);
+  gpio_cfg_input(7,0);
+  gpio_cfg_input(7,1);
+  gpio_cfg_input(7,2);
+  gpio_cfg_input(7,3);
+  gpio_cfg_input(7,4);
+  gpio_cfg_input(7,5);
+  gpio_cfg_input(7,6);
+  gpio_cfg_input(7);
+  gpio_cfg_input(7,8);
+  gpio_cfg_out_low(7,9);
+  gpio_cfg_out_low(7,10);
+  gpio_cfg_out_low(7,0xc);
+  gpio_cfg_input(7,0xd);
+  gpio_cfg_input(7,0xe);
+  gpio_cfg_input(7,0xf);
+  gpio_cfg_input(8,0);
+  gpio_cfg_out_low(8,1);
+  gpio_cfg_out_low(8,2);
+  gpio_cfg_alt(8,3,3,0);
+  gpio_cfg_alt(8,4,3,0);
+  gpio_cfg_alt(8,5,3,0);
+  gpio_cfg_alt(8,6,3,0);
+  gpio_cfg_out_low(8,7);
+  gpio_cfg_out_low(8);
+  gpio_cfg_input(8,9);
+  gpio_cfg_out_low(8,10);
+  gpio_cfg_input(8,0xb);
+  gpio_cfg_input(8,0xc);
+  gpio_cfg_input(8,0xd);
+  gpio_cfg_out_low(8,0xe);
+  gpio_cfg_input(8,0xf);
+  gpio_cfg_alt(9,0,4);
+  gpio_cfg_input(9,1);
+  gpio_cfg_alt(9,2,2,0);
+  gpio_cfg_alt(9,3,2,0);
+  gpio_cfg_alt(9,4,2,0);
+  gpio_cfg_alt(9,5,2,0);
+  gpio_cfg_alt(9,6,2,0);
+  gpio_cfg_alt(9,7,2,0);
+  gpio_cfg_alt(10,0,2);
+  gpio_cfg_alt(10,1,2,0);
+  gpio_cfg_input(10,2);
+  gpio_cfg_alt(10,3,2,0);
+  gpio_cfg_alt(10,4,2);
+  gpio_cfg_input(10,5);
+  gpio_cfg_input(10,6);
+  gpio_cfg_input(10,7);
+  gpio_cfg_alt(10,8,5,0);
+  gpio_cfg_alt(10,9,5,0);
+  gpio_cfg_alt(10,10,5,0);
+  gpio_cfg_alt(10,0xb,5,0);
+  gpio_cfg_alt(10,0xc,5,0);
+  gpio_cfg_alt(10,0xd,5,0);
+  gpio_cfg_out_low(10,0xe);
+  gpio_cfg_input(10,0xf);
+  gpio_cfg_input(0xb,0);
+  gpio_cfg_input(0xb,1);
+  gpio_cfg_out_high(0xb,2);
+  gpio_cfg_input(0xb,3);
+  gpio_cfg_alt(0xb,4,2,0);
+  gpio_cfg_alt(0xb,5,2,0);
+  gpio_cfg_alt(0xb,6,2,0);
+  gpio_cfg_alt(0xb,7,2,0);
+  gpio_cfg_alt(0xb,8,2,0);
+  gpio_cfg_alt(0xb,9,2,0);
+  gpio_cfg_alt(0xb,10,2,0);
+  gpio_cfg_alt(0xb,0xb,2,0);
+  gpio_cfg_input(0xb,0xc);
+  gpio_cfg_input(0xb,0xd);
+  gpio_cfg_input(0xb,0xe);
+  gpio_cfg_alt(0xb,0xf,5,0);
   return;
 }
 
 
-// ===== FUN_20101b60 @ 20101b60 (68 bytes)
+// ===== backlight_enable @ 20101b60 (68 bytes)
 
-void FUN_20101b60(int param_1)
+/* P4_7 BLPWM alt3 (MTU2 out) + P10_4 level, or input */
+
+void backlight_enable(int param_1)
 
 {
   undefined4 uVar1;
   
   if (param_1 == 0) {
-    FUN_2010087c(4,7);
+    gpio_cfg_input(4,7);
     uVar1 = 0x100000;
   }
   else {
-    FUN_20100658(4,7,3,2);
+    gpio_cfg_alt(4,7,3,2);
     uVar1 = 0x100010;
   }
   DAT_fcfe3128 = uVar1;

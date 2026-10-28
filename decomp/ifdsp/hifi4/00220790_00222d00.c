@@ -75,11 +75,11 @@ void FUN_00220b5c(undefined4 param_1)
 }
 
 
-// ===== FUN_00220bd0 @ 00220bd0 (11 bytes)
+// ===== create_Thread_Rx_Audio @ 00220bd0 (11 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00220bd0(void)
+void create_Thread_Rx_Audio(void)
 
 {
   rsr(0);
@@ -100,11 +100,11 @@ void FUN_00220c68(void)
 }
 
 
-// ===== FUN_00220c7c @ 00220c7c (40 bytes)
+// ===== rx_audio_fifo_push @ 00220c7c (40 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00220c7c(void)
+void rx_audio_fifo_push(void)
 
 {
   flix();
@@ -153,7 +153,7 @@ FUN_00220d14(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_
   uVar1 = FUN_00200ef8();
   flix();
   if (0x7fff < uVar1) {
-    FUN_00235d30();
+    memcpy();
     flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
@@ -219,25 +219,25 @@ void FUN_00220ee0(void)
 }
 
 
-// ===== FUN_00220f74 @ 00220f74 (13 bytes)
+// ===== rx_audio_push_block @ 00220f74 (13 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00220f74(undefined4 param_1)
+void rx_audio_push_block(undefined4 param_1)
 
 {
-  FUN_00220c7c(param_1);
+  rx_audio_fifo_push(param_1);
   flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
 }
 
 
-// ===== FUN_00220f90 @ 00220f90 (12 bytes)
+// ===== Thread_Rx_Audio_entry @ 00220f90 (12 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00220f90(void)
+void Thread_Rx_Audio_entry(void)
 
 {
   flix();
@@ -246,11 +246,11 @@ void FUN_00220f90(void)
 }
 
 
-// ===== FUN_00220fd0 @ 00220fd0 (20 bytes)
+// ===== fc1_spi_dma_init @ 00220fd0 (20 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void FUN_00220fd0(void)
+void fc1_spi_dma_init(void)
 
 {
   flix();
@@ -268,7 +268,7 @@ void FUN_002210a4(void)
 
 {
   flix();
-  FUN_00235eb0(&DAT_200607e0);
+  memset(&DAT_200607e0);
   flix();
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();

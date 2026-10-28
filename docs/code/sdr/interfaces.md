@@ -50,13 +50,17 @@ marked "?" were hard to read at the scan resolution.
 - **The DISPLAY's "SDR SPI" is the FFT/scope data port, not the flash.** `SDR_SCLK/SS/MOSI` land on the module's
   `FFT_CLK/FFT_FRM/FFT_DAT` (23/25/27), i.e. on FPGA fabric pins. The module's `MISO/MOSI/SCLK` pins 9/11/13 (which by
   name could reach the config flash) have no MAIN net.
-- **`SDR_UPDATE` drives the module pin labelled `WP`** (pin 53). That reads as the **write-protect of the QSPI config
-  flash**, controlled by MAIN. T08's hypothesis that the DISPLAY writes the flash directly over its SPI bus is
-  therefore unlikely; more likely the **FPGA (or a module-side path) writes its own config flash**, with MAIN lifting
-  WP during an update and pulsing `SDR_RESET` afterwards so the FPGA reboots from the new image.
-- The FPGA receives the image either over the FFT/FRM SPI port from DISPLAY or over the MAIN UART (pins 46/48)
-  **[guess, open]**. Fabric logic that writes flash needs user access to the flash clock (STARTUPE2 `USRCCLKO`); its use
-  could not be read from the bitstream (see [resources.md](resources.md#special-blocks)).
+- **`SDR_UPDATE` drives the module pin labelled `WP`** (pin 53), but it is an **update-mode input**, not a plain
+  write-protect. MAIN holds it **low** for the whole update and raises it again for the reboot, so an active-low flash
+  `WP#` would be protected exactly while the image is written (T10c [../main/sdr-link.md](../main/sdr-link.md), T11c
+  [../display/update.md](../display/update.md) §8). The fabric writes the config flash itself; whether the pin also reaches the
+  flash's /WP cannot be told from the code. (T13 first read it as "MAIN lifts WP".)
+- **The image goes over the FFT/FRM SPI port** **[fact for DISPLAY]**: the DISPLAY switches RSPI2 to master (about 2 MHz) on
+  the `SDR_SCLK/SS/MOSI` pins (`sdr_spi_master_write` 0x201107C0) and sends 4 KiB blocks, while MAIN bridges the register
+  commands over its UART5. Fabric logic that writes flash needs user access to the flash clock (STARTUPE2 `USRCCLKO`);
+  the QSPI pins D00/FCS_B are driven and D01–D03 are user inputs, so STARTUPE2 is likely used
+  ([resources.md](resources.md#io)) **[inference]**.
+- A volatile JTAG test bitstream (SRAM only) is planned in [docs/patches/fpga-jtag-hello.md](../../patches/fpga-jtag-hello.md) (T16).
 - `SDR_DBG_IN/OUT` is a second UART ("UART_DBG"), and JTAG (`SDR_TDI/TDO/TMS/TCK`) also goes to header J2001.
 
 ## Data paths
@@ -64,7 +68,7 @@ marked "?" were hard to read at the scan resolution.
 ```mermaid
 flowchart LR
   RF["J3003 RX_P/N, TX1_P/N<br/>DITHER, SCOPE_IN"] --> ADC["ADC<br/>(part unknown, ~250 MSPS?)"]
-  ADC -- "~9 LVDS pairs [inference]" --> FPGA
+  ADC -- "16 LVDS pairs (bank 35) [inference]" --> FPGA
   subgraph FPGA["XC7A50T (SDR image)"]
     DDC["DDC: NCO cos table<br/>+ FIR bank, 119 DSP48"]
     FFT["scope / FFT engine<br/>phase + twiddle tables"]
@@ -78,7 +82,7 @@ flowchart LR
   MAIN["MAIN RX651"] -- "UART5 (46/48)" --> REG
   MAIN -- "TX, SEND_A, FSK_SHIFT" --> FPGA
   FPGA -- "SDR_OVF, FADC0/1, SDR_DET/DET2" --> MAIN
-  DUC -- "~9 LVDS pairs [inference]" --> DAC["TX DAC?<br/>(unknown)"] --> RF
+  DUC -- "18 LVDS pairs (bank 34) [inference]" --> DAC["TX DAC?<br/>(unknown)"] --> RF
 ```
 
 All block names inside the FPGA are **[inference]** from BRAM contents and resource counts; the routing is not decoded.
@@ -96,24 +100,35 @@ sequenceDiagram
   participant Q as module QSPI flash
   Note over F,Q: power-up: master SPI x4, opcode 0x6B, from flash 0 (sync at 0x1030) [fact: BSPI 0x26B]
   Q->>F: bitstream (2.19 MB)
-  F-->>M: UART5 version ("SDR : V01-04"?) [inference]
-  Note over SD,Q: firmware update [inference unless marked]
-  SD->>D: FT-710_SDR_V*.SFL (tag SR) [fact: filename in DISPLAY]
-  D->>D: SFL decode, CRC check [fact: T04]
-  D->>M: request SDR update (DISP UART) [guess]
-  M->>Q: SDR_UPDATE = WP released (J2002 pin 53) [inference]
-  D->>F: image over FFT/FRM SPI, or MAIN over UART [guess]
-  F->>Q: erase/program sectors (needs STARTUPE2 USRCCLKO) [guess]
-  D->>F: sdrchk1/sdrchk2 verify, CRC-32/BZIP2 header word? [guess]
-  M->>F: SDR_RESET pulse (pin 52) [inference]
-  Q->>F: reboot from the new image
+  M->>F: UART5 read reg 0 at boot → 0x0104 = V01-04 [fact]
+  SD->>D: FT-710_SDR_V*.SFL (tag SR), size 0x43075A, salted CRC [fact]
+  D->>M: link sub-command 1 (F1 01) [fact]
+  M->>F: DSP_RESET=0, SDR_RESET=0, SDR_UPDATE=0, 100 ms, SDR_RESET=1, 2 s [fact]
+  M->>F: write reg 0x37 = 0xBCC5 (unlock) [fact]
+  loop 536 blocks of 4 KiB
+    D->>M: FD frames: reg 0x30/0x31 = 0x240000 + i·0x1000, reg 0x32 = 3, 1 [fact]
+    M->>F: relayed register writes (UART5) [fact]
+    D->>F: 4 KiB over RSPI2 master on the FFT pins [fact]
+    D->>M: reg 0x32 = 4, 5; FE read 0x32 status, 0x33 CRC-16 [fact]
+    F->>Q: erase / program [inference]
+  end
+  D->>F: 4 KiB header block last, at 0x480000 [fact for the address]
+  D->>M: F1 81 (end bridge) [fact]
+  M->>F: SDR_RESET pulse with SDR_UPDATE=1, then DSP_RESET=1 [fact]
+  Q->>F: reboot from flash
 ```
+
+Details: MAIN side [../main/sdr-link.md](../main/sdr-link.md) (`sdr_bridge_mode` 0xFFFA3226), DISPLAY side
+[../display/update.md](../display/update.md) §8 (`sdr_flash_write` 0x20110AB8). The bitstream proper (file binary 0x1000..) goes to
+flash 0x240000 and the header with the CRC-32/BZIP2 word last to 0x480000, so an interrupted update leaves no valid header
+**[inference]**. Whether the FPGA boots 0x240000 directly or through a golden/multiboot image at 0 is open **[guess]**.
 
 ### To confirm
 
-1. DISPLAY (T06): the `sdrup`/`sdr1up`/`sdr2up`/`sdrspi`/`sdrchk1/2` handlers: which bus carries the image, what
-   commands/framing are used, and who computes the CRC-32/BZIP2 in the 4 KiB header.
-2. MAIN (T05/T11): the GPIOs for `SDR_UPDATE`/`SDR_RESET`, the UART5 protocol (version query, register writes), and
-   whether MAIN takes part in the update.
+1. ~~Which bus carries the image~~ **answered (T11c/T11d)**: RSPI2 master on the FFT pins, control through MAIN
+   ([update.md](../display/update.md) §8). Still open: the meaning of reg 0x32 commands 3/1/4/5 and the 0x240000 / 0x480000
+   slot layout (T15).
+2. ~~MAIN GPIOs and UART5 protocol~~ **answered (T10c)**: P76 `SDR_UPDATE`, P77 `SDR_RESET`, SCI5 115200 8N1, MAIN bridges
+   the update ([sdr-link.md](../main/sdr-link.md)).
 3. Readable labels on J2002 pins 14 and 37 at a higher scan resolution.
 4. Whether the module's `MISO/MOSI/SCLK` pins (9/11/13) are a factory flash-programming port.
