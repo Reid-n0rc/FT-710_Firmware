@@ -1,0 +1,11 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -1827,7 +1827,7 @@
+     local rs1:4 = zext(op4_4:1);
+     local rs2:4 = zext(op0_4:1);
+ 
+-    local n_regs = reg0_4 - reg4_4 + 1;
++    local n_regs = rs2 - rs1 + 1;   # T21d: register numbers, not register values
+     SP = SP + (imm - n_regs * 4);
+ 
+     ## pop stack to registers
