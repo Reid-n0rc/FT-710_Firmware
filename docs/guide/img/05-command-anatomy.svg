@@ -83,9 +83,9 @@
   <text x="420" y="262" font-size="15">a read is just the mnemonic and the end mark</text>
   <text x="360" y="422" font-size="15">the only error reply: unknown command, wrong length, bad digit</text>
   <rect x="24" y="470" width="912" height="104" rx="8" fill="#FFFFFF" stroke="#6B7280" stroke-width="2"/>
-  <text x="44" y="500" font-size="15">• Only the two letters are case-insensitive: fa; works, the parameters must be exact.</text>
+  <text x="44" y="500" font-size="15">• Only the two letters are case-insensitive: fa; works, but parameters are case-sensitive.</text>
   <text x="44" y="528" font-size="15">• MAIN first checks the total length (FA: 3 or 12 characters), then the handler checks the digits.</text>
-  <text x="44" y="556" font-size="15">• A set normally gives no reply on success. A read always answers, or answers ?;.</text>
+  <text x="44" y="556" font-size="15">• A set normally gives no reply on success. A read answers with the value, or with ?;.</text>
   <rect x="230" y="596" width="22" height="18" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="260" y="611" font-size="14">mnemonic</text>
   <rect x="400" y="596" width="22" height="18" rx="4" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/><text x="430" y="611" font-size="14">parameters</text>
   <rect x="570" y="596" width="22" height="18" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/><text x="600" y="611" font-size="14">terminator ;</text>
