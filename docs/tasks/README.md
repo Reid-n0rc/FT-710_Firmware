@@ -57,7 +57,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T19e | [Guide: Inside MAIN and DISPLAY](T19e-guide-inside-main-and-display.md) | T19 | done |
 | T19f | [Guide: Inside IFDSP and SDR](T19f-guide-inside-ifdsp-and-sdr.md) | T19 | done |
 | T19g | [Guide: Hacking and custom firmware](T19g-guide-hacking-and-custom-firmware.md) | T19 | done |
-| T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | in progress |
+| T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | done |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
