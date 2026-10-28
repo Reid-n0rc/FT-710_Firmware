@@ -16,6 +16,8 @@ usage: python3 -I tools/hifi4_hand_decode.py <command> [args]   (env: see DEFAUL
   regions MISMATCHES LISTING OUT  settle the listing-mode conflict regions of tools/flix_compare.py (rows "missing ...
                                   inside", grouped with an 8-byte gap) with an own recursive-descent flow decode and with
                                   objdump run at Ghidra's instruction starts; one verdict row per region in OUT
+                                  (verdict ghidra / flix: only that side's starts are reached; "(ptr)": reached only
+                                  through a code pointer from an l32r literal, the rodata or the TCM/data images; unreached; mixed)
 Normalisation for comparisons: case; `(0x...)` literal comments and `; name` call comments dropped; integers by value
 modulo 2^32; bundles split into slots at `;`; `rsr.X a` == `rsr a, X` (also wsr/xsr/rur/wur); `mov a, b` == `or a, b, b`.
 """
@@ -268,7 +270,7 @@ def cmd_parallel(n, outp):
     ins, _, _ = parse_flix()
     bund = [a for a, ln, hx, text in ins if text.startswith('{')]
     d = decode(bund)
-    hits = []
+    hits, dual = [], []
     for a in bund:
         r = d[a]
         rw = [slot_regs(s) for s in r['slots']]
@@ -278,6 +280,10 @@ def cmd_parallel(n, outp):
                 if i != j:
                     for reg in sorted((wi & rj) - {x for x in wi if x.startswith('state:')}):
                         dep.append((i, j, reg))
+        allw = [w - {x for x in w if x.startswith('state:')} for _, w in rw]
+        if any(allw[i] & allw[j] for i in range(len(allw)) for j in range(i + 1, len(allw))):
+            dual.append(a)  # two slots write the same register: not a legal bundle, so probably data
+            continue
         if dep:
             hits.append((a, dep))
     # prefer variety: different (writer opcode, reader opcode) pairs, and some where the writer is the earlier slot
@@ -300,7 +306,8 @@ def cmd_parallel(n, outp):
                                                              j, r['slots'][j]['op'], reg))
             print('%x %s  %s' % (a, r['text'], ', '.join('slot%d(%s) writes %s read by slot%d(%s)' % (
                 i, r['slots'][i]['op'], reg, j, r['slots'][j]['op']) for i, j, reg in dep)))
-    print('bundles with a cross-slot write->read: %d of %d' % (len(hits), len(bund)))
+    print('bundles with a cross-slot write->read: %d of %d; bundles where two slots write one register: %d (%s)'
+          % (len(hits), len(bund), len(dual), ' '.join('%x' % a for a in dual[:20])))
 
 
 def flow(dec, roots):
@@ -357,6 +364,38 @@ def cmd_regions(mism, listing, outp):
         if f[0] != 'entry':
             roots.add(int(f[0], 16))
     reach = flow(dec, roots)
+    # second pass: code pointers. Values of the l32r literals that reached code loads, when they point into .text
+    # (handler and callback addresses that reach code through callx/jx or a vector table), plus aligned words in the
+    # other two carved images (TCM, SRAM data) and in the SRAM image's rodata below 0x207000 that point into .text.
+    img = open(ENV['HD_IMAGE'], 'rb').read()
+    tlo, thi = 0x207000, BASE + len(img)
+    ptrs = set()
+    for _ in range(4):
+        for a in reach:
+            for sl in dec[a]['slots']:
+                if sl['op'] == 'l32r':
+                    lit = [int(o[2], 16) for o in sl['ops'] if o[2] and o[2].startswith('0x')][0]
+                    if BASE <= lit < BASE + len(img) - 3:
+                        v = int.from_bytes(img[lit - BASE:lit - BASE + 4], 'little')
+                        if tlo <= v < thi:
+                            ptrs.add(v)
+        for i in range(0, tlo - BASE, 4):  # rodata / literal area of the SRAM image: jump tables, handler tables
+            v = int.from_bytes(img[i:i + 4], 'little')
+            if tlo <= v < thi:
+                ptrs.add(v)
+        for other in ('_0_tcm.bin', '_2_sram_data.bin'):
+            o = ENV['HD_IMAGE'].replace('_1_sram_text.bin', other)
+            if os.path.exists(o):
+                b = open(o, 'rb').read()
+                for i in range(0, len(b) - 3, 4):
+                    v = int.from_bytes(b[i:i + 4], 'little')
+                    if tlo <= v < thi:
+                        ptrs.add(v)
+        reach2 = flow(dec, roots | ptrs)
+        if reach2 == reach:
+            break
+        reach = reach2
+    reach_fn = flow(dec, roots)
     gstarts = sorted(a for a in G if BASE <= a < BASE + os.path.getsize(ENV['HD_IMAGE']))
     need_od = set()
     for lo, hi in regs:
@@ -376,10 +415,11 @@ def cmd_regions(mism, listing, outp):
             fo, go = sorted(fs - gs), sorted(gs - fs)
             rf = [a for a in fo if a in reach]
             rg = [a for a in go if a in reach]
+            weak = not any(a in reach_fn for a in rf + rg)  # reached only through a code pointer
             if rg and not rf:
-                v = 'ghidra'
+                v = 'ghidra' + ('(ptr)' if weak else '')
             elif rf and not rg:
-                v = 'flix'
+                v = 'flix' + ('(ptr)' if weak else '')
             elif not rf and not rg:
                 v = 'unreached'
             else:
@@ -405,7 +445,8 @@ def cmd_regions(mism, listing, outp):
                 ','.join('%x' % a for a in rf), ','.join('%x' % a for a in rg),
                 ' '.join('%s=%d' % kv for kv in sorted(chk.items())), ex))
     print('regions %d (%d flix rows): %s; rows %s' % (len(regs), len(inside), dict(verdicts), dict(nrow)))
-    print('hand-decoder flow reaches %d instruction starts' % len(reach))
+    print('hand-decoder flow reaches %d instruction starts from the %d entries, %d with %d code pointers added'
+          % (len(reach_fn), len(roots), len(reach), len(ptrs)))
 
 
 def main(argv):

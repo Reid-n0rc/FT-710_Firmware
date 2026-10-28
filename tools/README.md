@@ -96,6 +96,8 @@ The Verilator harness and build scripts are in [`hdl/sdr/sim/`](../hdl/sdr/READM
 | `index_refresh.py` | Refreshes the export-file column of a `decomp/*/INDEX.md` after a re-export | `INDEX.md` + `functions.tsv` | T17 |
 | `decomp_quality.py` | Decompile-quality regression check (#97 B11): `compare old new` exits 1 if any count in `quality.tsv` went up (run by `bootstrap.sh verify`); `index INDEX.md LABEL=quality.tsv ...` renders the counts as a table between `<!-- quality:begin/end -->` | `decomp/*/quality.tsv` → exit code / `INDEX.md` | T21f |
 | `hifi4_rizin_compare.py` | Re-decodes every non-FLIX HiFi4 instruction of `flix.dis` with rizin's Capstone Xtensa decoder, driven from `flix.dis`'s own addresses, and classifies each (agree / rizin illegal / mnemonic / operands / standard-FPU layout) | rizin + `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin` + `decomp/ifdsp/hifi4/flix.dis` → stdout summary, per-instruction TSV | T22c |
+| `hifi4_isa_decode.c` | Stand-alone HiFi4 decoder: compiled with Cadence's `xtensa-modules.c`, it uses only that file's tables and generated functions (format decode, slot get, opcode decode, fields, operand decode/undo_reloc, iclass in/out); own driver, no libisa, nothing shared with `xtensa_sleigh_gen.py`. Prints length, format, flow flags, PC-relative targets, objdump-like text and the slot/field breakdown | image + base, addresses on stdin (or every byte) → TSV | T22c |
+| `hifi4_hand_decode.py` | Drives `hifi4_isa_decode.c`: `flix` (vs `flix.dis`), `ghidra` (vs an `ExportListing.java` TSV), `sample N` (bundles of different format/slot mixes, field by field), `parallel N` (bundles where one slot writes what another reads), `regions` (settles `flix_compare.py`'s listing conflict regions with an own recursive-descent flow decode plus objdump at Ghidra's starts) | `build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin`, `flix.dis`, oracle TSVs → stdout, TSVs | T22c |
 | `rx_compare.py` | Diffs Ghidra's MAIN (RX) listing against GNU binutils `rx-elf-objdump` per instruction (length, mnemonic, operands; normalisation rules N1-N10 in the docstring); exit 1 on any difference | `ListingExport.java` TSV + `build/FT-710_MAIN_V0112.bin` (+ `~/opt/rx-binutils-2.47`) → stdout, `--diffs` TSV | T21c |
 
 ## tools/ghidra/ (Ghidra scripts and their data)
@@ -133,6 +135,7 @@ the exact command line for every program.
 | `DumpFuncs.java` | postScript | Decompiles a few functions (by address or name) into one text file | any | T07 |
 | `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
 | `ListingExport.java` | postScript | Every instruction as TSV (addr, len, bytes, mnemonic, operands, function) plus undefined holes in function bodies; prints Error bookmarks (input of `rx_compare.py`) | any | T21c |
+| `PcodeDump.java` | postScript | Raw p-code of the instruction at each given address (bundle-parallel semantics check) | any | T22c |
 | `PeriphRefs.java` | postScript | Functions touching given peripheral register ranges | any | T05 |
 | `ProgramStats.java` | postScript | Function/instruction/data coverage and the largest undefined ROM gaps | any | T05 |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | postScript | References to addresses/ranges with the containing function (one would do; the others are kept for the task logs) | MAIN | T10 |
