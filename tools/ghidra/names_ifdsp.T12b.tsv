@@ -1,0 +1,15 @@
+# T12b proposed IFDSP names. address<TAB>name<TAB>comment. See docs/code/ifdsp/control-link.md.
+# --- program FT-710_IFDSP_V0101.bin (Cortex-M33): both need a function created first (tail-call targets, no Ghidra function yet)
+0008138c	console_printf	vsprintf into 0x88DF0 then console_puts; tail-called by console_cmd_r
+00085f88	aic3204_select_right_input	codec P1 R55 = 0x10 (arg 1, IN2R) or 0x40 (arg 0, IN1R); called by regfile_write for reg 10
+# --- program FT-710_IFDSP_V0101_hifi4.bin (HiFi4); no HiFi4 names script exists yet (T12e)
+0021be80	regfile_set_defaults	writes the default of every DSP register (all but 0, 1, 0x4000)
+0021c060	regfile_update_gpio_status	reg 0x4004 = (f()<<2) | (GPIO P0_21<<1) | GPIO P0_22; called from Thread_Main loop 0x0021C360
+0021c090	regfile_capture_init	capture block table 0x2390E0 = {0x2007E000, 0x2007F000} (regs 0x7000/0x7800), memset 4 KB each
+0021c0b8	regfile_capture_clear	memset(block[idx], 0, 0x1000)
+0021c0d4	regfile_capture_set_ctrl	*(u16 *)block[idx] = v (control word); no caller
+0021c0e8	regfile_capture_append	append u32 if ctrl bit 0, count at +2 (max 0x3FE), wrap if ctrl bit 1; no caller
+0021c5cc	regfile_gpio_sel	(reg 0xC & 0xF000) == 0x1000 -> GPIO P0_4 byte
+0021d270	status_reg4_update	reg 4 = rounded value or 0x7FFF (CW zero-in offset [inference])
+0021f348	status_level_update	reg 0x4005 = 0..99 level for the M33 PWM; also level byte for reg 3
+0021f388	status_reg3_update	reg 3 = level<<8 | (255 - x)
