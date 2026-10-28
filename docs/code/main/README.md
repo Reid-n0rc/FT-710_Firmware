@@ -87,7 +87,7 @@ sequenceDiagram
 | Step | Address | Ghidra name | Inferred name | What it does |
 |---|---|---|---|---|
 | 1 | 0xFFF8FBDB | `PowerON_Reset` | — | Stack/INTB/EXTB/FPSW set-up, then the calls below; `_CLOSEALL` and an endless `bra` if `main` ever returns **[fact]** |
-| 2 | 0xFFF913D7 | `hw_init_clock` | — | SYSTEM/clock registers (PRCR 0xA50B…) **[inference]**. The side-tone code computes TPU periods from **PCLK = 60 MHz** (`6e+07` in `tone_set`) **[fact]** |
+| 2 | 0xFFF913D7 | `hw_init_clock` | — | clock setup, PLL 240 MHz, ICLK 120 MHz, PCLKB 60 MHz (PLLCR 0x1300, SCKCR 0x21C21222) **[fact: RX651 HWM r01uh0590 §9.2.1, §9.2.5]**. The side-tone code computes TPU periods from **PCLK = 60 MHz** (`6e+07` in `tone_set`) **[fact]** |
 | 3 | 0xFFFEDEDA | `_INITSCT` | — | CC-RX section init: BTBL zero-fill, DTBL ROM→RAM copy **[fact]** |
 | 4 | 0xFFF8FF5F | `bsp_callbacks_clear` | `bsp_callbacks_clear` | Clears 0x74 words at 0x1FFC4 (BSP interrupt callback table) **[fact; role inference]** |
 | 5 | 0xFFF8F8F5 | `_INIT_IOLIB` | — | CC-RX stdio init (FILE table 0x1FF74) **[fact]** |
@@ -156,7 +156,7 @@ flowchart TD
 | 12 | 0xFFFB98E9 | `keyer_task` | `keyer_task` | CW keyer: uses key speed 0x9C03 (also `cat_KS`), 0x20B97 (also `cat_KY`), timer 0x13 **[inference]** | [tx-protection.md](tx-protection.md) |
 | 13 | 0xFFFD0582 | `FUN_fffd0582` | — | When 0x20B8C != 0, runs one of four sub-state machines selected by 0x15DE3 (1..4, set by `FUN_fffcf6f7` / `…f7a7` / `…f88b` / `…f951`) **[fact; purpose unknown]** | [radio-control.md](radio-control.md) |
 | 14 | 0xFFF94D6F | `displink_task` | `displink_task` | SCI1 DISPLAY link: takes a received frame, validates it (`displink_check_sum`), dispatches by first byte (`displink_rx_dispatch`: 0x06 ACK, 0x15 NAK, 0xB3, 0xC3–0xC5, 0xE0–0xE8, 0xF0, 0xF1…), answers ACK/NAK and sends the next queued frame (`displink_tx_poll`) with retry timers 0x3B/0x3C **[fact]** | [display-link.md](display-link.md) |
-| 15 | 0xFFFBBD58 | `key_task` | `key_task` | Key/event dispatcher: a new event (flag 0x20BA4, type 0x20BA1, code 0x20BA2) is latched into 0x1FA40 and is mapped through the 4651-entry **handler table 0xFFF89D94** (`key_call_press`), with auto-repeat timers 0x3F/0x40; also per-port config refresh (`FUN_fffc4d93`) **[fact]** | [ui-keys.md](ui-keys.md), [menu.md](menu.md) |
+| 15 | 0xFFFBBD58 | `key_task` | `key_task` | Key/event dispatcher: a new event (flag 0x20BA4, type 0x20BA1, code 0x20BA2) is latched into 0x1FA40 and is mapped through **five 863-entry key handler tables 0xFFF89D94..0xFFF8E0FF** (`key_call_press`; press … release tables, ending at 0xFFF8E100), with auto-repeat timers 0x3F/0x40; also per-port config refresh (`FUN_fffc4d93`) **[fact]** | [ui-keys.md](ui-keys.md), [menu.md](menu.md) |
 | 16 | 0xFFFEC473 | `tuner_task` | `tuner_task` | Antenna tuner: dispatch on tuner-select setting 0x9AB8 (also read by `cat_AC`): 3 → `FUN_fffed165`, 2 → `FUN_fffed62a`, else `FUN_fffec62b` (state machine 0x1B3AC) **[fact; tuner inference]** | [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md) |
 
 ### Power states
@@ -179,8 +179,9 @@ stateDiagram-v2
 
 - **Power-on is a handshake with DISPLAY.** `cat_PS` with `1` only calls `power_on_request` (0x20B9C = 1, 0x1B3D0 = 1)
   **[fact]**; the flag 0x20B3A is set only in `displink_rx_F0_hello`, the handler of DISPLAY frame 0xF0, which also stores the
-  DISPLAY version string (0x1436, `ver_display`) and a power-on reason byte at 0x20B9F **[fact]**. So MAIN asks the
-  DISPLAY CPU and waits for it **[inference]**.
+  DISPLAY version string (0x1436, `ver_display`) and a power-on reason byte at 0x20B9F **[fact]**. So power-on is triggered
+  by the DISPLAY `F0` frame (0x20B3A = global state block +0x36): MAIN asks the DISPLAY CPU and waits for it **[inference]**.
+  The frame format is in [display-link.md](display-link.md).
 - **Power-off ends in a software reset.** `sw_reset` writes PRCR (0x803FE) = 0xA502 and 0x800C2 = 0xA501
   **[fact]**, which is the RX65x software-reset register SWRR **[inference]**. The CPU then restarts in `PowerON_Reset`
   and waits in the power-off loop again **[inference]**. The front-panel power key is key code 0x300 with event type 2
@@ -199,8 +200,8 @@ stateDiagram-v2
 | 4 slow timers | flags 0x1203A, counters 0x1FA24, limits 0x1FA2C | — | TPU3 vector 142 ISR → `slowtimer_tick` |
 
 TPU0 is set up with TCR = 0x2A (PCLK/16, clear on TGRA) and TGRA = 0x176 → (374 + 1) × 16 / 60 MHz = **100 µs**
-**[fact for the values; the arithmetic assumes PCLK = 60 MHz]**, which matches `ms × 10` in `swtimer_start`. TPU3
-has TGRA = 0x5B8D with TCR = 0x2E; with PCLK/256 that is **100 ms** **[inference: TPSC decode from the RX TPU manual]**.
+**[fact; PCLKB = 60 MHz from SCKCR, RX651 HWM §9.2.1]**, which matches `ms × 10` in `swtimer_start`. TPU3
+has TGRA = 0x5B8D with TCR = 0x2E; with PCLK/256 that is **100 ms** **[fact: RX651 HWM r01uh0590 §26.2.1 Table 26.7, TPU3 TPSC=110b = PCLK/256]**.
 Timer ids seen on this page (the id and its user are **[fact]**, the role words are **[inference]**): 0x0B DSP
 sequence, 0x13 power-up settle (2500 ms), 0x16 tone step, 0x1F link init, 0x2A PB3 check, 0x2B/0x3B/0x3C DISPLAY link,
 0x2D TPU2 pulse, 0x31 `FUN_fffcdb26` delay (200 ms), 0x32 CAT AI hold-off (200 ms), 0x3F/0x40 event repeat, 0x4A
@@ -210,7 +211,7 @@ never fire for 200 ms (limit 2000), so it is probably a decompiler artifact **[i
 ### Vector table
 
 The relocatable vector table at INTB = **0xFFF8E6DC** has 256 entries: **31 populated**, the other 225 point to
-`Undefined_0xD8` @ 0xFFF90802 **[fact]**. Vectors ≥ 128 are selectable (ICU SLIBXRn, set in `icu_select_init`).
+`Undefined_0xD8` @ 0xFFF90802 **[fact]**. Vectors 128–207 are software-configurable interrupt B (ICU SLIBXR128–143 / SLIBR144–207, set in `icu_select_init`); 208–255 are interrupt A (SLIARn) **[fact: RX651 HWM §15.2.25–15.2.27, Table 15.5]**.
 
 | Vector | Handler | Source | Role |
 |---|---|---|---|
@@ -218,14 +219,14 @@ The relocatable vector table at INTB = **0xFFF8E6DC** has 256 entries: **31 popu
 | 26 / 27 | `vec026_ICU_SWINT2` / `vec027_ICU_SWINT` | software interrupts | → `FUN_fff910c3(1/0)`, BSP software-interrupt task queue at 0x20318 **[fact; FIT naming inference]** |
 | 58–63, 80–85 | `r_sci0..5_receive/transmit_interrupt` | SCI0–SCI5 RXI/TXI | UART drivers ([sci.md](sci.md)) **[fact]** |
 | 86 / 87 | `r_sci6_iic_rxi` / `r_sci6_iic_txi` | SCI6 (simple I2C) | [peripherals.md](peripherals.md) **[fact]** |
-| 98 / 99 | `r_sci7_receive/transmit_interrupt` | SCI7 | "C4" link **[fact]** |
+| 98 / 99 | `r_sci7_receive/transmit_interrupt` | SCI7 | configured but never started in V01-12 ([dsp-link.md](dsp-link.md)) **[fact]** |
 | 106, 107, 110–113 | `vec106_GROUPBE0`, `vec107_GROUPBL2`, `vec110_GROUPBL0`, `vec111_GROUPBL1`, `vec112_GROUPAL0`, `vec113_GROUPAL1` | group interrupts | SCI TEI/ERI and others, dispatched to the callbacks registered by `R_BSP_InterruptWrite` in `R_Systeminit` **[fact]** |
-| 130 | `vec130_isr` 0xFFF94A57 | source 0x0F = TPU0 TGI0A **[inference]** | 100 µs soft-timer tick `swtimer_tick` **[fact]** |
-| 138 | `vec138_isr` 0xFFFEDD8C | source 0x18 = TPU2 TGI2A **[inference]** | `spk_softstart_isr`: pulse train on a port bit chosen by 0x20FCC (P7/P8/PB), stops itself via `R_TPU2_Stop` when timer 0x2D expires **[fact; purpose unknown]** |
-| 142 | `vec142_isr` 0xFFFB27D1 | source 0x1C = TPU3 TGI3A **[inference]** | 100 ms slow timers `slowtimer_tick` **[fact]** |
-| 144 | `vec144_isr` 0xFFF94AEC | source 0x14 = TPU1 TGI1A **[inference]** | Tone DAC: next sample of the table at 0x20B00 → DAC 0x88040 (`dac0_write`); TGRA 0x88128 sets the pitch **[fact]** |
-| 186 | `vec186_isr` 0xFFF92B01 | source 0x40 = S12ADI0 **[inference]** | Stores ADC0 channels 1,2,3,5,6,7 to 0x20B04..0x20B0E, sets 0x1203E **[fact]** |
-| 189 | `vec189_isr` 0xFFF92E0F | source 0x44 = S12ADI1 **[inference]** | Stores ADC1 channels 8,9,15,17 to 0x20B10..0x20B16, sets 0x1203F **[fact]** |
+| 130 | `r_tpu0_tgia_isr` 0xFFF94A57 | source 0x0F = TPU0 TGI0A **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | 100 µs soft-timer tick `swtimer_tick` **[fact]** |
+| 138 | `r_tpu2_tgia_isr` 0xFFFEDD8C | source 0x18 = TPU2 TGI2A **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | `spk_softstart_isr`: pulse train on a port bit chosen by 0x20FCC (P7/P8/PB), stops itself via `R_TPU2_Stop` when timer 0x2D expires **[fact; purpose unknown]** |
+| 142 | `r_tpu3_tgia_isr` 0xFFFB27D1 | source 0x1C = TPU3 TGI3A **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | 100 ms slow timers `slowtimer_tick` **[fact]** |
+| 144 | `r_tpu1_tgia_isr` 0xFFF94AEC | source 0x14 = TPU1 TGI1A **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | Tone DAC: next sample of the table at 0x20B00 → DAC 0x88040 (`dac0_write`); TGRA 0x88128 sets the pitch **[fact]** |
+| 186 | `r_s12ad0_scan_end_isr` 0xFFF92B01 | source 0x40 = S12ADI (S12AD unit 0) **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | Stores ADC0 channels 1,2,3,5,6,7 to 0x20B04..0x20B0E, sets 0x1203E **[fact]** |
+| 189 | `r_s12ad1_scan_end_isr` 0xFFF92E0F | source 0x44 = S12ADI1 **[fact: icu_select_init write; RX651 HWM r01uh0590 Table 15.3 p452–453]** | Stores ADC1 channels 8,9,15,17 to 0x20B10..0x20B16, sets 0x1203F **[fact]** |
 
 Fixed vectors (0xFFFFFFD0..FC): `SuperVisorInst`, `AccessExc`, `UndefinedInst`, `FloatingPoint`, `NMI` 0xFFF9061B,
 reset `PowerON_Reset`; the remaining slots use `Undefined_0xD8` **[fact]**.
@@ -239,8 +240,8 @@ Full table: [docs/memory-maps.md](../../memory-maps.md#main-mc-image-ft-710_main
 | 0x00000000..0x00001403 | user stack (top 0x1004), interrupt stack (top 0x1404) |
 | 0x00001404..0x00025E5F | .bss / .data (three DTBL copies); highest used RAM ~0x25E60 of 256 KB |
 | 0x00080000..0x000FFFFF | peripheral I/O (SYSTEM, ICU 0x87000, IWDT 0x88030, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI 0x8A000.., ports 0x8C000..) |
-| 0x00100000..0x00107FFF | E2 data flash |
-| 0xFFF80000..0xFFF8FFFF | constants: CAT tables (0xFFF805EC), menu strings, **event handler table 0xFFF89D94**, vector table 0xFFF8E6DC, DTBL/BTBL, .data images, CAT switch/reply tables (0xFFF8F014, 0xFFF8F480) |
+| 0x00100000..0x00107FFF | E2 data flash, **unused** (no references; settings live in the SPI EEPROM, [eeprom.md](eeprom.md)) **[fact, T10e]** |
+| 0xFFF80000..0xFFF8FFFF | constants: CAT tables (0xFFF805EC), menu strings, **key handler tables 0xFFF89D94..0xFFF8E0FF** (5 × 863, [ui-keys.md](ui-keys.md)), vector table 0xFFF8E6DC, DTBL/BTBL, .data images, CAT switch/reply tables (0xFFF8F014, 0xFFF8F480) |
 | 0xFFF8FBDB..~0xFFFEE1BE | code (2252 functions) |
 | 0xFFFFFF00 / 0xFFFFFF80 | version string `V01-12` / fixed vectors |
 
@@ -274,14 +275,14 @@ To find all users of a field, search for both forms. Other pointers there: 0x25D
 | [cat.md](cat.md) | T09 | CAT receive ring, parser, dispatch, AI broadcaster, all handlers. Command reference [docs/cat-commands.md](../../cat-commands.md) |
 | [sci.md](sci.md) | T10b | SCI0–SCI7 driver layer: create/start/stop, ISRs, buffers, baud tables |
 | [display-link.md](display-link.md) | T10b | SCI1 protocol to the DISPLAY CPU (frames, ACK/NAK, power-on handshake) |
-| [ui-keys.md](ui-keys.md) | T10b | Key/encoder/touch events → radio actions, event handler table 0xFFF89D94 |
+| [ui-keys.md](ui-keys.md) | T10b | Key/encoder/touch events → radio actions, five 863-entry key handler tables 0xFFF89D94..0xFFF8E0FF |
 | [sdr-link.md](sdr-link.md) | T10c | SCI5 FPGA register protocol, SDR_UPDATE/SDR_RESET |
-| [dsp-link.md](dsp-link.md) | T10d | SCI4 IF-DSP register pokes, SCI7 "C4" link |
+| [dsp-link.md](dsp-link.md) | T10d | SCI4 link to the RT685 IF-DSP (register protocol, `dsp_link_poll` task, ISP bridge); SCI7 configured but unused |
 | [eeprom.md](eeprom.md) | T10e | BR25G256 driver, EEPROM map, settings image, defaults and factory reset |
 | [menu.md](menu.md) | T10f | EX menu table and engine |
 | [radio-control.md](radio-control.md) | T10g | VFO/band/mode, memories, scan, frequency programming |
 | [tx-protection.md](tx-protection.md) | T10h | PTT/TX sequencing, protection, keyer, tuner |
-| [peripherals.md](peripherals.md) | T10h | ADC channels, DAC/tone, timers, SCI2 tuner port, SCI6 I2C device, GPIO map, power on/off |
+| [peripherals.md](peripherals.md) | T10h | ADC channels, DAC/tone, timers, SCI2 tuner port, SCI6 (simple I2C, pins not connected), GPIO map, power on/off |
 
 Related: [DISPLAY overview](../display/README.md), [IFDSP overview](../ifdsp/README.md), [SDR overview](../sdr/README.md),
 custom-firmware feasibility [docs/custom-firmware.md](../../custom-firmware.md).

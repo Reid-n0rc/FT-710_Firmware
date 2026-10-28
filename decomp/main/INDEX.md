@@ -8,7 +8,7 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `<first>_<last>.c`: decompiled C, 50 functions per file in address order (`tools/ghidra/ExportDecomp.java`).
 - `functions.tsv`: entry, name, size, reference count, file for every function.
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
-- Function names come from `tools/ghidra/names_main.tsv` (applied with `tools/ghidra/ApplyNames.java`). Everything else is `FUN_<addr>`. Subsystem pages: `docs/code/main/`.
+- Function names come from `tools/ghidra/names_main.tsv` (T05, T09 and T10a–h, applied with `tools/ghidra/ApplyNames.java` in T17). Everything else is `FUN_<addr>`. Subsystem pages: [docs/code/main/](../../docs/code/main/README.md).
 
 ## Numbers
 - T17 rebuild (2026-10-27): full re-import with the fixed RX module (`tools/ghidra/rx62t-movu-fix.patch`, see `docs/tooling.md`), then
@@ -26,14 +26,16 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
     `cat_checksum_ok(cmd+4, len-2)` and `displink_tx_req` passes `len-1` instead of loading from address `len-1`.
 
 ## Boot and main loop  [fact unless marked]
+Full boot flow, main-loop task table and power states: [docs/code/main/README.md](../../docs/code/main/README.md).
+
 | Address | Name | Role |
 |---|---|---|
 | 0xFFF8FBDB | `PowerON_Reset` | USP=0x1004, ISP=0x1404, INTB=0xFFF8E6DC, EXTB=0xFFFFFF80, FPSW=0x100. Then `hw_init_clock`, `_INITSCT`, RAM clear, `_INIT_IOLIB`, …, PSW=0x30000 (user mode, I=1), `main`, `_CLOSEALL`, `nop; bra` |
-| 0xFFF913D7 | `hw_init_clock` | SYSTEM register setup (PRCR=0xA50B…) **[inference]** |
+| 0xFFF913D7 | `hw_init_clock` | Clock setup: PLLCR=0x1300 (24 MHz ×10 = 240 MHz), SCKCR=0x21C21222 → ICLK 120 / PCLKA 120 / PCLKB,C,D 60 / FCLK 60 MHz, SCKCR3=0x400 (PLL), ROMWT=2; PRCR=0xA50B…0xA500 **[fact: RX651 HWM r01uh0590 §9.2.1, §9.2.5]** |
 | 0xFFFEDEDA | `_INITSCT` | CC-RX runtime: BTBL zero-fill, DTBL ROM→RAM copy |
 | 0xFFF8F658 | `main` | → `app_main` |
 | 0xFFF94AFA | `app_main` | Init. While power is off (flag `0x20B3A`==0) it loops `displink_task`/`cat_parse` so that `PS1;` can power the radio on, then initializes the subsystems and enters `main_loop` |
-| 0xFFF94B8B | `main_loop` | Super-loop with no RTOS: ~16 polled tasks per pass, including `cat_parse` |
+| 0xFFF94B8B | `main_loop` | Super-loop with no RTOS: 16 polled tasks per pass, including `cat_parse` and `dsp_link_poll` |
 
 The vector tables are seeded by `tools/ghidra/SetupRX651.java`. Relocatable vectors are named `vecNNN_<source>` (names from the RX651 vector table **[inference]**; the SCI ones are confirmed by the registers they touch). The fixed vectors are at 0xFFFFFFD0.
 
@@ -41,7 +43,7 @@ The vector tables are seeded by `tools/ghidra/SetupRX651.java`. Relocatable vect
 Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), command reference [docs/cat-commands.md](../../docs/cat-commands.md). Note: `cat_dispatch.tsv` shows `len==8` for EX because the case tests `len > 8`; read is len 9, set is any len >= 10.
 - **Parser**: `cat_parse` @ **0xFFFA347C**. It runs from `main_loop` and from `app_main` (power-off loop). It takes a received command buffer (port id byte at +0, length at +2, text at +4), compares the 2-char mnemonic linearly against
   - `cat_mnemonics` @ **0xFFF805EC**: 104 entries `AB AC AG … VX XT ZI`. The index is the switch case.
-  - `cat_ext_mnemonics` @ **0xFFF806BC**: 10 entries `SP EO E8 E9 FD KT PE ZZ VE JP`, tried only when the primary lookup fails. **These are not in the primary table, which makes them the prime candidates for undocumented/service commands (T09).**
+  - `cat_ext_mnemonics` @ **0xFFF806BC**: 10 entries `SP EO E8 E9 FD KT PE ZZ VE JP`, tried only when the primary lookup fails. These are not in the primary table; all are undocumented except `VE` (T09).
   - While power is off, only index 71 (`PS`) with parameter `1` is accepted.
 - **Dispatch**: `cat_dispatch` @ **0xFFFA3B6E**. This is a switch, not a pointer table: `MOV.W [idx, 0xFFF8F014], R14 ; BRA.L R14` at 0xFFFA3B8A. **`cat_switch_table` @ 0xFFF8F014 holds 104 × int16 offsets** relative to 0xFFFA3B8A. Each case checks the total command length (e.g. `FA;` = 3 → read, `FA014250000;` = 12 → set) and calls the handler with `(cmd+4, is_set)`. Wrong lengths and the default case set the error flag `0x464A`, which makes the parser send an error reply.
 - **Extended dispatch**: `cat_dispatch_ext` @ 0xFFFA3A2A is a compare chain. `SP` is special-cased in `cat_ext_SP` @ 0xFFFA36F2. `E9` is handled only on a second input path in `cat_parse` (`cat_ext_E9` @ 0xFFFA5985). `KT` has no case.
@@ -169,23 +171,25 @@ Full analysis (T09): [docs/code/main/cat.md](../../docs/code/main/cat.md), comma
 | secondary | 8 | `VE` | fffa3a64 | `hex2nib` (fffb2f07) ; cat_ext_VE (fffa54b3) |
 | secondary | 9 | `JP` | fffa3a84 | len==7:cat_ext_JP (fffa556b) ; len==15:cat_ext_JP (fffa556b) |
 
-## UART (SCI) drivers  [fact: register use; role per docs/hardware.md]
+## UART (SCI) drivers  [fact: register use; roles from T10b–d/T10h]
+Details: [docs/code/main/sci.md](../../docs/code/main/sci.md).
 Renesas Code Generator style (`R_SCIn_Create/Start/Stop/Serial_Send/Serial_Receive` + RXI/TXI ISRs). TEI/ERI go through group interrupts.
 
 | SCI | Regs | Create | Send / Receive | ISRs (RXI / TXI) | Role |
 |---|---|---|---|---|---|
 | SCI0 | 0x8A000 | `R_SCI0_Create` 0xFFF9321F (Start 0xFFF932C2, Stop 0xFFF93302) | 0xFFF933AE / 0xFFF9336A | 0xFFF9347F / 0xFFF9340E | CP2105 "Standard" CAT. Baud: `sci0_set_baud` 0xFFFB1645, table 0xFFF80FF4 |
-| SCI1 | 0x8A020 | `R_SCI1_Create` 0xFFF9354E | 0xFFF936DB / 0xFFF93697 | 0xFFF937AC / 0xFFF9373B | DISPLAY CPU link |
+| SCI1 | 0x8A020 | `R_SCI1_Create` 0xFFF9354E | 0xFFF936DB / 0xFFF93697 | 0xFFF937AC / 0xFFF9373B | DISPLAY CPU link, ≈340.9 kbit/s 8N2 ([display-link.md](../../docs/code/main/display-link.md)) |
 | SCI2 | 0x8A040 | `R_SCI2_Create` 0xFFF93A86 (Stop 0xFFF93B69) | 0xFFF93C15 / 0xFFF93BD1 | 0xFFF93CED / 0xFFF93C7C | external tuner port. `sci2_configure` 0xFFFB177E switches mode/pins |
 | SCI3 | 0x8A060 | `R_SCI3_Create` 0xFFF93F0D (Stop 0xFFF93FF0) | 0xFFF9409C / 0xFFF94058 | 0xFFF9416D / 0xFFF940FC | CP2105 "Enhanced" CAT. Baud: `sci3_set_baud` 0xFFFB198F |
-| SCI4 | 0x8A080 | `R_SCI4_Create` 0xFFF9423C | 0xFFF943CB / 0xFFF94387 | 0xFFF9449C / 0xFFF9442B | not in docs/hardware.md, so the role is unknown |
-| SCI5 | 0x8A0A0 | `R_SCI5_Create` 0xFFF94662 (Stop 0xFFF94745) | 0xFFF947F1 / 0xFFF947AD | 0xFFF948C2 / 0xFFF94851 | SDR FPGA link. `sdr_send_cmd` 0xFFFB1B2B sends and then arms a 7-byte reply into 0xA2AC |
-| SCI6 | 0x8A0C0 | `R_SCI6_Create_IIC` 0xFFFC91B3 | `sci6_iic_condition` 0xFFFC9311 | 0xFFFC9467 / 0xFFFC93A4 | **simple-I2C mode** (SIMR3/SISR); the device is unknown |
-| SCI7 | 0x8A0E0 | `R_SCI7_Create` 0xFFFC95B1 | (no separate send/receive functions found) | 0xFFFC9811 / 0xFFFC97A0 | "C4" link, probably the RT685 DSP |
+| SCI4 | 0x8A080 | `R_SCI4_Create` 0xFFF9423C | 0xFFF943CB / 0xFFF94387 | 0xFFF9449C / 0xFFF9442B | RT685 IF-DSP UART (PB0/PB1, 115200 8N1): register protocol, and NXP ISP framing during a DSP update ([dsp-link.md](../../docs/code/main/dsp-link.md)) |
+| SCI5 | 0x8A0A0 | `R_SCI5_Create` 0xFFF94662 (Stop 0xFFF94745) | 0xFFF947F1 / 0xFFF947AD | 0xFFF948C2 / 0xFFF94851 | SDR FPGA link, 115200 8N1. `sdr_send_cmd` 0xFFFB1B2B sends and then arms a 7-byte reply into 0xA2AC ([sdr-link.md](../../docs/code/main/sdr-link.md)) |
+| SCI6 | 0x8A0C0 | `R_SCI6_Create_IIC` 0xFFFC91B3 | `sci6_iic_condition` 0xFFFC9311 | 0xFFFC9467 / 0xFFFC93A4 | **simple-I2C mode** (SIMR3/SISR); no device: pins P00/P01 not connected ([peripherals.md](../../docs/code/main/peripherals.md)) |
+| SCI7 | 0x8A0E0 | `R_SCI7_Create` 0xFFFC95B1 | (no separate send/receive functions found) | 0xFFFC9811 / 0xFFFC97A0 | "C4" port (P90/P92), configured but **never started** (no Start/Send/Receive caller) |
 
-The SDR side (T08: SDR_UPDATE/SDR_RESET GPIOs): `power_off_io` 0xFFFB73A6 stops SCI5 and clears PC4/PC3/P67/PB5/PA7. The SDR reset/update pins are not yet identified, but the small port-bit helpers 0xFFFB70C9..0xFFFB71A7 (PC/P8/P1/P5/P2 bits) are the place to look **[inference]**.
+The SDR side: `power_off_io` 0xFFFB73A6 stops SCI5 and clears PC4/PC3/P67/PB5/PA7. The SDR control pins are **SDR_UPDATE = P76** and **SDR_RESET = P77** (T10c, [sdr-link.md](../../docs/code/main/sdr-link.md)).
 
 ## EEPROM (Q1008 BR25G256, 32 KB SPI)  [fact]
+Details: [docs/code/main/eeprom.md](../../docs/code/main/eeprom.md).
 Bit-banged SPI on **port E**: PE0 = /CS, PE5 = SCK, PE6 = MOSI (PODR 0x8C02E), PE7 = MISO (PIDR 0x8C04E). The RSPI peripherals are not used.
 | Address | Name | Role |
 |---|---|---|
@@ -196,6 +200,6 @@ Bit-banged SPI on **port E**: PE0 = /CS, PE5 = SCK, PE6 = MOSI (PODR 0x8C02E), P
 
 ## Other notable items
 - `cat_switch_table`, `DTBL` (0xFFF8E6A0) and `BTBL` (0xFFF8E6C4) are labelled.
-- A **large code-pointer table at 0xFFF89D94**: 4651 dwords with 863 distinct targets in 0xFFFBC5F9..0xFFFEC2DF. It is probably a menu/UI or DISPLAY-link command handler table. Analyse it in T10 **[inference]**.
+- The **code-pointer area at 0xFFF89D94** is five 863-entry key handler tables (press … release, codes 0..0x35E), ending at 0xFFF8E100 (T10b, [ui-keys.md](../../docs/code/main/ui-keys.md)).
 - `V01-12` version string at 0xFFFFFF00.
-- Peripherals used (by register address): ICU, CMT, TPU, S12AD/S12AD1 (ADC), DA (0x88040), ports and MPC, SCI0–7, data flash (0x100000), FLASH registers. There is no RSPI, RIIC, USB or Ethernet use.
+- Peripherals used (by register address): ICU, CMT, TPU, S12AD/S12AD1 (ADC), DA (0x88040), ports and MPC, SCI0–7. The E2 data flash (0x100000) is **not** used (T10e, [eeprom.md](../../docs/code/main/eeprom.md)). There is no RSPI, RIIC, USB or Ethernet use.

@@ -1,9 +1,11 @@
 # MAIN — CAT subsystem (remote control)
 
 Part of the MAIN code documentation (T09). Command reference: [docs/cat-commands.md](../../cat-commands.md).
-Other MAIN subsystem pages (T10, TODO): `README.md` (overview, boot, main loop), `sci.md` (UART drivers), `display-link.md`
-(SCI1 link to the DISPLAY CPU), `sdr-link.md` (SCI5), `eeprom.md` (settings/memory persistence), `menu.md` (EX menu engine), `ui-keys.md`
-(front-panel key events). The names below are the Ghidra names in `ghidra/FT710_MAIN` (from `tools/ghidra/names_main.tsv`).
+Other MAIN subsystem pages (T10): [README.md](README.md) (overview, boot, main loop), [sci.md](sci.md) (UART drivers),
+[display-link.md](display-link.md) (SCI1 link to the DISPLAY CPU), [sdr-link.md](sdr-link.md) (SCI5), [dsp-link.md](dsp-link.md)
+(SCI4, IF-DSP), [eeprom.md](eeprom.md) (settings/memory persistence), [menu.md](menu.md) (EX menu engine), [ui-keys.md](ui-keys.md)
+(front-panel key events), [radio-control.md](radio-control.md), [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md).
+The names below are the Ghidra names in `ghidra/FT710_MAIN` (from `tools/ghidra/names_main.tsv`).
 All addresses are MAIN ROM/RAM addresses, and the tags follow AGENTS.md: **[fact]** means seen in code or data, at the address given.
 
 ## Overview
@@ -96,10 +98,10 @@ The full table is in [cat-commands.md](../../cat-commands.md#extended-table). Th
 ```mermaid
 flowchart LR
   SP["SP (cat_ext_SP)"] --> SPS["SPS R/W aaaa vvvv<br/>SDR register (SCI5)"]
-  SP --> SPD["SPD R/W aaaa vvvv<br/>SCI4 device register"]
+  SP --> SPD["SPD R/W aaaa vvvv<br/>IF-DSP register (SCI4)"]
   SP --> SPI["SPIR: 12 ADC channels"]
   SP --> SPRW["SPR/SPW binary: EEPROM byte"]
-  SP --> SPN["SPN R/W/S binary:<br/>0x4659[1..261] table"]
+  SP --> SPN["SPN R/W/S binary:<br/>cfg105 calibration 0x4659[1..261]"]
   SP --> SPM["SPM binary: meter bytes"]
   SP --> SPA["SPAWE binary: commit<br/>0x4659 block to EEPROM"]
   E8["E8: dump 10665-byte<br/>settings image"] -.-> E9["E9: restore image<br/>+ EEPROM write"]
@@ -107,12 +109,10 @@ flowchart LR
   JP["JP0710: destination code<br/>read / write + reset"]
 ```
 
-Binary SP checksum bug **[fact]** (decompile plus disassembly at 0xFFFA3861..0xFFFA3869, 0xFFFA38BC, 0xFFFA39B3 and 0xFFFA5104..0xFFFA510A):
-- The checksum-protected sub-commands (`SPR SPW SPM SPN SPA`) call `cat_checksum_ok(text, n)`. The `n` they pass is not the frame length.
-- `n` is the u16 **read from RAM address `len-2`**: `MOVU.W 0x2[R1],R2; SUB #2,R2; MOVU.W [R2],R2`.
-- Address `len-2` is in the bottom 0x66 bytes of RAM, at the far end of the user stack, which is cleared at boot.
-- For a normal frame, `n` is therefore almost certainly 0. The check then compares a sum of 0 with the text's first byte, `'S'`, so it fails, and these sub-commands answer `?;`. **[inference]**
-- They appear to be **unusable in V01-12** unless that low RAM happens to hold the right value. **[inference]**
+Binary SP checksum (corrected in T10e/T17) **[fact]** (disassembly at 0xFFFA3867, 0xFFFA38C4, 0xFFFA39BB and 0xFFFA510A; `decomp/main/fffa20af_fffa7928.c` lines ~1468, 1489, 1551, 2890):
+- The checksum-protected sub-commands (`SPR SPW SPM SPN SPA`) call `cat_checksum_ok(text, len-2)`. The checksum is a normal 8-bit sum over the frame without the sum byte and the `;`, compared with the sum byte.
+- The earlier "checksum bug" (T09: `n` read from RAM address `len-2`) was a **decoder artifact**. The bytes `60 22 5F 22` are `SUB #2,R2; MOVU.W R2,R2`, but the RX SLEIGH module showed `MOVU.W [R2],R2`. T17 fixed the decoder and re-exported `decomp/main` (see [eeprom.md](eeprom.md) and `decomp/main/INDEX.md`, "Known decompiler artifacts").
+- So these sub-commands are **usable in V01-12, high risk**: they read and write EEPROM and calibration/service data. Never send them without the owner's approval.
 
 ## Function table
 
@@ -141,21 +141,21 @@ Binary SP checksum bug **[fact]** (decompile plus disassembly at 0xFFFA3861..0xF
 | 0xFFFB3168 | `toupper_inplace` | | a-z → A-Z **[fact]** |
 | 0xFFFB01AF | `sum8` | additive checksum | 8-bit sum of n bytes **[fact]** |
 | 0xFFFB0182 | `cat_checksum_ok` | checksum test | `sum8(buf,n) == buf[n]` **[fact]** |
-| 0xFFFB44F7 | `key_event_filter` | front-panel key gate | Checks a key code against about 20 mode locks (TX, tuning, menus, etc.) and returns 1 if the key may run. Many CAT handlers emulate a key press through it **[fact]** for the structure; it is used by AC CS SV VS VM ZI ST TS UP DN KY LM … |
+| 0xFFFB44F7 | `key_event_filter` | front-panel key gate | Checks a key code against about 20 mode locks (TX, tuning, menus, etc.) and returns 1 if the key may run. Many CAT handlers emulate a key press through it **[fact]** for the structure; it is used by AC CS SV VS VM ZI ST TS UP DN KY LM …. `cat_TX` (0xFFFAF7B8, `TX1;`) does **not** go through it **[fact]** ([tx-protection.md](tx-protection.md)) |
 | 0xFFFA4E31 | `cat_SP_sdr_reg` | SPS | Parses 4-hex address and 4-hex value, then `sdr_reg_access` **[fact]** |
-| 0xFFFA4E8F | `cat_SP_dev4_reg` | SPD | The same, through `dsp_reg_access` **[fact]** |
-| 0xFFFA4EED | `cat_SP_adc_dump` | SPIR | 12 × 3 hex digits of ADC results **[fact]** |
+| 0xFFFA4E8F | `cat_SP_dev4_reg` | SPD | The same, through `dsp_reg_access` to the IF-DSP register file **[fact]** ([dsp-link.md](dsp-link.md), [../ifdsp/control-link.md](../ifdsp/control-link.md)) |
+| 0xFFFA4EED | `cat_SP_adc_dump` | SPIR | 12 × 3 hex digits of ADC results, in the order AN000..AN007 (AN000, AN004 and AN006 reported as 0), AN115, AN117, AN108, AN109 **[fact]** ([peripherals.md](peripherals.md#the-12-spir-fields)) |
 | 0xFFFA520B | `cat_SP_eeprom_byte` | SPR/SPW | Byte read/write at a 16-bit EEPROM address. The write also updates the RAM mirror at 0x464F[addr] **[fact]** |
-| 0xFFFA50F9 | `cat_SP_table` | SPN | Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `FUN_fffbff93` after 500 ms, `R` reads the entry and loads preset idx-1 (`FUN_fffbb567`) **[fact]**; the meaning of the table is not known **[guess]** |
+| 0xFFFA50F9 | `cat_SP_table` | SPN | Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `FUN_fffbff93` after 500 ms, `R` reads the entry and loads preset idx-1 (`FUN_fffbb567`) **[fact]**. `cfg105` is the calibration table **[inference]** ([eeprom.md](eeprom.md)); entries from index 70 (0x469E..) hold the per-band TX power calibration used for SDR register 0x25 **[inference]** ([sdr-link.md](sdr-link.md)) |
 | 0xFFFA5284 | `cat_SP_meters` | SPM | 8 binary bytes: meter values 0x1204A, 0x12048/0x1204B, … **[fact]** for the sources, **[inference]** that they are meters |
-| 0xFFFB0532 | `eeprom_save_cfg105` | | `eeprom_write(0x000A, 0x4659, 0x105)` **[fact]** |
-| 0xFFFB0544 | `eeprom_save_dest` | | `eeprom_write(0x010F, 0x475E, 3)`; holds the destination code **[fact]** |
-| 0xFFFB0558 | `settings_defaults` | factory defaults | arg 1: also reloads the 0x105 block from ROM 0xFFF8074F and the destination 0x8043. Then reinitializes VFO, memory and menu RAM from ROM defaults **[fact]** |
-| 0xFFFB0356 | `eeprom_save_image` | | `eeprom_write(0x1A7A, 0x60C9, 0x2F49)`, bracketed by header updates (`eeprom_hdr_update` 0xFFFB142B) **[fact]** |
-| 0xFFFB0376 | `eeprom_save_memch` | | Writes the 0x87-byte block plus one 0x5A-byte memory channel **[fact]** |
+| 0xFFFB0532 | `eeprom_save_cfg105` | [eeprom.md](eeprom.md) | `eeprom_write(0x000A, 0x4659, 0x105)` **[fact]** |
+| 0xFFFB0544 | `eeprom_save_dest` | [eeprom.md](eeprom.md) | `eeprom_write(0x010F, 0x475E, 3)`; holds the destination code **[fact]** |
+| 0xFFFB0558 | `settings_defaults` | factory defaults ([eeprom.md](eeprom.md)) | arg 1: also reloads the 0x105 block from ROM 0xFFF8074F and the destination 0x8043. Then reinitializes VFO, memory and menu RAM from ROM defaults **[fact]** |
+| 0xFFFB0356 | `eeprom_save_image` | [eeprom.md](eeprom.md) | `eeprom_write(0x1A7A, 0x60C9, 0x2F49)`, bracketed by header updates (`eeprom_hdr_update` 0xFFFB142B) **[fact]** |
+| 0xFFFB0376 | `eeprom_save_memch` | [eeprom.md](eeprom.md) | Writes the 0x87-byte block plus one 0x5A-byte memory channel **[fact]** |
 | 0xFFFB3B33 / 0xFFFB3B5D | `dest_code_get` / `dest_code_set` | destination code | 0x475E/0x475F. Set writes EEPROM, reloads defaults (`settings_defaults(0)`) and requests a restart (0x20F4B=1, 0x20B39=0x11) **[fact]**; that 0x20B39=0x11 means a reboot is **[inference]** |
 | 0xFFFA1485 | `sdr_reg_access` | SDR register r/w | Waits until idle, then sends an `r`/`w` + hex address [+ value] + 2-hex sum + CR frame over SCI5 (`sdr_send_cmd`) and waits for the 7-byte reply **[fact]** |
-| 0xFFF9D8A4 | `dsp_reg_access` | SCI4 register r/w | The same protocol over **SCI4**, whose device is not yet known (T10) **[fact]** |
+| 0xFFF9D8A4 | `dsp_reg_access` | IF-DSP register r/w | The same protocol over **SCI4** to the RT685 IF-DSP **[fact]** (T10d/T12b, [dsp-link.md](dsp-link.md)). A write does not update the shadow **[fact]** |
 | 0xFFFA3226 | `sdr_bridge_mode` | SDR maintenance bridge | Not CAT. Started by a DISPLAY-link message (`displink_rx_F1_sys` sub 1 → 0x1C8D=1). Relays binary SDR register requests from the DISPLAY CPU (ACK 0x06 / NAK 0x15) **[fact]** for the structure |
 | 0xFFFB2718 | `cat_rand8` | | Pseudo-random byte from timer counter 0x88116; this is the E8 key **[fact]** |
 
@@ -180,7 +180,7 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x464B | u8 | `cat_spn_save_pending` | set by `SPNS`; `cat_parse` runs `FUN_fffbff93` when timer 0x32 expires **[fact]** |
 | 0x464C | u8 | `cat_port` | port id of the command being handled **[fact]** |
 | 0x464F | 10 | `eeprom_hdr` | RAM mirror of EEPROM 0x0000..0x0009. `eeprom_hdr_update` increments a 32-bit counter in it on every save **[fact]** |
-| 0x4659 | 0x105 | `cfg105` | table addressed by `SPN`, EEPROM 0x000A **[fact]** |
+| 0x4659 | 0x105 | `cfg105` | table addressed by `SPN`, EEPROM 0x000A **[fact]**; calibration table **[inference]** ([eeprom.md](eeprom.md)) |
 | 0x475E | 3 | `dest_code` | destination/version code, EEPROM 0x010F. `JP` reads and writes it **[fact]** |
 | 0x60C9 | 0x29A9 (0x2F49 saved) | `settings_image` | Settings and memory image dumped by `E8` and restored by `E9`; EEPROM 0x1A7A **[fact]** |
 | 0x9ADA..0x9AEB | 18 | `peq_params` | `PE` parameters (2 sets × 3 bands × 3 values) **[fact]**; that they are parametric EQ is **[inference]** |

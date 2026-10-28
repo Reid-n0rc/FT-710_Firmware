@@ -180,7 +180,7 @@ Found by comparing the dispatch length tests and the handlers against the manual
 | `VM` | Set `VM;` only | `VM;` toggles V/M. **Hidden:** `VM0;` reads a 2-hex-digit state code (`00`, `10`, `11`, `20`, `21`, `51`, `91`: VFO / memory / PMS / 5 MHz-channel ranges). `VM000;` forces the mode back to state 1 (VFO). | [fact] 0xFFFAFADB; meanings [inference] |
 | `VD` | Drawn as `VDP1P1P1P1;` (7) with values 00–33 | Read `VD;`, set `VDnn;` (5): **2 digits**, 00–33. The manual drawing is wrong. | [fact] dispatch case 0xFFFA4CD9 |
 | `MT` | Set length 19 (tag of up to 12 characters, padded) | Set accepts lengths 8..19, so shorter, unpadded tags work too. | [fact] dispatch case 0xFFFA4589 |
-| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value). Menu groups `01 02 03 04 06` are accepted, while `05` and `00` give `?;`. | [fact] 0xFFFA4097, `ex_command` |
+| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value). Key = decimal P1P2P3. Menu groups `01 02 03 04 06` are accepted, while `05` (the internal EXTENSION SETTING group, 18 front-panel-only items) and `00` give `?;`. The P4 length must be exact (digits + sign). SSB TX BPF SEL (`EX010113`) also accepts 6 = TTBF (5 = 50-4000Hz is refused). FM TONE FREQ answers 3 digits. CW WEIGHT P4 = 00..20. See [code/main/menu.md](code/main/menu.md). | [fact] 0xFFFA4097, `ex_command`, `ex_parse_key` |
 | `ID` | `ID0800;` | Constant `ID0800;` | [fact] |
 | `AI` | P1 0/1 | Accepts any character ≤ `'1'`. A character below `'0'` stores 0xFF ("on" for some tests, "off" for others) | [fact] 0xFFFA6946 |
 | `PS` | Read answers `PS0`/`PS1` | Read always answers `PS1;`. While the radio is off, the parser drops `PS;` before the handler runs. | [fact] 0xFFFAD696 |
@@ -203,20 +203,18 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 | Form | Class | Handler | What it does |
 |---|---|---|---|
 | `SPSRaaaa;` → `SPSRvvvv;` | read | `cat_SP_sdr_reg` 0xFFFA4E31 → `sdr_reg_access` 0xFFFA1485 | Reads 16-bit register `aaaa` (hex) of the **SDR unit** over SCI5. The SDR link frame is `r` + 4 hex + 2-hex sum + CR. **[fact]** for SCI5; SCI5 = SDR link per T05. |
-| `SPSWaaaavvvv;` | set | same | Writes `vvvv` to SDR register `aaaa`. No reply on success; `?;` if the SDR does not ACK. **High risk**: it writes SDR/FPGA registers directly. |
-| `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dsp_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** (device unknown; perhaps the IF-DSP **[guess]**). High risk for the write. |
+| `SPSWaaaavvvv;` | set | same | Writes `vvvv` to SDR register `aaaa`. No reply on success; `?;` if the SDR does not ACK. The write bypasses MAIN's register shadow, so it persists only until the firmware's own value for that register changes (then the updater overwrites it) **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk**: it writes SDR/FPGA registers directly. |
+| `SPDRaaaa;` / `SPDWaaaavvvv;` | read / set | `cat_SP_dev4_reg` 0xFFFA4E8F → `dsp_reg_access` 0xFFF9D8A4 | Same protocol on **SCI4** to the **IF-DSP (RT685) register file** (113 registers, see [code/ifdsp/control-link.md](code/ifdsp/control-link.md) and [code/main/dsp-link.md](code/main/dsp-link.md)) **[fact]** (T12b). A write does not update MAIN's shadow, so the value stays until the setting behind that register changes **[inference]**. High risk for the write. |
 | `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. |
 | `SPR<aH><aL><x><sum>;` (binary) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes). Upper-case `R` only. |
 | `SPW<aH><aL><byte><sum>;` (binary) | set | same | **Writes one EEPROM byte** and the RAM mirror 0x464F[addr]. Upper-case `W` only. **High risk** (raw EEPROM write, no bounds). |
-| `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `FUN_fffbff93` (a re-apply) 500 ms later. `R` also sets 0x20CE2 = idx-1 and calls `FUN_fffbb567`, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. Meaning of the table: not known **[guess: per-preset/per-channel flags]**. |
+| `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `FUN_fffbff93` (a re-apply) 500 ms later. `R` also sets 0x20CE2 = idx-1 and calls `FUN_fffbb567`, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. `cfg105` is the factory alignment / calibration table **[inference]** ([code/main/eeprom.md](code/main/eeprom.md)); entries from index 70 (0x469E..0x4734, 15 bytes per band) hold the per-band TX power calibration behind SDR register 0x25 **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk** for `W`/`S`. |
 | `SPM...<sum>;` (binary) | read | `cat_SP_meters` 0xFFFA5284 | Answers `SPM` + 8 binary bytes (0x1204A, 0x12048/0x1204B, and four more meter getters 0xFFFB6E03..0xFFFB6E98) + 3 zero bytes + sum + `;` (16 bytes). These are meter readings **[inference]**. |
 | `SPAWE<sum>;` (binary) | set | `eeprom_save_cfg105` 0xFFFB0532 | Writes the whole 0x4659 table to EEPROM 0x000A. **High risk.** |
 
-- **Checksum.** The binary forms use `cat_checksum_ok` (8-bit additive sum of the preceding bytes, compared with the next byte).
-- **Checksum length bug.** In V01-12 the length argument is read from RAM address `len-2` instead of being `len-2`.
-  - Evidence (disassembly): 0xFFFA3861..0xFFFA3869, 0xFFFA38BE..0xFFFA38C4, 0xFFFA39B5..0xFFFA39BB, 0xFFFA5104..0xFFFA510A.
-  - Consequence: these five sub-commands **probably always answer `?;`** **[inference]**. See [cat.md](code/main/cat.md#extended-and-service-commands-summary).
-- **Not affected.** The ASCII forms `SPS`, `SPD` and `SPIR` have no checksum and are fully functional **[fact]**.
+- **Checksum.** The binary forms call `cat_checksum_ok(text, len-2)`: the 8-bit additive sum of every frame byte before the sum byte (from the `S` of `SP` on, without the sum byte and the `;`) must equal the sum byte **[fact]** (0xFFFA3867, 0xFFFA38C4, 0xFFFA39BB, 0xFFFA510A; `decomp/main/fffa20af_fffa7928.c`).
+- **No checksum bug.** An earlier reading (T09) that the length is loaded from RAM address `len-2` came from a decoder defect: the RX SLEIGH module showed `MOVU.W R2,R2` (bytes `5F 22`) as `MOVU.W [R2],R2`. T10e found it and T17 fixed the decoder and re-exported `decomp/main`. **`SPR`, `SPW`, `SPN`, `SPM` and `SPA` are usable in V01-12, high risk** (they read or write EEPROM and calibration/service data; never send one without the owner's approval). See [cat.md](code/main/cat.md#extended-and-service-commands-summary).
+- **ASCII forms.** `SPS`, `SPD` and `SPIR` have no checksum **[fact]**.
 
 <a id="ext-eo"></a>
 ### EO — encoder offset (in 2211-A, removed in 2306-C; medium)
@@ -251,7 +249,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 - **Normal path:** `E9` received through the normal ring (impossible in practice) has no case and is ignored.
 
 <a id="ext-fd"></a>
-### FD — band/selector frequency (undocumented; medium)
+### FD — scope start frequency (undocumented; medium)
 `cat_ext_FD` 0xFFFA5A51. Positions 2–3 must be `00`, and position 4 is the selector n. **[fact]**
 - **Read `FD00n;` (6):** answers `FD00n` + 9 decimal digits.
   - n = 0: u32 at 0x20F5C.
@@ -259,7 +257,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
   - n = 2: band-memory frequency of the band that contains the active VFO frequency. Bands come from `band_of_freq` 0xFFFB33E5 (12 ranges at 0xFFF8876C). The value is from 0x9C99 + 4·band, with sub-slots at 0x9CC9 for band 11.
 - **Set `FD002ddddddddd;` (15):** only n = 2. The 9-digit Hz value must satisfy 30000 < f < 75,000,001. It is written into the band memory of the band that contains the active frequency (`bandmem_set`).
 - **AI:** `cat_ai_FD` broadcasts `FD00n<9 digits>;`, with n from 0x9C35, when the value changes. This is the only undocumented AI message.
-- **Meaning:** not known. A per-band "last frequency"/band-stack slot used by `BS` is plausible **[guess]**.
+- **Meaning:** scope start frequency (T10g): n = 0 the dial frequency (0x20F5C, active VFO + `vfo_display_offset`), n = 1 the CURSOR-mode start 0x20F60, n = 2 the FIX-mode start of the current band. The AI frame uses n = scope mode 0x9C35. **[fact]** for the variables, **[inference]** (strong) for "scope start". See [code/main/radio-control.md](code/main/radio-control.md#band-memories-and-the-fd-command-scope-start-frequencies).
 - **Risk:** medium (persistent band memory).
 
 <a id="ext-kt"></a>

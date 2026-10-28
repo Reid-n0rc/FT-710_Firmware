@@ -21,12 +21,17 @@ Part of T10b. The protocol on SCI1 (DISPLAY link) is on [display-link.md](displa
   frame ends by the inter-byte timeout or by the checksum check of the upper layer. **[fact]**
 - **TXD pin handling.** `Serial_Send` sets the TXD pin's PMR bit (peripheral function), and TEI clears it again, so between frames TXD is a GPIO
   output driven high (PODR set in `Create`). **[fact]**
-- **Clock.** The baud values below assume **PCLKB = 60 MHz**. That is the only clock for which every entry of the CAT baud table gives a
-  standard rate (4800…115200), so it is **[inference, high]**; the SCKCR value itself was not decoded here.
+- **Clock.** **PCLKB = 60 MHz**: `hw_init_clock` sets PLLCR = 0x1300 (24 MHz crystal × 10 = 240 MHz) and SCKCR = 0x21C21222 (PCKB = ×1/4)
+  **[fact: code + RX651 HWM r01uh0590 §9.2.1 p302–303, §9.2.5 p308; details in [peripherals.md](peripherals.md#init-sequence-r_systeminit--r_systeminit-fact)]**.
+  It also agrees with the CAT baud table, whose entries all give standard rates (4800…115200) only at 60 MHz.
 
 ## Channels
 
-Register values are from each `R_SCIn_Create` **[fact]**. Baud = PCLKB / (64 · 2^(2n−1) / (ABCS ? 2 : 1) / (BGDM ? 2 : 1) · (BRR+1)).
+Register values are from each `R_SCIn_Create` **[fact]**. Baud = PCLKB / (64 · 2^(2n−1) / (ABCS ? 2 : 1) / (BGDM ? 2 : 1) · (BRR+1)), with
+n = SMR.CKS (0 = PCLK, 1 = PCLK/4, 2 = PCLK/16, 3 = PCLK/64). Bit meanings: SMR b7 CM, b6 CHR, b5 PE, b4 PM, b3 STOP, b2 MP, b1–b0 CKS;
+SEMR b7 RXDESEL, b6 BGDM, b5 NFEN, b4 ABCS (1 = 8 base clocks per bit instead of 16), b2 BRME, b0 ACS0. In asynchronous mode the divider is 64 with
+BGDM = ABCS = 0, 32 with one of them set, 16 with both **[fact: RX651 HWM r01uh0590 §37.2.9 SMR p1620, §37.2.13 BRR Table 37.11 and Table 37.13
+p1638–1639, §37.2.15 SEMR p1649]**. SEMR 0x50 = BGDM + ABCS, 0x10 = ABCS only.
 
 | SCI | Base | Pins (MPC PFS) | SMR / BRR / SEMR at create | Baud at create | Role (see docs/hardware.md) | Upper layer |
 |---|---|---|---|---|---|---|
@@ -39,8 +44,8 @@ Register values are from each `R_SCIn_Create` **[fact]**. Baud = PCLKB / (64 · 
 | SCI6 | 0x8A0C0 | P01 SSCL6, P00 SSDA6 | simple-I2C: BRR 0x12, SIMR3 0xF0, SCR 0xF4 | ≈ 98.7 kHz I2C | unknown I2C device | T10h |
 | SCI7 | 0x8A0E0 | P92 RXD7, P90 TXD7 | 0x00 / 0xC2 / 0x00 | 9600 8N1 | "C4" port | **unused**: no Start/Send/Receive caller |
 
-- SCI1: SMR bit 3 (STOP) = 1 means two stop bits, CKS = 0, SEMR.ABCS = 1, so 60 MHz / (16 · 11) = 340,909 bit/s **[fact for the registers,
-  inference for the rate]**. This is not a standard rate. The DISPLAY's SCIF5 setting has to match; that is a cross-check for T11b.
+- SCI1: SMR bit 3 (STOP) = 1 means two stop bits, CKS = 0, SEMR.ABCS = 1, so 60 MHz / (16 · 11) = 340,909 bit/s **[fact: registers, PCLKB and
+  formula, RX651 HWM r01uh0590 §37.2.9, §37.2.13 Table 37.11, §9.2.1]**. This is not a standard rate. The DISPLAY's SCIF5 setting has to match; that is a cross-check for T11b.
 - SCI7 is created (MSTP released, pins set, interrupts registered) but nothing enables TE/RE: there is no `R_SCI7_Start` and no caller of the
   RX/TX ISR buffers outside the ISRs. **[fact: no other code writes 0x8A0E2 except the driver]**, so the "C4" UART is unused in V01-12 **[inference]**.
 - SCI2 pin/function choice depends on setting 0x9AB7 (`tunlin_port_mode` 0..3, >3 → 0): mode 2 = CAT (baud from setting 0x9ABE, stop bits from

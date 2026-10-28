@@ -47,8 +47,16 @@ PRCR unlock, then `R_Pins_Create`, `R_IWDT_Create`, `R_DA_Create`, `R_S12AD0_Cre
 `R_SCI7_Create` and `R_TPU2_Create`. It then registers the group/peripheral vectors with `R_BSP_InterruptWrite` and locks PRCR.
 `app_main` later starts the timers (`timers_init`), sets the shift-register bus idle levels (`shreg_bus_init`) and sets up the DAC (`dac_init_idle`).
 
-Clocks: SCKCR = 0x21C21222 (`FUN_fff913db`). `tone_set` hard-codes 60 MHz as the timer clock, which fits PCLKB = 60 MHz
-**[fact for the constant, inference for PCLKB]**. The timer periods below assume PCLKB = 60 MHz.
+Clocks (`hw_init_clock` 0xFFF913D7 → `FUN_fff913db` 0xFFF913DB, oscillator part in `FUN_fff91495` 0xFFF91495) **[fact for the values]**:
+main oscillator on (MOSCWTCR 0x800A2 = 0x53, MOSCCR 0x80032 = 0, wait for OSCOVFSR.MOOVF); PLLCR 0x80028 = 0x1300 (PLIDIV = ×1,
+PLLSRCSEL = main oscillator, STC = 010011b = ×10.0), PLLCR2 0x8002A = 0 (PLL on, wait for OSCOVFSR.PLOVF); ROMWT 0x8101C = 2;
+SCKCR 0x80020 = 0x21C21222; SCKCR2 0x80024 = 0x11 (UCLK ×1/2); SCKCR3 0x80026 = 0x400 (CKSEL = 100b, PLL).
+With the 24.000 MHz crystal X1001 (docs/hardware.md) the PLL runs at 24 × 10 = **240 MHz**, and SCKCR gives FCK ×1/4, ICK ×1/2, PSTOP1 = PSTOP0 = 1
+(BCLK/SDCLK pins off), BCK ×1/4, PCKA ×1/2, PCKB/PCKC/PCKD ×1/4:
+**ICLK = 120 MHz, PCLKA = 120 MHz, PCLKB = PCLKC = PCLKD = 60 MHz, FCLK = 60 MHz, BCLK = 60 MHz, UCLK = 120 MHz** (UCLK unused).
+ROMWT = 10b is the setting for 100 MHz < ICLK ≤ 120 MHz, which agrees **[fact: RX651 HWM r01uh0590 §9.2.1 SCKCR p302–303, §9.2.2 ROMWT p304,
+§9.2.3 SCKCR2 p306, §9.2.4 SCKCR3 p307, §9.2.5 PLLCR p308, §9.2.6 PLLCR2 p309]**. `tone_set` hard-codes 60 MHz as the timer clock, which matches.
+All timer periods and baud rates on these pages use PCLKB = 60 MHz.
 
 ## GPIO map [fact unless tagged]
 
@@ -174,6 +182,16 @@ So fields 1–8 are AN000..AN007 in order, with the unused ones reported as 0, a
 
 No CMT channel is used (there are no CMT references) **[fact]**. The timebase is the TPU:
 
+TPU register meanings **[fact: RX651 HWM r01uh0590 §26.2.1 TCR and Tables 26.4–26.7, 26.11, 26.12 p1175–1178; §26.2.4 TIER p1189]**:
+TCR = CCLR[7:5] | CKEG[4:3] | TPSC[2:0]. The four `R_TPUn_Create` write TCR 0x2A / 0x20 / 0x29 / 0x2E (TPU0..3): CCLR = 001b (clear on TGRA
+compare match), CKEG = 01b (TPU0/2/3, rising edge; ignored for PCLK/1) and TPSC = 010b PCLK/16 (TPU0), 000b PCLK/1 (TPU1), 001b PCLK/4 (TPU2),
+110b PCLK/256 (TPU3; this code means /256 only on TPU1/3/5). TIER |= 0x41 = TGIEA plus reserved bit 6 (reads 1, write 1), so only the
+TGRA compare-match interrupt is used, no A/D trigger (TTGE is bit 7). TIORH/TIORL = 0: no output compare pins.
+The vectors are software-configurable interrupt B slots, selected by `icu_select_init` 0xFFF92014: SLIBXR130 (0x87782) = 15 = TPU0 TGI0A,
+SLIBXR138 (0x8778A) = 24 = TPU2 TGI2A, SLIBXR142 (0x8778E) = 28 = TPU3 TGI3A, SLIBR144 (0x87790) = 20 = TPU1 TGI1A, SLIBR186 (0x877BA) = 64 = S12AD
+S12ADI, SLIBR189 (0x877BD) = 68 = S12AD1 S12ADI1 **[fact: code writes; source numbers from RX651 HWM r01uh0590 §15.2.25 SLIBXRn p450, §15.2.26
+SLIBRn p451, Table 15.3 p452–453; vectors 128–207 are INTB128..INTB207 in Table 15.5 p463]**.
+
 | Timer | Setup (PCLKB 60 MHz) | Vector | Body | Use |
 |---|---|---|---|---|
 | TPU0 | /16, TGRA 374 → **10 kHz** | 130 | `swtimer_tick` | 75 one-shot soft timers (`swtimer_start(id, ms)` → limit ms×10, done flags 0x11FED[id], tested with `swtimer_expired`) plus 2 blink timers (0x12038, set as 450/250 ms and 1000/1000 ms) |
@@ -242,13 +260,13 @@ stateDiagram-v2
 | 0xFFF927E5 / 0xFFF92826 / 0xFFF9283D | `R_DA_Create` / `R_DA0_Start` / `dac0_write` | `R_DA_Create` / `R_DA0_Start` / `dac0_write` | DA0 |
 | 0xFFF92851 / 0xFFF929F7 / 0xFFF92A13 / 0xFFF92A31 | `R_S12AD0_Create`… | *R_S12AD0_Create/Start/Stop/Get_ValueResult* | ADC unit 0 |
 | 0xFFF92B17 / 0xFFF92C74 / 0xFFF92C90 / 0xFFF92CAE | `R_S12AD1_Create`… | *R_S12AD1_Create/Start/Stop/Get_ValueResult* | ADC unit 1 |
-| 0xFFF92B01 / 0xFFF92E0F | `vec186_isr` / `vec189_isr` | *r_s12ad0/1_scan_end_isr* | store results, set done flags |
+| 0xFFF92B01 / 0xFFF92E0F | `r_s12ad0_scan_end_isr` / `r_s12ad1_scan_end_isr` | *r_s12ad0/1_scan_end_isr* | store results, set done flags |
 | 0xFFFB27E0 / 0xFFFB289E / 0xFFFB741E | `adc_scan_start`… | `adc_scan_start` / `adc_scan_done` / `adc_scan_blocking` | software-triggered scan of both units |
 | 0xFFFB27FB / 0xFFFB2858 | `adc0_store` / `adc1_store` | `adc0_store` / `adc1_store` | results → 0x20B04..0x20B16 |
-| 0xFFF949B4 / 0xFFF94A38 / 0xFFF94A57 | `R_TPU0_Create` / `R_TPU0_Start` / `vec130_isr` | *R_TPU0_Create/Start*, `r_tpu0_tgia_isr` | 10 kHz tick |
-| 0xFFF94A65 / 0xFFF94ACD / 0xFFF94ADC / 0xFFF94AEC | … / `vec144_isr` | *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr` | tone clock |
-| 0xFFFEDD07 / 0xFFFEDD6D / 0xFFFEDD7C / 0xFFFEDD8C | … / `vec138_isr` | *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr` | speaker soft-start |
-| 0xFFFB2734 / 0xFFFB27B2 / 0xFFFB27D1 | … / `vec142_isr` | *R_TPU3_Create/Start*, `r_tpu3_tgia_isr` | 100 ms tick |
+| 0xFFF949B4 / 0xFFF94A38 / 0xFFF94A57 | `R_TPU0_Create` / `R_TPU0_Start` / `r_tpu0_tgia_isr` | *R_TPU0_Create/Start*, `r_tpu0_tgia_isr` | 10 kHz tick |
+| 0xFFF94A65 / 0xFFF94ACD / 0xFFF94ADC / 0xFFF94AEC | … / `r_tpu1_tgia_isr` | *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr` | tone clock |
+| 0xFFFEDD07 / 0xFFFEDD6D / 0xFFFEDD7C / 0xFFFEDD8C | … / `r_tpu2_tgia_isr` | *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr` | speaker soft-start |
+| 0xFFFB2734 / 0xFFFB27B2 / 0xFFFB27D1 | … / `r_tpu3_tgia_isr` | *R_TPU3_Create/Start*, `r_tpu3_tgia_isr` | 100 ms tick |
 | 0xFFFC913B | `R_MTU2_Create` | `R_MTU2_Create` | unused PWM |
 | 0xFFFB2228 | `timers_init` | `timers_init` | marks all timers expired, sets blinkers, starts TPU0/TPU3 |
 | 0xFFFB2288 / 0xFFFB237A / 0xFFFB23F3 | … | `swtimer_tick` / `swtimer_start` / `swtimer_expired` | soft timers (84 callers each) |

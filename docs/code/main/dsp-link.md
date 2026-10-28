@@ -14,7 +14,7 @@ The Ghidra names are the current ones in `ghidra/FT710_MAIN`. Function names are
 
 - **Transport.** SCI4 (PB0 = RXD4, PB1 = TXD4), 115200 baud 8N1, polled from the main loop. No RTOS, no queue: **one
   transaction at a time**, at most **one frame sent per `main_loop` pass**. **[fact]** `R_SCI4_Create` 0xFFF9423C (BRR 0x40,
-  SEMR 0x50 → PCLKB/(8·65) = 115385 baud at PCLKB 60 MHz **[inference: PCLKB]**; PFS 0x8C198/0x8C199 = 0x0A).
+  SEMR 0x50 (BGDM + ABCS) → PCLKB/(8·65) = 115385 baud at PCLKB 60 MHz **[fact: RX651 HWM r01uh0590 §37.2.13 Table 37.11, §37.2.15; PCLKB from SCKCR §9.2.1]**; PFS 0x8C198/0x8C199 = 0x0A).
 - **Frames** (ASCII, upper-case hex, 8-bit additive checksum over all preceding characters, then CR) **[fact]** `dsp_send_frame`:
   - read `rAAAACC\r` (8 bytes) → reply `rDDDDCC` (7 bytes, checksum over `rDDDD`);
   - write `wAAAADDDDCC\r` (12 bytes) → reply one byte `0x06` (ACK). `?` (0x3F) is the M33's "invalid" reply.
@@ -337,7 +337,7 @@ returns with P72 still high and the DSP in ISP mode; the radio is presumably res
 ## SCI7 ("C4" UART)
 
 - `R_SCI7_Create` 0xFFFC95B1, called once from `R_Systeminit` (peripheral init) **[fact]**: MSTPCRB bit 24 cleared, IPR for
-  vectors 98/99, SMR = 0, SCR = 0, SCMR = 0x72, SEMR = 0, BRR = 0xC2 → about 9600 baud at PCLKB 60 MHz **[inference]**,
+  vectors 98/99, SMR = 0, SCR = 0, SCMR = 0x72, SEMR = 0, BRR = 0xC2 → 60 MHz/(32·195) = 9615 baud (9600 +0.16 %) **[fact: RX651 HWM r01uh0590 §37.2.13 Table 37.11; PCLKB from SCKCR §9.2.1]**,
   pins P90 = TXD7 and P92 = RXD7 (PFS 0x8C188/0x8C18A = 0x0A), P90 output high.
 - SCR is never set again, so TE/RE stay off. The ISR globals (count 0x1FA48 / 0x1FA4A / 0x1FA4C, pointers 0x21054 / 0x21058)
   are written only by the two ISRs; there is no `R_SCI7_Serial_Send/Receive` and no other reference to the SCI7 registers

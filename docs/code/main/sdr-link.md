@@ -16,9 +16,10 @@ data or the schematic at the address or page given.
 
 - **Physical link.** SCI5 runs as an 8N1 UART. TXD5 (pin 67, `SDR_UMOSI`, R1057 470 Ω) goes to J2002 pin 46
   (`UART_RX`), and pin 70 (`SDR_UMISO`) comes from J2002 pin 48 (`UART_TX`) **[fact: p17, p19]**.
-- **Baud rate.** `R_SCI5_Create` (0xFFF94662) sets SMR=0x00, BRR=0x40 and SEMR=0x50 (BGDM=1, ABCS=1), giving PCLKB/(4·65)
-  **[fact]**. PCLKB is 60 MHz, which follows from the SCI0 CAT baud table at 0xFFF80FF4 (its five entries give 4800…115200
-  only with 60 MHz) **[inference]**. So the SDR link runs at **115 385 baud, i.e. 115200 (+0.16 %)** **[inference]**.
+- **Baud rate.** `R_SCI5_Create` (0xFFF94662) sets SMR=0x00, BRR=0x40 and SEMR=0x50 (BGDM=1, ABCS=1), giving PCLKB/(8·65)
+  (divider 16·2^(2n−1) = 8 with n = 0 and both bits set; the earlier "4·65" was wrong) **[fact: RX651 HWM r01uh0590 §37.2.13 Table 37.11, §37.2.15]**.
+  PCLKB is 60 MHz (PLLCR 0x1300: 24 MHz × 10, SCKCR 0x21C21222: PCKB ×1/4) **[fact: `hw_init_clock` + RX651 HWM §9.2.1, §9.2.5]**, which also fits
+  the SCI0 CAT baud table at 0xFFF80FF4. So the SDR link runs at **115 385 baud, i.e. 115200 (+0.16 %)** **[fact]**.
 - **Protocol.** The protocol is ASCII and strictly one request at a time, always started by MAIN. A request is `r` + 4 hex
   digits of register (8 bytes) or `w` + register + 4 hex digits of value (12 bytes), followed by a 2-hex-digit additive
   checksum and CR. The FPGA always answers with **7 bytes**, received into 0xA2AC. A write is accepted when reply byte 0

@@ -2,7 +2,7 @@
 
 Per-command firmware analysis of the 104 entries in `cat_mnemonics` @ 0xFFF805EC (T09b). Overview, the extended/service commands and the manual comparison are in [cat-commands.md](cat-commands.md); parser, reply buffer and AI are in [code/main/cat.md](code/main/cat.md).
 
-Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and text[2] the first parameter; replies are built at 0x1C8E with length in 0x1B788; `?;` = error flag 0x464A. Rows were produced by reading `decomp/main` (four parallel read-only passes) and spot-checked against the disassembly where marked; behaviour sentences carry their own [fact]/[inference]/[guess] tags. The manual line is a paraphrase of rev 2306-C (2211-A for EO). Open points needing disassembly are listed per command.
+Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and text[2] the first parameter; replies are built at 0x1C8E with length in 0x1B788; `?;` = error flag 0x464A. Rows were produced by reading `decomp/main` (four parallel read-only passes) and spot-checked against the disassembly where marked; behaviour sentences carry their own [fact]/[inference]/[guess] tags. The manual line is a paraphrase of rev 2306-C (2211-A for EO). Open points needing disassembly are listed per command. "Dirty flag" in the rows below means 0x20F10. T10g showed it is a **frequency-cache refresh request** for `freq_cache_update` (set by about 90 functions), not a settings-dirty flag [fact] (see [code/main/radio-control.md](code/main/radio-control.md)); EEPROM saving is described in [code/main/eeprom.md](code/main/eeprom.md).
 
 ### AB
 
@@ -11,7 +11,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** none
 - **Class:** action
 - **Behaviour:** Copies the VFO-A data block (0x5A bytes at 0x9D09) into the VFO-B block (0x9D63), sets VFO-B state 0x9DBF=1 and applies it; i.e. A=>B copy [fact for copy, name inference].
-- **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (settings dirty); callees `vfo_mark_edited`(1), `vfo_store_back`(1)
+- **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (frequency-cache refresh request, see [radio-control.md](code/main/radio-control.md)); callees `vfo_mark_edited`(1), `vfo_store_back`(1)
 - **Risk:** low-medium: changes VFO-B contents (RAM + dirty flag)
 - **Open (needs disassembly):** `vfo_store_back` / `vfo_mark_edited`: what exactly is applied (retune?)
 
@@ -374,7 +374,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Set parameters (firmware):** FAnnnnnnnnn; 9 digits '0'..'9' at cmd[2..10] (Hz). Non-digit -> '?;'. Value must satisfy `freq_in_range`: 29999 < f < 75000001 (30000..75000000 Hz) else '?;'. Also '?;' while DAT_00020B8A==1 or DAT_00020F11==1, if `vfo_tune_locked`(side)==1 (side state is 7/8, or state 2 with memory-channel byte 117..132 = 501-515/EMG), or if DAT_00020F6D==1 after the tune attempt (state restored)
 - **Class:** read+set
 - **Behaviour:** Reads/sets the VFO-A frequency in Hz; set stores the 32-bit value big-endian into side-0 record bytes +0x4A..+0x4D of 0x9D09, zeroes +0x48/+0x49 (clarifier offset cleared) and retunes via `freq_clamp` [fact]
-- **Globals / callees:** R: 0x20F54,0x20F50,0x20B6B,0x9DBD. W: 0x9D09[0x48..0x4D],0x9DBE/0x9DBF (restored, or from 0x9DC7 if 0x9C5E==1),0x20F10 (dirty flag=1),0x20F68. callees: `freq_in_range` range, `vfo_tune_locked` lock, `freq_clamp` tune, `vfo_mem_to_memtune`, `vfo_mark_edited`+`vfo_store_back` UI refresh
+- **Globals / callees:** R: 0x20F54,0x20F50,0x20B6B,0x9DBD. W: 0x9D09[0x48..0x4D],0x9DBE/0x9DBF (restored, or from 0x9DC7 if 0x9C5E==1),0x20F10 (frequency-cache refresh request=1),0x20F68. callees: `freq_in_range` range, `vfo_tune_locked` lock, `freq_clamp` tune, `vfo_mem_to_memtune`, `vfo_mark_edited`+`vfo_store_back` UI refresh
 - **Risk:** medium: changes operating frequency (persisted via dirty flag), no direct TX
 - **Open (needs disassembly):** `freq_clamp` tune path internals not followed
 
@@ -420,7 +420,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** FTn; n='1' if DAT_00009C5E==1 else '0'
 - **Set parameters (firmware):** FTn; n '0' or '1' else '?;'. '?;' if any busy flag: 0x20F1C==1, 0x20F70==1, 0x20F0C!=0, 0x20B8A==1, 0x20B3D!=0, 0x20CCE==1, 0x20F1B==1, 0x20CCD==1, 0x20B7C!=0, 0x20CD0==1, 0x20CD1==1, 0x20F11==1, 0x20B98==1. If requested value differs from current 0x9C5E calls `split_toggle`() (toggle); if same, does nothing
 - **Class:** read+set
-- **Behaviour:** Turns the two-VFO TX/RX state flag DAT_00009C5E off/on: `split_toggle` toggles 0x9C5E, saves/restores VFO states (0x9DBE/0x9DBF vs 0x9DC7/0x9DC8) and refreshes UI [fact]; calling it split is [inference] because FA/FB also key off 0x9C5E
+- **Behaviour:** Turns split (0x9C5E) off/on, the same flag as `ST`: `split_toggle` @ fffbeca5 toggles 0x9C5E, saves/restores VFO states (0x9DBE/0x9DBF vs 0x9DC7/0x9DC8) and refreshes UI [fact] (T10g, [radio-control.md](code/main/radio-control.md#split-clarifier-ab)). While split is on, `vfo_rec_ptr`(1) selects the other VFO as TX [fact]
 - **Globals / callees:** RW 0x9C5E; callee `split_toggle` (also writes 0x9DBE,0x9DBF,0x9DC7,0x9DC8,0x20F09, PTR_DAT_00025d54 fields)
 - **Risk:** medium: changes TX/RX VFO configuration (no direct key-down)
 - **Open (needs disassembly):** meaning of the busy flags (0x20F1C,0x20F70,0x20B8A,...) unresolved
@@ -1052,10 +1052,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** STn; n='0' if DAT_00009c5e==0 else '1'
 - **Set parameters (firmware):** P1 '0' or '1' else error; key_event_filter(0x305,0) must pass and DAT_00020b3d must be 0 else error. '0': if DAT_00009c5e==1 call `split_toggle`() (toggle off); '1': if DAT_00009c5e==0 call `split_toggle`() (toggle on). No-op if already in that state
 - **Class:** read+set
-- **Behaviour:** Turns the state flag DAT_00009c5e on/off. `split_toggle` saves/restores DAT_00009dbe/dbf (per-VFO mode bytes, mirrored to UI struct offsets 0x484/0x485) and sets DAT_00009dc7/c8; behaves like a split-operation toggle (TS requires c5e==1; VS clears it) [inference]. Emulates front-panel key code 0x305
-- **Globals / callees:** DAT_00009c5e (rw), DAT_00020b3d (r, probably TX-active), key_event_filter(0x305), `split_toggle`@fffbeca5 (calls FUN_fffe3d24, `vm_toggle_core`, FUN_fff9cdb0, FUN_fffc2794 if DAT_00020b9b==1), UI struct PTR_DAT_00025d54
+- **Behaviour:** Turns split (0x9C5E) on/off, the same flag as `FT` [fact] (T10g, [radio-control.md](code/main/radio-control.md#split-clarifier-ab)). `split_toggle` saves/restores DAT_00009dbe/dbf (per-VFO state bytes, mirrored to UI struct offsets 0x484/0x485) and sets DAT_00009dc7/c8 [fact]. Emulates front-panel key code 0x305
+- **Globals / callees:** DAT_00009c5e (rw), DAT_00020b3d (r, TX flag, see [tx-protection.md](code/main/tx-protection.md)), key_event_filter(0x305), `split_toggle`@fffbeca5 (calls FUN_fffe3d24, `vm_toggle_core`, FUN_fff9cdb0, FUN_fffc2794 if DAT_00020b9b==1), UI struct PTR_DAT_00025d54
 - **Risk:** medium: changes operating state (VFO routing), blocked while DAT_00020b3d!=0
-- **Open (needs disassembly):** What DAT_00020b3d is (TX flag?); FUN_fffe3d24
+- **Open (needs disassembly):** FUN_fffe3d24
 
 ### SV
 
