@@ -28,10 +28,20 @@ Other references: [hardware survey](docs/hardware.md), [memory maps](docs/memory
 [SFL file format](docs/sfl-format.md), [custom-firmware feasibility](docs/custom-firmware.md), [tooling](docs/tooling.md).
 Decompiled code is in `decomp/<image>/`.
 
-## Getting the inputs (not stored in this repo)
+## Getting started: rebuild everything from the official downloads
 
-- **Firmware:** download https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip and unzip it into `Firmware/`.
-- **Manuals:** get them from https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers (Files tab) and save them into `Manuals/`.
-- **Service manual (Technical Supplement):** download https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf into `Manuals/`.
+**[docs/getting-started.md](docs/getting-started.md)** is the manual for newcomers: prerequisites per OS, getting the inputs, the
+bootstrap, a tour of the repo, Ghidra (and optionally REA), the conventions and how to contribute. In short:
 
-`Firmware/` and `Manuals/` are gitignored and must never be committed.
+```sh
+mkdir -p Firmware && curl -fL -o Firmware/FT-710_Firmware_updata_202402.zip \
+  https://yaesu.com/Files/BB2B47AE-1018-01AF-FAE48FDCB1919193/FT-710_Firmware_updata_202402.zip
+tools/bootstrap.sh            # decode, build the Ghidra projects with every name, re-export, diff against decomp/
+```
+
+Yaesu's firmware, the decoded binaries, the Ghidra projects and the manuals are not in this repo; `tools/bootstrap.sh` rebuilds the
+derived files byte for byte from the official download (hashes in [docs/inputs.sha256](docs/inputs.sha256)). The manuals and datasheets,
+with their sources, are listed in [docs/manuals.md](docs/manuals.md); the scripts in [tools/README.md](tools/README.md). Open questions
+are GitHub issues (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+
+`Firmware/`, `Manuals/`, `build/` and `ghidra/` are gitignored and must never be committed.

@@ -374,7 +374,7 @@ step_sdr() {
   sdr_deps
   mkdir -p "$SDR_OUT"
   local t0=$SECONDS
-  py "$REPO/tools/xc7_db.py" "$BUILD/FT-710_SDR_V0104.bin" frames | tail -n 2 | sed 's/^/   /'
+  py "$REPO/tools/xc7_db.py" "$BUILD/FT-710_SDR_V0104.bin" frames | grep -E "MATCH|MISMATCH" | sed "s/^/   /"
   py "$REPO/tools/xc7_fasm.py" fasm "$BUILD/FT-710_SDR_V0104.bin" "$SDR_OUT/FT-710_SDR_V0104.fasm" --unknown "$SDR_OUT/unknown_bits.txt" | tail -n 3 | sed 's/^/   /'
   py "$REPO/tools/xc7_netlist.py" build "$SDR_OUT/FT-710_SDR_V0104.fasm" "$SDR_OUT/netlist.json" | tail -n 3 | sed 's/^/   /'
   py "$REPO/tools/xc7_netlist_verilog.py" verilog "$SDR_OUT/netlist.json" "$SDR_OUT/ft710_sdr.v" --xdc "$SDR_OUT/ft710_sdr.xdc" | tail -n 3 | sed 's/^/   /'
