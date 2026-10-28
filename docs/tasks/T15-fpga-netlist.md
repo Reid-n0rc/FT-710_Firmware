@@ -1,6 +1,6 @@
 # T15 — FPGA netlist recovery (SDR)
 
-**Status:** in progress (T15a-T15d done, T15e receiver done) · **Depends on:** T13
+**Status:** done · **Depends on:** T13
 
 ## Goal
 Turn the SDR bitstream (XC7A50T, `build/FT-710_SDR_V0104.bin`) into a gate-level netlist and identify its main blocks, so
@@ -28,7 +28,7 @@ Split into five sub-tasks (T15d and T15e added on the owner's request), done in 
 | [T15b](T15b-fpga-netlist-cells.md) | `tools/xc7_netlist.py` (stdlib): FASM -> cells (LUT INIT, FF, CARRY4, DSP48E1, BRAM, IOB, MMCM, BUFG) + nets from active PIPs walked over `tileconn.json`; self-test on a hand-built FASM case | done |
 | [T15c](T15c-fpga-blocks.md) | Block recognition in `docs/code/sdr/netlist.md`: clock domains, IOB groups, DSP48 cascades and BRAM<->DSP links (DDC/filter chain), UART5 and scope SPI candidates, TX path | done |
 | [T15d](T15d-fpga-verilog.md) | `tools/xc7_netlist_verilog.py`: structural Verilog (UNISIM primitives with recovered parameters, ports named from package pins / J2002 signals) + XDC (LOC, IOSTANDARD) in `build/sdr/`; smoke test with an open tool (Yosys/Icarus/Verilator) against a UNISIM blackbox library; summary only in docs | done |
-| [T15e](T15e-fpga-uart-rtl.md) | Behavioral RTL of the UART link to MAIN in `hdl/sdr/` (baud generator, framing, `r`/`w` command handling) + README + testbench comparing it against the structural slice | in progress (RX done) |
+| [T15e](T15e-fpga-uart-rtl.md) | Behavioral RTL of the UART link to MAIN in `hdl/sdr/` (baud generator, framing, `r`/`w` command handling) + README + testbench comparing it against the structural slice | done |
 
 Approach:
 1. No C++ build: prjxray's `bitread` is replaced by a stdlib writer of the same `bit_FFFFFFFF_WWW_BB` lines (frames from
@@ -63,15 +63,17 @@ Derived files (FASM, netlist JSON, Verilog, XDC, slices) are in `build/sdr/` onl
   inference for roles]**. Package CSG324 or FGG484 **[fact]**.
 - **Verilog (T15d):** 63,474 UNISIM instances with recovered parameters + XDC; Yosys `hierarchy -check` clean; the UART
   receiver slice decodes real frames in Icarus **[fact]**.
-- **RTL (T15e):** `hdl/sdr/uart_rx.v` matches the netlist cycle by cycle over 260k clocks **[fact]**.
+- **RTL (T15e):** `hdl/sdr/uart_rx.v` matches the netlist cycle by cycle over 260k clocks; the **whole netlist runs
+  in Verilator** and answers MAIN's `r000032` with `r010437` (V01-04); **UART B is MAIN's UART5**, UART A a debug
+  console (`[IF]>`); `hdl/sdr/uart_link.v` (the MAIN link) equals the netlist cycle by cycle on the TX pin over
+  ~160 M co-simulated clocks of directed and random traffic; `x` has no reachable function **[fact]**.
 
 ## Follow-ups
-- Which UART is MAIN's UART5 (the other is UART_DBG); the parser state machine, the `x` command and the read-reply
-  format (T15e).
+- RTL for the debug console (UART A); whether `x` is gated by an input pin (T15e follow-ups).
 - DISPLAY scope SPI slave and the I2S ports among the remaining bank 14/15 pins; J2002-to-FPGA pin path.
 - DSP OPMODE/ALUMODE polarity and `USE_MULT` (no segbits) before reading the DDC arithmetic.
 - STARTUPE2 use (needed by the flash writer) is not decodable with prjxray-db (`CFG_CENTER_MID` has routing bits only).
-- A full-design simulation needs a faster simulator (Verilator) than Icarus on the shared box.
+- The whole-design Verilator model (T15e) can now be used to find the scope SPI / I2S pins and the DDC behaviour.
 
 ## Proposed shared-file edits
 For the parent to apply (this task does not edit shared files).
@@ -82,7 +84,7 @@ For the parent to apply (this task does not edit shared files).
 | T15b | [FASM to cell-level netlist (SDR)](T15b-fpga-netlist-cells.md) | T15a | done |
 | T15c | [Block recognition (SDR)](T15c-fpga-blocks.md) | T15b | done |
 | T15d | [Structural Verilog netlist + smoke test (SDR)](T15d-fpga-verilog.md) | T15b | done |
-| T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | in progress |
+| T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | done |
 ```
 
 **docs/tooling.md** — append to the prjxray section:

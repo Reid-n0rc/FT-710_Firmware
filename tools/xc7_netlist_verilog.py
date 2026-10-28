@@ -8,10 +8,11 @@ Usage:
     python3 -I tools/xc7_netlist_verilog.py verilog NETLIST.json OUT.v [--xdc OUT.xdc] [--pkg PKG]
         whole design as one module `ft710_sdr` of UNISIM primitives, top ports named
         after package pins (and J2002 / block names where T15c identified them)
-    python3 -I tools/xc7_netlist_verilog.py slice NETLIST.json OUT.v --seeds CELL[,CELL...] [--depth N]
+    python3 -I tools/xc7_netlist_verilog.py slice NETLIST.json OUT.v --seeds CELL[,CELL...] [--depth N] [--stop CELL,...]
         a sub-netlist: the seeds plus their fan-in cones (through LUT/CARRY/MUX/FF,
         N register stages deep); nets entering from outside become input ports
-        `in_<net>`, the seeds' outputs and every IOB pad become ports
+        `in_<net>`, the seeds' outputs and every IOB pad become ports; --stop cells are cut off
+        (their outputs become input ports), to put the slice boundary on a chosen bus (T15e)
     python3 -I tools/xc7_netlist_verilog.py prims OUT.v
         behavioural models for primitives that Yosys' cells_sim.v lacks (RAMD64E, RAMD32)
     python3 -I tools/xc7_netlist_verilog.py simprims OUT.v
@@ -498,8 +499,10 @@ def cmd_verilog(path, out, xdc, pkg, db):
     return w
 
 
-def slice_cells(nl, seeds, depth):
-    """Seeds + fan-in cones (stop at clocks/resets, IOB, BUF*, hard blocks), DEPTH FF stages."""
+def slice_cells(nl, seeds, depth, stopcells=()):
+    """Seeds + fan-in cones (stop at clocks/resets, IOB, BUF*, hard blocks), DEPTH FF stages.
+    Cells in STOPCELLS are left out: their outputs become input ports of the slice."""
+    stopcells = set(stopcells)
     g = xc7_blocks.G(nl)
     keep = set()
     seen = set()
@@ -527,14 +530,14 @@ def slice_cells(nl, seeds, depth):
             # resets: follow local reset logic (LUTs), stop at register-driven global resets
             if p in ("R", "S", "CLR", "PRE") and dr and g.ctype(dr[0]) in xc7_blocks.FF:
                 continue
-            if dr and g.ctype(dr[0]) not in stop:
+            if dr and g.ctype(dr[0]) not in stop and dr[0] not in stopcells:
                 frontier.append((dr[0], d + (1 if isff else 0), dr[1]))
     return keep
 
 
-def cmd_slice(path, out, seeds, depth, pkg, db):
+def cmd_slice(path, out, seeds, depth, pkg, db, stopcells=()):
     nl = json.load(open(path))
-    keep = slice_cells(nl, seeds, depth)
+    keep = slice_cells(nl, seeds, depth, stopcells)
     cells = [c for c in nl["cells"] if c["name"] in keep]
     g = xc7_blocks.G(nl)
     driven = set()
@@ -623,7 +626,7 @@ def selftest():
 def main():
     a = sys.argv[1:]
     opts = {}
-    for k in ("--xdc", "--pkg", "--db", "--seeds", "--depth"):
+    for k in ("--xdc", "--pkg", "--db", "--seeds", "--depth", "--stop"):
         if k in a:
             i = a.index(k)
             opts[k] = a[i + 1]
@@ -635,7 +638,8 @@ def main():
     if a[0] == "verilog" and len(a) == 3:
         cmd_verilog(a[1], a[2], opts.get("--xdc"), pkg, db)
     elif a[0] == "slice" and len(a) == 3 and "--seeds" in opts:
-        cmd_slice(a[1], a[2], opts["--seeds"].split(","), int(opts.get("--depth", 4)), pkg, db)
+        cmd_slice(a[1], a[2], opts["--seeds"].split(","), int(opts.get("--depth", 4)), pkg, db,
+                  opts["--stop"].split(",") if opts.get("--stop") else ())
     elif a[0] == "prims" and len(a) == 2:
         open(a[1], "w").write(PRIMS)
     elif a[0] == "simprims" and len(a) == 2:
