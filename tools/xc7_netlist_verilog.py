@@ -327,8 +327,15 @@ class Writer:
         rows = {r["site"]: r for r in xc7_blocks.io_rows(self.g, self.db, self.pkg)}
         cells = {c["site"]: c for c in self.nl["cells"] if c["type"] == "IOB"}
         done = set()
+        # N sites of differential pairs are emitted together with their P site
+        for site, r in rows.items():
+            if r["diff"] and "P_" in (pf.get(site, "").split("_T")[0] + "_"):
+                x, y = site.split("_X")[1].split("Y")
+                done.add("IOB_X%sY%d" % (x, int(y) - 1))
         for site in sorted(cells, key=lambda s: (s.split("Y")[0], int(s.split("Y")[1]))):
-            if site in done:
+            if site in done and not rows[site]["diff"]:
+                continue
+            if site in done and rows[site]["diff"] and "N_" in (pf.get(site, "").split("_T")[0] + "_"):
                 continue
             c = cells[site]
             r = rows[site]
@@ -351,12 +358,14 @@ class Writer:
                 self.xdc_pin(site, pn, "LVDS_25", pins)
                 self.xdc_pin(mate, nn, "LVDS_25", pins)
                 continue
+            def enabled(tnet):    # unrouted T (OLOGIC T1 left at its IMUX default) = always driving
+                return tnet is None or tnet.startswith("1'b") or not self.g.driver(tnet)
             if diff == "out" and mate in cells:
                 done.update((site, mate))
                 pn, nn = base + ("" if base.endswith("_p") else "_p"), "io_" + vname(pins.get(mate, mate)) + "_n"
                 self.ports += [("output", pn), ("output", nn)]
-                tn = t[0] if t else "1'b1"
-                if tn.startswith("1'b"):
+                tn = t[0] if t else None
+                if enabled(tn):
                     self.inst("OBUFDS", "obufds_" + vname(site), [("IOSTANDARD", '"LVDS_25"')],
                               [("I", self.w(o[0]) if o else "1'b0"), ("O", pn), ("OB", nn)])
                 else:
@@ -372,7 +381,7 @@ class Writer:
                 self.ports.append(("input", base))
                 self.inst("IBUF", "ibuf_" + vname(site), [("IOSTANDARD", '"%s"' % std)],
                           [("I", base), ("O", self.w(i[0]) if i else "")])
-            elif d.startswith("inout"):
+            elif d.startswith("inout") and not enabled(t[0] if t else None):
                 self.ports.append(("inout", base))
                 self.inst("IOBUF", "iobuf_" + vname(site), [("IOSTANDARD", '"%s"' % std)],
                           [("I", self.w(o[0])), ("T", self.w(t[0])), ("O", self.w(i[0]) if i else ""), ("IO", base)],
