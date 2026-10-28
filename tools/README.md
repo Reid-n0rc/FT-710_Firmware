@@ -56,6 +56,8 @@ Conventions:
 | `ifdsp_l32r.py` | Heuristic per-function L32R literal scan | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_regscan.py` | Heuristic HiFi4 accesses to the shared register file (base ISA only) | SRAM image + `functions.tsv` → stdout | T12a |
 | `ifdsp_hifi4_dis.py` | Per-function FLIX-aware HiFi4 listing with the Zephyr SDK RT600 objdump, names from `IfdspHifi4Names.java` | objdump + SRAM image + `functions.tsv` → `decomp/ifdsp/hifi4/flix.dis` (committed; bootstrap step `flix`) | T12e |
+| `flix_compare.py` | FLIX test oracle: compares a Ghidra instruction export with `flix.dis` (length, mnemonic, operands per slot; normalisation rules N1–N8 in the docstring), compares function lists (`funcs`), writes the address list (`addrs`) and `entries_hifi4.tsv` (`entries`) | `ExportListing.java` TSV + `flix.dis` → `summary.txt`, `mismatches.tsv`, `by_mnemonic.tsv` | T21b (#97) |
+| `flix_oracle.sh` | End-to-end oracle for one Xtensa language id: scratch import with the HiFi4 setup and function pass, listing + decode export, B9 decompile of `FUN_0020bb74`, all comparisons; env `IMAGE`, `PROJDIR`, `HEADLESS`, `TIMEOUT` | language id → `build/oracle/<lang>/` | T21b (#97) |
 | `flix_stats.py` | Counts what Ghidra cannot represent in the HiFi4 code: functions with FLIX bundles, bundle sizes and slots, branch slots, unknown and wrong-register ops | `decomp/ifdsp/hifi4/flix.dis` (+ Ghidra's Xtensa `.sinc` files) → stdout | #97 |
 | `ifdsp_hifi4_regscan.py` | Register-file accesses in a FLIX-aware objdump listing | listing + `functions.tsv` → stdout | T12b |
 | `ifdsp_coef_tables.py` | Finds and classifies numeric tables (filters, windows, sin/cos, gain curves) | SRAM image → stdout | T12e |
@@ -117,7 +119,11 @@ the exact command line for every program.
 | `IfdspFindFuncs.java` | postScript | Missed Thumb `push {…,lr}` prologues in the M33 code ranges; rodata strings | IFDSP M33 | T07 |
 | `IfdspM33Names.java` | postScript | M33 names + plate comments, creates/removes entries (`MERGE_INTO`) | IFDSP M33 | T07/T12/T17 |
 | `IfdspHifi4Setup.java` | preScript | Maps the three carved HiFi4 images at their DSP load addresses, seeds the vectors | IFDSP HiFi4 | T07 |
-| `IfdspHifi4FindFuncs.java` | postScript | Functions at 4-aligned `entry a1,N` prologues; drops artifacts in uninitialized memory | IFDSP HiFi4 | T07 |
+| `IfdspHifi4FindFuncs.java` | postScript | Makes the SRAM function list exactly `entries_hifi4.tsv` (creates missing entries, clears instructions overlapping them, removes every other function outside the ITCM vectors) | IFDSP HiFi4 | T07, T21b |
+| `entries_hifi4.tsv` | data | 1,067 HiFi4 function entries: the 1,065 `flix.dis` functions + 2 real entries without `entry` (`source` = `extra`); regenerate with `flix_compare.py entries` | IfdspHifi4FindFuncs | T21b |
+| `ExportListing.java` | postScript | Every instruction as TSV (addr, len, mnemonic, operands, bytes): `listing` = analysed listing, `decode <addrs>` = flow-independent decode at each address | FLIX oracle | T21b |
+| `ExportFuncList.java` | postScript | Function entries, names, sizes, blocks as TSV | any | T21b |
+| `DecompileBisect.java` | postScript | Finds the instruction that kills a function's decompile: patches `retw.n` from the end backwards, then confirms the candidate alone with a `nop` (read-only session) | any | T21b |
 | `IfdspHifi4Names.java` | postScript | HiFi4 names + plate comments | IFDSP HiFi4 | T12e/T17 |
 | `DumpFuncs.java` | postScript | Decompiles a few functions (by address or name) into one text file | any | T07 |
 | `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
