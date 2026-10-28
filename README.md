@@ -4,6 +4,11 @@ A private analysis of the Yaesu FT-710 firmware, done for the owner's own radio.
 
 **Agents and contributors: start with [AGENTS.md](AGENTS.md).** The task board is in [docs/tasks/README.md](docs/tasks/README.md).
 
+## New here? Read the illustrated guide
+
+**[docs/guide/README.md](docs/guide/README.md)** explains the whole radio in plain language, in one document with a table of contents,
+74 pictures and diagrams, and a glossary. Start there; the reference pages below hold the detail and the evidence.
+
 ## How the radio is built
 
 The FT-710 runs four firmware images on four devices. The DISPLAY CPU owns the front panel and the SD card, wakes the MAIN CPU and updates
