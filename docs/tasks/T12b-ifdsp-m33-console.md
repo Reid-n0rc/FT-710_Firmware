@@ -1,12 +1,18 @@
 # T12b — IFDSP M33 console / command link
 
-**Status:** todo · **Parent:** T12 · **Depends on:** T12a
+**Status:** in progress (2026-10-27) · **Parent:** T12 · **Depends on:** T12a
 
 ## Goal
 `docs/code/ifdsp/control-link.md`: FLEXCOMM0 USART driver, Command Task, console command grammar (interactive and machine mode), frame format, register file, MAIN-side register list, function table.
 
 ## Plan
-See T12 plan. Starting notes from T12a below (all M33 names already applied in `IfdspM33Names.java`).
+1. Read M33 decomp of the FC0 driver, CommandTask, `console_rx_char` and the `console_cmd_*` handlers; list every command, argument and effect in both modes; confirm the frame grammar and checksum (`frame_checksum_ok`).
+2. Register file: `regfile_*` functions and every M33 access (reg 0, 1, 10, 0x4000, 0x4005, ...). Codec: `aic3204_*` bit-banged SPI and the 67-write init table 0x00087A1C.
+3. HiFi4: find every literal/offset into 0x20070000 (and 0x2006FF00/0x20077F00 bases), and dump `regfile_set_defaults` 0x0021BE80 to get the default table.
+4. MAIN: read `decomp/main` around `FUN_fff9d06c`/`FUN_fffa0b4c` and the per-register setters to list registers MAIN writes/reads (and with what source value, as far as cheap).
+5. Merge into one register map (address, writer, reader, default, meaning, tag). Write `docs/code/ifdsp/control-link.md` (function tables, sequence diagram of a frame, state diagram of the two modes, register map). Propose names in `tools/ghidra/names_ifdsp.T12b.tsv`. Commit.
+
+See also the T12 plan. Starting notes from T12a below (all M33 names already applied in `IfdspM33Names.java`).
 
 ## Starting notes (from T12a)
 - Driver: `uart0_init` 0x80D0C (FC0, 115200), `FLEXCOMM0_IRQHandler` 0x80E50 (RX ring 0x87EC8, TX ring 0x882D4, 1 KB each; sets event-group bit 0), `uart0_write` 0x80CA4, `uart0_tx_pending` 0x80F3C, `CommandTask` 0x80D78, `console_init` 0x813EC, `console_rx_char` 0x81430, `console_puts` 0x85FAE.
