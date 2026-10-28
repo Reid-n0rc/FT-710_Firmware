@@ -308,9 +308,9 @@ build_main() {
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/ApplyNames.java" "$G/names_display.tsv")
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, ApplyNames"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -318,6 +318,11 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.tsv"
+  # T21e (#97 B6, B8): repair the ARM jump tables the decompiler does not turn into switches; then define the undefined
+  # fragments that are not code as data (reports next to the project)
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript DisplayJumpTables.java apply "$PROJ/display_jumptables.tsv"
+  headless FT710_DISPLAY -process "$prog" -noanalysis \
+    -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
@@ -333,7 +338,7 @@ build_ifdsp() {
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
-  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/IfdspHifi4Names.java")
+  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java")
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
     info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:default @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"

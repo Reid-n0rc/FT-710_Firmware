@@ -95,6 +95,15 @@ The owner wants **full documentation of all the code**, with figures wherever th
 
 Every task is mirrored as a GitHub issue in the repo: epic #1, one issue per task, and sub-tasks (`T10a`...) as sub-issues of their parent. `docs/tasks/` stays the source of truth. After any change to the board or a task file's status/findings, the parent agent runs `python3 -I tools/issues_sync.py`. It updates titles, bodies and status labels, comments on status changes, closes done tasks, and keeps `docs/tasks/issues.json`, which is committed along with the change. Background task agents don't run it, because the parent does. When you split a task, add the sub-task rows to the board (`T10a`, `T10b`, ...) so the sync creates the sub-issues.
 
+## Hardware use (owner rule, 2026-10-27 and 2026-10-28)
+
+Always use the most the hardware will support ("always do the max the hardware will support").
+
+- **CPU:** use every core. Pass `-max-cpu $(nproc)` to Ghidra, `-j$(nproc)` to builds and `--maxWorkers=$(nproc)` to vitest. Ghidra's launcher caps garbage collection at 2 threads, so raise it with `GHIDRA_HEADLESS_JAVA_OPTIONS="-XX:ParallelGCThreads=$(nproc) -XX:CICompilerCount=4"`. Run independent jobs and agents in parallel.
+- **RAM:** never set a fixed limit on parallel jobs. Let free memory decide instead: start every Ghidra or REA run through `python3 -I tools/memgate.py <reserve_mb> -- <command>`. The gate starts a job as soon as `MemAvailable` covers its reservation plus a 1 GB margin. It counts the memory that jobs already running can still grow into, so a burst of starts can't over-commit. All agents on the machine must share one `MEMGATE_DIR` (default `~/.cache/ft710-memgate`).
+- **Heap size:** pick the heap per image: 2 GB for DISPLAY and IFDSP, 3 GB for MAIN, via `GHIDRA_HEADLESS_MAXMEM`. Reserve the heap plus about 700 MB. On the owner's container, `free` shows the whole Unraid host and there is no swap, so running out of memory kills processes instead of slowing them down.
+- **Overrides:** override tool caps with command-line flags or environment variables, never by editing upstream config files that would land in commits.
+
 ## Watchdog / long-running work
 
 - Give every long command a hard timeout. Ghidra headless runs take `-analysisTimeoutPerFile <sec>`, and the decompiler has a 60 s per-function limit inside `ExportDecomp.java`.
