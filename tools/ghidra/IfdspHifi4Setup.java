@@ -5,7 +5,7 @@
 // Headless usage (from the repo root):
 //   python3 -I tools/ifdsp_dsp_images.py build/FT-710_IFDSP_V0101.bin build
 //   tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -import build/FT-710_IFDSP_V0101_hifi4.bin \
-//     -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 \
+//     -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
 //     -scriptPath tools/ghidra -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java \
 //     -analysisTimeoutPerFile 3600
 // @category FT710

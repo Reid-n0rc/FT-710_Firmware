@@ -371,13 +371,14 @@ build_ifdsp() {
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
-  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java")
+  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java" \
+    "$GHIDRA_INSTALL_DIR"/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*.{slaspec,sinc,pspec,ldefs})
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
-    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:default @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"
+    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"
     rm -f "$PROJ/.stamp_ifdsp_hifi4"
     headless FT710_IFDSP -import "$hifi" -overwrite \
-      -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 \
+      -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
       -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
@@ -386,6 +387,7 @@ step_ghidra() {
   log "ghidra: projects in $PROJ (JOBS=$JOBS, heap $GHIDRA_HEADLESS_MAXMEM; logs in $OUT/logs/)"
   [ -f "$BUILD/FT-710_MAIN_V0112.bin" ] || die "no decoded images in $BUILD (run step decode)"
   [ -f "$RX_MODULE_DIR/data/languages/rx62t.sla" ] || die "RX module missing (run step rx)"
+  [ -f "$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4.sla" ] || die "HiFi4 language missing (run step hifi4)"
   build_main
   build_display
   build_ifdsp

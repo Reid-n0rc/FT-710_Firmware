@@ -105,7 +105,7 @@ tools/bootstrap.sh --only export,verify   # after you change names: re-export an
 The exact Ghidra command lines (language, base address, scripts and their order for each program) are in the script itself, which is the
 reference: MAIN is `rx62t:LE:32:default` at 0xFFF80000 with `SetupRX651.java` and three `.data` copy-downs; DISPLAY is `ARM:LE:32:v7` at
 0x20100000 with `DisplaySetup.java`, two `DisplayFindCode.java` passes and `FixFuncEntries.java`; IFDSP is `ARM:LE:32:v8-m` at 0x08000000
-plus `Xtensa:LE:32:default` at 0. Logs go to `<out>/logs/`.
+plus `Xtensa:LE:32:rt600hifi4` (the generated HiFi4 language that step `hifi4` installs, T21a) at 0. Logs go to `<out>/logs/`.
 
 **Settings** are environment variables (all listed by `--help`). The useful ones:
 

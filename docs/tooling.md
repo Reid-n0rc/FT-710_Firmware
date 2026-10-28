@@ -257,7 +257,7 @@ count except `functions` must not go up (lower is better; improvements are print
 (for example more functions found, so more warnings), commit the new `quality.tsv` with the export and refresh the table in
 `INDEX.md` with `tools/decomp_quality.py index`.
 
-`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
+`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The M33 program uses the stock `ARM:LE:32:v8-m`; since T21g the HiFi4 program uses the generated `Xtensa:LE:32:rt600hifi4` (below), which decodes the FLIX bundles that the stock `Xtensa:LE:32:default` (base ISA only, T07) could not.
 
 MAIN full rebuild (from the repo root; ~1 minute in total):
 ```sh
