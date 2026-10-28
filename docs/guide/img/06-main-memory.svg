@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>MAIN memory map: code flash, RAM and the SPI EEPROM with its RAM mirror</title>
+  <rect width="960" height="660" fill="#FFFFFF"/>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">Where MAIN keeps things (roughly to scale within each column)</text>
+  <text x="140.0" y="76" font-size="16" font-weight="bold" text-anchor="middle">Code flash · 512 KB</text>
+  <text x="140.0" y="98" font-size="14" text-anchor="middle">(no data flash on this part)</text>
+  <rect x="40" y="120" width="200" height="62" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="140.0" y="147.0" font-size="14" text-anchor="middle">constants: CAT tables,</text>
+  <text x="140.0" y="165.0" font-size="14" text-anchor="middle">menu text, 5 key tables</text>
+  <rect x="40" y="182" width="200" height="338" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="140.0" y="302.0" font-size="14" text-anchor="middle">program code</text>
+  <text x="140.0" y="320.0" font-size="14" text-anchor="middle"></text>
+  <text x="140.0" y="338.0" font-size="14" text-anchor="middle">about 2,250 functions</text>
+  <text x="140.0" y="356.0" font-size="14" text-anchor="middle"></text>
+  <text x="140.0" y="374.0" font-size="14" text-anchor="middle">reset code, drivers,</text>
+  <text x="140.0" y="392.0" font-size="14" text-anchor="middle">16 loop jobs, CAT,</text>
+  <text x="140.0" y="410.0" font-size="14" text-anchor="middle">menus, keys, links</text>
+  <rect x="40" y="520" width="200" height="60" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="140.0" y="555.0" font-size="14" text-anchor="middle">empty (erased)</text>
+  <rect x="40" y="580" width="200" height="22" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="140.0" y="596.0" font-size="14" text-anchor="middle">version + vectors</text>
+  <rect x="40" y="120" width="200" height="482" rx="8" fill="none" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="76" font-size="16" font-weight="bold" text-anchor="middle">RAM · 256 KB</text>
+  <text x="440.0" y="98" font-size="14" text-anchor="middle">(on-chip)</text>
+  <rect x="340" y="120" width="200" height="22" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="136.0" font-size="14" text-anchor="middle">two stacks (5 KB)</text>
+  <rect x="340" y="142" width="200" height="24" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="159.0" font-size="14" text-anchor="middle">variables</text>
+  <rect x="340" y="166" width="200" height="42" fill="#BFDBFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="183.0" font-size="14" text-anchor="middle" font-weight="bold">EEPROM mirror</text>
+  <text x="440.0" y="201.0" font-size="14" text-anchor="middle">22 KB</text>
+  <rect x="340" y="208" width="200" height="162" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="267.0" font-size="14" text-anchor="middle">variables and buffers:</text>
+  <text x="440.0" y="285.0" font-size="14" text-anchor="middle">CAT rings and replies,</text>
+  <text x="440.0" y="303.0" font-size="14" text-anchor="middle">soft timers, link</text>
+  <text x="440.0" y="321.0" font-size="14" text-anchor="middle">buffers, DSP shadows</text>
+  <rect x="340" y="370" width="200" height="24" fill="#BFDBFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="387.0" font-size="14" text-anchor="middle" font-weight="bold">global state block</text>
+  <rect x="340" y="394" width="200" height="34" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="440.0" y="407.0" font-size="14" text-anchor="middle">menu item table</text>
+  <text x="440.0" y="425.0" font-size="14" text-anchor="middle">(built at boot)</text>
+  <rect x="340" y="428" width="200" height="174" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="440.0" y="520.0" font-size="14" text-anchor="middle">unused (~105 KB)</text>
+  <rect x="340" y="120" width="200" height="482" rx="8" fill="none" stroke="#2563EB" stroke-width="2"/>
+  <text x="850.0" y="76" font-size="16" font-weight="bold" text-anchor="middle">SPI EEPROM · 32 KB</text>
+  <text x="850.0" y="98" font-size="14" text-anchor="middle">(BR25G256 chip)</text>
+  <rect x="760" y="120" width="180" height="24" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="850.0" y="137.0" font-size="14" text-anchor="middle">header, cal, region</text>
+  <rect x="760" y="144" width="180" height="95" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="850.0" y="178.5" font-size="14" text-anchor="middle">band stacks</text>
+  <text x="850.0" y="196.5" font-size="14" text-anchor="middle">VFO-A and B</text>
+  <text x="850.0" y="214.5" font-size="14" text-anchor="middle">3 levels × 12 bands</text>
+  <rect x="760" y="239" width="180" height="176" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="850.0" y="305.0" font-size="14" text-anchor="middle">memory channels</text>
+  <text x="850.0" y="323.0" font-size="14" text-anchor="middle">133 × 90 bytes</text>
+  <text x="850.0" y="341.0" font-size="14" text-anchor="middle">(001–099, PMS,</text>
+  <text x="850.0" y="359.0" font-size="14" text-anchor="middle">60 m, EMG)</text>
+  <rect x="760" y="415" width="180" height="40" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="850.0" y="431.0" font-size="14" text-anchor="middle">QMB, CW / text</text>
+  <text x="850.0" y="449.0" font-size="14" text-anchor="middle">messages, tuner</text>
+  <rect x="760" y="455" width="180" height="24" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="850.0" y="472.0" font-size="14" text-anchor="middle">menus + VFO state</text>
+  <rect x="760" y="479" width="180" height="123" fill="#FFFFFF" stroke="#6B7280" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="850.0" y="536.5" font-size="14" text-anchor="middle">never used</text>
+  <text x="850.0" y="554.5" font-size="14" text-anchor="middle">(~10 KB)</text>
+  <rect x="760" y="120" width="180" height="482" rx="8" fill="none" stroke="#6B7280" stroke-width="2"/>
+  <path d="M 540 166 L 760 120 L 760 479 L 540 208 Z" fill="#DBEAFE" fill-opacity="0.6" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="672" y="178" font-size="14" text-anchor="middle" font-weight="bold">byte-for-byte copy</text>
+  <text x="672" y="198" font-size="14" text-anchor="middle">read in at boot,</text>
+  <text x="672" y="216" font-size="14" text-anchor="middle">written back when a</text>
+  <text x="672" y="234" font-size="14" text-anchor="middle">record changes and</text>
+  <text x="672" y="252" font-size="14" text-anchor="middle">at power-off</text>
+  <line x1="560" y1="440" x2="544" y2="382.0" stroke="#1F2937" stroke-width="1.5"/>
+  <text x="560" y="456" font-size="14">most radio state:</text>
+  <text x="560" y="475" font-size="14">on/off, TX state,</text>
+  <text x="560" y="494" font-size="14">ADC readings, flags</text>
+  <text x="40" y="622" font-size="14">Each column has its own scale; very small regions are drawn larger so their labels fit.</text>
+  <text x="40" y="644" font-size="14">The stacks and the memory map come from the reset code and the compiler's section tables.</text>
+</svg>
