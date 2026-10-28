@@ -177,6 +177,103 @@ HiFi4 29,161**. So:
    Commit a modest per-range TSV, document the tools in `tools/README.md`.
 REA tools used for cross-checks: `inspect_byte_entropy`, `search_strings`, `search_bytes`, `inspect_firmware_regions`.
 
+**Step 4 — ranges from the T21g projects [fact].** `UndefinedRanges.java` on `-readOnly` scratch copies of the committed
+`ghidra/FT710_{MAIN,DISPLAY,IFDSP}` gives MAIN 2 ranges / 161 B, DISPLAY 15 / 242 B, M33 178 / 5,162 B, HiFi4 1,722 / 29,161 B:
+the same totals as `decomp/*/quality.tsv`.
+
+**Step 5 — classifier v3.** Changes against the first agent's v2, each from a false class seen in this run: (a) a run where more
+than 1 in 4 decoded instructions are all-zero bytes is not code (M33 0x87AD0: a u32 register table read as Thumb `movs r0, r0`
+plus one `bmi`); (b) HiFi4 bytes count as `flix.dis` code only when a whole `flix.dis` instruction lies inside the undefined
+range: one that runs into a Ghidra instruction is a sweep artefact (T22c: Ghidra's starts are right in all 337 conflict
+regions), which turned 629 B of 1–2-byte "code" between functions back into zero padding; (c) float32 runs (>= 8 words,
+1e-30 <= |x| <= 1e10, half of them 1e-6..1e7, so libm hi/lo pairs count) and runs of u32 byte values are found before the string
+pass, so tables are no longer cut into "strings" such as `'1bA'`. Every class below was then checked by hand against objdump
+(and REA, step 6) at the addresses given.
+
+```sh
+tools/ghidra-headless.sh <scratch> FT710_IFDSP_T22d -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -readOnly \
+  -scriptPath tools/ghidra -postScript UndefinedRanges.java hifi4.ghidra.tsv
+python3 -I tools/undefined_classify.py hifi4 hifi4.ghidra.tsv hifi4.tsv --flix decomp/ifdsp/hifi4/flix.dis   # main|display|m33 likewise
+```
+
+Per-sub-run result without the padding rows (196 rows): [`T22d-undefined-classes.tsv`](T22d-undefined-classes.tsv).
+
+**Bytes per class (non-0xFF bytes, after the hand review; the classifier's own class in brackets where it differs).**
+
+| Class | MAIN | DISPLAY | M33 | HiFi4 | Ghidra should… |
+|---|---:|---:|---:|---:|---|
+| code, reached | 161 | 64 | 4 | 82 | **define** (details below) |
+| code, unreached stubs / dead | 0 | 4 | 8 | 5 | may leave; or disassemble without a function |
+| float32 tables | 0 | 0 | 0 | 19,523 | **define** (HiFi4 rodata: split the block, apply `float[]`) |
+| int / struct tables | 0 | 127 | 952 | 1,281 | define as arrays (cheap, cosmetic) |
+| strings | 0 | 27 [11 unknown, 12 int, 4 pad] | 29 | 83 | define (cosmetic) |
+| pointers, literals, other referenced words | 0 | 8 [unknown] | 24 | 256 | define as `addr`/`dword` |
+| padding (zero fill, alignment `nop`s) | 0 | 6 | 4,114 | 7,345 | **leave** |
+| unknown | 0 | 6 | 31 | 586 | leave (listed in the TSV) |
+| **total** | **161** | **242** | **5,162** | **29,161** | |
+
+Region split [fact]: M33 `flexspi_xip` 4,211 B (3,584 B zero fill of the boot header around the FCFB, 512 B FCFB, the rest
+handlers/strings at 0x08001xxx) and `sram_text_rodata` 951 B. HiFi4: SRAM rodata 0x200000–0x207CEF 22,704 B, `.text`
+0x207CF0– 5,481 B (5,388 B zero padding between functions), ITCM 976 B (971 B zero fill between the vectors).
+
+Findings per image:
+- **MAIN (161 B)** — both runs are RX code reached by branches [fact]: 0xFFF8FEC0–0xFFF8FEF4 (52 B, branch from 0xFFF8FF2E) and
+  0xFFF91295–0xFFF91302 (109 B, ends in `rtsd`, branch from 0xFFF912E0). These are T21h's two fragments; not decoded further here.
+- **DISPLAY (242 B)**, all in the armcc Thumb library [fact unless marked]:
+  - fplib code reached through the inline-parameter return of `bl 0x20164EFC` (the handler reads the word after the call and returns
+    to `lr + 4 + 4·n`, so the slots after the word are code that no static flow reaches): 0x20164988 (12 B), 0x20164BDC (14),
+    0x20164CEC (2), 0x20164D48 (2), 0x20164ECC (14), 0x20164EE2 (18). The inline words themselves: 0x201649D0 (`0x3EBEFB64`),
+    and 0x20164EF8 is the literal `0x7FF80000` (double NaN high word) of `ldr r1,[pc,#4]` at 0x20164EF0.
+  - **0x2016385A: T21e's Thumb entry 0x2016385C is 2 bytes late.** The `.data` function-table word at 0x2042807C is `0x2016385B`,
+    so the function starts with `movs r0, #0` at 0x2016385A; Ghidra's `FUN_2016385c` loses that argument. Fix: `2016385a thumb`
+    in `entries_display.tsv` (with `drop` for 0x2016385C).
+  - `bx lr` stubs with no reference: 0x20155B5A, 0x2015625C (2 B each) — empty library functions [inference]; leave.
+  - 0x20164C00: 128-byte falling table `ff fd fb … 82 81 81 80`, the reciprocal seed table of the fplib divider (`addw r6, pc,
+    #320; ldrb r6, [r6, r5]` at 0x20164A3C) → `byte[128]`.
+  - 0x20154B64 and 0x20154BE0: two 16-byte tables of 4-byte NUL-padded strings `""`, `"-"`, `"+"`, `" "` (the printf sign prefix,
+    selected by `adr r6, …` at 0x20154B88–0x20154BB2 and its twin) → `char[4][4]`.
+  - 0x2015497E: `nop` (alignment) + word `0x0000EEF5` in front of the ARM function 0x20154984; no reference found [unknown].
+- **M33 (5,162 B)**:
+  - **0x0800143C: `FUN_0800143e` starts 2 bytes late.** The word at 0x080015C8 is `0x0800143D`; the function begins with
+    `ldr r3, [pc, #236]` at 0x0800143C. Same pattern as DISPLAY 0x2016385A → add the entry 0x0800143C (Thumb).
+  - 0x00087232: `bx lr` with the pointer `0x00087233` at 0x00080A10 → an empty function that is called through a pointer; define it.
+  - 0x0800120E, 0x08001218, 0x0800121C: `b .` default handlers next to `NMI_Handler` (0x0800120C) with no vector pointing to them
+    [fact: no image word]; leave.
+  - 0x08000400–0x080005FF: the FlexSPI NOR configuration block (FCFB) → apply a 512-byte struct (`docs/memory-maps.md`); 0x08000000–
+    0x080003FF and 0x08000600–0x08000FFF are zero fill.
+  - 0x00087D84: 256-byte C `ctype` table (digits 0x20, upper 0x10, lower 0x08) → `byte[256]`; the strings `"r"`, `"w"`, `"0x"`,
+    `"0X"`, `"db"`, `"DB"`, `"IDLE"` and the pointer to `"Cortex-M33"` at 0x08001830 are all referenced → define.
+  - 147 single `nop` (2 B) and two `nop` runs: Thumb alignment between functions; leave.
+- **HiFi4 (29,161 B)**:
+  - **Rodata in an executable block.** 22,704 B lie in 0x200000–0x207CEF, the rodata and `l32r` literal pool in front of the first
+    function (0x207CF0), which `IfdspHifi4Setup.java` puts in the executable block `sram_dsp_text`. 19,523 B of it are float32
+    tables: FFT twiddles (cos/sin pairs at 0x200D18, 763 words, and 0x201918, 1,532 words), FIR/window coefficients and
+    rising/falling ramps (0x203124–0x2035BF, 0x20360C–0x20388B, 0x2038E4–0x203A7B, 0x20537C–0x20553B), libm tables (0x205A40
+    `n·π/2` high parts, 0x2058D0 hi/lo pairs). 1,281 B more are int tables, among them libm's `two_over_pi[]` at 0x205AA0 (the
+    bytes `a2 f9 83 6e 4e 44 15 29 …` stored as int32, about 200 words, pointer from the literal at 0x207A24). Strings: the XOS/libm
+    names `idle`, `join`, `cond`, `sem`, `msgq`, `powf`, `inf`, `NAN`, `nan`, `NaN` at 0x2063C4–0x206477.
+  - **Code Ghidra misses (82 B):** 0x228B08–0x228B32 (41 B, reached only through the `l32r` literal at 0x207864, loaded at 0x227850;
+    an idle routine ending in `waiti 0; j .`); 0x2316F1–0x2316FE (13 B, a switch case: the pointer table at 0x206290 holds
+    0x2316F1, 0x231549, 0x231517, so Ghidra did not recover that jump table); 0x2287FC–0x228815 (26 B, a level-2 interrupt
+    epilogue: `l32r`/`callx0` hook, `rsr.excsave2 a0; rfi 2`; no pointer found, so it is reached by computed flow
+    [inference]); 2 B inside `FUN_00218480` (data, T21a). Not reached: 0x240205FF `break 1, 15; j .` in the ITCM (5 B).
+  - 7,345 B of zero padding: 4-byte function alignment in `.text` and fill between the ITCM vectors. Leave.
+  - 586 B unknown (including 6 B of rodata the classifier took for `call0`), mostly between the rodata tables (0x205960–0x206130: mixed libm constants); none in `.text` except 9 B next to
+    `FUN_00218480` and 3 B at 0x233815 (a `flix.dis` bundle that overlaps Ghidra's `entry` at 0x233818, so padding [inference]).
+
+**Recommended Ghidra fixes (for a T21 follow-up; nothing here was applied to the canonical projects):**
+1. `IfdspHifi4Setup.java`: split 0x200000–0x207CEF out of `sram_dsp_text` into a read-only, non-executable `sram_rodata` block.
+   This alone removes 22,704 of HiFi4's 29,161 B from the metric and stops the decompiler treating the tables as code space; then
+   a small script applies `float[n]` / `int[n]` / strings from `T22d-undefined-classes.tsv` (the float tables matter for reading
+   the filter code, which loads them by `l32r`).
+2. Entries: DISPLAY 0x2016385A (Thumb, replaces 0x2016385C) and M33 0x0800143C (replaces 0x0800143E): both pointer-proven entries
+   2 bytes before the current function. M33 0x00087232 (empty function, pointer at 0x00080A10).
+3. HiFi4: disassemble 0x228B08 (code pointer in the literal pool; T22c's flow pass adds such pointers, `IfdspHifi4FindFuncs.java`
+   does not), recover the switch at 0x206290 (case 0x2316F1), and disassemble 0x2287FC.
+4. MAIN: T21h's two fragments (in progress there).
+5. DISPLAY/M33 small data (fplib reciprocal table, printf sign strings, `ctype`, FCFB struct, literals): optional, cosmetic.
+6. Leave: zero fill, alignment `nop`s, the unreferenced `bx lr` / `b .` / `break; j .` stubs and the unknown bytes.
+
 
 ## Findings
 
