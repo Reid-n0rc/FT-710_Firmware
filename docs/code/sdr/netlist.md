@@ -164,6 +164,10 @@ flowchart LR
   **28.17 MHz** **[inference]**. A second VCO at 1,440 MHz needs a -2 speed grade, so one divider may be misread. This
   clock drives 166 flip-flops and goes straight to pin **P14** (a BUFHCE output on an OBUF). That fits the `DSP_CLK`
   line to the RT685 (J2002 pin 22) **[guess]**. Both MMCM resets come from the global reset flip-flop.
+  *T19h note:* the RT685's M33 code is built for CLKIN = `DSP_CLK` = **18.432 MHz** **[fact, [ifdsp/m33-platform.md](../ifdsp/m33-platform.md)]**,
+  which 28.17 MHz does not match. If MMCM_X0Y0's feedback multiplier were 22.25 instead of 34 (same DIVCLK 5 and CLKOUT0 51.125), the
+  chain would give 18.4323 MHz (18 ppm off) with a legal 942 MHz VCO **[guess]**; until the divider fields are re-checked, whether P14
+  is `DSP_CLK` stays open ([system.md O8](../system.md#8-contradictions-and-open-questions)).
 - **Bank 34 output clock** **[fact for the wiring]**. BUFR_X1Y1 clocks the 17 ODDRs and 83 flip-flops next to bank 34.
   Its input is a CMT "PERF" clock whose source mux has no segbits, so it cannot be decoded.
 - **Global reset** **[fact]**. `SLICE_X10Y76/BFF` (INIT 1) is released by a 3-bit counter in `SLICE_X11Y59`. The second

@@ -113,7 +113,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  ANT["RF front end<br/>(MAIN RX/PA units)"] -->|"RX_P/N"| ADC["ADC ~250 MSPS<br/>(SDR module)"]
+  ANT["RF front end<br/>(MAIN RX/PA units)"] -->|"RX_P/N"| ADC["ADC, 250 or 125 MSPS (O7)<br/>(SDR module)"]
   ADC -->|LVDS| DDC["FPGA RX DDC<br/>NCO reg 0x18/19, FIR"]
   DDC -->|"I2S RX_IF (FC3)"| RXP["HiFi4 Rx_Path<br/>12 kHz blocks"]
   RXP -->|"I2S FC5"| COD["TLV320AIC3204<br/>codec"]
@@ -572,3 +572,5 @@ The page fixes proposed for C1, C2, C3, C5, C8 and C10–C13, and the C9 note in
 | O4 | CM119B audio routing | not traced in the schematic | Open (hardware, service manual p20). |
 | O5 | RZ/A1H USB0/USB1 lines through J6002 | where they end up | Open (hardware). |
 | O6 | MAIN tasks 10, 11, 13 | `dispreq_e8_task`, `dispreq_e7_task`, `FUN_fffd0582` | Open (MAIN). E7/E8 look like SD-file operation status from the DISPLAY **[inference]**. |
+| O7 | ADC sample rate (T19h) | §2.3 and [sdr/README.md](sdr/README.md): "~250 MSPS". [main/sdr-link.md](main/sdr-link.md) reg 0x03: "Nyquist zone of a 125 MSPS ADC". [hardware.md](../hardware.md): 250 MHz clock, "Operating clock 125MHz, Divide 250MHz by 2" (p6) | **Partly settled.** The FPGA fabric runs at **125 MHz** **[inference, high: UART divider 1,086, [sdr/netlist.md §3.2](sdr/netlist.md)]**, and the clock off the MAIN unit is 250 MHz **[fact, p6]**. Whether the ADC samples at 250 MSPS (two samples per fabric clock; its 14 LVDS pairs are captured DDR) or at 125 MSPS (the ADC divides its 250 MHz input by 2) is **open**: the ADC part is not in the manual and the IDDR edge mode is not decoded. The 62.5 MHz switch point of reg 0x03 depends on the TX frequency, so it may be the Nyquist limit of a 125 MSPS DAC rather than of the ADC **[guess]**. |
+| O8 | `DSP_CLK` frequency (T19h) | [ifdsp/m33-platform.md](ifdsp/m33-platform.md): CLKIN = 18.432 MHz. [sdr/netlist.md §3.2](sdr/netlist.md): MMCM clock on pin P14 = ~28.17 MHz, maybe `DSP_CLK` [guess]. [sdr/resources.md](sdr/resources.md#clocking): ~16.6 MHz [guess, T13] | **Open.** 18.432 MHz is what the RT685 code is built for **[fact]**. The 16.6 MHz figure assumed one MMCM and is superseded by T15's cascade. 28.17 MHz needs an out-of-range 1,440 MHz VCO, so one MMCM divider is probably misread; a multiplier of 22.25 instead of 34 would give 18.432 MHz **[guess]**. Settle by re-checking MMCM_X0Y0's CLKFBOUT fields or by measuring J2002 pin 22 (passive probe, owner approval). |

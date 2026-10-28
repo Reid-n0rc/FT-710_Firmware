@@ -26,7 +26,7 @@ prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
 
 ## Key findings
 
-- The FPGA is nearly full: about 26,600 LUTs (82 %), 31,400 FFs (48 %), **119 of 120 DSP48E1** (all fully pipelined),
+- The FPGA is nearly full: about 26,600 LUTs (82 %), 31,400 FFs (48 %), **119 of 120 DSP48E1** (register use varies, 12 use the pre-adder; T13's "all fully pipelined" was inverted, corrected by T15b, see [netlist.md §3.5](netlist.md#35-dsp-and-block-ram-structure)),
   70 of 75 RAMB36 sites, 2 MMCMs **[fact for counts]**. ([resources.md](resources.md))
 - Block RAM holds **DSP tables only**: an exact 0.5-degree cosine (720 per cycle, 16-bit), an exact 720-step
   raised-cosine ramp, six symmetric low-pass FIRs with 36-bit coefficients, a 1024-tap symmetric filter, quadratic
@@ -43,7 +43,7 @@ prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
 ```mermaid
 flowchart LR
   subgraph MOD["SDR module"]
-    ADC["ADC (unknown part)<br/>~250 MSPS"]
+    ADC["ADC (unknown part)<br/>250 or 125 MSPS, see system.md O7"]
     Q["QSPI config flash<br/>WP = SDR_UPDATE"]
     subgraph F["XC7A50T"]
       DDC["RX DDC<br/>NCO + FIR bank<br/>DSP48 x ~119"]

@@ -201,7 +201,7 @@ column is tagged per row.
 |---|---|---|---|---|---|
 | 0x00 | 0x1B736 | read by `sdr_init` | boot | read only | SDR firmware version, BCD: 0x0104 → `V01-04` (stored at 0x144A, returned by `VE2;`) **[inference: matches SR V01-04]** |
 | 0x01 | 0x1B738 | read by `sdr_init` | boot | read only | Unknown. It is read and must answer, otherwise boot error 0x20B36=3 **[fact]** |
-| 0x03 | 0x1B73A | `sdr_upd_r03` | all | 0xE63D if TX-side frequency ≤ 62 500 000 Hz, else 0xE61D | Control word. Bit 5 changes at fs/2 = 62.5 MHz, i.e. the Nyquist zone of a 125 MSPS ADC **[inference]** |
+| 0x03 | 0x1B73A | `sdr_upd_r03` | all | 0xE63D if TX-side frequency ≤ 62 500 000 Hz, else 0xE61D | Control word. Bit 5 changes at 62.5 MHz: fs/2 of a 125 MSPS converter, or fs/4 at 250 MSPS; since it follows the TX frequency it may concern the DAC **[inference; ADC rate open, [system.md O7](../system.md#8-contradictions-and-open-questions)]** |
 | 0x04 | 0x1B73C | `sdr_upd_r04` | RX | 0xE519 | constant **[meaning unknown]** |
 | 0x08 / 0x09 | 0x1B73E / 0x1B740 | `sdr_upd_r08_tx_freq` | all | high/low word of 0x20F50 (Hz). PSK: −1000/1500/2000 (0x9A79). CW keying in an SSB mode (`FUN_fffba192`==3): ∓(300 + 10·KP 0x9C04) | **TX NCO frequency** **[inference]** |
 | 0x0A | 0x1B742 | `sdr_upd_r0a_demod` | all, only while 0x1204D≠0 | 0 = CW (modes 2,3, or CW in SSB), 1 = AM (4,5), 2 = FM (6,7,10,11), 3 = LSB/DATA-L (0,8), 4 = USB/DATA-U/PSK (1,9,14), 5 = RTTY (12,13) | **Modulation class** of the active side **[inference]** |

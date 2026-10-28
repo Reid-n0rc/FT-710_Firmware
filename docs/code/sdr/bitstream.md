@@ -58,6 +58,9 @@ features; `bramcfg` and `sites` summarize them (see [resources.md](resources.md)
 ## Limits
 
 - Routing (PIPs) is not decoded into a netlist. The design is described at the level of placed resources, configured
-  features and BRAM contents only.
+  features and BRAM contents only. *(True for T13; superseded by T15, which decoded the routing into a full netlist,
+  see [netlist.md](netlist.md).)*
 - The package (cpg236/csg324/ftg256/fgg484) is not in the bitstream; IOB tile positions are the same for every
-  XC7A50T package, but the package pin (and so the J2002 pin) behind each used IOB is unknown.
+  XC7A50T package, but the package pin (and so the J2002 pin) behind each used IOB is unknown. *(T15: the used IOBs are
+  bonded only in CSG324 and FGG484 [fact]; CSG324 is the likelier package [guess]; [netlist.md §3.1](netlist.md#31-package).
+  The J2002 pin behind each FPGA pin is still unknown, apart from the two UARTs.)*

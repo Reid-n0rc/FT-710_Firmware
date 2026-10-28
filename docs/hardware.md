@@ -134,7 +134,8 @@ registers: p56–57, p74).
 - Shown only as the "SDR MODULE" box on the block diagram, containing "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6). The module's parts are **not in the
   parts list**, so the FPGA and ADC part numbers are **unknown** from this manual. **[fact]**
 - Clock: X1002 **35.7142 MHz VCTCXO** (DSA211SDN) → Q1011/Q1010 oscillator/buffer → **250 MHz** sampling clock into the module.
-  The FPGA runs at 125 MHz (p6, p46). **[fact]**
+  The FPGA runs at 125 MHz (p6, p46). **[fact]** Whether the ADC then samples at 250 MSPS or at 125 MSPS ("Divide 250MHz by 2")
+  is open ([code/system.md O7](code/system.md#8-contradictions-and-open-questions), T19h).
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),

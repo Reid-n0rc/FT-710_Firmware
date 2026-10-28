@@ -32,10 +32,10 @@ are configured, and 70 BRAM sites are in use **[fact]**.
 > 107, and 12 DSPs use the pre-adder (`USE_DPORT`). The register sets and the 34 A/B cascades are in
 > [netlist.md](netlist.md#35-dsp-and-block-ram-structure).
 
-**DSP48E1 options [fact for the counts, inference for the meaning].** In all 119 used DSPs the "Z" (inverted) bits for
+**DSP48E1 options (T13 reading, superseded by T15b; see the correction box above).** In all 119 used DSPs the "Z" (inverted) bits for
 `MREG`, `PREG`, `CREG`, `OPMODEREG` are clear, i.e. the multiplier, output, C and OPMODE registers are enabled
 (fully pipelined, as Xilinx FIR/DDS/CMult IP generates). `ZAREG_2_ACASCREG_1` and `ZBREG_2_BCASCREG_1` are set in all
-119, and `AREG_0` in 9. No DSP uses the pre-adder (`USE_DPORT`) or SIMD mode. 119 fully pipelined multipliers plus
+119, and `AREG_0` in 9. No DSP uses the pre-adder (`USE_DPORT`) or SIMD mode [wrong: 12 do, T15b]. 119 fully pipelined multipliers plus
 the coefficient and phase tables in [bram-tables.md](bram-tables.md) point to a **multi-channel DDC/filter chain and
 an FFT/scope engine** in fabric **[inference]**.
 
@@ -46,14 +46,15 @@ an FFT/scope engine** in fabric **[inference]**.
 | MMCME2_ADV | **2 in use**: `CMT_TOP_R_LOWER_B_X8Y9` (bottom region) and `CMT_TOP_R_LOWER_B_X8Y113` (top region), both on the left CMT column | [fact] |
 | MMCM @X8Y9 | DIVCLK 5 (high 2 / low 3, edge), CLKFBOUT 34 (17/17), CLKOUT0 51 + fractional 1/8 (26/25, FRAC_EN), CLKOUT1-6 counters bypassed (NO_COUNT) | [fact for fields], divide values [inference, XAPP888 encoding] |
 | MMCM @X8Y113 | DIVCLK 5, CLKFBOUT 36 (18/18), CLKOUT0 4 + fractional 2/8 (FRAC_EN), CLKOUT1-6 bypassed | as above |
-| If the MMCM input is the 125 MHz FPGA clock (p6) | X8Y9: VCO 850 MHz, CLKOUT0 about 16.63 MHz; X8Y113: VCO 900 MHz, CLKOUT0 about 211.8 MHz. Both VCOs are inside the 600-1200 MHz range | [guess: input frequency not in the bitstream] |
+| If the MMCM input is the 125 MHz FPGA clock (p6) | X8Y9: VCO 850 MHz, CLKOUT0 about 16.63 MHz; X8Y113: VCO 900 MHz, CLKOUT0 about 211.8 MHz. Both VCOs are inside the 600-1200 MHz range | [guess: input frequency not in the bitstream]. **Superseded by T15:** the routed netlist shows the two MMCMs in cascade (X8Y113 feeds X8Y9), giving about 28.17 MHz, see [netlist.md §3.2](netlist.md) |
 | PLLE2 | no `IN_USE` feature matched in the CMT upper tiles | [fact] |
 | BUFG / HROW | both BUFG tiles and all three HROW tiles carry routing bits | [fact] |
 
 Service manual block diagram: "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6, see
 [`docs/hardware.md`](../../hardware.md)). That suggests a 250 MHz sample clock and 125 MHz fabric clock
 **[inference]**. A fractional CLKOUT0 near 16.6 MHz could be an audio/I2S or DSP_CLK source for the RT685 (J2002 pin 22)
-**[guess]**.
+**[guess, superseded: T15 found the MMCMs in cascade; the DSP_CLK frequency question is open, see [system.md O8](../system.md#8-contradictions-and-open-questions)]**.
+Whether the ADC samples at 250 or 125 MSPS is also open ([system.md O7](../system.md#8-contradictions-and-open-questions)).
 
 ## I/O
 

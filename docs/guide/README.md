@@ -185,7 +185,8 @@ Follow a signal from the antenna to your ears:
 1. **RF front end.** The signal passes the band-pass filters and the preamp or attenuator. MAIN picks the filter and switches the preamp
    and attenuator through a chain of serial shift registers.
 2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds the 250 MHz
-   sampling clock, and the FPGA runs at half that, 125 MHz.
+   sampling clock, and the FPGA runs at half that, 125 MHz. Whether the ADC takes a sample on every tick of the 250 MHz clock or on
+   every second one is not known yet: the ADC's part number is not in the service manual.
 3. **FPGA "tuner".** The FPGA multiplies the samples with a digital oscillator ([NCO](#glossary)) set to your frequency. That moves the
    wanted signal down to near zero, where a bank of filters cuts out a narrow slice and drops the sample rate. This is the classic
    digital down-converter ([DDC](#glossary)). The blocks inside the FPGA are recognised from its lookup tables and multiplier use *(inference)*.
@@ -2028,7 +2029,9 @@ What the netlist shows for certain:
   125 MHz, and the service manual says "Operating clock 125MHz, Divide 250MHz by 2")*. A second LVDS clock from the ADC
   captures 14 data pairs at double data rate ([LVDS](#glossary), [DDR](#glossary)).
 - **Two cascaded clock generators** ([MMCM](#glossary)s) make a clock of about 28 MHz *(inference from the divider
-  settings)* that goes straight to one output pin. Its role is open.
+  settings)* that goes straight to one output pin. Its role is open. It may well be `DSP_CLK`, the DSP's 18.432 MHz clock: the
+  28 MHz reading needs a clock generator setting outside the chip's legal range, so one divider is probably misread, and one other
+  plausible reading gives 18.432 MHz almost exactly *(guess)*.
 - **17 LVDS output pairs**, clocked at double data rate *(inference: the transmit DAC)*.
 - **A QSPI master on the configuration-flash pins.** The FPGA can read and write its own flash. This is how an update
   rewrites the bitstream (chapter 4) *(inference for the purpose)*.
