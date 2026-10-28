@@ -9,10 +9,12 @@
 //     -scriptPath tools/ghidra -postScript DisplayJumpTables.java <mode> [report.tsv]
 // Modes:
 //   scan   (read only) list every site and its table, nothing changed
-//   apply  for each resolved site: table words -> pointers (ldr form) or instructions (add form), case targets
-//          disassembled, COMPUTED_JUMP references added, switch override written (JumpTable), function body fixed up.
-//          Functions that DisplayFindCode's orphan pass had started at a case target (no call or data reference) are
-//          removed first, so the cases join the switch's function. Idempotent.
+//   apply  decompiles every site; only sites the decompiler does not already turn into a switch with all cases are
+//          touched: table words -> pointers (ldr form) or instructions (add form), case targets disassembled, stray
+//          references (a table guessed one word early) and a RETURN flow override removed, COMPUTED_JUMP references
+//          added, function body fixed up. A site that still fails gets a switch override (JumpTable). Functions that
+//          DisplayFindCode's orphan pass had started at a case target (no call or data reference) are removed first,
+//          so the cases join the switch's function. Idempotent (a second run touches nothing).
 //   check  (read only) decompile every site's function; a site passes when the decompiler built a jump table at it
 //          with all its cases. Prints FAIL lines and a summary.
 // The report TSV (optional) has one row per site: site, form, cond, reg, entries, function, status, detail.
@@ -48,7 +50,7 @@ public class DisplayJumpTables extends GhidraScript {
         Address at;
         boolean ldr;          // ldr pc,[pc,...] (address table) vs add pc,pc,... (branch table)
         int cond, reg, k = -1, n = -1;
-        String status = "", detail = "";
+        String status = "", detail = "", action = "";
         List<Address> targets = new ArrayList<>();
     }
 
@@ -175,9 +177,10 @@ public class DisplayJumpTables extends GhidraScript {
         new ArmDisassembleCommand(a, null, thumb).applyTo(currentProgram, monitor);
     }
 
-    int removedFuncs = 0, flowCleared = 0;
+    int removedFuncs = 0, flowCleared = 0, overrides = 0, repaired = 0;
 
-    void apply(Site s) throws Exception {
+    /** Repair one site: table, cases, references, flow override, body; with override=true also write a JumpTable override. */
+    void apply(Site s, boolean override) throws Exception {
         Address t0 = s.at.add(8);
         Address tEnd = t0.add(4L * s.n - 1);
         if (s.ldr) {
@@ -230,15 +233,31 @@ public class DisplayJumpTables extends GhidraScript {
         // Auto-analysis marks some sites (the RSPI helpers, which bound-check twice) with a RETURN flow override; the
         // decompiler then treats the jump as a return, and dies on the switch override. Clear it.
         if (ins.getFlowOverride() != ghidra.program.model.listing.FlowOverride.NONE) {
-            s.detail = "flow override " + ins.getFlowOverride() + " cleared; ";
+            s.action += "flow override " + ins.getFlowOverride() + " cleared; ";
             ins.setFlowOverride(ghidra.program.model.listing.FlowOverride.NONE);
             flowCleared++;
         }
         for (Address t : dest) ins.addOperandReference(0, t, RefType.COMPUTED_JUMP, SourceType.USER_DEFINED);
-        new JumpTable(s.at, dest, true, 0).writeOverride(f);
+        if (override) { new JumpTable(s.at, dest, true, 0).writeOverride(f); overrides++; }
         CreateFunctionCmd.fixupFunctionBody(currentProgram, f, monitor);
         s.status = "applied";
-        s.detail += f.getName() + " cases=" + dest.size();
+        if (!override) repaired++;
+        s.action += (override ? "switch override" : "references fixed") + " (" + dest.size() + " cases); ";
+    }
+
+    /** apply mode: repair only the sites the decompiler does not already turn into a full switch. */
+    void applyAll(List<Site> sites) throws Exception {
+        List<Site> todo = new ArrayList<>();
+        for (Site s : sites) if (s.n > 0) todo.add(s);
+        check(todo);
+        List<Site> bad = new ArrayList<>();
+        for (Site s : todo) if (!s.status.equals("ok")) bad.add(s);
+        for (Site s : bad) apply(s, false);
+        check(bad);
+        List<Site> still = new ArrayList<>();
+        for (Site s : bad) if (!s.status.equals("ok")) still.add(s);
+        for (Site s : still) apply(s, true);
+        check(still);
     }
 
     void check(List<Site> sites) throws Exception {
@@ -284,23 +303,22 @@ public class DisplayJumpTables extends GhidraScript {
         println("DisplayJumpTables: " + sites.size() + " sites (" + ldr + " ldr pc, " + (sites.size() - ldr)
                 + " add pc), " + resolved + " with a table length");
         if (mode.equals("apply")) {
-            int ok = 0;
-            for (Site s : sites) {
-                if (s.n <= 0) { s.status = "unresolved"; continue; }
-                apply(s);
-                if (s.status.equals("applied")) ok++;
-            }
+            applyAll(sites);
             // second pass: sites inside code that the first pass disassembled (cases of nested switches)
-            List<Site> again = scan();
-            for (Site s : again) {
+            List<Site> fresh = new ArrayList<>();
+            for (Site s : scan()) {
                 boolean seen = false;
                 for (Site o : sites) if (o.at.equals(s.at)) seen = true;
-                if (!seen && s.n > 0) { apply(s); if (s.status.equals("applied")) ok++; sites.add(s); }
-                else if (!seen) { s.status = "unresolved"; sites.add(s); }
+                if (!seen) fresh.add(s);
             }
-            println("DisplayJumpTables apply: " + ok + " switches written, " + removedFuncs + " case-target functions removed, " + flowCleared + " flow overrides cleared");
-        } else if (mode.equals("check")) {
-            check(sites);
+            applyAll(fresh);
+            sites.addAll(fresh);
+            println("DisplayJumpTables apply: " + repaired + " sites repaired by references alone, " + overrides
+                    + " switch overrides written, " + removedFuncs + " case-target functions removed, " + flowCleared
+                    + " flow overrides cleared, " + fresh.size() + " new sites in the second pass");
+        }
+        if (mode.equals("check") || mode.equals("apply")) {
+            if (mode.equals("check")) check(sites);
             int ok = 0, fail = 0;
             for (Site s : sites) {
                 if (s.status.equals("ok")) ok++;
@@ -313,11 +331,11 @@ public class DisplayJumpTables extends GhidraScript {
         for (Site s : sites) if (s.status.equals("unresolved")) println("unresolved " + s.at + " " + s.detail);
         if (args.length > 1) {
             try (PrintWriter pw = new PrintWriter(args[1], "UTF-8")) {
-                pw.println("site\tform\tcond\treg\tentries\tfunction\tstatus\tdetail");
+                pw.println("site\tform\tcond\treg\tentries\tfunction\tstatus\tdetail\taction");
                 for (Site s : sites) {
                     Function f = getFunctionContaining(s.at);
                     pw.println(s.at + "\t" + (s.ldr ? "ldr" : "add") + "\t" + COND[s.cond] + "\tr" + s.reg + "\t" + s.n
-                            + "\t" + (f == null ? "" : f.getEntryPoint() + " " + f.getName()) + "\t" + s.status + "\t" + s.detail);
+                            + "\t" + (f == null ? "" : f.getEntryPoint() + " " + f.getName()) + "\t" + s.status + "\t" + s.detail + "\t" + s.action);
                 }
             }
         }
