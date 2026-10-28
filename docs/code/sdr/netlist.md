@@ -71,8 +71,11 @@ python3 -I tools/xc7_netlist.py net build/sdr/netlist.json SLICE_X12Y43/A5FF   #
 **Method.** A prjxray *node* is a set of tile wires joined by `tileconn.json`; the tool builds nodes lazily (1.25 M
 wires in 0.74 M nodes are touched) and joins them into nets with the 367,368 FASM PIPs plus the `always` pseudo-PIPs
 of `ppips_*.db`. Two refinements were needed **[fact, found while testing]**:
-- `always` pseudo-PIPs whose two ends are both site-pin wires are paths *through* a site (for example BUFHCE I to O);
-  following them merged every clock buffer output into one net, so they are skipped.
+- `always` pseudo-PIPs whose two ends are pins of the *same* site are paths through that site (for example BUFHCE I
+  to O); following them merged every clock buffer output into one net, so they are skipped. Those between two sites
+  (DSP ACOUT to the next DSP's ACIN, for example) are real wires and are kept.
+- HCLK_IOI3 has PIPs without segbits (`IO_PLL_CLKn_DMUX` to the BUFIO input and to `RCLKn`, and the clock-capable
+  pin to `DMUX` when no FASM PIP selects another source); the tool assumes them, since the design clearly uses them.
 - An INT `IMUX`/`BYP_ALT`/`FAN_ALT` wire with no driving PIP is VCC (prjxray `default` pseudo-PIP), and a LUT with no
   INIT bits has INIT = 0, so its O6/O5 are constant 0. Vivado writes `PRECYINIT.C0` into slices without a carry chain,
   so CARRY4s are emitted for every slice and dropped (iteratively, along chains) when no output is used.
@@ -96,8 +99,8 @@ keep all routed site pins and their FASM features.
 | SRLC32E (221 SRL LUTs, 220 of them SRL16 pairs) | 441 | 221 `xLUT.SRL` |
 | DSP48E1 | 119 | |
 | RAMB18E1 halves in use | 137 | 70 RAMB36 sites |
-| IOB / IDDR / ODDR / IDELAYE2 | 162 / 14 / 17 / 124 | 110 ILOGIC and 30 OLOGIC are plain pass-through |
-| MMCME2_ADV / BUFGCTRL / BUFHCE / BUFR | 2 / 7 / 16 / 8 | |
+| IOB / IDDR / ODDR | 116 / 14 / 17 | 110 ILOGIC and 30 OLOGIC are plain pass-through; the 124 IDELAYs only carry Vivado's default (`IDELAY_TYPE_FIXED`) and are not used; unused pins carry only `PULLTYPE`/`IN_TERM`/`SLEW` |
+| MMCME2_ADV / BUFGCTRL / BUFHCE / BUFR / BUFIO | 2 / 7 / 16 / 1 / 1 | BUFIO and BUFR carry no FASM features; they are kept when their output is used |
 
 127,648 nets: 125,597 with exactly one driver, **none with two or more**, and 2,051 without a driver. The undriven
 ones are unused hard-block inputs (ILOGIC clocks, DSP cascade inputs at the bottom of a column, unused IOB O/T, BRAM
