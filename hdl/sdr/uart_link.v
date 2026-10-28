@@ -41,7 +41,7 @@ module ft710_uart_link #(
   output reg         bus_wr = 1'b0,      // one-clock write strobe
   output reg  [15:0] bus_addr = 16'h0,
   output reg  [15:0] bus_wdata = 16'h0,
-  input  wire [15:0] bus_rdata           // registered read data, sampled T_LATCH clocks after CR
+  input  wire [15:0] bus_rdata           // read data, sampled T_LATCH clocks after CR (2 clocks after bus_rd)
 );
   // ---------------------------------------------------------------- receiver (same circuit as UART A)
   wire [7:0] rxd;
@@ -112,7 +112,7 @@ module ft710_uart_link #(
       end
       if (busy) begin
         t <= t + 8'd1;
-        if (kind == K_READ && t == T_LATCH - 2) bus_rd <= 1'b1;
+        if (kind == K_READ && t == T_LATCH - 3) bus_rd <= 1'b1;   // rdata due two clocks later
         if (kind == K_ACK && t == T_WRITE - 1) bus_wr <= 1'b1;
         if (kind == K_READ && t == T_LATCH - 1) begin
           reply[0] <= "r";

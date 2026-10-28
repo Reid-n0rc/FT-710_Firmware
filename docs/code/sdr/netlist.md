@@ -5,7 +5,7 @@ Back to the [SDR overview](README.md).
 This page takes the XC7A50T design from configuration bits ([bitstream.md](bitstream.md)) to FASM features, then to a
 cell-level netlist, and then to recognized blocks. Everything derived (FASM, netlist JSON) stays in `build/sdr/` and
 is not committed. Tools: `tools/xc7_fasm.py` (T15a), `tools/xc7_netlist.py` (T15b), `tools/xc7_blocks.py` (T15c),
-`tools/xc7_netlist_verilog.py` (T15d). Reconstructed RTL: [`hdl/sdr/`](../../../hdl/sdr/README.md) (T15e).
+`tools/xc7_netlist_verilog.py` (T15d), `tools/xc7_probe_netlist.py`, `tools/sdr_uart_sim.py`, `tools/sdr_cosim_check.py` (T15e). Reconstructed RTL: [`hdl/sdr/`](../../../hdl/sdr/README.md) (T15e).
 
 ```mermaid
 flowchart LR
@@ -177,8 +177,8 @@ flowchart LR
 | 35 | A5/A6 (`IO_L3_AD5`), inputs with no fabric load | XADC auxiliary input VAUX5 (the MONITOR tile is configured) | [inference] |
 | 34 (2.5 V, LVDS) | 17 LVDS output pairs from ODDRs, plus 1 pair driven high | **DDR LVDS output bus**, most likely the **TX DAC**. Every pair's OBUFTDS enable comes from a flip-flop | [fact] wiring, [inference] DAC |
 | 14 (3.3 V) | L13 `FCS_B` out (FDPE), K17 `D00_MOSI` in/out, K18 `D01_DIN`, L14 `D02`, M14 `D03` in | **QSPI master in fabric on the configuration-flash pins**: chip select and bidirectional D0, with D1-D3 captured together under a shared enable (`SLICE_X1Y60`), i.e. quad reads. Together with T13's WP finding, this is how the FPGA **rewrites its own configuration flash** during an update | [fact] wiring, [inference] purpose |
-| 14 | **M18 in / L18 out** (`IO_L4N/L4P_T0_D05/D04`) | **UART A**: 115,200 8N1 receiver, transmitter and ASCII command parser (3.4) | [fact] |
-| 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B**: a second, identical instance | [fact] |
+| 14 | **M18 in / L18 out** (`IO_L4N/L4P_T0_D05/D04`) | **UART A = debug console** (`UART_DBG`, prompt `[IF]>`): 115,200 8N1 receiver, transmitter and ASCII command parser (3.4, 5.3) | [fact] |
+| 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B = MAIN's UART5** register link: same receiver, 11-character frame window (3.4, 5.2) | [fact] |
 | 14 | N14, T18, R18 in/out | Each has an output FDPE (INIT 1, MMCM domain) enabled from a LUT, and an input synchronized in the 125 MHz domain: open-drain-style lines, I2C or similar | [guess] |
 | 14 | P14 out | forwarded MMCM clock (`DSP_CLK`?) | [guess] |
 | 14 | 9 more inputs, 13 more outputs (3 tied low, 1 tied high) | control lines (TX, SEND, FSK, OVF, DET, I2S), not yet matched to J2002 pins | open |
@@ -186,8 +186,8 @@ flowchart LR
 | 15 | B18, A14, A13, A16 in; D17, F13 out; E17 = 0, D14 = 1 | 1.8 V control and status lines (D17 is in the undecoded BUFGCTRL_X0Y1 domain) | open |
 
 The J2002 signals in [interfaces.md](interfaces.md) still have to be matched to these pins one by one. The two UARTs
-and the flash pins are certain. One UART is MAIN's UART5 and the other the debug UART (`UART_DBG`); 3.4 and section 4
-explain how far the netlist tells them apart.
+and the flash pins are certain. UART B is MAIN's UART5 and UART A the debug UART (`UART_DBG`), shown by simulating the
+whole netlist (3.4, section 5).
 
 ### 3.4 UART links
 
@@ -212,12 +212,12 @@ side of UART5 (`sdr_reg_access` 0xFFFA1485, `FUN_fffa30f9`, `FUN_fffa31ae`, `FUN
 | read | `r` + 4 hex address + 2 hex checksum + `CR` | 7 bytes: 5 characters, then a 2-hex checksum of those 5. MAIN parses the value with `hex2word` |
 | write | `w` + 4 hex address + 4 hex value + 2 hex checksum + `CR` | one byte, `0x06` (ACK) |
 
-**Which UART is which [inference].** Behind the shared receiver and character decoder the two instances differ.
-UART B (V12/U12) copies received bytes into flip-flops right away (7 FFs one stage after the byte register, 83 FFs
-three stages later), i.e. a **line buffer of about ten characters**, the length of MAIN's fixed frames (`w` + 8 hex +
-2 hex sum = 11 characters before CR). UART A (M18/L18) has no buffer: its bytes go only through the character LUTs to
-a small state machine, and in the netlist slice it answers every character at once (section 4.3), which is how an
-interactive console behaves. So **UART B is most likely MAIN's UART5 and UART A the debug UART (`UART_DBG`)**.
+**Which UART is which [fact, T15e simulation].** UART B (V12/U12) is **MAIN's UART5**: simulated with the whole
+netlist, it answers MAIN's boot frame `r000032` CR with `r010437` (register 0 = 0x0104 = V01-04, the version MAIN stores
+for `VE2;`) and a write with ACK 0x06. UART A (M18/L18) is the **debug console** (`UART_DBG`): it prints the prompt
+`[IF]>`, echoes what it receives and takes `r 0000` / `w 0015 1234` style commands (section 5). The structural hints
+of T15c fit: UART B keeps the last 11 characters in an 88-FF window, UART A works character by character. The
+module-side J2002-to-FPGA traces are still not in the service manual, so this rests on behaviour, not on the pin path.
 
 The checksum is the 8-bit sum of all the characters before it, written as two upper-case hex digits (`byte2hex`,
 `"0123456789ABCDEF"`) **[fact, MAIN code]**. On the transmit side, `SLICE_X1Y94/A5FF` drives L18 (UART A) and
@@ -305,8 +305,112 @@ including senders 2 % slow and fast) **[fact]**.
 - A 3,580-cell slice of UART A's transmit cone (depth 10) answers every received character with `?` (`0x3F`), and
   after `CR` sends 9-bit frames without a stop bit. That slice ties ~500 boundary nets (register bank, other blocks)
   to 0, so this is **not** the radio's real behaviour, only evidence that the transmitter is driven by the parser
-  per character **[inference]**. UART B's slice sends nothing under the same conditions.
+  per character **[inference]**. UART B's slice sends nothing under the same conditions. (Superseded by the
+  whole-netlist simulation in section 5.)
 - A full-netlist simulation (63k cells in Icarus, with functional models for IBUFDS/IDDR/ODDR/BUFR/BUFIO/MMCM from
   `simprims` and the Yosys DSP48E1/RAMB18E1 models, the DSP `$fatal` mode checks removed) compiles to a 195 MB image
   but runs at under 5 us of simulated time per minute on the shared box, so one UART exchange (~3 ms) would take
-  over ten hours; it was stopped **[fact]**. A compiled simulator (Verilator) is the way to run the whole design.
+  over ten hours; it was stopped **[fact]**. A compiled simulator (Verilator) is the way to run the whole design
+(section 5).
+
+## 5. Whole-design simulation and the UART protocols (T15e)
+
+```sh
+hdl/sdr/sim/build_full.sh                                      # Verilator 5.006, ~2.5 min, -> build/sdr/vl/obj_full
+python3 -I tools/sdr_uart_sim.py b:r0000 b:w00151234 b:r0015   # frames with checksum + CR on UART B
+python3 -I tools/sdr_uart_sim.py "a:=r 0000\r"                 # raw text on UART A (console)
+python3 -I tools/xc7_probe_netlist.py ...                      # expose internal nets on a `probe` port
+```
+
+The Yosys `cells_sim.v` models trip Verilator 5.006 (an internal error on CARRY4 with constant inputs), so the small
+primitives have their own models in `hdl/sdr/sim/xc7_prims_vl.v`; DSP48E1 and RAMB18E1 still come from Yosys (with
+the `$fatal` mode checks removed). One detail mattered: the recovered BUFGCTRLs have `S1 = I1 = 1` because unrouted
+pins sit at their tie value, so the model must pass I0; with a textbook BUFGCTRL model the whole design has no
+clock. All inputs other than the clock and the two RX pins are tied to 0. The model runs at **~15,000 clocks/s**
+(one MAIN exchange of ~0.2 M clocks in ~15 s) **[fact]**.
+
+### 5.1 End-to-end MAIN exchange [fact]
+
+```mermaid
+sequenceDiagram
+  participant M as MAIN SCI5 (testbench)
+  participant R as UART B receiver
+  participant W as 11-char window + checker
+  participant B as register bank
+  participant T as reply transmitter
+  M->>R: r 0 0 0 0 3 2 (7 bytes, 115,200 8N1)
+  R->>W: each byte shifts into the window
+  M->>R: CR
+  R->>W: CR strobe (clock C)
+  W->>B: read request, address 0x0000
+  B-->>W: read data 0x0104, latched at C+37
+  W->>T: reply r 0 1 0 4 3 7
+  T-->>M: start bit at C+74, 7 bytes x 11,949 clocks
+```
+
+With the reset released by the design's own counter, `r000032` CR sent from clock 108,500 gives the reply
+**`r010437`** (`72 30 31 30 34 33 37`), first byte complete at clock 225,163 **[fact]**. MAIN accepts it: byte 0 echo,
+value `0104`, sum `37` over the first five bytes.
+
+### 5.2 Register link (UART B) [fact unless marked]
+
+Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_link.v`, section 5.4):
+
+| Line (last characters before CR) | Reply |
+|---|---|
+| `r` aaaa ss | `r` vvvv ss, 7 bytes, no CR; ss = 8-bit sum of `r`vvvv in upper-case hex |
+| `w` aaaa vvvv ss | ACK 0x06, **one byte** (MAIN arms a 7-byte receive and checks only byte 0) |
+| anything else, including `x...`, upper-case `R`, missing or wrong checksum, wrong length | `?` 0x3F |
+
+- **Window, not a parser.** The receiver shifts every character except CR into an 11-character window (88 FFs,
+  `SLICE_X0..X2Y107..Y111`, cleared only at reset). At CR the checker looks at the last 11 (write) or 7 (read)
+  characters, so junk, LF, BS or a second letter in front of a frame do not matter, and **CR alone repeats the
+  previous command** (a repeated read reads again). Address and value digits may be lower case; the two checksum
+  characters must be upper case, because they are compared with the FPGA's own rendering of the sum.
+- **Datapath.** Hex digits go into 4-bit nibble registers (the 4-FF groups in `SLICE_X7..X10Y95..Y100`), the read
+  result is latched from the register bank's read-data flip-flops (`SLICE_X9..X14Y63..Y70`) into 16 FFs
+  (`SLICE_X5Y103..X7Y101`, enable `SLICE_X15Y106/CLUT`), and the transmitter takes a 5-bit symbol
+  (`SLICE_X3Y103/AFF`, `X5Y102/AFF`, `X6Y102/AFF`, `X6Y102/BFF`, `X7Y104/AFF`) that LUTs turn into the ASCII byte
+  (hex digits, `r`, ACK, `?`). The bit timer is `SLICE_X0Y102..X0Y105`, the pad flip-flop `SLICE_X2Y101/AFF`.
+- **Timing** (clocks after the receiver's CR strobe): read-data latch +37; first start bit +74 for a read reply,
+  +69 for the ACK, +37 for `?` when the line has no frame shape, +45/+47 for a read-shaped line whose first/second
+  checksum digit is wrong, +49/+51 for a write-shaped one. Each reply byte is start + 8 data + 2 stop bits + 3 clocks.
+- **Register values** after reset (other inputs tied 0): 0x00 = 0x0104 (read-only), 0x01 = 0x000F, 0x02 = 0, 0x03 =
+  0x8800, 0x04 = 0x8810, 0x05 = 0, 0x06 = 0x020A, 0x07 = 0, 0x0A = 0, 0x15 = 0x1FFF, 0x30 = 0x0023, 0x32/0x33/0x37 = 0.
+  Unmapped addresses tried read 0xCCCC (0x00FF, 0xA8B2, 0xB837, 0xFFFF) or 0 (0x0100, 0x90E4). Write and read-back
+  work for 0x03, 0x15, 0x30, 0x31. MAIN's 0x37 = 0xBCC5 unlock is ACKed and reads back 0.
+
+### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
+
+- After reset it prints the prompt **`[IF]>`** (no CR/LF before it).
+- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). `#` comes back as
+  0x06 and the line then fails with `Err` **[fact, meaning unknown]**. LF is echoed and does nothing.
+- On CR: `r AAAA` prints CR LF `VVVV ` CR LF `[IF]>`; `w AAAA VVVV` or `w AAAA,VVVV` writes silently and prints CR LF
+  `[IF]>`. Exactly four hex digits and one separator (space or comma) are required; anything else (`r0`, `r 15`,
+  `r  0001`, trailing space, `0x` prefixes, two operands for `r`) prints `Err` CR LF `[IF]>`.
+- It reads the same register bank as the link (register 0 = 0104, writes to 0x15 read back) **[fact]**; the two
+  command engines meet at the shared bus flip-flops around `SLICE_X10..X15Y85..Y89` **[inference]**.
+- **`x`**: accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
+  `x 0000,0000`, `x 0000 0000 0000`, `x0015`, also after `w 0037 BCC5`) gives `Err`, as on the link. So `x` is in the
+  character tables of both engines but has **no reachable function** in this bitstream with the other inputs at 0
+  **[fact for the tried forms, inference that it is unused or gated by an input pin]**.
+- BS echo is garbled in simulation (overlapping frames on the TX line) **[open]**: a console quirk or a modelling
+  gap of this harness; not followed up.
+- The console's transmit cone also drives the three open-drain-style pins N14, T18, R18 (shared tri-state enable)
+  **[fact for the wiring, function open]**.
+
+### 5.4 RTL equivalence (T15e) [fact]
+
+`hdl/sdr/sim/cosim_top.v` runs the whole netlist and `ft710_uart_link` in one Verilator model, feeds both the same
+UART B input and the RTL the netlist's read-data bus (a 17-bit probe port added by `tools/xc7_probe_netlist.py`), and
+compares the two TX pins on every clock. Directed runs (`cosim_directed.sh`: boot reads, unlock, writes, every NAK
+latency class, junk, LF, empty line) and random runs (`cosim_random.sh`: reads, writes, corrupted and lower-case sums,
+wrong lengths, junk prefixes, lines split by idle gaps) show **0 mismatching clocks** (counts in
+[T15e](../../tasks/T15e-fpga-uart-rtl.md)). Not compared: the RTL's own bus strobes (writes are checked through
+read-back) and a CR during a running reply.
+
+### 5.5 Remaining pins
+
+Not done in T15e: matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3).
+The whole-design model can now do it by driving candidate input pins and watching outputs.
+
