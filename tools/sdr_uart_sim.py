@@ -31,7 +31,7 @@ def sum8hex(s):
 def frame(f):
     if f.startswith("="):
         return f[1:]
-    if re.fullmatch(r"[rwx][0-9A-Fa-f]*", f):
+    if re.fullmatch(r"[a-z][0-9A-Fa-f]*", f):
         return f + sum8hex(f) + "\\r"
     raise ValueError("bad frame %r" % f)
 

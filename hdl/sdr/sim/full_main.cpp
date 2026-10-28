@@ -124,10 +124,15 @@ int main(int argc, char** argv) {
         top->adc_clk_p = 1; top->adc_clk_n = 0; top->adc_dco_p = 1; top->adc_dco_n = 0;
         top->eval();
         clk++;
-#ifdef PROBE_W                        // probe port added by tools/xc7_probe_netlist.py (> 64 bits wide)
+#ifdef PROBE_W                        // probe port added by tools/xc7_probe_netlist.py
+#if PROBE_W > 2
+#define PROBE_WORD(w) ((uint32_t)top->probe[w])
+#else
+#define PROBE_WORD(w) ((uint32_t)((uint64_t)top->probe >> (32 * (w))))
+#endif
         static uint32_t prev[PROBE_W];
         for (int w = 0; w < PROBE_W; w++) {
-            uint32_t v = top->probe[w], d = v ^ prev[w];
+            uint32_t v = PROBE_WORD(w), d = v ^ prev[w];
             if (d && snaps.empty())
                 for (int b = 0; b < 32; b++)
                     if ((d >> b) & 1) printf("%10llu P %d %d\n", (unsigned long long)clk, w * 32 + b, (v >> b) & 1);
@@ -135,7 +140,7 @@ int main(int argc, char** argv) {
         }
         if (si_snap < snaps.size() && clk == snaps[si_snap]) {   // full snapshot: "<clock> S <hex words, LSW first>"
             printf("%10llu S", (unsigned long long)clk);
-            for (int w = 0; w < PROBE_W; w++) printf(" %08x", (uint32_t)top->probe[w]);
+            for (int w = 0; w < PROBE_W; w++) printf(" %08x", PROBE_WORD(w));
             printf("\n");
             si_snap++;
         }
