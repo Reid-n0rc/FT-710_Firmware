@@ -31,3 +31,14 @@ Split by subsystem; each sub-task is finished, documented and committed before t
 
 Renames go into `tools/ghidra/IfdspM33Names.java` (M33) or a new HiFi4 names script, followed by a re-export; decomp
 commits are kept separate from docs commits.
+
+Page names: T12b writes `control-link.md` (not `m33-console.md`); the README subsystem index links all four pages.
+
+## Findings
+- T12a (done): `docs/code/ifdsp/README.md`. The FLEXCOMM0 console is the MAIN↔IFDSP control link: MAIN (SCI4) pokes a 32K × 16-bit
+  parameter register file at 0x20070000 with `r`/`w` checksum frames; the DSP reads it. The M33 also owns codec setup (bit-banged SPI)
+  and an SCT0 PWM (duty from reg 0x4005). The rpmsg-lite link is initialised but carries no traffic. Details in the sub-task files.
+- Rebuild in the Linux container reproduces `decomp/ifdsp/` byte-identical.
+
+## Status
+In progress: T12a done; T12b–T12e todo (starting notes in each file).
