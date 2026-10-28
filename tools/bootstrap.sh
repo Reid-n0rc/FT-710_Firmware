@@ -41,7 +41,7 @@
 #   JAVA_HOME            JDK 21 [Homebrew openjdk@21 if present, else $OPT_DIR/jdk-21.0.13+9]
 #   RX_MODULE_DIR        where the RX module goes [$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX]
 #   RX_SRC               clone of rx-proc-ghidra [$OPT_DIR/rx-proc-ghidra]
-#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [half of nproc: owner cap, AGENTS.md "Hardware use"]
+#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, AGENTS.md "Hardware use"]
 #   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [a quarter of the RAM, 2G to 3G]; Ghidra runs go through tools/ghidra-cap.sh
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
@@ -80,7 +80,7 @@ RX_MODULE_DIR=${RX_MODULE_DIR:-$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX}
 RX_SRC=${RX_SRC:-$OPT_DIR/rx-proc-ghidra}
 
 if command -v nproc >/dev/null 2>&1; then ncpu=$(nproc); else ncpu=$(sysctl -n hw.ncpu 2>/dev/null || echo 4); fi
-JOBS=${JOBS:-$(( ncpu / 2 > 0 ? ncpu / 2 : 1 ))}
+JOBS=${JOBS:-$(( ncpu * 3 / 4 > 0 ? ncpu * 3 / 4 : 1 ))}
 if [ -z "${GHIDRA_HEADLESS_MAXMEM:-}" ]; then
   if [ -r /proc/meminfo ]; then memk=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
   else memk=$(( $(sysctl -n hw.memsize 2>/dev/null || echo 8589934592) / 1024 )); fi

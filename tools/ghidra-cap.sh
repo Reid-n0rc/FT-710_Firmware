@@ -1,8 +1,8 @@
 #!/bin/bash
-# Run a Ghidra/REA job inside the owner's hardware cap (AGENTS.md "Hardware use"): about half the machine.
+# Run a Ghidra/REA job inside the owner's hardware cap (AGENTS.md "Hardware use"): about 75% of the machine.
 # Usage: tools/ghidra-cap.sh <reserve_mb> -- <command...>
-#   - at most CAP_SLOTS heavy jobs at once, machine-wide (flock slots in $CAP_DIR) [2]
-#   - pinned to the first CAP_CPUS cores (taskset, Linux only) and run at nice 10 [half of nproc]
+#   - at most CAP_SLOTS heavy jobs at once, machine-wide (flock slots in $CAP_DIR) [3]
+#   - pinned to the first CAP_CPUS cores (taskset, Linux only) and run at nice 10 [3/4 of nproc]
 #   - admitted through tools/memgate.py, which keeps MEMGATE_SAFETY_MB free on top of all reservations [3072]
 # Exports CAP_CPUS for the caller's -max-cpu, and GC/compiler threads sized to the cap.
 # Defaults: Ghidra and JDK 21 under $OPT_DIR (~/opt), unless GHIDRA_HEADLESS / GHIDRA_JAVA_HOME are set.
@@ -12,8 +12,8 @@ reserve=$1; shift 2
 REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 if command -v nproc >/dev/null 2>&1; then ncpu=$(nproc); else ncpu=$(sysctl -n hw.ncpu 2>/dev/null || echo 4); fi
-CAP_CPUS=${CAP_CPUS:-$(( ncpu / 2 > 0 ? ncpu / 2 : 1 ))}
-CAP_SLOTS=${CAP_SLOTS:-2}
+CAP_CPUS=${CAP_CPUS:-$(( ncpu * 3 / 4 > 0 ? ncpu * 3 / 4 : 1 ))}
+CAP_SLOTS=${CAP_SLOTS:-3}
 CAP_DIR=${CAP_DIR:-$HOME/.cache/ft710-ghidra-cap}
 export CAP_CPUS
 export MEMGATE_DIR=${MEMGATE_DIR:-$HOME/.cache/ft710-memgate}
