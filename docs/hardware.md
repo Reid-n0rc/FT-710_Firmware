@@ -151,6 +151,13 @@ registers: p56–57, p74).
   comes late, with dither fed into both inputs **[fact: third-party report]**. That explains the 14 DDR-captured LVDS pairs as two
   14-bit channels multiplexed on the two clock edges (channel A on one edge, B on the other) at 125 MSPS each **[inference, strong]**,
   which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
+- **Physical form (exploded view, p5):** a separate small PCB mounted **under the MAIN unit**, screwed down (screw ⑨) with thermal
+  pads RA6334400/RA6334500 and gaskets RA6119900/RA6143800 against the chassis floor, which acts as its heat sink **[fact for the
+  drawing]**. It is drawn without its own part number, so it appears to come with the MAIN assembly CS2712704 (USA) / CS2712705 (EU)
+  **[inference]**. It mates with the MAIN board through a board-to-board connector, and a short wire assembly **TT9207967** runs
+  between the two boards **[fact for the drawing]**. That this board is the SDR module is an **[inference, strong]**: it is the only
+  separate board under MAIN, J2002 is labelled "SDR MODULE", and it is cooled the way an FPGA/ADC board would be. That TT9207967
+  carries the J3003 RF/analog lines (RX, TX, DITHER, SCOPE) while J2002 carries power, clocks and logic is a **[guess]**.
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),
