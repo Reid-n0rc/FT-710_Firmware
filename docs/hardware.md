@@ -61,7 +61,7 @@ registers: p56–57, p74).
 - Other peripherals: Q1005 BU2505FV 10-bit DAC on `SDATA`, used for `FADJ` (reference oscillator trim) (p6, p17). PA-unit control goes
   through serial shift registers (`SCLK`/`SDAT`/`/SST4`/`/STT6`/`SST5` on J1002) (p17). The on-chip **DA0** (P03) drives `DA_OUT` →
   `TONE_BEEP`, the beep tone into the AF path (`dac0_write`) **[fact]**. The full pin-by-pin GPIO, ADC and DAC map with the functions
-  that use each pin is in [code/main/peripherals.md#gpio-map](code/main/peripherals.md#gpio-map) (T10h). Pins that matter for the other
+  that use each pin is in [code/main/peripherals.md#gpio-map](code/main/peripherals.md#gpio-map-fact-unless-tagged) (T10h). Pins that matter for the other
   boards **[fact: code + p17]**: P71 `DSP_RESET` (pin 86) / P72 `DSP_UPDATE` (pin 85, ISP select **[inference]**), P74 `AF_RESET` (pin 72),
   P75 `USB_DET` (pin 71), P76 `SDR_UPDATE` (pin 69) / P77 `SDR_RESET` (pin 68, R1133 10k pull), PC0 `PA_PON` (pin 75).
 - **UARTs (SCI)** on Q1001 (p17, pin labels read from the schematic; port pins and line formats from the firmware, see
@@ -110,8 +110,8 @@ registers: p56–57, p74).
 - Boot configuration (p19, printed note): `BootConf_ISP[2:0]` on PIO1_15..17 (pins N3/M4/N4): "111 Serial Master Boot,
   110 Serial ISP, **011 FlexSPI A**". The `DSP_UPDATE` signal (through Q2010/Q2006) selects "L: Normal (FlexSPI) / H: Update (Serial ISP)". **[fact]**
   So in normal operation the code runs from the QSPI flash. For an update, the RT685 ROM serial ISP is used (UART on FC0): DISPLAY sends NXP
-  bootloader packets that MAIN relays over SCI4 while it drives `DSP_UPDATE`/`DSP_RESET` (P72/P71) **[fact for the DISPLAY side, inference for
-  MAIN]** ([code/display/update.md](code/display/update.md#7-ifdsp-update-rt685-rom-isp-through-main)).
+  bootloader packets that MAIN relays over SCI4 while it drives `DSP_UPDATE`/`DSP_RESET` (P72/P71) **[fact, both sides]** ([code/display/update.md](code/display/update.md#7-ifdsp-update-rt685-rom-isp-through-main),
+  [code/main/dsp-link.md](code/main/dsp-link.md#dsp-firmware-update-bridge)).
 - Flash config (FCFB at 0x08000400 in the IFDSP image) **[fact]**: serial NOR, quad pads, `serialClkFreq` 7 (120 MHz **[inference]**), 16 MB,
   256 B pages, 4 KB sectors, 64 KB blocks; LUT read `0xEB` (quad I/O, 6 dummy cycles), status 0x05, WREN 0x06, erase 0x20/0xD8/0x60,
   program 0x02. This matches the W25Q128JV. The firmware has no FlexSPI program/erase code ([code/ifdsp/m33-platform.md](code/ifdsp/m33-platform.md)).

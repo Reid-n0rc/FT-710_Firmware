@@ -109,8 +109,8 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P2_8..P2_11 | alt 8 | DSP_SCLK / SS / MOSI / MISO | RSPI (DSP link), see [spi-links.md](spi-links.md) |
 | P2_12..P2_15 | alt 2 | ACC_FS / SCLK / MISO / MOSI | RSPI from the FT4222H |
 | P3_0, P3_6 | in | KEY1, KEY2 | keys |
-| P3_1 / P3_3 | alt 3 | ENC3_A / ENC2_A | encoder (IRQ or MTU input) |
-| P3_2 / P3_5 | in | ENC3_B / ENC2_B | |
+| P3_1 / P3_3 | alt 3 | ENC3_A / ENC2_A | P3_3 = IRQ4 edge input of firmware encoder **id 3** (`renc_irq4_isr` compares PPR3 bits 3 and 5) **[fact]**. P3_1 (ENC3_A): no ISR or reader found, so ENC3 is unused or unfitted **[inference]**. See the note below the table |
+| P3_2 / P3_5 | in | ENC3_B / ENC2_B | P3_5 = B phase of encoder id 3, read in `renc_irq4_isr` **[fact]** |
 | P3_4 | alt 1 | LCD_DEN | VDC5 (`lcd_pins_enable`) |
 | P3_8..P3_15 | alt 1 | R0..R7 | VDC5 RGB |
 | P4_0 / P4_1 | alt 1 | G0 / G1 | VDC5 RGB |
@@ -139,9 +139,9 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P8_11 / P8_12 / P8_13 | in | USB0_PG / USB_DET / USB1_PG | |
 | P8_14 | out low | 5VON | `gpio_p8_14` (1 on the full path) |
 | P8_15, P9_1 | in | ENC1_S, ENC2_S | encoder push switches |
-| P9_0 | alt 4 | ENC1_A | encoder |
+| P9_0 | alt 4 | ENC1_A | MTU2 phase-counting clock input of encoder id 2 (MTU2 ch2) **[inference]**, see the note below |
 | P9_2..P9_7 | alt 2 | QF_CLK, QF_CSn, QF_DAT0..3 | SPIBSC0 (`spibsc0_pins_init` does them again) |
-| P10_0 / P10_1 / P10_3 | alt 2 | ENC0_A / ENC0_B / ENC1_B | encoder (MTU2 phase counting?) **[guess]** |
+| P10_0 / P10_1 / P10_3 | alt 2 | ENC0_A / ENC0_B / ENC1_B | MTU2 phase-counting clock inputs: ENC0 = encoder id 1 (main dial, MTU2 ch1), ENC1_B = encoder id 2 (MTU2 ch2) **[inference]**, see the note below |
 | P10_4 | alt 2, out | LED_DIMR | MTU2 TIOC0A dimmer PWM **[inference]** |
 | P10_5 / P10_6 | in | KEY_PTT / KEY_FAST | |
 | P10_8..P10_13 | alt 5 | G7..G2 | VDC5 RGB |
@@ -150,6 +150,8 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P11_4..P11_11 | alt 2 | SD_CD, SD_WP, SD_DAT1, SD_DAT0, SD_CLK, SD_CMD, SD_DAT3, SD_DAT2 | **SDHI0** **[fact: driver uses 0xE804E000]** |
 | P11_13 / P11_14 | in | VSYNC / HSYNC (pulled down) | unused |
 | P11_15 | (not in `pinmux_init`) | LCD_CLK | `lcd_pins_enable` sets alt 5 |
+
+**Encoder pins vs. [input.md](input.md#rotary-encoders-and-pots) (T14).** The two pages describe two layers of the same thing, so they do not contradict each other. input.md gives the counters: encoders 1 and 2 are MTU2 ch1/ch2 in phase-counting mode (`renc_mtu2_init` 0x20112AEC) and encoder 3 is IRQ4 with P3_3/P3_5 **[fact]**. This table gives the pins. The schematic numbers the encoders from 0, so schematic ENC*n* is firmware id *n*+1: ENC2 on P3_3/P3_5 is id 3 **[fact: `renc_irq4_isr` reads PPR3 bits 3 and 5]**. ENC0 (P10_0/P10_1) and ENC1 (P9_0/P10_3) are the only other encoder pins put in a peripheral function (`pinmux_init`: `gpio_cfg_alt(10,0,2)`, `(10,1,2)`, `(10,3,2)`, `(9,0,4)`), so they must be the MTU2 TCLK inputs of ch1 and ch2 **[inference]**. Which pin is TCLKA..D, and so which of ENC0/ENC1 is ch1, needs the RZ/A1H pin-function table, which is not in the repo. That ENC0 = ch1 = main dial (id 1) is **[inference]** from the order.
 
 Cross-check against docs/hardware.md: everything listed there matches (RTC P1_0..2, TINT/TSCL/TSDA P1_3..5, DSP P2_8..11, ACC P2_12..15, FT4222_RESET
 P2_7, RX_UPDATE P4_3, DISP UART P6_6/7, RX_RESET P7_10, SDR P8_3..6, QF P9_2..7, QF_RESETn P11_2). The power latch nets RX_PWR_ON / RZ_PWR_ON on P7_9 / P7_11, 5VON on P8_14,

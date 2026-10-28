@@ -133,7 +133,9 @@ So **Rx_Path is clocked by the codec DAC and Tx_Path by the codec ADC**; the SDR
 **[fact]**. The sample rate is **12 kHz** **[inference, strong]**: the constant 1/12000 (0x38AEC33E at 0x206D04) is used in
 ~10 parameter functions to turn Hz into normalised frequency, 12000.0 appears in 0x21CAD4, and the 12-bit frequency field of
 reg 0x45 is clamped to 5999 (0x176F, just below Nyquist) **[fact: constants]**. So one block = 2 ms, and Rx_Audio frames are
-24 ms. The FIR/IIR tables below are consistent with 12 kHz (SSB/CW passbands of 0–4 kHz).
+24 ms. The FIR/IIR tables below are consistent with 12 kHz (SSB/CW passbands of 0–4 kHz). **Open (T14, C9):** the DISPLAY writes the
+REC PCM it receives over FC1 as a **16 kHz** stereo WAV ([display/spi-links.md](../display/spi-links.md#link-2-if-dsp-fftrecplay-rspi4)),
+so either `Thread_Spi` resamples to 16 kHz or the WAV header is nominal. The FC1 buffer spacing (0x1200) matches the DISPLAY's 0x11F8-byte frame **[fact]**.
 
 ### SPI on FLEXCOMM1 (DMA0)
 
