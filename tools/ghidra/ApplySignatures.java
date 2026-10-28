@@ -54,7 +54,7 @@ public class ApplySignatures extends GhidraScript {
 
     @Override
     protected void run() throws Exception {
-        int ok = 0, bad = 0;
+        int ok = 0, bad = 0, purgeFixed = 0;
         Register r1 = currentProgram.getRegister("R1"), r2 = currentProgram.getRegister("R2");
         // the cspec default (__fastcall: R1..R4, return R1); without a named convention the decompiler warns
         String cc = currentProgram.getCompilerSpec().getDefaultCallingConvention().getName();
@@ -67,8 +67,11 @@ public class ApplySignatures extends GhidraScript {
             if (!f.getName().equals(p[1])) println("ApplySignatures: warning: " + a + " is " + f.getName() + ", TSV says " + p[1]);
             try {
                 DataType rt = type(p[2]);
+                // CC-RX callers pop their own stack arguments: every function returns with SP = entry SP + 4, i.e. purge 0
+                // (the analysis leaves it unknown; with custom storage the decompiler then mistracks the caller stack).
                 List<Variable> params = new ArrayList<>();
                 List<Integer> stackOff = new ArrayList<>(); // -1 = next register
+                List<String> names = new ArrayList<>();
                 String ps = p.length > 3 ? p[3].trim() : "void";
                 if (!ps.equals("void") && !ps.isEmpty()) {
                     int i = 0;
@@ -78,8 +81,9 @@ public class ApplySignatures extends GhidraScript {
                         if (at >= 0) { off = Integer.decode(q.substring(at + 7).trim()); q = q.substring(0, at).trim(); }
                         int sp = Math.max(q.lastIndexOf(' '), Math.max(q.lastIndexOf('*'), q.lastIndexOf(']')));
                         String tn = q.substring(0, sp + 1).trim(), nm = q.substring(sp + 1).trim();
-                        if (tn.isEmpty() || nm.isEmpty()) { tn = q; nm = "p" + (i + 1); }
+                        if (tn.isEmpty() || nm.isEmpty()) { if (tn.isEmpty()) tn = q; nm = null; } // unnamed: param_N
                         params.add(new ParameterImpl(nm, type(tn), currentProgram, SourceType.USER_DEFINED));
+                        names.add(nm);
                         stackOff.add(off);
                         i++;
                     }
@@ -98,7 +102,7 @@ public class ApplySignatures extends GhidraScript {
                             Register reg = currentProgram.getRegister("R" + k++);
                             vs = new VariableStorage(currentProgram, reg.getAddress(), v.getLength());
                         }
-                        cp.add(new ParameterImpl(v.getName(), v.getDataType(), vs, currentProgram, SourceType.USER_DEFINED));
+                        cp.add(new ParameterImpl(names.get(j), v.getDataType(), vs, currentProgram, SourceType.USER_DEFINED));
                     }
                     ReturnParameterImpl ret = rt.getLength() == 8
                             ? new ReturnParameterImpl(rt, new VariableStorage(currentProgram, r2, r1), currentProgram)
@@ -112,12 +116,13 @@ public class ApplySignatures extends GhidraScript {
                             SourceType.USER_DEFINED);
                 }
                 f.setSignatureSource(SourceType.USER_DEFINED);
+                if (f.getStackPurgeSize() != 0) { purgeFixed++; f.setStackPurgeSize(0); }
                 ok++;
             } catch (Exception e) {
                 printerr("ApplySignatures: " + a + " " + p[1] + ": " + e.getMessage());
                 bad++;
             }
         }
-        println("ApplySignatures: " + ok + " applied, " + bad + " failed");
+        println("ApplySignatures: " + ok + " applied, " + bad + " failed, stack purge set to 0 on " + purgeFixed);
     }
 }

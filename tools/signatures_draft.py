@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Draft tools/ghidra/signatures_main.tsv from CallArgCheck.java's protos.tsv (T21d, #97 B3).
 
-Usage: python3 -I tools/signatures_draft.py <protos.tsv> tools/ghidra/names_main.tsv tools/ghidra/signatures_main.tsv
+Usage: python3 -I tools/signatures_draft.py <protos.tsv> tools/ghidra/names_main.tsv tools/ghidra/signatures_main.tsv \
+           [<mismatch.tsv>]
+With a CallArgCheck mismatch.tsv, the unnamed (FUN_) callees and callers it lists get a row as well.
 
 Rows of the existing signatures file whose source column is not "asm" (hand-reviewed: "doc") are kept as they are;
 every other named function (names_main.tsv, function entries only) gets a row derived from the disassembly:
@@ -9,7 +11,8 @@ every other named function (names_main.tsv, function entries only) gets a row de
 - parameters: R1..R4 live at the entry (CallArgCheck block liveness), sized by the first spill of each register
   (MOV.B/W/L Rk,dsp[SP] in CC-RX -O0 code; L otherwise). A gap (R1, R3 live but not R2) is filled with uint32.
   The decompiler's type is kept when its size matches and it is not undefinedN (so pointers and signedness survive).
-- return: if every RTS/RTSD is preceded by the -O0 return idiom (MOVU.B/MOVU.W/MOV.B/MOV.W/MOV.L dsp[SP],R1), the
+- return: if every RTS/RTSD is preceded by an -O0 return idiom (MOVU.B/MOVU.W/MOV.B/MOV.W/MOV.L dsp[SP],R1, or
+  MOV.B/W/L R1,dsp[SP] not right after a call), the
   function returns that type (the decompiler's type is kept when its size matches, e.g. bool, char, pointers).
   Otherwise, if any direct call site reads R1 before writing it after the call, it returns a value sized by the
   callers' first use (MOV.B/MOV.W R1,... gives 1/2 bytes), else the decompiler's type if it has one, else uint32
@@ -69,13 +72,14 @@ def draft(r):
             ct, csz = ctype(cps[i - 1])
             if ct and csz == sz:
                 t = ct
-        params.append(f"{t} p{i}")
+        params.append(t)  # unnamed: Ghidra shows param_N and does not carry a made-up name into the callers
     sites, rd1, rd12 = int(r["sites"]), int(r["sites_read_R1"]), int(r["sites_read_R1R2"])
     ct, csz = ctype(cret) if cret and cret != "void" else (None, 0)
     ub, uw, _ul = (int(x) for x in r.get("ret_use_B_W_L", "0/0/0").split("/"))
     esz = 2 if uw else 1 if ub else 0  # size evidence from MOV.B/MOV.W R1,... right after the call
     epi = r.get("ret_epilogue", "-")
-    EPI = {"UB": ("uint8", 1), "UW": ("uint16", 2), "B": ("int8", 1), "W": ("int16", 2), "L": ("uint32", 4)}
+    EPI = {"UB": ("uint8", 1), "UW": ("uint16", 2), "B": ("int8", 1), "W": ("int16", 2), "L": ("uint32", 4),
+           "SB": ("uint8", 1), "SW": ("uint16", 2), "SL": ("uint32", 4)}
     if epi in EPI:  # every return loads R1 from the frame right before RTS/RTSD: the function returns that
         et, esz2 = EPI[epi]
         ret = ct if ct and csz == esz2 else et
@@ -92,7 +96,7 @@ def draft(r):
     return ret, ", ".join(params) if params else "void", note
 
 
-def main(protos, names, out):
+def main(protos, names, out, mismatch=None):
     rows = {}
     with open(protos) as f:
         hdr = f.readline().rstrip("\n").split("\t")
@@ -119,6 +123,15 @@ def main(protos, names, out):
             if p[1].startswith("@"):
                 continue
             named.append((int(p[0], 16), p[1]))
+    if mismatch:  # also unnamed callees (and callers) that CallArgCheck lists
+        with open(mismatch) as f:
+            for line in f:
+                p = line.rstrip("\n").split("\t")
+                if line.startswith("#") or p[0] == "kind" or len(p) < 6:
+                    continue
+                for a, n in ((p[4], p[5]), (p[2], p[3])):
+                    if n.startswith("FUN_"):
+                        named.append((int(a, 16), n))
     lines, nd, na, miss = [], 0, 0, 0
     for a, name in sorted(set(named)):
         if a in keep:
@@ -133,7 +146,7 @@ def main(protos, names, out):
         na += 1
     with open(out, "w") as f:
         f.write("# FT-710 MAIN V01-12 function signatures (T21d, #97 B3), applied with ApplySignatures.java after ApplyNames.java.\n")
-        f.write("# address<TAB>name<TAB>return type<TAB>parameters (\"type name, ...\" or void)<TAB>source<TAB>note\n")
+        f.write("# address<TAB>name<TAB>return type<TAB>parameters (\"type [name][@stack:N], ...\" or void; unnamed = param_N)<TAB>source<TAB>note\n")
         f.write("# source: doc = reviewed against the disassembly and docs/code/main (kept by tools/signatures_draft.py);\n")
         f.write("#         asm = drafted by tools/signatures_draft.py from CallArgCheck.java protos (overwritten on redraft).\n")
         f.write("# Types: void bool char int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double, '*' for pointers.\n")
@@ -144,4 +157,4 @@ def main(protos, names, out):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    main(*sys.argv[1:5])

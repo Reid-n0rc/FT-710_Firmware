@@ -250,7 +250,8 @@ public class CallArgCheck extends GhidraScript {
     }
 
     // the CC-RX -O0 return idiom: the instruction right before each RTS/RTSD loads R1 from the frame
-    // (MOVU.B/MOVU.W = unsigned 1/2 bytes, MOV.B/MOV.W = signed, MOV.L = 4). "-" if no return has it, "mixed" if they differ.
+    // (MOVU.B/MOVU.W = unsigned 1/2 bytes, MOV.B/MOV.W = signed, MOV.L = 4), or stores R1 to the frame
+    // (SB/SW/SL; not right after a call). "-" if no return has it, "mixed" if they differ.
     String retEpilogue(Function f) {
         String res = null;
         boolean any = false;
@@ -265,6 +266,11 @@ public class CallArgCheck extends GhidraScript {
                 String pm = pv.getMnemonicString();
                 k = pm.equals("MOVU.B") ? "UB" : pm.equals("MOVU.W") ? "UW" : pm.equals("MOV.B") ? "B"
                         : pm.equals("MOV.W") ? "W" : pm.equals("MOV.L") ? "L" : "-";
+            } else if (pv != null && pv.getNumOperands() == 2 && pv.getDefaultOperandRepresentation(0).equals("R1")
+                    && pv.getDefaultOperandRepresentation(1).contains("[SP]") && pv.getMnemonicString().startsWith("MOV.")
+                    && pv.getPrevious() != null && !isCall(pv.getPrevious())) {
+                // the other -O0 form: R1 is stored to the return slot right before the return (not a call result)
+                k = "S" + pv.getMnemonicString().substring(4);
             }
             if (!k.equals("-")) any = true;
             res = res == null ? k : res.equals(k) ? res : "mixed";
