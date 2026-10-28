@@ -1,0 +1,39 @@
+# FT-710 DISPLAY: T11g missed function entries (same format as entries_display.tsv). Merge before ApplyNames.
+# --- ISR stubs from the T_CISR / def_inh descriptors (see docs/code/display/peripherals.md, GIC table). Each is "mov r0,#ch; b handler" or a short thunk.
+2011ecd4		ISR RSPI0 SPTI (GIC 272) -> 0x2011F89C(0)
+2011ecdc		ISR RSPI0 SPRI (GIC 271) -> 0x2011F840(0)
+2011ece4		ISR RSPI1 SPTI (GIC 275)
+2011ecec		ISR RSPI1 SPRI (GIC 274)
+2011ecf4		ISR RSPI2 SPTI (GIC 278)
+2011ecfc		ISR RSPI2 SPRI (GIC 277)
+2011ed04		ISR RSPI3 SPTI (GIC 281)
+2011ed0c		ISR RSPI3 SPRI (GIC 280)
+2011ed14		ISR RSPI4 SPTI (GIC 284)
+2011ed1c		ISR RSPI4 SPRI (GIC 283)
+201203d4		ISR RIIC0 RI (GIC 190) -> 0x20120C04(0)
+201203dc		ISR RIIC0 TI (GIC 191) -> 0x20120C54(0)
+201203e4		ISR RIIC0 TEI (GIC 189) -> 0x20120CB0(0)
+201203ec		ISR RIIC1 RI (GIC 198)
+201203f4		ISR RIIC1 TI (GIC 199)
+201203fc		ISR RIIC1 TEI (GIC 197)
+20120404		ISR RIIC2 RI (GIC 206)
+2012040c		ISR RIIC2 TI (GIC 207)
+20120414		ISR RIIC2 TEI (GIC 205)
+2012041c		ISR RIIC3 RI (GIC 214)
+20120424		ISR RIIC3 TI (GIC 215)
+2012042c		ISR RIIC3 TEI (GIC 213)
+201333f0		late start (FUN_201333f4): ISR GIC 535 (TINT, SDR SPI frame) -> 0x2011F138(2)
+20133418		late start (FUN_2013341c): ISR GIC 449 (TINT, DSP SPI frame) -> 0x2011F138(4)
+20137490		ISR DMAC ch3 end (GIC 44): sets a done flag
+201374a0		ISR DMAC ch5 end (GIC 46): calls a callback pointer
+201376c4		ISR DMAC ch4 end (GIC 45): calls a callback pointer
+20137aec		ISR DMAC ch9 end (GIC 50): calls a callback pointer
+20137d1c		ISR DMAC ch10 end (GIC 51): calls a callback pointer
+2013b58c		def_inh handler USBI0 (GIC 73) -> 0x201396B0(0)
+2013b598		def_inh handler USBI1 (GIC 74) -> 0x201396B0(1)
+2013fde0		def_inh handler SDHI0 (GIC 303) -> 0x20140B9C
+# --- function heads merged into neighbours
+20102698		backlight_set_pct; the tail of FUN_2010261c / target of FUN_201026e0 and FUN_201026e8
+20113d6c		dimmer_set_pct; target of FUN_20113db8 and FUN_20113dc0
+20101cd4		P2_4/P2_5/P10_1 3-way select (PSR2/PSR10), no Ghidra function
+20101da4		gpio_usb0_en: (port, on) -> P8_10 USB0_EN via PSR8, no Ghidra function
