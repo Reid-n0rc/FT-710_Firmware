@@ -229,7 +229,7 @@ def find_strings(b, a0, pointed):
                 dbl += 1
             else:
                 break
-        if dbl and j < n and b[j] == 0 and ((dbl >= 3 and j - i >= 8) or ptr):
+        if dbl and j < n and b[j] == 0 and ((dbl >= 3 and j - i >= 8) or (ptr and dbl >= 2)):
             try:
                 txt = b[i:j].decode('shift_jis')
                 out.append((i, j + 1 - i, 'string_sjis', repr(txt[:30]) + ('; pointer to start' if ptr else '')))
@@ -241,7 +241,9 @@ def find_strings(b, a0, pointed):
         j = i
         while j + 1 < n and b[j + 1] == 0 and b[j] in PRINT:
             j += 2
-        if (j - i) // 2 >= (1 if ptr else 4) and (j + 1 >= n or (b[j] == 0 and b[j + 1] == 0)) and (a0 + i) % 2 == 0:
+        letters = sum(1 for c in b[i:j:2] if c in ALNUM and not 0x30 <= c <= 0x39)
+        if ((j - i) // 2 >= (1 if ptr else 4) and (j + 1 >= n or (b[j] == 0 and b[j + 1] == 0)) and (a0 + i) % 2 == 0
+                and 2 * letters >= (j - i) // 2):
             k = min(n, j + 2)
             out.append((i, k - i, 'string_utf16', repr(b[i:j:2][:40].decode('latin-1')) + ('; pointer to start' if ptr else '')))
             i = k
