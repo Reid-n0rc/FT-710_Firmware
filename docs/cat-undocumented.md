@@ -52,10 +52,18 @@ python3 -I tools/cat_backup.py /dev/cu.SLAB_USBtoUART     # Windows: COM5 etc.; 
 ```
 
 - Use the CP2105 **Enhanced** port, at the baud rate set in the radio's menu CAT-1 RATE (the script defaults to 38400; pass `--baud`).
-- It writes `backup-<date>/info.txt` with the firmware versions and the `JP0710;` reply. **The region code is the four hex digits after
-  `JP0710`** (for example `50E2`). Write it down: it is the one value you need to know to get the region back (section 4).
+- It writes `backup-<date>/info.txt` with the firmware versions and the `JP0710;` reply. The radio sends the region code together
+  with its bitwise complement, and the script checks the two against each other. `info.txt` then says, for example,
+  `region code 0x50E2 (check bytes OK)`. **Write the code down:** it is the one value you need to know to get the region back
+  (section 4).
 - It saves `e8_raw.bin` and `e8_plain.bin` and checks the signature and checksum. `E8` holds the memory channels only
   (0x87-byte memory header + 117 channels), not menus, calibration or the region **[fact]**.
+- It finishes with `SHA256SUMS`, the SHA-256 hash of every file in the backup. To check later that nothing has changed (on another
+  disk, after a copy, years later), run `python3 -I tools/cat_backup.py --verify backup-<date>`, or `shasum -a 256 -c SHA256SUMS`
+  inside the folder.
+
+The reads carry no CRC. `E8` and `SPR` replies carry an 8-bit additive checksum, which the script checks; `ID` and `VE` carry none.
+An 8-bit sum catches most single damaged bytes but not every error, which is why section 2.4 also suggests comparing two runs.
 
 ### 2.3 Full EEPROM dump: calibration and region (untested)
 
@@ -67,8 +75,9 @@ This also copies the radio's whole EEPROM into `eeprom.bin`. It is the **only** 
 region code as well. Expect it to take several minutes, because the service command it uses (`SPR`) reads one byte at a time
 **[estimate]**. A progress line shows how far it is, the time left and any bytes that didn't answer.
 
-It only reads, but it **has not been run on a radio yet**. Check the result: bytes 0x010F..0x0110 of `eeprom.bin` should equal the
-region code from `JP0710;`, and `eeprom_missing.txt` lists any addresses that didn't answer.
+It only reads, but it **has not been run on a radio yet**. The script checks each byte's reply (checksum and address,
+one retry), lists any addresses that didn't answer in `eeprom_missing.txt`, and compares the region code in the dump (bytes
+0x010F..0x0110) with the `JP0710;` reply. It prints a warning if they differ.
 
 ### 2.4 Is the backup really read-only?
 
@@ -86,7 +95,7 @@ Yes, as far as the firmware shows. Three things make sure of it:
   Standard USB port (menus RPTT SELECT and PC KEYING), so a backup run on the wrong port could otherwise transmit.
 
 To check it on your own radio, run the backup twice, with the radio left alone in between. The two `e8_plain.bin` files, and the two
-`eeprom.bin` files if you used `--eeprom`, should be identical. That includes the EEPROM save counter (bytes 0x0005..0x0008), which
+`eeprom.bin` files if you used `--eeprom`, should be identical: their lines in the two `SHA256SUMS` files show the same hash. That includes the EEPROM save counter (bytes 0x0005..0x0008), which
 goes up on every save **[fact]** ([eeprom.md](code/main/eeprom.md)).
 
 ## 3. Every undocumented command: risk and path back

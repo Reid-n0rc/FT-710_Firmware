@@ -3,6 +3,7 @@
 
 Usage: python3 -I tools/cat_backup.py PORT [OUTDIR] [--baud 38400] [--eeprom]
        python3 -I tools/cat_backup.py --decode E8_RAW.BIN      (offline check of a saved E8 frame)
+       python3 -I tools/cat_backup.py --verify OUTDIR          (check a backup against its SHA256SUMS)
 
 PORT is the CP210x "Enhanced" COM port (macOS /dev/cu.SLAB_USBtoUART, Linux /dev/ttyUSB0, Windows COMx); the baud rate must match
 menu CAT-1 RATE. OUTDIR defaults to backup-<date>. Everything this script sends is a read:
@@ -14,9 +15,13 @@ calibration table (EEPROM 0x000A..0x010E) and the region code (0x010F), which no
 It never sends a set form: every frame goes through send(), which refuses anything that is not one of the reads above.
 The port is opened with RTS and DTR off, because the radio can be set to key the transmitter from them (RPTT SELECT,
 PC KEYING).
+Checks: the JP0710 region code against its complement bytes, the E8 signature and sum, each SPR reply's sum and address, and
+(with --eeprom) the region code in the dump against the JP0710 reply. Every file is listed with its SHA-256 in SHA256SUMS
+(the format of `shasum -a 256 -c` / `sha256sum -c`), so --verify can tell later whether a file has changed.
 See docs/cat-undocumented.md for what to back up, why, and how to restore.
 """
 import datetime
+import hashlib
 import os
 import sys
 import time
@@ -24,6 +29,41 @@ import time
 E8_LEN = 10674          # "E8" + 5 header bytes + 10665 data + sum + ";"
 E8_DATA = 10665
 EEPROM_END = 0x5836     # last EEPROM address (RAM mirror 0x464F..0x9E85)
+
+
+def parse_jp(reply):
+    """JP0710 read reply: 'JP0710' HHLL ~H~L + 10 hex digits of EEPROM header bytes 0..4 + ';' (25 chars).
+    Return (code, stamp, problems); code is the 16-bit region code, stamp the header bytes as hex."""
+    text = reply.decode(errors="replace")
+    if len(text) != 25 or not text.startswith("JP0710") or not text.endswith(";"):
+        return None, None, [f"unexpected reply {text!r}"]
+    try:
+        hi, lo, nhi, nlo = (int(text[i:i + 2], 16) for i in (6, 8, 10, 12))
+        int(text[14:24], 16)
+    except ValueError:
+        return None, None, [f"non-hex digits in {text!r}"]
+    problems = [] if (nhi, nlo) == (hi ^ 0xFF, lo ^ 0xFF) else ["check bytes are not the complement of the code"]
+    return (hi << 8) | lo, text[14:24], problems
+
+
+def write_sums(out):
+    names = sorted(n for n in os.listdir(out) if n != "SHA256SUMS" and os.path.isfile(os.path.join(out, n)))
+    with open(os.path.join(out, "SHA256SUMS"), "w") as f:
+        for n in names:
+            f.write(f"{hashlib.sha256(open(os.path.join(out, n), 'rb').read()).hexdigest()}  {n}\n")
+    return len(names)
+
+
+def verify_sums(out):
+    bad = 0
+    for line in open(os.path.join(out, "SHA256SUMS")):
+        digest, name = line.rstrip("\n").split("  ", 1)
+        path = os.path.join(out, name)
+        ok = os.path.isfile(path) and hashlib.sha256(open(path, "rb").read()).hexdigest() == digest
+        bad += not ok
+        print(f"  {'OK     ' if ok else 'CHANGED' if os.path.isfile(path) else 'MISSING'}  {name}")
+    print("All files match SHA256SUMS." if not bad else f"{bad} file(s) do not match SHA256SUMS.")
+    return 1 if bad else 0
 
 
 def decode_e8(raw):
@@ -159,6 +199,8 @@ def main():
         plain, problems = decode_e8(open(args[1], "rb").read())
         print("E8 OK" if not problems else "E8 problems: " + "; ".join(problems))
         return 0 if not problems else 1
+    if args[:1] == ["--verify"]:
+        return verify_sums(args[1])
     if not args or args[0].startswith("-"):
         print(__doc__)
         return 2
@@ -176,8 +218,20 @@ def main():
         print(f"No FT-710 on {port} at {baud} baud (ID; -> {ident!r}). Check the port and menu CAT-1 RATE.")
         return 1
     info = [f"date {datetime.datetime.now().isoformat(timespec='seconds')}", f"port {port} {baud}", f"ID; {ident.decode()}"]
-    for c in (b"VE0;", b"VE1;", b"VE2;", b"VE3;", b"JP0710;"):
+    for c in (b"VE0;", b"VE1;", b"VE2;", b"VE3;"):
         info.append(f"{c.decode()} {query(s, c).decode(errors='replace')}")
+    for _ in range(2):
+        jp = query(s, b"JP0710;")
+        code, stamp, problems = parse_jp(jp)
+        if not problems:
+            break
+    info.append(f"JP0710; {jp.decode(errors='replace')}")
+    if problems:
+        print("  JP0710 reply failed its check: " + "; ".join(problems))
+        info.append("region code UNVERIFIED: " + "; ".join(problems))
+        code = None
+    else:
+        info.append(f"region code 0x{code:04X} (check bytes OK), EEPROM header stamp {stamp}")
     open(os.path.join(out, "info.txt"), "w").write("\n".join(info) + "\n")
     print("\n".join("  " + x for x in info))
 
@@ -197,8 +251,17 @@ def main():
         open(os.path.join(out, "eeprom.bin"), "wb").write(image)
         open(os.path.join(out, "eeprom_missing.txt"), "w").write("".join(f"0x{a:04X}\n" for a in missing))
         print(f"  EEPROM: {len(image):,} bytes, {len(missing)} addresses unread (see eeprom_missing.txt)")
+        dump_code = (image[0x010F] << 8) | image[0x0110]
+        if code is None or 0x010F in missing or 0x0110 in missing:
+            print("  Region code in the dump could not be compared with JP0710.")
+        elif dump_code == code:
+            print(f"  Region code in the dump (0x{dump_code:04X}) matches JP0710.")
+        else:
+            print(f"  WARNING: region code in the dump (0x{dump_code:04X}) differs from JP0710 (0x{code:04X}).")
     s.close()
-    print(f"Done. Saved in {out}/")
+    n = write_sums(out)
+    print(f"  SHA-256 of {n} files written to SHA256SUMS")
+    print(f"Done. Saved in {out}/  (check later with --verify {out})")
     return 0
 
 
