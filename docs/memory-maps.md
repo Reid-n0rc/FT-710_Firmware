@@ -188,6 +188,16 @@ The other five (dst 0x0, 0x20000, 0x200000, 0x40140000, 0x70000) have length 0. 
 `SystemCoreClock` initial value) are writable .data **[inference]**. HardFault/SVC/PendSV/SysTick and the FLEXCOMM0 and MU_A IRQ
 vectors point into this RAM code directly. VTOR = 0x08001000, MSP = 0x00200000, MSPLIM = 0x001FF000. **[fact]**
 
+### Shared SRAM areas between M33 and HiFi4 (T12)
+
+| Range | Use | Evidence |
+|---|---|---|
+| 0x20020000–0x2003FFFF | rpmsg-lite shared memory (vrings + 512-byte buffers) | `rpmsg_lite_master_init(0x20020000, 0x20000)` in `ipc_init` 0x00084A50; DSP literal 0x20020000 @0x206CA8 **[fact]** |
+| 0x20060000–0x200631DF | DSP buffers (XOS init, I2S DMA buffers) | DSP literals in 0x0021C498, 0x002260D8 **[fact]** |
+| 0x20070000–0x2007FFFF | parameter register file, 32K × 16 bit, written by the MAIN CPU through the M33 console; the DSP addresses it via bases 0x2006FF00 (regs 0..0x7F) and 0x20077F00 (regs 0x4000..0x407F) | `regfile_*` 0x00080C20..0x00080C78; DSP literals **[fact]** |
+
+See `docs/code/ifdsp/README.md`.
+
 ### M33 memory map used in Ghidra
 
 | Range | Block | Notes |

@@ -96,7 +96,7 @@ GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
 | `IfdspHifi4Setup.java` | pre-script for the carved HiFi4 images: maps each one at its DSP load address and seeds the vectors (T07) |
 | `IfdspHifi4FindFuncs.java` | post-script: creates functions at 4-aligned `entry a1,N` prologues and drops artifacts in uninitialized memory (T07) |
 
-`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
+`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
 
 MAIN full rebuild (from the repo root; ~1 minute in total):
 ```sh

@@ -1,13 +1,91 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_000865ba @ 000865ba (26 bytes)
+// ===== vPortSVCHandler_C @ 0008657c (56 bytes)
 
-undefined4 * FUN_000865ba(void)
+void vPortSVCHandler_C(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  bool bVar1;
+  char cVar2;
+  undefined4 *puVar3;
+  
+  if (*(char *)(*(int *)(param_1 + 0x18) + -2) == '\x02') {
+    puVar3 = (undefined4 *)*DAT_00088800;
+    setProcStackPointerLimit(*puVar3);
+    bVar1 = (bool)isCurrentModePrivileged();
+    if (bVar1) {
+      setThreadModePrivileged(1);
+      bVar1 = (bool)isThreadMode();
+      if (bVar1) {
+        cVar2 = isUsingMainStack();
+        setStackMode(cVar2 == '\x01');
+      }
+    }
+    bVar1 = (bool)isCurrentModePrivileged();
+    if (bVar1) {
+      setProcessStackPointer(puVar3 + 10);
+    }
+    InstructionSynchronizationBarrier(0xf);
+                    /* WARNING: Could not recover jumptable at 0x00080a7c. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    (*(code *)puVar3[1])(puVar3 + 10,2,(code *)puVar3[1],param_4);
+    return;
+  }
+  vPortRaiseBASEPRI();
+  do {
+                    /* WARNING: Do nothing block with infinite loop */
+  } while( true );
+}
+
+
+// ===== vPortRaiseBASEPRI @ 00086596 (22 bytes)
+
+undefined8 vPortRaiseBASEPRI(void)
+
+{
+  bool bVar1;
+  undefined4 uVar2;
+  
+  uVar2 = 0;
+  bVar1 = (bool)isCurrentModePrivileged();
+  if (bVar1) {
+    uVar2 = getBasePriority();
+  }
+  bVar1 = (bool)isCurrentModePrivileged();
+  if (bVar1) {
+    setBasePriority(0x40);
+  }
+  DataSynchronizationBarrier(0xf);
+  InstructionSynchronizationBarrier(0xf);
+  return CONCAT44(0x40,uVar2);
+}
+
+
+// ===== vPortClearBASEPRI @ 000865ac (14 bytes)
+
+void vPortClearBASEPRI(undefined4 param_1)
+
+{
+  bool bVar1;
+  
+  bVar1 = (bool)isCurrentModePrivileged();
+  if (bVar1) {
+    setBasePriority(param_1);
+  }
+  DataSynchronizationBarrier(0xf);
+  InstructionSynchronizationBarrier(0xf);
+  return;
+}
+
+
+// ===== xEventGroupCreate @ 000865ba (26 bytes)
+
+undefined4 * xEventGroupCreate(void)
 
 {
   undefined4 *puVar1;
   
-  puVar1 = (undefined4 *)FUN_00081ec8(0x1c);
+  puVar1 = (undefined4 *)pvPortMalloc(0x1c);
   if (puVar1 != (undefined4 *)0x0) {
     *puVar1 = 0;
     FUN_00086716(puVar1 + 1);
@@ -16,40 +94,40 @@ undefined4 * FUN_000865ba(void)
 }
 
 
-// ===== FUN_000865d4 @ 000865d4 (208 bytes)
+// ===== xEventGroupWaitBits @ 000865d4 (208 bytes)
 
-uint FUN_000865d4(uint *param_1,uint param_2,int param_3,int param_4,int param_5)
+uint xEventGroupWaitBits(uint *param_1,uint param_2,int param_3,int param_4,int param_5)
 
 {
   int iVar1;
   uint uVar2;
   
   if (param_1 == (uint *)0x0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 & 0xff000000) != 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if (param_2 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   iVar1 = FUN_00082910();
   if ((iVar1 == 0) && (param_5 != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  FUN_00082484();
+  vTaskSuspendAll();
   uVar2 = *param_1;
   if (param_4 == 0) {
     if ((param_2 & uVar2) != 0) goto LAB_00086652;
@@ -76,7 +154,7 @@ LAB_00086652:
       *param_1 = uVar2 & ~param_2;
     }
   }
-  iVar1 = FUN_00082598();
+  iVar1 = xTaskResumeAll();
   if (param_5 == 0) {
     return uVar2;
   }
@@ -85,7 +163,7 @@ LAB_00086652:
   }
   uVar2 = FUN_00082ab0();
   if ((int)(uVar2 << 6) < 0) goto LAB_0008668a;
-  FUN_00082084();
+  vPortEnterCritical();
   uVar2 = *param_1;
   if (param_4 == 0) {
     if ((param_2 & uVar2) != 0) {
@@ -96,7 +174,7 @@ LAB_00086698:
     }
   }
   else if (param_2 == (param_2 & uVar2)) goto LAB_00086698;
-  FUN_000820a0();
+  vPortExitCritical();
 LAB_0008668a:
   return uVar2 & 0xffffff;
 }
@@ -115,18 +193,18 @@ uint FUN_000866a4(uint *param_1,uint param_2)
   uint *puVar6;
   
   if (param_1 == (uint *)0x0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 & 0xff000000) != 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  FUN_00082484();
+  vTaskSuspendAll();
   *param_1 = *param_1 | param_2;
   uVar5 = 0;
   puVar6 = (uint *)param_1[4];
@@ -136,7 +214,7 @@ LAB_000866d0:
     uVar2 = *param_1;
     if (param_1 + 3 == puVar1) {
       *param_1 = uVar2 & ~uVar5;
-      FUN_00082598();
+      xTaskResumeAll();
       return *param_1;
     }
     uVar3 = *puVar1;
@@ -267,9 +345,9 @@ bool FUN_00086798(int param_1)
 {
   int iVar1;
   
-  FUN_00082084();
+  vPortEnterCritical();
   iVar1 = *(int *)(param_1 + 0x38);
-  FUN_000820a0();
+  vPortExitCritical();
   return iVar1 == 0;
 }
 
@@ -293,7 +371,7 @@ undefined4 FUN_000867ae(uint *param_1,undefined4 param_2,int param_3)
   }
   else {
     if (param_3 == 0) {
-      thunk_FUN_000878cc(param_1[1]);
+      memcpy(param_1[1]);
       uVar2 = param_1[1];
       param_1[1] = uVar2 + param_1[0x10];
       uVar1 = 0;
@@ -302,7 +380,7 @@ undefined4 FUN_000867ae(uint *param_1,undefined4 param_2,int param_3)
       }
       goto LAB_000867c8;
     }
-    thunk_FUN_000878cc(param_1[3]);
+    memcpy(param_1[3]);
     uVar2 = param_1[3] - param_1[0x10];
     param_1[3] = uVar2;
     if (uVar2 < *param_1) {
@@ -343,7 +421,7 @@ void FUN_00086818(uint *param_1,undefined4 param_2)
     if (bVar3) {
       param_1[3] = uVar1;
     }
-    thunk_FUN_000878cc(param_2,param_1[3]);
+    memcpy(param_2,param_1[3]);
     return;
   }
   return;
@@ -358,7 +436,7 @@ void FUN_00086844(int param_1)
   char cVar1;
   int iVar2;
   
-  FUN_00082084();
+  vPortEnterCritical();
   cVar1 = *(char *)(param_1 + 0x45);
   while (('\0' < cVar1 && (*(int *)(param_1 + 0x24) != 0))) {
     iVar2 = FUN_0008279c(param_1 + 0x24);
@@ -368,8 +446,8 @@ void FUN_00086844(int param_1)
     cVar1 = cVar1 + -1;
   }
   *(undefined1 *)(param_1 + 0x45) = 0xff;
-  FUN_000820a0();
-  FUN_00082084();
+  vPortExitCritical();
+  vPortEnterCritical();
   cVar1 = *(char *)(param_1 + 0x44);
   while (('\0' < cVar1 && (*(int *)(param_1 + 0x10) != 0))) {
     iVar2 = FUN_0008279c(param_1 + 0x10);
@@ -379,7 +457,7 @@ void FUN_00086844(int param_1)
     cVar1 = cVar1 + -1;
   }
   *(undefined1 *)(param_1 + 0x44) = 0xff;
-  FUN_000820a0();
+  vPortExitCritical();
   return;
 }
 
@@ -393,12 +471,12 @@ undefined4 FUN_000868b4(int *param_1,int param_2)
   int iVar2;
   
   if (param_1 == (int *)0x0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  FUN_00082084();
+  vPortEnterCritical();
   iVar2 = param_1[0x10] * param_1[0xf];
   iVar1 = *param_1;
   param_1[2] = iVar1 + iVar2;
@@ -416,21 +494,21 @@ undefined4 FUN_000868b4(int *param_1,int param_2)
     FUN_00086716(param_1 + 4);
     FUN_00086716(param_1 + 9);
   }
-  FUN_000820a0();
+  vPortExitCritical();
   return 1;
 }
 
 
-// ===== FUN_00086916 @ 00086916 (60 bytes)
+// ===== xQueueGenericCreate @ 00086916 (60 bytes)
 
-int FUN_00086916(int param_1,int param_2,undefined1 param_3)
+int xQueueGenericCreate(int param_1,int param_2,undefined1 param_3)
 
 {
   int *piVar1;
   int *piVar2;
   
   if (param_1 != 0) {
-    piVar1 = (int *)FUN_00081ec8(param_2 * param_1 + 0x50);
+    piVar1 = (int *)pvPortMalloc(param_2 * param_1 + 0x50);
     if (piVar1 != (int *)0x0) {
       piVar2 = piVar1;
       if (param_2 != 0) {
@@ -444,7 +522,7 @@ int FUN_00086916(int param_1,int param_2,undefined1 param_3)
     }
     return (int)piVar1;
   }
-  FUN_00086596();
+  vPortRaiseBASEPRI();
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
@@ -459,18 +537,18 @@ void FUN_00086952(uint param_1,uint param_2)
   int iVar1;
   
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if (param_1 < param_2) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  iVar1 = FUN_00086916(param_1,0,2);
+  iVar1 = xQueueGenericCreate(param_1,0,2);
   if (iVar1 != 0) {
     *(uint *)(iVar1 + 0x38) = param_2;
   }
@@ -478,9 +556,9 @@ void FUN_00086952(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_00086976 @ 00086976 (276 bytes)
+// ===== xQueueGenericSend @ 00086976 (276 bytes)
 
-undefined4 FUN_00086976(int param_1,int param_2,int param_3,int param_4)
+undefined4 xQueueGenericSend(int param_1,int param_2,int param_3,int param_4)
 
 {
   bool bVar1;
@@ -490,33 +568,33 @@ undefined4 FUN_00086976(int param_1,int param_2,int param_3,int param_4)
   
   local_2c = param_3;
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 == 0) && (*(int *)(param_1 + 0x40) != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_4 == 2) && (*(int *)(param_1 + 0x3c) != 1)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   iVar2 = FUN_00082910();
   if ((iVar2 == 0) && (local_2c != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   bVar1 = false;
   while( true ) {
-    FUN_00082084();
+    vPortEnterCritical();
     if ((*(uint *)(param_1 + 0x38) < *(uint *)(param_1 + 0x3c)) || (param_4 == 2)) {
       iVar2 = FUN_000867ae(param_1,param_2,param_4);
       if (*(int *)(param_1 + 0x24) != 0) {
@@ -525,54 +603,54 @@ undefined4 FUN_00086976(int param_1,int param_2,int param_3,int param_4)
       if (iVar2 != 0) {
         FUN_00086542();
       }
-      FUN_000820a0();
+      vPortExitCritical();
       return 1;
     }
     if (local_2c == 0) {
-      FUN_000820a0();
+      vPortExitCritical();
       return 0;
     }
     if (!bVar1) {
       FUN_0008288c(auStack_28);
     }
-    FUN_000820a0();
-    FUN_00082484();
-    FUN_00082084();
+    vPortExitCritical();
+    vTaskSuspendAll();
+    vPortEnterCritical();
     if (*(char *)(param_1 + 0x44) == -1) {
       *(undefined1 *)(param_1 + 0x44) = 0;
     }
     if (*(char *)(param_1 + 0x45) == -1) {
       *(undefined1 *)(param_1 + 0x45) = 0;
     }
-    FUN_000820a0();
+    vPortExitCritical();
     iVar2 = FUN_000828a4(auStack_28,&local_2c);
     if (iVar2 != 0) break;
-    FUN_00082084();
+    vPortEnterCritical();
     if (*(int *)(param_1 + 0x38) == *(int *)(param_1 + 0x3c)) {
-      FUN_000820a0();
+      vPortExitCritical();
       FUN_00082700(param_1 + 0x10,local_2c);
       FUN_00086844(param_1);
-      iVar2 = FUN_00082598();
+      iVar2 = xTaskResumeAll();
       if (iVar2 == 0) {
         FUN_00086542();
       }
     }
     else {
-      FUN_000820a0();
+      vPortExitCritical();
       FUN_00086844(param_1);
-      FUN_00082598();
+      xTaskResumeAll();
     }
     bVar1 = true;
   }
   FUN_00086844(param_1);
-  FUN_00082598();
+  xTaskResumeAll();
   return 0;
 }
 
 
-// ===== FUN_00086a8a @ 00086a8a (146 bytes)
+// ===== xQueueGenericSendFromISR @ 00086a8a (146 bytes)
 
-undefined4 FUN_00086a8a(int param_1,int param_2,undefined4 *param_3,int param_4)
+undefined4 xQueueGenericSendFromISR(int param_1,int param_2,undefined4 *param_3,int param_4)
 
 {
   char cVar1;
@@ -581,24 +659,24 @@ undefined4 FUN_00086a8a(int param_1,int param_2,undefined4 *param_3,int param_4)
   undefined4 uVar4;
   
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 == 0) && (*(int *)(param_1 + 0x40) != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_4 == 2) && (*(int *)(param_1 + 0x3c) != 1)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  uVar2 = FUN_00086596();
+  uVar2 = vPortRaiseBASEPRI();
   if ((*(uint *)(param_1 + 0x38) < *(uint *)(param_1 + 0x3c)) || (param_4 == 2)) {
     cVar1 = *(char *)(param_1 + 0x45);
     FUN_000867ae(param_1,param_2,param_4,*(undefined4 *)(param_1 + 0x38));
@@ -619,14 +697,14 @@ undefined4 FUN_00086a8a(int param_1,int param_2,undefined4 *param_3,int param_4)
     uVar4 = 0;
   }
 LAB_00086b02:
-  FUN_000865ac(uVar2);
+  vPortClearBASEPRI(uVar2);
   return uVar4;
 }
 
 
-// ===== FUN_00086b1c @ 00086b1c (248 bytes)
+// ===== xQueueReceive @ 00086b1c (248 bytes)
 
-undefined4 FUN_00086b1c(int param_1,int param_2,int param_3,undefined4 param_4)
+undefined4 xQueueReceive(int param_1,int param_2,int param_3,undefined4 param_4)
 
 {
   bool bVar1;
@@ -639,27 +717,27 @@ undefined4 FUN_00086b1c(int param_1,int param_2,int param_3,undefined4 param_4)
   iStack_20 = param_3;
   uStack_1c = param_4;
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 == 0) && (*(int *)(param_1 + 0x40) != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   iVar2 = FUN_00082910();
   if ((iVar2 == 0) && (local_24 != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   bVar1 = false;
   while( true ) {
-    FUN_00082084();
+    vPortEnterCritical();
     iVar2 = *(int *)(param_1 + 0x38);
     if (iVar2 != 0) {
       FUN_00086818(param_1,param_2);
@@ -667,34 +745,34 @@ undefined4 FUN_00086b1c(int param_1,int param_2,int param_3,undefined4 param_4)
       if ((*(int *)(param_1 + 0x10) != 0) && (iVar2 = FUN_0008279c(param_1 + 0x10), iVar2 != 0)) {
         FUN_00086542();
       }
-      FUN_000820a0();
+      vPortExitCritical();
       return 1;
     }
     if (local_24 == 0) break;
     if (!bVar1) {
       FUN_0008288c(&iStack_20);
     }
-    FUN_000820a0();
-    FUN_00082484();
-    FUN_00082084();
+    vPortExitCritical();
+    vTaskSuspendAll();
+    vPortEnterCritical();
     if (*(char *)(param_1 + 0x44) == -1) {
       *(undefined1 *)(param_1 + 0x44) = 0;
     }
     if (*(char *)(param_1 + 0x45) == -1) {
       *(undefined1 *)(param_1 + 0x45) = 0;
     }
-    FUN_000820a0();
+    vPortExitCritical();
     iVar2 = FUN_000828a4(&iStack_20,&local_24);
     if (iVar2 == 0) {
       iVar2 = FUN_00086798(param_1);
       if (iVar2 == 0) {
         FUN_00086844(param_1);
-        FUN_00082598();
+        xTaskResumeAll();
       }
       else {
         FUN_00082700(param_1 + 0x24,local_24);
         FUN_00086844(param_1);
-        iVar2 = FUN_00082598();
+        iVar2 = xTaskResumeAll();
         if (iVar2 == 0) {
           FUN_00086542();
         }
@@ -702,7 +780,7 @@ undefined4 FUN_00086b1c(int param_1,int param_2,int param_3,undefined4 param_4)
     }
     else {
       FUN_00086844(param_1);
-      FUN_00082598();
+      xTaskResumeAll();
       iVar2 = FUN_00086798(param_1);
       if (iVar2 != 0) {
         return 0;
@@ -710,14 +788,14 @@ undefined4 FUN_00086b1c(int param_1,int param_2,int param_3,undefined4 param_4)
     }
     bVar1 = true;
   }
-  FUN_000820a0();
+  vPortExitCritical();
   return 0;
 }
 
 
-// ===== FUN_00086c14 @ 00086c14 (308 bytes)
+// ===== xQueueSemaphoreTake @ 00086c14 (308 bytes)
 
-undefined4 FUN_00086c14(int *param_1,int param_2)
+undefined4 xQueueSemaphoreTake(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -727,7 +805,7 @@ undefined4 FUN_00086c14(int *param_1,int param_2)
   
   local_24 = param_2;
   if (param_1 == (int *)0x0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -735,7 +813,7 @@ undefined4 FUN_00086c14(int *param_1,int param_2)
   if (param_1[0x10] == 0) {
     iVar1 = FUN_00082910();
     if ((iVar1 == 0) && (local_24 != 0)) {
-      FUN_00086596();
+      vPortRaiseBASEPRI();
       do {
                     /* WARNING: Do nothing block with infinite loop */
       } while( true );
@@ -743,7 +821,7 @@ undefined4 FUN_00086c14(int *param_1,int param_2)
     iVar2 = 0;
     iVar1 = iVar2;
     while( true ) {
-      FUN_00082084();
+      vPortEnterCritical();
       if (param_1[0xe] != 0) {
         param_1[0xe] = param_1[0xe] + -1;
         if (*param_1 == 0) {
@@ -753,39 +831,39 @@ undefined4 FUN_00086c14(int *param_1,int param_2)
         if ((param_1[4] != 0) && (iVar1 = FUN_0008279c(param_1 + 4), iVar1 != 0)) {
           FUN_00086542();
         }
-        FUN_000820a0();
+        vPortExitCritical();
         return 1;
       }
       if (local_24 == 0) break;
       if (iVar1 == 0) {
         FUN_0008288c(auStack_20);
       }
-      FUN_000820a0();
-      FUN_00082484();
-      FUN_00082084();
+      vPortExitCritical();
+      vTaskSuspendAll();
+      vPortEnterCritical();
       if ((char)param_1[0x11] == -1) {
         *(undefined1 *)(param_1 + 0x11) = 0;
       }
       if (*(char *)((int)param_1 + 0x45) == -1) {
         *(undefined1 *)((int)param_1 + 0x45) = 0;
       }
-      FUN_000820a0();
+      vPortExitCritical();
       iVar1 = FUN_000828a4(auStack_20,&local_24);
       if (iVar1 == 0) {
         iVar1 = FUN_00086798(param_1);
         if (iVar1 == 0) {
           FUN_00086844(param_1);
-          FUN_00082598();
+          xTaskResumeAll();
         }
         else {
           if (*param_1 == 0) {
-            FUN_00082084();
+            vPortEnterCritical();
             iVar2 = FUN_00082930(param_1[2]);
-            FUN_000820a0();
+            vPortExitCritical();
           }
           FUN_00082700(param_1 + 9,local_24);
           FUN_00086844(param_1);
-          iVar1 = FUN_00082598();
+          iVar1 = xTaskResumeAll();
           if (iVar1 == 0) {
             FUN_00086542();
           }
@@ -793,43 +871,43 @@ undefined4 FUN_00086c14(int *param_1,int param_2)
       }
       else {
         FUN_00086844(param_1);
-        FUN_00082598();
+        xTaskResumeAll();
         iVar1 = FUN_00086798(param_1);
         if (iVar1 != 0) {
           if (iVar2 == 0) {
             return 0;
           }
-          FUN_00082084();
+          vPortEnterCritical();
           iVar1 = 0;
           if (param_1[9] != 0) {
             iVar1 = 5 - *(int *)param_1[0xc];
           }
           FUN_00082a24(param_1[2],iVar1);
-          FUN_000820a0();
+          vPortExitCritical();
           return 0;
         }
       }
       iVar1 = 1;
     }
     if (iVar2 == 0) {
-      FUN_000820a0();
+      vPortExitCritical();
       return 0;
     }
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  FUN_00086596();
+  vPortRaiseBASEPRI();
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
 }
 
 
-// ===== FUN_00086d48 @ 00086d48 (116 bytes)
+// ===== xQueueReceiveFromISR @ 00086d48 (116 bytes)
 
-undefined4 FUN_00086d48(int param_1,int param_2,undefined4 *param_3)
+undefined4 xQueueReceiveFromISR(int param_1,int param_2,undefined4 *param_3)
 
 {
   char cVar1;
@@ -838,18 +916,18 @@ undefined4 FUN_00086d48(int param_1,int param_2,undefined4 *param_3)
   undefined4 uVar4;
   
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
   if ((param_2 == 0) && (*(int *)(param_1 + 0x40) != 0)) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  uVar2 = FUN_00086596();
+  uVar2 = vPortRaiseBASEPRI();
   iVar3 = *(int *)(param_1 + 0x38);
   uVar4 = 0;
   if (iVar3 != 0) {
@@ -870,7 +948,7 @@ undefined4 FUN_00086d48(int param_1,int param_2,undefined4 *param_3)
     uVar4 = 1;
   }
 LAB_00086da6:
-  FUN_000865ac(uVar2);
+  vPortClearBASEPRI(uVar2);
   return uVar4;
 }
 
@@ -881,13 +959,13 @@ void FUN_00086dbc(int param_1)
 
 {
   if (param_1 == 0) {
-    FUN_00086596();
+    vPortRaiseBASEPRI();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  FUN_000821a8();
-  FUN_00081fd4(param_1);
+  vQueueUnregisterQueue();
+  vPortFree(param_1);
   return;
 }
 
@@ -897,14 +975,14 @@ void FUN_00086dbc(int param_1)
 void FUN_00086dd6(int param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  FUN_00082084();
+  vPortEnterCritical();
   if (*(char *)(param_1 + 0x44) == -1) {
     *(undefined1 *)(param_1 + 0x44) = 0;
   }
   if (*(char *)(param_1 + 0x45) == -1) {
     *(undefined1 *)(param_1 + 0x45) = 0;
   }
-  FUN_000820a0();
+  vPortExitCritical();
   if (*(int *)(param_1 + 0x38) == 0) {
     FUN_00082768(param_1 + 0x24,param_2,param_3);
   }
@@ -913,9 +991,9 @@ void FUN_00086dd6(int param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00086e1c @ 00086e1c (60 bytes)
+// ===== CLOCK_AttachClk @ 00086e1c (60 bytes)
 
-void FUN_00086e1c(uint param_1)
+void CLOCK_AttachClk(uint param_1)
 
 {
   undefined *puVar1;
@@ -944,9 +1022,9 @@ void FUN_00086e1c(uint param_1)
 }
 
 
-// ===== FUN_00086e58 @ 00086e58 (52 bytes)
+// ===== CLOCK_SetClkDiv @ 00086e58 (52 bytes)
 
-void FUN_00086e58(uint param_1,int param_2)
+void CLOCK_SetClkDiv(uint param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -1021,9 +1099,9 @@ void FUN_00086ec4(int param_1,int param_2)
 }
 
 
-// ===== FUN_00086ef0 @ 00086ef0 (14 bytes)
+// ===== INPUTMUX_AttachSignal @ 00086ef0 (14 bytes)
 
-void FUN_00086ef0(int param_1,int param_2,uint param_3)
+void INPUTMUX_AttachSignal(int param_1,int param_2,uint param_3)
 
 {
   *(uint *)(param_1 + param_2 * 4 + (param_3 >> 0x14)) = param_3 & 0xfffff;
@@ -1043,9 +1121,9 @@ void FUN_00086efe(int param_1,uint param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00086f14 @ 00086f14 (26 bytes)
+// ===== MU_SetFlags @ 00086f14 (26 bytes)
 
-void FUN_00086f14(int param_1,uint param_2)
+void MU_SetFlags(int param_1,uint param_2)
 
 {
   do {
@@ -1067,9 +1145,9 @@ void FUN_00086f2e(int param_1)
 }
 
 
-// ===== FUN_00086f52 @ 00086f52 (18 bytes)
+// ===== RESET_ClearPeripheralReset @ 00086f52 (18 bytes)
 
-void FUN_00086f52(uint param_1)
+void RESET_ClearPeripheralReset(uint param_1)
 
 {
   uint uVar1;
@@ -1118,12 +1196,12 @@ void FUN_00086f52(uint param_1)
 }
 
 
-// ===== FUN_00086f64 @ 00086f64 (38 bytes)
+// ===== SCTIMER_GetDefaultConfig @ 00086f64 (38 bytes)
 
-void FUN_00086f64(undefined1 *param_1)
+void SCTIMER_GetDefaultConfig(undefined1 *param_1)
 
 {
-  thunk_FUN_00087900(param_1,0,9);
+  memset(param_1,0,9);
   *param_1 = 1;
   param_1[1] = 0;
   param_1[2] = 0;
@@ -1137,9 +1215,9 @@ void FUN_00086f64(undefined1 *param_1)
 }
 
 
-// ===== FUN_00086f8a @ 00086f8a (98 bytes)
+// ===== SCTIMER_UpdatePwmDutycycle @ 00086f8a (98 bytes)
 
-void FUN_00086f8a(int param_1,undefined4 param_2,uint param_3,int param_4)
+void SCTIMER_UpdatePwmDutycycle(int param_1,undefined4 param_2,uint param_3,int param_4)
 
 {
   longlong lVar1;
@@ -1174,9 +1252,9 @@ void FUN_00086f8a(int param_1,undefined4 param_2,uint param_3,int param_4)
 }
 
 
-// ===== FUN_00086fec @ 00086fec (28 bytes)
+// ===== SEMA42_Lock @ 00086fec (28 bytes)
 
-void FUN_00086fec(int param_1,uint param_2,char param_3)
+void SEMA42_Lock(int param_1,uint param_2,char param_3)
 
 {
   char *pcVar1;
@@ -1191,9 +1269,9 @@ void FUN_00086fec(int param_1,uint param_2,char param_3)
 }
 
 
-// ===== FUN_00087008 @ 00087008 (36 bytes)
+// ===== SEMA42_ResetAllGates @ 00087008 (36 bytes)
 
-ushort FUN_00087008(int param_1,ushort param_2)
+ushort SEMA42_ResetAllGates(int param_1,ushort param_2)
 
 {
   ushort uVar1;
@@ -1210,12 +1288,12 @@ ushort FUN_00087008(int param_1,ushort param_2)
 }
 
 
-// ===== FUN_0008702c @ 0008702c (34 bytes)
+// ===== USART_GetDefaultConfig @ 0008702c (34 bytes)
 
-void FUN_0008702c(undefined4 *param_1)
+void USART_GetDefaultConfig(undefined4 *param_1)
 
 {
-  thunk_FUN_00087900(param_1,0,0x14);
+  memset(param_1,0,0x14);
   *param_1 = &DAT_0001c200;
   param_1[1] = 0x10000;
   param_1[2] = 0;
@@ -1293,9 +1371,9 @@ undefined * FUN_0008704e(uint *param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_00087100 @ 00087100 (306 bytes)
+// ===== USART_Init @ 00087100 (306 bytes)
 
-undefined * FUN_00087100(uint *param_1,uint *param_2,int param_3,undefined4 param_4)
+undefined * USART_Init(uint *param_1,uint *param_2,int param_3,undefined4 param_4)
 
 {
   byte bVar1;
@@ -1358,7 +1436,7 @@ undefined * FUN_00087100(uint *param_1,uint *param_2,int param_3,undefined4 para
 void FUN_00087234(void)
 
 {
-  FUN_000809a0(3,1);
+  CLOCK_SetDiv_0x620(3,1);
   return;
 }
 
@@ -1407,9 +1485,9 @@ void FUN_0008726c(void)
 }
 
 
-// ===== FUN_00087294 @ 00087294 (190 bytes)
+// ===== BOARD_InitPins @ 00087294 (190 bytes)
 
-void FUN_00087294(void)
+void BOARD_InitPins(void)
 
 {
   undefined1 local_28;
@@ -1426,29 +1504,29 @@ void FUN_00087294(void)
   undefined1 local_13;
   
   FUN_00087242();
-  FUN_00084b78();
-  FUN_00084bec();
+  BOARD_InitPins_P0();
+  BOARD_InitPins_codec_spi();
   FUN_0008726c();
   DAT_40021044 = 1;
   DAT_40021044 = 4;
   local_28 = 1;
   local_27 = 0;
-  FUN_000841d8(&DAT_40100000,0,0x1c,&local_28);
+  GPIO_PinInit(&DAT_40100000,0,0x1c,&local_28);
   local_24 = 1;
   local_23 = 0;
-  FUN_000841d8(&DAT_40100000,0,0x1d,&local_24);
+  GPIO_PinInit(&DAT_40100000,0,0x1d,&local_24);
   local_20 = 1;
   local_1f = 0;
-  FUN_000841d8(&DAT_40100000,0,0x1f,&local_20);
+  GPIO_PinInit(&DAT_40100000,0,0x1f,&local_20);
   local_1c = 1;
   local_1b = 0;
-  FUN_000841d8(&DAT_40100000,2,4,&local_1c);
+  GPIO_PinInit(&DAT_40100000,2,4,&local_1c);
   local_18 = 1;
   local_17 = 0;
-  FUN_000841d8(&DAT_40100000,2,5,&local_18);
+  GPIO_PinInit(&DAT_40100000,2,5,&local_18);
   local_14 = 1;
   local_13 = 0;
-  FUN_000841d8(&DAT_40100000,2,6,&local_14);
+  GPIO_PinInit(&DAT_40100000,2,6,&local_14);
   DAT_40004070 = 0;
   DAT_40004074 = 0;
   DAT_4000407c = 0;
@@ -1459,51 +1537,14 @@ void FUN_00087294(void)
 }
 
 
-// ===== main @ 000872ae (232 bytes)
+// ===== main @ 000872ae (14 bytes)
 
-undefined4 main(void)
+void main(void)
 
 {
-  uint uVar1;
-  undefined4 in_r3;
-  
-  FUN_00084e38();
-  thunk_FUN_00087900(&DAT_000886e4,0,0xc,in_r3);
-  FUN_000841b4(&DAT_40100000,0);
-  FUN_000841b4(&DAT_40100000,1);
-  FUN_000841b4(&DAT_40100000,2);
-  FUN_00087294();
-  thunk_FUN_0008494c();
-  FUN_00087240();
-  FUN_00080c20();
-  DAT_40021048 = 0x80000000;
-  FUN_00086ef0(&DAT_40026000,1,0x14000015);
-  FUN_00086f52(0x41d);
-  FUN_00086f52(0x41c);
-  FUN_00080bd0();
-  FUN_000811e0();
-  FUN_00084a50();
-  BOARD_DSP_Init();
-  FUN_000848f4(&DAT_40112000);
-  FUN_00087008(&DAT_40112000,0x40);
-  FUN_00086f14(&DAT_40110000,1);
-  do {
-    uVar1 = DAT_40110060;
-  } while ((uVar1 & 7) != 1);
-  FUN_00086fec(&DAT_40112000,0);
-  FUN_00086f14(&DAT_40110000,2);
-  DAT_40112003 = 0;
-  do {
-    uVar1 = DAT_40110060;
-  } while ((uVar1 & 7) != 3);
-  FUN_00080c4c(0,0x101);
-  FUN_00080c4c(0x4000,1);
-  FUN_00080c78(1);
-  create_IpcTasks();
-  FUN_00081264();
-  create_CommandTask();
-  vTaskStartScheduler();
-  return 0;
+  stdio_init();
+  app_main();
+  return;
 }
 
 
@@ -1559,9 +1600,9 @@ LAB_0008732a:
 }
 
 
-// ===== FUN_00087336 @ 00087336 (68 bytes)
+// ===== strcmp @ 00087336 (68 bytes)
 
-int FUN_00087336(uint *param_1,uint *param_2)
+int strcmp(uint *param_1,uint *param_2)
 
 {
   uint *puVar1;
@@ -1588,117 +1629,5 @@ int FUN_00087336(uint *param_1,uint *param_2)
     puVar2 = (uint *)((int)puVar2 + 1);
   } while (uVar3 != 0);
   return 0;
-}
-
-
-// ===== FUN_0008737a @ 0008737a (72 bytes)
-
-int FUN_0008737a(uint *param_1)
-
-{
-  uint *puVar1;
-  uint *puVar2;
-  uint uVar3;
-  uint *puVar4;
-  
-  puVar1 = param_1;
-  do {
-    if (((uint)puVar1 & 3) == 0) goto LAB_00087384;
-    puVar2 = (uint *)((int)puVar1 + 1);
-    uVar3 = *puVar1;
-    puVar1 = puVar2;
-  } while ((char)uVar3 != '\0');
-LAB_000873b6:
-  return (int)puVar2 - (int)((int)param_1 + 1);
-LAB_00087384:
-  do {
-    puVar4 = puVar1;
-    puVar2 = puVar4 + 1;
-    uVar3 = *puVar4;
-    puVar1 = puVar2;
-  } while ((uVar3 + 0xfefefeff & ~uVar3 & 0x80808080) == 0);
-  if ((uVar3 & 0xff) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 1);
-  }
-  else if ((uVar3 & 0xff00) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 2);
-  }
-  else if ((uVar3 & 0xff0000) == 0) {
-    puVar2 = (uint *)((int)puVar4 + 3);
-  }
-  goto LAB_000873b6;
-}
-
-
-// ===== FUN_000873c2 @ 000873c2 (86 bytes)
-
-int FUN_000873c2(uint *param_1,uint *param_2,uint param_3)
-
-{
-  uint *puVar1;
-  uint uVar2;
-  
-  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
-    for (; 3 < param_3; param_3 = param_3 - 4) {
-      uVar2 = *param_2;
-      if ((uVar2 != *param_1) || ((uVar2 + 0xfefefeff & ~uVar2 & 0x80808080) != 0)) break;
-      param_1 = param_1 + 1;
-      param_2 = param_2 + 1;
-    }
-  }
-  puVar1 = param_1;
-  while( true ) {
-    if (puVar1 == (uint *)(param_3 + (int)param_1)) {
-      return 0;
-    }
-    uVar2 = (uint)(byte)*puVar1;
-    if (uVar2 != (byte)*param_2) break;
-    puVar1 = (uint *)((int)puVar1 + 1);
-    param_2 = (uint *)((int)param_2 + 1);
-    if (uVar2 == 0) {
-      return 0;
-    }
-  }
-  return uVar2 - (byte)*param_2;
-}
-
-
-// ===== FUN_00087418 @ 00087418 (88 bytes)
-
-void FUN_00087418(uint *param_1,uint *param_2,uint param_3)
-
-{
-  char cVar1;
-  char *pcVar2;
-  uint *puVar3;
-  uint *puVar4;
-  uint uVar5;
-  
-  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
-    for (; 3 < param_3; param_3 = param_3 - 4) {
-      uVar5 = *param_2;
-      if ((uVar5 + 0xfefefeff & ~uVar5 & 0x80808080) != 0) break;
-      *param_1 = uVar5;
-      param_1 = param_1 + 1;
-      param_2 = param_2 + 1;
-    }
-  }
-  pcVar2 = (char *)((int)param_2 - 1);
-  do {
-    param_3 = param_3 - 1;
-    if (param_3 == 0xffffffff) {
-      return;
-    }
-    pcVar2 = pcVar2 + 1;
-    cVar1 = *pcVar2;
-    puVar4 = (uint *)((int)param_1 + 1);
-    *(char *)param_1 = cVar1;
-    param_1 = puVar4;
-  } while (cVar1 != '\0');
-  puVar3 = (uint *)(param_3 + (int)puVar4);
-  for (; puVar4 != puVar3; puVar4 = (uint *)((int)puVar4 + 1)) {
-    *(char *)puVar4 = '\0';
-  }
-  return;
 }
 

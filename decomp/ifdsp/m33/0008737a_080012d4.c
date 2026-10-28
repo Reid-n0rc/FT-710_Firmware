@@ -1,5 +1,117 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== strlen @ 0008737a (72 bytes)
+
+int strlen(uint *param_1)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  uint uVar3;
+  uint *puVar4;
+  
+  puVar1 = param_1;
+  do {
+    if (((uint)puVar1 & 3) == 0) goto LAB_00087384;
+    puVar2 = (uint *)((int)puVar1 + 1);
+    uVar3 = *puVar1;
+    puVar1 = puVar2;
+  } while ((char)uVar3 != '\0');
+LAB_000873b6:
+  return (int)puVar2 - (int)((int)param_1 + 1);
+LAB_00087384:
+  do {
+    puVar4 = puVar1;
+    puVar2 = puVar4 + 1;
+    uVar3 = *puVar4;
+    puVar1 = puVar2;
+  } while ((uVar3 + 0xfefefeff & ~uVar3 & 0x80808080) == 0);
+  if ((uVar3 & 0xff) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 1);
+  }
+  else if ((uVar3 & 0xff00) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 2);
+  }
+  else if ((uVar3 & 0xff0000) == 0) {
+    puVar2 = (uint *)((int)puVar4 + 3);
+  }
+  goto LAB_000873b6;
+}
+
+
+// ===== strncmp @ 000873c2 (86 bytes)
+
+int strncmp(uint *param_1,uint *param_2,uint param_3)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    for (; 3 < param_3; param_3 = param_3 - 4) {
+      uVar2 = *param_2;
+      if ((uVar2 != *param_1) || ((uVar2 + 0xfefefeff & ~uVar2 & 0x80808080) != 0)) break;
+      param_1 = param_1 + 1;
+      param_2 = param_2 + 1;
+    }
+  }
+  puVar1 = param_1;
+  while( true ) {
+    if (puVar1 == (uint *)(param_3 + (int)param_1)) {
+      return 0;
+    }
+    uVar2 = (uint)(byte)*puVar1;
+    if (uVar2 != (byte)*param_2) break;
+    puVar1 = (uint *)((int)puVar1 + 1);
+    param_2 = (uint *)((int)param_2 + 1);
+    if (uVar2 == 0) {
+      return 0;
+    }
+  }
+  return uVar2 - (byte)*param_2;
+}
+
+
+// ===== FUN_00087418 @ 00087418 (88 bytes)
+
+void FUN_00087418(uint *param_1,uint *param_2,uint param_3)
+
+{
+  char cVar1;
+  char *pcVar2;
+  uint *puVar3;
+  uint *puVar4;
+  uint uVar5;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    for (; 3 < param_3; param_3 = param_3 - 4) {
+      uVar5 = *param_2;
+      if ((uVar5 + 0xfefefeff & ~uVar5 & 0x80808080) != 0) break;
+      *param_1 = uVar5;
+      param_1 = param_1 + 1;
+      param_2 = param_2 + 1;
+    }
+  }
+  pcVar2 = (char *)((int)param_2 - 1);
+  do {
+    param_3 = param_3 - 1;
+    if (param_3 == 0xffffffff) {
+      return;
+    }
+    pcVar2 = pcVar2 + 1;
+    cVar1 = *pcVar2;
+    puVar4 = (uint *)((int)param_1 + 1);
+    *(char *)param_1 = cVar1;
+    param_1 = puVar4;
+  } while (cVar1 != '\0');
+  puVar3 = (uint *)(param_3 + (int)puVar4);
+  for (; puVar4 != puVar3; puVar4 = (uint *)((int)puVar4 + 1)) {
+    *(char *)puVar4 = '\0';
+  }
+  return;
+}
+
+
 // ===== FUN_00087470 @ 00087470 (64 bytes)
 
 void FUN_00087470(undefined4 *param_1)
@@ -59,7 +171,7 @@ LAB_000874ee:
       if ((uVar3 & 0xf00) == 0) {
         iVar1 = FUN_00087940(param_2[5]);
         if ((iVar1 == 0) || (-1 < (int)(uVar3 << 0x15))) {
-          uVar2 = FUN_00084e04(0x100);
+          uVar2 = _Csys_alloc_failed(0x100);
           param_2[7] = 0x100;
           uVar5 = uVar3 | 0x12800;
           param_2[4] = uVar2;
@@ -234,7 +346,7 @@ undefined4 FUN_000876aa(int param_1)
         FUN_00087702(auStack_38);
       }
     }
-    thunk_FUN_00087900(param_1,0,0x3c);
+    memset(param_1,0,0x3c);
     uVar2 = 0;
   }
   return uVar2;
@@ -248,7 +360,7 @@ undefined8 FUN_00087702(void)
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0008737a();
+  uVar1 = strlen();
   return CONCAT44(uVar1,0xffffffff);
 }
 
@@ -483,9 +595,9 @@ void FUN_00087850(uint param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_000878cc @ 000878cc (52 bytes)
+// ===== memcpy @ 000878cc (52 bytes)
 
-void FUN_000878cc(undefined4 *param_1,undefined4 *param_2,uint param_3)
+void memcpy(undefined4 *param_1,undefined4 *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -520,9 +632,9 @@ void FUN_000878cc(undefined4 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00087900 @ 00087900 (50 bytes)
+// ===== memset @ 00087900 (50 bytes)
 
-void FUN_00087900(uint *param_1,uint param_2,uint param_3)
+void memset(uint *param_1,uint param_2,uint param_3)
 
 {
   bool bVar1;
@@ -938,36 +1050,6 @@ void FLEXCOMM5_IRQHandler(void)
 
 {
   FUN_080016e8();
-  return;
-}
-
-
-// ===== FLEXCOMM14_IRQHandler @ 080012dc (8 bytes)
-
-void FLEXCOMM14_IRQHandler(void)
-
-{
-  FUN_08001768();
-  return;
-}
-
-
-// ===== FLEXCOMM15_IRQHandler @ 080012e4 (8 bytes)
-
-void FLEXCOMM15_IRQHandler(void)
-
-{
-  FUN_080016a8();
-  return;
-}
-
-
-// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
-
-void ADC0_IRQHandler(void)
-
-{
-  FUN_08001220();
   return;
 }
 

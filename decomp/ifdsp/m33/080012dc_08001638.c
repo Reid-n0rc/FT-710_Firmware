@@ -1,5 +1,35 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== FLEXCOMM14_IRQHandler @ 080012dc (8 bytes)
+
+void FLEXCOMM14_IRQHandler(void)
+
+{
+  FUN_08001768();
+  return;
+}
+
+
+// ===== FLEXCOMM15_IRQHandler @ 080012e4 (8 bytes)
+
+void FLEXCOMM15_IRQHandler(void)
+
+{
+  FUN_080016a8();
+  return;
+}
+
+
+// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
+
+void ADC0_IRQHandler(void)
+
+{
+  FUN_08001220();
+  return;
+}
+
+
 // ===== Reserved39_IRQHandler @ 080012f4 (8 bytes)
 
 void Reserved39_IRQHandler(void)
@@ -574,36 +604,6 @@ void FUN_08001638(undefined4 param_1)
 
 {
   (*(code *)0x8491d)(param_1);
-  return;
-}
-
-
-// ===== FUN_08001648 @ 08001648 (10 bytes)
-
-void FUN_08001648(undefined4 param_1)
-
-{
-  (*(code *)0x84351)(param_1);
-  return;
-}
-
-
-// ===== FUN_08001658 @ 08001658 (10 bytes)
-
-void FUN_08001658(undefined4 param_1)
-
-{
-  (*(code *)0x86e8d)(param_1);
-  return;
-}
-
-
-// ===== FUN_08001668 @ 08001668 (10 bytes)
-
-void FUN_08001668(undefined4 param_1)
-
-{
-  (*(code *)0x84935)(param_1);
   return;
 }
 

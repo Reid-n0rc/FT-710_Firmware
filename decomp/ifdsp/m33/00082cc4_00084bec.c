@@ -1,5 +1,218 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_00082cc4 @ 00082cc4 (70 bytes)
+
+void FUN_00082cc4(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5)
+
+{
+  int iVar1;
+  int local_20;
+  int iStack_1c;
+  int local_18;
+  undefined4 uStack_14;
+  
+  uStack_14 = param_4;
+  if (param_1 == 0) {
+    local_20 = param_1;
+    iStack_1c = param_2;
+    local_18 = param_3;
+    vPortRaiseBASEPRI();
+    do {
+                    /* WARNING: Do nothing block with infinite loop */
+    } while( true );
+  }
+  if (DAT_00088920 != 0) {
+    local_20 = param_2;
+    iStack_1c = param_3;
+    local_18 = param_1;
+    if (param_2 < 6) {
+      iVar1 = FUN_00082910();
+      if (iVar1 != 2) {
+        param_5 = 0;
+      }
+      xQueueGenericSend(DAT_00088920,&local_20,param_5);
+    }
+    else {
+      xQueueGenericSendFromISR(DAT_00088920,&local_20,param_4,0);
+    }
+  }
+  return;
+}
+
+
+// ===== FUN_00082d10 @ 00082d10 (146 bytes)
+
+uint FUN_00082d10(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int *piVar1;
+  uint uVar2;
+  int iVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  uint uVar6;
+  uint uVar7;
+  
+  uVar2 = FUN_00082494();
+  if (uVar2 < DAT_0008891c) {
+    while (piVar1 = DAT_000888f0, *DAT_000888ec != 0) {
+      uVar6 = ((uint *)DAT_000888ec[3])[3];
+      uVar7 = *(uint *)DAT_000888ec[3];
+      FUN_00086778(uVar6 + 4);
+      (**(code **)(uVar6 + 0x20))(uVar6);
+      piVar1 = DAT_000888ec;
+      if ((*(byte *)(uVar6 + 0x28) & 4) != 0) {
+        uVar5 = *(int *)(uVar6 + 0x18) + uVar7;
+        if (uVar7 < uVar5) {
+          *(uint *)(uVar6 + 4) = uVar5;
+          *(uint *)(uVar6 + 0x10) = uVar6;
+          FUN_0008674a(piVar1,uVar6 + 4);
+        }
+        else {
+          iVar3 = FUN_00082cc4(uVar6,0,uVar7,0,0,param_2,param_3);
+          if (iVar3 == 0) {
+            vPortRaiseBASEPRI();
+            do {
+                    /* WARNING: Do nothing block with infinite loop */
+            } while( true );
+          }
+        }
+      }
+    }
+    DAT_000888f0 = DAT_000888ec;
+    uVar4 = 1;
+    DAT_000888ec = piVar1;
+  }
+  else {
+    uVar4 = 0;
+  }
+  *param_1 = uVar4;
+  DAT_0008891c = uVar2;
+  return uVar2;
+}
+
+
+// ===== prvTimerTask @ 00082db0 (384 bytes)
+
+void prvTimerTask(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  byte bVar3;
+  bool bVar4;
+  int iVar5;
+  uint uVar6;
+  undefined1 auStack_34 [4];
+  int local_30;
+  code *local_2c;
+  int local_28;
+  undefined4 local_24;
+  
+LAB_00082dba:
+  iVar5 = *DAT_000888ec;
+  if (iVar5 == 0) {
+    uVar6 = 0;
+  }
+  else {
+    uVar6 = *(uint *)DAT_000888ec[3];
+  }
+  vTaskSuspendAll();
+  uVar1 = FUN_00082d10(&local_30);
+  if (local_30 == 0) {
+    if (iVar5 == 0) {
+      bVar4 = *DAT_000888f0 == 0;
+    }
+    else {
+      bVar4 = false;
+      if (uVar6 <= uVar1) {
+        xTaskResumeAll();
+        iVar5 = *(int *)(DAT_000888ec[3] + 0xc);
+        FUN_00086778(iVar5 + 4);
+        if ((int)((uint)*(byte *)(iVar5 + 0x28) << 0x1d) < 0) {
+          iVar2 = FUN_00082c44(iVar5,*(int *)(iVar5 + 0x18) + uVar6,uVar1,uVar6);
+          if ((iVar2 != 0) && (iVar2 = FUN_00082cc4(iVar5,0,uVar6,0,0), iVar2 == 0)) {
+            vPortRaiseBASEPRI();
+            do {
+                    /* WARNING: Do nothing block with infinite loop */
+            } while( true );
+          }
+        }
+        else {
+          *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) & 0xfe;
+        }
+        (**(code **)(iVar5 + 0x20))(iVar5);
+        goto switchD_00082e62_default;
+      }
+    }
+    FUN_00086dd6(DAT_00088920,uVar6 - uVar1,bVar4);
+    iVar5 = xTaskResumeAll();
+    if (iVar5 == 0) {
+      FUN_00086542();
+    }
+  }
+  else {
+    xTaskResumeAll();
+  }
+switchD_00082e62_default:
+  do {
+    iVar5 = xQueueReceive(DAT_00088920,&local_30,0);
+    if (iVar5 == 0) goto LAB_00082dba;
+    if ((-1 < local_30) || ((*local_2c)(local_28,local_24), -1 < local_30)) {
+      iVar5 = local_28;
+      if (*(int *)(local_28 + 0x14) != 0) {
+        FUN_00086778(local_28 + 4);
+      }
+      iVar2 = FUN_00082d10(auStack_34);
+      switch(local_30) {
+      case 0:
+      case 1:
+      case 2:
+      case 6:
+      case 7:
+        *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) | 1;
+        iVar2 = FUN_00082c44(iVar5,local_2c + *(int *)(iVar5 + 0x18),iVar2);
+        if (((iVar2 != 0) &&
+            ((**(code **)(iVar5 + 0x20))(iVar5), (int)((uint)*(byte *)(iVar5 + 0x28) << 0x1d) < 0))
+           && (iVar5 = FUN_00082cc4(iVar5,0,local_2c + *(int *)(iVar5 + 0x18),0,0), iVar5 == 0)) {
+          vPortRaiseBASEPRI();
+          do {
+                    /* WARNING: Do nothing block with infinite loop */
+          } while( true );
+        }
+        goto switchD_00082e62_default;
+      case 3:
+      case 8:
+        bVar3 = *(byte *)(iVar5 + 0x28);
+        break;
+      case 4:
+      case 9:
+        *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) | 1;
+        *(code **)(iVar5 + 0x18) = local_2c;
+        if (local_2c == (code *)0x0) {
+          vPortRaiseBASEPRI();
+          do {
+                    /* WARNING: Do nothing block with infinite loop */
+          } while( true );
+        }
+        FUN_00082c44(iVar5,local_2c + iVar2,iVar2,iVar2);
+        goto switchD_00082e62_default;
+      case 5:
+        bVar3 = *(byte *)(iVar5 + 0x28);
+        if (-1 < (int)((uint)bVar3 << 0x1e)) {
+          vPortFree(iVar5);
+          goto switchD_00082e62_default;
+        }
+        break;
+      default:
+        goto switchD_00082e62_default;
+      }
+      *(byte *)(iVar5 + 0x28) = bVar3 & 0xfe;
+    }
+  } while( true );
+}
+
+
 // ===== FUN_00082f70 @ 00082f70 (18 bytes)
 
 undefined4 FUN_00082f70(void)
@@ -362,9 +575,9 @@ undefined * FUN_0008322c(void)
 }
 
 
-// ===== FUN_00083470 @ 00083470 (238 bytes)
+// ===== CLOCK_GetFlexCommClkFreq @ 00083470 (238 bytes)
 
-undefined4 FUN_00083470(uint param_1)
+undefined4 CLOCK_GetFlexCommClkFreq(uint param_1)
 
 {
   longlong lVar1;
@@ -459,12 +672,12 @@ switchD_000833ea_caseD_0:
 }
 
 
-// ===== FUN_000837a8 @ 000837a8 (214 bytes)
+// ===== CLOCK_GetFreq @ 000837a8 (214 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x000835a6) */
 
 undefined *
-FUN_000837a8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+CLOCK_GetFreq(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -824,7 +1037,7 @@ LAB_000837d4:
   default:
     return (undefined *)0x0;
   }
-  puVar5 = (undefined *)FUN_00083470(uVar6,param_2,param_3,param_4);
+  puVar5 = (undefined *)CLOCK_GetFlexCommClkFreq(uVar6,param_2,param_3,param_4);
   return puVar5;
 }
 
@@ -1167,7 +1380,7 @@ void FUN_00083e48(void)
     DAT_40002634 = 0x1000000;
     DAT_40002634 = 0x2000000;
     FUN_00084470();
-    FUN_00086f52(1);
+    RESET_ClearPeripheralReset(1);
     return;
   }
   iVar1 = DAT_40000010;
@@ -1246,7 +1459,7 @@ LAB_00083f38:
   }
   *(int *)(puVar4 + 0x40) = 1 << (uVar5 & 0xff);
 switchD_00083ed2_default:
-  FUN_00086f52(*(undefined2 *)(&DAT_00087b28 + iVar2 * 2));
+  RESET_ClearPeripheralReset(*(undefined2 *)(&DAT_00087b28 + iVar2 * 2));
   if (param_2 == 0) {
 LAB_00083f04:
     if ((*(int *)(param_1 + 0xff8) << 0x1c < 0) && ((*(uint *)(param_1 + 0xff8) & 7) != param_2)) {
@@ -1312,23 +1525,24 @@ switchD_00084156_default:
 }
 
 
-// ===== FUN_000841b4 @ 000841b4 (26 bytes)
+// ===== GPIO_PortInit @ 000841b4 (26 bytes)
 
-void FUN_000841b4(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+void GPIO_PortInit(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int extraout_r1;
   undefined4 extraout_r2;
   
   FUN_00084150(*(undefined2 *)(&DAT_00087b3c + param_2 * 2));
-  FUN_00086f52(*(undefined2 *)(&DAT_00087b3c + extraout_r1 * 2),extraout_r1,extraout_r2,param_4);
+  RESET_ClearPeripheralReset
+            (*(undefined2 *)(&DAT_00087b3c + extraout_r1 * 2),extraout_r1,extraout_r2,param_4);
   return;
 }
 
 
-// ===== FUN_000841d8 @ 000841d8 (74 bytes)
+// ===== GPIO_PinInit @ 000841d8 (74 bytes)
 
-void FUN_000841d8(int param_1,int param_2,uint param_3,char *param_4)
+void GPIO_PinInit(int param_1,int param_2,uint param_3,char *param_4)
 
 {
   int extraout_r1;
@@ -1358,9 +1572,9 @@ void FUN_000841d8(int param_1,int param_2,uint param_3,char *param_4)
 }
 
 
-// ===== FUN_000842c8 @ 000842c8 (10 bytes)
+// ===== MU_Init @ 000842c8 (10 bytes)
 
-void FUN_000842c8(void)
+void MU_Init(void)
 
 {
   DAT_40021044 = 0x10000000;
@@ -1448,9 +1662,9 @@ void FUN_00084498(uint param_1)
 }
 
 
-// ===== FUN_000845b4 @ 000845b4 (154 bytes)
+// ===== SCTIMER_Init @ 000845b4 (154 bytes)
 
-undefined4 FUN_000845b4(uint *param_1,byte *param_2)
+undefined4 SCTIMER_Init(uint *param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -1458,7 +1672,7 @@ undefined4 FUN_000845b4(uint *param_1,byte *param_2)
   int iVar3;
   
   DAT_40001040 = 0x1000000;
-  FUN_00086f52(0x18);
+  RESET_ClearPeripheralReset(0x18);
   bVar1 = *param_2;
   *param_1 = (param_2[2] & 0xf) << 3 | (param_2[1] & 3) << 1 | (uint)bVar1 | (param_2[8] & 0xf) << 9
   ;
@@ -1560,10 +1774,10 @@ FUN_00084670(int *param_1,uint param_2,int param_3,uint param_4,char param_5,uin
 }
 
 
-// ===== FUN_0008477c @ 0008477c (344 bytes)
+// ===== SCTIMER_SetupPwm @ 0008477c (344 bytes)
 
 undefined4
-FUN_0008477c(int param_1,byte *param_2,int param_3,uint param_4,uint param_5,uint *param_6)
+SCTIMER_SetupPwm(int param_1,byte *param_2,int param_3,uint param_4,uint param_5,uint *param_6)
 
 {
   longlong lVar1;
@@ -1637,9 +1851,9 @@ LAB_000847cc:
 }
 
 
-// ===== FUN_000848d8 @ 000848d8 (8 bytes)
+// ===== SCTIMER_SetCallback @ 000848d8 (8 bytes)
 
-void FUN_000848d8(undefined4 param_1,undefined4 param_2,int param_3)
+void SCTIMER_SetCallback(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
   (&DAT_00088afc)[param_3] = param_2;
@@ -1647,9 +1861,9 @@ void FUN_000848d8(undefined4 param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_000848f4 @ 000848f4 (10 bytes)
+// ===== SEMA42_Init @ 000848f4 (10 bytes)
 
-void FUN_000848f4(void)
+void SEMA42_Init(void)
 
 {
   DAT_40021044 = 0x20000000;
@@ -1657,9 +1871,9 @@ void FUN_000848f4(void)
 }
 
 
-// ===== FUN_0008494c @ 0008494c (204 bytes)
+// ===== BOARD_BootClockRUN @ 0008494c (204 bytes)
 
-void FUN_0008494c(void)
+void BOARD_BootClockRUN(void)
 
 {
   uint uVar1;
@@ -1670,7 +1884,7 @@ void FUN_0008494c(void)
   DAT_40002630 = 0x8000;
   FUN_000839b4();
   FUN_00087234();
-  FUN_00086e1c(0x4343430);
+  CLOCK_AttachClk(0x4343430);
   DAT_40002630 = 0x2000;
   FUN_0008448c(0x104);
   FUN_00083c9c(1,1,0x104);
@@ -1684,46 +1898,46 @@ void FUN_0008494c(void)
   uVar1 = DAT_40021204;
   DAT_40021204 = uVar1 | 1;
   FUN_00083c54(0,0x1a);
-  FUN_00086e58(0x400,3);
-  FUN_00086e1c(&DAT_00002434);
-  FUN_00086e58(0x80000240,1);
-  FUN_00086e58(0x500,2);
-  FUN_00086e58(0x800006fc,0xc);
-  FUN_000809a0(1,6);
+  CLOCK_SetClkDiv(0x400,3);
+  CLOCK_AttachClk(&DAT_00002434);
+  CLOCK_SetClkDiv(0x80000240,1);
+  CLOCK_SetClkDiv(0x500,2);
+  CLOCK_SetClkDiv(0x800006fc,0xc);
+  CLOCK_SetDiv_0x620(1,6);
   DAT_00087ec0 = 198000000;
   return;
 }
 
 
-// ===== FUN_00084a50 @ 00084a50 (46 bytes)
+// ===== ipc_init @ 00084a50 (46 bytes)
 
-void FUN_00084a50(void)
+void ipc_init(void)
 
 {
-  DAT_00088b60 = rpmsg_virtqueues_init(&DAT_20020000,0x20000,0);
-  DAT_00088b5c = FUN_000861da();
-  DAT_00088b58 = FUN_000862b2(DAT_00088b60,0x28,&LAB_000861b8_1,DAT_00088b5c);
+  DAT_00088b60 = rpmsg_lite_master_init(&DAT_20020000,0x20000,0);
+  DAT_00088b5c = rpmsg_queue_create();
+  DAT_00088b58 = rpmsg_lite_create_ept(DAT_00088b60,0x28,&LAB_000861b8_1,DAT_00088b5c);
   DAT_00088b54 = 0x1e;
   return;
 }
 
 
-// ===== FUN_00084a8c @ 00084a8c (30 bytes)
+// ===== ipc_send @ 00084a8c (30 bytes)
 
-void FUN_00084a8c(undefined4 param_1)
+void ipc_send(undefined4 param_1)
 
 {
-  FUN_00081afc(DAT_00088b60,DAT_00088b58,DAT_00088b54,param_1,0x98,0xffffffff);
+  rpmsg_lite_send(DAT_00088b60,DAT_00088b58,DAT_00088b54,param_1,0x98,0xffffffff);
   return;
 }
 
 
-// ===== FUN_00084ab0 @ 00084ab0 (34 bytes)
+// ===== ipc_recv @ 00084ab0 (34 bytes)
 
-void FUN_00084ab0(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void ipc_recv(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  FUN_00081a88(DAT_00088b60,DAT_00088b5c,&DAT_00088b54,param_1,0x98,0,0xffffffff,param_4);
+  rpmsg_queue_recv(DAT_00088b60,DAT_00088b5c,&DAT_00088b54,param_1,0x98,0,0xffffffff,param_4);
   return;
 }
 
@@ -1753,9 +1967,9 @@ void BOARD_DSP_Init(void)
   local_14 = &dsp_image2_sram_data;
   local_c = 0x31e0;
   FUN_00083b04(1,0xc);
-  FUN_00086e1c(0x80002434);
-  FUN_00086e58(0x80000400,1);
-  FUN_00086e58(0x80000404,2);
+  CLOCK_AttachClk(0x80002434);
+  CLOCK_SetClkDiv(0x80000400,1);
+  CLOCK_SetClkDiv(0x80000404,2);
   FUN_00083e48();
   DSP_CopyImage(&local_2c);
   DSP_CopyImage(&local_20);
@@ -1765,9 +1979,9 @@ void BOARD_DSP_Init(void)
 }
 
 
-// ===== FUN_00084b78 @ 00084b78 (108 bytes)
+// ===== BOARD_InitPins_P0 @ 00084b78 (108 bytes)
 
-void FUN_00084b78(uint param_1,uint param_2,uint param_3,uint param_4)
+void BOARD_InitPins_P0(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   uint local_18;
@@ -1780,13 +1994,13 @@ void FUN_00084b78(uint param_1,uint param_2,uint param_3,uint param_4)
   local_14 = param_2;
   local_10 = param_3;
   local_c = param_4;
-  FUN_000841d8(&DAT_40100000,0,4,&local_18);
+  GPIO_PinInit(&DAT_40100000,0,4,&local_18);
   local_14 = local_14 & 0xffff0000;
-  FUN_000841d8(&DAT_40100000,0,5,&local_14);
+  GPIO_PinInit(&DAT_40100000,0,5,&local_14);
   local_10 = local_10 & 0xffff0000;
-  FUN_000841d8(&DAT_40100000,0,0x15,&local_10);
+  GPIO_PinInit(&DAT_40100000,0,0x15,&local_10);
   local_c = local_c & 0xffff0000;
-  FUN_000841d8(&DAT_40100000,0,0x16,&local_c);
+  GPIO_PinInit(&DAT_40100000,0,0x16,&local_c);
   DAT_40004054 = 0x40;
   DAT_40004058 = 0x40;
   DAT_40004010 = 0x40;
@@ -1795,9 +2009,9 @@ void FUN_00084b78(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_00084bec @ 00084bec (150 bytes)
+// ===== BOARD_InitPins_codec_spi @ 00084bec (150 bytes)
 
-void FUN_00084bec(void)
+void BOARD_InitPins_codec_spi(void)
 
 {
   undefined1 local_24;
@@ -1814,124 +2028,23 @@ void FUN_00084bec(void)
   DAT_40021044 = 4;
   local_24 = 1;
   local_23 = 0;
-  FUN_000841d8(&DAT_40100000,1,0,&local_24);
+  GPIO_PinInit(&DAT_40100000,1,0,&local_24);
   local_20 = 1;
   local_1f = 0;
-  FUN_000841d8(&DAT_40100000,1,1,&local_20);
+  GPIO_PinInit(&DAT_40100000,1,1,&local_20);
   local_1c[0] = 0x101;
-  FUN_000841d8(&DAT_40100000,1,7,local_1c);
+  GPIO_PinInit(&DAT_40100000,1,7,local_1c);
   local_18 = 0;
   local_17 = 0;
-  FUN_000841d8(&DAT_40100000,2,0x1c,&local_18);
+  GPIO_PinInit(&DAT_40100000,2,0x1c,&local_18);
   local_14 = 1;
   local_13 = 0;
-  FUN_000841d8(&DAT_40100000,2,0x1d,&local_14);
+  GPIO_PinInit(&DAT_40100000,2,0x1d,&local_14);
   DAT_40004080 = 0;
   DAT_40004084 = 0;
   DAT_4000409c = 0;
   DAT_40004170 = 0x40;
   DAT_40004174 = 0;
   return;
-}
-
-
-// ===== FUN_00084d3c @ 00084d3c (194 bytes)
-
-int * FUN_00084d3c(int param_1)
-
-{
-  int *piVar1;
-  int iVar2;
-  uint uVar3;
-  int *piVar4;
-  uint uVar5;
-  int *piVar6;
-  uint uVar7;
-  
-  if (param_1 != 0) {
-    uVar7 = param_1 + 3U >> 2;
-    piVar1 = DAT_00088b70;
-    piVar6 = (int *)0x0;
-    while (piVar4 = piVar1, piVar4 != (int *)0x0) {
-      if (*piVar4 == 0x10000000) {
-        while( true ) {
-          uVar3 = piVar4[1];
-          piVar1 = (int *)piVar4[2];
-          if ((piVar1 == (int *)0x0) || (*piVar1 != 0x10000000)) break;
-          piVar4[1] = piVar1[1] + uVar3 + 3;
-          piVar4[2] = piVar1[2];
-        }
-        if (((int)uVar7 <= (int)uVar3) && ((int)uVar3 <= (int)(uVar7 + 3))) {
-          *piVar4 = 0x20000000;
-          return piVar4 + 3;
-        }
-        if (uVar7 + 10 < uVar3) {
-          piVar4[1] = uVar7;
-          piVar6 = piVar4 + 3;
-          *piVar4 = 0x20000000;
-          uVar5 = param_1 + 3U & 0xfffffffc;
-          iVar2 = (int)piVar6 + uVar5;
-          piVar4[2] = iVar2;
-          *(undefined4 *)((int)piVar6 + uVar5) = 0x10000000;
-          *(uint *)(iVar2 + 4) = (uVar3 - uVar7) + -3;
-          *(int **)(iVar2 + 8) = piVar1;
-          return piVar6;
-        }
-        if (piVar1 == (int *)0x0) {
-          iVar2 = FUN_00085d48(param_1 + uVar3 * -4);
-          if (iVar2 == -1) {
-            return (int *)0x0;
-          }
-          *piVar4 = 0x20000000;
-          piVar4[1] = uVar7;
-          return piVar4 + 3;
-        }
-      }
-      piVar6 = piVar4;
-      piVar1 = (int *)piVar4[2];
-    }
-    piVar1 = (int *)FUN_00085d48(param_1 + 0xc);
-    if (piVar1 != (int *)0xffffffff) {
-      piVar1[2] = 0;
-      *piVar1 = 0x20000000;
-      piVar1[1] = uVar7;
-      piVar4 = piVar1;
-      if (piVar6 != (int *)0x0) {
-        piVar6[2] = (int)piVar1;
-        piVar4 = DAT_00088b70;
-      }
-      DAT_00088b70 = piVar4;
-      return piVar1 + 3;
-    }
-  }
-  return (int *)0x0;
-}
-
-
-// ===== FUN_00084e04 @ 00084e04 (26 bytes)
-
-int FUN_00084e04(void)
-
-{
-  int iVar1;
-  
-  iVar1 = FUN_00084d3c();
-  if (iVar1 == 0) {
-    FUN_00087958(0,"*** _Csys_alloc failed\n",0x17);
-    FUN_00087932();
-  }
-  return iVar1;
-}
-
-
-// ===== FUN_00084e24 @ 00084e24 (16 bytes)
-
-int FUN_00084e24(int param_1)
-
-{
-  if ((int)((uint)(byte)(&DAT_00087d84)[param_1] << 0x1b) < 0) {
-    param_1 = param_1 + 0x20;
-  }
-  return param_1;
 }
 
