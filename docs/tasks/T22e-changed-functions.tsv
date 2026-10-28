@@ -1,0 +1,2687 @@
+image	entry	name_before	name_after	size_before	size_after	class	flags
+main	fff8f65e	R_Systeminit	R_Systeminit	358	358	signature	
+main	fff8f8d8		FUN_fff8f8d8		29	added	
+main	fff8f8f5	_INIT_IOLIB	_INIT_IOLIB	232	232	signature	lost_strings=3;string_as_int
+main	fff8fa1b	FUN_fff8fa1b	FUN_fff8fa1b	167	167	insn	new_calls=1;lost_strings=3;string_as_int
+main	fff8facd	FUN_fff8facd	FUN_fff8facd	140	140	signature	
+main	fff8fb59		FUN_fff8fb59		113	added	
+main	fff8fbca		FUN_fff8fbca		17	added	
+main	fff8fbdb	PowerON_Reset	PowerON_Reset	100	100	signature	
+main	fff8fc3f		FUN_fff8fc3f		14	added	
+main	fff8fc4d	FUN_fff8fc4d	FUN_fff8fc4d	10	10	signature	
+main	fff8fc57	FUN_fff8fc57	FUN_fff8fc57	277	277	stack	new_calls=1
+main	fff8fd6d		FUN_fff8fd6d		23	added	
+main	fff8fe3c		FUN_fff8fe3c		132	added	
+main	fff8fec0		FUN_fff8fec0		1	added	
+main	fff8fefb		FUN_fff8fefb		35	added	
+main	fff8fffb	R_BSP_InterruptWrite	R_BSP_InterruptWrite	75	75	signature	
+main	fff90046		FUN_fff90046		81	added	
+main	fff90097	R_BSP_InterruptControl	R_BSP_InterruptControl	234	234	signature	
+main	fff90181	FUN_fff90181	FUN_fff90181	119	119	signature	
+main	fff901f8	FUN_fff901f8	FUN_fff901f8	949	949	signature	
+main	fff905ad	SuperVisorInst	SuperVisorInst	23	23	signature	
+main	fff905c4	AccessExc	AccessExc	23	23	signature	
+main	fff905db	UndefinedInst	UndefinedInst	23	23	signature	
+main	fff905f2	FloatingPoint	FloatingPoint	41	41	signature	
+main	fff9061b	NMI	NMI	487	487	signature	
+main	fff90802	Undefined_0xD8	Undefined_0xD8	23	23	signature	
+main	fff90819	vec016_BSC_BUSERR	vec016_BSC_BUSERR	30	30	signature	
+main	fff90837	FUN_fff90837	FUN_fff90837	39	39	insn	
+main	fff9085e		FUN_fff9085e		14	added	
+main	fff90885		FUN_fff90885		25	added	
+main	fff9089e	FUN_fff9089e	FUN_fff9089e	273	273	signature	
+main	fff909af		FUN_fff909af		231	added	
+main	fff90a96		FUN_fff90a96		272	added	
+main	fff90c76	FUN_fff90c76	FUN_fff90c76	171	171	signature	
+main	fff90d74	FUN_fff90d74	FUN_fff90d74	17	17	renamed_moved	
+main	fff90d85	FUN_fff90d85	FUN_fff90d85	183	183	signature	
+main	fff90e3c	FUN_fff90e3c	FUN_fff90e3c	244	244	signature	
+main	fff90f9b	FUN_fff90f9b	FUN_fff90f9b	190	190	signature	
+main	fff91059	FUN_fff91059	FUN_fff91059	46	46	insn	
+main	fff91087	FUN_fff91087	FUN_fff91087	53	53	insn	
+main	fff91228		FUN_fff91228		32	added	
+main	fff91248		FUN_fff91248		4	added	
+main	fff9124c		FUN_fff9124c		19	added	
+main	fff9125f		FUN_fff9125f		4	added	
+main	fff91263		FUN_fff91263		19	added	
+main	fff91276		FUN_fff91276		4	added	
+main	fff9127a		FUN_fff9127a		19	added	
+main	fff9128d		FUN_fff9128d		4	added	
+main	fff91291		FUN_fff91291		4	added	
+main	fff912c7		FUN_fff912c7		1	added	
+main	fff91303	FUN_fff91303	FUN_fff91303	212	212	signature	
+main	fff913db	FUN_fff913db	FUN_fff913db	186	186	signature	
+main	fff916ac	FUN_fff916ac	FUN_fff916ac	158	158	signature	
+main	fff9174a	vec110_GROUPBL0	vec110_GROUPBL0	884	884	signature	
+main	fff91abe	vec111_GROUPBL1	vec111_GROUPBL1	736	736	signature	
+main	fff91d9e	vec107_GROUPBL2	vec107_GROUPBL2	46	46	signature	
+main	fff91dcc	vec112_GROUPAL0	vec112_GROUPAL0	316	316	signature	
+main	fff91f08	vec113_GROUPAL1	vec113_GROUPAL1	166	166	signature	
+main	fff91fae	vec106_GROUPBE0	vec106_GROUPBE0	102	102	signature	
+main	fff92475		FUN_fff92475		820	added	
+main	fff927e5	R_DA_Create	R_DA_Create	65	65	renamed_moved	
+main	fff92835		FUN_fff92835		8	added	
+main	fff92a31	R_S12AD0_Get_ValueResult	R_S12AD0_Get_ValueResult	207	207	signature	
+main	fff92b01	r_s12ad0_scan_end_isr	r_s12ad0_scan_end_isr	22	22	signature	
+main	fff92cae	R_S12AD1_Get_ValueResult	R_S12AD1_Get_ValueResult	352	352	signature	
+main	fff92e0f	r_s12ad1_scan_end_isr	r_s12ad1_scan_end_isr	22	22	signature	
+main	fff9336a	R_SCI0_Serial_Receive	R_SCI0_Serial_Receive	68	68	signature	
+main	fff933ae	R_SCI0_Serial_Send	R_SCI0_Serial_Send	95	95	signature	
+main	fff9340e	r_sci0_transmit_interrupt	r_sci0_transmit_interrupt	76	76	signature	
+main	fff9347f	r_sci0_receive_interrupt	r_sci0_receive_interrupt	114	114	signature	
+main	fff9352d	r_sci0_rx_byte_hook	r_sci0_rx_byte_hook	33	33	signature	
+main	fff9362f		FUN_fff9362f		104	added	
+main	fff93697	R_SCI1_Serial_Receive	R_SCI1_Serial_Receive	68	68	signature	
+main	fff936db	R_SCI1_Serial_Send	R_SCI1_Serial_Send	95	95	signature	
+main	fff9373b	r_sci1_transmit_interrupt	r_sci1_transmit_interrupt	76	76	signature	
+main	fff937ac	r_sci1_receive_interrupt	r_sci1_receive_interrupt	114	114	signature	
+main	fff9384c	displink_rx_frame_len	displink_rx_frame_len	570	570	signature	
+main	fff93b29	R_SCI2_Start	R_SCI2_Start	64	64	renamed_moved	
+main	fff93bd1	R_SCI2_Serial_Receive	R_SCI2_Serial_Receive	68	68	signature	
+main	fff93c15	R_SCI2_Serial_Send	R_SCI2_Serial_Send	102	102	signature	
+main	fff93c7c	r_sci2_transmit_interrupt	r_sci2_transmit_interrupt	76	76	signature	
+main	fff93ced	r_sci2_receive_interrupt	r_sci2_receive_interrupt	114	114	signature	
+main	fff93d86	r_sci2_callback_transmitend	r_sci2_callback_transmitend	17	17	signature	
+main	fff93d97	r_sci2_callback_receiveend	r_sci2_callback_receiveend	28	28	signature	
+main	fff93db4	sci2_rx_byte_hook	sci2_rx_byte_hook	345	345	signature	dropped_result=F_fffb237a
+main	fff94058	R_SCI3_Serial_Receive	R_SCI3_Serial_Receive	68	68	signature	
+main	fff9409c	R_SCI3_Serial_Send	R_SCI3_Serial_Send	95	95	signature	
+main	fff940fc	r_sci3_transmit_interrupt	r_sci3_transmit_interrupt	76	76	signature	
+main	fff9416d	r_sci3_receive_interrupt	r_sci3_receive_interrupt	114	114	signature	
+main	fff9421b	sci3_rx_byte_hook	sci3_rx_byte_hook	33	33	signature	
+main	fff9431f		FUN_fff9431f		104	added	
+main	fff94387	R_SCI4_Serial_Receive	R_SCI4_Serial_Receive	68	68	signature	
+main	fff943cb	R_SCI4_Serial_Send	R_SCI4_Serial_Send	95	95	signature	
+main	fff9442b	r_sci4_transmit_interrupt	r_sci4_transmit_interrupt	76	76	signature	
+main	fff9449c	r_sci4_receive_interrupt	r_sci4_receive_interrupt	114	114	signature	
+main	fff947ad	R_SCI5_Serial_Receive	R_SCI5_Serial_Receive	68	68	signature	
+main	fff947f1	R_SCI5_Serial_Send	R_SCI5_Serial_Send	95	95	signature	
+main	fff94851	r_sci5_transmit_interrupt	r_sci5_transmit_interrupt	76	76	signature	
+main	fff948c2	r_sci5_receive_interrupt	r_sci5_receive_interrupt	114	114	signature	
+main	fff94934	r_sci5_receiveerror_interrupt	r_sci5_receiveerror_interrupt	39	39	renamed_moved	
+main	fff94a47		FUN_fff94a47		15	added	
+main	fff94a57	r_tpu0_tgia_isr	r_tpu0_tgia_isr	14	14	signature	
+main	fff94aec	r_tpu1_tgia_isr	r_tpu1_tgia_isr	14	14	signature	
+main	fff94bcd	ver_main	ver_main	12	12	signature	
+main	fff94bf1	ver_display	ver_display	12	12	signature	
+main	fff94c2d	ver_dsp	ver_dsp	12	12	signature	
+main	fff94c39	ver_dsp_set	ver_dsp_set	18	18	signature	
+main	fff94c4b	ver_sdr	ver_sdr	12	12	signature	
+main	fff94c69		FUN_fff94c69		12	added	
+main	fff94c75	FUN_fff94c75	FUN_fff94c75	54	54	signature	
+main	fff94d6f	displink_task	displink_task	614	614	insn	new_calls=1
+main	fff9513c	FUN_fff9513c	FUN_fff9513c	195	195	signature	
+main	fff95277	displink_rx_len_of	displink_rx_len_of	186	186	signature	
+main	fff95331	displink_rx_dispatch	displink_rx_dispatch	237	237	signature	
+main	fff9546a	displink_rx_F0_hello	displink_rx_F0_hello	892	892	signature	
+main	fff95829	displink_rx_E0_key	displink_rx_E0_key	98	98	signature	
+main	fff9588b	displink_rx_E1_encoder	displink_rx_E1_encoder	473	473	signature	
+main	fff95cbc	displink_rx_E7	displink_rx_E7	241	241	renamed_moved	
+main	fff95e65	displink_rx_C3	displink_rx_C3	50	50	insn	new_calls=1
+main	fff95e97	displink_rx_C4_C5	displink_rx_C4_C5	50	50	insn	new_calls=1
+main	fff95f26	displink_send_ack	displink_send_ack	25	25	signature	
+main	fff95f3f	displink_send_nak	displink_send_nak	25	25	signature	
+main	fff95f58	displink_tx_schedule	displink_tx_schedule	689	689	signature	
+main	fff96209	displink_tx_resend	displink_tx_resend	28	28	signature	
+main	fff96241	displink_build_60	displink_build_60	532	532	insn	new_calls=1
+main	fff96455	displink_build_status	displink_build_status	2367	2367	insn	new_calls=1;fewer_args=F_fff98691
+main	fff96dde	FUN_fff96dde	FUN_fff96dde	352	352	insn	
+main	fff97430	FUN_fff97430	FUN_fff97430	251	251	signature	
+main	fff976d2	FUN_fff976d2	FUN_fff976d2	57	57	signature	
+main	fff9770b	FUN_fff9770b	FUN_fff9770b	36	36	signature	
+main	fff9772f	scope_span_index	scope_span_index	85	85	signature	
+main	fff97784	range_cmp3	range_cmp3	47	47	signature	
+main	fff9782b	FUN_fff9782b	FUN_fff9782b	192	192	signature	
+main	fff97ba6	FUN_fff97ba6	FUN_fff97ba6	206	206	signature	
+main	fff97cf7	FUN_fff97cf7	FUN_fff97cf7	294	294	insn	
+main	fff97e1d	FUN_fff97e1d	FUN_fff97e1d	162	162	signature	
+main	fff97ebf	FUN_fff97ebf	FUN_fff97ebf	591	591	insn	
+main	fff9810e	FUN_fff9810e	FUN_fff9810e	172	172	insn	
+main	fff981ba	FUN_fff981ba	FUN_fff981ba	158	158	signature	
+main	fff98258	FUN_fff98258	FUN_fff98258	82	82	signature	
+main	fff982aa	FUN_fff982aa	FUN_fff982aa	17	17	signature	
+main	fff982bb	FUN_fff982bb	FUN_fff982bb	72	72	renamed_moved	
+main	fff98303	FUN_fff98303	FUN_fff98303	96	96	signature	
+main	fff9849e	FUN_fff9849e	FUN_fff9849e	136	136	signature	
+main	fff98566	disp_put_op_freq	disp_put_op_freq	95	95	signature	
+main	fff985c5	disp_put_tx_freq	disp_put_tx_freq	48	48	signature	
+main	fff985f5	disp_put_dial_freq	disp_put_dial_freq	116	116	signature	
+main	fff98691	disp_put_scope_start	disp_put_scope_start	79	79	signature	
+main	fff98797	power_down_save	power_down_save	210	210	signature	
+main	fff98925	displink_tx_70	displink_tx_70	42	42	signature	
+main	fff9894f	displink_build_70	displink_build_70	638	638	insn	new_calls=1
+main	fff98bcd	displink_tx_req	displink_tx_req	82	82	signature	
+main	fff98c1f	displink_build_req	displink_build_req	86	86	signature	
+main	fff98c75	FUN_fff98c75	FUN_fff98c75	94	94	insn	new_calls=1
+main	fff98cd3	FUN_fff98cd3	FUN_fff98cd3	25	25	insn	new_calls=1
+main	fff98cec	FUN_fff98cec	FUN_fff98cec	111	111	insn	new_calls=1
+main	fff98d5b	FUN_fff98d5b	FUN_fff98d5b	111	111	insn	new_calls=1
+main	fff98dca	FUN_fff98dca	FUN_fff98dca	111	111	insn	new_calls=1
+main	fff98e96	displink_build_23	displink_build_23	51	51	renamed_moved	
+main	fff98ecb	displink_tx_30_31	displink_tx_30_31	177	177	signature	
+main	fff98fb1	displink_build_30	displink_build_30	622	622	signature	
+main	fff99297	displink_build_31	displink_build_31	478	478	signature	
+main	fff9959f	FUN_fff9959f	FUN_fff9959f	45	45	data	
+main	fff995cc	FUN_fff995cc	FUN_fff995cc	66	66	insn	new_calls=1
+main	fff9960e	FUN_fff9960e	FUN_fff9960e	91	91	insn	new_calls=1
+main	fff99669	FUN_fff99669	FUN_fff99669	121	121	signature	
+main	fff996e2	FUN_fff996e2	FUN_fff996e2	53	53	insn	new_calls=1
+main	fff99717	FUN_fff99717	FUN_fff99717	117	117	insn	new_calls=1
+main	fff9978c	FUN_fff9978c	FUN_fff9978c	83	83	insn	new_calls=1
+main	fff997df	FUN_fff997df	FUN_fff997df	88	88	insn	new_calls=1
+main	fff99837	FUN_fff99837	FUN_fff99837	64	64	insn	new_calls=1
+main	fff99877	FUN_fff99877	FUN_fff99877	107	107	signature	
+main	fff998e2	FUN_fff998e2	FUN_fff998e2	72	72	insn	new_calls=1
+main	fff9992a	FUN_fff9992a	FUN_fff9992a	95	95	insn	new_calls=1
+main	fff99989	FUN_fff99989	FUN_fff99989	90	90	insn	new_calls=1
+main	fff999e3	FUN_fff999e3	FUN_fff999e3	70	70	insn	new_calls=1
+main	fff99a29	FUN_fff99a29	FUN_fff99a29	97	97	insn	new_calls=1
+main	fff99a8a	FUN_fff99a8a	FUN_fff99a8a	53	53	insn	new_calls=1
+main	fff99b70	FUN_fff99b70	FUN_fff99b70	53	53	insn	new_calls=1
+main	fff99ba5	FUN_fff99ba5	FUN_fff99ba5	89	89	insn	new_calls=1
+main	fff99bfe	FUN_fff99bfe	FUN_fff99bfe	90	90	insn	new_calls=1
+main	fff99c58	FUN_fff99c58	FUN_fff99c58	74	74	data	
+main	fff99d48	FUN_fff99d48	FUN_fff99d48	58	58	data	
+main	fff99d82	FUN_fff99d82	FUN_fff99d82	61	61	signature	
+main	fff99ddb	FUN_fff99ddb	FUN_fff99ddb	58	58	data	
+main	fff99e15	FUN_fff99e15	FUN_fff99e15	53	53	insn	new_calls=1
+main	fff9a00f	FUN_fff9a00f	FUN_fff9a00f	53	53	insn	new_calls=1
+main	fff9a06e	displink_build_34	displink_build_34	94	94	insn	new_calls=2
+main	fff9a0cc	displink_tx_65_clock	displink_tx_65_clock	52	52	signature	
+main	fff9a100	displink_build_65	displink_build_65	125	125	signature	
+main	fff9a17d	displink_tx_24	displink_tx_24	42	42	signature	
+main	fff9a1a7	displink_build_24	displink_build_24	298	298	signature	
+main	fff9a2d1	displink_tx_50	displink_tx_50	42	42	signature	
+main	fff9a2fb	displink_build_50	displink_build_50	105	105	signature	
+main	fff9a42f	FUN_fff9a42f	FUN_fff9a42f	197	197	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a4f4	FUN_fff9a4f4	FUN_fff9a4f4	106	106	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a55e	FUN_fff9a55e	FUN_fff9a55e	106	106	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a5c8	FUN_fff9a5c8	FUN_fff9a5c8	135	135	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a64f	FUN_fff9a64f	FUN_fff9a64f	170	170	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a6f9	FUN_fff9a6f9	FUN_fff9a6f9	169	169	insn	new_calls=2;lost_strings=1;string_as_int
+main	fff9a804	FUN_fff9a804	FUN_fff9a804	55	55	insn	new_calls=1
+main	fff9a8e3	displink_tx_3A	displink_tx_3A	66	66	insn	new_calls=1
+main	fff9a925	displink_build_3A	displink_build_3A	392	392	signature	
+main	fff9aaad	displink_tx_40	displink_tx_40	74	74	signature	
+main	fff9aaf7	displink_build_40	displink_build_40	51	51	signature	
+main	fff9ab2a	displink_tx_37	displink_tx_37	45	45	signature	
+main	fff9ab57	displink_build_37	displink_build_37	413	413	signature	
+main	fff9ad7e	FUN_fff9ad7e	FUN_fff9ad7e	96	96	data	
+main	fff9adde	FUN_fff9adde	FUN_fff9adde	83	83	data	
+main	fff9ae76	FUN_fff9ae76	FUN_fff9ae76	69	69	renamed_moved	
+main	fff9af40	FUN_fff9af40	FUN_fff9af40	114	114	data	
+main	fff9b195	FUN_fff9b195	FUN_fff9b195	125	125	signature	
+main	fff9b212	FUN_fff9b212	FUN_fff9b212	143	143	signature	
+main	fff9b373	FUN_fff9b373	FUN_fff9b373	91	91	signature	
+main	fff9b69e	displink_tx_39	displink_tx_39	42	42	signature	
+main	fff9b6c8	displink_build_39	displink_build_39	848	848	insn	new_calls=1
+main	fff9ba18	FUN_fff9ba18	FUN_fff9ba18	136	136	insn	new_calls=1
+main	fff9bb23	displink_tx_41	displink_tx_41	45	45	signature	
+main	fff9bb50	displink_build_41	displink_build_41	1128	1128	insn	new_calls=1
+main	fff9bfb8	FUN_fff9bfb8	FUN_fff9bfb8	41	41	signature	
+main	fff9c04a	FUN_fff9c04a	FUN_fff9c04a	63	63	signature	
+main	fff9c089	FUN_fff9c089	FUN_fff9c089	217	217	signature	
+main	fff9c162	FUN_fff9c162	FUN_fff9c162	63	63	signature	
+main	fff9c1a1	FUN_fff9c1a1	FUN_fff9c1a1	241	241	signature	
+main	fff9c292	FUN_fff9c292	FUN_fff9c292	59	59	signature	
+main	fff9c2cd	FUN_fff9c2cd	FUN_fff9c2cd	44	44	signature	
+main	fff9c42a	displink_tx_20_status	displink_tx_20_status	42	42	signature	
+main	fff9c454	displink_build_20	displink_build_20	25	25	signature	
+main	fff9c46d	displink_tx_62	displink_tx_62	45	45	signature	
+main	fff9c49a	displink_build_62	displink_build_62	187	187	insn	new_calls=1
+main	fff9c5b2	displink_tx_start	displink_tx_start	38	38	signature	
+main	fff9c60f	displink_check_sum	displink_check_sum	70	70	renamed_moved	
+main	fff9c655	mem_zero	mem_zero	18	18	insn	new_calls=1
+main	fff9c667	displink_copy_if_changed	displink_copy_if_changed	68	68	insn	new_calls=1
+main	fff9c6ab	FUN_fff9c6ab	FUN_fff9c6ab	69	69	signature	
+main	fff9cba4	FUN_fff9cba4	FUN_fff9cba4	153	153	signature	
+main	fff9ccd3	FUN_fff9ccd3	FUN_fff9ccd3	221	221	signature	
+main	fff9cdb0	FUN_fff9cdb0	FUN_fff9cdb0	85	85	signature	
+main	fff9ce05	FUN_fff9ce05	FUN_fff9ce05	156	156	data	
+main	fff9cee1	freq_cache_update	freq_cache_update	395	395	signature	
+main	fff9d06c	dsp_link_init	dsp_link_init	333	333	insn	new_calls=1;lost_strings=1;string_as_int
+main	fff9d1b9	dsp_link_poll	dsp_link_poll	1591	1591	signature	
+main	fff9d7f0	dsp_status1_raw	dsp_status1_raw	16	16	signature	
+main	fff9d800	dsp_fm_noise	dsp_fm_noise	56	56	signature	
+main	fff9d838	dsp_tone_detect	dsp_tone_detect	15	15	signature	
+main	fff9d847		FUN_fff9d847		16	added	
+main	fff9d857	dsp_comp_level	dsp_comp_level	15	15	signature	
+main	fff9d866	dsp_signal_level	dsp_signal_level	16	16	signature	
+main	fff9d876		FUN_fff9d876		15	added	
+main	fff9d885		FUN_fff9d885		16	added	
+main	fff9d895	dsp_tune_offset	dsp_tune_offset	15	15	signature	
+main	fff9d8a4	dsp_reg_access	dsp_reg_access	169	169	signature	fewer_args=F_fffb2f9e
+main	fff9d94d	dsp_isp_request	dsp_isp_request	10	10	renamed_moved	
+main	fff9d957	dsp_read_version	dsp_read_version	16	16	signature	
+main	fff9d967	dsp_read_status1	dsp_read_status1	16	16	signature	
+main	fff9d977	dsp_read_status2	dsp_read_status2	16	16	signature	
+main	fff9d987	dsp_read_status3	dsp_read_status3	16	16	signature	
+main	fff9d997	dsp_read_status4	dsp_read_status4	16	16	signature	
+main	fff9d9a7	dsp_set_demod	dsp_set_demod	98	98	signature	
+main	fff9da09	dsp_set_r08	dsp_set_r08	51	51	signature	
+main	fff9da3c	dsp_set_r09	dsp_set_r09	51	51	signature	
+main	fff9da6f	dsp_set_r0a	dsp_set_r0a	51	51	signature	
+main	fff9daa2	dsp_set_r0c	dsp_set_r0c	47	47	signature	
+main	fff9dad1	dsp_set_r0d	dsp_set_r0d	51	51	signature	
+main	fff9db04	dsp_set_r0e	dsp_set_r0e	51	51	signature	
+main	fff9db37	dsp_set_r0f	dsp_set_r0f	47	47	signature	
+main	fff9db66	dsp_set_r11	dsp_set_r11	49	49	signature	
+main	fff9db97	dsp_set_r12	dsp_set_r12	47	47	signature	
+main	fff9dbc6	dsp_set_r13	dsp_set_r13	49	49	signature	
+main	fff9dbf7	dsp_set_tx_gain	dsp_set_tx_gain	147	147	signature	
+main	fff9dc8a	dsp_set_vox_gain	dsp_set_vox_gain	90	90	signature	
+main	fff9dce4	dsp_set_antivox	dsp_set_antivox	134	134	signature	
+main	fff9dd6a	dsp_set_peq_freq	dsp_set_peq_freq	380	380	signature	
+main	fff9dee6	dsp_set_peq_level	dsp_set_peq_level	239	239	signature	
+main	fff9dfd5	dsp_set_peq_bw	dsp_set_peq_bw	216	216	signature	
+main	fff9e0ad	dsp_set_proc	dsp_set_proc	126	126	signature	
+main	fff9e12b	dsp_set_tx_bpf	dsp_set_tx_bpf	244	244	signature	
+main	fff9e21f	dsp_set_r30	dsp_set_r30	76	76	signature	
+main	fff9e26b	dsp_set_r31	dsp_set_r31	197	197	signature	
+main	fff9e330	dsp_set_r32	dsp_set_r32	197	197	signature	
+main	fff9e3f5	dsp_set_amc_release	dsp_set_amc_release	139	139	signature	
+main	fff9e480	dsp_set_amc_level	dsp_set_amc_level	156	156	signature	
+main	fff9e51c	dsp_set_ctcss_enc	dsp_set_ctcss_enc	152	152	signature	
+main	fff9e5b4	dsp_set_r36	dsp_set_r36	48	48	signature	
+main	fff9e5e4	dsp_set_r37	dsp_set_r37	48	48	signature	
+main	fff9e614	dsp_set_r38	dsp_set_r38	48	48	signature	
+main	fff9e644	dsp_set_fm_flag	dsp_set_fm_flag	117	117	signature	
+main	fff9e6b9	dsp_set_r3b	dsp_set_r3b	151	151	signature	
+main	fff9e750	dsp_set_dnr_r40	dsp_set_dnr_r40	116	116	signature	
+main	fff9e7c4	dsp_set_dnf	dsp_set_dnf	173	173	signature	
+main	fff9e871	dsp_set_contour	dsp_set_contour	307	307	signature	
+main	fff9e9a4	dsp_set_contour_level	dsp_set_contour_level	86	86	signature	
+main	fff9e9fa	dsp_set_contour_width	dsp_set_contour_width	63	63	signature	
+main	fff9ea39	dsp_set_apf	dsp_set_apf	174	174	signature	
+main	fff9eae7	dsp_set_hcut	dsp_set_hcut	551	551	signature	
+main	fff9ed0e	dsp_set_lcut	dsp_set_lcut	550	550	signature	
+main	fff9ef34	dsp_set_tone_freq	dsp_set_tone_freq	381	381	signature	
+main	fff9f0b1	dsp_set_tone_gain	dsp_set_tone_gain	480	480	signature	
+main	fff9f291	dsp_set_tone_type	dsp_set_tone_type	367	367	signature	
+main	fff9f400	dsp_set_r51	dsp_set_r51	48	48	signature	
+main	fff9f430	dsp_set_am_notch	dsp_set_am_notch	152	152	signature	
+main	fff9f4c8	dsp_set_ctcss_dec	dsp_set_ctcss_dec	131	131	signature	
+main	fff9f54b	dsp_set_r56	dsp_set_r56	48	48	signature	
+main	fff9f57b	dsp_set_affft_att	dsp_set_affft_att	75	75	signature	
+main	fff9f5c6	dsp_set_osc	dsp_set_osc	114	114	signature	
+main	fff9f638	dsp_set_cw_pitch	dsp_set_cw_pitch	73	73	signature	
+main	fff9f681	dsp_set_agc	dsp_set_agc	1261	1261	signature	
+main	fff9fb6e	dsp_set_freq_range_param	dsp_set_freq_range_param	188	188	signature	
+main	fff9fc2a	dsp_set_rf_gain	dsp_set_rf_gain	118	118	signature	
+main	fff9fca0	dsp_set_r68	dsp_set_r68	48	48	signature	
+main	fff9fcd0	dsp_set_dnr_400b	dsp_set_dnr_400b	129	129	signature	
+main	fff9fd51	dsp_set_dnr_400d	dsp_set_dnr_400d	129	129	signature	
+main	fff9fdd2	dsp_set_aess	dsp_set_aess	88	88	signature	
+main	fff9fe2a	dsp_set_dnr_4022	dsp_set_dnr_4022	133	133	signature	
+main	fff9feaf	dsp_set_dnr_4023	dsp_set_dnr_4023	129	129	signature	
+main	fff9ff30	dsp_set_dnr_4025	dsp_set_dnr_4025	129	129	signature	
+main	fff9ffb1	dsp_set_dnr_4026	dsp_set_dnr_4026	129	129	signature	
+main	fffa0265	dsp_status4_filter	dsp_status4_filter	277	277	renamed_moved	
+main	fffa0ad6	dsp_check_reply	dsp_check_reply	118	118	signature	
+main	fffa0b4c	dsp_send_frame	dsp_send_frame	181	181	signature	
+main	fffa0c2e	dsp_reply_sum_ok	dsp_reply_sum_ok	75	75	signature	
+main	fffa0c79	dsp_isp_bridge	dsp_isp_bridge	449	449	insn	new_calls=1;dropped_result=F_fffb175b
+main	fffa0e3a	dsp_route_param	dsp_route_param	760	760	signature	
+main	fffa1132	sdr_init	sdr_init	187	187	insn	new_calls=1
+main	fffa11ed	sdr_task	sdr_task	664	664	signature	
+main	fffa1485	sdr_reg_access	sdr_reg_access	135	135	signature	
+main	fffa150c	scope_level_ptr	scope_level_ptr	53	53	signature	
+main	fffa1541	scope_span_ptr	scope_span_ptr	53	53	signature	
+main	fffa1580	sdr_req_reg0	sdr_req_reg0	16	16	signature	
+main	fffa1590	sdr_req_reg1	sdr_req_reg1	16	16	signature	
+main	fffa15a0	sdr_upd_r03	sdr_upd_r03	83	83	signature	
+main	fffa15f3	sdr_upd_r04	sdr_upd_r04	57	57	signature	
+main	fffa162c	sdr_upd_r08_tx_freq	sdr_upd_r08_tx_freq	268	268	signature	
+main	fffa1738	sdr_upd_r0a_demod	sdr_upd_r0a_demod	164	164	signature	
+main	fffa17dc	sdr_upd_r0b_band	sdr_upd_r0b_band	97	97	signature	
+main	fffa183d	sdr_upd_r0c_rtty_shift	sdr_upd_r0c_rtty_shift	113	113	signature	
+main	fffa18ae	sdr_upd_r0d	sdr_upd_r0d	74	74	signature	
+main	fffa18f8	sdr_upd_r0e	sdr_upd_r0e	49	49	signature	
+main	fffa1929	sdr_upd_r0f_band	sdr_upd_r0f_band	131	131	signature	
+main	fffa19ac	sdr_upd_r12	sdr_upd_r12	49	49	signature	
+main	fffa19dd	sdr_upd_r13	sdr_upd_r13	49	49	signature	
+main	fffa1a0e	sdr_upd_r14_mode	sdr_upd_r14_mode	124	124	signature	
+main	fffa1a8a	sdr_init_r15	sdr_init_r15	49	49	signature	
+main	fffa1abb	sdr_upd_r16_filter	sdr_upd_r16_filter	430	430	signature	
+main	fffa1c69	sdr_upd_r18_rx_freq	sdr_upd_r18_rx_freq	872	872	insn	
+main	fffa1fd1	sdr_upd_r1a_nb_level	sdr_upd_r1a_nb_level	120	120	signature	
+main	fffa2049	sdr_upd_r1b	sdr_upd_r1b	102	102	signature	
+main	fffa20af	sdr_upd_r1c	sdr_upd_r1c	72	72	signature	
+main	fffa20f7	sdr_upd_r1d_notch	sdr_upd_r1d_notch	897	897	signature	
+main	fffa2478	sdr_upd_r1e_passband	sdr_upd_r1e_passband	599	599	signature	
+main	fffa26cf	sdr_upd_r1f_width	sdr_upd_r1f_width	137	137	signature	
+main	fffa2758	sdr_upd_r20_scope_freq	sdr_upd_r20_scope_freq	402	402	signature	
+main	fffa28ea	sdr_upd_r22_scope_span	sdr_upd_r22_scope_span	168	168	signature	
+main	fffa2992	sdr_upd_r23	sdr_upd_r23	83	83	signature	
+main	fffa29e5	sdr_init_r24	sdr_init_r24	49	49	signature	
+main	fffa2a16	sdr_upd_r25_tx_drive	sdr_upd_r25_tx_drive	377	377	signature	
+main	fffa2b8f	sdr_upd_r26	sdr_upd_r26	116	116	signature	
+main	fffa2c03	sdr_upd_r27_scope_level	sdr_upd_r27_scope_level	156	156	signature	
+main	fffa2ff7	sdr_wait_reply	sdr_wait_reply	140	140	signature	
+main	fffa3083	sdr_poll_reply	sdr_poll_reply	118	118	signature	
+main	fffa30f9	sdr_send_frame	sdr_send_frame	181	181	signature	
+main	fffa31db	sdr_check_hex_sum	sdr_check_hex_sum	75	75	signature	
+main	fffa3226	sdr_bridge_mode	sdr_bridge_mode	598	598	insn	new_calls=1
+main	fffa347c	cat_parse	cat_parse	630	630	insn	new_calls=1
+main	fffa36f2	cat_ext_SP	cat_ext_SP	824	824	signature	
+main	fffa3a2a	cat_dispatch_ext	cat_dispatch_ext	324	324	signature	
+main	fffa3b6e	cat_dispatch	cat_dispatch	4803	4803	signature	
+main	fffa4e31	cat_SP_sdr_reg	cat_SP_sdr_reg	94	94	signature	
+main	fffa4e8f	cat_SP_dev4_reg	cat_SP_dev4_reg	94	94	signature	
+main	fffa4eed	cat_SP_adc_dump	cat_SP_adc_dump	524	524	signature	
+main	fffa50f9	cat_SP_table	cat_SP_table	274	274	signature	dropped_result=F_fffb237a
+main	fffa520b	cat_SP_eeprom_byte	cat_SP_eeprom_byte	121	121	signature	
+main	fffa5284	cat_SP_meters	cat_SP_meters	288	288	stack	
+main	fffa53a4	cat_ext_E8	cat_ext_E8	271	271	insn	new_calls=1
+main	fffa556b	cat_ext_JP	cat_ext_JP	822	822	signature	
+main	fffa58a1	cat_ext_ZZ	cat_ext_ZZ	228	228	signature	
+main	fffa5985	cat_ext_E9	cat_ext_E9	204	204	insn	new_calls=1
+main	fffa5a51	cat_ext_FD	cat_ext_FD	575	575	signature	
+main	fffa5c90	cat_ext_EO	cat_ext_EO	847	847	insn	
+main	fffa5fdf	cat_ext_PE	cat_ext_PE	1166	1166	insn	
+main	fffa646d	cat_AB	cat_AB	359	359	insn	new_calls=1
+main	fffa65d4	cat_AC	cat_AC	659	659	signature	
+main	fffa6867	cat_AG	cat_AG	223	223	insn	
+main	fffa6946	cat_AI	cat_AI	224	224	signature	
+main	fffa6a26	cat_AM	cat_AM	329	329	insn	new_calls=1
+main	fffa6b6f	cat_AO	cat_AO	302	302	insn	dropped_result=F_fffc8d8c
+main	fffa6c9d	cat_AS	cat_AS	575	575	insn	dropped_result=F_fffc8d8c
+main	fffa6edc	cat_AV	cat_AV	316	316	insn	dropped_result=F_fffc8d8c
+main	fffa7018	cat_BA	cat_BA	359	359	insn	new_calls=1
+main	fffa717f	cat_BC	cat_BC	346	346	signature	
+main	fffa72d9	cat_BD	cat_BD	659	659	insn	
+main	fffa756c	cat_BU	cat_BU	640	640	insn	
+main	fffa77ec	cat_BI	cat_BI	316	316	signature	
+main	fffa7928	cat_BM	cat_BM	329	329	insn	new_calls=1
+main	fffa7a71	cat_BP	cat_BP	836	836	insn	dropped_result=F_fffc16f6
+main	fffa7db5	cat_BS	cat_BS	492	492	signature	
+main	fffa7fa1	cat_CF	cat_CF	980	980	signature	
+main	fffa8513	cat_CN	cat_CN	389	389	insn	dropped_result=F_fffc16f6
+main	fffa8698	cat_CO	cat_CO	1280	1280	insn	
+main	fffa8b98	cat_CS	cat_CS	225	225	signature	
+main	fffa8d8a	cat_DA	cat_DA	671	671	insn	
+main	fffa9029	cat_DN	cat_DN	300	300	signature	
+main	fffa9155	cat_UP	cat_UP	300	300	signature	
+main	fffa9281	cat_DT	cat_DT	967	967	insn	
+main	fffa9648	cat_EM	cat_EM	736	736	insn	new_calls=1
+main	fffa9928	cat_EN	cat_EN	15	15	signature	
+main	fffa9937	cat_EX	cat_EX	134	134	signature	fewer_args=F_fffe61e7
+main	fffa99bd	cat_FA_FB	cat_FA_FB	729	729	signature	dropped_result=F_fffc16f6
+main	fffa9d3d	cat_FS	cat_FS	17	17	signature	
+main	fffa9f23	cat_GT	cat_GT	764	764	signature	
+main	fffaa21f	cat_GP	cat_GP	326	326	signature	
+main	fffaa39c	cat_IF_OI	cat_IF_OI	839	839	signature	
+main	fffaa6e3	cat_IS	cat_IS	546	546	signature	dropped_result=F_fffc16f6
+main	fffaa905	cat_KM	cat_KM	817	817	insn	new_calls=2
+main	fffaac36	cat_KP	cat_KP	284	284	insn	dropped_result=F_fffc8d8c
+main	fffaad52	cat_KR	cat_KR	152	152	signature	
+main	fffaadea	cat_KS	cat_KS	303	303	insn	dropped_result=F_fffc8d8c
+main	fffaaf19	cat_KY	cat_KY	390	390	signature	dropped_result=F_fffb2da6,F_fffe53c0
+main	fffab09f	cat_LK	cat_LK	208	208	signature	
+main	fffab16f	cat_LM	cat_LM	654	654	signature	
+main	fffab3fd	cat_MA	cat_MA	123	123	insn	new_calls=1
+main	fffab478	cat_MB	cat_MB	123	123	insn	new_calls=1
+main	fffab4f3	cat_MC	cat_MC	734	734	insn	new_calls=1;dropped_result=F_fffb0376
+main	fffab7d1	cat_MD	cat_MD	659	659	signature	
+main	fffaba64	cat_MG	cat_MG	406	406	insn	dropped_result=F_fffc8d8c
+main	fffabbfa	cat_ML	cat_ML	683	683	insn	dropped_result=F_fffc8d8c
+main	fffabea5	cat_MR	cat_MR	992	992	insn	
+main	fffac285	cat_MT	cat_MT	561	561	insn	
+main	fffac4b6	cat_MS	cat_MS	126	126	signature	
+main	fffac534	cat_MW	cat_MW	1145	1145	insn	
+main	fffac9ad	cat_MX	cat_MX	154	154	signature	
+main	fffaca47	cat_NA	cat_NA	542	542	signature	
+main	fffacc65	cat_NB	cat_NB	131	131	signature	fewer_args=F_fffb2e9c
+main	fffacce8	cat_NL	cat_NL	313	313	insn	dropped_result=F_fffc8d8c
+main	ffface21	cat_NR	cat_NR	157	157	signature	
+main	fffad001	cat_PA	cat_PA	161	161	signature	
+main	fffad0a2	cat_PB	cat_PB	415	415	signature	
+main	fffad241	cat_PC	cat_PC	550	550	insn	dropped_result=F_fffc8d8c
+main	fffad467	cat_PL	cat_PL	302	302	insn	dropped_result=F_fffc8d8c
+main	fffad595	cat_PR	cat_PR	257	257	insn	
+main	fffad718	cat_RA	cat_RA	150	150	signature	
+main	fffad7ae	cat_RG	cat_RG	309	309	insn	
+main	fffad8e3	cat_RI	cat_RI	355	355	signature	
+main	fffada46	cat_RL	cat_RL	311	311	insn	
+main	fffadb7d	cat_RM	cat_RM	345	345	signature	
+main	fffadcd6	cat_SC	cat_SC	196	196	signature	
+main	fffadd9a	cat_SD	cat_SD	284	284	insn	dropped_result=F_fffc8d8c
+main	fffadeb6	cat_SF	cat_SF	1044	1044	insn	
+main	fffae2ca	cat_SH	cat_SH	897	897	insn	dropped_result=F_fffc16f6
+main	fffae64b	cat_SM	cat_SM	129	129	signature	
+main	fffae6cc	cat_SQ	cat_SQ	388	388	insn	
+main	fffae850	cat_SS	cat_SS	2917	2917	insn	dropped_result=F_fffc4f9e
+main	fffaf3b5	cat_ST	cat_ST	185	185	signature	
+main	fffaf46e	cat_SV	cat_SV	345	345	signature	
+main	fffaf5c7	cat_TS	cat_TS	497	497	insn	new_calls=1
+main	fffaf7b8	cat_TX	cat_TX	188	188	signature	
+main	fffaf874	cat_VD	cat_VD	332	332	insn	dropped_result=F_fffc8d8c
+main	fffaf9c0	cat_VG	cat_VG	283	283	insn	dropped_result=F_fffc8d8c
+main	fffafadb	cat_VM	cat_VM	738	738	signature	
+main	fffafdbd	cat_VS	cat_VS	483	483	signature	
+main	fffaffa0	cat_VX	cat_VX	206	206	signature	
+main	fffb006e	cat_ZI	cat_ZI	190	190	signature	
+main	fffb0229	eeprom_load_all	eeprom_load_all	134	134	signature	
+main	fffb02af	eeprom_save_all	eeprom_save_all	32	32	signature	
+main	fffb02cf	eeprom_save_opstate	eeprom_save_opstate	52	52	signature	
+main	fffb0303	eeprom_save_bandstack	eeprom_save_bandstack	83	83	signature	
+main	fffb0356	eeprom_save_image	eeprom_save_image	32	32	signature	
+main	fffb0376	eeprom_save_memch	eeprom_save_memch	75	75	signature	
+main	fffb03c1	eeprom_save_qmb	eeprom_save_qmb	32	32	signature	
+main	fffb03e1	eeprom_save_qmb_slot	eeprom_save_qmb_slot	111	111	signature	
+main	fffb0450	eeprom_save_msg	eeprom_save_msg	185	185	signature	
+main	fffb0509	eeprom_save_atu_mem	eeprom_save_atu_mem	41	41	signature	
+main	fffb0558	settings_defaults	settings_defaults	222	222	insn	new_calls=2
+main	fffb063e	eeprom_read_raw	eeprom_read_raw	19	19	signature	
+main	fffb0651	eeprom_write_raw	eeprom_write_raw	19	19	signature	
+main	fffb06e5	defaults_vfo	defaults_vfo	148	148	insn	new_calls=1
+main	fffb0779	FUN_fffb0779	FUN_fffb0779	687	687	insn	new_calls=1
+main	fffb0a28	defaults_bandstack	defaults_bandstack	84	84	insn	new_calls=1
+main	fffb0a7c	defaults_qmb	defaults_qmb	19	19	insn	new_calls=1
+main	fffb0a8f	defaults_memch	defaults_memch	1557	1557	insn	new_calls=2
+main	fffb10a4	defaults_msg	defaults_msg	196	196	insn	new_calls=2
+main	fffb1168	menu_defaults_load	menu_defaults_load	43	43	insn	new_calls=1
+main	fffb1193	menu_defaults_mode	menu_defaults_mode	93	93	insn	new_calls=1
+main	fffb11f0	menu_defaults_cw	menu_defaults_cw	29	29	insn	new_calls=1
+main	fffb120d	menu_defaults_operation	menu_defaults_operation	217	217	insn	new_calls=1
+main	fffb12e6	menu_defaults_display	menu_defaults_display	29	29	insn	new_calls=1
+main	fffb1325	menu_defaults_presets	menu_defaults_presets	189	189	insn	new_calls=1
+main	fffb13e2	FUN_fffb13e2	FUN_fffb13e2	73	73	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffb142b	eeprom_hdr_update	eeprom_hdr_update	121	121	signature	
+main	fffb14a4	eeprom_read	eeprom_read	73	73	stack	
+main	fffb14ed	eeprom_write	eeprom_write	189	189	signature	
+main	fffb15aa	eeprom_spi_tx	eeprom_spi_tx	69	69	signature	
+main	fffb1645	sci0_set_baud	sci0_set_baud	189	189	signature	
+main	fffb1702	displink_uart_start	displink_uart_start	28	28	signature	
+main	fffb171e	displink_rx_ready	displink_rx_ready	15	15	signature	
+main	fffb172d	displink_rx_rearm	displink_rx_rearm	24	24	signature	
+main	fffb174f	displink_rx_buf	displink_rx_buf	12	12	signature	
+main	fffb175b	displink_uart_send	displink_uart_send	16	16	signature	
+main	fffb177e	sci2_configure	sci2_configure	386	386	signature	
+main	fffb192d	FUN_fffb192d	FUN_fffb192d	23	23	signature	
+main	fffb195a	FUN_fffb195a	FUN_fffb195a	28	28	signature	
+main	fffb1980		FUN_fffb1980		15	added	
+main	fffb198f	sci3_set_baud	sci3_set_baud	242	242	signature	
+main	fffb1a8f	sci4_rx_ready	sci4_rx_ready	15	15	signature	
+main	fffb1aa8	sci4_rx_buf	sci4_rx_buf	12	12	signature	
+main	fffb1ab4	sci4_send	sci4_send	39	39	signature	
+main	fffb1adb	sci4_rx_set_len	sci4_rx_set_len	14	14	signature	
+main	fffb1ae9	sci4_rx_len	sci4_rx_len	15	15	signature	
+main	fffb1b06	sdr_rx_ready	sdr_rx_ready	15	15	signature	
+main	fffb1b1f	sdr_rx_buf	sdr_rx_buf	12	12	signature	
+main	fffb1b2b	sdr_send_cmd	sdr_send_cmd	37	37	signature	
+main	fffb1b50	cat_rx_complete	cat_rx_complete	321	321	insn	new_calls=1
+main	fffb1c91	cat_ring_head	cat_ring_head	15	15	signature	
+main	fffb1ca0	cat_ring_tail	cat_ring_tail	15	15	signature	
+main	fffb1cd2	cat_ring_pop	cat_ring_pop	52	52	signature	
+main	fffb1d06	cat_e9_slot	cat_e9_slot	12	12	signature	
+main	fffb1d12	cat_send_reply	cat_send_reply	73	73	signature	
+main	fffb1dad	cat_rx_byte_hook	cat_rx_byte_hook	405	405	signature	
+main	fffb208d	sst2_write12	sst2_write12	191	191	signature	
+main	fffb23f3	swtimer_expired	swtimer_expired	19	19	signature	
+main	fffb2406	blink_phase	blink_phase	19	19	signature	
+main	fffb2469	tone_sample_isr	tone_sample_isr	58	58	signature	
+main	fffb24a3	tone_play	tone_play	39	39	signature	
+main	fffb24d8	spk_softstart_isr	spk_softstart_isr	196	196	signature	
+main	fffb26bf	tot_expired	tot_expired	38	38	signature	
+main	fffb27c1		FUN_fffb27c1		15	added	
+main	fffb27d1	r_tpu3_tgia_isr	r_tpu3_tgia_isr	14	14	signature	
+main	fffb289e	adc_scan_done	adc_scan_done	51	51	signature	
+main	fffb28d1	dac_init_idle	dac_init_idle	17	17	renamed_moved	
+main	fffb28e2	beep_task	beep_task	1220	1220	signature	
+main	fffb2dfe	FUN_fffb2dfe	FUN_fffb2dfe	15	15	signature	
+main	fffb2e1e	tone_set	tone_set	126	126	signature	
+main	fffb2e9c	nib2hex	nib2hex	27	27	signature	
+main	fffb2ee7	word2hex	word2hex	32	32	signature	
+main	fffb2f79	hex2byte	hex2byte	37	37	signature	
+main	fffb2f9e	hex2word	hex2word	34	34	signature	new_calls=1
+main	fffb2fec	FUN_fffb2fec	FUN_fffb2fec	93	93	data	
+main	fffb3049		FUN_fffb3049		108	added	
+main	fffb30b5	FUN_fffb30b5	FUN_fffb30b5	104	104	renamed_moved	
+main	fffb3168	toupper_inplace	toupper_inplace	46	46	signature	
+main	fffb3196	vfo_mode	vfo_mode	182	182	insn	
+main	fffb324c	vfo_rec_ptr	vfo_rec_ptr	94	94	insn	
+main	fffb32aa	FUN_fffb32aa	FUN_fffb32aa	83	83	insn	
+main	fffb32fd	FUN_fffb32fd	FUN_fffb32fd	58	58	other	
+main	fffb3337	FUN_fffb3337	FUN_fffb3337	58	58	data	
+main	fffb3371	FUN_fffb3371	FUN_fffb3371	58	58	data	
+main	fffb33ab	FUN_fffb33ab	FUN_fffb33ab	58	58	data	
+main	fffb33e5	band_of_freq	band_of_freq	96	96	signature	
+main	fffb3445	gen_subband_of_freq	gen_subband_of_freq	59	59	signature	
+main	fffb3480	freq_range_index	freq_range_index	58	58	signature	
+main	fffb34cf	FUN_fffb34cf	FUN_fffb34cf	21	21	signature	
+main	fffb34f9	FUN_fffb34f9	FUN_fffb34f9	21	21	signature	
+main	fffb350e	FUN_fffb350e	FUN_fffb350e	21	21	data	
+main	fffb3523	FUN_fffb3523	FUN_fffb3523	21	21	signature	
+main	fffb3538	FUN_fffb3538	FUN_fffb3538	21	21	signature	
+main	fffb354d	FUN_fffb354d	FUN_fffb354d	23	23	signature	
+main	fffb3564	FUN_fffb3564	FUN_fffb3564	24	24	signature	
+main	fffb357c	vfo_freq	vfo_freq	91	91	signature	
+main	fffb35d7	vfo_freq_clar	vfo_freq_clar	296	296	insn	new_calls=1
+main	fffb36ff	FUN_fffb36ff	FUN_fffb36ff	118	118	data	
+main	fffb3775	FUN_fffb3775	FUN_fffb3775	88	88	data	
+main	fffb37fe	tx_freq_allowed	tx_freq_allowed	675	675	signature	
+main	fffb3aa1	freq_in_range	freq_in_range	77	77	signature	
+main	fffb3b33	dest_code_get	dest_code_get	42	42	signature	
+main	fffb3b5d	dest_code_set	dest_code_set	73	73	signature	
+main	fffb3ba6	dest_jumper_apply	dest_jumper_apply	363	363	signature	
+main	fffb3e6a	wdt_kick	wdt_kick	5	5	renamed_moved	
+main	fffb3e6f	FUN_fffb3e6f	FUN_fffb3e6f	156	156	signature	
+main	fffb3f0b	FUN_fffb3f0b	FUN_fffb3f0b	156	156	signature	
+main	fffb3fa7	FUN_fffb3fa7	FUN_fffb3fa7	187	187	signature	
+main	fffb4062	FUN_fffb4062	FUN_fffb4062	211	211	signature	
+main	fffb4135	FUN_fffb4135	FUN_fffb4135	85	85	signature	
+main	fffb418a	FUN_fffb418a	FUN_fffb418a	143	143	signature	
+main	fffb4219	audio_route_state	audio_route_state	734	734	insn	
+main	fffb44f7	key_event_filter	key_event_filter	1585	1585	signature	
+main	fffb4b28	supply_undervolt_check	supply_undervolt_check	146	146	signature	
+main	fffb4bba	vfo_tune_locked	vfo_tune_locked	139	139	signature	
+main	fffb4c45	vfo_display_offset	vfo_display_offset	467	467	signature	
+main	fffb4e18	bandmem_set	bandmem_set	166	166	signature	
+main	fffb4ebe	bandmem_get	bandmem_get	148	148	signature	
+main	fffb4f52	tx_freq_repeater_shift	tx_freq_repeater_shift	389	389	signature	new_calls=1
+main	fffb50d7	FUN_fffb50d7	FUN_fffb50d7	323	323	renamed_moved	
+main	fffb521a	FUN_fffb521a	FUN_fffb521a	98	98	signature	
+main	fffb527c	tx_mod_gain	tx_mod_gain	526	526	signature	
+main	fffb54a0	FUN_fffb54a0	FUN_fffb54a0	140	140	signature	
+main	fffb552c	FUN_fffb552c	FUN_fffb552c	140	140	signature	
+main	fffb55eb	pa_relay_update	pa_relay_update	186	186	signature	
+main	fffb56a5	rf_bpf_update	rf_bpf_update	225	225	signature	
+main	fffb5786	atu_relay_update	atu_relay_update	238	238	signature	
+main	fffb5874	main_dac_update	main_dac_update	258	258	signature	
+main	fffb5976	pa_dac_update	pa_dac_update	1010	1010	signature	
+main	fffb5d68	FUN_fffb5d68	FUN_fffb5d68	2322	2322	signature	
+main	fffb667a	FUN_fffb667a	FUN_fffb667a	1636	1636	insn	
+main	fffb6d56	io_task	io_task	173	173	signature	
+main	fffb6e03	meter_get_vdd	meter_get_vdd	15	15	signature	
+main	fffb6e12	meter_get_idd	meter_get_idd	15	15	signature	
+main	fffb6e21	meter_get_alc	meter_get_alc	15	15	signature	
+main	fffb6e30	meter_get_swr	meter_get_swr	15	15	signature	
+main	fffb6e3f	meter_get_swr_raw	meter_get_swr_raw	15	15	signature	
+main	fffb6e6a	meter_get_po	meter_get_po	46	46	signature	
+main	fffb6e98	meter_get_comp	meter_get_comp	15	15	signature	
+main	fffb6ea7	meter_get_s	meter_get_s	15	15	signature	
+main	fffb6eb6	remote_key_get	remote_key_get	15	15	signature	
+main	fffb6ec5	ptt_source_get	ptt_source_get	15	15	signature	
+main	fffb6f3d		FUN_fffb6f3d		19	added	
+main	fffb6f50		FUN_fffb6f50		19	added	
+main	fffb6f63		FUN_fffb6f63		19	added	
+main	fffb6f94		FUN_fffb6f94		24	added	
+main	fffb6fbf	send_a_get	send_a_get	19	19	renamed_moved	
+main	fffb7067	sdr_update_set	sdr_update_set	25	25	renamed_moved	
+main	fffb7080	dsp_reset_set	dsp_reset_set	24	24	renamed_moved	
+main	fffb7098	dsp_update_set	dsp_update_set	24	24	renamed_moved	
+main	fffb70b0	af_reset_set	af_reset_set	25	25	renamed_moved	
+main	fffb70df	tun_lin_sel_set	tun_lin_sel_set	24	24	renamed_moved	
+main	fffb70f7	rem_key_sel_set	rem_key_sel_set	25	25	renamed_moved	
+main	fffb7110	gpo_a_dir_out	gpo_a_dir_out	12	12	renamed_moved	
+main	fffb714d	gpo_a_set	gpo_a_set	24	24	renamed_moved	
+main	fffb7165	gpo_b_set	gpo_b_set	24	24	renamed_moved	
+main	fffb7193	gpo_d_set	gpo_d_set	24	24	renamed_moved	
+main	fffb7243	af_mute_set	af_mute_set	199	199	signature	
+main	fffb73dd	meter_task	meter_task	65	65	signature	
+main	fffb741e	adc_scan_blocking	adc_scan_blocking	13	13	signature	
+main	fffb74b8	meter_idd	meter_idd	71	71	insn	
+main	fffb74ff	meter_alc	meter_alc	70	70	insn	
+main	fffb7545	swr_meter_protect	swr_meter_protect	557	557	signature	
+main	fffb7772	meter_po	meter_po	247	247	signature	
+main	fffb7869	meter_comp	meter_comp	240	240	signature	
+main	fffb7959	meter_s	meter_s	231	231	signature	
+main	fffb7a40	remote_keypad_scan	remote_keypad_scan	259	259	signature	
+main	fffb7b43	io_poll	io_poll	34	34	signature	
+main	fffb7b65	af_mute_update	af_mute_update	391	391	signature	
+main	fffb7cec	FUN_fffb7cec	FUN_fffb7cec	373	373	signature	
+main	fffb7e61	FUN_fffb7e61	FUN_fffb7e61	270	270	signature	
+main	fffb7f6f	ptt_inputs_read	ptt_inputs_read	394	394	signature	
+main	fffb80f9	trx_sequencer	trx_sequencer	1193	1193	signature	dropped_result=F_fffb6fd2
+main	fffb85a2	ptt_source_select	ptt_source_select	326	326	signature	
+main	fffb86e8	ptt_arbiter	ptt_arbiter	794	794	signature	
+main	fffb8a8c	speaker_route	speaker_route	747	747	signature	
+main	fffb8d77	FUN_fffb8d77	FUN_fffb8d77	518	518	signature	
+main	fffb8f7d	linear_band_data	linear_band_data	481	481	signature	
+main	fffb915e	FUN_fffb915e	FUN_fffb915e	393	393	insn	
+main	fffb9605	FUN_fffb9605	FUN_fffb9605	367	367	signature	
+main	fffb98c8	keyer_init	keyer_init	33	33	insn	new_calls=1
+main	fffb98e9	keyer_task	keyer_task	2120	2120	insn	new_calls=2;dropped_result=F_fffba336
+main	fffba131		FUN_fffba131		97	added	
+main	fffba192	FUN_fffba192	FUN_fffba192	378	378	signature	
+main	fffba35c	FUN_fffba35c	FUN_fffba35c	27	27	data	
+main	fffba377	FUN_fffba377	FUN_fffba377	1225	1225	signature	
+main	fffba840	FUN_fffba840	FUN_fffba840	387	387	signature	
+main	fffba9c3	FUN_fffba9c3	FUN_fffba9c3	190	190	signature	
+main	fffbaa81	FUN_fffbaa81	FUN_fffbaa81	1397	1397	insn	
+main	fffbb024	FUN_fffbb024	FUN_fffbb024	231	231	signature	
+main	fffbb10b	FUN_fffbb10b	FUN_fffbb10b	96	96	signature	
+main	fffbb185	FUN_fffbb185	FUN_fffbb185	61	61	signature	
+main	fffbb1dd	FUN_fffbb1dd	FUN_fffbb1dd	166	166	signature	
+main	fffbb283	FUN_fffbb283	FUN_fffbb283	60	60	signature	
+main	fffbb338	FUN_fffbb338	FUN_fffbb338	559	559	signature	
+main	fffbb567	FUN_fffbb567	FUN_fffbb567	1020	1020	insn	new_calls=1
+main	fffbba2e	FUN_fffbba2e	FUN_fffbba2e	113	113	stack	
+main	fffbbbdc	FUN_fffbbbdc	FUN_fffbbbdc	46	46	signature	
+main	fffbbd58	key_task	key_task	939	939	signature	
+main	fffbc103	key_cancel_check	key_cancel_check	205	205	signature	
+main	fffbc1d0	key_class_of	key_class_of	85	85	signature	
+main	fffbc225	key_assign_slot	key_assign_slot	122	122	signature	
+main	fffbc29f	scope_cursor_follow	scope_cursor_follow	192	192	signature	
+main	fffbc35f	key_call_press	key_call_press	47	47	stack	
+main	fffbc38e	key_call_short	key_call_short	47	47	stack	
+main	fffbc3bd	key_call_long	key_call_long	73	73	stack	
+main	fffbc406	key_call_repeat	key_call_repeat	47	47	stack	
+main	fffbc435	key_call_release	key_call_release	47	47	stack	
+main	fffbc464	key_touch_scope_tune	key_touch_scope_tune	405	405	stack	new_calls=1
+main	fffbc6e9	scope_cursor_center	scope_cursor_center	149	149	signature	dropped_result=F_fffb4e18
+main	fffbd16c	FUN_fffbd16c	FUN_fffbd16c	20	20	renamed_moved	
+main	fffbe83f	FUN_fffbe83f	FUN_fffbe83f	147	147	signature	
+main	fffbeca5	split_toggle	split_toggle	352	352	signature	
+main	fffbf0b6	FUN_fffbf0b6	FUN_fffbf0b6	286	286	signature	
+main	fffbf924	qmb_recall	qmb_recall	416	416	signature	
+main	fffbfac4	qmb_store	qmb_store	371	371	insn	new_calls=1
+main	fffc052b	FUN_fffc052b	FUN_fffc052b	108	108	signature	
+main	fffc0b2f	FUN_fffc0b2f	FUN_fffc0b2f	352	352	signature	dropped_result=F_fffb2da6
+main	fffc0d69	FUN_fffc0d69	FUN_fffc0d69	142	142	signature	
+main	fffc0e65	FUN_fffc0e65	FUN_fffc0e65	13	13	renamed_moved	
+main	fffc0fcc	FUN_fffc0fcc	FUN_fffc0fcc	225	225	signature	
+main	fffc10c3	freq_clamp	freq_clamp	229	229	signature	
+main	fffc11a8	freq_clamp_pms	freq_clamp_pms	178	178	signature	
+main	fffc125a	vfo_mark_tuned	vfo_mark_tuned	33	33	signature	
+main	fffc127b	qmb_exit_to_vfo	qmb_exit_to_vfo	144	144	signature	
+main	fffc130b	freq_fix_below	freq_fix_below	109	109	signature	
+main	fffc1378	freq_fix_above	freq_fix_above	111	111	signature	
+main	fffc1625	FUN_fffc1625	FUN_fffc1625	62	62	signature	
+main	fffc1663	band_select	band_select	147	147	signature	
+main	fffc16f6	vfo_store_back	vfo_store_back	233	233	signature	
+main	fffc18ff	memtune_backup_a	memtune_backup_a	20	20	insn	new_calls=1
+main	fffc1913	memtune_backup_b	memtune_backup_b	20	20	insn	new_calls=1
+main	fffc1927	bandstack_save	bandstack_save	230	230	insn	new_calls=1
+main	fffc1a5f	band_select_pms	band_select_pms	73	73	signature	
+main	fffc1aa8	band_select_mem	band_select_mem	39	39	signature	
+main	fffc1acf	band_select_memtune	band_select_memtune	23	23	signature	
+main	fffc1ae6	band_select_vfo	band_select_vfo	73	73	signature	
+main	fffc1c04	vfo_reload	vfo_reload	186	186	signature	
+main	fffc1cbe	vfo_reload_bandstack	vfo_reload_bandstack	27	27	signature	
+main	fffc1cd9	bandstack_load	bandstack_load	188	188	insn	new_calls=1
+main	fffc1d95	FUN_fffc1d95	FUN_fffc1d95	49	49	signature	
+main	fffc1dca	FUN_fffc1dca	FUN_fffc1dca	49	49	signature	
+main	fffc1dff	vfo_reload_memory	vfo_reload_memory	16	16	signature	
+main	fffc1e0f	memtune_restore_a	memtune_restore_a	20	20	insn	new_calls=1
+main	fffc1e23	memtune_restore_b	memtune_restore_b	20	20	insn	new_calls=1
+main	fffc1e6f	FUN_fffc1e6f	FUN_fffc1e6f	111	111	insn	new_calls=1
+main	fffc2137	FUN_fffc2137	FUN_fffc2137	144	144	insn	new_calls=1
+main	fffc21e8	FUN_fffc21e8	FUN_fffc21e8	102	102	signature	
+main	fffc224e	FUN_fffc224e	FUN_fffc224e	72	72	signature	
+main	fffc2296	FUN_fffc2296	FUN_fffc2296	72	72	signature	
+main	fffc22de	FUN_fffc22de	FUN_fffc22de	120	120	signature	
+main	fffc2426	FUN_fffc2426	FUN_fffc2426	486	486	signature	
+main	fffc260c	FUN_fffc260c	FUN_fffc260c	117	117	signature	
+main	fffc2681	memch_load_to_vfo	memch_load_to_vfo	189	189	insn	new_calls=1
+main	fffc273e	vfo_clear_tag	vfo_clear_tag	86	86	signature	
+main	fffc27ad	vm_toggle_core	vm_toggle_core	318	318	signature	
+main	fffc28eb	FUN_fffc28eb	FUN_fffc28eb	16	16	signature	
+main	fffc28fb	vfo_enter_mem_state	vfo_enter_mem_state	60	60	signature	
+main	fffc29f3	FUN_fffc29f3	FUN_fffc29f3	74	74	signature	
+main	fffc2a3d	FUN_fffc2a3d	FUN_fffc2a3d	213	213	signature	
+main	fffc2b2e	FUN_fffc2b2e	FUN_fffc2b2e	102	102	signature	
+main	fffc2b94	FUN_fffc2b94	FUN_fffc2b94	187	187	signature	
+main	fffc2c66	FUN_fffc2c66	FUN_fffc2c66	98	98	insn	new_calls=1
+main	fffc2d05	FUN_fffc2d05	FUN_fffc2d05	142	142	insn	new_calls=1
+main	fffc2d93	vfo_is_memory	vfo_is_memory	86	86	signature	
+main	fffc2de9	memch_current_valid	memch_current_valid	24	24	signature	
+main	fffc2e01	memch_valid	memch_valid	100	100	signature	
+main	fffc2e65	memch_current	memch_current	40	40	signature	
+main	fffc2e8d	memch_dest_blocked	memch_dest_blocked	62	62	signature	
+main	fffc2ecb	memch_current_is_special	memch_current_is_special	22	22	signature	
+main	fffc2f50	FUN_fffc2f50	FUN_fffc2f50	142	142	insn	new_calls=1
+main	fffc2fde	vfo_mark_edited	vfo_mark_edited	40	40	signature	
+main	fffc3006	FUN_fffc3006	FUN_fffc3006	37	37	signature	
+main	fffc316c	qmb_enter	qmb_enter	59	59	signature	
+main	fffc31a7	FUN_fffc31a7	FUN_fffc31a7	25	25	signature	
+main	fffc3240	FUN_fffc3240	FUN_fffc3240	71	71	insn	new_calls=1
+main	fffc3287	vfo_retune	vfo_retune	197	197	signature	
+main	fffc334c	FUN_fffc334c	FUN_fffc334c	163	163	renamed_moved	
+main	fffc3408	FUN_fffc3408	FUN_fffc3408	208	208	signature	
+main	fffc3d75	FUN_fffc3d75	FUN_fffc3d75	115	115	signature	
+main	fffc3de8	FUN_fffc3de8	FUN_fffc3de8	84	84	signature	
+main	fffc3eaa	FUN_fffc3eaa	FUN_fffc3eaa	113	113	signature	
+main	fffc3fef	FUN_fffc3fef	FUN_fffc3fef	117	117	insn	new_calls=1
+main	fffc4064	FUN_fffc4064	FUN_fffc4064	115	115	signature	
+main	fffc40d7	FUN_fffc40d7	FUN_fffc40d7	51	51	data	
+main	fffc410a	FUN_fffc410a	FUN_fffc410a	51	51	data	
+main	fffc413d	FUN_fffc413d	FUN_fffc413d	51	51	data	
+main	fffc4170	FUN_fffc4170	FUN_fffc4170	51	51	data	
+main	fffc41a3	FUN_fffc41a3	FUN_fffc41a3	51	51	data	
+main	fffc4af5	FUN_fffc4af5	FUN_fffc4af5	72	72	renamed_moved	
+main	fffc4c4e	band_select_on	band_select_on	61	61	signature	
+main	fffc4cc5	FUN_fffc4cc5	FUN_fffc4cc5	206	206	signature	
+main	fffc4d93	FUN_fffc4d93	FUN_fffc4d93	89	89	insn	new_calls=1
+main	fffc4e4f	FUN_fffc4e4f	FUN_fffc4e4f	320	320	signature	
+main	fffc4fce	FUN_fffc4fce	FUN_fffc4fce	157	157	signature	
+main	fffc506b	FUN_fffc506b	FUN_fffc506b	53	53	signature	
+main	fffc50a0	FUN_fffc50a0	FUN_fffc50a0	53	53	signature	
+main	fffc50d5	FUN_fffc50d5	FUN_fffc50d5	41	41	signature	
+main	fffc50fe	FUN_fffc50fe	FUN_fffc50fe	41	41	signature	
+main	fffc5127	FUN_fffc5127	FUN_fffc5127	54	54	signature	
+main	fffc515d	FUN_fffc515d	FUN_fffc515d	64	64	signature	
+main	fffc519d	FUN_fffc519d	FUN_fffc519d	157	157	signature	
+main	fffc523a	FUN_fffc523a	FUN_fffc523a	86	86	insn	
+main	fffc53dc	FUN_fffc53dc	FUN_fffc53dc	240	240	signature	
+main	fffc54cc	FUN_fffc54cc	FUN_fffc54cc	117	117	signature	
+main	fffc5541	FUN_fffc5541	FUN_fffc5541	150	150	signature	
+main	fffc55d7	FUN_fffc55d7	FUN_fffc55d7	150	150	signature	
+main	fffc566d	FUN_fffc566d	FUN_fffc566d	29	29	signature	
+main	fffc568a	FUN_fffc568a	FUN_fffc568a	67	67	signature	
+main	fffc56cd	FUN_fffc56cd	FUN_fffc56cd	154	154	insn	
+main	fffc5767	FUN_fffc5767	FUN_fffc5767	49	49	signature	
+main	fffc58e1	FUN_fffc58e1	FUN_fffc58e1	116	116	signature	
+main	fffc5955	FUN_fffc5955	FUN_fffc5955	137	137	signature	
+main	fffc5bb9	FUN_fffc5bb9	FUN_fffc5bb9	214	214	signature	
+main	fffc5c8f	FUN_fffc5c8f	FUN_fffc5c8f	81	81	signature	
+main	fffc5ce0	vfo_mem_to_memtune	vfo_mem_to_memtune	51	51	signature	
+main	fffc5d13	pms_load_limits	pms_load_limits	247	247	signature	
+main	fffc5e0a	FUN_fffc5e0a	FUN_fffc5e0a	186	186	signature	
+main	fffc5ec4	FUN_fffc5ec4	FUN_fffc5ec4	104	104	signature	
+main	fffc5f2c	FUN_fffc5f2c	FUN_fffc5f2c	113	113	signature	
+main	fffc5f9d	FUN_fffc5f9d	FUN_fffc5f9d	214	214	signature	
+main	fffc6073	FUN_fffc6073	FUN_fffc6073	144	144	signature	
+main	fffc6103	FUN_fffc6103	FUN_fffc6103	107	107	signature	
+main	fffc616e	FUN_fffc616e	FUN_fffc616e	320	320	signature	
+main	fffc62ae	FUN_fffc62ae	FUN_fffc62ae	312	312	renamed_moved	
+main	fffc63e6	FUN_fffc63e6	FUN_fffc63e6	166	166	signature	
+main	fffc648c	FUN_fffc648c	FUN_fffc648c	52	52	signature	
+main	fffc670d	FUN_fffc670d	FUN_fffc670d	243	243	signature	
+main	fffc68c2	FUN_fffc68c2	FUN_fffc68c2	328	328	signature	
+main	fffc6a0a	FUN_fffc6a0a	FUN_fffc6a0a	186	186	signature	
+main	fffc6ac4	FUN_fffc6ac4	FUN_fffc6ac4	112	112	renamed_moved	
+main	fffc6ddd	FUN_fffc6ddd	FUN_fffc6ddd	308	308	signature	
+main	fffc71c7	FUN_fffc71c7	FUN_fffc71c7	213	213	signature	
+main	fffc729c	FUN_fffc729c	FUN_fffc729c	246	246	signature	
+main	fffc7392	FUN_fffc7392	FUN_fffc7392	45	45	signature	
+main	fffc73df	FUN_fffc73df	FUN_fffc73df	271	271	signature	
+main	fffc77c7	FUN_fffc77c7	FUN_fffc77c7	24	24	signature	
+main	fffc77df	FUN_fffc77df	FUN_fffc77df	72	72	signature	
+main	fffc7827	FUN_fffc7827	FUN_fffc7827	228	228	signature	
+main	fffc79b8	FUN_fffc79b8	FUN_fffc79b8	215	215	insn	
+main	fffc7b47	FUN_fffc7b47	FUN_fffc7b47	24	24	renamed_moved	
+main	fffc7eeb	FUN_fffc7eeb	FUN_fffc7eeb	225	225	signature	
+main	fffc7fcc	FUN_fffc7fcc	FUN_fffc7fcc	178	178	insn	
+main	fffc809d	FUN_fffc809d	FUN_fffc809d	164	164	signature	
+main	fffc8141	FUN_fffc8141	FUN_fffc8141	164	164	signature	
+main	fffc836a	FUN_fffc836a	FUN_fffc836a	199	199	signature	
+main	fffc84f9	FUN_fffc84f9	FUN_fffc84f9	396	396	signature	
+main	fffc89b0	FUN_fffc89b0	FUN_fffc89b0	63	63	signature	
+main	fffc8b7f	FUN_fffc8b7f	FUN_fffc8b7f	108	108	signature	
+main	fffc8cbb	FUN_fffc8cbb	FUN_fffc8cbb	209	209	data	
+main	fffc8d8c	FUN_fffc8d8c	FUN_fffc8d8c	76	76	signature	
+main	fffc8dd8	FUN_fffc8dd8	FUN_fffc8dd8	54	54	signature	
+main	fffc8e0e	FUN_fffc8e0e	FUN_fffc8e0e	24	24	signature	
+main	fffc8e26	FUN_fffc8e26	FUN_fffc8e26	150	150	signature	
+main	fffc8ee2	FUN_fffc8ee2	FUN_fffc8ee2	78	78	signature	
+main	fffc8f30	FUN_fffc8f30	FUN_fffc8f30	24	24	signature	
+main	fffc8f48	FUN_fffc8f48	FUN_fffc8f48	67	67	signature	
+main	fffc8f8b	FUN_fffc8f8b	FUN_fffc8f8b	27	27	signature	
+main	fffc8fa6	FUN_fffc8fa6	FUN_fffc8fa6	83	83	signature	
+main	fffc8ff9	FUN_fffc8ff9	FUN_fffc8ff9	77	77	signature	
+main	fffc9046	FUN_fffc9046	FUN_fffc9046	62	62	signature	
+main	fffc9084	FUN_fffc9084	FUN_fffc9084	27	27	signature	
+main	fffc90cb	FUN_fffc90cb	FUN_fffc90cb	34	34	signature	
+main	fffc90fc	FUN_fffc90fc	FUN_fffc90fc	34	34	signature	
+main	fffc912d	FUN_fffc912d	FUN_fffc912d	14	14	renamed_moved	
+main	fffc91a2		FUN_fffc91a2		8	added	
+main	fffc91aa		FUN_fffc91aa		8	added	
+main	fffc9288		FUN_fffc9288		64	added	
+main	fffc92c8		FUN_fffc92c8		64	added	
+main	fffc9308		FUN_fffc9308		9	added	
+main	fffc931a		FUN_fffc931a		64	added	
+main	fffc935a		FUN_fffc935a		73	added	
+main	fffc93a4	r_sci6_iic_txi	r_sci6_iic_txi	75	75	signature	
+main	fffc9467	r_sci6_iic_rxi	r_sci6_iic_rxi	328	328	signature	
+main	fffc9654		FUN_fffc9654		64	added	
+main	fffc9694		FUN_fffc9694		104	added	
+main	fffc96fc		FUN_fffc96fc		68	added	
+main	fffc9740		FUN_fffc9740		95	added	
+main	fffc97a0	r_sci7_transmit_interrupt	r_sci7_transmit_interrupt	76	76	signature	
+main	fffc9811	r_sci7_receive_interrupt	r_sci7_receive_interrupt	111	111	signature	
+main	fffc98f9	menu_page_serialize	menu_page_serialize	626	626	insn	new_calls=1
+main	fffc9d9a	FUN_fffc9d9a	FUN_fffc9d9a	119	119	insn	new_calls=1
+main	fffc9ed4	FUN_fffc9ed4	FUN_fffc9ed4	119	119	insn	new_calls=1
+main	fffca06d	FUN_fffca06d	FUN_fffca06d	163	163	insn	new_calls=1
+main	fffca125	FUN_fffca125	FUN_fffca125	119	119	insn	new_calls=1
+main	fffca2a1	FUN_fffca2a1	FUN_fffca2a1	119	119	insn	new_calls=1
+main	fffca3ab	FUN_fffca3ab	FUN_fffca3ab	119	119	insn	new_calls=1
+main	fffcabc2	FUN_fffcabc2	FUN_fffcabc2	120	120	insn	new_calls=1
+main	fffcb34b	FUN_fffcb34b	FUN_fffcb34b	119	119	insn	new_calls=1
+main	fffcb672	FUN_fffcb672	FUN_fffcb672	119	119	insn	new_calls=1
+main	fffcb9ba	FUN_fffcb9ba	FUN_fffcb9ba	119	119	insn	new_calls=1
+main	fffcba46	FUN_fffcba46	FUN_fffcba46	119	119	insn	new_calls=1
+main	fffcc04a	FUN_fffcc04a	FUN_fffcc04a	120	120	insn	new_calls=1
+main	fffcda51	FUN_fffcda51	FUN_fffcda51	213	213	signature	
+main	fffcdb26	FUN_fffcdb26	FUN_fffcdb26	69	69	signature	
+main	fffcdc1f	menu_ui_enter	menu_ui_enter	89	89	signature	
+main	fffcdc79	FUN_fffcdc79	FUN_fffcdc79	106	106	signature	
+main	fffcdd0f	FUN_fffcdd0f	FUN_fffcdd0f	111	111	signature	
+main	fffcdd7e	menu_ui_step	menu_ui_step	93	93	signature	
+main	fffcdddb	menu_apply_from_cat	menu_apply_from_cat	42	42	signature	
+main	fffce3eb	menu_fm_rptshift_get	menu_fm_rptshift_get	38	38	signature	
+main	fffce411	menu_fm_rptshift_set	menu_fm_rptshift_set	37	37	signature	
+main	fffce53c	menu_fm_encdec_get	menu_fm_encdec_get	38	38	signature	
+main	fffce562	menu_fm_encdec_set	menu_fm_encdec_set	38	38	signature	
+main	fffce5be	menu_fm_tone_get	menu_fm_tone_get	55	55	signature	
+main	fffce5f5	menu_fm_tone_set	menu_fm_tone_set	52	52	signature	
+main	fffcf5bd	FUN_fffcf5bd	FUN_fffcf5bd	60	60	signature	
+main	fffcf6dd	FUN_fffcf6dd	FUN_fffcf6dd	26	26	renamed_moved	
+main	fffcf6f7	FUN_fffcf6f7	FUN_fffcf6f7	137	137	renamed_moved	
+main	fffcfc50	FUN_fffcfc50	FUN_fffcfc50	174	174	insn	
+main	fffcfe83	FUN_fffcfe83	FUN_fffcfe83	209	209	insn	
+main	fffd0288	reset_select	reset_select	103	103	insn	new_calls=1
+main	fffd0366	FUN_fffd0366	FUN_fffd0366	39	39	renamed_moved	
+main	fffd038d	FUN_fffd038d	FUN_fffd038d	26	26	renamed_moved	
+main	fffd077e	FUN_fffd077e	FUN_fffd077e	388	388	insn	new_calls=1
+main	fffd0a16	FUN_fffd0a16	FUN_fffd0a16	82	82	insn	new_calls=1
+main	fffd0d0e	FUN_fffd0d0e	FUN_fffd0d0e	266	266	insn	new_calls=2
+main	fffd0e37	FUN_fffd0e37	FUN_fffd0e37	51	51	insn	new_calls=1
+main	fffd0e6a	FUN_fffd0e6a	FUN_fffd0e6a	105	105	insn	new_calls=1
+main	fffd1078	FUN_fffd1078	FUN_fffd1078	184	184	insn	new_calls=1
+main	fffd1252	FUN_fffd1252	FUN_fffd1252	171	171	insn	new_calls=1
+main	fffd17ee	FUN_fffd17ee	FUN_fffd17ee	47	47	renamed_moved	
+main	fffd181d	FUN_fffd181d	FUN_fffd181d	42	42	renamed_moved	
+main	fffd199a	FUN_fffd199a	FUN_fffd199a	138	138	signature	
+main	fffd1a46	FUN_fffd1a46	FUN_fffd1a46	119	119	signature	
+main	fffd1d86	FUN_fffd1d86	FUN_fffd1d86	234	234	insn	new_calls=1
+main	fffd1eb1	FUN_fffd1eb1	FUN_fffd1eb1	235	235	insn	new_calls=1
+main	fffd1fdd	FUN_fffd1fdd	FUN_fffd1fdd	234	234	insn	new_calls=1
+main	fffd249d	FUN_fffd249d	FUN_fffd249d	235	235	insn	new_calls=1
+main	fffd25c9	FUN_fffd25c9	FUN_fffd25c9	234	234	insn	new_calls=1
+main	fffd26f4	FUN_fffd26f4	FUN_fffd26f4	236	236	insn	new_calls=1
+main	fffd2821	FUN_fffd2821	FUN_fffd2821	234	234	insn	new_calls=1
+main	fffd2b7a	FUN_fffd2b7a	FUN_fffd2b7a	234	234	insn	new_calls=1
+main	fffd2ca5	FUN_fffd2ca5	FUN_fffd2ca5	234	234	insn	new_calls=1
+main	fffd2ffe	FUN_fffd2ffe	FUN_fffd2ffe	234	234	insn	new_calls=1
+main	fffd30e8	FUN_fffd30e8	FUN_fffd30e8	138	138	signature	
+main	fffd3202	FUN_fffd3202	FUN_fffd3202	132	132	signature	
+main	fffd32a4	FUN_fffd32a4	FUN_fffd32a4	132	132	signature	
+main	fffd3346	FUN_fffd3346	FUN_fffd3346	132	132	signature	
+main	fffd33e8	FUN_fffd33e8	FUN_fffd33e8	133	133	signature	
+main	fffd348b	FUN_fffd348b	FUN_fffd348b	133	133	signature	
+main	fffd352e	FUN_fffd352e	FUN_fffd352e	133	133	signature	
+main	fffd35d1	FUN_fffd35d1	FUN_fffd35d1	133	133	signature	
+main	fffd3674	FUN_fffd3674	FUN_fffd3674	132	132	signature	
+main	fffd3716	FUN_fffd3716	FUN_fffd3716	133	133	signature	
+main	fffd37b9	FUN_fffd37b9	FUN_fffd37b9	132	132	signature	
+main	fffd385b	FUN_fffd385b	FUN_fffd385b	133	133	signature	
+main	fffd38fe	FUN_fffd38fe	FUN_fffd38fe	133	133	signature	
+main	fffd39a1	FUN_fffd39a1	FUN_fffd39a1	132	132	signature	
+main	fffd3a43	FUN_fffd3a43	FUN_fffd3a43	132	132	signature	
+main	fffd3ae5	FUN_fffd3ae5	FUN_fffd3ae5	133	133	signature	
+main	fffd3b88	FUN_fffd3b88	FUN_fffd3b88	133	133	signature	
+main	fffd3c2b	FUN_fffd3c2b	FUN_fffd3c2b	132	132	signature	
+main	fffd405e	FUN_fffd405e	FUN_fffd405e	859	859	renamed_moved	
+main	fffd43b9	FUN_fffd43b9	FUN_fffd43b9	118	118	renamed_moved	
+main	fffd442f	menu_register	menu_register	377	377	insn	new_calls=1
+main	fffd45a8	menu_group_visible	menu_group_visible	169	169	signature	
+main	fffd4795	menu_get_desc	menu_get_desc	85	85	insn	new_calls=1
+main	fffd47ea	menu_get_name	menu_get_name	87	87	insn	new_calls=1
+main	fffd49a0	menu_call_draw	menu_call_draw	32	32	signature	
+main	fffd49c0	menu_call_step	menu_call_step	26	26	signature	
+main	fffd49da	menu_call_enter	menu_call_enter	26	26	signature	
+main	fffd4a4f	menu_dest_mask	menu_dest_mask	139	139	signature	
+main	fffd4ada	menu_cursor_of	menu_cursor_of	317	317	signature	
+main	fffd4ffe	menu_get_limits	menu_get_limits	78	78	insn	new_calls=1
+main	fffd504c	menu_value_rw	menu_value_rw	343	343	insn	new_calls=6
+main	fffd51a3	menu_value_get	menu_value_get	39	39	signature	
+main	fffd51ca	menu_value_set	menu_value_set	39	39	signature	
+main	fffd51f1	menu_string_rw	menu_string_rw	156	156	insn	new_calls=1
+main	fffd528d	menu_string_get	menu_string_get	41	41	signature	
+main	fffd52b6	menu_string_set	menu_string_set	41	41	signature	
+main	fffd52df	menu_p1_range	menu_p1_range	148	148	signature	
+main	fffd5373	menuitem_EX010101	menuitem_EX010101	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd53e1	menuitem_EX010102	menuitem_EX010102	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd544f	menuitem_EX010103	menuitem_EX010103	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd54bd	menuitem_EX010104	menuitem_EX010104	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5529	menuitem_EX010105	menuitem_EX010105	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5595	menuitem_EX010106	menuitem_EX010106	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5601	menuitem_EX010107	menuitem_EX010107	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd566d	menuitem_EX010108	menuitem_EX010108	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd56d9	menuitem_EX010109	menuitem_EX010109	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5745	menuitem_EX010110	menuitem_EX010110	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd57b1	menuitem_EX010111	menuitem_EX010111	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd581d	menuitem_EX010112	menuitem_EX010112	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5889	menuitem_EX010113	menuitem_EX010113	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd58f5	menuitem_EX010114	menuitem_EX010114	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5961	menuitem_EX010115	menuitem_EX010115	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd59cd	menuitem_EX010116	menuitem_EX010116	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5a39	menuitem_EX010117	menuitem_EX010117	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5aa5	menuitem_EX010118	menuitem_EX010118	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5b11	menuitem_EX010119	menuitem_EX010119	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5b7d	menuitem_EX010201	menuitem_EX010201	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5beb	menuitem_EX010202	menuitem_EX010202	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5c59	menuitem_EX010203	menuitem_EX010203	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5cc7	menuitem_EX010204	menuitem_EX010204	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5d33	menuitem_EX010205	menuitem_EX010205	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5d9f	menuitem_EX010206	menuitem_EX010206	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5e0b	menuitem_EX010207	menuitem_EX010207	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5e77	menuitem_EX010208	menuitem_EX010208	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5ee3	menuitem_EX010209	menuitem_EX010209	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5f4f	menuitem_EX010210	menuitem_EX010210	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd5fbb	menuitem_EX010211	menuitem_EX010211	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6027	menuitem_EX010212	menuitem_EX010212	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6093	menuitem_EX010213	menuitem_EX010213	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd60ff	menuitem_EX010214	menuitem_EX010214	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd616b	menuitem_EX010215	menuitem_EX010215	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd61d7	menuitem_EX010216	menuitem_EX010216	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6243	menuitem_EX010217	menuitem_EX010217	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd62af	menuitem_EX010301	menuitem_EX010301	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd631d	menuitem_EX010302	menuitem_EX010302	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd638b	menuitem_EX010303	menuitem_EX010303	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd63f9	menuitem_EX010304	menuitem_EX010304	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6465	menuitem_EX010305	menuitem_EX010305	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd64d1	menuitem_EX010306	menuitem_EX010306	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd653d	menuitem_EX010307	menuitem_EX010307	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd65a9	menuitem_EX010308	menuitem_EX010308	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6615	menuitem_EX010309	menuitem_EX010309	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6681	menuitem_EX010310	menuitem_EX010310	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd66ed	menuitem_EX010311	menuitem_EX010311	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6759	menuitem_EX010312	menuitem_EX010312	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd67c5	menuitem_EX010313	menuitem_EX010313	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6831	menuitem_EX010314	menuitem_EX010314	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd689d	menuitem_EX010315	menuitem_EX010315	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6909	menuitem_EX010316	menuitem_EX010316	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6975	menuitem_EX010317	menuitem_EX010317	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd69d8	menuitem_EX010318	menuitem_EX010318	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6a44	menuitem_EX010319	menuitem_EX010319	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6ab2	menuitem_EX010320	menuitem_EX010320	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6b15	menuitem_EX010321	menuitem_EX010321	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6b78	menuitem_EX010401	menuitem_EX010401	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6be6	menuitem_EX010402	menuitem_EX010402	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6c54	menuitem_EX010403	menuitem_EX010403	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6cc2	menuitem_EX010404	menuitem_EX010404	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6d2e	menuitem_EX010405	menuitem_EX010405	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6d9a	menuitem_EX010406	menuitem_EX010406	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6e06	menuitem_EX010407	menuitem_EX010407	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6e72	menuitem_EX010408	menuitem_EX010408	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6ede	menuitem_EX010409	menuitem_EX010409	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6f4a	menuitem_EX010410	menuitem_EX010410	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd6fb6	menuitem_EX010411	menuitem_EX010411	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7022	menuitem_EX010412	menuitem_EX010412	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd708e	menuitem_EX010413	menuitem_EX010413	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd70fa	menuitem_EX010414	menuitem_EX010414	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7166	menuitem_EX010415	menuitem_EX010415	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd71d2	menuitem_EX010416	menuitem_EX010416	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd723e	menuitem_EX010417	menuitem_EX010417	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd72aa	menuitem_EX010418	menuitem_EX010418	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7316	menuitem_EX010419	menuitem_EX010419	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7382	menuitem_EX010420	menuitem_EX010420	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd73f0	menuitem_EX010501	menuitem_EX010501	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd745e	menuitem_EX010502	menuitem_EX010502	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd74cc	menuitem_EX010503	menuitem_EX010503	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd753a	menuitem_EX010504	menuitem_EX010504	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd75a6	menuitem_EX010505	menuitem_EX010505	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7612	menuitem_EX010506	menuitem_EX010506	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd767e	menuitem_EX010507	menuitem_EX010507	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd76ea	menuitem_EX010508	menuitem_EX010508	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7756	menuitem_EX010509	menuitem_EX010509	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd77c2	menuitem_EX010510	menuitem_EX010510	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd782e	menuitem_EX010511	menuitem_EX010511	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd789a	menuitem_EX010512	menuitem_EX010512	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7906	menuitem_EX010513	menuitem_EX010513	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7972	menuitem_EX010514	menuitem_EX010514	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd79de	menuitem_EX010515	menuitem_EX010515	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7a4a	menuitem_EX010516	menuitem_EX010516	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7ab6	menuitem_EX010517	menuitem_EX010517	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7b22	menuitem_EX020101	menuitem_EX020101	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7b90	menuitem_EX020102	menuitem_EX020102	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7bfe	menuitem_EX020103	menuitem_EX020103	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7c6c	menuitem_EX020104	menuitem_EX020104	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7cd8	menuitem_EX020105	menuitem_EX020105	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7d44	menuitem_EX020106	menuitem_EX020106	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7db0	menuitem_EX020107	menuitem_EX020107	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7e1c	menuitem_EX020108	menuitem_EX020108	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7e88	menuitem_EX020109	menuitem_EX020109	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7ef4	menuitem_EX020110	menuitem_EX020110	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7f60	menuitem_EX020111	menuitem_EX020111	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd7fcc	menuitem_EX020112	menuitem_EX020112	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8038	menuitem_EX020113	menuitem_EX020113	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd80a4	menuitem_EX020114	menuitem_EX020114	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8110	menuitem_EX020115	menuitem_EX020115	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd817c	menuitem_EX020116	menuitem_EX020116	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd81e8	menuitem_EX020117	menuitem_EX020117	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8254	menuitem_EX020118	menuitem_EX020118	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd82c0	menuitem_EX020119	menuitem_EX020119	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd832c	menuitem_EX020120	menuitem_EX020120	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8398	menuitem_EX020201	menuitem_EX020201	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8404	menuitem_EX020202	menuitem_EX020202	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8470	menuitem_EX020203	menuitem_EX020203	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd84dc	menuitem_EX020204	menuitem_EX020204	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8548	menuitem_EX020205	menuitem_EX020205	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd85b6	menuitem_EX020206	menuitem_EX020206	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8622	menuitem_EX020207	menuitem_EX020207	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd868e	menuitem_EX020208	menuitem_EX020208	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd86fa	menuitem_EX020209	menuitem_EX020209	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8766	menuitem_EX020210	menuitem_EX020210	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd87d2	menuitem_EX020211	menuitem_EX020211	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd883e	menuitem_EX030101	menuitem_EX030101	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd88aa	menuitem_EX030102	menuitem_EX030102	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8916	menuitem_EX030103	menuitem_EX030103	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8982	menuitem_EX030104	menuitem_EX030104	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd89ee	menuitem_EX030105	menuitem_EX030105	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8a5a	menuitem_EX030106	menuitem_EX030106	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8ac6	menuitem_EX030107	menuitem_EX030107	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8b32	menuitem_EX030108	menuitem_EX030108	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8b9e	menuitem_EX030109	menuitem_EX030109	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8c0a	menuitem_EX030110	menuitem_EX030110	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8c76	menuitem_EX030111	menuitem_EX030111	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8ce2	menuitem_EX030112	menuitem_EX030112	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8d4e	menuitem_EX030113	menuitem_EX030113	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8dba	menuitem_EX030114	menuitem_EX030114	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8e26	menuitem_EX030115	menuitem_EX030115	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8e92	menuitem_EX030116	menuitem_EX030116	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8efe	menuitem_EX030117	menuitem_EX030117	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8f6a	menuitem_EX030118	menuitem_EX030118	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd8fd8	menuitem_EX030119	menuitem_EX030119	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9044	menuitem_EX030120	menuitem_EX030120	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd90b0	menuitem_EX030121	menuitem_EX030121	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd911c	menuitem_EX030122	menuitem_EX030122	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9188	menuitem_EX030123	menuitem_EX030123	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd91f4	menuitem_EX030124	menuitem_EX030124	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9260	menuitem_EX030125	menuitem_EX030125	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd92cc	menuitem_EX030126	menuitem_EX030126	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9338	menuitem_EX030201	menuitem_EX030201	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd93a4	menuitem_EX030202	menuitem_EX030202	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9410	menuitem_EX030203	menuitem_EX030203	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd947c	menuitem_EX030204	menuitem_EX030204	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd94e8	menuitem_EX030205	menuitem_EX030205	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9556	menuitem_EX030206	menuitem_EX030206	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd95c2	menuitem_EX030301	menuitem_EX030301	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd962e	menuitem_EX030302	menuitem_EX030302	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd969a	menuitem_EX030303	menuitem_EX030303	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9708	menuitem_EX030304	menuitem_EX030304	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9774	menuitem_EX030305	menuitem_EX030305	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd97e0	menuitem_EX030306	menuitem_EX030306	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd984e	menuitem_EX030307	menuitem_EX030307	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd98ba	menuitem_EX030308	menuitem_EX030308	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9926	menuitem_EX030309	menuitem_EX030309	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9994	menuitem_EX030310	menuitem_EX030310	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9a00	menuitem_EX030311	menuitem_EX030311	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9a6c	menuitem_EX030312	menuitem_EX030312	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9ada	menuitem_EX030313	menuitem_EX030313	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9b46	menuitem_EX030314	menuitem_EX030314	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9bb2	menuitem_EX030315	menuitem_EX030315	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9c20	menuitem_EX030316	menuitem_EX030316	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9c8c	menuitem_EX030317	menuitem_EX030317	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9cf8	menuitem_EX030318	menuitem_EX030318	110	110	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9d66	menuitem_EX030319	menuitem_EX030319	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9dd2	menuitem_EX030401	menuitem_EX030401	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9e3e	menuitem_EX030402	menuitem_EX030402	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9eaa	menuitem_EX030403	menuitem_EX030403	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9f16	menuitem_EX030404	menuitem_EX030404	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9f82	menuitem_EX030405	menuitem_EX030405	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffd9fee	menuitem_EX030406	menuitem_EX030406	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda05a	menuitem_EX030407	menuitem_EX030407	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda0c6	menuitem_EX030408	menuitem_EX030408	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda132	menuitem_EX030501	menuitem_EX030501	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda19e	menuitem_EX030502	menuitem_EX030502	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda20a	menuitem_EX030503	menuitem_EX030503	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda276	menuitem_EX030504	menuitem_EX030504	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda2e2	menuitem_EX030505	menuitem_EX030505	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda34e	menuitem_EX030506	menuitem_EX030506	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda3ba	menuitem_EX040101	menuitem_EX040101	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda426	menuitem_EX040102	menuitem_EX040102	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda492	menuitem_EX040103	menuitem_EX040103	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda4fe	menuitem_EX040104	menuitem_EX040104	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda56a	menuitem_EX040105	menuitem_EX040105	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda5d6	menuitem_EX040106	menuitem_EX040106	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda642	menuitem_EX040201	menuitem_EX040201	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda6ae	menuitem_EX040202	menuitem_EX040202	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda71a	menuitem_EX040203	menuitem_EX040203	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda786	menuitem_EX040204	menuitem_EX040204	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda7f2	menuitem_EX040301	menuitem_EX040301	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda85e	menuitem_EX040302	menuitem_EX040302	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda8ca	menuitem_EX040303	menuitem_EX040303	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda936	menuitem_EX040304	menuitem_EX040304	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffda9a2	menuitem_EX040401	menuitem_EX040401	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaa0e	menuitem_EX040402	menuitem_EX040402	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaa7a	menuitem_int4_16_00	menuitem_int4_16_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaadd	menuitem_int4_16_01	menuitem_int4_16_01	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdab40	menuitem_int4_16_02	menuitem_int4_16_02	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaba3	menuitem_int4_16_03	menuitem_int4_16_03	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdac06	menuitem_int4_16_04	menuitem_int4_16_04	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdac69	menuitem_int4_17_00	menuitem_int4_17_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaccc	menuitem_int4_17_01	menuitem_int4_17_01	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdad2f	menuitem_int4_17_02	menuitem_int4_17_02	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdad92	menuitem_int4_17_03	menuitem_int4_17_03	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdadf5	menuitem_int4_17_04	menuitem_int4_17_04	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdae58	menuitem_int4_17_05	menuitem_int4_17_05	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaebb	menuitem_int4_17_06	menuitem_int4_17_06	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaf1e	menuitem_int4_18_00	menuitem_int4_18_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdaf81	menuitem_int4_19_00	menuitem_int4_19_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdafe4	menuitem_int4_20_00	menuitem_int4_20_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb047	menuitem_int4_20_01	menuitem_int4_20_01	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb0aa	menuitem_int4_20_02	menuitem_int4_20_02	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb10d	menuitem_int4_21_00	menuitem_int4_21_00	99	99	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb170	menuitem_EX060101	menuitem_EX060101	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb1dc	menuitem_EX060102	menuitem_EX060102	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb248	menuitem_EX060103	menuitem_EX060103	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb2b4	menuitem_EX060104	menuitem_EX060104	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb320	menuitem_EX060105	menuitem_EX060105	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb38c	menuitem_EX060106	menuitem_EX060106	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb3f8	menuitem_EX060107	menuitem_EX060107	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb464	menuitem_EX060108	menuitem_EX060108	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb4d0	menuitem_EX060109	menuitem_EX060109	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb53c	menuitem_EX060110	menuitem_EX060110	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb5a8	menuitem_EX060111	menuitem_EX060111	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb614	menuitem_EX060112	menuitem_EX060112	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb680	menuitem_EX060113	menuitem_EX060113	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb6ec	menuitem_EX060114	menuitem_EX060114	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb758	menuitem_EX060115	menuitem_EX060115	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb7c4	menuitem_EX060116	menuitem_EX060116	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb830	menuitem_EX060117	menuitem_EX060117	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb89c	menuitem_EX060118	menuitem_EX060118	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb908	menuitem_EX060201	menuitem_EX060201	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb974	menuitem_EX060202	menuitem_EX060202	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdb9e0	menuitem_EX060203	menuitem_EX060203	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdba4c	menuitem_EX060204	menuitem_EX060204	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbab8	menuitem_EX060205	menuitem_EX060205	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbb24	menuitem_EX060206	menuitem_EX060206	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbb90	menuitem_EX060207	menuitem_EX060207	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbbfc	menuitem_EX060208	menuitem_EX060208	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbc68	menuitem_EX060209	menuitem_EX060209	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbcd4	menuitem_EX060210	menuitem_EX060210	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbd40	menuitem_EX060211	menuitem_EX060211	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbdac	menuitem_EX060212	menuitem_EX060212	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbe18	menuitem_EX060213	menuitem_EX060213	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbe84	menuitem_EX060214	menuitem_EX060214	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbef0	menuitem_EX060215	menuitem_EX060215	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbf5c	menuitem_EX060216	menuitem_EX060216	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdbfc8	menuitem_EX060217	menuitem_EX060217	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc034	menuitem_EX060218	menuitem_EX060218	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc0a0	menuitem_EX060301	menuitem_EX060301	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc10c	menuitem_EX060302	menuitem_EX060302	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc178	menuitem_EX060303	menuitem_EX060303	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc1e4	menuitem_EX060304	menuitem_EX060304	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc250	menuitem_EX060305	menuitem_EX060305	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc2bc	menuitem_EX060306	menuitem_EX060306	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc328	menuitem_EX060307	menuitem_EX060307	108	108	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc394	menuitem_EX060308	menuitem_EX060308	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc401	menuitem_EX060309	menuitem_EX060309	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc46e	menuitem_EX060310	menuitem_EX060310	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc4db	menuitem_EX060311	menuitem_EX060311	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc548	menuitem_EX060312	menuitem_EX060312	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc5b5	menuitem_EX060313	menuitem_EX060313	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc622	menuitem_EX060314	menuitem_EX060314	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc68f	menuitem_EX060315	menuitem_EX060315	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc6fc	menuitem_EX060316	menuitem_EX060316	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc769	menuitem_EX060317	menuitem_EX060317	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc7d6	menuitem_EX060318	menuitem_EX060318	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc843	menuitem_EX060401	menuitem_EX060401	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc8b0	menuitem_EX060402	menuitem_EX060402	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc91d	menuitem_EX060403	menuitem_EX060403	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc98a	menuitem_EX060404	menuitem_EX060404	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdc9f7	menuitem_EX060405	menuitem_EX060405	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdca64	menuitem_EX060406	menuitem_EX060406	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcad1	menuitem_EX060407	menuitem_EX060407	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcb3e	menuitem_EX060408	menuitem_EX060408	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcbab	menuitem_EX060409	menuitem_EX060409	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcc18	menuitem_EX060410	menuitem_EX060410	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcc85	menuitem_EX060411	menuitem_EX060411	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdccf2	menuitem_EX060412	menuitem_EX060412	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcd5f	menuitem_EX060413	menuitem_EX060413	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcdcc	menuitem_EX060414	menuitem_EX060414	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdce39	menuitem_EX060415	menuitem_EX060415	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcea6	menuitem_EX060416	menuitem_EX060416	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcf13	menuitem_EX060417	menuitem_EX060417	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcf80	menuitem_EX060418	menuitem_EX060418	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdcfed	menuitem_EX060501	menuitem_EX060501	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd05a	menuitem_EX060502	menuitem_EX060502	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd0c7	menuitem_EX060503	menuitem_EX060503	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd134	menuitem_EX060504	menuitem_EX060504	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd1a1	menuitem_EX060505	menuitem_EX060505	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd20e	menuitem_EX060506	menuitem_EX060506	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd27b	menuitem_EX060507	menuitem_EX060507	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd2e8	menuitem_EX060508	menuitem_EX060508	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd355	menuitem_EX060509	menuitem_EX060509	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd3c2	menuitem_EX060510	menuitem_EX060510	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd42f	menuitem_EX060511	menuitem_EX060511	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd49c	menuitem_EX060512	menuitem_EX060512	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd509	menuitem_EX060513	menuitem_EX060513	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd576	menuitem_EX060514	menuitem_EX060514	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd5e3	menuitem_EX060515	menuitem_EX060515	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd650	menuitem_EX060516	menuitem_EX060516	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd6bd	menuitem_EX060517	menuitem_EX060517	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd72a	menuitem_EX060518	menuitem_EX060518	109	109	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffdd797	cat_ai_poll	cat_ai_poll	979	979	signature	
+main	fffddb7e	cat_ai_FD	cat_ai_FD	311	311	insn	new_calls=1;lost_strings=1;string_as_int
+main	fffddcb5	FUN_fffddcb5	FUN_fffddcb5	452	452	insn	new_calls=1
+main	fffdde79	FUN_fffdde79	FUN_fffdde79	330	330	insn	new_calls=1
+main	fffddfc3	FUN_fffddfc3	FUN_fffddfc3	161	161	signature	
+main	fffde064	FUN_fffde064	FUN_fffde064	284	284	insn	new_calls=1;lost_buffer_stores=7
+main	fffde180	FUN_fffde180	FUN_fffde180	227	227	signature	
+main	fffde263	FUN_fffde263	FUN_fffde263	207	207	signature	
+main	fffde332	FUN_fffde332	FUN_fffde332	191	191	signature	
+main	fffde3f1	FUN_fffde3f1	FUN_fffde3f1	409	409	insn	new_calls=1;lost_buffer_stores=1;lost_strings=1
+main	fffde58a	FUN_fffde58a	FUN_fffde58a	765	765	insn	new_calls=1;lost_buffer_stores=4;lost_strings=1;string_as_int
+main	fffde887	FUN_fffde887	FUN_fffde887	289	289	insn	new_calls=1;lost_strings=1
+main	fffde9a8	FUN_fffde9a8	FUN_fffde9a8	553	553	insn	new_calls=2;lost_buffer_stores=3
+main	fffdebd1	FUN_fffdebd1	FUN_fffdebd1	97	97	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdec32	FUN_fffdec32	FUN_fffdec32	186	186	insn	new_calls=1;lost_buffer_stores=5;lost_strings=1
+main	fffdecec	FUN_fffdecec	FUN_fffdecec	45	45	insn	new_calls=1
+main	fffded19	FUN_fffded19	FUN_fffded19	275	275	insn	new_calls=1
+main	fffdee2c	FUN_fffdee2c	FUN_fffdee2c	106	106	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdee96	FUN_fffdee96	FUN_fffdee96	125	125	insn	new_calls=1;lost_buffer_stores=6;lost_strings=1
+main	fffdef13	FUN_fffdef13	FUN_fffdef13	551	551	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdf13a	FUN_fffdf13a	FUN_fffdf13a	1333	1333	insn	new_calls=1;lost_buffer_stores=2;lost_strings=1;string_as_int
+main	fffdf66f	FUN_fffdf66f	FUN_fffdf66f	324	324	insn	new_calls=1
+main	fffdf7b3	FUN_fffdf7b3	FUN_fffdf7b3	169	169	insn	new_calls=1
+main	fffdf85c	FUN_fffdf85c	FUN_fffdf85c	120	120	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdf8d4	FUN_fffdf8d4	FUN_fffdf8d4	173	173	insn	new_calls=1
+main	fffdf981	FUN_fffdf981	FUN_fffdf981	107	107	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdf9ec	FUN_fffdf9ec	FUN_fffdf9ec	248	248	insn	new_calls=1;lost_buffer_stores=6;lost_strings=1
+main	fffdfae4	FUN_fffdfae4	FUN_fffdfae4	256	256	insn	new_calls=1
+main	fffdfbe4	FUN_fffdfbe4	FUN_fffdfbe4	338	338	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=8
+main	fffdfd36	FUN_fffdfd36	FUN_fffdfd36	110	110	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdfda4	FUN_fffdfda4	FUN_fffdfda4	102	102	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdfe0a	FUN_fffdfe0a	FUN_fffdfe0a	112	112	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdfe7a	FUN_fffdfe7a	FUN_fffdfe7a	108	108	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffdfee6	FUN_fffdfee6	FUN_fffdfee6	182	182	insn	new_calls=1
+main	fffdff9c	FUN_fffdff9c	FUN_fffdff9c	122	122	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffe0016	FUN_fffe0016	FUN_fffe0016	168	168	insn	new_calls=1;lost_buffer_stores=8
+main	fffe00be	FUN_fffe00be	FUN_fffe00be	133	133	insn	new_calls=1;lost_buffer_stores=8
+main	fffe0143	FUN_fffe0143	FUN_fffe0143	264	264	insn	new_calls=1
+main	fffe024b	FUN_fffe024b	FUN_fffe024b	169	169	insn	new_calls=1;lost_buffer_stores=1
+main	fffe02f4	FUN_fffe02f4	FUN_fffe02f4	160	160	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_strings=1
+main	fffe0394	FUN_fffe0394	FUN_fffe0394	119	119	insn	new_calls=1;dropped_result=F_fffb2e9c
+main	fffe040b	FUN_fffe040b	FUN_fffe040b	368	368	insn	new_calls=1
+main	fffe057b	FUN_fffe057b	FUN_fffe057b	474	474	insn	new_calls=1;lost_buffer_stores=1;lost_strings=1;string_as_int
+main	fffe0839	FUN_fffe0839	FUN_fffe0839	142	142	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffe08c7	FUN_fffe08c7	FUN_fffe08c7	409	409	insn	new_calls=1
+main	fffe0a60	FUN_fffe0a60	FUN_fffe0a60	159	159	insn	new_calls=1;lost_buffer_stores=4
+main	fffe0aff	FUN_fffe0aff	FUN_fffe0aff	162	162	insn	new_calls=1
+main	fffe0ba1	FUN_fffe0ba1	FUN_fffe0ba1	357	357	insn	new_calls=1;lost_buffer_stores=26;lost_strings=1
+main	fffe0d06	FUN_fffe0d06	FUN_fffe0d06	403	403	insn	new_calls=1
+main	fffe0e99	FUN_fffe0e99	FUN_fffe0e99	333	333	signature	
+main	fffe0fe6	FUN_fffe0fe6	FUN_fffe0fe6	1121	1121	insn	new_calls=1;dropped_result=F_fffb2e9c
+main	fffe1447	FUN_fffe1447	FUN_fffe1447	109	109	insn	new_calls=1;lost_buffer_stores=7
+main	fffe14b4	FUN_fffe14b4	FUN_fffe14b4	111	111	insn	new_calls=1;lost_buffer_stores=3;lost_strings=1
+main	fffe1523	FUN_fffe1523	FUN_fffe1523	115	115	insn	new_calls=1;lost_buffer_stores=7
+main	fffe1596	FUN_fffe1596	FUN_fffe1596	199	199	insn	new_calls=1
+main	fffe165d	FUN_fffe165d	FUN_fffe165d	173	173	insn	new_calls=1
+main	fffe170a	FUN_fffe170a	FUN_fffe170a	106	106	insn	new_calls=1;dropped_result=F_fffb2e9c;lost_buffer_stores=1
+main	fffe1774	FUN_fffe1774	FUN_fffe1774	145	145	insn	new_calls=1;dropped_result=F_fffb2e9c
+main	fffe1805	FUN_fffe1805	FUN_fffe1805	52	52	renamed_moved	
+main	fffe1a00	FUN_fffe1a00	FUN_fffe1a00	904	904	signature	
+main	fffe1d88	FUN_fffe1d88	FUN_fffe1d88	14	14	signature	
+main	fffe1d96	FUN_fffe1d96	FUN_fffe1d96	14	14	signature	
+main	fffe1da4	FUN_fffe1da4	FUN_fffe1da4	51	51	signature	
+main	fffe1dd7	FUN_fffe1dd7	FUN_fffe1dd7	153	153	signature	
+main	fffe1e70	FUN_fffe1e70	FUN_fffe1e70	21	21	signature	
+main	fffe1ee4	FUN_fffe1ee4	FUN_fffe1ee4	89	89	signature	
+main	fffe1f60		FUN_fffe1f60		197	added	
+main	fffe2811	FUN_fffe2811	FUN_fffe2811	257	257	insn	new_calls=1
+main	fffe291e	FUN_fffe291e	FUN_fffe291e	153	153	insn	new_calls=1
+main	fffe29b7	FUN_fffe29b7	FUN_fffe29b7	294	294	signature	dropped_result=F_fffb2da6
+main	fffe3121	FUN_fffe3121	FUN_fffe3121	202	202	insn	
+main	fffe3615	FUN_fffe3615	FUN_fffe3615	341	341	signature	
+main	fffe3979	FUN_fffe3979	FUN_fffe3979	412	412	signature	dropped_result=F_fffb2da6
+main	fffe3e2a	ladder_key_task	ladder_key_task	699	699	signature	
+main	fffe40e5	FUN_fffe40e5	FUN_fffe40e5	120	120	signature	
+main	fffe415d	FUN_fffe415d	FUN_fffe415d	61	61	signature	
+main	fffe419a	FUN_fffe419a	FUN_fffe419a	89	89	signature	
+main	fffe4360	FUN_fffe4360	FUN_fffe4360	6	6	renamed_moved	
+main	fffe436c	FUN_fffe436c	FUN_fffe436c	6	6	renamed_moved	
+main	fffe481d	FUN_fffe481d	FUN_fffe481d	478	478	insn	new_calls=1;dropped_result=F_fffb0450
+main	fffe4bb3	FUN_fffe4bb3	FUN_fffe4bb3	81	81	signature	
+main	fffe4c04	FUN_fffe4c04	FUN_fffe4c04	81	81	signature	
+main	fffe4efc	FUN_fffe4efc	FUN_fffe4efc	25	25	signature	
+main	fffe5138	FUN_fffe5138	FUN_fffe5138	72	72	signature	dropped_result=F_fffb2da6
+main	fffe52a1	FUN_fffe52a1	FUN_fffe52a1	60	60	renamed_moved	
+main	fffe5302	FUN_fffe5302	FUN_fffe5302	78	78	renamed_moved	
+main	fffe5401	FUN_fffe5401	FUN_fffe5401	323	323	data	
+main	fffe5690	FUN_fffe5690	FUN_fffe5690	47	47	signature	
+main	fffe56e4	FUN_fffe56e4	FUN_fffe56e4	159	159	insn	new_calls=1;dropped_result=F_fffb2da6;lost_strings=1;string_as_int
+main	fffe5783	FUN_fffe5783	FUN_fffe5783	203	203	signature	
+main	fffe584e	FUN_fffe584e	FUN_fffe584e	49	49	signature	
+main	fffe5a47	FUN_fffe5a47	FUN_fffe5a47	107	107	signature	
+main	fffe5acf	FUN_fffe5acf	FUN_fffe5acf	24	24	signature	
+main	fffe5ae7	FUN_fffe5ae7	FUN_fffe5ae7	24	24	signature	
+main	fffe5aff	scan_allowed	scan_allowed	82	82	signature	
+main	fffe5b51	FUN_fffe5b51	FUN_fffe5b51	213	213	signature	
+main	fffe5c26	FUN_fffe5c26	FUN_fffe5c26	88	88	signature	
+main	fffe5d8f	FUN_fffe5d8f	FUN_fffe5d8f	70	70	signature	
+main	fffe5dd5	FUN_fffe5dd5	FUN_fffe5dd5	70	70	signature	
+main	fffe5e1b	FUN_fffe5e1b	FUN_fffe5e1b	32	32	signature	
+main	fffe5e67	FUN_fffe5e67	FUN_fffe5e67	83	83	signature	
+main	fffe5ece	FUN_fffe5ece	FUN_fffe5ece	21	21	signature	
+main	fffe5ee3	FUN_fffe5ee3	FUN_fffe5ee3	53	53	signature	
+main	fffe5f18	FUN_fffe5f18	FUN_fffe5f18	53	53	signature	
+main	fffe5f4d	FUN_fffe5f4d	FUN_fffe5f4d	53	53	signature	
+main	fffe600f	FUN_fffe600f	FUN_fffe600f	31	31	signature	
+main	fffe602e	FUN_fffe602e	FUN_fffe602e	120	120	signature	
+main	fffe61ca	FUN_fffe61ca	FUN_fffe61ca	29	29	signature	
+main	fffe61e7	ex_command	ex_command	178	178	insn	new_calls=1
+main	fffe6299	ex_read_or_write	ex_read_or_write	156	156	insn	new_calls=1
+main	fffe6335	ex_read_string	ex_read_string	198	198	signature	
+main	fffe63fb	ex_write_string	ex_write_string	113	113	signature	
+main	fffe646c	ex_read_value	ex_read_value	228	228	stack	
+main	fffe6550	ex_write_value	ex_write_value	314	314	stack	
+main	fffe668a	ex_value_allowed	ex_value_allowed	88	88	signature	
+main	fffe66e2	ex_fmt_byte	ex_fmt_byte	275	275	signature	
+main	fffe67f5	ex_fmt_4digits	ex_fmt_4digits	116	116	signature	
+main	fffe6869	ex_parse_4digits	ex_parse_4digits	210	210	signature	
+main	fffe693b	ex_parse_byte	ex_parse_byte	748	748	insn	
+main	fffe6c27	ex_parse_key	ex_parse_key	339	339	signature	
+main	fffe6d7a	FUN_fffe6d7a	FUN_fffe6d7a	172	172	renamed_moved	
+main	fffec2e5	FUN_fffec2e5	FUN_fffec2e5	275	275	signature	
+main	fffec3f8	FUN_fffec3f8	FUN_fffec3f8	116	116	signature	
+main	fffec537	FUN_fffec537	FUN_fffec537	35	35	signature	
+main	fffec55a	FUN_fffec55a	FUN_fffec55a	30	30	signature	
+main	fffec62b	FUN_fffec62b	FUN_fffec62b	223	223	signature	
+main	fffec7f9	FUN_fffec7f9	FUN_fffec7f9	136	136	signature	
+main	fffec881	FUN_fffec881	FUN_fffec881	32	32	signature	
+main	fffec8a1	FUN_fffec8a1	FUN_fffec8a1	112	112	signature	
+main	fffec911	FUN_fffec911	FUN_fffec911	163	163	signature	
+main	fffec9b4	FUN_fffec9b4	FUN_fffec9b4	57	57	signature	
+main	fffec9ed	FUN_fffec9ed	FUN_fffec9ed	91	91	signature	
+main	fffeca48	FUN_fffeca48	FUN_fffeca48	54	54	signature	
+main	fffeca7e	FUN_fffeca7e	FUN_fffeca7e	292	292	signature	
+main	fffecba2	FUN_fffecba2	FUN_fffecba2	325	325	signature	
+main	fffecce7	FUN_fffecce7	FUN_fffecce7	255	255	signature	
+main	fffed0ae	FUN_fffed0ae	FUN_fffed0ae	129	129	data	
+main	fffed12f	FUN_fffed12f	FUN_fffed12f	54	54	data	
+main	fffed165	FUN_fffed165	FUN_fffed165	161	161	signature	
+main	fffed2a9	FUN_fffed2a9	FUN_fffed2a9	200	200	signature	
+main	fffed401	FUN_fffed401	FUN_fffed401	142	142	signature	
+main	fffed48f	FUN_fffed48f	FUN_fffed48f	128	128	signature	
+main	fffed50f	FUN_fffed50f	FUN_fffed50f	182	182	signature	
+main	fffed5c5	FUN_fffed5c5	FUN_fffed5c5	31	31	signature	
+main	fffed61e	FUN_fffed61e	FUN_fffed61e	12	12	signature	
+main	fffed62a	FUN_fffed62a	FUN_fffed62a	203	203	signature	
+main	fffed72b	FUN_fffed72b	FUN_fffed72b	40	40	signature	
+main	fffed753	FUN_fffed753	FUN_fffed753	67	67	signature	
+main	fffed796	FUN_fffed796	FUN_fffed796	93	93	signature	
+main	fffed7f3	FUN_fffed7f3	FUN_fffed7f3	184	184	signature	
+main	fffed8ab	FUN_fffed8ab	FUN_fffed8ab	81	81	signature	
+main	fffed8fc	FUN_fffed8fc	FUN_fffed8fc	56	56	signature	
+main	fffed934	FUN_fffed934	FUN_fffed934	79	79	signature	
+main	fffed983	FUN_fffed983	FUN_fffed983	48	48	signature	
+main	fffed9b3	FUN_fffed9b3	FUN_fffed9b3	136	136	signature	
+main	fffeda3b	FUN_fffeda3b	FUN_fffeda3b	91	91	signature	
+main	fffedae4	FUN_fffedae4	FUN_fffedae4	94	94	signature	
+main	fffedb87	FUN_fffedb87	FUN_fffedb87	33	33	renamed_moved	
+main	fffedbc9	FUN_fffedbc9	FUN_fffedbc9	33	33	renamed_moved	
+main	fffedbea	FUN_fffedbea	FUN_fffedbea	61	61	stack	
+main	fffedc27	FUN_fffedc27	FUN_fffedc27	142	142	signature	
+main	fffedd8c	r_tpu2_tgia_isr	r_tpu2_tgia_isr	14	14	signature	
+main	fffedd9a	FUN_fffedd9a	FUN_fffedd9a	47	47	stack	
+main	fffeddc9	FUN_fffeddc9	FUN_fffeddc9	84	84	stack	
+main	fffede41	FUN_fffede41	FUN_fffede41	153	153	signature	new_calls=1
+main	fffededa	_INITSCT	_INITSCT	74	74	insn	new_calls=2
+main	fffedf24	FUN_fffedf24	FUN_fffedf24	131	131	stack	
+main	fffedfa7	FUN_fffedfa7	FUN_fffedfa7	214	214	insn	new_calls=1
+main	fffee07d		FUN_fffee07d		69	added	
+main	fffee18e	FUN_fffee18e	FUN_fffee18e	48	48	signature	
+main	fffee1be		FUN_fffee1be		123	added	
+main	fffee239		FUN_fffee239		99	added	
+main	fffee29c		FUN_fffee29c		27	added	
+display	201004a4		FUN_201004a4		92	added	
+display	20100a88		FUN_20100a88		8	added	
+display	20100c7c	FUN_20100c7c	FUN_20100c7c	1176	1176	data	lost_strings=4;string_as_int
+display	20100dc0		FUN_20100dc0		100	added	
+display	20100e8c		FUN_20100e8c		112	added	
+display	20100efc		FUN_20100efc		36	added	
+display	20100f20		FUN_20100f20		36	added	
+display	20100f44		FUN_20100f44		32	added	
+display	20100f64		FUN_20100f64		32	added	
+display	20100fd8		FUN_20100fd8		68	added	
+display	20101ba4	gpio_p8_14	gpio_p8_14	24	24	renamed_moved	
+display	20101c44		FUN_20101c44		24	added	
+display	20101d40		FUN_20101d40		16	added	
+display	20101d50		FUN_20101d50		16	added	
+display	20101d60		FUN_20101d60		16	added	
+display	20101f00		FUN_20101f00		68	added	
+display	20101f74		FUN_20101f74		24	added	
+display	2010233c		FUN_2010233c		12	added	
+display	201025c4	mouse_middle_is_func	mouse_middle_is_func	60	60	renamed_moved	
+display	201033e8	tsc2007_tint_isr	tsc2007_tint_isr	124	124	renamed_moved	
+display	20103804	task_tsc2007_irq	task_tsc2007_irq	84	84	renamed_moved	
+display	20103a4c		FUN_20103a4c		52	added	
+display	20103a58	FUN_20103a58		40		removed	
+display	20103adc		FUN_20103adc		112	added	
+display	20103b4c		FUN_20103b4c		28	added	
+display	20103bd4		FUN_20103bd4		8	added	
+display	2010414c		FUN_2010414c		8	added	
+display	20104188	FUN_20104188	FUN_20104188	24	24	renamed_moved	
+display	201050ac	FUN_201050ac	FUN_201050ac	96	96	renamed_moved	
+display	20105158	wav_check_header	wav_check_header	292	292	data	
+display	201052b0	wav_open_read	wav_open_read	588	588	data	
+display	20105550	wav_list_dir	wav_list_dir	576	576	data	
+display	201057d8	wav_delete	wav_delete	232	232	data	
+display	20106060	rec_finish	rec_finish	332	332	data	
+display	20106248	rec_open_wav	rec_open_wav	740	740	data	
+display	20106dc8	audio_codec_post	audio_codec_post	44	44	renamed_moved	
+display	20107e9c	FUN_20107e9c	FUN_20107e9c	68	68	renamed_moved	
+display	20107efc	vk_key_name	vk_key_name	2420	2420	data	
+display	2010a79c	kbdtest_draw	kbdtest_draw	180	180	data	
+display	2010b360	dsp_isp_configure_memory	dsp_isp_configure_memory	604	604	renamed_moved	
+display	2010cab4	rx_boot_id_auth	rx_boot_id_auth	256	256	other	
+display	2010d50c	rx_boot_program	rx_boot_program	1040	1040	renamed_moved	
+display	2010d92c	update_dsp	update_dsp	316	316	data	lost_strings=1;string_as_int
+display	2010ddd8	fwfile_check_versions	fwfile_check_versions	352	352	data	
+display	2010ea90	update_main_cpu	update_main_cpu	436	436	data	
+display	2010ec44	uptest_line	uptest_line	232	232	data	
+display	2010ef88	FUN_2010ef88	FUN_2010ef88	320	320	data	
+display	2010f0dc	sdmenu_default_name	sdmenu_default_name	232	232	data	
+display	2010f2c8	sdmenu_xfer_len	sdmenu_xfer_len	32	32	renamed_moved	
+display	2010f60c	sdmenu_save_file	sdmenu_save_file	488	488	renamed_moved	
+display	2010f81c	sdmenu_load_file	sdmenu_load_file	876	876	data	
+display	20110584	sdr_reg_read	sdr_reg_read	200	200	data	
+display	20110750	sdr_wait_ready	sdr_wait_ready	92	92	renamed_moved	
+display	20110e68		FUN_20110e68		28	added	
+display	201111ac		FUN_201111ac		28	added	
+display	201113f8		FUN_201113f8		24	added	
+display	20111480	mainlink_trace	mainlink_trace	268	268	renamed_moved	
+display	2011158c	mainlink_trace_dump	mainlink_trace_dump	444	444	data	
+display	20111794	task_keycode	task_keycode	768	768	data	
+display	20111ab0	keycode_line	keycode_line	1368	1368	data	
+display	201120c0		FUN_201120c0		8	added	
+display	20112894	adc_ring_average	adc_ring_average	76	76	renamed_moved	
+display	20112f34		FUN_20112f34		8	added	
+display	20113d00	key_task_pause	key_task_pause	16	16	renamed_moved	
+display	20113e48		FUN_20113e48		4	added	
+display	20114244	rtc_recv_bytes	rtc_recv_bytes	36	36	renamed_moved	
+display	20114848		FUN_20114848		8	added	
+display	2011489c	scif4_txi_isr	scif4_txi_isr	8	8	renamed_moved	
+display	20114938		FUN_20114938		32	added	
+display	2011493c	FUN_2011493c		28		removed	
+display	20114ca0	sfl_read_header	sfl_read_header	336	336	renamed_moved	
+display	20114fc4		FUN_20114fc4		40	added	
+display	2011503c		FUN_2011503c		36	added	
+display	2011506c	mainlink_last_frame_differs	mainlink_last_frame_differs	32	32	renamed_moved	
+display	20116334	mainlink_send_f1	mainlink_send_f1	52	52	renamed_moved	
+display	201169d0	cli_run_file	cli_run_file	224	224	data	
+display	20116bb0		FUN_20116bb0		76	added	
+display	20116bfc		FUN_20116bfc		80	added	
+display	20116e84	boot_mode_full	boot_mode_full	68	68	renamed_moved	
+display	20117254		FUN_20117254		12	added	
+display	20117728	gic_irq_exit	gic_irq_exit	52	52	renamed_moved	
+display	201179bc		FUN_201179bc		4	added	
+display	20117c14		FUN_20117c14		80	added	
+display	2011834c		FUN_2011834c		24	added	
+display	20118598	FUN_20118598	FUN_20118598	80	80	renamed_moved	
+display	20118a48	FUN_20118a48	FUN_20118a48	80	80	renamed_moved	
+display	201198dc	FUN_201198dc	FUN_201198dc	180	180	renamed_moved	
+display	2011a110		FUN_2011a110		252	added	
+display	2011a288		FUN_2011a288		8	added	
+display	2011aad8	FUN_2011aad8	FUN_2011aad8	32	32	renamed_moved	
+display	2011cc60	FUN_2011cc60	FUN_2011cc60	136	136	renamed_moved	
+display	2011d014		FUN_2011d014		104	added	
+display	2011d1f4	FUN_2011d1f4	FUN_2011d1f4	84	84	renamed_moved	
+display	2011d59c		FUN_2011d59c		12	added	
+display	2011d5dc		FUN_2011d5dc		16	added	
+display	2011d684		FUN_2011d684		28	added	
+display	2011d77c		FUN_2011d77c		12	added	
+display	2011d860		FUN_2011d860		52	added	
+display	2011d8b4		FUN_2011d8b4		52	added	
+display	2011dea0		FUN_2011dea0		4	added	
+display	2011e018	rspi3_open	rspi3_open	132	132	renamed_moved	
+display	2011e148	rspi3_clear_rx_flag	rspi3_clear_rx_flag	16	16	renamed_moved	
+display	2011ed14	rspi4_spti_isr	rspi4_spti_isr	8	8	renamed_moved	
+display	2011f0cc	rspi_open	rspi_open	72	72	jumptable	new_calls=5
+display	2011f138	rspi_start	rspi_start	80	80	jumptable	new_calls=1
+display	2011f1ac	rspi_stop	rspi_stop	112	112	jumptable	new_calls=6
+display	2011f494		FUN_2011f494		64	added	
+display	2011f7b4	rspi_reset_buffers	rspi_reset_buffers	120	120	jumptable	new_calls=11
+display	2011f8f8	rspi_wait_tx_end	rspi_wait_tx_end	72	72	jumptable	new_calls=5
+display	2012001c		FUN_2012001c		12	added	
+display	201200a0	FUN_201200a0	FUN_201200a0	20	20	renamed_moved	
+display	201200dc	FUN_201200dc	FUN_201200dc	20	20	renamed_moved	
+display	20120be4		FUN_20120be4		32	added	
+display	20120bf0	FUN_20120bf0		20		removed	
+display	20120c04		FUN_20120c04		80	added	
+display	20120c08	FUN_20120c08		76		removed	
+display	20120c54		FUN_20120c54		80	added	
+display	20120c58	FUN_20120c58		76		removed	
+display	20120d38	FUN_20120d38	FUN_20120d38	108	108	renamed_moved	
+display	20120d58	FUN_20120d58	FUN_20120d58	8	8	renamed_moved	
+display	20120d70		FUN_20120d70		20	added	
+display	20120dd4		FUN_20120dd4		8	added	
+display	20121980		FUN_20121980		8	added	
+display	2012384c	FUN_2012384c	FUN_2012384c	884	884	data	
+display	20124adc	FUN_20124adc	FUN_20124adc	204	204	data	
+display	20124c24	scr_playlist	scr_playlist	4304	4304	data	
+display	20125e74		FUN_20125e74		4	added	
+display	20126a58	FUN_20126a58	FUN_20126a58	1084	1084	data	
+display	201271cc	FUN_201271cc	FUN_201271cc	904	904	data	
+display	2012910c	FUN_2012910c	FUN_2012910c	676	676	data	
+display	201293f8	FUN_201293f8	FUN_201293f8	2000	2000	data	
+display	2012cf30	FUN_2012cf30	FUN_2012cf30	900	900	renamed_moved	
+display	2012d000	FUN_2012d000	FUN_2012d000	412	412	renamed_moved	
+display	2012e744	rec_start_stop	rec_start_stop	352	352	data	
+display	201322c8		FUN_201322c8		16	added	
+display	201322d8		FUN_201322d8		12	added	
+display	201322f0	FUN_201322f0	FUN_201322f0	12	12	renamed_moved	
+display	20132ee8		FUN_20132ee8		16	added	
+display	20132f54		FUN_20132f54		24	added	
+display	20132fd8		FUN_20132fd8		8	added	
+display	20133618	FUN_20133618	FUN_20133618	8	8	renamed_moved	
+display	201337f8	layer_alpha_rect_off	layer_alpha_rect_off	120	120	renamed_moved	
+display	2013433c		FUN_2013433c		12	added	
+display	20134358	FUN_20134358	FUN_20134358	68	68	renamed_moved	
+display	20134390		FUN_20134390		8	added	
+display	20134414	FUN_20134414	FUN_20134414	568	16	renamed_moved	
+display	20134424		FUN_20134424		16	added	
+display	201344a8		FUN_201344a8		8	added	
+display	20134644	screen_capture_bmp	screen_capture_bmp	416	416	data	
+display	20134854	debug_screenshot_root	debug_screenshot_root	256	256	data	
+display	20134fdc	debug_replay_send_cmd	debug_replay_send_cmd	268	268	data	
+display	201351b8	debug_cmd_line_write	debug_cmd_line_write	264	264	data	
+display	201352e8	debug_log_recv_cmd	debug_log_recv_cmd	228	228	data	
+display	201353f8	div10_round	div10_round	80	80	renamed_moved	
+display	20135448		FUN_20135448		16	added	
+display	201354bc		FUN_201354bc		48	added	
+display	20135658	fb_fill_rect	fb_fill_rect	128	128	renamed_moved	
+display	20135ec0	gui_draw_text_words	gui_draw_text_words	288	288	renamed_moved	
+display	201367b4	debug_overlay_draw	debug_overlay_draw	2056	2056	data	
+display	20137904	dmac9_register_isr	dmac9_register_isr	12	12	renamed_moved	
+display	20137d78		FUN_20137d78		12	added	
+display	20137dcc	dmac4_disable	dmac4_disable	20	20	renamed_moved	
+display	20138410		FUN_20138410		40	added	
+display	2013857c		FUN_2013857c		40	added	
+display	20138660		FUN_20138660		8	added	
+display	20138668		FUN_20138668		8	added	
+display	20139624		FUN_20139624		48	added	
+display	20139654		FUN_20139654		4	added	
+display	201396ac		FUN_201396ac		4	added	
+display	2013a9e8	FUN_2013a9e8	FUN_2013a9e8	116	116	renamed_moved	
+display	2013aaa0		FUN_2013aaa0		4	added	
+display	2013ad50		FUN_2013ad50		8	added	
+display	2013ad58		FUN_2013ad58		60	added	
+display	2013afa4	FUN_2013afa4	FUN_2013afa4	660	660	other	
+display	2013b238		FUN_2013b238		124	added	
+display	2013b23c	FUN_2013b23c		120		removed	
+display	2013b34c		FUN_2013b34c		4	added	
+display	2013b540		FUN_2013b540		4	added	
+display	2013b544		FUN_2013b544		8	added	
+display	2013b54c	FUN_2013b54c	FUN_2013b54c	64	64	renamed_moved	
+display	2013d1c8	FUN_2013d1c8	FUN_2013d1c8	112	112	renamed_moved	
+display	2013ea74	FUN_2013ea74	FUN_2013ea74	332	332	renamed_moved	
+display	2013fa60		FUN_2013fa60		148	added	
+display	2013fc10		FUN_2013fc10		60	added	
+display	2013fc14	FUN_2013fc14		56		removed	
+display	2013fd50		FUN_2013fd50		32	added	
+display	2013fd98	FUN_2013fd98	FUN_2013fd98	60	60	renamed_moved	
+display	2013fde4		FUN_2013fde4		4	added	
+display	2013ffdc		FUN_2013ffdc		4	added	
+display	20140148		FUN_20140148		16	added	
+display	20140400	FUN_20140400	FUN_20140400	12	12	renamed_moved	
+display	201418b8	FUN_201418b8	FUN_201418b8	516	516	renamed_moved	
+display	2014358c	FUN_2014358c	FUN_2014358c	240	240	renamed_moved	
+display	201447f4		FUN_201447f4		12	added	
+display	20144970	FUN_20144970	FUN_20144970	16	16	renamed_moved	
+display	2014570c	FUN_2014570c	FUN_2014570c	88	88	renamed_moved	
+display	201468c0	FUN_201468c0	FUN_201468c0	2308	2308	renamed_moved	
+display	20148048	FUN_20148048	FUN_20148048	108	108	renamed_moved	
+display	20148bb0		FUN_20148bb0		64	added	
+display	20148c5c		FUN_20148c5c		56	added	
+display	20148f40	FUN_20148f40	FUN_20148f40	124	124	data	
+display	2014933c	FUN_2014933c	FUN_2014933c	120	120	renamed_moved	
+display	2014af14	FUN_2014af14	FUN_2014af14	48	48	renamed_moved	
+display	2014b93c	FUN_2014b93c	FUN_2014b93c	300	300	renamed_moved	
+display	2014c688	FUN_2014c688	FUN_2014c688	812	812	renamed_moved	
+display	2014d2cc		FUN_2014d2cc		108	added	
+display	2014d508	FUN_2014d508	FUN_2014d508	172	172	renamed_moved	
+display	2014d600		FUN_2014d600		48	added	
+display	2014d8b4		FUN_2014d8b4		20	added	
+display	2014d8c8		FUN_2014d8c8		36	added	
+display	2014d95c	FUN_2014d95c	FUN_2014d95c	48	48	renamed_moved	
+display	2014e044		FUN_2014e044		40	added	
+display	2014e04c	FUN_2014e04c		32		removed	
+display	2014e2a4	strncmp	strncmp	64	64	renamed_moved	
+display	2014e6e4	FUN_2014e6e4	FUN_2014e6e4	44	44	renamed_moved	
+display	201508ec	FUN_201508ec	FUN_201508ec	264	264	signature	
+display	201509f4	FUN_201509f4	FUN_201509f4	148	148	signature	
+display	20151520		FUN_20151520		324	added	
+display	20151e68	FUN_20151e68	FUN_20151e68	536	536	renamed_moved	
+display	201530e4	FUN_201530e4	FUN_201530e4	24	24	renamed_moved	
+display	2015441c		FUN_2015441c		124	added	
+display	20154524		FUN_20154524		20	added	
+display	20154538		FUN_20154538		72	added	
+display	20154580		FUN_20154580		72	added	
+display	201545c8		FUN_201545c8		20	added	
+display	201545dc		FUN_201545dc		20	added	
+display	2015460c		FUN_2015460c		176	added	
+display	201546bc		FUN_201546bc		72	added	
+display	20154710		FUN_20154710		16	added	
+display	20154a00		FUN_20154a00		8	added	
+display	20155058	FUN_20155058	FUN_20155058	36	36	renamed_moved	
+display	2015507c	FUN_2015507c	FUN_2015507c	88	88	renamed_moved	
+display	201550d4		FUN_201550d4		8	added	
+display	201552b8		FUN_201552b8		8	added	
+display	201556e0	FUN_201556e0	FUN_201556e0	752	752	other	
+display	20156020	FUN_20156020	FUN_20156020	112	112	data	
+display	20156310		FUN_20156310		28	added	
+display	2015632c	FUN_2015632c	FUN_2015632c	192	192	renamed_moved	
+display	201563ec		FUN_201563ec		368	added	
+display	201563f4	FUN_201563f4		360		removed	
+display	2015677c		FUN_2015677c		84	added	
+display	201567d0		FUN_201567d0		4	added	
+display	20156860	FUN_20156860	FUN_20156860	12	12	signature	
+display	2015689c	FUN_2015689c	FUN_2015689c	20	20	renamed_moved	
+display	201568b0		FUN_201568b0		4	added	
+display	201568b4		FUN_201568b4		4	added	
+display	20157194		FUN_20157194		16	added	
+display	201571e8		FUN_201571e8		36	added	
+display	20157604		FUN_20157604		40	added	
+display	2015760c	FUN_2015760c		32		removed	
+display	20157d3c		FUN_20157d3c		552	added	
+display	20158590		FUN_20158590		104	added	
+display	20158598	FUN_20158598		96		removed	
+display	201587ac	mainlink_tx_ctor	mainlink_tx_ctor	32	32	renamed_moved	
+display	201589f4	uart4_tx_alloc	uart4_tx_alloc	12	12	renamed_moved	
+display	2015a8dc		FUN_2015a8dc		52	added	
+display	2015c43c	FUN_2015c43c	FUN_2015c43c	376	376	renamed_moved	
+display	2015d1c4	FUN_2015d1c4	FUN_2015d1c4	204	204	renamed_moved	
+display	2015f62c	update_display_self	update_display_self	1028	1028	renamed_moved	
+display	2015fd60		FUN_2015fd60		4	added	
+display	2015fd64	mouse_cursor_run	mouse_cursor_run	496	496	renamed_moved	
+display	2015ff64		FUN_2015ff64		12	added	
+display	20160018	FUN_20160018	FUN_20160018	32	32	renamed_moved	
+display	20162d3c	FUN_20162d3c	FUN_20162d3c	12	12	renamed_moved	
+display	20163360	FUN_20163360	FUN_20163360	12	12	renamed_moved	
+display	2016385c		FUN_2016385c		8	added	
+display	20163d6c	FUN_20163d6c	FUN_20163d6c	264	264	renamed_moved	
+display	20164298		FUN_20164298		156	added	
+display	20164360	FUN_20164360	FUN_20164360	28	28	renamed_moved	
+display	2016437c		FUN_2016437c		12	added	
+display	2016440c		FUN_2016440c		8	added	
+display	201644ac		FUN_201644ac		56	added	
+display	20164654		FUN_20164654		12	added	
+display	2016466c		FUN_2016466c		8	added	
+display	20164674		FUN_20164674		12	added	
+display	201646bc		FUN_201646bc		84	added	
+display	20164714		FUN_20164714		68	added	
+display	20164870	FUN_20164870	FUN_20164870	24	24	renamed_moved	
+display	20164888	FUN_20164888	FUN_20164888	316	316	renamed_moved	
+display	20164f98		FUN_20164f98		12	added	
+display	20164fa4	FUN_20164fa4	FUN_20164fa4	464	464	renamed_moved	
+hifi4	00200ef8	FUN_00200ef8		3		removed	
+hifi4	00201a1a	FUN_00201a1a		2		removed	
+hifi4	00201e38	FUN_00201e38		3		removed	
+hifi4	0020218c	FUN_0020218c		3		removed	
+hifi4	00202258	FUN_00202258		9		removed	
+hifi4	00202315	FUN_00202315		2		removed	
+hifi4	00202878	FUN_00202878		3		removed	
+hifi4	00202bec	FUN_00202bec		3		removed	
+hifi4	0020358a	FUN_0020358a		27		removed	
+hifi4	00203fc0	FUN_00203fc0		60		removed	
+hifi4	00204234	FUN_00204234		5		removed	
+hifi4	00204340	FUN_00204340		26		removed	
+hifi4	002044e7	FUN_002044e7		9		removed	
+hifi4	002054f8	FUN_002054f8		5		removed	
+hifi4	00207220	FUN_00207220		3		removed	
+hifi4	00207d58	FUN_00207d58	FUN_00207d58	26	748	bundles	new_calls=1
+hifi4	00208060	FUN_00208060	FUN_00208060	72	259	bundles	new_calls=1
+hifi4	00208164	FUN_00208164	FUN_00208164	8	182	bundles	new_calls=2
+hifi4	00208234	FUN_00208234	FUN_00208234	6	50	bundles	new_calls=1
+hifi4	00208294	FUN_00208294	FUN_00208294	65	51	bundles	lost_call=F_1e0404
+hifi4	00208320	FUN_00208320	FUN_00208320	63	64	bundles	
+hifi4	00208360	FUN_00208360	FUN_00208360	3	110	bundles	new_calls=1
+hifi4	002083d0	FUN_002083d0	FUN_002083d0	59	126	bundles	lost_call=F_1f31a8
+hifi4	00208468	FUN_00208468	FUN_00208468	27	27	bundles	
+hifi4	00208484	FUN_00208484	FUN_00208484	27	84	bundles	
+hifi4	002084d8	FUN_002084d8	FUN_002084d8	17	60	bundles	
+hifi4	00208514	FUN_00208514	FUN_00208514	23	40	bundles	
+hifi4	0020853c	FUN_0020853c	FUN_0020853c	23	45	bundles	
+hifi4	0020856c	FUN_0020856c	FUN_0020856c	28	109	bundles	lost_call=F_1e8670;new_calls=1
+hifi4	00208600	CLOCK_AttachClk	CLOCK_AttachClk	27	80	bundles	lost_call=F_1e8700;new_calls=1
+hifi4	00208654	FUN_00208654	FUN_00208654	3	95	bundles	new_calls=1
+hifi4	00208690	FUN_00208690		3		removed	
+hifi4	002086b4	FUN_002086b4	FUN_002086b4	15	43	bundles	
+hifi4	002086e0	FUN_002086e0	FUN_002086e0	127	139	bundles	new_calls=2
+hifi4	0020876c	FUN_0020876c	FUN_0020876c	103	172	bundles	new_calls=1
+hifi4	00208818	FUN_00208818	FUN_00208818	127	139	bundles	new_calls=2
+hifi4	002088a8	FUN_002088a8	FUN_002088a8	103	172	bundles	new_calls=1
+hifi4	00208958	FUN_00208958	FUN_00208958	156	156	bundles	
+hifi4	002089f8	FUN_002089f8	FUN_002089f8	23	173	bundles	new_calls=2
+hifi4	00208aa8	FUN_00208aa8	FUN_00208aa8	88	311	bundles	new_calls=1
+hifi4	00208be0	FUN_00208be0	FUN_00208be0	22	433	bundles	new_calls=6
+hifi4	00208d94	FUN_00208d94	FUN_00208d94	105	248	bundles	new_calls=3;fewer_args=F_208958
+hifi4	00208e90	CLOCK_GetFlexCommClkFreq	CLOCK_GetFlexCommClkFreq	13	123	bundles	new_calls=4
+hifi4	00208f10	FUN_00208f10	FUN_00208f10	92	99	bundles	
+hifi4	00208f5c	FUN_00208f5c		2		removed	
+hifi4	00208f78	FUN_00208f78	FUN_00208f78	31	191	bundles	new_calls=3
+hifi4	00209038	FUN_00209038	FUN_00209038	29	245	bundles	lost_call=F_2222b0;new_calls=4
+hifi4	00209130	FUN_00209130	FUN_00209130	62	100	bundles	new_calls=1
+hifi4	00209194	FUN_00209194	FUN_00209194	43	57	bundles	new_calls=1
+hifi4	002091d0	FUN_002091d0	FUN_002091d0	75	80	bundles	
+hifi4	00209220	FUN_00209220	FUN_00209220	39	208	bundles	new_calls=3
+hifi4	002092f4	FUN_002092f4	FUN_002092f4	58	77	bundles	new_calls=1
+hifi4	00209344	FUN_00209344	FUN_00209344	93	132	bundles	new_calls=1
+hifi4	002093cc	FUN_002093cc	FUN_002093cc	140	266	bundles	new_calls=2
+hifi4	002094dc	FUN_002094dc	FUN_002094dc	144	179	bundles	
+hifi4	00209590	FUN_00209590	FUN_00209590	41	264	bundles	new_calls=16
+hifi4	0020969c	FUN_0020969c	FUN_0020969c	21	132	bundles	new_calls=2
+hifi4	00209720	FUN_00209720	FUN_00209720	157	338	bundles	new_calls=2
+hifi4	00209878	FUN_00209878	FUN_00209878	65	114	bundles	lost_call=F_20876c
+hifi4	002098ec	FUN_002098ec	FUN_002098ec	174	338	bundles	new_calls=2
+hifi4	00209a40	FUN_00209a40	FUN_00209a40	65	114	bundles	
+hifi4	00209ab4	FUN_00209ab4	FUN_00209ab4	8	52	bundles	new_calls=2
+hifi4	00209b30	FUN_00209b30	FUN_00209b30	18	219	bundles	
+hifi4	00209c10	FUN_00209c10	FUN_00209c10	8	68	bundles	new_calls=2
+hifi4	00209c54	FUN_00209c54	FUN_00209c54	8	28	bundles	new_calls=1
+hifi4	00209c70	FUN_00209c70	FUN_00209c70	16	166	bundles	new_calls=1
+hifi4	00209d20	FUN_00209d20	FUN_00209d20	25	101	bundles	new_calls=1
+hifi4	00209d88	FUN_00209d88	FUN_00209d88	51	45	bundles	
+hifi4	00209dd8	FUN_00209dd8	FUN_00209dd8	14	62	bundles	
+hifi4	00209e18	FUN_00209e18	FUN_00209e18	69	112	bundles	
+hifi4	00209e90	FUN_00209e90	FUN_00209e90	13	266	bundles	new_calls=2
+hifi4	00209f9c	FUN_00209f9c	FUN_00209f9c	12	190	bundles	new_calls=1
+hifi4	0020a06c	FUN_0020a06c	FUN_0020a06c	33	203	bundles	
+hifi4	0020a138	FUN_0020a138	FUN_0020a138	8	145	bundles	new_calls=1
+hifi4	0020a1cc	FUN_0020a1cc	FUN_0020a1cc	48	48	bundles	
+hifi4	0020a200	FUN_0020a200	FUN_0020a200	16	185	bundles	lost_call=F_1ea2f8;new_calls=1
+hifi4	0020a2cc	FUN_0020a2cc	FUN_0020a2cc	12	97	bundles	lost_call=F_202315
+hifi4	0020a330	FUN_0020a330	FUN_0020a330	11	71	bundles	
+hifi4	0020a378	FUN_0020a378	FUN_0020a378	27	74	bundles	
+hifi4	0020a3c4	FUN_0020a3c4	FUN_0020a3c4	28	76	bundles	
+hifi4	0020a410	FUN_0020a410	FUN_0020a410	28	75	bundles	
+hifi4	0020a45c	FUN_0020a45c	FUN_0020a45c	28	76	bundles	
+hifi4	0020a4a8	FUN_0020a4a8	FUN_0020a4a8	28	75	bundles	
+hifi4	0020a500	FUN_0020a500	FUN_0020a500	6	38	bundles	new_calls=1
+hifi4	0020a528	DMA_Init	DMA_Init	12	282	bundles	new_calls=2
+hifi4	0020a644	FUN_0020a644	FUN_0020a644	9	192	bundles	lost_call=F_20358a;new_calls=1
+hifi4	0020a708	FUN_0020a708	FUN_0020a708	51	51	bundles	lost_call=F_1e2888
+hifi4	0020a73c	FUN_0020a73c	FUN_0020a73c	9	80	bundles	new_calls=1
+hifi4	0020a758	FUN_0020a758		18		removed	
+hifi4	0020a78c	FUN_0020a78c	FUN_0020a78c	46	140	bundles	
+hifi4	0020a818	FUN_0020a818	FUN_0020a818	6	305	bundles	new_calls=1
+hifi4	0020a94c	FUN_0020a94c	FUN_0020a94c	14	211	bundles	new_calls=1
+hifi4	0020aa20	FUN_0020aa20	FUN_0020aa20	69	145	bundles	lost_call=F_1ccc18
+hifi4	0020aab4	DMA_CreateHandle	DMA_CreateHandle	11	115	bundles	new_calls=1
+hifi4	0020ab34	FUN_0020ab34	FUN_0020ab34	78	205	bundles	
+hifi4	0020ac04	FUN_0020ac04	FUN_0020ac04	27	79	bundles	new_calls=1
+hifi4	0020ac54	FUN_0020ac54	FUN_0020ac54	66	82	bundles	
+hifi4	0020aca8	FUN_0020aca8	FUN_0020aca8	28	91	bundles	new_calls=1
+hifi4	0020ad10	FUN_0020ad10	FUN_0020ad10	10	88	bundles	new_calls=2
+hifi4	0020ad68	FUN_0020ad68	FUN_0020ad68	12	16	bundles	new_calls=1
+hifi4	0020ad78	FUN_0020ad78	FUN_0020ad78	11	159	bundles	new_calls=3
+hifi4	0020ae18	FUN_0020ae18	FUN_0020ae18	17	189	bundles	new_calls=2
+hifi4	0020aed8	FUN_0020aed8	FUN_0020aed8	92	96	bundles	lost_call=F_24f600
+hifi4	0020af38	DMA_IRQHandle	DMA_IRQHandle	8	277	bundles	new_calls=1
+hifi4	0020b070	FUN_0020b070	FUN_0020b070	11	19	bundles	
+hifi4	0020b084	FUN_0020b084	FUN_0020b084	130	220	bundles	
+hifi4	0020b164	FUN_0020b164	FUN_0020b164	116	150	bundles	
+hifi4	0020b24c	FUN_0020b24c	FUN_0020b24c	55	138	bundles	
+hifi4	0020b2d8	FUN_0020b2d8	FUN_0020b2d8	10	44	bundles	new_calls=1
+hifi4	0020b330	FUN_0020b330	FUN_0020b330	19	59	bundles	lost_call=F_1cb4e8;new_calls=1
+hifi4	0020b36c	FUN_0020b36c	FUN_0020b36c	55	109	bundles	
+hifi4	0020b3f0	FUN_0020b3f0	FUN_0020b3f0	21	21	bundles	
+hifi4	0020b41c	FUN_0020b41c	FUN_0020b41c	21	21	bundles	
+hifi4	0020b460	FUN_0020b460	FUN_0020b460	27	39	bundles	
+hifi4	0020b494	FUN_0020b494	FUN_0020b494	14	46	bundles	new_calls=3;dropped_result=F_20b494
+hifi4	0020b4c4	FUN_0020b4c4	FUN_0020b4c4	37	642	bundles	lost_call=F_1a3780;new_calls=7
+hifi4	0020b760	FUN_0020b760	FUN_0020b760	15	41	bundles	new_calls=1
+hifi4	0020b790	FUN_0020b790	FUN_0020b790	9	30	bundles	
+hifi4	0020b7b0	FUN_0020b7b0	FUN_0020b7b0	33	305	bundles	new_calls=2
+hifi4	0020b8e4	FUN_0020b8e4	FUN_0020b8e4	32	30	bundles	fewer_args=F_20b790
+hifi4	0020b904	FUN_0020b904	FUN_0020b904	44	44	bundles	
+hifi4	0020b930	FUN_0020b930	FUN_0020b930	44	44	bundles	
+hifi4	0020b95c	FUN_0020b95c	FUN_0020b95c	44	44	bundles	
+hifi4	0020b988	FUN_0020b988	FUN_0020b988	24	44	bundles	
+hifi4	0020b9a0	FUN_0020b9a0		20		removed	
+hifi4	0020b9b4	FUN_0020b9b4	FUN_0020b9b4	44	44	bundles	
+hifi4	0020b9e0	FUN_0020b9e0	FUN_0020b9e0	44	44	bundles	
+hifi4	0020ba0c	FUN_0020ba0c	FUN_0020ba0c	44	44	bundles	
+hifi4	0020ba38	FUN_0020ba38	FUN_0020ba38	44	44	bundles	
+hifi4	0020ba64	FUN_0020ba64	FUN_0020ba64	44	44	bundles	
+hifi4	0020ba90	FUN_0020ba90	FUN_0020ba90	44	44	bundles	
+hifi4	0020bb00	FUN_0020bb00	FUN_0020bb00	11	19	bundles	
+hifi4	0020bb14	FUN_0020bb14	FUN_0020bb14	6	96	bundles	new_calls=2
+hifi4	0020bb74	FUN_0020bb74	FUN_0020bb74	159	755	boundary	new_calls=4
+hifi4	0020be6c	FUN_0020be6c	FUN_0020be6c	12	196	bundles	lost_call=F_208f5c
+hifi4	0020bf5c	FUN_0020bf5c	FUN_0020bf5c	205	221	bundles	
+hifi4	0020c03c	FUN_0020c03c	FUN_0020c03c	14	485	bundles	new_calls=1
+hifi4	0020c224	FUN_0020c224	FUN_0020c224	91	128	bundles	
+hifi4	0020c2a8	FUN_0020c2a8	FUN_0020c2a8	64	118	bundles	
+hifi4	0020c320	FUN_0020c320	FUN_0020c320	30	171	bundles	new_calls=1
+hifi4	0020c3cc	FUN_0020c3cc	FUN_0020c3cc	27	252	bundles	new_calls=1
+hifi4	0020c4d0	FUN_0020c4d0	FUN_0020c4d0	14	273	bundles	new_calls=4
+hifi4	0020c5e4	FUN_0020c5e4	FUN_0020c5e4	20	43	bundles	
+hifi4	0020c610	FUN_0020c610	FUN_0020c610	23	229	bundles	new_calls=2
+hifi4	0020c63c	FUN_0020c63c		7		removed	
+hifi4	0020c6f8	FUN_0020c6f8	FUN_0020c6f8	24	28	bundles	lost_call=F_20c730
+hifi4	0020c714	FUN_0020c714	FUN_0020c714	8	18	bundles	new_calls=1
+hifi4	0020c728	FUN_0020c728	FUN_0020c728	8	506	bundles	new_calls=2
+hifi4	0020c730	FUN_0020c730		15		removed	
+hifi4	0020c940	FUN_0020c940	FUN_0020c940	72	78	bundles	
+hifi4	0020c990	FUN_0020c990	FUN_0020c990	19	54	bundles	new_calls=1
+hifi4	0020c9d0	FUN_0020c9d0	FUN_0020c9d0	12	1594	bundles	new_calls=8
+hifi4	0020cac5	FUN_0020cac5		5		removed	
+hifi4	0020d01c	FUN_0020d01c	FUN_0020d01c	49	81	bundles	new_calls=1
+hifi4	0020d070	FUN_0020d070	FUN_0020d070	81	83	bundles	new_calls=1
+hifi4	0020d0d0	FUN_0020d0d0	FUN_0020d0d0	47	44	bundles	new_calls=1
+hifi4	0020d100	FUN_0020d100	FUN_0020d100	21	163	bundles	new_calls=2
+hifi4	0020d1a4	FUN_0020d1a4	FUN_0020d1a4	31	267	bundles	new_calls=1
+hifi4	0020d2b0	FUN_0020d2b0	FUN_0020d2b0	60	80	bundles	
+hifi4	0020d340	FUN_0020d340	FUN_0020d340	6	72	bundles	new_calls=1
+hifi4	0020d3e8	FUN_0020d3e8	FUN_0020d3e8	46	78	bundles	new_calls=1
+hifi4	0020d438	FUN_0020d438	FUN_0020d438	8	86	bundles	new_calls=1
+hifi4	0020d494	FUN_0020d494	FUN_0020d494	43	59	bundles	new_calls=1
+hifi4	0020d4f0	FUN_0020d4f0	FUN_0020d4f0	9	30	bundles	
+hifi4	0020d510	FUN_0020d510	FUN_0020d510	33	32	bundles	
+hifi4	0020d584	FUN_0020d584	FUN_0020d584	6	28	bundles	new_calls=1
+hifi4	0020d5a0	FUN_0020d5a0	FUN_0020d5a0	22	100	bundles	
+hifi4	0020d604	FUN_0020d604	FUN_0020d604	23	203	bundles	new_calls=3
+hifi4	0020d6d0	FUN_0020d6d0	FUN_0020d6d0	51	48	bundles	
+hifi4	0020d700	FUN_0020d700	FUN_0020d700	20	71	bundles	new_calls=1
+hifi4	0020d748	FUN_0020d748	FUN_0020d748	20	107	bundles	new_calls=1
+hifi4	0020d7b4	FUN_0020d7b4	FUN_0020d7b4	20	90	bundles	new_calls=2
+hifi4	0020d814	FUN_0020d814	FUN_0020d814	8	223	bundles	new_calls=4
+hifi4	0020d8f4	FUN_0020d8f4	FUN_0020d8f4	10	268	bundles	new_calls=2
+hifi4	0020da04	FUN_0020da04	FUN_0020da04	20	109	bundles	new_calls=3
+hifi4	0020da74	FUN_0020da74	FUN_0020da74	34	271	bundles	new_calls=5
+hifi4	0020db88	FUN_0020db88	FUN_0020db88	18	47	bundles	new_calls=4
+hifi4	0020dbb8	FUN_0020dbb8	FUN_0020dbb8	18	245	bundles	new_calls=4
+hifi4	0020dcb0	FUN_0020dcb0	FUN_0020dcb0	24	34	bundles	
+hifi4	0020dcd4	FUN_0020dcd4	FUN_0020dcd4	23	105	bundles	new_calls=3
+hifi4	0020dd40	FUN_0020dd40	FUN_0020dd40	25	673	bundles	new_calls=3
+hifi4	0020dfe8	FUN_0020dfe8	FUN_0020dfe8	31	102	bundles	
+hifi4	0020e050	FUN_0020e050	FUN_0020e050	13	119	bundles	new_calls=2
+hifi4	0020e0c8	FUN_0020e0c8	FUN_0020e0c8	13	119	bundles	new_calls=2
+hifi4	0020e140	FUN_0020e140	FUN_0020e140	6	29	bundles	new_calls=1
+hifi4	0020e160	FUN_0020e160	FUN_0020e160	14	44	bundles	new_calls=1
+hifi4	0020e18c	FUN_0020e18c	FUN_0020e18c	11	185	bundles	new_calls=3
+hifi4	0020e248	FUN_0020e248	FUN_0020e248	6	16	bundles	new_calls=1
+hifi4	0020e258	FUN_0020e258	FUN_0020e258	8	192	bundles	new_calls=1
+hifi4	0020e31c	FUN_0020e31c	FUN_0020e31c	8	192	bundles	new_calls=1
+hifi4	0020e3e0	FUN_0020e3e0	FUN_0020e3e0	10	59	bundles	new_calls=5
+hifi4	0020e41c	FUN_0020e41c	FUN_0020e41c	8	114	bundles	new_calls=3
+hifi4	0020e490	FUN_0020e490	FUN_0020e490	6	42	bundles	new_calls=1
+hifi4	0020e4bc	FUN_0020e4bc	FUN_0020e4bc	8	41	bundles	new_calls=2
+hifi4	0020e4e8	FUN_0020e4e8	FUN_0020e4e8	65	555	bundles	lost_call=F_1d6dd4;new_calls=1
+hifi4	0020e5cc	FUN_0020e5cc		93		removed	
+hifi4	0020e740	FUN_0020e740	FUN_0020e740	10	137	bundles	new_calls=4
+hifi4	0020e7d0	FUN_0020e7d0	FUN_0020e7d0	13	782	boundary	new_calls=7
+hifi4	0020eaec	FUN_0020eaec	FUN_0020eaec	17	148	bundles	new_calls=4
+hifi4	0020eb84	FUN_0020eb84	FUN_0020eb84	30	74	bundles	new_calls=4;fewer_args=F_20d4f0
+hifi4	0020ebd0	FUN_0020ebd0	FUN_0020ebd0	39	250	bundles	lost_call=F_1eed04;new_calls=3
+hifi4	0020eccc	FUN_0020eccc	FUN_0020eccc	24	34	bundles	
+hifi4	0020ecf0	FUN_0020ecf0	FUN_0020ecf0	95	113	bundles	new_calls=2;dropped_result=F_20aa20
+hifi4	0020ed90	FUN_0020ed90	FUN_0020ed90	22	28	bundles	new_calls=1
+hifi4	0020edac	I2S_TxInit	I2S_TxInit	8	285	bundles	new_calls=2
+hifi4	0020eecc	I2S_RxInit	I2S_RxInit	8	272	bundles	new_calls=2
+hifi4	0020efdc	I2S_TxGetDefaultConfig	I2S_TxGetDefaultConfig	8	67	bundles	
+hifi4	0020f020	I2S_RxGetDefaultConfig	I2S_RxGetDefaultConfig	11	64	bundles	
+hifi4	0020f068	FUN_0020f068	FUN_0020f068	34	82	bundles	
+hifi4	0020f0bc	FUN_0020f0bc	FUN_0020f0bc	10	152	bundles	new_calls=4
+hifi4	0020f154	FUN_0020f154	FUN_0020f154	195	266	bundles	new_calls=1
+hifi4	0020f260	FUN_0020f260	FUN_0020f260	8	95	bundles	new_calls=3
+hifi4	0020f2c0	FUN_0020f2c0	FUN_0020f2c0	10	155	bundles	new_calls=4
+hifi4	0020f35c	FUN_0020f35c	FUN_0020f35c	180	268	bundles	new_calls=1
+hifi4	0020f468	FUN_0020f468	FUN_0020f468	11	95	bundles	new_calls=3
+hifi4	0020f4c8	FUN_0020f4c8	FUN_0020f4c8	6	39	bundles	new_calls=1
+hifi4	0020f4f0	FUN_0020f4f0	FUN_0020f4f0	6	39	bundles	new_calls=1
+hifi4	0020f518	FUN_0020f518	FUN_0020f518	6	898	bundles	new_calls=4
+hifi4	0020f8a0	FUN_0020f8a0	FUN_0020f8a0	17	701	bundles	new_calls=3
+hifi4	0020fb70	FUN_0020fb70	FUN_0020fb70	6	38	bundles	new_calls=1
+hifi4	0020fb98	FUN_0020fb98	FUN_0020fb98	6	38	bundles	new_calls=1
+hifi4	0020fbc0	FUN_0020fbc0	FUN_0020fbc0	93	16	bundles	lost_call=F_1dc85c;new_calls=1
+hifi4	0020fbd0	FUN_0020fbd0	FUN_0020fbd0	20	20	bundles	new_calls=1
+hifi4	0020fbe4	I2S_TxTransferCreateHandleDMA	I2S_TxTransferCreateHandleDMA	8	149	bundles	new_calls=3
+hifi4	0020fc7c	I2S_TxTransferSendDMA	I2S_TxTransferSendDMA	13	215	bundles	new_calls=4
+hifi4	0020fd3a	FUN_0020fd3a		17		removed	
+hifi4	0020fd54	FUN_0020fd54	FUN_0020fd54	8	313	bundles	new_calls=4
+hifi4	0020fe90	I2S_RxTransferCreateHandleDMA	I2S_RxTransferCreateHandleDMA	10	22	bundles	new_calls=1
+hifi4	0020fea8	I2S_RxTransferReceiveDMA	I2S_RxTransferReceiveDMA	13	215	bundles	new_calls=4
+hifi4	0020ff80	FUN_0020ff80	FUN_0020ff80	22	620	bundles	lost_call=F_1f01e0;new_calls=5
+hifi4	002101ec	FUN_002101ec	FUN_002101ec	8	558	bundles	new_calls=3
+hifi4	00210294	FUN_00210294		2		removed	
+hifi4	00210420	FUN_00210420	FUN_00210420	47	208	bundles	lost_call=F_213880;new_calls=2
+hifi4	002105ac	FUN_002105ac	FUN_002105ac	11	19	bundles	
+hifi4	002105c0	FUN_002105c0	FUN_002105c0	6	141	bundles	new_calls=2
+hifi4	00210650	FUN_00210650	FUN_00210650	9	83	bundles	lost_call=F_208690;new_calls=3
+hifi4	002106a4	FUN_002106a4	FUN_002106a4	23	72	bundles	new_calls=3
+hifi4	002106ec	FUN_002106ec	FUN_002106ec	6	149	bundles	new_calls=2
+hifi4	00210784	FUN_00210784	FUN_00210784	91	104	bundles	lost_call=F_210568;new_calls=2
+hifi4	00210814	FUN_00210814	FUN_00210814	18	32	bundles	lost_call=F_1f08fc
+hifi4	00210834	FUN_00210834	FUN_00210834	23	101	bundles	lost_call=F_24a154;new_calls=1
+hifi4	0021089c	FUN_0021089c	FUN_0021089c	135	587	bundles	lost_call=F_1f0a68,F_1f0ae4,F_1fb6d8,F_2120cc;new_calls=2;fewer_args=F_213910
+hifi4	00210ae8	FUN_00210ae8	FUN_00210ae8	35	40	bundles	
+hifi4	00210b10	FUN_00210b10	FUN_00210b10	26	271	bundles	new_calls=3
+hifi4	00210c38	FUN_00210c38	FUN_00210c38	117	248	bundles	
+hifi4	00210d30	FUN_00210d30	FUN_00210d30	3	39	bundles	
+hifi4	00210d58	FUN_00210d58	FUN_00210d58	20	223	bundles	new_calls=2
+hifi4	00210e38	FUN_00210e38	FUN_00210e38	49	63	bundles	new_calls=1
+hifi4	00210e7c	FUN_00210e7c	FUN_00210e7c	31	77	bundles	
+hifi4	00210ecc	FUN_00210ecc	FUN_00210ecc	57	96	bundles	new_calls=2
+hifi4	00210f34	FUN_00210f34	FUN_00210f34	14	28	bundles	
+hifi4	00210f50	FUN_00210f50	FUN_00210f50	9	83	bundles	new_calls=1
+hifi4	00210fa4	FUN_00210fa4	FUN_00210fa4	46	310	bundles	lost_call=F_1f1150;new_calls=4
+hifi4	002110e4	FUN_002110e4	FUN_002110e4	11	283	bundles	new_calls=8
+hifi4	00211204	FUN_00211204	FUN_00211204	35	404	bundles	new_calls=11
+hifi4	0021139c	FUN_0021139c	FUN_0021139c	6	493	bundles	new_calls=11
+hifi4	00211590	FUN_00211590	FUN_00211590	10	103	bundles	new_calls=5
+hifi4	002115f8	FUN_002115f8	FUN_002115f8	36	325	bundles	new_calls=8
+hifi4	0021171e	FUN_0021171e		3		removed	
+hifi4	00211748	FUN_00211748	FUN_00211748	34	95	bundles	new_calls=2
+hifi4	00211776	FUN_00211776		26		removed	
+hifi4	002117a8	FUN_002117a8	FUN_002117a8	15	49	bundles	new_calls=3
+hifi4	002117dc	FUN_002117dc	FUN_002117dc	17	1031	bundles	lost_call=F_20a758;new_calls=12
+hifi4	00211bec	FUN_00211bec	FUN_00211bec	6	58	bundles	new_calls=1
+hifi4	00211c28	FUN_00211c28	FUN_00211c28	41	444	bundles	lost_call=F_1e9e94;new_calls=2
+hifi4	00211de8	FUN_00211de8	FUN_00211de8	36	248	bundles	
+hifi4	00211e0e	FUN_00211e0e		107		removed	
+hifi4	00211ee0	FUN_00211ee0	FUN_00211ee0	36	36	bundles	
+hifi4	00211f04	FUN_00211f04	FUN_00211f04	13	26	bundles	
+hifi4	00211f20	FUN_00211f20	FUN_00211f20	16	69	bundles	
+hifi4	00211f68	FUN_00211f68	FUN_00211f68	67	135	bundles	new_calls=2
+hifi4	00211ff0	FUN_00211ff0	FUN_00211ff0	22	59	bundles	new_calls=2
+hifi4	0021202c	FUN_0021202c	FUN_0021202c	14	52	bundles	new_calls=3
+hifi4	00212060	FUN_00212060	FUN_00212060	18	69	bundles	new_calls=3
+hifi4	002120a8	FUN_002120a8	FUN_002120a8	24	34	bundles	
+hifi4	002120cc	FUN_002120cc	FUN_002120cc	15	40	bundles	new_calls=1
+hifi4	002120f4	FUN_002120f4	FUN_002120f4	24	745	bundles	lost_call=F_26220c;new_calls=7
+hifi4	002121bc	FUN_002121bc		29		removed	
+hifi4	002123e0	FUN_002123e0	FUN_002123e0	51	67	bundles	
+hifi4	00212440	FUN_00212440	FUN_00212440	16	24	bundles	
+hifi4	00212458	FUN_00212458	FUN_00212458	16	30	bundles	
+hifi4	00212478	FUN_00212478	FUN_00212478	16	24	bundles	
+hifi4	00212490	FUN_00212490	FUN_00212490	16	30	bundles	
+hifi4	002124b0	FUN_002124b0	FUN_002124b0	18	26	bundles	
+hifi4	002124cc	FUN_002124cc	FUN_002124cc	18	26	bundles	
+hifi4	002124e8	FUN_002124e8	FUN_002124e8	18	26	bundles	
+hifi4	00212504	FUN_00212504	FUN_00212504	20	34	bundles	
+hifi4	00212528	FUN_00212528	FUN_00212528	16	24	bundles	
+hifi4	00212540	FUN_00212540	FUN_00212540	16	30	bundles	
+hifi4	00212574	FUN_00212574	FUN_00212574	18	24	bundles	
+hifi4	0021258c	FUN_0021258c	FUN_0021258c	18	46	bundles	
+hifi4	002125e4	FUN_002125e4	FUN_002125e4	16	24	bundles	
+hifi4	002125fc	FUN_002125fc	FUN_002125fc	18	26	bundles	
+hifi4	00212618	FUN_00212618	FUN_00212618	18	26	bundles	
+hifi4	00212648	FUN_00212648	FUN_00212648	18	26	bundles	
+hifi4	00212684	INPUTMUX_AttachSignal	INPUTMUX_AttachSignal	12	25	bundles	lost_call=F_20cac5;new_calls=1
+hifi4	002126a0	FUN_002126a0	FUN_002126a0	8	63	bundles	new_calls=1
+hifi4	00212700	FUN_00212700	FUN_00212700	20	437	bundles	lost_call=F_192a14;new_calls=1
+hifi4	002128b8	FUN_002128b8	FUN_002128b8	6	48	bundles	new_calls=1
+hifi4	002128e8	FUN_002128e8	FUN_002128e8	188	188	bundles	lost_call=F_1f65c0
+hifi4	002129a8	FUN_002129a8	FUN_002129a8	42	42	bundles	
+hifi4	002129d4	FUN_002129d4	FUN_002129d4	13	67	bundles	new_calls=1
+hifi4	00212a2c	FUN_00212a2c	FUN_00212a2c	15	200	bundles	new_calls=1
+hifi4	00212af4	FUN_00212af4	FUN_00212af4	45	45	bundles	new_calls=1
+hifi4	00212b30	FUN_00212b30	FUN_00212b30	28	209	bundles	new_calls=2
+hifi4	00212c04	FUN_00212c04	FUN_00212c04	49	196	bundles	
+hifi4	00212cc8	FUN_00212cc8	FUN_00212cc8	25	50	bundles	
+hifi4	00212d00	MU_Init	MU_Init	23	172	bundles	new_calls=1
+hifi4	00212dac	FUN_00212dac	FUN_00212dac	23	172	bundles	new_calls=1
+hifi4	00212eb8	MU_SetFlags	MU_SetFlags	41	55	bundles	
+hifi4	00212ef0	FUN_00212ef0	FUN_00212ef0	36	36	bundles	
+hifi4	00212f34	FUN_00212f34	FUN_00212f34	89	105	bundles	
+hifi4	00212fa0	FUN_00212fa0	FUN_00212fa0	6	28	bundles	new_calls=1
+hifi4	00212fbc	FUN_00212fbc	FUN_00212fbc	9	173	bundles	new_calls=1
+hifi4	0021306c	FUN_0021306c	FUN_0021306c	6	143	bundles	new_calls=1
+hifi4	00213100	FUN_00213100	FUN_00213100	8	109	bundles	new_calls=1
+hifi4	00213170	FUN_00213170	FUN_00213170	19	19	bundles	
+hifi4	00213184	FUN_00213184	FUN_00213184	19	19	bundles	
+hifi4	00213198	FUN_00213198	FUN_00213198	70	112	bundles	new_calls=2
+hifi4	0021320c	FUN_0021320c	FUN_0021320c	8	124	bundles	new_calls=3
+hifi4	00213288	FUN_00213288	FUN_00213288	33	105	bundles	
+hifi4	002132f4	FUN_002132f4	FUN_002132f4	23	136	bundles	lost_call=F_232148;new_calls=1
+hifi4	0021337c	FUN_0021337c	FUN_0021337c	28	120	bundles	new_calls=1
+hifi4	002133f8	FUN_002133f8	FUN_002133f8	33	33	bundles	
+hifi4	0021341c	FUN_0021341c	FUN_0021341c	22	44	bundles	
+hifi4	00213448	FUN_00213448	FUN_00213448	13	93	bundles	new_calls=1
+hifi4	002134a8	FUN_002134a8	FUN_002134a8	21	32	bundles	new_calls=1
+hifi4	002134c8	FUN_002134c8	FUN_002134c8	8	14	bundles	new_calls=1
+hifi4	002134d8	FUN_002134d8	FUN_002134d8	21	32	bundles	new_calls=1
+hifi4	002134f8	FUN_002134f8	FUN_002134f8	16	22	bundles	new_calls=1
+hifi4	00213514	FUN_00213514	FUN_00213514	56	56	bundles	lost_call=F_2133f8;new_calls=1;dropped_result=F_2134d8
+hifi4	0021354c	FUN_0021354c	FUN_0021354c	44	50	bundles	new_calls=1
+hifi4	00213584	FUN_00213584	FUN_00213584	47	50	bundles	new_calls=1
+hifi4	002135bc	FUN_002135bc	FUN_002135bc	47	50	bundles	new_calls=1
+hifi4	002135f0	FUN_002135f0	FUN_002135f0	44	50	bundles	new_calls=1
+hifi4	00213628	FUN_00213628	FUN_00213628	44	50	bundles	new_calls=1
+hifi4	0021365c	FUN_0021365c	FUN_0021365c	44	50	bundles	new_calls=1
+hifi4	00213690	FUN_00213690	FUN_00213690	47	50	bundles	new_calls=1
+hifi4	002136c8	FUN_002136c8	FUN_002136c8	47	50	bundles	new_calls=1
+hifi4	00213700	FUN_00213700	FUN_00213700	6	261	bundles	new_calls=1
+hifi4	00213808	FUN_00213808	FUN_00213808	6	261	bundles	new_calls=1
+hifi4	00213839	FUN_00213839		15		removed	
+hifi4	00213880	FUN_00213880		6		removed	
+hifi4	00213920	FUN_00213920	FUN_00213920	14	48	bundles	new_calls=1
+hifi4	00213950	FUN_00213950	FUN_00213950	14	296	bundles	new_calls=2
+hifi4	00213a78	FUN_00213a78	FUN_00213a78	42	194	bundles	
+hifi4	00213b3c	FUN_00213b3c	FUN_00213b3c	12	283	bundles	new_calls=2
+hifi4	00213c58	FUN_00213c58	FUN_00213c58	25	179	bundles	
+hifi4	00213d10	SEMA42_GetInstance	SEMA42_GetInstance	11	19	bundles	
+hifi4	00213d24	SEMA42_Init	SEMA42_Init	116	150	bundles	
+hifi4	00213dbc	SEMA42_Deinit	SEMA42_Deinit	116	150	bundles	
+hifi4	00213e54	SEMA42_TryLock	SEMA42_TryLock	45	45	bundles	lost_call=F_1f5780
+hifi4	00213e84	SEMA42_Lock	SEMA42_Lock	11	73	bundles	new_calls=1
+hifi4	00213ed0	SEMA42_ResetGate	SEMA42_ResetGate	45	45	bundles	
+hifi4	00213f00	FUN_00213f00	FUN_00213f00	8	14	bundles	new_calls=1
+hifi4	00213f10	FUN_00213f10	FUN_00213f10	9	30	bundles	
+hifi4	00213f58	SPI_MasterGetDefaultConfig	SPI_MasterGetDefaultConfig	16	67	bundles	new_calls=1
+hifi4	00213f9c	SPI_MasterInit	SPI_MasterInit	67	373	bundles	new_calls=4
+hifi4	00214114	FUN_00214114	FUN_00214114	38	38	bundles	
+hifi4	0021413c	FUN_0021413c	FUN_0021413c	26	271	bundles	new_calls=4
+hifi4	00214250	FUN_00214250	FUN_00214250	61	61	bundles	lost_call=F_1f7f9c
+hifi4	00214290	FUN_00214290	FUN_00214290	6	52	bundles	new_calls=1
+hifi4	002142c4	FUN_002142c4	FUN_002142c4	6	52	bundles	new_calls=1
+hifi4	002142f8	FUN_002142f8	FUN_002142f8	11	99	bundles	new_calls=2
+hifi4	0021433e	FUN_0021433e		3		removed	
+hifi4	0021435c	FUN_0021435c	FUN_0021435c	48	77	bundles	lost_call=F_1a31c8;new_calls=1
+hifi4	002143ac	FUN_002143ac	FUN_002143ac	14	130	bundles	new_calls=3
+hifi4	00214430	FUN_00214430	FUN_00214430	12	445	bundles	new_calls=3
+hifi4	002145f0	FUN_002145f0	FUN_002145f0	25	186	bundles	new_calls=1
+hifi4	002146ac	FUN_002146ac	FUN_002146ac	84	166	bundles	new_calls=1
+hifi4	00214754	FUN_00214754	FUN_00214754	72	167	bundles	new_calls=2
+hifi4	00214804	FUN_00214804	FUN_00214804	25	49	bundles	lost_call=F_201a1a
+hifi4	00214838	FUN_00214838	FUN_00214838	6	68	bundles	new_calls=1
+hifi4	0021487c	FUN_0021487c	FUN_0021487c	69	932	bundles	new_calls=6;fewer_args=F_213f10
+hifi4	00214c30	FUN_00214c30	FUN_00214c30	27	89	bundles	new_calls=2
+hifi4	00214c8c	FUN_00214c8c	FUN_00214c8c	31	1149	bundles	new_calls=10
+hifi4	0021510c	FUN_0021510c	FUN_0021510c	84	168	bundles	new_calls=2
+hifi4	002151b8	FUN_002151b8	FUN_002151b8	19	55	bundles	new_calls=1
+hifi4	002151f0	FUN_002151f0	FUN_002151f0	19	55	bundles	new_calls=1
+hifi4	00215248	FUN_00215248	FUN_00215248	19	47	bundles	lost_call=F_202258;new_calls=1
+hifi4	00215280	FUN_00215280	FUN_00215280	38	152	bundles	
+hifi4	00215318	FUN_00215318	FUN_00215318	13	692	bundles	new_calls=2
+hifi4	002155d0	FUN_002155d0	FUN_002155d0	6	687	bundles	new_calls=3
+hifi4	00215880	FUN_00215880	FUN_00215880	208	233	bundles	
+hifi4	0021596c	FUN_0021596c	FUN_0021596c	10	351	bundles	new_calls=1
+hifi4	00215ad0	FUN_00215ad0	FUN_00215ad0	6	16	bundles	new_calls=1
+hifi4	00215ae0	FUN_00215ae0	FUN_00215ae0	6	16	bundles	new_calls=1
+hifi4	00215b00	FUN_00215b00	FUN_00215b00	9	30	bundles	
+hifi4	00215b20	FUN_00215b20	FUN_00215b20	29	34	bundles	lost_call=F_1ea090
+hifi4	00215b44	FUN_00215b44	FUN_00215b44	27	36	bundles	new_calls=1
+hifi4	00215b68	FUN_00215b68	FUN_00215b68	33	66	bundles	
+hifi4	00215bac	FUN_00215bac	FUN_00215bac	18	449	bundles	new_calls=3
+hifi4	00215d70	FUN_00215d70	FUN_00215d70	38	77	bundles	
+hifi4	00215dc0	FUN_00215dc0	FUN_00215dc0	10	60	bundles	new_calls=1
+hifi4	00215dfc	FUN_00215dfc	FUN_00215dfc	27	213	bundles	
+hifi4	00215ed4	FUN_00215ed4	FUN_00215ed4	22	150	bundles	new_calls=1
+hifi4	00215f70	FUN_00215f70	FUN_00215f70	3	67	bundles	new_calls=1
+hifi4	00215fb4	FUN_00215fb4	FUN_00215fb4	19	19	bundles	lost_call=F_1e216c
+hifi4	00215fc8	FUN_00215fc8	FUN_00215fc8	94	103	bundles	
+hifi4	00216034	FUN_00216034	FUN_00216034	30	193	bundles	new_calls=1
+hifi4	002160f8	FUN_002160f8	FUN_002160f8	24	107	bundles	new_calls=3
+hifi4	00216164	FUN_00216164	FUN_00216164	27	93	bundles	new_calls=4
+hifi4	002161c4	FUN_002161c4	FUN_002161c4	8	52	bundles	new_calls=2
+hifi4	002161f8	FUN_002161f8	FUN_002161f8	12	61	bundles	
+hifi4	00216238	FUN_00216238	FUN_00216238	35	341	bundles	new_calls=4
+hifi4	00216394	FUN_00216394	FUN_00216394	26	76	bundles	new_calls=1
+hifi4	002163e4	FUN_002163e4	FUN_002163e4	40	37	bundles	
+hifi4	0021640c	FUN_0021640c	FUN_0021640c	39	729	bundles	lost_call=F_211776;new_calls=1
+hifi4	00216718	FUN_00216718	FUN_00216718	61	55	bundles	
+hifi4	00216750	FUN_00216750	FUN_00216750	10	118	bundles	new_calls=4
+hifi4	002167c8	FUN_002167c8	FUN_002167c8	58	96	bundles	new_calls=3
+hifi4	0021682c	FUN_0021682c	FUN_0021682c	64	102	bundles	new_calls=3
+hifi4	002168bc	FUN_002168bc	FUN_002168bc	15	41	bundles	new_calls=1
+hifi4	002168e8	FUN_002168e8	FUN_002168e8	15	41	bundles	lost_call=F_2054f8;new_calls=1
+hifi4	00216914	FUN_00216914	FUN_00216914	31	41	bundles	
+hifi4	00216940	FUN_00216940	FUN_00216940	154	45	bundles	
+hifi4	00216970	FUN_00216970	FUN_00216970	12	196	bundles	new_calls=1
+hifi4	00216a38	FUN_00216a38	FUN_00216a38	8	180	bundles	new_calls=1
+hifi4	00216b30	FUN_00216b30	FUN_00216b30	37	37	bundles	
+hifi4	00216b58	FUN_00216b58	FUN_00216b58	11	420	bundles	new_calls=3
+hifi4	00216d00	FUN_00216d00	FUN_00216d00	11	173	bundles	new_calls=1
+hifi4	00216dc4	FUN_00216dc4	FUN_00216dc4	9	45	bundles	lost_call=F_20fd3a;new_calls=1
+hifi4	00216e00	FUN_00216e00	FUN_00216e00	8	1708	bundles	new_calls=33
+hifi4	002171f8	FUN_002171f8		3		removed	
+hifi4	002174b0	FUN_002174b0	FUN_002174b0	14	2144	bundles	lost_call=F_21171e;new_calls=17
+hifi4	00217d10	FUN_00217d10	FUN_00217d10	9	2329	bundles	new_calls=18
+hifi4	00218640	FUN_00218640	FUN_00218640	37	1314	bundles	new_calls=37
+hifi4	00218b70	FUN_00218b70	FUN_00218b70	14	375	bundles	new_calls=40
+hifi4	00218cf0	FUN_00218cf0	FUN_00218cf0	16	355	bundles	new_calls=36
+hifi4	00218e60	FUN_00218e60	FUN_00218e60	9	346	bundles	new_calls=24
+hifi4	00218fc0	FUN_00218fc0	FUN_00218fc0	21	299	bundles	new_calls=19
+hifi4	002190f0	FUN_002190f0	FUN_002190f0	9	558	bundles	new_calls=26
+hifi4	00219320	FUN_00219320	FUN_00219320	9	561	bundles	new_calls=27
+hifi4	00219560	FUN_00219560	FUN_00219560	21	291	bundles	new_calls=18
+hifi4	00219690	FUN_00219690	FUN_00219690	21	363	bundles	new_calls=17
+hifi4	00219800	FUN_00219800	FUN_00219800	50	2215	bundles	new_calls=38
+hifi4	00219808	FUN_00219808		1		removed	
+hifi4	0021a017	FUN_0021a017		7		removed	
+hifi4	0021a0b0	FUN_0021a0b0	FUN_0021a0b0	41	1661	bundles	lost_call=F_21433e,F_2171f8;new_calls=31
+hifi4	0021a730	FUN_0021a730	FUN_0021a730	9	97	bundles	new_calls=5
+hifi4	0021a7a0	FUN_0021a7a0	FUN_0021a7a0	9	274	bundles	lost_call=F_1d17b8;new_calls=14
+hifi4	0021a8c0	FUN_0021a8c0	FUN_0021a8c0	12	164	bundles	lost_call=F_1d18d0;new_calls=8
+hifi4	0021a970	FUN_0021a970	FUN_0021a970	17	169	bundles	lost_call=F_1d1980;new_calls=8
+hifi4	0021aa20	FUN_0021aa20	FUN_0021aa20	18	101	bundles	new_calls=6
+hifi4	0021aa90	FUN_0021aa90	FUN_0021aa90	24	46	bundles	new_calls=2
+hifi4	0021aac0	FUN_0021aac0	FUN_0021aac0	24	34	bundles	new_calls=1
+hifi4	0021aafc	FUN_0021aafc	FUN_0021aafc	10	16	bundles	new_calls=1
+hifi4	0021ab0c	FUN_0021ab0c	FUN_0021ab0c	10	16	bundles	new_calls=1
+hifi4	0021ab1c	FUN_0021ab1c	FUN_0021ab1c	8	16	bundles	new_calls=1
+hifi4	0021ab2c	FUN_0021ab2c	FUN_0021ab2c	10	16	bundles	new_calls=1
+hifi4	0021ab3c	FUN_0021ab3c	FUN_0021ab3c	10	18	bundles	new_calls=1
+hifi4	0021ab80	FUN_0021ab80	FUN_0021ab80	11	11	bundles	
+hifi4	0021abc4	FUN_0021abc4	FUN_0021abc4	15	22	bundles	
+hifi4	0021abf4	FUN_0021abf4	FUN_0021abf4	8	20	bundles	new_calls=1
+hifi4	0021ac30	MU_B_IRQHandler	MU_B_IRQHandler	31	37	bundles	new_calls=1
+hifi4	0021ac58	platform_init_interrupt	platform_init_interrupt	8	89	bundles	new_calls=5
+hifi4	0021acb4	platform_deinit_interrupt	platform_deinit_interrupt	12	79	boundary	new_calls=4
+hifi4	0021ad04	platform_notify	platform_notify	19	60	boundary	new_calls=2
+hifi4	0021ad44	platform_time_delay	platform_time_delay	32	32	other	new_calls=1
+hifi4	0021adcc	FUN_0021adcc	FUN_0021adcc	11	23	bundles	new_calls=1
+hifi4	0021ae00	FUN_0021ae00	FUN_0021ae00	22	207	bundles	
+hifi4	0021aed4	FUN_0021aed4	FUN_0021aed4	15	19	bundles	
+hifi4	0021aee8	FUN_0021aee8	FUN_0021aee8	10	21	bundles	new_calls=1
+hifi4	0021af00	FUN_0021af00	FUN_0021af00	10	18	bundles	new_calls=1
+hifi4	0021af14	FUN_0021af14	FUN_0021af14	10	18	bundles	new_calls=1
+hifi4	0021af28	FUN_0021af28	FUN_0021af28	10	21	bundles	new_calls=1
+hifi4	0021af40	FUN_0021af40	FUN_0021af40	8	19	bundles	new_calls=1
+hifi4	0021af54	FUN_0021af54	FUN_0021af54	10	18	bundles	new_calls=1
+hifi4	0021af68	FUN_0021af68	FUN_0021af68	10	18	bundles	new_calls=1
+hifi4	0021af7c	FUN_0021af7c	FUN_0021af7c	8	19	bundles	new_calls=1
+hifi4	0021af9c	rpmsg_lite_create_ept	rpmsg_lite_create_ept	14	149	boundary	new_calls=3
+hifi4	0021b034	FUN_0021b034	FUN_0021b034	17	63	boundary	new_calls=2;dropped_result=F_21ab94
+hifi4	0021b088	rpmsg_lite_send	rpmsg_lite_send	3	259	bundles	new_calls=5
+hifi4	0021b190	FUN_0021b190	FUN_0021b190	27	166	bundles	new_calls=3
+hifi4	0021b238	FUN_0021b238	FUN_0021b238	10	188	bundles	new_calls=4
+hifi4	0021b2f8	FUN_0021b2f8	FUN_0021b2f8	18	81	boundary	new_calls=2
+hifi4	0021b34c	FUN_0021b34c	FUN_0021b34c	8	503	bundles	new_calls=14
+hifi4	0021b544	rpmsg_lite_remote_init	rpmsg_lite_remote_init	24	285	bundles	new_calls=8
+hifi4	0021b664	FUN_0021b664	FUN_0021b664	28	104	bundles	new_calls=6
+hifi4	0021b6d0	FUN_0021b6d0	FUN_0021b6d0	23	99	bundles	
+hifi4	0021b734	rpmsg_ns_bind	rpmsg_ns_bind	16	46	bundles	new_calls=1
+hifi4	0021b768	FUN_0021b768	FUN_0021b768	8	16	bundles	new_calls=1
+hifi4	0021b778	rpmsg_ns_announce	rpmsg_ns_announce	20	57	bundles	new_calls=2
+hifi4	0021b7c0	FUN_0021b7c0	FUN_0021b7c0	47	148	bundles	new_calls=2
+hifi4	0021b854	FUN_0021b854	FUN_0021b854	59	140	bundles	new_calls=1
+hifi4	0021b8e8	FUN_0021b8e8	FUN_0021b8e8	33	77	bundles	new_calls=3
+hifi4	0021b938	FUN_0021b938	FUN_0021b938	38	123	bundles	new_calls=4
+hifi4	0021b9b4	FUN_0021b9b4	FUN_0021b9b4	24	95	bundles	new_calls=4
+hifi4	0021ba14	FUN_0021ba14	FUN_0021ba14	15	15	bundles	
+hifi4	0021ba24	FUN_0021ba24	FUN_0021ba24	24	24	bundles	
+hifi4	0021ba3c	FUN_0021ba3c	FUN_0021ba3c	21	21	bundles	
+hifi4	0021ba54	FUN_0021ba54	FUN_0021ba54	11	84	bundles	new_calls=5
+hifi4	0021baa8	FUN_0021baa8	FUN_0021baa8	20	54	bundles	new_calls=3
+hifi4	0021bae0	FUN_0021bae0	FUN_0021bae0	6	98	bundles	new_calls=4
+hifi4	0021bb44	FUN_0021bb44	FUN_0021bb44	16	16	bundles	new_calls=1
+hifi4	0021bb54	FUN_0021bb54	FUN_0021bb54	32	46	bundles	lost_call=F_1f04b4;new_calls=2
+hifi4	0021bb84	FUN_0021bb84	FUN_0021bb84	31	90	bundles	new_calls=2
+hifi4	0021bbe0	FUN_0021bbe0	FUN_0021bbe0	24	62	bundles	new_calls=3
+hifi4	0021bc20	FUN_0021bc20	FUN_0021bc20	30	50	bundles	lost_call=F_1f057c;new_calls=1
+hifi4	0021bc54	FUN_0021bc54	FUN_0021bc54	29	130	bundles	lost_call=F_19d974;new_calls=1
+hifi4	0021bcd8	FUN_0021bcd8	FUN_0021bcd8	11	73	bundles	new_calls=4
+hifi4	0021bd40	ipc_handle_msg	ipc_handle_msg	9	139	bundles	new_calls=6
+hifi4	0021bdcc	handle_msg_general	handle_msg_general	25	81	bundles	
+hifi4	0021be20	FUN_0021be20	FUN_0021be20	29	51	bundles	
+hifi4	0021be54	handle_msg_audio	handle_msg_audio	22	37	bundles	
+hifi4	0021be80	regfile_set_defaults	regfile_set_defaults	12	479	bundles	new_calls=1
+hifi4	0021c060	tx_gpio_to_reg4004	tx_gpio_to_reg4004	30	44	bundles	
+hifi4	0021c090	regfile_capture_init	regfile_capture_init	18	39	bundles	new_calls=1
+hifi4	0021c0b8	regfile_capture_clear	regfile_capture_clear	22	28	bundles	new_calls=1
+hifi4	0021c0d4	regfile_capture_set_ctrl	regfile_capture_set_ctrl	16	20	bundles	new_calls=1
+hifi4	0021c0e8	regfile_capture_append	regfile_capture_append	16	77	bundles	new_calls=3
+hifi4	0021c140	FUN_0021c140	FUN_0021c140	14	211	bundles	new_calls=12
+hifi4	0021c230	cpu_load_to_regs_2000	cpu_load_to_regs_2000	30	298	bundles	new_calls=1
+hifi4	0021c314	FUN_0021c314		3		removed	
+hifi4	0021c360	Thread_Main_entry	Thread_Main_entry	26	53	bundles	new_calls=5
+hifi4	0021c398	ipc_ept_rx_cb	ipc_ept_rx_cb	18	26	bundles	new_calls=1
+hifi4	0021c3b4	Thread_Ipc_entry	Thread_Ipc_entry	58	224	bundles	new_calls=11
+hifi4	0021c498	xos_create_main_ipc_threads	xos_create_main_ipc_threads	12	193	bundles	new_calls=11
+hifi4	0021c560	FUN_0021c560	FUN_0021c560	8	54	bundles	
+hifi4	0021c598	FUN_0021c598	FUN_0021c598	18	52	bundles	lost_call=F_219808
+hifi4	0021c600	FUN_0021c600	FUN_0021c600	15	15	bundles	
+hifi4	0021c610	FUN_0021c610	FUN_0021c610	12	96	bundles	new_calls=7
+hifi4	0021c670	FUN_0021c670	FUN_0021c670	6	215	bundles	new_calls=8
+hifi4	0021c748	FUN_0021c748	FUN_0021c748	11	207	bundles	new_calls=7
+hifi4	0021c76b	FUN_0021c76b		2		removed	
+hifi4	0021c818	FUN_0021c818	FUN_0021c818	11	104	bundles	new_calls=4
+hifi4	0021c890	FUN_0021c890	FUN_0021c890	11	26	bundles	new_calls=3
+hifi4	0021c8ac	FUN_0021c8ac	FUN_0021c8ac	14	14	bundles	
+hifi4	0021c8bc	FUN_0021c8bc	FUN_0021c8bc	15	909	bundles	new_calls=17
+hifi4	0021ca24	FUN_0021ca24		17		removed	
+hifi4	0021cc50	FUN_0021cc50	FUN_0021cc50	23	23	bundles	
+hifi4	0021cc68	FUN_0021cc68	FUN_0021cc68	45	916	bundles	lost_call=F_1c8778,F_227644;new_calls=19
+hifi4	0021d010	FUN_0021d010	FUN_0021d010	11	28	bundles	new_calls=1
+hifi4	0021d02c	FUN_0021d02c	FUN_0021d02c	15	44	bundles	new_calls=2
+hifi4	0021d058	FUN_0021d058	FUN_0021d058	15	33	bundles	new_calls=1
+hifi4	0021d07c	FUN_0021d07c	FUN_0021d07c	18	42	bundles	new_calls=2
+hifi4	0021d0a8	FUN_0021d0a8	FUN_0021d0a8	6	38	bundles	new_calls=3
+hifi4	0021d0d0	FUN_0021d0d0	FUN_0021d0d0	26	112	bundles	new_calls=6
+hifi4	0021d140	FUN_0021d140	FUN_0021d140	9	80	bundles	new_calls=3
+hifi4	0021d190	FUN_0021d190	FUN_0021d190	9	78	bundles	new_calls=7
+hifi4	0021d1e0	FUN_0021d1e0	FUN_0021d1e0	11	84	bundles	new_calls=3
+hifi4	0021d234	FUN_0021d234	FUN_0021d234	12	60	bundles	new_calls=4
+hifi4	0021d270	status_reg4_update	status_reg4_update	41	823	bundles	new_calls=22
+hifi4	0021d5b0	FUN_0021d5b0	FUN_0021d5b0	6	23	bundles	new_calls=3
+hifi4	0021d5c8	FUN_0021d5c8	FUN_0021d5c8	11	121	bundles	new_calls=8
+hifi4	0021d650	FUN_0021d650	FUN_0021d650	15	60	bundles	new_calls=3
+hifi4	0021d68c	FUN_0021d68c	FUN_0021d68c	13	514	bundles	new_calls=24
+hifi4	0021d8a0	FUN_0021d8a0	FUN_0021d8a0	12	159	bundles	new_calls=6
+hifi4	0021d940	FUN_0021d940	FUN_0021d940	14	605	bundles	new_calls=11
+hifi4	0021dbb0	FUN_0021dbb0	FUN_0021dbb0	11	32	bundles	new_calls=3
+hifi4	0021dbd0	FUN_0021dbd0	FUN_0021dbd0	20	837	bundles	lost_call=F_213839;new_calls=17
+hifi4	0021df20	FUN_0021df20	FUN_0021df20	17	195	bundles	new_calls=6
+hifi4	0021dfd6	FUN_0021dfd6		60		removed	
+hifi4	0021dfe4	FUN_0021dfe4	FUN_0021dfe4	21	270	bundles	new_calls=12
+hifi4	0021e0f4	FUN_0021e0f4	FUN_0021e0f4	57	343	bundles	lost_call=F_1edeac;new_calls=7
+hifi4	0021e24c	FUN_0021e24c	FUN_0021e24c	14	708	bundles	new_calls=17
+hifi4	0021e520	FUN_0021e520	FUN_0021e520	15	15	bundles	
+hifi4	0021e530	FUN_0021e530	FUN_0021e530	14	364	bundles	new_calls=15
+hifi4	0021e6b0	FUN_0021e6b0	FUN_0021e6b0	11	17	bundles	new_calls=1
+hifi4	0021e6c4	FUN_0021e6c4	FUN_0021e6c4	22	124	bundles	lost_call=F_21e9d8;new_calls=9
+hifi4	0021e740	FUN_0021e740	FUN_0021e740	20	17	bundles	new_calls=1
+hifi4	0021e754	FUN_0021e754	FUN_0021e754	14	206	bundles	new_calls=6
+hifi4	0021e82c	FUN_0021e82c	FUN_0021e82c	10	91	bundles	new_calls=7
+hifi4	0021e890	FUN_0021e890	FUN_0021e890	13	30	bundles	new_calls=1
+hifi4	0021e8b0	FUN_0021e8b0	FUN_0021e8b0	14	860	bundles	new_calls=13
+hifi4	0021e9d8	FUN_0021e9d8		1		removed	
+hifi4	0021ec18	FUN_0021ec18		3		removed	
+hifi4	0021ec20	FUN_0021ec20	FUN_0021ec20	13	30	bundles	new_calls=1
+hifi4	0021ec40	FUN_0021ec40	FUN_0021ec40	14	828	bundles	new_calls=13
+hifi4	0021ef90	FUN_0021ef90	FUN_0021ef90	15	116	bundles	new_calls=5
+hifi4	0021f004	FUN_0021f004	FUN_0021f004	19	213	bundles	new_calls=9
+hifi4	0021f0dc	FUN_0021f0dc	FUN_0021f0dc	22	494	bundles	lost_call=F_21c314;new_calls=21
+hifi4	0021f2d0	FUN_0021f2d0	FUN_0021f2d0	14	78	bundles	new_calls=5
+hifi4	0021f320		FUN_0021f320		35	added	
+hifi4	0021f348	meter_to_reg4005	meter_to_reg4005	67	62	bundles	lost_call=F_1c6e1c,F_1e611c,F_2642b0
+hifi4	0021f388	status_reg3_update	status_reg3_update	6	122	bundles	new_calls=7
+hifi4	0021f410	FUN_0021f410	FUN_0021f410	22	113	bundles	new_calls=15
+hifi4	0021f484	FUN_0021f484	FUN_0021f484	14	582	bundles	new_calls=20
+hifi4	0021f6d0	FUN_0021f6d0	FUN_0021f6d0	26	278	bundles	lost_call=F_1ff77c;new_calls=10
+hifi4	0021f7ec	FUN_0021f7ec	FUN_0021f7ec	39	207	bundles	new_calls=12
+hifi4	0021f8bc	FUN_0021f8bc	FUN_0021f8bc	6	166	bundles	new_calls=8
+hifi4	0021f968	FUN_0021f968	FUN_0021f968	6	221	bundles	new_calls=9
+hifi4	0021fa48	FUN_0021fa48	FUN_0021fa48	9	715	bundles	new_calls=23
+hifi4	0021fd20	FUN_0021fd20	FUN_0021fd20	65	152	bundles	new_calls=10
+hifi4	0021fdbc	FUN_0021fdbc	FUN_0021fdbc	19	1121	bundles	new_calls=9
+hifi4	00220224	FUN_00220224	FUN_00220224	8	495	bundles	new_calls=23
+hifi4	00220370	FUN_00220370		1		removed	
+hifi4	00220420	FUN_00220420	FUN_00220420	13	78	bundles	new_calls=1
+hifi4	00220470	FUN_00220470	FUN_00220470	92	792	bundles	lost_call=F_29c2ac;new_calls=16
+hifi4	00220790	FUN_00220790	FUN_00220790	14	783	bundles	new_calls=16
+hifi4	00220aa4	FUN_00220aa4	FUN_00220aa4	65	126	bundles	new_calls=2
+hifi4	00220b30	FUN_00220b30	FUN_00220b30	18	44	bundles	new_calls=1
+hifi4	00220b5c	FUN_00220b5c	FUN_00220b5c	21	106	bundles	new_calls=3
+hifi4	00220bd0	create_Thread_Rx_Audio	create_Thread_Rx_Audio	11	152	bundles	new_calls=12
+hifi4	00220c7c	rx_audio_fifo_push	rx_audio_fifo_push	40	151	bundles	lost_call=F_1a0ca0,F_1ca1a4;new_calls=10
+hifi4	00220d14	FUN_00220d14	FUN_00220d14	89	142	bundles	lost_call=F_200ef8,F_222e60;new_calls=8;dropped_result=F_235d30
+hifi4	00220da4	FUN_00220da4	FUN_00220da4	32	140	bundles	new_calls=9
+hifi4	00220e34	FUN_00220e34	FUN_00220e34	35	168	bundles	new_calls=10
+hifi4	00220ee0	FUN_00220ee0	FUN_00220ee0	18	146	bundles	new_calls=8
+hifi4	00220f74	rx_audio_push_block	rx_audio_push_block	13	28	bundles	new_calls=1
+hifi4	00220f90	Thread_Rx_Audio_entry	Thread_Rx_Audio_entry	12	64	bundles	new_calls=4
+hifi4	00220fd0	fc1_spi_dma_init	fc1_spi_dma_init	20	210	bundles	new_calls=10
+hifi4	002210a4	FUN_002210a4	FUN_002210a4	28	55	bundles	new_calls=1
+hifi4	002210dc	FUN_002210dc	FUN_002210dc	28	62	bundles	new_calls=1
+hifi4	0022111c	FUN_0022111c	FUN_0022111c	14	109	bundles	new_calls=2
+hifi4	00221198	FUN_00221198	FUN_00221198	23	29	bundles	new_calls=1
+hifi4	002211d0	FUN_002211d0	FUN_002211d0	13	78	bundles	new_calls=1
+hifi4	00221220	FUN_00221220	FUN_00221220	108	792	bundles	lost_call=F_252fa8;new_calls=16
+hifi4	00221540	FUN_00221540	FUN_00221540	14	783	bundles	new_calls=16
+hifi4	00221854	FUN_00221854	FUN_00221854	74	126	bundles	new_calls=2
+hifi4	002218e0	FUN_002218e0	FUN_002218e0	9	37	bundles	new_calls=3
+hifi4	00221908	FUN_00221908	FUN_00221908	12	247	bundles	new_calls=8
+hifi4	00221a10	FUN_00221a10	FUN_00221a10	11	30	bundles	new_calls=3
+hifi4	00221a30	FUN_00221a30	FUN_00221a30	40	206	bundles	lost_call=F_1aed98,F_1d86e8;new_calls=8
+hifi4	00221b10	FUN_00221b10	FUN_00221b10	12	165	bundles	new_calls=6
+hifi4	00221bb8	FUN_00221bb8	FUN_00221bb8	8	628	bundles	new_calls=12
+hifi4	00221e40	FUN_00221e40	FUN_00221e40	14	66	bundles	new_calls=3
+hifi4	00221e84	FUN_00221e84	FUN_00221e84	14	266	bundles	new_calls=9
+hifi4	00221f98	FUN_00221f98	FUN_00221f98	18	156	bundles	lost_call=F_21a017;new_calls=10
+hifi4	00222034	FUN_00222034	FUN_00222034	9	101	bundles	new_calls=6
+hifi4	002220a0	FUN_002220a0	FUN_002220a0	14	72	bundles	new_calls=8
+hifi4	002220e8	FUN_002220e8	FUN_002220e8	12	216	bundles	new_calls=11
+hifi4	002221c0	FUN_002221c0	FUN_002221c0	9	13	bundles	new_calls=1
+hifi4	002221d0	FUN_002221d0	FUN_002221d0	14	91	bundles	new_calls=5
+hifi4	00222230	FUN_00222230	FUN_00222230	14	17	bundles	new_calls=1
+hifi4	00222244	FUN_00222244	FUN_00222244	22	653	bundles	new_calls=24
+hifi4	002222b0	FUN_002222b0		3		removed	
+hifi4	0022239d	FUN_0022239d		2		removed	
+hifi4	002224e0	FUN_002224e0	FUN_002224e0	18	48	bundles	new_calls=2
+hifi4	00222510	FUN_00222510	FUN_00222510	14	294	bundles	new_calls=10
+hifi4	00222640	FUN_00222640	FUN_00222640	9	69	bundles	new_calls=4
+hifi4	00222688	FUN_00222688	FUN_00222688	19	1050	bundles	new_calls=15
+hifi4	00222ab0	FUN_00222ab0	FUN_00222ab0	27	63	bundles	new_calls=2
+hifi4	00222af0	FUN_00222af0	FUN_00222af0	18	519	bundles	new_calls=11
+hifi4	00222d00	FUN_00222d00	FUN_00222d00	22	52	bundles	new_calls=2
+hifi4	00222d34	FUN_00222d34	FUN_00222d34	11	157	bundles	new_calls=8
+hifi4	00222dd4	FUN_00222dd4	FUN_00222dd4	12	25	bundles	new_calls=1
+hifi4	00222df0	FUN_00222df0	FUN_00222df0	11	23	bundles	new_calls=1
+hifi4	00222e10	FUN_00222e10	FUN_00222e10	13	31	bundles	new_calls=3
+hifi4	00222e30	FUN_00222e30	FUN_00222e30	19	574	bundles	new_calls=19
+hifi4	00222e60	FUN_00222e60		22		removed	
+hifi4	00223080	FUN_00223080	FUN_00223080	12	25	bundles	new_calls=1
+hifi4	0022309c	FUN_0022309c	FUN_0022309c	27	45	bundles	new_calls=2
+hifi4	002230d0	FUN_002230d0	FUN_002230d0	12	25	bundles	new_calls=1
+hifi4	002230ec	FUN_002230ec	FUN_002230ec	11	23	bundles	new_calls=1
+hifi4	0022312c	FUN_0022312c	FUN_0022312c	9	13	bundles	new_calls=1
+hifi4	0022313c	FUN_0022313c	FUN_0022313c	16	269	bundles	new_calls=13
+hifi4	00223250	nlms_51tap_update	nlms_51tap_update	5	207	bundles	new_calls=9
+hifi4	00223320	FUN_00223320	FUN_00223320	14	108	bundles	new_calls=4
+hifi4	0022338c	FUN_0022338c	FUN_0022338c	11	109	bundles	new_calls=4
+hifi4	002233fc	FUN_002233fc	FUN_002233fc	13	820	bundles	new_calls=27
+hifi4	002235d2	FUN_002235d2		8		removed	
+hifi4	00223734	FUN_00223734	FUN_00223734	15	823	bundles	new_calls=27
+hifi4	00223a74	FUN_00223a74	FUN_00223a74	9	28	bundles	new_calls=1
+hifi4	00223a90	FUN_00223a90	FUN_00223a90	3	34	bundles	new_calls=4
+hifi4	00223ab4	FUN_00223ab4	FUN_00223ab4	3	38	bundles	new_calls=6
+hifi4	00223adc	FUN_00223adc	FUN_00223adc	24	263	bundles	new_calls=11
+hifi4	00223bf0	FUN_00223bf0	FUN_00223bf0	17	153	bundles	new_calls=5
+hifi4	00223c8c	FUN_00223c8c	FUN_00223c8c	12	856	bundles	new_calls=13
+hifi4	00223fe8	FUN_00223fe8	FUN_00223fe8	19	16	bundles	new_calls=1
+hifi4	00224000	FUN_00224000	FUN_00224000	16	94	bundles	new_calls=2
+hifi4	00224060	FUN_00224060	FUN_00224060	38	313	bundles	new_calls=12
+hifi4	0022419c	FUN_0022419c	FUN_0022419c	18	504	bundles	lost_call=F_204234,F_2235d2;new_calls=2
+hifi4	0022439c	FUN_0022439c	FUN_0022439c	6	298	bundles	
+hifi4	002244c8	FUN_002244c8	FUN_002244c8	19	16	bundles	new_calls=1
+hifi4	002244e0	FUN_002244e0	FUN_002244e0	11	67	bundles	new_calls=6
+hifi4	00224524	FUN_00224524	FUN_00224524	14	110	bundles	new_calls=8
+hifi4	00224594	FUN_00224594	FUN_00224594	14	110	bundles	new_calls=8
+hifi4	00224604	FUN_00224604	FUN_00224604	11	186	bundles	new_calls=14
+hifi4	002246c0	codec_out_fill_dma	codec_out_fill_dma	18	113	bundles	lost_call=F_21c76b;new_calls=3
+hifi4	00224734	codec_in_from_dma	codec_in_from_dma	9	96	bundles	new_calls=2
+hifi4	00224798	FUN_00224798	FUN_00224798	17	123	bundles	new_calls=10
+hifi4	00224814	FUN_00224814	FUN_00224814	29	134	bundles	new_calls=10
+hifi4	002248a0	FUN_002248a0	FUN_002248a0	26	54	bundles	new_calls=4
+hifi4	002248d8	FUN_002248d8	FUN_002248d8	61	133	bundles	lost_call=F_233920;new_calls=7
+hifi4	00224960	FUN_00224960	FUN_00224960	17	66	bundles	new_calls=5
+hifi4	002249b0	FUN_002249b0	FUN_002249b0	24	30	bundles	new_calls=1
+hifi4	002249d0	FUN_002249d0	FUN_002249d0	33	61	bundles	lost_call=F_1e6364,F_1e636c,F_220370;new_calls=1
+hifi4	00224a10	create_Thread_Spi	create_Thread_Spi	97	148	bundles	new_calls=10;dropped_result=F_2254a0
+hifi4	00224aa4	Thread_Spi_entry	Thread_Spi_entry	14	655	bundles	new_calls=31
+hifi4	00224d40	spi_post_tx_done	spi_post_tx_done	23	23	bundles	
+hifi4	00224d58	spi_fifo_push	spi_fifo_push	41	152	bundles	lost_call=F_1a4d7c,F_1ce284;new_calls=10
+hifi4	00224df0	FUN_00224df0	FUN_00224df0	21	139	bundles	new_calls=8
+hifi4	00224e80	FUN_00224e80	FUN_00224e80	14	85	bundles	new_calls=4
+hifi4	00224ed8	FUN_00224ed8	FUN_00224ed8	46	873	bundles	lost_call=F_275c60;new_calls=22
+hifi4	00225250	FUN_00225250	FUN_00225250	19	19	bundles	
+hifi4	00225264	FUN_00225264	FUN_00225264	22	213	bundles	new_calls=9
+hifi4	00225340	FUN_00225340	FUN_00225340	8	46	bundles	new_calls=2
+hifi4	00225370	FUN_00225370	FUN_00225370	6	119	bundles	new_calls=4
+hifi4	002253a8	FUN_002253a8		5		removed	
+hifi4	002253f0	FUN_002253f0	FUN_002253f0	3	23	bundles	new_calls=3
+hifi4	00225408	FUN_00225408	FUN_00225408	3	111	bundles	new_calls=6
+hifi4	00225478	FUN_00225478	FUN_00225478	3	17	bundles	new_calls=2
+hifi4	0022548c	FUN_0022548c	FUN_0022548c	3	17	bundles	new_calls=2
+hifi4	002254a0	FUN_002254a0	FUN_002254a0	23	76	bundles	new_calls=3
+hifi4	002254ec	FUN_002254ec	FUN_002254ec	11	98	bundles	new_calls=8
+hifi4	00225550	FUN_00225550	FUN_00225550	11	98	bundles	new_calls=8
+hifi4	002255b4	FUN_002255b4	FUN_002255b4	39	465	bundles	lost_call=F_2927cc;new_calls=18
+hifi4	00225790	FUN_00225790	FUN_00225790	10	162	bundles	new_calls=12
+hifi4	00225834	FUN_00225834	FUN_00225834	3	426	bundles	new_calls=18
+hifi4	002259e4	FUN_002259e4	FUN_002259e4	134	159	bundles	lost_call=F_1cf00c,F_22678c;new_calls=11
+hifi4	00225a84	FUN_00225a84	FUN_00225a84	14	46	bundles	new_calls=3
+hifi4	00225ab4	FUN_00225ab4	FUN_00225ab4	14	46	bundles	new_calls=3
+hifi4	00225af0	FUN_00225af0	FUN_00225af0	14	62	bundles	new_calls=7
+hifi4	00225b30	FUN_00225b30	FUN_00225b30	14	92	bundles	new_calls=8
+hifi4	00225b8c	FUN_00225b8c	FUN_00225b8c	14	92	bundles	new_calls=8
+hifi4	00225be8	FUN_00225be8	FUN_00225be8	44	178	bundles	new_calls=13
+hifi4	00225c9c	txaf_fifo_pop_to_dma	txaf_fifo_pop_to_dma	30	90	bundles	new_calls=3
+hifi4	00225cf8	rxif_dma_to_fifo	rxif_dma_to_fifo	8	78	bundles	new_calls=2
+hifi4	00225d48	FUN_00225d48	FUN_00225d48	33	123	bundles	new_calls=10
+hifi4	00225dc4	FUN_00225dc4	FUN_00225dc4	23	112	bundles	new_calls=9
+hifi4	00225e40	create_rx_tx_path_threads	create_rx_tx_path_threads	30	661	bundles	new_calls=26
+hifi4	002260d8	audio_i2s_fc3_fc4_fc5_init	audio_i2s_fc3_fc4_fc5_init	27	331	bundles	new_calls=4
+hifi4	00226224	fc2_txaf_dma_done	fc2_txaf_dma_done	10	47	bundles	new_calls=2
+hifi4	00226254	fc3_rxif_dma_done	fc3_rxif_dma_done	10	47	bundles	new_calls=2
+hifi4	00226284	fc5_codec_out_dma_done	fc5_codec_out_dma_done	10	59	bundles	new_calls=3
+hifi4	002262c0	fc4_codec_in_dma_done	fc4_codec_in_dma_done	10	59	bundles	new_calls=3
+hifi4	002262fc	Thread_Rx_Path_entry	Thread_Rx_Path_entry	46	353	bundles	lost_call=F_1efb94,F_27c39c;new_calls=13
+hifi4	0022647c	Thread_Tx_Path_entry	Thread_Tx_Path_entry	24	595	bundles	lost_call=F_226579;new_calls=23
+hifi4	002264a9	FUN_002264a9		12		removed	
+hifi4	00226562	FUN_00226562		3		removed	
+hifi4	00226579	FUN_00226579		28		removed	
+hifi4	002266b6	FUN_002266b6		6		removed	
+hifi4	002266fc	xos_register_interrupt_handler	xos_register_interrupt_handler	29	29	bundles	
+hifi4	0022671c	FUN_0022671c	FUN_0022671c	26	14	bundles	new_calls=1
+hifi4	00226744	FUN_00226744	FUN_00226744	31	69	bundles	lost_call=F_1ace6c,F_224d58,F_226562;new_calls=8
+hifi4	0022678c	xos_interrupt_enable	xos_interrupt_enable	57	57	bundles	new_calls=7
+hifi4	002267c8	FUN_002267c8	FUN_002267c8	6	24	bundles	
+hifi4	002267e0	FUN_002267e0	FUN_002267e0	17	61	bundles	new_calls=9
+hifi4	00226800	FUN_00226800		29		removed	
+hifi4	00226820	FUN_00226820	FUN_00226820	27	35	bundles	
+hifi4	00226844	FUN_00226844	FUN_00226844	6	15	bundles	
+hifi4	00226854	FUN_00226854	FUN_00226854	24	28	bundles	
+hifi4	00226870	FUN_00226870	FUN_00226870	37	41	bundles	new_calls=2;dropped_result=F_227c64
+hifi4	0022689c	FUN_0022689c	FUN_0022689c	20	67	bundles	new_calls=8
+hifi4	00226a50	xos_msgq_create	xos_msgq_create	19	82	bundles	new_calls=1
+hifi4	00226aa4	FUN_00226aa4	FUN_00226aa4	21	147	bundles	new_calls=13
+hifi4	00226b38	xos_msgq_put	xos_msgq_put	23	138	bundles	new_calls=11
+hifi4	00226bc4	FUN_00226bc4	FUN_00226bc4	48	293	bundles	new_calls=13
+hifi4	00226cec	xos_msgq_get	xos_msgq_get	23	141	bundles	new_calls=11
+hifi4	00226d7c	FUN_00226d7c	FUN_00226d7c	50	295	bundles	new_calls=13
+hifi4	00226eb0	FUN_00226eb0	FUN_00226eb0	8	166	bundles	new_calls=13
+hifi4	00226f58	FUN_00226f58	FUN_00226f58	14	20	bundles	new_calls=1
+hifi4	00226f70	FUN_00226f70	FUN_00226f70	3	154	bundles	new_calls=14
+hifi4	0022700c	FUN_0022700c	FUN_0022700c	55	73	bundles	
+hifi4	00227058	FUN_00227058	FUN_00227058	71	122	bundles	lost_call=F_207220;new_calls=5
+hifi4	002270d4	xos_mutex_lock	xos_mutex_lock	20	143	bundles	new_calls=7
+hifi4	00227168	FUN_00227168	FUN_00227168	30	197	bundles	new_calls=9
+hifi4	00227230	xos_mutex_unlock	xos_mutex_unlock	84	95	bundles	new_calls=3;dropped_result=F_227f3c
+hifi4	00227294	FUN_00227294	FUN_00227294	73	84	bundles	new_calls=3
+hifi4	002272ec	FUN_002272ec	FUN_002272ec	14	20	bundles	new_calls=1
+hifi4	00227300	FUN_00227300	FUN_00227300	63	89	bundles	
+hifi4	0022735c	xos_get_cpu_load	xos_get_cpu_load	13	363	bundles	new_calls=11
+hifi4	002274c8	FUN_002274c8	FUN_002274c8	8	21	bundles	new_calls=1
+hifi4	002274e0	xos_thread_create	xos_thread_create	16	517	bundles	lost_call=F_1e24ec;new_calls=12
+hifi4	00227644	FUN_00227644		109		removed	
+hifi4	002276f0	FUN_002276f0	FUN_002276f0	24	113	bundles	new_calls=9
+hifi4	00227770	FUN_00227770	FUN_00227770	43	115	bundles	new_calls=3
+hifi4	002277f0	xos_start	xos_start	45	178	bundles	new_calls=5
+hifi4	002278b0	FUN_002278b0	FUN_002278b0	10	67	bundles	new_calls=2
+hifi4	002278f8	FUN_002278f8	FUN_002278f8	34	100	bundles	new_calls=11
+hifi4	0022795c	FUN_0022795c	FUN_0022795c	53	197	bundles	new_calls=14
+hifi4	00227a24	FUN_00227a24	FUN_00227a24	14	203	bundles	new_calls=11
+hifi4	00227af0	FUN_00227af0	FUN_00227af0	35	240	bundles	new_calls=12
+hifi4	00227be4	FUN_00227be4	FUN_00227be4	102	78	bundles	lost_call=F_20b9a0;new_calls=9;dropped_result=F_227f3c
+hifi4	00227c38	FUN_00227c38	FUN_00227c38	36	44	bundles	
+hifi4	00227c64	FUN_00227c64	FUN_00227c64	63	86	bundles	new_calls=3
+hifi4	00227cbc	FUN_00227cbc	FUN_00227cbc	42	125	bundles	new_calls=10
+hifi4	00227d3c	FUN_00227d3c	FUN_00227d3c	40	163	bundles	new_calls=11
+hifi4	00227de0	FUN_00227de0	FUN_00227de0	35	47	bundles	new_calls=1
+hifi4	00227e10	FUN_00227e10	FUN_00227e10	44	220	bundles	new_calls=14
+hifi4	00227ef4	FUN_00227ef4	FUN_00227ef4	31	71	bundles	
+hifi4	00227f3c	FUN_00227f3c	FUN_00227f3c	25	25	other	new_calls=6
+hifi4	00227f58	FUN_00227f58	FUN_00227f58	47	47	bundles	new_calls=6
+hifi4	00227f88	FUN_00227f88	FUN_00227f88	22	102	bundles	new_calls=1
+hifi4	00227ff0	FUN_00227ff0	FUN_00227ff0	17	100	bundles	new_calls=1
+hifi4	00228054	FUN_00228054	FUN_00228054	13	110	bundles	new_calls=1
+hifi4	002280c4	FUN_002280c4	FUN_002280c4	17	91	bundles	new_calls=2
+hifi4	00228120	FUN_00228120	FUN_00228120	53	53	bundles	new_calls=1
+hifi4	00228158	FUN_00228158	FUN_00228158	18	505	bundles	new_calls=14
+hifi4	00228299	FUN_00228299		32		removed	
+hifi4	0022835c	xos_start_system_timer	xos_start_system_timer	25	115	bundles	new_calls=5
+hifi4	002283e0	FUN_002283e0	FUN_002283e0	34	263	bundles	new_calls=10
+hifi4	002284e8	FUN_002284e8	FUN_002284e8	20	122	bundles	new_calls=10
+hifi4	00228564	FUN_00228564	FUN_00228564	30	207	bundles	new_calls=11
+hifi4	00228634	FUN_00228634	FUN_00228634	26	56	bundles	new_calls=9
+hifi4	0022866c	xos_thread_sleep	xos_thread_sleep	45	140	bundles	new_calls=11
+hifi4	002286fc	FUN_002286fc	FUN_002286fc	41	54	bundles	new_calls=3
+hifi4	00228734	FUN_00228734	FUN_00228734	13	19	bundles	new_calls=1
+hifi4	00228748	FUN_00228748	FUN_00228748	36	175	bundles	new_calls=4
+hifi4	002287f8	FUN_002287f8		2		removed	
+hifi4	00228818	FUN_00228818		26		removed	
+hifi4	00228834	FUN_00228834		25		removed	
+hifi4	00228c44	FUN_00228c44	FUN_00228c44	61	77	bundles	new_calls=13
+hifi4	00228cfc	FUN_00228cfc	FUN_00228cfc	40	108	bundles	new_calls=11
+hifi4	00228dc0	FUN_00228dc0	FUN_00228dc0	31	43	bundles	new_calls=1
+hifi4	00228df0	FUN_00228df0	FUN_00228df0	43	43	bundles	fewer_args=F_227230
+hifi4	00228e34	FUN_00228e34	FUN_00228e34	12	42	bundles	lost_call=F_228299
+hifi4	00228e60	FUN_00228e60	FUN_00228e60	14	33	bundles	new_calls=1
+hifi4	00228e84	FUN_00228e84	FUN_00228e84	25	290	bundles	lost_call=F_228299;new_calls=1
+hifi4	00228fb0	FUN_00228fb0	FUN_00228fb0	39	44	bundles	lost_call=F_1bbdc0
+hifi4	00229224	FUN_00229224	FUN_00229224	11	17	bundles	new_calls=1
+hifi4	00229238	FUN_00229238	FUN_00229238	67	71	bundles	new_calls=1
+hifi4	00229284	FUN_00229284	FUN_00229284	33	39	bundles	new_calls=3
+hifi4	002292ac	FUN_002292ac	FUN_002292ac	14	93	bundles	new_calls=15
+hifi4	0022930c	FUN_0022930c	FUN_0022930c	38	38	bundles	new_calls=1
+hifi4	00229340	FUN_00229340	FUN_00229340	15	106	bundles	
+hifi4	002293ac	FUN_002293ac	FUN_002293ac	17	31	bundles	new_calls=3
+hifi4	002293e0	FUN_002293e0	FUN_002293e0	6	100	bundles	new_calls=6
+hifi4	00229460	FUN_00229460	FUN_00229460	6	105	bundles	new_calls=6
+hifi4	002294e0	FUN_002294e0	FUN_002294e0	28	1240	bundles	new_calls=18
+hifi4	00229a20	FUN_00229a20	FUN_00229a20	6	224	bundles	new_calls=14
+hifi4	00229b10	FUN_00229b10	FUN_00229b10	6	2019	bundles	new_calls=18
+hifi4	0022a320	FUN_0022a320	FUN_0022a320	6	725	bundles	new_calls=11
+hifi4	0022a610	FUN_0022a610	FUN_0022a610	6	218	bundles	new_calls=5
+hifi4	0022a6f0	FUN_0022a6f0	FUN_0022a6f0	11	3349	bundles	new_calls=13
+hifi4	0022a7bf	FUN_0022a7bf		7		removed	
+hifi4	0022b420	FUN_0022b420	FUN_0022b420	6	163	bundles	new_calls=3
+hifi4	0022b456	FUN_0022b456		28		removed	
+hifi4	0022b4d0	FUN_0022b4d0	FUN_0022b4d0	6	22	bundles	new_calls=1
+hifi4	0022b4f0	FUN_0022b4f0	FUN_0022b4f0	10	396	bundles	new_calls=4
+hifi4	0022b680	FUN_0022b680	FUN_0022b680	6	21	bundles	new_calls=2
+hifi4	0022b6a0	FUN_0022b6a0	FUN_0022b6a0	6	29	bundles	new_calls=1
+hifi4	0022b6c0	FUN_0022b6c0	FUN_0022b6c0	3	79	bundles	new_calls=1
+hifi4	0022b710	FUN_0022b710	FUN_0022b710	8	13	bundles	new_calls=1
+hifi4	0022b720	FUN_0022b720	FUN_0022b720	3	226	bundles	new_calls=5
+hifi4	0022b810	FUN_0022b810	FUN_0022b810	9	37	bundles	new_calls=2
+hifi4	0022b838	FUN_0022b838	FUN_0022b838	3	14	bundles	new_calls=6
+hifi4	0022b848	FUN_0022b848	FUN_0022b848	3	16	bundles	new_calls=6
+hifi4	0022b858	FUN_0022b858	FUN_0022b858	3	11	bundles	new_calls=6
+hifi4	0022b864	FUN_0022b864	FUN_0022b864	3	16	bundles	new_calls=6
+hifi4	0022b874	FUN_0022b874	FUN_0022b874	3	11	bundles	new_calls=6
+hifi4	0022b8ac	FUN_0022b8ac	FUN_0022b8ac	93	188	bundles	lost_call=F_20c63c;new_calls=1
+hifi4	0022b96c	FUN_0022b96c	FUN_0022b96c	15	100	bundles	new_calls=2
+hifi4	0022ba20	FUN_0022ba20	FUN_0022ba20	20	32	bundles	new_calls=3
+hifi4	0022ba60	FUN_0022ba60	FUN_0022ba60	11	17	bundles	new_calls=1
+hifi4	0022ba80	FUN_0022ba80	FUN_0022ba80	45	1297	bundles	new_calls=3
+hifi4	0022bfb0	FUN_0022bfb0	FUN_0022bfb0	11	49	bundles	new_calls=1
+hifi4	0022bff0	FUN_0022bff0	FUN_0022bff0	18	55	bundles	new_calls=1
+hifi4	0022c030	FUN_0022c030	FUN_0022c030	9	20	bundles	
+hifi4	0022c050	FUN_0022c050	FUN_0022c050	70	75	bundles	lost_call=F_1f4238
+hifi4	0022c0a0	FUN_0022c0a0	FUN_0022c0a0	23	30	bundles	new_calls=1
+hifi4	0022c0c0	FUN_0022c0c0	FUN_0022c0c0	115	140	bundles	
+hifi4	0022c150	FUN_0022c150	FUN_0022c150	29	56	bundles	
+hifi4	0022c190	FUN_0022c190	FUN_0022c190	110	328	bundles	new_calls=3
+hifi4	0022c1d2	FUN_0022c1d2		17		removed	
+hifi4	0022c2e0	FUN_0022c2e0	FUN_0022c2e0	87	148	bundles	lost_call=F_22239d
+hifi4	0022c3bc	FUN_0022c3bc	FUN_0022c3bc	15	175	bundles	new_calls=2
+hifi4	0022c4d0	FUN_0022c4d0	FUN_0022c4d0	8	175	bundles	new_calls=2
+hifi4	0022c590	FUN_0022c590	FUN_0022c590	9	31	bundles	new_calls=1
+hifi4	0022c5b0	FUN_0022c5b0	FUN_0022c5b0	21	8131	bundles	new_calls=16
+hifi4	0022c79b	FUN_0022c79b		55		removed	
+hifi4	0022d050	FUN_0022d050		11		removed	
+hifi4	0022d11b	FUN_0022d11b		31		removed	
+hifi4	0022d6da	FUN_0022d6da		6		removed	
+hifi4	0022df88	FUN_0022df88		79		removed	
+hifi4	0022e630	FUN_0022e630	FUN_0022e630	31	214	bundles	lost_call=F_2266b6;new_calls=2
+hifi4	0022e710	FUN_0022e710	FUN_0022e710	27	48	bundles	
+hifi4	0022e740	FUN_0022e740	FUN_0022e740	34	204	bundles	new_calls=1
+hifi4	0022e810	FUN_0022e810	FUN_0022e810	15	372	bundles	lost_call=F_21ca24;new_calls=2
+hifi4	0022e990	FUN_0022e990	FUN_0022e990	58	4063	bundles	new_calls=25
+hifi4	0022fa00	FUN_0022fa00	FUN_0022fa00	6	373	bundles	new_calls=1
+hifi4	0022fb80	FUN_0022fb80	FUN_0022fb80	31	39	bundles	new_calls=1
+hifi4	0022fbe0	FUN_0022fbe0	FUN_0022fbe0	14	51	bundles	new_calls=2
+hifi4	0022fc20	FUN_0022fc20	FUN_0022fc20	82	170	bundles	new_calls=3
+hifi4	0022fce0	FUN_0022fce0	FUN_0022fce0	8	14	bundles	new_calls=1
+hifi4	0022fd00	FUN_0022fd00	FUN_0022fd00	24	263	bundles	new_calls=1
+hifi4	0022fe50	FUN_0022fe50	FUN_0022fe50	39	564	bundles	new_calls=2;dropped_result=F_228dc0
+hifi4	00230015	FUN_00230015		10		removed	
+hifi4	00230090	FUN_00230090	FUN_00230090	73	197	bundles	new_calls=1
+hifi4	00230160	FUN_00230160	FUN_00230160	16	52	bundles	new_calls=1
+hifi4	002301f0	FUN_002301f0	FUN_002301f0	14	24	bundles	new_calls=1
+hifi4	00230230	FUN_00230230	FUN_00230230	18	260	bundles	lost_call=F_210294;new_calls=3
+hifi4	00230340	FUN_00230340	FUN_00230340	84	139	bundles	new_calls=2
+hifi4	002303d0	FUN_002303d0	FUN_002303d0	33	98	bundles	lost_call=F_1eb3e0;new_calls=1
+hifi4	00230440	FUN_00230440	FUN_00230440	55	159	bundles	lost_call=F_289008;new_calls=4
+hifi4	002304f0	FUN_002304f0	FUN_002304f0	6	159	bundles	new_calls=2
+hifi4	002305a0	FUN_002305a0	FUN_002305a0	14	29	bundles	new_calls=1
+hifi4	002305c0	FUN_002305c0	FUN_002305c0	21	388	bundles	lost_call=F_21dfd6;new_calls=4
+hifi4	00230750	FUN_00230750	FUN_00230750	25	157	bundles	new_calls=4
+hifi4	00230800	FUN_00230800	FUN_00230800	18	197	bundles	lost_call=F_245df4;new_calls=2
+hifi4	002308e0	FUN_002308e0	FUN_002308e0	10	316	bundles	new_calls=3
+hifi4	00230a30	FUN_00230a30	FUN_00230a30	38	88	bundles	
+hifi4	00230a90	FUN_00230a90	FUN_00230a90	11	223	bundles	new_calls=2
+hifi4	00230b70	FUN_00230b70	FUN_00230b70	8	202	bundles	new_calls=3
+hifi4	00230c40	FUN_00230c40	FUN_00230c40	8	115	bundles	new_calls=2
+hifi4	00230cc0	FUN_00230cc0	FUN_00230cc0	8	73	bundles	new_calls=1
+hifi4	00230d10	FUN_00230d10	FUN_00230d10	34	101	bundles	
+hifi4	00230d80	FUN_00230d80	FUN_00230d80	8	54	bundles	new_calls=1
+hifi4	00230dc0	FUN_00230dc0	FUN_00230dc0	20	58	bundles	new_calls=2
+hifi4	00230e00	FUN_00230e00	FUN_00230e00	8	63	bundles	new_calls=1
+hifi4	00230e40	FUN_00230e40	FUN_00230e40	8	16	bundles	new_calls=1
+hifi4	00230e50	FUN_00230e50	FUN_00230e50	6	102	bundles	
+hifi4	00230ec0	FUN_00230ec0	FUN_00230ec0	43	145	bundles	new_calls=2
+hifi4	00230f60	FUN_00230f60	FUN_00230f60	8	175	bundles	new_calls=2
+hifi4	00231020	FUN_00231020	FUN_00231020	9	31	bundles	new_calls=1
+hifi4	00231040	FUN_00231040	FUN_00231040	28	1298	bundles	new_calls=10
+hifi4	00232264	FUN_00232264		11		removed	
+hifi4	00232470	FUN_00232470	FUN_00232470	10	44	bundles	new_calls=1
+hifi4	002324a0	FUN_002324a0	FUN_002324a0	32	112	bundles	new_calls=1
+hifi4	00232520	FUN_00232520	FUN_00232520	38	146	bundles	new_calls=4
+hifi4	002325f0	FUN_002325f0	FUN_002325f0	64	245	bundles	new_calls=2
+hifi4	00232700	FUN_00232700	FUN_00232700	31	40	bundles	new_calls=1
+hifi4	00232730	FUN_00232730	FUN_00232730	43	895	bundles	lost_call=F_22a7bf;new_calls=8
+hifi4	00232af0	FUN_00232af0	FUN_00232af0	23	1270	bundles	new_calls=4;dropped_result=F_228dc0
+hifi4	00232ca3	FUN_00232ca3		49		removed	
+hifi4	00233010	FUN_00233010	FUN_00233010	25	194	bundles	new_calls=2
+hifi4	002330e0	FUN_002330e0	FUN_002330e0	14	24	bundles	new_calls=1
+hifi4	00233100	FUN_00233100	FUN_00233100	17	85	boundary	
+hifi4	00233160	FUN_00233160	FUN_00233160	23	97	boundary	
+hifi4	002331d0	FUN_002331d0	FUN_002331d0	6	34	boundary	
+hifi4	00233200	FUN_00233200	FUN_00233200	20	20	bundles	
+hifi4	00233220	FUN_00233220	FUN_00233220	37	37	bundles	
+hifi4	00233250	FUN_00233250	FUN_00233250	11	40	bundles	
+hifi4	00233280	FUN_00233280	FUN_00233280	17	27	bundles	lost_call=F_22d6da
+hifi4	002332c4	FUN_002332c4	FUN_002332c4	197	276	bundles	new_calls=5
+hifi4	002333e0	FUN_002333e0	FUN_002333e0	15	36	bundles	lost_call=F_22df88;new_calls=9
+hifi4	00233410	xthal_set_region_attribute	xthal_set_region_attribute	12	360	bundles	new_calls=5
+hifi4	00233600	FUN_00233600	FUN_00233600	58	80	bundles	new_calls=1
+hifi4	00233670	FUN_00233670	FUN_00233670	8	631	bundles	new_calls=14
+hifi4	00233818	FUN_00233818	FUN_00233818	3	137	bundles	new_calls=9
+hifi4	00233920	FUN_00233920		11		removed	
+hifi4	00233970	FUN_00233970	FUN_00233970	6	20	bundles	
+hifi4	00233984	FUN_00233984	FUN_00233984	8	126	bundles	new_calls=5
+hifi4	00233a10	FUN_00233a10	FUN_00233a10	10	731	bundles	new_calls=31
+hifi4	00233cf0	FUN_00233cf0	FUN_00233cf0	22	22	bundles	
+hifi4	00233d08	FUN_00233d08	FUN_00233d08	17	102	bundles	new_calls=4
+hifi4	00233d70	FUN_00233d70	FUN_00233d70	93	311	bundles	lost_call=F_238ea4,F_248948,F_25697c;new_calls=22
+hifi4	00233eb0	FUN_00233eb0	FUN_00233eb0	12	567	bundles	new_calls=14
+hifi4	002340fc	iir_cascade_init	iir_cascade_init	11	194	bundles	lost_call=F_22d050;new_calls=4
+hifi4	002341c0	iir_cascade_process	iir_cascade_process	11	1352	bundles	new_calls=17
+hifi4	00234710	FUN_00234710	FUN_00234710	18	31	bundles	new_calls=1
+hifi4	00234730	FUN_00234730	FUN_00234730	6	25	bundles	new_calls=1
+hifi4	00234750	FUN_00234750	FUN_00234750	20	309	bundles	new_calls=14
+hifi4	00234890	FUN_00234890	FUN_00234890	77	347	bundles	lost_call=F_23e410;new_calls=13
+hifi4	002349f0	FUN_002349f0	FUN_002349f0	12	341	bundles	new_calls=15
+hifi4	00234b50	FUN_00234b50	FUN_00234b50	3	130	bundles	new_calls=11
+hifi4	00234be0	FUN_00234be0	FUN_00234be0	3	533	bundles	new_calls=7
+hifi4	00234e00	FUN_00234e00	FUN_00234e00	3	315	bundles	new_calls=13
+hifi4	00234f40	FUN_00234f40	FUN_00234f40	3	568	bundles	new_calls=11
+hifi4	00235190	FUN_00235190	FUN_00235190	29	472	bundles	new_calls=14
+hifi4	00235370	FUN_00235370	FUN_00235370	35	37	bundles	
+hifi4	002353c0	FUN_002353c0	FUN_002353c0	12	32	bundles	new_calls=1
+hifi4	002353e0	FUN_002353e0	FUN_002353e0	9	19	bundles	new_calls=1
+hifi4	002353f4	FUN_002353f4	FUN_002353f4	9	28	bundles	lost_call=F_22b456
+hifi4	0023543c	FUN_0023543c	FUN_0023543c	46	46	bundles	lost_call=F_2121bc
+hifi4	0023546c	FUN_0023546c	FUN_0023546c	58	74	bundles	lost_call=F_230015
+hifi4	002354c0	FUN_002354c0	FUN_002354c0	25	32	bundles	
+hifi4	002354e0	FUN_002354e0	FUN_002354e0	43	43	signature	new_calls=7
+hifi4	00235510	FUN_00235510	FUN_00235510	3	92	bundles	new_calls=20
+hifi4	00235570	FUN_00235570	FUN_00235570	3	189	bundles	new_calls=20
+hifi4	00235630	FUN_00235630	FUN_00235630	3	392	bundles	new_calls=18
+hifi4	002357c0	FUN_002357c0	FUN_002357c0	3	275	bundles	new_calls=23
+hifi4	00235900	__udivdi3	__udivdi3	28	619	bundles	lost_call=F_1e5bc4;new_calls=3
+hifi4	00235b80	FUN_00235b80	FUN_00235b80	3	39	bundles	new_calls=4
+hifi4	00235ba8	FUN_00235ba8	FUN_00235ba8	3	164	bundles	new_calls=10
+hifi4	00235c50	FUN_00235c50	FUN_00235c50	3	59	bundles	new_calls=4
+hifi4	00235c8c	FUN_00235c8c	FUN_00235c8c	3	160	bundles	new_calls=10
+hifi4	00235d30	memcpy	memcpy	12	364	bundles	lost_call=F_1e6d4c;new_calls=2
+hifi4	00235eb0	memset	memset	129	134	bundles	lost_call=F_1fe07c,F_1fe0a0,F_1fe0a8,F_1fe0dc,F_1fe494,F_232ca3;new_calls=2
+hifi4	00235fa0	FUN_00235fa0	FUN_00235fa0	15	84	bundles	
+hifi4	00236000	FUN_00236000	FUN_00236000	46	89	bundles	
+hifi4	00236060	FUN_00236060	FUN_00236060	24	24	bundles	lost_call=F_20e5cc
+hifi4	00236080	FUN_00236080	FUN_00236080	73	80	bundles	
+hifi4	002360e0	FUN_002360e0	FUN_002360e0	17	131	bundles	new_calls=1
+hifi4	00236170	FUN_00236170	FUN_00236170	9	74	bundles	lost_call=F_22c1d2
+hifi4	002361d0	FUN_002361d0	FUN_002361d0	11	157	bundles	
+hifi4	00236270	FUN_00236270	FUN_00236270	19	110	bundles	new_calls=1
+hifi4	00236300	FUN_00236300	FUN_00236300	18	222	bundles	
+hifi4	002363f0	FUN_002363f0	FUN_002363f0	9	36	bundles	
+hifi4	00236430	FUN_00236430	FUN_00236430	13	13	bundles	
+hifi4	00236470	FUN_00236470	FUN_00236470	8	8	other	new_calls=1
+hifi4	00236478	FUN_00236478	FUN_00236478	26	26	stack	new_calls=4
+hifi4	00236494	FUN_00236494	FUN_00236494	22	22	other	new_calls=2
+hifi4	002364f4	FUN_002364f4	FUN_002364f4	10	10	bundles	new_calls=2
+hifi4	00236500	FUN_00236500	FUN_00236500	34	49	bundles	new_calls=2
+hifi4	00236540	FUN_00236540	FUN_00236540	15	669	bundles	lost_call=F_226800;new_calls=3
+hifi4	24020044	FUN_24020044	FUN_24020044	102	250	bundles	new_calls=15
+hifi4	24020450		FUN_24020450		45	added	
+hifi4	2402057c	_Vector_57c	_Vector_57c	26	26	stack	new_calls=5
+hifi4	2402059c	_Vector_59c	_Vector_59c	12	12	stack	new_calls=1
+hifi4	240205bc	_Vector_5bc	_Vector_5bc	12	12	stack	new_calls=1
+hifi4	240205dc	_Vector_5dc	_Vector_5dc	12	12	stack	new_calls=1
+hifi4	2402061c	_Vector_61c	_Vector_61c	24	24	signature	new_calls=4

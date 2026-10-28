@@ -16,8 +16,10 @@ tools/ghidra/signatures_main.tsv; a caller of one counts as `signature` even whe
 
 Each changed function gets one primary class, tested in this order (the first that applies wins):
   renamed_moved  identical after mapping every function name to its entry address, auto labels (DAT_x, s_.._x, PTR_..)
-                 to their address, and dropping comments and blank space
-  bundles        the before side had halt_baddata() / a bad-instruction warning and the after side has fewer (HiFi4)
+                 to their address, stack variables (local_N, auStack_N, ...) to their offset, and dropping comments and
+                 blank space
+  bundles        the before side had halt_baddata() / a bad-instruction warning / the stock Xtensa flix() placeholder
+                 and the after side has fewer (HiFi4)
   insn           a fixed instruction is in the function (--marked) or the before side had an unimplemented instruction
   jumptable      more `switch` statements, or a "Could not recover jumptable" warning went away
   stack          a spacebase warning went away or fewer distinct in_/unaff_/extraout_ variables
@@ -29,7 +31,9 @@ Each changed function gets one primary class, tested in this order (the first th
 Review flags (any class): lost_call=<callees called before but not after, by entry address>, dropped_result=<callees
 whose result is used before but whose call became a bare statement after>, fewer_args=<callees passed fewer
 arguments after than before (largest count over the call sites)>, lost_strings=<n> (string literals no longer
-shown; string_as_int when the after side has address-sized constants instead), new_calls=<n>. Only calls to functions
+shown; string_as_int when the after side has address-sized constants instead), lost_buffer_stores=<n> (statements
+storing into a stack buffer that the after side passes as the source of smovf/smovb/smovu, fewer after than before:
+the string pcodeops have no memory effect, so the decompiler drops those stores as dead), new_calls=<n>. Only calls to functions
 count (names mapped to F_<entry>, `func_0x...` too); pcodeops such as flix(), memw(), smovf() do not.
 Also writes a summary to stdout. Stdlib only.
 """
@@ -44,6 +48,7 @@ KEYWORDS = {'if', 'while', 'for', 'do', 'switch', 'case', 'return', 'break', 'go
 AUTO = re.compile(r'\b(?:[A-Za-z_]\w*?_|[a-z]{1,3}Ram)([0-9a-f]{8})\b')
 IDENT = re.compile(r'\b[A-Za-z_]\w*\b')
 CALL = re.compile(r'\b([A-Za-z_]\w*)\s*\(')
+SMOV_SRC = re.compile(r'\bsmov[fbu]\([^,]*,\s*&?\(?(L_[0-9a-f]+)\b')
 STRLIT = re.compile(r'"(?:[^"\\]|\\.)*"')
 
 
@@ -76,6 +81,7 @@ class Norm:
             return ('F_%x' % a) if a in all_entries else ('G_%x' % a)
 
         t = AUTO.sub(auto, t)
+        t = re.sub(r'\b(?:local_|[a-z]{1,4}Stack_)([0-9a-f]+)\b', r'L_\1', t)
         t = re.sub(r'\bfunc_0x([0-9a-f]+)\b', lambda m: 'F_%x' % int(m.group(1), 16), t)
 
         def nm(m):
@@ -188,7 +194,8 @@ def main(argv):
         if newc:
             flags.append('new_calls=%d' % newc)
         arb, ara = arities(tb), arities(ta)
-        fewer = sorted(k for k in arb if k in ara and max(ara[k]) < max(arb[k]))
+        own = 'F_%x' % a
+        fewer = sorted(k for k in arb if k in ara and k != own and max(ara[k]) < max(arb[k]))
         if fewer:
             flags.append('fewer_args=' + ','.join(fewer))
         sb, sa = collections.Counter(stmt_calls(tb)), collections.Counter(stmt_calls(ta))
@@ -196,6 +203,14 @@ def main(argv):
                          and cb[k] - sb.get(k, 0) > ca[k] - sa[k])
         if dropped:
             flags.append('dropped_result=' + ','.join(dropped))
+        lost_st = 0
+        for buf in sorted(set(SMOV_SRC.findall(ta))):
+            def nstores(t):
+                pat = re.compile(r'^\s*%s\b(?:\[[^\]]*\])?\s*=[^=][^;]*;|\bbuiltin_\w+\(\s*&?%s\b' % (buf, buf), re.M)
+                return sum(1 for m in pat.finditer(t) if m.group(0).count(buf) < 2)
+            lost_st += max(0, nstores(tb) - nstores(ta))
+        if lost_st:
+            flags.append('lost_buffer_stores=%d' % lost_st)
         strb, stra = set(STRLIT.findall(tb)), set(STRLIT.findall(ta))
         if strb - stra:
             flags.append('lost_strings=%d' % len(strb - stra))
@@ -204,8 +219,8 @@ def main(argv):
         if compact(tb) == compact(ta):
             cls = 'renamed_moved'
         else:
-            bad_b = warn(bb, r'halt_baddata\(') + warn(bb, r'Bad instruction')
-            bad_a = warn(ba, r'halt_baddata\(') + warn(ba, r'Bad instruction')
+            bad_b = warn(bb, r'halt_baddata\(') + warn(bb, r'Bad instruction') + warn(bb, r'\bflix\(')
+            bad_a = warn(ba, r'halt_baddata\(') + warn(ba, r'Bad instruction') + warn(ba, r'\bflix\(')
             callee_protos = any(protos_b.get(int(k[2:], 16)) != protos_a.get(int(k[2:], 16))
                                 or int(k[2:], 16) in locked
                                 for k in set(cb) | set(ca) if k.startswith('F_') and int(k[2:], 16) in before
