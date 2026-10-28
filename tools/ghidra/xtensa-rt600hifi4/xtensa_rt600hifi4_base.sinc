@@ -11,6 +11,8 @@
 # 24/16-bit operations of this core that the stock module lacks or decodes on the wrong registers.
 :sigmoid_q15 o0_170^", "^o0_169 is b24_0_3=0 & b24_8_11=1 & b24_16_23=6 & o0_170 & o0_169 { local ot0:4 = sigmoid_q15(o0_169); o0_170 = ot0; }
 :sigmoid_fp32 o0_172^", "^o0_171 is b24_0_3=0 & b24_8_11=0 & b24_16_23=6 & o0_172 & o0_171 { local ot0:8 = sigmoid_fp32(o0_171); o0_172 = ot0; }
+:ret is b24_0_7=128 & b24_12_23=0 & o0_6 { return [a0]; }
+:jx o0_5 is b24_0_7=160 & b24_12_23=0 & o0_5 { goto [o0_5]; }
 :pfnxt.f is b24_0_23=13360 { pfnxt_f(); }
 :pfend.a is b24_0_23=12336 { pfend_a(); }
 :pfend.o is b24_0_23=12592 { pfend_o(); }
@@ -18,6 +20,10 @@
 :pfwait.r is b24_0_23=13104 { pfwait_r(); }
 :lddr32.p o0_5 is b24_0_7=224 & b24_12_23=7 & o0_5 { local ot0:4 = lddr32_p(o0_5, st_InOCDMode); local ot1:4 = lddr32_p_1(o0_5, st_InOCDMode); o0_5 = ot0; DDR = ot1; }
 :sddr32.p o0_5 is b24_0_7=240 & b24_12_23=7 & o0_5 { local ot0:4 = sddr32_p(o0_5, st_InOCDMode, DDR); o0_5 = ot0; }
+:any4 o0_50^", "^o0_57 is b24_0_3=0 & b24_12_23=8 & o0_50 & o0_57 { local ot0:1 = any4(o0_57); o0_50 = ot0; }
+:all4 o0_50^", "^o0_57 is b24_0_3=0 & b24_12_23=9 & o0_50 & o0_57 { local ot0:1 = all4(o0_57); o0_50 = ot0; }
+:any8 o0_50^", "^o0_60 is b24_0_3=0 & b24_12_23=10 & o0_50 & o0_60 { local ot0:1 = any8(o0_60); o0_50 = ot0; }
+:all8 o0_50^", "^o0_60 is b24_0_3=0 & b24_12_23=11 & o0_50 & o0_60 { local ot0:1 = all8(o0_60); o0_50 = ot0; }
 :xsr.lbeg o0_7 is b24_0_3=0 & b24_8_23=24832 & o0_7 { local ot0:4 = xsr_lbeg(o0_7, LBEG); local ot1:4 = xsr_lbeg_1(o0_7, LBEG); o0_7 = ot0; LBEG = ot1; }
 :xsr.lend o0_7 is b24_0_3=0 & b24_8_23=24833 & o0_7 { local ot0:4 = xsr_lend(o0_7, LEND); local ot1:4 = xsr_lend_1(o0_7, LEND); o0_7 = ot0; LEND = ot1; }
 :xsr.lcount o0_7 is b24_0_3=0 & b24_8_23=24834 & o0_7 { local ot0:4 = xsr_lcount(o0_7, LCOUNT); local ot1:4 = xsr_lcount_1(o0_7, LCOUNT); o0_7 = ot0; LCOUNT = ot1; }
@@ -73,6 +79,11 @@
 :xsr.ccompare1 o0_7 is b24_0_3=0 & b24_8_23=25073 & o0_7 { local ot0:4 = xsr_ccompare1(o0_7, CCOMPARE1, INTERRUPT); local ot1:4 = xsr_ccompare1_1(o0_7, CCOMPARE1, INTERRUPT); local ot2:4 = xsr_ccompare1_2(o0_7, CCOMPARE1, INTERRUPT); o0_7 = ot0; CCOMPARE1 = ot1; INTERRUPT = ot2; }
 :xsr.misc0 o0_7 is b24_0_3=0 & b24_8_23=25076 & o0_7 { local ot0:4 = xsr_misc0(o0_7, MISC0); local ot1:4 = xsr_misc0_1(o0_7, MISC0); o0_7 = ot0; MISC0 = ot1; }
 :xsr.misc1 o0_7 is b24_0_3=0 & b24_8_23=25077 & o0_7 { local ot0:4 = xsr_misc1(o0_7, MISC1); local ot1:4 = xsr_misc1_1(o0_7, MISC1); o0_7 = ot0; MISC1 = ot1; }
+:licw o0_7^", "^o0_5 is b24_0_3=0 & b24_12_23=3858 & o0_7 & o0_5 { local ot0:4 = licw(o0_5); o0_7 = ot0; }
+:quou o0_4^", "^o0_5^", "^o0_7 is b24_0_3=0 & b24_16_23=194 & o0_4 & o0_5 & o0_7 { o0_4 = o0_5 / o0_7; }
+:quos o0_4^", "^o0_5^", "^o0_7 is b24_0_3=0 & b24_16_23=210 & o0_4 & o0_5 & o0_7 { o0_4 = o0_5 s/ o0_7; }
+:remu o0_4^", "^o0_5^", "^o0_7 is b24_0_3=0 & b24_16_23=226 & o0_4 & o0_5 & o0_7 { o0_4 = o0_5 % o0_7; }
+:rems o0_4^", "^o0_5^", "^o0_7 is b24_0_3=0 & b24_16_23=242 & o0_4 & o0_5 & o0_7 { o0_4 = o0_5 s% o0_7; }
 :rsr.lbeg o0_7 is b24_0_3=0 & b24_8_23=768 & o0_7 { local ot0:4 = rsr_lbeg(LBEG); o0_7 = ot0; }
 :rsr.lend o0_7 is b24_0_3=0 & b24_8_23=769 & o0_7 { local ot0:4 = rsr_lend(LEND); o0_7 = ot0; }
 :rsr.lcount o0_7 is b24_0_3=0 & b24_8_23=770 & o0_7 { local ot0:4 = rsr_lcount(LCOUNT); o0_7 = ot0; }
@@ -324,6 +335,7 @@
 :ae_or o0_91^", "^o0_92^", "^o0_93 is b24_0_3=4 & b24_16_23=22 & o0_91 & o0_92 & o0_93 { local ot0:8 = ae_or(o0_92, o0_93); o0_91 = ot0; }
 :ae_xor o0_91^", "^o0_92^", "^o0_93 is b24_0_3=4 & b24_16_23=30 & o0_91 & o0_92 & o0_93 { local ot0:8 = ae_xor(o0_92, o0_93); o0_91 = ot0; }
 :ae_sext32 o0_91^", "^o0_92^", "^o0_73 is b24_0_3=4 & b24_16_23=23 & o0_91 & o0_92 & o0_73 { local ot0:8 = ae_sext32(o0_92, o0_73); o0_91 = ot0; }
+:mul.dd.lh o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=76 & o0_41 & o0_42 { local ot0:8 = mul_dd_lh(o0_41, o0_42); ACC = ot0; }
 :muls.dd.ll o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=88 & o0_41 & o0_42 { local ot0:8 = muls_dd_ll(o0_41, o0_42, ACC); ACC = ot0; }
 :muls.dd.hl o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=90 & o0_41 & o0_42 { local ot0:8 = muls_dd_hl(o0_41, o0_42, ACC); ACC = ot0; }
 :muls.dd.lh o0_41^", "^o0_42 is b24_0_5=4 & b24_7_13=0 & b24_15_23=92 & o0_41 & o0_42 { local ot0:8 = muls_dd_lh(o0_41, o0_42, ACC); ACC = ot0; }
@@ -542,13 +554,17 @@
 :ae_s32m.x o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=230 & o0_94 & o0_5 & o0_7 { ae_s32m_x(o0_94, o0_5, o0_7); }
 :ae_s32m.xu o0_94^", "^o0_5^", "^o0_7 is b24_0_3=4 & b24_16_23=231 & o0_94 & o0_5 & o0_7 { local ot0:4 = ae_s32m_xu(o0_94, o0_5, o0_7); o0_5 = ot0; }
 :ae_trunca32x2f64s o0_107^", "^o0_108^", "^o0_109^", "^o0_5 is b24_0_3=4 & b24_20_23=15 & o0_107 & o0_108 & o0_109 & o0_5 { local ot0:8 = ae_trunca32x2f64s(o0_108, o0_109, o0_5, st_AE_OVERFLOW); local ot1:1 = ae_trunca32x2f64s_1(o0_108, o0_109, o0_5, st_AE_OVERFLOW); o0_107 = ot0; st_AE_OVERFLOW = ot1; }
+:bltui o0_5^", "^o0_19^", "^o0_31 is b24_0_7=182 & o0_5 & o0_19 & o0_31 { if (o0_5 < o0_19) goto o0_31; }
+:bgeui o0_5^", "^o0_19^", "^o0_31 is b24_0_7=246 & o0_5 & o0_19 & o0_31 { if (o0_5 >= o0_19) goto o0_31; }
 :bnone o0_5^", "^o0_7^", "^o0_31 is b24_0_3=7 & b24_12_15=0 & o0_5 & o0_7 & o0_31 { if ((o0_5 & o0_7) == 0) goto o0_31; }
 :ball o0_5^", "^o0_7^", "^o0_31 is b24_0_3=7 & b24_12_15=4 & o0_5 & o0_7 & o0_31 { if ((~o0_5 & o0_7) == 0) goto o0_31; }
 :bany o0_5^", "^o0_7^", "^o0_31 is b24_0_3=7 & b24_12_15=8 & o0_5 & o0_7 & o0_31 { if ((o0_5 & o0_7) != 0) goto o0_31; }
 :bnall o0_5^", "^o0_7^", "^o0_31 is b24_0_3=7 & b24_12_15=12 & o0_5 & o0_7 & o0_31 { if ((~o0_5 & o0_7) != 0) goto o0_31; }
+:movi.n o2_5^", "^o2_15 is b16_0_3=12 & b16_7_7=0 & o2_5 & o2_15 { o2_5 = o2_15; }
 :ae_l16si.n o2_7^", "^o2_5^", "^o2_110 is b16_0_3=13 & b16_13_15=1 & o2_7 & o2_5 & o2_110 { local ot0:4 = ae_l16si_n(o2_5, o2_110); o2_7 = ot0; }
 :ae_l16ui.n o2_7^", "^o2_5^", "^o2_110 is b16_0_3=13 & b16_13_15=2 & o2_7 & o2_5 & o2_110 { local ot0:4 = ae_l16ui_n(o2_5, o2_110); o2_7 = ot0; }
 :ae_s16i.n o2_7^", "^o2_5^", "^o2_110 is b16_0_3=13 & b16_13_15=3 & o2_7 & o2_5 & o2_110 { ae_s16i_n(o2_7, o2_5, o2_110); }
 :ae_sext16 o2_7^", "^o2_5 is b16_0_3=13 & b16_12_15=8 & o2_7 & o2_5 { local ot0:4 = ae_sext16(o2_5); o2_7 = ot0; }
 :ae_zext16 o2_7^", "^o2_5 is b16_0_3=13 & b16_12_15=9 & o2_7 & o2_5 { local ot0:4 = ae_zext16(o2_5); o2_7 = ot0; }
 :ae_clamps16 o2_7^", "^o2_5 is b16_0_3=13 & b16_12_15=10 & o2_7 & o2_5 { local ot0:4 = ae_clamps16(o2_5); o2_7 = ot0; }
+:ret.n is b16_0_7=13 & b16_12_15=15 & o2_6 { return [a0]; }

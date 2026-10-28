@@ -167,6 +167,7 @@ define token bx24(24)
   b24_8_23 = (8,23)
   b24_9_23 = (9,23)
   b24_10_11 = (10,11)
+  b24_11_11 = (11,11)
   b24_12_12 = (12,12)
   b24_12_13 = (12,13)
   b24_12_15 = (12,15)
@@ -197,7 +198,10 @@ define token bx24(24)
 ;
 define token bx16(16)
   b16_0_3 = (0,3)
+  b16_0_7 = (0,7)
+  b16_4_6 = (4,6)
   b16_4_7_AR = (4,7)
+  b16_7_7 = (7,7)
   b16_8_11_AR = (8,11)
   b16_12_12 = (12,12)
   b16_12_15 = (12,15)
@@ -2225,6 +2229,7 @@ define pcodeop movltz_s;
 define pcodeop movnez_s;
 define pcodeop movt_s;
 define pcodeop msubn_s;
+define pcodeop mul_dd_lh;
 define pcodeop mula_da_hh_ldinc;
 define pcodeop mula_da_hh_ldinc_1;
 define pcodeop mula_da_hh_ldinc_2;

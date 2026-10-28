@@ -1,5 +1,5 @@
 # Copied from Ghidra 12.1.4 Ghidra/Processors/Xtensa/data/languages/xtensaInstructions.sinc (Apache License 2.0)
-# by tools/xtensa_sleigh_gen.py; constructors marked #T21a# are dropped (55 mnemonics: not in this core, or on the f0..f15 FPU registers that this core does not have).
+# by tools/xtensa_sleigh_gen.py; constructors marked #T21a# are dropped (71 mnemonics: not in this core, or on the f0..f15 FPU registers that this core does not have).
 
 
 # ABS - Absolute Value (RRR), pg. 246.
@@ -61,24 +61,24 @@
 }
 
 # ALL4 - All 4 Booleans True (RRR), pg. 257.
-:all4 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1001 & bs & bt & op0 = 0 {
-	local b = *[register]:1 &:4 bs+1;
-	local c = *[register]:1 &:4 bs+2;
-	local d = *[register]:1 &:4 bs+3;
-	bt = bs && b && c && d;
-}
+#T21a# :all4 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1001 & bs & bt & op0 = 0 {
+#T21a# 	local b = *[register]:1 &:4 bs+1;
+#T21a# 	local c = *[register]:1 &:4 bs+2;
+#T21a# 	local d = *[register]:1 &:4 bs+3;
+#T21a# 	bt = bs && b && c && d;
+#T21a# }
 
 # ALL8 - All 8 Booleans True (RRR), pg. 258.
-:all8 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1011 & bs & bt & op0 = 0 {
-	local b = *[register]:1 &:4 bs+1;
-	local c = *[register]:1 &:4 bs+2;
-	local d = *[register]:1 &:4 bs+3;
-	local e = *[register]:1 &:4 bs+4;
-	local f = *[register]:1 &:4 bs+5;
-	local g = *[register]:1 &:4 bs+6;
-	local h = *[register]:1 &:4 bs+7;
-	bt = bs && b && c && d && e && f && g && h;
-}
+#T21a# :all8 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1011 & bs & bt & op0 = 0 {
+#T21a# 	local b = *[register]:1 &:4 bs+1;
+#T21a# 	local c = *[register]:1 &:4 bs+2;
+#T21a# 	local d = *[register]:1 &:4 bs+3;
+#T21a# 	local e = *[register]:1 &:4 bs+4;
+#T21a# 	local f = *[register]:1 &:4 bs+5;
+#T21a# 	local g = *[register]:1 &:4 bs+6;
+#T21a# 	local h = *[register]:1 &:4 bs+7;
+#T21a# 	bt = bs && b && c && d && e && f && g && h;
+#T21a# }
 
 # AND - Bitwise Logical And (RRR), pg. 259.
 :and ar, as, at is op2 = 0b0001 & op1 = 0 & ar & as & at & op0 = 0 {
@@ -96,24 +96,24 @@
 }
 
 # ANY4 - Any 4 Booleans True (RRR), pg. 262.
-:any4 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1000 & bs & bt & op0 = 0 {
-	local b = *[register]:1 &:4 bs+1;
-	local c = *[register]:1 &:4 bs+2;
-	local d = *[register]:1 &:4 bs+3;
-	bt = bs || b || c || d;
-}
+#T21a# :any4 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1000 & bs & bt & op0 = 0 {
+#T21a# 	local b = *[register]:1 &:4 bs+1;
+#T21a# 	local c = *[register]:1 &:4 bs+2;
+#T21a# 	local d = *[register]:1 &:4 bs+3;
+#T21a# 	bt = bs || b || c || d;
+#T21a# }
 
 # ANY8 - Any 8 Booleans True (RRR), pg. 263.
-:any8 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1010 & bs & bt & op0 = 0 {
-	local b = *[register]:1 &:4 bs+1;
-	local c = *[register]:1 &:4 bs+2;
-	local d = *[register]:1 &:4 bs+3;
-	local e = *[register]:1 &:4 bs+4;
-	local f = *[register]:1 &:4 bs+5;
-	local g = *[register]:1 &:4 bs+6;
-	local h = *[register]:1 &:4 bs+7;
-	bt = bs || b || c || d || e || f || g || h;
-}
+#T21a# :any8 bt, bs is op2 = 0 & op1 = 0 & ar = 0b1010 & bs & bt & op0 = 0 {
+#T21a# 	local b = *[register]:1 &:4 bs+1;
+#T21a# 	local c = *[register]:1 &:4 bs+2;
+#T21a# 	local d = *[register]:1 &:4 bs+3;
+#T21a# 	local e = *[register]:1 &:4 bs+4;
+#T21a# 	local f = *[register]:1 &:4 bs+5;
+#T21a# 	local g = *[register]:1 &:4 bs+6;
+#T21a# 	local h = *[register]:1 &:4 bs+7;
+#T21a# 	bt = bs || b || c || d || e || f || g || h;
+#T21a# }
 
 # BALL - Branch if All Bits Set (RRI8), pg. 264.
 #T21a# :ball ri8_srel, as, at is ri8_srel & ar = 0b0100 & as & at & op0 = 0b0111 {
@@ -220,10 +220,10 @@ macro extract_bit(bit, result) {
 }
 
 # BGEUI - Branch if Greater Than or Equal Unsigned Immediate (BRI8), pg. 280.
-:bgeui as, r_b4constu, ri8_srel is ri8_srel & r_b4constu & as & bri8_m = 0b11 & bri8_n = 0b11 & op0 = 0b0110 {
-    if (as >= r_b4constu)
-        goto ri8_srel;
-}
+#T21a# :bgeui as, r_b4constu, ri8_srel is ri8_srel & r_b4constu & as & bri8_m = 0b11 & bri8_n = 0b11 & op0 = 0b0110 {
+#T21a#     if (as >= r_b4constu)
+#T21a#         goto ri8_srel;
+#T21a# }
 
 # BGEZ - Branch if Greater Than or Equal Zero (BRI12), pg. 281.
 :bgez as, bri12_srel is bri12_srel & as & bri8_m = 0b11 & bri8_n = 0b01 & op0 = 0b0110 {
@@ -250,10 +250,10 @@ macro extract_bit(bit, result) {
 }
 
 # BLTUI - Branch if Less Than Unsigned Immediate (BRI8), pg. 285.
-:bltui as, r_b4constu, ri8_srel is ri8_srel & r_b4constu & as & bri8_m = 0b10 & bri8_n = 0b11 & op0 = 0b0110 {
-    if (as < r_b4constu)
-        goto ri8_srel;
-}
+#T21a# :bltui as, r_b4constu, ri8_srel is ri8_srel & r_b4constu & as & bri8_m = 0b10 & bri8_n = 0b11 & op0 = 0b0110 {
+#T21a#     if (as < r_b4constu)
+#T21a#         goto ri8_srel;
+#T21a# }
 
 # BLTZ - Branch if Less Than Zero (BRI12), pg. 286.
 :bltz as, bri12_srel is bri12_srel & as & bri8_m = 0b10 & bri8_n = 0b01 & op0 = 0b0110 {
@@ -581,19 +581,19 @@ macro extract_bit(bit, result) {
 # J.L is a macro.
 
 # RET (JX A0) - Non-Windowed Return (CALLX), pg. 478.
-:ret is op2 = 0 & op1 = 0 & ar = 0 & as = 0 & bri8_m = 0b10 & bri8_n = 0b10 & op0 = 0 {
-    return [a0];
-}
+#T21a# :ret is op2 = 0 & op1 = 0 & ar = 0 & as = 0 & bri8_m = 0b10 & bri8_n = 0b10 & op0 = 0 {
+#T21a#     return [a0];
+#T21a# }
 
 # The manual suggests that RET is equivalent to JX A0, yet RET has bit 5 unset, JX doesn’t.
-:ret is op2 = 0 & op1 = 0 & ar = 0 & as = 0 & bri8_m = 0b10 & bri8_n = 0b00 & op0 = 0 {
-	return [a0];
-}
+#T21a# :ret is op2 = 0 & op1 = 0 & ar = 0 & as = 0 & bri8_m = 0b10 & bri8_n = 0b00 & op0 = 0 {
+#T21a# 	return [a0];
+#T21a# }
 
 # JX - Uncoditional Jump Register (CALLX), pg. 368.
-:jx as is op2 = 0 & op1 = 0 & ar = 0 & as & bri8_m = 0b10 & bri8_n = 0b10 & op0 = 0 {
-    goto [as];
-}
+#T21a# :jx as is op2 = 0 & op1 = 0 & ar = 0 & as & bri8_m = 0b10 & bri8_n = 0b10 & op0 = 0 {
+#T21a#     goto [as];
+#T21a# }
 
 # L8UI - Load 8-bit Unsigned (RRI8), pg. 369.
 :l8ui at, as, ri8_i8 is ri8_i8 & ar = 0 & as & at & op0 = 0b0010 {
@@ -654,9 +654,9 @@ macro extract_bit(bit, result) {
 }
 
 # LICW - Load Instruction Cache Word (RRR), pg. 390.
-:licw at, as is op2 = 0b1111 & op1 = 0b0010 & ar = 0 & as & at & op0 = 0 {
-	at = licw(as);
-}
+#T21a# :licw at, as is op2 = 0b1111 & op1 = 0b0010 & ar = 0 & as & at & op0 = 0 {
+#T21a# 	at = licw(as);
+#T21a# }
 
 # LSI - Load Single Immediate, (RRI8) pg. 398.
 #T21a# :lsi ft, as, ri8_i8_sh2 is ri8_i8_sh2 & ar = 0 & as & ft & op0 = 0b0011 {
@@ -777,10 +777,10 @@ macro extract_bit(bit, result) {
 }
 
 # MOVI.N - Narrow Move Immediate (RI7), pg. 422.
-:movi.n n_as, movin_si8 is movin_si8 & n_as & n_op_s_3 = 0 & n_op0 = 0b1100 {
-    local val:4 = sext(movin_si8);
-    n_as = val;
-}
+#T21a# :movi.n n_as, movin_si8 is movin_si8 & n_as & n_op_s_3 = 0 & n_op0 = 0b1100 {
+#T21a#     local val:4 = sext(movin_si8);
+#T21a#     n_as = val;
+#T21a# }
 
 # MOVLTZ - Move if Less Than Zero (RRR), pg. 423.
 :movltz ar, as, at is op2 = 0b1010 & op1 = 0b0011 & ar & as & at & op0 = 0 {
@@ -942,14 +942,14 @@ macro extract_bit(bit, result) {
 }
 
 # QUOS - Quotient Signed (RRR), pg. 471.
-:quos ar, as, at is op2 = 0b1101 & op1 = 0b0010 & ar & as & at & op0 = 0 {
-	ar = as s/ at;
-}
+#T21a# :quos ar, as, at is op2 = 0b1101 & op1 = 0b0010 & ar & as & at & op0 = 0 {
+#T21a# 	ar = as s/ at;
+#T21a# }
 
 # QUOU - Quotient Unsigned (RRR), pg. 472.
-:quou ar, as, at is op2 = 0b1100 & op1 = 0b0010 & ar & as & at & op0 = 0 {
-	ar = as / at;
-}
+#T21a# :quou ar, as, at is op2 = 0b1100 & op1 = 0b0010 & ar & as & at & op0 = 0 {
+#T21a# 	ar = as / at;
+#T21a# }
 
 # RDTLB0 - Read Data TLB Virtual Entry (RRR), pg. 473.
 :rdtlb0 at, as is op2 = 0b0101 & op1 = 0 & ar = 0b1011 & as & at & op0 = 0 {
@@ -962,14 +962,14 @@ macro extract_bit(bit, result) {
 }
 
 # REMS - Remainder Signed (RRR), pg. 475.
-:rems ar, as, at, is op2 = 0b1111 & op1 = 0b0010 & ar & as & at & op0 = 0 {
-	ar = as s% at;
-}
+#T21a# :rems ar, as, at, is op2 = 0b1111 & op1 = 0b0010 & ar & as & at & op0 = 0 {
+#T21a# 	ar = as s% at;
+#T21a# }
 
 # REMU - Remainder Unsigned (RRR), pg. 476.
-:remu ar, as, at, is op2 = 0b1110 & op1 = 0b0010 & ar & as & at & op0 = 0 {
-	ar = as % at;
-}
+#T21a# :remu ar, as, at, is op2 = 0b1110 & op1 = 0b0010 & ar & as & at & op0 = 0 {
+#T21a# 	ar = as % at;
+#T21a# }
 
 # RER - Read External Register (RRR), pg. 477.
 :rer as, at is op2 = 0b0100 & op1 = 0 & ar = 0b0110 & as & at & op0 = 0 {
@@ -977,9 +977,9 @@ macro extract_bit(bit, result) {
 }
 
 # RET.N - Narrow Non-Windowed Return (RRRN), pg. 479.
-:ret.n is n_ar = 0b1111 & n_as = 0 & n_at = 0 & n_op0 = 0b1101 {
-    return [a0];
-}
+#T21a# :ret.n is n_ar = 0b1111 & n_as = 0 & n_at = 0 & n_op0 = 0b1101 {
+#T21a#     return [a0];
+#T21a# }
 
 # RETW - Windowed Return (CALLX), pg. 480.
 :retw is op2 = 0 & op1 = 0 & ar = 0 & as = 0 & bri8_m = 0b10 & bri8_n = 0b01 & op0 = 0 {
@@ -1545,13 +1545,13 @@ rfi_eps: ptr is op_s	[ ptr = $(EPS_BASE) + (4 * op_s); ] { export *[register]:4 
 	ACC = sext(M1:2) * sext(M2:2);
 }
 
-:mul.dd.lh mx, my is op2 = 0x2 & op1 = 0x6 & ar = 0 & op_r_3 = 0 & op_r_0_2 = 0 & mx & op_t_3 = 0 & op_t_0_2 = 0 & my & op0 = 0x4 {
-	tm1:2 = mx:2;
-	tm2:2 = my(2);
-	M1 = zext(tm1);
-	M2 = zext(tm2);
-	ACC = sext(M1:2) * sext(M2:2);
-}
+#T21a# :mul.dd.lh mx, my is op2 = 0x2 & op1 = 0x6 & ar = 0 & op_r_3 = 0 & op_r_0_2 = 0 & mx & op_t_3 = 0 & op_t_0_2 = 0 & my & op0 = 0x4 {
+#T21a# 	tm1:2 = mx:2;
+#T21a# 	tm2:2 = my(2);
+#T21a# 	M1 = zext(tm1);
+#T21a# 	M2 = zext(tm2);
+#T21a# 	ACC = sext(M1:2) * sext(M2:2);
+#T21a# }
 
 :mul.dd.hh mx, my is op2 = 0x2 & op1 = 0x7 & ar = 0 & op_r_3 = 0 & op_r_0_2 = 0 & mx & op_t_3 = 0 & op_t_0_2 = 0 & my & op0 = 0x4 {
 	tm1:2 = mx(2);

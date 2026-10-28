@@ -1958,7 +1958,15 @@ o0_170: b24_12_15_AR is b24_12_15_AR { export b24_12_15_AR; }
 o0_169: b24_4_7_AR is b24_4_7_AR { export b24_4_7_AR; }
 o0_172: b24_12_15_AE_DR is b24_12_15_AE_DR { export b24_12_15_AE_DR; }
 o0_171: b24_4_7_AE_DR is b24_4_7_AE_DR { export b24_4_7_AE_DR; }
+o0_6: b24_8_11_AR is b24_8_11_AR { export b24_8_11_AR; }
 o0_5: b24_8_11_AR is b24_8_11_AR { export b24_8_11_AR; }
+o0_50: b24_4_7_BR is b24_4_7_BR { export b24_4_7_BR; }
+o0_57: "b0:b1:b2:b3" is b24_10_11=0 { export br4_0; }
+o0_57: "b4:b5:b6:b7" is b24_10_11=1 { export br4_4; }
+o0_57: "b8:b9:b10:b11" is b24_10_11=2 { export br4_8; }
+o0_57: "b12:b13:b14:b15" is b24_10_11=3 { export br4_12; }
+o0_60: "b0:b1:b2:b3:b4:b5:b6:b7" is b24_11_11=0 { export br8_0; }
+o0_60: "b8:b9:b10:b11:b12:b13:b14:b15" is b24_11_11=1 { export br8_8; }
 o0_7: b24_4_7_AR is b24_4_7_AR { export b24_4_7_AR; }
 o0_65: "b0:b1:b2:b3:b4:b5:b6:b7:b8:b9:b10:b11:b12:b13:b14:b15" is epsilon { export br16_0; }
 o0_44: "m0" is epsilon { export M0; }
@@ -2044,7 +2052,6 @@ o0_55: "b8:b9" is b24_13_15=4 { export br2_8; }
 o0_55: "b10:b11" is b24_13_15=5 { export br2_10; }
 o0_55: "b12:b13" is b24_13_15=6 { export br2_12; }
 o0_55: "b14:b15" is b24_13_15=7 { export br2_14; }
-o0_50: b24_4_7_BR is b24_4_7_BR { export b24_4_7_BR; }
 o0_52: b24_12_15_BR is b24_12_15_BR { export b24_12_15_BR; }
 o0_56: "b0:b1:b2:b3" is b24_6_7=0 { export br4_0; }
 o0_56: "b4:b5:b6:b7" is b24_6_7=1 { export br4_4; }
@@ -2160,10 +2167,155 @@ o0_82: b24_16_19 is b24_16_19 { export *[const]:4 b24_16_19; }
 o0_80: val is b24_4_7 [ val = (((b24_4_7 ^ 8) - 8) << 1); ] { export *[const]:4 val; }
 o0_79: val is b24_4_7 [ val = (((b24_4_7 ^ 8) - 8) << 2); ] { export *[const]:4 val; }
 o0_109: b24_16_19_AE_DR is b24_16_19_AE_DR { export b24_16_19_AE_DR; }
+o0_19: val is b24_12_15=0 [ val = 32768; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=1 [ val = 65536; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=2 [ val = 2; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=3 [ val = 3; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=4 [ val = 4; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=5 [ val = 5; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=6 [ val = 6; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=7 [ val = 7; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=8 [ val = 8; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=9 [ val = 10; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=10 [ val = 12; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=11 [ val = 16; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=12 [ val = 32; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=13 [ val = 64; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=14 [ val = 128; ] { export *[const]:4 val; }
+o0_19: val is b24_12_15=15 [ val = 256; ] { export *[const]:4 val; }
 o0_31: val is b24_16_23 [ val = (inst_start + ((((b24_16_23 ^ 128) - 128) + 4))) & 0xffffffff; ] { export *:4 val; }
-o2_7: b16_4_7_AR is b16_4_7_AR { export b16_4_7_AR; }
 o2_5: b16_8_11_AR is b16_8_11_AR { export b16_8_11_AR; }
+o2_15: val is b16_4_6=0 & b16_12_15=0 [ val = 0; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=1 [ val = 1; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=2 [ val = 2; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=3 [ val = 3; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=4 [ val = 4; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=5 [ val = 5; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=6 [ val = 6; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=7 [ val = 7; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=8 [ val = 8; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=9 [ val = 9; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=10 [ val = 10; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=11 [ val = 11; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=12 [ val = 12; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=13 [ val = 13; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=14 [ val = 14; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=0 & b16_12_15=15 [ val = 15; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=0 [ val = 16; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=1 [ val = 17; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=2 [ val = 18; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=3 [ val = 19; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=4 [ val = 20; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=5 [ val = 21; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=6 [ val = 22; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=7 [ val = 23; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=8 [ val = 24; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=9 [ val = 25; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=10 [ val = 26; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=11 [ val = 27; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=12 [ val = 28; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=13 [ val = 29; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=14 [ val = 30; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=1 & b16_12_15=15 [ val = 31; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=0 [ val = 32; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=1 [ val = 33; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=2 [ val = 34; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=3 [ val = 35; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=4 [ val = 36; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=5 [ val = 37; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=6 [ val = 38; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=7 [ val = 39; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=8 [ val = 40; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=9 [ val = 41; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=10 [ val = 42; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=11 [ val = 43; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=12 [ val = 44; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=13 [ val = 45; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=14 [ val = 46; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=2 & b16_12_15=15 [ val = 47; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=0 [ val = 48; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=1 [ val = 49; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=2 [ val = 50; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=3 [ val = 51; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=4 [ val = 52; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=5 [ val = 53; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=6 [ val = 54; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=7 [ val = 55; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=8 [ val = 56; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=9 [ val = 57; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=10 [ val = 58; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=11 [ val = 59; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=12 [ val = 60; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=13 [ val = 61; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=14 [ val = 62; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=3 & b16_12_15=15 [ val = 63; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=0 [ val = 64; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=1 [ val = 65; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=2 [ val = 66; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=3 [ val = 67; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=4 [ val = 68; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=5 [ val = 69; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=6 [ val = 70; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=7 [ val = 71; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=8 [ val = 72; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=9 [ val = 73; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=10 [ val = 74; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=11 [ val = 75; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=12 [ val = 76; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=13 [ val = 77; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=14 [ val = 78; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=4 & b16_12_15=15 [ val = 79; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=0 [ val = 80; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=1 [ val = 81; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=2 [ val = 82; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=3 [ val = 83; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=4 [ val = 84; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=5 [ val = 85; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=6 [ val = 86; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=7 [ val = 87; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=8 [ val = 88; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=9 [ val = 89; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=10 [ val = 90; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=11 [ val = 91; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=12 [ val = 92; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=13 [ val = 93; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=14 [ val = 94; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=5 & b16_12_15=15 [ val = 95; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=0 [ val = -32; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=1 [ val = -31; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=2 [ val = -30; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=3 [ val = -29; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=4 [ val = -28; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=5 [ val = -27; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=6 [ val = -26; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=7 [ val = -25; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=8 [ val = -24; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=9 [ val = -23; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=10 [ val = -22; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=11 [ val = -21; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=12 [ val = -20; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=13 [ val = -19; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=14 [ val = -18; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=6 & b16_12_15=15 [ val = -17; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=0 [ val = -16; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=1 [ val = -15; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=2 [ val = -14; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=3 [ val = -13; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=4 [ val = -12; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=5 [ val = -11; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=6 [ val = -10; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=7 [ val = -9; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=8 [ val = -8; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=9 [ val = -7; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=10 [ val = -6; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=11 [ val = -5; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=12 [ val = -4; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=13 [ val = -3; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=14 [ val = -2; ] { export *[const]:4 val; }
+o2_15: val is b16_4_6=7 & b16_12_15=15 [ val = -1; ] { export *[const]:4 val; }
+o2_7: b16_4_7_AR is b16_4_7_AR { export b16_4_7_AR; }
 o2_110: val is b16_12_12 [ val = ((b16_12_12) << 1); ] { export *[const]:4 val; }
+o2_6: b16_8_11_AR is b16_8_11_AR { export b16_8_11_AR; }
 
 # FLIX slot sub-tables (S<slot>: compute, S<slot>w: commit).
 

@@ -501,6 +501,9 @@ SEM = {
     "ssai": "SAR = {r0};", "ssa8l": "SAR = ({r0} & 3) << 3;", "ssa8b": "SAR = 32 - (({r0} & 3) << 3);",
     "sext": "local sh:4 = 31 - {r2}; {w0} = ({r1} << sh) s>> sh;",
     "mull": "{w0} = {r1} * {r2};",
+    "quou": "{w0} = {r1} / {r2};", "quos": "{w0} = {r1} s/ {r2};",
+    "remu": "{w0} = {r1} % {r2};", "rems": "{w0} = {r1} s% {r2};",
+    "ret": "return [a0];", "ret.n": "return [a0];", "jx": "goto [{r0}];",
     "l32r": "{w0} = {r1};",
     "l32i": "{w0} = *:4 ({r1} + {r2});", "l32i.n": "{w0} = *:4 ({r1} + {r2});",
     "l16ui": "{w0} = zext(*:2 ({r1} + {r2}));", "l16si": "{w0} = sext(*:2 ({r1} + {r2}));",
@@ -1156,7 +1159,10 @@ with : phase=1 {{
 # (found by compiling: identical patterns). Stock's mula.da.*.ldinc sit on the encodings of mula.dd.*.ldinc.
 # Stock bany/bnone/ball/bnall print the target first (found with the flix.dis comparison).
 EXTRA_DROP = ["mula.da.hh.ldinc", "mula.da.hl.ldinc", "mula.da.lh.ldinc", "mula.da.ll.ldinc", "sext",
-              "bany", "bnone", "ball", "bnall"]
+              "bany", "bnone", "ball", "bnall",
+              # T21b oracle (decode mode): wrong value, trailing comma, shadowing or missing encodings in stock
+              "movi.n", "remu", "rems", "quou", "quos", "bgeui", "bltui", "ret", "jx", "licw", "mul.dd.lh",
+              "ret.n", "any4", "all4", "any8", "all8"]
 
 
 if __name__ == "__main__":
