@@ -1,0 +1,20 @@
+# T11d: missed DISPLAY function entries (FixFuncEntries.java format: address[<TAB>drop][<TAB>comment]).
+2011f840		late start (FUN_2011f84c), rspi_rx_isr
+2011f89c		late start (FUN_2011f8a8), rspi_tx_isr
+201333f0		late start (FUN_201333f4), sdr_ss_isr
+20133418		late start (FUN_2013341c), dsp_ss_isr
+2011ecd4		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ecdc		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ece4		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ecec		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ecf4		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ecfc		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ed04		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ed0c		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ed14		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+2011ed1c		ISR stub (mov r0,#n; b dispatch), descriptor 0x20166A84..
+20137490		DMA ISR stub (descriptor 0x204200B0..)
+201374a0		DMA ISR stub (descriptor 0x204200B0..)
+201376c4		DMA ISR stub (descriptor 0x204200B0..)
+20137aec		DMA ISR stub (descriptor 0x204200B0..)
+20137d1c		DMA ISR stub (descriptor 0x204200B0..)
