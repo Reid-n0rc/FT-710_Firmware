@@ -415,3 +415,7 @@ bridge offsets above were checked in the disassembly.
    back with `SPSR` would be safe (read only), but that needs the owner's approval because it talks to the radio.
 3. The settings at 0x9AA1, 0x9AD2, 0x9AD3 and 0x9B14 need their EX-menu names (menu page).
 4. How `boot_error` 0x20B36 is shown to the user.
+
+## Note from the FPGA side (T15e)
+
+The FPGA answers a write with **one byte** (ACK 0x06), not 7, and answers a rejected frame with one byte `?` (0x3F). MAIN's 7-byte receive therefore completes only for reads. For writes, the SCI5 reply handling must be reading byte 0 before the receive count is reached; this is worth checking in the SCI5 code. Register 0 reads 0x0104 and register 1 reads 0x000F after reset. **[fact for the FPGA side, from the T15e netlist simulation, see [netlist.md §5](../sdr/netlist.md)]**

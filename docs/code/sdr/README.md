@@ -7,7 +7,7 @@ no soft CPU** **[inference, high]**, so there are no functions to name and `deco
 The "code" documented here is the FPGA design, at the level of placed resources, configured features and block-RAM
 contents (T13).
 
-**Key findings from T15 ([netlist.md](netlist.md)):** one 125 MHz fabric clock from the ADC; two identical 115,200-baud UARTs with an ASCII command parser (M18/L18, V12/U12); a QSPI master on the configuration-flash pins; 14 LVDS DDR ADC data pairs and 17 LVDS DDR outputs. **[fact, T15]**
+**Key findings from T15 ([netlist.md](netlist.md)):** one 125 MHz fabric clock from the ADC; two identical 115,200-baud UARTs with an ASCII command parser (M18/L18, V12/U12); a QSPI master on the configuration-flash pins; 14 LVDS DDR ADC data pairs and 17 LVDS DDR outputs. **[fact, T15]** The whole recovered netlist runs in Verilator: UART B is MAIN's link (`r`/`w` window protocol) and UART A is a debug console with the prompt `[IF]>`. **[fact, T15e]**
 
 ## Pages
 
@@ -21,7 +21,7 @@ contents (T13).
 | [`decomp/sdr/README.md`](../../../decomp/sdr/README.md) | T08: packet stream, leading CRC word, first BRAM evidence |
 
 Tools: `tools/xbit_parse.py` (packets, CRCs), `tools/xc7_db.py` (prjxray mapping: `frames`, `bram`, `bramcfg`,
-`usage`, `sites`, `config`, `tilebits`), `tools/xc7_bram_tables.py` (logical BRAM tables, `selftest`), and from T15 `tools/xc7_fasm.py`, `tools/xc7_netlist.py`, `tools/xc7_blocks.py`, `tools/xc7_netlist_verilog.py`. They need the
+`usage`, `sites`, `config`, `tilebits`), `tools/xc7_bram_tables.py` (logical BRAM tables, `selftest`), and from T15 `tools/xc7_fasm.py`, `tools/xc7_netlist.py`, `tools/xc7_blocks.py`, `tools/xc7_netlist_verilog.py`, and from T15e `tools/sdr_uart_sim.py`, `tools/xc7_probe_netlist.py`, `tools/sdr_cosim_check.py` and the simulation harness `hdl/sdr/sim/`. They need the
 prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
 
 ## Key findings

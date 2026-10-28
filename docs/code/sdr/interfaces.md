@@ -136,3 +136,5 @@ flash 0x240000 and the header with the CRC-32/BZIP2 word last to 0x480000, so an
    two identical UARTs (M18/L18 and V12/U12, 115,200 8N1), a QSPI master on the configuration-flash pins, the LVDS
    ADC input (bank 35) and an LVDS DDR output bus (bank 34). Which UART is UART5 and which is UART_DBG, and the
    other control lines, still need the module-side pin path, which the service manual does not show.
+
+**Answered (T15e):** UART B (V12/U12) is UART5, MAIN's link; UART A (M18/L18) is UART_DBG, a debug console with the prompt `[IF]>`. Shown by simulating the recovered netlist ([netlist.md §5](netlist.md)). **[fact, from behaviour]**

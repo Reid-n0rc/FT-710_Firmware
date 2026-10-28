@@ -237,3 +237,5 @@ built. Used only by `tools/xc7_fasm.py fasm` (which re-runs itself under that ve
 CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dependencies such as xdot), recorded in
 `~/.config/claude-container/apt-packages.txt` so they survive rebuilds. Used for the T15d smoke test
 (`yosys -s ...` with `+/xilinx/cells_sim.v`, `cells_xtra.v`) and the T15d/T15e simulations (`iverilog -g2012`).
+
+**T15e (2026-10-28).** `persist-apt verilator`: Debian bookworm **verilator 5.006-3**, used by `hdl/sdr/sim/build_full.sh` for the whole-netlist simulation (`-j 16`, about 2.5 min build, about 15,000 clocks/s). Yosys' cell models crash it on CARRY4, so `hdl/sdr/sim/xc7_prims_vl.v` has its own primitive models.

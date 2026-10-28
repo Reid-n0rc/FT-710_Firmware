@@ -40,12 +40,12 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T12e | [IFDSP HiFi4 DSP code (threads, audio I/O, tables)](T12e-ifdsp-hifi4.md) | T12a | done |
 | T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | done |
 | T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | done |
-| T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | in progress |
+| T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | done |
 | T15a | [Bitstream to FASM (SDR)](T15a-fpga-fasm.md) | T13 | done |
 | T15b | [FASM to cell-level netlist (SDR)](T15b-fpga-netlist-cells.md) | T15a | done |
 | T15c | [Block recognition (SDR)](T15c-fpga-blocks.md) | T15b | done |
 | T15d | [Structural Verilog netlist + smoke test (SDR)](T15d-fpga-verilog.md) | T15b | done |
-| T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | in progress |
+| T15e | [Behavioral RTL of the UART link (SDR)](T15e-fpga-uart-rtl.md) | T15c T15d | done |
 | T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | done |
 | T17 | [Integration: names, RX decoder fix, re-exports, shared-file edits](T17-integration.md) | T09–T12 | done |
 
