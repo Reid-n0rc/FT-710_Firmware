@@ -89,3 +89,76 @@
 201177e4	ostm_init	OSTM 0xFCFEC000 (system tick)
 20120224	riic_init	RIIC 0xFCFEE000 (touch controller TSC2003)
 201033e8	intc_irq_setup	INTC 0xFCFEF800
+# --- T11a: root task, boot mode, RTOS task entries (see docs/code/display/boot-rtos.md)
+201170c8	task_root	root task (pri 8), created by main; runs the whole init sequence
+20116c4c	bootinfo_load	copies the 0x60-byte boot-info block (pointer in SPIBSC1 reg 0x3FEFB018) or builds defaults
+20132f84	fb_clear_all	clears 0x60000000..+0x2FF300 and the frame buffer at 0x605048A0
+201039b0	sd_fs_init	FAT volume + SDHI driver registration, then sd_task_create
+20110f0c	loader_selfinstall	if 0xFCFF400C == 0xAABBCCDD: writes this image (0x340000 B) to flash 0 and resets the bank flags
+20116e30	gpio_p2_0_debounced	reads P2_0 until 3 equal samples 10 ms apart
+201008ac	gpio_read_bit	(port, bit) -> PPRn bit (0xFCFE3200 + 4n)
+20116e84	boot_mode_full	returns 1 for the full application, 0 for the reduced (standby) start
+201020a0	cpg_set_clock_profile	FRQCR + STBCR1..11 from a 2-entry table at 0x2016517C
+20101c5c	gpio_rx_reset	P7_10 (RX_RESET per hardware.md) via PSR7
+20101ba4	gpio_p8_14	P8_14 via PSR8
+20116768	periodic_wakeup_register	(task, slot): slot n of 0x208DBAD0 {tskid, ?, period from 0x20800374[n], count}
+201167d8	periodic_wakeup_start	OSTM1 1 ms compare (31999), ISR on GIC ID 0x87
+20132ccc	gui_start	VDC5 layers + GUI tasks
+20114028	powon_init	IRQ 0x25 (P2_0 edge) + event flag + task "powon"
+20113f88	task_powon	waits for the P2_0 edge flag, passes the level to 0x201131A8
+20113c84	key_init	creates task "key"
+201137f8	task_key
+201130c8	key_scan_first	first of 8 key lines that reads active (0..7)
+20116df4	hid_chain0_dispatch	calls the 9 handlers at 0x208DC198 (none registered in V01-08)
+20116db8	hid_chain1_dispatch	calls the 9 debug handlers at 0x208DC1BC
+20106fc0	usbkbd_report	USB keyboard HID report: NumLock/ScrollLock LEDs, chain 0, chain 1 if debug_enabled
+20111098	debug_enabled	0x20450000 == 0xA0B9C8E7 (0 in the shipped .data)
+20107e68	debug_unlock	sets 0x20450000 = 0xA0B9C8E7; no caller in V01-08
+20107dc0	debug_unlock_check	P4_2/P4_3/P8_3 low + Ctrl + Backspace in the HID report
+20112e5c	hid_line_edit	HID-usage line editor: 0x28/0x58 Enter, 0x29 Esc, 0x2A Backspace, max 31 chars
+20111064	fwdbg_init	registers fwdbg_line (fw1up/fw1chk/up0/up1/up2)
+20110ed4	fwdbg_line
+2015f0ec	fwdbg_cmd	fw1up, fw1chk, up0, up1, up2 -> event flags of the self-update task
+20116b30	cli_init	event flag + task "cli"; returns cli_line
+20116b00	cli_line
+20116ab0	task_cli	memory monitor: "ADDR", "ADDR VAL", "b ADDR VAL", "h ADDR VAL", or NAME.txt = run I:\NAME.txt
+201169d0	cli_run_file
+20116848	cli_exec_line
+20162d04	cpp_task_thunk	task entry for C++ objects: exinf = object, calls obj->vtbl[0]
+2011509c	task_cmd_interval
+201161bc	task_mainlink_retry
+2011203c	keycode_init	task "keycode"
+20111794	task_keycode
+20112450	spi_slave_init	task "spi_slave_task"
+20112288	task_spi_slave
+20112bb8	renc_init	tasks "renc", "ad renc", "detect renc"
+20112774	task_renc
+201128f4	task_ad_renc
+20112ad4	task_detect_renc
+20103858	touch_init	tasks "tsc2007" x2
+20103464	task_tsc2007
+20103804	task_tsc2007_irq
+20105c78	audio_codec_init	task "audio_codec"
+201065c4	task_audio_codec
+2010dcbc	dspup_init	task "dspup"
+2010e4ac	fwupdate_init	task "fwupdate"
+2010e1f8	task_fwupdate
+2010ed80	uptest_init	task "uptest" (update_main_cpu)
+20110388	sdmenu_init	task "sdmenu"
+2011010c	task_sdmenu
+20113df8	mouse_cursor_init
+20134e0c	test_disp_init	task "test_disp"
+2013512c	task_test_disp
+20116ec8	power_on_full_init	standby -> full start: same init list as task_root full branch, run once (flag 0x208003A5)
+2012ffcc	power_on_request	calls power_on_full_init [inference]
+20116d84	mmu_cache_enable	SCTLR |= M|C|W bits (0xD) after setting TTBR/DACR
+20101190	pinmux_init	PFC setup of every port pin (2.5 KB of calls)
+20100480	gpio_p7_9_11	P7_11 and P7_9 via PSR7
+201562b4	kernel_heap_init	heap/kernel memory up to 0x20980000
+2011775c	gic_enable_irq	enable one GIC interrupt ID
+2014f1a8	itron_acre_isr	create an interrupt service routine object (auto-ID counts down from 0x40) [inference]
+201176b4	gic_dispatch	IRQ_Handler -> handler table 0x208DC1E0
+20117838	ostm0_tick_isr	GIC 0x86: system time += 10000 us, kernel tick
+2011678c	periodic_wakeup_isr	GIC 0x87, every 1 ms: per slot count++, at period wake the task (0x20152FAC)
+20113fdc	powon_isr	GIC 0x25 (IRQ5): sets the powon event flag
+20152fac	itron_iwup_tsk	[inference from use in an ISR]

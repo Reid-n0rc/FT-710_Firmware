@@ -15,6 +15,13 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T09 | [CAT command table recovery (MAIN)](T09-cat-commands.md) | T05 | in progress |
 | T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | todo |
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
+| T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |
+| T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | todo |
+| T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | todo |
+| T11d | [DISPLAY SPI links (SDR, DSP, FT4222H)](T11d-display-spi.md) | T06 | todo |
+| T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | todo |
+| T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | todo |
+| T11g | [DISPLAY misc peripherals and files](T11g-display-misc.md) | T06 | todo |
 | T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | in progress |
 | T12a | [IFDSP overview + boot/memory map](T12a-ifdsp-overview.md) | T07 | done |
 | T12b | [IFDSP M33 console / command link](T12b-ifdsp-m33-console.md) | T12a | todo |

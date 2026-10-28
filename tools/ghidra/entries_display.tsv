@@ -1,0 +1,18 @@
+# FT-710 DISPLAY: function entries that auto-analysis missed or merged (T11). Applied with FixFuncEntries.java
+# before ApplyNames.java. Column 2 "drop" = the old containing function started on data and is not re-created.
+# --- RTOS task entries (from the T_CTSK descriptors in .rodata, see docs/code/display/boot-rtos.md)
+20103804		task "tsc2007" (pri 4), descriptor 0x201651C4
+20111794	drop	task "keycode"; old FUN_20111790 started on the string tail "\r\n"
+201128f4		task "ad renc", descriptor 0x20165594
+20112774		task "renc", descriptor 0x201655CC
+20112ad4		task "detect renc", descriptor 0x201655B0
+20113f88		task "powon", descriptor 0x2016571C
+2011509c		task "cmd_interval", descriptor 0x2016589C
+201161bc		task "retry", descriptor 0x201658D8
+201170c8		task "root", descriptor 0x20165A44 (created by main)
+20162d04		C++ task thunk: exinf = object, calls obj->vtbl[0] (uart/uart4/mouse_cursor tasks)
+# --- late starts: a 1-2 instruction stub at the real entry, the prologue pass started a function at the push
+20112894		late start (FUN_2011289c)
+20114028		late start (FUN_2011402c), powon_init
+201167d8		late start (FUN_201167e0)
+20116c4c		late start (FUN_20116c50), bootinfo_load
