@@ -45,15 +45,16 @@ flowchart LR
   end
   SDR["SDR module<br/>XC7A50T"] -- "I2S RX_IF (FC3)" --> TH
   TH -- "I2S TX_AF (FC2)" --> SDR
-  TH <-- "I2S FC4 out / FC5 in" --> CODEC["TLV320AIC3204<br/>Q2001"]
+  CODEC -- "I2S FC4 (ADC into the DSP)" --> TH
+  TH -- "I2S FC5 (DAC from the DSP)" --> CODEC["TLV320AIC3204<br/>Q2001"]
   CODECCTL -- "AIC_SS/SCLK/MOSI/MISO" --> CODEC
   TH <-- "SPI FC1<br/>FFT/REC/PLAY" --> DISP["DISPLAY RZ/A1H"]
   PWM --> TP["SCT0_OUT0, RC filter<br/>TP2005"]
 ```
 
 Pin/flexcomm assignment is printed on the schematic (p19): FC0 UART, FC1 FFT/REC/PLAY data, FC2 TX AF I2S, FC3 RX IF I2S,
-FC4 codec I2S out, FC5 codec I2S in, GPIO = AIC setting **[fact, p19]**. Which DSP thread owns which FLEXCOMM is
-**[inference]** from literal pools (see T12e).
+FC4 codec I2S, FC5 codec I2S, GPIO = AIC setting **[fact, p19]**. T12e (FLIX-aware decode): FC4 = codec ADC into the DSP (I2S RX),
+FC5 = DAC from the DSP (I2S TX) **[fact, hifi4.md]**. Which DSP thread owns which FLEXCOMM: see [hifi4.md](hifi4.md).
 
 ## Boot flow
 
@@ -71,7 +72,8 @@ sequenceDiagram
   M->>D: BOARD_DSP_Init: copy 3 images, DSPSTALL=0
   M->>D: MU-A flags=1
   D-->>M: MU flags 1 (DSP up)
-  M->>M: SEMA42 lock gate 0, MU-A flags=2, release gate 3
+  D->>D: main 0x0021C498: register-file defaults (regfile_set_defaults)
+  M->>M: SEMA42 lock gate 0, MU-A flags=2, release gate 0 (GATE0 byte 0x40112003)
   D-->>M: MU flags 3
   M->>M: reg[0]=0x0101 (version), reg[0x4000]=1, reg[1] |= 1
   M->>M: create IpcRecv/IpcSend, start SCT0, create CommandTask, vTaskStartScheduler
@@ -91,7 +93,9 @@ side is **[inference]**.
 | 0x00087EC4–0x000A1EF7 | M33 .bss: FreeRTOS heap (heap_4, 0x18FF8 bytes), UART rings, console buffers **[fact]** |
 | 0x00200000–0x002383B3 (+ .bss) | HiFi4 image 1: rodata/literals, text, data **[fact]** |
 | 0x24000000 / 0x24020000 | HiFi4 DTCM / ITCM (image 0: reset and window vectors) **[fact]** |
-| 0x20020000–0x2003FFFF | rpmsg-lite shared memory (vrings + 512-byte buffers), `rpmsg_lite_master_init(0x20020000, 0x20000)` **[fact]** |
+| 0x20020000–0x200203FF / 0x20020400–0x200207FF | rpmsg-lite vrings `rx_vq` / `tx_vq` (`rpmsg_lite_master_init(0x20020000, 0x20000)`) **[fact]**; details in [ipc.md](ipc.md) |
+| 0x20020800–0x20020FFF | rpmsg buffers (2 × 2 × 512 B) **[fact]** |
+| 0x20021000–0x2003FFFF | rest of the rpmsg window, unused **[fact]** |
 | 0x20040000–0x200431DF | HiFi4 image 2 (all zero) **[fact]** |
 | 0x20060000–0x200631DF | DSP buffers (XOS init 0x0021C498, DMA buffers 0x20062BE0.. for FC3/4/5) **[fact: DSP literals]** |
 | 0x20070000–0x2007FFFF | **shared parameter register file**, 16-bit words, word index = (addr − 0x20070000)/2; M33 clears it at boot **[fact]** |
@@ -131,8 +135,8 @@ DSP thread names are **[fact]** (strings at 0x206370; creators 0x0021C498, 0x002
 
 | Page | Sub-task | Contents |
 |---|---|---|
-| [control-link.md](control-link.md) | T12b | FLEXCOMM0 USART driver, console grammar (interactive and machine mode), frame format, register file, MAIN-side register list |
-| [ipc.md](ipc.md) | T12c | MU-A boot handshake, SEMA42, rpmsg-lite master (shm 0x20020000, endpoints 0x28 → 0x1E, 0x98-byte messages), DSP reply categories |
+| [control-link.md](control-link.md) | T12b | FLEXCOMM0 USART driver, console grammar (interactive and machine mode), frame format, register file and register map (113 regs), MAIN-side register list |
+| [ipc.md](ipc.md) | T12c | MU-A boot handshake, SEMA42, rpmsg-lite master (shm 0x20020000, endpoints 0x28 ↔ 0x1E, srtm-style 0x98-byte messages; the link is idle: nothing writes the send queue), DSP reply categories |
 | [m33-platform.md](m33-platform.md) | T12d | reset/copy-down, clocks (198 MHz core, CLKIN 18.432 MHz on PIO2_30), pins, codec init table, SCT0 PWM, FreeRTOS/Redlib, full M33 function table |
 | [hifi4.md](hifi4.md) | T12e | XOS threads, FLEXCOMM/DMA/GPIO usage per function, register-file use, coefficient tables, what the base-ISA decode can and cannot show |
 
@@ -143,6 +147,10 @@ Pages not yet written are tracked by their sub-task on the board (`docs/tasks/RE
 | Item | Value | Evidence |
 |---|---|---|
 | M33 core clock | 198 MHz (`SystemCoreClock`) | `BOARD_BootClockRUN` 0x0008494C **[fact]** |
+| HiFi4 clock / SYSPLL | DSP 594 MHz, SYSPLL 396 MHz | `BOARD_BootClockRUN` (T12d, [m33-platform.md](m33-platform.md)) **[fact]** |
+| FreeRTOS tick / watchdog | 1 kHz tick; no watchdog is started | T12d **[fact]** |
+| DSP audio blocks | 12 kHz sample rate, 24-sample blocks | T12e, [hifi4.md](hifi4.md) **[fact]** |
+| XOS thread priorities | Thread_Main 4, Thread_Ipc 13, Thread_Rx_Path / Thread_Tx_Path 7, Thread_Rx_Audio 6, Thread_Spi 5 | `xos_thread_create` arguments (T12e) **[fact]** |
 | CLKIN | 18.432 MHz (0x1194000), from the SDR module's `DSP_CLK` on PIO2_30 (func 5) | 0x0008494C; p19 **[fact]** |
 | Console UART | FLEXCOMM0, 115200 baud (0x1C200), 1 KB RX and TX rings | `uart0_init` 0x00080D0C **[fact]** |
 | IFDSP version register | reg 0 = 0x0101 (V01-01); MAIN reads regs 0–4 | `app_main`; MAIN `FUN_fff9d957`.. **[fact]** |

@@ -92,7 +92,7 @@ conflicts in `tools/ghidra/names_ifdsp.picks.tsv`); the full function tables are
 
 ### HiFi4 limitations
 Ghidra's Xtensa module decodes the base ISA only. It maps every `op0=0xE` word to a 3-byte `FLIX` placeholder, but HiFi4 FLIX bundles
-are wider (64-bit and up), so disassembly desynchronises inside any DSP kernel. Most function bodies are truncated at the first bundle
+are wider (T12c: the op0=0xE bundles in this image look 6 bytes long, `tools/ifdsp_xtdis.py`), so disassembly desynchronises inside any DSP kernel. Most function bodies are truncated at the first bundle
 (the average exported body is 26 bytes). Control code (XOS, rpmsg, drivers) decompiles partly. The signal-processing code does not.
 Function **entries** are still reliable, because they come from 4-aligned `entry a1,N` prologues. For the real instruction stream use
 the FLIX-aware listing from the Zephyr SDK RT600 HiFi4 objdump (`tools/ifdsp_hifi4_dis.py`, command above; T12e, `docs/code/ifdsp/hifi4.md`).
