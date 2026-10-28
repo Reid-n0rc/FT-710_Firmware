@@ -162,7 +162,7 @@ The manual parameter summaries below are short paraphrases. Ranges and digit cou
 **Counts.**
 - 114 mnemonics in total: 104 primary and 10 extended. 92 are documented in 2306-C, and `XT` is one of them.
 - 22 are **not** documented in 2306-C: `BY E8 E9 ED EK EM EN EU EO FD FS JP KT PE QS RC RD RS RT RU SP ZZ`. `EO` was still in 2211-A.
-- Of the undocumented ones, 12 do nothing: they answer `?;` or are ignored.
+- Of the undocumented ones, **13** do nothing: they answer `?;` or are ignored (9 + 3 + 1 below; 22 − 9 real functions = 13. Corrected by T19h: this line and the T09 findings used to say 12).
   - Switch default: `BY ED EK EU RC RD RS RT RU`.
   - Stubs that only set the error flag: `EN FS QS`.
   - In the table but no case: `KT`.
@@ -180,7 +180,7 @@ Found by comparing the dispatch length tests and the handlers against the manual
 | `VM` | Set `VM;` only | `VM;` toggles V/M. **Hidden:** `VM0;` reads a 2-hex-digit state code (`00`, `10`, `11`, `20`, `21`, `51`, `91`: VFO / memory / PMS / 5 MHz-channel ranges). `VM000;` forces the mode back to state 1 (VFO). | [fact] 0xFFFAFADB; meanings [inference] |
 | `VD` | Drawn as `VDP1P1P1P1;` (7) with values 00–33 | Read `VD;`, set `VDnn;` (5): **2 digits**, 00–33. The manual drawing is wrong. | [fact] dispatch case 0xFFFA4CD9 |
 | `MT` | Set length 19 (tag of up to 12 characters, padded) | Set accepts lengths 8..19, so shorter, unpadded tags work too. | [fact] dispatch case 0xFFFA4589 |
-| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value). Key = decimal P1P2P3. Menu groups `01 02 03 04 06` are accepted, while `05` (the internal EXTENSION SETTING group, 18 front-panel-only items) and `00` give `?;`. The P4 length must be exact (digits + sign). SSB TX BPF SEL (`EX010113`) also accepts 6 = TTBF (5 = 50-4000Hz is refused). FM TONE FREQ answers 3 digits. CW WEIGHT P4 = 00..20. See [code/main/menu.md](code/main/menu.md). | [fact] 0xFFFA4097, `ex_command`, `ex_parse_key` |
+| `EX` | Read 9, set 10..21 | Read 9, set any length ≥ 10 (no upper bound in the case; the menu engine limits the value: `ex_write_value` 0xFFFE6550 expects exactly 9 + the item's digit count [fact, T19h]). Key = decimal P1P2P3. Menu groups `01 02 03 04 06` are accepted, while `05` (the internal EXTENSION SETTING group, 18 front-panel-only items) and `00` give `?;`. The P4 length must be exact (digits + sign). SSB TX BPF SEL (`EX010113`) also accepts 6 = TTBF (5 = 50-4000Hz is refused). FM TONE FREQ answers 3 digits. CW WEIGHT P4 = 00..20. See [code/main/menu.md](code/main/menu.md). | [fact] 0xFFFA4097, `ex_command`, `ex_parse_key` |
 | `ID` | `ID0800;` | Constant `ID0800;` | [fact] |
 | `AI` | P1 0/1 | Accepts any character ≤ `'1'`. A character below `'0'` stores 0xFF ("on" for some tests, "off" for others) | [fact] 0xFFFA6946 |
 | `PS` | Read answers `PS0`/`PS1` | Read always answers `PS1;`. While the radio is off, the parser drops `PS;` before the handler runs. | [fact] 0xFFFAD696 |

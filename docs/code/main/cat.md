@@ -66,7 +66,7 @@ Details **[fact]** unless marked:
 - **Length checks.** Most primary cases check the **total** length, which counts the mnemonic and the `;`. The read form calls `cat_XX(text, 0)` and the set form calls `cat_XX(text, 1)`. Any other length gives `?;`. Some cases accept any length. The per-command list is in [cat-commands.md](../../cat-commands.md).
 - **Reply prefill.** Before calling the handler, the case copies the start of the request (mnemonic plus the first 1–2 parameter characters) into 0x1C8E. The answer therefore echoes the selector digits of the request.
 - **Mnemonics with no case.** The table holds mnemonics that have no switch case: `BY ED EK EU RC RD RS RT RU XT`. They hit the switch default, which answers `?;`.
-  - `XT` (TX CLAR) is documented in manual rev 2211-A but is **not implemented in V01-12**.
+  - `XT` (TX CLAR) is documented in manual revs 2211-A and 2306-C (both p. 23, `XTP1;` / `XT;`) but is **not implemented in V01-12**.
   - `KT`, and `E9` when it arrives through the ring, hit no case in `cat_dispatch_ext` and get **no reply at all**.
 
 ## Request / reply sequence

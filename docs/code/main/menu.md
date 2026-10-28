@@ -152,7 +152,7 @@ sequenceDiagram
   participant M as menu engine
   participant R as RAM 0x9A2A..
   participant S as sync loops (main_loop)
-  H->>P: EX010104300;
+  H->>P: EX0101040300;
   P->>X: text, is_set=1
   X->>X: ex_parse_key "010104" -> {0,0,3}
   X->>M: menu_find / menu_get_limits
@@ -165,6 +165,7 @@ sequenceDiagram
   S->>S: differs from shadow -> DSP register write (T10d)
 ```
 
+(T19h: the set example used to read `EX010104300;`, a 3-digit value that the length check 9 + 4 would reject; the item has 4 digits.)
 A read (`EX010104;`) takes the same path up to `menu_get_limits` and answers `EX010104` + `0300;`. **[fact]** The read
 reply format and the exact-length check are in `ex_read_value` and `ex_write_value`.
 

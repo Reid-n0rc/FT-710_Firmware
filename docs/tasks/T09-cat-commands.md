@@ -34,7 +34,7 @@ Delivered: [cat-commands.md](../cat-commands.md) (all 114 mnemonics, documented 
 
 **Headline findings:**
 - **22 mnemonics are not in 2306-C:** `BY E8 E9 ED EK EM EN EU EO FD FS JP KT PE QS RC RD RS RT RU SP ZZ`.
-- **12 of them do nothing.** Real functions [fact]:
+- **13 of them do nothing** (corrected from "12" by T19h: 9 switch-default + 3 stubs + `KT`). Real functions [fact]:
   - `SP*`: a service family covering SDR and SCI4 register access, an ADC dump, raw EEPROM bytes and the 0x4659 table.
   - `E8`/`E9`: settings image dump and restore.
   - `ZZPE0710xx`: factory reset.

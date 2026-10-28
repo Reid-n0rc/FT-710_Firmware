@@ -1440,7 +1440,8 @@ main loop carry the value on to the DSP, the FPGA and EEPROM.*
 
 Most of the radio's setup menu is reachable over CAT through one command, `EX`. Its key is three two-digit numbers: the menu group,
 the sub-group and the item. `EX010104;` reads item 04 of sub-group 01 in group 01, which is AGC FAST DELAY in the SSB settings, and
-the answer `EX0101040300;` means 300. A set is the same key followed by the value.
+the answer `EX0101040300;` means 300. A set is the same key followed by the value, written with exactly as many digits as
+the item uses: `EX0101040300;` sets 300, while `EX010104300;` (three digits) is refused.
 
 - The firmware builds **314** menu items at start-up. **296** of them can be reached by `EX`, and they match the manual's menu chart
   one to one.
