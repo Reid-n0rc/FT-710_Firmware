@@ -111,15 +111,17 @@ signal from the antenna to the speaker and from the microphone back to the anten
 
 *Figure 1.1 — The units of the FT-710 and the four programmable chips (coloured). The placement is a sketch, not the real board layout.*
 
-Yaesu's service manual lists four boards: **MAIN**, **PA**, **DISPLAY** and **JACK**. A fifth part, the **SDR module**, plugs into the
-MAIN unit through two connectors: a 60-pin board-to-board connector for the digital signals and a small one for RF. The manual draws the
+Yaesu's service manual lists four boards: **MAIN**, **PA**, **DISPLAY** and **JACK**. A fifth part, the **SDR module**, is a separate
+small board mounted **underneath the MAIN unit**. It is screwed to the chassis floor with thermal pads, so the chassis works as its heat
+sink. It connects to the MAIN unit through a 60-pin board-to-board connector (J2002) and a 10-pin connector for the RF lines (J3003).
+The exploded view also shows a short wire assembly, TT9207967, between the two boards *(inference: the RF lines)*. The manual draws the
 SDR module only as a box. None of its parts are in the parts list, so everything we know about its insides comes from its firmware.
 
 - The **DISPLAY unit** is the front panel. It holds the RZ/A1H, a 16 MB [SPI](#glossary) flash with the DISPLAY program, the SD card
   slot, the touch controller, the keys and encoders, a clock chip with a backup battery, and an FT4222H USB bridge.
 - The **MAIN unit** holds most of the radio. The RX651 sits here with its settings [EEPROM](#glossary). So do the RT685 with its own
   16 MB [QSPI](#glossary) flash and the audio [codec](#glossary), the receive front end, the USB hub and its chips, and the DVI/HDMI output.
-  The SDR module, with its fast ADC, the FPGA and the FPGA's own flash chip, plugs in here.
+  The SDR module, with its fast ADC, the FPGA and the FPGA's own flash chip, is mounted underneath it.
 - The **PA unit** has the power amplifier and no processor. Shift registers, a small DAC and some sensors let the MAIN CPU control it
   over a serial bus.
 - The **JACK unit** carries the front phones and mic jacks and has no processor either.
@@ -187,17 +189,19 @@ Follow a signal from the antenna to your ears:
    balun transformer. MAIN picks the filter and switches the preamps and attenuators through a chain of serial shift registers.
    **There is no mixer and no local oscillator anywhere in this chain.** The block diagram labels the line into the SDR module
    "RX-IN 0.03–75MHz": the whole band, from 30 kHz to 75 MHz, goes straight to the ADC. This is a **direct-sampling** receiver. A
-   separate "DITHER" line from the SDR module is high-pass filtered and added to the ADC input. Dither is a small noise signal outside
+   separate "[DITHER](#glossary)" line comes back from the SDR module, where Yaesu's diagram puts a D/A converter that makes it; it is
+   high-pass filtered and added to the ADC input. Dither is a small noise signal outside
    the wanted band that makes a direct-sampling ADC's errors behave like noise rather than spurs *(inference for its purpose)*.
-2. **ADC.** On the SDR module a fast ADC turns the RF into a stream of numbers. A 35.7 MHz oscillator on the MAIN unit feeds a 250 MHz
-   clock into the module, which is divided by 2: the FPGA, and most likely the ADC, run at 125 MHz. The ADC's part number is not in the service manual, so its exact sample
-   rate is not proven yet. The service manual's module box reads "Operating clock 125MHz, Divide 250MHz
-   by 2", and MAIN treats 62.5 MHz (half of 125) as a boundary: it flips an FPGA control bit there and mirrors the scope frequency about
-   it. So **125 million samples per second is the most likely rate** *(inference, strong)*. An independent test report by DC4KU adds that
-   the ADC is a **dual-channel 14-bit** converter, the same one as in the FT-DX10. The FPGA combines its two channels so that the
-   receiver overloads later, and dither goes into both inputs. Two channels sharing the data wires, one on each clock edge, explain the
-   wiring that had looked like a single faster ADC. Signals above 62.5 MHz (for example the
-   70 MHz band) are then received "folded" from the second Nyquist zone, and the 56–75 MHz band-pass filter keeps out their mirror image.
+2. **ADC.** On the SDR module, Yaesu's receiver diagram shows a **divider** that splits the signal into **two ADC channels**. An
+   independent test report by DC4KU identifies the converter as a **dual-channel 14-bit** ADC, the same one as in the FT-DX10. The FPGA
+   adds the two channels together, so the receiver overloads later than one channel would.
+   A 35.7 MHz oscillator on the MAIN unit feeds a 250 MHz clock into the module, which divides it by 2 ("Operating clock 125MHz,
+   Divide 250MHz by 2" on the block diagram). MAIN treats 62.5 MHz, half of 125, as a boundary: it flips an FPGA control bit there and
+   mirrors the scope frequency about it. So each channel most likely samples at **125 million samples per second** *(inference, strong;
+   the ADC's part number is not in the service manual)*. The FPGA reads the two channels over the same 14 wire pairs, one channel on
+   each clock edge. That wiring had first looked like a single, faster ADC.
+   Signals above 62.5 MHz, for example the 70 MHz band, are received "folded" from the second [Nyquist zone](#glossary). The 56–75 MHz band-pass
+   filter keeps out their mirror image.
 3. **FPGA "tuner".** The FPGA multiplies the samples with a digital oscillator ([NCO](#glossary)) set to your frequency. That moves the
    wanted signal down to near zero, where a bank of filters cuts out a narrow slice and drops the sample rate. This is the classic
    digital down-converter ([DDC](#glossary)). The blocks inside the FPGA are recognised from its lookup tables and multiplier use *(inference)*.
@@ -2039,7 +2043,8 @@ What the netlist shows for certain:
 - **One clock for almost everything.** An LVDS clock from the ADC drives every multiplier, the block RAMs and all but about
   300 flip-flops. It runs at **125 MHz** *(inference, high: the UART bit timer divides by 1,086, which is 115,200 baud at
   125 MHz, and the service manual says "Operating clock 125MHz, Divide 250MHz by 2")*. A second LVDS clock from the ADC
-  captures 14 data pairs at double data rate ([LVDS](#glossary), [DDR](#glossary)).
+  captures 14 data pairs at double data rate ([LVDS](#glossary), [DDR](#glossary)): the two 14-bit channels of the dual ADC, one on
+  each clock edge *(inference, from DC4KU's "dual-channel 14-bit ADC")*.
 - **Two cascaded clock generators** ([MMCM](#glossary)s) make a clock of about 28 MHz *(inference from the divider
   settings)* that goes straight to one output pin. Its role is open. It may well be `DSP_CLK`, the DSP's 18.432 MHz clock: the
   28 MHz reading needs a clock generator setting outside the chip's legal range, so one divider is probably misread, and one other
@@ -2089,7 +2094,7 @@ flowchart LR
   subgraph SDR["SDR FPGA"]
     S1["Package: CSG324 or FGG484?<br/>(read the chip marking)"]
     S2["Which pins carry the scope SPI<br/>and the I2S ports?"]
-    S3["ADC and DAC part numbers"]
+    S3["ADC and DAC part numbers<br/>(dual 14-bit ADC)"]
     S4["Multiplier modes<br/>(OPMODE not decoded)"]
     S5["What enables x?<br/>Role of the 28 MHz clock?"]
   end
@@ -2107,6 +2112,8 @@ flowchart LR
   WAV. Either the scope/record thread resamples, or the WAV header is nominal.
 - **Codec clock.** No M33 code selects the codec's master-clock output, so the DSP must do it, or the pin keeps its reset
   setting *(inference)*.
+- **ADC.** It is a dual-channel 14-bit converter, most likely at 125 MSPS per channel, but the part number is unknown, and the
+  logic that adds the two channels has not been located in the netlist yet.
 - **FPGA package.** The bitstream does not record the package. Only the CSG324 and FGG484 packages connect every pin
   the design uses, so the pin-to-ball map, and with it the J2002 pin path, stays open until someone reads the chip marking
   (chapter 8).
@@ -2431,6 +2438,7 @@ Short definitions of the terms used in this guide, in alphabetical order.
 - **DDC**: Digital down-converter: mixes a sampled RF signal down to near zero and filters it to a narrow, slower stream.
 - **DDR**: Double data rate; one bit on each clock edge.
 - **Destination code / region table**: The stored region code and the table of TX frequency ranges it selects.
+- **Dither**: A small noise signal, outside the wanted band, added to an ADC's input so that its conversion errors turn into harmless noise instead of spurs.
 - **DMA**: Direct memory access: hardware that copies data between a peripheral and memory without the CPU.
 - **double buffering**: Drawing into a hidden copy of a frame buffer and then swapping it with the visible one, to avoid flicker.
 - **DSP**: Digital signal processor; here the HiFi4 core in the i.MX RT685 (the "IFDSP").
@@ -2467,6 +2475,7 @@ Short definitions of the terms used in this guide, in alphabetical order.
 - **NCO**: Numerically controlled oscillator: the digital local oscillator inside the FPGA that sets the receive or transmit frequency.
 - **Netlist**: A list of circuit cells and the wires (nets) between them.
 - **NMI**: Non-maskable interrupt, an interrupt that software cannot switch off; MAIN's watchdog raises one instead of resetting.
+- **Nyquist zone**: A slice of frequencies half a sample rate wide. At 125 MSPS the first zone is 0–62.5 MHz; signals in the second zone (62.5–125 MHz) appear mirrored into the first.
 - **Operating record**: The 90-byte record per VFO that holds mode, settings, clarifier, frequency and name; memories use the same layout.
 - **Option-setting memory**: 116 bytes in the RX651 flash that hold its protection and start-up settings (ID code, lock bits, watchdog start).
 - **OTP fuses**: One-time-programmable bits in the RT685 that can enable signed or encrypted boot.
