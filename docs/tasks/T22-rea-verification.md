@@ -247,6 +247,127 @@ scratchpad `rea-requests/T22e-pseudocode-version-diff.md`. The diff was done wit
 
 **Status:** done (2026-10-28).
 
+### T22b
+**Status:** done (2026-10-28). DISPLAY: T21e's jump tables, function starts and fragments recovered again independently.
+
+**Result.** Jump tables: Ghidra right at all 87 sites (own agrees on all 86 it finds; rizin miscounts 7). Function starts: all 305
+own-vs-Ghidra differences settled from the bytes: 199 Ghidra right, 37 same code (thunks, vectors), 6 own wrong, and Ghidra misses:
+**0x2016385A** (T21e entry 2 B late), **0x2013FE64** (entry listed, function lost in the build) and **60 functions reached only by a
+tail branch** that Ghidra merges into their single caller (convention; rows proposed). Fragments: 14 of T21e's 15 are no code; one
+is the late entry. Fixes are listed below for the parent; nothing canonical was changed.
+
+Plan (resumed after the first agent was cut off; its tool commits are kept, the comparison is re-run against the T21g canonical
+`ghidra/FT710_DISPLAY` / `decomp/display/functions.tsv`):
+1. Own analyser: `tools/arm_recover.py` (stdlib A32/Thumb-2 decoder, recursive descent from the vectors, BL/BLX targets, data
+   pointers and prologues; the four jump-table idioms with the bound from the `cmp`; byte classes for the gaps). Shares no code or
+   data with Ghidra, rizin or T21e.
+2. rizin 0.9.1 (`-a arm -b 32 -m 0x20100000`, `aaa; aap; aanr`, `afbj` with `switch_op`) as the second non-Ghidra analyser.
+3. Ghidra as REA runs it: `open_binary` raw-binary, provider `ghidra`, default auto-analysis, none of the T21e scripts
+   (`list_procedures`). REA has no rizin provider for raw images (request `T22b-rizin-raw-arm.md`, T22f).
+4. The canonical project's map (`tools/ghidra/CodeUnitMap.java` on a `-readOnly` scratch copy) plus `functions.tsv` and
+   `DisplayJumpTables.java check` as the T21e result being verified.
+5. `tools/arm_recover_compare.py` lines the four up (jump-table sites and case lists, function starts, bytes no analyser covers);
+   every difference is classed, and each class is settled from the bytes (objdump / own decoder at the address).
+6. Write-up here; real Ghidra misses get the exact `entries_display.tsv` / table fixes for the parent (no canonical rebuild).
+
+**Inputs and runs [fact].** Image `build/FT-710_DISPLAY_V0108.bin` (SHA-256 `65a9b654…77bb`), `.text` 0x20100000–0x20165178.
+(1) `arm_recover.py … --bound 20164f68=4 --objdump arm-none-eabi-objdump`: 98,921 instructions (96,006 A32, 2,915 T32), 2,142
+starts, 115 computed-PC sites, 3 conflicts; objdump calls 3 recovered instructions undefined/unpredictable (0x2013A0BC
+`ldrh r1,[r0,r1]!`, and 0x201649D0/0x201649D6, a Thumb desync settled below). (2) rizin 0.9.1, `-a arm -b 32 -m 0x20100000`,
+`aaa; aap; aanr`, then `aflj` and `afbj @@F` (two runs, byte-identical output). (3) REA `open_binary` raw-binary, `arm`, base and entry
+0x20100000, provider `ghidra`: Ghidra 12.1.4 default auto-analysis, no project scripts; `list_procedures` = 1,832 procedures
+(evidence `ev_313cb0a3…b0ae5`). (4) The T21g canonical project, on a `-readOnly` scratch copy: `CodeUnitMap.java` (6,342 runs) and
+`DisplayJumpTables.java check` (86 sites, 86 ok); `decomp/display/functions.tsv` (2,208 entries in `.text`; it leaves thunks out).
+The comparison (`arm_recover_compare.py`) gives the same numbers as the first agent's run against T21e's fresh scratch export, so
+the T21g canonical DISPLAY is T21e's result.
+
+```sh
+python3 -I tools/arm_recover.py build/FT-710_DISPLAY_V0108.bin OWN --bound 20164f68=4 --objdump arm-none-eabi-objdump
+rizin -q -a arm -b 32 -m 0x20100000 -i anal.rz build/FT-710_DISPLAY_V0108.bin     # aaa; aap; aanr; aflj; Ps; then afbj @@F
+tools/ghidra-headless.sh <copy> FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript CodeUnitMap.java map.tsv -postScript DisplayJumpTables.java check jt_check.tsv
+python3 -I tools/arm_recover_compare.py --own OWN --rz-bbs rz_bbs.jsonl --rz-funcs rz_funcs.json \
+  --ghidra canonical=decomp/display/functions.tsv --ghidra rea=rea_functions.tsv --ghidra-jt jt_check.tsv \
+  --ghidra-map canonical=map.tsv --out CMP
+```
+
+**Jump tables [fact].** 87 table sites in all: T21e's 86 A32 sites (81 `ldr pc`, 5 `add pc`) and one Thumb `tbb` at 0x20164F68 in the
+fplib (outside `DisplayJumpTables.java`'s A32 scope; Ghidra's decompiler builds that switch by itself, `switchD_20164f68`, cases 4–7
+of `r6`).
+
+| Pair | Sites both find | Same case count | Settled |
+|---|---:|---:|---|
+| own vs canonical Ghidra | 86 of 87 | **86 / 86** | own misses 0x20132EF0 (its function has no reference, below) |
+| rizin vs canonical Ghidra | 87 of 87 | 80 / 87 | rizin wrong on all 7 |
+| own vs rizin | 86 | 79 / 86 | rizin wrong on all 7 |
+
+The seven rizin differences, from the bytes: the five `add pc,pc,rX,lsl #2` sites (0x2010054C, 0x201005A4, 0x201005D8, 0x201008BC,
+0x2010E69C) get one case too many: at 0x2010054C `cmp r2,#9; addcc pc,pc,r2,lsl #2; b default` gives 9 cases 0x20100554–0x20100574,
+and rizin adds 0x20100578, which is `ldr r4,[r3,r0,lsl #2]` of the case body. 0x20122644 (`cmp r1,#15; ldrcc pc,…`): the table is
+15 words 0x2012264C–0x20122684; rizin stops at 13. 0x20164F68 `tbb [pc,ip]` after `and r6,#7; subs ip,r6,#4; bcs`: 4 byte entries
+(09 0B 02 02 → 0x20164F7E, 0x20164F82, 0x20164F70, 0x20164F70); rizin gives 1. Own and Ghidra agree on all of it (own needs the
+manual `--bound`, its CMP search does not read `subs`). 0x20132EF0 (6 cases) is in FUN_20132EE8, a leaf `ldr; cmp r0,#6; ldrcc pc;
+bx lr` with six `ldr r0,=…; b 0x20101030` cases. No word in the image equals 0x20132EE8/9 and no branch reaches it, so own (which
+only follows references and prologues) never decodes it; rizin and Ghidra (T21e `after_return_undef`) do, and both count 6.
+**Ghidra's 87 tables are all right.**
+
+**Function starts.** Counts in `.text` (canonical without its 38 thunks, which `functions.tsv` omits):
+
+| Pair | Both | Only first | Only second |
+|---|---:|---:|---:|
+| own (2,137) vs canonical (2,208) | 2,020 | 117 | 188 |
+| own vs rizin (2,672) | 1,971 | 166 | 701 |
+| own vs REA Ghidra (1,832) | 1,807 | 330 | 25 |
+| rizin vs canonical | 2,033 | 639 | 175 |
+| REA Ghidra vs canonical | 1,803 | 29 | 405 |
+| rizin vs REA Ghidra | 1,757 | 915 | 75 |
+
+Every own-vs-canonical difference was classed and settled (per address:
+[`T22b-display-start-diffs.tsv`](T22b-display-start-diffs.tsv)):
+
+| Difference (count) | Verdict, from the bytes |
+|---|---|
+| own only: 36 thunks (7 exception vectors, `b`/veneer stubs) | same code: Ghidra has them as thunks, `functions.tsv` leaves thunks out **[fact: map]** |
+| own only: **58 push-prologue functions reached only by a tail `b`** | **Ghidra merges them into the one function that tail-calls them** (non-contiguous body). Every one starts with `push {…,lr}`, every jump source sits after its own frame is popped (or it has none), and each has exactly one source function **[fact]**. Examples: 0x20157238 (`push {r4,lr}`) only from `afscope_store_frame` 0x20120D48 (`mov r1,r0; ldr r0,=…; b`), so `afscope_store_frame` is exported as 188 B; ten screen functions 0x2012B1BC…0x2012C0D8 inside `scr_select_popup` (4,200 B); 0x20117A68 inside `vdc5_channel_shutdown`. rizin also starts 27 of them, REA's plain Ghidra 1 (0x2015FA88). Proposed fix below |
+| own only: 13 late starts | Ghidra's entry is 4–12 B earlier: `mov r2,r1; mov r1,r0` or `ldr r0,=obj` falling into the `push`; the earlier byte is the entry when anything points at it (0x201170C8, task "root", T_CTSK word 0x20165A4C), the others have no reference either way **[fact: bytes; inference: Ghidra's earliest coherent start is the entry]** |
+| own only: 0x20100018 | IRQ vector `b 0x201001D8`; Ghidra's 0x20100014 is the reserved vector `nop` falling into it. Same code |
+| own only: 0x20100050, 0x20139D04, 0x20140020 | own wrong: data values that happen to equal mid-function addresses (0x20100050 is the literal the reset code subtracts to find its load offset; the other two point after a `bl` / into straight-line code) |
+| own only: 0x20164C34 | own wrong: its prologue seed matched `b6 b5` inside the 128-byte descending table 0x20164C00 (T21e leftover) |
+| own only: 0x20156584 | own wrong: `push {r0,lr}` straight after `push {r0-r3}` inside the NORTi stub FUN_2015655C (falls in, not an entry) |
+| own only: 0x20155D0A, 0x20163838 | **two more tail-only functions, reached through linker veneers** (Ghidra's references, read with a one-off read-only `AtAddr` script): 0x20155D0A (Thumb `push {r4-r11,lr}`) only from FUN_20100C7C 0x20100C7E `cmp r1,#0x66; beq.w 0x20165178`, where 0x20165178 is the Thumb veneer `b.w 0x20155D0A`; 0x20163838 (Thumb `push`) only from FUN_20107EE0 0x20107EF0 `b 0x20163830`, the A32 veneer `adr ip,0x20163839; bx ip`. Ghidra merges both into the caller, like the 58 **[fact]**. The veneer at 0x20165178 is the "1 stray instruction in .rodata" of `DisplayReport.java` (`docs/memory-maps.md`): own's `--text-end` stops just before it |
+| own only: **0x2016385A** / canonical only: 0x2016385C | **Ghidra miss: entry 2 B late.** The .data word 0x2042807C is 0x2016385B, so the Thumb entry is 0x2016385A: `movs r0,#0; push {r4,lr}; bl 0x20155FDE; pop {r4,pc}`. T21e's `entries_display.tsv` row says 0x2016385C (it cleared one bit too many); the `movs r0,#0` is left as an undefined fragment and the exported function loses its argument **[fact]** |
+| own only: **0x2013FE64** | **Ghidra miss: no function.** `b 0x2014030C`, pointed to by the .data words 0x204205E8 and 0x204205F4 (a function-pointer table). It is a row in `entries_display.tsv` (`after_return_undef`), but the canonical project has code and no function there, and no reference to it (the two .data words are not typed as pointers) **[fact: AtAddr]**. T21e's fresh-build log says FixFuncEntries created all 205 entries with 0 failures, and T21e's and T21g's `DisplayGaps` reports still list 0x2013FE64 as an `after_return` candidate afterwards, so a later bootstrap step removes the one-instruction function; which one was not determined (no intermediate project) |
+| canonical only: 62 starts at jump targets inside own code | Ghidra right: every one is entered by a `b` (one `bne`) from code of another Ghidra function, 37 of them from two to nine functions (shared tails: `rspi*_spri/spti_isr` → 0x2011F840/0x2011F89C, eight callers → 0x2011D860, `backlight_set/init` → 0x20102698, fplib tails 0x20164654…) **[fact]**; own only starts functions at calls, pointers and prologues |
+| canonical only: 126 starts own never decodes as one (114 in own "unknown", 9 in own "ref_data", 2 inside own code, 1 own conflict) | Ghidra right for 125: each decodes with own's decoder as straight-line code that ends in a return/branch or runs into known code, none hits an undefined encoding; 90 are T21e `after_return_undef` rows, 88 are rizin starts too. Most have no reference own can see (dead or computed-pointer code, as T21e found); 0x201170C8 is the "root" task (descriptor), 0x201567D0 the address-taken NORTi stub, and 0x201649D8 has 41 `bl`s (own flagged a Thumb overlap after it decoded 0x20164994… through the undefined 0x201649D0/D6: own bug). The 126th is 0x2016385C (late entry, above) |
+
+REA's plain Ghidra (default analysis, no T11/T21e scripts) lacks 405 canonical starts (the reviewed entries and the scripts'
+work); of its 29 starts that the canonical `functions.tsv` lacks, 28 are thunks the canonical project also has, and one is
+0x2015FA88, one of the 58 tail-only functions. rizin's 639 extra starts are mostly false: 353 on literal pools, 75 on other data
+(strings, zero runs, referenced data), 89 in the middle of functions with no reference (after calls it treats as no-return),
+the rest at jump targets **[fact: own and Ghidra both class those bytes as data / mid-function]**.
+
+**Fragments [fact].** The canonical project has 15 undefined runs in `.text` with 242 non-0xFF bytes (243 B), T21e's numbers. 141 B in
+11 of them are covered by neither rizin nor Ghidra. Own classes those bytes as data or unknown, except: 0x2016385A (2 B, real code,
+the late entry above), 0x20164C34 (46 B, own's false Thumb function on the table) and 0x201649D2 (2 B, own's desync). So
+**14 of the 15 fragments are no reachable code for own and Ghidra; one (0x2016385A) is the first instruction of a real function.**
+rizin's blocks run over parts of 0x20164C00 (the descending byte table), 0x2015497E, 0x20155B5A, 0x2015625C, 0x20164CEC, 0x20164D48
+**[inference: rizin linear block extension over padding/tables]**.
+
+**Proposed fixes for the parent (not applied; canonical projects untouched).**
+1. `tools/ghidra/entries_display.tsv`: change row `2016385c thumb …` to `2016385a thumb dataptr (Thumb): movs r0,#0; push {r4,lr};
+   bl 0x20155fde; pop -- .data word 0x2042807c = 0x2016385b`.
+2. 0x2013FE64: the row is already in `entries_display.tsv`; find the step after FixFuncEntries that deletes it (candidates:
+   `DisplayJumpTables apply`'s orphan removal, `DisplayGaps define`), or re-create it at the end, and mark the .data words
+   0x204205E8 and 0x204205F4 as pointers so it has references. Check: `DisplayGaps` no longer lists it.
+3. Optional, a convention choice: 60 `tail_only` rows (58 direct, 2 through veneers; ready to append:
+   [`T22b-entries-proposed.tsv`](T22b-entries-proposed.tsv)) would make the tail-called functions their own functions. Effect: the
+   60 get `FUN_` names, their callers' C shrinks to the call, and `decomp_quality.py compare` will count new functions. T21e's
+   `tail_target` rule covered targets inside *another* function's body; these are targets Ghidra absorbed because only one
+   function reaches them.
+4. Not a fix, a note: the reserved vector 0x20100014 (`nop`) and the IRQ vector 0x20100018 are one Ghidra function; harmless.
+
+REA: the raw-ARM rizin gaps are in `T22b-rizin-raw-arm.md` (scratchpad `rea-requests/`, T22f). REA's Ghidra lane was used as filed.
+
 ### T22d
 **Status:** in progress (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
