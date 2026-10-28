@@ -32,8 +32,9 @@ Rules for the sub-tasks:
 (filled in by each sub-task)
 
 ### T21b
-**Status:** oracle, B10 and the B9 diagnosis done on the stock language; re-run on T21a's `Xtensa:LE:32:rt600hifi4` pending
-(see below). Branch `worktree-agent-a3cf9ef23f5240768`.
+**Status:** done. The oracle, B10 and B9 are checked on the stock language and on T21a's first `Xtensa:LE:32:rt600hifi4` (installed
+2026-10-28 11:27). B9 is fixed on that language and B10 matches. The oracle is not yet at 100 % (see "On T21a's language").
+Branch `worktree-agent-a3cf9ef23f5240768`.
 
 **Plan.** (1) `ExportListing.java` exports instructions, either the analysed listing or a flow-independent decode at every
 `flix.dis` address; `tools/flix_compare.py` compares that export with `flix.dis`, and `tools/flix_oracle.sh <language-id>` runs
@@ -98,8 +99,47 @@ undefined bytes itself. So `DecompileBisect.java` patches the bytes instead. Wit
 still dies, and with `retw.n` over 0x20BC28 it succeeds. Writing a `nop.n` over 0x20BC28 alone, with the original bytes restored,
 also makes it succeed. The culprit is Ghidra's `s32i.n a1,a12,0x34` at **0x20BC28**. In `flix.dis` that address is the middle
 (bytes 3–4) of the 6-byte bundle `{ slli a15, a15, 4; and a13, a13, a9 }` at 0x20BC25 **[fact]**. The crash therefore comes from
-the misaligned FLIX decode. It should go away once the bundles decode at their true length **[inference]**; to be confirmed on
-T21a's language.
+the misaligned FLIX decode **[inference]**. On `rt600hifi4` the function decompiles: `void FUN_0020bb74(uint *param_1,int
+param_2)`, with no `halt_baddata` **[fact: run 2026-10-28]**.
+
+**On T21a's language (`Xtensa:LE:32:rt600hifi4`, first install, 2026-10-28 11:27)** **[fact: `flix_oracle.sh` run]**:
+
+| Export | Match | Bundles | Functions fully matching | Mismatches |
+|---|---|---|---|---|
+| decode | **48,650 / 49,389 = 98.50 %** | 12,471 / 12,676 | 871 / 1,065 | 730 operands, 8 mnemonic, 1 error |
+| listing | **46,623 / 49,389 = 94.40 %** | 12,427 / 12,676 | 545 / 1,065 | 2,077 no instruction (1,416 of them within 8 bytes of a `flix.dis` `.byte`/`ill`), 688 operands, 1 mnemonic |
+| functions | 1,067 SRAM functions = reference, 0 extra, 0 missing (16 in the TCM) | | | |
+
+The 739 decode mismatches have two causes; the list went to T21a in the scratchpad `oracle/FEEDBACK_T21a.txt`.
+- **BR view register names (459 rows, including all 205 bundle mismatches).** objdump names the BR2/4/8 views after the bits they
+  cover (`b2:b3`, `b0:b1:b2:b3`, `b8:…:b15`), while Ghidra prints `b2`. At least `any8` also maps to the wrong register: it prints
+  `b14` for `b8:…:b15`.
+- **Bugs inherited from the stock base-ISA SLEIGH:**
+  - `movi.n` with a negative immediate is printed 8-bit unsigned (89 rows).
+  - `bnone`/`bany`/`ball`/`bnall` print the target first and add a trailing comma (136 rows).
+  - `remu`/`rems` add a trailing comma (48 rows).
+  - The `b4constu` table has 0x1000 where it should have 0x10000 (`bgeui`, 4 rows; a value bug).
+  - `jx a0` prints as `ret` (1 row).
+  - `rems` is shadowed by `licw` (6 rows).
+  - `ae_pksr24` is shadowed by MAC16 `mul.dd.lh` (1 row).
+  - `ret.n` with bytes `0d fc` does not decode (1 row).
+
+**Limit of the reference.** `flix.dis` sweeps each function linearly from its entry to the next one. It therefore decodes padding
+and unreachable bytes, and after padding it can stay out of sync for a few instructions. At 0x207F9E–0x207FA4 objdump shows
+`sub`/`remu`/`add.n`, while Ghidra's flow decode has two padding bytes and then `memw` at 0x207FA0, which is right **[fact]**. So
+the listing mode cannot reach 100 % against `flix.dis`: 1,075 of the "no instruction" rows are bytes that flow never reaches, and
+1,002 are conflicts, most of them next to padding. The decode mode, which decodes the same bytes objdump did, is the decoder test.
+The listing-mode target should be "no mismatch except sweep artefacts". That needs an adjudication step, for example running
+objdump at Ghidra's instruction starts in the conflict regions (a follow-up).
+
+**Commits:** `77cf14b` oracle tools; `a6488de` B10 reference list and FindFuncs, B9 bisect, stock baseline; then the rt600hifi4
+results and the padding annotation.
+
+**Leftovers:**
+1. Re-run `tools/flix_oracle.sh Xtensa:LE:32:rt600hifi4` after T21a fixes the items above.
+2. Listing-mode adjudication of the 337 conflict regions.
+3. T21g: re-export `decomp/ifdsp/hifi4` with the new `IfdspHifi4FindFuncs.java`. The expected count is 1,067 SRAM functions plus
+   the TCM vectors, against 1,148 today, and 0 decompile failures if `FUN_0020bb74` stays fixed.
 
 ## Findings
 

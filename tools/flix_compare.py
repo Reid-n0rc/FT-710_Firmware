@@ -42,11 +42,17 @@ rule is counted in summary.txt, so it is visible how many matches depend on it):
                 `rsr.interrupt` vs Ghidra's `INTSET` (same SR number 226) stays a mismatch.
   N8 mov alias  `or ar, as, as` == `mov ar, as`: Ghidra prints the MOV assembler alias of OR with equal sources.
 
+Caveat: flix.dis is a linear sweep from each function entry to the next, so it also decodes alignment padding and
+unreachable bytes, and it can lose sync after padding for a few instructions (e.g. 0x207f9e..0x207fa4, where Ghidra's flow
+decode `memw` at 0x207fa0 is right and objdump's `remu`/`add.n` are not). Use the decode mode to test the decoder (it
+decodes the same bytes objdump did); in listing mode, "missing ... near padding" rows are mostly such sweep artefacts.
+
 Nothing else is normalised: register names (`aed3`, `b8:b9`, `f3`), mnemonic suffixes (`.n`, `.w15`, `.s`), signs and
 operand order must be identical.
 
 Mismatch kinds (first failing check wins): missing (Ghidra has no instruction starting at this address; detail says
-whether the address is inside another Ghidra instruction or undecoded), error (decode mode: Ghidra could not decode),
+whether the address is inside another Ghidra instruction or undecoded, and "near padding" when a flix.dis `.byte` or
+`ill` line is within 8 bytes), error (decode mode: Ghidra could not decode),
 length, slots (bundle with a different slot count), mnemonic, operands.
 """
 import collections
@@ -67,6 +73,9 @@ EXTRA_ENTRIES = [
 DEFAULT_DIS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "decomp", "ifdsp", "hifi4", "flix.dis")
 
 
+PAD = set()   # addresses of flix.dis `.byte` and `ill` lines (padding the per-function sweep ran into), filled by parse_flix
+
+
 def parse_flix(path):
     """Return ([(addr, length, text, func)], n_byte_lines, [func entries])."""
     out, nbyte, funcs, func = [], 0, [], None
@@ -80,6 +89,8 @@ def parse_flix(path):
         if not m:
             continue
         text = m.group(3).strip()
+        if text.startswith(".byte") or text == "ill":
+            PAD.add(int(m.group(1), 16))
         if text.startswith(".byte"):
             nbyte += 1
             continue
@@ -198,6 +209,9 @@ def compare(gtsv, outdir, dis):
             kind = "missing"
             c = containing(addr)
             detail = "inside %08x" % c if c is not None else "undecoded"
+            if any(addr + d in PAD for d in range(-8, 9)):
+                detail += "; near padding"
+                kinds["(missing near padding)"] += 1
         elif gi[1] == "!error":
             kind, detail = "error", gi[2]
         else:
