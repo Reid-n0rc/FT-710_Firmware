@@ -14,6 +14,9 @@ Usage:
         `in_<net>`, the seeds' outputs and every IOB pad become ports
     python3 -I tools/xc7_netlist_verilog.py prims OUT.v
         behavioural models for primitives that Yosys' cells_sim.v lacks (RAMD64E, RAMD32)
+    python3 -I tools/xc7_netlist_verilog.py simprims OUT.v
+        the same plus functional models of IBUFDS/OBUFDS/OBUFTDS/BUFIO/BUFR/IDDR/ODDR/MMCME2_ADV
+        (Yosys' cells_xtra.v only declares them) for Icarus simulation with cells_sim.v
     python3 -I tools/xc7_netlist_verilog.py selftest
 
 Smoke test (Yosys 0.23, see docs/code/sdr/netlist.md):
@@ -439,6 +442,42 @@ module RAMD32 #(parameter [31:0] INIT = 32'h0, parameter [0:0] IS_CLK_INVERTED =
 endmodule
 """
 
+# Simple simulation models for primitives that Yosys' cells_xtra.v only declares (ports, no
+# behaviour). Enough for functional simulation of the recovered netlist, not timing-accurate.
+SIM_PRIMS = r"""// Functional sim models (T15d) for primitives stubbed in Yosys' cells_xtra.v. Not for synthesis.
+module IBUFDS #(parameter IOSTANDARD = "DEFAULT", parameter DIFF_TERM = "FALSE") (output O, input I, input IB);
+  assign O = I;
+endmodule
+module OBUFDS #(parameter IOSTANDARD = "DEFAULT") (output O, output OB, input I);
+  assign O = I; assign OB = ~I;
+endmodule
+module OBUFTDS #(parameter IOSTANDARD = "DEFAULT") (output O, output OB, input I, input T);
+  assign O = T ? 1'bz : I; assign OB = T ? 1'bz : ~I;
+endmodule
+module BUFIO (output O, input I); assign O = I; endmodule
+module BUFR #(parameter BUFR_DIVIDE = "BYPASS", parameter SIM_DEVICE = "7SERIES")
+  (output O, input CE, input CLR, input I); assign O = I; endmodule
+module IDDR #(parameter DDR_CLK_EDGE = "OPPOSITE_EDGE", parameter SRTYPE = "SYNC",
+              parameter INIT_Q1 = 1'b0, parameter INIT_Q2 = 1'b0)
+  (output reg Q1 = INIT_Q1, output reg Q2 = INIT_Q2, input C, input CE, input D, input R, input S);
+  always @(posedge C) if (CE) Q1 <= D;
+  always @(negedge C) if (CE) Q2 <= D;
+endmodule
+module ODDR #(parameter DDR_CLK_EDGE = "OPPOSITE_EDGE", parameter SRTYPE = "SYNC", parameter INIT = 1'b0)
+  (output Q, input C, input CE, input D1, input D2, input R, input S);
+  assign Q = C ? D1 : D2;
+endmodule
+module MMCME2_ADV #(parameter DIVCLK_DIVIDE = 1, parameter CLKFBOUT_MULT_F = 5.0,
+                    parameter CLKOUT0_DIVIDE_F = 1.0, parameter CLKIN1_PERIOD = 0.0)
+  (input CLKIN1, CLKIN2, CLKFBIN, RST, PWRDWN, CLKINSEL, DCLK, DEN, DWE, PSCLK, PSEN, PSINCDEC,
+   input [6:0] DADDR, input [15:0] DI,
+   output CLKOUT0, CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKOUT5, CLKOUT6, CLKFBOUT, LOCKED);
+  // functional stand-in: output = input clock (frequency not modelled), always locked
+  assign CLKOUT0 = CLKIN1; assign CLKFBOUT = CLKIN1; assign LOCKED = 1'b1;
+  assign {CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKOUT5, CLKOUT6} = 6'b0;
+endmodule
+"""
+
 
 def cmd_verilog(path, out, xdc, pkg, db):
     nl = json.load(open(path))
@@ -586,6 +625,8 @@ def main():
         cmd_slice(a[1], a[2], opts["--seeds"].split(","), int(opts.get("--depth", 4)), pkg, db)
     elif a[0] == "prims" and len(a) == 2:
         open(a[1], "w").write(PRIMS)
+    elif a[0] == "simprims" and len(a) == 2:
+        open(a[1], "w").write(PRIMS + SIM_PRIMS)
     elif a[0] == "selftest":
         selftest()
     else:
