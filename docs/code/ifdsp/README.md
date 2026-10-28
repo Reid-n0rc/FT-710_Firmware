@@ -135,7 +135,7 @@ DSP thread names are **[fact]** (strings at 0x206370; creators 0x0021C498, 0x002
 
 | Page | Sub-task | Contents |
 |---|---|---|
-| [control-link.md](control-link.md) | T12b | FLEXCOMM0 USART driver, console grammar (interactive and machine mode), frame format, register file and register map (113 regs), MAIN-side register list |
+| [control-link.md](control-link.md) | T12b | FLEXCOMM0 USART driver, console grammar (interactive and machine mode), frame format, register file and register map (113 regs, 98 with a known access), MAIN-side register list |
 | [ipc.md](ipc.md) | T12c | MU-A boot handshake, SEMA42, rpmsg-lite master (shm 0x20020000, endpoints 0x28 ↔ 0x1E, srtm-style 0x98-byte messages; the link is idle: nothing writes the send queue), DSP reply categories |
 | [m33-platform.md](m33-platform.md) | T12d | reset/copy-down, clocks (198 MHz core, CLKIN 18.432 MHz on PIO2_30), pins, codec init table, SCT0 PWM, FreeRTOS/Redlib, full M33 function table |
 | [hifi4.md](hifi4.md) | T12e | XOS threads, FLEXCOMM/DMA/GPIO usage per function, register-file use, coefficient tables, what the base-ISA decode can and cannot show |

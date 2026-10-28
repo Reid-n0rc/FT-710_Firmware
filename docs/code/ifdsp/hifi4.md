@@ -173,7 +173,7 @@ S = Spi, M = Main; "fp" = only reached through a function pointer.
 | 0x1 | 0x21D68C, 0x21F7EC, 0x21FA48, 0x21FD20, 0x220224, 0x2233FC, 0x223734 | same | RP, TP, fp | status/flag bits (M33 sets bit 0) **[inference]** |
 | 0x2 | 0x222034, 0x224ED8 | same | RA, TP | flag word |
 | 0x3 / 0x4 | — | 0x21F388 / 0x21D270 | RP / RA | DSP → MAIN results (MAIN reads regs 0–4) **[inference]** |
-| 0x6 | 0x21F484, 0x220EE0, 0x2220E8, 0x22313C, Rx_Path, Tx_Path | — | all | **operating mode**: compared with 9 and 10, and indexes an 11-entry jump table (0x204EF0) in the TX filter switch **[fact]**; the mode numbering **[unknown]** |
+| 0x6 | 0x21F484, 0x220EE0, 0x2220E8, 0x22313C, Rx_Path, Tx_Path | — | all | **operating mode**: compared with 9 and 10, and indexes an 11-entry jump table (0x204EF0) in the TX filter switch **[fact]**; the mode numbering **[unknown]** on the DSP side; MAIN writes 0 CW-U, 1 CW-L, 2 USB/DATA-U/RTTY-U/PSK, 3 LSB/DATA-L/RTTY-L, 8 AM, 9 FM ([control-link.md](control-link.md#register-map)) **[fact, MAIN mapping]**, so 9 is FM; which MAIN value the 10 compare means is open |
 | 0x8–0xA | 0x2249D0 | — | TP | |
 | 0xC | 0x21C5CC, 0x22309C, 0x2233FC, 0x223734 | — | M, TP | top nibble selects a GPIO input / TX source **[inference]** |
 | 0xD, 0xE, 0x10 | 0x224814 | — | RP | |
@@ -321,7 +321,8 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
 
 ## Open points
 
-- Mode numbering of reg 6 and the meaning of most RX registers: needs the MAIN-side setter names (T10/T12b) next to this table.
+- Mode numbering of reg 6: MAIN's side is now known ([control-link.md](control-link.md#register-map): 0 CW-U … 9 FM); what the DSP does
+  with each value (and with 10, which MAIN never sends **[inference]**) is open. The meaning of most RX registers: needs the MAIN-side setter names (T10/T12b) next to this table.
 - The receive and transmit chains are listed by call, not yet by algorithm (NR, NB, notch, AGC, demodulators). The FLIX
   disassembly makes this possible function by function.
 - `decomp/ifdsp/hifi4/` is still Ghidra's base-ISA output; a committed FLIX listing (or a SLEIGH FLIX extension) would make the

@@ -18,7 +18,7 @@ Claims are tagged **[fact]** (seen in code, address cited), **[inference]** or *
 flowchart LR
   subgraph MAIN["MAIN RX651"]
     POLL["FUN_fff9d1b9<br/>DSP link poll"] --> FB["FUN_fffa0b4c<br/>frame builder"]
-    SPD["CAT SPDR/SPDW<br/>cat_SP_dev4_reg"] --> ACC["dev4_reg_access<br/>FUN_fff9d8a4"]
+    SPD["CAT SPDR/SPDW<br/>cat_SP_dev4_reg"] --> ACC["dsp_reg_access<br/>0xFFF9D8A4"]
     ACC --> FB
     FB --> SCI4["R_SCI4_Serial_Send"]
   end
@@ -125,7 +125,7 @@ CC is the low 8 bits of the ASCII sum, as two hex digits. Example: reading regis
 
 ```mermaid
 sequenceDiagram
-  participant M as MAIN (FUN_fff9d06c / FUN_fff9d1b9)
+  participant M as MAIN (dsp_link_init / dsp_link_poll)
   participant C as M33 console_rx_char
   participant R as register file
   Note over M: power-up: wait timer 0x1F (100 ticks)
@@ -134,10 +134,9 @@ sequenceDiagram
   M->>C: "r0000" + CC + "\r"
   C->>R: regfile_read(0)
   C-->>M: "r0101" + CC  (version V01-01)
-  loop until reg 1 bit 0 = 1
-    M->>C: "r0001" + CC + "\r"
-    C-->>M: "rVVVV" + CC
-  end
+  M->>C: "r0001" + CC + "\r" (read once)
+  C-->>M: "rVVVV" + CC
+  Note over M: bit 0 = 0 or no reply: boot_error 0x20B36 = 2 (no re-poll)
   loop FUN_fff9d1b9 (one frame in flight)
     M->>C: "wAAAADDDD" + CC + "\r"
     C->>R: regfile_write(A, D)
@@ -145,17 +144,21 @@ sequenceDiagram
   end
 ```
 
-MAIN side **[fact]** (`decomp/main`): `FUN_fffa0b4c(cmd)` builds `cmd` + `word2hex(addr 0x1B6DE)` [+ `word2hex(data 0x1B6E0)`] +
-`byte2hex(FUN_fffa0c01 sum)` + CR and sends it with `FUN_fffb1ab4` (SCI4), then starts timer 3 (6 ticks). Flags 0x1C5E (write
-pending) and 0x1C5F (read pending) allow one frame in flight. `FUN_fffa0ad6` takes the reply: for `r` it checks the 5-char
-checksum (`FUN_fffa0c2e`), for `w` it expects 0x06. On timeout it drops the pending flag, so a lost frame is not retried
-directly; the setter sends it again on its next pass because the shadow still differs **[inference]**. `FUN_fffa037a` stores
+The reg 1 read is sent **once**: `dsp_link_init` 0xFFF9D06C re-enters its wait loop after a reply with bit 0 clear, finds no read pending
+(0x1C5F cleared by `dsp_check_reply`) and sets `boot_error` = 2 **[fact, T19h; agrees with [main/dsp-link.md](../main/dsp-link.md#boot-handshake)]**.
+(Corrected by T19h: this diagram used to show "loop until reg 1 bit 0 = 1".)
+
+MAIN side **[fact]** (`decomp/main`; current Ghidra names in brackets): `FUN_fffa0b4c(cmd)` [`dsp_send_frame`] builds `cmd` + `word2hex(addr 0x1B6DE)` [+ `word2hex(data 0x1B6E0)`] +
+`byte2hex(FUN_fffa0c01 sum)` [`dsp_sum8`] + CR and sends it with `FUN_fffb1ab4` [`sci4_send`] (SCI4), then starts timer 3 (6 ticks). Flags 0x1C5E (write
+pending) and 0x1C5F (read pending) allow one frame in flight. `FUN_fffa0ad6` [`dsp_check_reply`] takes the reply: for `r` it checks the 5-char
+checksum (`FUN_fffa0c2e` [`dsp_reply_sum_ok`]), for `w` it expects 0x06. On timeout it drops the pending flag, so a lost frame is not retried
+directly; the setter sends it again on its next pass because the shadow still differs **[inference]**. `FUN_fffa037a` [`dsp_shadow_store`] stores
 the confirmed value in a shadow table at 0x1B634.. (one slot per register, not linear in the register number). Each setter
-compares its new value with the shadow and sends at most one frame per pass of `FUN_fff9d1b9` **[fact]**. While the radio is in
+compares its new value with the shadow and sends at most one frame per pass of `FUN_fff9d1b9` [`dsp_link_poll`] **[fact]**. While the radio is in
 state 3 or 8 (0x20B18), regs 1–4 are read in rotation every 20 ticks (timer 0xB) **[fact]**.
 
 **CAT access [fact]:** the service CAT commands `SPDRaaaa;` / `SPDWaaaavvvv;` (`cat_SP_dev4_reg` 0xFFFA4E8F →
-`dev4_reg_access` 0xFFF9D8A4) send the same `r`/`w` frames, so they read and write **this register file** directly.
+`dsp_reg_access` 0xFFF9D8A4, the current Ghidra name; earlier drafts called it `dev4_reg_access`) send the same `r`/`w` frames, so they read and write **this register file** directly.
 `docs/cat-commands.md` calls the SCI4 device "unknown"; it is the IFDSP. `SPDW` changes DSP parameters live and must not be
 sent to the radio without the owner's approval.
 
@@ -361,7 +364,9 @@ So the codec is used as a line-level stereo ADC/DAC (line outputs only, no headp
 ## Findings in short
 
 1. The console is the MAIN↔IFDSP control link; machine mode is a strict 7/11-char frame protocol with an 8-bit ASCII sum **[fact]**.
-2. The **register map** has about 110 live registers. MAIN writes 72 registers (0x06–0x68 and 0x400B–0x4026), reads 0–4 **[fact]**.
+2. The **register map** lists **113 registers** (0x0000–0x4026, not counting the zero-only block 0x2000–0x200F and the two capture blocks
+   0x7000/0x7800); for 98 of them the scan found a MAIN, M33 or HiFi4 access, the other 15 only have a default **[fact: count of the table, T19h]**.
+   (This line used to say "about 110 live registers".) MAIN writes 72 registers (0x06–0x68 and 0x400B–0x4026), reads 0–4 **[fact]**.
    Several are now identified by their MAIN formulas: reg 6 demod class, TX parametric EQ 0x25–0x2D, RX EQ 0x48–0x50,
    reg 4 CW zero-in offset, regs 1–3 squelch/meter levels **[inference]**.
 3. The CAT service commands `SPDR`/`SPDW` give raw access to this register file **[fact]**.

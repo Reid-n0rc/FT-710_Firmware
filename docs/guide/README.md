@@ -1924,8 +1924,8 @@ Noise blanker, noise reduction, AGC and the demodulators themselves are not yet 
 
 ![The register file drawn as a bar with bands: status, mode, transmit and receive settings, DSP load meter, DSP-internal constants and capture blocks, plus a USB example](img/07-ifdsp-register-map.svg)
 
-*Figure 7.4 — The IF DSP register file at a glance (not to scale). About 110 registers are live; the rest of the 32K words
-are unused.*
+*Figure 7.4 — The IF DSP register file at a glance (not to scale). 113 registers are listed, and the scan found code using 98 of them; the rest of
+the 32K words are unused.*
 
 Every IF DSP setting is one 16-bit word in the register file. When you turn a knob or change a menu item, MAIN works out
 the new register value, compares it with the value it last sent, and if it differs sends one frame to the M33 console:
@@ -2114,7 +2114,7 @@ IF DSP reference pages:
 - [IF DSP overview](../code/ifdsp/README.md): block diagram, boot flow, memory map, key numbers.
 - [Control link](../code/ifdsp/control-link.md): console grammar, the full register map, the codec set-up table.
   Functions: `console_rx_char` 0x00081430, `regfile_write` 0x00080C4C, `aic3204_init` 0x00080BD0,
-  `sct0_pwm_callback` 0x00081164. MAIN side: frame builder `FUN_fffa0b4c`, `SPDR`/`SPDW` via `cat_SP_dev4_reg`
+  `sct0_pwm_callback` 0x00081164. MAIN side: frame builder `dsp_send_frame` 0xFFFA0B4C, `SPDR`/`SPDW` via `cat_SP_dev4_reg`
   0xFFFA4E8F.
 - [IPC](../code/ifdsp/ipc.md): MU flags, SEMA42 gate 0, the idle rpmsg-lite link (shared memory 0x20020000, endpoints
   0x28 and 0x1E). M33 `app_main` 0x0008106C, DSP `Thread_Ipc_entry` 0x0021C3B4.
