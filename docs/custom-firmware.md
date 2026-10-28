@@ -41,7 +41,7 @@ flowchart LR
 
 - **MAIN** is reflashed by DISPLAY through the Renesas serial boot mode over SCI1, using `RX_UPDATE`/`RX_RESET`
   [inference, high; T02, `update_main_cpu` 0x2010EA90, T11].
-- **DISPLAY** updates itself by writing the other bank (running bank 1 → bank 2 at 0x18A00000, else bank 1 at 0x18400000; `display_flash_write_bank` 0x2015F1F0, display/update.md §6) and picks the bank at
+- **DISPLAY** updates itself by writing the other bank (running bank 1 → bank 2 at 0x18A00000, else bank 1 at 0x18400000; `fwobj_display_run` 0x201607E8, display/update.md §6; corrected by T19h: this line used to name 0x2015F1F0 `display_flash_write_bank`, but 0x2015F1F0 is `fwdbg_verify_bank1`, the `fw1chk` debug verifier, §9/§10) and picks the bank at
   boot (`boot_select_bank` 0x20100ABC) [fact, T06]. `loader_selfinstall` 0x20110F0C rewrites the loader region
   (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11].
 - **IFDSP** update: `dsp_isp_program` (`FUN_2010b81c`) on DISPLAY sends `F1 02` to MAIN, then NXP MCU-bootloader packets
@@ -51,7 +51,7 @@ flowchart LR
 - **SDR** [fact for the DISPLAY side, T11c section 8; MAIN side T10c]: DISPLAY sends `F1 01` to MAIN, and MAIN starts its
   SDR bridge (DSP_RESET low, **`SDR_UPDATE` low**, reg 0x37 = 0xBCC5) and relays DISPLAY's `FD 00` / `FE 00` register frames
   to the FPGA over UART5. The bitstream itself goes from DISPLAY over **RSPI2, switched to master** (about 2 MHz on P8_3..P8_6,
-  the pins that normally carry the scope stream into the FPGA's FFT port), in 536 blocks of 4 KiB with a CRC-16 read back
+  the pins that normally carry the scope stream into the FPGA's FFT port), in 536 blocks of 4 KiB plus the 4 KiB header block (537 writes) with a CRC-16 read back
   from FPGA reg 0x33. Blocks go to flash 0x240000 + n·0x1000; the 4 KiB header (CRC-32/BZIP2 word) is written last at
   0x480000. At the end, `F1 81` makes MAIN pulse `SDR_RESET` with `SDR_UPDATE` high. **The FPGA fabric writes its own config
   flash**: the module pin labelled `WP` (J2002 pin 53, `SDR_UPDATE`) is held low during the update, so it acts as an
@@ -108,7 +108,7 @@ flowchart LR
    - Per image: **MAIN** S-records need valid record checksums, and every area is read back and compared (the
      option-setting area is read but not compared). **DISPLAY** file size ≥ 0x242 and the decoded count must equal
      size − 0x240; there is no limit against the 6 MiB bank. **IFDSP** erase region is fixed at 0x08000000 + 0xA0000.
-     **SDR** file size must be exactly 0x43075A (4 392 794) bytes, written as 536 blocks of 4 KiB.
+     **SDR** file size must be exactly 0x43075A (4 392 794) bytes, written as 536 blocks of 4 KiB plus a 4 KiB header block.
    - Boot never checks an image CRC: a DISPLAY bank flag `{0x11111111, len ≠ 0}` is enough (`boot_select_bank` 0x20100ABC).
 
    `python3 -I tools/sfl_encode.py --check FILE.SFL` tests all of these (plus our own size limits) on a finished file.

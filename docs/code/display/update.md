@@ -18,7 +18,7 @@ Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidr
 | Header: 9 × 64-byte blocks read; the tag line (block 8) must be exactly 64 chars with no NUL; it is split on spaces; the **3rd token** parsed as hex (≤ 8 digits) must equal the salted CRC-32 of bytes 0x240..EOF | `sfl_read_header` 0x20114CA0, `sfl_crc` 0x20114A64 | [fact]. The **tag (`MC`/`PC`/`ID`/`SR`) and the length field are not checked**. Only the CRC matters ("Ready" vs "(Broken file)") |
 | Comment box: not checked, except block 3 (`[PRODUCT NAME]`) in the DISPLAY file: `" : "` followed by `"#UP0    "` turns the update into a **loader** write — only when F1 is held on a USB keyboard | `fwobj_display_run` 0x201607E8 (*name*), `DAT_20800181` | [fact] (F1 = HID usage 0x3A) |
 | Version: shown, and rows whose file version is higher than the installed one (from MAIN's 0x60 status frame) are pre-marked; any "Ready" row can be ticked | `fwupdate_menu_screen` 0x2015A500 (*name*), format `%04X` | [fact for the pre-mark]; downgrades are allowed **[inference]** (only the Ready bit gates the tick box, `FUN_2015a910`) |
-| **SDR**: SFL file size must be exactly **0x43075A = 4 392 794** bytes; 536 blocks of 4 KiB are written | `fwobj_sdr_run` 0x201602AC, `sdr_flash_write` 0x20110AB8 | [fact]. A custom bitstream must be padded/fitted to the same size |
+| **SDR**: SFL file size must be exactly **0x43075A = 4 392 794** bytes; 536 bitstream blocks of 4 KiB are written, then the 4 KiB header block (537 block writes) | `fwobj_sdr_run` 0x201602AC, `sdr_flash_write` 0x20110AB8 | [fact]. A custom bitstream must be padded/fitted to the same size |
 | **DISPLAY**: file size ≥ 0x242; decoded byte count must equal size − 0x240; no upper limit vs. the 6 MiB bank | `fwobj_display_run` | [fact]. A payload over 6 MiB would run into the next region **[inference]** |
 | **IFDSP**: erase region fixed at 0x08000000 + 0xA0000 (640 KiB) | `dsp_isp_erase_region` 0x2010B0F4 | [fact]. A larger image would be written into unerased flash **[inference]** |
 | **MAIN**: S-records must have valid record checksums; each area is written and **read back and compared** | `srec_parse_line` 0x2010E670, `rx_boot_verify_areas` 0x2010BCA0 | [fact]. Option-setting area (type `0`) is read back but not compared |
@@ -63,8 +63,8 @@ the DISPLAY bank flag stores a second CRC-32 over the **decoded** bytes (section
 |---|---|---|---|---|---|
 | 0 | MAIN (`FT-710_MAIN_V`) | `fwobj_main_ctor` | 0x20428088 | `fwobj_main_run` | `rx_boot_program` |
 | 1 | DISPLAY (`FT-710_DISPLAY_V`) | `fwobj_display_ctor` | 0x204280A0 | `fwobj_display_run` | itself (SPI flash) |
-| 2 | IFDSP (`FT-710_IFDSP_V`, label "DSP") | `fwobj_ifdsp_ctor`(…,1)` | 0x20428094 | `fwobj_ifdsp_run` | `dsp_isp_program` |
-| 3 | SDR (`FT-710_SDR_V`) | `fwobj_sdr_ctor`(…,1)` | 0x20428070 | `fwobj_sdr_run` | `sdr_flash_write` |
+| 2 | IFDSP (`FT-710_IFDSP_V`, label "DSP") | `fwobj_ifdsp_ctor(…, 1)` | 0x20428094 | `fwobj_ifdsp_run` | `dsp_isp_program` |
+| 3 | SDR (`FT-710_SDR_V`) | `fwobj_sdr_ctor(…, 1)` | 0x20428070 | `fwobj_sdr_run` | `sdr_flash_write` |
 
 Return codes of `run`: 0 OK, 1 cannot open, 2 bad header/CRC (check mode), 3 write failed **[fact]**.
 
@@ -104,7 +104,7 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
   `YAESU FT-710 BOOT LOADER V01-02`, boot-info word 0 = 0xBBBB and word +8 stays 2, so a DISPLAY update then goes to the **loader**
   region (section 6). Otherwise word +8 is reset to 1 and it is a normal update screen **[fact]**. Which physical key is line 6 is for T11f.
 - **MAIN asks for update mode**: at power-on `opening_check_main` reads MAIN's 0x60 status frame; if byte 1 has 0xF0 set it opens
-  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set`, `fw_installed_versions_set`:
+  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set`:
   BE16 at +0, +2, +4, +10 → 0x208F4BF4..0x208F4BFA) **[fact]**.
 - **MAIN not answering** (`DAT_2045005c` set, `mainlink_got_esc`): `fwupdate_screen` 0x201322B4, the 2-step recovery screen. It requires
   both the MAIN and the DISPLAY files to be Ready ("MAIN FIRMWARE FILE [ OK ]", "DISPLAY FIRMWARE FILE"), then runs MAIN first
@@ -112,7 +112,7 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
 
 ## 5. MAIN update (RX651 serial boot mode)
 
-DISPLAY drives `RX_RESET` (P7_10, `gpio_rx_reset`, 0 = reset asserted) and `RX_UPDATE` (P4_3, `gpio_rx_update_b` `gpio_rx_update_b`,
+DISPLAY drives `RX_RESET` (P7_10, `gpio_rx_reset`, 0 = reset asserted) and `RX_UPDATE` (P4_3, `gpio_rx_update_b`,
 high = boot mode, hardware.md p17), and talks over SCIF5, the normal MAIN-link UART wired to the RX651 SCI1 (hardware.md) **[fact for the
 code, inference for the nets]**. The commands follow the Renesas RX "SOD 01 / 81" boot protocol: `01 LNH LNL CMD data SUM 03`, replies
 start `81`, data packets end in `17` (more) or `03` (last) **[fact for the bytes; command meanings fact: RX651 HWM r01uh0590 §59.13 pp2577–2612, T18]**.
@@ -166,7 +166,7 @@ Flag record (20 bytes) **[fact]**: `+0 0x11111111`, `+4 length`, `+8 0`, `+0xC 0
 64 KiB blocks; `spiflash_write` (0x20103DD0) writes and then compares a checksum of the data with the XIP window 0x18000000 + offset
 **[fact]**.
 
-### Write sequence (`fwobj_display_run`, `fwobj_display_run`)
+### Write sequence (`fwobj_display_run`)
 
 ```mermaid
 sequenceDiagram
@@ -239,7 +239,7 @@ This resolves the T13 question. **Control goes through MAIN, the bitstream goes 
 - Register writes: `FD 00` + ASCII `"%04X%04X"` (reg, value) + 8-bit sum = 11 bytes; reads: `FE 00` + `"%04X"` + sum = 7 bytes. The reply is
   `06`, or a frame with `}` and 4 ASCII hex digits (`sdr_relay_xfer`, `sdr_reg_write`, `sdr_reg_read`) **[fact]**. These are MAIN's
   `FD 00` / `FE 00` bridge frames.
-- Data: each 4 KiB block goes over **RSPI channel 2** (`sdr_spi_master_write` → `rspi_write`(2, buf, 0x1000, 0xFF)`) **[fact]**. T11d found that
+- Data: each 4 KiB block goes over **RSPI channel 2** (`sdr_spi_master_write` → `rspi_write(2, buf, 0x1000, 0xFF)`) **[fact]**. T11d found that
   RSPI2 is switched to master at about 2 MHz on P8_3..P8_6, the pins that carry the scope stream into the FPGA's FFT port.
 
 FPGA registers used **[fact for the accesses, inference for the names]**:
@@ -269,14 +269,16 @@ sequenceDiagram
     D->>M: FE 0033 -> CRC-16, compare with own CRC
     F->>Q: erase / program [inference]
   end
-  D->>F: header block last, at block 0x240 (address 0x480000)
+  D->>F: header block last, block index 0x240, i.e. address 0x240000 + 0x240 × 0x1000 = 0x480000
   D->>M: F1 81 (end bridge)
   M->>F: SDR_RESET pulse with SDR_UPDATE high (T10c)
 ```
 
 Block data is the decoded hex text converted to binary (`hex_to_bin`), CRC-16 reflected 0xA001 with init and xorout 0xFFFF
 (`crc16_a001`, table 0x208D9560) **[fact]**. The bitstream proper (file binary 0x1000..) is written from flash address 0x240000, and the
-4 KiB header (the CRC-32/BZIP2 word plus 0xFF) is written last at 0x480000 **[fact for the addresses sent]**. So the update writes a second
+4 KiB header (the CRC-32/BZIP2 word plus 0xFF) is written last at 0x480000 **[fact for the addresses sent]**: `sdr_spi_xfer_block`
+0x20110834 sends address 0x240000 + index × 0x1000, `sdr_flash_write` 0x20110AB8 calls it for indexes 0..0x217 (536 blocks) and then
+once with index 0x240 for the header, so 537 blocks are written in all (wording clarified by T19h). So the update writes a second
 image slot and commits it with the header at the end; an interrupted update leaves no valid header **[inference]**. Whether the FPGA
 reads 0x240000 directly or through a multiboot/golden image at 0 (T08 saw the sync at 0x1030 for flash 0) is open **[guess]**.
 
@@ -288,7 +290,7 @@ programming logic / bridge mode) **[inference]**. Whether it also reaches the fl
 ## 9. Hidden debug commands (USB keyboard)
 
 All of these run from `hid_chain1_dispatch`, which is only called when `debug_enabled()` sees 0xA0B9C8E7 at 0x20450000; in V01-08 that
-word is never set (T11a, README). Status is shown on the **keyboard LEDs** (`kbd_led_status` `kbd_led_status`) **[fact]**.
+word is never set (T11a, README). Status is shown on the **keyboard LEDs** (`kbd_led_status`) **[fact]**.
 
 | Command(s) | Handler → worker | What it does | Live in V01-08? |
 |---|---|---|---|
@@ -296,7 +298,7 @@ word is never set (T11a, README). Status is shown on the **keyboard LEDs** (`kbd
 | `fw1chk` | → `fwdbg_verify_bank1` (really `fwdbg_verify_bank1`) | compares `I:\AH076H_DISPLAY.bin` with bank 1, repeats forever | yes, after unlock |
 | `up0` | → `update_display_self` | raw `I:\AH068_DISPLAY_Loader.bin` to flash 0, no flag | yes, after unlock |
 | `up1` / `up2` | → `update_display_self` | raw `I:\AH076H_DISPLAY.bin` to bank 1 / bank 2, erases both flags first, then writes the target flag | yes, after unlock |
-| `uptest` / `uptest2` | `uptest_line` → `update_main_cpu` | loads `I:\AH076H_HEW.mot` / `AH068H_HEW.mot`, toggles RX_RESET / RX_UPDATE, then calls `uptest_program_stub` `uptest_program_stub`, which does nothing and returns 0 | no: the programmer is a stub [fact]; `uptest2` sets flag 2 but the task waits for pattern 1 **[inference]** |
+| `uptest` / `uptest2` | `uptest_line` → `update_main_cpu` | loads `I:\AH076H_HEW.mot` / `AH068H_HEW.mot`, toggles RX_RESET / RX_UPDATE, then calls `uptest_program_stub`, which does nothing and returns 0 | no: the programmer is a stub [fact]; `uptest2` sets flag 2 but the task waits for pattern 1 **[inference]** |
 | `mrst` | `uptest_line` | pulses MAIN reset | yes |
 | `rf0` / `rf1` | `uptest_line` | toggle 0x20800194 / 0x20800198, read nowhere else | no effect |
 | `dsp1up`..`dsp3up`, `/32`, `/9` variants | `dsp_debug_cmd` → `update_dsp` | raw `I:\AH076H_IFDSP.dat`, `I:\rom_writer.dat`, `I:\AH068_AFDSP_V0000.dat` via the IFDSP ISP writer | no: `dspup_init` has **no caller** (Ghidra xrefs) [fact] |

@@ -1119,8 +1119,8 @@ Instead, the FPGA's own logic writes it *(inference)*:
   open.
 - The data goes over the SPI pins that normally carry the spectrum-scope stream into the FPGA. During the update the DISPLAY
   switches that port to master mode.
-- The bitstream itself goes to flash address 0x240000 and up, 0x1000 bytes apart. The 4 KiB header with the CRC-32/BZIP2 is
-  written **last**, at 0x480000. So an update that is cut off leaves no valid header *(inference)*.
+- The bitstream itself goes to flash address 0x240000 and up, 0x1000 bytes apart, 536 blocks in all. The 4 KiB header with the
+  CRC-32/BZIP2 is written **last**, as a 537th block at 0x480000. So an update that is cut off leaves no valid header *(inference)*.
 - At the end, `F1 81` tells MAIN to restart the FPGA with `SDR_UPDATE` high again.
 
 Because the pin labelled `WP` (write protect) on the SDR module is held low during the update, it acts as an "update mode"
