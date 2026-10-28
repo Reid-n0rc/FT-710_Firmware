@@ -125,6 +125,8 @@ start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as
   `tools/display_assets.py`; formats in [code/display/gui.md](code/display/gui.md#asset-formats).
 - **0x20427ED4–0x204286A0:** UI and update-screen strings (`YAESU FT-710 BOOT LOADER V01-02`, `INSERT FIRMWARE SD CARD.`, …).
 - `.rodata` is a non-executable block, and the `DisplayReport.java` check finds 1 stray instruction there (at 0x20165178) and none elsewhere.
+  That instruction is a linker long-branch veneer, Thumb `b.w 0x20155D0A`, reached from `beq.w` at 0x20100C7E (T22b) **[fact]**:
+  the code really ends at 0x2016517C.
 
 ## MAIN (MC image, `FT-710_MAIN_V0112.SFL`) — T05
 

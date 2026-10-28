@@ -1,0 +1,306 @@
+addr	side	class	verdict	detail	rizin	rea
+20100000	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources dataptr,vector; own refs dataptr_literal	y	y
+20100004	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+20100008	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+2010000c	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+20100010	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+20100014	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+20100018	own_only	in_ghidra_body	same_code	IRQ vector `b 0x201001d8`; Ghidra function 0x20100014 = reserved-vector nop falling into it	-	-
+2010001c	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources vector; own refs none	-	-
+20100050	own_only	in_ghidra_body	own_wrong	literal 0x20100230 = 0x20100050 is used in arithmetic (load-offset check in reset code), not a code pointer	-	-
+20103a58	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20103a4c is 12 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20104184	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2010727c	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20107d8c (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2010dcc0	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 2010dcbc is 4 B earlier; own sources has_prologue,prologue; own refs none	-	-
+2010ec4c	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 2010ec44 is 8 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20110c44	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20110c3c is 8 B earlier; own sources has_prologue,prologue; own refs none	-	-
+201120f8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	-
+20112184	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20112180 is 4 B earlier; own sources has_prologue,prologue; own refs none	-	-
+2011493c	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20114938 is 4 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20116b0c	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20116b00 is 12 B earlier; own sources has_prologue,prologue; own refs none	-	-
+201170cc	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 201170c8 is 4 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20117a68	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20132b94 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20117f3c	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20132b58 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2011a20c	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2011a394 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2011b374	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2011b498 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20120bf0	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20120be4 is 12 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20120de0	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20123ec4	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201244d8 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012b1bc	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012b2a8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012b5b8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012b708	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012bb34	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2012bc30	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012bd00	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012be28	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012bf84	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012c0d8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012c1b4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012c598	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012e3e0 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2012cc08	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012cf30 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20130c4c	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c50	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c54	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c58	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c5c	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c60	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c64	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c68	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20130c6c	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20131b40	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2012470c (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20133010	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20133018	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20133014 is 4 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20138578	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20139d04	own_only	in_ghidra_body	own_wrong	value 0x20139d04 in .data 0x2042bbac points after a bl inside FUN_20139c68 (pop of a frame it did not push): not an entry	-	-
+2013b534	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013b920	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013b924	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013e50c	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2013e71c (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2013e6a0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2013e71c (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2013e6d0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2013e71c (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2013f9f4	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013f9f8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013fde0	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources dataptr; own refs dataptr_rodata	-	-
+2013fe64	own_only	ghidra_code_a32_no_function	ghidra_miss	in entries_display.tsv and pointed to by .data words 0x204205e8/0x204205f4, but no function in the canonical project (one-instruction `b 0x2014030c`)	y	-
+2013ffe0	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2013ffe8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20140020	own_only	in_ghidra_body	own_wrong	values at 0x20328c0c/0x20328ca0 equal a mid-body address of FUN_2013ffec (straight-line ldr/orr/str): not an entry	-	-
+20140470	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources dataptr; own refs dataptr_rodata	y	-
+20148e80	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201490f8 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2014afc8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2014b1dc	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2014c4b8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+2014c9b8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2014ca08 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2014e04c	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 2014e044 is 8 B earlier; own sources has_prologue,prologue; own refs none	-	-
+20155d0a	own_only	in_ghidra_body/unreferenced_prologue	ghidra_miss_tail_only	Thumb push prologue; only reached from FUN_20100c7c 0x20100C7E `beq.w 0x20165178` (cmp r1,#0x66) through the Thumb veneer 0x20165178 `b.w 0x20155d0a`; Ghidra merged it into FUN_20100c7c	y	-
+20156584	own_only	in_ghidra_body/unreferenced_prologue	own_wrong	`push {r0,lr}` straight after `push {r0-r3}` inside the NORTi stub FUN_2015655c: falls in, not an entry	-	-
+20157238	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d40 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2015730c	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120da4 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+201573bc	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d60 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20157444	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d90 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20157544	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d84 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20157594	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d38 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2015760c	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20157604 is 8 B earlier; own sources has_prologue,prologue; own refs none	-	-
+201578c4	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+201578fc	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201342dc (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20157a00	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134318 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20157bd0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134480 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20158010	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134348 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+201580e0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134328 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20158330	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201342b4 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20158598	own_only	own_late_start/unreferenced_prologue	ghidra_right	ghidra entry 20158590 is 8 B earlier; own sources has_prologue,prologue; own refs none	-	-
+201595f0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201322bc (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20159714	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201322b4 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2015afb0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201322ac (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2015cb20	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2015c048 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+2015d048	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2015c750 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+2015fa88	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20113f60 (code_a32); own sources has_prologue,prologue; own refs jump	-	y
+20160f10	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349b4 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20160ff0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349a8 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+201610cc	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349cc (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+201613a0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134990 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20161660	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 2013499c (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20161964	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349fc (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20161be4	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134984 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20161fb8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134978 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20162330	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349c0 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20162584	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349d8 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20162734	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 201349e4 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20162954	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134a08 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20162d68	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20158544 (code_a32); own sources has_prologue,prologue; own refs jump	y	-
+20163370	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20120d98 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+201634f0	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134434 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+20163664	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20163838	own_only	in_ghidra_body/unreferenced_prologue	ghidra_miss_tail_only	Thumb push prologue; only reached from FUN_20107ee0 0x20107EF0 `b 0x20163830` through the A32 veneer 0x20163830 (`adr ip,0x20163839; bx ip`); Ghidra merged it into FUN_20107ee0	-	-
+2016385a	own_only	ghidra_undefined_no_function	ghidra_miss	.data word 0x2042807c = 0x2016385b: Thumb entry is 0x2016385a (movs r0,#0; push {r4,lr}; bl 0x20155fde; pop); entries_display.tsv has 0x2016385c	-	-
+201641e8	own_only	in_ghidra_body/tail_target	ghidra_miss_tail_only	body of 20134074 (code_a32); own sources has_prologue,prologue; own refs jump	-	-
+201646b8	own_only	ghidra_function_not_in_tsv	same_code	a Ghidra function starts here but functions.tsv omits it (thunk); own sources call; own refs call	y	y
+20164c34	own_only	ghidra_undefined_no_function/unreferenced_prologue	own_wrong	own push-prologue seed on the 128-byte descending byte table 0x20164c00 (b6 b5 b4 ...)	-	-
+201004a4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100a88	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100bfc	canonical_only	own_ref_data	ghidra_right	own refs none	-	-
+20100c60	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+20100dc0	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100e8c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100efc	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100f20	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100f44	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100f64	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20100fd8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101c44	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101cd4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101d40	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101d50	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101d60	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101da4	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20101f00	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20101f74	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2010233c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20102348	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20102478	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201024b4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201025b4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20102698	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20103a4c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20103bd4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2010414c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20104154	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+20107ee0	canonical_only	own_unknown	ghidra_right	own refs none	-	y
+2010dcbc	canonical_only	own_ref_data	ghidra_right	own refs none	-	y
+2010ec44	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+2010ede8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+2010eeb4	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20110c3c	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+20110e68	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201111ac	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201113f8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201120c0	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20112144	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20112158	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20112180	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20112288	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20112f34	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20113d6c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20113e48	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20114848	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20114850	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20114938	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20114fc4	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2011503c	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201166cc	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20116728	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20116b00	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+20116bb0	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20116bfc	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201170c8	canonical_only	own_unknown	ghidra_right	task "root": T_CTSK descriptor word 0x20165a4c = 0x201170c8; own starts 4 B later at the push	y	-
+20117254	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20117728	canonical_only	own_unknown	ghidra_right	own refs none	y	y
+201179bc	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2011834c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011a110	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+2011a288	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2011d59c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011d5dc	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011d684	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011d77c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011d860	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2011d8b4	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+2011dea0	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011f494	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2011f840	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2011f89c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20120be4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20120c04	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20120c54	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20120cb0	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20120d70	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20120dd4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20121980	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20125e74	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201322c8	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201322d8	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132ee8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20132f10	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f18	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f20	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f28	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f30	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f38	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132f54	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20132fd8	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20132fe0	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20133014	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+2013433c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20134390	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20134424	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201344a8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20135448	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201354bc	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20137904	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20137af8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20137d78	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20137e34	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20137e40	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20137e88	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20138438	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs cjump	-	y
+201384d4	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+2013857c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20138660	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20138668	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20139344	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+20139590	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20139624	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20139654	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201396ac	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201396b0	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+2013aaa0	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013ad50	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013ad58	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013b34c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013b540	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013b544	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2013fde4	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2013ffdc	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20140148	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+2014030c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+20140b9c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+201447f4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20148bb0	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20148c5c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2014af64	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+2014c474	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+2014d2cc	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2014d600	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2014d8b4	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2014d8c8	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2014e044	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20151520	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20152d28	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+2015441c	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20154524	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20154538	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20154580	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+201545c8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+201545dc	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2015460c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+201546bc	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20154710	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20154a00	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+201550d4	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20155254	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2015526c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+201552b8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20155f68	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20155fa2	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20156310	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201563ec	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+2015655c	canonical_only	own_ref_data	ghidra_right	own refs none	y	-
+201567d0	canonical_only	inside_own_code/no_own_ref	ghidra_right	own refs none	-	-
+201568b0	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+201568b4	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+20157194	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+201571e8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+201572f8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+201575f8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20157604	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+20158590	canonical_only	own_unknown	ghidra_right	own refs none	y	-
+2015a8dc	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2015d2a8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+2015fd60	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2015fd64	canonical_only	own_unknown	ghidra_right	own refs none	-	-
+2015ff64	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20160278	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20162d48	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	y
+20162dd8	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	y
+20162f10	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2016385c	canonical_only	inside_own_code/no_own_ref	ghidra_miss	entry 2 B late (see 0x2016385a); nothing references 0x2016385c	y	-
+20164298	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2016437c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+2016440c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+201644ac	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	-	-
+20164654	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+2016466c	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20164674	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+20164714	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs jump	y	-
+201649d8	canonical_only	own_start_not_reached	own_wrong	own reached it (41 calls) but flagged a Thumb overlap after decoding 0x20164994.. through undefined encodings (0x201649d0/d6); Ghidra right	y	y
+20164f98	canonical_only	inside_own_code/own_jump_target	ghidra_right	own refs cjump,jump	-	-

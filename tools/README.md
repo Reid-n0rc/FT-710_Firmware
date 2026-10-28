@@ -46,6 +46,8 @@ Conventions:
 |---|---|---|---|
 | `display_assets.py` | Lists the GUI sprites, fonts, tables and strings (lists only; `--render` is an ASCII preview) | DISPLAY image → stdout | T11e |
 | `t11g_pinmux_decode.py` | Decodes `pinmux_init` 0x20101190 into a port/pin → mode table (needs `arm-none-eabi-objdump`) | DISPLAY image → TSV on stdout | T11g |
+| `arm_recover.py` | Independent code recovery for DISPLAY, stdlib only (no Ghidra/rizin/T21e input): own A32 + Thumb-2 control-flow decoder (ARM ARM DDI 0406C), recursive descent from the vectors, BL/BLX targets, code pointers in .rodata/.data and push prologues; the four jump-table idioms (A32 `ldr pc,[pc,rX,lsl #2]`, `add pc,pc,rX,lsl #2`, Thumb `tbb/tbh`, `add pc` after `adr`) with the bound read from the `cmp` and the condition (`--bound SITE=N` for guards it cannot read, e.g. `20164f68=4`); byte classes for everything else. `--objdump` cross-checks every recovered instruction | DISPLAY image → `OUTDIR/{jumptables,starts,coverage,xrefs,conflicts}.tsv`, `summary.txt` | T22b |
+| `arm_recover_compare.py` | Lines up `arm_recover.py`, rizin (`aflj`, `afbj` with `switch_op`) and Ghidra (`functions.tsv`, `DisplayJumpTables.java check`, `CodeUnitMap.java`) results: per-site case counts, function-start membership per analyser pair, own-vs-Ghidra differences by class, bytes no analyser covers | outputs above → `jt_compare.tsv`, `starts_compare.tsv`, `starts_diff.tsv`, `gaps_compare.tsv`, `compare.txt` | T22b |
 
 ## IFDSP (NXP i.MX RT685: Cortex-M33 + HiFi4)
 
@@ -141,6 +143,7 @@ the exact command line for every program.
 | `DumpListing.java` | postScript | Disassembly (optionally the decompile) for addresses or functions | any | T05 |
 | `ListingExport.java` | postScript | Every instruction as TSV (addr, len, bytes, mnemonic, operands, function) plus undefined holes in function bodies; prints Error bookmarks (input of `rx_compare.py`) | any | T21c |
 | `PcodeDump.java` | postScript | Raw p-code of the instruction at each given address (bundle-parallel semantics check) | any | T22c |
+| `CodeUnitMap.java` | postScript | Read-only: code (A32/T32 by `TMode`) / data / undefined runs of an address range with the containing function, as TSV (`arm_recover_compare.py --ghidra-map`) | DISPLAY | T22b |
 | `PeriphRefs.java` | postScript | Functions touching given peripheral register ranges | any | T05 |
 | `ProgramStats.java` | postScript | Function/instruction/data coverage and the largest undefined ROM gaps | any | T05 |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | postScript | References to addresses/ranges with the containing function (one would do; the others are kept for the task logs) | MAIN | T10 |
