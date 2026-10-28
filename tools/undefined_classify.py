@@ -3,6 +3,7 @@
 
 usage: python3 -I tools/undefined_classify.py <image> <ranges.tsv> <out.tsv> [--build DIR] [--flix FILE] [--jobs N]
        python3 -I tools/undefined_classify.py summary <out.tsv>...
+       python3 -I tools/undefined_classify.py compare <out.tsv> <other.tsv> <start-col> <length-col> <class-col> [a:b,...]
 
 <image>      main | display | m33 | hifi4 (memory maps from docs/memory-maps.md, built into IMAGES below)
 <ranges.tsv> tools/ghidra/UndefinedRanges.java output: the only input taken from Ghidra is the list of ranges
@@ -48,18 +49,22 @@ IMAGES = {
                  # const data (strings, menu and key tables, vectors, DTBL/BTBL, .data images) ends at 0xFFF8EEA4
                  code_area=[(0xFFF8EEA4, 0xFFFFFFFF)]),
     'display': dict(arch='arm', segs=[(0x20100000, 'FT-710_DISPLAY_V0108.bin', 0, 0x65178)],
+                    scan=[(0x20100000, 'FT-710_DISPLAY_V0108.bin', 0, 0)],
                     ptr=[(0x18000000, 0x18FFFFFF), (0x20100000, 0x2042BC0F), (0x2042BC10, 0x209FFFFF),
                          (0x3FE00000, 0x3FFFFFFF), (0x60000000, 0x609FFFFF), (0xE8000000, 0xE82FFFFF),
                          (0xFCFE0000, 0xFCFFFFFF)],
                     linear=[(0x20100000, 0x20165178)], thumb=True),
     'm33': dict(arch='thumb', segs=[(0x08000000, 'FT-710_IFDSP_V0101.bin', 0, 0x1844),
                                     (0x00080000, 'FT-710_IFDSP_V0101.bin', 0x5D428, 0x7EBC)],
+                scan=[(0x08000000, 'FT-710_IFDSP_V0101.bin', 0, 0x5D428), (0x00080000, 'FT-710_IFDSP_V0101.bin', 0x5D428, 0)],
                 ptr=[(0x08000000, 0x080652EB), (0x00080000, 0x000A1EF7), (0x20000000, 0x2047FFFF),
                      (0x40000000, 0x4015FFFF), (0xE0000000, 0xE00FFFFF)],
                 linear=[(0x08000000, 0x08001844), (0x00080000, 0x00087EBC)], thumb=True,
                 known=[(0x08000400, 0x080005FF, 'struct', 'FlexSPI NOR config block (FCFB tag at 0x08000400), docs/memory-maps.md')]),
     'hifi4': dict(arch='xtensa', segs=[(0x24020000, 'FT-710_IFDSP_V0101_hifi4.bin', 0x20000, 0x644),
                                        (0x00200000, 'FT-710_IFDSP_V0101_hifi4.bin', 0x20644, 0x36800)],
+                  scan=[(0x24000000, 'FT-710_IFDSP_V0101_hifi4.bin', 0, 0x20644),
+                        (0x00200000, 'FT-710_IFDSP_V0101_hifi4.bin', 0x20644, 0x383B4)],
                   ptr=[(0x00200000, 0x002FFFFF), (0x24000000, 0x2402FFFF), (0x20020000, 0x2007FFFF),
                        (0x40000000, 0x4015FFFF)],
                   linear=[], thumb=False),
@@ -73,6 +78,13 @@ FLOW = {
     'arm': re.compile(_ARMFLOW),
     'thumb': re.compile(_ARMFLOW + r'|^(cbz|cbnz|tbb|tbh)\b'),
     'xtensa': re.compile(r'(^|[{;]\s*)(ret|retw|ret\.n|retw\.n|j|jx|call\d+|callx\d+|b[a-z]+[iz]?(\.n)?|loop\w*|rfe|rfi|rfwo|rfwu)\s'),
+}
+_UARM = r'^(b|bx)(\.[nw])?\s|^(pop|ldm\w*)(\.[nw])?\s.*\bpc\b'
+UNCOND = {  # unconditional end of a function or block
+    'rx': re.compile(r'^(rts|rtsd|rte|rtfi|bra|jmp)(\.[absw])?\b'),
+    'arm': re.compile(_UARM),
+    'thumb': re.compile(_UARM),
+    'xtensa': re.compile(r'(^|[{;]\s*)(ret|retw|ret\.n|retw\.n|j|jx|rfe|rfi)\s'),
 }
 NOPS = {'nop', 'nop.w', 'nop.n', 'nop.s'}
 INS = re.compile(r'^\s*([0-9a-f]+):\s+((?:[0-9a-f]{2,8} ?)+)\s*\t(.*)$')
@@ -90,7 +102,12 @@ class Image:
                 fh.seek(off)
                 self.mem.append((a, fh.read(n)))
         self.words = {}  # pointer value -> list of image addresses holding it (4-aligned)
-        for a, b in self.mem:
+        scan = []  # the whole file(s), not only the executable blocks, so .rodata/.data pointers count too
+        for a, f, off, n in self.cfg.get('scan', self.cfg['segs']):
+            with open(os.path.join(build, f), 'rb') as fh:
+                fh.seek(off)
+                scan.append((a, fh.read(n) if n else fh.read()))
+        for a, b in scan:
             for i in range(0, len(b) - 3, 4 if self.arch != 'rx' else 1):
                 v = struct.unpack_from('<I', b, i)[0]
                 if self.is_ptr(v):
@@ -111,6 +128,9 @@ class Image:
             atexit.register(os.unlink, path)
             self._tmp[base] = path
         return self._tmp[base]
+
+    def in_exec(self, v):
+        return any(base <= (v & ~1) < base + len(b) for base, b in self.mem)
 
     def read(self, a, n):
         for base, b in self.mem:
@@ -134,11 +154,11 @@ def objdump(img, start, end, thumb=False):
     path = img.tmpfile(base)
     if True:
         if img.arch == 'rx':
-            cmd = [RX_OD, '-D', '-b', 'binary', '-m', 'rx']
+            cmd = [RX_OD, '-D', '-z', '-b', 'binary', '-m', 'rx']
         elif img.arch == 'xtensa':
-            cmd = [XT_OD, '-D', '-b', 'binary', '-m', 'xtensa']
+            cmd = [XT_OD, '-D', '-z', '-b', 'binary', '-m', 'xtensa']
         else:
-            cmd = [ARM_OD, '-D', '-b', 'binary', '-m', 'arm'] + (['-M', 'force-thumb'] if thumb else [])
+            cmd = [ARM_OD, '-D', '-z', '-b', 'binary', '-m', 'arm'] + (['-M', 'force-thumb'] if thumb else [])
         cmd += ['--adjust-vma=0x%x' % base, '--start-address=0x%x' % start, '--stop-address=0x%x' % end, path]
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=600).stdout
     res = []
@@ -256,6 +276,7 @@ def monotonic_runs(b):
     """Byte tables: >= 16 bytes that only go up or only go down (e.g. gamma/log curves)."""
     out, i, n = [], 0, len(b)
     while i < n - 1:
+        nxt = i + 1
         for sign in (1, -1):
             j = i + 1
             while j < n and (b[j] - b[j - 1]) * sign >= 0:
@@ -263,9 +284,14 @@ def monotonic_runs(b):
             if j - i >= 16 and len(set(b[i:j])) >= 8:
                 out.append((i, j - i, 'int_table', 'u8 %s %d..%d, %d bytes' % (
                     'rising' if sign > 0 else 'falling', b[i], b[j - 1], j - i)))
-                i = j - 1
+                nxt = j
                 break
-        i += 1
+            # a later start inside this run cannot reach further, except from its last plateau
+            p = j - 1
+            while p > i and b[p - 1] == b[p]:
+                p -= 1
+            nxt = max(nxt, p)
+        i = nxt
     return out
 
 
@@ -290,13 +316,32 @@ def ctype_runs(b):
     return out
 
 
+def monotonic_words(b, a):
+    """>= 8 aligned u32 words that strictly rise or fall (e.g. reciprocal tables 2^32/n)."""
+    out, k, n = [], (-a) % 4, len(b)
+    ws = [struct.unpack_from('<I', b, o)[0] for o in range(k, n - 3, 4)]
+    i = 0
+    while i < len(ws) - 1:
+        for sign in (1, -1):
+            j = i + 1
+            while j < len(ws) and (ws[j] - ws[j - 1]) * sign > 0:
+                j += 1
+            if j - i >= 8:
+                out.append((k + 4 * i, 4 * (j - i), 'int_table', 'u32 %s 0x%08x..0x%08x, %d words' % (
+                    'rising' if sign > 0 else 'falling', ws[i], ws[j - 1], j - i)))
+                i = j - 1
+                break
+        i += 1
+    return out
+
+
 def fill_runs(b):
     out, i, n = [], 0, len(b)
     while i < n:
         j = i
         while j < n and b[j] == b[i]:
             j += 1
-        if j - i >= 4:
+        if j - i >= (4 if b[i] in (0, 0xFF) else 8):
             out.append((i, j - i, 'padding', '%d x 0x%02X' % (j - i, b[i])))
         i = j
     return out
@@ -333,7 +378,9 @@ class Classifier:
             covered = sum(x[1] for x in ins)
             bad = [x for x in ins if BAD.search(x[2])]
             flow = [x for x in ins if FLOW[self.img.arch].search(x[2])]
-            ok = not bad and covered == n
+            # a direct branch/call to an address outside the executable blocks means this is not code
+            wild = [x for x in ins if TARGET.match(x[2]) and not self.img.in_exec(int(TARGET.match(x[2]).group(1), 16))]
+            ok = not bad and not wild and covered == n
             cand = (ok, len(flow), th, ins, bad)
             if best is None or cand[:2] > best[:2]:
                 best = cand
@@ -342,14 +389,16 @@ class Classifier:
         ok, nflow, th, ins, bad = best
         if all(x[2].split()[0] in NOPS for x in ins):
             return 'padding', '%d nop instructions' % len(ins)
-        if nflow == 0:
-            return None
         ev, reached = self.inbound(a, n)
+        thumb_entry = self.img.cfg['thumb'] and (a | 1) in self.img.words and (a | 1) != a
+        if nflow == 0 and not thumb_entry:  # without flow, only a Thumb function pointer (address | 1) makes it code
+            return None
         mode = {'rx': 'RX', 'xtensa': 'Xtensa', 'thumb': 'T32', 'arm': 'T32' if th else 'A32'}[self.img.arch]
         last = ins[-1][2].split('\t')[0] if ins else ''
         e = '%s %d insns, %d flow, last %s' % (mode, len(ins), nflow, last)
         cls = 'code' if (n >= 8 or reached) else 'code_weak'
-        return cls, '; '.join([e] + ev)
+        lastflow = bool(UNCOND[self.img.arch].search(ins[-1][2]))
+        return cls, '; '.join([e] + ev), lastflow
 
     def table(self, b, a):
         n = len(b)
@@ -451,7 +500,7 @@ class Classifier:
         if t:
             return [(0, n, t[0], t[1])]
         ev, _ = self.inbound(a, n)
-        if n >= 8 and (a in self.img.words or a + ((-a) % 4) in self.img.words):
+        if a in self.img.words or (n >= 8 and a + ((-a) % 4) in self.img.words):
             return [(0, n, 'data_ref', '; '.join(['pointer to start; entropy %.2f bits/byte, %s' % (
                 entropy(b), b[:8].hex())] + ev))]
         return [(0, n, 'unknown', '; '.join(['entropy %.2f bits/byte, %s' % (entropy(b), b[:8].hex())] + ev))]
@@ -496,10 +545,16 @@ class Classifier:
         t = len(b)
         while t > 0 and b[t - 1] in (0, 0xFF):
             t -= 1
-        if t >= 4:
+        #    or ends in a control-flow instruction (a function tail such as Thumb "bx lr" = "pG")
+        long_fill = any(r[1] >= 16 for r in fill_runs(b))  # zero/fill blocks decode as code too
+        for t in ([len(b), t] if t != len(b) else [t]):
+            if t < 2 or long_fill:
+                continue
             c = self.try_code(a, t)
-            if c and c[0] == 'code' and self.inbound(a, t)[1]:
-                res = [(0, t, 'code', c[1])]
+            if not c or c[0] == 'padding':
+                continue
+            if self.inbound(a, t)[1] or c[2]:
+                res = [(0, t, c[0], c[1] + ('' if self.inbound(a, t)[1] else '; ends in a control-flow instruction'))]
                 if t < len(b):
                     res.append((t, len(b) - t, 'padding' if len(b) - t >= 4 else 'padding_short', 'after code'))
                 return res
@@ -511,7 +566,7 @@ class Classifier:
                     (i, len(b) - i, 'string_ascii', repr(core.decode('latin-1')) + ' between NULs')]
         th = self.img.cfg['thumb']
         pointed = lambda x: x in self.img.words or (th and (x | 1) in self.img.words)
-        marks = sorted(ctype_runs(b) + fill_runs(b) + monotonic_runs(b) + find_strings(b, a, pointed),
+        marks = sorted(ctype_runs(b) + monotonic_words(b, a) + fill_runs(b) + monotonic_runs(b) + find_strings(b, a, pointed),
                        key=lambda m: (m[0], -m[1]))
         # drop overlaps (fill wins over strings that start inside it, first come first served)
         sel, end = [], 0
@@ -533,6 +588,8 @@ class Classifier:
 def main(argv):
     if argv and argv[0] == 'summary':
         return summary(argv[1:])
+    if argv and argv[0] == 'compare':
+        return compare(argv[1:])
     args, opts = [], {}
     it = iter(argv)
     for x in it:
@@ -574,6 +631,51 @@ def main(argv):
                     a, e, a + off, a + off + ln - 1, ln, nonff, k, ev.replace('\t', ' '),
                     r.get('refs_in', ''), r.get('prev', ''), r.get('next', '')))
     return summary([opath])
+
+
+FAMILY = {'code': 'code', 'code_weak': 'code', 'padding': 'pad', 'padding_short': 'pad', 'string_ascii': 'string',
+          'string_utf16': 'string', 'string_sjis': 'string', 'pointer': 'ptr', 'int_table': 'data',
+          'float_table': 'data', 'struct_table': 'data', 'struct': 'data', 'data_ref': 'data', 'unknown': 'unknown'}
+
+
+def compare(argv):
+    """compare <out.tsv> <other.tsv> <start-col> <length-col> <class-col> [map=a:b,c:d]
+    Byte-level agreement (non-0xFF bytes) between this script's classes (as families) and another classification,
+    e.g. T21e's frags_def.tsv (columns start, length, class). Prints a matrix and the disagreeing runs."""
+    out, other, sc, lc, cc = argv[:5]
+    cmap = dict(x.split(':') for x in argv[5].split(',')) if len(argv) > 5 else {}
+    mine = {}
+    with open(out) as f:
+        f.readline()
+        for line in f:
+            c = line.rstrip('\n').split('\t')
+            for x in range(int(c[2], 16), int(c[3], 16) + 1):
+                mine[x] = FAMILY.get(c[6], c[6])
+    mat, dis = {}, []
+    with open(other) as f:
+        hdr = f.readline().rstrip('\n').split('\t')
+        for line in f:
+            r = dict(zip(hdr, line.rstrip('\n').split('\t')))
+            s, n, k = int(r[sc], 16), int(r[lc], 0), r[cc]
+            k = cmap.get(k, k)
+            got = {}
+            for x in range(s, s + n):
+                if x in mine:
+                    got[mine[x]] = got.get(mine[x], 0) + 1
+            for m, cnt in got.items():
+                mat[(k, m)] = mat.get((k, m), 0) + cnt
+            if set(got) - {k}:
+                dis.append((s, n, k, got))
+    ks = sorted({a for a, _ in mat})
+    ms = sorted({b for _, b in mat})
+    print('other\\mine\t' + '\t'.join(ms))
+    for k in ks:
+        print(k + '\t' + '\t'.join(str(mat.get((k, m), 0)) for m in ms))
+    agree = sum(v for (a, b), v in mat.items() if a == b)
+    print('agree %d of %d bytes' % (agree, sum(mat.values())))
+    for s, n, k, got in dis:
+        print('  0x%08x %4d %-7s mine %s' % (s, n, k, ', '.join('%s %d' % kv for kv in sorted(got.items()))))
+    return 0
 
 
 def summary(paths):
