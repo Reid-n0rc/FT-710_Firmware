@@ -2,7 +2,7 @@
 
 This guide explains how the FT-710's firmware works, in plain language and with pictures. It is for anyone who knows what a CPU, a serial
 port and an FPGA are and wants to understand what goes on inside the radio. You don't need to read code. It summarises a long
-reverse-engineering project on the owner's own radio. The detailed reference pages, with every address and every piece of evidence, live
+reverse-engineering project. The detailed reference pages, with every address and every piece of evidence, live
 elsewhere in this repository, and each chapter ends with links to them.
 
 ![Overview of the FT-710: four chips (DISPLAY, MAIN, SDR FPGA, IF DSP) inside the case, the links between them, the antenna, the speaker and the USB connection to a PC, with badges showing which chapter covers each part](img/00-guide-map.svg)
@@ -1343,7 +1343,7 @@ has 10 more, searched only when the main table has no match. Together that is 11
   - **`XT` (TX clarifier) is not implemented.** The mnemonic is in the table, but there is no code behind it, so it always answers
     `?;`. The clarifier's TX switch is reached through `CF` instead.
   - **`VE` (firmware version) needs a parameter.** The current manual writes it `VEP1;`, with P1 = 0 MAIN, 1 DISPLAY, 2 SDR,
-    3 DSP. The old form from manual 2211-A, `VE;`, answers `?;`. On the owner's radio `VE0;` answers `VE00112;` (V01-12), as the code predicted *(fact, radio check 2026-10-28)*.
+    3 DSP. The old form from manual 2211-A, `VE;`, answers `?;`. On the tested radio `VE0;` answers `VE00112;` (V01-12), as the code predicted *(fact, radio check 2026-10-28)*.
 - **22 undocumented:** `BY E8 E9 ED EK EM EN EU EO FD FS JP KT PE QS RC RD RS RT RU SP ZZ`. `EO` was still in the older
   manual 2211-A and was dropped in 2306-C. Section 5.5 sorts them by risk.
 
@@ -1433,7 +1433,7 @@ For what these hooks could mean for experiments, see [chapter 8](#8-hacking-and-
 
 All of the above comes from reading the firmware. The project's rule is that nothing is sent to the radio without the owner's
 explicit approval, each time. The CAT analysis proposed a short list of **read-only** commands as safe first tests, and on
-2026-10-28 the owner approved them and ran them on their FT-710:
+2026-10-28 they were run on an FT-710:
 
 - `VE0;` to `VE3;`: the four firmware versions.
 - `JP0710;`: the region code (the read form only).
@@ -2363,7 +2363,7 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
 
 *Figure 8.7 — The open decisions. Only the read-only CAT tests have been done.*
 
-- **Read-only CAT tests (done, 2026-10-28).** The owner ran `VE0;`…`VE3;`, `JP0710;`, `FD000;`…`FD002;`, `PE000;`,
+- **Read-only CAT tests (done, 2026-10-28).** Sent `VE0;`…`VE3;`, `JP0710;`, `FD000;`…`FD002;`, `PE000;`,
   `SPIR;` and `E8;`; every answer matched the analysis ([section 5.7](#57-the-read-only-tests-on-the-radio)). The set forms
   that rewrite EEPROM, calibration or the region were not sent and stay off the list.
 - **Debug console, step 0 or step 1.** The JTAG RAM write first (needs a probe), or straight to the SD-card patch.
@@ -2373,7 +2373,7 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
 - **A possible US 60 m transmit check.** In MAIN's US band table the 60 m channels are single-frequency rows, and the
   compare can never match a row whose start equals its end. So, as written, 60 m transmit in the US table appears
   never to be allowed *(inference)*. Only an on-air test would confirm it, and that keys the transmitter. It needs a radio with
-  the US code 0x315B; the owner's radio has the wide code 0x50E2, whose table covers 60 m as an ordinary range.
+  the US code 0x315B; the tested radio has the wide code 0x50E2, whose table covers 60 m as an ordinary range.
 
 Some open questions don't need the radio at all. Two of the project's open contradictions, how `PS1;` powers the radio
 on and the 12 kHz vs 16 kHz audio rate, are code questions. A third, the SDR flash layout (the FPGA boots from flash
@@ -2397,8 +2397,8 @@ would still need approval.
    and test DISPLAY changes in RAM before you flash them.
 
 Two more rules sit beside these. Transmit-path changes (DSP, FPGA TX path, power or band limits) must keep the radio
-within the owner's licence conditions (FCC Part 97 in the US). Patched and decoded images come from Yaesu's
-copyrighted firmware: they stay on the owner's machine and radio and are never committed or published.
+within the operator's licence conditions (FCC Part 97 in the US). Patched and decoded images come from Yaesu's
+copyrighted firmware: they stay local and are never committed or published.
 
 ### 8.8 Where to look
 

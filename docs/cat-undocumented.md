@@ -43,7 +43,7 @@ shows "FILE LOADED" and restarts itself. This is the safest way back after any r
 
 ### 2.2 CAT: identity, region code and the `E8` memory image
 
-`tools/cat_backup.py` sends only reads: `ID;`, `VE0;`..`VE3;`, `JP0710;` and `E8;`. These were tested on the owner's radio
+`tools/cat_backup.py` sends only reads: `ID;`, `VE0;`..`VE3;`, `JP0710;` and `E8;`. These were tested on a radio
 (2026-10-28).
 
 ```

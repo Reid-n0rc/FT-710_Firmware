@@ -1,6 +1,6 @@
 # Custom firmware and HDL: feasibility
 
-Status of what stands between the owner and running their own code (or FPGA logic) on their own FT-710. This page
+Status of what stands between a user and running their own code (or FPGA logic) on an FT-710. This page
 collects the evidence from T02–T13. Work items are tracked as **T15** (FPGA netlist recovery) and **T16** (custom-firmware
 groundwork) on the [task board](tasks/README.md).
 
@@ -142,9 +142,9 @@ measure the pitch before ordering [inference].
 hardware.md describes, and J1005 as `SB20-08WS` P0090615, a wire-to-board connector that the exploded view (p5) shows as a
 cable connection ("Connect to J1005 on the MAIN-Unit"). T10c read J1004 on the p17 symbol. So the RX-CPU DEBUG header is
 **J1004**, and hardware.md's "J1005" is a mislabel [fact for the parts list and p5; T16].
-- **Transmit-path changes** (DSP, FPGA TX path, power or band limits) must keep emissions compliant with the owner's licence
+- **Transmit-path changes** (DSP, FPGA TX path, power or band limits) must keep emissions compliant with the operator's licence
   conditions (FCC Part 97 in the US).
-- **Distribution:** the repo is private and derived from Yaesu's copyrighted firmware. Patches stay for the owner's radio;
+- **Distribution:** the repo is private and derived from Yaesu's copyrighted firmware. Patches are for personal use;
   never publish decoded images, patched images or decompiled code.
 
 ## Next steps

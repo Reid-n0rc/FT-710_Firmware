@@ -6,7 +6,7 @@ Instructions for any agent (Claude, Codex, etc.) working in this repo. `CLAUDE.m
 
 1. Understand how the owner's Yaesu FT-710 works internally.
 2. Find undocumented remote-control (CAT) commands and settings.
-3. Eventually build custom firmware that extends the owner's own radio.
+3. Eventually build custom firmware that extends the radio.
 
 The first milestone is decoding every firmware image and committing Ghidra's decompiled output to `decomp/`.
 

@@ -47,5 +47,5 @@
 <text x="480" y="470" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >Today all 116 bytes are 0xFF: nothing protected, serial programming allowed, ID = 16 × 0xFF.</text>
 <text x="480" y="488" font-size="14" text-anchor="middle" font-weight="normal" fill="#1F2937" >The encoder always writes this area, so a patched MAIN image must copy it unchanged.</text>
 <text x="480" y="524" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >Also: transmit changes must stay within the licence (FCC Part 97 in the US),</text>
-<text x="480" y="544" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >and patched or decoded images never leave the owner's radio and private repo.</text>
+<text x="480" y="544" font-size="14" text-anchor="middle" font-weight="normal" fill="#374151" >and patched or decoded images stay local and are never published.</text>
 </svg>

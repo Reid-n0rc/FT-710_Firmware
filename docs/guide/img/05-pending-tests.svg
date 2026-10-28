@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="622" viewBox="0 0 960 622" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
-  <title>The read-only CAT tests, run on the owner's radio on 2026-10-28; every answer matched the firmware analysis</title>
+  <title>The read-only CAT tests, run on a radio on 2026-10-28; every answer matched the firmware analysis</title>
   <rect width="960" height="622" fill="#FFFFFF"/>
-  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">Read-only tests, run on the owner's radio (2026-10-28)</text>
+  <text x="480" y="34" font-size="20" font-weight="bold" text-anchor="middle">Read-only tests, run on a radio (2026-10-28)</text>
   <text x="480" y="58" font-size="15" text-anchor="middle" fill="#6B7280">Every answer had the format the firmware analysis predicted. Nothing was written.</text>
   <text x="40" y="94" font-size="15" font-weight="bold">send (read only)</text>
   <text x="290" y="94" font-size="15" font-weight="bold">radio answered</text>

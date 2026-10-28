@@ -1,6 +1,6 @@
 # Firmware patches (T16)
 
-Patches for the owner's own FT-710, built from the shipped 2024-02 package. **Nothing here has been flashed.** Every
+Patches for the FT-710, built from the shipped 2024-02 package. **Nothing here has been flashed.** Every
 write to the radio (SD-card update, JTAG load, RAM write) needs the owner's explicit approval each time (AGENTS.md).
 Patched images and SFL files are firmware-derived: they live only in `build/` (gitignored) and are never committed or
 published. This page records only the few patched bytes.

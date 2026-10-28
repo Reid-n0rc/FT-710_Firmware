@@ -23,7 +23,7 @@
   <main>
     <div class="wrap hero">
       <h1>Inside the FT-710's firmware</h1>
-      <p class="lead">An independent study of the Yaesu FT-710 HF/50/70 MHz transceiver, done on the owner's own radio. All four
+      <p class="lead">An independent study of the Yaesu FT-710 HF/50/70 MHz transceiver. All four
         firmware images are decoded and decompiled, every CAT command is mapped, and the whole radio is explained in an illustrated guide.</p>
       <div class="buttons">
         <a class="btn primary" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki">Read the illustrated guide</a>
@@ -42,6 +42,12 @@
         <p class="sub">What the project has found so far. Each card links to the chapter of the guide that explains it.</p>
         <div class="cards">
           <div class="card">
+            <h3>114 CAT commands, 22 undocumented</h3>
+            <p>MAIN firmware V01-12 accepts 114 commands; the manual lists 92. The rest range from harmless reads to factory reset,
+              region change and raw EEPROM access.</p>
+            <a class="more" href="cat-undocumented.html">Risks and backups →</a>
+          </div>
+          <div class="card">
             <h3>Four computers, not one</h3>
             <p>A Renesas RX651 (MAIN) runs the radio and CAT, a Renesas RZ/A1H (DISPLAY) runs the touch screen and SD card, an NXP
               i.MX RT685 does the audio DSP, and a Xilinx Artix-7 FPGA does the SDR.</p>
@@ -52,12 +58,6 @@
             <p>Each <code>.SFL</code> update file is scrambled with a fixed 43-byte key and protected by a salted CRC-32. All four now
               decode cleanly, and the DISPLAY CPU is shown to program every other chip.</p>
             <a class="more" href="https://github.com/Reid-n0rc/FT-710_Firmware/wiki/04-Firmware-files-and-how-updates-work">Chapter 4 →</a>
-          </div>
-          <div class="card">
-            <h3>114 CAT commands, 22 undocumented</h3>
-            <p>MAIN firmware V01-12 accepts 114 commands; the manual lists 92. The rest range from harmless reads to factory reset,
-              region change and raw EEPROM access.</p>
-            <a class="more" href="cat-undocumented.html">Risks and backups →</a>
           </div>
           <div class="card">
             <h3>How the chips talk</h3>
@@ -103,7 +103,7 @@
               does for each documented command, and where it differs from the manual.</p>
             <div class="callout ok">
               <strong>Checked on a real radio</strong>
-              On 2026-10-28 the read-only commands were sent to the owner's FT-710. Every reply matched the decoded format, and the
+              On 2026-10-28 the read-only commands were sent to an FT-710. Every reply matched the decoded format, and the
               radio reported the firmware versions this project analyses (MAIN V01-12, DISPLAY V01-08, SDR V01-04, DSP V01-01).
               <a href="cat-commands.html#radio-checks">Results</a>.
             </div>
@@ -139,7 +139,7 @@
 
   <footer>
     <div class="wrap">
-      An independent study of the owner's own radio. Not affiliated with or endorsed by Yaesu; FT-710 and Yaesu are trademarks of their owner.
+      An independent study. Not affiliated with or endorsed by Yaesu; FT-710 and Yaesu are trademarks of their owner.
       Nothing here is advice to modify a radio. You are responsible for your equipment and for transmitting only where your licence allows.
     </div>
   </footer>

@@ -190,7 +190,7 @@ with a number in 0x75..0x84 (the 60 m channel memories). That test is only reach
 **60 m TX in the US table and the 4630 kHz point appear never to be allowed** **[inference; needs an on-air check, which must not be done
 without the owner's approval]**.
 
-**The owner's radio** answers `JP0710;` with code **0x50E2** (2026-10-28) **[fact, radio]**: the wide table (1.8–30, 50–54,
+**The tested radio** answers `JP0710;` with code **0x50E2** (2026-10-28) **[fact, radio]**: the wide table (1.8–30, 50–54,
 70–70.5 MHz), the strap partner of the US code 0x315B. So the 60 m single-point question above cannot be tested on this radio as it is;
 it would need a US-code (0x315B) radio. Its EEPROM header stamp (2023-06-26 08:56) dates the last `JP` set, and `JP` cannot store
 0x50E2 (it remaps it to 0x315B), so the wide code most likely came from the strap swap below on a later reset **[inference]**.

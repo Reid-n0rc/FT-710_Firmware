@@ -311,9 +311,9 @@ See the differences table. `VE0;` → `VE00112;` on V01-12 (chars 1, 2, 4, 5 of 
 - **Risk: high.** It changes the radio's region, and with it, likely, its legal TX coverage. It also resets the settings.
 
 <a id="radio-checks"></a>
-## Read-only checks on the owner's radio (2026-10-28)
+## Read-only checks on a radio (2026-10-28)
 
-The owner approved the read-only list of issue #98 and ran it on their FT-710 over USB (CP210x enhanced port, 38400 baud). Nothing
+The read-only list of issue #98 was run on an FT-710 over USB (CP210x enhanced port, 38400 baud). Nothing
 was written: no set form, no `SPSR`/`SPDR`. `ID;` answered `ID0800;`.
 
 | Sent | Reply | Result |

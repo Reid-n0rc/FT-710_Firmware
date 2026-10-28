@@ -6,8 +6,8 @@ Usage: python3 -I tools/cat_backup.py PORT [OUTDIR] [--baud 38400] [--eeprom]
 
 PORT is the CP210x "Enhanced" COM port (macOS /dev/cu.SLAB_USBtoUART, Linux /dev/ttyUSB0, Windows COMx); the baud rate must match
 menu CAT-1 RATE. OUTDIR defaults to backup-<date>. Everything this script sends is a read:
-  ID; VE0;..VE3; JP0710;      -> info.txt                (tested on the owner's radio, 2026-10-28)
-  E8;                         -> e8_raw.bin, e8_plain.bin (tested on the owner's radio, 2026-10-28)
+  ID; VE0;..VE3; JP0710;      -> info.txt                (tested on a radio, 2026-10-28)
+  E8;                         -> e8_raw.bin, e8_plain.bin (tested on a radio, 2026-10-28)
   SPR<aH><aL>\\0<sum>;         -> eeprom.bin, eeprom_missing.txt   only with --eeprom; NOT YET TESTED on a radio
 The E8 image holds the memory channels only (docs/code/main/eeprom.md). The EEPROM dump holds everything, including the
 calibration table (EEPROM 0x000A..0x010E) and the region code (0x010F), which nothing else can back up.
