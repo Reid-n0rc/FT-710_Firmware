@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Reset, power and update wires between the chips</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .w { font-size: 16px; font-weight: bold; font-family: DejaVu Sans Mono, monospace; }
+    .s { fill: #4B5563; }
+    .hd { font-size: 16px; font-weight: bold; fill: #FFFFFF; }
+  </style>
+  <rect width="960" height="560" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Control wires: who can reset whom</text>
+<rect x="20" y="60" width="296" height="420" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<rect x="20" y="60" width="296" height="44" rx="8" fill="#16A34A"/>
+<text x="168" y="88" text-anchor="middle" class="hd">DISPLAY → MAIN</text>
+<text x="170" y="128" text-anchor="middle" class="s">normal</text>
+<text x="256" y="128" text-anchor="middle" class="s">update</text>
+<text x="34" y="162" class="w">RX_PWR_ON</text>
+<rect x="138" y="142" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="144" y1="146" x2="196" y2="146" stroke="#1F2937" stroke-width="4"/>
+<text x="34" y="192">power latch: set high as soon</text>
+<text x="34" y="210">as the DISPLAY program starts</text>
+<text x="34" y="266" class="w">RX_RESET</text>
+<rect x="138" y="246" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="144" y1="250" x2="196" y2="250" stroke="#1F2937" stroke-width="4"/>
+<text x="34" y="296">low = MAIN held in reset;</text>
+<text x="34" y="314">pulsed to restart MAIN</text>
+<text x="34" y="370" class="w">RX_UPDATE</text>
+<rect x="138" y="350" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="144" y1="376" x2="196" y2="376" stroke="#1F2937" stroke-width="4"/>
+<rect x="224" y="350" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="230" y1="354" x2="282" y2="354" stroke="#DC2626" stroke-width="4"/>
+<text x="34" y="400">high at reset = RX651 starts in</text>
+<text x="34" y="418">its serial boot mode, so the</text>
+<text x="34" y="436">DISPLAY can rewrite MAIN</text>
+<rect x="332" y="60" width="296" height="420" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<rect x="332" y="60" width="296" height="44" rx="8" fill="#EA580C"/>
+<text x="480" y="88" text-anchor="middle" class="hd">MAIN → SDR module</text>
+<text x="482" y="128" text-anchor="middle" class="s">normal</text>
+<text x="568" y="128" text-anchor="middle" class="s">update</text>
+<text x="346" y="162" class="w">SDR_RESET</text>
+<rect x="450" y="142" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="456" y1="146" x2="508" y2="146" stroke="#1F2937" stroke-width="4"/>
+<text x="346" y="192">low = FPGA held in reset;</text>
+<text x="346" y="210">MAIN releases it at power-on,</text>
+<text x="346" y="228">then waits 1 s for it to load</text>
+<text x="346" y="284" class="w">SDR_UPDATE</text>
+<rect x="450" y="264" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="456" y1="268" x2="508" y2="268" stroke="#1F2937" stroke-width="4"/>
+<rect x="536" y="264" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="542" y1="290" x2="594" y2="290" stroke="#DC2626" stroke-width="4"/>
+<text x="346" y="314">low only during an SDR update;</text>
+<text x="346" y="332">the module pin is labelled WP,</text>
+<text x="346" y="350">but it acts as an update-mode</text>
+<text x="346" y="368">input (inference)</text>
+<rect x="644" y="60" width="296" height="420" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+<rect x="644" y="60" width="296" height="44" rx="8" fill="#9333EA"/>
+<text x="792" y="88" text-anchor="middle" class="hd">MAIN → IF DSP</text>
+<text x="794" y="128" text-anchor="middle" class="s">normal</text>
+<text x="880" y="128" text-anchor="middle" class="s">update</text>
+<text x="658" y="162" class="w">DSP_RESET</text>
+<rect x="762" y="142" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="768" y1="146" x2="820" y2="146" stroke="#1F2937" stroke-width="4"/>
+<rect x="848" y="142" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="854" y1="168" x2="906" y2="168" stroke="#DC2626" stroke-width="4"/>
+<text x="658" y="192">low = RT685 held in reset;</text>
+<text x="658" y="210">released once the FPGA is up,</text>
+<text x="658" y="228">held low during an SDR update</text>
+<text x="658" y="246">(probably as the FPGA clocks it)</text>
+<text x="658" y="302" class="w">DSP_UPDATE</text>
+<rect x="762" y="282" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="768" y1="308" x2="820" y2="308" stroke="#1F2937" stroke-width="4"/>
+<rect x="848" y="282" width="64" height="30" rx="4" fill="#F9FAFB" stroke="#D1D5DB"/>
+<line x1="854" y1="286" x2="906" y2="286" stroke="#DC2626" stroke-width="4"/>
+<text x="658" y="332">high at reset = RT685 ROM</text>
+<text x="658" y="350">serial update mode instead</text>
+<text x="658" y="368">of booting from its flash</text>
+<line x1="40" y1="514" x2="92" y2="514" stroke="#1F2937" stroke-width="4"/><text x="102" y="519">level in normal running</text>
+<line x1="340" y1="514" x2="392" y2="514" stroke="#DC2626" stroke-width="4"/><text x="402" y="519">level while that chip is being updated (chapter 4)</text>
+<text x="40" y="546" class="s">Only the DISPLAY drives MAIN's wires, and only MAIN drives the FPGA's and the DSP's.</text>
+</svg>

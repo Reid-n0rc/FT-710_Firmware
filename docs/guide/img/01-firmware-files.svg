@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Where each firmware file ends up</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+    .f { font-family: DejaVu Sans Mono, monospace; font-size: 14px; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .arr { stroke: #1F2937; stroke-width: 2; fill: none; marker-end: url(#ah); }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="500" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Four .SFL files: from the SD card to each chip</text>
+
+  <!-- SD card -->
+  <path d="M20 70 h230 l26 26 v360 h-256 z" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <g stroke="#6B7280" stroke-width="2"><line x1="44" y1="70" x2="44" y2="94"/><line x1="64" y1="70" x2="64" y2="94"/><line x1="84" y1="70" x2="84" y2="94"/><line x1="104" y1="70" x2="104" y2="94"/></g>
+  <text x="36" y="122" class="b">SD card</text>
+  <text x="36" y="142" class="s">folder I:\FT-710\</text>
+  <rect x="34" y="160" width="226" height="56" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="46" y="184" class="f">..._MAIN_V0112</text>
+  <text x="46" y="204" class="s">1.3 MB (S-records)</text>
+  <rect x="34" y="226" width="226" height="56" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="46" y="250" class="f">..._DISPLAY_V0108</text>
+  <text x="46" y="270" class="s">3.3 MB program</text>
+  <rect x="34" y="292" width="226" height="56" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="46" y="316" class="f">..._IFDSP_V0101</text>
+  <text x="46" y="336" class="s">415 KB program</text>
+  <rect x="34" y="358" width="226" height="56" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="46" y="382" class="f">..._SDR_V0104</text>
+  <text x="46" y="402" class="s">2.19 MB bitstream</text>
+  <text x="36" y="440" class="s">scrambled + CRC-checked</text>
+
+  <!-- DISPLAY -->
+  <rect x="300" y="200" width="180" height="96" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="3"/>
+  <text x="390" y="232" text-anchor="middle" class="b">DISPLAY</text>
+  <text x="390" y="252" text-anchor="middle">RZ/A1H</text>
+  <text x="390" y="274" text-anchor="middle" class="s">reads, unscrambles,</text>
+  <text x="390" y="290" text-anchor="middle" class="s">writes</text>
+  <path d="M262 248 H296" class="arr"/>
+
+  <!-- MAIN relay -->
+  <rect x="520" y="330" width="120" height="56" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="580" y="354" text-anchor="middle" class="b">MAIN</text>
+  <text x="580" y="374" text-anchor="middle" class="s">relays</text>
+
+  <!-- destinations -->
+  <rect x="680" y="70" width="260" height="76" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="694" y="96" class="b">RX651 internal flash</text>
+  <text x="694" y="116">512 KB, runs the MAIN code</text>
+  <text x="694" y="136" class="s">written by the chip's boot ROM</text>
+  <rect x="680" y="166" width="260" height="76" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="694" y="192" class="b">DISPLAY SPI flash</text>
+  <text x="694" y="212">16 MB, two program banks</text>
+  <text x="694" y="232" class="s">copied into RAM at boot</text>
+  <rect x="680" y="262" width="260" height="76" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="694" y="288" class="b">RT685 QSPI flash</text>
+  <text x="694" y="308">16 MB, code runs from it</text>
+  <text x="694" y="328" class="s">written by the RT685 boot ROM</text>
+  <rect x="680" y="358" width="260" height="76" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="694" y="384" class="b">SDR module flash</text>
+  <text x="694" y="404">FPGA loads it at power-on</text>
+  <text x="694" y="424" class="s">written by the FPGA (inference)</text>
+
+  <path d="M482 220 C 560 200, 600 110, 676 108" class="arr"/>
+  <path d="M482 236 C 560 230, 620 204, 676 204" class="arr"/>
+  <path d="M482 268 C 500 300, 505 340, 516 352" class="arr"/>
+  <path d="M642 350 C 660 330, 665 305, 676 300" class="arr"/>
+  <path d="M642 370 C 660 380, 665 396, 676 396" class="arr"/>
+  <path d="M440 298 C 450 450, 600 460, 676 420" class="arr" stroke-dasharray="6 4"/>
+  <text x="440" y="400" text-anchor="end" class="s">image data</text><text x="440" y="418" text-anchor="end" class="s">over SPI</text>
+  <text x="540" y="92" class="s">serial boot mode</text>
+  
+
+  <text x="20" y="492" class="s">The DISPLAY is the only chip with the SD card, so it runs every update. Chapter 4 has the details.</text>
+</svg>

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>What the PC sees on the FT-710 USB port</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+    .grey { fill: #F3F4F6; stroke: #6B7280; stroke-width: 2; }
+    .main { fill: #DBEAFE; stroke: #2563EB; stroke-width: 2; }
+    .disp { fill: #DCFCE7; stroke: #16A34A; stroke-width: 2; }
+    .ln { stroke: #1F2937; stroke-width: 2; fill: none; marker-end: url(#ah); }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1F2937"/></marker>
+  </defs>
+  <rect width="960" height="540" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">One USB cable, three devices</text>
+
+  <!-- PC laptop icon -->
+  <rect x="26" y="226" width="96" height="64" rx="6" fill="#F3F4F6" stroke="#1F2937" stroke-width="3"/>
+  <rect x="36" y="236" width="76" height="44" fill="#FFFFFF" stroke="#6B7280" stroke-width="1"/>
+  <path d="M14 296 H134 L126 306 H22 Z" fill="#6B7280"/>
+  <text x="74" y="330" text-anchor="middle" class="b">PC</text>
+  <!-- cable + USB-B plug -->
+  <path d="M134 270 H164" stroke="#1F2937" stroke-width="4"/>
+  <rect x="164" y="256" width="26" height="28" rx="3" fill="#1F2937"/>
+  <text x="177" y="244" text-anchor="middle" class="s">USB-B</text>
+  <path d="M190 270 H206" class="ln"/>
+
+  <!-- hub -->
+  <rect x="210" y="70" width="130" height="420" rx="8" class="grey"/>
+  <text x="275" y="250" text-anchor="middle" class="b">USB hub</text>
+  <text x="275" y="270" text-anchor="middle">4 ports</text>
+  <text x="275" y="290" text-anchor="middle" class="s">CY7C65631</text>
+  <text x="352" y="138" class="s">P1</text>
+  <text x="352" y="290" class="s">P2</text>
+  <text x="352" y="380" class="s">P3</text>
+  <text x="352" y="450" class="s">P4</text>
+
+  <!-- port 1 CP2105 -->
+  <path d="M340 150 H386" class="ln"/>
+  <rect x="390" y="94" width="160" height="112" rx="8" class="grey"/>
+  <text x="470" y="128" text-anchor="middle" class="b">CP2105</text>
+  <text x="470" y="150" text-anchor="middle">USB to two</text>
+  <text x="470" y="170" text-anchor="middle">serial ports</text>
+  <text x="470" y="192" text-anchor="middle" class="s">(two COM ports)</text>
+  <path d="M550 110 C 570 110, 575 84, 596 84" class="ln"/>
+  <path d="M550 150 H596" class="ln"/>
+  <path d="M550 190 C 570 190, 575 216, 596 216" class="ln"/>
+  <rect x="600" y="62" width="340" height="44" rx="8" class="main"/>
+  <text x="614" y="90">"Enhanced" port → MAIN CAT port 1</text>
+  <rect x="600" y="128" width="340" height="44" rx="8" class="main"/>
+  <text x="614" y="156">"Standard" port → MAIN CAT port 2</text>
+  <rect x="600" y="194" width="340" height="44" rx="8" class="main"/>
+  <text x="614" y="222">RTS / DTR lines → PTT or keying</text>
+
+  <!-- port 2 CM119B -->
+  <path d="M340 300 H386" class="ln"/>
+  <rect x="390" y="262" width="160" height="76" rx="8" class="grey"/>
+  <text x="470" y="292" text-anchor="middle" class="b">CM119B</text>
+  <text x="470" y="314" text-anchor="middle">USB sound card</text>
+  <path d="M550 300 H596" class="ln"/>
+  <rect x="600" y="262" width="340" height="76" rx="8" class="grey"/>
+  <text x="614" y="290">sound card for the PC; a menu</text>
+  <text x="614" y="312">setting picks it as TX audio</text>
+  <text x="614" y="330" class="s">analog wiring not traced</text>
+
+  <!-- port 3 FT4222H -->
+  <path d="M340 390 H386" class="ln"/>
+  <rect x="390" y="352" width="160" height="76" rx="8" class="grey"/>
+  <text x="470" y="382" text-anchor="middle" class="b">FT4222H</text>
+  <text x="470" y="404" text-anchor="middle">USB to SPI</text>
+  <path d="M550 390 H596" class="ln"/>
+  <rect x="600" y="352" width="340" height="76" rx="8" class="disp"/>
+  <text x="614" y="380">→ DISPLAY: 4 KB frames with the</text>
+  <text x="614" y="400">scope, audio scope and status</text>
+  <text x="614" y="418" class="s">off until a MAIN setting enables it</text>
+
+  <!-- port 4 -->
+  <path d="M340 460 H386" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="4 4"/>
+  <text x="394" y="465" class="s">not used</text>
+
+  <text x="20" y="522" class="s">Not on USB: a third CAT port (TUNER/LINEAR jack). The CPUs' own USB pins are not used for the PC.</text>
+</svg>

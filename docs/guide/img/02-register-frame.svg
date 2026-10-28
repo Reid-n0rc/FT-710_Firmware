@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Anatomy of the MAIN to FPGA and MAIN to DSP register frames</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .b { font-weight: bold; }
+    .s { fill: #4B5563; }
+    .ch { font-family: DejaVu Sans Mono, monospace; font-size: 22px; font-weight: bold; }
+    .hx { font-family: DejaVu Sans Mono, monospace; font-size: 14px; fill: #4B5563; }
+    .m { font-family: DejaVu Sans Mono, monospace; font-size: 14px; }
+  </style>
+  <rect width="960" height="640" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Register frames: plain ASCII you could type</text>
+<text x="40" y="78" class="b">1. MAIN asks the FPGA for register 0</text>
+<text x="40" y="116" class="b">MAIN →</text><text x="40" y="136" class="s">8 bytes</text>
+<rect x="150" y="90" width="56" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="178.0" y="123" text-anchor="middle" class="ch">r</text>
+<text x="178.0" y="160" text-anchor="middle" class="hx">72</text>
+<rect x="212" y="90" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="240.0" y="123" text-anchor="middle" class="ch">0</text>
+<text x="240.0" y="160" text-anchor="middle" class="hx">30</text>
+<rect x="274" y="90" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="302.0" y="123" text-anchor="middle" class="ch">0</text>
+<text x="302.0" y="160" text-anchor="middle" class="hx">30</text>
+<rect x="336" y="90" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="364.0" y="123" text-anchor="middle" class="ch">0</text>
+<text x="364.0" y="160" text-anchor="middle" class="hx">30</text>
+<rect x="398" y="90" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="426.0" y="123" text-anchor="middle" class="ch">0</text>
+<text x="426.0" y="160" text-anchor="middle" class="hx">30</text>
+<rect x="460" y="90" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="488.0" y="123" text-anchor="middle" class="ch">3</text>
+<text x="488.0" y="160" text-anchor="middle" class="hx">33</text>
+<rect x="522" y="90" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="550.0" y="123" text-anchor="middle" class="ch">2</text>
+<text x="550.0" y="160" text-anchor="middle" class="hx">32</text>
+<rect x="584" y="90" width="56" height="50" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="612.0" y="123" text-anchor="middle" class="b">CR</text>
+<text x="612.0" y="160" text-anchor="middle" class="hx">0D</text>
+<path d="M150 172 v6 H206 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="178.0" y="196" text-anchor="middle">read</text>
+<path d="M212 172 v6 H454 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="333.0" y="196" text-anchor="middle">register 0x0000</text>
+<path d="M460 172 v6 H578 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="519.0" y="196" text-anchor="middle">sum</text>
+<path d="M584 172 v6 H640 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="612.0" y="196" text-anchor="middle">end</text>
+<text x="40" y="246" class="b">← FPGA</text><text x="40" y="266" class="s">7 bytes</text>
+<rect x="150" y="220" width="56" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="178.0" y="253" text-anchor="middle" class="ch">r</text>
+<text x="178.0" y="290" text-anchor="middle" class="hx">72</text>
+<rect x="212" y="220" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="240.0" y="253" text-anchor="middle" class="ch">0</text>
+<text x="240.0" y="290" text-anchor="middle" class="hx">30</text>
+<rect x="274" y="220" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="302.0" y="253" text-anchor="middle" class="ch">1</text>
+<text x="302.0" y="290" text-anchor="middle" class="hx">31</text>
+<rect x="336" y="220" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="364.0" y="253" text-anchor="middle" class="ch">0</text>
+<text x="364.0" y="290" text-anchor="middle" class="hx">30</text>
+<rect x="398" y="220" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="426.0" y="253" text-anchor="middle" class="ch">4</text>
+<text x="426.0" y="290" text-anchor="middle" class="hx">34</text>
+<rect x="460" y="220" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="488.0" y="253" text-anchor="middle" class="ch">3</text>
+<text x="488.0" y="290" text-anchor="middle" class="hx">33</text>
+<rect x="522" y="220" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="550.0" y="253" text-anchor="middle" class="ch">7</text>
+<text x="550.0" y="290" text-anchor="middle" class="hx">37</text>
+<path d="M150 302 v6 H206 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="178.0" y="326" text-anchor="middle">echo</text>
+<path d="M212 302 v6 H454 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="333.0" y="326" text-anchor="middle">value 0x0104 = V01-04</text>
+<path d="M460 302 v6 H578 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="519.0" y="326" text-anchor="middle">sum</text>
+<text x="640" y="244" class="m">72+30+30+30+30 = 0x132 → 32</text>
+<text x="640" y="268" class="m">72+30+31+30+34 = 0x137 → 37</text>
+<text x="640" y="292" class="s">sum = low byte of all characters</text>
+<text x="640" y="310" class="s">before it, as two hex digits</text>
+<text x="40" y="378" class="b">2. MAIN sets register 0x22 (scope span) to 0x0064 = 100 kHz</text>
+<text x="40" y="416" class="b">MAIN →</text><text x="40" y="436" class="s">12 bytes</text>
+<rect x="150" y="390" width="56" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+<text x="178.0" y="423" text-anchor="middle" class="ch">w</text>
+<text x="178.0" y="460" text-anchor="middle" class="hx">77</text>
+<rect x="212" y="390" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="240.0" y="423" text-anchor="middle" class="ch">0</text>
+<text x="240.0" y="460" text-anchor="middle" class="hx">30</text>
+<rect x="274" y="390" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="302.0" y="423" text-anchor="middle" class="ch">0</text>
+<text x="302.0" y="460" text-anchor="middle" class="hx">30</text>
+<rect x="336" y="390" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="364.0" y="423" text-anchor="middle" class="ch">2</text>
+<text x="364.0" y="460" text-anchor="middle" class="hx">32</text>
+<rect x="398" y="390" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="426.0" y="423" text-anchor="middle" class="ch">2</text>
+<text x="426.0" y="460" text-anchor="middle" class="hx">32</text>
+<rect x="460" y="390" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="488.0" y="423" text-anchor="middle" class="ch">0</text>
+<text x="488.0" y="460" text-anchor="middle" class="hx">30</text>
+<rect x="522" y="390" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="550.0" y="423" text-anchor="middle" class="ch">0</text>
+<text x="550.0" y="460" text-anchor="middle" class="hx">30</text>
+<rect x="584" y="390" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="612.0" y="423" text-anchor="middle" class="ch">6</text>
+<text x="612.0" y="460" text-anchor="middle" class="hx">36</text>
+<rect x="646" y="390" width="56" height="50" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="674.0" y="423" text-anchor="middle" class="ch">4</text>
+<text x="674.0" y="460" text-anchor="middle" class="hx">34</text>
+<rect x="708" y="390" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="736.0" y="423" text-anchor="middle" class="ch">0</text>
+<text x="736.0" y="460" text-anchor="middle" class="hx">30</text>
+<rect x="770" y="390" width="56" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+<text x="798.0" y="423" text-anchor="middle" class="ch">5</text>
+<text x="798.0" y="460" text-anchor="middle" class="hx">35</text>
+<rect x="832" y="390" width="56" height="50" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="860.0" y="423" text-anchor="middle" class="b">CR</text>
+<text x="860.0" y="460" text-anchor="middle" class="hx">0D</text>
+<path d="M150 472 v6 H206 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="178.0" y="496" text-anchor="middle">write</text>
+<path d="M212 472 v6 H454 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="333.0" y="496" text-anchor="middle">register 0x0022</text>
+<path d="M460 472 v6 H702 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="581.0" y="496" text-anchor="middle">value 0x0064</text>
+<path d="M708 472 v6 H826 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="767.0" y="496" text-anchor="middle">sum</text>
+<path d="M832 472 v6 H888 v-6" stroke="#1F2937" stroke-width="2" fill="none"/>
+<text x="860.0" y="496" text-anchor="middle">end</text>
+<text x="40" y="546" class="b">← FPGA</text><text x="40" y="566" class="s">1 byte</text>
+<rect x="150" y="520" width="56" height="50" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><text x="178" y="553" text-anchor="middle" class="ch">06</text>
+<text x="222" y="542">ACK: done. A bad frame gets one byte "?" (0x3F) instead,</text>
+<text x="222" y="562">and a lost answer times out after 6 ms.</text>
+<text x="40" y="612" class="s">The DSP link uses the same r and w frames: its register 0 answers r010134 (value 0x0101 = V01-01).</text>
+</svg>

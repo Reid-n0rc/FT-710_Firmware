@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>The four brains of the FT-710</title>
+  <style>
+    text { fill: #1F2937; font-size: 14px; }
+    .h { font-size: 20px; font-weight: bold; }
+    .n { font-size: 18px; font-weight: bold; }
+    .s { fill: #4B5563; }
+    .f { font-family: DejaVu Sans Mono, monospace; font-size: 14px; }
+  </style>
+  <defs>
+    <g id="chip">
+      <rect x="0" y="0" width="34" height="34" rx="4" fill="#1F2937"/>
+      <g stroke="#1F2937" stroke-width="3">
+        <line x1="7" y1="-6" x2="7" y2="0"/><line x1="17" y1="-6" x2="17" y2="0"/><line x1="27" y1="-6" x2="27" y2="0"/>
+        <line x1="7" y1="34" x2="7" y2="40"/><line x1="17" y1="34" x2="17" y2="40"/><line x1="27" y1="34" x2="27" y2="40"/>
+        <line x1="-6" y1="7" x2="0" y2="7"/><line x1="-6" y1="17" x2="0" y2="17"/><line x1="-6" y1="27" x2="0" y2="27"/>
+        <line x1="34" y1="7" x2="40" y2="7"/><line x1="34" y1="17" x2="40" y2="17"/><line x1="34" y1="27" x2="40" y2="27"/>
+      </g>
+    </g>
+  </defs>
+  <rect width="960" height="600" fill="#FFFFFF"/>
+  <text x="480" y="34" text-anchor="middle" class="h">Four brains, four firmware files</text>
+
+  <!-- MAIN -->
+  <rect x="20" y="56" width="450" height="256" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <rect x="20" y="56" width="450" height="56" rx="8" fill="#2563EB"/>
+  <use href="#chip" x="38" y="67" transform="translate(0,0)"/>
+  <text x="92" y="82" class="n" style="fill:#FFFFFF">MAIN: Renesas RX651</text>
+  <text x="92" y="102" style="fill:#FFFFFF">the radio's boss, on the MAIN unit</text>
+  <text x="36" y="138" class="s">Core: RXv2 CPU at 120 MHz, 512 KB flash</text>
+  <text x="36" y="160" class="s">Runs: no OS, one loop that polls 16 tasks</text>
+  <text x="36" y="188">• owns the radio state (VFOs, modes, menus)</text>
+  <text x="36" y="210">• answers CAT commands from the PC</text>
+  <text x="36" y="232">• keeps all settings in an EEPROM</text>
+  <text x="36" y="254">• switches between receive and transmit</text>
+  <text x="36" y="276">• tells the FPGA and the DSP what to do</text>
+  <text x="36" y="300" class="f">FT-710_MAIN_V0112.SFL (tag MC)</text>
+
+  <!-- DISPLAY -->
+  <rect x="490" y="56" width="450" height="256" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <rect x="490" y="56" width="450" height="56" rx="8" fill="#16A34A"/>
+  <use href="#chip" x="508" y="67"/>
+  <text x="562" y="82" class="n" style="fill:#FFFFFF">DISPLAY: Renesas RZ/A1H</text>
+  <text x="562" y="102" style="fill:#FFFFFF">the front panel, on the DISPLAY unit</text>
+  <text x="506" y="138" class="s">Core: ARM Cortex-A9, 10 MB on-chip RAM</text>
+  <text x="506" y="160" class="s">Runs: µITRON real-time OS, ~32 tasks</text>
+  <text x="506" y="188">• draws the touch screen, reads keys, knobs</text>
+  <text x="506" y="210">• owns the power key, SD card and clock</text>
+  <text x="506" y="232">• updates the firmware of every chip</text>
+  <text x="506" y="254">• shows the scope and waterfall</text>
+  <text x="506" y="276">• streams scope data to a PC over USB</text>
+  <text x="506" y="300" class="f">FT-710_DISPLAY_V0108.SFL (tag PC)</text>
+
+  <!-- IFDSP -->
+  <rect x="20" y="328" width="450" height="256" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <rect x="20" y="328" width="450" height="56" rx="8" fill="#9333EA"/>
+  <use href="#chip" x="38" y="339"/>
+  <text x="92" y="354" class="n" style="fill:#FFFFFF">IFDSP: NXP i.MX RT685</text>
+  <text x="92" y="374" style="fill:#FFFFFF">the audio signal processor, MAIN unit</text>
+  <text x="36" y="410" class="s">Cores: Cortex-M33 (198 MHz) + HiFi4 DSP</text>
+  <text x="36" y="432" class="s">Runs: FreeRTOS on M33, XOS threads on HiFi4</text>
+  <text x="36" y="460">• demodulates SSB, CW, AM, FM, data</text>
+  <text x="36" y="482">• filters, AGC, noise reduction, notch</text>
+  <text x="36" y="504">• processes mic audio for transmit</text>
+  <text x="36" y="526">• drives the audio codec (speaker, mic)</text>
+  <text x="36" y="548">• M33 = helper, HiFi4 = number cruncher</text>
+  <text x="36" y="572" class="f">FT-710_IFDSP_V0101.SFL (tag ID)</text>
+
+  <!-- SDR -->
+  <rect x="490" y="328" width="450" height="256" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <rect x="490" y="328" width="450" height="56" rx="8" fill="#EA580C"/>
+  <use href="#chip" x="508" y="339"/>
+  <text x="562" y="354" class="n" style="fill:#FFFFFF">SDR: Xilinx Artix-7 FPGA</text>
+  <text x="562" y="374" style="fill:#FFFFFF">XC7A50T on the plug-in SDR module</text>
+  <text x="506" y="410" class="s">No CPU at all: wired logic, 125 MHz clock</text>
+  <text x="506" y="432" class="s">"Firmware" = a configuration bitstream</text>
+  <text x="506" y="460">• takes the samples from the fast ADC</text>
+  <text x="506" y="482">• shifts the wanted signal down to a low rate</text>
+  <text x="506" y="504">• computes the spectrum-scope data</text>
+  <text x="506" y="526">• mixes transmit audio up to RF</text>
+  <text x="506" y="548">• supplies the DSP's clock</text>
+  <text x="506" y="572" class="f">FT-710_SDR_V0104.SFL (tag SR)</text>
+</svg>
