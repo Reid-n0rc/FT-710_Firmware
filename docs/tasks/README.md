@@ -59,6 +59,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T19g | [Guide: Hacking and custom firmware](T19g-guide-hacking-and-custom-firmware.md) | T19 | done |
 | T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | done |
 | T20 | [Onboarding: rebuild everything from the official downloads + getting-started manual](T20-onboarding.md) | T01–T19 | done |
+| T21 | [Close the Ghidra decompile gaps (#97)](T21-ghidra-gaps.md) | T05, T07, T11, T12e, T17, T20 | in progress |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
