@@ -46,6 +46,7 @@ docs/
   tasks/             one file per task; README.md is the index/status board
 tools/               scripts (Python 3, stdlib preferred) — e.g. sfl_decode.py, Ghidra headless scripts
 decomp/<image>/      committed Ghidra decompiled C output per image
+hdl/<image>/         hand-written HDL reconstructions (T15e)
 build/               (ignored) decoded .bin images
 ghidra/              (ignored) Ghidra projects
 ```

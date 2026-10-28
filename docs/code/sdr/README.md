@@ -7,6 +7,8 @@ no soft CPU** **[inference, high]**, so there are no functions to name and `deco
 The "code" documented here is the FPGA design, at the level of placed resources, configured features and block-RAM
 contents (T13).
 
+**Key findings from T15 ([netlist.md](netlist.md)):** one 125 MHz fabric clock from the ADC; two identical 115,200-baud UARTs with an ASCII command parser (M18/L18, V12/U12); a QSPI master on the configuration-flash pins; 14 LVDS DDR ADC data pairs and 17 LVDS DDR outputs. **[fact, T15]**
+
 ## Pages
 
 | Page | Contents |
@@ -15,10 +17,11 @@ contents (T13).
 | [bram-tables.md](bram-tables.md) | BRAM modes, RAMB36 bit order, catalogue of all 35 initialized memories, MicroBlaze verdict |
 | [resources.md](resources.md) | LUT/FF/DSP/BRAM use, 2 MMCMs and their dividers, LVDS/single-ended I/O counts, special blocks |
 | [interfaces.md](interfaces.md) | J2002 60-pin map (service manual p19), data-path figure, config/update sequence, open questions |
+| [netlist.md](netlist.md) | T15: FASM decode, cell/net netlist, recognized blocks (clocks, ADC capture, DSP chains, UART, scope SPI); Verilog RTL in [`hdl/sdr/`](../../../hdl/sdr/README.md) |
 | [`decomp/sdr/README.md`](../../../decomp/sdr/README.md) | T08: packet stream, leading CRC word, first BRAM evidence |
 
 Tools: `tools/xbit_parse.py` (packets, CRCs), `tools/xc7_db.py` (prjxray mapping: `frames`, `bram`, `bramcfg`,
-`usage`, `sites`, `config`, `tilebits`), `tools/xc7_bram_tables.py` (logical BRAM tables, `selftest`). They need the
+`usage`, `sites`, `config`, `tilebits`), `tools/xc7_bram_tables.py` (logical BRAM tables, `selftest`), and from T15 `tools/xc7_fasm.py`, `tools/xc7_netlist.py`, `tools/xc7_blocks.py`, `tools/xc7_netlist_verilog.py`. They need the
 prjxray-db checkout described in [`docs/tooling.md`](../../tooling.md).
 
 ## Key findings

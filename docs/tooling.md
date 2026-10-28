@@ -222,3 +222,18 @@ persistent, so they survive container rebuilds. Check: `python3 -I tools/xc7_db.
 prints `MATCH`. Remove: `rm -rf ~/.local/share/ft710-tools/prjxray ~/.local/share/ft710-tools/prjxray-db`.
 Tools using them: `tools/xc7_db.py` (`frames`, `bram`, `bramcfg`, `usage`, `sites`, `config`, `tilebits`) and
 `tools/xc7_bram_tables.py` (`tables`, `show`, `lanes`, `halfsym`, `selftest`).
+
+### FPGA netlist tools (T15)
+
+**T15 (2026-10-27).** prjxray-db sparse checkout extended with `git -C ~/.local/share/ft710-tools/prjxray-db
+sparse-checkout add '/artix7/mapping/'` (prjxray's `Database` reads `mapping/devices.yaml`). New venv
+`python3 -m venv ~/.local/share/ft710-tools/venv` (Python 3.11.2) + `pip install fasm simplejson intervaltree pyyaml`
+from PyPI: `fasm 0.0.2.post88` (pure-Python textX parser; the Antlr fast path is not built), `textX 4.4.0`,
+`Arpeggio 2.0.3`, `simplejson 4.2.0`, `intervaltree 3.2.1`, `sortedcontainers 2.4.0`, `PyYAML 6.0.3`. No sudo, nothing
+built. Used only by `tools/xc7_fasm.py fasm` (which re-runs itself under that venv). Remove:
+`rm -rf ~/.local/share/ft710-tools/venv`.
+
+**T15d (2026-10-28).** `persist-apt iverilog yosys` (the container's sanctioned Debian install, see the global
+CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dependencies such as xdot), recorded in
+`~/.config/claude-container/apt-packages.txt` so they survive rebuilds. Used for the T15d smoke test
+(`yosys -s ...` with `+/xilinx/cells_sim.v`, `cells_xtra.v`) and the T15d/T15e simulations (`iverilog -g2012`).
