@@ -44,7 +44,7 @@
   <rect x="752" y="386" width="168" height="30" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
   <text x="836" y="406" font-size="14" text-anchor="middle">confirmed</text>
   <rect x="32" y="446" width="896" height="72" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
-  <text x="48" y="474" font-size="15"><tspan font-weight="bold">Also read-only, but noisy:</tspan> E8 returned the whole settings image as one</text>
+  <text x="48" y="474" font-size="15"><tspan font-weight="bold">Also read-only, but noisy:</tspan> E8 returned the memory-channel image as one</text>
   <text x="48" y="498" font-size="15">10674-byte frame; signature and checksum correct.</text>
   <rect x="32" y="532" width="896" height="72" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
   <text x="48" y="560" font-size="15" font-weight="bold">Never send (writes):</text>

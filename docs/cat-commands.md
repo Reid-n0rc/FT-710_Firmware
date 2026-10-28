@@ -3,7 +3,7 @@
 Every CAT command that MAIN firmware V01-12 accepts, compared with Yaesu's CAT manual. Produced in T09 ([T09a](tasks/T09a-cat-core-ext.md), [T09b](tasks/T09b-cat-primary.md)).
 How the parser, replies, AI and ports work is described in [code/main/cat.md](code/main/cat.md). Per-command firmware details for the 104 primary commands are in [cat-commands-primary.md](cat-commands-primary.md).
 
-> **Safety.** Nothing here was sent to the radio. Commands marked high risk key the transmitter, power the radio off, or rewrite EEPROM, the region code or the factory settings. Do not try any undocumented **set** form without the owner's explicit approval for that specific test (AGENTS.md).
+> **Safety.** Before trying anything, read [cat-undocumented.md](cat-undocumented.md): risks, the path back for each command, and how to back up and restore. Only the read-only forms in [radio checks](#radio-checks) have been sent to a radio. Commands marked high risk key the transmitter, power the radio off, or rewrite EEPROM, the region code or the factory settings. Do not try any undocumented **set** form without the owner's explicit approval for that specific test (AGENTS.md).
 
 ## Sources
 
@@ -232,7 +232,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 
 `E8` k, k+7, k+0x90, k, k, then 10665 data bytes, then the sum, then `;`.
 - **k:** a pseudo-random key, `cat_rand8` = timer counter 0x88116 mod 255.
-- **Data bytes:** each is `settings_image[i] + k`, taken from 0x60C9..0x8A71 (the EEPROM-backed settings and memory-channel image).
+- **Data bytes:** each is `settings_image[i] + k`, taken from 0x60C9..0x8A71 (the EEPROM-backed memory-channel image: memory header + 117 channels; no menus, calibration or region, see [eeprom.md](code/main/eeprom.md)).
 - **Sum:** the 8-bit sum of the plain bytes, plus k.
 
 This is the obfuscated **clone/backup** export: header bytes 07 90 after removing k. It does not change the radio, but it floods the port. Low risk.
@@ -247,7 +247,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 3. It copies 10665 bytes to 0x60C9 and calls `eeprom_save_image` (EEPROM 0x1A7A, 0x2F49 bytes).
 
 - **Errors:** a bad signature or checksum answers `?;`.
-- **Risk:** **high**. It overwrites all settings and memory channels in EEPROM, and a malformed image can corrupt the configuration.
+- **Risk:** **high**. It overwrites all memory channels in EEPROM (menus, calibration and region are not in the image), and a malformed image can corrupt them.
 - **Normal path:** `E9` received through the normal ring (impossible in practice) has no case and is ignored.
 
 <a id="ext-fd"></a>

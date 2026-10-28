@@ -182,7 +182,7 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x464F | 10 | `eeprom_hdr` | RAM mirror of EEPROM 0x0000..0x0009. `eeprom_hdr_update` increments a 32-bit counter in it on every save **[fact]** |
 | 0x4659 | 0x105 | `cfg105` | table addressed by `SPN`, EEPROM 0x000A **[fact]**; calibration table **[inference]** ([eeprom.md](eeprom.md)) |
 | 0x475E | 3 | `dest_code` | destination/version code, EEPROM 0x010F. `JP` reads and writes it **[fact]** |
-| 0x60C9 | 0x29A9 (0x2F49 saved) | `settings_image` | Settings and memory image dumped by `E8` and restored by `E9`; EEPROM 0x1A7A **[fact]** |
+| 0x60C9 | 0x29A9 (0x2F49 saved) | `settings_image` | Memory header + 117 memory channels, dumped by `E8` and restored by `E9`; EEPROM 0x1A7A **[fact]** ([eeprom.md](eeprom.md)) |
 | 0x9ADA..0x9AEB | 18 | `peq_params` | `PE` parameters (2 sets × 3 bands × 3 values) **[fact]**; that they are parametric EQ is **[inference]** |
 | 0x11FEB / 0x11FEC | u8 | `cat_ring_tail` / `cat_ring_head` | **[fact]** |
 | 0x1B78C | 1+1+2+0x29BC | `cat_e9_slot` | flag, port, length, data **[fact]** |

@@ -9,8 +9,8 @@ Conventions:
   root with `python3 -I tools/<script>.py`; `-I` keeps a planted module next to the firmware data from being imported.
 - Inputs come from the gitignored `Firmware/` and `build/` folders. Outputs that are derived from Yaesu's firmware go to `build/` and are
   never committed; only `decomp/`, the docs and the hand-written `hdl/` are.
-- Nothing here talks to a radio. `t16_patches.py` and `sfl_encode.py` write SFL files into `build/` only; flashing them needs the
-  radio owner's explicit approval each time (AGENTS.md).
+- Only `cat_backup.py` talks to a radio, and it only sends reads. `t16_patches.py` and `sfl_encode.py` write SFL files into `build/`
+  only; flashing them needs the radio owner's explicit approval each time (AGENTS.md).
 
 ## Setup and orchestration
 
@@ -19,6 +19,7 @@ Conventions:
 | `bootstrap.sh` | One command from the official downloads to the full working tree: input hashes, SFL decode, RX module install + fix, the four Ghidra programs with every name, re-export and diff against `decomp/`, optional SDR netlist/Verilator chain. Steps run alone with `--only`; see `--help` | `Firmware/`, `docs/inputs.sha256`, `tools/ghidra/*` → `$BOOTSTRAP_OUT/{build,ghidra,decomp,logs}` | T20 |
 | `ghidra-headless.sh` | Runs Ghidra's `analyzeHeadless` with JDK 21 (Homebrew paths if present, else `~/opt`); override with `GHIDRA_JAVA_HOME`, `GHIDRA_HEADLESS` | Ghidra args | T01 |
 | `issues_sync.py` | Mirrors `docs/tasks/` to GitHub issues (epic, sub-issues, labels, status comments) and keeps `docs/tasks/issues.json`. **The parent agent / owner runs it, nobody else** | `docs/tasks/` → GitHub | (board setup) |
+| `cat_backup.py` | Read-only CAT backup: `ID`, `VE0..3`, `JP0710` and the `E8` memory image (tested on a radio), optional raw EEPROM dump with `SPR` (`--eeprom`, untested); `--decode` checks a saved `E8` frame. See [docs/cat-undocumented.md](../docs/cat-undocumented.md) | radio (CAT port) → `backup-<date>/` (private, never commit) | radio checks |
 | `guide_to_wiki.py` | Splits `docs/guide/README.md` into GitHub-wiki pages (`Home`, one page per chapter, `_Sidebar`, `img/`) | guide → `build/wiki/` | T19 |
 
 ## Firmware container (SFL)

@@ -17,6 +17,13 @@ time they appear.
 claim follows from the evidence but wasn't seen directly. *(guess)* marks an educated guess. Nothing in this guide has been tested on the
 radio itself unless the text says so. The project's rule is that nothing is written to the radio without the owner's explicit approval.
 
+> **Trying the undocumented CAT commands?** The FT-710 answers 22 CAT commands that Yaesu doesn't publish, including service
+> commands that can change the radio's region or overwrite its factory calibration. Start with
+> **[Undocumented CAT commands: risks, paths back and backups](../cat-undocumented.md)**: what each command changes, how to undo
+> it, and how to back up your memories, menus, region code and calibration first. The plain-language tour is
+> [chapter 5.5](#55-the-22-undocumented-commands-by-risk), and the full firmware reference is
+> [cat-commands.md](../cat-commands.md#extended-table).
+
 **Colours.** Each chip keeps the same colour in every picture: blue for MAIN, green for DISPLAY, purple for the IF DSP,
 orange for the SDR FPGA and grey for other hardware. Red marks something dangerous, and amber marks something to be careful with.
 
@@ -1350,12 +1357,17 @@ The manual and the firmware also disagree on smaller points: a few digit counts,
 
 *Figure 5.6 — The 22 undocumented commands on a risk ladder. Only E8 and the read forms are harmless.*
 
+> **Before you try any of them**, read [Undocumented CAT commands: risks, paths back and backups](../cat-undocumented.md). It gives
+> the way back for every command and the backup steps (SD card, `tools/cat_backup.py`). Some changes, like a lost factory
+> calibration, can only be undone from a backup.
+
 **Does nothing (13).** Nine mnemonics, `BY ED EK EU RC RD RS RT RU`, sit in the main table with no code behind them; they answer
 `?;`. Three more, `EN FS QS`, have a stub that only raises the error flag, so they answer `?;` as well. `KT` is in the extended table
 but has no code at all, so it gets no reply. They may be leftovers from other Yaesu models *(guess)*.
 
-**Read-only.** `E8` dumps the radio's whole settings and memory image, 10 665 bytes of data, scrambled with a random key byte,
-in one 10 674-byte reply. It changes nothing, but it floods the port. It looks like a clone or backup export, the mirror image of `E9`.
+**Read-only.** `E8` dumps the radio's memory channels (the memory header and 117 channels; not the menus, calibration or region),
+10 665 bytes of data scrambled with a random key byte, in one 10 674-byte reply. It changes nothing, but it floods the port. It looks
+like a clone or backup export, the mirror image of `E9`.
 
 **Changes settings (medium risk).**
 - `FD` reads the scope start frequencies: `FD000;` the dial, `FD001;` the CURSOR-mode start, `FD002;` the FIX-mode start of the
@@ -1376,8 +1388,8 @@ in one 10 674-byte reply. It changes nothing, but it floods the port. It looks l
 - `JP` reads and writes the [destination code](#glossary), the region that picks the market version. `JP0710;` reads it; a write
   saves a new code to EEPROM, reloads the defaults and requests a restart. The code most likely sets band limits and TX coverage
   *(inference)*.
-- `E9` is the restore side of `E8`: it unscrambles a 10 kB image, checks a signature and a checksum, and writes all settings and
-  memory channels to EEPROM. A bad image can corrupt the configuration.
+- `E9` is the restore side of `E8`: it unscrambles a 10 kB image, checks a signature and a checksum, and writes the memory channels
+  to EEPROM. A bad image can corrupt them.
 - `SP` is a whole service family; it gets its own section.
 
 ### 5.6 The SP service family
@@ -1481,6 +1493,7 @@ inside MAIN.
 
 | Topic | Reference page | Key names and addresses (MAIN V01-12) |
 |---|---|---|
+| Risks, paths back and backups for the undocumented commands | [cat-undocumented.md](../cat-undocumented.md) | `tools/cat_backup.py` |
 | Every command, documented or not, with risk | [cat-commands.md](../cat-commands.md) | `cat_mnemonics` 0xFFF805EC (104), `cat_ext_mnemonics` 0xFFF806BC (10) |
 | Per-command details of the 104 main-table commands | [cat-commands-primary.md](../cat-commands-primary.md) | `cat_FA_FB` 0xFFFA99BD, `freq_in_range`, `vfo_tune_locked` |
 | Parser, queue, reply, AI, ports | [code/main/cat.md](../code/main/cat.md) | `cat_rx_complete` 0xFFFB1B50, ring 0x1E14C (60 × 0x6A), `cat_parse` 0xFFFA347C, `cat_dispatch` 0xFFFA3B6E, `cat_reply_error` 0xFFFB0166, `cat_send_reply` 0xFFFB1D12, `cat_ai_poll` 0xFFFDD797, `cat_ai_holdoff` 0xFFFDDB6A |
@@ -2505,7 +2518,8 @@ Short definitions of the terms used in this guide, in alphabetical order.
 - **SEMA42**: RT685 hardware semaphore block; a gate that only one core can hold at a time.
 - **Serial boot mode**: RX651 start-up mode, selected by a pin at reset, in which the boot ROM accepts programming commands over SCI1.
 - **service CAT commands**: The undocumented `SP…` CAT family (`SPSR/SPSW`, `SPDR/SPDW`) that reads and writes FPGA/DSP registers directly.
-- **Settings image**: The 10 665-byte block of settings and memory channels dumped by `E8` and restored by `E9`.
+- **Settings image**: The 10 665-byte block dumped by `E8` and restored by `E9`: the memory header and 117 memory channels. Menus,
+  calibration and the region code are not in it.
 - **SFL**: Yaesu's firmware file container: 512-byte comment box, 64-byte tag line, payload scrambled with a 43-byte additive key.
 - **shadow register**: MAIN's copy of the last value a remote register acknowledged; a write is sent only when the wanted value differs.
 - **shift register**: A chip that takes bits in serially and presents them on parallel outputs; MAIN uses a chain of them to reach the PA board.

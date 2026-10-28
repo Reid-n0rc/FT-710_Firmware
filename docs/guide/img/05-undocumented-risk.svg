@@ -19,7 +19,7 @@
   <text x="578" y="138" font-size="14">resets settings, may change TX bands</text>
   <rect x="86" y="158" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
   <text x="112" y="187" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">E9</text>
-  <text x="148" y="176" font-size="14">restores a whole settings image</text>
+  <text x="148" y="176" font-size="14">restores the memory-channel image</text>
   <text x="148" y="196" font-size="14">into EEPROM; a bad one corrupts it</text>
   <rect x="516" y="158" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
   <text x="542" y="187" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">SP</text>
@@ -47,7 +47,7 @@
   <text x="86" y="422" font-size="16" font-weight="bold">Read-only</text>
   <rect x="86" y="436" width="52" height="44" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
   <text x="112" y="465" font-size="18" font-weight="bold" font-family="DejaVu Sans Mono, monospace" text-anchor="middle">E8</text>
-  <text x="148" y="454" font-size="14">dumps the settings image, 10674 bytes</text>
+  <text x="148" y="454" font-size="14">dumps the memory channels, 10674 bytes</text>
   <text x="148" y="474" font-size="14">obfuscated; changes nothing, floods the port</text>
   <rect x="70" y="506" width="866" height="156" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="2"/>
   <text x="86" y="532" font-size="16" font-weight="bold">Does nothing: always ?; (or no reply at all for KT)</text>
