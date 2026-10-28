@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>Anatomy of an SFL firmware file</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="660" fill="#FFFFFF"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">Anatomy of an .SFL file (example: FT-710_IFDSP_V0101.SFL)</text>
+
+  <!-- file bar -->
+  <text x="30" y="72" font-size="14">file offset</text>
+  <text x="30" y="92" font-size="14" font-family="DejaVu Sans Mono, monospace">0x000</text>
+  <text x="250" y="92" font-size="14" font-family="DejaVu Sans Mono, monospace">0x200</text>
+  <text x="330" y="92" font-size="14" font-family="DejaVu Sans Mono, monospace">0x240</text>
+  <text x="878" y="92" font-size="14" font-family="DejaVu Sans Mono, monospace">EOF</text>
+  <rect x="30" y="100" width="220" height="56" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <text x="140" y="124" text-anchor="middle" font-size="15" font-weight="bold">comment box</text>
+  <text x="140" y="144" text-anchor="middle" font-size="14">512 bytes, plain ASCII</text>
+  <rect x="250" y="100" width="80" height="56" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="290" y="124" text-anchor="middle" font-size="15" font-weight="bold">tag line</text>
+  <text x="290" y="144" text-anchor="middle" font-size="14">64 B</text>
+  <rect x="330" y="100" width="600" height="56" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="630" y="124" text-anchor="middle" font-size="15" font-weight="bold">encoded payload</text>
+  <text x="630" y="144" text-anchor="middle" font-size="14">the firmware itself, scrambled (414 444 bytes here)</text>
+  <text x="930" y="176" text-anchor="end" font-size="14" font-style="italic">not to scale: the header is 576 bytes, the payload 0.4–4.4 MB</text>
+
+  <!-- comment box zoom -->
+  <line x1="40" y1="158" x2="40" y2="200" stroke="#6B7280" stroke-width="2" stroke-dasharray="5,4"/>
+  <rect x="30" y="200" width="520" height="190" rx="8" fill="#F9FAFB" stroke="#6B7280" stroke-width="2"/>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14" xml:space="preserve">
+    <text x="44" y="224">****************************************</text>
+    <text x="44" y="244">*  IFDSP FIRMWARE</text>
+    <text x="44" y="264">*  [FILE NAME]    : FT-710_IFDSP_V0101.SFL</text>
+    <text x="44" y="284">*  [PRODUCT NAME] : FT-710</text>
+    <text x="44" y="304">*  [FIRM VERSION] : V01-01</text>
+    <text x="44" y="324">*  [DATE]         : 2023/03/23</text>
+    <text x="44" y="344">*  COPYRIGHT 2023 YAESU MUSEN CO., LTD.</text>
+    <text x="44" y="364">****************************************</text>
+  </g>
+  <text x="44" y="383" font-size="14" font-style="italic">8 lines × 64 bytes (62 characters + CR LF); shortened here</text>
+  <text x="570" y="224" font-size="14" font-weight="bold">Comment box</text>
+  <text x="570" y="246" font-size="14">For people. The radio ignores it,</text>
+  <text x="570" y="266" font-size="14">except one hidden "#UP0" marker</text>
+  <text x="570" y="286" font-size="14">in a DISPLAY file (chapter 8).</text>
+
+  <!-- tag line zoom -->
+  <line x1="290" y1="158" x2="290" y2="190" stroke="#D97706" stroke-width="2" stroke-dasharray="5,4"/>
+  <line x1="290" y1="190" x2="558" y2="190" stroke="#D97706" stroke-width="2" stroke-dasharray="5,4"/>
+  <line x1="558" y1="190" x2="558" y2="408" stroke="#D97706" stroke-width="2" stroke-dasharray="5,4"/>
+  <rect x="30" y="410" width="900" height="96" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="44" y="434" font-size="15" font-weight="bold">Tag line (64 bytes)</text>
+  <text x="340" y="434" font-size="14">column</text>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="15">
+    <text x="410" y="434">0</text><text x="560" y="434">16</text><text x="710" y="434">32</text>
+    <rect x="404" y="444" width="140" height="30" rx="4" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+    <text x="414" y="465">ID</text>
+    <rect x="554" y="444" width="140" height="30" rx="4" fill="#FFFFFF" stroke="#D97706" stroke-width="2"/>
+    <text x="564" y="465">415020</text>
+    <rect x="704" y="444" width="140" height="30" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="3"/>
+    <text x="714" y="465">616282B0</text>
+      </g>
+  <text x="44" y="465" font-size="14">tag · total file length · checksum</text>
+  <text x="414" y="496" font-size="14">which image</text>
+  <text x="564" y="496" font-size="14">bytes, incl. header</text>
+  <text x="714" y="496" font-size="14" fill="#DC2626" font-weight="bold">the only field checked</text>
+
+  <!-- payload / CRC -->
+  <rect x="30" y="526" width="900" height="120" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="44" y="550" font-size="15" font-weight="bold">Payload encoding</text>
+  <text x="44" y="574" font-size="14">every byte has a key byte added: </text>
+  <text x="290" y="574" font-size="15" font-family="DejaVu Sans Mono, monospace">enc[i] = plain[i] + KEY[i mod 43]</text>
+  <text x="44" y="596" font-size="14">KEY = 43 bytes, a shuffle of the numbers 1…43, the same for all four files</text>
+  <text x="44" y="626" font-size="15" font-weight="bold">Checksum</text>
+  <text x="140" y="626" font-size="15" font-family="DejaVu Sans Mono, monospace">CRC-32( encoded payload + A6 EC 9E 13 )</text>
+  <text x="500" y="626" font-size="14">← 4-byte "salt"</text>
+  <path d="M846,459 L908,459 L908,621 L622,621" fill="none" stroke="#DC2626" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="900" y="608" font-size="14" fill="#DC2626" text-anchor="end">must match</text>
+</svg>
