@@ -1,4 +1,34 @@
-// FT-710_IFDSP_V0101.bin — Ghidra decompile, 26 functions
+// FT-710_IFDSP_V0101.bin — Ghidra decompile, 29 functions
+
+// ===== FUN_08001648 @ 08001648 (10 bytes)
+
+void FUN_08001648(undefined4 param_1)
+
+{
+  (*(code *)0x84351)(param_1);
+  return;
+}
+
+
+// ===== FUN_08001658 @ 08001658 (10 bytes)
+
+void FUN_08001658(undefined4 param_1)
+
+{
+  (*(code *)0x86e8d)(param_1);
+  return;
+}
+
+
+// ===== FUN_08001668 @ 08001668 (10 bytes)
+
+void FUN_08001668(undefined4 param_1)
+
+{
+  (*(code *)0x84935)(param_1);
+  return;
+}
+
 
 // ===== FUN_08001678 @ 08001678 (10 bytes)
 
