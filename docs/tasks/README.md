@@ -16,31 +16,31 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T09a | [CAT core, reply/AI path, extended + hidden commands](T09a-cat-core-ext.md) | T05 | done |
 | T09b | [CAT primary 104-command table, Ghidra names, re-export](T09b-cat-primary.md) | T09a | done |
 | T10 | [Document MAIN code (split into sub-tasks)](T10-docs-main.md) | T05 | in progress |
-| T10a | [MAIN overview, boot, main loop and memory map](T10a-main-overview.md) | T05 | todo |
-| T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | todo |
-| T10c | [MAIN SDR link (SCI5) and SDR control GPIOs](T10c-main-sdr-link.md) | T05 T13 | todo |
-| T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | todo |
-| T10e | [MAIN EEPROM, data flash and settings persistence](T10e-main-eeprom.md) | T05 T09 | todo |
-| T10f | [MAIN menu engine (EX) and hidden menu items](T10f-main-menu.md) | T05 T09 | todo |
-| T10g | [MAIN band, VFO, mode, frequency and memory control](T10g-main-radio-control.md) | T05 T09 | todo |
-| T10h | [MAIN TX control, protection, meters and other peripherals](T10h-main-tx-peripherals.md) | T05 T09 | todo |
+| T10a | [MAIN overview, boot, main loop and memory map](T10a-main-overview.md) | T05 | in progress |
+| T10b | [MAIN SCI drivers, DISPLAY link (SCI1) and front-panel key events](T10b-main-display-link.md) | T05 | in progress |
+| T10c | [MAIN SDR link (SCI5) and SDR control GPIOs](T10c-main-sdr-link.md) | T05 T13 | in progress |
+| T10d | [MAIN DSP link (SCI4 console protocol, SCI7)](T10d-main-dsp-link.md) | T05 T12a | in progress |
+| T10e | [MAIN EEPROM, data flash and settings persistence](T10e-main-eeprom.md) | T05 T09 | in progress |
+| T10f | [MAIN menu engine (EX) and hidden menu items](T10f-main-menu.md) | T05 T09 | in progress |
+| T10g | [MAIN band, VFO, mode, frequency and memory control](T10g-main-radio-control.md) | T05 T09 | in progress |
+| T10h | [MAIN TX control, protection, meters and other peripherals](T10h-main-tx-peripherals.md) | T05 T09 | in progress |
 | T11 | [Document DISPLAY code](T11-docs-display.md) | T06 | in progress |
 | T11a | [DISPLAY overview, boot and RTOS](T11a-display-overview.md) | T06 | done |
-| T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | todo |
-| T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | todo |
-| T11d | [DISPLAY SPI links (SDR, DSP, FT4222H)](T11d-display-spi.md) | T06 | todo |
-| T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | todo |
-| T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | todo |
-| T11g | [DISPLAY misc peripherals and files](T11g-display-misc.md) | T06 | todo |
+| T11b | [DISPLAY ↔ MAIN UART link](T11b-display-mainlink.md) | T06 | in progress |
+| T11c | [DISPLAY SD card and firmware update paths](T11c-display-update.md) | T06 | in progress |
+| T11d | [DISPLAY SPI links (SDR, DSP, FT4222H)](T11d-display-spi.md) | T06 | in progress |
+| T11e | [DISPLAY GUI and LCD](T11e-display-gui.md) | T06 | in progress |
+| T11f | [DISPLAY input (touch, keys, encoders, USB HID)](T11f-display-input.md) | T06 | in progress |
+| T11g | [DISPLAY misc peripherals and files](T11g-display-misc.md) | T06 | in progress |
 | T12 | [Document IFDSP code](T12-docs-ifdsp.md) | T07 | in progress |
 | T12a | [IFDSP overview + boot/memory map](T12a-ifdsp-overview.md) | T07 | done |
-| T12b | [IFDSP M33 console / command link](T12b-ifdsp-m33-console.md) | T12a | todo |
-| T12c | [IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)](T12c-ifdsp-ipc.md) | T12a | todo |
-| T12d | [IFDSP M33 platform (boot, DSP loader, RTOS)](T12d-ifdsp-m33-platform.md) | T12a | todo |
-| T12e | [IFDSP HiFi4 DSP code (threads, audio I/O, tables)](T12e-ifdsp-hifi4.md) | T12a | todo |
+| T12b | [IFDSP M33 console / command link](T12b-ifdsp-m33-console.md) | T12a | in progress |
+| T12c | [IFDSP M33↔HiFi4 IPC (MU-A, rpmsg)](T12c-ifdsp-ipc.md) | T12a | in progress |
+| T12d | [IFDSP M33 platform (boot, DSP loader, RTOS)](T12d-ifdsp-m33-platform.md) | T12a | in progress |
+| T12e | [IFDSP HiFi4 DSP code (threads, audio I/O, tables)](T12e-ifdsp-hifi4.md) | T12a | in progress |
 | T13 | [Document SDR/FPGA](T13-docs-sdr.md) | T08 | done |
 | T14 | [System-level documentation + figures](T14-docs-system.md) | T09–T13 | todo |
-| T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | todo |
+| T15 | [FPGA netlist recovery (SDR)](T15-fpga-netlist.md) | T13 | in progress |
 | T16 | [Custom-firmware groundwork (SFL encoder, loader rules, first patch)](T16-custom-firmware.md) | T04 T11c | todo |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
