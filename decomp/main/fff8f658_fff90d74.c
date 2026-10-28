@@ -12,9 +12,12 @@ void main(void)
 }
 
 
-// ===== FUN_fff8f65e @ fff8f65e (358 bytes)
+// ===== R_Systeminit @ fff8f65e (358 bytes)
 
-void FUN_fff8f65e(void)
+/* Code Generator init: ports, IWDT, DA, S12AD0/1, SCI0-7, TPU0-3 create, registers 17 interrupt
+   callbacks via R_BSP_InterruptWrite */
+
+void R_Systeminit(void)
 
 {
   byte bVar1;
@@ -26,11 +29,11 @@ void FUN_fff8f65e(void)
   DAT_0008c11f = bVar1 | 0x40;
   DAT_0008c4cc = 0;
   FUN_fff8f7c4();
-  FUN_fff92e49();
-  FUN_fff927a9();
-  FUN_fff927e5();
-  FUN_fff92851();
-  FUN_fff92b17();
+  R_Pins_Create();
+  R_IWDT_Create();
+  R_DA_Create();
+  R_S12AD0_Create();
+  R_S12AD1_Create();
   R_SCI0_Create();
   R_SCI1_Create();
   R_SCI2_Create();
@@ -38,31 +41,31 @@ void FUN_fff8f65e(void)
   R_SCI4_Create();
   R_SCI5_Create();
   FUN_fff92e25();
-  FUN_fff949b4();
-  FUN_fff94a65();
-  FUN_fffb2734();
-  FUN_fffc913b();
+  R_TPU0_Create();
+  R_TPU1_Create();
+  R_TPU3_Create();
+  R_MTU2_Create();
   R_SCI6_Create_IIC();
   R_SCI7_Create();
-  FUN_fffedd07();
+  R_TPU2_Create();
   FUN_fff8f7ca();
-  FUN_fff8fffb(10,&DAT_fff8f65d);
-  FUN_fff8fffb(7,&LAB_fff927e0);
-  FUN_fff8fffb(0x14,&LAB_fff9345a);
-  FUN_fff8fffb(0x15,&LAB_fff934f1);
-  FUN_fff8fffb(0x16,&LAB_fff93787);
-  FUN_fff8fffb(0x17,&LAB_fff9381e);
-  FUN_fff8fffb(0x18,&LAB_fff93cc8);
-  FUN_fff8fffb(0x19,&LAB_fff93d5f);
-  FUN_fff8fffb(0x1a,&LAB_fff94148);
-  FUN_fff8fffb(0x1b,&LAB_fff941df);
-  FUN_fff8fffb(0x1c,&LAB_fff94477);
-  FUN_fff8fffb(0x1d,&LAB_fff9450e);
-  FUN_fff8fffb(0x1e,&LAB_fff9489d);
-  FUN_fff8fffb(0x1f,&LAB_fff94934);
-  FUN_fff8fffb(0x20,&LAB_fffc93ef);
-  FUN_fff8fffb(0x22,&LAB_fffc97ec);
-  FUN_fff8fffb(0x23,&LAB_fffc9880);
+  R_BSP_InterruptWrite(10,&DAT_fff8f65d);
+  R_BSP_InterruptWrite(7,&LAB_fff927e0);
+  R_BSP_InterruptWrite(0x14,r_sci0_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x15,r_sci0_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x16,r_sci1_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x17,r_sci1_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x18,r_sci2_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x19,r_sci2_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x1a,r_sci3_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x1b,r_sci3_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x1c,r_sci4_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x1d,r_sci4_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x1e,r_sci5_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x1f,r_sci5_receiveerror_interrupt);
+  R_BSP_InterruptWrite(0x20,r_sci6_iic_tei);
+  R_BSP_InterruptWrite(0x22,r_sci7_transmitend_interrupt);
+  R_BSP_InterruptWrite(0x23,r_sci7_receiveerror_interrupt);
   bVar1 = DAT_0008c11f;
   DAT_0008c11f = bVar1 & 0xbf;
   bVar1 = DAT_0008c11f;
@@ -108,9 +111,12 @@ void FUN_fff8f7ca(void)
 }
 
 
-// ===== FUN_fff8f7ec @ fff8f7ec (20 bytes)
+// ===== hardware_setup @ fff8f7ec (20 bytes)
 
-void FUN_fff8f7ec(void)
+/* BSP hardware set-up wrapper called from PowerON_Reset: stubs, R_Systeminit, port init,
+   module-stop/ADC reg, reg 0xC5800 */
+
+void hardware_setup(void)
 
 {
   FUN_fff8f800();
@@ -146,7 +152,7 @@ void FUN_fff8f802(void)
 void FUN_fff8f804(void)
 
 {
-  FUN_fff8f65e();
+  R_Systeminit();
   return;
 }
 
@@ -257,42 +263,35 @@ void _CLOSEALL(void)
 
 // ===== FUN_fff8fa1b @ fff8fa1b (167 bytes)
 
-void FUN_fff8fa1b(char *param_1,byte param_2,undefined4 param_3,undefined4 param_4,uint *param_5)
+void FUN_fff8fa1b(byte *param_1,byte param_2,undefined4 param_3,undefined4 param_4,uint *param_5)
 
 {
-  char cVar1;
-  char cVar2;
+  byte bVar1;
+  byte bVar2;
   bool bVar3;
-  char *pcVar4;
+  byte *pbVar4;
   char *pcVar5;
   int iVar6;
   undefined4 *in_R14;
   undefined4 *puVar7;
-  byte bVar8;
   
   iVar6 = -1;
   pcVar5 = "C:\\stdin";
-  pcVar4 = param_1;
+  pbVar4 = param_1;
   do {
-    if (iVar6 == 0) {
-      bVar8 = 3;
-      bVar3 = true;
-      goto code_r0xfff8fa31;
-    }
-    cVar1 = *pcVar4;
-    cVar2 = *pcVar5;
-    pcVar4 = pcVar4 + 1;
+    bVar1 = *pbVar4;
+    bVar2 = *pcVar5;
+    pbVar4 = pbVar4 + 1;
     pcVar5 = pcVar5 + 1;
     iVar6 = iVar6 + -1;
-  } while ((cVar1 != '\0') && (cVar1 == cVar2));
-  bVar8 = -1 < (char)(cVar1 - cVar2);
-  bVar3 = false;
-code_r0xfff8fa31:
-  if ((bool)(bVar8 & 1)) {
+    if ((bVar1 != bVar2) || (bVar1 == 0)) break;
+  } while (iVar6 != 0);
+  if (bVar2 <= bVar1) {
     *in_R14 = 1;
   }
-  if (!(bool)(bVar8 & 1) || bVar3) {
-    *param_5 = (uint)(!(bool)(bVar8 & 1) || bVar3);
+  bVar3 = bVar2 > bVar1;
+  if (bVar3 || bVar1 == bVar2) {
+    *param_5 = (uint)(bVar3 || bVar1 == bVar2);
   }
   puVar7 = (undefined4 *)((int)in_R14 - ((uint)param_5 & 0xff));
   if (puVar7 == (undefined4 *)0x0) {
@@ -303,27 +302,21 @@ code_r0xfff8fa31:
   else {
     iVar6 = -1;
     pcVar5 = "C:\\stdout";
-    pcVar4 = param_1;
+    pbVar4 = param_1;
     do {
-      if (iVar6 == 0) {
-        bVar8 = 3;
-        bVar3 = true;
-        goto code_r0xfff8fa63;
-      }
-      cVar1 = *pcVar4;
-      cVar2 = *pcVar5;
-      pcVar4 = pcVar4 + 1;
+      bVar1 = *pbVar4;
+      bVar2 = *pcVar5;
+      pbVar4 = pbVar4 + 1;
       pcVar5 = pcVar5 + 1;
       iVar6 = iVar6 + -1;
-    } while ((cVar1 != '\0') && (cVar1 == cVar2));
-    bVar8 = -1 < (char)(cVar1 - cVar2);
-    bVar3 = false;
-code_r0xfff8fa63:
-    if ((bool)(bVar8 & 1)) {
+      if ((bVar1 != bVar2) || (bVar1 == 0)) break;
+    } while (iVar6 != 0);
+    if (bVar2 <= bVar1) {
       *puVar7 = 1;
     }
-    if (!(bool)(bVar8 & 1) || bVar3) {
-      *param_5 = (uint)(!(bool)(bVar8 & 1) || bVar3);
+    bVar3 = bVar2 > bVar1;
+    if (bVar3 || bVar1 == bVar2) {
+      *param_5 = (uint)(bVar3 || bVar1 == bVar2);
     }
     puVar7 = (undefined4 *)((int)puVar7 - ((uint)param_5 & 0xff));
     if (puVar7 == (undefined4 *)0x0) {
@@ -333,27 +326,21 @@ code_r0xfff8fa63:
     }
     else {
       iVar6 = -1;
-      pcVar4 = "C:\\stderr";
+      pcVar5 = "C:\\stderr";
       do {
-        if (iVar6 == 0) {
-          bVar8 = 3;
-          bVar3 = true;
-          goto code_r0xfff8fa95;
-        }
-        cVar1 = *param_1;
-        cVar2 = *pcVar4;
+        bVar1 = *param_1;
+        bVar2 = *pcVar5;
         param_1 = param_1 + 1;
-        pcVar4 = pcVar4 + 1;
+        pcVar5 = pcVar5 + 1;
         iVar6 = iVar6 + -1;
-      } while ((cVar1 != '\0') && (cVar1 == cVar2));
-      bVar8 = -1 < (char)(cVar1 - cVar2);
-      bVar3 = false;
-code_r0xfff8fa95:
-      if ((bool)(bVar8 & 1)) {
+        if ((bVar1 != bVar2) || (bVar1 == 0)) break;
+      } while (iVar6 != 0);
+      if (bVar2 <= bVar1) {
         *puVar7 = 1;
       }
-      if (!(bool)(bVar8 & 1) || bVar3) {
-        *param_5 = (uint)(!(bool)(bVar8 & 1) || bVar3);
+      bVar3 = bVar2 > bVar1;
+      if (bVar3 || bVar1 == bVar2) {
+        *param_5 = (uint)(bVar3 || bVar1 == bVar2);
       }
       if ((puVar7 == (undefined4 *)((uint)param_5 & 0xff)) && ((param_2 & 2) != 0)) {
         DAT_00001406 = param_2;
@@ -420,12 +407,12 @@ void PowerON_Reset(void)
 {
   hw_init_clock();
   _INITSCT();
-  FUN_fff8ff5f();
+  bsp_callbacks_clear();
   _INIT_IOLIB();
-  FUN_fff8ffc4();
+  bsp_interrupt_open();
   FUN_fff8ff3d();
-  FUN_fff8f7ec();
-  FUN_fff90097(0xb,1,0x10000000);
+  hardware_setup();
+  R_BSP_InterruptControl(0xb,1,0x10000000);
   main();
   _CLOSEALL();
   do {
@@ -618,9 +605,11 @@ void FUN_fff8ff3d(void)
 }
 
 
-// ===== FUN_fff8ff5f @ fff8ff5f (35 bytes)
+// ===== bsp_callbacks_clear @ fff8ff5f (35 bytes)
 
-void FUN_fff8ff5f(void)
+/* Clears 0x74 words at 0x1FFC4 (BSP interrupt callback table) [inference] */
+
+void bsp_callbacks_clear(void)
 
 {
   uint local_4;
@@ -654,9 +643,11 @@ void FUN_fff8ffa3(uint param_1)
 }
 
 
-// ===== FUN_fff8ffc4 @ fff8ffc4 (55 bytes)
+// ===== bsp_interrupt_open @ fff8ffc4 (55 bytes)
 
-void FUN_fff8ffc4(void)
+/* Group callback table 0x20194 = FIT_NO_FUNC, icu_select_init, two group set-ups [inference] */
+
+void bsp_interrupt_open(void)
 
 {
   uint local_4;
@@ -664,16 +655,18 @@ void FUN_fff8ffc4(void)
   for (local_4 = 0; local_4 < 0x5f; local_4 = local_4 + 1) {
     *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
   }
-  FUN_fff92014();
+  icu_select_init();
   FUN_fff9089e(0);
   FUN_fff9089e(1);
   return;
 }
 
 
-// ===== FUN_fff8fffb @ fff8fffb (75 bytes)
+// ===== R_BSP_InterruptWrite @ fff8fffb (75 bytes)
 
-void FUN_fff8fffb(int param_1,int param_2)
+/* Registers a group-interrupt callback by index (0x14..0x23 = TEI0/ERI0..TEI7/ERI7) [inference] */
+
+void R_BSP_InterruptWrite(int param_1,int param_2)
 
 {
   bool bVar1;
@@ -694,9 +687,12 @@ void FUN_fff8fffb(int param_1,int param_2)
 }
 
 
-// ===== FUN_fff90097 @ fff90097 (234 bytes)
+// ===== R_BSP_InterruptControl @ fff90097 (234 bytes)
 
-void FUN_fff90097(undefined4 param_1,int param_2,undefined4 *param_3)
+/* BSP interrupt control; group ISRs call it with (id, 0, FIT_NO_VALUE 0x10000000) to run the
+   callback [inference] */
+
+void R_BSP_InterruptControl(undefined4 param_1,int param_2,undefined4 *param_3)
 
 {
   bool bVar1;
@@ -1019,7 +1015,7 @@ LAB_fff90228:
 undefined4 SuperVisorInst(undefined4 param_1)
 
 {
-  FUN_fff90097(0,0,0x10000000);
+  R_BSP_InterruptControl(0,0,0x10000000);
   return param_1;
 }
 
@@ -1034,7 +1030,7 @@ undefined4 SuperVisorInst(undefined4 param_1)
 undefined4 AccessExc(undefined4 param_1)
 
 {
-  FUN_fff90097(4,0,0x10000000);
+  R_BSP_InterruptControl(4,0,0x10000000);
   return param_1;
 }
 
@@ -1049,7 +1045,7 @@ undefined4 AccessExc(undefined4 param_1)
 undefined4 UndefinedInst(undefined4 param_1)
 
 {
-  FUN_fff90097(1,0,0x10000000);
+  R_BSP_InterruptControl(1,0,0x10000000);
   return param_1;
 }
 
@@ -1064,7 +1060,7 @@ undefined4 UndefinedInst(undefined4 param_1)
 undefined4 FloatingPoint(undefined4 param_1)
 
 {
-  FUN_fff90097(3,0,0x10000000);
+  R_BSP_InterruptControl(3,0,0x10000000);
   return param_1;
 }
 
@@ -1088,7 +1084,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(2,0,0x10000000);
+    R_BSP_InterruptControl(2,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 1;
   }
@@ -1100,7 +1096,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(5,0,0x10000000);
+    R_BSP_InterruptControl(5,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 2;
   }
@@ -1112,7 +1108,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(6,0,0x10000000);
+    R_BSP_InterruptControl(6,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 4;
   }
@@ -1124,7 +1120,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(7,0,0x10000000);
+    R_BSP_InterruptControl(7,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 8;
   }
@@ -1136,7 +1132,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(8,0,0x10000000);
+    R_BSP_InterruptControl(8,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 0x10;
   }
@@ -1148,7 +1144,7 @@ void NMI(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff90097(9,0,0x10000000);
+    R_BSP_InterruptControl(9,0,0x10000000);
     bVar1 = DAT_00087582;
     DAT_00087582 = bVar1 | 0x20;
   }
@@ -1162,13 +1158,13 @@ void NMI(void)
   if (bVar2) {
     bVar1 = DAT_00081201;
     if ((bVar1 & 1) == 1) {
-      FUN_fff90097(0xc,0,0x10000000);
+      R_BSP_InterruptControl(0xc,0,0x10000000);
       bVar1 = DAT_00081201;
       DAT_00081201 = bVar1 & 0xfe;
     }
     bVar1 = DAT_00081241;
     if ((bVar1 & 1) == 1) {
-      FUN_fff90097(0xd,0,0x10000000);
+      R_BSP_InterruptControl(0xd,0,0x10000000);
       bVar1 = DAT_00081241;
       DAT_00081241 = bVar1 & 0xfe;
     }
@@ -1189,7 +1185,7 @@ void NMI(void)
 undefined4 Undefined_0xD8(undefined4 param_1)
 
 {
-  FUN_fff90097(10,0,0x10000000);
+  R_BSP_InterruptControl(10,0,0x10000000);
   return param_1;
 }
 
@@ -1208,7 +1204,7 @@ undefined4 vec016_BSC_BUSERR(undefined4 param_1)
   
   bVar1 = DAT_00081300;
   DAT_00081300 = bVar1 | 1;
-  FUN_fff90097(0xb,0,0x10000000);
+  R_BSP_InterruptControl(0xb,0,0x10000000);
   return param_1;
 }
 
@@ -1357,7 +1353,7 @@ void FUN_fff90c76(int param_1,byte *param_2)
     local_14 = param_2;
     local_8 = param_2;
     local_4 = param_1;
-    FUN_fff90097(0x5e,6,auStack_1c);
+    R_BSP_InterruptControl(0x5e,6,auStack_1c);
     if (local_4 == 1) {
       bVar1 = DAT_00087203;
       bStack_15 = bVar1 >> 2 & 1;
@@ -1378,7 +1374,7 @@ void FUN_fff90c76(int param_1,byte *param_2)
         FUN_fff8ff82(0x1b);
       }
     }
-    FUN_fff90097(0x5e,5,auStack_1c);
+    R_BSP_InterruptControl(0x5e,5,auStack_1c);
   }
   return;
 }

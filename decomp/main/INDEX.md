@@ -8,15 +8,22 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `<first>_<last>.c`: decompiled C, 50 functions per file in address order (`tools/ghidra/ExportDecomp.java`).
 - `functions.tsv`: entry, name, size, reference count, file for every function.
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
-- Function names come from `tools/ghidra/names_main.tsv` (applied with `tools/ghidra/ApplyNames.java`). Everything else is `FUN_<addr>`.
+- Function names come from `tools/ghidra/names_main.tsv` (applied with `tools/ghidra/ApplyNames.java`). Everything else is `FUN_<addr>`. Subsystem pages: `docs/code/main/`.
 
 ## Numbers
-- 2252 functions exported (non-thunk), **0 decompile failures**. 232 are named so far (T05 + T09 CAT helpers).
-- About 384 KB of the ~451 KB non-0xFF ROM bytes are disassembled as code (129,938 instructions), and about 50 KB are defined data. About 20 KB of non-0xFF bytes remain undefined, mostly string/const areas in 0xFFF80000..0xFFF8FFFF.
-- Decompiler warnings: 1224 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
+- T17 rebuild (2026-10-27): full re-import with the fixed RX module (`tools/ghidra/rx62t-movu-fix.patch`, see `docs/tooling.md`), then
+  `ApplyNames.java tools/ghidra/names_main.tsv` (1147 entries merged from T05/T09 and T10a–h; conflicts resolved in
+  `tools/ghidra/names_main.picks.tsv`, listed in `docs/tasks/T17-integration.md`). **2268 functions exported** (non-thunk), **0 decompile
+  failures**; 1136 functions carry a name. The 16 extra functions over T05 are entries that ApplyNames created at names the sub-tasks gave to
+  code labels (SCI TEI/ERI callbacks, menu item callbacks, tail-call targets).
+- About 384 KB of the ~451 KB non-0xFF ROM bytes are disassembled as code (129,938 instructions, T05 count), and about 50 KB are defined data. About 20 KB of non-0xFF bytes remain undefined, mostly string/const areas in 0xFFF80000..0xFFF8FFFF.
+- Decompiler warnings: 1226 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
 - Known decompiler artifacts **[fact]**:
-  - `SCMPU`/`SMOVF`/`SSTR` string instructions decompile poorly (`cat_parse` shows them as odd loops). The underlying code is `strncmp(cmd, table+2*i, 2)`.
+  - `SCMPU`/`SMOVF`/`SSTR`/`SUNTIL`/`SWHILE` string instructions are p-code loops, so they decompile as loops (`cat_parse` shows one). The underlying code is `strncmp(cmd, table+2*i, 2)`.
   - Some call arguments are dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Check the disassembly when an argument count looks wrong.
+  - **Fixed in T17:** `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11) used to be shown as a memory load `[Rs]` (107 sites in 49 functions, found by T10e with
+    `tools/ghidra/T10eMovuRegCount.java`). After the fix all 107 decode as register zero-extends, e.g. `cat_ext_SP` now calls
+    `cat_checksum_ok(cmd+4, len-2)` and `displink_tx_req` passes `len-1` instead of loading from address `len-1`.
 
 ## Boot and main loop  [fact unless marked]
 | Address | Name | Role |
