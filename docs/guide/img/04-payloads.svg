@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" fill="#1F2937">
+  <title>What each decoded payload contains</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F2937"/>
+    </marker>
+  </defs>
+  <rect width="960" height="720" fill="#FFFFFF"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">After decoding: four very different payloads</text>
+
+  <!-- MAIN panel -->
+  <rect x="20" y="50" width="450" height="320" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+  <rect x="20" y="50" width="450" height="34" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="36" y="73" font-size="16" font-weight="bold">MAIN: Motorola S-record text</text>
+  <rect x="36" y="98" width="200" height="150" rx="6" fill="#F9FAFB" stroke="#6B7280" stroke-width="2"/>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14">
+    <text x="46" y="120">S00E0000…</text>
+    <text x="46" y="142">S311FE7F5D00…</text>
+    <text x="46" y="164">S3…FFF8…</text>
+    <text x="46" y="186">S3…</text>
+    <text x="46" y="208">S3…</text>
+    <text x="46" y="230">S705FFF8FBDB…</text>
+  </g>
+  <text x="36" y="268" font-size="14">28 227 address+data lines,</text>
+  <text x="36" y="288" font-size="14">each with its own checksum</text>
+  <line x1="240" y1="172" x2="276" y2="172" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <!-- memory -->
+  <rect x="282" y="98" width="172" height="150" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <rect x="282" y="98" width="172" height="22" rx="6" fill="#2563EB"/>
+  <text x="368" y="114" text-anchor="middle" font-size="14" fill="#FFFFFF">vectors (top)</text>
+  <text x="368" y="168" text-anchor="middle" font-size="15" font-weight="bold">code flash</text>
+  <text x="368" y="188" text-anchor="middle" font-size="14">512 KiB</text>
+  <text x="368" y="208" text-anchor="middle" font-size="14">FFF80000–FFFFFFFF</text>
+  <rect x="282" y="262" width="172" height="44" rx="6" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="368" y="280" text-anchor="middle" font-size="14" font-weight="bold">option-setting mem.</text>
+  <text x="368" y="298" text-anchor="middle" font-size="14">116 B, all FF</text>
+  <text x="36" y="330" font-size="14">Start address in the last line = the reset vector.</text>
+  <text x="36" y="352" font-size="14">The 116-byte block sets the chip's protections (4.7).</text>
+
+  <!-- DISPLAY panel -->
+  <rect x="490" y="50" width="450" height="320" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+  <rect x="490" y="50" width="450" height="34" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="506" y="73" font-size="16" font-weight="bold">DISPLAY: raw ARM program image</text>
+  <text x="506" y="114" font-size="14" font-family="DejaVu Sans Mono, monospace">offset 0</text>
+  <text x="840" y="114" font-size="14" font-family="DejaVu Sans Mono, monospace">3.3 MB</text>
+  <rect x="506" y="122" width="50" height="60" rx="6" fill="#16A34A"/>
+  <rect x="556" y="122" width="250" height="60" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <rect x="806" y="122" width="114" height="60" rx="6" fill="#BBF7D0" stroke="#16A34A" stroke-width="2"/>
+  <text x="531" y="157" text-anchor="middle" font-size="14" fill="#FFFFFF">vec</text>
+  <text x="681" y="150" text-anchor="middle" font-size="15" font-weight="bold">code + constants</text>
+  <text x="681" y="170" text-anchor="middle" font-size="14">GUI, SD card, update loader</text>
+  <text x="863" y="150" text-anchor="middle" font-size="14">.data</text>
+  <text x="863" y="170" text-anchor="middle" font-size="14">(holds KEY)</text>
+  <text x="506" y="214" font-size="14">• Starts with a table of ARM branch instructions.</text>
+  <text x="506" y="238" font-size="14">• Runs in RAM at 0x20100000, copied there</text>
+  <text x="520" y="258" font-size="14">from the DISPLAY's SPI flash.</text>
+  <text x="506" y="282" font-size="14">• Holds the SFL decoder, the CRC routine</text>
+  <text x="520" y="302" font-size="14">and the 43-byte key itself.</text>
+  <text x="506" y="330" font-size="14">• Not signed, not encrypted.</text>
+
+  <!-- IFDSP panel -->
+  <rect x="20" y="390" width="450" height="310" rx="8" fill="#FFFFFF" stroke="#9333EA" stroke-width="2"/>
+  <rect x="20" y="390" width="450" height="34" rx="8" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="36" y="413" font-size="16" font-weight="bold">IFDSP: raw flash image (NXP RT685)</text>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14">
+    <text x="36" y="452">0x000</text><text x="112" y="452">0x400</text><text x="190" y="452">0x1000</text><text x="404" y="452">414 KB</text>
+  </g>
+  <rect x="36" y="460" width="76" height="60" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <rect x="112" y="460" width="78" height="60" rx="6" fill="#E9D5FF" stroke="#9333EA" stroke-width="2"/>
+  <rect x="190" y="460" width="264" height="60" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="2"/>
+  <text x="74" y="495" text-anchor="middle" font-size="14">zeros</text>
+  <text x="151" y="487" text-anchor="middle" font-size="14">FCFB</text>
+  <text x="151" y="507" text-anchor="middle" font-size="14">config</text>
+  <text x="322" y="487" text-anchor="middle" font-size="14">Cortex-M vectors,</text>
+  <text x="322" y="507" text-anchor="middle" font-size="14">program code</text>
+  <text x="36" y="552" font-size="14">• The zeros at the start are what gave the key away.</text>
+  <text x="36" y="576" font-size="14">• "FCFB" tells the chip's boot ROM how to talk</text>
+  <text x="50" y="596" font-size="14">to its QSPI flash.</text>
+  <text x="36" y="620" font-size="14">• Runs in place from flash (address 0x08000000).</text>
+  <text x="36" y="644" font-size="14">• Written byte for byte into the DSP's flash.</text>
+
+  <!-- SDR panel -->
+  <rect x="490" y="390" width="450" height="310" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="2"/>
+  <rect x="490" y="390" width="450" height="34" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="506" y="413" font-size="16" font-weight="bold">SDR: FPGA bitstream as one hex line</text>
+  <rect x="506" y="438" width="418" height="30" rx="6" fill="#F9FAFB" stroke="#6B7280" stroke-width="2"/>
+  <text x="516" y="458" font-size="14" font-family="DejaVu Sans Mono, monospace">993966c2ffffffff…ffaa995566…   (4.4 MB text)</text>
+  <line x1="715" y1="470" x2="715" y2="494" stroke="#1F2937" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="726" y="488" font-size="14">hex → binary (2.2 MB)</text>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="14">
+    <text x="506" y="514">0x0</text><text x="626" y="514">0x1000</text>
+  </g>
+  <rect x="506" y="520" width="40" height="64" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <rect x="546" y="520" width="80" height="64" rx="6" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+  <rect x="626" y="520" width="298" height="64" rx="6" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+  <text x="526" y="557" text-anchor="middle" font-size="14">CRC</text>
+  <text x="586" y="548" text-anchor="middle" font-size="14">FF</text>
+  <text x="586" y="568" text-anchor="middle" font-size="14">fill</text>
+  <text x="775" y="546" text-anchor="middle" font-size="15" font-weight="bold">Xilinx Vivado .bin</text>
+  <text x="775" y="568" text-anchor="middle" font-size="14">sync AA995566, Artix-7 XC7A50T</text>
+  <text x="506" y="612" font-size="14">• 4 KiB Yaesu header: CRC-32/BZIP2 of the rest</text>
+  <text x="520" y="632" font-size="14">(993966C2), then 0xFF padding.</text>
+  <text x="506" y="656" font-size="14">• Then a standard, unencrypted bitstream:</text>
+  <text x="520" y="676" font-size="14">5 420 configuration frames.</text>
+</svg>
