@@ -16,6 +16,13 @@ how-to-read note, a table of contents with links to every chapter and section, a
 the last chapter. The parent renumbers the figures, checks every link and anchor, renders every SVG, deletes `parts/`, and links the
 guide from the top-level README.
 
+**Wiki too** (owner: "Or even a wiki would work. Or both"). The document stays the single source. `tools/guide_to_wiki.py` splits it
+into GitHub-wiki pages: `Home.md` (intro + overview), one page per chapter, `Glossary.md`, and `_Sidebar.md` (the table of contents).
+It also copies the images and rewrites links and anchors. The output goes to `build/wiki/` (gitignored). Blocker, 2026-10-28: the
+repo's wiki is disabled (`hasWikiEnabled: false`). Wikis on private repos need a paid GitHub plan, and the wiki's git repo only exists
+after the first page is created in the web UI. The owner enables it, then the parent pushes `build/wiki/` to
+`FT-710_Firmware.wiki.git`, which stays private with the repo. That push is owner-approved; it is the only remote besides `origin`.
+
 | Sub-task | Draft part (chapter) |
 |---|---|
 | T19a | `parts/01-the-radio.md`, `parts/02-how-the-chips-talk.md` |
