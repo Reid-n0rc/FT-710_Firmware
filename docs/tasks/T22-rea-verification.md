@@ -151,7 +151,7 @@ tools/ghidra-headless.sh <projdir> <proj> -process FT-710_IFDSP_V0101_hifi4.bin 
 ```
 
 ### T22d
-**Status:** in progress (2026-10-28, resumed). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
+**Status:** done (2026-10-28). All images: classify the undefined non-0xFF bytes left in executable blocks (T21f baseline:
 MAIN 20,622, DISPLAY 4,258, M33 5,162, HiFi4 186,167).
 
 Plan:
@@ -260,6 +260,13 @@ Findings per image:
   - 7,345 B of zero padding: 4-byte function alignment in `.text` and fill between the ITCM vectors. Leave.
   - 586 B unknown (including 6 B of rodata the classifier took for `call0`), mostly between the rodata tables (0x205960–0x206130: mixed libm constants); none in `.text` except 9 B next to
     `FUN_00218480` and 3 B at 0x233815 (a `flix.dis` bundle that overlaps Ghidra's `entry` at 0x233818, so padding [inference]).
+
+**Step 6 — REA cross-check [fact].** `rea inspect-byte-entropy` (REA 6.8.0, through `memgate.py 2748`) on the HiFi4 SRAM image
+(file offset 0x20644, 4 KiB blocks): the rodata blocks 0x203000–0x204FFF have 7.34 and 7.27 bits/byte, inside the range of the
+FLIX code blocks (6.5–7.43), and REA marks them `high` like code; only 0x206000 (strings, small ints, 5.47) stands out. So
+block entropy cannot tell the float tables from code; the byte-level classes above (word plausibility, decode, inbound
+references) are needed. REA's string search was not run: it needs an analysed REA session per image, and the machine was short
+of memory (the entropy run waited about 40 minutes in memgate); the strings above were checked with objdump/hexdump instead.
 
 **Recommended Ghidra fixes (for a T21 follow-up; nothing here was applied to the canonical projects):**
 1. `IfdspHifi4Setup.java`: split 0x200000–0x207CEF out of `sram_dsp_text` into a read-only, non-executable `sram_rodata` block.
