@@ -131,11 +131,15 @@ headless() {  # headless <project> <analyzeHeadless args...>
   local p=$1; shift
   [ -x "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" ] || die "no analyzeHeadless in $GHIDRA_INSTALL_DIR (step deps, or set GHIDRA_INSTALL_DIR)"
   mkdir -p "$PROJ" "$OUT/logs"
+  local run=$OUT/logs/ghidra_last_run.log rc=0
   GHIDRA_JAVA_HOME=$JAVA_HOME GHIDRA_HEADLESS=$GHIDRA_INSTALL_DIR/support/analyzeHeadless \
     "$REPO/tools/ghidra-headless.sh" "$PROJ" "$p" "$@" -max-cpu "$JOBS" -scriptPath "$REPO/tools/ghidra" \
-    >> "$OUT/logs/ghidra_$p.log" 2>&1 || { tail -30 "$OUT/logs/ghidra_$p.log" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
+    > "$run" 2>&1 || rc=$?
+  cat "$run" >> "$OUT/logs/ghidra_$p.log"
+  [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
+  grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
-    "$OUT/logs/ghidra_$p.log" | tail -n 3 | sed 's/^/   /' || true
+    "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
 # Stamp = hash of everything a program depends on; skip the rebuild when it is unchanged.
