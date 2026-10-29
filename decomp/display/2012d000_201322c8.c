@@ -1588,7 +1588,7 @@ undefined4 opening_check_main(void)
       FUN_2012e3c8(local_240,local_20,local_1c);
       FUN_201342dc(local_20[0],local_1c[0]);
       thunk_FUN_2015d2a8(local_20[0]);
-      fw_installed_versions_set(local_25f);
+      fw_installed_versions_set_thunk(local_25f);
       DAT_20800481 = local_1ba & 0xf;
       DAT_208f0b2a = 0x20;
       memcpy(&DAT_208f0b2b,auStack_251,0x97);
@@ -1694,7 +1694,7 @@ void opening_screen(void)
       for (; iVar7 * 0x21 < 0x9c5; iVar7 = iVar7 + 1) {
         itron_dly_tsk(3);
       }
-      fwupdate_screen();
+      fwupdate_screen_thunk();
     }
     itron_dly_tsk(3);
     iVar7 = iVar7 + 1;
@@ -1735,7 +1735,7 @@ void opening_screen(void)
       mainlink_get_frame60(local_288);
       if ((local_288[0] == '`') &&
          ((local_27a == '\x01' || local_27a == '\x02') || local_27a == '\x03')) {
-        FUN_201322ac();
+        fwupdate_insert_sd_screen_thunk();
       }
       key_task_resume();
       DAT_20800495 = 1;
@@ -1763,7 +1763,7 @@ void opening_screen(void)
     iVar6 = mainlink_get_settings24(&local_4d8);
   }
 LAB_2012fb90:
-  FUN_201322ac();
+  fwupdate_insert_sd_screen_thunk();
   return;
 }
 
@@ -1969,7 +1969,7 @@ void gui_main_loop(void)
     }
     iVar2 = key_scan_first();
     if (iVar2 == 6) {
-      FUN_201322ac();
+      fwupdate_insert_sd_screen_thunk();
       goto LAB_20130238;
     }
     if (DAT_2080049a != '\0') {
@@ -3155,238 +3155,38 @@ void FUN_20131f74(undefined1 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_201322ac @ 201322ac (364 bytes)
+// ===== fwupdate_insert_sd_screen_thunk @ 201322ac (8 bytes)
 
-void FUN_201322ac(void)
+/* r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen */
+
+void fwupdate_insert_sd_screen_thunk(void)
 
 {
-  undefined4 uVar1;
-  uint uVar2;
-  undefined1 auStack_278 [14];
-  char local_26a;
-  undefined4 local_38;
-  undefined4 local_34;
-  undefined4 local_30;
-  undefined4 local_2c;
-  undefined4 local_28;
-  
-  uVar1 = fb_get_layer_addr(DAT_208085bc);
-  fb_clear_rect(uVar1,0x132,0,800,0xae);
-  uVar2 = 0;
-  do {
-    gui_draw_text_centered(uVar1,(&DAT_20808558)[uVar2],uVar2 * 0x20 + 0x132,400,0xf,&DAT_20800b1c);
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 3);
-  local_38 = 0;
-  local_34 = 0;
-  local_30 = 0;
-  local_2c = 0;
-  local_28 = 0;
-  mainlink_get_frame60(auStack_278);
-  if ((local_26a != '\x01' && local_26a != '\x02') && (local_26a != '\x03')) {
-    local_26a = '\x01';
-  }
-  sprintf(&local_38,"ERROR CODE : %03d",local_26a);
-  gui_draw_text_centered(uVar1,&local_38,0x192,400,0xf,&DAT_20800b1c);
-  gui_update_layers();
-  key_task_resume();
-  DAT_20808532 = 1;
-  FUN_20158fd0();
-  if (DAT_20800493 == '\0') {
-    usbkbd_last_key();
-    fwupdate_set_hotkey();
-    uVar1 = fb_get_layer_addr(DAT_208085b8);
-    fb_clear_rect(uVar1,0,0,800,0x1e0);
-    uVar1 = fb_get_layer_addr(DAT_208085bc);
-    fb_clear_rect(uVar1,0,0,800,0x1e0);
-    gui_update_layers();
-    bootloader_screen(&DAT_208f4bf4,&DAT_208dbb44);
-    DAT_20808532 = 0;
-  }
+  fwupdate_insert_sd_screen(&DAT_208f4bf4);
   return;
 }
 
 
-// ===== fwupdate_screen @ 201322b4 (1384 bytes)
+// ===== fwupdate_screen_thunk @ 201322b4 (8 bytes)
 
-/* MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 */
+/* r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81) */
 
-void fwupdate_screen(void)
+void fwupdate_screen_thunk(void)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  uint uVar4;
-  undefined1 auStack_288 [288];
-  undefined1 auStack_168 [72];
-  char local_120;
-  undefined4 local_48;
-  undefined4 local_44;
-  undefined4 local_40;
-  undefined4 local_3c;
-  undefined4 local_38;
-  undefined4 local_34;
-  undefined4 local_30;
-  undefined4 local_2c;
-  undefined4 local_28;
-  
-  local_28 = fb_get_layer_addr(DAT_208085bc);
-  fb_clear_rect(local_28,0x132,0,800,0xae);
-  uVar4 = 0;
-  do {
-    gui_draw_text_centered
-              (local_28,(&DAT_20808564)[uVar4],uVar4 * 0x20 + 0x132,400,0xf,&DAT_20800b1c);
-    uVar4 = uVar4 + 1 & 0xff;
-  } while (uVar4 < 4);
-  gui_update_layers();
-  FUN_20158fd0();
-  usbkbd_last_key();
-  fwupdate_set_hotkey();
-  do {
-    local_28 = fb_get_layer_addr(DAT_208085bc);
-    fb_clear_rect(local_28,0x132,0,800,0xae);
-    gui_draw_text_centered(local_28,DAT_20808538,0x132,400,0xf,&DAT_20800b1c);
-    gui_update_layers();
-    fb_get_layer_addr(DAT_208085bc);
-    fwfile_check_versions(&DAT_208f4bfc);
-    DAT_208f4c30 = 1;
-    DAT_208f4c78 = 1;
-    fwfile_status_text(&DAT_208f4bfc,1);
-    DAT_208f4c30 = 0;
-    DAT_208f4c78 = 0;
-    gui_update_layers();
-    local_28 = fb_get_layer_addr(DAT_208085bc);
-    iVar1 = FUN_20103bb0();
-    if (iVar1 != 0) {
-      if ((DAT_208f4bfc == '\x01') && (DAT_208f4c44 == '\x01')) break;
-      fb_clear_rect(local_28,0x132,0,800,0xae);
-      local_48 = 0;
-      local_44 = 0;
-      local_40 = 0;
-      local_3c = 0;
-      local_38 = 0;
-      local_34 = 0;
-      local_30 = 0;
-      local_2c = 0;
-      if (DAT_208f4bfc == '\x01') {
-        sprintf(&local_48,"[ OK ]");
-      }
-      else {
-        sprintf(&local_48,"[ NG : %s ]",&DAT_208f4c11);
-      }
-      gui_draw_text_words(local_28,"MAIN FIRMWARE FILE",0x132,0x9d,0xf,&DAT_20800b1c);
-      gui_draw_text_words(local_28,&local_48,0x132,0x1a4,0xf,&DAT_20800b1c);
-      local_48 = 0;
-      local_44 = 0;
-      local_40 = 0;
-      local_3c = 0;
-      local_38 = 0;
-      local_34 = 0;
-      local_30 = 0;
-      local_2c = 0;
-      if (DAT_208f4c44 == '\x01') {
-        sprintf(&local_48,"[ OK ] %s",&DAT_208f4c80);
-      }
-      else {
-        sprintf(&local_48,"[ NG : %s ]",&DAT_208f4c59);
-      }
-      gui_draw_text_words(local_28,"DISPLAY FIRMWARE FILE",0x152,0x9d,0xf,&DAT_20800b1c);
-      gui_draw_text_words(local_28,&local_48,0x152,0x1a4,0xf,&DAT_20800b1c);
-      gui_draw_text_centered(local_28,DAT_2080853c,0x192,400,0xf,&DAT_20800b1c);
-    }
-    gui_update_layers();
-    local_28 = fb_get_layer_addr(DAT_208085bc);
-    iVar1 = FUN_20103ba0();
-    while (iVar1 != 0) {
-      if (DAT_20800493 != '\0') {
-        FUN_20117030();
-      }
-      FUN_201525f8(0xffffffff);
-      gui_update_layers();
-      local_28 = fb_get_layer_addr(DAT_208085bc);
-      iVar1 = FUN_20103ba0();
-    }
-    fb_clear_rect(local_28,0x132,0,800,0xae);
-    gui_draw_text_centered(local_28,DAT_2080856c,0x132,400,0xf,&DAT_20800b1c);
-    gui_update_layers();
-    fb_get_layer_addr(DAT_208085bc);
-    iVar1 = FUN_20103bb0();
-    while (iVar1 == 0) {
-      if (DAT_20800493 != '\0') {
-        FUN_20117030();
-      }
-      FUN_201525f8(0xffffffff);
-      iVar1 = FUN_20103bb0();
-    }
-  } while( true );
-  DAT_208f4c30 = 1;
-  DAT_208f4c78 = 1;
-  fb_clear_rect(local_28,0x132,0,800,0xae);
-  gui_draw_text_centered(local_28,"STEP 1 of 2.",0x132,400,0xf,&DAT_20800b1c);
-  uVar4 = 0;
-  do {
-    gui_draw_text_centered
-              (local_28,(&DAT_20808548)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,&DAT_20800b1c);
-    uVar4 = uVar4 + 1 & 0xff;
-  } while (uVar4 < 2);
-  FUN_20155310(auStack_168,&DAT_208f4bfc,0x120);
-  FUN_20155310(auStack_288,&DAT_208f4bfc,0x120);
-  iVar1 = 0xff;
-  while( true ) {
-    iVar2 = fwupdate_poll(&DAT_208f4bfc);
-    iVar3 = FUN_20103ba0();
-    if (iVar3 == 0) break;
-    if ((iVar1 != iVar2) ||
-       (iVar3 = FUN_2015507c(&DAT_208f4bfc,auStack_288,0x120), iVar1 = iVar2, iVar3 != 0)) {
-      FUN_20155310(auStack_288,&DAT_208f4bfc,0x120);
-      if (DAT_208f4bfc == '\x04') {
-        FUN_201219b8(local_28,0x1a5,0x129,DAT_208f4c34 & 0xffff,DAT_208f4c34);
-      }
-      else if (DAT_208f4c44 == '\x04') {
-        if (local_120 != '\x04') {
-          fb_clear_rect(local_28,0x132,0,800,0xae);
-          gui_draw_text_centered(local_28,"STEP 2 of 2.",0x132,400,0xf,&DAT_20800b1c);
-          uVar4 = 0;
-          do {
-            gui_draw_text_centered
-                      (local_28,(&DAT_20808550)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,&DAT_20800b1c);
-            uVar4 = uVar4 + 1 & 0xff;
-          } while (uVar4 < 2);
-        }
-        FUN_201219b8(local_28,0x1a5,0x129,DAT_208f4c7c & 0xffff,DAT_208f4c7c);
-        gui_update_layers();
-        fb_get_layer_addr(DAT_208085bc);
-      }
-      FUN_20155310(auStack_168,&DAT_208f4bfc,0x120);
-      if (iVar2 != 0) goto LAB_20159c44;
-      gui_update_layers();
-      local_28 = fb_get_layer_addr(DAT_208085bc);
-      iVar1 = iVar2;
-    }
-  }
-  iVar2 = 2;
-LAB_20159c44:
-  FUN_2010e4a0();
-  if (iVar2 != 1) {
-    update_error_screen();
-  }
-  system_reboot();
+  fwupdate_screen(&DAT_208f4bf4);
   return;
 }
 
 
-// ===== fw_installed_versions_set @ 201322bc (76 bytes)
+// ===== fw_installed_versions_set_thunk @ 201322bc (12 bytes)
 
-/* installed versions from the MAIN 0x60 frame */
+/* r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81) */
 
-void fw_installed_versions_set(int param_1)
+void fw_installed_versions_set_thunk(undefined4 param_1)
 
 {
-  DAT_208f4bf4 = be16_load(param_1);
-  DAT_208f4bf6 = be16_load(param_1 + 2);
-  DAT_208f4bf8 = be16_load(param_1 + 4);
-  DAT_208f4bfa = be16_load(param_1 + 10);
+  fw_installed_versions_set(&DAT_208f4bf4,param_1);
   return;
 }
 

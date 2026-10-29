@@ -1,27 +1,25 @@
 metric	value
-functions	2210
+functions	2212
 decompile_failures	0
-warnings	393
-functions_with_warnings	96
+warnings	212
+functions_with_warnings	68
 spacebase_warnings	0
-unreachable_block_warnings	267
+unreachable_block_warnings	147
 halt_baddata	4
 functions_with_halt_baddata	4
-functions_with_in_vars	61
-functions_with_unaff_vars	63
-functions_with_extraout_vars	80
-functions_with_in_unaff_extraout	182
+functions_with_in_vars	62
+functions_with_unaff_vars	44
+functions_with_extraout_vars	78
+functions_with_in_unaff_extraout	166
 undefined_nonff_bytes	86
 undefined_nonff_bytes:.text	86
 bookmarks_error	1
 bookmarks_bad_instruction	1
 warning:Bad instruction - Truncating control flow here	4
 warning:Control flow encountered bad instruction data	4
-warning:Could not find normalized switch variable to match jumptable	10
 warning:Could not recover jumptable at #. Too many branches	17
 warning:Do nothing block with infinite loop	6
-warning:Globals starting with '_' overlap smaller symbols at the same address	13
-warning:Removing unreachable block (#)	267
-warning:This code block may not be properly labeled as switch case	50
+warning:Globals starting with '_' overlap smaller symbols at the same address	12
+warning:Removing unreachable block (#)	147
 warning:Treating indirect jump as call	17
 warning:Type propagation algorithm not settling	5
