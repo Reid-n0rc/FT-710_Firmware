@@ -790,3 +790,30 @@
 2015afb0	fwupdate_insert_sd_screen	INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md)
 20159714	fwupdate_screen	MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object)
 201595f0	fw_installed_versions_set	installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame)
+# --- #83: scope drawing, layout helpers, SD format
+20124528	scope_draw_frame	per GUI frame: 3DSS (mode 8/9) or 2D renderers by 0x208004D0/D2 (gui.md Scope drawing)
+2012d52c	scope_area_setup	packet 0x20 scope bytes changed: clear area, decode mode, reset history
+2012d4a4	scope_mode_decode	packet 0x20 bytes 1-3 -> 0x20800482, 0x208004D0..D2
+2012d458	scope_mode_is_2d	byte 2: 0-2 -> 0 (3DSS), 3-11 -> 1
+2012d404	scope_mode_sub	byte 2 -> 0/1/2 sub-setting
+2012d3b8	scope_mode_split	byte 2 -> 0/1/2 spectrum/waterfall split (inference)
+2012d19c	scope_area_frame_draw	scope frame sprites (layout words 0x208004F4/F6)
+201335d8	scope3d_render_large_thunk	-> scope3d_render_large (this = 0x20907F78)
+201335f8	scope3d_render_small_thunk	-> scope3d_render_small (this = 0x20907F78)
+2015b9cc	scope3d_render_large	mode 8: 29 lines, 222/274 rows
+2015bb7c	scope3d_render_small	mode 9: 14 lines, 104/156 rows
+2015bc6c	scope3d_draw_line	line i at x = 5i+4, width 791-10i
+20134318	scope3d_redraw_history	every N frames: re-project lines 29..2 (14..2)
+20134328	scope3d_add_line	newest line = per-point max of the last N history rows
+2013f984	sd_format	drive letter; -> sd_fat_format (inference: format, #83)
+2013f83c	sd_fat_format	card init (3 tries), then fat_clear_root_dir
+2013f79c	fat_clear_root_dir	zero the root-directory sectors (FAT12/16: 32, FAT32: 1 cluster)
+2013e2b4	sd_write_sectors	driver op +0x60; -7 = write-protected
+2013e230	sd_read_sectors	driver op +0x58
+2013dff0	sd_card_identify	card reset/identify, card-type flags at +0x2C0/+0x2C2
+201271cc	keyboard_draw_keys	scr_keyboard key grid (CR/LF labels)
+20126a58	confirm_dialog_draw	OK? dialog (scr_confirm, update_error_screen)
+201293f8	vfo_audio_status_draw	REC/PLAY state on the VFO screen (%04d, %3d) (inference)
+2012c4a0	audio_error_check	audio_state/audio_error/audio_clear_error
+2012e6c8	screen_saver_exit	layers back after 0x7B
+20128f4c	text_list_draw	scr_text_list body

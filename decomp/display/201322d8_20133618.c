@@ -1151,22 +1151,28 @@ void sdr_dsp_link_init(void)
 }
 
 
-// ===== FUN_201335d8 @ 201335d8 (32 bytes)
+// ===== scope3d_render_large_thunk @ 201335d8 (32 bytes)
 
-void FUN_201335d8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* -> scope3d_render_large (this = 0x20907F78) */
+
+void scope3d_render_large_thunk
+               (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  FUN_2015b9cc(&DAT_20907f78,param_1,param_2,param_3,param_4);
+  scope3d_render_large(&DAT_20907f78,param_1,param_2,param_3,param_4);
   return;
 }
 
 
-// ===== FUN_201335f8 @ 201335f8 (32 bytes)
+// ===== scope3d_render_small_thunk @ 201335f8 (32 bytes)
 
-void FUN_201335f8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* -> scope3d_render_small (this = 0x20907F78) */
+
+void scope3d_render_small_thunk
+               (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  FUN_2015bb7c(&DAT_20907f78,param_1,param_2,param_3,param_4);
+  scope3d_render_small(&DAT_20907f78,param_1,param_2,param_3,param_4);
   return;
 }
 

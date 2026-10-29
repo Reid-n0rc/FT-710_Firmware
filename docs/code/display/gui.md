@@ -174,7 +174,7 @@ marked.
 
 | ID | Len | Handler | Screen |
 |---|---|---|---|
-| 0x20 ` ` | 0x97 | `scr_main_layout`, `FUN_2012C4A0` | main operating screen (scope/3DSS, mode, filter, status) |
+| 0x20 ` ` | 0x97 | `scr_main_layout`, `audio_error_check` | main operating screen (scope/3DSS, mode, filter, status) |
 | 0x21 `!` | 3 | `led_set_one` | backlight / dimmer level (no redraw) |
 | 0x23 `#` | 0x35 | `FUN_20131354` | decoder text stream, feeds the 0x40 text screen **[guess]** |
 | 0x24 `$` | 0x9D | `gui_apply_display_cfg`, `backlight_set`, `dimmer_set`, `gpio_ft4222_reset` | display settings: DVI on/off and 800×480/800×600, contrast; byte 0 bit 2 drives P2_7 (`FT4222_RESET`) **[fact for the pins]** |
@@ -182,7 +182,7 @@ marked.
 | 0x31 `1` | 0xA1 | `scr_value_popup` | big value popup: one of 45 setting names (LEVEL, CONTRAST, MIC GAIN, RF POWER, …, LOCK, TUNE, SCREEN SHOT) + value; tables at 0x208026DC–0x20802CE4 |
 | 0x34 `4` | — | `scr_info` | information screen with `CERTIFICATIONS` and `FCC ID : K6620801X50` **[fact for the strings]** |
 | 0x37 `7` | 0x23E | `scr_func_panel` | FUNC panel: CONTRAST, DIMMER, M-GROUP, MIC GAIN/EQ, PROC/AMC LEVEL, VOX, RF POWER, MONI, KEYER, BK-IN, CW SPEED/PITCH, AESS, MESSAGE, RECORD, PLAY |
-| 0x39 `9` | 0xE7 | `scr_vfo`, `FUN_201293F8` | frequency display (large green/white/red digit sprites) |
+| 0x39 `9` | 0xE7 | `scr_vfo`, `vfo_audio_status_draw` | frequency display (large green/white/red digit sprites) |
 | 0x3A `:` | 0xA0 | `scr_playlist` | PLAY LIST / voice messages (`%02d:%02d:%02d`, RX LEVEL, DELETE) |
 | 0x3F `?` | 3 | `rec_start_stop` | start/stop recording to SD, file name `20YYMMDD_HHMMSS` (no screen) |
 | 0x40 `@` | 0x1F9 | `scr_text_list` | text list with LF/CR glyphs, DONE/BACK (30-char rows) **[guess: RTTY/PSK text memories or decode]** |
@@ -214,6 +214,104 @@ overlay modes (scope expanded, popup open) **[fact for the variables, inference 
   draws a box with `testmode`, `CS_POLL`, `MOSI_OK/NG`, `FRAMES`, `MISO_OK/NG` and `msec` at (y 0x104, x 600). The box is red (0xC800) when any
   counter shows a fault **[fact]**. This is a service screen that needs **no** debug unlock. Which front-panel keys the codes are is in
   [input.md](input.md).
+
+## Screen layout (`.data2` coordinate words, #83)
+
+Widget positions are not immediates in the drawing code: each screen handler reads its origins and sizes from initialised **u16 words in
+`.data2`**, one variable per number (0x208004A4–0x20800660), plus per-slot arrays for the value popup (0x208026DC–0x20802D00)
+**[fact]**. `tools/display_layout.py` joins the initial values (LZ-unpacked image) with the role each word plays in the decompiled draw calls
+(`gui_draw_runs(fb, y, x, …)`, `fb_fill_rect(fb, colour, y, x, w, h)`, …) and prints one line per word:
+
+```sh
+python3 -I tools/display_layout.py build/FT-710_DISPLAY_V0108.bin            # both ranges, ~1000 lines, reads decomp/display/
+```
+
+The roles are **[fact: argument position in the call]**; the screen names come from the packet table above. All values are pixels on the 800 × 480
+panel, origin top left, as in the drawing primitives. Main results:
+
+| Screen (handler) | Words | Layout **[fact: values and roles]** |
+|---|---|---|
+| Main screen status row (`main_status_icons`) | 0x208004A8–0x208004BE, 0x2080065C/5E | 12 icon slots at x = 2, 58, 125, 175, 230, 285, 314, 357, 512, 592, 662, 718; one more widget at (x 282, y 64) |
+| Main screen parts (`scr_main_layout` → `FUN_2012D8BC`, `FUN_2012E27C`) | 0x208004C0, 0x20800508–0x2080051A | y 113 for one strip; two groups at (x 59, y 93) and (x 231, y 93) with a 4 × 8 cell box repeated every 6 px (+8, +6 offsets): a bar-graph style widget **[inference]** |
+| Frequency display (`scr_vfo` → `FUN_20129CF0`) | 0x2080051C–0x2080052E | fields at (x 398, y 86), (x 544, y 73) and (x 650, y 86); text pitch 21; one 142-px wide clear |
+| FUNC panel (`scr_func_panel`, 0x37) | 0x20800530–0x20800542 | origin (x 59, y 17) added to the per-cell table at 0x208019D6; cells offset (x 2, y 29) and (x 2, y 17) with a 5 / 55 px grid |
+| Setup menu (`scr_setup_menu`, 0x62) | 0x208004A4–0x208004A6, 0x208004DC–0x208004F2 | 8 rows at y = 173 + row · **35**; columns at x = 9 (number), 24, 144, 489; the cursor line at x 4, y 200 + row · 35, 792 × 1; list height 161 |
+| Selection popup (`scr_select_popup`, 0x30) | 0x208004C2–0x208004C4, 0x208004F8–0x20800506, 0x20800658/5A | box origin (x 137 + 0xDA, y 8 + 0xA1), item cells 349 × 23; items placed from the per-item tables 0x2016D358 / 0x2016DFFC / 0x2016E01A / 0x2016E038 / 0x2016DD44 / 0x2016ED68 plus (x 10, y 14) |
+| On-screen keyboard (`scr_keyboard`, 0x50; keys `keyboard_draw_keys`) | 0x20800544–0x2080058A | whole layer 800 × 454 at (0, 26); key grid from (x 25, y 45) with 15-px text pitch; input line (x 7, y 34) 786 × 42; caret 2 × 24; three buttons at y 2 (x 80, 400, 635); key labels at x 20, 9, 15, 10, 17, 7, 75, 39 + row/column table |
+| Memory list (`scr_memory_list`, 0x41) | 0x2080058C–0x208005C2 | list area (1, 184) 798 × 296; row bar (4, 187) 792 × 22; scroll arrows at x 665 and 739, y 190; five columns at x 5, 28, 112, 271, 385 (row y from the table 0x2016DB9A); side buttons at x 8 + 0x244 / 0x2B4, y 22 + 0xD3 / 0x15D / 0x1A2 |
+| Text list (`scr_text_list`, 0x40; `text_list_draw` → `FUN_20128E94`, `FUN_201281C0`, `FUN_20128860`, `FUN_20128D00`, row helpers `FUN_201283FC` / `FUN_20128564` / `FUN_20128704`) | 0x208005C4–0x2080064E | title centred at x 400, y 4; left pane (2, 28) 260 × 452, right pane (280, 28) 518 × 450; rows every **75** px (0x2080064E) from y 36 / 56 / 103; `BACK` / `DONE` buttons at (698, 31), (733, 55), (698, 416), (733, 438) |
+| Information screen (`scr_info`, 0x34) | 0x208005F0–0x20800606 (shared with the text list) | same button positions; text block (700, 96) 94 × 315 **[inference: last four words are not in a draw call]** |
+| Confirm dialog (`scr_confirm` → `confirm_dialog_draw`, also `update_error_screen`) | 0x20800650, 0x20800654 | dialog anchored at x 258 / 770 **[inference]** |
+| Opening screen (`opening_screen`, `logo_fade_in`) | 0x208004D4–0x208004DA | logo at (x 157, y 213); status text centred at x 400, y 351 |
+
+**Value popup slots** (0x31, `scr_value_popup`; 65 slots, arrays of {x, y} or pointers indexed by slot) **[fact: values]**:
+
+| Array | Contents |
+|---|---|
+| 0x208026DC | popup position: (x 154, y 184) for most slots; (154, 90) for slots 38, 39, 55; (280, 184) for 37, 41–43 |
+| 0x208027E0 / 0x208028E4 | title offset (10, 30) and value offset (20, 26) inside the box; the text-only slots use (50, 26), (16, 26), (58, 26) |
+| 0x208029E8 | title sprite (28 px high, 91–263 px wide) for slots 0–40, 55, 58; 0 for unused slots |
+| 0x20802AEC | title **text** for slots without a sprite: 37 (`QMB`), 41 `LOCK`, 42 `UNLOCK`, 43 `TUNE`, 44 `SCREEN SHOT` |
+| 0x20802C34 | box sprite: 0x2016E248 (492 × 88) or 0x202D0468 (240 × 88, the short popups 37, 41–43) |
+
+So the popup box is 492 × 88 at (154, 184), centred horizontally (154 + 246 = 400), or 240 × 88 at (280, 184) **[inference]**. Slots 2, 3, 16, 22–25,
+29–33 and 45–63 except 55 and 58 are empty in V01-08 **[fact]**.
+
+## Scope drawing (#83)
+
+The scope area of the main screen is drawn by `scope_draw_frame` (`FUN_20124528`, every GUI frame from `gui_main_loop`) from the **scope
+record** 0x204832BB (850 B, [spi-links.md](spi-links.md#link-1-sdr-module-scope-data-rspi2)) and the **history ring** 0x20490894 **[fact]**.
+
+**Mode bytes of packet 0x20** (`scope_area_setup` `FUN_2012D52C` → `scope_mode_decode` `FUN_2012D4A4`, redrawn only when bytes 1, 2 or byte 3
+bits 0–2 change) **[fact: code]**:
+
+| Field | Global | Meaning |
+|---|---|---|
+| byte 1 = 1 | 0x20800482 = 1 | small scope (the 3DSS uses 14 lines); otherwise large (29 lines) |
+| byte 2 (0–11) → `scope_mode_is_2d` (`FUN_2012D458`) | 0x208004D0 | 0 for values 0–2 = **3DSS**, 1 for 3–11 = **2D spectrum / waterfall** |
+| byte 2 → `scope_mode_sub` (`FUN_2012D404`) | 0x208004D1 | 0 for {0, 3, 4, 5}, 1 for {1, 6, 7, 8}, 2 for {2, 9, 10, 11} |
+| byte 2 → `scope_mode_split` (`FUN_2012D3B8`) | 0x208004D2 | 0 for {3, 6, 9}, 2 for {5, 8, 11}, 1 otherwise; the small layout forces 1 |
+| byte 3 bit 2 | 0x208004D0 = 3 | a third view; then `FUN_2012470C` draws a different widget set (it returns early unless 0x208004D0 = 3) |
+| byte 5 bit 5 | expanded | scope area starts at y 0x80 (128) and is 0x124 (292) high, else y 0xB4 (180) and 0xF0 (240) high for the 3DSS, y 0xC9 (201) and 0xDB (219) for 2D |
+| byte 7 bit 7 | | resets the 3D engine object (`FUN_201342D0`(0)) |
+| byte 0x12 bits 4–7 (clamped to 5) | 0x208085B0 | **history step**: a new 3DSS line every N GUI frames, N = {20, 17, 13, 9, 5, 0} from 0x203A70A8 (the scope SPEED setting **[inference]**) |
+
+So byte 2 encodes 3 × 4 combinations: the 3DSS with a 3-way sub-setting, or 2D with the same sub-setting and a 3-way spectrum/waterfall split
+(value = 3 + 3 · sub + split) **[inference from the case lists]**.
+
+**3DSS renderer** (`FUN_201335D8` → `scope3d_render_large` `FUN_2015B9CC`, mode 8; `FUN_201335F8` → `scope3d_render_small` `FUN_2015BB7C`,
+mode 9) **[fact: code]**:
+
+1. `scope_history_push` copies the 800 points of the record (+0x19) into the next 800-byte row of the ring 0x20490894, with 4 bytes of per-row
+   marker info at 0x20494718 (count 0x20494714, capped at N).
+2. `scope3d_add_line` (`FUN_20134328`) builds the newest 3D line in 0x2048A0F8 as the **per-point maximum of the last N rows** (peak hold
+   over one history step) and copies the row markers (0x54 bytes per line: count + up to 20 entries).
+3. Every N frames (`frame % N == 0`) `scope3d_redraw_history` (`FUN_20134318`) re-projects the older lines 29 … 2 (mode 8) or 14 … 2
+   (mode 9) one step further back.
+4. Line *i* is drawn by `scope3d_draw_line` (`FUN_2015BC6C`) at x = 5 · *i* + 4 with width **791 − 10 · *i*** (0x317 − 10 · *i*), so each older
+   line is 10 px narrower and shifted 5 px right: the perspective of the 3DSS. The y of each line comes from the object's per-line table;
+   the vertical scaling from `FUN_20134358` (tables at 0x20450278 for mode 8, 0x2045027C for mode 9).
+5. The finished image (0xDE = 222 or 0x112 = 274 rows for mode 8, 0x68 = 104 or 0x9C = 156 rows for mode 9) is copied into graphics 1
+   at the scope origin.
+
+The 2D spectrum and waterfall views are the `thunk_FUN_2015D49C` / `D874` / `D958` / `D5E8` / `D508` / `D3B8` / `D334` group selected by
+0x208004D0 / 0x208004D2 in `scope_draw_frame` **[fact: dispatch]**; their bodies are not decoded yet (#178). While the GUI freezes the scope (0x204832B8–BA,
+0x208004A0) the record holds 0xFF and nothing is pushed **[fact]**. The 0x2048360D copy of the record is used instead of the live one when packet
+byte 0x12 bits 4–7 = 5 (0x20800498) **[fact]**, which is the "hold" setting **[inference]**.
+
+```mermaid
+flowchart LR
+  SPI["RSPI2 frame<br/>1700 B"] --> SSF["scope_store_frame<br/>850 B → 0x204832BB"]
+  SSF --> PUSH["scope_history_push<br/>ring 0x20490894<br/>800 B rows"]
+  SSF --> PC["pclink_tx_copy_scope<br/>(FT4222, PC)"]
+  PUSH --> ADD["scope3d_add_line<br/>max over N rows"]
+  ADD --> RED["scope3d_redraw_history<br/>every N frames"]
+  RED --> DRAW["scope3d_draw_line<br/>x = 5i + 4, w = 791 − 10i"]
+  ADD --> DRAW
+  DRAW --> FB["graphics 1<br/>scope area"]
+  PKT["packet 0x20<br/>bytes 1, 2, 3, 5, 0x12"] --> MODE["scope_mode_decode"]
+  MODE --> DRAW
+```
 
 ## Drawing primitives
 
@@ -369,4 +467,4 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 
 - Which physical keys the codes 0x303–0x311 are (combos 4 and 6): [input.md](input.md) (T11f).
 - What the MAIN firmware does to send packet 0x64 (LCD test) or 0x34: a MAIN-side menu or service key sequence (T10).
-- The `.data2` coordinate tables (0x208004A4–0x20800650 and 0x208026DC–0x20802D00) could be decoded into a full screen layout.
+- Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Still open (#178): which value-popup slot is which setting (the titles are sprites), and the bodies of the 2D spectrum / waterfall renderers.

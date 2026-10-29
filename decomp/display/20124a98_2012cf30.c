@@ -982,10 +982,12 @@ void FUN_20126914(undefined4 param_1,int param_2,int param_3,int param_4)
 }
 
 
-// ===== FUN_20126a58 @ 20126a58 (1084 bytes)
+// ===== confirm_dialog_draw @ 20126a58 (1084 bytes)
 
-void FUN_20126a58(int param_1,int param_2,uint param_3,uint param_4,int param_5,int param_6,
-                 int param_7)
+/* OK? dialog (scr_confirm, update_error_screen) */
+
+void confirm_dialog_draw(int param_1,int param_2,uint param_3,uint param_4,int param_5,int param_6,
+                        int param_7)
 
 {
   int iVar1;
@@ -1153,7 +1155,7 @@ void scr_confirm(int param_1,undefined4 param_2)
   }
   uVar2 = be16_load(param_1 + 0x9c);
   uVar3 = be16_load(param_1 + 0x9e);
-  FUN_20126a58(param_2,bVar5,bVar4,uVar1,uVar2,uVar3,param_1 + 0xa0);
+  confirm_dialog_draw(param_2,bVar5,bVar4,uVar1,uVar2,uVar3,param_1 + 0xa0);
   return;
 }
 
@@ -1248,11 +1250,12 @@ void scr_setup_menu(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_201271cc @ 201271cc (904 bytes)
+// ===== keyboard_draw_keys @ 201271cc (904 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* scr_keyboard key grid (CR/LF labels) */
 
-void FUN_201271cc(int param_1)
+void keyboard_draw_keys(int param_1)
 
 {
   char cVar1;
@@ -1469,7 +1472,7 @@ void scr_keyboard(int param_1,int param_2,int param_3)
     fb_fill_rect(local_48,0x821,0,0,800,0x1e0);
     fb_fill_rect(local_48,0x4a69,DAT_20800546,DAT_20800544,DAT_20800548,DAT_2080054a);
     fb_fill_rect(local_48,0x821,DAT_20800562,DAT_20800560,DAT_20800564,DAT_20800566);
-    FUN_201271cc(DAT_20800464);
+    keyboard_draw_keys(DAT_20800464);
     memclr(local_a8,0x32);
     memclr(local_a8 + 0x34,local_28);
   }
@@ -2205,9 +2208,11 @@ void FUN_20128e94(void)
 }
 
 
-// ===== FUN_20128f4c @ 20128f4c (264 bytes)
+// ===== text_list_draw @ 20128f4c (264 bytes)
 
-void FUN_20128f4c(int param_1,int param_2,int param_3)
+/* scr_text_list body */
+
+void text_list_draw(int param_1,int param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -2287,7 +2292,7 @@ void scr_text_list(int param_1,int param_2,int param_3)
     param_3 = 1;
   }
   if (*(byte *)(param_1 + 0x98) < 2) {
-    FUN_20128f4c(param_1,param_2,param_3);
+    text_list_draw(param_1,param_2,param_3);
   }
   return;
 }
@@ -2431,9 +2436,11 @@ LAB_20129398:
 }
 
 
-// ===== FUN_201293f8 @ 201293f8 (2000 bytes)
+// ===== vfo_audio_status_draw @ 201293f8 (2000 bytes)
 
-void FUN_201293f8(int param_1,int param_2)
+/* REC/PLAY state on the VFO screen (%04d, %3d) (inference) */
+
+void vfo_audio_status_draw(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -3854,9 +3861,11 @@ undefined4 FUN_2012c2d8(byte *param_1,byte *param_2)
 }
 
 
-// ===== FUN_2012c4a0 @ 2012c4a0 (248 bytes)
+// ===== audio_error_check @ 2012c4a0 (248 bytes)
 
-void FUN_2012c4a0(int param_1)
+/* audio_state/audio_error/audio_clear_error */
+
+void audio_error_check(int param_1)
 
 {
   byte bVar1;

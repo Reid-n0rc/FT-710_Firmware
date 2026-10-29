@@ -51,7 +51,7 @@ void FUN_2013ec30(int *param_1)
     }
     *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
     *(undefined1 *)(*param_1 + 0x200) = 0xaa;
-    FUN_2013e2b4(*(undefined4 *)(iVar1 + 0x2d0),*param_1 + 1,1,param_1);
+    sd_write_sectors(*(undefined4 *)(iVar1 + 0x2d0),*param_1 + 1,1,param_1);
     return;
   }
   FUN_2014d128(*param_1 + 1,&DAT_20420299,0x5a);
@@ -68,9 +68,9 @@ void FUN_2013ec30(int *param_1)
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   iVar3 = *(int *)(iVar1 + 0x2d0);
-  iVar1 = FUN_2013e2b4(iVar3,*param_1 + 1,1,param_1);
+  iVar1 = sd_write_sectors(iVar3,*param_1 + 1,1,param_1);
   if (iVar1 == 0) {
-    FUN_2013e2b4(iVar3 + 6,*param_1 + 1,1,param_1);
+    sd_write_sectors(iVar3 + 6,*param_1 + 1,1,param_1);
     return;
   }
   return;
@@ -244,7 +244,7 @@ void FUN_2013f088(int *param_1)
   FUN_2014d918(iVar2 + 0x1cb,*(undefined4 *)(iVar1 + 0x2d4));
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
-  FUN_2013e2b4(0,*param_1 + 1,1,param_1);
+  sd_write_sectors(0,*param_1 + 1,1,param_1);
   return;
 }
 
@@ -568,9 +568,11 @@ undefined4 FUN_2013f340(int *param_1)
 }
 
 
-// ===== FUN_2013f79c @ 2013f79c (356 bytes)
+// ===== fat_clear_root_dir @ 2013f79c (356 bytes)
 
-int FUN_2013f79c(int *param_1)
+/* zero the root-directory sectors (FAT12/16: 32, FAT32: 1 cluster) */
+
+int fat_clear_root_dir(int *param_1)
 
 {
   char cVar1;
@@ -606,7 +608,7 @@ int FUN_2013f79c(int *param_1)
     uVar4 = 0;
     if (uVar5 != 0) {
       do {
-        iVar2 = FUN_2013e2b4(iVar3,*param_1 + 1,1,param_1);
+        iVar2 = sd_write_sectors(iVar3,*param_1 + 1,1,param_1);
         if (iVar2 != 0) {
           return iVar2;
         }
@@ -621,9 +623,11 @@ int FUN_2013f79c(int *param_1)
 }
 
 
-// ===== FUN_2013f83c @ 2013f83c (328 bytes)
+// ===== sd_fat_format @ 2013f83c (328 bytes)
 
-int FUN_2013f83c(int *param_1)
+/* card init (3 tries), then fat_clear_root_dir */
+
+int sd_fat_format(int *param_1)
 
 {
   int iVar1;
@@ -636,7 +640,7 @@ int FUN_2013f83c(int *param_1)
   iVar1 = 0;
   do {
     iVar2 = (**(code **)(param_1[1] + 0x20))(2);
-    if ((iVar2 == 0) && (iVar2 = FUN_2013dff0(param_1), iVar2 == 0)) {
+    if ((iVar2 == 0) && (iVar2 = sd_card_identify(param_1), iVar2 == 0)) {
       if (*(short *)(*param_1 + 0x2c6) == 1) {
         return -5;
       }
@@ -650,7 +654,7 @@ int FUN_2013f83c(int *param_1)
            (iVar2 = FUN_2013c928(1,param_1), iVar2 == 0)))) &&
          (((*(short *)(*param_1 + 0x2c2) != 2 && *(short *)(*param_1 + 0x2c2) != 3 ||
            (iVar2 = (**(code **)(param_1[1] + 0x40))(), iVar2 == 0)) &&
-          (iVar2 = FUN_2013f79c(param_1), iVar2 == 0)))) {
+          (iVar2 = fat_clear_root_dir(param_1), iVar2 == 0)))) {
         return 0;
       }
     }
@@ -662,9 +666,11 @@ int FUN_2013f83c(int *param_1)
 }
 
 
-// ===== FUN_2013f984 @ 2013f984 (96 bytes)
+// ===== sd_format @ 2013f984 (96 bytes)
 
-undefined4 FUN_2013f984(char param_1)
+/* drive letter; -> sd_fat_format (inference: format, #83) */
+
+undefined4 sd_format(char param_1)
 
 {
   undefined1 uVar1;
@@ -683,7 +689,7 @@ undefined4 FUN_2013f984(char param_1)
     if (*(int *)(local_10 + 0x24) == 0) {
       return 0xfffffff8;
     }
-    uVar3 = FUN_2013f83c();
+    uVar3 = sd_fat_format();
   }
   else {
     uVar3 = 0xfffffffe;

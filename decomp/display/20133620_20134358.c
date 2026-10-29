@@ -1070,9 +1070,11 @@ void FUN_20134310(void)
 }
 
 
-// ===== FUN_20134318 @ 20134318 (452 bytes)
+// ===== scope3d_redraw_history @ 20134318 (452 bytes)
 
-void FUN_20134318(int param_1,int param_2)
+/* every N frames: re-project lines 29..2 (14..2) */
+
+void scope3d_redraw_history(int param_1,int param_2)
 
 {
   int iVar1;
@@ -1132,9 +1134,11 @@ LAB_20157b88:
 }
 
 
-// ===== FUN_20134328 @ 20134328 (588 bytes)
+// ===== scope3d_add_line @ 20134328 (588 bytes)
 
-void FUN_20134328(int param_1,int param_2,int param_3)
+/* newest line = per-point max of the last N history rows */
+
+void scope3d_add_line(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
