@@ -1273,27 +1273,7 @@ LAB_2011a684:
   else {
     uVar4 = 3;
   }
-  iVar1 = uVar4 * 0x12;
-  *(uint *)(&DAT_20166204)[iVar5 * 0x18] = uVar4;
-  *(undefined4 *)(&DAT_20166208)[iVar5 * 0x18] = 0x800000;
-  *(uint *)(&DAT_20166208)[iVar5 * 0x18] =
-       *(uint *)(&DAT_20166208)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b8e + iVar1);
-  *(uint *)(&DAT_2016620c)[iVar5 * 0x18] = (uint)*(ushort *)(&UNK_20165b90 + iVar1) << 0x10;
-  *(uint *)(&DAT_2016620c)[iVar5 * 0x18] =
-       *(uint *)(&DAT_2016620c)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b92 + iVar1);
-  *(undefined4 *)(&DAT_20166210)[iVar5 * 0x18] = 0x800000;
-  *(uint *)(&DAT_20166210)[iVar5 * 0x18] =
-       *(uint *)(&DAT_20166210)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b94 + iVar1);
-  *(uint *)(&DAT_20166214)[iVar5 * 0x18] = (uint)*(ushort *)(&UNK_20165b96 + iVar1) << 0x10;
-  *(uint *)(&DAT_20166214)[iVar5 * 0x18] =
-       *(uint *)(&DAT_20166214)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b98 + iVar1);
-  *(undefined4 *)(&DAT_20166218)[iVar5 * 0x18] = 0x800000;
-  *(uint *)(&DAT_20166218)[iVar5 * 0x18] =
-       *(uint *)(&DAT_20166218)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b9a + iVar1);
-  *(uint *)(&PTR_DAT_2016621c)[iVar5 * 0x18] = (uint)*(ushort *)(&UNK_20165b9c + iVar1) << 0x10;
-  *(uint *)(&PTR_DAT_2016621c)[iVar5 * 0x18] =
-       *(uint *)(&PTR_DAT_2016621c)[iVar5 * 0x18] | (uint)*(ushort *)(&UNK_20165b9e + iVar1);
-  *(uint *)(&DAT_20166200)[iVar5 * 0x18] = *(uint *)(&DAT_20166200)[iVar5 * 0x18] | 1;
+  FUN_2011a110(uVar4,&DAT_20165b88,&UNK_20165b8e + uVar4 * 0x12,&DAT_20166200 + iVar5 * 0x18);
   return;
 }
 
@@ -1349,37 +1329,21 @@ void FUN_2011a800(int param_1,int param_2,int param_3)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
-  undefined4 *puVar4;
   
   if (param_3 == 0) {
-    iVar2 = 0;
+    iVar1 = 0;
+  }
+  else {
+    iVar1 = 2;
+  }
+  if (param_2 == 0) {
+    iVar2 = 1;
   }
   else {
     iVar2 = 2;
   }
-  iVar1 = iVar2 * 0x12;
-  if (param_2 == 0) {
-    iVar3 = 1;
-  }
-  else {
-    iVar3 = 2;
-  }
-  puVar4 = &DAT_20166200 + param_1 * 0x18 + iVar3 * 8;
-  *(int *)puVar4[1] = iVar2;
-  *(undefined4 *)puVar4[2] = 0x800000;
-  *(uint *)puVar4[2] = *(uint *)puVar4[2] | (uint)*(ushort *)(&UNK_20165b8e + iVar1);
-  *(uint *)puVar4[3] = (uint)*(ushort *)(&UNK_20165b90 + iVar1) << 0x10;
-  *(uint *)puVar4[3] = *(uint *)puVar4[3] | (uint)*(ushort *)(&UNK_20165b92 + iVar1);
-  *(undefined4 *)puVar4[4] = 0x800000;
-  *(uint *)puVar4[4] = *(uint *)puVar4[4] | (uint)*(ushort *)(&UNK_20165b94 + iVar1);
-  *(uint *)puVar4[5] = (uint)*(ushort *)(&UNK_20165b96 + iVar1) << 0x10;
-  *(uint *)puVar4[5] = *(uint *)puVar4[5] | (uint)*(ushort *)(&UNK_20165b98 + iVar1);
-  *(undefined4 *)puVar4[6] = 0x800000;
-  *(uint *)puVar4[6] = *(uint *)puVar4[6] | (uint)*(ushort *)(&UNK_20165b9a + iVar1);
-  *(uint *)puVar4[7] = (uint)*(ushort *)(&UNK_20165b9c + iVar1) << 0x10;
-  *(uint *)puVar4[7] = *(uint *)puVar4[7] | (uint)*(ushort *)(&UNK_20165b9e + iVar1);
-  *(uint *)*puVar4 = *(uint *)*puVar4 | 1;
+  FUN_2011a110(iVar1,&DAT_20165b88,&UNK_20165b8e + iVar1 * 0x12,
+               &DAT_20166200 + param_1 * 0x18 + iVar2 * 8);
   return;
 }
 
