@@ -334,6 +334,21 @@ flowchart TD
 - `hid_chain*_dispatch` first calls `kbd_set_current` (0x20111218), which remembers the keyboard. The console has **no text output**. Commands
   report their progress on the keyboard's **Num/Caps/Scroll LEDs** through `kbd_led_status` (0x20111224, a 3-bit value) **[fact]**.
 
+### Reachability (#80)
+
+**The USB keyboard is the only input path, and `debug_enabled()` gates all of it** **[fact]**:
+
+- `task_root` stores `hid_chain0_dispatch` / `hid_chain1_dispatch` as function pointers at 0x20800110 / 0x20800114. Their only reader is
+  `usbkbd_report` (the USB-host keyboard report), which calls chain 1 only when `debug_enabled()` is true.
+- No other code calls `hid_line_edit` or any slot handler (`fwdbg_line`, `uptest_line`, `cli_line`, `keycode_line`, `sdr_debug_cmd`,
+  `kbdtest_line`). The FT4222 PC link, the MAIN link and the touch/key scan have no path to them.
+- **Trace and replay are gated too.** Every write to the debug word 0x20808A84 and every set of the `keycode` event flag 0x208001D0 is in
+  `keycode_line`. `task_keycode` is the only caller of `mainlink_trace_toggle` and `mainlink_trace_dump`. `mainlink_trace` (called by
+  `mainlink_rx_deliver` and `task_mainlink_tx` for every frame) records only after the toggle has allocated the ring (0x208001D8) and
+  set 0x208001D5. The replay task `test_disp` (`debug_replay_send_cmd`) is started only by `sndc` in `keycode_line`.
+- So with the shipped gate word (0 at 0x20450000) none of these commands, F-key overlays, traces or replays can run. Opening the gate
+  needs one of the changes under [Enabling it](#enabling-it-input-for-t16-docscustom-firmwaremd).
+
 ### Line editor
 
 `hid_line_edit` (0x20112E5C) gives every handler its own line buffer. It ignores reports with more than one key down. Enter = usage 0x28 or 0x58
