@@ -175,7 +175,7 @@ mode until the next reset **[inference: nothing switches it back]**.
   So the header and trailer are meant for the **PC scope software**, not for the panel, and their layout is set by the FPGA (or that PC
   software). The DISPLAY cannot tell us what they mean **[inference]**.
 - **The second 850 bytes** of each 1700-byte DMA frame are never referenced (0x605C03F2..) **[fact]**. Most likely the FPGA sends two
-  850-byte halves (for example main and sub, or two resolutions) and this build uses only the first **[guess]**.
+  850-byte halves (for example main and sub, or two resolutions) and this build uses only the first **[guess]**. *#186:* the FPGA fills them with the constant 0xCC (netlist), so they are padding **[fact]**.
 - **Rate on the DISPLAY side.** The GUI uses at most one record per 33 ms frame: `scope_draw_frame` runs once per `gui_main_loop` pass,
   pushes the newest record into the history and draws it **[fact]**. Records that arrive in between overwrite each other in 0x204832BB, so a
   faster SDR frame rate is invisible on the panel; only the PC link (every 4 ms) could see more. The 3DSS adds a line every N GUI frames,
@@ -190,9 +190,27 @@ mode until the next reset **[inference: nothing switches it back]**.
   - M17 is driven by a flip-flop on the `dsp_clk` MMCM clock (`BUFHCE_X1Y8`), the clock that also drives the I2S port.
 
   So `FFT_CLK/FRM/DAT` are most likely T9/U17/M17 **[inference]**. Their logic waits on a condition the harness does not drive, perhaps ADC data or a DISPLAY-side input **[guess]**.
+  *#186 correction:* none of the three. The link is on the **bidirectional** pins R18 (`FFT_CLK`), T18 (`FFT_FRM`), N14 (`FFT_DAT`),
+  which the harness could not watch (its IOBUF model never drives a pad), and it starts only when MAIN sets register 0x04 bit 3
+  (MAIN's 0xE519 does); the #62 run did not write reg 0x04.
 
-**What stays open** (#186): the header/trailer field meanings and the SDR frame period. They need either the FPGA scope serializer located
-in the netlist, or a capture on the radio. A capture needs the owner's approval: either the debug overlay's "S" counter on a debug-enabled
+**The FPGA side (#186)** **[fact: netlist and simulation; see [sdr/netlist.md 5.6](../sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186)]**:
+
+- **Frame = 1,700 bytes, exactly what DMA ch5 takes.** Bytes 0..849 come from one bank of a 2 × 1024-byte ping-pong RAM (RAMB18_X2Y21);
+  bytes 850..1699 are a constant **0xCC** filler. So the unused second 850 bytes are padding, not a second trace.
+- **Period: one frame every 614,400 `dsp_clk` cycles**, from a free-running 20-bit counter; select low for 435,233 cycles, 32 cycles per
+  bit, MSB first, data changing on the rising and sampled on the falling clock edge. At `dsp_clk` = 18.432 MHz that is **33.33 ms
+  (30 frames/s, 576 kbit/s)**, the GUI's frame time; at the 28.166 MHz of the MMCM reading it would be 21.8 ms
+  ([system.md O8](../system.md#8-contradictions-and-open-questions)) **[inference for the clock]**.
+- **What starts it:** nothing per frame. Register 0x04 bit 3 (RX; reg 0x03 bit 3 in the other TX/RX state) releases the counter, and
+  every wrap starts the next frame. Register 0x06 has a test-pattern bit that sends byte k = k mod 256.
+- **Header and trailer are not made by the serializer.** It copies RAM bytes 0..24 and 825..849 like the 800 points;
+  their content is whatever the 125 MHz writer puts there. In simulation with MAIN's set-up the writer fills all 850 positions alike
+  (no constant, counter or register field at 0..24 or 825..849) **[fact, simulation]**, so header and trailer are most likely 25 more
+  trace bins on each side of the 800 drawn points, which the PC software can use or drop **[inference]**.
+
+**What stays open** (#186): the serializer is located and the period is 614,400 `dsp_clk` cycles (above); what is left is the
+`dsp_clk` frequency and the header/trailer content on a real radio, which needs a capture. A capture needs the owner's approval: either the debug overlay's "S" counter on a debug-enabled
 unit, or the FT4222 PC stream, which carries the header unchanged.
 
 The debug overlay (`debug_overlay_draw`, only with `debug_enabled`) shows the SS-IRQ counters as "S" (SDR) and "D" (DSP) **[fact: labels at
