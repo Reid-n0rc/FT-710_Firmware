@@ -79,7 +79,7 @@ sequenceDiagram
   end
   A->>A: first-boot EEPROM write (if defaults were loaded)
   A->>A: shreg_bus_init, TX/RX init, SDR/DSP link init, keyer/tone/tuner init
-  A->>M: cat_apo_reset, enter main_loop (never returns)
+  A->>M: screensaver_timer_restart, enter main_loop (never returns)
 ```
 
 ### Steps in detail
@@ -123,7 +123,7 @@ sequenceDiagram
 | post-power | 0xFFFB98C8 | `keyer_init` | `keyer_init` | Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC **[fact]** |
 | post-power | 0xFFFEC46C | `tuner_init` | `tuner_init` | One `tuner_task` pass, then `FUN_fffec578` **[fact]** |
 | post-power | 0xFFFC98AA | `menu_subsys_init` | — | `FUN_fffd405e` + `menu_init` (menu/UI tables) **[fact; role guess]**. See [menu.md](menu.md) |
-| post-power | 0xFFFB263D | `cat_apo_reset` | — | Arms the auto-power-off timer **[fact]** |
+| post-power | 0xFFFB263D | `screensaver_timer_restart` | — | Starts the screen-saver timer (slow timer 0; was `cat_apo_reset`, see [below](#screen-saver-timer-slow-timer-0)) **[fact]** |
 
 ## Main loop
 
@@ -143,7 +143,7 @@ flowchart TD
 | # | Address | Ghidra name | Inferred name | Role | Page |
 |---|---|---|---|---|---|
 | 1 | 0xFFFB3E6A | `wdt_kick` | `wdt_kick` | Independent-watchdog refresh (IWDTRR 0x88030 ← 0x00, 0xFF) **[fact: code + HWM §33.2.1]**. Also called in the power-off loop | [peripherals.md](peripherals.md) |
-| 2 | 0xFFFB6D56 | `io_task` | `io_task` | TX/RX and power supervisor: PB3 vs 0x20B44 with timer 0x2A; four sub-tasks (`meter_task` timers/APO, `io_poll` GPIO/TX state machine on 0x20B18, `FUN_fffb8d77`, `FUN_fffb9605`); **supply monitor** `supply_undervolt_check` (if ADC 0x20B08 < 0x7DD: `power_off_io`, save, 0x20B39 = 0x90); **power-off**: when 0x20B30 == 2 it saves the EEPROM (`eeprom_save_opstate`), waits for SCI1 to drain and calls `sw_reset` (software reset) **[fact]** | [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md) |
+| 2 | 0xFFFB6D56 | `io_task` | `io_task` | TX/RX and power supervisor: PB3 vs 0x20B44 with timer 0x2A; screen-saver check (`screensaver_timer_expired` → 0x20B87, [below](#screen-saver-timer-slow-timer-0)); four sub-tasks (`meter_task` ADC/meters, `io_poll` GPIO/TX state machine on 0x20B18, `FUN_fffb8d77`, `FUN_fffb9605`); **supply monitor** `supply_undervolt_check` (if ADC 0x20B08 < 0x7DD: `power_off_io`, save, 0x20B39 = 0x90); **power-off**: when 0x20B30 == 2 it saves the EEPROM (`eeprom_save_opstate`), waits for SCI1 to drain and calls `sw_reset` (software reset) **[fact]** | [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md) |
 | 3 | 0xFFFA11ED | `sdr_task` | `sdr_task` | SCI5 FPGA link: pending `sdr_reg_access` (flag 0x1C8B), `sdr_bridge_mode` (0x1C8D), then ~30 change detectors that push radio state to the FPGA whenever something changes; aborts the pass when a transfer is pending **[fact for the structure]** | [sdr-link.md](sdr-link.md) |
 | 4 | 0xFFF9D1B9 | `dsp_link_poll` | `dsp_link_poll` | SCI4 DSP link: pending `dsp_reg_access` (0x1C5E/0x1C5F), a 4-step sequence on timer 0x0B while 0x20B18 is 3 or 8, then ~40 change detectors (DSP register writes) **[fact for the structure]** | [dsp-link.md](dsp-link.md) |
 | 5 | 0xFFFB55C2 | `rf_ctrl_task` | `rf_ctrl_task` | Six port-output sub-tasks (`pa_relay_update`, `…56a5`, `…5786`, `…5874`, `…5976`, `…5d68`) on P6/P7/PA/PB, partly region-dependent (`dest_code_get`) **[fact; role guess: relays / band / TX lines]** | [radio-control.md](radio-control.md), [peripherals.md](peripherals.md) |
@@ -202,7 +202,7 @@ stateDiagram-v2
 |---|---|---|---|
 | 75 one-shot timers, id 0..0x4A | expired flags 0x11FED[id], counters 0x20890[id], limits 0x209BC[id] | `swtimer_start`(id, ms)` `swtimer_start` (limit = ms × 10), `swtimer_expired`(id)` `swtimer_expired` | TPU0 vector 130 ISR → `swtimer_tick` |
 | 2 periodic on/off timers | 0x20AE8, 0x20AF0/0x20AF4, state 0x12038 | `blink_set`(id, on_ms, off_ms)` | same ISR (blink cadence, e.g. 450/250 ms) |
-| 4 slow timers | flags 0x1203A, counters 0x1FA24, limits 0x1FA2C | — | TPU3 vector 142 ISR → `slowtimer_tick` |
+| 4 slow timers | flags 0x1203A, counters 0x1FA24, limits 0x1FA2C | `slowtimer_start`(id, s) (limit = s × 10) | TPU3 vector 142 ISR → `slowtimer_tick` |
 
 TPU0 is set up with TCR = 0x2A (PCLK/16, clear on TGRA) and TGRA = 0x176 → (374 + 1) × 16 / 60 MHz = **100 µs**
 **[fact; PCLKB = 60 MHz from SCKCR, RX651 HWM §9.2.1]**, which matches `ms × 10` in `swtimer_start`. TPU3
@@ -212,6 +212,36 @@ sequence, 0x13 power-up settle (2500 ms), 0x16 tone step, 0x1F link init, 0x2A P
 0x2D TPU2 pulse, 0x31 `FUN_fffcdb26` delay (200 ms), 0x32 CAT AI hold-off (200 ms), 0x3F/0x40 event repeat, 0x4A
 `displink_task` 100 ms re-check. The decompiler shows the counter compare as `(count & 0xFF) >= limit`; that would
 never fire for 200 ms (limit 2000), so it is probably a decompiler artifact **[inference]**.
+
+### Screen-saver timer (slow timer 0)
+
+Slow timer 0 is the **screen-saver** timeout, not an auto-power-off timer (#208). `screensaver_timer_restart`
+0xFFFB263D was named `cat_apo_reset` before; the committed decompile in `decomp/main/` shows the old names
+(`cat_apo_reset`, `FUN_fffb2604`, `FUN_fffb267f`) until the next Ghidra re-export.
+
+- `slowtimer_start`(id, seconds) 0xFFFB2604: ids 0..3 only; clears counter 0x1FA24[id] and flag 0x1203A[id], sets limit
+  0x1FA2C[id] = seconds × 10 **[fact]**. `slowtimer_tick` counts only while the limit is non-zero, so 0 stops the timer **[fact]**.
+  At the 100 ms TPU3 tick the argument is in seconds **[inference from the tick; `tot_start` passes minutes × 60, which agrees]**.
+  Users: id 0 screen saver, ids 1/2 TX time-out (`tot_start`) **[fact]**.
+- `screensaver_timer_restart` 0xFFFB263D: reads 0x9B0F (menu 040104 DISPLAY > SCREEN SAVER, 0..3, clamped to 3) and starts timer 0 with
+  0 / 900 / 1800 / 3600 s = **off / 15 / 30 / 60 min** **[fact for the values; minutes from the tick, inference]**.
+- `screensaver_timer_expired` 0xFFFB267F returns flag 0x1203A (timer 0). Its only caller is `io_task` 0xFFFB6D56 **[fact]**:
+  expired and 0x20B86 (`screensaver_on`, +0x82) clear → 0x20B87 (`screensaver_toggle_req`, +0x83) = 1; not expired and 0x20B86 set
+  → 0x20B87 = 1 as well **[fact]**.
+- `displink_tx_schedule` 0xFFF95F58 sees +0x83, clears it and calls `displink_tx_7B` 0xFFF9889C, which toggles +0x82 and sends frame
+  `0x7B` with b1 = the new value **[fact]**. While +0x82 = 1 the scheduler sends none of the lower-priority frames after it **[fact]**.
+  The DISPLAY shows its screen saver for `0x7B` with b1 = 1 ([display/mainlink.md](../display/mainlink.md)) **[inference there]**.
+- The DISPLAY answers a key, touch or encoder action with `E4`; `displink_rx_dispatch` 0xFFF95331 then clears +0x82 and, as for every
+  frame but 06/15/E3, restarts the timer **[fact]**. `remote_keypad_scan` restarts the timer on a key and drops that key while 0x20B86
+  is set **[fact]**.
+
+Callers of `screensaver_timer_restart` (the calling functions are **[fact]** from `decomp/main/`; the call-site addresses come
+from the #208 cross-reference list and lie inside each function): `app_main` (call 0xFFF94B83, before `main_loop`),
+`displink_rx_dispatch` (0xFFF95416, every received frame but 06/15/E3), `cat_parse` (0xFFFA34B6, every CAT command),
+`remote_keypad_scan` (0xFFFB7AEB), `ptt_source_select` (0xFFFB8689, any active PTT source), `FUN_fffbb024` (0xFFFBB02F, keyer element
+input, see [eeprom.md](eeprom.md)) and the menu step handler `menu_ex040104_step` (function 0xFFFCF123, when SCREEN SAVER is changed;
+already a Ghidra function from the #74 menu entries in `tools/ghidra/entries_main_menu.tsv`). Taken together: the screen saver starts after
+the chosen time with no key, knob, touch, PTT, keyer or CAT activity **[inference]**.
 
 ### Vector table
 
@@ -269,6 +299,8 @@ To find all users of a field, search for both forms. Other pointers there: 0x25D
 | 0x20B45 | +0x41 | settings defaults were loaded at boot **[fact]** |
 | 0x20B46 | +0x42 | CAT disabled (set by DISPLAY) **[fact]** |
 | 0x20B6B | +0x67 | RX/TX or VFO selector watched by the SDR and DSP link tasks **[fact for the use; meaning guess]** |
+| 0x20B86 | +0x82 | `screensaver_on`: toggled by `displink_tx_7B`, cleared on `E4` ([screen saver](#screen-saver-timer-slow-timer-0)) **[fact]** |
+| 0x20B87 | +0x83 | `screensaver_toggle_req`: set by `io_task`, sends `0x7B` **[fact]** |
 | 0x20B9C | +0x98 | link transmitter enabled: `displink_tx_poll` sends only while it is 1; set by `PS1` (`power_on_request`) and the `F0` hello **[fact]** (#57) |
 | 0x20F1C | +0x418 | scan running (`cat_SC`) **[fact]** |
 | 0x20F8C / 0x20F90 | +0x488 / +0x48C | command words from DISPLAY frames 0xE7 / 0xE8 **[fact]** |
@@ -332,6 +364,9 @@ Functions owned by a subsystem page are listed there; this table covers the ones
 | 0xFFFB23F3 | `swtimer_expired` | `swtimer_expired` | (id) → flag |
 | 0xFFFB2419 | `blink_set` | `blink_set` | (id, on_ms, off_ms) |
 | 0xFFFB259C | `slowtimer_tick` | `slowtimer_tick` | 100 ms tick body |
+| 0xFFFB2604 | `slowtimer_start` (decompile: `FUN_fffb2604`) | `slowtimer_start` | (id 0..3, seconds) |
+| 0xFFFB263D | `screensaver_timer_restart` (decompile: `cat_apo_reset`) | `screensaver_timer_restart` | slow timer 0 from 0x9B0F |
+| 0xFFFB267F | `screensaver_timer_expired` (decompile: `FUN_fffb267f`) | `screensaver_timer_expired` | → flag 0x1203A |
 | 0xFFFB2469 | `tone_sample_isr` | `tone_sample_isr` | TPU1 ISR body |
 | 0xFFF9283D | `dac0_write` | `dac0_write` | DADR0 0x88040 = value & 0xFFF |
 | 0xFFFB27FB | `adc0_store` | `adc0_store` | ADC0 ISR body |

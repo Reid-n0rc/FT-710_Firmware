@@ -112,7 +112,7 @@ stateDiagram-v2
 - 0x1B3D2 = TX busy, 0x1B3D3 = inter-frame gap running, 0x1B3D4/0x1B3D5 = ACK-wait window, 0x1B3CC = send ACK, 0x1B3CD = send NAK,
   0x1B3CE = data frame outstanding, 0x1B3CF = retry count, 0x1B3D0 = send the hello reply, 0x1B3D1 = hello reply outstanding. **[fact]**
 - A received NAK does nothing (`displink_rx_nak` 0xFFF95469 is empty); the frame is simply resent when the 30-unit window ends. **[fact]**
-- Every received data frame except `E3` restarts the auto-power-off timer (`cat_apo_reset`). **[fact]**
+- Every received data frame except `E3` restarts the screen-saver timer (`screensaver_timer_restart` 0xFFFB263D; it was named `cat_apo_reset`, and the committed decompile in `decomp/main/` shows that old name until the next Ghidra re-export, #208). **[fact]** See [README.md](README.md#screen-saver-timer-slow-timer-0).
 
 ## DISPLAY → MAIN frames
 
@@ -128,8 +128,8 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xE0 | 6 | `displink_rx_E0_key` 0xFFF95829 | **key / touch event**: b1 = source (high nibble) and action (low nibble), b2..b3 = key code (big-endian). Passed through `key_event_filter`, then queued at +0x9C..+0xA0 for `key_task` ([ui-keys.md](ui-keys.md)) **[fact]** | ACK (always) |
 | 0xE1 | 7 | `displink_rx_E1_encoder` 0xFFF9588B | **encoder step**: b1 = encoder id, b2 = signed step count ([ui-keys.md](ui-keys.md#encoders-e1)); ignored while +0x80 = 1 **[fact]** | ACK |
 | 0xE2 | 7 | `displink_rx_E2` 0xFFF95BF4 | b1 ≠ 0 → +0xA6 = 1 (first frame also sets +0xA7 and +0xA5). Read by 0xFFFCFxxx/0xFFFD3xxx UI code **[fact for the fields]**. **SD-card state**: the DISPLAY sender is `mainlink_send_sd_state` **[inference, T14]** | ACK |
-| 0xE3 | 9 | `displink_rx_E3_clock` 0xFFF95ED3 | b1..b5 → +0xAD..+0xB1. **Date/time from the DISPLAY RTC** **[inference]**: the clock-set code (0xFFFCD7xx, 0xFFFCDBB8) copies these to +0xB2..+0xB6 and forces fields 2 and 3 (month, day) to ≥ 1, and `0x65` sends +0xB2..+0xB6 back. No APO reset (periodic) | ACK |
-| 0xE4 | 5 | `displink_rx_E4` 0xFFF95C6A | clears +0x82: the DISPLAY's answer to `0x7B` **[fact]** | ACK |
+| 0xE3 | 9 | `displink_rx_E3_clock` 0xFFF95ED3 | b1..b5 → +0xAD..+0xB1. **Date/time from the DISPLAY RTC** **[inference]**: the clock-set code (0xFFFCD7xx, 0xFFFCDBB8) copies these to +0xB2..+0xB6 and forces fields 2 and 3 (month, day) to ≥ 1, and `0x65` sends +0xB2..+0xB6 back. No screen-saver timer restart (the frame is periodic) | ACK |
+| 0xE4 | 5 | `displink_rx_E4` 0xFFF95C6A | clears +0x82 (`screensaver_on`; the clear is in `displink_rx_dispatch`, the handler only sets 0x1B3CC = send ACK): the DISPLAY's wake-up answer to `0x7B` **[fact]** | ACK |
 | 0xE5 | 5 | `displink_rx_E5` 0xFFF95C74 | clears +0x80 (unblocks the scheduler and encoders) **[fact]** | ACK |
 | 0xE6 | 5 | `displink_rx_E6_beep` 0xFFF95C8A | b1 = 0/1/2 → `beep_request`(1/2/3) 0xFFFB2DA6 (code 3 is also used when `key_event_filter` rejects a key) **[fact; "beep" is inference]** | ACK |
 | 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task`. Status of the DISPLAY's **PlayList recorder/player** (sent while its audio owner flag 0x2080048E = 1); b1 = 0xFF is an error with code b5 **[fact, DISPLAY side: `FUN_20124744`]** (#65) | ACK |
@@ -167,7 +167,7 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 | 4 | 0x7F | 0x0B | +0x447 | `power_down_save` 0xFFF98797 | b1 = +0x35 & 0x7F, then the constant `9B BA F6 38 FF 25 73 1F`. +0x35 (= 0x20B39) is the power command: 0x10 power off (`PS0;`), 0x11 restart (`dest_code_set`, resets), 0x90 low-voltage off (also waits 2000 units) **[fact for the values; the constant looks like a guard against accidental matches, guess]** |
 | 5 | 0x62 / 0x30 / 0x31 | 0x197 / 0xA0 / 0xA3 | +0xBA (boot code 2) | 0xFFF9C46D / 0xFFF98ECB | |
 | 6 | 0x7C | 5 | +0x81 | 0xFFF98869 | zeros; +0x80 then blocks until `E5` **[fact]** |
-| 7 | 0x7B | 5 | +0x83 | 0xFFF9889C | b1 = toggled +0x82; blocks until `E4` **[fact]** |
+| 7 | 0x7B | 5 | +0x83 (`screensaver_toggle_req`, set by `io_task`) | 0xFFF9889C | b1 = toggled +0x82 (`screensaver_on`); while +0x82 = 1 the frames below are not sent, until `E4` **[fact]**. Screen saver on/off ([README.md](README.md#screen-saver-timer-slow-timer-0)) |
 | 8 | 0x7A | 5 | +0x85 | 0xFFF988F2 | zeros; +0x84 blocks **[fact]** |
 | 9 | 0x70 | 0xE3 | +0x86 | 0xFFF98925 / 0xFFF9894F | |
 | 10 | 0x43 / 0x44 / 0x45 | 0x23 / 7 / 0x107 | +0x87, type in +0x1E0, length in +0x1E2 | 0xFFF98BCD / 0xFFF98C1F | requests answered by `C3` / `C5` / `C4`; set by the SD CARD menu operations (`sd_menu_task`, task 13: MEM LIST / MENU load and save, INFORMATIONS, FORMAT) **[fact]** (#65) |

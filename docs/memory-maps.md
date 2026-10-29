@@ -209,6 +209,8 @@ so `PTR_DAT_00025d38[off]` in the decomp is the byte at 0x20B04 + off. Search fo
 | 0x1FA50 + 0xC8 × P1 | 6 × 100 × u16 | per-P1 menu index lists | menu.md |
 | 0x20B04..0x20B16 | 10 × u16 | ADC results: AN001, AN002, AN003, AN006, AN005, AN007, AN108, AN109, AN115, AN117 | [peripherals.md](code/main/peripherals.md#data-structures-and-globals) |
 | 0x20B18 | u8 | `trx_state`, TX/RX sequencer state 0..8 | tx-protection.md |
+| 0x20B86 | u8 | `screensaver_on` (state block +0x82): toggled by `displink_tx_7B` 0xFFF9889C, cleared on DISPLAY frame `E4` (`displink_rx_dispatch` 0xFFF95331) | [code/main/README.md](code/main/README.md#screen-saver-timer-slow-timer-0), display-link.md |
+| 0x20B87 | u8 | `screensaver_toggle_req` (+0x83): set by `io_task` 0xFFFB6D56 when the screen-saver timer state and 0x20B86 disagree; `displink_tx_schedule` clears it and sends `0x7B` | code/main/README.md, display-link.md |
 | 0x2105C | 350 × 0x38 | menu item table | menu.md |
 
 ### MAIN RAM and EEPROM areas used by CAT (T09) [fact]

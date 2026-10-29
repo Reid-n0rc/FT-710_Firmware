@@ -57,7 +57,7 @@ PlayList playback flag of `dispreq_e7_task`, so the radio cannot transmit while 
 
 - The "PTT select" value is setting 0x9A9F, or a per-mode value from `FUN_fffb50d7`. The code values 1 = RTS, 2 = DTR and 3 = DAKY match the CAT
   manual's `PC KEYING 0 OFF 1 RTS 2 DTR 3 DAKY` **[fact]**.
-- Any active source restarts the APO timer (`cat_apo_reset`). Any source except VOX arms timer 0x2F for 200 ms, which keeps VOX from
+- Any active source restarts the screen-saver timer (`screensaver_timer_restart` 0xFFFB263D; it was named `cat_apo_reset`, and the committed decompile in `decomp/main/` shows that old name until the next Ghidra re-export, #208). Any source except VOX arms timer 0x2F for 200 ms, which keeps VOX from
   re-triggering **[fact]**.
 - 0x12050 (`pc_keying_active`) is 1 when the source is DAKY, RTS, DTR, 8 or 9 and the mode group (`FUN_fffba192`) is CW (1 or 3). The
   line is then a CW key, not a PTT, and `pc_keying` keys SEND and plays a sidetone **[fact for the logic, inference for the naming]**.

@@ -188,7 +188,7 @@ fffb1caf	cat_ring_unpop	Steps the CAT ring tail back (port TX busy: retry later)
 fffb1d06	cat_e9_slot	Returns 0x1B78C: single-slot buffer for frames starting E1/E9 (flag, port, len, data)
 fffb1d12	cat_send_reply	Send buffer on CAT port (1=SCI3, 2=SCI0, else SCI2), sets per-port busy flag
 fffb0166	cat_reply_error	Builds the '?;' error reply (len 2)
-fffb263d	cat_apo_reset	Restarts the auto-power-off timer from setting 0x9B0F (called per received command)
+fffb263d	screensaver_timer_restart	Restarts slow timer 0 (screen saver) from menu 040104 SCREEN SAVER 0x9B0F: 0 off, 1/2/3 = 15/30/60 min; called on any user/CAT/link activity (#208; was cat_apo_reset)
 fffdd797	cat_ai_poll	Auto-information broadcaster: runs ~70 change detectors, sends one changed item to every port with AI on (0x20B20..22)
 fffddb6a	cat_ai_holdoff	Arms timer 0x32 (200 ms) and 0x187C2 to hold off the next AI frame after a CAT set
 fffddb7e	cat_ai_FD	AI detector for the undocumented FD command (FD00n + 9 digits)
@@ -262,6 +262,8 @@ fff92b01	r_s12ad0_scan_end_isr	vec186: stop unit 0, copy results to 0x20B04.., s
 fff92e0f	r_s12ad1_scan_end_isr	vec189: stop unit 1, copy results to 0x20B10.., set 0x1203F
 fffb2288	swtimer_tick	TPU0 ISR body: 75 one-shot timers (flags 0x11FED) + 2 blink timers (0x12038)
 fffb259c	slowtimer_tick	TPU3 ISR body: 4 timers in 100 ms units (flags 0x1203A)
+fffb2604	slowtimer_start	slowtimer_start(id 0..3, seconds): counter 0x1FA24[id] = 0, limit 0x1FA2C[id] = seconds x 10 (100 ms ticks), flag 0x1203A[id] = 0; 0 s = stopped (#208)
+fffb267f	screensaver_timer_expired	Returns slow-timer-0 flag 0x1203A (screen-saver timeout reached); read by io_task (#208)
 fffb24d8	spk_softstart_isr	TPU2 ISR body: pulses the selected speaker switch with a shrinking duty cycle [inference: pop suppression]
 fffb2469	tone_sample_isr	TPU1 ISR body: next sample of the table at *0x20B00 -> DADR0
 fff9283d	dac0_write	DADR0 = v & 0xFFF
@@ -300,7 +302,7 @@ fffe2cd0	dispreq_e7_task	main_loop task 11: acts on the E7 status (+0x488) of th
 fffb98c8	keyer_init	Clears keyer state 0x120BC (0xA0 B)
 fffb98e9	keyer_task	main_loop task 12: CW keyer (speed 0x9C03, 0x20B97) [inference]
 fff94d6f	displink_task	DISPLAY link task (main_loop and power-off loop): rx validate/dispatch, ACK/NAK, gap 2 / ACK-wait 30 units, scheduler, 3 retries
-fff95331	displink_rx_dispatch	Switch on received type; APO reset for all but 06/15/E3
+fff95331	displink_rx_dispatch	Switch on received type; screen-saver timer restart for all but 06/15/E3
 fff9546a	displink_rx_F0_hello	F0: DISPLAY version/date, boot code b7 (1 reset, 2, 4 numeric mode, 5, 6 link down, 7 destination swap, 0x10 warm), link up, power on (+0x36)
 fffbbd58	key_task	Key state machine (main_loop): press/short/long/repeat/release tables by key class
 fffbc35f	key_call_press	JSR key_press_table[code]

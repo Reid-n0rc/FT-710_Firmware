@@ -35,7 +35,7 @@ All addresses are MAIN ROM/RAM addresses, and the tags follow AGENTS.md: **[fact
     the value, and the frame is `EX` + ID + value + `;`. An EX set starts `cat_ai_ex_holdoff` 0xFFFE6E26 (timer 0x32, 200; flag 0x1B299) **[fact]** (#70).
 - **Power-off gate.** While the radio is "off" (0x20B3A == 0), `cat_parse` drops every command except `PS1`, primary index 71 with a parameter of `1`. **[fact]**
 - **Global CAT disable.** While 0x20B46 == 1, `cat_parse` returns at once without consuming anything. The DISPLAY link sets this flag: `displink_rx_F1_sys` sub-command 3. **[fact]** Most likely it is used during firmware update or SD operations **[guess]**.
-- **APO reset.** Every command received through the ring restarts the auto-power-off timer (`cat_apo_reset`). The timer is set to 900, 1800 or 3600 units, according to setting 0x9B0F (1, 2 or 3). **[fact]**
+- **Screen-saver restart.** Every command received through the ring restarts the screen-saver timer (`screensaver_timer_restart` 0xFFFB263D, called from `cat_parse` at 0xFFFA34B6) **[fact]**. The timer is slow timer 0, set to 900, 1800 or 3600 s (15/30/60 min) from menu 040104 DISPLAY > SCREEN SAVER (0x9B0F = 1/2/3; 0 = off) **[fact]**. So CAT traffic keeps the screen saver from starting. This was documented as an auto-power-off timer and named `cat_apo_reset`; the code shows it is the screen saver (#208, details in [README.md](README.md#screen-saver-timer-slow-timer-0)). The committed decompile in `decomp/main/` still shows the old name `cat_apo_reset` until the next Ghidra re-export.
 
 ## Parse and dispatch flow
 
@@ -47,7 +47,7 @@ flowchart TD
   ML["main_loop / app_main power-off loop"] --> P["cat_parse 0xFFFA347C"]
   P -->|"0x20B46==1"| X["return (CAT disabled)"]
   P -->|"ring empty, E9 slot full"| E9["ext lookup: only idx 3 = cat_ext_E9"]
-  P -->|"ring not empty"| T["sci_tx_end(port)? APO reset,<br/>toupper 2 chars"]
+  P -->|"ring not empty"| T["sci_tx_end(port)? screen-saver restart,<br/>toupper 2 chars"]
   T --> L1{"in cat_mnemonics<br/>0xFFF805EC (104)?"}
   L1 -->|"radio off and not PS1"| DROP["dropped silently"]
   L1 -->|yes| D["cat_dispatch 0xFFFA3B6E<br/>switch via 0xFFF8F014, length test"]
@@ -138,7 +138,7 @@ Binary SP checksum (corrected in T10e/T17) **[fact]** (disassembly at 0xFFFA3867
 | 0xFFFB0166 | `cat_reply_error` | error reply | Builds `?;` with length 2 **[fact]** |
 | 0xFFFB1D12 | `cat_send_reply` | send by port | Port 1 → `R_SCI3_Serial_Send`, 2 → SCI0, else SCI2. Sets per-port busy flags 0x11FEA/0x11FE8/0x11FE9 **[fact]** |
 | 0xFFFB1F42 | `sci_tx_end` | TX idle test | Port id → SCI3/SCI0/SCI2 transmit-end state **[fact]** (T05) |
-| 0xFFFB263D | `cat_apo_reset` | APO restart | Restarts the auto-power-off timer from setting 0x9B0F **[fact]** |
+| 0xFFFB263D | `screensaver_timer_restart` (decompile: `cat_apo_reset`) | screen-saver restart | Restarts slow timer 0 from menu 040104 SCREEN SAVER (0x9B0F) **[fact]** |
 | 0xFFFDD797 | `cat_ai_poll` | AI broadcaster | Runs about 70 change detectors (0xFFFDDCB5..0xFFFE1774, 0xFFFDDB7E) and sends to every AI-on port **[fact]** |
 | 0xFFFDDB6A | `cat_ai_holdoff` | AI holdoff | Timer 0x32 for 200 ms, flag 0x187C2 **[fact]** |
 | 0xFFFDDB7E | `cat_ai_FD` | AI detector for FD | Sends `FD00n<9 digits>;` when the FD value changes; part of the AI chain for an undocumented command **[fact]** |
