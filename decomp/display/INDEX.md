@@ -27,6 +27,13 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
 - T21j (#97, from T22d): the Thumb function in the `.data` table 0x2042807C starts at 0x2016385A (`movs r0, #0` first; T21e's
   0x2016385C lost that argument); `data_display.tsv` types the printf sign-prefix tables 0x20154B64/0x20154BE0 as `char[4][4]`
   (`""`, `"-"`, `"+"`, `" "`) and the fplib reciprocal seed table 0x20164C00 as `byte[128]`. Undefined non-0xFF bytes 242 → 86.
+- #81 (2026-10-28): the update-UI thunks 0x201322AC..0x201322F0 (`ldr r0, =0x208F4BF4; b method`) had swallowed their targets,
+  which were no functions: entries 0x2015AFB0, 0x20159714, 0x201595F0 added, `fwupdate_screen` / `fw_installed_versions_set` /
+  `fwupdate_insert_sd_screen` moved to the real bodies (thunks named `*_thunk`); `mouse_cursor_run` starts at 0x2015FD60 (was a
+  4-byte late start). `FixFuncEntries.java` now marks every unconditional branch from another function to a fixed entry as a tail
+  call (145 branches): their targets are no longer inlined into the branching function. Functions 2,210 → 2,212, warnings 393 → 212
+  (unreachable-block 267 → 147, both switch-labelling warnings 60 → 0); all 86 jump-table functions still decompile to a `switch`
+  (the C has 89 `switch(` instead of 99: 10 were inlined copies).
 - Rebuild commands (from the repo root; `tools/bootstrap.sh --only ghidra` runs the same steps):
   ```sh
   H="tools/ghidra-headless.sh $PWD/ghidra FT710_DISPLAY"; P="-process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra"
@@ -54,30 +61,28 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | DISPLAY |
 |---|---:|
-| Functions exported (non-thunk) | 2,210 |
+| Functions exported (non-thunk) | 2,212 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 393 |
-| Functions with a warning | 96 |
+| Decompiler warnings (all kinds) | 212 |
+| Functions with a warning | 68 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 267 |
+| "Removing unreachable block" | 147 |
 | `halt_baddata()` calls | 4 |
 | Functions with `halt_baddata()` | 4 |
-| Functions with `in_*` variables | 61 |
-| Functions with `unaff_*` variables | 63 |
-| Functions with `extraout_*` variables | 80 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 182 |
+| Functions with `in_*` variables | 62 |
+| Functions with `unaff_*` variables | 44 |
+| Functions with `extraout_*` variables | 78 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 166 |
 | Undefined non-0xFF bytes in executable blocks | 86 |
 | … in block `.text` | 86 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Bad instruction - Truncating control flow here | 4 |
 | warning: Control flow encountered bad instruction data | 4 |
-| warning: Could not find normalized switch variable to match jumptable | 10 |
 | warning: Could not recover jumptable at #. Too many branches | 17 |
 | warning: Do nothing block with infinite loop | 6 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 13 |
-| warning: Removing unreachable block (#) | 267 |
-| warning: This code block may not be properly labeled as switch case | 50 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 12 |
+| warning: Removing unreachable block (#) | 147 |
 | warning: Treating indirect jump as call | 17 |
 | warning: Type propagation algorithm not settling | 5 |
 <!-- quality:end -->

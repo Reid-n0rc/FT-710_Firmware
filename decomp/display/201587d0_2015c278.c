@@ -174,19 +174,11 @@ void FUN_201589e4(undefined4 *param_1)
 
 // ===== uart4_tx_alloc @ 201589f4 (12 bytes)
 
-undefined4 uart4_tx_alloc(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void uart4_tx_alloc(int param_1)
 
 {
-  int iVar1;
-  undefined4 uVar2;
-  undefined4 uStack_10;
-  
-  uStack_10 = param_4;
-  FUN_201571b8(&uStack_10,*(undefined4 *)(param_1 + 0x11a0),1);
-  iVar1 = FUN_201643f0(param_1 + 0x111c);
-  uVar2 = *(undefined4 *)(param_1 + 0x111c + iVar1 * 4 + 4);
-  FUN_201571d4(&uStack_10);
-  return uVar2;
+  FUN_201644ac(param_1 + 0x111c);
+  return;
 }
 
 
@@ -710,6 +702,27 @@ void bootloader_screen(undefined4 param_1,undefined4 *param_2)
 }
 
 
+// ===== fw_installed_versions_set @ 201595f0 (64 bytes)
+
+/* installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) */
+
+void fw_installed_versions_set(undefined2 *param_1,int param_2)
+
+{
+  undefined2 uVar1;
+  
+  uVar1 = be16_load(param_2);
+  *param_1 = uVar1;
+  uVar1 = be16_load(param_2 + 2);
+  param_1[1] = uVar1;
+  uVar1 = be16_load(param_2 + 4);
+  param_1[2] = uVar1;
+  uVar1 = be16_load(param_2 + 10);
+  param_1[3] = uVar1;
+  return;
+}
+
+
 // ===== FUN_20159630 @ 20159630 (220 bytes)
 
 void FUN_20159630(void)
@@ -745,6 +758,177 @@ void FUN_20159630(void)
     gui_update_layers();
     FUN_201525f8(0xffffffff);
   }
+  return;
+}
+
+
+// ===== fwupdate_screen @ 20159714 (1376 bytes)
+
+/* MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) */
+
+void fwupdate_screen(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  uint uVar4;
+  undefined1 auStack_288 [288];
+  undefined1 auStack_168 [72];
+  char cStack_120;
+  undefined4 uStack_48;
+  undefined4 uStack_44;
+  undefined4 uStack_40;
+  undefined4 uStack_3c;
+  undefined4 uStack_38;
+  undefined4 uStack_34;
+  undefined4 uStack_30;
+  undefined4 uStack_2c;
+  undefined4 uStack_28;
+  
+  uStack_28 = fb_get_layer_addr(DAT_208085bc);
+  fb_clear_rect(uStack_28,0x132,0,800,0xae);
+  uVar4 = 0;
+  do {
+    gui_draw_text_centered
+              (uStack_28,(&DAT_20808564)[uVar4],uVar4 * 0x20 + 0x132,400,0xf,&DAT_20800b1c);
+    uVar4 = uVar4 + 1 & 0xff;
+  } while (uVar4 < 4);
+  gui_update_layers();
+  FUN_20158fd0();
+  usbkbd_last_key();
+  fwupdate_set_hotkey();
+  do {
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    fb_clear_rect(uStack_28,0x132,0,800,0xae);
+    gui_draw_text_centered(uStack_28,DAT_20808538,0x132,400,0xf,&DAT_20800b1c);
+    gui_update_layers();
+    fb_get_layer_addr(DAT_208085bc);
+    fwfile_check_versions(param_1 + 8);
+    *(undefined4 *)(param_1 + 0x3c) = 1;
+    *(undefined4 *)(param_1 + 0x84) = 1;
+    fwfile_status_text(param_1 + 8,1);
+    *(undefined4 *)(param_1 + 0x3c) = 0;
+    *(undefined4 *)(param_1 + 0x84) = 0;
+    gui_update_layers();
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    iVar1 = FUN_20103bb0();
+    if (iVar1 != 0) {
+      if ((*(char *)(param_1 + 8) == '\x01') && (*(char *)(param_1 + 0x50) == '\x01')) break;
+      fb_clear_rect(uStack_28,0x132,0,800,0xae);
+      uStack_48 = 0;
+      uStack_44 = 0;
+      uStack_40 = 0;
+      uStack_3c = 0;
+      uStack_38 = 0;
+      uStack_34 = 0;
+      uStack_30 = 0;
+      uStack_2c = 0;
+      if (*(char *)(param_1 + 8) == '\x01') {
+        sprintf(&uStack_48,"[ OK ]");
+      }
+      else {
+        sprintf(&uStack_48,"[ NG : %s ]",param_1 + 0x1d);
+      }
+      gui_draw_text_words(uStack_28,"MAIN FIRMWARE FILE",0x132,0x9d,0xf,&DAT_20800b1c);
+      gui_draw_text_words(uStack_28,&uStack_48,0x132,0x1a4,0xf,&DAT_20800b1c);
+      uStack_48 = 0;
+      uStack_44 = 0;
+      uStack_40 = 0;
+      uStack_3c = 0;
+      uStack_38 = 0;
+      uStack_34 = 0;
+      uStack_30 = 0;
+      uStack_2c = 0;
+      if (*(char *)(param_1 + 0x50) == '\x01') {
+        sprintf(&uStack_48,"[ OK ] %s",param_1 + 0x8c);
+      }
+      else {
+        sprintf(&uStack_48,"[ NG : %s ]",param_1 + 0x65);
+      }
+      gui_draw_text_words(uStack_28,"DISPLAY FIRMWARE FILE",0x152,0x9d,0xf,&DAT_20800b1c);
+      gui_draw_text_words(uStack_28,&uStack_48,0x152,0x1a4,0xf,&DAT_20800b1c);
+      gui_draw_text_centered(uStack_28,DAT_2080853c,0x192,400,0xf,&DAT_20800b1c);
+    }
+    gui_update_layers();
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    iVar1 = FUN_20103ba0();
+    while (iVar1 != 0) {
+      if (DAT_20800493 != '\0') {
+        FUN_20117030();
+      }
+      FUN_201525f8(0xffffffff);
+      gui_update_layers();
+      uStack_28 = fb_get_layer_addr(DAT_208085bc);
+      iVar1 = FUN_20103ba0();
+    }
+    fb_clear_rect(uStack_28,0x132,0,800,0xae);
+    gui_draw_text_centered(uStack_28,DAT_2080856c,0x132,400,0xf,&DAT_20800b1c);
+    gui_update_layers();
+    fb_get_layer_addr(DAT_208085bc);
+    iVar1 = FUN_20103bb0();
+    while (iVar1 == 0) {
+      if (DAT_20800493 != '\0') {
+        FUN_20117030();
+      }
+      FUN_201525f8(0xffffffff);
+      iVar1 = FUN_20103bb0();
+    }
+  } while( true );
+  *(undefined4 *)(param_1 + 0x3c) = 1;
+  *(undefined4 *)(param_1 + 0x84) = 1;
+  fb_clear_rect(uStack_28,0x132,0,800,0xae);
+  gui_draw_text_centered(uStack_28,"STEP 1 of 2.",0x132,400,0xf,&DAT_20800b1c);
+  uVar4 = 0;
+  do {
+    gui_draw_text_centered
+              (uStack_28,(&DAT_20808548)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,&DAT_20800b1c);
+    uVar4 = uVar4 + 1 & 0xff;
+  } while (uVar4 < 2);
+  FUN_20155310(auStack_168,param_1 + 8,0x120);
+  FUN_20155310(auStack_288,param_1 + 8,0x120);
+  iVar1 = 0xff;
+  while( true ) {
+    iVar2 = fwupdate_poll(param_1 + 8);
+    iVar3 = FUN_20103ba0();
+    if (iVar3 == 0) break;
+    if ((iVar1 != iVar2) ||
+       (iVar3 = FUN_2015507c(param_1 + 8,auStack_288,0x120), iVar1 = iVar2, iVar3 != 0)) {
+      FUN_20155310(auStack_288,param_1 + 8,0x120);
+      if (*(char *)(param_1 + 8) == '\x04') {
+        FUN_201219b8(uStack_28,0x1a5,0x129,*(uint *)(param_1 + 0x40) & 0xffff,
+                     *(uint *)(param_1 + 0x40));
+      }
+      else if (*(char *)(param_1 + 0x50) == '\x04') {
+        if (cStack_120 != '\x04') {
+          fb_clear_rect(uStack_28,0x132,0,800,0xae);
+          gui_draw_text_centered(uStack_28,"STEP 2 of 2.",0x132,400,0xf,&DAT_20800b1c);
+          uVar4 = 0;
+          do {
+            gui_draw_text_centered
+                      (uStack_28,(&DAT_20808550)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,&DAT_20800b1c);
+            uVar4 = uVar4 + 1 & 0xff;
+          } while (uVar4 < 2);
+        }
+        FUN_201219b8(uStack_28,0x1a5,0x129,*(uint *)(param_1 + 0x88) & 0xffff,
+                     *(uint *)(param_1 + 0x88));
+        gui_update_layers();
+        fb_get_layer_addr(DAT_208085bc);
+      }
+      FUN_20155310(auStack_168,param_1 + 8,0x120);
+      if (iVar2 != 0) goto LAB_20159c44;
+      gui_update_layers();
+      uStack_28 = fb_get_layer_addr(DAT_208085bc);
+      iVar1 = iVar2;
+    }
+  }
+  iVar2 = 2;
+LAB_20159c44:
+  FUN_2010e4a0();
+  if (iVar2 != 1) {
+    update_error_screen();
+  }
+  system_reboot();
   return;
 }
 
@@ -1791,6 +1975,60 @@ LAB_2015aec4:
 }
 
 
+// ===== fwupdate_insert_sd_screen @ 2015afb0 (356 bytes)
+
+/* INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md) */
+
+void fwupdate_insert_sd_screen(undefined4 param_1)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  undefined1 auStack_278 [14];
+  char cStack_26a;
+  undefined4 uStack_38;
+  undefined4 uStack_34;
+  undefined4 uStack_30;
+  undefined4 uStack_2c;
+  undefined4 uStack_28;
+  
+  uVar1 = fb_get_layer_addr(DAT_208085bc);
+  fb_clear_rect(uVar1,0x132,0,800,0xae);
+  uVar2 = 0;
+  do {
+    gui_draw_text_centered(uVar1,(&DAT_20808558)[uVar2],uVar2 * 0x20 + 0x132,400,0xf,&DAT_20800b1c);
+    uVar2 = uVar2 + 1 & 0xff;
+  } while (uVar2 < 3);
+  uStack_38 = 0;
+  uStack_34 = 0;
+  uStack_30 = 0;
+  uStack_2c = 0;
+  uStack_28 = 0;
+  mainlink_get_frame60(auStack_278);
+  if ((cStack_26a != '\x01' && cStack_26a != '\x02') && (cStack_26a != '\x03')) {
+    cStack_26a = '\x01';
+  }
+  sprintf(&uStack_38,"ERROR CODE : %03d",cStack_26a);
+  gui_draw_text_centered(uVar1,&uStack_38,0x192,400,0xf,&DAT_20800b1c);
+  gui_update_layers();
+  key_task_resume();
+  DAT_20808532 = 1;
+  FUN_20158fd0();
+  if (DAT_20800493 == '\0') {
+    usbkbd_last_key();
+    fwupdate_set_hotkey();
+    uVar1 = fb_get_layer_addr(DAT_208085b8);
+    fb_clear_rect(uVar1,0,0,800,0x1e0);
+    uVar1 = fb_get_layer_addr(DAT_208085bc);
+    fb_clear_rect(uVar1,0,0,800,0x1e0);
+    gui_update_layers();
+    bootloader_screen(param_1,&DAT_208dbb44);
+    DAT_20808532 = 0;
+  }
+  return;
+}
+
+
 // ===== fwupdate_progress_screen @ 2015b134 (764 bytes)
 
 /* progress rows, error screen, update_finish_reset */
@@ -2448,126 +2686,5 @@ bool FUN_2015c278(void)
   memcpy(&local_20,&DAT_208f0bc7,0x14);
   iVar1 = strcmp("EXTENSION SETTING   ",&local_20);
   return iVar1 == 0;
-}
-
-
-// ===== FUN_2015c2d4 @ 2015c2d4 (112 bytes)
-
-bool FUN_2015c2d4(int param_1)
-
-{
-  int iVar1;
-  undefined4 local_20;
-  undefined4 local_1c;
-  undefined4 local_18;
-  undefined4 local_14;
-  undefined4 local_10;
-  undefined4 local_c;
-  
-  local_20 = 0;
-  local_1c = 0;
-  local_18 = 0;
-  local_14 = 0;
-  local_10 = 0;
-  local_c = 0;
-  memcpy(&local_20,(param_1 - 0x1128U & 0xff) * 0x2d + 0x208f0c46,0x15);
-  iVar1 = strcmp("FIRMWARE UPDATE      ",&local_20);
-  return iVar1 == 0;
-}
-
-
-// ===== FUN_2015c34c @ 2015c34c (224 bytes)
-
-int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  iVar1 = FUN_2015c978();
-  if (iVar1 == 0x1ff) {
-    iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,1);
-  }
-  if (iVar1 == 0x1ff) {
-    iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
-  }
-  if ((((iVar1 == 0x1ff) && (iVar1 = FUN_2015cdd4(param_1,param_2), iVar1 != 0x1ff)) &&
-      (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
-     ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
-    DAT_20800494 = 1;
-  }
-  if (iVar1 == 0x1ff) {
-    iVar1 = FUN_2015bf88(param_1,param_2,&DAT_202665d8,2);
-  }
-  if (iVar1 == 0x1ff) {
-    iVar1 = 0xff;
-  }
-  return iVar1;
-}
-
-
-// ===== FUN_2015c43c @ 2015c43c (376 bytes)
-
-undefined4 FUN_2015c43c(undefined4 param_1,undefined4 param_2,int param_3)
-
-{
-  undefined4 uVar1;
-  
-  switch(param_3) {
-  case 0:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016dd44,7);
-    return uVar1;
-  case 1:
-  case 2:
-  case 3:
-  case 4:
-    break;
-  case 5:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e734,0x11);
-    return uVar1;
-  case 6:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e6a4,0xb);
-    return uVar1;
-  case 7:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016da0c,0x10);
-    return uVar1;
-  case 8:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2024bc94,0x10);
-    return uVar1;
-  case 9:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016d358,4);
-    return uVar1;
-  case 10:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016dffc,0xd);
-    return uVar1;
-  case 0xb:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e530,0xd);
-    return uVar1;
-  case 0xc:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016ea38,0xd);
-    return uVar1;
-  case 0xd:
-    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016ed68,7);
-    return uVar1;
-  default:
-    return 0x1ff;
-  }
-  uVar1 = 0x1ff;
-  if (param_3 == 1) {
-    uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3a0,4,DAT_208f0bc3,DAT_208f0bc4);
-    return uVar1;
-  }
-  if (param_3 != 2) {
-    if (param_3 == 3) {
-      uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca418,2,DAT_208f0bc3,DAT_208f0bc4);
-      return uVar1;
-    }
-    if (param_3 == 4) {
-      uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3e6,5,DAT_208f0bc3,DAT_208f0bc4);
-    }
-    return uVar1;
-  }
-  uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3c8,3,DAT_208f0bc3,DAT_208f0bc4);
-  return uVar1;
 }
 
