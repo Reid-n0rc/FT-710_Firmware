@@ -76,25 +76,44 @@ CPU: Renesas RZ/A1H (R7S721001), Cortex-A9. Input: `build/FT-710_DISPLAY_V0108.b
 | Block | Range | Kind | Derivation |
 |---|---|---|---|
 | `spi_flash` | 0x18000000–0x18FFFFFF | uninit, r | SPIBSC0 window. W25Q128 = 16 MB (hardware.md). Code reads flags at 0x183E0000/0x183F0000 and jumps to 0x18400000 / 0x18A00000 |
-| `ram_lo` | 0x20000000–0x200FFFFF | uninit | Below the image. `boot_select_bank` keeps a 0x60-byte boot-info block at 0x20000000 (magic 0xBBBB, bank table) |
+| `ram_lo` | 0x20000000–0x200FFFFF | uninit | Below the image. `boot_select_bank` keeps a 0x60-byte boot-info block at 0x20000000 (magic 0xBBBB, bank table), built with `mov r4, #0x20000000`; nothing else refers to 0x20000060–0x200FFFFF (literal and MOVW/MOVT scan, #119) |
 | `.text` | 0x20100000–0x20165177 | file, r-x | Code + literal pools. The end was found from code density and the last Thumb fplib routine |
 | `.rodata` | 0x20165178–0x204286A7 | file, r (not exec) | Constant tables, GUI bitmaps and fonts (see below), and UI strings near 0x20427ED4–0x204286A0 |
 | `scatter_init` | 0x204286A8–0x2042BC0F | file, r | Region$$Table (0x50 B) + three LZ streams (0x2042886C, 0x20428960, 0x20428A40) |
-| `ram_stack` | 0x2042BC10–0x2044FFFF | uninit | Mode stacks: SP 0x2044C000 for SVC/FIQ/ABT/UND, then IRQ = SP−0x40 and SYS = IRQ−0x240 |
+| `ram_stack` | 0x2042BC10–0x2044FFFF | uninit | Mode stacks: SP 0x2044C000 for SVC/FIQ/ABT/UND, then IRQ = SP−0x40 and SYS = IRQ−0x240 (`main` runs in SYS mode from 0x2044BD80). `reset_in_ram`'s second copy loop runs 0x20428840..0x2043FFFF, so 0x2042BC10–0x2043FFFF starts with whatever follows the image in flash **[fact, #119]** |
 | `.data` | 0x20450000–0x2045028F | init (decompressed from 0x2042886C) | Region 1 |
 | `.bss` | 0x20450290–0x204FC5F3 | uninit | Region 4 (zero-init, 0xAC364 B) |
-| `ram_mid` | 0x204FC5F4–0x207FFFFF | uninit | Unassigned RAM. 0x20500000+ is used through the uncached mirror (`.data_nc`, frame buffers) |
+| `ram_mid` | 0x204FC5F4–0x207FFFFF | uninit | No literal or MOVW/MOVT pair points into it (#119). 0x20500000–0x207FFFFF is used only through the page-interleaved mirror at 0x60100000/0x60200000/0x60500000 (frame buffers, `.data_nc`, scope DMA; see the RAM mirror table below) |
 | `.data2` | 0x20800000–0x20808BCF | init (from 0x20428A40) | Region 3 (includes the GPIO port pointer table at 0x20800000) |
 | `.bss2` | 0x20808BD0–0x2091D56F | uninit | Region 5 (zero-init, 0x1149A0 B). Holds the kernel TCB table 0x208DBBA0, the UART objects 0x208DA1E0/0x208DAA30/0x208DB280, the GIC handler table 0x208DC1E0 and the recorder audio slots 0x208F4DE0 (see below) |
-| `ram_hi` | 0x2091D570–0x209FFFFF | uninit | End of the 10 MB RAM. The literal 0x20980000 at 0x2010022C may be a heap limit **[guess]** |
-| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Uncached mirror of RAM **[guess; see the T19h note below the table]**. **Frame buffers**: `fb_get_layer_addr` maps index 0–5 to fb0 0x600BB800, fb1 0x605048A0, fb2 0x60177000, fb3 0x60000000, fb4 0x60232800, fb5 0x602EE000 (fb0–fb4 800×480 RGB565 = 0xBB800 B each; fb5 is the mouse-cursor layer). See [code/display/gui.md](code/display/gui.md) |
-| `.data_nc` | 0x60500000–0x6050489F | init (from 0x20428960) | Region 2: RW data placed in the uncached mirror (aliases 0x20500000). 0x60500000–0x60503FFF holds SPI DMA buffers (FT4222H RX 0x60500000, PC TX frame 0x60501000, …) |
+| `ram_hi` | 0x2091D570–0x209FFFFF | uninit | End of the 10 MB RAM. **0x20980000–0x209FFFFF is the NORTi kernel pool** (#119): `kernel_heap_init` passes the literal 0x20980000 (0x2010022C) as the pool **base** and SP as r1; the pool set-up 0x201530FC ends it at SP − `cfg[0x3C]` (0x400; config table 0x201659D0, configured pool address 0 at 0x20165A38), but `main`'s SP (0x2044BD80) is below the base, so the size is negative and the first-fit allocator 0x20153B34 never refuses: the pool is effectively the 512 KB to the end of RAM, with no bound check **[fact]**. Boot allocates 34 task stacks + TCBs, `fsys_mpf` 5 × 0x10000 and "FSYS Work" 5 × 0x1630 from it, 495,608 B in all, about 28 KB left **[fact, #119 report]**. `dspup_init` and `test_disp_init` have no caller, so those two tasks are never created; `itron_acre_tsk` 0x201500F4 fills each new stack with the task ID, so a RAM dump shows every stack's high-water mark. 0x2091D570–0x2097FFFF: no reference |
+| `ram_nc_lo` | 0x60000000–0x604FFFFF | uninit | Page-interleaved mirror of on-chip RAM (manual Table 53.1; see the RAM mirror table below), strongly ordered. **Frame buffers**: `fb_get_layer_addr` maps index 0–5 to fb0 0x600BB800, fb1 0x605048A0, fb2 0x60177000, fb3 0x60000000, fb4 0x60232800, fb5 0x602EE000 (fb0–fb4 800×480 RGB565 = 0xBB800 B each; fb5 is the mouse-cursor layer). See [code/display/gui.md](code/display/gui.md) |
+| `.data_nc` | 0x60500000–0x6050489F | init (from 0x20428960) | Region 2: RW data placed in the uncached mirror (aliases RAM 0x20700000, p2b1; table below). 0x60500000–0x60503FFF holds SPI DMA buffers (FT4222H RX 0x60500000, PC TX frame 0x60501000, …) |
 | `ram_nc_hi` | 0x605048A0–0x609FFFFF | uninit | Uncached mirror (frame buffer 1 starts at 0x605048A0). SDR scope DMA buffer 0x605C00A0 (0x6A4 B) and its header copy 0x605C0780 |
 | `io_3FE` | 0x3FE00000–0x3FFFFFFF | volatile | RZ/A1H I/O: SPIBSC0 0x3FEFA000, SPIBSC1 0x3FEFB000 (its 0x3FEFB018 reg is used as a "loader already ran" marker), PL310 0x3FFFF000 |
 | `io_E800` | 0xE8000000–0xE82FFFFF | volatile | ADC 0xE8005800, SCIF3/4/5 0xE8008800/0xE8009000/0xE8009800, RSPI0–4 0xE800C800–0xE800E800, USB0 0xE8010000, SDHI 0xE804E000, DMAC 0xE8200000, GIC 0xE8201000/0xE8202000, USB1 0xE8207000 |
 | `io_FCFE` | 0xFCFE0000–0xFCFFFFFF | volatile | WDT 0xFCFE0000, CPG/STBCR 0xFCFE04xx, GPIO 0xFCFE3000, OSTM 0xFCFEC000, RIIC0–3 0xFCFEE000–0xFCFEEC00, INTC 0xFCFEF800, MTU2 0xFCFF0000, VDC5 0xFCFF7400/0xFCFF9400 |
 
-**T19h note on 0x60000000:** the frame-buffer window 0x60000000–0x602FF2FF cannot be a plain alias of 0x20000000–0x202FF2FF: `task_root` 0x201170C8 calls `fb_clear_all`, which zeroes 0x60000000 + 0x2FF300 (`__aeabi_memclr` with literals 0x60000000 / 0x2FF300 at 0x20132B30 / 0x20132FD0), while the code it runs from sits at 0x20100000+ in RAM; and the MMU table at 0x2044C000 is flat (VA = PA, filled by 0x20100D48, never remapped) **[fact for the code, inference for the conclusion]**. What the RZ/A1H decodes at 0x60000000 is therefore **open**; it needs the RZ/A1H hardware manual's address map (not in `Manuals/`). See [code/system.md O9](code/system.md#8-contradictions-and-open-questions).
+**RAM mirror (R01UH0403EJ0700 Table 53.1) [fact].** 0x60000000–0x609FFFFF mirrors the 10 MB on-chip RAM page by page (5 pages × 2
+banks of 1 MB); the normal space at 0x20000000 orders the same 1 MB blocks differently:
+
+| Mirror | 0x6000 | 0x6010 | 0x6020 | 0x6030 | 0x6040 | 0x6050 | 0x6060 | 0x6070 | 0x6080 | 0x6090 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Normal | 0x2000 | 0x2050 | 0x2060 | 0x2010 | 0x2020 | 0x2070 | 0x2080 | 0x2030 | 0x2040 | 0x2090 |
+| Page/bank | p0b0 | p0b1 | p1b0 | p1b1 | p2b0 | p2b1 | p3b0 | p3b1 | p4b0 | p4b1 |
+
+(top 16 bits of the 1 MB block). Every 0x60… address the image uses lands in RAM it does not address directly: fb3 0x60000000 =
+0x20000000 (over the boot-info block, which is only needed across a reset), fb0 0x600BB800 = 0x200BB800 + 0x20500000, fb2/fb4 =
+0x205…/0x206…, `.data_nc`, fb1 and the scope DMA buffer 0x605… = 0x207…. `ram_nc_lo`/`ram_nc_hi` below are therefore this mirror,
+not a guess.
+
+**MMU attributes (`reset_in_ram`, #119) [fact].** 0x20100D48 fills the 4,096 flat 1 MB sections with the template 0x00010C02 (strongly
+ordered, AP = 3, S = 1); 0x20100E24 then makes 0x20100000–0x204FFFFF and 0x20800000–0x209FFFFF write-back cacheable. A `b 0x20100128`
+at 0x20100100 skips three more calls that would have done the same for 0x60000000–0x602FFFFF, 0x60500000–0x605FFFFF and
+0x60600000–0x606FFFFF, and the section-remap helper 0x20100E8C has no caller. So 0x20000000–0x200FFFFF, 0x20500000–0x207FFFFF and
+the 0x60… windows stay strongly ordered.
+
+**T19h note on 0x60000000:** the frame-buffer window 0x60000000–0x602FF2FF cannot be a plain alias of 0x20000000–0x202FF2FF: `task_root` 0x201170C8 calls `fb_clear_all`, which zeroes 0x60000000 + 0x2FF300 (`__aeabi_memclr` with literals 0x60000000 / 0x2FF300 at 0x20132B30 / 0x20132FD0), while the code it runs from sits at 0x20100000+ in RAM; and the MMU table at 0x2044C000 is flat (VA = PA, filled by 0x20100D48, never remapped) **[fact for the code, inference for the conclusion]**. What the RZ/A1H decodes at 0x60000000 is therefore **open**; it needs the RZ/A1H hardware manual's address map (not in `Manuals/`). See [code/system.md O9](code/system.md#8-contradictions-and-open-questions). **Resolved:** the mirror is page-interleaved (RAM mirror table above), so the clear never reaches the code; the T19h reasoning was right that it is no plain alias.
 
 Other DISPLAY RAM structures found by T11 **[fact]**:
 
