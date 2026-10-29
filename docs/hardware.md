@@ -150,8 +150,9 @@ registers: p56–57, p74).
   Above 62.5 MHz the receiver then works in the **second Nyquist zone**; the 56–75 MHz BPF rejects the image of the 70 MHz band
   (125 − 70 = 55 MHz) **[inference]**. **DC4KU's test report** (`Manuals/FT-710_Test-Report_DC4KU_english.pdf`, p1) says the ADC is a
   **dual-channel 14-bit** part, "the same twin ADC as in the FT-DX10", and that the FPGA combines the two channels so that overload
-  comes late, with dither fed into both inputs **[fact: third-party report]**. That explains the 14 DDR-captured LVDS pairs as two
-  14-bit channels multiplexed on the two clock edges (channel A on one edge, B on the other) at 125 MSPS each **[inference, strong]**,
+  comes late, with dither fed into both inputs **[fact: third-party report]**. The netlist confirms two 14-bit channels at one word
+  per 125 MHz clock each, **7 DDR pairs per channel** with two adjacent bits per pair (Q1 = bit 2k, Q2 = bit 2k+1), not
+  channel A on one edge and B on the other ([code/sdr/netlist.md 3.7](code/sdr/netlist.md), #172) **[fact, routing and simulation]**,
   which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
 - **ADC part number: no public source names it (#66, searched 2026-10-29).** Checked: this service manual (the SDR module is one
   unitemised box; its text layer has no ADC part number anywhere, no `LTC2…`/`AD9…`/`ADS…` string); the FT-DX10 Technical Supplement (the ManualsLib copy's
@@ -162,8 +163,8 @@ registers: p56–57, p74).
   not a part identification, so whether the two channels are one dual part (DC4KU) or two chips stays open. The constraint the part must meet
   is the netlist's: 14 LVDS data pairs captured DDR in bank 35 by a source-synchronous `adc_dco` clock, plus an LVDS sample clock
   `adc_clk` at 125 MHz ([code/sdr/netlist.md](code/sdr/netlist.md)) **[fact for the FPGA side]**. Several dual 14-bit 125 MSPS
-  converters with DDR LVDS outputs would fit; naming one would be a **[guess]**, so the docs do not. The marking is the only way to settle it (#171); the two-channel combine in
-  the netlist is #172.
+  converters with DDR LVDS outputs would fit; naming one would be a **[guess]**, so the docs do not. The marking is the only way to settle it (#171); the two-channel front end in
+  the netlist is traced in #172 (where the channels are summed is still open).
 - **Yaesu's receiver diagram** (reproduced as Figure 1 of the DC4KU report in `Manuals/`): RX unit ATT → BPF → RF AMP → **divider**
   → **two A/D converters** → FPGA, which **sums** the two channels; a **D/A** in the SDR block makes the dithering signal fed into both
   ADC inputs **[fact: Yaesu diagram]**. The FT-DX10's diagram (Figure 2) has the same "SDR Block" of two A/Ds + FPGA, but there one ADC

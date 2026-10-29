@@ -323,7 +323,8 @@ registers later and reaches its own first multiplier 4 registers later:
 | 1 | H6, K2, J3, J4, G4, H1, H2 | RAMB18_X0Y24/25 (RAMB36_X0Y12, x9) | DSP48_X1Y26.A, then X1Y27.A (d5) | **U17** at d6: its whole fan-in is these 7 pairs (175 cells, no DSP/BRAM) |
 | 2 | F1, C2, E2, D5, B3, B1, B7 | RAMB18_X0Y22/23 (RAMB36_X0Y11) | DSP48_X0Y17.A, then X0Y20.A (d6) | V16 (I2S data) at d6 |
 
-7 DDR pairs carry 14 bits per clock, so this fits a **dual-channel 14-bit ADC with 7 DDR LVDS pairs per channel**,
+7 DDR pairs carry 14 bits per clock, so this fits a **dual-channel 14-bit ADC with 7 DDR LVDS pairs per channel**
+(confirmed bit by bit in 3.7, #172),
 consistent with the Analog Devices-style 24-bit SPI frames on B13/B14/C14 **[inference]**. Both groups also reach T9 at
 d3; T9 is a register-selected 2-to-1 mux of status flops, a debug/monitor output **[inference]**. Simulated with
 pseudo-random ADC bits (#91), U17 and V16 start toggling at clock ~65,500.
@@ -357,6 +358,88 @@ of phase/step tables whose outputs are selected in fabric) feeding the FIR-bank 
 x4 sample RAMs at the bottom of columns X0/X1, the shape of the zoom/FFT scope engine; the cosine table is the NCO of
 a mixer (DSP48_X1Y18) driven by the phase accumulator DSP48_X1Y38; the raised-cosine ramp multiplies a signal in
 DSP48_X1Y16 (TX keying envelope).
+
+### 3.7 ADC capture: two 14-bit channels, DC removal and per-channel gain (#172)
+
+Traced forward from the 14 IDDRs with `tools/xc7_blocks.py ... logic/reach` and scripts over `netlist.json`, then
+checked in the whole-netlist Verilator model with `hdl/sdr/sim/adc_main.cpp` (constant and decaying inputs on each
+channel, probes on every stage listed below).
+
+```mermaid
+flowchart LR
+  PA["7 pairs H1 H2 G4 J4 J3 K2 H6<br/>14 IDDR outputs"] --> SA["SRL + 2 FF<br/>SLICE_X46Y56/59, X45Y58..61"] --> XA["x_A 14 bit<br/>two's complement"]
+  XA --> DA["DC tracker<br/>acc 44 bit X47Y54..64<br/>dc = acc[43:20]"]
+  XA --> YA["y_A = x_A*512 - en*dc<br/>24 bit, X45Y59..64"]
+  DA --> YA
+  YA --> GA["DSP48_X1Y26<br/>y_A * gain reg 0x12"] --> MA["round/sat X40Y60..65<br/>mixers X1Y34/35 (LO1), X1Y38/39 (LO2)"]
+  PB["7 pairs B1 B3 C2 E2 F1 D5 B7"] --> SB["SRL + 2 FF<br/>SLICE_X52Y66, X56Y65, X7/X11"] --> XB["x_B 14 bit"]
+  XB --> DB["DC tracker X7Y41..51"] --> YB["y_B, X11Y41..46"]
+  XB --> YB
+  YB --> GB["DSP48_X0Y17<br/>y_B * gain reg 0x13"] --> MB["round/sat X10Y45..51<br/>mixers X0Y34/35 (LO1), X0Y36/37 (LO2)<br/>+ X0Y40/41, X0Y56/57"]
+  EN["en: SLICE_X38Y63/AFF"] --> YA
+  EN --> YB
+```
+
+- **Q1 and Q2 are adjacent bits of one word, not two channels [fact, routing; simulation].** The bit position of
+  every IDDR output is read off the carry chain that takes the word (`SLICE_X44Y57..X44Y60` for group 1,
+  `SLICE_X6Y43..X6Y46` / `SLICE_X11Y43..X11Y46` for group 2), chain bit 9 = ADC bit 0. Each pair carries bits 2k (Q1) and 2k+1 (Q2):
+
+  | ADC bit | 1:0 | 3:2 | 5:4 | 7:6 | 9:8 | 11:10 | 13:12 |
+  |---|---|---|---|---|---|---|---|
+  | channel A (group 1) | H1 `ILOGIC_X1Y66` | H2 `X1Y70` | G4 `X1Y60` | J4 `X1Y58` | J3 `X1Y56` | K2 `X1Y54` | H6 `X1Y52` |
+  | channel B (group 2) | B1 `ILOGIC_X1Y82` | B3 `X1Y80` | C2 `X1Y68` | E2 `X1Y72` | F1 `X1Y64` | D5 `X1Y78` | B7 `X1Y96` |
+
+  So the 14 IDDRs form two 14-bit words (7 pairs each, two bits per pair per clock: the "interleaved" DDR LVDS mode of
+  dual ADCs), and the earlier reading "channel A on one edge, B on the other" ([hardware.md](../../hardware.md)) is
+  wrong. With the ADC model driving these pins (`ADCA=const:1000 ADCB=const:-2000`) the probed words read exactly
+  1000 and -2000 **[fact, simulation]**.
+- **Capture pipeline [fact].** Every Q pin feeds one SRL (`SLICE_X46Y56`, `X46Y59`, `X52Y66`, `X56Y65`, A/B/C/D LUTs, clock
+  `BUFHCE_X1Y21` = the 125 MHz fabric clock, all 28 with the same static address `A[3:0] = 0001`), then two flip-flops
+  (`SLICE_X46Y5x` → `SLICE_X45Y58..61` for A, → `SLICE_X7Y43..51`, `X11Y45/46`, `X13Y50` for B). The SRL is where the
+  word leaves the BUFIO (`adc_dco`) domain. One word per channel per 125 MHz clock: **125 MSPS per channel** **[fact
+  for the structure; inference that the fabric clock is 125 MHz, 3.2]**.
+- **Format: two's complement, no inversion [fact].** The MSB (Q2 of H6 / B7) is sign-extended into the 24-bit
+  subtractor (chain bit 23 uses the same flip-flop) and into DSP A[29:23]; no LUT inverts it, so the words are already
+  two's complement (the ADC's output-format register, an SPI write in 3.3, would select that **[inference]**). A board-level P/N swap would
+  show as an inverted bit, and none is seen.
+- **DC removal per channel [fact, equations; simulation].** `d = x*2^9 - dc` (chain `SLICE_X44Y55..X44Y60`, CYINIT = 1,
+  S = XNOR) feeds a 44-bit accumulator `acc += sext(d)` (`SLICE_X47Y54..X47Y64`, its own carry chain), and
+  `dc = acc[43:20]`: a first-order DC tracker with a time constant of 2^20 samples (8.4 ms at 125 MSPS, corner about
+  19 Hz). The output `y = x*2^9 - (en ? dc : 0)` (chain `SLICE_X45Y59..X45Y64`, registered there, 24 bits) is the
+  DC-free sample. Channel B has the same circuit at `SLICE_X6Y41..46` (d), `SLICE_X7Y41..51` (acc), `SLICE_X11Y41..46` (y).
+  Both channels share one enable, `SLICE_X38Y63/AFF` (= `SLICE_X37Y62/AFF`, a register bit muxed by `SLICE_X41Y70/B5FF`),
+  which is 1 after reset. Simulated with x_A = 1000: y_A starts at 512,000 and decays as 512,000·e^(-t/2^20) (179,343 at
+  clock 1,100,000; e^-1.05 predicts 179,300) **[fact, simulation]**.
+- **Per-channel gain = MAIN registers 0x12 and 0x13 [fact, simulation].** y_A goes to A of **DSP48_X1Y26**, y_B to A of
+  **DSP48_X0Y17** (A[29:23] = sign), each `P = A*B` (OPMODE 005, AREG = BREG = PREG = 1, MREG = 0: P = y(t-2)·g, checked in
+  simulation with the fixed DSP model, see 4.4). B[15:0] is a 16-bit unsigned gain (B[17:16] = 0) from the register bank
+  (`SLICE_X29Y66/AFF`... for A, `SLICE_X15Y55`... for B, one pipeline FF). Writing `w00121234` set g_A = 0x1234 and
+  `w00135678` set g_B = 0x5678 in simulation; both read 0x8000 after reset. MAIN writes **0x8000 to both in RX**
+  ([main/sdr-link.md](../main/sdr-link.md) `sdr_upd_r12/r13`): equal weights, the setting a sum of the two channels needs
+  **[inference]**. The 42 P bits go through a rounding incrementer and saturation (`SLICE_X40Y60..X40Y65` for A,
+  `SLICE_X10Y45..X10Y51` for B) into the mixers.
+- **No dither subtraction [fact for this segment].** Between the pins and the gain DSPs the only arithmetic is the DC
+  tracker; no pseudo-random sequence or second operand is subtracted, so the dither from the module's D/A is removed
+  by filtering (out of band), not digitally **[inference]**.
+- **Mixing: separate per channel, shared LOs [fact, routing].** Channel A feeds the wide multipliers DSP48_X1Y34/35 and
+  DSP48_X1Y38/39 (B ports, 35-bit signal split 17 + 18, `[AP]` cascades with `Z = PCIN>>17`); channel B feeds
+  DSP48_X0Y34/35 and DSP48_X0Y36/37 (plus DSP48_X0Y40/41 and X0Y56/57, which only channel B reaches). The A operands are
+  shared: X1Y34 and X0Y34 both take `SLICE_X54Y126..131` (from DSP48_X1Y50.P), X1Y38 and X0Y36 both take
+  `SLICE_X39Y117..122` (from DSP48_X1Y48.P). So both channels are multiplied by the same two local-oscillator words
+  (I and Q, or two receivers) **[inference for what the LOs are]**.
+
+**What is still open.** (1) **Where (and whether) the two channels are added.** There is no adder between the two
+channels anywhere up to and including the mixers: the first carry chains after the four mixer pairs take only their own
+channel (e.g. `SLICE_X51Y83..89` after X1Y35, `SLICE_X13Y66..72` after X0Y35), and a search for cells that both channels
+reach within 6 registers finds only counters, the capture RAMs RAMB18_X0Y22..25 and register-bank muxes. Mixing A and B
+with identical LOs and identical gains makes a sum after the mixers (I_A + I_B, Q_A + Q_B, probably after decimation)
+the likely place **[inference]**, but it is not traced. Settling it needs an RX configuration (MAIN's register writes,
+#193/#146) and a probe on the decimated I/Q, with A and B driven separately. (2) **IDDR edge mode**: prjxray has no
+bits for `DDR_CLK_EDGE`, so whether Q2 is the falling-edge sample of the same ADC clock (SAME_EDGE[_PIPELINED]) or is
+retimed half a cycle earlier (OPPOSITE_EDGE) is unknown; the bit pairing above does not depend on it, only the
+half-cycle alignment of odd and even bits. The simulation uses a SAME_EDGE_PIPELINED-style stand-in (`-DIDDR_DDR`).
+(3) The SRL depth: the address reads `A[0] = 1` on all 28 (2 clocks), but an unrouted LUT input also reads 1, so 1 or 2
+clocks.
 
 ## 4. Structural Verilog, smoke test and simulation (T15d)
 
@@ -491,6 +574,13 @@ identically with and without the DSP fix: at the power-up register state the pat
 DSP results. U17's whole fan-in is 175 cells reaching 7 of the 14 IDDR pairs and no DSP or BRAM (a serializer of
 raw ADC bits); V16's reaches everything through the register bank. Exercising the DSP chain needs register settings
 MAIN writes (#146).
+
+**Correction (#172) [fact].** The `IS_*_INVERTED` parameters written for #91 had **no effect**: Yosys' `DSP48E1` model
+(`cells_sim.v`, Yosys 0.23) declares them but never applies them. Probing DSP48_X1Y26 with y_A = 499,947 and gain
+0x8000 gave P = -(y·2^18 + 2^15) (the raw pins: `Z - (A:B + C + CIN)` with C = all ones), not y·2^15. Since #172
+`hdl/sdr/sim/build_full.sh` XORs the four inverters into the model where INMODE/OPMODE/ALUMODE/CARRYIN enter; with that
+P = y(t-2)·g exactly. Every whole-netlist run before this fix (#91, #145, #146, #164, #193 ...) simulated the DSPs
+with the wrong modes, so results that depend on DSP outputs need a rebuild and re-run.
 
 ## 5. Whole-design simulation and the UART protocols (T15e)
 
