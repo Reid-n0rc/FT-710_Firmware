@@ -240,16 +240,16 @@ void _INIT_IOLIB(void)
   DAT_0001ff74 = &DAT_00025d80;
   DAT_0001ff78 = &DAT_00025dc8;
   DAT_0001ff7c = &DAT_00025e10;
-  FUN_fffedd9a(0xfff8f2e9,0xfff8f2f2,&DAT_00025d80);
+  freopen(0xfff8f2e9,0xfff8f2f2,&DAT_00025d80);
   DAT_00025d80 = 0x801;
   PTR_DAT_00025d88 = PTR_DAT_00025d84 + 1;
-  uVar1 = FUN_fffedd9a(0xfff8f2f4,0xfff8f2fe,&DAT_00025dc8);
+  uVar1 = freopen(0xfff8f2f4,0xfff8f2fe,&DAT_00025dc8);
   if (uVar1 == 0) {
     DAT_00025dc8 = 0xffff;
   }
   DAT_00025dc8 = DAT_00025dc8 | 0x800;
   PTR_DAT_00025dd0 = PTR_DAT_00025dcc + 1;
-  uVar1 = FUN_fffedd9a(0xfff8f300,0xfff8f2fe,&DAT_00025e10);
+  uVar1 = freopen(0xfff8f300,0xfff8f2fe,&DAT_00025e10);
   if (uVar1 == 0) {
     DAT_00025e10 = 0xffff;
   }
@@ -270,16 +270,19 @@ void _CLOSEALL(void)
   
   for (local_4 = 0; local_4 < 0x14; local_4 = local_4 + 1) {
     if ((*(ushort *)(&DAT_0001ff74)[local_4] & 7) != 0) {
-      FUN_fffeddc9((&DAT_0001ff74)[local_4]);
+      fclose((&DAT_0001ff74)[local_4]);
     }
   }
   return;
 }
 
 
-// ===== FUN_fff8fa1b @ fff8fa1b (167 bytes)
+// ===== open @ fff8fa1b (167 bytes)
 
-void FUN_fff8fa1b(undefined4 param_1,byte param_2)
+/* lowsrc open(name, mode): matches "C:\stdin"/"C:\stdout"/"C:\stderr" (0xFFF8F2E9/F4/0x300), stores
+   the mode in the fd flag bytes 0x1404..0x1406 [inference for the name] */
+
+void open(undefined4 param_1,byte param_2)
 
 {
   int iVar1;
@@ -308,18 +311,23 @@ void FUN_fff8fa1b(undefined4 param_1,byte param_2)
 }
 
 
-// ===== FUN_fff8fac2 @ fff8fac2 (11 bytes)
+// ===== close @ fff8fac2 (11 bytes)
 
-undefined4 FUN_fff8fac2(void)
+/* lowsrc close(fd): returns 1, no-op [inference for the name] */
+
+undefined4 close(void)
 
 {
   return 1;
 }
 
 
-// ===== FUN_fff8facd @ fff8facd (140 bytes)
+// ===== write @ fff8facd (140 bytes)
 
-uint FUN_fff8facd(int param_1,void *param_2,int param_3)
+/* lowsrc write(fd, buf, n): fd 1/2 with a write flag in 0x1404[fd] -> charput (FUN_fff8f8bb) per
+   byte; fd 0 -> -1 [inference for the name] */
+
+uint write(int param_1,void *param_2,int param_3)
 
 {
   undefined1 uVar1;

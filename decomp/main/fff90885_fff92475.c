@@ -760,9 +760,12 @@ void FUN_fff912c3(byte *param_1,byte param_2)
 }
 
 
-// ===== FUN_fff912c7 @ fff912c7 (60 bytes)
+// ===== sbrk @ fff912c7 (60 bytes)
 
-void FUN_fff912c7(int param_1)
+/* lowsrc sbrk(size): advances the heap pointer at 0x25D34 if the new end is <= 0x207F4; only caller
+   heap_getmem [inference for the name] */
+
+void sbrk(int param_1)
 
 {
   if (PTR_DAT_00025d34 + param_1 <= &DAT_000207f4) {

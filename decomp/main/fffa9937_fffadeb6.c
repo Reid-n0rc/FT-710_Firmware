@@ -1759,7 +1759,7 @@ void cat_MC(int param_1,byte param_2)
   else {
     local_e = 0;
     for (bStack_b = 0; bStack_b < 0x22; bStack_b = bStack_b + 1) {
-      iVar5 = FUN_fffede1d((uint)bStack_b * 3 + -0x7f917,local_8 + 2,3);
+      iVar5 = strncmp((uint)bStack_b * 3 + -0x7f917,local_8 + 2,3);
       if (iVar5 == 0) {
         local_e = bStack_b + 99;
         break;
@@ -2324,7 +2324,7 @@ void cat_MR(int param_1,byte param_2)
   else {
     bStack_30 = 0;
     for (bStack_22 = 0; bStack_22 < 0x22; bStack_22 = bStack_22 + 1) {
-      iVar3 = FUN_fffede1d((uint)bStack_22 * 3 + -0x7f917,local_8 + 2,3);
+      iVar3 = strncmp((uint)bStack_22 * 3 + -0x7f917,local_8 + 2,3);
       if (iVar3 == 0) {
         bStack_30 = bStack_22 + 99;
         break;
@@ -2521,7 +2521,7 @@ void cat_MT(int param_1,char param_2,ushort param_3)
   }
   else {
     for (bStack_e = 0; bStack_e < 0x22; bStack_e = bStack_e + 1) {
-      iVar2 = FUN_fffede1d((uint)bStack_e * 3 + -0x7f917,local_4 + 2,3);
+      iVar2 = strncmp((uint)bStack_e * 3 + -0x7f917,local_4 + 2,3);
       if (iVar2 == 0) {
         bStack_10 = bStack_e + 99;
         break;
@@ -2691,7 +2691,7 @@ void cat_MW(int param_1,byte param_2)
   else {
     local_21[4] = 0;
     for (bStack_1a = 0; bStack_1a < 0x22; bStack_1a = bStack_1a + 1) {
-      iVar4 = FUN_fffede1d((uint)bStack_1a * 3 + -0x7f917,local_4 + 2,3);
+      iVar4 = strncmp((uint)bStack_1a * 3 + -0x7f917,local_4 + 2,3);
       if (iVar4 == 0) {
         local_21[4] = bStack_1a + 99;
         break;

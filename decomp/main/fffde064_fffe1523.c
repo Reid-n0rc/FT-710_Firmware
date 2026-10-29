@@ -1339,7 +1339,7 @@ ushort FUN_fffdf13a(byte param_1)
     local_3f = '0';
   }
   if (local_5 == 0) {
-    iVar7 = FUN_fffede1d(&DAT_0001b50c,&local_41,3);
+    iVar7 = strncmp(&DAT_0001b50c,&local_41,3);
     if (iVar7 != 0) {
       DAT_0001b50e = local_3f;
       DAT_0001b50c = local_41;
@@ -1347,7 +1347,7 @@ ushort FUN_fffdf13a(byte param_1)
     }
   }
   else {
-    iVar7 = FUN_fffede1d(&DAT_0001b50f,&local_41,3);
+    iVar7 = strncmp(&DAT_0001b50f,&local_41,3);
     if (iVar7 != 0) {
       DAT_0001b511 = local_3f;
       DAT_0001b50f = local_41;
@@ -2754,7 +2754,7 @@ ushort FUN_fffe057b(void)
       pcVar3 = pcVar3 + 1;
       pcVar4 = pcVar4 + 1;
     }
-    iVar5 = FUN_fffede1d(s_RI00000000__0001b51f,acStack_d,0xb);
+    iVar5 = strncmp(s_RI00000000__0001b51f,acStack_d,0xb);
     if (iVar5 == 0) {
       return 0;
     }

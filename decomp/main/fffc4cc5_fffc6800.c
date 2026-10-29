@@ -60,7 +60,7 @@ void FUN_fffc4d93(void)
     local_2 = 4;
   }
   puVar1 = (undefined1 *)((int)&DAT_00009b2e + (uint)local_2 * 0x1f);
-  iVar2 = FUN_fffede1d(&DAT_00020b4c,puVar1,0x1f);
+  iVar2 = strncmp(&DAT_00020b4c,puVar1,0x1f);
   if (iVar2 != 0) {
     puVar3 = &DAT_00020b4c;
     for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
