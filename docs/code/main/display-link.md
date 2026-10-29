@@ -469,8 +469,30 @@ cfg byte 0x4659 + item through `FUN_fff9cea1`, each character `| 0x30` **[fact]*
 
 The message number n is UI +0xBB, and the frame is due when UI +0x86 = 1 **[fact]**. Writers: the SD-card menu code (`FUN_fffcf4b8`..`FUN_fffcf6ac`,
 `FUN_fffcfa3d`; numbers 1..0x0F) and the audio error paths of `dispreq_e7_task` and `dispreq_e8_result` (0x10..0x15, 0x18..0x1A; 0x17 from
-`FUN_fffe356f`) **[fact]**. The texts are in ROM 0xFFF80016..0xFFF80267, which is not in the repository, so which message each number
-shows is open. Settling it needs the MAIN image, or a screenshot from the radio for each number.
+`FUN_fffe356f`) **[fact]**. The texts are in ROM 0xFFF80000..0xFFF80267. T23e read them from the decoded MAIN image
+(`build/FT-710_MAIN_V0112.bin`, which is not committed) at the addresses that the switch in 0xFFF98925 passes to `displink_70_msg`
+(one line, no buttons), `displink_70_msg2` (two lines, buttons) and `displink_70_query` (one line, buttons); cases 1, 7 and 9 fill
+the frame inline **[fact]**:
+
+| n | Text | Builder | n | Text | Builder |
+|---|---|---|---|---|---|
+| 0 | RESET? | msg | 0x0E | CLEAR? | msg |
+| 1 | SETUP? | inline, 2 buttons | 0x0F | FILE ERROR | query |
+| 2 | INSERT FIRMWARE / SD CARD | msg2 | 0x10 | INSERT SD CARD | query |
+| 3 | NO SD CARD | query | 0x11 | SD CARD FULL | query |
+| 4 | WRITE PROTECTED ERROR | query | 0x12 | SD CARD ERROR | query |
+| 5 | MAXIMUM NUMBER / OF FILES EXCEEDE | msg2 | 0x13 | NO FILE | query |
+| 6 | READ ONLY FILE | query | 0x14 | FILE FULL | query |
+| 7 | FILE OVERWRITE? | inline, no buttons | 0x15 | DELETE ERROR | query |
+| 8 | FILE SAVED | query | 0x16 | PLAY ERROR | query |
+| 9 | OVERWRITE? | inline, no buttons | 0x17 | DELETE | msg |
+| 0x0A | FILE LOADED | query | 0x18 | FILE ERROR | query |
+| 0x0B | FORMAT COMPLETED | query | 0x19 | DATA ERROR | query |
+| 0x0C | FORMAT ERROR | query | 0x1A | ERROR | query |
+| 0x0D | SD CORD ERROR (sic) | query | | | |
+
+So `dialog_insert_fw_sd` (0xFFFCF4D5, n = 2) and `dialog_no_sd_card` (0xFFFCF4F2, n = 3) are the SD CARD menu's "no card"
+dialogs (names from T23e).
 
 ### E7 / E8 result codes (#179)
 

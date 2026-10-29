@@ -23,7 +23,7 @@ an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time thr
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33 (RT685) register labels, same TSV format and `ApplySfr.java` | apply + re-export | todo |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | todo |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | todo |
 
@@ -137,12 +137,62 @@ Rules for every sub-task:
   `tools/names_merge.py`.
 
 ## T23e — Name the most-called functions
-- A script ranks `FUN_` functions by callers (`functions.tsv`) and prints, per function: strings used, registers touched
-  (after T23a/b), struct fields (after T23c), named callers and callees, CAT command or menu item, so a reviewer can
-  name them in batches of about 100 (the T10/T11 pattern, `names_<image>.T23e.tsv`, merged into `names_<image>.tsv`).
-- Top unnamed callees in MAIN today: `FUN_fffec2e5` (124 call sites), `FUN_fffc0b2f` (117), `FUN_fffe2622` (113, a
-  dispatch on `PTR_DAT_00025d6c[0xbe]`). First names: `FUN_fff8ff82`/`FUN_fff8ffa3` (interrupt enable/disable) and
-  `FUN_fff8f8bb`/`FUN_fff8f8d8` (debug-console charput/charget), from T23a.
+
+**Status:** first batch named in the TSVs (2026-10-29); the Ghidra apply and re-export are open (the parent applies names to the
+canonical projects).
+
+### Method
+- `tools/naming_worklist.py <image>` ranks the unnamed `FUN_` functions (decomp name `FUN_` **and** no row in
+  `tools/ghidra/names_<image>.tsv`, so names added after the last export count as named) by distinct callers, then call sites,
+  both counted from the C text. Per function it prints: the plate comment, strings, globals with labels (RX651 register names
+  from `sfr_rx651.tsv` for MAIN; the state block 0x20B04 as `state+0xNN`; address rows from `docs/memory-maps.md` and the
+  `docs/code/<image>/` tables; EX item names and RAM addresses from the `menu.md` item list), CAT commands whose handlers reach it
+  within 3 call levels (`decomp/main/cat_dispatch.tsv`), menu items whose callbacks reach it (`entries_main_menu.tsv`), named
+  callers and callees, the lines of `docs/` that already mention it, and the first body lines. Output goes to `build/`.
+- Each function in the top of the list was read in `decomp/` (with callers where needed) and named in the repo style
+  (lower_snake_case, subsystem prefix; Renesas BSP / armcc / NORTi names where the code matches the library). Neutral names
+  (`ui_clear_415_423`, `sd_state_bit6`, `keypad_2digit_key`) where only the stores are clear. A few ROM tables and texts were
+  read from the decoded MAIN image to name menu draw helpers and dialogs; the comment says ROM when it did.
+- Rows: `tools/ghidra/names_main.T23e.tsv` and `names_display.T23e.tsv`, merged with
+  `python3 -I tools/names_merge.py merge` (0 conflicts for MAIN; one deliberate rename for DISPLAY, below) and appended to
+  `names_<image>.tsv` under a `# --- T23e` comment.
+
+### Findings
+- **MAIN: 132 names**, the whole top 100 of the ranking plus 32 helpers they call (BSP software-interrupt module, memory-channel
+  steps, dialogs). They cover **1,641 call sites** (20.7 % of the 7,910 calls to known functions in the export) and
+  1,519 caller edges (`naming_worklist.py main --coverage tools/ghidra/names_main.T23e.tsv`).
+  Examples: `ui_softkey_dispatch` 0xFFFC0B2F (116 soft-key handlers: dialog / keyboard / pop-up routing), `kbd_key_dispatch`
+  0xFFFE2622 (keyboard target UI +0xBE), `ai_ex_fmt_u8` 0xFFFEC2E5 (CAT AI EX value formatter), `popup_open_timed` /
+  `popup_close` / `popup_duration_get`, `R_BSP_SoftwareInterruptControl` 0xFFF90F9B with its 14 `bsp_swint_*` helpers (the
+  command switch matches the Renesas BSP), `R_BSP_InterruptRequestEnable` / `Disable` 0xFFF8FF82 / 0xFFF8FFA3, `charput` /
+  `charget`, `bcd_to_bin`, `tx_band_of_freq`, and 25 `menu_draw_*` / `menu_step_*` helpers named after their EX items.
+- **DISPLAY: 66 rows**, 50 of the top 60 plus 16 callees. They cover **1,888 call sites** (21.9 % of 8,620). Examples:
+  `__aeabi_uidivmod` 0x20156260 (71 callers), `reg_rmw8` / `reg_read8` (RSPI/DMAC field helpers), NORTi
+  `itron_tslp_tsk` / `itron_sig_sem` / `itron_twai_sem` / `itron_clr_flg` / `itron_rot_rdq` / `itron_chg_pri` /
+  `itron_tloc_mtx` / `itron_unl_mtx` / `itron_tget_mpf` (from the ITRON error codes and object tables), `memcmp`, `strlen`,
+  `__aeabi_memset` / `__aeabi_memclr`, the FAT layer's `fs_set_error`, `fs_fclose`, `fat_clust2sect`, `sjis_is_lead`.
+- **Rename:** 0x20155480 was `__aeabi_uidivmod`, but it negates negative operands first, so it is the signed
+  `__aeabi_idivmod`; the unsigned entry is 0x20156260, which joins the same loop **[fact for the code, inference for the ABI
+  names]**. This is the only changed existing row.
+- Settled on the way: the 0x70 dialog texts n = 0..0x1A ([display-link.md](../code/main/display-link.md#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw)),
+  which the page listed as open.
+- Left unnamed in DISPLAY's top 60: the NORTi queue internals 0x20153A38 / 0x201539EC / 0x20154524 / 0x20154580 / 0x2015476C,
+  the soft-float routine 0x201649D8, 0x20136398 (a wrapper whose arguments the decompiler lost), 0x20108BC8 (a 0x600-byte object
+  initialiser), 0x20144950 and 0x2011D830 (purpose unclear).
+
+### Open steps (Ghidra)
+1. Apply `names_main.tsv` / `names_display.tsv` with `ApplyNames.java` and re-export (`tools/bootstrap.sh --only ghidra,export`
+   or the per-image commands in `decomp/<image>/INDEX.md`), then `decomp_quality.py compare` and `readability_stats.py readme`.
+
+### Redo (next batch or new firmware)
+1. `python3 -I tools/naming_worklist.py main --top 100 --out build/t23e/main.md` (and `display --top 60`); `--format tsv` gives a
+   sortable list, `--all` ranks named functions too, `--excerpt N` sets the body lines.
+2. Read each function and its callers in `decomp/`, write rows to `tools/ghidra/names_<image>.T23<x>.tsv`
+   (address, name, comment with the evidence and [fact]/[inference]).
+3. `python3 -I tools/names_merge.py report tools/ghidra/names_<image>.tsv <new.tsv>` (conflicts), then `merge` into the base;
+   check for duplicate names; `naming_worklist.py <image> --coverage <new.tsv>` for the counts.
+4. For new firmware, port the names by function matching first (see the Redo section above); the work list then shows what is
+   still unnamed.
 
 ## T23f — Signatures, enums, parameter names
 - Draft signatures for DISPLAY and IFDSP the way `tools/signatures_draft.py` does for MAIN; apply with

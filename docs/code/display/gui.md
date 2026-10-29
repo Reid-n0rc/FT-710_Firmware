@@ -121,7 +121,7 @@ sequenceDiagram
   participant ML as MAIN link RX (mainlink.md)
   participant R as root task: gui_main_loop
   participant V as VDC5 ch0+ch1
-  Note over R: wake-up every 33 ms (periodic slot 0), FUN_201525F8 = slp_tsk
+  Note over R: wake-up every 33 ms (periodic slot 0), itron_tslp_tsk 0x201525F8 (T23e)
   ML->>R: latest screen packet (`mainlink_get_last_frame`, 0x240 B)
   R->>R: gui_screen_update: compare with 0x208F0B2A, dispatch on byte 0
   R->>R: per-frame widgets: status icons, filter graph, meter, scope, markers
