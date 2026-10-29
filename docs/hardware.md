@@ -200,18 +200,34 @@ registers: p56–57, p74).
 
 **Nothing in this subsection is a part identification.** No public source names the ADC or the power-up SPI part, and only
 a photo of the IC markings on the module can settle either (#171, #191). This subsection lists the candidates that fit the
-recovered interfaces, with the evidence for and against each, so that a photo (or a datasheet check) can confirm or rule
-them out quickly. Every part name here is a **[guess]**; the reasoning is **[inference]**.
+recovered interfaces, with the evidence for and against each, so that a photo can confirm or rule them out quickly. Every part
+name here is a **[guess]**; the reasoning is **[inference]**.
 
 **Search, 2026-10-29 (no part number found) [fact].** Web searches for FT-710, FT-DX10 and FTDX101 SDR-module teardowns, board
 photos, parts lists and forum posts (groups.io `ftdx-10` and `FTDX101D`, eham, retailer and review pages) found no photo of the
 module's ICs and no part number. Yaesu's pages and the ARRL review say only "two A/D converters" combined in the FPGA and "the same
 high resolution A/D converter and FPGA" as Yaesu's other SDR radios ([yaesu.co.uk/ft-710](https://www.yaesu.co.uk/ft-710/),
 [ARRL review, Aug 2023](https://www.arrl.org/files/file/ProductReviewsForDeb/2023/pr082023.pdf)). The FTDX101D group thread on ADC bit
-depth ([groups.io FTDX101D](https://groups.io/g/FTDX101D/topic/ftdx101d_audio_adc_bit_length/78707548)) names no chip either. Datasheet
-hosts (analog.com, ti.com, renesas.com, digikey, alldatasheet) were **blocked** from this session, so the register maps below were not read
-from the PDFs: the points marked *(search)* come from web-search summaries of the datasheets, and those marked *(memory)* are from
-general knowledge and must be checked against the datasheet before anyone relies on them.
+depth ([groups.io FTDX101D](https://groups.io/g/FTDX101D/topic/ftdx101d_audio_adc_bit_length/78707548)) names no chip either.
+
+**How the claims were checked.** The owner supplied six datasheets (AD9122 Rev. C, AD9125 Rev. A, AD9780/AD9781/AD9783 Rev. C,
+DAC5682Z SLLS853F, LTC2145-14 Rev. A, ADS4249 SBAS534E; listed in [manuals.md](manuals.md#cited-but-not-in-manuals-read-online-or-from-general-knowledge)).
+Their register maps were compared with every frame, and those claims are marked *(datasheet)* with the page and table. The other
+parts' datasheets could not be fetched (the vendor hosts are blocked from the session), so claims about them come from web-search
+summaries *(search)* or general knowledge *(memory)* and must be checked against the datasheet before anyone relies on them.
+
+##### The two power-up transfers
+
+Both are decoded in [code/sdr/netlist.md](code/sdr/netlist.md) 3.3 and 5.5 **[fact]**:
+
+- **1.8 V port** (bank 15: B13 SCK, B14 CS, C14 bidirectional SDIO): 27 frames of **24 bits**, MSB first. Bit 23 is the read flag,
+  bits 22:21 are a length field and the rest is a 13-bit address and 8 data bits: the ADI-style 16-bit-instruction framing. First
+  frame `000020`, two reads (`802500`, `802400`), no write to 0x0FF.
+- **3.3 V port** (bank 14: R16 SCK, P17 CS, N16 data out, write-only): 14 frames of **16 bits**, an 8-bit address and 8 data bits.
+  `0002` then `0000` (bit 1 of register 0x00 set, then cleared), then 0x10 = C0, 0x11 = 00, 0x12 = 2D, 0x13 = 10, 0x14 = 20,
+  0x16-0x19 = 00, 0x1A = 80, 0x1B = 03, 0x1D = 00. 0x15 and 0x1C are skipped.
+
+Every candidate below was checked against both, because the ADC's own port could be either one.
 
 ##### ADC (#171)
 
@@ -220,56 +236,52 @@ What the part has to match, from the netlist ([code/sdr/netlist.md](code/sdr/net
 1. 14 LVDS data pairs, captured DDR (IDDR) in 2.5 V bank 35 by one source-synchronous clock (`adc_dco`, E3/D3, BUFIO).
 2. The 14 pairs form **two groups of 7**, each going to its own capture RAM and its own first multiplier. That is the
    "two bits per pair, one 7-pair bus per channel" DDR layout, not an interleaved bus where every pair carries channel A on one edge
-   and channel B on the other (then each group would feed both channels) **[inference]**. This corrects the A/B-on-two-edges reading
-   in the bullet above, which predates #146.
+   and channel B on the other (then each group would feed both channels) **[inference]**.
 3. A second LVDS clock pair (`adc_clk`, F4/F3, 125 MHz) drives the whole fabric.
-4. A **3-wire, 1.8 V SPI** (B13 SCK, B14 CS, C14 bidirectional SDIO) sends 27 **24-bit** frames at power-up, MSB first: bit 23 = read,
-   two length bits, 13-bit address, 8-bit data, i.e. the Analog Devices ADC framing. The first frame is `000020` (register 0x00 = 0x20,
-   bit 5 of the ADI "SPI port configuration" register is soft reset), and two frames read back 0x025 and 0x024. No frame writes the
-   ADI transfer register 0xFF.
+4. The netlist reads the 1.8 V 24-bit port as the ADC's configuration port **[inference]**.
 5. Dual channel, 14 bit, 125 MSPS (DC4KU; service manual p6).
 
-| Candidate | Fits | Does not fit / unchecked | Score |
+| Candidate | Fits | Does not fit | Verdict |
 |---|---|---|---|
-| **AD9648** (ADI, dual 14-bit 105/125 MSPS, 1.8 V) | 125 MSPS dual 14-bit; CMOS or LVDS DDR outputs with an **interleave option in register 0x14 bit 5** (channel A with DCO high, B with DCO low) *(search)*, so the non-interleaved LVDS mode gives one 7-pair DDR bus per channel *(memory)*; **one DCO per channel** *(search)*, so its two DCO pairs could be the two LVDS clock inputs (`adc_dco` for capture, the other as the fabric clock) **[guess]**; 3-wire 1.8 V SPI with the ADI 24-bit frame and soft reset in register 0x00 (fits 4) | The ADI ADC map is 0x00-0x02, 0x05, 0xFF, 0x08-0x102, and the setup registers are shadowed until 0xFF = 0x01 is written *(search; stated for the sibling AD9642)*; the 27 frames never write 0xFF and write addresses (0x079, 0x080, 0x0E1, 0x05E/0x05F, 0x023-0x028, 0x03F-0x043) that no search result places in this map. Unchecked: exact LVDS pinout | **medium** |
-| **AD9258** (ADI, dual 14-bit 80/105/125 MSPS, 1.8 V) | Same family and SPI as AD9648 (output enable in register 0x14 bit 4 *(search)*); LVDS or CMOS outputs; 125 MSPS grade | Same map objections as AD9648; its own interleave bit position unchecked | **medium** |
-| **AD9643** (ADI, dual 14-bit 170/210/250 MSPS, 1.8 V) | Two 14-bit LVDS output ports, interleaved or channel-multiplexed; **3-pin 1.8 V SPI with readback** *(search)* | Rated 170 MSPS minimum, so 125 MSPS is below its range (the 250 MHz clock divided by 2 would have to happen inside it, or it would run at 250 MSPS, which the 62.5 MHz = fs/2 evidence argues against); same map objections | **low-medium** |
-| **ISLA224P** (Intersil/Renesas, dual 14-bit 130/200/250 MSPS) | DDR LVDS or LVCMOS outputs; SPI-programmable gain and offset with ADI-style framing *(search; framing from memory)*; a gain/offset block at 0x20-0x2B *(memory)* would fit the 0x020-0x028 writes | Map not read (Renesas blocked); 130 MSPS grade only near 125 MSPS; "not recommended for new designs" *(search)* | **low-medium** (worth checking first if the ADI maps fail) |
-| **LTC2145-14** (Linear/ADI, dual 14-bit 125 MSPS) | 125 MSPS dual 14-bit; DDR LVDS with 7 pairs per channel and one CLKOUT *(memory)* | SPI is 16-bit (R/W + 7-bit address + 8-bit data) with a separate SDO, and software reset is bit 7 of register 0x00 (as in its sibling LTC2269 *(search)*): this does not fit the 24-bit 3-wire frames on B13/B14/C14; only one output clock | **low** |
-| **ADS4249** (TI, dual 14-bit 250 MSPS) / **ADS62P49** (TI, dual 14-bit 250 MSPS) | DDR LVDS, two bits per pair, 7 pairs per channel plus CLKOUT *(search: "two data bits multiplexed on each LVDS pair" for ADS4245)* | SPI is 16-bit (8-bit address + 8-bit data) with separate SEN/SDATA/SDOUT pins *(search)*, which does not fit the 24-bit 3-wire port; 250 MSPS parts; only one output clock | **low** for the 1.8 V port (but see #191: TI's 16-bit format is the 3.3 V port's format) |
+| **LTC2145-14** (Linear/ADI, dual 14-bit 125 MSPS, 1.8 V) | 125 MSPS dual 14-bit. DDR LVDS mode puts two bits on each pair, 7 pairs per channel (`D1_0_1` … `D1_12_13`, `D2_0_1` … `D2_12_13`, pp15-16), plus one `CLKOUT` pair *(datasheet)*: interface points 1, 2 and 5 match | **Ruled out as the source of either transfer.** Its serial word is 16 bits: R/W, A6:A0, D7:D0, with a separate open-drain SDO (p28) *(datasheet)*, so it cannot be the 24-bit 3-wire port. Its whole map is registers 00h-04h (Table 3, pp29-30), and software reset is **bit 7** of register 00h (p28, Table 3) *(datasheet)*, so it is not the 3.3 V part either. Only one output clock, so point 3 needs another clock source | **ruled out** unless neither transfer reaches the ADC (then it is pin-strapped, with PAR/SER = VDD, p27) |
+| **ADS4249** (TI, dual 14-bit 250 MSPS) | DDR LVDS with D0/D1 … D12/D13 multiplexed on 7 pairs per channel (pin table, p6) *(datasheet)*: points 1, 2 match. Its serial port uses **8-bit address + 8-bit data with RESET in bit 1 of register 00h** (p39, Table 10 p41, register 00h p42) *(datasheet)*: the 3.3 V port's format exactly | **Ruled out.** Its map has only 00, 01, 02, 03, 25, 29, 2B, 3D, 3F, 40, 41, 42, 45, 4A, 58, BF, C1, CF, D5, D7, DB, EF, F1, F2 (Table 10, p41) *(datasheet)*: none of 0x10-0x1D exists, so it is not the 3.3 V part; its 16-bit frames and separate SDOUT rule out the 24-bit port. It is a 250 MSPS part, and has only one CLKOUT | **ruled out** (format matches, map does not) |
+| **AD9648** (ADI, dual 14-bit 105/125 MSPS, 1.8 V) | 125 MSPS dual 14-bit; CMOS or LVDS DDR outputs with an interleave option in register 0x14 bit 5 *(search)*, so the non-interleaved mode gives one 7-pair DDR bus per channel *(memory)*; **one DCO per channel** *(search)*, so its two DCO pairs could be the two LVDS clock inputs **[guess]**; 3-wire 1.8 V SPI with the ADI 24-bit frame and soft reset in register 0x00 (fits the 1.8 V port's format) | The ADI ADC map is 0x00-0x02, 0x05, 0xFF, 0x08-0x102, and the setup registers are shadowed until 0xFF = 0x01 is written *(search; stated for the sibling AD9642)*; the 27 frames never write 0xFF and write addresses (0x079, 0x080, 0x0E1, 0x05E/0x05F, 0x023-0x028, 0x03F-0x043) that no search result places in this map | **open, medium** (datasheet not read) |
+| **AD9258** (ADI, dual 14-bit 80/105/125 MSPS, 1.8 V) | Same family and SPI as AD9648 (output enable in register 0x14 bit 4 *(search)*); LVDS or CMOS outputs; 125 MSPS grade | Same map objections as AD9648 | **open, medium** (datasheet not read) |
+| **AD9643** (ADI, dual 14-bit 170/210/250 MSPS, 1.8 V) | Two 14-bit LVDS output ports, interleaved or channel-multiplexed; 3-pin 1.8 V SPI with readback *(search)* | Rated 170 MSPS minimum, below which 125 MSPS lies; same map objections | **open, low-medium** (datasheet not read) |
+| **ISLA224P** (Intersil/Renesas, dual 14-bit 130/200/250 MSPS) | DDR LVDS or LVCMOS outputs; SPI-programmable gain and offset *(search)* with ADI-style framing and a gain/offset block at 0x20-0x2B *(memory)* that would fit the 0x020-0x028 writes | Map not read; only the 130 MSPS grade is near 125 MSPS; "not recommended for new designs" *(search)* | **open, low-medium** (datasheet not read) |
 
-Reading **[inference]**: the 24-bit 3-wire 1.8 V port points to an ADI-style (or Intersil-style) ADC, which favours AD9648 or AD9258
-(both 125 MSPS) over LTC2145-14 and the TI parts. The register addresses in the frames do not match the ADI map as far as the search
-results show, so either the map has registers the summaries did not show, or the part is from another vendor that uses ADI framing.
-Reading 0x024/0x025 after toggling 0x025 bit 0 looks like a "start, then poll status" step (a calibration, or a clock or PLL lock)
-**[guess]**. Next check without the module: allow analog.com and renesas.com in the session's network settings and match the 27
-frames against the AD9648, AD9258 and ISLA224P memory maps.
+**A lead from the DAC datasheets [inference].** The 1.8 V frames write 0x018 = F9, 0x019 = 01, 0x01A = F9, 0x01B = 01: two 10-bit
+words of **0x1F9**. 0x1F9 is the power-on default of the full-scale-current word in the ADI TxDAC datasheets that were read: AD9783
+DAC1/DAC2 FSC at 0x0B/0x0C and 0x0F/0x10 (Table 11, p21) and AD9122 I/Q DAC FS adjust at 0x40/0x41 and 0x44/0x45 (Table 10, p22)
+*(datasheet)*. Two LSB/MSB pairs holding the default full-scale word look like the full-scale registers of a **dual DAC**, not
+anything an ADC has. So the 1.8 V port may configure an **ADI DAC** with a 16-bit instruction (13-bit address) and its full-scale
+registers at 0x018-0x01B, perhaps the TX DAC on bank 34, rather than the ADC **[guess]**. If so, the ADC might be pin-strapped
+(LTC2145-14 has a parallel programming mode, p27) or sit on the 3.3 V port. None of the six datasheets read has that layout: all
+four DACs use an 8-bit instruction (AD9122 p19, AD9125 p18, AD9783 Table 9 p19, DAC5682Z p36) *(datasheet)*. Next datasheets to
+check for this map: ADI LVDS DACs with 16-bit SPI instructions (for example AD9119/AD9129, AD9739A) **[guess]**.
 
 ##### Power-up SPI part on R16/P17/N16 (#191)
-
-What the part has to match ([code/sdr/netlist.md](code/sdr/netlist.md) 3.3, 5.5) **[fact]**: 3.3 V (bank 14), write-only (N16 is an
-output, there is no data-in pin), **16-bit frames, 8-bit address + 8-bit data**, MSB first; `0002` then `0000` (bit 1 of register 0x00
-set and cleared, a soft reset), then 0x10 = C0, 0x11 = 00, 0x12 = 2D, 0x13 = 10, 0x14 = 20, 0x16-0x19 = 00, 0x1A = 80, 0x1B = 03,
-0x1D = 00 (0x15 and 0x1C are skipped). All addresses are below 0x80, so the top address bit could be a read flag.
 
 Constraint from the likeliest consumer, the bank-34 output bus (2.5 V LVDS): **16 data pairs** fed by one multiplier, a 17th ODDR pair fed
 from the inputs T13/P15, and an 18th pair held at 1 **[fact, routing]**. A 16-bit LVDS DAC with a data clock input and one static
 control pair (FRAME, SYNC or SELIQ) would use exactly 18 pairs; the 17th pair, gated by two inputs, could be a data clock that runs only
 while transmitting **[guess]**.
 
-| Candidate | Fits | Does not fit / unchecked | Score |
+| Candidate | Fits | Does not fit (checked against every 3.3 V write) | Verdict |
 |---|---|---|---|
-| **AD9122 / AD9125** (ADI, dual 16-bit TxDAC+, LVDS) | 16 LVDS data pairs + DCI + FRAME = 18 pairs *(memory)*; 16-bit SPI frames (R/W + 7-bit address + 8-bit data); a dense block of registers at 0x10-0x1E (sync, DCI delay, FIFO, datapath, half-band filters) *(memory)* | Software reset is bit 5 of register 0x00 in ADI DACs *(memory, and confirmed for AD9783 by search)*, not bit 1; its FIFO is reset by writing 0x18 = 0x02 and reading it back, and register 0x17 powers up at 4 (AN-1093) *(search)*, while here 0x17 and 0x18 are written 0 and nothing is read; 0x12/0x13 are status registers *(memory)* | **low-medium** |
-| **AD9783 / AD9781 / AD9780** (ADI, dual 16/14/12-bit 500 MSPS, LVDS) | 16 LVDS DDR data pairs + DCI (17 ODDR pairs); 8-bit instruction + 8-bit data; registers 0x00-0x1F | Reset is **bit 5** of register 0x00 *(search)*; 0x1A is BIST control and 0x1B-0x1E are BIST result registers *(search)*, so writing 0x1B = 03 makes no sense | **low** |
-| **DAC5682Z / DAC5681Z** (TI, dual/single 16-bit 1 GSPS, LVDS DDR) | 16 LVDS data pairs + DCLK + SYNC = 18 pairs *(memory)*; 8-bit instruction + data byte | Its registers are 0x00-0x0F (CONFIG3 at 0x03 *(search)*; 5-bit addresses *(memory)*), so 0x10-0x1D do not exist | **low** |
-| **MAX5878** (Maxim/ADI, dual 16-bit 250 MSPS, LVDS, interleaved) | 16 LVDS data pairs + data clock + SELIQ *(memory)*; 250 MSPS fits a 125 MHz DDR bus | Configured by pins, no SPI *(memory, unchecked)*, so it could be the DAC but not the SPI part | **n/a for #191** |
-| **TI-style ADC serial port** (ADS4249, ADS62P49, ADS42xx families) | **The format matches best**: TI's ADCs use 16-bit frames of 8-bit address + 8-bit data, with **RESET at bit 1 and READOUT at bit 0 of register 0x00** *(memory)*, and SEN/SCLK/SDATA inputs that accept 3.3 V logic with SDOUT optional, so a write-only bus is normal | Their registers are not at 0x10-0x1D (ADS4249: 0x01, 0x03, 0x25-0x58, 0xBF-0xF2; ADS62P49: 0x20-0x7x) *(memory)*; and the ADC already has the 1.8 V ADI-style port (#171), so a second ADC port is unlikely | **low** (format high, map low) |
-| An ADC driver / DVGA, a clock divider for "Divide 250MHz by 2", or a separate dither D/A | Each would need a one-time setup at power-up and could sit on 3.3 V | None of those checked (LMH6401, LMH6881, Si534x, AD9510/AD9516 framing) fits the 16-bit, reg-0-bit-1-reset, 0x10-0x1D pattern *(memory)* | **open** |
+| **AD9122** (ADI, dual 16-bit TxDAC+, LVDS) | 16-bit SPI frames, 8-bit instruction (R/W + 7-bit address, p19) and 8-bit data; registers 0x10-0x1E exist (Table 10, pp21-22) *(datasheet)*; LVDS bus of 16 data pairs plus DCI and FRAME *(memory)* | Register 0x00 has only SDIO (bit 7), LSB_FIRST (bit 6) and **Reset (bit 5)**, so writing 0x02 is no reset; 0x12, 0x13 (sync status), 0x18, 0x19 (FIFO status) are read-only, yet they are written C0/2D/10/00/00; **0x14 and 0x1A do not exist**; 0x1B = 03 would clear all five bypass bits and set "select sideband" and "send I data to Q data" (Table 10, pp21-22) *(datasheet)* | **ruled out** |
+| **AD9125** (ADI, dual 16-bit TxDAC+, LVDS) | Same SPI format as AD9122 (p18) *(datasheet)* | Same map as AD9122 with Reset in bit 5 of 0x00, and it also lacks 0x15 and 0x16 (Table 10, pp20-21) *(datasheet)*: 0x14, 0x16 and 0x1A do not exist, and 0x12, 0x13, 0x18, 0x19 are read-only | **ruled out** |
+| **AD9783 / AD9781 / AD9780** (ADI, dual 16/14/12-bit 500 MSPS, LVDS) | 8-bit instruction (R/W, N1, N0, A4:A0) + data byte, so 16-bit single-byte frames and addresses up to 0x1F (Table 9, p19) *(datasheet)*; 16 LVDS DDR data pairs plus DCI *(memory)* | **RESET is bit 5** of 0x00 (Table 12, p22); **0x13-0x19 do not exist**; 0x1B and 0x1D are BIST result registers (Table 11, p21) *(datasheet)* | **ruled out** |
+| **DAC5682Z** (TI, dual 16-bit 1 GSPS, LVDS DDR) | 8-bit instruction (R/W, N1, N0, A4:A0) + data byte (p36) *(datasheet)*; 16 LVDS data pairs + DCLK + SYNC *(memory)* | The map is **0x00-0x0F only**, and 0x00 is the read-only STATUS0 (Table 9, p39) *(datasheet)*: none of 0x10-0x1D exists | **ruled out** |
+| **LTC2145-14** | 16-bit frames with an 8-bit data byte (p28) *(datasheet)* | Reset is **bit 7** of 00h, and the map ends at 04h (Table 3, pp29-30) *(datasheet)* | **ruled out** |
+| **ADS4249** (TI) | **Format matches exactly**: 8-bit address + 8-bit data, MSB first, with RESET in **bit 1** of register 00h, self-clearing, and READOUT in bit 0, so a write-only bus is normal (p39, Table 10 p41, p42) *(datasheet)* | No register at 0x10-0x1D (Table 10, p41) *(datasheet)* | **ruled out** (format only) |
+| **MAX5878** (Maxim/ADI, dual 16-bit 250 MSPS, LVDS, interleaved) | 16 LVDS data pairs + data clock + SELIQ *(memory)* | Configured by pins, no SPI *(memory, unchecked)*, so it could be the DAC but not the SPI part | **n/a for #191** |
+| An ADC driver / DVGA, a clock divider for "Divide 250MHz by 2", a separate dither D/A, or another TI part with the ADS42xx serial port | Each would need a one-time setup at power-up and could sit on 3.3 V | None checked fits the 16-bit, reg-0-bit-1-reset, 0x10-0x1D pattern; candidates are from memory only | **open** |
 
-Reading **[inference]**: the reset in bit 1 of register 0x00 is TI's convention rather than ADI's (bit 5), so the part is more likely
-a TI device, or a vendor that copies TI's ADC serial port, than any ADI DAC listed. No checked map has writable registers at
-0x10-0x1D that fit the values. The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**, but no candidate fits both its
-18-pair interface and this register pattern. Still open: the part needs the module's IC marking (#191).
+Reading **[inference]**: the reset in bit 1 of register 0x00 is TI's ADC serial-port convention (ADS4249, *(datasheet)*); every ADI
+part read puts its reset in bit 5. So the 3.3 V part is more likely a TI device, or one that copies TI's serial port, than any
+ADI DAC read. None of the six datasheets read has writable registers at 0x10-0x1D that fit the values, so **no candidate matches**.
+The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**. Still open: the part needs the module's IC marking (#191).
 
 ### USB / CAT path (MAIN, AF sheet p20)
 - J2602: USB **Type-B** jack (SUB-110HB-B2N, p35) → Q2607 **Cypress/Infineon CY7C65631-56LTXIT** USB 2.0 4-port hub (HX2VL),
