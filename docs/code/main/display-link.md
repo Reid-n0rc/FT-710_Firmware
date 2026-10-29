@@ -209,8 +209,8 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 5 | `FUN_fff9700b` | split 0x9C5E \| waterfall EXPAND 0x9C3D << 5 \| 0x9DC6 << 6 |
 | 6 | `FUN_fff97049` | 3DSS DISP SENSITIVITY 0x9B17 (bit 0) << 6 \| 2D DISP SENSITIVITY 0x9B16 << 7 (`EX040204` / `EX040203`, [menu.md](menu.md)) |
 | 7 | `FUN_fff97075` | *HI-SWR warning* UI +0x69 (0x20B6D, 2 bits: `swr_meter_protect` sets 1 or 2 by blink phase while the TX SWR is outside 1..5, 0 when it is back) << 4 \| +0x68 << 6 (no writer in MAIN, so always 0) \| **TX** (+0x67 = 0x20B6B) << 7 |
-| 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. That these are front-panel LEDs (hence the LED DIMMER mask) is **[inference]**; the DISPLAY reader was not found |
-| 9 | `FUN_fff97105` | 0x9C5C << 3 (a toggle flipped only by `FUN_fffbcbbd`, with beep 2, which has no direct caller and so is a key handler reached through the ROM key tables; no other reader, so the key and the meaning are open) \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. **DISPLAY reader** **[fact]** (#179): `gui_screen_update` (0x2012EBB8) calls `led_set_mask(frame[8])` for each status-carrying frame, just before copying it to 0x208F0B2A (and `led_set_mask(0)` on power-off), so the byte drives the front-panel LEDs on P6, bit 0..7 = D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX ([display/peripherals.md](../display/peripherals.md)). So `ui_lamp_set` n = 1..8 is VOX, STEPCH, RXBUSY, D_BLUE, D_WHITE, D_GREEN, D_RED, TX, and LED DIMMER = 0 turns off RXBUSY, TX, STEPCH and VOX **[fact for the bits; the LED names are the schematic's]** |
+| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011** (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`FUN_201233d4`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
 | 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
 | 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
 | 12 | `FUN_fff971fc` | ATT (rec+3 bits 0–1, `RA`) \| IPO/AMP1/AMP2 (rec+5 bits 0–1, minus 1, `PA`) << 2 \| {2 in FM modes, else DNF on = block+1 bit 7, `BC`} << 4 |
@@ -254,8 +254,9 @@ Bytes 97–102, 114 and 133–151 are **always 0** **[fact]**: every frame build
 0x1725..0x1737 under any address form. The DISPLAY has no absolute reference to the matching snapshot bytes (0x208F0B8B..0x208F0B90,
 0x208F0B9C, 0x208F0BAF..0x208F0BC1) **[fact]**; it reads the block mostly through a base pointer, so an indexed read cannot be ruled out
 from text alone. The gaps look like fields of the shared Yaesu status layout that the FT-710 does not use **[guess]**. Of the single bits
-listed in #179, UI +0x68 and +0x6F are always 0 and 0x9C5C (byte 9) is still open (the key behind `FUN_fffbcbbd` is in the ROM key
-tables, which are not in the repository). The DISPLAY reader of byte 8 (+0x34) was not found (#179).
+listed in #179, UI +0x68 and +0x6F are always 0; 0x9C5C (byte 9 bit 3) is the soft-key-0x011 long-press toggle that the DISPLAY reads as
+the AF-FFT overlay of the filter graph, and byte 8 (+0x34) is the front-panel LED mask (`led_set_mask`) (see the rows above; #179); `affft_bins_get` and `filter_graph_affft_overlay` are new rows in `tools/ghidra/names_display.tsv` and appear in `decomp/display/` after the next Ghidra re-export). Which
+on-screen area sends soft key 0x011 is still open: it is in the DISPLAY's touch hit tables, which were not traced.
 
 ### Small frames and mode flags (#72)
 
@@ -306,11 +307,21 @@ flowchart LR
 | 0x98 | 0x9ACE << 2 \| 0x9B21 << 1 \| 0x9B20; bit 2 is also forced on in service mode (UI +0x437 = 1) | bit 0 = EXT DISPLAY (`EX040401`), bit 1 = PIXEL (`EX040402`), bit 2 = SCU-LAN10 (`EX030126`) | bit 0 → `lvds_pins_enable`, bit 1 → `dvi_set_resolution`, bit 2 → `gpio_ft4222_reset` (the USB bridge chip, so the SCU-LAN10 port) **[fact for the calls]** |
 | 0x99 | 0x9AC7 | KEYBOARD LANGUAGE (`EX030119`) | copied with the rest; reader not traced |
 | 0x9A | 0x9B11 | MOUSE POINTER SPEED (`EX040106`) | copied with the rest; reader not traced |
-| 0x9B | ROM 0xFFF80557[0x9BEA] (service mode: index UI +0x480) | TFT brightness (`DA` P3) converted through a ROM table | `backlight_set(b & 0x7F)`, a PWM percentage **[fact]** |
-| 0x9C | ROM 0xFFF80542[0x9B10] (service mode: index UI +0x480) | LED DIMMER (`DA` P4) converted through a ROM table | `dimmer_set(b & 0x7F)` **[fact]** |
+| 0x9B | ROM 0xFFF80557[0x9BEA] (service mode: index UI +0x480) | TFT brightness (`DA` P3, 0..20) converted through a ROM table: **24 + n %** | `backlight_set(b & 0x7F)`, a PWM percentage **[fact]** |
+| 0x9C | ROM 0xFFF80542[0x9B10] (service mode: index UI +0x480) | LED DIMMER (`DA` P4, 0..20) converted through a ROM table: **20 + 4·n %** | `dimmer_set(b & 0x7F)` **[fact]** |
 | 0x9D | 0x9BE9 (service mode: UI +0x481) | TFT CONTRAST (`DA` P2), 0..20 | `r_vdc5_display_calibration` with gains of 10·n + 0x1C / 10·n + 0x11 (n capped at 20) **[fact]** |
 
-The two ROM tables are not in the repository (there is no firmware binary here), so the exact PWM curve is open. In boot mode 4
+The two ROM tables (`displink_build_24` 0xFFF9A1A7 indexes `0xFFF804E2 + 0x75` and `+ 0x60`) are 21 bytes each, one per setting step
+0..20 **[fact, MAIN image]** (#179):
+
+| Table | Values (n = 0..20) | Curve |
+|---|---|---|
+| 0xFFF80542, LED DIMMER (0x9B10) | 20, 24, 28, … 96, 100 | linear, 20 % at 0 and 100 % at 20 |
+| 0xFFF80557, TFT brightness (0x9BEA) | 24, 25, 26, … 43, 44 | linear, 24 % at 0 and 44 % at 20 |
+
+So the TFT backlight never goes below 24 % or above 44 % from the setting (the DISPLAY's own `backlight_set` callers use 60 % at start-up
+and 100 % on some screens, [display/peripherals.md](../display/peripherals.md)), and the LED DIMMER spans 20..100 % **[fact for the
+values]**. The DA range check (each value ≤ 20) keeps the index inside the tables **[fact]**. In boot mode 4
 (service) the counters UI +0x480/+0x481 replace the stored settings **[fact]**, which looks like the service-mode brightness test **[inference]**.
 
 #### `0x30` select pop-up and `0x31` value pop-up
@@ -373,7 +384,8 @@ Function ids, in slot order **[fact for the sources; the names 0..0x14 match the
 | 0x16, 0x17 (0x35 while recording, UI +0x92), 0x18, 0x2D, 0xFF, 0x15, 0x3A, 0x30..0x34 | not named | 0x16 is greyed in DATA/RTTY/PSK and has no text; 0x15 and 0x3A show per-mode settings (`FUN_fffb54a0` / `FUN_fffb552c`, base 0x9BCA); 0x30..0x34 have no text and the DISPLAY adds an icon |
 
 The names of ids 0x15..0x18, 0x2D, 0x30..0x35 and 0x3A are open. Their labels are bitmaps in the DISPLAY image and the `SF` command
-does not list them. 0x30..0x34 are five of a kind, perhaps the five message memories **[guess]**.
+does not list them; neither image holds a text table of the FUNC function names (a search of both for the known labels, for example
+`CW PITCH`, `BK-DELAY`, `MIC GAIN`, finds none of them; `PITCH` occurs only in menu texts such as `PITCH OFFSET`) **[fact]** (#179), so naming them needs the bitmaps decoded or a screenshot. 0x30..0x34 are five of a kind, perhaps the five message memories **[guess]**.
 
 #### `0x39` message-memory screen (0xE9 bytes; DISPLAY `scr_vfo` / `FUN_201293f8`)
 
@@ -465,12 +477,48 @@ cfg byte 0x4659 + item through `FUN_fff9cea1`, each character `| 0x30` **[fact]*
 | 0x99 | button set: 0, 2 or 4 (the DISPLAY clamps it to 3; 3 or more selects the second size table 0x208022D0) |
 | 0x9A | selected button UI +0xBD |
 | 0x9C..0x9D / 0x9E..0x9F | x = 230 and y = 183 (u16 BE), the box corner on the 800 × 480 screen |
-| 0xA0.. | 22 or 44 characters copied from ROM 0xFFF80000 + 0x16·n |
+| 0xA0.. | 22 or 44 characters of ROM text, chosen by n (table below) |
 
 The message number n is UI +0xBB, and the frame is due when UI +0x86 = 1 **[fact]**. Writers: the SD-card menu code (`FUN_fffcf4b8`..`FUN_fffcf6ac`,
 `FUN_fffcfa3d`; numbers 1..0x0F) and the audio error paths of `dispreq_e7_task` and `dispreq_e8_result` (0x10..0x15, 0x18..0x1A; 0x17 from
-`FUN_fffe356f`) **[fact]**. The texts are in ROM 0xFFF80016..0xFFF80267, which is not in the repository, so which message each number
-shows is open. Settling it needs the MAIN image, or a screenshot from the radio for each number.
+`FUN_fffe356f`) **[fact]**. `displink_build_70` (0xFFF9894F) is a `switch` on n, not an index: the texts are 22-character slots in ROM
+from 0xFFF80000 (the first bytes of the MAIN image), and some numbers share or skip a slot **[fact, MAIN image]** (#179):
+
+| n | ROM text | Text | Style / buttons | Builder |
+|---|---|---|---|---|
+| 0 | 0xFFF80000 | `RESET?` | 3 / 0 | `displink_70_msg` |
+| 1 | 0xFFF80016 | `SETUP?` | 3 / 2 | inline |
+| 2 | 0xFFF8002C | `INSERT FIRMWARE` / `SD CARD` | 1 / 4 | `displink_70_msg2` |
+| 3 | 0xFFF80058 | `NO SD CARD` | 3 / 4 | `displink_70_query` |
+| 4 | 0xFFF8006E | `WRITE PROTECTED ERROR` | 3 / 4 | `displink_70_query` |
+| 5 | 0xFFF80084 | `MAXIMUM NUMBER` / `OF FILES EXCEEDE` (sic, cut at 22) | 1 / 4 | `displink_70_msg2` |
+| 6 | 0xFFF800B0 | `READ ONLY FILE` | 3 / 4 | `displink_70_query` |
+| 7 | 0xFFF800C6 | `FILE OVERWRITE?` | 3 / 0 | inline |
+| 8 | 0xFFF800DC | `FILE SAVED` | 3 / 4 | `displink_70_query` |
+| 9 | 0xFFF800F2 | `OVERWRITE?` | 3 / 0 | inline |
+| 0x0A | 0xFFF80108 | `FILE LOADED` | 3 / 4 | `displink_70_query` |
+| 0x0B | 0xFFF8011E | `FORMAT COMPLETED` | 3 / 4 | `displink_70_query` |
+| 0x0C | 0xFFF80134 | `FORMAT ERROR` | 3 / 4 | `displink_70_query` |
+| 0x0D | 0xFFF8014A | `SD CORD ERROR` (sic) | 3 / 4 | `displink_70_query` |
+| 0x0E | 0xFFF80160 | `CLEAR?` | 3 / 0 | `displink_70_msg` |
+| 0x0F | 0xFFF80176 | `FILE ERROR` | 3 / 4 | `displink_70_query` |
+| 0x10 | 0xFFF8018C | `INSERT SD CARD` | 3 / 4 | `displink_70_query` |
+| 0x11 | 0xFFF801A2 | `SD CARD FULL` | 3 / 4 | `displink_70_query` |
+| 0x12 | 0xFFF801B8 | `SD CARD ERROR` | 3 / 4 | `displink_70_query` |
+| 0x13 | 0xFFF801CE | `NO FILE` | 3 / 4 | `displink_70_query` |
+| 0x14 | 0xFFF801E4 | `FILE FULL` | 3 / 4 | `displink_70_query` |
+| 0x15 | 0xFFF801FA | `DELETE ERROR` | 3 / 4 | `displink_70_query` |
+| 0x16 | 0xFFF80210 | `PLAY ERROR` | 3 / 4 | `displink_70_query`; no code stores 0x16 in UI +0xBB as a constant, so it looks unused **[inference]** |
+| 0x17 | 0xFFF80252 | `DELETE` (a question, from `FUN_fffe356f`) | 3 / 0 | `displink_70_msg` |
+| 0x18 | 0xFFF80176 | `FILE ERROR` (same slot as 0x0F) | 3 / 4 | `displink_70_query` |
+| 0x19 | 0xFFF80226 | `DATA ERROR` | 3 / 4 | `displink_70_query` |
+| 0x1A | 0xFFF8023C | `ERROR` | 3 / 4 | `displink_70_query` |
+| other | — | nothing after the status block (all 0) | — | — |
+
+All texts are space-padded to 22 characters **[fact]**. The questions (`?`, and `DELETE`) use button set 0 (2 for `SETUP?`) and the
+notices use 4, so 4 is most likely a single OK button and 0/2 the YES/NO kinds **[guess]**; the names `displink_70_msg`/`_query` were
+given before the texts were known and do not follow this split. After the texts the ROM continues at 0xFFF80268 with the 44-character
+warnings `Memory channels are   overwritten.` and `Menu settings are     overwritten.` **[fact]**; their user was not traced.
 
 ### E7 / E8 result codes (#179)
 
@@ -499,9 +547,13 @@ sequenceDiagram
 
 The DISPLAY's error index **[fact, DISPLAY `FUN_20124744`]**: the argument −1..−6, −8, −9 maps to 0..7 (−7 has no slot and sends 0xFF).
 The callers pass −1 when `FUN_20103ba0` (bit 6 of the SD-card status 0x20800094) is 0, which reads as *no SD card* **[inference]**; −3 when
-`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set, perhaps *write-protected* **[guess]**; −4 when the `MSG_CHn` file is missing; −6 when
+`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set (once guessed as *write-protected*, but see below); −4 when the `MSG_CHn` file is missing; −6 when
 there is nothing to delete; −8 / −7 when a file cannot be opened to play or wind; −9 when the matching `MSG_CHn` directory entry has a
-non-zero field +0x30 (meaning open). So the dialog numbers 0x10..0x1A are the SD-card / audio error texts **[inference]**.
+non-zero field +0x30 (meaning open). With the [0x70 texts](#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) the
+error index i gives **[fact for the mapping]**: 0 (−1) `INSERT SD CARD`, 1 (−2) `SD CARD FULL`, 2 (−3) `SD CARD ERROR`, 3 (−4) `NO FILE`,
+4 (−5) `FILE FULL`, 5 (−6) `DELETE ERROR`, 6 (−8) `FILE ERROR`, 7 (−9) `DATA ERROR`, anything else (0xFF) `ERROR`. That matches the
+callers above: −1 no card, −4 file missing, −6 nothing to delete **[inference, consistent]**, and makes −3 a general card error rather
+than *write-protected* (the dialog for that, n = 4, comes from the SD-card menu code) **[inference]**.
 
 
 ## Boot error report
@@ -611,7 +663,8 @@ Two DISPLAY-driven maintenance modes take over the link. Each runs as a blocking
 | 0xFFF98CD3 | `FUN_fff98cd3` | `displink_copy_status` | builds the status block and copies it to the staging frame 0x1742 (every "status + …" builder) **[fact]** (#179) |
 | 0xFFF98CEC / 0xFFF98D5B / 0xFFF98DCA | `FUN_fff98cec` / `FUN_fff98d5b` / `FUN_fff98dca` | `displink_70_msg` / `displink_70_msg2` / `displink_70_query` | `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text **[fact]** |
 | 0xFFF973BC / 0xFFF9921F | `FUN_fff973bc` / `FUN_fff9921f` | `mode_block_byte0` / `mode_block_byte1` | the active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) and +1 (BC, AGC) **[fact]** |
-| 0xFFF98727 | `FUN_fff98727` | `ui_lamp_set` | set or clear one bit of UI +0x34 (status byte 8) **[fact; "lamp" is inference]** |
+| 0xFFF98727 | `FUN_fff98727` | `ui_lamp_set` | set or clear one bit of UI +0x34 (status byte 8), the front-panel LED mask the DISPLAY passes to `led_set_mask` **[fact]** (#179) |
+| 0xFFFBCB19 / 0xFFFBCB77 / 0xFFFBCBBD | `FUN_fffbcb19` / `FUN_fffbcb77` / `FUN_fffbcbbd` | `key_011_press` / `key_011_short` / `key_011_long` | soft key 0x011: press check, short = toggle UI +0x70, long = toggle 0x9C5C (status byte 9 bit 3, AF-FFT overlay) **[fact; overlay meaning inference]** (#179; in `names_main.tsv`, shown as `FUN_` until the next Ghidra re-export) |
 | 0xFFF9C555 | `FUN_fff9c555` | `displink_62_value` | 3-character value of an alignment item for `0x62` **[fact]** |
 | 0xFFFE376A | `FUN_fffe376a` | `dispreq_e8_result` | E8 code actions (called by `dispreq_e8_task`) **[fact]** |
 | others | | `displink_rx_*`, `displink_tx_*`, `displink_build_*` | one per frame type, see the two frame tables (all proposed in the TSV) |

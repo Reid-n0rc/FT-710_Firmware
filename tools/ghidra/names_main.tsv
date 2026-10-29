@@ -2227,3 +2227,6 @@ fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) =
 fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
 fffc47dd	preamp_step	Record +0x05 bits 0-1: IPO(0) -> AMP1(2) -> AMP2(3) -> IPO, beep 1 [fact]; the IPO key [inference] (#205)
 fffc4850	preamp_ipo	Record +0x05 bits 0-1 = 0 (IPO), beep 2 [fact] (#205)
+fffbcb19	key_011_press	Soft key 0x011 press: error beep 3 and +0x409 (short skipped) while UI +0x97 or mode 6/7/0xA/0xB, else beep 1 [fact] (#179)
+fffbcb77	key_011_short	Soft key 0x011 short: toggle UI +0x70 (on: FUN_fffc8beb, timer 0x44 = 2000) unless UI +0x97 [fact] (#179)
+fffbcbbd	key_011_long	Soft key 0x011 long (key_long_table 0xFFF8B8D0): toggle 0x9C5C = status byte 9 bit 3, beep 2 [fact]; DISPLAY AF-FFT overlay in the filter graph [inference] (#179)
