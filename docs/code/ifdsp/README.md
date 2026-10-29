@@ -150,7 +150,7 @@ Pages not yet written are tracked by their sub-task on the board (`docs/tasks/RE
 | M33 core clock | 198 MHz (`SystemCoreClock`) | `BOARD_BootClockRUN` 0x0008494C **[fact]** |
 | HiFi4 clock / SYSPLL | DSP 594 MHz, SYSPLL 396 MHz | `BOARD_BootClockRUN` (T12d, [m33-platform.md](m33-platform.md)) **[fact]** |
 | FreeRTOS tick / watchdog | 1 kHz tick; no watchdog is started | T12d **[fact]** |
-| DSP audio blocks | 12 kHz sample rate, 24-sample blocks | T12e, [hifi4.md](hifi4.md) **[fact]** |
+| DSP audio blocks | 24-sample blocks at **72 kHz** (I2S and codec rate, 333 µs); Rx_Audio and TX cores at 12 kHz (÷6 / ×6) | #154, [hifi4.md](hifi4.md#i2s-on-flexcomm25-dma1) **[fact]** |
 | XOS thread priorities | Thread_Main 4, Thread_Ipc 13, Thread_Rx_Path / Thread_Tx_Path 7, Thread_Rx_Audio 6, Thread_Spi 5 | `xos_thread_create` arguments (T12e) **[fact]** |
 | CLKIN | 18.432 MHz (0x1194000), from the SDR module's `DSP_CLK` on PIO2_30 (func 5) | 0x0008494C; p19 **[fact]** |
 | Console UART | FLEXCOMM0, 115200 baud (0x1C200), 1 KB RX and TX rings | `uart0_init` 0x00080D0C **[fact]** |

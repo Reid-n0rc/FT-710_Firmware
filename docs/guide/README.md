@@ -215,8 +215,8 @@ Follow a signal from the antenna to your ears:
    The FPGA also has the noise blanker controls *(inference)* and computes the spectrum-scope data. The scope data goes **straight to the
    DISPLAY** over its own SPI link and never passes through MAIN.
 4. **HiFi4 DSP.** The narrow, slow stream reaches the RT685 over [I2S](#glossary), a standard serial audio bus. The HiFi4 demodulates
-   (SSB, CW, AM, FM, data) and runs the filters, AGC, noise reduction, notch and contour. It works at a sample rate of about 12 kHz
-   *(inference, strong)*. It also sends an audio spectrum ("AF-FFT") and the voice-recorder audio to the DISPLAY over a second SPI link.
+   (SSB, CW, AM, FM, data) and runs the filters, AGC, noise reduction, notch and contour. It moves audio at 72 kHz and runs the
+   receive-audio and transmit filters at 12 kHz *(fact, #154)*. It also sends an audio spectrum ("AF-FFT") and the voice-recorder audio to the DISPLAY over a second SPI link.
 5. **Audio codec.** A TI TLV320AIC3204 turns the numbers back into an analog voltage.
 6. **AF amplifier and speaker.** The audio is amplified and sent to the speaker or phones.
 
@@ -835,13 +835,12 @@ The codec's DAC clock paces the receive path.
 I2S to the FPGA, which shifts it up to the TX frequency with its TX NCO and shapes the keying with a raised-cosine ramp *(inference for
 the blocks inside the FPGA)*. MAIN's MOD SOURCE setting can select USB audio as the TX source.
 
-**The 12 kHz question.** The DSP code uses the constant 1/12000 to turn hertz into normalised frequency, and it limits one frequency field
-to just under 6000 Hz. So the DSP almost certainly runs at **12 kHz**: one 24-sample block every 2 ms, and one Rx_Audio batch every 24 ms
-*(inference, strong)*. The DISPLAY, however, writes the REC audio it receives over SPI to the SD card as a **16 kHz** stereo WAV file, and the
-link carries the right amount of data for 16 kHz (16 frames per second).
-
-> **Open question.** Both observations are solid, so either the DSP's Spi thread resamples the audio from 12 kHz to 16 kHz before sending
-> it, or the WAV header's 16 kHz is only nominal. Settling this needs a closer look at how the HiFi4's Spi thread packs its data.
+**Two sample rates, 72 and 12 kHz (#154).** The audio links run at **72 kHz**: the codec's clock is 18.432 MHz / 256, the SDR's I2S frame
+is the same clock / 256, and the SSB demodulator computes its oscillator step with 1/72000. One 24-sample block is 333 µs. The filters that
+shape the received audio and the transmit audio run at **12 kHz**: the code drops 5 of every 6 samples (after a lowpass), works on the short
+block, and fills the gaps back in. That is where the constant 1/12000 comes from, which once made us think the whole DSP ran at 12 kHz
+*(fact)*. The voice recorder takes the 72 kHz blocks and resamples them by 2/9 to **16 kHz**, exactly the rate of the WAV file the DISPLAY
+writes to the SD card *(inference, strong)*.
 
 ### 3.8 Where to look
 
@@ -856,7 +855,7 @@ link carries the right amount of data for 16 kHz (16 frames per second).
 | Operating records, band stack, frequency cache, SDR registers 0x08/0x09, 0x18/0x19, 0x20/0x21 | [../code/main/radio-control.md](../code/main/radio-control.md) |
 | EEPROM mirror, save triggers, interrupted saves, power fail (`supply_undervolt_check`) | [../code/main/eeprom.md](../code/main/eeprom.md), [../code/main/peripherals.md](../code/main/peripherals.md) |
 | PTT sources, `ptt_arbiter`, `tx_freq_allowed`, `trx_sequencer`, SWR and temperature, region tables, 60 m | [../code/main/tx-protection.md](../code/main/tx-protection.md) |
-| RT685 boot, HiFi4 threads, 12 kHz blocks, open question C9 | [../code/ifdsp/README.md](../code/ifdsp/README.md), [../code/ifdsp/hifi4.md](../code/ifdsp/hifi4.md), [../code/system.md](../code/system.md#8-contradictions-and-open-questions) |
+| RT685 boot, HiFi4 threads, 72 kHz blocks and 12 kHz cores (C9, resolved) | [../code/ifdsp/README.md](../code/ifdsp/README.md), [../code/ifdsp/hifi4.md](../code/ifdsp/hifi4.md), [../code/system.md](../code/system.md#8-contradictions-and-open-questions) |
 | FPGA configuration from QSPI and its blocks | [../code/sdr/README.md](../code/sdr/README.md) |
 | Scope, AF-FFT, REC/PLAY and FT4222H SPI links | [../code/display/spi-links.md](../code/display/spi-links.md) |
 
@@ -1929,9 +1928,9 @@ The DSP has four [I2S](#glossary) audio ports and one SPI port, all driven by [D
 On every I2S port the DSP is the clock **slave**: the SDR FPGA clocks the RX IF and TX AF ports, and the codec, which is
 the I2S master, clocks its own ports.
 
-**Blocks of 24 samples.** Audio moves in blocks of 24 samples. The sample rate is **12 kHz** *(inference, strong: the
-constant 1/12000 converts Hz in about ten places, and a frequency field is clamped just below 6 kHz)*, so one block is
-2 ms. Six threads share the work:
+**Blocks of 24 samples.** Audio moves in blocks of 24 samples. The blocks run at **72 kHz** *(fact, #154: the codec and the SDR link
+both run at 18.432 MHz / 256, and the SSB code uses 1/72000)*, so one block is 333 µs; the receive-audio and transmit filter cores run at
+12 kHz after a decimate-by-6. Six threads share the work:
 
 - **Rx_Path** runs once per block: RX IF in, the receive chain, out to the codec. The codec's DAC paces it.
 - **Tx_Path** runs once per block: codec in, the transmit chain, out to the FPGA. The codec's ADC paces it.
@@ -2118,8 +2117,6 @@ multipliers' exact modes are not decoded yet.
 flowchart LR
   subgraph IFDSP["IF DSP"]
     I1["Which code is NR, NB, AGC,<br/>notch, demodulators?"]
-    I2["12 kHz in the DSP vs<br/>16 kHz WAV on the DISPLAY"]
-    I3["Who sets the codec<br/>master clock?"]
   end
   subgraph SDR["SDR FPGA"]
     S1["Package: CSG324 or FGG484?<br/>(read the chip marking)"]
@@ -2130,7 +2127,7 @@ flowchart LR
   end
   classDef dsp fill:#F3E8FF,stroke:#9333EA,color:#1F2937
   classDef sdr fill:#FFEDD5,stroke:#EA580C,color:#1F2937
-  class I1,I2,I3 dsp
+  class I1 dsp
   class S1,S2,S3,S4,S5 sdr
 ```
 
@@ -2138,10 +2135,6 @@ flowchart LR
 
 - **IF DSP algorithms.** The DSP code is readable as assembly, but the receive and transmit chains are listed by call, not
   yet by algorithm. Register 6's numbering on the DSP side and most receive-side registers still need names.
-- **Sample rate.** The DSP code points to 12 kHz, but the DISPLAY saves the recorded audio it gets from the DSP as a 16 kHz
-  WAV. Either the scope/record thread resamples, or the WAV header is nominal.
-- **Codec clock.** No M33 code selects the codec's master-clock output, so the DSP must do it, or the pin keeps its reset
-  setting *(inference)*.
 - **ADC.** It is a dual-channel 14-bit converter, most likely at 125 MSPS per channel, but the part number is unknown, and the
   logic that adds the two channels has not been located in the netlist yet.
 - **FPGA package.** The bitstream does not record the package. Only the CSG324 and FGG484 packages connect every pin
@@ -2384,8 +2377,8 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
   60 m memories. The new 5351.5–5366.5 kHz segment needs a MAIN patch, planned in issue
   [FT-710_Custom_Firmware#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2), including split operation in the segment.
 
-Some open questions don't need the radio at all. Two of the project's open contradictions, how `PS1;` powers the radio
-on and the 12 kHz vs 16 kHz audio rate, are code questions. A third, the SDR flash layout (the FPGA boots from flash
+Some open questions don't need the radio at all. Two of the project's contradictions, how `PS1;` powers the radio
+on and the 12 kHz vs 16 kHz audio rate (settled in the code by #154: 72 kHz blocks, resampled by 2/9), are code questions. A third, the SDR flash layout (the FPGA boots from flash
 address 0, but the update writes to `0x240000`), could be settled by reading the module flash over J2001. That read
 would still need approval.
 
