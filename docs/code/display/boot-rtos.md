@@ -37,7 +37,7 @@ Its first word is stored in 0x20800398 (the running bank, used by the update cod
 | 1 | `mmu_cache_enable` 0x20116D84 | Writes CP15 and sets SCTLR bits 0xD (MMU, D-cache, write buffer) **[fact for the bits]** |
 | 2 | `pinmux_init` 0x20101190 | PFC/GPIO mode for every pin (2.5 KB of per-pin calls) **[fact]** |
 | 3 | `gpio_p7_9_11(1)` 0x20100480 | Drives P7_11 and P7_9 high through PSR7 (0xFCFE311C) **[fact]**. Pin meaning unknown |
-| 4 | `kernel_heap_init` 0x201562B4 | Kernel start-up, memory pool up to 0x20980000 **[fact for the limit]** |
+| 4 | `kernel_heap_init` 0x201562B4 | Kernel start-up: memory pool from **0x20980000** (base, `*(0x2010022C)` rounded to 8) via 0x201530FC; its size SP − 0x400 − base is negative (SP is below the base), so allocations are unbounded up to the end of RAM 0x209FFFFF ([memory-maps.md](../../memory-maps.md) `ram_hi`, #119) **[fact]** |
 | 5 | `itron_acre_tsk(0, 0x20165A44)` | Creates `task_root` (pri 8, 8 KB stack) |
 | 6 | `ostm_init` 0x201177E4 | OSTM0 compare 319999, ISR `ostm0_tick_isr` on GIC ID 0x86. The ISR adds 10000 µs to the system time, so the **tick is 10 ms** **[fact]** |
 | 7 | idle loop | Spins on the scheduler counters 0x208003DB–0x208003DD and counts idle passes in 0x208003C4/0x208003C8 (CPU-load measure) **[inference]** |
