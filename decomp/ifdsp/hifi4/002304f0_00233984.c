@@ -3248,7 +3248,7 @@ longlong FUN_00233670(undefined8 *param_1,undefined8 *param_2,int param_3,int pa
     param_1[3] = uVar11;
     return ZEXT48(puVar17 + param_4 * 3) << 0x20;
   }
-  FUN_002174b0(param_1,param_2,param_3,param_4 << 1,param_5 >> 1);
+  fft512_cplx(param_1,param_2,param_3,param_4 << 1,param_5 >> 1);
   puVar4 = param_1 + (param_5 >> 1);
   uVar16 = ae_l32x2_ip(*param_1);
   puVar3 = param_1 + 1;
@@ -3481,9 +3481,9 @@ int FUN_00233970(int param_1)
 }
 
 
-// ===== FUN_00233984 @ 00233984 (126 bytes)
+// ===== fir_init @ 00233984 (126 bytes)
 
-undefined8 FUN_00233984(int param_1,undefined4 *param_2,undefined4 *param_3)
+undefined8 fir_init(int param_1,undefined4 *param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;

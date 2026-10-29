@@ -15,7 +15,7 @@ from `tools/flix_stats.py` and the files named.
 | Named | **99 (9 %)**, also 9 % of the code bytes; the five largest unnamed functions are 8,320, 5,168, 4,208, 3,376 and 2,224 bytes (`FUN_0022c5b0`, `FUN_00231040`, `FUN_0022e990`, `FUN_0022a6f0`, `FUN_00219800`) **[fact]** |
 | Described in the IFDSP docs | about 96 functions (9 %) mentioned by name or address in this page, [control-link.md](control-link.md) or [ipc.md](ipc.md) **[fact: text search]** |
 | Readable as decompiled C | **since T21g (2026-10-28): all 1,067 functions decompile**, 0 failures, 982 of 1,081 exported functions without any decompiler warning, 1 `halt_baddata()` (data). Ghidra bodies cover 93 % of the listing's bytes (14 % before). Control flow, base-ISA and FPU operations and the simple HiFi4 loads/stores are real C; most `ae_*` operations are named calls with the right inputs and outputs but no arithmetic. Before T21, with the stock language: **none in practice** (891 functions, 84 %, contain FLIX bundles it could not decode) **[fact: `decomp/ifdsp/hifi4/quality.tsv`, [ghidra-flix.md](ghidra-flix.md)]** |
-| Signal-processing algorithms | the receive and transmit chains are known by call order only; noise reduction, noise blanker, notch, AGC and the demodulators are **not yet understood as algorithms**. Understood: the IIR biquad cascade engine, the 51-tap NLMS update and the FIR/IIR coefficient tables below **[fact: Open points]** |
+| Signal-processing algorithms | **documented stage by stage since #86** in [dsp-chains.md](dsp-chains.md): IF AGC, Weaver SSB/CW, AM and FM demodulators, CW zero-in, CTCSS/DCS decoders, manual notch, STFT Wiener NR, LMS line-enhancer NR, NLMS auto-notch, contour, APF, AF limiter, hi/lo-cut, RX EQ, CW FIR; TX EQ, speech processor, compressor, BPF, ALC, VOX/anti-VOX, CTCSS/DCS encoders, modulators. There is no noise blanker on the HiFi4 **[fact: stage list; inference: NB in the FPGA]** |
 | Evidence tags on this page | 47 **[fact]**, 29 **[inference]**, 9 **[guess]** |
 
 ## How this page was made: a FLIX-aware disassembler
@@ -262,7 +262,7 @@ S = Spi, M = Main; "fp" = only reached through a function pointer.
 | Reg | Read by | Written by | Thread | Notes |
 |---|---|---|---|---|
 | 0x1 | 0x21D68C, 0x21F7EC, 0x21FA48, 0x21FD20, 0x220224, 0x2233FC, 0x223734 | same | RP, TP, fp | status/flag bits (M33 sets bit 0) **[inference]** |
-| 0x2 | 0x222034, 0x224ED8 | same | RA, TP | flag word |
+| 0x2 | 0x222034, 0x224ED8 | same | TP | TX meters (#86): low byte = speech-processor gain reduction, high byte = ALC gain reduction, 0.5 dB steps **[fact]** |
 | 0x3 / 0x4 | — | 0x21F388 / 0x21D270 | RP / RA | DSP → MAIN results (MAIN reads regs 0–4) **[inference]** |
 | 0x6 | 0x21F484, 0x220EE0, 0x2220E8, 0x22313C, Rx_Path, Tx_Path | — | all | **operating mode**: compared with 9 and 10, and indexes an 11-entry jump table (0x204EF0) in the TX filter switch **[fact]**; the mode numbering **[unknown]** on the DSP side; MAIN writes 0 CW-U, 1 CW-L, 2 USB/DATA-U/RTTY-U/PSK, 3 LSB/DATA-L/RTTY-L, 8 AM, 9 FM ([control-link.md](control-link.md#register-map)) **[fact, MAIN mapping]**, so 9 is FM; which MAIN value the 10 compare means is open |
 | 0x8–0xA | 0x2249D0 | — | TP | |
@@ -271,7 +271,7 @@ S = Spi, M = Main; "fp" = only reached through a function pointer.
 | 0xF, 0x10 | 0x225DC4 | — | TP | |
 | 0x11 | 0x222510, 0x222688, 0x222AF0 | — | TP | with 0x35–0x38: tone/CTCSS encoder block (uses the CTCSS table 0x204DD0) **[inference]** |
 | 0x12 / 0x13 | 0x225A84 / 0x225AB4 | — | TP / RP | gains **[guess]** |
-| 0x20 | Tx_Path | — | TP | signed dB: on change computes 10^(0.05·x) (`FUN_00218B70`) → linear TX gain **[fact: code]** |
+| 0x20 | Tx_Path | — | TP | signed **half-dB** (#86: `i2f_scaled`(x, −1) first): on change computes 10^(0.05·x) (`FUN_00218B70`) → linear TX gain **[fact: code]** |
 | 0x23 | 0x2248D8 | — | TP | |
 | 0x2B–0x2D | 0x221220 | — | TP | |
 | 0x2F, 0x30, 0x3A | 0x2221D0, 0x222D00/0x222D34, 0x220B5C | — | TP, fp | |
@@ -408,13 +408,15 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
 | 0x00212EB8, 0x00213E84 | FUN_… | `MU_SetFlags`, `SEMA42_Lock` | MU-B / SEMA42 |
 | 0x0021B544, 0x0021B078, 0x0021AF9C, 0x0021C398, 0x0021BD40 | FUN_… | `rpmsg_lite_remote_init`, `rpmsg_lite_is_link_up`, `rpmsg_lite_create_ept`, `ipc_ept_rx_cb`, `ipc_handle_msg` | rpmsg-lite remote |
 | 0x002340FC, 0x002341C0 | FUN_… | `iir_cascade_init`, `iir_cascade_process` | biquad engine |
-| 0x00223250 | `nlms_51tap_update` | `nlms_51tap_update` | 51-tap normalised LMS (error, power + 1e-12, weight update) |
+| 0x00223250 | `nlms_51tap_update` | `nlms_51tap_update` | 51-tap normalised LMS (error, power + 1e-12, weight update), used by the VOX detectors |
+
+The signal-chain stages (about 95 functions named in #86) are listed in [dsp-chains.md](dsp-chains.md).
 
 ## Open points
 
 - Mode numbering of reg 6: MAIN's side is now known ([control-link.md](control-link.md#register-map): 0 CW-U … 9 FM); what the DSP does
   with each value (and with 10, which MAIN never sends **[inference]**) is open. The meaning of most RX registers: needs the MAIN-side setter names (T10/T12b) next to this table.
-- The receive and transmit chains are listed by call, not yet by algorithm (NR, NB, notch, AGC, demodulators). The FLIX
+- Done (#86): the receive and transmit chains are documented by algorithm in [dsp-chains.md](dsp-chains.md); its open points are in #184.
   disassembly makes this possible function by function.
 - Done (T21, #97): `decomp/ifdsp/hifi4/` is decompiled with the generated FLIX-aware language `Xtensa:LE:32:rt600hifi4`
   ([ghidra-flix.md](ghidra-flix.md); numbers in `decomp/ifdsp/INDEX.md`). Still open: exact arithmetic for the `ae_*` operations of

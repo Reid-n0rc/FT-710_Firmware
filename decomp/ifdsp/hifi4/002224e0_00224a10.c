@@ -20,9 +20,11 @@ void FUN_002224e0(void)
 }
 
 
-// ===== FUN_00222510 @ 00222510 (294 bytes)
+// ===== ctcss_encoder @ 00222510 (294 bytes)
 
-void FUN_00222510(undefined4 *param_1,undefined4 *param_2)
+/* reg 0x35, level reg 0x11 */
+
+void ctcss_encoder(undefined4 *param_1,undefined4 *param_2)
 
 {
   undefined4 uVar1;
@@ -39,9 +41,9 @@ void FUN_00222510(undefined4 *param_1,undefined4 *param_2)
   
   if ((int)(short)DAT_20070022 != (uint)DAT_0025b9f4) {
     DAT_0025b9f4 = DAT_20070022;
-    FUN_00234730((int)(short)DAT_20070022,0xffffffff);
+    i2f_scaled((int)(short)DAT_20070022,0xffffffff);
     uVar4 = (ulonglong)(uint)(in_aed0 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_0025b9f8 = ae_s32_l_i(uVar4);
   }
   if ((uint)DAT_0025b9fc == (uint)DAT_2007006a) {
@@ -90,7 +92,7 @@ LAB_00222610:
       } while (SUB21(uVar7,0));
     }
     fVar3 = (float)uVar4;
-    FUN_00218fc0();
+    cosf_();
     uVar6 = ae_l32_i(DAT_0025b9f8);
     uVar5 = ae_l32_i(uVar1);
     param_1 = param_1 + 1;
@@ -120,15 +122,17 @@ void FUN_00222640(void)
   DAT_0025ba20 = 0;
   DAT_0025ba24 = 0;
   DAT_0025ba28 = 0;
-  DAT_0025ba2c = FUN_00233984(0x25ba40,0x6d,FLOAT_ARRAY_00205380);
+  DAT_0025ba2c = fir_init(0x25ba40,0x6d,FLOAT_ARRAY_00205380);
   DAT_0025ba30 = iir_cascade_init(&DAT_0025bde0,5,&DAT_002373d0,1);
   return;
 }
 
 
-// ===== FUN_00222688 @ 00222688 (1050 bytes)
+// ===== dcs_encoder @ 00222688 (1050 bytes)
 
-undefined8 FUN_00222688(undefined4 *param_1,undefined4 *param_2)
+/* reg 0x38 */
+
+undefined8 dcs_encoder(undefined4 *param_1,undefined4 *param_2)
 
 {
   undefined4 uVar1;
@@ -155,9 +159,9 @@ undefined8 FUN_00222688(undefined4 *param_1,undefined4 *param_2)
   
   if ((int)(short)DAT_0025ba10 != (int)DAT_20070022) {
     DAT_0025ba10._0_2_ = DAT_20070022;
-    FUN_00234730((int)DAT_20070022,0xffffffff);
+    i2f_scaled((int)DAT_20070022,0xffffffff);
     uVar5 = (ulonglong)(uint)(in_aed0 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_0025ba18 = ae_s32_l_i(uVar5);
   }
   uVar12 = (uint)DAT_20070070;
@@ -202,7 +206,7 @@ LAB_00222729:
         DAT_0025ba24._2_2_ = (ushort)uVar1;
       }
       DAT_0025bea0 = ae_s32_l_ip((ulonglong)(uint)(fVar3 * (float)uVar19));
-      FUN_00233a10(DAT_0025ba2c,&DAT_0025bf00,&DAT_0025bea0,8);
+      fir_process(DAT_0025ba2c,&DAT_0025bf00,&DAT_0025bea0,8);
       memset(&DAT_0025bea0,0,0x60);
       uVar6 = ae_l32_ip(DAT_0025bf00);
       uVar19 = ae_l32_i(DAT_0025bf04);
@@ -319,9 +323,11 @@ void FUN_00222ab0(void)
 }
 
 
-// ===== FUN_00222af0 @ 00222af0 (519 bytes)
+// ===== two_tone_test_gen @ 00222af0 (519 bytes)
 
-void FUN_00222af0(undefined4 param_1,undefined4 param_2)
+/* regs 0x36 0x37 */
+
+void two_tone_test_gen(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 *puVar1;
@@ -342,9 +348,9 @@ void FUN_00222af0(undefined4 param_1,undefined4 param_2)
   fVar5 = (float)in_aed0;
   if ((int)(short)DAT_20070022 != (uint)DAT_0025bf60) {
     DAT_0025bf60 = DAT_20070022;
-    FUN_00234730((int)(short)DAT_20070022,0xffffffff);
+    i2f_scaled((int)(short)DAT_20070022,0xffffffff);
     in_aed0 = (ulonglong)(uint)(fVar5 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_0025bf64 = ae_s32_l_i(in_aed0);
   }
   fVar5 = (float)in_aed0;
@@ -360,7 +366,7 @@ void FUN_00222af0(undefined4 param_1,undefined4 param_2)
       iVar3 = 1;
     }
     uVar2 = ae_zext16(iVar3);
-    FUN_00234730(uVar2,0);
+    i2f_scaled(uVar2,0);
     uVar8 = ae_l32_i(0x38b702d4);
     DAT_0025bf78 = ae_s32_l_i((ulonglong)(uint)(fVar5 * (float)uVar8));
   }
@@ -391,7 +397,7 @@ void FUN_00222af0(undefined4 param_1,undefined4 param_2)
         } while (SUB21(uVar4,0));
       }
       fVar5 = (float)uVar6;
-      FUN_00218fc0();
+      cosf_();
       uVar7 = ae_l32_i(DAT_0025bf64);
       uVar12 = ae_l32_i(*puVar1);
       uVar8 = ae_l32_i(0x40c90fdb);
@@ -414,7 +420,7 @@ void FUN_00222af0(undefined4 param_1,undefined4 param_2)
       iVar3 = 1;
     }
     uVar2 = ae_zext16(iVar3);
-    FUN_00234730(uVar2,0);
+    i2f_scaled(uVar2,0);
     uVar7 = ae_l32_i(0x38b702d4);
     uVar8 = ae_l32_i(0x40c90fdb);
     uVar12 = ae_l32_i(0);
@@ -445,7 +451,7 @@ void FUN_00222af0(undefined4 param_1,undefined4 param_2)
         } while (SUB21(uVar4,0));
       }
       fVar5 = (float)uVar6;
-      FUN_00218fc0();
+      cosf_();
       uVar12 = ae_l32_i(DAT_0025bf64);
       uVar7 = ae_l32_i(*puVar1);
       uVar8 = ae_l32_i(0x40c90fdb);
@@ -470,7 +476,7 @@ void FUN_00222d00(void)
   
   FUN_00222dd4();
   DAT_0025bff4 = DAT_20070060;
-  FUN_00234730(DAT_20070060 & 0xff,0);
+  i2f_scaled(DAT_20070060 & 0xff,0);
   DAT_0025bffc = 0xffff;
   DAT_0025bffe = 0;
   DAT_0025bff8 = ae_s32_l_i((ulonglong)(uint)(in_aed0 * 0.003921569));
@@ -478,9 +484,11 @@ void FUN_00222d00(void)
 }
 
 
-// ===== FUN_00222d34 @ 00222d34 (157 bytes)
+// ===== fm_tx_audio @ 00222d34 (157 bytes)
 
-void FUN_00222d34(undefined4 param_1,undefined4 param_2)
+/* HPF 293 Hz, gain reg 0x30, pre-emphasis reg 0x3A */
+
+void fm_tx_audio(undefined4 param_1,undefined4 param_2)
 
 {
   float fVar1;
@@ -491,10 +499,10 @@ void FUN_00222d34(undefined4 param_1,undefined4 param_2)
   fVar1 = (float)uVar2;
   if (DAT_0025bff4 != DAT_20070060) {
     DAT_0025bff4 = DAT_20070060;
-    FUN_00234730(DAT_20070060 & 0xff,0);
+    i2f_scaled(DAT_20070060 & 0xff,0);
     DAT_0025bff8 = ae_s32_l_i((ulonglong)(uint)(fVar1 * 0.003921569));
   }
-  FUN_00234f40(&DAT_0025c020,&DAT_0025c010,4);
+  vec_scale_f32(&DAT_0025c020,&DAT_0025c010,4);
   if (DAT_0025bffc != DAT_20070074) {
     DAT_0025bffc = DAT_20070074;
     DAT_0025bffe = DAT_20070074 & 1;
@@ -547,9 +555,11 @@ void FUN_00222e10(void)
 }
 
 
-// ===== FUN_00222e30 @ 00222e30 (574 bytes)
+// ===== soft_knee_limiter @ 00222e30 (574 bytes)
 
-void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
+/* regs 0x4015-0x4019 (off by default) */
+
+void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
 
 {
   undefined4 uVar1;
@@ -574,21 +584,21 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
     if ((DAT_2007802a >> 0xb & 1) != 0) {
       uVar10 = uVar8 | 0xfffff000;
     }
-    FUN_00234730(uVar10,0xffffffff);
+    i2f_scaled(uVar10,0xffffffff);
     uVar4 = ae_l32_i(DAT_0025c200);
     DAT_0025c1fc = ae_s32_l_i(in_aed0);
     DAT_0025c204 = ae_s32_l_i((ulonglong)(uint)((float)uVar4 + (float)in_aed0));
   }
   if ((uint)DAT_0025c1f2 != (uint)DAT_2007802c) {
     DAT_0025c1f2 = DAT_2007802c;
-    FUN_00234730(DAT_2007802c | 0xfffff000,0xffffffff);
+    i2f_scaled(DAT_2007802c | 0xfffff000,0xffffffff);
     uVar4 = ae_l32_i(DAT_0025c1fc);
     DAT_0025c200 = ae_s32_l_i(in_aed0);
     DAT_0025c204 = ae_s32_l_i((ulonglong)(uint)((float)uVar4 + (float)in_aed0));
   }
   if (DAT_0025c1f4 != DAT_20078032) {
     DAT_0025c1f4 = DAT_20078032;
-    FUN_00234730(DAT_20078032,0);
+    i2f_scaled(DAT_20078032,0);
     uVar4 = const_s(3);
     DAT_0025c208 = ae_s32_l_i(in_aed0);
     uVar7 = ae_l32_i(0);
@@ -600,13 +610,13 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
     else {
       const_s(2);
       in_aed0 = ae_l32_i(0x3f800000);
-      FUN_00235ba8();
+      divf_();
     }
     DAT_0025c210 = ae_s32_l_i(in_aed0);
   }
   if (DAT_0025c1f6 != DAT_2007802e) {
     DAT_0025c1f6 = DAT_2007802e;
-    FUN_00234730(DAT_2007802e,0);
+    i2f_scaled(DAT_2007802e,0);
     uVar7 = ae_l32_i(0x3a83126f);
     uVar4 = ae_l32_i(0);
     uVar2 = oeq_s((ulonglong)(uint)((float)in_aed0 * (float)uVar7),uVar4);
@@ -616,7 +626,7 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
     else {
       ae_l32_i(0x463b8000);
       in_aed0 = ae_l32_i(0xc00c9f54);
-      FUN_00235ba8();
+      divf_();
       FUN_00218cf0();
       DAT_0025c214 = ae_s32_l_i(in_aed0);
     }
@@ -624,7 +634,7 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
   fVar3 = (float)in_aed0;
   if (DAT_0025c1f8 != DAT_20078030) {
     DAT_0025c1f8 = DAT_20078030;
-    FUN_00234730(DAT_20078030,0);
+    i2f_scaled(DAT_20078030,0);
     uVar7 = ae_l32_i(0x3a83126f);
     uVar4 = ae_l32_i(0);
     uVar2 = oeq_s((ulonglong)(uint)(fVar3 * (float)uVar7),uVar4);
@@ -635,7 +645,7 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
     else {
       ae_l32_i(0x463b8000);
       uVar4 = ae_l32_i(0xc00c9f54);
-      FUN_00235ba8();
+      divf_();
       FUN_00218cf0();
       DAT_0025c218 = ae_s32_l_i(uVar4);
     }
@@ -654,7 +664,7 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
       uVar2 = olt_s(uVar7,(ulonglong)(uint)ABS((float)uVar4));
       uVar4 = movf_s((ulonglong)(uint)ABS((float)uVar4),uVar7,(char)uVar2);
       fVar3 = (float)uVar4;
-      FUN_002190f0();
+      log10f_();
       uVar7 = ae_l32_i(DAT_0025c20c);
       uVar11 = ae_l32_i(DAT_0025c204);
       uVar4 = ae_l32_i(0x41a00000);
@@ -685,7 +695,7 @@ void FUN_00222e30(undefined4 *param_1,undefined4 *param_2)
       uVar4 = ae_l32_i(0x3d4ccccd);
       DAT_0025c220 = ae_s32_l_i((ulonglong)(uint)fVar3);
       fVar3 = fVar3 * (float)uVar4;
-      FUN_00218b70();
+      pow10f_();
       uVar4 = ae_l32_ip(*param_1);
       param_1 = param_1 + 1;
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * fVar3));
@@ -708,9 +718,11 @@ void FUN_00223080(void)
 }
 
 
-// ===== FUN_0022309c @ 0022309c (45 bytes)
+// ===== fm_post_lpf @ 0022309c (45 bytes)
 
-void FUN_0022309c(undefined4 param_1,undefined4 param_2)
+/* LP 3 kHz at 72 kHz, reg 0xC bit 8 */
+
+void fm_post_lpf(undefined4 param_1,undefined4 param_2)
 
 {
   if ((DAT_20070018 & 0x100) != 0) {
@@ -768,27 +780,29 @@ undefined8 FUN_0022312c(void)
 }
 
 
-// ===== FUN_0022313c @ 0022313c (269 bytes)
+// ===== tx_chain @ 0022313c (269 bytes)
 
-void FUN_0022313c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* core, ALC, sub-tones, modulators only if reg 0x4006 != 0 */
+
+void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   short sVar1;
   int iVar2;
   
   memcpy(&DAT_0025c360,param_1,0x60);
-  FUN_002220e8(&DAT_0025c360,&DAT_0025c360);
-  FUN_00221f98(&DAT_0025c360,&DAT_0025c3c0);
+  tx_core_12k(&DAT_0025c360,&DAT_0025c360);
+  tx_alc(&DAT_0025c360,&DAT_0025c3c0);
   if (DAT_2007000c == 9) {
-    FUN_0022309c(&DAT_0025c3c0,&DAT_0025c360);
+    fm_post_lpf(&DAT_0025c3c0,&DAT_0025c360);
   }
   else {
     memcpy(&DAT_0025c360,&DAT_0025c3c0,0x60);
   }
   memcpy(param_2,&DAT_0025c360,0x60);
-  FUN_00222510(&DAT_0025c360,&DAT_0025c420);
-  FUN_00222af0(&DAT_0025c420,&DAT_0025c420);
-  FUN_00222688(&DAT_0025c420,&DAT_0025c420);
+  ctcss_encoder(&DAT_0025c360,&DAT_0025c420);
+  two_tone_test_gen(&DAT_0025c420,&DAT_0025c420);
+  dcs_encoder(&DAT_0025c420,&DAT_0025c420);
   memcpy(param_3,&DAT_0025c420,0x60);
   sVar1 = DAT_0025c350;
   if (DAT_2007800c != 0) {
@@ -803,30 +817,30 @@ void FUN_0022313c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
     case 4:
     case 6:
       if (iVar2 != 0) {
-        FUN_00221b10(0);
+        weaver_ssb_mod_init(0);
       }
-      FUN_00221bb8(&DAT_0025c420,&DAT_0025c420);
+      weaver_ssb_mod(&DAT_0025c420,&DAT_0025c420);
       break;
     case 1:
     case 3:
     case 5:
     case 7:
       if (iVar2 != 0) {
-        FUN_00221b10();
+        weaver_ssb_mod_init();
       }
-      FUN_00221bb8(&DAT_0025c420,&DAT_0025c420);
+      weaver_ssb_mod(&DAT_0025c420,&DAT_0025c420);
       break;
     case 8:
       if (iVar2 != 0) {
-        FUN_002218e0();
+        am_modulator_init();
       }
-      FUN_00221908(&DAT_0025c420,&DAT_0025c420);
+      am_modulator(&DAT_0025c420,&DAT_0025c420);
       break;
     case 9:
       if (iVar2 != 0) {
-        FUN_00221a10();
+        fm_modulator_init();
       }
-      FUN_00221a30(&DAT_0025c420,&DAT_0025c420);
+      fm_modulator(&DAT_0025c420,&DAT_0025c420);
     }
   }
   memcpy(param_3,&DAT_0025c420,0x60);
@@ -879,7 +893,7 @@ nlms_51tap_update(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4
     uVar11 = ae_l32_i(*param_3);
     uVar2 = ae_s32_l_i((ulonglong)(uint)((float)uVar11 - fVar3));
     *param_4 = uVar2;
-    FUN_00234be0(iVar9,0x33);
+    vec_sum_sq(iVar9,0x33);
     uVar12 = ae_l32_i(0x2b8cbccc);
     uVar6 = olt_s(uVar5,uVar12);
     uVar14 = ae_l32_i(uVar1);
@@ -887,7 +901,7 @@ nlms_51tap_update(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4
     uVar13 = ae_mov(uVar5);
     uVar5 = (ulonglong)(uint)((float)uVar11 * (float)uVar14);
     movt_s(uVar13,uVar12,(char)uVar6);
-    FUN_00235ba8();
+    divf_();
     uVar12 = ae_l32_i(uVar4);
     uVar14 = ae_mov(uVar5);
     uVar11 = ae_l32_ip(*puVar8);
@@ -950,9 +964,11 @@ void FUN_0022338c(void)
 }
 
 
-// ===== FUN_002233fc @ 002233fc (820 bytes)
+// ===== vox_detector @ 002233fc (820 bytes)
 
-undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
+/* ch0, threshold reg 0x21, 20 ms level, 100 ms hang */
+
+undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
 
 {
   short sVar1;
@@ -979,7 +995,7 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
   sVar1 = *DAT_0025c480;
   if ((int)DAT_0025c48e != (int)sVar1) {
     DAT_0025c48e = sVar1;
-    FUN_00234730((int)sVar1,0xffffffff);
+    i2f_scaled((int)sVar1,0xffffffff);
     DAT_0025c490 = ae_s32_l_i(in_aed0);
   }
   fVar9 = (float)in_aed0;
@@ -992,11 +1008,11 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
   sVar1 = DAT_20078022;
   if (DAT_0025c48a != DAT_20078022) {
     DAT_0025c48a = DAT_20078022;
-    FUN_00234730(DAT_20078022,0);
+    i2f_scaled(DAT_20078022,0);
     uVar10 = 0x3fe66666;
     uVar11 = olt_s(0x3fe66666,(ulonglong)(uint)(fVar9 * 0.001));
     if (!SUB21(uVar11,0)) {
-      FUN_00234730(sVar1,0);
+      i2f_scaled(sVar1,0);
       uVar12 = ae_l32_i(0x3a83126f);
       uVar10 = (ulonglong)(uint)(fVar9 * (float)uVar12);
     }
@@ -1006,7 +1022,7 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
   }
   if (DAT_0025c48c != DAT_20078024) {
     DAT_0025c48c = DAT_20078024;
-    FUN_00234730(DAT_20078024,0);
+    i2f_scaled(DAT_20078024,0);
     uVar12 = const_s(1);
     DAT_0025c780 = ae_s32_l_i((ulonglong)(uint)(fVar9 * -1e-06 + (float)uVar12));
     memset(&DAT_0025c670,0,0xcc);
@@ -1059,7 +1075,7 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
     if (0x9f < uVar8) {
       uVar12 = ae_l32_i(DAT_0025c49c);
       fVar9 = (float)uVar12 * 0.00625;
-      FUN_002190f0(uVar5);
+      log10f_(uVar5);
       DAT_0025c4a0 = 0;
       uVar12 = ae_l32_i(DAT_0025c490);
       uVar11 = olt_s(uVar12,(ulonglong)(uint)(fVar9 * 20.0));
@@ -1079,9 +1095,9 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
         }
         ae_l32_i(DAT_0025c494);
       }
-      uVar5 = FUN_00234710(0xffffffff);
+      uVar5 = f2i_scaled(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c484,0);
-      iVar6 = FUN_00223a74();
+      iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
                      in_st_PSINTLEVEL);
@@ -1109,9 +1125,11 @@ undefined8 FUN_002233fc(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_00223734 @ 00223734 (823 bytes)
+// ===== antivox_detector @ 00223734 (823 bytes)
 
-undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
+/* ch1, threshold reg 0x22; reg 0x400A, reg 1 bit 4 */
+
+undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
 
 {
   short sVar1;
@@ -1138,7 +1156,7 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
   sVar1 = *DAT_0025c784;
   if ((int)DAT_0025c792 != (int)sVar1) {
     DAT_0025c792 = sVar1;
-    FUN_00234730((int)sVar1,0xffffffff);
+    i2f_scaled((int)sVar1,0xffffffff);
     DAT_0025c794 = ae_s32_l_i(in_aed0);
   }
   fVar9 = (float)in_aed0;
@@ -1151,11 +1169,11 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
   sVar1 = DAT_20078022;
   if (DAT_0025c78e != DAT_20078022) {
     DAT_0025c78e = DAT_20078022;
-    FUN_00234730(DAT_20078022,0);
+    i2f_scaled(DAT_20078022,0);
     uVar10 = 0x3fe66666;
     uVar11 = olt_s(0x3fe66666,(ulonglong)(uint)(fVar9 * 0.001));
     if (!SUB21(uVar11,0)) {
-      FUN_00234730(sVar1,0);
+      i2f_scaled(sVar1,0);
       uVar12 = ae_l32_i(0x3a83126f);
       uVar10 = (ulonglong)(uint)(fVar9 * (float)uVar12);
     }
@@ -1165,7 +1183,7 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
   }
   if (DAT_0025c790 != DAT_20078024) {
     DAT_0025c790 = DAT_20078024;
-    FUN_00234730(DAT_20078024,0);
+    i2f_scaled(DAT_20078024,0);
     uVar12 = const_s(1);
     DAT_0025ca84 = ae_s32_l_i((ulonglong)(uint)(fVar9 * -1e-06 + (float)uVar12));
     memset(&DAT_0025c974,0,0xcc);
@@ -1218,7 +1236,7 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
     if (0x9f < uVar8) {
       uVar12 = ae_l32_i(DAT_0025c7a0);
       fVar9 = (float)uVar12 * 0.00625;
-      FUN_002190f0(uVar5);
+      log10f_(uVar5);
       DAT_0025c7a4 = 0;
       uVar12 = ae_l32_i(DAT_0025c794);
       uVar11 = olt_s(uVar12,(ulonglong)(uint)(fVar9 * 20.0));
@@ -1238,9 +1256,9 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
         }
         ae_l32_i(DAT_0025c798);
       }
-      uVar5 = FUN_00234710(0xffffffff);
+      uVar5 = f2i_scaled(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c788,0);
-      iVar6 = FUN_00223a74();
+      iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
                      in_st_PSINTLEVEL);
@@ -1268,9 +1286,11 @@ undefined8 FUN_00223734(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_00223a74 @ 00223a74 (28 bytes)
+// ===== vox_state @ 00223a74 (28 bytes)
 
-undefined4 FUN_00223a74(void)
+/* mic and not speaker */
+
+undefined4 vox_state(void)
 
 {
   undefined4 uVar1;
@@ -1315,7 +1335,7 @@ void FUN_00223ab4(undefined4 param_1)
   undefined8 in_aed1;
   
   uVar1 = ae_s32_l_i(in_aed1);
-  FUN_00235ba8();
+  divf_();
   ae_mov(in_aed0);
   FUN_002294e0();
   ae_l32_i(uVar1);
@@ -1357,7 +1377,7 @@ void FUN_00223adc(undefined4 *param_1)
     FUN_00219320();
     uVar6 = (ulonglong)(uint)(fVar5 * -2.0);
     uVar1 = ae_s32_l_i(uVar6);
-    FUN_00235c8c();
+    sqrtf_();
     uVar4 = oeq_s(uVar6,uVar6);
     uStack_30 = ae_s32_l_i(uVar6);
     if (!SUB21(uVar4,0)) {
@@ -1369,7 +1389,7 @@ void FUN_00223adc(undefined4 *param_1)
     uVar7 = ae_l32_i(0x30000000);
     uVar6 = (ulonglong)(uint)((float)uVar8 * (float)uVar7 * 6.2831855);
     uVar1 = ae_s32_l_i(uVar6);
-    FUN_00218fc0();
+    cosf_();
     uVar3 = ae_s32_l_i(uVar6);
     uVar7 = ae_l32_i(uVar2);
     fVar5 = (float)uVar7;
@@ -1377,7 +1397,7 @@ void FUN_00223adc(undefined4 *param_1)
     uVar7 = ae_l32_i(0xc0000000);
     uVar6 = (ulonglong)(uint)(fVar5 * (float)uVar7);
     uVar2 = ae_s32_l_i(uVar6);
-    FUN_00235c8c();
+    sqrtf_();
     uVar4 = oeq_s(uVar6,uVar6);
     uStack_2c = ae_s32_l_i(uVar6);
     if (!SUB21(uVar4,0)) {
@@ -1387,7 +1407,7 @@ void FUN_00223adc(undefined4 *param_1)
     }
     uVar7 = ae_l32_i(uVar1);
     fVar5 = (float)uVar7;
-    FUN_00219560();
+    sinf_();
     uVar7 = ae_l32_i(uStack_2c);
     ae_l32_i(uVar3);
     ae_l32_i(uStack_30);
@@ -1426,11 +1446,11 @@ void FUN_00223bf0(void)
   puVar6 = &DAT_0025d360;
   do {
     fVar3 = (float)in_aed0;
-    FUN_00234730(iVar2,0);
+    i2f_scaled(iVar2,0);
     uVar5 = ae_l32_i(0x40c90fdb);
     uVar4 = ae_l32_i(0x3b000000);
     in_aed0 = (ulonglong)(uint)(fVar3 * (float)uVar5 * (float)uVar4);
-    FUN_00218fc0();
+    cosf_();
     uVar5 = ae_l32_i(0xbf000000);
     uVar4 = ae_l32_i(0x3f000000);
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)in_aed0 * (float)uVar5 + (float)uVar4));
@@ -1442,11 +1462,11 @@ void FUN_00223bf0(void)
   iVar2 = 0;
   do {
     fVar3 = (float)in_aed0;
-    FUN_00234730(iVar2,0);
+    i2f_scaled(iVar2,0);
     uVar4 = ae_l32_i(0x40c90fdb);
     uVar5 = ae_l32_i(0x3a800000);
     in_aed0 = (ulonglong)(uint)(fVar3 * (float)uVar4 * (float)uVar5);
-    FUN_00218fc0();
+    cosf_();
     uVar5 = ae_l32_i(0xbf000000);
     uVar4 = ae_l32_i(0x3f000000);
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)in_aed0 * (float)uVar5 + (float)uVar4));
@@ -1545,7 +1565,7 @@ uint FUN_00223c8c(undefined4 *param_1)
       memcpy(&DAT_00261450,&DAT_00260c40 + (uint)DAT_0025d354 * 4,800);
       ae_l32_i(DAT_0025d358);
       ae_l32_i(&DAT_40000000);
-      FUN_00234f40(&DAT_00261770,&DAT_00261450,200);
+      vec_scale_f32(&DAT_00261770,&DAT_00261450,200);
       FUN_0021a0b0(&DAT_00261450,&DAT_00261770,200);
       ae_l32_i(0x41a00000);
       ae_l32_i(0xc2fa0000);
@@ -1587,7 +1607,7 @@ uint FUN_00223c8c(undefined4 *param_1)
       memcpy(&DAT_00261450,&DAT_00260c40 + (uint)DAT_0025d354 * 4,800);
       ae_l32_i(DAT_0025d358);
       ae_l32_i(&DAT_40000000);
-      FUN_00234f40(&DAT_00261770,&DAT_00261450,200);
+      vec_scale_f32(&DAT_00261770,&DAT_00261450,200);
       FUN_0021a0b0(&DAT_00261450,&DAT_00261770,200);
       ae_l32_i(0x41a00000);
       ae_l32_i(0xc2fa0000);
@@ -1641,7 +1661,7 @@ void FUN_00224000(void)
 
 {
   memset(&DAT_00261a90,0,0x348);
-  DAT_00261dd8 = FUN_00233984(&DAT_00261de0,0x7b,FLOAT_ARRAY_00204f80);
+  DAT_00261dd8 = fir_init(&DAT_00261de0,0x7b,FLOAT_ARRAY_00204f80);
   DAT_00261a94 = 0;
   DAT_00261aa4 = 0;
   DAT_00261aa8 = 0;
@@ -1697,7 +1717,7 @@ undefined4 FUN_00224060(undefined4 *param_1)
     memset(&DAT_002621e0,0,0xa00);
     uVar6 = ae_l32_ip(*param_1);
     DAT_002621e0 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * 5.0));
-    FUN_00233a10(DAT_00261dd8,&DAT_00262be0,&DAT_002621e0,0x280);
+    fir_process(DAT_00261dd8,&DAT_00262be0,&DAT_002621e0,0x280);
     ae_l32_i(DAT_00261a98);
     FUN_00234e00(&DAT_002621e0,&DAT_00262be0,0x280);
     puVar3 = &DAT_002621e0;
@@ -1705,7 +1725,7 @@ undefined4 FUN_00224060(undefined4 *param_1)
     do {
       ae_l32_i(*puVar3);
       ae_l32_i(0x42fc0000);
-      uVar1 = FUN_00234710(0);
+      uVar1 = f2i_scaled(0);
       *puVar4 = uVar1;
       puVar3 = puVar3 + 1;
       puVar4 = puVar4 + 1;
@@ -2028,9 +2048,11 @@ uint FUN_00224594(uint param_1)
 }
 
 
-// ===== FUN_00224604 @ 00224604 (186 bytes)
+// ===== codec_out_sink @ 00224604 (186 bytes)
 
-void FUN_00224604(int param_1,undefined4 param_2)
+/* per-output gain, clip, into the codec-out object */
+
+void codec_out_sink(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -2071,7 +2093,7 @@ void FUN_00224604(int param_1,undefined4 param_2)
       uVar8 = ae_l32_i(*puVar3);
       uVar1 = ae_s32_l_i((ulonglong)(uint)((float)uVar8 * (float)uVar7));
       *puVar3 = uVar1;
-      FUN_00225408(&DAT_00263940 + param_1 * 8);
+      mute_ramp_step(&DAT_00263940 + param_1 * 8);
       puVar3 = puVar3 + 1;
     } while (puVar3 != (undefined4 *)&DAT_00263cd0);
     FUN_00234750(&DAT_00263950 + (uint)(byte)(&DAT_00263a11)[iVar4] * 0x60 + iVar4,&DAT_00263c70,
@@ -2139,9 +2161,11 @@ void codec_in_from_dma(undefined4 param_1)
 }
 
 
-// ===== FUN_00224798 @ 00224798 (123 bytes)
+// ===== codec_in_fifo_pop @ 00224798 (123 bytes)
 
-void FUN_00224798(int param_1,undefined4 param_2)
+/* (ch, dst), Q31 -> float */
+
+void codec_in_fifo_pop(int param_1,undefined4 param_2)
 
 {
   undefined6 uVar1;
@@ -2183,9 +2207,11 @@ void FUN_00224798(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00224814 @ 00224814 (134 bytes)
+// ===== rx_out_gain_mute_update @ 00224814 (134 bytes)
 
-void FUN_00224814(void)
+/* regs 0xD 0xE 0x10 */
+
+void rx_out_gain_mute_update(void)
 
 {
   uint uVar1;
@@ -2200,19 +2226,19 @@ void FUN_00224814(void)
   fVar5 = (float)in_aed0;
   if ((int)DAT_00263930 != (int)DAT_2007001c) {
     DAT_00263930 = DAT_2007001c;
-    FUN_00234730((int)DAT_2007001c,0xffffffff);
+    i2f_scaled((int)DAT_2007001c,0xffffffff);
     uVar7 = ae_l32_i(0x3d4ccccd);
     in_aed0 = (ulonglong)(uint)(fVar5 * (float)uVar7);
-    FUN_00218b70();
+    pow10f_();
     DAT_00263938 = ae_s32_l_i(in_aed0);
   }
   fVar5 = (float)in_aed0;
   if ((int)DAT_00263932 != (int)DAT_2007001a) {
     DAT_00263932 = DAT_2007001a;
-    FUN_00234730((int)DAT_2007001a,0xffffffff);
+    i2f_scaled((int)DAT_2007001a,0xffffffff);
     uVar7 = ae_l32_i(0x3d4ccccd);
     uVar6 = (ulonglong)(uint)(fVar5 * (float)uVar7);
-    FUN_00218b70();
+    pow10f_();
     DAT_0026393c = ae_s32_l_i(uVar6);
   }
   uVar1 = (uint)DAT_20070020;
@@ -2253,9 +2279,11 @@ void FUN_002248a0(void)
 }
 
 
-// ===== FUN_002248d8 @ 002248d8 (133 bytes)
+// ===== aux_in_gain_lp @ 002248d8 (133 bytes)
 
-void FUN_002248d8(uint param_1,undefined4 param_2,undefined4 param_3)
+/* reg 0x23, only with reg 6 = 10 */
+
+void aux_in_gain_lp(uint param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -2278,14 +2306,14 @@ void FUN_002248d8(uint param_1,undefined4 param_2,undefined4 param_3)
     fVar4 = (float)uVar5;
     DAT_00263cd0 = uVar2;
     if (iVar1 != DAT_00263cd4) {
-      FUN_00234730(DAT_00263cd4,0xffffffff);
+      i2f_scaled(DAT_00263cd4,0xffffffff);
       uVar3 = (ulonglong)(uint)(fVar4 * 0.05);
-      FUN_00218b70();
+      pow10f_();
       DAT_00263cd8 = ae_s32_l_i(uVar3);
       iVar1 = DAT_00263cd4;
     }
     DAT_00263cd4 = iVar1;
-    FUN_00234f40(param_3,param_2,0x18);
+    vec_scale_f32(param_3,param_2,0x18);
     iir_cascade_process(DAT_00263cdc,param_3,param_2,0x18);
     return;
   }
@@ -2296,9 +2324,11 @@ LAB_002248f9:
 }
 
 
-// ===== FUN_00224960 @ 00224960 (66 bytes)
+// ===== rx_loop_gain @ 00224960 (66 bytes)
 
-void FUN_00224960(undefined4 param_1,undefined4 param_2)
+/* reg 0x60, only with reg 6 = 10 */
+
+void rx_loop_gain(undefined4 param_1,undefined4 param_2)
 
 {
   ulonglong uVar1;
@@ -2311,12 +2341,12 @@ void FUN_00224960(undefined4 param_1,undefined4 param_2)
   fVar3 = (float)uVar4;
   if (DAT_00263ce0 != iVar2) {
     DAT_00263ce0 = iVar2;
-    FUN_00234730(iVar2,0xffffffff);
+    i2f_scaled(iVar2,0xffffffff);
     uVar1 = (ulonglong)(uint)(fVar3 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_00263ce4 = ae_s32_l_i(uVar1);
   }
-  FUN_00234f40(param_2,param_1,0x18);
+  vec_scale_f32(param_2,param_1,0x18);
   return;
 }
 
@@ -2337,9 +2367,11 @@ void FUN_002249b0(void)
 }
 
 
-// ===== FUN_002249d0 @ 002249d0 (61 bytes)
+// ===== routing_regs_decode @ 002249d0 (61 bytes)
 
-void FUN_002249d0(void)
+/* regs 8, 9, 10 -> selector nibbles */
+
+void routing_regs_decode(void)
 
 {
   DAT_00263d52 = DAT_20070010 >> 8 & 0xf;
@@ -2389,7 +2421,7 @@ void create_Thread_Spi(void)
   uVar2 = uVar2 & 0xf | uVar3 & 0xfffffff0;
   wsr_ps(uVar2);
   rsync();
-  DAT_002642a8 = FUN_00233984(&DAT_00264b70,0xab,FLOAT_ARRAY_00205540,uVar2);
+  DAT_002642a8 = fir_init(&DAT_00264b70,0xab,FLOAT_ARRAY_00205540,uVar2);
   xos_thread_create(&DAT_002642b0,0,Thread_Spi_entry,0,"Thread_Spi",&DAT_002650f0,&DAT_00001398,5,0,
                     0);
   xos_msgq_create(PTR_DAT_002374f4,4,4,0);

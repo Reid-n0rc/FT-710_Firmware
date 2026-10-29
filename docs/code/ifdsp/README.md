@@ -139,6 +139,7 @@ DSP thread names are **[fact]** (strings at 0x206370; creators 0x0021C498, 0x002
 | [ipc.md](ipc.md) | T12c | MU-A boot handshake, SEMA42, rpmsg-lite master (shm 0x20020000, endpoints 0x28 ↔ 0x1E, srtm-style 0x98-byte messages; the link is idle: nothing writes the send queue), DSP reply categories |
 | [m33-platform.md](m33-platform.md) | T12d | reset/copy-down, clocks (198 MHz core, CLKIN 18.432 MHz on PIO2_30), pins, codec init table, SCT0 PWM, FreeRTOS/Redlib, full M33 function table |
 | [hifi4.md](hifi4.md) | T12e | XOS threads, FLEXCOMM/DMA/GPIO usage per function, register-file use, coefficient tables, what the base-ISA decode can and cannot show; starts with the understanding gaps in numbers |
+| [dsp-chains.md](dsp-chains.md) | #86 | Receive and transmit chains stage by stage: AGC, demodulators, NR, notches, contour, APF, EQ, TX processor/ALC/BPF, VOX, sub-tone coders, modulators, with constants and registers |
 | [ghidra-flix.md](ghidra-flix.md) | #97 | what Ghidra needs to decode the HiFi4 FLIX bundles: the gap in numbers, the core's ISA description (`xtensa-modules.c`, MIT), the SLEIGH work and a plan |
 
 Pages not yet written are tracked by their sub-task on the board (`docs/tasks/README.md`).
