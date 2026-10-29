@@ -218,3 +218,8 @@
 201646bc		tail_target: jump from 20133ef8 in FUN_20133ee8@20133ee8 into FUN_20133f24@20133f24
 20164714		tail_target: jump from 20133ed0 in FUN_20133ec0@20133ec0 into FUN_20133f10@20133f10
 20164f98		tail_target: jump from 20164938 in FUN_20164888@20164888 into FUN_20164da8@20164da8
+# --- tail-call targets of the update-UI thunks 0x201322AC..0x201322F0 (ldr r0,=0x208F4BF4; b target); not functions
+# before, so Ghidra folded their bodies into the thunks (#81)
+2015afb0		thunk 0x201322AC target: INSERT FIRMWARE SD CARD screen
+20159714		thunk 0x201322B4 target: fwupdate_screen body
+201595f0		thunk 0x201322BC target: fw_installed_versions_set body
