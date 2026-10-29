@@ -111,7 +111,49 @@ VFO-A (0x9D09), VFO-B (0x9D63), memory channels, band-stack slots and QMB slots 
 | +0x4A | u32 frequency in Hz (big-endian) |
 | +0x4E | 12-character name |
 
+More fields **[fact]** (#73):
+
+| Offset | Field |
+|---|---|
+| +0x04 | NARROW flags per mode class (`cat_NA`, `key_nar_short`): bit 7 SSB (modes 0/1), bit 5 CW (2/3), bit 3 RTTY (0xC/0xD), bit 2 DATA (8/9/0xE). AM and FM have no flag: NAR switches the mode itself (AM ↔ AM-N, FM ↔ FM-N, DATA-FM ↔ D-FM-N, `FUN_fffc4bd5`). `align_load_preset` also sets bit 4 from preset flag 0x08 (meaning not traced) |
+| +0x06 | bit 4 = DNR on (`key_dnr_short` toggles it; `key_dnr_long` also uses this byte) |
+
 Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200`, `0x0000`. The 20 bytes from +0x46 come from ROM 0xFFF80947, or from 0xFFF80B4F.. for the dest-specific 60 m channels. T10g owns the full field map.
+
+### Menu block 0x9A2A..0x9C34 (EEPROM 0x53DB..0x55E5) **[fact]** (#73)
+
+`tools/main_menu_table.py` gives the RAM address of all 314 menu items; they cover 362 of the block's 523 bytes. The rest:
+
+- **Menu cursors.** The 2-byte holes after each group (0x9A3D, 0x9A50, 0x9A65, 0x9A7C, 0x9A8F, 0x9AA5, 0x9AB3, 0x9ACF, 0x9AD7, 0x9AEC,
+  0x9AF7, 0x9AFF, 0x9B12, 0x9B18, 0x9B1E, 0x9B22..0x9B2D, 0x9B4B, 0x9B6A, 0x9B89, 0x9BA8, 0x9BC7) hold the `{top, row}` cursor of each P2
+  group. The menu works on a RAM copy at 0x12238.. (`menu_cursor_of` returns the group's pair). `FUN_fffd405e` copies the block into it
+  in `menu_subsys_init`, and `FUN_fffd3d03` copies it back before the power-off save (`io_task`, `supply_undervolt_check`). So the menu
+  reopens where it was left. 0x9AF2 is the only byte nothing references.
+- **0x9BC9..0x9C34**, after the last preset: the front-panel values that are not menu items. Each is used by the CAT command named:
+
+| RAM | CAT / users | Value |
+|---|---|---|
+| 0x9BC9 | `menu_defaults_presets`, `FUN_fffc4d93` (per-port refresh) | preset selection **[inference]** |
+| 0x9BCA, 0x9BD8 | `FUN_fff9c6ab`, `FUN_fffb13e2` | not traced |
+| 0x9BE6..0x9BE8 | `SS` | scope settings |
+| 0x9BE9, 0x9BEA | `DA` | dimmer / display |
+| 0x9BEC..0x9BEF | `MG`, `tx_mod_gain` | MIC GAIN, 4 values (per mode class) |
+| 0x9BF0, 0x9BF1 | `PR`, `PL`, `dsp_set_peq_*`, `dsp_set_proc` | processor on/level, parametric EQ |
+| 0x9BF2 | `AO`, `dsp_set_amc_level` | AMC output level |
+| 0x9BF3 | `VG`, `dsp_set_vox_gain` | VOX gain |
+| 0x9BF4, 0x9BF5 | `VD`, `ptt_arbiter` | VOX delay (u16) |
+| 0x9BF6, 0x9BF7 | `AV`, `dsp_set_antivox` | anti-VOX |
+| 0x9BF8..0x9BFB | `PC`, the MAX POWER `on_draw` callbacks (EX030401..04) | RF power, 4 values (per band group) |
+| 0x9BFC..0x9C00 | `ML` | monitor level / on |
+| 0x9C02 | `KR`, `keyer_task` | keyer on |
+| 0x9C03 | `KS`, `keyer_task` | key speed |
+| 0x9C04 | `KP`, `dsp_set_cw_pitch`, `beep_task`, `sdr_upd_r08/r18` | CW pitch |
+| 0x9C05 | `SD`, `FUN_fffbaa81` (keyer TX) | CW break-in delay |
+| 0x9C08 | `SF`, `displink_build_37` | sub-dial (FUNC knob) function |
+| 0x9C17 | `menu_defaults_load` | default 0x1E; not traced |
+
+The "Value" column comes from the CAT command's meaning in [cat-commands.md](../../cat-commands.md) **[inference for the per-byte split
+of multi-byte entries]**. 0x9C09..0x9C34 has no direct references apart from 0x9C17.
 
 ## Boot load **[fact]**
 

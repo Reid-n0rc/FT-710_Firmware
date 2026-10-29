@@ -223,7 +223,7 @@ flowchart TD
 | `menu_defaults_presets` `menu_defaults_presets` | 0x9B2E + 0x1F × n | ROM 0xFFF80F4E (×5) | Names "FT-8", "PRESET2".."PRESET5" patched in |
 
 0x9A2A..0x9BC9 is therefore one linear image of ROM 0xFFF80E4A..0xFFF80FE9, apart from the overrides. The tool prints
-these ROM defaults. Each P2 group ends with 2 unused bytes, and 0x9AF2 (between AM MAX POWER and VOX SELECT) is a single
+these ROM defaults. Each P2 group ends with 2 bytes that hold the group's `{top, row}` menu cursor (saved at power-off, see [eeprom.md](eeprom.md#menu-block-0x9a2a0x9c34-eeprom-0x53db0x55e5-fact-73), #73), and 0x9AF2 (between AM MAX POWER and VOX SELECT) is a single
 unused byte, maybe a removed item **[guess]**. No code references 0x9AF2 directly. **[fact]**
 
 ## Diff against the CAT manual (2306-C, Table 2)
