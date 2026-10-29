@@ -36,7 +36,7 @@ CONDS = {"EQ": lambda f: f["Z"], "NE": lambda f: not f["Z"], "GEU": lambda f: f[
          "LE": lambda f: (f["S"] ^ f["O"]) or f["Z"], "O": lambda f: f["O"], "NO": lambda f: not f["O"]}
 ALU2 = ("ADD", "SUB", "CMP", "AND", "OR", "MUL", "DIVU", "DIV", "TST")
 MODELLED = set(ALU2) | {"MOV.B", "MOV.W", "MOV.L", "MOVU.B", "MOVU.W", "SHLL", "SHLR", "SHAR", "BSET", "BCLR", "BTST",
-                        "NOT", "NEG", "RTS", "RTSD", "JSR", "BRA.L", "PUSH.L", "PUSHM", "POPM", "XCHG", "SMOVF",
+                        "BNOT", "NOT", "NEG", "RTS", "RTSD", "JSR", "BRA.L", "PUSH.L", "PUSHM", "POPM", "XCHG", "SMOVF",
                         "SSTR.B", "SCMPU", "SUNTIL.B", "NOP", "ADC", "SBB", "ROLC", "RORC", "STZ", "STNZ", "ITOF"}
 
 
@@ -254,7 +254,7 @@ def model(st, addr, ln, mn, ops_txt):
         set_zs(st, res)
         st.r[dst] = res
         return
-    if base in ("BSET", "BCLR", "BTST"):
+    if base in ("BSET", "BCLR", "BTST", "BNOT"):   # BNOT: manual p68
         bit, dst = ops
         if dst[0] == "reg":
             b = get_src(st, bit, 4) & 31
@@ -267,7 +267,7 @@ def model(st, addr, ln, mn, ops_txt):
             st.f["C"] = (v >> b) & 1
             st.f["Z"] = 1 - st.f["C"]
             return
-        v = v | (1 << b) if base == "BSET" else v & ~(1 << b)
+        v = v | (1 << b) if base == "BSET" else v ^ (1 << b) if base == "BNOT" else v & ~(1 << b)
         if dst[0] == "reg":
             st.r[dst[1]] = v & M32
         else:
