@@ -43,7 +43,11 @@ flowchart LR
   [inference, high; T02, `update_main_cpu` 0x2010EA90, T11].
 - **DISPLAY** updates itself by writing the other bank (running bank 1 → bank 2 at 0x18A00000, else bank 1 at 0x18400000; `fwobj_display_run` 0x201607E8, display/update.md §6; corrected by T19h: this line used to name 0x2015F1F0 `display_flash_write_bank`, but 0x2015F1F0 is `fwdbg_verify_bank1`, the `fw1chk` debug verifier, §9/§10) and picks the bank at
   boot (`boot_select_bank` 0x20100ABC) [fact, T06]. `loader_selfinstall` 0x20110F0C rewrites the loader region
-  (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11].
+  (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11]. That value is an on-chip
+  RAM word, so a JTAG write (J6003) is the way to trigger it [inference]. **Maintenance mode** [fact, display/update.md "Other
+  entry points"]: power on with key line 6 held → the update screen; more than 4 encoder steps there turn it into
+  `YAESU FT-710 BOOT LOADER V01-02` and the next DISPLAY update goes to the loader region instead of a bank. A failed bank update
+  is recovered from this screen or from the loader's own screen [inference].
 - **IFDSP** update: `dsp_isp_program` (`FUN_2010b81c`) on DISPLAY sends `F1 02` to MAIN, then NXP MCU-bootloader packets
   wrapped in `5A LEN16 payload SUM8` relay frames; MAIN (`dsp_isp_bridge` 0xFFFA0C79) sets `DSP_UPDATE` and forwards them to the RT685 ROM ISP
   [fact for both sides, main/dsp-link.md; T11c, `docs/code/display/update.md` section 7]. (`update_dsp` 0x2010D92C is a dead
@@ -58,7 +62,9 @@ flowchart LR
   **update-mode input to the FPGA**, not as a plain flash write-protect [inference, T11c/T10c]. T16 found that the stock
   bitstream configures the QSPI pins D00 (output), D01–D03 (inputs) and FCS_B (output) as user I/O, i.e. a fabric SPI
   flash master [fact for the IOB features, inference for the use; [fpga-jtag-hello.md](patches/fpga-jtag-hello.md)]. This
-  replaces T08's guess that DISPLAY writes the flash.
+  replaces T08's guess that DISPLAY writes the flash. **No CPU and not the running FPGA design checks the header's
+  CRC-32/BZIP2** (no image holds that polynomial, and the DISPLAY copies the header unread); only a loader bitstream at SDR flash
+  0, which no file contains, could [fact for the code we have, #84; [code/sdr/bitstream.md](code/sdr/bitstream.md)].
 
 ## What makes changes easier than expected
 
@@ -77,7 +83,11 @@ flowchart LR
   **The gate patch** (T11f option A, [input.md](code/display/input.md)): in `debug_enabled` 0x20111098 change `movne r0,#0`
   at **0x201110AC** (file offset 0x110AC, `00 00 a0 13`) to `movne r0,#1` (`01 00 a0 13`): one byte in uncompressed `.text`.
   T16 built it as an SFL in `build/` and verified it (decode, CRC, loader rules, a 1-instruction listing diff); it is **not
-  flashed**. The volatile alternative is a JTAG write of 0xA0B9C8E7 to 0x20450000. Plan, risks and rollback for owner
+  flashed**. The four options from [input.md](code/display/input.md) "Gate": **A** the 1-byte `.text` patch above (re-packed as an
+  SFL with a valid CRC); **B** make the first word of the LZ-compressed `.data` stream (0x2042886C) 0xA0B9C8E7 (harder: the stream
+  must be re-encoded and still end where the next one starts); **C** a RAM write of 0xA0B9C8E7 to 0x20450000 over JTAG (no flash
+  change, lost at reset); **D** a BL to `debug_unlock` 0x20107E68 (still needs P4_3 and P8_3 low, which collide with `RX_UPDATE`
+  and `SDR_SCLK`). The volatile alternative is option C. Plan, risks and rollback for owner
   approval: [docs/patches/README.md](patches/README.md#plan-for-owner-approval-enabling-the-display-debug-console).
 - **Undocumented CAT commands** (22 in the current manual rev 2306-C) may expose service functions without any firmware
   change [fact for the list, from the manual and the firmware tables; T09 (in progress) will document each in `docs/cat-commands.md`].
