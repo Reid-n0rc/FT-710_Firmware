@@ -11,6 +11,9 @@ Usage:
     python3 -I tools/xc7_blocks.py NETLIST.json cone CELL[.PIN] [DEPTH]   fan-in cone of a pin (cells, types)
     python3 -I tools/xc7_blocks.py NETLIST.json fanout CELL.PIN [DEPTH]   fan-out cone of an output pin
     python3 -I tools/xc7_blocks.py NETLIST.json region SITE-PATTERN       cells and clocks of matching sites
+    python3 -I tools/xc7_blocks.py NETLIST.json reach CELL[,CELL] fwd|back [REGS] [PINRE]
+                                                               hard blocks (DSP/BRAM/IOB/IDDR/ODDR/MMCM) reached
+                                                               through fabric and at most REGS registers (#146)
     python3 -I tools/xc7_blocks.py NETLIST.json logic CELL[,CELL] [DEPTH]  equations (LUTs as minimal SOP) of
                                                                the cells within DEPTH steps of the seeds
     python3 -I tools/xc7_blocks.py selftest
@@ -615,6 +618,65 @@ def cmd_logic(g, seeds, depth):
             print(line)
 
 
+HARD = ("DSP48E1", "RAMB18E1", "IOB", "IDDR", "ODDR", "MMCME2_ADV")
+SEQ = ("FDRE", "FDSE", "FDCE", "FDPE", "SRLC32E", "RAMD64E", "RAMD32")
+CTRL_PINS = ("C", "CLK", "CLKARDCLK", "CLKBWRCLK", "RDCLK", "WRCLK", "R", "S", "CLR", "PRE", "CE")
+
+
+def reach(g, starts, forward=True, maxd=2, pins=None):
+    """Hard blocks reached from `starts` through fabric (#146): {cell: (register depth, its pin)}.
+
+    Walks LUT/CARRY/MUX freely and through at most `maxd` fabric registers (FF, SRL, LUT RAM), never through clock,
+    reset or enable pins, and stops at hard blocks (DSP, BRAM, IOB, IDDR/ODDR, MMCM). forward=True follows outputs
+    to sinks; False follows inputs back to drivers. `pins` limits the start cells' pins (regex)."""
+    rx = re.compile(pins) if pins else None
+    best, hits = {}, {}
+    work = collections.deque()
+    for c in starts:
+        best[c] = 0
+        work.append((c, 0, True))
+    while work:
+        c, d, first = work.popleft()
+        if d > best.get(c, 1 << 30):
+            continue
+        cc = g.cells[c]
+        for p, v in cc["pins"].items():
+            if first and rx and not rx.match(p):
+                continue
+            if forward and v[1] != "O":
+                continue
+            if not forward and (v[1] != "I" or (cc["type"] in SEQ + HARD and p in CTRL_PINS)):
+                continue
+            if forward:
+                nxt = [(x, y) for x, y in g.sinks(v[0])]
+            else:
+                dr = g.driver(v[0])
+                nxt = [dr] if dr else []
+            for x, y in nxt:
+                t = g.ctype(x)
+                if forward and y in CTRL_PINS and t in SEQ + HARD:
+                    continue
+                if t in HARD:
+                    if x not in starts and (x not in hits or hits[x][0] > d):
+                        hits[x] = (d, y)
+                    continue
+                nd = d + (1 if t in SEQ else 0)
+                if nd > maxd or best.get(x, 1 << 30) <= nd:
+                    continue
+                best[x] = nd
+                work.append((x, nd, False))
+    return hits
+
+
+def cmd_reach(g, cells, direction, maxd, pins=None):
+    hits = reach(g, cells.split(","), direction == "fwd", maxd, pins)
+    by = collections.defaultdict(list)
+    for c, (d, p) in hits.items():
+        by[(g.ctype(c), d)].append("%s.%s" % (c, p.rstrip("0123456789")))
+    for (t, d), l in sorted(by.items(), key=lambda kv: (kv[0][1], kv[0][0])):
+        print("%-9s depth %d  %3d  %s" % (t, d, len(l), " ".join(sorted(set(l)))))
+
+
 def cmd_region(g, pat):
     rx = re.compile(pat)
     cnt = collections.Counter()
@@ -649,7 +711,10 @@ def selftest():
     assert clock_name(g, "F2") == "IO.I via B", clock_name(g, "F2")
     assert iostd({"IOB_Y0.LVDS_25_SSTL135_SSTL15.IN_DIFF": 1}) == "LVDS_25"
     assert iostd({"IOB_Y0.LVCMOS18.DRIVE.I12_I8": 1, "IOB_Y0.STEPDOWN": 1}) == "LVCMOS18"
-    print("selftest: clock root through BUFG, 2-FF synchronizer, IOSTANDARD guess: ok")
+    assert reach(g, ["IN"], True, 2) == {}, reach(g, ["IN"], True, 2)       # FFs only, no hard block behind
+    assert reach(g, ["F2"], False, 1) == {"IN": (1, "I")}, reach(g, ["F2"], False, 1)
+    assert reach(g, ["F2"], False, 0) == {}
+    print("selftest: clock root through BUFG, 2-FF synchronizer, IOSTANDARD guess, reach: ok")
 
 
 def main():
@@ -679,6 +744,8 @@ def main():
         cmd_cone(g, a[2], int(a[3]) if len(a) > 3 else 3, forward=(cmd == "fanout"))
     elif cmd == "region":
         cmd_region(g, a[2])
+    elif cmd == "reach" and len(a) >= 4:
+        cmd_reach(g, a[2], a[3], int(a[4]) if len(a) > 4 else 2, a[5] if len(a) > 5 else None)
     elif cmd == "logic":
         cmd_logic(g, a[2].split(","), int(a[3]) if len(a) > 3 else 1)
     else:

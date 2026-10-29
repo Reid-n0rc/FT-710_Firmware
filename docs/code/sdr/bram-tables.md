@@ -111,7 +111,10 @@ Readings of the purposes **[guess]**: the 720-step raised-cosine ramp is the cla
 envelope** edge; the 0.5-degree cosine fits a phase-to-amplitude stage (NCO or display); the six symmetric low-pass
 filters of different lengths fit **selectable IF filter widths** or decimation stages; the quadratic phase tables fit
 a chirp-based transform (for example a zoomable spectrum scope) and the 2-D product phase table fits FFT twiddles.
-None of this is confirmed by the routing, which is not decoded.
+#146 traced the routing from every table to the multiplier it feeds and to what drives its address
+([netlist.md 3.6](netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146)): the four phase-table
+lanes each feed their own DSP pair, the cosine table sits between a phase-accumulator DSP and a mixer DSP, and the
+raised-cosine ramp feeds a multiplier's B input. The purposes above remain readings, not proofs.
 
 ## MicroBlaze question
 
