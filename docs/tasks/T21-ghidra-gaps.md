@@ -346,7 +346,9 @@ This is T21d's combined result plus T21c: two more functions (2,322 → 2,324) a
 export chunks were renamed (50-function boundaries moved); no doc linked to an old chunk name.
 
 ### T21h
-**Status:** todo. MAIN: decode the two RX fragments T21d left undefined (161 B), 0xFFF8FEF3 (`FE D1 55 …`, inside an
+**Status:** in progress (2026-10-28, branch `t21h-resume`): fix, patch and test done; the canonical MAIN rebuild and
+re-export (plan step 4-5) is still open. The worktree attempt aborted (Ghidra rejects a project path under `.claude/`), and the
+parent does it once together with T22a's `rx62t-semantics-fix.patch`. MAIN: decode the two RX fragments T21d left undefined (161 B), 0xFFF8FEF3 (`FE D1 55 …`, inside an
 `R_BSP_InterruptControl` caller at 0xFFF8FEC0, 2 references) and 0xFFF9129B (`FD 1F 02 …` after `PUSH.L R2`, likely the RXv2 accumulator
 save `MVFACHI/MVFACMI`) **[inference]**. Settle each from the RXv2 software manual and `rx-elf-objdump`; patch the SLEIGH if the
 module lacks the form, fold the patch into `bootstrap.sh --only rx`, rebuild MAIN and re-export.
@@ -361,6 +363,48 @@ stage of `step_rx` (`RX_SINC_RTSD` = `618938bb…`, new `RX_SINC_FIXED`), patch 
 MAIN (`.stamp_main` stale) and re-export with `--only rx --only ghidra --only export` (DISPLAY/IFDSP must stay byte-identical).
 (5) Commit project + `decomp/main` + new `quality.tsv`; update INDEX.md, tooling.md, tools/README.md and this section. If a run is data,
 define it as data instead and say why.
+
+**Findings [fact].** Both runs are code; neither is data.
+- **0xFFF8FEC0..0xFFF8FEF4 (53 B) was not a SLEIGH gap.** `FE D1 55` is `MOVU.W [R1,R5],R5` and decodes (`rx-elf-objdump` and Ghidra
+  agree; the same form at 0xFFF8FED7 too). DefineRomData's string pass ran over the code area before its code pass and took the bytes
+  `55 57 5F 77 3F 00` at 0xFFF8FEF5 (`OR R5,R15` + the first bytes of `OR #0xA500,R15`) as the string "UW_w?". The flow from
+  0xFFF8FEC0 then ran into the string and was cleared, and the code pass made a bogus function `FUN_fff8fefb` starting inside
+  `OR #0xA500,R15` (`A5 00` read as `MOV.L SP,0x50[SP]`). Fix in `tools/ghidra/DefineRomData.java`: the first data scan covers only the
+  const area (below `code=`), the code area is scanned for data after the code pass, and a clean run that is called (BSR at 0xFFF8FF2E
+  and 0xFFF92477) becomes a function even when its return lies in code that analysis had already decoded. `FUN_fff8fec0` (108 B) now
+  decompiles: `R_BSP_InterruptControl(0x5e,6,…)`, a per-channel counter at 0x1B5FC, the IPR-style write `0x803FE |= tbl[ch] | 0xA500`
+  (channel 3: bits of 0x8C11F instead), `R_BSP_InterruptControl(0x5e,5,…)`.
+- **0xFFF91295..0xFFF91302 (110 B) had two causes.** `FD 1F 02` at 0xFFF9129B is RXv2 `MVFACHI #0,A0,R2` and `FD 1F 22` at 0xFFF912AE
+  `MVFACMI #0,A0,R2` (manual pp. 265-266; objdump agrees). The module had only comment lines for MVFACxx. New patch
+  `tools/ghidra/rx62t-mvfac-fix.patch` (field `acci6_1`, six constructors for HI/MI/LO with imm 0/1/2; ACC is 64 bits in the module, exact
+  for imm ≤ 2; details in `docs/tooling.md`). Second cause: 0xFFF91228..0xFFF91302 is a chain of 15 small CC-RX intrinsic helpers
+  back to back (a PSW.PM switch through `RTE` at 0xFFF91228, `mvtc bpsw`/`mvfc bpsw`, `bpc`, `extb`, `mvtachi`, `mvtaclo`, `mvfachi`, `mvfacmi`, then
+  `bset`/`bclr`/`bnot Rs,[Rd]` and an `sbrk`-style pointer bump at 0xFFF912C7 **[inference for the roles]**). DefineRomData decodes one function per run per pass and stopped
+  after 10 passes, at 0xFFF91295; the limit is now 200 (the loop still ends on the first pass that adds nothing).
+- Sleigh: `bootstrap.sh --only rx` gained a fourth stage (`RX_SINC_RTSD` = `618938bb…4b36` → `RX_SINC_FIXED` = `9efea07b…82a5`),
+  8 NOP-constructor warnings as before; the shared install was patched with it. `rx_compare.py` rule N11 (`ACC` = `a0`).
+- Test (private Ghidra copy `~/opt/t21h-ghidra-tmp`, fresh import with the bootstrap recipe; not yet the canonical project):
+  DefineRomData 60 functions (was 54) and 0 B left undefined (was 161 B in 2 runs); 160 defined strings (was 161: "UW_w?" is gone);
+  `rx_compare.py --all` 131,274 instructions, 131,274 same, 0 different/missing/bad/undefined.
+
+| `quality.tsv` (MAIN) | T21g | T21h (test import) |
+|---|---:|---:|
+| functions | 2,324 | 2,328 (+5: 0xFFF91295, 0xFFF912A8, 0xFFF912BB, 0xFFF912BF, 0xFFF912C3; −1: bogus 0xFFF8FEFB) |
+| decompile failures | 0 | 0 |
+| warnings | 1,229 | 1,229 |
+| functions with `in_`/`unaff_`/`extraout_` | 8 | 7 |
+| undefined non-0xFF bytes | 161 | **0** |
+
+`FUN_fff8fec0` and `FUN_fff912c7` were 1-byte stubs before (entry known, body undefined) and now have their full bodies.
+DISPLAY and IFDSP are ARM/Xtensa and do not use the RX module; their re-export is byte-identical.
+
+**Leftovers / follow-ups:**
+- The `get_*` helpers (0xFFF9124C, 0xFFF91263, 0xFFF9127A, 0xFFF91295, 0xFFF912A8: `SUB #8,SP; MOV.L SP,R1; PUSH.L R2; MVFC/MVFACxx
+  …,R2; MOV.L R2,[R1]; POP R2; MOV.L [SP],R1; …; RTSD #8`) decompile as `return param_2;` instead of the register they read. This is
+  older than T21h (the `MVFC` ones show it in the T21g export) and looks like a stack-aliasing or PUSH/POP p-code problem; for T22a's
+  semantics check.
+- `MVTACHI`/`MVTACLO` still have empty semantics (writes to ACC are lost) and A1/`MVFACGU`/guard bits are not modelled; left to T22a's
+  `rx62t-semantics-fix.patch` to avoid two patches editing the same constructors.
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
