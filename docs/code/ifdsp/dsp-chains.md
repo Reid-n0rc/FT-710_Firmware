@@ -225,7 +225,16 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
 - **reg 0x63** = the IF AGC **gain ceiling**: Gmax = g67 · 0.2512 · 10^((255 − x)/40), 0.5 dB per step (`if_agc_params` 0x21F06B)
   **[fact]**. MAIN sends one of the five cfg105 bytes 0x4674..0x4678 (`SPN` entries 28..32) by RX band ≤ 7.5 / 14.5 / 21.5 / 41.5 /
   75 MHz (`dsp_set_freq_range_param` 0xFFF9FB6E) **[fact]**. Because reg 3's low byte (the S-meter source) is 255 − 2·(Gmax_dB −
-  gain_dB), these bytes are a per-band gain and S-meter calibration **[inference]**. The values need an EEPROM dump (#193).
+  gain_dB), these bytes are a per-band gain and S-meter calibration **[inference]**. The owner's radio (EEPROM dump 2026-10-28,
+  `tools/cat_backup.py --eeprom`, EEPROM 0x0025..0x0029; header stamp 2306260856) holds **[fact: dump]**:
+
+  | RX band | ≤ 7.5 MHz | ≤ 14.5 MHz | ≤ 21.5 MHz | ≤ 41.5 MHz | ≤ 75 MHz |
+  |---|---|---|---|---|---|
+  | byte (`SPN` 28..32) | 190 (0xBE) | 190 (0xBE) | 189 (0xBD) | 188 (0xBC) | 199 (0xC7) |
+  | ceiling 10^((255 − x)/40) · 0.2512, in dB above g67 | +20.5 | +20.5 | +21.0 | +21.5 | +16.0 |
+
+  So the HF bands sit within 1 dB of each other and 6 m gets about 5 dB less IF gain headroom, consistent with a per-band
+  gain/S-meter trim **[inference]**. Values differ between radios (factory alignment), so these are one sample, not defaults.
 
 ### Rx_Audio branch B is the AESS speaker feed; reg 6 = 10 is an external-audio mode
 
@@ -315,4 +324,4 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement, the AESS level and delay, and the per-band reg 0x63 values: #193 (the AESS speaker is settled: EXT SP).
+- The SDR FPGA's per-mode IF placement and the AESS level and delay: #193 (the AESS speaker and the reg 0x63 values are settled).

@@ -36,3 +36,7 @@ __pycache__/
 # GitHub Pages build output (site/build.py, Jekyll)
 _build/
 _site/
+
+# The owner's radio backups (EEPROM / memory-channel dumps): radio-specific, never committed
+radio_backup/
+radio-backup*/
