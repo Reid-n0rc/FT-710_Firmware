@@ -836,3 +836,6 @@
 2012470c	scope_text_view_draw	third scope view (0x208004D0 = 3): RX/TX text lines
 20131154	decode_text_rx	RX text filter (47-char sets 0x20801DE0..) -> 0x208F48C8 (inference: decoder)
 20131354	pkt23_tx_text	packet 0x23: TX text line 0x208F489F
+# --- #178 (image read): scope marker code; 0x20123EC4 has no function yet, ApplyNames creates it; show in decomp/ after the next re-export
+20123ec4	scope_markers_draw	(r0 = 1 MULTI / 0 large) red 0xF800 RX/TX marker frames on graphics 1; zeroes range 0x208007D4
+201244d8	scope_markers_update	checks 0x20800482 / 0x208004D0, tail-branches to scope_markers_draw(layout)

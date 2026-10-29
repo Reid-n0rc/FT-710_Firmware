@@ -250,7 +250,8 @@ panel, origin top left, as in the drawing primitives. Main results:
 |---|---|
 | 0x208026DC | popup position: (x 154, y 184) for most slots; (154, 90) for slots 38, 39, 55; (280, 184) for 37, 41–43 |
 | 0x208027E0 / 0x208028E4 | title offset (10, 30) and value offset (20, 26) inside the box; the text-only slots use (50, 26), (16, 26), (58, 26) |
-| 0x208029E8 | title sprite (28 px high, 91–263 px wide) for slots 0–40, 55, 58; 0 for unused slots |
+| 0x208029E8 | title sprite (28 px high, 91–263 px wide) for slots 0, 1, 4–15, 17–21, 26–28, 34–36, 38–40, 55, 58; 0 for the others, slot 64 included |
+| 0x20802BF0 | u8 title-text length: 3, 4, 6, 4, 11 for slots 37, 41–44, else 0 |
 | 0x20802AEC | title **text** for slots without a sprite: 37 (`QMB`), 41 `LOCK`, 42 `UNLOCK`, 43 `TUNE`, 44 `SCREEN SHOT` |
 | 0x20802C34 | box sprite: 0x2016E248 (492 × 88) or 0x202D0468 (240 × 88, the short popups 37, 41–43) |
 
@@ -263,49 +264,59 @@ value text is the 9 characters at 0x99 **[fact]**. MAIN fills it in `displink_bu
 the 65 slots are exactly ids 0x1E–0x5E **[fact]**. The setting comes from the MAIN code that stores the id, and from the formatter that
 `displink_build_31` picks for that id:
 
-| Slot | id | Stored by (MAIN) | Value text (formatter) | Setting |
-|---|---|---|---|---|
-| 0 | 0x1E | FUNC-knob step `FUN_fffc6ffe` → `FUN_fffc7016` (0..120) | `FUN_fff99475` (`….0dB`) | **SCOPE LEVEL** **[inference: −30…+30 dB in 0.5 dB steps, as in `SS` sel 4]** |
-| 1 | 0x1F | `FUN_fffc7053` (0x9BE6, 0..4) | `FUN_fff9959f` | **PEAK** (`SS` sel 1) **[fact: variable]** |
-| 4 | 0x22 | `FUN_fffc70db` (0x9BE9, 0..20) | `FUN_fff99e15` | **CONTRAST** **[inference: `DA` byte, FUNC order of `SF`]** |
-| 5 | 0x23 | `FUN_fffc7145` (0x9BEA, 0..20) | `FUN_fff9a00f` | **DIMMER** **[inference, as above]** |
-| 6 | 0x24 | `FUN_fffc71af` (steps the memory channel, `eeprom_save_memch`) | `FUN_fff99abf` | **M-GROUP** **[inference]** |
-| 7 | 0x25 | `FUN_fffc74ee`, `cat_MG` | `FUN_fff99837` | **MIC GAIN** **[fact]** |
-| 8 | 0x26 | `FUN_fffc754b` (0x9BF0 on/off) | `FUN_fff99ddb` (OFF/ON) | **PROC** on/off **[fact: variable]** |
-| 9 | 0x27 | `FUN_fffc75bc`, `cat_PL` | `FUN_fff997df` | **PROC LEVEL** (0x9BF1) **[fact]** |
-| 10 | 0x28 | `FUN_fffc7619`, `cat_AO` | `FUN_fff99a8a` | **AMC LEVEL** (0x9BF2) **[fact]** |
-| 11 | 0x29 | `FUN_fffc7674`, `cat_VG` | `FUN_fff996e2` | **VOX GAIN** (0x9BF3) **[fact]** |
-| 12 | 0x2A | `FUN_fffc76d1`, `cat_VD` | `FUN_fff99717` | **VOX DELAY** (0x9BF4) **[fact]** |
-| 13 | 0x2B | `FUN_fffc774c`, `cat_AV` | `FUN_fff9978c` | **ANTI VOX** (0x9BF6) **[fact]** |
-| 14 | 0x2C | `FUN_fffc77c7`, `cat_PC` | `FUN_fff995cc` | **RF POWER** **[fact]** |
-| 15 | 0x2D | `FUN_fffc790b`, `cat_ML` | `FUN_fff9960e` | **MONI LEVEL** **[fact]** |
-| 17 | 0x2F | `FUN_fffc79b8` (BI bit of the TX VFO's per-mode block) | `FUN_fff99d82` (OFF/ON) | **BK-IN** on/off **[fact: variable, see [radio-control.md](../main/radio-control.md)]** |
-| 18 | 0x30 | `FUN_fffc7a8f`, `cat_KS` | `FUN_fff998e2` | **CW SPEED** (0x9C03, 4..60) **[fact]** |
-| 19 | 0x31 | `FUN_fffc7aea`, `cat_KP` | `FUN_fff9992a` | **CW PITCH** (0x9C04) **[fact]** |
-| 20 | 0x32 | `FUN_fffc7b47`, `cat_SD` | `FUN_fff99989` | **BK-IN DELAY** (0x9C05) **[fact]** |
-| 21 | 0x33 | `FUN_fffc7ba4` (0..20), `cat_AS` P1 = 1 | `FUN_fff999e3` | **AESS LEVEL** **[fact]** |
-| 26 | 0x38 | `cat_NL`, `key_nb_long` | `FUN_fff99b70` | **NB LEVEL** **[fact]** |
-| 27 | 0x39 | `cat_RL`, `key_dnr_long` | `FUN_fff99ba5` | **DNR LEVEL** **[fact]** |
-| 37 | 0x43 | `FUN_fffc33ef` | `FUN_fff99bfe` (channel number from 0x901F / 0x9021) | **QMB** (DISPLAY title text `QMB`) **[fact]** |
-| 38 | 0x44 | `FUN_fffc224e` (memory-list button 2) | `FUN_fff99ca2`: `SCAN` / `SKIP` (memory byte +1 bit 7) | memory **SCAN** **[fact]** |
-| 39 | 0x45 | `FUN_fffc2296` (memory-list button 3) | `FUN_fff99cf2`: `FREQ` / `NAME` (memory byte +5 bit 7) | memory **TYPE** **[fact]** |
-| 40 | 0x46 | `FUN_fffc7975` (0x9C02 on/off) | `FUN_fff99d48` (OFF/ON) | **KEYER** on/off **[fact]** |
-| 41 / 42 | 0x47 / 0x48 | `cat_LK`, `key_lock_pwr_short`, `enc3_step`, `key_event_filter` | none | **LOCK** / **UNLOCK** (DISPLAY title text) **[fact]** |
-| 43 | 0x49 | `FUN_fffec493` (saves the meter 0x9C5B and sets it to 5 = SWR) | none | **TUNE** (tuner start) **[fact]** |
-| 44 | (0x4A) | never stored by MAIN | | **SCREEN SHOT**, drawn by the DISPLAY itself (`screenshot_popup` 0x2013059C reads the slot-44 entries 0x2080278C / 0x20802CE4) **[fact]** |
-| 55 | 0x55 | `FUN_fffc21e8` (memory-list button 1) | `FUN_fff99c58`: mode name from ROM 0xFFF803F4 | memory **MODE** **[fact]** |
-| 58 | 0x58 | FUNC code `:` → `FUN_fffc7bfd` (0..1), `cat_AS` P1 = 2 | `FUN_fff99a29` | **AESS-CF** (700 / 1000 Hz) **[fact]** |
-| 64 | 0x5E | `FUN_fffc4cc5`, `FUN_fffc89ef`, `FUN_fffc8a90`, `FUN_fffe56e4` | `FUN_fff9a044`: 9 characters from UI +0x427 | free-text popup **[inference]** |
+| Slot | id | Stored by (MAIN) | Value text (formatter) | Setting | Title (DISPLAY, rendered) |
+|---|---|---|---|---|---|
+| 0 | 0x1E | FUNC-knob step `FUN_fffc6ffe` → `FUN_fffc7016` (0..120) | `FUN_fff99475` (`….0dB`) | **SCOPE LEVEL** **[inference: −30…+30 dB in 0.5 dB steps, as in `SS` sel 4]** | LEVEL |
+| 1 | 0x1F | `FUN_fffc7053` (0x9BE6, 0..4) | `FUN_fff9959f` | **PEAK** (`SS` sel 1) **[fact: variable]** | PEAK |
+| 4 | 0x22 | `FUN_fffc70db` (0x9BE9, 0..20) | `FUN_fff99e15` | **CONTRAST** **[inference: `DA` byte, FUNC order of `SF`]** | CONTRAST |
+| 5 | 0x23 | `FUN_fffc7145` (0x9BEA, 0..20) | `FUN_fff9a00f` | **DIMMER** **[inference, as above]** | DIMMER |
+| 6 | 0x24 | `FUN_fffc71af` (steps the memory channel, `eeprom_save_memch`) | `FUN_fff99abf` | **M-GROUP** **[inference]** | M-GROUP |
+| 7 | 0x25 | `FUN_fffc74ee`, `cat_MG` | `FUN_fff99837` | **MIC GAIN** **[fact]** | MIC GAIN |
+| 8 | 0x26 | `FUN_fffc754b` (0x9BF0 on/off) | `FUN_fff99ddb` (OFF/ON) | **MIC EQ** on/off: 0x9BF0 is the parametric EQ flag (`PR1`, #157), not the processor **[fact: title and variable]** | MIC EQ |
+| 9 | 0x27 | `FUN_fffc75bc`, `cat_PL` | `FUN_fff997df` | **PROC LEVEL** (0x9BF1) **[fact]** | PROC LEVEL |
+| 10 | 0x28 | `FUN_fffc7619`, `cat_AO` | `FUN_fff99a8a` | **AMC LEVEL** (0x9BF2) **[fact]** | AMC LEVEL |
+| 11 | 0x29 | `FUN_fffc7674`, `cat_VG` | `FUN_fff996e2` | **VOX GAIN** (0x9BF3) **[fact]** | VOX GAIN |
+| 12 | 0x2A | `FUN_fffc76d1`, `cat_VD` | `FUN_fff99717` | **VOX DELAY** (0x9BF4) **[fact]** | VOX DELAY |
+| 13 | 0x2B | `FUN_fffc774c`, `cat_AV` | `FUN_fff9978c` | **ANTI VOX** (0x9BF6) **[fact]** | ANTI VOX |
+| 14 | 0x2C | `FUN_fffc77c7`, `cat_PC` | `FUN_fff995cc` | **RF POWER** **[fact]** | RF POWER |
+| 15 | 0x2D | `FUN_fffc790b`, `cat_ML` | `FUN_fff9960e` | **MONI LEVEL** **[fact]** | MONI LEVEL |
+| 17 | 0x2F | `FUN_fffc79b8` (BI bit of the TX VFO's per-mode block) | `FUN_fff99d82` (OFF/ON) | **BK-IN** on/off **[fact: variable, see [radio-control.md](../main/radio-control.md)]** | BK-IN |
+| 18 | 0x30 | `FUN_fffc7a8f`, `cat_KS` | `FUN_fff998e2` | **CW SPEED** (0x9C03, 4..60) **[fact]** | CW SPEED |
+| 19 | 0x31 | `FUN_fffc7aea`, `cat_KP` | `FUN_fff9992a` | **CW PITCH** (0x9C04) **[fact]** | CW PITCH |
+| 20 | 0x32 | `FUN_fffc7b47`, `cat_SD` | `FUN_fff99989` | **BK-DELAY** (0x9C05) **[fact]** | BK-DELAY |
+| 21 | 0x33 | `FUN_fffc7ba4` (0..20), `cat_AS` P1 = 1 | `FUN_fff999e3` | **AESS** level **[fact]** | AESS |
+| 26 | 0x38 | `cat_NL`, `key_nb_long` | `FUN_fff99b70` | **NB LEVEL** **[fact]** | NB LEVEL |
+| 27 | 0x39 | `cat_RL`, `key_dnr_long` | `FUN_fff99ba5` | **DNR LEVEL** **[fact]** | DNR LEVEL |
+| 28 | 0x3A | none in V01-12 | `FUN_fff99d42` (empty) | **DEC LVL**: the level of the DISPLAY's RTTY/PSK text decoder (`decode_text_rx`, third scope view) **[fact: title; inference: meaning]** | DEC LVL |
+| 34 | 0x40 | none in V01-12 | none | **RX LEVEL**: SD-card playback volume of the PLAY screen (manual: touch RX LEVEL, turn FUNC) **[fact: title; inference: meaning]** | RX LEVEL |
+| 35 | 0x41 | none in V01-12 | none | **TX LEVEL**: output level of the voice message memory (MESSAGE screen) **[fact: title; inference: meaning]** | TX LEVEL |
+| 36 | 0x42 | none in V01-12 | none | **S.SPEED**: scope sweep speed (manual: touching the scope sets "level and sweep speed", next to slot 0 LEVEL). The only title drawn in white, all others are orange **[fact: title and colour; inference: meaning]** | S.SPEED |
+| 37 | 0x43 | `FUN_fffc33ef` | `FUN_fff99bfe` (channel number from 0x901F / 0x9021) | **QMB** (DISPLAY title text `QMB`) **[fact]** | text `QMB` |
+| 38 | 0x44 | `FUN_fffc224e` (memory-list button 2) | `FUN_fff99ca2`: `SCAN` / `SKIP` (memory byte +1 bit 7) | memory **SCAN** **[fact]** | SCAN MEMORY |
+| 39 | 0x45 | `FUN_fffc2296` (memory-list button 3) | `FUN_fff99cf2`: `FREQ` / `NAME` (memory byte +5 bit 7) | memory **TYPE** **[fact]** | DISPLAY TYPE |
+| 40 | 0x46 | `FUN_fffc7975` (0x9C02 on/off) | `FUN_fff99d48` (OFF/ON) | **KEYER** on/off **[fact]** | KEYER |
+| 41 / 42 | 0x47 / 0x48 | `cat_LK`, `key_lock_pwr_short`, `enc3_step`, `key_event_filter` | none | **LOCK** / **UNLOCK** (DISPLAY title text) **[fact]** | text `LOCK` / `UNLOCK` |
+| 43 | 0x49 | `FUN_fffec493` (saves the meter 0x9C5B and sets it to 5 = SWR) | none | **TUNE** (tuner start) **[fact]** | text `TUNE` |
+| 44 | (0x4A) | never stored by MAIN | | **SCREEN SHOT**, drawn by the DISPLAY itself (`screenshot_popup` 0x2013059C reads the slot-44 entries 0x2080278C / 0x20802CE4) **[fact]** | text `SCREEN SHOT` |
+| 55 | 0x55 | `FUN_fffc21e8` (memory-list button 1) | `FUN_fff99c58`: mode name from ROM 0xFFF803F4 | memory **MODE** **[fact]** | MODE |
+| 58 | 0x58 | FUNC code `:` → `FUN_fffc7bfd` (0..1), `cat_AS` P1 = 2 | `FUN_fff99a29` | **AESS-CF** (700 / 1000 Hz) **[fact]** | AESS-CF |
+| 64 | 0x5E | `FUN_fffc4cc5`, `FUN_fffc89ef`, `FUN_fffc8a90`, `FUN_fffe56e4` | `FUN_fff9a044`: 9 characters from UI +0x427 | **free-text popup**: the DISPLAY has no title (sprite 0, text 0, length 0) but a full entry otherwise: big box 0x2016E248 at (154, 184), title offset (10, 30), value offset (20, 26), so it shows only the 9-character text **[fact: entries; inference: use]** | none (no sprite, no text) |
 
 The memory-list buttons are 0 NAME (keyboard), 1 MODE, 2 SCAN, 3 TYPE, 4 `FUN_fffc22de`, 5 close (`FUN_fffc20dd`), which matches the labels of
 the 0x41 screen **[fact for the dispatch, inference for the label order]**. That is why slots 38, 39 and 55 sit higher on the screen, at (154, 90), above the list.
 `FUN_fffc8cbb(id)` is not a store: it returns the display time of popup *id* for POP-UP TIME (0x9B0E). It is also called with 0x56 / 0x57 by
 `FUN_fffc6b34` / `FUN_fffc6b86`, which step the same SCAN / TYPE bits **[fact]**.
 
-Still open: slots **28** (id 0x3A: `displink_build_31` has an empty formatter, `FUN_fff99d42`) and **34–36** (ids 0x40–0x42) have title sprites in
-the DISPLAY, but no store of these ids is in the MAIN V01-12 export **[fact: grep of `decomp/main` for `[0x1c2] =` and `DAT_00020cc6 =`]**.
-A store through another pointer, which a Ghidra xref on 0x20CC6 would find, or rendering the sprites 0x208029E8[28, 34–36] with
-`tools/display_assets.py` (this needs the decoded image), would settle them. Slot 64's DISPLAY entries also still need the image.
+**Titles from the image (#178).** The "Title" column is the sprite 0x208029E8[slot] (or the text 0x20802AEC[slot]) rendered from the
+decoded V01-08 image with `display_assets.Mem` **[fact]**. All 31 slots mapped from MAIN agree with their titles except slot 8: its title is
+`MIC EQ` and its variable 0x9BF0 is the parametric-EQ flag, so the earlier "PROC on/off" was wrong (the processor is slot 9, PROC LEVEL
+0x9BF1, where 0 shows OFF). Slots 20 and 21 are titled `BK-DELAY` and `AESS`. The FUNC panel labels agree: function id 8 there is `MIC EQ`
+too ([display-link.md](../main/display-link.md#0x37-func-panel-0x240-bytes-display-scr_func_panel)) **[fact]**.
+Slots **28** (`DEC LVL`) and **34–36** (`RX LEVEL`, `TX LEVEL`, `S.SPEED`) have titles, but MAIN V01-12 never sends them. No code stores
+0x3A or 0x40–0x42 into UI +0x1C2 **[fact: grep of `decomp/main` for `[0x1c2] =`]**, and `displink_build_31` has no formatter for 0x40–0x42
+and an empty one for 0x3A **[fact: 0xFFF99297]**. So they are popups that the DISPLAY GUI (shared with other Yaesu sets, or from earlier
+firmware) still carries **[inference]**. Only a store through a computed pointer could still reach them, which a Ghidra xref on 0x20CC6
+would show; this is not needed to name them. Slot 64 has no title at all (above).
 
 ## Scope drawing (#83)
 
@@ -355,7 +366,7 @@ record is used instead of the live one when packet byte 0x12 bits 4–7 = 5 (0x2
 **The other renderers (#178).** `scope_draw_frame` calls seven more renderers through thunks. Their bodies are all in the export, in
 `decomp/display/2015c2d4_2015f1f0.c` **[fact]**. All draw into graphics 1 (`fb_get_layer_addr(0x208085B8)`) at x 4 with width 0x317 (791). `exp` is
 byte 5 bit 5 (expanded area), and `range` is the {u16 x, u16 width} pair at 0x208007D4, which `FUN_201244D8` (the scope marker code, red 0xF800
-marks) clears **[fact]**:
+marks; its body is at 0x20123EC4) clears and nothing sets (details after the 3DSS front trace below) **[fact]**:
 
 | Renderer | Called when | Draws **[fact: code]** |
 |---|---|---|
@@ -370,6 +381,27 @@ marks) clears **[fact]**:
 `scope_draw_frame` calls `thunk_FUN_2015D3B8()` without arguments in the decompile, but the target takes the same (exp, range) pair as its siblings. The arguments are presumably still in r0/r1 from the earlier code **[inference]**.
 
 The 2D renderers share one body. With waterfall height *h* and spectrum height *s* = u16 table **0x203A1EE0**[index]:
+
+**Spectrum height table 0x203A1EE0** (#178). The table is in the flash image, not in a scatter-loaded region, so it is read at file offset
+0x2A1EE0 **[fact]**. Only the four 2D renderers reference it (literal-pool words at 0x2015D490, 0x2015D5DC, 0x2015D94C, 0x2015DA30; no other
+word in the image holds 0x203A1EE0..0x203A1EF7) **[fact]**. The index is also the level-object mode passed to `FUN_2013437C`:
+
+| Index | Renderer, layout | Spectrum *s* | Waterfall *h* | *s* + *h* | Spectrum top (bottom − *h* − *s* − 1) |
+|---|---|---|---|---|---|
+| 0 | `FUN_2015D3B8`, large, NORMAL | 100 | 100 | 200 | 201 |
+| 1 | `FUN_2015D874`, large, size 0 | 140 | 60 | 200 | 201 |
+| 2 | `FUN_2015D958`, large, EXPAND | 60 | 140 | 200 | 201 |
+| 3 | `FUN_2015D3B8`, large, NORMAL, `exp` | 140 | 133 | 273 | 128 |
+| 4 | `FUN_2015D874`, large, size 0, `exp` | 210 | 63 | 273 | 128 |
+| 5 | `FUN_2015D958`, large, EXPAND, `exp` | 60 | 213 | 273 | 128 |
+| 6 | `FUN_2015D508`, MULTI | 40 | 42 | 82 | 201 |
+| 7 | `FUN_2015D508`, MULTI, `exp` | 80 | 75 | 155 | 128 |
+| 8–11 | (not read through this table) | 186, 80, 240, 144 | | | |
+
+**[fact: values from the image, *h* and bottoms (402 large, 284 MULTI) from the code]**. So the 2D area always starts at y 201, or at y 128
+when expanded, in both layouts. The waterfall size only moves the split between spectrum and waterfall: NORMAL 100/100, size 0 140/60,
+EXPAND 60/140 (expanded 140/133, 210/63, 60/213) **[fact: arithmetic]**. Entries 8–11 are the 3DSS heights of modes 8 (large 186, `exp` 240)
+and 9 (MULTI 80, `exp` 144), which `FUN_2015D49C` / `FUN_2015D5E8` hard-code instead **[fact: values; inference: that they belong to modes 8, 9]**.
 
 1. `FUN_2015DB80` draws the **spectrum** as a filled graph at y = bottom − *h* − *s* − 1. For each of the 791 columns, the level comes from
    `FUN_2013437C`(index) (the 3D object 0x2047963C, `FUN_20157C50`). Pixels up to the level get the COLOR fill 0x208084CC, the rest get 0 (black).
@@ -389,8 +421,17 @@ a second, that is 100 rows per 20 s (SLOW1) … 100 rows per second (FAST3) **[i
 **3DSS front trace** (`FUN_2015D70C`): it takes the per-column levels for mode 8 / 9 from `FUN_2013437C` and two per-row colour ramps: one from the
 same call, and one from `FUN_20134398`(mode), the objects 0x20474D04 / 0x20478550. It fills each column from its level down to the bottom with
 the ramp, using the second ramp inside `range`. Nothing above the level is cleared, so it is painted over the 3D image **[fact]**. So it is the
-newest, nearest line of the 3DSS drawn as a solid gradient trace **[inference]**. `range` is probably the receive passband or marker zone
-**[guess]**: the code that sets it non-zero is not visible in the decompile.
+newest, nearest line of the 3DSS drawn as a solid gradient trace **[inference]**.
+
+**`range` (0x208007D4) is always zero in V01-08 (#178).** It is in `.data2`, and its initial value from the image is {0, 0} **[fact]**. The
+only word in the whole image that holds 0x208007D4 is the literal-pool entry at 0x201244B4. Its one load (0x20124184, `ldr r1`) is followed by
+`mov r0, #0; strh r0, [r1]; strh r0, [r1, #2]` **[fact: disassembly]**. That code is the body at **0x20123EC4**, which Ghidra has not made a
+function of its own. `FUN_201244D8` is only a 0x4C-byte wrapper: it checks 0x20800482 / 0x208004D0 and tail-branches (`b 0x20123EC4`) with
+r0 = 1 for MULTI or 0 for large, so the decompile shows the body under the wrapper's name **[fact]**. `scope_draw_frame` passes &range to the
+renderers, and `scope3d_render_large` / `_small` only read it (they push it to the history only when x > 3) **[fact]**. No neighbouring word
+(0x208007BC/C0, 0x208007A0–B8) is used as a base for it **[fact: literal search, the 0x208007BC pair is a sprite position]**. So no writer
+stores a non-zero value, the "inside `range`" branches never run, and the second colour ramp is never used **[inference: only a pointer
+computed at run time could still reach it]**. It looks like a passband/marker zone that this firmware leaves off **[guess]**.
 
 **Oscilloscope / AF-FFT panel** (`FUN_2015D334`, MULTI only), fed by the IF DSP's 600-byte record 0x208DD73C
 ([spi-links.md](spi-links.md)) **[fact: code]**:
@@ -419,6 +460,13 @@ is dormant in this firmware pair: the SCIF4 link that `task_uart4_rx` reads is n
 [mainlink.md](mainlink.md#10-the-unused-scif4-link-fact)). MAIN's byte-3 builder `FUN_fff96f3e` sets only bits 4–7, and the Japanese
 operating manual describes no decoder screen. Ghidra reports one removed unreachable block at 0xFFF96F69, so a listing check of `FUN_fff96f3e` would confirm
 that bit 2 is never sent **[fact for the code read; inference that the view is unreachable]**.
+
+Its layout words (`.data2`, values from the image via `tools/display_layout.py … --range 208084E8 2080850C`) **[fact: values and uses]**:
+RX area (x 4, y 212) 688 × 170 and TX area (4, 385) 688 × 30, both cleared each frame. `FUN_20131F74` works from (x − 3, y − 3) with a height of 170 + 30 + 3, so it spans both areas **[fact: operands; inference: a frame]**. RX text starts at
+(10, 215) with a line pitch of 28 px (0x2080850A), so about 6 of the 16 history lines fit **[inference]**. The TX text is at (10, 388) with a
+17-px character step (0x20808508). Four more words, (35, 23) and (94, 78) at 0x20808500–06, are offsets that `FUN_20131F74` combines with
+0x20808518–0x2080851E **[fact]**; what they place is not traced. The popup slot 28 `DEC LVL` title (above) belongs to this decoder
+**[inference]**.
 
 ```mermaid
 flowchart TD
@@ -611,4 +659,6 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 - Which physical keys the codes 0x303–0x311 are (combos 4 and 6): [input.md](input.md) (T11f).
 - What the MAIN firmware does to send packet 0x64 (LCD test) or 0x34: a MAIN-side menu or service key sequence (T10).
 - Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Done (#178): the value-popup slots are mapped from MAIN's popup id (slot = id − 0x1E, [table](#screen-layout-data2-coordinate-words-83)); the 2D / 3DSS-front / oscilloscope / AF-FFT renderers and the third (text) view are decoded ([Scope drawing](#scope-drawing-83)).
-- Still open (#178): slots 28 and 34–36 (sprite titles, no MAIN V01-12 store found: needs a Ghidra xref on 0x20CC6 or rendering the sprites 0x208029E8[28, 34–36] from the decoded image) and slot 64's DISPLAY entries. The spectrum heights in the u16 table 0x203A1EE0[0..7] and the text-view layout words 0x208084E8–0x2080850A are initialised data, so they need the image (`tools/display_layout.py`-style read). Who sets the `range` pair 0x208007D4 non-zero is not visible in the decompile (struct store; needs a Ghidra xref). Whether MAIN can ever set packet 0x20 byte 3 bit 2 needs a listing check of the unreachable block at 0xFFF96F69.
+- Done (#178, from the decoded image): every value-popup title is rendered and named, slot 8 corrected to MIC EQ, slots 28 / 34–36 named (DEC LVL, RX LEVEL, TX LEVEL, S.SPEED; never sent by MAIN V01-12) and slot 64's entries read (no title). The spectrum height table 0x203A1EE0 and the text-view layout words are decoded. `range` 0x208007D4 starts at 0 and only zero is ever stored (one literal, body 0x20123EC4).
+- Optional Ghidra checks (no longer needed to settle #178): an xref on MAIN 0x20CC6, to rule out a computed-pointer store of the popup ids 0x3A / 0x40–0x42; creating the function at 0x20123EC4 (`names_display.tsv`) so that the next re-export shows it apart from its wrapper `FUN_201244D8`.
+- Whether MAIN can ever set packet 0x20 byte 3 bit 2 (the dormant decoder view) needs a listing check of the unreachable block at 0xFFF96F69.
