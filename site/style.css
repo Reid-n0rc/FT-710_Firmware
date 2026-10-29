@@ -116,3 +116,11 @@ footer { border-top: 1px solid var(--border); margin-top: 32px; padding: 20px 0 
 .doc th { background: var(--surface); }
 .doc tr:nth-child(even) td { background: var(--surface); }
 .doc img { max-width: 100%; }
+.progress { margin: 0 0 24px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.progress h2 { font-size: 20px; margin: 0 0 8px; }
+.progress p { margin: 8px 0; }
+.progress p.note { font-size: 13px; color: var(--muted); }
+.progress table { display: block; overflow-x: auto; border-collapse: collapse; margin: 12px 0; font-size: 14px; max-width: 100%; }
+.progress th, .progress td { border: 1px solid var(--border); padding: 4px 8px; text-align: right; white-space: nowrap; }
+.progress th:first-child, .progress td:first-child { text-align: left; }
+.progress th { background: var(--bg); }

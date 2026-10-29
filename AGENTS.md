@@ -93,6 +93,7 @@ The owner wants **full documentation of all the code**, with figures wherever th
 - **Figures:** use Mermaid in Markdown (it renders on GitHub). Use `flowchart` for module and call structure, `sequenceDiagram` for protocols and boot/update flows, and `stateDiagram-v2` for modes. Every overview needs at least a block diagram and a boot/control-flow figure. Keep each figure readable (around 25 nodes or fewer); split it rather than cram.
 - Mark each claim **[fact]** (seen in code/data, cite the address), **[inference]** or **[guess]**.
 - When you name functions in Ghidra, keep the project as the source of truth, re-export `decomp/<image>/` with `tools/ghidra/ExportDecomp.java`, and use the same names in the docs.
+- **Progress figures (T23):** after any change to `decomp/` or `docs/code/`, run `python3 -I tools/readability_stats.py readme` and commit the updated block at the top of `README.md` (the website and the wiki copy it from there). Readability work (register names, structs, library signatures, naming batches) follows [docs/tasks/T23-readability.md](docs/tasks/T23-readability.md), including its redo steps for new firmware.
 
 ## Issue tracking (owner requirement)
 

@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - site/**
+      - README.md
+      - tools/readability_stats.py
       - docs/cat-undocumented.md
       - docs/cat-commands.md
       - docs/cat-commands-primary.md

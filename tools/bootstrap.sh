@@ -458,6 +458,10 @@ step_export() {
   local d; for d in main display ifdsp/m33 ifdsp/hifi4; do
     info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure, $(awk -F'\t' '$1=="warnings"{print $2}' "$DECOMP_OUT/$d/quality.tsv" 2>/dev/null) warnings (quality.tsv)"
   done
+  # T23: the progress figures in README.md (shown on the website and the wiki) follow the committed export.
+  if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
+    (cd "$REPO" && python3 -I tools/readability_stats.py readme) | sed 's/^/   /'
+  fi
 }
 
 # ---------------------------------------------------------------- verify

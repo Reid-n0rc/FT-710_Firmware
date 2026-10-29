@@ -78,6 +78,14 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T22d | [All images: classify the undefined bytes left](T22-rea-verification.md) | T21 | done |
 | T22e | [All images: before/after behaviour diff](T22-rea-verification.md) | T21g | done |
 | T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | done |
+| T23 | [Make the decompiled code readable: registers, structs, libraries, names; progress in README](T23-readability.md) | T10–T12, T17, T21 | in progress |
+| T23a | [MAIN: RX651 peripheral-register names](T23-readability.md) | T21 | in progress (Ghidra apply on hold) |
+| T23b | [DISPLAY and IFDSP: peripheral-register names](T23-readability.md) | T23a | todo |
+| T23c | [Global state structs (MAIN, then DISPLAY)](T23-readability.md) | T23a | todo |
+| T23d | [Library identification by signature](T23-readability.md) | T21 | todo |
+| T23e | [Name the most-called functions from ranked work lists](T23-readability.md) | T23a, T23c | todo |
+| T23f | [DISPLAY/IFDSP signatures, enums, parameter names](T23-readability.md) | T23e | todo |
+| T23g | [Readable view grouped by subsystem (optional)](T23-readability.md) | T23e | todo |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 
