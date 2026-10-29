@@ -3,10 +3,13 @@
 
 Usage: tools/healthlog.py [--watch PID] [--label TEXT] [--interval SEC] [--dir DIR]
   --watch PID   stop when PID exits (tools/ghidra-cap.sh passes the job's PID); without it, run until killed
+  HEALTH_SYSLOG remote syslog host[:port], UDP [192.168.10.50:514]; empty or 0 turns it off
   HEALTH_DIR    log directory [~/.cache/ft710-health]; HEALTH_INTERVAL seconds between samples [10]
 
-One file per run, health-<UTC time>-<pid>.log, plus health-latest.log pointing at it. Each sample is one
-line of key=value fields, flushed and fsynced so it survives a hard reset:
+Every line goes to the remote syslog (facility local0, tag ft710-health; GAP/WARN/KERNEL at warning, the rest
+at info) and to a local file as a fallback for the last lines a hang keeps off the network: one file per
+run, health-<UTC time>-<pid>.log, plus health-latest.log pointing at it. Each sample is one line of
+key=value fields, flushed and fsynced so it survives a hard reset:
   temps (C): cpu_pkg, core_max, board sensors (nct6687), nvme, gpu; fans (rpm); cpu MHz avg/min
   thr=      CPU thermal-throttle events since the last sample
   load, run= runnable tasks, iowait=% / steal=% of CPU time since the last sample
@@ -17,7 +20,7 @@ Also logs: GAP when a sample is late by more than 3 intervals (the host stalled)
 OOM, hung tasks, throttling, MCE or I/O errors, and at start a warning if the previous run has no END line
 (it was cut off by a hang or reset).
 """
-import argparse, glob, os, re, subprocess, sys, time
+import argparse, glob, os, re, socket, subprocess, sys, time
 
 
 def rd(path, default=None):
@@ -157,6 +160,28 @@ def kernel_lines(seen):
     return lines[-1], [l for l in new if KERN.search(l)]
 
 
+def syslog_sender(spec):
+    """Return send(msg, warn) for RFC 3164 UDP syslog to host[:port], or None when turned off."""
+    if not spec or spec == "0":
+        return None
+    host, _, port = spec.partition(":")
+    try:
+        addr = socket.getaddrinfo(host, int(port or 514), type=socket.SOCK_DGRAM)[0]
+        sock = socket.socket(addr[0], socket.SOCK_DGRAM)
+    except (OSError, ValueError):
+        return None
+    me, tag = socket.gethostname(), f"ft710-health[{os.getpid()}]"
+
+    def send(msg, warn):
+        pri = 16 * 8 + (4 if warn else 6)  # local0.warning / local0.info
+        line = f"<{pri}>{time.strftime('%b %e %H:%M:%S')} {me} {tag}: {msg}"
+        try:
+            sock.sendto(line.encode()[:8000], addr[4])
+        except OSError:
+            pass  # the network may be what is failing; the local file still has the line
+    return send
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--watch", type=int)
@@ -179,10 +204,14 @@ def main():
     except OSError:
         pass
 
+    send = syslog_sender(os.environ.get("HEALTH_SYSLOG", "192.168.10.50:514"))
+
     def log(msg):
         f.write(time.strftime("%Y-%m-%dT%H:%M:%S%z ") + msg + "\n")
         f.flush()
         os.fsync(f.fileno())
+        if send:
+            send(msg, msg.split(" ", 1)[0] in ("GAP", "WARN", "KERNEL"))
 
     log(f"START watch={a.watch} label={a.label!r} interval={a.interval}s nproc={os.cpu_count()}")
     if prev and os.path.exists(prev):
