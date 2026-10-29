@@ -12,7 +12,7 @@ fff8f9dd	_CLOSEALL	void	void	asm	asm: live-in -, 0/1 call sites read R1, return 
 fff8facd	write	uint32	int32, void *, int32	asm	asm: live-in R1:L,R2:L,R3:L, 1/1 call sites read R1, return load SL
 fff8fbdb	PowerON_Reset	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
 fff8fc4d	FUN_fff8fc4d	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load -
-fff8fc57	FUN_fff8fc57	uint8	uint32, void *	asm	asm: live-in R1:L,R2:L, 0/1 call sites read R1, return load UB
+fff8fc57	FUN_fff8fc57	uint8	uint32 delay, uint32 units	doc	R2 is compared with #0xF4240 (1,000,000), #1000 and 1, then divides: a time unit, not a pointer (T23f; Renesas BSP software delay with units us/ms/s [inference]); MOV.L R1/R2 spills; returns 0/1 [fact, 0xFFF8FC5E]
 fff8ff5f	bsp_callbacks_clear	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8ffc4	bsp_interrupt_open	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8fffb	R_BSP_InterruptWrite	uint32	int32, int32	asm	asm: live-in R1:L,R2:L, 0/17 call sites read R1, return load SL
@@ -1221,3 +1221,7 @@ fff91263	get_bpc	uint32	void	doc	returns BPC in R1 (MOV.L [SP],R1 before RTSD #8
 fff9127a	get_extb	uint32	void	doc	returns EXTB in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff91295	get_acc_hi	uint32	void	doc	returns ACC bits 63..32 (MVFACHI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff912a8	get_acc_mi	uint32	void	doc	returns ACC bits 47..16 (MVFACMI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fffc0d33	FUN_fffc0d33	void	uint8 mode	doc	MOV.B R1 spill; mode goes to FUN_fffc0eb8 and UI +0x424 (T23f) [fact, 0xFFFC0D35]
+fffc0eb8	FUN_fffc0eb8	void	uint8 mode	doc	MOV.B R1 spill; *rec = *rec & 0xF0 | mode on the active record (T23f) [fact, 0xFFFC0EBA]
+fffc0f10	FUN_fffc0f10	void	uint8 old_mode, uint8 new_mode, uint8 * rec	doc	MOV.B R1, MOV.B R2, MOV.L R3 spills; called by FUN_fffc0eb8 with (old mode, new mode, record) (T23f) [fact, 0xFFFC0F12]
+fffc4bd5	FUN_fffc4bd5	void	uint8 mode	doc	MOV.B R1 spill; CMP #15 and a switch to the mode setters (T23f) [fact, 0xFFFC4BD7]
