@@ -8,7 +8,8 @@
 //            ROM byte that is not 0xFF) or of >= 4 into labelled/referenced RAM/IO addresses -> pointer each
 //   zeros    a run of >= 4 NUL bytes between defined items -> byte[n] (zero-filled constants/padding)
 //   code     (code area, from code=<addr>, default 0xFFF8F658 = main in V01-12) a run after an instruction is disassembled;
-//            a clean flow that reaches RTS/RTSD/RTE becomes a function (unreferenced CC-RX functions)
+//            a clean flow that reaches RTS/RTSD/RTE, or a called one, becomes a function (unreferenced CC-RX functions).
+//            The code pass runs before the data scan of the code area (T21h), so text-like instruction bytes stay code.
 //   tables   (const area, below the code area) what is still left: float[n] / uint16[n] / byte[n] by a simple test,
 //            with a plate comment that the layout is a guess
 // Anything else is listed in the report (address, length, non-0xFF bytes, first bytes, previous instruction, refs).
@@ -19,6 +20,7 @@ import ghidra.program.model.address.*;
 import ghidra.program.model.data.*;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.MemoryBlock;
+import ghidra.program.model.symbol.Reference;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -167,18 +169,23 @@ public class DefineRomData extends GhidraScript {
             else if (!a.equals("dry")) report = a;
         }
         if (codeStart == null) codeStart = toAddr(0xFFF8F658L); // MAIN V01-12: main(), the first code after the const area
-        dataPasses();
+        // T21h: the code area is scanned for data only after the code pass. Before, a string pass in the code area could
+        // take instruction bytes as text (0xFFF8FEF5 "UW_w?" = OR R5,R15; OR #0xA500,R15), so the flow from 0xFFF8FEC0 ran
+        // into it and stayed undefined, and the code pass then made a bogus function from 0xFFF8FEFB, inside an instruction
+        dataPasses(dry);
         if (!dry) {
             // unreferenced code after a return in the code area: disassemble, and make a function if it reaches a return
-            // repeat: a function can end inside a run and leave the next function of the run undefined
-            for (int pass = 1; pass <= 10; pass++) {
+            // repeat: a function can end inside a run and leave the next function of the run undefined. One pass decodes one
+            // function per run, so the limit must cover the longest chain (T21h: 0xFFF91228..0xFFF91302 holds 15 small CC-RX
+            // intrinsic helpers back to back; a limit of 10 stopped before 0xFFF91295). The loop ends when a pass adds nothing.
+            for (int pass = 1; pass <= 200; pass++) {
                 int before = nFunc + nIns;
                 for (AddressRange r : undefinedRom()) code(r);
                 if (nFunc + nIns == before) break;
             }
             println("DefineRomData: code fragments: " + nFunc + " functions (" + bFunc + " B), " + nIns + " other ("
                     + bIns + " B)");
-            dataPasses();
+            dataPasses(true);
             // what is left in the const area are numeric tables of unknown layout: typed arrays
             for (AddressRange r : undefinedRom()) table(r);
             println("DefineRomData: const tables: " + nTab + " (" + bTab + " B)");
@@ -205,10 +212,13 @@ public class DefineRomData extends GhidraScript {
     int nFunc, nIns, nTab;
     long bFunc, bIns, bTab;
 
-    void dataPasses() throws Exception {
+    // all = false: scan only below codeStart (the const area); dry runs scan everything
+    void dataPasses(boolean all) throws Exception {
         for (int pass = 1; pass <= 5; pass++) {
             int d = 0;
-            for (AddressRange r : undefinedRom()) d += scan(r, null);
+            AddressSet und = undefinedRom();
+            if (!all) und.delete(codeStart, currentProgram.getMaxAddress());
+            for (AddressRange r : und) d += scan(r, null);
             println("DefineRomData: data pass " + pass + ": " + d + " items");
             if (d == 0 || dry) break;
         }
@@ -245,7 +255,11 @@ public class DefineRomData extends GhidraScript {
             println("DefineRomData: " + a + ": does not decode cleanly, left undefined (listed in the report)");
             return;
         }
-        if (ret && len > 1 && getFunctionContaining(a) == null && createFunction(a, null) != null) { nFunc++; bFunc += len; }
+        // a function: the run reaches a return, or it is called (T21h: 0xFFF8FEC0's return lies past the run, in code
+        // that analysis had already decoded)
+        boolean called = false;
+        for (Reference ref : getReferencesTo(a)) if (ref.getReferenceType().isCall()) called = true;
+        if ((ret || called) && len > 1 && getFunctionContaining(a) == null && createFunction(a, null) != null) { nFunc++; bFunc += len; }
         else { nIns++; bIns += len; }
     }
 

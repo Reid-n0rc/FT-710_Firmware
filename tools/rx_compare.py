@@ -39,6 +39,7 @@ Normalisation rules (each one is a pure notation difference between the two disa
       SCC = SCGEU, SCNC = SCLTU, BMC = BMGEU, BMNC = BMLTU; RXv2 manual, condition table), see MNEM_ALIASES.
   N9  register ranges: objdump's "r1-r5" (PUSHM/POPM/RTSD) is Ghidra's two operands "R1,R5".
   N10 Ghidra puts the flag operand of SETPSW/CLRPSW into the mnemonic ("SETPSW I "); it is split off as an operand.
+  N11 the RX module's one accumulator register ACC is RXv2's A0 (MVTACHI/MVTACLO/MVFACHI/MVFACMI, T21h).
 Everything else is reported as a difference.
 
 rizin (0.9.1 `rx` plugin) prints the encoded fields rather than assembler syntax. Its text is first rewritten into the
@@ -230,6 +231,7 @@ def split_ops(s):
 def norm_op(op):
     op = op.lower().replace(" ", "")            # N1
     op = re.sub(r"\bsp\b", "r0", op)           # N2
+    op = re.sub(r"\bacc\b", "a0", op)          # N11
     op = op.replace("#", "")                    # N3
     op = re.sub(r"^(?:0x0|0)\[", "[", op)       # N6
     if "[" in op and op.endswith(".l"):         # N7

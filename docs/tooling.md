@@ -200,11 +200,23 @@ mattered (`eeprom_read`, `displink_build_60`, `cat_SP_meters`, `menu_page_serial
 stage after T21c's patch: `rx62t.sinc` SHA-256 T21c `9eadf83b…6a11` → `618938bb…4b36` (`RX_SINC_FIXED`); installed in the container's
 Ghidra on 2026-10-28.
 
+### Local SLEIGH fix (T21h, 2026-10-28): `tools/ghidra/rx62t-mvfac-fix.patch`
+
+The module had no constructor for the RXv2 accumulator reads `MVFACHI`/`MVFACMI`/`MVFACLO #imm,As,Rd` (bytes `FD 1E|i1 a:i0:op:rd`,
+manual R01US0071EJ0100 pp. 135-137 and 265-266; imm `i1:i0` = 10 → #0, 11 → #1, 00 → #2, 01 reserved; op 00 HI, 01 LO, 10 MI), so
+MAIN's `FD 1F 02` at 0xFFF9129B (`MVFACHI #0,A0,R2`) and `FD 1F 22` at 0xFFF912AE (`MVFACMI #0,A0,R2`) did not decode **[fact]**. The
+patch adds the token field `acci6_1` and six constructors: Rd = (ACC << imm) bits 63..32 / 47..16 / 31..0. The module's ACC is 64 bits
+(no guard bits 71..64); for imm ≤ 2 those bits come from ACC bits 63..0 only, so the result is exact. A1 is not decoded (as for
+`MVTACHI`/`MVTACLO`, whose empty semantics are left to T22a); `MVFACGU` is not modelled. Ghidra prints the accumulator as `ACC`
+(`rx_compare.py` rule N11: ACC = A0). `bootstrap.sh --only rx` applies it as the fourth stage after the RTSD patch: `rx62t.sinc` SHA-256
+`618938bb…4b36` (`RX_SINC_RTSD`) → `9efea07b…82a5` (`RX_SINC_FIXED`); sleigh still reports 8 NOP constructors. Installed in the
+container's Ghidra on 2026-10-28.
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
 download with SHA-256 checks (`--only deps`, Linux x86_64), the RX module install from `stefan00lpf/rx-proc-ghidra` @ `ea4cd204` plus the
-T17, T21c and T21d patches and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
+T17, T21c, T21d and T21h patches and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
 venv + SDR netlist/Verilator chain (`--only sdr`). Newcomer walk-through: [getting-started.md](getting-started.md); catalogue of all
 scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` takes `JOBS` (default 16) and `tools/xc7_fasm.py` takes
 `FT710_VENV` (default `~/.local/share/ft710-tools/venv`) since T20.
