@@ -1054,6 +1054,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Globals / callees:** DAT_0000464e (rw), DAT_00020ba7 (rw), DAT_00009ab6 (r)
 - **Risk:** low: level setting, RAM cells only (no EEPROM call seen here)
 - **Resolved in part (#69):** 0x9AB6 is **RF/SQL VR** (`EX030102`, 0..2: what the RF/SQL knob controls) **[fact]**. 0x464E lies just below the EEPROM mirror (0x464F..), so it is not saved; 0x20BA7 is RAM-only UI state **[fact for the addresses]**.
+- **Resolved (#173), entry closed:** 0x20BA7 (UI +0xA3) is the **RF/SQL knob value**, written by the DISPLAY encoder frame (`displink_rx_E1_encoder` @ fff9588b) and shared with `RG` **[fact]**. With RF/SQL VR = 0 (RF) the knob is RF gain (`dsp_set_rf_gain` @ fff9fc2a, DSP reg 0x67) and `SQ` only updates the shadow 0x464E, which no code other than `cat_SQ` reads, so `SQ` then has no audible effect and reads back its own value **[fact]**. With VR = 1 (SQL) `SQ` sets the knob value used by both squelch paths in `af_mute_update` @ fffb7b65 (`FUN_fffb7cec` FM noise squelch, `FUN_fffb7e61` signal-level squelch for the other modes) and RF gain is forced to 0xFF **[fact]**. With VR = 2 (SQL, FM only) only the FM path runs and `dsp_set_rf_gain` forces 0xFF only in FM/DATA-FM, so in the other modes `SQ` writes the value that is the **RF gain** there **[fact]**. `RG` mirrors this with its shadow 0x464D. Nothing is left open.
 
 ### SS
 
