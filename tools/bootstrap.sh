@@ -16,7 +16,8 @@
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
 #           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17), tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
 #           tools/ghidra/rx62t-rtsd-fix.patch (T21d), tools/ghidra/rx62t-mvfac-fix.patch (T21h),
-#           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch (T21i) and compile it.
+#           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch and
+#           tools/ghidra/rx62t-mvtac-fix.patch (T21i) and compile it.
 #           Skipped when already installed and patched.
 #   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
 #           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
@@ -115,7 +116,8 @@ RX_SINC_T21C=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
 RX_SINC_RTSD=618938bbd851134261c441cdfd2d34dca327b261c2c5acb49d63651b219e4b36
 RX_SINC_MVFAC=9efea07b76390e708c29f7e2ed8a7a044976d58d67a991cf4687319954b882a5
 RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3d0
-RX_SINC_FIXED=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
+RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
+RX_SINC_FIXED=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -313,11 +315,15 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-stringmem-fix.patch")
     info "applied tools/ghidra/rx62t-stringmem-fix.patch (T21i: SMOVF/SMOVB/SMOVU/SSTR as loops again)"
   fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_STRINGMEM" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-mvtac-fix.patch")
+    info "applied tools/ghidra/rx62t-mvtac-fix.patch (T21i: MVTACHI/MVTACLO write ACC)"
+  fi
   [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
-  info "compiled rx62t.sla (log: $OUT/logs/sleigh.txt; the 8 NOP-constructor warnings are expected)"
+  info "compiled rx62t.sla (log: $OUT/logs/sleigh.txt; the 6 NOP-constructor warnings are expected)"
 }
 
 # ---------------------------------------------------------------- hifi4

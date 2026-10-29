@@ -1162,3 +1162,9 @@ fffb56a5	rf_bpf_update	/SST3: RX/TX band one-hot + preamp/ATT bits [inference]
 fffb5786	atu_relay_update	/SST6: internal tuner relay bytes, SEND dropped 15 ms while switching [inference]
 fffb5874	main_dac_update	Q1005 ch3 (FADJ) and ch5
 fffb5976	pa_dac_update	PA BU2505 ch1..7,10: per-band cal, drive level, fan (ch6 from PA_HF_TH) [inference]
+# --- CC-RX intrinsic helpers 0xFFF91228.. (T21h/T21i): unreferenced; each returns a control register or accumulator part in R1
+fff9124c	get_bpsw	CC-RX intrinsic: return BPSW in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
+fff91263	get_bpc	CC-RX intrinsic: return BPC in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
+fff9127a	get_extb	CC-RX intrinsic: return EXTB in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
+fff91295	get_acc_hi	CC-RX intrinsic: return ACC bits 63..32 (MVFACHI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
+fff912a8	get_acc_mi	CC-RX intrinsic: return ACC bits 47..16 (MVFACMI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]

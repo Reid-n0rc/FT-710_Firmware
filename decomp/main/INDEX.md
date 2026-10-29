@@ -42,7 +42,9 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   `nib2hex` result (17 before). Copy sources show as string literals (51 → 66 distinct literals in the C, e.g. `"MEMORY NAME"`),
   and false parameters/returns that the pcodeop's register reads made up are gone (`FUN_fffe56e4` returned `main`).
   2,328 functions, 0 failures, 0 undefined non-0xFF bytes; warnings 1,217 → 1,222 (all "Globals starting with '_' overlap",
-  24 → 29, from byte accesses in the loops).
+  24 → 29, from byte accesses in the loops). Same task: `MVTACHI`/`MVTACLO` write ACC, and the five CC-RX intrinsic helpers
+  `get_bpsw`/`get_bpc`/`get_extb`/`get_acc_hi`/`get_acc_mi` (0xFFF9124C–0xFFF912A8, no callers) have locked `uint32 f(void)`
+  signatures (Ghidra's default prototype had picked R2 as their return register).
 - Known decompiler artifacts **[fact]**:
   - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
     `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
@@ -70,10 +72,10 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | "Removing unreachable block" | 1,175 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
-| Functions with `in_*` variables | 7 |
+| Functions with `in_*` variables | 12 |
 | Functions with `unaff_*` variables | 0 |
 | Functions with `extraout_*` variables | 0 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 7 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 12 |
 | Undefined non-0xFF bytes in executable blocks | 0 |
 | … in block `ROM` | 0 |
 | Error bookmarks | 1 |

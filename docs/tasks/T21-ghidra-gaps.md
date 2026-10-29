@@ -445,6 +445,15 @@ correctness wins over B4 here.
   `functions_with_extraout_vars` 1 → 0. DefineRomData defines 2 strings and 3 zero runs fewer (analysis types those bytes
   first now; still 0 B undefined); the C shows more literals (51 → 66 distinct).
 - DISPLAY and IFDSP exports byte-identical.
+- **T21h leftovers, also closed here.** (a) The five `get_*` helpers 0xFFF9124C–0xFFF912A8 decompiled as `return param_2;`: not
+  p-code, but the default prototype. Its `<output>` lists R1, R2, R3, R4, R14 as alternatives, and for these five (only these:
+  1,117 unsigned functions checked with a decompile pass, 5 come out `R2:4`, the rest `R1` or void) the decompiler picked R2,
+  the `POP R2` restore. They are named in `names_main.tsv` and locked in `signatures_main.tsv` as `uint32 f(void)` (`doc`):
+  `get_bpsw` now returns `in_BPSW`, `get_acc_hi` `(uint)(in_ACC >> 0x20)`. No callers; the cspec is left as it is. (b)
+  `MVTACHI`/`MVTACLO` had empty bodies: `tools/ghidra/rx62t-mvtac-fix.patch` (seventh `--only rx` stage, `30af4806…c69d` →
+  `73d417d2…8290`; sleigh NOP constructors 8 → 6) writes ACC bits 63..32 / 31..0 (manual pp. 267-268). The two MAIN uses are
+  one-instruction helpers (0xFFF9128D, 0xFFF91291) whose ACC write nothing reads, so their C does not change. Rebuild diff
+  against the first T21i export: exactly the five helpers changed (`signature`), ApplySignatures 1,217 applied.
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).

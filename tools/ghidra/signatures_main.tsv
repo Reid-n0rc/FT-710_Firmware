@@ -1216,3 +1216,8 @@ fffedd9a	FUN_fffedd9a	uint32	uint32, uint32, uint16 *	asm	asm: live-in R1:L,R2:L
 fffede41	FUN_fffede41	uint64	uint32, uint32, uint32, uint32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 1/1 call sites read R1, return load -
 fffededa	_INITSCT	void	void	asm	interrupt handler (entry PUSHM R1-R5)
 fffedf24	FUN_fffedf24	uint32	uint16 *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load -
+fff9124c	get_bpsw	uint32	void	doc	returns BPSW in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff91263	get_bpc	uint32	void	doc	returns BPC in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff9127a	get_extb	uint32	void	doc	returns EXTB in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff91295	get_acc_hi	uint32	void	doc	returns ACC bits 63..32 (MVFACHI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff912a8	get_acc_mi	uint32	void	doc	returns ACC bits 47..16 (MVFACMI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]

@@ -3,7 +3,7 @@
     <BASIC_INFO>
         <STATE NAME="CONTENT_TYPE" TYPE="string" VALUE="Program" />
         <STATE NAME="PARENT" TYPE="string" VALUE="/" />
-        <STATE NAME="FILE_ID" TYPE="string" VALUE="ac12028b2910617671855782" />
+        <STATE NAME="FILE_ID" TYPE="string" VALUE="ac1202a3b511188227400801" />
         <STATE NAME="FILE_TYPE" TYPE="int" VALUE="0" />
         <STATE NAME="READ_ONLY" TYPE="boolean" VALUE="false" />
         <STATE NAME="NAME" TYPE="string" VALUE="FT-710_MAIN_V0112.bin" />

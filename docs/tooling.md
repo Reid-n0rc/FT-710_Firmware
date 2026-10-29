@@ -244,6 +244,10 @@ stack buffer filled only by plain stores, it needs the same treatment. Sixth `bo
 (`RX_SINC_SEMANTICS` `c4d71924…c3d0` → `RX_SINC_FIXED` `30af4806…c69d`); `rx_semcheck.py` models the copied/stored bytes and
 keeps R3 at 0–40 for these two ops so the emulated loop ends (28,772 cases, 0 fail).
 
+`tools/ghidra/rx62t-mvtac-fix.patch` (T21i, seventh stage: `30af4806…c69d` → `73d417d2…8290` = `RX_SINC_FIXED`) fills the empty
+`MVTACHI`/`MVTACLO` bodies: ACC bits 63..32 / 31..0 = Rs (manual pp. 267-268; the module's ACC is 64 bits, no guard bits). sleigh
+now reports 6 NOP constructors (was 8).
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9

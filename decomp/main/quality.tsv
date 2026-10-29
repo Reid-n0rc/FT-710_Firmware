@@ -7,10 +7,10 @@ spacebase_warnings	0
 unreachable_block_warnings	1175
 halt_baddata	0
 functions_with_halt_baddata	0
-functions_with_in_vars	7
+functions_with_in_vars	12
 functions_with_unaff_vars	0
 functions_with_extraout_vars	0
-functions_with_in_unaff_extraout	7
+functions_with_in_unaff_extraout	12
 undefined_nonff_bytes	0
 undefined_nonff_bytes:ROM	0
 bookmarks_error	1

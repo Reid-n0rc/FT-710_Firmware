@@ -624,12 +624,17 @@ void FUN_fff91248(void)
 }
 
 
-// ===== FUN_fff9124c @ fff9124c (19 bytes)
+// ===== get_bpsw @ fff9124c (19 bytes)
 
-undefined4 FUN_fff9124c(undefined4 param_1,undefined4 param_2)
+/* CC-RX intrinsic: return BPSW in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for
+   the name] */
+
+uint get_bpsw(void)
 
 {
-  return param_2;
+  uint in_BPSW;
+  
+  return in_BPSW;
 }
 
 
@@ -642,12 +647,17 @@ void FUN_fff9125f(void)
 }
 
 
-// ===== FUN_fff91263 @ fff91263 (19 bytes)
+// ===== get_bpc @ fff91263 (19 bytes)
 
-undefined4 FUN_fff91263(undefined4 param_1,undefined4 param_2)
+/* CC-RX intrinsic: return BPC in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for
+   the name] */
+
+uint get_bpc(void)
 
 {
-  return param_2;
+  uint in_BPC;
+  
+  return in_BPC;
 }
 
 
@@ -660,12 +670,17 @@ void FUN_fff91276(void)
 }
 
 
-// ===== FUN_fff9127a @ fff9127a (19 bytes)
+// ===== get_extb @ fff9127a (19 bytes)
 
-undefined4 FUN_fff9127a(undefined4 param_1,undefined4 param_2)
+/* CC-RX intrinsic: return EXTB in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for
+   the name] */
+
+uint get_extb(void)
 
 {
-  return param_2;
+  uint in_EXTB;
+  
+  return in_EXTB;
 }
 
 
@@ -687,21 +702,31 @@ void FUN_fff91291(void)
 }
 
 
-// ===== FUN_fff91295 @ fff91295 (19 bytes)
+// ===== get_acc_hi @ fff91295 (19 bytes)
 
-undefined4 FUN_fff91295(undefined4 param_1,undefined4 param_2)
+/* CC-RX intrinsic: return ACC bits 63..32 (MVFACHI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD
+   #8); no callers [inference for the name] */
+
+uint get_acc_hi(void)
 
 {
-  return param_2;
+  undefined8 in_ACC;
+  
+  return (uint)((ulonglong)in_ACC >> 0x20);
 }
 
 
-// ===== FUN_fff912a8 @ fff912a8 (19 bytes)
+// ===== get_acc_mi @ fff912a8 (19 bytes)
 
-undefined4 FUN_fff912a8(undefined4 param_1,undefined4 param_2)
+/* CC-RX intrinsic: return ACC bits 47..16 (MVFACMI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD
+   #8); no callers [inference for the name] */
+
+uint get_acc_mi(void)
 
 {
-  return param_2;
+  undefined8 in_ACC;
+  
+  return (uint)((ulonglong)in_ACC >> 0x10);
 }
 
 

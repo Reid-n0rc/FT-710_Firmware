@@ -1,0 +1,22 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -1480,13 +1480,17 @@
+ 
+ ## MVTACHI - move high-order long to accumulator
+ :MVTACHI reg0_4, adest7_1    is op0_8 = 0xFD; op0_8 = 0x17; adest7_1 & op4_3 = 0x0 & reg0_4 {
+-    #adest7_1(4) = reg0_4;
++    # p. 267: ACC bits 63..32 = src (the module's ACC has no guard bits 71..64); flags unchanged (T21i)
++    local v:8 = zext(reg0_4);
++    adest7_1 = (adest7_1 & 0xFFFFFFFF) | (v << 32);
+ }
+ 
+ 
+ ## MVTACLO
+ :MVTACLO reg0_4, adest7_1    is op0_8 = 0xFD; op0_8 = 0x17; adest7_1 & op4_3 = 0x1 & reg0_4 {
+-    #adest7_1:4 = reg0_4;
++    # p. 268: ACC bits 31..0 = src; flags unchanged (T21i)
++    local v:8 = zext(reg0_4);
++    adest7_1 = (adest7_1 & 0xFFFFFFFF00000000) | v;
+ }
+ 
+ 
