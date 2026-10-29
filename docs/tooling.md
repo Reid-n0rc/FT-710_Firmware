@@ -113,6 +113,18 @@ GNU binutils `rx-elf` (the fallback route) was not needed in T17; T21c built it 
 | RXv2 support | **[fact]** the 2.47 RX disassembler (`opcodes/rx-decode.opc`) decodes the RXv2 set (EMACA, EMSBA, EMULA, MACLH, MSBHI/LH/LO, MULLH, MVFACGU, MVTACGU, RACL, RDACL/RDACW, FSQRT, FTOU, UTOF, MOVCO/MOVLI) and the RXv3 additions |
 | Remove | `rm -rf ~/opt/rx-binutils-2.47 ~/opt/build/binutils-2.47* ~/opt/dl/binutils-2.47` |
 
+**Rebuild in the cloud container (#205, 2026-10-29).** The 2.47 build above is on the owner's machine only. In the cloud
+container ftp.gnu.org and GitHub archives are refused by the proxy, and Ubuntu's `binutils-multiarch` 2.42 has no RX target, so
+binutils 2.42 was built from Ubuntu's source tarball:
+
+| Item | Value |
+|---|---|
+| Source | http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils_2.42.orig.tar.xz, SHA-256 `f6e4d41fd5fc778b06b7891457b3620da5ecea1006c6a4a41ae998109f85a800`, the same value as `binutils_2.42-4ubuntu2.10.dsc` from the same archive lists (the `.dsc` signature was not checked) |
+| Build | `configure --target=rx-elf --prefix=$HOME/opt/rx-binutils-2.42 --disable-nls --disable-werror --disable-gdb --disable-gprofng --disable-sim --disable-gold --disable-ld`, `make -j4 MAKEINFO=true`, `make install MAKEINFO=true` (tree in `~/opt/build/binutils-2.42`, `~/opt/build/rx-obj`) |
+| Location | `~/opt/rx-binutils-2.42/bin/rx-elf-objdump`; pass it to `tools/rx_compare.py --objdump` there |
+| Also downloaded | `~/opt/dl/binutils-multiarch_2.42-4ubuntu2.10_amd64.deb`, unpacked in `~/opt/binutils-multiarch-2.42` (no RX; unused) |
+| Remove | `rm -rf ~/opt/rx-binutils-2.42 ~/opt/build/binutils-2.42 ~/opt/build/rx-obj ~/opt/dl/binutils_2.42.orig.tar.xz ~/opt/dl/binutils-multiarch_2.42-4ubuntu2.10_amd64.deb ~/opt/binutils-multiarch-2.42` |
+
 **Method.** `tools/ghidra/ListingExport.java` writes every Ghidra instruction (address, length, bytes, mnemonic, operands,
 function) plus any undefined hole inside a function body. `tools/rx_compare.py` re-disassembles every run of back-to-back
 Ghidra instructions with `rx-elf-objdump -D -b binary -m rx --adjust-vma=0xFFF80000 --start-address --stop-address` and
