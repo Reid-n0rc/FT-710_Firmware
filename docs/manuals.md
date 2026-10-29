@@ -1,6 +1,6 @@
 # Manuals and datasheets
 
-Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 14 PDFs the project keeps are
+Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 15 PDFs the project keeps are
 **committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`), under the file names below, so the paths in
 the docs work. The documents in the second list are cited but not kept; get them from the links. The SHA-256 values identify the exact revision the project read; a newer
 revision from the vendor is fine for reading, but page numbers in the docs refer to these files.
@@ -39,6 +39,14 @@ https://www.renesas.com/en/products/rx651). Checked against the docs in T17 and 
 | `REN_tnrxa0280ae.pdf_TCU_20240903.pdf` | Technical update TN-RX*-A0280A | Deletes the RCKSEL write in the clock setup ([main/peripherals.md](code/main/peripherals.md)) (T18) | `eb68ff4dd7a7c52c61e92f046988b303f2ecf6737179a85e6d72377fc8667396` |
 | `REN_tnrxa0291ae.pdf_TCU_20251215.pdf` | Technical update TN-RX*-A0291A | Errata check (T18) | `bc1d3683348beea72e75b79ad6262472f6ce22fbc54f22c2f6acfbe676f5c240` |
 
+## Renesas RZ/A1H (DISPLAY CPU, R7S721001)
+
+Downloaded from renesas.com on 2026-10-28 (owner decision, 2026-10-29, to keep it). Used for #82 and O9.
+
+| File (in `Manuals/Renesas/`) | Document | Used for | SHA-256 |
+|---|---|---|---|
+| `r01uh0403ej0700-rza1h.pdf` | RZ/A1H Group, RZ/A1M Group User's Manual: Hardware, R01UH0403EJ0700 Rev.7.00 (Sep. 2024, 3,413 pages); https://www.renesas.com/document/mah/rza1h-group-rza1m-group-users-manual-hardware | DISPLAY register names, STBCR bits, INTC IDs, SCIF/RSPI/RIIC/VDC5/SPIBSC ([code/display/](code/display/README.md)). Table 5.5 and Table 53.1 (on-chip RAM pages and their mirror) settled O9 (2026-10-28) | `8a84a7149f95e50be2020e3d0966aa6a130afd7636a6ee5c219b22f80831d4ca` |
+
 ## Cited but not in `Manuals/` (read online or from general knowledge)
 
 These are cited in the docs for register meanings, formats or encodings. The project did not keep a copy, so claims that rest on them
@@ -47,7 +55,6 @@ are tagged **[inference]** unless the code confirms them. Getting a copy and che
 
 | Part / document | Vendor (where to get it) | Used for |
 |---|---|---|
-| **RZ/A1H** Group, RZ/A1M Group User's Manual: Hardware, **R01UH0403EJ0700 Rev.7.00** (Sep. 2024, 3,413 pages, SHA-256 `8a84a714…`) | Renesas, https://www.renesas.com/document/mah/rza1h-group-rza1m-group-users-manual-hardware (direct PDF) | DISPLAY register names, STBCR bits, INTC IDs, SCIF/RSPI/RIIC/VDC5/SPIBSC ([code/display/](code/display/README.md)). Table 5.5 and Table 53.1 (on-chip RAM pages and their mirror) settled O9 (2026-10-28) |
 | **i.MX RT600** (RT685) reference manual UM11147 and datasheet | NXP, https://www.nxp.com (search "RT685"; the reference manual needs a free account) | IFDSP memory map, boot ROM / FlexSPI boot header, PLL formula, FLEXCOMM/MU/DMA request map ([code/ifdsp/](code/ifdsp/README.md), [memory-maps.md](memory-maps.md)) |
 | **UG470** 7 Series FPGAs Configuration User Guide | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug470_7Series_Config | Bitstream packets, registers, frame/ECC layout, XC7A50T length and IDCODE ([decomp/sdr/README.md](../decomp/sdr/README.md), [code/sdr/bitstream.md](code/sdr/bitstream.md)) |
 | **UG473** 7 Series FPGAs Memory Resources | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug473_7Series_Memory_Resources | BRAM widths and parity layout ([code/sdr/bram-tables.md](code/sdr/bram-tables.md)) |
