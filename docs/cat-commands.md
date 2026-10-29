@@ -292,7 +292,9 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
     - `key_event_filter` refuses key codes < 8 and 0x16..0x19. FUNC only beeps.
     - The DSP key (`key_dsp_press` → `align_store`) runs the store handler 0xFFF89910[item] for the current item 0x20CE2 (0..0x104, one per byte of
       the 261-byte calibration table at RAM 0x4659 = EEPROM 0x000A). The handlers write a measurement into the table: UI-state ADC fields
-      0x20B06/0x20B08/0x20B0C, `dsp_signal_level`, or a DSP status read; 191 of the 261 handlers are empty.
+      0x20B06/0x20B08/0x20B0C, `dsp_signal_level`, or a DSP status read; 191 of the 261 handlers are empty. MAIN's alignment menu
+      names every item (`001 [GN] VDD MTR` … `261 [TX] IDD MTR`, ROM 0xFFF817C3); the map is in
+      [code/main/eeprom.md](code/main/eeprom.md#cfg105-the-alignment-table-fact) (#203).
     - `align_load_preset` sets the radio up for each item from the 12-byte preset at 0xFFF88CD4[item]: VFO A or B, band memory, mode bits,
       an optional frequency (u32 at +8), and for items 0x45..0xDA a TX power level (100, 50, 20, 10, … by `(item − 0x45) mod 15`).
     - Powering off in this mode does not save the operating state (`io_task`).

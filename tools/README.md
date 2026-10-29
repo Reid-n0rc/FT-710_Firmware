@@ -40,6 +40,7 @@ Conventions:
 |---|---|---|---|
 | `main_key_tables.py` | Dumps the front-panel key handler tables | `build/FT-710_MAIN_V0112.bin`, `decomp/main/functions.tsv` → stdout / TSV | T10b |
 | `main_menu_table.py` | Dumps the EX/setup-menu item table and diffs it against the CAT manual's menu chart | MAIN image → stdout | T10f |
+| `eeprom_decode.py` | Decodes an EEPROM dump from `cat_backup.py --eeprom` into the fields of [docs/code/main/eeprom.md](../docs/code/main/eeprom.md): header, the 261 named `cfg105` alignment items, destination, band stacks, memory header, QMB, messages, tuner memory, front-panel values; checks each section against the documented layout. `--main` adds the ROM defaults and checks the alignment-name table; frequencies, tags and messages only with `--private`. Embeds no dump data | `eeprom.bin` (+ MAIN image) → stdout | #203 |
 
 ## DISPLAY (Renesas RZ/A1H)
 
