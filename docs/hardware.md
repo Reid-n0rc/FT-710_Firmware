@@ -90,8 +90,10 @@ registers: p56–57, p74).
   `RX_UPDATE` is high, and the drawing is annotated "RX_UPDATE: Update is High" (p17). `RX_UPDATE` and `RX_RESET` are driven by the
   DISPLAY CPU (J1009 pins 12–13 → RZ/A1H P4_3 and P7_10) (p17, p62). SCI1 (P30/P26) is the RX boot-mode SCI.
   **So the DISPLAY CPU reflashes the MAIN CPU through the Renesas serial boot mode over the DISP UART** **[fact: DISPLAY code (display/update.md §5) +
-  HWM r01uh0590 Table 3.1 p180, Table 59.7 p2564: MD low + PC7/UB low at reset = SCI boot on SCI1 P30/P26; T18]**. MAIN never drives PC7 (`UB`, J1004 pin 4),
-  so it must be held low on the board **[inference]**. MD low, then high 20–100 ms after reset, selects the FINE interface instead (Table 3.1 note 3).
+  HWM r01uh0590 Table 3.1 p180, Table 59.7 p2564: MD low + PC7/UB low at reset = SCI boot on SCI1 P30/P26; T18]**. MAIN never drives PC7 (`UB`, J1004 pin 4);
+  on the board, net `UB` is pulled to ground by **R1072 10 kΩ** (p17, in the pull-resistor column beside `E1_RESET`/`RX_RESET`/`NMI`;
+  fitted per the parts list p38, side A, D3), and nothing else drives it apart from J1004 pin 4 **[fact, #79]**. So with MD low, the RX651
+  always comes up in SCI boot mode unless a debugger on J1004 pulls `UB` high (USB boot). MD low, then high 20–100 ms after reset, selects the FINE interface instead (Table 3.1 note 3).
   This matches the update manual: firmware comes from the SD card, which is on the DISPLAY CPU, and "update DISPLAY first".
 - **Debug header J1004, "RX-CPU DEBUG"** (P1091201, an 8-pin 08FLT-SM2 FFC, p35, p17). Earlier versions of this page called it J1005; the
   p17 symbol reads J1004 (T10c) and the p35 parts list gives J1004 = 08FLT-SM2-TB P1091201 (side A, D3). **J1005 is `SB20-08WS` P0090615**,
@@ -151,6 +153,17 @@ registers: p56–57, p74).
   comes late, with dither fed into both inputs **[fact: third-party report]**. That explains the 14 DDR-captured LVDS pairs as two
   14-bit channels multiplexed on the two clock edges (channel A on one edge, B on the other) at 125 MSPS each **[inference, strong]**,
   which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
+- **ADC part number: no public source names it (#66, searched 2026-10-29).** Checked: this service manual (the SDR module is one
+  unitemised box; its text layer has no ADC part number anywhere, no `LTC2…`/`AD9…`/`ADS…` string); the FT-DX10 Technical Supplement (the ManualsLib copy's
+  text has no ADC part either, its SDR module appears only as a "MODULE" part number, and the radiomanual.info copy could not be fetched);
+  DC4KU's report (dual-channel 14-bit, no part number); and Sherwood Engineering's FT-710 test results (`Manuals/FT-710_Sherwood_HF_Test_Results.pdf`,
+  pp3–4, test date 2022-10-01), which read the block diagram as "some non-listed gain block in front of both ADC chips, possibly an ADC driver chip" and note an
+  AGC that keeps the ADC below 0 dBFS **[fact: third-party report]**. "Both ADC chips" is Sherwood's reading of Yaesu's two "A/D" boxes,
+  not a part identification, so whether the two channels are one dual part (DC4KU) or two chips stays open. The constraint the part must meet
+  is the netlist's: 14 LVDS data pairs captured DDR in bank 35 by a source-synchronous `adc_dco` clock, plus an LVDS sample clock
+  `adc_clk` at 125 MHz ([code/sdr/netlist.md](code/sdr/netlist.md)) **[fact for the FPGA side]**. Several dual 14-bit 125 MSPS
+  converters with DDR LVDS outputs would fit; naming one would be a **[guess]**, so the docs do not. The marking is the only way to settle it (#171); the two-channel combine in
+  the netlist is #172.
 - **Yaesu's receiver diagram** (reproduced as Figure 1 of the DC4KU report in `Manuals/`): RX unit ATT → BPF → RF AMP → **divider**
   → **two A/D converters** → FPGA, which **sums** the two channels; a **D/A** in the SDR block makes the dithering signal fed into both
   ADC inputs **[fact: Yaesu diagram]**. The FT-DX10's diagram (Figure 2) has the same "SDR Block" of two A/Ds + FPGA, but there one ADC
@@ -188,7 +201,35 @@ registers: p56–57, p74).
 - Q2614 **Silicon Labs CP2105-F01-GMR**, a dual USB-UART bridge (p37). Its **SCI ("Standard") port → `USBSS_*` → RX SCI0**, and its
   **ECI ("Enhanced") port → `USBSE_*` → RX SCI3**. RTS/DTR are routed to the CPU through UMD5N buffers (`USBSS_RTS/DTR`, `USBSE_RTS`; used
   for PTT/keying) (p20, p17). The note on p20 reads: "SCI(Standard)=SS, ECI(Extend)=SE". **So CAT goes from the PC through CP2105 to the RX651 SCI0/SCI3.** **[fact]**
-- Q2624 **C-Media CM119B**, the USB audio codec (p37, p6).
+- Q2624 **C-Media CM119B**, the USB audio codec (p37, p6). **Analog routing (p20, #63)** **[fact unless tagged]**:
+  - **USB side:** pins 41/42 `USBDP`/`USBDM` through R2701/R2702 22 Ω to hub port 2 (`HUB_DP2/DM2`). Its 5 V (`USB5V`, through R2699 and
+    ferrites FB2606/FB2607) is switched by P-FET Q2622 RTM002P02, driven through Q2620 UMD5N by `BC_EN2`. On the DISPLAY sheet the matching
+    `BC_EN3` is the hub's `PWR3` port-power line to the FT4222H (J1801 pin 19), so `BC_EN2` is most likely the hub's port-2 power enable
+    **[inference]**. The SPI pins (44–47) go only to test points TP2606–TP2609; `LEDR` (pin 21) goes to TP2613 "H=Recording", `LEDO`
+    (pin 12) to TP2614 "H=Power ON Status"; `GPIO1..8`, `BUZZ`, `SPDIFO` are not connected; `VOLUP`/`VOLDN`/`MUTER`/`MUTEP` are marked "BTM".
+  - **Straps:** `MSEL` (pin 38) pulled low by R2705 47 kΩ (R2704 to the 3.3 V side not fitted), so **"MIXER OFF"**; `PWRSEL` (pin 7) pulled
+    high by R2706 47 kΩ (R2707 not fitted), so **100 mA**; `MODE` (pin 10) pulled low by R2713 47 kΩ (R2712 not fitted), so **"Headset"**
+    mode. The note on p20 gives the meanings ("MODE H=Speaker L=Headset, PWRSEL H:100mA L:500mA, MSEL H:MIXER ON L:MIXER OFF"); the
+    fitted resistors are confirmed by the parts list (R2705/R2706/R2713 present, R2704/R2707/R2712 absent, p42).
+  - **PC → radio (playback, the transmit audio):** `LOL` (pin 30) and `LOR` (pin 32) → C2700/C2697 → R2726/R2725 100 kΩ, summed to **mono**
+    in Q2628 NJM12902V (pins 5–7, R2730 100 kΩ feedback) → a 5 kHz low-pass (R2732/R2736/R2739, Q2628 pins 1–3, "fc=5kHz") → R2807 100 kΩ /
+    R2809 33 kΩ divider → net **`USB_AF_MOD`** → Q2615 **SN74LV4052** analog mux input `1Y2`. The mux's other inputs are `1Y0` `MIC_AF_MOD`
+    (front mic), `1Y1` `DATA_MOD` (rear DATA jack) and `1Y3` (tone/radio path); its select lines are `TX_SEL_A` (pin 10, A) and `TX_SEL_B`
+    (pin 9, B), driven by MAIN P81/P82. The common `1C` goes through R2783 to `VIN4` of the 8-channel electronic volume Q2621 (CH4 "MOD IN").
+  - **Radio → PC (record, the receive audio):** Q2621 CH2 "USB Audio OUT" (`VOUT2`, pin 24) → net **`USB_AUDIO_SPEAKER`** → C2727 → 5 kHz
+    low-pass (R2747/R2746/R2742, Q2628 pins 12–14) → R2733 100 kΩ into an inverting stage (Q2628 pins 8–10, R2731 47 kΩ) → R2722 0 Ω →
+    C2705 → **`MICIN`** (pin 27). So the PC records a **mono** signal on the CM119B's microphone input. `VIN2` is fed through R2687 from the
+    `RX AF` node (codec `AF_OUT1` after Q2602) **[inference, high: traced in a 600 dpi render]**.
+- **Q2621 Renesas R2A20178NP, 8-channel electronic volume** (p20, parts list p37). Its p20 legend reads: CH1 AF2 MASTER VR, **CH2 USB
+  Audio OUT**, **CH3 DATA conn. OUT**, **CH4 MOD IN**, CH5 AF1 MASTER VR, CH6 CPU DA(TONE), CH7 CPU DA(BEEP), CH8 BOOST LEVEL. Its serial
+  pins `LD`/`CLK`/`DI` are on `SST2n_5`/`CK1_/5`/`DT1_5`, so it is the "8-channel audio level device" that MAIN writes with
+  `sst2_write12` on /SST2, and the firmware's channel meanings match the legend (ch2 = USB OUT LEVEL, ch3 = REAR OUT LEVEL, ch4 = the
+  selected source's MOD GAIN; [code/main/tx-protection.md](code/main/tx-protection.md)) **[fact: schematic + code]**.
+- **TX audio source select (Q2615)** **[fact: schematic + code]**: `tx_audio_select` writes PODR8 bit 1 (P81, `TX_SEL_A`) and bit 2 (P82,
+  `TX_SEL_B`): source 0 → A=0 B=0 → `1Y0` front MIC; 1 → A=0 B=1 → `1Y2` **USB**; 2 → A=1 B=0 → `1Y1` rear DATA; 3 (CW, RTTY) → A=1 B=1
+  → `1Y3`. That matches the firmware's gain index (0 MIC, 1 USB, 2 REAR) through the 4052's pin wiring. The truth table printed next to
+  Q2615 on p20 lists (A,B) = (L,H) as "Rear(DATA) MIC" and (H,L) as "USB Audio", i.e. rows 1 and 2 swapped against the chip pins and the
+  code; the table is probably drawn with B as the low bit **[inference]**.
 - Hub PORT3 goes over J1801 → J6002 (`FT4222_DP/DM`) to the **FTDI FT4222HQ** on the DISPLAY unit (p20, p62).
 - The 8-pin mini-DIN/RTTY and other rear-panel data lines are not covered here. No RS-232 level shifter (MAX232-type) is in the parts list, so the radio has
   **no DB-9 RS-232 port**: CAT is USB only, plus the ACC/DATA connectors at logic level. **[inference]**
@@ -245,7 +286,20 @@ registers: p56–57, p74).
   AF-FFT record (600 B) and a 151-byte status block from the MAIN link; PC → DISPLAY data is only parsed in a test mode. A MAIN-side setting
   switches the bridge on through `FT4222_RESET` ([code/display/spi-links.md](code/display/spi-links.md#link-3-ft4222h-usb-to-spi-bridge-rspi0))
   **[fact for the code]**. The PC software that reads it is not known.
-  The RZ/A1H's own USB0/USB1 (`USB0_DP/DM`, `D+1/D-1`) also run through J6002 to the MAIN unit (p62). Where they end up is not resolved.
+- **RZ/A1H USB0 and USB1 (#64)** **[fact unless tagged]**:
+  - **USB0 = the USB Type-A jack on the MAIN unit (keyboard/mouse).** `USB0_DP`/`USB0_DM` leave on J6002 pins 10/9, with `USB0_EN` (pin 11)
+    and `USB0_PG` (pin 8) (p62). J6002 and MAIN's J1801 are the two ends of a 24-pin FFC with reversed numbering, so these are J1801 pins
+    15/16/14/17, labelled "TO MAIN-BLOCK" (p18). On the CNTL sheet (p17) the four nets go to **J1003 "USB TYPE-A Connector"** (C1AA0Q-020-R,
+    P1091733, parts list p35, side A, F1) through the ESD array D1013 DRTR5V0U2SO-7. `VBUS1` of J1003 comes from **Q1029 MP5073GG**, a
+    current-limited load switch fed from D5V: "EN: HIGH = MP5073 is Enable" (`USB0_EN`, DISPLAY P8_10, `gpio_usb0_en`), "PG: Low = Current
+    Limit is working" (`USB0_PG`, DISPLAY P8_11); ILIM is set by R1065 47 kΩ. That is the port behind the DISPLAY's USB host stack, whose only
+    class driver is HID ([code/display/input.md](code/display/input.md)). The RZ/A1H has no VBUS-enable pin of its own (its USB pins
+    are `DP0/DM0`, `DP1/DM1`, `VBUS0/1` and `REFRIN`; R01UH0403EJ0700 Table 1.3, p1-18), hence the GPIO switch. That `USB0_DP/DM` land on the
+    RZ/A1H's `DP0/DM0` balls is read from the net names **[inference]**.
+  - **USB1 is not used.** On the DISPLAY sheet `D+1`, `D-1` and `USB1_PG` end at R6004, R6005 and R6006, all marked "***" (not fitted) and
+    absent from the parts list (p66–67). R6006 would join `USB1_PG` to J6002 pin 3 (labelled N/A); the other ends of R6004/R6005 are
+    drawn unconnected (p62). The RZ firmware still initialises the USB1 host controller ([code/display/peripherals.md](code/display/peripherals.md)),
+    but nothing is wired to it.
 - **JTAG header J6003** (P1091201, 8-pin, p66, p62): 1 3.3 V, 2 TMS, 3 TCK, 4 TDO, 5 TDI, 6 TRST, 7 nRZRST, 8 GND.
   This is plain ARM JTAG for the Cortex-A9 (`JT_*` nets on the RZ TCK/TMS/TDI/TDO/TRST pins). **[fact]**
 
@@ -263,13 +317,15 @@ registers: p56–57, p74).
 ```
  PC (USB-B) ── CY7C65631 hub ─┬─ P1: CP2105 ─ SCI port ─ RX651 SCI0   ("Standard" CAT)
                               │              └ ECI port ─ RX651 SCI3   ("Enhanced" CAT)
-                              ├─ P2: CM119B (USB audio)
+                              ├─ P2: CM119B (USB audio) ─ LOL+LOR → USB_AF_MOD → 4052 mux → TX audio
+                              │                            MICIN ← USB_AUDIO_SPEAKER ← R2A20178 CH2
                               └─ P3: FT4222H ─ SPI ─ RZ/A1H (DISPLAY)
 
  RZ/A1H (DISPLAY, PC image) ── UART ── RX651 SCI1 (MAIN, MC image)   + RX_UPDATE/RX_RESET (RZ flashes RX)
         │  SD card (firmware files)
         ├── SPI (RSPI2) ── SDR module (FPGA, SR image): scope in; image out during an update
-        └── SPI (RSPI4) ── RT685 FC1 (IF DSP, ID image): AF-FFT + REC/PLAY PCM
+        ├── SPI (RSPI4) ── RT685 FC1 (IF DSP, ID image): AF-FFT + REC/PLAY PCM
+        └── USB0 host ── J6002/J1801 ── J1003 USB Type-A on MAIN (VBUS via MP5073): keyboard/mouse; USB1 not wired
 
  RX651 ── SCI5 + SDR_UPDATE/RESET ── SDR module    (register frames; bridges DISPLAY during an SDR update)
  RX651 ── SCI4 + DSP_UPDATE/RESET ── RT685 FC0     (console/register file; relays ISP during an IFDSP update)
