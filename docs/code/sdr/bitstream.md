@@ -18,6 +18,24 @@ Database: prjxray-db `artix7/xc7a50tcpg236-1/part.json` and `artix7/xc7a50t/tile
 | 0x0010FC | 547,420 words | single type-2 FDRI write = 5,420 frames x 101 words | [fact] |
 | 0x217A70 | ... | CRC, GRESTORE, DGHIGH, START, trailer, DESYNC | [fact] |
 
+## Who checks the header CRC-32/BZIP2? (#84)
+
+Nobody in the firmware we have **[fact for each check below]**:
+- **CPU images.** Neither CRC-32 polynomial word (0x04C11DB7 MSB-first, 0xEDB88320 LSB-first, either byte order) occurs in MAIN or IFDSP;
+  in DISPLAY only 0xEDB88320 does (0x20100A94, inside the table-driven LSB-first CRC-32 of `sfl_crc`, which checks the *salted* CRC
+  of the `.SFL` file). No fragment of 0x04C11DB7 appears in any decompiled C. The DISPLAY's `sdr_flash_write` reads the file's
+  4 KiB header and writes it unchanged to SDR flash 0x480000 after the bitstream; the only checksum on that path is the CRC-16/0xA001
+  of each 0x2000-byte SPI block (`crc16_a001_table_init`, FPGA reg 0x33). MAIN only bridges the link (`sdr_bridge_mode`). The
+  `sdrchk1`/`sdrchk2` console commands set bits in an event flag that no task waits on ([display/update.md](../display/update.md)).
+- **Running FPGA design.** `tools/xc7_crc_search.py`: none of the 54 initialised RAMB18 halves holds a CRC-32 or CRC-16 table or a
+  CRC-32 polynomial at any bit offset, and the most XOR-linear register groups of the netlist are adders (cone sizes growing in
+  steps of 4 through CARRY4 chains), not a 32-bit CRC register.
+- **FPGA configuration logic.** The 7-series loader looks for the sync word and does not read a vendor header word.
+
+What is left is a loader ("golden") bitstream at SDR flash address 0 that would check 0x480000 before a MultiBoot jump to 0x240000;
+no file we have contains one ([interfaces.md](interfaces.md)), so only reading the SDR configuration flash can settle it (#101)
+**[inference]**. The `.SFL` header CRC that the DISPLAY does check is a different one ([sfl-format.md](../../sfl-format.md)).
+
 ## FAR sequence (step 2)
 
 `xc7_db.py` rebuilds the FAR auto-increment order from `part.json`: for each block type (0 = CLB/IO/CLK, 1 = BRAM
