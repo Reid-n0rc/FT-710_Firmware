@@ -16,6 +16,7 @@ in `build/` (never committed).
 | `tb_uart_link.v` | link on its own with a register model: boot read of reg 0 (`r010437`), write + read-back, bad/lower-case checksum, junk prefix, empty line | PASS (Icarus, 7 s) |
 | `sim/xc7_prims_vl.v` | Verilator models of LUT6/LUT6_2/CARRY4/FD*/SRLC32E/RAMD*/BUF*/IO/IDDR/ODDR/MMCM for the recovered netlist | |
 | `sim/full_main.cpp`, `sim/build_full.sh` | Verilator harness and build for the **whole** netlist (UART players/decoders, probe and snapshot output) | 63k cells, ~15,000 clocks/s |
+| `sim/pins_main.cpp` | Pin-activity harness for the whole netlist (#90): toggle counts, burst gaps and optional edge logs of the unassigned outputs, with MAIN register frames played on UART B. Build with `MAIN=pins_main.cpp OBJ=obj_pins hdl/sdr/sim/build_full.sh` | found the I2S port and the two power-up SPI transfers |
 | `sim/cosim_top.v`, `sim/cosim_directed.sh`, `sim/cosim_random.sh` | netlist and `ft710_uart_link` side by side, TX compared every clock | see results |
 
 ## The link protocol (UART B, MAIN's UART5) [fact, whole-netlist simulation]

@@ -185,8 +185,11 @@ flowchart LR
 | 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B = MAIN's UART5** register link: same receiver, 11-character frame window (3.4, 5.2) | [fact] |
 | 14 | N14, T18, R18 in/out | Each has an output FDPE (INIT 1, MMCM domain) enabled from a LUT, and an input synchronized in the 125 MHz domain: open-drain-style lines, I2C or similar | [guess] |
 | 14 | P14 out | forwarded MMCM clock (`DSP_CLK`?) | [guess] |
-| 14 | 9 more inputs, 13 more outputs (3 tied low, 1 tied high) | control lines (TX, SEND, FSK, OVF, DET, I2S), not yet matched to J2002 pins | open |
+| 14 | **U16 out, V17 out, V16 out** | **I2S-style serial port, running from reset** (#90, simulation): U16 toggles every 2 cycles (31.25 MHz bit clock), V17 every 128 cycles (frame, 64 bit clocks = 2 × 32-bit slots, 125 MHz / 256 = 488.28 kHz), V16 data from clock 65,541. Fits J2002 24 `TX_CLKA` / 26 `TX_FRMA` (the shared RX/TX audio clock and frame) and 33 `RX_DATA`, the RX IQ/audio stream to the RT685 | [fact] behaviour, [inference] J2002 pins |
+| 14 | **R16 out (clock), P17 out (select), N16 out (data)** | **16-bit SPI write sequence at power-up** (14 words, clocks 155–13,979, same on either edge): `0002 0000` (bit 1 of reg 0 set then cleared: soft reset), then reg 0x10 = C0, 11 = 00, 12 = 2D, 13 = 10, 14 = 20, 16 = 00, 17 = 00, 18 = 00, 19 = 00, 1A = 80, 1B = 03, 1D = 00 (8-bit address + 8-bit data). A 3.3 V chip on the module configured once; which part is open | [fact] words, open part |
+| 14 | T9, U17, V15, T16, T15, M17 out; N15 = 1; L16, F13 one edge after reset | idle in 4 M clocks after reset, also after MAIN's boot frames and a scope set-up (0x15, 0x24, 0x20/0x21, 0x22, 0x23, 0x26, 0x27): the scope SPI (`FFT_CLK/FRM/DAT`, J2002 23/25/27) is among them but did not start in 32 ms of simulation; it probably needs a trigger the harness does not give (a DISPLAY input or a longer frame period) | open |
 | 15 (1.8 V) | B14, B13 out and C14 in/out, all driven from one slice (`SLICE_X42Y80`) | **3-wire SPI master** (clock, select, bidirectional data) at 1.8 V, the usual ADC configuration port | [inference] |
+| 15 | B13 = SCK, B14 = CS, C14 = SDIO (data from `SLICE_X42Y80/A5FF`) | **ADC configuration at power-up** (#90, probed simulation): 27 frames of 24 bits, SCK period 8 cycles (15.6 MHz), 72-cycle gaps, MSB first, sampled on the falling edge: `000020 002001 007918 0080AD 00E11A 0014E7 0015C4 0012C0 001200 005E00 005F08 002800 002340 002501 002500 802500 802400 002764 003F20 004020 004330 003001 0018F9 001901 001AF9 001B01 000100`. Bit 23 set on the two `0x025`/`0x024` frames = reads: an Analog Devices-style 24-bit frame (R/W, length, 13-bit address, 8-bit data). The register map is not identified, so the ADC part stays open | [fact] frames, [inference] format |
 | 15 | B18, A14, A13, A16 in; D17, F13 out; E17 = 0, D14 = 1 | 1.8 V control and status lines (D17 is in the undecoded BUFGCTRL_X0Y1 domain) | open |
 
 The J2002 signals in [interfaces.md](interfaces.md) still have to be matched to these pins one by one. The two UARTs
@@ -415,6 +418,7 @@ read-back) and a CR during a running reply.
 
 ### 5.5 Remaining pins
 
-Not done in T15e: matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3).
+Not done in T15e: matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3). #90 (2026-10-28) found the I2S port (U16/V17/V16) and decoded the two power-up configuration transfers (R16/P17/N16 and
+B13/B14/C14) with `hdl/sdr/sim/pins_main.cpp`; the scope SPI did not start in simulation (table in 3.3).
 The whole-design model can now do it by driving candidate input pins and watching outputs.
 
