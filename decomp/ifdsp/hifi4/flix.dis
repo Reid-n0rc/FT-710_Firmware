@@ -51984,7 +51984,7 @@
   2367fb:	1df0                          	retw.n
   2367fd:	000000                      	ill
 
-;; functions.tsv entries dropped (no `entry` instruction): 002332c4 002354e0
+;; functions.tsv entries dropped (no `entry` instruction): 002287f8 00228b08 002332c4 002354e0
 
 ;; call targets that are not function entries in functions.tsv:
 ;;   001a5a5c from 00225264

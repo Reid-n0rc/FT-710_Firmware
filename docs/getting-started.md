@@ -43,7 +43,7 @@ Versions the project was verified with are in [tooling.md](tooling.md).
 ### Debian / Ubuntu (x86_64)
 
 ```sh
-sudo apt install git python3 python3-venv unzip curl patch
+sudo apt install git python3 python3-venv unzip curl patch xz-utils
 tools/bootstrap.sh --only deps        # Ghidra 12.1.4 + Temurin JDK 21.0.13+9 into ~/opt, SHA-256 checked
 # optional, for the SDR step:
 sudo apt install verilator yosys      # Debian bookworm: verilator 5.006, yosys 0.23
