@@ -28,6 +28,8 @@ Bit order (prjxray segbits_bram_*.block_ram.db, see docs/code/sdr/bram-tables.md
     the MSBs.
   * A RAMB36 interleaves its two halves bit by bit: RAMB36 INIT bit j is bit j//2
     of half Y(j%2); same for INITP. [inference from smoothness, see the doc]
+  * A tile with RAMB36.BRAM36_*_WIDTH_1 is a certain RAMB36 in x1 (halves x1) or x9
+    (halves x4) mode (prjxray fuzzer 027-bram36-config); other pairs stay a guess. (#92)
 """
 import collections
 import hashlib
@@ -109,10 +111,21 @@ def memories(bs):
             return WCODE.get(c["rd_a"] or "1", 1)
         same = (c0["in_use"] and c1["in_use"] and not (c0["sdp_rd36"] or c1["sdp_rd36"])
                 and c0["rd_a"] == c1["rd_a"])
+        flagged = bool(r["R36"]["w1"]) and c0["rd_a"] == c1["rd_a"] in ("1", "4")
+        if flagged:
+            # RAMB36.BRAM36_*_WIDTH_1 exists only on a true RAMB36E1 in the odd widths:
+            # x1 (halves x1) or x9 (halves x4) (prjxray fuzzer 027-bram36-config) (#92)
+            w = 1 if c0["rd_a"] == "1" else 9
+            bits = interleave(halves[0][0], halves[1][0])
+            pb = interleave(halves[0][1], halves[1][1])
+            pv = entries(bits, pb, w)
+            out.append({"name": r36, "sites": r18, "tile": t, "width": w, "kind": "RAMB36",
+                        "values": pv, "alt": "certain (BRAM36 width flag)"})
+            continue
         if same:
             # Two halves with the same port width are either one RAMB36 or two
-            # independent RAMB18s; the bitstream has no bit that tells them
-            # apart, so keep the reading with the smoother contents.
+            # independent RAMB18s; apart from the odd-width flag above the bitstream
+            # has no bit that tells them apart, so keep the reading with the smoother contents.
             w = R36_FROM_HALF[hw(c0)]
             bits = interleave(halves[0][0], halves[1][0])
             pb = interleave(halves[0][1], halves[1][1])

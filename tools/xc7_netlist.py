@@ -586,19 +586,21 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                 approx.append("SMALL (32-deep / dual 32) mode modelled as one 64/32-deep cell")
             if is_srl:
                 pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(5)}
-                pins.update({"D": (d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
+                # SMALL mode: the 6LUT (O6) half takes its data from DI2 = the X bypass pin and the 5LUT
+                # (O5) half from DI1, as nextpnr-xilinx's packer models it (#92)
+                pins.update({"D": (P(L + "X") if small else d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
                              "Q": (o6[L], "O"), "Q31": (mc31[L], "O")})
                 nl.cell(S + L + "LUT", "SRLC32E", site, {"INIT": (init >> 32) if small else init & 0xFFFFFFFF,
                                                          "#w:INIT": 32, "IS_CLK_INVERTED": clkinv},
                         pins, approx)
-                if small:   # second shift register of the pair drives O5, data from DI2 = X bypass pin
+                if small:   # second shift register of the pair drives O5, data from DI1 (#92)
                     pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(4)}
                     pins["A[4]"] = (GND, "I")
-                    pins.update({"D": (P(L + "X"), "I"), "CE": (we, "I"), "CLK": (clk, "I"),
+                    pins.update({"D": (d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
                                  "Q": (o5[L], "O")})
                     nl.cell(S + L + "5LUT", "SRLC32E", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
                                                               "IS_CLK_INVERTED": clkinv}, pins,
-                            ["SRL16 pair half (O5); DI2 = X bypass assumed"])
+                            ["SRL16 pair half (O5); DI1 per nextpnr-xilinx (#92)"])
             else:
                 pins = {"RADR%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(6)}
                 pins.update({"WADR%d" % i: (P("D%d" % (i + 1)), "I") for i in range(6)})
@@ -606,17 +608,18 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                     pins["WADR6"] = (P("CX"), "I")
                 if f.get("WA8USED"):
                     pins["WADR7"] = (P("BX"), "I")
-                pins.update({"I": (d, "I"), "WE": (we, "I"), "CLK": (clk, "I"), "O": (o6[L], "O")})
+                pins.update({"I": (P(L + "X") if small else d, "I"), "WE": (we, "I"), "CLK": (clk, "I"),
+                             "O": (o6[L], "O")})
                 nl.cell(S + L + "LUT", "RAMD64E", site, {"INIT": init, "#w:INIT": 64,
                                                          "IS_CLK_INVERTED": clkinv}, pins, approx)
-                if small:   # RAM32 pair: second 32x1 on O5, data DI2 = X bypass pin
+                if small:   # RAM32 pair: second 32x1 on O5, data from DI1 (#92)
                     pins = {"RADR%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(5)}
                     pins.update({"WADR%d" % i: (P("D%d" % (i + 1)), "I") for i in range(5)})
-                    pins.update({"I": (P(L + "X"), "I"), "WE": (we, "I"), "CLK": (clk, "I"),
+                    pins.update({"I": (d, "I"), "WE": (we, "I"), "CLK": (clk, "I"),
                                  "O": (o5[L], "O")})
                     nl.cell(S + L + "5LUT", "RAMD32", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
                                                              "IS_CLK_INVERTED": clkinv}, pins,
-                            ["RAM32 pair half (O5); DI2 = X bypass assumed"])
+                            ["RAM32 pair half (O5); DI1 per nextpnr-xilinx (#92)"])
             continue
         if L in used_o5:
             pins = dict(ins, O6=(o6[L], "O"), O5=(o5[L], "O"))

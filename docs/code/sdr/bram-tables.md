@@ -45,8 +45,12 @@ meaning]**.
 **RAMB36 bit order [inference, high].** RAMB36 INIT bit *j* is bit *j*/2 of half Y(*j* mod 2): the two RAMB18 halves
 are bit-interleaved. Evidence: joined this way, pairs that look like noise per half become smooth (X0Y19: total
 variation 32/step interleaved vs 482 concatenated; X1Y4: 4.7 vs 17.1; X0Y5 starts 40, 40, 39, 37, 34, 31, 26 ...).
-Two halves with the same width can also be two independent RAMB18s, and no configuration bit separates the cases,
-so `xc7_bram_tables.py` keeps whichever reading is smoother (it chose separate halves for X0Y5, X2Y12, X2Y14).
+Two halves with the same width can also be two independent RAMB18s. For the odd widths a configuration bit does separate
+them (#92): `RAMB36.BRAM36_{READ,WRITE}_WIDTH_{A,B}_1` exists only on a true RAMB36E1 in x1 mode (halves x1) or x9 mode
+(halves x4) (prjxray fuzzer `027-bram36-config`) **[fact]**. 31 tiles of this image carry it, all with x4 halves, so they are
+**RAMB36 x9**; `xc7_bram_tables.py` now takes them as certain. For other widths no bit separates the cases, and the tool
+still keeps whichever reading is smoother (separate halves for X2Y12, X2Y14). This bit order is also what makes X0Y5's
+flagged pair a smooth quadratic table, which strengthens the interleave rule.
 Inside a RAMB18 at width W, entry *i* is INIT bits [*i*d, *i*d+d) (d = 1/2/4/8/16) with INITP bits as the MSBs
 (x9: 1, x18: 2) **[fact, UG473 + prjxray]**.
 
@@ -64,7 +68,7 @@ with identical contents. Sites are prjxray names (`RAMB36_X*Y*` / `RAMB18_X*Y*`)
 | RAMB36_X0Y19 (x4: X0Y19, X0Y29, X1Y28, X2Y16) | x18 | 2048 | Each 16-bit word holds two 6-bit fields (bits 6, 7, 14, 15 always 0). Read as `hi*64+lo` it is a smooth 12-bit sequence 3..4094 starting and ending at 2047 and symmetric about the middle, with a wrap at 4096: a 12-bit **phase table with quadratic (chirp-like) shape** | [fact for fields, inference for phase] |
 | RAMB36_X0Y25 (x4: X0Y25, X1Y27, X1Y29, X2Y19) | x18 | 2048 | Low 16 bits step by a slowly decreasing increment (13807, 13807, 13806, 13805 ...) modulo 2^16: a 16-bit **phase accumulator / chirp phase table**; the two parity bits carry extra flags | [fact for the steps, inference for phase] |
 | RAMB36_X0Y26 (x4: X0Y26, X0Y27, X0Y28, X2Y18) | x18 | 2048 | 16-bit values whose first differences change by about -3000 per step modulo 2^16: another **quadratic phase table** | [inference, medium] |
-| RAMB18_X0Y10, RAMB18_X0Y11 (RAMB36_X0Y5) | x4 + x4, or x9 | 4096 | Joined as x9, second differences modulo 512 are 0 or -1 for 83 % of entries: `phase(n) ~ 40 - 0.216 n^2 (mod 512)`, a 9-bit **quadratic phase table**. The tool's smoothness rule keeps the halves separate; the quadratic fit is the stronger evidence for x9. | [inference, medium] |
+| RAMB36_X0Y5 (RAMB18_X0Y10 + X0Y11) | **x9** (BRAM36 width flag, #92) | 4096 | Second differences modulo 512 are 0 or -1 for 83 % of entries: `phase(n) ~ 40 - 0.216 n^2 (mod 512)`, a 9-bit **quadratic phase table**. Earlier the tool's smoothness rule kept the halves separate; the configuration flag now settles x9 **[fact for the mode]**. | [inference, medium] for the meaning |
 | RAMB36_X0Y6 | x9 | 4096 | Second differences modulo 512 cluster at 107-113: a 9-bit **quadratic phase table** with a larger rate | [inference, medium] |
 | RAMB36_X1Y4 | x9 | 4096 | 16 rows of 256: each row is a straight line modulo 512 whose slope grows with the row number (about -0.37 x row per step): `phase(r, c) ~ p0(r) - k r c`, a 2-D **twiddle-style phase table** | [inference, medium] |
 | RAMB36_X1Y9 | x18 | 1527 / 2048 | Piecewise-smooth 18-bit signed values (-66097..98095) with steps in blocks | [fact], purpose unknown |
