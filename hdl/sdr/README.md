@@ -21,6 +21,7 @@ in `build/` (never committed).
 | `sim/tb_bram.v` | BRAM model test: RAMB36 x9 against two RAMB18 x4 halves with interleaved INIT (data + parity), x9 writes, x18 byte enables, SDP x36 | PASS (Icarus) |
 | `sim/full_main.cpp`, `sim/build_full.sh` | Verilator harness and build for the **whole** netlist (UART players/decoders, probe and snapshot output) | 63k cells, ~15,000 clocks/s |
 | `sim/pins_main.cpp` | Pin-activity harness for the whole netlist (#90): toggle counts, burst gaps and optional edge logs of the unassigned outputs, with MAIN register frames played on UART B. Build with `MAIN=pins_main.cpp OBJ=obj_pins hdl/sdr/sim/build_full.sh` | found the I2S port and the two power-up SPI transfers; `CONSOLE=`/`INPUTS=` (#89) showed `#` = hex E, BS = hex B on the console and that no input gates `x`; `ADC=noise` / `ADC=sine:PERIOD` drive the 14 ADC pairs (#91) |
+| `sim/adc_main.cpp` | Two-channel ADC harness (#172): drives channel A and B with the traced bit map (needs `-DIDDR_DDR`, the DDR IDDR stand-in in `xc7_prims_vl.v`), MAIN frames on UART B, probe snapshots | confirmed the 14-bit two's-complement words, the DC tracker and the gain registers 0x12/0x13 |
 | `sim/cosim_top.v`, `sim/cosim_directed.sh`, `sim/cosim_random.sh` | netlist and `ft710_uart_link` side by side, TX compared every clock | see results |
 
 ## The link protocol (UART B, MAIN's UART5) [fact, whole-netlist simulation]

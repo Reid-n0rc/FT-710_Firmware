@@ -16,10 +16,19 @@ BUILD=${BUILD:-$REPO/build/sdr}
 HERE=$(cd "$(dirname "$0")" && pwd)
 mkdir -p "$BUILD/vl"
 cd "$BUILD/vl"
-# DSP48E1 (and RAMB18E1's port list for BRAM=yosys) from Yosys, without the $fatal mode checks (they fire on constant-tied mode pins)
+# DSP48E1 (and RAMB18E1's port list for BRAM=yosys) from Yosys, without the $fatal mode checks (they fire on constant-tied mode pins).
+# Yosys' model declares IS_{INMODE,OPMODE,ALUMODE,CARRYIN}_INVERTED but ignores them, so the netlist's pin inverters (#91)
+# had no effect and every DSP computed Z - (A:B + C + 1) instead of A*B (#172); apply them where the mode pins enter.
 python3 -I - /usr/share/yosys/xilinx/cells_sim.v <<'EOF'
 import re, sys
 s = re.sub(r'\$fatal[^;]*;', ';', open(sys.argv[1]).read())
+for a, b in (('INMODEr <= INMODE;', 'INMODEr <= INMODE ^ IS_INMODE_INVERTED;'),
+             ('OPMODEr <= OPMODE;', 'OPMODEr <= OPMODE ^ IS_OPMODE_INVERTED;'),
+             ('ALUMODEr <= ALUMODE;', 'ALUMODEr <= ALUMODE ^ IS_ALUMODE_INVERTED;'),
+             ('CARRYINr <= CARRYIN;', 'CARRYINr <= CARRYIN ^ IS_CARRYIN_INVERTED;'),
+             ('CARRYINr = CARRYIN;', 'CARRYINr = CARRYIN ^ IS_CARRYIN_INVERTED;')):
+    assert a in s, a
+    s = s.replace(a, b)
 for m in ('DSP48E1', 'RAMB18E1'):
     i = s.index('module ' + m + ' ')
     open('y_' + m + '.v', 'w').write(s[i:s.index('endmodule', i) + 9] + '\n')
