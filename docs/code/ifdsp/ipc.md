@@ -117,7 +117,7 @@ sequenceDiagram
   M->>HW: ipc_init: rpmsg_lite_master_init(0x20020000), ept 0x28
   M->>HW: virtqueue_kick(rx_vq): MU-A TR1 = 0<<16
   M->>D: BOARD_DSP_Init: copy images, DSPSTALL = 0
-  D->>D: main 0x21C498: zero 0x20060000..0x200631E0, regfile_set_defaults
+  D->>D: main 0x21C498: 0x20060000.. uncached (xthal), regfile_set_defaults
   D->>D: create Thread_Main, Thread_Ipc, audio threads, xos_start
   M->>HW: SEMA42_Init, SEMA42_ResetAllGates(0x40 = all)
   M->>HW: MU_SetFlags(MUA, 1)
@@ -143,9 +143,9 @@ Details and evidence:
 | Step | M33 (address) | DSP (address) | Tag |
 |---|---|---|---|
 | Flag 1 from M33 | `MU_SetFlags(0x40110000, 1)` at 0x000810E4 | Polls `l32i SR (+0x60)`, `extui 0..2`, `beqi 1` at 0x0021C416–0x0021C434 | **[fact]** |
-| Flag 1 from DSP | Polls SR & 7 == 1 at 0x000810EA–0x000810F2 | `call8 MU_SetFlags` 0x0021C43E (argument in a bundle) | **[fact]**, value 1 **[inference: FLIX]** |
+| Flag 1 from DSP | Polls SR & 7 == 1 at 0x000810EA–0x000810F2 | `MU_SetFlags(0x40111000, 1)` 0x0021C438–0x0021C43E (`{ l32r a10; movi a11, 1 }`) | **[fact]** (#184) |
 | Gate 0 lock, flag 2 | `SEMA42_Lock(0x40112000, 0, r2 = 1)` 0x000810FA, `MU_SetFlags(2)` 0x00081102, `strb 0 → 0x40112003` (GATE0 unlock) 0x0008110A | Polls SR & 7 == 2 at 0x0021C441–0x0021C45C | **[fact]** |
-| DSP takes the gate, flag 3 | Polls SR & 7 == 3 at 0x0008110C–0x00081114 | `SEMA42_Init` 0x0021C463, `SEMA42_Lock` 0x0021C46F, `MU_SetFlags` 0x0021C478 | calls **[fact]**, gate number and flag 3 **[inference: FLIX]** |
+| DSP takes the gate, flag 3 | Polls SR & 7 == 3 at 0x0008110C–0x00081114 | `SEMA42_Init(0x40112000)` 0x0021C463, `SEMA42_Lock(0x40112000, gate 0, proc 3)` 0x0021C469–0x0021C46F (`{ movi a11, 0; movi a12, 3 }`), `MU_SetFlags(0x40111000, 3)` 0x0021C472–0x0021C478 | **[fact]** (#184) |
 
 **Correction to the T12a notes:** the M33 releases **gate 0**, not gate 3. The NXP SEMA42 gate registers are byte-reversed
 inside each word (gate n is at byte offset n ^ 3), so 0x40112003 is GATE0. `SEMA42_Lock` 0x00086FEC computes the same
@@ -159,8 +159,8 @@ What the handshake guarantees **[inference]**:
   (reg 0 = 0x0101, reg 0x4000 = 1, reg 1 bit 0) and every later MAIN write via the console cannot be overwritten by the DSP's
   defaults. This is likely the real purpose of the handshake: `CommandTask` is created only after flag 3.
 - SEMA42 is used only as this one-shot token. No other code on either core references 0x40112000. **[fact: M33 literal at
-  0x0008115C only; DSP literals 0x002069B0 used only by 0x00213D10 and `Thread_Ipc`]** The DSP never releases the gate in
-  visible code. **[inference: FLIX may hide it]**
+  0x0008115C only; DSP literals 0x002069B0 used only by 0x00213D10 and `Thread_Ipc`]** The DSP never releases the gate: with the
+  FLIX-aware listing, no other code loads that literal **[fact, #184]**.
 
 The handshake has no timeouts. If the DSP never reaches flag 3, the M33 spins in `app_main` forever. No console comes up, and
 MAIN's `i DB00` / register frames go unanswered. **[fact: busy loops without a counter]**
@@ -183,7 +183,7 @@ MAIN's `i DB00` / register frames go unanswered. **[fact: busy loops without a c
 | Local endpoint | 0x28 (40), rx callback `rpmsg_queue_rx_cb` 0x000861B8 into a FreeRTOS queue of `rvq->vq_nentries` = 2 × 12 B | `ipc_init`, `rpmsg_queue_create` 0x000861DA **[fact]** |
 | Remote endpoint | 0x1E (30), stored at 0x00088B54 | `ipc_init` **[fact]** |
 | DSP side | `rpmsg_lite_remote_init` 0x0021B544 with shm 0x20020000 | call **[fact]**, address **[inference: L32R]**: literal 0x20020000 at 0x00206CA8, next to the endpoint-callback literal 0x00206CAC in `Thread_Ipc`'s pool, loaded inside a bundle |
-| DSP endpoint | 0x1E, callback `ipc_ept_rx_cb` 0x0021C398 | callback **[fact: literal 0x00206CAC loaded at 0x0021C402]**, number **[inference: FLIX]** (byte 0x1E appears in the bundle `eef11e7b12e0` at 0x0021C405 that sets up the call) |
+| DSP endpoint | 0x1E, callback `ipc_ept_rx_cb` 0x0021C398 | callback **[fact: literal 0x00206CAC loaded at 0x0021C402]**, number **[fact]**: the bundle `eef11e7b12e0` at 0x0021C405 is `{ addi a14, a1, 127; movi a11, 30 }` (#184) |
 
 The endpoint numbers 0x28 (MCU) and 0x1E (DSP) are the `MCU_EPT_ADDR` (40) / `DSP_EPT_ADDR` (30) values of NXP's RT685
 `dsp_xaf_*` SDK examples. The DSP code structure (remote init, wait for link up, `create_ept`, message queue, `handleMSG`
@@ -228,9 +228,9 @@ endpoint callback drops anything else (`movi a8, 152; beq a3, a8` at 0x0021C39B)
 |---|---|---|---|---|
 | 0x00 | 8 | (unused prefix) | not read by either side | **[fact: no access seen]**, meaning **[guess]** |
 | 0x08 | 1 | `head.category` | M33 `ipc_print_dsp_reply` 0x00080FE8, DSP `ipc_handle_msg` 0x0021BD5B | **[fact]** |
-| 0x09 | 1 | `head.majorVersion` | DSP loads +9 at 0x0021BD43, checks a value == 2 | **[fact]** load, meaning **[inference]** |
-| 0x0A | 1 | `head.minorVersion` | (likely checked inside the bundle at 0x0021BD49) | **[guess]** |
-| 0x0B | 1 | `head.type` (0 = request) | DSP loads +0xB; handlers write it (`s8i …, 11`); reply sent only when the original type was 0 | **[inference]** |
+| 0x09 | 1 | `head.majorVersion` | DSP: +9 must be 1 (`bnei.w15 a8, 1` in the bundle at 0x0021BD49) | **[fact]** (#184), meaning **[inference]** |
+| 0x0A | 1 | `head.minorVersion` | DSP: +10 must be 2 (`beqi a9, 2` at 0x0021BD54) | **[fact]** (#184), meaning **[inference]** |
+| 0x0B | 1 | `head.type` (0 = request) | DSP loads +0xB; reply only when it was 0, then sets it to 1 (0x0021BD9F); an unknown category or a handler error sets 2 | **[fact]** (#184), names **[inference]** |
 | 0x0C | 1 | `head.command` | M33 0x00080FE8, DSP 0x0021BDCF / 0x0021BE57 | **[fact]** |
 | 0x0D–0x13 | 7 | `head.priority`, `reserved[4]`, padding | — | **[inference]** |
 | 0x14 | 4 | `error` (0 = OK) | M33 reads it; DSP writes it on unknown category/command | **[fact]** |
@@ -245,11 +245,11 @@ Categories and commands known from both sides:
 |---|---|---|---|---|
 | 0 (general) | 0 | `Component versions from DSP:` (header only, no parameters printed) | `handle_msg_general` 0x0021BDCC: one command fills `param[]` with nine `major<<16 \| minor` words: 0x00020000, 0x00010003, 0x00040000, 0x0004000A, 0x00030011, 0x00030006, 0x0001000C, 0x00010008, 0x00010004 (Xtensa Audio Framework / codec library versions, as in NXP's `SRTM_Command_SYST`) | **[fact]** values, meaning **[inference]** |
 | 0 | other | `Incoming unknown message command %d from category %d` | error | **[fact]** |
-| 1 (audio) | 0 | `Mute on` / `Mute off` (`param[0]` ≠ 0 / = 0), `Mute error (%d)` (error ≠ 0) | `handle_msg_audio` 0x0021BE54: command at +0xC, sets error +0x14 (0 on the success path at 0x0021BE4D) | **[fact]** strings; DSP command meaning **[inference]** |
-| 3 | 0 | `DSP Version %04X` (`param[0]`) / `DSP Version error (%d)` | **none**: `ipc_handle_msg` only accepts categories 0 and 1, and stores an error for others | **[fact]** M33; DSP **[inference: FLIX in the error path 0x0021BD63]** |
+| 1 (audio) | 0 | `Mute on` / `Mute off` (`param[0]` ≠ 0 / = 0), `Mute error (%d)` (error ≠ 0) | `handle_msg_audio` 0x0021BE20: command 0 with param[0] 0 or 1 → error 0, and **nothing else is done**; other param → type 2, error 2; other command → error 3 | **[fact]** (#184) |
+| 3 | 0 | `DSP Version %04X` (`param[0]`) / `DSP Version error (%d)` | `handle_msg_version` 0x0021BE54 (`beqi.w15 a9, 3` in the bundle at 0x0021BD63): command 0 → param[0] = 1, so the M33 would print `DSP Version 0001`; other command → error 3 | **[fact]** (#184) |
 | other | — | `Incoming unknown message category %d` | error | **[fact]** |
 
-The M33 and DSP tables do not match (category 3 exists only on the M33). This fits the code being a leftover from development,
+*(Before #184 this page said the DSP had no category 3 and put `handle_msg_audio` at 0x0021BE54; the FLIX-aware listing shows the dispatch above.)* The tables match. The M33 send queue is never written (`ipc_send_queue`, below), so no message is sent in normal use, and this fits the code being a leftover from development,
 or from a different DSP build. **[inference]**
 
 ## IPC tasks and steady state
@@ -305,7 +305,7 @@ MAIN as text. **[fact: `uart0_write` 0x00080CA4]**
 | 0x20020C00–0x20020FFF | both | 2 × 512 B tx buffers | **[fact: computed]** |
 | 0x20021000–0x2003FFFF | — | unused part of the rpmsg window (0x1F000 B). The DSP has literals 0x20021001, 0x20022800 (×2), 0x200317E5, 0x20037D38 and 0x2003D400 in code at 0x0021532C / 0x00209250 / 0x002092B0 / …; these are probably float constants or unrelated values, not checked | **[guess]** |
 | 0x20040000–0x200431DF | DSP | HiFi4 image 2 (all zero) copied by the M33 | **[fact]** |
-| 0x20060000–0x200631DF | DSP only | DMA/I2S buffers. DSP `main` zeroes the region and `audio_i2s_fc3_fc4_fc5_init` lists 0x20062BE0.. 0x20063120 per FLEXCOMM; never touched by the M33 | DSP literals **[fact]**, ownership **[inference]** |
+| 0x20060000–0x200631DF | DSP only | DMA/I2S buffers. DSP `main` makes the region uncached (`xthal_set_region_attribute`, cattr 2; earlier read as a memset, #184) and `audio_i2s_fc3_fc4_fc5_init` lists 0x20062BE0.. 0x20063120 per FLEXCOMM; never touched by the M33 | DSP literals **[fact]**, ownership **[inference]** |
 | 0x20070000–0x2007FFFF | both, unsynchronised | parameter register file (32K × 16 bit). Cleared by the M33 before the DSP starts, cleared again and filled with defaults by DSP `regfile_set_defaults` before the handshake ends, then written by the M33 console (MAIN) and read and written by DSP threads | **[fact]** |
 
 ### How the DSP consumes the register file
@@ -386,13 +386,13 @@ inference: DSP ownership, see T12e]**
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0x0021C498 | `xos_create_main_ipc_threads` | `main` | zero DMA area, `regfile_set_defaults`, clocks, create threads, `xos_start` **[fact: calls]** |
+| 0x0021C498 | `xos_create_main_ipc_threads` | `main` | DMA area uncached (`xthal_set_region_attribute`), `regfile_set_defaults`, clocks, create threads, `xos_start` **[fact: calls]** |
 | 0x0021C360 | `Thread_Main_entry` | *`Thread_Main`* | thread entry (literal 0x00206CD0 with name 0x00206370) **[fact]** |
 | 0x0021C3B4 | `Thread_Ipc_entry` | *`Thread_Ipc`* | rpmsg remote, endpoint, handshake, message loop **[fact: calls; args inference]** |
 | 0x0021C398 | `ipc_ept_rx_cb` | `ipc_ept_rx_cb` | length check 0x98, `xos_msgq_put`, return 0 (RL_RELEASE) **[fact]** |
 | 0x0021BD40 | `ipc_handle_msg` | `ipc_handle_msg` | version check, category dispatch, reply via `rpmsg_lite_send` under `xos_mutex` **[fact: calls]** |
-| 0x0021BDCC / 0x0021BE54 | `FUN_…` | `handle_msg_general` / `handle_msg_audio` | category 0 / 1 **[inference]** |
-| 0x0021BE80 | `regfile_set_defaults` | `regfile_set_defaults` | clear + defaults of 0x20070000 **[fact]** |
+| 0x0021BDCC / 0x0021BE20 / 0x0021BE54 | `handle_msg_general` / `handle_msg_audio` / `handle_msg_version` | same | category 0 / 1 / 3 **[fact, #184]** |
+| 0x0021BE80 | `regfile_set_defaults` | `regfile_set_defaults` | `xthal_set_region_attribute(0x20070000, 0x10000, 2, 0)` (bypass), then the defaults; the clear is the M33's `regfile_clear` **[fact, #184]** |
 | 0x0021B544 | `rpmsg_lite_remote_init` | `rpmsg_lite_remote_init` | **[inference]** |
 | 0x0021B078 / 0x0021B088 / 0x0021AF9C | `FUN_…` | `rpmsg_lite_is_link_up` / `rpmsg_lite_send` / `rpmsg_lite_create_ept` | **[fact: link_state +0x10; inference others]** |
 | 0x0021B734 / 0x0021B778 | `FUN_…` | `rpmsg_ns_bind` / `rpmsg_ns_announce` | no callers **[inference]** |
@@ -422,8 +422,8 @@ inference: DSP ownership, see T12e]**
 
 ## Open questions
 
-- DSP flag values 1 and 3, the SEMA42 gate number and proc id, and the DSP endpoint number 0x1E are inside FLIX bundles.
-  A correct HiFi4 decode (T12e / T07 follow-up) would turn these from inference into fact.
+- *(Done in #184: the DSP flag values 1 and 3, SEMA42 gate 0 / proc 3, endpoint 0x1E and the category-3 handler are read from the
+  FLIX-aware listing, see the tables above and [dsp-chains.md](dsp-chains.md#ipc-the-flix-hidden-operands-and-xthal_set_region_attribute).)*
 - What reg 0x4000 = 1 and reg 1 bit 0 mean to the DSP (FLIX-hidden loads, or the 0x20070000 base, which the scanner does not track).
 - Whether the DSP's `Thread_Main` (reads a global ×100 in a loop of 10, then `cpu_load_to_regs_2000`) polls the register file. See T12e.
 - The 8-byte prefix of the 0x98-byte message.

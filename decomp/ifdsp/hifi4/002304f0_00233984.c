@@ -2980,8 +2980,10 @@ void FUN_002333e0(void)
 
 // ===== xthal_set_region_attribute @ 00233410 (360 bytes)
 
-/* (vaddr, size, cattr, flags): called by the DSP main with (0x20060000, 0x31E0, 2, 0) and
-   (0x20070000, 0x10000, 2, 0); T12c proposed memset, but memset is 0x235EB0 [inference] */
+/* (vaddr, size, cattr, flags): Cadence HAL region-protection variant, 8 x 512 MB regions via
+   xthal_get/set_cacheattr; flag bits 9-12 EXACT, NO_PARTIAL, NO_AUTO_WB, NO_AUTO_INV; returns 0, -2
+   (inexact), -3 (bad range). DSP main calls (0x20060000, 0x31E0, 2, 0) and (0x20070000, 0x10000, 2,
+   0): cattr 2 = bypass on region 0x20000000-0x3FFFFFFF (#184) */
 
 undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint param_4)
 
@@ -3025,7 +3027,7 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
     else if (((param_1 & 0x1fffffff) != 0) || ((uVar5 + 1 & 0x1fffffff) != 0)) {
       return 0xfffffffe;
     }
-    uVar2 = FUN_00233580();
+    uVar2 = xthal_get_cacheattr();
     uVar5 = uVar2;
     if (uVar7 < uVar6) {
       bVar1 = false;
@@ -3056,11 +3058,11 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
       }
     }
     if ((uVar5 != uVar2) && ((param_4 >> 0xb & 1) == 0)) {
-      FUN_002335a0(uVar5,uVar6);
+      xthal_set_cacheattr(uVar5,uVar6);
       FUN_00236450();
       uVar6 = extraout_a3;
     }
-    FUN_002335a0(uVar2,uVar6);
+    xthal_set_cacheattr(uVar2,uVar6);
     if ((bVar1) && ((param_4 & 0x1000) == 0)) {
       FUN_002364b0();
       FUN_002364d0();
@@ -3071,9 +3073,11 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
 }
 
 
-// ===== FUN_00233580 @ 00233580 (32 bytes)
+// ===== xthal_get_cacheattr @ 00233580 (32 bytes)
 
-uint FUN_00233580(void)
+/* rdtlb1 of the 8 x 512 MB regions -> 8 attribute nibbles (#184) */
+
+uint xthal_get_cacheattr(void)
 
 {
   uint uVar1;
@@ -3092,9 +3096,11 @@ uint FUN_00233580(void)
 }
 
 
-// ===== FUN_002335a0 @ 002335a0 (83 bytes)
+// ===== xthal_set_cacheattr @ 002335a0 (83 bytes)
 
-void FUN_002335a0(uint param_1)
+/* witlb (skipping its own region) and wdtlb for each 512 MB region, 4 bits each (#184) */
+
+void xthal_set_cacheattr(uint param_1)
 
 {
   int iVar1;

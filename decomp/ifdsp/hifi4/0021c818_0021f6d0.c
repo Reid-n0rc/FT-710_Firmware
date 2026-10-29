@@ -551,9 +551,11 @@ void FUN_0021d07c(void)
 }
 
 
-// ===== FUN_0021d0a8 @ 0021d0a8 (38 bytes)
+// ===== zeroin_goertzel_reset @ 0021d0a8 (38 bytes)
 
-void FUN_0021d0a8(void)
+/* s1 = s2 = 0 for the 3 bins (#184) */
+
+void zeroin_goertzel_reset(void)
 
 {
   undefined8 uVar1;
@@ -572,9 +574,12 @@ void FUN_0021d0a8(void)
 }
 
 
-// ===== FUN_0021d0d0 @ 0021d0d0 (112 bytes)
+// ===== zeroin_goertzel_tune @ 0021d0d0 (112 bytes)
 
-void FUN_0021d0d0(void)
+/* (f): 3 Goertzel bins at f, f - 15, f + 15 Hz over 240 samples, coeff 2 cos(2 pi f / 12000); then
+   reset (#184) */
+
+void zeroin_goertzel_tune(void)
 
 {
   undefined4 uVar1;
@@ -601,11 +606,11 @@ void FUN_0021d0d0(void)
     uVar5 = (ulonglong)
             (uint)((float)uVar4 * (float)uVar6 * (float)uVar9 * (float)uVar8 * (float)uVar7);
     uVar2 = ae_s32_l_i(uVar5);
-    FUN_00229460();
+    sinf();
     uVar1 = ae_s32_l_i(uVar5);
     puVar3[3] = uVar1;
     uVar4 = ae_l32_i(uVar2);
-    FUN_002293e0();
+    cosf();
     uVar6 = ae_l32_i(&DAT_40000000);
     uVar1 = ae_s32_l_i(uVar4);
     puVar3[4] = uVar1;
@@ -613,14 +618,16 @@ void FUN_0021d0d0(void)
     *puVar3 = uVar1;
     puVar3 = puVar3 + 7;
   } while (puVar3 != (undefined4 *)0x246d18);
-  FUN_0021d0a8();
+  zeroin_goertzel_reset();
   return;
 }
 
 
-// ===== FUN_0021d140 @ 0021d140 (80 bytes)
+// ===== zeroin_goertzel_step @ 0021d140 (80 bytes)
 
-void FUN_0021d140(void)
+/* (x): s = x + c s1 - s2 for the 3 bins (#184) */
+
+void zeroin_goertzel_step(void)
 
 {
   float in_aed0;
@@ -650,9 +657,11 @@ void FUN_0021d140(void)
 }
 
 
-// ===== FUN_0021d190 @ 0021d190 (78 bytes)
+// ===== zeroin_goertzel_mag @ 0021d190 (78 bytes)
 
-void FUN_0021d190(void)
+/* |X| = sqrt(s1^2 + s2^2 - c s1 s2) per bin (#184) */
+
+void zeroin_goertzel_mag(void)
 
 {
   undefined4 uVar1;
@@ -687,9 +696,12 @@ void FUN_0021d190(void)
 }
 
 
-// ===== FUN_0021d1e0 @ 0021d1e0 (84 bytes)
+// ===== zeroin_tone_gate @ 0021d1e0 (84 bytes)
 
-uint FUN_0021d1e0(uint param_1)
+/* (state): off -> on when the centre bin > 90.83 A and > both side bins; on -> off when centre <
+   90.83 A (A = sqrt 2 RMS) (#184) */
+
+uint zeroin_tone_gate(uint param_1)
 
 {
   undefined2 uVar1;
@@ -720,9 +732,11 @@ uint FUN_0021d1e0(uint param_1)
 }
 
 
-// ===== FUN_0021d234 @ 0021d234 (60 bytes)
+// ===== cw_zero_in_init @ 0021d234 (60 bytes)
 
-void FUN_0021d234(void)
+/* clears the zero-in state, reg 4 = 0x7FFF, hilbert state (#184) */
+
+void cw_zero_in_init(void)
 
 {
   undefined8 uVar1;
@@ -833,7 +847,7 @@ void cw_zero_in_estimator(undefined4 param_1)
           }
           memw();
           ae_l32_i(DAT_00246eac);
-          FUN_0021d0d0();
+          zeroin_goertzel_tune();
           memw();
           uVar8 = ae_l32_i(0);
           DAT_00246ea8 = ae_s32_l_i(uVar8);
@@ -849,7 +863,7 @@ void cw_zero_in_estimator(undefined4 param_1)
             DAT_00246ea4 = ae_s32_l_i(uVar8);
             memw();
             ae_l32_i(DAT_00246ea4);
-            FUN_0021d140();
+            zeroin_goertzel_step();
             memw();
             uVar10 = ae_l32_i(DAT_00246ea8);
             memw();
@@ -861,7 +875,7 @@ void cw_zero_in_estimator(undefined4 param_1)
                                      );
             iVar1 = iVar1 + 1;
           } while (iVar1 != 0xf0);
-          FUN_0021d190();
+          zeroin_goertzel_mag();
           memw();
           uVar9 = ae_l32_i(DAT_00246ea8);
           uVar8 = ae_l32_i(0x3b888889);
@@ -893,7 +907,7 @@ void cw_zero_in_estimator(undefined4 param_1)
           uVar8 = ae_l32_i(0x3727c5ac);
           uVar7 = ole_s(uVar8,uVar9);
           if (!SUB21(uVar7,0)) goto LAB_0021d307;
-          uVar2 = FUN_0021d1e0(DAT_002469cc);
+          uVar2 = zeroin_tone_gate(DAT_002469cc);
           iVar1 = ae_zext16(uVar2);
           DAT_002469cc = (undefined2)iVar1;
           uVar8 = ae_l32_i(DAT_002465e8);
@@ -2049,7 +2063,7 @@ void FUN_0021e6b0(void)
 
 // ===== branch_b_delay @ 0021e6c4 (124 bytes)
 
-/* reg 0x56 */
+/* reg 0x56 samples (MAIN 32), max 1200, branch B (AESS output) only */
 
 undefined8 branch_b_delay(undefined4 *param_1,undefined4 *param_2)
 
@@ -2108,11 +2122,12 @@ void FUN_0021e740(void)
 }
 
 
-// ===== cw_fir_lowpass @ 0021e754 (206 bytes)
+// ===== aess_lowpass_fir @ 0021e754 (206 bytes)
 
-/* 257-tap FIR, reg 0x4020 */
+/* AESS crossover (branch B): 257-tap low-pass, reg 0x4020 bits 15-12 = 1 gentle / 2 steep, bits
+   11-0 = 700 or 1000 Hz (#184; was cw_fir_lowpass) */
 
-void cw_fir_lowpass(undefined *param_1,undefined *param_2)
+void aess_lowpass_fir(undefined *param_1,undefined *param_2)
 
 {
   uint uVar1;
@@ -2175,7 +2190,7 @@ LAB_0021e780:
 
 // ===== branch_a_align_delay @ 0021e82c (91 bytes)
 
-/* 128 samples while the CW FIR is on */
+/* 128 samples = the AESS FIR group delay, only while that FIR is on */
 
 undefined8 branch_a_align_delay(undefined4 *param_1,undefined4 *param_2)
 
@@ -2756,7 +2771,7 @@ void if_agc_init(void)
 
 // ===== if_agc_params @ 0021f004 (213 bytes)
 
-/* regs 0x62 0x63 0x66 0x67 */
+/* regs 0x62 on, 0x63 gain ceiling 0.2512 10^((255 - x)/40), 0x66 decay, 0x67 10^((x - 255)/40) */
 
 bool if_agc_params(void)
 
@@ -3109,7 +3124,7 @@ void FUN_0021f410(void)
   DAT_00252d34 = iir_cascade_init(&DAT_00252e00,5,&DAT_002373d0,1);
   DAT_00252d38 = iir_cascade_init(&DAT_00252ec0,5,&DAT_002373d0,1);
   FUN_00220b30();
-  FUN_0021d234();
+  cw_zero_in_init();
   FUN_0021e520();
   FUN_0021dbb0();
   spectral_nr_init();
@@ -3169,7 +3184,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   branch_a_align_delay(&DAT_002534c0,&DAT_002534c0);
   af_hicut(1,&DAT_00253400,&DAT_00253580);
   af_locut(1,&DAT_00253580,&DAT_00253580);
-  cw_fir_lowpass(&DAT_00253580,&DAT_00253580);
+  aess_lowpass_fir(&DAT_00253580,&DAT_00253580);
   branch_b_delay(&DAT_00253580,&DAT_00253580);
   memset(&DAT_00252f80,0,0x480);
   uVar2 = ae_l32_ip(DAT_002534c0);

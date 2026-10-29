@@ -61,10 +61,13 @@ but working out every algorithm needs more time than T12e had; the tables below 
 
 `xos_create_main_ipc_threads` (0x0021C498, the DSP `main`) runs once **[fact]**:
 
-1. `xthal_set_region_attribute`(0x20060000, 0x31E0, 2, 0)` and `(0x20070000, 0x10000, 2, 0)` — sets a memory attribute on the DMA buffers
-   and the register file (both shared with the M33 or DMA) **[fact: args]**; that it is `xthal_mpu_set_region_attribute`
-   (making them uncached) is **[inference]**.
-2. `regfile_set_defaults` (0x0021BE80): clears the 64 KB register file and writes defaults (table below) **[fact]**.
+1. `xthal_set_region_attribute`(0x20060000, 0x31E0, 2, 0)` and `(0x20060000, 0, 2, 0)` (size 0: returns at once). It is the
+   Cadence HAL region-protection variant (8 × 512 MB regions, `wdtlb`/`witlb`), and cattr 2 = bypass, so the whole region
+   0x20000000–0x3FFFFFFF (DMA buffers, register file, rpmsg shared memory) becomes uncached **[fact: code; HAL encoding inference]**
+   ([dsp-chains.md](dsp-chains.md#ipc-the-flix-hidden-operands-and-xthal_set_region_attribute), #184).
+2. `regfile_set_defaults` (0x0021BE80): `xthal_set_region_attribute(0x20070000, 0x10000, 2, 0)` (no further effect), then writes the
+   defaults (table below) **[fact]**. It does not clear the file: the M33's `regfile_clear` already did (#184; this page used to say
+   it clears it).
 3. `regfile_capture_init` (GPIO setup), `SystemCoreClock` = **594 MHz** (0x2367B880 → 0x2CB680), `xos_start_system_timer(-1, 0)`,
    `g_xtal = 24 MHz`, `g_clkin = 18.432 MHz` (0x238420 / 0x23841C) **[fact: values]**.
 4. `create_rx_tx_path_threads` (0x00225E40) — audio I/O init, `Thread_Rx_Path`, `Thread_Tx_Path`, then `create_Thread_Rx_Audio`.
