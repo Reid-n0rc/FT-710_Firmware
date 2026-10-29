@@ -474,7 +474,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Answers with the whole state of the VFO-A record 0x9D09 (channel, frequency, clarifier offset and flags, mode, VFO/memory state, two small selectors); always side 0 regardless of the selected VFO [fact]
 - **Globals / callees:** R: 0x60C9,0x9DBE,0x20F29,0x9D09[0,2,3,0x48,0x49,0x4A..0x4D], tables @0xFFF806D0/DF/E9; callees `vfo_freq`(0,0), nib2hex
 - **Risk:** low: read-only
-- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. Still open: meaning of P7 for states 4, 6–9.
+- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**.
+- **Resolved (#173):** P7 by state: 4 is **PMS** (written only by `vfo_mem_to_memtune` @ fffc5ce0, which stores 4 when `pms_load_limits` succeeds and 3 otherwise), and the table gives `5`, which is the manual's "5 PMS" **[fact]**. States 0 and 6–9 are never produced by MAIN V01-12: every write to 0x9DBE/0x9DBF is a constant 1, 2, 3, 5, the PMS setter's 3/4, or a copy of a saved state (0x9DC7, UI +0x484, 0x20F88, 0x18809, the `cat_FA_FB` restore) or the operating-state EEPROM block / ROM default 0xFFF80FC6 **[fact]**. So `F` (0/6/9) and `1` (7/8) are defensive table entries; `vfo_tune_locked` and `vfo_is_memory` also test 7/8, which suggests a memory sub-state from an earlier firmware or the sister model **[inference]**. A P7 of `F` would only appear after a corrupted operating-state block **[inference]**. Also, the manual's P7 `4` is never emitted **[fact]**.
 - **Resolved (#159):** rec[2] bits 2–3 are the repeater shift (0 minus, 1 simplex, 2 plus) and rec[3] bits 3–5 the tone mode (`CT`); see [the record table](code/main/radio-control.md#the-0x5a-byte-channel-record) **[fact]**.
 
 ### IS
@@ -757,7 +758,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Same as IF but reports VFO-B (side 1) [fact: dispatch calls cat_IF_OI(1) for table idx 64 '@']
 - **Globals / callees:** R 0x60CA,0x9DBF,0x20F2A,0x9D63[...]; `vfo_freq`(0,1)
 - **Risk:** low: read-only
-- **Resolved in part (#157):** as IF.
+- **Resolved (#157, #173):** as IF (same P7 table, indexed by 0x9DBF).
 
 ### OS
 
