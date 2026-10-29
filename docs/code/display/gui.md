@@ -315,8 +315,12 @@ too ([display-link.md](../main/display-link.md#0x37-func-panel-0x240-bytes-displ
 Slots **28** (`DEC LVL`) and **34–36** (`RX LEVEL`, `TX LEVEL`, `S.SPEED`) have titles, but MAIN V01-12 never sends them. No code stores
 0x3A or 0x40–0x42 into UI +0x1C2 **[fact: grep of `decomp/main` for `[0x1c2] =`]**, and `displink_build_31` has no formatter for 0x40–0x42
 and an empty one for 0x3A **[fact: 0xFFF99297]**. So they are popups that the DISPLAY GUI (shared with other Yaesu sets, or from earlier
-firmware) still carries **[inference]**. Only a store through a computed pointer could still reach them, which a Ghidra xref on 0x20CC6
-would show; this is not needed to name them. Slot 64 has no title at all (above).
+firmware) still carries **[inference]**. The Ghidra listing confirms it: all 68 writers of 0x20CC6 are `mov.b #imm, 0x1C2[r14]` (the same 68 are the only
+stores to `450[rN]` in an `rx-elf-objdump` sweep), with immediates 0–13, 0x1E, 0x1F, 0x22–0x25, 0x27–0x2D, 0x30–0x33, 0x38, 0x39,
+0x43–0x45, 0x47–0x49, 0x55, 0x58, 0x5E and 0xFF, so 0x3A and 0x40–0x42 are never stored, not even through a computed pointer **[fact]**.
+The on/off ids 0x26 (PROC), 0x2F (BK-IN) and 0x46 (KEYER) are not stored either: `FUN_fffc754b`, `FUN_fffc79b8` and `FUN_fffc7975` pass
+them only to `popup_time_get` (`FUN_fffc8cbb`) and start the popup timer (`popup_timer_start`, `FUN_fffc8d8c`: 0x1B4EF, UI +0x1C0/+0x1C1 = 1)
+without writing +0x1C2 **[fact]**, so that popup shows whatever id was stored last **[inference]**. Slot 64 has no title at all (above).
 
 ## Scope drawing (#83)
 
@@ -458,8 +462,13 @@ description and `SS` sel 7 (AF-FFT ATT, OSC level / time) **[inference]**.
 So this is a scope-area **decoder / keyboard-text terminal** (RTTY or PSK text, judging by the restricted character sets) **[inference]**. It
 is dormant in this firmware pair: the SCIF4 link that `task_uart4_rx` reads is never started (`uart4_link_init` has no caller,
 [mainlink.md](mainlink.md#10-the-unused-scif4-link-fact)). MAIN's byte-3 builder `FUN_fff96f3e` sets only bits 4–7, and the Japanese
-operating manual describes no decoder screen. Ghidra reports one removed unreachable block at 0xFFF96F69, so a listing check of `FUN_fff96f3e` would confirm
-that bit 2 is never sent **[fact for the code read; inference that the view is unreachable]**.
+operating manual describes no decoder screen. **Listing check (#178):** the "unreachable block at 0xFFF96F69" is not machine code. 0xFFF96F69 is
+`SHLL #7, R1`, and the removed block is the p-code branch of that instruction for a shift count of 0 (`CBRANCH` on `count == 0` in the
+flag semantics), which a constant count of 7 can never take **[fact: PcodeDump of fff96f69]**. The function (fff96f3e..fff96fb6) has no other
+branch: bit 7 = active VFO (0x9DBD) or its inverse when UI +0x405 = 1, then exactly one of bit 5 (0x9C5E = 1), bit 6 (UI +0x425/+0x426
+of the active VFO non-zero) or bit 4 (else), and it returns that byte at fff96fb5 **[fact]**. `displink_build_status` stores the result
+straight into frame byte 3 (fff964e4 `bsr`, fff964ed `mov.b r1, [0x16A0 + 3]`) and Ghidra has no other reference to 0x16A3 **[fact]**. So
+MAIN V01-12 never sets byte 3 bit 2, and the text view cannot be selected from MAIN **[fact for MAIN; inference that the view is unreachable]**.
 
 Its layout words (`.data2`, values from the image via `tools/display_layout.py … --range 208084E8 2080850C`) **[fact: values and uses]**:
 RX area (x 4, y 212) 688 × 170 and TX area (4, 385) 688 × 30, both cleared each frame. `FUN_20131F74` works from (x − 3, y − 3) with a height of 170 + 30 + 3, so it spans both areas **[fact: operands; inference: a frame]**. RX text starts at
@@ -660,5 +669,4 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 - What the MAIN firmware does to send packet 0x64 (LCD test) or 0x34: a MAIN-side menu or service key sequence (T10).
 - Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Done (#178): the value-popup slots are mapped from MAIN's popup id (slot = id − 0x1E, [table](#screen-layout-data2-coordinate-words-83)); the 2D / 3DSS-front / oscilloscope / AF-FFT renderers and the third (text) view are decoded ([Scope drawing](#scope-drawing-83)).
 - Done (#178, from the decoded image): every value-popup title is rendered and named, slot 8 corrected to MIC EQ, slots 28 / 34–36 named (DEC LVL, RX LEVEL, TX LEVEL, S.SPEED; never sent by MAIN V01-12) and slot 64's entries read (no title). The spectrum height table 0x203A1EE0 and the text-view layout words are decoded. `range` 0x208007D4 starts at 0 and only zero is ever stored (one literal, body 0x20123EC4).
-- Optional Ghidra checks (no longer needed to settle #178): an xref on MAIN 0x20CC6, to rule out a computed-pointer store of the popup ids 0x3A / 0x40–0x42; creating the function at 0x20123EC4 (`names_display.tsv`) so that the next re-export shows it apart from its wrapper `FUN_201244D8`.
-- Whether MAIN can ever set packet 0x20 byte 3 bit 2 (the dormant decoder view) needs a listing check of the unreachable block at 0xFFF96F69.
+- Settled by the listing check (#178): MAIN never sets packet 0x20 byte 3 bit 2. The "unreachable block" at 0xFFF96F69 is the internal count==0 branch of `SHLL #7` (PcodeDump), `FUN_fff96f3e` sets only bits 7 and 4–6, and its result goes straight into frame byte 3 at 0xFFF964ED **[fact]**; so the text view is dormant. Creating the function at 0x20123EC4 (`names_display.tsv`) happens at the next re-export.

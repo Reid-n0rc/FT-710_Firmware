@@ -282,8 +282,12 @@ Notes **[fact unless marked]**:
     `PTR_DAT_00025d50` (`align_store_*`, `cal_adjust`, and `FUN_fffbba9f`, which writes only the `FALC` and `TXG` of a
     band row, +0 and +2). The pointer table 0xFFF8861C is read only by `sdr_upd_r25_tx_drive` 0xFFFA2A40, at row offsets
     +2, +5, +8, +11, +14 (the `TXG` items) **[fact: disassembly 0xFFFA2A58..0xFFFA2B20]**.
-  - So aligned values in these items are stored and shown in the alignment menu but have no effect. A Ghidra data-xref
-    listing on the same addresses would only confirm this (optional, after the Ghidra hold).
+  - So aligned values in these items are stored and shown in the alignment menu but have no effect. The Ghidra data-xref
+    listing confirms it: no reference at all to 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683 or the band-row `MTR` bytes
+    0x46A2/A5/A8/AB + 15·*b* and 0x473B/3E/41; the code that keeps 0x4659 in a register and adds a constant (`main_dac_update`
+    +22..+25, `pa_dac_update` +1, +49..+56, +58..+68, +234..+244, `FUN_fffb667a` the `FALC` and 100 W `MTR` offsets) was read in
+    the listing too **[fact]**. `FUN_fffbba9f` is `align_ialc_park`: while an `I-ALC` item (059..069) is selected it saves that
+    band's 100 W `FALC`/`TXG` (50 W on 70 MHz) to 0x12167/0x12168, sets them to 0xFF and restores them when the selection moves **[fact]**.
 - **The fixed meter curves** (#205) **[fact: ROM bytes, little-endian `float`]**:
   - **PO** (`meter_po` 0xFFFB7772): P = x² · (P<sub>full</sub> − 0.00694025 · M) / M² + 0.00694025 · x, with x = AN002
     (0x20B06), M = 100 W `MTR` item << 4 (0x20B1E) and P<sub>full</sub> = 100 W (50 W when `FUN_fffb3371` returns 10, the

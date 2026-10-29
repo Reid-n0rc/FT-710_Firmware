@@ -2207,7 +2207,7 @@ fffbbcb8	align_store_dsp_async	Starts a DSP status read (dsp_status1_raw, timer 
 fffbbcff	align_store_ui8_scaled	cal[item] = (0x20B0C >> 4) * 0x4666 / 137 rounded (item 245)
 fffbbd52	align_store_nop	Empty store handler (191 of the 261 items)
 # --- #173 (CAT remainders): names from reading decomp/main; they show in decomp/ after the next Ghidra re-export
-fffb012c	mem_find_byte	(buf, c, n): index of the first byte == c in buf[0..n), else n; returned in R1 (EM, KM)
+fffb012c	mem_find_byte	(buf, c, n): pointer to the first byte == c in buf[0..n), else buf itself; returned in R1 (EM, KM) [fact, #173 listing check]
 fff9ba18	displink_39_keyer_texts	Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32)
 fff9baa0	displink_39_rtty_labels	Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes 0xC0..0xE7 (0x1801..)
 fffe4407	msg_type_select	Sets UI +0x1C7 (message type) from vfo_mode(1): CW 1, RTTY 2, PSK 3, voice modes 0
@@ -2234,3 +2234,7 @@ fff88bfc	@s_meter_curve	10 x {f32 slope, f32 offset, f32 limit} (limit at +8): S
 fff88c74	@po_meter_curve	8 x {f32 watts, f32 slope, f32 offset}: PO position = slope*P + offset for the first row with P >= watts (100, 50, 40, 30, 20, 10, 5, 0 W); hits 196/138/89/64/46 = PO MTR POS defaults (meter_po) [fact] (#205)
 fff8861c	@tx_row_ptrs	11 x u32 cfg105 TX-row pointers (0x469E + 15*band, 70 MHz 0x4734); sdr_upd_r25_tx_drive reads +2/+5/+8/+11/+14 (TXG) only [fact] (#205)
 fffc4b3d	vfo_filter_byte_ptr	Returns VFO-A/B record (0x9D09/0x9D63) + the per-mode filter byte offset (+0x0B/+0x15/+0x1F/+0x29/+0x33/+0x3D by mode nibble) [fact: disassembly]; the decompile shows void (#205)
+# --- listing checks (#173/#178/#205): names from the Ghidra listing of FT710_MAIN; they show in decomp/ after the next re-export
+fffbba9f	align_ialc_park	(item): while an I-ALC item (index 0x3A..0x44) is selected, saves the band's 100 W FALC/TXG (50 W on 70 MHz) to 0x12167/0x12168 and sets them to 0xFF; restores them on leaving [fact]
+fffc8cbb	popup_time_get	(id): display time of value popup id for POP-UP TIME (0x9B0E); tables 0xFFF8854E/0xFFF88566/0xFFF88578 [fact]
+fffc8d8c	popup_timer_start	(time): 0x1B4EF = time != 0, timer 57, UI +0x1C0/+0x1C1 = 1, +0x70 = 0; does not write the popup id +0x1C2 [fact]
