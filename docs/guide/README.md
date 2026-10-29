@@ -732,7 +732,7 @@ VFO. The check uses the transmit frequency including the TX clarifier (XIT), so 
 frequency and transmit is refused; the RX clarifier (RIT) has no effect. *(An earlier version of this guide read these rows as zero-width and concluded that 60 m TX could never work; that was wrong.)*
 
 These channels predate the US rules of February 2026, which add a 5351.5–5366.5 kHz segment that firmware V01-12 doesn't know about.
-Issue [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103) plans the fix.
+Issue [FT-710_Custom_Firmware#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2) plans the fix.
 
 ![A frequency axis from 5320 to 5410 kHz: the Europe row is a green bar; the US rows are one-hertz channel rows, each allowed at its exact frequency from a 60 m memory; two boxes work through the test](img/03-us-60m-quirk.svg)
 
@@ -2382,7 +2382,7 @@ Writing the FPGA's flash for good is out of scope until there is a working repla
   tell which. The marking under the SDR module's shield must be read before any design that drives a pin.
 - **US 60 m update for the 2026 rules.** Firmware V01-12 allows US 60 m transmit only on the old channel frequencies, from the
   60 m memories. The new 5351.5–5366.5 kHz segment needs a MAIN patch, planned in issue
-  [#103](https://github.com/Reid-n0rc/FT-710_Firmware/issues/103), including split operation in the segment.
+  [FT-710_Custom_Firmware#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2), including split operation in the segment.
 
 Some open questions don't need the radio at all. Two of the project's open contradictions, how `PS1;` powers the radio
 on and the 12 kHz vs 16 kHz audio rate, are code questions. A third, the SDR flash layout (the FPGA boots from flash
