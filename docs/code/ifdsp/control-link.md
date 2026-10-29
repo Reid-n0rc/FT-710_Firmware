@@ -210,8 +210,8 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0009 | 0x0002 | w `FUN_fff9da3c` |  | R 0x002249D0 | `FUN_fffa0e3a(9)`: 2 in RTTY-U and PSK, else 0 [fact] |
 | 0x000A | 0x0022 | w `FUN_fff9da6f` | any write → codec P1 R55 (`regfile_write`) | R 0x002249D0 | `FUN_fffa0e3a(10)`: LSB/CW-L/DATA-L 0x52, USB/DATA-U 0x50, CW-U/AM 0x02, AM-N/DATA-FM-N/RTTY-L/PSK 0x03, FM/FM-N/DATA-FM/RTTY-U 0x22 [fact]. Low nibble == 1 would select codec IN1R; MAIN never sends 1, so the first write switches the right MICPGA to IN2R [inference] |
 | 0x000C | 0x0001 | w `FUN_fff9daa2` |  | R 0x0021C5CC, 0x0022309C, 0x002233FC, 0x00223734 | written 0 once by MAIN [fact]; DSP 0x0021C5CC tests `(reg & 0xF000) == 0x1000` to read GPIO P0_4 into reg 0x4004 bit 2 [fact] |
-| 0x000D | 0x0000 | w `FUN_fff9dad1` |  |  | `FUN_fffa0e3a(0xD)`: 0xF000 in FM, else 0 [fact] |
-| 0x000E | 0x0000 | w `FUN_fff9db04` |  |  | `FUN_fffa0e3a(0xE)`: 0xF000 in FM, else 0 [fact] |
+| 0x000D | 0x0000 | w `FUN_fff9dad1` |  |  | `dsp_route_param(0xD)`: 0xF000 in audio-route state 6, else 0 [fact]. State 6 = keyed (CW/RTTY) TX without playback, or voice TX with `FUN_fffba192()`==3 and 0x12041==4 ([main/dsp-link.md](../main/dsp-link.md#audio-route-state-audio_route_state)); not tied to FM |
+| 0x000E | 0x0000 | w `FUN_fff9db04` |  |  | `dsp_route_param(0xE)`: 0xF000 in audio-route state 6, else 0 [fact] (see 0x000D) |
 | 0x000F | 0x0000 | w `FUN_fff9db37` |  | R 0x00225DC4 | constant 0x002B written once [fact] |
 | 0x0010 | 0x0000 |  |  | R 0x00225DC4 | no MAIN writer [fact] |
 | 0x0011 | 0xFFD4 | w `FUN_fff9db66` |  | R 0x00222510, 0x00222688, 0x00222AF0 | constant 0xFFA2 (−94) written once [fact] |
