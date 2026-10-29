@@ -587,7 +587,7 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
             if is_srl:
                 pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(5)}
                 # SMALL mode: the 6LUT (O6) half takes its data from DI2 = the X bypass pin and the 5LUT
-                # (O5) half from DI1, as nextpnr-xilinx's packer models it (#92)
+                # (O5) half from DI1 (UG474 Figures 7 and 18) (#92)
                 pins.update({"D": (P(L + "X") if small else d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
                              "Q": (o6[L], "O"), "Q31": (mc31[L], "O")})
                 nl.cell(S + L + "LUT", "SRLC32E", site, {"INIT": (init >> 32) if small else init & 0xFFFFFFFF,
@@ -600,7 +600,7 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                                  "Q": (o5[L], "O")})
                     nl.cell(S + L + "5LUT", "SRLC32E", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
                                                               "IS_CLK_INVERTED": clkinv}, pins,
-                            ["SRL16 pair half (O5); DI1 per nextpnr-xilinx (#92)"])
+                            ["SRL16 pair half (O5); DI1 per UG474 Fig. 7/18 (#92)"])
             else:
                 pins = {"RADR%d" % i: (P("%s%d" % (L, i + 1)), "I") for i in range(6)}
                 pins.update({"WADR%d" % i: (P("D%d" % (i + 1)), "I") for i in range(6)})
@@ -619,7 +619,7 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                                  "O": (o5[L], "O")})
                     nl.cell(S + L + "5LUT", "RAMD32", site, {"INIT": init & 0xFFFFFFFF, "#w:INIT": 32,
                                                              "IS_CLK_INVERTED": clkinv}, pins,
-                            ["RAM32 pair half (O5); DI1 per nextpnr-xilinx (#92)"])
+                            ["RAM32 pair half (O5); DI1 per UG474 Fig. 7/18 (#92)"])
             continue
         if L in used_o5:
             pins = dict(ins, O6=(o6[L], "O"), O5=(o5[L], "O"))

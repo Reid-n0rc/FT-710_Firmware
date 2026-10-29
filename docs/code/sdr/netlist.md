@@ -283,10 +283,10 @@ the function: `adc_clk_p/n`, `adc_dco_p/n`, `uart_a_rx/tx`, `uart_b_rx/tx`, `fla
 bank 14, LVCMOS18 on bank 15) **[fact for the pin/site mapping, inference for the standard of multi-standard
 features]**.
 
-**LUT RAM / SRL16 pairs (#92) [fact for the model change].** In SMALL mode a SLICEM LUT holds two 32-bit halves. The O6 half takes
-its data from DI2 = the X bypass pin and the O5 half from DI1 (the I pin or the shift chain): nextpnr-xilinx packs RAMD32 on
-the 6LUT with `I -> DI2` and on the 5LUT with `I -> DI1`, SRL16E with `D -> DI2`, and its placement check ties DI2 to the X pin
-(UG474 itself only names DI1 as the shift-in). `tools/xc7_netlist.py` had the two swapped until #92; 556 O5-half cells are
+**LUT RAM / SRL16 pairs (#92) [fact].** In SMALL mode a SLICEM LUT holds two 32-bit halves. The O6 half takes
+its data from DI2 = the X bypass pin and the O5 half from DI1 (the I pin or the shift chain): UG474 Figure 7 (RAM32M, p. 23:
+DID[0] via AX..DX to DI2, read on O6; DID[1] via DI to DI1, read on O5) and Figure 18 (dual SRL16, p. 35: SHIFTIN1 (AI) to DI1
+and O5, SHIFTIN2 (AX) to DI2 and O6/MC31) **[fact, `Manuals/AMD/ug474_7Series_CLB.pdf`]**; nextpnr-xilinx packs them the same way. `tools/xc7_netlist.py` had the two swapped until #92; 556 O5-half cells are
 affected. UART B and the console give identical answers with the old and the new netlist; data paths that use these cells
 should be re-simulated.
 
