@@ -156,10 +156,21 @@ check_hashes() {
   info "$n files match docs/inputs.sha256"
 }
 
+# Ghidra opens a project only for the user named as OWNER in its project.prp (the committed projects say "claude", the
+# owner's agent account). Hand a committed project to the current user so a fresh clone works for anyone.
+claim_project() {
+  local prp=$PROJ/$1.rep/project.prp me
+  me=$(id -un)
+  [ -f "$prp" ] && ! grep -q "NAME=\"OWNER\" TYPE=\"string\" VALUE=\"$me\"" "$prp" || return 0
+  sed -i.bak -e "s/\(NAME=\"OWNER\" TYPE=\"string\" VALUE=\"\)[^\"]*\"/\1$me\"/" "$prp" && rm -f "$prp.bak"
+  info "$1: project owner set to $me (local change to ghidra/$1.rep/project.prp; do not commit it)"
+}
+
 headless() {  # headless <project> <analyzeHeadless args...>
   local p=$1; shift
   [ -x "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" ] || die "no analyzeHeadless in $GHIDRA_INSTALL_DIR (step deps, or set GHIDRA_INSTALL_DIR)"
   mkdir -p "$PROJ" "$OUT/logs"
+  claim_project "$p"
   local run=$OUT/logs/ghidra_last_run.log rc=0
   local heap=${GHIDRA_HEADLESS_MAXMEM%[GgMm]} reserve
   case $GHIDRA_HEADLESS_MAXMEM in *[Mm]) reserve=$(( heap + 700 ));; *) reserve=$(( heap * 1024 + 700 ));; esac

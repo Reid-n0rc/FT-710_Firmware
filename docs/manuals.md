@@ -1,7 +1,7 @@
 # Manuals and datasheets
 
-Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 16 PDFs the project keeps are
-**committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`), under the file names below, so the paths in
+Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 18 PDFs the project keeps are
+**committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`, AMD in `Manuals/AMD/`), under the file names below, so the paths in
 the docs work. The documents in the second list are cited but not kept; get them from the links. The SHA-256 values identify the exact revision the project read; a newer
 revision from the vendor is fine for reading, but page numbers in the docs refer to these files.
 
@@ -19,6 +19,7 @@ Never read a whole PDF into an AI agent's context: use `pdftotext -f N -l M file
 | `FT-710_serv_2022.pdf` | Service manual / Technical Supplement 2022 (schematics, parts lists, block diagrams) | https://www.radiomanual.info/schemi/YAESU_HF/FT-710_serv_2022.pdf | **The hardware survey** ([hardware.md](hardware.md), T02): every CPU, DSP, FPGA, memory and bus; pin-level wiring for the GPIO, UART and SPI pages; debug header J1004 (T17) | `c257332cd85f74fec89954c608a3537ff1a6149cfc7d8ce34615db6c79c3f5c4` |
 | `Firmware_Ver_Up_Manual_ENG_FT-710_2211-A.pdf` | Firmware update manual, English rev 2211-A | inside the firmware zip (see [getting-started.md](getting-started.md)); also on the yaesu.com FT-710 page, Files tab | The official SD-card update procedure behind [display/update.md](code/display/update.md) and the guide's chapter 3 (T11c, T19c) | `6880607aa210afad2989366610d3ba26d5cdc8a2781490945fd361a004677b57` |
 | `FT-710_Test-Report_DC4KU_english.pdf` | Independent lab test report by Werner Schnorrenberg, DC4KU, 30 Oct 2022 (13 pages) | https://dc4ku.darc.de/FT-710_Test-Report_DC4KU_english.pdf | States the receiver is direct-sampling with a **dual-channel 14-bit ADC** (the same twin ADC as the FT-DX10) whose two channels the FPGA combines, with dither into both inputs; settles O7 together with p6 of the service manual (T20 follow-up) | `b924e181b5c31f39037ac9e07cf6d1236264126236e5c6ca6e1fb217983bf24a` |
+| `FT-710_Sherwood_HF_Test_Results.pdf` | Sherwood Engineering HF Test Results, Yaesu FT-710 serial 2J020104, test date 2022-10-01 (4 pages) | https://www.qsl.net/n9ewo/sher_ft710.pdf | Third-party bench data; pp3–4 read the block diagram as a gain block "in front of both ADC chips" and describe the ADC-protecting AGC. Checked for an ADC part number (none given) (#66) | `fc9b22f57036f7f221937c94c37c928bacd89137f3568862ac26af3a0a952eda` |
 
 The other language editions and Yaesu documents are on the FT-710 product page:
 https://yaesu.com/product-detail.aspx?Model=FT-710&CatName=HF%20Transceivers/Amplifiers (Files tab).
@@ -75,5 +76,6 @@ are tagged **[inference]** unless the code confirms them. Getting a copy and che
 | **W25Q128** SPI NOR flash datasheet | Winbond, https://www.winbond.com (search "W25Q128JV") | DISPLAY boot flash layout, SDR config flash commands ([display/update.md](code/display/update.md)) |
 | Cadence Xtensa / HiFi4 ISA and the RT600 core overlay | via the Zephyr SDK 0.17.0 toolchain (https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0) | FLIX-aware HiFi4 disassembly ([ifdsp/hifi4.md](code/ifdsp/hifi4.md), [tooling.md](tooling.md)) |
 
-The USB parts on the MAIN unit (CY7C65631 hub, CP2105 dual UART, CM119B audio, FT4222H) are identified from the service manual only; no
-datasheet was needed so far.
+The USB and audio parts on the MAIN unit (CY7C65631 hub, CP2105 dual UART, CM119B audio, FT4222H, SN74LV4052 mux, R2A20178NP electronic
+volume, MP5073 USB load switch) are identified from the service manual only; their pin roles were read off the schematic's own pin labels
+and notes (#63, #64), so no datasheet was needed so far.

@@ -78,13 +78,13 @@ order matches Cadence XOS **[inference]**; the values are **[fact]** from the ca
 |---|---|---|---|---|---|---|
 | `Thread_Main` | 0x0021C498 | `Thread_Main_entry` 0x0021C360 | 4 | 0x1398 @0x241170 | `xos_thread_sleep(SystemCoreClock·100/1000)` = 100 ms | starts the I2S DMA (`audio_i2s_fc3_fc4_fc5_init`), then every 100 ms `tx_gpio_to_reg4004`, every 1 s `cpu_load_to_regs_2000` **[fact]** |
 | `Thread_Ipc` | 0x0021C498 | `Thread_Ipc_entry` 0x0021C3B4 | 13 | 0x2000 @0x240290 | msgq (10 × 152 B) fed by the rpmsg endpoint callback | MU-B/SEMA42 boot handshake, rpmsg-lite remote on 0x20020000, endpoint 30, `ipc_handle_msg` 0x0021BD40 (see [ipc.md](ipc.md)) **[fact]** |
-| `Thread_Rx_Path` | 0x00225E40 | `Thread_Rx_Path_entry` 0x002262FC | 7 | 0x1398 @0x2C83B0 | msgq 0x23773C[0] (2 × 4 B), posted by the codec-out DMA callback | per 24-sample block: RX IF in → receive chain → codec out; forwards blocks to Rx_Audio and Spi **[fact: calls]**, chain contents **[inference]** |
-| `Thread_Tx_Path` | 0x00225E40 | `Thread_Tx_Path_entry` 0x0022647C | 7 | 0x1398 @0x2C9750 | msgq 0x23773C[1], posted by the codec-in DMA callback | per 24-sample block: mic/codec in → transmit chain → TX AF FIFO for FC2 **[fact: calls]** |
-| `Thread_Rx_Audio` | 0x00220BD0 | `Thread_Rx_Audio_entry` 0x00220F90 | 6 | 0x1398 @0x258A00 | msgq 0x236BC0 (2 × 4 B), posted when 12 blocks are queued | batch processing of 12 × 24 = 288 samples (24 ms): reads most "RX DSP" registers (0x40–0x45, 0x52, 0x56, 0x61, 0x400B–0x400E, 0x4020–0x4026) **[fact]** |
+| `Thread_Rx_Path` | 0x00225E40 | `Thread_Rx_Path_entry` 0x002262FC | 7 | 0x1398 @0x2C83B0 | msgq 0x23773C[0] (2 × 4 B), posted by the codec-out DMA callback | per 24-sample block (333 µs at 72 kHz): RX IF in → demodulator (`FUN_00220EE0`) → codec out; forwards blocks to Rx_Audio and Spi **[fact: calls]** |
+| `Thread_Tx_Path` | 0x00225E40 | `Thread_Tx_Path_entry` 0x0022647C | 7 | 0x1398 @0x2C9750 | msgq 0x23773C[1], posted by the codec-in DMA callback | per 24-sample block (333 µs at 72 kHz): mic/codec in → transmit chain → TX AF FIFO for FC2 **[fact: calls]** |
+| `Thread_Rx_Audio` | 0x00220BD0 | `Thread_Rx_Audio_entry` 0x00220F90 | 6 | 0x1398 @0x258A00 | msgq 0x236BC0 (2 × 4 B), posted when 12 blocks are queued | batch processing of 12 × 24 = 288 samples (4 ms at 72 kHz), decimated by 6 to 48 samples at 12 kHz and interpolated back (#154): reads most "RX DSP" registers (0x40–0x45, 0x52, 0x56, 0x61, 0x400B–0x400E, 0x4020–0x4026) **[fact]** |
 | `Thread_Spi` | 0x00224A10 | `Thread_Spi_entry` 0x00224AA4 | 5 | 0x1398 @0x2650F0 | msgq 0x2374F4 (4 × 4 B): msg 0 = 7 blocks queued, msg 1 = SPI transfer done | builds spectrum/scope data from tapped blocks (decimate by 7, 128-point buffer, regs 0x5C/0x5D) and sends it to the DISPLAY over FC1 SPI **[fact: calls]**, purpose **[inference]** |
 
-XOS priority: higher number = higher priority **[inference from XOS]**, so the IPC thread and the two 2 ms block threads
-pre-empt the batch threads.
+XOS priority: higher number = higher priority **[inference from XOS]**, so the IPC thread and the two block threads
+pre-empt the batch threads. The two block threads run every 333 µs (24 samples at 72 kHz, #154).
 
 ```mermaid
 flowchart LR
@@ -144,21 +144,89 @@ callback re-queues the buffer it just finished (index toggles 0/1) and then:
 
 So **Rx_Path is clocked by the codec DAC and Tx_Path by the codec ADC**; the SDR side is decoupled by 2-deep FIFOs **[fact]**.
 
-**Block size and sample rate.** One DMA transfer = 0xC0 bytes = 24 stereo frames; all path buffers are 96 bytes = 24 floats
-**[fact]**. The sample rate is **12 kHz** **[inference, strong]**: the constant 1/12000 (0x38AEC33E at 0x206D04) is used in
-~10 parameter functions to turn Hz into normalised frequency, 12000.0 appears in 0x21CAD4, and the 12-bit frequency field of
-reg 0x45 is clamped to 5999 (0x176F, just below Nyquist) **[fact: constants]**. So one block = 2 ms, and Rx_Audio frames are
-24 ms. The FIR/IIR tables below are consistent with 12 kHz (SSB/CW passbands of 0–4 kHz). **Open (T14, C9):** the DISPLAY writes the
-REC PCM it receives over FC1 as a **16 kHz** stereo WAV ([display/spi-links.md](../display/spi-links.md#link-2-if-dsp-fftrecplay-rspi4)),
-so either `Thread_Spi` resamples to 16 kHz or the WAV header is nominal. The FC1 buffer spacing (0x1200) matches the DISPLAY's 0x11F8-byte frame **[fact]**.
-*#59:* `Thread_Spi` does not resample. The recorder audio is resampled before it, in the routing sink `FUN_002255B4` (reg 10 n1,
-[control-link.md](control-link.md#audio-routing-registers-8-9-10-77-fact)) **[fact, FLIX listing]**: each 24-sample block is zero-stuffed by 2 with gain 2
-(0x2C6B90); every 0x90 = 144 stuffed samples go through `iir_cascade_process` (anti-image filter), a `loop` of 8 keeps every **9th** sample
-(16 outputs), `FUN_00234750` converts them to int16 (shift −15), and they enter the 4000-entry ring 0x266ED8 (count 0x268E18). So the
-recorder rate is **2/9 of the sink's input rate**. `FUN_00225790` packs the 4000-byte PCM part of each SPI frame as `u16 count`
-(≤ 0x7CE = 1998), `u16 (4000 − 0x2C6A20)/6`, then up to `count` int16 samples, the rest 0xF0. A 16 kHz WAV therefore needs **72 kHz** at
-the sink's input, which does not fit the 12 kHz block rate inferred above (that would give 2.67 kHz); one of the two rate readings is
-wrong **[inference]**, see #154.
+**Block size and sample rate (#154).** One DMA transfer = 0xC0 bytes = 24 stereo frames; all path buffers are 96 bytes = 24 floats
+**[fact]**. The I2S links and the block threads run at **72 kHz**; only the cores of the receive audio and transmit chains run at
+**12 kHz**, between a decimate-by-6 and an interpolate-by-6 **[fact: code, below]**. One block is therefore 24 / 72 kHz = **333 µs**, and a
+Rx_Audio batch of 288 samples is 4 ms. (Up to #154 this page read the 1/12000 constant as the rate of every block, which gave 2 ms
+blocks and 24 ms batches; that was wrong.)
+
+```mermaid
+flowchart LR
+  subgraph R72["72 kHz (I2S, Rx_Path, Tx_Path)"]
+    IF["FC3 RX IF<br/>24-sample blocks"] --> DEM["demodulator<br/>FUN_00220EE0 (reg 6)"]
+    DEM --> RA_IN["rx_audio_push_block"]
+    MIC["FC4 codec in"] --> TXC["FUN_0022313C<br/>TX chain"]
+    TXC --> TXAF["FC2 TX AF"]
+    RA_OUT["Rx_Audio outputs"] --> DAC["FC5 codec out"]
+    RA_OUT --> REC["recorder sink FUN_002255B4<br/>× 2/9 → 16 kHz"]
+  end
+  subgraph R12["12 kHz cores"]
+    RAC["Rx_Audio chain<br/>FUN_0021F484<br/>48 samples / 4 ms"]
+    TXCORE["TX core FUN_002220E8<br/>4 samples / block"]
+    WV["Weaver 2nd stage<br/>2 kHz NCO, LP 1.98 kHz"]
+  end
+  RA_IN -- "LP 0x2373D0, keep 1 of 6" --> RAC
+  RAC -- "zero-stuff ×6, gain 6, LP" --> RA_OUT
+  TXC -- "÷6" --> TXCORE
+  TXCORE -- "×6" --> TXC
+  DEM -- "SSB/CW ÷6" --> WV
+  WV -- "×6" --> DEM
+```
+
+Evidence, from the strongest:
+
+1. **The code says 72 kHz.** The SSB/CW demodulator `FUN_0021D940` (Rx_Path, reg 6 = 0–7) sets its first NCO step to
+   (±2000 + 18000) · 2π · **1.3888889e-05** rad per sample; 1.3888889e-05 = **1/72000** (0x37690453, literal 0x206EA8; float 72000/4
+   = 18000.0 at 0x206EAC) **[fact: 0x21D954, 0x21D966]**. The transmit modulator `FUN_00221BB8` uses the same two literals
+   **[fact: 0x221D65, 0x221D77]**. These functions run on the 24-sample blocks straight from the I2S FIFOs.
+2. **The codec runs at MCLK / 256.** `create_rx_tx_path_threads` selects the audio PLL clock for MCLK (`CLOCK_AttachClk(0x80001740)`,
+   CLKCTL1 AUDIOMCLKSEL = 1), sets the divider to 1 (`CLOCK_SetClkDiv(0x80000744, 1)`, AUDIOMCLKDIV) and turns the MCLK pin into an
+   output (`SYSCTL1 0x40022010` MCLKPINDIR = 1) **[fact: values; register names from the RT600 SDK = inference]**. The audio PLL is in
+   bypass, so MCLK = CLKIN = `DSP_CLK` = 18.432 MHz ([m33-platform.md](m33-platform.md)). The AIC3204 table sets PLL = MCLK × 5,
+   NDAC 5, MDAC 4, DOSR 64, BCLK = DAC_CLK / 4 ([control-link.md](control-link.md#tlv320aic3204-initialisation-table-0x00087a1c)), so
+   fs = 18.432 MHz × 5 / (5 · 4 · 64) = **72.000 kHz** and BCLK = 4.608 MHz = 64 × fs **[inference: datasheet formula on fact values]**.
+   Rx_Path is clocked by the codec DAC and Tx_Path by the codec ADC, so both block threads run at the codec rate.
+3. **The SDR's I2S frame is `DSP_CLK` / 256 too.** In the recovered netlist the frame flip-flop on pin V17 (`SLICE_X15Y42/BFF`) and the
+   bit-clock flip-flop behind U16 (`SLICE_X15Y43/B5FF`) are clocked by net `BUFHCE_X0Y9`, the same buffer that drives the `dsp_clk`
+   output pin, from MMCM_X0Y0 CLKOUT0 via BUFGCTRL_X0Y0 **[fact: `build/sdr/ft710_sdr.v`]**. The #90 simulation saw a frame every 256
+   clocks and a bit clock every 4; it printed 488.28 kHz only because its MMCM stand-in passes the 125 MHz input straight through
+   (`hdl/sdr/sim/xc7_prims_vl.v`). So frame = `DSP_CLK` / 256: **72 kHz** at 18.432 MHz, locked to the codec, which is why 2-deep
+   FIFOs are enough **[inference]**. (What clock MMCM_X0Y0 really outputs is [system.md O8](../system.md#8-contradictions-and-open-questions);
+   the 1/72000 constants side with 18.432 MHz.)
+4. **FC3 and FC4 share clocks.** The same function writes SYSCTL1 `0x40022080` = 0x22 and `0x40022084` = 0x55 (shared signal sets 0 and
+   1 take SCK and WS from FC2 and FC5), `0x4002204C` = 0x101 (FC3 takes SCK/WS from set 0) and `0x40022050` = 0x202 (FC4 from set 1)
+   **[fact: values; field meaning from the RT600 SYSCTL1 SHAREDCTRLSET/FCCTRLSEL layout = inference]**. So RX IF (FC3) is clocked by the
+   SDR's TX AF clock pair on FC2, and codec-in (FC4) by the codec's clock pair on FC5: two clock domains, both at `DSP_CLK` / 256.
+5. **Where 12 kHz is.** `Thread_Rx_Audio_entry` → `FUN_0021F484` runs `iir_cascade_process` over 0x120 = 288 samples with the
+   0x2373D0 lowpass, keeps every 6th sample (stride 0x18 bytes) into a 48-sample buffer at 0x253400, runs the receive audio chain on it,
+   then zero-stuffs ×6 with gain 6.0 into 288 samples and filters them again with 0x2373D0, once per output (0x25A280, 0x25A700)
+   **[fact]**. The transmit core `FUN_002220E8` does the same on each 24-sample block: 0x2373D0, keep 4 samples, chain, ×6 with gain 6,
+   0x2373D0 **[fact]**. The Weaver demodulator and modulator decimate to 4 samples for their 0x237440 lowpass pair the same way
+   **[fact]**. All 11 users of the 1/12000 constant (0x21C670, 0x21C748, 0x21CC68, 0x21DBD0, 0x21E530, 0x21E8B0, 0x21EC40, 0x220470,
+   0x220790, 0x221220, 0x221540) are reached from these 12 kHz cores (Rx_Audio chain; the TX EQ `FUN_00221220` via `FUN_00221854`
+   inside `FUN_002220E8`) **[fact: call sites]**. The reg 0x45 clamp at 5999 Hz is the 12 kHz Nyquist of that core.
+6. **The recorder.** The routing sources fed to the sink `FUN_002255B4` are Rx_Path blocks 5 (0x2CAC50) and 6 (0x2CACB0) and Tx_Path
+   blocks 2 (0x2CAD70), 3 (0x2CAE30) and 4 (0x2CAE90) **[fact: `Thread_Rx_Path_entry`, `Thread_Tx_Path_entry`]**: all 72 kHz
+   blocks (the two RX ones are the two Rx_Audio outputs, popped back one 24-sample block per Rx_Path cycle by `FUN_00220E34`). 72 kHz × 2/9 = **16 kHz**, which is what the DISPLAY's WAV header says ([display/spi-links.md](../display/spi-links.md#link-2-if-dsp-fftrecplay-rspi4)),
+   so the C9 contradiction is resolved **[inference, strong]**. Three blocks (72 samples) give 144 stuffed samples and 16 outputs, i.e.
+   1 ms of audio per 16 recorder samples.
+
+The old "2 ms block" figure carries over to other places as **333 µs**: `Thread_Spi` wakes after 7 blocks (2.33 ms) and its decimate-by-7
+gives 10.29 kHz **[inference]**; `Thread_Rx_Audio` wakes after 12 blocks (4 ms).
+
+**Filter tables at the right rate.** Each table below is characterised at 12 kHz (the old assumption). Multiply its frequencies by 6
+when its user runs at 72 kHz. Users traced so far **[fact: call sites]**:
+
+| Table | User | Rate | Response at that rate |
+|---|---|---|---|
+| 0x2373D0 (5 sections) | decimators and interpolators of all 12 kHz cores (`FUN_0021D8A0`, `FUN_00221B10`, `FUN_002220A0`, the Rx_Audio init `FUN_0021F410`) | 72 kHz | LP −3 dB 4.9 kHz: the anti-alias / anti-image filter for ÷6 / ×6 |
+| 0x237440 (9 sections) | Weaver lowpass pair in `FUN_0021D940` / `FUN_00221BB8` | 12 kHz | LP −3 dB 1.97 kHz (half the 0–4 kHz SSB band) |
+| 0x2368D0 (5 sections) | FM demodulator init `FUN_0021D650` (reg 6 = 9, Rx_Path) | 72 kHz | BP 9.0–15.1 kHz (peak 13.8 kHz) |
+| 0x2373A0 (2 sections) | `FUN_002248D8` (Tx_Path) | 72 kHz | LP 4.9 kHz |
+| 0x237360 (3 sections) | `FUN_002233FC` (Tx_Path, LMS block) | 72 kHz | LP 3.5 kHz |
+| 0x2372E0 (2 sections) | `FUN_0022309C` (TX FM, after the 12 kHz core) | 72 kHz | LP 3.0 kHz |
+| 0x204F80 (123-tap FIR) | `Thread_Spi` (fed by 72 kHz blocks) | 72 kHz | LP −3 dB 5.9 kHz, −40 dB 7.1 kHz |
+| FIRs 0x203B70–0x2047A0, 0x2035C0, 0x2038E0; IIRs 0x236850, 0x236AB0, 0x236B20, 0x237240, 0x2371F0 | Rx_Audio chain / TX core | 12 kHz | as in the tables below |
 
 ### SPI on FLEXCOMM1 (DMA0)
 
@@ -236,7 +304,7 @@ The MAIN side of these registers (who writes which, with what values) is T12b's 
 
 ## Coefficient and constant tables
 
-From `tools/ifdsp_coef_tables.py` at Fs = 12 kHz (frequencies scale linearly if a block runs at another rate). Biquad sets are
+From `tools/ifdsp_coef_tables.py` at Fs = 12 kHz. Since #154 the DSP is known to run at 72 kHz outside the 12 kHz cores; multiply by 6 for a table whose user runs at 72 kHz (table [above](#audio-io)). Biquad sets are
 stored as **b0 b1 b2 a1 a2** per section with denominator 1 + a1 z⁻¹ + a2 z⁻² (all sections stable with this sign) **[fact:
 pole check]**. Passband edges are at −3 dB from the peak **[fact: computed]**; the purpose is **[inference]** unless stated.
 
@@ -315,8 +383,8 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
 | 0x00224A10 | `create_Thread_Spi` | `create_Thread_Spi` | SPI state init, thread + msgq (4 × 4) |
 | 0x00224AA4 | `Thread_Spi_entry` | `Thread_Spi_entry` | sine table, then msg 0: 7 blocks → decimate → spectrum (`FUN_00224060`, `FUN_00223C8C`) → SPI; msg 1: next SPI transfer |
 | 0x00225E40 | `create_rx_tx_path_threads` | `create_rx_tx_path_threads` | I2S/DMA1 init (FC2–5), Rx/Tx path threads, then Rx_Audio |
-| 0x002262FC | `Thread_Rx_Path_entry` | `Thread_Rx_Path_entry` | per 2 ms block, receive chain; mode reg 6 |
-| 0x0022647C | `Thread_Tx_Path_entry` | `Thread_Tx_Path_entry` | per 2 ms block, transmit chain; reg 0x20 gain |
+| 0x002262FC | `Thread_Rx_Path_entry` | `Thread_Rx_Path_entry` | per 333 µs block (72 kHz), receive chain; mode reg 6 |
+| 0x0022647C | `Thread_Tx_Path_entry` | `Thread_Tx_Path_entry` | per 333 µs block (72 kHz), transmit chain; reg 0x20 gain |
 | 0x002260D8 | `audio_i2s_fc3_fc4_fc5_init` | `audio_i2s_fc3_fc4_fc5_init` | DMA handles and ping-pong transfers for FC2–FC5 |
 | 0x00226224 / 54 / 84 / 0x002262C0 | FUN_… | `fc2_txaf_dma_done` / `fc3_rxif_dma_done` / `fc5_codec_out_dma_done` / `fc4_codec_in_dma_done` | DMA callbacks (above) |
 | 0x00225C9C / 0x00225CF8 | FUN_… | `txaf_fifo_pop_to_dma` / `rxif_dma_to_fifo` | SDR-side FIFOs |
