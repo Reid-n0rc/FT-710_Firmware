@@ -7,59 +7,51 @@
 void menu_defaults_presets(void)
 
 {
-  undefined4 *puVar1;
-  undefined1 *puVar2;
+  preset *ppVar1;
+  char *pcVar2;
   int iVar3;
   
-  puVar2 = &DAT_fff80f4e;
-  puVar1 = &DAT_00009b2e;
+  pcVar2 = "            \x03";
+  ppVar1 = g_opstate.presets;
   for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *(undefined1 *)puVar1 = *puVar2;
-    puVar1 = (undefined4 *)((int)puVar1 + 1);
-    puVar2 = puVar2 + 1;
+    ppVar1->name[0] = *pcVar2;
+    ppVar1 = (preset *)(ppVar1->name + 1);
+    pcVar2 = pcVar2 + 1;
   }
-  puVar1 = &DAT_00009b4d;
-  puVar2 = &DAT_fff80f4e;
+  ppVar1 = g_opstate.presets + 1;
+  pcVar2 = "            \x03";
   for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *(undefined1 *)puVar1 = *puVar2;
-    puVar1 = (undefined4 *)((int)puVar1 + 1);
-    puVar2 = puVar2 + 1;
+    ppVar1->name[0] = *pcVar2;
+    ppVar1 = (preset *)(ppVar1->name + 1);
+    pcVar2 = pcVar2 + 1;
   }
-  puVar1 = &DAT_00009b6c;
-  puVar2 = &DAT_fff80f4e;
+  ppVar1 = g_opstate.presets + 2;
+  pcVar2 = "            \x03";
   for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *(undefined1 *)puVar1 = *puVar2;
-    puVar1 = (undefined4 *)((int)puVar1 + 1);
-    puVar2 = puVar2 + 1;
+    ppVar1->name[0] = *pcVar2;
+    ppVar1 = (preset *)(ppVar1->name + 1);
+    pcVar2 = pcVar2 + 1;
   }
-  puVar1 = &DAT_00009b8b;
-  puVar2 = &DAT_fff80f4e;
+  ppVar1 = g_opstate.presets + 3;
+  pcVar2 = "            \x03";
   for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *(undefined1 *)puVar1 = *puVar2;
-    puVar1 = (undefined4 *)((int)puVar1 + 1);
-    puVar2 = puVar2 + 1;
+    ppVar1->name[0] = *pcVar2;
+    ppVar1 = (preset *)(ppVar1->name + 1);
+    pcVar2 = pcVar2 + 1;
   }
-  puVar1 = &DAT_00009baa;
-  puVar2 = &DAT_fff80f4e;
+  ppVar1 = g_opstate.presets + 4;
+  pcVar2 = "            \x03";
   for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *(undefined1 *)puVar1 = *puVar2;
-    puVar1 = (undefined4 *)((int)puVar1 + 1);
-    puVar2 = puVar2 + 1;
+    ppVar1->name[0] = *pcVar2;
+    ppVar1 = (preset *)(ppVar1->name + 1);
+    pcVar2 = pcVar2 + 1;
   }
-  DAT_00009b2e = 0x382d5446;
-  DAT_00009b51._2_1_ = 0x32;
-  DAT_00009b51._0_2_ = 0x5445;
-  DAT_00009b4d = 0x53455250;
-  DAT_00009b70._0_2_ = 0x5445;
-  DAT_00009b70._2_1_ = 0x33;
-  DAT_00009b6c = 0x53455250;
-  DAT_00009b8f._2_1_ = 0x34;
-  DAT_00009b8f._0_2_ = 0x5445;
-  DAT_00009b8b = 0x53455250;
-  DAT_00009bae._2_1_ = 0x35;
-  DAT_00009bae._0_2_ = 0x5445;
-  DAT_00009baa = 0x53455250;
-  DAT_00009bc9 = 0;
+  builtin_strncpy(g_opstate.presets[0].name,"FT-8",4);
+  builtin_strncpy(g_opstate.presets[1].name,"PRESET2",7);
+  builtin_strncpy(g_opstate.presets[2].name,"PRESET3",7);
+  builtin_strncpy(g_opstate.presets[3].name,"PRESET4",7);
+  builtin_strncpy(g_opstate.presets[4].name,"PRESET5",7);
+  g_opstate.preset_sel = 0;
   return;
 }
 
@@ -69,21 +61,21 @@ void menu_defaults_presets(void)
 void FUN_fffb13e2(void)
 
 {
-  char *pcVar1;
+  byte *pbVar1;
   char *pcVar2;
   int iVar3;
   
   pcVar2 = "2222222222222222222222222222";
-  pcVar1 = &DAT_00009bca;
+  pbVar1 = &g_opstate.f_0x1a0_u8;
   for (iVar3 = 0x4d; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *pcVar1 = *pcVar2;
-    pcVar1 = pcVar1 + 1;
+    *pbVar1 = *pcVar2;
+    pbVar1 = pbVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
-  DAT_00009bf8 = DAT_00009aee;
-  DAT_00009bf9 = DAT_00009aef;
-  DAT_00009bfa = DAT_00009af0;
-  DAT_00009bfb = DAT_00009af1;
+  g_opstate.rf_power[0] = g_opstate.ex030401_hf_max_power;
+  g_opstate.rf_power[1] = g_opstate.ex030402_50m_max_power;
+  g_opstate.rf_power[2] = g_opstate.ex030403_70m_max_power;
+  g_opstate.rf_power[3] = g_opstate.ex030404_am_max_power;
   return;
 }
 
@@ -100,13 +92,13 @@ void eeprom_hdr_update(byte param_1)
   
   local_8 = 0;
   for (local_2 = 0; local_2 < 4; local_2 = local_2 + 1) {
-    local_8 = (uint)*(byte *)((int)&DAT_00004653 + local_2 + 1) << (3 - local_2 & 3) * 8 | local_8;
+    local_8 = (uint)g_ee_hdr.save_count_be[local_2] << (3 - local_2 & 3) * 8 | local_8;
   }
   for (local_2 = 0; local_2 < 4; local_2 = local_2 + 1) {
-    *(char *)((int)&DAT_00004653 + local_2 + 1) = (char)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
+    g_ee_hdr.save_count_be[local_2] = (byte)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
   }
-  DAT_00004657._1_1_ = param_1;
-  eeprom_write(0,(byte *)&DAT_0000464f,10);
+  g_ee_hdr.state = param_1;
+  eeprom_write(0,g_ee_hdr.stamp,10);
   return;
 }
 
@@ -124,8 +116,8 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
   ushort local_10;
   byte bStack_6;
   
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xfe;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xfe;
   eeprom_spi_tx(3);
   eeprom_spi_tx((byte)(addr >> 8));
   bStack_6 = (byte)addr;
@@ -134,8 +126,8 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
     bVar1 = eeprom_spi_rx();
     buf[local_10] = bVar1;
   }
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 | 1;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 | 1;
   return;
 }
 
@@ -167,23 +159,23 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
     local_a = local_a - local_c;
     bVar2 = true;
     while (bVar2) {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 & 0xfe;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 & 0xfe;
       eeprom_spi_tx(5);
       bVar3 = eeprom_spi_rx();
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 | 1;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 | 1;
       if ((bVar3 & 1) == 0) {
         bVar2 = false;
       }
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xfe;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xfe;
     eeprom_spi_tx(6);
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xfe;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 1;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xfe;
     eeprom_spi_tx(2);
     eeprom_spi_tx((byte)(local_2 >> 8));
     eeprom_spi_tx((byte)local_2);
@@ -191,8 +183,8 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
       eeprom_spi_tx(*local_8);
       local_8 = local_8 + 1;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 1;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 1;
     local_2 = local_2 + local_c;
   }
   return;
@@ -211,23 +203,23 @@ void eeprom_spi_tx(byte b)
   undefined1 local_2;
   undefined1 local_1;
   
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xdf;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xdf;
   local_1 = b;
   for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
     if ((local_1 & 0x80) == 0) {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 & 0xbf;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 & 0xbf;
     }
     else {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 | 0x40;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 | 0x40;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 0x20;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 0x20;
     local_1 = local_1 << 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xdf;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xdf;
   }
   return;
 }
@@ -249,14 +241,14 @@ byte eeprom_spi_rx(void)
   local_3 = 0;
   for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
     local_3 = local_3 << 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 0x20;
-    cVar2 = DAT_0008c04e;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 0x20;
+    cVar2 = PORTE_PIDR;
     if (cVar2 < '\0') {
       local_3 = local_3 | 1;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xdf;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xdf;
   }
   return local_3;
 }
@@ -296,21 +288,21 @@ void sci0_set_baud(void)
   byte bVar1;
   byte local_1;
   
-  bVar1 = DAT_00009abc;
-  local_1 = DAT_00009abc;
+  bVar1 = g_opstate.ex030108_cat_2_rate;
+  local_1 = g_opstate.ex030108_cat_2_rate;
   do {
   } while (DAT_00011fe8 != '\0');
   R_SCI0_Stop();
   if (4 < bVar1) {
     local_1 = 0;
   }
-  bVar1 = DAT_0008a000;
-  DAT_0008a000 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xfc;
-  DAT_0008a001 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
-  bVar1 = DAT_0008a007;
-  DAT_0008a007 = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
-  bVar1 = DAT_0008a007;
-  DAT_0008a007 = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
+  bVar1 = SCI0_SMR;
+  SCI0_SMR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xfc;
+  SCI0_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
+  bVar1 = SCI0_SEMR;
+  SCI0_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
+  bVar1 = SCI0_SEMR;
+  SCI0_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
   R_SCI0_Start();
   R_SCI0_Serial_Receive(0xa2b4,0x29bc);
   return;
@@ -397,7 +389,7 @@ byte sci1_tx_end(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008a024;
+  bVar1 = SCI1_SSR;
   return bVar1 >> 2 & 1;
 }
 
@@ -417,26 +409,27 @@ void sci2_configure(void)
 {
   uint uVar1;
   byte bVar2;
+  tunlin_mode tVar3;
   byte bStack_3;
   byte bStack_1;
   
-  bVar2 = tunlin_port_mode();
+  tVar3 = tunlin_port_mode();
   R_SCI2_Stop();
   do {
   } while (DAT_00011fe9 != '\0');
-  if (bVar2 != 1) {
+  if (tVar3 != TUNLIN_LINEAR) {
     gpo_a_set(0);
     gpo_b_set(0);
     gpo_c_set(0);
     gpo_d_set(0);
   }
-  if ((bVar2 == 3) || (bVar2 == 1)) {
-    uVar1 = DAT_00080014;
-    DAT_00080014 = uVar1 | 0x20000000;
-    DAT_0008c14a = 0;
-    bVar2 = DAT_0008c061;
-    DAT_0008c061 = bVar2 & 0xfb;
-    DAT_0008c14b = 0;
+  if ((tVar3 == TUNLIN_GPO) || (tVar3 == TUNLIN_LINEAR)) {
+    uVar1 = SYSTEM_MSTPCRB;
+    SYSTEM_MSTPCRB = uVar1 | 0x20000000;
+    MPC_P12PFS = 0;
+    bVar2 = PORT1_PMR;
+    PORT1_PMR = bVar2 & 0xfb;
+    MPC_P13PFS = 0;
     gpo_a_dir_out();
     gpo_b_dir_out();
     gpo_c_dir('\x01');
@@ -444,23 +437,23 @@ void sci2_configure(void)
     rem_key_sel_set(1);
     return;
   }
-  if (bVar2 == 2) {
+  if (tVar3 == TUNLIN_CAT3) {
     R_SCI2_Create();
-    bStack_1 = DAT_00009abe;
-    if (4 < DAT_00009abe) {
+    bStack_1 = g_opstate.ex030110_cat_3_rate;
+    if (4 < g_opstate.ex030110_cat_3_rate) {
       bStack_1 = 3;
     }
-    bVar2 = DAT_0008a040;
+    bVar2 = SCI2_SMR;
     bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar2 & 0xf4;
-    if (DAT_00009abb != '\0') {
+    if (g_opstate.ex030107_cat_1_cat_3_stop_bit != 0) {
       bStack_3 = bStack_3 | 8;
     }
-    DAT_0008a040 = bStack_3;
-    DAT_0008a041 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 2];
-    bVar2 = DAT_0008a047;
-    DAT_0008a047 = bVar2 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
-    bVar2 = DAT_0008a047;
-    DAT_0008a047 = bVar2 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
+    SCI2_SMR = bStack_3;
+    SCI2_BRR = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 2];
+    bVar2 = SCI2_SEMR;
+    SCI2_SEMR = bVar2 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
+    bVar2 = SCI2_SEMR;
+    SCI2_SEMR = bVar2 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
     R_SCI2_Start();
     R_SCI2_Serial_Receive(0xcc70,0x29bc);
     gpo_c_dir('\x01');
@@ -468,7 +461,7 @@ void sci2_configure(void)
     rem_key_sel_set(0);
     return;
   }
-  if (bVar2 == 0) {
+  if (tVar3 == TUNLIN_EXT_TUNER) {
     R_SCI2_Create();
     R_SCI2_Start();
     gpo_c_dir('\0');
@@ -485,14 +478,14 @@ void sci2_configure(void)
 
 /* setting 0x9AB7: 0 EXT-TUNER 1 LINEAR 2 CAT-3 3 GPO */
 
-byte tunlin_port_mode(void)
+tunlin_mode tunlin_port_mode(void)
 
 {
   undefined1 local_2;
   
-  local_2 = DAT_00009ab7;
-  if (3 < DAT_00009ab7) {
-    local_2 = 0;
+  local_2 = g_opstate.ex030103_tun_lin_port_select;
+  if (3 < g_opstate.ex030103_tun_lin_port_select) {
+    local_2 = TUNLIN_EXT_TUNER;
   }
   return local_2;
 }
@@ -539,9 +532,11 @@ void FUN_fffb194e(void)
 }
 
 
-// ===== FUN_fffb195a @ fffb195a (28 bytes)
+// ===== sci2_send @ fffb195a (28 bytes)
 
-void FUN_fffb195a(uint param_1,short param_2)
+/* R_SCI2_Serial_Send(buf, n), FUN_fffb192d(result), 0xA0AA = 1 [fact] */
+
+void sci2_send(uint param_1,short param_2)
 
 {
   ushort uVar1;
@@ -586,35 +581,35 @@ void sci3_set_baud(void)
 
 {
   byte bVar1;
-  char local_4;
+  byte local_4;
   byte bStack_3;
   byte local_1;
   
   do {
   } while (DAT_00011fea != '\0');
-  if (DAT_00009dc6 == '\0') {
-    local_1 = DAT_00009ab9;
-    local_4 = DAT_00009abb;
+  if (g_opstate.preset_on == 0) {
+    local_1 = g_opstate.ex030105_cat_1_rate;
+    local_4 = g_opstate.ex030107_cat_1_cat_3_stop_bit;
   }
   else {
-    local_1 = DAT_00020b58;
-    local_4 = DAT_00020b5a;
+    local_1 = g_ui.preset_active.cat1_rate;
+    local_4 = g_ui.preset_active.cat1_cat3_stop_bit;
   }
   R_SCI3_Stop();
   if (4 < local_1) {
     local_1 = 3;
   }
-  bVar1 = DAT_0008a060;
+  bVar1 = SCI3_SMR;
   bStack_3 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xf4;
-  if (local_4 != '\0') {
+  if (local_4 != 0) {
     bStack_3 = bStack_3 | 8;
   }
-  DAT_0008a060 = bStack_3;
-  DAT_0008a061 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
-  bVar1 = DAT_0008a067;
-  DAT_0008a067 = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
-  bVar1 = DAT_0008a067;
-  DAT_0008a067 = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
+  SCI3_SMR = bStack_3;
+  SCI3_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
+  bVar1 = SCI3_SEMR;
+  SCI3_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
+  bVar1 = SCI3_SEMR;
+  SCI3_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
   R_SCI3_Start();
   R_SCI3_Serial_Receive(0xf62c,0x29bc);
   return;
@@ -1080,24 +1075,24 @@ LAB_fffb1ea5:
     *local_8 = *local_4 + 1;
   }
   if (local_10 == 4) {
-    cVar1 = DAT_00009aba;
-    if (DAT_00009dc6 != '\0') {
-      cVar1 = DAT_00020b59;
+    bVar3 = g_opstate.ex030106_cat_1_time_out_timer;
+    if (g_opstate.preset_on != 0) {
+      bVar3 = g_ui.preset_active.cat1_tot;
     }
   }
   else {
-    cVar1 = DAT_00009abd;
+    bVar3 = g_opstate.ex030109_cat_2_time_out_timer;
     if (local_10 != 5) {
-      cVar1 = DAT_00009abf;
+      bVar3 = g_opstate.ex030111_cat_3_time_out_timer;
     }
   }
-  if (cVar1 == '\x01') {
+  if (bVar3 == 1) {
     local_1a = 100;
   }
-  else if (cVar1 == '\x02') {
+  else if (bVar3 == 2) {
     local_1a = 1000;
   }
-  else if (cVar1 == '\x03') {
+  else if (bVar3 == 3) {
     local_1a = 3000;
   }
   else {

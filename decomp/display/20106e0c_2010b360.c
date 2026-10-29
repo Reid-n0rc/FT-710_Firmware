@@ -91,21 +91,21 @@ void usbkbd_queue_key(int param_1,int param_2)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* USB keyboard HID report: NumLock/ScrollLock LEDs, chain 0, chain 1 if debug_enabled */
 
-void usbkbd_report(undefined4 param_1,undefined4 *param_2)
+void usbkbd_report(uint param_1,void *param_2)
 
 {
-  int iVar1;
+  bool bVar1;
   
-  DAT_20811220 = *param_2;
-  _DAT_20811224 = param_2[1];
-  DAT_20811228 = param_2[2];
-  DAT_2081122c = param_2[3];
-  DAT_20811230 = param_2[4];
-  DAT_20811234 = param_2[5];
-  DAT_20811238 = param_2[6];
-  DAT_2081123c = param_2[7];
-  usbkbd_queue_key(param_1,param_2);
-  DAT_2080010d = *(char *)(param_2 + 3);
+  DAT_20811220 = *(undefined4 *)param_2;
+  _DAT_20811224 = *(undefined4 *)((int)param_2 + 4);
+  DAT_20811228 = *(undefined4 *)((int)param_2 + 8);
+  DAT_2081122c = *(undefined4 *)((int)param_2 + 0xc);
+  DAT_20811230 = *(undefined4 *)((int)param_2 + 0x10);
+  DAT_20811234 = *(undefined4 *)((int)param_2 + 0x14);
+  DAT_20811238 = *(undefined4 *)((int)param_2 + 0x18);
+  DAT_2081123c = *(undefined4 *)((int)param_2 + 0x1c);
+  usbkbd_queue_key(param_1,(int)param_2);
+  DAT_2080010d = *(char *)((int)param_2 + 0xc);
   if (*(char *)((int)param_2 + 0xd) == '\0') {
     if (DAT_2080010d == 'S') {
       DAT_2080010c = DAT_2080010c ^ 1;
@@ -119,8 +119,8 @@ void usbkbd_report(undefined4 param_1,undefined4 *param_2)
   if (DAT_20800110 != (code *)0x0) {
     (*DAT_20800110)(param_1,param_2);
   }
-  iVar1 = debug_enabled();
-  if ((iVar1 != 0) && (DAT_20800114 != (code *)0x0)) {
+  bVar1 = debug_enabled();
+  if ((bVar1) && (DAT_20800114 != (code *)0x0)) {
                     /* WARNING: Could not recover jumptable at 0x20107094. Too many branches */
                     /* WARNING: Treating indirect jump as call */
     (*DAT_20800114)(param_1,param_2);
@@ -132,7 +132,7 @@ void usbkbd_report(undefined4 param_1,undefined4 *param_2)
 
 // ===== usbkbd_active @ 2010709c (68 bytes)
 
-undefined * usbkbd_active(void)
+void * usbkbd_active(void)
 
 {
   int iVar1;
@@ -144,7 +144,7 @@ undefined * usbkbd_active(void)
     }
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
-  return (undefined *)0x0;
+  return (void *)0x0;
 }
 
 
@@ -154,16 +154,16 @@ undefined1
 usbkbd_get_device(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 uVar2;
   undefined4 uStack_10;
   
   uStack_10 = param_4;
   FUN_201571b8(&uStack_10,DAT_20800118,1);
-  iVar1 = usbkbd_active();
-  if (iVar1 != 0) {
-    uVar2 = *(undefined4 *)(iVar1 + 0x84);
-    *param_1 = *(undefined4 *)(iVar1 + 0x80);
+  pvVar1 = usbkbd_active();
+  if (pvVar1 != (void *)0x0) {
+    uVar2 = *(undefined4 *)((int)pvVar1 + 0x84);
+    *param_1 = *(undefined4 *)((int)pvVar1 + 0x80);
     param_1[1] = uVar2;
     FUN_201571d4(&uStack_10);
     return *(undefined1 *)param_1;
@@ -179,24 +179,25 @@ undefined4
 usbkbd_pop_key(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  int iVar1;
-  undefined4 *puVar2;
-  undefined4 uVar3;
+  void *pvVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 uVar4;
   undefined4 uStack_10;
   
   uStack_10 = param_4;
   FUN_201571b8(&uStack_10,DAT_20800118,1);
-  iVar1 = usbkbd_active();
-  if (iVar1 != 0) {
-    uVar3 = *(undefined4 *)(iVar1 + 0x80);
-    iVar1 = *(int *)(iVar1 + 0x84);
-    param_1[1] = iVar1;
-    *param_1 = uVar3;
-    puVar2 = (undefined4 *)FUN_20164604(iVar1 * 0xd0 + 0x20811108);
-    if (puVar2 != (undefined4 *)0x0) {
-      uVar3 = puVar2[1];
-      param_1[2] = *puVar2;
-      param_1[3] = uVar3;
+  pvVar1 = usbkbd_active();
+  if (pvVar1 != (void *)0x0) {
+    uVar4 = *(undefined4 *)((int)pvVar1 + 0x80);
+    iVar2 = *(int *)((int)pvVar1 + 0x84);
+    param_1[1] = iVar2;
+    *param_1 = uVar4;
+    puVar3 = (undefined4 *)FUN_20164604(iVar2 * 0xd0 + 0x20811108);
+    if (puVar3 != (undefined4 *)0x0) {
+      uVar4 = puVar3[1];
+      param_1[2] = *puVar3;
+      param_1[3] = uVar4;
       FUN_201571d4(&uStack_10);
       return 1;
     }
@@ -211,18 +212,16 @@ usbkbd_pop_key(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefin
 void usbkbd_flush_all(void)
 
 {
-  undefined4 in_r3;
   int iVar1;
-  undefined4 uStack_10;
+  undefined1 auStack_10 [4];
   
-  uStack_10 = in_r3;
-  FUN_201571b8(&uStack_10,DAT_20800118,1);
+  FUN_201571b8(auStack_10,DAT_20800118,1);
   iVar1 = 0;
   do {
     FUN_2015f0c4(&DAT_20811080 + iVar1 * 0xd0);
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
-  FUN_201571d4(&uStack_10);
+  FUN_201571d4(auStack_10);
   return;
 }
 
@@ -231,37 +230,38 @@ void usbkbd_flush_all(void)
 
 /* FIFO -> char via the KEYBOARD LANGUAGE layout (0x2080010E) */
 
-undefined4 usbkbd_get_char(byte *param_1)
+uint usbkbd_get_char(byte *param_1)
 
 {
   byte bVar1;
   int iVar2;
   undefined4 uVar3;
-  byte bVar4;
+  uint uVar4;
+  byte bVar5;
   undefined1 auStack_18 [8];
   undefined4 local_10;
   undefined4 uStack_c;
   
   iVar2 = usbkbd_pop_key(auStack_18);
-  uVar3 = 0;
+  uVar4 = 0;
   if (iVar2 != 0) {
     *(undefined4 *)param_1 = local_10;
     *(undefined4 *)(param_1 + 4) = uStack_c;
     bVar1 = *param_1;
     if ((bVar1 & 0x9d) == 0) {
-      bVar4 = (bVar1 & 0x22) != 0;
+      bVar5 = (bVar1 & 0x22) != 0;
       if ((bVar1 & 0x40) != 0) {
-        bVar4 = bVar4 | 2;
+        bVar5 = bVar5 | 2;
       }
     }
     else {
-      bVar4 = 0xff;
+      bVar5 = 0xff;
     }
-    uVar3 = FUN_2010a684(param_1[1],bVar4,DAT_2080010e);
+    uVar3 = FUN_2010a684(param_1[1],bVar5,DAT_2080010e);
     *(undefined4 *)(param_1 + 4) = uVar3;
-    uVar3 = 1;
+    uVar4 = 1;
   }
-  return uVar3;
+  return uVar4;
 }
 
 
@@ -269,11 +269,11 @@ undefined4 usbkbd_get_char(byte *param_1)
 
 /* text buffer 0x20811240 (64 chars) */
 
-void kbd_text_append(undefined1 param_1)
+void kbd_text_append(byte param_1)
 
 {
   if (DAT_2080011c < 0x40) {
-    *(undefined1 *)((int)&DAT_20811240 + DAT_2080011c) = param_1;
+    *(byte *)((int)&DAT_20811240 + DAT_2080011c) = param_1;
     DAT_2080011c = DAT_2080011c + 1;
   }
   return;
@@ -356,28 +356,29 @@ void usbkbd_reset(void)
 void usbkbd_capslock_for_mode(uint param_1)
 
 {
-  undefined2 uVar1;
+  ushort uVar1;
   bool bVar2;
   uint uVar3;
-  int iVar4;
-  uint uVar5;
+  uint uVar4;
+  byte bVar5;
   int iVar6;
-  uint uVar7;
-  undefined2 auStack_1a8 [48];
+  int iVar7;
+  uint uVar8;
+  ushort auStack_1a8 [48];
   undefined1 auStack_148 [96];
   undefined1 auStack_e8 [96];
   undefined1 auStack_88 [96];
   undefined4 local_28;
   uint local_24;
   
-  iVar4 = usbkbd_get_char(&local_28);
-  if (iVar4 == 0) {
+  uVar3 = usbkbd_get_char((byte *)&local_28);
+  if (uVar3 == 0) {
     return;
   }
-  FUN_20155310(auStack_148,&DAT_20165348,0x60);
-  FUN_20155310(auStack_e8,&DAT_201653a8,0x60);
-  FUN_20155310(auStack_88,&DAT_20165408,0x60);
-  FUN_20155310(auStack_1a8,auStack_e8,0x60);
+  __aeabi_memcpy4(auStack_148,&DAT_20165348,0x60);
+  __aeabi_memcpy4(auStack_e8,&DAT_201653a8,0x60);
+  __aeabi_memcpy4(auStack_88,&DAT_20165408,0x60);
+  __aeabi_memcpy4(auStack_1a8,auStack_e8,0x60);
   uVar3 = local_24;
   if (local_28._1_1_ == '\0') {
     _DAT_20800128 = local_28;
@@ -389,61 +390,61 @@ void usbkbd_capslock_for_mode(uint param_1)
     DAT_2080012c = local_24;
     return;
   }
-  uVar7 = 0;
-  iVar4 = 0xff;
+  uVar8 = 0;
+  iVar6 = 0xff;
   bVar2 = false;
-  uVar5 = local_24 - 0x30;
-  if (uVar5 < 10) {
-    uVar7 = local_24 & 0xff;
-    switch(uVar5) {
+  uVar4 = local_24 - 0x30;
+  if (uVar4 < 10) {
+    uVar8 = local_24 & 0xff;
+    switch(uVar4) {
     case 0:
 switchD_20107444_caseD_0:
-      iVar4 = 9;
+      iVar6 = 9;
       break;
     case 1:
 switchD_20107444_caseD_1:
-      iVar4 = 0;
+      iVar6 = 0;
       break;
     case 2:
 switchD_20107444_caseD_2:
-      iVar4 = 1;
+      iVar6 = 1;
       break;
     case 3:
 switchD_20107444_caseD_3:
-      iVar4 = 2;
+      iVar6 = 2;
       break;
     case 4:
 switchD_20107444_caseD_4:
-      iVar4 = 3;
+      iVar6 = 3;
       break;
     case 5:
 switchD_20107444_caseD_5:
-      iVar4 = 4;
+      iVar6 = 4;
       break;
     case 6:
 switchD_20107444_caseD_6:
-      iVar4 = 5;
+      iVar6 = 5;
       break;
     case 7:
 switchD_20107444_caseD_7:
-      iVar4 = 6;
+      iVar6 = 6;
       break;
     case 8:
 switchD_20107444_caseD_8:
-      iVar4 = 7;
+      iVar6 = 7;
       break;
     case 9:
 switchD_20107444_caseD_9:
-      iVar4 = 8;
+      iVar6 = 8;
       break;
     default:
 switchD_20107444_default:
-      if (iVar4 == 0xff) goto LAB_20107d28;
+      if (iVar6 == 0xff) goto LAB_20107d28;
     }
   }
   else {
     if (local_24 - 0x60 < 10) {
-      uVar7 = uVar5 & 0xff;
+      uVar8 = uVar4 & 0xff;
       switch(local_24) {
       case 0x60:
         goto switchD_20107444_caseD_0;
@@ -469,22 +470,22 @@ switchD_20107444_default:
         goto switchD_20107444_default;
       }
     }
-    uVar5 = local_24 - 0x41;
-    if (0x19 < uVar5) {
+    uVar4 = local_24 - 0x41;
+    if (0x19 < uVar4) {
       if (local_24 == 0x1b) {
-        iVar4 = 0x2a;
+        iVar6 = 0x2a;
       }
       else if (local_24 == 0x25) {
-        iVar4 = 0x2b;
+        iVar6 = 0x2b;
       }
       else if (local_24 == 0x20) {
-        iVar4 = 0x2c;
+        iVar6 = 0x2c;
       }
       else if (local_24 == 0x27) {
-        iVar4 = 0x2d;
+        iVar6 = 0x2d;
       }
       else if (local_24 == 0xd || local_24 == 0xd8) {
-        iVar4 = 0x2e;
+        iVar6 = 0x2e;
       }
       else {
         if (local_24 != 8) {
@@ -492,12 +493,12 @@ switchD_20107444_default:
             bVar2 = true;
             if (local_24 == 0xbc) {
 switchD_20107c58_caseD_bc:
-              iVar4 = 0x25;
+              iVar6 = 0x25;
             }
             else if ((int)local_24 < 0xbd) {
               if (local_24 == 0xb3) {
 LAB_20107854:
-                iVar4 = 0xd;
+                iVar6 = 0xd;
               }
               else if ((int)local_24 < 0xb4) {
                 if (local_24 == 0x6e) goto switchD_20107b38_caseD_6e;
@@ -521,7 +522,7 @@ joined_r0x201077ac:
                   goto switchD_20107a88_caseD_b4;
                 case 0xb5:
 switchD_20107c34_caseD_b5:
-                  iVar4 = 0xf;
+                  iVar6 = 0xf;
                   break;
                 case 0xb6:
                   goto switchD_20107c34_caseD_b6;
@@ -544,56 +545,56 @@ switchD_20107c34_caseD_b5:
                 goto switchD_20107c58_caseD_bd;
               case 0xbe:
 switchD_20107b38_caseD_6e:
-                iVar4 = 0x26;
+                iVar6 = 0x26;
                 break;
               case 0xbf:
                 goto switchD_20107b38_caseD_6f;
               case 0xc0:
               case 0xcc:
 switchD_20107c58_caseD_c0:
-                iVar4 = 0x1f;
+                iVar6 = 0x1f;
                 break;
               case 0xc1:
 switchD_20107ab8_caseD_c1:
-                iVar4 = 0x19;
+                iVar6 = 0x19;
                 break;
               case 0xc3:
 switchD_20107ab8_caseD_c3:
-                iVar4 = 0x1a;
+                iVar6 = 0x1a;
                 break;
               case 0xc4:
                 goto switchD_20107c58_caseD_c4;
               case 0xc5:
 switchD_20107ab8_caseD_c5:
-                iVar4 = 0x1b;
+                iVar6 = 0x1b;
                 break;
               case 0xc6:
 switchD_20107b98_caseD_c6:
-                iVar4 = 0x1c;
+                iVar6 = 0x1c;
                 break;
               case 200:
                 goto switchD_20107c58_caseD_c8;
               case 0xc9:
 switchD_20107c58_caseD_c9:
-                iVar4 = 0x23;
+                iVar6 = 0x23;
                 break;
               case 0xca:
 switchD_20107c58_caseD_ca:
-                iVar4 = 0x21;
+                iVar6 = 0x21;
                 break;
               case 0xcb:
                 goto switchD_20107c58_caseD_cb;
               case 0xce:
 switchD_20107c58_caseD_ce:
-                iVar4 = 0x1d;
+                iVar6 = 0x1d;
                 break;
               case 0xcf:
 switchD_20107ab8_caseD_cf:
-                iVar4 = 0x24;
+                iVar6 = 0x24;
                 break;
               case 0xd0:
 switchD_20107b38_caseD_70:
-                iVar4 = 0x20;
+                iVar6 = 0x20;
               }
             }
           }
@@ -604,7 +605,7 @@ switchD_20107b38_caseD_70:
               if ((int)local_24 < 0xbd) {
                 if (local_24 == 0xb4) {
 switchD_20107a88_caseD_b4:
-                  iVar4 = 0xe;
+                  iVar6 = 0xe;
                 }
                 else if ((int)local_24 < 0xb5) {
                   if (local_24 == 0x6f) goto switchD_20107b38_caseD_6f;
@@ -647,14 +648,14 @@ joined_r0x20107978:
                   goto switchD_20107b38_caseD_6e;
                 case 0xbf:
 switchD_20107b38_caseD_6f:
-                  iVar4 = 0x18;
+                  iVar6 = 0x18;
                   break;
                 case 0xc0:
                 case 0xcc:
                   goto switchD_20107c58_caseD_c0;
                 case 0xc2:
 switchD_20107b98_caseD_c2:
-                  iVar4 = 0x27;
+                  iVar6 = 0x27;
                   break;
                 case 0xc3:
                   goto switchD_20107ab8_caseD_c3;
@@ -718,7 +719,7 @@ switchD_20107b98_caseD_c2:
                   if (local_24 == 0x6a) goto switchD_20107ab8_caseD_c1;
                   if (local_24 != 0x6b) goto joined_r0x20107790;
 switchD_20107b38_caseD_6b:
-                  iVar4 = 0x15;
+                  iVar6 = 0x15;
                 }
                 else {
                   switch(local_24) {
@@ -751,7 +752,7 @@ switchD_20107b38_caseD_6b:
                     goto switchD_20107c58_caseD_ca;
                   case 0xcb:
 switchD_20107c58_caseD_cb:
-                    iVar4 = 0x1e;
+                    iVar6 = 0x1e;
                     break;
                   case 0xce:
                     goto switchD_20107c58_caseD_ce;
@@ -767,7 +768,7 @@ switchD_20107c58_caseD_cb:
                 if (param_1 == 8 || param_1 == 9) {
                   if (local_24 == 0xb6) {
 switchD_20107c34_caseD_b6:
-                    iVar4 = 0x10;
+                    iVar6 = 0x10;
                   }
                   else if ((int)local_24 < 0xb7) {
                     if (local_24 == 0x72) goto switchD_20107c58_caseD_c8;
@@ -789,12 +790,12 @@ switchD_20107c34_caseD_b6:
                     }
                     else if (local_24 == 0xb2) {
 LAB_2010784c:
-                      iVar4 = 0xc;
+                      iVar6 = 0xc;
                     }
                     else if ((int)local_24 < 0xb3) {
                       if (local_24 == 0x79) {
 LAB_20107b10:
-                        iVar4 = 0x14;
+                        iVar6 = 0x14;
                       }
                       else if (local_24 == 0xb1) goto LAB_20107844;
                     }
@@ -807,19 +808,19 @@ LAB_20107b10:
                     switch(local_24) {
                     case 0xb7:
 switchD_20107c34_caseD_b7:
-                      iVar4 = 0x11;
+                      iVar6 = 0x11;
                       break;
                     case 0xb8:
 switchD_20107c34_caseD_b8:
-                      iVar4 = 0x12;
+                      iVar6 = 0x12;
                       break;
                     case 0xb9:
 switchD_20107c34_caseD_b9:
-                      iVar4 = 0x13;
+                      iVar6 = 0x13;
                       break;
                     case 0xba:
 switchD_20107b98_caseD_ba:
-                      iVar4 = 0x28;
+                      iVar6 = 0x28;
                       break;
                     case 0xbb:
                       goto switchD_20107b38_caseD_6b;
@@ -859,7 +860,7 @@ switchD_20107b98_caseD_ba:
                       else {
                         if (local_24 != 0xb1) goto joined_r0x20107978;
 LAB_20107844:
-                        iVar4 = 0xb;
+                        iVar6 = 0xb;
                       }
                     }
                     else {
@@ -883,18 +884,18 @@ LAB_20107844:
                       goto switchD_20107c58_caseD_bc;
                     case 0xbd:
 switchD_20107c58_caseD_bd:
-                      iVar4 = 0x16;
+                      iVar6 = 0x16;
                       break;
                     case 0xc0:
                     case 0xcc:
                       goto switchD_20107c58_caseD_c0;
                     case 0xc4:
 switchD_20107c58_caseD_c4:
-                      iVar4 = 0x17;
+                      iVar6 = 0x17;
                       break;
                     case 200:
 switchD_20107c58_caseD_c8:
-                      iVar4 = 0x22;
+                      iVar6 = 0x22;
                       break;
                     case 0xc9:
                       goto switchD_20107c58_caseD_c9;
@@ -911,104 +912,104 @@ switchD_20107c58_caseD_c8:
             }
           }
 switchD_20107c34_default:
-          FUN_20155310(auStack_1a8,auStack_148,0x60);
+          __aeabi_memcpy4(auStack_1a8,auStack_148,0x60);
           goto switchD_20107444_default;
         }
-        iVar4 = 10;
+        iVar6 = 10;
       }
       goto LAB_20107cc4;
     }
     if ((local_28 & 0xdd) != 0) goto LAB_20107d28;
-    iVar6 = 0x20;
+    iVar7 = 0x20;
     if ((local_28 & 0x22) == 0) {
       if (DAT_2080010f != '\0') goto LAB_20107538;
 LAB_20107548:
-      FUN_20155310(auStack_1a8,auStack_88,0x60);
+      __aeabi_memcpy4(auStack_1a8,auStack_88,0x60);
     }
     else {
       if (DAT_2080010f != '\0') goto LAB_20107548;
 LAB_20107538:
-      iVar6 = 0;
+      iVar7 = 0;
     }
-    uVar7 = uVar3 + iVar6 & 0xff;
-    switch(uVar5) {
+    uVar8 = uVar3 + iVar7 & 0xff;
+    switch(uVar4) {
     case 0:
-      iVar4 = 0x16;
+      iVar6 = 0x16;
       break;
     case 1:
-      iVar4 = 0x25;
+      iVar6 = 0x25;
       break;
     case 2:
-      iVar4 = 0x23;
+      iVar6 = 0x23;
       break;
     case 3:
-      iVar4 = 0x18;
+      iVar6 = 0x18;
       break;
     case 4:
-      iVar4 = 0xd;
+      iVar6 = 0xd;
       break;
     case 5:
-      iVar4 = 0x19;
+      iVar6 = 0x19;
       break;
     case 6:
-      iVar4 = 0x1a;
+      iVar6 = 0x1a;
       break;
     case 7:
-      iVar4 = 0x1b;
+      iVar6 = 0x1b;
       break;
     case 8:
-      iVar4 = 0x12;
+      iVar6 = 0x12;
       break;
     case 9:
-      iVar4 = 0x1c;
+      iVar6 = 0x1c;
       break;
     case 10:
-      iVar4 = 0x1d;
+      iVar6 = 0x1d;
       break;
     case 0xb:
-      iVar4 = 0x1e;
+      iVar6 = 0x1e;
       break;
     case 0xc:
-      iVar4 = 0x27;
+      iVar6 = 0x27;
       break;
     case 0xd:
-      iVar4 = 0x26;
+      iVar6 = 0x26;
       break;
     case 0xe:
-      iVar4 = 0x13;
+      iVar6 = 0x13;
       break;
     case 0xf:
-      iVar4 = 0x14;
+      iVar6 = 0x14;
       break;
     case 0x10:
-      iVar4 = 0xb;
+      iVar6 = 0xb;
       break;
     case 0x11:
-      iVar4 = 0xe;
+      iVar6 = 0xe;
       break;
     case 0x12:
-      iVar4 = 0x17;
+      iVar6 = 0x17;
       break;
     case 0x13:
-      iVar4 = 0xf;
+      iVar6 = 0xf;
       break;
     case 0x14:
-      iVar4 = 0x11;
+      iVar6 = 0x11;
       break;
     case 0x15:
-      iVar4 = 0x24;
+      iVar6 = 0x24;
       break;
     case 0x16:
-      iVar4 = 0xc;
+      iVar6 = 0xc;
       break;
     case 0x17:
-      iVar4 = 0x22;
+      iVar6 = 0x22;
       break;
     case 0x18:
-      iVar4 = 0x10;
+      iVar6 = 0x10;
       break;
     case 0x19:
-      iVar4 = 0x21;
+      iVar6 = 0x21;
       break;
     default:
       goto switchD_20107444_default;
@@ -1016,18 +1017,18 @@ LAB_20107538:
   }
 LAB_20107cc4:
   if (uVar3 == 0x14 || uVar3 == 0xc0) {
-    FUN_20155310(auStack_1a8,auStack_e8,0x60);
+    __aeabi_memcpy4(auStack_1a8,auStack_e8,0x60);
   }
-  uVar5 = 0x10;
-  uVar1 = auStack_1a8[iVar4];
-  if (uVar7 - 0x41 < 0x1a) {
-    uVar5 = 0x20;
+  bVar5 = 0x10;
+  uVar1 = auStack_1a8[iVar6];
+  if (uVar8 - 0x41 < 0x1a) {
+    bVar5 = 0x20;
   }
   if ((bVar2 && uVar3 != 0xc0) && (uVar3 != 0x14)) {
-    uVar5 = 0x30;
+    bVar5 = 0x30;
   }
-  mainlink_send_e0(uVar5 | 1,uVar1);
-  mainlink_send_e0(uVar5,uVar1);
+  mainlink_send_e0(bVar5 | 1,(uint)uVar1);
+  mainlink_send_e0(bVar5,(uint)uVar1);
 LAB_20107d28:
   if (uVar3 == 0x1b) {
     kbd_text_clear();
@@ -1035,8 +1036,8 @@ LAB_20107d28:
   else if (uVar3 == 8) {
     kbd_text_backspace();
   }
-  else if (uVar7 != 0) {
-    kbd_text_append(uVar7);
+  else if (uVar8 != 0) {
+    kbd_text_append((byte)uVar8);
   }
   DAT_2080012c = local_24;
   _DAT_20800128 = local_28;
@@ -1090,16 +1091,15 @@ uint debug_unlock_check(void)
 
 {
   uint uVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
+  uint uVar2;
+  uint uVar3;
   
-  iVar2 = gpio_read_bit(4,2);
-  iVar3 = gpio_read_bit(4,3);
-  iVar4 = gpio_read_bit(8,3);
-  uVar1 = (uint)(byte)(iVar2 == 0 | (iVar3 == 0) << 1 | (iVar4 == 0) << 2) << 0x18;
+  uVar1 = gpio_read_bit(4,2);
+  uVar2 = gpio_read_bit(4,3);
+  uVar3 = gpio_read_bit(8,3);
+  uVar1 = (uint)(byte)(uVar1 == 0 | (uVar2 == 0) << 1 | (uVar3 == 0) << 2) << 0x18;
   DAT_20800124 = uVar1;
-  if (iVar3 == 0 && iVar4 == 0) {
+  if (uVar2 == 0 && uVar3 == 0) {
     itron_dly_tsk(0x1e);
     DAT_20800124 = uVar1 | (uint)DAT_20811225 << 0x10 | (uint)(byte)DAT_2081122c;
     if (((DAT_20811225 & 0x11) != 0) && ((byte)DAT_2081122c == 0x2a)) {
@@ -1144,7 +1144,7 @@ void FUN_20107e9c(void)
 {
   int iVar1;
   
-  DAT_20800118 = FUN_2014fd24(0,&DAT_2016533c);
+  DAT_20800118 = itron_acre_mtx(0,&DAT_2016533c);
   iVar1 = 0;
   do {
     FUN_2015f05c(&DAT_20811080 + iVar1 * 0xd0);
@@ -1200,7 +1200,7 @@ void vk_key_name(void)
   DAT_2045c2b4 = 0xd;
   FUN_20163770(&DAT_2045c2b8,"VK_RETURN");
   DAT_2045c2d8 = 0x14;
-  FUN_20155310(&DAT_2045c2dc,"VK_CAPITAL",0xb);
+  __aeabi_memcpy4(&DAT_2045c2dc,"VK_CAPITAL",0xb);
   DAT_2045c2fc = 0x20;
   FUN_201637bc(&DAT_2045c300,"VK_SPACE");
   DAT_2045c320 = 0x25;
@@ -1230,7 +1230,7 @@ void vk_key_name(void)
     local_2c = 0;
     local_28 = 0;
     local_24 = 0;
-    FUN_20154a30(&local_40,0x20,"VK_%d",iVar3);
+    snprintf(&local_40,0x20,"VK_%d",iVar3);
     iVar4 = iVar1 * 0x24;
     iVar3 = iVar3 + 1;
     (&DAT_2045c294)[iVar1 * 9] = local_40;
@@ -1255,7 +1255,7 @@ void vk_key_name(void)
     local_2c = 0;
     local_28 = 0;
     local_24 = 0;
-    FUN_20154a30(&local_40,0x20,"VK_%c",iVar3 + 0x41);
+    snprintf(&local_40,0x20,"VK_%c",iVar3 + 0x41);
     iVar4 = iVar1 * 0x24;
     iVar3 = iVar3 + 1;
     (&DAT_2045c294)[iVar1 * 9] = local_40;
@@ -1269,7 +1269,7 @@ void vk_key_name(void)
   } while (iVar3 < 0x1a);
   iVar2 = iVar2 + 2;
   (&DAT_2045c290)[iVar2 * 9] = 0x60;
-  FUN_20155310(&DAT_2045c294 + iVar2 * 9,"VK_NUMPAD0",0xb);
+  __aeabi_memcpy4(&DAT_2045c294 + iVar2 * 9,"VK_NUMPAD0",0xb);
   iVar1 = 1;
   do {
     iVar4 = iVar2;
@@ -1283,7 +1283,7 @@ void vk_key_name(void)
     local_2c = 0;
     local_28 = 0;
     local_24 = 0;
-    FUN_20154a30(&local_40,0x20,"VK_NUMPAD%d",iVar1);
+    snprintf(&local_40,0x20,"VK_NUMPAD%d",iVar1);
     iVar3 = iVar2 * 0x24;
     iVar1 = iVar1 + 1;
     (&DAT_2045c294)[iVar2 * 9] = local_40;
@@ -1308,7 +1308,7 @@ void vk_key_name(void)
   builtin_strncpy((char *)(&DAT_2045c298 + iVar1 * 9),"UBTR",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"ACT",4);
   (&DAT_2045c290)[(iVar4 + 5) * 9] = 0x6e;
-  FUN_20155310(&DAT_2045c294 + (iVar4 + 5) * 9,"VK_DECIMAL",0xb);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar4 + 5) * 9,"VK_DECIMAL",0xb);
   iVar4 = iVar4 + 6;
   (&DAT_2045c290)[iVar4 * 9] = 0x6f;
   FUN_20163770(&DAT_2045c294 + iVar4 * 9,"VK_DIVIDE");
@@ -1325,7 +1325,7 @@ void vk_key_name(void)
     local_2c = 0;
     local_28 = 0;
     local_24 = 0;
-    FUN_20154a30(&local_40,0x20,"VK_F%d",iVar1 + 1);
+    snprintf(&local_40,0x20,"VK_F%d",iVar1 + 1);
     iVar3 = iVar4 * 0x24;
     iVar1 = iVar1 + 1;
     (&DAT_2045c294)[iVar4 * 9] = local_40;
@@ -1356,40 +1356,40 @@ void vk_key_name(void)
   (&DAT_2045c290)[(iVar2 + 7) * 9] = 0xa5;
   FUN_201637bc(&DAT_2045c294 + (iVar2 + 7) * 9,"VK_RMENU");
   (&DAT_2045c290)[(iVar2 + 8) * 9] = 0xb1;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 8) * 9,"VK_OEM_EXCLAMATION",0x13);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 8) * 9,"VK_OEM_EXCLAMATION",0x13);
   (&DAT_2045c290)[(iVar2 + 9) * 9] = 0xb2;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 9) * 9,"VK_OEM_DOUBLEQUOTE",0x13);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 9) * 9,"VK_OEM_DOUBLEQUOTE",0x13);
   (&DAT_2045c290)[(iVar2 + 10) * 9] = 0xb3;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 10) * 9,"VK_OEM_SHARP",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 10) * 9,"VK_OEM_SHARP",0xd);
   (&DAT_2045c290)[(iVar2 + 0xb) * 9] = 0xb4;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0xb) * 9,"VK_OEM_DOLLAR",0xe);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0xb) * 9,"VK_OEM_DOLLAR",0xe);
   (&DAT_2045c290)[(iVar2 + 0xc) * 9] = 0xb5;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0xc) * 9,"VK_OEM_PERCENT",0xf);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0xc) * 9,"VK_OEM_PERCENT",0xf);
   (&DAT_2045c290)[(iVar2 + 0xd) * 9] = 0xb6;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0xd) * 9,"VK_OEM_AMPERSAND",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0xd) * 9,"VK_OEM_AMPERSAND",0x11);
   (&DAT_2045c290)[(iVar2 + 0xe) * 9] = 0xb7;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0xe) * 9,"VK_OEM_SINGLEQUOTE",0x13);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0xe) * 9,"VK_OEM_SINGLEQUOTE",0x13);
   (&DAT_2045c290)[(iVar2 + 0xf) * 9] = 0xb8;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0xf) * 9,"VK_OEM_PARENTHESIS_1",0x15);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0xf) * 9,"VK_OEM_PARENTHESIS_1",0x15);
   (&DAT_2045c290)[(iVar2 + 0x10) * 9] = 0xb9;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x10) * 9,"VK_OEM_PARENTHESIS_2",0x15);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x10) * 9,"VK_OEM_PARENTHESIS_2",0x15);
   (&DAT_2045c290)[(iVar2 + 0x11) * 9] = 0xba;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x11) * 9,"VK_OEM_COLON",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x11) * 9,"VK_OEM_COLON",0xd);
   iVar1 = iVar2 + 0x12;
   (&DAT_2045c290)[iVar1 * 9] = 0xbb;
   builtin_strncpy((char *)(&DAT_2045c294 + iVar1 * 9),"VK_O",4);
   builtin_strncpy((char *)(&DAT_2045c298 + iVar1 * 9),"EM_P",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"LUS",4);
   (&DAT_2045c290)[(iVar2 + 0x13) * 9] = 0xbc;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x13) * 9,"VK_OEM_COMMA",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x13) * 9,"VK_OEM_COMMA",0xd);
   (&DAT_2045c290)[(iVar2 + 0x14) * 9] = 0xbd;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x14) * 9,"VK_OEM_MINUS",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x14) * 9,"VK_OEM_MINUS",0xd);
   (&DAT_2045c290)[(iVar2 + 0x15) * 9] = 0xbe;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x15) * 9,"VK_OEM_PERIOD",0xe);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x15) * 9,"VK_OEM_PERIOD",0xe);
   (&DAT_2045c290)[(iVar2 + 0x16) * 9] = 0xbf;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x16) * 9,"VK_OEM_SLASH",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x16) * 9,"VK_OEM_SLASH",0xd);
   (&DAT_2045c290)[(iVar2 + 0x17) * 9] = 0xc0;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x17) * 9,"VK_OEM_ATMARK",0xe);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x17) * 9,"VK_OEM_ATMARK",0xe);
   iVar1 = iVar2 + 0x18;
   (&DAT_2045c290)[iVar1 * 9] = 0xc1;
   builtin_strncpy((char *)(&DAT_2045c294 + iVar1 * 9),"VK_O",4);
@@ -1397,7 +1397,7 @@ void vk_key_name(void)
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"STER",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c2a0),"ISK",4);
   (&DAT_2045c290)[(iVar2 + 0x19) * 9] = 0xc2;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x19) * 9,"VK_OEM_SEMICOLON",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x19) * 9,"VK_OEM_SEMICOLON",0x11);
   iVar1 = iVar2 + 0x1a;
   (&DAT_2045c290)[iVar1 * 9] = 0xc3;
   builtin_strncpy((char *)(&DAT_2045c294 + iVar1 * 9),"VK_O",4);
@@ -1405,9 +1405,9 @@ void vk_key_name(void)
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"ESST",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c2a0),"HAN",4);
   (&DAT_2045c290)[(iVar2 + 0x1b) * 9] = 0xc4;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x1b) * 9,"VK_OEM_EQUAL",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x1b) * 9,"VK_OEM_EQUAL",0xd);
   (&DAT_2045c290)[(iVar2 + 0x1c) * 9] = 0xc5;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x1c) * 9,"VK_OEM_GREATERTHAN",0x13);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x1c) * 9,"VK_OEM_GREATERTHAN",0x13);
   iVar1 = iVar2 + 0x1d;
   (&DAT_2045c290)[iVar1 * 9] = 0xc6;
   builtin_strncpy((char *)(&DAT_2045c294 + iVar1 * 9),"VK_O",4);
@@ -1415,19 +1415,19 @@ void vk_key_name(void)
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"UEST",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c2a0),"ION",4);
   (&DAT_2045c290)[(iVar2 + 0x1e) * 9] = 199;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x1e) * 9,"VK_OEM_BACKQUOTE",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x1e) * 9,"VK_OEM_BACKQUOTE",0x11);
   (&DAT_2045c290)[(iVar2 + 0x1f) * 9] = 200;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x1f) * 9,"VK_OEM_BRACKET_1",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x1f) * 9,"VK_OEM_BRACKET_1",0x11);
   (&DAT_2045c290)[(iVar2 + 0x20) * 9] = 0xc9;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x20) * 9,"VK_OEM_BRACKET_2",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x20) * 9,"VK_OEM_BRACKET_2",0x11);
   (&DAT_2045c290)[(iVar2 + 0x21) * 9] = 0xca;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x21) * 9,"VK_OEM_HAT",0xb);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x21) * 9,"VK_OEM_HAT",0xb);
   (&DAT_2045c290)[(iVar2 + 0x22) * 9] = 0xcb;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x22) * 9,"VK_OEM_BRACKET_3",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x22) * 9,"VK_OEM_BRACKET_3",0x11);
   (&DAT_2045c290)[(iVar2 + 0x23) * 9] = 0xcc;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x23) * 9,"VK_OEM_BRACKET_4",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x23) * 9,"VK_OEM_BRACKET_4",0x11);
   (&DAT_2045c290)[(iVar2 + 0x24) * 9] = 0xcd;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x24) * 9,"VK_OEM_TILDE",0xd);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x24) * 9,"VK_OEM_TILDE",0xd);
   iVar1 = iVar2 + 0x25;
   (&DAT_2045c290)[iVar1 * 9] = 0xce;
   builtin_strncpy((char *)(&DAT_2045c294 + iVar1 * 9),"VK_O",4);
@@ -1442,7 +1442,7 @@ void vk_key_name(void)
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c29c),"ERTI",4);
   builtin_strncpy((char *)(iVar1 * 0x24 + 0x2045c2a0),"CAL",4);
   (&DAT_2045c290)[(iVar2 + 0x28) * 9] = 0xd0;
-  FUN_20155310(&DAT_2045c294 + (iVar2 + 0x28) * 9,"VK_OEM_BACKSLASH",0x11);
+  __aeabi_memcpy4(&DAT_2045c294 + (iVar2 + 0x28) * 9,"VK_OEM_BACKSLASH",0x11);
   iVar2 = iVar2 + 0x29;
   (&DAT_2045c290)[iVar2 * 9] = 0xd8;
   builtin_strncpy((char *)(iVar2 * 0x24 + 0x2045c29c),"TER",4);
@@ -2615,8 +2615,8 @@ void FUN_2010a438(void)
 undefined4 kbd_layout_tables_init(void)
 
 {
-  memclr(&DAT_20450290,0xc000);
-  memclr(&DAT_2045c290,0x1200);
+  __aeabi_memclr4(&DAT_20450290,0xc000);
+  __aeabi_memclr4(&DAT_2045c290,0x1200);
   vk_key_name();
   FUN_201090a0();
   FUN_201090a8();
@@ -2685,7 +2685,7 @@ LAB_2010a744:
 
 // ===== vk_name_lookup @ 2010a758 (60 bytes)
 
-undefined4 * vk_name_lookup(int param_1)
+void * vk_name_lookup(int param_1)
 
 {
   int iVar1;
@@ -2697,7 +2697,7 @@ undefined4 * vk_name_lookup(int param_1)
     }
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x80);
-  return (undefined4 *)0x0;
+  return (void *)0x0;
 }
 
 
@@ -2705,7 +2705,7 @@ undefined4 * vk_name_lookup(int param_1)
 
 /* F12 overlay: layout, usage hex, VK name */
 
-void kbdtest_draw(undefined4 param_1)
+void kbdtest_draw(int param_1)
 
 {
   undefined1 auStack_50 [64];
@@ -2729,12 +2729,12 @@ void kbdtest_draw(undefined4 param_1)
 void kbdtest_record(undefined1 param_1)
 
 {
-  undefined4 uVar1;
+  int iVar1;
   
-  uVar1 = FUN_2010a684();
-  DAT_20811288 = vk_name_lookup();
+  iVar1 = FUN_2010a684();
+  DAT_20811288 = vk_name_lookup(iVar1);
   DAT_20811282 = param_1;
-  DAT_20811284 = uVar1;
+  DAT_20811284 = iVar1;
   DAT_20811280 = DAT_20811280 + '\x01';
   return;
 }
@@ -2779,7 +2779,7 @@ LAB_2010a8e8:
 
 /* returns kbdtest_line */
 
-code * kbdtest_init(void)
+void * kbdtest_init(void)
 
 {
   DAT_20800130 = 0;
@@ -2829,7 +2829,7 @@ void sum8_neg_append(int param_1,int param_2)
 
 /* same F1 <code> frame (DSP 02/82) */
 
-undefined4 isp_relay_mode_cmd(int *param_1,char param_2)
+uint isp_relay_mode_cmd(int *param_1,char param_2)
 
 {
   int iVar1;
@@ -2867,7 +2867,7 @@ undefined4 isp_relay_mode_cmd(int *param_1,char param_2)
 
 /* CRC-16 poly 0x1021 init 0 (NXP framing) */
 
-void crc16_xmodem(int param_1,uint param_2)
+byte crc16_xmodem(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -2890,7 +2890,7 @@ void crc16_xmodem(int param_1,uint param_2)
       uVar4 = uVar4 + (7 < uVar3);
     } while (7 >= uVar3);
   }
-  return;
+  return (byte)uVar2;
 }
 
 
@@ -2898,7 +2898,7 @@ void crc16_xmodem(int param_1,uint param_2)
 
 /* 5A A6 ping -> 5A A7 */
 
-undefined4 dsp_isp_ping(int *param_1)
+uint dsp_isp_ping(int *param_1)
 
 {
   int iVar1;
@@ -2948,18 +2948,18 @@ undefined4 dsp_isp_ping(int *param_1)
 
 /* WriteMemory 256 B per packet from 0x08000000 */
 
-undefined4 dsp_isp_write_image(int *param_1,undefined4 param_2)
+uint dsp_isp_write_image(int *param_1,uint param_2)
 
 {
   char *pcVar1;
   char cVar2;
   char cVar3;
   ushort uVar4;
-  undefined2 uVar5;
-  int iVar6;
-  undefined4 uVar7;
-  uint uVar8;
+  uint uVar5;
+  uint uVar6;
+  int iVar7;
   undefined4 extraout_r1;
+  undefined4 uVar8;
   int iVar9;
   int iVar10;
   int iVar11;
@@ -2970,13 +2970,13 @@ undefined4 dsp_isp_write_image(int *param_1,undefined4 param_2)
   char *local_18c;
   char local_188 [5];
   undefined2 local_183;
-  undefined1 local_181;
+  byte local_181;
   undefined1 local_180;
   undefined1 auStack_17f [256];
   char local_7f;
   char local_7c [5];
   undefined2 local_77;
-  undefined1 local_75;
+  byte local_75;
   undefined1 local_74;
   undefined1 local_73;
   undefined1 local_72;
@@ -3007,9 +3007,9 @@ undefined4 dsp_isp_write_image(int *param_1,undefined4 param_2)
   
   iVar10 = 0;
   iVar9 = 0;
-  memclr(local_60,0x18);
-  memclr(local_7c,0x1c);
-  memclr(local_188,0x10c);
+  __aeabi_memclr4(local_60,0x18);
+  __aeabi_memclr4(local_7c,0x1c);
+  __aeabi_memclr4(local_188,0x10c);
   local_7c[0] = 'Z';
   local_7c[1] = 0x16;
   local_7c[4] = 0xa4;
@@ -3041,55 +3041,54 @@ undefined4 dsp_isp_write_image(int *param_1,undefined4 param_2)
   local_64 = 0;
   local_183 = 0x100;
   thunk_FUN_2014af64(param_2,&local_194);
-  uVar7 = 0;
+  uVar5 = 0;
   if (local_194 != 0) {
-    progress_scale(&DAT_20800178,extraout_r1,0,0x3ff00000);
-    progress_set();
+    uVar5 = progress_scale(&DAT_20800178,extraout_r1,0,0x3ff00000);
+    progress_set(uVar5);
     progress_range_init(auStack_30,DAT_2080017c,99);
-    sfl_stream_init(auStack_48,param_2,0,param_1);
+    sfl_stream_init(auStack_48,param_2,0,(uint)param_1);
     itron_dly_tsk(100);
-    iVar6 = dsp_isp_ping(param_1);
-    uVar7 = 0;
-    if (iVar6 != 0) {
+    uVar6 = dsp_isp_ping(param_1);
+    uVar5 = 0;
+    if (uVar6 != 0) {
 LAB_2010acc8:
-      local_190 = sfl_stream_read(auStack_17f,1,0x100,auStack_48);
+      local_190 = sfl_stream_read((uint)auStack_17f,1,0x100,(int)auStack_48);
       if (local_190 != 0) {
         iVar11 = 0;
-        iVar6 = iVar9 * 0x100 + 0x8000000;
+        iVar7 = iVar9 * 0x100 + 0x8000000;
         local_6f = 0;
-        local_6e = (undefined1)((uint)iVar6 >> 8);
-        local_6c = (undefined1)((uint)iVar6 >> 0x18);
+        local_6e = (undefined1)((uint)iVar7 >> 8);
+        local_6c = (undefined1)((uint)iVar7 >> 0x18);
         local_18c = local_7c + 2;
-        local_6d = (undefined1)((uint)iVar6 >> 0x10);
+        local_6d = (undefined1)((uint)iVar7 >> 0x10);
         do {
           uVar4 = local_77;
           cVar3 = local_7c[4];
           cVar2 = local_7c[3];
           local_75 = (undefined1)local_77;
-          uVar8 = (uint)local_77;
+          uVar5 = (uint)local_77;
           local_74 = local_77._1_1_;
           local_77 = CONCAT11(local_7c[4],local_7c[3]);
-          uVar5 = crc16_xmodem(local_18c + 3,uVar8 + 4);
+          local_75 = crc16_xmodem((int)(local_18c + 3),uVar5 + 4);
           local_7c[4] = cVar3;
           local_77 = uVar4;
-          local_75 = (char)uVar5;
           local_7c[3] = cVar2;
-          local_74 = (char)((ushort)uVar5 >> 8);
-          iVar6 = 0;
+          local_74 = 0;
+          iVar7 = 0;
           do {
-            pcVar1 = local_7c + iVar6;
-            iVar6 = iVar6 + 1;
+            pcVar1 = local_7c + iVar7;
+            iVar7 = iVar7 + 1;
             local_63 = local_63 + *pcVar1;
-          } while (iVar6 < 0x19);
-          iVar6 = (**(code **)(*param_1 + 0x24))(param_1,local_7c,0x1a);
-          if (iVar6 != 0x1a) {
+          } while (iVar7 < 0x19);
+          iVar7 = (**(code **)(*param_1 + 0x24))(param_1,local_7c,0x1a);
+          if (iVar7 != 0x1a) {
             return 0;
           }
-          iVar6 = (**(code **)(*param_1 + 0x18))(param_1,local_60,1,100);
-          if (((((iVar6 != -1) && (local_60[0] == '\x06')) &&
-               (iVar6 = (**(code **)(*param_1 + 0x18))(param_1,local_60,6,100), iVar6 != -1)) &&
+          iVar7 = (**(code **)(*param_1 + 0x18))(param_1,local_60,1,100);
+          if (((((iVar7 != -1) && (local_60[0] == '\x06')) &&
+               (iVar7 = (**(code **)(*param_1 + 0x18))(param_1,local_60,6,100), iVar7 != -1)) &&
               ((local_5c == -0x5f &&
-               (iVar6 = (**(code **)(*param_1 + 0x18))(param_1,local_60,0x16,100), iVar6 != -1))))
+               (iVar7 = (**(code **)(*param_1 + 0x18))(param_1,local_60,0x16,100), iVar7 != -1))))
              && (local_57 == -0x60)) {
             cVar2 = local_53;
             if (local_53 == '\0') {
@@ -3105,12 +3104,12 @@ LAB_2010acc8:
             if (local_51 != '\0' || cVar2 != '\0') {
               return 0;
             }
-            iVar6 = (**(code **)(*param_1 + 0x24))(param_1,&DAT_20800170,6);
-            if (iVar6 != 6) {
+            iVar7 = (**(code **)(*param_1 + 0x24))(param_1,&DAT_20800170,6);
+            if (iVar7 != 6) {
               return 0;
             }
-            iVar6 = (**(code **)(*param_1 + 0x18))(param_1,local_60,1,100);
-            if ((iVar6 != -1) && (local_60[0] == '\x06')) goto LAB_2010aed8;
+            iVar7 = (**(code **)(*param_1 + 0x18))(param_1,local_60,1,100);
+            if ((iVar7 != -1) && (local_60[0] == '\x06')) goto LAB_2010aed8;
           }
           iVar11 = iVar11 + 1;
           if (4 < iVar11) {
@@ -3118,12 +3117,12 @@ LAB_2010acc8:
           }
         } while( true );
       }
-      uVar7 = 1;
+      uVar5 = 1;
     }
   }
-  return uVar7;
+  return uVar5;
 LAB_2010aed8:
-  iVar6 = 0;
+  iVar7 = 0;
   local_18c = local_188 + 2;
   do {
     uVar4 = local_183;
@@ -3131,14 +3130,13 @@ LAB_2010aed8:
     cVar2 = local_188[3];
     local_180 = local_183._1_1_;
     local_181 = (undefined1)local_183;
-    uVar8 = (uint)local_183;
+    uVar5 = (uint)local_183;
     local_183 = CONCAT11(local_188[4],local_188[3]);
-    uVar5 = crc16_xmodem(local_18c + 3,uVar8 + 4);
+    local_181 = crc16_xmodem((int)(local_18c + 3),uVar5 + 4);
     local_188[4] = cVar3;
     local_183 = uVar4;
-    local_181 = (char)uVar5;
     local_188[3] = cVar2;
-    local_180 = (char)((ushort)uVar5 >> 8);
+    local_180 = 0;
     iVar11 = 0;
     do {
       pcVar1 = local_188 + iVar11;
@@ -3176,19 +3174,19 @@ LAB_2010aed8:
       iVar11 = (**(code **)(*param_1 + 0x18))(param_1,local_60,1,100);
       if ((iVar11 != -1) && (local_60[0] == '\x06')) break;
     }
-    iVar6 = iVar6 + 1;
-    if (4 < iVar6) {
+    iVar7 = iVar7 + 1;
+    if (4 < iVar7) {
       return 0;
     }
   } while( true );
   iVar10 = iVar10 + local_190;
-  uVar12 = FUN_20164d82(local_194);
-  uVar13 = FUN_20164d82(iVar10);
+  uVar12 = __aeabi_ui2d(local_194);
+  uVar13 = __aeabi_ui2d(iVar10);
   uVar12 = FUN_201649d8((int)uVar13,(int)((ulonglong)uVar13 >> 0x20),(int)uVar12,
                         (int)((ulonglong)uVar12 >> 0x20));
-  uVar7 = (undefined4)((ulonglong)uVar12 >> 0x20);
-  progress_scale(auStack_30,uVar7,(int)uVar12,uVar7);
-  progress_set();
+  uVar8 = (undefined4)((ulonglong)uVar12 >> 0x20);
+  uVar5 = progress_scale(auStack_30,uVar8,(int)uVar12,uVar8);
+  progress_set(uVar5);
   iVar9 = iVar9 + 1;
   goto LAB_2010acc8;
 }
@@ -3198,12 +3196,12 @@ LAB_2010aed8:
 
 /* FlashEraseRegion 0x08000000, 0xA0000, 9 */
 
-undefined4 dsp_isp_erase_region(int *param_1)
+uint dsp_isp_erase_region(int *param_1)
 
 {
   char *pcVar1;
   char cVar2;
-  undefined2 uVar3;
+  uint uVar3;
   int iVar4;
   int iVar5;
   char local_50 [28];
@@ -3215,8 +3213,8 @@ undefined4 dsp_isp_erase_region(int *param_1)
   char local_25;
   char local_24;
   
-  memclr(local_34,0x18);
-  memclr(local_50,0x1c);
+  __aeabi_memclr4(local_34,0x18);
+  __aeabi_memclr4(local_50,0x1c);
   local_50[0] = 'Z';
   local_50[1] = 0x16;
   local_50[8] = 0;
@@ -3242,15 +3240,14 @@ undefined4 dsp_isp_erase_region(int *param_1)
   local_50[0xf] = 0;
   local_50[0x17] = 0;
   local_50[7] = 0x10;
-  uVar3 = crc16_xmodem(local_50 + 5,0x14);
+  local_50[7] = crc16_xmodem((int)(local_50 + 5),0x14);
   local_50[4] = 0xa4;
   local_50[5] = 0x10;
   local_50[6] = 0;
-  local_50[7] = (char)uVar3;
-  local_50[8] = (char)((ushort)uVar3 >> 8);
+  local_50[8] = 0;
   local_50[3] = 0x5a;
-  iVar4 = dsp_isp_ping(param_1);
-  if (iVar4 != 0) {
+  uVar3 = dsp_isp_ping(param_1);
+  if (uVar3 != 0) {
     iVar4 = 0;
     do {
       pcVar1 = local_50 + iVar4;
@@ -3304,12 +3301,12 @@ undefined4 dsp_isp_erase_region(int *param_1)
 
 /* ConfigureMemory 9 (FlexSPI NOR), 0x1C000 */
 
-undefined4 dsp_isp_configure_memory(int *param_1)
+uint dsp_isp_configure_memory(int *param_1)
 
 {
   char *pcVar1;
   char cVar2;
-  undefined2 uVar3;
+  uint uVar3;
   int iVar4;
   int iVar5;
   char local_50 [24];
@@ -3321,8 +3318,8 @@ undefined4 dsp_isp_configure_memory(int *param_1)
   char local_29;
   char local_28;
   
-  memclr(local_38,0x18);
-  memclr(local_50,0x18);
+  __aeabi_memclr4(local_38,0x18);
+  __aeabi_memclr4(local_50,0x18);
   local_50[0] = 'Z';
   local_50[1] = 0x12;
   local_50[8] = 0;
@@ -3344,15 +3341,14 @@ undefined4 dsp_isp_configure_memory(int *param_1)
   local_50[0xf] = 0;
   local_50[0x14] = 0;
   local_50[7] = 0xc;
-  uVar3 = crc16_xmodem(local_50 + 5,0x10);
+  local_50[7] = crc16_xmodem((int)(local_50 + 5),0x10);
   local_50[4] = 0xa4;
   local_50[5] = 0xc;
   local_50[6] = 0;
-  local_50[7] = (char)uVar3;
-  local_50[8] = (char)((ushort)uVar3 >> 8);
+  local_50[8] = 0;
   local_50[3] = 0x5a;
-  iVar4 = dsp_isp_ping(param_1);
-  if (iVar4 != 0) {
+  uVar3 = dsp_isp_ping(param_1);
+  if (uVar3 != 0) {
     iVar4 = 0;
     do {
       pcVar1 = local_50 + iVar4;

@@ -113,6 +113,18 @@ GNU binutils `rx-elf` (the fallback route) was not needed in T17; T21c built it 
 | RXv2 support | **[fact]** the 2.47 RX disassembler (`opcodes/rx-decode.opc`) decodes the RXv2 set (EMACA, EMSBA, EMULA, MACLH, MSBHI/LH/LO, MULLH, MVFACGU, MVTACGU, RACL, RDACL/RDACW, FSQRT, FTOU, UTOF, MOVCO/MOVLI) and the RXv3 additions |
 | Remove | `rm -rf ~/opt/rx-binutils-2.47 ~/opt/build/binutils-2.47* ~/opt/dl/binutils-2.47` |
 
+**Rebuild in the cloud container (#205, 2026-10-29).** The 2.47 build above is on the owner's machine only. In the cloud
+container ftp.gnu.org and GitHub archives are refused by the proxy, and Ubuntu's `binutils-multiarch` 2.42 has no RX target, so
+binutils 2.42 was built from Ubuntu's source tarball:
+
+| Item | Value |
+|---|---|
+| Source | http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils_2.42.orig.tar.xz, SHA-256 `f6e4d41fd5fc778b06b7891457b3620da5ecea1006c6a4a41ae998109f85a800`, the same value as `binutils_2.42-4ubuntu2.10.dsc` from the same archive lists (the `.dsc` signature was not checked) |
+| Build | `configure --target=rx-elf --prefix=$HOME/opt/rx-binutils-2.42 --disable-nls --disable-werror --disable-gdb --disable-gprofng --disable-sim --disable-gold --disable-ld`, `make -j4 MAKEINFO=true`, `make install MAKEINFO=true` (tree in `~/opt/build/binutils-2.42`, `~/opt/build/rx-obj`) |
+| Location | `~/opt/rx-binutils-2.42/bin/rx-elf-objdump`; pass it to `tools/rx_compare.py --objdump` there |
+| Also downloaded | `~/opt/dl/binutils-multiarch_2.42-4ubuntu2.10_amd64.deb`, unpacked in `~/opt/binutils-multiarch-2.42` (no RX; unused) |
+| Remove | `rm -rf ~/opt/rx-binutils-2.42 ~/opt/build/binutils-2.42 ~/opt/build/rx-obj ~/opt/dl/binutils_2.42.orig.tar.xz ~/opt/dl/binutils-multiarch_2.42-4ubuntu2.10_amd64.deb ~/opt/binutils-multiarch-2.42` |
+
 **Method.** `tools/ghidra/ListingExport.java` writes every Ghidra instruction (address, length, bytes, mnemonic, operands,
 function) plus any undefined hole inside a function body. `tools/rx_compare.py` re-disassembles every run of back-to-back
 Ghidra instructions with `rx-elf-objdump -D -b binary -m rx --adjust-vma=0xFFF80000 --start-address --stop-address` and
@@ -336,6 +348,23 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin
   0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
 ```
 
+## Owner's tower server: hardware caps
+
+These limits apply **only on the owner's local "tower" server** (an Unraid host with no swap, where running out of memory kills
+processes and three parallel Ghidra jobs once hung the machine). Elsewhere, including Claude Code cloud sessions, there is no core or
+RAM limit: run `tools/ghidra-headless.sh` directly and set `JOBS=$(nproc) CAP_CPUS=$(nproc)` for `tools/bootstrap.sh`. Moved here from
+AGENTS.md on 2026-10-29 (owner: "that only applies to my local setup"); the rules date from 2026-10-27/28.
+
+Always use the most the hardware will support ("always do the max the hardware will support").
+
+**Ghidra/REA cap (owner rule, 2026-10-28, raised from 50 % to 75 % the same day, then cut to one job at a time because 3 jobs hung the host; overrides the "max" rule above for Ghidra and REA):** Ghidra and REA may use only about 75 % of the hardware, and must leave RAM headroom. Start every Ghidra headless or REA run through `tools/ghidra-cap.sh <reserve_mb> -- <command>`. It allows only 1 such job at a time machine-wide, pins it to 3/4 of the cores (`taskset`) at nice 10, sizes GC threads to the cap, and admits it through `memgate.py` with a 3 GB free-RAM margin. `tools/bootstrap.sh` already does this and defaults `JOBS` to 3/4 of `nproc`. All agents on the machine must share one `CAP_DIR` (default `~/.cache/ft710-ghidra-cap`) and one `MEMGATE_DIR`.
+
+- **CPU:** for Ghidra, pass `-max-cpu $CAP_CPUS` (3/4 of `nproc`, exported by `ghidra-cap.sh`), never `$(nproc)`. REA's vitest takes `--maxWorkers` of 3/4 of `nproc` too. Other builds may use `-j$(nproc)`. Run independent agents in parallel, but their Ghidra/REA jobs queue for the single slot.
+- **RAM:** `memgate.py` (called by `ghidra-cap.sh`) starts a job as soon as `MemAvailable` covers its reservation plus a 3 GB margin (`MEMGATE_SAFETY_MB`, default 3072). It counts the memory that jobs already running can still grow into, so a burst of starts can't over-commit. All agents on the machine must share one `MEMGATE_DIR` (default `~/.cache/ft710-memgate`).
+- **Heap size:** pick the heap per image: 2 GB for DISPLAY and IFDSP, 3 GB for MAIN, via `GHIDRA_HEADLESS_MAXMEM` (never more than 3 GB). Reserve the heap plus about 700 MB. On the owner's container, `free` shows the whole Unraid host and there is no swap, so running out of memory kills processes instead of slowing them down.
+- **Health log:** `ghidra-cap.sh` starts `tools/healthlog.py` beside every job. Every 10 s it records CPU, board, NVMe and GPU temperatures, fan speeds, CPU clock and thermal-throttle events, load, I/O wait, free RAM, major page faults per second (thrashing), OOM kills and the job's RSS. It also flags late samples (`GAP`, meaning the host stalled), matching kernel messages, and a previous log with no `END` line (the run was cut off by a hang or reset). Every line goes to the owner's syslog server over UDP (`HEALTH_SYSLOG`, default `192.168.10.50:514`, facility local0, tag `ft710-health`; `GAP`/`WARN`/`KERNEL` at warning level) and to a local fallback file in `$HEALTH_DIR` (default `~/.cache/ft710-health`, newest at `health-latest.log`, fsynced per line so it survives a reset). Set `HEALTH_LOG=0` to turn it off, `HEALTH_SYSLOG=` to keep only the file. After a hang, read the last lines of the cut-off log first.
+- **Overrides:** override tool caps with command-line flags or environment variables, never by editing upstream config files that would land in commits.
+
 ## Side effects outside the repo
 
 Ghidra writes per-user state to `~/Library/ghidra/ghidra_12.1.4_PUBLIC/` (settings, logs) and `/var/tmp/<user>-ghidra/` (caches). Both are safe to delete. T05 also added the per-user RX extension in `~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX/` (see above).
@@ -396,6 +425,16 @@ Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
 | Remove | `rm ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*` |
 | Details | [docs/code/ifdsp/ghidra-flix.md](code/ifdsp/ghidra-flix.md), "The SLEIGH language" |
 
+## Library matching (T23d, 2026-10-29)
+
+| Item | Value |
+|---|---|
+| ARM GCC | `gcc-arm-none-eabi` 15:13.2.rel1-2 (`arm-none-eabi-gcc` 13.2.1 20231009, with its binutils `arm-none-eabi-objdump`), Ubuntu apt in the cloud container (`apt-get install -y gcc-arm-none-eabi`), `/usr/bin` |
+| FreeRTOS kernel | https://github.com/FreeRTOS/FreeRTOS-Kernel tag **V10.3.0** = commit `1049fc776a191006831e9802dd4f9c1246bb67ef` (kernel in `FreeRTOS/Source`), shallow clone at `~/opt/t23d/frk-V10.3.0`. Compared against: V10.2.1 (`5d78b82acbf69c25925a6df8e267fc71da755a79`, far fewer matches) and `V10.3.1-kernel-only` (identical result to V10.3.0, so the image is V10.3.x; NXP's SDK 2.8 shipped V10.3.0) |
+| Build | `tools/t23d_lib.sh` (`FRTOS=~/opt/t23d/frk-V10.3.0/FreeRTOS/Source`): `-mcpu=cortex-m33 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -Os -ffunction-sections`, port `GCC/ARM_CM33_NTZ/non_secure`, `heap_4`, config `tools/t23d_FreeRTOSConfig.h`. `-Os` matched 67 functions, `-O1` 22, `-O2` 15 |
+| Matcher | `tools/lib_match.py` (stdlib Python + objdump; no Ghidra FunctionID database needed) |
+| Remove | `apt-get remove gcc-arm-none-eabi; rm -rf ~/opt/t23d` |
+
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
@@ -450,6 +489,21 @@ CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dep
   in `~/.cache/puppeteer`. Browser libraries were installed with `persist-apt` (libgbm1 libnss3 libatk1.0-0 libatk-bridge2.0-0
   libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2). Run it as `mmdc -p pp.json`
   with `{"args":["--no-sandbox"]}`, because the container has no user namespaces. Used to check that every Mermaid block renders.
+
+## Peripheral-register sources (T23b, 2026-10-29)
+
+`tools/sfr_table.py` builds the register tables from vendor data. The RX651 and RZ/A1H manuals are committed
+(`Manuals/Renesas/`, parsed with poppler `pdftotext -layout` 24.02.0). The i.MX RT685 inputs are NXP's public BSD-3-Clause
+files, downloaded at build time and **not committed** (7 MB and 1.7 MB); the script refuses any other hash.
+
+| File | Source (pinned commit) | SHA-256 |
+|---|---|---|
+| `MIMXRT685S_cm33.xml` (CMSIS SVD, Cortex-M33 view; NXP does not publish a HiFi4 SVD) | https://github.com/nxp-mcuxpresso/mcux-soc-svd, commit `7c1f00bdd6263f0b93466f5e73e5fc55a744b879`, path `MIMXRT685S/MIMXRT685S_cm33.xml` | `751c25d4fcf4986825ff8e3a1d399b43012ccd9fb6035d9e3529ced68d9bff1b` |
+| `MIMXRT685S_dsp.h` (device header of the DSP build: which peripherals the HiFi4 sees, and where) | https://github.com/nxp-mcuxpresso/mcux-sdk, commit `8a289764d763ad06e0c3a05c885644ed98b970af` (`main`, 2026-10-29), path `devices/MIMXRT685S/MIMXRT685S_dsp.h` | `903348aa34ad7e7ea27d4b32530fc341f67aeffc9ee9e2c6879c921a88775439` |
+
+mcux-sdk itself has no SVD files (only the generated headers); `mcux-soc-svd` is NXP's SVD repository. Fetch them with
+`curl -L -o <dir>/<file> https://raw.githubusercontent.com/nxp-mcuxpresso/<repo>/<commit>/<path>` into an empty directory
+outside the repo, then `python3 -I tools/sfr_table.py build --chip rt685 --svd <dir>/MIMXRT685S_cm33.xml --dsp-header <dir>/MIMXRT685S_dsp.h`.
 
 ## Commit signing (2026-10-28)
 

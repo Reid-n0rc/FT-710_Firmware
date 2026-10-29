@@ -3444,7 +3444,7 @@ LAB_0022eca8:
           *pcStack_38 = (char)uStack_68 + '0';
           pcStack_38 = pcStack_38 + 1;
           if (uStack_4c == uVar7) {
-            uVar19 = FUN_00235630(uStack_40,uVar5,0,&DAT_40000000);
+            uVar19 = FUN_00235630(uStack_40,uVar5,0,&RSTCTL0_SYSRSTSTAT);
             uVar5 = (undefined4)((ulonglong)uVar19 >> 0x20);
             iVar14 = FUN_0022b838(uVar16,uVar8,(int)uVar19,uVar5);
             if ((iVar14 < 0) ||

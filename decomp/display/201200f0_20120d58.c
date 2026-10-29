@@ -93,17 +93,17 @@ void FUN_201201f4(int param_1)
 void riic_init(int param_1)
 
 {
-  int iVar1;
+  byte bVar1;
   
   if (param_1 != 0) {
     do {
-      iVar1 = FUN_20157174(&DAT_fcfee004,7,0x80);
-    } while (iVar1 == 0);
+      bVar1 = reg_read8((byte *)&RIIC_RIIC0CR2,7,0x80);
+    } while (bVar1 == 0);
     return;
   }
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee004,7,0x80);
-  } while (iVar1 == 1);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC0CR2,7,0x80);
+  } while (bVar1 == 1);
   return;
 }
 
@@ -113,17 +113,17 @@ void riic_init(int param_1)
 void FUN_2012026c(int param_1)
 
 {
-  int iVar1;
+  byte bVar1;
   
   if (param_1 != 0) {
     do {
-      iVar1 = FUN_20157174(&DAT_fcfee404,7,0x80);
-    } while (iVar1 == 0);
+      bVar1 = reg_read8((byte *)&RIIC_RIIC1CR2,7,0x80);
+    } while (bVar1 == 0);
     return;
   }
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee404,7,0x80);
-  } while (iVar1 == 1);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC1CR2,7,0x80);
+  } while (bVar1 == 1);
   return;
 }
 
@@ -133,17 +133,17 @@ void FUN_2012026c(int param_1)
 void FUN_201202b4(int param_1)
 
 {
-  int iVar1;
+  byte bVar1;
   
   if (param_1 != 0) {
     do {
-      iVar1 = FUN_20157174(&DAT_fcfee804,7,0x80);
-    } while (iVar1 == 0);
+      bVar1 = reg_read8((byte *)&RIIC_RIIC2CR2,7,0x80);
+    } while (bVar1 == 0);
     return;
   }
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee804,7,0x80);
-  } while (iVar1 == 1);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC2CR2,7,0x80);
+  } while (bVar1 == 1);
   return;
 }
 
@@ -153,17 +153,17 @@ void FUN_201202b4(int param_1)
 void FUN_201202fc(int param_1)
 
 {
-  int iVar1;
+  byte bVar1;
   
   if (param_1 != 0) {
     do {
-      iVar1 = FUN_20157174(&DAT_fcfeec04,7,0x80);
-    } while (iVar1 == 0);
+      bVar1 = reg_read8((byte *)&RIIC_RIIC3CR2,7,0x80);
+    } while (bVar1 == 0);
     return;
   }
   do {
-    iVar1 = FUN_20157174(&DAT_fcfeec04,7,0x80);
-  } while (iVar1 == 1);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC3CR2,7,0x80);
+  } while (bVar1 == 1);
   return;
 }
 
@@ -173,11 +173,11 @@ void FUN_201202fc(int param_1)
 void FUN_20120344(void)
 
 {
-  int iVar1;
+  byte bVar1;
   
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee024,3,8);
-  } while (iVar1 == 0);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC0SR2,3,8);
+  } while (bVar1 == 0);
   return;
 }
 
@@ -187,11 +187,11 @@ void FUN_20120344(void)
 void FUN_20120368(void)
 
 {
-  int iVar1;
+  byte bVar1;
   
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee424,3,8);
-  } while (iVar1 == 0);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC1SR2,3,8);
+  } while (bVar1 == 0);
   return;
 }
 
@@ -201,11 +201,11 @@ void FUN_20120368(void)
 void FUN_2012038c(void)
 
 {
-  int iVar1;
+  byte bVar1;
   
   do {
-    iVar1 = FUN_20157174(&DAT_fcfee824,3,8);
-  } while (iVar1 == 0);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC2SR2,3,8);
+  } while (bVar1 == 0);
   return;
 }
 
@@ -215,11 +215,11 @@ void FUN_2012038c(void)
 void FUN_201203b0(void)
 
 {
-  int iVar1;
+  byte bVar1;
   
   do {
-    iVar1 = FUN_20157174(&DAT_fcfeec24,3,8);
-  } while (iVar1 == 0);
+    bVar1 = reg_read8((byte *)&RIIC_RIIC3SR2,3,8);
+  } while (bVar1 == 0);
   return;
 }
 
@@ -258,13 +258,13 @@ void FUN_201203dc(void)
 undefined4 FUN_201203e4(void)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 in_r3;
   
   FUN_20120038(0);
-  iVar1 = FUN_201204a4(0);
-  FUN_20157138(iVar1 + 0x24,0,6,0x40,in_r3);
-  FUN_20157174(iVar1 + 0x24,6,0x40);
+  pvVar1 = riic_base(0);
+  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
   return 0;
 }
 
@@ -302,13 +302,13 @@ void FUN_201203f4(void)
 undefined4 FUN_201203fc(void)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 in_r3;
   
   FUN_20120048();
-  iVar1 = FUN_201204a4(1);
-  FUN_20157138(iVar1 + 0x24,0,6,0x40,in_r3);
-  FUN_20157174(iVar1 + 0x24,6,0x40);
+  pvVar1 = riic_base(1);
+  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
   return 0;
 }
 
@@ -345,13 +345,13 @@ void FUN_2012040c(void)
 undefined4 FUN_20120414(void)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 in_r3;
   
   FUN_20120058();
-  iVar1 = FUN_201204a4(2);
-  FUN_20157138(iVar1 + 0x24,0,6,0x40,in_r3);
-  FUN_20157174(iVar1 + 0x24,6,0x40);
+  pvVar1 = riic_base(2);
+  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
   return 0;
 }
 
@@ -386,13 +386,13 @@ void FUN_20120424(void)
 undefined4 FUN_2012042c(void)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 in_r3;
   
   FUN_20120068();
-  iVar1 = FUN_201204a4(3);
-  FUN_20157138(iVar1 + 0x24,0,6,0x40,in_r3);
-  FUN_20157174(iVar1 + 0x24,6,0x40);
+  pvVar1 = riic_base(3);
+  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
   return 0;
 }
 
@@ -426,39 +426,41 @@ undefined4 FUN_20120454(uint param_1)
 }
 
 
-// ===== FUN_201204a4 @ 201204a4 (48 bytes)
+// ===== riic_base @ 201204a4 (48 bytes)
 
-undefined * FUN_201204a4(int param_1)
+/* (ch 0..3): RIIC register base 0xFCFEE000 + 0x400*ch (docs/memory-maps.md) [fact] */
+
+void * riic_base(int param_1)
 
 {
-  undefined *puVar1;
+  dword *pdVar1;
   
-  puVar1 = &DAT_fcfee000;
+  pdVar1 = &RIIC_RIIC0CR1;
   if (param_1 != 0) {
     if (param_1 == 1) {
-      puVar1 = &DAT_fcfee400;
+      pdVar1 = &RIIC_RIIC1CR1;
     }
     else if (param_1 == 2) {
-      puVar1 = &DAT_fcfee800;
+      pdVar1 = &RIIC_RIIC2CR1;
     }
     else if (param_1 == 3) {
-      puVar1 = &DAT_fcfeec00;
+      pdVar1 = &RIIC_RIIC3CR1;
     }
   }
-  return puVar1;
+  return pdVar1;
 }
 
 
 // ===== FUN_201204d4 @ 201204d4 (56 bytes)
 
-void FUN_201204d4(void)
+void FUN_201204d4(int param_1)
 
 {
-  int iVar1;
+  void *pvVar1;
   
-  iVar1 = FUN_201204a4();
-  FUN_20157138(iVar1 + 0x24,0,3,8);
-  FUN_20157138(iVar1 + 4,1,3,8);
+  pvVar1 = riic_base(param_1);
+  reg_rmw8((int)pvVar1 + 0x24,0,3,8);
+  reg_rmw8((int)pvVar1 + 4,1,3,8);
   return;
 }
 
@@ -468,7 +470,7 @@ void FUN_201204d4(void)
 void FUN_2012050c(int param_1)
 
 {
-  int iVar1;
+  void *pvVar1;
   
   if (param_1 == 0) {
     riic_init(1);
@@ -494,8 +496,8 @@ void FUN_2012050c(int param_1)
     FUN_2011ff2c();
     FUN_2011ff84(0);
   }
-  iVar1 = FUN_201204a4(param_1);
-  FUN_20157138(iVar1 + 4,1,2,4);
+  pvVar1 = riic_base(param_1);
+  reg_rmw8((int)pvVar1 + 4,1,2,4);
   return;
 }
 
@@ -505,7 +507,7 @@ void FUN_2012050c(int param_1)
 void FUN_201205c0(int param_1)
 
 {
-  int iVar1;
+  void *pvVar1;
   
   if (param_1 == 0) {
     riic_init(0);
@@ -531,8 +533,8 @@ void FUN_201205c0(int param_1)
     FUN_2011ff2c();
     FUN_2011ff84(0);
   }
-  iVar1 = FUN_201204a4(param_1);
-  FUN_20157138(iVar1 + 4,1,1,2);
+  pvVar1 = riic_base(param_1);
+  reg_rmw8((int)pvVar1 + 4,1,1,2);
   return;
 }
 
@@ -563,13 +565,13 @@ undefined4 FUN_20120674(uint param_1,uint param_2)
 undefined4 FUN_201206c0(int param_1,undefined1 param_2)
 
 {
-  int iVar1;
-  int iVar2;
+  byte bVar1;
+  void *pvVar2;
   undefined4 uVar3;
   
-  iVar1 = FUN_201204a4();
-  iVar2 = FUN_20157174(iVar1 + 0x24,4,0x10);
-  if (iVar2 == 0) {
+  pvVar2 = riic_base(param_1);
+  bVar1 = reg_read8((byte *)((int)pvVar2 + 0x24),4,0x10);
+  if (bVar1 == 0) {
     uVar3 = 0;
     if (param_1 == 0) {
       FUN_201200c8();
@@ -587,7 +589,7 @@ undefined4 FUN_201206c0(int param_1,undefined1 param_2)
       FUN_20120104();
       FUN_2011ff2c();
     }
-    *(undefined1 *)(iVar1 + 0x3c) = param_2;
+    *(undefined1 *)((int)pvVar2 + 0x3c) = param_2;
   }
   else {
     uVar3 = 0xfffffffe;
@@ -601,12 +603,13 @@ undefined4 FUN_201206c0(int param_1,undefined1 param_2)
 int FUN_20120750(uint param_1,undefined1 param_2,uint param_3)
 
 {
-  int iVar1;
+  byte bVar1;
   int iVar2;
+  void *pvVar3;
   
   if ((param_1 < 4) && (param_3 < 2)) {
-    iVar1 = FUN_201206c0(param_1,param_2);
-    if (iVar1 == 0) {
+    iVar2 = FUN_201206c0(param_1,param_2);
+    if (iVar2 == 0) {
       if (param_1 == 0) {
         FUN_20120118(param_3);
         FUN_2011ff3c(param_3);
@@ -623,13 +626,13 @@ int FUN_20120750(uint param_1,undefined1 param_2,uint param_3)
         FUN_201201f4(param_3);
         FUN_2011ff84(param_3);
       }
-      iVar2 = FUN_201204a4(param_1);
-      iVar2 = FUN_20157174(iVar2 + 0x24,4,0x10);
-      if (iVar2 != 0) {
-        iVar1 = -2;
+      pvVar3 = riic_base(param_1);
+      bVar1 = reg_read8((byte *)((int)pvVar3 + 0x24),4,0x10);
+      if (bVar1 != 0) {
+        iVar2 = -2;
       }
     }
-    return iVar1;
+    return iVar2;
   }
   return -1;
 }
@@ -640,25 +643,26 @@ int FUN_20120750(uint param_1,undefined1 param_2,uint param_3)
 int FUN_2012081c(uint param_1,int param_2,uint param_3)
 
 {
-  int iVar1;
+  byte bVar1;
   int iVar2;
-  uint uVar3;
+  void *pvVar3;
+  uint uVar4;
   
   if (3 < param_1) {
     return -1;
   }
   if (param_3 == 0) {
-    iVar1 = 0;
+    iVar2 = 0;
   }
   else {
-    uVar3 = 0;
+    uVar4 = 0;
     do {
-      iVar1 = FUN_201206c0(param_1,*(undefined1 *)(param_2 + uVar3));
-      if (iVar1 != 0) {
-        return iVar1;
+      iVar2 = FUN_201206c0(param_1,*(undefined1 *)(param_2 + uVar4));
+      if (iVar2 != 0) {
+        return iVar2;
       }
-      uVar3 = uVar3 + 1;
-    } while (uVar3 < param_3);
+      uVar4 = uVar4 + 1;
+    } while (uVar4 < param_3);
     if (param_1 == 0) {
       FUN_20120118(0);
       FUN_2011ff3c(0);
@@ -675,14 +679,14 @@ int FUN_2012081c(uint param_1,int param_2,uint param_3)
       FUN_201201f4(0);
       FUN_2011ff84(0);
     }
-    iVar1 = FUN_201204a4(param_1);
-    iVar2 = FUN_20157174(iVar1 + 0x24,4,0x10);
-    iVar1 = 0;
-    if (iVar2 != 0) {
-      iVar1 = -2;
+    pvVar3 = riic_base(param_1);
+    bVar1 = reg_read8((byte *)((int)pvVar3 + 0x24),4,0x10);
+    iVar2 = 0;
+    if (bVar1 != 0) {
+      iVar2 = -2;
     }
   }
-  return iVar1;
+  return iVar2;
 }
 
 
@@ -691,7 +695,7 @@ int FUN_2012081c(uint param_1,int param_2,uint param_3)
 void FUN_20120904(int param_1)
 
 {
-  FUN_20157138(param_1 + 0x24,0,4,0x10);
+  reg_rmw8(param_1 + 0x24,0,4,0x10);
   return;
 }
 
@@ -701,7 +705,7 @@ void FUN_20120904(int param_1)
 void FUN_20120918(int param_1)
 
 {
-  int iVar1;
+  void *pvVar1;
   
   if (param_1 == 0) {
     FUN_20120344();
@@ -715,9 +719,9 @@ void FUN_20120918(int param_1)
   else if (param_1 == 3) {
     FUN_201203b0();
   }
-  iVar1 = FUN_201204a4(param_1);
+  pvVar1 = riic_base(param_1);
   FUN_20120904();
-  FUN_20157138(iVar1 + 0x24,0,3,8);
+  reg_rmw8((int)pvVar1 + 0x24,0,3,8);
   return;
 }
 
@@ -727,7 +731,7 @@ void FUN_20120918(int param_1)
 void FUN_2012097c(int param_1,undefined4 param_2,undefined1 *param_3)
 
 {
-  int iVar1;
+  void *pvVar1;
   
   if (param_1 == 0) {
     FUN_20120078();
@@ -745,33 +749,33 @@ void FUN_2012097c(int param_1,undefined4 param_2,undefined1 *param_3)
     FUN_201200b4();
     FUN_2011feec();
   }
-  iVar1 = FUN_201204a4(param_1);
+  pvVar1 = riic_base(param_1);
   switch(param_2) {
   case 1:
-    FUN_20157138(iVar1 + 0x10,1,4,0x10);
-    FUN_20157138(iVar1 + 0x10,0,3,8);
+    reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
+    reg_rmw8((int)pvVar1 + 0x10,0,3,8);
     break;
   case 2:
-    FUN_20157138(iVar1 + 0x10,1,6,0x40);
+    reg_rmw8((int)pvVar1 + 0x10,1,6,0x40);
     break;
   case 3:
-    FUN_20157138(iVar1 + 0x10,1,4,0x10);
-    FUN_20157138(iVar1 + 0x10,1,3,8);
+    reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
+    reg_rmw8((int)pvVar1 + 0x10,1,3,8);
     break;
   case 4:
     FUN_201204d4(param_1);
   }
-  *param_3 = *(undefined1 *)(iVar1 + 0x40);
+  *param_3 = *(undefined1 *)((int)pvVar1 + 0x40);
   return;
 }
 
 
 // ===== FUN_20120a88 @ 20120a88 (20 bytes)
 
-void FUN_20120a88(void)
+void FUN_20120a88(uint param_1)
 
 {
-  FUN_201204a4();
+  riic_base(param_1);
   return;
 }
 
@@ -781,17 +785,17 @@ void FUN_20120a88(void)
 undefined4 FUN_20120a9c(uint param_1,int param_2,uint param_3)
 
 {
-  int iVar1;
+  void *pvVar1;
   
   if (3 < param_1) {
     return 0xffffffff;
   }
   if (param_3 != 0) {
-    iVar1 = FUN_201204a4();
+    pvVar1 = riic_base(param_1);
     if (param_3 == 1) {
-      FUN_20157138(iVar1 + 0x10,1,6,0x40);
-      FUN_20157138(iVar1 + 0x10,1,4,0x10);
-      FUN_20157138(iVar1 + 0x10,1,3,8);
+      reg_rmw8((int)pvVar1 + 0x10,1,6,0x40);
+      reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
+      reg_rmw8((int)pvVar1 + 0x10,1,3,8);
     }
     FUN_20120a88(param_1);
     if (param_3 != 1) {
@@ -807,7 +811,7 @@ undefined4 FUN_20120a9c(uint param_1,int param_2,uint param_3)
       param_2 = param_2 + 1;
     }
     FUN_2012097c(param_1,4,param_2);
-    FUN_20157138(iVar1 + 0x10,0,6,0x40);
+    reg_rmw8((int)pvVar1 + 0x10,0,6,0x40);
     FUN_20120918(param_1);
     return 0;
   }
@@ -847,7 +851,7 @@ undefined4 FUN_20120be4(uint param_1)
 
 {
   if (param_1 < 4) {
-    FUN_201204a4(param_1);
+    riic_base(param_1);
     FUN_20120904();
     return 0;
   }
@@ -919,7 +923,7 @@ undefined4 FUN_20120cb0(uint param_1,undefined4 param_2,undefined4 param_3,undef
 
 {
   undefined4 uVar1;
-  int iVar2;
+  void *pvVar2;
   
   if (param_1 < 4) {
     if (param_1 == 0) {
@@ -934,9 +938,9 @@ undefined4 FUN_20120cb0(uint param_1,undefined4 param_2,undefined4 param_3,undef
     else if (param_1 == 3) {
       FUN_20120068();
     }
-    iVar2 = FUN_201204a4(param_1);
-    FUN_20157138(iVar2 + 0x24,0,6,0x40,param_4);
-    FUN_20157174(iVar2 + 0x24,6,0x40);
+    pvVar2 = riic_base(param_1);
+    reg_rmw8((int)pvVar2 + 0x24,0,6,0x40,param_4);
+    reg_read8((byte *)((int)pvVar2 + 0x24),6,0x40);
     uVar1 = 0;
   }
   else {
@@ -959,8 +963,8 @@ void FUN_20120d38(void)
   FUN_20160de4(&DAT_208dce3c);
   FUN_20160e44(&DAT_208dce3c);
   FUN_20162b50(&DAT_208dd53c);
-  memclr(&DAT_208dd73c,600);
-  FUN_20155254(&DAT_208dd73c,200,0xff);
+  __aeabi_memclr4(&DAT_208dd73c,600);
+  __aeabi_memset_veneer(&DAT_208dd73c,200,0xff);
   return;
 }
 
@@ -987,7 +991,7 @@ void afscope_store_frame(char *param_1)
   }
   else if (DAT_208dd995 != '\0') {
 LAB_20157258:
-    FUN_20155254(&DAT_208dd73c,600,0xff);
+    __aeabi_memset_veneer(&DAT_208dd73c,600,0xff);
     return;
   }
   return;

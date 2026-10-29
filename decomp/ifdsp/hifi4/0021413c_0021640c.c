@@ -1324,19 +1324,19 @@ undefined4 FUN_00215318(int param_1,int param_2,undefined4 *param_3)
 /* WARNING: Removing unreachable block (ram,0x00215835) */
 /* WARNING: Removing unreachable block (ram,0x00215823) */
 
-int FUN_002155d0(uint *param_1,char *param_2)
+int FUN_002155d0(dword *param_1,char *param_2)
 
 {
   byte bVar1;
   int iVar2;
   uint uVar3;
   
-  if ((param_1 == (uint *)0x0) || (param_2 == (char *)0x0)) {
+  if ((param_1 == (dword *)0x0) || (param_2 == (char *)0x0)) {
     return 4;
   }
   memw();
-  DAT_40001040 = 1 << 0x20 - (0x20 - ((byte)(&DAT_002005a0)
-                                            [(uint)(param_1 != (uint *)&DAT_40138000) * 4] & 0x1f));
+  CLKCTL0_PSCCTL0_SET =
+       1 << 0x20 - (0x20 - ((byte)(&DAT_002005a0)[(uint)(param_1 != &TRNG_MCTL) * 4] & 0x1f));
   memw();
   memw();
   bVar1 = param_2[0x16];
@@ -1414,12 +1414,12 @@ int FUN_002155d0(uint *param_1,char *param_2)
 /* WARNING: Removing unreachable block (ram,0x00215936) */
 /* WARNING: Removing unreachable block (ram,0x00215925) */
 
-void FUN_00215880(uint *param_1)
+void FUN_00215880(dword *param_1)
 
 {
   uint uVar1;
   
-  if (param_1 == (uint *)0x0) {
+  if (param_1 == (dword *)0x0) {
     return;
   }
   memw();
@@ -1431,13 +1431,13 @@ void FUN_00215880(uint *param_1)
     memw();
     uVar1 = *param_1 & (uint)&DAT_00002000;
   }
-  if (param_1 != (uint *)&DAT_40138000) {
+  if (param_1 != &TRNG_MCTL) {
     memw();
-    DAT_40001070 = 1;
+    CLKCTL0_PSCCTL0_CLR = 1;
     return;
   }
   memw();
-  DAT_40001070 = 0x1000;
+  CLKCTL0_PSCCTL0_CLR = 0x1000;
   return;
 }
 
@@ -1574,10 +1574,10 @@ undefined4 FUN_00215af0(int param_1)
 
 // ===== FUN_00215b00 @ 00215b00 (30 bytes)
 
-bool FUN_00215b00(undefined *param_1)
+bool FUN_00215b00(dword *param_1)
 
 {
-  return param_1 != &DAT_40106000;
+  return param_1 != &USART0_CFG;
 }
 
 

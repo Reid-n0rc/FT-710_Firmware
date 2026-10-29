@@ -175,7 +175,7 @@ void FUN_00213184(int param_1,uint param_2)
 void FUN_00213198(undefined4 *param_1)
 
 {
-  if (param_1 != &DAT_40025000) {
+  if (param_1 != &PINT_ISEL) {
     memw();
     param_1[0xc] = 0;
     return;
@@ -189,10 +189,10 @@ void FUN_00213198(undefined4 *param_1)
   DAT_00238f38 = 0;
   DAT_00238f3c = 0;
   memw();
-  DAT_40021048 = &DAT_40000000;
+  CLKCTL1_PSCCTL2_SET = &RSTCTL0_SYSRSTSTAT;
   FUN_00213910(0x51e);
   memw();
-  Ram40025030 = 0x3600;
+  PINT_PMCFG = 0x3600;
   return;
 }
 
@@ -208,7 +208,7 @@ void FUN_0021320c(uint *param_1,uint param_2,uint param_3,undefined4 param_4)
   FUN_00213184(param_1,param_2);
   FUN_00213170(param_1,param_2);
   uVar2 = 1 << 0x20 - (0x20 - (param_2 & 0x1f));
-  if (param_1 == &DAT_40025000) {
+  if (param_1 == &PINT_ISEL) {
     (&DAT_00238f20)[param_2] = param_4;
   }
   uVar1 = uVar2;
@@ -273,7 +273,7 @@ void FUN_00213288(uint *param_1,uint param_2,int *param_3,undefined4 *param_4)
       *param_3 = iVar4;
     }
   }
-  if (param_1 != &DAT_40025000) {
+  if (param_1 != &PINT_ISEL) {
     return;
   }
   *param_4 = (&DAT_00238f20)[param_2];
@@ -309,7 +309,7 @@ void FUN_002132f4(undefined4 *param_1,uint param_2,int *param_3)
   }
   memw();
   param_1[0xc] = uVar2;
-  if ((param_1 == &DAT_40025000) && (param_2 < 8)) {
+  if ((param_1 == &PINT_ISEL) && (param_2 < 8)) {
     (&DAT_00238f20)[param_2] = param_3[3];
     return;
   }
@@ -339,7 +339,7 @@ void FUN_0021337c(undefined4 *param_1,uint param_2,uint *param_3)
     *(bool *)(param_3 + 2) =
          (uint)(param_1[0xc] & 1 << 0x20 - (0x20 - (param_2 & 0x1f))) >> (param_2 & 0x1f) != 0;
   }
-  if ((param_1 == &DAT_40025000) && (param_2 < 8)) {
+  if ((param_1 == &PINT_ISEL) && (param_2 < 8)) {
     param_3[3] = (&DAT_00238f20)[param_2];
     return;
   }
@@ -393,7 +393,7 @@ void FUN_00213448(uint *param_1)
   uint uVar1;
   uint uVar2;
   
-  uVar1 = (uint)(param_1 == &DAT_40025000);
+  uVar1 = (uint)(param_1 == &PINT_ISEL);
   uVar2 = 0;
   if (uVar1 != 0) {
     if ((uVar1 != 0) && ((uVar1 << 3 == 1 || (uVar1 != 0)))) {
@@ -421,9 +421,9 @@ void FUN_002134a8(undefined4 *param_1)
   int iVar1;
   
   iVar1 = 0;
-  if (param_1 == &DAT_40025000) {
+  if (param_1 == &PINT_ISEL) {
     do {
-      FUN_0021341c(&DAT_40025000,iVar1);
+      FUN_0021341c(&PINT_ISEL,iVar1);
       iVar1 = iVar1 + 1;
     } while (iVar1 != 8);
   }
@@ -449,9 +449,9 @@ void FUN_002134d8(undefined4 *param_1)
   int iVar1;
   
   iVar1 = 0;
-  if (param_1 == &DAT_40025000) {
+  if (param_1 == &PINT_ISEL) {
     do {
-      FUN_0021341c(&DAT_40025000,iVar1);
+      FUN_0021341c(&PINT_ISEL,iVar1);
       iVar1 = iVar1 + 1;
     } while (iVar1 != 8);
   }
@@ -464,10 +464,10 @@ void FUN_002134d8(undefined4 *param_1)
 void FUN_002134f8(undefined4 *param_1,undefined4 param_2)
 
 {
-  if (param_1 != &DAT_40025000) {
+  if (param_1 != &PINT_ISEL) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,param_2);
+  FUN_0021341c(&PINT_ISEL,param_2);
   return;
 }
 
@@ -478,7 +478,7 @@ void FUN_00213514(undefined4 *param_1)
 
 {
   FUN_002134d8(param_1);
-  if (param_1 == &DAT_40025000) {
+  if (param_1 == &PINT_ISEL) {
     DAT_00238f20 = 0;
     DAT_00238f24 = 0;
     DAT_00238f28 = 0;
@@ -488,7 +488,7 @@ void FUN_00213514(undefined4 *param_1)
     DAT_00238f38 = 0;
     DAT_00238f3c = 0;
     memw();
-    DAT_40021078 = &DAT_40000000;
+    CLKCTL1_PSCCTL2_CLR = &RSTCTL0_SYSRSTSTAT;
     FUN_00213910(0x51e);
   }
   return;
@@ -503,16 +503,16 @@ void FUN_0021354c(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f20 != (code *)0x0) {
     (*DAT_00238f20)(0,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 1) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,0);
+  FUN_0021341c(&PINT_ISEL,0);
   return;
 }
 
@@ -525,16 +525,16 @@ void FUN_00213584(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f24 != (code *)0x0) {
     (*DAT_00238f24)(1,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 2) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,1);
+  FUN_0021341c(&PINT_ISEL,1);
   return;
 }
 
@@ -547,16 +547,16 @@ void FUN_002135bc(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f28 != (code *)0x0) {
     (*DAT_00238f28)(2,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 4) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,2);
+  FUN_0021341c(&PINT_ISEL,2);
   return;
 }
 
@@ -569,16 +569,16 @@ void FUN_002135f0(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f2c != (code *)0x0) {
     (*DAT_00238f2c)(3,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 8) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,3);
+  FUN_0021341c(&PINT_ISEL,3);
   return;
 }
 
@@ -591,16 +591,16 @@ void FUN_00213628(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f30 != (code *)0x0) {
     (*DAT_00238f30)(4,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 0x10) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,4);
+  FUN_0021341c(&PINT_ISEL,4);
   return;
 }
 
@@ -613,16 +613,16 @@ void FUN_0021365c(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f34 != (code *)0x0) {
     (*DAT_00238f34)(5,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 0x20) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,5);
+  FUN_0021341c(&PINT_ISEL,5);
   return;
 }
 
@@ -635,16 +635,16 @@ void FUN_00213690(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f38 != (code *)0x0) {
     (*DAT_00238f38)(6,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 0x40) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,6);
+  FUN_0021341c(&PINT_ISEL,6);
   return;
 }
 
@@ -657,16 +657,16 @@ void FUN_002136c8(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&DAT_40025000);
+  uVar2 = FUN_002133f8(&PINT_ISEL);
   if (DAT_00238f3c != (code *)0x0) {
     (*DAT_00238f3c)(7,uVar2);
   }
   memw();
-  uVar1 = DAT_40025000;
+  uVar1 = PINT_ISEL;
   if ((uVar1 & 0x80) != 0) {
     return;
   }
-  FUN_0021341c(&DAT_40025000,7);
+  FUN_0021341c(&PINT_ISEL,7);
   return;
 }
 
@@ -683,24 +683,24 @@ void FUN_00213700(uint param_1)
   if (uVar2 == 0) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000040 = uVar1;
+    RSTCTL0_PRSTCTL0_SET = uVar1;
     memw();
-    uVar2 = DAT_40000010;
+    uVar2 = RSTCTL0_PRSTCTL0;
     while ((uVar2 & uVar1) == 0) {
       memw();
-      uVar2 = DAT_40000010;
+      uVar2 = RSTCTL0_PRSTCTL0;
     }
   }
   else if (uVar2 == 1) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000044 = uVar1;
+    RSTCTL0_PRSTCTL1_SET = uVar1;
     memw();
-    uVar2 = DAT_40000014;
+    uVar2 = RSTCTL0_PRSTCTL1;
     if ((uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40000014;
+        uVar2 = RSTCTL0_PRSTCTL1;
       } while ((uVar2 & uVar1) == 0);
       return;
     }
@@ -708,13 +708,13 @@ void FUN_00213700(uint param_1)
   else if (uVar2 == 2) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000048 = uVar1;
+    RSTCTL0_PRSTCTL2_SET = uVar1;
     memw();
-    uVar2 = DAT_40000018;
+    uVar2 = RSTCTL0_PRSTCTL2;
     if ((uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40000018;
+        uVar2 = RSTCTL0_PRSTCTL2;
       } while ((uVar2 & uVar1) == 0);
       return;
     }
@@ -722,13 +722,13 @@ void FUN_00213700(uint param_1)
   else if (uVar2 == 3) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020040 = uVar1;
+    RSTCTL1_PRSTCTL0_SET = uVar1;
     memw();
-    uVar2 = DAT_40020010;
+    uVar2 = RSTCTL1_PRSTCTL0;
     if ((uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020010;
+        uVar2 = RSTCTL1_PRSTCTL0;
       } while ((uVar2 & uVar1) == 0);
       return;
     }
@@ -736,13 +736,13 @@ void FUN_00213700(uint param_1)
   else if (uVar2 == 4) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020044 = uVar1;
+    RSTCTL1_PRSTCTL1_SET = uVar1;
     memw();
-    uVar2 = DAT_40020014;
+    uVar2 = RSTCTL1_PRSTCTL1;
     if ((uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020014;
+        uVar2 = RSTCTL1_PRSTCTL1;
       } while ((uVar2 & uVar1) == 0);
       return;
     }
@@ -750,13 +750,13 @@ void FUN_00213700(uint param_1)
   else if (uVar2 == 5) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020048 = uVar1;
+    RSTCTL1_PRSTCTL2_SET = uVar1;
     memw();
-    uVar2 = DAT_40020018;
+    uVar2 = RSTCTL1_PRSTCTL2;
     if ((uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020018;
+        uVar2 = RSTCTL1_PRSTCTL2;
       } while ((uVar2 & uVar1) == 0);
       return;
     }
@@ -777,24 +777,24 @@ void FUN_00213808(uint param_1)
   if (uVar2 == 0) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000070 = uVar1;
+    RSTCTL0_PRSTCTL0_CLR = uVar1;
     memw();
-    uVar2 = DAT_40000010;
+    uVar2 = RSTCTL0_PRSTCTL0;
     while ((~uVar2 & uVar1) == 0) {
       memw();
-      uVar2 = DAT_40000010;
+      uVar2 = RSTCTL0_PRSTCTL0;
     }
   }
   else if (uVar2 == 1) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000074 = uVar1;
+    RSTCTL0_PRSTCTL1_CLR = uVar1;
     memw();
-    uVar2 = DAT_40000014;
+    uVar2 = RSTCTL0_PRSTCTL1;
     if ((~uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40000014;
+        uVar2 = RSTCTL0_PRSTCTL1;
       } while ((~uVar2 & uVar1) == 0);
       return;
     }
@@ -802,13 +802,13 @@ void FUN_00213808(uint param_1)
   else if (uVar2 == 2) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40000078 = uVar1;
+    RSTCTL0_PRSTCTL2_CLR = uVar1;
     memw();
-    uVar2 = DAT_40000018;
+    uVar2 = RSTCTL0_PRSTCTL2;
     if ((~uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40000018;
+        uVar2 = RSTCTL0_PRSTCTL2;
       } while ((~uVar2 & uVar1) == 0);
       return;
     }
@@ -816,13 +816,13 @@ void FUN_00213808(uint param_1)
   else if (uVar2 == 3) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020070 = uVar1;
+    RSTCTL1_PRSTCTL0_CLR = uVar1;
     memw();
-    uVar2 = DAT_40020010;
+    uVar2 = RSTCTL1_PRSTCTL0;
     if ((~uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020010;
+        uVar2 = RSTCTL1_PRSTCTL0;
       } while ((~uVar2 & uVar1) == 0);
       return;
     }
@@ -830,13 +830,13 @@ void FUN_00213808(uint param_1)
   else if (uVar2 == 4) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020074 = uVar1;
+    RSTCTL1_PRSTCTL1_CLR = uVar1;
     memw();
-    uVar2 = DAT_40020014;
+    uVar2 = RSTCTL1_PRSTCTL1;
     if ((~uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020014;
+        uVar2 = RSTCTL1_PRSTCTL1;
       } while ((~uVar2 & uVar1) == 0);
       return;
     }
@@ -844,13 +844,13 @@ void FUN_00213808(uint param_1)
   else if (uVar2 == 5) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
-    DAT_40020078 = uVar1;
+    RSTCTL1_PRSTCTL2_CLR = uVar1;
     memw();
-    uVar2 = DAT_40020018;
+    uVar2 = RSTCTL1_PRSTCTL2;
     if ((~uVar2 & uVar1) == 0) {
       do {
         memw();
-        uVar2 = DAT_40020018;
+        uVar2 = RSTCTL1_PRSTCTL2;
       } while ((~uVar2 & uVar1) == 0);
       return;
     }
@@ -876,7 +876,7 @@ void FUN_00213920(uint *param_1)
 
 {
   memw();
-  DAT_40021048 = 0x80;
+  CLKCTL1_PSCCTL2_SET = 0x80;
   memw();
   memw();
   *param_1 = *param_1 & 0xfffffffe;
@@ -1125,10 +1125,10 @@ void FUN_00213c58(int param_1,ushort *param_2)
 
 /* base -> index via table 0x2004E0 */
 
-bool SEMA42_GetInstance(undefined *param_1)
+bool SEMA42_GetInstance(byte *param_1)
 
 {
-  return param_1 != &DAT_40112000;
+  return param_1 != &SEMA42_GATE3;
 }
 
 
@@ -1148,34 +1148,34 @@ void SEMA42_Init(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
-      DAT_40021044 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+      CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
     if (uVar3 != 5) {
       return;
     }
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
-  DAT_40021040 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+  CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
 
@@ -1196,34 +1196,34 @@ void SEMA42_Deinit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001070 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001074 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
-    DAT_40001078 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
-      DAT_40021074 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+      CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
     if (uVar3 != 5) {
       return;
     }
     memw();
-    DAT_40021078 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
-  DAT_40021070 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+  CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
 
@@ -1310,10 +1310,10 @@ void FUN_00213f00(undefined4 param_1,undefined4 param_2)
 
 // ===== FUN_00213f10 @ 00213f10 (30 bytes)
 
-bool FUN_00213f10(undefined *param_1)
+bool FUN_00213f10(dword *param_1)
 
 {
-  return param_1 != &DAT_40106000;
+  return param_1 != &USART0_CFG;
 }
 
 

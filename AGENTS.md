@@ -75,6 +75,7 @@ What we know so far about the SFL format: an ASCII `*` comment box, then one lin
 - Ghidra 12.1.4 (Homebrew formula) + `openjdk@21`. Always run headless through `tools/ghidra-headless.sh`, which sets the JAVA_HOME Ghidra needs (the system default Java 11 won't work). Put projects under `ghidra/`. Details are in `docs/tooling.md`.
 - Python 3 for the decoding tools. Run scripts that read firmware data with `python3 -I`.
 - Record installed versions in `docs/tooling.md`.
+- Machine limits (CPU/RAM caps, `ghidra-cap.sh`, `memgate.py`, the health log) apply only to the owner's local "tower" server and are documented in [docs/tooling.md](docs/tooling.md#owners-tower-server-hardware-caps). Elsewhere, including Claude Code cloud sessions, use the whole machine and call `tools/ghidra-headless.sh` directly.
 - The owner authorizes installing community tooling (Ghidra extensions/processor modules, Homebrew/pip packages, source builds) when a task needs it. Prefer reputable sources, avoid sudo and system-wide default changes, and record each install (source, version, method, location) in `docs/tooling.md`.
 
 ## Task sizing
@@ -98,18 +99,6 @@ The owner wants **full documentation of all the code**, with figures wherever th
 ## Issue tracking (owner requirement)
 
 Every task is mirrored as a GitHub issue in the repo: epic #1, one issue per task, and sub-tasks (`T10a`...) as sub-issues of their parent. `docs/tasks/` stays the source of truth. After any change to the board or a task file's status/findings, the parent agent runs `python3 -I tools/issues_sync.py`. It updates titles, bodies and status labels, comments on status changes, closes done tasks, and keeps `docs/tasks/issues.json`, which is committed along with the change. Background task agents don't run it, because the parent does. When you split a task, add the sub-task rows to the board (`T10a`, `T10b`, ...) so the sync creates the sub-issues.
-
-## Hardware use (owner rule, 2026-10-27 and 2026-10-28)
-
-Always use the most the hardware will support ("always do the max the hardware will support").
-
-**Ghidra/REA cap (owner rule, 2026-10-28, raised from 50 % to 75 % the same day, then cut to one job at a time because 3 jobs hung the host; overrides the "max" rule above for Ghidra and REA):** Ghidra and REA may use only about 75 % of the hardware, and must leave RAM headroom. Start every Ghidra headless or REA run through `tools/ghidra-cap.sh <reserve_mb> -- <command>`. It allows only 1 such job at a time machine-wide, pins it to 3/4 of the cores (`taskset`) at nice 10, sizes GC threads to the cap, and admits it through `memgate.py` with a 3 GB free-RAM margin. `tools/bootstrap.sh` already does this and defaults `JOBS` to 3/4 of `nproc`. All agents on the machine must share one `CAP_DIR` (default `~/.cache/ft710-ghidra-cap`) and one `MEMGATE_DIR`.
-
-- **CPU:** for Ghidra, pass `-max-cpu $CAP_CPUS` (3/4 of `nproc`, exported by `ghidra-cap.sh`), never `$(nproc)`. REA's vitest takes `--maxWorkers` of 3/4 of `nproc` too. Other builds may use `-j$(nproc)`. Run independent agents in parallel, but their Ghidra/REA jobs queue for the single slot.
-- **RAM:** `memgate.py` (called by `ghidra-cap.sh`) starts a job as soon as `MemAvailable` covers its reservation plus a 3 GB margin (`MEMGATE_SAFETY_MB`, default 3072). It counts the memory that jobs already running can still grow into, so a burst of starts can't over-commit. All agents on the machine must share one `MEMGATE_DIR` (default `~/.cache/ft710-memgate`).
-- **Heap size:** pick the heap per image: 2 GB for DISPLAY and IFDSP, 3 GB for MAIN, via `GHIDRA_HEADLESS_MAXMEM` (never more than 3 GB). Reserve the heap plus about 700 MB. On the owner's container, `free` shows the whole Unraid host and there is no swap, so running out of memory kills processes instead of slowing them down.
-- **Health log:** `ghidra-cap.sh` starts `tools/healthlog.py` beside every job. Every 10 s it records CPU, board, NVMe and GPU temperatures, fan speeds, CPU clock and thermal-throttle events, load, I/O wait, free RAM, major page faults per second (thrashing), OOM kills and the job's RSS. It also flags late samples (`GAP`, meaning the host stalled), matching kernel messages, and a previous log with no `END` line (the run was cut off by a hang or reset). Every line goes to the owner's syslog server over UDP (`HEALTH_SYSLOG`, default `192.168.10.50:514`, facility local0, tag `ft710-health`; `GAP`/`WARN`/`KERNEL` at warning level) and to a local fallback file in `$HEALTH_DIR` (default `~/.cache/ft710-health`, newest at `health-latest.log`, fsynced per line so it survives a reset). Set `HEALTH_LOG=0` to turn it off, `HEALTH_SYSLOG=` to keep only the file. After a hang, read the last lines of the cut-off log first.
-- **Overrides:** override tool caps with command-line flags or environment variables, never by editing upstream config files that would land in commits.
 
 ## Watchdog / long-running work
 

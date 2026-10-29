@@ -66,22 +66,22 @@ void FUN_fffd38fe(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc1;
+    local_8 = &g_opstate.presets[4].rear_out_level;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b64;
+    local_8 = &g_opstate.presets[1].rear_out_level;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b83;
+    local_8 = &g_opstate.presets[2].rear_out_level;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba2;
+    local_8 = &g_opstate.presets[3].rear_out_level;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b45;
+    local_8 = &g_opstate.presets[0].rear_out_level;
   }
   menu_step_u8(0,100,local_8);
   return;
@@ -166,22 +166,22 @@ void FUN_fffd39a1(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc2;
+    local_8 = &g_opstate.presets[4].tx_bpf_sel;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b65;
+    local_8 = &g_opstate.presets[1].tx_bpf_sel;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b84;
+    local_8 = &g_opstate.presets[2].tx_bpf_sel;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba3;
+    local_8 = &g_opstate.presets[3].tx_bpf_sel;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b46;
+    local_8 = &g_opstate.presets[0].tx_bpf_sel;
   }
   menu_step_u8(0,4,local_8);
   return;
@@ -266,22 +266,22 @@ void FUN_fffd3a43(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc3;
+    local_8 = &g_opstate.presets[4].mod_source;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b66;
+    local_8 = &g_opstate.presets[1].mod_source;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b85;
+    local_8 = &g_opstate.presets[2].mod_source;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba4;
+    local_8 = &g_opstate.presets[3].mod_source;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b47;
+    local_8 = &g_opstate.presets[0].mod_source;
   }
   menu_step_u8(0,3,local_8);
   return;
@@ -366,22 +366,22 @@ void FUN_fffd3ae5(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc4;
+    local_8 = &g_opstate.presets[4].usb_mod_gain;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b67;
+    local_8 = &g_opstate.presets[1].usb_mod_gain;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b86;
+    local_8 = &g_opstate.presets[2].usb_mod_gain;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba5;
+    local_8 = &g_opstate.presets[3].usb_mod_gain;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b48;
+    local_8 = &g_opstate.presets[0].usb_mod_gain;
   }
   menu_step_u8(0,100,local_8);
   return;
@@ -466,22 +466,22 @@ void FUN_fffd3b88(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc5;
+    local_8 = &g_opstate.presets[4].rear_mod_gain;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b68;
+    local_8 = &g_opstate.presets[1].rear_mod_gain;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b87;
+    local_8 = &g_opstate.presets[2].rear_mod_gain;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba6;
+    local_8 = &g_opstate.presets[3].rear_mod_gain;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b49;
+    local_8 = &g_opstate.presets[0].rear_mod_gain;
   }
   menu_step_u8(0,100,local_8);
   return;
@@ -566,22 +566,22 @@ void FUN_fffd3c2b(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc6;
+    local_8 = &g_opstate.presets[4].rptt_select;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b69;
+    local_8 = &g_opstate.presets[1].rptt_select;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b88;
+    local_8 = &g_opstate.presets[2].rptt_select;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba7;
+    local_8 = &g_opstate.presets[3].rptt_select;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b4a;
+    local_8 = &g_opstate.presets[0].rptt_select;
   }
   menu_step_u8(0,3,local_8);
   return;
@@ -593,8 +593,8 @@ void FUN_fffd3c2b(byte param_1)
 void FUN_fffd3caf(void)
 
 {
-  DAT_00015e05 = DAT_00009bc9;
-  PTR_DAT_00025d60[0x420] = DAT_00009bc9;
+  DAT_00015e05 = g_opstate.preset_sel;
+  PTR_g_ui_00025d60->menu_p2 = g_opstate.preset_sel;
   return;
 }
 
@@ -606,12 +606,12 @@ void FUN_fffd3caf(void)
 void menu_m4_21_0_enter(void)
 
 {
-  if (PTR_DAT_00025d60[0x9a] != '\0') {
+  if (PTR_g_ui_00025d60->dl_block_34 != 0) {
     FUN_fffbe544();
     return;
   }
-  PTR_DAT_00025d60[0x99] = 1;
-  PTR_DAT_00025d60[0x3ff] = 2;
+  PTR_g_ui_00025d60->dl_req_34 = 1;
+  PTR_g_ui_00025d60->menu_state = 2;
   return;
 }
 
@@ -621,58 +621,58 @@ void menu_m4_21_0_enter(void)
 void FUN_fffd3d03(void)
 
 {
-  DAT_00009a3d = DAT_00012238;
-  DAT_00009a3e = DAT_00012239;
-  DAT_00009a50 = DAT_0001223a;
-  DAT_00009a51 = DAT_0001223b;
-  DAT_00009a65 = DAT_0001223c;
-  DAT_00009a66 = DAT_0001223d;
-  DAT_00009a7c = DAT_0001223e;
-  DAT_00009a7d = DAT_0001223f;
-  DAT_00009a8f = DAT_00012240;
-  DAT_00009a90 = DAT_00012241;
-  DAT_00009aa5 = DAT_00012242;
-  DAT_00009aa6 = DAT_00012243;
-  DAT_00009ab3 = DAT_00012244;
-  DAT_00009ab4 = DAT_00012245;
-  DAT_00009acf = DAT_00012246;
-  DAT_00009ad0 = DAT_00012247;
-  DAT_00009ad7 = DAT_00012248;
-  DAT_00009ad8 = DAT_00012249;
-  DAT_00009aec = DAT_0001224a;
-  DAT_00009aed = DAT_0001224b;
-  DAT_00009af7 = DAT_0001224c;
-  DAT_00009af8 = DAT_0001224d;
-  DAT_00009aff = DAT_0001224e;
-  DAT_00009b00 = DAT_0001224f;
-  DAT_00009b12 = DAT_00012250;
-  DAT_00009b13 = DAT_00012251;
-  DAT_00009b18 = DAT_00012252;
-  DAT_00009b19 = DAT_00012253;
-  DAT_00009b1e = DAT_00012254;
-  DAT_00009b1f = DAT_00012255;
-  DAT_00009b22 = DAT_00012256;
-  DAT_00009b23 = DAT_00012257;
-  DAT_00009b24 = DAT_00012258;
-  DAT_00009b25 = DAT_00012259;
-  DAT_00009b26 = DAT_0001225a;
-  DAT_00009b27 = DAT_0001225b;
-  DAT_00009b28 = DAT_0001225e;
-  DAT_00009b29 = DAT_0001225f;
-  DAT_00009b2a = DAT_00012260;
-  DAT_00009b2b = DAT_00012261;
-  DAT_00009b2c = DAT_00012262;
-  DAT_00009b2d = DAT_00012263;
-  DAT_00009b4b = DAT_00012264;
-  DAT_00009b4c = DAT_00012265;
-  DAT_00009b6a = DAT_00012266;
-  DAT_00009b6b = DAT_00012267;
-  DAT_00009b89 = DAT_00012268;
-  DAT_00009b8a = DAT_00012269;
-  DAT_00009ba8 = DAT_0001226a;
-  DAT_00009ba9 = DAT_0001226b;
-  DAT_00009bc7 = DAT_0001226c;
-  DAT_00009bc8 = DAT_0001226d;
+  g_opstate.menu_cursor_9a3d[0] = DAT_00012238;
+  g_opstate.menu_cursor_9a3d[1] = DAT_00012239;
+  g_opstate.menu_cursor_9a50[0] = DAT_0001223a;
+  g_opstate.menu_cursor_9a50[1] = DAT_0001223b;
+  g_opstate.menu_cursor_9a65[0] = DAT_0001223c;
+  g_opstate.menu_cursor_9a65[1] = DAT_0001223d;
+  g_opstate.menu_cursor_9a7c[0] = DAT_0001223e;
+  g_opstate.menu_cursor_9a7c[1] = DAT_0001223f;
+  g_opstate.menu_cursor_9a8f[0] = DAT_00012240;
+  g_opstate.menu_cursor_9a8f[1] = DAT_00012241;
+  g_opstate.menu_cursor_9aa5[0] = DAT_00012242;
+  g_opstate.menu_cursor_9aa5[1] = DAT_00012243;
+  g_opstate.menu_cursor_9ab3[0] = DAT_00012244;
+  g_opstate.menu_cursor_9ab3[1] = DAT_00012245;
+  g_opstate.menu_cursor_9acf[0] = DAT_00012246;
+  g_opstate.menu_cursor_9acf[1] = DAT_00012247;
+  g_opstate.menu_cursor_9ad7[0] = DAT_00012248;
+  g_opstate.menu_cursor_9ad7[1] = DAT_00012249;
+  g_opstate.menu_cursor_9aec[0] = DAT_0001224a;
+  g_opstate.menu_cursor_9aec[1] = DAT_0001224b;
+  g_opstate.menu_cursor_9af7[0] = DAT_0001224c;
+  g_opstate.menu_cursor_9af7[1] = DAT_0001224d;
+  g_opstate.menu_cursor_9aff[0] = DAT_0001224e;
+  g_opstate.menu_cursor_9aff[1] = DAT_0001224f;
+  g_opstate.menu_cursor_9b12[0] = DAT_00012250;
+  g_opstate.menu_cursor_9b12[1] = DAT_00012251;
+  g_opstate.menu_cursor_9b18[0] = DAT_00012252;
+  g_opstate.menu_cursor_9b18[1] = DAT_00012253;
+  g_opstate.menu_cursor_9b1e[0] = DAT_00012254;
+  g_opstate.menu_cursor_9b1e[1] = DAT_00012255;
+  g_opstate.menu_cursor_9b22[0] = DAT_00012256;
+  g_opstate.menu_cursor_9b22[1] = DAT_00012257;
+  g_opstate.menu_cursor_9b24[0] = DAT_00012258;
+  g_opstate.menu_cursor_9b24[1] = DAT_00012259;
+  g_opstate.menu_cursor_9b26[0] = DAT_0001225a;
+  g_opstate.menu_cursor_9b26[1] = DAT_0001225b;
+  g_opstate.menu_cursor_9b28[0] = DAT_0001225e;
+  g_opstate.menu_cursor_9b28[1] = DAT_0001225f;
+  g_opstate.menu_cursor_9b2a[0] = DAT_00012260;
+  g_opstate.menu_cursor_9b2a[1] = DAT_00012261;
+  g_opstate.menu_cursor_9b2c[0] = DAT_00012262;
+  g_opstate.menu_cursor_9b2c[1] = DAT_00012263;
+  g_opstate.presets[0].menu_cursor[0] = DAT_00012264;
+  g_opstate.presets[0].menu_cursor[1] = DAT_00012265;
+  g_opstate.presets[1].menu_cursor[0] = DAT_00012266;
+  g_opstate.presets[1].menu_cursor[1] = DAT_00012267;
+  g_opstate.presets[2].menu_cursor[0] = DAT_00012268;
+  g_opstate.presets[2].menu_cursor[1] = DAT_00012269;
+  g_opstate.presets[3].menu_cursor[0] = DAT_0001226a;
+  g_opstate.presets[3].menu_cursor[1] = DAT_0001226b;
+  g_opstate.presets[4].menu_cursor[0] = DAT_0001226c;
+  g_opstate.presets[4].menu_cursor[1] = DAT_0001226d;
   return;
 }
 
@@ -682,73 +682,76 @@ void FUN_fffd3d03(void)
 void FUN_fffd405e(void)
 
 {
-  DAT_00012238 = DAT_00009a3d;
-  DAT_00012239 = DAT_00009a3e;
-  DAT_0001223a = DAT_00009a50;
-  DAT_0001223b = DAT_00009a51;
-  DAT_0001223c = DAT_00009a65;
-  DAT_0001223d = DAT_00009a66;
-  DAT_0001223e = DAT_00009a7c;
-  DAT_0001223f = DAT_00009a7d;
-  DAT_00012240 = DAT_00009a8f;
-  DAT_00012241 = DAT_00009a90;
-  DAT_00012242 = DAT_00009aa5;
-  DAT_00012243 = DAT_00009aa6;
-  DAT_00012244 = DAT_00009ab3;
-  DAT_00012245 = DAT_00009ab4;
-  DAT_00012246 = DAT_00009acf;
-  DAT_00012247 = DAT_00009ad0;
-  DAT_00012248 = DAT_00009ad7;
-  DAT_00012249 = DAT_00009ad8;
-  DAT_0001224a = DAT_00009aec;
-  DAT_0001224b = DAT_00009aed;
-  DAT_0001224c = DAT_00009af7;
-  DAT_0001224d = DAT_00009af8;
-  DAT_0001224e = DAT_00009aff;
-  DAT_0001224f = DAT_00009b00;
-  DAT_00012250 = DAT_00009b12;
-  DAT_00012251 = DAT_00009b13;
-  DAT_00012252 = DAT_00009b18;
-  DAT_00012253 = DAT_00009b19;
-  DAT_00012254 = DAT_00009b1e;
-  DAT_00012255 = DAT_00009b1f;
-  DAT_00012256 = DAT_00009b22;
-  DAT_00012257 = DAT_00009b23;
-  DAT_00012258 = DAT_00009b24;
-  DAT_00012259 = DAT_00009b25;
-  DAT_0001225a = DAT_00009b26;
-  DAT_0001225b = DAT_00009b27;
-  DAT_0001225e = DAT_00009b28;
-  DAT_0001225f = DAT_00009b29;
-  DAT_00012260 = DAT_00009b2a;
-  DAT_00012261 = DAT_00009b2b;
-  DAT_00012262 = DAT_00009b2c;
-  DAT_00012263 = DAT_00009b2d;
-  DAT_00012264 = DAT_00009b4b;
-  DAT_00012265 = DAT_00009b4c;
-  DAT_00012266 = DAT_00009b6a;
-  DAT_00012267 = DAT_00009b6b;
-  DAT_00012268 = DAT_00009b89;
-  DAT_00012269 = DAT_00009b8a;
-  DAT_0001226a = DAT_00009ba8;
-  DAT_0001226b = DAT_00009ba9;
-  DAT_0001226c = DAT_00009bc7;
-  DAT_0001226d = DAT_00009bc8;
+  DAT_00012238 = g_opstate.menu_cursor_9a3d[0];
+  DAT_00012239 = g_opstate.menu_cursor_9a3d[1];
+  DAT_0001223a = g_opstate.menu_cursor_9a50[0];
+  DAT_0001223b = g_opstate.menu_cursor_9a50[1];
+  DAT_0001223c = g_opstate.menu_cursor_9a65[0];
+  DAT_0001223d = g_opstate.menu_cursor_9a65[1];
+  DAT_0001223e = g_opstate.menu_cursor_9a7c[0];
+  DAT_0001223f = g_opstate.menu_cursor_9a7c[1];
+  DAT_00012240 = g_opstate.menu_cursor_9a8f[0];
+  DAT_00012241 = g_opstate.menu_cursor_9a8f[1];
+  DAT_00012242 = g_opstate.menu_cursor_9aa5[0];
+  DAT_00012243 = g_opstate.menu_cursor_9aa5[1];
+  DAT_00012244 = g_opstate.menu_cursor_9ab3[0];
+  DAT_00012245 = g_opstate.menu_cursor_9ab3[1];
+  DAT_00012246 = g_opstate.menu_cursor_9acf[0];
+  DAT_00012247 = g_opstate.menu_cursor_9acf[1];
+  DAT_00012248 = g_opstate.menu_cursor_9ad7[0];
+  DAT_00012249 = g_opstate.menu_cursor_9ad7[1];
+  DAT_0001224a = g_opstate.menu_cursor_9aec[0];
+  DAT_0001224b = g_opstate.menu_cursor_9aec[1];
+  DAT_0001224c = g_opstate.menu_cursor_9af7[0];
+  DAT_0001224d = g_opstate.menu_cursor_9af7[1];
+  DAT_0001224e = g_opstate.menu_cursor_9aff[0];
+  DAT_0001224f = g_opstate.menu_cursor_9aff[1];
+  DAT_00012250 = g_opstate.menu_cursor_9b12[0];
+  DAT_00012251 = g_opstate.menu_cursor_9b12[1];
+  DAT_00012252 = g_opstate.menu_cursor_9b18[0];
+  DAT_00012253 = g_opstate.menu_cursor_9b18[1];
+  DAT_00012254 = g_opstate.menu_cursor_9b1e[0];
+  DAT_00012255 = g_opstate.menu_cursor_9b1e[1];
+  DAT_00012256 = g_opstate.menu_cursor_9b22[0];
+  DAT_00012257 = g_opstate.menu_cursor_9b22[1];
+  DAT_00012258 = g_opstate.menu_cursor_9b24[0];
+  DAT_00012259 = g_opstate.menu_cursor_9b24[1];
+  DAT_0001225a = g_opstate.menu_cursor_9b26[0];
+  DAT_0001225b = g_opstate.menu_cursor_9b26[1];
+  DAT_0001225e = g_opstate.menu_cursor_9b28[0];
+  DAT_0001225f = g_opstate.menu_cursor_9b28[1];
+  DAT_00012260 = g_opstate.menu_cursor_9b2a[0];
+  DAT_00012261 = g_opstate.menu_cursor_9b2a[1];
+  DAT_00012262 = g_opstate.menu_cursor_9b2c[0];
+  DAT_00012263 = g_opstate.menu_cursor_9b2c[1];
+  DAT_00012264 = g_opstate.presets[0].menu_cursor[0];
+  DAT_00012265 = g_opstate.presets[0].menu_cursor[1];
+  DAT_00012266 = g_opstate.presets[1].menu_cursor[0];
+  DAT_00012267 = g_opstate.presets[1].menu_cursor[1];
+  DAT_00012268 = g_opstate.presets[2].menu_cursor[0];
+  DAT_00012269 = g_opstate.presets[2].menu_cursor[1];
+  DAT_0001226a = g_opstate.presets[3].menu_cursor[0];
+  DAT_0001226b = g_opstate.presets[3].menu_cursor[1];
+  DAT_0001226c = g_opstate.presets[4].menu_cursor[0];
+  DAT_0001226d = g_opstate.presets[4].menu_cursor[1];
   return;
 }
 
 
-// ===== FUN_fffd43b9 @ fffd43b9 (118 bytes)
+// ===== sd_menu_enter_check @ fffd43b9 (118 bytes)
 
-char FUN_fffd43b9(char param_1)
+/* SD CARD action on_enter guard: refuses while +0x93 / +0x92 (PlayList, recording); with no card
+   (+0xA6 != 1) shows dialog 2 (arg 1) or 3 and returns 0 with an error beep [fact] */
+
+char sd_menu_enter_check(char param_1)
 
 {
   bool bVar1;
   char local_3;
   
   local_3 = '\x01';
-  if (DAT_00020b97 == '\0') {
-    if (DAT_00020b96 != '\0') {
+  if (g_ui.playlist_open == 0) {
+    if (g_ui.dvs_lm1_flag != 0) {
       local_3 = '\0';
     }
   }
@@ -761,13 +764,13 @@ char FUN_fffd43b9(char param_1)
   else {
     bVar1 = true;
   }
-  if ((bVar1) && (PTR_DAT_00025d60[0xa6] != '\x01')) {
+  if ((bVar1) && (PTR_g_ui_00025d60->sd_present != 1)) {
     local_3 = '\0';
     if (param_1 == '\x01') {
-      FUN_fffcf4d5();
+      dialog_insert_fw_sd();
     }
     else {
-      FUN_fffcf4f2();
+      dialog_no_sd_card();
     }
   }
   if (local_3 == '\0') {

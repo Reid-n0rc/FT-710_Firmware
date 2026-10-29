@@ -98,7 +98,13 @@ endmodule
 module IDDR #(parameter DDR_CLK_EDGE = "OPPOSITE_EDGE", parameter SRTYPE = "SYNC",
               parameter [0:0] INIT_Q1 = 1'b0, parameter [0:0] INIT_Q2 = 1'b0)
   (output reg Q1 = INIT_Q1, output reg Q2 = INIT_Q2, input wire C, CE, D, R, S);
+`ifdef IDDR_DDR   // #172: D before the falling edge -> Q2, D before the rising edge -> Q1, both presented at the rising edge
+  reg dn = 1'b0;
+  always @(negedge C) if (CE) dn <= D;
+  always @(posedge C) if (CE) begin Q1 <= D; Q2 <= dn; end
+`else
   always @(posedge C) if (CE) begin Q1 <= D; Q2 <= D; end   // single-edge stand-in
+`endif
 endmodule
 module ODDR #(parameter DDR_CLK_EDGE = "OPPOSITE_EDGE", parameter SRTYPE = "SYNC", parameter [0:0] INIT = 1'b0)
   (output reg Q = INIT, input wire C, CE, D1, D2, R, S);

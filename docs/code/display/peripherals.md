@@ -337,7 +337,7 @@ The `sdmenu` task (`task_sdmenu`) serves three event-flag requests: 1 = save, 2 
 | 0x20113D6C / 0x20113DB8 / 0x20113DC0 | `dimmer_set_pct` (new entry) / `dimmer_set` / `dimmer_init` | LED/key dimmer from message 0x24 (second byte & 0x7F); 60 % at start-up |
 | 0x20102708 / 0x20102774 | `touch_cal_load` / `touch_cal_save` | 48-byte record in SPI flash at 0x183D0000 (magic 0xA5C30001, 6 doubles, CRC-32): the **touch-screen calibration** (affine a…f), loaded by `touch_cal_init` and saved by `touch_cal_step`, see [input.md](input.md) **[fact, #83]** |
 
-MAIN message 0x24 also carries the LED bits (`led_set_mask`) and the FT4222 reset bit (bit 2 of its first byte) **[fact]**.
+The LED bits for `led_set_mask` are byte 8 of the status block that every "status + …" frame from MAIN carries (`gui_screen_update` 0x2012EBB8 passes it on; MAIN UI +0x34, [main/display-link.md](../main/display-link.md#the-0x97-byte-radio-status-block-0x20-72) (#179)); MAIN message 0x24 carries the FT4222 reset bit (bit 2 of its first data byte) **[fact]**.
 
 ## 8. Other blocks
 

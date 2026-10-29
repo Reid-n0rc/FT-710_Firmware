@@ -5,7 +5,7 @@
 void ADC0_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -15,7 +15,7 @@ void ADC0_IRQHandler(void)
 void Reserved39_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -25,7 +25,7 @@ void Reserved39_IRQHandler(void)
 void ACMP_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -35,7 +35,7 @@ void ACMP_IRQHandler(void)
 void DMIC0_IRQHandler(void)
 
 {
-  FUN_080017b8();
+  __DMIC0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -45,7 +45,7 @@ void DMIC0_IRQHandler(void)
 void Reserved42_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -55,7 +55,7 @@ void Reserved42_IRQHandler(void)
 void HYPERVISOR_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -65,7 +65,7 @@ void HYPERVISOR_IRQHandler(void)
 void SECURE_VIOLATION_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -75,7 +75,7 @@ void SECURE_VIOLATION_IRQHandler(void)
 void HWVAD0_IRQHandler(void)
 
 {
-  FUN_080016c8();
+  __HWVAD0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -85,7 +85,7 @@ void HWVAD0_IRQHandler(void)
 void Reserved46_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -95,7 +95,7 @@ void Reserved46_IRQHandler(void)
 void RNG_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -105,7 +105,7 @@ void RNG_IRQHandler(void)
 void RTC_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -115,7 +115,7 @@ void RTC_IRQHandler(void)
 void DSP_TIE_EXPSTATE1_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -125,7 +125,7 @@ void DSP_TIE_EXPSTATE1_IRQHandler(void)
 void PIN_INT4_IRQHandler(void)
 
 {
-  FUN_08001718();
+  __PIN_INT4_DriverIRQHandler_veneer();
   return;
 }
 
@@ -135,7 +135,7 @@ void PIN_INT4_IRQHandler(void)
 void PIN_INT5_IRQHandler(void)
 
 {
-  FUN_080016b8();
+  __PIN_INT5_DriverIRQHandler_veneer();
   return;
 }
 
@@ -145,7 +145,7 @@ void PIN_INT5_IRQHandler(void)
 void PIN_INT6_IRQHandler(void)
 
 {
-  FUN_08001788();
+  __PIN_INT6_DriverIRQHandler_veneer();
   return;
 }
 
@@ -155,7 +155,7 @@ void PIN_INT6_IRQHandler(void)
 void PIN_INT7_IRQHandler(void)
 
 {
-  FUN_080017d8();
+  __PIN_INT7_DriverIRQHandler_veneer();
   return;
 }
 
@@ -165,7 +165,7 @@ void PIN_INT7_IRQHandler(void)
 void CTIMER2_IRQHandler(void)
 
 {
-  FUN_08001738();
+  __CTIMER2_DriverIRQHandler_veneer();
   return;
 }
 
@@ -175,7 +175,7 @@ void CTIMER2_IRQHandler(void)
 void CTIMER4_IRQHandler(void)
 
 {
-  FUN_08001688();
+  __CTIMER4_DriverIRQHandler_veneer();
   return;
 }
 
@@ -185,7 +185,7 @@ void CTIMER4_IRQHandler(void)
 void OS_EVENT_IRQHandler(void)
 
 {
-  FUN_080015f8();
+  __OS_EVENT_DriverIRQHandler_veneer();
   return;
 }
 
@@ -195,7 +195,7 @@ void OS_EVENT_IRQHandler(void)
 void FLEXSPI_IRQHandler(void)
 
 {
-  FUN_08001748();
+  __FLEXSPI_DriverIRQHandler_veneer();
   return;
 }
 
@@ -205,7 +205,7 @@ void FLEXSPI_IRQHandler(void)
 void FLEXCOMM6_IRQHandler(void)
 
 {
-  FUN_08001708();
+  __FLEXCOMM6_DriverIRQHandler_veneer();
   return;
 }
 
@@ -215,7 +215,7 @@ void FLEXCOMM6_IRQHandler(void)
 void FLEXCOMM7_IRQHandler(void)
 
 {
-  FUN_08001778();
+  __FLEXCOMM7_DriverIRQHandler_veneer();
   return;
 }
 
@@ -225,7 +225,7 @@ void FLEXCOMM7_IRQHandler(void)
 void USDHC0_IRQHandler(void)
 
 {
-  FUN_080015e8();
+  __USDHC0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -235,7 +235,7 @@ void USDHC0_IRQHandler(void)
 void USDHC1_IRQHandler(void)
 
 {
-  FUN_08001638();
+  __USDHC1_DriverIRQHandler_veneer();
   return;
 }
 
@@ -245,7 +245,7 @@ void USDHC1_IRQHandler(void)
 void SGPIO_INTA_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -255,7 +255,7 @@ void SGPIO_INTA_IRQHandler(void)
 void SGPIO_INTB_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -265,7 +265,7 @@ void SGPIO_INTB_IRQHandler(void)
 void I3C0_IRQHandler(void)
 
 {
-  FUN_080017c8();
+  __I3C0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -275,7 +275,7 @@ void I3C0_IRQHandler(void)
 void USB0_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -285,7 +285,7 @@ void USB0_IRQHandler(void)
 void USB0_NEEDCLK_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -295,7 +295,7 @@ void USB0_NEEDCLK_IRQHandler(void)
 void WDT1_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -305,7 +305,7 @@ void WDT1_IRQHandler(void)
 void USB_PHYDCD_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -315,7 +315,7 @@ void USB_PHYDCD_IRQHandler(void)
 void DMA1_IRQHandler(void)
 
 {
-  FUN_08001758();
+  __DMA1_DriverIRQHandler_veneer();
   return;
 }
 
@@ -325,7 +325,7 @@ void DMA1_IRQHandler(void)
 void PUF_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -335,7 +335,7 @@ void PUF_IRQHandler(void)
 void POWERQUAD_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -345,7 +345,7 @@ void POWERQUAD_IRQHandler(void)
 void CASPER_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -355,7 +355,7 @@ void CASPER_IRQHandler(void)
 void PMC_PMIC_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -365,7 +365,7 @@ void PMC_PMIC_IRQHandler(void)
 void HASHCRYPT_IRQHandler(void)
 
 {
-  FUN_08001628();
+  __HASHCRYPT_DriverIRQHandler_veneer();
   return;
 }
 
@@ -378,7 +378,7 @@ undefined4 FUN_08001414(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar1 = DAT_40001100;
+  uVar1 = CLKCTL0_FFROCTL0;
   if ((uVar1 & 0xc0000) != 0) {
     uVar2 = 60000000;
     if ((uVar1 & 0xc0000) != 0xc0000) {
@@ -406,19 +406,19 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
   int iVar7;
   uint uVar8;
   
-  uVar8 = DAT_40001434;
+  uVar8 = CLKCTL0_MAINCLKSELB;
   uVar8 = uVar8 & 3;
   if (uVar8 == 2) {
-    uVar8 = DAT_40001200;
+    uVar8 = CLKCTL0_SYSPLL0CLKSEL;
     uVar8 = uVar8 & 7;
     if (uVar8 == 1) {
-      iVar7 = DAT_40001168;
+      iVar7 = CLKCTL0_SYSOSCBYPASS;
       if (iVar7 == 0) {
         uVar6 = 24000000;
       }
       else {
         uVar6 = 0;
-        uVar2 = DAT_40001168;
+        uVar2 = CLKCTL0_SYSOSCBYPASS;
       }
     }
     else if (uVar8 == 2) {
@@ -431,20 +431,22 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
         uVar6 = 0;
       }
     }
-    uVar8 = DAT_40001204;
+    uVar8 = CLKCTL0_SYSPLL0CTL0;
     uVar8 = uVar8 & 1;
     if (uVar8 == 0) {
-      uVar4 = DAT_40001210;
-      uVar2 = DAT_40001214;
-      uVar3 = DAT_40001204;
-      iVar7 = FUN_08001618((int)((ulonglong)uVar6 * (ulonglong)uVar4),
-                           (int)((ulonglong)uVar6 * (ulonglong)uVar4 >> 0x20),uVar2,0,param_1,0,
-                           param_3);
-      uVar4 = DAT_40001218;
+      uVar4 = CLKCTL0_SYSPLL0NUM;
+      uVar2 = CLKCTL0_SYSPLL0DENOM;
+      uVar3 = CLKCTL0_SYSPLL0CTL0;
+      iVar7 = ____aeabi_uldivmod_veneer
+                        ((int)((ulonglong)uVar6 * (ulonglong)uVar4),
+                         (int)((ulonglong)uVar6 * (ulonglong)uVar4 >> 0x20),uVar2,0,param_1,0,
+                         param_3);
+      uVar4 = CLKCTL0_SYSPLL0PFD;
       lVar1 = (ulonglong)(iVar7 + uVar6 * ((uVar3 & 0xffffff) >> 0x10)) * 0x12;
-      uVar6 = FUN_08001618((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar4 & 0x3f,uVar8);
+      uVar6 = ____aeabi_uldivmod_veneer
+                        ((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar4 & 0x3f,uVar8);
     }
-    uVar8 = DAT_40001240;
+    uVar8 = CLKCTL0_MAINPLLCLKDIV;
     puVar5 = (undefined *)(uVar6 / ((uVar8 & 0xff) + 1));
   }
   else if (uVar8 == 3) {
@@ -454,7 +456,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
     puVar5 = (undefined *)0xf42400;
   }
   else {
-    uVar8 = DAT_40001430;
+    uVar8 = CLKCTL0_MAINCLKSELA;
     uVar8 = uVar8 & 3;
     if (uVar8 == 2) {
       puVar5 = &DAT_000f4240;
@@ -463,13 +465,13 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       puVar5 = (undefined *)FUN_08001414();
     }
     else if (uVar8 == 1) {
-      iVar7 = DAT_40001168;
+      iVar7 = CLKCTL0_SYSOSCBYPASS;
       if (iVar7 == 0) {
         puVar5 = (undefined *)0x16e3600;
       }
       else {
         puVar5 = (undefined *)0x0;
-        uVar2 = DAT_40001168;
+        uVar2 = CLKCTL0_SYSOSCBYPASS;
       }
     }
     else {
@@ -477,7 +479,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       puVar5 = (undefined *)(uVar8 >> 2);
     }
   }
-  uVar8 = DAT_40001400;
+  uVar8 = CLKCTL0_SYSCPUAHBCLKDIV;
   DAT_00087ec0 = (uint)puVar5 / ((uVar8 & 0xff) + 1);
   return;
 }
@@ -491,25 +493,25 @@ void SystemInit(void)
   int iVar1;
   uint uVar2;
   
-  uVar2 = DAT_e000ed88;
-  DAT_e000ed88 = uVar2 | 0xf00000;
-  uVar2 = DAT_e000ed88;
-  DAT_e000ed88 = uVar2 | 0xf;
-  uVar2 = DAT_e000ed8c;
-  DAT_e000ed8c = uVar2 | 0xc03;
-  DAT_4000200c = 1;
-  iVar1 = DAT_4003301c;
+  uVar2 = SCB_CPACR;
+  SCB_CPACR = uVar2 | 0xf00000;
+  uVar2 = SCB_CPACR;
+  SCB_CPACR = uVar2 | 0xf;
+  uVar2 = SCB_NSACR;
+  SCB_NSACR = uVar2 | 0xc03;
+  SYSCTL0_DSPSTALL = 1;
+  iVar1 = CACHE64_POLSEL_POLSEL;
   if (iVar1 == 0) {
-    DAT_40033800 = 0x5000000;
-    uVar2 = DAT_40033800;
-    DAT_40033800 = uVar2 | 0x80000000;
+    CACHE64_CCR = 0x5000000;
+    uVar2 = CACHE64_CCR;
+    CACHE64_CCR = uVar2 | 0x80000000;
     do {
-      iVar1 = DAT_40033800;
+      iVar1 = CACHE64_CCR;
     } while (iVar1 < 0);
-    DAT_40033800 = 3;
-    DAT_40033014 = 0x7fffc00;
-    DAT_40033018 = 0;
-    DAT_4003301c = 1;
+    CACHE64_CCR = 3;
+    CACHE64_POLSEL_REG0_TOP = 0x7fffc00;
+    CACHE64_POLSEL_REG1_TOP = 0;
+    CACHE64_POLSEL_POLSEL = 1;
     InstructionSynchronizationBarrier(0xf);
     DataSynchronizationBarrier(0xf);
   }
@@ -527,9 +529,12 @@ void FUN_080015d4(void)
 }
 
 
-// ===== FUN_080015d8 @ 080015d8 (10 bytes)
+// ===== __FLEXCOMM2_DriverIRQHandler_veneer @ 080015d8 (10 bytes)
 
-void FUN_080015d8(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083fb9; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM2_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   FLEXCOMM2_DriverIRQHandler(param_1);
@@ -537,9 +542,12 @@ void FUN_080015d8(undefined4 param_1)
 }
 
 
-// ===== FUN_080015e8 @ 080015e8 (10 bytes)
+// ===== __USDHC0_DriverIRQHandler_veneer @ 080015e8 (10 bytes)
 
-void FUN_080015e8(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084905; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __USDHC0_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   USDHC0_DriverIRQHandler(param_1);
@@ -547,9 +555,12 @@ void FUN_080015e8(undefined4 param_1)
 }
 
 
-// ===== FUN_080015f8 @ 080015f8 (10 bytes)
+// ===== __OS_EVENT_DriverIRQHandler_veneer @ 080015f8 (10 bytes)
 
-void FUN_080015f8(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000842d9; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __OS_EVENT_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   OS_EVENT_DriverIRQHandler(param_1);
@@ -557,9 +568,12 @@ void FUN_080015f8(undefined4 param_1)
 }
 
 
-// ===== FUN_08001608 @ 08001608 (10 bytes)
+// ===== __CTIMER1_DriverIRQHandler_veneer @ 08001608 (10 bytes)
 
-void FUN_08001608(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00086e93; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __CTIMER1_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   CTIMER1_DriverIRQHandler(param_1);
@@ -567,19 +581,28 @@ void FUN_08001608(undefined4 param_1)
 }
 
 
-// ===== FUN_08001618 @ 08001618 (10 bytes)
+// ===== ____aeabi_uldivmod_veneer @ 08001618 (10 bytes)
 
-void FUN_08001618(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00087757; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+ulonglong ____aeabi_uldivmod_veneer
+                    (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  __aeabi_uldivmod(param_1);
-  return;
+  ulonglong uVar1;
+  
+  uVar1 = __aeabi_uldivmod(CONCAT44(param_2,param_1),CONCAT44(param_4,param_3));
+  return uVar1;
 }
 
 
-// ===== FUN_08001628 @ 08001628 (10 bytes)
+// ===== __HASHCRYPT_DriverIRQHandler_veneer @ 08001628 (10 bytes)
 
-void FUN_08001628(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084229; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __HASHCRYPT_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   HASHCRYPT_DriverIRQHandler(param_1);
@@ -587,9 +610,12 @@ void FUN_08001628(undefined4 param_1)
 }
 
 
-// ===== FUN_08001638 @ 08001638 (10 bytes)
+// ===== __USDHC1_DriverIRQHandler_veneer @ 08001638 (10 bytes)
 
-void FUN_08001638(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x0008491d; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __USDHC1_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   USDHC1_DriverIRQHandler(param_1);
@@ -597,9 +623,12 @@ void FUN_08001638(undefined4 param_1)
 }
 
 
-// ===== FUN_08001648 @ 08001648 (10 bytes)
+// ===== __PIN_INT2_DriverIRQHandler_veneer @ 08001648 (10 bytes)
 
-void FUN_08001648(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084351; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT2_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   PIN_INT2_DriverIRQHandler(param_1);
@@ -607,9 +636,12 @@ void FUN_08001648(undefined4 param_1)
 }
 
 
-// ===== FUN_08001658 @ 08001658 (10 bytes)
+// ===== __CTIMER0_DriverIRQHandler_veneer @ 08001658 (10 bytes)
 
-void FUN_08001658(undefined4 param_1)
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00086e8d; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __CTIMER0_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   CTIMER0_DriverIRQHandler(param_1);

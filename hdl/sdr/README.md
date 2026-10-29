@@ -11,6 +11,9 @@ in `build/` (never committed).
 | `uart_link.v` | `ft710_uart_link`: **MAIN's register link** (UART B, V12 in / U12 out = MAIN's SCI5): 11-character window, `r`/`w` frames with checksum, read reply / ACK / `?`, register-bus port | **matches the whole netlist cycle by cycle on the TX pin** (co-simulation, below) |
 | `uart_tx.v` | `ft710_uart_tx`: generic transmitter with the console's bit timer (shift strobe at count 32) | loopback only; the link has its own transmitter in `uart_link.v` |
 | `uart_console.v`, `uart_console_echo.vh` | `ft710_uart_console`: **UART A debug console** (prompt `[IF]>`, echo, `r`/`w` commands, `Err`), byte-level (#147) | **same bytes as the whole netlist** for `sim/console_lines.txt` (`tools/sdr_console_check.py`); not cycle-accurate; BS/`x` open (#204) |
+| `scope_spi.v` | `ft710_scope_spi`: **scope frame serializer** (#186), master of the DISPLAY's RSPI2 link on N14 (data) / T18 (select) / R18 (clock): 1,700-byte frame every 614,400 `dsp_clk` cycles, 32 clocks per bit, bytes 0-849 from the ping-pong RAM RAMB18_X2Y21, bytes 850-1699 = 0xCC, address test pattern | **matches the netlist slice cycle by cycle** (`tb_scope_spi.v -DSTRUCT`, 5 frames, 0 mismatching clocks) |
+| `tb_scope_spi.v` | serializer testbench: RAM model, frame decoder (length, period, bank, contents, test mode, disable), with `-DSTRUCT` against the slice | PASS (Icarus, 35 s) |
+| `sim/scope_main.cpp` | Whole-netlist harness for the scope port (#186): holds R15 high (pins driven), copies the three output flops onto their pads, decodes frames, prints the enable/mode flops. Needs a probed netlist (command in the file) | |
 | `tb_uart_console.v` | console testbench: plays a line file, prints the TX bytes, small register model | used by `tools/sdr_console_check.py` |
 | `uart_charclass.v` | `ft710_uart_charclass`: character classes of the parsers (hex digits, `r`/`w`/`x`, `,`/space, CR/LF/BS) | sets taken from the netlist LUTs |
 | `tb_uart_rx.v` | RX testbench: MAIN-style frames, edge bytes, +/-2 % baud error; with `-DSTRUCT` also against the netlist slice | PASS, 0 mismatches in 260,417 clocks |
@@ -21,6 +24,7 @@ in `build/` (never committed).
 | `sim/tb_bram.v` | BRAM model test: RAMB36 x9 against two RAMB18 x4 halves with interleaved INIT (data + parity), x9 writes, x18 byte enables, SDP x36 | PASS (Icarus) |
 | `sim/full_main.cpp`, `sim/build_full.sh` | Verilator harness and build for the **whole** netlist (UART players/decoders, probe and snapshot output) | 63k cells, ~15,000 clocks/s |
 | `sim/pins_main.cpp` | Pin-activity harness for the whole netlist (#90): toggle counts, burst gaps and optional edge logs of the unassigned outputs, with MAIN register frames played on UART B. Build with `MAIN=pins_main.cpp OBJ=obj_pins hdl/sdr/sim/build_full.sh` | found the I2S port and the two power-up SPI transfers; `CONSOLE=`/`INPUTS=` (#89) showed `#` = hex E, BS = hex B on the console and that no input gates `x`; `ADC=noise` / `ADC=sine:PERIOD` drive the 14 ADC pairs (#91) |
+| `sim/adc_main.cpp` | Two-channel ADC harness (#172): drives channel A and B with the traced bit map (needs `-DIDDR_DDR`, the DDR IDDR stand-in in `xc7_prims_vl.v`), MAIN frames on UART B, probe snapshots | confirmed the 14-bit two's-complement words, the DC tracker and the gain registers 0x12/0x13 |
 | `sim/cosim_top.v`, `sim/cosim_directed.sh`, `sim/cosim_random.sh` | netlist and `ft710_uart_link` side by side, TX compared every clock | see results |
 
 ## The link protocol (UART B, MAIN's UART5) [fact, whole-netlist simulation]
@@ -61,6 +65,17 @@ python3 -I tools/xc7_netlist_verilog.py slice build/sdr/netlist.json build/sdr/s
   --depth 4
 iverilog -g2012 -DSTRUCT -o /tmp/rxc.vvp hdl/sdr/tb_uart_rx.v hdl/sdr/uart_rx.v build/sdr/sim/uart_a_rx.v \
   /usr/share/yosys/xilinx/cells_sim.v && vvp -n /tmp/rxc.vvp
+```
+
+Scope serializer (#186), RTL alone and against its netlist slice:
+
+```sh
+iverilog -g2012 -o /tmp/sc.vvp hdl/sdr/tb_scope_spi.v hdl/sdr/scope_spi.v && vvp -n /tmp/sc.vvp
+python3 -I tools/xc7_netlist_verilog.py slice build/sdr/netlist.json build/sdr/sim/scope_ser.v \
+  --seeds SLICE_X12Y48/AFF,SLICE_X5Y50/AFF,SLICE_X12Y49/AFF,SLICE_X15Y49/AFF,SLICE_X58Y49/AFF,SLICE_X58Y49/BFF,SLICE_X58Y49/B5FF,SLICE_X58Y49/CFF,SLICE_X58Y49/A5FF,SLICE_X58Y50/CFF,SLICE_X58Y50/AFF,SLICE_X58Y50/A5FF,SLICE_X58Y50/BFF,SLICE_X34Y53/AFF \
+  --depth 12 --stop RAMB18_X2Y21,SLICE_X28Y73/A5FF,SLICE_X40Y60/BFF,SLICE_X1Y47/AFF
+iverilog -g2012 -DSTRUCT -o /tmp/scs.vvp hdl/sdr/tb_scope_spi.v hdl/sdr/scope_spi.v build/sdr/sim/scope_ser.v \
+  /usr/share/yosys/xilinx/cells_sim.v && vvp -n /tmp/scs.vvp
 ```
 
 Block-RAM model (#164):

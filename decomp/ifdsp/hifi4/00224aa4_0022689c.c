@@ -1574,13 +1574,13 @@ void tx_mute_ctrl(void)
     if (uVar4 != 0) {
       FUN_0022548c();
       memw();
-      DAT_40100044 = uVar2;
+      GPIO_B2_4 = uVar2;
       return;
     }
     FUN_00225478(&DAT_002c757c);
   }
   memw();
-  DAT_40100044 = uVar2;
+  GPIO_B2_4 = uVar2;
   return;
 }
 
@@ -1593,7 +1593,7 @@ void create_rx_tx_path_threads(void)
   uint uVar1;
   undefined8 uVar2;
   
-  INPUTMUX_AttachSignal(&DAT_40026000,0x12,0x14000014);
+  INPUTMUX_AttachSignal(&INPUTMUX_SCT0_IN_SEL0,0x12,0x14000014);
   CLOCK_AttachClk(0x80002548);
   CLOCK_AttachClk(0x80002568);
   CLOCK_AttachClk(0x80002588);
@@ -1605,16 +1605,16 @@ void create_rx_tx_path_threads(void)
   CLOCK_AttachClk(0x80001740);
   FUN_00208654(0x80000744,1);
   memw();
-  DAT_40022010 = 1;
+  SYSCTL1_MCLKPINDIR = 1;
   memw();
-  DAT_40022080 = 0x22;
+  SYSCTL1_SHAREDCTRLSET0 = 0x22;
   memw();
-  DAT_4002204c = 0x101;
+  SYSCTL1_FCCTRLSEL3 = 0x101;
   memw();
-  DAT_40022084 = 0x55;
+  SYSCTL1_SHAREDCTRLSET1 = 0x55;
   memw();
-  DAT_40022050 = 0x202;
-  xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DAT_40105000);
+  SYSCTL1_FCCTRLSEL4 = 0x202;
+  xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DMA1_CTRL);
   xos_interrupt_enable(0x17);
   I2S_TxGetDefaultConfig(&DAT_002c8208);
   DAT_002c8216 = 1;
@@ -1636,47 +1636,47 @@ void create_rx_tx_path_threads(void)
   DAT_002c825c = 0;
   DAT_002c826d = 0x20;
   DAT_002c826e = 0x40;
-  I2S_TxInit(&DAT_40108000,&DAT_002c8208);
-  I2S_RxInit(&DAT_40109000,&DAT_002c8240);
-  I2S_TxInit(&DAT_40123000,&DAT_002c8224);
-  I2S_RxInit(&DAT_40122000,&DAT_002c825c);
-  DMA_Init(&DAT_40105000);
+  I2S_TxInit(&I2S2_BASE,&DAT_002c8208);
+  I2S_RxInit(&I2S3_BASE,&DAT_002c8240);
+  I2S_TxInit(&I2S5_BASE,&DAT_002c8224);
+  I2S_RxInit(&I2S4_BASE,&DAT_002c825c);
+  DMA_Init(&DMA1_CTRL);
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x20;
+  DMA1_ENABLESET0 = uVar1 | 0x20;
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x40;
+  DMA1_ENABLESET0 = uVar1 | 0x40;
   memw();
-  uVar1 = DAT_40105450;
+  uVar1 = DMA1_CHANNEL5_CFG;
   memw();
-  DAT_40105450 = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
+  DMA1_CHANNEL5_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
   memw();
-  uVar1 = DAT_40105460;
+  uVar1 = DMA1_CHANNEL6_CFG;
   memw();
-  DAT_40105460 = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
-  DMA_CreateHandle(&DAT_002c8278,&DAT_40105000,5);
-  DMA_CreateHandle(&DAT_002c8288,&DAT_40105000,6);
+  DMA1_CHANNEL6_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
+  DMA_CreateHandle(&DAT_002c8278,&DMA1_CTRL,5);
+  DMA_CreateHandle(&DAT_002c8288,&DMA1_CTRL,6);
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x800;
+  DMA1_ENABLESET0 = uVar1 | 0x800;
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x100;
+  DMA1_ENABLESET0 = uVar1 | 0x100;
   memw();
-  uVar1 = DAT_401054b0;
+  uVar1 = DMA1_CHANNEL11_CFG;
   memw();
-  DAT_401054b0 = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
+  DMA1_CHANNEL11_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
   memw();
-  uVar1 = DAT_40105480;
+  uVar1 = DMA1_CHANNEL8_CFG;
   memw();
-  DAT_40105480 = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
-  DMA_CreateHandle(&DAT_002c8298,&DAT_40105000,0xb);
-  DMA_CreateHandle(&DAT_002c82a8,&DAT_40105000,8);
+  DMA1_CHANNEL8_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
+  DMA_CreateHandle(&DAT_002c8298,&DMA1_CTRL,0xb);
+  DMA_CreateHandle(&DAT_002c82a8,&DMA1_CTRL,8);
   FUN_00225af0();
   FUN_002244e0();
   xos_thread_create(&DAT_002c7890,0,Thread_Rx_Path_entry,0,"Thread_Rx_Path",&DAT_002c83b0,
@@ -1716,13 +1716,13 @@ void audio_i2s_fc3_fc4_fc5_init(void)
   DAT_002c82bc = 0;
   DAT_002cab50 = &DAT_20062be0;
   I2S_TxTransferCreateHandleDMA
-            (&DAT_40108000,&DAT_002c82c0,&DAT_002c8278,fc2_txaf_dma_done,&DAT_002c82bc);
+            (&I2S2_BASE,&DAT_002c82c0,&DAT_002c8278,fc2_txaf_dma_done,&DAT_002c82bc);
   I2S_RxTransferCreateHandleDMA
-            (&DAT_40109000,&DAT_002c82f8,&DAT_002c8288,fc3_rxif_dma_done,&DAT_002c82b8);
-  I2S_RxTransferReceiveDMA(&DAT_40109000,&DAT_002c82f8,DAT_002cab60,DAT_002cab64);
-  I2S_RxTransferReceiveDMA(&DAT_40109000,&DAT_002c82f8,DAT_002cab68,DAT_002cab6c);
-  I2S_TxTransferSendDMA(&DAT_40108000,&DAT_002c82c0,DAT_002cab50,DAT_002cab54);
-  I2S_TxTransferSendDMA(&DAT_40108000,&DAT_002c82c0,DAT_002cab58,DAT_002cab5c);
+            (&I2S3_BASE,&DAT_002c82f8,&DAT_002c8288,fc3_rxif_dma_done,&DAT_002c82b8);
+  I2S_RxTransferReceiveDMA(&I2S3_BASE,&DAT_002c82f8,DAT_002cab60,DAT_002cab64);
+  I2S_RxTransferReceiveDMA(&I2S3_BASE,&DAT_002c82f8,DAT_002cab68,DAT_002cab6c);
+  I2S_TxTransferSendDMA(&I2S2_BASE,&DAT_002c82c0,DAT_002cab50,DAT_002cab54);
+  I2S_TxTransferSendDMA(&I2S2_BASE,&DAT_002c82c0,DAT_002cab58,DAT_002cab5c);
   DAT_002cab74 = 0xc0;
   DAT_002cab7c = 0xc0;
   DAT_002cab84 = 0xc0;
@@ -1734,13 +1734,13 @@ void audio_i2s_fc3_fc4_fc5_init(void)
   DAT_002c8330 = 0;
   DAT_002c8334 = 0;
   I2S_TxTransferCreateHandleDMA
-            (&DAT_40123000,&DAT_002c8338,&DAT_002c8298,fc5_codec_out_dma_done,&DAT_002c8334);
+            (&I2S5_BASE,&DAT_002c8338,&DAT_002c8298,fc5_codec_out_dma_done,&DAT_002c8334);
   I2S_RxTransferCreateHandleDMA
-            (&DAT_40122000,&DAT_002c8370,&DAT_002c82a8,fc4_codec_in_dma_done,&DAT_002c8330);
-  I2S_RxTransferReceiveDMA(&DAT_40122000,&DAT_002c8370,DAT_002cab80,DAT_002cab84);
-  I2S_RxTransferReceiveDMA(&DAT_40122000,&DAT_002c8370,DAT_002cab88,DAT_002cab8c);
-  I2S_TxTransferSendDMA(&DAT_40123000,&DAT_002c8338,DAT_002cab70,DAT_002cab74);
-  I2S_TxTransferSendDMA(&DAT_40123000,&DAT_002c8338,DAT_002cab78,DAT_002cab7c);
+            (&I2S4_BASE,&DAT_002c8370,&DAT_002c82a8,fc4_codec_in_dma_done,&DAT_002c8330);
+  I2S_RxTransferReceiveDMA(&I2S4_BASE,&DAT_002c8370,DAT_002cab80,DAT_002cab84);
+  I2S_RxTransferReceiveDMA(&I2S4_BASE,&DAT_002c8370,DAT_002cab88,DAT_002cab8c);
+  I2S_TxTransferSendDMA(&I2S5_BASE,&DAT_002c8338,DAT_002cab70,DAT_002cab74);
+  I2S_TxTransferSendDMA(&I2S5_BASE,&DAT_002c8338,DAT_002cab78,DAT_002cab7c);
   return;
 }
 

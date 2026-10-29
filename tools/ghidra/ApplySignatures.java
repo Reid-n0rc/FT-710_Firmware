@@ -9,7 +9,11 @@
 // Signatures are set with SourceType.USER_DEFINED, so the decompiler uses them as locked prototypes (its parameter
 // ID no longer guesses arguments or returns for these functions or at their call sites). Storage is dynamic
 // (CC-RX: R1..R4, return R1); a 64-bit return gets custom storage R2:R1 (low word in R1).
+// Rows whose source column is "skip" are not applied: the function keeps the decompiler's own prototype (reviewed:
+// locking it made the export worse; the note says why). tools/signatures_draft.py keeps them on a redraft.
 // The name column is only checked (a warning if the function has another name); ApplyNames.java sets names.
+// ARM programs (DISPLAY, IFDSP M33; T23f: signatures_display.tsv, signatures_m33.tsv) always get dynamic storage from the
+// cspec's default convention (AAPCS: r0..r3 then the stack, return r0 or r0:r1); "@stack:N" is not accepted there.
 // @category FT710
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
@@ -54,13 +58,15 @@ public class ApplySignatures extends GhidraScript {
 
     @Override
     protected void run() throws Exception {
-        int ok = 0, bad = 0, purgeFixed = 0;
+        int ok = 0, bad = 0, purgeFixed = 0, skipped = 0;
         Register r1 = currentProgram.getRegister("R1"), r2 = currentProgram.getRegister("R2");
+        boolean rx = !currentProgram.getLanguage().getProcessor().toString().equalsIgnoreCase("ARM");
         // the cspec default (__fastcall: R1..R4, return R1); without a named convention the decompiler warns
         String cc = currentProgram.getCompilerSpec().getDefaultCallingConvention().getName();
         for (String line : Files.readAllLines(Paths.get(getScriptArgs()[0]))) {
             if (line.isBlank() || line.startsWith("#")) continue;
             String[] p = line.split("\t");
+            if (p.length > 4 && p[4].equals("skip")) { skipped++; continue; } // reviewed: keep the decompiler's prototype
             Address a = toAddr(Long.parseLong(p[0].replaceFirst("^0x", ""), 16));
             Function f = getFunctionAt(a);
             if (f == null) { printerr("ApplySignatures: no function at " + a + " (" + p[1] + ")"); bad++; continue; }
@@ -88,7 +94,9 @@ public class ApplySignatures extends GhidraScript {
                         i++;
                     }
                 }
-                if (rt.getLength() == 8 || stackOff.stream().anyMatch(o -> o >= 0)) {
+                if (!rx && stackOff.stream().anyMatch(o -> o >= 0))
+                    throw new IllegalArgumentException("@stack:N is only supported for CC-RX (MAIN)");
+                if (rx && (rt.getLength() == 8 || stackOff.stream().anyMatch(o -> o >= 0))) {
                     // custom storage: register params in R1..R4 in order (sized), "@stack:N" params at entry SP+N
                     // (N >= 4, above the return address; CC-RX packs small stack arguments), return R2:R1 if 64-bit
                     List<Variable> cp = new ArrayList<>();
@@ -123,6 +131,7 @@ public class ApplySignatures extends GhidraScript {
                 bad++;
             }
         }
-        println("ApplySignatures: " + ok + " applied, " + bad + " failed, stack purge set to 0 on " + purgeFixed);
+        println("ApplySignatures: " + ok + " applied, " + bad + " failed, stack purge set to 0 on " + purgeFixed
+                + (skipped > 0 ? ", " + skipped + " skip rows left alone" : ""));
     }
 }

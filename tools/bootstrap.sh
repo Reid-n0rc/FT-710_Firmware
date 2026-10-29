@@ -25,10 +25,13 @@
 #           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
-#   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
+#   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv; into the
+#           repo's decomp/ it also refreshes the README progress block and decomp/*/readable/ (tools/readable_view.py).
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
-#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared), and
+#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared;
+#           readable/ is generated from the export by tools/readable_view.py, so it is left out of the diff and checked
+#           on its own with `readable_view.py check`), and
 #           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
 #           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
@@ -44,7 +47,7 @@
 #   JAVA_HOME            JDK 21 [Homebrew openjdk@21 if present, else $OPT_DIR/jdk-21.0.13+9]
 #   RX_MODULE_DIR        where the RX module goes [$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX]
 #   RX_SRC               clone of rx-proc-ghidra [$OPT_DIR/rx-proc-ghidra]
-#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, AGENTS.md "Hardware use"]
+#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, docs/tooling.md "Owner's tower server"]
 #   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [a quarter of the RAM, 2G to 3G]; Ghidra runs go through tools/ghidra-cap.sh
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
@@ -180,7 +183,7 @@ headless() {  # headless <project> <analyzeHeadless args...>
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
-  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
+  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
     "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
@@ -371,9 +374,10 @@ G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
   local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
-    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
+    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc" \
+    "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyStructs, ApplyEnums, ApplySfr"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
@@ -382,14 +386,18 @@ build_main() {
     -postScript FixFuncEntries.java "$G/entries_main_menu.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
-    -postScript ApplySignatures.java "$G/signatures_main.tsv"
+    -postScript ApplySignatures.java "$G/signatures_main.tsv" \
+    -postScript ApplyStructs.java "$G/structs_main.h" \
+    -postScript ApplyEnums.java "$G/enums_main.h" "$G/enum_uses_main.tsv" \
+    -postScript ApplySfr.java "$G/sfr_rx651.tsv"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv")
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
+    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -403,33 +411,36 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis \
     -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
-    -postScript ApplyData.java "$G/data_display.tsv"
+    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
   local m33=$BUILD/FT-710_IFDSP_V0101.bin hifi=$BUILD/FT-710_IFDSP_V0101_hifi4.bin st
   st=$(stamp_of "$m33" "$G/IfdspM33Setup.java" "$G/IfdspFindFuncs.java" "$G/IfdspM33Names.java" "$G/FixFuncEntries.java" \
-    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv")
+    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv" "$G/ApplySignatures.java" "$G/signatures_m33.tsv" "$G/ApplySfr.java" "$G/sfr_rt685.tsv")
   if stamp_ok FT710_IFDSP ifdsp_m33 "$st"; then info "FT710_IFDSP/M33 up to date"
   else
-    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData"
+    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData, ApplySignatures, ApplySfr"
     rm -f "$PROJ/.stamp_ifdsp_m33"
     headless FT710_IFDSP -import "$m33" -overwrite \
       -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 \
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript FixFuncEntries.java "$G/entries_m33.tsv" \
-      -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -postScript ApplySignatures.java "$G/signatures_m33.tsv" -postScript ApplySfr.java "$G/sfr_rt685.tsv" \
+      -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
   st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java" "$G/ApplyData.java" "$G/data_hifi4.tsv" \
+    "$G/ApplySfr.java" "$G/sfr_rt685_hifi4.tsv" \
     "$GHIDRA_INSTALL_DIR"/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*.{slaspec,sinc,pspec,ldefs})
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
-    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData"
+    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData, ApplySfr"
     rm -f "$PROJ/.stamp_ifdsp_hifi4"
     headless FT710_IFDSP -import "$hifi" -overwrite \
       -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
       -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
-      -postScript ApplyData.java "$G/data_hifi4.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -postScript ApplyData.java "$G/data_hifi4.tsv" -postScript ApplySfr.java "$G/sfr_rt685_hifi4.tsv" \
+      -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
 }
@@ -461,6 +472,8 @@ step_export() {
   # T23: the progress figures in README.md (shown on the website and the wiki) follow the committed export.
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
     (cd "$REPO" && python3 -I tools/readability_stats.py readme) | sed 's/^/   /'
+    # T23g: the readable view decomp/<image>/readable/ is generated from the export and docs/code/.
+    (cd "$REPO" && python3 -I tools/readable_view.py build) | sed 's/^/   /'
   fi
 }
 
@@ -484,15 +497,18 @@ step_verify() {
   local rc=0 qrc=0 noflix="" d old
   [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
   # quality.tsv is not diffed byte for byte: it is compared metric by metric below (T21f, #97 B11).
+  # readable/ (T23g) is not an export output but derived from it and docs/code/: it is left out of the comparison in
+  # both modes and checked by `readable_view.py check` (committed readable/ against committed decomp/ + docs).
+  local ex=(':(exclude,glob)decomp/**/quality.tsv' ':(exclude,glob)decomp/**/readable/**')
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
-    git -C "$REPO" diff --stat -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' | tail -n 5
-    git -C "$REPO" diff --quiet -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' \
-      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ ':(exclude,glob)decomp/**/quality.tsv')" ] || rc=1
+    git -C "$REPO" diff --stat -- decomp/ "${ex[@]}" | tail -n 5
+    git -C "$REPO" diff --quiet -- decomp/ "${ex[@]}" \
+      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ "${ex[@]}")" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x readable -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x readable -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
@@ -509,8 +525,12 @@ step_verify() {
     fi
     py "$REPO/tools/decomp_quality.py" compare "$old" "$DECOMP_OUT/$d/quality.tsv" "$d" | sed 's/^/   /' || qrc=1  # pipefail
   done
+  # T23g: the committed readable view must match decomp/ and docs/code/ (stale = rerun readable_view.py build).
+  local vrc=0
+  (cd "$REPO" && python3 -I tools/readable_view.py check) | sed 's/^/   /' || vrc=1  # pipefail
   [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
   [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
+  [ "$vrc" -eq 0 ] || die "decomp/*/readable/ is stale: run python3 -I tools/readable_view.py build and commit it"
 }
 
 # ---------------------------------------------------------------- sdr

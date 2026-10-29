@@ -180,12 +180,38 @@ Still without a reader **[fact for the forms scanned above]**: the **high nibble
 (`cat_MD`, `cat_MW`, `FUN_fffc0eb8`, `FUN_fffc6ac4`, `align_load_preset`) keeps the high nibble (`& 0xF0 | mode`), and only the
 defaults and whole-record copies (band stack, QMB, memory, clone, SD MEM LIST LOAD) move the byte. So the owner's values (bit 7 clear,
 bit 6 mostly clear, +0x01 bit 0 set) were written by something outside this code: an earlier firmware, the E8/E9 clone or an SD memory
-list **[inference]**. What would settle it: a disassembly search (not the decompile) for byte stores and `BSET`/`BCLR` on record
-offset 0 and 1 (`[Rn]`, `1[Rn]`), and a dump from a radio that was factory-reset under V01-12 for comparison.
+list **[inference]**. The disassembly search (#205, 2026-10-29, `rx-elf-objdump` of the whole image) confirms the
+decompile **[fact]**:
+
+- `tools/rx_const_refs.py` on 0x9D09..0x9D0A and 0x9D63..0x9D64 finds, apart from reads, only these writes to +0x00/+0x01 of
+  the operating records: `defaults_vfo` (32-bit copy from the ROM template 0xFFF80875), `cat_MD`, `FUN_fffc0eb8` and
+  `align_load_preset` (all `& 0xF0 | mode` on +0x00), the whole-record copies (`smovf`, 90 bytes) of `memch_load_to_vfo`
+  0xFFFC26B4/0xFFFC26D0 (and the other whole-record copies named above), and `& 0xE7` on +0x01 in `memch_load_to_vfo`, `vm_toggle_core` and `cat_CF`
+  (`cat_CF` then ORs in bits 3–4, the clarifier; `key_clar_short` sets bit 4). None sets +0x01 bit 0 or +0x00 bits 4–7.
+- Every `BSET`/`BCLR`/`BNOT #0, 1[Rn]` in the image (19) is on an I/O register (base 0x87xxx) **[fact]**. Of the 235
+  `BSET`/`BCLR #4..7, [Rn]` whose base is not a constant I/O address, most are in the menu value formatters
+  (0xFFFC9694..0xFFFD30xx, display text buffers) and I/O drivers (`bu2505_write`, `af_mute_update`, ...); the ones on record
+  pointers hit other offsets: the per-mode filter byte (`vfo_filter_byte_ptr` 0xFFFC4B3D returns record +
+  0x0B/0x15/0x1F/0x29/0x33/0x3D, used by `FUN_fffc49c1`/`FUN_fffc4a47`; `FUN_fffc0ad4` gets the same pointers), +0x06 in
+  `key_dnr_long` (0x9D0F/0x9D69), +0x01 bit 4 in `key_clar_short`, +0x14.. in `FUN_fffc8685`/`FUN_fffc87ab`, and the
+  filter bytes in `cat_BC`, `cat_BP`, `cat_CO`, `cat_GT` **[fact for the sites named; the formatter and driver sites were
+  classified by function, not one by one]**.
+- The ROM holds the 0x01 form only in the 60 m memory-channel templates (32-bit words 0x80040101 at 0xFFF809FB, 0xFFF80B45,
+  0xFFF80C17, 0x80040103 at 0xFFF80A05, 0x80040109 at 0xFFF80A0F; EMG 0x80040003 at 0xFFF80C35); every other template is
+  0x800400*mm* with *mm* = 0x40/0x42/0xC1 **[fact]**.
+
+So in V01-12 the form can reach an operating record only by a whole-record copy from a record that already holds it
+**[fact]**, and the only ROM source is the 60 m channel defaults **[fact]**. In the owner's dump the VFO-A memory pointer is on
+a 60 m channel **[fact: dump]**, which fits a memory recall copying a 60 m channel into VFO-A **[inference]**. How 21 band-stack
+records and the ordinary memory channels got the form too is not answered by the code: a chain of such copies, or a write from
+outside (an earlier firmware, the E8/E9 clone, an SD memory list) **[inference]**. A dump from a radio factory-reset under
+V01-12 would separate the two; the meaning of the bits stays open (no reader).
 
 Names added to `tools/ghidra/names_main.tsv` for #205 (they appear in `decomp/` after the next Ghidra re-export; this page still uses
 the current `FUN_` names): `preamp_step` 0xFFFC47DD, `preamp_ipo` 0xFFFC4850, `memch_skip_get` 0xFFFE5E3B, `memch_current_skip`
-0xFFFE5E1B, `ver_main_ext1` 0xFFF94BD9, `ver_main_ext2` 0xFFF94BE5, `ver_display_date_set` 0xFFF94C1B.
+0xFFFE5E1B, `ver_main_ext1` 0xFFF94BD9, `ver_main_ext2` 0xFFF94BE5, `ver_display_date_set` 0xFFF94C1B; and (2026-10-29)
+`vfo_filter_byte_ptr` 0xFFFC4B3D plus the data labels `@s_meter_curve` 0xFFF88BFC, `@po_meter_curve` 0xFFF88C74 and
+`@tx_row_ptrs` 0xFFF8861C.
 
 ## cfg105: the alignment table **[fact]**
 
@@ -206,13 +232,13 @@ MAIN holds the menu labels itself: a table of 261 × 25 characters at **ROM 0xFF
 | 004 (0x465C) | `[GN] TX INH` | `tx_freq_allowed`: TX refused when non-zero | 0 | 0 |
 | 005..007 | `[GN] --RESERVED--` | none | 0xFF | 0xFF |
 | 008 (0x4660) | `[GN] DBG MODE ENABLE` | `displink_build_60` (frame `0x60` error field = 0xDB: the DISPLAY shows a link-error box instead of resetting), `menu_m4_18_0_draw` (SOFT VERSION shows build strings); see the notes | 0 | 0 |
-| 009..013 (0x4661..) | `[MT] PO MTR 100W/50W/20W/10W/5W POS` | none for operation: only the alignment menu, `SPN` and the save (#205, notes) | 197 139 89 63 46 | same |
+| 009..013 (0x4661..) | `[MT] PO MTR 100W/50W/20W/10W/5W POS` | **none**: no instruction reads them except the generic menu-text, `SPN` and save paths; `meter_po` uses a fixed ROM curve with the same five positions instead (#205, notes) | 197 139 89 63 46 | same |
 | 014..016 (0x4666..) | `[MT] ALC / VDD / IDD MTR POS` | `meter_alc`, `vdd_scale_calc`, `meter_idd`; 014 also scales the `ALC MTR` store (245) | 146 210 175 | same |
 | 017..019 (0x4669..) | `[MT] SWR 1.5 / 2.0 / 3.0 MTR POS` | `swr_meter_protect` | 60 90 128 | same |
 | 020..022 | `[MT] --RESERVED--` | none | 0xFF | 0xFF |
 | 023..027 (0x466F..) | `[RX] RF-AGC 7 / 14 / 21 / 28 / 50` | `main_dac_update`: Q1005 ch5 by RX band (manual: set to 255) | 255 | 255 × 5 |
 | 028..032 (0x4674..) | `[RX] IF-AGC 7 / 14 / 21 / 28 / 50` | `dsp_set_freq_range_param` → IFDSP reg 0x63, the IF AGC gain ceiling ([dsp-chains.md](../ifdsp/dsp-chains.md)); manual: −2.0 dB ± 0.5 dB of AF at 10 dBµV | **0** | 190 190 189 188 199 |
-| 033..043 (0x4679..) | `[RX] S-MTR 0, 2, 5, 7, 9, +10 … +60` | only 041 (`S-MTR +40`, 0x4681) is read: `meter_s` and `FUN_fffb7e61`; the other ten have no operating reader (#205, notes); all 11 are stored from `dsp_signal_level` | 8 33 74 101 125 140 158 177 198 216 255 | 255 247 74 101 125 140 158 177 **127** 216 87 |
+| 033..043 (0x4679..) | `[RX] S-MTR 0, 2, 5, 7, 9, +10 … +60` | only 041 (`S-MTR +40`, 0x4681) is read: `meter_s` and `FUN_fffb7e61`; the other ten are never read (#205 disassembly scan, notes): `meter_s` uses a fixed ROM curve whose breakpoints are these ten defaults; all 11 are stored from `dsp_signal_level` | 8 33 74 101 125 140 158 177 198 216 255 | 255 247 74 101 125 140 158 177 **127** 216 87 |
 | 044, 045 | `[RX] --RESERVED--` | none | 0xFF | 0xFF |
 | 046..048 (0x4686..) | `[RX] FM SQL THW / THN / TI` | `FUN_fffb7cec` (FM squelch); stored from a DSP status read (`align_store_dsp_async`) | 127 37 46 | 126 34 80 |
 | 049 (0x4689) | `[RX] SCOPE SDR REF` | `sdr_upd_r27_scope_level` | 170 | 170 |
@@ -238,18 +264,61 @@ Notes **[fact unless marked]**:
   `cfg105_defaults` (blank EEPROM, `ZZPE071099`) loses its bias and IF-AGC settings **[inference: the PA would run without bias until
   realigned]**.
 - 162 of the 261 bytes in the owner's dump differ from the ROM defaults.
-- **Items with no operating reader** (#205): `PO MTR … POS` 009..013, the 50/20/10/5 W `MTR` items of 070..219 (+4, +7, +10, +13 in
-  each band row; on 70 MHz the 50 W one, 0x4738, *is* the PO scale) and the `S-MTR` points other than +40 (033..040, 042, 043).
-  The only code that touches them is generic, by index: `FUN_fff9c555` 0xFFF9C555 (three digits of 0x4659[*n*] into the frame `0x62`
-  text, so the DISPLAY gets them only as menu text), `cat_SP_table` 0xFFFA50F9 (`SPN` read/write) and `eeprom_save_cfg105` **[fact]**. The meters do
-  not use them: `meter_po` 0xFFFB7772 scales AN002 with the 100 W `MTR` item (0x20B1E) and an 8-segment ROM curve at 0xFFF88C74, and
-  `meter_s` 0xFFFB7959 uses `S-MTR +40` and a 10-segment ROM curve (0xFFF88BFC) **[fact]**. The only ROM pointer table into the TX
-  rows, 0xFFF8861C (`sdr_upd_r25_tx_drive`), reads the `TXG` offsets +2..+14 only, and `FUN_fffb667a` reads the `FALC` offsets and
-  +1 **[fact]**. No frame carries the table to the DISPLAY in binary ([display/mainlink.md](../display/mainlink.md)). So in V01-12
-  these items are dead: aligned values are stored and shown but have no effect **[inference: the remaining gap is a ROM pointer
-  table not visible in the decompile; a Ghidra data-xref listing on 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683 and 0x46A2.. would
-  close it]**. The fixed ROM curves were probably fitted to the `POS` defaults; the curve values are in ROM and not in the
-  decompile, so that is **[guess]** until the bytes at 0xFFF88C74/0xFFF88BFC are read from the image.
+- **Items with no operating reader: settled, they are dead in V01-12** (#205, 2026-10-29). `PO MTR … POS` 009..013, the
+  `S-MTR` points other than +40 (033..040, 042, 043) and the 50/20/10/5 W `MTR` items (row +4, +7, +10, +13 of 070..219,
+  and 227/230/233 on 70 MHz, where the 50 W one, 224 = 0x4738, *is* the PO scale) are never read for operation **[fact:
+  disassembly scan below]**.
+  - **Method.** The decompile hides this question because CC-RX reaches every EEPROM-mirror byte through `mov.l #0x464F, Rn`
+    plus a displacement (3638 such loads in the image; no other `mov.l #imm` of any size and no 32-bit data word anywhere
+    holds an address in 0x4650..0x475E except the RAM-pointer init 0x4659 at 0xFFF8EB0C → `PTR_DAT_00025d50` and the TX-row table 0xFFF8861C).
+    So a byte search for 0x4661 finds nothing even for items that are read. `tools/rx_const_refs.py` runs the data-xref
+    search Ghidra would do on a GNU `rx-elf-objdump` listing of the image: it follows the base through register moves, stack
+    spills and forward branches and resolves each `dsp[Rn]` and `[Ri,Rb]` operand **[fact: tool]**.
+  - **Result for 0x4659..0x475D.** Every item named "read by" in the table above shows up with its reader (for example 027 and
+    058 in `main_dac_update`/`pa_dac_update`, 041 in `meter_s` 0xFFFB7962 and `FUN_fffb7e61` 0xFFFB7E6A). No item listed
+    above as dead has a single exact access, and the reserved items have none **[fact]**. The only accesses that can reach
+    any item are generic, by item index: `FUN_fff9c555` 0xFFF9C569 (menu text, `[r2,r1]` with r2 = 0x4659),
+    `cat_SP_table` 0xFFFA5179/0xFFFA51CE (`SPN`), `cat_SP_eeprom_byte` 0xFFFA527E, and the alignment-mode writers that use
+    `PTR_DAT_00025d50` (`align_store_*`, `cal_adjust`, and `FUN_fffbba9f`, which writes only the `FALC` and `TXG` of a
+    band row, +0 and +2). The pointer table 0xFFF8861C is read only by `sdr_upd_r25_tx_drive` 0xFFFA2A40, at row offsets
+    +2, +5, +8, +11, +14 (the `TXG` items) **[fact: disassembly 0xFFFA2A58..0xFFFA2B20]**.
+  - So aligned values in these items are stored and shown in the alignment menu but have no effect. The Ghidra data-xref
+    listing confirms it: no reference at all to 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683 or the band-row `MTR` bytes
+    0x46A2/A5/A8/AB + 15·*b* and 0x473B/3E/41; the code that keeps 0x4659 in a register and adds a constant (`main_dac_update`
+    +22..+25, `pa_dac_update` +1, +49..+56, +58..+68, +234..+244, `FUN_fffb667a` the `FALC` and 100 W `MTR` offsets) was read in
+    the listing too **[fact]**. `FUN_fffbba9f` is `align_ialc_park`: while an `I-ALC` item (059..069) is selected it saves that
+    band's 100 W `FALC`/`TXG` (50 W on 70 MHz) to 0x12167/0x12168, sets them to 0xFF and restores them when the selection moves **[fact]**.
+- **The fixed meter curves** (#205) **[fact: ROM bytes, little-endian `float`]**:
+  - **PO** (`meter_po` 0xFFFB7772): P = x² · (P<sub>full</sub> − 0.00694025 · M) / M² + 0.00694025 · x, with x = AN002
+    (0x20B06), M = 100 W `MTR` item << 4 (0x20B1E) and P<sub>full</sub> = 100 W (50 W when `FUN_fffb3371` returns 10, the
+    70 MHz band), so P = P<sub>full</sub> at x = M. The position is slope · P + offset (clamped to 255) from the first row of
+    the 8 × {watts, slope, offset} table at **0xFFF88C74** with P ≥ watts:
+
+    | Row (address) | 0 (0xFFF88C74) | 1 | 2 | 3 | 4 | 5 | 6 | 7 (0xFFF88CC8) |
+    |---|---|---|---|---|---|---|---|---|
+    | P ≥ (W) | 100 | 50 | 40 | 30 | 20 | 10 | 5 | 0 |
+    | slope | 1.18 | 1.16 | 1.3 | 1.6 | 2.0 | 2.5 | 3.6 | 9.2 |
+    | offset | 78 | 80 | 73 | 61 | 49 | 39 | 28 | 0 |
+
+    At 100/50/20/10/5 W this gives positions 196/138/89/64/46, within 1 of the `PO MTR … POS` defaults 197/139/89/63/46: the
+    curve is those defaults (plus 40 and 30 W points) built into the code **[fact for the numbers; inference that the ROM
+    defaults were the source]**.
+  - **S** (`meter_s` 0xFFFB7959): x = item 041 (`S-MTR +40`) − `dsp_signal_level()` (reg 3 shadow 0x1B63A), position =
+    slope · x + offset clamped to 0..255, from the first row of the 10 × {slope, offset, limit} table at **0xFFF88BFC** (limit
+    at +8, 0xFFF88C04 + 12·i) with x ≤ limit; above the last limit the code keeps slope 1.95, offset 177:
+
+    | Row | 0 (0xFFF88BFC) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 (0xFFF88C68) |
+    |---|---|---|---|---|---|---|---|---|---|---|
+    | x ≤ | −120 | −104 | −92 | −80 | −60 | −40 | −20 | 0 | 20 | 40 |
+    | slope | 5.5 | 2.563 | 2.25 | 2.0 | 0.75 | 0.9 | 0.95 | 1.05 | 0.9 | 1.95 |
+    | offset | 693 | 340.5 | 308 | 285 | 185 | 194 | 196 | 198 | 198 | 177 |
+
+    The segments join only in this order, and at the ten limits they give positions 33, 74, 101, 125, 140, 158, 177, 198,
+    216, 255: exactly the ROM defaults of `S-MTR 2` … `+60` (034..043), with `+40` (198) at x = 0 **[fact]**. So the S-meter
+    has one calibration point (041) and a fixed shape; S0 (033, default 8) is not on the curve (position 0 at x ≈ −126).
+    The signal value falls as the signal rises (x grows with signal) **[inference: from the sign of x]**. The owner's
+    aligned 034 and 043 sit exactly on the curve's limits relative to their 041: 034 = 041 + 120 and 043 = 041 − 40
+    **[fact: dump]**, so the stored points agree with the fixed shape even though only 041 is used.
 - **`DBG MODE ENABLE` (008, 0x4660)** (#205) **[fact]**:
   - `displink_build_60` 0xFFF96241: if UI +0x32 (0x20B36, the boot error code) is 0 and 0x4660 ≠ 0, it sends 0xDB in that field.
     The DISPLAY then sets 0x20450029, so on a MAIN-link failure `gui_link_error_popup` shows the unanswered command in hex instead of
@@ -318,6 +387,11 @@ schematic (Technical Supplement p47, PA unit) shows where they go **[fact: schem
 byte) was decoded with `tools/eeprom_decode.py`. Only structure and calibration/settings values are given here; frequencies,
 memory tags and messages are personal data and stay out of the repository.
 
+**Re-run with the MAIN image (#205, 2026-10-29):** `python3 -I tools/eeprom_decode.py --main build/FT-710_MAIN_V0112.bin
+<dump>` reports `ROM name table 0xFFF817C3: matches` (all 261 labels as the tool has them) and `checks: ok` in all seven
+sections (header, cfg105, band stacks, memory channels, QMB/messages, tuner memory, operating state); 162 of the 261 items
+differ from `cfg105_defaults`, as above **[fact: tool output]**.
+
 **Agrees with this page [fact: dump]:**
 
 - Header: stamp 23 06 26 08 56, save counter 312,810, state flag 1 (clean). Destination 0x50E2 (the `JP` reply), flag 0x4760 = 0
@@ -361,9 +435,9 @@ memory tags and messages are personal data and stay out of the repository.
     the 60 m channels 501–515 (USB / CW-U / DATA-U at 0x8A72.., 0x5A apart) and 0x80040003 for EMG (0x8FB8): high nibble 0, with
     +0x01 bit 0 set except at EMG.
   Mode changes keep both fields, so the two forms look like one property of the record's origin that later copies carry along,
-  not two independent flags **[inference]**. How the two operating records came to hold the 0x01 form (`defaults_vfo` writes the
-  0x40 form) is not visible in the decompile; a disassembly search for byte stores to record +0x00/+0x01 (Ghidra hold) would
-  settle it.
+  not two independent flags **[inference]**. The operating records can get the 0x01 form only by a whole-record copy (memory
+  recall and the like) from a record that holds it; the disassembly search is in the
+  [flag-bit section above](#90-byte-vfo--memory-record) **[fact]**.
 - Other bits across the same 90 records **[fact: dump]**: ATT (+0x03 bits 0–1) is 0 and memory-scan SKIP (+0x01 bit 7) is clear
   everywhere; the preamp is only ever 2 (79) or 3 (11), never the 1 that reads back as IPO; +0x03 bits 6–7 are 2 everywhere,
   as every default writes (+0x03 = 0x80); +0x04 bit 4 is 0 everywhere. NB is on in the VFO-A level-0 band stacks of every band

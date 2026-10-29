@@ -16,7 +16,7 @@ void menuitem_EX060408(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -47,7 +47,7 @@ void menuitem_EX060408(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009b9d;
+  local_c = 0x9b9d;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -70,7 +70,7 @@ void menuitem_EX060409(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -101,7 +101,7 @@ void menuitem_EX060409(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009b9e;
+  local_c = 0x9b9e;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -124,7 +124,7 @@ void menuitem_EX060410(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -155,7 +155,7 @@ void menuitem_EX060410(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009b9f;
+  local_c = 0x9b9f;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -178,7 +178,7 @@ void menuitem_EX060411(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -209,7 +209,7 @@ void menuitem_EX060411(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009ba0;
+  local_c = 0x9ba0;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -232,7 +232,7 @@ void menuitem_EX060412(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -263,7 +263,7 @@ void menuitem_EX060412(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009ba1;
+  local_c = 0x9ba1;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -286,7 +286,7 @@ void menuitem_EX060413(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -317,7 +317,7 @@ void menuitem_EX060413(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009ba2;
+  local_c = 0x9ba2;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -340,7 +340,7 @@ void menuitem_EX060414(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -371,7 +371,7 @@ void menuitem_EX060414(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009ba3;
+  local_c = 0x9ba3;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -394,7 +394,7 @@ void menuitem_EX060415(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -425,7 +425,7 @@ void menuitem_EX060415(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009ba4;
+  local_c = 0x9ba4;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -448,7 +448,7 @@ void menuitem_EX060416(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -479,7 +479,7 @@ void menuitem_EX060416(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009ba5;
+  local_c = 0x9ba5;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -502,7 +502,7 @@ void menuitem_EX060417(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -533,7 +533,7 @@ void menuitem_EX060417(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009ba6;
+  local_c = 0x9ba6;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -556,7 +556,7 @@ void menuitem_EX060418(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -587,7 +587,7 @@ void menuitem_EX060418(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009ba7;
+  local_c = 0x9ba7;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -610,7 +610,7 @@ void menuitem_EX060501(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined4 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -641,7 +641,7 @@ void menuitem_EX060501(void)
   local_6 = 0;
   local_5 = 0;
   local_4 = 0;
-  local_c = &DAT_00009baa;
+  local_c = 0x9baa;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -664,7 +664,7 @@ void menuitem_EX060502(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -695,7 +695,7 @@ void menuitem_EX060502(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bb6;
+  local_c = 0x9bb6;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -718,7 +718,7 @@ void menuitem_EX060503(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -749,7 +749,7 @@ void menuitem_EX060503(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bb7;
+  local_c = 0x9bb7;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -772,7 +772,7 @@ void menuitem_EX060504(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -803,7 +803,7 @@ void menuitem_EX060504(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bb8;
+  local_c = 0x9bb8;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -826,7 +826,7 @@ void menuitem_EX060505(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -857,7 +857,7 @@ void menuitem_EX060505(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009bb9;
+  local_c = 0x9bb9;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -880,7 +880,7 @@ void menuitem_EX060506(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -911,7 +911,7 @@ void menuitem_EX060506(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009bba;
+  local_c = 0x9bba;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -934,7 +934,7 @@ void menuitem_EX060507(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -965,7 +965,7 @@ void menuitem_EX060507(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009bbb;
+  local_c = 0x9bbb;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -988,7 +988,7 @@ void menuitem_EX060508(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1019,7 +1019,7 @@ void menuitem_EX060508(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009bbc;
+  local_c = 0x9bbc;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1042,7 +1042,7 @@ void menuitem_EX060509(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1073,7 +1073,7 @@ void menuitem_EX060509(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bbd;
+  local_c = 0x9bbd;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1096,7 +1096,7 @@ void menuitem_EX060510(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1127,7 +1127,7 @@ void menuitem_EX060510(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009bbe;
+  local_c = 0x9bbe;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1150,7 +1150,7 @@ void menuitem_EX060511(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1181,7 +1181,7 @@ void menuitem_EX060511(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bbf;
+  local_c = 0x9bbf;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1204,7 +1204,7 @@ void menuitem_EX060512(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1235,7 +1235,7 @@ void menuitem_EX060512(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009bc0;
+  local_c = 0x9bc0;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1258,7 +1258,7 @@ void menuitem_EX060513(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1289,7 +1289,7 @@ void menuitem_EX060513(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009bc1;
+  local_c = 0x9bc1;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1312,7 +1312,7 @@ void menuitem_EX060514(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1343,7 +1343,7 @@ void menuitem_EX060514(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bc2;
+  local_c = 0x9bc2;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1366,7 +1366,7 @@ void menuitem_EX060515(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1397,7 +1397,7 @@ void menuitem_EX060515(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bc3;
+  local_c = 0x9bc3;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1420,7 +1420,7 @@ void menuitem_EX060516(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1451,7 +1451,7 @@ void menuitem_EX060516(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009bc4;
+  local_c = 0x9bc4;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1474,7 +1474,7 @@ void menuitem_EX060517(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1505,7 +1505,7 @@ void menuitem_EX060517(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009bc5;
+  local_c = 0x9bc5;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1528,7 +1528,7 @@ void menuitem_EX060518(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1559,7 +1559,7 @@ void menuitem_EX060518(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009bc6;
+  local_c = 0x9bc6;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1580,13 +1580,13 @@ void cat_ai_poll(void)
   int iVar3;
   ushort local_2;
   
-  if ((DAT_00020b20 == '\x01') || (DAT_00020b21 == '\x01')) {
+  if ((g_ui.cat_ai_on[0] == 1) || (g_ui.cat_ai_on[1] == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (DAT_00020b22 == '\x01')) {
+  if ((bVar1) || (g_ui.cat_ai_on[2] == 1)) {
     bVar1 = true;
   }
   else {
@@ -1823,13 +1823,13 @@ void cat_ai_poll(void)
         DAT_000187c2 = '\0';
       }
       if (local_2 != 0) {
-        if (DAT_00020b20 == '\x01') {
+        if (g_ui.cat_ai_on[0] == 1) {
           cat_send_reply(1,0x15e06,local_2);
         }
-        if (DAT_00020b21 == '\x01') {
+        if (g_ui.cat_ai_on[1] == 1) {
           cat_send_reply(2,0x15e06,local_2);
         }
-        if (DAT_00020b22 == '\x01') {
+        if (g_ui.cat_ai_on[2] == 1) {
           cat_send_reply(3,0x15e06,local_2);
           return;
         }
@@ -1875,11 +1875,11 @@ ushort cat_ai_FD(void)
   undefined1 uStack_15;
   byte bStack_13;
   byte bStack_12;
-  byte bStack_11;
+  band_idx bStack_11;
   uint uStack_10;
   uint uStack_c;
   
-  uVar3 = vfo_freq(0,2);
+  uVar3 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
   bStack_11 = band_of_freq(uVar3);
   pcVar5 = "FD000000000000;";
   pcVar4 = acStack_23;
@@ -1889,22 +1889,22 @@ ushort cat_ai_FD(void)
     pcVar5 = pcVar5 + 1;
   }
   uStack_26 = 0;
-  if (DAT_00020b3d == '\x01') {
-    uStack_c = DAT_00020f50;
+  if (g_ui.tx_lamp == 1) {
+    uStack_c = g_ui.freq_tx;
   }
-  else if (DAT_00009c35 == 0) {
-    uStack_c = DAT_00020f5c;
+  else if (g_opstate.scope_mode == 0) {
+    uStack_c = g_ui.freq_dial;
     uStack_1f = 0x30;
   }
-  else if (DAT_00009c35 == 1) {
-    uStack_c = DAT_00020f60;
+  else if (g_opstate.scope_mode == 1) {
+    uStack_c = g_ui.scope_cursor_start;
     uStack_1f = 0x31;
   }
   else {
     uStack_c = bandmem_get('\x02');
     uStack_1f = 0x32;
   }
-  if ((DAT_00025cec == uStack_c) && (DAT_00009c35 == DAT_00025cf0)) {
+  if ((DAT_00025cec == uStack_c) && (g_opstate.scope_mode == DAT_00025cf0)) {
     bVar1 = false;
   }
   else {
@@ -1912,7 +1912,7 @@ ushort cat_ai_FD(void)
   }
   if (bVar1) {
     DAT_00025cec = uStack_c;
-    DAT_00025cf0 = (uint)DAT_00009c35;
+    DAT_00025cf0 = (uint)g_opstate.scope_mode;
     uStack_10 = 100000000;
     for (bStack_12 = 0; bStack_12 < 9; bStack_12 = bStack_12 + 1) {
       if (uStack_10 == 0) {
@@ -1956,48 +1956,49 @@ undefined2 FUN_fffddcb5(void)
   char *pcVar4;
   undefined2 local_12;
   char local_f [7];
-  char local_8;
-  char local_7;
-  char local_6;
-  char local_5;
+  byte local_8;
+  byte local_7;
+  byte local_6;
+  byte local_5;
   undefined2 local_4;
   
   local_4 = 0;
-  local_5 = DAT_00009ab8;
-  local_6 = DAT_00020b41;
-  local_7 = DAT_00020b40;
-  local_8 = DAT_00020f0c;
-  local_f[6] = DAT_00020b3c;
+  local_5 = g_opstate.ex030104_tuner_type_select;
+  local_6 = g_ui.tune_cycle_3d;
+  local_7 = g_ui.tune_cycle_3c;
+  local_8 = g_ui.tune_cycle;
+  local_f[6] = g_ui.tuner_result;
   local_f[0] = 'A';
   local_f[1] = 'C';
   local_f[2] = '0';
   local_f[4] = '0';
   local_f[5] = ';';
-  if ((DAT_000187c3 == DAT_00009ab8) && (DAT_000187c4 == DAT_00020b41)) {
+  if ((DAT_000187c3 == g_opstate.ex030104_tuner_type_select) && (DAT_000187c4 == g_ui.tune_cycle_3d)
+     ) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) && (DAT_000187c5 == DAT_00020b40)) {
+  if ((bVar1) && (DAT_000187c5 == g_ui.tune_cycle_3c)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) && (DAT_000187c6 == DAT_00020f0c)) {
+  if ((bVar1) && (DAT_000187c6 == g_ui.tune_cycle)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) && (DAT_000187c7 == DAT_00020b3c)) {
+  if ((bVar1) && (DAT_000187c7 == g_ui.tuner_result)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) && (DAT_000187c8 == DAT_00020b3f)) {
+  if ((bVar1) && (DAT_000187c8 == g_ui.atu_state)) {
     bVar1 = true;
   }
   else {
@@ -2007,22 +2008,22 @@ undefined2 FUN_fffddcb5(void)
     local_12 = 0;
   }
   else {
-    DAT_000187c3 = DAT_00009ab8;
-    DAT_000187c4 = DAT_00020b41;
-    DAT_000187c5 = DAT_00020b40;
-    DAT_000187c6 = DAT_00020f0c;
-    DAT_000187c7 = DAT_00020b3c;
-    DAT_000187c8 = DAT_00020b3f;
-    if (DAT_00009ab8 == '\x03') {
+    DAT_000187c3 = g_opstate.ex030104_tuner_type_select;
+    DAT_000187c4 = g_ui.tune_cycle_3d;
+    DAT_000187c5 = g_ui.tune_cycle_3c;
+    DAT_000187c6 = g_ui.tune_cycle;
+    DAT_000187c7 = g_ui.tuner_result;
+    DAT_000187c8 = g_ui.atu_state;
+    if (g_opstate.ex030104_tuner_type_select == 3) {
       local_f[3] = 0x32;
-      if (DAT_00020f0c == '\x01') {
+      if (g_ui.tune_cycle == 1) {
         local_f[4] = 0x33;
       }
-      else if (DAT_00020f0c == '\x02') {
-        if (DAT_00020b3c == '\x02') {
+      else if (g_ui.tune_cycle == 2) {
+        if (g_ui.tuner_result == 2) {
           local_f[4] = 0x31;
         }
-        else if (DAT_00020b3c == '\x03') {
+        else if (g_ui.tuner_result == 3) {
           local_f[4] = 0x32;
         }
         else {
@@ -2035,7 +2036,7 @@ undefined2 FUN_fffddcb5(void)
     }
     else {
       local_f[3] = 0x30;
-      if ((DAT_00020b41 == '\x02') || (DAT_00020b40 == '\x02')) {
+      if ((g_ui.tune_cycle_3d == 2) || (g_ui.tune_cycle_3c == 2)) {
         bVar1 = true;
       }
       else {
@@ -2099,18 +2100,18 @@ undefined2 FUN_fffdde79(void)
   byte local_8;
   byte local_7;
   
-  bVar3 = DAT_00020ba8;
-  local_11[7] = DAT_00020ba8;
+  bVar3 = g_ui.af_gain;
+  local_11[7] = g_ui.af_gain;
   builtin_strncpy(local_11,"AG0000;",7);
-  if (DAT_000187c9 == DAT_00020ba8) {
+  if (DAT_000187c9 == g_ui.af_gain) {
     return 0;
   }
-  DAT_000187c9 = DAT_00020ba8;
+  DAT_000187c9 = g_ui.af_gain;
   DAT_0001b50a = DAT_0001b50a + 1;
   if (3 < DAT_0001b50a) {
     DAT_0001b50a = 0;
   }
-  (&DAT_0001b53e)[DAT_0001b50a] = DAT_00020ba8;
+  (&DAT_0001b53e)[DAT_0001b50a] = g_ui.af_gain;
   if ((bVar3 < 3) || (0xfc < bVar3)) {
     bVar2 = false;
   }
@@ -2175,14 +2176,14 @@ undefined2 FUN_fffddfc3(void)
   byte local_8;
   byte local_7;
   
-  local_a = DAT_00009bf2;
+  local_a = g_opstate.amc_level;
   local_10 = 0x30304f41;
   local_c = 0x3b30;
-  if (DAT_000187ca == DAT_00009bf2) {
+  if (DAT_000187ca == g_opstate.amc_level) {
     local_12 = 0;
   }
   else {
-    DAT_000187ca = DAT_00009bf2;
+    DAT_000187ca = g_opstate.amc_level;
     local_8 = 100;
     for (local_9 = 0; local_9 < 3; local_9 = local_9 + 1) {
       local_7 = local_a;
@@ -2227,7 +2228,7 @@ ushort FUN_fffde064(char param_1)
   local_e = 0;
   builtin_strncpy(local_15,"AS0000;",7);
   if (param_1 == '\x01') {
-    pcVar2 = (char *)FUN_fffb54a0();
+    pcVar2 = (char *)aess_level_ptr();
     bStack_9 = *pcVar2;
     if (DAT_000187cb != bStack_9) {
       local_15[2] = 0x31;
@@ -2249,7 +2250,7 @@ ushort FUN_fffde064(char param_1)
     }
   }
   else if (param_1 == '\x02') {
-    pcVar2 = (char *)FUN_fffb552c();
+    pcVar2 = (char *)aess_mode_ptr();
     bStack_9 = *pcVar2;
     if (DAT_000187cc != bStack_9) {
       local_15[2] = 0x32;
@@ -2299,20 +2300,20 @@ undefined2 FUN_fffde180(void)
   byte local_10;
   byte local_f;
   byte local_e;
-  char local_d;
-  undefined1 *local_c;
+  byte local_d;
+  undefined4 local_c;
   
-  local_c = &DAT_00009bca;
-  local_d = DAT_00009af3;
+  local_c = 0x9bca;
+  local_d = g_opstate.ex030405_vox_select;
   local_17 = 0x30305641;
   local_13 = 0x3b30;
-  if (DAT_00009af3 == '\0') {
-    local_11 = DAT_00009bf6;
+  if (g_opstate.ex030405_vox_select == 0) {
+    local_11 = g_opstate.antivox[0];
   }
   else {
-    local_11 = DAT_00009bf7;
+    local_11 = g_opstate.antivox[1];
   }
-  if ((DAT_000187cd == DAT_00009af3) && (DAT_000187ce == local_11)) {
+  if ((DAT_000187cd == g_opstate.ex030405_vox_select) && (DAT_000187ce == local_11)) {
     bVar2 = true;
   }
   else {
@@ -2322,7 +2323,7 @@ undefined2 FUN_fffde180(void)
     local_1a = 0;
   }
   else {
-    DAT_000187cd = DAT_00009af3;
+    DAT_000187cd = g_opstate.ex030405_vox_select;
     DAT_000187ce = local_11;
     local_f = 100;
     for (local_10 = 0; local_10 < 3; local_10 = local_10 + 1) {
@@ -2352,20 +2353,20 @@ undefined2 FUN_fffde263(void)
 
 {
   uint uVar1;
-  byte bVar2;
-  byte *pbVar3;
+  radio_mode rVar2;
+  vfo_rec *pvVar3;
   undefined2 uStack_12;
   undefined4 uStack_f;
   byte bStack_a;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar2 = vfo_mode(0);
-  uVar1 = (uint)bVar2;
+  pvVar3 = vfo_rec_ptr(VFO_RX);
+  rVar2 = vfo_mode(VFO_RX);
+  uVar1 = (uint)rVar2;
   if (uVar1 - 2 < 2) {
-    bStack_a = pbVar3[0x15];
+    bStack_a = pvVar3->blk[1].flags2;
   }
   else if (uVar1 - 4 < 2) {
-    bStack_a = pbVar3[0x33];
+    bStack_a = pvVar3->blk[4].flags2;
   }
   else {
     if (uVar1 - 6 < 2) {
@@ -2376,15 +2377,15 @@ undefined2 FUN_fffde263(void)
         return 0;
       }
       if (uVar1 - 0xc < 2) {
-        bStack_a = pbVar3[0x1f];
+        bStack_a = pvVar3->blk[2].flags2;
         goto LAB_fffde2eb;
       }
       if (uVar1 != 0xe) {
-        bStack_a = pbVar3[0xb];
+        bStack_a = pvVar3->blk[0].flags2;
         goto LAB_fffde2eb;
       }
     }
-    bStack_a = pbVar3[0x29];
+    bStack_a = pvVar3->blk[3].flags2;
   }
 LAB_fffde2eb:
   bStack_a = bStack_a & 0x80;
@@ -2415,20 +2416,20 @@ undefined2 FUN_fffde332(void)
 
 {
   uint uVar1;
-  byte bVar2;
-  byte *pbVar3;
+  radio_mode rVar2;
+  vfo_rec *pvVar3;
   undefined2 uStack_10;
   undefined4 uStack_e;
   byte bStack_a;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar2 = vfo_mode(0);
-  uVar1 = (uint)bVar2;
+  pvVar3 = vfo_rec_ptr(VFO_RX);
+  rVar2 = vfo_mode(VFO_RX);
+  uVar1 = (uint)rVar2;
   if (uVar1 - 2 < 2) {
-    bStack_a = pbVar3[0x14];
+    bStack_a = pvVar3->blk[1].flags;
   }
   else if (uVar1 - 4 < 2) {
-    bStack_a = pbVar3[0x32];
+    bStack_a = pvVar3->blk[4].flags;
   }
   else {
     if (1 < uVar1 - 6) {
@@ -2442,11 +2443,11 @@ undefined2 FUN_fffde332(void)
         if (uVar1 == 0xe) {
           return 0;
         }
-        bStack_a = pbVar3[10];
+        bStack_a = pvVar3->blk[0].flags;
         goto LAB_fffde3b1;
       }
     }
-    bStack_a = pbVar3[0x3c];
+    bStack_a = pvVar3->blk[5].flags;
   }
 LAB_fffde3b1:
   bStack_a = bStack_a & 2;
@@ -2492,52 +2493,52 @@ ushort FUN_fffde3f1(void)
   byte bStack_10;
   byte bStack_f;
   byte bStack_e;
-  byte bStack_d;
-  byte *pbStack_c;
+  radio_mode rStack_d;
+  vfo_rec *pvStack_c;
   
   pcVar3 = acStack_20;
-  pbStack_c = vfo_rec_ptr(0);
-  bStack_d = vfo_mode(0);
+  pvStack_c = vfo_rec_ptr(VFO_RX);
+  rStack_d = vfo_mode(VFO_RX);
   uStack_18 = 0;
   builtin_strncpy(acStack_20,"BP00000;",8);
-  uVar4 = (uint)bStack_d;
+  uVar4 = (uint)rStack_d;
   if (uVar4 - 2 < 2) {
-    bStack_f = pbStack_c[0x14];
-    bStack_13 = pbStack_c[0x18];
-    bStack_12 = pbStack_c[0x19];
+    bStack_f = pvStack_c->blk[1].flags;
+    bStack_13 = pvStack_c->blk[1].notch_be[0];
+    bStack_12 = pvStack_c->blk[1].notch_be[1];
     goto LAB_fffde4d3;
   }
   if (uVar4 - 4 < 2) {
-    bStack_f = pbStack_c[0x32];
-    bStack_13 = pbStack_c[0x36];
-    bStack_12 = pbStack_c[0x37];
+    bStack_f = pvStack_c->blk[4].flags;
+    bStack_13 = pvStack_c->blk[4].notch_be[0];
+    bStack_12 = pvStack_c->blk[4].notch_be[1];
     goto LAB_fffde4d3;
   }
   if (uVar4 - 6 < 2) {
 LAB_fffde4c1:
-    bStack_f = pbStack_c[0x3c];
-    bStack_13 = pbStack_c[0x40];
-    bStack_12 = pbStack_c[0x41];
+    bStack_f = pvStack_c->blk[5].flags;
+    bStack_13 = pvStack_c->blk[5].notch_be[0];
+    bStack_12 = pvStack_c->blk[5].notch_be[1];
   }
   else {
     if (1 < uVar4 - 8) {
       if (uVar4 - 10 < 2) goto LAB_fffde4c1;
       if (uVar4 - 0xc < 2) {
-        bStack_f = pbStack_c[0x1e];
-        bStack_13 = pbStack_c[0x22];
-        bStack_12 = pbStack_c[0x23];
+        bStack_f = pvStack_c->blk[2].flags;
+        bStack_13 = pvStack_c->blk[2].notch_be[0];
+        bStack_12 = pvStack_c->blk[2].notch_be[1];
         goto LAB_fffde4d3;
       }
       if (uVar4 != 0xe) {
-        bStack_f = pbStack_c[10];
-        bStack_13 = pbStack_c[0xe];
-        bStack_12 = pbStack_c[0xf];
+        bStack_f = pvStack_c->blk[0].flags;
+        bStack_13 = pvStack_c->blk[0].notch_be[0];
+        bStack_12 = pvStack_c->blk[0].notch_be[1];
         goto LAB_fffde4d3;
       }
     }
-    bStack_f = pbStack_c[0x28];
-    bStack_13 = pbStack_c[0x2c];
-    bStack_12 = pbStack_c[0x2d];
+    bStack_f = pvStack_c->blk[3].flags;
+    bStack_13 = pvStack_c->blk[3].notch_be[0];
+    bStack_12 = pvStack_c->blk[3].notch_be[1];
   }
 LAB_fffde4d3:
   uStack_16 = CONCAT11(bStack_13,bStack_12);
@@ -2620,7 +2621,7 @@ short FUN_fffde58a(char param_1)
   ushort local_10;
   byte local_e;
   byte local_d;
-  undefined1 *local_c;
+  undefined4 local_c;
   char local_5;
   
   local_5 = param_1;
@@ -2635,30 +2636,30 @@ short FUN_fffde58a(char param_1)
     pcVar5 = pcVar5 + 1;
   }
   if (local_5 == '\0') {
-    if (DAT_00009dbd == '\0') {
-      local_c = &DAT_00009d09;
-      local_13 = DAT_00020f29 & 1;
-      local_14 = DAT_00020f29 & 2;
-      local_10 = CONCAT11(DAT_00009d51,DAT_00009d52);
+    if (g_opstate.active_vfo == 0) {
+      local_c = 0x9d09;
+      local_13 = g_ui.clar_flags_a & 1;
+      local_14 = g_ui.clar_flags_a & 2;
+      local_10 = CONCAT11(g_opstate.vfo_a.clar_offset_be[0],g_opstate.vfo_a.clar_offset_be[1]);
     }
     else {
-      local_c = &DAT_00009d63;
-      local_13 = DAT_00020f2a & 1;
-      local_14 = DAT_00020f2a & 2;
-      local_10 = CONCAT11(DAT_00009dab,DAT_00009dac);
+      local_c = 0x9d63;
+      local_13 = g_ui.clar_flags_b & 1;
+      local_14 = g_ui.clar_flags_b & 2;
+      local_10 = CONCAT11(g_opstate.vfo_b.clar_offset_be[0],g_opstate.vfo_b.clar_offset_be[1]);
     }
   }
-  else if (DAT_00009dbd == '\0') {
-    local_c = &DAT_00009d63;
-    local_13 = DAT_00020f2a & 1;
-    local_14 = DAT_00020f2a & 2;
-    local_10 = CONCAT11(DAT_00009dab,DAT_00009dac);
+  else if (g_opstate.active_vfo == 0) {
+    local_c = 0x9d63;
+    local_13 = g_ui.clar_flags_b & 1;
+    local_14 = g_ui.clar_flags_b & 2;
+    local_10 = CONCAT11(g_opstate.vfo_b.clar_offset_be[0],g_opstate.vfo_b.clar_offset_be[1]);
   }
   else {
-    local_c = &DAT_00009d09;
-    local_13 = DAT_00020f29 & 1;
-    local_14 = DAT_00020f29 & 2;
-    local_10 = CONCAT11(DAT_00009d51,DAT_00009d52);
+    local_c = 0x9d09;
+    local_13 = g_ui.clar_flags_a & 1;
+    local_14 = g_ui.clar_flags_a & 2;
+    local_10 = CONCAT11(g_opstate.vfo_a.clar_offset_be[0],g_opstate.vfo_a.clar_offset_be[1]);
   }
   if (local_5 == '\0') {
     if ((DAT_000187d2 == local_13) && (DAT_000187d3 == local_14)) {
@@ -2798,11 +2799,11 @@ ushort FUN_fffde887(void)
   
   local_e = 0;
   builtin_strncpy(local_16,"CN00000;",8);
-  local_a = DAT_00009d4f;
-  local_b = DAT_00009da9;
-  if (DAT_000187d6 == DAT_00009d4f) {
-    if (DAT_000187d7 != DAT_00009da9) {
-      DAT_000187d7 = DAT_00009da9;
+  local_a = g_opstate.vfo_a.tone_num;
+  local_b = g_opstate.vfo_b.tone_num;
+  if (DAT_000187d6 == g_opstate.vfo_a.tone_num) {
+    if (DAT_000187d7 != g_opstate.vfo_b.tone_num) {
+      DAT_000187d7 = g_opstate.vfo_b.tone_num;
       local_16[2] = 0x31;
       local_16[3] = 0x30;
       local_8 = 100;
@@ -2821,7 +2822,7 @@ ushort FUN_fffde887(void)
     }
   }
   else {
-    DAT_000187d6 = DAT_00009d4f;
+    DAT_000187d6 = g_opstate.vfo_a.tone_num;
     local_16[2] = 0x30;
     local_16[3] = 0x30;
     local_8 = 100;
@@ -2880,49 +2881,49 @@ ushort FUN_fffde9a8(void)
   byte bStack_10;
   byte bStack_f;
   byte bStack_e;
-  byte bStack_d;
-  byte *pbStack_c;
+  radio_mode rStack_d;
+  vfo_rec *pvStack_c;
   
-  pbStack_c = vfo_rec_ptr(0);
-  bStack_d = vfo_mode(0);
+  pvStack_c = vfo_rec_ptr(VFO_RX);
+  rStack_d = vfo_mode(VFO_RX);
   uStack_18 = 0;
   builtin_strncpy(acStack_1d,"0000;",5);
   uStack_21 = 0x30304f43;
-  uVar4 = (uint)bStack_d;
+  uVar4 = (uint)rStack_d;
   if (uVar4 - 2 < 2) {
-    bStack_e = pbStack_c[0x14];
-    uStack_14 = CONCAT11(pbStack_c[0x16],pbStack_c[0x17]);
+    bStack_e = pvStack_c->blk[1].flags;
+    uStack_14 = CONCAT11(pvStack_c->blk[1].contour_be[0],pvStack_c->blk[1].contour_be[1]);
     goto LAB_fffdea79;
   }
   if (uVar4 - 4 < 2) {
-    bStack_e = pbStack_c[0x32];
-    uStack_14 = CONCAT11(pbStack_c[0x34],pbStack_c[0x35]);
+    bStack_e = pvStack_c->blk[4].flags;
+    uStack_14 = CONCAT11(pvStack_c->blk[4].contour_be[0],pvStack_c->blk[4].contour_be[1]);
     goto LAB_fffdea79;
   }
   if (uVar4 - 6 < 2) {
 LAB_fffdea67:
-    bStack_e = pbStack_c[0x3c];
-    uStack_14 = CONCAT11(pbStack_c[0x3e],pbStack_c[0x3f]);
+    bStack_e = pvStack_c->blk[5].flags;
+    uStack_14 = CONCAT11(pvStack_c->blk[5].contour_be[0],pvStack_c->blk[5].contour_be[1]);
   }
   else {
     if (1 < uVar4 - 8) {
       if (uVar4 - 10 < 2) goto LAB_fffdea67;
       if (uVar4 - 0xc < 2) {
-        bStack_e = pbStack_c[0x1e];
-        uStack_14 = CONCAT11(pbStack_c[0x20],pbStack_c[0x21]);
+        bStack_e = pvStack_c->blk[2].flags;
+        uStack_14 = CONCAT11(pvStack_c->blk[2].contour_be[0],pvStack_c->blk[2].contour_be[1]);
         goto LAB_fffdea79;
       }
       if (uVar4 != 0xe) {
-        bStack_e = pbStack_c[10];
-        uStack_14 = CONCAT11(pbStack_c[0xc],pbStack_c[0xd]);
+        bStack_e = pvStack_c->blk[0].flags;
+        uStack_14 = CONCAT11(pvStack_c->blk[0].contour_be[0],pvStack_c->blk[0].contour_be[1]);
         goto LAB_fffdea79;
       }
     }
-    bStack_e = pbStack_c[0x28];
-    uStack_14 = CONCAT11(pbStack_c[0x2a],pbStack_c[0x2b]);
+    bStack_e = pvStack_c->blk[3].flags;
+    uStack_14 = CONCAT11(pvStack_c->blk[3].contour_be[0],pvStack_c->blk[3].contour_be[1]);
   }
 LAB_fffdea79:
-  bStack_11 = DAT_00009c5f + 0x19;
+  bStack_11 = g_opstate.apf_freq + 0x19;
   if (DAT_000187d8 == (bStack_e & 0x40)) {
     if (DAT_0001ff0c == uStack_14) {
       if (DAT_000187d9 == (bStack_e & 0x20)) {
@@ -3018,9 +3019,9 @@ ushort FUN_fffdebd1(void)
   
   builtin_strncpy(local_6,"CS0;",4);
   local_a = 0;
-  if (DAT_000187db != DAT_00020f0b) {
-    DAT_000187db = DAT_00020f0b;
-    local_6[2] = nib2hex(DAT_00020f0b);
+  if (DAT_000187db != g_ui.cw_spot_on) {
+    DAT_000187db = g_ui.cw_spot_on;
+    local_6[2] = nib2hex(g_ui.cw_spot_on);
     local_a = 4;
   }
   if (local_a != 0) {
@@ -3051,8 +3052,8 @@ undefined2 FUN_fffdec32(void)
   byte local_3;
   
   builtin_strncpy(local_a,"CT00;",5);
-  local_3 = DAT_00009d0c & 0x38;
-  local_4 = DAT_00009d66 & 0x38;
+  local_3 = g_opstate.vfo_a.flags3 & 0x38;
+  local_4 = g_opstate.vfo_b.flags3 & 0x38;
   bVar1 = DAT_000187dd;
   local_a[5] = local_3;
   if ((DAT_000187dc == local_3) &&
@@ -3140,14 +3141,14 @@ ushort FUN_fffded19(void)
   
   local_20 = 0x3b303030;
   local_24 = 0x30303030;
-  local_10 = DAT_00020f54;
-  local_14 = DAT_00020f58;
-  if (DAT_00020b6b == '\x01') {
-    if (DAT_00009dbd == '\0') {
-      local_10 = DAT_00020f50;
+  local_10 = g_ui.freq_a;
+  local_14 = g_ui.freq_b;
+  if (g_ui.transmitting == 1) {
+    if (g_opstate.active_vfo == 0) {
+      local_10 = g_ui.freq_tx;
     }
     else {
-      local_14 = DAT_00020f50;
+      local_14 = g_ui.freq_tx;
     }
   }
   if (DAT_00025cf4 == local_10) {
@@ -3210,12 +3211,12 @@ ushort FUN_fffdee2c(void)
   char local_6 [6];
   
   builtin_strncpy(local_6,"FN0;",4);
-  if (DAT_000187de == DAT_00009c61) {
+  if (DAT_000187de == g_opstate.fn_select) {
     local_c = 0;
   }
   else {
-    DAT_000187de = DAT_00009c61;
-    local_6[2] = nib2hex(DAT_00009c61);
+    DAT_000187de = g_opstate.fn_select;
+    local_6[2] = nib2hex(g_opstate.fn_select);
     pcVar2 = local_6;
     pcVar1 = &DAT_00015e06;
     for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
@@ -3241,24 +3242,24 @@ undefined2 FUN_fffdee96(void)
   int iVar3;
   undefined2 local_c;
   char local_a [7];
-  char local_3;
+  byte local_3;
   
-  local_3 = DAT_00009c5e;
+  local_3 = g_opstate.split_on;
   builtin_strncpy(local_a,"FT0;",4);
-  if (DAT_000187df == DAT_00009c5e) {
+  if (DAT_000187df == g_opstate.split_on) {
     local_c = 0;
   }
   else {
-    DAT_000187df = DAT_00009c5e;
+    DAT_000187df = g_opstate.split_on;
     local_a[4] = '\x04';
     local_a[5] = '\0';
-    if (DAT_00009c5e == '\0') {
+    if (g_opstate.split_on == 0) {
       local_a[2] = 0x30;
     }
-    else if (DAT_00009c5e == '\x01') {
+    else if (g_opstate.split_on == 1) {
       local_a[2] = 0x31;
     }
-    else if (DAT_00009c5e == '\x02') {
+    else if (g_opstate.split_on == 2) {
       local_a[2] = 0x31;
     }
     pcVar2 = local_a;
@@ -3280,125 +3281,131 @@ ushort FUN_fffdef13(void)
 
 {
   byte bVar1;
-  byte *pbVar2;
-  char *pcVar3;
+  radio_mode rVar2;
+  vfo_rec *pvVar3;
   char *pcVar4;
-  uint uVar5;
+  char *pcVar5;
+  uint uVar6;
   ushort uStack_12;
   byte bStack_e;
   char local_7 [7];
   
   builtin_strncpy(local_7,"GT00;",5);
-  pbVar2 = vfo_rec_ptr(0);
-  bVar1 = vfo_mode(0);
+  pvVar3 = vfo_rec_ptr(VFO_RX);
+  rVar2 = vfo_mode(VFO_RX);
   uStack_12 = 0;
   bStack_e = 0;
-  uVar5 = (uint)bVar1;
-  if (uVar5 == 0xe) {
+  uVar6 = (uint)rVar2;
+  if (uVar6 == 0xe) {
 LAB_fffdf011:
-    if ((pbVar2[0x29] & 0x40) != 0) {
-      uVar5 = (pbVar2[0x29] & 0x30) >> 4;
-      if (uVar5 == 0) {
+    bVar1 = pvVar3->blk[3].flags2;
+    if ((bVar1 & 0x40) != 0) {
+      uVar6 = (bVar1 & 0x30) >> 4;
+      if (uVar6 == 0) {
         bStack_e = 5;
       }
-      else if (uVar5 == 3) {
+      else if (uVar6 == 3) {
         bStack_e = 3;
       }
-      else if (uVar5 == 2) {
+      else if (uVar6 == 2) {
         bStack_e = 2;
       }
-      else if (uVar5 == 1) {
+      else if (uVar6 == 1) {
         bStack_e = 1;
       }
     }
   }
   else {
-    if (uVar5 - 2 < 2) {
-      if ((pbVar2[0x15] & 0x40) != 0) {
-        uVar5 = (pbVar2[0x15] & 0x30) >> 4;
-        if (uVar5 == 3) {
+    if (uVar6 - 2 < 2) {
+      bVar1 = pvVar3->blk[1].flags2;
+      if ((bVar1 & 0x40) != 0) {
+        uVar6 = (bVar1 & 0x30) >> 4;
+        if (uVar6 == 3) {
           bStack_e = 3;
         }
-        else if (uVar5 == 1) {
+        else if (uVar6 == 1) {
           bStack_e = 1;
         }
-        else if (uVar5 == 2) {
+        else if (uVar6 == 2) {
           bStack_e = 2;
         }
-        else if (uVar5 == 0) {
+        else if (uVar6 == 0) {
           bStack_e = 4;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (uVar5 - 4 < 2) {
-      if ((pbVar2[0x33] & 0x40) != 0) {
-        uVar5 = (pbVar2[0x33] & 0x30) >> 4;
-        if (uVar5 == 0) {
+    if (uVar6 - 4 < 2) {
+      bVar1 = pvVar3->blk[4].flags2;
+      if ((bVar1 & 0x40) != 0) {
+        uVar6 = (bVar1 & 0x30) >> 4;
+        if (uVar6 == 0) {
           bStack_e = 6;
         }
-        else if (uVar5 == 3) {
+        else if (uVar6 == 3) {
           bStack_e = 3;
         }
-        else if (uVar5 == 2) {
+        else if (uVar6 == 2) {
           bStack_e = 2;
         }
-        else if (uVar5 == 1) {
+        else if (uVar6 == 1) {
           bStack_e = 1;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (1 < uVar5 - 6) {
-      if (uVar5 - 8 < 2) goto LAB_fffdf011;
-      if (1 < uVar5 - 10) {
-        if (uVar5 - 0xc < 2) {
-          if ((pbVar2[0x1f] & 0x40) != 0) {
-            uVar5 = (pbVar2[0x1f] & 0x30) >> 4;
-            if (uVar5 == 0) {
+    if (1 < uVar6 - 6) {
+      if (uVar6 - 8 < 2) goto LAB_fffdf011;
+      if (1 < uVar6 - 10) {
+        if (uVar6 - 0xc < 2) {
+          bVar1 = pvVar3->blk[2].flags2;
+          if ((bVar1 & 0x40) != 0) {
+            uVar6 = (bVar1 & 0x30) >> 4;
+            if (uVar6 == 0) {
               bStack_e = 5;
             }
-            else if (uVar5 == 3) {
+            else if (uVar6 == 3) {
               bStack_e = 3;
             }
-            else if (uVar5 == 2) {
+            else if (uVar6 == 2) {
               bStack_e = 2;
             }
-            else if (uVar5 == 1) {
+            else if (uVar6 == 1) {
               bStack_e = 1;
             }
           }
         }
-        else if ((uVar5 < 2) && ((pbVar2[0xb] & 0x40) != 0)) {
-          uVar5 = (pbVar2[0xb] & 0x30) >> 4;
-          if (uVar5 == 0) {
+        else if ((uVar6 < 2) && (bVar1 = pvVar3->blk[0].flags2, (bVar1 & 0x40) != 0)) {
+          uVar6 = (bVar1 & 0x30) >> 4;
+          if (uVar6 == 0) {
             bStack_e = 6;
           }
-          else if (uVar5 == 3) {
+          else if (uVar6 == 3) {
             bStack_e = 3;
           }
-          else if (uVar5 == 2) {
+          else if (uVar6 == 2) {
             bStack_e = 2;
           }
-          else if (uVar5 == 1) {
+          else if (uVar6 == 1) {
             bStack_e = 1;
           }
         }
         goto LAB_fffdf0fe;
       }
     }
-    if ((pbVar2[0x3d] & 0x40) != 0) {
-      uVar5 = (pbVar2[0x3d] & 0x30) >> 4;
-      if (uVar5 == 3) {
+    bVar1 = pvVar3->blk[5].flags2;
+    if ((bVar1 & 0x40) != 0) {
+      uVar6 = (bVar1 & 0x30) >> 4;
+      if (uVar6 == 3) {
         bStack_e = 3;
       }
-      else if (uVar5 == 1) {
+      else if (uVar6 == 1) {
         bStack_e = 1;
       }
-      else if (uVar5 == 2) {
+      else if (uVar6 == 2) {
         bStack_e = 2;
       }
-      else if (uVar5 == 0) {
+      else if (uVar6 == 0) {
         bStack_e = 4;
       }
     }
@@ -3410,12 +3417,12 @@ LAB_fffdf0fe:
     uStack_12 = 5;
   }
   if (uStack_12 != 0) {
-    pcVar4 = local_7;
-    pcVar3 = &DAT_00015e06;
-    for (uVar5 = (uint)uStack_12; uVar5 != 0; uVar5 = uVar5 - 1) {
-      *pcVar3 = *pcVar4;
-      pcVar3 = pcVar3 + 1;
+    pcVar5 = local_7;
+    pcVar4 = &DAT_00015e06;
+    for (uVar6 = (uint)uStack_12; uVar6 != 0; uVar6 = uVar6 - 1) {
+      *pcVar4 = *pcVar5;
       pcVar4 = pcVar4 + 1;
+      pcVar5 = pcVar5 + 1;
     }
   }
   return uStack_12;

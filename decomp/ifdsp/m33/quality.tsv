@@ -7,10 +7,10 @@ spacebase_warnings	0
 unreachable_block_warnings	37
 halt_baddata	1
 functions_with_halt_baddata	1
-functions_with_in_vars	13
+functions_with_in_vars	9
 functions_with_unaff_vars	3
 functions_with_extraout_vars	16
-functions_with_in_unaff_extraout	25
+functions_with_in_unaff_extraout	21
 undefined_nonff_bytes	4363
 undefined_nonff_bytes:sram_text_rodata	675
 undefined_nonff_bytes:flexspi_xip	3688

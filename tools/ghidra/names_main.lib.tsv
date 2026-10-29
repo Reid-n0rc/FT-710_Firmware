@@ -1,0 +1,32 @@
+# FT-710 MAIN library functions (T23d): Renesas Code Generator drivers (by the registers they touch, sfr_rx651.tsv)
+# and CC-RX runtime helpers (by idiom). Reviewed table, written by hand from the evidence column.
+# address	name	library	version	method	score	previous	evidence
+fff9362f	R_SCI1_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fff9362f	new; clears SCI1.SCR (0x8A022) TE/RE/TIE/RIE, IEN/IR of SCI1 TXI/RXI/TEI (0x87207, 0x8703C..D, ICU.GENBL0 0x87670); 104 B like R_SCI0/2/3/5_Stop, sits after R_SCI1_Start
+fff9431f	R_SCI4_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fff9431f	new; SCI4 (0x8A082) and its IER/IR bits; 104 B like the other R_SCIn_Stop, after R_SCI4_Start
+fffc9654	R_SCI7_Start	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fffc9654	new; clears IR, sets IEN of SCI7 TXI/RXI (0x8720C) and ICU.GENBL0 TEI/ERI bits 14/15 (0x87670); 64 B like R_SCIn_Start, after R_SCI7_Create
+fffc9694	R_SCI7_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fffc9694	new; reverse of R_SCI7_Start plus SCI7.SCR (0x8A0E2); 104 B like the other R_SCIn_Stop
+fffc96fc	R_SCI7_Serial_Receive	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fffc96fc	new; (buf, num): 0x81 (MD_ARGERROR) when num == 0, sets SCR RIE|RE (0x8A0E2 |= 0x50); same 68 B shape as R_SCIn_Serial_Receive
+fffc9740	R_SCI7_Serial_Send	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fffc9740	new; (buf, num): 0x81 when num == 0, 0x80 when busy, SCR TIE|TE (|= 0xA0); same shape as R_SCIn_Serial_Send
+fffc9288	R_SCI6_Start	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc9288	new; clears IR, sets IEN of SCI6 TXI/RXI (0x8720A bits 7/6) and ICU.GENBL0 bits 12/13; after R_SCI6_Create_IIC
+fffc92c8	R_SCI6_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc92c8	new; reverse of R_SCI6_Start
+fffc9308	R_SCI6_IIC_StartCondition	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc9308	new; SCI6.SIMR3 (0x8A0CB) = 0x51: IICSTAREQ with SDA/SCL as condition outputs
+fffc9311	R_SCI6_IIC_StopCondition	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	sci6_iic_condition	renamed; SCI6.SIMR3 = 0x54: IICSTPREQ
+fffc931a	R_SCI6_IIC_Master_Send	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc931a	new; (adr, tx_buf, tx_num): mode 0x80 (send) in 0x12235, address byte, count, buffer, then R_SCI6_IIC_StartCondition
+fffc935a	R_SCI6_IIC_Master_Receive	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc935a	new; (adr, rx_buf, rx_num): mode 0 (receive) in 0x12235, then R_SCI6_IIC_StartCondition
+fffc95af	r_sci6_callback_transmitend	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.850	FUN_fffc95af	new; empty; called by r_sci6_iic_tei after the stop condition when the mode is send (0x80)
+fffc95b0	r_sci6_callback_receiveend	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.850	FUN_fffc95b0	new; empty; called by r_sci6_iic_tei after the stop condition when the mode is receive (0)
+fff94a47	R_TPU0_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fff94a47	new; IEN of TGI0A (0x87210 bit 2) off, TPU TSTR (0x88100) CST0 off; after R_TPU0_Start
+fffb27c1	R_TPU3_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fffb27c1	new; IEN of TGI3A off, TSTR CST3 (bit 3) off; after R_TPU3_Start
+fff92835	R_DA0_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.950	FUN_fff92835	new; DA.DACR (0x88044) DAOE0 (bit 6) off; after R_DA0_Start
+fffc91a2	R_MTU2_Start	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc91a2	new; MTU.TSTRA (0xC1280) CST2 (bit 2) on; after R_MTU2_Create
+fffc91aa	R_MTU2_Stop	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc91aa	new; MTU.TSTRA CST2 off
+fff927df	R_IWDT_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff927df	new; empty rts, called last by R_IWDT_Create
+fff92850	R_DA_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff92850	new; empty rts, called last by R_DA_Create
+fff92b00	R_S12AD0_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff92b00	new; empty rts, called last by R_S12AD0_Create
+fff92e0e	R_S12AD1_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff92e0e	new; empty rts, called last by R_S12AD1_Create
+fff94a56	R_TPU0_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff94a56	new; empty rts, called last by R_TPU0_Create
+fff94aeb	R_TPU1_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fff94aeb	new; empty rts, called last by R_TPU1_Create
+fffedd8b	R_TPU2_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffedd8b	new; empty rts, called last by R_TPU2_Create
+fffb27d0	R_TPU3_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffb27d0	new; empty rts, called last by R_TPU3_Create
+fffc91b2	R_MTU2_Create_UserInit	Renesas Code Generator	r_cg_* / Smart Configurator (RX651)	cg_registers	0.900	FUN_fffc91b2	new; empty rts, called last by R_MTU2_Create
+fffede41	__udiv64	CC-RX runtime	CC-RX (version unknown)	idiom	0.800	FUN_fffede41	new; (u64 n in R1:R2, u64 d in R3:R4) -> quotient: 16-bit long-division fast paths, then normalise + 64-step shift/subtract; between strncmp and _INITSCT in the library block. Real CC-RX symbol unknown

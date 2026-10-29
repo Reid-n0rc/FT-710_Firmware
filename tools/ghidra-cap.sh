@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run a Ghidra/REA job inside the owner's hardware cap (AGENTS.md "Hardware use"): about 75% of the machine.
+# Run a Ghidra/REA job inside the owner's hardware cap (docs/tooling.md "Owner's tower server"): about 75% of the machine.
 # Usage: tools/ghidra-cap.sh <reserve_mb> -- <command...>
 #   - at most CAP_SLOTS heavy jobs at once, machine-wide (flock slots in $CAP_DIR) [1]
 #   - pinned to the first CAP_CPUS cores (taskset, Linux only) and run at nice 10 [3/4 of nproc]

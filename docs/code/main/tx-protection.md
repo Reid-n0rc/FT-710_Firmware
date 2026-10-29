@@ -165,10 +165,10 @@ CAT `SPN`), clamped to 0..255 and smoothed (`FUN_fffb92e7`, `FUN_fffb9350`, … 
 
 | Meter byte | Getter | Source | Calibration | CAT RM index |
 |---|---|---|---|---|
-| 0x1204A S | `meter_get_s` | DSP level (`dsp_signal_level`) vs 0x4681, piecewise table 0xFFF88BFC. 0 while 0x20B3D (TX) | 0x4681 | RM1, SM0 |
+| 0x1204A S | `meter_get_s` | DSP level (`dsp_signal_level`) vs 0x4681, piecewise table 0xFFF88BFC ([decoded](eeprom.md#cfg105-the-alignment-table-fact), #205). 0 while 0x20B3D (TX) | 0x4681 | RM1, SM0 |
 | 0x12049 COMP | `meter_get_comp` | DSP value (`dsp_comp_level`), 3-segment line | – | RM3 |
 | 0x12045 ALC | `meter_get_alc` | AN005 | 0x474E | RM4 |
-| 0x12048 / 0x1204B PO | `meter_get_po` (0x1204B if 0x9AF6) | AN002 squared-law fit; full scale 50 (band 10) or 100 W; table 0xFFF88C74 | 0x20B1E | RM5 |
+| 0x12048 / 0x1204B PO | `meter_get_po` (0x1204B if 0x9AF6) | AN002 squared-law fit; full scale 50 (band 10) or 100 W; table 0xFFF88C74 ([decoded](eeprom.md#cfg105-the-alignment-table-fact), #205) | 0x20B1E | RM5 |
 | 0x12046 SWR (0x12047 raw) | `meter_get_swr` | SWR; points SWR 1.5/2.0/3.0 → 0x4669/0x466A/0x466B | 0x4669..0x466B | RM6 |
 | 0x12044 IDD | `meter_get_idd` | AN007 | 0x475D | RM7 |
 | 0x12043 VDD | `meter_get_vdd` | AN003 × (0x4659/192)·(0.0718/(13.8/0x4667)) | 0x4659, 0x4667 | RM8 |

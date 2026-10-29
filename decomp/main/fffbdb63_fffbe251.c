@@ -7,62 +7,62 @@ void FUN_fffbdb63(void)
 {
   byte bVar1;
   uint uVar2;
-  byte *local_8;
-  byte *local_4;
+  mode_blk *local_8;
+  vfo_rec *local_4;
   
-  if (PTR_DAT_00025d54[0x74] != '\0') {
-    PTR_DAT_00025d54[0x74] = 0;
-    PTR_DAT_00025d54[0x72] = 0;
-    PTR_DAT_00025d54[0x71] = 1;
+  if (PTR_g_ui_00025d54->f_0x074_u8 != 0) {
+    PTR_g_ui_00025d54->f_0x074_u8 = 0;
+    PTR_g_ui_00025d54->f_0x072_u8 = 0;
+    PTR_g_ui_00025d54->f_0x071_u8 = 1;
     goto LAB_fffbdc83;
   }
-  PTR_DAT_00025d54[0x74] = 1;
-  PTR_DAT_00025d54[0x7a] = 0x1f;
-  if (PTR_DAT_00025d54[0x73] == '\x02') {
-    if (DAT_00009dbd == '\0') {
-      local_4 = &DAT_00009d09;
+  PTR_g_ui_00025d54->f_0x074_u8 = 1;
+  PTR_g_ui_00025d54->func_knob_item = 0x1f;
+  if (PTR_g_ui_00025d54->dsp_knob_func == 2) {
+    if (g_opstate.active_vfo == 0) {
+      local_4 = &g_opstate.vfo_a;
     }
     else {
-      local_4 = &DAT_00009d63;
+      local_4 = &g_opstate.vfo_b;
     }
-    uVar2 = *local_4 & 0xf;
+    uVar2 = local_4->mode & 0xf;
     if (uVar2 == 0xe) {
 LAB_fffbdc16:
-      local_8 = local_4 + 0x28;
+      local_8 = local_4->blk + 3;
     }
     else if (uVar2 - 2 < 2) {
-      local_8 = local_4 + 0x14;
+      local_8 = local_4->blk + 1;
     }
     else if (uVar2 - 4 < 2) {
-      local_8 = local_4 + 0x32;
+      local_8 = local_4->blk + 4;
     }
     else {
       if (uVar2 - 8 < 2) goto LAB_fffbdc16;
       if (uVar2 - 0xc < 2) {
-        local_8 = local_4 + 0x1e;
+        local_8 = local_4->blk + 2;
       }
       else {
-        if ((*local_4 & 0xf) != 0 && uVar2 != 1) {
+        if ((local_4->mode & 0xf) != 0 && uVar2 != 1) {
           return;
         }
-        local_8 = local_4 + 10;
+        local_8 = local_4->blk;
       }
     }
-    bVar1 = *local_8;
+    bVar1 = local_8->flags;
     if ((bVar1 & 0x80) == 0) {
-      *local_8 = bVar1 | 0x80;
+      local_8->flags = bVar1 | 0x80;
     }
     else {
-      *local_8 = bVar1 & 0x7f;
+      local_8->flags = bVar1 & 0x7f;
     }
   }
   else {
-    PTR_DAT_00025d54[0x7a] = 0x1f;
-    PTR_DAT_00025d54[0x73] = 2;
+    PTR_g_ui_00025d54->func_knob_item = 0x1f;
+    PTR_g_ui_00025d54->dsp_knob_func = 2;
   }
-  PTR_DAT_00025d54[0x72] = 1;
+  PTR_g_ui_00025d54->f_0x072_u8 = 1;
   swtimer_start(0x45,0x1c2);
-  FUN_fffc89b0();
+  func_display_open();
 LAB_fffbdc83:
   beep_request(1);
   return;
@@ -74,7 +74,7 @@ LAB_fffbdc83:
 void FUN_fffbdc8d(void)
 
 {
-  FUN_fffc3659(DAT_00009dbd != '\0');
+  FUN_fffc3659(g_opstate.active_vfo != 0);
   beep_request(2);
   return;
 }
@@ -88,81 +88,81 @@ void FUN_fffbdcb0(void)
   byte bVar1;
   bool bVar2;
   uint uVar3;
-  byte *local_8;
-  byte *local_4;
+  mode_blk *local_8;
+  vfo_rec *local_4;
   
   bVar2 = false;
-  if (PTR_DAT_00025d54[0x74] != '\0') {
-    PTR_DAT_00025d54[0x74] = 0;
-    PTR_DAT_00025d54[0x72] = 0;
-    PTR_DAT_00025d54[0x71] = 1;
+  if (PTR_g_ui_00025d54->f_0x074_u8 != 0) {
+    PTR_g_ui_00025d54->f_0x074_u8 = 0;
+    PTR_g_ui_00025d54->f_0x072_u8 = 0;
+    PTR_g_ui_00025d54->f_0x071_u8 = 1;
     goto LAB_fffbde2b;
   }
-  PTR_DAT_00025d54[0x74] = 1;
-  PTR_DAT_00025d54[0x7a] = 0x20;
-  if (PTR_DAT_00025d54[0x73] == '\x03') {
-    if (DAT_00009dbd == '\0') {
-      local_4 = &DAT_00009d09;
+  PTR_g_ui_00025d54->f_0x074_u8 = 1;
+  PTR_g_ui_00025d54->func_knob_item = 0x20;
+  if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
+    if (g_opstate.active_vfo == 0) {
+      local_4 = &g_opstate.vfo_a;
     }
     else {
-      local_4 = &DAT_00009d63;
+      local_4 = &g_opstate.vfo_b;
     }
-    uVar3 = *local_4 & 0xf;
+    uVar3 = local_4->mode & 0xf;
     if (uVar3 == 0xe) {
 LAB_fffbdd86:
-      local_8 = local_4 + 0x28;
+      local_8 = local_4->blk + 3;
     }
     else if (uVar3 - 2 < 2) {
-      local_8 = local_4 + 0x14;
+      local_8 = local_4->blk + 1;
       bVar2 = true;
     }
     else if (uVar3 - 4 < 2) {
-      local_8 = local_4 + 0x32;
+      local_8 = local_4->blk + 4;
     }
     else {
       if (1 < uVar3 - 6) {
         if (uVar3 - 8 < 2) goto LAB_fffbdd86;
         if (1 < uVar3 - 10) {
           if (uVar3 - 0xc < 2) {
-            local_8 = local_4 + 0x1e;
+            local_8 = local_4->blk + 2;
           }
           else {
-            if ((*local_4 & 0xf) != 0 && uVar3 != 1) {
+            if ((local_4->mode & 0xf) != 0 && uVar3 != 1) {
               return;
             }
-            local_8 = local_4 + 10;
+            local_8 = local_4->blk;
           }
           goto LAB_fffbdd8f;
         }
       }
-      local_8 = local_4 + 0x3c;
+      local_8 = local_4->blk + 5;
     }
 LAB_fffbdd8f:
-    bVar1 = *local_8;
+    bVar1 = local_8->flags;
     if (bVar2) {
       if ((bVar1 & 0x40) == 0) {
-        *local_8 = bVar1 | 0x40;
+        local_8->flags = bVar1 | 0x40;
       }
       else {
-        *local_8 = bVar1 & 0xbf;
-        PTR_DAT_00025d54[0x47a] = 1;
-        PTR_DAT_00025d54[0x7a] = 0x21;
+        local_8->flags = bVar1 & 0xbf;
+        PTR_g_ui_00025d54->f_0x47a_u8 = 1;
+        PTR_g_ui_00025d54->func_knob_item = 0x21;
       }
     }
     else if ((bVar1 & 0x40) == 0) {
-      *local_8 = bVar1 | 0x40;
+      local_8->flags = bVar1 | 0x40;
     }
     else {
-      *local_8 = bVar1 & 0xbf;
+      local_8->flags = bVar1 & 0xbf;
     }
   }
   else {
-    PTR_DAT_00025d54[0x7a] = 0x20;
-    PTR_DAT_00025d54[0x73] = 3;
+    PTR_g_ui_00025d54->func_knob_item = 0x20;
+    PTR_g_ui_00025d54->dsp_knob_func = 3;
   }
-  PTR_DAT_00025d54[0x72] = 1;
+  PTR_g_ui_00025d54->f_0x072_u8 = 1;
   swtimer_start(0x45,0x1c2);
-  FUN_fffc89b0();
+  func_display_open();
 LAB_fffbde2b:
   beep_request(1);
   return;
@@ -174,7 +174,7 @@ LAB_fffbde2b:
 void FUN_fffbde35(void)
 
 {
-  FUN_fffc3773(DAT_00009dbd != '\0');
+  FUN_fffc3773(g_opstate.active_vfo != 0);
   beep_request(2);
   return;
 }
@@ -186,19 +186,21 @@ void FUN_fffbde58(void)
 
 {
   bool bVar1;
-  byte *local_4;
+  byte bVar2;
+  vfo_rec *local_4;
   
-  if (PTR_DAT_00025d54[0x74] == '\0') {
-    PTR_DAT_00025d54[0x74] = 1;
-    PTR_DAT_00025d54[0x7a] = 0x21;
-    if (PTR_DAT_00025d54[0x73] == '\x03') {
-      if (DAT_00009dbd == '\0') {
-        local_4 = &DAT_00009d09;
+  if (PTR_g_ui_00025d54->f_0x074_u8 == 0) {
+    PTR_g_ui_00025d54->f_0x074_u8 = 1;
+    PTR_g_ui_00025d54->func_knob_item = 0x21;
+    if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
+      if (g_opstate.active_vfo == 0) {
+        local_4 = &g_opstate.vfo_a;
       }
       else {
-        local_4 = &DAT_00009d63;
+        local_4 = &g_opstate.vfo_b;
       }
-      if (((*local_4 & 0xf) == 3) || ((*local_4 & 0xf) == 2)) {
+      bVar2 = local_4->mode & 0xf;
+      if ((bVar2 == 3) || (bVar2 == 2)) {
         bVar1 = false;
       }
       else {
@@ -207,28 +209,29 @@ void FUN_fffbde58(void)
       if (bVar1) {
         return;
       }
-      if ((local_4[0x14] & 0x20) == 0) {
-        local_4[0x14] = local_4[0x14] | 0x20;
+      bVar2 = local_4->blk[1].flags;
+      if ((local_4->blk[1].flags & 0x20) == 0) {
+        local_4->blk[1].flags = bVar2 | 0x20;
       }
       else {
-        local_4[0x14] = local_4[0x14] & 0xdf;
-        local_4[0x14] = local_4[0x14] | 0x40;
-        PTR_DAT_00025d54[0x47a] = 0;
-        PTR_DAT_00025d54[0x7a] = 0x20;
+        local_4->blk[1].flags = bVar2 & 0xdf;
+        local_4->blk[1].flags = local_4->blk[1].flags | 0x40;
+        PTR_g_ui_00025d54->f_0x47a_u8 = 0;
+        PTR_g_ui_00025d54->func_knob_item = 0x20;
       }
     }
     else {
-      PTR_DAT_00025d54[0x7a] = 0x21;
-      PTR_DAT_00025d54[0x73] = 3;
+      PTR_g_ui_00025d54->func_knob_item = 0x21;
+      PTR_g_ui_00025d54->dsp_knob_func = 3;
     }
-    PTR_DAT_00025d54[0x72] = 1;
+    PTR_g_ui_00025d54->f_0x072_u8 = 1;
     swtimer_start(0x45,0x1c2);
-    FUN_fffc89b0();
+    func_display_open();
   }
   else {
-    PTR_DAT_00025d54[0x74] = 0;
-    PTR_DAT_00025d54[0x72] = 0;
-    PTR_DAT_00025d54[0x71] = 1;
+    PTR_g_ui_00025d54->f_0x074_u8 = 0;
+    PTR_g_ui_00025d54->f_0x072_u8 = 0;
+    PTR_g_ui_00025d54->f_0x071_u8 = 1;
   }
   beep_request(1);
   return;
@@ -240,7 +243,7 @@ void FUN_fffbde58(void)
 void FUN_fffbdf75(void)
 
 {
-  FUN_fffc388d(DAT_00009dbd != '\0');
+  FUN_fffc388d(g_opstate.active_vfo != 0);
   beep_request(2);
   return;
 }
@@ -254,97 +257,97 @@ void FUN_fffbdf98(void)
   byte bVar1;
   bool bVar2;
   uint uVar3;
-  byte *local_8;
-  byte *local_4;
+  mode_blk *local_8;
+  vfo_rec *local_4;
   
   bVar2 = false;
-  if (PTR_DAT_00025d54[0x74] != '\0') {
-    PTR_DAT_00025d54[0x74] = 0;
-    PTR_DAT_00025d54[0x72] = 0;
-    PTR_DAT_00025d54[0x71] = 1;
+  if (PTR_g_ui_00025d54->f_0x074_u8 != 0) {
+    PTR_g_ui_00025d54->f_0x074_u8 = 0;
+    PTR_g_ui_00025d54->f_0x072_u8 = 0;
+    PTR_g_ui_00025d54->f_0x071_u8 = 1;
     goto LAB_fffbe12e;
   }
-  PTR_DAT_00025d54[0x74] = 1;
-  if (DAT_00009dbd == '\0') {
-    local_4 = &DAT_00009d09;
+  PTR_g_ui_00025d54->f_0x074_u8 = 1;
+  if (g_opstate.active_vfo == 0) {
+    local_4 = &g_opstate.vfo_a;
   }
   else {
-    local_4 = &DAT_00009d63;
+    local_4 = &g_opstate.vfo_b;
   }
-  uVar3 = *local_4 & 0xf;
+  uVar3 = local_4->mode & 0xf;
   if (uVar3 == 0xe) {
 LAB_fffbe052:
-    local_8 = local_4 + 0x28;
+    local_8 = local_4->blk + 3;
   }
   else if (uVar3 - 2 < 2) {
-    local_8 = local_4 + 0x14;
+    local_8 = local_4->blk + 1;
     bVar2 = true;
   }
   else if (uVar3 - 4 < 2) {
-    local_8 = local_4 + 0x32;
+    local_8 = local_4->blk + 4;
   }
   else {
     if (1 < uVar3 - 6) {
       if (uVar3 - 8 < 2) goto LAB_fffbe052;
       if (1 < uVar3 - 10) {
         if (uVar3 - 0xc < 2) {
-          local_8 = local_4 + 0x1e;
+          local_8 = local_4->blk + 2;
         }
         else {
-          if ((*local_4 & 0xf) != 0 && uVar3 != 1) {
+          if ((local_4->mode & 0xf) != 0 && uVar3 != 1) {
             return;
           }
-          local_8 = local_4 + 10;
+          local_8 = local_4->blk;
         }
         goto LAB_fffbe05b;
       }
     }
-    local_8 = local_4 + 0x3c;
+    local_8 = local_4->blk + 5;
   }
 LAB_fffbe05b:
-  if (PTR_DAT_00025d54[0x73] == '\x02') {
-    bVar1 = *local_8;
+  if (PTR_g_ui_00025d54->dsp_knob_func == 2) {
+    bVar1 = local_8->flags;
     if ((bVar1 & 0x80) == 0) {
-      *local_8 = bVar1 | 0x80;
+      local_8->flags = bVar1 | 0x80;
     }
     else {
-      *local_8 = bVar1 & 0x7f;
+      local_8->flags = bVar1 & 0x7f;
     }
   }
-  else if (PTR_DAT_00025d54[0x73] == '\x03') {
+  else if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
     if (bVar2) {
-      if (PTR_DAT_00025d54[0x47a] == '\0') {
-        bVar1 = *local_8;
+      if (PTR_g_ui_00025d54->f_0x47a_u8 == 0) {
+        bVar1 = local_8->flags;
         if ((bVar1 & 0x40) == 0) {
-          *local_8 = bVar1 | 0x40;
+          local_8->flags = bVar1 | 0x40;
         }
         else {
-          *local_8 = bVar1 & 0xbf;
+          local_8->flags = bVar1 & 0xbf;
         }
       }
-      else if (PTR_DAT_00025d54[0x47a] == '\x01') {
-        bVar1 = *local_8;
+      else if (PTR_g_ui_00025d54->f_0x47a_u8 == 1) {
+        bVar1 = local_8->flags;
         if ((bVar1 & 0x20) == 0) {
-          *local_8 = bVar1 | 0x20;
+          local_8->flags = bVar1 | 0x20;
         }
         else {
-          *local_8 = bVar1 & 0xdf;
+          local_8->flags = bVar1 & 0xdf;
         }
       }
     }
     else {
-      bVar1 = *local_8;
+      bVar1 = local_8->flags;
       if ((bVar1 & 0x40) == 0) {
-        *local_8 = bVar1 | 0x40;
+        local_8->flags = bVar1 | 0x40;
       }
       else {
-        *local_8 = bVar1 & 0xbf;
+        local_8->flags = bVar1 & 0xbf;
       }
     }
   }
-  PTR_DAT_00025d54[0x72] = 1;
+  PTR_g_ui_00025d54->f_0x072_u8 = 1;
   swtimer_start(0x45,0x1c2);
-  FUN_fffc89b0();
+  func_display_open();
 LAB_fffbe12e:
   beep_request(1);
   return;
@@ -356,7 +359,7 @@ LAB_fffbe12e:
 void FUN_fffbe138(void)
 
 {
-  FUN_fffc1ede(0xd0);
+  func_knob_assign_key(0xd0);
   return;
 }
 
@@ -366,7 +369,7 @@ void FUN_fffbe138(void)
 void FUN_fffbe13f(void)
 
 {
-  FUN_fffc1ede(0xd1);
+  func_knob_assign_key(0xd1);
   return;
 }
 
@@ -376,7 +379,7 @@ void FUN_fffbe13f(void)
 void FUN_fffbe146(void)
 
 {
-  FUN_fffc1ede(0xd2);
+  func_knob_assign_key(0xd2);
   return;
 }
 
@@ -386,7 +389,7 @@ void FUN_fffbe146(void)
 void FUN_fffbe14d(void)
 
 {
-  FUN_fffc1ede(0xd3);
+  func_knob_assign_key(0xd3);
   return;
 }
 
@@ -396,7 +399,7 @@ void FUN_fffbe14d(void)
 void FUN_fffbe154(void)
 
 {
-  FUN_fffc1ede(0xd4);
+  func_knob_assign_key(0xd4);
   return;
 }
 
@@ -406,7 +409,7 @@ void FUN_fffbe154(void)
 void FUN_fffbe15b(void)
 
 {
-  FUN_fffc1ede(0xd5);
+  func_knob_assign_key(0xd5);
   return;
 }
 
@@ -416,7 +419,7 @@ void FUN_fffbe15b(void)
 void FUN_fffbe162(void)
 
 {
-  FUN_fffc1ede(0xd6);
+  func_knob_assign_key(0xd6);
   return;
 }
 
@@ -426,7 +429,7 @@ void FUN_fffbe162(void)
 void FUN_fffbe169(void)
 
 {
-  FUN_fffc1ede(0xd7);
+  func_knob_assign_key(0xd7);
   return;
 }
 
@@ -436,7 +439,7 @@ void FUN_fffbe169(void)
 void FUN_fffbe170(void)
 
 {
-  FUN_fffc1ede(0xd8);
+  func_knob_assign_key(0xd8);
   return;
 }
 
@@ -446,7 +449,7 @@ void FUN_fffbe170(void)
 void FUN_fffbe177(void)
 
 {
-  FUN_fffc1ede(0xd9);
+  func_knob_assign_key(0xd9);
   return;
 }
 
@@ -456,7 +459,7 @@ void FUN_fffbe177(void)
 void FUN_fffbe17e(void)
 
 {
-  FUN_fffc1ede(0xda);
+  func_knob_assign_key(0xda);
   return;
 }
 
@@ -466,7 +469,7 @@ void FUN_fffbe17e(void)
 void FUN_fffbe185(void)
 
 {
-  FUN_fffc1ede(0xdb);
+  func_knob_assign_key(0xdb);
   return;
 }
 
@@ -476,7 +479,7 @@ void FUN_fffbe185(void)
 void FUN_fffbe18c(void)
 
 {
-  FUN_fffc1ede(0xdc);
+  func_knob_assign_key(0xdc);
   return;
 }
 
@@ -486,7 +489,7 @@ void FUN_fffbe18c(void)
 void FUN_fffbe193(void)
 
 {
-  FUN_fffc1ede(0xdd);
+  func_knob_assign_key(0xdd);
   return;
 }
 
@@ -496,7 +499,7 @@ void FUN_fffbe193(void)
 void FUN_fffbe19a(void)
 
 {
-  FUN_fffc1ede(0xde);
+  func_knob_assign_key(0xde);
   return;
 }
 
@@ -506,7 +509,7 @@ void FUN_fffbe19a(void)
 void FUN_fffbe1a1(void)
 
 {
-  FUN_fffc1ede(0xdf);
+  func_knob_assign_key(0xdf);
   return;
 }
 
@@ -516,7 +519,7 @@ void FUN_fffbe1a1(void)
 void FUN_fffbe1a8(void)
 
 {
-  FUN_fffc1ede(0xe0);
+  func_knob_assign_key(0xe0);
   return;
 }
 
@@ -526,8 +529,8 @@ void FUN_fffbe1a8(void)
 void FUN_fffbe1af(void)
 
 {
-  FUN_fffc1ede(0xe1);
-  FUN_fffc5290();
+  func_knob_assign_key(0xe1);
+  vfo_mark_edited_if_vfo();
   return;
 }
 
@@ -537,7 +540,7 @@ void FUN_fffbe1af(void)
 void FUN_fffbe1b9(void)
 
 {
-  FUN_fffc1ede(0xe2);
+  func_knob_assign_key(0xe2);
   return;
 }
 
@@ -547,7 +550,7 @@ void FUN_fffbe1b9(void)
 void FUN_fffbe1c0(void)
 
 {
-  FUN_fffc1ede(0xe3);
+  func_knob_assign_key(0xe3);
   return;
 }
 
@@ -557,7 +560,7 @@ void FUN_fffbe1c0(void)
 void FUN_fffbe1c7(void)
 
 {
-  FUN_fffc1ede(0xe4);
+  func_knob_assign_key(0xe4);
   return;
 }
 
@@ -567,7 +570,7 @@ void FUN_fffbe1c7(void)
 void FUN_fffbe1ce(void)
 
 {
-  FUN_fffc1ede(0xe5);
+  func_knob_assign_key(0xe5);
   return;
 }
 
@@ -577,7 +580,7 @@ void FUN_fffbe1ce(void)
 void FUN_fffbe1d5(void)
 
 {
-  FUN_fffc1ede(0xe6);
+  func_knob_assign_key(0xe6);
   return;
 }
 
@@ -587,7 +590,7 @@ void FUN_fffbe1d5(void)
 void FUN_fffbe1dc(void)
 
 {
-  FUN_fffc1ede(0xe7);
+  func_knob_assign_key(0xe7);
   return;
 }
 
@@ -597,7 +600,7 @@ void FUN_fffbe1dc(void)
 void FUN_fffbe1e3(void)
 
 {
-  FUN_fffc1ede(0xe8);
+  func_knob_assign_key(0xe8);
   return;
 }
 
@@ -607,7 +610,7 @@ void FUN_fffbe1e3(void)
 void FUN_fffbe1ea(void)
 
 {
-  FUN_fffc1ede(0xe9);
+  func_knob_assign_key(0xe9);
   return;
 }
 
@@ -617,7 +620,7 @@ void FUN_fffbe1ea(void)
 void FUN_fffbe1f1(void)
 
 {
-  FUN_fffc1ede(0xec);
+  func_knob_assign_key(0xec);
   return;
 }
 
@@ -636,7 +639,7 @@ void FUN_fffbe1f8(void)
 void FUN_fffbe1f9(void)
 
 {
-  FUN_fffc1ede(0xed);
+  func_knob_assign_key(0xed);
   return;
 }
 
@@ -646,7 +649,7 @@ void FUN_fffbe1f9(void)
 void FUN_fffbe200(void)
 
 {
-  FUN_fffc1ede(0xee);
+  func_knob_assign_key(0xee);
   return;
 }
 
@@ -656,7 +659,7 @@ void FUN_fffbe200(void)
 void FUN_fffbe207(void)
 
 {
-  FUN_fffc1ede(0xef);
+  func_knob_assign_key(0xef);
   return;
 }
 
@@ -666,7 +669,7 @@ void FUN_fffbe207(void)
 void FUN_fffbe20e(void)
 
 {
-  FUN_fffc1ede(0xf0);
+  func_knob_assign_key(0xf0);
   return;
 }
 
@@ -676,7 +679,7 @@ void FUN_fffbe20e(void)
 void FUN_fffbe215(void)
 
 {
-  FUN_fffc1ede(0xf1);
+  func_knob_assign_key(0xf1);
   return;
 }
 
@@ -686,7 +689,7 @@ void FUN_fffbe215(void)
 void FUN_fffbe21c(void)
 
 {
-  FUN_fffc1ede(0xf2);
+  func_knob_assign_key(0xf2);
   return;
 }
 
@@ -696,7 +699,7 @@ void FUN_fffbe21c(void)
 void FUN_fffbe223(void)
 
 {
-  FUN_fffc1ede(0xf3);
+  func_knob_assign_key(0xf3);
   return;
 }
 
@@ -706,7 +709,7 @@ void FUN_fffbe223(void)
 void FUN_fffbe22a(void)
 
 {
-  FUN_fffc0b2f(0xfe);
+  ui_softkey_dispatch(0xfe);
   return;
 }
 
@@ -725,7 +728,7 @@ void FUN_fffbe231(void)
 void FUN_fffbe232(void)
 
 {
-  FUN_fffc0b2f(0xff);
+  ui_softkey_dispatch(0xff);
   return;
 }
 
@@ -735,7 +738,7 @@ void FUN_fffbe232(void)
 void FUN_fffbe239(void)
 
 {
-  FUN_fffc1fb6(0);
+  memlist_key(0);
   return;
 }
 
@@ -745,7 +748,7 @@ void FUN_fffbe239(void)
 void FUN_fffbe23f(void)
 
 {
-  FUN_fffc1fb6(1);
+  memlist_key(1);
   return;
 }
 
@@ -755,7 +758,7 @@ void FUN_fffbe23f(void)
 void FUN_fffbe245(void)
 
 {
-  FUN_fffc1fb6(2);
+  memlist_key(2);
   return;
 }
 
@@ -765,7 +768,7 @@ void FUN_fffbe245(void)
 void FUN_fffbe24b(void)
 
 {
-  FUN_fffc1fb6(3);
+  memlist_key(3);
   return;
 }
 
@@ -775,7 +778,7 @@ void FUN_fffbe24b(void)
 void FUN_fffbe251(void)
 
 {
-  FUN_fffc1fb6(4);
+  memlist_key(4);
   return;
 }
 

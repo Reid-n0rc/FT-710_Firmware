@@ -1011,7 +1011,7 @@ void FUN_0020ed90(int param_1,uint param_2,uint param_3,uint param_4,uint param_
 
 // ===== I2S_TxInit @ 0020edac (285 bytes)
 
-void I2S_TxInit(undefined *param_1,uint *param_2)
+void I2S_TxInit(dword *param_1,uint *param_2)
 
 {
   byte bVar1;
@@ -1022,34 +1022,34 @@ void I2S_TxInit(undefined *param_1,uint *param_2)
   FUN_0020b7b0(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
-  if (param_1 == &DAT_40106000) {
+  if (param_1 == &USART0_CFG) {
     uVar4 = uVar4 | (*(byte *)((int)param_2 + 10) & 1) << 0xb;
   }
   uVar2 = *(ushort *)((int)param_2 + 0x12);
   uVar3 = param_2[5];
   memw();
-  *(uint *)(param_1 + 0xc00) =
+  param_1[0x300] =
        uVar4 | (*(byte *)((int)param_2 + 0xb) & 1) << 0xc | ((byte)param_2[3] & 1) << 0xd |
        ((byte)param_2[4] & 1) << 10 |
        (*(byte *)((int)param_2 + 0x11) - 1) * 0x10000 & (uint)&DAT_001f0000;
   memw();
-  *(uint *)(param_1 + 0xc04) = uVar2 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
+  param_1[0x301] = uVar2 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
   memw();
   bVar1 = *(byte *)((int)param_2 + 0x16);
   uVar4 = param_2[6];
-  *(uint *)(param_1 + 0xc1c) = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
+  param_1[0x307] = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
   memw();
-  *(uint *)(param_1 + 0xe00) =
+  param_1[0x380] =
        (*(byte *)((int)param_2 + 0x17) & 1) << 2 | ((byte)uVar4 & 1) << 3 | (uint)&DAT_00010001;
   memw();
-  *(uint *)(param_1 + 0xe08) = (bVar1 & 0xf) << 8 | 1;
+  param_1[0x382] = (bVar1 & 0xf) << 8 | 1;
   return;
 }
 
 
 // ===== I2S_RxInit @ 0020eecc (272 bytes)
 
-void I2S_RxInit(undefined *param_1,uint *param_2)
+void I2S_RxInit(dword *param_1,uint *param_2)
 
 {
   ushort uVar1;
@@ -1060,25 +1060,25 @@ void I2S_RxInit(undefined *param_1,uint *param_2)
   FUN_0020b7b0(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
-  if (param_1 == &DAT_40106000) {
+  if (param_1 == &USART0_CFG) {
     uVar4 = uVar4 | (*(byte *)((int)param_2 + 10) & 1) << 0xb;
   }
   uVar1 = *(ushort *)((int)param_2 + 0x12);
   uVar3 = param_2[5];
   memw();
-  *(uint *)(param_1 + 0xc00) =
+  param_1[0x300] =
        uVar4 | (*(byte *)((int)param_2 + 0xb) & 1) << 0xc | ((byte)param_2[3] & 1) << 0xd |
        ((byte)param_2[4] & 1) << 10 |
        (*(byte *)((int)param_2 + 0x11) - 1) * 0x10000 & (uint)&DAT_001f0000;
   memw();
-  *(uint *)(param_1 + 0xc04) = uVar1 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
+  param_1[0x301] = uVar1 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
   memw();
   bVar2 = *(byte *)((int)param_2 + 0x16);
-  *(uint *)(param_1 + 0xc1c) = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
+  param_1[0x307] = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
   memw();
-  *(uint *)(param_1 + 0xe00) = ((byte)param_2[6] & 1) << 3 | (uint)&DAT_00020002;
+  param_1[0x380] = ((byte)param_2[6] & 1) << 3 | (uint)&DAT_00020002;
   memw();
-  *(uint *)(param_1 + 0xe08) = (bVar2 & 0xf) << 0x10 | 2;
+  param_1[0x382] = (bVar2 & 0xf) << 0x10 | 2;
   return;
 }
 
@@ -2035,46 +2035,46 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
 
 // ===== FUN_0020fd54 @ 0020fd54 (313 bytes)
 
-void FUN_0020fd54(undefined *param_1,int *param_2)
+void FUN_0020fd54(dword *param_1,int *param_2)
 
 {
   uint uVar1;
   
-  FUN_0020fbc0(param_2,param_1 != &DAT_40106000);
+  FUN_0020fbc0(param_2,param_1 != &USART0_CFG);
   FUN_0020aa20(param_2[4]);
   if (*param_2 == 1) {
     memw();
-    uVar1 = *(uint *)(param_1 + 0xe04) >> 4 & 1;
+    uVar1 = param_1[0x381] >> 4 & 1;
     while (uVar1 == 0) {
       memw();
-      uVar1 = *(uint *)(param_1 + 0xe04) & 0x10;
+      uVar1 = param_1[0x381] & 0x10;
     }
     memw();
-    *(undefined4 *)(param_1 + 0xe20) = 0;
+    param_1[0x388] = 0;
     memw();
-    uVar1 = *(uint *)(param_1 + 0xe04);
+    uVar1 = param_1[0x381];
     while ((uVar1 & 0x10) == 0) {
       memw();
-      uVar1 = *(uint *)(param_1 + 0xe04);
+      uVar1 = param_1[0x381];
     }
     memw();
     memw();
-    *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) & 0xffffefff;
+    param_1[0x380] = param_1[0x380] & 0xffffefff;
     memw();
     memw();
-    *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00010000;
+    param_1[0x380] = param_1[0x380] | (uint)&DAT_00010000;
   }
   else {
     memw();
     memw();
-    *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) & 0xffffdfff;
+    param_1[0x380] = param_1[0x380] & 0xffffdfff;
     memw();
     memw();
-    *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00020000;
+    param_1[0x380] = param_1[0x380] | (uint)&DAT_00020000;
   }
   memw();
   memw();
-  *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0xfffffffe;
+  param_1[0x300] = param_1[0x300] & 0xfffffffe;
   *param_2 = 0;
   memset(param_2 + 5,0,0x20);
   memw();

@@ -12,7 +12,7 @@ fff8f9dd	_CLOSEALL	void	void	asm	asm: live-in -, 0/1 call sites read R1, return 
 fff8facd	write	uint32	int32, void *, int32	asm	asm: live-in R1:L,R2:L,R3:L, 1/1 call sites read R1, return load SL
 fff8fbdb	PowerON_Reset	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
 fff8fc4d	FUN_fff8fc4d	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load -
-fff8fc57	FUN_fff8fc57	uint8	uint32, void *	asm	asm: live-in R1:L,R2:L, 0/1 call sites read R1, return load UB
+fff8fc57	FUN_fff8fc57	uint8	uint32 delay, uint32 units	doc	R2 is compared with #0xF4240 (1,000,000), #1000 and 1, then divides: a time unit, not a pointer (T23f; Renesas BSP software delay with units us/ms/s [inference]); MOV.L R1/R2 spills; returns 0/1 [fact, 0xFFF8FC5E]
 fff8ff5f	bsp_callbacks_clear	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8ffc4	bsp_interrupt_open	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8fffb	R_BSP_InterruptWrite	uint32	int32, int32	asm	asm: live-in R1:L,R2:L, 0/17 call sites read R1, return load SL
@@ -20,10 +20,10 @@ fff90097	R_BSP_InterruptControl	uint32	uint32, int32, void *	asm	asm: live-in R1
 fff90181	FUN_fff90181	uint32	char, uint32 *	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load SL
 fff901f8	FUN_fff901f8	uint32	int32, char, uint32	asm	asm: live-in R1:L,R2:B,R3:L, 2/2 call sites read R1, return load SL
 fff9089e	FUN_fff9089e	uint32	int32	asm	asm: live-in R1:L, 0/2 call sites read R1, return load SL
-fff90c76	FUN_fff90c76	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
-fff90d85	FUN_fff90d85	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
-fff90e3c	FUN_fff90e3c	uint32	int32	asm	asm: live-in R1:L, 1/1 call sites read R1, return load SL
-fff90f9b	FUN_fff90f9b	uint32	int32, uint32, char *	asm	asm: live-in R1:L,R2:L,R3:L, 0/6 call sites read R1, return load SL
+fff90c76	bsp_swint_set_interrupt_priority	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
+fff90d85	bsp_swint_clear_task	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
+fff90e3c	bsp_swint_clear_all_task	uint32	int32	asm	asm: live-in R1:L, 1/1 call sites read R1, return load SL
+fff90f9b	R_BSP_SoftwareInterruptControl	uint32	int32, uint32, char *	asm	asm: live-in R1:L,R2:L,R3:L, 0/6 call sites read R1, return load SL
 fff91303	FUN_fff91303	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
 fff913d7	hw_init_clock	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff916ac	FUN_fff916ac	uint32	int32, char	asm	asm: live-in R1:L,R2:B, 2/2 call sites read R1, return load SL
@@ -586,7 +586,7 @@ fffb2ee7	word2hex	void	int32, uint16	asm	asm: live-in R1:L,R2:W, 0/22 call sites
 fffb2f07	hex2nib	char	uint8	asm	asm: live-in R1:B, 75/79 call sites read R1, return load UB
 fffb2f79	hex2byte	uint8	char * s	doc	two hex digits at s -> byte [fact]
 fffb2f9e	hex2word	uint16	char * s	doc	four hex digits at s -> word [fact]
-fffb2fc0	FUN_fffb2fc0	char	uint8	asm	asm: live-in R1:B, 5/5 call sites read R1, return load UB
+fffb2fc0	bcd_to_bin	char	uint8	asm	asm: live-in R1:B, 5/5 call sites read R1, return load UB
 fffb3168	toupper_inplace	void	char * c	doc	upper-cases *c if a..z [fact]
 fffb3196	vfo_mode	uint8	uint8 which	doc	mode code of VFO which; all 111 callers read R1 [fact]
 fffb324c	vfo_rec_ptr	uint8 *	uint8 which	doc	pointer to the VFO record (base 0x9D09 = 0x464F+0x56BA); all 79 callers read R1 [fact]
@@ -614,8 +614,8 @@ fffb4e18	bandmem_set	void	char, uint32	asm	asm: live-in R1:B,R2:L, 0/5 call site
 fffb4ebe	bandmem_get	uint32	char	asm	asm: live-in R1:B, 5/5 call sites read R1, return load SL
 fffb4f52	tx_freq_repeater_shift	uint32	uint32	asm	asm: live-in R1:L, 2/3 call sites read R1, return load SL
 fffb527c	tx_mod_gain	uint8	void	asm	asm: live-in -, 2/4 call sites read R1, return load UB
-fffb54a0	FUN_fffb54a0	uint32	void	asm	asm: live-in -, 7/7 call sites read R1, return load SL
-fffb552c	FUN_fffb552c	uint32	void	asm	asm: live-in -, 5/5 call sites read R1, return load SL
+fffb54a0	aess_level_ptr	uint32	void	asm	asm: live-in -, 7/7 call sites read R1, return load SL
+fffb552c	aess_mode_ptr	uint32	void	asm	asm: live-in -, 5/5 call sites read R1, return load SL
 fffb55b8	portctl_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffb55c2	rf_ctrl_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffb55eb	pa_relay_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
@@ -694,7 +694,7 @@ fffb8f7d	linear_band_data	void	void	asm	asm: live-in -, 0/1 call sites read R1, 
 fffb9774	pc_keying	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffb98c8	keyer_init	void	void	asm	asm: live-in -, 0/5 call sites read R1, return load -
 fffb98e9	keyer_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
-fffba192	FUN_fffba192	uint8	void	asm	asm: live-in -, 11/11 call sites read R1, return load UB
+fffba192	tx_cw_keying_class	uint8	void	asm	asm: live-in -, 11/11 call sites read R1, return load UB
 fffba377	FUN_fffba377	void	char, char	asm	asm: live-in R1:B,R2:B, 0/2 call sites read R1, return load -
 fffba840	FUN_fffba840	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
 fffbaa81	FUN_fffbaa81	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
@@ -762,8 +762,8 @@ fffc3287	vfo_retune	void	uint8	asm	asm: live-in R1:B, 0/4 call sites read R1, re
 fffc4064	FUN_fffc4064	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
 fffc4a8d	key_nop	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
 fffc4c4e	band_select_on	void	uint8, uint8	asm	asm: live-in R1:B,R2:B, 0/5 call sites read R1, return load -
-fffc4e4f	FUN_fffc4e4f	uint16	void *	asm	asm: live-in R1:L, 1/7 call sites read R1, return load UW
-fffc4fce	FUN_fffc4fce	uint32	void *	asm	asm: live-in R1:L, 6/6 call sites read R1, return load SL
+fffc4e4f	vfo_filter_width_hz	uint16	void *	asm	asm: live-in R1:L, 1/7 call sites read R1, return load UW
+fffc4fce	qmb_current_slot	uint32	void *	asm	asm: live-in R1:L, 6/6 call sites read R1, return load SL
 fffc506b	FUN_fffc506b	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
 fffc50a0	FUN_fffc50a0	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
 fffc50d5	FUN_fffc50d5	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
@@ -771,8 +771,8 @@ fffc50fe	FUN_fffc50fe	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, 
 fffc5127	FUN_fffc5127	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
 fffc515d	FUN_fffc515d	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
 fffc52d7	enc_main_dial	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
-fffc5541	FUN_fffc5541	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
-fffc55d7	FUN_fffc55d7	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc5541	memch_step_up	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc55d7	memch_step_down	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
 fffc5ce0	vfo_mem_to_memtune	void	char	asm	asm: live-in R1:B, 0/6 call sites read R1, return load -
 fffc5d13	pms_load_limits	uint8	uint8	asm	asm: live-in R1:B, 1/3 call sites read R1, return load UB
 fffc5ec4	FUN_fffc5ec4	uint32	uint8, uint32	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load SL
@@ -791,7 +791,7 @@ fffc7daf	enc3_step	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, retu
 fffc84f9	FUN_fffc84f9	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
 fffc913b	R_MTU2_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffc91b3	R_SCI6_Create_IIC	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
-fffc9311	sci6_iic_condition	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffc9311	R_SCI6_IIC_StopCondition	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
 fffc93a3	R_SCI6_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffc93a4	r_sci6_iic_txi	void	void	asm	interrupt handler (entry PUSHM R14-R15)
 fffc93ef	r_sci6_iic_tei	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
@@ -1179,7 +1179,7 @@ fffe0839	FUN_fffe0839	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, re
 fffe0fe6	FUN_fffe0fe6	uint16	char	asm	asm: live-in R1:B, 9/9 call sites read R1, return load UW
 fffe170a	FUN_fffe170a	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
 fffe1774	FUN_fffe1774	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
-fffe207f	FUN_fffe207f	void	char	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffe207f	keypad_2digit_key	void	char	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
 fffe2cd0	dispreq_e7_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffe360e	dispreq_e8_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffe3e2a	ladder_key_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
@@ -1213,7 +1213,7 @@ fffedd6d	R_TPU2_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, retu
 fffedd7c	R_TPU2_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffedd8c	r_tpu2_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
 fffedd9a	freopen	uint32	uint32, uint32, uint16 *	asm	asm: live-in R1:L,R2:L,R3:L, 3/3 call sites read R1, return load -
-fffede41	FUN_fffede41	uint64	uint32, uint32, uint32, uint32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 1/1 call sites read R1, return load -
+fffede41	__udiv64	uint64	uint32, uint32, uint32, uint32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 1/1 call sites read R1, return load -
 fffededa	_INITSCT	void	void	asm	interrupt handler (entry PUSHM R1-R5)
 fffedf24	fflush	uint32	uint16 *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load -
 fff9124c	get_bpsw	uint32	void	doc	returns BPSW in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
@@ -1221,3 +1221,7 @@ fff91263	get_bpc	uint32	void	doc	returns BPC in R1 (MOV.L [SP],R1 before RTSD #8
 fff9127a	get_extb	uint32	void	doc	returns EXTB in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff91295	get_acc_hi	uint32	void	doc	returns ACC bits 63..32 (MVFACHI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff912a8	get_acc_mi	uint32	void	doc	returns ACC bits 47..16 (MVFACMI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fffc0d33	FUN_fffc0d33	void	uint8 mode	doc	MOV.B R1 spill; mode goes to FUN_fffc0eb8 and UI +0x424 (T23f) [fact, 0xFFFC0D35]
+fffc0eb8	vfo_mode_set	void	uint8 mode	doc	MOV.B R1 spill; *rec = *rec & 0xF0 | mode on the active record (T23f) [fact, 0xFFFC0EBA]
+fffc0f10	FUN_fffc0f10	void	uint8 old_mode, uint8 new_mode, uint8 * rec	doc	MOV.B R1, MOV.B R2, MOV.L R3 spills; called by FUN_fffc0eb8 with (old mode, new mode, record) (T23f) [fact, 0xFFFC0F12]
+fffc4bd5	FUN_fffc4bd5	void	uint8 mode	doc	MOV.B R1 spill; CMP #15 and a switch to the mode setters (T23f) [fact, 0xFFFC4BD7]

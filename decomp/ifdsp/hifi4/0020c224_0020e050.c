@@ -501,7 +501,7 @@ void FUN_0020c728(int param_1,int *param_2)
 void FUN_0020c92c(void)
 
 {
-  (*DAT_002385d8)(&DAT_40134000,DAT_002385dc);
+  (*DAT_002385d8)(&FLEXSPI_MCR0,DAT_002385dc);
   return;
 }
 
@@ -998,27 +998,27 @@ void FUN_0020d100(undefined4 param_1,int param_2)
   uVar2 = (uint)puVar1 >> 8 & 0xff;
   if (uVar2 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 3) {
     memw();
-    DAT_40021040 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 4) {
     memw();
-    DAT_40021044 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 5) {
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   FUN_00213910((&PTR_DAT_002002c0)[param_2]);
   return;
@@ -1037,27 +1037,27 @@ void FUN_0020d1a4(int param_1,int param_2,uint param_3,int *param_4)
   uVar2 = (uint)puVar1 >> 8 & 0xff;
   if (uVar2 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 3) {
     memw();
-    DAT_40021040 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 4) {
     memw();
-    DAT_40021044 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 5) {
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   param_1 = param_2 * 4 + param_1;
   uVar2 = 1 << 0x20 - (0x20 - (param_3 & 0x1f));
@@ -1284,10 +1284,10 @@ void FUN_0020d4e0(int param_1,undefined4 param_2)
 
 // ===== FUN_0020d4f0 @ 0020d4f0 (30 bytes)
 
-bool FUN_0020d4f0(undefined *param_1)
+bool FUN_0020d4f0(dword *param_1)
 
 {
-  return param_1 != &DAT_40106000;
+  return param_1 != &USART0_CFG;
 }
 
 

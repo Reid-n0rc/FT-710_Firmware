@@ -21,16 +21,16 @@ void dimmer_pwm_init(void)
 {
   byte bVar1;
   
-  DAT_fcff0300 = 0x22;
-  DAT_fcff0306 = 0;
-  DAT_fcff0308 = 19999;
-  DAT_fcff030a = 0;
-  DAT_fcff030c = 0;
-  DAT_fcff030e = 0;
-  DAT_fcff0302 = 0x12;
-  DAT_fcff0301 = 2;
-  bVar1 = DAT_fcff0280;
-  DAT_fcff0280 = bVar1 | 1;
+  MTU2_TCR_0 = 0x22;
+  MTU2_TCNT_0 = 0;
+  MTU2_TGRA_0 = 19999;
+  MTU2_TGRB_0 = 0;
+  MTU2_TGRC_0 = 0;
+  MTU2_TGRD_0 = 0;
+  MTU2_TIORH_0 = 0x12;
+  MTU2_TMDR_0 = 2;
+  bVar1 = MTU2_TSTR;
+  MTU2_TSTR = bVar1 | 1;
   return;
 }
 
@@ -42,7 +42,8 @@ void dimmer_pwm_init(void)
 void dimmer_set_pct(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
+  int iVar2;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -50,12 +51,12 @@ void dimmer_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  iVar1 = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 20000) {
-    iVar1 = 19999;
+  uVar1 = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
+  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
+  if (iVar2 == 20000) {
+    iVar2 = 19999;
   }
-  DAT_fcff030a = (short)iVar1 + -1;
+  MTU2_TGRB_0 = (short)iVar2 + -1;
   return;
 }
 
@@ -64,7 +65,7 @@ void dimmer_set_pct(int param_1)
 
 /* thunk: dimmer_set_pct */
 
-void dimmer_set(undefined4 param_1)
+void dimmer_set(uint param_1)
 
 {
   dimmer_set_pct(param_1,1);
@@ -101,13 +102,13 @@ void FUN_20113de0(int param_1,undefined1 param_2)
 void mouse_cursor_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  memclr(&DAT_208d9c40,0x5a0);
+  __aeabi_memclr4(&DAT_208d9c40,0x5a0);
   DAT_20800330 = FUN_2015f040(&DAT_208d9c40);
-  iVar1 = itron_acre_tsk(0,&DAT_201656e4);
-  if (0 < iVar1) {
-    itron_sta_tsk(iVar1,DAT_20800330);
+  uVar1 = itron_acre_tsk(0,&DAT_201656e4);
+  if (0 < (int)uVar1) {
+    itron_sta_tsk(uVar1,DAT_20800330);
     return;
   }
   return;
@@ -175,7 +176,7 @@ void mouse_detach_post(void)
 
 /* message type 2 (32-byte report) */
 
-void mouse_report_post(undefined4 *param_1)
+void mouse_report_post(void *param_1)
 
 {
   int iVar1;
@@ -185,17 +186,17 @@ void mouse_report_post(undefined4 *param_1)
   
   iVar1 = FUN_2015fa40(DAT_20800330 + 4);
   *(undefined1 *)(iVar1 + 4) = 2;
-  uVar2 = param_1[1];
-  uVar3 = param_1[2];
-  uVar4 = param_1[3];
-  *(undefined4 *)(iVar1 + 8) = *param_1;
+  uVar2 = *(undefined4 *)((int)param_1 + 4);
+  uVar3 = *(undefined4 *)((int)param_1 + 8);
+  uVar4 = *(undefined4 *)((int)param_1 + 0xc);
+  *(undefined4 *)(iVar1 + 8) = *(undefined4 *)param_1;
   *(undefined4 *)(iVar1 + 0xc) = uVar2;
   *(undefined4 *)(iVar1 + 0x10) = uVar3;
   *(undefined4 *)(iVar1 + 0x14) = uVar4;
-  uVar2 = param_1[5];
-  uVar3 = param_1[6];
-  uVar4 = param_1[7];
-  *(undefined4 *)(iVar1 + 0x18) = param_1[4];
+  uVar2 = *(undefined4 *)((int)param_1 + 0x14);
+  uVar3 = *(undefined4 *)((int)param_1 + 0x18);
+  uVar4 = *(undefined4 *)((int)param_1 + 0x1c);
+  *(undefined4 *)(iVar1 + 0x18) = *(undefined4 *)((int)param_1 + 0x10);
   *(undefined4 *)(iVar1 + 0x1c) = uVar2;
   *(undefined4 *)(iVar1 + 0x20) = uVar3;
   *(undefined4 *)(iVar1 + 0x24) = uVar4;
@@ -206,35 +207,35 @@ void mouse_report_post(undefined4 *param_1)
 
 // ===== mouse_cursor_set_pos @ 20113f38 (24 bytes)
 
-void mouse_cursor_set_pos(undefined4 param_1,undefined4 param_2)
+void mouse_cursor_set_pos(uint param_1,uint param_2)
 
 {
-  mouse_cursor_move(DAT_20800330 + 4,param_1,param_2);
+  mouse_cursor_move(DAT_20800330 + 4,(ushort)param_1,(ushort)param_2);
   return;
 }
 
 
 // ===== mouse_cursor_visible @ 20113f50 (24 bytes)
 
-undefined1 mouse_cursor_visible(void)
+byte mouse_cursor_visible(void)
 
 {
-  return *(undefined1 *)(DAT_20800330 + 0x594);
+  return *(byte *)(DAT_20800330 + 0x594);
 }
 
 
 // ===== mouse_cursor_get_pos @ 20113f60 (84 bytes)
 
-void mouse_cursor_get_pos(undefined2 *param_1,undefined2 *param_2)
+void mouse_cursor_get_pos(void *param_1,void *param_2)
 
 {
   int iVar1;
   
   iVar1 = DAT_20800330;
-  FUN_20152bb0(*(undefined4 *)(DAT_20800330 + 0x59c),0xffffffff);
-  *param_1 = *(undefined2 *)(iVar1 + 0x596);
-  *param_2 = *(undefined2 *)(iVar1 + 0x598);
-  FUN_201511e8(*(undefined4 *)(iVar1 + 0x59c));
+  itron_twai_sem(*(undefined4 *)(DAT_20800330 + 0x59c),0xffffffff);
+  *(undefined2 *)param_1 = *(undefined2 *)(iVar1 + 0x596);
+  *(undefined2 *)param_2 = *(undefined2 *)(iVar1 + 0x598);
+  itron_sig_sem(*(undefined4 *)(iVar1 + 0x59c));
   return;
 }
 
@@ -247,16 +248,16 @@ void task_powon(void)
 
 {
   ushort uVar1;
-  int iVar2;
-  int iStack_4;
+  void *pvVar2;
+  uint uStack_4;
   
   do {
     do {
       do {
-        iVar2 = itron_twai_flg(DAT_20800358,1,5,&iStack_4,0xffffffff);
-      } while (iVar2 != 0);
-    } while (iStack_4 != 1);
-    uVar1 = DAT_fcfe3208;
+        pvVar2 = itron_twai_flg(DAT_20800358,1,5,&uStack_4,-1);
+      } while (pvVar2 != (void *)0x0);
+    } while (uStack_4 != 1);
+    uVar1 = PORT_PPR2;
     key_set_power_level(uVar1 & 1);
     gic_enable_irq(0x25);
   } while( true );
@@ -275,10 +276,10 @@ void powon_isr(void)
   gic_disable_irq(0x25);
   itron_set_flg(DAT_20800358,1);
   itron_iwup_tsk(DAT_2080035c);
-  uVar1 = DAT_fcfef804;
+  uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x20) != 0) {
-    uVar1 = DAT_fcfef804;
-    DAT_fcfef804 = uVar1 & 0xffdf;
+    uVar1 = INTC_IRQRR;
+    INTC_IRQRR = uVar1 & 0xffdf;
   }
   return;
 }
@@ -292,22 +293,18 @@ void powon_init(void)
 
 {
   ushort uVar1;
-  undefined2 uVar2;
-  int iVar3;
-  undefined4 extraout_r2;
-  undefined8 uVar4;
+  uint uVar2;
   
-  uVar1 = DAT_fcfef802;
-  DAT_fcfef802 = uVar1 & 0xf3ff;
-  uVar2 = DAT_fcfef802;
-  uVar1 = DAT_fcfef802;
-  DAT_fcfef802 = uVar1 | 0xc00;
+  uVar1 = INTC_ICR1;
+  INTC_ICR1 = uVar1 & 0xf3ff;
+  uVar1 = INTC_ICR1;
+  INTC_ICR1 = uVar1 | 0xc00;
   DAT_20800358 = itron_acre_flg(0,&DAT_20165738);
-  if (0 < DAT_20800358) {
+  if (0 < (int)DAT_20800358) {
     DAT_2080035c = itron_acre_tsk(0,&DAT_2016571c);
-    if (((0 < DAT_2080035c) && (iVar3 = itron_sta_tsk(DAT_2080035c,0), iVar3 == 0)) &&
-       (uVar4 = itron_acre_isr(0,&DAT_20165744), 0 < (int)uVar4)) {
-      gic_enable_irq(0x25,(int)((ulonglong)uVar4 >> 0x20),extraout_r2,uVar2);
+    if (((0 < (int)DAT_2080035c) && (uVar2 = itron_sta_tsk(DAT_2080035c,0), uVar2 == 0)) &&
+       (uVar2 = itron_acre_isr(0,0x20165744), 0 < (int)uVar2)) {
+      gic_enable_irq(0x25);
       return;
     }
   }
@@ -319,7 +316,7 @@ void powon_init(void)
 
 /* progress percent 0x20800364 */
 
-void progress_set(undefined4 param_1)
+void progress_set(uint param_1)
 
 {
   DAT_20800364 = param_1;
@@ -331,7 +328,7 @@ void progress_set(undefined4 param_1)
 
 /* progress percent */
 
-undefined4 progress_get(void)
+uint progress_get(void)
 
 {
   return DAT_20800364;
@@ -342,11 +339,11 @@ undefined4 progress_get(void)
 
 /* {from, to} range */
 
-void progress_range_init(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+void progress_range_init(void *param_1,uint param_2,uint param_3)
 
 {
-  *param_1 = param_2;
-  param_1[1] = param_3;
+  *(uint *)param_1 = param_2;
+  *(uint *)((int)param_1 + 4) = param_3;
   return;
 }
 
@@ -369,9 +366,9 @@ uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined
   undefined8 uVar8;
   
   iVar3 = *param_1;
-  uVar7 = FUN_20164d54(param_1[1] - iVar3);
+  uVar7 = __aeabi_i2d(param_1[1] - iVar3);
   uVar7 = FUN_20164da8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),param_3,param_4);
-  uVar8 = FUN_20164d54(iVar3);
+  uVar8 = __aeabi_i2d(iVar3);
   uVar7 = FUN_20164888((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar7,
                        (int)((ulonglong)uVar7 >> 0x20));
   uVar1 = (uint)((ulonglong)uVar7 >> 0x20);
@@ -430,17 +427,17 @@ void rtc_send_byte(uint param_1)
   
   iVar1 = 0;
   do {
-    DAT_fcfe3104 = 0x20000;
+    PORT_PSR1 = 0x20000;
     if ((param_1 & 1) == 0) {
-      DAT_fcfe3104 = 0x10000;
+      PORT_PSR1 = 0x10000;
     }
     else {
-      DAT_fcfe3104 = 0x10001;
+      PORT_PSR1 = 0x10001;
     }
-    rtc_delay(1);
-    DAT_fcfe3104 = 0x20002;
+    rtc_delay();
+    PORT_PSR1 = 0x20002;
     param_1 = param_1 >> 1;
-    rtc_delay(1);
+    rtc_delay();
     iVar1 = iVar1 + 1;
   } while (iVar1 < 8);
   return;
@@ -449,12 +446,12 @@ void rtc_send_byte(uint param_1)
 
 // ===== rtc_send_bytes @ 201141c0 (36 bytes)
 
-void rtc_send_bytes(undefined1 *param_1,int param_2)
+void rtc_send_bytes(void *param_1,int param_2)
 
 {
   for (; param_2 != 0; param_2 = param_2 + -1) {
-    rtc_send_byte(*param_1);
-    param_1 = param_1 + 1;
+    rtc_send_byte((uint)*(byte *)param_1);
+    param_1 = (byte *)((int)param_1 + 1);
   }
   return;
 }
@@ -462,7 +459,7 @@ void rtc_send_bytes(undefined1 *param_1,int param_2)
 
 // ===== rtc_recv_byte @ 201141e4 (96 bytes)
 
-uint rtc_recv_byte(void)
+byte rtc_recv_byte(void)
 
 {
   ushort uVar1;
@@ -474,32 +471,32 @@ uint rtc_recv_byte(void)
   iVar3 = 0;
   do {
     uVar2 = uVar2 >> 1;
-    DAT_fcfe3104 = 0x20000;
-    rtc_delay(1);
-    uVar1 = DAT_fcfe3204;
-    DAT_fcfe3104 = 0x20002;
+    PORT_PSR1 = 0x20000;
+    rtc_delay();
+    uVar1 = PORT_PPR1;
+    PORT_PSR1 = 0x20002;
     if ((uVar1 & 1) != 0) {
       uVar2 = uVar2 | 0x80;
     }
-    rtc_delay(1);
+    rtc_delay();
     iVar3 = iVar3 + 1;
   } while (iVar3 < 8);
   rtc_dt_output();
-  return uVar2;
+  return (byte)uVar2;
 }
 
 
 // ===== rtc_recv_bytes @ 20114244 (36 bytes)
 
-void rtc_recv_bytes(undefined1 *param_1,int param_2)
+void rtc_recv_bytes(void *param_1,int param_2)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
   for (; param_2 != 0; param_2 = param_2 + -1) {
-    uVar1 = rtc_recv_byte();
-    *param_1 = uVar1;
-    param_1 = param_1 + 1;
+    bVar1 = rtc_recv_byte();
+    *(byte *)param_1 = bVar1;
+    param_1 = (byte *)((int)param_1 + 1);
   }
   return;
 }
@@ -509,21 +506,21 @@ void rtc_recv_bytes(undefined1 *param_1,int param_2)
 
 /* cmd 0x86|reg: status 1/2, INT1/INT2 registers */
 
-undefined4 rtc_read_reg(uint param_1)
+byte rtc_read_reg(uint param_1)
 
 {
-  undefined4 uVar1;
+  byte bVar1;
   
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_byte(param_1 | 0x86);
-  uVar1 = rtc_recv_byte();
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
-  rtc_delay(1);
-  return uVar1;
+  bVar1 = rtc_recv_byte();
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
+  rtc_delay();
+  return bVar1;
 }
 
 
@@ -538,13 +535,13 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
   
   local_10._2_2_ = (undefined2)((uint)param_4 >> 0x10);
   local_10 = CONCAT22(local_10._2_2_,CONCAT11(param_2,param_1)) | 6;
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_bytes(&local_10,2);
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
   return;
 }
 
@@ -556,8 +553,8 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
 void rtc_port_idle(void)
 
 {
-  DAT_fcfe3104 = 0x20002;
-  DAT_fcfe3104 = 0x40000;
+  PORT_PSR1 = 0x20002;
+  PORT_PSR1 = 0x40000;
   return;
 }
 
@@ -566,17 +563,17 @@ void rtc_port_idle(void)
 
 /* cmd 0x26 + 7 BCD bytes */
 
-void rtc_write_datetime_raw(undefined4 param_1)
+void rtc_write_datetime_raw(uint param_1)
 
 {
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_byte(0x26);
-  rtc_send_bytes(param_1,7);
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
+  rtc_send_bytes((void *)param_1,7);
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
   return;
 }
 
@@ -588,14 +585,14 @@ void rtc_write_datetime_raw(undefined4 param_1)
 void rtc_write_time_raw(int param_1)
 
 {
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_byte(0x66);
-  rtc_send_bytes(param_1 + 4,3);
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
+  rtc_send_bytes((void *)(param_1 + 4),3);
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
   return;
 }
 
@@ -607,14 +604,14 @@ void rtc_write_time_raw(int param_1)
 void rtc_read_datetime_raw(int param_1)
 
 {
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_byte(0xa6);
-  rtc_recv_bytes(param_1,7);
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
+  rtc_recv_bytes((void *)param_1,7);
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
   *(byte *)(param_1 + 4) = *(byte *)(param_1 + 4) & 0xbf;
   return;
 }
@@ -627,14 +624,14 @@ void rtc_read_datetime_raw(int param_1)
 void rtc_read_time_raw(int param_1)
 
 {
-  FUN_20151c3c(DAT_20800368,0xffffffff);
-  DAT_fcfe3104 = 0x40004;
-  rtc_delay(1);
+  itron_tloc_mtx(DAT_20800368,0xffffffff);
+  PORT_PSR1 = 0x40004;
+  rtc_delay();
   rtc_send_byte(0xe6);
-  rtc_recv_bytes(param_1 + 4,2);
-  rtc_delay(1);
-  DAT_fcfe3104 = 0x40000;
-  FUN_20152df4(DAT_20800368);
+  rtc_recv_bytes((void *)(param_1 + 4),2);
+  rtc_delay();
+  PORT_PSR1 = 0x40000;
+  itron_unl_mtx(DAT_20800368);
   *(byte *)(param_1 + 4) = *(byte *)(param_1 + 4) & 0xbf;
   return;
 }
@@ -649,7 +646,7 @@ void rtc_minutes_of_day(short *param_1)
   byte local_c;
   byte local_b;
   
-  rtc_read_time_raw(auStack_10);
+  rtc_read_time_raw((int)auStack_10);
   *param_1 = (local_b & 0xf) + (ushort)(local_b >> 4) * 2 + (ushort)(local_b >> 4) * 8 +
              ((local_c & 0xf) + (ushort)(local_c >> 4) * 10) * 0x3c;
   return;
@@ -660,35 +657,35 @@ void rtc_minutes_of_day(short *param_1)
 
 /* (y, m, d) BCD */
 
-void rtc_get_date(undefined1 *param_1,undefined1 *param_2,undefined1 *param_3)
+void rtc_get_date(void *param_1,void *param_2,void *param_3)
 
 {
   undefined1 local_18;
   undefined1 local_17;
   undefined1 local_16;
   
-  rtc_read_datetime_raw(&local_18);
-  *param_1 = local_18;
-  *param_2 = local_17;
-  *param_3 = local_16;
+  rtc_read_datetime_raw((int)&local_18);
+  *(undefined1 *)param_1 = local_18;
+  *(undefined1 *)param_2 = local_17;
+  *(undefined1 *)param_3 = local_16;
   return;
 }
 
 
 // ===== rtc_set_date @ 20114564 (56 bytes)
 
-void rtc_set_date(undefined1 param_1,undefined1 param_2,undefined1 param_3)
+void rtc_set_date(byte param_1,byte param_2,byte param_3)
 
 {
-  undefined1 local_18;
-  undefined1 local_17;
-  undefined1 local_16;
+  byte local_18;
+  byte local_17;
+  byte local_16;
   
-  rtc_read_time_raw(&local_18);
+  rtc_read_time_raw((int)&local_18);
   local_18 = param_1;
   local_17 = param_2;
   local_16 = param_3;
-  rtc_write_datetime_raw(&local_18);
+  rtc_write_datetime_raw((uint)&local_18);
   return;
 }
 
@@ -697,7 +694,7 @@ void rtc_set_date(undefined1 param_1,undefined1 param_2,undefined1 param_3)
 
 /* (h, m, s) BCD */
 
-void rtc_get_time(undefined1 *param_1,undefined1 *param_2,undefined1 *param_3)
+void rtc_get_time(void *param_1,void *param_2,void *param_3)
 
 {
   undefined1 auStack_18 [4];
@@ -705,17 +702,17 @@ void rtc_get_time(undefined1 *param_1,undefined1 *param_2,undefined1 *param_3)
   undefined1 local_13;
   undefined1 local_12;
   
-  rtc_read_datetime_raw(auStack_18);
-  *param_1 = local_14;
-  *param_2 = local_13;
-  *param_3 = local_12;
+  rtc_read_datetime_raw((int)auStack_18);
+  *(undefined1 *)param_1 = local_14;
+  *(undefined1 *)param_2 = local_13;
+  *(undefined1 *)param_3 = local_12;
   return;
 }
 
 
 // ===== rtc_set_time @ 201145d8 (48 bytes)
 
-void rtc_set_time(undefined1 param_1,undefined1 param_2,undefined1 param_3)
+void rtc_set_time(byte param_1,byte param_2,byte param_3)
 
 {
   undefined4 local_10;
@@ -723,40 +720,39 @@ void rtc_set_time(undefined1 param_1,undefined1 param_2,undefined1 param_3)
   
   local_c = (uint)CONCAT12(param_3,CONCAT11(param_2,param_1));
   local_10 = 0;
-  rtc_write_time_raw(&local_10);
+  rtc_write_time_raw((int)&local_10);
   return;
 }
 
 
 // ===== rtc_set_datetime @ 20114608 (80 bytes)
 
-void rtc_set_datetime(undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined1 param_4,
-                     undefined1 param_5)
+void rtc_set_datetime(byte param_1,byte param_2,byte param_3,byte param_4,byte param_5)
 
 {
-  undefined1 local_20;
-  undefined1 local_1f;
-  undefined1 local_1e;
-  undefined1 local_1c;
-  undefined1 local_1b;
+  byte local_20;
+  byte local_1f;
+  byte local_1e;
+  byte local_1c;
+  byte local_1b;
   undefined1 local_1a;
   
-  rtc_read_time_raw(&local_20);
+  rtc_read_time_raw((int)&local_20);
   local_1b = param_5;
   local_1a = 0;
   local_20 = param_1;
   local_1f = param_2;
   local_1e = param_3;
   local_1c = param_4;
-  rtc_write_datetime_raw(&local_20);
+  rtc_write_datetime_raw((uint)&local_20);
   return;
 }
 
 
 // ===== rtc_get_datetime @ 20114658 (92 bytes)
 
-void rtc_get_datetime(undefined1 *param_1,undefined1 *param_2,undefined1 *param_3,
-                     undefined1 *param_4,undefined1 *param_5,undefined1 *param_6)
+void rtc_get_datetime(void *param_1,void *param_2,void *param_3,void *param_4,void *param_5,
+                     void *param_6)
 
 {
   undefined1 local_28;
@@ -766,13 +762,13 @@ void rtc_get_datetime(undefined1 *param_1,undefined1 *param_2,undefined1 *param_
   undefined1 local_23;
   undefined1 local_22;
   
-  rtc_read_datetime_raw(&local_28);
-  *param_1 = local_28;
-  *param_2 = local_27;
-  *param_3 = local_26;
-  *param_4 = local_24;
-  *param_5 = local_23;
-  *param_6 = local_22;
+  rtc_read_datetime_raw((int)&local_28);
+  *(undefined1 *)param_1 = local_28;
+  *(undefined1 *)param_2 = local_27;
+  *(undefined1 *)param_3 = local_26;
+  *(undefined1 *)param_4 = local_24;
+  *(undefined1 *)param_5 = local_23;
+  *(undefined1 *)param_6 = local_22;
   return;
 }
 
@@ -791,7 +787,7 @@ void rtc_get_tm(int *param_1)
   byte local_b;
   byte local_a;
   
-  rtc_read_datetime_raw(&local_10);
+  rtc_read_datetime_raw((int)&local_10);
   *param_1 = (local_a & 0xf) + (uint)(local_a >> 4) * 10;
   param_1[1] = (local_b & 0xf) + (uint)(local_b >> 4) * 10;
   param_1[2] = (local_c & 0xf) + (uint)(local_c >> 4) * 10;
@@ -809,19 +805,19 @@ void rtc_get_tm(int *param_1)
 
 /* status1, status2, INT1, INT2 */
 
-void rtc_read_status(undefined1 *param_1)
+void rtc_read_status(byte *param_1)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
-  uVar1 = rtc_read_reg(0);
-  *param_1 = uVar1;
-  uVar1 = rtc_read_reg(0x40);
-  param_1[1] = uVar1;
-  uVar1 = rtc_read_reg(0x10);
-  param_1[2] = uVar1;
-  uVar1 = rtc_read_reg(0x50);
-  param_1[3] = uVar1;
+  bVar1 = rtc_read_reg(0);
+  *param_1 = bVar1;
+  bVar1 = rtc_read_reg(0x40);
+  param_1[1] = bVar1;
+  bVar1 = rtc_read_reg(0x10);
+  param_1[2] = bVar1;
+  bVar1 = rtc_read_reg(0x50);
+  param_1[3] = bVar1;
   return;
 }
 
@@ -856,7 +852,7 @@ void rtc_init(void)
   local_10 = 2;
   uStack_c = 0;
   local_8 = 0;
-  DAT_20800368 = FUN_2014fd24(0,&local_10);
+  DAT_20800368 = itron_acre_mtx(0,&local_10);
   return;
 }
 

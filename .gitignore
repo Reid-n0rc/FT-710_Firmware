@@ -7,12 +7,21 @@ Firmware/
 *.SFL
 *.sfl
 
-# Manuals: committed by the owner's decision (2026-10-28). Everything else under Manuals/ stays out.
+# Manuals: committed by the owner's decision (2026-10-28; vendor datasheets in ADI/ and TI/ 2026-10-29). Everything else under Manuals/ stays out.
 Manuals/*
 !Manuals/*.pdf
 !Manuals/Renesas/
 Manuals/Renesas/*
 !Manuals/Renesas/*.pdf
+!Manuals/AMD/
+Manuals/AMD/*
+!Manuals/AMD/*.pdf
+!Manuals/ADI/
+Manuals/ADI/*
+!Manuals/ADI/*.pdf
+!Manuals/TI/
+Manuals/TI/*
+!Manuals/TI/*.pdf
 
 # Ghidra: the three canonical projects are committed by the owner's decision (2026-10-28).
 # Per-task scratch copies (FT710_*_T1x*) and lock files stay out.

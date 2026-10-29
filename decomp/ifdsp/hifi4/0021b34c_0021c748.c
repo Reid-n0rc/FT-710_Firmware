@@ -1084,9 +1084,9 @@ void tx_gpio_to_reg4004(void)
   
   sVar3 = regfile_gpio_sel();
   memw();
-  bVar1 = DAT_40100015;
+  bVar1 = GPIO_B0_21;
   memw();
-  bVar2 = DAT_40100016;
+  bVar2 = GPIO_B0_22;
   DAT_20078008 = (ushort)bVar2 | sVar3 << 2 | (ushort)bVar1 << 1;
   return;
 }
@@ -1370,7 +1370,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
   undefined1 auStack_dc [32];
   undefined1 auStack_bc [188];
   
-  MU_Init(&DAT_40111000);
+  MU_Init(&MUB_VER);
   FUN_0022700c(param_1 + 0x3ac,0,0);
   uVar2 = FUN_0022ba40(0x618);
   param_1[2] = uVar2;
@@ -1384,21 +1384,21 @@ void Thread_Ipc_entry(undefined4 *param_1)
   uVar2 = rpmsg_lite_create_ept(*param_1,0x1e,ipc_ept_rx_cb,param_1[2],auStack_dc);
   param_1[1] = uVar2;
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   while ((uVar1 & 7) != 1) {
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
   }
-  MU_SetFlags(&DAT_40111000,1);
+  MU_SetFlags(&MUB_VER,1);
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   while ((uVar1 & 7) != 2) {
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
   }
-  SEMA42_Init(&DAT_40112000);
-  SEMA42_Lock(&DAT_40112000,0,3);
-  MU_SetFlags(&DAT_40111000,3);
+  SEMA42_Init(&SEMA42_GATE3);
+  SEMA42_Lock(&SEMA42_GATE3,0,3);
+  MU_SetFlags(&MUB_VER,3);
   do {
     xos_msgq_get(param_1[2],auStack_bc);
     ipc_handle_msg(param_1,auStack_bc);
@@ -1483,11 +1483,11 @@ undefined1 regfile_gpio_sel(void)
   
   if ((DAT_20070018 & 0xf000) != 0x1000) {
     memw();
-    uVar1 = DAT_40100004;
+    uVar1 = GPIO_B0_4;
     return uVar1;
   }
   memw();
-  uVar1 = DAT_40100005;
+  uVar1 = GPIO_B0_5;
   return uVar1;
 }
 
@@ -1644,7 +1644,7 @@ void apf_design_fir(void)
         fVar6 = (float)uVar8 * (float)uVar11;
         cosf_();
         uVar10 = ae_l32_i(uVar2);
-        uVar8 = ae_l32_i(&DAT_40000000);
+        uVar8 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
         uVar2 = ae_s32_l_ip((ulonglong)(uint)(fVar6 * (float)uVar10 * (float)uVar8));
         *puVar3 = uVar2;
         puVar3 = puVar3 + 1;

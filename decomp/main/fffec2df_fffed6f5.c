@@ -12,13 +12,16 @@ void ai_ex060518(void)
 }
 
 
-// ===== FUN_fffec2e5 @ fffec2e5 (275 bytes)
+// ===== ai_ex_fmt_u8 @ fffec2e5 (275 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffec3f5) */
 /* WARNING: Removing unreachable block (ram,0xfffec3af) */
 /* WARNING: Removing unreachable block (ram,0xfffec329) */
+/* CAT AI EX reply value at 0x1B23D: u8 as 2 (arg 0) or 3 (arg 1) digits, or signed +/- 2 digits
+   (3rd arg 0), then ';'; returns the reply length that the ai_ex* detectors store to 0x1FF12 [fact]
+    */
 
-short FUN_fffec2e5(byte param_1,char param_2,int param_3)
+short ai_ex_fmt_u8(byte param_1,char param_2,int param_3)
 
 {
   char cVar1;
@@ -78,12 +81,13 @@ short FUN_fffec2e5(byte param_1,char param_2,int param_3)
 }
 
 
-// ===== FUN_fffec3f8 @ fffec3f8 (116 bytes)
+// ===== ai_ex_fmt_u16_4 @ fffec3f8 (116 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffec469) */
 /* WARNING: Removing unreachable block (ram,0xfffec422) */
+/* CAT AI EX reply value at 0x1B23D: u16 as 4 digits + ';'; returns the reply length [fact] */
 
-short FUN_fffec3f8(ushort param_1)
+short ai_ex_fmt_u16_4(ushort param_1)
 
 {
   char cVar1;
@@ -122,7 +126,7 @@ void tuner_init(void)
 
 {
   tuner_task();
-  FUN_fffec578();
+  tuner_rearm();
   return;
 }
 
@@ -134,11 +138,11 @@ void tuner_init(void)
 void tuner_task(void)
 
 {
-  if (DAT_00009ab8 == 3) {
+  if (g_opstate.ex030104_tuner_type_select == 3) {
     FUN_fffed165();
     return;
   }
-  if (1 < DAT_00009ab8) {
+  if (1 < g_opstate.ex030104_tuner_type_select) {
     FUN_fffed62a();
     return;
   }
@@ -152,12 +156,12 @@ void tuner_task(void)
 void FUN_fffec493(void)
 
 {
-  DAT_0001b3bc = DAT_00009c5b;
-  DAT_00009c5b = 5;
-  DAT_0001b3bd = DAT_00009aa1;
-  DAT_00009aa1 = 0;
-  DAT_00020cc6 = 0x49;
-  FUN_fffc8d8c(0);
+  DAT_0001b3bc = g_opstate.meter_sel;
+  g_opstate.meter_sel = 5;
+  DAT_0001b3bd = g_opstate.ex020117_cw_wave_shape;
+  g_opstate.ex020117_cw_wave_shape = 0;
+  g_ui.popup_code = 0x49;
+  popup_open_timed(0);
   return;
 }
 
@@ -167,9 +171,9 @@ void FUN_fffec493(void)
 void FUN_fffec4db(void)
 
 {
-  DAT_00009c5b = DAT_0001b3bc;
-  DAT_00009aa1 = DAT_0001b3bd;
-  FUN_fffc8beb();
+  g_opstate.meter_sel = DAT_0001b3bc;
+  g_opstate.ex020117_cw_wave_shape = DAT_0001b3bd;
+  popup_close();
   return;
 }
 
@@ -211,19 +215,21 @@ void FUN_fffec52d(void)
 }
 
 
-// ===== FUN_fffec537 @ fffec537 (35 bytes)
+// ===== vfo_tuner_bit_set @ fffec537 (35 bytes)
 
-void FUN_fffec537(char param_1)
+/* (on): TX-side record rec+1 bit 2, the tuner bit that FUN_fffec55a reads for CAT AC [fact] */
+
+void vfo_tuner_bit_set(char param_1)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
+  pvVar1 = vfo_rec_ptr(VFO_TX);
   if (param_1 != '\0') {
-    pbVar1[1] = pbVar1[1] | 4;
+    pvVar1->flags1 = pvVar1->flags1 | 4;
     return;
   }
-  pbVar1[1] = pbVar1[1] & 0xfb;
+  pvVar1->flags1 = pvVar1->flags1 & 0xfb;
   return;
 }
 
@@ -233,59 +239,62 @@ void FUN_fffec537(char param_1)
 bool FUN_fffec55a(void)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return (pbVar1[1] & 4) != 0;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  return (pvVar1->flags1 & 4) != 0;
 }
 
 
-// ===== FUN_fffec578 @ fffec578 (179 bytes)
+// ===== tuner_rearm @ fffec578 (179 bytes)
 
-void FUN_fffec578(void)
+/* TUNER TYPE SELECT 0x9AB8 = 2 path: re-arms the tuner state 0x20B3F after VFO/band changes [fact
+   for the callers] (cat-commands-primary.md) */
+
+void tuner_rearm(void)
 
 {
   bool bVar1;
   int iVar2;
   
-  if (DAT_00009ab8 == 2) {
+  if (g_opstate.ex030104_tuner_type_select == 2) {
     iVar2 = FUN_fffed6f5();
     if (iVar2 == 1) {
       iVar2 = FUN_fffec55a();
       if (iVar2 == 0) {
-        if ((DAT_00020b3f == '\x04') || (DAT_00020b3f == '\x05')) {
+        if ((g_ui.atu_state == 4) || (g_ui.atu_state == 5)) {
           bVar1 = true;
         }
         else {
           bVar1 = false;
         }
         if (bVar1) {
-          DAT_00020b3f = 6;
+          g_ui.atu_state = 6;
           return;
         }
       }
-      else if (DAT_00020b3f == '\0') {
-        DAT_00020b3f = 4;
+      else if (g_ui.atu_state == 0) {
+        g_ui.atu_state = 4;
         return;
       }
     }
   }
-  else if (DAT_00009ab8 < 2) {
+  else if (g_opstate.ex030104_tuner_type_select < 2) {
     iVar2 = FUN_fffec55a();
     if (iVar2 == 0) {
-      if ((DAT_00020b3f == '\x01') || (DAT_00020b3f == '\x02')) {
+      if ((g_ui.atu_state == 1) || (g_ui.atu_state == 2)) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        DAT_00020b3f = 3;
+        g_ui.atu_state = 3;
         return;
       }
     }
-    else if (DAT_00020b3f == '\0') {
-      DAT_00020b3f = 1;
+    else if (g_ui.atu_state == 0) {
+      g_ui.atu_state = 1;
       return;
     }
   }
@@ -301,23 +310,23 @@ void FUN_fffec62b(void)
   bool bVar1;
   byte bVar2;
   
-  DAT_00020b71 = 0;
-  if ((DAT_00020b3f == '\x02') || (DAT_00020b3f == '\x01')) {
+  g_ui.tuner_indicator = 0;
+  if ((g_ui.atu_state == 2) || (g_ui.atu_state == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (bVar1) {
-    DAT_00020b71 = 1;
-    if ((DAT_00020b41 == '\x02') && (bVar2 = blink_phase(0), bVar2 == 0)) {
+    g_ui.tuner_indicator = 1;
+    if ((g_ui.tune_cycle_3d == 2) && (bVar2 = blink_phase(0), bVar2 == 0)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (bVar1) {
-      DAT_00020b71 = 0;
+      g_ui.tuner_indicator = 0;
     }
   }
   switch(DAT_0001b3ac) {
@@ -381,8 +390,8 @@ void FUN_fffec62b(void)
 void FUN_fffec70a(void)
 
 {
-  DAT_00020b41 = 0;
-  DAT_00020b3f = 0;
+  g_ui.tune_cycle_3d = 0;
+  g_ui.atu_state = 0;
   DAT_0001b3ac = 1;
   return;
 }
@@ -399,32 +408,32 @@ void FUN_fffec728(void)
   uint uVar1;
   char cStack_5;
   
-  uVar1 = DAT_00020f50;
-  if (DAT_00020b41 == '\x01') {
+  uVar1 = g_ui.freq_tx;
+  if (g_ui.tune_cycle_3d == 1) {
     DAT_0001b3ac = 2;
   }
-  else if (DAT_00020b3f == '\x03') {
-    DAT_00020b3f = '\0';
+  else if (g_ui.atu_state == 3) {
+    g_ui.atu_state = 0;
   }
   else {
-    if (DAT_00020b6b == '\0') {
+    if (g_ui.transmitting == 0) {
       return;
     }
-    if (DAT_00020b3f == '\x01') {
-      cStack_5 = FUN_fffecfac(DAT_00020f50);
+    if (g_ui.atu_state == 1) {
+      cStack_5 = FUN_fffecfac(g_ui.freq_tx);
       if (cStack_5 == -1) {
         cStack_5 = FUN_fffed0ae(uVar1);
       }
       if (cStack_5 != -1) {
         DAT_00025d00 = uVar1;
-        DAT_0001b3bb = FUN_fffb3371(uVar1);
+        DAT_0001b3bb = tx_band_of_freq(uVar1);
         FUN_fffed12f();
-        DAT_00020b3f = '\x02';
+        g_ui.atu_state = 2;
       }
     }
   }
-  if ((DAT_00020b3f == '\x02') && (DAT_00025d00 / 10000 != uVar1 / 10000)) {
-    DAT_00020b3f = 1;
+  if ((g_ui.atu_state == 2) && (DAT_00025d00 / 10000 != uVar1 / 10000)) {
+    g_ui.atu_state = 1;
     return;
   }
   return;
@@ -439,18 +448,18 @@ void FUN_fffec7f9(void)
   uint uVar1;
   bool bVar2;
   
-  uVar1 = DAT_00020f50;
-  bVar2 = tx_freq_allowed(DAT_00020f50);
+  uVar1 = g_ui.freq_tx;
+  bVar2 = tx_freq_allowed(g_ui.freq_tx);
   if (bVar2) {
     DAT_00025d00 = uVar1;
-    DAT_0001b3bb = FUN_fffb3371(uVar1);
+    DAT_0001b3bb = tx_band_of_freq(uVar1);
     FUN_fffec493();
-    DAT_00020b41 = 2;
-    DAT_00020b2d = 1;
+    g_ui.tune_cycle_3d = 2;
+    g_ui.ptt_atu_tune = 1;
     DAT_0001b3ae = 0;
     DAT_0001b3b0 = 0;
     FUN_fffed12f();
-    DAT_00020b3f = 0;
+    g_ui.atu_state = 0;
     swtimer_start(0x27,100);
     DAT_0001b3ac = 3;
     return;
@@ -524,7 +533,7 @@ void FUN_fffec911(void)
     DAT_0001b3b2 = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 10];
     DAT_0001b3ae = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 0xb];
     DAT_0001b3b4 = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 0xc];
-    DAT_00020b3f = 2;
+    g_ui.atu_state = 2;
     DAT_0001b3b0 = DAT_0001b3ae;
     DAT_0001b3b3 = DAT_0001b3ae;
     swtimer_start(0x27,5);
@@ -566,7 +575,7 @@ void FUN_fffec9ed(void)
 {
   byte bVar1;
   
-  if (DAT_00020b3f == '\x03') {
+  if (g_ui.atu_state == 3) {
     DAT_0001b3ac = 0xf;
     return;
   }
@@ -635,7 +644,7 @@ void FUN_fffeca7e(void)
     DAT_00025cfc = fVar3;
     DAT_0001b3b9 = DAT_0001b3ad;
     DAT_0001b3ba = DAT_0001b3af;
-    if ((DAT_00009ab8 == '\x01') && (fVar3 <= 1.5)) {
+    if ((g_opstate.ex030104_tuner_type_select == 1) && (fVar3 <= 1.5)) {
       DAT_0001b3ac = 9;
       return;
     }
@@ -786,10 +795,10 @@ void FUN_fffece39(void)
 
 {
   FUN_fffec4db();
-  DAT_00020b41 = 0;
-  DAT_00020b2d = 0;
-  DAT_00020b3f = 2;
-  FUN_fffec537(1);
+  g_ui.tune_cycle_3d = 0;
+  g_ui.ptt_atu_tune = 0;
+  g_ui.atu_state = 2;
+  vfo_tuner_bit_set(1);
   DAT_0001b3ac = 1;
   return;
 }
@@ -811,7 +820,7 @@ void FUN_fffece69(void)
 void FUN_fffece79(void)
 
 {
-  DAT_00020b2d = 0;
+  g_ui.ptt_atu_tune = 0;
   DAT_0001b3ae = 0;
   DAT_0001b3b0 = 0;
   FUN_fffed12f();
@@ -994,7 +1003,7 @@ void FUN_fffed165(void)
     bVar1 = swtimer_expired(0x22);
     if (bVar1 == 1) {
       DAT_0001b3c3 = 0;
-      DAT_00020b3c = 0;
+      g_ui.tuner_result = 0;
       return;
     }
   }
@@ -1002,20 +1011,20 @@ void FUN_fffed165(void)
     bVar1 = swtimer_expired(0x21);
     if (bVar1 != 0) {
       swtimer_start(0x21,5);
-      DAT_00020b71 = 2;
-      if (DAT_00020f0c == '\x01') {
+      g_ui.tuner_indicator = 2;
+      if (g_ui.tune_cycle == 1) {
         FUN_fffed399();
       }
       else {
-        if (DAT_00020f0c != '\x02') {
-          DAT_00020b3c = 0;
+        if (g_ui.tune_cycle != 2) {
+          g_ui.tuner_result = 0;
           return;
         }
         FUN_fffed2a9();
       }
       bVar1 = blink_phase(0);
       if (bVar1 == 0) {
-        DAT_00020b71 = 0;
+        g_ui.tuner_indicator = 0;
         return;
       }
     }
@@ -1024,18 +1033,21 @@ void FUN_fffed165(void)
 }
 
 
-// ===== FUN_fffed206 @ fffed206 (72 bytes)
+// ===== tuner_tune_state_set @ fffed206 (72 bytes)
 
-void FUN_fffed206(char param_1)
+/* (s): 0x20F0C = s; 1 starts (0x1B3BE = 1), 2 swaps the meter (0x9C5B = 5) and CW WAVE SHAPE
+   (0x9AA1 = 0) and opens pop-up 0x49, 0 restores both [fact]; a tune cycle [inference] */
+
+void tuner_tune_state_set(byte param_1)
 
 {
-  DAT_00020f0c = param_1;
-  if (param_1 == '\x01') {
+  g_ui.tune_cycle = param_1;
+  if (param_1 == 1) {
     FUN_fffed371();
   }
-  else if (param_1 != '\x02') {
+  else if (param_1 != 2) {
     DAT_0001b3be = 0;
-    DAT_00020b2d = 0;
+    g_ui.ptt_atu_tune = 0;
     DAT_00025d08 = DAT_00025d0c;
     FUN_fffec4db();
     return;
@@ -1053,18 +1065,18 @@ void FUN_fffed24e(char param_1)
   DAT_0001b3c3 = 1;
   swtimer_start(0x22,0x32);
   if (param_1 == '\x01') {
-    DAT_00020b3c = 2;
+    g_ui.tuner_result = 2;
   }
   else if (param_1 == '\x02') {
-    DAT_00020b3c = 3;
+    g_ui.tuner_result = 3;
   }
   else {
-    DAT_00020b3c = 1;
+    g_ui.tuner_result = 1;
   }
-  if (DAT_00020f0c != '\x01') {
+  if (g_ui.tune_cycle != 1) {
     return;
   }
-  FUN_fffed206(0);
+  tuner_tune_state_set(0);
   return;
 }
 
@@ -1078,11 +1090,11 @@ void FUN_fffed2a9(void)
   byte bVar2;
   int iVar3;
   
-  if (DAT_00020b3d == '\0') {
-    FUN_fffed206(0);
+  if (g_ui.tx_lamp == 0) {
+    tuner_tune_state_set(0);
     return;
   }
-  if ((DAT_00020b3c == '\0') || (iVar3 = FUN_fffed61e(), iVar3 == 0)) {
+  if ((g_ui.tuner_result == 0) || (iVar3 = FUN_fffed61e(), iVar3 == 0)) {
     bVar1 = false;
   }
   else {
@@ -1090,29 +1102,29 @@ void FUN_fffed2a9(void)
   }
   if (bVar1) {
     beep_request(3);
-    FUN_fffed206(0);
+    tuner_tune_state_set(0);
     return;
   }
-  if (DAT_00020b3e == '\x01') {
-    DAT_00020b3c = 2;
+  if (g_ui.f_0x03a_u8 == 1) {
+    g_ui.tuner_result = 2;
     send_a_set(1);
     send_b_set(1);
     return;
   }
-  if (DAT_00020b3e != '\x02') {
-    if (DAT_00020b3e != '\x03') {
-      DAT_00020b3c = 0;
+  if (g_ui.f_0x03a_u8 != 2) {
+    if (g_ui.f_0x03a_u8 != 3) {
+      g_ui.tuner_result = 0;
       return;
     }
-    DAT_00020b3c = 1;
+    g_ui.tuner_result = 1;
     bVar2 = swtimer_expired(0x20);
     if (bVar2 != 0) {
-      DAT_00020b3e = 0;
+      g_ui.f_0x03a_u8 = 0;
       return;
     }
     return;
   }
-  DAT_00020b3c = 3;
+  g_ui.tuner_result = 3;
   send_a_set(1);
   send_b_set(1);
   return;
@@ -1140,7 +1152,7 @@ void FUN_fffed399(void)
   bool bVar1;
   int iVar2;
   
-  if ((DAT_00020b3c == '\0') || (iVar2 = FUN_fffed61e(), iVar2 == 0)) {
+  if ((g_ui.tuner_result == 0) || (iVar2 = FUN_fffed61e(), iVar2 == 0)) {
     bVar1 = false;
   }
   else {
@@ -1181,21 +1193,21 @@ void FUN_fffed401(void)
 {
   int iVar1;
   
-  DAT_00025d0c = DAT_00020f50;
+  DAT_00025d0c = g_ui.freq_tx;
   if (DAT_0001b3bf == '\0') {
     if (DAT_0001b3c0 == '\0') {
-      DAT_00020b3c = 3;
+      g_ui.tuner_result = 3;
     }
     else {
-      DAT_00020b3c = 2;
+      g_ui.tuner_result = 2;
     }
     swtimer_start(0x20,60000);
   }
   else {
-    iVar1 = FUN_fffb3371(DAT_00020f50);
+    iVar1 = tx_band_of_freq(g_ui.freq_tx);
     if (iVar1 == 9) {
       DAT_0001b3c0 = '\x01';
-      DAT_00020b3c = 2;
+      g_ui.tuner_result = 2;
       swtimer_start(0x20,5000);
     }
     else {
@@ -1223,14 +1235,14 @@ void FUN_fffed48f(void)
   }
   else if (DAT_00025d08 < DAT_00025d0c) {
     DAT_0001b3c0 = 1;
-    DAT_00020b3c = 2;
+    g_ui.tuner_result = 2;
   }
   else {
     DAT_0001b3c0 = 0;
-    DAT_00020b3c = 3;
+    g_ui.tuner_result = 3;
   }
   DAT_0001b3bf = 0;
-  DAT_00020b2d = 1;
+  g_ui.ptt_atu_tune = 1;
   swtimer_start(0x20,60000);
   DAT_0001b3be = 3;
   return;
@@ -1261,7 +1273,7 @@ void FUN_fffed50f(void)
   }
   DAT_00025d10 = fVar2;
   if (2 < DAT_0001b3c2) {
-    DAT_00020b3c = 1;
+    g_ui.tuner_result = 1;
     swtimer_start(0x20,2000);
     DAT_0001b3be = 4;
     return;
@@ -1303,7 +1315,7 @@ void FUN_fffed5c5(void)
 void FUN_fffed5e4(void)
 
 {
-  FUN_fffed206(0);
+  tuner_tune_state_set(0);
   return;
 }
 
@@ -1315,11 +1327,11 @@ void FUN_fffed5ea(void)
 {
   if (DAT_0001b3c0 != '\0') {
     DAT_0001b3c0 = 0;
-    DAT_00020b3c = 3;
+    g_ui.tuner_result = 3;
     return;
   }
   DAT_0001b3c0 = 1;
-  DAT_00020b3c = 2;
+  g_ui.tuner_result = 2;
   return;
 }
 
@@ -1342,21 +1354,22 @@ void FUN_fffed62a(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  tunlin_mode tVar2;
+  byte bVar3;
   
-  DAT_00020b71 = 0;
-  bVar2 = tunlin_port_mode();
-  if (bVar2 == 0) {
-    if (DAT_00020b3f == '\x05') {
-      DAT_00020b71 = 1;
-      if ((DAT_00020b40 == '\x02') && (bVar2 = blink_phase(0), bVar2 == 0)) {
+  g_ui.tuner_indicator = 0;
+  tVar2 = tunlin_port_mode();
+  if (tVar2 == TUNLIN_EXT_TUNER) {
+    if (g_ui.atu_state == 5) {
+      g_ui.tuner_indicator = 1;
+      if ((g_ui.tune_cycle_3c == 2) && (bVar3 = blink_phase(0), bVar3 == 0)) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        DAT_00020b71 = 0;
+        g_ui.tuner_indicator = 0;
       }
     }
     switch(DAT_0001b3c8) {

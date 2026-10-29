@@ -202,12 +202,12 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
-  uVar1 = DAT_40111044;
+  uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
 }
@@ -227,9 +227,9 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = DAT_40111064;
+      uVar1 = MUB_CR;
       memw();
-      DAT_40111064 = uVar1 & 0xfff0fff7 | 0x4000000;
+      MUB_CR = uVar1 & 0xfff0fff7 | 0x4000000;
       xos_register_interrupt_handler(6,MU_B_IRQHandler,0);
     }
     DAT_002390d4 = DAT_002390d4 + 1;
@@ -258,9 +258,9 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
   if (bVar2) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = DAT_40111064;
+      uVar1 = MUB_CR;
       memw();
-      DAT_40111064 = uVar1 & 0xfbf0fff7;
+      MUB_CR = uVar1 & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
     FUN_0021abc4(param_1);
@@ -285,13 +285,13 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
-      uVar1 = DAT_40111060;
+      uVar1 = MUB_SR;
     }
     memw();
-    DAT_40111024 = param_1 << 0x10;
+    MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;
   }

@@ -15,17 +15,18 @@ to the top of the website and `tools/guide_to_wiki.py` to the top of the wiki's 
 ## Plan
 Owner: Claude session on branch `claude/friendly-euler-urlgry`, 2026-10-29. The owner asked to **hold off on Ghidra
 steps** for now: this session writes the tables, scripts and task plan, and leaves every Ghidra run (apply, re-export) as
-an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time through `tools/ghidra-cap.sh`, heap per image).
+an explicit open step below. (On 2026-10-29 the owner allowed installs and Ghidra in Claude cloud sessions, with no CPU/RAM cap; the
+caps in docs/tooling.md apply only to the owner's tower server.)
 
 | Sub-task | Deliverable | Ghidra? | Status |
 |---|---|---|---|
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
-| T23b | DISPLAY (RZ/A1H) and IFDSP M33 (RT685) register labels, same TSV format and `ApplySfr.java` | apply + re-export | todo |
-| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | todo |
-| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
-| T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
-| T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | todo |
+| T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
+| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
+| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); Ghidra steps open; HiFi4 not started |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
+| T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
+| T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
 field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last.
@@ -96,7 +97,7 @@ Rules for every sub-task:
 
 ### Open steps (Ghidra; wait for the owner's go-ahead)
 1. Apply to the canonical project (MAIN heap 3 GB, AGENTS.md):
-   `tools/ghidra-cap.sh 3772 -- tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplySfr.java tools/ghidra/sfr_rx651.tsv`
+   `tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplySfr.java tools/ghidra/sfr_rx651.tsv`
    (with `GHIDRA_HEADLESS_MAXMEM=3G`). Expect about 4,600 labels and the "not in memory" count for OFSM only.
 2. Re-export: `tools/bootstrap.sh --only export`, then `--only verify`. Check that `R_IWDT_Create` shows
    `IWDT_IWDTCR = 0x3350`, that `decomp_quality.py compare` shows no count worse, and that
@@ -109,40 +110,295 @@ Rules for every sub-task:
    names alone are not enough.
 
 ## T23b — DISPLAY and IFDSP register names
-- DISPLAY (RZ/A1H): the committed manual `Manuals/Renesas/r01uh0403ej0700-rza1h.pdf` has no single address-order table;
-  each chapter has a "Register Configuration" table. Parse those into `tools/ghidra/sfr_rza1h.tsv` with the same columns
-  (or add an `rza1h` mode to `tools/sfr_table.py`), check with known registers from `docs/code/display/peripherals.md`,
-  then apply with `ApplySfr.java`. 965 references to `DAT_e*/DAT_f*` addresses in `decomp/display` are the target.
-- IFDSP M33 (i.MX RT685): NXP publishes the CMSIS SVD file (`MIMXRT685S_cm33.xml`) in the open-source mcux-sdk; convert
-  it to `tools/ghidra/sfr_rt685.tsv` (pin the commit and its SHA-256 in the TSV header). The HiFi4 sees the same
-  peripherals at its own addresses (check `docs/code/ifdsp/hifi4.md`).
-- Add each image's TSV and ranges to `IMAGES` in `tools/readability_stats.py` so its "Registers named" column fills in.
+
+**Status:** tables, script, bootstrap steps and a Ghidra test on per-task copies done (2026-10-29); the apply to the
+canonical projects and the re-export are left to the parent session.
+
+### Plan
+1. DISPLAY: find the register lists in the committed RZ/A1H manual, parse them with `pdftotext -layout`, expand channel
+   and parameterised rows, check against registers the DISPLAY docs name. Extend `tools/sfr_table.py` with a `--chip`
+   mode (one file, shared checks/TSV/coverage code; `python3 -I` cannot import a sibling module).
+2. IFDSP: fetch NXP's SVD (pinned commit, SHA-256 checked) and the DSP device header, convert to one table per core.
+3. `coverage` per image, Ghidra test on `ghidra/FT710_{DISPLAY,IFDSP}_T23b` (apply + `ExportDecomp`, then
+   `decomp_quality.py compare`), then `readability_stats.py` IMAGES, `bootstrap.sh`, docs.
+
+### Findings
+- **The RZ/A1H manual does have one register list**: section 58 "List of Registers", **Table 58.1 "Register Addresses"**
+  (R01UH0403EJ0700 Rev.7.00, PDF pages 2959–3047, 89 pages). It lists every module's registers per channel (`SCSMR_0` …
+  `SCSMR_7`), with name, symbol, width, address and access size, so `--chip rza1h` parses it instead of the 60 chapter
+  "Register Configuration" tables **[fact]**. Module symbols come from a 46-entry map (`RZA_MODULES`, Renesas iodefine
+  names; each with its chapter number, which becomes the `section` column and the `(HWM s14)` comment). The power-down
+  registers (STBCR*, SYSCR*) go under `CPG`, as in Renesas' `cpg_iodefine.h`.
+- The parser handles: wrapped names and symbols (`CPU_CTICS_` + `CTITRIGINSTATUS`), parameterised rows
+  (`RSCAN0CmCFG (m = 0 to 4)` at `H'E803A000 + m * H'0010` → `RSCAN0C0CFG` …), the CEU's `Plane A/B/Mirror` addresses
+  (`CEU_CAMOR_A/_B/_M`), `to` ranges (JCU tables as one byte array, PFV FIFO windows as words), and modules that the table
+  repeats per channel under the same symbols (VDC5 → `VDC50`/`VDC51`, PFV → `PFV0`/`PFV1`, DISC → `DISC0`/`DISC1`).
+- **Four misprints in Table 58.1**, corrected in the script with their source (`RZA_ERRATA_*`) **[fact unless noted]**:
+  `CKDLY_1`/`SPODLY_1` printed at channel 0's H'3FEFA050/H'3FEFA068 (Table 17.2: H'3FEFB050/H'3FEFB068);
+  `RSCAN0TXQCCm` stride printed `* H'0010` (Table 21.10: 03A0H + 4 m); the PFV output-buffer windows end at H'E840505C /
+  H'E840585C (2 MB; the input windows are 32 bytes, so H'E820505C / H'E820585C); and the PTM-A9 CoreSight management
+  registers printed in the CA9-PMU block H'FC031FA0.. instead of H'FC03CFA0.. **[inference: section 56 has no address
+  table]**. After the fixes no two registers share an address.
+- Output `tools/ghidra/sfr_rza1h.tsv`: **5,466 registers at 5,466 addresses in 48 modules**, 0 unparsed rows, no
+  overlaps; deterministic. 30 known registers are checked (CPG FRQCR/STBCR2..12/STBREQ2/STBACK2/SYSCR3, GIC ICDDCR/ICDISER0/
+  ICDIPR0/ICCICR, INTC ICR1/IRQRR, OSTM0/1, WDT, SCIF0/SCIF5, RSPI0/RSPI4, PORT, VDC50/VDC51, CEU planes, RSCAN rows,
+  JCU, L2C power control, SPIBSC).
+- **i.MX RT685**: NXP's SVD is not in `mcux-sdk` (only the generated headers); it is in
+  [nxp-mcuxpresso/mcux-soc-svd](https://github.com/nxp-mcuxpresso/mcux-soc-svd) (`MIMXRT685S/MIMXRT685S_cm33.xml`, commit
+  `7c1f00bd…`, SHA-256 `751c25d4…`). There is **no DSP SVD**; the DSP view comes from the DSP device header
+  `mcux-sdk/devices/MIMXRT685S/MIMXRT685S_dsp.h` (commit `8a289764…`, SHA-256 `903348aa…`). Full URLs and hashes:
+  [docs/tooling.md](../tooling.md#peripheral-register-sources-t23b-2026-10-29) and the TSV headers. The downloads are not
+  committed.
+- Address variants **[fact]**: the SVD gives the non-secure addresses 0x4xxxxxxx, which both cores' code uses (no
+  0x5xxxxxxx reference in `decomp/ifdsp`). `IfdspM33Setup.java` maps 0x4…, the secure alias 0x5… and the PPB 0xE00…;
+  `IfdspHifi4Setup.java` maps only 0x4…. So:
+  - `sfr_rt685.tsv` (M33): the 101 SVD peripherals at 0x4… (module = SVD peripheral, `USART0_FIFOWR`), again at the secure
+    alias +0x10000000 (module `<P>_S`, `SYSCTL0_S_DSPSTALL`), the SVD's own SCnSCB/NVIC/SCB/MPU/SAU, and the Armv8-M SCS
+    registers the SVD lacks (SysTick, FPU, CoreDebug, ICTR/ACTLR; `RT_SCS`): **10,085 registers at 9,509 addresses,
+    200 modules**.
+  - `sfr_rt685_hifi4.tsv` (HiFi4): the 83 SVD peripherals the DSP header lists (the header bases equal the SVD bases),
+    plus the two DSP-side blocks the SVD lacks, laid out like the M33 block of the same struct: **MUB** (as MUA, `MU_Type`)
+    and **OSTIMER1** (as OSTIMER0): **3,728 registers at 3,483 addresses, 85 modules**. Not visible to the DSP:
+    AHB_SECURE_CTRL, CASPER, ESPI, HASHCRYPT, MUA, OSTIMER0, PMC, POWERQUAD, SCT0, SECGPIO, USB HS, and the Arm SCS.
+- Each FLEXCOMM is one block with USART/SPI/I2C/I2S views at one address. The view the firmware uses comes first, so it
+  gets the type and the primary label (`RT_PREFER`): FC0 = USART0, FC1 = SPI1, FC2..FC5 = I2S2..I2S5 (from
+  m33-platform.md / hifi4.md) **[fact]**; the other views are secondary labels. Peripherals without a register at offset 0
+  get a `<P>_BASE` label (CLKCTL0/1, SYSCTL0/1, FLEXCOMM14/15 …), because the SDK drivers pass the block base around
+  (`&CLKCTL0_BASE` in the clock code). SVD descriptions are cut to their first sentence (≤ 100 characters).
+- **Coverage before Ghidra** (`tools/sfr_table.py coverage`, `DAT_` references in the mapped I/O blocks):
+
+  | Image | Unnamed I/O refs (addresses) | On a table register | Left after the Ghidra test |
+  |---|---:|---:|---|
+  | DISPLAY | 985 (295) | 980 (99.5 %) | 5: `DAT_3fe99999`/`DAT_3fe33333` (high words of the doubles 0.8/0.6, not registers), `DAT_e8205580` (read in `ostm_time_us`, bit 6; no register there in the manual, open) |
+  | IFDSP M33 | 619 (213) | 617 (99.7 %) | 2: `DAT_40135020` (PMC +0x20, set to 0x04040808 if it differs, in the first code file; not in the SVD, open) |
+  | IFDSP HiFi4 | 711 (164) | 708 (99.6 %) | 3: `DAT_40060a92` and `DAT_40140000` (outside every peripheral block) |
+
+- **Ghidra test** (per-task copies `ghidra/FT710_DISPLAY_T23b`, `FT710_IFDSP_T23b`, owner `root`, `-noanalysis`,
+  `ApplySfr.java` then `ExportDecomp.java` into a scratch directory; Ghidra 12.1.4, JDK 21): `ApplySfr` added 5,116 / 10,085
+  / 3,728 labels, typed 4,860 / 9,316 / 3,352, kept 256 / 193 / 131 existing data items, skipped 350 / 0 / 0 rows not in
+  memory (the RZ/A1H debug registers at 0xFC000000..), 0 failures. `decomp_quality.py compare` against the committed
+  `quality.tsv`: **no metric worse** for DISPLAY, M33 and HiFi4 (0 decompile failures, warnings and `halt_baddata`
+  unchanged). "Registers named" (readability_stats definition) on the test exports: **DISPLAY 99.5 %, M33 99.7 %,
+  HiFi4 99.6 %** (0.0 % before). Example: `FLEXCOMM0_IRQHandler` now reads `USART0_FIFOSTAT`, `USART0_FIFORD`,
+  `USART0_FIFOWR`, `SCB_ICSR = 0x10000000`; `ostm_time_us` reads `OSTM_OSTM0CNT`, `OSTM_OSTM0TE`.
+- `ApplySfr.java` needed no change for these chips (only its header comment); MAIN's behaviour is unchanged, and
+  `sfr_table.py build` (rx651) rewrites `sfr_rx651.tsv` byte for byte.
+- `tools/bootstrap.sh`: `build_display` and `build_ifdsp` (M33 and HiFi4) run `ApplySfr.java` last, and their `stamp_of`
+  lists include `ApplySfr.java` and the TSV. `tools/readability_stats.py` IMAGES now has the three tables and their ranges
+  (the README block is regenerated by the parent after the canonical re-export).
+
+### Open steps (parent session)
+1. Apply to the canonical projects (DISPLAY, then IFDSP M33 and HiFi4, as in the test above), re-export `decomp/display`
+   and `decomp/ifdsp/{m33,hifi4}`, run `decomp_quality.py compare`, `python3 -I tools/readability_stats.py readme`, and
+   commit the projects with the re-export.
+2. Look up `0xE8205580` (DISPLAY) and PMC `+0x20` (M33) in other sources; add sourced rows if found.
+
+### Redo
+- New RZ/A1H manual revision: `python3 -I tools/sfr_table.py build --chip rza1h --pdf <new.pdf>` (finds Table N.1
+  "Register Addresses" in the last fifth of the manual). A new module name fails the build until it is added to
+  `RZA_MODULES`; re-check the `RZA_ERRATA_*` entries against the new revision (drop the ones it fixes).
+- New SVD or SDK: download the files (docs/tooling.md), `build --chip rt685 --svd … --dsp-header … --any-hash`, review
+  the TSV diff, then put the new URLs and hashes into `RT_SOURCES` and docs/tooling.md and rebuild without `--any-hash`.
+- New DISPLAY or IFDSP firmware: after the re-export, `python3 -I tools/sfr_table.py coverage decomp/display --chip rza1h`
+  (and `decomp/ifdsp/m33 --chip rt685`, `decomp/ifdsp/hifi4 --chip rt685_hifi4`); each `missing:` line is an address to
+  look up.
 
 ## T23c — Global state structs
-- For each hot base (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a` with 462 references, `DAT_0001ff12` …): list
-  every offset and access width from the C (a script over `decomp/main`, output `build/`), name the fields from
-  `docs/code/main/radio-control.md`, `eeprom.md`, `menu.md` and the CAT handlers (a CAT handler that reads offset X for
-  command `YY` names field X), and write the struct as a committed C header or TSV (`tools/ghidra/structs_main.h`).
-- Apply with a new `ApplyStructs.java` (parse the header with Ghidra's C parser, then retype the globals); re-export.
-- Field names must cite their evidence ([fact] address or [inference]) in a comment in the header.
+
+**Status:** MAIN done in a per-task Ghidra copy (2026-10-29); the apply to the canonical project and the re-export of
+`decomp/main` are the parent's step (below). DISPLAY is open.
+
+### Approach
+1. `tools/ghidra/StructAccessDump.java` (read-only) decompiles every function and lists each RAM global access with its
+   width from the high p-code. The C text alone cannot give widths: `DAT_00020b08` is a u16 (it is compared with 0x7DD),
+   yet the decompiler prints it without a cast **[fact]**.
+2. `tools/struct_offsets.py scan decomp/main build/t23c/off --access build/t23c/access.tsv` lists every offset per block
+   with its widths, reference forms (`PTR[0x..]`, `*(type *)(PTR + 0x..)`, `PTR + 0x..`, absolute `DAT_`, `&DAT_`) and
+   the functions that use it (output in `build/`, not committed).
+3. The fields were named from `docs/code/main/*.md`, `docs/memory-maps.md`, `docs/cat-commands*.md` and the CAT
+   handlers; the operating-state block from the 314 menu descriptors (`tools/main_menu_table.py`, RAM address per item)
+   and cfg105 from its 261 alignment labels (ROM 0xFFF817C3). Accessed fields without a known meaning get neutral names
+   `f_0xOFF_u8/u16/u32` with the widths and some users in the comment.
+4. `tools/ghidra/structs_main.h` holds the result (valid C, `gcc -fsyntax-only` passes), and `tools/ghidra/ApplyStructs.java`
+   applies it with its own line parser (simpler and more predictable headless than Ghidra's CParser; the format is
+   described at the top of the header).
+
+### Findings
+- **One UI/radio state block, not eleven.** All eleven `.data` pointers 0x25D38, 0x25D4C, 0x25D54..0x25D60, 0x25D6C..0x25D7C
+  hold 0x20B04, and 0x25D50 holds 0x4659 (cfg105) **[fact]**. The highest offset used through them is +0x490, and the next
+  object starts at 0x20F98 (u32s at 0x20F98..0x20FCC), so `struct ui_state` is 0x494 bytes **[fact for the accesses;
+  the padding to 0x494 is an inference]**. 0x25D34 points to 0x203F4 and is the heap break of the C library's `sbrk`
+  (`PTR_DAT_00025d34 + n <= &DAT_000207f4`), not a struct **[fact]**.
+- The 31 bytes at UI +0x48 are a **copy of the selected PRESET** (menu EX06): `FUN_fffc4d93` copies 0x9B2E + 0x1F·n there,
+  and the per-mode setters (AGC delays 0x20B5B.., LCUT/HCUT, TX BPF, MOD GAIN, the CAT-1 baud rate 0x20B58 and time-out
+  0x20B59) read it instead of the menu values while 0x9DC6 is set **[fact]**. So `struct preset` describes both.
+- UI +0x409 is a **"key consumed" flag**: the press handlers set it (`FUN_fffc0b2f` sets it on every branch) and `key_task`
+  skips `key_call_short`/`key_call_long` while it is set **[fact]**.
+- UI +0xC2 holds **five 50-byte message texts** (the stride 0x32 shows in the accesses at +0xC2/+0xF4/+0x126/+0x158/+0x18A)
+  **[fact]**; UI +0x2ED is the 0x109-byte answer buffer of DISPLAY frames C3/C4/C5 **[fact]**.
+- The 90-byte record keeps multi-byte values big-endian and the code reads them byte by byte (`[0x4a]`..`[0x4d]` appear
+  ten times each, a 4-byte read only five times) **[fact]**, so those fields are byte arrays named `*_be`.
+- `vfo_rec_ptr` (0xFFFB324C) now returns `struct vfo_rec *`; its callers print `pvVar->blk[i].notch_be` instead of
+  `pbVar[0x13]` (109 `->mode`, 108 `->flags1`, 44 `->blk[].flags2`, … in the export) **[fact]**.
+
+### Result (per-task copy `ghidra/FT710_MAIN_T23c`)
+| Structure | Size | Fields | Neutral `f_0x..` | Instances |
+|---|---|---|---|---|
+| `ui_state` | 0x494 | 265 | 69 | `g_ui` 0x20B04 + 11 pointers |
+| `opstate` | 0x45C | 296 | 5 | `g_opstate` 0x9A2A |
+| `cfg105` | 0x105 | 261 | 0 | `g_cfg105` 0x4659 + pointer 0x25D50 |
+| `vfo_rec` / `mode_blk` / `preset` | 0x5A / 0xA / 0x1F | 14 / 6 / 19 | 0 | `bandstack_a/b[3][12]`, `memch[133]`, `qmb[10]`, `vfo_a/b`, `memtune_a/b`, `presets[5]`, `preset_active` |
+| `ee_hdr` / `mem_hdr` / `qmb_hdr` | 10 / 0x87 / 0x11 | 3 / 3 / 6 | 0 / 0 / 2 | 0x464F / 0x60C9 / 0x9012 |
+| scalars and arrays | | | | `cat_error` 0x464A (462 references), `cat_spn_save_pending`, `cat_port`, `rf_gain_alt`, `dest_code[3]`, `bandstack_level_a/b[12]` |
+
+873 fields in 9 structures, 29 typed globals, 1 return type. `ApplyStructs: 9 structures, 873 fields, 29 globals (931 data
+units replaced, 17 labels), 1 return types, 0 errors`; a second run replaces nothing (idempotent) **[fact]**.
+`tools/struct_offsets.py fields` on the export: **8,835 accesses print as named fields** and 672 as neutral `f_0x..`
+fields; of the 9,175 raw block accesses in the committed `decomp/main` (`PTR_DAT_00025d54[0x86]`, `DAT_0000464a`, …) 3
+are left (`DAT_0000464e`, not declared). `tools/decomp_quality.py compare decomp/main/quality.tsv` → no metric worse,
+warnings 1249 → 1246, functions with a warning 371 → 368, "Globals starting with '_' overlap smaller symbols" 29 → 26.
+The retyped pointers get Ghidra's default label for a pointer to `g_ui`: `PTR_DAT_00025d54` now prints as
+`PTR_g_ui_00025d54` (the address stays in the name, so a search for `00025d54` still finds both forms).
+
+Before / after (`FUN_fffc0b2f`, `FUN_fffe2622`, `cat_TS`):
+```c
+if (PTR_DAT_00025d54[0x86] == '\x01') { ... PTR_DAT_00025d54[0x409] = 1;      /* before */
+if (PTR_g_ui_00025d54->dialog_shown == 1) { ... PTR_g_ui_00025d54->key_consumed = 1;   /* after */
+cVar1 = PTR_DAT_00025d6c[0xbe];  if (cVar1 == '\x06') ...                       /* before */
+bVar1 = PTR_g_ui_00025d6c->kbd_target;  if (bVar1 == 6) ...                    /* after */
+if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
+```
+
+### Open steps
+1. Parent: apply to the canonical project (MAIN heap 3 GB):
+   `tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplyStructs.java tools/ghidra/structs_main.h`,
+   then re-export (`tools/bootstrap.sh --only export`), `decomp_quality.py compare`, `readability_stats.py readme`, and
+   commit the project and `decomp/main` together. `build_main` in `tools/bootstrap.sh` already runs `ApplyStructs.java`
+   after `ApplySignatures.java` (both files are in its stamp list).
+2. Docs that cite `PTR_DAT_00025dxx[0x..]` or `DAT_0000464a` can keep doing so; new text should use the field names.
+3. Name the 76 neutral fields as their meaning is found (the largest: UI +0x3F7 (44 uses), +0x43A (36), +0x46B (32),
+   +0x468 (29)); 0x1FF12 (301 references, the value a menu `on_step` returns) and 0x464E are scalars outside these blocks.
+4. DISPLAY: the same scan and header for its big blocks (`struct_offsets.py` takes a different `BLOCKS` table).
+
+### Redo
+- New firmware: re-run `StructAccessDump.java` and `struct_offsets.py scan --access` on the new export; offsets that are new
+  or changed width show up as rows the header does not cover. The block addresses move with the build, so check the
+  pointer table in `.data` (`tools/ghidra/StructAccessDump.java` output, kind `ptr`) and the menu table first.
+- New information: edit the field in `structs_main.h` (name, type, tag, evidence) and re-apply; `ApplyStructs.java`
+  replaces the structures in place.
 
 ## T23d — Library identification
-- MAIN: CC-RX runtime (`_INITSCT`, stdio, `malloc`, the helpers for 64-bit and float arithmetic) and the Renesas
-  code-generator drivers (`R_*_Create`). Build the matching objects with CC-RX (or use the Renesas FIT sources), make Ghidra
-  FunctionID databases, apply, list matches in a TSV.
-- DISPLAY: armcc runtime (`__aeabi_*`, `__rt_*`) and the NORTi µITRON kernel (service calls by their standard API).
-- IFDSP: FreeRTOS kernel and NXP Redlib on the M33 (open source, build the matching version); Cadence NatureDSP on the
-  HiFi4. This is the main reason the HiFi4 is only about 30 % named.
-- Output: `tools/ghidra/names_<image>.lib.tsv` (address, name, library, version, match score), merged by
-  `tools/names_merge.py`.
+Done 2026-10-29 (worktree agent, branch `worktree-agent-a00920445fc29dc23`) as tables merged into the name TSVs; the Ghidra
+apply and re-export are open (T23d-1). Output per image: `tools/ghidra/names_<image>.lib.tsv` with the columns address,
+name, library, version, method, score, previous (the name in `decomp/<image>/functions.tsv`), evidence (starts with
+`same`, `new` or `renamed`). `python3 -I tools/lib_match.py totsv` turns it into the `names_<image>.T23d.tsv` proposal
+(only rows that change a name, comment = library, method, score, evidence, `was <old name>`), merged with
+`tools/names_merge.py merge` (MAIN, DISPLAY: under a `# --- T23d` block of `names_<image>.tsv`, renames in place; IFDSP:
+through `ifdsp_names_java.py totsv/tojava` into `IfdspM33Names.java`). Only clear matches are named; method and score per row.
+
+| Image | Library, version | Method | Rows | New names | Renamed (old hand name) |
+|---|---|---|---|---|---|
+| IFDSP M33 | FreeRTOS kernel **V10.3.0** (V10.3.x; NXP MCUXpresso SDK 2.8 era), port `ARM_CM33_NTZ`, heap_4 | `lib_match` structural match against FreeRTOS compiled with arm-none-eabi-gcc 13.2.1 `-Os` (score 0.80–1.00, 24 exact) | 67 | 0 (65 confirm the T07/T12 names) | `vPortRaiseBASEPRI` → `ulSetInterruptMask`, `vPortClearBASEPRI` → `vClearInterruptMask` (the V10.3.0 CM33 `portasm.c` names) |
+| IFDSP M33 | GNU ld long-branch veneers, startup | `veneer_pattern` (push {r0}; ldr r0,=target; mov ip,r0; pop {r0}; bx ip), `idiom` | 37 | 35 `__<target>_veneer` (34 IRQ driver handlers, `____aeabi_uldivmod_veneer`), `DefaultHandler` | none: `call_main` (= ld's `__main_veneer`) kept |
+| DISPLAY | armcc C library (RVCT / ARM Compiler 5) | `idiom` / `veneer_pattern` from objdump listings | 40 | 38 (`__aeabi_memset/memclr/memclr4/memcpy4`, `__aeabi_uidivmod`, `__aeabi_ldivmod/uldivmod`, `strcpy/strlen/strcat/strstr/memcmp`, `snprintf`, `tolower`, `__rt_entry` helpers: `__user_setup_stackheap`, `__rt_lib_init`, `exit`, `_sys_exit`, `__cxa_pure_virtual`, ...; A32→Thumb veneers) | `memclr` → `__aeabi_memclr4`; `__aeabi_uidivmod` (0x20155480) → `__aeabi_idivmod` (it is the signed divider; the unsigned entry is 0x20156260) |
+| DISPLAY | NORTi µITRON 4.0 (MiSPO) | `uitron_api_shape`: object table, id range, error codes, semantics read in the decompiler | 45 | 37 service calls (`itron_act_tsk`, `chg_pri`, `sus_tsk`, `ext_tsk`, `get_pri/tid/tim`, `tslp_tsk`, `rot_rdq`, `dis/ena_dsp`, `loc/unl_cpu`, `sig_sem`, `twai_sem`, `del_sem`, `clr_flg`, `tsnd/trcv_dtq`, `snd/trcv_mbx`, `tsnd/trcv_mbf`, `tget/rel_mpf`, `del_mpf`, `tloc/unl_mtx`, `sta/stp_cyc`, `acre_cyc/dtq/mbf/mbx/mpf/mpl/mtx`) + 8 `os_create_*_named` wrappers | none |
+| MAIN | Renesas Code Generator (r_cg_*) for RX651 | `cg_registers`: registers touched (named by `sfr_rx651.tsv`), position after the module's `R_*_Create`, size equal to the sibling drivers | 28 | `R_SCI1/4/6/7_Stop`, `R_SCI7_Start/Serial_Send/Serial_Receive`, `R_SCI6_Start`, `R_SCI6_IIC_StartCondition/Master_Send/Master_Receive`, `R_TPU0/3_Stop`, `R_DA0_Stop`, `R_MTU2_Start/Stop`, 9 `R_*_Create_UserInit`, 2 `r_sci6_callback_*` | `sci6_iic_condition` → `R_SCI6_IIC_StopCondition` |
+| MAIN | CC-RX runtime | `idiom` | 1 | `__udiv64` (64-bit unsigned divide; the real CC-RX symbol is unknown) | none |
+
+Findings:
+- The M33 kernel is FreeRTOS **V10.3.x** [fact]: no FPU context save in `PendSV_Handler` (configENABLE_FPU 0), non-indexed task
+  notifications (V10.4 added indices), `xTaskGenericNotify`/`vTaskInternalSetTimeOutState`/`xQueueSemaphoreTake` (V10.0+),
+  and the `ARM_CM33_NTZ` port; V10.3.0 and `V10.3.1-kernel-only` match identically, V10.2.1 matches 33 functions instead of 67.
+  The build is `-Os` (67 matches vs 22 at `-O1`, 15 at `-O2`).
+- Four more hand-named kernel functions agree with the source but fall under the uniqueness margin (`prvInsertBlockIntoFreeList`,
+  `xTaskGetSchedulerState`, `xTaskGenericNotify`, `xQueueReceive`, score 0.69–0.86); tiny accessors (`xTaskGetTickCount`, 3
+  instructions) are not distinctive. None of the 39 `FUN_` M33 functions is a FreeRTOS function.
+- Redlib (NXP's closed C library), the MCUXpresso drivers and rpmsg-lite were not compiled: their M33 functions already
+  carry their SDK names from T07/T12.
+- The DISPLAY armcc library is A32 (division, `memcpy`, `strcmp`) and Thumb-2 (`memset` family, string functions, printf
+  helpers, `__rt_entry` path); A32 callers reach the Thumb code through `add ip,pc,#1; bx ip` veneers [fact].
+- NORTi object tables [fact]: TCB pointers 0x208DBBA0, semaphores 0x208DBCA4 (64), flags 0x208DBDA4 (64), mailboxes
+  0x208DBEA4 (8), message buffers 0x208DBEC4 (8), variable pools 0x208DBF04 (8), fixed pools 0x208DBF24 (16), cyclic
+  handlers 0x208DBF64 (8), data queues 0x208DBFA4 (8), mutexes 0x208DBFC4 (32), interrupt service routines 0x208DC044;
+  ready queues 0x208DC18C, kernel state 0x208003D4.. (last error 0x208003D4, dispatch/CPU-lock state 0x208003DB).
+- Not named (unclear): the NORTi internals (wait-queue, timer-queue and dispatcher helpers 0x201535B4..0x20156878, kernel
+  start 0x201530FC), the armcc printf core (0x20100C7C, 0x20154C48, 0x20155F72), floating-point printing (0x201560A0,
+  0x20155B5C), `__user_libspace` (0x201556D8, an alias of `__user_perproc_libspace`), MAIN `FUN_fff92e25`/`FUN_fff9321e`.
+
+Open steps:
+- **T23d-1** apply: MAIN and DISPLAY with `ApplyNames.java` (`names_<image>.tsv`), IFDSP with `IfdspM33Names.java`, on the
+  canonical projects; re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together (rules above).
+- **T23d-2** HiFi4 NatureDSP-like kernels (FLIX patterns in `decomp/ifdsp/hifi4/flix.dis`): not started.
+- **T23d-3** optional: Ghidra FunctionID `.fidb` from the same FreeRTOS objects, for porting to other firmware with Ghidra's
+  own matcher (`lib_match.py` already covers this image).
+
+Redo:
+- IFDSP: `FRTOS=<FreeRTOS-Kernel V10.3.0>/FreeRTOS/Source BUILD=build tools/t23d_lib.sh` rewrites `names_ifdsp.lib.tsv`; then
+  `python3 -I tools/lib_match.py totsv --skip 080017a8 tools/ghidra/names_ifdsp.lib.tsv > tools/ghidra/names_ifdsp.T23d.tsv`,
+  `ifdsp_names_java.py totsv IfdspM33Names.java m33.tsv`, `names_merge.py merge m33.tsv out.tsv names_ifdsp.T23d.tsv`,
+  `ifdsp_names_java.py tojava IfdspM33Names.java out.tsv`. On new firmware rerun the version sweep first (build each candidate
+  tag, keep the one with the most matches).
+- DISPLAY, MAIN: the tables are reviewed by hand; on new firmware port the rows by function matcher (the evidence column says
+  what to look for), then `lib_match.py totsv names_<image>.lib.tsv > names_<image>.T23d.tsv` and
+  `names_merge.py merge names_<image>.tsv names_<image>.tsv names_<image>.T23d.tsv`.
 
 ## T23e — Name the most-called functions
-- A script ranks `FUN_` functions by callers (`functions.tsv`) and prints, per function: strings used, registers touched
-  (after T23a/b), struct fields (after T23c), named callers and callees, CAT command or menu item, so a reviewer can
-  name them in batches of about 100 (the T10/T11 pattern, `names_<image>.T23e.tsv`, merged into `names_<image>.tsv`).
-- Top unnamed callees in MAIN today: `FUN_fffec2e5` (124 call sites), `FUN_fffc0b2f` (117), `FUN_fffe2622` (113, a
-  dispatch on `PTR_DAT_00025d6c[0xbe]`). First names: `FUN_fff8ff82`/`FUN_fff8ffa3` (interrupt enable/disable) and
-  `FUN_fff8f8bb`/`FUN_fff8f8d8` (debug-console charput/charget), from T23a.
+
+**Status:** first batch named in the TSVs (2026-10-29); the Ghidra apply and re-export are open (the parent applies names to the
+canonical projects).
+
+### Method
+- `tools/naming_worklist.py <image>` ranks the unnamed `FUN_` functions (decomp name `FUN_` **and** no row in
+  `tools/ghidra/names_<image>.tsv`, so names added after the last export count as named) by distinct callers, then call sites,
+  both counted from the C text. Per function it prints: the plate comment, strings, globals with labels (RX651 register names
+  from `sfr_rx651.tsv` for MAIN; the state block 0x20B04 as `state+0xNN`; address rows from `docs/memory-maps.md` and the
+  `docs/code/<image>/` tables; EX item names and RAM addresses from the `menu.md` item list), CAT commands whose handlers reach it
+  within 3 call levels (`decomp/main/cat_dispatch.tsv`), menu items whose callbacks reach it (`entries_main_menu.tsv`), named
+  callers and callees, the lines of `docs/` that already mention it, and the first body lines. Output goes to `build/`.
+- Each function in the top of the list was read in `decomp/` (with callers where needed) and named in the repo style
+  (lower_snake_case, subsystem prefix; Renesas BSP / armcc / NORTi names where the code matches the library). Neutral names
+  (`ui_clear_415_423`, `sd_state_bit6`, `keypad_2digit_key`) where only the stores are clear. A few ROM tables and texts were
+  read from the decoded MAIN image to name menu draw helpers and dialogs; the comment says ROM when it did.
+- Rows: `tools/ghidra/names_main.T23e.tsv` and `names_display.T23e.tsv`, merged with
+  `python3 -I tools/names_merge.py merge` (0 conflicts for MAIN; one deliberate rename for DISPLAY, below) and appended to
+  `names_<image>.tsv` under a `# --- T23e` comment.
+
+### Findings
+- **MAIN: 132 names**, the whole top 100 of the ranking plus 32 helpers they call (BSP software-interrupt module, memory-channel
+  steps, dialogs). They cover **1,641 call sites** (20.7 % of the 7,910 calls to known functions in the export) and
+  1,519 caller edges (`naming_worklist.py main --coverage tools/ghidra/names_main.T23e.tsv`).
+  Examples: `ui_softkey_dispatch` 0xFFFC0B2F (116 soft-key handlers: dialog / keyboard / pop-up routing), `kbd_key_dispatch`
+  0xFFFE2622 (keyboard target UI +0xBE), `ai_ex_fmt_u8` 0xFFFEC2E5 (CAT AI EX value formatter), `popup_open_timed` /
+  `popup_close` / `popup_duration_get`, `R_BSP_SoftwareInterruptControl` 0xFFF90F9B with its 14 `bsp_swint_*` helpers (the
+  command switch matches the Renesas BSP), `R_BSP_InterruptRequestEnable` / `Disable` 0xFFF8FF82 / 0xFFF8FFA3, `charput` /
+  `charget`, `bcd_to_bin`, `tx_band_of_freq`, and 25 `menu_draw_*` / `menu_step_*` helpers named after their EX items.
+- **DISPLAY: 66 rows**, 50 of the top 60 plus 16 callees. They cover **1,888 call sites** (21.9 % of 8,620). Examples:
+  `__aeabi_uidivmod` 0x20156260 (71 callers), `reg_rmw8` / `reg_read8` (RSPI/DMAC field helpers), NORTi
+  `itron_tslp_tsk` / `itron_sig_sem` / `itron_twai_sem` / `itron_clr_flg` / `itron_rot_rdq` / `itron_chg_pri` /
+  `itron_tloc_mtx` / `itron_unl_mtx` / `itron_tget_mpf` (from the ITRON error codes and object tables), `memcmp`, `strlen`,
+  `__aeabi_memset` / `__aeabi_memclr`, the FAT layer's `fs_set_error`, `fs_fclose`, `fat_clust2sect`, `sjis_is_lead`.
+- **Rename:** 0x20155480 was `__aeabi_uidivmod`, but it negates negative operands first, so it is the signed
+  `__aeabi_idivmod`; the unsigned entry is 0x20156260, which joins the same loop **[fact for the code, inference for the ABI
+  names]**. This is the only changed existing row.
+- Settled on the way: the 0x70 dialog texts n = 0..0x1A ([display-link.md](../code/main/display-link.md#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw)),
+  which the page listed as open.
+- Left unnamed in DISPLAY's top 60: the NORTi queue internals 0x20153A38 / 0x201539EC / 0x20154524 / 0x20154580 / 0x2015476C,
+  the soft-float routine 0x201649D8, 0x20136398 (a wrapper whose arguments the decompiler lost), 0x20108BC8 (a 0x600-byte object
+  initialiser), 0x20144950 and 0x2011D830 (purpose unclear).
+
+### Open steps (Ghidra)
+1. Apply `names_main.tsv` / `names_display.tsv` with `ApplyNames.java` and re-export (`tools/bootstrap.sh --only ghidra,export`
+   or the per-image commands in `decomp/<image>/INDEX.md`), then `decomp_quality.py compare` and `readability_stats.py readme`.
+
+### Redo (next batch or new firmware)
+1. `python3 -I tools/naming_worklist.py main --top 100 --out build/t23e/main.md` (and `display --top 60`); `--format tsv` gives a
+   sortable list, `--all` ranks named functions too, `--excerpt N` sets the body lines.
+2. Read each function and its callers in `decomp/`, write rows to `tools/ghidra/names_<image>.T23<x>.tsv`
+   (address, name, comment with the evidence and [fact]/[inference]).
+3. `python3 -I tools/names_merge.py report tools/ghidra/names_<image>.tsv <new.tsv>` (conflicts), then `merge` into the base;
+   check for duplicate names; `naming_worklist.py <image> --coverage <new.tsv>` for the counts.
+4. For new firmware, port the names by function matching first (see the Redo section above); the work list then shows what is
+   still unnamed.
 
 ## T23f — Signatures, enums, parameter names
 - Draft signatures for DISPLAY and IFDSP the way `tools/signatures_draft.py` does for MAIN; apply with
@@ -150,9 +406,121 @@ Rules for every sub-task:
 - Enums for mode, band, VFO and the CAT command ids (`decomp/main/cat_dispatch.tsv`), applied to the parameters and
   struct fields that hold them.
 
+**Status:** done on per-task copies (2026-10-29, worktree agent). Open: apply to the canonical projects and re-export
+`decomp/` (the parent's step; `tools/bootstrap.sh` already runs the new scripts on a rebuild).
+
+### Plan
+1. MAIN enums as a committed C header with per-value evidence, a uses TSV and `ApplyEnums.java` (after ApplySignatures).
+2. `FUN_fff8fc57`: reviewed `doc` row in `signatures_main.tsv` (two `uint32`), plus `doc` rows for the mode setters the
+   enums need.
+3. `CallArgCheck.java` and `signatures_draft.py` learn ARM AAPCS; draft `signatures_display.tsv` / `signatures_m33.tsv`
+   with only clear rows; apply with `ApplySignatures.java` on copies; `decomp_quality.py compare` must show nothing worse.
+4. bootstrap steps, tools/README, this section.
+
+### Findings
+- **Enums** (`tools/ghidra/enums_main.h`, 10 enums, 178 values, each with its evidence): `radio_mode` (0..15 from
+  `cat_mode_codes` 0xFFF806D0, plus `MODE_NONE` 0xFF), `band_idx` (band_table 0xFFF8876C rows 0..11, `BAND_COUNT`,
+  `BAND_NONE`), `vfo_which` (RX/TX), `vfo_side` (A/B/selected), `vfo_state` (0x9DBE/0x9DBF: 1 VFO, 2 memory,
+  3 memory tune, 4 PMS, 5 QMB, 7/8 locked; 0/6/9 named as never written, #173), `cat_cmd` (the 104 `cat_mnemonics`
+  indices + `CAT_COUNT`/`CAT_NONE`), `cat_ext_cmd` (10), `sdr_mod_class` (SDR reg 0x0A), `dsp_demod` (DSP reg 6),
+  `tunlin_mode` (0x9AB7). `tools/ghidra/enum_uses_main.tsv`: 30 parameters, 3 returns (`vfo_mode`, `band_of_freq`,
+  `tunlin_port_mode`), 11 globals (0x9DBD, 0x9DBE/F, 0x9DC3/4, 0x9DC7/8, 0x20F28, 0x9AB7, shadows 0x1B742 and 0x1B63E).
+  All applied, 0 failed **[fact: ApplyEnums log]**. The decompiler now prints `radio_mode vfo_mode(vfo_which which)`,
+  `switch(mode) { case MODE_LSB: ...` in `FUN_fffc4bd5`, `case CAT_AG:` in `cat_dispatch`,
+  `if (vfo_side_00009dbd == VFO_A)` and `param_1 < BAND_GEN` in `band_select`.
+- Enum caveats: Ghidra prints an enum's type into arithmetic on it (`rStack_e + MODE_USB` in the cat_MD lookup loop,
+  `& ~MODE_15` for the 0xF0 mask, `cStack_e < CAT_BD` for the extended-table loop that shares cat_parse's counter).
+  `cat_ext_cmd` is therefore defined but not applied (applying it turned the primary loop into `CATX_` values). Values
+  that are not named print as an OR of named ones, so every bound the code compares with has a name.
+- **Pointer-typed constant fixed:** `FUN_fff8fc57` compares R2 with #0xF4240, #1000 and 1 and divides by it, so it is a
+  time unit, not a pointer (`doc` row `uint8 FUN_fff8fc57(uint32 delay, uint32 units)`; Renesas BSP software delay
+  [inference]). The call now reads `FUN_fff8fc57(0x19,1000000)`. `FUN_fffc616e` still has a local `&DAT_000f4240`
+  (a stack variable, not a signature matter).
+- **MAIN quality** (copy with the new rows + enums, compared with the committed `decomp/main/quality.tsv`): no metric
+  changed.
+- **CallArgCheck on ARM** (slot k = r(k-1)): tail calls (`b func`, 512 in DISPLAY, 102 in the M33) were read as calls
+  whose following bytes were their return use; they are now left out of the stats (DISPLAY lost_ret 170 → 17, M33 13 → 0
+  before any signature). A call reads its callee's live-in (wrappers pass r0..r3 on), PUSH counts as no use (armcc and
+  gcc push r0-r3 to reserve stack). The M33 code is built with gcc `-fipa-ra`: callers keep r0..r3 across a callee that
+  never writes them (`power_set_deepsleep_pmc_cfg` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
+  (transitive over the call graph) and `sites_keep_scratch` (r2/r3/r12 live after the call, or r0/r1 the callee never
+  writes), and the drafter leaves such functions out.
+- **Signatures**: `signatures_display.tsv` 578 rows (575 asm, 1 doc `__aeabi_uidivmod` as uint64 per the RTABI,
+  2 skip), `signatures_m33.tsv` 222 rows (216 asm, 2 doc `__aeabi_uldivmod`, `rpmsg_queue_nocopy_free`, 4 skip);
+  246 / 166 named functions left out as not clear. Rules in `draft_arm()`: same count as the decompiler, or more with a
+  caller that sets them; never fewer (17 functions got `in_` variables when that was tried: the decompiler's extra
+  parameters are mostly real reads the block liveness misses); >4 parameters keep the decompiler's stack arguments;
+  no gaps. `skip` rows (not applied, kept on redraft) are the six whose lock made the export worse
+  (`gic_dispatch`, `debug_cmd_line_write`, `RESET_SetPeripheralReset`, the two `PINT_` helpers, `memset`).
+- **Quality on the copies** vs the committed `quality.tsv`: DISPLAY warnings 212 → 211, functions with `in_` 62 → 60,
+  `unaff_` 44 → 42, `extraout_` 78 → 68, any of them 166 → 158; M33 `in_` 13 → 9, any 25 → 21; nothing worse
+  **[fact: decomp_quality.py compare]**. Example: `scr_select_popup` loses all 66 `unaff_` variables once
+  `fb_get_layer_addr` is `void *(uint32)`.
+
+### Open steps (parent)
+1. Apply to the canonical projects (`ApplySignatures.java signatures_main.tsv` + `ApplyEnums.java enums_main.h
+   enum_uses_main.tsv` on MAIN; `ApplySignatures.java` with `signatures_display.tsv` / `signatures_m33.tsv` on
+   DISPLAY / IFDSP M33), re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together.
+2. Redraft after naming batches (T23e): `CallArgCheck.java` on a project without the ARM signatures, then
+   `python3 -I tools/signatures_draft.py protos.tsv - tools/ghidra/signatures_display.tsv mismatch.tsv display`
+   (or `... signatures_m33.tsv ... m33`); check the export and turn any row that makes it worse into a `skip` row.
+3. More enum uses once T23c's structs exist (per-mode block fields, UI +0x424, the record's mode nibble).
+4. Canonical apply (2026-10-29, parent): done for 30 parameters and 3 returns; 9 of the 11 enum globals failed
+   ("not undefined/plain integer data") because `ApplyStructs.java` had already typed them as fields of `opstate`
+   (0x9DBD..0x9DC8, 0x9AB7) and `ui_state` (0x20F28). Fix: give those struct fields the enum types in `structs_main.h`
+   (ApplyStructs would need to look the enum up under /FT710, so ApplyEnums must create the enums first) and drop the
+   global rows from `enum_uses_main.tsv`.
+
 ## T23g — Readable view (optional)
 - `decomp/<image>/readable/<subsystem>.c`: the same functions grouped by the `docs/code/<image>/` subsystem pages, each
   with a header comment (inferred name, purpose, [fact]/[inference]); generated from the export, never edited by hand.
+
+**Status:** done (2026-10-29).
+
+### Plan
+1. `tools/readable_view.py` reads only committed files: `decomp/<image>/*.c` (split at the `// ===== name @ addr`
+   markers), `functions.tsv` (callers) and the function tables of `docs/code/<dir>/*.md`.
+2. Deterministic output, a `check` mode for staleness, hooked into `tools/bootstrap.sh` (`export` builds, `verify` checks).
+3. Commit the generated `decomp/*/readable/`.
+
+### How it works
+- **Tables:** every Markdown table whose header has an address column (`Address`, `Entry`, `ISR (entry)`) and/or a name
+  column (`Ghidra name`, `Name`, `Helper`); tables with a `Size` or `Type` column are data and skipped. The variants seen
+  on the pages: `Address | Ghidra name | Inferred name | Purpose` (most), `… | Proposed name | …` (radio-control),
+  `… | Inferred name / role | …` (cat), `Address | Ghidra name | What it computes | Registers | Tag` (dsp-chains),
+  `Address | Name | Notes` (display boot-rtos), `Step`/`#` + `Address` (main README), `Task | Entry | …` (display input,
+  mainlink), `Helper | Proposed name | …` without addresses (sdr-link). Cells with several addresses
+  (`0x201326FC / 0x20132E78` with `` `a` / `b` ``) are paired by position; an address range of at most 0x400 bytes in a
+  table with a name column (`0xFFFB7051..0xFFFB70F7`) covers every function entry in it.
+- **Assignment:** a hex number in the address column that is a function entry of this image assigns it; rows whose
+  addresses are not functions of this image (data, the other IFDSP core) are ignored. Rows without an address match by
+  the backticked names against the current Ghidra name. Pages are searched in name order with README.md last (its file
+  is `overview.c`); the first page that lists the address wins, otherwise the first that lists the name; the others are
+  listed as "Also on". Unlisted functions go to `unassigned.c`, in sections by export file.
+- **Header comment** per function: Ghidra name, address, size, callers, export file; the doc's name if it differs from
+  the Ghidra name (so a stale doc name after a rename is visible), the inferred/proposed name, the purpose columns,
+  the tags found in the row (`[fact]`, `[inference]`, `[guess]`, or a `Tag` column; "none in the table row" when the
+  page tags the claim elsewhere), the page link. The body from the marker line to the next marker is copied byte for
+  byte (the script asserts that the chunks rebuild each export file exactly).
+- **Bootstrap:** `step_export` runs `readable_view.py build` after `readability_stats.py readme` when `DECOMP_OUT` is the
+  repo's `decomp/`. `verify` leaves `readable/` out of the export comparison in both modes (it is derived, not
+  exported; with a separate `DECOMP_OUT` it does not exist there) and runs `readable_view.py check` instead, which
+  regenerates into a temp dir and fails if the committed view differs from committed `decomp/` + `docs/code/`.
+  After a re-export with new names, `bootstrap.sh --only export` (or `python3 -I tools/readable_view.py build`)
+  refreshes it with no manual step; commit it with the export. A docs-only change also makes it stale (rerun `build`).
+
+### Findings (first build, 2026-10-29, export as of commit 66edeac)
+| Image | Functions | On a subsystem page | Unassigned |
+|---|---:|---:|---:|
+| main | 3,793 | 521 | 3,272 |
+| display | 2,212 | 561 | 1,651 |
+| ifdsp/m33 | 427 | 143 | 284 |
+| ifdsp/hifi4 | 1,083 | 196 | 887 |
+
+- Size: 7.4 MB in all (main 3.0, display 2.4, hifi4 1.7, m33 0.4 MB) against 6.3 MB of exported `*.c`; the header
+  comments add about 1.1 MB. Unassigned functions get a one-line header (the marker already gives name, address, size).
+- Only function **tables** count; a function named only in the prose of a page stays unassigned. Moving prose-only
+  functions into the tables raises the assigned share without touching the script.
 
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.

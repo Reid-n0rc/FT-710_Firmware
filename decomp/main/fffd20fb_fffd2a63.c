@@ -7,14 +7,16 @@
 void menu_ex060505_draw(void)
 
 {
-  FUN_fffd2108(5);
+  menu_draw_preset_agc_fast(5);
   return;
 }
 
 
-// ===== FUN_fffd2108 @ fffd2108 (240 bytes)
+// ===== menu_draw_preset_agc_fast @ fffd2108 (240 bytes)
 
-void FUN_fffd2108(byte param_1,byte *param_2)
+/* PRESET n AGC FAST DELAY row [fact] */
+
+void menu_draw_preset_agc_fast(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -31,22 +33,22 @@ void FUN_fffd2108(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bb9;
+    local_b = g_opstate.presets[4].agc_fast_delay;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b5c;
+    local_b = g_opstate.presets[1].agc_fast_delay;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b7b;
+    local_b = g_opstate.presets[2].agc_fast_delay;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9a;
+    local_b = g_opstate.presets[3].agc_fast_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b3d;
+    local_b = g_opstate.presets[0].agc_fast_delay;
   }
   if (local_b == 7) {
     *param_2 = *param_2 | 0x80;
@@ -56,7 +58,7 @@ void FUN_fffd2108(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
-  bVar2 = FUN_fff9c843((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
+  bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
   param_2[1] = 0x73;
@@ -73,7 +75,7 @@ void FUN_fffd2108(byte param_1,byte *param_2)
 void menu_ex060106_draw(void)
 
 {
-  FUN_fffd2239(1);
+  menu_draw_preset_agc_mid(1);
   return;
 }
 
@@ -85,7 +87,7 @@ void menu_ex060106_draw(void)
 void menu_ex060206_draw(void)
 
 {
-  FUN_fffd2239(2);
+  menu_draw_preset_agc_mid(2);
   return;
 }
 
@@ -97,7 +99,7 @@ void menu_ex060206_draw(void)
 void menu_ex060306_draw(void)
 
 {
-  FUN_fffd2239(3);
+  menu_draw_preset_agc_mid(3);
   return;
 }
 
@@ -109,7 +111,7 @@ void menu_ex060306_draw(void)
 void menu_ex060406_draw(void)
 
 {
-  FUN_fffd2239(4);
+  menu_draw_preset_agc_mid(4);
   return;
 }
 
@@ -121,14 +123,16 @@ void menu_ex060406_draw(void)
 void menu_ex060506_draw(void)
 
 {
-  FUN_fffd2239(5);
+  menu_draw_preset_agc_mid(5);
   return;
 }
 
 
-// ===== FUN_fffd2239 @ fffd2239 (241 bytes)
+// ===== menu_draw_preset_agc_mid @ fffd2239 (241 bytes)
 
-void FUN_fffd2239(byte param_1,byte *param_2)
+/* PRESET n AGC MID DELAY row [fact] */
+
+void menu_draw_preset_agc_mid(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -145,22 +149,22 @@ void FUN_fffd2239(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bba;
+    local_b = g_opstate.presets[4].agc_mid_delay;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b5d;
+    local_b = g_opstate.presets[1].agc_mid_delay;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b7c;
+    local_b = g_opstate.presets[2].agc_mid_delay;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9b;
+    local_b = g_opstate.presets[3].agc_mid_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b3e;
+    local_b = g_opstate.presets[0].agc_mid_delay;
   }
   if (local_b == 0x18) {
     *param_2 = *param_2 | 0x80;
@@ -170,7 +174,7 @@ void FUN_fffd2239(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
-  bVar2 = FUN_fff9c843((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
+  bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
   param_2[1] = 0x73;
@@ -187,7 +191,7 @@ void FUN_fffd2239(byte param_1,byte *param_2)
 void menu_ex060107_draw(void)
 
 {
-  FUN_fffd236b(1);
+  menu_draw_preset_agc_slow(1);
   return;
 }
 
@@ -199,7 +203,7 @@ void menu_ex060107_draw(void)
 void menu_ex060207_draw(void)
 
 {
-  FUN_fffd236b(2);
+  menu_draw_preset_agc_slow(2);
   return;
 }
 
@@ -211,7 +215,7 @@ void menu_ex060207_draw(void)
 void menu_ex060307_draw(void)
 
 {
-  FUN_fffd236b(3);
+  menu_draw_preset_agc_slow(3);
   return;
 }
 
@@ -223,7 +227,7 @@ void menu_ex060307_draw(void)
 void menu_ex060407_draw(void)
 
 {
-  FUN_fffd236b(4);
+  menu_draw_preset_agc_slow(4);
   return;
 }
 
@@ -235,14 +239,16 @@ void menu_ex060407_draw(void)
 void menu_ex060507_draw(void)
 
 {
-  FUN_fffd236b(5);
+  menu_draw_preset_agc_slow(5);
   return;
 }
 
 
-// ===== FUN_fffd236b @ fffd236b (241 bytes)
+// ===== menu_draw_preset_agc_slow @ fffd236b (241 bytes)
 
-void FUN_fffd236b(byte param_1,byte *param_2)
+/* PRESET n AGC SLOW DELAY row [fact] */
+
+void menu_draw_preset_agc_slow(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -259,22 +265,22 @@ void FUN_fffd236b(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bbb;
+    local_b = g_opstate.presets[4].agc_slow_delay;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b5e;
+    local_b = g_opstate.presets[1].agc_slow_delay;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b7d;
+    local_b = g_opstate.presets[2].agc_slow_delay;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9c;
+    local_b = g_opstate.presets[3].agc_slow_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b3f;
+    local_b = g_opstate.presets[0].agc_slow_delay;
   }
   if (local_b == 0x4a) {
     *param_2 = *param_2 | 0x80;
@@ -284,7 +290,7 @@ void FUN_fffd236b(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
-  bVar2 = FUN_fff9c843((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
+  bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
   param_2[1] = 0x73;
@@ -301,7 +307,7 @@ void FUN_fffd236b(byte param_1,byte *param_2)
 void menu_ex060108_draw(void)
 
 {
-  FUN_fffd249d(1);
+  menu_draw_preset_lcut_freq(1);
   return;
 }
 
@@ -313,7 +319,7 @@ void menu_ex060108_draw(void)
 void menu_ex060208_draw(void)
 
 {
-  FUN_fffd249d(2);
+  menu_draw_preset_lcut_freq(2);
   return;
 }
 
@@ -325,7 +331,7 @@ void menu_ex060208_draw(void)
 void menu_ex060308_draw(void)
 
 {
-  FUN_fffd249d(3);
+  menu_draw_preset_lcut_freq(3);
   return;
 }
 
@@ -337,7 +343,7 @@ void menu_ex060308_draw(void)
 void menu_ex060408_draw(void)
 
 {
-  FUN_fffd249d(4);
+  menu_draw_preset_lcut_freq(4);
   return;
 }
 
@@ -349,14 +355,16 @@ void menu_ex060408_draw(void)
 void menu_ex060508_draw(void)
 
 {
-  FUN_fffd249d(5);
+  menu_draw_preset_lcut_freq(5);
   return;
 }
 
 
-// ===== FUN_fffd249d @ fffd249d (235 bytes)
+// ===== menu_draw_preset_lcut_freq @ fffd249d (235 bytes)
 
-void FUN_fffd249d(byte param_1,byte *param_2)
+/* PRESET n LCUT FREQ row: OFF / 100Hz / 150Hz .. (ROM 0xFFF8509B) [fact] */
+
+void menu_draw_preset_lcut_freq(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -374,22 +382,22 @@ void FUN_fffd249d(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bbc;
+    local_b = g_opstate.presets[4].lcut_freq;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b5f;
+    local_b = g_opstate.presets[1].lcut_freq;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b7e;
+    local_b = g_opstate.presets[2].lcut_freq;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9d;
+    local_b = g_opstate.presets[3].lcut_freq;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b40;
+    local_b = g_opstate.presets[0].lcut_freq;
   }
   if (local_b == 1) {
     *param_2 = *param_2 | 0x80;
@@ -495,22 +503,22 @@ void FUN_fffd25c9(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bbd;
+    local_b = g_opstate.presets[4].lcut_slope;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b60;
+    local_b = g_opstate.presets[1].lcut_slope;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b7f;
+    local_b = g_opstate.presets[2].lcut_slope;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9e;
+    local_b = g_opstate.presets[3].lcut_slope;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b41;
+    local_b = g_opstate.presets[0].lcut_slope;
   }
   if (local_b == 1) {
     *param_2 = *param_2 | 0x80;
@@ -616,22 +624,22 @@ void FUN_fffd26f4(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bbe;
+    local_b = g_opstate.presets[4].hcut_freq;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b61;
+    local_b = g_opstate.presets[1].hcut_freq;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b80;
+    local_b = g_opstate.presets[2].hcut_freq;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009b9f;
+    local_b = g_opstate.presets[3].hcut_freq;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b42;
+    local_b = g_opstate.presets[0].hcut_freq;
   }
   if (local_b == 0x33) {
     *param_2 = *param_2 | 0x80;
@@ -737,22 +745,22 @@ void FUN_fffd2821(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bbf;
+    local_b = g_opstate.presets[4].hcut_slope;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b62;
+    local_b = g_opstate.presets[1].hcut_slope;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b81;
+    local_b = g_opstate.presets[2].hcut_slope;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009ba0;
+    local_b = g_opstate.presets[3].hcut_slope;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b43;
+    local_b = g_opstate.presets[0].hcut_slope;
   }
   if (local_b == 1) {
     *param_2 = *param_2 | 0x80;
@@ -844,7 +852,7 @@ void FUN_fffd294c(byte param_1,byte *param_2)
 
 {
   bool bVar1;
-  char local_b;
+  byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
     bVar1 = true;
@@ -856,24 +864,24 @@ void FUN_fffd294c(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bc0;
+    local_b = g_opstate.presets[4].usb_out_level;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b63;
+    local_b = g_opstate.presets[1].usb_out_level;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b82;
+    local_b = g_opstate.presets[2].usb_out_level;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009ba1;
+    local_b = g_opstate.presets[3].usb_out_level;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b44;
+    local_b = g_opstate.presets[0].usb_out_level;
   }
-  if (local_b == '2') {
+  if (local_b == 0x32) {
     *param_2 = *param_2 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -881,7 +889,7 @@ void FUN_fffd294c(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
-  FUN_fff9c6f0(local_b,param_2 + 0x18);
+  dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
 
@@ -952,7 +960,7 @@ void FUN_fffd2a63(byte param_1,byte *param_2)
 
 {
   bool bVar1;
-  char local_b;
+  byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
     bVar1 = true;
@@ -964,24 +972,24 @@ void FUN_fffd2a63(byte param_1,byte *param_2)
     return;
   }
   if (param_1 == 5) {
-    local_b = DAT_00009bc1;
+    local_b = g_opstate.presets[4].rear_out_level;
   }
   else if (param_1 == 2) {
-    local_b = DAT_00009b64;
+    local_b = g_opstate.presets[1].rear_out_level;
   }
   else if (param_1 == 3) {
-    local_b = DAT_00009b83;
+    local_b = g_opstate.presets[2].rear_out_level;
   }
   else if (param_1 == 4) {
-    local_b = DAT_00009ba2;
+    local_b = g_opstate.presets[3].rear_out_level;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_b = DAT_00009b45;
+    local_b = g_opstate.presets[0].rear_out_level;
   }
-  if (local_b == '2') {
+  if (local_b == 0x32) {
     *param_2 = *param_2 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -989,7 +997,7 @@ void FUN_fffd2a63(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
-  FUN_fff9c6f0(local_b,param_2 + 0x18);
+  dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
 

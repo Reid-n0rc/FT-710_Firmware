@@ -4,18 +4,18 @@
 
 /* [guess] */
 
-void _Cflush_read(undefined4 *param_1)
+void _Cflush_read(void *param_1)
 
 {
-  param_1[3] = param_1[3] & 0xffffffdf;
-  if (param_1[6] != param_1[10]) {
+  *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffffdf;
+  if (*(int *)((int)param_1 + 0x18) != *(int *)((int)param_1 + 0x28)) {
     _Cflush_write();
-    param_1[3] = param_1[3] & 0xffffcfef | 0x10;
-    param_1[6] = param_1[10];
-    param_1[0xb] = param_1[4];
-    *param_1 = param_1[4];
+    *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffcfef | 0x10;
+    *(undefined4 *)((int)param_1 + 0x18) = *(undefined4 *)((int)param_1 + 0x28);
+    *(undefined4 *)((int)param_1 + 0x2c) = *(undefined4 *)((int)param_1 + 0x10);
+    *(undefined4 *)param_1 = *(undefined4 *)((int)param_1 + 0x10);
   }
-  param_1[3] = param_1[3] & 0xffffbfbf;
+  *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffbfbf;
   return;
 }
 
@@ -27,8 +27,8 @@ void _Cflush_read(undefined4 *param_1)
 uint fputc(byte param_1,uint *param_2)
 
 {
-  int iVar1;
-  uint uVar2;
+  uint uVar1;
+  int iVar2;
   uint uVar3;
   byte *pbVar4;
   uint uVar5;
@@ -61,13 +61,13 @@ LAB_000874ee:
       uVar5 = uVar3 | 0x12000;
       param_2[3] = uVar5;
       if ((uVar3 & 0xf00) == 0) {
-        iVar1 = __sys_istty(param_2[5]);
-        if ((iVar1 == 0) || (-1 < (int)(uVar3 << 0x15))) {
-          uVar2 = _Csys_alloc(0x100);
+        uVar5 = __sys_istty();
+        if ((uVar5 == 0) || (-1 < (int)(uVar3 << 0x15))) {
+          uVar1 = _Csys_alloc(0x100);
           param_2[7] = 0x100;
           uVar5 = uVar3 | 0x12800;
-          param_2[4] = uVar2;
-          *param_2 = uVar2;
+          param_2[4] = uVar1;
+          *param_2 = uVar1;
           param_2[3] = param_2[3] | uVar5;
         }
         else {
@@ -85,31 +85,31 @@ LAB_000874ee:
         *param_2 = (uint)(pbVar4 + 1);
         *pbVar4 = param_1;
         if (*param_2 < param_2[0xb]) {
-          iVar1 = param_2[0xb] - (int)pbVar6;
+          iVar2 = param_2[0xb] - (int)pbVar6;
         }
         else {
-          iVar1 = *param_2 - (int)pbVar6;
+          iVar2 = *param_2 - (int)pbVar6;
         }
         param_2[0xc] = param_2[7];
-        if (((-1 < (int)(uVar5 << 0x15)) && (uVar3 != 10)) && (iVar1 < (int)param_2[7])) {
+        if (((-1 < (int)(uVar5 << 0x15)) && (uVar3 != 10)) && (iVar2 < (int)param_2[7])) {
           return uVar3;
         }
         param_2[0xb] = (uint)pbVar6;
         *param_2 = (uint)pbVar6;
         param_2[2] = 0;
-        iVar1 = _Cwrite_buffer(pbVar6,iVar1,param_2);
-        if (iVar1 == 0) {
+        uVar5 = _Cwrite_buffer((uint)pbVar6,iVar2,(int)param_2);
+        if (uVar5 == 0) {
           return uVar3;
         }
       }
       else {
         if (pbVar4 < (byte *)param_2[0xb]) {
-          iVar1 = (int)param_2[0xb] - (int)pbVar6;
+          iVar2 = (int)param_2[0xb] - (int)pbVar6;
         }
         else {
-          iVar1 = (int)pbVar4 - (int)pbVar6;
+          iVar2 = (int)pbVar4 - (int)pbVar6;
         }
-        if ((iVar1 == 0) || (iVar1 = _Cwrite_buffer(pbVar6,iVar1,param_2), iVar1 == 0)) {
+        if ((iVar2 == 0) || (uVar3 = _Cwrite_buffer((uint)pbVar6,iVar2,(int)param_2), uVar3 == 0)) {
           param_2[0xb] = (uint)(pbVar6 + 1);
           *param_2 = (uint)(pbVar6 + 1);
           param_2[2] = param_2[7] - 1;
@@ -181,16 +181,13 @@ int _Cfdopen(undefined4 param_1,char *param_2,int param_3)
 
 /* [guess] */
 
-undefined4 _Cflush_write(uint *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined4 _Cflush_write(uint *param_1)
 
 {
   uint uVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
+  uint uVar2;
   
-  uVar4 = param_1[4];
-  uVar3 = param_1[0xb];
+  uVar2 = param_1[4];
   uVar1 = param_1[3];
   param_1[3] = uVar1 & 0xfff7ffff;
   if ((uVar1 & 0x82) == 2) {
@@ -198,13 +195,13 @@ undefined4 _Cflush_write(uint *param_1,undefined4 param_2,undefined4 param_3,und
       return 0;
     }
     uVar1 = *param_1;
-    if (*param_1 < uVar3) {
-      uVar1 = uVar3;
+    if (*param_1 < param_1[0xb]) {
+      uVar1 = param_1[0xb];
     }
-    if ((uVar4 == uVar1) ||
-       (iVar2 = _Cwrite_buffer(uVar4,uVar1 - uVar4,param_1,uVar3,param_4), iVar2 == 0)) {
-      param_1[0xb] = uVar4;
-      *param_1 = uVar4;
+    if ((uVar2 == uVar1) || (uVar1 = _Cwrite_buffer(uVar2,uVar1 - uVar2,(int)param_1), uVar1 == 0))
+    {
+      param_1[0xb] = uVar2;
+      *param_1 = uVar2;
       param_1[2] = 0;
       param_1[3] = param_1[3] & 0xfffeffff;
       return 0;
@@ -222,32 +219,32 @@ undefined4 _Cfclose(int param_1)
 
 {
   uint uVar1;
-  undefined4 uVar2;
+  int iVar2;
   undefined4 uVar3;
   undefined1 auStack_38 [36];
   
   uVar1 = *(uint *)(param_1 + 0xc);
   if ((uVar1 & 3) == 0) {
-    uVar2 = 0xffffffff;
+    uVar3 = 0xffffffff;
   }
   else {
     if (-1 < (int)(uVar1 << 0x1c)) {
-      uVar2 = *(undefined4 *)(param_1 + 0x10);
+      iVar2 = *(int *)(param_1 + 0x10);
       uVar3 = *(undefined4 *)(param_1 + 0x14);
       fflush();
       __sys_close(uVar3);
       if ((int)(uVar1 << 0x14) < 0) {
-        free(uVar2);
+        free(iVar2);
       }
       if ((uVar1 & 0xffc00000) == 0xad800000) {
         __sys_tmpnam(auStack_38,*(undefined4 *)(param_1 + 0x20),0x20);
-        remove(auStack_38);
+        remove((uint)auStack_38);
       }
     }
     memset(param_1,0,0x3c);
-    uVar2 = 0;
+    uVar3 = 0;
   }
-  return uVar2;
+  return uVar3;
 }
 
 
@@ -255,13 +252,13 @@ undefined4 _Cfclose(int param_1)
 
 /* Stub: strlen then return -1 [guess] */
 
-void remove(undefined4 param_1)
+void remove(uint param_1)
 
 {
-  undefined4 uVar1;
+  int iVar1;
   
-  uVar1 = strlen();
-  __sys_readc(param_1,uVar1);
+  iVar1 = strlen((uint *)param_1);
+  __sys_readc(param_1,iVar1);
   return;
 }
 
@@ -270,17 +267,17 @@ void remove(undefined4 param_1)
 
 /* [inference] */
 
-undefined4 _Cfflush1(int *param_1)
+uint _Cfflush1(int *param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
   
   uVar1 = 0;
   if ((param_1[3] & 3U) != 0) {
     if (param_1[3] << 0x1a < 0) {
       iVar2 = param_1[10];
-      _Cflush_read();
+      _Cflush_read(param_1);
     }
     else {
       iVar2 = (*param_1 + param_1[6]) - param_1[4];
@@ -297,84 +294,91 @@ undefined4 _Cfflush1(int *param_1)
 
 /* 64-bit unsigned divide (also reached by the flash veneer 0x08001618) [inference] */
 
-undefined8 __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
+ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
 
 {
   longlong lVar1;
-  int iVar2;
-  uint uVar3;
+  uint uVar2;
+  int iVar3;
   uint uVar4;
   uint uVar5;
   uint uVar6;
+  uint uVar7;
   uint extraout_r12;
   uint extraout_r12_00;
-  bool bVar7;
-  ulonglong uVar8;
+  uint uVar8;
+  bool bVar9;
+  ulonglong uVar10;
   
-  uVar6 = 0;
-  if (param_4 == 0) {
-    if (param_3 == 0) {
+  uVar4 = (uint)(d >> 0x20);
+  uVar6 = (uint)d;
+  uVar5 = (uint)(n >> 0x20);
+  uVar2 = (uint)n;
+  uVar7 = 0;
+  if (uVar4 == 0) {
+    if (uVar6 == 0) {
       return 0;
     }
-    iVar2 = 0;
-    if (param_3 <= param_2) {
-      iVar2 = __udivmoddi_core(param_2,0);
+    iVar3 = 0;
+    if (uVar6 <= uVar5) {
+      iVar3 = __udivmoddi_core(uVar5,0);
+      n = n & 0xffffffff;
     }
-    uVar3 = __udivmoddi_core(param_1);
-    uVar6 = extraout_r12;
+    uVar4 = __udivmoddi_core((int)n);
+    uVar7 = extraout_r12;
   }
-  else if ((int)param_4 < 0) {
-    iVar2 = 0;
-    uVar3 = (uint)(param_4 < param_2 || param_2 - param_4 < (uint)(param_3 <= param_1));
+  else if ((longlong)d < 0) {
+    iVar3 = 0;
+    uVar4 = (uint)(uVar4 < uVar5 || uVar5 - uVar4 < (uint)(uVar6 <= uVar2));
   }
   else {
-    if (param_4 >> 0x10 == 0) {
-      param_4 = param_4 << 0x10;
-      uVar6 = 0x10;
+    if (uVar4 >> 0x10 == 0) {
+      uVar4 = uVar4 << 0x10;
+      uVar7 = 0x10;
     }
-    if ((param_4 & 0xff000000) == 0) {
-      param_4 = param_4 << 8;
-      uVar6 = uVar6 + 8;
+    if ((uVar4 & 0xff000000) == 0) {
+      uVar4 = uVar4 << 8;
+      uVar7 = uVar7 + 8;
     }
-    if ((param_4 & 0xf0000000) == 0) {
-      param_4 = param_4 << 4;
-      uVar6 = uVar6 + 4;
+    if ((uVar4 & 0xf0000000) == 0) {
+      uVar4 = uVar4 << 4;
+      uVar7 = uVar7 + 4;
     }
-    uVar3 = param_4 & 0xc0000000;
-    if ((param_4 & 0xc0000000) == 0) {
-      uVar6 = uVar6 + 2;
-      param_4 = param_4 << 2;
-      uVar3 = param_4;
+    uVar8 = uVar4 & 0xc0000000;
+    if ((uVar4 & 0xc0000000) == 0) {
+      uVar7 = uVar7 + 2;
+      uVar4 = uVar4 << 2;
+      uVar8 = uVar4;
     }
-    if (-1 < (int)uVar3) {
-      uVar6 = uVar6 + 1;
-      param_4 = param_4 << 1;
+    if (-1 < (int)uVar8) {
+      uVar7 = uVar7 + 1;
+      uVar4 = uVar4 << 1;
     }
-    uVar3 = 0x20 - uVar6;
-    uVar8 = __udivmoddi_core(param_1 >> (uVar3 & 0xff) | param_2 << uVar6,param_2 >> (uVar3 & 0xff),
-                             param_4 | param_3 >> (uVar3 & 0xff));
-    uVar4 = (uint)(uVar8 >> 0x20);
-    uVar3 = (uint)uVar8;
-    lVar1 = (ulonglong)(param_3 << uVar6) * (uVar8 & 0xffffffff);
-    uVar5 = (uint)((ulonglong)lVar1 >> 0x20);
-    if (uVar4 <= uVar5 && (uint)((uint)lVar1 <= param_1 << uVar6) <= uVar4 - uVar5) {
-      uVar3 = uVar3 - 1;
+    uVar8 = 0x20 - uVar7;
+    uVar10 = __udivmoddi_core(uVar2 >> (uVar8 & 0xff) | uVar5 << uVar7,uVar5 >> (uVar8 & 0xff),
+                              uVar4 | uVar6 >> (uVar8 & 0xff));
+    uVar5 = (uint)(uVar10 >> 0x20);
+    uVar4 = (uint)uVar10;
+    lVar1 = (ulonglong)(uVar6 << uVar7) * (uVar10 & 0xffffffff);
+    uVar6 = (uint)((ulonglong)lVar1 >> 0x20);
+    if (uVar5 <= uVar6 && (uint)((uint)lVar1 <= uVar2 << uVar7) <= uVar5 - uVar6) {
+      uVar4 = uVar4 - 1;
     }
-    iVar2 = 0;
-    uVar6 = extraout_r12_00;
+    iVar3 = 0;
+    uVar7 = extraout_r12_00;
   }
-  if ((uVar6 & 0xc0000000) != 0) {
-    if ((int)(uVar6 & 0xc0000000) < 0) {
-      bVar7 = uVar3 != 0;
-      uVar3 = -uVar3;
-      iVar2 = -(uint)bVar7 - iVar2;
+  if ((uVar7 & 0xc0000000) != 0) {
+    if ((int)(uVar7 & 0xc0000000) < 0) {
+      bVar9 = uVar4 != 0;
+      uVar4 = -uVar4;
+      iVar3 = -(uint)bVar9 - iVar3;
     }
-    if ((uVar6 & 0x40000000) != 0) {
-      return CONCAT44(iVar2,uVar3);
+    if ((uVar7 & 0x40000000) != 0) {
+      return CONCAT44(iVar3,uVar4);
     }
-    return CONCAT44(iVar2,uVar3);
+    return CONCAT44(iVar3,uVar4);
   }
-  return CONCAT44(iVar2,uVar3);
+  return CONCAT44(iVar3,uVar4);
 }
 
 
@@ -504,37 +508,38 @@ void __udivmoddi_core(uint param_1,uint param_2,uint param_3)
 
 // ===== memcpy @ 000878cc (52 bytes)
 
-void memcpy(undefined4 *param_1,undefined4 *param_2,uint param_3)
+void memcpy(void *param_1,void *param_2,uint param_3)
 
 {
-  bool bVar1;
+  uint uVar1;
+  bool bVar2;
   
   if (-1 < (int)(((uint)param_1 | (uint)param_2) << 0x1f)) {
-    bVar1 = 3 < param_3;
-    param_3 = param_3 - 4;
+    bVar2 = 3 < param_3;
+    uVar1 = param_3 - 4;
     do {
-      if (bVar1) {
-        *param_1 = *param_2;
-        bVar1 = 3 < param_3;
-        param_3 = param_3 - 4;
-        param_1 = param_1 + 1;
-        param_2 = param_2 + 1;
+      if (bVar2) {
+        *(undefined4 *)param_1 = *(undefined4 *)param_2;
+        bVar2 = 3 < uVar1;
+        uVar1 = uVar1 - 4;
+        param_1 = (undefined4 *)((int)param_1 + 4);
+        param_2 = (undefined4 *)((int)param_2 + 4);
       }
-    } while (bVar1);
-    param_3 = param_3 + 4;
+    } while (bVar2);
+    param_3 = uVar1 + 4;
     if (param_3 == 0) {
       return;
     }
   }
   do {
-    bVar1 = param_3 != 0;
+    bVar2 = param_3 != 0;
     param_3 = param_3 - 1;
-    if (bVar1) {
+    if (bVar2) {
       *(undefined1 *)param_1 = *(undefined1 *)param_2;
       param_1 = (undefined4 *)((int)param_1 + 1);
       param_2 = (undefined4 *)((int)param_2 + 1);
     }
-  } while (bVar1 && param_3 != 0);
+  } while (bVar2 && param_3 != 0);
   return;
 }
 
@@ -597,7 +602,7 @@ undefined4 __sys_close(void)
 
 /* returns -1 [fact] */
 
-undefined4 __sys_flen(void)
+uint __sys_flen(void)
 
 {
   return 0xffffffff;
@@ -608,7 +613,7 @@ undefined4 __sys_flen(void)
 
 /* returns -1 [fact] */
 
-undefined4 __sys_istty(void)
+uint __sys_istty(void)
 
 {
   return 0xffffffff;
@@ -630,7 +635,7 @@ undefined4 __sys_readc(void)
 
 /* returns -1 [fact] */
 
-undefined4 __sys_seek(void)
+uint __sys_seek(void)
 
 {
   return 0xffffffff;
@@ -665,23 +670,22 @@ void ResetISR(void)
 
 {
   bool bVar1;
-  undefined4 in_r3;
   dword *pdVar2;
   
   disableIRQinterrupts();
-  DAT_e000ed08 = 0x8001000;
+  SCB_VTOR = 0x8001000;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
     setMainStackPointer(0x200000);
   }
   setMainStackPointerLimit(0x1ff000);
-  SystemInit(&DAT_e000ed08,0x200000,0x1ff000,&vec___initial_sp,in_r3);
+  SystemInit();
   for (pdVar2 = &__data_section_table; pdVar2 < &__bss_section_table;
       pdVar2 = (dword *)((int)pdVar2 + 0xc)) {
-    data_init(*pdVar2,*(dword *)((int)pdVar2 + 4),*(dword *)((int)pdVar2 + 8));
+    data_init(*pdVar2,*(dword *)((int)pdVar2 + 4),*(uint *)((int)pdVar2 + 8));
   }
   for (; pdVar2 < ResetISR; pdVar2 = (dword *)((int)pdVar2 + 8)) {
-    bss_init(*pdVar2,*(dword *)((int)pdVar2 + 4));
+    bss_init(*pdVar2,*(uint *)((int)pdVar2 + 4));
   }
   enableIRQinterrupts();
   call_main();
@@ -757,9 +761,12 @@ void DebugMon_Handler(void)
 }
 
 
-// ===== FUN_08001220 @ 08001220 (2 bytes)
+// ===== DefaultHandler @ 08001220 (2 bytes)
 
-void FUN_08001220(void)
+/* T23d MCUXpresso startup (idiom 0.900): the 25 weak IRQ handlers without a driver call it
+   [inference] */
+
+void DefaultHandler(void)
 
 {
   do {
@@ -801,7 +808,7 @@ void bss_init(int param_1,uint param_2)
 void WDT0_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -811,7 +818,7 @@ void WDT0_IRQHandler(void)
 void DMA0_IRQHandler(void)
 
 {
-  FUN_08001698();
+  __DMA0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -821,7 +828,7 @@ void DMA0_IRQHandler(void)
 void GPIO_INTA_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -831,7 +838,7 @@ void GPIO_INTA_IRQHandler(void)
 void GPIO_INTB_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -841,7 +848,7 @@ void GPIO_INTB_IRQHandler(void)
 void PIN_INT0_IRQHandler(void)
 
 {
-  FUN_08001678();
+  __PIN_INT0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -851,7 +858,7 @@ void PIN_INT0_IRQHandler(void)
 void PIN_INT1_IRQHandler(void)
 
 {
-  FUN_08001798();
+  __PIN_INT1_DriverIRQHandler_veneer();
   return;
 }
 
@@ -861,7 +868,7 @@ void PIN_INT1_IRQHandler(void)
 void PIN_INT2_IRQHandler(void)
 
 {
-  FUN_08001648();
+  __PIN_INT2_DriverIRQHandler_veneer();
   return;
 }
 
@@ -871,7 +878,7 @@ void PIN_INT2_IRQHandler(void)
 void PIN_INT3_IRQHandler(void)
 
 {
-  FUN_08001728();
+  __PIN_INT3_DriverIRQHandler_veneer();
   return;
 }
 
@@ -881,7 +888,7 @@ void PIN_INT3_IRQHandler(void)
 void UTICK0_IRQHandler(void)
 
 {
-  FUN_08001668();
+  __UTICK0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -891,7 +898,7 @@ void UTICK0_IRQHandler(void)
 void MRT0_IRQHandler(void)
 
 {
-  FUN_08001220();
+  DefaultHandler();
   return;
 }
 
@@ -901,7 +908,7 @@ void MRT0_IRQHandler(void)
 void CTIMER0_IRQHandler(void)
 
 {
-  FUN_08001658();
+  __CTIMER0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -911,7 +918,7 @@ void CTIMER0_IRQHandler(void)
 void CTIMER1_IRQHandler(void)
 
 {
-  FUN_08001608();
+  __CTIMER1_DriverIRQHandler_veneer();
   return;
 }
 
@@ -921,7 +928,7 @@ void CTIMER1_IRQHandler(void)
 void SCT0_IRQHandler(void)
 
 {
-  FUN_080017f8();
+  __SCT0_DriverIRQHandler_veneer();
   return;
 }
 
@@ -931,7 +938,7 @@ void SCT0_IRQHandler(void)
 void CTIMER3_IRQHandler(void)
 
 {
-  FUN_080016f8();
+  __CTIMER3_DriverIRQHandler_veneer();
   return;
 }
 
@@ -941,7 +948,7 @@ void CTIMER3_IRQHandler(void)
 void FLEXCOMM1_IRQHandler(void)
 
 {
-  FUN_080016d8();
+  __FLEXCOMM1_DriverIRQHandler_veneer();
   return;
 }
 
@@ -951,7 +958,7 @@ void FLEXCOMM1_IRQHandler(void)
 void FLEXCOMM2_IRQHandler(void)
 
 {
-  FUN_080015d8();
+  __FLEXCOMM2_DriverIRQHandler_veneer();
   return;
 }
 
@@ -961,7 +968,7 @@ void FLEXCOMM2_IRQHandler(void)
 void FLEXCOMM3_IRQHandler(void)
 
 {
-  FUN_080017e8();
+  __FLEXCOMM3_DriverIRQHandler_veneer();
   return;
 }
 
@@ -971,7 +978,7 @@ void FLEXCOMM3_IRQHandler(void)
 void FLEXCOMM4_IRQHandler(void)
 
 {
-  FUN_08001808();
+  __FLEXCOMM4_DriverIRQHandler_veneer();
   return;
 }
 
@@ -981,7 +988,7 @@ void FLEXCOMM4_IRQHandler(void)
 void FLEXCOMM5_IRQHandler(void)
 
 {
-  FUN_080016e8();
+  __FLEXCOMM5_DriverIRQHandler_veneer();
   return;
 }
 
@@ -991,7 +998,7 @@ void FLEXCOMM5_IRQHandler(void)
 void FLEXCOMM14_IRQHandler(void)
 
 {
-  FUN_08001768();
+  __FLEXCOMM14_DriverIRQHandler_veneer();
   return;
 }
 
@@ -1001,7 +1008,7 @@ void FLEXCOMM14_IRQHandler(void)
 void FLEXCOMM15_IRQHandler(void)
 
 {
-  FUN_080016a8();
+  __FLEXCOMM15_DriverIRQHandler_veneer();
   return;
 }
 

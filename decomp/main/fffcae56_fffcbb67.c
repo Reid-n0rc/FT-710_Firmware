@@ -8,7 +8,7 @@ void menu_ex010513_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca2a1(param_1,DAT_00009a8a,0,param_4,param_5,param_1);
+  menu_draw_rptt_select(param_1,g_opstate.ex010513_rptt_select,0,param_4,param_5,param_1);
   return;
 }
 
@@ -21,7 +21,7 @@ void menu_ex010514_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcabc2(param_1,DAT_00009a8b,5,param_4,param_5,param_1);
+  FUN_fffcabc2(param_1,g_opstate.ex010514_nar_width,5,param_4,param_5,param_1);
   return;
 }
 
@@ -38,9 +38,9 @@ void menu_ex010515_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009a8c;
-  local_5 = DAT_00009a8c;
-  if (DAT_00009a8c == 1) {
+  bVar1 = g_opstate.ex010515_mark_frequency;
+  local_5 = g_opstate.ex010515_mark_frequency;
+  if (g_opstate.ex010515_mark_frequency == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -76,9 +76,9 @@ void menu_ex010516_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009a8d;
-  local_5 = DAT_00009a8d;
-  if (DAT_00009a8d == 0) {
+  bVar1 = g_opstate.ex010516_shift_frequency;
+  local_5 = g_opstate.ex010516_shift_frequency;
+  if (g_opstate.ex010516_shift_frequency == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -114,9 +114,9 @@ void menu_ex010517_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009a8e;
-  local_5 = DAT_00009a8e;
-  if (DAT_00009a8e == 0) {
+  bVar1 = g_opstate.ex010517_polarity_tx;
+  local_5 = g_opstate.ex010517_polarity_tx;
+  if (g_opstate.ex010517_polarity_tx == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -147,7 +147,7 @@ void menu_ex010517_draw(byte *param_1)
 void menu_ex020101_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a91);
+  menu_draw_flags(param_1,g_opstate.ex020101_af_treble_gain);
   return;
 }
 
@@ -159,7 +159,7 @@ void menu_ex020101_draw(byte *param_1)
 void menu_ex020102_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a92);
+  menu_draw_flags(param_1,g_opstate.ex020102_af_middle_tone_gain);
   return;
 }
 
@@ -171,7 +171,7 @@ void menu_ex020102_draw(byte *param_1)
 void menu_ex020103_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a93);
+  menu_draw_flags(param_1,g_opstate.ex020103_af_bass_gain);
   return;
 }
 
@@ -184,7 +184,7 @@ void menu_ex020104_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a94,0xa0,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex020104_agc_fast_delay,0xa0,param_4,param_5,param_1);
   return;
 }
 
@@ -197,7 +197,7 @@ void menu_ex020105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a95,500,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex020105_agc_mid_delay,500,param_4,param_5,param_1);
   return;
 }
 
@@ -210,7 +210,7 @@ void menu_ex020106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a96,0x5dc,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex020106_agc_slow_delay,0x5dc,param_4,param_5,param_1);
   return;
 }
 
@@ -223,7 +223,7 @@ void menu_ex020107_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9cee(param_1,DAT_00009a97,4,param_4,param_5,param_1);
+  menu_draw_lcut_freq(param_1,g_opstate.ex020107_lcut_freq,4,param_4,param_5,param_1);
   return;
 }
 
@@ -236,7 +236,7 @@ void menu_ex020108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9d9a(param_1,DAT_00009a98,1,param_4,param_5,param_1);
+  menu_draw_lcut_slope(param_1,g_opstate.ex020108_lcut_slope,1,param_4,param_5,param_1);
   return;
 }
 
@@ -249,7 +249,7 @@ void menu_ex020109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9e27(param_1,DAT_00009a99,0xb,param_4,param_5,param_1);
+  menu_draw_hcut_freq(param_1,g_opstate.ex020109_hcut_freq,0xb,param_4,param_5,param_1);
   return;
 }
 
@@ -262,7 +262,7 @@ void menu_ex020110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9ed4(param_1,DAT_00009a9a,1,param_4,param_5,param_1);
+  menu_draw_hcut_slope(param_1,g_opstate.ex020110_hcut_slope,1,param_4,param_5,param_1);
   return;
 }
 
@@ -275,7 +275,7 @@ void menu_ex020111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a9b,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex020111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -288,7 +288,7 @@ void menu_ex020112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a9c,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex020112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -301,7 +301,7 @@ void menu_ex020113_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca2a1(param_1,DAT_00009a9d,0,param_4,param_5,param_1);
+  menu_draw_rptt_select(param_1,g_opstate.ex020113_rptt_select,0,param_4,param_5,param_1);
   return;
 }
 
@@ -314,7 +314,7 @@ void menu_ex020114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcabc2(param_1,DAT_00009a9e,4,param_4,param_5,param_1);
+  FUN_fffcabc2(param_1,g_opstate.ex020114_nar_width,4,param_4,param_5,param_1);
   return;
 }
 
@@ -327,7 +327,7 @@ void menu_ex020115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca2a1(param_1,DAT_00009a9f,0,param_4,param_5,param_1);
+  menu_draw_rptt_select(param_1,g_opstate.ex020115_pc_keying,0,param_4,param_5,param_1);
   return;
 }
 
@@ -344,9 +344,9 @@ void menu_ex020116_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa0;
-  local_5 = DAT_00009aa0;
-  if (DAT_00009aa0 == 0) {
+  bVar1 = g_opstate.ex020116_cw_bk_in_type;
+  local_5 = g_opstate.ex020116_cw_bk_in_type;
+  if (g_opstate.ex020116_cw_bk_in_type == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -382,9 +382,9 @@ void menu_ex020117_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa1;
-  local_5 = DAT_00009aa1;
-  if (DAT_00009aa1 == 2) {
+  bVar1 = g_opstate.ex020117_cw_wave_shape;
+  local_5 = g_opstate.ex020117_cw_wave_shape;
+  if (g_opstate.ex020117_cw_wave_shape == 2) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -420,9 +420,9 @@ void menu_ex020118_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa2;
-  local_5 = DAT_00009aa2;
-  if (DAT_00009aa2 == 1) {
+  bVar1 = g_opstate.ex020118_cw_freq_display;
+  local_5 = g_opstate.ex020118_cw_freq_display;
+  if (g_opstate.ex020118_cw_freq_display == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -458,9 +458,9 @@ void menu_ex020119_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa3;
-  local_5 = DAT_00009aa3;
-  if (DAT_00009aa3 == 0) {
+  bVar1 = g_opstate.ex020119_qsk_delay_time;
+  local_5 = g_opstate.ex020119_qsk_delay_time;
+  if (g_opstate.ex020119_qsk_delay_time == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -492,14 +492,17 @@ void menu_ex020120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb34b(param_1,DAT_00009aa4,1,param_4,param_5,param_1);
+  menu_draw_off_on(param_1,g_opstate.ex020120_cw_indicator,1,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcb34b @ fffcb34b (119 bytes)
+// ===== menu_draw_off_on @ fffcb34b (119 bytes)
 
-void FUN_fffcb34b(byte *param_1,byte param_2,byte param_3)
+/* OFF / ON row (ROM 0xFFF842E5): CW INDICATOR, SCU-LAN10, EMERGENCY FREQ TX, TX INHIBIT, EXT
+   DISPLAY [fact] */
+
+void menu_draw_off_on(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -543,9 +546,9 @@ void menu_ex020201_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa7;
-  local_5 = DAT_00009aa7;
-  if (DAT_00009aa7 == 3) {
+  bVar1 = g_opstate.ex020201_keyer_type;
+  local_5 = g_opstate.ex020201_keyer_type;
+  if (g_opstate.ex020201_keyer_type == 3) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -581,9 +584,9 @@ void menu_ex020202_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aa8;
-  local_5 = DAT_00009aa8;
-  if (DAT_00009aa8 == 0) {
+  bVar1 = g_opstate.ex020202_keyer_dot_dash;
+  local_5 = g_opstate.ex020202_keyer_dot_dash;
+  if (g_opstate.ex020202_keyer_dot_dash == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -616,10 +619,10 @@ void menu_ex020202_draw(byte *param_1)
 void menu_ex020203_draw(byte *param_1)
 
 {
-  char cVar1;
+  byte bVar1;
   
-  cVar1 = DAT_00009aa9;
-  if (DAT_00009aa9 == '\x05') {
+  bVar1 = g_opstate.ex020203_cw_weight;
+  if (g_opstate.ex020203_cw_weight == 5) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -648,9 +651,9 @@ void menu_ex020203_draw(byte *param_1)
   param_1[0x1a] = 0x20;
   param_1[0x1b] = 0x20;
   param_1[0x2c] = 0x20;
-  param_1[0x18] = (byte)(cVar1 + 0x19U) / 10 | 0x30;
+  param_1[0x18] = (byte)(bVar1 + 0x19) / 10 | 0x30;
   param_1[0x19] = 0x2e;
-  param_1[0x1a] = (byte)(cVar1 + 0x19U) % 10 | 0x30;
+  param_1[0x1a] = (byte)(bVar1 + 0x19) % 10 | 0x30;
   return;
 }
 
@@ -667,9 +670,9 @@ void menu_ex020204_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009aaa;
-  local_5 = DAT_00009aaa;
-  if (DAT_00009aaa == 0) {
+  bVar1 = g_opstate.ex020204_number_style;
+  local_5 = g_opstate.ex020204_number_style;
+  if (g_opstate.ex020204_number_style == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -702,7 +705,7 @@ void menu_ex020205_draw(byte *param_1)
 {
   short sVar1;
   
-  sVar1 = FUN_fffba30c();
+  sVar1 = contest_number_get();
   if (sVar1 == 1) {
     *param_1 = *param_1 | 0x80;
   }
@@ -711,7 +714,7 @@ void menu_ex020205_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  FUN_fff9c843(sVar1,param_1 + 0x18);
+  dec_to_str_u16(sVar1,param_1 + 0x18);
   return;
 }
 
@@ -724,14 +727,16 @@ void menu_ex020206_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb672(param_1,DAT_00009aad,0,param_4,param_5,param_1);
+  menu_draw_cw_memory(param_1,g_opstate.ex020206_cw_memory_1,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcb672 @ fffcb672 (119 bytes)
+// ===== menu_draw_cw_memory @ fffcb672 (119 bytes)
 
-void FUN_fffcb672(byte *param_1,byte param_2,byte param_3)
+/* CW MEMORY 1..5 row: TEXT / MESSAGE (ROM 0xFFF8444A) [fact] */
+
+void menu_draw_cw_memory(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -771,7 +776,7 @@ void menu_ex020207_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb672(param_1,DAT_00009aae,0,param_4,param_5,param_1);
+  menu_draw_cw_memory(param_1,g_opstate.ex020207_cw_memory_2,0,param_4,param_5,param_1);
   return;
 }
 
@@ -784,7 +789,7 @@ void menu_ex020208_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb672(param_1,DAT_00009aaf,0,param_4,param_5,param_1);
+  menu_draw_cw_memory(param_1,g_opstate.ex020208_cw_memory_3,0,param_4,param_5,param_1);
   return;
 }
 
@@ -797,7 +802,7 @@ void menu_ex020209_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb672(param_1,DAT_00009ab0,0,param_4,param_5,param_1);
+  menu_draw_cw_memory(param_1,g_opstate.ex020209_cw_memory_4,0,param_4,param_5,param_1);
   return;
 }
 
@@ -810,7 +815,7 @@ void menu_ex020210_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb672(param_1,DAT_00009ab1,0,param_4,param_5,param_1);
+  menu_draw_cw_memory(param_1,g_opstate.ex020210_cw_memory_5,0,param_4,param_5,param_1);
   return;
 }
 
@@ -822,11 +827,10 @@ void menu_ex020210_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex020211_draw(byte *param_1)
 
 {
-  char cVar1;
-  byte bVar2;
+  byte bVar1;
   
-  cVar1 = DAT_00009ab2;
-  if (DAT_00009ab2 == '\x05') {
+  bVar1 = g_opstate.ex020211_repeat_interval;
+  if (g_opstate.ex020211_repeat_interval == 5) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -834,8 +838,8 @@ void menu_ex020211_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  bVar2 = FUN_fff9c6f0(cVar1,param_1 + 0x18);
-  param_1 = param_1 + bVar2 + 0x18;
+  bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
+  param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 99;
   param_1[0] = 0x73;
   param_1[1] = 0x65;
@@ -850,10 +854,10 @@ void menu_ex020211_draw(byte *param_1)
 void menu_ex030101_draw(byte *param_1)
 
 {
-  char cVar1;
+  byte bVar1;
   
-  cVar1 = DAT_00009ab5;
-  if (DAT_00009ab5 == '\x14') {
+  bVar1 = g_opstate.ex030101_beep_level;
+  if (g_opstate.ex030101_beep_level == 0x14) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -861,7 +865,7 @@ void menu_ex030101_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c6f0(cVar1,param_1 + 0x18);
+  dec_to_str_u8(bVar1,param_1 + 0x18);
   return;
 }
 
@@ -878,9 +882,9 @@ void menu_ex030102_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ab6;
-  local_7 = DAT_00009ab6;
-  if (DAT_00009ab6 == 0) {
+  bVar1 = g_opstate.ex030102_rf_sql_vr;
+  local_7 = g_opstate.ex030102_rf_sql_vr;
+  if (g_opstate.ex030102_rf_sql_vr == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -916,9 +920,9 @@ void menu_ex030103_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ab7;
-  local_7 = DAT_00009ab7;
-  if (DAT_00009ab7 == 0) {
+  bVar1 = g_opstate.ex030103_tun_lin_port_select;
+  local_7 = g_opstate.ex030103_tun_lin_port_select;
+  if (g_opstate.ex030103_tun_lin_port_select == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -954,9 +958,9 @@ void menu_ex030104_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ab8;
-  local_7 = DAT_00009ab8;
-  if (DAT_00009ab8 == 0) {
+  bVar1 = g_opstate.ex030104_tuner_type_select;
+  local_7 = g_opstate.ex030104_tuner_type_select;
+  if (g_opstate.ex030104_tuner_type_select == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -988,7 +992,7 @@ void menu_ex030105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,DAT_00009ab9,3,param_4,param_5,param_1);
+  FUN_fffcb9ba(param_1,g_opstate.ex030105_cat_1_rate,3,param_4,param_5,param_1);
   return;
 }
 
@@ -1035,7 +1039,7 @@ void menu_ex030106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,DAT_00009aba,0,param_4,param_5,param_1);
+  FUN_fffcba46(param_1,g_opstate.ex030106_cat_1_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1086,9 +1090,9 @@ void menu_ex030107_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009abb;
-  local_7 = DAT_00009abb;
-  if (DAT_00009abb == 0) {
+  bVar1 = g_opstate.ex030107_cat_1_cat_3_stop_bit;
+  local_7 = g_opstate.ex030107_cat_1_cat_3_stop_bit;
+  if (g_opstate.ex030107_cat_1_cat_3_stop_bit == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -1120,7 +1124,7 @@ void menu_ex030108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,DAT_00009abc,0,param_4,param_5,param_1);
+  FUN_fffcb9ba(param_1,g_opstate.ex030108_cat_2_rate,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1133,7 +1137,7 @@ void menu_ex030109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,DAT_00009abd,0,param_4,param_5,param_1);
+  FUN_fffcba46(param_1,g_opstate.ex030109_cat_2_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1146,7 +1150,7 @@ void menu_ex030110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,DAT_00009abe,3,param_4,param_5,param_1);
+  FUN_fffcb9ba(param_1,g_opstate.ex030110_cat_3_rate,3,param_4,param_5,param_1);
   return;
 }
 

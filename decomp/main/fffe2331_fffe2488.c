@@ -5,7 +5,7 @@
 void FUN_fffe2331(void)
 
 {
-  FUN_fffe2622(0x30);
+  kbd_key_dispatch(0x30);
   return;
 }
 
@@ -15,7 +15,7 @@ void FUN_fffe2331(void)
 void FUN_fffe2338(void)
 
 {
-  FUN_fffe2622(0x31);
+  kbd_key_dispatch(0x31);
   return;
 }
 
@@ -25,7 +25,7 @@ void FUN_fffe2338(void)
 void FUN_fffe233f(void)
 
 {
-  FUN_fffe2622(0x32);
+  kbd_key_dispatch(0x32);
   return;
 }
 
@@ -35,7 +35,7 @@ void FUN_fffe233f(void)
 void FUN_fffe2346(void)
 
 {
-  FUN_fffe2622(0x33);
+  kbd_key_dispatch(0x33);
   return;
 }
 
@@ -45,7 +45,7 @@ void FUN_fffe2346(void)
 void FUN_fffe234d(void)
 
 {
-  FUN_fffe2622(0x34);
+  kbd_key_dispatch(0x34);
   return;
 }
 
@@ -55,7 +55,7 @@ void FUN_fffe234d(void)
 void FUN_fffe2354(void)
 
 {
-  FUN_fffe2622(0x35);
+  kbd_key_dispatch(0x35);
   return;
 }
 
@@ -65,7 +65,7 @@ void FUN_fffe2354(void)
 void FUN_fffe235b(void)
 
 {
-  FUN_fffe2622(0x36);
+  kbd_key_dispatch(0x36);
   return;
 }
 
@@ -75,7 +75,7 @@ void FUN_fffe235b(void)
 void FUN_fffe2362(void)
 
 {
-  FUN_fffe2622(0x37);
+  kbd_key_dispatch(0x37);
   return;
 }
 
@@ -85,7 +85,7 @@ void FUN_fffe2362(void)
 void FUN_fffe2369(void)
 
 {
-  FUN_fffe2622(0x38);
+  kbd_key_dispatch(0x38);
   return;
 }
 
@@ -95,7 +95,7 @@ void FUN_fffe2369(void)
 void FUN_fffe2370(void)
 
 {
-  FUN_fffe2622(0x39);
+  kbd_key_dispatch(0x39);
   return;
 }
 
@@ -105,7 +105,7 @@ void FUN_fffe2370(void)
 void FUN_fffe2377(void)
 
 {
-  FUN_fffe2622(0x3a);
+  kbd_key_dispatch(0x3a);
   return;
 }
 
@@ -115,7 +115,7 @@ void FUN_fffe2377(void)
 void FUN_fffe237e(void)
 
 {
-  FUN_fffe2622(0x3b);
+  kbd_key_dispatch(0x3b);
   return;
 }
 
@@ -125,7 +125,7 @@ void FUN_fffe237e(void)
 void FUN_fffe2385(void)
 
 {
-  FUN_fffe2622(0x3c);
+  kbd_key_dispatch(0x3c);
   return;
 }
 
@@ -135,7 +135,7 @@ void FUN_fffe2385(void)
 void FUN_fffe238c(void)
 
 {
-  FUN_fffe2622(0x3d);
+  kbd_key_dispatch(0x3d);
   return;
 }
 
@@ -145,7 +145,7 @@ void FUN_fffe238c(void)
 void FUN_fffe2393(void)
 
 {
-  FUN_fffe2622(0x3e);
+  kbd_key_dispatch(0x3e);
   return;
 }
 
@@ -155,7 +155,7 @@ void FUN_fffe2393(void)
 void FUN_fffe239a(void)
 
 {
-  FUN_fffe2622(0x3f);
+  kbd_key_dispatch(0x3f);
   return;
 }
 
@@ -165,7 +165,7 @@ void FUN_fffe239a(void)
 void FUN_fffe23a1(void)
 
 {
-  FUN_fffe2622(0x40);
+  kbd_key_dispatch(0x40);
   return;
 }
 
@@ -175,7 +175,7 @@ void FUN_fffe23a1(void)
 void FUN_fffe23a8(void)
 
 {
-  FUN_fffe2622(0x41);
+  kbd_key_dispatch(0x41);
   return;
 }
 
@@ -185,7 +185,7 @@ void FUN_fffe23a8(void)
 void FUN_fffe23af(void)
 
 {
-  FUN_fffe2622(0x42);
+  kbd_key_dispatch(0x42);
   return;
 }
 
@@ -195,7 +195,7 @@ void FUN_fffe23af(void)
 void FUN_fffe23b6(void)
 
 {
-  FUN_fffe2622(0x43);
+  kbd_key_dispatch(0x43);
   return;
 }
 
@@ -205,7 +205,7 @@ void FUN_fffe23b6(void)
 void FUN_fffe23bd(void)
 
 {
-  FUN_fffe2622(0x44);
+  kbd_key_dispatch(0x44);
   return;
 }
 
@@ -215,7 +215,7 @@ void FUN_fffe23bd(void)
 void FUN_fffe23c4(void)
 
 {
-  FUN_fffe2622(0x45);
+  kbd_key_dispatch(0x45);
   return;
 }
 
@@ -225,7 +225,7 @@ void FUN_fffe23c4(void)
 void FUN_fffe23cb(void)
 
 {
-  FUN_fffe2622(0x46);
+  kbd_key_dispatch(0x46);
   return;
 }
 
@@ -235,7 +235,7 @@ void FUN_fffe23cb(void)
 void FUN_fffe23d2(void)
 
 {
-  FUN_fffe2622(0x47);
+  kbd_key_dispatch(0x47);
   return;
 }
 
@@ -245,7 +245,7 @@ void FUN_fffe23d2(void)
 void FUN_fffe23d9(void)
 
 {
-  FUN_fffe2622(0x48);
+  kbd_key_dispatch(0x48);
   return;
 }
 
@@ -255,7 +255,7 @@ void FUN_fffe23d9(void)
 void FUN_fffe23e0(void)
 
 {
-  FUN_fffe2622(0x49);
+  kbd_key_dispatch(0x49);
   return;
 }
 
@@ -265,7 +265,7 @@ void FUN_fffe23e0(void)
 void FUN_fffe23e7(void)
 
 {
-  FUN_fffe2622(0x4a);
+  kbd_key_dispatch(0x4a);
   return;
 }
 
@@ -275,7 +275,7 @@ void FUN_fffe23e7(void)
 void FUN_fffe23ee(void)
 
 {
-  FUN_fffe2622(0x4b);
+  kbd_key_dispatch(0x4b);
   return;
 }
 
@@ -285,7 +285,7 @@ void FUN_fffe23ee(void)
 void FUN_fffe23f5(void)
 
 {
-  FUN_fffe2622(0x4c);
+  kbd_key_dispatch(0x4c);
   return;
 }
 
@@ -295,7 +295,7 @@ void FUN_fffe23f5(void)
 void FUN_fffe23fc(void)
 
 {
-  FUN_fffe2622(0x4d);
+  kbd_key_dispatch(0x4d);
   return;
 }
 
@@ -305,7 +305,7 @@ void FUN_fffe23fc(void)
 void FUN_fffe2403(void)
 
 {
-  FUN_fffe2622(0x4e);
+  kbd_key_dispatch(0x4e);
   return;
 }
 
@@ -315,7 +315,7 @@ void FUN_fffe2403(void)
 void FUN_fffe240a(void)
 
 {
-  FUN_fffe2622(0x4f);
+  kbd_key_dispatch(0x4f);
   return;
 }
 
@@ -325,7 +325,7 @@ void FUN_fffe240a(void)
 void FUN_fffe2411(void)
 
 {
-  FUN_fffe2622(0x50);
+  kbd_key_dispatch(0x50);
   return;
 }
 
@@ -335,7 +335,7 @@ void FUN_fffe2411(void)
 void FUN_fffe2418(void)
 
 {
-  FUN_fffe2622(0x51);
+  kbd_key_dispatch(0x51);
   return;
 }
 
@@ -345,7 +345,7 @@ void FUN_fffe2418(void)
 void FUN_fffe241f(void)
 
 {
-  FUN_fffe2622(0x52);
+  kbd_key_dispatch(0x52);
   return;
 }
 
@@ -355,7 +355,7 @@ void FUN_fffe241f(void)
 void FUN_fffe2426(void)
 
 {
-  FUN_fffe2622(0x53);
+  kbd_key_dispatch(0x53);
   return;
 }
 
@@ -365,7 +365,7 @@ void FUN_fffe2426(void)
 void FUN_fffe242d(void)
 
 {
-  FUN_fffe2622(0x54);
+  kbd_key_dispatch(0x54);
   return;
 }
 
@@ -375,7 +375,7 @@ void FUN_fffe242d(void)
 void FUN_fffe2434(void)
 
 {
-  FUN_fffe2622(0x55);
+  kbd_key_dispatch(0x55);
   return;
 }
 
@@ -385,7 +385,7 @@ void FUN_fffe2434(void)
 void FUN_fffe243b(void)
 
 {
-  FUN_fffe2622(0x56);
+  kbd_key_dispatch(0x56);
   return;
 }
 
@@ -395,7 +395,7 @@ void FUN_fffe243b(void)
 void FUN_fffe2442(void)
 
 {
-  FUN_fffe2622(0x57);
+  kbd_key_dispatch(0x57);
   return;
 }
 
@@ -405,7 +405,7 @@ void FUN_fffe2442(void)
 void FUN_fffe2449(void)
 
 {
-  FUN_fffe2622(0x58);
+  kbd_key_dispatch(0x58);
   return;
 }
 
@@ -415,7 +415,7 @@ void FUN_fffe2449(void)
 void FUN_fffe2450(void)
 
 {
-  FUN_fffe2622(0x59);
+  kbd_key_dispatch(0x59);
   return;
 }
 
@@ -425,7 +425,7 @@ void FUN_fffe2450(void)
 void FUN_fffe2457(void)
 
 {
-  FUN_fffe2622(0x5a);
+  kbd_key_dispatch(0x5a);
   return;
 }
 
@@ -435,7 +435,7 @@ void FUN_fffe2457(void)
 void FUN_fffe245e(void)
 
 {
-  FUN_fffe2622(0x5b);
+  kbd_key_dispatch(0x5b);
   return;
 }
 
@@ -445,7 +445,7 @@ void FUN_fffe245e(void)
 void FUN_fffe2465(void)
 
 {
-  FUN_fffe2622(0x5c);
+  kbd_key_dispatch(0x5c);
   return;
 }
 
@@ -455,7 +455,7 @@ void FUN_fffe2465(void)
 void FUN_fffe246c(void)
 
 {
-  FUN_fffe2622(0x5d);
+  kbd_key_dispatch(0x5d);
   return;
 }
 
@@ -465,7 +465,7 @@ void FUN_fffe246c(void)
 void FUN_fffe2473(void)
 
 {
-  FUN_fffe2622(0x5e);
+  kbd_key_dispatch(0x5e);
   return;
 }
 
@@ -475,7 +475,7 @@ void FUN_fffe2473(void)
 void FUN_fffe247a(void)
 
 {
-  FUN_fffe2622(0x5f);
+  kbd_key_dispatch(0x5f);
   return;
 }
 
@@ -485,7 +485,7 @@ void FUN_fffe247a(void)
 void FUN_fffe2481(void)
 
 {
-  FUN_fffe2622(0x60);
+  kbd_key_dispatch(0x60);
   return;
 }
 
@@ -495,7 +495,7 @@ void FUN_fffe2481(void)
 void FUN_fffe2488(void)
 
 {
-  FUN_fffe2622(0x61);
+  kbd_key_dispatch(0x61);
   return;
 }
 

@@ -7,7 +7,7 @@
 void menu_ex010103_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a2c);
+  menu_draw_flags(param_1,g_opstate.ex010103_af_bass_gain);
   return;
 }
 
@@ -20,14 +20,16 @@ void menu_ex010104_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a2d,300,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010104_agc_fast_delay,300,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9c29 @ fffc9c29 (130 bytes)
+// ===== menu_draw_agc_delay @ fffc9c29 (130 bytes)
 
-void FUN_fffc9c29(byte *param_1,byte param_2,short param_3)
+/* AGC FAST/MID/SLOW DELAY row: raw*20+20 in decimal + "msec", bit 7 on the default [fact] */
+
+void menu_draw_agc_delay(byte *param_1,byte param_2,short param_3)
 
 {
   byte bVar1;
@@ -42,7 +44,7 @@ void FUN_fffc9c29(byte *param_1,byte param_2,short param_3)
   }
   param_1[1] = 8;
   param_1[2] = 0;
-  bVar1 = FUN_fff9c843(sVar2,param_1 + 0x18);
+  bVar1 = dec_to_str_u16(sVar2,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[0] = 0x6d;
   param_1[1] = 0x73;
@@ -60,7 +62,7 @@ void menu_ex010105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a2e,1000,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010105_agc_mid_delay,1000,param_4,param_5,param_1);
   return;
 }
 
@@ -73,7 +75,7 @@ void menu_ex010106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a2f,3000,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010106_agc_slow_dely,3000,param_4,param_5,param_1);
   return;
 }
 
@@ -86,14 +88,16 @@ void menu_ex010107_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9cee(param_1,DAT_00009a30,1,param_4,param_5,param_1);
+  menu_draw_lcut_freq(param_1,g_opstate.ex010107_lcut_freq,1,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9cee @ fffc9cee (151 bytes)
+// ===== menu_draw_lcut_freq @ fffc9cee (151 bytes)
 
-void FUN_fffc9cee(byte *param_1,byte param_2,byte param_3)
+/* LCUT FREQ row: OFF or the frequency (dec_to_str_u16) [fact] */
+
+void menu_draw_lcut_freq(byte *param_1,byte param_2,byte param_3)
 
 {
   byte bVar1;
@@ -114,7 +118,7 @@ void FUN_fffc9cee(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
-  bVar1 = FUN_fff9c843(uVar2 * 0x32 + 0x32,param_1 + 0x18);
+  bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x32,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
   return;
@@ -129,14 +133,16 @@ void menu_ex010108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9d9a(param_1,DAT_00009a31,0,param_4,param_5,param_1);
+  menu_draw_lcut_slope(param_1,g_opstate.ex010108_lcut_slope,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9d9a @ fffc9d9a (119 bytes)
+// ===== menu_draw_lcut_slope @ fffc9d9a (119 bytes)
 
-void FUN_fffc9d9a(byte *param_1,byte param_2,byte param_3)
+/* LCUT SLOPE row: 6dB/oct / 18dB/oct (ROM 0xFFF836EB) [fact] */
+
+void menu_draw_lcut_slope(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -176,14 +182,16 @@ void menu_ex010109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9e27(param_1,DAT_00009a32,0x2f,param_4,param_5,param_1);
+  menu_draw_hcut_freq(param_1,g_opstate.ex010109_hcut_freq,0x2f,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9e27 @ fffc9e27 (152 bytes)
+// ===== menu_draw_hcut_freq @ fffc9e27 (152 bytes)
 
-void FUN_fffc9e27(byte *param_1,byte param_2,byte param_3)
+/* HCUT FREQ row: OFF or the frequency [fact] */
+
+void menu_draw_hcut_freq(byte *param_1,byte param_2,byte param_3)
 
 {
   byte bVar1;
@@ -204,7 +212,7 @@ void FUN_fffc9e27(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
-  bVar1 = FUN_fff9c843(uVar2 * 0x32 + 0x28a,param_1 + 0x18);
+  bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x28a,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
   return;
@@ -219,14 +227,16 @@ void menu_ex010110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9ed4(param_1,DAT_00009a33,0,param_4,param_5,param_1);
+  menu_draw_hcut_slope(param_1,g_opstate.ex010110_hcut_slope,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9ed4 @ fffc9ed4 (119 bytes)
+// ===== menu_draw_hcut_slope @ fffc9ed4 (119 bytes)
 
-void FUN_fffc9ed4(byte *param_1,byte param_2,byte param_3)
+/* HCUT SLOPE row: 6dB/oct / 18dB/oct [fact] */
+
+void menu_draw_hcut_slope(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -266,14 +276,16 @@ void menu_ex010111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a34,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex010111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffc9f61 @ fffc9f61 (98 bytes)
+// ===== menu_draw_out_level @ fffc9f61 (98 bytes)
 
-void FUN_fffc9f61(byte *param_1,char param_2,char param_3)
+/* USB / REAR OUT LEVEL row: value via dec_to_str_u8 [fact] */
+
+void menu_draw_out_level(byte *param_1,char param_2,char param_3)
 
 {
   if (param_2 == param_3) {
@@ -284,7 +296,7 @@ void FUN_fffc9f61(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c6f0(param_2,param_1 + 0x18);
+  dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
 
@@ -297,7 +309,7 @@ void menu_ex010112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a35,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex010112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -311,10 +323,10 @@ void menu_ex010113_draw(undefined4 param_1)
 {
   bool bVar1;
   ushort uVar2;
-  char local_5;
+  byte local_5;
   
-  local_5 = DAT_00009a36;
-  if (DAT_00009a36 == '\x06') {
+  local_5 = g_opstate.ex010113_tx_bpf_sel;
+  if (g_opstate.ex010113_tx_bpf_sel == 6) {
     uVar2 = dest_code_get();
     if ((uVar2 == 0x315b) || (uVar2 == 0x50e2)) {
       bVar1 = true;
@@ -329,17 +341,17 @@ void menu_ex010113_draw(undefined4 param_1)
       bVar1 = false;
     }
     if (bVar1) {
-      if (DAT_00004760 == '\0') {
-        DAT_00009a36 = '\x01';
-        local_5 = '\x01';
+      if (dest_code[2] == 0) {
+        g_opstate.ex010113_tx_bpf_sel = 1;
+        local_5 = 1;
       }
       else {
-        local_5 = '\x05';
+        local_5 = 5;
       }
     }
     else {
-      DAT_00009a36 = '\x01';
-      local_5 = '\x01';
+      g_opstate.ex010113_tx_bpf_sel = 1;
+      local_5 = 1;
     }
   }
   FUN_fffca06d(param_1,local_5,1);
@@ -404,7 +416,7 @@ void menu_ex010114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca125(param_1,DAT_00009a37,3,param_4,param_5,param_1);
+  FUN_fffca125(param_1,g_opstate.ex010114_mod_source,3,param_4,param_5,param_1);
   return;
 }
 
@@ -451,7 +463,7 @@ void menu_ex010115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca1b2(param_1,DAT_00009a38,0x32,param_4,param_5,param_1);
+  FUN_fffca1b2(param_1,g_opstate.ex010115_usb_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -469,7 +481,7 @@ void FUN_fffca1b2(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c6f0(param_2,param_1 + 0x18);
+  dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
 
@@ -482,7 +494,7 @@ void menu_ex010116_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca22a(param_1,DAT_00009a39,0x32,param_4,param_5,param_1);
+  FUN_fffca22a(param_1,g_opstate.ex010116_rear_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -500,7 +512,7 @@ void FUN_fffca22a(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c6f0(param_2,param_1 + 0x18);
+  dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
 
@@ -513,14 +525,16 @@ void menu_ex010117_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca2a1(param_1,DAT_00009a3a,0,param_4,param_5,param_1);
+  menu_draw_rptt_select(param_1,g_opstate.ex010117_rptt_select,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffca2a1 @ fffca2a1 (119 bytes)
+// ===== menu_draw_rptt_select @ fffca2a1 (119 bytes)
 
-void FUN_fffca2a1(byte *param_1,byte param_2,byte param_3)
+/* RPTT SELECT / PC KEYING row: OFF / RTS / DTR / DAKY (ROM 0xFFF83850) [fact] */
+
+void menu_draw_rptt_select(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -564,9 +578,9 @@ void menu_ex010118_draw(byte *param_1)
   int iVar3;
   byte local_5;
   
-  bVar1 = DAT_00009a3b;
-  local_5 = DAT_00009a3b;
-  if (DAT_00009a3b == 6) {
+  bVar1 = g_opstate.ex010118_nar_width;
+  local_5 = g_opstate.ex010118_nar_width;
+  if (g_opstate.ex010118_nar_width == 6) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -598,7 +612,7 @@ void menu_ex010119_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca3ab(param_1,DAT_00009a3c,0,param_4,param_5,param_1);
+  FUN_fffca3ab(param_1,g_opstate.ex010119_cw_auto_mode,0,param_4,param_5,param_1);
   return;
 }
 
@@ -644,7 +658,7 @@ void FUN_fffca3ab(byte *param_1,byte param_2,byte param_3)
 void menu_ex010201_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a3f);
+  menu_draw_flags(param_1,g_opstate.ex010201_af_treble_gain);
   return;
 }
 
@@ -656,7 +670,7 @@ void menu_ex010201_draw(byte *param_1)
 void menu_ex010202_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a40);
+  menu_draw_flags(param_1,g_opstate.ex010202_af_middle_tone_gain);
   return;
 }
 
@@ -668,7 +682,7 @@ void menu_ex010202_draw(byte *param_1)
 void menu_ex010203_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a41);
+  menu_draw_flags(param_1,g_opstate.ex010203_af_bass_gain);
   return;
 }
 
@@ -681,7 +695,7 @@ void menu_ex010204_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a42,1000,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010204_agc_fast_delay,1000,param_4,param_5,param_1);
   return;
 }
 
@@ -694,7 +708,7 @@ void menu_ex010205_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a43,2000,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010205_agc_mid_delay,2000,param_4,param_5,param_1);
   return;
 }
 
@@ -707,7 +721,7 @@ void menu_ex010206_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a44,4000,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010206_agc_slow_delay,4000,param_4,param_5,param_1);
   return;
 }
 
@@ -720,7 +734,7 @@ void menu_ex010207_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9cee(param_1,DAT_00009a45,0,param_4,param_5,param_1);
+  menu_draw_lcut_freq(param_1,g_opstate.ex010207_lcut_freq,0,param_4,param_5,param_1);
   return;
 }
 
@@ -733,7 +747,7 @@ void menu_ex010208_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9d9a(param_1,DAT_00009a46,0,param_4,param_5,param_1);
+  menu_draw_lcut_slope(param_1,g_opstate.ex010208_lcut_slope,0,param_4,param_5,param_1);
   return;
 }
 
@@ -746,7 +760,7 @@ void menu_ex010209_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9e27(param_1,DAT_00009a47,0,param_4,param_5,param_1);
+  menu_draw_hcut_freq(param_1,g_opstate.ex010209_hcut_freq,0,param_4,param_5,param_1);
   return;
 }
 
@@ -759,7 +773,7 @@ void menu_ex010210_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9ed4(param_1,DAT_00009a48,0,param_4,param_5,param_1);
+  menu_draw_hcut_slope(param_1,g_opstate.ex010210_hcut_slope,0,param_4,param_5,param_1);
   return;
 }
 
@@ -772,7 +786,7 @@ void menu_ex010211_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a49,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex010211_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -785,7 +799,7 @@ void menu_ex010212_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9f61(param_1,DAT_00009a4a,0x32,param_4,param_5,param_1);
+  menu_draw_out_level(param_1,g_opstate.ex010212_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -798,7 +812,7 @@ void menu_ex010213_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca06d(param_1,DAT_00009a4b,0,param_4,param_5,param_1);
+  FUN_fffca06d(param_1,g_opstate.ex010213_tx_bpf_sel,0,param_4,param_5,param_1);
   return;
 }
 
@@ -811,7 +825,7 @@ void menu_ex010214_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca125(param_1,DAT_00009a4c,3,param_4,param_5,param_1);
+  FUN_fffca125(param_1,g_opstate.ex010214_mod_source,3,param_4,param_5,param_1);
   return;
 }
 
@@ -824,7 +838,7 @@ void menu_ex010215_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca1b2(param_1,DAT_00009a4d,0x32,param_4,param_5,param_1);
+  FUN_fffca1b2(param_1,g_opstate.ex010215_usb_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -837,7 +851,7 @@ void menu_ex010216_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca22a(param_1,DAT_00009a4e,0x32,param_4,param_5,param_1);
+  FUN_fffca22a(param_1,g_opstate.ex010216_rear_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -850,7 +864,7 @@ void menu_ex010217_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca2a1(param_1,DAT_00009a4f,0,param_4,param_5,param_1);
+  menu_draw_rptt_select(param_1,g_opstate.ex010217_rptt_select,0,param_4,param_5,param_1);
   return;
 }
 
@@ -862,7 +876,7 @@ void menu_ex010217_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex010301_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a52);
+  menu_draw_flags(param_1,g_opstate.ex010301_af_treble_gain);
   return;
 }
 
@@ -874,7 +888,7 @@ void menu_ex010301_draw(byte *param_1)
 void menu_ex010302_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a53);
+  menu_draw_flags(param_1,g_opstate.ex010302_af_middle_tone_gain);
   return;
 }
 
@@ -886,7 +900,7 @@ void menu_ex010302_draw(byte *param_1)
 void menu_ex010303_draw(byte *param_1)
 
 {
-  menu_draw_flags(param_1,DAT_00009a54);
+  menu_draw_flags(param_1,g_opstate.ex010303_af_bass_gain);
   return;
 }
 
@@ -899,7 +913,7 @@ void menu_ex010304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffc9c29(param_1,DAT_00009a55,0xa0,param_4,param_5,param_1);
+  menu_draw_agc_delay(param_1,g_opstate.ex010304_agc_fast_delay,0xa0,param_4,param_5,param_1);
   return;
 }
 

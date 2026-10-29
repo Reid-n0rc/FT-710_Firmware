@@ -1,7 +1,7 @@
 # Manuals and datasheets
 
-Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 18 PDFs the project keeps are
-**committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`, AMD in `Manuals/AMD/`), under the file names below, so the paths in
+Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 28 PDFs the project keeps are
+**committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`, AMD in `Manuals/AMD/`, ADI in `Manuals/ADI/`, TI in `Manuals/TI/`), under the file names below, so the paths in
 the docs work. The documents in the second list are cited but not kept; get them from the links. The SHA-256 values identify the exact revision the project read; a newer
 revision from the vendor is fine for reading, but page numbers in the docs refer to these files.
 
@@ -56,6 +56,25 @@ Supplied by the owner (2026-10-29).
 |---|---|---|---|
 | `ug474_7Series_CLB.pdf` | UG474 7 Series FPGAs Configurable Logic Block User Guide, v1.9 (April 1, 2025), 81 pages | SLICE model, LUT/MUXF7/CARRY4 ([code/sdr/netlist.md](code/sdr/netlist.md)); Figure 7 (RAM32M, p. 23) and Figure 18 (dual SRL16, p. 35) give the DI1/DI2 data pins of the two LUT halves (#92) | `52904ee835809e51fb5a62a2b87a6e949dfcf8225c00c8c74f2ca064b2fd293c` |
 
+## SDR module converter candidates (#171, #191)
+
+Supplied by the owner (2026-10-29) and committed by the owner's decision. They were read to check the candidate ADCs and DACs against
+the SDR module's two power-up SPI transfers and its LVDS buses; none matches, so no part is identified
+([hardware.md](hardware.md#candidates-not-confirmed-171-191)).
+
+| File (in `Manuals/`) | Document | Used for | SHA-256 |
+|---|---|---|---|
+| `ADI/AD9648_RevC.pdf` | AD9648 data sheet, "14-Bit, 125 MSPS/105 MSPS, 1.8 V Dual Analog-to-Digital Converter", Rev. C (11/2015), 41 pages; https://www.analog.com/en/products/ad9648.html | SPI frame (p33), memory map (Table 18, pp34-37), interleaved LVDS pinout (Table 9, pp14-15): ruled out for #171 | `8e9885b8a39308eca64c00d57c33961b3ac3c462838c29936eada4a5e2245f91` |
+| `ADI/AD9258_RevA.pdf` | AD9258 data sheet, "14-Bit, 80 MSPS/105 MSPS/125 MSPS, 1.8 V Dual Analog-to-Digital Converter (ADC)", Rev. A (9/2009), 44 pages; https://www.analog.com/en/products/ad9258.html | SPI frame (p35), shadowing (p37), memory map (Table 17, pp38-39), LVDS pinout (Table 9, pp15-16): ruled out for #171 | `ec8e1fb261d6ca113c16c626790e9c43e74008fb76f7bb037935e394e26ea7a6` |
+| `ADI/LTC2145-14_LTC2144-14_LTC2143-14_RevA.pdf` | LTC2145-14/LTC2144-14/LTC2143-14 data sheet, "14-Bit, 125Msps/105Msps/80Msps Low Power Dual ADCs", Rev. A (21454314fa); https://www.analog.com/en/products/ltc2145-14.html | DDR LVDS pinout (pp15-16), serial programming and map (Table 3, pp28-30): ruled out as the source of either transfer (#171, #191) | `89e79c408eea8828ed8bacd80983ae00ea284edcba38ef80359e872aa5907cc7` |
+| `TI/ADS4249_SBAS534E.pdf` | ADS4249 data sheet, "Dual-Channel, 14-Bit, 250-MSPS Ultralow-Power ADC", SBAS534E (revised January 2016); https://www.ti.com/product/ADS4249 | Pinout (p6), serial interface (p39), map (Table 10, p41; register 00h p42): the 3.3 V port's format matches, its map does not (#171, #191) | `afc5f8ccbcbfc9dbf7190ff602baf0312fcd54a8733f2334696282ee3e70853e` |
+| `ADI/AD9122_RevC.pdf` | AD9122 data sheet, "Dual, 16-Bit, 1230 MSPS, TxDAC+ Digital-to-Analog Converter", Rev. C (7/2024), 60 pages; https://www.analog.com/en/products/ad9122.html | SPI (p19), register map (Table 10, pp21-22): ruled out for #191; its 0x1F9 full-scale default is part of the #171 DAC lead | `b82d8acff09fb215aa1eec3ae8dda36df7ca868461c79ab5f023d677411bc447` |
+| `ADI/AD9125_RevA.pdf` | AD9125 data sheet, "Dual, 16-Bit, 1000 MSPS, TxDAC+ Digital-to-Analog Converter", Rev. A (2/2025), 58 pages; https://www.analog.com/en/products/ad9125.html | SPI (p18), register map (Table 10, pp20-21): ruled out for #191 | `1440fd16e851c9421a6d8ade7b4934e7c61338ca6d10f76f5ac71859d13a945a` |
+| `ADI/AD9780_AD9781_AD9783_RevC.pdf` | AD9780/AD9781/AD9783 data sheet, "Dual 12-/14-/16-Bit, LVDS Interface, 500 MSPS DACs", Rev. C (8/2017), 32 pages; https://www.analog.com/en/products/ad9783.html | SPI format (Table 9, p19), register map (Tables 11-12, pp21-22): ruled out for #191; 0x1F9 FSC default (#171 lead) | `b039d7a4cf31fe71d6191d975d5b2ff225a0db59527011ed231464ddfb3e7176` |
+| `ADI/AD9737A_AD9739A_RevD.pdf` | AD9737A/AD9739A data sheet, "11-/14-Bit, 2.5 GSPS, RF Digital-to-Analog Converters", Rev. D, 64 pages; https://www.analog.com/en/products/ad9739a.html | SPI (Table 9, p40), register map (Table 10, pp42-43), dual-port LVDS (p1): ruled out for both ports and as the bank-34 DAC (#171 lead, #191) | `df9477d17f251c84b5edeb9519b689df59d3a65b59fdcacf064631aadcc4a41a` |
+| `ADI/AD9119_AD9129_RevB.pdf` | AD9119/AD9129 data sheet, "11-/14-Bit, 5.7 GSPS, RF Digital-to-Analog Converter", Rev. B, 66 pages; https://www.analog.com/en/products/ad9129.html | SPI (p36), register map (Table 17, p55), dual-port LVDS (p1): ruled out for both ports and as the bank-34 DAC (#171 lead, #191) | `062f41dfe5749278c51ad9ae5822c07662c6e9515deafba9d341d65c41501fe0` |
+| `TI/DAC5682Z_SLLS853F.pdf` | DAC5682Z data sheet, "16-Bit, 1.0 GSPS 2x-4x Interpolating Dual-Channel Digital-to-Analog Converter (DAC)", SLLS853F (revised January 2015); https://www.ti.com/product/DAC5682Z | SPI (p36), register map (Table 9, p39): ruled out for #191 | `96080209c2f42124c01bf52d92fa1e03d2e886bddef2d88371b7e8831e7eefee` |
+
 ## Cited but not in `Manuals/` (read online or from general knowledge)
 
 These are cited in the docs for register meanings, formats or encodings. The project did not keep a copy, so claims that rest on them
@@ -73,6 +92,7 @@ are tagged **[inference]** unless the code confirms them. Getting a copy and che
 | **TSC2003** / **TSC2007** touch controller datasheets | TI, https://www.ti.com/product/TSC2003, https://www.ti.com/product/TSC2007 | DISPLAY touch driver (the code calls it `tsc2007`; the parts list has a TSC2003) ([display/input.md](code/display/input.md)) |
 | **S-35190A** 3-wire RTC datasheet | ABLIC, https://www.ablic.com (search "S-35190A") | DISPLAY RTC command bytes ([display/peripherals.md](code/display/peripherals.md)) |
 | **BR25G256** SPI EEPROM datasheet | ROHM, https://www.rohm.com/products/memory/serial-eeprom/spi-bus/br25g256fj-3-product | MAIN settings EEPROM: 32 KB, 64-byte pages, RDSR/WREN/WRITE ([main/eeprom.md](code/main/eeprom.md)) |
+| Candidate datasheets **not read**: AD9643 (ADI); ADS62P49 (TI); ISLA224P (Renesas, FN7570); MAX5878; AN-1093 (AD9122 synchronization) | analog.com, ti.com, renesas.com product pages | Search-summary claims in the #171/#191 candidate lists ([hardware.md](hardware.md#candidates-not-confirmed-171-191)); the hosts were blocked from the session on 2026-10-29 |
 | **W25Q128** SPI NOR flash datasheet | Winbond, https://www.winbond.com (search "W25Q128JV") | DISPLAY boot flash layout, SDR config flash commands ([display/update.md](code/display/update.md)) |
 | Cadence Xtensa / HiFi4 ISA and the RT600 core overlay | via the Zephyr SDK 0.17.0 toolchain (https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0) | FLIX-aware HiFi4 disassembly ([ifdsp/hifi4.md](code/ifdsp/hifi4.md), [tooling.md](tooling.md)) |
 

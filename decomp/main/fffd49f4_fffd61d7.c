@@ -918,7 +918,7 @@ void menuitem_EX010101(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  opstate *local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -949,7 +949,7 @@ void menuitem_EX010101(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a2a;
+  local_c = &g_opstate;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -972,7 +972,7 @@ void menuitem_EX010102(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1003,7 +1003,7 @@ void menuitem_EX010102(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a2b;
+  local_c = 0x9a2b;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1026,7 +1026,7 @@ void menuitem_EX010103(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1057,7 +1057,7 @@ void menuitem_EX010103(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a2c;
+  local_c = 0x9a2c;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1080,7 +1080,7 @@ void menuitem_EX010104(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1111,7 +1111,7 @@ void menuitem_EX010104(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a2d;
+  local_c = 0x9a2d;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1134,7 +1134,7 @@ void menuitem_EX010105(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1165,7 +1165,7 @@ void menuitem_EX010105(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a2e;
+  local_c = 0x9a2e;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1188,7 +1188,7 @@ void menuitem_EX010106(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1219,7 +1219,7 @@ void menuitem_EX010106(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a2f;
+  local_c = 0x9a2f;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1242,7 +1242,7 @@ void menuitem_EX010107(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1273,7 +1273,7 @@ void menuitem_EX010107(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a30;
+  local_c = 0x9a30;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1296,7 +1296,7 @@ void menuitem_EX010108(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1327,7 +1327,7 @@ void menuitem_EX010108(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a31;
+  local_c = 0x9a31;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1350,7 +1350,7 @@ void menuitem_EX010109(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1381,7 +1381,7 @@ void menuitem_EX010109(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a32;
+  local_c = 0x9a32;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1404,7 +1404,7 @@ void menuitem_EX010110(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1435,7 +1435,7 @@ void menuitem_EX010110(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a33;
+  local_c = 0x9a33;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1458,7 +1458,7 @@ void menuitem_EX010111(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1489,7 +1489,7 @@ void menuitem_EX010111(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a34;
+  local_c = 0x9a34;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1512,7 +1512,7 @@ void menuitem_EX010112(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1543,7 +1543,7 @@ void menuitem_EX010112(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a35;
+  local_c = 0x9a35;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1566,7 +1566,7 @@ void menuitem_EX010113(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1597,7 +1597,7 @@ void menuitem_EX010113(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a36;
+  local_c = 0x9a36;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1620,7 +1620,7 @@ void menuitem_EX010114(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1651,7 +1651,7 @@ void menuitem_EX010114(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a37;
+  local_c = 0x9a37;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1674,7 +1674,7 @@ void menuitem_EX010115(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1705,7 +1705,7 @@ void menuitem_EX010115(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a38;
+  local_c = 0x9a38;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1728,7 +1728,7 @@ void menuitem_EX010116(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1759,7 +1759,7 @@ void menuitem_EX010116(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a39;
+  local_c = 0x9a39;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1782,7 +1782,7 @@ void menuitem_EX010117(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1813,7 +1813,7 @@ void menuitem_EX010117(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a3a;
+  local_c = 0x9a3a;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1836,7 +1836,7 @@ void menuitem_EX010118(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1867,7 +1867,7 @@ void menuitem_EX010118(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a3b;
+  local_c = 0x9a3b;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1890,7 +1890,7 @@ void menuitem_EX010119(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1921,7 +1921,7 @@ void menuitem_EX010119(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a3c;
+  local_c = 0x9a3c;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1944,7 +1944,7 @@ void menuitem_EX010201(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -1975,7 +1975,7 @@ void menuitem_EX010201(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a3f;
+  local_c = 0x9a3f;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -1998,7 +1998,7 @@ void menuitem_EX010202(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2029,7 +2029,7 @@ void menuitem_EX010202(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a40;
+  local_c = 0x9a40;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2052,7 +2052,7 @@ void menuitem_EX010203(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2083,7 +2083,7 @@ void menuitem_EX010203(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a41;
+  local_c = 0x9a41;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2106,7 +2106,7 @@ void menuitem_EX010204(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2137,7 +2137,7 @@ void menuitem_EX010204(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a42;
+  local_c = 0x9a42;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2160,7 +2160,7 @@ void menuitem_EX010205(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2191,7 +2191,7 @@ void menuitem_EX010205(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a43;
+  local_c = 0x9a43;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2214,7 +2214,7 @@ void menuitem_EX010206(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2245,7 +2245,7 @@ void menuitem_EX010206(void)
   local_6 = 0;
   local_5 = 4;
   local_4 = 2;
-  local_c = &DAT_00009a44;
+  local_c = 0x9a44;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2268,7 +2268,7 @@ void menuitem_EX010207(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2299,7 +2299,7 @@ void menuitem_EX010207(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a45;
+  local_c = 0x9a45;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2322,7 +2322,7 @@ void menuitem_EX010208(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2353,7 +2353,7 @@ void menuitem_EX010208(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a46;
+  local_c = 0x9a46;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2376,7 +2376,7 @@ void menuitem_EX010209(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2407,7 +2407,7 @@ void menuitem_EX010209(void)
   local_6 = 0;
   local_5 = 2;
   local_4 = 0;
-  local_c = &DAT_00009a47;
+  local_c = 0x9a47;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2430,7 +2430,7 @@ void menuitem_EX010210(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2461,7 +2461,7 @@ void menuitem_EX010210(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a48;
+  local_c = 0x9a48;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2484,7 +2484,7 @@ void menuitem_EX010211(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2515,7 +2515,7 @@ void menuitem_EX010211(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a49;
+  local_c = 0x9a49;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2538,7 +2538,7 @@ void menuitem_EX010212(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2569,7 +2569,7 @@ void menuitem_EX010212(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a4a;
+  local_c = 0x9a4a;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2592,7 +2592,7 @@ void menuitem_EX010213(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2623,7 +2623,7 @@ void menuitem_EX010213(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a4b;
+  local_c = 0x9a4b;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2646,7 +2646,7 @@ void menuitem_EX010214(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2677,7 +2677,7 @@ void menuitem_EX010214(void)
   local_6 = 0;
   local_5 = 1;
   local_4 = 0;
-  local_c = &DAT_00009a4c;
+  local_c = 0x9a4c;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2700,7 +2700,7 @@ void menuitem_EX010215(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2731,7 +2731,7 @@ void menuitem_EX010215(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a4d;
+  local_c = 0x9a4d;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -2754,7 +2754,7 @@ void menuitem_EX010216(void)
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  undefined1 *local_c;
+  undefined4 local_c;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -2785,7 +2785,7 @@ void menuitem_EX010216(void)
   local_6 = 0;
   local_5 = 3;
   local_4 = 0;
-  local_c = &DAT_00009a4e;
+  local_c = 0x9a4e;
   local_3 = 0;
   menu_register(local_38);
   return;

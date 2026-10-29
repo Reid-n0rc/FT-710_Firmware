@@ -111,7 +111,7 @@ void ctcss_goertzel_retune(void)
     puVar3[3] = uVar1;
     uVar7 = ae_l32_i(uVar2);
     cosf_();
-    uVar8 = ae_l32_i(&DAT_40000000);
+    uVar8 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar7);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar7 * (float)uVar8));
@@ -175,7 +175,7 @@ void ctcss_goertzel_init(void)
     puVar3[3] = uVar1;
     uVar7 = ae_l32_i(uVar2);
     cosf_();
-    uVar8 = ae_l32_i(&DAT_40000000);
+    uVar8 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar7);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar7 * (float)uVar8));
@@ -882,7 +882,7 @@ LAB_0022054b:
       divf_();
       uVar17 = ae_l32_i(uVar1);
       uVar16 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar2);
       uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -928,7 +928,7 @@ LAB_0022054b:
     divf_();
     uVar17 = ae_l32_i(uVar5);
     uVar16 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -1108,7 +1108,7 @@ LAB_00220860:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar18 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar7 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar3);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -1154,7 +1154,7 @@ LAB_00220860:
     divf_();
     uVar19 = ae_l32_i(uVar5);
     uVar18 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar7 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar3);
     uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -1611,8 +1611,8 @@ void fc1_spi_dma_init(void)
   undefined4 uStack_38;
   
   DAT_0025abb0 = 0;
-  INPUTMUX_AttachSignal(&DAT_40026000,0x11,0x14000013);
-  xos_register_interrupt_handler(0x16,DMA_IRQHandle,&DAT_40104000);
+  INPUTMUX_AttachSignal(&INPUTMUX_SCT0_IN_SEL0,0x11,0x14000013);
+  xos_register_interrupt_handler(0x16,DMA_IRQHandle,&DMA0_CTRL);
   xos_interrupt_enable(0x16);
   CLOCK_AttachClk(0x80002528);
   uVar2 = CLOCK_GetFlexCommClkFreq(1);
@@ -1620,26 +1620,26 @@ void fc1_spi_dma_init(void)
   uStack_38 = 0;
   puStack_40 = &DAT_000f4240;
   uStack_4c = 1;
-  SPI_MasterInit(&DAT_40107000,auStack_50,uVar2);
-  DMA_Init(&DAT_40104000);
+  SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
+  DMA_Init(&DMA0_CTRL);
   memw();
-  uVar1 = DAT_40104020;
+  uVar1 = DMA0_ENABLESET0;
   memw();
-  DAT_40104020 = uVar1 | 8;
+  DMA0_ENABLESET0 = uVar1 | 8;
   memw();
-  uVar1 = DAT_40104020;
+  uVar1 = DMA0_ENABLESET0;
   memw();
-  DAT_40104020 = uVar1 | 4;
+  DMA0_ENABLESET0 = uVar1 | 4;
   memw();
-  uVar1 = DAT_40104430;
+  uVar1 = DMA0_CHANNEL3_CFG;
   memw();
-  DAT_40104430 = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
+  DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
-  uVar1 = DAT_40104420;
+  uVar1 = DMA0_CHANNEL2_CFG;
   memw();
-  DAT_40104420 = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
-  DMA_CreateHandle(&DAT_0025abb4,&DAT_40104000,3);
-  DMA_CreateHandle(&DAT_0025abc4,&DAT_40104000,2);
+  DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
+  DMA_CreateHandle(&DAT_0025abb4,&DMA0_CTRL,3);
+  DMA_CreateHandle(&DAT_0025abc4,&DMA0_CTRL,2);
   return;
 }
 
@@ -1652,7 +1652,7 @@ void FUN_002210a4(void)
   DAT_0025abb0 = 0;
   memset(&DAT_200607e0,0,&DAT_000011f8);
   memset(&DAT_200619e0,0,&DAT_000011f8);
-  FUN_00214c30(&DAT_40107000,&DAT_0025abd4,FUN_0022118c,0,&DAT_0025abb4,&DAT_0025abc4);
+  FUN_00214c30(&SPI1_BASE,&DAT_0025abd4,FUN_0022118c,0,&DAT_0025abb4,&DAT_0025abc4);
   return;
 }
 
@@ -1673,7 +1673,7 @@ void FUN_002210dc(void)
   puStack_30 = &DAT_200607e0;
   DAT_0025abb0 = 0;
   puStack_2c = &DAT_200619e0;
-  iVar1 = FUN_00214c8c(&DAT_40107000,&DAT_0025abd4,&puStack_30);
+  iVar1 = FUN_00214c8c(&SPI1_BASE,&DAT_0025abd4,&puStack_30);
   if (iVar1 != 0) {
     DAT_0025abb0 = 1;
     return;
@@ -1701,7 +1701,7 @@ void FUN_0022111c(void)
     if (3 < DAT_0025abb0) {
       puStack_28 = &DAT_00100000;
     }
-    FUN_00214c8c(&DAT_40107000,&DAT_0025abd4,&local_30);
+    FUN_00214c8c(&SPI1_BASE,&DAT_0025abd4,&local_30);
     if (DAT_0025abb0 < 4) {
       DAT_0025abb0 = DAT_0025abb0 + 1;
       return;
@@ -1908,7 +1908,7 @@ LAB_002212fb:
       divf_();
       uVar17 = ae_l32_i(uVar1);
       uVar16 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar2);
       uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -1954,7 +1954,7 @@ LAB_002212fb:
     divf_();
     uVar17 = ae_l32_i(uVar5);
     uVar16 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -2134,7 +2134,7 @@ LAB_00221610:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar18 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar7 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar3);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -2180,7 +2180,7 @@ LAB_00221610:
     divf_();
     uVar19 = ae_l32_i(uVar5);
     uVar18 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar7 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar3);
     uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);

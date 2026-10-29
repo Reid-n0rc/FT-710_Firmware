@@ -22,12 +22,12 @@ void R_Systeminit(void)
 {
   byte bVar1;
   
-  DAT_000803fe = 0xa50b;
-  bVar1 = DAT_0008c11f;
-  DAT_0008c11f = bVar1 & 0x7f;
-  bVar1 = DAT_0008c11f;
-  DAT_0008c11f = bVar1 | 0x40;
-  DAT_0008c4cc = 0;
+  SYSTEM_PRCR = 0xa50b;
+  bVar1 = MPC_PWPR;
+  MPC_PWPR = bVar1 & 0x7f;
+  bVar1 = MPC_PWPR;
+  MPC_PWPR = bVar1 | 0x40;
+  POE3_POECR2 = 0;
   FUN_fff8f7c4();
   R_Pins_Create();
   R_IWDT_Create();
@@ -66,11 +66,11 @@ void R_Systeminit(void)
   R_BSP_InterruptWrite(0x20,-0x36c11);
   R_BSP_InterruptWrite(0x22,-0x36814);
   R_BSP_InterruptWrite(0x23,-0x36780);
-  bVar1 = DAT_0008c11f;
-  DAT_0008c11f = bVar1 & 0xbf;
-  bVar1 = DAT_0008c11f;
-  DAT_0008c11f = bVar1 | 0x80;
-  DAT_000803fe = 0xa500;
+  bVar1 = MPC_PWPR;
+  MPC_PWPR = bVar1 & 0xbf;
+  bVar1 = MPC_PWPR;
+  MPC_PWPR = bVar1 | 0x80;
+  SYSTEM_PRCR = 0xa500;
   return;
 }
 
@@ -101,12 +101,12 @@ void FUN_fff8f7ca(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008720d;
-  DAT_0008720d = bVar1 & 0xbf;
-  bVar1 = DAT_0008736e;
-  DAT_0008736e = bVar1 & 0xf8 | 8;
-  bVar1 = DAT_0008720d;
-  DAT_0008720d = bVar1 | 0x40;
+  bVar1 = ICU_IER0D;
+  ICU_IER0D = bVar1 & 0xbf;
+  bVar1 = ICU_IPR110;
+  ICU_IPR110 = bVar1 & 0xf8 | 8;
+  bVar1 = ICU_IER0D;
+  ICU_IER0D = bVar1 | 0x40;
   return;
 }
 
@@ -168,17 +168,17 @@ void FUN_fff8f809(void)
   uint uVar2;
   undefined4 uVar3;
   
-  DAT_000803fe = 0xa502;
-  uVar1 = DAT_00080010;
-  uVar2 = DAT_00080010;
-  DAT_00080010 = uVar2 & 0xfffeffff;
-  uVar3 = DAT_00080010;
-  DAT_00089163 = 3;
-  DAT_0008916e = 0x20;
-  DAT_00089163 = 2;
-  uVar2 = DAT_00080010;
-  DAT_00080010 = uVar2 & 0xfffeffff | uVar1 & 0x10000;
-  DAT_000803fe = 0xa500;
+  SYSTEM_PRCR = 0xa502;
+  uVar1 = SYSTEM_MSTPCRA;
+  uVar2 = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = uVar2 & 0xfffeffff;
+  uVar3 = SYSTEM_MSTPCRA;
+  S12AD1_ADSAMPR = 3;
+  S12AD1_ADSAM = 0x20;
+  S12AD1_ADSAMPR = 2;
+  uVar2 = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = uVar2 & 0xfffeffff | uVar1 & 0x10000;
+  SYSTEM_PRCR = 0xa500;
   return;
 }
 
@@ -191,39 +191,45 @@ void FUN_fff8f879(void)
   uint uVar1;
   undefined4 local_4;
   
-  uVar1 = DAT_000c5800;
+  uVar1 = BSC_EBMAPCR;
   local_4 = uVar1 & 0xfffca9b8 | 0x42130;
-  DAT_000c5800 = local_4;
+  BSC_EBMAPCR = local_4;
   return;
 }
 
 
-// ===== FUN_fff8f8bb @ fff8f8bb (29 bytes)
+// ===== charput @ fff8f8bb (29 bytes)
 
-void FUN_fff8f8bb(byte param_1)
+/* lowsrc charput: waits for DBG_DBGSTAT (0x840C0) bit 8 clear, writes DBG_C2E0 (0x84080) [fact];
+   E1/E2 virtual console, called by write [inference] (T23a) */
+
+void charput(byte param_1)
 
 {
   uint uVar1;
   
   do {
-    uVar1 = DAT_000840c0;
+    uVar1 = DBG_DBGSTAT;
   } while ((uVar1 & 0x100) != 0);
-  DAT_00084080 = (uint)param_1;
+  DBG_C2E0 = (uint)param_1;
   return;
 }
 
 
-// ===== FUN_fff8f8d8 @ fff8f8d8 (29 bytes)
+// ===== charget @ fff8f8d8 (29 bytes)
 
-uint FUN_fff8f8d8(void)
+/* lowsrc charget: waits for DBG_DBGSTAT (0x840C0) bit 12, returns DBG_E2C0 (0x84090) & 0xFF [fact];
+   E1/E2 virtual console [inference] (T23a) */
+
+uint charget(void)
 
 {
   uint uVar1;
   
   do {
-    uVar1 = DAT_000840c0;
+    uVar1 = DBG_DBGSTAT;
   } while ((uVar1 & 0x1000) == 0);
-  uVar1 = DAT_00084090;
+  uVar1 = DBG_E2C0;
   return uVar1 & 0xff;
 }
 
@@ -359,7 +365,7 @@ uint write(int param_1,void *param_2,int param_3)
         for (; local_1c = param_3, 0 < local_14; local_14 = local_14 + -1) {
           uVar1 = *local_8;
           local_8 = local_8 + 1;
-          FUN_fff8f8bb(uVar1);
+          charput(uVar1);
         }
       }
       else {
@@ -397,7 +403,7 @@ int FUN_fff8fb59(int param_1,char *param_2,int param_3)
   local_c = param_2;
   if (bVar1) {
     for (; local_1c = param_3, 0 < local_18; local_18 = local_18 + -1) {
-      cVar2 = FUN_fff8f8d8();
+      cVar2 = charget();
       *local_c = cVar2;
       if (*local_c == '\r') {
         *local_c = '\n';
@@ -468,7 +474,7 @@ uint FUN_fff8fc4d(void)
 
 // ===== FUN_fff8fc57 @ fff8fc57 (277 bytes)
 
-byte FUN_fff8fc57(uint param_1,void *param_2)
+byte FUN_fff8fc57(uint delay,uint units)
 
 {
   bool bVar1;
@@ -477,13 +483,13 @@ byte FUN_fff8fc57(uint param_1,void *param_2)
   undefined8 uStack_20;
   uint uStack_14;
   
-  if ((param_2 == &DAT_000f4240) || (param_2 == &DAT_000003e8)) {
+  if (((undefined *)units == &DAT_000f4240) || (units == 1000)) {
     bVar1 = false;
   }
   else {
     bVar1 = true;
   }
-  if ((bVar1) && (param_2 != (void *)0x1)) {
+  if ((bVar1) && (units != 1)) {
     bVar1 = true;
   }
   else {
@@ -493,12 +499,12 @@ byte FUN_fff8fc57(uint param_1,void *param_2)
     return 0;
   }
   uStack_14 = FUN_fff8fc4d();
-  if (param_2 == &DAT_000f4240) {
+  if ((undefined *)units == &DAT_000f4240) {
     uVar2 = 0xffffffff;
     if (uStack_14 != 0) {
       uVar2 = 0xffffffff / uStack_14;
     }
-    if (param_1 <= uVar2) {
+    if (delay <= uVar2) {
       bVar1 = true;
       goto LAB_fff8fcb2;
     }
@@ -506,9 +512,9 @@ byte FUN_fff8fc57(uint param_1,void *param_2)
   bVar1 = false;
 LAB_fff8fcb2:
   if (bVar1) {
-    uStack_14 = uStack_14 * param_1;
-    if (param_2 != (void *)0x0) {
-      uStack_14 = uStack_14 / (uint)param_2;
+    uStack_14 = uStack_14 * delay;
+    if (units != 0) {
+      uStack_14 = uStack_14 / units;
     }
     if (uStack_14 < 3) {
       uStack_14 = 0;
@@ -522,9 +528,9 @@ LAB_fff8fcb2:
     }
   }
   else {
-    uVar3 = FUN_fffede41((uint)((ulonglong)param_1 * (ulonglong)uStack_14),
-                         (uint)((ulonglong)param_1 * (ulonglong)uStack_14 >> 0x20),(uint)param_2,
-                         (int)param_2 >> 0x1f);
+    uVar3 = __udiv64((uint)((ulonglong)delay * (ulonglong)uStack_14),
+                     (uint)((ulonglong)delay * (ulonglong)uStack_14 >> 0x20),units,
+                     (int)units >> 0x1f);
     uStack_20._4_4_ = (uint)(uVar3 >> 0x20);
     uStack_20._0_4_ = (uint)uVar3;
     if (uStack_20._4_4_ != 0 || uStack_20._4_4_ == 0 && 2 < (uint)uStack_20) {
@@ -656,16 +662,16 @@ void FUN_fff8fe3c(int param_1)
   }
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = DAT_0008c11f;
-      DAT_0008c11f = bVar2 & 0x7f;
-      bVar2 = DAT_0008c11f;
-      DAT_0008c11f = bVar2 & 0xbf;
-      bVar2 = DAT_0008c11f;
-      DAT_0008c11f = bVar2 | 0x80;
+      bVar2 = MPC_PWPR;
+      MPC_PWPR = bVar2 & 0x7f;
+      bVar2 = MPC_PWPR;
+      MPC_PWPR = bVar2 & 0xbf;
+      bVar2 = MPC_PWPR;
+      MPC_PWPR = bVar2 | 0x80;
     }
     else {
-      uVar1 = DAT_000803fe;
-      DAT_000803fe = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
+      uVar1 = SYSTEM_PRCR;
+      SYSTEM_PRCR = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -687,14 +693,14 @@ void FUN_fff8fec0(int param_1)
   R_BSP_InterruptControl(0x5e,6,auStack_8);
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = DAT_0008c11f;
-      DAT_0008c11f = bVar2 & 0x7f;
-      bVar2 = DAT_0008c11f;
-      DAT_0008c11f = bVar2 | 0x40;
+      bVar2 = MPC_PWPR;
+      MPC_PWPR = bVar2 & 0x7f;
+      bVar2 = MPC_PWPR;
+      MPC_PWPR = bVar2 | 0x40;
     }
     else {
-      uVar1 = DAT_000803fe;
-      DAT_000803fe = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
+      uVar1 = SYSTEM_PRCR;
+      SYSTEM_PRCR = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
     }
   }
   *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
@@ -733,22 +739,28 @@ void bsp_callbacks_clear(void)
 }
 
 
-// ===== FUN_fff8ff82 @ fff8ff82 (33 bytes)
+// ===== R_BSP_InterruptRequestEnable @ fff8ff82 (33 bytes)
 
-void FUN_fff8ff82(uint param_1)
+/* Sets bit (v & 7) of ICU IER[v >> 3] (0x87200 + v/8) for vector v [fact]; Renesas BSP
+   R_BSP_InterruptRequestEnable [inference for the name] (T23a) */
+
+void R_BSP_InterruptRequestEnable(uint param_1)
 
 {
-  (&DAT_00087200)[param_1 >> 3] = (&DAT_00087200)[param_1 >> 3] | '\x01' << ((byte)param_1 & 7);
+  (&ICU_IER00)[param_1 >> 3] = (&ICU_IER00)[param_1 >> 3] | '\x01' << ((byte)param_1 & 7);
   return;
 }
 
 
-// ===== FUN_fff8ffa3 @ fff8ffa3 (33 bytes)
+// ===== R_BSP_InterruptRequestDisable @ fff8ffa3 (33 bytes)
 
-void FUN_fff8ffa3(uint param_1)
+/* Clears bit (v & 7) of ICU IER[v >> 3] (0x87200 + v/8) for vector v [fact]; Renesas BSP
+   R_BSP_InterruptRequestDisable [inference for the name] (T23a) */
+
+void R_BSP_InterruptRequestDisable(uint param_1)
 
 {
-  (&DAT_00087200)[param_1 >> 3] = (&DAT_00087200)[param_1 >> 3] & ~('\x01' << ((byte)param_1 & 7));
+  (&ICU_IER00)[param_1 >> 3] = (&ICU_IER00)[param_1 >> 3] & ~('\x01' << ((byte)param_1 & 7));
   return;
 }
 
@@ -994,24 +1006,24 @@ LAB_fff90228:
       local_1c = param_3;
       if (bVar3) {
         if (param_2 == '\x01') {
-          FUN_fff8ffa3(0x6a);
-          bVar1 = DAT_0008706a;
-          DAT_0008706a = bVar1 & 0xfe;
-          bVar1 = DAT_0008736a;
+          R_BSP_InterruptRequestDisable(0x6a);
+          bVar1 = ICU_IR106;
+          ICU_IR106 = bVar1 & 0xfe;
+          bVar1 = ICU_IPR106;
           if (param_3 <= (bVar1 & 0xf)) {
-            bVar1 = DAT_0008736a;
+            bVar1 = ICU_IPR106;
             local_1c = bVar1 & 0xf;
           }
-          bVar1 = DAT_0008736a;
-          DAT_0008736a = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-          FUN_fff8ff82(0x6a);
+          bVar1 = ICU_IPR106;
+          ICU_IPR106 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+          R_BSP_InterruptRequestEnable(0x6a);
         }
         else {
-          iVar2 = DAT_00087640;
+          iVar2 = ICU_GENBE0;
           if (iVar2 == 0) {
-            FUN_fff8ffa3(0x6a);
-            bVar1 = DAT_0008736a;
-            DAT_0008736a = bVar1 & 0xf0;
+            R_BSP_InterruptRequestDisable(0x6a);
+            bVar1 = ICU_IPR106;
+            ICU_IPR106 = bVar1 & 0xf0;
           }
           else {
             local_14 = 4;
@@ -1027,24 +1039,24 @@ LAB_fff90228:
         }
         if (bVar3) {
           if (param_2 == '\x01') {
-            FUN_fff8ffa3(0x6e);
-            bVar1 = DAT_0008706e;
-            DAT_0008706e = bVar1 & 0xfe;
-            bVar1 = DAT_0008736e;
+            R_BSP_InterruptRequestDisable(0x6e);
+            bVar1 = ICU_IR110;
+            ICU_IR110 = bVar1 & 0xfe;
+            bVar1 = ICU_IPR110;
             if (param_3 <= (bVar1 & 0xf)) {
-              bVar1 = DAT_0008736e;
+              bVar1 = ICU_IPR110;
               local_1c = bVar1 & 0xf;
             }
-            bVar1 = DAT_0008736e;
-            DAT_0008736e = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-            FUN_fff8ff82(0x6e);
+            bVar1 = ICU_IPR110;
+            ICU_IPR110 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+            R_BSP_InterruptRequestEnable(0x6e);
           }
           else {
-            iVar2 = DAT_00087670;
+            iVar2 = ICU_GENBL0;
             if (iVar2 == 0) {
-              FUN_fff8ffa3(0x6e);
-              bVar1 = DAT_0008736e;
-              DAT_0008736e = bVar1 & 0xf0;
+              R_BSP_InterruptRequestDisable(0x6e);
+              bVar1 = ICU_IPR110;
+              ICU_IPR110 = bVar1 & 0xf0;
             }
             else {
               local_14 = 4;
@@ -1060,24 +1072,24 @@ LAB_fff90228:
           }
           if (bVar3) {
             if (param_2 == '\x01') {
-              FUN_fff8ffa3(0x6f);
-              bVar1 = DAT_0008706f;
-              DAT_0008706f = bVar1 & 0xfe;
-              bVar1 = DAT_0008736f;
+              R_BSP_InterruptRequestDisable(0x6f);
+              bVar1 = ICU_IR111;
+              ICU_IR111 = bVar1 & 0xfe;
+              bVar1 = ICU_IPR111;
               if (param_3 <= (bVar1 & 0xf)) {
-                bVar1 = DAT_0008736f;
+                bVar1 = ICU_IPR111;
                 local_1c = bVar1 & 0xf;
               }
-              bVar1 = DAT_0008736f;
-              DAT_0008736f = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-              FUN_fff8ff82(0x6f);
+              bVar1 = ICU_IPR111;
+              ICU_IPR111 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+              R_BSP_InterruptRequestEnable(0x6f);
             }
             else {
-              iVar2 = DAT_00087674;
+              iVar2 = ICU_GENBL1;
               if (iVar2 == 0) {
-                FUN_fff8ffa3(0x6f);
-                bVar1 = DAT_0008736f;
-                DAT_0008736f = bVar1 & 0xf0;
+                R_BSP_InterruptRequestDisable(0x6f);
+                bVar1 = ICU_IPR111;
+                ICU_IPR111 = bVar1 & 0xf0;
               }
               else {
                 local_14 = 4;
@@ -1093,24 +1105,24 @@ LAB_fff90228:
             }
             if (bVar3) {
               if (param_2 == '\x01') {
-                FUN_fff8ffa3(0x6b);
-                bVar1 = DAT_0008706b;
-                DAT_0008706b = bVar1 & 0xfe;
-                bVar1 = DAT_0008736b;
+                R_BSP_InterruptRequestDisable(0x6b);
+                bVar1 = ICU_IR107;
+                ICU_IR107 = bVar1 & 0xfe;
+                bVar1 = ICU_IPR107;
                 if (param_3 <= (bVar1 & 0xf)) {
-                  bVar1 = DAT_0008736b;
+                  bVar1 = ICU_IPR107;
                   local_1c = bVar1 & 0xf;
                 }
-                bVar1 = DAT_0008736b;
-                DAT_0008736b = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-                FUN_fff8ff82(0x6b);
+                bVar1 = ICU_IPR107;
+                ICU_IPR107 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+                R_BSP_InterruptRequestEnable(0x6b);
               }
               else {
-                iVar2 = DAT_00087678;
+                iVar2 = ICU_GENBL2;
                 if (iVar2 == 0) {
-                  FUN_fff8ffa3(0x6b);
-                  bVar1 = DAT_0008736b;
-                  DAT_0008736b = bVar1 & 0xf0;
+                  R_BSP_InterruptRequestDisable(0x6b);
+                  bVar1 = ICU_IPR107;
+                  ICU_IPR107 = bVar1 & 0xf0;
                 }
                 else {
                   local_14 = 4;
@@ -1126,24 +1138,24 @@ LAB_fff90228:
               }
               if (bVar3) {
                 if (param_2 == '\x01') {
-                  FUN_fff8ffa3(0x70);
-                  bVar1 = DAT_00087070;
-                  DAT_00087070 = bVar1 & 0xfe;
-                  bVar1 = DAT_00087370;
+                  R_BSP_InterruptRequestDisable(0x70);
+                  bVar1 = ICU_IR112;
+                  ICU_IR112 = bVar1 & 0xfe;
+                  bVar1 = ICU_IPR112;
                   if (param_3 <= (bVar1 & 0xf)) {
-                    bVar1 = DAT_00087370;
+                    bVar1 = ICU_IPR112;
                     local_1c = bVar1 & 0xf;
                   }
-                  bVar1 = DAT_00087370;
-                  DAT_00087370 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-                  FUN_fff8ff82(0x70);
+                  bVar1 = ICU_IPR112;
+                  ICU_IPR112 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+                  R_BSP_InterruptRequestEnable(0x70);
                 }
                 else {
-                  iVar2 = DAT_00087870;
+                  iVar2 = ICU_GENAL0;
                   if (iVar2 == 0) {
-                    FUN_fff8ffa3(0x70);
-                    bVar1 = DAT_00087370;
-                    DAT_00087370 = bVar1 & 0xf0;
+                    R_BSP_InterruptRequestDisable(0x70);
+                    bVar1 = ICU_IPR112;
+                    ICU_IPR112 = bVar1 & 0xf0;
                   }
                   else {
                     local_14 = 4;
@@ -1159,24 +1171,24 @@ LAB_fff90228:
                 }
                 if (bVar3) {
                   if (param_2 == '\x01') {
-                    FUN_fff8ffa3(0x71);
-                    bVar1 = DAT_00087071;
-                    DAT_00087071 = bVar1 & 0xfe;
-                    bVar1 = DAT_00087371;
+                    R_BSP_InterruptRequestDisable(0x71);
+                    bVar1 = ICU_IR113;
+                    ICU_IR113 = bVar1 & 0xfe;
+                    bVar1 = ICU_IPR113;
                     if (param_3 <= (bVar1 & 0xf)) {
-                      bVar1 = DAT_00087371;
+                      bVar1 = ICU_IPR113;
                       local_1c = bVar1 & 0xf;
                     }
-                    bVar1 = DAT_00087371;
-                    DAT_00087371 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
-                    FUN_fff8ff82(0x71);
+                    bVar1 = ICU_IPR113;
+                    ICU_IPR113 = bVar1 & 0xf0 | (byte)local_1c & 0xf;
+                    R_BSP_InterruptRequestEnable(0x71);
                   }
                   else {
-                    iVar2 = DAT_00087874;
+                    iVar2 = ICU_GENAL1;
                     if (iVar2 == 0) {
-                      FUN_fff8ffa3(0x71);
-                      bVar1 = DAT_00087371;
-                      DAT_00087371 = bVar1 & 0xf0;
+                      R_BSP_InterruptRequestDisable(0x71);
+                      bVar1 = ICU_IPR113;
+                      ICU_IPR113 = bVar1 & 0xf0;
                     }
                     else {
                       local_14 = 4;
@@ -1269,8 +1281,8 @@ void NMI(void)
   byte bVar1;
   bool bVar2;
   
-  bVar1 = DAT_00087580;
-  if (((bVar1 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1278,11 +1290,11 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(2,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 1;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 1;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 1 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 1 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 1 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 1 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1290,11 +1302,11 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(5,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 2;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 2;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 2 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 2 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 2 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 2 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1302,11 +1314,11 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(6,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 4;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 4;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 3 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 3 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 3 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 3 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1314,11 +1326,11 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(7,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 8;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 8;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 4 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 4 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 4 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 4 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1326,11 +1338,11 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(8,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 0x10;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 0x10;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 5 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 5 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 5 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 5 & 1) == 1)) {
     bVar2 = true;
   }
   else {
@@ -1338,28 +1350,28 @@ void NMI(void)
   }
   if (bVar2) {
     R_BSP_InterruptControl(9,0,(void *)0x10000000);
-    bVar1 = DAT_00087582;
-    DAT_00087582 = bVar1 | 0x20;
+    bVar1 = ICU_NMICLR;
+    ICU_NMICLR = bVar1 | 0x20;
   }
-  bVar1 = DAT_00087580;
-  if (((bVar1 >> 6 & 1) == 1) && (bVar1 = DAT_00087581, (bVar1 >> 6 & 1) == 1)) {
+  bVar1 = ICU_NMISR;
+  if (((bVar1 >> 6 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 >> 6 & 1) == 1)) {
     bVar2 = true;
   }
   else {
     bVar2 = false;
   }
   if (bVar2) {
-    bVar1 = DAT_00081201;
+    bVar1 = RAM_RAMSTS;
     if ((bVar1 & 1) == 1) {
       R_BSP_InterruptControl(0xc,0,(void *)0x10000000);
-      bVar1 = DAT_00081201;
-      DAT_00081201 = bVar1 & 0xfe;
+      bVar1 = RAM_RAMSTS;
+      RAM_RAMSTS = bVar1 & 0xfe;
     }
-    bVar1 = DAT_00081241;
+    bVar1 = RAM_EXRAMSTS;
     if ((bVar1 & 1) == 1) {
       R_BSP_InterruptControl(0xd,0,(void *)0x10000000);
-      bVar1 = DAT_00081241;
-      DAT_00081241 = bVar1 & 0xfe;
+      bVar1 = RAM_EXRAMSTS;
+      RAM_EXRAMSTS = bVar1 & 0xfe;
     }
   }
   do {
@@ -1395,8 +1407,8 @@ undefined4 vec016_BSC_BUSERR(undefined4 param_1)
 {
   byte bVar1;
   
-  bVar1 = DAT_00081300;
-  DAT_00081300 = bVar1 | 1;
+  bVar1 = BSC_BERCLR;
+  BSC_BERCLR = bVar1 | 1;
   R_BSP_InterruptControl(0xb,0,(void *)0x10000000);
   return param_1;
 }

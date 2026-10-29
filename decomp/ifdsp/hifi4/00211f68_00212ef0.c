@@ -346,14 +346,14 @@ void FUN_002123e0(void)
   uint uVar1;
   
   memw();
-  uVar1 = DAT_40036000;
+  uVar1 = I3C_MCONFIG;
   if (((uVar1 & 3) == 1) && (DAT_00238e30 != (code *)0x0)) {
-    (*DAT_00238e30)(&DAT_40036000,DAT_00238e38);
+    (*DAT_00238e30)(&I3C_MCONFIG,DAT_00238e38);
   }
   memw();
-  uVar1 = DAT_40036004;
+  uVar1 = I3C_SCONFIG;
   if (((uVar1 & 1) != 0) && (DAT_00238e34 != (code *)0x0)) {
-    (*DAT_00238e34)(&DAT_40036000,DAT_00238f10);
+    (*DAT_00238e34)(&I3C_MCONFIG,DAT_00238f10);
   }
   return;
 }
@@ -661,7 +661,7 @@ void FUN_00212670(void)
 
 {
   memw();
-  DAT_40021048 = 0x80000000;
+  CLKCTL1_PSCCTL2_SET = 0x80000000;
   return;
 }
 
@@ -706,7 +706,7 @@ void FUN_002126e0(void)
 
 {
   memw();
-  DAT_40021078 = 0x80000000;
+  CLKCTL1_PSCCTL2_CLR = 0x80000000;
   return;
 }
 
@@ -720,63 +720,63 @@ void FUN_002126e0(void)
 /* WARNING: Removing unreachable block (ram,0x0021273b) */
 /* WARNING: Removing unreachable block (ram,0x0021286d) */
 
-void FUN_00212700(undefined *param_1,char *param_2)
+void FUN_00212700(dword *param_1,char *param_2)
 
 {
   char cVar1;
-  uint uVar2;
+  dword dVar2;
+  uint uVar3;
   
-  if (param_1 == &DAT_4013a000) {
+  if (param_1 == &ADC0_VERID) {
     memw();
-    DAT_40001044 = 0x10000;
+    CLKCTL0_PSCCTL1_SET = 0x10000;
   }
   memw();
   memw();
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) | 2;
+  param_1[4] = param_1[4] | 2;
   memw();
   memw();
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) & 0xfffffffd;
+  param_1[4] = param_1[4] & 0xfffffffd;
   memw();
   memw();
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) | 0x100;
+  param_1[4] = param_1[4] | 0x100;
   memw();
   memw();
   cVar1 = *param_2;
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) & 0xfffffffe;
+  param_1[4] = param_1[4] & 0xfffffffe;
   if (cVar1 == '\0') {
     memw();
-    uVar2 = *(uint *)(param_1 + 0x10) | 4;
+    dVar2 = param_1[4] | 4;
   }
   else {
     memw();
-    uVar2 = *(uint *)(param_1 + 0x10) & 0xfffffffb;
+    dVar2 = param_1[4] & 0xfffffffb;
   }
   memw();
-  *(uint *)(param_1 + 0x10) = uVar2;
+  param_1[4] = dVar2;
   memw();
-  uVar2 = *(uint *)(param_2 + 0x18);
+  uVar3 = *(uint *)(param_2 + 0x18);
   cVar1 = param_2[0x14];
-  *(uint *)(param_1 + 0x20) =
-       *(uint *)(param_2 + 0x10) & 1 | (uint)(byte)param_2[1] << 0x1c |
-       (*(uint *)(param_2 + 0xc) & 3) << 4 |
-       (*(uint *)(param_2 + 4) & 0xff) << 0x10 | (*(uint *)(param_2 + 8) & 3) << 6;
+  param_1[8] = *(uint *)(param_2 + 0x10) & 1 | (uint)(byte)param_2[1] << 0x1c |
+               (*(uint *)(param_2 + 0xc) & 3) << 4 |
+               (*(uint *)(param_2 + 4) & 0xff) << 0x10 | (*(uint *)(param_2 + 8) & 3) << 6;
   if (cVar1 != '\0') {
     memw();
-    *(uint *)(param_1 + 0x24) = uVar2 & 0x1ff | 0x80000000;
+    param_1[9] = uVar3 & 0x1ff | 0x80000000;
     memw();
-    *(uint *)(param_1 + 0x30) = (*(uint *)(param_2 + 0x1c) & 0xf) << 0x10;
+    param_1[0xc] = (*(uint *)(param_2 + 0x1c) & 0xf) << 0x10;
     memw();
     memw();
-    *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) | 1;
+    param_1[4] = param_1[4] | 1;
     return;
   }
   memw();
-  *(undefined4 *)(param_1 + 0x24) = 0;
+  param_1[9] = 0;
   memw();
-  *(uint *)(param_1 + 0x30) = (*(uint *)(param_2 + 0x1c) & 0xf) << 0x10;
+  param_1[0xc] = (*(uint *)(param_2 + 0x1c) & 0xf) << 0x10;
   memw();
   memw();
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) | 1;
+  param_1[4] = param_1[4] | 1;
   return;
 }
 
@@ -809,17 +809,17 @@ void FUN_002128b8(undefined1 *param_1)
 /* WARNING: Removing unreachable block (ram,0x00212940) */
 /* WARNING: Removing unreachable block (ram,0x00212962) */
 
-void FUN_002128e8(undefined *param_1)
+void FUN_002128e8(dword *param_1)
 
 {
   memw();
   memw();
-  *(uint *)(param_1 + 0x10) = *(uint *)(param_1 + 0x10) & 0xfffffffe;
-  if (param_1 != &DAT_4013a000) {
+  param_1[4] = param_1[4] & 0xfffffffe;
+  if (param_1 != &ADC0_VERID) {
     return;
   }
   memw();
-  DAT_40001074 = 0x10000;
+  CLKCTL0_PSCCTL1_CLR = 0x10000;
   return;
 }
 
@@ -944,15 +944,16 @@ void FUN_00212af4(undefined4 *param_1)
 /* WARNING: Removing unreachable block (ram,0x00212be0) */
 /* WARNING: Removing unreachable block (ram,0x00212ba8) */
 
-void FUN_00212b30(undefined *param_1,byte *param_2)
+void FUN_00212b30(dword *param_1,byte *param_2)
 
 {
   memw();
-  DAT_40021048 = 1 << 0x20 - (0x20 - ((byte)(&DAT_0020046c)[(uint)(param_1 != &DAT_4002d000) * 4] &
-                                     0x1f));
-  FUN_00213910(*(undefined4 *)(&DAT_00200470 + (uint)(param_1 != &DAT_4002d000) * 4));
+  CLKCTL1_PSCCTL2_SET =
+       1 << 0x20 - (0x20 - ((byte)(&DAT_0020046c)[(uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4] &
+                           0x1f));
+  FUN_00213910(*(undefined4 *)(&DAT_00200470 + (uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4));
   memw();
-  *(uint *)(param_1 + 0xf0) = (uint)*param_2 << 0x1f;
+  param_1[0x3c] = (uint)*param_2 << 0x1f;
   return;
 }
 
@@ -966,7 +967,7 @@ void FUN_00212b30(undefined *param_1,byte *param_2)
 /* WARNING: Removing unreachable block (ram,0x00212c49) */
 /* WARNING: Removing unreachable block (ram,0x00212c73) */
 
-void FUN_00212c04(undefined4 *param_1)
+void FUN_00212c04(dword *param_1)
 
 {
   memw();
@@ -977,13 +978,13 @@ void FUN_00212c04(undefined4 *param_1)
   param_1[8] = 0x80000000;
   memw();
   param_1[0xc] = 0x80000000;
-  if (param_1 != (undefined4 *)&DAT_4002d000) {
+  if (param_1 != &MRT0_CHANNEL0_INTVAL) {
     memw();
-    DAT_40021078 = 0x100;
+    CLKCTL1_PSCCTL2_CLR = 0x100;
     return;
   }
   memw();
-  DAT_40021078 = 0x100;
+  CLKCTL1_PSCCTL2_CLR = 0x100;
   return;
 }
 
@@ -1023,16 +1024,16 @@ void FUN_00212cc8(int param_1,int param_2,uint param_3,int param_4)
 /* WARNING: Removing unreachable block (ram,0x00212d79) */
 /* clock enable for MU (base 0x40111000 MU-B passed by Thread_Ipc) */
 
-void MU_Init(undefined *param_1)
+void MU_Init(dword *param_1)
 
 {
-  if (param_1 != &DAT_40111000) {
+  if (param_1 != &MUB_VER) {
     memw();
-    DAT_40001040 = 1;
+    CLKCTL0_PSCCTL0_SET = 1;
     return;
   }
   memw();
-  DAT_40021044 = 0x10000000;
+  CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
 
@@ -1051,16 +1052,16 @@ void MU_Init(undefined *param_1)
 /* WARNING: Removing unreachable block (ram,0x00212e36) */
 /* WARNING: Removing unreachable block (ram,0x00212e25) */
 
-void FUN_00212dac(undefined *param_1)
+void FUN_00212dac(dword *param_1)
 
 {
-  if (param_1 != &DAT_40111000) {
+  if (param_1 != &MUB_VER) {
     memw();
-    DAT_40001070 = 1;
+    CLKCTL0_PSCCTL0_CLR = 1;
     return;
   }
   memw();
-  DAT_40021074 = 0x10000000;
+  CLKCTL1_PSCCTL1_CLR = 0x10000000;
   return;
 }
 
