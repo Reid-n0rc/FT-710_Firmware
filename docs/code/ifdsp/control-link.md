@@ -230,7 +230,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x002B | 0x0000 | w `FUN_fff9dd6a` |  | R 0x00221220 | TX EQ band 3: `setting×100+1400` Hz, bit 12 = on; DSP checks low 12 bits ≤ 5999 [fact] |
 | 0x002C | 0x0000 | w `FUN_fff9dee6` |  | R 0x00221220 | TX EQ band 3 level; DSP clips to −40..+20 [fact] |
 | 0x002D | 0x0000 | w `FUN_fff9dfd5` |  | R 0x00221220 | TX EQ band 3 width [fact] |
-| 0x002E | 0x0000 | w `FUN_fff9e0ad` |  |  | `0x9BF1` (also selects the processor EQ set) when TX mode is SSB, else 0, bit 12 set when non-zero [fact] → speech processor [inference] |
+| 0x002E | 0x0000 | w `FUN_fff9e0ad` |  | R 0x00224ED8 (indirect, #199) | `0x9BF1` (also selects the processor EQ set) when TX mode is SSB, else 0, bit 12 set when non-zero [fact] → speech processor [inference] |
 | 0x002F | 0x0001 | w `FUN_fff9e12b` |  | R 0x002221D0 | per-mode setting byte (SSB 0x9A36, AM 0x9A4B, DATA/PSK 0x9A73) or 0x20B64 [fact] |
 | 0x0030 | 0x00FF | w `FUN_fff9e21f` |  | R 0x00222D00, 0x00222D34 | 0xFF in the FM modes (TX mode) [fact] |
 | 0x0031 | 0x0FFA | w `FUN_fff9e26b` |  | R 0x00221E84 | −43 (SSB/CW/DATA/RTTY/PSK), −54 (AM), −56 (FM) by TX mode [fact] |
@@ -243,7 +243,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0038 | 0x0000 | w `FUN_fff9e614` |  | R 0x00222688 | 0 written once [fact] |
 | 0x0039 | 0x0000 |  |  |  |  |
 | 0x003A | 0x0001 | w `FUN_fff9e644` |  | R 0x00220B5C, 0x00222D34 | mode dependent (`FUN_fff9e644`) [fact] |
-| 0x003B | 0x02C4 | w `FUN_fff9e6b9` |  |  | TX-mode dependent (`FUN_fff9e6b9`) [fact] |
+| 0x003B | 0x02C4 | w `dsp_set_r3b` (`FUN_fff9e6b9`) |  | R 0x00224ED8 (indirect) | **speech-processor threshold**, half-dB, 12-bit signed. MAIN: −39 (−19.5 dB) for LSB/USB/CW/DATA-L/U/RTTY/PSK (modes 0–3, 8, 9, 12–14), −50 (−25 dB) for AM/AM-N (4, 5), −52 (−26 dB) for FM/FM-N/DATA-FM/DATA-FM-N (6, 7, 10, 11) [fact: fff9e6b9]. Read by `peak_limiter` instance 0 through the register index 0x3B stored at 0x266E12 by `peak_limiter_init` (0x224EC5), not by a fixed offset, which is why the scan missed it: threshold = 10^(v/40) (linear), compared with the 7-sample RMS envelope [fact: 0x224F21–0x224F27, 0x2251E2–0x22521A]. Only takes effect while reg 0x2E bit 12 is set, i.e. in SSB; the AM/FM values are written but unused [inference]. Default 708 = +354 dB, i.e. never limits [fact: value; meaning inference] (#199) |
 | 0x0040 | 0x0000 | w `FUN_fff9e750` |  | R 0x0021DBD0 | RX mode/VFO dependent (`FUN_fff9e750`) [fact] |
 | 0x0041 | 0x0000 | w `FUN_fff9e7c4` |  | R 0x0021C8BC | RX mode/VFO dependent [fact] |
 | 0x0042 | 0x0000 | w `FUN_fff9e871` |  |  | RX mode/VFO dependent [fact] |
@@ -267,8 +267,8 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0054 | 0x0000 |  |  | R 0x0021EC40 (inst 1) | Rx_Audio branch B (AESS) high-cut; no writer, so off [fact, #184] |
 | 0x0055 | 0x0000 |  |  | R 0x0021E8B0 (inst 1) | Rx_Audio branch B (AESS) low-cut; no writer, so off [fact, #184] |
 | 0x0056 | 0x0000 | w `FUN_fff9f54b` |  | R 0x0021E6C4 | constant 0x20 [fact] |
-| 0x0057 | 0x0000 |  |  |  |  |
-| 0x0058 | 0x02C4 |  |  |  |  |
+| 0x0057 | 0x0000 |  |  | R 0x00224ED8 (indirect) | RX AF limiter on (bit 12) + pre-gain level; index stored at 0x266E5C by `peak_limiter_init` instance 1 [fact]; no MAIN writer, so off |
+| 0x0058 | 0x02C4 |  |  | R 0x00224ED8 (indirect) | RX AF limiter threshold, same coding as 0x3B; index at 0x266E5E [fact] |
 | 0x005C | 0x0000 | w `FUN_fff9f57b` |  | R 0x00223C8C | from 0x9C39, bit 12 flag [fact] |
 | 0x005D | 0x0000 | w `FUN_fff9f5c6` |  |  | from 0x9C3A..0x9C3C, bit 12 flag [fact] |
 | 0x0060 | 0x0000 |  |  | R 0x00224960 |  |
@@ -390,7 +390,8 @@ can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.
 
 - Every register MAIN writes has a DSP default **[fact]**, so the two firmwares agree on the register set.
 - Registers MAIN writes but the scan found no DSP reader for: 0x0D, 0x0E, 0x12, 0x20, 0x25–0x2A, 0x2E, 0x3B, 0x42–0x44,
-  0x46–0x4D, 0x51, 0x5D **[fact: scan]**. The EQ groups are read through a per-band loop or pointer (band 3 of each group is
+  0x46–0x4D, 0x51, 0x5D **[fact: scan]**. 0x2E and 0x3B (and the RX pair 0x57/0x58) are read indirectly by `peak_limiter`
+  0x00224ED8 from a per-instance index table (#199, row above) **[fact]**. The EQ groups are read through a per-band loop or pointer (band 3 of each group is
   found at 0x00221220 / 0x00220470, bands 1–2 are not), so most of these are probably read indirectly **[inference]**.
 - Registers the DSP reads that MAIN never writes: 0x10, 0x23, 0x60, 0x4006, 0x4007, 0x400C, 0x400E, 0x4011, 0x4012, 0x401A–0x401F
   **[fact: scan]**. They keep their DSP defaults unless someone uses `w`/`SPDW` **[inference]**, so they are tuning constants.
