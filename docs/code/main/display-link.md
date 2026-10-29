@@ -132,7 +132,7 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xE4 | 5 | `displink_rx_E4` 0xFFF95C6A | clears +0x82 (`screensaver_on`; the clear is in `displink_rx_dispatch`, the handler only sets 0x1B3CC = send ACK): the DISPLAY's wake-up answer to `0x7B` **[fact]** | ACK |
 | 0xE5 | 5 | `displink_rx_E5` 0xFFF95C74 | clears +0x80 (unblocks the scheduler and encoders) **[fact]** | ACK |
 | 0xE6 | 5 | `displink_rx_E6_beep` 0xFFF95C8A | b1 = 0/1/2 → `beep_request`(1/2/3) 0xFFFB2DA6 (code 3 is also used when `key_event_filter` rejects a key) **[fact; "beep" is inference]** | ACK |
-| 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task`. Status of the DISPLAY's **PlayList recorder/player** (sent while its audio owner flag 0x2080048E = 1); b1 = 0xFF is an error with code b5 **[fact, DISPLAY side: `FUN_20124744`]** (#65) | ACK |
+| 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task` ([codes](#e7--e8-result-codes-179)). Status of the DISPLAY's **PlayList recorder/player** (sent while its audio owner flag 0x2080048E = 1); b1 = 0xFF is an error with code b5 **[fact, DISPLAY side: `FUN_20124744`]** (#65) | ACK |
 | 0xE8 | 10 | `displink_rx_E8` 0xFFF95DAD | as E7, result in +0x48C **[fact]**; sent for the other audio screens (0x2080048E = 2/3), most likely voice messages **[inference]** (#65) | ACK |
 | 0xC3 | 35 | `displink_rx_C3` 0xFFF95E65 | copies the payload to +0x2ED (0x109 bytes are copied whatever the frame length), sets +0x3F6: the answer to MAIN's `0x43` **[fact]** | ACK |
 | 0xC4 / 0xC5 | 263 / 7 | `displink_rx_C4_C5` 0xFFF95E97 | same as C3: C4 answers `0x44` (block read, carries the data), C5 answers `0x45` (block write, echo only) **[fact, DISPLAY side: `mainlink_rx_block_read` / `mainlink_rx_block_write`]** (corrected in #61; this row used to pair them the other way round). Layout in [SD CARD transfers](#sd-card-transfers-0x43--0x44--0x45) | ACK |
@@ -163,34 +163,34 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 |---|---|---|---|---|---|
 | 1 | 0x60 | 0xB6 | 0x1B3D0 (after F0) | `displink_tx_60_hello` 0xFFF96225 / 0xFFF96241 | b1..b8: MAIN, DISPLAY, DSP, SDR versions as BCD pairs (from `ver_main`, `ver_display`, `ver_dsp`, `ver_sdr`); b13..b14 = +0x32 (0xDB when 0x4660 set); then the 0x97-byte status block (same as `0x20`) and a few settings (0x9B0D, 0x9B09, 0x9B05, 0x9B01, 0x9DC5) **[fact]** |
 | 2 | 0x64 | 3 | +0xB7 | 0xFFF986E0 | b1 = +0xB8, sent only when it changed **[fact]** |
-| 3 | 0x24 | 0x9F | +0x400 (after the hello ACK; again 0x2B timer after +0x401) | 0xFFF9A17D / 0xFFF9A1A7 | settings block (0x9ACE, 0x9B20/21, 0x9AC7, 0x9B11, 0x9BEA, 0x9B10, 0x9BE9 …) **[fact]** |
+| 3 | 0x24 | 0x9F | +0x400 (after the hello ACK; again 0x2B timer after +0x401) | 0xFFF9A17D / 0xFFF9A1A7 | display settings: EXT DISPLAY / PIXEL / SCU-LAN10, keyboard language, mouse speed, TFT brightness, LED dimmer, contrast, see [0x24](#0x24-display-settings-0x9f-bytes-display-mainlink_get_settings24-gui_apply_display_cfg) **[fact]** |
 | 4 | 0x7F | 0x0B | +0x447 | `power_down_save` 0xFFF98797 | b1 = +0x35 & 0x7F, then the constant `9B BA F6 38 FF 25 73 1F`. +0x35 (= 0x20B39) is the power command: 0x10 power off (`PS0;`), 0x11 restart (`dest_code_set`, resets), 0x90 low-voltage off (also waits 2000 units) **[fact for the values; the constant looks like a guard against accidental matches, guess]** |
-| 5 | 0x62 / 0x30 / 0x31 | 0x197 / 0xA0 / 0xA3 | +0xBA (boot code 2) | 0xFFF9C46D / 0xFFF98ECB | |
+| 5 | 0x62 / 0x30 / 0x31 | 0x197 / 0xA0 / 0xA3 | +0xBA (boot code 2) | 0xFFF9C46D / 0xFFF98ECB | `0x62`: nine alignment-menu lines, see [0x62](#0x62-alignment-menu-0x197-bytes-display-scr_setup_menu) **[fact]** |
 | 6 | 0x7C | 5 | +0x81 | 0xFFF98869 | zeros; +0x80 then blocks until `E5` **[fact]** |
 | 7 | 0x7B | 5 | +0x83 (`screensaver_toggle_req`, set by `io_task`) | 0xFFF9889C | b1 = toggled +0x82 (`screensaver_on`); while +0x82 = 1 the frames below are not sent, until `E4` **[fact]**. Screen saver on/off ([README.md](README.md#screen-saver-timer-slow-timer-0)) |
 | 8 | 0x7A | 5 | +0x85 | 0xFFF988F2 | zeros; +0x84 blocks **[fact]** |
-| 9 | 0x70 | 0xE3 | +0x86 | 0xFFF98925 / 0xFFF9894F | |
+| 9 | 0x70 | 0xE3 | +0x86 | 0xFFF98925 / 0xFFF9894F | dialog box: style, buttons, position, ROM text n = UI +0xBB, see [0x70](#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) **[fact]** |
 | 10 | 0x43 / 0x44 / 0x45 | 0x23 / 7 / 0x107 | +0x87, type in +0x1E0, length in +0x1E2 | 0xFFF98BCD / 0xFFF98C1F | requests answered by `C3` / `C5` / `C4`; set by the SD CARD menu operations (`sd_menu_task`, task 13: MEM LIST / MENU load and save, INFORMATIONS, FORMAT) **[fact]** (#65) |
-| 11 | 0x50 | 0xF5 | +0x88 and +0x90 | 0xFFF9A2D1 / 0xFFF9A2FB | |
+| 11 | 0x50 | 0xF5 | +0x88 and +0x90 | 0xFFF9A2D1 / 0xFFF9A2FB | on-screen keyboard: layout, cursor, title, text, see [0x50](#0x50-on-screen-keyboard-0xf5-bytes-display-scr_keyboard) **[fact]** |
 | 12 | 0x23 | 0x37 | +0x89 / +0x8A / +0x8B | 0xFFF98E39 / 0xFFF98E96 | b1 = high byte of +0x1BE plus 1. **The +0x8A/+0x8B variants call empty fill functions** (0xFFF98EC9, 0xFFF98ECA) and resend whatever is in 0x1456 with length 0x37 **[fact]** |
-| 13 | 0x30 / 0x31 | 0xA0 / 0xA3 | +0x8C | `displink_tx_30_31` 0xFFF98ECB | 0x30 when +0x1C2 < 0x1E or 0xFF, 0x31 when < 0x5F **[fact]** |
+| 13 | 0x30 / 0x31 | 0xA0 / 0xA3 | +0x8C | `displink_tx_30_31` 0xFFF98ECB | 0x30 when +0x1C2 < 0x1E or 0xFF, 0x31 when < 0x5F **[fact]**; layouts in [0x30 / 0x31](#0x30-select-pop-up-and-0x31-value-pop-up) |
 | 14 | 0x65 | 9 | +0x8D | 0xFFF9A0CC / 0xFFF9A100 | +0xB2..+0xB6: the clock to set on the DISPLAY RTC **[inference]** |
 | 15 | 0x34 | 0xA3 | +0x99 (then +0x9A blocks) | 0xFFF98F7C / 0xFFF9A06E | |
 | 16 | 0x30 / 0x31 | | +0x1C0 or +0x1C1 (when +0x8F = 0) | 0xFFF98ECB | |
 | 17 | 0x50 | 0xF5 | +0x90 | 0xFFF9A2D1 | |
-| 18 | 0x3A | 0xA2 | +0x93 | 0xFFF9A8E3 / 0xFFF9A925 | |
-| 19 | 0x39 | 0xE9 | +0x94 | 0xFFF9B69E / 0xFFF9B6C8 | |
+| 18 | 0x3A | 0xA2 | +0x93 | 0xFFF9A8E3 / 0xFFF9A925 | PlayList sub-state, list position, command, volume; sent once per +0x3F8, see [0x3A](#0x3a-playlist-0xa2-bytes-display-scr_playlist) **[fact]** |
+| 19 | 0x39 | 0xE9 | +0x94 | 0xFFF9B69E / 0xFFF9B6C8 | message-memory screen: title, state, channel, volumes, 5 slot labels, see [0x39](#0x39-message-memory-screen-0xe9-bytes-display-scr_vfo--fun_201293f8) **[fact]** |
 | 20 | 0x3F | 5 | +0x91 | 0xFFF9A89B | b1 = +0x92 **[fact]** |
-| 21 | 0x40 | 0x1FB | +0x95, at most every 100 units (timer 0x29) | 0xFFF9AAAD / 0xFFF9AAF7 | the only rate-limited frame. Status + menu list (five 0x2D-byte text slots, also the "FIRMWARE UPDATE" entry) **[fact on the DISPLAY side, display/mainlink.md]**; the scope does not use this link ([system.md §6.4](../system.md#64-scope-and-waterfall-data)) |
-| 22 | 0x37 | 0x240 | +0x96 | 0xFFF9AB2A / 0xFFF9AB57 | the largest frame **[fact]** |
-| 23 | 0x41 | 0x146 | +0x97 | 0xFFF9BB23 / 0xFFF9BB50 | |
+| 21 | 0x40 | 0x1FB | +0x95, at most every 100 units (timer 0x29) | 0xFFF9AAAD / 0xFFF9AAF7 | the only rate-limited frame. Status + menu list (five 0x2D-byte text slots, also the "FIRMWARE UPDATE" entry) **[fact on the DISPLAY side, display/mainlink.md]**; the scope does not use this link ([system.md §6.4](../system.md#64-scope-and-waterfall-data)). Layout in [0x40](#0x40-menu-page-0x1fb-bytes-display-main-screen-scr_text_list) |
+| 22 | 0x37 | 0x240 | +0x96 | 0xFFF9AB2A / 0xFFF9AB57 | the largest frame: FUNC panel, 41 slots of {flag, function id, 8-character value}, see [0x37](#0x37-func-panel-0x240-bytes-display-scr_func_panel) **[fact]** |
+| 23 | 0x41 | 0x146 | +0x97 | 0xFFF9BB23 / 0xFFF9BB50 | MEMORY CH LIST: header, group, 4 channel rows, see [0x41](#0x41-memory-ch-list-0x146-bytes-display-scr_memory_list) **[fact]** |
 | 24 | 0x20 | 0x99 | default | `displink_tx_20_status` 0xFFF9C42A / 0xFFF9C454 → `displink_build_status` | the main status block: VFO A/B record (0x9D09 or 0x9D63 by 0x9DBD), mode, etc. Sent only when changed **[fact]** |
 
 Types in the DISPLAY table that MAIN V01-12 never sends: **0x21, 0x42, 0x71** (no builder writes them) **[fact: none of the type stores in the
 image use these values]**.
 
-The payload layouts of the frames that carry their own data after the status block (0x24, 0x30/0x31, 0x37, 0x39, 0x3A, 0x40, 0x41,
-0x50, 0x62, 0x70) are still open (#179). The status block itself is mapped below (#72).
+The status block itself is mapped below (#72). The data that `0x24`, `0x30`/`0x31`, `0x37`, `0x39`, `0x3A`, `0x40`, `0x41`, `0x50`,
+`0x62` and `0x70` carry after it is in [Payloads after the status block](#payloads-after-the-status-block-179) (#179).
 
 ### The 0x97-byte radio status block (`0x20`, #72)
 
@@ -207,17 +207,17 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 3 | `FUN_fff96f3e` | bit 7 = active VFO is B (inverted while UI +0x405), bit 5 = split 0x9C5E, else bit 4/bit 6 from UI +0x425/+0x426 (side flag) |
 | 4 | `FUN_fff96fb7` | bit 5 when UI +0x95, +0x96 or +0x97 is set |
 | 5 | `FUN_fff9700b` | split 0x9C5E \| waterfall EXPAND 0x9C3D << 5 \| 0x9DC6 << 6 |
-| 6 | `FUN_fff97049` | 0x9B17 bit 0 << 6 \| 0x9B16 << 7 (menu settings) |
-| 7 | `FUN_fff97075` | UI +0x69 (2 bits) << 4 \| +0x68 << 6 \| **TX** (+0x67 = 0x20B6B) << 7 |
-| 8 | `FUN_fff970b8` | UI +0x34, high nibble only when 0x9B10 (or +0x480 in numeric-entry mode) is 0 |
-| 9 | `FUN_fff97105` | 0x9C5C << 3 \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 6 | `FUN_fff97049` | 3DSS DISP SENSITIVITY 0x9B17 (bit 0) << 6 \| 2D DISP SENSITIVITY 0x9B16 << 7 (`EX040204` / `EX040203`, [menu.md](menu.md)) |
+| 7 | `FUN_fff97075` | *HI-SWR warning* UI +0x69 (0x20B6D, 2 bits: `swr_meter_protect` sets 1 or 2 by blink phase while the TX SWR is outside 1..5, 0 when it is back) << 4 \| +0x68 << 6 (no writer in MAIN, so always 0) \| **TX** (+0x67 = 0x20B6B) << 7 |
+| 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. That these are front-panel LEDs (hence the LED DIMMER mask) is **[inference]**; the DISPLAY reader was not found |
+| 9 | `FUN_fff97105` | 0x9C5C << 3 (a toggle flipped only by `FUN_fffbcbbd`, with beep 2, which has no direct caller and so is a key handler reached through the ROM key tables; no other reader, so the key and the meaning are open) \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
 | 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
 | 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
-| 12 | `FUN_fff971fc` | rec+3 bits 0–1 \| (rec+5 bits 0–1, minus 1) << 2 \| {2 in FM modes, else `FUN_fff9921f` bit 7} << 4 |
-| 13 | `FUN_fff9728c` | 0x80 = 0x9AA4 in CW, 0x40 = APF on (CW block bit 5), bits 4–5 from `FUN_fff973bc`, bits 0–2 = AGC (`GT`) speed + 1, 0 = AUTO/off |
-| 14 | `FUN_fff97430` | TX-VFO flags: bit 6 `FUN_fff9752b`, bit 5 keyer on (0x9C02) with `FUN_fffc3e3c`, bit 4 `FUN_fff99669`, bit 2 `FUN_fff973bc` bit 1; FM modes: repeater shift + 1 in bits 0–1 |
-| 15 | `FUN_fff97567` | UI +0x6E (2 bits) \| +0x6D << 3 \| message/keyer state << 6 (1 recording, 2 playing, 3 +0x92) |
-| 16 | `FUN_fff976d2` | PEAK 0x9BE6 & 7 (`SS01`) \| (UI +0x6F << 4, or 0x40 while timer 0x2A runs) |
+| 12 | `FUN_fff971fc` | ATT (rec+3 bits 0–1, `RA`) \| IPO/AMP1/AMP2 (rec+5 bits 0–1, minus 1, `PA`) << 2 \| {2 in FM modes, else DNF on = block+1 bit 7, `BC`} << 4 |
+| 13 | `FUN_fff9728c` | 0x80 = CW INDICATOR 0x9AA4 in CW, 0x40 = APF on (CW block bit 5), 0x20 = CONTOUR on (block+0 bit 6), 0x10 = manual NOTCH on (block+0 bit 7; both not in FM), bits 0–2 = AGC (`GT`) speed + 1, 0 = AUTO/off |
+| 14 | `FUN_fff97430` | TX-VFO flags: bit 6 `FUN_fff9752b`, bit 5 keyer on (0x9C02) with `FUN_fffc3e3c`, bit 4 monitor on (the per-mode MONI byte from `FUN_fff99669` ≠ 0), bit 2 BK-IN/VOX flag (block+0 bit 1, `BI`); FM modes: repeater shift + 1 in bits 0–1 |
+| 15 | `FUN_fff97567` | FM tone mode in use UI +0x6E (0x20B72, rec+3 bits 3–5 in FM/DATA-FM, else 0; `dsp_set_ctcss_dec`) \| tuner indicator +0x6D << 3 (0x20B71, from `tuner_task`: 1 = tuner on, blinking while it tunes (internal tuner, `FUN_fffec62b`), 1/0 or 2 for TUNER TYPE SELECT 0x9AB8 = 2 / 3 (`FUN_fffed62a`, `FUN_fffed165`)) \| message/keyer state << 6 (1 recording, 2 playing, 3 +0x92) |
+| 16 | `FUN_fff976d2` | PEAK 0x9BE6 & 7 (`SS01`) \| (UI +0x6F << 4, or 0x40 while timer 0x2A runs); +0x6F has no writer in MAIN, so it is always 0 |
 | 17 | `FUN_fff9770b` | span index (`scope_span_index`) \| CENTER/CURSOR/FIX 0x9C35 << 6 |
 | 18 | 0x9C5A, 0x9BE8 | scope speed << 4 \| colour; with speed STOP (`FUN_fffc4f8f`) 0x50 \| colour |
 | 19–20 | `FUN_fff977b3` | default WIDTH of the mode (3000, 500, 9000, 16000, 3200 Hz) |
@@ -228,15 +228,15 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 31–32 | `FUN_fff97a44` | IF SHIFT (block +8) |
 | 33 | 0x9C5F | APF offset (`CO03`) |
 | 34 | 0x9C04 + 30 | CW pitch / 10 Hz |
-| 35 | `FUN_fff97abc` | bit 7 UI +0x70 (FUNC panel open), bit 6 +0x71, bit 5 shift ≠ 0, bit 4 width ≠ default, bit 2 +0x47A, bits 0–1 +0x73 |
-| 36 | `FUN_fff97b7b` | UI +0x79 & 0xF \| DVS state +0x78 << 4 (0x20B7C: 1 play, 2 record) |
+| 35 | `FUN_fff97abc` | bit 7 UI +0x70 (FUNC panel open), bit 6 +0x71, bit 5 shift ≠ 0, bit 4 width ≠ default, bit 2 +0x47A, bits 0–1 DSP-knob function +0x73 (0x20B77, set with +0x7E by `cat_SF` P1 = 1 and the knob code: 0 SHIFT, 1 WIDTH, 2 NOTCH, 3 CONTOUR or APF) |
+| 36 | `FUN_fff97b7b` | voice-memory channel UI +0x79 & 0xF (0x20B7D = channel − 1, set by `cat_PB`, `cat_LM`, `FUN_fffe4211`, `FUN_fffe4e6e`) \| DVS state +0x78 << 4 (0x20B7C: 1 play, 2 record) |
 | 37–42 | `FUN_fff97ba6` | scope: CENTER/CURSOR/FIX (0 in TX), 0x84/3 (3DSS 0x9C36), 0x86/5 (0x9C37), 0x88/7 (EXPAND 0x9C3D), 9, 10; skipped while UI +0x41A |
 | 43 | 0xFF | |
 | 44 | `FUN_fff97c74` | FUNC-knob function (0x9DC9, or a code for the open setting +0x1C2: 0x0B→3, '&'→8, '/'→0x11, 'T'→0x36, '9' DNR→0x1B, 'F'→0x10, '8'→0x1A); 0x2D while TXW (UI +0x483) |
 | 45–69 | VFO block, **main side** | 45 mode (rec+0 & 0xF); 46 VFO state code (`FUN_fff97cf7`: 1 VFO, 0 state 0, 2 memory, 3 memory tune, 4 PMS, 5 QMB, 7 60 m, 8 EMG; 9 = split RX); 47 channel number; 48 `FUN_fff97e1d` flags; 49–53 frequency digits (`FUN_fff982bb`, or the numeric-entry BCD at UI +0x7B in mode +0x437); 54–65 memory tag (rec+0x4E); 66 UI +0x425; 67–68 clarifier offset (rec+0x48) |
 | 70–94 | VFO block, **sub side** | same layout for the other VFO (state 10 = split TX). The two blocks are built for A then B and swapped when B is active |
 | 95 | `FUN_fff9849e` | meter value: S-meter in RX, else PO/COMP/ALC/VDD/IDD/SWR by byte 11 |
-| 96 | `FUN_fff98526` | 0x9C61 \| 0x9C62 << 2 \| rec+2 bit 1 << 3 \| DNR on (rec+6 bit 4) << 4 |
+| 96 | `FUN_fff98526` | FINE/FAST tuning 0x9C61 (0 off, 1, 2; `FN`) \| dial LOCK 0x9C62 << 2 (`LK`) \| rec+2 bit 1 << 3 \| DNR on (rec+6 bit 4) << 4 |
 | 103 | 0 | |
 | 104 | 0x9A8D, 0x9A8C | RTTY shift (2 bits) \| polarity << 7 |
 | 105 | 0x9A79 | (2 bits) << 4 (PSK/DATA setting) |
@@ -249,9 +249,13 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 125–128 | `disp_put_dial_freq` | dial frequency |
 | 129–132 | `disp_put_scope_start` | scope start frequency (0x20F60, or the FIX band memory) |
 
-Bytes 97–102, 114 and 133–151 are not written by this builder (they keep whatever the buffer holds) **[fact]**. The exact
-meaning of several single bits above (UI +0x34, +0x68, +0x69, +0x6D..+0x6F, +0x73, +0x79, 0x9B16/0x9B17, 0x9C5C/0x9C61/0x9C62) is open
-(#179).
+Bytes 97–102, 114 and 133–151 are **always 0** **[fact]**: every frame builder clears the 0x16A0 buffer before calling
+`displink_build_status` (`displink_build_60` runs after a builder that did), and no code in MAIN stores to 0x1701..0x1706, 0x1712 or
+0x1725..0x1737 under any address form. The DISPLAY has no absolute reference to the matching snapshot bytes (0x208F0B8B..0x208F0B90,
+0x208F0B9C, 0x208F0BAF..0x208F0BC1) **[fact]**; it reads the block mostly through a base pointer, so an indexed read cannot be ruled out
+from text alone. The gaps look like fields of the shared Yaesu status layout that the FT-710 does not use **[guess]**. Of the single bits
+listed in #179, UI +0x68 and +0x6F are always 0 and 0x9C5C (byte 9) is still open (the key behind `FUN_fffbcbbd` is in the ROM key
+tables, which are not in the repository). The DISPLAY reader of byte 8 (+0x34) was not found (#179).
 
 ### Small frames and mode flags (#72)
 
@@ -264,8 +268,240 @@ meaning of several single bits above (UI +0x34, +0x68, +0x69, +0x6D..+0x6F, +0x7
 - **Mode flags**: 0x20BBE = UI +0xBA, factory alignment mode (boot code 2); 0x20B8A = +0x86, a message pop-up is shown (`FUN_fffcfa3d`) and frame `0x70` is due;
   0x20B7C = +0x78, DVS state (0 idle, 1 play, 2 record; [cat-commands-primary.md](../../cat-commands-primary.md#pb)); 0x20B98 = +0x94,
   the request flag of frame `0x39` **[fact for the writers/readers]**.
-- **E2, E7/E8 result codes, boot code 5**: as in the tables above; E7/E8 codes 1..5 in +0x488/+0x48C are consumed by `dispreq_e7_task`,
-  whose per-code actions are open (#179).
+- **E2, E7/E8 result codes, boot code 5**: as in the tables above; what `dispreq_e7_task` and `dispreq_e8_result` do with each E7/E8
+  code is in [E7 / E8 result codes](#e7--e8-result-codes-179).
+
+### Payloads after the status block (#179)
+
+Every "status + …" frame is built the same way: the builder clears the status buffer 0x16A0 (0x98 bytes) and the staging frame 0x1741
+(0x24A bytes), writes the type, and calls `displink_copy_status` (0xFFF98CD3). That runs `displink_build_status` and copies its 0x97
+bytes to frame bytes 1..0x97. The frame's own data starts at **byte 0x98** (staging address 0x17D9), and every byte the builder does not
+write is 0 **[fact]**. On the DISPLAY the frame lands in the GUI's current-screen copy 0x208F0B2A, so frame byte 0x98 is 0x208F0BC2. The
+screen functions read it as `frame + 0x98` **[fact]**. The figure shows which MAIN state feeds which frame **[fact for the edges]**.
+
+The names `displink_copy_status`, `displink_70_*`, `mode_block_byte0/1`, `ui_lamp_set`, `displink_62_value` and `dispreq_e8_result`
+were added to `tools/ghidra/names_main.tsv` by #179. `decomp/main/` still shows them as `FUN_<address>` until the next Ghidra
+re-export (see the [Functions](#functions) table for the addresses).
+
+```mermaid
+flowchart LR
+  ST["displink_copy_status<br/>bytes 1..0x97"] --> F["staging frame 0x1741<br/>data from byte 0x98"]
+  SET["display settings<br/>0x9ACE 0x9AC7 0x9B10 0x9BE9/EA"] --> F24["0x24"]
+  POP["pop-up code UI +0x1C2"] --> F30["0x30 / 0x31"]
+  FUNC["FUNC knob 0x9C08<br/>function values"] --> F37["0x37"]
+  MSG["message screen +0x1C7..+0x1D6<br/>CW / text slots"] --> F39["0x39"]
+  PL["PlayList +0x3F9..+0x3FE, 0x9DC1"] --> F3A["0x3A"]
+  MENU["menu_page_serialize"] --> F40["0x40"]
+  MEM["memory list +0x439, +0x1D8..+0x1DB"] --> F41["0x41"]
+  KB["keyboard +0xBE..+0xC2"] --> F50["0x50"]
+  AL["alignment +0x1DD/+0x1DE, cfg 0x4659"] --> F62["0x62"]
+  DLG["dialog +0xBB/+0xBD, ROM texts"] --> F70["0x70"]
+  F24 & F30 & F37 & F39 & F3A & F40 & F41 & F50 & F62 & F70 --> F
+```
+
+#### `0x24` display settings (0x9F bytes; DISPLAY `mainlink_get_settings24`, `gui_apply_display_cfg`)
+
+| Byte | Source | Meaning | DISPLAY use |
+|---|---|---|---|
+| 0x98 | 0x9ACE << 2 \| 0x9B21 << 1 \| 0x9B20; bit 2 is also forced on in service mode (UI +0x437 = 1) | bit 0 = EXT DISPLAY (`EX040401`), bit 1 = PIXEL (`EX040402`), bit 2 = SCU-LAN10 (`EX030126`) | bit 0 → `lvds_pins_enable`, bit 1 → `dvi_set_resolution`, bit 2 → `gpio_ft4222_reset` (the USB bridge chip, so the SCU-LAN10 port) **[fact for the calls]** |
+| 0x99 | 0x9AC7 | KEYBOARD LANGUAGE (`EX030119`) | copied with the rest; reader not traced |
+| 0x9A | 0x9B11 | MOUSE POINTER SPEED (`EX040106`) | copied with the rest; reader not traced |
+| 0x9B | ROM 0xFFF80557[0x9BEA] (service mode: index UI +0x480) | TFT brightness (`DA` P3) converted through a ROM table | `backlight_set(b & 0x7F)`, a PWM percentage **[fact]** |
+| 0x9C | ROM 0xFFF80542[0x9B10] (service mode: index UI +0x480) | LED DIMMER (`DA` P4) converted through a ROM table | `dimmer_set(b & 0x7F)` **[fact]** |
+| 0x9D | 0x9BE9 (service mode: UI +0x481) | TFT CONTRAST (`DA` P2), 0..20 | `r_vdc5_display_calibration` with gains of 10·n + 0x1C / 10·n + 0x11 (n capped at 20) **[fact]** |
+
+The two ROM tables are not in the repository (there is no firmware binary here), so the exact PWM curve is open. In boot mode 4
+(service) the counters UI +0x480/+0x481 replace the stored settings **[fact]**, which looks like the service-mode brightness test **[inference]**.
+
+#### `0x30` select pop-up and `0x31` value pop-up
+
+`displink_tx_30_31` sends `0x30` (0xA0 bytes) when the pop-up code UI +0x1C2 is below 0x1E or 0xFF, and `0x31` (0xA3 bytes) when it is
+0x1E..0x5E **[fact]**. Key handlers set the code: `key_mode_short` 5, `key_band_short` 0x0C, `key_nb_long` 0x38, `key_dnr_long` 0x39,
+`key_lock_pwr_short` 0x47/0x48, and `FUN_fffbc782`..`FUN_fffbd0b9` 0..0x0D **[fact]**.
+
+`0x30` (DISPLAY `scr_select_popup`): byte 0x98 = code, then the fields below **[fact for the sources; the names come from the CAT handlers
+in cat-commands-primary.md]**. "rec" is the active VFO record, "block" its per-mode block ([radio-control.md](radio-control.md#per-mode-block-layout)).
+
+| Code | 0x99 | 0x9A | 0x9B | Pop-up |
+|---|---|---|---|---|
+| 0 | 0x9C5B (meter selection) | | | METER (PO/COMP/ALC/VDD/IDD/SWR) |
+| 1 | rec+3 & 3 | UI +0x1C3 | | ATT (`RA`: off / 6 / 12 / 18 dB) |
+| 2 | (rec+5 & 3) − 1, never below 0 | UI +0x1C3 | | IPO / AMP1 / AMP2 (`PA`) |
+| 3 | block+1 bit 7 (`mode_block_byte1`) | UI +0x1C3 | | DNF / AUTO NOTCH (`BC`) |
+| 4 | 0, or AGC speed + 1 (block+1 bits 4–6) | UI +0x1C3 | | AGC (`GT`) |
+| 5 | rec+0 & 0xF (mode) | 0 | UI +0x424 (mode cursor) | MODE |
+| 6 | `scope_span_index` | | | SPAN |
+| 7, 8 | 0 | | | no value |
+| 9 | 0x9C39 | | | AF-FFT attenuator (`SS07`) |
+| 0x0A | 0x9C3A << 6 \| 0x9C3B << 4 \| 0x9C3C | | | OSC level (TX, RX) and time (`SS07`) |
+| 0x0B | 0x9BE8 | 0 | UI +0x424 | scope COLOR |
+| 0x0C | UI +0x1DC (band) | 0 | UI +0x424 | BAND |
+| 0x0D | 0x9C5A, or 5 while STOP | | | scope SPEED |
+
+UI +0x1C3 is a second flag (set to 1 by `FUN_fffc06ab`); its meaning is open. The DISPLAY draws the pop-up labels from bitmaps, so the
+names above come from the MAIN sources only **[inference]**.
+
+`0x31` (DISPLAY `scr_value_popup`): byte 0x98 = code − 0x1E, bytes 0x99..0xA1 = a 9-character value text (spaces when the code has no
+formatter, for example the LOCK codes 0x47/0x48) **[fact]**. Code − 0x1E is the same **function id** as in frame `0x37` below, with these
+extra ids: 0x1A = NB level (0x9DC0, `NL`), 0x1B = DNR level (rec+6), 0x1C = no text, 0x25 = QMB depth (0x901F/0x9021), 0x26/0x27/0x37
+= texts from UI +0x43A, 0x28 = keyer on/off (0x9C02), 0x40 = UI +0x42F **[fact for the sources; names inferred]**.
+
+#### `0x37` FUNC panel (0x240 bytes; DISPLAY `scr_func_panel`)
+
+| Byte | Content |
+|---|---|
+| 0x98 | UI +0x1C4 << 7 (always 1 here) \| +0x1C5 << 6 \| +0x1C6 << 5 (always 0). On the DISPLAY bit 6 picks the highlight-frame colour (white or red) **[fact]** |
+| 0x99 | 0x9C08, the stored FUNC-knob function (`SF` P1 = 0) **[fact]** |
+| 0x9A | 0 |
+| 0x9B + 10·i | 41 slots (i = 0..40): flag byte (bit 7 = not usable in the current mode; the DISPLAY then takes the label from the second bitmap set 0x20801AD8), function id, 8-character value text **[fact]**. The DISPLAY draws only the first 33 slots (0x21); the last 8 carry id 0xFF |
+
+Function ids, in slot order **[fact for the sources; the names 0..0x14 match the `SF` P2 list in cat-commands-primary.md]**:
+
+| Id | Function | Value source |
+|---|---|---|
+| 0 | SCOPE LEVEL | per-band RX/TX byte 0x9BCA/0x9BD8 (`FUN_fff9c6ab`), shown as −30.0..+30.0 dB in 0.5 dB steps |
+| 1 / 2 / 3 | PEAK / MARKER / COLOR | 0x9BE6 / 0x9BE7 / 0x9BE8 (ROM text tables) |
+| 4 / 5 | CONTRAST / DIMMER | 0x9BE9 / 0x9BEA |
+| 6 | M-GROUP | no text in `0x37` (the `0x31` pop-up shows the group of the current channel) |
+| 7 | MIC GAIN | 0x9BEC..0x9BEF by mode class |
+| 8 | PROC on/off | 0x9BF0; greyed outside SSB/AM/FM (`FUN_fffc3d75`) |
+| 9 / 0x0A | PROC LEVEL / AMC LEVEL | 0x9BF1 ("OFF" at 0) / 0x9BF2 |
+| 0x0B / 0x0C / 0x0D | VOX GAIN / VOX DELAY / ANTI VOX | 0x9BF3 / 0x9BF4 or 0x9BF5 ("ms") / 0x9BF6 or 0x9BF7, the pair chosen by VOX SELECT 0x9AF3 |
+| 0x0E / 0x0F | RF POWER / MONI LEVEL | "W" / 0x9BFC..0x9C00 by mode ("OFF" at 0) |
+| 0x10 / 0x11 | KEYER on/off / BK-IN (VOX) on/off | 0x9C02, greyed outside CW / block+0 bit 1 (`FUN_fff99dbf`) |
+| 0x12 / 0x13 / 0x14 | CW SPEED / CW PITCH / BK-DELAY | 0x9C03 ("wp") / 0x9C04 / 0x9C05 ("ms") |
+| 0x16, 0x17 (0x35 while recording, UI +0x92), 0x18, 0x2D, 0xFF, 0x15, 0x3A, 0x30..0x34 | not named | 0x16 is greyed in DATA/RTTY/PSK and has no text; 0x15 and 0x3A show per-mode settings (`FUN_fffb54a0` / `FUN_fffb552c`, base 0x9BCA); 0x30..0x34 have no text and the DISPLAY adds an icon |
+
+The names of ids 0x15..0x18, 0x2D, 0x30..0x35 and 0x3A are open. Their labels are bitmaps in the DISPLAY image and the `SF` command
+does not list them. 0x30..0x34 are five of a kind, perhaps the five message memories **[guess]**.
+
+#### `0x39` message-memory screen (0xE9 bytes; DISPLAY `scr_vfo` / `FUN_201293f8`)
+
+| Byte | Source | Meaning |
+|---|---|---|
+| 0x98..0xB0 | ROM 0xFFF802C0 + 25·(UI +0x1C7) | 25-character title by the screen type +0x1C7 **[fact]**: 0 = voice messages, 1 = CW memories, 2 = text memories **[inference from the slot sources below]** |
+| 0xB1 | +0x1C7 \| +0x1CF << 2 \| +0x1D0 << 3 \| (DVS +0x78 = 1) << 4 \| (+0x78 = 2) << 5 | type and state: bit 2 playing (+0x1CF, set by E8 code 3), bit 4 DVS play, bit 5 DVS record |
+| 0xB2 | `FUN_fffe5783()` | not traced |
+| 0xB3 | 1 << UI +0x1CE when +0x1D1 = 1 (and +0x1CE < 8) | one-hot channel |
+| 0xB4 | UI +0x1C8 while anything is playing or recording (+0x78, +0x1C9, +0x1CC, +0x1CD, +0x1CF, +0x1D0) and +0x417 = 0 | active channel |
+| 0xB6 | bits 0..4 = 0x9AAD..0x9AB1 equal to 1 | CW MEMORY 1..5 (`EX020206..020210`) |
+| 0xB7 / 0xB8 | 0x9DC1 / 0x9DC2 | play volume 0..100 (stepped by `FUN_fffc6595`) / a second level, not traced |
+| 0xBA..0xBB | UI +0x1D6, u16 BE (from `FUN_fffba30c`) | time counter **[inference]** |
+| 0xC0..0xE7 | 5 × 8 bytes | first 8 characters of each slot. Type 1: the CW memories 0x96A0, 0x96D3, 0x9706, 0x9739, 0x976C (copied to UI +0xC2.. first). Type 2: the `EM` text slots 0x979E..0x9866. Type 0 leaves them 0 |
+
+#### `0x3A` PlayList (0xA2 bytes; DISPLAY `scr_playlist`)
+
+`displink_tx_3A` sends the frame once each time UI +0x3F8 is set, without the change check **[fact]**. Byte 0x98 = sub-state UI +0x3F9,
+0x99..0x9A = 0, then:
+
+| +0x3F9 | 0x9B..0x9C | 0x9D | 0x9E | DISPLAY action **[fact, DISPLAY]** |
+|---|---|---|---|---|
+| 0 open | 0x9B = 0x9DC1 (volume) | | | lists the `.wav` files (`FUN_20124bc0` → `wav_list_dir`) and answers E7 b1 = 0 with the count |
+| 1 list | UI +0x3FA (u16 BE): first file shown | cursor row +0x3FC (0..4) | 0 | redraws the list |
+| 2 command | as 1 | as 1 | +0x3FD: 0 stop/pause, 1 play, 2 and 3 the wind keys (3 = `play_ffwd`) | starts or stops playback and answers E7 b1 = 1 |
+| 3 delete | as 1 | as 1 | | `FUN_20124adc` deletes the selected file (`wav_delete`) and answers E7 b1 = 0 with the new count **[inference for the call path]** |
+| 4 volume | 0x9B = +0x3FE & 1 (playing), 0x9C = 0x9DC1 (volume) | | | redraws the volume |
+
+#### `0x40` menu page (0x1FB bytes; DISPLAY main screen, `scr_text_list`)
+
+`displink_build_40` calls `menu_page_serialize(0x1741, 0x98)` ([menu.md](menu.md)) **[fact]**:
+
+| Byte | Content |
+|---|---|
+| 0x98 | 1 when P1 = 4 (EXTENSION SETTING) and the group 0x15E04 = 2, else 0 (`FUN_fffc98c1`) **[fact]**; that page holds the DISPLAY's FIRMWARE UPDATE entry **[inference]** |
+| 0x99 | number of items in the current P2 group |
+| 0x9A | first item shown (cursor byte 1) |
+| 0x9B | min(items, 5) << 4 \| menu state UI +0x3FF (3 = editing a value) |
+| 0x9C | P2 index << 4 \| cursor row |
+| 0x9D..0xB0 | P1 title, 20 characters |
+| 0xB1..0x118 | up to 8 P2 tab names, 13 characters each |
+| 0x119 + 45·r | 5 rows (r = 0..4): byte 0 flags (bits 6–7, `menu_draw_flags`), byte 1 value length (& 0x1F), from +3 the item name (`menu_get_name`), from +0x18 the value text (21 characters, the item's `on_draw`) |
+
+The DISPLAY reads row r's value at 0x131 + 45·r and its length at 0x11A + 45·r **[fact, DISPLAY text-list code in 20124a98_2012cf30.c]**,
+so the "+0x11A" in [mainlink.md](../display/mainlink.md) is the length byte of the first row.
+
+#### `0x41` MEMORY CH LIST (0x146 bytes; DISPLAY `scr_memory_list`)
+
+| Byte | Content |
+|---|---|
+| 0x98 | UI +0x1D8 << 7 (selected channel valid) \| +0x1D9 << 6 |
+| 0x99 | UI +0x1DA << 4 \| +0x1DB (cursor row) |
+| 0x9C..0xAA | 15-character header from ROM 0xFFF804C4 |
+| 0xAB..0xB4 | with MEMORY GROUP on (0x9AC2 = 1): `GROUP ` and either `  n ` (groups 1..5) or a 4-character name from ROM for the PMS, 60 m and EMG groups (`FUN_fff9bfe1` 6..8); otherwise spaces |
+| 0xB5 + 36·k | 4 rows (k = 0..3) from channel UI +0x439 on, skipping channels the destination blocks: flags (bit 0 = tag shown, rec+5 bit 7; bit 1 = rec+1 bit 7), 5-character label (`M-01`..`M-99`; `M-PL1`/`M-PU1`.. for PMS 0x63..0x74; `5-01`.. for 60 m 0x75..0x83; `EMG` from 0x84), 10-character frequency (`FUN_fff9c2f9`), 8-character mode name (ROM table), 12-character tag (rec+0x4E). An empty channel shows its label, `--.---.---` and dashes |
+
+The 60 m and EMG channels exist only for the destination codes `FUN_fff9c04a` accepts (limit 0x75 for 0x020B / 0x1CB9 / 0x4380 / 0x60E6, 0x84 for
+0x315B / 0x50E2, none for the others) **[fact]**.
+
+#### `0x50` on-screen keyboard (0xF5 bytes; DISPLAY `scr_keyboard`)
+
+UI +0xBE is the keyboard target. The key handler `FUN_fffe29b7` edits the text at UI +0xC2 with the cursor in +0xC1 and the character
+set in +0xC0: key 0x81 toggles 0/1, 0x82 sets 0, 0x83 sets 2, 0x84 cancels, 0x85 is ENT, 0x86/0x87 move the cursor, 0x08 is backspace
+**[fact]**. Calling +0xC0 = 0/1/2 "lower case / Caps / symbols" matches the DISPLAY keys `Caps` and `#%^` **[inference]**.
+
+| Byte | Content |
+|---|---|
+| 0x98 | layout: +0xC0 (0, 1 or 2) plus 0x10 for CW TEXT, 0x20 PSK TEXT, 0x30 RTTY TEXT, 0x40 FILE NAME, 0 for the others (CW and RTTY use only 0 and 2) |
+| 0x99 | cursor position +0xC1 |
+| 0x9A..0x9E | channel label: the memory channel (`FUN_fff9c089`, target 1) or `ch` + slot number (UI +0xBF + 1) for the text memories |
+| 0xA4..0xB7 | title: `MY CALL` (target 0), `MEMORY NAME` (1), `CW TEXT` (2), `RTTY TEXT` (3), `PSK TEXT` (4), `FILE NAME` (5), `PRESET NAME` (6) |
+| 0xB8..0xBF | `Char #nn` (cursor + 1) |
+| 0xC2.. | the text: 12 bytes (targets 0, 1, 6), 20 bytes (FILE NAME) or 50 bytes (the text memories, UI +0xC2 + 0x32·slot). The character under the cursor is sent as 0xFF unless UI +0x1BC is set |
+
+Maximum lengths (`FUN_fffe2b7a`): 12 characters for targets 0, 1 and 6, 50 for CW TEXT, 15 for the others **[fact]**.
+
+#### `0x62` alignment menu (0x197 bytes; DISPLAY `scr_setup_menu`)
+
+Byte 0x98 = cursor row UI +0x1DD (0..8) and 0x99 = 0. Then come 9 lines of 28 bytes from 0x9A: the 25-character label from ROM 0xFFF817C3
+(item = UI +0x1DE − row, wrapping at 261) and a 3-character value at line + 0x19. `displink_62_value` (0xFFF9C555) makes the value from
+cfg byte 0x4659 + item through `FUN_fff9cea1`, each character `| 0x30` **[fact]**; three decimal digits **[inference]**. The items are listed in
+[eeprom.md](eeprom.md#cfg105-the-alignment-table-fact).
+
+#### `0x70` dialog (0xE3 bytes; DISPLAY `scr_confirm` → `confirm_dialog_draw`)
+
+| Byte | Content |
+|---|---|
+| 0x98 | box style (the DISPLAY clamps it to 3): 1 = two 22-character text lines (`displink_70_msg2`), 3 = one line |
+| 0x99 | button set: 0, 2 or 4 (the DISPLAY clamps it to 3; 3 or more selects the second size table 0x208022D0) |
+| 0x9A | selected button UI +0xBD |
+| 0x9C..0x9D / 0x9E..0x9F | x = 230 and y = 183 (u16 BE), the box corner on the 800 × 480 screen |
+| 0xA0.. | 22 or 44 characters copied from ROM 0xFFF80000 + 0x16·n |
+
+The message number n is UI +0xBB, and the frame is due when UI +0x86 = 1 **[fact]**. Writers: the SD-card menu code (`FUN_fffcf4b8`..`FUN_fffcf6ac`,
+`FUN_fffcfa3d`; numbers 1..0x0F) and the audio error paths of `dispreq_e7_task` and `dispreq_e8_result` (0x10..0x15, 0x18..0x1A; 0x17 from
+`FUN_fffe356f`) **[fact]**. The texts are in ROM 0xFFF80016..0xFFF80267, which is not in the repository, so which message each number
+shows is open. Settling it needs the MAIN image, or a screenshot from the radio for each number.
+
+### E7 / E8 result codes (#179)
+
+`displink_rx_E7` and `displink_rx_E8` turn the DISPLAY's audio status into a code in UI +0x488 / +0x48C. `dispreq_e7_task` (task 11) and
+`dispreq_e8_task` (task 10, through `dispreq_e8_result` 0xFFFE376A) act on the code and clear it **[fact]**. On the DISPLAY, E7 comes from the
+PlayList (0x2080048E = 1) and E8 from the voice-message (`MSG_CH%d`) screens. The senders are `FUN_20124744` (b1 = 0xFF, error),
+`FUN_20124848` / `FUN_201248a4` (b1 = 1, state) and `FUN_20124adc` / `FUN_20124bc0` (b1 = 0, file count) **[fact, DISPLAY]**.
+
+```mermaid
+sequenceDiagram
+  participant D as DISPLAY audio screen
+  participant R as displink_rx_E7 / E8
+  participant T as dispreq_e7_task / dispreq_e8_result
+  D->>R: E7/E8 b1 = 0 (count) / 1 (state 0,1,2) / 0xFF (error)
+  R->>T: code 1 / 2,3,4 / 5 in +0x488 or +0x48C
+  T-->>D: 0x3A redraw (+0x3F8) or 0x70 error dialog (+0x86)
+```
+
+| Code | Frame | E7 action (`dispreq_e7_task`) | E8 action (`dispreq_e8_result`) |
+|---|---|---|---|
+| 1 | b1 = 0, b5 = number of `.wav` files → UI +0xAA (E7 only) | if the list was in delete state (+0x3F9 = 3) and the cursor +0x3FC ≠ 0, move it up one; then +0x3F9 = 1 and +0x3F8 = 1 (send `0x3A`, list redraw) | E8 never sends b1 = 0; the code is only cleared |
+| 2 | b1 = 1, b5 = 0 (stopped) → UI +0xAB | if the PlayList is open (+0x93 = 1): clear +0x3FE (playing); if a command was pending (+0x3FD ≠ 0), clear it and redraw (sub-state 1) | playback or recording ended: DVS state +0x78 = 0 (0x20B2E cleared too if it was a play), +0x1CF = +0x1D0 = +0x1C8 = 0 |
+| 3 | b1 = 1, b5 = 1 (playing) | cleared only | +0x1CF = 1 (playing), +0x1D0 = 0 |
+| 4 | b1 = 1, b5 = 2 (recording) | cleared only | cleared only |
+| 5 | b1 = 0xFF, b5 = error index → UI +0xAC; the receiver also calls `beep_stop` | close the PlayList (+0x93 = +0x3F8 = 0), drop a recording request (+0x92 = 0), error beep (`beep_request(3)`), open dialog `0x70` with message 0x10 + index (index 6 → 0x18, 7 → 0x19, any other → 0x1A) | `FUN_fffe556a`, +0x1C8 = 0, error beep, clear 0x20B2E, then the same message numbers. Index 0 and 1 also close the message screen (+0x94 = 0); index 3 also resets +0x78, +0x1CF, +0x1D0 and +0x1C8 |
+
+The DISPLAY's error index **[fact, DISPLAY `FUN_20124744`]**: the argument −1..−6, −8, −9 maps to 0..7 (−7 has no slot and sends 0xFF).
+The callers pass −1 when `FUN_20103ba0` (bit 6 of the SD-card status 0x20800094) is 0, which reads as *no SD card* **[inference]**; −3 when
+`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set, perhaps *write-protected* **[guess]**; −4 when the `MSG_CHn` file is missing; −6 when
+there is nothing to delete; −8 / −7 when a file cannot be opened to play or wind; −9 when the matching `MSG_CHn` directory entry has a
+non-zero field +0x30 (meaning open). So the dialog numbers 0x10..0x1A are the SD-card / audio error texts **[inference]**.
 
 
 ## Boot error report
@@ -370,6 +606,12 @@ Two DISPLAY-driven maintenance modes take over the link. Each runs as a blocking
 | 0xFFF9C5B2 / 0xFFF9C5D8 / 0xFFF9C60F | `displink_tx_start` / `displink_put_sum` / `displink_check_sum` | `displink_tx_start` / `displink_put_sum` / `displink_check_sum` | |
 | 0xFFF9C655 / 0xFFF9C667 | `mem_zero` / `displink_copy_if_changed` | `mem_zero` / `displink_copy_if_changed` | |
 | 0xFFF96455 | `displink_build_status` | `displink_build_status` | fills the 0x97-byte status block at 0x16A1 |
+| 0xFFF98CD3 | `FUN_fff98cd3` | `displink_copy_status` | builds the status block and copies it to the staging frame 0x1742 (every "status + …" builder) **[fact]** (#179) |
+| 0xFFF98CEC / 0xFFF98D5B / 0xFFF98DCA | `FUN_fff98cec` / `FUN_fff98d5b` / `FUN_fff98dca` | `displink_70_msg` / `displink_70_msg2` / `displink_70_query` | `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text **[fact]** |
+| 0xFFF973BC / 0xFFF9921F | `FUN_fff973bc` / `FUN_fff9921f` | `mode_block_byte0` / `mode_block_byte1` | the active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) and +1 (BC, AGC) **[fact]** |
+| 0xFFF98727 | `FUN_fff98727` | `ui_lamp_set` | set or clear one bit of UI +0x34 (status byte 8) **[fact; "lamp" is inference]** |
+| 0xFFF9C555 | `FUN_fff9c555` | `displink_62_value` | 3-character value of an alignment item for `0x62` **[fact]** |
+| 0xFFFE376A | `FUN_fffe376a` | `dispreq_e8_result` | E8 code actions (called by `dispreq_e8_task`) **[fact]** |
 | others | | `displink_rx_*`, `displink_tx_*`, `displink_build_*` | one per frame type, see the two frame tables (all proposed in the TSV) |
 | 0xFFF9D94D / 0xFFFA1576 | `dsp_isp_request` / `sdr_bridge_request` | `dsp_isp_request` / `sdr_bridge_request` | set 0x1C63 / 0x1C8D |
 | 0xFFFA0C79 | `dsp_isp_bridge` | `dsp_isp_bridge` | see above |
