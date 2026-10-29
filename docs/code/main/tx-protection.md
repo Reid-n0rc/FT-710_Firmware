@@ -36,8 +36,10 @@ is 2.5 s after power-on (`trx_init`). Each pass it then runs `ptt_inputs_read`, 
 ## PTT sources [fact]
 
 `ptt_inputs_read` (0xFFFB7F6F) samples the ports into one flag per source. `ptt_source_select` (0xFFFB85A2) then picks the first active flag in
-priority order and returns its number. The result is stored in `ptt_source` 0x1204D. If 0x20B97 is set (from `cat_ext_EO` and
-`FUN_fffbf6c8`), every source is ignored.
+priority order and returns its number. The result is stored in `ptt_source` 0x1204D. If 0x20B97 is set, every source is ignored. 0x20B97 is UI-state +0x93: set by `FUN_fffe2fa8` (started from the remote keypad,
+`ladder_key_task`, and the assignable slots 0xD/0xE), cleared by `cat_ext_EO`, `key_mode_short` (`FUN_fffbf6c8`) and the E7 error path. It is the
+PlayList playback flag of `dispreq_e7_task`, so the radio cannot transmit while a recorded receive file plays **[fact for the writers, inference for
+"playback"]** (#75).
 
 | Priority | Flag | Source no. | Origin |
 |---|---|---|---|
@@ -46,7 +48,11 @@ priority order and returns its number. The result is stored in `ptt_source` 0x12
 | 3 | 0x20B24 | 1 | `DATA_PTT` (P20) low, when PTT select = 3 (DAKY) |
 | 4 | 0x20B26 | 3 | USB "Standard" port **RTS** (PC6) low and USB_DET, when select = 1 |
 | 5 | 0x20B27 | 4 | USB **DTR** (PC5) low and USB_DET, when select = 2 |
-| 6–10 | 0x20B2A..0x20B2E | 7, 8, 9, 10, 11 | set by other subsystems: 0x20B2A by the key/DISPLAY handlers (`FUN_fffba377`, `FUN_fffbaa81` and others); 0x20B2E by `cat_PB` (voice-memory playback) and others; 0x20B2D by tuner code (`FUN_fffec7f9`..) **[inference for the owners]** |
+| 6 | 0x20B2A (UI +0x26) | 7 | **CW keyer**: `keyer_task` → `FUN_fffbaa81` sets it while it keys (break-in) and clears it **[fact]** (#75) |
+| 7 | 0x20B2B (UI +0x27) | 8 | **MIC PTT**: DISPLAY key code 0x340 (P10_5 on the DISPLAY, [display/input.md](../display/input.md)). Its press handler `FUN_fffc0210` sets it, and `key_cancel_check` clears it on release **[fact]** (#75) |
+| 8 | 0x20B2C (UI +0x28) | 9 | **MOX**: holding MOX/VOX (`key_mox_vox_long`, 0x1B4D9 = 2) sets it, and the next press clears it. A short press toggles VOX (0x9C5D), except in modes 2, 3, 0xC and 0xD **[fact]** (#75) |
+| 9 | 0x20B2D (UI +0x29) | 10 | **ATU tune**: the tuner code (`FUN_fffec7f9`, `FUN_fffed48f`, `FUN_fffed8ab` set it; the 0xFFFECE.. / 0xFFFED... tuner steps clear it) **[fact]** (#75) |
+| 10 | 0x20B2E (UI +0x2A) | 11 | **voice-message playback on the air**: `cat_PB` and the message-play code (`FUN_fffe4211`) set it; the E8 status (`FUN_fffe376a`, [README.md](README.md) task 10) and the MIC PTT release clear it **[fact]** (#75) |
 | 11 | 0x20B29 | 6 | **VOX**: setting 0x9C5D on, DSP status bit 0x10 (`dsp_status1_raw`), and VOX holdoff timer 0x2F expired |
 
 - The "PTT select" value is setting 0x9A9F, or a per-mode value from `FUN_fffb50d7`. The code values 1 = RTS, 2 = DTR and 3 = DAKY match the CAT
@@ -59,7 +65,9 @@ priority order and returns its number. The result is stored in `ptt_source` 0x12
 ### The CAT TX1 path bypasses the key-event filter [fact]
 
 `cat_TX` (0xFFFAF7B8) does not call `key_event_filter` (unlike `cat_KY`, `cat_VS` and others; see [cat.md](cat.md)). It writes the request flag 0x20B28
-directly. It refuses (`?;`) only while 0x20F1C == 1 or 0x20F70 == 1. The read form `TX;` answers from `ptt_source_get`: `TX0` when no
+directly. It refuses (`?;`) only while 0x20F1C == 1 or 0x20F70 == 1. 0x20F1C is UI-state +0x418, **scan running** (`scan_start_up`/`scan_start_down`,
+cleared by `scan_stop`). 0x20F70 is +0x46C, set with a mode-dependent timer (0x38/0x40) by the long/repeat handlers of slots 0xD/0xE and the
+remote-keypad path, and cleared when the timer runs out **[fact]**; its purpose is not traced (#75). The read form `TX;` answers from `ptt_source_get`: `TX0` when no
 source is active, `TX1` when the source is CAT, and `TX2` for any other source. The **only** gates between `TX1;` and the RF are therefore
 `ptt_arbiter` and `tx_freq_allowed` (below). This is why CAT TX also works in UI states where front-panel keys are locked.
 
@@ -67,7 +75,7 @@ source is active, `TX1` when the source is CAT, and `TX2` for any other source. 
 
 *tx_freq_allowed(freq)* is called with the TX frequency 0x20F50:
 1. If `zz_mode0` (0x20BBE, set by `ZZPE071000`) is set, it returns **1 at once, with no band check**.
-2. It returns 0 if any of these is set: 0x465C (`cfg105[3]`), 0x9AF5 (a setting, also used by `menuitem_EX030407`), 0x20B46 (`cat_disabled`,
+2. It returns 0 if any of these is set: 0x465C (`cfg105[3]`), 0x9AF5 (**TX INHIBIT**, menu OPERATION SETTING / TX GENERAL, `EX030407`, #75), 0x20B46 (`cat_disabled`,
    set from the DISPLAY link), 0x20B47 (TX time-out tripped, see below).
 3. It looks up the range table for the destination code (`dest_code_get`, 0x475E/0x475F). It returns 1 if `lo <= freq < hi` for
    some row ([table below](#destination-code-and-tx-coverage)).
@@ -115,7 +123,7 @@ RX→TX (state 1). The ms values are soft-timer settings started in state 0:
 |---|---|---|
 | 1 ms | 0x0C | `DATA_BUSY` (P24) = 1 |
 | 1 ms | 0x0D | AF_MUTE on (*af_mute_set(1)*) |
-| 5 ms | 0x0E | speaker switches P70/PB2/P80 off (except in CW-type modes 1/3). Once both acknowledgements 0x20B19/0x20B1A are set (by `dsp_link_poll`/`sdr_task`, the SDR/DSP links **[inference]**), the speaker route is restored (unless EAR_DET), AF_MUTE is released and the state goes to 2 |
+| 5 ms | 0x0E | speaker switches P70/PB2/P80 off (except in CW-type modes 1/3). Once both acknowledgements are set (0x20B19 by `sdr_task`, 0x20B1A by `dsp_link_poll` **[fact]**, #75), the speaker route is restored (unless EAR_DET), AF_MUTE is released and the state goes to 2 |
 | 1 ms | 0x0F | **RX (PB7) = 0** → the RX8 rail turns off |
 | 3 ms | 0x10 | **TX (P73) = 1** → the TX8 rail turns on |
 | *tx delay* | 0x11 | value from `FUN_fffb548a` (forced to 0 for source 7, and for 8/9 with the CW key inserted outside CW). Then state 3, and SEND_A (PA2) / SEND_B (PB4) are keyed |
@@ -298,7 +306,7 @@ The bus is `SDAT0` PA4 / `SCLK0` PA5 with one strobe per device **[fact for the 
 | Address | Size | Name | Meaning |
 |---|---|---|---|
 | 0x20B18 | u8 | `trx_state` | 0..8 as above; 8 = RX idle **[fact]** |
-| 0x20B19 / 0x20B1A | u8 | TX acks | both must be 1 to leave state 1 **[fact]**. Set by the SDR/DSP links **[inference]** |
+| 0x20B19 / 0x20B1A | u8 | TX acks | both must be 1 to leave state 1 **[fact]**. 0x20B19 is set by `sdr_task`, 0x20B1A by `dsp_link_poll`; `trx_sequencer` clears both **[fact]** (#75) |
 | 0x20B24..0x20B2E | u8 | `ptt_req[]` | per-source request flags **[fact]** |
 | 0x20B28 | u8 | `cat_tx_req` | CAT TX1 **[fact]** |
 | 0x1204D | u8 | `ptt_source` | 0 = none, 1..11 **[fact]** |
@@ -310,7 +318,7 @@ The bus is `SDAT0` PA4 / `SCLK0` PA5 with one strobe per device **[fact for the 
 | 0x20F50 | u32 | TX frequency (Hz) passed to `tx_freq_allowed` | **[inference: Hz, from the table units]** |
 | 0x475E | 2 (+1) | destination code | **[fact]** |
 | 0x465C | u8 | `cfg105[3]`: TX disabled when non-zero | **[fact]** for the effect |
-| 0x9AF5 | u8 | setting: TX disabled when non-zero | **[fact]** for the effect |
+| 0x9AF5 | u8 | TX INHIBIT (`EX030407`): TX disabled when non-zero | **[fact]** |
 | 0x9A9F, 0x9AA0, 0x9AA1, 0x9AC3, 0x9C5B, 0x9C5D | u8 | settings: PTT select, break-in, TX→RX delay set, TOT minutes, meter select, VOX | **[fact]** for the use, **[inference]** for the menu names |
 | 0x12043..0x1204C | u8 | meter bytes | see the meter table **[fact]** |
 | 0x4659..0x475D | 0x105 | `cfg105` (CAT `SPN`) = **factory calibration** (meters, PA DAC per band, fan threshold 0x465A, FADJ 0x465B) | **[fact]** for the reads, **[inference]** that it is the calibration block |
