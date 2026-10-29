@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run a Ghidra/REA job inside the owner's hardware cap (AGENTS.md "Hardware use"): about 75% of the machine.
 # Usage: tools/ghidra-cap.sh <reserve_mb> -- <command...>
-#   - at most CAP_SLOTS heavy jobs at once, machine-wide (flock slots in $CAP_DIR) [3]
+#   - at most CAP_SLOTS heavy jobs at once, machine-wide (flock slots in $CAP_DIR) [1]
 #   - pinned to the first CAP_CPUS cores (taskset, Linux only) and run at nice 10 [3/4 of nproc]
 #   - admitted through tools/memgate.py, which keeps MEMGATE_SAFETY_MB free on top of all reservations [3072]
 # Exports CAP_CPUS for the caller's -max-cpu, and GC/compiler threads sized to the cap.
@@ -13,7 +13,7 @@ REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 if command -v nproc >/dev/null 2>&1; then ncpu=$(nproc); else ncpu=$(sysctl -n hw.ncpu 2>/dev/null || echo 4); fi
 CAP_CPUS=${CAP_CPUS:-$(( ncpu * 3 / 4 > 0 ? ncpu * 3 / 4 : 1 ))}
-CAP_SLOTS=${CAP_SLOTS:-3}
+CAP_SLOTS=${CAP_SLOTS:-1}
 CAP_DIR=${CAP_DIR:-$HOME/.cache/ft710-ghidra-cap}
 export CAP_CPUS
 export MEMGATE_DIR=${MEMGATE_DIR:-$HOME/.cache/ft710-memgate}
@@ -37,6 +37,13 @@ fi
 
 pin=()
 command -v taskset >/dev/null 2>&1 && pin=(taskset -c "0-$(( CAP_CPUS - 1 ))")
+# Log temps, memory pressure and stalls while the job runs (tools/healthlog.py; logs in $HEALTH_DIR).
+# exec below keeps this PID, so the logger watches it and writes END when the job exits. setsid keeps the
+# logger alive through a Ctrl-C so it still records how the job ended.
+if [ -r /proc/meminfo ] && [ "${HEALTH_LOG:-1}" != 0 ]; then
+  setsid python3 -I "$REPO/tools/healthlog.py" --watch $$ --label "$*" </dev/null >/dev/null 2>&1 &
+fi
+
 gate=()
 [ -r /proc/meminfo ] && gate=(python3 -I "$REPO/tools/memgate.py" "$reserve" --)
 exec "${pin[@]}" nice -n 10 "${gate[@]}" "$@"
