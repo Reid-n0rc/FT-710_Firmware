@@ -359,14 +359,15 @@ step_hifi4() {
 G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
-  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
+  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
     "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, ApplyNames, DefineRomData, ApplySignatures"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
     -preScript SetupRX651.java copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
+    -postScript FixFuncEntries.java "$G/entries_main.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
     -postScript ApplySignatures.java "$G/signatures_main.tsv"

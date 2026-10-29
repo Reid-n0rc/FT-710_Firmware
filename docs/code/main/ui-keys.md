@@ -98,11 +98,24 @@ stateDiagram-v2
 | `key_repeat_table` | 0xFFF8C608 | 14 | 13 | auto-repeat |
 | `key_release_table` | 0xFFF8D384 | 35 | 34 | class 2: on release |
 
-The empty slot handler is `key_nop` 0xFFFC4A8D (a single `RTS`) **[fact]**. The five tables are the "large code-pointer table at 0xFFF89D94" in
-the T05 index; it continues at 0xFFF8E100 with a different 360-entry table that is not part of the key system (T10f) **[fact for the boundary]**.
-**507 of the 536 distinct handler addresses are not function entries in the T05 project**, so their code is folded into neighbours or not
-disassembled. They should be created as functions before the handlers can be documented one by one (follow-up). `tools/main_key_tables.py`
-writes the full code → handler list.
+The empty slot handler is `key_nop` 0xFFFC4A8D (a single `RTS`) **[fact]**. The five tables are the "large code-pointer table at 0xFFF89D94"
+(4651 entries) in the T05 index (#71): the index is the key code 0..0x35E, one table per handler role. Two more `JSR` tables follow
+**[fact]** (#70):
+
+- **0xFFF8E100..0xFFF8E19F**, five 8-entry tables, one per role (press, short, long, repeat, release in that order, 0x20 apart). Five
+  helpers 0xFFFC40D7 / 0xFFFC410A / 0xFFFC413D / 0xFFFC4170 / 0xFFFC41A3 (one per role) take a slot number: slots 0..0xC are mapped to a key
+  code through the u16 list at 0xFFF88534 and call the 863-entry table; slots 0xD..0x14 call these small tables. 31 distinct handlers.
+  The callers pass the assignment settings 0x9ACC, 0x9ACD, 0x9AC8.. (the same slots as in `key_event_filter`), so slots 0xD..0x14 are the
+  eight assignable functions that have no front-panel key of their own **[fact for the settings, inference for the meaning]**.
+- **0xFFF8E1A0..0xFFF8E63F**, 296 entries: the **CAT auto-information change detectors for the EX menu**, not a key table. Entry *i* belongs to
+  the *i*-th ID of the 296 × 8-character list at 0xFFF872B1 (`EX010101` … `EX060518`); `cat_ai_ex_scan` 0xFFFE6D7A calls them in turn
+  ([cat.md](../cat.md)).
+
+Before #70, 506 of the 535 key handlers, 31 of the 32 slot handlers and all 296 detectors were not function entries; 0xFFFE6E3A..0xFFFEA639
+(14 KB) had no function at all. `tools/main_key_tables.py out.tsv entries.tsv` lists them, and `FixFuncEntries.java
+tools/ghidra/entries_main.tsv nolate` creates all 862 in the MAIN rebuild (2,834 → 3,161 functions, 0 failures) **[fact]**. The handlers of the
+physical keys 0x300..0x312 are named `key_<key>_<role>` after the DISPLAY key-code table ([display/input.md](../display/input.md)), except the
+five that T10 had named already.
 
 Code ranges (codes with at least one handler) **[fact]**:
 
@@ -119,32 +132,31 @@ Codes below 0x300 are most likely GUI touch keys, since the DISPLAY draws the so
 
 Physical-key handlers (press / short / long / release; `-` = `key_nop`) **[fact]**:
 
-| Code | Class | Press | Short | Long | Release |
-|---|---|---|---|---|---|
-| 0x300 | 1 | 0xFFFBE582 | 0xFFFBE593 | 0xFFFBE63D | - |
-| 0x301 | 1 | 0xFFFBE680 | 0xFFFBE6BC | 0xFFFBE794 | - |
-| 0x302 | 1 | 0xFFFBE7E7 | 0xFFFBE83F | 0xFFFBE8D2 | - |
-| 0x303 | 1 | 0xFFFBE92F | 0xFFFBE96B | 0xFFFBE9D6 | - |
-| 0x304 | 1 | 0xFFFBEA9C | 0xFFFBEB2C | 0xFFFBEBA3 | - |
-| 0x305 | 1 | 0xFFFBEC6C | 0xFFFBECA5 | 0xFFFBEE05 | - |
-| 0x306 | 1 | 0xFFFBEE52 | 0xFFFBEEA9 | 0xFFFBEFA0 | - |
-| 0x307 | 1 | 0xFFFBF00D | 0xFFFBF0B6 | 0xFFFBF1D4 | - |
-| 0x308 | 1 | 0xFFFBF20B | 0xFFFBF234 | 0xFFFBF24E | - |
-| 0x309 | 1 | 0xFFFBF3F6 | 0xFFFBF41F | 0xFFFBF43B | - |
-| 0x30A | 1 | 0xFFFBF482 | 0xFFFBF4BB | 0xFFFBF5D6 | - |
-| 0x30B | 0 | 0xFFFBF600 | 0xFFFBF62F | - | - |
-| 0x30C | 1 | 0xFFFBF6C1 | 0xFFFBF6C8 | 0xFFFBF7A7 | - |
-| 0x30D | 0 | 0xFFFBF7D7 | 0xFFFBF807 | - | - |
-| 0x30E | 1 | 0xFFFBF8EE | 0xFFFBF924 | 0xFFFBFAC4 | - |
-| 0x30F | 2 | 0xFFFBFC37 | 0xFFFBFD17 | 0xFFFBFD21 | 0xFFFBFD7E |
-| 0x310 | 1 | 0xFFFBFE14 | 0xFFFBFE5E | 0xFFFBFE8E | - |
-| 0x311 | 1 | 0xFFFBFEE9 | 0xFFFBFF22 | 0xFFFBFF57 | - |
-| 0x312 | 2 | 0xFFFBFF93 | 0xFFFC0003 | 0xFFFC0047 | 0xFFFC008F |
+| Code | Key (DISPLAY) | Class | Press | Short | Long | Release |
+|---|---|---|---|---|---|---|
+| 0x300 | LOCK/PWR | 1 | 0xFFFBE582 | 0xFFFBE593 | 0xFFFBE63D | - |
+| 0x301 | TUNE | 1 | 0xFFFBE680 | 0xFFFBE6BC | 0xFFFBE794 | - |
+| 0x302 | MOX/VOX | 1 | 0xFFFBE7E7 | 0xFFFBE83F | 0xFFFBE8D2 | - |
+| 0x303 | NB | 1 | 0xFFFBE92F | 0xFFFBE96B | 0xFFFBE9D6 | - |
+| 0x304 | DNR | 1 | 0xFFFBEA9C | 0xFFFBEB2C | 0xFFFBEBA3 | - |
+| 0x305 | SPLIT | 1 | 0xFFFBEC6C | 0xFFFBECA5 | 0xFFFBEE05 | - |
+| 0x306 | CLAR | 1 | 0xFFFBEE52 | 0xFFFBEEA9 | 0xFFFBEFA0 | - |
+| 0x307 | ZIN/SPOT | 1 | 0xFFFBF00D | 0xFFFBF0B6 | 0xFFFBF1D4 | - |
+| 0x308 | M>V | 1 | 0xFFFBF20B | 0xFFFBF234 | 0xFFFBF24E | - |
+| 0x309 | V/M W | 1 | 0xFFFBF3F6 | 0xFFFBF41F | 0xFFFBF43B | - |
+| 0x30A | A/B | 1 | 0xFFFBF482 | 0xFFFBF4BB | 0xFFFBF5D6 | - |
+| 0x30B | BAND | 0 | 0xFFFBF600 | 0xFFFBF62F | - | - |
+| 0x30C | MODE | 1 | 0xFFFBF6C1 | 0xFFFBF6C8 | 0xFFFBF7A7 | - |
+| 0x30D | NAR | 0 | 0xFFFBF7D7 | 0xFFFBF807 | - | - |
+| 0x30E | QMB | 1 | 0xFFFBF8EE | 0xFFFBF924 | 0xFFFBFAC4 | - |
+| 0x30F | FUNC | 2 | 0xFFFBFC37 | 0xFFFBFD17 | 0xFFFBFD21 | 0xFFFBFD7E |
+| 0x310 | STEP/MCH | 1 | 0xFFFBFE14 | 0xFFFBFE5E | 0xFFFBFE8E | - |
+| 0x311 | FINE/FAST | 1 | 0xFFFBFEE9 | 0xFFFBFF22 | 0xFFFBFF57 | - |
+| 0x312 | DSP | 2 | 0xFFFBFF93 | 0xFFFC0003 | 0xFFFC0047 | 0xFFFC008F |
 
 Callees of the few handlers that are already functions **[fact]**: 0x302 short → `FUN_fffc2794`, `vfo_mode`, `beep_request`, `swtimer_start`;
 0x307 short → `freq_clamp`, `FUN_fffc2efb`, `vfo_store_back` (the same call that follows the VFO write in touch tuning); 0x30E short/long →
-`FUN_fffc34d8`, `vfo_is_memory` (also called after the VFO write in touch tuning). Naming each key needs the handler bodies and the DISPLAY's
-key-code table (T11f).
+`FUN_fffc34d8`, `vfo_is_memory` (also called after the VFO write in touch tuning). The key names come from the DISPLAY's key-code table (#70).
 
 ### Touch tuning (source 4)
 

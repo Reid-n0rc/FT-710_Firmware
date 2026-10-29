@@ -346,7 +346,7 @@ void cat_parse(void)
     }
   }
   if ((DAT_0000464b == '\x01') && (bVar4 = swtimer_expired(0x32), bVar4 == 1)) {
-    FUN_fffbff93();
+    key_dsp_press();
     DAT_0000464b = '\0';
   }
   cat_ai_poll();
@@ -3010,7 +3010,7 @@ void cat_AC(int param_1,char param_2)
         DAT_0000464a = 1;
       }
     }
-    FUN_fffe6e26();
+    cat_ai_ex_holdoff();
     return;
   }
   DAT_0000464a = 1;
