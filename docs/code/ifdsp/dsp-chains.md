@@ -235,6 +235,10 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
 
   So the HF bands sit within 1 dB of each other and 6 m gets about 5 dB less IF gain headroom, consistent with a per-band
   gain/S-meter trim **[inference]**. Values differ between radios (factory alignment), so these are one sample, not defaults.
+  MAIN's own alignment menu names the five bytes `028..032 [RX] IF-AGC 7 / 14 / 21 / 28 / 50`, and their ROM default is 0
+  (`cfg105_defaults` 0xFFF8074F) **[fact, #203]**. The service manual aligns each at 7.150 / 14.200 / 21.200 / 28.100 / 50.500 MHz
+  for −2.0 dB ± 0.5 dB of AF with a 10 dBµV signal, after setting 0 dB with 40 dBµV: a per-band IF-gain (AGC threshold) trim
+  **[fact: manual]**. Map of the whole table: [main/eeprom.md](../main/eeprom.md#cfg105-the-alignment-table-fact).
 
 ### Rx_Audio branch B is the AESS speaker feed; reg 6 = 10 is an external-audio mode
 
@@ -249,8 +253,9 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
   one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**. The
   AESS speaker is the rear-panel EXT SP jack (owner), which the schematic feeds from codec LOR, so **branch B (DAC channel 0) → LOR →
   EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
-  [hardware.md](../../hardware.md)]**. Where the AESS level `AS1` is applied (it is not sent to the DSP) and why B gets 32 more
-  samples of delay (reg 0x56) are in #193.
+  [hardware.md](../../hardware.md)]**. The AESS level `AS1` is not sent to the DSP: MAIN applies it on the analog side
+  (route 2 only when it is non-zero, and R2A20178 channel 8 from it; [main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact),
+  #203) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is still open in #193.
 - **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
   (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
   skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the
@@ -324,4 +329,4 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement and the AESS level and delay: #193 (the AESS speaker and the reg 0x63 values are settled).
+- The SDR FPGA's per-mode IF placement and the AESS branch delay: #193 (the AESS speaker, the AESS level (#203) and the reg 0x63 values are settled).

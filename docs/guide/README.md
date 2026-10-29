@@ -1420,8 +1420,8 @@ is one, picks read or write:
 - **`SPM` reads eight bytes of meter values** *(inference that they are meters)*.
 - **`SPR` / `SPW` read and write one EEPROM byte** at any address. The write has no bounds check. The read is tested on a radio
   and is how the backup script copies the whole EEPROM, including the factory calibration.
-- **`SPN` reaches a 261-byte table** that is most likely the factory alignment and calibration table *(inference)*, including the
-  per-band TX power calibration. `W` changes an entry in RAM, `S` re-applies the table half a second later, and `SPAWE` saves the
+- **`SPN` reaches the 261-byte factory alignment table.** The firmware names every entry itself (`001 [GN] VDD MTR` …
+  `261 [TX] IDD MTR`, the labels of the service manual's alignment mode), including the per-band TX power items. `W` changes an entry in RAM, `S` re-applies the table half a second later, and `SPAWE` saves the
   whole table to EEPROM. Even the read, `SPNR`, has a side effect: it also loads a preset into the active VFO.
 
 The ASCII forms (`SPS`, `SPD`, `SPIR`) look like any other command. The others are **binary**: after `SP` and the letter come raw
@@ -2451,7 +2451,7 @@ Short definitions of the terms used in this guide, in alphabetical order.
 - **Boot ROM**: Fixed code inside a chip that runs at reset and can program the chip's flash over a serial port.
 - **BRAM**: Block RAM; on-chip 18/36 Kbit memories of an FPGA, which can be pre-loaded with tables.
 - **BSCANE2**: A Xilinx primitive that lets the FPGA design add its own registers to the JTAG chain.
-- **Calibration table (`cfg105`)**: 261-byte factory alignment table in EEPROM, reached by `SPN` (inference for its meaning).
+- **Calibration table (`cfg105`)**: 261-byte factory alignment table in EEPROM, reached by `SPN`; the firmware's alignment menu names each item (map in `docs/code/main/eeprom.md`).
 - **CAT**: Computer Aided Transceiver: Yaesu's text command protocol for controlling the radio from a PC (`FA…;`, `MD…;`).
 - **Checksum**: Here an 8-bit sum of the frame bytes, used by the binary `SP` sub-commands.
 - **codec**: A chip with both an ADC and a DAC for audio; here the TI TLV320AIC3204 between the DSP and the speaker/mic.

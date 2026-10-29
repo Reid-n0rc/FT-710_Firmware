@@ -304,17 +304,25 @@ stateDiagram-v2
 
 ### Speaker routing (`speaker_route`, 0x20FCC) [fact]
 
-The inputs are EXT_SP_DET (P02) and EAR_DET (PF5) plus a setting byte (×5 mask):
+The inputs are EXT_SP_DET (P02) and EAR_DET (PF5) plus the **AESS level of the current mode** (`FUN_fffb54a0`: 0x9C06 SSB, 0x9C09 CW,
+… 0x9C0F FM; `AS1` = byte × 5) **[fact]** (#193, #203):
 
 | route | INT_SP_SW P70 | EAR_SW P80 | EXT_SP_SW PB2 | PA6 | When |
 |---|---|---|---|---|---|
 | 0 | 1 | 0 | 0 | 0 | no external speaker, no phones |
 | 1 | 0 | 1 | 0 | 0 | phones plugged in (they take priority) |
-| 2 | 1 | 0 | 1 | 1 | external speaker, and the setting selects both |
-| 3 | 0 | 0 | 1 | 0 | external speaker only |
+| 2 | 1 | 0 | 1 | 1 | external speaker, and the AESS level is not 0: both speakers (the AESS crossover, [dsp-chains.md](../ifdsp/dsp-chains.md)). 0x20B31 = curve 0xFFF8117D[level × 5], which `FUN_fffb5d68` sends to R2A20178 channel 8 (`BOOST LEVEL` on p20); reg 8 = 0x3263 |
+| 3 | 0 | 0 | 1 | 0 | external speaker only (AESS level 0); 0x20B31 = 0 |
 | 4 | 0 | 0 | 0 | – | all off: CAT disabled (0x20B46), flag 0x1204E or 0x20B3B, or timer 0x2C still running |
 
 During the RX↔TX switch, `trx_sequencer` clears these switches and then restores them (see tx-protection.md).
+
+So the `AS1` AESS level is applied on the analog side, never in the DSP: level 0 turns AESS off (route 3 instead of 2, and
+`dsp_set_aess` sends reg 0x4020 = 0), and a non-zero level sets R2A20178 channel 8 (0xFF in route 0, 0 in route 3; with phones in,
+`FUN_fffb5d68` derives channel 8 from the AF gain instead) **[fact]**. That channel 8 sets the loudness of the AESS (low-passed) speaker
+feed is **[guess]**: the schematic legend only says `BOOST LEVEL`. `sdr_upd_r16_filter` also adds 10 to 0x20B4A when the level is
+non-zero (meaning not traced). The owner's levels (dump 2026-10-28): SSB 15, CW 14, DATA 15, AM 10, FM 17, RTTY/DATA-FM/PSK 0
+(`AS1` 75/70/75/50/85/0).
 
 ## Data structures and globals
 

@@ -67,14 +67,14 @@ Multi-byte values are **big-endian**. Offsets are from the start of the record.
 
 | Offset | Size | Field | Evidence |
 |---|---|---|---|
-| +0x00 | u8 | bits 0–3 = **mode index** (table below). Bits 4–7 are not yet known. | `vfo_mode` (`AND #0xF`), IF/MD/MR via `cat_mode_codes` 0xFFF806D0 **[fact]** |
+| +0x00 | u8 | bits 0–3 = **mode index** (table below). Bits 4–7 have no known reader. The defaults write 0x4_ (0xC_ for the USB band-stack defaults); in the owner's dump the records changed from their default have bit 7 clear and bit 6 set in some, clear in most (dump 2026-10-28, [eeprom.md](eeprom.md#check-against-the-owners-dump-2026-10-28)) **[fact: dump]**; meaning open. | `vfo_mode` (`AND #0xF`), IF/MD/MR via `cat_mode_codes` 0xFFF806D0 **[fact]** |
 | +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]** | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR` **[fact]** |
 | +0x02 | u8 | bits 2–3 = **repeater shift**: 0 = minus, 1 = simplex, 2 = plus | `tx_freq_repeater_shift` (TX shift), `cat_MW` (`'2'`→0, `'0'`→1, `'1'`→2) **[fact]** |
 | +0x03 | u8 | bits 3–5 = **tone mode** (CT: 0 off, 1 = CTCSS ENC/DEC, 2 = CTCSS ENC, 3 = DCS **[inference]**). bit 3 alone is tested by the scan engine (`FUN_fffe600f`) | `cat_CT`, `cat_IF_OI`, `cat_MW` **[fact]** |
 | +0x04 | u8 | NARROW flags per mode class (bit 7 SSB, 5 CW, 3 RTTY, 2 DATA); see [eeprom.md](eeprom.md#90-byte-vfo--memory-record) | `cat_NA`, `key_nar_short` **[fact]** (#73) |
 | +0x05 | u8 | bit 7 = memory tag shown (MT P2) | `cat_MT` **[fact]**; `vfo_clear_tag` clears it |
 | +0x06 | u8 | bits 0–3 = **DNR level** 1..15 (`RL`), bit 4 = **DNR on** (`NR`). The DSP setters `dsp_set_dnr_*` (0xFFF9E750, 0xFFF9FCD0..0xFFF9FFB1) index their coefficient tables with the level and send 0 when bit 4 is clear or the mode is FM/DATA-FM (6/7, 10/11). Bits 5–7: no reader or writer found; the defaults write 0 | `cat_RL` 0xFFFADA46 (`& 0xF0 \| level`), `cat_NR`, `key_dnr_short`/`key_dnr_long`, `FUN_fffc7d41` (DNR knob, clamps 1..15), the AI reporters `FUN_fffdff9c` (`NR`) / `FUN_fffe0839` (`RL`) **[fact]** |
-| +0x07..+0x09 | 3 | **unused** in V01-12: no field access anywhere in MAIN; only copied with the whole record. The defaults write 0 | see [below](#record-bytes-without-users) **[fact for the absence of users]**; reserved **[inference]** |
+| +0x07..+0x09 | 3 | **unused** in V01-12: no field access anywhere in MAIN; only copied with the whole record. The defaults write 0, except +0x08 = 1 in the 50 MHz band-stack records (`FUN_fffb0779`; seen in the owner's dump) | see [below](#record-bytes-without-users) **[fact for the absence of users]**; reserved **[inference]** |
 | +0x0A..+0x13 | 10 | **per-mode block, SSB** (modes 0/1). +0x0B bit 7 is the BC flag. +0x12/+0x13 (s16) is the SSB offset; SDR RX adds +1500 Hz to it | `cat_BC`, `sdr_upd_r18_rx_freq`, `vfo_display_offset` **[fact]** |
 | +0x14..+0x1D | 10 | **per-mode block, CW** (2/3). +0x14 bit 1 = BI. +0x15 bit 7 = BC. +0x1C/+0x1D (s16) is the CW offset, combined with the CW pitch (0x9C04×10 + 300 Hz) | `cat_BI`, `cat_BC`, `sdr_upd_r18_rx_freq` **[fact]** |
 | +0x1E..+0x27 | 10 | **per-mode block, RTTY** (12/13). +0x1F bit 7 = BC. +0x26/+0x27 is the RTTY offset; the base comes from setting 0x9A8D (85/105/215/425 Hz) | `cat_BC`, `sdr_upd_r18_rx_freq` **[fact]** |
@@ -143,6 +143,10 @@ A scan of the whole MAIN decompile (every pointer that comes from `vfo_rec_ptr` 
 pointer that is also indexed at the frequency/tag offsets) finds **no field access** to +0x07, +0x08, +0x09 or +0x47, and none to
 bits 5–7 of +0x06 **[fact]**. They are written only by the defaults (`defaults_vfo` 0xFFFB06E5, `defaults_memch` 0xFFFB0A8F):
 
+- The band-stack defaults (`defaults_bandstack` → `FUN_fffb0779`, per band) write the same pattern with the band's mode (0x40, 0x42 or
+  0xC1 in +0x00), **except +0x08..+0x09 = `01 00` for band 10 (50 MHz)**: a u16 store of 1 at byte 0x38C of the 12-band row (band 10 starts at 0x384). The owner's
+  dump (2026-10-28) has +0x08 = 1 in exactly the four 50 MHz slots it never used (VFO A and B, levels 1 and 2) **[fact: code + dump]**.
+  No reader exists, so the value has no effect **[inference]**.
 - `+0x00..+0x03` = `40 00 04 80`, `+0x04..+0x07` = `00 02 01 00`, `+0x08..+0x09` = `00 00` for the VFOs and memories 001–P9U (LSB,
   simplex, DNR level 1); the dest-specific 60 m channels get `01 01 04 80`, `00 02 03 00`, `00 00` (USB, DNR level 3).
 - `+0x46..+0x59` = 20 bytes from ROM 0xFFF80947 (`0C 00 0000 006ACFC0` + 12 spaces: tone 12, +0x47 = 0, no clarifier, 7.000 MHz,
@@ -221,7 +225,7 @@ Related ROM tables **[fact]**:
 | (code) | `29999 < f < 75000001` | `freq_in_range` `freq_in_range`, used by FA/FB/FD/MW/ZI and touch-tune |
 | 0xFFF887CC | 18 ascending u32 boundaries: 1.7, 2.1, 4.1, 6.9, 8.2, 11.8, 15.0, 15.8, 17.8, 20.0, 20.9, 25.0, 30, 48, 56, 69, 75.000001, 108.000001 MHz | `gen_subband_of_freq` `gen_subband_of_freq`. It returns the first i with f < table[i], clamped to 15. This is the GEN sub-slot for the FIX band memory |
 | 0xFFF88814 | 14 boundaries: 1.7, 3.0, 4.5, 6.0, 9.0, 13.0 MHz, … | `freq_range_index`, a frequency → range index. This may be a filter-bank index **[guess]** |
-| 0xFFF88598 | 7.5, 14.5, 21.5, 41.5, 75 MHz | `dsp_set_freq_range_param`: picks one of the cfg105 bytes 0x4674..0x4678 and writes it to SCI4 device register 99 when it changes **[fact]**. That it is a per-range DSP calibration is **[inference]** |
+| 0xFFF88598 | 7.5, 14.5, 21.5, 41.5, 75 MHz | `dsp_set_freq_range_param`: picks one of the cfg105 bytes 0x4674..0x4678 and writes it to SCI4 device register 99 when it changes **[fact]**. They are the alignment items `028..032 [RX] IF-AGC 7/14/21/28/50` (#203, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)) **[fact]** |
 | 0xFFF89D24 | 10 × u32: 1k, 2k, 5k, 10k, 20k, 50k, 100k, 200k, 500k, 1M | scope span in Hz, indexed by `scope_span_index`(side)` |
 
 ### Band stack
