@@ -13,7 +13,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Copies the VFO-A data block (0x5A bytes at 0x9D09) into the VFO-B block (0x9D63), sets VFO-B state 0x9DBF=1 and applies it; i.e. A=>B copy [fact for copy, name inference].
 - **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (frequency-cache refresh request, see [radio-control.md](code/main/radio-control.md)); callees `vfo_mark_edited`(1), `vfo_store_back`(1)
 - **Risk:** low-medium: changes VFO-B contents (RAM + dirty flag)
-- **Resolved in part (#157):** `vfo_store_back` stores the operating record back to where it came from, by state: the band stack (`FUN_fffc17df`), a pending copy (+0x443/+0x43D), or the memory-tune backup for states 3/4 (memory tune, PMS) **[fact]**. Whether it also retunes is still open.
+- **Resolved in part (#157):** `vfo_store_back` stores the operating record back to where it came from, by state: the band stack (`FUN_fffc17df`), a pending copy (+0x443/+0x43D), or the memory-tune backup for states 3/4 (memory tune, PMS) **[fact]**.
+- **Resolved (#173):** `vfo_store_back` does **not** retune. Every path ends in a store: `bandstack_save` @ fffc1927 (record → band-stack slot, `eeprom_save_bandstack` only if the 0x5A bytes differ), the memory-tune backup (`FUN_fffc18e1` → `memtune_backup_b` @ fffc1913, 0x9D63 → 0x9E28, UI +0x440/+0x442 = 1; or `FUN_fffc1a35` @ fffc1a35, a partial copy to 0x9E28 and UI +0x43F = 1), or nothing in state 2; none of `FUN_fffc184f`, `FUN_fffc18bf`, `FUN_fffc18e1` calls `vfo_reload`/`vfo_retune` **[fact]**. `cat_AB` itself also calls no retune; the new B frequency reaches the hardware only through the 0x20F10 frequency-cache refresh request it sets **[fact for the code, inference that this is the retune path]**. Quirk: `bandstack_save` takes no side argument and saves the record of the **active** VFO (0x9DBD), so `vfo_store_back(1)` from `AB` while VFO-A is active rewrites A's band-stack slot (a no-op unless A changed), not B's **[fact, current decompile]**; B's slot then follows on the next store with B active **[inference]**.
 
 ### AC
 
@@ -59,7 +60,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores the VFO-A data block into memory channel (number 0x60C9) in RAM (0x6150+ch*0x5A) and writes it to EEPROM; A=>Memory [name inference; copy and EEPROM write are facts].
 - **Globals / callees:** R: 0x60C9 (error if in 0x75..0x84), 0x9DBE state (1,3,4,5,else), 0x9DC3, 0x60B1[], 0x9D09; W: 0x6150+ch*0x5A (0x5A), 0x9D09 (states 1? no: 4 and default), 0x20F10; callees `vm_toggle` (state 4), `vfo_mark_edited`/fffc16f6(0x9DBD), eeprom_save_memch(ch) = eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(slot,0x5A)
 - **Risk:** medium: overwrites a memory channel in EEPROM (user data)
-- **Resolved in part (#157):** the band-stack records are at 0x4761 + band·0x438 + slot·0x5A for VFO A and 0x5409 + … for VFO B, with the current slot per band in 0x60B1[band] / 0x60BD[band] (the same addressing `align_load_preset` uses) **[fact]**. `vm_toggle` is still open.
+- **Resolved (#157, #173):** the band-stack records are at 0x4761 + level·0x438 + band·0x5A for VFO A and 0x5409 + … for VFO B, with the current stack level per band in 0x60B1[band] / 0x60BD[band] (the same addressing `align_load_preset` and `bandstack_save` @ fffc1927 use; the #157 note had band and level swapped) **[fact]**. `vm_toggle` @ fffbf41f is the V/M key: unless UI +0x97 (0x20B9B) is 1 (then it only clears +0x97/+0x90, `FUN_fffc2794`), it cancels a keyer/message send (`FUN_fffe3d24`), runs `vm_toggle_core` @ fffc27ad and re-arms the tuner (`FUN_fffec578`) **[fact]**. For state 4 (PMS) `vm_toggle_core` stores the record back (`vfo_store_back`), sets state 2 (`vfo_enter_mem_state` @ fffc28fb), clears the memory-tune flags (`FUN_fffc2937`) and reloads (`vfo_reload`) **[fact]**. So `AM` in PMS first drops back to the memory channel, then stores VFO-A's band-stack record (not the PMS-tuned frequency) into the channel and into 0x9D09 **[fact for the copies; reading as "leave PMS first" is inference]**. By state: 1 (VFO) stores the live record 0x9D09; 3 (memory tune) stores the band-stack slot into the channel only; 2 and every other state store the slot into the channel and also load it into 0x9D09; 5 (QMB) stores the slot and writes EEPROM at once, skipping `vfo_mark_edited`/`vfo_store_back`/0x20F10 **[fact]**. `vm_toggle` works on the **active** side (0x9DBD), see `BM`.
 
 ### AO
 
@@ -128,7 +129,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Steps the band down one (wraps 0 -> 11) on VFO selected by P1: '0' = currently selected VFO (0x9DBD), '1' = the other VFO [inference]; band index from band_of_freq(freq) (12-entry table) then `band_select_on`(newBand,vfo) changes band.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. W 0x9C5E=0, 0x9DBE/0x9DBF=1 (VFO state) or restored from 0x20F88/89; callees fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency of the radio
-- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. P1 meaning still to confirm.
+- **Resolved (#157, #173):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. P1 is relative to the active VFO: the side is 0x9DBD XOR P1, so `0` = the active (operating) VFO and `1` = the other one; any other P1 answers `?;` **[fact]** (`cat_BD` @ fffa72d9). The manual's "main/sub" therefore means active/inactive VFO, not A/B **[inference]**. Side effects: with split on (0x9C5E = 1) split is cleared and, for P1 `0`, both states are forced to 1 (VFO), for P1 `1` both are restored from 0x20F88/0x20F89 (UI +0x484/+0x485, saved by `split_toggle` @ fffbeca5 when split was turned on); with split off, P1 `0` forces the active side to state 1, while P1 `1` leaves the other side's state as it is **[fact]**. The band is stepped with `band_select_on`(band, side) @ fffc4c4e, which sets 0x9DBD to the side for one `band_select` call, clears split and re-arms the tuner (`FUN_fffec578`) **[fact]**.
 
 ### BI
 
@@ -151,7 +152,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores the VFO-B data block into memory channel (number 0x60CA) in RAM and EEPROM; twin of AM using B state 0x9DBF and block 0x9D63 [name inference; copy and EEPROM write are facts].
 - **Globals / callees:** R 0x60CA (error if 0x75..0x84), 0x9DBF, 0x9DC4, 0x60BD[]; W 0x6150+ch*0x5A, 0x9D63, 0x20F10; fffbf41f, fffc2fde/16f6, eeprom_save_memch(ch) (EEPROM)
 - **Risk:** medium: overwrites a memory channel in EEPROM
-- **Resolved in part (#157):** as AM.
+- **Resolved (#157, #173):** as AM (B side: 0x5409 + level·0x438 + band·0x5A, level 0x60BD[band], band 0x9DC4) **[fact]**. Quirk: in B state 4 `cat_BM` calls the same `vm_toggle`, which acts on the **active** VFO (0x9DBD), so with VFO-A active it toggles A, not B **[fact, current decompile]**; `vfo_mark_edited`/`vfo_store_back` are also called with 0x9DBD, not 1 **[fact]**.
 
 ### BP
 
@@ -186,7 +187,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Steps the band up one (wraps after 11 to 0) on VFO selected by P1 ('0' = selected VFO 0x9DBD, '1' = other) via `band_select_on`; twin of BD.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. Same state writes as BD; fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency
-- **Resolved in part (#157):** as BD.
+- **Resolved (#157, #173):** as BD: same P1 = 0x9DBD XOR P1 side selection and split handling in `cat_BU` @ fffa756c; it steps band+1 with 11 (GEN) wrapping to 0 **[fact]**.
 
 ### BY
 
