@@ -151,6 +151,14 @@ reg 0x45 is clamped to 5999 (0x176F, just below Nyquist) **[fact: constants]**. 
 24 ms. The FIR/IIR tables below are consistent with 12 kHz (SSB/CW passbands of 0–4 kHz). **Open (T14, C9):** the DISPLAY writes the
 REC PCM it receives over FC1 as a **16 kHz** stereo WAV ([display/spi-links.md](../display/spi-links.md#link-2-if-dsp-fftrecplay-rspi4)),
 so either `Thread_Spi` resamples to 16 kHz or the WAV header is nominal. The FC1 buffer spacing (0x1200) matches the DISPLAY's 0x11F8-byte frame **[fact]**.
+*#59:* `Thread_Spi` does not resample. The recorder audio is resampled before it, in the routing sink `FUN_002255B4` (reg 10 n1,
+[control-link.md](control-link.md#audio-routing-registers-8-9-10-77-fact)) **[fact, FLIX listing]**: each 24-sample block is zero-stuffed by 2 with gain 2
+(0x2C6B90); every 0x90 = 144 stuffed samples go through `iir_cascade_process` (anti-image filter), a `loop` of 8 keeps every **9th** sample
+(16 outputs), `FUN_00234750` converts them to int16 (shift −15), and they enter the 4000-entry ring 0x266ED8 (count 0x268E18). So the
+recorder rate is **2/9 of the sink's input rate**. `FUN_00225790` packs the 4000-byte PCM part of each SPI frame as `u16 count`
+(≤ 0x7CE = 1998), `u16 (4000 − 0x2C6A20)/6`, then up to `count` int16 samples, the rest 0xF0. A 16 kHz WAV therefore needs **72 kHz** at
+the sink's input, which does not fit the 12 kHz block rate inferred above (that would give 2.67 kHz); one of the two rate readings is
+wrong **[inference]**, see #154.
 
 ### SPI on FLEXCOMM1 (DMA0)
 
