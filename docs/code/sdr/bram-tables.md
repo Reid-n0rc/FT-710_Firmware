@@ -50,7 +50,9 @@ them (#92): `RAMB36.BRAM36_{READ,WRITE}_WIDTH_{A,B}_1` exists only on a true RAM
 (halves x4) (prjxray fuzzer `027-bram36-config`) **[fact]**. 31 tiles of this image carry it, all with x4 halves, so they are
 **RAMB36 x9**; `xc7_bram_tables.py` now takes them as certain. For other widths no bit separates the cases, and the tool
 still keeps whichever reading is smoother (separate halves for X2Y12, X2Y14). This bit order is also what makes X0Y5's
-flagged pair a smooth quadratic table, which strengthens the interleave rule.
+flagged pair a smooth quadratic table, which strengthens the interleave rule. #164 extends the check to the parity
+bits and the routing (the parity input goes to both halves, the parity output comes from the lower half only) and
+writes these 31 pairs as RAMB36E1 in the Verilog netlist ([netlist.md 4.4](netlist.md#44-true-ramb36e1-and-a-working-block-ram-model-164)).
 Inside a RAMB18 at width W, entry *i* is INIT bits [*i*d, *i*d+d) (d = 1/2/4/8/16) with INITP bits as the MSBs
 (x9: 1, x18: 2) **[fact, UG473 + prjxray]**.
 

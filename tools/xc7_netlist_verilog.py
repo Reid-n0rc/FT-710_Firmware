@@ -5,9 +5,10 @@ Written for T15 (FT-710 SDR image, XC7A50T). Stdlib only. The output is
 derived from Yaesu's bitstream: write it to build/ and never commit it.
 
 Usage:
-    python3 -I tools/xc7_netlist_verilog.py verilog NETLIST.json OUT.v [--xdc OUT.xdc] [--pkg PKG]
+    python3 -I tools/xc7_netlist_verilog.py verilog NETLIST.json OUT.v [--xdc OUT.xdc] [--pkg PKG] [--ramb18]
         whole design as one module `ft710_sdr` of UNISIM primitives, top ports named
-        after package pins (and J2002 / block names where T15c identified them)
+        after package pins (and J2002 / block names where T15c identified them); --ramb18 writes
+        the RAMB36 x9/x1 pairs as two RAMB18E1 halves (the pre-#164 reading) instead of one RAMB36E1
     python3 -I tools/xc7_netlist_verilog.py slice NETLIST.json OUT.v --seeds CELL[,CELL...] [--depth N] [--stop CELL,...]
         a sub-netlist: the seeds plus their fan-in cones (through LUT/CARRY/MUX/FF,
         N register stages deep); nets entering from outside become input ports
@@ -27,7 +28,8 @@ Smoke test (Yosys 0.23, see docs/code/sdr/netlist.md):
 Primitive mapping: LUT6/LUT6_2 #(INIT), FDRE/FDSE/FDCE/FDPE #(INIT, IS_C_INVERTED), CARRY4,
 MUXF7/MUXF8, SRLC32E, RAMD64E/RAMD32, DSP48E1 (register attributes, A/B_INPUT, USE_DPORT,
 MASK/PATTERN, USE_MULT assumed MULTIPLY), RAMB18E1 (INIT_xx/INITP_xx, widths, DOx_REG,
-WRITE_MODE), IDDR/ODDR, BUFGCTRL/BUFHCE/BUFR/BUFIO, MMCME2_ADV (dividers from the
+WRITE_MODE, RSTREG_PRIORITY, IS_*_INVERTED from ZINV_*), RAMB36E1 for the halves that carry the
+RAMB36 BRAM36_*_WIDTH_1 flag (x9/x1, INIT interleaved, #164), IDDR/ODDR, BUFGCTRL/BUFHCE/BUFR/BUFIO, MMCME2_ADV (dividers from the
 DRP counter fields, XAPP888 encoding), IBUF/IBUFDS/OBUF/OBUFDS/OBUFT/IOBUF with IOSTANDARD.
 """
 import collections
@@ -52,6 +54,14 @@ PORT_NAMES = {
 }
 
 
+def interleave_bits(a, b, n):
+    """RAMB36 INIT from its halves (#92/#164): bit j of the result is bit j//2 of a (j even) or b (j odd)."""
+    v = 0
+    for j in range(n):
+        v |= ((a >> j) & 1) << (2 * j) | ((b >> j) & 1) << (2 * j + 1)
+    return v
+
+
 def vname(s):
     return re.sub(r"[^A-Za-z0-9_]", "_", s)
 
@@ -72,6 +82,8 @@ class Writer:
         self.db = db
         self.counts = collections.Counter()
         self.notes = collections.Counter()
+        self.ramb36 = True          # merge flagged RAMB18 pairs into RAMB36E1 (#164); --ramb18 turns it off
+        self.r36_pairs = {}
 
     rename = {}
 
@@ -185,7 +197,15 @@ class Writer:
         elif ty == "DSP48E1":
             self.dsp(c)
         elif ty == "RAMB18E1":
-            self.bram(c)
+            if self.ramb36 and self.is_ramb36(c):
+                site, half = self.ramb36_site(c)
+                pair = self.r36_pairs.get(site)
+                if pair and half == 0:
+                    self.bram36(*pair)
+                elif not pair:
+                    self.bram(c)       # the other half is not in use: keep the RAMB18 reading
+            else:
+                self.bram(c)
         elif ty == "IDDR":
             self.inst("IDDR", n, [("DDR_CLK_EDGE", '"OPPOSITE_EDGE"'), ("SRTYPE", '"ASYNC"')],
                       [("C", self.pin(c, "CLK")), ("CE", "1'b1"), ("D", self.pin(c, "D")),
@@ -247,28 +267,58 @@ class Writer:
         self.inst("DSP48E1", c["name"], [(k, v if isinstance(v, str) else str(v)) for k, v in params], conns,
                   "USE_MULT has no prjxray segbits; MULTIPLY assumed [approx]")
 
+    # FIFO18E1-type site (the Y0 half of a BRAM tile) names its pins after the FIFO; the tile wires show
+    # DO[15:0] = DOADO, DO[31:16] = DOBDO, DOP[1:0] = DOPADOP, DOP[3:2] = DOPBDOP (tile_type_BRAM_*.json)
+    FIFO_PINS = dict([("CLKARDCLK", "RDCLK"), ("CLKBWRCLK", "WRCLK"), ("ENARDEN", "RDEN"), ("ENBWREN", "WREN"),
+                      ("REGCEAREGCE", "REGCE"), ("RSTRAMARSTRAM", "RST"), ("RSTREGARSTREG", "RSTREG")]
+                     + [("DOADO%d" % i, "DO%d" % i) for i in range(16)]
+                     + [("DOBDO%d" % i, "DO%d" % (16 + i)) for i in range(16)]
+                     + [("DOPADOP%d" % i, "DOP%d" % i) for i in range(2)]
+                     + [("DOPBDOP%d" % i, "DOP%d" % (2 + i)) for i in range(2)])
+
+    @staticmethod
+    def bram_width(p, prefix):
+        for k in p:
+            m = re.match(r"^%s_(\d+)$" % prefix, k)
+            if m:
+                return int(m.group(1))
+        return 1
+
+    def bram_params(self, p):
+        """Mode parameters shared by RAMB18E1 and RAMB36E1 (without widths and INIT)."""
+        params = [("DOA_REG", 1 if p.get("DOA_REG") else 0), ("DOB_REG", 1 if p.get("DOB_REG") else 0),
+                  ("WRITE_MODE_A", '"%s"' % ("NO_CHANGE" if p.get("WRITE_MODE_A_NO_CHANGE") else
+                                             "READ_FIRST" if p.get("WRITE_MODE_A_READ_FIRST") else "WRITE_FIRST")),
+                  ("WRITE_MODE_B", '"%s"' % ("NO_CHANGE" if p.get("WRITE_MODE_B_NO_CHANGE") else
+                                             "READ_FIRST" if p.get("WRITE_MODE_B_READ_FIRST") else "WRITE_FIRST")),
+                  ("RSTREG_PRIORITY_A", '"%s"' % ("REGCE" if p.get("RSTREG_PRIORITY_A_REGCE") else "RSTREG")),
+                  ("RSTREG_PRIORITY_B", '"%s"' % ("REGCE" if p.get("RSTREG_PRIORITY_B_REGCE") else "RSTREG"))]
+        # prjxray ZINV_<pin> = 1 means the pin is NOT inverted (#164). Unrouted RST pins sit at VCC
+        # with ZINV clear, i.e. inverted to an inactive 0.
+        for s in ("CLKARDCLK", "CLKBWRCLK", "ENARDEN", "ENBWREN", "RSTRAMARSTRAM", "RSTRAMB", "RSTREGARSTREG",
+                  "RSTREGB"):
+            params.append(("IS_%s_INVERTED" % s, "1'b%d" % (0 if p.get("ZINV_" + s) else 1)))
+        return params
+
+    def bpin(self, c, logical, default="1'b0"):
+        """Pin of a RAMB18 half by its RAMB18E1 port name (FIFO18 sites use other pin names)."""
+        fifo = "RDCLK" in c["pins"] or "WRCLK" in c["pins"] or "DO0" in c["pins"]
+        name = self.FIFO_PINS.get(logical, logical) if fifo else logical
+        v = c["pins"].get(name)
+        if v is None:
+            return default
+        return self.w(v[0])
+
     def bram(self, c):
         p = c["params"]
-        fifo_site = "RDCLK" in c["pins"] or "WRCLK" in c["pins"]
-
-        def width(prefix):
-            for k in p:
-                m = re.match(r"^%s_(\d+)$" % prefix, k)
-                if m:
-                    return int(m.group(1))
-            return 1
+        width = lambda pre: self.bram_width(p, pre)  # noqa: E731
         rda, rdb, wra, wrb = width("READ_WIDTH_A"), width("READ_WIDTH_B"), width("WRITE_WIDTH_A"), width("WRITE_WIDTH_B")
         if p.get("SDP_READ_WIDTH_36"):
             rda = 36
         if p.get("SDP_WRITE_WIDTH_36"):
             wrb = 36
         params = [("READ_WIDTH_A", rda), ("READ_WIDTH_B", rdb), ("WRITE_WIDTH_A", wra), ("WRITE_WIDTH_B", wrb),
-                  ("DOA_REG", 1 if p.get("DOA_REG") else 0), ("DOB_REG", 1 if p.get("DOB_REG") else 0),
-                  ("RAM_MODE", '"SDP"' if rda == 36 or wrb == 36 else '"TDP"'),
-                  ("WRITE_MODE_A", '"%s"' % ("NO_CHANGE" if p.get("WRITE_MODE_A_NO_CHANGE") else
-                                             "READ_FIRST" if p.get("WRITE_MODE_A_READ_FIRST") else "WRITE_FIRST")),
-                  ("WRITE_MODE_B", '"%s"' % ("NO_CHANGE" if p.get("WRITE_MODE_B_NO_CHANGE") else
-                                             "READ_FIRST" if p.get("WRITE_MODE_B_READ_FIRST") else "WRITE_FIRST"))]
+                  ("RAM_MODE", '"SDP"' if rda == 36 or wrb == 36 else '"TDP"')] + self.bram_params(p)
         for k in range(0x40):
             v = p.get("INIT_%02X" % k, 0)
             if v:
@@ -277,37 +327,98 @@ class Writer:
             v = p.get("INITP_%02X" % k, 0)
             if v:
                 params.append(("INITP_%02X" % k, lit(256, v)))
-        ren = {"CLKARDCLK": "RDCLK", "CLKBWRCLK": "WRCLK", "ENARDEN": "RDEN", "ENBWREN": "WREN",
-               "REGCEAREGCE": "REGCE", "RSTRAMARSTRAM": "RST", "RSTREGARSTREG": "RSTREG"} if fifo_site else {}
-        conns = [(s, self.pin(c, ren.get(s, s))) for s in
+
+        def bus(base, n, out=False):
+            bits = []
+            for i in reversed(range(n)):
+                b = self.bpin(c, "%s%d" % (base, i), "" if out else "1'b0")
+                if out and b == "":
+                    b = "nc_%s_%s%d" % (vname(c["name"]), base, i)
+                    self.wires.add(b)
+                bits.append(b)
+            return "{" + ", ".join(bits) + "}"
+        conns = [(s, self.bpin(c, s)) for s in
                  ("CLKARDCLK", "CLKBWRCLK", "ENARDEN", "ENBWREN", "REGCEAREGCE", "REGCEB", "RSTRAMARSTRAM",
                   "RSTRAMB", "RSTREGARSTREG", "RSTREGB")]
-        conns += [("ADDRARDADDR", self.bus(c, "ADDRARDADDR", 14)), ("ADDRBWRADDR", self.bus(c, "ADDRBWRADDR", 14)),
-                  ("DIADI", self.bus(c, "DIADI", 16)), ("DIBDI", self.bus(c, "DIBDI", 16)),
-                  ("DIPADIP", self.bus(c, "DIPADIP", 2)), ("DIPBDIP", self.bus(c, "DIPBDIP", 2)),
-                  ("WEA", self.bus(c, "WEA", 2)), ("WEBWE", self.bus(c, "WEBWE", 4))]
-        if fifo_site:   # FIFO18E1-type site: DO[15:0] = DOADO, DO[31:16] = DOBDO [approx]
-            do = [c["pins"].get("DO%d" % i) for i in range(32)]
-            dop = [c["pins"].get("DOP%d" % i) for i in range(4)]
+        conns += [("ADDRARDADDR", bus("ADDRARDADDR", 14)), ("ADDRBWRADDR", bus("ADDRBWRADDR", 14)),
+                  ("DIADI", bus("DIADI", 16)), ("DIBDI", bus("DIBDI", 16)),
+                  ("DIPADIP", bus("DIPADIP", 2)), ("DIPBDIP", bus("DIPBDIP", 2)),
+                  ("WEA", bus("WEA", 2)), ("WEBWE", bus("WEBWE", 4)),
+                  ("DOADO", bus("DOADO", 16, True)), ("DOBDO", bus("DOBDO", 16, True)),
+                  ("DOPADOP", bus("DOPADOP", 2, True)), ("DOPBDOP", bus("DOPBDOP", 2, True))]
+        self.inst("RAMB18E1", c["name"], [(k, str(v)) for k, v in params], conns)
 
-            def ob(lst, lo, n, nm):
-                bits = []
-                for i in reversed(range(lo, lo + n)):
-                    v = lst[i] if i < len(lst) else None
-                    if v is None:
-                        d = "nc_%s_%s%d" % (vname(c["name"]), nm, i)
-                        self.wires.add(d)
-                        bits.append(d)
-                    else:
-                        bits.append(self.w(v[0]))
-                return "{" + ", ".join(bits) + "}"
-            conns += [("DOADO", ob(do, 0, 16, "DO")), ("DOBDO", ob(do, 16, 16, "DO")),
-                      ("DOPADOP", ob(dop, 0, 2, "DOP")), ("DOPBDOP", ob(dop, 2, 2, "DOP"))]
-        else:
-            conns += [("DOADO", self.bus(c, "DOADO", 16, out=True)), ("DOBDO", self.bus(c, "DOBDO", 16, out=True)),
-                      ("DOPADOP", self.bus(c, "DOPADOP", 2, out=True)), ("DOPBDOP", self.bus(c, "DOPBDOP", 2, out=True))]
-        self.inst("RAMB18E1", c["name"], [(k, str(v)) for k, v in params], conns,
-                  "RAMB36 pairs are written as two RAMB18E1 halves [approx]" if fifo_site else None)
+    @staticmethod
+    def ramb36_site(c):
+        m = re.match(r"^RAMB18_X(\d+)Y(\d+)$", c["site"])
+        return "RAMB36_X%sY%d" % (m.group(1), int(m.group(2)) // 2), int(m.group(2)) % 2
+
+    @staticmethod
+    def is_ramb36(c):
+        """True RAMB36E1 (#164): RAMB36.BRAM36_*_WIDTH_1 exists only on a RAMB36 in x1 (halves x1) or
+        x9 (halves x4) mode (prjxray fuzzer 027-bram36-config, docs/code/sdr/bram-tables.md)."""
+        p = c["params"]
+        return bool(c["type"] == "RAMB18E1" and p.get("RAMB36.BRAM36_READ_WIDTH_A_1")
+                    and all(Writer.bram_width(p, w) in (1, 4) for w in
+                            ("READ_WIDTH_A", "READ_WIDTH_B", "WRITE_WIDTH_A", "WRITE_WIDTH_B")))
+
+    def bram36(self, lo, hi):
+        """One RAMB36E1 from its two RAMB18 halves (lo = Y0 = the L pins, hi = Y1 = the U pins).
+
+        Pin map (tile_type_BRAM_*.json, RAMBFIFO36E1 site): data/parity bit 2k is the lower half's pin k and
+        bit 2k+1 the upper half's (DOADO1 = BRAM_FIFO36_DOADOU0, DIPADIP1 = ...DIPADIPU0); RAMB18 address pin k is
+        RAMB36 address bit k+1 (BRAM_ADDRARDADDRL<k+1> -> FIFO18 ADDRARDADDR<k>); bit 0 and the cascade bit 15
+        are not on the RAMB18 pins (unused in x9/x1, tied 1). INIT/INITP: RAMB36 bit j = bit j/2 of half Y(j mod 2)."""
+        p = lo["params"]
+        w36 = {1: 1, 4: 9}
+        params = [(k, w36[self.bram_width(p, k)]) for k in
+                  ("READ_WIDTH_A", "READ_WIDTH_B", "WRITE_WIDTH_A", "WRITE_WIDTH_B")]
+        params += [("RAM_MODE", '"TDP"')] + self.bram_params(p)
+        for kind, n, nw in (("INIT", 0x40, 0x80), ("INITP", 8, 16)):
+            h = []
+            for c in (lo, hi):
+                v = 0
+                for k in range(n):
+                    v |= c["params"].get("%s_%02X" % (kind, k), 0) << (256 * k)
+                h.append(v)
+            v = interleave_bits(h[0], h[1], n * 256)
+            for k in range(nw):
+                word = (v >> (256 * k)) & ((1 << 256) - 1)
+                if word:
+                    params.append(("%s_%02X" % (kind, k), lit(256, word)))
+
+        def ilv(base, n, out=False):
+            bits = []
+            for i in reversed(range(2 * n)):
+                b = self.bpin((lo, hi)[i % 2], "%s%d" % (base, i // 2), "" if out else "1'b0")
+                if out and b == "":
+                    b = "nc_%s_%s%d" % (vname(lo["name"]), base, i)
+                    self.wires.add(b)
+                bits.append(b)
+            return "{" + ", ".join(bits) + "}"
+
+        def addr(base):
+            return "{1'b1, " + ", ".join(self.bpin(lo, "%s%d" % (base, i), "1'b1") for i in reversed(range(14))) \
+                + ", 1'b1}"
+        ctl = ("CLKARDCLK", "CLKBWRCLK", "ENARDEN", "ENBWREN", "REGCEAREGCE", "REGCEB", "RSTRAMARSTRAM",
+               "RSTRAMB", "RSTREGARSTREG", "RSTREGB")
+        for s in ctl + tuple("ADDRARDADDR%d" % i for i in range(14)) + tuple("ADDRBWRADDR%d" % i for i in range(14)) \
+                + tuple("WEA%d" % i for i in range(4)) + tuple("WEBWE%d" % i for i in range(4)):
+            if self.bpin(lo, s) != self.bpin(hi, s):
+                self.notes["RAMB36 halves differ on " + s.rstrip("0123456789")] += 1
+        conns = [(s, self.bpin(lo, s)) for s in ctl]
+        conns += [("CASCADEINA", "1'b0"), ("CASCADEINB", "1'b0"), ("INJECTDBITERR", "1'b0"),
+                  ("INJECTSBITERR", "1'b0"),
+                  ("ADDRARDADDR", addr("ADDRARDADDR")), ("ADDRBWRADDR", addr("ADDRBWRADDR")),
+                  ("DIADI", ilv("DIADI", 16)), ("DIBDI", ilv("DIBDI", 16)),
+                  ("DIPADIP", ilv("DIPADIP", 2)), ("DIPBDIP", ilv("DIPBDIP", 2)),
+                  ("WEA", "{" + ", ".join(self.bpin(lo, "WEA%d" % i) for i in reversed(range(4))) + "}"),
+                  ("WEBWE", "{" + ", ".join(self.bpin(lo, "WEBWE%d" % (i % 4)) for i in reversed(range(8))) + "}"),
+                  ("DOADO", ilv("DOADO", 16, True)), ("DOBDO", ilv("DOBDO", 16, True)),
+                  ("DOPADOP", ilv("DOPADOP", 2, True)), ("DOPBDOP", ilv("DOPBDOP", 2, True))]
+        name = self.ramb36_site(lo)[0]
+        self.inst("RAMB36E1", name, [(k, str(v)) for k, v in params], conns,
+                  "true RAMB36E1 from %s + %s (BRAM36 width flag, #164)" % (lo["site"], hi["site"]))
 
     def mmcm(self, c):
         p = c["params"]
@@ -408,6 +519,12 @@ class Writer:
 
     def emit(self, name="ft710_sdr", cells=None, extra_ports=()):
         cells = self.nl["cells"] if cells is None else cells
+        halves = collections.defaultdict(dict)
+        for c in cells:
+            if self.ramb36 and self.is_ramb36(c):
+                site, half = self.ramb36_site(c)
+                halves[site][half] = c
+        self.r36_pairs = {s: (h[0], h[1]) for s, h in halves.items() if len(h) == 2}
         for c in cells:
             self.cell(c)
         body = self.lines
@@ -483,9 +600,10 @@ endmodule
 """
 
 
-def cmd_verilog(path, out, xdc, pkg, db):
+def cmd_verilog(path, out, xdc, pkg, db, ramb18=False):
     nl = json.load(open(path))
     w = Writer(nl, pkg, db)
+    w.ramb36 = not ramb18
     w.iobs()
     text = w.emit()
     open(out, "w").write(text)
@@ -635,8 +753,11 @@ def main():
     db = opts.get("--db", xc7_blocks.DEFAULT_DB)
     if not a:
         sys.exit(__doc__)
+    ramb18 = "--ramb18" in a
+    if ramb18:
+        a.remove("--ramb18")
     if a[0] == "verilog" and len(a) == 3:
-        cmd_verilog(a[1], a[2], opts.get("--xdc"), pkg, db)
+        cmd_verilog(a[1], a[2], opts.get("--xdc"), pkg, db, ramb18)
     elif a[0] == "slice" and len(a) == 3 and "--seeds" in opts:
         cmd_slice(a[1], a[2], opts["--seeds"].split(","), int(opts.get("--depth", 4)), pkg, db,
                   opts["--stop"].split(",") if opts.get("--stop") else ())

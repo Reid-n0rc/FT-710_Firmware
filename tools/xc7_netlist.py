@@ -277,6 +277,7 @@ class Netlist:
         self.r = router
         self.parent = {}
         self.cells = []
+        self.r36 = {}       # RAMB36 site -> its tile-level features
 
     def find(self, k):
         if k[0] == "n":
@@ -381,6 +382,12 @@ def build(fasm_lines, db, progress=False):
                 nsites[sty] += 1
     if progress:
         print("sites: %s" % dict(nsites), file=sys.stderr)
+    for c in nl.cells:
+        if c["type"] == "RAMB18E1":
+            m = re.match(r"^RAMB18_X(\d+)Y(\d+)$", c["site"])
+            r36 = "RAMB36_X%sY%d" % (m.group(1), int(m.group(2)) // 2)
+            for k, v in nl.r36.get(r36, {}).items():
+                c["params"]["RAMB36." + k] = v
     return finish(nl, db)
 
 
@@ -680,8 +687,9 @@ def bram18_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
 
 
 def bram36_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
-    # recorded as tile-level RAMB36 options; the RAMB18 halves carry the cells
-    pass
+    # tile-level RAMB36 options; the RAMB18 halves carry the cells, so build() copies these
+    # onto both halves as "RAMB36.<feature>" params (#164: BRAM36_*_WIDTH_1 marks a true RAMB36E1)
+    nl.r36[site] = dict(f)
 
 
 def iob_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
