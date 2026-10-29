@@ -30,6 +30,12 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   `in_`/`unaff_`/`extraout_` variables 61 → 8, undefined non-0xFF bytes 20,622 → 161 (two RX fragments the module cannot decode, at
   0xFFF8FEF3 and 0xFFF9129B), warnings 1,294 → 1,229, unimplemented-instruction warnings 3 → 0. Functions with a warning go 347 → 352
   because of the 56 new functions and "Removing unreachable block" in byte-parameter setters; this baseline was committed on purpose.
+- T21h + T22a rebuild (2026-10-28, #112, #113): MAIN rebuilt with two more RX stages, `rx62t-mvfac-fix.patch` (RXv2
+  `MVFACHI`/`MVFACMI`/`MVFACLO`) and `rx62t-semantics-fix.patch` (`SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF Rs,Rd` read all of Rs,
+  `JSR Rs` is a call, flag fixes), and `DefineRomData` scanning the code area for strings only after its code pass. **2,328
+  functions**, 0 decompile failures, **0 undefined non-0xFF bytes** (161 → 0: both fragments are code), warnings 1,229 → 1,217
+  (unreachable-block 1,187 → 1,175: wrong flags had made branches look constant), functions with `in_`/`unaff_`/`extraout_` 8 → 7.
+  The 23 `JSR Rs` sites now show as indirect calls, e.g. `FUN_fffbba0f` calls the handler table at 0xFFF89910 before `return 1;`.
 - Known decompiler artifacts **[fact]**:
   - `SCMPU`/`SMOVF`/`SSTR`/`SUNTIL`/`SWHILE` string instructions are p-code loops, so they decompile as loops (`cat_parse` shows one). The underlying code is `strncmp(cmd, table+2*i, 2)`.
   - Some call arguments used to be dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Since
@@ -47,26 +53,26 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 2,324 |
+| Functions exported (non-thunk) | 2,328 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,229 |
+| Decompiler warnings (all kinds) | 1,217 |
 | Functions with a warning | 352 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 1,187 |
+| "Removing unreachable block" | 1,175 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
-| Functions with `in_*` variables | 8 |
+| Functions with `in_*` variables | 7 |
 | Functions with `unaff_*` variables | 0 |
 | Functions with `extraout_*` variables | 1 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 8 |
-| Undefined non-0xFF bytes in executable blocks | 161 |
-| … in block `ROM` | 161 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 7 |
+| Undefined non-0xFF bytes in executable blocks | 0 |
+| … in block `ROM` | 0 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Do nothing block with infinite loop | 2 |
 | warning: Globals starting with '_' overlap smaller symbols at the same address | 24 |
 | warning: Ignoring partial resolution of indirect | 16 |
-| warning: Removing unreachable block (#) | 1,187 |
+| warning: Removing unreachable block (#) | 1,175 |
 <!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]

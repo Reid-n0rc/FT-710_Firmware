@@ -27,8 +27,8 @@ through the fork's CLI build until the MCP server is restarted.
 ## Sub-task status
 
 ### T22a
-**Status:** done (2026-10-28). MAIN (RX). Follow-up for the parent: fold `rx62t-semantics-fix.patch` into `bootstrap.sh`
-after T21h's MVFAC stage, then rebuild and re-export MAIN (together with T21h's pending rebuild).
+**Status:** done (2026-10-28). MAIN (RX). `rx62t-semantics-fix.patch` is now the fifth `bootstrap.sh --only rx` stage (after
+T21h's MVFAC fix); MAIN was rebuilt and re-exported with both (`decomp/main/INDEX.md`).
 
 Plan:
 1. **Decoder, third opinion.** Copy canonical `ghidra/FT710_MAIN` (T21g rebuild, RX module `rx62t.sinc` `618938bb…4b36` =

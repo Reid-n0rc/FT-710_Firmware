@@ -346,9 +346,9 @@ This is T21d's combined result plus T21c: two more functions (2,322 → 2,324) a
 export chunks were renamed (50-function boundaries moved); no doc linked to an old chunk name.
 
 ### T21h
-**Status:** in progress (2026-10-28, branch `t21h-resume`): fix, patch and test done; the canonical MAIN rebuild and
-re-export (plan step 4-5) is still open. The worktree attempt aborted (Ghidra rejects a project path under `.claude/`), and the
-parent does it once together with T22a's `rx62t-semantics-fix.patch`. MAIN: decode the two RX fragments T21d left undefined (161 B), 0xFFF8FEF3 (`FE D1 55 …`, inside an
+**Status:** done (2026-10-28). The canonical MAIN rebuild and re-export ran once, in the main checkout, together with
+T22a's `rx62t-semantics-fix.patch` (the worktree attempt aborted: Ghidra rejects a project path under `.claude/`); results in
+`decomp/main/INDEX.md` (2,328 functions, 0 undefined non-0xFF bytes). MAIN: decode the two RX fragments T21d left undefined (161 B), 0xFFF8FEF3 (`FE D1 55 …`, inside an
 `R_BSP_InterruptControl` caller at 0xFFF8FEC0, 2 references) and 0xFFF9129B (`FD 1F 02 …` after `PUSH.L R2`, likely the RXv2 accumulator
 save `MVFACHI/MVFACMI`) **[inference]**. Settle each from the RXv2 software manual and `rx-elf-objdump`; patch the SLEIGH if the
 module lacks the form, fold the patch into `bootstrap.sh --only rx`, rebuild MAIN and re-export.

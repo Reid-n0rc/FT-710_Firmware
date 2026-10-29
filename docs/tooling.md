@@ -229,7 +229,8 @@ for the register forms of `SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF` (the memex 
 
 The patch (21 hunks) applies after `rx62t-rtsd-fix.patch` (`618938bb…4b36` → `c80b4ed7…73d3`, `rx62t.sla` `30eb8a06…f3ea`) and,
 with line offsets only, after T21h's MVFAC fix. Tested in a private Ghidra copy (`~/opt/t22a-ghidra-tmp`: hard links, own
-`Ghidra/Processors/RX`); not installed in the shared Ghidra and not in `bootstrap.sh --only rx` yet (T21h owns that step).
+`Ghidra/Processors/RX`). Since 2026-10-28 it is the fifth stage of `bootstrap.sh --only rx` (`RX_SINC_MVFAC` `9efea07b…82a5` →
+`RX_SINC_FIXED` `c4d71924…c3d0`), installed in the container's Ghidra, and MAIN was rebuilt and re-exported with it.
 
 ## Bootstrap (T20)
 
