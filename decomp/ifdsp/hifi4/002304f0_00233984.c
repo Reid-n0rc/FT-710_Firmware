@@ -2970,19 +2970,9 @@ void FUN_002333e0(void)
   uVar2 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL);
   iVar1 = (uVar2 & 0xfffbfff0) + 2;
   wsr_ps(iVar1);
-  wsr_ps_1(iVar1);
-  wsr_ps_2(iVar1);
-  wsr_ps_3(iVar1);
-  wsr_ps_4(iVar1);
-  wsr_ps_5(iVar1);
   rsync();
   FUN_002332c4(iVar1);
   wsr_ps(extraout_a5);
-  wsr_ps_1(extraout_a5);
-  wsr_ps_2(extraout_a5);
-  wsr_ps_3(extraout_a5);
-  wsr_ps_4(extraout_a5);
-  wsr_ps_5(extraout_a5);
   rsync();
   return;
 }

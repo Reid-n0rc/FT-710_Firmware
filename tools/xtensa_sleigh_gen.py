@@ -779,6 +779,7 @@ class Emitter:
         op = pcodeop_name(o["name"])
         ins = [n for n, io in zip(opnames, inouts) if io in "im"]
         outs = [(wnames[i], regsizes[i]) for i, io in enumerate(inouts) if io in "oms" and regsizes[i]]
+        sts = []
         for st, io in ic["states"]:
             if M.states[st]["name"] in NOISE_STATES:
                 continue
@@ -786,18 +787,32 @@ class Emitter:
             if io in "im":
                 ins.append(reg)
             if io in "om":
-                outs.append((reg, self.state_size(st)))
+                sts.append((reg, self.state_size(st)))
         args = ", ".join(ins)
-        if not outs:
+        if not outs and not sts:
             self.pcodeops.add(op)
             return f"{op}({args});"
+        # One pcodeop per register output (their values differ, e.g. xsr: AR = old SR, SR = old AR). Two or more
+        # state outputs are the fields of one special-register write (wsr.ps: WOE, CALLINC, OWB, UM, EXCM,
+        # INTLEVEL): one call whose result is cut into disjoint byte ranges, one per field, so the decompiler shows
+        # one call and cannot infer that two fields are equal (T21k, T22e follow-up).
+        group = len(sts) > 1
+        calls = outs + ([("", sum(sz for _, sz in sts))] if group else sts)
         lines = []
-        for k, (dst, sz) in enumerate(outs):
+        for k, (dst, sz) in enumerate(calls):
             opk = op if k == 0 else f"{op}_{k}"
             self.pcodeops.add(opk)
             lines.append(f"local ot{k}:{sz} = {opk}({args});")
-        for k, (dst, sz) in enumerate(outs):
+        for k, (dst, sz) in enumerate(outs + ([] if group else sts)):
             lines.append(f"{dst} = ot{k};")
+        if group:
+            g, off, tot = f"ot{len(calls) - 1}", 0, calls[-1][1]
+            for j, (dst, sz) in enumerate(sts):
+                if off:
+                    lines.append(f"local of{j}:{tot - off} = {g}({off}); {dst} = of{j}:{sz};")
+                else:
+                    lines.append(f"{dst} = {g}:{sz};")
+                off += sz
         return " ".join(lines)
 
     def state_size(self, st):

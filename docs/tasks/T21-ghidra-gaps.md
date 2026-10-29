@@ -487,10 +487,10 @@ other T22d "leave" items (fill, alignment, unreferenced stubs, unknown bytes).
 - `decomp_behavior_diff.py`: DISPLAY 2,208 unchanged (+ the moved entry); M33 412 unchanged, 6 moved, 7 `data`; HiFi4 1,044
   unchanged, 8 moved, 16 `data`, 13 `other`, all checked in samples to be typed table reads (`*(undefined4 *)(&DAT_00204be0 + i*4)`
   → `FLOAT_ARRAY_00204be0[i]`, `&DAT_00201900` → `FLOAT_ARRAY_00201900` as an FFT argument).
-- The idle thread shows T22e's cosmetic `wsr_ps` … `wsr_ps_5` (one pcodeop per iclass output for one `wsr.ps`); still open.
+- The idle thread showed T22e's cosmetic `wsr_ps` … `wsr_ps_5`; fixed in T21k.
 
 ### T21k
-**Status:** in progress (2026-10-28). HiFi4: one pcodeop per special-register write (T22e cosmetic follow-up).
+**Status:** done (2026-10-28). HiFi4: one pcodeop per special-register write (T22e cosmetic follow-up).
 
 **Problem [fact, T22e].** `xtensa_sleigh_gen.py` emits one opaque pcodeop per iclass output, so one `wsr.ps a3` decompiles as six
 calls `wsr_ps` … `wsr_ps_5` (one per PS field state). **Plan.** Generator: keep one pcodeop per register output (their values
@@ -498,6 +498,17 @@ differ: `xsr` gives AR the old SR and SR the old AR, so `xsr_excsave1` ×2 stays
 result is cut into disjoint byte ranges, one per field (no false equalities between fields). Regenerate from the pinned
 `xtensa-modules.c` (the old generator reproduces the committed files), selftest, private Ghidra copy, scratch HiFi4 import:
 `flix_compare.py compare` unchanged, decomp diff; then install, rebuild HiFi4, re-export, docs.
+
+**Findings [fact].** The committed generator reproduces the committed language byte for byte from the pinned `xtensa-modules.c`
+(SHA-256 `9e218b19…f372`); the new one changes 45 constructors and 2,090 → 2,008 pcodeops: `wsr`/`xsr` of PS, CCOMPARE0/1,
+DEBUGCAUSE, three `wur.ae_*`, the HiFi4 bit-stream loads/stores (`ae_db*`, `ae_sb*`, `ae_vl*`) and `f64cmph`/`f64iter`/`f64norm` (all
+write two or more state fields). `selftest`: 49,389/49,389 instructions equal objdump. Private Ghidra (`~/opt/t21k-ghidra-tmp`),
+scratch HiFi4 import with the bootstrap recipe: Ghidra listing identical to the canonical one (address, length, mnemonic,
+operands), `flix_compare.py compare` unchanged (MATCH 47,340/49,389 = 95.85 %, bundles 12,633/12,676; every mismatch `missing`);
+`quality.tsv` unchanged (1,083 functions, 0 failures, 258 warnings). Decomp diff: 1,008 unchanged, 75 changed, all fewer calls
+or temporaries, e.g. `FUN_00226f70` six `wsr_ps*` calls → `wsr_ps(uVar2 & 0xfffffff0 | param_3 & 0xf);`, the idle thread
+`FUN_00228b08` one `wsr_ps(&DAT_00040020)`. The canonical rebuild (`bootstrap.sh --only hifi4 --only ghidra --only export`) equals
+the scratch export; MAIN, DISPLAY and M33 exports unchanged. `xsr_*` stays two calls (register and state values differ).
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).

@@ -2733,145 +2733,147 @@ FUN_00235510(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undef
 {
   uint uVar1;
   undefined4 uVar2;
-  undefined4 uVar3;
-  uint uVar4;
-  int iVar5;
-  undefined4 uVar6;
+  int iVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  undefined1 auVar6 [16];
   undefined4 uVar7;
   undefined4 uVar8;
   uint uVar9;
   undefined8 uVar10;
-  int iVar11;
+  undefined4 uVar11;
+  int iVar12;
   
   f64cmpl(param_1,param_3);
-  uVar6 = f64cmpl_1(param_1,param_3);
-  uVar4 = f64cmph(param_2,param_4,4,uVar6);
-  iVar5 = f64cmph_1(param_2,param_4,4,uVar6);
-  uVar10 = f64cmph_2(param_2,param_4,4,uVar6);
-  uVar6 = f64cmph_3(param_2,param_4,4,uVar6);
-  if (-1 < (int)uVar4) {
-    if ((uVar4 & 0x10000) == 0) {
+  uVar11 = f64cmpl_1(param_1,param_3);
+  uVar5 = f64cmph(param_2,param_4,4,uVar11);
+  auVar6 = f64cmph_1(param_2,param_4,4,uVar11);
+  iVar3 = auVar6._0_4_;
+  uVar11 = auVar6._12_4_;
+  if (-1 < (int)uVar5) {
+    if ((uVar5 & 0x10000) == 0) {
       param_6 = f64sig(param_2);
-      iVar11 = param_1 << 0x20 - iVar5;
-      uVar2 = (undefined4)(CONCAT44(param_6,param_1) >> iVar5);
+      iVar12 = param_1 << 0x20 - iVar3;
+      uVar2 = (undefined4)(CONCAT44(param_6,param_1) >> iVar3);
       uVar7 = f64sig(param_4);
-      uVar1 = uVar4 & 0x100000;
+      uVar1 = uVar5 & 0x100000;
       param_1 = param_3;
       uVar9 = param_6;
     }
     else {
       uVar9 = f64sig(param_4);
-      iVar11 = param_3 << 0x20 - iVar5;
-      uVar2 = (undefined4)(CONCAT44(uVar9,param_3) >> iVar5);
+      iVar12 = param_3 << 0x20 - iVar3;
+      uVar2 = (undefined4)(CONCAT44(uVar9,param_3) >> iVar3);
       uVar7 = f64sig(param_2);
-      uVar1 = uVar4 >> 0x14 & 1;
+      uVar1 = uVar5 >> 0x14 & 1;
     }
-    uVar9 = uVar9 >> iVar5;
+    uVar9 = uVar9 >> iVar3;
     if (uVar1 != 0) {
-      uVar8 = f64subc(param_6,iVar11,3,1,uVar6);
-      uVar6 = f64subc_1(param_6,iVar11,3,1,uVar6);
-      uVar3 = f64subc(param_1,uVar2,0,1,uVar6);
-      uVar6 = f64subc_1(param_1,uVar2,0,1,uVar6);
-      uVar2 = f64subc(uVar7,uVar9,0,1,uVar6);
-      uVar6 = f64subc_1(uVar7,uVar9,0,1,uVar6);
-      iVar5 = f64subc(uVar8,iVar11,3,1,uVar6);
-      uVar6 = f64subc_1(uVar8,iVar11,3,1,uVar6);
-      uVar4 = f64norm(uVar2,uVar3,0,uVar6);
-      iVar11 = f64norm_1(uVar2,uVar3,0,uVar6);
-      uVar7 = f64norm_2(uVar2,uVar3,0,uVar6);
-      uVar6 = (undefined4)(CONCAT44(uVar3,iVar5) >> iVar11);
-      if ((uVar4 & 0x400000) != 0) {
-        uVar6 = f64sexp(uVar6,uVar4);
-        return CONCAT44(uVar6,iVar5 << 0x20 - iVar11);
+      uVar8 = f64subc(param_6,iVar12,3,1,uVar11);
+      uVar11 = f64subc_1(param_6,iVar12,3,1,uVar11);
+      uVar4 = f64subc(param_1,uVar2,0,1,uVar11);
+      uVar11 = f64subc_1(param_1,uVar2,0,1,uVar11);
+      uVar2 = f64subc(uVar7,uVar9,0,1,uVar11);
+      uVar11 = f64subc_1(uVar7,uVar9,0,1,uVar11);
+      iVar3 = f64subc(uVar8,iVar12,3,1,uVar11);
+      uVar11 = f64subc_1(uVar8,iVar12,3,1,uVar11);
+      uVar5 = f64norm(uVar2,uVar4,0,uVar11);
+      uVar10 = f64norm_1(uVar2,uVar4,0,uVar11);
+      iVar12 = (int)uVar10;
+      uVar7 = (undefined4)((ulonglong)uVar10 >> 0x20);
+      uVar11 = (undefined4)(CONCAT44(uVar4,iVar3) >> iVar12);
+      if ((uVar5 & 0x400000) != 0) {
+        uVar11 = f64sexp(uVar11,uVar5);
+        return CONCAT44(uVar11,iVar3 << 0x20 - iVar12);
       }
-      uVar8 = f64sexp((int)(CONCAT44(uVar2,uVar3) >> iVar11),uVar4);
-      uVar2 = f64addc(uVar6,uVar6,2,0,uVar7);
-      uVar7 = f64addc_1(uVar6,uVar6,2,0,uVar7);
-      uVar6 = f64addc(uVar8,uVar8,2,0,uVar7);
+      uVar8 = f64sexp((int)(CONCAT44(uVar2,uVar4) >> iVar12),uVar5);
+      uVar2 = f64addc(uVar11,uVar11,2,0,uVar7);
+      uVar7 = f64addc_1(uVar11,uVar11,2,0,uVar7);
+      uVar11 = f64addc(uVar8,uVar8,2,0,uVar7);
       f64addc_1(uVar8,uVar8,2,0,uVar7);
-      return CONCAT44(uVar6,uVar2);
+      return CONCAT44(uVar11,uVar2);
     }
-    if ((uVar4 & 0x200000) != 0) {
-      if ((uVar4 >> 0x11 & 1) == 0) {
-        uVar10 = wf64r(uVar2,iVar11,0);
-        uVar2 = f64addc(param_1,uVar9,1,1,uVar6);
-        uVar8 = f64addc_1(param_1,uVar9,1,1,uVar6);
-        uVar6 = f64addc(uVar7,uVar7,2,1,uVar8);
+    if ((uVar5 & 0x200000) != 0) {
+      if ((uVar5 >> 0x11 & 1) == 0) {
+        uVar10 = wf64r(uVar2,iVar12,0);
+        uVar2 = f64addc(param_1,uVar9,1,1,uVar11);
+        uVar8 = f64addc_1(param_1,uVar9,1,1,uVar11);
+        uVar11 = f64addc(uVar7,uVar7,2,1,uVar8);
         uVar7 = f64addc_1(uVar7,uVar7,2,1,uVar8);
-        uVar8 = f64rnd(uVar6,uVar2,1,uVar10,uVar7);
-        uVar10 = f64rnd_1(uVar6,uVar2,1,uVar10,uVar7);
-        uVar6 = rf64r(0,uVar10);
-        return CONCAT44(uVar8,uVar6);
+        uVar8 = f64rnd(uVar11,uVar2,1,uVar10,uVar7);
+        uVar10 = f64rnd_1(uVar11,uVar2,1,uVar10,uVar7);
+        uVar11 = rf64r(0,uVar10);
+        return CONCAT44(uVar8,uVar11);
       }
-      uVar8 = f64subc(iVar11,iVar11,3,1,uVar6);
-      uVar3 = f64subc_1(iVar11,iVar11,3,1,uVar6);
-      uVar6 = f64subc(uVar2,uVar2,2,1,uVar3);
-      uVar2 = f64subc_1(uVar2,uVar2,2,1,uVar3);
-      uVar10 = wf64r(uVar6,uVar8,0);
-      uVar6 = f64subc(param_1,uVar9,0,1,uVar2);
+      uVar8 = f64subc(iVar12,iVar12,3,1,uVar11);
+      uVar4 = f64subc_1(iVar12,iVar12,3,1,uVar11);
+      uVar11 = f64subc(uVar2,uVar2,2,1,uVar4);
+      uVar2 = f64subc_1(uVar2,uVar2,2,1,uVar4);
+      uVar10 = wf64r(uVar11,uVar8,0);
+      uVar11 = f64subc(param_1,uVar9,0,1,uVar2);
       uVar8 = f64subc_1(param_1,uVar9,0,1,uVar2);
       uVar2 = f64subc(uVar7,0,0,1,uVar8);
       uVar7 = f64subc_1(uVar7,0,0,1,uVar8);
-      uVar8 = f64rnd(uVar2,uVar6,1,uVar10,uVar7);
-      uVar10 = f64rnd_1(uVar2,uVar6,1,uVar10,uVar7);
-      uVar6 = rf64r(0,uVar10);
-      return CONCAT44(uVar8,uVar6);
+      uVar8 = f64rnd(uVar2,uVar11,1,uVar10,uVar7);
+      uVar10 = f64rnd_1(uVar2,uVar11,1,uVar10,uVar7);
+      uVar11 = rf64r(0,uVar10);
+      return CONCAT44(uVar8,uVar11);
     }
-    if ((uVar4 & 0x20000) == 0) {
-      uVar8 = f64addc(param_1,uVar2,1,1,uVar6);
-      uVar2 = f64addc_1(param_1,uVar2,1,1,uVar6);
-      uVar6 = f64addc(uVar7,uVar9,0,1,uVar2);
+    if ((uVar5 & 0x20000) == 0) {
+      uVar8 = f64addc(param_1,uVar2,1,1,uVar11);
+      uVar2 = f64addc_1(param_1,uVar2,1,1,uVar11);
+      uVar11 = f64addc(uVar7,uVar9,0,1,uVar2);
       uVar2 = f64addc_1(uVar7,uVar9,0,1,uVar2);
-      uVar10 = wf64r(iVar11,iVar11,1);
-      uVar7 = f64rnd(uVar6,uVar8,1,uVar10,uVar2);
-      uVar10 = f64rnd_1(uVar6,uVar8,1,uVar10,uVar2);
-      uVar6 = rf64r(0,uVar10);
-      return CONCAT44(uVar7,uVar6);
+      uVar10 = wf64r(iVar12,iVar12,1);
+      uVar7 = f64rnd(uVar11,uVar8,1,uVar10,uVar2);
+      uVar10 = f64rnd_1(uVar11,uVar8,1,uVar10,uVar2);
+      uVar11 = rf64r(0,uVar10);
+      return CONCAT44(uVar7,uVar11);
     }
-    uVar8 = f64subc(iVar11,iVar11,3,1,uVar6);
-    uVar3 = f64subc_1(iVar11,iVar11,3,1,uVar6);
-    uVar6 = f64subc(param_1,uVar2,0,1,uVar3);
-    uVar3 = f64subc_1(param_1,uVar2,0,1,uVar3);
-    uVar2 = f64subc(uVar7,uVar9,0,1,uVar3);
-    uVar7 = f64subc_1(uVar7,uVar9,0,1,uVar3);
+    uVar8 = f64subc(iVar12,iVar12,3,1,uVar11);
+    uVar4 = f64subc_1(iVar12,iVar12,3,1,uVar11);
+    uVar11 = f64subc(param_1,uVar2,0,1,uVar4);
+    uVar4 = f64subc_1(param_1,uVar2,0,1,uVar4);
+    uVar2 = f64subc(uVar7,uVar9,0,1,uVar4);
+    uVar7 = f64subc_1(uVar7,uVar9,0,1,uVar4);
     uVar10 = wf64r(uVar8,uVar8,1);
-    uVar8 = f64rnd(uVar2,uVar6,1,uVar10,uVar7);
-    uVar10 = f64rnd_1(uVar2,uVar6,1,uVar10,uVar7);
-    uVar6 = rf64r(0,uVar10);
-    return CONCAT44(uVar8,uVar6);
+    uVar8 = f64rnd(uVar2,uVar11,1,uVar10,uVar7);
+    uVar10 = f64rnd_1(uVar2,uVar11,1,uVar10,uVar7);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar8,uVar11);
   }
-  if ((uVar4 & 0x40000000) != 0) {
-    uVar2 = f64rnd(param_2,param_1,2,uVar10,uVar6);
-    uVar10 = f64rnd_1(param_2,param_1,2,uVar10,uVar6);
-    uVar6 = rf64r(0,uVar10);
-    return CONCAT44(uVar2,uVar6);
+  if ((uVar5 & 0x40000000) != 0) {
+    uVar2 = f64rnd(param_2,param_1,2,auVar6._4_8_,uVar11);
+    uVar10 = f64rnd_1(param_2,param_1,2,auVar6._4_8_,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar2,uVar11);
   }
-  if ((uVar4 & 0x8000) != 0) {
-    uVar6 = f64sexp(param_4,uVar4);
-    return CONCAT44(uVar6,param_3);
+  if ((uVar5 & 0x8000) != 0) {
+    uVar11 = f64sexp(param_4,uVar5);
+    return CONCAT44(uVar11,param_3);
   }
-  if ((uVar4 & 0x20000) == 0) {
+  if ((uVar5 & 0x20000) == 0) {
     uVar8 = f64sig(param_4);
-    uVar2 = f64addc(param_1,param_3,1,0,uVar6);
-    uVar7 = f64addc_1(param_1,param_3,1,0,uVar6);
-    uVar6 = f64addc(param_2,uVar8,0,0,uVar7);
+    uVar2 = f64addc(param_1,param_3,1,0,uVar11);
+    uVar7 = f64addc_1(param_1,param_3,1,0,uVar11);
+    uVar11 = f64addc(param_2,uVar8,0,0,uVar7);
     f64addc_1(param_2,uVar8,0,0,uVar7);
-    return CONCAT44(uVar6,uVar2);
+    return CONCAT44(uVar11,uVar2);
   }
-  if ((uVar4 & 0x10000) != 0) {
-    uVar2 = f64subc(param_1,param_3,1,0,uVar6);
-    uVar7 = f64subc_1(param_1,param_3,1,0,uVar6);
-    uVar6 = f64subc(param_2,param_4,0,0,uVar7);
+  if ((uVar5 & 0x10000) != 0) {
+    uVar2 = f64subc(param_1,param_3,1,0,uVar11);
+    uVar7 = f64subc_1(param_1,param_3,1,0,uVar11);
+    uVar11 = f64subc(param_2,param_4,0,0,uVar7);
     f64subc_1(param_2,param_4,0,0,uVar7);
-    uVar6 = f64sexp(uVar6,uVar4);
-    return CONCAT44(uVar6,uVar2);
+    uVar11 = f64sexp(uVar11,uVar5);
+    return CONCAT44(uVar11,uVar2);
   }
-  uVar2 = f64subc(param_3,param_1,1,0,uVar6);
-  uVar7 = f64subc_1(param_3,param_1,1,0,uVar6);
-  uVar6 = f64subc(param_4,param_2,0,0,uVar7);
+  uVar2 = f64subc(param_3,param_1,1,0,uVar11);
+  uVar7 = f64subc_1(param_3,param_1,1,0,uVar11);
+  uVar11 = f64subc(param_4,param_2,0,0,uVar7);
   f64subc_1(param_4,param_2,0,0,uVar7);
-  uVar6 = f64sexp(uVar6,uVar4);
-  return CONCAT44(uVar6,uVar2);
+  uVar11 = f64sexp(uVar11,uVar5);
+  return CONCAT44(uVar11,uVar2);
 }
 
 
@@ -2884,145 +2886,147 @@ FUN_00235570(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undef
 {
   uint uVar1;
   undefined4 uVar2;
-  undefined4 uVar3;
-  uint uVar4;
-  int iVar5;
-  undefined4 uVar6;
+  int iVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  undefined1 auVar6 [16];
   undefined4 uVar7;
   undefined4 uVar8;
   uint uVar9;
   undefined8 uVar10;
-  int iVar11;
+  undefined4 uVar11;
+  int iVar12;
   
   f64cmpl(param_1,param_3);
-  uVar6 = f64cmpl_1(param_1,param_3);
-  uVar4 = f64cmph(param_2,param_4,0,uVar6);
-  iVar5 = f64cmph_1(param_2,param_4,0,uVar6);
-  uVar10 = f64cmph_2(param_2,param_4,0,uVar6);
-  uVar6 = f64cmph_3(param_2,param_4,0,uVar6);
-  if (-1 < (int)uVar4) {
-    if ((uVar4 & 0x10000) == 0) {
+  uVar11 = f64cmpl_1(param_1,param_3);
+  uVar5 = f64cmph(param_2,param_4,0,uVar11);
+  auVar6 = f64cmph_1(param_2,param_4,0,uVar11);
+  iVar3 = auVar6._0_4_;
+  uVar11 = auVar6._12_4_;
+  if (-1 < (int)uVar5) {
+    if ((uVar5 & 0x10000) == 0) {
       param_6 = f64sig(param_2);
-      iVar11 = param_1 << 0x20 - iVar5;
-      uVar2 = (undefined4)(CONCAT44(param_6,param_1) >> iVar5);
+      iVar12 = param_1 << 0x20 - iVar3;
+      uVar2 = (undefined4)(CONCAT44(param_6,param_1) >> iVar3);
       uVar7 = f64sig(param_4);
-      uVar1 = uVar4 & 0x100000;
+      uVar1 = uVar5 & 0x100000;
       uVar9 = param_6;
     }
     else {
       uVar9 = f64sig(param_4);
-      iVar11 = param_3 << 0x20 - iVar5;
-      uVar2 = (undefined4)(CONCAT44(uVar9,param_3) >> iVar5);
+      iVar12 = param_3 << 0x20 - iVar3;
+      uVar2 = (undefined4)(CONCAT44(uVar9,param_3) >> iVar3);
       uVar7 = f64sig(param_2);
-      uVar1 = uVar4 >> 0x14 & 1;
+      uVar1 = uVar5 >> 0x14 & 1;
       param_3 = param_1;
     }
-    uVar9 = uVar9 >> iVar5;
+    uVar9 = uVar9 >> iVar3;
     if (uVar1 != 0) {
-      uVar8 = f64subc(param_6,iVar11,3,1,uVar6);
-      uVar6 = f64subc_1(param_6,iVar11,3,1,uVar6);
-      uVar3 = f64subc(param_3,uVar2,0,1,uVar6);
-      uVar6 = f64subc_1(param_3,uVar2,0,1,uVar6);
-      uVar2 = f64subc(uVar7,uVar9,0,1,uVar6);
-      uVar6 = f64subc_1(uVar7,uVar9,0,1,uVar6);
-      iVar5 = f64subc(uVar8,iVar11,3,1,uVar6);
-      uVar6 = f64subc_1(uVar8,iVar11,3,1,uVar6);
-      uVar4 = f64norm(uVar2,uVar3,0,uVar6);
-      iVar11 = f64norm_1(uVar2,uVar3,0,uVar6);
-      uVar7 = f64norm_2(uVar2,uVar3,0,uVar6);
-      uVar6 = (undefined4)(CONCAT44(uVar3,iVar5) >> iVar11);
-      if ((uVar4 & 0x400000) != 0) {
-        uVar6 = f64sexp(uVar6,uVar4);
-        return CONCAT44(uVar6,iVar5 << 0x20 - iVar11);
+      uVar8 = f64subc(param_6,iVar12,3,1,uVar11);
+      uVar11 = f64subc_1(param_6,iVar12,3,1,uVar11);
+      uVar4 = f64subc(param_3,uVar2,0,1,uVar11);
+      uVar11 = f64subc_1(param_3,uVar2,0,1,uVar11);
+      uVar2 = f64subc(uVar7,uVar9,0,1,uVar11);
+      uVar11 = f64subc_1(uVar7,uVar9,0,1,uVar11);
+      iVar3 = f64subc(uVar8,iVar12,3,1,uVar11);
+      uVar11 = f64subc_1(uVar8,iVar12,3,1,uVar11);
+      uVar5 = f64norm(uVar2,uVar4,0,uVar11);
+      uVar10 = f64norm_1(uVar2,uVar4,0,uVar11);
+      iVar12 = (int)uVar10;
+      uVar7 = (undefined4)((ulonglong)uVar10 >> 0x20);
+      uVar11 = (undefined4)(CONCAT44(uVar4,iVar3) >> iVar12);
+      if ((uVar5 & 0x400000) != 0) {
+        uVar11 = f64sexp(uVar11,uVar5);
+        return CONCAT44(uVar11,iVar3 << 0x20 - iVar12);
       }
-      uVar8 = f64sexp((int)(CONCAT44(uVar2,uVar3) >> iVar11),uVar4);
-      uVar2 = f64addc(uVar6,uVar6,2,0,uVar7);
-      uVar7 = f64addc_1(uVar6,uVar6,2,0,uVar7);
-      uVar6 = f64addc(uVar8,uVar8,2,0,uVar7);
+      uVar8 = f64sexp((int)(CONCAT44(uVar2,uVar4) >> iVar12),uVar5);
+      uVar2 = f64addc(uVar11,uVar11,2,0,uVar7);
+      uVar7 = f64addc_1(uVar11,uVar11,2,0,uVar7);
+      uVar11 = f64addc(uVar8,uVar8,2,0,uVar7);
       f64addc_1(uVar8,uVar8,2,0,uVar7);
-      return CONCAT44(uVar6,uVar2);
+      return CONCAT44(uVar11,uVar2);
     }
-    if ((uVar4 & 0x200000) != 0) {
-      if ((uVar4 >> 0x11 & 1) == 0) {
-        uVar10 = wf64r(uVar2,iVar11,0);
-        uVar2 = f64addc(param_3,uVar9,1,1,uVar6);
-        uVar8 = f64addc_1(param_3,uVar9,1,1,uVar6);
-        uVar6 = f64addc(uVar7,uVar7,2,1,uVar8);
+    if ((uVar5 & 0x200000) != 0) {
+      if ((uVar5 >> 0x11 & 1) == 0) {
+        uVar10 = wf64r(uVar2,iVar12,0);
+        uVar2 = f64addc(param_3,uVar9,1,1,uVar11);
+        uVar8 = f64addc_1(param_3,uVar9,1,1,uVar11);
+        uVar11 = f64addc(uVar7,uVar7,2,1,uVar8);
         uVar7 = f64addc_1(uVar7,uVar7,2,1,uVar8);
-        uVar8 = f64rnd(uVar6,uVar2,1,uVar10,uVar7);
-        uVar10 = f64rnd_1(uVar6,uVar2,1,uVar10,uVar7);
-        uVar6 = rf64r(0,uVar10);
-        return CONCAT44(uVar8,uVar6);
+        uVar8 = f64rnd(uVar11,uVar2,1,uVar10,uVar7);
+        uVar10 = f64rnd_1(uVar11,uVar2,1,uVar10,uVar7);
+        uVar11 = rf64r(0,uVar10);
+        return CONCAT44(uVar8,uVar11);
       }
-      uVar8 = f64subc(iVar11,iVar11,3,1,uVar6);
-      uVar3 = f64subc_1(iVar11,iVar11,3,1,uVar6);
-      uVar6 = f64subc(uVar2,uVar2,2,1,uVar3);
-      uVar2 = f64subc_1(uVar2,uVar2,2,1,uVar3);
-      uVar10 = wf64r(uVar6,uVar8,0);
-      uVar6 = f64subc(param_3,uVar9,0,1,uVar2);
+      uVar8 = f64subc(iVar12,iVar12,3,1,uVar11);
+      uVar4 = f64subc_1(iVar12,iVar12,3,1,uVar11);
+      uVar11 = f64subc(uVar2,uVar2,2,1,uVar4);
+      uVar2 = f64subc_1(uVar2,uVar2,2,1,uVar4);
+      uVar10 = wf64r(uVar11,uVar8,0);
+      uVar11 = f64subc(param_3,uVar9,0,1,uVar2);
       uVar8 = f64subc_1(param_3,uVar9,0,1,uVar2);
       uVar2 = f64subc(uVar7,0,0,1,uVar8);
       uVar7 = f64subc_1(uVar7,0,0,1,uVar8);
-      uVar8 = f64rnd(uVar2,uVar6,1,uVar10,uVar7);
-      uVar10 = f64rnd_1(uVar2,uVar6,1,uVar10,uVar7);
-      uVar6 = rf64r(0,uVar10);
-      return CONCAT44(uVar8,uVar6);
+      uVar8 = f64rnd(uVar2,uVar11,1,uVar10,uVar7);
+      uVar10 = f64rnd_1(uVar2,uVar11,1,uVar10,uVar7);
+      uVar11 = rf64r(0,uVar10);
+      return CONCAT44(uVar8,uVar11);
     }
-    if ((uVar4 & 0x20000) != 0) {
-      uVar8 = f64subc(iVar11,iVar11,3,1,uVar6);
-      uVar3 = f64subc_1(iVar11,iVar11,3,1,uVar6);
-      uVar6 = f64subc(param_3,uVar2,0,1,uVar3);
-      uVar3 = f64subc_1(param_3,uVar2,0,1,uVar3);
-      uVar2 = f64subc(uVar7,uVar9,0,1,uVar3);
-      uVar7 = f64subc_1(uVar7,uVar9,0,1,uVar3);
+    if ((uVar5 & 0x20000) != 0) {
+      uVar8 = f64subc(iVar12,iVar12,3,1,uVar11);
+      uVar4 = f64subc_1(iVar12,iVar12,3,1,uVar11);
+      uVar11 = f64subc(param_3,uVar2,0,1,uVar4);
+      uVar4 = f64subc_1(param_3,uVar2,0,1,uVar4);
+      uVar2 = f64subc(uVar7,uVar9,0,1,uVar4);
+      uVar7 = f64subc_1(uVar7,uVar9,0,1,uVar4);
       uVar10 = wf64r(uVar8,uVar8,1);
-      uVar8 = f64rnd(uVar2,uVar6,1,uVar10,uVar7);
-      uVar10 = f64rnd_1(uVar2,uVar6,1,uVar10,uVar7);
-      uVar6 = rf64r(0,uVar10);
-      return CONCAT44(uVar8,uVar6);
+      uVar8 = f64rnd(uVar2,uVar11,1,uVar10,uVar7);
+      uVar10 = f64rnd_1(uVar2,uVar11,1,uVar10,uVar7);
+      uVar11 = rf64r(0,uVar10);
+      return CONCAT44(uVar8,uVar11);
     }
-    uVar8 = f64addc(param_3,uVar2,1,1,uVar6);
-    uVar2 = f64addc_1(param_3,uVar2,1,1,uVar6);
-    uVar6 = f64addc(uVar7,uVar9,0,1,uVar2);
+    uVar8 = f64addc(param_3,uVar2,1,1,uVar11);
+    uVar2 = f64addc_1(param_3,uVar2,1,1,uVar11);
+    uVar11 = f64addc(uVar7,uVar9,0,1,uVar2);
     uVar2 = f64addc_1(uVar7,uVar9,0,1,uVar2);
-    uVar10 = wf64r(iVar11,iVar11,1);
-    uVar7 = f64rnd(uVar6,uVar8,1,uVar10,uVar2);
-    uVar10 = f64rnd_1(uVar6,uVar8,1,uVar10,uVar2);
-    uVar6 = rf64r(0,uVar10);
-    return CONCAT44(uVar7,uVar6);
+    uVar10 = wf64r(iVar12,iVar12,1);
+    uVar7 = f64rnd(uVar11,uVar8,1,uVar10,uVar2);
+    uVar10 = f64rnd_1(uVar11,uVar8,1,uVar10,uVar2);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar7,uVar11);
   }
-  if ((uVar4 & 0x40000000) != 0) {
-    uVar2 = f64rnd(param_2,param_1,2,uVar10,uVar6);
-    uVar10 = f64rnd_1(param_2,param_1,2,uVar10,uVar6);
-    uVar6 = rf64r(0,uVar10);
-    return CONCAT44(uVar2,uVar6);
+  if ((uVar5 & 0x40000000) != 0) {
+    uVar2 = f64rnd(param_2,param_1,2,auVar6._4_8_,uVar11);
+    uVar10 = f64rnd_1(param_2,param_1,2,auVar6._4_8_,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar2,uVar11);
   }
-  if ((uVar4 & 0x8000) != 0) {
-    uVar6 = f64sexp(param_4,uVar4);
-    return CONCAT44(uVar6,param_3);
+  if ((uVar5 & 0x8000) != 0) {
+    uVar11 = f64sexp(param_4,uVar5);
+    return CONCAT44(uVar11,param_3);
   }
-  if ((uVar4 & 0x20000) == 0) {
+  if ((uVar5 & 0x20000) == 0) {
     uVar8 = f64sig(param_4);
-    uVar2 = f64addc(param_1,param_3,1,0,uVar6);
-    uVar7 = f64addc_1(param_1,param_3,1,0,uVar6);
-    uVar6 = f64addc(param_2,uVar8,0,0,uVar7);
+    uVar2 = f64addc(param_1,param_3,1,0,uVar11);
+    uVar7 = f64addc_1(param_1,param_3,1,0,uVar11);
+    uVar11 = f64addc(param_2,uVar8,0,0,uVar7);
     f64addc_1(param_2,uVar8,0,0,uVar7);
-    return CONCAT44(uVar6,uVar2);
+    return CONCAT44(uVar11,uVar2);
   }
-  if ((uVar4 & 0x10000) != 0) {
-    uVar2 = f64subc(param_1,param_3,1,0,uVar6);
-    uVar7 = f64subc_1(param_1,param_3,1,0,uVar6);
-    uVar6 = f64subc(param_2,param_4,0,0,uVar7);
+  if ((uVar5 & 0x10000) != 0) {
+    uVar2 = f64subc(param_1,param_3,1,0,uVar11);
+    uVar7 = f64subc_1(param_1,param_3,1,0,uVar11);
+    uVar11 = f64subc(param_2,param_4,0,0,uVar7);
     f64subc_1(param_2,param_4,0,0,uVar7);
-    uVar6 = f64sexp(uVar6,uVar4);
-    return CONCAT44(uVar6,uVar2);
+    uVar11 = f64sexp(uVar11,uVar5);
+    return CONCAT44(uVar11,uVar2);
   }
-  uVar2 = f64subc(param_3,param_1,1,0,uVar6);
-  uVar7 = f64subc_1(param_3,param_1,1,0,uVar6);
-  uVar6 = f64subc(param_4,param_2,0,0,uVar7);
+  uVar2 = f64subc(param_3,param_1,1,0,uVar11);
+  uVar7 = f64subc_1(param_3,param_1,1,0,uVar11);
+  uVar11 = f64subc(param_4,param_2,0,0,uVar7);
   f64subc_1(param_4,param_2,0,0,uVar7);
-  uVar6 = f64sexp(uVar6,uVar4);
-  return CONCAT44(uVar6,uVar2);
+  uVar11 = f64sexp(uVar11,uVar5);
+  return CONCAT44(uVar11,uVar2);
 }
 
 
@@ -3032,7 +3036,7 @@ undefined8 FUN_00235630(uint param_1,undefined4 param_2,uint param_3,undefined4 
 
 {
   int iVar1;
-  undefined4 uVar2;
+  undefined1 auVar2 [16];
   undefined4 uVar3;
   uint uVar4;
   uint uVar5;
@@ -3041,152 +3045,155 @@ undefined8 FUN_00235630(uint param_1,undefined4 param_2,uint param_3,undefined4 
   uint uVar8;
   uint uVar9;
   undefined8 uVar10;
-  int iVar11;
+  undefined4 uVar11;
   int iVar12;
   int iVar13;
-  uint uVar14;
+  int iVar14;
+  uint uVar15;
   
   f64cmpl(param_1,param_3);
-  uVar2 = f64cmpl_1(param_1,param_3);
-  uVar8 = f64cmph(param_2,param_4,1,uVar2);
-  iVar11 = f64cmph_1(param_2,param_4,1,uVar2);
-  uVar10 = f64cmph_2(param_2,param_4,1,uVar2);
-  uVar2 = f64cmph_3(param_2,param_4,1,uVar2);
+  uVar11 = f64cmpl_1(param_1,param_3);
+  uVar8 = f64cmph(param_2,param_4,1,uVar11);
+  auVar2 = f64cmph_1(param_2,param_4,1,uVar11);
+  iVar12 = auVar2._0_4_;
+  uVar11 = auVar2._12_4_;
   if ((int)uVar8 < 0) {
     if ((uVar8 & 0x8000) != 0) {
       param_1 = param_3;
       param_2 = param_4;
     }
-    uVar6 = f64rnd(param_2,param_1,2,uVar10,uVar2);
-    uVar10 = f64rnd_1(param_2,param_1,2,uVar10,uVar2);
-    uVar2 = rf64r(0,uVar10);
-    return CONCAT44(uVar6,uVar2);
+    uVar6 = f64rnd(param_2,param_1,2,auVar2._4_8_,uVar11);
+    uVar10 = f64rnd_1(param_2,param_1,2,auVar2._4_8_,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar6,uVar11);
   }
   uVar4 = f64sig(param_2);
   uVar5 = f64sig(param_4);
   uVar3 = (undefined4)((ulonglong)param_1 * (ulonglong)param_3 >> 0x20);
-  uVar6 = f64addc(uVar4 * param_3,uVar5 * param_1,1,1,uVar2);
-  uVar2 = f64addc_1(uVar4 * param_3,uVar5 * param_1,1,1,uVar2);
-  uVar9 = f64addc(uVar6,uVar3,1,0,uVar2);
-  uVar6 = f64addc_1(uVar6,uVar3,1,0,uVar2);
+  uVar6 = f64addc(uVar4 * param_3,uVar5 * param_1,1,1,uVar11);
+  uVar11 = f64addc_1(uVar4 * param_3,uVar5 * param_1,1,1,uVar11);
+  uVar9 = f64addc(uVar6,uVar3,1,0,uVar11);
+  uVar6 = f64addc_1(uVar6,uVar3,1,0,uVar11);
   uVar3 = (undefined4)((ulonglong)uVar4 * (ulonglong)param_3 >> 0x20);
   uVar7 = (undefined4)((ulonglong)uVar5 * (ulonglong)param_1 >> 0x20);
-  uVar2 = f64addc(uVar3,uVar7,0,1,uVar6);
+  uVar11 = f64addc(uVar3,uVar7,0,1,uVar6);
   uVar6 = f64addc_1(uVar3,uVar7,0,1,uVar6);
-  uVar14 = f64addc(uVar2,uVar4 * uVar5,0,0,uVar6);
-  uVar2 = f64addc_1(uVar2,uVar4 * uVar5,0,0,uVar6);
+  uVar15 = f64addc(uVar11,uVar4 * uVar5,0,0,uVar6);
+  uVar11 = f64addc_1(uVar11,uVar4 * uVar5,0,0,uVar6);
   uVar6 = (undefined4)((ulonglong)uVar4 * (ulonglong)uVar5 >> 0x20);
   param_1 = param_1 * param_3;
-  uVar4 = f64addc(uVar6,uVar6,2,0,uVar2);
-  uVar2 = f64addc_1(uVar6,uVar6,2,0,uVar2);
+  uVar4 = f64addc(uVar6,uVar6,2,0,uVar11);
+  uVar11 = f64addc_1(uVar6,uVar6,2,0,uVar11);
   if ((uVar8 & 0x400000) == 0) {
-    uVar6 = (undefined4)(CONCAT44(uVar14,uVar9) >> iVar11);
-    uVar3 = (undefined4)(CONCAT44(uVar4,uVar14) >> iVar11);
-    uVar10 = wf64r((int)(CONCAT44(uVar9,param_1) >> iVar11),param_1,0);
-    uVar7 = f64rnd(uVar3,uVar6,1,uVar10,uVar2);
-    uVar10 = f64rnd_1(uVar3,uVar6,1,uVar10,uVar2);
-    uVar2 = rf64r(0,uVar10);
-    return CONCAT44(uVar7,uVar2);
+    uVar6 = (undefined4)(CONCAT44(uVar15,uVar9) >> iVar12);
+    uVar3 = (undefined4)(CONCAT44(uVar4,uVar15) >> iVar12);
+    uVar10 = wf64r((int)(CONCAT44(uVar9,param_1) >> iVar12),param_1,0);
+    uVar7 = f64rnd(uVar3,uVar6,1,uVar10,uVar11);
+    uVar10 = f64rnd_1(uVar3,uVar6,1,uVar10,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar7,uVar11);
   }
   if ((uVar8 & 0x200000) != 0) {
-    uVar2 = (undefined4)(CONCAT44(uVar4,uVar14) >> iVar11);
-    uVar6 = (undefined4)(CONCAT44(uVar14,uVar9) >> iVar11);
+    uVar11 = (undefined4)(CONCAT44(uVar4,uVar15) >> iVar12);
+    uVar6 = (undefined4)(CONCAT44(uVar15,uVar9) >> iVar12);
     uVar7 = wur_f64s(uVar8 + (uVar4 >> 9 & 1));
-    uVar10 = wf64r(uVar9 << 0x20 - iVar11,param_1,0);
-    uVar3 = f64rnd(uVar2,uVar6,0,uVar10,uVar7);
-    uVar10 = f64rnd_1(uVar2,uVar6,0,uVar10,uVar7);
-    uVar2 = rf64r(0,uVar10);
-    return CONCAT44(uVar3,uVar2);
+    uVar10 = wf64r(uVar9 << 0x20 - iVar12,param_1,0);
+    uVar3 = f64rnd(uVar11,uVar6,0,uVar10,uVar7);
+    uVar10 = f64rnd_1(uVar11,uVar6,0,uVar10,uVar7);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar3,uVar11);
   }
   uVar5 = (int)(uVar8 << 0x15) >> 0x1f;
-  iVar11 = ((int)(uVar8 << 0x15) >> 0x15 ^ uVar5) - uVar5;
-  uVar2 = wur_f64s(uVar8 & 0xfffff800);
+  iVar12 = ((int)(uVar8 << 0x15) >> 0x15 ^ uVar5) - uVar5;
+  uVar11 = wur_f64s(uVar8 & 0xfffff800);
   if ((uVar8 & 0x400) != 0) {
-    uVar5 = iVar11 + 0x13;
+    uVar5 = iVar12 + 0x13;
     if (((uVar8 >> 0xc & 1) == 0) && ((uVar8 & 0x2000) == 0)) {
-      uVar5 = iVar11 + 0x14;
+      uVar5 = iVar12 + 0x14;
     }
     uVar8 = uVar5 & 0x1f;
     if (0x1f < uVar5) {
       if (uVar5 < 0x40) {
-        uVar6 = (undefined4)(CONCAT44(uVar4,uVar14) >> uVar8);
-        uVar10 = wf64r((int)(CONCAT44(uVar14,uVar9) >> uVar8),param_1 | uVar9,0);
-        uVar3 = f64rnd(uVar4 >> uVar8,uVar6,0,uVar10,uVar2);
-        uVar10 = f64rnd_1(uVar4 >> uVar8,uVar6,0,uVar10,uVar2);
-        uVar2 = rf64r(0,uVar10);
-        return CONCAT44(uVar3,uVar2);
+        uVar6 = (undefined4)(CONCAT44(uVar4,uVar15) >> uVar8);
+        uVar10 = wf64r((int)(CONCAT44(uVar15,uVar9) >> uVar8),param_1 | uVar9,0);
+        uVar3 = f64rnd(uVar4 >> uVar8,uVar6,0,uVar10,uVar11);
+        uVar10 = f64rnd_1(uVar4 >> uVar8,uVar6,0,uVar10,uVar11);
+        uVar11 = rf64r(0,uVar10);
+        return CONCAT44(uVar3,uVar11);
       }
-      uVar10 = wf64r((int)(CONCAT44(uVar4,uVar14) >> uVar8),param_1 | uVar9 | uVar14,0);
-      uVar6 = f64rnd(0,uVar4 >> uVar8,0,uVar10,uVar2);
-      uVar10 = f64rnd_1(0,uVar4 >> uVar8,0,uVar10,uVar2);
-      uVar2 = rf64r(0,uVar10);
-      return CONCAT44(uVar6,uVar2);
+      uVar10 = wf64r((int)(CONCAT44(uVar4,uVar15) >> uVar8),param_1 | uVar9 | uVar15,0);
+      uVar6 = f64rnd(0,uVar4 >> uVar8,0,uVar10,uVar11);
+      uVar10 = f64rnd_1(0,uVar4 >> uVar8,0,uVar10,uVar11);
+      uVar11 = rf64r(0,uVar10);
+      return CONCAT44(uVar6,uVar11);
     }
-    uVar6 = (undefined4)(CONCAT44(uVar14,uVar9) >> uVar8);
-    uVar3 = (undefined4)(CONCAT44(uVar4,uVar14) >> uVar8);
+    uVar6 = (undefined4)(CONCAT44(uVar15,uVar9) >> uVar8);
+    uVar3 = (undefined4)(CONCAT44(uVar4,uVar15) >> uVar8);
     uVar10 = wf64r((int)(CONCAT44(uVar9,param_1) >> uVar8),param_1,0);
-    uVar7 = f64rnd(uVar3,uVar6,0,uVar10,uVar2);
-    uVar10 = f64rnd_1(uVar3,uVar6,0,uVar10,uVar2);
-    uVar2 = rf64r(0,uVar10);
-    return CONCAT44(uVar7,uVar2);
+    uVar7 = f64rnd(uVar3,uVar6,0,uVar10,uVar11);
+    uVar10 = f64rnd_1(uVar3,uVar6,0,uVar10,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar7,uVar11);
   }
-  uVar5 = f64norm(uVar4,uVar14,1,uVar2);
-  iVar1 = f64norm_1(uVar4,uVar14,1,uVar2);
-  uVar2 = f64norm_2(uVar4,uVar14,1,uVar2);
+  uVar5 = f64norm(uVar4,uVar15,1,uVar11);
+  uVar10 = f64norm_1(uVar4,uVar15,1,uVar11);
+  iVar1 = (int)uVar10;
+  uVar11 = (undefined4)((ulonglong)uVar10 >> 0x20);
   if (uVar5 < 0x20) {
-    uVar4 = (uint)(CONCAT44(uVar4,uVar14) >> iVar1);
-    iVar12 = uVar5 - 0xc;
-    uVar14 = (uint)(CONCAT44(uVar14,uVar9) >> iVar1);
+    uVar4 = (uint)(CONCAT44(uVar4,uVar15) >> iVar1);
+    iVar13 = uVar5 - 0xc;
+    uVar15 = (uint)(CONCAT44(uVar15,uVar9) >> iVar1);
     uVar5 = param_1 << 0x20 - iVar1;
-    iVar13 = (int)(CONCAT44(uVar9,param_1) >> iVar1);
+    iVar14 = (int)(CONCAT44(uVar9,param_1) >> iVar1);
   }
   else {
-    uVar4 = f64norm(uVar14,uVar9,1,uVar2);
-    iVar1 = f64norm_1(uVar14,uVar9,1,uVar2);
-    uVar2 = f64norm_2(uVar14,uVar9,1,uVar2);
+    uVar4 = f64norm(uVar15,uVar9,1,uVar11);
+    uVar10 = f64norm_1(uVar15,uVar9,1,uVar11);
+    iVar1 = (int)uVar10;
+    uVar11 = (undefined4)((ulonglong)uVar10 >> 0x20);
     if (uVar4 < 0x20) {
-      iVar12 = uVar4 + 0x14;
-      uVar4 = (uint)(CONCAT44(uVar14,uVar9) >> iVar1);
-      iVar13 = param_1 << 0x20 - iVar1;
-      uVar14 = (uint)(CONCAT44(uVar9,param_1) >> iVar1);
+      iVar13 = uVar4 + 0x14;
+      uVar4 = (uint)(CONCAT44(uVar15,uVar9) >> iVar1);
+      iVar14 = param_1 << 0x20 - iVar1;
+      uVar15 = (uint)(CONCAT44(uVar9,param_1) >> iVar1);
       uVar5 = 0;
     }
     else {
-      iVar12 = f64norm(uVar9,param_1,1,uVar2);
-      iVar1 = f64norm_1(uVar9,param_1,1,uVar2);
-      uVar2 = f64norm_2(uVar9,param_1,1,uVar2);
-      uVar14 = param_1 << 0x20 - iVar1;
-      iVar12 = iVar12 + 0x34;
-      uVar4 = (uint)(CONCAT44(uVar9,param_1) >> iVar1);
-      iVar13 = 0;
+      iVar13 = f64norm(uVar9,param_1,1,uVar11);
+      uVar10 = f64norm_1(uVar9,param_1,1,uVar11);
+      uVar11 = (undefined4)((ulonglong)uVar10 >> 0x20);
+      uVar15 = param_1 << 0x20 - (int)uVar10;
+      iVar13 = iVar13 + 0x34;
+      uVar4 = (uint)(CONCAT44(uVar9,param_1) >> (int)uVar10);
+      iVar14 = 0;
       uVar5 = 0;
     }
   }
-  iVar11 = iVar11 - iVar12;
-  if (iVar11 < 0) {
-    if (iVar11 < 1) {
-      iVar11 = -iVar11;
+  iVar12 = iVar12 - iVar13;
+  if (iVar12 < 0) {
+    if (iVar12 < 1) {
+      iVar12 = -iVar12;
     }
-    uVar9 = iVar11 - 1U & 0x1f;
+    uVar9 = iVar12 - 1U & 0x1f;
     uVar8 = uVar4;
-    if (0x1f < iVar11 - 1U) {
-      uVar5 = uVar5 | uVar14;
+    if (0x1f < iVar12 - 1U) {
+      uVar5 = uVar5 | uVar15;
       uVar8 = 0;
-      uVar14 = uVar4;
+      uVar15 = uVar4;
     }
-    uVar6 = (undefined4)(CONCAT44(uVar8,uVar14) >> uVar9);
-    uVar10 = wf64r(iVar13,uVar5 | (uint)(CONCAT44(uVar14,iVar13) >> uVar9),0);
-    uVar3 = f64rnd(uVar8 >> uVar9,uVar6,0,uVar10,uVar2);
-    uVar10 = f64rnd_1(uVar8 >> uVar9,uVar6,0,uVar10,uVar2);
-    uVar2 = rf64r(0,uVar10);
-    return CONCAT44(uVar3,uVar2);
+    uVar6 = (undefined4)(CONCAT44(uVar8,uVar15) >> uVar9);
+    uVar10 = wf64r(iVar14,uVar5 | (uint)(CONCAT44(uVar15,iVar14) >> uVar9),0);
+    uVar3 = f64rnd(uVar8 >> uVar9,uVar6,0,uVar10,uVar11);
+    uVar10 = f64rnd_1(uVar8 >> uVar9,uVar6,0,uVar10,uVar11);
+    uVar11 = rf64r(0,uVar10);
+    return CONCAT44(uVar3,uVar11);
   }
-  uVar10 = wf64r(iVar13,uVar5,0);
-  uVar6 = wur_f64s(uVar8 & 0xfffff800 | iVar11 + 1U);
-  uVar2 = f64rnd(uVar4,uVar14,2,uVar10,uVar6);
-  uVar10 = f64rnd_1(uVar4,uVar14,2,uVar10,uVar6);
+  uVar10 = wf64r(iVar14,uVar5,0);
+  uVar6 = wur_f64s(uVar8 & 0xfffff800 | iVar12 + 1U);
+  uVar11 = f64rnd(uVar4,uVar15,2,uVar10,uVar6);
+  uVar10 = f64rnd_1(uVar4,uVar15,2,uVar10,uVar6);
   uVar6 = rf64r(0,uVar10);
-  return CONCAT44(uVar2,uVar6);
+  return CONCAT44(uVar11,uVar6);
 }
 
 
@@ -3197,134 +3204,134 @@ undefined8 FUN_00235630(uint param_1,undefined4 param_2,uint param_3,undefined4 
 longlong FUN_002357c0(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
-  undefined8 uVar1;
-  undefined4 uVar2;
-  uint uVar3;
-  undefined4 uVar4;
+  undefined1 auVar1 [12];
+  undefined1 auVar2 [16];
+  undefined4 uVar3;
+  uint uVar4;
   undefined4 uVar5;
   int iVar6;
   int iVar7;
   undefined8 uVar8;
   undefined4 uVar9;
-  uint uVar10;
+  undefined4 uVar10;
   uint uVar11;
   uint uVar12;
+  uint uVar13;
   
   f64cmpl(param_1,param_3);
-  uVar4 = f64cmpl_1(param_1,param_3);
-  uVar11 = f64cmph(param_2,param_4,3,uVar4);
-  uVar5 = f64cmph_1(param_2,param_4,3,uVar4);
-  uVar8 = f64cmph_2(param_2,param_4,3,uVar4);
-  uVar4 = f64cmph_3(param_2,param_4,3,uVar4);
-  if (-1 < (int)uVar11) {
+  uVar5 = f64cmpl_1(param_1,param_3);
+  uVar12 = f64cmph(param_2,param_4,3,uVar5);
+  auVar2 = f64cmph_1(param_2,param_4,3,uVar5);
+  uVar5 = auVar2._0_4_;
+  uVar9 = auVar2._12_4_;
+  if (-1 < (int)uVar12) {
     iVar6 = rsr_sar(uVar5);
     goto LAB_002357cf;
   }
-  if ((uVar11 & 0x40000000) != 0) {
-    uVar5 = f64rnd(param_2,param_1,2,uVar8,uVar4);
-    uVar8 = f64rnd_1(param_2,param_1,2,uVar8,uVar4);
-    uVar4 = rf64r(0,uVar8);
-    return CONCAT44(uVar5,uVar4);
+  if ((uVar12 & 0x40000000) != 0) {
+    uVar5 = f64rnd(param_2,param_1,2,auVar2._4_8_,uVar9);
+    uVar8 = f64rnd_1(param_2,param_1,2,auVar2._4_8_,uVar9);
+    uVar9 = rf64r(0,uVar8);
+    return CONCAT44(uVar5,uVar9);
   }
-  if ((uVar11 & 0x400000) == 0) {
+  if ((uVar12 & 0x400000) == 0) {
 LAB_00235858:
-    uVar10 = param_2 >> 0x14 & 0x7ff;
-    uVar12 = param_4 >> 0x14 & 0x7ff;
-    if ((uVar11 >> 0xc & 1) == 0) {
+    uVar11 = param_2 >> 0x14 & 0x7ff;
+    uVar13 = param_4 >> 0x14 & 0x7ff;
+    if ((uVar12 >> 0xc & 1) == 0) {
 LAB_00235881:
-      uVar12 = f64norm(param_4,param_3,1,uVar4);
-      iVar6 = f64norm_1(param_4,param_3,1,uVar4);
-      f64norm_2(param_4,param_3,1,uVar4);
-      uVar3 = param_3;
-      if (0x1f < uVar12) {
-        uVar3 = 0;
+      uVar13 = f64norm(param_4,param_3,1,uVar9);
+      uVar8 = f64norm_1(param_4,param_3,1,uVar9);
+      uVar4 = param_3;
+      if (0x1f < uVar13) {
+        uVar4 = 0;
         param_4 = param_3;
       }
-      uVar12 = 1 - uVar12;
-      param_4 = (uint)(CONCAT44(param_4,uVar3) >> iVar6);
-      param_3 = uVar3 << 0x20 - iVar6;
+      uVar13 = 1 - uVar13;
+      param_4 = (uint)(CONCAT44(param_4,uVar4) >> (int)uVar8);
+      param_3 = uVar4 << 0x20 - (int)uVar8;
     }
     else {
-      uVar10 = f64norm(param_2,param_1,1,uVar4);
-      iVar6 = f64norm_1(param_2,param_1,1,uVar4);
-      uVar4 = f64norm_2(param_2,param_1,1,uVar4);
-      uVar3 = param_1;
-      if (0x1f < uVar10) {
-        uVar3 = 0;
+      uVar11 = f64norm(param_2,param_1,1,uVar9);
+      uVar8 = f64norm_1(param_2,param_1,1,uVar9);
+      uVar9 = (undefined4)((ulonglong)uVar8 >> 0x20);
+      uVar4 = param_1;
+      if (0x1f < uVar11) {
+        uVar4 = 0;
         param_2 = param_1;
       }
-      uVar10 = 1 - uVar10;
-      param_2 = (uint)(CONCAT44(param_2,uVar3) >> iVar6);
-      param_1 = uVar3 << 0x20 - iVar6;
-      if ((uVar11 >> 0xd & 1) != 0) goto LAB_00235881;
+      uVar11 = 1 - uVar11;
+      param_2 = (uint)(CONCAT44(param_2,uVar4) >> (int)uVar8);
+      param_1 = uVar4 << 0x20 - (int)uVar8;
+      if ((uVar12 >> 0xd & 1) != 0) goto LAB_00235881;
     }
     f64cmpl(param_1,param_3);
-    uVar4 = f64cmpl_1(param_1,param_3);
-    f64cmph(param_2,param_4,3,uVar4);
-    uVar5 = f64cmph_1(param_2,param_4,3,uVar4);
-    f64cmph_2(param_2,param_4,3,uVar4);
-    f64cmph_3(param_2,param_4,3,uVar4);
+    uVar5 = f64cmpl_1(param_1,param_3);
+    f64cmph(param_2,param_4,3,uVar5);
+    auVar2 = f64cmph_1(param_2,param_4,3,uVar5);
+    uVar5 = auVar2._0_4_;
     iVar6 = rsr_sar(uVar5);
-    iVar7 = ((uVar10 - uVar12) + 0x400) - (iVar6 + -0x36);
+    iVar7 = ((uVar11 - uVar13) + 0x400) - (iVar6 + -0x36);
     if (-1 < iVar7 + -0x800) {
-      uVar11 = f64sexp(0,uVar11 | 0x7ff);
-      return (ulonglong)uVar11 << 0x20;
+      uVar12 = f64sexp(0,uVar12 | 0x7ff);
+      return (ulonglong)uVar12 << 0x20;
     }
-    uVar10 = iVar7 - 1;
-    uVar11 = (uVar11 >> 0xb & 1) << 0xb | uVar10 & 0x7ff;
+    uVar11 = iVar7 - 1;
+    uVar12 = (uVar12 >> 0xb & 1) << 0xb | uVar11 & 0x7ff;
     if (-1 < iVar7 + -2) goto LAB_002357cf;
   }
   else {
-    uVar10 = (int)(uVar11 << 0x15) >> 0x15;
-    if ((int)(uVar10 + 0x35) < 0) goto LAB_0023583a;
-    if ((uVar11 & 0x1000) != 0) goto LAB_00235858;
+    uVar11 = (int)(uVar12 << 0x15) >> 0x15;
+    if ((int)(uVar11 + 0x35) < 0) goto LAB_0023583a;
+    if ((uVar12 & 0x1000) != 0) goto LAB_00235858;
   }
   iVar6 = rsr_sar(uVar5);
-  iVar6 = iVar6 + uVar10 + -1;
-  uVar11 = uVar11 & 0xfffff800;
+  iVar6 = iVar6 + uVar11 + -1;
+  uVar12 = uVar12 & 0xfffff800;
   if (iVar6 < 1) {
 LAB_0023583a:
-    uVar11 = f64sexp(0,uVar11 & 0xfffff800);
-    return (ulonglong)uVar11 << 0x20;
+    uVar12 = f64sexp(0,uVar12 & 0xfffff800);
+    return (ulonglong)uVar12 << 0x20;
   }
 LAB_002357cf:
-  uVar4 = f64sig(param_2);
-  uVar8 = wf64r(uVar4,param_1,0);
-  uVar4 = 0;
-  uVar5 = f64sig(param_4);
+  uVar5 = f64sig(param_2);
+  uVar8 = wf64r(uVar5,param_1,0);
+  uVar5 = 0;
+  uVar9 = f64sig(param_4);
   iVar7 = iVar6 + -0x21;
   if (iVar6 + -0x21 < 0) {
     iVar7 = iVar6 + -1;
   }
-  uVar9 = wur_f64s(0);
-  uVar2 = f64iter(uVar5,uVar5,param_3,2,1,uVar8,uVar9);
-  uVar1 = f64iter_1(uVar5,uVar5,param_3,2,1,uVar8,uVar9);
-  uVar5 = f64iter_2(uVar5,uVar5,param_3,2,1,uVar8,uVar9);
+  uVar10 = wur_f64s(0);
+  uVar3 = f64iter(uVar9,uVar9,param_3,2,1,uVar8,uVar10);
+  auVar1 = f64iter_1(uVar9,uVar9,param_3,2,1,uVar8,uVar10);
+  uVar8 = auVar1._0_8_;
+  uVar9 = auVar1._8_4_;
   if (iVar7 == 1) {
     isync();
   }
-  uVar9 = uVar2;
-  uVar8 = uVar1;
+  uVar10 = uVar3;
   if (0 < iVar7) {
-    uVar9 = f64iter(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
-    uVar8 = f64iter_1(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
-    uVar5 = f64iter_2(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
+    uVar10 = f64iter(uVar3,uVar3,param_3,2,0,uVar8,uVar9);
+    auVar1 = f64iter_1(uVar3,uVar3,param_3,2,0,uVar8,uVar9);
+    uVar8 = auVar1._0_8_;
+    uVar9 = auVar1._8_4_;
   }
   if (0x1f < iVar6 + -1) {
-    uVar4 = rur_f64s(uVar5);
-    uVar2 = f64iter(uVar9,uVar9,param_3,2,0,uVar8,uVar5);
-    uVar1 = f64iter_1(uVar9,uVar9,param_3,2,0,uVar8,uVar5);
-    uVar5 = f64iter_2(uVar9,uVar9,param_3,2,0,uVar8,uVar5);
-    f64iter(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
-    uVar8 = f64iter_1(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
-    uVar5 = f64iter_2(uVar2,uVar2,param_3,2,0,uVar1,uVar5);
+    uVar5 = rur_f64s(uVar9);
+    uVar3 = f64iter(uVar10,uVar10,param_3,2,0,uVar8,uVar9);
+    auVar1 = f64iter_1(uVar10,uVar10,param_3,2,0,uVar8,uVar9);
+    f64iter(uVar3,uVar3,param_3,2,0,auVar1._0_8_,auVar1._8_4_);
+    auVar1 = f64iter_1(uVar3,uVar3,param_3,2,0,auVar1._0_8_,auVar1._8_4_);
+    uVar8 = auVar1._0_8_;
+    uVar9 = auVar1._8_4_;
   }
-  uVar2 = rur_f64s(uVar5);
-  uVar9 = wur_f64s(uVar11);
-  uVar5 = f64rnd(uVar4,uVar2,0,uVar8,uVar9);
-  uVar8 = f64rnd_1(uVar4,uVar2,0,uVar8,uVar9);
-  uVar4 = rf64r(0,uVar8);
-  return CONCAT44(uVar5,uVar4);
+  uVar3 = rur_f64s(uVar9);
+  uVar10 = wur_f64s(uVar12);
+  uVar9 = f64rnd(uVar5,uVar3,0,uVar8,uVar10);
+  uVar8 = f64rnd_1(uVar5,uVar3,0,uVar8,uVar10);
+  uVar5 = rf64r(0,uVar8);
+  return CONCAT44(uVar9,uVar5);
 }
 
 

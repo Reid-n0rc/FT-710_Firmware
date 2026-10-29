@@ -336,13 +336,11 @@ void FUN_00236478(int param_1,undefined4 param_2)
   
   if (param_1 == 0) {
     wsr_ccompare0(param_2,in_INTERRUPT);
-    wsr_ccompare0_1(param_2,in_INTERRUPT);
     rsync();
     return;
   }
   if (param_1 == 1) {
     wsr_ccompare1(param_2,in_INTERRUPT);
-    wsr_ccompare1_1(param_2,in_INTERRUPT);
     rsync();
     return;
   }
@@ -731,11 +729,6 @@ undefined4 FUN_24020450(undefined4 param_1,undefined4 param_2,uint param_3,int p
   uVar1 = rsil(0xf);
   uVar1 = uVar1 ^ (uVar1 >> 8 & 0xf ^ param_5) << 8;
   wsr_ps(uVar1);
-  wsr_ps_1(uVar1);
-  wsr_ps_2(uVar1);
-  wsr_ps_3(uVar1);
-  wsr_ps_4(uVar1);
-  wsr_ps_5(uVar1);
   rsync();
   if ((param_3 & 0x80000000) == 0) {
     rfwu();

@@ -70,7 +70,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T21h | [MAIN: decode the two RX fragments left undefined](T21-ghidra-gaps.md) | T21c, T21g | done |
 | T21i | [MAIN: memory effect for the RX string instructions](T21-ghidra-gaps.md) | T21c, T22e | done |
 | T21j | [DISPLAY/IFDSP: T22d's entry, block and data fixes](T21-ghidra-gaps.md) | T21g, T22d | done |
-| T21k | [HiFi4: one pcodeop per special-register write](T21-ghidra-gaps.md) | T21a, T22e | in progress |
+| T21k | [HiFi4: one pcodeop per special-register write](T21-ghidra-gaps.md) | T21a, T22e | done |
 | T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | in progress |
 | T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | done |
 | T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | done |
