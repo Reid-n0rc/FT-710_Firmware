@@ -836,3 +836,5 @@
 2012470c	scope_text_view_draw	third scope view (0x208004D0 = 3): RX/TX text lines
 20131154	decode_text_rx	RX text filter (47-char sets 0x20801DE0..) -> 0x208F48C8 (inference: decoder)
 20131354	pkt23_tx_text	packet 0x23: TX text line 0x208F489F
+20120d84	affft_bins_get	200 AF-FFT bins of 0x208DD73C through FUN_20157214 and the table 0x208DD23C; returns the bar height 0x2C [fact] (#179)
+20121af0	filter_graph_affft_overlay	bars of affft_bins_get into empty pixels of the filter graph (row 129, x 521..720) when status byte 9 bit 3 (MAIN 0x9C5C) is set [fact] (#179)
