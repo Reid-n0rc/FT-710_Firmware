@@ -344,11 +344,30 @@ memory tags and messages are personal data and stay out of the repository.
 
 - **Mode byte +0x00, bits 4–7.** The defaults write 0x40 (0xC1 in the USB band-stack defaults). In the dump, the band-stack records
   that differ from their default have bit 7 clear; bit 6 is clear in 21 of the 23 and still set in 2 whose mode was changed (for
-  example a default USB record now in DATA-U with high nibble 4). No V01-12 code reads or writes these bits (#205, [above](#90-byte-vfo--memory-record));
-  the meaning is open.
+  example a default USB record now in DATA-U with high nibble 4). Only the default writers set these bits, and the mode setter
+  `FUN_fffc0eb8` keeps them (`rec[0] = rec[0] & 0xF0 | mode`); no V01-12 code reads them (#205, [above](#90-byte-vfo--memory-record))
+  **[fact]**. The meaning is open.
 - **+0x01, +0x02, +0x05** in used records: +0x01 = 0x05 (bit 2, the ATU flag read by `AC`, and bit 0), +0x02 bit 1 set in some
   bands, +0x05 bits 0–1 = 2 or 3 **[fact for the values]**. Settled in #205: +0x02 bit 1 is **NB on** and +0x05 bits 0–1 the
-  **preamp** (2 = AMP1, 3 = AMP2) **[fact: `cat_NB`, `cat_PA`]**; +0x01 bit 0 has no reader or writer in V01-12 and stays open.
+  **preamp** (2 = AMP1, 3 = AMP2) **[fact: `cat_NB`, `cat_PA`]**; +0x01 bit 0 has no reader in V01-12 and stays open (its only
+  writers are the defaults, next item).
+- **The +0x00 high nibble and +0x01 bit 0 never occur together** (#205 re-check of the same dump, 2026-10-29, all 90 records in use:
+  72 band-stack, 16 memory channels, the two operating records 0x9D09/0x9D63) **[fact: dump]**. Exactly the 38 records whose high
+  nibble is 0 have +0x01 bit 0 set (21 band-stack, 15 memory, both operating records); the other 52 have high nibble 4 (20) or
+  0xC (32) and bit 0 clear. The ROM defaults come in the same two forms **[fact]**, as one 32-bit store of bytes +0x00..+0x03:
+  - `FUN_fffb0779` (band-stack defaults) and `defaults_vfo` @ 0xFFFB06E5 (0x9D09 = 0x80040040) write 0x800400*mm* with
+    *mm* = 0x40/0x42/0xC1: high nibble 4 or 0xC, +0x01 = 0;
+  - `defaults_memch` @ 0xFFFB0A8F writes 0x80040040 for the ordinary channels, but 0x80040101 / 0x80040103 / 0x80040109 for
+    the 60 m channels 501–515 (USB / CW-U / DATA-U at 0x8A72.., 0x5A apart) and 0x80040003 for EMG (0x8FB8): high nibble 0, with
+    +0x01 bit 0 set except at EMG.
+  Mode changes keep both fields, so the two forms look like one property of the record's origin that later copies carry along,
+  not two independent flags **[inference]**. How the two operating records came to hold the 0x01 form (`defaults_vfo` writes the
+  0x40 form) is not visible in the decompile; a disassembly search for byte stores to record +0x00/+0x01 (Ghidra hold) would
+  settle it.
+- Other bits across the same 90 records **[fact: dump]**: ATT (+0x03 bits 0–1) is 0 and memory-scan SKIP (+0x01 bit 7) is clear
+  everywhere; the preamp is only ever 2 (79) or 3 (11), never the 1 that reads back as IPO; +0x03 bits 6–7 are 2 everywhere,
+  as every default writes (+0x03 = 0x80); +0x04 bit 4 is 0 everywhere. NB is on in the VFO-A level-0 band stacks of every band
+  except 3.5 and 10 MHz. DBG MODE ENABLE (item 008, 0x4660) is 0.
 - AESS: the owner's levels are SSB 15, CW 14, DATA 15, AM 10, FM 17 (`AS1` 75/70/75/50/85), RTTY/DATA-FM/PSK 0. The ROM defaults
   (0xFFF80F6D + 0x3C.., the table `FUN_fffb13e2` copies to 0x9BCA..0x9C16) are SSB/AM/FM 10, the rest 0. Where the level acts:
   [peripherals.md](peripherals.md#speaker-routing-speaker_route-0x20fcc-fact).
