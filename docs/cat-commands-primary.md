@@ -208,7 +208,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Clarifier-style RX/TX on-off flags (P3=0) and signed offset (P3=1, 4 digits) per VFO [inference from sign+4-digit structure; flags are fact].
 - **Globals / callees:** R/W 0x20F29/0x20F2A, block 0x9D09/0x9D63 +1,+0x48,+0x49; 0x9C5E; fffb44f7(0x306,0), fffb4bba; 0x20F10
 - **Risk:** medium: changes RX/TX clarifier offsets (affects tuning, not TX keying)
-- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**; the unit of the offset is still open.
+- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**.
+- **Resolved (#159):** the offset is in **Hz**: `vfo_freq_clar` (0xFFFB35D7) adds the s16 at +0x48 directly to the Hz frequency from `vfo_freq` when the RX or TX clarifier bit is set **[fact]**.
 
 ### CH
 
@@ -424,6 +425,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Globals / callees:** RW 0x9C5E; callee `split_toggle` (also writes 0x9DBE,0x9DBF,0x9DC7,0x9DC8,0x20F09, PTR_DAT_00025d54 fields)
 - **Risk:** medium: changes TX/RX VFO configuration (no direct key-down)
 - **Resolved in part (#69):** 0x20F1C = scan running (UI +0x418); 0x20F70 = UI +0x46C, a timed flag of the MIC slot/remote-keypad handlers ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. 0x20B8A and the others are still open.
+- **Resolved (#159):** the other guard flags are all named under `SV` (0x20B8A = +0x86 message pop-up, 0x20B3D = TX lamp state, 0x20CCE = armed DVS recording, …) **[fact]**.
 
 ### GT
 
@@ -470,7 +472,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Answers with the whole state of the VFO-A record 0x9D09 (channel, frequency, clarifier offset and flags, mode, VFO/memory state, two small selectors); always side 0 regardless of the selected VFO [fact]
 - **Globals / callees:** R: 0x60C9,0x9DBE,0x20F29,0x9D09[0,2,3,0x48,0x49,0x4A..0x4D], tables @0xFFF806D0/DF/E9; callees `vfo_freq`(0,0), nib2hex
 - **Risk:** low: read-only
-- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. Still open: meaning of P7 for states 4, 6–9 and of the rec[2]/rec[3] bit fields.
+- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. Still open: meaning of P7 for states 4, 6–9.
+- **Resolved (#159):** rec[2] bits 2–3 are the repeater shift (0 minus, 1 simplex, 2 plus) and rec[3] bits 3–5 the tone mode (`CT`); see [the record table](code/main/radio-control.md#the-0x5a-byte-channel-record) **[fact]**.
 
 ### IS
 
@@ -564,7 +567,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Message-memory job control: LM0n starts slot n (1..5) / stops (0), state 0x20B7C, slot in 0x20B7D, flags 0x20F1B/0x20CCE (also block FT/MD); LM1n sets a 0/1 flag 0x20B96 [fact for flags; record/playback meaning is inference]
 - **Globals / callees:** RW 0x20B7C,0x20B7D,0x20B96,0x20B95,0x20F1B,0x20CCE,0x20CCC,0x20CCB; R 0x20CCD,0x20CD0,0x20CD1; callees key_event_filter(0x87,0), FUN_fffe56bf, FUN_fffe4efc
 - **Risk:** high: may start message/recorder operation (possibly TX), same key filter 0x87 as KY
-- **Resolved in part (#157):** `FUN_fffe4efc` only sets UI +0x1CB = 1 and starts timer 0x37 (10,000 units); it does not key TX itself **[fact]**. +0x1CB is one of the message states that `FUN_fffe3d24` and the E8 status clear, so it arms a message recording **[inference]**. 0x20B7C (+0x78) is the voice-message playback state (see `SV`). Still open: 0x20B96, and the chars-below-'0' quirk (real code).
+- **Resolved in part (#157):** `FUN_fffe4efc` only sets UI +0x1CB = 1 and starts timer 0x37 (10,000 units); it does not key TX itself **[fact]**. +0x1CB is one of the message states that `FUN_fffe3d24` and the E8 status clear, so it arms a message recording **[inference]**. 0x20B7C (+0x78) is the voice-message playback state (see `SV`). Still open: the chars-below-'0' quirk (real code).
+- **Resolved (#159):** **0x20B96** is the DVS **RECORD** flag of `LM1`: `LM11;` sets it, `LM10;` clears it, `LM1;` reads it, and `RI` P3 reports it as 1 (recording) **[fact, `cat_LM` 0xFFFAB16F]**. `LM0n;` (n = 1..5) sets 0x20F1B and **0x20CCE (UI +0x1CA) = 1** (record armed for channel n, 0x20B7D = n−1); `LM00;` clears both. When the record starts, `FUN_fffc0210` clears +0x1CA and sets +0x78 = 2 **[fact]**.
 
 ### MA
 
@@ -634,7 +638,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Per-mode monitor-level-like variable: ML0 = on/off view of it (set maps to 0 or 50), ML1 = 0-100 level. Variable by mode m: 0,1->0x9BFC; 2,3->0x9BFD; 4,5->0x9C00; 8,9,14->0x9BFF; 12,13->0x9BFE; 6,7,10,11->0x9C01 (read only, set rejected); other m -> error [fact from C; label 'monitor' is guess].
 - **Globals / callees:** 0x9BFC-0x9C01, 0x9ACE, 0x20CC6=0x2d; `vfo_mode`, FUN_fffc8cbb/8d8c
 - **Risk:** medium - audio/monitor setting; RAM only in handler
-- **Resolved in part (#157):** the current decompile (T21 fixes, no `in_`/`unaff_` variables in this handler) shows a plain `P1 == '0'` test; the garbled `{1,0,0,0}` store was an artifact **[fact]**. The set refusal for modes 6/7/10/11 (FM and DATA-FM) is still to confirm in the C.
+- **Resolved in part (#157):** the current decompile (T21 fixes, no `in_`/`unaff_` variables in this handler) shows a plain `P1 == '0'` test; the garbled `{1,0,0,0}` store was an artifact **[fact]**.
+- **Resolved (#159):** confirmed in the C: for modes 6/7/10/11 `cat_ML` selects 0x9C01 and returns `?;` when it is a set (`param_2 == 1`); the read works **[fact]**.
 
 ### MR
 
@@ -785,7 +790,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** [inference] Plays/stops a stored voice message (slots 1-5); starts audio playback and, when the mode's TX bit is set (FUN_fffb521a), flags 0x20B2E which most likely transmits the message.
 - **Globals / callees:** 0x20B7C,0x20B7D,0x20CCC,0x20B2E,0x20CD3,0x20CD4,0x20F1B,0x20CCE,0x20B97; key_event_filter(0x87), FUN_fffe56bf, FUN_fffb521a
 - **Risk:** high - may key the transmitter to play a voice message
-- **Resolved in part (#69):** 0x20B2E is **PTT source 11** (voice message on the air), cleared by the E8 status and the MIC PTT release ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. Still open: 0x20B7C states, and the chars-below-'0' quirk (still true).
+- **Resolved in part (#69):** 0x20B2E is **PTT source 11** (voice message on the air), cleared by the E8 status and the MIC PTT release ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. Still open: the chars-below-'0' quirk (still true).
+- **Resolved (#159):** **0x20B7C (UI +0x78)**: 0 = idle, 1 = playback (`PB0n;` sets it with the channel in 0x20B7D; a second `PB0n;` or `PB00;` stops it), 2 = recording (set by `FUN_fffc0210` from the armed `LM0n` state +0x1CA). `LM0;` answers the channel only while it is 2, and `RI` P3 maps it to 1/2 **[fact for the writers; the names follow the manual's RI P3]**.
 
 ### PC
 
@@ -916,6 +922,11 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Globals / callees:** 0x20B6D,0x20B3D,0x20B40,0x20B41,0x20F0C,0x20F1C,0x20F1D,0x20B38,0x20CCD,0x20B7C,0x20B96,0x20CD0/1,0x20F01; FUN_fffe0755, `af_mute_get`
 - **Risk:** low - read-only
 - **Resolved in part (#157):** the flags shared with the busy guard are explained under `SV` (scan +0x418, tune cycle +0x408, voice-message playback +0x78, keyer/message states +0x1C9/+0x1CC/+0x1CD) **[fact]**; 0x20B6D, 0x20B38, 0x20B96 and 0x20F1D are still open.
+- **Resolved (#159)** (each matches the manual's RI field) **[fact for the writers]**:
+  - **0x20B6D** (P2) = **HI-SWR**: `swr_meter_protect` (0xFFFB7545) sets it to 1/2 (blink phase) after 9 TX passes with SWR outside [1, 5) and clears it after 9 good passes or on RX.
+  - **P3** comes from `FUN_fffe0755`: 1 (recording) when 0x20B96 (`LM1`), 0x20B7C = 2 or +0x1C9 is set; the keyer/message send states and 0x20F01 lead to the other values.
+  - **0x20B38** (P8 = bit 4) is the **status-LED byte** that `FUN_fffb8d77` (an `io_task` sub-task) builds every pass: bit 4 = BUSY (0x20B48, squelch open), bit 5 = TX lamp (on while 0x20B6B = 1, blinking when the TX frequency is not allowed), bit 7 = VOX on (0x9C5D, not in CW/RTTY).
+  - **0x20F1D** (P7 = 2) = UI +0x419, **scan paused** (read only while scan +0x418 runs and the audio is not muted). It has no direct writer in the decompile; it is written through the UI-state pointer **[inference]**.
 
 ### RL
 
@@ -1037,13 +1048,17 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 
 - **Index / handler:** 91, cat_SS @ fffae850; switch case fffa4bb4; length tests `len==5:cat_SS@fffae850 \| len==10:cat_SS@fffae850` [fact]
 - **Manual 2306-C:** SPECTRUM SCOPE. Set `SSP1P2P3P4P5P6P7;` (10), read `SSP1P2;` (5), answer `SSP1P2P3P4P5P6P7;` (10), AI O. P1 0 fixed; P2 0 speed,1 peak,2 marker,3 color,4 level,5 span,6 mode,7 AF-FFT/osc; P3-P7 per P2: 0 speed 0-5; 1 peak 0-4; 2 marker 0/1; 3 color 0-9,A; 4 level P3-P7 = 5 chars +/-nn.n (0.5dB); 5 span 0-9; 6 mode 0-A; 7 P3 AF-FFT att, P4 osc level, P5 osc time 0-5; unused P = 0
-- **Read / answer (firmware):** SS0Sv0000; (len 10): 1c8e..1c91 = 'S','S','0',S copied from request; S=selector hex char 0-8; v=1 char then '0000' filler, except sel 4 = sign + nn.d and sel 7 = four digits + '0'. Sel 0: v=5 if FUN_fffc4f8f()==1 (DAT_0001b4df) else DAT_00009c5a. Sel 1: DAT_00009be6. Sel 2: DAT_00009be7. Sel 3: DAT_00009be8. Sel 4: byte b=*`scope_level_ptr`(`vfo_freq`(DAT_00020b6b,2),DAT_00020b6b): if b<0x3c '-' and (0x3c-b) else '+' and (b-0x3c), halved, printed as 'nn.d' with .0/.5, i.e. -30.0..+30.0 in 0.5 steps (SS04+05.5;). Sel 5: *`scope_span_ptr`(`vfo_freq`(0,2)) (0-9). Sel 6: composed from DAT_00009c35/c36/c38 (see needs_disasm). Sel 7: DAT_00009c39,DAT_00009c3b,DAT_00009c3c,DAT_00009c3a then '0'. Sel 8: DAT_00020f1f
+- **Read / answer (firmware):** SS0Sv0000; (len 10): 1c8e..1c91 = 'S','S','0',S copied from request; S=selector hex char 0-8; v=1 char then '0000' filler, except sel 4 = sign + nn.d and sel 7 = four digits + '0'. Sel 0: v=5 if FUN_fffc4f8f()==1 (DAT_0001b4df) else DAT_00009c5a. Sel 1: DAT_00009be6. Sel 2: DAT_00009be7. Sel 3: DAT_00009be8. Sel 4: byte b=*`scope_level_ptr`(`vfo_freq`(DAT_00020b6b,2),DAT_00020b6b): if b<0x3c '-' and (0x3c-b) else '+' and (b-0x3c), halved, printed as 'nn.d' with .0/.5, i.e. -30.0..+30.0 in 0.5 steps (SS04+05.5;). Sel 5: *`scope_span_ptr`(`vfo_freq`(0,2)) (0-9). Sel 6: composed from DAT_00009c35/c36/c38 (see Resolved below). Sel 7: DAT_00009c39,DAT_00009c3b,DAT_00009c3c,DAT_00009c3a then '0'. Sel 8: DAT_00020f1f
 - **Set parameters (firmware):** P1 must be '0' else error; P2 selector = hex digit (hex2nib), valid 0-8 else error. Set len 10 = 'SS0S' + 5 chars + ';'. Sel 0: [4]=0-5 (5 -> FUN_fffc4f9e(1) sets DAT_0001b4df=1; 0-4 -> DAT_00009c5a=v then FUN_fffc4f9e(0) copies to DAT_0001b4e0 and clears DAT_0001b4df), [5..8] must be '0000'. Sel 1: v 0-4 -> DAT_00009be6. Sel 2: v 0-1 -> DAT_00009be7. Sel 3: v 0-10 (0xA) -> DAT_00009be8. Sel 4: [4] '+'/'-', [5..6] 2 dec digits <=30, [7] '.', [8] '0' or '5'; stored byte=(30+nn)*2 (+1 if .5) for '+', (30-nn)*2 (-1 if .5) for '-', must be <=0x78 -> *`scope_level_ptr`(...). Sel 5: v 0-9 -> *`scope_span_ptr`(`vfo_freq`(0,2)), [5..8]=0000. Sel 6: v 0-0xB: 0,1,2 -> DAT_00009c36=1,DAT_00009c35=v; 3 -> c36=0,c35=0,c38=2,c3d=1; 4 -> c36=0,c35=0,c38=1,c3d=0; 6 -> c36=0,c35=1,c38=2,c3d=1; 7 -> c36=0,c35=1,c38=1,c3d=0; 9 -> c36=0,c35=2,c38=2,c3d=1; 10 -> c36=0,c35=2,c38=1,c3d=0; 5,8,11 and >11 -> error; [5..8]=0000. Sel 7: [8] must be '0'; [4],[5] each '0'-'2', [6] '0'-'5', [7] '0'-'2' -> DAT_00009c39,c3b,c3c,c3a. Sel 8: v 0-1 -> DAT_00020f1f, [5..8]=0000. Any [5..8] mismatch for sels 0,1,2,3,5,6,8 -> error
 - **Class:** read+set
 - **Behaviour:** Multi-selector settings block: 9 sub-parameters (sel 0..8) in one command, all RAM variables (sel 4 a signed +/-30.0 in 0.5 steps, sel 6 a combo of three fields, sel 7 four small digits). Sel 0 value 5 goes through a separate flag DAT_0001b4df. Parameter shapes suggest spectrum/waterfall-scope style display settings [guess]; no TX, no frequency change, no key event, no EEPROM call in this function [fact]
 - **Globals / callees:** DAT_00009c5a, DAT_0001b4df/b4e0 (FUN_fffc4f9e@fffc4f9e, FUN_fffc4f8f@fffc4f8f), DAT_00009be6/be7/be8, DAT_00020b6b (selects per-VFO row), `vfo_freq`, `scope_level_ptr`@fffa150c, `scope_span_ptr`@fffa1541, DAT_00009c35/c36/c38/c3d, DAT_00009c39/c3a/c3b/c3c, DAT_00020f1f
 - **Risk:** low: display-type settings stored in RAM, no TX/key/EEPROM call here
-- **Open (needs disassembly):** Sel 6 read-back arm: decompiler tree mixes c35/c36/c38 and shows junk 'uRam00000000=1' writes, and does not round-trip with the set mapping (set 3 reads back 9): re-check disasm of cat_SS fffae850..fffaf3b5. Also confirm decompiler flag puVar9 == (selector==0), and what `scope_level_ptr`/fffa1541/fffb357c index
+- **Resolved (#159): sel 6.** The current decompile (T21g rebuild) has no junk stores in this arm, and the same tree appears in two more functions, `FUN_fff96dde` (the scope-mode byte of the DISPLAY status frame, `DAT_000016a2` in `displink_build_status`) and the `SS` AI reporter `FUN_fffe0fe6` (its `param_1 == 6` arm) **[fact]**. The fields match the manual's P3 list: **0x9C36** = 1 for 3DSS, 0 for waterfall; **0x9C35** = CENTER 0 / CURSOR 1 / FIX 2; **0x9C38** = waterfall size, 1 NORMAL, 2 EXPAND; **0x9C3D** = the EXPAND flag (the front-panel toggle `FUN_fffbc91a` flips 0x9C3D and 0x9C38 together: 0/1 or 1/2). Defaults (ROM 0xFFF80E22 → 0x9C35..): c35 0, c36 1, c38 1, c3d 0 (3DSS CENTER) **[fact]**.
+  - Read: 3DSS → c35 (0..2). Waterfall → 3 + 3·c35 + {c38 = 0: 0, 1: 1, else 2}, so NORMAL reads 4/7/A and **EXPAND reads 5/8/B** **[fact]**.
+  - Set: 3/6/9 (EXPAND) store c38 = 2; 4/7/A (NORMAL) store c38 = 1; 5, 8, B are refused **[fact]**.
+  - So NORMAL round-trips, and EXPAND set as `SS0630000;` reads back as `SS0650000;` (5/8/B are "-" in the manual). Nothing writes c38 = 0, so the read codes 3/6/9 are dead. This is a firmware inconsistency in V01-12, not a decompiler artifact **[fact for the code; radio check not done]**. The DISPLAY frame uses the same 3..B coding as the read path, so the display side is consistent with itself **[inference]**.
+- **Resolved (#159): the other sel details.** `puVar9` is gone from the current decompile. `vfo_freq` (0xFFFB357C) returns the record frequency in Hz. `scope_level_ptr` picks a byte through the per-frequency-range pointer tables 0xFFF88648 (side 0) / 0xFFF88680 (side 1), indexed by `freq_range_index`; `scope_span_ptr` uses the 8-byte-stride table at 0xFFF885AC, or the second pointer of each pair (0xFFF885B0..) in FIX mode (c35 = 2), so FIX has its own span per range **[fact]**.
 
 ### ST
 
@@ -1067,7 +1082,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Front-panel key 0x30a action: toggles active VFO A/B (`vfo_ab_toggle`: clears DAT_00009c5e, if active-VFO mode is 1 flips DAT_00009dbd, else steps the mode toward 1 first via `vm_toggle` / `vfo_reload`) [inference]. Error if key filter or any busy flag below blocks it
 - **Globals / callees:** key_event_filter(0x30a,0); key_event_filter key-filter; error if DAT_00020f1c==1 or DAT_00020f70==1 or DAT_00020f0c!=0 or DAT_00020b8a==1 or DAT_00020b3d!=0 or DAT_00020cce==1 or DAT_00020f1b==1 or DAT_00020ccd==1 or DAT_00020b7c!=0 or DAT_00020cd0==1 or DAT_00020cd1==1 or DAT_00020f11==1; `vfo_ab_toggle`@fffbf4bb; DAT_00009c5e, DAT_00009dbd, DAT_00009dbe/dbf
 - **Risk:** medium: changes active VFO / operating state; refused while TX-style flags are set
-- **Resolved in part (#157):** The guard flags are UI-state (0x20B04) fields **[fact for the offsets and writers]**: 0x20F1C = +0x418 scan running; 0x20F70 = +0x46C timed MIC-slot/remote-keypad flag; 0x20F0C = +0x408 tune cycle (`vfo_mode` reports CW-L while it is 1 or 2); 0x20B8A = +0x86 message pop-up shown (`FUN_fffcfa3d`, with the message code in +0xBB); 0x20B7C = +0x78 voice-message playback (E8 status, cleared by the MIC PTT release); 0x20CCD/0x20CD0/0x20CD1/0x20F1B = +0x1C9/+0x1CC/+0x1CD/+0x417 keyer/message send states (all cleared by `FUN_fffe3d24`); 0x20B3D = +0x39 and 0x20CCE = +0x1CA not traced. In short: no key-like command runs while a scan, a tune cycle, a message pop-up or a message/keyer playback is active.
+- **Resolved in part (#157):** The guard flags are UI-state (0x20B04) fields **[fact for the offsets and writers]**: 0x20F1C = +0x418 scan running; 0x20F70 = +0x46C timed MIC-slot/remote-keypad flag; 0x20F0C = +0x408 tune cycle (`vfo_mode` reports CW-L while it is 1 or 2); 0x20B8A = +0x86 message pop-up shown (`FUN_fffcfa3d`, with the message code in +0xBB); 0x20B7C = +0x78 voice-message playback (E8 status, cleared by the MIC PTT release); 0x20CCD/0x20CD0/0x20CD1/0x20F1B = +0x1C9/+0x1CC/+0x1CD/+0x417 keyer/message send states (all cleared by `FUN_fffe3d24`); 0x20B3D = +0x39 and 0x20CCE = +0x1CA not traced.
+- **Resolved (#159):** **0x20B3D (+0x39)** is the TX-lamp state from `FUN_fffb8d77`: 1 while transmitting (0x20B6B = 1), 2 when TX is blocked because the frequency is outside the TX bands (`tx_freq_allowed`, lamp blinks), else 0; `RI` P4 reports it (0 RX, 1 TX, 2 TX INHIBIT) **[fact]**. **0x20CCE (+0x1CA)** is the armed DVS recording of `LM0n` (see `LM`) **[fact]**. In short: no key-like command runs while a scan, a tune cycle, a message pop-up or a message/keyer playback is active.
 
 ### TS
 
@@ -1150,7 +1166,12 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Selects active VFO 0/1 (A/B) [inference from the DAT_00009dbd flip in `vfo_ab_toggle`], also drops split state. Key code 0x30a
 - **Globals / callees:** DAT_00009dbd (rw), DAT_00009c5e (w=0), DAT_00020f10 (w=1), `vfo_ab_toggle`@fffbf4bb, key_event_filter(0x30a)
 - **Risk:** medium: changes active VFO; clears DAT_00009c5e without `split_toggle` bookkeeping when target equals current
-- **Open (needs disassembly):** Effect of DAT_00009c5e being cleared without `split_toggle` restore
+- **Resolved (#159).** Every accepted `VS` set (also `VS0;` when A is already active) clears split 0x9C5E first; `vfo_ab_toggle` (0xFFFBF4BB) does the same on `SV`/A-B **[fact]**. Compared with `split_toggle` (0xFFFBECA5) turning split off, this skips four steps **[fact]**:
+  1. **0x9DBE/0x9DBF are not restored** from UI +0x484/+0x485. Turning split on moves the active side from memory, PMS or QMB state to VFO (`vm_toggle_core`, or state 4 → 1), so after `VS` that side stays in VFO mode instead of returning to the memory.
+  2. **TXW stays on.** 0x20F09 (the `TS` swap flag) and UI +0x483 are not cleared. If TXW was on, the A/B records stay swapped; `TS;` still answers 1, `TS0;` still swaps them back (it does not check split), and `TS1;` is refused because split is off. `key_func_long` tests +0x483 only together with 0x9C5E, so it treats TXW as off, but `displink_build_status` tests +0x483 alone, so the DISPLAY status frame keeps its TXW form (0x2D in place of the `FUN_fff97c74` byte).
+  3. **`FUN_fff9cdb0` is not called.** It pre-fills the 20-sample history 0x20824 of the VFO frequency (the active VFO, or the TX VFO while split) that `FUN_fff9ccd3` checks every 100 ms in `displink_task` (UI +0x6A/+0x6B = "frequency settled"). Without the pre-fill the settled flags drop for up to 2 s after the change **[inference for the visible effect]**.
+  4. `vfo_ab_toggle` itself calls `FUN_fffe3d24` (stop message/keyer playback) and sets the refresh flag +0x40C, so those happen only when the VFO really changes.
+  `split_toggle` turning split off does not swap the TXW records back either; it only clears 0x20F09 **[fact]**.
 
 ### VX
 
