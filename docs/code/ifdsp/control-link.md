@@ -317,6 +317,42 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x7000 |  |  |  | ptr 0x0021C090 | capture block 0 (4 KB, 0x2007E000): word 0 control (bit 0 enable, bit 1 wrap), word 1 count, then up to 1022 32-bit samples; zeroed at DSP boot (0x0021C090); the append helper 0x0021C0E8 has no caller [fact] → unused debug capture [inference] |
 | 0x7800 |  |  |  | ptr 0x0021C090 | capture block 1 (0x2007F000), same layout [fact] |
 
+### Audio routing registers 8, 9, 10 (#77) **[fact]**
+
+`FUN_002249D0` (called by `Thread_Tx_Path` each block) splits the three registers into selector nibbles; `Thread_Rx_Path` and
+`Thread_Tx_Path` then copy one source block into each sink. Reg 8 = `n3 n2 n1 n0`, reg 9 = `n0`, reg 10 = `n1 n0`.
+
+| Selector | Sink (HiFi4 function) | RX path sources | TX path sources |
+|---|---|---|---|
+| reg 8 n0 | `FUN_00224604(1, …)` (output object 1 of 2, 0xC4 bytes each at 0x263A10) | 3, 4, 6 | 1, 2, 5, 7 |
+| reg 8 n1 | `FUN_00224604(0, …)` (output object 0) | 3, 4, 6 | 1, 2, 5, 7 |
+| reg 8 n2 | `FUN_00223734` | 3, 6 | 1, 2 |
+| reg 8 n3 | `spi_fifo_push`: the block stream to the DISPLAY (scope/recorder) | 3, 6 | 0, 1, 2 |
+| reg 9 n0 | `FUN_00225BE8` | — | 1, 2 |
+| reg 10 n1 | `FUN_002255B4` | 5, 6 | 2, 3, 4 |
+| reg 10 n0 | TX input select: 2/3/4 pick the block that enters the TX chain (`memcpy` / generator `FUN_00225264`, else silence); with reg 6 = 10 (a mode) value 1 makes the RX path run an extra copy (source 4) | 1 | 2, 3, 4 |
+
+Source blocks (0x60 bytes = 24 samples): RX 3 = 0x2CAC50, 4 = 0x2CAD10, 6 = 0x2CACB0 (the three outputs of the RX chain around
+`rx_audio_push_block`); TX 0 = 0x2CAAF0, 1 = 0x2CAFB0, 2 = 0x2CAF50, 5 = 0x2CADD0, 7 = 0x2CAEF0. A value with no case in a path
+leaves that sink untouched in that path, so a selector can be "RX only" or "TX only".
+
+MAIN's values ([main/dsp-link.md](../main/dsp-link.md)) decode as:
+
+| MAIN value (reg 8) | When | n3 → DISPLAY stream | n2 → `FUN_00223734` | n1 → out 0 | n0 → out 1 |
+|---|---|---|---|---|---|
+| 0x2031 | DSP default | TX 2 | none | RX 3 | TX 1 |
+| 0x2022 | states 3–7, 10–12 | TX 2 | none | TX 2 | TX 2 |
+| 0x2222 | states 13, 14 | TX 2 | TX 2 | TX 2 | TX 2 |
+| 0x3233 | RX, output select 0x20FCC = A | RX 3 | TX 2 | RX 3 | RX 3 |
+| 0x3263 | RX, output select B | RX 3 | TX 2 | RX 6 | RX 3 |
+
+Both threads run all the time (each is driven by its own DMA), so a selector acts in whichever path has a case for its value. So in RX the DISPLAY stream and both outputs carry RX block 3, and the output-select setting moves output 0 to RX block 6; in TX
+everything carries TX block 2 **[fact for the copies]**. Which physical outputs (codec DAC L/R, USB, rear jack) the two output objects
+and `FUN_00223734` / `FUN_002255B4` / `FUN_00225BE8` feed is not traced, so the meaning of each block stays open.
+
+Regs **0x2000–0x2007** are the per-thread CPU load (`cpu_load_to_regs_2000`, [hifi4.md](hifi4.md)); MAIN never reads them, but `SPDR2000;`
+can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.
+
 ### Cross-check: MAIN writes vs DSP use
 
 - Every register MAIN writes has a DSP default **[fact]**, so the two firmwares agree on the register set.
