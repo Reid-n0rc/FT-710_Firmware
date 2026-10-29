@@ -435,6 +435,15 @@ fff9c454	displink_build_20
 fff9c46d	displink_tx_62	0x62 (0x197 bytes)
 fff9c49a	displink_build_62
 fff9c5b2	displink_tx_start	put sum, mark outstanding, send
+fff98cd3	displink_copy_status	build the 0x97-byte status block and copy it to staging frame bytes 1..0x97 (0x1742) (#179)
+fff98cec	displink_70_msg	0x70 dialog: style 3, no buttons, 22 bytes of ROM text (#179)
+fff98d5b	displink_70_msg2	0x70 dialog: style 1, buttons 4, 44 bytes of ROM text (#179)
+fff98dca	displink_70_query	0x70 dialog: style 3, buttons 4, 22 bytes of ROM text (#179)
+fff973bc	mode_block_byte0	active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) (#179)
+fff9921f	mode_block_byte1	active mode's per-mode block byte +1 (BC bit 7, AGC bits 4-6) (#179)
+fff98727	ui_lamp_set	set/clear one bit of UI +0x34 (status byte 8); lamp/LED meaning is inference (#179)
+fff9c555	displink_62_value	3-character value of alignment item n (cfg 0x4659+n) for frame 0x62 (#179)
+fffe376a	dispreq_e8_result	E8 code actions (+0x48C 1..5), called by dispreq_e8_task (#179)
 fff9c5d8	displink_put_sum	8-bit sum of bytes 0..len-2 into byte len-1
 fff9c60f	displink_check_sum	verify 8-bit sum
 fff9c655	mem_zero	mem_zero(n, ptr)
