@@ -465,6 +465,11 @@ canonical projects).
    `python3 -I tools/signatures_draft.py protos.tsv - tools/ghidra/signatures_display.tsv mismatch.tsv display`
    (or `... signatures_m33.tsv ... m33`); check the export and turn any row that makes it worse into a `skip` row.
 3. More enum uses once T23c's structs exist (per-mode block fields, UI +0x424, the record's mode nibble).
+4. Canonical apply (2026-10-29, parent): done for 30 parameters and 3 returns; 9 of the 11 enum globals failed
+   ("not undefined/plain integer data") because `ApplyStructs.java` had already typed them as fields of `opstate`
+   (0x9DBD..0x9DC8, 0x9AB7) and `ui_state` (0x20F28). Fix: give those struct fields the enum types in `structs_main.h`
+   (ApplyStructs would need to look the enum up under /FT710, so ApplyEnums must create the enums first) and drop the
+   global rows from `enum_uses_main.tsv`.
 
 ## T23g — Readable view (optional)
 - `decomp/<image>/readable/<subsystem>.c`: the same functions grouped by the `docs/code/<image>/` subsystem pages, each
