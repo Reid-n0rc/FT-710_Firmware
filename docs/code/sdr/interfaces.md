@@ -64,6 +64,11 @@ MAIN net `FSK_SHIFT` agrees) **[fact for 14, 30, 32; high-confidence reading for
   D00..D03/FCS_B also owns CCLK ([resources.md](resources.md#io)).
 - A volatile JTAG test bitstream (SRAM only) is planned in [docs/patches/fpga-jtag-hello.md](../../patches/fpga-jtag-hello.md) (T16).
 - `SDR_DBG_IN/OUT` is a second UART ("UART_DBG"), and JTAG (`SDR_TDI/TDO/TMS/TCK`) also goes to header J2001.
+- **Reaching the debug console (#147) [fact: schematic p19].** The MAIN/DSP sheet's "DEBUG UART" box ("For Debug") brings
+  the SDR debug UART out to test points: **TP2025 = UART OUT** (net `SDR_DBG_OUT`, from J2002 pin 47 `UART_DBG_TX` via R2088)
+  and **TP2024 = UART IN** (`SDR_DBG_IN`, to J2002 pin 45 `UART_DBG_RX`). On the FPGA these are UART A, L18 (TX) and M18 (RX),
+  115,200 8N1, 3.3 V bank 14 ([netlist.md 5.3](netlist.md#53-debug-console-uart-a-m18l18-fact-unless-marked)); the RTL is
+  `hdl/sdr/uart_console.v`. Writing registers there changes the radio's SDR state: owner approval rule applies.
 
 ## Data paths
 

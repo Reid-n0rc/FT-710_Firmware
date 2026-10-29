@@ -86,6 +86,7 @@ The `xc7_*` tools need the Project X-Ray checkouts (`~/.local/share/ft710-tools/
 | `xc7_blocks.py` | Block recognition: `clocks`, `io`, `package`, `dsp`, `bram`, `logic` (LUT equations around a cell) | netlist → stdout | T15c |
 | `xc7_netlist_verilog.py` | Structural Verilog + XDC (`verilog`), Yosys/sim primitive models (`prims`, `simprims`), sub-netlists (`slice`) | netlist → `build/sdr/ft710_sdr.{v,xdc}` | T15d |
 | `xc7_probe_netlist.py` | Adds a `probe` output port to the netlist to watch internal nets in Verilator | netlist + `.v` → probed `.v` | T15e |
+| `sdr_console_check.py` | Plays console lines into the whole-netlist model and the console RTL (`hdl/sdr/uart_console.v`, Icarus) and compares the UART A bytes; groups (`---`) run as parallel netlist processes (`--jobs`, default 12), netlist bytes cached per group in `build/sdr/console_cache/` | line file → PASS/FAIL | #147 |
 | `sdr_uart_sim.py` | Drives the Verilator model with MAIN-style UART frames (`b:r0000`) or console text (`a:=...`); `--bin` picks the model | `build/sdr/vl/obj_full/Vft710_sdr` → replies | T15e |
 | `sdr_cosim_check.py` | Compares netlist and RTL TX edges in the co-simulation | co-sim output → stdout | T15e |
 

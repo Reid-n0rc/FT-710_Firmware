@@ -10,6 +10,8 @@ in `build/` (never committed).
 | `uart_rx.v` | `ft710_uart_rx`: 115,200 baud 8N1 receiver at 125 MHz (bit timer 1,086, sample at 542, 10-stage shift register, byte + strobe) | **matches the netlist cycle by cycle** (`tb_uart_rx.v -DSTRUCT`) |
 | `uart_link.v` | `ft710_uart_link`: **MAIN's register link** (UART B, V12 in / U12 out = MAIN's SCI5): 11-character window, `r`/`w` frames with checksum, read reply / ACK / `?`, register-bus port | **matches the whole netlist cycle by cycle on the TX pin** (co-simulation, below) |
 | `uart_tx.v` | `ft710_uart_tx`: generic transmitter with the console's bit timer (shift strobe at count 32) | loopback only; the link has its own transmitter in `uart_link.v` |
+| `uart_console.v`, `uart_console_echo.vh` | `ft710_uart_console`: **UART A debug console** (prompt `[IF]>`, echo, `r`/`w` commands, `Err`), byte-level (#147) | **same bytes as the whole netlist** for `sim/console_lines.txt` (`tools/sdr_console_check.py`); not cycle-accurate; BS/`x` open (#204) |
+| `tb_uart_console.v` | console testbench: plays a line file, prints the TX bytes, small register model | used by `tools/sdr_console_check.py` |
 | `uart_charclass.v` | `ft710_uart_charclass`: character classes of the parsers (hex digits, `r`/`w`/`x`, `,`/space, CR/LF/BS) | sets taken from the netlist LUTs |
 | `tb_uart_rx.v` | RX testbench: MAIN-style frames, edge bytes, +/-2 % baud error; with `-DSTRUCT` also against the netlist slice | PASS, 0 mismatches in 260,417 clocks |
 | `tb_uart_tx.v` | TX looped back into RX | PASS |
@@ -39,7 +41,7 @@ in `build/` (never committed).
   (`?`, line not frame-shaped), +45/+47 (read-shaped, first/second sum digit wrong), +49/+51 (write-shaped). Reply bytes
   are start + 8 data + 2 stop bits plus 3 clocks (11,949 clocks).
 
-The debug console on UART A (M18/L18) is described in netlist.md section 5.3; it has no RTL yet.
+The debug console on UART A (M18/L18) is described in netlist.md section 5.3; its byte-level RTL is `uart_console.v` (#147).
 
 ## Running the tests
 
