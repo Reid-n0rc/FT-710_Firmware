@@ -166,8 +166,13 @@ flowchart LR
   line to the RT685 (J2002 pin 22) **[guess]**. Both MMCM resets come from the global reset flip-flop.
   *T19h note:* the RT685's M33 code is built for CLKIN = `DSP_CLK` = **18.432 MHz** **[fact, [ifdsp/m33-platform.md](../ifdsp/m33-platform.md)]**,
   which 28.17 MHz does not match. If MMCM_X0Y0's feedback multiplier were 22.25 instead of 34 (same DIVCLK 5 and CLKOUT0 51.125), the
-  chain would give 18.4323 MHz (18 ppm off) with a legal 942 MHz VCO **[guess]**; until the divider fields are re-checked, whether P14
-  is `DSP_CLK` stays open ([system.md O8](../system.md#8-contradictions-and-open-questions)).
+  chain would give 18.4323 MHz (18 ppm off) with a legal 942 MHz VCO **[guess]**.
+  *#67 re-check:* the reading is right. The 40-bit `LKTABLE` of both MMCMs is `1111111111 0100010011 1111101001 0000000001`, which is
+  XAPP888's `mmcm_lock_lookup` value for M = 34..36 (M = 22 would be `…0111000010…`); Vivado fills it from the feedback multiplier, so
+  M = 22.25 is ruled out. The FASM counter bits: top (X8Y113) FB 18+18 = 36, DIVCLK 2+3 (edge) = 5, CLKOUT0 2+2 + frac 2/8 = 4.25; bottom
+  (X8Y9) FB 17+17 = 34, DIVCLK 5, CLKOUT0 26+25 (edge) + frac 1/8 = 51.125 **[fact]**. So P14 = 125 × 36/5/4.25 × 34/5/51.125 =
+  **28.166 MHz**, and the bottom VCO sits at 1,440 MHz, the -2 grade's maximum **[inference: speed grade]**. Whether P14 is `DSP_CLK`
+  stays open ([system.md O8](../system.md#8-contradictions-and-open-questions)).
 - **Bank 34 output clock** **[fact for the wiring]**. BUFR_X1Y1 clocks the 17 ODDRs and 83 flip-flops next to bank 34.
   Its input is a CMT "PERF" clock whose source mux has no segbits, so it cannot be decoded.
 - **Global reset** **[fact]**. `SLICE_X10Y76/BFF` (INIT 1) is released by a 3-bit counter in `SLICE_X11Y59`. The second
