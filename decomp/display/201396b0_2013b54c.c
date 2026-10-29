@@ -1608,14 +1608,10 @@ undefined4 FUN_2013b524(void)
 
 // ===== FUN_2013b538 @ 2013b538 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20101db4) */
-
-void FUN_2013b538(int param_1)
+void FUN_2013b538(undefined4 param_1)
 
 {
-  if (param_1 == 0) {
-    DAT_fcfe3120 = 0x4000400;
-  }
+  gpio_usb0_en(param_1,1);
   return;
 }
 

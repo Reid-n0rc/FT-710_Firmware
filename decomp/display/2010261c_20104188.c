@@ -61,49 +61,23 @@ void backlight_set_pct(int param_1)
 
 /* thunk: backlight_set_pct */
 
-void backlight_set(int param_1)
+void backlight_set(undefined4 param_1)
 
 {
-  int iVar1;
-  
-  if (param_1 < 0) {
-    param_1 = 0;
-  }
-  else if (99 < param_1) {
-    param_1 = 100;
-  }
-  iVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 0x140) {
-    iVar1 = 0x13f;
-  }
-  DAT_fcff022a = (short)iVar1 + -1;
+  backlight_set_pct(param_1,1);
   return;
 }
 
 
 // ===== backlight_init @ 201026e8 (24 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x201026a0) */
-/* WARNING: Removing unreachable block (ram,0x201026ac) */
 /* backlight_pwm_init + 60 % */
 
 void backlight_init(void)
 
 {
-  int iVar1;
-  undefined4 extraout_r2;
-  undefined4 extraout_r3;
-  undefined4 unaff_r4;
-  undefined4 unaff_lr;
-  
   backlight_pwm_init();
-  iVar1 = div10_round(0x4b00,0,extraout_r2,extraout_r3,unaff_r4,unaff_lr);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 0x140) {
-    iVar1 = 0x13f;
-  }
-  DAT_fcff022a = (short)iVar1 + -1;
+  backlight_set_pct(0x3c,1);
   return;
 }
 
