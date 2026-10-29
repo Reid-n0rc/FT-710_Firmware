@@ -190,9 +190,24 @@ flowchart LR
 | 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B = MAIN's UART5** register link: same receiver, 11-character frame window (3.4, 5.2) | [fact] |
 | 14 | N14, T18, R18 in/out | Each has an output FDPE (INIT 1, MMCM domain) enabled from a LUT, and an input synchronized in the 125 MHz domain: open-drain-style lines, I2C or similar | [guess] |
 | 14 | P14 out | forwarded MMCM clock (`DSP_CLK`?) | [guess] |
-| 14 | 9 more inputs, 13 more outputs (3 tied low, 1 tied high) | control lines (TX, SEND, FSK, OVF, DET, I2S), not yet matched to J2002 pins | open |
+| 14 | **U16 out, V17 out, V16 out** | **I2S-style serial port, running from reset** (#90, simulation): U16 toggles every 2 cycles (31.25 MHz bit clock), V17 every 128 cycles (frame, 64 bit clocks = 2 × 32-bit slots, 125 MHz / 256 = 488.28 kHz), V16 data from clock 65,541. Fits J2002 24 `TX_CLKA` / 26 `TX_FRMA` (the shared RX/TX audio clock and frame) and 33 `RX_DATA`, the RX IQ/audio stream to the RT685 | [fact] behaviour, [inference] J2002 pins |
+| 14 | **R16 out (clock), P17 out (select), N16 out (data)** | **16-bit SPI write sequence at power-up** (14 words, clocks 155–13,979, same on either edge): `0002 0000` (bit 1 of reg 0 set then cleared: soft reset), then reg 0x10 = C0, 11 = 00, 12 = 2D, 13 = 10, 14 = 20, 16 = 00, 17 = 00, 18 = 00, 19 = 00, 1A = 80, 1B = 03, 1D = 00 (8-bit address + 8-bit data). A 3.3 V chip on the module configured once; which part is open | [fact] words, open part |
+| 14 | T9, U17, V15, T16, T15, M17 out; N15 = 1; L16, F13 one edge after reset | idle in 4 M clocks after reset, also after MAIN's boot frames and a scope set-up (0x15, 0x24, 0x20/0x21, 0x22, 0x23, 0x26, 0x27): the scope SPI (`FFT_CLK/FRM/DAT`, J2002 23/25/27) is among them but did not start in 32 ms of simulation; it probably needs a trigger the harness does not give (a DISPLAY input or a longer frame period) | open |
 | 15 (1.8 V) | B14, B13 out and C14 in/out, all driven from one slice (`SLICE_X42Y80`) | **3-wire SPI master** (clock, select, bidirectional data) at 1.8 V, the usual ADC configuration port | [inference] |
+| 15 | B13 = SCK, B14 = CS, C14 = SDIO (data from `SLICE_X42Y80/A5FF`) | **ADC configuration at power-up** (#90, probed simulation): 27 frames of 24 bits, SCK period 8 cycles (15.6 MHz), 72-cycle gaps, MSB first, sampled on the falling edge: `000020 002001 007918 0080AD 00E11A 0014E7 0015C4 0012C0 001200 005E00 005F08 002800 002340 002501 002500 802500 802400 002764 003F20 004020 004330 003001 0018F9 001901 001AF9 001B01 000100`. Bit 23 set on the two `0x025`/`0x024` frames = reads: an Analog Devices-style 24-bit frame (R/W, length, 13-bit address, 8-bit data). The register map is not identified, so the ADC part stays open | [fact] frames, [inference] format |
 | 15 | B18, A14, A13, A16 in; D17, F13 out; E17 = 0, D14 = 1 | 1.8 V control and status lines (D17 is in the undecoded BUFGCTRL_X0Y1 domain) | open |
+
+**STARTUPE2 / CCLK (#93) [fact, routing].** prjxray cannot decode the STARTUPE2 site (`CFG_CENTER_MID` has routing bits only), and
+`tools/xc7_netlist_verilog.py` writes no STARTUPE2 cell, but the routing into it is visible. Inside `CFG_CENTER_MID_X46Y32` the wire
+`CFG_CENTER_STARTUP_USRCCLKO` has one source, `CFG_CENTER_CLK1_7` (a PIP without configuration bits), which runs through
+`VFRAME_X47Y29.VFRAME_CLK1` and `INT_INTERFACE_L_X18Y27.INT_INTERFACE_CLK1` to `INT_L_X18Y27.CLK_L1`. The FASM enables
+`INT_L_X18Y27.CLK_L1.FAN_BOUNCE5`, and following the enabled PIPs back (`FAN_ALT5` ← `SL1END2` ← SS6 ×3 from Y46 ← SE6 ×4 from
+`INT_L_X4Y62`) ends at `CLBLL_L_X4Y62.CLBLL_LOGIC_OUTS6` = `CLBLL_LL_CQ` = **`SLICE_X4Y62/CFF`**. That FDCE is clocked by the main
+fabric clock (`BUFHCE_X0Y22`, 4,233 loads), its next state is a LUT6 of its own Q and state flops at `SLICE_X1Y61` and
+`SLICE_X4Y63`, and its Q has **no other load in the fabric** (only its own LUT): it is the SPI clock of the fabric flash master,
+and its only way out is STARTUPE2 `USRCCLKO` → CCLK. So the design clocks its own configuration flash (D00..D03, FCS_B above) through
+STARTUPE2, as T11c/T16 inferred. Reproduce: walk back from `CFG_CENTER_STARTUP_USRCCLKO` over `tileconn.json` and the tile-type
+PIPs to an INT tile, then over the FASM's `INT_*` PIP lines, resolving each node across tiles.
 
 The J2002 signals in [interfaces.md](interfaces.md) still have to be matched to these pins one by one. The two UARTs
 and the flash pins are certain. UART B is MAIN's UART5 and UART A the debug UART (`UART_DBG`), shown by simulating the
@@ -392,8 +407,12 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 ### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
 
 - After reset it prints the prompt **`[IF]>`** (no CR/LF before it).
-- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). `#` comes back as
-  0x06 and the line then fails with `Err` **[fact, meaning unknown]**. LF is echoed and does nothing.
+- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). LF is echoed and does nothing.
+- **`#` and BS are hex digits** (#89, `hdl/sdr/sim/pins_main.cpp` with `CONSOLE=`) **[fact]**: the console's hex decoder reads
+  `#` (0x23) as **E** and BS (0x08) as **B**. `#` is echoed as 0x06, BS as `B`. So `r 000#` reads register 0x0E (`1200`),
+  `r 000<BS>` reads 0x0B (`0058`), `w 0015 12<BS>4` stores 0x12B4 (read back as `12B4`), and BS does not edit the line. The
+  earlier "`#` then `Err`" came from lines whose digit count the extra character broke; `r ####` reads 0xEEEE (unmapped,
+  `CCCC`). Unmapped registers read `CCCC`.
 - On CR: `r AAAA` prints CR LF `VVVV ` CR LF `[IF]>`; `w AAAA VVVV` or `w AAAA,VVVV` writes silently and prints CR LF
   `[IF]>`. Exactly four hex digits and one separator (space or comma) are required; anything else (`r0`, `r 15`,
   `r  0001`, trailing space, `0x` prefixes, two operands for `r`) prints `Err` CR LF `[IF]>`.
@@ -402,9 +421,11 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 - **`x`**: accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
   `x 0000,0000`, `x 0000 0000 0000`, `x0015`, also after `w 0037 BCC5`) gives `Err`, as on the link. So `x` is in the
   character tables of both engines but has **no reachable function** in this bitstream with the other inputs at 0
-  **[fact for the tried forms, inference that it is unused or gated by an input pin]**.
-- BS echo is garbled in simulation (overlapping frames on the TX line) **[open]**: a console quirk or a modelling
-  gap of this harness; not followed up.
+  **[fact for the tried forms]**. **Not gated by an input pin** (#89): with each of the 12 unassigned inputs (U13, T13, V10,
+  T11, T14, R15, P15, L15, B18, A14, A13, A16) held high in turn, and with all of them high, `x` and `x 0000` still give `Err`
+  **[fact, simulation]**; so `x` is unused in this bitstream, or needs a register state no tried sequence reaches **[inference]**.
+- The "garbled BS echo" was the echo `B` overlapping the next frame in the old harness; with a gap between characters
+  it is a clean `B` (above).
 - The console's transmit cone also drives the three open-drain-style pins N14, T18, R18 (shared tri-state enable)
   **[fact for the wiring, function open]**.
 
@@ -420,6 +441,7 @@ read-back) and a CR during a running reply.
 
 ### 5.5 Remaining pins
 
-Not done in T15e: matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3).
+Not done in T15e: matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3). #90 (2026-10-28) found the I2S port (U16/V17/V16) and decoded the two power-up configuration transfers (R16/P17/N16 and
+B13/B14/C14) with `hdl/sdr/sim/pins_main.cpp`; the scope SPI did not start in simulation (table in 3.3).
 The whole-design model can now do it by driving candidate input pins and watching outputs.
 

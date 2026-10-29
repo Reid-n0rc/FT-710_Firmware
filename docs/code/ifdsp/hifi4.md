@@ -112,7 +112,7 @@ flowchart LR
 
 ### I2S on FLEXCOMM2–5 (DMA1)
 
-`create_rx_tx_path_threads` (0x00225E40) **[fact]**: `INPUTMUX_AttachSignal(INPUTMUX, 18, 0x14000014)`, `CLOCK_AttachClk`
+`create_rx_tx_path_threads` (0x00225E40) **[fact]**: `INPUTMUX_AttachSignal(INPUTMUX, 18, 0x14000014)` (`DSP_INT_SEL[18]` ← DMAC1, source 20; see [ipc.md](ipc.md)), `CLOCK_AttachClk`
 for FC2–FC5 (0x80002548/68/88/A8) and one more clock (0x80001740), four clock/reset calls (`FUN_00213910` 0x30A–0x30D),
 writes to 0x40021E00 (+0x210/0x24C/0x250/0x280/0x284, I2S signal sharing / clock setup **[inference]**), DMA1 IRQ 23 via
 `xos_register_interrupt_handler(23, DMA_IRQHandle, DMA1)` + `xos_interrupt_enable(23)`, then four `i2s_config_t`
@@ -154,7 +154,7 @@ so either `Thread_Spi` resamples to 16 kHz or the WAV header is nominal. The FC1
 
 ### SPI on FLEXCOMM1 (DMA0)
 
-`fc1_spi_dma_init` (0x00220FD0) **[fact]**: `INPUTMUX_AttachSignal(17, 0x14000013)`, DMA0 IRQ 22, `CLOCK_AttachClk(0x80002528)`,
+`fc1_spi_dma_init` (0x00220FD0) **[fact]**: `INPUTMUX_AttachSignal(17, 0x14000013)` (`DSP_INT_SEL[17]` ← DMAC0, source 19), DMA0 IRQ 22, `CLOCK_AttachClk(0x80002528)`,
 `SPI_MasterGetDefaultConfig`, `SPI_MasterInit(FC1 0x40107000, cfg, CLOCK_GetFlexCommClkFreq(1))` with baud **1 000 000**, a
 second field = 1 (polarity, **[inference]**), SSEL 0; DMA0 ch3 (TX, prio 3) and ch2 (RX, prio 2). The DSP is the **SPI master**
 towards the DISPLAY CPU (FFT/REC/PLAY on the schematic) **[fact: MasterInit]**. FC1 RX/TX buffers 0x200607E0 / 0x200619E0 (T12a).
