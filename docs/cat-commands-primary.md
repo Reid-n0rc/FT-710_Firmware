@@ -609,7 +609,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Selects/recalls a memory channel into the selected VFO (memory state) [fact]
 - **Globals / callees:** R/W 0x60C9,0x60CA,0x9DBD,0x9DBE,0x9DBF,0x9DCE[0x5A],0x9E28[0x5A], record `vfo_rec_ptr`(0) (0x5A), table 0x6150; R 0x20B3D,0x9AF4; callees `memch_valid`,`memch_dest_blocked`,FUN_fff9c2cd,eeprom_save_memch,FUN_fffede1d,toupper_inplace
 - **Risk:** medium: changes current VFO contents (persisted), no TX
-- **Resolved in part (#157):** `vfo_rec_ptr`/`vfo_mode`(0) return the **active** VFO (0x9DBD: 0 = A record 0x9D09, 1 = B 0x9D63); with argument 1 they return the **TX** VFO, i.e. the other VFO while split (0x9C5E) is on. `vfo_mode` returns 2 (CW-L) during tune/EXT-PA cycles (0x20F0C, 0x20B40, 0x20B41, 0x20B25) **[fact, current decompile]**. The `memch_valid` test is still open.
+- **Resolved in part (#157):** `vfo_rec_ptr`/`vfo_mode`(0) return the **active** VFO (0x9DBD: 0 = A record 0x9D09, 1 = B 0x9D63); with argument 1 they return the **TX** VFO, i.e. the other VFO while split (0x9C5E) is on. `vfo_mode` returns 2 (CW-L) during tune/EXT-PA cycles (0x20F0C, 0x20B40, 0x20B41, 0x20B25) **[fact, current decompile]**.
+- **Resolved (#173):** `memch_valid`(ch, &flagptr) @ fffc2e01: for ch < 117 (001–099 and P1L–P9U) it is true only if the channel-written flag 0x60CB[ch] is 1, so `MC` on an **empty** channel or PMS pair answers `?;`; for 117..132 (501–515, EMG) it is `!memch_dest_blocked`(ch); ch 133 always passes **[fact]**. In `cat_MC` the 117..131 path has already checked `FUN_fff9c2cd` (destination 0x315B/0x50E2/0xA4C5/0xD950 has 5 MHz channels) and `memch_dest_blocked` (@ fffc2e8d: 508–515 and EMG blocked for 0xA4C5/0xA983/0xB5A7/0xD950), and EMG (132) needs EMERGENCY FREQ TX (0x9AF4, `EX030406`) on, so for those channels the `memch_valid` call is a repeat; the used flag is not consulted for them **[fact]**. Channel 133 cannot be reached from `MC` (the name table ends at EMG = 132) **[fact]**.
 
 ### MD
 
@@ -630,10 +631,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** MGnnn; nnn=per-mode level byte, 3-digit dec 000-100
 - **Set parameters (firmware):** P1 nnn = 3 dec digits [2..4], each must be '0'..'9' and value <=100 else error; stored as byte into the per-mode variable; also sets 0x20F10=1 and (if 0x9ACE==0) notifies display/panel with param id 0x25 (FUN_fffc8cbb/8d8c) [inference]
 - **Class:** read+set
-- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=`vfo_mode`(0): m=0,1->0x9BEC; m=2,3->0x9BEE; m=4,6->0x9BEF; m=5,14->0x9BED; any other m -> error '?;' [fact from C, but decompiler removed 7 unreachable blocks]. Mode m is an index into cat_mode_codes @fff806d0.
+- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=`vfo_mode`(0): m=0,1 (SSB)->0x9BEC; m=4,5 (AM)->0x9BEE; m=6,7,10,11 (FM, DATA-FM)->0x9BEF; m=8,9,14 (DATA-L/U, PSK)->0x9BED; m=2,3 (CW) and 12,13 (RTTY) -> '?;' [fact; corrected in #173, the earlier mapping misread the branch tree]. Mode m is the internal mode index (LSB, USB, CW-L, CW-U, AM, AM-N, FM, FM-N, DATA-L, DATA-U, DATA-FM, D-FM-N, RTTY-L, RTTY-U, PSK).
 - **Globals / callees:** 0x9BEC-0x9BEF (per-mode level), 0x9ACE, 0x20F10, 0x20CC6=0x25; callees `vfo_mode` (current VFO mode), FUN_fffc8cbb, FUN_fffc8d8c
 - **Risk:** medium - TX-related audio level, RAM only in handler (no EEPROM call)
-- **Resolved in part (#157):** the TX audio code `FUN_fffb5d68` uses MIC GAIN 0x9BEC for SSB (0/1), 0x9BED for DATA-L/U and PSK (8/9/14), 0x9BEE for AM (4/5), 0x9BEF for FM and DATA-FM (6/7/10/11) **[fact]**; that `cat_MG`'s branch tree uses the same split is **[inference]**.
+- **Resolved in part (#157):** the TX audio code `FUN_fffb5d68` uses MIC GAIN 0x9BEC for SSB (0/1), 0x9BED for DATA-L/U and PSK (8/9/14), 0x9BEE for AM (4/5), 0x9BEF for FM and DATA-FM (6/7/10/11) **[fact]**; `cat_MG`'s branch tree uses the same split is now **[fact]** (#173): in `cat_MG` @ fffaba64, m = 14 or 8/9 → 0x9BED, 4/5 → 0x9BEE, 6/7 and 10/11 → 0x9BEF, 0/1 → 0x9BEC, CW and RTTY → `?;`. Both read `vfo_mode`(0), the active VFO, so in split the CAT value is the active VFO's mode's gain, the same one the TX audio code uses **[fact]**.
 
 ### ML
 
