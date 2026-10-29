@@ -208,7 +208,7 @@ The sub-command letter is at position 2. The read/write letter is at position 3,
 | `SPIR;` → `SPIR` + 12×3 hex + `;` (41 chars) | read | `cat_SP_adc_dump` 0xFFFA4EED | Raw 12-bit ADC results from 0x20B04..0x20B16 in the order 0, AN001, AN002, AN003, 0, AN005, 0, AN007, AN115, AN117, AN108, AN109 (S12AD/S12AD1). Low risk. Seen on the radio: 41 chars, the three constant-0 fields are 0 ([radio checks](#radio-checks)). |
 | `SPR<aH><aL><sum>;` (binary, 7 bytes) | read | `cat_SP_eeprom_byte` 0xFFFA520B | Reads one **EEPROM** byte at 16-bit address aH:aL and answers `SPR aH aL <byte> <sum>;` (8 bytes; sum over the first 6). Upper-case `R` only. The request has no data byte: the receiver ends an `SPR` frame after 7 bytes, so an 8-byte request is split and answered `?;?;`. **[fact, radio 2026-10-28]**: `SPR 01 0F` → `50`, `SPR 01 10` → `E2` (the region code), about 5 ms per read. |
 | `SPW<aH><aL><byte><sum>;` (binary) | set | same | **Writes one EEPROM byte** and the RAM mirror 0x464F[addr]. Upper-case `W` only. **High risk** (raw EEPROM write, no bounds). |
-| `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `FUN_fffbff93` (a re-apply) 500 ms later. `R` also sets 0x20CE2 = idx-1 and calls `FUN_fffbb567`, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. `cfg105` is the factory alignment / calibration table **[inference]** ([code/main/eeprom.md](code/main/eeprom.md)); entries from index 70 (0x469E..0x4734, 15 bytes per band) hold the per-band TX power calibration behind SDR register 0x25 **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk** for `W`/`S`. |
+| `SPN{R\|W\|S}<iH><iL>[<byte>]<sum>;` (binary) | read / set | `cat_SP_table` 0xFFFA50F9 | Index 1..0x105 into the 261-byte table `cfg105` @ 0x4659 (EEPROM 0x000A..0x010E). `W` sets an entry in RAM. `S` schedules `key_dsp_press` 0xFFFBFF93 500 ms later: a DSP key press, which in `ZZPE071000` alignment mode stores the measurement for the current item (`align_store`, #76). `R` also sets 0x20CE2 = idx-1 and calls `align_load_preset` 0xFFFBB567, which loads ROM preset idx-1 (12-byte records at 0xFFF88CD4) into the active VFO. Answer: `SPN <byte> <sum>;`. So `SPNR` + `SPNS` let a PC step through the factory alignment. `cfg105` is the factory calibration table **[fact: the alignment store handlers write it, #76]** ([code/main/eeprom.md](code/main/eeprom.md)); entries from index 70 (0x469E..0x4734, 15 bytes per band) hold the per-band TX power calibration behind SDR register 0x25 **[inference]** ([code/main/sdr-link.md](code/main/sdr-link.md)). **High risk** for `W`/`S`. |
 | `SPM...<sum>;` (binary) | read | `cat_SP_meters` 0xFFFA5284 | Answers `SPM` + 8 binary bytes (0x1204A, 0x12048/0x1204B, and four more meter getters 0xFFFB6E03..0xFFFB6E98) + 3 zero bytes + sum + `;` (16 bytes). These are meter readings **[inference]**. |
 | `SPAWE<sum>;` (binary) | set | `eeprom_save_cfg105` 0xFFFB0532 | Writes the whole 0x4659 table to EEPROM 0x000A. **High risk.** |
 
@@ -287,9 +287,21 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 - **Format:** positions 2–3 must be `PE`. Positions 4–7 must be hex `0710`, the model number. xx (hex) selects the action:
   - **`99`:** `settings_defaults(1)`, which loads ROM defaults including the 0x4659 table and destination 0x8043. Then it writes the 0x105 table (`eeprom_save_cfg105`) and the destination (`eeprom_save_dest`) to EEPROM, and sets the restart request 0x20F4B = 1, 0x20B39 = 0x11. **This is a full factory reset.**
   - **`01`:** `settings_defaults(0)` plus the restart request. This resets VFO, memory and menu RAM to defaults (a "reset" without the 0x105 table).
-  - **`00`:** sets 0x20BBE = 1. In that mode `key_event_filter` refuses key codes < 8 and 0x16..0x19. It is cleared by `EO`. The purpose of this mode is not known **[guess: test/demo or lock mode]**.
+  - **`00`:** sets 0x20BBE = 1, the **factory alignment mode** (#76) **[fact for the mechanics, inference for the name]**. In that mode:
+    - `tx_freq_allowed` returns true for every frequency: **the TX band limits are off**.
+    - `key_event_filter` refuses key codes < 8 and 0x16..0x19. FUNC only beeps.
+    - The DSP key (`key_dsp_press` → `align_store`) runs the store handler 0xFFF89910[item] for the current item 0x20CE2 (0..0x104, one per byte of
+      the 261-byte calibration table at RAM 0x4659 = EEPROM 0x000A). The handlers write a measurement into the table: UI-state ADC fields
+      0x20B06/0x20B08/0x20B0C, `dsp_signal_level`, or a DSP status read; 191 of the 261 handlers are empty.
+    - `align_load_preset` sets the radio up for each item from the 12-byte preset at 0xFFF88CD4[item]: VFO A or B, band memory, mode bits,
+      an optional frequency (u32 at +8), and for items 0x45..0xDA a TX power level (100, 50, 20, 10, … by `(item − 0x45) mod 15`).
+    - Powering off in this mode does not save the operating state (`io_task`).
+    - It is cleared by `EO` or a restart.
 - **Errors:** anything else answers `?;`. No reply on success.
-- **Restart request:** 0x20B39 = 0x10 is what `PS0` uses, so 0x11 is a related power-off/restart code **[inference]**.
+- **Restart request** **[fact]** (#76): 0x20F4B = UI-state +0x447 and 0x20B39 = +0x35. With 0x20F4B = 1, `displink_tx_schedule` calls
+  `power_down_save`. That sends frame `0x7F` with sub = code & 0x7F and the 8-byte key, so the DISPLAY freezes its GUI. Then it saves the EEPROM
+  and calls `sw_reset`. Code **0x10** (`PS0`) stores 0x9DC5 = 0, so after the reset the radio stays off. Code **0x11** (ZZ, JP, destination
+  change) stores 0x9DC5 = 1, so it comes back on: a restart. Code **0x90** (supply undervoltage) only waits 2 s before the reset.
 
 <a id="ext-ve"></a>
 ### VE — firmware version (documented)

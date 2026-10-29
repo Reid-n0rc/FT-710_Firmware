@@ -55,6 +55,8 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   `tools/main_menu_table.py --names`; SD CARD operations named (`sd_menu_task`, #65). **3,787 functions**, 0 failures, 0 undefined
   non-0xFF bytes; warnings 1,226 → 1,247 (unreachable blocks in the new callbacks); functions with `in_` variables 12 → 18 (six
   PRMTRC EQ `on_draw` callbacks whose shared helper takes a fifth, stacked argument, shown as `in_R15`); committed on purpose.
+- #76 (2026-10-29): `entries_main.tsv` also creates the 6 distinct store handlers of the `ZZPE071000` alignment table 0xFFF89910 (261
+  entries); 3,793 functions, warnings 1,247 → 1,249.
 - Known decompiler artifacts **[fact]**:
   - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
     `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
@@ -74,12 +76,12 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 3,787 |
+| Functions exported (non-thunk) | 3,793 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,247 |
-| Functions with a warning | 370 |
+| Decompiler warnings (all kinds) | 1,249 |
+| Functions with a warning | 371 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 1,200 |
+| "Removing unreachable block" | 1,202 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
 | Functions with `in_*` variables | 18 |
@@ -93,7 +95,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | warning: Do nothing block with infinite loop | 2 |
 | warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
 | warning: Ignoring partial resolution of indirect | 16 |
-| warning: Removing unreachable block (#) | 1,200 |
+| warning: Removing unreachable block (#) | 1,202 |
 <!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]

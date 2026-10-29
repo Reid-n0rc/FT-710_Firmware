@@ -19,6 +19,11 @@ All addresses are MAIN ROM/RAM addresses, and the tags follow AGENTS.md: **[fact
 | 3 (any other id) | SCI2 | 0xCC70 | TUNER/LINEAR jack, 5 V TTL | CAT-3 **[inference]**. The manual says the TUNER/LINEAR jack is CAT-3 when it is enabled in the menu. |
 
 - **Command queue.** `cat_rx_complete` copies every received frame shorter than 0x67 bytes into a **60-slot ring** at 0x1E14C. Each slot is 0x6A bytes: `+0` port id, `+2` length (u16), `+4` text. The head index is 0x11FEC and the tail index is 0x11FEB. **[fact]**
+- **Framing** (`cat_rx_byte_hook` 0xFFFB1DAD, called from the SCI0/2/3 receive ISRs for every byte) **[fact]** (#76). A frame ends at `;`
+  unless its first four bytes fix the length: `SPR` → 7, `SPW` → 8, `SPN` + `W` → 9 (other `SPN`/`SPn` → 8), `E9` → **0x29B2 = 10,674
+  bytes**. So a `;` inside the `E9` binary data does not end the frame; only the byte count does. Each byte restarts an inter-byte timer
+  from the port's CAT TIME OUT TIMER setting (0x9ABA for the USB-side port, or 0x20B59 when 0x9DC6 is set; 0x9ABD, 0x9ABF for the others):
+  10, 100, 1000 or 3000 ms. If it expires mid-frame, the partial frame is dropped and the new byte starts a new one.
 - **Fast path for E1/E9.** Frames that start with `E1`/`e1`/`E9`/`e9` bypass the ring. They go into a single-slot buffer at 0x1B78C: flag, port 0x1B78D, length 0x1B78E, data 0x1B790. This path exists for the 10 kB binary `E9` restore frame. **[fact]**
 - **Main-loop parse.** `cat_parse` @ 0xFFFA347C runs once per pass of `main_loop`, and from the power-off loop in `app_main`. Each call parses at most one ring slot, or else the E9 slot, and at most one reply is sent per call. **[fact]**
 - **Reply buffer and error reply.** Every reply is built in place at **0x1C8E** (`cat_reply`). The length goes in 0x1B788 (`cat_reply_len`), and a length of 0 means no reply. Errors set **0x464A** (`cat_error`), and the parser then replaces the reply with `?;` (`cat_reply_error` @ 0xFFFB0166). There is no other error code and no "busy" reply. **[fact]**
@@ -149,7 +154,7 @@ Binary SP checksum (corrected in T10e/T17) **[fact]** (disassembly at 0xFFFA3867
 | 0xFFFA4E8F | `cat_SP_dev4_reg` | SPD | The same, through `dsp_reg_access` to the IF-DSP register file **[fact]** ([dsp-link.md](dsp-link.md), [../ifdsp/control-link.md](../ifdsp/control-link.md)) |
 | 0xFFFA4EED | `cat_SP_adc_dump` | SPIR | 12 × 3 hex digits of ADC results, in the order AN000..AN007 (AN000, AN004 and AN006 reported as 0), AN115, AN117, AN108, AN109 **[fact]** ([peripherals.md](peripherals.md#the-12-spir-fields)) |
 | 0xFFFA520B | `cat_SP_eeprom_byte` | SPR/SPW | Byte read/write at a 16-bit EEPROM address. The write also updates the RAM mirror at 0x464F[addr] **[fact]** |
-| 0xFFFA50F9 | `cat_SP_table` | SPN | Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `FUN_fffbff93` after 500 ms, `R` reads the entry and loads preset idx-1 (`FUN_fffbb567`) **[fact]**. `cfg105` is the calibration table **[inference]** ([eeprom.md](eeprom.md)); entries from index 70 (0x469E..) hold the per-band TX power calibration used for SDR register 0x25 **[inference]** ([sdr-link.md](sdr-link.md)) |
+| 0xFFFA50F9 | `cat_SP_table` | SPN | Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `key_dsp_press` after 500 ms (in alignment mode: `align_store`), `R` reads the entry and loads preset idx-1 (`align_load_preset`) **[fact]**. `cfg105` is the calibration table **[fact, #76]** ([eeprom.md](eeprom.md)); entries from index 70 (0x469E..) hold the per-band TX power calibration used for SDR register 0x25 **[inference]** ([sdr-link.md](sdr-link.md)) |
 | 0xFFFA5284 | `cat_SP_meters` | SPM | 8 binary bytes: meter values 0x1204A, 0x12048/0x1204B, … **[fact]** for the sources, **[inference]** that they are meters |
 | 0xFFFB0532 | `eeprom_save_cfg105` | [eeprom.md](eeprom.md) | `eeprom_write(0x000A, 0x4659, 0x105)` **[fact]** |
 | 0xFFFB0544 | `eeprom_save_dest` | [eeprom.md](eeprom.md) | `eeprom_write(0x010F, 0x475E, 3)`; holds the destination code **[fact]** |
@@ -183,7 +188,7 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x464B | u8 | `cat_spn_save_pending` | set by `SPNS`; `cat_parse` runs `FUN_fffbff93` when timer 0x32 expires **[fact]** |
 | 0x464C | u8 | `cat_port` | port id of the command being handled **[fact]** |
 | 0x464F | 10 | `eeprom_hdr` | RAM mirror of EEPROM 0x0000..0x0009. `eeprom_hdr_update` increments a 32-bit counter in it on every save **[fact]** |
-| 0x4659 | 0x105 | `cfg105` | table addressed by `SPN`, EEPROM 0x000A **[fact]**; calibration table **[inference]** ([eeprom.md](eeprom.md)) |
+| 0x4659 | 0x105 | `cfg105` | table addressed by `SPN`, EEPROM 0x000A **[fact]**; the factory calibration table, written item by item in `ZZPE071000` alignment mode (#76) **[fact]** ([eeprom.md](eeprom.md)) |
 | 0x475E | 3 | `dest_code` | destination/version code, EEPROM 0x010F. `JP` reads and writes it **[fact]** |
 | 0x60C9 | 0x29A9 (0x2F49 saved) | `settings_image` | Memory header + 117 memory channels, dumped by `E8` and restored by `E9`; EEPROM 0x1A7A **[fact]** ([eeprom.md](eeprom.md)) |
 | 0x9ADA..0x9AEB | 18 | `peq_params` | `PE` parameters (2 sets × 3 bands × 3 values) **[fact]**; that they are parametric EQ is **[inference]** |
@@ -196,5 +201,5 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x20B20/21/22 | u8 | `cat_ai_on[3]` | AI per port 1/2/3 **[fact]** |
 | 0x20B3A | u8 | `radio_on` | 0 while off, so only `PS1` is accepted **[fact]** |
 | 0x20B46 | u8 | `cat_disabled` | set from the DISPLAY link **[fact]** |
-| 0x20BBE | u8 | `zz_mode0` | set by `ZZPE071000`. While it is 1, `key_event_filter` blocks key codes < 8 and 0x16..0x19 **[fact]**; the purpose is not known **[guess]** |
-| 0x20F4B, 0x20B39 | u8 | restart request | written together by ZZ, JP and the destination change **[fact]**; that they mean "restart" is **[inference]** |
+| 0x20BBE | u8 | `zz_mode0` | set by `ZZPE071000`: **factory alignment mode** (UI-state +0xBA). TX band limits off, DSP key stores calibration item 0x20CE2 ([cat-commands.md](../../cat-commands.md#ext-zz), #76) **[fact]** |
+| 0x20F4B, 0x20B39 | u8 | restart request | UI-state +0x447 / +0x35. `power_down_save`: frame `0x7F`, EEPROM save, `sw_reset`; 0x10 = power off, 0x11 = restart (radio on again), 0x90 = undervoltage (#76) **[fact]** |

@@ -1918,7 +1918,7 @@ void cat_SP_table(int param_1,char param_2,short param_3)
     return;
   }
   DAT_00020ce2 = uVar2;
-  FUN_fffbb567();
+  align_load_preset();
   DAT_00001c91 = (&DAT_00004659)[uVar2];
   DAT_00001c92 = sum8(0x1c8e,4);
   DAT_00001c93._0_1_ = 0x3b;

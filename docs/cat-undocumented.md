@@ -143,7 +143,7 @@ calibration, all settings or the hardware state, or has no clean path back.
 |---|---|---|---|
 | `ZZPE071001;` | resets VFOs, memories and menus (like ALL RESET), restarts | high | SD-card load (2.1) |
 | `ZZPE071099;` | **full factory reset: also the calibration table and the region** (→ 0x8043, which has no TX ranges), restarts | **highest** | SD-card load for settings; region as in section 4; **calibration only from an EEPROM dump (2.3)**, otherwise a service alignment |
-| `ZZPE071000;` | alignment (service-adjust) mode: some keys blocked, and **a key press saves the calibration table** **[inference]** | high | send `EO` (clears the mode; it also retunes), or power-cycle **[inference]**; don't press keys meanwhile |
+| `ZZPE071000;` | factory alignment mode: **TX band limits off** (any frequency), keys < 8 and FUNC blocked, the **DSP key stores a measured value into the calibration table** (item 0x20CE2) **[fact, #76]** | high | send `EO` (clears the mode; it also retunes), or power-cycle **[inference]**; don't press keys meanwhile |
 | `JP0710hhll~h~l;` | **region code**, then resets menus and memories and restarts | high | send `JP` with the old code, then SD-card load; wide codes need section 4 |
 | `E9…` (binary) | overwrites all memory channels | high | SD-card load, or `E9` with your own `E8` dump (same risk) |
 | `SPW…` (binary) | **any EEPROM byte**, no bounds check | high | `SPW` the old byte, which you only know from a dump (2.3) |

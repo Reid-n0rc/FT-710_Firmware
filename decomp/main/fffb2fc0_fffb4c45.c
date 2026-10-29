@@ -32,20 +32,20 @@ short FUN_fffb2fec(ushort param_1)
 ushort FUN_fffb3049(byte param_1)
 
 {
-  ushort uStack_8;
-  byte bStack_1;
+  ushort local_8;
+  byte local_1;
   
-  uStack_8 = 0;
-  bStack_1 = param_1;
+  local_8 = 0;
+  local_1 = param_1;
   if (99 < param_1) {
-    uStack_8 = *(ushort *)(BYTE_ARRAY_fff88111 + (uint)(param_1 / 100) * 2 + 1);
-    bStack_1 = param_1 % 100;
+    local_8 = *(ushort *)(BYTE_ARRAY_fff88111 + (uint)(param_1 / 100) * 2 + 1);
+    local_1 = param_1 % 100;
   }
-  if (9 < bStack_1) {
-    uStack_8 = *(ushort *)(BYTE_ARRAY_fff880c6 + (uint)(bStack_1 / 10) * 2 + 0x38) | uStack_8;
-    bStack_1 = bStack_1 % 10;
+  if (9 < local_1) {
+    local_8 = *(ushort *)(BYTE_ARRAY_fff880c6 + (uint)(local_1 / 10) * 2 + 0x38) | local_8;
+    local_1 = local_1 % 10;
   }
-  return uStack_8 | bStack_1;
+  return local_8 | local_1;
 }
 
 

@@ -1127,7 +1127,7 @@ void displink_rx_F0_hello(int param_1)
   else {
     if (cVar1 == '\x02') {
       PTR_DAT_00025d38[0xba] = 1;
-      FUN_fffbb567();
+      align_load_preset();
       return;
     }
     if (cVar1 == '\x04') {

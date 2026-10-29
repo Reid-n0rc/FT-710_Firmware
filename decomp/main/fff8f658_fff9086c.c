@@ -223,7 +223,7 @@ uint FUN_fff8f8d8(void)
   do {
     uVar1 = DAT_000840c0;
   } while ((uVar1 & 0x1000) == 0);
-  uVar1 = Ram00084090;
+  uVar1 = DAT_00084090;
   return uVar1 & 0xff;
 }
 
@@ -383,9 +383,9 @@ int FUN_fff8fb59(int param_1,char *param_2,int param_3)
 {
   bool bVar1;
   char cVar2;
-  int iStack_1c;
-  int iStack_18;
-  char *pcStack_c;
+  int local_1c;
+  int local_18;
+  char *local_c;
   
   if ((((&DAT_00001404)[param_1] & 1) == 0) && (((&DAT_00001404)[param_1] & 4) == 0)) {
     bVar1 = false;
@@ -393,22 +393,22 @@ int FUN_fff8fb59(int param_1,char *param_2,int param_3)
   else {
     bVar1 = true;
   }
-  iStack_18 = param_3;
-  pcStack_c = param_2;
+  local_18 = param_3;
+  local_c = param_2;
   if (bVar1) {
-    for (; iStack_1c = param_3, 0 < iStack_18; iStack_18 = iStack_18 + -1) {
+    for (; local_1c = param_3, 0 < local_18; local_18 = local_18 + -1) {
       cVar2 = FUN_fff8f8d8();
-      *pcStack_c = cVar2;
-      if (*pcStack_c == '\r') {
-        *pcStack_c = '\n';
+      *local_c = cVar2;
+      if (*local_c == '\r') {
+        *local_c = '\n';
       }
-      pcStack_c = pcStack_c + 1;
+      local_c = local_c + 1;
     }
   }
   else {
-    iStack_1c = -1;
+    local_1c = -1;
   }
-  return iStack_1c;
+  return local_1c;
 }
 
 
@@ -647,15 +647,15 @@ void FUN_fff8fe3c(int param_1)
   ushort uVar1;
   byte bVar2;
   undefined1 auStack_8 [4];
-  int iStack_4;
+  int local_4;
   
-  iStack_4 = param_1;
+  local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
-  if (*(short *)(&DAT_0001b5fc + iStack_4 * 2) != 0) {
-    *(short *)(&DAT_0001b5fc + iStack_4 * 2) = *(short *)(&DAT_0001b5fc + iStack_4 * 2) + -1;
+  if (*(short *)(&DAT_0001b5fc + local_4 * 2) != 0) {
+    *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + -1;
   }
-  if (*(short *)(&DAT_0001b5fc + iStack_4 * 2) == 0) {
-    if (iStack_4 == 3) {
+  if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
+    if (local_4 == 3) {
       bVar2 = DAT_0008c11f;
       DAT_0008c11f = bVar2 & 0x7f;
       bVar2 = DAT_0008c11f;
@@ -665,7 +665,7 @@ void FUN_fff8fe3c(int param_1)
     }
     else {
       uVar1 = DAT_000803fe;
-      DAT_000803fe = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + iStack_4 * 2);
+      DAT_000803fe = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -681,12 +681,12 @@ void FUN_fff8fec0(int param_1)
   ushort uVar1;
   byte bVar2;
   undefined1 auStack_8 [4];
-  int iStack_4;
+  int local_4;
   
-  iStack_4 = param_1;
+  local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
-  if (*(short *)(&DAT_0001b5fc + iStack_4 * 2) == 0) {
-    if (iStack_4 == 3) {
+  if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
+    if (local_4 == 3) {
       bVar2 = DAT_0008c11f;
       DAT_0008c11f = bVar2 & 0x7f;
       bVar2 = DAT_0008c11f;
@@ -694,10 +694,10 @@ void FUN_fff8fec0(int param_1)
     }
     else {
       uVar1 = DAT_000803fe;
-      DAT_000803fe = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + iStack_4 * 2) | 0xa500;
+      DAT_000803fe = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
     }
   }
-  *(short *)(&DAT_0001b5fc + iStack_4 * 2) = *(short *)(&DAT_0001b5fc + iStack_4 * 2) + 1;
+  *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
   R_BSP_InterruptControl(0x5e,5,auStack_8);
   return;
 }

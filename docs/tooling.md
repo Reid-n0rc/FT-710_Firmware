@@ -277,7 +277,7 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 | `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
 | `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
 | `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
-| `FixFuncEntries.java` + `entries_main.tsv nolate` | MAIN: the 862 handlers reached only through the `JSR` tables 0xFFF89D94..0xFFF8E63F (keys, key slots, EX-menu AI detectors; `tools/main_key_tables.py`, #70); run before ApplyNames |
+| `FixFuncEntries.java` + `entries_main.tsv nolate` | MAIN: the 868 handlers reached only through the `JSR` tables 0xFFF89D94..0xFFF8E63F (keys, key slots, EX-menu AI detectors, #70; alignment store handlers 0xFFF89910, #76; `tools/main_key_tables.py`); run before ApplyNames |
 | `FixFuncEntries.java` + `entries_main_menu.tsv nolate` | MAIN: the 626 menu callbacks (`on_draw`/`on_step`/`on_enter`) stored only in the menu descriptors (`tools/main_menu_table.py --entries`, #74); run after `entries_main.tsv` |
 | `DisplayJumpTables.java` / `DisplayGaps.java` | DISPLAY ARM jump-table repair + check; missed-start and undefined-fragment report, `define` mode for the fragments (T21e, #97 B6–B8); run after FixFuncEntries, before ApplyNames |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | print references to addresses or ranges with the containing function (T10 helpers; one would do, the others are kept for the task logs) |
