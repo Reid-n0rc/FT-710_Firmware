@@ -225,6 +225,20 @@ registers: p56–57, p74).
   pins `LD`/`CLK`/`DI` are on `SST2n_5`/`CK1_/5`/`DT1_5`, so it is the "8-channel audio level device" that MAIN writes with
   `sst2_write12` on /SST2, and the firmware's channel meanings match the legend (ch2 = USB OUT LEVEL, ch3 = REAR OUT LEVEL, ch4 = the
   selected source's MOD GAIN; [code/main/tx-protection.md](code/main/tx-protection.md)) **[fact: schematic + code]**.
+- **Speaker outputs: which codec pin drives which speaker** (p19 codec, p20 AF; traced 2026-10-29 on 300–400 dpi renders)
+  **[fact: schematic]** unless marked:
+  - **Codec LOR** (Q2001 TLV320AIC3204 pin 23) → C2021 → R2012 → `AF_OUT1` → Q2602 buffer → R2624 → net **`RX AF`** → Q2621
+    `VIN5` (R2745, TP2634) → **CH5 "AF1 MASTER VR"** → `VOUT5` (R2743, TP2633) → Q2639 filter/buffer (R2734…R2791, C2726) →
+    **Q2636 TDA2003G "EXT SP"** → **J2606 EXT SP jack** (pin 2; `EXT_SP_DET` on pin 5). `RX AF` also feeds `VIN2` (CH2 USB Audio OUT,
+    via R2687) and the DATA OUT path, so USB and rear DATA audio carry the LOR channel **[inference: the VIN2 tie was traced at #63]**.
+  - **Codec LOL** (pin 22) → C2022 → R2013 → `AF_OUT2` → Q2602 buffer → R2826 → Q2621 `VIN8` → **CH8 "BOOST LEVEL"** → `VOUT8` →
+    R2686 → `VIN1` → **CH1 "AF2 MASTER VR"** → `VOUT1` (R2684) → Q2639 filter/buffer (R2626…R2650, C2636) → **Q2619 TDA2003G
+    "INT SP/PHONE"** → **J2607 INT SP** (pin 2, R2822) and the phones line to J2603 pin 4 (JACK unit).
+  - Muting: Q2623/Q2634 QH8KA4TCR switches on the amp outputs, driven by `INT_SP_SW` / `EXT_SP_SW` ("L: MUTE").
+  - So **LOL = internal speaker and phones, LOR = external speaker** (and USB/DATA out). The codec init routes left DAC → LOL and right
+    DAC → LOR ([code/ifdsp/control-link.md](code/ifdsp/control-link.md)). Which HiFi4 output object (`FUN_00224604(0/1)`, reg 8 n1/n0)
+    lands in the I2S left slot is not settled, so which speaker gets the AESS branch B is still open (#193) **[open]**. AESS's purpose
+    (low frequencies to the external SP-40) suggests branch B = LOR = EXT SP **[guess]**.
 - **TX audio source select (Q2615)** **[fact: schematic + code]**: `tx_audio_select` writes PODR8 bit 1 (P81, `TX_SEL_A`) and bit 2 (P82,
   `TX_SEL_B`): source 0 → A=0 B=0 → `1Y0` front MIC; 1 → A=0 B=1 → `1Y2` **USB**; 2 → A=1 B=0 → `1Y1` rear DATA; 3 (CW, RTTY) → A=1 B=1
   → `1Y3`. That matches the firmware's gain index (0 MIC, 1 USB, 2 REAR) through the 4052's pin wiring. The truth table printed next to
