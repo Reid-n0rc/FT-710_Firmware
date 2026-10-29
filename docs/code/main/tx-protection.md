@@ -132,7 +132,7 @@ SEND keying (`send_a_set`/`send_b_set`) is forced low whenever `ETUN_TXINH_REQ` 
 therefore never leads TX **[fact]**. While the internal tuner relays switch (`atu_relay_update`), SEND is dropped for 15 ms (timer 0x30).
 
 TX→RX (states 5..7) runs in the reverse order: SEND off, then AF_MUTE, then TX = 0 (timer 0x10), RX = 1 (timer 0x0F), DATA_BUSY = 0 (0x0C),
-speakers back (0x0E), and AF_MUTE released (0x0D). The delays are read from a table indexed by setting 0x9AA1. The decompile lost
+speakers back (0x0E), and AF_MUTE released (0x0D). The delays are read from a table indexed by setting 0x9AA1 (CW WAVE SHAPE, `EX020117`, #74). The decompile lost
 the table base **[decoder?]**.
 
 Other TX-related outputs:

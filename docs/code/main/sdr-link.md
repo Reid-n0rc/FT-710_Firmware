@@ -207,7 +207,7 @@ column is tagged per row.
 | 0x0A | 0x1B742 | `sdr_upd_r0a_demod` | all, only while 0x1204D≠0 | 0 = CW (modes 2,3, or CW in SSB), 1 = AM (4,5), 2 = FM (6,7,10,11), 3 = LSB/DATA-L (0,8), 4 = USB/DATA-U/PSK (1,9,14), 5 = RTTY (12,13) | **Modulation class** of the active side **[inference]** |
 | 0x0B | 0x1B744 | `sdr_upd_r0b_band` | all | per-band word, table 0xFFF87FFA (RX: 105…117) / 0xFFF87FFE (TX: 96…128), 8-byte rows | Per-band gain/level calibration **[guess]** |
 | 0x0C | 0x1B746 | `sdr_upd_r0c_rtty_shift` | all | `(shift/5) << 8 | 3`, shift = 170/200/425/850 Hz from 0x9A8D | **RTTY shift** **[inference]** |
-| 0x0D | 0x1B748 | `sdr_upd_r0d` | all | 9 / 14 / 19 for 0x9AA1 = 0 / 1 / 2 | Unknown. 0x9AA1 also sets a TX-sequencer delay (2·v+4) **[fact]**, so maybe a keying or timing setting **[guess]** |
+| 0x0D | 0x1B748 | `sdr_upd_r0d` | all | 9 / 14 / 19 for 0x9AA1 = 0 / 1 / 2 | 0x9AA1 is **CW WAVE SHAPE** (`EX020117`, #74), so reg 0x0D is the CW envelope rise/fall. 0x9AA1 also sets a TX-sequencer delay (2·v+4) **[fact]**; envelope meaning **[inference]** |
 | 0x0E | 0x1B74A | `sdr_upd_r0e` | all | 0x1200 | constant |
 | 0x0F | 0x1B74C | `sdr_upd_r0f_band` | all | per-band word 0xFFF87FFC (RX 0x1800) / 0xFFF88000 (TX 0x0A00). 0 when ADC 0x20B14 (`adc_results[8]`) ≥ 0xE8B, unchanged while it is 0x9B3…0xE8A (hysteresis) | Unknown; disabled by an analog condition **[guess]** |
 | 0x12, 0x13 | 0x1B74E, 0x1B750 | `sdr_upd_r12`, `sdr_upd_r13` | RX | 0x8000 each | constants (unity gain in Q15?) **[guess]** |
@@ -216,17 +216,17 @@ column is tagged per row.
 | 0x16 | 0x1B756 | `sdr_upd_r16_filter` | RX | CW: 0/1/2 for width <251/<800/≥800 Hz; SSB, DATA, RTTY, PSK: 0x10/0x11/0x12 for <1101/<2000/≥2000 Hz; AM 0x21, AM-N 0x20, FM-N 0x30, FM and DATA-FM 0x31 | **Filter (FIR) class selection** **[inference]**. It also sets 0x20B4A (0x15…0x54), probably the matching filter delay used elsewhere **[guess]** |
 | 0x18 / 0x19 | 0x1B758 / 0x1B75A | `sdr_upd_r18_rx_freq` | RX | high/low word of the RX-side frequency (Hz) plus a mode offset: SSB ±(1500 + shift), CW pitch, RTTY mark/shift (0x9A8C/0x9A8D), DATA offset 10·0x9A7A, PSK | **RX NCO frequency** **[inference]** |
 | 0x1A | 0x1B75C | `sdr_upd_r1a_nb_level` | RX | 0 if NB is off (VFO flag byte +2 bit 1). Else NB level `NL` (0x9DC0, 0…10) through 0xFFF8808A (AM: 16128…9728) or 0xFFF880A0 (others: 16128…7040) | **Noise-blanker threshold** **[inference: NL]** |
-| 0x1B | 0x1B75E | `sdr_upd_r1b` | RX | 0x9AD3 index → 0xFFF880B6 (AM: 6, 352, 720) / 0xFFF880BC (6, 12, 36) | NB parameter (width?) **[guess]** |
-| 0x1C | 0x1B760 | `sdr_upd_r1c` | RX | 2 / 5 / 10 for 0x9AD2 = 0 / 1 / 2 | NB parameter (rejection?) **[guess]** |
+| 0x1B | 0x1B75E | `sdr_upd_r1b` | RX | 0x9AD3 index → 0xFFF880B6 (AM: 6, 352, 720) / 0xFFF880BC (6, 12, 36) | **NB WIDTH** (0x9AD3 = `EX030203`, #74) **[fact for the setting]** |
+| 0x1C | 0x1B760 | `sdr_upd_r1c` | RX | 2 / 5 / 10 for 0x9AD2 = 0 / 1 / 2 | **NB REJECTION** (0x9AD2 = `EX030202`, #74) **[fact for the setting]** |
 | 0x1D | 0x1B762 | `sdr_upd_r1d_notch` | RX | 0 when off (per-mode enable bit 0x80). Else (centre − 10·setting)/5, sign-flipped for USB-side modes, 12 bits, `| 0x2000` (0x9AD1=0) or `| 0x1000` | **Manual notch** frequency and width **[inference]** |
 | 0x1E | 0x1B764 | `sdr_upd_r1e_passband` | RX | signed passband centre / 5 Hz (1500 + shift for SSB, CW pitch, RTTY tones, …), negated for modes 1, 3, 9, 13, 14 | **Passband centre / IF shift** **[inference]** |
 | 0x1F | 0x1B766 | `sdr_upd_r1f_width` | RX | AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N/DATA-FM-N 9000, otherwise the selected width (`FUN_fffc4e4f`) | **Filter bandwidth in Hz** **[inference]** |
 | 0x20 / 0x21 | 0x1B768 / 0x1B76A | `sdr_upd_r20_scope_freq` | all | RX, scope mode 0x9C35=0 (centre): RX frequency + offset (`vfo_display_offset`). Fixed/cursor: start (0x20F60 or `bandmem_get`(2)`) + half span (500…500 000). TX: frequency mirrored about 62.5 MHz | **Scope centre frequency** **[inference]** |
 | 0x22 | 0x1B76C | `sdr_upd_r22_scope_span` | all | span index → 1, 2, 5, 10, 20, 50, 100, 200, 500, default 1000 | **Scope span in kHz** **[inference]** |
-| 0x23 | 0x1B76E | `sdr_upd_r23` | all | 0x8000 / 0x7000 / 0x5000 for 0x9B14 = 0 / 1 / 2 | Gain step tied to the scope level (see 0x27) **[guess]** |
+| 0x23 | 0x1B76E | `sdr_upd_r23` | all | 0x8000 / 0x7000 / 0x5000 for 0x9B14 = 0 / 1 / 2 | 0x9B14 is the scope **RBW** (`EX040201`, #74), so reg 0x23 is a scope resolution-bandwidth parameter **[fact for the setting, inference for the register]** |
 | 0x24 | 0x1B770 | `sdr_init_r24` | once | 0x0317 | constant |
 | 0x25 | 0x1B772 | `sdr_upd_r25_tx_drive` | all | linear interpolation of the power setting (`FUN_fffb4062`) between the 5/10/20/50/100 W points of the per-band record (pointer table 0xFFF8861C → 0x469E…0x4734, 15 bytes per band, inside the `SPN` table 0x4659), × 16 | **TX drive level** **[inference]**. This means the `SPN` table holds per-band TX power calibration (`SPN` index 70…) **[inference]** |
-| 0x26 | 0x1B774 | `sdr_upd_r26` | all | RX 0x0610. TX: 0x9C36=0 → 0x0140 if 0x9B16 else 0x0610; 0x9C36≠0 → 0xFF00 if 0x9B17 else 0x0200 | Unknown. TX-only value tied to the scope settings (TX monitor?) **[guess]** |
+| 0x26 | 0x1B774 | `sdr_upd_r26` | all | RX 0x0610. TX: 0x9C36=0 → 0x0140 if 0x9B16 else 0x0610; 0x9C36≠0 → 0xFF00 if 0x9B17 else 0x0200. 0x9B16/0x9B17 are the scope's **2D / 3DSS DISP SENSITIVITY** (`EX040203`/`EX040204`, #74) | Unknown. TX-only value tied to the scope settings (TX monitor?) **[guess]** |
 | 0x27 | 0x1B776 | `sdr_upd_r27_scope_level` | all | `0x8000 | (−(L) + 0/2/4)`. RX: L = scope ref-level byte (SS sel 4) + 0x4689 + 0x44; TX: L = byte − 0x37 | **Scope reference level** **[inference]** |
 | 0x30, 0x31 | 0x1B778, 0x1B77A | no updater | | written only by the bridge or `SPSW` | update data path? **[guess]** |
 | 0x32, 0x33 | 0x1B77C, 0x1B77E | no updater | bridge | the only registers the bridge lets the DISPLAY read | update status words **[inference]** |
@@ -419,7 +419,7 @@ bridge offsets above were checked in the disassembly.
    through registers 0x30/0x31 or over SPI, and how 0x32/0x33 are interpreted.
 2. The FPGA meaning of registers 0x03, 0x04, 0x0D, 0x0F, 0x12–0x15, 0x1B, 0x1C, 0x23, 0x24 and 0x26. Reading them
    back with `SPSR` would be safe (read only), but that needs the owner's approval because it talks to the radio.
-3. The settings at 0x9AA1, 0x9AD2, 0x9AD3 and 0x9B14 need their EX-menu names (menu page).
+3. ~~The settings at 0x9AA1, 0x9AD2, 0x9AD3 and 0x9B14 need their EX-menu names.~~ CW WAVE SHAPE, NB REJECTION, NB WIDTH, RBW; 0x9B16/0x9B17 (reg 0x26) are 2D / 3DSS DISP SENSITIVITY (#74).
 4. ~~How `boot_error` 0x20B36 is shown to the user.~~ Answered (#60): `ERROR CODE : 003` on the DISPLAY, see [display-link.md](display-link.md#boot-error-report).
 
 ## Note from the FPGA side (T15e)
