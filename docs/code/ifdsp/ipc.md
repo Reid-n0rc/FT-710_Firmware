@@ -207,6 +207,10 @@ sequenceDiagram
 
 The M33 MU interrupt is enabled in two steps: `platform_init` sets NVIC priority and enable, and on first use
 `platform_init_interrupt` sets MU-A CR RIE1. `platform_interrupt_enable`/`disable` count nested masks of NVIC IRQ 34. **[fact]**
+On the DSP side the MU-B interrupt reaches the HiFi4 through the INPUTMUX: the M33's `app_main` attaches `kINPUTMUX_MuBToDspInterrupt`
+(source 21) to `DSP_INT_SEL[1]`, and the DSP handles it as XOS IRQ 6 (`MU_B_IRQHandler`). The other DSP interrupt selections follow the
+same rule, DSP IRQ = `DSP_INT_SEL` index + 5: index 17 ← DMAC0 (source 19) = IRQ 22, index 18 ← DMAC1 (source 20) = IRQ 23
+([hifi4.md](hifi4.md)) **[fact for the three pairs, inference for the rule]**.
 
 ### Virtqueue roles
 

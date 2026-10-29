@@ -76,7 +76,7 @@ Full table: `docs/memory-maps.md` → DISPLAY.
 | 0x20165178–0x204286A7 | `.rodata`: task/ISR descriptors (0x201651A8–0x20165A6C), GUI bitmaps, UI strings |
 | 0x2042BC10–0x2044BFFF | mode stacks (SP 0x2044C000) |
 | 0x20450000 / 0x20800000 | `.data` / `.data2` (RW, LZ-initialised), followed by `.bss` / `.bss2` (kernel TCBs at 0x208DBBA0, UART objects) |
-| 0x20980000 | heap limit passed to `kernel_heap_init` **[fact]** |
+| 0x20980000 | base of the NORTi kernel pool (`kernel_heap_init`); in effect it runs to the end of RAM, 0x209FFFFF (#119) **[fact]** |
 | 0x60000000–0x609FFFFF | uncached RAM mirror: frame buffers, `.data_nc` (0x60500000) |
 | 0xE8000000 / 0xFCFE0000 | peripherals: SCIF, RSPI, USB, SDHI, DMAC, GIC / CPG, GPIO, OSTM, RIIC, INTC, VDC5 |
 
