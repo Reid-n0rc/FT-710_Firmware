@@ -132,8 +132,10 @@ SEND keying (`send_a_set`/`send_b_set`) is forced low whenever `ETUN_TXINH_REQ` 
 therefore never leads TX **[fact]**. While the internal tuner relays switch (`atu_relay_update`), SEND is dropped for 15 ms (timer 0x30).
 
 TX→RX (states 5..7) runs in the reverse order: SEND off, then AF_MUTE, then TX = 0 (timer 0x10), RX = 1 (timer 0x0F), DATA_BUSY = 0 (0x0C),
-speakers back (0x0E), and AF_MUTE released (0x0D). The delays are read from a table indexed by setting 0x9AA1 (CW WAVE SHAPE, `EX020117`, #74). The decompile lost
-the table base **[decoder?]**.
+speakers back (0x0E), and AF_MUTE released (0x0D). The delays are computed, not read from a table (#205): with *d* = 2·(setting 0x9AA1,
+CW WAVE SHAPE, `EX020117`, #74) + 4 ms, state 5 starts timer 0x12 = *d*, 0x0C = *d* + 6, **0x0D = *d* + 0x20B4A**, 0x0E = *d* + 5,
+0x0F = *d* + 4 and 0x10 = *d* + 3 **[fact: `trx_sequencer` 0xFFFB80F9]**. 0x20B4A comes from `sdr_upd_r16_filter` (21..84 ms by mode and
+filter width, +10 with AESS on; [sdr-link.md](sdr-link.md)), so the audio comes back last, and later for narrow CW filters.
 
 Other TX-related outputs:
 - `tx_audio_select` (0xFFFB8A02) sets `TX_SEL_A/B` (P81/P82) from `FUN_fffb3d11(mode)` (0..3). It is forced to 3 in modes 2/3 (CW) and 12/13

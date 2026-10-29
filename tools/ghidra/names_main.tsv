@@ -2219,3 +2219,11 @@ fffc3b22	func_menu_select	FUNC menu: runs the item at cursor 0x9C08 (func_knob_a
 fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +0x1C5 = 1, beep
 fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
 fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
+# --- #205 (EEPROM leftovers)
+fff94bd9	ver_main_ext1	Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; build date/time [guess] (#205)
+fff94be5	ver_main_ext2	Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C [fact] (#205)
+fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP [fact] (#205)
+fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
+fffc47dd	preamp_step	Record +0x05 bits 0-1: IPO(0) -> AMP1(2) -> AMP2(3) -> IPO, beep 1 [fact]; the IPO key [inference] (#205)
+fffc4850	preamp_ipo	Record +0x05 bits 0-1 = 0 (IPO), beep 2 [fact] (#205)

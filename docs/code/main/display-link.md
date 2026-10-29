@@ -522,8 +522,10 @@ each `0x60` **[fact]** (#60):
   `ERROR CODE : %03d` with byte 0xE (any other value is shown as 1). It then waits for a touch or key and opens the boot-loader
   (firmware update) screen. So **001 = MAIN did not answer, 002 = DSP, 003 = SDR (FPGA)**. Value 1 is never set by MAIN; it is the
   DISPLAY's own default **[fact]**.
-- **0x4660** is the RAM copy of EEPROM byte 0x0011 (RAM = EEPROM + 0x464F); nothing in the code writes it. When it is set, the
-  SOFTVERSION menu row also appends a `-` suffix to the MAIN version, so it looks like a factory/test-build flag **[inference]**.
+- **0x4660** is the RAM copy of EEPROM byte 0x0011 (RAM = EEPROM + 0x464F), alignment item 008 `DBG MODE ENABLE`; only `SPN`, the
+  alignment menu and the defaults write it. When it is set, the SOFT VERSION rows (`menu_m4_18_0_draw`) also show `-` + 4 + 8
+  characters from ROM 0xFFFFFF10/0xFFFFFF20 after the MAIN version and the DISPLAY's hello date (`yy-mm-dd`) after the DISPLAY
+  version (#205, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)). A factory/debug display flag **[inference]**.
 
 ## SD CARD transfers (0x43 / 0x44 / 0x45)
 
