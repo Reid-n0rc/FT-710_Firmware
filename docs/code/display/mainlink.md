@@ -134,26 +134,26 @@ falls back to 0x20 when nothing else is pending. The validation column refers to
 | 0x20 ' ' | 0x97 | `FUN_fff9c42a` (default) | redraw of the main screen | Base **radio status block** (0x97 bytes, range-checked by `mainlink_status_valid`). Every status frame below starts with it, and the command-specific part starts at offset 0x98 **[fact for the layout]** |
 | 0x21 '!' | 3 | not found in MAIN V01-12 | copy into 0x20450035, `led_set_one`(b1, b2)` (P6 pin from a table) | **[guess]** LED / output select |
 | 0x23 '#' | 0x35 | `FUN_fff98e39/58/77` | `FUN_20131354` text line (bit 7 of byte 1 = flag), 0x208084D4 = 1 | **[guess]** text/message line (decoder or memo) |
-| 0x24 '$' | 0x9D | `FUN_fff9a17d` | copy of the tail into 0x2045006D. Backlight `backlight_set` (PWM 0xFCFF022A, 0..100 %), `dimmer_set`, `gui_apply_display_cfg` | **Display settings** (brightness etc.) **[inference]** |
-| 0x30 '0' | 0x9E | `FUN_fff98ecb` | `scr_select_popup` | status + sub-screen selector at +0x98 (0..0xD, 0xFF) |
-| 0x31 '1' | 0xA1 | `FUN_fff98ecb`, `FUN_fff98f7c` | `scr_value_popup` | status + menu/item code at +0x98 (a fixed set of 36 values) |
+| 0x24 '$' | 0x9D | `FUN_fff9a17d` | copy of the tail into 0x2045006D. Backlight `backlight_set` (PWM 0xFCFF022A, 0..100 %), `dimmer_set`, `gui_apply_display_cfg` | **Display settings**: EXT DISPLAY / PIXEL / SCU-LAN10 bits, keyboard language, mouse speed, TFT brightness, LED dimmer, contrast **[fact, MAIN `displink_build_24`]**; [layout](../main/display-link.md#0x24-display-settings-0x9f-bytes-display-mainlink_get_settings24-gui_apply_display_cfg) (#179) |
+| 0x30 '0' | 0x9E | `FUN_fff98ecb` | `scr_select_popup` | status + pop-up code at +0x98 (0 METER, 1 ATT, 2 IPO, 3 DNF, 4 AGC, 5 MODE, 6 SPAN, 9/0xA scope audio, 0xB COLOR, 0xC BAND, 0xD SPEED; 0xFF none) and its values; [layout](../main/display-link.md#0x30-select-pop-up-and-0x31-value-pop-up) (#179) |
+| 0x31 '1' | 0xA1 | `FUN_fff98ecb`, `FUN_fff98f7c` | `scr_value_popup` | status + function id at +0x98 (pop-up code − 0x1E, the `0x37` id space) and a 9-character value text at +0x99; [layout](../main/display-link.md#0x30-select-pop-up-and-0x31-value-pop-up) (#179) |
 | 0x34 '4' | 0xA1 | `FUN_fff98ecb`, `FUN_fff98f7c` | `scr_info` | status + 2 small fields |
-| 0x37 '7' | 0x23E | `FUN_fff9ab2a` | `scr_func_panel` | largest status frame (574 B) |
-| 0x39 '9' | 0xE7 | `FUN_fff9b69e` | `scr_vfo`, `FUN_201293f8` | status + full-screen page |
-| 0x3A ':' | 0xA0 | `FUN_fff9a8e3` | (special paths in `gui_screen_update`) | status + 4-way sub-mode |
+| 0x37 '7' | 0x23E | `FUN_fff9ab2a` | `scr_func_panel` | largest status frame (574 B): **FUNC panel**, 41 slots of {flag, function id, 8-character value} from +0x9B (the GUI draws 33); [layout](../main/display-link.md#0x37-func-panel-0x240-bytes-display-scr_func_panel) (#179) |
+| 0x39 '9' | 0xE7 | `FUN_fff9b69e` | `scr_vfo`, `FUN_201293f8` | status + **message-memory screen** (voice / CW / text memories: title, state, channel, volumes, 5 slot labels); [layout](../main/display-link.md#0x39-message-memory-screen-0xe9-bytes-display-scr_vfo--fun_201293f8) (#179) |
+| 0x3A ':' | 0xA0 | `FUN_fff9a8e3` | (special paths in `gui_screen_update`) | status + **PlayList** sub-state at +0x98 (0 open, 1 list, 2 command, 3 delete, 4 volume) with list position, cursor and command; [layout](../main/display-link.md#0x3a-playlist-0xa2-bytes-display-scr_playlist) (#179) |
 | 0x3F '?' | 3 | `FUN_fff9a89b` | `rec_start_stop` | short frame, byte 1 < 2 |
-| 0x40 '@' | 0x1F9 | `FUN_fff9aaad` | main screen. Five 0x2D-byte text slots at +0x11A. Slot text "FIRMWARE UPDATE" + SD card + touch → firmware-update mode (0x20800494) | status + menu list **[inference]** |
-| 0x41 'A' | 0x144 | `FUN_fff9bb23` | status redraw | status + list |
+| 0x40 '@' | 0x1F9 | `FUN_fff9aaad` | main screen. Five 0x2D-byte text slots at +0x11A. Slot text "FIRMWARE UPDATE" + SD card + touch → firmware-update mode (0x20800494) | status + **menu page** from MAIN `menu_page_serialize` (title, 8 tabs, 5 rows of 45 bytes from +0x119) **[fact]**; [layout](../main/display-link.md#0x40-menu-page-0x1fb-bytes-display-main-screen-scr_text_list) (#179) |
+| 0x41 'A' | 0x144 | `FUN_fff9bb23` | status redraw | status + **MEMORY CH LIST** (header, group, 4 rows of 36 bytes from +0xB5); [layout](../main/display-link.md#0x41-memory-ch-list-0x146-bytes-display-scr_memory_list) (#179) |
 | 0x42 'B' | 0xFD | not found | accepted, stored only | **[unknown]** |
 | 0x43 'C' | 0x21 | `FUN_fff98bcd` (variable length) **[inference]** | `scr_sd_menu` overlay with 0x21 bytes | **[guess]** pop-up text |
 | 0x44 'D' | 5 | (block-transfer code) | `mainlink_rx_block_read` 0x2010EEB4 → reply C4 | **MAIN reads** a block of the 32000-byte buffer 0x208116A6: `id, off u16 BE, len u16 BE` |
 | 0x45 'E' | 0x105 | (block-transfer code) | `mainlink_rx_block_write` 0x2010EDE8 → reply C5 | **MAIN writes** up to 0xFF bytes into 0x208116A6: `id, off, len, data` |
-| 0x50 'P' | 0xF3 | `FUN_fff9a2d1` | status redraw | status + one mode byte |
+| 0x50 'P' | 0xF3 | `FUN_fff9a2d1` | status redraw | status + **on-screen keyboard** (layout byte, cursor, title, text); [layout](../main/display-link.md#0x50-on-screen-keyboard-0xf5-bytes-display-scr_keyboard) (#179) |
 | 0x60 '`' | 0xB4 | `FUN_fff96225`, sent after the F0 hello | copy into 0x2045FB00 + flag 0x20450026. Byte 0xE = 1/2/3 (MAIN boot error: 2 = DSP, 3 = SDR) shows the `ERROR CODE : 00n` screen (`FUN_201322AC`), #60. u16 at +0xD = 0xDB sets 0x20450029 ("show error box instead of reset") | **Power-up / identity frame** (status block at +0xF) |
-| 0x62 'b' | 0x195 | `FUN_fff9c46d` (after F0 key code 2) | status redraw | status + large page |
+| 0x62 'b' | 0x195 | `FUN_fff9c46d` (after F0 key code 2) | status redraw | status + **alignment menu** (cursor row, 9 lines of 25-character label + 3-character value); [layout](../main/display-link.md#0x62-alignment-menu-0x197-bytes-display-scr_setup_menu) (#179) |
 | 0x64 'd' | 1 | `FUN_fff986e0` | `scr_lcd_test` 0x20125F6C: black, white, red, green, blue, colour bars | **LCD test pattern** (service) **[fact for the drawing]** |
 | 0x65 'e' | 7 | `FUN_fff9a0cc` | `rtc_set_from_main` 0x2012E8F4 (BCD YY MM DD hh mm, clamped) | **set the DISPLAY RTC** from MAIN **[inference]** |
-| 0x70 'p' | 0xE1 | `FUN_fff98925` | status redraw (special overlay rules) | status + 3 small fields |
+| 0x70 'p' | 0xE1 | `FUN_fff98925` | status redraw (special overlay rules) | status + **dialog** (style, buttons, selected button, x/y, ROM text); [layout](../main/display-link.md#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) (#179) |
 | 0x71 'q' | 6 | not found | byte 1 must be 0x81..0x82 or < 3 (checked), stored only | **[unknown]** |
 | 0x7A 'z' | 3 | `FUN_fff988f2` | `screen_capture_bmp`, then replays the saved frame | **take a screenshot** to SD **[fact for the call]** |
 | 0x7B '{' | 3 | `FUN_fff9889c` (toggles MAIN flag +0x82) | sets 0x208F0B2B = byte 1, `scr_screen_saver` every GUI pass | **screen saver on/off** **[inference]**. A key/touch/encoder then sends E4 |
@@ -174,7 +174,7 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 | 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `FUN_201217b0` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
 | 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
 | 0xE6 | 3 | `mainlink_send_e6` 0x20121830 | `FUN_fff95c8a` → `FUN_fffb2da6(1..3)` | **beep request**: MAIN calls `beep_request`(1..3) **[inference from the MAIN handler]** |
-| 0xE7 / 0xE8 | 8 | `FUN_20124744`, `FUN_20124848`, `FUN_201248a4`, `FUN_20124adc`, `FUN_20124bc0` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **SD-card file operation status** (sub 0 / 1 / 0xFF + result) **[inference]**, from the SD menu code |
+| 0xE7 / 0xE8 | 8 | `FUN_20124744`, `FUN_20124848`, `FUN_201248a4`, `FUN_20124adc`, `FUN_20124bc0` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **audio status** of the PlayList (E7) and voice-message (E8) screens: b1 = 0 file count, 1 state (0 stopped, 1 playing, 2 recording), 0xFF error index **[fact]**; MAIN's per-code actions in [E7 / E8 result codes](../main/display-link.md#e7--e8-result-codes-179) (#179) |
 | 0xC3 | 0x21 | `FUN_20134978`..`FUN_20134a08`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | 0x21-byte settings/name record **[guess]** |
 | 0xC4 | 0x105 | `mainlink_rx_block_read` | `FUN_fff95e97` | reply to 'D': `id, off, len, data` |
 | 0xC5 | 5 | `mainlink_rx_block_write` | `FUN_fff95e97` | reply to 'E': `id, off, len` |
