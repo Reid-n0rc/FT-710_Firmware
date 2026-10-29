@@ -455,6 +455,26 @@ correctness wins over B4 here.
   one-instruction helpers (0xFFF9128D, 0xFFF91291) whose ACC write nothing reads, so their C does not change. Rebuild diff
   against the first T21i export: exactly the five helpers changed (`signature`), ApplySignatures 1,217 applied.
 
+### T21j
+**Status:** in progress (2026-10-28). DISPLAY and IFDSP: apply T22d's recommended Ghidra fixes (items 1, 2, 3, 5 of its list).
+
+**Plan.**
+1. `tools/ghidra/ApplyData.java` + `data_<image>.tsv` (address, type, count, name, note): clears the range and applies the type;
+   `float`/`int32` arrays split at every referenced address inside the range (so the two FFT twiddle tables stay separate); `code`
+   rows only disassemble (no function). Rows (from `docs/tasks/T22d-undefined-classes.tsv`, cleanly classified ones only):
+   HiFi4 float32 tables (FFT twiddles, FIR/window, ramps, libm), `two_over_pi` int32[201], the XOS/libm names; code at
+   0x2316F1 (switch case) and 0x2287FC (level-2 interrupt epilogue); DISPLAY printf sign tables `char[4][4]` at 0x20154B64 and
+   0x20154BE0, fplib reciprocal seed `byte[128]` at 0x20164C00; M33 `ctype` `byte[256]` at 0x87D84, FCFB `byte[512]` at
+   0x08000400, the referenced short strings and the pointer at 0x08001830.
+2. `IfdspHifi4Setup.java`: 0x200000–0x207CEF becomes its own read-only, non-executable block `sram_dsp_rodata`.
+3. Entries: DISPLAY `2016385a thumb` replaces `2016385c` in `entries_display.tsv`; new `entries_m33.tsv` (0x0800143C, 0x00087232,
+   Thumb) applied with `FixFuncEntries.java`; HiFi4 0x228B08 (idle thread start, stored in a context at 0x227859) as an
+   `EXTRA_ENTRIES` row of `flix_compare.py`, `entries_hifi4.tsv` regenerated.
+4. `bootstrap.sh`: wire the scripts/tables into `build_display`/`build_ifdsp` (and their stamps); rebuild DISPLAY, M33 and HiFi4
+   one job at a time; re-export; `decomp_quality.py compare` and `decomp_behavior_diff.py` per image; docs, board, sync.
+Left on purpose: the jump table at 0x206290 (no load of its address; needs a jump-table override for one 13-byte case), the
+other T22d "leave" items (fill, alignment, unreferenced stubs, unknown bytes).
+
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
 
