@@ -177,8 +177,7 @@ undefined4 afscope_buf_ptr(void)
 void FUN_20120dd4(void)
 
 {
-  DAT_208f0b14 = 0;
-  DAT_208dd998 = &DAT_208dd73c;
+  FUN_20157604(&DAT_208dce3c);
   return;
 }
 

@@ -50,7 +50,7 @@
 2015f62c	update_display_self	I:\AH076H_DISPLAY.bin, I:\AH068_DISPLAY_Loader.bin
 2015f1f0	fwdbg_verify_bank1	fw1chk: compares a file with bank 1 (0x18400000), forever (was display_flash_write_bank)
 2015938c	bootloader_screen	YAESU FT-710 BOOT LOADER V01-02
-201322b4	fwupdate_screen	MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2
+201322b4	fwupdate_screen_thunk	r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81)
 # --- MAIN CPU link (SCIF5) and other UARTs
 201148b4	scif5_get	UART object @0x208DB280 on SCIF5 (0xE8009800), MAIN link
 201148d8	scif4_get	UART object on SCIF4 (0xE8009000)
@@ -359,7 +359,7 @@
 2015a500	fwupdate_menu_screen	file list, CRC check, pre-marks newer versions
 20159158	update_error_screen	"UPDATE ERROR", waits for a touch
 20159cb0	bootloader_unlock_wait	key-6 mode: > 4 encoder steps -> loader-install mode
-201322bc	fw_installed_versions_set	installed versions from the MAIN 0x60 frame
+201322bc	fw_installed_versions_set_thunk	r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81)
 201149e0	sfl_encode	inverse of sfl_decode (adds the 43-byte key)
 2010f370	sdmenu_write_dat	9 x 64-byte text lines ("MemList  n  CRC") + 0x7D10 encoded bytes
 2010f60c	sdmenu_save_file	<dir>\<name>.dat, sfl_encode, salted CRC-32
@@ -668,7 +668,7 @@
 2015fa54	mouse_cursor_move
 2015fac4	mouse_wheel_event	wheel -> encoder id 6/2/3 or list scroll by screen id
 2015fcc4	mouse_cursor_obj_init	cursor at (400,240), sem "mouse_cursor_sem"
-2015fd64	mouse_cursor_run	attach/detach/report loop: buttons -> pointer sources, dx/dy * speed
+2015fd60	mouse_cursor_run	attach/detach/report loop: buttons -> pointer sources, dx/dy * speed
 20120fe4	gui_middle_key	0x30F (FUNC) on menu-type screens, else 0xFFFF
 20121160	gui_right_key	right button -> screen-dependent key code
 20111218	kbd_set_current	keyboard device used for the LED status
@@ -785,3 +785,8 @@
 20110368	sd_format_done
 20101da4	gpio_usb0_en	NEW ENTRY; (port, on): P8_10 USB0_EN
 20101cd4	gpio_p2_4_5_select	NEW ENTRY; 3-way select on P2_4/P2_5/P10_1
+# --- update-UI methods behind the thunks 0x201322AC..0x201322BC (#81)
+201322ac	fwupdate_insert_sd_screen_thunk	r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen
+2015afb0	fwupdate_insert_sd_screen	INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md)
+20159714	fwupdate_screen	MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object)
+201595f0	fw_installed_versions_set	installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame)
