@@ -689,8 +689,8 @@ void FUN_fffba131(undefined1 *param_1,int param_2,byte param_3)
   int iVar2;
   undefined1 *puVar3;
   uint uVar4;
-  byte local_9;
-  int local_8;
+  byte bStack_9;
+  int iStack_8;
   
   if ((param_2 < 1) || (5 < param_2)) {
     bVar1 = true;
@@ -698,18 +698,18 @@ void FUN_fffba131(undefined1 *param_1,int param_2,byte param_3)
   else {
     bVar1 = false;
   }
-  local_8 = param_2;
+  iStack_8 = param_2;
   if (bVar1) {
-    local_8 = 1;
+    iStack_8 = 1;
   }
-  local_9 = param_3;
+  bStack_9 = param_3;
   if (0x32 < param_3) {
-    local_9 = 0x32;
+    bStack_9 = 0x32;
   }
-  iVar2 = (local_8 + -1) * 0x33;
-  (&DAT_0000969f)[iVar2] = local_9;
+  iVar2 = (iStack_8 + -1) * 0x33;
+  (&DAT_0000969f)[iVar2] = bStack_9;
   puVar3 = &DAT_000096a0 + iVar2;
-  for (uVar4 = (uint)local_9; uVar4 != 0; uVar4 = uVar4 - 1) {
+  for (uVar4 = (uint)bStack_9; uVar4 != 0; uVar4 = uVar4 - 1) {
     *puVar3 = *param_1;
     puVar3 = puVar3 + 1;
     param_1 = param_1 + 1;

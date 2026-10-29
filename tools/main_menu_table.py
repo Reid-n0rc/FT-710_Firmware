@@ -15,7 +15,9 @@ doc, not computed here (MAX POWER, KEYBOARD LANGUAGE, TX TIME OUT TIMER, preset 
 
 Usage (run with python3 -I):
   python3 -I tools/main_menu_table.py [--image build/FT-710_MAIN_V0112.bin] [--format tsv|md]
-          [--diff manual.txt]
+          [--diff manual.txt] [--entries entries.tsv] [--names names.tsv]
+  --entries writes every distinct on_draw/on_step/on_enter callback as a FixFuncEntries row (none of them is a function
+  after analysis: they are only stored in descriptors; #74), --names a names_main.tsv section for them.
   manual.txt = pdftotext -layout -f 10 -l 12 Manuals/FT-710_CAT_OM_ENG_2306-C.pdf manual.txt
 Output goes to stdout. Do not commit the output for the raw table; it is derived from firmware.
 """
@@ -301,14 +303,46 @@ def diff(items, path, out):
         out.write(f"#   {it['p1']}.{it['p2']}.{it['p3']} {it['name']} dest_mask={it['dest_mask']:#x} on_enter={it['on_enter']:08x}\n")
 
 
+def callbacks(img, items, entries, names):
+    """Each callback address with its users; named after the first item that uses it, or menu_<role>_nop for a bare RTS (#74)."""
+    users = {}
+    for it in items:
+        key = f"ex{it['cat']}" if it['cat'] else f"m{it['p1']}_{it['p2']}_{it['p3']}"
+        for role in ('draw', 'step', 'enter'):
+            users.setdefault(it['on_' + role], []).append((role, key, it['name'].strip()))
+    if entries:
+        with open(entries, 'w') as f:
+            f.write('# MAIN menu item callbacks on_draw/on_step/on_enter from the 314 descriptors '
+                    '(tools/main_menu_table.py --entries, #74); FixFuncEntries.java nolate\n')
+            for x in sorted(users):
+                u = users[x]
+                f.write(f"{x:08x}\t\t" + ', '.join(f'{r} {k}' for r, k, _ in u[:4])
+                        + (f', +{len(u) - 4} more' if len(u) > 4 else '') + '\n')
+    if names:
+        with open(names, 'w') as f:
+            for x in sorted(users):
+                u = users[x]
+                role, key, name = u[0]
+                if img.u(x, 1) == 0x02 and len(u) > 1:   # a bare RTS shared by several items
+                    f.write(f"{x:08x}\tmenu_{role}_nop\tEmpty menu on_{role} (RTS), shared by {len(u)} items (#74)\n")
+                    continue
+                more = f"; also {', '.join(k for _, k, _ in u[1:])}" if len(u) > 1 else ''
+                f.write(f"{x:08x}\tmenu_{key}_{role}\tMenu item {key} {name}: on_{role}{more} (#74)\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--image', default='build/FT-710_MAIN_V0112.bin')
     ap.add_argument('--format', choices=('tsv', 'md'), default='tsv')
     ap.add_argument('--diff', metavar='MANUAL_TXT', help='pdftotext -layout output of Table 2')
+    ap.add_argument('--entries', metavar='TSV', help='write the callbacks as FixFuncEntries rows')
+    ap.add_argument('--names', metavar='TSV', help='write names for the callbacks (names_main.tsv rows)')
     a = ap.parse_args()
     img = Image(a.image)
     items = load(img)
+    if a.entries or a.names:
+        callbacks(img, items, a.entries, a.names)
+        return
     if a.diff:
         diff(items, a.diff, sys.stdout)
         return

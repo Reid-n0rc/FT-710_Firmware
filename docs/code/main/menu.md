@@ -59,6 +59,11 @@ flowchart LR
 
 ## Item descriptor (0x38 bytes)
 
+The three callbacks are only stored in the descriptors, so analysis did not make them functions. Since #74 the MAIN rebuild creates
+all 626 distinct ones (`tools/main_menu_table.py --entries` → `tools/ghidra/entries_main_menu.tsv`) and names them
+`menu_<item>_<role>` after the first item that uses them (`menu_ex010113_step`, `menu_m4_17_0_enter`); the shared bare `RTS`
+callbacks are `menu_enter_nop` (296 items) and `menu_step_nop` (18 items) **[fact]**.
+
 The descriptor is laid out by the `menuitem_*` functions and read through `menu_get_desc` (`menu_get_desc`, full copy),
 `menu_get_limits` (`menu_get_limits`, bytes 0x28..0x37) and `menu_get_name`. **[fact]** for the layout.
 Field meanings are **[fact]** where the consumer is cited.
@@ -74,7 +79,7 @@ Field meanings are **[fact]** where the consumer is cited.
 | 0x06 | char[21] | `name` | Space-padded, shown on the menu page |
 | 0x1C | code* | `on_draw` | Formats the value for the DISPLAY menu page (`menu_call_draw` `menu_call_draw`). Unique per item. Most call `menu_draw_flags` `menu_draw_flags` plus a label table |
 | 0x20 | code* | `on_step` | Called by `menu_call_step` `menu_call_step`: dial step from the front panel, **and** after an EX set, as an apply hook with 0x15DFC = 1 (see below). Most items wrap `menu_step_s8` `menu_step_s8` / `menu_step_u8` `menu_step_u8` (min, max, ptr) |
-| 0x24 | code* | `on_enter` | `menu_call_enter` `menu_call_enter`. For 296 items this is a bare `RTS` at 0xFFFCDC78. Only the action items (SD card, calibration, reset, certification, PRESET NAME, MY CALL) have real handlers |
+| 0x24 | code* | `on_enter` | `menu_call_enter` `menu_call_enter`. For 296 items this is a bare `RTS` at 0xFFFCDC78. Only the action items (SD card, calibration, reset, certification, PRESET NAME, MY CALL) have real handlers; the SD CARD ones start `sd_menu_task` ([README.md](README.md), task 13) |
 | 0x28 | s16 | `min` | Raw (stored) minimum |
 | 0x2A | s16 | `max` | Raw maximum |
 | 0x2C | u8* | `store` | RAM address of the value (0 = no slot: an action, or a VFO accessor) |

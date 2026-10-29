@@ -151,10 +151,10 @@ flowchart TD
 | 7 | 0xFFFA347C | `cat_parse` | — | One CAT command per pass, then `cat_ai_poll` **[fact]** | [cat.md](cat.md) |
 | 8 | 0xFFFE3E2A | `ladder_key_task` | `ladder_key_task` | Acts on key code 0x1204C (1..6, 0xF7..0xFA; `remote_keypad_scan` ORs 0xF0 in after the key is held for 100 passes, i.e. a long press **[inference]**), produced by `remote_keypad_scan` from ADC channel 0x20B10 (a 12-level resistor ladder) **[fact for the decode; guess: microphone or remote-keypad keys]** | [ui-keys.md](ui-keys.md) |
 | 9 | 0xFFFE587F | `scan_task` | `scan_task` | State machine on 0x18877, gated by 0x20F1C (the flag `cat_SC` reports as "scan on") **[fact; scan inference]** | [radio-control.md](radio-control.md) |
-| 10 | 0xFFFE360E | `dispreq_e8_task` | `dispreq_e8_task` | `FUN_fffe376a` executes the command 1..5 that DISPLAY frame 0xE8 (`displink_rx_E8`) posts in 0x20F90, then `FUN_fffe3615` **[fact; purpose unknown]** | [display-link.md](display-link.md) |
-| 11 | 0xFFFE2CD0 | `dispreq_e7_task` | `dispreq_e7_task` | Same for DISPLAY frame 0xE7 (`displink_rx_E7`) and command word 0x20F8C **[fact; purpose unknown — guess: SD/voice-memory record/playback control]** | [display-link.md](display-link.md) |
+| 10 | 0xFFFE360E | `dispreq_e8_task` | `dispreq_e8_task` | `FUN_fffe376a` acts on the status 1..5 that DISPLAY frame 0xE8 (`displink_rx_E8`) leaves in +0x48C, then `FUN_fffe3615`. E8 is the status of the DISPLAY's audio screens other than the PlayList: the DISPLAY sends E7 when its audio owner flag 0x2080048E is 1 (PlayList recorder/player, `scr_playlist`, `rec_start_stop`) and E8 when it is 2 or 3 (`FUN_201293f8`, `FUN_2012c4a0`) **[fact, both sides]**. The E8 side clears +0x78 and 0x20B2E, the same flags as `key_cancel_check` (key 0x340), so it is most likely **voice-message playback** (`MESSAGE` files) **[inference]**. Status 5 (DISPLAY error, b1 = 0xFF) beeps (`beep_request(3)`) and sets message code 0x10..0x1A in +0xBB from the error code in +0xAC **[fact]** (a pop-up id **[inference]**) (#65) | [display-link.md](display-link.md), [display/peripherals.md](../display/peripherals.md) |
+| 11 | 0xFFFE2CD0 | `dispreq_e7_task` | `dispreq_e7_task` | Same for frame 0xE7 (`displink_rx_E7`, status in +0x488): the **PlayList recorder/player** (receive-audio WAV files on the SD card). The DISPLAY sends it from the PlayList code (`FUN_20124744` errors, `FUN_20124848`, `FUN_20124adc` after `wav_delete`, `FUN_20124bc0` after `wav_list_dir`); status 1/2 update the PlayList state +0x3F8..+0x3FE, status 5 is the error case as for E8 **[fact]** (#65) | [display-link.md](display-link.md) |
 | 12 | 0xFFFB98E9 | `keyer_task` | `keyer_task` | CW keyer: uses key speed 0x9C03 (also `cat_KS`), 0x20B97 (also `cat_KY`), timer 0x13 **[inference]** | [tx-protection.md](tx-protection.md) |
-| 13 | 0xFFFD0582 | `FUN_fffd0582` | — | When 0x20B8C != 0, runs one of four sub-state machines selected by 0x15DE3 (1..4, set by `FUN_fffcf6f7` / `…f7a7` / `…f88b` / `…f951`) **[fact; purpose unknown]** | [radio-control.md](radio-control.md) |
+| 13 | 0xFFFD0582 | `sd_menu_task` | `sd_menu_task` | **SD CARD menu operations.** The `on_enter` callbacks of EXTENSION SETTING / SD CARD start a mode in 0x15DE3: MEM LIST LOAD / MENU LOAD → 1 (`sd_load_start`), MEM LIST SAVE / MENU SAVE → 2 (`sd_save_start`), INFORMATIONS → 3, FORMAT → 4; 0x15DE5 = 1 selects the memory list, 0 the menu settings. While +0x88 (0x20B8C) is set the task runs the mode's step machine (step in +0x3F7), which talks to the DISPLAY with frames 0x43 (command, answered by C3 setting +0x3F6), 0x44 (block read) and 0x45 (block write) of the DISPLAY's 32000-byte buffer. If the SD card goes away (+0xA6 = 0) it stops (`FUN_fffcf4f2`) **[fact]** (#65; payloads: #61) | [display-link.md](display-link.md), [menu.md](menu.md) |
 | 14 | 0xFFF94D6F | `displink_task` | `displink_task` | SCI1 DISPLAY link: takes a received frame, validates it (`displink_check_sum`), dispatches by first byte (`displink_rx_dispatch`: 0x06 ACK, 0x15 NAK, 0xB3, 0xC3–0xC5, 0xE0–0xE8, 0xF0, 0xF1…), answers ACK/NAK and sends the next queued frame (`displink_tx_poll`) with retry timers 0x3B/0x3C **[fact]** | [display-link.md](display-link.md) |
 | 15 | 0xFFFBBD58 | `key_task` | `key_task` | Key/event dispatcher: a new event (flag 0x20BA4, type 0x20BA1, code 0x20BA2) is latched into 0x1FA40 and is mapped through **five 863-entry key handler tables 0xFFF89D94..0xFFF8E0FF** (`key_call_press`; press … release tables, ending at 0xFFF8E100), with auto-repeat timers 0x3F/0x40; also per-port config refresh (`FUN_fffc4d93`) **[fact]** | [ui-keys.md](ui-keys.md), [menu.md](menu.md) |
 | 16 | 0xFFFEC473 | `tuner_task` | `tuner_task` | Antenna tuner: dispatch on tuner-select setting 0x9AB8 (also read by `cat_AC`): 3 → `FUN_fffed165`, 2 → `FUN_fffed62a`, else `FUN_fffec62b` (state machine 0x1B3AC) **[fact; tuner inference]** | [tx-protection.md](tx-protection.md), [peripherals.md](peripherals.md) |
@@ -353,7 +353,7 @@ Functions owned by a subsystem page are listed there; this table covers the ones
 | 0xFFFE360E | `dispreq_e8_task` | `dispreq_e8_task` | Task 10 |
 | 0xFFFE2CD0 | `dispreq_e7_task` | `dispreq_e7_task` | Task 11 |
 | 0xFFFB98C8 / 0xFFFB98E9 | `keyer_init` / `keyer_task` | `keyer_init` / `keyer_task` | Task 12 |
-| 0xFFFD0582 | `FUN_fffd0582` | — | Task 13 |
+| 0xFFFD0582 | `sd_menu_task` | `sd_menu_task` | Task 13 |
 | 0xFFF94D6F | `displink_task` | `displink_task` | Task 14 |
 | 0xFFF95331 | `displink_rx_dispatch` | `displink_rx_dispatch` | DISPLAY frame dispatch by first byte |
 | 0xFFF9546A | `displink_rx_F0_hello` | `displink_rx_F0_hello` | Frame 0xF0: DISPLAY version, radio on |
@@ -365,7 +365,7 @@ Functions owned by a subsystem page are listed there; this table covers the ones
 
 ## Open questions
 
-- Tasks 10, 11 and 13 have no identified purpose yet (DISPLAY frames 0xE7/0xE8; mode 0x15DE3).
+- Tasks 10, 11 and 13 (answered, #65): E8/E7 audio status from the DISPLAY and the SD CARD menu operations. Open: the 0x43/0x44/0x45 payloads (#61).
 - The role of TPU2 (5 µs period with PCLK/4, port pulse train on vector 138) is unknown.
 - The power-on handshake frames should be cross-checked against the DISPLAY side (T11b `mainlink_*`).
 - SCI4 vs SCI7 for the DSP: the code talks to the DSP console on SCI4; what SCI7 ("C4") carries is open (T10d).

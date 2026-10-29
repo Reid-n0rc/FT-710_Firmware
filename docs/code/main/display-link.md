@@ -132,8 +132,8 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xE4 | 5 | `displink_rx_E4` 0xFFF95C6A | clears +0x82: the DISPLAY's answer to `0x7B` **[fact]** | ACK |
 | 0xE5 | 5 | `displink_rx_E5` 0xFFF95C74 | clears +0x80 (unblocks the scheduler and encoders) **[fact]** | ACK |
 | 0xE6 | 5 | `displink_rx_E6_beep` 0xFFF95C8A | b1 = 0/1/2 → `beep_request`(1/2/3) 0xFFFB2DA6 (code 3 is also used when `key_event_filter` rejects a key) **[fact; "beep" is inference]** | ACK |
-| 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task`; looks like the completion status of a DISPLAY-side file operation **[guess]** | ACK |
-| 0xE8 | 10 | `displink_rx_E8` 0xFFF95DAD | as E7, result in +0x48C **[fact]** | ACK |
+| 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task`. Status of the DISPLAY's **PlayList recorder/player** (sent while its audio owner flag 0x2080048E = 1); b1 = 0xFF is an error with code b5 **[fact, DISPLAY side: `FUN_20124744`]** (#65) | ACK |
+| 0xE8 | 10 | `displink_rx_E8` 0xFFF95DAD | as E7, result in +0x48C **[fact]**; sent for the other audio screens (0x2080048E = 2/3), most likely voice messages **[inference]** (#65) | ACK |
 | 0xC3 | 35 | `displink_rx_C3` 0xFFF95E65 | copies the payload to +0x2ED (0x109 bytes are copied whatever the frame length), sets +0x3F6: the answer to MAIN's `0x43` **[fact]** | ACK |
 | 0xC4 / 0xC5 | 263 / 7 | `displink_rx_C4_C5` 0xFFF95E97 | same as C3: answers to `0x45` / `0x44` **[fact]** | ACK |
 | 0xB3 | — | 0xFFF95EC9 | has a case in the dispatcher (sets ACK) but no length entry, so it can never arrive **[fact]** | — |
@@ -170,7 +170,7 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 | 7 | 0x7B | 5 | +0x83 | 0xFFF9889C | b1 = toggled +0x82; blocks until `E4` **[fact]** |
 | 8 | 0x7A | 5 | +0x85 | 0xFFF988F2 | zeros; +0x84 blocks **[fact]** |
 | 9 | 0x70 | 0xE3 | +0x86 | 0xFFF98925 / 0xFFF9894F | |
-| 10 | 0x43 / 0x44 / 0x45 | 0x23 / 7 / 0x107 | +0x87, type in +0x1E0, length in +0x1E2 | 0xFFF98BCD / 0xFFF98C1F | requests answered by `C3` / `C5` / `C4`; set by the 0xFFFCF6xx..0xFFFD2xxx code (14 sites for 0x43). Probably SD-card file or memory-list operations, since the SD card is on the DISPLAY **[inference]** |
+| 10 | 0x43 / 0x44 / 0x45 | 0x23 / 7 / 0x107 | +0x87, type in +0x1E0, length in +0x1E2 | 0xFFF98BCD / 0xFFF98C1F | requests answered by `C3` / `C5` / `C4`; set by the SD CARD menu operations (`sd_menu_task`, task 13: MEM LIST / MENU load and save, INFORMATIONS, FORMAT) **[fact]** (#65) |
 | 11 | 0x50 | 0xF5 | +0x88 and +0x90 | 0xFFF9A2D1 / 0xFFF9A2FB | |
 | 12 | 0x23 | 0x37 | +0x89 / +0x8A / +0x8B | 0xFFF98E39 / 0xFFF98E96 | b1 = high byte of +0x1BE plus 1. **The +0x8A/+0x8B variants call empty fill functions** (0xFFF98EC9, 0xFFF98ECA) and resend whatever is in 0x1456 with length 0x37 **[fact]** |
 | 13 | 0x30 / 0x31 | 0xA0 / 0xA3 | +0x8C | `displink_tx_30_31` 0xFFF98ECB | 0x30 when +0x1C2 < 0x1E or 0xFF, 0x31 when < 0x5F **[fact]** |

@@ -277,7 +277,8 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 | `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
 | `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
 | `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
-| `FixFuncEntries.java` + `entries_main.tsv nolate` | MAIN: the 535 key handlers reached only through the five key tables (`tools/main_key_tables.py`, #70); run before ApplyNames |
+| `FixFuncEntries.java` + `entries_main.tsv nolate` | MAIN: the 862 handlers reached only through the `JSR` tables 0xFFF89D94..0xFFF8E63F (keys, key slots, EX-menu AI detectors; `tools/main_key_tables.py`, #70); run before ApplyNames |
+| `FixFuncEntries.java` + `entries_main_menu.tsv nolate` | MAIN: the 626 menu callbacks (`on_draw`/`on_step`/`on_enter`) stored only in the menu descriptors (`tools/main_menu_table.py --entries`, #74); run after `entries_main.tsv` |
 | `DisplayJumpTables.java` / `DisplayGaps.java` | DISPLAY ARM jump-table repair + check; missed-start and undefined-fragment report, `define` mode for the fragments (T21e, #97 B6–B8); run after FixFuncEntries, before ApplyNames |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | print references to addresses or ranges with the containing function (T10 helpers; one would do, the others are kept for the task logs) |
 | `T10eMovuRegCount.java` | lists every `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11); after the T17 SLEIGH fix all 107 print as register forms |
@@ -326,6 +327,7 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -import build/FT-710_MAIN_V011
   -scriptPath tools/ghidra -preScript SetupRX651.java \
     copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
   -postScript FixFuncEntries.java tools/ghidra/entries_main.tsv nolate \
+  -postScript FixFuncEntries.java tools/ghidra/entries_main_menu.tsv nolate \
   -postScript ApplyNames.java tools/ghidra/names_main.tsv \
   -postScript DefineRomData.java build/main_undefined.tsv code=0xFFF8F658 \
   -postScript ApplySignatures.java tools/ghidra/signatures_main.tsv -postScript ExportDecomp.java decomp/main 50

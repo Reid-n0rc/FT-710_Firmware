@@ -1,16 +1,16 @@
 metric	value
-functions	3161
+functions	3787
 decompile_failures	0
-warnings	1226
-functions_with_warnings	358
+warnings	1247
+functions_with_warnings	370
 spacebase_warnings	0
-unreachable_block_warnings	1179
+unreachable_block_warnings	1200
 halt_baddata	0
 functions_with_halt_baddata	0
-functions_with_in_vars	12
+functions_with_in_vars	18
 functions_with_unaff_vars	0
 functions_with_extraout_vars	0
-functions_with_in_unaff_extraout	12
+functions_with_in_unaff_extraout	18
 undefined_nonff_bytes	0
 undefined_nonff_bytes:ROM	0
 bookmarks_error	1
@@ -18,4 +18,4 @@ bookmarks_bad_instruction	1
 warning:Do nothing block with infinite loop	2
 warning:Globals starting with '_' overlap smaller symbols at the same address	29
 warning:Ignoring partial resolution of indirect	16
-warning:Removing unreachable block (#)	1179
+warning:Removing unreachable block (#)	1200

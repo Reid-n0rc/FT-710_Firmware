@@ -10,7 +10,7 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
 - Rebuild (`tools/bootstrap.sh --only ghidra,export` does the same; full command in `docs/tooling.md`, "MAIN full rebuild"): import with
   `SetupRX651.java`, then the post-scripts in this order: `FixFuncEntries.java tools/ghidra/entries_main.tsv nolate` (the key handlers,
-  #70), `ApplyNames.java tools/ghidra/names_main.tsv`,
+  #70), the same with `entries_main_menu.tsv` (the menu callbacks, #74), `ApplyNames.java tools/ghidra/names_main.tsv`,
   `DefineRomData.java <report.tsv> code=0xFFF8F658` (strings, pointer/zero runs, unreferenced functions, const tables; T21d, #97 B5),
   `ApplySignatures.java tools/ghidra/signatures_main.tsv` (locked prototypes; T21d, #97 B3), `ExportDecomp.java decomp/main 50`.
   Check call arguments with the read-only `CallArgCheck.java <mismatch.tsv> [<protos.tsv>]`; redraft the signatures with
@@ -51,6 +51,10 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   handlers, 31 key-slot handlers and the 296 EX-menu AI detectors (0xFFFE6E3A..0xFFFEA639 had no function before). Full rebuild:
   **3,161 functions** (2,328 before), 0 failures, 0 undefined non-0xFF bytes; warnings 1,222 → 1,226 and functions with a warning
   354 → 358, all "Removing unreachable block" in new small handlers (the compiler's dead `bool` tails); committed on purpose.
+- #74 / #65 rebuild (2026-10-29): `entries_main_menu.tsv` creates the 626 menu callbacks (`on_draw`/`on_step`/`on_enter`), named by
+  `tools/main_menu_table.py --names`; SD CARD operations named (`sd_menu_task`, #65). **3,787 functions**, 0 failures, 0 undefined
+  non-0xFF bytes; warnings 1,226 → 1,247 (unreachable blocks in the new callbacks); functions with `in_` variables 12 → 18 (six
+  PRMTRC EQ `on_draw` callbacks whose shared helper takes a fifth, stacked argument, shown as `in_R15`); committed on purpose.
 - Known decompiler artifacts **[fact]**:
   - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
     `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
@@ -70,18 +74,18 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 3,161 |
+| Functions exported (non-thunk) | 3,787 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,226 |
-| Functions with a warning | 358 |
+| Decompiler warnings (all kinds) | 1,247 |
+| Functions with a warning | 370 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 1,179 |
+| "Removing unreachable block" | 1,200 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
-| Functions with `in_*` variables | 12 |
+| Functions with `in_*` variables | 18 |
 | Functions with `unaff_*` variables | 0 |
 | Functions with `extraout_*` variables | 0 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 12 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 18 |
 | Undefined non-0xFF bytes in executable blocks | 0 |
 | … in block `ROM` | 0 |
 | Error bookmarks | 1 |
@@ -89,7 +93,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | warning: Do nothing block with infinite loop | 2 |
 | warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
 | warning: Ignoring partial resolution of indirect | 16 |
-| warning: Removing unreachable block (#) | 1,179 |
+| warning: Removing unreachable block (#) | 1,200 |
 <!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]
