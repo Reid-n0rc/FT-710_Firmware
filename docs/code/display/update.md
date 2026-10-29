@@ -103,10 +103,14 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
   (ISR `renc_irq4_isr` → `DAT_208001e4`) make `bootloader_unlock_wait` return 1: the title becomes
   `YAESU FT-710 BOOT LOADER V01-02`, boot-info word 0 = 0xBBBB and word +8 stays 2, so a DISPLAY update then goes to the **loader**
   region (section 6). Otherwise word +8 is reset to 1 and it is a normal update screen **[fact]**. Which physical key is line 6 is for T11f.
+- **Update-UI thunks [fact]** (#81): 0x201322AC..0x201322F0 are seven 8-12-byte thunks `[mov r1, r0;] ldr r0, =0x208F4BF4; b method`
+  that call a method of the update-UI object at 0x208F4BF4: `fwupdate_insert_sd_screen` 0x2015AFB0, `fwupdate_screen` 0x20159714,
+  `fw_installed_versions_set` 0x201595F0, `fwupdate_menu_screen` 0x2015A500, 0x2015A8DC, 0x20159058 and 0x20159D98 (the last one,
+  through 0x201322F0, is the `YAESU FT-710 FIRMWARE UPDATE` screen).
 - **MAIN asks for update mode**: at power-on `opening_check_main` reads MAIN's 0x60 status frame; if byte 1 has 0xF0 set it opens
-  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set`:
+  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set` 0x201595F0, through the thunk 0x201322BC:
   BE16 at +0, +2, +4, +10 → 0x208F4BF4..0x208F4BFA) **[fact]**.
-- **MAIN not answering** (`DAT_2045005c` set, `mainlink_got_esc`): `fwupdate_screen` 0x201322B4, the 2-step recovery screen. It requires
+- **MAIN not answering** (`DAT_2045005c` set, `mainlink_got_esc`): `fwupdate_screen` 0x20159714 (called through the thunk 0x201322B4), the 2-step recovery screen. It requires
   both the MAIN and the DISPLAY files to be Ready ("MAIN FIRMWARE FILE [ OK ]", "DISPLAY FIRMWARE FILE"), then runs MAIN first
   ("STEP 1 of 2") and DISPLAY second ("STEP 2 of 2") **[fact for the code; the trigger meaning is inference]**.
 
