@@ -488,7 +488,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Per-mode-class signed 16-bit value in the main-side record at offset by `vfo_mode`(0): {0,1}->+0x12, {2,3}->+0x1C, {4,5}->+0x3A, {6,7}->+0x44, {8,9}->+0x30, {10,11}->+0x44, {12,13}->+0x26, {14}->+0x30 [fact]; probably IF shift in Hz [guess]
 - **Globals / callees:** R/W record(`vfo_rec_ptr`(0)) offsets above (2 bytes); W 0x20F10; `vfo_mode`(0), `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes per-mode DSP setting (persisted)
-- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**; the side selection of `vfo_rec_ptr`/fffb3196 is still open.
+- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**.
+- **Resolved (#173):** `cat_IS` @ fffaa6e3 calls `vfo_rec_ptr`(0) @ fffb324c and `vfo_mode`(0) (fffb3196) with argument 0, which always selects the **active** VFO record (0x9DBD: 0x9D09 or 0x9D63) and ignores split; it then marks and stores back that same side (`vfo_mark_edited`/`vfo_store_back`(0x9DBD)) **[fact]**. So IF SHIFT reads and writes the operating VFO's per-mode value, never the TX VFO, and P1 (documented as fixed `0`) does not choose a side **[fact]**. The magnitude test is `12000 < value`, so 4 digits accept 0000–9999, not the manual's 0000–1200 (no 20 Hz step check either) **[fact]**.
 
 ### KM
 
@@ -500,7 +501,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/writes five 50-char text message memories (CW keyer text, [inference] from KY/LM using the same slots) and saves slot n to EEPROM [fact: eeprom_write in `eeprom_save_msg`]
 - **Globals / callees:** RW 0x969F+0x33*(n-1) (len), +1 (text); R 0x20B94,0x20BC2,0x20BC3; callees FUN_fffb012c, `eeprom_save_msg` -> eeprom_write (addr table @0x5050+0x33*i, 0x33 bytes)
 - **Risk:** medium: EEPROM write of message memory on every set
-- **Resolved in part (#157):** `FUN_fffb012c(buf, c, n)` is a bounded search: it returns (in R1; the decompiler's `void` signature drops it) the index of the first byte equal to `c` in `buf[0..n)`, or `n`. `cat_EM` uses it with c = 0xFE as a text-length function **[fact]**. The off-by-one check in `cat_KM` is still open.
+- **Resolved in part (#157):** `FUN_fffb012c(buf, c, n)` is a bounded search: it returns (in R1; the decompiler's `void` signature drops it) the index of the first byte equal to `c` in `buf[0..n)`, or `n`. `cat_EM` uses it with c = 0xFE as a text-length function **[fact]**.
+- **Resolved (#173):** no off-by-one in the length. The command is `KM` + n + text + `;`, so text length = total length − 4 (the dispatcher's length includes the `;`), the text starts at cmd[3], and 5..54 bytes give 1..50 characters, as in the manual **[fact]** (`cat_KM` @ fffaa905: `bVar2 = len − 4`, copy from `param_1 + 3`). `}` (0x7D) is the keyer-text **end mark**: the front-panel editor `FUN_fffe481d` @ fffe481d ends a text at the first `}` or appends one after the last non-space character and counts it in the length **[fact]**. `cat_KM` searches 50 bytes from cmd[3] for `}` (so the search runs past the `;` into the rest of the CAT buffer for short texts) and may append `}` at text[len] without counting it in the length byte **[fact]**; which result triggers the append is still unsure because the decompile compares the search result with `param_1 + 3` (the lost R1 return of `FUN_fffb012c`) and needs the disassembly (Ghidra hold) **[fact for the decompile]**. Visible edge case: if the append runs for a 50-character text it writes 0x7D at text[50], which is the **length byte of the next slot** (0x96D2/0x9705/0x9738/0x976B) or, for slot 5, the first byte of the `EM` text block 0x979E; that slot would then read back with length 125 **[fact for the addresses; whether the branch is taken is the open point above]**.
 
 ### KP
 
