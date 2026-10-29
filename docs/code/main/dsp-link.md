@@ -108,7 +108,7 @@ flowchart LR
 | 0x1B3DA | u8 | `dsp_stat_idx` | status poll round-robin 0..3 → regs 1..4 **[fact]** |
 | 0x1C60, 0x1C61, 0x1C62, 0x1B6E2, 0x1B6E4 | | | filtered status values (see "Registers read") **[fact]** |
 | 0x1444 | 6 B | `dsp_version_text` | `V01-01` from reg 0 **[fact]** |
-| 0x20B36 | u8 | `link_error` | 2 = DSP did not answer at boot (this module), 3 = SDR (set by `sdr_init`); read by `displink_build_60` (version/status report) **[fact]** |
+| 0x20B36 | u8 | `link_error` | 2 = DSP did not answer at boot (this module), 3 = SDR (set by `sdr_init`); read by `displink_build_60` (version/status report) as UI-state +0x32; the DISPLAY shows it as `ERROR CODE : 002` / `003` ([display-link.md](display-link.md#boot-error-report), #60) **[fact]** |
 | 0x20B49 | u8 | `dsp_route_ready` | set when reg 0x20 has been computed. The TX/RX sequencer (`trx_sequencer`, 0x20B18 state 6) waits for it **[fact]** |
 | 0x20B1A | u8 | `dsp_settled` | set by the poller when no setter has anything to send and 0x20B18 is 1 or 7. Read and cleared by the sequencer `trx_sequencer` **[fact]**; purpose (wait for the DSP to be reconfigured before switching TX/RX) **[inference]** |
 

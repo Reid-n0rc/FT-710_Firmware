@@ -391,7 +391,7 @@ documented on the DSP-link page.
 | 0x1B3DD | u8 | `sdr_last_tx` | Last TX flag seen by the task **[fact]** |
 | 0x1B3DE | u8 | | CW-in-SSB offset active (register 0x08 path) **[fact]** |
 | 0x144A | 6 | `sdr_version` | `Vxx-yy` from register 0, read by `VE2;` **[fact]** |
-| 0x20B36 | u8 | `boot_error` | 3 = SDR not answering at boot, 2 = DSP **[fact for the values]**; how it is reported is not traced |
+| 0x20B36 | u8 | `boot_error` | 3 = SDR not answering at boot, 2 = DSP **[fact for the values]**. It is the low byte of the u16 UI-state field +0x32 (0x20B04 + 0x32), sent in frame `0x60` bytes 13..14; the DISPLAY then shows `ERROR CODE : 003` / `002` ([display-link.md](display-link.md#boot-error-report), #60) **[fact]** |
 | 0x20B19 | u8 | | SDR settled for the TX sequencer **[inference]** |
 | 0x20B4A | u8 | | Filter-dependent value set with register 0x16 **[fact]**; use not traced |
 | timer 2 / 0x1E / 0x1F | | | SDR reply timeout (6) / bridge delays (100, 2000) / boot wait (1000) **[fact]** |
@@ -420,7 +420,7 @@ bridge offsets above were checked in the disassembly.
 2. The FPGA meaning of registers 0x03, 0x04, 0x0D, 0x0F, 0x12–0x15, 0x1B, 0x1C, 0x23, 0x24 and 0x26. Reading them
    back with `SPSR` would be safe (read only), but that needs the owner's approval because it talks to the radio.
 3. The settings at 0x9AA1, 0x9AD2, 0x9AD3 and 0x9B14 need their EX-menu names (menu page).
-4. How `boot_error` 0x20B36 is shown to the user.
+4. ~~How `boot_error` 0x20B36 is shown to the user.~~ Answered (#60): `ERROR CODE : 003` on the DISPLAY, see [display-link.md](display-link.md#boot-error-report).
 
 ## Note from the FPGA side (T15e)
 
