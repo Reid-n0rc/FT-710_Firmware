@@ -5,13 +5,15 @@ Usage: python3 -I tools/guide_to_wiki.py [docs/guide/README.md] [build/wiki]
 
 Input: the guide, with the document title as `# ...`, an intro, a `## Contents` section (skipped: the wiki sidebar replaces it),
 and chapters as `## N. Title` (the glossary is the last `##` chapter). Output, in the output directory:
-  Home.md         the intro (everything before the first chapter, without the contents list)
+  Home.md         the intro (everything before the first chapter, without the contents list), with the project's progress
+                  block from README.md (tools/readability_stats.py) right under the title
   <Chapter>.md    one page per `##` chapter, named after its title (e.g. `1. The radio at a glance` -> `01-The-radio-at-a-glance`)
   _Sidebar.md     table of contents: every chapter with its `###` sections
   img/            copy of docs/guide/img/
 Links are rewritten: `#anchor` links go to the page that holds the anchor, and relative links to repo files
 (`../code/system.md`) become absolute links to the repo on GitHub, because wiki pages live outside the repo tree.
 """
+import importlib.util
 import os
 import posixpath
 import re
@@ -56,6 +58,25 @@ def split(lines):
     return intro, chapters
 
 
+def progress_md():
+    """README.md's progress block with absolute links, as a `## Progress` section ('' if the README has none)."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "readability_stats.py")
+    spec = importlib.util.spec_from_file_location("readability_stats", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    md = mod.published_block(REPO_URL)
+    return f"## Progress\n\n{md}\n" if md else ""
+
+
+def with_progress(home):
+    """Put the progress section right after the page title (the first `# ` line), or first if there is none."""
+    block = progress_md()
+    if not block:
+        return home
+    m = re.match(r"(# [^\n]*\n)", home)
+    return (m.group(1) + "\n" + block + "\n" + home[m.end():].lstrip("\n")) if m else block + "\n" + home
+
+
 def main():
     src = sys.argv[1] if len(sys.argv) > 1 else "docs/guide/README.md"
     out = sys.argv[2] if len(sys.argv) > 2 else "build/wiki"
@@ -87,7 +108,7 @@ def main():
 
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, "Home.md"), "w", encoding="utf-8") as f:
-        f.write(fix_links("\n".join(intro)).strip() + "\n")
+        f.write(with_progress(fix_links("\n".join(intro)).strip() + "\n"))
     side = ["**[Home](Home)**", ""]
     for title, body in chapters:
         name = page_name(title)
