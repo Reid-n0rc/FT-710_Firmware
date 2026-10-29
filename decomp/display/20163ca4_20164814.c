@@ -1,5 +1,36 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_20163ca4 @ 20163ca4 (160 bytes)
+
+void FUN_20163ca4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                 ushort *param_5)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  
+  iVar2 = 0;
+  if (*param_5 != 0) {
+    do {
+      uVar3 = (uint)param_5[1];
+      iVar1 = 0;
+      if (uVar3 != 0) {
+        do {
+          if (*(short *)(*(int *)(param_5 + 2) + iVar2 * 2 + (uint)*param_5 * iVar1 * 2) != 0) {
+            FUN_20163b9c(param_1,iVar1,param_3,param_4,param_5,uVar3 - iVar1,iVar2);
+            break;
+          }
+          iVar1 = iVar1 + 1;
+        } while (iVar1 < (int)uVar3);
+      }
+      iVar2 = iVar2 + 1;
+    } while (iVar2 < (int)(uint)*param_5);
+  }
+  return;
+}
+
+
 // ===== FUN_20163d44 @ 20163d44 (40 bytes)
 
 void FUN_20163d44(int param_1,undefined2 param_2)
@@ -37,7 +68,7 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   undefined4 uVar9;
   
   uVar9 = param_4;
-  uVar8 = FUN_20164d54(param_6);
+  uVar8 = __aeabi_i2d(param_6);
   FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
   iVar2 = FUN_20164c90();
   uVar6 = (uint)*param_5;
@@ -56,7 +87,7 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   iVar4 = 0;
   if (0 < param_6) {
     do {
-      uVar8 = FUN_20164d54(iVar4);
+      uVar8 = __aeabi_i2d(iVar4);
       FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
       iVar5 = FUN_20164c90();
       iVar1 = iVar4 * uVar6;
@@ -416,7 +447,7 @@ void FUN_20164414(int param_1)
   local_18 = 2;
   uStack_14 = 0;
   local_10 = 0;
-  uVar1 = FUN_2014fd24(0,&local_18);
+  uVar1 = itron_acre_mtx(0,&local_18);
   *(undefined4 *)(param_1 + 0x44) = uVar1;
   return;
 }
@@ -445,7 +476,7 @@ void FUN_20164460(int param_1)
   local_18 = 2;
   uStack_14 = 0;
   local_10 = 0;
-  uVar1 = FUN_2014fd24(0,&local_18);
+  uVar1 = itron_acre_mtx(0,&local_18);
   *(undefined4 *)(param_1 + 0x84) = uVar1;
   return;
 }
@@ -492,7 +523,7 @@ void FUN_201644e4(int param_1)
   local_18 = 2;
   uStack_14 = 0;
   local_10 = 0;
-  uVar1 = FUN_2014fd24(0,&local_18);
+  uVar1 = itron_acre_mtx(0,&local_18);
   *(undefined4 *)(param_1 + 0x84) = uVar1;
   return;
 }
@@ -774,19 +805,5 @@ int FUN_20164814(int *param_1)
     iVar1 = 0;
   }
   return iVar1;
-}
-
-
-// ===== FUN_20164828 @ 20164828 (48 bytes)
-
-int FUN_20164828(int *param_1,int param_2)
-
-{
-  int iVar1;
-  uint uVar2;
-  
-  uVar2 = param_2 + 0x1e + *param_1;
-  iVar1 = (int)((longlong)(int)uVar2 * -0x77777777 + ((ulonglong)uVar2 << 0x20) >> 0x20);
-  return uVar2 + ((iVar1 >> 4) - (iVar1 >> 0x1f)) * -0x1e;
 }
 

@@ -24,16 +24,16 @@
 /* WARNING: Removing unreachable block (ram,0x00212d79) */
 /* clock enable for MU (base 0x40111000 MU-B passed by Thread_Ipc) */
 
-void MU_Init(undefined *param_1)
+void MU_Init(dword *param_1)
 
 {
-  if (param_1 != &DAT_40111000) {
+  if (param_1 != &MUB_VER) {
     memw();
-    DAT_40001040 = 1;
+    CLKCTL0_PSCCTL0_SET = 1;
     return;
   }
   memw();
-  DAT_40021044 = 0x10000000;
+  CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
 
@@ -101,10 +101,10 @@ undefined4 MU_ReceiveMsg(int param_1,uint param_2)
 
 /* base -> index via table 0x2004E0 */
 
-bool SEMA42_GetInstance(undefined *param_1)
+bool SEMA42_GetInstance(byte *param_1)
 
 {
-  return param_1 != &DAT_40112000;
+  return param_1 != &SEMA42_GATE3;
 }
 
 
@@ -130,34 +130,34 @@ void SEMA42_Init(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
-      DAT_40021044 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+      CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
     if (uVar3 != 5) {
       return;
     }
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
-  DAT_40021040 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+  CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
 
@@ -184,34 +184,34 @@ void SEMA42_Deinit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001070 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001074 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
-    DAT_40001078 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
-      DAT_40021074 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+      CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
     if (uVar3 != 5) {
       return;
     }
     memw();
-    DAT_40021078 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+    CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
-  DAT_40021070 = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
+  CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
 
@@ -308,12 +308,12 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
-  uVar1 = DAT_40111044;
+  uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
 }
@@ -339,9 +339,9 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = DAT_40111064;
+      uVar1 = MUB_CR;
       memw();
-      DAT_40111064 = uVar1 & 0xfff0fff7 | 0x4000000;
+      MUB_CR = uVar1 & 0xfff0fff7 | 0x4000000;
       xos_register_interrupt_handler(6,MU_B_IRQHandler,0);
     }
     DAT_002390d4 = DAT_002390d4 + 1;
@@ -376,9 +376,9 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
   if (bVar2) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = DAT_40111064;
+      uVar1 = MUB_CR;
       memw();
-      DAT_40111064 = uVar1 & 0xfbf0fff7;
+      MUB_CR = uVar1 & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
     FUN_0021abc4(param_1);
@@ -409,13 +409,13 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
-      uVar1 = DAT_40111060;
+      uVar1 = MUB_SR;
     }
     memw();
-    DAT_40111024 = param_1 << 0x10;
+    MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;
   }

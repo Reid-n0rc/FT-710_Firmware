@@ -10,79 +10,79 @@ void FUN_00209720(undefined4 *param_1)
   uint uVar3;
   
   memw();
-  DAT_40002620 = &DAT_00060000;
+  SYSCTL0_PDRUNCFG0_SET = &DAT_00060000;
   memw();
-  DAT_40001200 = *param_1;
+  CLKCTL0_SYSPLL0CLKSEL = *param_1;
   memw();
-  DAT_40001210 = param_1[1];
+  CLKCTL0_SYSPLL0NUM = param_1[1];
   memw();
   iVar2 = param_1[3];
-  DAT_40001214 = param_1[2];
+  CLKCTL0_SYSPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
   }
   else if (iVar2 == 1) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
   }
   else if (iVar2 == 2) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
   }
   else if (iVar2 == 3) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
   }
   else if (iVar2 == 4) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
   }
   else if (iVar2 == 5) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
   }
   else if (iVar2 == 6) {
     memw();
-    uVar3 = DAT_40001204;
+    uVar3 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    DAT_40001204 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
+    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
-  uVar3 = DAT_40001204;
+  uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  DAT_40001204 = uVar3 & 0xfffffffd;
+  CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xfffffffd;
   memw();
-  DAT_40002630 = &DAT_00060000;
+  SYSCTL0_PDRUNCFG0_CLR = &DAT_00060000;
   memw();
-  uVar3 = DAT_4000120c;
+  uVar3 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   FUN_00209c70(uVar3 >> 1 & 0x7fff,600000000);
   memw();
-  uVar3 = DAT_40001204;
+  uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  DAT_40001204 = uVar3 | (uint)&DAT_00002000;
+  CLKCTL0_SYSPLL0CTL0 = uVar3 | (uint)&DAT_00002000;
   memw();
-  uVar1 = DAT_4000120c;
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
   FUN_00209c70(uVar3 / 6,600000000);
   memw();
-  uVar3 = DAT_40001204;
+  uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  DAT_40001204 = uVar3 & 0xffffdfff;
+  CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xffffdfff;
   memw();
-  uVar1 = DAT_4000120c;
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
   FUN_00209c70(uVar3 / 3,600000000);
   return;
@@ -99,23 +99,23 @@ void FUN_00209878(int param_1,uint param_2)
   
   uVar1 = param_1 << 3;
   memw();
-  uVar2 = DAT_40001218;
+  uVar2 = CLKCTL0_SYSPLL0PFD;
   uVar2 = uVar2 & (0xbf << 0x20 - (0x20 - (uVar1 & 0x1f)) ^ 0xffffffffU);
   memw();
-  DAT_40001218 = uVar2 | 0x80 << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL0_SYSPLL0PFD = uVar2 | 0x80 << 0x20 - (0x20 - (uVar1 & 0x1f));
   memw();
-  DAT_40001218 = uVar2 | (param_2 & 0x3f) << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL0_SYSPLL0PFD = uVar2 | (param_2 & 0x3f) << 0x20 - (0x20 - (uVar1 & 0x1f));
   uVar1 = 0x40 << 0x20 - (0x20 - (uVar1 & 0x1f));
   memw();
-  uVar2 = DAT_40001218;
+  uVar2 = CLKCTL0_SYSPLL0PFD;
   while ((uVar2 & uVar1) == 0) {
     memw();
-    uVar2 = DAT_40001218;
+    uVar2 = CLKCTL0_SYSPLL0PFD;
   }
   memw();
-  uVar2 = DAT_40001218;
+  uVar2 = CLKCTL0_SYSPLL0PFD;
   memw();
-  DAT_40001218 = uVar2 | uVar1;
+  CLKCTL0_SYSPLL0PFD = uVar2 | uVar1;
   return;
 }
 
@@ -130,79 +130,79 @@ void FUN_002098ec(undefined4 *param_1)
   uint uVar3;
   
   memw();
-  DAT_40002620 = &DAT_00180000;
+  SYSCTL0_PDRUNCFG0_SET = &DAT_00180000;
   memw();
-  DAT_40021200 = *param_1;
+  CLKCTL1_AUDIOPLL0CLKSEL = *param_1;
   memw();
-  DAT_40021210 = param_1[1];
+  CLKCTL1_AUDIOPLL0NUM = param_1[1];
   memw();
   iVar2 = param_1[3];
-  DAT_40021214 = param_1[2];
+  CLKCTL1_AUDIOPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
   }
   else if (iVar2 == 1) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
   }
   else if (iVar2 == 2) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
   }
   else if (iVar2 == 3) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
   }
   else if (iVar2 == 4) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
   }
   else if (iVar2 == 5) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
   }
   else if (iVar2 == 6) {
     memw();
-    uVar3 = DAT_40021204;
+    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    DAT_40021204 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
-  uVar3 = DAT_40021204;
+  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  DAT_40021204 = uVar3 & 0xfffffffd;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xfffffffd;
   memw();
-  DAT_40002630 = &DAT_00180000;
+  SYSCTL0_PDRUNCFG0_CLR = &DAT_00180000;
   memw();
-  uVar3 = DAT_4002120c;
+  uVar3 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   FUN_00209c70(uVar3 >> 1 & 0x7fff,600000000);
   memw();
-  uVar3 = DAT_40021204;
+  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  DAT_40021204 = uVar3 | (uint)&DAT_00002000;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar3 | (uint)&DAT_00002000;
   memw();
-  uVar1 = DAT_4002120c;
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
   FUN_00209c70(uVar3 / 6,600000000);
   memw();
-  uVar3 = DAT_40021204;
+  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  DAT_40021204 = uVar3 & 0xffffdfff;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xffffdfff;
   memw();
-  uVar1 = DAT_4002120c;
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
   FUN_00209c70(uVar3 / 3,600000000);
   return;
@@ -219,23 +219,23 @@ void FUN_00209a40(int param_1,uint param_2)
   
   uVar1 = param_1 << 3;
   memw();
-  uVar2 = DAT_40021218;
+  uVar2 = CLKCTL1_AUDIOPLL0PFD;
   uVar2 = uVar2 & (0xbf << 0x20 - (0x20 - (uVar1 & 0x1f)) ^ 0xffffffffU);
   memw();
-  DAT_40021218 = uVar2 | 0x80 << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL1_AUDIOPLL0PFD = uVar2 | 0x80 << 0x20 - (0x20 - (uVar1 & 0x1f));
   memw();
-  DAT_40021218 = uVar2 | (param_2 & 0x3f) << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL1_AUDIOPLL0PFD = uVar2 | (param_2 & 0x3f) << 0x20 - (0x20 - (uVar1 & 0x1f));
   uVar1 = 0x40 << 0x20 - (0x20 - (uVar1 & 0x1f));
   memw();
-  uVar2 = DAT_40021218;
+  uVar2 = CLKCTL1_AUDIOPLL0PFD;
   while ((uVar2 & uVar1) == 0) {
     memw();
-    uVar2 = DAT_40021218;
+    uVar2 = CLKCTL1_AUDIOPLL0PFD;
   }
   memw();
-  uVar2 = DAT_40021218;
+  uVar2 = CLKCTL1_AUDIOPLL0PFD;
   memw();
-  DAT_40021218 = uVar2 | uVar1;
+  CLKCTL1_AUDIOPLL0PFD = uVar2 | uVar1;
   return;
 }
 
@@ -247,14 +247,14 @@ void FUN_00209ab4(int param_1,uint param_2,undefined4 param_3)
 {
   if (param_1 != 0) {
     memw();
-    DAT_40001160 = param_2;
+    CLKCTL0_SYSOSCCTL0 = param_2;
     memw();
-    DAT_40001168 = 0;
+    CLKCTL0_SYSOSCBYPASS = 0;
     FUN_00209c70(param_3,600000000);
     return;
   }
   memw();
-  DAT_40001160 = param_2 | 2;
+  CLKCTL0_SYSOSCCTL0 = param_2 | 2;
   return;
 }
 
@@ -265,11 +265,11 @@ void FUN_00209ae8(void)
 
 {
   memw();
-  DAT_40001040 = &DAT_00100000;
+  CLKCTL0_PSCCTL0_SET = &DAT_00100000;
   memw();
-  DAT_40001040 = &DAT_00200000;
+  CLKCTL0_PSCCTL0_SET = &DAT_00200000;
   memw();
-  DAT_40001040 = 0x800000;
+  CLKCTL0_PSCCTL0_SET = 0x800000;
   return;
 }
 
@@ -280,11 +280,11 @@ void FUN_00209b0c(void)
 
 {
   memw();
-  DAT_40001040 = &DAT_00100000;
+  CLKCTL0_PSCCTL0_SET = &DAT_00100000;
   memw();
-  DAT_40001040 = &DAT_00400000;
+  CLKCTL0_PSCCTL0_SET = &DAT_00400000;
   memw();
-  DAT_40001040 = 0x800000;
+  CLKCTL0_PSCCTL0_SET = 0x800000;
   return;
 }
 
@@ -299,7 +299,7 @@ undefined4 FUN_00209b30(undefined4 param_1,uint param_2)
   undefined *puVar3;
   
   memw();
-  DAT_4013b038 = 0x80000000;
+  USBPHY_CTRL_CLR = 0x80000000;
   param_2 = 480000000 / param_2;
   if (param_2 == 0xd) {
     puVar3 = (undefined *)0x0;
@@ -329,24 +329,24 @@ undefined4 FUN_00209b30(undefined4 param_1,uint param_2)
     puVar3 = (undefined *)0x1c00000;
   }
   memw();
-  DAT_4013b0a4 = FLOAT_ARRAY_00201000;
+  USBPHY_PLL_SIC_SET = FLOAT_ARRAY_00201000;
   memw();
-  uVar1 = DAT_4013b0a0;
+  uVar1 = USBPHY_PLL_SIC;
   memw();
-  DAT_4013b0a0 = uVar1 & 0xfe3fffff | (uint)puVar3;
+  USBPHY_PLL_SIC = uVar1 & 0xfe3fffff | (uint)puVar3;
   memw();
-  DAT_4013b0a8 = &DAT_00010000;
+  USBPHY_PLL_SIC_CLR = &DAT_00010000;
   memw();
-  DAT_4013b0a4 = 0x40;
+  USBPHY_PLL_SIC_SET = 0x40;
   memw();
-  DAT_4013b038 = &DAT_40000000;
+  USBPHY_CTRL_CLR = &RSTCTL0_SYSRSTSTAT;
   memw();
-  DAT_4013b004 = 0;
+  USBPHY_PWD_SET = 0;
   memw();
-  iVar2 = DAT_4013b0a0;
+  iVar2 = USBPHY_PLL_SIC;
   while (-1 < iVar2) {
     memw();
-    iVar2 = DAT_4013b0a0;
+    iVar2 = USBPHY_PLL_SIC;
   }
   return 1;
 }
@@ -459,7 +459,7 @@ void FUN_00209d20(uint *param_1,uint *param_2)
 
 {
   memw();
-  DAT_40021044 = &DAT_00010000;
+  CLKCTL1_PSCCTL1_SET = &DAT_00010000;
   FUN_00213910(0x410);
   memw();
   *param_1 = (*(byte *)((int)param_2 + 5) & 1) << 3 | *param_2 & 3 | ((byte)param_2[1] & 1) << 2 |
@@ -561,37 +561,37 @@ void FUN_00209e90(undefined4 *param_1,uint *param_2)
   uint uVar3;
   
   iVar2 = 0;
-  if (param_1 != &DAT_40028000) {
+  if (param_1 != &CTIMER0_IR) {
     iVar2 = 4;
   }
   uVar1 = *(uint *)((int)&PTR_DAT_00200130 + iVar2);
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
-    DAT_40021040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
-    DAT_40021044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
-  if (param_1 != &DAT_40028000) {
+  if (param_1 != &CTIMER0_IR) {
     iVar2 = 4;
   }
   FUN_00213910(*(undefined4 *)((int)&PTR_DAT_00200150 + iVar2));
@@ -613,7 +613,7 @@ void FUN_00209f9c(undefined4 *param_1)
   uint uVar3;
   
   iVar2 = 0;
-  if (param_1 != &DAT_40028000) {
+  if (param_1 != &CTIMER0_IR) {
     iVar2 = 4;
   }
   memw();
@@ -623,34 +623,34 @@ void FUN_00209f9c(undefined4 *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001070 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001074 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 != 2) {
     if (uVar3 == 3) {
       memw();
-      DAT_40021070 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+      CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
       return;
     }
     if (uVar3 != 4) {
       if (uVar3 == 5) {
         memw();
-        DAT_40021078 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+        CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
         return;
       }
       return;
     }
     memw();
-    DAT_40021074 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   memw();
-  DAT_40001078 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   return;
 }
 
@@ -834,7 +834,7 @@ void FUN_0020a2cc(int *param_1,uint param_2,int param_3,int param_4)
 void FUN_0020a330(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  if (param_1 != &DAT_40028000) {
+  if (param_1 != &CTIMER0_IR) {
     DAT_00238434 = param_2;
     DAT_00238454 = param_3;
     return;
@@ -855,9 +855,9 @@ void FUN_0020a378(void)
   int iVar3;
   
   memw();
-  uVar1 = DAT_40028000;
+  uVar1 = CTIMER0_IR;
   memw();
-  DAT_40028000 = uVar1;
+  CTIMER0_IR = uVar1;
   iVar3 = 0;
   iVar2 = 0;
   if (DAT_00238450 == 0) {
@@ -890,9 +890,9 @@ void FUN_0020a3c4(void)
   int iVar3;
   
   memw();
-  uVar1 = DAT_40029000;
+  uVar1 = CTIMER1_IR;
   memw();
-  DAT_40029000 = uVar1;
+  CTIMER1_IR = uVar1;
   iVar3 = 0;
   iVar2 = 0;
   if (DAT_00238454 == 0) {
@@ -925,9 +925,9 @@ void FUN_0020a410(void)
   int iVar3;
   
   memw();
-  uVar1 = DAT_4002a000;
+  uVar1 = CTIMER2_IR;
   memw();
-  DAT_4002a000 = uVar1;
+  CTIMER2_IR = uVar1;
   iVar3 = 0;
   iVar2 = 0;
   if (DAT_00238458 == 0) {
@@ -960,9 +960,9 @@ void FUN_0020a45c(void)
   int iVar3;
   
   memw();
-  uVar1 = DAT_4002b000;
+  uVar1 = CTIMER3_IR;
   memw();
-  DAT_4002b000 = uVar1;
+  CTIMER3_IR = uVar1;
   iVar3 = 0;
   iVar2 = 0;
   if (DAT_0023845c == 0) {
@@ -995,9 +995,9 @@ void FUN_0020a4a8(void)
   int iVar3;
   
   memw();
-  uVar1 = DAT_4002c000;
+  uVar1 = CTIMER4_IR;
   memw();
-  DAT_4002c000 = uVar1;
+  CTIMER4_IR = uVar1;
   iVar3 = 0;
   iVar2 = 0;
   if (DAT_00238460 == 0) {
@@ -1035,7 +1035,7 @@ void FUN_0020a500(int param_1,uint param_2)
 
 // ===== DMA_Init @ 0020a528 (282 bytes)
 
-void DMA_Init(uint *param_1)
+void DMA_Init(dword *param_1)
 
 {
   uint uVar1;
@@ -1043,42 +1043,42 @@ void DMA_Init(uint *param_1)
   uint uVar3;
   
   iVar2 = 0;
-  if (param_1 != (uint *)&DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
   uVar1 = *(uint *)((int)&DAT_00200190 + iVar2);
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
-    DAT_40021040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
-    DAT_40021044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
-  if (param_1 != (uint *)&DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
   FUN_00213910(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
-  param_1[2] = (uint)(&PTR_DAT_00236828)[param_1 != (uint *)&DAT_40104000];
+  param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
   memw();
   memw();
   *param_1 = *param_1 | 1;
@@ -1088,7 +1088,7 @@ void DMA_Init(uint *param_1)
 
 // ===== FUN_0020a644 @ 0020a644 (192 bytes)
 
-void FUN_0020a644(uint *param_1)
+void FUN_0020a644(dword *param_1)
 
 {
   uint uVar1;
@@ -1099,41 +1099,41 @@ void FUN_0020a644(uint *param_1)
   memw();
   *param_1 = *param_1 & 0xfffffffe;
   iVar2 = 0;
-  if (param_1 != (uint *)&DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
   uVar1 = *(uint *)((int)&DAT_00200190 + iVar2);
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001070 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
-    DAT_40001074 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 != 2) {
     if (uVar3 == 3) {
       memw();
-      DAT_40021070 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+      CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
       return;
     }
     if (uVar3 != 4) {
       if (uVar3 == 5) {
         memw();
-        DAT_40021078 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+        CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
         return;
       }
       return;
     }
     memw();
-    DAT_40021074 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   memw();
-  DAT_40001078 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+  CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   return;
 }
 
@@ -1355,14 +1355,14 @@ void FUN_0020aa20(int param_1)
 /* WARNING: Removing unreachable block (ram,0x0020aafd) */
 /* WARNING: Removing unreachable block (ram,0x0020ab00) */
 
-void DMA_CreateHandle(undefined4 *param_1,undefined *param_2,int param_3)
+void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
 
 {
   int iVar1;
   
   iVar1 = 0;
-  if (param_2 != &DAT_40104000) {
-    if (param_2 != &DAT_40104000) {
+  if (param_2 != &DMA0_CTRL) {
+    if (param_2 != &DMA0_CTRL) {
       iVar1 = 0x21;
     }
   }
@@ -1531,26 +1531,26 @@ void FUN_0020ac54(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
 
 // ===== FUN_0020aca8 @ 0020aca8 (91 bytes)
 
-void FUN_0020aca8(undefined *param_1,int param_2,undefined4 *param_3)
+void FUN_0020aca8(dword *param_1,int param_2,dword *param_3)
 
 {
   int iVar1;
-  undefined4 *puVar2;
+  dword *pdVar2;
   
   iVar1 = 0;
-  if (param_1 != &DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar1 = 4;
   }
-  puVar2 = (undefined4 *)(param_2 * 0x10 + *(int *)((int)&PTR_DAT_00236828 + iVar1));
+  pdVar2 = (dword *)(param_2 * 0x10 + *(int *)((int)&PTR_DAT_00236828 + iVar1));
   memw();
   memw();
-  *puVar2 = *param_3;
-  puVar2[1] = param_3[1];
-  puVar2[2] = param_3[2];
-  puVar2[3] = param_3[3];
+  *pdVar2 = *param_3;
+  pdVar2[1] = param_3[1];
+  pdVar2[2] = param_3[2];
+  pdVar2[3] = param_3[3];
   memw();
   memw();
-  *(undefined4 *)(param_1 + param_2 * 0x10 + 0x408) = *param_3;
+  param_1[param_2 * 4 + 0x102] = *param_3;
   return;
 }
 
@@ -1575,7 +1575,7 @@ void FUN_0020ad10(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
   int iVar1;
   
   iVar1 = 0;
-  if (*(undefined **)(param_1 + 8) != &DAT_40104000) {
+  if (*(dword **)(param_1 + 8) != &DMA0_CTRL) {
     iVar1 = 4;
   }
   FUN_0020a78c(*(int *)((int)&PTR_DAT_00236828 + iVar1) + (uint)*(byte *)(param_1 + 0xc) * 0x10,
@@ -1605,22 +1605,21 @@ undefined * FUN_0020ad78(int param_1,undefined4 *param_2)
   int iVar2;
   int iVar3;
   undefined4 uVar4;
-  undefined *puVar5;
+  dword *pdVar5;
   uint uVar6;
   
-  puVar5 = *(undefined **)(param_1 + 8);
+  pdVar5 = *(dword **)(param_1 + 8);
   iVar3 = 0;
-  if (puVar5 != &DAT_40104000) {
+  if (pdVar5 != &DMA0_CTRL) {
     iVar3 = 4;
   }
   uVar6 = (uint)*(byte *)(param_1 + 0xc);
   iVar3 = *(int *)((int)&PTR_DAT_00236828 + iVar3);
   memw();
-  if ((*(uint *)(puVar5 + (uint)(*(byte *)(param_1 + 0xc) >> 5) * 4 + 0x30) >> (uVar6 & 0x1f) & 1)
-      != 0) {
+  if ((pdVar5[(*(byte *)(param_1 + 0xc) >> 5) + 0xc] >> (uVar6 & 0x1f) & 1) != 0) {
     return &DAT_00001388;
   }
-  FUN_0020ac04(puVar5,uVar6,param_2[4],*(undefined1 *)(param_2 + 5));
+  FUN_0020ac04(pdVar5,uVar6,param_2[4],*(undefined1 *)(param_2 + 5));
   iVar2 = param_2[4];
   uVar4 = 0;
   uVar1 = 0;

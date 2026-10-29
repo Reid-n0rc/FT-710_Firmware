@@ -32,7 +32,7 @@ void gpio_dvr(int param_1,int param_2)
   else {
     uVar1 = 0x2000200;
   }
-  DAT_fcfe3114 = uVar1 | uVar2;
+  PORT_PSR5 = uVar1 | uVar2;
   return;
 }
 
@@ -52,14 +52,14 @@ void lvds_pins_enable(int param_1)
 
 {
   if (param_1 != 0) {
-    gpio_cfg_alt(5,0,1);
-    gpio_cfg_alt(5,1,1);
-    gpio_cfg_alt(5,2,1);
-    gpio_cfg_alt(5,3,1);
-    gpio_cfg_alt(5,4,1);
-    gpio_cfg_alt(5,5,1);
-    gpio_cfg_alt(5,6,1);
-    gpio_cfg_alt(5,7,1);
+    gpio_cfg_alt(5,0,1,1);
+    gpio_cfg_alt(5,1,1,1);
+    gpio_cfg_alt(5,2,1,1);
+    gpio_cfg_alt(5,3,1,1);
+    gpio_cfg_alt(5,4,1,1);
+    gpio_cfg_alt(5,5,1,1);
+    gpio_cfg_alt(5,6,1,1);
+    gpio_cfg_alt(5,7,1,1);
     return;
   }
   gpio_cfg_out_low(5,0);
@@ -67,7 +67,7 @@ void lvds_pins_enable(int param_1)
   gpio_cfg_out_low(5,2);
   gpio_cfg_out_low(5,3);
   gpio_cfg_out_low(5,4);
-  gpio_cfg_out_low(5);
+  gpio_cfg_out_low(5,5);
   gpio_cfg_out_low(5,6);
   gpio_cfg_out_low(5,7);
   return;
@@ -84,18 +84,18 @@ void lvds_pins_enable(int param_1)
 
 /* (ch, vdc5_init_t*, init_func, user_num) */
 
-undefined4 r_vdc5_initialize(undefined4 param_1,int param_2,code *param_3,undefined4 param_4)
+uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
 
 {
   int iVar1;
-  undefined4 uVar2;
+  uint uVar2;
   
   uVar2 = 0;
   FUN_2011d080();
   iVar1 = FUN_2011d830(param_1,4);
   if ((iVar1 == 0) || (*(int *)(param_2 + 4) == 0)) {
     FUN_2011d19c(param_1,param_2);
-    if (param_3 != (code *)0x0) {
+    if (param_3 != (void *)0x0) {
       (*param_3)(param_4);
     }
     FUN_201193ec(param_1,param_2);
@@ -199,16 +199,16 @@ undefined4 r_vdc5_display_output(undefined4 param_1,undefined4 param_2)
 
 /* (ch, layer, vdc5_read_t*): frame buffer, stride, format, window */
 
-undefined4 r_vdc5_read_data_control(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+uint r_vdc5_read_data_control(uint param_1,uint param_2,uint param_3)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
-  undefined4 uVar3;
+  uint uVar3;
   
   uVar1 = vdc5_layer_to_gr(param_2);
   uVar3 = 0;
-  iVar2 = FUN_2011d84c(param_1,param_2);
+  iVar2 = r_vdc5_shrd_get_resource(param_1,param_2);
   if (iVar2 == 0) {
     FUN_2011d438(param_1,uVar1,param_3);
     FUN_2011af34(param_1,uVar1,param_3);
@@ -231,10 +231,10 @@ undefined4 r_vdc5_read_data_control(undefined4 param_1,undefined4 param_2,undefi
 
 /* (ch, layer, {base,...}): new frame-buffer address */
 
-undefined4 r_vdc5_change_read_process(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 r_vdc5_change_read_process(undefined4 param_1,uint param_2,undefined4 param_3)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
   undefined4 uVar3;
   
@@ -262,20 +262,20 @@ undefined4 r_vdc5_change_read_process(undefined4 param_1,undefined4 param_2,unde
 
 /* (ch, layer, &disp_sel): show a layer (2 current, 3 blend) */
 
-undefined4 r_vdc5_start_process(undefined4 param_1,int param_2,undefined4 param_3)
+byte r_vdc5_start_process(uint param_1,int param_2,uint param_3)
 
 {
   int iVar1;
-  undefined4 uVar2;
+  byte bVar2;
   
-  uVar2 = 0;
+  bVar2 = 0;
   if ((param_2 == -1) || (iVar1 = FUN_2011d8e8(), iVar1 != 0)) {
     FUN_2011b8b8(param_1,param_2,param_3);
   }
   else {
-    uVar2 = 0xe;
+    bVar2 = 0xe;
   }
-  return uVar2;
+  return bVar2;
 }
 
 
@@ -289,20 +289,20 @@ undefined4 r_vdc5_start_process(undefined4 param_1,int param_2,undefined4 param_
 
 /* (ch, layer): hide a layer */
 
-undefined4 r_vdc5_stop_process(undefined4 param_1,int param_2)
+byte r_vdc5_stop_process(uint param_1,int param_2)
 
 {
   int iVar1;
-  undefined4 uVar2;
+  byte bVar2;
   
-  uVar2 = 0;
+  bVar2 = 0;
   if ((param_2 == -1) || (iVar1 = FUN_2011d920(), iVar1 != 0)) {
     FUN_2011b988(param_1,param_2);
   }
   else {
-    uVar2 = 0xe;
+    bVar2 = 0xe;
   }
-  return uVar2;
+  return bVar2;
 }
 
 
@@ -316,16 +316,15 @@ undefined4 r_vdc5_stop_process(undefined4 param_1,int param_2)
 
 /* (ch, layer, on, {rect, alpha, ...}): alpha window / fades */
 
-undefined4
-r_vdc5_alpha_blending_rect(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+uint r_vdc5_alpha_blending_rect(uint param_1,int param_2,uint param_3,uint param_4)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
   
   uVar1 = vdc5_layer_to_gr(param_2);
   if (param_2 != 7) {
-    iVar2 = FUN_2011d84c(param_1,param_2);
+    iVar2 = r_vdc5_shrd_get_resource(param_1,param_2);
     if (iVar2 == 0) {
       return 0xe;
     }
@@ -349,17 +348,16 @@ r_vdc5_alpha_blending_rect(undefined4 param_1,int param_2,undefined4 param_3,und
 
 /* (ch, layer, on, {ck_color, rep_color, rep_alpha}); used with color 0 = transparent */
 
-undefined4
-r_vdc5_chromakey(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+uint r_vdc5_chromakey(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
-  undefined4 uVar3;
+  uint uVar3;
   
   uVar1 = vdc5_layer_to_gr(param_2);
   uVar3 = 0;
-  iVar2 = FUN_2011d84c(param_1,param_2);
+  iVar2 = r_vdc5_shrd_get_resource(param_1,param_2);
   if (iVar2 == 0) {
     uVar3 = 0xe;
   }
@@ -386,21 +384,21 @@ r_vdc5_chromakey(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefi
 
 /* (ch, vdc5_disp_calibration_t*): used for the LCD contrast setting */
 
-undefined4 r_vdc5_display_calibration(undefined4 param_1,undefined4 param_2)
+byte r_vdc5_display_calibration(uint param_1,uint param_2)
 
 {
   int iVar1;
-  undefined4 uVar2;
+  byte bVar2;
   
-  uVar2 = 0;
+  bVar2 = 0;
   iVar1 = FUN_2011d830(param_1,3);
   if (iVar1 == 1) {
     FUN_2011c6ec(param_1,param_2);
   }
   else {
-    uVar2 = 0xc;
+    bVar2 = 0xc;
   }
-  return uVar2;
+  return bVar2;
 }
 
 
@@ -458,14 +456,15 @@ void r_vdc5_callback_isr(int param_1,byte *param_2)
   }
   if (bVar1 == 9) {
     puVar2 = *(uint **)(&DAT_20165ce0 + param_1 * 0x228);
-    *(undefined2 *)(&PTR_DAT_20165d08)[param_1 * 0x8a] = *(undefined2 *)(param_2 + 8);
+    *(undefined2 *)(&PTR_VDC50_SC0_SCL0_INT_20165d08)[param_1 * 0x8a] = *(undefined2 *)(param_2 + 8)
+    ;
     *puVar2 = *puVar2 | 1;
     return;
   }
   if (bVar1 != 0x10) {
     if (bVar1 == 0x13) {
-      puVar2 = (uint *)(&PTR_DAT_201664c8)[param_1 * 0x84];
-      puVar3 = (uint *)(&PTR_DAT_20166478)[param_1 * 0x84];
+      puVar2 = (uint *)(&PTR_VDC50_GR_OIR_CLUT_201664c8)[param_1 * 0x84];
+      puVar3 = (uint *)(&PTR_VDC50_GR_OIR_UPDATE_20166478)[param_1 * 0x84];
       *puVar2 = *puVar2 & 0xfffff800;
       *puVar2 = (uint)*(ushort *)(param_2 + 8) | *puVar2;
       *puVar3 = *puVar3 | 0x10;
@@ -473,7 +472,7 @@ void r_vdc5_callback_isr(int param_1,byte *param_2)
     return;
   }
   puVar2 = *(uint **)(&DAT_20165d98 + param_1 * 0x228);
-  *(undefined2 *)(&PTR_DAT_20165dc0)[param_1 * 0x8a] = *(undefined2 *)(param_2 + 8);
+  *(undefined2 *)(&PTR_VDC50_SC1_SCL0_INT_20165dc0)[param_1 * 0x8a] = *(undefined2 *)(param_2 + 8);
   *puVar2 = *puVar2 | 1;
   return;
 }
@@ -625,15 +624,16 @@ LAB_2011a684:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012470c @ 2012470c  (1132 bytes, 1 callers, export file 20120d60_20124a74.c)
- * Name on the doc page: scope_text_view_draw
+ * scope_text_view_draw @ 2012470c  (1132 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012470c @ 2012470c (1132 bytes)
+// ===== scope_text_view_draw @ 2012470c (1132 bytes)
 
-uint FUN_2012470c(void)
+/* third scope view (0x208004D0 = 3): RX/TX text lines */
+
+uint scope_text_view_draw(void)
 
 {
   uint uVar1;
@@ -660,15 +660,17 @@ uint FUN_2012470c(void)
   undefined4 local_34;
   undefined4 local_30;
   undefined4 local_2c;
-  undefined4 local_28;
+  int local_28;
   
   if ((1 < DAT_20800482) || (DAT_208004d0 != '\x03')) {
     return (DAT_208f0b2f & 0x3f) >> 5;
   }
   local_28 = fb_get_layer_addr(DAT_208085b8);
   uVar6 = 0;
-  fb_clear_rect(local_28,DAT_208084ea,DAT_208084e8,DAT_208084f0,DAT_208084f2);
-  fb_clear_rect(local_28,DAT_208084f6,DAT_208084f4,DAT_208084f8,DAT_208084fa);
+  fb_clear_rect(local_28,(uint)DAT_208084ea,(uint)DAT_208084e8,(uint)DAT_208084f0,(uint)DAT_208084f2
+               );
+  fb_clear_rect(local_28,(uint)DAT_208084f6,(uint)DAT_208084f4,(uint)DAT_208084f8,(uint)DAT_208084fa
+               );
   local_68 = 0;
   local_64 = 0;
   local_60 = 0;
@@ -774,7 +776,7 @@ uint FUN_2012470c(void)
       local_34 = 0;
       local_30 = 0;
       local_2c = 0;
-      uVar2 = FUN_20155122(&DAT_208f48f1 + uVar7 * 0x29);
+      uVar2 = strlen(&DAT_208f48f1 + uVar7 * 0x29);
       memcpy(&local_68,&DAT_208f48f1 + uVar7 * 0x29,uVar2);
       gui_draw_text(local_28,&local_68,DAT_2080850a * uVar5 + DAT_208084ee,DAT_208084ec,DAT_20808508
                     ,&DAT_20800b1c);
@@ -791,8 +793,10 @@ uint FUN_2012470c(void)
   }
   DAT_208f4bef = 0;
 LAB_20131eb8:
-  gui_draw_runs(local_28,DAT_2080851a + DAT_20808502,DAT_20808518 + DAT_20808500,&DAT_2016dc58);
-  gui_draw_runs(local_28,DAT_2080851e + DAT_20808502,DAT_2080851c + DAT_20808500,&DAT_2016dc68);
+  gui_draw_runs(local_28,(uint)DAT_2080851a + (uint)DAT_20808502 & 0xffff,
+                (uint)DAT_20808518 + (uint)DAT_20808500 & 0xffff,&DAT_2016dc58);
+  gui_draw_runs(local_28,(uint)DAT_2080851e + (uint)DAT_20808502 & 0xffff,
+                (uint)DAT_2080851c + (uint)DAT_20808500 & 0xffff,&DAT_2016dc68);
   uVar7 = (uint)DAT_208f4899;
   uVar6 = (uint)DAT_208f489c;
   if (uVar6 < uVar7) {
@@ -810,7 +814,7 @@ LAB_20131eb8:
 
 
 /* -----------------------------------------------------------------------------
- * touch_calibration @ 20125e78  (244 bytes, 5 callers, export file 20124a98_2012cf30.c)
+ * touch_calibration @ 20125e78  (244 bytes, 5 callers, export file 20124a74_2012cb60.c)
  * Purpose: `TOUCH THE CROSS`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -823,7 +827,7 @@ LAB_20131eb8:
 void touch_calibration(int param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   uint uVar2;
   undefined4 local_50;
   undefined4 local_4c;
@@ -841,8 +845,8 @@ void touch_calibration(int param_1)
   uVar1 = fb_get_layer_addr(DAT_208085bc);
   layer_alpha_rect_opaque(5);
   fb_fill_rect(uVar1,0,0,0,800,0x1e0);
-  gui_draw_runs(uVar1,*(undefined2 *)(&DAT_2016d61e + param_1 * 4),
-                *(undefined2 *)(&DAT_2016d61c + param_1 * 4),&DAT_2016d60c);
+  gui_draw_runs(uVar1,(uint)*(ushort *)(&DAT_2016d61e + param_1 * 4),
+                (uint)*(ushort *)(&DAT_2016d61c + param_1 * 4),&DAT_2016d60c);
   uVar2 = 0;
   do {
     local_50 = 0;
@@ -857,8 +861,8 @@ void touch_calibration(int param_1)
     local_2c = 0;
     local_28 = 0;
     local_24 = 0;
-    FUN_201550dc(&local_50,(&DAT_20800880)[uVar2]);
-    gui_draw_text_centered(uVar1,&local_50,uVar2 * 0x14 + 0x177,400,0xf,&DAT_20800b1c);
+    strcpy(&local_50,(&DAT_20800880)[uVar2]);
+    gui_draw_text_centered(uVar1,(int)&local_50,uVar2 * 0x14 + 0x177,400,0xf,0x20800b1c);
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 4);
   return;
@@ -866,7 +870,7 @@ void touch_calibration(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gui_screen_update @ 2012ebb8  (2912 bytes, 1 callers, export file 2012d000_201322c8.c)
+ * gui_screen_update @ 2012ebb8  (2912 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: `gui_screen_update`: packet compare and dispatch
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -881,36 +885,35 @@ void gui_screen_update(void)
 {
   byte bVar1;
   int iVar2;
-  undefined4 uVar3;
+  uint uVar3;
   uint uVar4;
-  undefined4 uVar5;
-  undefined1 *puVar6;
-  bool bVar7;
+  char *pcVar5;
+  bool bVar6;
   byte local_270;
-  undefined1 local_26f;
-  undefined1 local_26e;
+  byte local_26f;
+  byte local_26e;
   byte local_269;
-  undefined1 local_268;
+  byte local_268;
   byte local_260;
   undefined2 local_1d8;
   undefined2 local_1d6;
   undefined2 local_1d4;
-  undefined4 local_30;
+  int local_30;
   undefined4 local_2c;
-  undefined4 local_28;
+  int local_28;
   
   local_28 = fb_get_layer_addr(0);
   local_30 = fb_get_layer_addr(DAT_208085b8);
   local_2c = fb_get_layer_addr(DAT_208085bc);
-  puVar6 = (undefined1 *)0x0;
-  uVar5 = 0;
+  pcVar5 = (char *)0x0;
+  uVar4 = 0;
   if (DAT_20800488 == '\x01') {
     mainlink_inject_rx(&DAT_208f0fcb);
     DAT_20800488 = '\0';
   }
-  mainlink_get_last_frame(&local_270);
+  mainlink_get_last_frame((uint)&local_270);
   FUN_2012ea74(&local_270,&DAT_208f0b2a);
-  iVar2 = FUN_2015507c(&local_270,&DAT_208f0b2a,0x240);
+  iVar2 = memcmp(&local_270,&DAT_208f0b2a,0x240);
   if (iVar2 == 0) goto LAB_2012f698;
   if ((local_270 == 0x39 || local_270 == 0x3a) || local_270 == 0x3f) {
 LAB_2012ec7c:
@@ -940,11 +943,11 @@ LAB_2012ecc8:
     }
 LAB_2012ecdc:
     if (local_270 == 0x65) {
-      rtc_set_from_main(&local_270);
+      rtc_set_from_main((int)&local_270);
       return;
     }
     if (local_270 == 0x23) {
-      FUN_20131354(&local_270);
+      pkt23_tx_text(&local_270);
       return;
     }
     if ((((((DAT_208f0b2a == 0x40) && (local_270 != 0x40 && local_270 != 0x20)) &&
@@ -967,30 +970,30 @@ LAB_2012ecdc:
       }
     }
     else {
-      FUN_20155274(local_2c,0xbb800);
+      __aeabi_memclr(local_2c,0xbb800);
     }
   }
   if ((DAT_208f463c != '\0') && (DAT_208f0b2a == 0x31 || DAT_208f0b2a == 0x3a)) {
     return;
   }
   if ((DAT_208f0b2a == 0x70) && (local_270 == 0x30)) {
-    if ((byte)local_1d8 == -1) {
+    if ((byte)local_1d8 == 0xff) {
       return;
     }
   }
   else {
     if (local_270 == 0x3f) {
-      rec_start_stop(&local_270);
+      rec_start_stop((int)&local_270);
       DAT_2080049e = DAT_208f0b2a;
       memcpy(&DAT_208f0b2a,&local_270,0x240);
       return;
     }
     if (((DAT_208f0b2a == 0x7b) && (local_270 != 0x7b)) &&
-       ((screen_saver_exit(&local_270), DAT_208f4636 != '\0' || (local_270 == 0x3a)))) {
+       ((screen_saver_exit(), DAT_208f4636 != '\0' || (local_270 == 0x3a)))) {
       FUN_2012616c(0);
     }
   }
-  if ((DAT_208f463b != '\0') && (FUN_20155274(local_2c,0xbb800), DAT_208f4630 != '\0')) {
+  if ((DAT_208f463b != '\0') && (__aeabi_memclr(local_2c,0xbb800), DAT_208f4630 != '\0')) {
     if (local_270 == 0x41) {
       fb_fill_rect(local_30,0x821,0x6d,0x1bb,0x164,0x45);
     }
@@ -1000,24 +1003,24 @@ LAB_2012ecdc:
   }
   if (DAT_208f463a != '\0') {
     if (DAT_208f4630 == '\0') {
-      uVar3 = 0xb4;
+      iVar2 = 0xb4;
     }
     else {
-      uVar3 = 0x6d;
+      iVar2 = 0x6d;
     }
-    fb_clear_rect(local_28,uVar3,1,0x31e,0x15);
-    fb_clear_rect(local_30,uVar3,1,0x31e,0x15);
+    fb_clear_rect(local_28,iVar2,1,0x31e,0x15);
+    fb_clear_rect(local_30,iVar2,1,0x31e,0x15);
   }
-  uVar4 = (uint)local_270;
-  if (uVar4 - 0x20 < 0x22) {
-    if (uVar4 != 0x21) {
+  uVar3 = (uint)local_270;
+  if (uVar3 - 0x20 < 0x22) {
+    if (uVar3 != 0x21) {
 LAB_2012efbc:
-      pclink_tx_set_status(&local_26f);
+      pclink_tx_set_status((uint)&local_26f);
       DAT_2080048b = DAT_2080048a;
-      bVar7 = (local_269 & 0x80) != 0;
+      bVar6 = (local_269 & 0x80) != 0;
       bVar1 = ~DAT_2080048a;
-      DAT_2080048a = bVar7;
-      if ((bVar7 & bVar1) != 0) {
+      DAT_2080048a = bVar6;
+      if ((bVar6 & bVar1) != 0) {
         FUN_2013448c();
         FUN_20120db4();
       }
@@ -1026,14 +1029,14 @@ LAB_2012efbc:
         FUN_20120dc0();
       }
       if ((local_260 & 0xf0) != (DAT_208f0b3a & 0xf0)) {
-        bVar7 = (local_260 & 0xf0) == 0;
-        if (bVar7) {
+        bVar6 = (local_260 & 0xf0) == 0;
+        if (bVar6) {
           FUN_201342f8(0);
         }
         else {
           FUN_201342f8(1);
         }
-        FUN_20120d4c(!bVar7);
+        FUN_20120d4c(!bVar6);
       }
       FUN_2012e678(&local_270,&DAT_208f0b2a,DAT_20800485);
       if (local_270 != 0x3a) {
@@ -1077,7 +1080,7 @@ LAB_2012f09c:
 LAB_2012f188:
           if ((DAT_208f4636 != '\0') || (local_270 == 0x3a)) goto LAB_2012f1c0;
         }
-        scr_main_layout(&local_270,&DAT_208f0b2a,DAT_20800485);
+        scr_main_layout((int)&local_270,0x208f0b2a,(uint)DAT_20800485);
         DAT_20800485 = 0;
       }
 LAB_2012f1c0:
@@ -1085,20 +1088,20 @@ LAB_2012f1c0:
         if ((local_270 == 0x30) || (local_270 == 0x31)) {
           if ((byte)local_1d8 != DAT_208f0bc2) {
 LAB_2012f2d8:
-            FUN_20155274(local_2c,0xbb800);
+            __aeabi_memclr(local_2c,0xbb800);
             goto LAB_2012f2f8;
           }
         }
         else if (local_270 == 0x70) {
-          puVar6 = &DAT_208f0b2a;
-          uVar5 = 1;
+          pcVar5 = (char *)&DAT_208f0b2a;
+          uVar4 = 1;
           goto LAB_2012f320;
         }
-        puVar6 = &DAT_208f0b2a;
+        pcVar5 = (char *)&DAT_208f0b2a;
 LAB_2012f2f8:
         if (((local_270 == 0x20 || local_270 == 0x39) || local_270 == 0x37) &&
            (DAT_208f0b2a != 0x70)) {
-          audio_error_check(&local_270);
+          audio_error_check((int)&local_270);
         }
       }
       else {
@@ -1106,17 +1109,17 @@ LAB_2012f2f8:
            && ((DAT_208f0b2a == 0x40 || DAT_208f0b2a == 0x43 ||
                ((DAT_208f0b2a == 0x70 || DAT_208f0b2a == 0x7c ||
                 ((DAT_208f0b2a == 0x31 || DAT_208f0b2a == 0x7a) || local_270 == 0x70)))))) {
-          uVar5 = 1;
+          uVar4 = 1;
           goto LAB_2012f2f8;
         }
-        uVar5 = 1;
+        uVar4 = 1;
         if ((DAT_208f0b2a != 0) &&
            (layer_alpha_rect_off(5), DAT_208f0b2a == 0x7b || DAT_208f0b2a == 0x7a)) {
           if (DAT_208f4636 != '\0') goto LAB_2012f2f8;
           if (local_270 == 0x3a) goto LAB_2012f320;
         }
         if (local_270 == 0x30) {
-          if ((byte)local_1d8 != -1) {
+          if ((byte)local_1d8 != 0xff) {
 LAB_2012f26c:
             if (DAT_20800497 == '\0') {
               return;
@@ -1128,15 +1131,15 @@ LAB_2012f26c:
         else if (local_270 != 0x24) goto LAB_2012f26c;
       }
 LAB_2012f320:
-      iVar2 = FUN_2012c2d8(&local_270,puVar6);
+      iVar2 = FUN_2012c2d8(&local_270,pcVar5);
       if (iVar2 != 0) {
         if (local_270 == 0x39) {
-          scr_vfo(&local_270,puVar6,uVar5);
-          vfo_audio_status_draw(&local_270,uVar5);
+          scr_vfo((char *)&local_270,pcVar5,uVar4);
+          vfo_audio_status_draw((int)&local_270,uVar4);
         }
         else if (local_270 < 0x3a) {
           if (local_270 == 0x31) {
-            scr_value_popup(&local_270);
+            scr_value_popup((int)&local_270);
           }
           else if (local_270 < 0x32) {
             if (local_270 != 0x20) {
@@ -1153,7 +1156,7 @@ LAB_2012f320:
                 }
                 else {
 LAB_2012f534:
-                  gui_apply_display_cfg(&local_1d8,&DAT_208007e8,0);
+                  gui_apply_display_cfg((byte *)&local_1d8,(byte *)&DAT_208007e8,0);
                 }
                 if (((byte)local_1d8 & 4) != ((byte)DAT_208007e8 & 4)) {
                   gpio_ft4222_reset((byte)local_1d8 & 4);
@@ -1163,54 +1166,55 @@ LAB_2012f534:
                 DAT_208007ec = local_1d4;
               }
               else if (local_270 == 0x30) {
-                scr_select_popup(&local_270,puVar6,uVar5);
+                scr_select_popup((int)&local_270,(int)pcVar5,uVar4);
               }
             }
           }
           else if (local_270 == 0x34) {
-            scr_info(&local_270);
+            scr_info((int)&local_270);
           }
           else if (local_270 == 0x37) {
-            scr_func_panel(&local_270,uVar5);
+            scr_func_panel((int)&local_270,uVar4);
           }
         }
         else if (local_270 == 0x50) {
           if (DAT_208f463b != '\0') {
-            uVar5 = 1;
+            uVar4 = 1;
           }
-          scr_keyboard(&local_270,puVar6,uVar5);
+          scr_keyboard((int)&local_270,(int)pcVar5,uVar4);
         }
         else if (local_270 < 0x51) {
           if (local_270 == 0x3a) {
-            scr_playlist(&local_270,&DAT_208f0b2a);
+            scr_playlist((int)&local_270,(char *)&DAT_208f0b2a);
             FUN_2012616c(1);
           }
           else if (local_270 == 0x40) {
-            scr_text_list(&local_270,puVar6,uVar5);
+            scr_text_list((int)&local_270,(int)pcVar5,uVar4);
           }
           else if (local_270 == 0x41) {
-            scr_memory_list(&local_270,uVar5);
+            scr_memory_list((int)&local_270,uVar4);
           }
         }
         else if (local_270 == 0x62) {
           if (DAT_208f463b != '\0') {
-            uVar5 = 1;
+            uVar4 = 1;
           }
-          scr_setup_menu(&local_270,puVar6,uVar5);
+          scr_setup_menu((int)&local_270,(int)pcVar5,uVar4);
           rtc_int_setup();
         }
-        else if ((local_270 == 0x70) && (scr_confirm(&local_270,uVar5), DAT_208f4636 != '\0')) {
+        else if ((local_270 == 0x70) && (scr_confirm((int)&local_270,uVar4), DAT_208f4636 != '\0'))
+        {
           FUN_2012616c(1);
         }
       }
-      led_set_mask(local_268);
+      led_set_mask((uint)local_268);
       DAT_2080049e = DAT_208f0b2a;
       memcpy(&DAT_208f0b2a,&local_270,0x240);
       goto LAB_2012f698;
     }
   }
-  else if ((uVar4 == 0x50 || uVar4 == 0x62) || uVar4 == 0x70) goto LAB_2012efbc;
-  if (uVar4 == 0x7a) {
+  else if ((uVar3 == 0x50 || uVar3 == 0x62) || uVar3 == 0x70) goto LAB_2012efbc;
+  if (uVar3 == 0x7a) {
     screen_capture_bmp();
     DAT_208f0b2a = local_270;
     DAT_20800488 = '\x01';
@@ -1219,26 +1223,25 @@ LAB_2012f534:
     }
     goto LAB_2012f698;
   }
-  if (uVar4 < 0x7b) {
-    if (uVar4 == 0x21) {
-      led_set_one(local_26f,local_26e);
+  if (uVar3 < 0x7b) {
+    if (uVar3 == 0x21) {
+      led_set_one((uint)local_26f,(uint)local_26e);
       goto LAB_2012f698;
     }
-    if (uVar4 != 0x43) {
-      if (uVar4 == 100) {
-        scr_lcd_test(&local_270);
+    if (uVar3 != 0x43) {
+      if (uVar3 == 100) {
+        scr_lcd_test((int)&local_270);
         DAT_208f0b2a = local_270;
       }
       goto LAB_2012f698;
     }
-    if ((DAT_208f0b2a != 0x43) || (iVar2 = FUN_2015507c(&DAT_208f0d6a,&local_26f,0x21), iVar2 != 0))
-    {
-      scr_sd_menu(&local_270);
+    if ((DAT_208f0b2a != 0x43) || (iVar2 = memcmp(&DAT_208f0d6a,&local_26f,0x21), iVar2 != 0)) {
+      scr_sd_menu((int)&local_270);
       memcpy(&DAT_208f0d6a,&local_26f,0x21);
     }
   }
   else {
-    if (uVar4 == 0x7b) {
+    if (uVar3 == 0x7b) {
       if (DAT_208f0b2a != 0x7b) {
         DAT_20800487 = 0;
         DAT_20800485 = 1;
@@ -1247,7 +1250,7 @@ LAB_2012f534:
       }
       goto LAB_2012f698;
     }
-    if (uVar4 != 0x7c) goto LAB_2012f698;
+    if (uVar3 != 0x7c) goto LAB_2012f698;
     if (DAT_208f0b2a != 0x7c) {
       DAT_2080049f = 1;
       touch_calibration(1);
@@ -1257,21 +1260,21 @@ LAB_2012f534:
 LAB_2012f698:
   iVar2 = FUN_20125d8c();
   if (iVar2 != 0) {
-    scr_playlist(&local_270,&DAT_208f0b2a);
+    scr_playlist((int)&local_270,(char *)&DAT_208f0b2a);
     DAT_2080049e = DAT_208f0b2a;
     memcpy(&DAT_208f0b2a,&local_270,0x240);
   }
   FUN_201248f8();
   if (DAT_20800491 != '\0') {
-    iVar2 = audio_state();
-    if (iVar2 == 0) {
+    uVar4 = audio_state();
+    if (uVar4 == 0) {
       FUN_20124848(0);
       DAT_20800491 = '\0';
     }
-    iVar2 = FUN_20103ba0();
+    iVar2 = sd_state_bit6();
     if (iVar2 == 0) {
       rec_stop();
-      FUN_20124744(0xffffffff);
+      mainlink_send_audio_error(0xffffffff);
       DAT_20800491 = 0;
       return;
     }
@@ -1281,7 +1284,7 @@ LAB_2012f698:
 
 
 /* -----------------------------------------------------------------------------
- * opening_check_main @ 2012f734  (416 bytes, 4 callers, export file 2012d000_201322c8.c)
+ * opening_check_main @ 2012f734  (416 bytes, 4 callers, export file 2012cf30_201322bc.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -1290,12 +1293,12 @@ LAB_2012f698:
 
 /* handles the 0x60 power-on packet */
 
-undefined4 opening_check_main(void)
+uint opening_check_main(void)
 
 {
   undefined4 uVar1;
   int iVar2;
-  undefined4 uVar3;
+  uint uVar3;
   char local_260;
   byte local_25f [14];
   undefined1 auStack_251 [4];
@@ -1310,7 +1313,7 @@ undefined4 opening_check_main(void)
   
   uVar3 = 0;
   fb_get_layer_addr(DAT_208085b8);
-  mainlink_get_frame60(&local_260);
+  mainlink_get_frame60((uint)&local_260);
   if (local_260 == '`') {
     if ((~local_25f[0] & 0xf0) == 0) {
       iVar2 = 0;
@@ -1320,12 +1323,12 @@ undefined4 opening_check_main(void)
         iVar2 = iVar2 + 1;
       } while (iVar2 * 0x21 < 0x9c5);
       uVar1 = fb_get_layer_addr(DAT_208085b8);
-      FUN_20155274(uVar1,0xbb800);
+      __aeabi_memclr(uVar1,0xbb800);
       gui_update_layers();
       FUN_201322f0();
       while (DAT_20800493 == '\0') {
         gui_update_layers();
-        FUN_201525f8(0xffffffff);
+        itron_tslp_tsk(0xffffffff);
       }
     }
     else {
@@ -1344,13 +1347,13 @@ undefined4 opening_check_main(void)
         FUN_20120dc0();
       }
       FUN_20134480((local_24d & 0x3f) >> 5);
-      uVar3 = FUN_2012d318(local_24d & 0x20);
-      FUN_20134444(uVar3,local_24c & 0x80);
+      uVar1 = FUN_2012d318(local_24d & 0x20);
+      FUN_20134444(uVar1,local_24c & 0x80);
       FUN_20134474(local_24c & 0x40);
       FUN_2012e3c8(local_240,local_20,local_1c);
       FUN_201342dc(local_20[0],local_1c[0]);
-      thunk_FUN_2015d2a8(local_20[0]);
-      fw_installed_versions_set_thunk(local_25f);
+      scope2d_set_color(local_20[0]);
+      fw_installed_versions_set_thunk((uint)local_25f);
       DAT_20800481 = local_1ba & 0xf;
       DAT_208f0b2a = 0x20;
       memcpy(&DAT_208f0b2b,auStack_251,0x97);
@@ -1363,7 +1366,7 @@ undefined4 opening_check_main(void)
 
 
 /* -----------------------------------------------------------------------------
- * opening_screen @ 2012f8d4  (1216 bytes, 2 callers, export file 2012d000_201322c8.c)
+ * opening_screen @ 2012f8d4  (1216 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -1378,10 +1381,12 @@ void opening_screen(void)
   undefined2 uVar1;
   undefined2 uVar2;
   undefined2 uVar3;
-  undefined4 uVar4;
-  undefined4 uVar5;
+  byte bVar4;
+  int iVar5;
   int iVar6;
-  int iVar7;
+  uint uVar7;
+  undefined4 uVar8;
+  int iVar9;
   undefined2 local_4e0;
   undefined1 local_4de;
   undefined1 local_4dd;
@@ -1389,9 +1394,9 @@ void opening_screen(void)
   undefined2 local_4d8;
   undefined2 local_4d6;
   undefined2 local_4d4;
-  short local_4d0;
+  ushort local_4d0;
   short local_4ce;
-  undefined2 local_4cc;
+  ushort local_4cc;
   undefined2 local_4ca;
   undefined1 uStack_4c8;
   undefined1 auStack_4c7 [575];
@@ -1402,23 +1407,23 @@ void opening_screen(void)
   undefined4 local_44;
   undefined4 local_40;
   undefined4 local_3c;
-  undefined4 local_38;
-  short *local_34;
+  uint local_38;
+  ushort *local_34;
   undefined2 *local_30;
   undefined4 local_2c;
   
-  uVar4 = fb_get_layer_addr(0);
-  uVar5 = fb_get_layer_addr(DAT_208085bc);
+  iVar5 = fb_get_layer_addr(0);
+  iVar6 = fb_get_layer_addr(DAT_208085bc);
   local_38 = fb_get_layer_addr(DAT_208085b8);
-  iVar7 = 0;
-  memclr(&uStack_4c8,0x240);
-  fb_clear_rect(uVar4,0,0,800,0x1e0);
+  iVar9 = 0;
+  __aeabi_memclr4(&uStack_4c8,0x240);
+  fb_clear_rect(iVar5,0,0,800,0x1e0);
   fb_clear_rect(local_38,0,0,800,0x1e0);
-  fb_clear_rect(uVar5,0,0,800,0x1e0);
+  fb_clear_rect(iVar6,0,0,800,0x1e0);
   gui_update_layers();
-  fb_clear_rect(uVar4,0,0,800,0x1e0);
+  fb_clear_rect(iVar5,0,0,800,0x1e0);
   fb_clear_rect(local_38,0,0,800,0x1e0);
-  fb_clear_rect(uVar5,0,0,800,0x1e0);
+  fb_clear_rect(iVar6,0,0,800,0x1e0);
   gui_update_layers();
   layer_alpha_rect_off(3);
   layer_alpha_rect_off(5);
@@ -1439,7 +1444,7 @@ void opening_screen(void)
   layer_alpha_rect_set(1,4,1,&local_34);
   vdc5_wait_frames(1);
   itron_dly_tsk(0x14);
-  gui_draw_runs(local_38,DAT_208004d6,DAT_208004d4,&DAT_2016d2c0);
+  gui_draw_runs(local_38,(uint)DAT_208004d6,(uint)DAT_208004d4,&DAT_2016d2c0);
   gui_update_layers();
   local_4e0 = 2;
   layer_alpha_rect_set(0,4,1,&local_34);
@@ -1452,55 +1457,56 @@ void opening_screen(void)
     mainlink_hello_poweron();
   }
   gui_update_layers();
-  iVar6 = opening_check_main();
-  while (iVar6 == 0) {
+  uVar7 = opening_check_main();
+  while (uVar7 == 0) {
     if (DAT_20800493 != '\0') {
       return;
     }
-    iVar6 = mainlink_got_esc();
-    if (iVar6 != 0) {
-      for (; iVar7 * 0x21 < 0x9c5; iVar7 = iVar7 + 1) {
+    uVar7 = mainlink_got_esc();
+    if (uVar7 != 0) {
+      for (; iVar9 * 0x21 < 0x9c5; iVar9 = iVar9 + 1) {
         itron_dly_tsk(3);
       }
       fwupdate_screen_thunk();
     }
     itron_dly_tsk(3);
-    iVar7 = iVar7 + 1;
-    if (4999 < iVar7 * 0x21) goto LAB_2012fb90;
-    iVar6 = opening_check_main();
+    iVar9 = iVar9 + 1;
+    if (4999 < iVar9 * 0x21) goto LAB_2012fb90;
+    uVar7 = opening_check_main();
   }
-  iVar6 = mainlink_get_settings24(&local_4d8);
+  bVar4 = mainlink_get_settings24((uint)&local_4d8);
   while( true ) {
     uVar1 = local_4d8;
     uVar2 = local_4d6;
     uVar3 = local_4d4;
-    if (iVar6 != 0) {
-      for (; DAT_208007ec = uVar3, DAT_208007ea = uVar2, DAT_208007e8 = uVar1, iVar7 * 0x21 < 0x9c5;
-          iVar7 = iVar7 + 1) {
+    if (bVar4 != 0) {
+      for (; DAT_208007ec = uVar3, DAT_208007ea = uVar2, DAT_208007e8 = uVar1, iVar9 * 0x21 < 0x9c5;
+          iVar9 = iVar9 + 1) {
         itron_dly_tsk(3);
         uVar1 = DAT_208007e8;
         uVar2 = DAT_208007ea;
         uVar3 = DAT_208007ec;
       }
-      mainlink_get_frame60(local_288);
+      mainlink_get_frame60((uint)local_288);
       if ((DAT_20800481 != 0) && (local_27a == '\0' || local_27a == -0x25)) {
         local_48 = 0;
         local_44 = 0;
         local_40 = 0;
         local_3c = 0;
         memcpy(&local_48,auStack_1e1,0xc);
-        str_rtrim(&local_48);
-        gui_draw_text_centered(local_38,&local_48,DAT_208004da,DAT_208004d8,0x10,&DAT_20800b1c);
+        str_rtrim((int)&local_48);
+        gui_draw_text_centered
+                  (local_38,(int)&local_48,(uint)DAT_208004da,(uint)DAT_208004d8,0x10,0x20800b1c);
         gui_update_layers();
-        iVar7 = 0;
+        iVar9 = 0;
         if (DAT_20800481 != 0) {
           do {
-            iVar7 = iVar7 + 1;
+            iVar9 = iVar9 + 1;
             itron_dly_tsk(100);
-          } while (iVar7 < (int)(uint)DAT_20800481);
+          } while (iVar9 < (int)(uint)DAT_20800481);
         }
       }
-      mainlink_get_frame60(local_288);
+      mainlink_get_frame60((uint)local_288);
       if ((local_288[0] == '`') &&
          ((local_27a == '\x01' || local_27a == '\x02') || local_27a == '\x03')) {
         fwupdate_insert_sd_screen_thunk();
@@ -1511,24 +1517,24 @@ void opening_screen(void)
       layer_alpha_rect_set(0,4,0,&local_34);
       layer_alpha_rect_set(1,4,0,&local_34);
       gui_update_layers();
-      uVar4 = fb_get_layer_addr(DAT_208085b8);
-      FUN_20155274(uVar4,0xbb800);
+      uVar8 = fb_get_layer_addr(DAT_208085b8);
+      __aeabi_memclr(uVar8,0xbb800);
       gui_update_layers();
       backlight_set(local_4d6._1_1_ & 0x7f);
       dimmer_set((byte)local_4d4 & 0x7f);
       memcpy(auStack_4c7,&DAT_208f0b2b,0x97);
-      pclink_tx_set_status(&DAT_208f0b2b);
+      pclink_tx_set_status(0x208f0b2b);
       FUN_2012e678(&uStack_4c8,0,1);
-      gui_apply_display_cfg(&local_4d8,&local_4d8,1);
+      gui_apply_display_cfg((byte *)&local_4d8,(byte *)&local_4d8,1);
       gpio_ft4222_reset((byte)local_4d8 & 4);
-      scr_main_layout(&DAT_208f0b2a,0,1);
+      scr_main_layout(0x208f0b2a,0,1);
       gui_update_layers();
       return;
     }
     itron_dly_tsk(3);
-    iVar7 = iVar7 + 1;
-    if (4999 < iVar7 * 0x21) break;
-    iVar6 = mainlink_get_settings24(&local_4d8);
+    iVar9 = iVar9 + 1;
+    if (4999 < iVar9 * 0x21) break;
+    bVar4 = mainlink_get_settings24((uint)&local_4d8);
   }
 LAB_2012fb90:
   fwupdate_insert_sd_screen_thunk();
@@ -1537,7 +1543,7 @@ LAB_2012fb90:
 
 
 /* -----------------------------------------------------------------------------
- * logo_fade_in @ 2012fd94  (568 bytes, 2 callers, export file 2012d000_201322c8.c)
+ * logo_fade_in @ 2012fd94  (568 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -1549,35 +1555,35 @@ LAB_2012fb90:
 void logo_fade_in(void)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
-  undefined4 uVar3;
+  int iVar1;
+  int iVar2;
+  int iVar3;
   int iVar4;
   undefined2 local_27c;
   undefined1 local_27a;
   undefined1 local_279;
   undefined1 local_278;
-  short local_270;
+  ushort local_270;
   short local_26e;
-  undefined2 local_26c;
+  ushort local_26c;
   undefined2 local_26a;
   undefined1 auStack_268 [576];
-  short *local_28;
+  ushort *local_28;
   undefined2 *local_24;
   undefined4 local_20;
   
-  uVar1 = fb_get_layer_addr(0);
-  uVar2 = fb_get_layer_addr(DAT_208085bc);
-  uVar3 = fb_get_layer_addr(DAT_208085b8);
+  iVar1 = fb_get_layer_addr(0);
+  iVar2 = fb_get_layer_addr(DAT_208085bc);
+  iVar3 = fb_get_layer_addr(DAT_208085b8);
   iVar4 = 0;
-  memclr(auStack_268,0x240);
-  fb_clear_rect(uVar1,0,0,800,0x1e0);
-  fb_clear_rect(uVar3,0,0,800,0x1e0);
-  fb_clear_rect(uVar2,0,0,800,0x1e0);
+  __aeabi_memclr4(auStack_268,0x240);
+  fb_clear_rect(iVar1,0,0,800,0x1e0);
+  fb_clear_rect(iVar3,0,0,800,0x1e0);
+  fb_clear_rect(iVar2,0,0,800,0x1e0);
   gui_update_layers();
-  fb_clear_rect(uVar1,0,0,800,0x1e0);
-  fb_clear_rect(uVar3,0,0,800,0x1e0);
-  fb_clear_rect(uVar2,0,0,800,0x1e0);
+  fb_clear_rect(iVar1,0,0,800,0x1e0);
+  fb_clear_rect(iVar3,0,0,800,0x1e0);
+  fb_clear_rect(iVar2,0,0,800,0x1e0);
   gui_update_layers();
   layer_alpha_rect_off(3);
   layer_alpha_rect_off(5);
@@ -1597,7 +1603,7 @@ void logo_fade_in(void)
   layer_alpha_rect_set(1,4,1,&local_28);
   vdc5_wait_frames(1);
   itron_dly_tsk(0x14);
-  gui_draw_runs(uVar3,DAT_208004d6,DAT_208004d4,&DAT_2016d2c0);
+  gui_draw_runs(iVar3,(uint)DAT_208004d6,(uint)DAT_208004d4,&DAT_2016d2c0);
   gui_update_layers();
   local_27c = 2;
   layer_alpha_rect_set(0,4,1,&local_28);
@@ -1617,7 +1623,7 @@ void logo_fade_in(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_main_loop @ 20130188  (1044 bytes, 1 callers, export file 2012d000_201322c8.c)
+ * gui_main_loop @ 20130188  (1044 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: `gui_main_loop`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -1631,16 +1637,19 @@ void logo_fade_in(void)
 void gui_main_loop(void)
 
 {
-  undefined4 uVar1;
-  int iVar2;
+  byte bVar1;
+  bool bVar2;
   int iVar3;
-  undefined1 auStack_8 [8];
+  int iVar4;
+  uint uVar5;
+  int iVar6;
+  byte abStack_8 [8];
   
-  uVar1 = fb_get_layer_addr(5);
-  iVar3 = 0;
+  iVar3 = fb_get_layer_addr(5);
+  iVar6 = 0;
   DAT_208004a2 = key_scan_first();
-  iVar2 = key_scan_first();
-  if (iVar2 == 6) {
+  bVar1 = key_scan_first();
+  if (bVar1 == 6) {
     DAT_208dbb4c = 2;
     logo_fade_in();
     FUN_201322e4(&DAT_208dbb44);
@@ -1649,18 +1658,18 @@ void gui_main_loop(void)
         FUN_20117030();
       }
       gui_update_layers();
-      FUN_201525f8(0xffffffff);
+      itron_tslp_tsk(0xffffffff);
     } while( true );
   }
-  iVar2 = FUN_2011727c();
-  if (iVar2 == 0) {
-    iVar2 = mainlink_wait_status();
-    if (iVar2 == 0) {
+  iVar4 = FUN_2011727c();
+  if (iVar4 == 0) {
+    bVar2 = mainlink_wait_status();
+    if (!bVar2) {
       DAT_20800493 = '\x01';
       goto LAB_20130238;
     }
-    iVar2 = key_scan_first();
-    if (iVar2 == 6) {
+    bVar1 = key_scan_first();
+    if (bVar1 == 6) {
       fwupdate_insert_sd_screen_thunk();
       goto LAB_20130238;
     }
@@ -1671,18 +1680,18 @@ void gui_main_loop(void)
   }
   opening_screen();
 LAB_20130238:
-  iVar2 = mouse_cursor_visible();
-  if (iVar2 != 0) {
+  bVar1 = mouse_cursor_visible();
+  if (bVar1 != 0) {
     layer_show(6);
   }
-  fb_blit_raw(uVar1,0,0,&DAT_2016e860,0xc,0x13);
+  fb_blit_raw(iVar3,0,0,0x2016e860,0xc,0x13);
   while( true ) {
     if (DAT_20800494 != '\0') {
-      iVar2 = FUN_20103bb0();
-      if (iVar2 != 0) {
+      iVar3 = sd_state_bit7();
+      if (iVar3 != 0) {
         DAT_20800495 = 0;
         FUN_201322f0();
-        FUN_20155274(&DAT_208f0b2a,0x240);
+        __aeabi_memclr(&DAT_208f0b2a,0x240);
         if (DAT_20800493 == '\0') {
           DAT_20800495 = 1;
           mainlink_send_touch_key(1,0x166,0);
@@ -1712,15 +1721,15 @@ LAB_201303a8:
     DAT_2080049a = '\0';
     FUN_20117030();
     pclink_set_testmode(0);
-    iVar2 = mainlink_get_settings24(auStack_8);
-    if (iVar2 != 0) {
+    bVar1 = mainlink_get_settings24((uint)abStack_8);
+    if (bVar1 != 0) {
       DAT_208007e8._0_1_ = (byte)DAT_208007e8 & 0xfe;
-      gui_apply_display_cfg(&DAT_208007e8,auStack_8,0);
+      gui_apply_display_cfg((byte *)&DAT_208007e8,abStack_8,0);
     }
-    iVar2 = FUN_2011727c();
-    while (iVar2 == 0) {
-      FUN_201525f8(0xffffffff);
-      iVar2 = FUN_2011727c();
+    iVar3 = FUN_2011727c();
+    while (iVar3 == 0) {
+      itron_tslp_tsk(0xffffffff);
+      iVar3 = FUN_2011727c();
     }
     DAT_20800496 = 0;
     power_on_request();
@@ -1729,12 +1738,12 @@ LAB_20130450:
       gui_screen_update();
       if (DAT_208004d0 == '\x03') {
         if (DAT_208f4632 == '\0') {
-          FUN_2012470c();
+          scope_text_view_draw();
         }
       }
       else if ((DAT_20800483 == '\0') && (DAT_208f0b2a != 'z')) {
         scope_draw_frame();
-        FUN_201244d8();
+        scope_markers_update();
       }
       if (DAT_20800484 == '\0') {
         if (DAT_208f4633 == '\0') {
@@ -1760,18 +1769,18 @@ LAB_20130450:
       }
       FUN_20131638();
       FUN_20121988(&DAT_20800838);
-      iVar3 = iVar3 + DAT_20800838;
-      if (DAT_208004a2 == '\x04') {
+      iVar6 = iVar6 + DAT_20800838;
+      if (DAT_208004a2 == 4) {
         pclink_set_testmode(1);
       }
-      fb_get_layer_addr(DAT_208085bc);
-      pclink_stats_print();
-      debug_overlay_draw(iVar3);
+      uVar5 = fb_get_layer_addr(DAT_208085bc);
+      pclink_stats_print(uVar5);
+      debug_overlay_draw(iVar6);
       FUN_20121988(&DAT_20800838);
       gui_update_layers();
       FUN_20121988(&DAT_20800838);
-      iVar3 = DAT_20800838;
-      FUN_201525f8(0xffffffff);
+      iVar6 = DAT_20800838;
+      itron_tslp_tsk(0xffffffff);
       FUN_20121988(&DAT_20800838);
       _DAT_208f4bf0 = _DAT_208f4bf0 + 1;
     }
@@ -1788,7 +1797,7 @@ LAB_20130450:
     }
     DAT_20800495 = 0;
     FUN_20116da0(0);
-    led_set_one(0);
+    led_set_one(0,0);
     led_set_mask(0);
     backlight_enable(0);
     lcd_power(0);
@@ -1805,7 +1814,7 @@ LAB_20130450:
 
 
 /* -----------------------------------------------------------------------------
- * screenshot_popup @ 2013059c  (384 bytes, 1 callers, export file 2012d000_201322c8.c)
+ * screenshot_popup @ 2013059c  (384 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: `screenshot_popup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -1817,21 +1826,22 @@ LAB_20130450:
 void screenshot_popup(void)
 
 {
-  short *psVar1;
-  undefined4 uVar2;
+  ushort *puVar1;
+  uint uVar2;
   undefined4 local_28;
   undefined4 local_24;
   undefined4 local_20;
   undefined4 local_1c;
   
   uVar2 = fb_get_layer_addr(DAT_208085bc);
-  psVar1 = DAT_20802ce4;
-  if (DAT_20802ce4 != (short *)0x0) {
-    fb_fill_rect(uVar2,0x821,DAT_2080278e + 2,DAT_2080278c + 2,*DAT_20802ce4 + -4,
-                 DAT_20802ce4[1] + -4);
-    gui_draw_runs(uVar2,DAT_2080278e,DAT_2080278c,psVar1);
-    fb_fill_box(uVar2,DAT_2080278e,DAT_2080278c + 6,*psVar1 + -0xc,2,0x632c);
-    fb_fill_box(uVar2,DAT_2080278e + psVar1[1] + -2,DAT_2080278c + 6,*psVar1 + -0xc,2,0x632c);
+  puVar1 = DAT_20802ce4;
+  if (DAT_20802ce4 != (ushort *)0x0) {
+    fb_fill_rect(uVar2,0x821,DAT_2080278e + 2 & 0xffff,DAT_2080278c + 2 & 0xffff,
+                 *DAT_20802ce4 - 4 & 0xffff,DAT_20802ce4[1] - 4 & 0xffff);
+    gui_draw_runs(uVar2,(uint)DAT_2080278e,(uint)DAT_2080278c,puVar1);
+    fb_fill_box(uVar2,(uint)DAT_2080278e,DAT_2080278c + 6 & 0xffff,*puVar1 - 0xc & 0xffff,2,0x632c);
+    fb_fill_box(uVar2,((uint)DAT_2080278e + (uint)puVar1[1]) - 2 & 0xffff,DAT_2080278c + 6 & 0xffff,
+                *puVar1 - 0xc & 0xffff,2,0x632c);
     if (DAT_20802890 != 0) {
       local_28 = 0;
       local_24 = 0;
@@ -1847,15 +1857,16 @@ void screenshot_popup(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20131154 @ 20131154  (512 bytes, 1 callers, export file 2012d000_201322c8.c)
- * Name on the doc page: decode_text_rx
+ * decode_text_rx @ 20131154  (512 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20131154 @ 20131154 (512 bytes)
+// ===== decode_text_rx @ 20131154 (512 bytes)
 
-void FUN_20131154(byte *param_1,int param_2)
+/* RX text filter (47-char sets 0x20801DE0..) -> 0x208F48C8 (inference: decoder) */
+
+void decode_text_rx(byte *param_1,int param_2)
 
 {
   byte bVar1;
@@ -1920,13 +1931,13 @@ LAB_2013129c:
           uVar2 = 0;
           do {
             iVar3 = uVar2 * 0x29;
-            FUN_20155274(&DAT_208f48f1 + iVar3,0x29);
+            __aeabi_memclr(&DAT_208f48f1 + iVar3,0x29);
             memcpy(&DAT_208f48f1 + iVar3,&DAT_208f491a + iVar3,0x29);
             uVar2 = uVar2 + 1 & 0xff;
           } while (uVar2 < 0xf);
-          FUN_20155274(&DAT_208f4b58,0x29);
+          __aeabi_memclr(&DAT_208f4b58,0x29);
           memcpy(&DAT_208f4b58,&DAT_208f48c8,DAT_208f489a + 1);
-          FUN_20155274(&DAT_208f48c8,0x29);
+          __aeabi_memclr(&DAT_208f48c8,0x29);
           if (DAT_208f4899 < 0x10) {
             DAT_208f4899 = DAT_208f4899 + 1;
           }
@@ -1945,15 +1956,16 @@ LAB_2013129c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20131354 @ 20131354  (492 bytes, 1 callers, export file 2012d000_201322c8.c)
- * Name on the doc page: pkt23_tx_text
+ * pkt23_tx_text @ 20131354  (492 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20131354 @ 20131354 (492 bytes)
+// ===== pkt23_tx_text @ 20131354 (492 bytes)
 
-void FUN_20131354(int param_1)
+/* packet 0x23: TX text line 0x208F489F */
+
+void pkt23_tx_text(int param_1)
 
 {
   char cVar1;
@@ -1991,7 +2003,7 @@ void FUN_20131354(int param_1)
     local_28 = 0;
     local_24 = 0;
     local_20 = 0;
-    FUN_20155274(&DAT_208f489f,0x29);
+    __aeabi_memclr(&DAT_208f489f,0x29);
     memcpy(&local_48,param_1 + 4,uVar2);
     memcpy(&DAT_208f489f,param_1 + 4,uVar2);
     DAT_208f489b = (undefined1)uVar2;
@@ -2106,7 +2118,7 @@ switchD_201313b0_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_module_start @ 20132320  (120 bytes, 3 callers, export file 201322d8_20133618.c)
+ * vdc5_module_start @ 20132320  (120 bytes, 3 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_module_start` / `vdc5_module_stop` (STBCR9 0xFCFE0438)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2120,28 +2132,28 @@ void vdc5_module_start(char param_1)
 {
   byte bVar1;
   
-  bVar1 = DAT_fcfe0438;
+  bVar1 = CPG_STBCR9;
   if (param_1 != '\0') {
-    DAT_fcfe0438 = bVar1 & 0xfc;
-    bVar1 = DAT_fcfe0034;
-    DAT_fcfe0034 = bVar1 & 0xef;
+    CPG_STBCR9 = bVar1 & 0xfc;
+    bVar1 = CPG_STBREQ2;
+    CPG_STBREQ2 = bVar1 & 0xef;
     do {
-      bVar1 = DAT_fcfe0044;
+      bVar1 = CPG_STBACK2;
     } while ((bVar1 & 0x10) != 0);
     return;
   }
-  DAT_fcfe0438 = bVar1 & 0xfd;
-  bVar1 = DAT_fcfe0034;
-  DAT_fcfe0034 = bVar1 & 0xdf;
+  CPG_STBCR9 = bVar1 & 0xfd;
+  bVar1 = CPG_STBREQ2;
+  CPG_STBREQ2 = bVar1 & 0xdf;
   do {
-    bVar1 = DAT_fcfe0044;
+    bVar1 = CPG_STBACK2;
   } while ((bVar1 & 0x20) != 0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_module_stop @ 20132398  (100 bytes, 2 callers, export file 201322d8_20133618.c)
+ * vdc5_module_stop @ 20132398  (100 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_module_start` / `vdc5_module_stop` (STBCR9 0xFCFE0438)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2155,35 +2167,35 @@ void vdc5_module_stop(char param_1)
 {
   byte bVar1;
   
-  bVar1 = DAT_fcfe0034;
+  bVar1 = CPG_STBREQ2;
   if (param_1 == '\0') {
     bVar1 = bVar1 | 0x20;
   }
   else {
     bVar1 = bVar1 | 0x10;
   }
-  DAT_fcfe0034 = bVar1;
+  CPG_STBREQ2 = bVar1;
   if (param_1 == '\0') {
     do {
-      bVar1 = DAT_fcfe0044;
+      bVar1 = CPG_STBACK2;
     } while ((bVar1 & 0x20) == 0);
-    bVar1 = DAT_fcfe0438;
+    bVar1 = CPG_STBCR9;
     bVar1 = bVar1 | 2;
   }
   else {
     do {
-      bVar1 = DAT_fcfe0044;
+      bVar1 = CPG_STBACK2;
     } while ((bVar1 & 0x10) == 0);
-    bVar1 = DAT_fcfe0438;
+    bVar1 = CPG_STBCR9;
     bVar1 = bVar1 | 1;
   }
-  DAT_fcfe0438 = bVar1;
+  CPG_STBCR9 = bVar1;
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * lvds_pll_cfg @ 2013249c  (104 bytes, 3 callers, export file 201322d8_20133618.c)
+ * lvds_pll_cfg @ 2013249c  (104 bytes, 3 callers, export file 201322c8_201335f8.c)
  * Purpose: `lvds_pll_cfg`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2214,7 +2226,7 @@ void lvds_pll_cfg(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_sync_setup @ 20132504  (228 bytes, 3 callers, export file 201322d8_20133618.c)
+ * vdc5_sync_setup @ 20132504  (228 bytes, 3 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_sync_setup` / `vdc5_output_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2223,9 +2235,10 @@ void lvds_pll_cfg(undefined4 param_1,int param_2)
 
 /* timing: ch0 1016x525 (800x480); ch1 1088x517 (800x480) or 1056x628 (800x600) */
 
-void vdc5_sync_setup(int param_1,int param_2)
+uint vdc5_sync_setup(int param_1,int param_2)
 
 {
+  uint uVar1;
   undefined1 local_20;
   undefined1 local_1f;
   undefined2 local_1e;
@@ -2263,13 +2276,13 @@ void vdc5_sync_setup(int param_1,int param_2)
   local_1a = 0;
   local_1f = 0;
   local_20 = 1;
-  r_vdc5_sync_control(param_1,&local_20);
-  return;
+  uVar1 = r_vdc5_sync_control(param_1,&local_20);
+  return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_output_setup @ 201325e8  (152 bytes, 3 callers, export file 201322d8_20133618.c)
+ * vdc5_output_setup @ 201325e8  (152 bytes, 3 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_sync_setup` / `vdc5_output_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2278,9 +2291,10 @@ void vdc5_sync_setup(int param_1,int param_2)
 
 /* r_vdc5_display_output wrapper per channel */
 
-void vdc5_output_setup(int param_1,int param_2)
+uint vdc5_output_setup(int param_1,int param_2)
 
 {
+  uint uVar1;
   undefined2 local_40;
   undefined2 local_3e;
   undefined1 auStack_3c [32];
@@ -2317,13 +2331,13 @@ void vdc5_output_setup(int param_1,int param_2)
   local_19 = 0;
   local_16 = 0;
   local_14 = 0;
-  r_vdc5_display_output(param_1,&local_40);
-  return;
+  uVar1 = r_vdc5_display_output(param_1,&local_40);
+  return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fb_get_layer_addr @ 201326fc  (88 bytes, 179 callers, export file 201322d8_20133618.c)
+ * fb_get_layer_addr @ 201326fc  (88 bytes, 179 callers, export file 201322c8_201335f8.c)
  * Purpose: buffer index → address / front buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2362,7 +2376,7 @@ undefined * fb_get_layer_addr(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_layers_setup @ 2013276c  (920 bytes, 3 callers, export file 201322d8_20133618.c)
+ * vdc5_layers_setup @ 2013276c  (920 bytes, 3 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_layers_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2371,14 +2385,15 @@ undefined * fb_get_layer_addr(undefined4 param_1)
 
 /* graphics 0..3 read setup, chroma key, start; then enables the VLINE callback */
 
-int vdc5_layers_setup(int param_1,int param_2)
+uint vdc5_layers_setup(uint param_1,int param_2)
 
 {
-  undefined4 uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  byte bVar1;
+  undefined4 uVar2;
+  uint uVar3;
   undefined4 uVar4;
-  undefined8 uVar5;
+  undefined4 uVar5;
+  undefined8 uVar6;
   undefined4 local_68;
   undefined4 local_64;
   undefined4 local_60;
@@ -2393,96 +2408,97 @@ int vdc5_layers_setup(int param_1,int param_2)
   undefined4 local_3c;
   undefined1 *local_38;
   undefined1 local_34 [8];
-  int local_2c;
+  uint local_2c;
   int iStack_28;
   
   if (param_1 == 0) {
-    uVar3 = 0x1e00020;
-    uVar4 = 0x3200058;
+    uVar4 = 0x1e00020;
+    uVar5 = 0x3200058;
   }
   else if (param_2 == 0) {
-    uVar3 = 0x1e0001f;
-    uVar4 = 0x32000e0;
+    uVar4 = 0x1e0001f;
+    uVar5 = 0x32000e0;
   }
   else {
-    uVar3 = 0x1e00057;
-    uVar4 = 0x32000d8;
+    uVar4 = 0x1e00057;
+    uVar5 = 0x32000d8;
   }
   local_44 = 0;
   local_4c = 0;
   local_48 = 0;
   local_2c = param_1;
   iStack_28 = param_2;
-  uVar5 = fb_get_layer_addr(0);
-  local_3c = fb_get_layer_addr(1,(int)((ulonglong)uVar5 >> 0x20),(int)uVar5);
+  uVar6 = fb_get_layer_addr(0);
+  local_3c = fb_get_layer_addr(1,(int)((ulonglong)uVar6 >> 0x20),(int)uVar6);
   local_40 = fb_get_layer_addr(3);
-  uVar1 = fb_get_layer_addr(5);
+  uVar2 = fb_get_layer_addr(5);
   local_68 = 0x100;
   local_60 = 0x640;
   local_58 = 0x6000000;
   local_5c = 0;
-  local_54 = uVar3;
-  local_50 = uVar4;
-  iVar2 = r_vdc5_read_data_control(local_2c,3,&local_68);
-  if (((iVar2 == 0) && (iVar2 = r_vdc5_chromakey(local_2c,3,1,&local_4c), iVar2 == 0)) &&
-     (iVar2 = layer_alpha_rect_reapply(local_2c,3), iVar2 == 0)) {
+  local_54 = uVar4;
+  local_50 = uVar5;
+  uVar3 = r_vdc5_read_data_control(local_2c,3,(uint)&local_68);
+  if (((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,3,1,(uint)&local_4c), uVar3 == 0)) &&
+     (uVar3 = layer_alpha_rect_reapply(local_2c,3), uVar3 == 0)) {
     local_68 = 0x100;
     local_64 = local_3c;
     local_58 = 0x6000000;
     local_5c = 0;
     local_60 = 0x640;
-    local_54 = uVar3;
-    local_50 = uVar4;
-    iVar2 = r_vdc5_read_data_control(local_2c,4,&local_68);
-    if ((iVar2 == 0) && (iVar2 = r_vdc5_chromakey(local_2c,4,1,&local_4c), iVar2 == 0)) {
-      iVar2 = layer_alpha_rect_reapply(local_2c,4);
+    local_54 = uVar4;
+    local_50 = uVar5;
+    uVar3 = r_vdc5_read_data_control(local_2c,4,(uint)&local_68);
+    if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,4,1,(uint)&local_4c), uVar3 == 0)) {
+      uVar3 = layer_alpha_rect_reapply(local_2c,4);
     }
     DAT_208f4d50 = local_64;
-    if (iVar2 == 0) {
+    if (uVar3 == 0) {
       local_68 = 0x100;
       local_58 = 0x6000000;
       local_64 = local_40;
       local_5c = 0;
       local_60 = 0x640;
-      local_54 = uVar3;
-      local_50 = uVar4;
-      iVar2 = r_vdc5_read_data_control(local_2c,5,&local_68);
-      if ((iVar2 == 0) && (iVar2 = r_vdc5_chromakey(local_2c,5,1,&local_4c), iVar2 == 0)) {
-        iVar2 = layer_alpha_rect_reapply(local_2c,5);
+      local_54 = uVar4;
+      local_50 = uVar5;
+      uVar3 = r_vdc5_read_data_control(local_2c,5,(uint)&local_68);
+      if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,5,1,(uint)&local_4c), uVar3 == 0)) {
+        uVar3 = layer_alpha_rect_reapply(local_2c,5);
       }
       DAT_208f4d60 = local_64;
-      if (iVar2 == 0) {
+      if (uVar3 == 0) {
         local_68 = 0x100;
         local_60 = 0x640;
         local_58 = 0x6000000;
         local_5c = 0;
-        local_64 = uVar1;
-        local_54 = uVar3;
-        local_50 = uVar4;
-        cursor_rect_calc(&local_40,local_2c,400,0xf0);
-        DAT_20808584 = (undefined2)local_40;
+        local_64 = uVar2;
+        local_54 = uVar4;
+        local_50 = uVar5;
+        cursor_rect_calc((short *)&local_40,local_2c,400,0xf0);
+        DAT_20808584 = (short)local_40;
         DAT_20808586 = local_40._2_2_;
         DAT_20808588 = (undefined2)local_3c;
         DAT_2080858a = local_3c._2_2_;
         local_54 = local_40;
         local_50 = local_3c;
-        iVar2 = r_vdc5_read_data_control(local_2c,6,&local_68);
-        if ((iVar2 == 0) && (iVar2 = r_vdc5_chromakey(local_2c,6,1,&local_4c), iVar2 == 0)) {
-          iVar2 = layer_alpha_rect_reapply(local_2c,6);
+        uVar3 = r_vdc5_read_data_control(local_2c,6,(uint)&local_68);
+        if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,6,1,(uint)&local_4c), uVar3 == 0)) {
+          uVar3 = layer_alpha_rect_reapply(local_2c,6);
         }
         DAT_208f4d78 = &DAT_20808584;
         DAT_208f4d74 = 0;
         DAT_208f4d7c = 0;
-        DAT_208f4d70 = uVar1;
-        if ((iVar2 == 0) && (iVar2 = vdc5_vline_cb_enable(local_2c), iVar2 == 0)) {
+        DAT_208f4d70 = uVar2;
+        if ((uVar3 == 0) && (uVar3 = vdc5_vline_cb_enable(local_2c), uVar3 == 0)) {
           local_34[0] = 2;
           local_38 = local_34;
-          r_vdc5_start_process(local_2c,3,&local_38);
+          r_vdc5_start_process(local_2c,3,(uint)&local_38);
           local_34[0] = 3;
           local_38 = local_34;
-          r_vdc5_start_process(local_2c,4,&local_38);
-          iVar2 = r_vdc5_start_process(local_2c,5,&local_38);
-          if (iVar2 == 0) {
+          r_vdc5_start_process(local_2c,4,(uint)&local_38);
+          bVar1 = r_vdc5_start_process(local_2c,5,(uint)&local_38);
+          uVar3 = (uint)bVar1;
+          if (uVar3 == 0) {
             local_40 = 0;
             do {
               DataMemoryBarrier(2);
@@ -2494,12 +2510,12 @@ int vdc5_layers_setup(int param_1,int param_2)
       }
     }
   }
-  return iVar2;
+  return uVar3;
 }
 
 
 /* -----------------------------------------------------------------------------
- * dvi_set_resolution @ 20132bc0  (268 bytes, 1 callers, export file 201322d8_20133618.c)
+ * dvi_set_resolution @ 20132bc0  (268 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: `dvi_set_resolution`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2508,18 +2524,18 @@ int vdc5_layers_setup(int param_1,int param_2)
 
 /* re-initialises VDC5 ch1 for 800x480 (0) or 800x600 (1) */
 
-int dvi_set_resolution(int param_1)
+byte dvi_set_resolution(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined1 local_18;
   undefined1 local_17;
   undefined4 local_14;
   
-  iVar1 = vdc5_channel_shutdown(1);
+  uVar1 = vdc5_channel_shutdown(1);
   DAT_20808574 = 0x58;
   DAT_20808578 = 0x20;
-  if (iVar1 == 0) {
+  if (uVar1 == 0) {
     local_18 = 6;
     local_17 = 0;
     if (param_1 == 0) {
@@ -2528,30 +2544,30 @@ int dvi_set_resolution(int param_1)
     else {
       local_14 = lvds_pll_cfg(1,param_1);
     }
-    iVar1 = r_vdc5_initialize(1,&local_18,vdc5_module_start);
-    if ((iVar1 == 0) && (iVar1 = vdc5_sync_setup(1,param_1), iVar1 == 0)) {
-      iVar1 = vdc5_output_setup(1,param_1);
+    uVar1 = r_vdc5_initialize(1,(int)&local_18,vdc5_module_start,1);
+    if ((uVar1 == 0) && (uVar1 = vdc5_sync_setup(1,param_1), uVar1 == 0)) {
+      uVar1 = vdc5_output_setup(1,param_1);
       if (param_1 == 0) {
         gpio_dvr(0,1);
         DAT_2080857c = 0xe0;
         DAT_20808580 = 0x1f;
       }
       else {
-        gpio_dvr(0);
+        gpio_dvr(0,0);
         DAT_2080857c = 0xd8;
         DAT_20808580 = 0x57;
       }
-      if (iVar1 == 0) {
-        iVar1 = vdc5_layers_setup(1,param_1);
+      if (uVar1 == 0) {
+        uVar1 = vdc5_layers_setup(1,param_1);
       }
     }
   }
-  return iVar1;
+  return (byte)uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * gui_start @ 20132ccc  (428 bytes, 1 callers, export file 201322d8_20133618.c)
+ * gui_start @ 20132ccc  (428 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: VDC5 ch0/ch1 set-up, then the GUI loop
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2564,7 +2580,7 @@ void gui_start(void)
 
 {
   int iVar1;
-  int iVar2;
+  uint uVar2;
   undefined1 local_20;
   undefined1 local_1f;
   undefined4 local_1c;
@@ -2575,44 +2591,44 @@ void gui_start(void)
   FUN_20133620();
   dmac8_m2m_init();
   sdr_dsp_link_init();
-  iVar1 = vdc5_isr_create(0);
+  iVar1 = vdc5_isr_create();
   if (iVar1 == 0) {
     local_20 = 4;
     local_1f = 1;
     local_1c = 0;
-    iVar1 = r_vdc5_initialize(0,&local_20,vdc5_module_start);
-    if ((iVar1 == 0) && (iVar1 = vdc5_sync_setup(0), iVar1 == 0)) {
-      iVar1 = vdc5_output_setup(0);
+    uVar2 = r_vdc5_initialize(0,(int)&local_20,vdc5_module_start,0);
+    if ((uVar2 == 0) && (uVar2 = vdc5_sync_setup(0,0), uVar2 == 0)) {
+      uVar2 = vdc5_output_setup(0,0);
       DAT_20808574 = 0x58;
       DAT_20808578 = 0x20;
-      if (iVar1 == 0) {
-        iVar1 = vdc5_vline_int_setup(0);
+      if (uVar2 == 0) {
+        uVar2 = vdc5_vline_int_setup(0);
       }
     }
   }
   else {
-    iVar1 = 7;
+    uVar2 = 7;
   }
-  iVar2 = vdc5_isr_create(1);
-  if (iVar2 != 0) {
-    iVar1 = 7;
+  iVar1 = vdc5_isr_create();
+  if (iVar1 != 0) {
+    uVar2 = 7;
   }
   DataMemoryBarrier(2);
-  if (iVar1 == 0) {
+  if (uVar2 == 0) {
     local_20 = 6;
     local_1f = 0;
     local_1c = lvds_pll_cfg(1,0);
-    iVar1 = r_vdc5_initialize(1,&local_20,vdc5_module_start);
-    if ((iVar1 == 0) && (iVar1 = vdc5_sync_setup(1,0), iVar1 == 0)) {
-      iVar1 = vdc5_output_setup(1,0);
+    uVar2 = r_vdc5_initialize(1,(int)&local_20,vdc5_module_start,1);
+    if ((uVar2 == 0) && (uVar2 = vdc5_sync_setup(1,0), uVar2 == 0)) {
+      uVar2 = vdc5_output_setup(1,0);
       gpio_dvr(0,1);
       DAT_2080857c = 0x58;
       DAT_20808580 = 0x20;
-      if ((iVar1 == 0) &&
-         (((iVar1 = vdc5_vline_int_setup(1), iVar1 == 0 &&
+      if ((uVar2 == 0) &&
+         (((uVar2 = vdc5_vline_int_setup(1), uVar2 == 0 &&
            (iVar1 = vdc5_layers_setup(0), iVar1 == 0)) &&
           (iVar1 = vdc5_layers_setup(1,0), iVar1 == 0)))) {
-        gui_main_loop(0);
+        gui_main_loop();
         vdc5_layers_stop(0);
         vdc5_layers_stop(1);
       }
@@ -2625,7 +2641,7 @@ void gui_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * fb_get_front_addr @ 20132e78  (88 bytes, 2 callers, export file 201322d8_20133618.c)
+ * fb_get_front_addr @ 20132e78  (88 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: buffer index → address / front buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2634,7 +2650,7 @@ void gui_start(void)
 
 /* frame buffer currently shown for a back-buffer index (1<->2, 3<->4) */
 
-undefined * fb_get_front_addr(undefined4 param_1)
+void * fb_get_front_addr(uint param_1)
 
 {
   int iVar1;
@@ -2652,19 +2668,19 @@ undefined * fb_get_front_addr(undefined4 param_1)
     iVar1 = 0x232800;
     break;
   case 4:
-    return (undefined *)0x60000000;
+    return &DAT_60000000;
   case 5:
     iVar1 = 0x2ee000;
     break;
   default:
-    return (undefined *)0x0;
+    return (void *)0x0;
   }
-  return (undefined *)(iVar1 + 0x60000000);
+  return (void *)(iVar1 + 0x60000000);
 }
 
 
 /* -----------------------------------------------------------------------------
- * fb_clear_all @ 20132f84  (32 bytes, 1 callers, export file 201322d8_20133618.c)
+ * fb_clear_all @ 20132f84  (32 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: clears all frame buffers (T11a)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2676,14 +2692,14 @@ undefined * fb_get_front_addr(undefined4 param_1)
 void fb_clear_all(void)
 
 {
-  memclr(0x60000000,0x2ff300);
-  FUN_201552b8(&DAT_605048a0,0xdc3c0);
+  __aeabi_memclr4(0x60000000,0x2ff300);
+  __aeabi_memclr4_veneer(&DAT_605048a0,0xdc3c0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_vline_cb @ 20133014  (56 bytes, 1 callers, export file 201322d8_20133618.c)
+ * vdc5_vline_cb @ 20133014  (56 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2705,7 +2721,7 @@ void vdc5_vline_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_wait_frames @ 20133090  (24 bytes, 11 callers, export file 201322d8_20133618.c)
+ * vdc5_wait_frames @ 20133090  (24 bytes, 11 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2725,7 +2741,7 @@ void vdc5_wait_frames(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_isr_create @ 201330a8  (44 bytes, 2 callers, export file 201322d8_20133618.c)
+ * vdc5_isr_create @ 201330a8  (44 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2737,19 +2753,19 @@ void vdc5_wait_frames(int param_1)
 int vdc5_isr_create(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = itron_acre_isr(0,&DAT_203a706c);
-  if (0 < iVar1) {
+  uVar1 = itron_acre_isr(0,0x203a706c);
+  if (0 < (int)uVar1) {
     gic_enable_irq(0x4e);
-    iVar1 = 0;
+    uVar1 = 0;
   }
-  return iVar1;
+  return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_set @ 20133658  (240 bytes, 28 callers, export file 20133620_20134358.c)
+ * layer_alpha_rect_set @ 20133658  (240 bytes, 28 callers, export file 20133618_20134348.c)
  * Purpose: `layer_alpha_rect_set` / `layer_fade`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2758,19 +2774,19 @@ int vdc5_isr_create(void)
 
 /* r_vdc5_alpha_blending_rect on ch0+ch1, cached in 0x209080E4[ch][layer] */
 
-int layer_alpha_rect_set(int param_1,int param_2,undefined1 param_3,undefined4 *param_4)
+uint layer_alpha_rect_set(uint param_1,int param_2,uint param_3,undefined4 *param_4)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined *puVar2;
   undefined2 *puVar3;
   undefined4 uVar4;
   undefined4 uVar5;
   
-  iVar1 = r_vdc5_alpha_blending_rect();
-  if (iVar1 == 0) {
+  uVar1 = r_vdc5_alpha_blending_rect(param_1,param_2,param_3,(uint)param_4);
+  if (uVar1 == 0) {
     puVar2 = &DAT_209080e4 + param_2 * 0x24 + param_1 * 0x144;
-    *puVar2 = param_3;
+    *puVar2 = (char)param_3;
     if (param_4 == (undefined4 *)0x0) {
       *(undefined4 *)(puVar2 + 4) = 0;
     }
@@ -2802,12 +2818,12 @@ int layer_alpha_rect_set(int param_1,int param_2,undefined1 param_3,undefined4 *
       }
     }
   }
-  return iVar1;
+  return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * layer_fade @ 2013396c  (160 bytes, 3 callers, export file 20133620_20134358.c)
+ * layer_fade @ 2013396c  (160 bytes, 3 callers, export file 20133618_20134348.c)
  * Purpose: `layer_alpha_rect_set` / `layer_fade`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2816,7 +2832,7 @@ int layer_alpha_rect_set(int param_1,int param_2,undefined1 param_3,undefined4 *
 
 /* alpha ramp +5 / -5 per frame over the whole layer */
 
-void layer_fade(undefined4 param_1,int param_2)
+void layer_fade(uint param_1,int param_2)
 
 {
   undefined2 local_28;
@@ -2855,7 +2871,7 @@ void layer_fade(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * layer_hide @ 20133a0c  (44 bytes, 5 callers, export file 20133620_20134358.c)
+ * layer_hide @ 20133a0c  (44 bytes, 5 callers, export file 20133618_20134348.c)
  * Purpose: `layer_hide` / `layer_show` (both channels)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2864,17 +2880,17 @@ void layer_fade(undefined4 param_1,int param_2)
 
 /* r_vdc5_stop_process on ch0+ch1 */
 
-void layer_hide(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void layer_hide(int param_1)
 
 {
-  r_vdc5_stop_process(0,param_1,param_3,param_4,param_4);
+  r_vdc5_stop_process(0,param_1);
   r_vdc5_stop_process(1,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * layer_show @ 20133a38  (84 bytes, 6 callers, export file 20133620_20134358.c)
+ * layer_show @ 20133a38  (84 bytes, 6 callers, export file 20133618_20134348.c)
  * Purpose: `layer_hide` / `layer_show` (both channels)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2888,7 +2904,7 @@ void layer_show(int param_1)
 {
   undefined1 *local_18;
   undefined1 local_14 [4];
-  undefined1 local_10;
+  byte local_10;
   
   if (param_1 == 3) {
     local_14[0] = 2;
@@ -2897,14 +2913,14 @@ void layer_show(int param_1)
     local_14[0] = 3;
   }
   local_18 = local_14;
-  local_10 = r_vdc5_start_process(0,param_1,&local_18);
-  r_vdc5_start_process(1,param_1,&local_18);
+  local_10 = r_vdc5_start_process(0,param_1,(uint)&local_18);
+  r_vdc5_start_process(1,param_1,(uint)&local_18);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * gui_update_layers @ 20133a8c  (436 bytes, 57 callers, export file 20133620_20134358.c)
+ * gui_update_layers @ 20133a8c  (436 bytes, 57 callers, export file 20133618_20134348.c)
  * Purpose: flip graphics 1/2 on both channels, copy-forward
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2916,6 +2932,8 @@ void gui_update_layers(void)
 {
   undefined4 uVar1;
   undefined4 uVar2;
+  uint uVar3;
+  uint uVar4;
   
   DAT_208f4d50 = fb_get_layer_addr(DAT_208085b8);
   r_vdc5_change_read_process(0,4,&DAT_208f4d50);
@@ -2944,15 +2962,15 @@ void gui_update_layers(void)
   }
   if (DAT_208085b8 == 1) {
     DAT_208085b8 = 2;
-    uVar1 = fb_get_layer_addr(1);
-    uVar2 = fb_get_layer_addr(DAT_208085b8);
-    dmac8_m2m_start(uVar2,uVar1,0xbb800);
+    uVar3 = fb_get_layer_addr(1);
+    uVar4 = fb_get_layer_addr(DAT_208085b8);
+    dmac8_m2m_start(uVar4,uVar3,0xbb800);
   }
   else {
     DAT_208085b8 = 1;
-    uVar1 = fb_get_layer_addr(2);
-    uVar2 = fb_get_layer_addr(DAT_208085b8);
-    dmac8_m2m_start(uVar2,uVar1,0xbb800);
+    uVar3 = fb_get_layer_addr(2);
+    uVar4 = fb_get_layer_addr(DAT_208085b8);
+    dmac8_m2m_start(uVar4,uVar3,0xbb800);
   }
   if (DAT_208085bc != 3) {
     DAT_208085bc = 3;
@@ -2970,7 +2988,7 @@ void gui_update_layers(void)
 
 
 /* -----------------------------------------------------------------------------
- * bmp_write_screen @ 2013456c  (216 bytes, 2 callers, export file 20134368_201353f8.c)
+ * bmp_write_screen @ 2013456c  (216 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: capture / `bmp_write_screen`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -2979,28 +2997,28 @@ void gui_update_layers(void)
 
 /* 54-byte header + 480 bottom-up 24-bit rows, layers merged */
 
-undefined4 bmp_write_screen(undefined4 param_1)
+undefined4 bmp_write_screen(uint param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   int iVar2;
-  int iVar3;
-  int iVar4;
+  void *pvVar3;
+  void *pvVar4;
   int iVar5;
   
-  iVar1 = fs_fwrite(&DAT_208085c4,1,0x36,param_1);
-  if (iVar1 != 0) {
-    iVar1 = fb_get_layer_addr(0);
-    iVar2 = fb_get_front_addr(DAT_208085b8);
-    iVar3 = fb_get_front_addr(DAT_208085bc);
+  uVar1 = fs_fwrite(0x208085c4,1,0x36,param_1);
+  if (uVar1 != 0) {
+    iVar2 = fb_get_layer_addr(0);
+    pvVar3 = fb_get_front_addr(DAT_208085b8);
+    pvVar4 = fb_get_front_addr(DAT_208085bc);
     iVar5 = 0x1df;
     while( true ) {
-      memcpy(&DAT_20908710,iVar1 + iVar5 * 0x640,0x640);
-      capture_merge_row(iVar5,&DAT_20908710,iVar2 + iVar5 * 0x640,4);
-      capture_merge_row(iVar5,&DAT_20908710,iVar3 + iVar5 * 0x640,5);
-      rgb565_row_to_bgr24(&DAT_20908710,&DAT_20908d50);
-      iVar4 = fs_fwrite(&DAT_20908d50,1,0x960,param_1);
-      if (iVar4 == 0) break;
+      memcpy(&DAT_20908710,iVar2 + iVar5 * 0x640,0x640);
+      capture_merge_row((ushort)iVar5,0x20908710,(int)((int)pvVar3 + iVar5 * 0x640),4);
+      capture_merge_row((ushort)iVar5,0x20908710,(int)((int)pvVar4 + iVar5 * 0x640),5);
+      rgb565_row_to_bgr24(0x20908710,0x20908d50);
+      uVar1 = fs_fwrite(0x20908d50,1,0x960,param_1);
+      if (uVar1 == 0) break;
       iVar5 = iVar5 + -1;
       if (iVar5 < 0) {
         return 0;
@@ -3012,7 +3030,7 @@ undefined4 bmp_write_screen(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * screen_capture_bmp @ 20134644  (416 bytes, 1 callers, export file 20134368_201353f8.c)
+ * screen_capture_bmp @ 20134644  (416 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: capture / `bmp_write_screen`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3025,6 +3043,7 @@ void screen_capture_bmp(void)
 
 {
   int iVar1;
+  uint uVar2;
   undefined1 auStack_68 [64];
   byte local_28 [4];
   byte local_24 [4];
@@ -3040,9 +3059,9 @@ void screen_capture_bmp(void)
   if (DAT_208f0b2a == 'z') {
     return;
   }
-  screenshot_popup(DAT_208f0b2a,local_c - 0x119436);
+  screenshot_popup();
   gui_flip_one(0);
-  FUN_201525f8(0xffffffff);
+  itron_tslp_tsk(0xffffffff);
   iVar1 = FUN_2014c410("I:\\FT-710\\Capture");
   if (iVar1 == 0) {
     iVar1 = FUN_2014c410("I:\\FT-710");
@@ -3056,7 +3075,7 @@ LAB_201347b8:
       iVar1 = FUN_2014beec("I:\\FT-710\\Capture");
       if (iVar1 == 0) goto LAB_201346c0;
     }
-    FUN_2014d95c();
+    fs_task_ctx_get();
   }
   else {
     thunk_FUN_2014c474();
@@ -3069,10 +3088,10 @@ LAB_201346c0:
             (local_1c[0] & 0xf) + (uint)(local_1c[0] >> 4) * 10,
             (local_18[0] & 0xf) + (uint)(local_18[0] >> 4) * 10,
             (local_14[0] & 0xf) + (uint)(local_14[0] >> 4) * 10);
-    iVar1 = fs_fopen(auStack_68,0x20134844);
-    if (iVar1 != 0) {
+    uVar2 = fs_fopen((uint)auStack_68,0x20134844);
+    if (uVar2 != 0) {
       bmp_write_screen();
-      FUN_20141ff0(iVar1);
+      fs_fclose(uVar2);
     }
   }
 LAB_20134794:
@@ -3082,7 +3101,7 @@ LAB_20134794:
 
 
 /* -----------------------------------------------------------------------------
- * debug_screenshot_root @ 20134854  (256 bytes, 1 callers, export file 20134368_201353f8.c)
+ * debug_screenshot_root @ 20134854  (256 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: `debug_overlay_draw` / `debug_screenshot_root`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3094,7 +3113,7 @@ LAB_20134794:
 void debug_screenshot_root(void)
 
 {
-  int iVar1;
+  uint uVar1;
   int iVar2;
   bool bVar3;
   undefined1 auStack_68 [64];
@@ -3115,10 +3134,10 @@ void debug_screenshot_root(void)
           (local_14[0] & 0xf) + (uint)(local_14[0] >> 4) * 10);
   iVar2 = 2;
   do {
-    iVar1 = fs_fopen(auStack_68,0x20134844);
-    if (iVar1 != 0) {
+    uVar1 = fs_fopen((uint)auStack_68,0x20134844);
+    if (uVar1 != 0) {
       bmp_write_screen();
-      FUN_20141ff0(iVar1);
+      fs_fclose(uVar1);
       return;
     }
     itron_dly_tsk(0x32);
@@ -3130,7 +3149,7 @@ void debug_screenshot_root(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_draw @ 20134abc  (616 bytes, 1 callers, export file 20134368_201353f8.c)
+ * meter_draw @ 20134abc  (616 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: `meter_draw` (181-step bar, peak hold) / `meter_draw_scale`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3142,19 +3161,20 @@ void debug_screenshot_root(void)
 void meter_draw(void)
 
 {
-  undefined4 uVar1;
+  int iVar1;
   int iVar2;
-  int iVar3;
-  undefined *puVar4;
-  uint uVar5;
+  undefined4 uVar3;
+  int iVar4;
+  undefined *puVar5;
+  uint uVar6;
   
-  uVar1 = fb_get_layer_addr(DAT_208085b8);
+  iVar1 = fb_get_layer_addr(DAT_208085b8);
   if (DAT_208f0b2a == 0x3a) {
 LAB_20134b8c:
-    uVar5 = (uint)DAT_208f0b89;
+    uVar6 = (uint)DAT_208f0b89;
   }
   else {
-    uVar5 = DAT_20808640;
+    uVar6 = DAT_20808640;
     if (0x3a < DAT_208f0b2a) {
       if (DAT_208f0b2a != 0x50) {
         if (DAT_208f0b2a < 0x51) {
@@ -3172,34 +3192,34 @@ LAB_20134b8c:
     else if (DAT_208f0b2a == 0x37 || DAT_208f0b2a == 0x39) goto LAB_20134b8c;
   }
 LAB_20134b08:
-  iVar2 = FUN_20134a18(uVar5);
+  iVar2 = FUN_20134a18(uVar6);
   if (iVar2 < DAT_20808638) {
-    iVar3 = 0;
+    iVar4 = 0;
     if (DAT_20808638 - iVar2 == 1) {
       if (DAT_2080863c == 0) goto LAB_20134bac;
       DAT_2080863c = DAT_2080863c + -1;
     }
     else {
       DAT_2080863c = 1;
-      iVar3 = (iVar2 - DAT_20808638) / 3;
-      if (iVar3 == 0) {
+      iVar4 = (iVar2 - DAT_20808638) / 3;
+      if (iVar4 == 0) {
 LAB_20134bac:
-        iVar3 = -1;
+        iVar4 = -1;
       }
     }
-    DAT_20808638 = DAT_20808638 + iVar3;
+    DAT_20808638 = DAT_20808638 + iVar4;
     if (DAT_20808638 < iVar2) {
 LAB_20134bbc:
       DAT_20808638 = iVar2;
     }
   }
   else if (DAT_20808638 < iVar2) {
-    iVar3 = (iVar2 - DAT_20808638) / 3;
-    if (iVar3 == 0) {
+    iVar4 = (iVar2 - DAT_20808638) / 3;
+    if (iVar4 == 0) {
       DAT_20808638 = DAT_20808638 + 1;
     }
     else {
-      DAT_20808638 = DAT_20808638 + iVar3;
+      DAT_20808638 = DAT_20808638 + iVar4;
     }
     if (iVar2 < DAT_20808638) goto LAB_20134bbc;
   }
@@ -3213,10 +3233,10 @@ LAB_20134bbc:
     iVar2 = 0xb4;
   }
   DAT_20808638 = iVar2;
-  DAT_20808640 = uVar5;
-  fb_clear_rect(uVar1,DAT_2080862c,DAT_2080862a,0x118,0x50);
-  fb_clear_rect(uVar1,DAT_20808630,DAT_2080862e,0x40,0x11);
-  gui_draw_runs(uVar1,DAT_2080862c,DAT_2080862a,(&PTR_DAT_2080865c)[iVar2]);
+  DAT_20808640 = uVar6;
+  fb_clear_rect(iVar1,(uint)DAT_2080862c,(uint)DAT_2080862a,0x118,0x50);
+  fb_clear_rect(iVar1,(uint)DAT_20808630,(uint)DAT_2080862e,0x40,0x11);
+  gui_draw_runs(iVar1,(uint)DAT_2080862c,(uint)DAT_2080862a,(&PTR_DAT_2080865c)[iVar2]);
   if (DAT_20808634 < iVar2) {
     DAT_20808622 = DAT_20808620;
     DAT_20808634 = iVar2;
@@ -3225,7 +3245,7 @@ LAB_20134bbc:
     DAT_20808634 = 0;
   }
   else {
-    gui_draw_runs(uVar1,DAT_2080862c,DAT_2080862a,(&PTR_DAT_2080865c)[DAT_20808634]);
+    gui_draw_runs(iVar1,(uint)DAT_2080862c,(uint)DAT_2080862a,(&PTR_DAT_2080865c)[DAT_20808634]);
     if (DAT_20808622 < 0x21) {
       DAT_20808622 = 0;
     }
@@ -3234,26 +3254,26 @@ LAB_20134bbc:
     }
   }
   if ((DAT_208f0b31 & 0x30) == 0x10) {
-    puVar4 = &DAT_203eea9c;
+    puVar5 = &DAT_203eea9c;
   }
   else {
     if ((DAT_208f0b31 & 0x30) != 0x20) goto LAB_20134cec;
-    puVar4 = &DAT_203eeaac;
+    puVar5 = &DAT_203eeaac;
   }
-  if (puVar4 != (undefined *)0x0) {
-    gui_draw_runs(uVar1,DAT_20808630,DAT_2080862e);
+  if (puVar5 != (undefined *)0x0) {
+    gui_draw_runs(iVar1,(uint)DAT_20808630,(uint)DAT_2080862e,puVar5);
   }
 LAB_20134cec:
   if (((byte)DAT_20808a84 & 1) != 0) {
-    uVar1 = fb_get_layer_addr(DAT_208085bc);
-    gui_draw_dec(uVar1,iVar2,3,0x46,100);
+    uVar3 = fb_get_layer_addr(DAT_208085bc);
+    gui_draw_dec(uVar3,iVar2,3,0x46,100);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * meter_draw_scale @ 20134d24  (176 bytes, 1 callers, export file 20134368_201353f8.c)
+ * meter_draw_scale @ 20134d24  (176 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: `meter_draw` (181-step bar, peak hold) / `meter_draw_scale`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3265,19 +3285,19 @@ LAB_20134cec:
 void meter_draw_scale(int param_1,int param_2,int param_3)
 
 {
-  undefined4 uVar1;
+  int iVar1;
   uint uVar2;
   
-  uVar1 = fb_get_layer_addr(0);
+  iVar1 = fb_get_layer_addr(0);
   uVar2 = *(byte *)(param_1 + 0xb) & 7;
   if (param_3 != 0 || uVar2 != (*(byte *)(param_2 + 0xb) & 7)) {
     if (5 < uVar2) {
       uVar2 = 5;
     }
-    fb_fill_rect(uVar1,0,10,0,0x118,0x50);
-    FUN_20132f44(0);
-    gui_draw_runs(uVar1,10,0,&DAT_203eea8c);
-    gui_draw_runs(uVar1,DAT_20808628,DAT_20808626,(&PTR_DAT_20808644)[uVar2]);
+    fb_fill_rect(iVar1,0,10,0,0x118,0x50);
+    gui_area_dirty_set(0);
+    gui_draw_runs(iVar1,10,0,&DAT_203eea8c);
+    gui_draw_runs(iVar1,(uint)DAT_20808628,(uint)DAT_20808626,(&PTR_DAT_20808644)[uVar2]);
     DAT_20808620 = 0;
   }
   return;
@@ -3285,7 +3305,7 @@ void meter_draw_scale(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * test_disp_init @ 20134e0c  (100 bytes, 0 callers, export file 20134368_201353f8.c)
+ * test_disp_init @ 20134e0c  (100 bytes, 0 callers, export file 20134358_201352e8.c)
  * Purpose: replay task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3297,7 +3317,7 @@ void meter_draw_scale(int param_1,int param_2,int param_3)
 void test_disp_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 local_18;
   undefined4 uStack_14;
   undefined4 local_10;
@@ -3305,13 +3325,13 @@ void test_disp_init(void)
   local_18 = 2;
   uStack_14 = 0;
   local_10 = 0;
-  iVar1 = itron_acre_flg(0,&local_18);
-  if (0 < iVar1) {
-    DAT_20808934 = iVar1;
-    iVar1 = itron_acre_tsk(0,&DAT_20420088);
-    if (0 < iVar1) {
-      DAT_20808938 = iVar1;
-      itron_sta_tsk(iVar1,0);
+  uVar1 = itron_acre_flg(0,(byte *)&local_18);
+  if (0 < (int)uVar1) {
+    DAT_20808934 = uVar1;
+    uVar1 = itron_acre_tsk(0,&DAT_20420088);
+    if (0 < (int)uVar1) {
+      DAT_20808938 = uVar1;
+      itron_sta_tsk(uVar1,0);
     }
   }
   return;
@@ -3319,7 +3339,7 @@ void test_disp_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * debug_cmd_line_read @ 20134e70  (364 bytes, 1 callers, export file 20134368_201353f8.c)
+ * debug_cmd_line_read @ 20134e70  (364 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: `debug_replay_send_cmd` / `debug_cmd_line_read`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3328,17 +3348,16 @@ void test_disp_init(void)
 
 /* parses "NNN:hh hh ...:DDDD" lines */
 
-undefined4 debug_cmd_line_read(short *param_1,undefined4 param_2)
+uint debug_cmd_line_read(short *param_1,uint param_2)
 
 {
-  uint uVar1;
-  undefined1 uVar2;
-  ushort uVar3;
-  short sVar4;
+  undefined1 uVar1;
+  ushort uVar2;
+  short sVar3;
+  uint uVar4;
   int iVar5;
-  undefined4 uVar6;
-  int iVar7;
-  undefined1 *puVar8;
+  int iVar6;
+  undefined1 *puVar7;
   undefined1 local_bf0 [2048];
   undefined1 auStack_3f0 [952];
   undefined1 local_38;
@@ -3350,55 +3369,55 @@ undefined4 debug_cmd_line_read(short *param_1,undefined4 param_2)
   undefined1 local_29;
   char local_28 [8];
   
-  iVar5 = fs_fread(auStack_2c,3,1,param_2);
-  if (iVar5 < 1) {
-    uVar6 = 0xffffffff;
+  uVar4 = fs_fread((uint)auStack_2c,3,1,param_2);
+  if ((int)uVar4 < 1) {
+    uVar4 = 0xffffffff;
   }
   else {
     local_29 = 0;
-    uVar3 = FUN_20154dd0(auStack_2c);
-    uVar1 = (uint)uVar3;
-    param_1[1] = uVar3;
-    if (uVar1 != 0) {
-      fs_fread(local_28,1,1,param_2);
-      fs_fread(local_bf0,uVar1 * 3,1,param_2);
-      puVar8 = auStack_34;
-      fs_fread(puVar8,4,1,param_2);
+    uVar2 = FUN_20154dd0(auStack_2c);
+    uVar4 = (uint)uVar2;
+    param_1[1] = uVar2;
+    if (uVar4 != 0) {
+      fs_fread((uint)local_28,1,1,param_2);
+      fs_fread((uint)local_bf0,uVar4 * 3,1,param_2);
+      puVar7 = auStack_34;
+      fs_fread((uint)puVar7,4,1,param_2);
       local_30 = 0;
-      sVar4 = FUN_20154dd0(puVar8);
-      *param_1 = sVar4;
-      if (sVar4 == 0) {
+      sVar3 = FUN_20154dd0(puVar7);
+      *param_1 = sVar3;
+      if (sVar3 == 0) {
         *param_1 = 1000;
       }
-      if (uVar1 != 0) {
-        puVar8 = auStack_3f0;
+      if (uVar4 != 0) {
+        puVar7 = auStack_3f0;
       }
       local_36 = 0;
-      if (uVar1 != 0) {
+      if (uVar4 != 0) {
         iVar5 = 0;
         do {
           local_38 = local_bf0[iVar5 * 3];
           local_37 = local_bf0[iVar5 * 3 + 1];
-          uVar2 = FUN_2014e3c4(puVar8 + 0x3b8,0,0x10);
-          iVar7 = iVar5 + 1;
-          *(undefined1 *)((int)param_1 + iVar5 + 4) = uVar2;
-          iVar5 = iVar7;
-        } while (iVar7 < (int)uVar1);
+          uVar1 = FUN_2014e3c4(puVar7 + 0x3b8,0,0x10);
+          iVar6 = iVar5 + 1;
+          *(undefined1 *)((int)param_1 + iVar5 + 4) = uVar1;
+          iVar5 = iVar6;
+        } while (iVar6 < (int)uVar4);
       }
-      fs_fread(local_28,1,1,param_2);
+      fs_fread((uint)local_28,1,1,param_2);
       return 1;
     }
     do {
-      fs_fread(local_28,1,1,param_2);
+      fs_fread((uint)local_28,1,1,param_2);
     } while (local_28[0] != '\n');
-    uVar6 = 0;
+    uVar4 = 0;
   }
-  return uVar6;
+  return uVar4;
 }
 
 
 /* -----------------------------------------------------------------------------
- * debug_replay_send_cmd @ 20134fdc  (268 bytes, 1 callers, export file 20134368_201353f8.c)
+ * debug_replay_send_cmd @ 20134fdc  (268 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: `debug_replay_send_cmd` / `debug_cmd_line_read`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3414,7 +3433,7 @@ undefined4 debug_replay_send_cmd(void)
 {
   char cVar1;
   int iVar2;
-  int iVar3;
+  uint uVar3;
   uint uVar4;
   undefined4 uVar5;
   ushort local_e5c;
@@ -3423,35 +3442,35 @@ undefined4 debug_replay_send_cmd(void)
   char local_2a0 [576];
   undefined1 auStack_60 [64];
   
-  iVar2 = FUN_20103ba0();
+  iVar2 = sd_state_bit6();
   uVar5 = 0;
   if (iVar2 != 0) {
-    FUN_20154a30(auStack_60,0x32,"%s\\%s","I:\\FT-710\\DEBUG_RECV_CMD","SEND_CMD.TXT");
-    iVar2 = fs_fopen(auStack_60,0x20135124);
+    snprintf(auStack_60,0x32,"%s\\%s","I:\\FT-710\\DEBUG_RECV_CMD","SEND_CMD.TXT");
+    uVar3 = fs_fopen((uint)auStack_60,0x20135124);
     uVar5 = 0;
-    if (iVar2 != 0) {
+    if (uVar3 != 0) {
       do {
-        memclr(local_e58,3000);
-        iVar3 = debug_cmd_line_read(&local_e5c,iVar2);
+        __aeabi_memclr4(local_e58,3000);
+        uVar4 = debug_cmd_line_read((short *)&local_e5c,uVar3);
         cVar1 = local_e58[0];
-        if (iVar3 == -1) break;
-        if (iVar3 == 1) {
-          memclr(local_2a0,0x240);
+        if (uVar4 == 0xffffffff) break;
+        if (uVar4 == 1) {
+          __aeabi_memclr4(local_2a0,0x240);
           uVar4 = 0;
           do {
             if ((&DAT_2080893c)[uVar4 * 0xc] == cVar1) {
-              FUN_20155310(local_2a0,local_e58,local_e5a);
+              __aeabi_memcpy4(local_2a0,local_e58,local_e5a);
               break;
             }
             uVar4 = uVar4 + 1;
           } while (uVar4 < 0x1a);
           if (local_2a0[0] != '\0') {
-            mainlink_set_last_frame(local_2a0);
+            mainlink_set_last_frame((uint)local_2a0);
           }
           itron_dly_tsk(local_e5c / 10);
         }
       } while (DAT_20808931 != '\x02');
-      FUN_20141ff0(iVar2);
+      fs_fclose(uVar3);
       uVar5 = 1;
     }
   }
@@ -3460,7 +3479,7 @@ undefined4 debug_replay_send_cmd(void)
 
 
 /* -----------------------------------------------------------------------------
- * fb_blit_raw @ 20135534  (88 bytes, 14 callers, export file 20135448_20137904.c)
+ * fb_blit_raw @ 20135534  (88 bytes, 14 callers, export file 201353f8_201378b0.c)
  * Purpose: `fb_blit_raw`(fb, y, x, src, w, h): raw RGB565
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3473,15 +3492,16 @@ void fb_blit_raw(int param_1,int param_2,int param_3,int param_4,int param_5,int
 
 {
   int iVar1;
+  int iVar2;
   
   iVar1 = 0;
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   if (0 < param_6) {
     do {
-      memcpy(param_1,param_4,param_5 << 1);
+      memcpy(iVar2,param_4,param_5 << 1);
       iVar1 = iVar1 + 1;
       param_4 = param_4 + param_5 * 2;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
     } while (iVar1 < param_6);
   }
   return;
@@ -3489,7 +3509,7 @@ void fb_blit_raw(int param_1,int param_2,int param_3,int param_4,int param_5,int
 
 
 /* -----------------------------------------------------------------------------
- * fb_clear_rect @ 201355bc  (72 bytes, 93 callers, export file 20135448_20137904.c)
+ * fb_clear_rect @ 201355bc  (72 bytes, 93 callers, export file 201353f8_201378b0.c)
  * Purpose: `fb_clear_rect`(fb, y, x, w, h): fill with 0 (transparent)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3502,14 +3522,15 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 {
   int iVar1;
+  int iVar2;
   
   iVar1 = 0;
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   if (0 < param_5) {
     do {
-      FUN_20155274(param_1,param_4 << 1);
+      __aeabi_memclr(iVar2,param_4 << 1);
       iVar1 = iVar1 + 1;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
     } while (iVar1 < param_5);
   }
   return;
@@ -3517,7 +3538,7 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_rect @ 20135658  (128 bytes, 175 callers, export file 20135448_20137904.c)
+ * fb_fill_rect @ 20135658  (128 bytes, 175 callers, export file 201353f8_201378b0.c)
  * Purpose: (fb, color, y, x, w, h); color 0 → `fb_clear_rect`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3530,30 +3551,32 @@ void fb_fill_rect(int param_1,int param_2,int param_3,int param_4,int param_5,in
 
 {
   int iVar1;
+  int iVar2;
+  int iVar3;
   
   if (param_2 == 0) {
     fb_clear_rect(param_1,param_3,param_4,param_5,param_6);
     return;
   }
-  param_6 = param_6 + param_3;
-  param_1 = param_1 + param_3 * 0x640;
-  if (param_3 < param_6) {
+  iVar3 = param_6 + param_3;
+  iVar2 = param_1 + param_3 * 0x640;
+  if (param_3 < iVar3) {
     iVar1 = param_4;
     do {
       for (; iVar1 < param_5 + param_4; iVar1 = iVar1 + 1) {
-        *(short *)(param_1 + iVar1 * 2) = (short)param_2;
+        *(short *)(iVar2 + iVar1 * 2) = (short)param_2;
       }
       param_3 = param_3 + 1;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
       iVar1 = param_4;
-    } while (param_3 < param_6);
+    } while (param_3 < iVar3);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fb_draw_frame @ 2013573c  (172 bytes, 8 callers, export file 20135448_20137904.c)
+ * fb_draw_frame @ 2013573c  (172 bytes, 8 callers, export file 201353f8_201378b0.c)
  * Purpose: rectangle outline / outline with cut corners
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3562,13 +3585,13 @@ void fb_fill_rect(int param_1,int param_2,int param_3,int param_4,int param_5,in
 
 /* rectangle outline of given thickness */
 
-void fb_draw_frame(undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5,
-                  int param_6,int param_7)
+void fb_draw_frame(uint param_1,uint param_2,int param_3,int param_4,int param_5,int param_6,
+                  int param_7)
 
 {
   uint uVar1;
   
-  fb_fill_rect();
+  fb_fill_rect(param_1,param_2,param_3,param_4,param_5,param_7);
   fb_fill_rect(param_1,param_2,(param_3 + param_6) - param_7 & 0xffff,param_4,param_5,param_7);
   uVar1 = param_6 + param_7 * -2 & 0xffff;
   fb_fill_rect(param_1,param_2,param_3 + param_7 & 0xffff,param_4,param_7,uVar1);
@@ -3579,50 +3602,49 @@ void fb_draw_frame(undefined4 param_1,undefined4 param_2,int param_3,int param_4
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_runs @ 201358d0  (160 bytes, 294 callers, export file 20135448_20137904.c)
+ * gui_draw_runs @ 201358d0  (160 bytes, 294 callers, export file 201353f8_201378b0.c)
  * Purpose: draw a run sprite at (y, x) (294 callers)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
 // ===== gui_draw_runs @ 201358d0 (160 bytes)
 
-void gui_draw_runs(int param_1,int param_2,int param_3,undefined2 *param_4)
+void gui_draw_runs(int param_1,int param_2,int param_3,void *param_4)
 
 {
   int iVar1;
-  undefined2 uVar2;
+  ushort uVar2;
   uint uVar3;
   int iVar4;
   uint uVar5;
-  uint uVar6;
-  undefined8 uVar7;
+  uint n;
+  ulonglong uVar6;
   
-  uVar2 = *param_4;
+  uVar2 = *(ushort *)param_4;
   iVar4 = 0;
   uVar5 = 0;
-  if (*(int *)(param_4 + 2) != 0) {
+  if (*(int *)((int)param_4 + 4) != 0) {
     do {
-      uVar6 = (uint)*(ushort *)(*(int *)(param_4 + 4) + uVar5 * 4);
-      for (uVar3 = (uint)*(ushort *)(*(int *)(param_4 + 4) + uVar5 * 4 + 2); uVar3 != 0;
+      n = (uint)*(ushort *)(*(int *)((int)param_4 + 8) + uVar5 * 4);
+      for (uVar3 = (uint)*(ushort *)(*(int *)((int)param_4 + 8) + uVar5 * 4 + 2); uVar3 != 0;
           uVar3 = uVar3 - 1) {
-        uVar7 = __aeabi_uidivmod(uVar6,uVar2);
-        uVar6 = uVar6 + 1;
+        uVar6 = __aeabi_idivmod(n,(uint)uVar2);
+        n = n + 1;
         iVar1 = iVar4 * 2;
         iVar4 = iVar4 + 1;
         *(undefined2 *)
-         (param_1 + (param_3 + param_2 * 800) * 2 +
-         (int)((ulonglong)uVar7 >> 0x20) * 2 + (int)uVar7 * 0x640) =
-             *(undefined2 *)(*(int *)(param_4 + 6) + iVar1);
+         (param_1 + (param_3 + param_2 * 800) * 2 + ((int)(uVar6 >> 0x20) + (int)uVar6 * 800) * 2) =
+             *(undefined2 *)(*(int *)((int)param_4 + 0xc) + iVar1);
       }
       uVar5 = uVar5 + 1;
-    } while (uVar5 < *(uint *)(param_4 + 2));
+    } while (uVar5 < *(uint *)((int)param_4 + 4));
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_runs32 @ 201359bc  (156 bytes, 15 callers, export file 20135448_20137904.c)
+ * gui_draw_runs32 @ 201359bc  (156 bytes, 15 callers, export file 201353f8_201378b0.c)
  * Purpose: run sprite with u32 runs (`gui_draw_runs32`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3631,7 +3653,7 @@ void gui_draw_runs(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 /* run sprite with u32 {start, count} runs */
 
-void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
+void gui_draw_runs32(int param_1,int param_2,int param_3,void *param_4)
 
 {
   int iVar1;
@@ -3643,31 +3665,31 @@ void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
   
   iVar3 = 0;
   uVar5 = 0;
-  if (*(int *)(param_4 + 2) != 0) {
+  if (*(int *)((int)param_4 + 4) != 0) {
     do {
       uVar2 = 0;
-      piVar4 = (int *)(*(int *)(param_4 + 4) + uVar5 * 8);
+      piVar4 = (int *)(*(int *)((int)param_4 + 8) + uVar5 * 8);
       if (piVar4[1] != 0) {
         do {
-          uVar6 = FUN_20156260(*piVar4 + uVar2,*param_4);
+          uVar6 = __aeabi_uidivmod(*piVar4 + uVar2,*(undefined2 *)param_4);
           uVar2 = uVar2 + 1;
           iVar1 = iVar3 * 2;
           iVar3 = iVar3 + 1;
           *(undefined2 *)
            (param_1 + (param_3 + param_2 * 800) * 2 +
            (int)((ulonglong)uVar6 >> 0x20) * 2 + (int)uVar6 * 0x640) =
-               *(undefined2 *)(*(int *)(param_4 + 6) + iVar1);
+               *(undefined2 *)(*(int *)((int)param_4 + 0xc) + iVar1);
         } while (uVar2 < (uint)piVar4[1]);
       }
       uVar5 = uVar5 + 1;
-    } while (uVar5 < *(uint *)(param_4 + 2));
+    } while (uVar5 < *(uint *)((int)param_4 + 4));
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_box @ 20135aa4  (52 bytes, 38 callers, export file 20135448_20137904.c)
+ * fb_fill_box @ 20135aa4  (52 bytes, 38 callers, export file 201353f8_201378b0.c)
  * Purpose: `fb_fill_box` (fb, y, x, w, h, color) / same with w, h swapped
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3676,8 +3698,7 @@ void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 /* (fb, y, x, w, h, color) */
 
-void fb_fill_box(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                undefined4 param_5,undefined4 param_6)
+void fb_fill_box(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5,uint param_6)
 
 {
   fb_fill_rect(param_1,param_6,param_2,param_3,param_4,param_5);
@@ -3686,7 +3707,7 @@ void fb_fill_box(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_box_t @ 20135ad8  (52 bytes, 26 callers, export file 20135448_20137904.c)
+ * fb_fill_box_t @ 20135ad8  (52 bytes, 26 callers, export file 201353f8_201378b0.c)
  * Purpose: `fb_fill_box` (fb, y, x, w, h, color) / same with w, h swapped
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3695,8 +3716,7 @@ void fb_fill_box(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefi
 
 /* (fb, y, x, h, w, color) */
 
-void fb_fill_box_t(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                  undefined4 param_5,undefined4 param_6)
+void fb_fill_box_t(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5,uint param_6)
 
 {
   fb_fill_rect(param_1,param_6,param_2,param_3,param_5,param_4);
@@ -3705,7 +3725,7 @@ void fb_fill_box_t(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
 
 
 /* -----------------------------------------------------------------------------
- * sprite_unpack @ 20135b0c  (96 bytes, 3 callers, export file 20135448_20137904.c)
+ * sprite_unpack @ 20135b0c  (96 bytes, 3 callers, export file 201353f8_201378b0.c)
  * Purpose: `sprite_unpack` to a w×h buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3736,7 +3756,7 @@ void sprite_unpack(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_hex @ 20135b6c  (168 bytes, 4 callers, export file 20135448_20137904.c)
+ * gui_draw_hex @ 20135b6c  (168 bytes, 4 callers, export file 201353f8_201378b0.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3745,17 +3765,17 @@ void sprite_unpack(int param_1,int param_2)
 
 /* hex number in the 10x15 font */
 
-void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4,int param_5)
+void gui_draw_hex(int param_1,uint param_2,int param_3,int param_4,int param_5)
 
 {
   uint uVar1;
   int iVar2;
   int iVar3;
   undefined1 auStack_160 [300];
-  undefined4 local_34;
+  int local_34;
   uint uStack_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   iVar3 = 0;
   if (0 < param_3 * 2) {
@@ -3764,7 +3784,7 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
     iStack_2c = param_3;
     local_28 = param_4;
     do {
-      memclr(auStack_160,300);
+      __aeabi_memclr4(auStack_160,300);
       uVar1 = param_2 >> ((param_3 * 8 + iVar3 * -4) - 4U & 0xff) & 0xf;
       if (uVar1 < 10) {
         iVar2 = uVar1 + 0x10;
@@ -3772,8 +3792,8 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
       else {
         iVar2 = uVar1 + 0x37;
       }
-      sprite_unpack((&PTR_DAT_20803738)[iVar2],auStack_160);
-      fb_blit_raw(local_34,local_28,iVar3 * 0xb + param_5 & 0xffff,auStack_160,10,0xf);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar2],(int)auStack_160);
+      fb_blit_raw(local_34,local_28,iVar3 * 0xb + param_5 & 0xffff,(int)auStack_160,10,0xf);
       iVar3 = iVar3 + 1;
     } while (iVar3 < param_3 * 2);
   }
@@ -3782,7 +3802,7 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_dec @ 20135c14  (212 bytes, 22 callers, export file 20135448_20137904.c)
+ * gui_draw_dec @ 20135c14  (212 bytes, 22 callers, export file 201353f8_201378b0.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3791,7 +3811,7 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
 
 /* decimal number in the 10x15 font */
 
-void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5)
+void gui_draw_dec(int param_1,undefined4 param_2,int param_3,int param_4,int param_5)
 
 {
   int iVar1;
@@ -3801,10 +3821,10 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
   int iVar5;
   int iVar6;
   undefined1 auStack_160 [300];
-  undefined4 local_34;
+  int local_34;
   undefined4 local_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   iVar6 = 0;
   local_34 = param_1;
@@ -3822,7 +3842,7 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
           iVar4 = iVar4 * 10;
         } while (iVar1 < iVar5);
       }
-      uVar2 = FUN_20156260(local_30,iVar4);
+      uVar2 = __aeabi_uidivmod(local_30,iVar4);
       uVar3 = uVar2 % 10;
       if (uVar3 < 10) {
         iVar4 = uVar3 + 0x10;
@@ -3830,9 +3850,9 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
       else {
         iVar4 = uVar3 + 0x37;
       }
-      memclr(auStack_160,300,uVar2 * -0x33333333);
-      sprite_unpack((&PTR_DAT_20803738)[iVar4],auStack_160);
-      fb_blit_raw(local_34,local_28,iVar6 * 0xb + param_5 & 0xffff,auStack_160,10,0xf);
+      __aeabi_memclr4(auStack_160,300,uVar2 * -0x33333333);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar4],(int)auStack_160);
+      fb_blit_raw(local_34,local_28,iVar6 * 0xb + param_5 & 0xffff,(int)auStack_160,10,0xf);
       iVar6 = iVar6 + 1;
     } while (iVar6 < param_3);
   }
@@ -3841,7 +3861,7 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_hex_color @ 20135ce8  (236 bytes, 3 callers, export file 20135448_20137904.c)
+ * gui_draw_hex_color @ 20135ce8  (236 bytes, 3 callers, export file 201353f8_201378b0.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3850,8 +3870,8 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
 
 /* hex number, recoloured */
 
-void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 param_4,int param_5,
-                       uint param_6,ushort param_7)
+void gui_draw_hex_color(int param_1,uint param_2,int param_3,int param_4,int param_5,uint param_6,
+                       ushort param_7)
 
 {
   uint uVar1;
@@ -3861,10 +3881,10 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
   int iVar5;
   ushort local_290 [150];
   undefined2 local_164 [152];
-  undefined4 local_34;
+  int local_34;
   uint uStack_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   uVar1 = 0;
   do {
@@ -3886,8 +3906,8 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
       else {
         iVar5 = uVar1 + 0x37;
       }
-      FUN_20155310(local_290,local_164,300);
-      sprite_unpack((&PTR_DAT_20803738)[iVar5],local_290);
+      __aeabi_memcpy4(local_290,local_164,300);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar5],(int)local_290);
       uVar1 = 0;
       do {
         puVar2 = local_290 + uVar1;
@@ -3896,7 +3916,7 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
           *puVar2 = param_7;
         }
       } while (uVar1 < 0x96);
-      fb_blit_raw(local_34,local_28,param_5 + iVar4 * 10 & 0xffff,local_290,10,0xf);
+      fb_blit_raw(local_34,local_28,param_5 + iVar4 * 10 & 0xffff,(int)local_290,10,0xf);
       iVar4 = iVar4 + 1;
     } while (iVar4 < param_3 * 2);
   }
@@ -3905,7 +3925,7 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text @ 20135dd4  (108 bytes, 74 callers, export file 20135448_20137904.c)
+ * gui_draw_text @ 20135dd4  (108 bytes, 74 callers, export file 201353f8_201378b0.c)
  * Purpose: `gui_draw_text`(fb, str, y, x, pitch, font)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3914,27 +3934,19 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
 
 /* (fb, str, y, x, pitch, font): char -> glyph via map 0x2080173C */
 
-void gui_draw_text(undefined4 param_1,int param_2,undefined4 param_3,int param_4,int param_5,
-                  int param_6)
+void gui_draw_text(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6)
 
 {
   uint uVar1;
   uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
-  int iVar5;
   
-  iVar3 = param_2;
-  uVar4 = param_3;
-  iVar5 = param_4;
-  uVar1 = FUN_20155122(param_2);
+  uVar1 = strlen(param_2);
   uVar2 = 0;
   if ((uVar1 & 0xffff) != 0) {
     do {
       gui_draw_runs(param_1,param_3,param_5 * uVar2 + param_4 & 0xffff,
-                    *(undefined4 *)
-                     (param_6 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar2)] * 4),param_1
-                    ,iVar3,uVar4,iVar5);
+                    *(void **)(param_6 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar2)] * 4
+                              ));
       uVar2 = uVar2 + 1 & 0xffff;
     } while (uVar2 < (uVar1 & 0xffff));
   }
@@ -3943,7 +3955,7 @@ void gui_draw_text(undefined4 param_1,int param_2,undefined4 param_3,int param_4
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text_words @ 20135ec0  (288 bytes, 14 callers, export file 20135448_20137904.c)
+ * gui_draw_text_words @ 20135ec0  (288 bytes, 14 callers, export file 201353f8_201378b0.c)
  * Purpose: text with half-width spaces / centred on x
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -3952,8 +3964,8 @@ void gui_draw_text(undefined4 param_1,int param_2,undefined4 param_3,int param_4
 
 /* text with half-width spaces */
 
-void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4,
-                        uint param_5,undefined4 param_6)
+void gui_draw_text_words(uint param_1,uint param_2,uint param_3,int param_4,uint param_5,
+                        uint param_6)
 
 {
   undefined4 uVar1;
@@ -3994,11 +4006,11 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
   local_30 = 0;
   local_2c = 0;
   local_28 = 0;
-  uVar1 = FUN_20155122(param_2);
+  uVar1 = strlen(param_2);
   memcpy(&local_60,param_2,uVar1);
   iVar2 = FUN_2014e320(&local_60,&DWORD_20135fec,local_24);
   gui_draw_text(param_1,iVar2,param_3,param_4,param_5,param_6);
-  iVar3 = FUN_20155122(iVar2);
+  iVar3 = strlen(iVar2);
   uVar4 = iVar3 * param_5 + param_4;
   if (iVar2 != 0) {
     while( true ) {
@@ -4006,7 +4018,7 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
       if (iVar2 == 0) break;
       uVar4 = (uVar4 & 0xffff) + (param_5 >> 1) & 0xffff;
       gui_draw_text(param_1,iVar2,param_3,uVar4,param_5,param_6);
-      iVar2 = FUN_20155122(iVar2);
+      iVar2 = strlen(iVar2);
       uVar4 = iVar2 * param_5 + uVar4;
     }
   }
@@ -4015,7 +4027,7 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text_centered @ 20135ff0  (156 bytes, 53 callers, export file 20135448_20137904.c)
+ * gui_draw_text_centered @ 20135ff0  (156 bytes, 53 callers, export file 201353f8_201378b0.c)
  * Purpose: text with half-width spaces / centred on x
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -4025,8 +4037,7 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
 /* centred on x */
 
 void gui_draw_text_centered
-               (undefined4 param_1,int param_2,undefined4 param_3,int param_4,uint param_5,
-               undefined4 param_6)
+               (uint param_1,int param_2,uint param_3,int param_4,uint param_5,uint param_6)
 
 {
   char *pcVar1;
@@ -4037,7 +4048,7 @@ void gui_draw_text_centered
   
   iVar5 = 0;
   uVar4 = 0;
-  iVar2 = FUN_20155122(param_2);
+  iVar2 = strlen(param_2);
   if (iVar2 != 0) {
     do {
       pcVar1 = (char *)(param_2 + uVar4);
@@ -4045,10 +4056,10 @@ void gui_draw_text_centered
       if (*pcVar1 == ' ') {
         iVar5 = iVar5 + 1;
       }
-      uVar3 = FUN_20155122(param_2);
+      uVar3 = strlen(param_2);
     } while (uVar4 < uVar3);
   }
-  iVar2 = FUN_20155122(param_2);
+  iVar2 = strlen(param_2);
   gui_draw_text_words(param_1,param_2,param_3,
                       param_4 - ((iVar5 * (param_5 >> 1) + (iVar2 - iVar5) * param_5 & 0xffff) >> 1)
                       & 0xffff,param_5,param_6);
@@ -4057,7 +4068,7 @@ void gui_draw_text_centered
 
 
 /* -----------------------------------------------------------------------------
- * fb_draw_round_frame @ 20136290  (264 bytes, 12 callers, export file 20135448_20137904.c)
+ * fb_draw_round_frame @ 20136290  (264 bytes, 12 callers, export file 201353f8_201378b0.c)
  * Purpose: rectangle outline / outline with cut corners
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -4066,32 +4077,33 @@ void gui_draw_text_centered
 
 /* outline with cut corners */
 
-void fb_draw_round_frame(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6,
-                        undefined4 param_7)
+void fb_draw_round_frame(uint param_1,uint param_2,uint param_3,int param_4,int param_5,uint param_6
+                        ,uint param_7)
 
 {
   undefined2 uVar1;
   int iVar2;
+  int iVar3;
   
-  fb_fill_box_t(param_1,param_2 + 1U & 0xffff,param_3,param_5 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box_t(param_1,param_2 + 1U & 0xffff,(param_3 + param_4) - param_6 & 0xffff,
+  fb_fill_box_t(param_1,param_2 + 1 & 0xffff,param_3,param_5 - 2U & 0xffff,param_6,param_7);
+  fb_fill_box_t(param_1,param_2 + 1 & 0xffff,(param_3 + param_4) - param_6 & 0xffff,
                 param_5 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box(param_1,param_2,param_3 + 1U & 0xffff,param_4 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box(param_1,(param_2 + param_5) - param_6 & 0xffff,param_3 + 1U & 0xffff,
+  fb_fill_box(param_1,param_2,param_3 + 1 & 0xffff,param_4 - 2U & 0xffff,param_6,param_7);
+  fb_fill_box(param_1,(param_2 + param_5) - param_6 & 0xffff,param_3 + 1 & 0xffff,
               param_4 - 2U & 0xffff,param_6,param_7);
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   uVar1 = (undefined2)param_7;
-  *(undefined2 *)(param_1 + param_6 * 0x642) = uVar1;
-  *(undefined2 *)(param_1 + (param_4 + param_6 * 799) * 2 + -2) = uVar1;
-  iVar2 = (param_5 - param_6) + -1;
-  *(undefined2 *)(param_1 + (param_6 + iVar2 * 800) * 2) = uVar1;
-  *(undefined2 *)(param_1 + ((param_4 + iVar2 * 800) - param_6) * 2 + -2) = uVar1;
+  *(undefined2 *)(iVar2 + param_6 * 0x642) = uVar1;
+  *(undefined2 *)(iVar2 + (param_4 + param_6 * 799) * 2 + -2) = uVar1;
+  iVar3 = (param_5 - param_6) + -1;
+  *(undefined2 *)(iVar2 + (param_6 + iVar3 * 800) * 2) = uVar1;
+  *(undefined2 *)(iVar2 + ((param_4 + iVar3 * 800) - param_6) * 2 + -2) = uVar1;
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * debug_overlay_draw @ 201367b4  (2056 bytes, 1 callers, export file 20135448_20137904.c)
+ * debug_overlay_draw @ 201367b4  (2056 bytes, 1 callers, export file 201353f8_201378b0.c)
  * Purpose: `debug_overlay_draw` / `debug_screenshot_root`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -4105,16 +4117,18 @@ void debug_overlay_draw(int param_1)
 
 {
   byte bVar1;
-  undefined4 uVar2;
+  bool bVar2;
   int iVar3;
   undefined4 uVar4;
-  byte bVar5;
+  uint uVar5;
+  int iVar6;
+  byte bVar7;
   
-  uVar2 = fb_get_layer_addr(DAT_208085bc);
-  iVar3 = debug_enabled();
-  if (iVar3 != 0) {
+  iVar3 = fb_get_layer_addr(DAT_208085bc);
+  bVar2 = debug_enabled();
+  if (bVar2) {
     if ((DAT_20808a84 & 1) != 0) {
-      gui_draw_text(uVar2,DAT_2080039c,1,2,10,&DAT_20803730);
+      gui_draw_text(iVar3,DAT_2080039c,1,2,10,&DAT_20803730);
       if (DAT_20808a74 == 0) {
         if (DAT_208dbb44 == 1) {
           DAT_20808a78 = DAT_183e0010;
@@ -4127,60 +4141,60 @@ void debug_overlay_draw(int param_1)
         }
         DAT_20808a74 = 1;
       }
-      gui_draw_hex(uVar2,DAT_20808a78,4,0x14,2);
+      gui_draw_hex(iVar3,DAT_20808a78,4,0x14,2);
       DAT_20808a80 = DAT_20808a80 + 1;
       if (DAT_20808a80 == DAT_20808a7c) {
         DAT_20808a80 = 0;
-        gui_draw_text(uVar2,"CPU",2,0x82,10,&DAT_20803730);
-        gui_draw_dec(uVar2,(uint)((ulonglong)(uint)(param_1 * 100) * 0xa7c5ac47 + 0xa7c5ac47 >> 0x31
+        gui_draw_text(iVar3,"CPU",2,0x82,10,&DAT_20803730);
+        gui_draw_dec(iVar3,(uint)((ulonglong)(uint)(param_1 * 100) * 0xa7c5ac47 + 0xa7c5ac47 >> 0x31
                                  ),3,2,0xa5);
       }
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
       uVar4 = FUN_20114920();
-      gui_draw_dec(uVar2,uVar4,4,2,0xe1);
-      gui_draw_text(uVar2,0x20136c48,2,0x118,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208085a8,3,2,0x127);
-      gui_draw_text(uVar2,&DWORD_20136c50,2,0x154,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208085ac,3,2,0x163);
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c58,2,0x19a,10,&DAT_20803730);
-      uVar4 = mainlink_stat_rx_resync();
-      gui_draw_dec(uVar2,uVar4,2,2,0x1a9);
-      gui_draw_text(uVar2,0x20136c5c,2,0x1cc,10,&DAT_20803730);
-      uVar4 = mainlink_stat_nak_sent();
-      gui_draw_dec(uVar2,uVar4,2,2,0x1db);
-      bVar5 = (byte)DAT_208dbb4c & 0xf;
+      gui_draw_dec(iVar3,uVar4,4,2,0xe1);
+      gui_draw_text(iVar3,0x20136c48,2,0x118,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208085a8,3,2,0x127);
+      gui_draw_text(iVar3,&DWORD_20136c50,2,0x154,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208085ac,3,2,0x163);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c58,2,0x19a,10,&DAT_20803730);
+      uVar5 = mainlink_stat_rx_resync();
+      gui_draw_dec(iVar3,uVar5,2,2,0x1a9);
+      gui_draw_text(iVar3,0x20136c5c,2,0x1cc,10,&DAT_20803730);
+      uVar5 = mainlink_stat_nak_sent();
+      gui_draw_dec(iVar3,uVar5,2,2,0x1db);
+      bVar7 = (byte)DAT_208dbb4c & 0xf;
       bVar1 = (char)DAT_208dbb44 << 4;
-      gui_draw_text(uVar2,0x20136c60,2,0x1fe,10,&DAT_20803730);
-      gui_draw_hex(uVar2,bVar5 | bVar1,1,2,0x20d);
-      gui_draw_text(uVar2,0x20136c64,2,0x230,10,&DAT_20803730);
+      gui_draw_text(iVar3,0x20136c60,2,0x1fe,10,&DAT_20803730);
+      gui_draw_hex(iVar3,bVar7 | bVar1,1,2,0x20d);
+      gui_draw_text(iVar3,0x20136c64,2,0x230,10,&DAT_20803730);
       uVar4 = FUN_2011492c();
-      gui_draw_dec(uVar2,uVar4,4,2,0x23f);
-      gui_draw_text(uVar2,0x20136c68,0xd2,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800474,2,0xd2,0x69);
-      gui_draw_hex(uVar2,DAT_2080046c,1,0xd2,0x8a);
-      gui_draw_text(uVar2,"Toff",0xe9,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800478,2,0xe9,0x69);
-      gui_draw_text(uVar2,"irq",0x100,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800074,4,0x100,0x69);
-      gui_draw_text(uVar2,&DWORD_20136c88,0x117,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080007a,4,0x117,0x69);
-      gui_draw_dec(uVar2,DAT_20800076,3,0x117,0xa0);
-      gui_draw_text(uVar2,&DWORD_20136c94,0x12e,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080007c,4,0x12e,0x69);
-      gui_draw_dec(uVar2,DAT_20800078,3,0x12e,0xa0);
-      gui_draw_text(uVar2,0x20136c64,0x145,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800084,4,0x145,0x69);
-      gui_draw_text(uVar2,&DWORD_2013703c,0x15c,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800080,10,0x15c,0x69);
+      gui_draw_dec(iVar3,uVar4,4,2,0x23f);
+      gui_draw_text(iVar3,0x20136c68,0xd2,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800474,2,0xd2,0x69);
+      gui_draw_hex(iVar3,DAT_2080046c,1,0xd2,0x8a);
+      gui_draw_text(iVar3,"Toff",0xe9,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800478,2,0xe9,0x69);
+      gui_draw_text(iVar3,"irq",0x100,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800074,4,0x100,0x69);
+      gui_draw_text(iVar3,&DWORD_20136c88,0x117,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080007a,4,0x117,0x69);
+      gui_draw_dec(iVar3,DAT_20800076,3,0x117,0xa0);
+      gui_draw_text(iVar3,&DWORD_20136c94,0x12e,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080007c,4,0x12e,0x69);
+      gui_draw_dec(iVar3,DAT_20800078,3,0x12e,0xa0);
+      gui_draw_text(iVar3,0x20136c64,0x145,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800084,4,0x145,0x69);
+      gui_draw_text(iVar3,&DWORD_2013703c,0x15c,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800080,10,0x15c,0x69);
     }
     if ((DAT_20808a84 & 2) != 0) {
-      iVar3 = FUN_2015507c(&DAT_2045f260,&DAT_20909db4,0x200);
-      if (iVar3 != 0) {
+      iVar6 = memcmp(&DAT_2045f260,&DAT_20909db4,0x200);
+      if (iVar6 != 0) {
         FUN_201360b0(&DAT_2045f260,&DAT_20909db4,0x200);
         memcpy(&DAT_20909db4,&DAT_2045f260,0x240);
       }
-      iVar3 = FUN_2015507c(&DAT_2045f4a0,&DAT_20909ff4,0x20);
-      if (iVar3 != 0) {
+      iVar6 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
+      if (iVar6 != 0) {
         FUN_20136188(&DAT_2045f4a0,&DAT_20909ff4,0x20);
         memcpy(&DAT_20909ff4,&DAT_2045f4a0,0x401);
       }
@@ -4188,45 +4202,45 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 0x60) != 0) {
       if ((DAT_20808a84 & 0x20) == 0) {
         if ((DAT_20808a88 & 0x20) != 0) {
-          fb_clear_rect(uVar2,2,0x280,0x14,0xf);
+          fb_clear_rect(iVar3,2,0x280,0x14,0xf);
         }
       }
       else {
-        gui_draw_text(uVar2,&DWORD_20137054,2,0x280,10,&DAT_20803730);
+        gui_draw_text(iVar3,&DWORD_20137054,2,0x280,10,&DAT_20803730);
       }
       if ((DAT_20808a84 & 0x40) == 0) {
         if ((DAT_20808a88 & 0x40) != 0) {
-          fb_clear_rect(uVar2,2,0x29a,0x14,0xf);
+          fb_clear_rect(iVar3,2,0x29a,0x14,0xf);
         }
       }
       else {
-        gui_draw_text(uVar2,"F7",2,0x29a,10,&DAT_20803730);
+        gui_draw_text(iVar3,"F7",2,0x29a,10,&DAT_20803730);
       }
     }
     if ((DAT_20808a84 & 0x400) == 0) {
       if ((DAT_20808a88 & 0x400) != 0) {
-        fb_clear_rect(uVar2,2,0x2a8,0x32,0xf);
+        fb_clear_rect(iVar3,2,0x2a8,0x32,0xf);
       }
     }
     else {
-      gui_draw_text(uVar2,"RF",2,0x2a8,10,&DAT_20803730);
-      gui_draw_hex(uVar2,DAT_20450284,1,2,0x2c1);
+      gui_draw_text(iVar3,"RF",2,0x2a8,10,&DAT_20803730);
+      gui_draw_hex(iVar3,DAT_20450284,1,2,0x2c1);
     }
     if (DAT_2080018c != 0) {
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c44,100,100,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080018c,4,100,0x6f);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c44,100,100,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080018c,4,100,0x6f);
     }
     if (DAT_2080016c != 0) {
-      gui_draw_text(uVar2,&DWORD_20136c50,100,500,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080016c,8,100,0x1ff);
+      gui_draw_text(iVar3,&DWORD_20136c50,100,500,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080016c,8,100,0x1ff);
     }
     if (DAT_208001bc != 0) {
-      gui_draw_text(uVar2,0x20136c48,100,100,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208001bc,8,100,0x6f);
+      gui_draw_text(iVar3,0x20136c48,100,100,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208001bc,8,100,0x6f);
     }
     if (DAT_208001c0 != 0) {
-      gui_draw_dec(uVar2,DAT_208001c0,3,0x14,300);
-      gui_draw_dec(uVar2,DAT_208001c4,3,0x14,0x15e);
+      gui_draw_dec(iVar3,DAT_208001c0,3,0x14,300);
+      gui_draw_dec(iVar3,DAT_208001c4,3,0x14,0x15e);
     }
   }
   DAT_20808a88 = DAT_20808a84;
@@ -4235,7 +4249,7 @@ void debug_overlay_draw(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac8_m2m_start @ 201378b0  (84 bytes, 4 callers, export file 20135448_20137904.c)
+ * dmac8_m2m_start @ 201378b0  (84 bytes, 4 callers, export file 201353f8_201378b0.c)
  * Purpose: `dmac8_m2m_start`: DMAC ch0 (0xE8200400) memory copy
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -4244,41 +4258,41 @@ void debug_overlay_draw(int param_1)
 
 /* DMAC ch8 (0xE8200400) memory-to-memory copy, 0xBB800 B (frame buffer copy-forward) */
 
-void dmac8_m2m_start(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
   
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 2;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 8;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 4;
-  DAT_e8200400 = param_2;
-  DAT_e8200404 = param_1;
-  DAT_e8200408 = param_3;
-  FUN_20157160(&DAT_e8200428,1,0);
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 4;
+  DMAC_N0SA_8 = param_2;
+  DMAC_N0DA_8 = param_1;
+  DMAC_N0TB_8 = param_3;
+  reg_rmw32(&DMAC_CHCTRL_8,1,0);
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * FUN_2015d1c4 @ 2015d1c4  (204 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_set_speed
+ * scope2d_set_speed @ 2015d1c4  (204 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d1c4 @ 2015d1c4 (204 bytes)
+// ===== scope2d_set_speed @ 2015d1c4 (204 bytes)
 
-void FUN_2015d1c4(undefined4 param_1)
+/* SPEED -> period 0x208084CE (600..30), depth 0x208084D2 (20..1), 100 rows/period */
+
+void scope2d_set_speed(undefined4 param_1)
 
 {
   int iVar1;
-  int iVar2;
-  int iVar3;
-  uint uVar4;
+  uint d;
+  ulonglong uVar2;
+  ulonglong uVar3;
   
   switch(param_1) {
   case 0:
@@ -4301,21 +4315,21 @@ void FUN_2015d1c4(undefined4 param_1)
     DAT_208084ce = 0x1e;
     DAT_208084d2 = 1;
   }
-  iVar3 = 1;
+  iVar1 = 1;
   DAT_208f463e = 1;
-  uVar4 = (uint)DAT_208084ce;
-  if (1 < uVar4) {
+  d = (uint)DAT_208084ce;
+  if (1 < d) {
     do {
-      iVar1 = __aeabi_uidivmod(iVar3 * 100,uVar4);
-      iVar2 = __aeabi_uidivmod((iVar3 + -1) * 100,uVar4);
-      if (iVar2 < iVar1) {
-        (&DAT_208f463e)[iVar3] = 1;
+      uVar2 = __aeabi_idivmod(iVar1 * 100,d);
+      uVar3 = __aeabi_idivmod((iVar1 + -1) * 100,d);
+      if ((int)uVar3 < (int)uVar2) {
+        (&DAT_208f463e)[iVar1] = 1;
       }
       else {
-        (&DAT_208f463e)[iVar3] = 0;
+        (&DAT_208f463e)[iVar1] = 0;
       }
-      iVar3 = iVar3 + 1;
-    } while (iVar3 < (int)uVar4);
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < (int)d);
   }
   DAT_208084d0 = 0;
   return;
@@ -4323,15 +4337,16 @@ void FUN_2015d1c4(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d2a8 @ 2015d2a8  (92 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_set_color
+ * scope2d_set_color @ 2015d2a8  (92 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d2a8 @ 2015d2a8 (92 bytes)
+// ===== scope2d_set_color @ 2015d2a8 (92 bytes)
 
-void FUN_2015d2a8(undefined4 param_1)
+/* COLOR 0..10 -> spectrum fill 0x208084CC */
+
+void scope2d_set_color(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -4367,38 +4382,40 @@ void FUN_2015d2a8(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d334 @ 2015d334  (128 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: multi_panel_draw
+ * multi_panel_draw @ 2015d334  (128 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d334 @ 2015d334 (128 bytes)
+// ===== multi_panel_draw @ 2015d334 (128 bytes)
 
-void FUN_2015d334(undefined4 param_1)
+/* MULTI: oscilloscope + AF-FFT spectrum + AF-FFT waterfall at y 325 */
+
+void multi_panel_draw(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
   uVar1 = fb_get_layer_addr(DAT_208085b8);
-  FUN_2015dc90(uVar1,0x145,0x195,0x187,param_1);
+  affft_spectrum_draw(uVar1,0x145,0x195,0x187,param_1);
   FUN_20120d90();
-  FUN_2015da3c(uVar1,0x16d,0x195,0x187,0x27);
-  FUN_2015d650(uVar1,0x145,4,0,0x4f,param_1);
+  affft_waterfall_blit(uVar1,0x16d,0x195,0x187,0x27);
+  osc_draw(uVar1,0x145,4,0,0x4f,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d3b8 @ 2015d3b8  (212 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_draw_normal
+ * scope2d_draw_normal @ 2015d3b8  (212 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d3b8 @ 2015d3b8 (212 bytes)
+// ===== scope2d_draw_normal @ 2015d3b8 (212 bytes)
 
-void FUN_2015d3b8(int param_1,undefined4 param_2)
+/* 2D spectrum + waterfall 100/133 px (waterfall size 1 NORMAL) */
+
+void scope2d_draw_normal(int param_1,void *param_2)
 
 {
   undefined4 uVar1;
@@ -4415,29 +4432,31 @@ void FUN_2015d3b8(int param_1,undefined4 param_2)
     iVar2 = 3;
     iVar3 = 0x85;
   }
-  FUN_2015db80(uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
-               (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push(DAT_208084d2,param_2);
+  scope2d_spectrum_fill
+            (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
+             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
+  scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     FUN_20134414(DAT_208084d2);
   }
-  FUN_20156260(DAT_208084d0 + 1,DAT_208084ce);
+  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
-  FUN_2015da9c(uVar1,0x192 - iVar3,4,0x317,iVar3);
+  scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d49c @ 2015d49c  (104 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope3d_front_large
+ * scope3d_front_large @ 2015d49c  (104 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d49c @ 2015d49c (104 bytes)
+// ===== scope3d_front_large @ 2015d49c (104 bytes)
 
-void FUN_2015d49c(int param_1,undefined4 param_2)
+/* 3DSS front trace, large layout (mode 8, h 186/240) */
+
+void scope3d_front_large(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -4453,21 +4472,22 @@ void FUN_2015d49c(int param_1,undefined4 param_2)
     uVar2 = 0xf0;
     iVar3 = 0xf0;
   }
-  FUN_2015d70c(uVar1,0x192 - iVar3,4,0x317,uVar2,8,param_2,0x1e);
+  scope_front_trace_draw(uVar1,0x192 - iVar3,4,0x317,uVar2,8,param_2,0x1e);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d508 @ 2015d508  (208 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_draw_multi
+ * scope2d_draw_multi @ 2015d508  (208 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d508 @ 2015d508 (208 bytes)
+// ===== scope2d_draw_multi @ 2015d508 (208 bytes)
 
-void FUN_2015d508(int param_1,undefined4 param_2)
+/* 2D spectrum + waterfall 42/75 px, MULTI layout */
+
+void scope2d_draw_multi(int param_1,void *param_2)
 
 {
   undefined4 uVar1;
@@ -4484,29 +4504,31 @@ void FUN_2015d508(int param_1,undefined4 param_2)
     iVar2 = 7;
     iVar3 = 0x4b;
   }
-  FUN_2015db80(uVar1,((0x11c - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
-               (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push(DAT_208084d2,param_2);
+  scope2d_spectrum_fill
+            (uVar1,((0x11c - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
+             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
+  scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     FUN_20134414(DAT_208084d2);
   }
-  FUN_20156260(DAT_208084d0 + 1,DAT_208084ce);
+  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
-  FUN_2015da9c(uVar1,0x11c - iVar3,4,0x317,iVar3);
+  scope2d_waterfall_blit(uVar1,0x11c - iVar3,4,0x317,iVar3);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d5e8 @ 2015d5e8  (100 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope3d_front_small
+ * scope3d_front_small @ 2015d5e8  (100 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d5e8 @ 2015d5e8 (100 bytes)
+// ===== scope3d_front_small @ 2015d5e8 (100 bytes)
 
-void FUN_2015d5e8(int param_1,undefined4 param_2)
+/* 3DSS front trace, MULTI layout (mode 9, h 80/144) */
+
+void scope3d_front_small(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -4522,22 +4544,22 @@ void FUN_2015d5e8(int param_1,undefined4 param_2)
     uVar2 = 0x90;
     iVar3 = 0x90;
   }
-  FUN_2015d70c(uVar1,0x11c - iVar3,4,0x317,uVar2,9,param_2,0xf);
+  scope_front_trace_draw(uVar1,0x11c - iVar3,4,0x317,uVar2,9,param_2,0xf);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d650 @ 2015d650  (188 bytes, 1 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: osc_draw
+ * osc_draw @ 2015d650  (188 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d650 @ 2015d650 (188 bytes)
+// ===== osc_draw @ 2015d650 (188 bytes)
 
-void FUN_2015d650(int param_1,int param_2,int param_3,undefined4 param_4,int param_5,
-                 undefined4 param_6)
+/* oscilloscope min/max envelope, 391 x 79 at (4, 325) */
+
+void osc_draw(int param_1,int param_2,int param_3,undefined4 param_4,int param_5,undefined4 param_6)
 
 {
   int iVar1;
@@ -4572,16 +4594,18 @@ void FUN_2015d650(int param_1,int param_2,int param_3,undefined4 param_4,int par
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d70c @ 2015d70c  (360 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope_front_trace_draw
+ * scope_front_trace_draw @ 2015d70c  (360 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d70c @ 2015d70c (360 bytes)
+// ===== scope_front_trace_draw @ 2015d70c (360 bytes)
 
-void FUN_2015d70c(int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6,
-                 ushort *param_7,int param_8)
+/* (fb, y, x, w, h, mode, range, stride): gradient-filled level trace */
+
+void scope_front_trace_draw
+               (int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6,
+               ushort *param_7,int param_8)
 
 {
   ushort uVar1;
@@ -4656,15 +4680,16 @@ void FUN_2015d70c(int param_1,int param_2,int param_3,int param_4,int param_5,un
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d874 @ 2015d874  (212 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_draw_size0
+ * scope2d_draw_size0 @ 2015d874  (212 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d874 @ 2015d874 (212 bytes)
+// ===== scope2d_draw_size0 @ 2015d874 (212 bytes)
 
-void FUN_2015d874(int param_1,undefined4 param_2)
+/* 2D spectrum + waterfall 60/63 px (size 0, never sent by MAIN) */
+
+void scope2d_draw_size0(int param_1,void *param_2)
 
 {
   undefined4 uVar1;
@@ -4681,29 +4706,31 @@ void FUN_2015d874(int param_1,undefined4 param_2)
     iVar2 = 4;
     iVar3 = 0x3f;
   }
-  FUN_2015db80(uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
-               (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push(DAT_208084d2,param_2);
+  scope2d_spectrum_fill
+            (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
+             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
+  scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     FUN_20134414(DAT_208084d2);
   }
-  FUN_20156260(DAT_208084d0 + 1,DAT_208084ce);
+  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
-  FUN_2015da9c(uVar1,0x192 - iVar3,4,0x317,iVar3);
+  scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015d958 @ 2015d958  (212 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_draw_expand
+ * scope2d_draw_expand @ 2015d958  (212 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015d958 @ 2015d958 (212 bytes)
+// ===== scope2d_draw_expand @ 2015d958 (212 bytes)
 
-void FUN_2015d958(int param_1,undefined4 param_2)
+/* 2D spectrum + waterfall 140/213 px (size 2 EXPAND) */
+
+void scope2d_draw_expand(int param_1,void *param_2)
 
 {
   undefined4 uVar1;
@@ -4720,51 +4747,54 @@ void FUN_2015d958(int param_1,undefined4 param_2)
     iVar2 = 5;
     iVar3 = 0xd5;
   }
-  FUN_2015db80(uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
-               (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push(DAT_208084d2,param_2);
+  scope2d_spectrum_fill
+            (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
+             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
+  scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     FUN_20134414(DAT_208084d2);
   }
-  FUN_20156260(DAT_208084d0 + 1,DAT_208084ce);
+  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
-  FUN_2015da9c(uVar1,0x192 - iVar3,4,0x317,iVar3);
+  scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015da3c @ 2015da3c  (96 bytes, 1 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: affft_waterfall_blit
+ * affft_waterfall_blit @ 2015da3c  (96 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015da3c @ 2015da3c (96 bytes)
+// ===== affft_waterfall_blit @ 2015da3c (96 bytes)
 
-void FUN_2015da3c(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5)
+/* AF-FFT waterfall 39 rows at (405, 365) */
+
+void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 {
-  undefined4 uVar1;
+  int iVar1;
   
   while (param_5 = param_5 + -1, -1 < param_5) {
-    uVar1 = FUN_20120d98(param_5);
-    fb_blit_raw(param_1,param_2 + param_5 & 0xffff,param_3,uVar1,param_4,1);
+    iVar1 = FUN_20120d98(param_5);
+    fb_blit_raw(param_1,param_2 + param_5 & 0xffff,param_3,iVar1,param_4,1);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015da9c @ 2015da9c  (228 bytes, 4 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_waterfall_blit
+ * scope2d_waterfall_blit @ 2015da9c  (228 bytes, 4 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015da9c @ 2015da9c (228 bytes)
+// ===== scope2d_waterfall_blit @ 2015da9c (228 bytes)
 
-void FUN_2015da9c(undefined4 param_1,int param_2,int param_3,undefined4 param_4,uint param_5)
+/* h/2 rows x 2 px from ring 0x2049476C */
+
+void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,uint param_5)
 
 {
   int iVar1;
@@ -4789,16 +4819,18 @@ void FUN_2015da9c(undefined4 param_1,int param_2,int param_3,undefined4 param_4,
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015db80 @ 2015db80  (268 bytes, 4 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: scope2d_spectrum_fill
+ * scope2d_spectrum_fill @ 2015db80  (268 bytes, 4 callers, export file 2015c278_2015f0ec.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015db80 @ 2015db80 (268 bytes)
+// ===== scope2d_spectrum_fill @ 2015db80 (268 bytes)
 
-void FUN_2015db80(int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6,
-                 ushort *param_7)
+/* filled spectrum, colour 0x208084CC; height table 0x203A1EE0 */
+
+void scope2d_spectrum_fill
+               (int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6,
+               ushort *param_7)
 
 {
   int iVar1;
@@ -4869,15 +4901,16 @@ void FUN_2015db80(int param_1,int param_2,int param_3,int param_4,int param_5,un
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015dc90 @ 2015dc90  (156 bytes, 1 callers, export file 2015c2d4_2015f1f0.c)
- * Name on the doc page: affft_spectrum_draw
+ * affft_spectrum_draw @ 2015dc90  (156 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015dc90 @ 2015dc90 (156 bytes)
+// ===== affft_spectrum_draw @ 2015dc90 (156 bytes)
 
-void FUN_2015dc90(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+/* AF-FFT spectrum 391 x 39 at (405, 325) */
+
+void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
 
 {
   byte *pbVar1;

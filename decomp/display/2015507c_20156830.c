@@ -1,8 +1,72 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_201550d4 @ 201550d4 (8 bytes)
+// ===== memcmp @ 2015507c (88 bytes)
 
-void FUN_201550d4(uint *param_1,uint *param_2)
+/* (a, b, n): word compare when both are aligned, byte compare otherwise, returns the difference
+   [fact]; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): word compare when both aligned
+   (rev for ordering), then byte compare, returns -1/1/diff [inference] */
+
+int memcmp(uint *param_1,uint *param_2,uint param_3)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    while (3 < param_3) {
+      uVar5 = *param_1;
+      param_1 = param_1 + 1;
+      uVar3 = *param_2;
+      param_2 = param_2 + 1;
+      param_3 = param_3 - 4;
+      if (uVar5 != uVar3) {
+        if ((uVar5 << 0x18 | (uVar5 >> 8 & 0xff) << 0x10 | (uVar5 >> 0x10 & 0xff) << 8 |
+            uVar5 >> 0x18) <=
+            (uVar3 << 0x18 | (uVar3 >> 8 & 0xff) << 0x10 | (uVar3 >> 0x10 & 0xff) << 8 |
+            uVar3 >> 0x18)) {
+          return -1;
+        }
+        return 1;
+      }
+    }
+  }
+  if (param_3 != 0) {
+    if ((param_3 & 1) == 0) goto LAB_201550b4;
+    param_3 = param_3 + 1;
+    puVar1 = param_1;
+    puVar2 = param_2;
+    while( true ) {
+      param_1 = (uint *)((int)puVar1 + 1);
+      param_2 = (uint *)((int)puVar2 + 1);
+      iVar4 = (uint)(byte)*puVar1 - (uint)(byte)*puVar2;
+      if (iVar4 != 0) {
+        return iVar4;
+      }
+      param_3 = param_3 - 2;
+      if (param_3 == 0) break;
+LAB_201550b4:
+      puVar1 = (uint *)((int)param_1 + 1);
+      puVar2 = (uint *)((int)param_2 + 1);
+      iVar4 = (uint)(byte)*param_1 - (uint)(byte)*param_2;
+      if (iVar4 != 0) {
+        return iVar4;
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+
+
+// ===== strcpy_veneer @ 201550d4 (8 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
+   strcpy 0x201550DC [fact] */
+
+void strcpy_veneer(uint *param_1,uint *param_2)
 
 {
   char cVar1;
@@ -52,9 +116,13 @@ void FUN_201550d4(uint *param_1,uint *param_2)
 }
 
 
-// ===== FUN_201550dc @ 201550dc (70 bytes)
+// ===== strcpy @ 201550dc (70 bytes)
 
-void FUN_201550dc(uint *param_1,uint *param_2)
+/* (dst, src): word copy while aligned, then bytes up to the NUL [inference]; T23d armcc C library
+   RVCT/ARM Compiler 5 (idiom 0.900): word copy while no zero byte (uqsub8 test), then byte tail;
+   returns nothing used [inference] */
+
+void strcpy(uint *param_1,uint *param_2)
 
 {
   char cVar1;
@@ -104,9 +172,12 @@ void FUN_201550dc(uint *param_1,uint *param_2)
 }
 
 
-// ===== FUN_20155122 @ 20155122 (58 bytes)
+// ===== strlen @ 20155122 (58 bytes)
 
-int FUN_20155122(uint *param_1)
+/* Word-at-a-time string length [fact]; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): byte
+   loop to alignment, word loop with uqsub8 zero test, position of the zero byte [inference] */
+
+int strlen(uint *param_1)
 
 {
   undefined4 uVar1;
@@ -155,9 +226,12 @@ int FUN_20155122(uint *param_1)
 }
 
 
-// ===== FUN_2015515c @ 2015515c (36 bytes)
+// ===== strcat @ 2015515c (36 bytes)
 
-void FUN_2015515c(int param_1,char *param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): scan dst to NUL, copy src including NUL
+   [inference] */
+
+void strcat(int param_1,char *param_2)
 
 {
   char cVar1;
@@ -420,9 +494,12 @@ undefined8 memcpy(uint *param_1,uint *param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20155254 @ 20155254 (8 bytes)
+// ===== __aeabi_memset_veneer @ 20155254 (8 bytes)
 
-undefined4 * FUN_20155254(undefined4 *param_1,uint param_2,undefined1 param_3)
+/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
+   __aeabi_memset 0x2015525C [fact] */
+
+undefined4 * __aeabi_memset_veneer(undefined4 *param_1,uint param_2,undefined1 param_3)
 
 {
   undefined2 uVar1;
@@ -516,9 +593,13 @@ undefined4 * FUN_20155254(undefined4 *param_1,uint param_2,undefined1 param_3)
 }
 
 
-// ===== FUN_2015525c @ 2015525c (16 bytes)
+// ===== __aeabi_memset @ 2015525c (16 bytes)
 
-undefined4 * FUN_2015525c(undefined4 *param_1,uint param_2,undefined1 param_3)
+/* (dst, n, c): replicates c into a word and joins the fill loop of __aeabi_memclr [fact]; armcc
+   argument order [inference]; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): (dst, n, c):
+   replicates c (and #0xff, orr lsl 8/16) then joins _memset at 0x20155278 [inference] */
+
+undefined4 * __aeabi_memset(undefined4 *param_1,uint param_2,undefined1 param_3)
 
 {
   undefined2 uVar1;
@@ -612,9 +693,12 @@ undefined4 * FUN_2015525c(undefined4 *param_1,uint param_2,undefined1 param_3)
 }
 
 
-// ===== FUN_2015526c @ 2015526c (8 bytes)
+// ===== __aeabi_memclr_veneer @ 2015526c (8 bytes)
 
-undefined4 * FUN_2015526c(undefined4 *param_1,uint param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
+   __aeabi_memclr 0x20155274 [fact] */
+
+undefined4 * __aeabi_memclr_veneer(undefined4 *param_1,uint param_2)
 
 {
   undefined4 *puVar1;
@@ -704,9 +788,13 @@ undefined4 * FUN_2015526c(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_20155274 @ 20155274 (68 bytes)
+// ===== __aeabi_memclr @ 20155274 (68 bytes)
 
-undefined4 * FUN_20155274(undefined4 *param_1,uint param_2)
+/* (dst, n): zero fill with alignment fix-up, 32-byte blocks [fact]; T23d armcc C library RVCT/ARM
+   Compiler 5 (idiom 0.950): mov.w r2,#0 then _memset: byte/halfword head, word fill, tail via lsls
+   #31 flags [inference] */
+
+undefined4 * __aeabi_memclr(undefined4 *param_1,uint param_2)
 
 {
   undefined4 *puVar1;
@@ -796,9 +884,12 @@ undefined4 * FUN_20155274(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_201552b8 @ 201552b8 (8 bytes)
+// ===== __aeabi_memclr4_veneer @ 201552b8 (8 bytes)
 
-undefined4 * FUN_201552b8(undefined4 *param_1,uint param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
+   __aeabi_memclr4 0x201552C0 [fact] */
+
+undefined4 * __aeabi_memclr4_veneer(undefined4 *param_1,uint param_2)
 
 {
   undefined4 *puVar1;
@@ -858,9 +949,13 @@ undefined4 * FUN_201552b8(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== memclr @ 201552c0 (78 bytes)
+// ===== __aeabi_memclr4 @ 201552c0 (78 bytes)
 
-undefined4 * memclr(undefined4 *param_1,uint param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): r2=0, 32-byte stmia loop of
+   {r2,r3,ip,lr}, tail by lsls #28/#2 flags (rt_memclr_w); aliases __aeabi_memclr8, __rt_memclr_w;
+   was memclr [inference] */
+
+undefined4 * __aeabi_memclr4(undefined4 *param_1,uint param_2)
 
 {
   undefined4 *puVar1;
@@ -920,9 +1015,14 @@ undefined4 * memclr(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_20155310 @ 20155310 (124 bytes)
+// ===== __aeabi_memcpy4 @ 20155310 (124 bytes)
 
-undefined8 FUN_20155310(undefined4 *param_1,byte *param_2,uint param_3,undefined4 param_4)
+/* (dst, src, n): word copy in 32-byte blocks with preload, no alignment check [fact]; the aligned
+   memcpy entry [inference]; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): aligned path of
+   memcpy 0x20155180 (beq when src word aligned): pld + ldm/stm 8 regs (rt_memcpy_w); aliases
+   __aeabi_memcpy8, __rt_memcpy_w [inference] */
+
+undefined8 __aeabi_memcpy4(undefined4 *param_1,byte *param_2,uint param_3,undefined4 param_4)
 
 {
   undefined4 *puVar1;
@@ -1163,9 +1263,15 @@ LAB_20155474:
 }
 
 
-// ===== __aeabi_uidivmod @ 20155480 (556 bytes)
+// ===== __aeabi_idivmod @ 20155480 (556 bytes)
 
-longlong __aeabi_uidivmod(uint param_1,uint param_2)
+/* Signed divide: negates negative operands ((a | b) < 0), then the shared unsigned loop [fact]; was
+   named __aeabi_uidivmod, which is the unsigned entry 0x20156260 [inference for the ABI names];
+   T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): orrs r3,r0,r1; bmi -> signed path
+   (negate, eors sign, unrolled rsbs/subcs/adcs), divide-by-zero path returns 0; quotient r0,
+   remainder r1; alias __aeabi_idiv; was __aeabi_uidivmod [inference] */
+
+ulonglong __aeabi_idivmod(uint n,uint d)
 
 {
   int iVar1;
@@ -1179,29 +1285,29 @@ longlong __aeabi_uidivmod(uint param_1,uint param_2)
   bool bVar9;
   bool bVar10;
   
-  if ((int)(param_1 | param_2) < 0) {
-    uVar5 = param_2 & 0x80000000;
+  if ((int)(n | d) < 0) {
+    uVar5 = d & 0x80000000;
     if ((int)uVar5 < 0) {
-      param_2 = -param_2;
+      d = -d;
     }
-    uVar4 = uVar5 ^ (int)param_1 >> 0x20;
-    if (SUB41(param_1 >> 0x1f,0)) {
-      param_1 = -param_1;
+    uVar4 = uVar5 ^ (int)n >> 0x20;
+    if (SUB41(n >> 0x1f,0)) {
+      n = -n;
     }
     iVar3 = (int)uVar4 >> 0x1f;
-    uVar2 = param_2;
-    if (param_1 >> 4 < param_2) goto LAB_20155650;
-    if (param_1 >> 8 < param_2) goto LAB_20155620;
-    uVar2 = param_2 << 6;
+    uVar2 = d;
+    if (n >> 4 < d) goto LAB_20155650;
+    if (n >> 8 < d) goto LAB_20155620;
+    uVar2 = d << 6;
     uVar5 = 0xfc000000;
-    if (param_1 >> 8 < uVar2) goto LAB_20155620;
-    uVar2 = param_2 << 0xc;
+    if (n >> 8 < uVar2) goto LAB_20155620;
+    uVar2 = d << 0xc;
     uVar5 = 0xfff00000;
-    if (param_1 >> 8 < uVar2) goto LAB_20155620;
-    uVar2 = param_2 << 0x12;
+    if (n >> 8 < uVar2) goto LAB_20155620;
+    uVar2 = d << 0x12;
     uVar5 = 0xffffc000;
-    if (uVar2 <= param_1 >> 8) {
-      uVar2 = param_2 << 0x18;
+    if (uVar2 <= n >> 8) {
+      uVar2 = d << 0x18;
       uVar5 = 0xffffff00;
     }
     bVar7 = uVar2 == 0;
@@ -1211,46 +1317,46 @@ longlong __aeabi_uidivmod(uint param_1,uint param_2)
           uVar2 = uVar2 >> 6;
         }
 LAB_20155620:
-        bVar7 = uVar2 <= param_1 >> 7;
+        bVar7 = uVar2 <= n >> 7;
         if (bVar7) {
-          param_1 = param_1 + uVar2 * -0x80;
+          n = n + uVar2 * -0x80;
         }
-        bVar8 = uVar2 <= param_1 >> 6;
+        bVar8 = uVar2 <= n >> 6;
         if (bVar8) {
-          param_1 = param_1 + uVar2 * -0x40;
+          n = n + uVar2 * -0x40;
         }
-        bVar9 = uVar2 <= param_1 >> 5;
+        bVar9 = uVar2 <= n >> 5;
         if (bVar9) {
-          param_1 = param_1 + uVar2 * -0x20;
+          n = n + uVar2 * -0x20;
         }
-        bVar10 = uVar2 <= param_1 >> 4;
+        bVar10 = uVar2 <= n >> 4;
         if (bVar10) {
-          param_1 = param_1 + uVar2 * -0x10;
+          n = n + uVar2 * -0x10;
         }
         uVar5 = (((uVar5 * 2 + (uint)bVar7) * 2 + (uint)bVar8) * 2 + (uint)bVar9) * 2 + (uint)bVar10
         ;
 LAB_20155650:
-        bVar7 = uVar2 <= param_1 >> 3;
+        bVar7 = uVar2 <= n >> 3;
         if (bVar7) {
-          param_1 = param_1 + uVar2 * -8;
+          n = n + uVar2 * -8;
         }
         uVar6 = uVar5 * 2 + (uint)bVar7;
-        bVar8 = uVar2 <= param_1 >> 2;
+        bVar8 = uVar2 <= n >> 2;
         if (bVar8) {
-          param_1 = param_1 + uVar2 * -4;
+          n = n + uVar2 * -4;
         }
         uVar5 = uVar6 * 2 + (uint)bVar8;
         bVar7 = true;
       } while (CARRY4(uVar6,uVar6) || CARRY4(uVar6 * 2,(uint)bVar8));
-      bVar7 = uVar2 <= param_1 >> 1;
+      bVar7 = uVar2 <= n >> 1;
       if (bVar7) {
-        param_1 = param_1 + uVar2 * -2;
+        n = n + uVar2 * -2;
       }
-      uVar6 = param_1 - uVar2;
-      if (uVar2 > param_1) {
-        uVar6 = param_1;
+      uVar6 = n - uVar2;
+      if (uVar2 > n) {
+        uVar6 = n;
       }
-      iVar1 = (uVar5 * 2 + (uint)bVar7) * 2 + (uint)(uVar2 <= param_1);
+      iVar1 = (uVar5 * 2 + (uint)bVar7) * 2 + (uint)(uVar2 <= n);
       if (iVar3 < 0) {
         iVar1 = -iVar1;
       }
@@ -1260,30 +1366,30 @@ LAB_20155650:
       return CONCAT44(uVar6,iVar1);
     }
     if (iVar3 < 0) {
-      param_1 = -param_1;
+      n = -n;
     }
 LAB_2015569c:
-    return (ulonglong)param_1 << 0x20;
+    return (ulonglong)n << 0x20;
   }
-  if (param_1 >> 1 < param_2) {
-    if (param_1 < param_2) {
-      return (ulonglong)param_1 << 0x20;
+  if (n >> 1 < d) {
+    if (n < d) {
+      return (ulonglong)n << 0x20;
     }
-    return CONCAT44(param_1 - param_2,1);
+    return CONCAT44(n - d,1);
   }
   iVar3 = 0;
-  uVar5 = param_2;
-  if (param_2 <= param_1 >> 4) {
-    if (param_2 <= param_1 >> 8) {
-      if (param_1 >> 0xc < param_2) goto LAB_2015550c;
-      if (param_1 >> 0x10 < param_2) goto LAB_201554dc;
-      uVar5 = param_2 << 8;
+  uVar5 = d;
+  if (d <= n >> 4) {
+    if (d <= n >> 8) {
+      if (n >> 0xc < d) goto LAB_2015550c;
+      if (n >> 0x10 < d) goto LAB_201554dc;
+      uVar5 = d << 8;
       iVar3 = -0x1000000;
-      if (uVar5 <= param_1 >> 0x10) {
+      if (uVar5 <= n >> 0x10) {
         iVar3 = -0x10000;
-        uVar5 = param_2 << 0x10;
+        uVar5 = d << 0x10;
       }
-      if (param_1 >> 0xc < uVar5) goto LAB_2015550c;
+      if (n >> 0xc < uVar5) goto LAB_2015550c;
       bVar7 = false;
       if (uVar5 == 0) goto LAB_2015569c;
       do {
@@ -1291,88 +1397,91 @@ LAB_2015569c:
           uVar5 = uVar5 >> 8;
         }
 LAB_201554dc:
-        bVar7 = uVar5 <= param_1 >> 0xf;
+        bVar7 = uVar5 <= n >> 0xf;
         if (bVar7) {
-          param_1 = param_1 + uVar5 * -0x8000;
+          n = n + uVar5 * -0x8000;
         }
-        bVar8 = uVar5 <= param_1 >> 0xe;
+        bVar8 = uVar5 <= n >> 0xe;
         if (bVar8) {
-          param_1 = param_1 + uVar5 * -0x4000;
+          n = n + uVar5 * -0x4000;
         }
-        bVar9 = uVar5 <= param_1 >> 0xd;
+        bVar9 = uVar5 <= n >> 0xd;
         if (bVar9) {
-          param_1 = param_1 + uVar5 * -0x2000;
+          n = n + uVar5 * -0x2000;
         }
-        bVar10 = uVar5 <= param_1 >> 0xc;
+        bVar10 = uVar5 <= n >> 0xc;
         if (bVar10) {
-          param_1 = param_1 + uVar5 * -0x1000;
+          n = n + uVar5 * -0x1000;
         }
         iVar3 = (((iVar3 * 2 + (uint)bVar7) * 2 + (uint)bVar8) * 2 + (uint)bVar9) * 2 + (uint)bVar10
         ;
 LAB_2015550c:
-        bVar7 = uVar5 <= param_1 >> 0xb;
+        bVar7 = uVar5 <= n >> 0xb;
         if (bVar7) {
-          param_1 = param_1 + uVar5 * -0x800;
+          n = n + uVar5 * -0x800;
         }
-        bVar8 = uVar5 <= param_1 >> 10;
+        bVar8 = uVar5 <= n >> 10;
         if (bVar8) {
-          param_1 = param_1 + uVar5 * -0x400;
+          n = n + uVar5 * -0x400;
         }
-        bVar9 = uVar5 <= param_1 >> 9;
+        bVar9 = uVar5 <= n >> 9;
         if (bVar9) {
-          param_1 = param_1 + uVar5 * -0x200;
+          n = n + uVar5 * -0x200;
         }
         uVar4 = ((iVar3 * 2 + (uint)bVar7) * 2 + (uint)bVar8) * 2 + (uint)bVar9;
-        bVar8 = uVar5 <= param_1 >> 8;
+        bVar8 = uVar5 <= n >> 8;
         if (bVar8) {
-          param_1 = param_1 + uVar5 * -0x100;
+          n = n + uVar5 * -0x100;
         }
         iVar3 = uVar4 * 2 + (uint)bVar8;
         bVar7 = true;
       } while (CARRY4(uVar4,uVar4) || CARRY4(uVar4 * 2,(uint)bVar8));
     }
-    bVar7 = uVar5 <= param_1 >> 7;
+    bVar7 = uVar5 <= n >> 7;
     if (bVar7) {
-      param_1 = param_1 + uVar5 * -0x80;
+      n = n + uVar5 * -0x80;
     }
-    bVar8 = uVar5 <= param_1 >> 6;
+    bVar8 = uVar5 <= n >> 6;
     if (bVar8) {
-      param_1 = param_1 + uVar5 * -0x40;
+      n = n + uVar5 * -0x40;
     }
-    bVar9 = uVar5 <= param_1 >> 5;
+    bVar9 = uVar5 <= n >> 5;
     if (bVar9) {
-      param_1 = param_1 + uVar5 * -0x20;
+      n = n + uVar5 * -0x20;
     }
-    bVar10 = uVar5 <= param_1 >> 4;
+    bVar10 = uVar5 <= n >> 4;
     if (bVar10) {
-      param_1 = param_1 + uVar5 * -0x10;
+      n = n + uVar5 * -0x10;
     }
     iVar3 = (((iVar3 * 2 + (uint)bVar7) * 2 + (uint)bVar8) * 2 + (uint)bVar9) * 2 + (uint)bVar10;
   }
-  bVar7 = uVar5 <= param_1 >> 3;
+  bVar7 = uVar5 <= n >> 3;
   if (bVar7) {
-    param_1 = param_1 + uVar5 * -8;
+    n = n + uVar5 * -8;
   }
-  bVar8 = uVar5 <= param_1 >> 2;
+  bVar8 = uVar5 <= n >> 2;
   if (bVar8) {
-    param_1 = param_1 + uVar5 * -4;
+    n = n + uVar5 * -4;
   }
-  bVar9 = uVar5 <= param_1 >> 1;
+  bVar9 = uVar5 <= n >> 1;
   if (bVar9) {
-    param_1 = param_1 + uVar5 * -2;
+    n = n + uVar5 * -2;
   }
-  uVar4 = param_1 - uVar5;
-  if (uVar5 > param_1) {
-    uVar4 = param_1;
+  uVar4 = n - uVar5;
+  if (uVar5 > n) {
+    uVar4 = n;
   }
   return CONCAT44(uVar4,(((iVar3 * 2 + (uint)bVar7) * 2 + (uint)bVar8) * 2 + (uint)bVar9) * 2 +
-                        (uint)(uVar5 <= param_1));
+                        (uint)(uVar5 <= n));
 }
 
 
-// ===== FUN_201556ac @ 201556ac (26 bytes)
+// ===== __cpp_initialize__aeabi_ @ 201556ac (26 bytes)
 
-void FUN_201556ac(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): walks a table of self-relative offsets
+   and calls each (C++ static constructors); called by __rt_lib_init [inference] */
+
+void __cpp_initialize__aeabi_(void)
 
 {
   byte *pbVar1;
@@ -1385,9 +1494,12 @@ void FUN_201556ac(void)
 }
 
 
-// ===== FUN_201556d0 @ 201556d0 (4 bytes)
+// ===== __rt_locale @ 201556d0 (4 bytes)
 
-undefined * FUN_201556d0(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): returns 0x2091D530 (C library libspace);
+   used by __rt_ctype_table and __rt_lib_init [inference] */
+
+undefined * __rt_locale(void)
 
 {
   return &DAT_2091d530;
@@ -1403,9 +1515,12 @@ undefined * FUN_201556d8(void)
 }
 
 
-// ===== FUN_201556e0 @ 201556e0 (752 bytes)
+// ===== __aeabi_uldivmod @ 201556e0 (752 bytes)
 
-ulonglong FUN_201556e0(uint param_1,uint param_2,uint param_3,uint param_4)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): (u64 n in r0:r1, u64 d in r2:r3) ->
+   quotient r0:r1, remainder r2:r3; called by __aeabi_ldivmod [inference] */
+
+ulonglong __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   longlong lVar1;
@@ -1811,9 +1926,12 @@ void FUN_20155f72(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_20155f98 @ 20155f98 (10 bytes)
+// ===== _sputc @ 20155f98 (10 bytes)
 
-void FUN_20155f98(undefined1 param_1,undefined4 *param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): *(*p)++ = c; the sprintf output function
+   [inference] */
+
+void _sputc(undefined1 param_1,undefined4 *param_2)
 
 {
   undefined1 *puVar1;
@@ -1825,9 +1943,12 @@ void FUN_20155f98(undefined1 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_20155fa2 @ 20155fa2 (16 bytes)
+// ===== _snputc @ 20155fa2 (16 bytes)
 
-void FUN_20155fa2(undefined1 param_1,undefined4 *param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): stores c only while p < end; the snprintf
+   output function [inference] */
+
+void _snputc(undefined1 param_1,undefined4 *param_2)
 
 {
   undefined1 *puVar1;
@@ -1841,25 +1962,31 @@ void FUN_20155fa2(undefined1 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_20155fde @ 20155fde (24 bytes)
+// ===== __cxa_pure_virtual @ 20155fde (24 bytes)
 
-void FUN_20155fde(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): __rt_SIGPVFN, then _sys_exit [inference]
+    */
+
+void __cxa_pure_virtual(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_20156184();
+  iVar1 = __rt_SIGPVFN();
   if (iVar1 != 0) {
-    FUN_201561b4();
+    _sys_exit();
     return;
   }
   return;
 }
 
 
-// ===== FUN_20155fec @ 20155fec (44 bytes)
+// ===== __rt_udiv10 @ 20155fec (44 bytes)
 
-undefined8 FUN_20155fec(uint param_1)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): n - n/4, +>>4, +>>8, +>>16, >>3,
+   remainder fix-up: quotient and remainder of n/10 [inference] */
+
+undefined8 __rt_udiv10(uint param_1)
 
 {
   uint uVar1;
@@ -1880,18 +2007,24 @@ undefined8 FUN_20155fec(uint param_1)
 }
 
 
-// ===== FUN_20156018 @ 20156018 (4 bytes)
+// ===== __user_perproc_libspace @ 20156018 (4 bytes)
 
-undefined * FUN_20156018(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): returns 0x2091D510; called by
+   __user_setup_stackheap [inference] */
+
+undefined * __user_perproc_libspace(void)
 
 {
   return &DAT_2091d510;
 }
 
 
-// ===== FUN_20156020 @ 20156020 (112 bytes)
+// ===== _printf_infnan @ 20156020 (112 bytes)
 
-void FUN_20156020(uint *param_1,undefined4 param_2,int param_3,int param_4)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): prints inf/INF/nan/NAN with padding
+   [inference] */
+
+void _printf_infnan(uint *param_1,undefined4 param_2,int param_3,int param_4)
 
 {
   uint uVar1;
@@ -1921,7 +2054,7 @@ void FUN_20156020(uint *param_1,undefined4 param_2,int param_3,int param_4)
   if (param_4 != 0) {
     param_1[6] = uVar1 - 4;
   }
-  FUN_20154a64(param_1);
+  _printf_pre_padding(param_1);
   if (param_4 == 0) {
     uVar1 = param_1[8];
   }
@@ -1935,7 +2068,7 @@ void FUN_20156020(uint *param_1,undefined4 param_2,int param_3,int param_4)
     (*(code *)param_1[1])(*pcVar2,param_1[2]);
     pcVar2 = pcVar2 + 1;
   }
-  FUN_20154a90(param_1);
+  _printf_post_padding(param_1);
   return;
 }
 
@@ -1955,8 +2088,9 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
   uint uVar4;
   int iVar5;
   bool bVar6;
-  undefined8 uVar7;
+  ulonglong uVar7;
   undefined8 uVar8;
+  undefined8 uVar9;
   undefined8 local_48;
   undefined4 uStack_40;
   undefined8 local_3c;
@@ -1971,26 +2105,26 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
   local_3c._0_4_ = 0x3fff;
   local_3c._4_4_ = 0x80000000;
   uStack_34 = 0;
-  uVar7 = __aeabi_uidivmod(param_2 + 0x1b9b,0x37);
-  uVar8 = CONCAT44(local_48._4_4_,(undefined4)local_48);
-  uVar3 = (int)((ulonglong)uVar7 >> 0x20) - 0x1b;
+  uVar7 = __aeabi_idivmod(param_2 + 0x1b9b,0x37);
+  uVar9 = CONCAT44(local_48._4_4_,(undefined4)local_48);
+  uVar3 = (int)(uVar7 >> 0x20) - 0x1b;
   bVar6 = -1 < (int)uVar3;
   uVar4 = (int)uVar7 - 0x80;
   if (!bVar6) {
     uVar3 = -uVar3;
   }
   iVar5 = 0;
-  for (; uVar7 = CONCAT44(local_3c._4_4_,(undefined4)local_3c), uVar3 != 0; uVar3 = (int)uVar3 >> 1)
+  for (; uVar8 = CONCAT44(local_3c._4_4_,(undefined4)local_3c), uVar3 != 0; uVar3 = (int)uVar3 >> 1)
   {
     if ((uVar3 & 1) != 0) {
-      local_48 = uVar8;
-      uVar8 = FUN_20156eca(&local_48,&DAT_20427f10 + iVar5 * 0xc,param_3);
+      local_48 = uVar9;
+      uVar9 = FUN_20156eca(&local_48,&DAT_20427f10 + iVar5 * 0xc,param_3);
       uStack_40 = extraout_r2;
     }
     iVar5 = iVar5 + 1;
   }
   iVar5 = 0;
-  for (; local_48 = uVar8, local_3c = uVar7, uVar4 != 0; uVar4 = (int)uVar4 >> 1) {
+  for (; local_48 = uVar9, local_3c = uVar8, uVar4 != 0; uVar4 = (int)uVar4 >> 1) {
     if ((uVar4 & 1) != 0) {
       iVar1 = iVar5 * 0x10;
       local_30 = *(undefined4 *)(&DAT_20427f4c + iVar1);
@@ -1999,39 +2133,45 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
       if (*(int *)(&DAT_20427f58 + iVar1) + param_3 == 0) {
         local_28 = local_28 + param_3;
       }
-      uVar7 = FUN_20156eca(&local_3c,&local_30,param_3);
+      uVar8 = FUN_20156eca(&local_3c,&local_30,param_3);
       uStack_34 = extraout_r2_00;
-      uVar8 = local_48;
+      uVar9 = local_48;
     }
     iVar5 = iVar5 + 1;
   }
   if (bVar6) {
-    uVar8 = FUN_20156eca(&local_3c,&local_48,param_3);
+    uVar9 = FUN_20156eca(&local_3c,&local_48,param_3);
     uVar2 = extraout_r2_02;
   }
   else {
-    uVar8 = FUN_20156ea2();
+    uVar9 = FUN_20156ea2();
     uVar2 = extraout_r2_01;
   }
-  *param_1 = uVar8;
+  *param_1 = uVar9;
   *(undefined4 *)(param_1 + 1) = uVar2;
   return;
 }
 
 
-// ===== FUN_20156184 @ 20156184 (14 bytes)
+// ===== __rt_SIGPVFN @ 20156184 (14 bytes)
 
-undefined4 FUN_20156184(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): shows "SIGPVFN: Pure virtual fn called"
+   and returns 1 [inference] */
+
+undefined4 __rt_SIGPVFN(void)
 
 {
-  FUN_2015621c("SIGPVFN: Pure virtual fn called",0);
+  __default_signal_display("SIGPVFN: Pure virtual fn called",0);
   return 1;
 }
 
 
-// ===== FUN_201561b4 @ 201561b4 (8 bytes)
+// ===== _sys_exit @ 201561b4 (8 bytes)
 
-void FUN_201561b4(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): semihosting svc 0xAB then b . (no return)
+   [inference] */
+
+void _sys_exit(void)
 
 {
   software_interrupt(0xab);
@@ -2041,9 +2181,13 @@ void FUN_201561b4(void)
 }
 
 
-// ===== FUN_201561c0 @ 201561c0 (74 bytes)
+// ===== __user_setup_stackheap @ 201561c0 (74 bytes)
 
-void FUN_201561c0(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): gets __user_perproc_libspace, calls
+   __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry
+   [inference] */
+
+void __user_setup_stackheap(void)
 
 {
   uint uVar1;
@@ -2051,11 +2195,11 @@ void FUN_201561c0(void)
   undefined4 unaff_lr;
   uint *puVar3;
   
-  uVar1 = FUN_20156018();
+  uVar1 = __user_perproc_libspace();
   *(undefined4 *)((uVar1 & 0xfffffff8) + 0x5c) = unaff_lr;
   puVar3 = (uint *)((uVar1 & 0xfffffff8) + 0x58);
   *puVar3 = uVar1;
-  FUN_201172ec();
+  __user_initial_stackheap();
   puVar2 = (undefined4 *)*puVar3;
   *puVar2 = 0;
   puVar2[1] = 0;
@@ -2077,17 +2221,20 @@ void FUN_201561c0(void)
 }
 
 
-// ===== FUN_2015620a @ 2015620a (18 bytes)
+// ===== exit @ 2015620a (18 bytes)
 
-uint FUN_2015620a(undefined4 param_1,undefined4 param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): called by __rt_entry with main()s result
+   (blx main; bl exit) [inference] */
+
+uint exit(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
   uint uVar2;
   int extraout_r3;
   
-  FUN_20100cd8();
-  iVar1 = FUN_201561b4(param_1,param_2);
+  __rt_lib_shutdown();
+  iVar1 = _sys_exit(param_1,param_2);
   *(short *)(iVar1 + 0x1c) = (short)iVar1;
   *(short *)(extraout_r3 + 0x20) = (short)iVar1;
   coproc_moveto_Invalidate_unified_TLB_unlocked(0);
@@ -2103,28 +2250,34 @@ uint FUN_2015620a(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2015621c @ 2015621c (50 bytes)
+// ===== __default_signal_display @ 2015621c (50 bytes)
 
-undefined8 FUN_2015621c(char *param_1,char *param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): writes a newline, the message and the
+   extra string with _ttywrch [inference] */
+
+undefined8 __default_signal_display(char *param_1,char *param_2)
 
 {
   char cVar1;
   
   cVar1 = '\n';
-  for (; (FUN_2015624e(cVar1), param_1 != (char *)0x0 && (cVar1 = *param_1, cVar1 != '\0'));
+  for (; (_ttywrch(cVar1), param_1 != (char *)0x0 && (cVar1 = *param_1, cVar1 != '\0'));
       param_1 = param_1 + 1) {
   }
   for (; (param_2 != (char *)0x0 && (*param_2 != '\0')); param_2 = param_2 + 1) {
-    FUN_2015624e();
+    _ttywrch();
   }
   software_interrupt(0xab);
   return CONCAT44(&stack0xfffffff8,3);
 }
 
 
-// ===== FUN_2015624e @ 2015624e (14 bytes)
+// ===== _ttywrch @ 2015624e (14 bytes)
 
-undefined8 FUN_2015624e(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): semihosting SYS_WRITEC (r0=3, svc 0xAB)
+   of one character [inference] */
+
+undefined8 _ttywrch(void)
 
 {
   undefined1 local_8 [4];
@@ -2134,9 +2287,14 @@ undefined8 FUN_2015624e(void)
 }
 
 
-// ===== FUN_20156260 @ 20156260 (48 bytes)
+// ===== __aeabi_uidivmod @ 20156260 (48 bytes)
 
-longlong FUN_20156260(uint param_1,uint param_2)
+/* Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the
+   shared loop at 0x201554DC [fact]; the 71-caller divide [fact]; T23d armcc C library RVCT/ARM
+   Compiler 5 (idiom 0.950): movs r2,#0 then the rsbs r3,r1,r0,lsr #n ladder jumping into the shared
+   unsigned body of 0x20155480; alias __aeabi_uidiv [inference] */
+
+longlong __aeabi_uidivmod(uint param_1,uint param_2)
 
 {
   uint uVar1;
@@ -2257,10 +2415,10 @@ LAB_2015550c:
 void kernel_heap_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = gic_init();
-  if (iVar1 == 0) {
+  uVar1 = gic_init();
+  if (uVar1 == 0) {
     DAT_208003ac = 0;
     DAT_208003a8 = 0;
     FUN_201530fc(&DAT_20980000,&stack0xfffffff8);
@@ -2577,47 +2735,5 @@ undefined8 FUN_20156830(void)
   
   return CONCAT44(in_stack_00000004,
                   (uint)(byte)(in_NG << 4 | in_ZR << 3 | in_CY << 2 | in_OV << 1 | in_Q) << 0x1b);
-}
-
-
-// ===== FUN_20156860 @ 20156860 (12 bytes)
-
-code * FUN_20156860(undefined4 *param_1,undefined4 param_2,int *param_3,undefined4 param_4)
-
-{
-  uint uVar1;
-  undefined4 unaff_r4;
-  undefined4 unaff_r5;
-  uint uVar2;
-  undefined4 unaff_r6;
-  undefined4 unaff_r7;
-  undefined4 unaff_r8;
-  
-  param_1[-1] = FUN_201509f4;
-  param_1[-2] = unaff_r8;
-  param_1[-3] = unaff_r7;
-  param_1[-4] = unaff_r6;
-  param_1[-5] = unaff_r5;
-  param_1[-6] = unaff_r4;
-  uVar2 = *(uint *)(param_3[6] + 8);
-  param_1[0xc] = param_1 + 0x12;
-  *param_1 = param_2;
-  uVar1 = DAT_208003ac;
-  if ((uVar2 & 1) != 0) {
-    uVar1 = DAT_208003ac | 0x20;
-  }
-  param_1[0xf] = uVar1;
-  uVar1 = FUN_201568b8();
-  param_1[0xf] = uVar1 | param_1[0xf];
-  param_1[0xd] = FUN_201508ec;
-  param_1[0x11] = uVar2;
-  *param_3 = (int)param_1;
-  *(undefined1 *)(param_3 + 2) = 0;
-  *(undefined1 *)((int)param_3 + 9) = 0;
-  param_3[8] = 0;
-  *(undefined1 *)((int)param_3 + 5) = 0x10;
-  FUN_201538d4(&DAT_208dc18c + *(char *)((int)param_3 + 0x27),param_3,param_4);
-  software_interrupt(0);
-  return FUN_2015677c;
 }
 

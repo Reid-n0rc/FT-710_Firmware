@@ -10,7 +10,7 @@ undefined4 xTaskGenericNotify(int param_1,uint param_2,undefined4 param_3,undefi
   undefined4 uVar3;
   
   if (param_1 == 0) {
-    vPortRaiseBASEPRI();
+    ulSetInterruptMask();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -41,7 +41,7 @@ switchD_00082b60_caseD_3:
     goto switchD_00082b60_caseD_3;
   default:
     if (*(int *)(param_1 + 0x68) != -1) {
-      vPortRaiseBASEPRI();
+      ulSetInterruptMask();
       do {
                     /* WARNING: Do nothing block with infinite loop */
       } while( true );
@@ -55,7 +55,7 @@ switchD_00082b60_caseD_3:
     }
     vListInsertEnd(&DAT_0008880c + uVar2 * 5,param_1 + 4);
     if (*(int *)(param_1 + 0x28) != 0) {
-      vPortRaiseBASEPRI();
+      ulSetInterruptMask();
       do {
                     /* WARNING: Do nothing block with infinite loop */
       } while( true );
@@ -84,7 +84,7 @@ void prvCheckForValidListAndQueue(void)
     DAT_000888f0 = &DAT_00088908;
     DAT_00088920 = xQueueGenericCreate(10,0x10,0);
     if (DAT_00088920 != 0) {
-      vQueueAddToRegistry(DAT_00088920,"TmrQ");
+      vQueueAddToRegistry(DAT_00088920,0x87cdd);
     }
   }
   vPortExitCritical();
@@ -96,7 +96,7 @@ void prvCheckForValidListAndQueue(void)
 
 /* [inference] */
 
-undefined4 prvInsertTimerInActiveList(int param_1,uint param_2,uint param_3,uint param_4)
+uint prvInsertTimerInActiveList(int param_1,uint param_2,uint param_3,uint param_4)
 
 {
   undefined4 *puVar1;
@@ -110,32 +110,31 @@ undefined4 prvInsertTimerInActiveList(int param_1,uint param_2,uint param_3,uint
     puVar1 = &DAT_000888ec;
   }
   else {
-    param_3 = param_3 - param_4;
-    if (*(uint *)(param_1 + 0x18) <= param_3) {
+    if (*(uint *)(param_1 + 0x18) <= param_3 - param_4) {
       return 1;
     }
     puVar1 = &DAT_000888f0;
   }
-  vListInsert(*puVar1,param_1 + 4,param_3,puVar1,param_4);
+  vListInsert((int *)*puVar1,(uint *)(param_1 + 4));
   return 0;
 }
 
 
 // ===== xTimerCreateTimerTask @ 00082c80 (50 bytes)
 
-void xTimerCreateTimerTask(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void xTimerCreateTimerTask(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
   prvCheckForValidListAndQueue();
   if (DAT_00088920 != 0) {
-    iVar1 = xTaskCreate(0x82db1,"Tmr Svc",0x100,0,2,&DAT_00088924,param_3);
-    if (iVar1 != 0) {
+    uVar1 = xTaskCreate(0x82db1,0x87ce2,0x100,0,2,(int *)&DAT_00088924);
+    if (uVar1 != 0) {
       return;
     }
   }
-  vPortRaiseBASEPRI();
+  ulSetInterruptMask();
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
@@ -146,42 +145,42 @@ void xTimerCreateTimerTask(undefined4 param_1,undefined4 param_2,undefined4 para
 
 /* Posts to TmrQ 0x88920 [inference] */
 
-void xTimerGenericCommand
-               (int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5)
+uint xTimerGenericCommand(int param_1,int param_2,uint param_3,uint param_4,uint param_5)
 
 {
-  int iVar1;
+  uint uVar1;
   int local_20;
-  int iStack_1c;
-  int local_18;
-  undefined4 uStack_14;
+  uint uStack_1c;
+  uint local_18;
+  uint uStack_14;
   
   uStack_14 = param_4;
   if (param_1 == 0) {
     local_20 = param_1;
-    iStack_1c = param_2;
+    uStack_1c = param_2;
     local_18 = param_3;
-    vPortRaiseBASEPRI();
+    ulSetInterruptMask();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
+  uVar1 = 0;
   if (DAT_00088920 != 0) {
     local_20 = param_2;
-    iStack_1c = param_3;
+    uStack_1c = param_3;
     local_18 = param_1;
     if (param_2 < 6) {
-      iVar1 = xTaskGetSchedulerState();
-      if (iVar1 != 2) {
+      uVar1 = xTaskGetSchedulerState();
+      if (uVar1 != 2) {
         param_5 = 0;
       }
-      xQueueGenericSend(DAT_00088920,&local_20,param_5);
+      uVar1 = xQueueGenericSend(DAT_00088920,(int)&local_20,param_5,0);
     }
     else {
-      xQueueGenericSendFromISR(DAT_00088920,&local_20,param_4,0);
+      uVar1 = xQueueGenericSendFromISR(DAT_00088920,(int)&local_20,(void *)param_4,0);
     }
   }
-  return;
+  return uVar1;
 }
 
 
@@ -189,36 +188,35 @@ void xTimerGenericCommand
 
 /* With prvSwitchTimerLists inlined [inference] */
 
-uint prvSampleTimeNow(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+uint prvSampleTimeNow(undefined4 *param_1)
 
 {
   int *piVar1;
   uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
+  undefined4 uVar3;
+  uint uVar4;
   uint uVar5;
   uint uVar6;
-  uint uVar7;
   
   uVar2 = xTaskGetTickCount();
   if (uVar2 < DAT_0008891c) {
     while (piVar1 = DAT_000888f0, *DAT_000888ec != 0) {
-      uVar6 = ((uint *)DAT_000888ec[3])[3];
-      uVar7 = *(uint *)DAT_000888ec[3];
-      uxListRemove(uVar6 + 4);
-      (**(code **)(uVar6 + 0x20))(uVar6);
+      uVar5 = ((uint *)DAT_000888ec[3])[3];
+      uVar6 = *(uint *)DAT_000888ec[3];
+      uxListRemove((uint *)(uVar5 + 4));
+      (**(code **)(uVar5 + 0x20))(uVar5);
       piVar1 = DAT_000888ec;
-      if ((*(byte *)(uVar6 + 0x28) & 4) != 0) {
-        uVar5 = *(int *)(uVar6 + 0x18) + uVar7;
-        if (uVar7 < uVar5) {
-          *(uint *)(uVar6 + 4) = uVar5;
-          *(uint *)(uVar6 + 0x10) = uVar6;
-          vListInsert(piVar1,uVar6 + 4);
+      if ((*(byte *)(uVar5 + 0x28) & 4) != 0) {
+        uVar4 = *(int *)(uVar5 + 0x18) + uVar6;
+        if (uVar6 < uVar4) {
+          *(uint *)(uVar5 + 4) = uVar4;
+          *(uint *)(uVar5 + 0x10) = uVar5;
+          vListInsert(piVar1,(uint *)(uVar5 + 4));
         }
         else {
-          iVar3 = xTimerGenericCommand(uVar6,0,uVar7,0,0,param_2,param_3);
-          if (iVar3 == 0) {
-            vPortRaiseBASEPRI();
+          uVar5 = xTimerGenericCommand(uVar5,0,uVar6,0,0);
+          if (uVar5 == 0) {
+            ulSetInterruptMask();
             do {
                     /* WARNING: Do nothing block with infinite loop */
             } while( true );
@@ -227,13 +225,13 @@ uint prvSampleTimeNow(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
       }
     }
     DAT_000888f0 = DAT_000888ec;
-    uVar4 = 1;
+    uVar3 = 1;
     DAT_000888ec = piVar1;
   }
   else {
-    uVar4 = 0;
+    uVar3 = 0;
   }
-  *param_1 = uVar4;
+  *param_1 = uVar3;
   DAT_0008891c = uVar2;
   return uVar2;
 }
@@ -245,11 +243,10 @@ void prvTimerTask(void)
 
 {
   uint uVar1;
-  int iVar2;
-  byte bVar3;
-  bool bVar4;
-  int iVar5;
-  uint uVar6;
+  byte bVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
   undefined1 auStack_34 [4];
   int local_30;
   code *local_2c;
@@ -257,44 +254,44 @@ void prvTimerTask(void)
   undefined4 local_24;
   
 LAB_00082dba:
-  iVar5 = *DAT_000888ec;
-  if (iVar5 == 0) {
-    uVar6 = 0;
+  iVar4 = *DAT_000888ec;
+  if (iVar4 == 0) {
+    uVar5 = 0;
   }
   else {
-    uVar6 = *(uint *)DAT_000888ec[3];
+    uVar5 = *(uint *)DAT_000888ec[3];
   }
   vTaskSuspendAll();
   uVar1 = prvSampleTimeNow(&local_30);
   if (local_30 == 0) {
-    if (iVar5 == 0) {
-      bVar4 = *DAT_000888f0 == 0;
+    if (iVar4 == 0) {
+      uVar3 = (uint)(*DAT_000888f0 == 0);
     }
     else {
-      bVar4 = false;
-      if (uVar6 <= uVar1) {
+      uVar3 = 0;
+      if (uVar5 <= uVar1) {
         xTaskResumeAll();
-        iVar5 = *(int *)(DAT_000888ec[3] + 0xc);
-        uxListRemove(iVar5 + 4);
-        if ((int)((uint)*(byte *)(iVar5 + 0x28) << 0x1d) < 0) {
-          iVar2 = prvInsertTimerInActiveList(iVar5,*(int *)(iVar5 + 0x18) + uVar6,uVar1,uVar6);
-          if ((iVar2 != 0) && (iVar2 = xTimerGenericCommand(iVar5,0,uVar6,0,0), iVar2 == 0)) {
-            vPortRaiseBASEPRI();
+        iVar4 = *(int *)(DAT_000888ec[3] + 0xc);
+        uxListRemove(iVar4 + 4);
+        if ((int)((uint)*(byte *)(iVar4 + 0x28) << 0x1d) < 0) {
+          uVar1 = prvInsertTimerInActiveList(iVar4,*(int *)(iVar4 + 0x18) + uVar5,uVar1,uVar5);
+          if ((uVar1 != 0) && (uVar5 = xTimerGenericCommand(iVar4,0,uVar5,0,0), uVar5 == 0)) {
+            ulSetInterruptMask();
             do {
                     /* WARNING: Do nothing block with infinite loop */
             } while( true );
           }
         }
         else {
-          *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) & 0xfe;
+          *(byte *)(iVar4 + 0x28) = *(byte *)(iVar4 + 0x28) & 0xfe;
         }
-        (**(code **)(iVar5 + 0x20))(iVar5);
+        (**(code **)(iVar4 + 0x20))(iVar4);
         goto switchD_00082e62_default;
       }
     }
-    vQueueWaitForMessageRestricted(DAT_00088920,uVar6 - uVar1,bVar4);
-    iVar5 = xTaskResumeAll();
-    if (iVar5 == 0) {
+    vQueueWaitForMessageRestricted(DAT_00088920,uVar5 - uVar1,uVar3);
+    uVar5 = xTaskResumeAll();
+    if (uVar5 == 0) {
       vPortYield();
     }
   }
@@ -303,27 +300,28 @@ LAB_00082dba:
   }
 switchD_00082e62_default:
   do {
-    iVar5 = xQueueReceive(DAT_00088920,&local_30,0);
-    if (iVar5 == 0) goto LAB_00082dba;
+    iVar4 = xQueueReceive(DAT_00088920,&local_30,0);
+    if (iVar4 == 0) goto LAB_00082dba;
     if ((-1 < local_30) || ((*local_2c)(local_28,local_24), -1 < local_30)) {
-      iVar5 = local_28;
+      iVar4 = local_28;
       if (*(int *)(local_28 + 0x14) != 0) {
         uxListRemove(local_28 + 4);
       }
-      iVar2 = prvSampleTimeNow(auStack_34);
+      uVar5 = prvSampleTimeNow(auStack_34);
       switch(local_30) {
       case 0:
       case 1:
       case 2:
       case 6:
       case 7:
-        *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) | 1;
-        iVar2 = prvInsertTimerInActiveList(iVar5,local_2c + *(int *)(iVar5 + 0x18),iVar2);
-        if (((iVar2 != 0) &&
-            ((**(code **)(iVar5 + 0x20))(iVar5), (int)((uint)*(byte *)(iVar5 + 0x28) << 0x1d) < 0))
-           && (iVar5 = xTimerGenericCommand(iVar5,0,local_2c + *(int *)(iVar5 + 0x18),0,0),
-              iVar5 == 0)) {
-          vPortRaiseBASEPRI();
+        *(byte *)(iVar4 + 0x28) = *(byte *)(iVar4 + 0x28) | 1;
+        uVar5 = prvInsertTimerInActiveList
+                          (iVar4,(uint)(local_2c + *(int *)(iVar4 + 0x18)),uVar5,(uint)local_2c);
+        if (((uVar5 != 0) &&
+            ((**(code **)(iVar4 + 0x20))(iVar4), (int)((uint)*(byte *)(iVar4 + 0x28) << 0x1d) < 0))
+           && (uVar5 = xTimerGenericCommand(iVar4,0,(uint)(local_2c + *(int *)(iVar4 + 0x18)),0,0),
+              uVar5 == 0)) {
+          ulSetInterruptMask();
           do {
                     /* WARNING: Do nothing block with infinite loop */
           } while( true );
@@ -331,31 +329,31 @@ switchD_00082e62_default:
         goto switchD_00082e62_default;
       case 3:
       case 8:
-        bVar3 = *(byte *)(iVar5 + 0x28);
+        bVar2 = *(byte *)(iVar4 + 0x28);
         break;
       case 4:
       case 9:
-        *(byte *)(iVar5 + 0x28) = *(byte *)(iVar5 + 0x28) | 1;
-        *(code **)(iVar5 + 0x18) = local_2c;
+        *(byte *)(iVar4 + 0x28) = *(byte *)(iVar4 + 0x28) | 1;
+        *(code **)(iVar4 + 0x18) = local_2c;
         if (local_2c == (code *)0x0) {
-          vPortRaiseBASEPRI();
+          ulSetInterruptMask();
           do {
                     /* WARNING: Do nothing block with infinite loop */
           } while( true );
         }
-        prvInsertTimerInActiveList(iVar5,local_2c + iVar2,iVar2,iVar2);
+        prvInsertTimerInActiveList(iVar4,(uint)(local_2c + uVar5),uVar5,uVar5);
         goto switchD_00082e62_default;
       case 5:
-        bVar3 = *(byte *)(iVar5 + 0x28);
-        if (-1 < (int)((uint)bVar3 << 0x1e)) {
-          vPortFree(iVar5);
+        bVar2 = *(byte *)(iVar4 + 0x28);
+        if (-1 < (int)((uint)bVar2 << 0x1e)) {
+          vPortFree(iVar4);
           goto switchD_00082e62_default;
         }
         break;
       default:
         goto switchD_00082e62_default;
       }
-      *(byte *)(iVar5 + 0x28) = bVar3 & 0xfe;
+      *(byte *)(iVar4 + 0x28) = bVar2 & 0xfe;
     }
   } while( true );
 }
@@ -371,7 +369,7 @@ undefined4 CLOCK_GetOsc32KFreq(void)
   uint uVar1;
   undefined4 uVar2;
   
-  uVar1 = DAT_400011c0;
+  uVar1 = CLKCTL0_OSC32KHZCTL0;
   uVar2 = 0;
   if ((uVar1 & 1) != 0) {
     uVar2 = 0x8000;
@@ -390,12 +388,12 @@ undefined4 CLOCK_GetXtalInClkFreq(void)
   int iVar1;
   undefined4 *puVar2;
   
-  iVar1 = DAT_40001168;
+  iVar1 = CLKCTL0_SYSOSCBYPASS;
   if (iVar1 == 0) {
     puVar2 = &DAT_00088930;
   }
   else {
-    iVar1 = DAT_40001168;
+    iVar1 = CLKCTL0_SYSOSCBYPASS;
     if (iVar1 != 1) {
       return 0;
     }
@@ -409,13 +407,13 @@ undefined4 CLOCK_GetXtalInClkFreq(void)
 
 /* FFROCTL0 trim range: 48 or 60 MHz [inference] */
 
-undefined4 CLOCK_GetFFroFreq(void)
+uint CLOCK_GetFFroFreq(void)
 
 {
   uint uVar1;
-  undefined4 uVar2;
+  uint uVar2;
   
-  uVar1 = DAT_40001100;
+  uVar1 = CLKCTL0_FFROCTL0;
   if ((uVar1 & 0xc0000) != 0) {
     uVar2 = 60000000;
     if ((uVar1 & 0xc0000) != 0xc0000) {
@@ -435,36 +433,37 @@ uint CLOCK_GetSysPllFreq(void)
 
 {
   uint uVar1;
-  undefined4 uVar2;
-  uint uVar3;
-  int iVar4;
+  uint uVar2;
+  undefined4 uVar3;
+  uint uVar4;
   uint uVar5;
+  ulonglong uVar6;
   
-  uVar5 = DAT_40001200;
+  uVar5 = CLKCTL0_SYSPLL0CLKSEL;
   uVar5 = uVar5 & 7;
   if (uVar5 == 1) {
-    uVar3 = CLOCK_GetXtalInClkFreq();
+    uVar4 = CLOCK_GetXtalInClkFreq();
   }
   else if (uVar5 == 2) {
-    uVar3 = CLOCK_GetFFroFreq();
-    uVar3 = uVar3 >> 1;
+    uVar4 = CLOCK_GetFFroFreq();
+    uVar4 = uVar4 >> 1;
   }
   else {
-    uVar3 = 16000000;
+    uVar4 = 16000000;
     if (uVar5 != 0) {
-      uVar3 = 0;
+      uVar4 = 0;
     }
   }
-  uVar5 = DAT_40001204;
+  uVar5 = CLKCTL0_SYSPLL0CTL0;
   if ((uVar5 & 1) == 0) {
-    uVar1 = DAT_40001210;
-    uVar2 = DAT_40001214;
-    uVar5 = DAT_40001204;
-    iVar4 = __aeabi_uldivmod((int)((ulonglong)uVar3 * (ulonglong)uVar1),
-                             (int)((ulonglong)uVar3 * (ulonglong)uVar1 >> 0x20),uVar2);
-    uVar3 = iVar4 + uVar3 * ((uVar5 & 0xffffff) >> 0x10);
+    uVar2 = CLKCTL0_SYSPLL0NUM;
+    uVar3 = CLKCTL0_SYSPLL0DENOM;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
+    uVar6 = __aeabi_uldivmod((ulonglong)uVar4 * (ulonglong)uVar2,CONCAT44(uVar5,uVar3) & 0x1ffffffff
+                            );
+    uVar4 = (int)uVar6 + uVar4 * ((uVar1 & 0xffffff) >> 0x10);
   }
-  return uVar3;
+  return uVar4;
 }
 
 
@@ -472,38 +471,39 @@ uint CLOCK_GetSysPllFreq(void)
 
 /* SYSPLL x 18 / PFDn [inference] */
 
-uint CLOCK_GetSysPfdFreq(undefined4 param_1)
+uint CLOCK_GetSysPfdFreq(uint param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
+  ulonglong uVar4;
   
   uVar2 = CLOCK_GetSysPllFreq();
-  iVar1 = DAT_40001204;
+  iVar1 = CLKCTL0_SYSPLL0CTL0;
   if (-1 < iVar1 << 0x1f) {
     switch(param_1) {
     case 0:
-      uVar3 = DAT_40001218;
+      uVar3 = CLKCTL0_SYSPLL0PFD;
       uVar3 = uVar3 & 0x3f;
       break;
     case 1:
-      uVar3 = DAT_40001218;
+      uVar3 = CLKCTL0_SYSPLL0PFD;
       uVar3 = (uVar3 & 0x3fff) >> 8;
       break;
     case 2:
-      uVar3 = DAT_40001218;
+      uVar3 = CLKCTL0_SYSPLL0PFD;
       uVar3 = (uVar3 & 0x3fffff) >> 0x10;
       break;
     case 3:
-      uVar3 = DAT_40001218;
+      uVar3 = CLKCTL0_SYSPLL0PFD;
       uVar3 = (uVar3 & 0x3fffffff) >> 0x18;
       break;
     default:
       return 0;
     }
-    uVar2 = __aeabi_uldivmod((int)((ulonglong)uVar2 * 0x12),(int)((ulonglong)uVar2 * 0x12 >> 0x20),
-                             uVar3,0);
+    uVar4 = __aeabi_uldivmod((ulonglong)uVar2 * 0x12,(ulonglong)uVar3);
+    uVar2 = (uint)uVar4;
   }
   return uVar2;
 }
@@ -520,7 +520,7 @@ uint CLOCK_GetMainPllClkFreq(void)
   uint uVar2;
   
   uVar2 = CLOCK_GetSysPfdFreq(0);
-  uVar1 = DAT_40001240;
+  uVar1 = CLKCTL0_MAINPLLCLKDIV;
   return uVar2 / ((uVar1 & 0xff) + 1);
 }
 
@@ -536,7 +536,7 @@ uint CLOCK_GetAux0PllClkFreq(void)
   uint uVar2;
   
   uVar2 = CLOCK_GetSysPfdFreq(2);
-  uVar1 = DAT_40001248;
+  uVar1 = CLKCTL0_AUX0PLLCLKDIV;
   return uVar2 / ((uVar1 & 0xff) + 1);
 }
 
@@ -552,7 +552,7 @@ uint CLOCK_GetAux1PllClkFreq(void)
   uint uVar2;
   
   uVar2 = CLOCK_GetSysPfdFreq(3);
-  uVar1 = DAT_4000124c;
+  uVar1 = CLKCTL0_AUX1PLLCLKDIV;
   return uVar2 / ((uVar1 & 0xff) + 1);
 }
 
@@ -565,36 +565,37 @@ uint CLOCK_GetAudioPllFreq(void)
 
 {
   uint uVar1;
-  undefined4 uVar2;
-  uint uVar3;
-  int iVar4;
+  uint uVar2;
+  undefined4 uVar3;
+  uint uVar4;
   uint uVar5;
+  ulonglong uVar6;
   
-  uVar5 = DAT_40021200;
+  uVar5 = CLKCTL1_AUDIOPLL0CLKSEL;
   uVar5 = uVar5 & 7;
   if (uVar5 == 1) {
-    uVar3 = CLOCK_GetXtalInClkFreq();
+    uVar4 = CLOCK_GetXtalInClkFreq();
   }
   else if (uVar5 == 2) {
-    uVar3 = CLOCK_GetFFroFreq();
-    uVar3 = uVar3 >> 1;
+    uVar4 = CLOCK_GetFFroFreq();
+    uVar4 = uVar4 >> 1;
   }
   else {
-    uVar3 = 16000000;
+    uVar4 = 16000000;
     if (uVar5 != 0) {
-      uVar3 = 0;
+      uVar4 = 0;
     }
   }
-  uVar5 = DAT_40021204;
+  uVar5 = CLKCTL1_AUDIOPLL0CTL0;
   if ((uVar5 & 1) == 0) {
-    uVar1 = DAT_40021210;
-    uVar2 = DAT_40021214;
-    uVar5 = DAT_40021204;
-    iVar4 = __aeabi_uldivmod((int)((ulonglong)uVar3 * (ulonglong)uVar1),
-                             (int)((ulonglong)uVar3 * (ulonglong)uVar1 >> 0x20),uVar2);
-    uVar3 = iVar4 + uVar3 * ((uVar5 & 0xffffff) >> 0x10);
+    uVar2 = CLKCTL1_AUDIOPLL0NUM;
+    uVar3 = CLKCTL1_AUDIOPLL0DENOM;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar6 = __aeabi_uldivmod((ulonglong)uVar4 * (ulonglong)uVar2,CONCAT44(uVar5,uVar3) & 0x1ffffffff
+                            );
+    uVar4 = (int)uVar6 + uVar4 * ((uVar1 & 0xffffff) >> 0x10);
   }
-  return uVar3;
+  return uVar4;
 }
 
 
@@ -602,38 +603,39 @@ uint CLOCK_GetAudioPllFreq(void)
 
 /* AUDIOPLL x 18 / PFDn unless bypassed [inference] */
 
-uint CLOCK_GetAudioPfdFreq(undefined4 param_1)
+uint CLOCK_GetAudioPfdFreq(uint param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
+  ulonglong uVar4;
   
   uVar2 = CLOCK_GetAudioPllFreq();
-  iVar1 = DAT_40021204;
+  iVar1 = CLKCTL1_AUDIOPLL0CTL0;
   if (-1 < iVar1 << 0x1f) {
     switch(param_1) {
     case 0:
-      uVar3 = DAT_40021218;
+      uVar3 = CLKCTL1_AUDIOPLL0PFD;
       uVar3 = uVar3 & 0x3f;
       break;
     case 1:
-      uVar3 = DAT_40021218;
+      uVar3 = CLKCTL1_AUDIOPLL0PFD;
       uVar3 = (uVar3 & 0x3fff) >> 8;
       break;
     case 2:
-      uVar3 = DAT_40021218;
+      uVar3 = CLKCTL1_AUDIOPLL0PFD;
       uVar3 = (uVar3 & 0x3fffff) >> 0x10;
       break;
     case 3:
-      uVar3 = DAT_40021218;
+      uVar3 = CLKCTL1_AUDIOPLL0PFD;
       uVar3 = (uVar3 & 0x3fffffff) >> 0x18;
       break;
     default:
       return 0;
     }
-    uVar2 = __aeabi_uldivmod((int)((ulonglong)uVar2 * 0x12),(int)((ulonglong)uVar2 * 0x12 >> 0x20),
-                             uVar3,0);
+    uVar4 = __aeabi_uldivmod((ulonglong)uVar2 * 0x12,(ulonglong)uVar3);
+    uVar2 = (uint)uVar4;
   }
   return uVar2;
 }
@@ -650,7 +652,7 @@ uint CLOCK_GetAudioPllClkFreq(void)
   uint uVar2;
   
   uVar2 = CLOCK_GetAudioPfdFreq(0);
-  uVar1 = DAT_40021240;
+  uVar1 = CLKCTL1_AUDIOPLLCLKDIV;
   return uVar2 / ((uVar1 & 0xff) + 1);
 }
 
@@ -659,42 +661,43 @@ uint CLOCK_GetAudioPllClkFreq(void)
 
 /* MAINCLKSELA/B [inference] */
 
-undefined * CLOCK_GetMainClkFreq(void)
+void * CLOCK_GetMainClkFreq(void)
 
 {
   undefined *puVar1;
-  uint uVar2;
+  void *pvVar2;
+  uint uVar3;
   
-  uVar2 = DAT_40001434;
-  uVar2 = uVar2 & 3;
-  if (uVar2 == 2) {
-    puVar1 = (undefined *)CLOCK_GetMainPllClkFreq();
-    return puVar1;
+  uVar3 = CLKCTL0_MAINCLKSELB;
+  uVar3 = uVar3 & 3;
+  if (uVar3 == 2) {
+    pvVar2 = (void *)CLOCK_GetMainPllClkFreq();
+    return pvVar2;
   }
-  if (uVar2 == 3) {
-    puVar1 = (undefined *)CLOCK_GetOsc32KFreq();
-    return puVar1;
+  if (uVar3 == 3) {
+    pvVar2 = (void *)CLOCK_GetOsc32KFreq();
+    return pvVar2;
   }
-  if (uVar2 == 1) {
+  if (uVar3 == 1) {
     puVar1 = (undefined *)0xf42400;
   }
   else {
-    uVar2 = DAT_40001430;
-    uVar2 = uVar2 & 3;
-    if (uVar2 == 2) {
+    uVar3 = CLKCTL0_MAINCLKSELA;
+    uVar3 = uVar3 & 3;
+    if (uVar3 == 2) {
       puVar1 = &DAT_000f4240;
     }
     else {
-      if (uVar2 == 3) {
-        puVar1 = (undefined *)CLOCK_GetFFroFreq();
-        return puVar1;
+      if (uVar3 == 3) {
+        pvVar2 = (void *)CLOCK_GetFFroFreq();
+        return pvVar2;
       }
-      if (uVar2 == 1) {
-        puVar1 = (undefined *)CLOCK_GetXtalInClkFreq();
-        return puVar1;
+      if (uVar3 == 1) {
+        pvVar2 = (void *)CLOCK_GetXtalInClkFreq();
+        return pvVar2;
       }
-      uVar2 = CLOCK_GetFFroFreq();
-      puVar1 = (undefined *)(uVar2 >> 2);
+      uVar3 = CLOCK_GetFFroFreq();
+      puVar1 = (undefined *)(uVar3 >> 2);
     }
   }
   return puVar1;
@@ -712,11 +715,11 @@ undefined * CLOCK_GetDspMainClkFreq(void)
   uint uVar2;
   uint uVar3;
   
-  uVar3 = DAT_40021434;
+  uVar3 = CLKCTL1_DSPCPUCLKSELB;
   uVar3 = uVar3 & 3;
   if (uVar3 == 2) {
     uVar2 = CLOCK_GetSysPfdFreq(1);
-    uVar3 = DAT_40001244;
+    uVar3 = CLKCTL0_DSPPLLCLKDIV;
     puVar1 = (undefined *)(uVar2 / ((uVar3 & 0xff) + 1));
   }
   else {
@@ -728,7 +731,7 @@ undefined * CLOCK_GetDspMainClkFreq(void)
       puVar1 = (undefined *)CLOCK_GetMainPllClkFreq();
       return puVar1;
     }
-    uVar3 = DAT_40021430;
+    uVar3 = CLKCTL1_DSPCPUCLKSELA;
     uVar3 = uVar3 & 3;
     if (uVar3 == 2) {
       puVar1 = &DAT_000f4240;
@@ -751,39 +754,40 @@ undefined * CLOCK_GetDspMainClkFreq(void)
 
 // ===== CLOCK_GetFlexCommClkFreq @ 00083470 (238 bytes)
 
-undefined4 CLOCK_GetFlexCommClkFreq(uint param_1)
+uint CLOCK_GetFlexCommClkFreq(uint param_1)
 
 {
-  longlong lVar1;
-  uint uVar2;
-  int iVar3;
+  undefined4 uVar1;
+  void *pvVar2;
+  uint uVar3;
   uint uVar4;
-  undefined4 uVar5;
+  dword dVar5;
   byte bVar6;
   uint uVar7;
   uint uVar8;
+  ulonglong uVar9;
   
   if (param_1 < 8) {
-    uVar5 = *(undefined4 *)(&DAT_40021508 + param_1 * 0x20);
+    dVar5 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[param_1 * 8];
   }
   else if (param_1 == 0xe) {
-    uVar5 = DAT_400216c8;
+    dVar5 = CLKCTL1_FC14FCLKSEL;
   }
   else {
     if (param_1 != 0xf) {
       return 16000000;
     }
-    uVar5 = DAT_400216e8;
+    dVar5 = CLKCTL1_FC15FCLKSEL;
   }
-  switch(uVar5) {
+  switch(dVar5) {
   case 0:
     return 16000000;
   case 1:
-    uVar5 = CLOCK_GetFFroFreq();
-    return uVar5;
+    uVar4 = CLOCK_GetFFroFreq();
+    return uVar4;
   case 2:
-    uVar5 = CLOCK_GetAudioPllClkFreq();
-    return uVar5;
+    uVar4 = CLOCK_GetAudioPllClkFreq();
+    return uVar4;
   case 3:
     return DAT_0008892c;
   case 4:
@@ -792,57 +796,55 @@ undefined4 CLOCK_GetFlexCommClkFreq(uint param_1)
     return 0;
   }
   if (param_1 < 8) {
-    iVar3 = param_1 * 0x20;
-    bVar6 = (byte)*(undefined4 *)(&DAT_40021504 + iVar3);
-    uVar4 = *(uint *)(&DAT_40021500 + iVar3) & 7;
-    uVar8 = (*(uint *)(&DAT_40021504 + iVar3) & 0xffff) >> 8;
+    bVar6 = (byte)(&CLKCTL1_FLEXCOMM0_FRGCTL)[param_1 * 8];
+    uVar4 = (&CLKCTL1_FLEXCOMM0_FRGCLKSEL)[param_1 * 8] & 7;
+    uVar8 = ((&CLKCTL1_FLEXCOMM0_FRGCTL)[param_1 * 8] & 0xffff) >> 8;
 LAB_000833e4:
     uVar7 = (uint)bVar6;
     switch(uVar4) {
     case 0:
       goto switchD_000833ea_caseD_0;
     case 1:
-      uVar2 = DAT_400216fc;
-      uVar4 = CLOCK_GetMainPllClkFreq();
-      uVar4 = uVar4 / ((uVar2 & 0xff) + 1);
+      uVar4 = CLKCTL1_FRGPLLCLKDIV;
+      uVar3 = CLOCK_GetMainPllClkFreq();
+      pvVar2 = (void *)(uVar3 / ((uVar4 & 0xff) + 1));
       break;
     case 2:
-      uVar4 = 16000000;
+      pvVar2 = (void *)0xf42400;
       break;
     case 3:
-      uVar4 = CLOCK_GetFFroFreq();
+      pvVar2 = (void *)CLOCK_GetFFroFreq();
       break;
     default:
-      uVar4 = 0;
+      pvVar2 = (void *)0x0;
     }
   }
   else {
     if (param_1 == 0xe) {
-      uVar4 = DAT_400216c0;
-      uVar8 = DAT_400216c4;
+      uVar4 = CLKCTL1_FRG14CLKSEL;
+      uVar8 = CLKCTL1_FRG14CTL;
       uVar4 = uVar4 & 7;
-      uVar5 = DAT_400216c4;
-      bVar6 = (byte)uVar5;
+      uVar1 = CLKCTL1_FRG14CTL;
+      bVar6 = (byte)uVar1;
       uVar8 = (uVar8 & 0xffff) >> 8;
       goto LAB_000833e4;
     }
     if (param_1 == 0xf) {
-      uVar4 = DAT_400216e0;
-      uVar8 = DAT_400216e4;
+      uVar4 = CLKCTL1_FRG15CLKSEL;
+      uVar8 = CLKCTL1_FRG15CTL;
       uVar4 = uVar4 & 7;
-      uVar5 = DAT_400216e4;
-      bVar6 = (byte)uVar5;
+      uVar1 = CLKCTL1_FRG15CTL;
+      bVar6 = (byte)uVar1;
       uVar8 = (uVar8 & 0xffff) >> 8;
       goto LAB_000833e4;
     }
     uVar8 = 0;
     uVar7 = 0;
 switchD_000833ea_caseD_0:
-    uVar4 = CLOCK_GetMainClkFreq();
+    pvVar2 = CLOCK_GetMainClkFreq();
   }
-  lVar1 = (ulonglong)(uVar7 + 1) * (ulonglong)uVar4;
-  uVar5 = __aeabi_uldivmod((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar7 + uVar8 + 1,0);
-  return uVar5;
+  uVar9 = __aeabi_uldivmod((ulonglong)(uVar7 + 1) * ZEXT48(pvVar2),(ulonglong)(uVar7 + uVar8 + 1));
+  return (uint)uVar9;
 }
 
 
@@ -850,369 +852,369 @@ switchD_000833ea_caseD_0:
 
 /* WARNING: Removing unreachable block (ram,0x000835a6) */
 
-undefined *
-CLOCK_GetFreq(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined * CLOCK_GetFreq(undefined4 param_1)
 
 {
   int iVar1;
-  bool bVar2;
-  uint uVar3;
+  undefined4 uVar2;
+  bool bVar3;
   uint uVar4;
-  undefined *puVar5;
-  undefined4 uVar6;
-  uint *puVar7;
+  void *pvVar5;
+  undefined *puVar6;
+  uint uVar7;
   uint *puVar8;
+  dword *pdVar9;
   
   switch(param_1) {
   case 0:
   case 1:
-    uVar4 = CLOCK_GetMainClkFreq();
-    puVar5 = &DAT_40001000;
+    pvVar5 = CLOCK_GetMainClkFreq();
+    pdVar9 = &CLKCTL0_BASE;
     goto LAB_000837d4;
   case 2:
-    iVar1 = DAT_40021740;
+    iVar1 = CLKCTL1_AUDIOMCLKSEL;
     if (iVar1 == 0) {
-      uVar4 = CLOCK_GetFFroFreq();
+      uVar7 = CLOCK_GetFFroFreq();
     }
     else {
-      iVar1 = DAT_40021740;
+      iVar1 = CLKCTL1_AUDIOMCLKSEL;
       if (iVar1 == 1) {
-        uVar4 = CLOCK_GetAudioPllClkFreq();
+        uVar7 = CLOCK_GetAudioPllClkFreq();
       }
       else {
-        uVar4 = 0;
+        uVar7 = 0;
       }
     }
-    uVar3 = DAT_40021744;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar4 = CLKCTL1_AUDIOMCLKDIV;
+    return (undefined *)(uVar7 / ((uVar4 & 0xff) + 1));
   case 3:
-    uVar4 = DAT_40021764;
-    puVar5 = (undefined *)(uVar4 & 7);
-    switch(puVar5) {
+    uVar7 = CLKCTL1_CLKOUTSEL1;
+    puVar6 = (undefined *)(uVar7 & 7);
+    switch(puVar6) {
     case (undefined *)0x0:
-      uVar4 = DAT_40021760;
-      switch(uVar4 & 7) {
+      uVar7 = CLKCTL1_CLKOUTSEL0;
+      switch(uVar7 & 7) {
       case 0:
-        puVar5 = (undefined *)0xf42400;
+        puVar6 = (undefined *)0xf42400;
         break;
       case 1:
-        puVar5 = (undefined *)CLOCK_GetXtalInClkFreq();
+        puVar6 = (undefined *)CLOCK_GetXtalInClkFreq();
         break;
       case 2:
-        puVar5 = &DAT_000f4240;
+        puVar6 = &DAT_000f4240;
         break;
       case 3:
-        puVar5 = (undefined *)CLOCK_GetFFroFreq();
+        puVar6 = (undefined *)CLOCK_GetFFroFreq();
         break;
       case 4:
-        puVar5 = (undefined *)CLOCK_GetMainClkFreq();
+        puVar6 = CLOCK_GetMainClkFreq();
         break;
       case 6:
-        puVar5 = (undefined *)CLOCK_GetDspMainClkFreq();
+        puVar6 = (undefined *)CLOCK_GetDspMainClkFreq();
       }
       break;
     case (undefined *)0x1:
-      puVar5 = (undefined *)CLOCK_GetMainPllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetMainPllClkFreq();
       break;
     case (undefined *)0x2:
-      puVar5 = (undefined *)CLOCK_GetAux0PllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAux0PllClkFreq();
       break;
     case (undefined *)0x3:
-      uVar3 = CLOCK_GetSysPfdFreq(1);
-      uVar4 = DAT_40001244;
-      puVar5 = (undefined *)(uVar3 / ((uVar4 & 0xff) + 1));
+      uVar4 = CLOCK_GetSysPfdFreq(1);
+      uVar7 = CLKCTL0_DSPPLLCLKDIV;
+      puVar6 = (undefined *)(uVar4 / ((uVar7 & 0xff) + 1));
       break;
     case (undefined *)0x4:
-      puVar5 = (undefined *)CLOCK_GetAux1PllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAux1PllClkFreq();
       break;
     case (undefined *)0x5:
-      puVar5 = (undefined *)CLOCK_GetAudioPllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAudioPllClkFreq();
       break;
     case (undefined *)0x6:
-      puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
+      puVar6 = (undefined *)CLOCK_GetOsc32KFreq();
       break;
     default:
-      puVar5 = (undefined *)0x0;
+      puVar6 = (undefined *)0x0;
     }
-    uVar4 = DAT_40021768;
-    return (undefined *)((uint)puVar5 / ((uVar4 & 0xff) + 1));
+    uVar7 = CLKCTL1_CLKOUTDIV;
+    return (undefined *)((uint)puVar6 / ((uVar7 & 0xff) + 1));
   case 4:
-    uVar4 = DAT_400016d4;
-    puVar5 = (undefined *)(uVar4 & 7);
-    switch(puVar5) {
+    uVar7 = CLKCTL0_ADC0FCLKSEL1;
+    puVar6 = (undefined *)(uVar7 & 7);
+    switch(puVar6) {
     case (undefined *)0x0:
-      uVar4 = DAT_400016d0;
-      switch(uVar4 & 7) {
+      uVar7 = CLKCTL0_ADC0FCLKSEL0;
+      switch(uVar7 & 7) {
       case 0:
-        puVar5 = (undefined *)0xf42400;
+        puVar6 = (undefined *)0xf42400;
         break;
       case 1:
-        puVar5 = (undefined *)CLOCK_GetXtalInClkFreq();
+        puVar6 = (undefined *)CLOCK_GetXtalInClkFreq();
         break;
       case 2:
-        puVar5 = &DAT_000f4240;
+        puVar6 = &DAT_000f4240;
         break;
       case 3:
-        puVar5 = (undefined *)CLOCK_GetFFroFreq();
+        puVar6 = (undefined *)CLOCK_GetFFroFreq();
       }
       break;
     case (undefined *)0x1:
-      puVar5 = (undefined *)CLOCK_GetMainPllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetMainPllClkFreq();
       break;
     default:
-      puVar5 = (undefined *)0x0;
+      puVar6 = (undefined *)0x0;
       break;
     case (undefined *)0x3:
-      puVar5 = (undefined *)CLOCK_GetAux0PllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAux0PllClkFreq();
       break;
     case (undefined *)0x5:
-      puVar5 = (undefined *)CLOCK_GetAux1PllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAux1PllClkFreq();
     }
-    uVar4 = DAT_400016d8;
-    return (undefined *)((uint)puVar5 / ((uVar4 & 0xff) + 1));
+    uVar7 = CLKCTL0_ADC0FCLKDIV;
+    return (undefined *)((uint)puVar6 / ((uVar7 & 0xff) + 1));
   case 5:
-    uVar4 = DAT_40001620;
-    switch(uVar4 & 7) {
+    uVar7 = CLKCTL0_FLEXSPIFCLKSEL;
+    switch(uVar7 & 7) {
     case 0:
-      uVar4 = CLOCK_GetMainClkFreq();
+      pvVar5 = CLOCK_GetMainClkFreq();
       break;
     case 1:
-      uVar4 = CLOCK_GetMainPllClkFreq();
+      pvVar5 = (void *)CLOCK_GetMainPllClkFreq();
       break;
     case 2:
-      uVar4 = CLOCK_GetAux0PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux0PllClkFreq();
       break;
     case 3:
-      uVar4 = CLOCK_GetFFroFreq();
+      pvVar5 = (void *)CLOCK_GetFFroFreq();
       break;
     case 4:
-      uVar4 = CLOCK_GetAux1PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux1PllClkFreq();
       break;
     default:
-      uVar4 = 0;
+      pvVar5 = (void *)0x0;
     }
-    uVar3 = DAT_40001624;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar7 = CLKCTL0_FLEXSPIFCLKDIV;
+    return (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
   case 6:
-    uVar4 = DAT_40001640;
-    switch(uVar4 & 7) {
+    uVar7 = CLKCTL0_SCTFCLKSEL;
+    switch(uVar7 & 7) {
     case 0:
-      uVar4 = CLOCK_GetMainClkFreq();
+      pvVar5 = CLOCK_GetMainClkFreq();
       break;
     case 1:
-      uVar4 = CLOCK_GetMainPllClkFreq();
+      pvVar5 = (void *)CLOCK_GetMainPllClkFreq();
       break;
     case 2:
-      uVar4 = CLOCK_GetAux0PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux0PllClkFreq();
       break;
     case 3:
-      uVar4 = CLOCK_GetFFroFreq();
+      pvVar5 = (void *)CLOCK_GetFFroFreq();
       break;
     case 4:
-      uVar4 = CLOCK_GetAux1PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux1PllClkFreq();
       break;
     case 5:
-      uVar4 = CLOCK_GetAudioPllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAudioPllClkFreq();
       break;
     default:
-      uVar4 = 0;
+      pvVar5 = (void *)0x0;
     }
-    uVar3 = DAT_40001644;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar7 = CLKCTL0_SCTFCLKDIV;
+    return (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
   case 7:
-    uVar4 = DAT_40001720;
-    if ((uVar4 & 7) == 0) {
+    uVar7 = CLKCTL0_WDT0FCLKSEL;
+    if ((uVar7 & 7) == 0) {
       return &DAT_000f4240;
     }
-    puVar5 = (undefined *)CLOCK_GetMainClkFreq();
-    return puVar5;
+    puVar6 = CLOCK_GetMainClkFreq();
+    return puVar6;
   case 8:
-    uVar4 = DAT_400217a0;
-    if ((uVar4 & 7) != 0) {
-      puVar5 = (undefined *)CLOCK_GetMainClkFreq();
-      return puVar5;
+    uVar7 = CLKCTL1_WDT1FCLKSEL;
+    if ((uVar7 & 7) != 0) {
+      puVar6 = CLOCK_GetMainClkFreq();
+      return puVar6;
     }
     return &DAT_000f4240;
   case 9:
-    uVar6 = DAT_40001760;
-    switch(uVar6) {
+    uVar2 = CLKCTL0_SYSTICKFCLKSEL;
+    switch(uVar2) {
     case 0:
-      uVar3 = CLOCK_GetMainClkFreq();
-      uVar4 = DAT_40001764;
-      puVar5 = (undefined *)(uVar3 / ((uVar4 & 0xff) + 1));
+      pvVar5 = CLOCK_GetMainClkFreq();
+      uVar7 = CLKCTL0_SYSTICKFCLKDIV;
+      puVar6 = (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
       break;
     case 1:
-      puVar5 = &DAT_000f4240;
+      puVar6 = &DAT_000f4240;
       break;
     case 2:
-      puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
-      return puVar5;
+      puVar6 = (undefined *)CLOCK_GetOsc32KFreq();
+      return puVar6;
     case 3:
-      puVar5 = (undefined *)0xf42400;
+      puVar6 = (undefined *)0xf42400;
       break;
     default:
-      puVar5 = (undefined *)0x0;
+      puVar6 = (undefined *)0x0;
     }
-    return puVar5;
+    return puVar6;
   case 10:
-    bVar2 = false;
+    bVar3 = false;
     goto LAB_00083830;
   case 0xb:
-    bVar2 = true;
+    bVar3 = true;
 LAB_00083830:
-    puVar8 = (uint *)&DAT_40001684;
-    if (bVar2) {
-      puVar8 = &DAT_40001694;
+    pdVar9 = &CLKCTL0_SDIO0FCLKDIV;
+    if (bVar3) {
+      pdVar9 = &CLKCTL0_SDIO1FCLKDIV;
     }
-    puVar7 = &DAT_40001680;
-    if (bVar2) {
-      puVar7 = &DAT_40001690;
+    puVar8 = &CLKCTL0_SDIO0FCLKSEL;
+    if (bVar3) {
+      puVar8 = &CLKCTL0_SDIO1FCLKSEL;
     }
-    switch(*puVar7 & 7) {
+    switch(*puVar8 & 7) {
     case 0:
-      uVar4 = CLOCK_GetMainClkFreq();
+      pvVar5 = CLOCK_GetMainClkFreq();
       break;
     case 1:
-      uVar4 = CLOCK_GetMainPllClkFreq();
+      pvVar5 = (void *)CLOCK_GetMainPllClkFreq();
       break;
     case 2:
-      uVar4 = CLOCK_GetAux0PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux0PllClkFreq();
       break;
     case 3:
-      uVar4 = CLOCK_GetFFroFreq();
+      pvVar5 = (void *)CLOCK_GetFFroFreq();
       break;
     case 4:
-      uVar4 = CLOCK_GetAux1PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux1PllClkFreq();
       break;
     default:
-      uVar4 = 0;
+      pvVar5 = (void *)0x0;
     }
-    return (undefined *)(uVar4 / ((*puVar8 & 0xff) + 1));
+    return (undefined *)((uint)pvVar5 / ((*pdVar9 & 0xff) + 1));
   case 0xc:
-    uVar4 = DAT_40021780;
-    if ((uVar4 & 7) == 0) {
-      uVar4 = CLOCK_GetMainClkFreq();
+    uVar7 = CLKCTL1_I3C0FCLKSEL;
+    if ((uVar7 & 7) == 0) {
+      pvVar5 = CLOCK_GetMainClkFreq();
     }
-    else if ((uVar4 & 7) == 1) {
-      uVar4 = CLOCK_GetFFroFreq();
+    else if ((uVar7 & 7) == 1) {
+      pvVar5 = (void *)CLOCK_GetFFroFreq();
     }
     else {
-      uVar4 = 0;
+      pvVar5 = (void *)0x0;
     }
-    uVar3 = DAT_40021790;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar7 = CLKCTL1_I3C0FCLKDIV;
+    return (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
   case 0xd:
-    iVar1 = DAT_40001660;
+    iVar1 = CLKCTL0_USBHSFCLKSEL;
     if (iVar1 == 0) {
-      uVar4 = CLOCK_GetXtalInClkFreq();
+      pvVar5 = (void *)CLOCK_GetXtalInClkFreq();
     }
     else {
-      iVar1 = DAT_40001660;
+      iVar1 = CLKCTL0_USBHSFCLKSEL;
       if (iVar1 == 1) {
-        uVar4 = CLOCK_GetMainClkFreq();
+        pvVar5 = CLOCK_GetMainClkFreq();
       }
       else {
-        uVar4 = 0;
+        pvVar5 = (void *)0x0;
       }
     }
-    uVar3 = DAT_40001664;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar7 = CLKCTL0_USBHSFCLKDIV;
+    return (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
   case 0xe:
-    uVar4 = DAT_40021700;
-    switch(uVar4 & 7) {
+    uVar7 = CLKCTL1_DMIC0FCLKSEL;
+    switch(uVar7 & 7) {
     case 0:
-      puVar5 = (undefined *)0xf42400;
+      puVar6 = (undefined *)0xf42400;
       break;
     case 1:
-      puVar5 = (undefined *)CLOCK_GetFFroFreq();
+      puVar6 = (undefined *)CLOCK_GetFFroFreq();
       break;
     case 2:
-      puVar5 = (undefined *)CLOCK_GetAudioPllClkFreq();
+      puVar6 = (undefined *)CLOCK_GetAudioPllClkFreq();
       break;
     case 3:
-      puVar5 = DAT_0008892c;
+      puVar6 = DAT_0008892c;
       break;
     case 4:
-      puVar5 = &DAT_000f4240;
+      puVar6 = &DAT_000f4240;
       break;
     case 5:
-      uVar4 = DAT_40001730;
-      if ((uVar4 & 7) == 0) {
-        puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
+      uVar7 = CLKCTL0_WAKECLK32KHZSEL;
+      if ((uVar7 & 7) == 0) {
+        puVar6 = (undefined *)CLOCK_GetOsc32KFreq();
       }
       else {
-        uVar4 = DAT_40001734;
-        puVar5 = (undefined *)(1000000 / ((uVar4 & 0xff) + 1));
+        uVar7 = CLKCTL0_WAKECLK32KHZDIV;
+        puVar6 = (undefined *)(1000000 / ((uVar7 & 0xff) + 1));
       }
       break;
     default:
-      puVar5 = (undefined *)0x0;
+      puVar6 = (undefined *)0x0;
     }
-    uVar4 = DAT_40021704;
-    return (undefined *)((uint)puVar5 / ((uVar4 & 0xff) + 1));
+    uVar7 = CLKCTL1_DMIC0FCLKDIV;
+    return (undefined *)((uint)puVar6 / ((uVar7 & 0xff) + 1));
   case 0xf:
-    uVar4 = CLOCK_GetDspMainClkFreq();
-    puVar5 = &DAT_40021000;
+    pvVar5 = (void *)CLOCK_GetDspMainClkFreq();
+    pdVar9 = &CLKCTL1_BASE;
 LAB_000837d4:
-    return (undefined *)(uVar4 / ((*(uint *)(puVar5 + 0x400) & 0xff) + 1));
+    return (undefined *)((uint)pvVar5 / ((pdVar9[0x100] & 0xff) + 1));
   case 0x10:
-    uVar4 = DAT_400217c0;
-    switch(uVar4 & 7) {
+    uVar7 = CLKCTL1_ACMP0FCLKSEL;
+    switch(uVar7 & 7) {
     case 0:
-      uVar4 = CLOCK_GetMainClkFreq();
+      pvVar5 = CLOCK_GetMainClkFreq();
       break;
     case 1:
-      uVar4 = 16000000;
+      pvVar5 = (void *)0xf42400;
       break;
     case 2:
-      uVar4 = CLOCK_GetFFroFreq();
+      pvVar5 = (void *)CLOCK_GetFFroFreq();
       break;
     case 3:
-      uVar4 = CLOCK_GetAux0PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux0PllClkFreq();
       break;
     case 4:
-      uVar4 = CLOCK_GetAux1PllClkFreq();
+      pvVar5 = (void *)CLOCK_GetAux1PllClkFreq();
       break;
     default:
-      uVar4 = 0;
+      pvVar5 = (void *)0x0;
     }
-    uVar3 = DAT_400217c4;
-    return (undefined *)(uVar4 / ((uVar3 & 0xff) + 1));
+    uVar7 = CLKCTL1_ACMP0FCLKDIV;
+    return (undefined *)((uint)pvVar5 / ((uVar7 & 0xff) + 1));
   case 0x11:
-    uVar6 = 0;
+    uVar7 = 0;
     break;
   case 0x12:
-    uVar6 = 1;
+    uVar7 = 1;
     break;
   case 0x13:
-    uVar6 = 2;
+    uVar7 = 2;
     break;
   case 0x14:
-    uVar6 = 3;
+    uVar7 = 3;
     break;
   case 0x15:
-    uVar6 = 4;
+    uVar7 = 4;
     break;
   case 0x16:
-    uVar6 = 5;
+    uVar7 = 5;
     break;
   case 0x17:
-    uVar6 = 6;
+    uVar7 = 6;
     break;
   case 0x18:
-    uVar6 = 7;
+    uVar7 = 7;
     break;
   case 0x19:
-    uVar6 = 0xe;
+    uVar7 = 0xe;
     break;
   case 0x1a:
-    uVar6 = 0xf;
+    uVar7 = 0xf;
     break;
   default:
     return (undefined *)0x0;
   }
-  puVar5 = (undefined *)CLOCK_GetFlexCommClkFreq(uVar6,param_2,param_3,param_4);
-  return puVar5;
+  puVar6 = (undefined *)CLOCK_GetFlexCommClkFreq(uVar7);
+  return puVar6;
 }
 
 
@@ -1227,18 +1229,18 @@ void CLOCK_SetFRGClock(byte *param_1)
   
   uVar1 = (uint)*param_1;
   if (uVar1 < 8) {
-    *(uint *)(&DAT_40021500 + uVar1 * 0x20) = (uint)param_1[1];
-    *(uint *)(&DAT_40021504 + uVar1 * 0x20) = (uint)*(ushort *)(param_1 + 2);
+    (&CLKCTL1_FLEXCOMM0_FRGCLKSEL)[uVar1 * 8] = (uint)param_1[1];
+    (&CLKCTL1_FLEXCOMM0_FRGCTL)[uVar1 * 8] = (uint)*(ushort *)(param_1 + 2);
     return;
   }
   if (uVar1 == 0xe) {
-    DAT_400216c0 = (uint)param_1[1];
-    DAT_400216c4 = (uint)*(ushort *)(param_1 + 2);
+    CLKCTL1_FRG14CLKSEL = (uint)param_1[1];
+    CLKCTL1_FRG14CTL = (uint)*(ushort *)(param_1 + 2);
     return;
   }
   if (uVar1 == 0xf) {
-    DAT_400216e0 = (uint)param_1[1];
-    DAT_400216e4 = (uint)*(ushort *)(param_1 + 2);
+    CLKCTL1_FRG15CLKSEL = (uint)param_1[1];
+    CLKCTL1_FRG15CTL = (uint)*(ushort *)(param_1 + 2);
   }
   return;
 }
@@ -1252,7 +1254,7 @@ void CLOCK_SetFRGClock(byte *param_1)
 void CLOCK_EnableFfroClk(int param_1)
 
 {
-  uint uVar1;
+  void *pvVar1;
   undefined4 uVar2;
   uint uVar3;
   uint local_20;
@@ -1264,11 +1266,11 @@ void CLOCK_EnableFfroClk(int param_1)
   local_1c = 0;
   local_18 = 0;
   local_14[0] = 0;
-  uVar3 = DAT_40001104;
-  DAT_40001104 = uVar3 | 1;
-  uVar1 = CLOCK_GetMainClkFreq();
-  uVar3 = DAT_40001400;
-  (*(code *)0x13009ff9)(uVar1 / ((uVar3 & 0xff) + 1));
+  uVar3 = CLKCTL0_FFROCTL1;
+  CLKCTL0_FFROCTL1 = uVar3 | 1;
+  pvVar1 = CLOCK_GetMainClkFreq();
+  uVar3 = CLKCTL0_SYSCPUAHBCLKDIV;
+  (*(code *)0x13009ff9)((uint)pvVar1 / ((uVar3 & 0xff) + 1));
   if (param_1 == 0) {
     (*(code *)0x1300a057)(0x30);
     (*(code *)0x1300a057)(0x31,&local_1c);
@@ -1288,9 +1290,9 @@ void CLOCK_EnableFfroClk(int param_1)
   else {
     uVar3 = 0xc0000;
   }
-  DAT_40001100 = (local_1c & 0x3f) << 5 | (local_18 & 0x7f) << 0xb | local_20 & 0x1f | uVar3;
-  uVar3 = DAT_40001104;
-  DAT_40001104 = uVar3 & 0xfffffffe;
+  CLKCTL0_FFROCTL0 = (local_1c & 0x3f) << 5 | (local_18 & 0x7f) << 0xb | local_20 & 0x1f | uVar3;
+  uVar3 = CLKCTL0_FFROCTL1;
+  CLKCTL0_FFROCTL1 = uVar3 & 0xfffffffe;
   SDK_DelayAtLeastUs(local_14[0],300000000);
   return;
 }
@@ -1304,14 +1306,14 @@ void CLOCK_EnableSfroClk(undefined4 param_1)
 
 {
   uint uVar1;
-  uint uVar2;
+  void *pvVar2;
   undefined4 extraout_r2;
   undefined4 local_c;
   
   local_c = 0;
-  uVar2 = CLOCK_GetMainClkFreq();
-  uVar1 = DAT_40001400;
-  (*(code *)0x13009ff9)(uVar2 / ((uVar1 & 0xff) + 1));
+  pvVar2 = CLOCK_GetMainClkFreq();
+  uVar1 = CLKCTL0_SYSCPUAHBCLKDIV;
+  (*(code *)0x13009ff9)((uint)pvVar2 / ((uVar1 & 0xff) + 1));
   (*(code *)0x1300a057)(0xd,&local_c,extraout_r2,0x1300a057,param_1);
   (*(code *)0x1300a047)();
   SDK_DelayAtLeastUs(local_c,300000000);
@@ -1328,56 +1330,56 @@ void CLOCK_InitSysPll(byte *param_1)
 {
   uint uVar1;
   
-  DAT_40002620 = 0x60000;
-  DAT_40001200 = (uint)*param_1;
-  DAT_40001210 = *(undefined4 *)(param_1 + 4);
-  DAT_40001214 = *(undefined4 *)(param_1 + 8);
+  SYSCTL0_PDRUNCFG0_SET = 0x60000;
+  CLKCTL0_SYSPLL0CLKSEL = (uint)*param_1;
+  CLKCTL0_SYSPLL0NUM = *(undefined4 *)(param_1 + 4);
+  CLKCTL0_SYSPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
   case 1:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x110000;
     break;
   case 2:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x120000;
     break;
   case 3:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x130000;
     break;
   case 4:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x140000;
     break;
   case 5:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x150000;
     break;
   case 6:
-    uVar1 = DAT_40001204;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x160000;
     break;
   default:
     goto switchD_00083a22_default;
   }
-  DAT_40001204 = uVar1;
+  CLKCTL0_SYSPLL0CTL0 = uVar1;
 switchD_00083a22_default:
-  uVar1 = DAT_40001204;
-  DAT_40001204 = uVar1 & 0xfffffffd;
-  DAT_40002630 = 0x60000;
-  uVar1 = DAT_4000120c;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xfffffffd;
+  SYSCTL0_PDRUNCFG0_CLR = 0x60000;
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
-  uVar1 = DAT_40001204;
-  DAT_40001204 = uVar1 | 0x2000;
-  uVar1 = DAT_4000120c;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 | 0x2000;
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) / 6,300000000);
-  uVar1 = DAT_40001204;
-  DAT_40001204 = uVar1 & 0xffffdfff;
-  uVar1 = DAT_4000120c;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xffffdfff;
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) / 3,300000000);
   return;
 }
@@ -1394,16 +1396,16 @@ void CLOCK_InitSysPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
-  uVar2 = DAT_40001218;
+  uVar2 = CLKCTL0_SYSPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
-  DAT_40001218 = 0x80 << (uVar1 & 0xff) | uVar2;
-  DAT_40001218 = (param_2 & 0x3f) << (uVar1 & 0xff) | uVar2;
+  CLKCTL0_SYSPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
+  CLKCTL0_SYSPLL0PFD = (param_2 & 0x3f) << (uVar1 & 0xff) | uVar2;
   uVar2 = 0x40 << (uVar1 & 0xff);
   do {
-    uVar1 = DAT_40001218;
+    uVar1 = CLKCTL0_SYSPLL0PFD;
   } while ((uVar1 & uVar2) == 0);
-  uVar1 = DAT_40001218;
-  DAT_40001218 = uVar2 | uVar1;
+  uVar1 = CLKCTL0_SYSPLL0PFD;
+  CLKCTL0_SYSPLL0PFD = uVar2 | uVar1;
   return;
 }
 
@@ -1417,56 +1419,56 @@ void CLOCK_InitAudioPll(byte *param_1)
 {
   uint uVar1;
   
-  DAT_40002620 = 0x180000;
-  DAT_40021200 = (uint)*param_1;
-  DAT_40021210 = *(undefined4 *)(param_1 + 4);
-  DAT_40021214 = *(undefined4 *)(param_1 + 8);
+  SYSCTL0_PDRUNCFG0_SET = 0x180000;
+  CLKCTL1_AUDIOPLL0CLKSEL = (uint)*param_1;
+  CLKCTL1_AUDIOPLL0NUM = *(undefined4 *)(param_1 + 4);
+  CLKCTL1_AUDIOPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
   case 1:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x110000;
     break;
   case 2:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x120000;
     break;
   case 3:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x130000;
     break;
   case 4:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x140000;
     break;
   case 5:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x150000;
     break;
   case 6:
-    uVar1 = DAT_40021204;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x160000;
     break;
   default:
     goto switchD_00083b72_default;
   }
-  DAT_40021204 = uVar1;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1;
 switchD_00083b72_default:
-  uVar1 = DAT_40021204;
-  DAT_40021204 = uVar1 & 0xfffffffd;
-  DAT_40002630 = 0x180000;
-  uVar1 = DAT_4002120c;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xfffffffd;
+  SYSCTL0_PDRUNCFG0_CLR = 0x180000;
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
-  uVar1 = DAT_40021204;
-  DAT_40021204 = uVar1 | 0x2000;
-  uVar1 = DAT_4002120c;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 | 0x2000;
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) / 6,300000000);
-  uVar1 = DAT_40021204;
-  DAT_40021204 = uVar1 & 0xffffdfff;
-  uVar1 = DAT_4002120c;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xffffdfff;
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) / 3,300000000);
   return;
 }
@@ -1483,16 +1485,16 @@ void CLOCK_InitAudioPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
-  uVar2 = DAT_40021218;
+  uVar2 = CLKCTL1_AUDIOPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
-  DAT_40021218 = 0x80 << (uVar1 & 0xff) | uVar2;
-  DAT_40021218 = (param_2 & 0x3f) << (uVar1 & 0xff) | uVar2;
+  CLKCTL1_AUDIOPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
+  CLKCTL1_AUDIOPLL0PFD = (param_2 & 0x3f) << (uVar1 & 0xff) | uVar2;
   uVar2 = 0x40 << (uVar1 & 0xff);
   do {
-    uVar1 = DAT_40021218;
+    uVar1 = CLKCTL1_AUDIOPLL0PFD;
   } while ((uVar1 & uVar2) == 0);
-  uVar1 = DAT_40021218;
-  DAT_40021218 = uVar2 | uVar1;
+  uVar1 = CLKCTL1_AUDIOPLL0PFD;
+  CLKCTL1_AUDIOPLL0PFD = uVar2 | uVar1;
   return;
 }
 
@@ -1501,16 +1503,16 @@ void CLOCK_InitAudioPfd(int param_1,uint param_2)
 
 /* SYSOSCCTL0 = mode, SYSOSCBYPASS = 0, delay [inference] */
 
-void CLOCK_EnableSysOscClk(int param_1,uint param_2,undefined4 param_3)
+void CLOCK_EnableSysOscClk(int param_1,uint param_2,uint param_3)
 
 {
   if (param_1 != 0) {
-    DAT_40001160 = param_2;
-    DAT_40001168 = 0;
+    CLKCTL0_SYSOSCCTL0 = param_2;
+    CLKCTL0_SYSOSCBYPASS = 0;
     SDK_DelayAtLeastUs(param_3,300000000);
     return;
   }
-  DAT_40001160 = param_2 | 2;
+  CLKCTL0_SYSOSCCTL0 = param_2 | 2;
   return;
 }
 
@@ -1519,15 +1521,15 @@ void CLOCK_EnableSysOscClk(int param_1,uint param_2,undefined4 param_3)
 
 /* Busy loop: us x 300 MHz / 4e6 iterations [inference] */
 
-void SDK_DelayAtLeastUs(uint param_1,uint param_2,undefined4 param_3,undefined4 param_4)
+void SDK_DelayAtLeastUs(uint param_1,uint param_2)
 
 {
   int iVar1;
+  ulonglong uVar2;
   
   if (param_1 != 0) {
-    iVar1 = __aeabi_uldivmod((int)((ulonglong)param_1 * (ulonglong)param_2),
-                             (int)((ulonglong)param_1 * (ulonglong)param_2 >> 0x20),&DAT_003d0900,0,
-                             param_4);
+    uVar2 = __aeabi_uldivmod((ulonglong)param_1 * (ulonglong)param_2,4000000);
+    iVar1 = (int)uVar2;
     do {
       iVar1 = iVar1 + -1;
     } while (iVar1 != 0);
@@ -1540,15 +1542,15 @@ void SDK_DelayAtLeastUs(uint param_1,uint param_2,undefined4 param_3,undefined4 
 
 /* 0x40104000 -> 0, 0x40105000 -> 1 [fact] */
 
-undefined4 DMA_GetInstance(undefined *param_1)
+uint DMA_GetInstance(void *param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   
-  if (param_1 == &DAT_40104000) {
+  if (param_1 == &DMA0_CTRL) {
     return 0;
   }
-  if (param_1 == &DAT_40105000) {
+  if (param_1 == &DMA1_CTRL) {
     uVar1 = 1;
   }
   else {
@@ -1563,52 +1565,50 @@ undefined4 DMA_GetInstance(undefined *param_1)
 /* NEW. fsl_dma.c channel interrupt dispatcher (33 channels); unused (DMA IRQs never enabled by the
    M33) [inference] */
 
-void DMA_IRQHandle(void)
+void DMA_IRQHandle(void *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  int iVar1;
-  uint uVar2;
-  undefined4 in_r3;
-  undefined4 *puVar3;
-  uint uVar4;
-  int *piVar5;
-  int iVar6;
-  code *pcVar7;
+  uint uVar1;
+  undefined4 *puVar2;
+  uint uVar3;
+  int *piVar4;
+  int iVar5;
+  code *pcVar6;
   
-  iVar1 = DMA_GetInstance();
-  iVar6 = 0;
-  piVar5 = (int *)(&DAT_00088948 + iVar1 * 0x84);
+  uVar1 = DMA_GetInstance(param_1);
+  iVar5 = 0;
+  piVar4 = (int *)(&DAT_00088948 + uVar1 * 0x84);
   do {
-    puVar3 = (undefined4 *)*piVar5;
-    if (puVar3 != (undefined4 *)0x0) {
-      uVar2 = (uint)(*(byte *)(puVar3 + 3) >> 5);
-      uVar4 = *(byte *)(puVar3 + 3) & 0x1f;
-      if ((int)((*(uint *)(puVar3[2] + 0x58 + uVar2 * 4) >> uVar4) << 0x1f) < 0) {
-        pcVar7 = (code *)*puVar3;
-        *(int *)(puVar3[2] + 0x58 + uVar2 * 4) = 1 << uVar4;
-        if (pcVar7 != (code *)0x0) {
-          (*pcVar7)(puVar3,puVar3[1],1,0,in_r3);
+    puVar2 = (undefined4 *)*piVar4;
+    if (puVar2 != (undefined4 *)0x0) {
+      uVar1 = (uint)(*(byte *)(puVar2 + 3) >> 5);
+      uVar3 = *(byte *)(puVar2 + 3) & 0x1f;
+      if ((int)((*(uint *)(puVar2[2] + 0x58 + uVar1 * 4) >> uVar3) << 0x1f) < 0) {
+        pcVar6 = (code *)*puVar2;
+        *(int *)(puVar2[2] + 0x58 + uVar1 * 4) = 1 << uVar3;
+        if (pcVar6 != (code *)0x0) {
+          (*pcVar6)(puVar2,puVar2[1],1,0,param_4);
         }
       }
-      if ((int)((*(uint *)(puVar3[2] + 0x60 + (uint)(*(byte *)(puVar3 + 3) >> 5) * 4) >> uVar4) <<
+      if ((int)((*(uint *)(puVar2[2] + 0x60 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) >> uVar3) <<
                0x1f) < 0) {
-        pcVar7 = (code *)*puVar3;
-        *(int *)(puVar3[2] + 0x60 + (uint)(*(byte *)(puVar3 + 3) >> 5) * 4) = 1 << uVar4;
-        if (pcVar7 != (code *)0x0) {
-          (*pcVar7)(puVar3,puVar3[1],1);
+        pcVar6 = (code *)*puVar2;
+        *(int *)(puVar2[2] + 0x60 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) = 1 << uVar3;
+        if (pcVar6 != (code *)0x0) {
+          (*pcVar6)(puVar2,puVar2[1],1);
         }
       }
-      if ((int)((*(uint *)(puVar3[2] + 0x40 + (uint)(*(byte *)(puVar3 + 3) >> 5) * 4) >> uVar4) <<
+      if ((int)((*(uint *)(puVar2[2] + 0x40 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) >> uVar3) <<
                0x1f) < 0) {
-        *(int *)(puVar3[2] + 0x40 + (uint)(*(byte *)(puVar3 + 3) >> 5) * 4) = 1 << uVar4;
-        if ((code *)*puVar3 != (code *)0x0) {
-          (*(code *)*puVar3)(puVar3,puVar3[1],0,2);
+        *(int *)(puVar2[2] + 0x40 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) = 1 << uVar3;
+        if ((code *)*puVar2 != (code *)0x0) {
+          (*(code *)*puVar2)(puVar2,puVar2[1],0,2);
         }
       }
     }
-    iVar6 = iVar6 + 1;
-    piVar5 = piVar5 + 1;
-  } while (iVar6 != 0x21);
+    iVar5 = iVar5 + 1;
+    piVar4 = piVar4 + 1;
+  } while (iVar5 != 0x21);
   return;
 }
 
@@ -1620,7 +1620,7 @@ void DMA_IRQHandle(void)
 void DMA0_DriverIRQHandler(void)
 
 {
-  DMA_IRQHandle(&DAT_40104000);
+  DMA_IRQHandle(&DMA0_CTRL);
   return;
 }
 
@@ -1632,7 +1632,7 @@ void DMA0_DriverIRQHandler(void)
 void DMA1_DriverIRQHandler(void)
 
 {
-  DMA_IRQHandle(&DAT_40105000);
+  DMA_IRQHandle(&DMA1_CTRL);
   return;
 }
 
@@ -1683,21 +1683,21 @@ void DSP_Init(void)
   int iVar1;
   uint uVar2;
   
-  uVar2 = DAT_40002614;
+  uVar2 = SYSCTL0_PDRUNCFG1;
   if ((uVar2 & 0xf000000) != 0) {
-    DAT_40002634 = 0x4000000;
-    DAT_40002634 = 0x8000000;
-    DAT_40002634 = 0x1000000;
-    DAT_40002634 = 0x2000000;
+    SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
+    SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
+    SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
+    SYSCTL0_PDRUNCFG1_CLR = 0x2000000;
     POWER_ApplyPD();
     RESET_ClearPeripheralReset(1);
     return;
   }
-  iVar1 = DAT_40000010;
+  iVar1 = RSTCTL0_PRSTCTL0;
   if (iVar1 << 0x1e < 0) {
-    DAT_40000070 = 2;
+    RSTCTL0_PRSTCTL0_CLR = 2;
     do {
-      uVar2 = DAT_40000010;
+      uVar2 = RSTCTL0_PRSTCTL0;
     } while ((~uVar2 & 2) == 0);
     return;
   }
@@ -1709,22 +1709,22 @@ void DSP_Init(void)
 
 /* Search of 10 FLEXCOMM bases at 0x879D0 [fact] */
 
-void FLEXCOMM_GetInstance(int param_1)
+uint FLEXCOMM_GetInstance(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   int *piVar2;
   
-  iVar1 = 0;
+  uVar1 = 0;
   piVar2 = &DAT_000879d0;
   do {
     if (*piVar2 == param_1) {
-      return;
+      return uVar1;
     }
-    iVar1 = iVar1 + 1;
+    uVar1 = uVar1 + 1;
     piVar2 = piVar2 + 1;
-  } while (iVar1 != 10);
-  return;
+  } while (uVar1 != 10);
+  return 10;
 }
 
 
@@ -1732,71 +1732,70 @@ void FLEXCOMM_GetInstance(int param_1)
 
 /* Clock enable + reset release from table 0x87B28, PSELID (base+0xFF8) [inference] */
 
-undefined4 FLEXCOMM_Init(int param_1,uint param_2)
+uint FLEXCOMM_Init(int param_1,uint param_2)
 
 {
   ushort uVar1;
-  int iVar2;
-  undefined4 uVar3;
-  undefined *puVar4;
-  uint uVar5;
+  uint uVar2;
+  dword *pdVar3;
+  uint uVar4;
   
-  iVar2 = FLEXCOMM_GetInstance();
-  uVar1 = *(ushort *)(&DAT_00087b28 + iVar2 * 2);
-  uVar5 = (uint)uVar1;
+  uVar2 = FLEXCOMM_GetInstance(param_1);
+  uVar1 = *(ushort *)(&DAT_00087b28 + uVar2 * 2);
+  uVar4 = (uint)uVar1;
   switch(uVar1 >> 8) {
   case 0:
-    puVar4 = &DAT_40001000;
+    pdVar3 = &CLKCTL0_BASE;
     break;
   case 1:
-    uVar5 = (uint)(byte)uVar1;
-    puVar4 = &DAT_40001000;
+    uVar4 = (uint)(byte)uVar1;
+    pdVar3 = &CLKCTL0_BASE;
     goto LAB_00083f2a;
   case 2:
-    puVar4 = &DAT_40001000;
+    pdVar3 = &CLKCTL0_BASE;
     goto LAB_00083f38;
   case 3:
-    puVar4 = &DAT_40021000;
+    pdVar3 = &CLKCTL1_BASE;
     break;
   case 4:
-    uVar5 = uVar5 & 0xff;
-    puVar4 = &DAT_40021000;
+    uVar4 = uVar4 & 0xff;
+    pdVar3 = &CLKCTL1_BASE;
 LAB_00083f2a:
-    *(int *)(puVar4 + 0x44) = 1 << uVar5;
+    pdVar3[0x11] = 1 << uVar4;
     goto switchD_00083ed2_default;
   case 5:
-    puVar4 = &DAT_40021000;
+    pdVar3 = &CLKCTL1_BASE;
 LAB_00083f38:
-    *(int *)(puVar4 + 0x48) = 1 << (uVar5 & 0xff);
+    pdVar3[0x12] = 1 << (uVar4 & 0xff);
   default:
     goto switchD_00083ed2_default;
   }
-  *(int *)(puVar4 + 0x40) = 1 << (uVar5 & 0xff);
+  pdVar3[0x10] = 1 << (uVar4 & 0xff);
 switchD_00083ed2_default:
-  RESET_ClearPeripheralReset(*(undefined2 *)(&DAT_00087b28 + iVar2 * 2));
+  RESET_ClearPeripheralReset((uint)*(ushort *)(&DAT_00087b28 + uVar2 * 2));
   if (param_2 == 0) {
 LAB_00083f04:
     if ((*(int *)(param_1 + 0xff8) << 0x1c < 0) && ((*(uint *)(param_1 + 0xff8) & 7) != param_2)) {
-      uVar3 = 1;
+      uVar4 = 1;
     }
     else {
-      uVar3 = 0;
+      uVar4 = 0;
       *(uint *)(param_1 + 0xff8) = param_2;
     }
   }
   else {
     if (param_2 < 5) {
-      uVar5 = *(uint *)(param_1 + 0xff8) >> (param_2 + 3 & 0xff) & 1;
+      uVar4 = *(uint *)(param_1 + 0xff8) >> (param_2 + 3 & 0xff) & 1;
 LAB_00083f02:
-      if (uVar5 != 0) goto LAB_00083f04;
+      if (uVar4 != 0) goto LAB_00083f04;
     }
     else if (param_2 == 5) {
-      uVar5 = *(uint *)(param_1 + 0xff8) & 0x80;
+      uVar4 = *(uint *)(param_1 + 0xff8) & 0x80;
       goto LAB_00083f02;
     }
-    uVar3 = 3;
+    uVar4 = 3;
   }
-  return uVar3;
+  return uVar4;
 }
 
 
@@ -1807,13 +1806,13 @@ LAB_00083f02:
 void FLEXCOMM1_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40107000);
+  uVar1 = FLEXCOMM_GetInstance(0x40107000);
                     /* WARNING: Could not recover jumptable at 0x00083fa6. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1825,13 +1824,13 @@ void FLEXCOMM1_DriverIRQHandler(void)
 void FLEXCOMM2_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40108000);
+  uVar1 = FLEXCOMM_GetInstance(0x40108000);
                     /* WARNING: Could not recover jumptable at 0x00083fd6. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1843,13 +1842,13 @@ void FLEXCOMM2_DriverIRQHandler(void)
 void FLEXCOMM3_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40109000);
+  uVar1 = FLEXCOMM_GetInstance(0x40109000);
                     /* WARNING: Could not recover jumptable at 0x00084006. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1861,13 +1860,13 @@ void FLEXCOMM3_DriverIRQHandler(void)
 void FLEXCOMM4_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40122000);
+  uVar1 = FLEXCOMM_GetInstance(0x40122000);
                     /* WARNING: Could not recover jumptable at 0x00084036. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1879,13 +1878,13 @@ void FLEXCOMM4_DriverIRQHandler(void)
 void FLEXCOMM5_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40123000);
+  uVar1 = FLEXCOMM_GetInstance(0x40123000);
                     /* WARNING: Could not recover jumptable at 0x00084066. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1897,13 +1896,13 @@ void FLEXCOMM5_DriverIRQHandler(void)
 void FLEXCOMM6_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40124000);
+  uVar1 = FLEXCOMM_GetInstance(0x40124000);
                     /* WARNING: Could not recover jumptable at 0x00084096. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1915,13 +1914,13 @@ void FLEXCOMM6_DriverIRQHandler(void)
 void FLEXCOMM7_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40125000);
+  uVar1 = FLEXCOMM_GetInstance(0x40125000);
                     /* WARNING: Could not recover jumptable at 0x000840c6. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1933,13 +1932,13 @@ void FLEXCOMM7_DriverIRQHandler(void)
 void FLEXCOMM14_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40126000);
+  uVar1 = FLEXCOMM_GetInstance(0x40126000);
                     /* WARNING: Could not recover jumptable at 0x000840f6. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1951,13 +1950,13 @@ void FLEXCOMM14_DriverIRQHandler(void)
 void FLEXCOMM15_DriverIRQHandler(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = FLEXCOMM_GetInstance(&DAT_40127000);
+  uVar1 = FLEXCOMM_GetInstance(0x40127000);
                     /* WARNING: Could not recover jumptable at 0x00084126. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + iVar1 * 4))
-            ((&DAT_000879d0)[iVar1],*(undefined4 *)(&DAT_00088a58 + iVar1 * 4));
+  (**(code **)(&DAT_00088a80 + uVar1 * 4))
+            ((&DAT_000879d0)[uVar1],*(undefined4 *)(&DAT_00088a58 + uVar1 * 4));
   return;
 }
 
@@ -1971,7 +1970,7 @@ void FLEXSPI_DriverIRQHandler(void)
 {
                     /* WARNING: Could not recover jumptable at 0x00084142. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (*DAT_00088aac)(&DAT_40134000,DAT_00088aa8);
+  (*DAT_00088aac)(&FLEXSPI_MCR0,DAT_00088aa8);
   return;
 }
 

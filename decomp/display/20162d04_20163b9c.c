@@ -1,5 +1,19 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== cpp_task_thunk @ 20162d04 (12 bytes)
+
+/* task entry for C++ objects: exinf = object, calls obj->vtbl[0] */
+
+void cpp_task_thunk(void *param_1)
+
+{
+                    /* WARNING: Could not recover jumptable at 0x20162d0c. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  (*(code *)**(undefined4 **)param_1)();
+  return;
+}
+
+
 // ===== FUN_20162d10 @ 20162d10 (40 bytes)
 
 void FUN_20162d10(void)
@@ -14,7 +28,7 @@ void FUN_20162d10(void)
   uStack_14 = 1;
   uStack_10 = 0;
   uStack_c = 0;
-  FUN_2014f67c(0,&local_18);
+  itron_acre_mbx(0,&local_18);
   return;
 }
 
@@ -24,7 +38,7 @@ void FUN_20162d10(void)
 void FUN_20162d3c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  FUN_20151520(param_2,param_3);
+  itron_snd_mbx(param_2,param_3);
   return;
 }
 
@@ -114,19 +128,18 @@ void scif_txi_isr(int param_1)
 // ===== uart_obj_init @ 20162fac (104 bytes)
 
 undefined4
-uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-             undefined4 param_5)
+uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5)
 
 {
-  int iVar1;
+  uint uVar1;
   
   if (*(int *)(param_1 + 4) == 0) {
     *(undefined4 *)(param_1 + 4) = param_2;
     *(undefined4 *)(param_1 + 0x818) = param_5;
     *(undefined4 *)(param_1 + 0x810) = param_3;
-    *(undefined4 *)(param_1 + 0x814) = param_4;
-    iVar1 = itron_acre_isr(0,param_4);
-    if ((iVar1 < 1) || (iVar1 = itron_acre_isr(0,*(undefined4 *)(param_1 + 0x810)), iVar1 < 1)) {
+    *(int *)(param_1 + 0x814) = param_4;
+    uVar1 = itron_acre_isr(0,param_4);
+    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,*(int *)(param_1 + 0x810)), (int)uVar1 < 1)) {
       return 0xffffffff;
     }
   }
@@ -176,17 +189,12 @@ int scif_read(int param_1,undefined1 *param_2,int param_3)
 
 /* scif_open + enable RXI/TXI in the GIC */
 
-void scif_start(int param_1)
+void scif_start(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 {
-  undefined4 extraout_r1;
-  undefined4 extraout_r2;
-  undefined4 in_stack_00000000;
-  
-  scif_open(param_1);
+  scif_open(param_1,param_2,param_3,param_4,param_5);
   gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8),extraout_r1,extraout_r2,
-                 in_stack_00000000);
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
   return;
 }
 
@@ -217,7 +225,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
     uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
-    cVar1 = FUN_20156260(64000000,param_2 << 5);
+    cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
     cVar1 = cVar1 + -1;
   }
   else {
@@ -421,7 +429,7 @@ void FUN_201635b8(int param_1,undefined1 *param_2)
 void FUN_201635e4(int param_1,undefined4 param_2)
 
 {
-  FUN_20154a00(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
+  sprintf_veneer(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
   return;
 }
 
@@ -430,11 +438,11 @@ void FUN_201635e4(int param_1,undefined4 param_2)
 
 /* prefix + 4 chars + ".sfl", case-insensitive, exact length */
 
-undefined4 fwname_pattern_match(int *param_1,int param_2,int param_3)
+uint fwname_pattern_match(int *param_1,int param_2,int param_3)
 
 {
   int iVar1;
-  undefined4 uVar2;
+  uint uVar2;
   
   if (((*param_1 == param_3) && (iVar1 = FUN_2014e250(param_1[1],param_2,param_1[3]), iVar1 == 0))
      && (iVar1 = FUN_2014e250(param_1[2],param_1[4] + param_2,param_1[5]), iVar1 == 0)) {
@@ -682,7 +690,7 @@ uint FUN_20163808(int param_1,uint param_2)
 void FUN_2016385a(void)
 
 {
-  FUN_20155fde(0);
+  __cxa_pure_virtual(0);
   return;
 }
 
@@ -701,13 +709,13 @@ undefined4 FUN_20163864(int param_1)
 
 // ===== FUN_20163874 @ 20163874 (34 bytes)
 
-undefined4 FUN_20163874(undefined4 param_1,char *param_2)
+undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  if (((param_2 != (char *)0x0) && (*param_2 != '\0')) && (iVar1 = strcmp(0x204286fc), iVar1 != 0))
-  {
+  if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
+     (uVar1 = strcmp((uint *)(BYTE_ARRAY_204286f8 + 4),param_2), uVar1 != 0)) {
     return 0;
   }
   return 0x20428704;
@@ -716,13 +724,13 @@ undefined4 FUN_20163874(undefined4 param_1,char *param_2)
 
 // ===== FUN_201638a0 @ 201638a0 (34 bytes)
 
-undefined4 FUN_201638a0(undefined4 param_1,char *param_2)
+undefined4 FUN_201638a0(undefined4 param_1,uint *param_2)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  if (((param_2 != (char *)0x0) && (*param_2 != '\0')) && (iVar1 = strcmp(0x2042880c), iVar1 != 0))
-  {
+  if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
+     (uVar1 = strcmp((uint *)(BYTE_ARRAY_204286f8 + 0x114),param_2), uVar1 != 0)) {
     return 0;
   }
   return 0x20428814;
@@ -800,7 +808,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   undefined4 uVar9;
   
   uVar9 = param_4;
-  uVar8 = FUN_20164d54(param_6);
+  uVar8 = __aeabi_i2d(param_6);
   FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
   iVar2 = FUN_20164c90();
   uVar6 = (uint)*param_5;
@@ -819,7 +827,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   iVar4 = 0;
   if (0 < param_6) {
     do {
-      uVar8 = FUN_20164d54(iVar4);
+      uVar8 = __aeabi_i2d(iVar4);
       FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
       iVar5 = FUN_20164c90();
       iVar1 = iVar4 * uVar6;
@@ -971,7 +979,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   undefined4 uVar9;
   
   uVar9 = param_4;
-  uVar8 = FUN_20164d54(param_6);
+  uVar8 = __aeabi_i2d(param_6);
   FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
   iVar2 = FUN_20164c90();
   uVar6 = (uint)*param_5;
@@ -990,7 +998,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   iVar4 = 0;
   if (0 < param_6) {
     do {
-      uVar8 = FUN_20164d54(iVar4);
+      uVar8 = __aeabi_i2d(iVar4);
       FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
       iVar5 = FUN_20164c90();
       iVar1 = iVar4 * uVar6;
@@ -1006,37 +1014,6 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
       *(undefined2 *)((int)param_1 + (param_7 - iVar4) * 2 + iVar3) =
            *(undefined2 *)(iVar7 + (param_7 - (param_6 + -1) * uVar6) * 2);
     } while (iVar2 < param_6);
-  }
-  return;
-}
-
-
-// ===== FUN_20163ca4 @ 20163ca4 (160 bytes)
-
-void FUN_20163ca4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 ushort *param_5)
-
-{
-  int iVar1;
-  int iVar2;
-  uint uVar3;
-  
-  iVar2 = 0;
-  if (*param_5 != 0) {
-    do {
-      uVar3 = (uint)param_5[1];
-      iVar1 = 0;
-      if (uVar3 != 0) {
-        do {
-          if (*(short *)(*(int *)(param_5 + 2) + iVar2 * 2 + (uint)*param_5 * iVar1 * 2) != 0) {
-            FUN_20163b9c(param_1,iVar1,param_3,param_4,param_5,uVar3 - iVar1,iVar2);
-            break;
-          }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < (int)uVar3);
-      }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < (int)(uint)*param_5);
   }
   return;
 }

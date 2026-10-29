@@ -1,5 +1,47 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_20156860 @ 20156860 (12 bytes)
+
+code * FUN_20156860(undefined4 *param_1,undefined4 param_2,int *param_3,undefined4 param_4)
+
+{
+  uint uVar1;
+  undefined4 unaff_r4;
+  undefined4 unaff_r5;
+  uint uVar2;
+  undefined4 unaff_r6;
+  undefined4 unaff_r7;
+  undefined4 unaff_r8;
+  
+  param_1[-1] = FUN_201509f4;
+  param_1[-2] = unaff_r8;
+  param_1[-3] = unaff_r7;
+  param_1[-4] = unaff_r6;
+  param_1[-5] = unaff_r5;
+  param_1[-6] = unaff_r4;
+  uVar2 = *(uint *)(param_3[6] + 8);
+  param_1[0xc] = param_1 + 0x12;
+  *param_1 = param_2;
+  uVar1 = DAT_208003ac;
+  if ((uVar2 & 1) != 0) {
+    uVar1 = DAT_208003ac | 0x20;
+  }
+  param_1[0xf] = uVar1;
+  uVar1 = FUN_201568b8();
+  param_1[0xf] = uVar1 | param_1[0xf];
+  param_1[0xd] = itron_ext_tsk;
+  param_1[0x11] = uVar2;
+  *param_3 = (int)param_1;
+  *(undefined1 *)(param_3 + 2) = 0;
+  *(undefined1 *)((int)param_3 + 9) = 0;
+  param_3[8] = 0;
+  *(undefined1 *)((int)param_3 + 5) = 0x10;
+  FUN_201538d4(&DAT_208dc18c + *(char *)((int)param_3 + 0x27),param_3,param_4);
+  software_interrupt(0);
+  return FUN_2015677c;
+}
+
+
 // ===== FUN_2015686c @ 2015686c (12 bytes)
 
 code * FUN_2015686c(void)
@@ -669,9 +711,11 @@ ulonglong FUN_20156ef2(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20157138 @ 20157138 (20 bytes)
+// ===== reg_rmw8 @ 20157138 (20 bytes)
 
-void FUN_20157138(byte *param_1,int param_2,uint param_3,byte param_4)
+/* (reg, val, shift, mask): *reg = *reg & ~mask | val << shift, 8-bit [fact] */
+
+void reg_rmw8(byte *param_1,int param_2,uint param_3,byte param_4)
 
 {
   *param_1 = *param_1 & ~param_4 | (byte)(param_2 << (param_3 & 0xff));
@@ -679,9 +723,11 @@ void FUN_20157138(byte *param_1,int param_2,uint param_3,byte param_4)
 }
 
 
-// ===== FUN_2015714c @ 2015714c (20 bytes)
+// ===== reg_rmw16 @ 2015714c (20 bytes)
 
-void FUN_2015714c(ushort *param_1,int param_2,uint param_3,ushort param_4)
+/* 16-bit read-modify-write, same arguments (spi-links.md) [fact] */
+
+void reg_rmw16(ushort *param_1,int param_2,uint param_3,ushort param_4)
 
 {
   *param_1 = *param_1 & ~param_4 | (ushort)(param_2 << (param_3 & 0xff));
@@ -689,9 +735,11 @@ void FUN_2015714c(ushort *param_1,int param_2,uint param_3,ushort param_4)
 }
 
 
-// ===== FUN_20157160 @ 20157160 (20 bytes)
+// ===== reg_rmw32 @ 20157160 (20 bytes)
 
-void FUN_20157160(uint *param_1,int param_2,uint param_3,uint param_4)
+/* 32-bit read-modify-write, same arguments [fact] */
+
+void reg_rmw32(uint *param_1,int param_2,uint param_3,uint param_4)
 
 {
   *param_1 = *param_1 & ~param_4 | param_2 << (param_3 & 0xff);
@@ -699,18 +747,22 @@ void FUN_20157160(uint *param_1,int param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20157174 @ 20157174 (16 bytes)
+// ===== reg_read8 @ 20157174 (16 bytes)
 
-uint FUN_20157174(byte *param_1,uint param_2,uint param_3)
+/* (reg, shift, mask): (*reg & mask) >> shift, 8-bit [fact] */
+
+byte reg_read8(byte *param_1,uint param_2,uint param_3)
 
 {
-  return (*param_1 & param_3) >> (param_2 & 0xff);
+  return (byte)((*param_1 & param_3) >> (param_2 & 0xff));
 }
 
 
-// ===== FUN_20157184 @ 20157184 (16 bytes)
+// ===== reg_read16 @ 20157184 (16 bytes)
 
-uint FUN_20157184(ushort *param_1,uint param_2,uint param_3)
+/* 16-bit field read (spi-links.md) [fact] */
+
+uint reg_read16(ushort *param_1,uint param_2,uint param_3)
 
 {
   return (*param_1 & param_3) >> (param_2 & 0xff);
@@ -731,7 +783,7 @@ uint FUN_20157194(uint *param_1,uint param_2,uint param_3)
 void FUN_201571a4(undefined4 *param_1)
 
 {
-  FUN_20151c3c(*param_1,0xffffffff);
+  itron_tloc_mtx(*param_1,0xffffffff);
   return;
 }
 
@@ -741,7 +793,7 @@ void FUN_201571a4(undefined4 *param_1)
 void FUN_201571b0(undefined4 *param_1)
 
 {
-  FUN_20152df4(*param_1);
+  itron_unl_mtx(*param_1);
   return;
 }
 
@@ -774,7 +826,7 @@ undefined4 FUN_201571d4(undefined4 param_1)
 void FUN_201571e8(int param_1)
 
 {
-  memclr(param_1 + 0xb60,0x13178);
+  __aeabi_memclr4(param_1 + 0xb60,0x13178);
   FUN_2016437c(param_1 + 0x13cd8);
   return;
 }
@@ -856,6 +908,8 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
   uint uVar2;
   int iVar3;
   uint uVar4;
+  uint n;
+  ulonglong uVar5;
   
   iVar3 = 0;
   do {
@@ -863,13 +917,13 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
     iVar3 = iVar3 + 1;
   } while (iVar3 < 0x100);
   uVar4 = (uint)*param_3;
-  param_2 = param_2 * 10000;
+  n = param_2 * 10000;
   uVar2 = (uint)param_3[1];
   if (uVar4 <= uVar2) {
     do {
       bVar1 = *param_3;
-      iVar3 = __aeabi_uidivmod(param_2,(uVar2 - bVar1) + 1);
-      iVar3 = iVar3 * ((uVar4 - bVar1) + 1) + 0x26ac;
+      uVar5 = __aeabi_idivmod(n,(uVar2 - bVar1) + 1);
+      iVar3 = (int)uVar5 * ((uVar4 - bVar1) + 1) + 0x26ac;
       *(char *)(param_1 + uVar4) =
            ((char)(iVar3 / 10000) + (char)(iVar3 >> 0x1f)) -
            (char)((longlong)iVar3 * 0x68db8bad >> 0x3f);
@@ -881,8 +935,8 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
   if (uVar2 < 0x100) {
     do {
       *(char *)(param_1 + uVar2) =
-           ((char)(param_2 / 10000) + (char)(param_2 >> 0x1f)) -
-           (char)((longlong)param_2 * 0x68db8bad >> 0x3f);
+           ((char)((int)n / 10000) + (char)((int)n >> 0x1f)) -
+           (char)((longlong)(int)n * 0x68db8bad >> 0x3f);
       uVar2 = uVar2 + 1;
     } while ((int)uVar2 < 0x100);
   }
@@ -896,13 +950,13 @@ void FUN_201576f4(int param_1,int param_2)
 
 {
   if (param_2 == 0) {
-    memclr(param_1 + 0x1b130,0x33f40);
+    __aeabi_memclr4(param_1 + 0x1b130,0x33f40);
     FUN_201643a4(param_1 + 0x82fb4);
     DAT_20450280 = 0;
   }
   else {
     if (param_2 != 1) {
-      memclr(param_1 + 0x1b130,0x67e80);
+      __aeabi_memclr4(param_1 + 0x1b130,0x67e80);
       FUN_201643a4(param_1 + 0x82fb4);
       FUN_201643a4(param_1 + 0x82fb0);
       return;
@@ -918,12 +972,12 @@ void FUN_201576f4(int param_1,int param_2)
 void FUN_20157778(int param_1)
 
 {
-  FUN_2015525c(param_1 + 0x9c7f,0x352,0xff);
-  FUN_2015525c(param_1 + 0x9fd1,0x352,0xff);
-  memclr(param_1 + 0x10abc,0x6798);
-  FUN_20155274(param_1 + 0xa323,24000);
-  memclr(param_1 + 0x17258,0x3ed4);
-  FUN_201552b8(param_1 + 0x100e4,0x9d8);
+  __aeabi_memset(param_1 + 0x9c7f,0x352,0xff);
+  __aeabi_memset(param_1 + 0x9fd1,0x352,0xff);
+  __aeabi_memclr4(param_1 + 0x10abc,0x6798);
+  __aeabi_memclr(param_1 + 0xa323,24000);
+  __aeabi_memclr4(param_1 + 0x17258,0x3ed4);
+  __aeabi_memclr4_veneer(param_1 + 0x100e4,0x9d8);
   return;
 }
 
@@ -1176,7 +1230,7 @@ void FUN_20158618(int param_1)
 {
   *(undefined2 *)(param_1 + 4) = 0;
   *(undefined2 *)(param_1 + 6) = 0;
-  FUN_201552b8(param_1 + 8,0x80);
+  __aeabi_memclr4_veneer(param_1 + 8,0x80);
   return;
 }
 
@@ -1185,11 +1239,13 @@ void FUN_20158618(int param_1)
 
 /* gets a free 0x408-byte buffer */
 
-void mainlink_tx_alloc(int param_1)
+uint mainlink_tx_alloc(int param_1)
 
 {
-  FUN_201644ac(param_1 + 0x811c);
-  return;
+  uint uVar1;
+  
+  uVar1 = FUN_201644ac(param_1 + 0x811c);
+  return uVar1;
 }
 
 
@@ -1197,14 +1253,14 @@ void mainlink_tx_alloc(int param_1)
 
 /* 32 x 0x408 B buffer pool + mailbox */
 
-void mainlink_tx_init(int param_1,undefined4 param_2)
+void mainlink_tx_init(int param_1,uint param_2)
 
 {
   undefined4 uVar1;
   uint uVar2;
   int iVar3;
   
-  *(undefined4 *)(param_1 + 0x18) = param_2;
+  *(uint *)(param_1 + 0x18) = param_2;
   FUN_20164460();
   uVar2 = 0;
   do {
@@ -1240,10 +1296,10 @@ void task_mainlink_tx(int param_1)
   int iVar1;
   int local_8 [2];
   
-  mainlink_tx_clear_stats();
+  mainlink_tx_clear_stats(param_1);
   do {
     do {
-      FUN_20152434(*(undefined4 *)(param_1 + 0x81a4),local_8,0xffffffff);
+      itron_trcv_mbx(*(undefined4 *)(param_1 + 0x81a4),local_8,0xffffffff);
       *(int *)(param_1 + 0x10) = *(int *)(param_1 + 0x10) + 1;
       iVar1 = (**(code **)(**(int **)(param_1 + 0x18) + 0xc))();
     } while (iVar1 == 0);
@@ -1254,7 +1310,7 @@ void task_mainlink_tx(int param_1)
       *(int *)(param_1 + 0x14) = *(int *)(param_1 + 0x14) + 1;
       itron_dly_tsk(1);
     }
-    mainlink_trace(local_8[0] + 8,*(undefined2 *)(local_8[0] + 6));
+    mainlink_trace(local_8[0] + 8,(uint)*(ushort *)(local_8[0] + 6));
   } while( true );
 }
 
@@ -1263,31 +1319,16 @@ void task_mainlink_tx(int param_1)
 
 /* waits for the 3 ms pacing counter, posts to the TX mailbox, re-arms cmd_interval */
 
-void mainlink_tx_post(int param_1,undefined4 param_2)
+void mainlink_tx_post(int param_1,uint param_2)
 
 {
   while (DAT_20450050 != 0) {
     itron_dly_tsk(1);
   }
   FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
-  FUN_20152bb0(DAT_20450054,0xffffffff);
+  itron_twai_sem(DAT_20450054,0xffffffff);
   DAT_20450050 = 3;
-  FUN_201511e8(DAT_20450054);
+  itron_sig_sem(DAT_20450054);
   return;
-}
-
-
-// ===== mainlink_tx_ctor @ 201587ac (32 bytes)
-
-/* vtbl 0x20427FAC */
-
-int mainlink_tx_ctor(undefined4 *param_1)
-
-{
-  int iVar1;
-  
-  *param_1 = &DAT_20427fac;
-  iVar1 = FUN_20162c18(param_1 + 0x2047);
-  return iVar1 + -0x811c;
 }
 

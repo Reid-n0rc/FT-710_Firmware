@@ -499,18 +499,23 @@ undefined1 FUN_2011d830(void)
 }
 
 
-// ===== FUN_2011d84c @ 2011d84c (20 bytes)
+// ===== r_vdc5_shrd_get_resource @ 2011d84c (20 bytes)
 
-undefined1 FUN_2011d84c(int param_1,int param_2)
+/* (ch, id): resource state 0x208DCE04[ch*9 + id] [fact]; VDC5 driver shared parameters [inference]
+    */
+
+undefined1 r_vdc5_shrd_get_resource(int param_1,int param_2)
 
 {
   return (&DAT_208dce04)[param_2 + param_1 * 9];
 }
 
 
-// ===== FUN_2011d860 @ 2011d860 (52 bytes)
+// ===== r_vdc5_shrd_rw_enable @ 2011d860 (52 bytes)
 
-void FUN_2011d860(int param_1,int param_2)
+/* (ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use [fact] */
+
+void r_vdc5_shrd_rw_enable(int param_1,int param_2)
 
 {
   if ((param_2 != -1) && ((&DAT_208dce04)[param_2 + param_1 * 9] != '\0')) {
@@ -520,9 +525,11 @@ void FUN_2011d860(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011d8b4 @ 2011d8b4 (52 bytes)
+// ===== r_vdc5_shrd_rw_disable @ 2011d8b4 (52 bytes)
 
-void FUN_2011d8b4(int param_1,int param_2)
+/* (ch, id): the same flag = 0 [fact] */
+
+void r_vdc5_shrd_rw_disable(int param_1,int param_2)
 
 {
   if ((param_2 != -1) && ((&DAT_208dce04)[param_2 + param_1 * 9] != '\0')) {
@@ -600,70 +607,70 @@ undefined4 rspi_hw_config(uint param_1,int param_2)
   
   uVar2 = 0;
   if (param_1 < 6) {
-    ppuVar1 = &PTR_DAT_20166b4c + param_1 * 0xb;
+    ppuVar1 = &PTR_RSPI_SPCR_0_20166b4c + param_1 * 0xb;
     if (param_2 == 0) {
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,5,0x20);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,4,0x10);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b54)[param_1 * 0xb],1,0,0xff);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],1,5,0x60);
-      FUN_20157138((&PTR_DAT_20166b5c)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b60)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b64)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b68)[param_1 * 0xb],0,0,3);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xf,0x8000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xe,0x4000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xd,0x2000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],7,8,0xf00);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,7,0x80);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],3,2,0xc);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,1,2);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],2,4,0x30);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],5,0,7);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b74)[param_1 * 0xb],0,0,1);
-      FUN_20157138(*ppuVar1,0,7,0x80);
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138(*ppuVar1,1,5,0x20);
-      FUN_20157138(*ppuVar1,1,3,8);
-      FUN_20157138(*ppuVar1,0,2,4);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPBR_0_20166b54)[param_1 * 0xb],1,0,0xff);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw8((&PTR_RSPI_SPCKD_0_20166b5c)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SSLND_0_20166b60)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPND_0_20166b64)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPSCR_0_20166b68)[param_1 * 0xb],0,0,3);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],3,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],2,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],5,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8(*ppuVar1,0,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,1,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
     }
     else if (param_2 == 1) {
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,5,0x20);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,4,0x10);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b74)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],1,5,0x60);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xf,0x8000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xe,0x4000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xd,0x2000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],7,8,0xf00);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,7,0x80);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,2,0xc);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,1,2);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],3,4,0x30);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,6,0x40);
-      FUN_20157138(*ppuVar1,1,7,0x80);
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138(*ppuVar1,1,5,0x20);
-      FUN_20157138(*ppuVar1,0,4,0x10);
-      FUN_20157138(*ppuVar1,0,3,8);
-      FUN_20157138(*ppuVar1,0,2,4);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],3,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8(*ppuVar1,1,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,0,4,0x10);
+      reg_rmw8(*ppuVar1,0,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
     }
     else {
       uVar2 = 0xff;
@@ -692,13 +699,13 @@ void FUN_2011dea0(void)
 undefined4 rspi0_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,7,0x80,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166a84);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166a98), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     uVar2 = rspi_hw_config(0,1);
@@ -715,13 +722,13 @@ undefined4 rspi0_open(void)
 undefined4 rspi1_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,6,0x40,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166aac);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ac0), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     uVar2 = rspi_hw_config(1,0);
@@ -738,13 +745,13 @@ undefined4 rspi1_open(void)
 undefined4 rspi2_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,5,0x20,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166ad4);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ae8), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166ad4);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
     uVar2 = rspi_hw_config(2,1);
@@ -761,13 +768,13 @@ undefined4 rspi2_open(void)
 undefined4 rspi3_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,4,0x10,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166afc);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166b10), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166afc);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
@@ -785,13 +792,13 @@ undefined4 rspi3_open(void)
 undefined4 rspi4_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,3,8,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166b24);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166b38), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166b24);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
     uVar2 = rspi_hw_config(4,1);

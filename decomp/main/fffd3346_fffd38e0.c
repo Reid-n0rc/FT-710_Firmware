@@ -18,22 +18,22 @@ void FUN_fffd3346(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bb8;
+    local_8 = &g_opstate.presets[4].cat1_cat3_stop_bit;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b5b;
+    local_8 = &g_opstate.presets[1].cat1_cat3_stop_bit;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7a;
+    local_8 = &g_opstate.presets[2].cat1_cat3_stop_bit;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b99;
+    local_8 = &g_opstate.presets[3].cat1_cat3_stop_bit;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b3c;
+    local_8 = &g_opstate.presets[0].cat1_cat3_stop_bit;
   }
   menu_step_u8(0,1,local_8);
   return;
@@ -118,22 +118,22 @@ void FUN_fffd33e8(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bb9;
+    local_8 = &g_opstate.presets[4].agc_fast_delay;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b5c;
+    local_8 = &g_opstate.presets[1].agc_fast_delay;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7b;
+    local_8 = &g_opstate.presets[2].agc_fast_delay;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9a;
+    local_8 = &g_opstate.presets[3].agc_fast_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b3d;
+    local_8 = &g_opstate.presets[0].agc_fast_delay;
   }
   menu_step_u8(0,199,local_8);
   return;
@@ -218,22 +218,22 @@ void FUN_fffd348b(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bba;
+    local_8 = &g_opstate.presets[4].agc_mid_delay;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b5d;
+    local_8 = &g_opstate.presets[1].agc_mid_delay;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7c;
+    local_8 = &g_opstate.presets[2].agc_mid_delay;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9b;
+    local_8 = &g_opstate.presets[3].agc_mid_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b3e;
+    local_8 = &g_opstate.presets[0].agc_mid_delay;
   }
   menu_step_u8(0,199,local_8);
   return;
@@ -318,22 +318,22 @@ void FUN_fffd352e(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bbb;
+    local_8 = &g_opstate.presets[4].agc_slow_delay;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b5e;
+    local_8 = &g_opstate.presets[1].agc_slow_delay;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7d;
+    local_8 = &g_opstate.presets[2].agc_slow_delay;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9c;
+    local_8 = &g_opstate.presets[3].agc_slow_delay;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b3f;
+    local_8 = &g_opstate.presets[0].agc_slow_delay;
   }
   menu_step_u8(0,199,local_8);
   return;
@@ -418,22 +418,22 @@ void FUN_fffd35d1(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bbc;
+    local_8 = &g_opstate.presets[4].lcut_freq;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b5f;
+    local_8 = &g_opstate.presets[1].lcut_freq;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7e;
+    local_8 = &g_opstate.presets[2].lcut_freq;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9d;
+    local_8 = &g_opstate.presets[3].lcut_freq;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b40;
+    local_8 = &g_opstate.presets[0].lcut_freq;
   }
   menu_step_u8(0,0x13,local_8);
   return;
@@ -518,22 +518,22 @@ void FUN_fffd3674(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bbd;
+    local_8 = &g_opstate.presets[4].lcut_slope;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b60;
+    local_8 = &g_opstate.presets[1].lcut_slope;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b7f;
+    local_8 = &g_opstate.presets[2].lcut_slope;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9e;
+    local_8 = &g_opstate.presets[3].lcut_slope;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b41;
+    local_8 = &g_opstate.presets[0].lcut_slope;
   }
   menu_step_u8(0,1,local_8);
   return;
@@ -618,22 +618,22 @@ void FUN_fffd3716(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bbe;
+    local_8 = &g_opstate.presets[4].hcut_freq;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b61;
+    local_8 = &g_opstate.presets[1].hcut_freq;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b80;
+    local_8 = &g_opstate.presets[2].hcut_freq;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009b9f;
+    local_8 = &g_opstate.presets[3].hcut_freq;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b42;
+    local_8 = &g_opstate.presets[0].hcut_freq;
   }
   menu_step_u8(0,0x43,local_8);
   return;
@@ -718,22 +718,22 @@ void FUN_fffd37b9(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bbf;
+    local_8 = &g_opstate.presets[4].hcut_slope;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b62;
+    local_8 = &g_opstate.presets[1].hcut_slope;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b81;
+    local_8 = &g_opstate.presets[2].hcut_slope;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba0;
+    local_8 = &g_opstate.presets[3].hcut_slope;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b43;
+    local_8 = &g_opstate.presets[0].hcut_slope;
   }
   menu_step_u8(0,1,local_8);
   return;
@@ -818,22 +818,22 @@ void FUN_fffd385b(byte param_1)
     return;
   }
   if (param_1 == 5) {
-    local_8 = &DAT_00009bc0;
+    local_8 = &g_opstate.presets[4].usb_out_level;
   }
   else if (param_1 == 2) {
-    local_8 = &DAT_00009b63;
+    local_8 = &g_opstate.presets[1].usb_out_level;
   }
   else if (param_1 == 3) {
-    local_8 = &DAT_00009b82;
+    local_8 = &g_opstate.presets[2].usb_out_level;
   }
   else if (param_1 == 4) {
-    local_8 = &DAT_00009ba1;
+    local_8 = &g_opstate.presets[3].usb_out_level;
   }
   else {
     if (param_1 != 1) {
       return;
     }
-    local_8 = &DAT_00009b44;
+    local_8 = &g_opstate.presets[0].usb_out_level;
   }
   menu_step_u8(0,100,local_8);
   return;

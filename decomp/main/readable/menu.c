@@ -28,18 +28,18 @@ void cat_EX(uint param_1,char param_2,ushort param_3)
   local_8 = param_3;
   local_5 = param_2;
   local_4 = param_1;
-  DAT_0000464a = ex_command((char *)param_1,param_2,param_3,(byte *)&DAT_00001c8e,local_c);
+  cat_error = ex_command((char *)param_1,param_2,param_3,(byte *)&DAT_00001c8e,local_c);
   if (local_5 == '\0') {
     DAT_0001b788 = *local_c;
     return;
   }
-  if ((DAT_00020b20 == '\x01') || (DAT_00020b21 == '\x01')) {
+  if ((g_ui.cat_ai_on[0] == 1) || (g_ui.cat_ai_on[1] == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (DAT_00020b22 == '\x01')) {
+  if ((bVar1) || (g_ui.cat_ai_on[2] == 1)) {
     bVar1 = true;
   }
   else {
@@ -66,8 +66,8 @@ void cat_EX(uint param_1,char param_2,ushort param_3)
 void menu_defaults_load(void)
 
 {
-  undefined1 *puVar1;
-  undefined1 *puVar2;
+  byte *pbVar1;
+  byte *pbVar2;
   int iVar3;
   
   menu_defaults_mode();
@@ -77,12 +77,12 @@ void menu_defaults_load(void)
   FUN_fffb1303();
   menu_defaults_presets();
   FUN_fffb13e2();
-  puVar1 = &DAT_00009c17;
-  puVar2 = &DAT_fff80fd6;
+  pbVar1 = g_opstate.zero_9c17;
+  pbVar2 = &DAT_fff80fd6;
   for (iVar3 = 0x1e; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *puVar1 = *puVar2;
-    puVar1 = puVar1 + 1;
-    puVar2 = puVar2 + 1;
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
   }
   return;
 }
@@ -135,14 +135,14 @@ void menu_page_serialize(int param_1,ushort param_2)
   byte bStack_1e;
   byte bStack_1d;
   byte *pbStack_1c;
-  char cStack_18;
+  byte bStack_18;
   char cStack_17;
   byte bStack_16;
   byte bStack_15;
   ushort uStack_14;
   byte bStack_11;
   byte bStack_10;
-  char cStack_f;
+  byte bStack_f;
   ushort local_e;
   byte bStack_b;
   ushort uStack_a;
@@ -153,14 +153,14 @@ void menu_page_serialize(int param_1,ushort param_2)
   uVar1 = FUN_fffc98c1();
   *(undefined1 *)((uint)param_2 + param_1) = uVar1;
   uStack_a = uStack_a + 1;
-  DAT_0001226e = (&DAT_00015e00)[(byte)PTR_DAT_00025d60[0x41f]];
-  PTR_DAT_00025d60[0x420] = (&DAT_00015e00)[(byte)PTR_DAT_00025d60[0x41f]];
-  bStack_10 = menu_p2_global(PTR_DAT_00025d60[0x41f],PTR_DAT_00025d60[0x420]);
+  DAT_0001226e = (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1];
+  PTR_g_ui_00025d60->menu_p2 = (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1];
+  bStack_10 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
   bStack_b = menu_count_items(bStack_10);
   if (bStack_b != 0) {
     *(byte *)((uint)uStack_a + iStack_8) = bStack_b;
     uStack_a = uStack_a + 1;
-    bStack_10 = menu_p2_global(PTR_DAT_00025d60[0x41f],PTR_DAT_00025d60[0x420]);
+    bStack_10 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
     pbStack_1c = (byte *)menu_cursor_of(bStack_10);
     DAT_0001226f = *pbStack_1c;
     DAT_00012270 = pbStack_1c[1];
@@ -168,10 +168,11 @@ void menu_page_serialize(int param_1,ushort param_2)
     if (5 < bStack_b) {
       bStack_b = 5;
     }
-    *(byte *)((uint)(ushort)(uStack_a + 1) + iStack_8) = bStack_b << 4 | PTR_DAT_00025d60[0x3ff];
+    *(byte *)((uint)(ushort)(uStack_a + 1) + iStack_8) =
+         bStack_b << 4 | PTR_g_ui_00025d60->menu_state;
     *(byte *)((uint)(ushort)(uStack_a + 2) + iStack_8) = DAT_0001226e << 4 | DAT_0001226f;
     pcVar3 = "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-             + (uint)(byte)PTR_DAT_00025d60[0x41f] * 0x14;
+             + (uint)PTR_g_ui_00025d60->menu_p1 * 0x14;
     pcVar2 = (char *)(iStack_8 + (uint)(ushort)(uStack_a + 3));
     for (iVar4 = 0x14; iVar4 != 0; iVar4 = iVar4 + -1) {
       *pcVar2 = *pcVar3;
@@ -179,13 +180,13 @@ void menu_page_serialize(int param_1,ushort param_2)
       pcVar3 = pcVar3 + 1;
     }
     uStack_a = uStack_a + 0x17;
-    cStack_f = PTR_DAT_00025d60[0x41f];
+    bStack_f = PTR_g_ui_00025d60->menu_p1;
     bStack_11 = 0;
-    bStack_15 = menu_p1_range(cStack_f,&bStack_1d,&bStack_1e);
+    bStack_15 = menu_p1_range(bStack_f,&bStack_1d,&bStack_1e);
     if (bStack_15 != 0) {
       bStack_10 = bStack_1d;
       for (uStack_14 = (ushort)bStack_1d; uStack_14 <= bStack_1e; uStack_14 = uStack_14 + 1) {
-        bStack_15 = menu_group_visible(cStack_f,bStack_10);
+        bStack_15 = menu_group_visible(bStack_f,bStack_10);
         if (bStack_15 == 1) {
           pcVar3 = "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)bStack_10 * 0xd + 0x78;
@@ -201,16 +202,16 @@ void menu_page_serialize(int param_1,ushort param_2)
         bStack_10 = bStack_10 + 1;
       }
       uStack_a = (8 - (ushort)bStack_11) * 0xd + uStack_a;
-      bStack_10 = menu_p2_global(cStack_f,DAT_0001226e);
+      bStack_10 = menu_p2_global(bStack_f,DAT_0001226e);
       for (local_e = 0; local_e < bStack_b; local_e = local_e + 1) {
         DAT_00012271 = 0;
-        if ((PTR_DAT_00025d60[0x3ff] == '\x03') && (local_e == DAT_0001226f)) {
+        if ((PTR_g_ui_00025d60->menu_state == 3) && (local_e == DAT_0001226f)) {
           DAT_00012271 = 1;
         }
-        cStack_18 = cStack_f;
+        bStack_18 = bStack_f;
         cStack_17 = bStack_10;
         bStack_16 = DAT_00012270;
-        bStack_15 = menu_get_name(&cStack_18,(char *)((uint)uStack_a + iStack_8 + 3));
+        bStack_15 = menu_get_name((char *)&bStack_18,(char *)((uint)uStack_a + iStack_8 + 3));
         if (bStack_15 == 0) {
           return;
         }
@@ -221,7 +222,7 @@ void menu_page_serialize(int param_1,ushort param_2)
         *(undefined4 *)(iVar4 + 0x1c) = 0x20202020;
         *(undefined4 *)(iVar4 + 0x18) = 0x20202020;
         *(undefined1 *)(iVar4 + 0x2c) = 0x20;
-        menu_call_draw((uint)&cStack_18,iStack_8 + (uint)uStack_a);
+        menu_call_draw((uint)&bStack_18,iStack_8 + (uint)uStack_a);
         uStack_a = uStack_a + 0x2d;
         DAT_00012270 = DAT_00012270 + 1;
       }
@@ -272,20 +273,20 @@ void menu_ui_enter(void)
 
 {
   char *pcVar1;
-  undefined1 uStack_5;
+  byte bStack_5;
   byte bStack_4;
   char cStack_3;
   char cStack_2;
   byte bStack_1;
   
-  PTR_DAT_00025d60[0x3ff] = 3;
-  bStack_1 = menu_p2_global(PTR_DAT_00025d60[0x41f],PTR_DAT_00025d60[0x420]);
+  PTR_g_ui_00025d60->menu_state = 3;
+  bStack_1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
   pcVar1 = (char *)menu_cursor_of(bStack_1);
   cStack_3 = *pcVar1 + pcVar1[1];
-  uStack_5 = PTR_DAT_00025d60[0x41f];
+  bStack_5 = PTR_g_ui_00025d60->menu_p1;
   bStack_4 = bStack_1;
   cStack_2 = cStack_3;
-  menu_call_enter((uint)&uStack_5);
+  menu_call_enter((uint)&bStack_5);
   FUN_fffc8f30(3000);
   return;
 }
@@ -305,22 +306,22 @@ void menu_ui_step(void)
 
 {
   char *pcVar1;
-  undefined1 uStack_4;
+  byte bStack_4;
   byte bStack_3;
   char cStack_2;
   byte bStack_1;
   
   FUN_fffc8f30(3000);
-  PTR_DAT_00025d60[0x40b] = 1;
-  bStack_1 = menu_p2_global(PTR_DAT_00025d60[0x41f],PTR_DAT_00025d60[0x420]);
+  PTR_g_ui_00025d60->vfo_refresh_req = 1;
+  bStack_1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
   pcVar1 = (char *)menu_cursor_of(bStack_1);
   if (pcVar1 == (char *)0x0) {
     return;
   }
-  uStack_4 = PTR_DAT_00025d60[0x41f];
+  bStack_4 = PTR_g_ui_00025d60->menu_p1;
   bStack_3 = bStack_1;
   cStack_2 = *pcVar1 + pcVar1[1];
-  menu_call_step((uint)&uStack_4);
+  menu_call_step((uint)&bStack_4);
   return;
 }
 
@@ -341,7 +342,7 @@ void menu_apply_from_cat(uint param_1)
   DAT_00015dfc = 1;
   menu_call_step(param_1);
   DAT_00015dfc = 0;
-  PTR_DAT_00025d60[0x40b] = 1;
+  PTR_g_ui_00025d60->vfo_refresh_req = 1;
   return;
 }
 
@@ -362,7 +363,7 @@ void menu_step_s8(char param_1,char param_2,char *param_3)
 
 {
   if (DAT_00015dfc != '\x01') {
-    if (PTR_DAT_00025d60[0x421] == '\0') {
+    if (PTR_g_ui_00025d60->menu_step_dir == 0) {
       if (*param_3 < param_2) {
         *param_3 = *param_3 + '\x01';
         return;
@@ -392,7 +393,7 @@ void menu_step_u8(byte param_1,byte param_2,byte *param_3)
 
 {
   if (DAT_00015dfc != '\x01') {
-    if (PTR_DAT_00025d60[0x421] == '\0') {
+    if (PTR_g_ui_00025d60->menu_step_dir == 0) {
       if (*param_3 < param_2) {
         *param_3 = *param_3 + 1;
         return;
@@ -421,10 +422,10 @@ void menu_step_u8(byte param_1,byte param_2,byte *param_3)
 byte menu_fm_rptshift_get(void)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return pbVar1[2] >> 2 & 3;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  return pvVar1->flags2 >> 2 & 3;
 }
 
 
@@ -442,14 +443,16 @@ byte menu_fm_rptshift_get(void)
 void menu_fm_tone_set(byte param_1)
 
 {
+  vfo_rec *pvVar1;
   byte *local_8;
   
-  if (DAT_00009dbd == '\0') {
-    local_8 = &DAT_00009d4f;
+  if (g_opstate.active_vfo == 0) {
+    pvVar1 = &g_opstate.vfo_a;
   }
   else {
-    local_8 = &DAT_00009da9;
+    pvVar1 = &g_opstate.vfo_b;
   }
+  local_8 = &pvVar1->tone_num;
   *local_8 = param_1;
   return;
 }

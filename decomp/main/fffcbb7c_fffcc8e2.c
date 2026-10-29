@@ -8,7 +8,7 @@ void menu_ex030111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,DAT_00009abf,0,param_4,param_5,param_1);
+  FUN_fffcba46(param_1,g_opstate.ex030111_cat_3_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
@@ -25,9 +25,9 @@ void menu_ex030112_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ac0;
-  local_7 = DAT_00009ac0;
-  if (DAT_00009ac0 == 0) {
+  bVar1 = g_opstate.ex030112_qmb_ch;
+  local_7 = g_opstate.ex030112_qmb_ch;
+  if (g_opstate.ex030112_qmb_ch == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -63,9 +63,9 @@ void menu_ex030113_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ac1;
-  local_7 = DAT_00009ac1;
-  if (DAT_00009ac1 == 1) {
+  bVar1 = g_opstate.ex030113_band_stack;
+  local_7 = g_opstate.ex030113_band_stack;
+  if (g_opstate.ex030113_band_stack == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -101,9 +101,9 @@ void menu_ex030114_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ac2;
-  local_7 = DAT_00009ac2;
-  if (DAT_00009ac2 == 0) {
+  bVar1 = g_opstate.ex030114_mem_group;
+  local_7 = g_opstate.ex030114_mem_group;
+  if (g_opstate.ex030114_mem_group == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -134,23 +134,22 @@ void menu_ex030114_draw(byte *param_1)
 void menu_ex030115_draw(byte *param_1)
 
 {
-  char cVar1;
-  byte bVar2;
-  ushort uVar3;
-  char local_9;
+  byte bVar1;
+  ushort uVar2;
+  byte local_9;
   
-  cVar1 = DAT_00009ac3;
-  uVar3 = dest_code_get();
-  if ((((((uVar3 == 0x20b) || (uVar3 == 0x1cb9)) || (uVar3 == 0x306f)) ||
-       ((uVar3 == 0x315b || (uVar3 == 0x4380)))) ||
-      ((uVar3 == 0x50e2 || ((uVar3 == 0x60e6 || (uVar3 == 0x7753)))))) ||
-     ((uVar3 == 0x9cf7 || (uVar3 == 0xd32d)))) {
-    local_9 = '\0';
+  bVar1 = g_opstate.ex030115_tx_time_out_timer;
+  uVar2 = dest_code_get();
+  if ((((((uVar2 == 0x20b) || (uVar2 == 0x1cb9)) || (uVar2 == 0x306f)) ||
+       ((uVar2 == 0x315b || (uVar2 == 0x4380)))) ||
+      ((uVar2 == 0x50e2 || ((uVar2 == 0x60e6 || (uVar2 == 0x7753)))))) ||
+     ((uVar2 == 0x9cf7 || (uVar2 == 0xd32d)))) {
+    local_9 = 0;
   }
   else {
-    local_9 = '\n';
+    local_9 = 10;
   }
-  if (cVar1 == local_9) {
+  if (bVar1 == local_9) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -158,14 +157,14 @@ void menu_ex030115_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  if (cVar1 == '\0') {
+  if (bVar1 == 0) {
     param_1[0x1a] = 0x46;
     param_1[0x18] = 0x4f;
     param_1[0x19] = 0x46;
     return;
   }
-  bVar2 = FUN_fff9c6f0(cVar1,param_1 + 0x18);
-  param_1 = param_1 + bVar2 + 0x18;
+  bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
+  param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 0x6e;
   param_1[0] = 0x6d;
   param_1[1] = 0x69;
@@ -185,9 +184,9 @@ void menu_ex030116_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ac4;
-  local_7 = DAT_00009ac4;
-  if (DAT_00009ac4 == 1) {
+  bVar1 = g_opstate.ex030116_mic_scan;
+  local_7 = g_opstate.ex030116_mic_scan;
+  if (g_opstate.ex030116_mic_scan == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -223,9 +222,9 @@ void menu_ex030117_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ac5;
-  local_7 = DAT_00009ac5;
-  if (DAT_00009ac5 == 1) {
+  bVar1 = g_opstate.ex030117_mic_scan_resume;
+  local_7 = g_opstate.ex030117_mic_scan_resume;
+  if (g_opstate.ex030117_mic_scan_resume == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -256,10 +255,10 @@ void menu_ex030117_draw(byte *param_1)
 void menu_ex030118_draw(byte *param_1)
 
 {
-  char cVar1;
+  sbyte sVar1;
   
-  cVar1 = DAT_00009ac6;
-  if (DAT_00009ac6 == '\0') {
+  sVar1 = g_opstate.ex030118_ref_freq_fine_adj;
+  if (g_opstate.ex030118_ref_freq_fine_adj == 0) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -267,7 +266,7 @@ void menu_ex030118_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)cVar1,param_1 + 0x18);
+  FUN_fff9c787((int)sVar1,param_1 + 0x18);
   return;
 }
 
@@ -286,8 +285,8 @@ void menu_ex030119_draw(byte *param_1)
   byte local_8;
   byte local_7;
   
-  bVar1 = DAT_00009ac7;
-  local_7 = DAT_00009ac7;
+  bVar1 = g_opstate.ex030119_keyboard_language;
+  local_7 = g_opstate.ex030119_keyboard_language;
   uVar2 = dest_code_get();
   if (uVar2 == 0xd950) {
 LAB_fffcbfc4:
@@ -348,14 +347,16 @@ void menu_ex030120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009ac8,0,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030120_mic_p1,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcc04a @ fffcc04a (120 bytes)
+// ===== menu_draw_mic_key @ fffcc04a (120 bytes)
 
-void FUN_fffcc04a(byte *param_1,byte param_2,byte param_3)
+/* MIC P1..P4 / UP / DOWN row: LOCK, QMB, .., AGC (21 labels, ROM 0xFFF84753) [fact] */
+
+void menu_draw_mic_key(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -395,7 +396,7 @@ void menu_ex030121_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009ac9,1,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030121_mic_p2,1,param_4,param_5,param_1);
   return;
 }
 
@@ -408,7 +409,7 @@ void menu_ex030122_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009aca,2,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030122_mic_p3,2,param_4,param_5,param_1);
   return;
 }
 
@@ -421,7 +422,7 @@ void menu_ex030123_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009acb,3,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030123_mic_p4,3,param_4,param_5,param_1);
   return;
 }
 
@@ -434,7 +435,7 @@ void menu_ex030124_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009acc,0xd,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030124_mic_up,0xd,param_4,param_5,param_1);
   return;
 }
 
@@ -447,7 +448,7 @@ void menu_ex030125_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc04a(param_1,DAT_00009acd,0xe,param_4,param_5,param_1);
+  menu_draw_mic_key(param_1,g_opstate.ex030125_mic_down,0xe,param_4,param_5,param_1);
   return;
 }
 
@@ -460,7 +461,7 @@ void menu_ex030126_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb34b(param_1,DAT_00009ace,0,param_4,param_5,param_1);
+  menu_draw_off_on(param_1,g_opstate.ex030126_scu_lan10,0,param_4,param_5,param_1);
   return;
 }
 
@@ -477,9 +478,9 @@ void menu_ex030201_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ad1;
-  local_7 = DAT_00009ad1;
-  if (DAT_00009ad1 == 1) {
+  bVar1 = g_opstate.ex030201_if_notch_width;
+  local_7 = g_opstate.ex030201_if_notch_width;
+  if (g_opstate.ex030201_if_notch_width == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -515,9 +516,9 @@ void menu_ex030202_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ad2;
-  local_7 = DAT_00009ad2;
-  if (DAT_00009ad2 == 1) {
+  bVar1 = g_opstate.ex030202_nb_rejection;
+  local_7 = g_opstate.ex030202_nb_rejection;
+  if (g_opstate.ex030202_nb_rejection == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -553,9 +554,9 @@ void menu_ex030203_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ad3;
-  local_7 = DAT_00009ad3;
-  if (DAT_00009ad3 == 1) {
+  bVar1 = g_opstate.ex030203_nb_width;
+  local_7 = g_opstate.ex030203_nb_width;
+  if (g_opstate.ex030203_nb_width == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -591,9 +592,9 @@ void menu_ex030204_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ad4;
-  local_7 = DAT_00009ad4;
-  if (DAT_00009ad4 == 1) {
+  bVar1 = g_opstate.ex030204_apf_width;
+  local_7 = g_opstate.ex030204_apf_width;
+  if (g_opstate.ex030204_apf_width == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -624,10 +625,10 @@ void menu_ex030204_draw(byte *param_1)
 void menu_ex030205_draw(byte *param_1)
 
 {
-  char cVar1;
+  sbyte sVar1;
   
-  cVar1 = DAT_00009ad5;
-  if (DAT_00009ad5 == -0xf) {
+  sVar1 = g_opstate.ex030205_contour_level;
+  if (g_opstate.ex030205_contour_level == -0xf) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -635,7 +636,7 @@ void menu_ex030205_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)cVar1,param_1 + 0x18);
+  FUN_fff9c787((int)sVar1,param_1 + 0x18);
   return;
 }
 
@@ -647,10 +648,10 @@ void menu_ex030205_draw(byte *param_1)
 void menu_ex030206_draw(byte *param_1)
 
 {
-  char cVar1;
+  byte bVar1;
   
-  cVar1 = DAT_00009ad6;
-  if (DAT_00009ad6 == '\n') {
+  bVar1 = g_opstate.ex030206_contour_width;
+  if (g_opstate.ex030206_contour_width == 10) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -658,7 +659,7 @@ void menu_ex030206_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
-  FUN_fff9c6f0(cVar1,param_1 + 0x18);
+  dec_to_str_u8(bVar1,param_1 + 0x18);
   return;
 }
 
@@ -675,9 +676,9 @@ void menu_ex030301_draw(byte *param_1)
   int iVar3;
   byte local_7;
   
-  bVar1 = DAT_00009ad9;
-  local_7 = DAT_00009ad9;
-  if (DAT_00009ad9 == 1) {
+  bVar1 = g_opstate.ex030301_amc_release_time;
+  local_7 = g_opstate.ex030301_amc_release_time;
+  if (g_opstate.ex030301_amc_release_time == 1) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -710,14 +711,16 @@ void menu_ex030302_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,100,DAT_00009ada,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,100,g_opstate.ex030302_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
 
 
-// ===== FUN_fffcc4af @ fffcc4af (167 bytes)
+// ===== menu_draw_eq_freq @ fffcc4af (167 bytes)
 
-void FUN_fffcc4af(byte *param_1,short param_2,byte param_3,byte param_4)
+/* PRMTRC EQ1..3 FREQ row (also the P PRMTRC items) [fact] */
+
+void menu_draw_eq_freq(byte *param_1,short param_2,byte param_3,byte param_4)
 
 {
   byte bVar1;
@@ -741,7 +744,7 @@ void FUN_fffcc4af(byte *param_1,short param_2,byte param_3,byte param_4)
   if (0xc80 < local_c) {
     local_c = 0xc80;
   }
-  bVar1 = FUN_fff9c843(local_c,param_1 + 0x18);
+  bVar1 = dec_to_str_u16(local_c,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
   return;
@@ -756,14 +759,16 @@ void menu_ex030303_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009adb,5,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030303_prmtrc_eq1_level,5,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcc56b @ fffcc56b (99 bytes)
+// ===== menu_draw_eq_level @ fffcc56b (99 bytes)
 
-void FUN_fffcc56b(byte *param_1,char param_2,char param_3)
+/* PRMTRC EQ1..3 LEVEL row: signed value (FUN_fff9c787) [fact] */
+
+void menu_draw_eq_level(byte *param_1,char param_2,char param_3)
 
 {
   if (param_2 == param_3) {
@@ -787,14 +792,16 @@ void menu_ex030304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009adc,10,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030304_prmtrc_eq1_bwth,10,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcc5e3 @ fffcc5e3 (98 bytes)
+// ===== menu_draw_eq_bwth @ fffcc5e3 (98 bytes)
 
-void FUN_fffcc5e3(byte *param_1,char param_2,char param_3)
+/* PRMTRC EQ1..3 BWTH row [fact] */
+
+void menu_draw_eq_bwth(byte *param_1,char param_2,char param_3)
 
 {
   if (param_2 == param_3) {
@@ -805,7 +812,7 @@ void FUN_fffcc5e3(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 2;
   param_1[2] = 0;
-  FUN_fff9c6f0(param_2,param_1 + 0x18);
+  dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
 
@@ -819,7 +826,7 @@ void menu_ex030305_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,700,DAT_00009add,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,700,g_opstate.ex030305_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
 
@@ -832,7 +839,7 @@ void menu_ex030306_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009ade,5,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030306_prmtrc_eq2_level,5,param_4,param_5,param_1);
   return;
 }
 
@@ -845,7 +852,7 @@ void menu_ex030307_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009adf,10,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030307_prmtrc_eq2_bwth,10,param_4,param_5,param_1);
   return;
 }
 
@@ -859,7 +866,7 @@ void menu_ex030308_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,0x5dc,DAT_00009ae0,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030308_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
 
@@ -872,7 +879,7 @@ void menu_ex030309_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009ae1,5,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030309_prmtrc_eq3_level,5,param_4,param_5,param_1);
   return;
 }
 
@@ -885,7 +892,7 @@ void menu_ex030310_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009ae2,10,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030310_prmtrc_eq3_bwth,10,param_4,param_5,param_1);
   return;
 }
 
@@ -899,7 +906,7 @@ void menu_ex030311_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,100,DAT_00009ae3,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,100,g_opstate.ex030311_p_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
 
@@ -912,7 +919,7 @@ void menu_ex030312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009ae4,0,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030312_p_prmtrc_eq1_level,0,param_4,param_5,param_1);
   return;
 }
 
@@ -925,7 +932,7 @@ void menu_ex030313_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009ae5,2,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030313_p_prmtrc_eq1_bwth,2,param_4,param_5,param_1);
   return;
 }
 
@@ -939,7 +946,7 @@ void menu_ex030314_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,700,DAT_00009ae6,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,700,g_opstate.ex030314_p_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
 
@@ -952,7 +959,7 @@ void menu_ex030315_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009ae7,0,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030315_p_prmtrc_eq2_level,0,param_4,param_5,param_1);
   return;
 }
 
@@ -965,7 +972,7 @@ void menu_ex030316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009ae8,1,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030316_p_prmtrc_eq2_bwth,1,param_4,param_5,param_1);
   return;
 }
 
@@ -979,7 +986,7 @@ void menu_ex030317_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
-  FUN_fffcc4af(param_1,0x5dc,DAT_00009ae9,0,in_R15,param_1);
+  menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030317_p_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
 
@@ -992,7 +999,7 @@ void menu_ex030318_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc56b(param_1,(int)DAT_00009aea,0,param_4,param_5,param_1);
+  menu_draw_eq_level(param_1,(int)g_opstate.ex030318_p_prmtrc_eq3_level,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1005,7 +1012,7 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcc5e3(param_1,DAT_00009aeb,1,param_4,param_5,param_1);
+  menu_draw_eq_bwth(param_1,g_opstate.ex030319_p_prmtrc_eq3_bwth,1,param_4,param_5,param_1);
   return;
 }
 
@@ -1017,20 +1024,20 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 /* WARNING: Removing unreachable block (ram,0xfffcc7d6) */
 /* Menu item ex030401 HF MAX POWER: on_draw (#74) */
 
-undefined1 * menu_ex030401_draw(undefined4 param_1)
+undefined4 menu_ex030401_draw(undefined4 param_1)
 
 {
   byte bVar1;
   undefined4 uVar2;
   
-  bVar1 = DAT_00009aee;
-  uVar2 = FUN_fffb3e6f(0);
+  bVar1 = g_opstate.ex030401_hf_max_power;
+  uVar2 = max_power_limit(0);
   FUN_fffcc7dc(param_1,bVar1,uVar2);
-  if (DAT_00009bf8 <= DAT_00009aee) {
-    return &DAT_00009aee;
+  if (g_opstate.rf_power[0] <= g_opstate.ex030401_hf_max_power) {
+    return 0x9aee;
   }
-  DAT_00009bf8 = DAT_00009aee;
-  return &DAT_00009aee;
+  g_opstate.rf_power[0] = g_opstate.ex030401_hf_max_power;
+  return 0x9aee;
 }
 
 
@@ -1049,7 +1056,7 @@ void FUN_fffcc7dc(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  bVar1 = FUN_fff9c6f0(param_2,param_1 + 0x18);
+  bVar1 = dec_to_str_u8(param_2,param_1 + 0x18);
   param_1[bVar1 + 0x18] = 0x57;
   return;
 }
@@ -1062,20 +1069,20 @@ void FUN_fffcc7dc(byte *param_1,char param_2,char param_3)
 /* WARNING: Removing unreachable block (ram,0xfffcc893) */
 /* Menu item ex030402 50M MAX POWER: on_draw (#74) */
 
-undefined1 * menu_ex030402_draw(undefined4 param_1)
+undefined4 menu_ex030402_draw(undefined4 param_1)
 
 {
   byte bVar1;
   undefined4 uVar2;
   
-  bVar1 = DAT_00009aef;
-  uVar2 = FUN_fffb3e6f(1);
+  bVar1 = g_opstate.ex030402_50m_max_power;
+  uVar2 = max_power_limit(1);
   FUN_fffcc7dc(param_1,bVar1,uVar2);
-  if (DAT_00009bf9 <= DAT_00009aef) {
-    return &DAT_00009aef;
+  if (g_opstate.rf_power[1] <= g_opstate.ex030402_50m_max_power) {
+    return 0x9aef;
   }
-  DAT_00009bf9 = DAT_00009aef;
-  return &DAT_00009aef;
+  g_opstate.rf_power[1] = g_opstate.ex030402_50m_max_power;
+  return 0x9aef;
 }
 
 
@@ -1086,20 +1093,20 @@ undefined1 * menu_ex030402_draw(undefined4 param_1)
 /* WARNING: Removing unreachable block (ram,0xfffcc8dc) */
 /* Menu item ex030403 70M MAX POWER: on_draw (#74) */
 
-undefined1 * menu_ex030403_draw(undefined4 param_1)
+undefined4 menu_ex030403_draw(undefined4 param_1)
 
 {
   byte bVar1;
   undefined4 uVar2;
   
-  bVar1 = DAT_00009af0;
-  uVar2 = FUN_fffb3e6f(2);
+  bVar1 = g_opstate.ex030403_70m_max_power;
+  uVar2 = max_power_limit(2);
   FUN_fffcc7dc(param_1,bVar1,uVar2);
-  if (DAT_00009bfa <= DAT_00009af0) {
-    return &DAT_00009af0;
+  if (g_opstate.rf_power[2] <= g_opstate.ex030403_70m_max_power) {
+    return 0x9af0;
   }
-  DAT_00009bfa = DAT_00009af0;
-  return &DAT_00009af0;
+  g_opstate.rf_power[2] = g_opstate.ex030403_70m_max_power;
+  return 0x9af0;
 }
 
 
@@ -1110,7 +1117,7 @@ undefined1 * menu_ex030403_draw(undefined4 param_1)
 /* WARNING: Removing unreachable block (ram,0xfffcc936) */
 /* Menu item ex030404 AM MAX POWER: on_draw (#74) */
 
-undefined1 * menu_ex030404_draw(undefined4 param_1)
+undefined4 menu_ex030404_draw(undefined4 param_1)
 
 {
   byte bVar1;
@@ -1119,19 +1126,19 @@ undefined1 * menu_ex030404_draw(undefined4 param_1)
   undefined1 uStack_11;
   
   uVar2 = dest_code_get();
-  bVar1 = DAT_00009af1;
+  bVar1 = g_opstate.ex030404_am_max_power;
   if (uVar2 == 0x60e6) {
     uStack_11 = 4;
   }
   else {
     uStack_11 = 3;
   }
-  uVar3 = FUN_fffb3e6f(uStack_11);
+  uVar3 = max_power_limit(uStack_11);
   FUN_fffcc7dc(param_1,bVar1,uVar3);
-  if (DAT_00009bfb <= DAT_00009af1) {
-    return &DAT_00009af1;
+  if (g_opstate.rf_power[3] <= g_opstate.ex030404_am_max_power) {
+    return 0x9af1;
   }
-  DAT_00009bfb = DAT_00009af1;
-  return &DAT_00009af1;
+  g_opstate.rf_power[3] = g_opstate.ex030404_am_max_power;
+  return 0x9af1;
 }
 

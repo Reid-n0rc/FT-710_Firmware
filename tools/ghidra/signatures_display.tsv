@@ -365,7 +365,7 @@
 2011f230	rspi_base	void *	uint32	asm	asm: live-in r0:L (= decompiler 1), 2/2 call sites read r0, writes r0 1, return value
 2011f758	rspi_fifo_reset	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 20120224	riic_init	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
-201204a4	FUN_201204a4	void *	int32	asm	asm: live-in r0:L (= decompiler 1), 11/12 call sites read r0, writes r0 1, return value
+201204a4	riic_base	void *	int32	asm	asm: live-in r0:L (= decompiler 1), 11/12 call sites read r0, writes r0 1, return value
 2012081c	FUN_2012081c	int32	uint32, int32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 2/2 call sites read r0, writes r0 1, return value
 20120a88	FUN_20120a88	void	uint32	asm	asm: live-in r0:L (> decompiler 0), 0/2 call sites read r0, writes r0 1, return void
 20120d40	afscope_store_frame	void	char *	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
@@ -527,7 +527,7 @@
 20143750	fs_fseek	uint32	uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 7/8 call sites read r0, writes r0 1, return value
 20148fcc	fat_mount	uint32	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 1/1 call sites read r0, writes r0 1, return value
 2014d630	FUN_2014d630	char *	uint32, char *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 3/3 call sites read r0, writes r0 1, return value
-2014d95c	FUN_2014d95c	uint32	void	asm	asm: live-in - (= decompiler 0), 17/22 call sites read r0, writes r0 1, return value
+2014d95c	fs_task_ctx_get	uint32	void	asm	asm: live-in - (= decompiler 0), 17/22 call sites read r0, writes r0 1, return value
 2014e2a4	strncmp	int32	uint8 *, uint8 *, int32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 6/6 call sites read r0, writes r0 1, return value
 2014e584	os_create_sem_named	uint32	void *, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 12/12 call sites read r0, writes r0 1, return value
 2014effc	itron_acre_flg	uint32	uint32, uint8 *	asm	asm: live-in r0:L,r1:L (= decompiler 2), 15/16 call sites read r0, writes r0 1, return value
@@ -536,9 +536,9 @@
 20151768	itron_sta_tsk	uint32	uint32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 20/26 call sites read r0, writes r0 1, return value
 20152988	itron_twai_flg	void *	uint32, uint32, uint32, uint32 *, int32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 5), 24/27 call sites read r0, writes r0 1, return value
 2015538c	strcmp	uint32	uint32 *, uint32 *	asm	asm: live-in r0:L,r1:L (= decompiler 2), 42/42 call sites read r0, writes r0 1, return value
-20155480	__aeabi_uidivmod	uint64	uint32 n, uint32 d	doc	ARM RTABI (IHI 0043) 4.3.1: quotient in r0, remainder in r1, returned as one 64-bit value (low word = quotient); some callers read r1 [fact]
+20155480	__aeabi_idivmod	uint64	uint32 n, uint32 d	doc	ARM RTABI (IHI 0043) 4.3.1: quotient in r0, remainder in r1, returned as one 64-bit value (low word = quotient); some callers read r1 [fact]
 201562b4	kernel_heap_init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
-20157174	FUN_20157174	uint8	uint8 *, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 38/38 call sites read r0, writes r0 1, return value
+20157174	reg_read8	uint8	uint8 *, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 38/38 call sites read r0, writes r0 1, return value
 20158630	mainlink_tx_alloc	uint32	int32	asm	asm: live-in r0:L (= decompiler 1), 6/6 call sites read r0, writes r0 1, return value
 2015863c	mainlink_tx_init	void	int32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 1, return void
 2015869c	mainlink_tx_clear_stats	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void

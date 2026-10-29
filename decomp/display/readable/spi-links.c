@@ -14,7 +14,7 @@
 
 /* RSPI2 master for SDR image */
 
-void sdr_spi_master_write(undefined4 param_1,undefined4 param_2)
+void sdr_spi_master_write(uint param_1,uint param_2)
 
 {
   if (DAT_208001b4 == '\0') {
@@ -66,7 +66,7 @@ int cycle_delta(int *param_1)
 
 /* 151 B MAIN status */
 
-void pclink_tx_set_status(undefined4 param_1)
+void pclink_tx_set_status(uint param_1)
 
 {
   memcpy(&DAT_60501b64,param_1,0x97);
@@ -87,7 +87,7 @@ void pclink_tx_set_status(undefined4 param_1)
 void pclink_tx_copy_afscope(void)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   
   uVar1 = afscope_buf_ptr();
   memcpy(&DAT_605016a4,uVar1,600);
@@ -108,10 +108,10 @@ void pclink_tx_copy_afscope(void)
 void pclink_tx_copy_scope(void)
 
 {
-  undefined4 uVar1;
+  void *pvVar1;
   
-  uVar1 = scope_frame_buf();
-  memcpy(&DAT_60501000,uVar1,0x352);
+  pvVar1 = scope_frame_buf();
+  memcpy(&DAT_60501000,pvVar1,0x352);
   return;
 }
 
@@ -150,10 +150,10 @@ void pclink_tx_trailer_init(void)
 void pclink_tx_dma_start(void)
 
 {
-  DAT_e8200440 = &DAT_60501000;
-  DAT_e8200444 = 0xe800c804;
-  DAT_e8200448 = 0x1000;
-  FUN_20157160(&DAT_e8200468,1,0);
+  DMAC_N0SA_9 = &DAT_60501000;
+  DMAC_N0DA_9 = 0xe800c804;
+  DMAC_N0TB_9 = 0x1000;
+  reg_rmw32(&DMAC_CHCTRL_9,1,0);
   return;
 }
 
@@ -194,7 +194,7 @@ void pclink_rx_parse(void)
   undefined4 local_10;
   
   local_10 = 0xeeafccba;
-  iVar1 = FUN_2015507c(&DAT_60500000,&local_10,4);
+  iVar1 = memcmp(&DAT_60500000,&local_10,4);
   if (iVar1 != 0) {
     DAT_2045d4ac = DAT_2045d4ac + 1;
     return;
@@ -247,11 +247,11 @@ void pclink_rx_done_cb(void)
 void spi_slave_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = itron_acre_tsk(0,&DAT_20165554);
-  if (0 < iVar1) {
-    itron_sta_tsk(iVar1,0);
+  uVar1 = itron_acre_tsk(0,&DAT_20165554);
+  if (0 < (int)uVar1) {
+    itron_sta_tsk(uVar1,0);
     return;
   }
   return;
@@ -268,25 +268,25 @@ void spi_slave_init(void)
 
 /* replaces sdr_spi_stats_print: FT4222H link test-mode box */
 
-void pclink_stats_print(undefined4 param_1)
+void pclink_stats_print(uint param_1)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  uint uVar1;
+  int iVar2;
   undefined1 auStack_a0 [128];
   
   if (DAT_20450004 != 0) {
-    uVar2 = 0x400;
-    iVar1 = gpio_read_bit(2,0xd);
-    if (DAT_20450008 != iVar1) {
+    iVar2 = 0x400;
+    uVar1 = gpio_read_bit(2,0xd);
+    if (DAT_20450008 != uVar1) {
       DAT_2045d4b0 = DAT_2045d4b0 + 1;
     }
     if ((((DAT_2045d4a8 == 0) || (DAT_2045d4ac != 0)) || (DAT_2045d4bc == 0)) ||
        ((DAT_2045d4c0 != 0 || (DAT_2045d4b0 == 0)))) {
-      uVar2 = 0xc800;
+      iVar2 = 0xc800;
     }
-    DAT_20450008 = iVar1;
-    fb_fill_rect(param_1,uVar2,0x104,600,200,0xaf);
+    DAT_20450008 = uVar1;
+    fb_fill_rect(param_1,iVar2,0x104,600,200,0xaf);
     DAT_20450010 = DAT_20450010 + 1;
     if (DAT_20450010 == 0x14) {
       DAT_20450010 = 0;
@@ -332,70 +332,70 @@ undefined4 rspi_hw_config(uint param_1,int param_2)
   
   uVar2 = 0;
   if (param_1 < 6) {
-    ppuVar1 = &PTR_DAT_20166b4c + param_1 * 0xb;
+    ppuVar1 = &PTR_RSPI_SPCR_0_20166b4c + param_1 * 0xb;
     if (param_2 == 0) {
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,5,0x20);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,4,0x10);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b54)[param_1 * 0xb],1,0,0xff);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],1,5,0x60);
-      FUN_20157138((&PTR_DAT_20166b5c)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b60)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b64)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b68)[param_1 * 0xb],0,0,3);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xf,0x8000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xe,0x4000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0xd,0x2000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],7,8,0xf00);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,7,0x80);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],3,2,0xc);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,1,2);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],2,4,0x30);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],5,0,7);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b74)[param_1 * 0xb],0,0,1);
-      FUN_20157138(*ppuVar1,0,7,0x80);
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138(*ppuVar1,1,5,0x20);
-      FUN_20157138(*ppuVar1,1,3,8);
-      FUN_20157138(*ppuVar1,0,2,4);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPBR_0_20166b54)[param_1 * 0xb],1,0,0xff);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw8((&PTR_RSPI_SPCKD_0_20166b5c)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SSLND_0_20166b60)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPND_0_20166b64)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPSCR_0_20166b68)[param_1 * 0xb],0,0,3);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],3,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],2,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],5,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8(*ppuVar1,0,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,1,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
     }
     else if (param_2 == 1) {
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,5,0x20);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,4,0x10);
-      FUN_20157138((&PTR_DAT_20166b50)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b74)[param_1 * 0xb],0,0,1);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b58)[param_1 * 0xb],1,5,0x60);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xf,0x8000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xe,0x4000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xd,0x2000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],7,8,0xf00);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,7,0x80);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,2,0xc);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],0,1,2);
-      FUN_2015714c((&PTR_DAT_20166b6c)[param_1 * 0xb],1,0);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],1,6,0x40);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],3,4,0x30);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,0,7);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,7,0x80);
-      FUN_20157138((&PTR_DAT_20166b70)[param_1 * 0xb],0,6,0x40);
-      FUN_20157138(*ppuVar1,1,7,0x80);
-      FUN_20157138(*ppuVar1,0,6,0x40);
-      FUN_20157138(*ppuVar1,1,5,0x20);
-      FUN_20157138(*ppuVar1,0,4,0x10);
-      FUN_20157138(*ppuVar1,0,3,8);
-      FUN_20157138(*ppuVar1,0,2,4);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],3,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8(*ppuVar1,1,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,0,4,0x10);
+      reg_rmw8(*ppuVar1,0,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
     }
     else {
       uVar2 = 0xff;
@@ -422,13 +422,13 @@ undefined4 rspi_hw_config(uint param_1,int param_2)
 undefined4 rspi0_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,7,0x80,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166a84);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166a98), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     uVar2 = rspi_hw_config(0,1);
@@ -452,13 +452,13 @@ undefined4 rspi0_open(void)
 undefined4 rspi1_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,6,0x40,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166aac);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ac0), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     uVar2 = rspi_hw_config(1,0);
@@ -482,13 +482,13 @@ undefined4 rspi1_open(void)
 undefined4 rspi2_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,5,0x20,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166ad4);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ae8), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166ad4);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
     uVar2 = rspi_hw_config(2,1);
@@ -512,13 +512,13 @@ undefined4 rspi2_open(void)
 undefined4 rspi3_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,4,0x10,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166afc);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166b10), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166afc);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
@@ -543,13 +543,13 @@ undefined4 rspi3_open(void)
 undefined4 rspi4_open(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 uVar2;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,3,8,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166b24);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166b38), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166b24);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
     uVar2 = rspi_hw_config(4,1);
@@ -741,12 +741,12 @@ void rspi4_clear_tx_flag(void)
 undefined4 rspi0_open_irq_only(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,7,0x80,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166a84);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166a98), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     return 0;
@@ -768,12 +768,12 @@ undefined4 rspi0_open_irq_only(void)
 undefined4 rspi1_open_irq_only(void)
 
 {
-  int iVar1;
+  uint uVar1;
   undefined4 in_r3;
   
-  FUN_20157138(&DAT_fcfe043c,0,6,0x40,in_r3);
-  iVar1 = itron_acre_isr(0,&DAT_20166aac);
-  if ((0 < iVar1) && (iVar1 = itron_acre_isr(0,&DAT_20166ac0), 0 < iVar1)) {
+  reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     return 0;
@@ -825,10 +825,10 @@ undefined4 rspi_open(uint param_1)
  */
 // ===== rspi_spe_set @ 2011f128 (16 bytes)
 
-void rspi_spe_set(undefined4 param_1)
+void rspi_spe_set(uint param_1)
 
 {
-  FUN_20157138(param_1,1,6,0x40);
+  reg_rmw8(param_1,1,6,0x40);
   return;
 }
 
@@ -846,30 +846,30 @@ void rspi_spe_set(undefined4 param_1)
 undefined4 rspi_start(uint param_1)
 
 {
-  undefined *puVar1;
+  byte *pbVar1;
   
   if (4 < param_1) {
     return 0xffffffff;
   }
   switch(param_1) {
   case 0:
-    puVar1 = &DAT_e800c800;
+    pbVar1 = &RSPI_SPCR_0;
     break;
   case 1:
-    puVar1 = &DAT_e800d000;
+    pbVar1 = &RSPI_SPCR_1;
     break;
   case 2:
-    puVar1 = &DAT_e800d800;
+    pbVar1 = &RSPI_SPCR_2;
     break;
   case 3:
-    puVar1 = &DAT_e800e000;
+    pbVar1 = &RSPI_SPCR_3;
     break;
   case 4:
-    rspi_spe_set(&DAT_e800e800);
+    rspi_spe_set(0xe800e800);
   default:
     goto switchD_2011f14c_default;
   }
-  rspi_spe_set(puVar1);
+  rspi_spe_set((uint)pbVar1);
 switchD_2011f14c_default:
   return 0;
 }
@@ -883,10 +883,10 @@ switchD_2011f14c_default:
  */
 // ===== rspi_spe_clear @ 2011f19c (16 bytes)
 
-void rspi_spe_clear(undefined4 param_1)
+void rspi_spe_clear(uint param_1)
 
 {
-  FUN_20157138(param_1,0,6,0x40);
+  reg_rmw8(param_1,0,6,0x40);
   return;
 }
 
@@ -909,23 +909,23 @@ undefined4 rspi_stop(uint param_1)
   }
   switch(param_1) {
   case 0:
-    rspi_spe_clear(&DAT_e800c800);
+    rspi_spe_clear(0xe800c800);
     rspi0_delay();
     break;
   case 1:
-    rspi_spe_clear(&DAT_e800d000);
+    rspi_spe_clear(0xe800d000);
     rspi1_delay();
     break;
   case 2:
-    rspi_spe_clear(&DAT_e800d800);
+    rspi_spe_clear(0xe800d800);
     rspi2_delay();
     break;
   case 3:
-    rspi_spe_clear(&DAT_e800e000);
+    rspi_spe_clear(0xe800e000);
     rspi3_delay();
     break;
   case 4:
-    rspi_spe_clear(&DAT_e800e800);
+    rspi_spe_clear(0xe800e800);
     rspi4_delay();
   }
   return 0;
@@ -940,20 +940,20 @@ undefined4 rspi_stop(uint param_1)
  */
 // ===== rspi_base @ 2011f230 (52 bytes)
 
-undefined * rspi_base(undefined4 param_1)
+void * rspi_base(uint param_1)
 
 {
   switch(param_1) {
   default:
-    return &DAT_e800c800;
+    return &RSPI_SPCR_0;
   case 1:
-    return &DAT_e800d000;
+    return &RSPI_SPCR_1;
   case 2:
-    return &DAT_e800d800;
+    return &RSPI_SPCR_2;
   case 3:
-    return &DAT_e800e000;
+    return &RSPI_SPCR_3;
   case 4:
-    return &DAT_e800e800;
+    return &RSPI_SPCR_4;
   }
 }
 
@@ -969,92 +969,92 @@ undefined * rspi_base(undefined4 param_1)
 
 /* PIO read; no callers */
 
-undefined4 rspi_read(undefined4 param_1,undefined4 *param_2,int param_3,int param_4)
+undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  uint uVar4;
-  int extraout_r1;
+  byte bVar1;
+  byte bVar2;
+  byte bVar3;
+  void *pvVar4;
   uint uVar5;
+  int extraout_r1;
   uint uVar6;
   uint uVar7;
-  undefined4 *puVar8;
+  uint uVar8;
   undefined4 *puVar9;
   undefined4 *puVar10;
+  undefined4 *puVar11;
   undefined4 local_3c;
-  undefined4 local_38;
   
+  puVar10 = (undefined4 *)0x0;
   puVar9 = (undefined4 *)0x0;
-  puVar8 = (undefined4 *)0x0;
-  local_38 = 0;
-  iVar1 = rspi_base(param_1);
+  bVar1 = 0;
+  pvVar4 = rspi_base(param_1);
   if (param_4 != 0xff) {
-    local_38 = FUN_20157174(iVar1 + 0x20,0,7);
-    FUN_20157138(iVar1 + 0x20,param_4,0,7);
+    bVar1 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
+    reg_rmw8((int)pvVar4 + 0x20,param_4,0,7);
   }
-  iVar2 = FUN_20157174(iVar1 + 0xb,5,0x60);
-  if (iVar2 == 3) {
-    uVar7 = 4;
+  bVar2 = reg_read8((byte *)((int)pvVar4 + 0xb),5,0x60);
+  if (bVar2 == 3) {
+    uVar8 = 4;
   }
-  else if (iVar2 == 2) {
-    uVar7 = 2;
-    puVar9 = param_2;
+  else if (bVar2 == 2) {
+    uVar8 = 2;
+    puVar10 = param_2;
     param_2 = (undefined4 *)0x0;
   }
   else {
-    uVar7 = 1;
-    puVar8 = param_2;
+    uVar8 = 1;
+    puVar9 = param_2;
     param_2 = (undefined4 *)0x0;
   }
-  iVar3 = FUN_20157174(iVar1 + 0x20,0,7);
-  uVar4 = *(uint *)(&DAT_20800434 + iVar3 * 4);
-  if ((uVar4 < uVar7) || (FUN_20156260(uVar4,uVar7), extraout_r1 != 0)) {
+  bVar3 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
+  uVar5 = *(uint *)(&DAT_20800434 + (uint)bVar3 * 4);
+  if ((uVar5 < uVar8) || (__aeabi_uidivmod(uVar5,uVar8), extraout_r1 != 0)) {
     local_3c = 0xffffffff;
   }
   else {
     local_3c = 0;
     while (param_3 != 0) {
-      uVar5 = param_3 * uVar7;
-      uVar6 = uVar5;
-      if (uVar4 <= uVar5) {
-        uVar6 = uVar4;
+      uVar6 = param_3 * uVar8;
+      uVar7 = uVar6;
+      if (uVar5 <= uVar6) {
+        uVar7 = uVar5;
       }
       switch(param_1) {
       case 0:
-        rspi0_read_burst(uVar6);
+        rspi0_read_burst(uVar7);
         break;
       case 1:
-        rspi1_read_burst(uVar6);
+        rspi1_read_burst(uVar7);
         break;
       case 2:
-        rspi2_read_burst(uVar6);
+        rspi2_read_burst(uVar7);
         break;
       case 3:
-        rspi3_read_burst(uVar6);
+        rspi3_read_burst(uVar7);
         break;
       case 4:
-        rspi4_read_burst(uVar6,uVar4 > uVar5);
+        rspi4_read_burst(uVar7,uVar5 > uVar6);
       }
-      for (; uVar7 <= uVar6; uVar6 = uVar6 - uVar7) {
-        if (iVar2 == 3) {
-          puVar10 = param_2 + 1;
-          *param_2 = *(undefined4 *)(iVar1 + 4);
+      for (; uVar8 <= uVar7; uVar7 = uVar7 - uVar8) {
+        if (bVar2 == 3) {
+          puVar11 = param_2 + 1;
+          *param_2 = *(undefined4 *)((int)pvVar4 + 4);
         }
         else {
-          puVar10 = param_2;
-          if (iVar2 == 2) {
-            *(undefined2 *)puVar9 = *(undefined2 *)(iVar1 + 4);
-            puVar9 = (undefined4 *)((int)puVar9 + 2);
+          puVar11 = param_2;
+          if (bVar2 == 2) {
+            *(undefined2 *)puVar10 = *(undefined2 *)((int)pvVar4 + 4);
+            puVar10 = (undefined4 *)((int)puVar10 + 2);
           }
           else {
-            *(undefined1 *)puVar8 = *(undefined1 *)(iVar1 + 4);
-            puVar8 = (undefined4 *)((int)puVar8 + 1);
+            *(undefined1 *)puVar9 = *(undefined1 *)((int)pvVar4 + 4);
+            puVar9 = (undefined4 *)((int)puVar9 + 1);
           }
         }
         param_3 = param_3 + -1;
-        param_2 = puVar10;
+        param_2 = puVar11;
       }
       switch(param_1) {
       case 0:
@@ -1075,7 +1075,7 @@ undefined4 rspi_read(undefined4 param_1,undefined4 *param_2,int param_3,int para
     }
   }
   if (param_4 != 0xff) {
-    FUN_20157138(iVar1 + 0x20,local_38,0,7);
+    reg_rmw8((int)pvVar4 + 0x20,bVar1,0,7);
   }
   return local_3c;
 }
@@ -1096,47 +1096,47 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 {
   uint uVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  uint uVar5;
-  undefined4 uVar6;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  void *pvVar5;
+  uint uVar6;
+  undefined4 uVar7;
   int extraout_r1;
-  uint uVar7;
-  undefined4 *puVar8;
+  uint uVar8;
   undefined4 *puVar9;
   undefined4 *puVar10;
+  undefined4 *puVar11;
   undefined4 local_48;
-  undefined4 local_40;
   
-  uVar6 = 0;
+  uVar7 = 0;
   if ((param_1 < 5) && (0xfa < param_4 - 4U)) {
     if (param_3 != 0) {
+      puVar10 = (undefined4 *)0x0;
       puVar9 = (undefined4 *)0x0;
-      puVar8 = (undefined4 *)0x0;
-      local_40 = 0;
-      iVar2 = rspi_base(param_1);
+      bVar2 = 0;
+      pvVar5 = rspi_base(param_1);
       if (param_4 != 0xff) {
-        local_40 = FUN_20157174(iVar2 + 0x20,4,0x30);
-        FUN_20157138(iVar2 + 0x20,param_4,4,0x30);
+        bVar2 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
+        reg_rmw8((int)pvVar5 + 0x20,param_4,4,0x30);
       }
-      iVar3 = FUN_20157174(iVar2 + 0xb,5,0x60);
-      if (iVar3 == 3) {
-        uVar7 = 4;
+      bVar3 = reg_read8((byte *)((int)pvVar5 + 0xb),5,0x60);
+      if (bVar3 == 3) {
+        uVar8 = 4;
       }
-      else if (iVar3 == 2) {
-        uVar7 = 2;
-        puVar9 = param_2;
+      else if (bVar3 == 2) {
+        uVar8 = 2;
+        puVar10 = param_2;
         param_2 = (undefined4 *)0x0;
       }
       else {
-        uVar7 = 1;
-        puVar8 = param_2;
+        uVar8 = 1;
+        puVar9 = param_2;
         param_2 = (undefined4 *)0x0;
       }
-      iVar4 = FUN_20157174(iVar2 + 0x20,4,0x30);
-      uVar5 = *(uint *)(&DAT_20800424 + iVar4 * 4);
-      if ((uVar5 < uVar7) || (FUN_20156260(uVar5,uVar7), extraout_r1 != 0)) {
+      bVar4 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
+      uVar6 = *(uint *)(&DAT_20800424 + (uint)bVar4 * 4);
+      if ((uVar6 < uVar8) || (__aeabi_uidivmod(uVar6,uVar8), extraout_r1 != 0)) {
         local_48 = 0xffffffff;
       }
       else {
@@ -1158,29 +1158,29 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
           case 4:
             rspi4_tx_wait();
           }
-          uVar1 = uVar5;
-          if (param_3 * uVar7 < uVar5) {
-            uVar1 = param_3 * uVar7;
+          uVar1 = uVar6;
+          if (param_3 * uVar8 < uVar6) {
+            uVar1 = param_3 * uVar8;
           }
-          for (; uVar7 <= uVar1; uVar1 = uVar1 - uVar7) {
-            if (iVar3 == 3) {
-              puVar10 = param_2 + 1;
-              *(undefined4 *)(iVar2 + 4) = *param_2;
+          for (; uVar8 <= uVar1; uVar1 = uVar1 - uVar8) {
+            if (bVar3 == 3) {
+              puVar11 = param_2 + 1;
+              *(undefined4 *)((int)pvVar5 + 4) = *param_2;
             }
             else {
-              puVar10 = param_2;
-              if (iVar3 == 2) {
-                *(undefined2 *)(iVar2 + 4) = *(undefined2 *)puVar9;
-                puVar9 = (undefined4 *)((int)puVar9 + 2);
+              puVar11 = param_2;
+              if (bVar3 == 2) {
+                *(undefined2 *)((int)pvVar5 + 4) = *(undefined2 *)puVar10;
+                puVar10 = (undefined4 *)((int)puVar10 + 2);
               }
               else {
-                *(undefined1 *)(iVar2 + 4) = *(undefined1 *)puVar8;
-                puVar8 = (undefined4 *)((int)puVar8 + 1);
+                *(undefined1 *)((int)pvVar5 + 4) = *(undefined1 *)puVar9;
+                puVar9 = (undefined4 *)((int)puVar9 + 1);
               }
             }
-            FUN_20157174(iVar2 + 3,7,0x80);
+            reg_read8((byte *)((int)pvVar5 + 3),7,0x80);
             param_3 = param_3 + -1;
-            param_2 = puVar10;
+            param_2 = puVar11;
           }
           switch(param_1) {
           case 0:
@@ -1201,15 +1201,15 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
         }
       }
       if (param_4 != 0xff) {
-        FUN_20157138(iVar2 + 0x20,local_40,4,0x30);
+        reg_rmw8((int)pvVar5 + 0x20,bVar2,4,0x30);
       }
       return local_48;
     }
   }
   else {
-    uVar6 = 0xffffffff;
+    uVar7 = 0xffffffff;
   }
-  return uVar6;
+  return uVar7;
 }
 
 
@@ -1226,10 +1226,10 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
 void rspi_fifo_reset(int param_1)
 
 {
-  FUN_20157138(param_1 + 0x20,1,6,0x40);
-  FUN_20157138(param_1 + 0x20,1,7,0x80);
-  FUN_20157138(param_1 + 0x20,0,6,0x40);
-  FUN_20157138(param_1 + 0x20,0,7,0x80);
+  reg_rmw8(param_1 + 0x20,1,6,0x40);
+  reg_rmw8(param_1 + 0x20,1,7,0x80);
+  reg_rmw8(param_1 + 0x20,0,6,0x40);
+  reg_rmw8(param_1 + 0x20,0,7,0x80);
   return;
 }
 
@@ -1245,7 +1245,7 @@ void rspi_fifo_reset(int param_1)
 undefined4 rspi_reset_buffers(uint param_1)
 
 {
-  undefined *puVar1;
+  byte *pbVar1;
   
   if (4 < param_1) {
     return 0xffffffff;
@@ -1254,31 +1254,31 @@ undefined4 rspi_reset_buffers(uint param_1)
   case 0:
     rspi0_clear_rx_flag();
     rspi0_clear_tx_flag();
-    puVar1 = &DAT_e800c800;
+    pbVar1 = &RSPI_SPCR_0;
     break;
   case 1:
     rspi1_clear_rx_flag();
     rspi1_clear_tx_flag();
-    puVar1 = &DAT_e800d000;
+    pbVar1 = &RSPI_SPCR_1;
     break;
   case 2:
     rspi2_clear_rx_flag();
     rspi2_clear_tx_flag();
-    puVar1 = &DAT_e800d800;
+    pbVar1 = &RSPI_SPCR_2;
     break;
   case 3:
     rspi3_clear_rx_flag();
     rspi3_clear_tx_flag();
-    puVar1 = &DAT_e800e000;
+    pbVar1 = &RSPI_SPCR_3;
     break;
   case 4:
     rspi4_clear_rx_flag();
     rspi4_clear_tx_flag();
-    rspi_fifo_reset(&DAT_e800e800);
+    rspi_fifo_reset(-0x17ff1800);
   default:
     goto switchD_2011f7c8_default;
   }
-  rspi_fifo_reset(puVar1);
+  rspi_fifo_reset((int)pbVar1);
 switchD_2011f7c8_default:
   return 0;
 }
@@ -1346,7 +1346,7 @@ void afscope_store_frame(char *param_1)
   }
   else if (DAT_208dd995 != '\0') {
 LAB_20157258:
-    FUN_20155254(&DAT_208dd73c,600,0xff);
+    __aeabi_memset_veneer(&DAT_208dd73c,600,0xff);
     return;
   }
   return;
@@ -1354,14 +1354,14 @@ LAB_20157258:
 
 
 /* -----------------------------------------------------------------------------
- * afscope_buf_ptr @ 20120dc8  (12 bytes, 1 callers, export file 20120d60_20124a74.c)
+ * afscope_buf_ptr @ 20120dc8  (12 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: 600-byte AF-FFT record 0x208DD73C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
  */
 // ===== afscope_buf_ptr @ 20120dc8 (12 bytes)
 
-undefined4 afscope_buf_ptr(void)
+uint afscope_buf_ptr(void)
 
 {
   return DAT_208dd998;
@@ -1369,7 +1369,7 @@ undefined4 afscope_buf_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_buf @ 20132f74  (8 bytes, 2 callers, export file 201322d8_20133618.c)
+ * sdr_rx_buf @ 20132f74  (8 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: Return 0x605C00A0 / 0x605C0780 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1378,7 +1378,7 @@ undefined4 afscope_buf_ptr(void)
 
 /* 0x605C00A0 */
 
-undefined * sdr_rx_buf(void)
+void * sdr_rx_buf(void)
 
 {
   return &DAT_605c00a0;
@@ -1386,7 +1386,7 @@ undefined * sdr_rx_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_hdr_buf @ 20132f7c  (8 bytes, 2 callers, export file 201322d8_20133618.c)
+ * dsp_hdr_buf @ 20132f7c  (8 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: Return 0x605C00A0 / 0x605C0780 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1395,7 +1395,7 @@ undefined * sdr_rx_buf(void)
 
 /* 0x605C0780 */
 
-undefined * dsp_hdr_buf(void)
+void * dsp_hdr_buf(void)
 
 {
   return &DAT_605c0780;
@@ -1403,7 +1403,7 @@ undefined * dsp_hdr_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * cycle_delta_2 @ 20132fe0  (48 bytes, 2 callers, export file 201322d8_20133618.c)
+ * cycle_delta_2 @ 20132fe0  (48 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: `{delta, last}` from CP15 PMCCNTR (c9,c13) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1427,7 +1427,7 @@ int cycle_delta_2(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_done_cb @ 201330d4  (108 bytes, 1 callers, export file 201322d8_20133618.c)
+ * sdr_rx_done_cb @ 201330d4  (108 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: SDR frame complete [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1440,14 +1440,14 @@ void sdr_rx_done_cb(void)
   char cVar1;
   char *pcVar2;
   
-  pcVar2 = (char *)sdr_rx_buf();
+  pcVar2 = sdr_rx_buf();
   cycle_delta_2(&DAT_208f4dc0);
   DAT_208085a4 = DAT_208085a4 + 1;
   if ((((byte)DAT_20808a84 & 0x10) != 0) && (cVar1 = *pcVar2, cVar1 != '\0')) {
     pcVar2[0x1a8] = cVar1;
     pcVar2[0x1a9] = cVar1;
   }
-  scope_store_frame(pcVar2);
+  scope_store_frame((uint)pcVar2);
   dmac5_disable();
   rspi_stop(2);
   rspi_reset_buffers(2);
@@ -1457,7 +1457,7 @@ void sdr_rx_done_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_link_recover @ 20133140  (136 bytes, 0 callers, export file 201322d8_20133618.c)
+ * sdr_link_recover @ 20133140  (136 bytes, 0 callers, export file 201322c8_201335f8.c)
  * Purpose: Error recovery, unreferenced [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1475,17 +1475,17 @@ void sdr_link_recover(void)
   rspi_stop(2);
   dmac5_enable();
   rspi_reset_buffers(2);
-  bVar1 = DAT_e800d803;
+  bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 1) != 0) {
-    bVar1 = DAT_e800d803;
-    DAT_e800d803 = bVar1 & 0xfe;
+    bVar1 = RSPI_SPSR_2;
+    RSPI_SPSR_2 = bVar1 & 0xfe;
     DAT_208f4dac = DAT_208f4dac + 1;
     DAT_20808590 = DAT_20808590 + 1;
   }
-  bVar1 = DAT_e800d803;
+  bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 4) != 0) {
-    bVar1 = DAT_e800d803;
-    DAT_e800d803 = bVar1 & 0xfb;
+    bVar1 = RSPI_SPSR_2;
+    RSPI_SPSR_2 = bVar1 & 0xfb;
     DAT_208f4da8 = DAT_208f4da8 + 1;
   }
   rspi_start(2);
@@ -1494,7 +1494,7 @@ void sdr_link_recover(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_audio_ptr @ 201331c8  (20 bytes, 1 callers, export file 201322d8_20133618.c)
+ * dsp_set_audio_ptr @ 201331c8  (20 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: 0x20808598 = audio pointer, 0x2080858E = halfword at +2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1511,7 +1511,7 @@ void dsp_set_audio_ptr(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * link_ss_irq_init @ 20133440  (68 bytes, 2 callers, export file 201322d8_20133618.c)
+ * link_ss_irq_init @ 20133440  (68 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: ISRs for GIC 535 (SDR) and 449 (DSP) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1523,13 +1523,13 @@ void dsp_set_audio_ptr(int param_1)
 void link_ss_irq_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = itron_acre_isr(0,&DAT_203a7080);
-  if (0 < iVar1) {
+  uVar1 = itron_acre_isr(0,0x203a7080);
+  if (0 < (int)uVar1) {
     gic_enable_irq(0x217);
-    iVar1 = itron_acre_isr(0,&DAT_203a7094);
-    if (0 < iVar1) {
+    uVar1 = itron_acre_isr(0,0x203a7094);
+    if (0 < (int)uVar1) {
       gic_enable_irq(0x1c1);
       return;
     }
@@ -1539,7 +1539,7 @@ void link_ss_irq_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_dsp_link_init @ 20133484  (200 bytes, 1 callers, export file 201322d8_20133618.c)
+ * sdr_dsp_link_init @ 20133484  (200 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: Sets up RSPI2 + DMA ch5 and RSPI4 + DMA ch3/ch4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1551,19 +1551,19 @@ void link_ss_irq_init(void)
 void sdr_dsp_link_init(void)
 
 {
-  undefined4 uVar1;
+  void *pvVar1;
   
-  uVar1 = sdr_rx_buf();
-  dmac5_rspi2_rx_setup(&DAT_e800d804,uVar1,0x6a4);
-  FUN_2015525c(&DAT_60502000,0x1450,0xf0);
-  FUN_2015525c(&DAT_208f4de0,0x11f80,0xf0);
-  dmac4_rspi4_rx_setup(&DAT_e800e804,&DAT_60502000,0x11f8);
-  dmac3_rspi4_tx_setup(&DAT_208f4de0,&DAT_e800e804,0x11f8);
-  FUN_2015525c(&DAT_20906d60,0x11f8,0xf0);
+  pvVar1 = sdr_rx_buf();
+  dmac5_rspi2_rx_setup(0xe800d804,(uint)pvVar1,0x6a4);
+  __aeabi_memset(&DAT_60502000,0x1450,0xf0);
+  __aeabi_memset(&DAT_208f4de0,0x11f80,0xf0);
+  dmac4_rspi4_rx_setup(0xe800e804,0x60502000,0x11f8);
+  dmac3_rspi4_tx_setup(0x208f4de0,0xe800e804,0x11f8);
+  __aeabi_memset(&DAT_20906d60,0x11f8,0xf0);
   DAT_20906d60 = 0;
   DAT_20906d61 = 0;
-  dmac5_set_callback(sdr_rx_done_cb);
-  dmac4_set_callback(dsp_rx_done_cb);
+  dmac5_set_callback(0x201330d4);
+  dmac4_set_callback(0x201331dc);
   rspi_open(2);
   rspi_reset_buffers(2);
   dmac5_enable();
@@ -1577,7 +1577,7 @@ void sdr_dsp_link_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_store_frame @ 201342ec  (168 bytes, 1 callers, export file 20133620_20134358.c)
+ * scope_store_frame @ 201342ec  (168 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: 850-byte scope record 0x204832BB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1586,7 +1586,7 @@ void sdr_dsp_link_init(void)
 
 /* 850 B -> 0x204832BB */
 
-void scope_store_frame(undefined4 param_1)
+void scope_store_frame(uint param_1)
 
 {
   if (DAT_204832b8 == '\0') {
@@ -1594,15 +1594,15 @@ void scope_store_frame(undefined4 param_1)
       memcpy(&DAT_204832bb,param_1,0x352);
     }
     else {
-      FUN_2015525c(&DAT_204832bb,0x352,0xff);
+      __aeabi_memset(&DAT_204832bb,0x352,0xff);
     }
     if (((ushort)DAT_20808a84 & 0x400) != 0) {
-      FUN_20155310(&DAT_204832d4,&DAT_203d9b14,800);
+      __aeabi_memcpy4(&DAT_204832d4,&DAT_203d9b14,800);
       return;
     }
   }
   else if (DAT_204832ba != '\0') {
-    FUN_20155254(&DAT_204832bb,0x352,0xff);
+    __aeabi_memset_veneer(&DAT_204832bb,0x352,0xff);
     return;
   }
   return;
@@ -1610,7 +1610,7 @@ void scope_store_frame(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_history_push @ 20134348  (212 bytes, 6 callers, export file 20133620_20134358.c)
+ * scope_history_push @ 20134348  (212 bytes, 6 callers, export file 20133618_20134348.c)
  * Purpose: Appends the 800 points to the waterfall/3D history ring 0x20490894 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1619,7 +1619,7 @@ void scope_store_frame(undefined4 param_1)
 
 /* 800 points -> ring 0x20490894 (inference) */
 
-void scope_history_push(int param_1,undefined2 *param_2)
+void scope_history_push(int param_1,void *param_2)
 
 {
   int iVar1;
@@ -1629,8 +1629,8 @@ void scope_history_push(int param_1,undefined2 *param_2)
     FUN_201643b0();
     iVar1 = FUN_201647e4(&DAT_20494768,0);
     FUN_201577f8(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
-    *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *param_2;
-    *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = param_2[1];
+    *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
+    *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
     DAT_20494714 = DAT_20494714 + 1;
     if (param_1 <= DAT_20494714) {
       DAT_20494714 = param_1;
@@ -1639,16 +1639,15 @@ void scope_history_push(int param_1,undefined2 *param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope_frame_buf @ 201344a0  (8 bytes, 1 callers, export file 20134368_201353f8.c)
+ * scope_frame_buf @ 201344a0  (8 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: 850-byte scope record 0x204832BB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
  */
 // ===== scope_frame_buf @ 201344a0 (8 bytes)
 
-undefined * scope_frame_buf(void)
+void * scope_frame_buf(void)
 
 {
   return &DAT_204832bb;

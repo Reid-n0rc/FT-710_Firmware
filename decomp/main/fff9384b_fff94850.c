@@ -123,29 +123,29 @@ void R_SCI2_Create(void)
   uint uVar1;
   byte bVar2;
   
-  uVar1 = DAT_00080014;
-  DAT_00080014 = uVar1 & 0xdfffffff;
-  bVar2 = DAT_0008733e;
-  DAT_0008733e = bVar2 & 0xf8 | 8;
-  bVar2 = DAT_0008733f;
-  DAT_0008733f = bVar2 & 0xf8 | 8;
-  DAT_0008a042 = 0;
-  DAT_0008a042 = 0;
-  bVar2 = DAT_0008a049;
-  DAT_0008a049 = bVar2 & 0xfe;
-  DAT_0008a04d = 0;
-  DAT_0008a040 = 1;
-  DAT_0008a046 = 0x72;
-  DAT_0008a047 = 0x10;
-  DAT_0008a041 = 0xc2;
-  DAT_0008c14a = 10;
-  bVar2 = DAT_0008c061;
-  DAT_0008c061 = bVar2 | 4;
-  DAT_0008c14b = 10;
-  bVar2 = DAT_0008c021;
-  DAT_0008c021 = bVar2 | 8;
-  bVar2 = DAT_0008c001;
-  DAT_0008c001 = bVar2 | 8;
+  uVar1 = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = uVar1 & 0xdfffffff;
+  bVar2 = ICU_IPR062;
+  ICU_IPR062 = bVar2 & 0xf8 | 8;
+  bVar2 = ICU_IPR063;
+  ICU_IPR063 = bVar2 & 0xf8 | 8;
+  SCI2_SCR = 0;
+  SCI2_SCR = 0;
+  bVar2 = SCI2_SIMR1;
+  SCI2_SIMR1 = bVar2 & 0xfe;
+  SCI2_SPMR = 0;
+  SCI2_SMR = 1;
+  SCI2_SCMR = 0x72;
+  SCI2_SEMR = 0x10;
+  SCI2_BRR = 0xc2;
+  MPC_P12PFS = 10;
+  bVar2 = PORT1_PMR;
+  PORT1_PMR = bVar2 | 4;
+  MPC_P13PFS = 10;
+  bVar2 = PORT1_PODR;
+  PORT1_PODR = bVar2 | 8;
+  bVar2 = PORT1_PDR;
+  PORT1_PDR = bVar2 | 8;
   R_SCI2_Create_UserInit();
   return;
 }
@@ -159,18 +159,18 @@ void R_SCI2_Start(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0008703f;
-  DAT_0008703f = bVar1 & 0xfe;
-  bVar1 = DAT_0008703e;
-  DAT_0008703e = bVar1 & 0xfe;
-  bVar1 = DAT_00087207;
-  DAT_00087207 = bVar1 | 0x80;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x10;
-  bVar1 = DAT_00087207;
-  DAT_00087207 = bVar1 | 0x40;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x20;
+  bVar1 = ICU_IR063;
+  ICU_IR063 = bVar1 & 0xfe;
+  bVar1 = ICU_IR062;
+  ICU_IR062 = bVar1 & 0xfe;
+  bVar1 = ICU_IER07;
+  ICU_IER07 = bVar1 | 0x80;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x10;
+  bVar1 = ICU_IER07;
+  ICU_IER07 = bVar1 | 0x40;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x20;
   return;
 }
 
@@ -183,28 +183,28 @@ void R_SCI2_Stop(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0008c061;
-  DAT_0008c061 = bVar1 & 0xf7;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0xef;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0xbf;
-  bVar1 = DAT_00087207;
-  DAT_00087207 = bVar1 & 0x7f;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xffffffef;
-  bVar1 = DAT_0008703f;
-  DAT_0008703f = bVar1 & 0xfe;
-  bVar1 = DAT_00087207;
-  DAT_00087207 = bVar1 & 0xbf;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xffffffdf;
-  bVar1 = DAT_0008703e;
-  DAT_0008703e = bVar1 & 0xfe;
+  bVar1 = PORT1_PMR;
+  PORT1_PMR = bVar1 & 0xf7;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0xdf;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0xef;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0x7f;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0xbf;
+  bVar1 = ICU_IER07;
+  ICU_IER07 = bVar1 & 0x7f;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xffffffef;
+  bVar1 = ICU_IR063;
+  ICU_IR063 = bVar1 & 0xfe;
+  bVar1 = ICU_IER07;
+  ICU_IER07 = bVar1 & 0xbf;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xffffffdf;
+  bVar1 = ICU_IR062;
+  ICU_IR062 = bVar1 & 0xfe;
   return;
 }
 
@@ -223,10 +223,10 @@ ushort R_SCI2_Serial_Receive(uint param_1,short param_2)
   }
   else {
     DAT_0001b612 = 0;
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 | 0x40;
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 | 0x10;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 | 0x40;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 | 0x10;
     DAT_0001b614 = param_2;
     DAT_00020808 = param_1;
   }
@@ -248,16 +248,16 @@ ushort R_SCI2_Serial_Send(uint param_1,short param_2)
     local_a = 0x81;
   }
   else {
-    cVar1 = DAT_00087207;
+    cVar1 = ICU_IER07;
     if (cVar1 < '\0') {
-      bVar2 = DAT_00087207;
-      DAT_00087207 = bVar2 & 0x7f;
-      bVar2 = DAT_0008a042;
-      DAT_0008a042 = bVar2 | 0xa0;
-      bVar2 = DAT_0008c061;
-      DAT_0008c061 = bVar2 | 8;
-      bVar2 = DAT_00087207;
-      DAT_00087207 = bVar2 | 0x80;
+      bVar2 = ICU_IER07;
+      ICU_IER07 = bVar2 & 0x7f;
+      bVar2 = SCI2_SCR;
+      SCI2_SCR = bVar2 | 0xa0;
+      bVar2 = PORT1_PMR;
+      PORT1_PMR = bVar2 | 8;
+      bVar2 = ICU_IER07;
+      ICU_IER07 = bVar2 | 0x80;
       DAT_0001b610 = param_2;
       DAT_00020804 = param_1;
     }
@@ -292,13 +292,13 @@ void r_sci2_transmit_interrupt(void)
   byte bVar1;
   
   if (DAT_0001b610 == 0) {
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 & 0x7f;
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 | 4;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 & 0x7f;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 | 4;
     return;
   }
-  DAT_0008a043 = *DAT_00020804;
+  SCI2_TDR = *DAT_00020804;
   DAT_00020804 = DAT_00020804 + 1;
   DAT_0001b610 = DAT_0001b610 + -1;
   return;
@@ -314,14 +314,14 @@ void r_sci2_transmitend_interrupt(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008c061;
-  DAT_0008c061 = bVar1 & 0xf7;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a042;
-  DAT_0008a042 = bVar1 & 0xfb;
+  bVar1 = PORT1_PMR;
+  PORT1_PMR = bVar1 & 0xf7;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0x7f;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0xdf;
+  bVar1 = SCI2_SCR;
+  SCI2_SCR = bVar1 & 0xfb;
   r_sci2_callback_transmitend();
   return;
 }
@@ -343,17 +343,17 @@ void r_sci2_receive_interrupt(void)
   undefined1 uVar2;
   
   if (DAT_0001b612 < DAT_0001b614) {
-    uVar2 = DAT_0008a045;
+    uVar2 = SCI2_RDR;
     *DAT_00020808 = uVar2;
     sci2_rx_byte_hook();
     DAT_00020808 = DAT_00020808 + 1;
     DAT_0001b612 = DAT_0001b612 + 1;
   }
   if (DAT_0001b614 <= DAT_0001b612) {
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 & 0xbf;
-    bVar1 = DAT_0008a042;
-    DAT_0008a042 = bVar1 & 0xef;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 & 0xbf;
+    bVar1 = SCI2_SCR;
+    SCI2_SCR = bVar1 & 0xef;
     r_sci2_callback_receiveend();
     return;
   }
@@ -371,8 +371,8 @@ void r_sci2_receiveerror_interrupt(void)
   byte bVar1;
   
   r_sci2_callback_receiveerror();
-  bVar1 = DAT_0008a044;
-  DAT_0008a044 = bVar1 & 199 | 0xc0;
+  bVar1 = SCI2_SSR;
+  SCI2_SSR = bVar1 & 199 | 0xc0;
   return;
 }
 
@@ -384,10 +384,10 @@ void r_sci2_receiveerror_interrupt(void)
 void r_sci2_callback_transmitend(void)
 
 {
-  byte bVar1;
+  tunlin_mode tVar1;
   
-  bVar1 = tunlin_port_mode();
-  if (bVar1 != 2) {
+  tVar1 = tunlin_port_mode();
+  if (tVar1 != TUNLIN_CAT3) {
     FUN_fffb1976();
     return;
   }
@@ -403,10 +403,10 @@ void r_sci2_callback_transmitend(void)
 void r_sci2_callback_receiveend(void)
 
 {
-  byte bVar1;
+  tunlin_mode tVar1;
   
-  bVar1 = tunlin_port_mode();
-  if (bVar1 != 2) {
+  tVar1 = tunlin_port_mode();
+  if (tVar1 != TUNLIN_CAT3) {
     FUN_fffb1944();
     return;
   }
@@ -437,11 +437,12 @@ void sci2_rx_byte_hook(void)
 {
   char cVar1;
   bool bVar2;
-  byte bVar3;
+  tunlin_mode tVar3;
+  byte bVar4;
   
-  bVar3 = tunlin_port_mode();
-  if (bVar3 != 2) {
-    if ((DAT_0001b612 == 0) || (bVar3 = swtimer_expired(8), bVar3 != 1)) {
+  tVar3 = tunlin_port_mode();
+  if (tVar3 != TUNLIN_CAT3) {
+    if ((DAT_0001b612 == 0) || (bVar4 = swtimer_expired(8), bVar4 != 1)) {
       bVar2 = false;
     }
     else {
@@ -508,29 +509,29 @@ void R_SCI3_Create(void)
   uint uVar1;
   byte bVar2;
   
-  uVar1 = DAT_00080014;
-  DAT_00080014 = uVar1 & 0xefffffff;
-  bVar2 = DAT_00087350;
-  DAT_00087350 = bVar2 & 0xf8 | 8;
-  bVar2 = DAT_00087351;
-  DAT_00087351 = bVar2 & 0xf8 | 8;
-  DAT_0008a062 = 0;
-  DAT_0008a062 = 0;
-  bVar2 = DAT_0008a069;
-  DAT_0008a069 = bVar2 & 0xfe;
-  DAT_0008a06d = 0;
-  DAT_0008a060 = 0;
-  DAT_0008a066 = 0x72;
-  DAT_0008a067 = 0x50;
-  DAT_0008a061 = 0xc2;
-  DAT_0008c155 = 10;
-  bVar2 = DAT_0008c062;
-  DAT_0008c062 = bVar2 | 0x20;
-  DAT_0008c153 = 10;
-  bVar2 = DAT_0008c022;
-  DAT_0008c022 = bVar2 | 8;
-  bVar2 = DAT_0008c002;
-  DAT_0008c002 = bVar2 | 8;
+  uVar1 = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = uVar1 & 0xefffffff;
+  bVar2 = ICU_IPR080;
+  ICU_IPR080 = bVar2 & 0xf8 | 8;
+  bVar2 = ICU_IPR081;
+  ICU_IPR081 = bVar2 & 0xf8 | 8;
+  SCI3_SCR = 0;
+  SCI3_SCR = 0;
+  bVar2 = SCI3_SIMR1;
+  SCI3_SIMR1 = bVar2 & 0xfe;
+  SCI3_SPMR = 0;
+  SCI3_SMR = 0;
+  SCI3_SCMR = 0x72;
+  SCI3_SEMR = 0x50;
+  SCI3_BRR = 0xc2;
+  MPC_P25PFS = 10;
+  bVar2 = PORT2_PMR;
+  PORT2_PMR = bVar2 | 0x20;
+  MPC_P23PFS = 10;
+  bVar2 = PORT2_PODR;
+  PORT2_PODR = bVar2 | 8;
+  bVar2 = PORT2_PDR;
+  PORT2_PDR = bVar2 | 8;
   R_SCI3_Create_UserInit();
   return;
 }
@@ -544,18 +545,18 @@ void R_SCI3_Start(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_00087051;
-  DAT_00087051 = bVar1 & 0xfe;
-  bVar1 = DAT_00087050;
-  DAT_00087050 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 2;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x40;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 1;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x80;
+  bVar1 = ICU_IR081;
+  ICU_IR081 = bVar1 & 0xfe;
+  bVar1 = ICU_IR080;
+  ICU_IR080 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 2;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x40;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 1;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x80;
   return;
 }
 
@@ -568,28 +569,28 @@ void R_SCI3_Stop(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0008c062;
-  DAT_0008c062 = bVar1 & 0xf7;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0xef;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0xbf;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xfd;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xffffffbf;
-  bVar1 = DAT_00087051;
-  DAT_00087051 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xfe;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xffffff7f;
-  bVar1 = DAT_00087050;
-  DAT_00087050 = bVar1 & 0xfe;
+  bVar1 = PORT2_PMR;
+  PORT2_PMR = bVar1 & 0xf7;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0xdf;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0xef;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0x7f;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0xbf;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xfd;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xffffffbf;
+  bVar1 = ICU_IR081;
+  ICU_IR081 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xfe;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xffffff7f;
+  bVar1 = ICU_IR080;
+  ICU_IR080 = bVar1 & 0xfe;
   return;
 }
 
@@ -608,10 +609,10 @@ ushort R_SCI3_Serial_Receive(uint param_1,short param_2)
   }
   else {
     DAT_0001b618 = 0;
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 | 0x40;
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 | 0x10;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 | 0x40;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 | 0x10;
     DAT_0001b61a = param_2;
     DAT_00020810 = param_1;
   }
@@ -632,19 +633,19 @@ ushort R_SCI3_Serial_Send(uint param_1,short param_2)
     local_a = 0x81;
   }
   else {
-    bVar1 = DAT_0008720a;
+    bVar1 = ICU_IER0A;
     if ((bVar1 & 2) == 0) {
       local_a = 0x80;
     }
     else {
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 & 0xfd;
-      bVar1 = DAT_0008a062;
-      DAT_0008a062 = bVar1 | 0xa0;
-      bVar1 = DAT_0008c062;
-      DAT_0008c062 = bVar1 | 8;
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 | 2;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 & 0xfd;
+      bVar1 = SCI3_SCR;
+      SCI3_SCR = bVar1 | 0xa0;
+      bVar1 = PORT2_PMR;
+      PORT2_PMR = bVar1 | 8;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 | 2;
       DAT_0001b616 = param_2;
       DAT_0002080c = param_1;
     }
@@ -676,13 +677,13 @@ void r_sci3_transmit_interrupt(void)
   byte bVar1;
   
   if (DAT_0001b616 == 0) {
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 & 0x7f;
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 | 4;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 & 0x7f;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 | 4;
     return;
   }
-  DAT_0008a063 = *DAT_0002080c;
+  SCI3_TDR = *DAT_0002080c;
   DAT_0002080c = DAT_0002080c + 1;
   DAT_0001b616 = DAT_0001b616 + -1;
   return;
@@ -698,14 +699,14 @@ void r_sci3_transmitend_interrupt(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008c062;
-  DAT_0008c062 = bVar1 & 0xf7;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a062;
-  DAT_0008a062 = bVar1 & 0xfb;
+  bVar1 = PORT2_PMR;
+  PORT2_PMR = bVar1 & 0xf7;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0x7f;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0xdf;
+  bVar1 = SCI3_SCR;
+  SCI3_SCR = bVar1 & 0xfb;
   r_sci3_callback_transmitend();
   return;
 }
@@ -727,17 +728,17 @@ void r_sci3_receive_interrupt(void)
   undefined1 uVar2;
   
   if (DAT_0001b618 < DAT_0001b61a) {
-    uVar2 = DAT_0008a065;
+    uVar2 = SCI3_RDR;
     *DAT_00020810 = uVar2;
     sci3_rx_byte_hook();
     DAT_00020810 = DAT_00020810 + 1;
     DAT_0001b618 = DAT_0001b618 + 1;
   }
   if (DAT_0001b61a <= DAT_0001b618) {
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 & 0xbf;
-    bVar1 = DAT_0008a062;
-    DAT_0008a062 = bVar1 & 0xef;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 & 0xbf;
+    bVar1 = SCI3_SCR;
+    SCI3_SCR = bVar1 & 0xef;
     r_sci3_callback_receiveend();
     return;
   }
@@ -755,8 +756,8 @@ void r_sci3_receiveerror_interrupt(void)
   byte bVar1;
   
   r_sci3_callback_receiveerror();
-  bVar1 = DAT_0008a064;
-  DAT_0008a064 = bVar1 & 199 | 0xc0;
+  bVar1 = SCI3_SSR;
+  SCI3_SSR = bVar1 & 199 | 0xc0;
   return;
 }
 
@@ -817,29 +818,29 @@ void R_SCI4_Create(void)
   uint uVar1;
   byte bVar2;
   
-  uVar1 = DAT_00080014;
-  DAT_00080014 = uVar1 & 0xf7ffffff;
-  bVar2 = DAT_00087352;
-  DAT_00087352 = bVar2 & 0xfa | 10;
-  bVar2 = DAT_00087353;
-  DAT_00087353 = bVar2 & 0xfa | 10;
-  DAT_0008a082 = 0;
-  DAT_0008a082 = 0;
-  bVar2 = DAT_0008a089;
-  DAT_0008a089 = bVar2 & 0xfe;
-  DAT_0008a08d = 0;
-  DAT_0008a080 = 0;
-  DAT_0008a086 = 0x72;
-  DAT_0008a087 = 0x50;
-  DAT_0008a081 = 0x40;
-  DAT_0008c198 = 10;
-  bVar2 = DAT_0008c06b;
-  DAT_0008c06b = bVar2 | 1;
-  DAT_0008c199 = 10;
-  bVar2 = DAT_0008c02b;
-  DAT_0008c02b = bVar2 | 2;
-  bVar2 = DAT_0008c00b;
-  DAT_0008c00b = bVar2 | 2;
+  uVar1 = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = uVar1 & 0xf7ffffff;
+  bVar2 = ICU_IPR082;
+  ICU_IPR082 = bVar2 & 0xfa | 10;
+  bVar2 = ICU_IPR083;
+  ICU_IPR083 = bVar2 & 0xfa | 10;
+  SCI4_SCR = 0;
+  SCI4_SCR = 0;
+  bVar2 = SCI4_SIMR1;
+  SCI4_SIMR1 = bVar2 & 0xfe;
+  SCI4_SPMR = 0;
+  SCI4_SMR = 0;
+  SCI4_SCMR = 0x72;
+  SCI4_SEMR = 0x50;
+  SCI4_BRR = 0x40;
+  MPC_PB0PFS = 10;
+  bVar2 = PORTB_PMR;
+  PORTB_PMR = bVar2 | 1;
+  MPC_PB1PFS = 10;
+  bVar2 = PORTB_PODR;
+  PORTB_PODR = bVar2 | 2;
+  bVar2 = PORTB_PDR;
+  PORTB_PDR = bVar2 | 2;
   R_SCI4_Create_UserInit();
   return;
 }
@@ -853,52 +854,56 @@ void R_SCI4_Start(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_00087053;
-  DAT_00087053 = bVar1 & 0xfe;
-  bVar1 = DAT_00087052;
-  DAT_00087052 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 8;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x100;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 4;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x200;
+  bVar1 = ICU_IR083;
+  ICU_IR083 = bVar1 & 0xfe;
+  bVar1 = ICU_IR082;
+  ICU_IR082 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 8;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x100;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 4;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x200;
   return;
 }
 
 
-// ===== FUN_fff9431f @ fff9431f (104 bytes)
+// ===== R_SCI4_Stop @ fff9431f (104 bytes)
 
-void FUN_fff9431f(void)
+/* T23d Renesas Code Generator r_cg_* / Smart Configurator (RX651) (cg_registers 0.950): SCI4
+   (0x8A082) and its IER/IR bits; 104 B like the other R_SCIn_Stop, after R_SCI4_Start [inference]
+    */
+
+void R_SCI4_Stop(void)
 
 {
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0008c06b;
-  DAT_0008c06b = bVar1 & 0xfd;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0xef;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0xbf;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xf7;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xfffffeff;
-  bVar1 = DAT_00087053;
-  DAT_00087053 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xfb;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xfffffdff;
-  bVar1 = DAT_00087052;
-  DAT_00087052 = bVar1 & 0xfe;
+  bVar1 = PORTB_PMR;
+  PORTB_PMR = bVar1 & 0xfd;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0xdf;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0xef;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0x7f;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0xbf;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xf7;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xfffffeff;
+  bVar1 = ICU_IR083;
+  ICU_IR083 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xfb;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xfffffdff;
+  bVar1 = ICU_IR082;
+  ICU_IR082 = bVar1 & 0xfe;
   return;
 }
 
@@ -917,10 +922,10 @@ ushort R_SCI4_Serial_Receive(uint param_1,short param_2)
   }
   else {
     DAT_0001b61e = 0;
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 | 0x40;
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 | 0x10;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 | 0x40;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 | 0x10;
     DAT_0001b620 = param_2;
     DAT_00020818 = param_1;
   }
@@ -941,19 +946,19 @@ ushort R_SCI4_Serial_Send(uint param_1,short param_2)
     local_a = 0x81;
   }
   else {
-    bVar1 = DAT_0008720a;
+    bVar1 = ICU_IER0A;
     if ((bVar1 & 8) == 0) {
       local_a = 0x80;
     }
     else {
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 & 0xf7;
-      bVar1 = DAT_0008a082;
-      DAT_0008a082 = bVar1 | 0xa0;
-      bVar1 = DAT_0008c06b;
-      DAT_0008c06b = bVar1 | 2;
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 | 8;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 & 0xf7;
+      bVar1 = SCI4_SCR;
+      SCI4_SCR = bVar1 | 0xa0;
+      bVar1 = PORTB_PMR;
+      PORTB_PMR = bVar1 | 2;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 | 8;
       DAT_0001b61c = param_2;
       DAT_00020814 = param_1;
     }
@@ -985,13 +990,13 @@ void r_sci4_transmit_interrupt(void)
   byte bVar1;
   
   if (DAT_0001b61c == 0) {
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 & 0x7f;
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 | 4;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 & 0x7f;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 | 4;
     return;
   }
-  DAT_0008a083 = *DAT_00020814;
+  SCI4_TDR = *DAT_00020814;
   DAT_00020814 = DAT_00020814 + 1;
   DAT_0001b61c = DAT_0001b61c + -1;
   return;
@@ -1007,14 +1012,14 @@ void r_sci4_transmitend_interrupt(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008c06b;
-  DAT_0008c06b = bVar1 & 0xfd;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a082;
-  DAT_0008a082 = bVar1 & 0xfb;
+  bVar1 = PORTB_PMR;
+  PORTB_PMR = bVar1 & 0xfd;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0x7f;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0xdf;
+  bVar1 = SCI4_SCR;
+  SCI4_SCR = bVar1 & 0xfb;
   r_sci4_callback_transmitend();
   return;
 }
@@ -1036,17 +1041,17 @@ void r_sci4_receive_interrupt(void)
   undefined1 uVar2;
   
   if (DAT_0001b61e < DAT_0001b620) {
-    uVar2 = DAT_0008a085;
+    uVar2 = SCI4_RDR;
     *DAT_00020818 = uVar2;
     sci4_rx_frame_len();
     DAT_00020818 = DAT_00020818 + 1;
     DAT_0001b61e = DAT_0001b61e + 1;
   }
   if (DAT_0001b620 <= DAT_0001b61e) {
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 & 0xbf;
-    bVar1 = DAT_0008a082;
-    DAT_0008a082 = bVar1 & 0xef;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 & 0xbf;
+    bVar1 = SCI4_SCR;
+    SCI4_SCR = bVar1 & 0xef;
     sci4_rx_frame_done();
     return;
   }
@@ -1064,8 +1069,8 @@ void r_sci4_receiveerror_interrupt(void)
   byte bVar1;
   
   r_sci4_callback_receiveerror();
-  bVar1 = DAT_0008a084;
-  DAT_0008a084 = bVar1 & 199 | 0xc0;
+  bVar1 = SCI4_SSR;
+  SCI4_SSR = bVar1 & 199 | 0xc0;
   return;
 }
 
@@ -1165,29 +1170,29 @@ void R_SCI5_Create(void)
   uint uVar1;
   byte bVar2;
   
-  uVar1 = DAT_00080014;
-  DAT_00080014 = uVar1 & 0xfbffffff;
-  bVar2 = DAT_00087354;
-  DAT_00087354 = bVar2 & 0xfa | 10;
-  bVar2 = DAT_00087355;
-  DAT_00087355 = bVar2 & 0xfa | 10;
-  DAT_0008a0a2 = 0;
-  DAT_0008a0a2 = 0;
-  bVar2 = DAT_0008a0a9;
-  DAT_0008a0a9 = bVar2 & 0xfe;
-  DAT_0008a0ad = 0;
-  DAT_0008a0a0 = 0;
-  DAT_0008a0a6 = 0x72;
-  DAT_0008a0a7 = 0x50;
-  DAT_0008a0a1 = 0x40;
-  DAT_0008c1a2 = 10;
-  bVar2 = DAT_0008c06c;
-  DAT_0008c06c = bVar2 | 4;
-  DAT_0008c1a3 = 10;
-  bVar2 = DAT_0008c02c;
-  DAT_0008c02c = bVar2 | 8;
-  bVar2 = DAT_0008c00c;
-  DAT_0008c00c = bVar2 | 8;
+  uVar1 = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = uVar1 & 0xfbffffff;
+  bVar2 = ICU_IPR084;
+  ICU_IPR084 = bVar2 & 0xfa | 10;
+  bVar2 = ICU_IPR085;
+  ICU_IPR085 = bVar2 & 0xfa | 10;
+  SCI5_SCR = 0;
+  SCI5_SCR = 0;
+  bVar2 = SCI5_SIMR1;
+  SCI5_SIMR1 = bVar2 & 0xfe;
+  SCI5_SPMR = 0;
+  SCI5_SMR = 0;
+  SCI5_SCMR = 0x72;
+  SCI5_SEMR = 0x50;
+  SCI5_BRR = 0x40;
+  MPC_PC2PFS = 10;
+  bVar2 = PORTC_PMR;
+  PORTC_PMR = bVar2 | 4;
+  MPC_PC3PFS = 10;
+  bVar2 = PORTC_PODR;
+  PORTC_PODR = bVar2 | 8;
+  bVar2 = PORTC_PDR;
+  PORTC_PDR = bVar2 | 8;
   R_SCI5_Create_UserInit();
   return;
 }
@@ -1203,18 +1208,18 @@ void R_SCI5_Start(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_00087055;
-  DAT_00087055 = bVar1 & 0xfe;
-  bVar1 = DAT_00087054;
-  DAT_00087054 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 0x20;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x400;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 | 0x10;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 | 0x800;
+  bVar1 = ICU_IR085;
+  ICU_IR085 = bVar1 & 0xfe;
+  bVar1 = ICU_IR084;
+  ICU_IR084 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 0x20;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x400;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 | 0x10;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 | 0x800;
   return;
 }
 
@@ -1227,28 +1232,28 @@ void R_SCI5_Stop(void)
   byte bVar1;
   uint uVar2;
   
-  bVar1 = DAT_0008c06c;
-  DAT_0008c06c = bVar1 & 0xf7;
-  bVar1 = DAT_0008a0a2;
-  DAT_0008a0a2 = bVar1 & 0xdf;
-  bVar1 = DAT_0008a0a2;
-  DAT_0008a0a2 = bVar1 & 0xef;
-  bVar1 = DAT_0008a0a2;
-  DAT_0008a0a2 = bVar1 & 0x7f;
-  bVar1 = DAT_0008a0a2;
-  DAT_0008a0a2 = bVar1 & 0xbf;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xdf;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xfffffbff;
-  bVar1 = DAT_00087055;
-  DAT_00087055 = bVar1 & 0xfe;
-  bVar1 = DAT_0008720a;
-  DAT_0008720a = bVar1 & 0xef;
-  uVar2 = DAT_00087670;
-  DAT_00087670 = uVar2 & 0xfffff7ff;
-  bVar1 = DAT_00087054;
-  DAT_00087054 = bVar1 & 0xfe;
+  bVar1 = PORTC_PMR;
+  PORTC_PMR = bVar1 & 0xf7;
+  bVar1 = SCI5_SCR;
+  SCI5_SCR = bVar1 & 0xdf;
+  bVar1 = SCI5_SCR;
+  SCI5_SCR = bVar1 & 0xef;
+  bVar1 = SCI5_SCR;
+  SCI5_SCR = bVar1 & 0x7f;
+  bVar1 = SCI5_SCR;
+  SCI5_SCR = bVar1 & 0xbf;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xdf;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xfffffbff;
+  bVar1 = ICU_IR085;
+  ICU_IR085 = bVar1 & 0xfe;
+  bVar1 = ICU_IER0A;
+  ICU_IER0A = bVar1 & 0xef;
+  uVar2 = ICU_GENBL0;
+  ICU_GENBL0 = uVar2 & 0xfffff7ff;
+  bVar1 = ICU_IR084;
+  ICU_IR084 = bVar1 & 0xfe;
   return;
 }
 
@@ -1267,10 +1272,10 @@ ushort R_SCI5_Serial_Receive(uint param_1,short param_2)
   }
   else {
     DAT_0001b624 = 0;
-    bVar1 = DAT_0008a0a2;
-    DAT_0008a0a2 = bVar1 | 0x40;
-    bVar1 = DAT_0008a0a2;
-    DAT_0008a0a2 = bVar1 | 0x10;
+    bVar1 = SCI5_SCR;
+    SCI5_SCR = bVar1 | 0x40;
+    bVar1 = SCI5_SCR;
+    SCI5_SCR = bVar1 | 0x10;
     DAT_0001b626 = param_2;
     DAT_00020820 = param_1;
   }
@@ -1291,19 +1296,19 @@ ushort R_SCI5_Serial_Send(uint param_1,short param_2)
     local_a = 0x81;
   }
   else {
-    bVar1 = DAT_0008720a;
+    bVar1 = ICU_IER0A;
     if ((bVar1 & 0x20) == 0) {
       local_a = 0x80;
     }
     else {
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 & 0xdf;
-      bVar1 = DAT_0008a0a2;
-      DAT_0008a0a2 = bVar1 | 0xa0;
-      bVar1 = DAT_0008c06c;
-      DAT_0008c06c = bVar1 | 8;
-      bVar1 = DAT_0008720a;
-      DAT_0008720a = bVar1 | 0x20;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 & 0xdf;
+      bVar1 = SCI5_SCR;
+      SCI5_SCR = bVar1 | 0xa0;
+      bVar1 = PORTC_PMR;
+      PORTC_PMR = bVar1 | 8;
+      bVar1 = ICU_IER0A;
+      ICU_IER0A = bVar1 | 0x20;
       DAT_0001b622 = param_2;
       DAT_0002081c = param_1;
     }

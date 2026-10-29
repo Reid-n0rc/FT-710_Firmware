@@ -20,7 +20,7 @@ void power_down_save(void)
   byte bVar1;
   
   DAT_00001456 = 0x7f;
-  DAT_00001457 = PTR_DAT_00025d38[0x35] & 0x7f;
+  DAT_00001457 = PTR_g_ui_00025d38->power_cmd & 0x7f;
   DAT_00001458 = 0x9b;
   DAT_00001459 = 0xba;
   DAT_0000145a = 0xf6;
@@ -31,18 +31,18 @@ void power_down_save(void)
   DAT_0000145f = 0x1f;
   DAT_0001b628 = 0xb;
   displink_tx_start(0xb);
-  if (PTR_DAT_00025d38[0x35] == -0x70) {
+  if (PTR_g_ui_00025d38->power_cmd == 0x90) {
     swtimer_start(0x14,2000);
     do {
       bVar1 = swtimer_expired(0x14);
     } while (bVar1 == 0);
   }
-  else if (PTR_DAT_00025d38[0x35] == '\x11') {
-    DAT_00009dc5 = 1;
+  else if (PTR_g_ui_00025d38->power_cmd == 0x11) {
+    g_opstate.auto_power_on = 1;
     eeprom_save_all();
   }
   else {
-    DAT_00009dc5 = 0;
+    g_opstate.auto_power_on = 0;
     eeprom_save_all();
   }
   sw_reset();
@@ -66,20 +66,20 @@ void eeprom_init(void)
 {
   byte bVar1;
   
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 | 1;
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xdf;
-  bVar1 = DAT_0008c026;
-  DAT_0008c026 = bVar1 | 0x20;
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xfe;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 | 1;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xdf;
+  bVar1 = PORT6_PODR;
+  PORT6_PODR = bVar1 | 0x20;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xfe;
   eeprom_spi_tx(1);
   eeprom_spi_tx(0x80);
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 | 1;
-  bVar1 = DAT_0008c026;
-  DAT_0008c026 = bVar1 & 0xdf;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 | 1;
+  bVar1 = PORT6_PODR;
+  PORT6_PODR = bVar1 & 0xdf;
   return;
 }
 
@@ -99,25 +99,32 @@ void eeprom_init(void)
 void eeprom_load_all(void)
 
 {
-  eeprom_read(0,(byte *)&DAT_0000464f,10);
-  if (DAT_00004657._1_1_ == '\x01') {
-    eeprom_read(0,(byte *)&DAT_0000464f,0x5837);
+  eeprom_read(0,g_ee_hdr.stamp,10);
+  if (g_ee_hdr.state == 1) {
+    eeprom_read(0,g_ee_hdr.stamp,0x5837);
     return;
   }
-  if (DAT_00004657._1_1_ == '\0') {
-    eeprom_read(10,&DAT_00004659,0x105);
-    eeprom_read(0x10f,&DAT_0000475e,3);
+  if (g_ee_hdr.state == 0) {
+    eeprom_read(10,&g_cfg105.a001_gn_vdd_mtr,0x105);
+    eeprom_read(0x10f,dest_code,3);
     settings_defaults(0);
   }
   else {
-    DAT_00004657 = 0;
-    DAT_00004653 = 0;
-    DAT_0000464f = 0;
+    g_ee_hdr.save_count_be[3] = 0;
+    g_ee_hdr.state = 0;
+    g_ee_hdr.stamp[4] = 0;
+    g_ee_hdr.save_count_be[0] = 0;
+    g_ee_hdr.save_count_be[1] = 0;
+    g_ee_hdr.save_count_be[2] = 0;
+    g_ee_hdr.stamp[0] = 0;
+    g_ee_hdr.stamp[1] = 0;
+    g_ee_hdr.stamp[2] = 0;
+    g_ee_hdr.stamp[3] = 0;
     settings_defaults(1);
     eeprom_save_cfg105();
     eeprom_save_dest();
   }
-  DAT_00020b45 = 1;
+  g_ui.defaults_loaded = 1;
   return;
 }
 
@@ -138,7 +145,7 @@ void eeprom_save_all(void)
 
 {
   eeprom_hdr_update(0);
-  eeprom_write(0x112,&DAT_00004761,0x5725);
+  eeprom_write(0x112,(byte *)bandstack_a,0x5725);
   eeprom_hdr_update(1);
   return;
 }
@@ -160,8 +167,8 @@ void eeprom_save_opstate(void)
 
 {
   eeprom_hdr_update(0);
-  eeprom_write(0x53db,&DAT_00009a2a,0x45c);
-  eeprom_write(0x1a62,&DAT_000060b1,0x18);
+  eeprom_write(0x53db,(byte *)&g_opstate,0x45c);
+  eeprom_write(0x1a62,bandstack_level_a,0x18);
   eeprom_hdr_update(1);
   return;
 }
@@ -178,7 +185,7 @@ void eeprom_save_opstate(void)
 
 /* One band-stack entry to EEPROM 0x112/0xDBA + level*0x438 + band*0x5A */
 
-void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint param_4)
+void eeprom_save_bandstack(vfo_side param_1,band_idx param_2,byte param_3,uint param_4)
 
 {
   char cVar1;
@@ -187,7 +194,7 @@ void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint param_4)
   local_a = 0x112;
   cVar1 = supply_undervolt_check();
   if (cVar1 != '\x01') {
-    if (param_1 != '\0') {
+    if (param_1 != VFO_A) {
       local_a = 0xdba;
     }
     eeprom_hdr_update(0);
@@ -214,7 +221,7 @@ void eeprom_save_qmb(void)
 
 {
   eeprom_hdr_update(0);
-  eeprom_write(0x49c3,&DAT_00009012,0x395);
+  eeprom_write(0x49c3,&g_qmb_hdr.f_0x000_u8,0x395);
   eeprom_hdr_update(1);
   return;
 }
@@ -241,8 +248,8 @@ void eeprom_save_qmb_slot(byte param_1)
     return;
   }
   eeprom_hdr_update(0);
-  eeprom_write(0x49c3,&DAT_00009012,0x11);
-  eeprom_write((short)((uint)param_1 * 0x5a) + 0x49d4,&DAT_00009023 + (uint)param_1 * 0x5a,0x5a);
+  eeprom_write(0x49c3,&g_qmb_hdr.f_0x000_u8,0x11);
+  eeprom_write((ushort)param_1 * 0x5a + 0x49d4,&qmb[param_1].mode,0x5a);
   eeprom_hdr_update(1);
   return;
 }
@@ -375,13 +382,13 @@ void eeprom_hdr_update(byte param_1)
   
   local_8 = 0;
   for (local_2 = 0; local_2 < 4; local_2 = local_2 + 1) {
-    local_8 = (uint)*(byte *)((int)&DAT_00004653 + local_2 + 1) << (3 - local_2 & 3) * 8 | local_8;
+    local_8 = (uint)g_ee_hdr.save_count_be[local_2] << (3 - local_2 & 3) * 8 | local_8;
   }
   for (local_2 = 0; local_2 < 4; local_2 = local_2 + 1) {
-    *(char *)((int)&DAT_00004653 + local_2 + 1) = (char)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
+    g_ee_hdr.save_count_be[local_2] = (byte)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
   }
-  DAT_00004657._1_1_ = param_1;
-  eeprom_write(0,(byte *)&DAT_0000464f,10);
+  g_ee_hdr.state = param_1;
+  eeprom_write(0,g_ee_hdr.stamp,10);
   return;
 }
 
@@ -405,8 +412,8 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
   ushort local_10;
   byte bStack_6;
   
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xfe;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xfe;
   eeprom_spi_tx(3);
   eeprom_spi_tx((byte)(addr >> 8));
   bStack_6 = (byte)addr;
@@ -415,8 +422,8 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
     bVar1 = eeprom_spi_rx();
     buf[local_10] = bVar1;
   }
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 | 1;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 | 1;
   return;
 }
 
@@ -454,23 +461,23 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
     local_a = local_a - local_c;
     bVar2 = true;
     while (bVar2) {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 & 0xfe;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 & 0xfe;
       eeprom_spi_tx(5);
       bVar3 = eeprom_spi_rx();
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 | 1;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 | 1;
       if ((bVar3 & 1) == 0) {
         bVar2 = false;
       }
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xfe;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xfe;
     eeprom_spi_tx(6);
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xfe;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 1;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xfe;
     eeprom_spi_tx(2);
     eeprom_spi_tx((byte)(local_2 >> 8));
     eeprom_spi_tx((byte)local_2);
@@ -478,8 +485,8 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
       eeprom_spi_tx(*local_8);
       local_8 = local_8 + 1;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 1;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 1;
     local_2 = local_2 + local_c;
   }
   return;
@@ -504,23 +511,23 @@ void eeprom_spi_tx(byte b)
   undefined1 local_2;
   undefined1 local_1;
   
-  bVar1 = DAT_0008c02e;
-  DAT_0008c02e = bVar1 & 0xdf;
+  bVar1 = PORTE_PODR;
+  PORTE_PODR = bVar1 & 0xdf;
   local_1 = b;
   for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
     if ((local_1 & 0x80) == 0) {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 & 0xbf;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 & 0xbf;
     }
     else {
-      bVar1 = DAT_0008c02e;
-      DAT_0008c02e = bVar1 | 0x40;
+      bVar1 = PORTE_PODR;
+      PORTE_PODR = bVar1 | 0x40;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 0x20;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 0x20;
     local_1 = local_1 << 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xdf;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xdf;
   }
   return;
 }
@@ -548,14 +555,14 @@ byte eeprom_spi_rx(void)
   local_3 = 0;
   for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
     local_3 = local_3 << 1;
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 | 0x20;
-    cVar2 = DAT_0008c04e;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 | 0x20;
+    cVar2 = PORTE_PIDR;
     if (cVar2 < '\0') {
       local_3 = local_3 | 1;
     }
-    bVar1 = DAT_0008c02e;
-    DAT_0008c02e = bVar1 & 0xdf;
+    bVar1 = PORTE_PODR;
+    PORTE_PODR = bVar1 & 0xdf;
   }
   return local_3;
 }
@@ -699,8 +706,8 @@ void dest_jumper_apply(void)
 void sw_reset(void)
 
 {
-  DAT_000803fe = 0xa502;
-  DAT_000800c2 = 0xa501;
+  SYSTEM_PRCR = 0xa502;
+  SYSTEM_SWRR = 0xa501;
   return;
 }
 
@@ -721,25 +728,25 @@ char supply_undervolt_check(void)
 {
   byte bVar1;
   
-  if ((DAT_00020b43 != '\x01') && (DAT_00020b08 < 0x7dd)) {
+  if ((g_ui.power_fail_latch != 1) && (g_ui.adc_pa_vdd < 0x7dd)) {
     bVar1 = swtimer_expired(0x13);
-    DAT_00020b43 = '\x01';
+    g_ui.power_fail_latch = 1;
     if (bVar1 == 1) {
       power_off_io();
-      DAT_00009dc5 = 1;
+      g_opstate.auto_power_on = 1;
       FUN_fffd3d03();
       eeprom_save_opstate();
-      DAT_00020f4b = 1;
-      DAT_00020b39 = 0x90;
+      g_ui.restart_req = 1;
+      g_ui.power_cmd = 0x90;
     }
     else {
       power_off_io();
-      DAT_00009dc5 = 1;
-      DAT_00020f4b = 1;
-      DAT_00020b39 = 0x90;
+      g_opstate.auto_power_on = 1;
+      g_ui.restart_req = 1;
+      g_ui.power_cmd = 0x90;
     }
   }
-  return DAT_00020b43;
+  return g_ui.power_fail_latch;
 }
 
 
@@ -761,7 +768,7 @@ void cal_adjust(byte param_1,byte param_2,char param_3)
   byte *pbVar2;
   byte local_a;
   
-  pbVar2 = PTR_DAT_00025d50 + *(ushort *)(PTR_DAT_00025d4c + 0x1de);
+  pbVar2 = &PTR_g_cfg105_00025d50->a001_gn_vdd_mtr + PTR_g_ui_00025d4c->align_item;
   sVar1 = (ushort)*pbVar2 + (short)param_3;
   if ((short)(ushort)param_2 < sVar1) {
     *pbVar2 = param_2;
@@ -792,44 +799,45 @@ void bandstack_save(void)
 
 {
   uint uVar1;
-  int iVar2;
-  undefined1 *puVar3;
+  vfo_rec *pvVar2;
+  int iVar3;
+  vfo_rec *pvVar4;
   bool local_13;
   byte bStack_12;
-  byte bStack_11;
-  undefined1 *puStack_c;
-  undefined1 *puStack_4;
+  band_idx bStack_11;
+  vfo_rec (*pavStack_c) [12];
+  vfo_rec *pvStack_4;
   
-  local_13 = DAT_00009dbd == '\0';
+  local_13 = g_opstate.active_vfo == 0;
   if (local_13) {
-    uVar1 = vfo_freq(0,0);
-    DAT_00009dc3 = band_of_freq(uVar1);
-    puStack_4 = &DAT_00009d09;
-    bStack_12 = (&DAT_000060b1)[DAT_00009dc3];
-    puStack_c = &DAT_00004761 + (uint)bStack_12 * 0x438;
-    bStack_11 = DAT_00009dc3;
+    uVar1 = vfo_freq(VFO_RX,VFO_A);
+    g_opstate.band_a = band_of_freq(uVar1);
+    pvStack_4 = &g_opstate.vfo_a;
+    bStack_12 = bandstack_level_a[g_opstate.band_a];
+    pavStack_c = bandstack_a + bStack_12;
+    bStack_11 = g_opstate.band_a;
   }
   else {
-    uVar1 = vfo_freq(0,1);
-    DAT_00009dc4 = band_of_freq(uVar1);
-    puStack_4 = &DAT_00009d63;
-    bStack_12 = (&DAT_000060bd)[DAT_00009dc4];
-    puStack_c = &DAT_00005409 + (uint)bStack_12 * 0x438;
-    bStack_11 = DAT_00009dc4;
+    uVar1 = vfo_freq(VFO_RX,VFO_B);
+    g_opstate.band_b = band_of_freq(uVar1);
+    pvStack_4 = &g_opstate.vfo_b;
+    bStack_12 = bandstack_level_b[g_opstate.band_b];
+    pavStack_c = bandstack_b + bStack_12;
+    bStack_11 = g_opstate.band_b;
   }
   local_13 = !local_13;
-  puStack_c = puStack_c + (uint)bStack_11 * 0x5a;
-  iVar2 = strncmp(puStack_c,puStack_4,0x5a);
-  if (iVar2 == 0) {
+  pvVar2 = *pavStack_c + bStack_11;
+  iVar3 = strncmp(pvVar2,pvStack_4,0x5a);
+  if (iVar3 == 0) {
     return;
   }
-  puVar3 = puStack_c;
-  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
-    *puVar3 = *puStack_4;
-    puVar3 = puVar3 + 1;
-    puStack_4 = puStack_4 + 1;
+  pvVar4 = pvVar2;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    pvVar4->mode = pvStack_4->mode;
+    pvVar4 = (vfo_rec *)&pvVar4->flags1;
+    pvStack_4 = (vfo_rec *)&pvStack_4->flags1;
   }
-  eeprom_save_bandstack(local_13,bStack_11,bStack_12,(uint)puStack_c);
+  eeprom_save_bandstack(local_13,bStack_11,bStack_12,(uint)pvVar2);
   return;
 }
 
@@ -848,8 +856,8 @@ void bandstack_save(void)
 void reset_select(char param_1)
 
 {
-  undefined1 *puVar1;
-  undefined1 *puVar2;
+  vfo_rec *pvVar1;
+  vfo_rec *pvVar2;
   int iVar3;
   
   if (param_1 == '\x02') {
@@ -860,27 +868,27 @@ void reset_select(char param_1)
   }
   else if (param_1 == '\0') {
     FUN_fffd02ef();
-    if (DAT_00009dbd == '\0') {
-      puVar2 = &DAT_00006150;
-      puVar1 = &DAT_00009d09;
+    if (g_opstate.active_vfo == 0) {
+      pvVar2 = memch;
+      pvVar1 = &g_opstate.vfo_a;
       for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-        *puVar1 = *puVar2;
-        puVar1 = puVar1 + 1;
-        puVar2 = puVar2 + 1;
+        pvVar1->mode = pvVar2->mode;
+        pvVar1 = (vfo_rec *)&pvVar1->flags1;
+        pvVar2 = (vfo_rec *)&pvVar2->flags1;
       }
     }
     else {
-      puVar2 = &DAT_00006150;
-      puVar1 = &DAT_00009d63;
+      pvVar2 = memch;
+      pvVar1 = &g_opstate.vfo_b;
       for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-        *puVar1 = *puVar2;
-        puVar1 = puVar1 + 1;
-        puVar2 = puVar2 + 1;
+        pvVar1->mode = pvVar2->mode;
+        pvVar1 = (vfo_rec *)&pvVar1->flags1;
+        pvVar2 = (vfo_rec *)&pvVar2->flags1;
       }
     }
   }
   beep_request(8);
-  PTR_DAT_00025d60[0x35] = 0x11;
+  PTR_g_ui_00025d60->power_cmd = 0x11;
   return;
 }
 

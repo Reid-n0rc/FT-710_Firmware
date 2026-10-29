@@ -231,12 +231,12 @@ void DAbort_Handler(void)
 void wdt_system_reset(void)
 
 {
-  DAT_fcfe0004 = 0xa500;
+  WDT_WRCSR = 0xa500;
   DataMemoryBarrier(2);
-  DAT_fcfe0004 = 0x5a5f;
-  DAT_fcfe0002 = 0x5aff;
+  WDT_WRCSR = 0x5a5f;
+  WDT_WTCNT = 0x5aff;
   DataMemoryBarrier(2);
-  DAT_fcfe0000 = 0xa578;
+  WDT_WTCSR = 0xa578;
   return;
 }
 
@@ -287,9 +287,9 @@ void system_reset_select(int param_1)
     return;
   }
   if (param_1 == 2) {
-    gpio_cfg_mask(0,0x4000,1);
-    gpio_cfg_mask(0,0x10,1);
-    gpio_cfg_mask(&DAT_fcfe302c,0x10004,1);
+    gpio_cfg_mask((ushort *)0x0,0x4000,1);
+    gpio_cfg_mask((ushort *)0x0,0x10,1);
+    gpio_cfg_mask(&PORT_P11,0x10004,1);
     wdt_system_reset();
     return;
   }
@@ -330,7 +330,7 @@ void gpio_cfg_out_low(int param_1,uint param_2)
 {
   ushort uVar1;
   
-  gpio_cfg_reset(param_1);
+  gpio_cfg_reset(param_1,param_2);
   uVar1 = (ushort)(1 << (param_2 & 0xff));
   *(ushort *)(&PTR_DAT_20800000)[param_1] = *(ushort *)(&PTR_DAT_20800000)[param_1] & ~uVar1;
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x300) =
@@ -347,7 +347,7 @@ void gpio_early_init(void)
 
 {
   system_reset_select(0);
-  DAT_2080001c = &DAT_fcfe301c;
+  DAT_2080001c = &PORT_P7;
   gpio_cfg_out_low(7,0xb);
   return;
 }
@@ -368,14 +368,14 @@ void gpio_p7_9_11(int param_1)
   else {
     uVar1 = 0x8000000;
   }
-  DAT_fcfe311c = uVar1;
+  PORT_PSR7 = uVar1;
   if (param_1 != 0) {
     uVar1 = 0x2000200;
   }
   else {
     uVar1 = 0x2000000;
   }
-  DAT_fcfe311c = uVar1;
+  PORT_PSR7 = uVar1;
   return;
 }
 
@@ -385,23 +385,23 @@ void gpio_p7_9_11(int param_1)
 void FUN_201004a4(int param_1)
 
 {
-  uint uVar1;
+  dword dVar1;
   
   do {
-    uVar1 = Ram3fefa048;
-  } while ((uVar1 & 1) == 0);
-  uVar1 = Ram3fefa000;
-  Ram3fefa000 = uVar1 | 0x80000000;
-  Ram3fefa024 = param_1 << 0x10;
-  Ram3fefa028 = 0;
-  Ram3fefa030 = 0x4000;
-  uVar1 = Ram3fefa020;
-  Ram3fefa020 = uVar1 | 1;
+    dVar1 = SPIBSC_CMNSR_0;
+  } while ((dVar1 & 1) == 0);
+  dVar1 = SPIBSC_CMNCR_0;
+  SPIBSC_CMNCR_0 = dVar1 | 0x80000000;
+  SPIBSC_SMCMR_0 = param_1 << 0x10;
+  SPIBSC_SMADR_0 = 0;
+  SPIBSC_SMENR_0 = 0x4000;
+  dVar1 = SPIBSC_SMCR_0;
+  SPIBSC_SMCR_0 = dVar1 | 1;
   do {
-    uVar1 = Ram3fefa048;
-  } while ((uVar1 & 1) == 0);
-  uVar1 = Ram3fefa000;
-  Ram3fefa000 = uVar1 & 0x7fffffff;
+    dVar1 = SPIBSC_CMNSR_0;
+  } while ((dVar1 & 1) == 0);
+  dVar1 = SPIBSC_CMNCR_0;
+  SPIBSC_CMNCR_0 = dVar1 & 0x7fffffff;
   return;
 }
 
@@ -410,7 +410,7 @@ void FUN_201004a4(int param_1)
 
 /* (port,pin,func 1..8): PFC/PFCE/PFCAE bits = func-1 */
 
-void gpio_set_alt_func(int param_1,uint param_2,undefined4 param_3)
+void gpio_set_alt_func(int param_1,uint param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -515,14 +515,14 @@ LAB_20100650:
 
 /* (port,pin,func,mode): PMC=1, alt function; mode 0 PIPC, 1 in, 2 out, 3 bidir */
 
-void gpio_cfg_alt(int param_1,uint param_2,undefined4 param_3,int param_4)
+void gpio_cfg_alt(int param_1,uint param_2,uint param_3,int param_4)
 
 {
   ushort *puVar1;
   ushort uVar2;
   
   uVar2 = (ushort)(1 << (param_2 & 0xff));
-  gpio_cfg_reset(param_1);
+  gpio_cfg_reset(param_1,param_2);
   gpio_set_alt_func(param_1,param_2,param_3);
   if (param_4 == 0) {
     *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4200) =
@@ -571,7 +571,7 @@ void gpio_cfg_alt(int param_1,uint param_2,undefined4 param_3,int param_4)
 void spibsc0_pins_init(void)
 
 {
-  PTR_DAT_20800024 = &DAT_fcfe3024;
+  PTR_PORT_P9_20800024 = (undefined *)&PORT_P9;
   gpio_cfg_alt(9,2,2,0);
   gpio_cfg_alt(9,3,2,0);
   gpio_cfg_alt(9,4,2,0);
@@ -592,12 +592,12 @@ void spibsc0_init(void)
   uint uVar1;
   
   spibsc0_pins_init();
-  DAT_3fefa008 = 1;
-  DAT_3fefa010 = 0xeb0000;
-  DAT_3fefa01c = 0x222c780;
-  DAT_3fefa018 = 0xff000000;
-  uVar1 = DAT_3fefa058;
-  DAT_3fefa058 = uVar1 | 3;
+  SPIBSC_SPBCR_0 = 1;
+  SPIBSC_DRCMR_0 = 0xeb0000;
+  SPIBSC_DRENR_0 = 0x222c780;
+  SPIBSC_DROPR_0 = 0xff000000;
+  uVar1 = SPIBSC_DRDMCR_0;
+  SPIBSC_DRDMCR_0 = uVar1 | 3;
   return;
 }
 
@@ -611,7 +611,7 @@ void gpio_cfg_out_high(int param_1,uint param_2)
 {
   ushort uVar1;
   
-  gpio_cfg_reset(param_1);
+  gpio_cfg_reset(param_1,param_2);
   uVar1 = (ushort)(1 << (param_2 & 0xff));
   *(ushort *)(&PTR_DAT_20800000)[param_1] = *(ushort *)(&PTR_DAT_20800000)[param_1] | uVar1;
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x300) =
@@ -627,7 +627,7 @@ void gpio_cfg_out_high(int param_1,uint param_2)
 void gpio_cfg_input(int param_1,uint param_2)
 
 {
-  gpio_cfg_reset();
+  gpio_cfg_reset(param_1,param_2);
   *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4000) =
        *(ushort *)((&PTR_DAT_20800000)[param_1] + 0x4000) | (ushort)(1 << (param_2 & 0xff));
   return;
@@ -638,7 +638,7 @@ void gpio_cfg_input(int param_1,uint param_2)
 
 /* (port, bit) -> PPRn bit (0xFCFE3200 + 4n) */
 
-uint gpio_read_bit(undefined4 param_1,uint param_2)
+uint gpio_read_bit(uint param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -646,51 +646,51 @@ uint gpio_read_bit(undefined4 param_1,uint param_2)
   
   switch(param_1) {
   case 0:
-    uVar1 = DAT_fcfe3200;
+    uVar1 = PORT_PPR0;
     uVar2 = (uint)uVar1;
     break;
   case 1:
-    uVar1 = DAT_fcfe3204;
+    uVar1 = PORT_PPR1;
     uVar2 = (uint)uVar1;
     break;
   case 2:
-    uVar1 = DAT_fcfe3208;
+    uVar1 = PORT_PPR2;
     uVar2 = (uint)uVar1;
     break;
   case 3:
-    uVar1 = DAT_fcfe320c;
+    uVar1 = PORT_PPR3;
     uVar2 = (uint)uVar1;
     break;
   case 4:
-    uVar1 = DAT_fcfe3210;
+    uVar1 = PORT_PPR4;
     uVar2 = (uint)uVar1;
     break;
   case 5:
-    uVar1 = DAT_fcfe3214;
+    uVar1 = PORT_PPR5;
     uVar2 = (uint)uVar1;
     break;
   case 6:
-    uVar1 = DAT_fcfe3218;
+    uVar1 = PORT_PPR6;
     uVar2 = (uint)uVar1;
     break;
   case 7:
-    uVar1 = DAT_fcfe321c;
+    uVar1 = PORT_PPR7;
     uVar2 = (uint)uVar1;
     break;
   case 8:
-    uVar1 = DAT_fcfe3220;
+    uVar1 = PORT_PPR8;
     uVar2 = (uint)uVar1;
     break;
   case 9:
-    uVar1 = DAT_fcfe3224;
+    uVar1 = PORT_PPR9;
     uVar2 = (uint)uVar1;
     break;
   case 10:
-    uVar1 = DAT_fcfe3228;
+    uVar1 = PORT_PPR10;
     uVar2 = (uint)uVar1;
     break;
   case 0xb:
-    uVar1 = DAT_fcfe322c;
+    uVar1 = PORT_PPR11;
     uVar2 = (uint)uVar1;
     break;
   default:
@@ -779,13 +779,14 @@ void crc32_make_table(void)
 
 // ===== crc32_update @ 20100a5c (44 bytes)
 
-void crc32_update(undefined4 param_1,int param_2)
+uint crc32_update(uint param_1,int param_2,uint param_3)
 
 {
-  do {
-    param_2 = param_2 + -1;
-  } while (-1 < param_2);
-  return;
+  while (param_2 = param_2 + -1, -1 < param_2) {
+    param_1 = (&DAT_208d9560)[(*(byte *)param_3 ^ param_1) & 0xff] ^ param_1 >> 8;
+    param_3 = (uint)(param_3 + 1);
+  }
+  return param_1;
 }
 
 
@@ -826,9 +827,9 @@ void boot_select_bank(void)
   
   bVar3 = false;
   bVar1 = false;
-  iVar2 = DAT_3fefb018;
+  iVar2 = SPIBSC_DROPR_1;
   if (iVar2 == 0) {
-    DAT_3fefb018 = 0x20000000;
+    SPIBSC_DROPR_1 = 0x20000000;
     FUN_20100a98(0x20000000,0,0x60);
     _DAT_20000000 = 0xbbbb;
     uRam20000004 = 0x100;
@@ -1081,7 +1082,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       local_44 = (*param_1 & 4) << 3;
     }
     if ((iVar8 == 3) || (6 < iVar8)) {
-      FUN_20156020(param_1,0x66,iVar8,local_44);
+      _printf_infnan(param_1,0x66,iVar8,local_44);
     }
     else {
       if ((int)((uint)(byte)*param_1 << 0x1a) < 0) {
@@ -1112,14 +1113,14 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       param_1[6] = (param_1[6] - (int)(puVar12 + (uint)(local_44 != 0) + iVar8 + (iVar10 >> 0x1f)))
                    - 1;
       if (-1 < (int)((uint)(byte)*param_1 << 0x1b)) {
-        FUN_20154a64(param_1);
+        _printf_pre_padding(param_1);
       }
       if (local_44 != 0) {
         (*(code *)param_1[1])(local_44,param_1[2]);
         param_1[8] = param_1[8] + 1;
       }
       if ((int)((uint)(byte)*param_1 << 0x1b) < 0) {
-        FUN_20154a64(param_1);
+        _printf_pre_padding(param_1);
       }
       while (iVar9 = iVar8 + -1, 0 < iVar8) {
         if ((iVar7 < 0) || (local_34 <= iVar7)) {
@@ -1134,7 +1135,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
         iVar10 = iVar10 + -1;
         iVar8 = iVar9;
         if (iVar10 == 0) {
-          iVar9 = FUN_201556d0();
+          iVar9 = __rt_locale();
           (*(code *)param_1[1])
                     (*(undefined1 *)((int)*(int **)(iVar9 + 0xc) + **(int **)(iVar9 + 0xc)),
                      param_1[2]);
@@ -1147,7 +1148,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
         puVar11 = puVar11 + 1;
         puVar12 = puVar12 + -1;
       }
-      FUN_20154a90(param_1);
+      _printf_post_padding(param_1);
     }
     return 3;
   }
@@ -1231,7 +1232,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
 LAB_20154b3e:
   iVar8 = 0;
   while (uVar2 != 0) {
-    uVar13 = FUN_20155fec(uVar2,puVar4);
+    uVar13 = __rt_udiv10(uVar2,puVar4);
     puVar4 = (uint *)((int)((ulonglong)uVar13 >> 0x20) + 0x30);
     *(byte *)((int)param_1 + iVar8 + 0x24) = (byte)puVar4;
     iVar8 = iVar8 + 1;
@@ -1253,14 +1254,14 @@ LAB_20155aa8:
   }
   param_1[6] = param_1[6] - (iVar10 + iVar8 + iVar7);
   if (-1 < (int)((uint)(byte)*param_1 << 0x1b)) {
-    FUN_20154a64(param_1);
+    _printf_pre_padding(param_1);
   }
   for (iVar9 = 0; iVar9 < iVar7; iVar9 = iVar9 + 1) {
     (*(code *)param_1[1])(*(char *)((int)pacVar5 + iVar9),param_1[2]);
     param_1[8] = param_1[8] + 1;
   }
   if ((int)((uint)(byte)*param_1 << 0x1b) < 0) {
-    FUN_20154a64(param_1);
+    _printf_pre_padding(param_1);
   }
   while (0 < iVar10) {
     (*(code *)param_1[1])(0x30,param_1[2]);
@@ -1272,7 +1273,7 @@ LAB_20155aa8:
     param_1[8] = param_1[8] + 1;
     iVar8 = iVar8 + -1;
   }
-  FUN_20154a90(param_1);
+  _printf_post_padding(param_1);
   if ((int)((uint)(byte)*param_1 << 0x18) < 0) {
     uVar6 = 2;
   }
@@ -1283,28 +1284,35 @@ LAB_20155aa8:
 }
 
 
-// ===== FUN_20100cb4 @ 20100cb4 (36 bytes)
+// ===== __rt_lib_init @ 20100cb4 (36 bytes)
 
-undefined8 FUN_20100cb4(undefined4 param_1,undefined4 param_2)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): called by __rt_entry after
+   __user_setup_stackheap: __rt_locale, two clock/time inits, __cpp_initialize__aeabi_ [inference]
+    */
+
+undefined8 __rt_lib_init(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
   int iVar2;
   undefined4 uVar3;
   
-  iVar1 = FUN_201556d0();
+  iVar1 = __rt_locale();
   iVar2 = FUN_20163874(0,0);
   *(int *)(iVar1 + 4) = iVar2 + 1;
   uVar3 = FUN_201638a0(0,0);
   *(undefined4 *)(iVar1 + 0xc) = uVar3;
-  FUN_201556ac();
+  __cpp_initialize__aeabi_();
   return CONCAT44(param_2,param_1);
 }
 
 
-// ===== FUN_20100cd8 @ 20100cd8 (4 bytes)
+// ===== __rt_lib_shutdown @ 20100cd8 (4 bytes)
 
-void FUN_20100cd8(void)
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): empty push/pop; called on the exit path
+   before _sys_exit [inference] */
+
+void __rt_lib_shutdown(void)
 
 {
   return;
@@ -1323,12 +1331,12 @@ uint __rt_entry(void)
   int extraout_r3;
   undefined8 uVar4;
   
-  uVar1 = FUN_201561c0();
-  FUN_20100cb4(uVar1,extraout_r2);
+  uVar1 = __user_setup_stackheap();
+  __rt_lib_init(uVar1,extraout_r2);
   main();
-  uVar4 = FUN_2015620a();
-  FUN_20100cd8();
-  iVar2 = FUN_201561b4((int)uVar4,(int)((ulonglong)uVar4 >> 0x20));
+  uVar4 = exit();
+  __rt_lib_shutdown();
+  iVar2 = _sys_exit((int)uVar4,(int)((ulonglong)uVar4 >> 0x20));
   *(short *)(iVar2 + 0x1c) = (short)iVar2;
   *(short *)(extraout_r3 + 0x20) = (short)iVar2;
   coproc_moveto_Invalidate_unified_TLB_unlocked(0);

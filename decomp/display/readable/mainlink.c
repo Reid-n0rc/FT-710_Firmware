@@ -16,21 +16,21 @@
 undefined4 mainlink_rx_block_write(char *param_1)
 
 {
-  uint uVar1;
-  uint uVar2;
+  ushort uVar1;
   undefined1 uStack_18;
   char cStack_17;
   char cStack_16;
   char cStack_15;
   uint uStack_14;
+  uint uVar2;
   
-  uVar1 = be16_load(param_1 + 1);
-  uVar1 = uVar1 & 0xffff;
-  uVar2 = be16_load(param_1 + 3);
-  if (((uVar1 < DAT_208116a2) && (uVar2 = uVar1 + (uVar2 & 0xffff), uVar2 <= DAT_208116a2)) &&
+  uVar1 = be16_load((byte *)(param_1 + 1));
+  uVar2 = (uint)uVar1;
+  uVar1 = be16_load((byte *)(param_1 + 3));
+  if (((uVar2 < DAT_208116a2) && (uVar2 + uVar1 <= (uint)DAT_208116a2)) &&
      (DAT_208116a0 == *param_1)) {
-    DAT_208116a4 = (undefined2)uVar2;
-    memcpy(&DAT_208116a6 + uVar1,param_1 + 5);
+    DAT_208116a4 = (undefined2)(uVar2 + uVar1);
+    memcpy(&DAT_208116a6 + uVar2,param_1 + 5);
     _uStack_18 = CONCAT13(param_1[2],CONCAT12(param_1[1],CONCAT11(*param_1,0xc5)));
     uStack_14 = (uint)*(ushort *)(param_1 + 3);
     mainlink_queue_frame(&uStack_18,6);
@@ -53,8 +53,7 @@ undefined4 mainlink_rx_block_write(char *param_1)
 undefined4 mainlink_rx_block_read(char *param_1)
 
 {
-  uint uVar1;
-  uint uVar2;
+  ushort uVar1;
   uint uVar3;
   undefined1 uStack_120;
   char cStack_11f;
@@ -62,17 +61,18 @@ undefined4 mainlink_rx_block_read(char *param_1)
   char cStack_11d;
   undefined4 uStack_11c;
   undefined1 auStack_118 [256];
+  uint uVar2;
   
-  uVar1 = be16_load(param_1 + 1);
-  uVar1 = uVar1 & 0xffff;
-  uVar2 = be16_load(param_1 + 3);
-  if (((uVar1 < DAT_208116a2) && (uVar3 = uVar1 + (uVar2 & 0xffff), uVar3 <= DAT_208116a2)) &&
+  uVar1 = be16_load((byte *)(param_1 + 1));
+  uVar2 = (uint)uVar1;
+  uVar1 = be16_load((byte *)(param_1 + 3));
+  if (((uVar2 < DAT_208116a2) && (uVar3 = uVar2 + uVar1, uVar3 <= DAT_208116a2)) &&
      (DAT_208116a0 == *param_1)) {
     DAT_208116a4 = (undefined2)uVar3;
-    memclr(auStack_118,0xfe);
+    __aeabi_memclr4(auStack_118,0xfe);
     _uStack_120 = CONCAT13(param_1[2],CONCAT12(param_1[1],CONCAT11(*param_1,0xc4)));
     uStack_11c = (uint)*(ushort *)(param_1 + 3);
-    memcpy((int)&uStack_11c + 2,&DAT_208116a6 + uVar1,uVar2 & 0xffff);
+    memcpy((int)&uStack_11c + 2,&DAT_208116a6 + uVar2,(uint)uVar1);
     mainlink_queue_frame(&uStack_120,0x106);
     return 1;
   }
@@ -264,10 +264,10 @@ void scif5_txi_isr(void)
 
 /* UART object @0x208DB280 on SCIF5 (0xE8009800), MAIN link */
 
-undefined * scif5_get(undefined4 param_1)
+void * scif5_get(uint param_1)
 
 {
-  uart_obj_init(&DAT_208db280,&DAT_e8009800,&DAT_201657c8,&DAT_201657b4,param_1);
+  uart_obj_init(&DAT_208db280,&SCIF_SCSMR_5,&DAT_201657c8,&DAT_201657b4,param_1);
   return &DAT_208db280;
 }
 
@@ -283,7 +283,7 @@ undefined * scif5_get(undefined4 param_1)
 
 /* copy of the newest MAIN frame (0x2045F8C0, 0x240 B) */
 
-void mainlink_get_last_frame(undefined4 param_1)
+void mainlink_get_last_frame(uint param_1)
 
 {
   memcpy(param_1,&DAT_2045f8c0,0x240);
@@ -302,7 +302,7 @@ void mainlink_get_last_frame(undefined4 param_1)
 
 /* copy of the newest 0x60 frame (0x2045FB00) */
 
-void mainlink_get_frame60(undefined4 param_1)
+void mainlink_get_frame60(uint param_1)
 
 {
   memcpy(param_1,&DAT_2045fb00,0x240);
@@ -321,7 +321,7 @@ void mainlink_get_frame60(undefined4 param_1)
 
 /* flag 0x20450026 */
 
-undefined1 mainlink_got_frame60(void)
+byte mainlink_got_frame60(void)
 
 {
   return DAT_20450026;
@@ -339,7 +339,7 @@ undefined1 mainlink_got_frame60(void)
 
 /* copies the 0x24 frame tail (0x2045006D) and returns flag 0x20450024 */
 
-undefined1 mainlink_get_settings24(undefined4 param_1)
+byte mainlink_get_settings24(uint param_1)
 
 {
   FUN_201636f8(param_1,&DAT_2045006d);
@@ -377,7 +377,7 @@ undefined1 FUN_2011503c(undefined1 *param_1)
 
 /* flag 0x2045005C, set by a 0x1B frame */
 
-undefined4 mainlink_got_esc(void)
+uint mainlink_got_esc(void)
 
 {
   return DAT_2045005c;
@@ -393,12 +393,12 @@ undefined4 mainlink_got_esc(void)
  */
 // ===== mainlink_last_frame_differs @ 2011506c (32 bytes)
 
-bool mainlink_last_frame_differs(undefined4 param_1)
+bool mainlink_last_frame_differs(uint param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2015507c(&DAT_2045f8c0,param_1,0x240);
+  iVar1 = memcmp(&DAT_2045f8c0,param_1,0x240);
   return iVar1 != 0;
 }
 
@@ -414,7 +414,7 @@ bool mainlink_last_frame_differs(undefined4 param_1)
 
 /* writes the 0x2045F8C0 snapshot (debug replay, GUI) */
 
-void mainlink_set_last_frame(undefined4 param_1)
+void mainlink_set_last_frame(uint param_1)
 
 {
   memcpy(&DAT_2045f8c0,param_1,0x240);
@@ -433,7 +433,7 @@ void mainlink_set_last_frame(undefined4 param_1)
 
 /* cmd byte of the frame waiting for ACK (0x2045002D) */
 
-void mainlink_set_wait_cmd(undefined1 param_1)
+void mainlink_set_wait_cmd(byte param_1)
 
 {
   DAT_2045002d = param_1;
@@ -450,7 +450,7 @@ void mainlink_set_wait_cmd(undefined1 param_1)
  */
 // ===== mainlink_get_wait_cmd @ 201150ec (12 bytes)
 
-undefined1 mainlink_get_wait_cmd(void)
+byte mainlink_get_wait_cmd(void)
 
 {
   return DAT_2045002d;
@@ -468,58 +468,57 @@ undefined1 mainlink_get_wait_cmd(void)
 /* adds checksum; F0/F1 go out at once; other frames go out if no ACK is pending, else are parked in
    per-type slots 0x2045F240..4B */
 
-void mainlink_submit(undefined4 param_1,undefined4 param_2)
+void mainlink_submit(uint param_1,uint param_2)
 
 {
   byte bVar1;
-  int iVar2;
+  uint uVar2;
   int iVar3;
-  uint uVar4;
-  char cVar5;
+  char cVar4;
+  int iVar5;
   int iVar6;
-  int iVar7;
   
-  iVar2 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
-  *(undefined2 *)(iVar2 + 4) = 0xaa;
-  *(short *)(iVar2 + 6) = (short)param_2 + 1;
-  memcpy(iVar2 + 8,param_1,param_2);
-  bVar1 = *(byte *)(iVar2 + 8);
+  uVar2 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
+  *(undefined2 *)(uVar2 + 4) = 0xaa;
+  *(short *)(uVar2 + 6) = (short)param_2 + 1;
+  memcpy(uVar2 + 8,param_1,param_2);
+  bVar1 = *(byte *)(uVar2 + 8);
   if (bVar1 == 0xf0 || bVar1 == 0xf1) {
-    cVar5 = '\0';
+    cVar4 = '\0';
     iVar3 = 0;
-    iVar6 = *(ushort *)(iVar2 + 6) - 1;
-    if (0 < iVar6) {
+    iVar5 = *(ushort *)(uVar2 + 6) - 1;
+    if (0 < iVar5) {
       do {
-        iVar7 = iVar2 + iVar3;
+        iVar6 = uVar2 + iVar3;
         iVar3 = iVar3 + 1;
-        cVar5 = cVar5 + *(char *)(iVar7 + 8);
-      } while (iVar3 < iVar6);
+        cVar4 = cVar4 + *(char *)(iVar6 + 8);
+      } while (iVar3 < iVar5);
     }
-    *(char *)((uint)*(ushort *)(iVar2 + 6) + iVar2 + 7) = cVar5;
-    mainlink_tx_post(DAT_20450060 + 0x8218,iVar2);
+    *(char *)((uint)*(ushort *)(uVar2 + 6) + uVar2 + 7) = cVar4;
+    mainlink_tx_post(DAT_20450060 + 0x8218,uVar2);
     return;
   }
   if (DAT_2080049c == '\0') {
     if (DAT_2045002a == '\0') {
-      memclr(&DAT_2045efc0,0x105);
+      __aeabi_memclr4(&DAT_2045efc0,0x105);
       memcpy(&DAT_2045efc0,param_1,param_2);
       DAT_20450038 = param_2;
-      mainlink_set_wait_cmd(*(undefined1 *)(iVar2 + 8));
-      cVar5 = '\0';
+      mainlink_set_wait_cmd(*(byte *)(uVar2 + 8));
+      cVar4 = '\0';
       iVar3 = 0;
-      iVar6 = *(ushort *)(iVar2 + 6) - 1;
-      if (0 < iVar6) {
+      iVar5 = *(ushort *)(uVar2 + 6) - 1;
+      if (0 < iVar5) {
         do {
-          iVar7 = iVar2 + iVar3;
+          iVar6 = uVar2 + iVar3;
           iVar3 = iVar3 + 1;
-          cVar5 = cVar5 + *(char *)(iVar7 + 8);
-        } while (iVar3 < iVar6);
+          cVar4 = cVar4 + *(char *)(iVar6 + 8);
+        } while (iVar3 < iVar5);
       }
-      *(char *)((uint)*(ushort *)(iVar2 + 6) + iVar2 + 7) = cVar5;
-      mainlink_tx_post(DAT_20450060 + 0x8218,iVar2);
+      *(char *)((uint)*(ushort *)(uVar2 + 6) + uVar2 + 7) = cVar4;
+      mainlink_tx_post(DAT_20450060 + 0x8218,uVar2);
       DAT_2045002a = 1;
       DAT_2045002c = 0;
-      FUN_20151680(DAT_20450064);
+      itron_sta_cyc(DAT_20450064);
       return;
     }
     if (bVar1 == 0xe4) {
@@ -530,23 +529,23 @@ void mainlink_submit(undefined4 param_1,undefined4 param_2)
     }
     if (bVar1 < 0xe5) {
       if (bVar1 == 0xe0) {
-        uVar4 = DAT_2045002e + 1 & 0xff;
-        DAT_2045002e = (byte)(uVar4 % 10);
-        iVar2 = (uVar4 % 10) * 5;
-        FUN_20163668(iVar2 + 0x20470117,(uVar4 / 10) * -5,uVar4 * -0x33333333);
-        memcpy(iVar2 + 0x20470117,param_1,param_2);
+        uVar2 = DAT_2045002e + 1 & 0xff;
+        DAT_2045002e = (byte)(uVar2 % 10);
+        iVar3 = (uVar2 % 10) * 5;
+        FUN_20163668(iVar3 + 0x20470117,(uVar2 / 10) * -5,uVar2 * -0x33333333);
+        memcpy(iVar3 + 0x20470117,param_1,param_2);
         DAT_2045f244 = 1;
         return;
       }
       if (bVar1 < 0xe1) {
         if (bVar1 == 0xc3) {
-          FUN_20155274(&DAT_20470165,0x22);
+          __aeabi_memclr(&DAT_20470165,0x22);
           memcpy(&DAT_20470165,param_1,param_2);
           DAT_2045f249 = 1;
           return;
         }
         if (bVar1 == 0xc4) {
-          FUN_20155274(&DAT_20470187,0x106);
+          __aeabi_memclr(&DAT_20470187,0x106);
           memcpy(&DAT_20470187,param_1,param_2);
           DAT_2045f24a = 1;
           return;
@@ -575,7 +574,7 @@ void mainlink_submit(undefined4 param_1,undefined4 param_2)
     }
     else {
       if (bVar1 == 0xe7) {
-        FUN_20155274(&DAT_20470153,9);
+        __aeabi_memclr(&DAT_20470153,9);
         memcpy(&DAT_20470153,param_1,param_2);
         DAT_2045f247 = 1;
         return;
@@ -605,7 +604,7 @@ void mainlink_submit(undefined4 param_1,undefined4 param_2)
           return;
         }
         if (bVar1 == 0xf1) {
-          memclr(&DAT_20470110,7);
+          __aeabi_memclr4(&DAT_20470110,7);
           memcpy(&DAT_20470110,param_1,param_2);
           DAT_2045f243 = 1;
           return;
@@ -627,13 +626,13 @@ void mainlink_submit(undefined4 param_1,undefined4 param_2)
 
 /* WARNING: Type propagation algorithm not settling */
 
-void mainlink_queue_frame(undefined4 param_1,undefined4 param_2)
+void mainlink_queue_frame(uint param_1,uint param_2)
 
 {
   int iVar1;
   undefined1 local_30 [4];
-  undefined4 local_2c;
-  undefined4 uStack_28;
+  uint local_2c;
+  uint uStack_28;
   
   local_2c = param_1;
   uStack_28 = param_2;
@@ -667,7 +666,7 @@ void mainlink_queue_frame(undefined4 param_1,undefined4 param_2)
     if ((DAT_208f0b2b != '\0') && (DAT_2045f4a0 == -0x1e)) {
       local_30[0] = 0xe4;
       DAT_20800488 = 1;
-      mainlink_submit(local_30,4);
+      mainlink_submit((uint)local_30,4);
       goto LAB_2011553c;
     }
   }
@@ -678,9 +677,8 @@ LAB_2011553c:
           ((((DAT_2045f4a2 == '\x03' && (DAT_2045f4a3 == '\x0f')) && (DAT_208f0bc2 == '\0')) &&
            (((DAT_208f0bc6 & 0x10) != 0 && ((DAT_208f0bc5 & 2) != 0)))))))) &&
         (((uint)DAT_208f0bc4 + (DAT_208f0bc6 & 0xf) == 5 &&
-         ((iVar1 = FUN_2015507c((DAT_208f0bc6 & 0xf) * 0x2d + 0x208f0c46,"FIRMWARE UPDATE      ",
-                                0x15), iVar1 == 0 && (DAT_208000b2 == '\0')))))) &&
-       (iVar1 = FUN_20103ba0(), iVar1 != 0)) {
+         ((iVar1 = memcmp((DAT_208f0bc6 & 0xf) * 0x2d + 0x208f0c46,"FIRMWARE UPDATE      ",0x15),
+          iVar1 == 0 && (DAT_208000b2 == '\0')))))) && (iVar1 = sd_state_bit6(), iVar1 != 0)) {
       DAT_20450027 = 1;
       DAT_20800494 = 1;
       DAT_20808533 = 0;
@@ -711,31 +709,31 @@ LAB_20115704:
 
 /* frame = 0xAA tag, length, payload, sum8; posts to the TX task (used for resends) */
 
-void mainlink_tx_raw(undefined4 param_1,undefined4 param_2)
+void mainlink_tx_raw(uint param_1,uint param_2)
 
 {
-  int iVar1;
+  uint uVar1;
   int iVar2;
   char cVar3;
   int iVar4;
   int iVar5;
   
-  iVar1 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
-  *(undefined2 *)(iVar1 + 4) = 0xaa;
-  *(short *)(iVar1 + 6) = (short)param_2 + 1;
-  memcpy(iVar1 + 8,param_1,param_2);
+  uVar1 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
+  *(undefined2 *)(uVar1 + 4) = 0xaa;
+  *(short *)(uVar1 + 6) = (short)param_2 + 1;
+  memcpy(uVar1 + 8,param_1,param_2);
   cVar3 = '\0';
   iVar2 = 0;
-  iVar4 = *(ushort *)(iVar1 + 6) - 1;
+  iVar4 = *(ushort *)(uVar1 + 6) - 1;
   if (0 < iVar4) {
     do {
-      iVar5 = iVar1 + iVar2;
+      iVar5 = uVar1 + iVar2;
       iVar2 = iVar2 + 1;
       cVar3 = cVar3 + *(char *)(iVar5 + 8);
     } while (iVar2 < iVar4);
   }
-  *(char *)((uint)*(ushort *)(iVar1 + 6) + iVar1 + 7) = cVar3;
-  mainlink_tx_post(DAT_20450060 + 0x8218,iVar1);
+  *(char *)((uint)*(ushort *)(uVar1 + 6) + uVar1 + 7) = cVar3;
+  mainlink_tx_post(DAT_20450060 + 0x8218,uVar1);
   return;
 }
 
@@ -750,28 +748,28 @@ void mainlink_tx_raw(undefined4 param_1,undefined4 param_2)
 
 /* resend of the last E1 (encoder) frame kept at 0x20450068 */
 
-void mainlink_tx_e1_raw(undefined4 param_1)
+void mainlink_tx_e1_raw(uint param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   uint uVar2;
   char cVar3;
   int iVar4;
   
-  iVar1 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
-  *(undefined2 *)(iVar1 + 4) = 0xaa;
-  *(undefined2 *)(iVar1 + 6) = 7;
-  *(undefined1 *)(iVar1 + 8) = 0xe1;
-  FUN_201636cc(iVar1 + 9,param_1);
+  uVar1 = mainlink_tx_alloc(DAT_20450060 + 0x8218);
+  *(undefined2 *)(uVar1 + 4) = 0xaa;
+  *(undefined2 *)(uVar1 + 6) = 7;
+  *(undefined1 *)(uVar1 + 8) = 0xe1;
+  FUN_201636cc(uVar1 + 9,param_1);
   cVar3 = '\0';
   uVar2 = 0;
   do {
-    iVar4 = iVar1 + uVar2;
+    iVar4 = uVar1 + uVar2;
     uVar2 = uVar2 + 1;
     cVar3 = cVar3 + *(char *)(iVar4 + 8);
   } while (uVar2 < 6);
-  *(char *)((uint)*(ushort *)(iVar1 + 6) + iVar1 + 7) = cVar3;
-  mainlink_tx_post(DAT_20450060 + 0x8218,iVar1);
+  *(char *)((uint)*(ushort *)(uVar1 + 6) + uVar1 + 7) = cVar3;
+  mainlink_tx_post(DAT_20450060 + 0x8218,uVar1);
   return;
 }
 
@@ -790,38 +788,36 @@ void mainlink_flush_parked(void)
 
 {
   uint uVar1;
-  uint uVar2;
   
   if (DAT_2045f240 == '\x01') {
-    mainlink_submit(&DAT_20470100,8);
+    mainlink_submit(0x20470100,8);
     DAT_20470100 = 0;
     DAT_20470104 = 0;
     DAT_2045f240 = 0;
     return;
   }
   if (DAT_2045f241 == '\x01') {
-    mainlink_submit(&DAT_20470108,4);
+    mainlink_submit(0x20470108,4);
     DAT_20470108 = 0;
     DAT_2045f241 = 0;
     return;
   }
   if (DAT_2045f242 == '\x01') {
-    mainlink_submit(&DAT_2047010c,4);
+    mainlink_submit(0x2047010c,4);
     DAT_2047010c = 0;
     DAT_2045f242 = 0;
     return;
   }
   if (DAT_2045f243 == '\x01') {
-    mainlink_submit(&DAT_20470110,7);
-    memclr(&DAT_20470110,7);
+    mainlink_submit(0x20470110,7);
+    __aeabi_memclr4(&DAT_20470110,7);
     DAT_2045f243 = 0;
     return;
   }
   if (DAT_2045f244 == '\x01') {
-    uVar1 = DAT_2045002f + 1 & 0xff;
-    uVar2 = uVar1 % 10;
-    DAT_2045002f = (byte)uVar2;
-    mainlink_submit(uVar2 * 5 + 0x20470117,5,uVar1 * -0x33333333);
+    uVar1 = (DAT_2045002f + 1 & 0xff) % 10;
+    DAT_2045002f = (byte)uVar1;
+    mainlink_submit(uVar1 * 5 + 0x20470117,5);
     uVar1 = (uint)DAT_2045002f;
     FUN_20163668(uVar1 * 5 + 0x20470117);
     if (DAT_2045002e == uVar1) {
@@ -830,13 +826,13 @@ void mainlink_flush_parked(void)
     return;
   }
   if (DAT_2045f245 == '\x01') {
-    mainlink_submit(&DAT_20470149,6);
+    mainlink_submit(0x20470149,6);
     FUN_20163684(&DAT_20470149);
     DAT_2045f245 = 0;
     return;
   }
   if (DAT_2045f246 == '\x01') {
-    mainlink_submit(&DAT_2047014f,4);
+    mainlink_submit(0x2047014f,4);
     DAT_2047014f = 0;
     DAT_20470150 = 0;
     DAT_20470151 = 0;
@@ -846,7 +842,7 @@ void mainlink_flush_parked(void)
   }
   if (DAT_2045f247 != '\x01') {
     if (DAT_2045f248 == '\x01') {
-      mainlink_submit(&DAT_2047015c,9);
+      mainlink_submit(0x2047015c,9);
       FUN_201636b8(&DAT_2047015c);
       DAT_2045f248 = 0;
       return;
@@ -854,24 +850,24 @@ void mainlink_flush_parked(void)
     if (DAT_2045f249 != '\x01') {
       if (DAT_2045f24a != '\x01') {
         if (DAT_2045f24b == '\x01') {
-          mainlink_submit(&DAT_2047028d,6);
+          mainlink_submit(0x2047028d,6);
           FUN_20163684(&DAT_2047028d);
           DAT_2045f24b = '\0';
         }
         return;
       }
-      mainlink_submit(&DAT_20470187,0x106);
-      FUN_20155274(&DAT_20470187,0x106);
+      mainlink_submit(0x20470187,0x106);
+      __aeabi_memclr(&DAT_20470187,0x106);
       DAT_2045f24a = 0;
       return;
     }
-    mainlink_submit(&DAT_20470165,0x22);
-    FUN_20155274(&DAT_20470165,0x22);
+    mainlink_submit(0x20470165,0x22);
+    __aeabi_memclr(&DAT_20470165,0x22);
     DAT_2045f249 = 0;
     return;
   }
-  mainlink_submit(&DAT_20470153,9);
-  FUN_20155274(&DAT_20470153,9);
+  mainlink_submit(0x20470153,9);
+  __aeabi_memclr(&DAT_20470153,9);
   DAT_2045f247 = 0;
   return;
 }
@@ -894,10 +890,10 @@ void mainlink_flush_enc(void)
   int iVar2;
   uint uVar3;
   int iVar4;
-  undefined1 auStack_28 [12];
+  byte abStack_28 [12];
   
   uVar3 = 8;
-  FUN_20152bb0(DAT_20450058,0xffffffff);
+  itron_twai_sem(DAT_20450058,0xffffffff);
   uVar1 = 0;
   do {
     if (((uint)DAT_2045002b & 1 << (uVar1 & 0xff)) != 0) {
@@ -914,7 +910,7 @@ void mainlink_flush_enc(void)
     FUN_20163668(&DAT_2045f0c5 + (&DAT_2045f224)[uVar3] * 5 + uVar3 * 0x32);
     return;
   }
-  FUN_201636cc(auStack_28);
+  FUN_201636cc(abStack_28);
   iVar4 = (&DAT_2045f224)[uVar3];
   iVar2 = 0;
   if (0 < iVar4) {
@@ -925,8 +921,8 @@ void mainlink_flush_enc(void)
     } while (iVar2 < iVar4);
   }
   (&DAT_2045f224)[uVar3] = iVar4 + -1;
-  FUN_201511e8(DAT_20450058);
-  mainlink_send_enc(auStack_28);
+  itron_sig_sem(DAT_20450058);
+  mainlink_send_enc(abStack_28);
   return;
 }
 
@@ -944,8 +940,8 @@ void mainlink_on_ack(void)
 
 {
   if (DAT_2045002a != '\0') {
-    FUN_2014eb94(DAT_2045004c,0);
-    FUN_20151878(DAT_20450064);
+    itron_clr_flg(DAT_2045004c,0);
+    itron_stp_cyc(DAT_20450064);
     DAT_2045002a = '\0';
     mainlink_flush_parked();
     if (DAT_2045002b != '\0') {
@@ -969,28 +965,27 @@ void mainlink_on_ack(void)
 void mainlink_on_nak(void)
 
 {
-  undefined4 uVar1;
-  int iVar2;
+  byte bVar1;
   
   if (DAT_2045002a != '\0') {
-    FUN_20151878(DAT_20450064);
+    itron_stp_cyc(DAT_20450064);
     if (2 < DAT_2045002c) {
       if (DAT_20450029 != '\0') {
-        uVar1 = mainlink_get_wait_cmd();
-        gui_link_error_popup(0,uVar1);
+        bVar1 = mainlink_get_wait_cmd();
+        gui_link_error_popup(0,bVar1);
         return;
       }
       system_reboot();
       return;
     }
-    iVar2 = mainlink_get_wait_cmd();
-    if (iVar2 == 0xe1) {
-      mainlink_tx_e1_raw(&DAT_20450068);
+    bVar1 = mainlink_get_wait_cmd();
+    if (bVar1 == 0xe1) {
+      mainlink_tx_e1_raw(0x20450068);
     }
     else {
-      mainlink_tx_raw(&DAT_2045efc0,DAT_20450038);
+      mainlink_tx_raw(0x2045efc0,DAT_20450038);
     }
-    FUN_20151680(DAT_20450064);
+    itron_sta_cyc(DAT_20450064);
     DAT_2045002c = DAT_2045002c + 1;
   }
   return;
@@ -1014,8 +1009,8 @@ void mainlink_tx_reset(void)
   int iVar1;
   int iVar2;
   
-  FUN_2014eb94(DAT_2045004c,0);
-  FUN_20151878(DAT_20450064);
+  itron_clr_flg(DAT_2045004c,0);
+  itron_stp_cyc(DAT_20450064);
   DAT_2045002a = 0;
   iVar2 = 0;
   DAT_2045002b = 0;
@@ -1107,7 +1102,7 @@ LAB_20150fa4:
 LAB_2015109c:
         **(uint **)(*piVar8 + 0xc) = uVar9;
         if ((bVar2 & 2) != 0) {
-          FUN_20153ad4(piVar8,uVar6);
+          knl_timeout_remove(piVar8,uVar6);
         }
         *(undefined1 *)((int)piVar8 + 5) = 0x10;
         if (*(char *)((int)piVar8 + 9) == '\0') {
@@ -1156,7 +1151,7 @@ LAB_20151030:
   }
   *(uint *)(iVar10 + 4) = uVar6;
   if ((bVar1 & 2) != 0) {
-    FUN_20153ad4(piVar8,uVar9);
+    knl_timeout_remove(piVar8,uVar9);
     puVar7 = extraout_r2;
   }
   *(undefined1 *)((int)piVar8 + 5) = 0x10;
@@ -1196,38 +1191,40 @@ LAB_2015116c:
 void mainlink_init(void)
 
 {
-  int iVar1;
-  int iVar2;
-  undefined4 uVar3;
+  uint uVar1;
+  uint uVar2;
+  void *pvVar3;
+  int iVar4;
   
-  iVar1 = os_create_sem_named(&DAT_20165860,"cmd_interval_sem");
-  if (0 < iVar1) {
-    DAT_20450054 = iVar1;
-    FUN_201511e8();
+  uVar1 = os_create_sem_named(&DAT_20165860,0x201164cc);
+  if (0 < (int)uVar1) {
+    DAT_20450054 = uVar1;
+    itron_sig_sem();
   }
-  iVar1 = itron_acre_tsk(0,&DAT_2016589c);
-  periodic_wakeup_register(iVar1,3);
-  if (0 < iVar1) {
-    itron_sta_tsk(iVar1,0);
-    iVar1 = os_create_sem_named(&DAT_20165870,"cmd_waiting_sem");
-    if (0 < iVar1) {
-      DAT_20450058 = iVar1;
-      FUN_201511e8();
+  uVar1 = itron_acre_tsk(0,&DAT_2016589c);
+  periodic_wakeup_register(uVar1,3);
+  if (0 < (int)uVar1) {
+    itron_sta_tsk(uVar1,0);
+    uVar1 = os_create_sem_named(&DAT_20165870,0x201164e8);
+    if (0 < (int)uVar1) {
+      DAT_20450058 = uVar1;
+      itron_sig_sem();
     }
-    memclr(&DAT_2045fd40,0x103c0);
+    __aeabi_memclr4(&DAT_2045fd40,0x103c0);
     DAT_20450060 = mainlink_obj_ctor(&DAT_2045fd40);
-    iVar1 = itron_acre_tsk(0,&DAT_20165880);
-    if ((0 < iVar1) && (iVar2 = itron_acre_flg(0,&DAT_201658b8), 0 < iVar2)) {
-      *(int *)(DAT_20450060 + 0x14) = iVar2;
-      uVar3 = scif5_get();
-      *(undefined4 *)(DAT_20450060 + 0x10) = uVar3;
-      itron_sta_tsk(iVar1);
+    uVar1 = itron_acre_tsk(0,&DAT_20165880);
+    if ((0 < (int)uVar1) && (uVar2 = itron_acre_flg(0,&DAT_201658b8), 0 < (int)uVar2)) {
+      *(uint *)(DAT_20450060 + 0x14) = uVar2;
+      pvVar3 = scif5_get(uVar2);
+      uVar2 = DAT_20450060;
+      *(void **)(DAT_20450060 + 0x10) = pvVar3;
+      itron_sta_tsk(uVar1,uVar2);
       DAT_2045004c = itron_acre_flg(0,&DAT_201658f4);
-      if ((0 < DAT_2045004c) &&
-         (((iVar1 = itron_acre_tsk(0,&DAT_201658d8), 0 < iVar1 &&
-           (iVar1 = itron_sta_tsk(iVar1,0), iVar1 == 0)) &&
-          (iVar1 = FUN_2014ec30(0,&DAT_201658c4), 0 < iVar1)))) {
-        DAT_20450064 = iVar1;
+      if ((0 < (int)DAT_2045004c) &&
+         (((uVar1 = itron_acre_tsk(0,&DAT_201658d8), 0 < (int)uVar1 &&
+           (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
+          (iVar4 = itron_acre_cyc(0,&DAT_201658c4), 0 < iVar4)))) {
+        DAT_20450064 = iVar4;
       }
     }
   }
@@ -1250,20 +1247,9 @@ void mainlink_init(void)
 void mainlink_rx_ctrl(int param_1)
 
 {
-  undefined4 uVar1;
-  
-  if (DAT_20450060 != 0) {
-    if (param_1 == 0) {
-      uVar1 = 0x4000;
-    }
-    else {
-      uVar1 = 0x8000;
-    }
-    itron_set_flg(*(undefined4 *)(DAT_20450060 + 0x14),uVar1);
-    if (param_1 == 0) {
-      scif5_get(*(undefined4 *)(DAT_20450060 + 0x14));
-      return;
-    }
+  if ((DAT_20450060 != 0) && (itron_set_flg(*(undefined4 *)(DAT_20450060 + 0x14)), param_1 == 0)) {
+    scif5_get(*(uint *)(DAT_20450060 + 0x14));
+    return;
   }
   return;
 }
@@ -1283,11 +1269,11 @@ void mainlink_rx_ctrl(int param_1)
 void mainlink_inject_rx(char *param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   uint uVar2;
   int iVar3;
   
-  iVar1 = mainlink_disp_alloc(DAT_20450060 + 0x58);
+  uVar1 = mainlink_disp_alloc(DAT_20450060 + 0x58);
   iVar3 = 0;
   uVar2 = 0;
   do {
@@ -1298,10 +1284,10 @@ void mainlink_inject_rx(char *param_1)
     uVar2 = uVar2 + 1;
   } while (uVar2 < 0x2b);
   if (iVar3 != 0) {
-    *(undefined2 *)(iVar1 + 4) = 0xaa;
-    *(short *)(iVar1 + 6) = (short)iVar3;
-    memcpy(iVar1 + 8,param_1);
-    mainlink_disp_post(DAT_20450060 + 0x58,iVar1);
+    *(undefined2 *)(uVar1 + 4) = 0xaa;
+    *(short *)(uVar1 + 6) = (short)iVar3;
+    memcpy(uVar1 + 8,param_1);
+    mainlink_disp_post(DAT_20450060 + 0x58,uVar1);
     return;
   }
   return;
@@ -1340,7 +1326,7 @@ void mainlink_hello_key6(void)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_alloc @ 20158630  (12 bytes, 6 callers, export file 2015686c_201587ac.c)
+ * mainlink_tx_alloc @ 20158630  (12 bytes, 6 callers, export file 20156860_20158744.c)
  * Purpose: TX buffer pool, paced post
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1349,16 +1335,18 @@ void mainlink_hello_key6(void)
 
 /* gets a free 0x408-byte buffer */
 
-void mainlink_tx_alloc(int param_1)
+uint mainlink_tx_alloc(int param_1)
 
 {
-  FUN_201644ac(param_1 + 0x811c);
-  return;
+  uint uVar1;
+  
+  uVar1 = FUN_201644ac(param_1 + 0x811c);
+  return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_post @ 20158744  (100 bytes, 7 callers, export file 2015686c_201587ac.c)
+ * mainlink_tx_post @ 20158744  (100 bytes, 7 callers, export file 20156860_20158744.c)
  * Purpose: TX buffer pool, paced post
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1367,22 +1355,21 @@ void mainlink_tx_alloc(int param_1)
 
 /* waits for the 3 ms pacing counter, posts to the TX mailbox, re-arms cmd_interval */
 
-void mainlink_tx_post(int param_1,undefined4 param_2)
+void mainlink_tx_post(int param_1,uint param_2)
 
 {
   while (DAT_20450050 != 0) {
     itron_dly_tsk(1);
   }
   FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
-  FUN_20152bb0(DAT_20450054,0xffffffff);
+  itron_twai_sem(DAT_20450054,0xffffffff);
   DAT_20450050 = 3;
-  FUN_201511e8(DAT_20450054);
+  itron_sig_sem(DAT_20450054);
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * mainlink_obj_run @ 20158b10  (240 bytes, 0 callers, export file 201587d0_2015c278.c)
+ * mainlink_obj_run @ 20158b10  (240 bytes, 0 callers, export file 201587ac_2015c048.c)
  * Task / object: uart
  * Descriptor: 0x20165880
  * Pri: 7
@@ -1394,27 +1381,27 @@ void mainlink_tx_post(int param_1,undefined4 param_2)
 
 /* task "uart" pri 7: binds SCIF5, starts the 3 sub-tasks, opens 345600 baud 8N2 */
 
-void mainlink_obj_run(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void mainlink_obj_run(int param_1)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
   
-  iVar1 = itron_acre_tsk(0,&DAT_20165938,param_3,param_4,param_4);
-  if (((0 < iVar1) && (iVar2 = itron_acre_tsk(0,&DAT_2016591c), 0 < iVar2)) &&
-     (iVar3 = itron_acre_tsk(0,&DAT_20165900), 0 < iVar3)) {
-    iVar4 = param_1 + 0x8218;
-    mainlink_tx_init(iVar4,*(undefined4 *)(param_1 + 0x10));
-    mainlink_disp_init(param_1 + 0x58,iVar4);
+  uVar1 = itron_acre_tsk(0,&DAT_20165938);
+  if (((0 < (int)uVar1) && (uVar2 = itron_acre_tsk(0,&DAT_2016591c), 0 < (int)uVar2)) &&
+     (uVar3 = itron_acre_tsk(0,&DAT_20165900), 0 < (int)uVar3)) {
+    uVar4 = param_1 + 0x8218;
+    mainlink_tx_init(uVar4,*(uint *)(param_1 + 0x10));
+    mainlink_disp_init(param_1 + 0x58,uVar4);
     *(undefined4 *)(param_1 + 0x4c) = *(undefined4 *)(param_1 + 0x14);
-    mainlink_rx_bind(param_1 + 0x18,*(undefined4 *)(param_1 + 0x10),iVar4,param_1 + 0x58);
-    iVar1 = itron_sta_tsk(iVar1,iVar4);
-    if (((iVar1 == 0) && (iVar1 = itron_sta_tsk(iVar2,param_1 + 0x58), iVar1 == 0)) &&
-       (iVar1 = itron_sta_tsk(iVar3,param_1 + 0x18), iVar1 == 0)) {
+    mainlink_rx_bind(param_1 + 0x18,*(uint *)(param_1 + 0x10),uVar4,param_1 + 0x58);
+    uVar1 = itron_sta_tsk(uVar1,uVar4);
+    if (((uVar1 == 0) && (uVar1 = itron_sta_tsk(uVar2,param_1 + 0x58), uVar1 == 0)) &&
+       (uVar1 = itron_sta_tsk(uVar3,param_1 + 0x18), uVar1 == 0)) {
       (**(code **)(**(int **)(param_1 + 0x10) + 4))(*(int **)(param_1 + 0x10),0x54600,8,0);
-      FUN_201525f8(0xffffffff);
+      itron_tslp_tsk(0xffffffff);
       return;
     }
   }
@@ -1423,7 +1410,7 @@ void mainlink_obj_run(int param_1,undefined4 param_2,undefined4 param_3,undefine
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_obj_ctor @ 20158c10  (48 bytes, 1 callers, export file 201587d0_2015c278.c)
+ * mainlink_obj_ctor @ 20158c10  (48 bytes, 1 callers, export file 201587ac_2015c048.c)
  * Purpose: link object constructor
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1432,21 +1419,21 @@ void mainlink_obj_run(int param_1,undefined4 param_2,undefined4 param_3,undefine
 
 /* builds RX (+0x18), dispatcher (+0x58) and TX (+0x8218) sub-objects */
 
-int mainlink_obj_ctor(undefined4 *param_1)
+int mainlink_obj_ctor(void *param_1)
 
 {
   int iVar1;
   
-  *param_1 = &DAT_20427fd0;
-  iVar1 = mainlink_rx_ctor(param_1 + 6);
-  iVar1 = mainlink_disp_ctor(iVar1 + 0x40);
-  iVar1 = mainlink_tx_ctor(iVar1 + 0x81c0);
+  *(undefined **)param_1 = &DAT_20427fd0;
+  iVar1 = mainlink_rx_ctor((int)param_1 + 0x18);
+  iVar1 = mainlink_disp_ctor((void *)(iVar1 + 0x40));
+  iVar1 = mainlink_tx_ctor((void *)(iVar1 + 0x81c0));
   return iVar1 + -0x8218;
 }
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_status_valid @ 2015e354  (928 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_status_valid @ 2015e354  (928 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: field range checks, 0x7F key
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1564,7 +1551,7 @@ mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_validate @ 2015e6f4  (2324 bytes, 1 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_rx_validate @ 2015e6f4  (2324 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: field range checks, 0x7F key
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1573,14 +1560,15 @@ mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefi
 
 /* per-command range checks; 0x7F with the 8-byte key enters maintenance mode */
 
-bool mainlink_rx_validate(undefined4 param_1,byte *param_2)
+bool mainlink_rx_validate(uint param_1,byte *param_2)
 
 {
   byte bVar1;
   byte bVar2;
   bool bVar3;
-  uint uVar4;
-  int iVar5;
+  ushort uVar4;
+  uint uVar5;
+  int iVar6;
   
   bVar2 = *param_2;
   if (bVar2 == 0x45) {
@@ -1614,36 +1602,39 @@ bool mainlink_rx_validate(undefined4 param_1,byte *param_2)
     }
     if (bVar2 < 0x7b) {
       if (bVar2 == 0x60) {
-        uVar4 = (uint)param_2[0xe] + (uint)param_2[0xd] * 0x100;
-        if (4 < uVar4) {
-          if (uVar4 == 0xdb) {
+        uVar5 = (uint)param_2[0xe] + (uint)param_2[0xd] * 0x100;
+        if (4 < uVar5) {
+          if (uVar5 == 0xdb) {
             DAT_20450029 = 1;
             goto LAB_2015dd64;
           }
-          if (uVar4 != 0xff) {
+          if (uVar5 != 0xff) {
             return false;
           }
         }
         DAT_20450029 = 0;
 LAB_2015dd64:
-        iVar5 = mainlink_status_valid(param_1,param_2 + 0xf);
-        return iVar5 != 0;
+        iVar6 = mainlink_status_valid(param_1,param_2 + 0xf);
+        return iVar6 != 0;
       }
       if (bVar2 == 100) {
         return param_2[1] < 6;
       }
       if (bVar2 == 0x65) {
-        iVar5 = bcd_to_bin(param_2[1]);
-        if (((((iVar5 < 100) && (bVar2 = bcd_to_bin(param_2[2]), bVar2 != 0)) && (bVar2 < 0xd)) &&
-            ((bVar2 = bcd_to_bin(param_2[3]), bVar2 != 0 && (bVar2 < 0x20)))) &&
-           ((bVar2 = bcd_to_bin(param_2[4]), bVar2 < 0x18 &&
-            (bVar2 = bcd_to_bin(param_2[5]), bVar2 < 0x3c)))) {
-          bVar3 = true;
+        iVar6 = bcd_to_bin((uint)param_2[1]);
+        if (iVar6 < 100) {
+          uVar5 = bcd_to_bin((uint)param_2[2]);
+          if (((uVar5 & 0xff) != 0) && ((uVar5 & 0xff) < 0xd)) {
+            uVar5 = bcd_to_bin((uint)param_2[3]);
+            if (((uVar5 & 0xff) != 0) &&
+               ((((uVar5 & 0xff) < 0x20 &&
+                 (uVar5 = bcd_to_bin((uint)param_2[4]), (uVar5 & 0xff) < 0x18)) &&
+                (uVar5 = bcd_to_bin((uint)param_2[5]), (uVar5 & 0xff) < 0x3c)))) {
+              return true;
+            }
+          }
         }
-        else {
-          bVar3 = false;
-        }
-        return bVar3;
+        return false;
       }
       if (bVar2 == 0x71) {
         if ((param_2[1] - 3 < 0x7e) || (0x82 < param_2[1])) {
@@ -1678,8 +1669,8 @@ LAB_2015dd64:
             return true;
           }
         }
-        iVar5 = FUN_2015507c(param_2 + 2,&DAT_20450285,8);
-        if (iVar5 != 0) {
+        iVar6 = memcmp(param_2 + 2,&DAT_20450285,8);
+        if (iVar6 != 0) {
           return false;
         }
         DAT_2080049c = 1;
@@ -1690,14 +1681,15 @@ LAB_2015dd64:
       }
     }
   }
-  iVar5 = mainlink_status_valid(param_1,param_2 + 1);
-  if (iVar5 == 0) {
+  iVar6 = mainlink_status_valid(param_1,param_2 + 1);
+  if (iVar6 == 0) {
     return false;
   }
   bVar2 = *param_2;
   if (bVar2 == 0x39) {
-    if ((((param_2[0xb4] < 0xb) && (param_2[0xb5] == 0)) && (param_2[0xb7] < 0x65)) &&
-       ((param_2[0xb8] < 0x65 && (iVar5 = be16_load(param_2 + 0xba), iVar5 < 10000)))) {
+    if (((param_2[0xb4] < 0xb) && (param_2[0xb5] == 0)) &&
+       ((param_2[0xb7] < 0x65 &&
+        ((param_2[0xb8] < 0x65 && (uVar4 = be16_load(param_2 + 0xba), uVar4 < 10000)))))) {
       bVar3 = true;
     }
     else {
@@ -1753,13 +1745,13 @@ LAB_2015dd64:
           if ((((bVar2 != 0) && ((bVar2 < 6 && ((param_2[0x9b] & 0xf) < 5)))) &&
               (param_2[0x9c] >> 4 < 8)) && ((param_2[0x9c] & 0xf) < 5)) {
             if (param_2[0x98] == 0) {
-              iVar5 = 0;
+              iVar6 = 0;
               do {
-                if (0x19 < param_2[iVar5 * 0x2d + 0x11a]) {
+                if (0x19 < param_2[iVar6 * 0x2d + 0x11a]) {
                   return false;
                 }
-                iVar5 = iVar5 + 1;
-              } while (iVar5 < 5);
+                iVar6 = iVar6 + 1;
+              } while (iVar6 < 5);
             }
             return true;
           }
@@ -1869,7 +1861,7 @@ LAB_2015dd64:
   if (bVar2 != 0x30) {
     return false;
   }
-  uVar4 = (uint)param_2[0x99];
+  uVar5 = (uint)param_2[0x99];
   bVar2 = param_2[0x9b];
   bVar1 = param_2[0x98];
   if (bVar1 != 7) {
@@ -1878,33 +1870,33 @@ LAB_2015dd64:
       case 0:
         goto joined_r0x2015e0ec;
       case 1:
-        if (3 < uVar4) {
+        if (3 < uVar5) {
           return false;
         }
         break;
       case 2:
 joined_r0x2015e084:
-        if (2 < uVar4) {
+        if (2 < uVar5) {
           return false;
         }
         break;
       case 3:
-        if (1 < uVar4) {
+        if (1 < uVar5) {
           return false;
         }
         break;
       case 4:
-        if (4 < uVar4) {
+        if (4 < uVar5) {
           return false;
         }
         break;
       case 5:
-        if (0xf < uVar4) {
+        if (0xf < uVar5) {
           return false;
         }
         break;
       case 6:
-        if (9 < uVar4) {
+        if (9 < uVar5) {
           return false;
         }
         break;
@@ -1913,7 +1905,7 @@ joined_r0x2015e084:
       }
     }
     else if (bVar1 == 0xb) {
-      if (10 < (uVar4 & 0xf)) {
+      if (10 < (uVar5 & 0xf)) {
         return false;
       }
     }
@@ -1926,18 +1918,18 @@ joined_r0x2015e084:
         if (2 < param_2[0x99] >> 6) {
           return false;
         }
-        if (2 < (uVar4 & 0x3f) >> 4) {
+        if (2 < (uVar5 & 0x3f) >> 4) {
           return false;
         }
-        uVar4 = uVar4 & 0xf;
+        uVar5 = uVar5 & 0xf;
 joined_r0x2015e0ec:
-        if (5 < uVar4) {
+        if (5 < uVar5) {
           return false;
         }
       }
     }
     else if (bVar1 == 0xc) {
-      if (0xb < uVar4) {
+      if (0xb < uVar5) {
         return false;
       }
     }
@@ -1975,7 +1967,7 @@ switchD_2015dfdc_default:
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_deliver @ 2015e9b8  (164 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_rx_deliver @ 2015e9b8  (164 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: trace, D/E, post to the dispatcher
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -1984,23 +1976,23 @@ switchD_2015dfdc_default:
 
 /* trace, 'D'/'E' block handlers, else post to the dispatcher */
 
-void mainlink_rx_deliver(int param_1,char *param_2,undefined4 param_3)
+void mainlink_rx_deliver(int param_1,char *param_2,uint param_3)
 
 {
-  int iVar1;
+  uint uVar1;
   
   *(int *)(param_1 + 0x28) = *(int *)(param_1 + 0x28) + 1;
   if (*param_2 != '\x06' && *param_2 != '\x15') {
-    mainlink_trace(param_2,param_3);
+    mainlink_trace((uint)param_2,param_3);
     *(char *)(param_1 + 0x24) = *param_2;
   }
   if (*param_2 != 'D') {
     if (*param_2 != 'E') {
-      iVar1 = mainlink_disp_alloc(*(undefined4 *)(param_1 + 0x18));
-      *(undefined2 *)(iVar1 + 4) = 0xaa;
-      *(short *)(iVar1 + 6) = (short)param_3;
-      memcpy(iVar1 + 8,param_2,param_3);
-      mainlink_disp_post(*(undefined4 *)(param_1 + 0x18),iVar1);
+      uVar1 = mainlink_disp_alloc(*(int *)(param_1 + 0x18));
+      *(undefined2 *)(uVar1 + 4) = 0xaa;
+      *(short *)(uVar1 + 6) = (short)param_3;
+      memcpy(uVar1 + 8,param_2,param_3);
+      mainlink_disp_post(*(undefined4 *)(param_1 + 0x18),uVar1);
       return;
     }
     mainlink_rx_block_write(param_2 + 1);
@@ -2012,7 +2004,7 @@ void mainlink_rx_deliver(int param_1,char *param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_parse @ 2015eb90  (168 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_rx_parse @ 2015eb90  (168 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: framing by table length
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2021,7 +2013,7 @@ void mainlink_rx_deliver(int param_1,char *param_2,undefined4 param_3)
 
 /* first byte: 06/15/1B single byte; else table lookup 0x20450074 */
 
-int mainlink_rx_parse(undefined4 param_1,char *param_2,int param_3,undefined4 *param_4)
+int mainlink_rx_parse(uint param_1,char *param_2,int param_3,void *param_4)
 
 {
   char cVar1;
@@ -2038,9 +2030,9 @@ int mainlink_rx_parse(undefined4 param_1,char *param_2,int param_3,undefined4 *p
     uVar2 = 0;
     do {
       if ((&DAT_20450074)[uVar2 * 0xc] == cVar1) {
-        iVar3 = mainlink_rx_frame(param_1,&DAT_20450074 + uVar2 * 0xc,param_2,param_3);
+        iVar3 = mainlink_rx_frame(param_1,(int)(&DAT_20450074 + uVar2 * 0xc),(uint)param_2,param_3);
         if (iVar3 == 0) {
-          *param_4 = &DAT_20450074 + uVar2 * 0xc;
+          *(undefined1 **)param_4 = &DAT_20450074 + uVar2 * 0xc;
         }
         return iVar3;
       }
@@ -2054,7 +2046,7 @@ int mainlink_rx_parse(undefined4 param_1,char *param_2,int param_3,undefined4 *p
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ack @ 2015ee40  (68 bytes, 1 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_send_ack @ 2015ee40  (68 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
  */
@@ -2065,20 +2057,20 @@ int mainlink_rx_parse(undefined4 param_1,char *param_2,int param_3,undefined4 *p
 void mainlink_send_ack(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   
   *(int *)(param_1 + 0x2c) = *(int *)(param_1 + 0x2c) + 1;
-  iVar1 = mainlink_tx_alloc(*(undefined4 *)(param_1 + 0x14));
-  *(undefined2 *)(iVar1 + 4) = 0xaa;
-  *(undefined2 *)(iVar1 + 6) = 1;
-  *(undefined1 *)(iVar1 + 8) = 6;
-  mainlink_tx_post(*(undefined4 *)(param_1 + 0x14));
+  uVar1 = mainlink_tx_alloc(*(int *)(param_1 + 0x14));
+  *(undefined2 *)(uVar1 + 4) = 0xaa;
+  *(undefined2 *)(uVar1 + 6) = 1;
+  *(undefined1 *)(uVar1 + 8) = 6;
+  mainlink_tx_post(*(int *)(param_1 + 0x14),uVar1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_nak @ 2015ee84  (68 bytes, 3 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_send_nak @ 2015ee84  (68 bytes, 3 callers, export file 2015c278_2015f0ec.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
  */
@@ -2089,20 +2081,20 @@ void mainlink_send_ack(int param_1)
 void mainlink_send_nak(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   
   *(int *)(param_1 + 0x30) = *(int *)(param_1 + 0x30) + 1;
-  iVar1 = mainlink_tx_alloc(*(undefined4 *)(param_1 + 0x14));
-  *(undefined2 *)(iVar1 + 4) = 0xaa;
-  *(undefined2 *)(iVar1 + 6) = 1;
-  *(undefined1 *)(iVar1 + 8) = 0x15;
-  mainlink_tx_post(*(undefined4 *)(param_1 + 0x14));
+  uVar1 = mainlink_tx_alloc(*(int *)(param_1 + 0x14));
+  *(undefined2 *)(uVar1 + 4) = 0xaa;
+  *(undefined2 *)(uVar1 + 6) = 1;
+  *(undefined1 *)(uVar1 + 8) = 0x15;
+  mainlink_tx_post(*(int *)(param_1 + 0x14),uVar1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_frame @ 2015eec8  (116 bytes, 2 callers, export file 2015c2d4_2015f1f0.c)
+ * mainlink_rx_frame @ 2015eec8  (116 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: framing by table length
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2111,35 +2103,35 @@ void mainlink_send_nak(int param_1)
 
 /* waits for len+2 bytes, validates, ACKs, delivers */
 
-int mainlink_rx_frame(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
+int mainlink_rx_frame(uint param_1,int param_2,uint param_3,int param_4)
 
 {
-  int iVar1;
-  int iVar2;
+  bool bVar1;
+  uint uVar2;
   
-  iVar2 = *(ushort *)(param_2 + 2) + 2;
-  if (param_4 < iVar2) {
-    iVar2 = 0;
+  uVar2 = *(ushort *)(param_2 + 2) + 2;
+  if (param_4 < (int)uVar2) {
+    uVar2 = 0;
   }
   else {
-    iVar1 = mainlink_rx_validate(param_1,param_3);
-    if (iVar1 == 0) {
-      iVar2 = -1;
-    }
-    else {
+    bVar1 = mainlink_rx_validate(param_1,(byte *)param_3);
+    if (bVar1) {
       *(int *)(param_2 + 8) = *(int *)(param_2 + 8) + 1;
       if (*(char *)(param_2 + 4) == '\0') {
         mainlink_send_ack(param_1);
       }
-      mainlink_rx_deliver(param_1,param_3,iVar2);
+      mainlink_rx_deliver(param_1,(char *)param_3,uVar2);
+    }
+    else {
+      uVar2 = 0xffffffff;
     }
   }
-  return iVar2;
+  return uVar2;
 }
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_disp_post @ 20160278  (16 bytes, 2 callers, export file 2015f348_20162d04.c)
+ * mainlink_disp_post @ 20160278  (16 bytes, 2 callers, export file 2015f1f0_20162c28.c)
  * Purpose: post to the dispatcher mailbox
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2155,7 +2147,7 @@ void mainlink_disp_post(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scif_rxi_isr @ 20162dd8  (312 bytes, 3 callers, export file 20162d10_20163ca4.c)
+ * scif_rxi_isr @ 20162dd8  (312 bytes, 3 callers, export file 20162d04_20163b9c.c)
  * Purpose: one byte per interrupt into the RX ring. Counts errors and overflows. Masks RXI and `set_flg(obj+0x818,
  *     1)`
  * Tag: none in the table row
@@ -2204,7 +2196,7 @@ void scif_rxi_isr(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scif_txi_isr @ 20162f10  (156 bytes, 3 callers, export file 20162d10_20163ca4.c)
+ * scif_txi_isr @ 20162f10  (156 bytes, 3 callers, export file 20162d04_20163b9c.c)
  * Purpose: (new entry, Ghidra had merged it into the RXI handler) one byte from the TX ring to SCFTDR. Clears TIE
  *     when the ring is empty
  * Tag: none in the table row
@@ -2241,7 +2233,7 @@ void scif_txi_isr(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart_obj_init @ 20162fac  (104 bytes, 4 callers, export file 20162d10_20163ca4.c)
+ * uart_obj_init @ 20162fac  (104 bytes, 4 callers, export file 20162d04_20163b9c.c)
  * Purpose: binds registers, ISRs, RX flag
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2249,19 +2241,18 @@ void scif_txi_isr(int param_1)
 // ===== uart_obj_init @ 20162fac (104 bytes)
 
 undefined4
-uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-             undefined4 param_5)
+uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5)
 
 {
-  int iVar1;
+  uint uVar1;
   
   if (*(int *)(param_1 + 4) == 0) {
     *(undefined4 *)(param_1 + 4) = param_2;
     *(undefined4 *)(param_1 + 0x818) = param_5;
     *(undefined4 *)(param_1 + 0x810) = param_3;
-    *(undefined4 *)(param_1 + 0x814) = param_4;
-    iVar1 = itron_acre_isr(0,param_4);
-    if ((iVar1 < 1) || (iVar1 = itron_acre_isr(0,*(undefined4 *)(param_1 + 0x810)), iVar1 < 1)) {
+    *(int *)(param_1 + 0x814) = param_4;
+    uVar1 = itron_acre_isr(0,param_4);
+    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,*(int *)(param_1 + 0x810)), (int)uVar1 < 1)) {
       return 0xffffffff;
     }
   }
@@ -2273,7 +2264,7 @@ uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param
 
 
 /* -----------------------------------------------------------------------------
- * scif_irq_off @ 20163014  (36 bytes, 1 callers, export file 20162d10_20163ca4.c)
+ * scif_irq_off @ 20163014  (36 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+8
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2290,7 +2281,7 @@ void scif_irq_off(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scif_read @ 20163038  (96 bytes, 1 callers, export file 20162d10_20163ca4.c)
+ * scif_read @ 20163038  (96 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+0x10: non-blocking copy out of the 1 KB RX ring (obj+0xC, indices +8/+0xA)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2320,7 +2311,7 @@ int scif_read(int param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scif_start @ 20163098  (52 bytes, 1 callers, export file 20162d10_20163ca4.c)
+ * scif_start @ 20163098  (52 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+4: `scif_open`, then enables the RXI/TXI GIC lines
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2329,23 +2320,18 @@ int scif_read(int param_1,undefined1 *param_2,int param_3)
 
 /* scif_open + enable RXI/TXI in the GIC */
 
-void scif_start(int param_1)
+void scif_start(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 {
-  undefined4 extraout_r1;
-  undefined4 extraout_r2;
-  undefined4 in_stack_00000000;
-  
-  scif_open(param_1);
+  scif_open(param_1,param_2,param_3,param_4,param_5);
   gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8),extraout_r1,extraout_r2,
-                 in_stack_00000000);
+  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * scif_open @ 201630cc  (324 bytes, 1 callers, export file 20162d10_20163ca4.c)
+ * scif_open @ 201630cc  (324 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: `(baud, bits, parity, stop)`: SCSMR (bits 7 → CHR, parity 1/2 → PE/PM, stop ≠ 1 → STOP). Below 345600
  *     baud SCBRR = 64 MHz/(32·baud) − 1, at 345600 SCBRR = 0x16 and SEMR |= 0x81. Resets FIFOs and counters
  * Tag: none in the table row
@@ -2377,7 +2363,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
     uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
-    cVar1 = FUN_20156260(64000000,param_2 << 5);
+    cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
     cVar1 = cVar1 + -1;
   }
   else {
@@ -2417,7 +2403,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 
 /* -----------------------------------------------------------------------------
- * scif_read_timeout @ 20163218  (104 bytes, 0 callers, export file 20162d10_20163ca4.c)
+ * scif_read_timeout @ 20163218  (104 bytes, 0 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+0x18: retries `scif_read` every 1 ms, up to n times
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2450,7 +2436,7 @@ int scif_read_timeout(int *param_1,int param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scif_flush @ 20163280  (88 bytes, 0 callers, export file 20162d10_20163ca4.c)
+ * scif_flush @ 20163280  (88 bytes, 0 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+0x28: empties both rings
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2473,7 +2459,7 @@ undefined4 scif_flush(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scif_write @ 201632d8  (136 bytes, 0 callers, export file 20162d10_20163ca4.c)
+ * scif_write @ 201632d8  (136 bytes, 0 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+0x24 (new entry): copies into the 1 KB TX ring (obj+0x410), sets SCSCR.TIE. Returns 0 if it does
  *     not fit
  * Tag: none in the table row
@@ -2517,7 +2503,7 @@ uint scif_write(int param_1,undefined1 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scif_has_flag @ 20163654  (16 bytes, 1 callers, export file 20162d10_20163ca4.c)
+ * scif_has_flag @ 20163654  (16 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: vtbl+0xC: true when an RX flag is bound (the TX task waits for this)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md

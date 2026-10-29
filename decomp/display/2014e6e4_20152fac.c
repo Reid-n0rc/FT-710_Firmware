@@ -1,5 +1,27 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== os_create_dtq_named @ 2014e6e4 (44 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_dtq
+   [inference] */
+
+void os_create_dtq_named(undefined4 *param_1,undefined4 param_2)
+
+{
+  undefined4 local_18;
+  undefined4 uStack_14;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  
+  local_18 = *param_1;
+  uStack_14 = param_1[1];
+  local_10 = param_1[2];
+  uStack_c = param_2;
+  itron_acre_dtq(0,&local_18);
+  return;
+}
+
+
 // ===== FUN_2014e710 @ 2014e710 (36 bytes)
 
 char FUN_2014e710(void)
@@ -15,9 +37,13 @@ char FUN_2014e710(void)
 }
 
 
-// ===== FUN_2014e73c @ 2014e73c (292 bytes)
+// ===== itron_act_tsk @ 2014e73c (292 bytes)
 
-code * FUN_2014e73c(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): TCB table 0x208DBBA0, id
+   0 = self; dormant -> start like sta_tsk with exinf, else activation count +0x26 ++ (E_QOVR)
+   [inference] */
+
+code * itron_act_tsk(uint param_1)
 
 {
   char cVar1;
@@ -56,7 +82,7 @@ code * FUN_2014e73c(uint param_1)
     *(uint *)(iVar5 + -0xc) = uVar3;
     uVar3 = FUN_201568b8();
     *(uint *)(iVar5 + -0xc) = uVar3 | *(uint *)(iVar5 + -0xc);
-    *(code **)(iVar5 + -0x14) = FUN_201508ec;
+    *(code **)(iVar5 + -0x14) = itron_ext_tsk;
     *(uint *)(iVar5 + -4) = uVar8;
     *piVar7 = iVar5 + -0x48;
     *(undefined1 *)(piVar7 + 2) = 0;
@@ -78,9 +104,13 @@ code * FUN_2014e73c(uint param_1)
 }
 
 
-// ===== FUN_2014e884 @ 2014e884 (736 bytes)
+// ===== itron_chg_pri @ 2014e884 (736 bytes)
 
-code * FUN_2014e884(uint param_1,uint param_2)
+/* (tskid, tskpri): 0 = self / initial priority, pri < 9, requeues the TCB [fact]; T23d NORTi uITRON
+   4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (tskid, tskpri <= 8, 0 = initial): E_OBJ
+   dormant, E_ILUSE mutex ceiling, requeues ready/wait queues [inference] */
+
+code * itron_chg_pri(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -215,9 +245,13 @@ LAB_2014e9e4:
 }
 
 
-// ===== FUN_2014eb94 @ 2014eb94 (132 bytes)
+// ===== itron_clr_flg @ 2014eb94 (132 bytes)
 
-code * FUN_2014eb94(uint param_1,uint param_2)
+/* (flgid 1..0x40, clrptn): flag table 0x208DBDA4; callers pass 0 or ~ptn [fact]; T23d NORTi uITRON
+   4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): flag table 0x208DBDA4 (64): flgptn &=
+   clrptn [inference] */
+
+code * itron_clr_flg(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -243,9 +277,13 @@ code * FUN_2014eb94(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_2014ec30 @ 2014ec30 (424 bytes)
+// ===== itron_acre_cyc @ 2014ec30 (424 bytes)
 
-uint FUN_2014ec30(uint param_1,uint *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): object table 0x208DBF64,
+   max id 8; 0x20-byte block, cycatr/exinf/cychdr/cyctim/cycphs, TA_STA starts it on timer queue
+   0x208003C4; id 0 = auto (E_NOID) [inference] */
+
+uint itron_acre_cyc(uint param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -325,9 +363,12 @@ uint FUN_2014ec30(uint param_1,uint *param_2)
 }
 
 
-// ===== FUN_2014edf4 @ 2014edf4 (496 bytes)
+// ===== itron_acre_dtq @ 2014edf4 (496 bytes)
 
-uint FUN_2014edf4(uint param_1,byte *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): object table 0x208DBFA4,
+   max id 8; id 0 = auto (E_NOID); same table as tsnd_dtq/trcv_dtq [inference] */
+
+uint itron_acre_dtq(uint param_1,byte *param_2)
 
 {
   int iVar1;
@@ -386,7 +427,7 @@ uint FUN_2014edf4(uint param_1,byte *param_2)
       iVar4 = uVar7 + iVar9 * 4;
     }
   }
-  iVar1 = FUN_2011758c(param_2);
+  iVar1 = knl_addr_in_image(param_2);
   if (iVar1 == 0) {
     uVar8 = iVar4 + 3U & 0xfffffffc;
     iVar4 = uVar8 + 0x10;
@@ -406,7 +447,7 @@ uint FUN_2014edf4(uint param_1,byte *param_2)
   }
   else {
     *piVar2 = (int)piVar2 + uVar8;
-    FUN_201545f0((int)piVar2 + uVar8,param_2,0x10);
+    knl_memcpy((int)piVar2 + uVar8,param_2,0x10);
   }
   if (uVar7 != 0) {
     iVar5 = (int)piVar2 + uVar7;
@@ -488,7 +529,7 @@ uint itron_acre_flg(uint param_1,byte *param_2)
   else {
     uVar6 = 7;
   }
-  iVar2 = FUN_2011758c(param_2);
+  iVar2 = knl_addr_in_image(param_2);
   if (iVar2 == 0) {
     uVar8 = uVar6 + 0xf & 0xfffffffc;
     uVar1 = uVar8;
@@ -510,7 +551,7 @@ uint itron_acre_flg(uint param_1,byte *param_2)
   }
   else {
     *piVar3 = (int)piVar3 + uVar8;
-    FUN_201545f0((int)piVar3 + uVar8,param_2,0xc);
+    knl_memcpy((int)piVar3 + uVar8,param_2,0xc);
     uVar5 = extraout_r1_00;
   }
   if (-1 < (int)uVar6) {
@@ -550,8 +591,9 @@ uint itron_acre_isr(uint param_1,int param_2)
   uint uVar2;
   undefined4 *puVar3;
   code *pcVar4;
-  int iVar5;
-  int *piVar6;
+  uint uVar5;
+  int iVar6;
+  int *piVar7;
   
   if (DAT_208003da == '\0') {
     if (param_1 < 0x41) {
@@ -579,38 +621,38 @@ uint itron_acre_isr(uint param_1,int param_2)
         if (puVar3 != (undefined4 *)0x0) {
           pcVar4 = (code *)gic_get_handler(param_2);
           if (pcVar4 == gic_default_handler) {
-            iVar5 = FUN_2015476c(0x58);
-            if (iVar5 == 0) {
+            uVar5 = FUN_2015476c(0x58);
+            if (uVar5 == 0) {
               FUN_20154790(puVar3,0x14);
               software_interrupt(0);
               DAT_208003d4 = 0xfffffffb;
               return 0xfffffffb;
             }
-            FUN_201545f0(iVar5,gic_default_handler,0x58);
-            *(undefined4 **)(iVar5 + 0x4c) = puVar3;
-            puVar3[3] = iVar5 + 0x4c;
-            gic_install_isr_stub(iVar5,param_2);
+            knl_memcpy(uVar5,gic_default_handler,0x58);
+            *(undefined4 **)(uVar5 + 0x4c) = puVar3;
+            puVar3[3] = uVar5 + 0x4c;
+            gic_install_isr_stub(uVar5,param_2);
           }
           else {
-            iVar5 = gic_get_handler(param_2);
-            piVar6 = (int *)(iVar5 + 0x4c);
-            iVar5 = *piVar6;
-            if (iVar5 == 0) {
-              *piVar6 = (int)puVar3;
-              puVar3[3] = piVar6;
+            uVar5 = gic_get_handler(param_2);
+            piVar7 = (int *)(uVar5 + 0x4c);
+            iVar6 = *piVar7;
+            if (iVar6 == 0) {
+              *piVar7 = (int)puVar3;
+              puVar3[3] = piVar7;
             }
             else {
-              for (iVar1 = *(int *)(iVar5 + 8); iVar1 != 0; iVar1 = *(int *)(iVar1 + 8)) {
-                if (*(int *)(iVar1 + 0xc) != iVar5 + 8) {
+              for (iVar1 = *(int *)(iVar6 + 8); iVar1 != 0; iVar1 = *(int *)(iVar1 + 8)) {
+                if (*(int *)(iVar1 + 0xc) != iVar6 + 8) {
                   FUN_20154790(puVar3,0x14);
                   software_interrupt(0);
                   DAT_208003d4 = 0xffffffe4;
                   return 0xffffffe4;
                 }
-                iVar5 = iVar1;
+                iVar6 = iVar1;
               }
-              *(int *)(iVar5 + 8) = (int)puVar3;
-              puVar3[3] = (int *)(iVar5 + 8);
+              *(int *)(iVar6 + 8) = (int)puVar3;
+              puVar3[3] = (int *)(iVar6 + 8);
             }
           }
           *puVar3 = *(undefined4 *)(param_2 + 0xc);
@@ -638,9 +680,12 @@ uint itron_acre_isr(uint param_1,int param_2)
 }
 
 
-// ===== FUN_2014f3e4 @ 2014f3e4 (640 bytes)
+// ===== itron_acre_mbf @ 2014f3e4 (640 bytes)
 
-uint FUN_2014f3e4(uint param_1,uint *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): object table 0x208DBEC4,
+   max id 8; allocates the buffer (E_NOMEM); same table as tsnd_mbf/trcv_mbf [inference] */
+
+uint itron_acre_mbf(uint param_1,uint *param_2)
 
 {
   int iVar1;
@@ -705,7 +750,7 @@ uint FUN_2014f3e4(uint param_1,uint *param_2)
   }
   iVar1 = iVar10 + 0x18;
   iVar8 = iVar1 + iVar9 + 1;
-  iVar3 = FUN_2011758c(param_2);
+  iVar3 = knl_addr_in_image(param_2);
   if (iVar3 == 0) {
     uVar2 = iVar1 + iVar9 + 4U & 0xfffffffc;
     iVar8 = uVar2 + 0x14;
@@ -732,7 +777,7 @@ uint FUN_2014f3e4(uint param_1,uint *param_2)
   }
   else {
     *piVar4 = (int)piVar4 + uVar2;
-    FUN_201545f0((int)piVar4 + uVar2,param_2,0x14);
+    knl_memcpy((int)piVar4 + uVar2,param_2,0x14);
   }
   if (uVar11 == 0) {
     local_30 = 0;
@@ -783,9 +828,12 @@ LAB_2014f5f8:
 }
 
 
-// ===== FUN_2014f67c @ 2014f67c (544 bytes)
+// ===== itron_acre_mbx @ 2014f67c (544 bytes)
 
-undefined4 * FUN_2014f67c(undefined4 *param_1,uint *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): object table 0x208DBEA4,
+   max id 8; same table as snd_mbx/trcv_mbx [inference] */
+
+undefined4 * itron_acre_mbx(undefined4 *param_1,uint *param_2)
 
 {
   int iVar1;
@@ -852,7 +900,7 @@ undefined4 * FUN_2014f67c(undefined4 *param_1,uint *param_2)
   else {
     uVar6 = 0;
   }
-  iVar1 = FUN_2011758c(param_2);
+  iVar1 = knl_addr_in_image(param_2);
   if (iVar1 == 0) {
     uVar7 = iVar8 + 3U & 0xfffffffc;
     iVar8 = uVar7 + 0x10;
@@ -882,7 +930,7 @@ undefined4 * FUN_2014f67c(undefined4 *param_1,uint *param_2)
   }
   else {
     *piVar2 = (int)piVar2 + uVar7;
-    FUN_201545f0((int)piVar2 + uVar7,param_2,0x10);
+    knl_memcpy((int)piVar2 + uVar7,param_2,0x10);
   }
   iVar8 = 0;
   if (0 < (int)uVar4) {
@@ -914,9 +962,12 @@ LAB_2014f830:
 }
 
 
-// ===== FUN_2014f8b8 @ 2014f8b8 (564 bytes)
+// ===== itron_acre_mpf @ 2014f8b8 (564 bytes)
 
-uint FUN_2014f8b8(uint param_1,byte *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): object table 0x208DBF24,
+   max id 16; E_PAR on block count/size, E_NOMEM; same table as tget_mpf/rel_mpf [inference] */
+
+uint itron_acre_mpf(uint param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -982,7 +1033,7 @@ uint FUN_2014f8b8(uint param_1,byte *param_2)
   else {
     uVar7 = 7;
   }
-  iVar5 = FUN_2011758c(param_2);
+  iVar5 = knl_addr_in_image(param_2);
   if (iVar5 == 0) {
     uVar10 = uVar7 + 0x17 & 0xfffffffc;
     uVar1 = uVar10;
@@ -1003,7 +1054,7 @@ uint FUN_2014f8b8(uint param_1,byte *param_2)
   }
   else {
     *piVar3 = (int)piVar3 + uVar10;
-    FUN_201545f0((int)piVar3 + uVar10,param_2,0x14);
+    knl_memcpy((int)piVar3 + uVar10,param_2,0x14);
   }
   piVar3[1] = (int)puVar6;
   piVar3[2] = (int)puVar6;
@@ -1036,9 +1087,12 @@ LAB_2014faac:
 }
 
 
-// ===== FUN_2014fb04 @ 2014fb04 (520 bytes)
+// ===== itron_acre_mpl @ 2014fb04 (520 bytes)
 
-uint FUN_2014fb04(uint param_1,byte *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.800): object table 0x208DBF04,
+   max id 8; pool memory from pk+8 or the kernel heap (E_NOMEM); id 0 = auto [inference] */
+
+uint itron_acre_mpl(uint param_1,byte *param_2)
 
 {
   int iVar1;
@@ -1095,7 +1149,7 @@ uint FUN_2014fb04(uint param_1,byte *param_2)
     iVar6 = 7;
   }
   iVar5 = iVar6 + 0x14;
-  iVar1 = FUN_2011758c(param_2);
+  iVar1 = knl_addr_in_image(param_2);
   if (iVar1 == 0) {
     uVar7 = iVar6 + 0x17U & 0xfffffffc;
     iVar5 = uVar7 + 0x10;
@@ -1117,7 +1171,7 @@ uint FUN_2014fb04(uint param_1,byte *param_2)
   }
   else {
     *piVar2 = (int)piVar2 + uVar7;
-    FUN_201545f0((int)piVar2 + uVar7,param_2,0x10);
+    knl_memcpy((int)piVar2 + uVar7,param_2,0x10);
     uVar3 = extraout_r1_00;
   }
   piVar2[1] = iVar4;
@@ -1147,9 +1201,12 @@ LAB_2014fccc:
 }
 
 
-// ===== FUN_2014fd24 @ 2014fd24 (496 bytes)
+// ===== itron_acre_mtx @ 2014fd24 (496 bytes)
 
-uint FUN_2014fd24(uint param_1,int *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): object table 0x208DBFC4,
+   max id 32; E_RSATR, ceiling priority; same table as tloc_mtx/unl_mtx [inference] */
+
+uint itron_acre_mtx(uint param_1,int *param_2)
 
 {
   undefined1 uVar1;
@@ -1212,7 +1269,7 @@ uint FUN_2014fd24(uint param_1,int *param_2)
     iVar4 = 7;
   }
   iVar5 = iVar4 + 0x10;
-  iVar2 = FUN_2011758c(param_2);
+  iVar2 = knl_addr_in_image(param_2);
   if (iVar2 == 0) {
     uVar9 = iVar4 + 0x13U & 0xfffffffc;
     iVar5 = uVar9 + 0xc;
@@ -1232,7 +1289,7 @@ uint FUN_2014fd24(uint param_1,int *param_2)
   }
   else {
     *piVar3 = (int)piVar3 + uVar9;
-    FUN_201545f0((int)piVar3 + uVar9,param_2,0xc);
+    knl_memcpy((int)piVar3 + uVar9,param_2,0xc);
   }
   if (iVar6 < 2) {
     uVar1 = 0;
@@ -1317,7 +1374,7 @@ uint itron_acre_sem(uint param_1,byte *param_2)
     iVar5 = 7;
   }
   iVar4 = iVar5 + 0xc;
-  iVar1 = FUN_2011758c(param_2);
+  iVar1 = knl_addr_in_image(param_2);
   if (iVar1 == 0) {
     uVar7 = iVar5 + 0xfU & 0xfffffffc;
     iVar4 = uVar7 + 0x10;
@@ -1338,7 +1395,7 @@ uint itron_acre_sem(uint param_1,byte *param_2)
   }
   else {
     *piVar2 = (int)piVar2 + uVar7;
-    FUN_201545f0((int)piVar2 + uVar7,param_2,0x10);
+    knl_memcpy((int)piVar2 + uVar7,param_2,0x10);
     uVar3 = extraout_r1_00;
   }
   if (-1 < iVar5) {
@@ -1409,7 +1466,7 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
           uVar5 = param_1;
           uVar7 = 0;
         }
-        iVar2 = FUN_2011758c(param_2);
+        iVar2 = knl_addr_in_image(param_2);
         if (iVar2 == 0) {
           uVar8 = 0x44;
           iVar2 = 0x28;
@@ -1442,7 +1499,7 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
         }
         else {
           *(int *)(iVar3 + 0x18) = iVar3 + iVar2;
-          FUN_201545f0(iVar3 + iVar2,param_2,0x1c);
+          knl_memcpy(iVar3 + iVar2,param_2,0x1c);
         }
         bVar1 = param_2[0xc];
         *(byte *)(iVar3 + 4) = bVar1;
@@ -1457,7 +1514,7 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
         } while (uVar4 != 0);
         software_interrupt(0);
         if ((*param_2 & 2) != 0) {
-          FUN_2014e73c(uVar5);
+          itron_act_tsk(uVar5);
         }
         return uVar7;
       }
@@ -1471,9 +1528,12 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
 }
 
 
-// ===== FUN_201502f4 @ 201502f4 (436 bytes)
+// ===== itron_del_mpf @ 201502f4 (436 bytes)
 
-code * FUN_201502f4(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.800): mpf table 0x208DBF24:
+   releases waiting tasks with E_DLT, frees the block and the pool [inference] */
+
+code * itron_del_mpf(uint param_1)
 
 {
   byte bVar1;
@@ -1502,7 +1562,7 @@ code * FUN_201502f4(uint param_1)
             puVar4 = *(undefined4 **)(&DAT_208dbba0 + uVar7 * 4);
             *(undefined4 *)*puVar4 = 0xffffffcd;
             if ((*(byte *)((int)puVar4 + 5) & 2) != 0) {
-              FUN_20153ad4(puVar4,uVar7);
+              knl_timeout_remove(puVar4,uVar7);
             }
             *(undefined1 *)((int)puVar4 + 5) = 0x10;
             if (*(char *)((int)puVar4 + 9) == '\0') {
@@ -1525,7 +1585,7 @@ code * FUN_201502f4(uint param_1)
       if (*(byte *)((int)piVar8 + 0x13) < 0xfe) {
         iVar5 = 0x1b;
       }
-      iVar3 = FUN_2011758c(*piVar8);
+      iVar3 = knl_addr_in_image(*piVar8);
       if (iVar3 == 0) {
         iVar5 = (iVar5 + 3U & 0xfffffffc) + 0x14;
       }
@@ -1547,9 +1607,12 @@ code * FUN_201502f4(uint param_1)
 }
 
 
-// ===== FUN_201504d0 @ 201504d0 (384 bytes)
+// ===== itron_del_sem @ 201504d0 (384 bytes)
 
-code * FUN_201504d0(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): sem table 0x208DBCA4:
+   releases waiting tasks with E_DLT, frees the block [inference] */
+
+code * itron_del_sem(uint param_1)
 
 {
   bool bVar1;
@@ -1577,7 +1640,7 @@ code * FUN_201504d0(uint param_1)
             puVar3 = *(undefined4 **)(&DAT_208dbba0 + uVar5 * 4);
             *(undefined4 *)*puVar3 = 0xffffffcd;
             if ((*(byte *)((int)puVar3 + 5) & 2) != 0) {
-              FUN_20153ad4(puVar3,uVar5);
+              knl_timeout_remove(puVar3,uVar5);
             }
             *(undefined1 *)((int)puVar3 + 5) = 0x10;
             if (*(char *)((int)puVar3 + 9) == '\0') {
@@ -1597,7 +1660,7 @@ code * FUN_201504d0(uint param_1)
       if (*(byte *)((int)puVar7 + 9) < 0xfe) {
         iVar4 = 0x13;
       }
-      iVar2 = FUN_2011758c(*puVar7);
+      iVar2 = knl_addr_in_image(*puVar7);
       if (iVar2 == 0) {
         iVar4 = (iVar4 + 3U & 0xfffffffc) + 0x10;
       }
@@ -1619,9 +1682,12 @@ code * FUN_201504d0(uint param_1)
 }
 
 
-// ===== FUN_20150678 @ 20150678 (164 bytes)
+// ===== itron_dis_dsp @ 20150678 (164 bytes)
 
-code * FUN_20150678(void)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): E_CTX in ISR/CPU-locked;
+   sets the dispatch-disabled bits (|= 9) of 0x208003DB [inference] */
+
+code * itron_dis_dsp(void)
 
 {
   software_interrupt(0);
@@ -1657,7 +1723,7 @@ undefined4 itron_dly_tsk(int param_1)
     iVar3 = *(int *)(&DAT_208dbba0 + uVar2 * 4);
     software_interrupt(0);
     if (param_1 != 0) {
-      FUN_20154498(param_1,iVar3,uVar2);
+      knl_timeout_add(param_1,iVar3,uVar2);
       *(undefined1 *)(iVar3 + 5) = 0x32;
       uVar1 = FUN_201545c8(iVar3,uVar2);
       return uVar1;
@@ -1670,9 +1736,13 @@ undefined4 itron_dly_tsk(int param_1)
 }
 
 
-// ===== FUN_2015080c @ 2015080c (184 bytes)
+// ===== itron_ena_dsp @ 2015080c (184 bytes)
 
-code * FUN_2015080c(void)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): clears the
+   dispatch-disabled bits of 0x208003DB, dispatches when a switch is pending (0x208003D9)
+   [inference] */
+
+code * itron_ena_dsp(void)
 
 {
   software_interrupt(0);
@@ -1698,9 +1768,13 @@ code * FUN_2015080c(void)
 }
 
 
-// ===== FUN_201508ec @ 201508ec (264 bytes)
+// ===== itron_ext_tsk @ 201508ec (264 bytes)
 
-code * FUN_201508ec(void)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): current task: back to the
+   initial priority, unlocks its mutexes, dormant or restarts when the activation count +0x26 > 0
+   [inference] */
+
+code * itron_ext_tsk(void)
 
 {
   undefined1 uVar1;
@@ -1767,7 +1841,7 @@ code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,int *param_3,undefine
   param_1[0xf] = uVar1;
   uVar1 = FUN_201568b8();
   param_1[0xf] = uVar1 | param_1[0xf];
-  param_1[0xd] = FUN_201508ec;
+  param_1[0xd] = itron_ext_tsk;
   param_1[0x11] = uVar2;
   *param_3 = (int)param_1;
   *(undefined1 *)(param_3 + 2) = 0;
@@ -1780,9 +1854,12 @@ code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,int *param_3,undefine
 }
 
 
-// ===== FUN_20150aac @ 20150aac (212 bytes)
+// ===== itron_get_pri @ 20150aac (212 bytes)
 
-code * FUN_20150aac(uint param_1,int *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): (tskid, p_tskpri): id 0 =
+   self, E_OBJ when dormant, *p = TCB+4 [inference] */
+
+code * itron_get_pri(uint param_1,int *param_2)
 
 {
   int iVar1;
@@ -1816,9 +1893,13 @@ code * FUN_20150aac(uint param_1,int *param_2)
 }
 
 
-// ===== FUN_20150ba0 @ 20150ba0 (44 bytes)
+// ===== itron_get_tid @ 20150ba0 (44 bytes)
 
-undefined4 FUN_20150ba0(uint *param_1)
+/* (*p_tskid): current task ID [inference]; fs_task_ctx_get indexes 0x2091D0BC[1..0x100] with it
+   [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): (p_tskid):
+   running task id or 0 (TSK_NONE) [inference] */
+
+undefined4 itron_get_tid(uint *param_1)
 
 {
   uint uVar1;
@@ -1832,9 +1913,12 @@ undefined4 FUN_20150ba0(uint *param_1)
 }
 
 
-// ===== FUN_20150bd4 @ 20150bd4 (88 bytes)
+// ===== itron_get_tim @ 20150bd4 (88 bytes)
 
-code * FUN_20150bd4(short *param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (p_systim): SYSTIM {H
+   utime, UW ltime} from 0x208003BC..C8 with carry [inference] */
+
+code * itron_get_tim(short *param_1)
 
 {
   short sVar1;
@@ -1853,9 +1937,12 @@ code * FUN_20150bd4(short *param_1)
 }
 
 
-// ===== FUN_20150c3c @ 20150c3c (44 bytes)
+// ===== itron_loc_cpu @ 20150c3c (44 bytes)
 
-undefined4 FUN_20150c3c(void)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): masks interrupts and sets
+   the CPU-locked state 0x13/0x1B in 0x208003DB [inference] */
+
+undefined4 itron_loc_cpu(void)
 
 {
   software_interrupt(0);
@@ -1869,9 +1956,13 @@ undefined4 FUN_20150c3c(void)
 }
 
 
-// ===== FUN_20150c70 @ 20150c70 (320 bytes)
+// ===== itron_rel_mpf @ 20150c70 (320 bytes)
 
-code * FUN_20150c70(uint param_1,int *param_2)
+/* (mpfid, blk): returns a block to the pool; used by fs_work_free [inference]; T23d NORTi uITRON
+   4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): (mpfid, blk): mpf table 0x208DBF24, E_PAR
+   if blk misaligned/outside the pool, hands the block to a waiter [inference] */
+
+code * itron_rel_mpf(uint param_1,int *param_2)
 
 {
   byte bVar1;
@@ -1901,7 +1992,7 @@ code * FUN_20150c70(uint param_1,int *param_2)
           piVar6 = *(int **)(&DAT_208dbba0 + uVar2 * 4);
           **(uint **)(*piVar6 + 0xc) = (uint)param_2;
           if ((*(byte *)((int)piVar6 + 5) & 2) != 0) {
-            FUN_20153ad4(piVar6,uVar2);
+            knl_timeout_remove(piVar6,uVar2);
           }
           *(undefined1 *)((int)piVar6 + 5) = 0x10;
           if (*(char *)((int)piVar6 + 9) != '\0') {
@@ -1926,9 +2017,13 @@ code * FUN_20150c70(uint param_1,int *param_2)
 }
 
 
-// ===== FUN_20150dcc @ 20150dcc (276 bytes)
+// ===== itron_rot_rdq @ 20150dcc (276 bytes)
 
-code * FUN_20150dcc(uint param_1)
+/* (tskpri): 0 = own priority, 1..8: rotates the ready queue 0x208DC18C[pri] and dispatches [fact];
+   T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (tskpri <= 8, 0 = own
+   priority): rotates the ready queue 0x208DC18C[pri], E_PAR [inference] */
+
+code * itron_rot_rdq(uint param_1)
 
 {
   int iVar1;
@@ -2039,7 +2134,7 @@ LAB_20150fa4:
 LAB_2015109c:
             **(uint **)(*piVar8 + 0xc) = param_2;
             if ((bVar2 & 2) != 0) {
-              FUN_20153ad4(piVar8,uVar9);
+              knl_timeout_remove(piVar8,uVar9);
             }
             *(undefined1 *)((int)piVar8 + 5) = 0x10;
             if (*(char *)((int)piVar8 + 9) == '\0') {
@@ -2088,7 +2183,7 @@ LAB_20151030:
       }
       *(uint *)(iVar10 + 4) = param_2;
       if ((bVar1 & 2) != 0) {
-        FUN_20153ad4(piVar8,uVar9);
+        knl_timeout_remove(piVar8,uVar9);
         puVar7 = extraout_r2;
       }
       *(undefined1 *)((int)piVar8 + 5) = 0x10;
@@ -2119,9 +2214,13 @@ LAB_2015116c:
 }
 
 
-// ===== FUN_201511e8 @ 201511e8 (260 bytes)
+// ===== itron_sig_sem @ 201511e8 (260 bytes)
 
-code * FUN_201511e8(uint param_1)
+/* (semid 1..0x40): semaphore table 0x208DBCA4, E_ID / E_NOEXS, releases a waiting task or counts up
+   [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): sem table
+   0x208DBCA4 (64): wakes the first waiter or count++, E_QOVR at maxsem [inference] */
+
+code * itron_sig_sem(uint param_1)
 
 {
   short sVar1;
@@ -2150,7 +2249,7 @@ code * FUN_201511e8(uint param_1)
     if (uVar5 < 0xfe) {
       iVar2 = *(int *)(&DAT_208dbba0 + uVar5 * 4);
       if ((*(byte *)(iVar2 + 5) & 2) != 0) {
-        FUN_20153ad4(iVar2,uVar5);
+        knl_timeout_remove(iVar2,uVar5);
       }
       *(undefined1 *)(iVar2 + 5) = 0x10;
       if (*(char *)(iVar2 + 9) != '\0') {
@@ -2172,9 +2271,13 @@ code * FUN_201511e8(uint param_1)
 }
 
 
-// ===== FUN_20151308 @ 20151308 (484 bytes)
+// ===== itron_tsnd_dtq @ 20151308 (484 bytes)
 
-code * FUN_20151308(uint param_1,undefined4 param_2,int param_3)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (dtqid, data, tmout): dtq
+   table 0x208DBFA4, hands data to a receiver or the ring buffer, E_TMOUT on polling, waits
+   otherwise [inference] */
+
+code * itron_tsnd_dtq(uint param_1,undefined4 param_2,int param_3)
 
 {
   undefined1 uVar1;
@@ -2200,7 +2303,7 @@ code * FUN_20151308(uint param_1,undefined4 param_2,int param_3)
       piVar6 = *(int **)(&DAT_208dbba0 + uVar8 * 4);
       **(undefined4 **)(*piVar6 + 0xc) = param_2;
       if ((*(byte *)((int)piVar6 + 5) & 2) != 0) {
-        FUN_20153ad4(piVar6,uVar8);
+        knl_timeout_remove(piVar6,uVar8);
       }
       *(undefined1 *)((int)piVar6 + 5) = 0x10;
       if (*(char *)((int)piVar6 + 9) != '\0') {
@@ -2232,7 +2335,7 @@ code * FUN_20151308(uint param_1,undefined4 param_2,int param_3)
         uVar1 = 100;
       }
       else {
-        FUN_20154498(param_3,iVar7,uVar8);
+        knl_timeout_add(param_3,iVar7,uVar8);
         uVar1 = 0x66;
       }
       *(undefined1 *)(iVar7 + 5) = uVar1;
@@ -2252,9 +2355,12 @@ code * FUN_20151308(uint param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_20151520 @ 20151520 (324 bytes)
+// ===== itron_snd_mbx @ 20151520 (324 bytes)
 
-code * FUN_20151520(uint param_1,undefined4 *param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (mbxid, pk_msg): mbx
+   table 0x208DBEA4, priority queues by msgpri (E_PAR), or wakes a receiver [inference] */
+
+code * itron_snd_mbx(uint param_1,undefined4 *param_2)
 
 {
   int iVar1;
@@ -2322,7 +2428,7 @@ code * FUN_20151520(uint param_1,undefined4 *param_2)
   piVar8 = *(int **)(&DAT_208dbba0 + uVar7 * 4);
   **(undefined4 **)(*piVar8 + 0xc) = param_2;
   if ((*(byte *)((int)piVar8 + 5) & 2) != 0) {
-    FUN_20153ad4(piVar8,uVar7);
+    knl_timeout_remove(piVar8,uVar7);
   }
   *(undefined1 *)((int)piVar8 + 5) = 0x10;
   if (*(char *)((int)piVar8 + 9) == '\0') {
@@ -2334,9 +2440,12 @@ code * FUN_20151520(uint param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_20151680 @ 20151680 (204 bytes)
+// ===== itron_sta_cyc @ 20151680 (204 bytes)
 
-code * FUN_20151680(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): cyc table 0x208DBF64:
+   (re)inserts the handler into timer queue 0x208003C4, sets TCYC_STA [inference] */
+
+code * itron_sta_cyc(uint param_1)
 
 {
   uint uVar1;
@@ -2373,14 +2482,13 @@ code * FUN_20151680(uint param_1)
 
 // ===== itron_sta_tsk @ 20151768 (244 bytes)
 
-undefined4 itron_sta_tsk(uint param_1,undefined4 param_2)
+uint itron_sta_tsk(uint param_1,uint param_2)
 
 {
   int iVar1;
   uint uVar2;
-  undefined4 uVar3;
-  int *piVar4;
-  uint uVar5;
+  int *piVar3;
+  uint uVar4;
   
   if (param_1 == 0) {
     DAT_208003d4 = 0xffffffd7;
@@ -2388,32 +2496,32 @@ undefined4 itron_sta_tsk(uint param_1,undefined4 param_2)
   else {
     if (param_1 <= DAT_201659d0) {
       software_interrupt(0);
-      piVar4 = *(int **)(&DAT_208dbba0 + param_1 * 4);
-      if (piVar4 == (int *)0x0) {
+      piVar3 = *(int **)(&DAT_208dbba0 + param_1 * 4);
+      if (piVar3 == (int *)0x0) {
         software_interrupt(0);
         return 0xffffffd6;
       }
-      if (*(char *)((int)piVar4 + 5) == '\0') {
-        uVar5 = *(uint *)(piVar4[6] + 8);
-        iVar1 = piVar4[5] + *(int *)(piVar4[6] + 0x10);
+      if (*(char *)((int)piVar3 + 5) == '\0') {
+        uVar4 = *(uint *)(piVar3[6] + 8);
+        iVar1 = piVar3[5] + *(int *)(piVar3[6] + 0x10);
         *(int *)(iVar1 + -0x18) = iVar1;
-        *(undefined4 *)(iVar1 + -0x48) = param_2;
+        *(uint *)(iVar1 + -0x48) = param_2;
         uVar2 = DAT_208003ac;
-        if ((uVar5 & 1) != 0) {
+        if ((uVar4 & 1) != 0) {
           uVar2 = DAT_208003ac | 0x20;
         }
         *(uint *)(iVar1 + -0xc) = uVar2;
         uVar2 = FUN_201568b8();
         *(uint *)(iVar1 + -0xc) = uVar2 | *(uint *)(iVar1 + -0xc);
-        *(code **)(iVar1 + -0x14) = FUN_201508ec;
-        *(uint *)(iVar1 + -4) = uVar5;
-        *piVar4 = iVar1 + -0x48;
-        *(undefined1 *)(piVar4 + 2) = 0;
-        *(undefined1 *)((int)piVar4 + 9) = 0;
-        piVar4[8] = 0;
-        *(undefined1 *)((int)piVar4 + 5) = 0x10;
-        uVar3 = FUN_20154538(piVar4,param_1);
-        return uVar3;
+        *(code **)(iVar1 + -0x14) = itron_ext_tsk;
+        *(uint *)(iVar1 + -4) = uVar4;
+        *piVar3 = iVar1 + -0x48;
+        *(undefined1 *)(piVar3 + 2) = 0;
+        *(undefined1 *)((int)piVar3 + 9) = 0;
+        piVar3[8] = 0;
+        *(undefined1 *)((int)piVar3 + 5) = 0x10;
+        uVar2 = FUN_20154538(piVar3,param_1);
+        return uVar2;
       }
       software_interrupt(0);
       return 0xffffffd7;
@@ -2424,9 +2532,12 @@ undefined4 itron_sta_tsk(uint param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20151878 @ 20151878 (164 bytes)
+// ===== itron_stp_cyc @ 20151878 (164 bytes)
 
-code * FUN_20151878(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): cyc table 0x208DBF64:
+   removes it from the timer queue, clears TCYC_STA [inference] */
+
+code * itron_stp_cyc(uint param_1)
 
 {
   int iVar1;
@@ -2454,9 +2565,13 @@ code * FUN_20151878(uint param_1)
 }
 
 
-// ===== FUN_20151934 @ 20151934 (328 bytes)
+// ===== itron_sus_tsk @ 20151934 (328 bytes)
 
-code * FUN_20151934(uint param_1)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): id 0 = self, E_OBJ
+   dormant, suspend count TCB+9 ++ (E_QOVR at 255), E_CTX for self with dispatch disabled
+   [inference] */
+
+code * itron_sus_tsk(uint param_1)
 
 {
   int iVar1;
@@ -2509,9 +2624,14 @@ code * FUN_20151934(uint param_1)
 }
 
 
-// ===== FUN_20151aa4 @ 20151aa4 (356 bytes)
+// ===== itron_tget_mpf @ 20151aa4 (356 bytes)
 
-code * FUN_20151aa4(uint param_1,int *param_2,int param_3)
+/* (mpfid 1..0x10, *p_blk, tmout): takes a block from the free list of pool table 0x208DBF24 or
+   waits; E_TMOUT for tmout 0 [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO)
+   (uitron_api_shape 0.950): (mpfid, p_blk, tmout): mpf table 0x208DBF24, pops the free list,
+   E_TMOUT polling, waits otherwise [inference] */
+
+code * itron_tget_mpf(uint param_1,int *param_2,int param_3)
 
 {
   undefined1 uVar1;
@@ -2551,7 +2671,7 @@ code * FUN_20151aa4(uint param_1,int *param_2,int param_3)
         uVar1 = 0xd0;
       }
       else {
-        FUN_20154498(param_3,iVar6,uVar7);
+        knl_timeout_add(param_3,iVar6,uVar7);
         uVar1 = 0xd2;
       }
       *(undefined1 *)(iVar6 + 5) = uVar1;
@@ -2571,9 +2691,14 @@ code * FUN_20151aa4(uint param_1,int *param_2,int param_3)
 }
 
 
-// ===== FUN_20151c3c @ 20151c3c (504 bytes)
+// ===== itron_tloc_mtx @ 20151c3c (504 bytes)
 
-code * FUN_20151c3c(uint param_1,int param_2)
+/* (mtxid 1..0x20, tmout): table 0x208DBFC4, E_ILUSE, E_TMOUT [fact]; the RTC I2C lock (rtc_read_* /
+   rtc_write_*) [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900):
+   (mtxid, tmout): mtx table 0x208DBFC4 (32), owner +10, ceiling/inherit, E_ILUSE, E_TMOUT
+   [inference] */
+
+code * itron_tloc_mtx(uint param_1,int param_2)
 
 {
   undefined2 uVar1;
@@ -2618,7 +2743,7 @@ code * FUN_20151c3c(uint param_1,int param_2)
               uVar3 = 0x94;
             }
             else {
-              FUN_20154498(param_2,iVar7,uVar10);
+              knl_timeout_add(param_2,iVar7,uVar10);
               uVar3 = 0x96;
             }
             *(undefined1 *)(iVar7 + 5) = uVar3;
@@ -2660,9 +2785,12 @@ code * FUN_20151c3c(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20151e68 @ 20151e68 (536 bytes)
+// ===== itron_trcv_dtq @ 20151e68 (536 bytes)
 
-code * FUN_20151e68(uint param_1,undefined4 *param_2,int param_3)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (dtqid, p_data, tmout):
+   dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT [inference] */
+
+code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
 
 {
   undefined1 uVar1;
@@ -2702,7 +2830,7 @@ code * FUN_20151e68(uint param_1,undefined4 *param_2,int param_3)
           uVar1 = 0xb4;
         }
         else {
-          FUN_20154498(param_3,iVar8,uVar6);
+          knl_timeout_add(param_3,iVar8,uVar6);
           uVar1 = 0xb6;
         }
         *(undefined1 *)(iVar8 + 5) = uVar1;
@@ -2745,7 +2873,7 @@ code * FUN_20151e68(uint param_1,undefined4 *param_2,int param_3)
     *(undefined4 **)(iVar5 + 8) = puVar2;
   }
   if ((*(byte *)((int)piVar7 + 5) & 2) != 0) {
-    FUN_20153ad4(piVar7,uVar6);
+    knl_timeout_remove(piVar7,uVar6);
   }
   *(undefined1 *)((int)piVar7 + 5) = 0x10;
   if (*(char *)((int)piVar7 + 9) != '\0') {
@@ -2819,9 +2947,12 @@ uint FUN_201520b0(int param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_201521a8 @ 201521a8 (600 bytes)
+// ===== itron_trcv_mbf @ 201521a8 (600 bytes)
 
-int FUN_201521a8(uint param_1,undefined4 param_2,int param_3,undefined4 param_4)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): (mbfid, msg, tmout): mbf
+   table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size [inference] */
+
+int itron_trcv_mbf(uint param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
   undefined1 uVar1;
@@ -2861,10 +2992,10 @@ int FUN_201521a8(uint param_1,undefined4 param_2,int param_3,undefined4 param_4)
     piVar4 = *(int **)(&DAT_208dbba0 + uVar5 * 4);
     iVar3 = *(int *)(*piVar4 + 8);
     if (iVar3 != 0) {
-      FUN_201545f0(param_2,*(undefined4 *)(*piVar4 + 0xc),iVar3);
+      knl_memcpy(param_2,*(undefined4 *)(*piVar4 + 0xc),iVar3);
     }
     if ((*(byte *)((int)piVar4 + 5) & 2) != 0) {
-      FUN_20153ad4(piVar4,uVar5);
+      knl_timeout_remove(piVar4,uVar5);
     }
     *(undefined1 *)((int)piVar4 + 5) = 0x10;
     if (*(char *)((int)piVar4 + 9) == '\0') {
@@ -2892,7 +3023,7 @@ int FUN_201521a8(uint param_1,undefined4 param_2,int param_3,undefined4 param_4)
       uVar1 = 0xb0;
     }
     else {
-      FUN_20154498(param_3,iVar6,uVar5);
+      knl_timeout_add(param_3,iVar6,uVar5);
       uVar1 = 0xb2;
     }
     *(undefined1 *)(iVar6 + 5) = uVar1;
@@ -2911,9 +3042,12 @@ int FUN_201521a8(uint param_1,undefined4 param_2,int param_3,undefined4 param_4)
 }
 
 
-// ===== FUN_20152434 @ 20152434 (400 bytes)
+// ===== itron_trcv_mbx @ 20152434 (400 bytes)
 
-code * FUN_20152434(uint param_1,int *param_2,int param_3)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (mbxid, ppk_msg, tmout):
+   mbx table 0x208DBEA4, takes the first queued message, E_TMOUT [inference] */
+
+code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
 
 {
   undefined1 uVar1;
@@ -2966,7 +3100,7 @@ code * FUN_20152434(uint param_1,int *param_2,int param_3)
         uVar1 = 0xa0;
       }
       else {
-        FUN_20154498(param_3,iVar6,uVar8);
+        knl_timeout_add(param_3,iVar6,uVar8);
         uVar1 = 0xa2;
       }
       *(undefined1 *)(iVar6 + 5) = uVar1;
@@ -2986,9 +3120,14 @@ code * FUN_20152434(uint param_1,int *param_2,int param_3)
 }
 
 
-// ===== FUN_201525f8 @ 201525f8 (216 bytes)
+// ===== itron_tslp_tsk @ 201525f8 (216 bytes)
 
-code * FUN_201525f8(int param_1)
+/* (tmout): E_CTX in a non-task context; consumes a wake-up count or waits (TMO_FEVR -1 at 40 call
+   sites, 10 ms at 12) [fact]; the wake-up wait of the periodic tasks (gui.md) [fact]; T23d NORTi
+   uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): (tmout): wakeup count TCB+8 -- or
+   waits (state 0x20/0x22), E_TMOUT when polling, E_CTX [inference] */
+
+code * itron_tslp_tsk(int param_1)
 
 {
   undefined1 uVar1;
@@ -3016,7 +3155,7 @@ code * FUN_201525f8(int param_1)
     uVar1 = 0x20;
   }
   else {
-    FUN_20154498(param_1,iVar3,uVar4);
+    knl_timeout_add(param_1,iVar3,uVar4);
     uVar1 = 0x22;
   }
   *(undefined1 *)(iVar3 + 5) = uVar1;
@@ -3025,9 +3164,13 @@ code * FUN_201525f8(int param_1)
 }
 
 
-// ===== FUN_201526f4 @ 201526f4 (604 bytes)
+// ===== itron_tsnd_mbf @ 201526f4 (604 bytes)
 
-code * FUN_201526f4(uint param_1,undefined4 param_2,uint param_3,int param_4)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): (mbfid, msg, msgsz,
+   tmout): mbf table 0x208DBEC4, E_PAR when msgsz > maxmsz, copies to a receiver or the ring
+   [inference] */
+
+code * itron_tsnd_mbf(uint param_1,undefined4 param_2,uint param_3,int param_4)
 
 {
   undefined1 uVar1;
@@ -3061,11 +3204,11 @@ code * FUN_201526f4(uint param_1,undefined4 param_2,uint param_3,int param_4)
   if (uVar8 < 0xfe) {
     piVar7 = *(int **)(&DAT_208dbba0 + uVar8 * 4);
     if (param_3 != 0) {
-      FUN_201545f0(*(undefined4 *)(*piVar7 + 0xc),param_2,param_3);
+      knl_memcpy(*(undefined4 *)(*piVar7 + 0xc),param_2,param_3);
     }
     *(uint *)*piVar7 = param_3;
     if ((*(byte *)((int)piVar7 + 5) & 2) != 0) {
-      FUN_20153ad4(piVar7,uVar8);
+      knl_timeout_remove(piVar7,uVar8);
     }
     *(undefined1 *)((int)piVar7 + 5) = 0x10;
     if (*(char *)((int)piVar7 + 9) == '\0') {
@@ -3096,7 +3239,7 @@ code * FUN_201526f4(uint param_1,undefined4 param_2,uint param_3,int param_4)
       uVar1 = 0x60;
     }
     else {
-      FUN_20154498(param_4,iVar4,uVar8);
+      knl_timeout_add(param_4,iVar4,uVar8);
       uVar1 = 0x62;
     }
     *(undefined1 *)(iVar4 + 5) = uVar1;
@@ -3118,19 +3261,19 @@ code * FUN_201526f4(uint param_1,undefined4 param_2,uint param_3,int param_4)
 
 // ===== itron_twai_flg @ 20152988 (496 bytes)
 
-code * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int param_5)
+void * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int param_5)
 
 {
   byte bVar1;
   uint uVar2;
   int iVar3;
-  code *pcVar4;
+  void *pvVar4;
   int iVar5;
   int iVar6;
   bool bVar7;
   
   if ((param_1 == 0) || (0x40 < param_1)) {
-    DAT_208003d4 = (code *)0xffffffee;
+    DAT_208003d4 = (void *)0xffffffee;
   }
   else {
     if (((param_2 != 0) && ((param_3 & 0xfffffffa) == 0)) && (-3 < param_5)) {
@@ -3138,11 +3281,11 @@ code * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int p
       iVar5 = *(int *)(&DAT_208dbda4 + param_1 * 4);
       if (iVar5 == 0) {
         software_interrupt(0);
-        return (code *)0xffffffd6;
+        return (void *)0xffffffd6;
       }
       if (((*(byte *)(iVar5 + 8) & 2) == 0) && (*(char *)(iVar5 + 9) != '\0')) {
         software_interrupt(0);
-        return (code *)0xffffffe4;
+        return (void *)0xffffffe4;
       }
       uVar2 = *(uint *)(iVar5 + 4);
       if ((param_3 & 1) == 0) {
@@ -3152,7 +3295,7 @@ code * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int p
 LAB_20152a7c:
         if (param_5 == 0) {
           software_interrupt(0);
-          return (code *)0xffffffce;
+          return (void *)0xffffffce;
         }
         if (((DAT_208003da == '\0') && (DAT_208003db == '\0')) &&
            (uVar2 = (uint)DAT_208dc18c, uVar2 != ((byte)DAT_201659d0 + 1 & 0xff))) {
@@ -3161,7 +3304,7 @@ LAB_20152a7c:
             bVar1 = *(byte *)(iVar5 + 8) & 4 | (byte)param_3 | 0x50;
           }
           else {
-            FUN_20154498(param_5,iVar6,uVar2);
+            knl_timeout_add(param_5,iVar6,uVar2);
             bVar1 = *(byte *)(iVar5 + 8) & 4 | (byte)param_3 | 0x52;
           }
           *(byte *)(iVar6 + 5) = bVar1;
@@ -3172,12 +3315,12 @@ LAB_20152a7c:
           DAT_208003e4 = param_2;
           DAT_208003e8 = param_4;
           DAT_208003ec = param_1;
-          pcVar4 = (code *)FUN_201545dc(iVar3,iVar6,uVar2);
-          return pcVar4;
+          pvVar4 = (void *)FUN_201545dc(iVar3,iVar6,uVar2);
+          return pvVar4;
         }
         software_interrupt(0);
-        DAT_208003d4 = (code *)0xffffffe7;
-        return (code *)0xffffffe7;
+        DAT_208003d4 = (void *)0xffffffe7;
+        return &DAT_ffffffe7;
       }
       bVar7 = (param_3 & 4) == 0;
       *param_4 = uVar2;
@@ -3190,15 +3333,20 @@ LAB_20152a7c:
       software_interrupt(0);
       return FUN_201567f4;
     }
-    DAT_208003d4 = (code *)0xffffffef;
+    DAT_208003d4 = (void *)0xffffffef;
   }
   return DAT_208003d4;
 }
 
 
-// ===== FUN_20152bb0 @ 20152bb0 (328 bytes)
+// ===== itron_twai_sem @ 20152bb0 (328 bytes)
 
-code * FUN_20152bb0(uint param_1,int param_2)
+/* (semid, tmout): semaphore table 0x208DBCA4, E_CTX, waits with time-out (300, 1000 or TMO_FEVR)
+   [fact]; paired with itron_sig_sem around the FS and link code [fact]; T23d NORTi uITRON 4.0 NORTi
+   Version 4 (MiSPO) (uitron_api_shape 0.950): (semid, tmout): sem table 0x208DBCA4, count-- or
+   waits (state 0x90/0x92), E_TMOUT [inference] */
+
+code * itron_twai_sem(uint param_1,int param_2)
 
 {
   undefined1 uVar1;
@@ -3234,7 +3382,7 @@ code * FUN_20152bb0(uint param_1,int param_2)
         uVar1 = 0x90;
       }
       else {
-        FUN_20154498(param_2,iVar5,uVar6);
+        knl_timeout_add(param_2,iVar5,uVar6);
         uVar1 = 0x92;
       }
       *(undefined1 *)(iVar5 + 5) = uVar1;
@@ -3253,9 +3401,12 @@ code * FUN_20152bb0(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20152d28 @ 20152d28 (164 bytes)
+// ===== itron_unl_cpu @ 20152d28 (164 bytes)
 
-code * FUN_20152d28(void)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): clears the CPU-locked
+   state of 0x208003DB and dispatches when pending [inference] */
+
+code * itron_unl_cpu(void)
 
 {
   software_interrupt(0);
@@ -3276,9 +3427,13 @@ code * FUN_20152d28(void)
 }
 
 
-// ===== FUN_20152df4 @ 20152df4 (392 bytes)
+// ===== itron_unl_mtx @ 20152df4 (392 bytes)
 
-code * FUN_20152df4(uint param_1)
+/* (mtxid 1..0x20): table 0x208DBFC4, E_ILUSE when not the owner [fact]; T23d NORTi uITRON 4.0 NORTi
+   Version 4 (MiSPO) (uitron_api_shape 0.900): (mtxid): mtx table 0x208DBFC4, E_ILUSE when not the
+   owner, restores the priority, passes it to a waiter [inference] */
+
+code * itron_unl_mtx(uint param_1)
 
 {
   short sVar1;
@@ -3385,7 +3540,7 @@ code * itron_iwup_tsk(uint param_1)
   cVar1 = *(char *)(iVar3 + 5);
   if (cVar1 == '\"') {
     *(undefined1 *)(iVar3 + 5) = 0x10;
-    FUN_20153ad4(iVar3,param_1);
+    knl_timeout_remove(iVar3,param_1);
     if (*(char *)(iVar3 + 9) != '\0') {
       software_interrupt(0);
       return FUN_201567f4;
@@ -3415,16 +3570,5 @@ code * itron_iwup_tsk(uint param_1)
   }
   pcVar2 = (code *)FUN_20154538(iVar3,param_1);
   return pcVar2;
-}
-
-
-// ===== FUN_201530e4 @ 201530e4 (24 bytes)
-
-undefined4 FUN_201530e4(undefined4 *param_1,uint param_2)
-
-{
-  param_1[1] = param_2 & 0xfffffff8;
-  *param_1 = 0;
-  return 0;
 }
 

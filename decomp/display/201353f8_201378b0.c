@@ -1,5 +1,34 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== div10_round @ 201353f8 (80 bytes)
+
+int div10_round(uint param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  if (param_2 < 0) {
+    iVar2 = -1;
+  }
+  else {
+    iVar2 = 1;
+  }
+  iVar1 = (int)param_1 / 10;
+  iVar3 = ((int)param_1 % 10) * iVar2;
+  if (iVar3 == 5) {
+    if ((param_1 & 1) == 0) {
+      return iVar1;
+    }
+  }
+  else if (iVar3 < 6) {
+    return iVar1;
+  }
+  return iVar1 + iVar2;
+}
+
+
 // ===== FUN_20135448 @ 20135448 (16 bytes)
 
 uint FUN_20135448(uint param_1)
@@ -22,10 +51,10 @@ int bcd_to_bin(uint param_1)
 
 // ===== be16_load @ 20135470 (24 bytes)
 
-uint be16_load(byte *param_1)
+ushort be16_load(byte *param_1)
 
 {
-  return (uint)param_1[1] | (int)(short)((ushort)*param_1 << 8);
+  return CONCAT11(*param_1,param_1[1]);
 }
 
 
@@ -74,7 +103,7 @@ void str_rtrim(int param_1)
   uint uVar1;
   uint uVar2;
   
-  uVar2 = FUN_20155122();
+  uVar2 = strlen();
   while ((uVar1 = uVar2 & 0xff, uVar1 != 0 && (*(char *)(param_1 + uVar1 + -1) == ' '))) {
     uVar2 = uVar1 - 1;
     *(undefined1 *)(param_1 + uVar1 + -1) = 0;
@@ -91,15 +120,16 @@ void fb_blit_raw(int param_1,int param_2,int param_3,int param_4,int param_5,int
 
 {
   int iVar1;
+  int iVar2;
   
   iVar1 = 0;
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   if (0 < param_6) {
     do {
-      memcpy(param_1,param_4,param_5 << 1);
+      memcpy(iVar2,param_4,param_5 << 1);
       iVar1 = iVar1 + 1;
       param_4 = param_4 + param_5 * 2;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
     } while (iVar1 < param_6);
   }
   return;
@@ -136,14 +166,15 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 {
   int iVar1;
+  int iVar2;
   
   iVar1 = 0;
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   if (0 < param_5) {
     do {
-      FUN_20155274(param_1,param_4 << 1);
+      __aeabi_memclr(iVar2,param_4 << 1);
       iVar1 = iVar1 + 1;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
     } while (iVar1 < param_5);
   }
   return;
@@ -152,13 +183,11 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 // ===== fb_clear_rect_checked @ 20135604 (84 bytes)
 
-bool fb_clear_rect_checked
-               (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-               undefined4 param_5)
+bool fb_clear_rect_checked(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
 
 {
   int iVar1;
-  undefined4 extraout_r12;
+  int extraout_r12;
   
   iVar1 = fb_rect_in_bounds(param_2,param_3,param_4,param_5,param_4);
   if (iVar1 != 0) {
@@ -176,23 +205,25 @@ void fb_fill_rect(int param_1,int param_2,int param_3,int param_4,int param_5,in
 
 {
   int iVar1;
+  int iVar2;
+  int iVar3;
   
   if (param_2 == 0) {
     fb_clear_rect(param_1,param_3,param_4,param_5,param_6);
     return;
   }
-  param_6 = param_6 + param_3;
-  param_1 = param_1 + param_3 * 0x640;
-  if (param_3 < param_6) {
+  iVar3 = param_6 + param_3;
+  iVar2 = param_1 + param_3 * 0x640;
+  if (param_3 < iVar3) {
     iVar1 = param_4;
     do {
       for (; iVar1 < param_5 + param_4; iVar1 = iVar1 + 1) {
-        *(short *)(param_1 + iVar1 * 2) = (short)param_2;
+        *(short *)(iVar2 + iVar1 * 2) = (short)param_2;
       }
       param_3 = param_3 + 1;
-      param_1 = param_1 + 0x640;
+      iVar2 = iVar2 + 0x640;
       iVar1 = param_4;
-    } while (param_3 < param_6);
+    } while (param_3 < iVar3);
   }
   return;
 }
@@ -200,12 +231,11 @@ void fb_fill_rect(int param_1,int param_2,int param_3,int param_4,int param_5,in
 
 // ===== FUN_201356d8 @ 201356d8 (100 bytes)
 
-bool FUN_201356d8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5,undefined4 param_6)
+bool FUN_201356d8(int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6)
 
 {
   int iVar1;
-  undefined4 extraout_r12;
+  int extraout_r12;
   
   iVar1 = fb_rect_in_bounds(param_3,param_4,param_5,param_6);
   if (iVar1 != 0) {
@@ -219,13 +249,13 @@ bool FUN_201356d8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 /* rectangle outline of given thickness */
 
-void fb_draw_frame(undefined4 param_1,undefined4 param_2,int param_3,int param_4,int param_5,
-                  int param_6,int param_7)
+void fb_draw_frame(uint param_1,uint param_2,int param_3,int param_4,int param_5,int param_6,
+                  int param_7)
 
 {
   uint uVar1;
   
-  fb_fill_rect();
+  fb_fill_rect(param_1,param_2,param_3,param_4,param_5,param_7);
   fb_fill_rect(param_1,param_2,(param_3 + param_6) - param_7 & 0xffff,param_4,param_5,param_7);
   uVar1 = param_6 + param_7 * -2 & 0xffff;
   fb_fill_rect(param_1,param_2,param_3 + param_7 & 0xffff,param_4,param_7,uVar1);
@@ -237,9 +267,7 @@ void fb_draw_frame(undefined4 param_1,undefined4 param_2,int param_3,int param_4
 
 // ===== FUN_201357e8 @ 201357e8 (124 bytes)
 
-undefined4
-FUN_201357e8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            uint param_5,uint param_6)
+undefined4 FUN_201357e8(uint param_1,uint param_2,int param_3,int param_4,uint param_5,uint param_6)
 
 {
   int iVar1;
@@ -293,36 +321,35 @@ void FUN_20135864(int param_1,int param_2,int param_3,int param_4,int param_5,ui
 
 // ===== gui_draw_runs @ 201358d0 (160 bytes)
 
-void gui_draw_runs(int param_1,int param_2,int param_3,undefined2 *param_4)
+void gui_draw_runs(int param_1,int param_2,int param_3,void *param_4)
 
 {
   int iVar1;
-  undefined2 uVar2;
+  ushort uVar2;
   uint uVar3;
   int iVar4;
   uint uVar5;
-  uint uVar6;
-  undefined8 uVar7;
+  uint n;
+  ulonglong uVar6;
   
-  uVar2 = *param_4;
+  uVar2 = *(ushort *)param_4;
   iVar4 = 0;
   uVar5 = 0;
-  if (*(int *)(param_4 + 2) != 0) {
+  if (*(int *)((int)param_4 + 4) != 0) {
     do {
-      uVar6 = (uint)*(ushort *)(*(int *)(param_4 + 4) + uVar5 * 4);
-      for (uVar3 = (uint)*(ushort *)(*(int *)(param_4 + 4) + uVar5 * 4 + 2); uVar3 != 0;
+      n = (uint)*(ushort *)(*(int *)((int)param_4 + 8) + uVar5 * 4);
+      for (uVar3 = (uint)*(ushort *)(*(int *)((int)param_4 + 8) + uVar5 * 4 + 2); uVar3 != 0;
           uVar3 = uVar3 - 1) {
-        uVar7 = __aeabi_uidivmod(uVar6,uVar2);
-        uVar6 = uVar6 + 1;
+        uVar6 = __aeabi_idivmod(n,(uint)uVar2);
+        n = n + 1;
         iVar1 = iVar4 * 2;
         iVar4 = iVar4 + 1;
         *(undefined2 *)
-         (param_1 + (param_3 + param_2 * 800) * 2 +
-         (int)((ulonglong)uVar7 >> 0x20) * 2 + (int)uVar7 * 0x640) =
-             *(undefined2 *)(*(int *)(param_4 + 6) + iVar1);
+         (param_1 + (param_3 + param_2 * 800) * 2 + ((int)(uVar6 >> 0x20) + (int)uVar6 * 800) * 2) =
+             *(undefined2 *)(*(int *)((int)param_4 + 0xc) + iVar1);
       }
       uVar5 = uVar5 + 1;
-    } while (uVar5 < *(uint *)(param_4 + 2));
+    } while (uVar5 < *(uint *)((int)param_4 + 4));
   }
   return;
 }
@@ -330,11 +357,11 @@ void gui_draw_runs(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 // ===== FUN_20135970 @ 20135970 (76 bytes)
 
-bool FUN_20135970(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined2 *param_4)
+bool FUN_20135970(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 {
   int iVar1;
-  undefined4 extraout_r12;
+  void *extraout_r12;
   
   iVar1 = fb_rect_in_bounds(param_2,param_3,*param_4,param_4[1]);
   if (iVar1 != 0) {
@@ -348,7 +375,7 @@ bool FUN_20135970(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 /* run sprite with u32 {start, count} runs */
 
-void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
+void gui_draw_runs32(int param_1,int param_2,int param_3,void *param_4)
 
 {
   int iVar1;
@@ -360,24 +387,24 @@ void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
   
   iVar3 = 0;
   uVar5 = 0;
-  if (*(int *)(param_4 + 2) != 0) {
+  if (*(int *)((int)param_4 + 4) != 0) {
     do {
       uVar2 = 0;
-      piVar4 = (int *)(*(int *)(param_4 + 4) + uVar5 * 8);
+      piVar4 = (int *)(*(int *)((int)param_4 + 8) + uVar5 * 8);
       if (piVar4[1] != 0) {
         do {
-          uVar6 = FUN_20156260(*piVar4 + uVar2,*param_4);
+          uVar6 = __aeabi_uidivmod(*piVar4 + uVar2,*(undefined2 *)param_4);
           uVar2 = uVar2 + 1;
           iVar1 = iVar3 * 2;
           iVar3 = iVar3 + 1;
           *(undefined2 *)
            (param_1 + (param_3 + param_2 * 800) * 2 +
            (int)((ulonglong)uVar6 >> 0x20) * 2 + (int)uVar6 * 0x640) =
-               *(undefined2 *)(*(int *)(param_4 + 6) + iVar1);
+               *(undefined2 *)(*(int *)((int)param_4 + 0xc) + iVar1);
         } while (uVar2 < (uint)piVar4[1]);
       }
       uVar5 = uVar5 + 1;
-    } while (uVar5 < *(uint *)(param_4 + 2));
+    } while (uVar5 < *(uint *)((int)param_4 + 4));
   }
   return;
 }
@@ -385,11 +412,11 @@ void gui_draw_runs32(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 // ===== FUN_20135a58 @ 20135a58 (76 bytes)
 
-bool FUN_20135a58(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined2 *param_4)
+bool FUN_20135a58(int param_1,int param_2,int param_3,undefined2 *param_4)
 
 {
   int iVar1;
-  undefined4 extraout_r12;
+  void *extraout_r12;
   
   iVar1 = fb_rect_in_bounds(param_2,param_3,*param_4,param_4[1]);
   if (iVar1 != 0) {
@@ -403,8 +430,7 @@ bool FUN_20135a58(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 /* (fb, y, x, w, h, color) */
 
-void fb_fill_box(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                undefined4 param_5,undefined4 param_6)
+void fb_fill_box(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5,uint param_6)
 
 {
   fb_fill_rect(param_1,param_6,param_2,param_3,param_4,param_5);
@@ -416,8 +442,7 @@ void fb_fill_box(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefi
 
 /* (fb, y, x, h, w, color) */
 
-void fb_fill_box_t(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                  undefined4 param_5,undefined4 param_6)
+void fb_fill_box_t(uint param_1,uint param_2,uint param_3,uint param_4,uint param_5,uint param_6)
 
 {
   fb_fill_rect(param_1,param_6,param_2,param_3,param_5,param_4);
@@ -454,17 +479,17 @@ void sprite_unpack(int param_1,int param_2)
 
 /* hex number in the 10x15 font */
 
-void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4,int param_5)
+void gui_draw_hex(int param_1,uint param_2,int param_3,int param_4,int param_5)
 
 {
   uint uVar1;
   int iVar2;
   int iVar3;
   undefined1 auStack_160 [300];
-  undefined4 local_34;
+  int local_34;
   uint uStack_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   iVar3 = 0;
   if (0 < param_3 * 2) {
@@ -473,7 +498,7 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
     iStack_2c = param_3;
     local_28 = param_4;
     do {
-      memclr(auStack_160,300);
+      __aeabi_memclr4(auStack_160,300);
       uVar1 = param_2 >> ((param_3 * 8 + iVar3 * -4) - 4U & 0xff) & 0xf;
       if (uVar1 < 10) {
         iVar2 = uVar1 + 0x10;
@@ -481,8 +506,8 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
       else {
         iVar2 = uVar1 + 0x37;
       }
-      sprite_unpack((&PTR_DAT_20803738)[iVar2],auStack_160);
-      fb_blit_raw(local_34,local_28,iVar3 * 0xb + param_5 & 0xffff,auStack_160,10,0xf);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar2],(int)auStack_160);
+      fb_blit_raw(local_34,local_28,iVar3 * 0xb + param_5 & 0xffff,(int)auStack_160,10,0xf);
       iVar3 = iVar3 + 1;
     } while (iVar3 < param_3 * 2);
   }
@@ -494,7 +519,7 @@ void gui_draw_hex(undefined4 param_1,uint param_2,int param_3,undefined4 param_4
 
 /* decimal number in the 10x15 font */
 
-void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5)
+void gui_draw_dec(int param_1,undefined4 param_2,int param_3,int param_4,int param_5)
 
 {
   int iVar1;
@@ -504,10 +529,10 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
   int iVar5;
   int iVar6;
   undefined1 auStack_160 [300];
-  undefined4 local_34;
+  int local_34;
   undefined4 local_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   iVar6 = 0;
   local_34 = param_1;
@@ -525,7 +550,7 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
           iVar4 = iVar4 * 10;
         } while (iVar1 < iVar5);
       }
-      uVar2 = FUN_20156260(local_30,iVar4);
+      uVar2 = __aeabi_uidivmod(local_30,iVar4);
       uVar3 = uVar2 % 10;
       if (uVar3 < 10) {
         iVar4 = uVar3 + 0x10;
@@ -533,9 +558,9 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
       else {
         iVar4 = uVar3 + 0x37;
       }
-      memclr(auStack_160,300,uVar2 * -0x33333333);
-      sprite_unpack((&PTR_DAT_20803738)[iVar4],auStack_160);
-      fb_blit_raw(local_34,local_28,iVar6 * 0xb + param_5 & 0xffff,auStack_160,10,0xf);
+      __aeabi_memclr4(auStack_160,300,uVar2 * -0x33333333);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar4],(int)auStack_160);
+      fb_blit_raw(local_34,local_28,iVar6 * 0xb + param_5 & 0xffff,(int)auStack_160,10,0xf);
       iVar6 = iVar6 + 1;
     } while (iVar6 < param_3);
   }
@@ -547,8 +572,8 @@ void gui_draw_dec(undefined4 param_1,undefined4 param_2,int param_3,undefined4 p
 
 /* hex number, recoloured */
 
-void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 param_4,int param_5,
-                       uint param_6,ushort param_7)
+void gui_draw_hex_color(int param_1,uint param_2,int param_3,int param_4,int param_5,uint param_6,
+                       ushort param_7)
 
 {
   uint uVar1;
@@ -558,10 +583,10 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
   int iVar5;
   ushort local_290 [150];
   undefined2 local_164 [152];
-  undefined4 local_34;
+  int local_34;
   uint uStack_30;
   int iStack_2c;
-  undefined4 local_28;
+  int local_28;
   
   uVar1 = 0;
   do {
@@ -583,8 +608,8 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
       else {
         iVar5 = uVar1 + 0x37;
       }
-      FUN_20155310(local_290,local_164,300);
-      sprite_unpack((&PTR_DAT_20803738)[iVar5],local_290);
+      __aeabi_memcpy4(local_290,local_164,300);
+      sprite_unpack((int)(&PTR_DAT_20803738)[iVar5],(int)local_290);
       uVar1 = 0;
       do {
         puVar2 = local_290 + uVar1;
@@ -593,7 +618,7 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
           *puVar2 = param_7;
         }
       } while (uVar1 < 0x96);
-      fb_blit_raw(local_34,local_28,param_5 + iVar4 * 10 & 0xffff,local_290,10,0xf);
+      fb_blit_raw(local_34,local_28,param_5 + iVar4 * 10 & 0xffff,(int)local_290,10,0xf);
       iVar4 = iVar4 + 1;
     } while (iVar4 < param_3 * 2);
   }
@@ -605,27 +630,19 @@ void gui_draw_hex_color(undefined4 param_1,uint param_2,int param_3,undefined4 p
 
 /* (fb, str, y, x, pitch, font): char -> glyph via map 0x2080173C */
 
-void gui_draw_text(undefined4 param_1,int param_2,undefined4 param_3,int param_4,int param_5,
-                  int param_6)
+void gui_draw_text(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6)
 
 {
   uint uVar1;
   uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
-  int iVar5;
   
-  iVar3 = param_2;
-  uVar4 = param_3;
-  iVar5 = param_4;
-  uVar1 = FUN_20155122(param_2);
+  uVar1 = strlen(param_2);
   uVar2 = 0;
   if ((uVar1 & 0xffff) != 0) {
     do {
       gui_draw_runs(param_1,param_3,param_5 * uVar2 + param_4 & 0xffff,
-                    *(undefined4 *)
-                     (param_6 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar2)] * 4),param_1
-                    ,iVar3,uVar4,iVar5);
+                    *(void **)(param_6 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar2)] * 4
+                              ));
       uVar2 = uVar2 + 1 & 0xffff;
     } while (uVar2 < (uVar1 & 0xffff));
   }
@@ -635,19 +652,22 @@ void gui_draw_text(undefined4 param_1,int param_2,undefined4 param_3,int param_4
 
 // ===== FUN_20135e40 @ 20135e40 (128 bytes)
 
-void FUN_20135e40(undefined4 param_1,int param_2,undefined4 param_3,short param_4,int param_5)
+void FUN_20135e40(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 {
   uint uVar1;
+  ushort *puVar2;
+  uint uVar3;
   
-  uVar1 = FUN_20155122(param_2);
+  uVar1 = strlen(param_2);
   uVar1 = uVar1 & 0xffff;
-  param_4 = **(short **)(param_5 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar1 + -1)] * 4)
-            + param_4;
+  uVar3 = (uint)**(ushort **)
+                  (param_5 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar1 + -1)] * 4) +
+          param_4 & 0xffff;
   while (uVar1 = uVar1 - 1, -1 < (int)uVar1) {
-    param_4 = param_4 - **(short **)
-                          (param_5 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar1)] * 4);
-    gui_draw_runs(param_1,param_3,param_4);
+    puVar2 = *(ushort **)(param_5 + (uint)(byte)(&DAT_2080173c)[*(byte *)(param_2 + uVar1)] * 4);
+    uVar3 = uVar3 - *puVar2 & 0xffff;
+    gui_draw_runs(param_1,param_3,uVar3,puVar2);
   }
   return;
 }
@@ -657,8 +677,8 @@ void FUN_20135e40(undefined4 param_1,int param_2,undefined4 param_3,short param_
 
 /* text with half-width spaces */
 
-void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4,
-                        uint param_5,undefined4 param_6)
+void gui_draw_text_words(uint param_1,uint param_2,uint param_3,int param_4,uint param_5,
+                        uint param_6)
 
 {
   undefined4 uVar1;
@@ -699,11 +719,11 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
   local_30 = 0;
   local_2c = 0;
   local_28 = 0;
-  uVar1 = FUN_20155122(param_2);
+  uVar1 = strlen(param_2);
   memcpy(&local_60,param_2,uVar1);
   iVar2 = FUN_2014e320(&local_60,&DWORD_20135fec,local_24);
   gui_draw_text(param_1,iVar2,param_3,param_4,param_5,param_6);
-  iVar3 = FUN_20155122(iVar2);
+  iVar3 = strlen(iVar2);
   uVar4 = iVar3 * param_5 + param_4;
   if (iVar2 != 0) {
     while( true ) {
@@ -711,7 +731,7 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
       if (iVar2 == 0) break;
       uVar4 = (uVar4 & 0xffff) + (param_5 >> 1) & 0xffff;
       gui_draw_text(param_1,iVar2,param_3,uVar4,param_5,param_6);
-      iVar2 = FUN_20155122(iVar2);
+      iVar2 = strlen(iVar2);
       uVar4 = iVar2 * param_5 + uVar4;
     }
   }
@@ -724,8 +744,7 @@ void gui_draw_text_words(undefined4 param_1,undefined4 param_2,undefined4 param_
 /* centred on x */
 
 void gui_draw_text_centered
-               (undefined4 param_1,int param_2,undefined4 param_3,int param_4,uint param_5,
-               undefined4 param_6)
+               (uint param_1,int param_2,uint param_3,int param_4,uint param_5,uint param_6)
 
 {
   char *pcVar1;
@@ -736,7 +755,7 @@ void gui_draw_text_centered
   
   iVar5 = 0;
   uVar4 = 0;
-  iVar2 = FUN_20155122(param_2);
+  iVar2 = strlen(param_2);
   if (iVar2 != 0) {
     do {
       pcVar1 = (char *)(param_2 + uVar4);
@@ -744,10 +763,10 @@ void gui_draw_text_centered
       if (*pcVar1 == ' ') {
         iVar5 = iVar5 + 1;
       }
-      uVar3 = FUN_20155122(param_2);
+      uVar3 = strlen(param_2);
     } while (uVar4 < uVar3);
   }
-  iVar2 = FUN_20155122(param_2);
+  iVar2 = strlen(param_2);
   gui_draw_text_words(param_1,param_2,param_3,
                       param_4 - ((iVar5 * (param_5 >> 1) + (iVar2 - iVar5) * param_5 & 0xffff) >> 1)
                       & 0xffff,param_5,param_6);
@@ -874,26 +893,27 @@ void FUN_20136188(int param_1,int param_2,int param_3)
 
 /* outline with cut corners */
 
-void fb_draw_round_frame(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6,
-                        undefined4 param_7)
+void fb_draw_round_frame(uint param_1,uint param_2,uint param_3,int param_4,int param_5,uint param_6
+                        ,uint param_7)
 
 {
   undefined2 uVar1;
   int iVar2;
+  int iVar3;
   
-  fb_fill_box_t(param_1,param_2 + 1U & 0xffff,param_3,param_5 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box_t(param_1,param_2 + 1U & 0xffff,(param_3 + param_4) - param_6 & 0xffff,
+  fb_fill_box_t(param_1,param_2 + 1 & 0xffff,param_3,param_5 - 2U & 0xffff,param_6,param_7);
+  fb_fill_box_t(param_1,param_2 + 1 & 0xffff,(param_3 + param_4) - param_6 & 0xffff,
                 param_5 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box(param_1,param_2,param_3 + 1U & 0xffff,param_4 - 2U & 0xffff,param_6,param_7);
-  fb_fill_box(param_1,(param_2 + param_5) - param_6 & 0xffff,param_3 + 1U & 0xffff,
+  fb_fill_box(param_1,param_2,param_3 + 1 & 0xffff,param_4 - 2U & 0xffff,param_6,param_7);
+  fb_fill_box(param_1,(param_2 + param_5) - param_6 & 0xffff,param_3 + 1 & 0xffff,
               param_4 - 2U & 0xffff,param_6,param_7);
-  param_1 = param_1 + (param_3 + param_2 * 800) * 2;
+  iVar2 = param_1 + (param_3 + param_2 * 800) * 2;
   uVar1 = (undefined2)param_7;
-  *(undefined2 *)(param_1 + param_6 * 0x642) = uVar1;
-  *(undefined2 *)(param_1 + (param_4 + param_6 * 799) * 2 + -2) = uVar1;
-  iVar2 = (param_5 - param_6) + -1;
-  *(undefined2 *)(param_1 + (param_6 + iVar2 * 800) * 2) = uVar1;
-  *(undefined2 *)(param_1 + ((param_4 + iVar2 * 800) - param_6) * 2 + -2) = uVar1;
+  *(undefined2 *)(iVar2 + param_6 * 0x642) = uVar1;
+  *(undefined2 *)(iVar2 + (param_4 + param_6 * 799) * 2 + -2) = uVar1;
+  iVar3 = (param_5 - param_6) + -1;
+  *(undefined2 *)(iVar2 + (param_6 + iVar3 * 800) * 2) = uVar1;
+  *(undefined2 *)(iVar2 + ((param_4 + iVar3 * 800) - param_6) * 2 + -2) = uVar1;
   return;
 }
 
@@ -910,14 +930,15 @@ void FUN_20136398(void)
 
 // ===== FUN_201363c0 @ 201363c0 (452 bytes)
 
-void FUN_201363c0(undefined4 param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
-                 int param_7,int param_8,undefined4 param_9)
+void FUN_201363c0(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
+                 uint param_7,int param_8,uint param_9)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   uint uVar4;
+  ulonglong uVar5;
   
   fb_fill_rect(param_1,param_9,param_2,param_3,param_4,param_5);
   fb_fill_box_t(param_1,param_2 - 1 & 0xffff,param_3 - 2U & 0xffff,param_5 + 2 & 0xffff,2,param_9);
@@ -926,14 +947,15 @@ void FUN_201363c0(undefined4 param_1,uint param_2,int param_3,int param_4,uint p
   fb_fill_box(param_1,param_2 - 2 & 0xffff,param_3 - 1U & 0xffff,param_4 + 2U & 0xffff,2,param_9);
   uVar4 = param_2 + param_5;
   fb_fill_box(param_1,uVar4 & 0xffff,param_3 - 1U & 0xffff,param_4 + 2U & 0xffff,2,param_9);
-  if (param_8 < param_7) {
-    iVar1 = __aeabi_uidivmod(param_5 * 10,param_7);
+  if (param_8 < (int)param_7) {
+    uVar5 = __aeabi_idivmod(param_5 * 10,param_7);
+    iVar1 = (int)uVar5;
     uVar2 = (iVar1 * param_6) / 10 + param_2 & 0xffff;
     uVar3 = (iVar1 * param_8) / 10 & 0xffff;
     if (param_5 < uVar3) {
       uVar3 = param_5 & 0xffff;
     }
-    iVar1 = (iVar1 * (param_7 - param_8)) / 10 + param_2 + uVar3;
+    iVar1 = (int)(iVar1 * (param_7 - param_8)) / 10 + param_2 + uVar3;
     if (iVar1 < (int)uVar4) {
       uVar3 = (uVar4 - iVar1) + uVar3 & 0xffff;
     }
@@ -957,7 +979,7 @@ void FUN_20136584(void)
 
 // ===== FUN_201365ac @ 201365ac (196 bytes)
 
-void FUN_201365ac(int param_1,int param_2,int param_3,undefined2 *param_4,int param_5,int param_6)
+void FUN_201365ac(int param_1,int param_2,int param_3,ushort *param_4,int param_5,int param_6)
 
 {
   int iVar1;
@@ -969,7 +991,7 @@ void FUN_201365ac(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
   ushort *puVar7;
   uint uVar8;
   bool bVar9;
-  undefined8 uVar10;
+  ulonglong uVar10;
   
   iVar6 = 0;
   uVar8 = 0;
@@ -979,8 +1001,8 @@ void FUN_201365ac(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
       puVar7 = (ushort *)(*(int *)(param_4 + 4) + uVar8 * 4);
       if (puVar7[1] != 0) {
         do {
-          uVar10 = __aeabi_uidivmod((uint)*puVar7 + iVar5,*param_4);
-          iVar3 = (int)((ulonglong)uVar10 >> 0x20);
+          uVar10 = __aeabi_idivmod((uint)*puVar7 + iVar5,(uint)*param_4);
+          iVar3 = (int)(uVar10 >> 0x20);
           iVar4 = param_3 + iVar3;
           bVar9 = SBORROW4(iVar4,param_5);
           iVar1 = iVar4 - param_5;
@@ -988,12 +1010,10 @@ void FUN_201365ac(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
             bVar9 = SBORROW4(param_6,iVar4);
             iVar1 = param_6 - iVar4;
           }
-          if (iVar1 < 0 == bVar9) {
-            psVar2 = (short *)(param_1 + (param_3 + param_2 * 800) * 2 +
-                              iVar3 * 2 + (int)uVar10 * 0x640);
-            if (*psVar2 == 0) {
-              *psVar2 = *(short *)(*(int *)(param_4 + 6) + iVar6 * 2);
-            }
+          if ((iVar1 < 0 == bVar9) &&
+             (psVar2 = (short *)(param_1 + (param_3 + param_2 * 800) * 2 +
+                                (iVar3 + (int)uVar10 * 800) * 2), *psVar2 == 0)) {
+            *psVar2 = *(short *)(*(int *)(param_4 + 6) + iVar6 * 2);
           }
           iVar5 = iVar5 + 1;
           iVar6 = iVar6 + 1;
@@ -1039,7 +1059,7 @@ void FUN_20136670(int param_1,int param_2,int param_3,uint param_4,uint param_5,
 
 // ===== FUN_201366e0 @ 201366e0 (200 bytes)
 
-void FUN_201366e0(int param_1,int param_2,int param_3,undefined2 *param_4,int param_5,int param_6)
+void FUN_201366e0(int param_1,int param_2,int param_3,ushort *param_4,int param_5,int param_6)
 
 {
   int iVar1;
@@ -1052,7 +1072,7 @@ void FUN_201366e0(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
   ushort *puVar8;
   uint uVar9;
   bool bVar10;
-  undefined8 uVar11;
+  ulonglong uVar11;
   
   iVar7 = 0;
   uVar9 = 0;
@@ -1062,8 +1082,8 @@ void FUN_201366e0(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
       puVar8 = (ushort *)(*(int *)(param_4 + 4) + uVar9 * 4);
       if (puVar8[1] != 0) {
         do {
-          uVar11 = __aeabi_uidivmod((uint)*puVar8 + iVar6,*param_4);
-          iVar4 = (int)((ulonglong)uVar11 >> 0x20);
+          uVar11 = __aeabi_idivmod((uint)*puVar8 + iVar6,(uint)*param_4);
+          iVar4 = (int)(uVar11 >> 0x20);
           iVar5 = param_3 + iVar4;
           bVar10 = SBORROW4(iVar5,param_5);
           iVar1 = iVar5 - param_5;
@@ -1073,7 +1093,7 @@ void FUN_201366e0(int param_1,int param_2,int param_3,undefined2 *param_4,int pa
           }
           if ((iVar1 < 0 == bVar10) &&
              (psVar3 = (short *)(param_1 + (param_3 + param_2 * 800) * 2 +
-                                iVar4 * 2 + (int)uVar11 * 0x640), sVar2 = *psVar3,
+                                (iVar4 + (int)uVar11 * 800) * 2), sVar2 = *psVar3,
              sVar2 == 0 || sVar2 == 0x1f)) {
             *psVar3 = *(short *)(*(int *)(param_4 + 6) + iVar7 * 2);
           }
@@ -1096,16 +1116,18 @@ void debug_overlay_draw(int param_1)
 
 {
   byte bVar1;
-  undefined4 uVar2;
+  bool bVar2;
   int iVar3;
   undefined4 uVar4;
-  byte bVar5;
+  uint uVar5;
+  int iVar6;
+  byte bVar7;
   
-  uVar2 = fb_get_layer_addr(DAT_208085bc);
-  iVar3 = debug_enabled();
-  if (iVar3 != 0) {
+  iVar3 = fb_get_layer_addr(DAT_208085bc);
+  bVar2 = debug_enabled();
+  if (bVar2) {
     if ((DAT_20808a84 & 1) != 0) {
-      gui_draw_text(uVar2,DAT_2080039c,1,2,10,&DAT_20803730);
+      gui_draw_text(iVar3,DAT_2080039c,1,2,10,&DAT_20803730);
       if (DAT_20808a74 == 0) {
         if (DAT_208dbb44 == 1) {
           DAT_20808a78 = DAT_183e0010;
@@ -1118,60 +1140,60 @@ void debug_overlay_draw(int param_1)
         }
         DAT_20808a74 = 1;
       }
-      gui_draw_hex(uVar2,DAT_20808a78,4,0x14,2);
+      gui_draw_hex(iVar3,DAT_20808a78,4,0x14,2);
       DAT_20808a80 = DAT_20808a80 + 1;
       if (DAT_20808a80 == DAT_20808a7c) {
         DAT_20808a80 = 0;
-        gui_draw_text(uVar2,"CPU",2,0x82,10,&DAT_20803730);
-        gui_draw_dec(uVar2,(uint)((ulonglong)(uint)(param_1 * 100) * 0xa7c5ac47 + 0xa7c5ac47 >> 0x31
+        gui_draw_text(iVar3,"CPU",2,0x82,10,&DAT_20803730);
+        gui_draw_dec(iVar3,(uint)((ulonglong)(uint)(param_1 * 100) * 0xa7c5ac47 + 0xa7c5ac47 >> 0x31
                                  ),3,2,0xa5);
       }
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
       uVar4 = FUN_20114920();
-      gui_draw_dec(uVar2,uVar4,4,2,0xe1);
-      gui_draw_text(uVar2,0x20136c48,2,0x118,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208085a8,3,2,0x127);
-      gui_draw_text(uVar2,&DWORD_20136c50,2,0x154,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208085ac,3,2,0x163);
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c58,2,0x19a,10,&DAT_20803730);
-      uVar4 = mainlink_stat_rx_resync();
-      gui_draw_dec(uVar2,uVar4,2,2,0x1a9);
-      gui_draw_text(uVar2,0x20136c5c,2,0x1cc,10,&DAT_20803730);
-      uVar4 = mainlink_stat_nak_sent();
-      gui_draw_dec(uVar2,uVar4,2,2,0x1db);
-      bVar5 = (byte)DAT_208dbb4c & 0xf;
+      gui_draw_dec(iVar3,uVar4,4,2,0xe1);
+      gui_draw_text(iVar3,0x20136c48,2,0x118,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208085a8,3,2,0x127);
+      gui_draw_text(iVar3,&DWORD_20136c50,2,0x154,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208085ac,3,2,0x163);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c58,2,0x19a,10,&DAT_20803730);
+      uVar5 = mainlink_stat_rx_resync();
+      gui_draw_dec(iVar3,uVar5,2,2,0x1a9);
+      gui_draw_text(iVar3,0x20136c5c,2,0x1cc,10,&DAT_20803730);
+      uVar5 = mainlink_stat_nak_sent();
+      gui_draw_dec(iVar3,uVar5,2,2,0x1db);
+      bVar7 = (byte)DAT_208dbb4c & 0xf;
       bVar1 = (char)DAT_208dbb44 << 4;
-      gui_draw_text(uVar2,0x20136c60,2,0x1fe,10,&DAT_20803730);
-      gui_draw_hex(uVar2,bVar5 | bVar1,1,2,0x20d);
-      gui_draw_text(uVar2,0x20136c64,2,0x230,10,&DAT_20803730);
+      gui_draw_text(iVar3,0x20136c60,2,0x1fe,10,&DAT_20803730);
+      gui_draw_hex(iVar3,bVar7 | bVar1,1,2,0x20d);
+      gui_draw_text(iVar3,0x20136c64,2,0x230,10,&DAT_20803730);
       uVar4 = FUN_2011492c();
-      gui_draw_dec(uVar2,uVar4,4,2,0x23f);
-      gui_draw_text(uVar2,0x20136c68,0xd2,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800474,2,0xd2,0x69);
-      gui_draw_hex(uVar2,DAT_2080046c,1,0xd2,0x8a);
-      gui_draw_text(uVar2,"Toff",0xe9,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800478,2,0xe9,0x69);
-      gui_draw_text(uVar2,"irq",0x100,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800074,4,0x100,0x69);
-      gui_draw_text(uVar2,&DWORD_20136c88,0x117,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080007a,4,0x117,0x69);
-      gui_draw_dec(uVar2,DAT_20800076,3,0x117,0xa0);
-      gui_draw_text(uVar2,&DWORD_20136c94,0x12e,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080007c,4,0x12e,0x69);
-      gui_draw_dec(uVar2,DAT_20800078,3,0x12e,0xa0);
-      gui_draw_text(uVar2,0x20136c64,0x145,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800084,4,0x145,0x69);
-      gui_draw_text(uVar2,&DWORD_2013703c,0x15c,0x32,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_20800080,10,0x15c,0x69);
+      gui_draw_dec(iVar3,uVar4,4,2,0x23f);
+      gui_draw_text(iVar3,0x20136c68,0xd2,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800474,2,0xd2,0x69);
+      gui_draw_hex(iVar3,DAT_2080046c,1,0xd2,0x8a);
+      gui_draw_text(iVar3,"Toff",0xe9,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800478,2,0xe9,0x69);
+      gui_draw_text(iVar3,"irq",0x100,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800074,4,0x100,0x69);
+      gui_draw_text(iVar3,&DWORD_20136c88,0x117,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080007a,4,0x117,0x69);
+      gui_draw_dec(iVar3,DAT_20800076,3,0x117,0xa0);
+      gui_draw_text(iVar3,&DWORD_20136c94,0x12e,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080007c,4,0x12e,0x69);
+      gui_draw_dec(iVar3,DAT_20800078,3,0x12e,0xa0);
+      gui_draw_text(iVar3,0x20136c64,0x145,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800084,4,0x145,0x69);
+      gui_draw_text(iVar3,&DWORD_2013703c,0x15c,0x32,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_20800080,10,0x15c,0x69);
     }
     if ((DAT_20808a84 & 2) != 0) {
-      iVar3 = FUN_2015507c(&DAT_2045f260,&DAT_20909db4,0x200);
-      if (iVar3 != 0) {
+      iVar6 = memcmp(&DAT_2045f260,&DAT_20909db4,0x200);
+      if (iVar6 != 0) {
         FUN_201360b0(&DAT_2045f260,&DAT_20909db4,0x200);
         memcpy(&DAT_20909db4,&DAT_2045f260,0x240);
       }
-      iVar3 = FUN_2015507c(&DAT_2045f4a0,&DAT_20909ff4,0x20);
-      if (iVar3 != 0) {
+      iVar6 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
+      if (iVar6 != 0) {
         FUN_20136188(&DAT_2045f4a0,&DAT_20909ff4,0x20);
         memcpy(&DAT_20909ff4,&DAT_2045f4a0,0x401);
       }
@@ -1179,45 +1201,45 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 0x60) != 0) {
       if ((DAT_20808a84 & 0x20) == 0) {
         if ((DAT_20808a88 & 0x20) != 0) {
-          fb_clear_rect(uVar2,2,0x280,0x14,0xf);
+          fb_clear_rect(iVar3,2,0x280,0x14,0xf);
         }
       }
       else {
-        gui_draw_text(uVar2,&DWORD_20137054,2,0x280,10,&DAT_20803730);
+        gui_draw_text(iVar3,&DWORD_20137054,2,0x280,10,&DAT_20803730);
       }
       if ((DAT_20808a84 & 0x40) == 0) {
         if ((DAT_20808a88 & 0x40) != 0) {
-          fb_clear_rect(uVar2,2,0x29a,0x14,0xf);
+          fb_clear_rect(iVar3,2,0x29a,0x14,0xf);
         }
       }
       else {
-        gui_draw_text(uVar2,"F7",2,0x29a,10,&DAT_20803730);
+        gui_draw_text(iVar3,"F7",2,0x29a,10,&DAT_20803730);
       }
     }
     if ((DAT_20808a84 & 0x400) == 0) {
       if ((DAT_20808a88 & 0x400) != 0) {
-        fb_clear_rect(uVar2,2,0x2a8,0x32,0xf);
+        fb_clear_rect(iVar3,2,0x2a8,0x32,0xf);
       }
     }
     else {
-      gui_draw_text(uVar2,"RF",2,0x2a8,10,&DAT_20803730);
-      gui_draw_hex(uVar2,DAT_20450284,1,2,0x2c1);
+      gui_draw_text(iVar3,"RF",2,0x2a8,10,&DAT_20803730);
+      gui_draw_hex(iVar3,DAT_20450284,1,2,0x2c1);
     }
     if (DAT_2080018c != 0) {
-      gui_draw_text(uVar2,DWORD_ARRAY_20136c44,100,100,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080018c,4,100,0x6f);
+      gui_draw_text(iVar3,DWORD_ARRAY_20136c44,100,100,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080018c,4,100,0x6f);
     }
     if (DAT_2080016c != 0) {
-      gui_draw_text(uVar2,&DWORD_20136c50,100,500,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_2080016c,8,100,0x1ff);
+      gui_draw_text(iVar3,&DWORD_20136c50,100,500,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_2080016c,8,100,0x1ff);
     }
     if (DAT_208001bc != 0) {
-      gui_draw_text(uVar2,0x20136c48,100,100,10,&DAT_20803730);
-      gui_draw_dec(uVar2,DAT_208001bc,8,100,0x6f);
+      gui_draw_text(iVar3,0x20136c48,100,100,10,&DAT_20803730);
+      gui_draw_dec(iVar3,DAT_208001bc,8,100,0x6f);
     }
     if (DAT_208001c0 != 0) {
-      gui_draw_dec(uVar2,DAT_208001c0,3,0x14,300);
-      gui_draw_dec(uVar2,DAT_208001c4,3,0x14,0x15e);
+      gui_draw_dec(iVar3,DAT_208001c0,3,0x14,300);
+      gui_draw_dec(iVar3,DAT_208001c4,3,0x14,0x15e);
     }
   }
   DAT_20808a88 = DAT_20808a84;
@@ -1229,45 +1251,44 @@ void debug_overlay_draw(int param_1)
 
 /* DMARS 0x131 */
 
-void dmac3_rspi4_tx_setup(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
-  int iVar2;
   
-  uVar1 = DAT_e82000e8;
-  DAT_e82000e8 = uVar1 | 2;
-  uVar1 = DAT_e82000e8;
-  DAT_e82000e8 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_3;
+  DMAC_CHCTRL_3 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_3;
+  DMAC_CHCTRL_3 = uVar1 | 8;
   gic_disable_irq(0x2c);
   DAT_20808a8c = 0;
-  DAT_fcfe1004 = 0x1310000;
-  DAT_e82000ec = 0;
-  FUN_20157160(&DAT_e82000ec,0,0x10,0xf0000);
-  FUN_20157160(&DAT_e82000ec,1,0xc,0xf000);
-  FUN_20157160(&DAT_e82000ec,1,0x15,0x200000);
-  FUN_20157160(&DAT_e82000ec,0,0x14,0x100000);
-  FUN_20157160(&DAT_e82000ec,0,0x1f,0x80000000);
-  FUN_20157160(&DAT_e82000ec,0,0x1c,0x10000000);
-  FUN_20157160(&DAT_e82000ec,0,0x1b,0x8000000);
-  FUN_20157160(&DAT_e82000ec,0,0x18,0x1000000);
-  FUN_20157160(&DAT_e82000ec,0,0x1e,0x40000000);
-  FUN_20157160(&DAT_e82000ec,0,0x1d,0x20000000);
-  FUN_20157160(&DAT_e82000ec,0,0x16,0x400000);
-  FUN_20157160(&DAT_e82000ec,2,8,0x700);
-  FUN_20157160(&DAT_e82000ec,1,6,0x40);
-  FUN_20157160(&DAT_e82000ec,1,5,0x20);
-  FUN_20157160(&DAT_e82000ec,0,4,0x10);
-  FUN_20157160(&DAT_e82000ec,1,3,8);
-  FUN_20157160(&DAT_e82000ec,3,0,7);
-  DAT_e82000f0 = 0;
-  DAT_e82000f4 = 0;
-  DAT_e82000c0 = param_1;
-  DAT_e82000c4 = param_2;
-  DAT_e82000c8 = param_3;
-  FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = itron_acre_isr(0,&DAT_204200b0);
-  if (0 < iVar2) {
+  DMAC_DMARS1 = 0x1310000;
+  DMAC_CHCFG_3 = 0;
+  reg_rmw32(&DMAC_CHCFG_3,0,0x10,0xf0000);
+  reg_rmw32(&DMAC_CHCFG_3,1,0xc,0xf000);
+  reg_rmw32(&DMAC_CHCFG_3,1,0x15,0x200000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x14,0x100000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x1f,0x80000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x1c,0x10000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x1b,0x8000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x18,0x1000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x1e,0x40000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x1d,0x20000000);
+  reg_rmw32(&DMAC_CHCFG_3,0,0x16,0x400000);
+  reg_rmw32(&DMAC_CHCFG_3,2,8,0x700);
+  reg_rmw32(&DMAC_CHCFG_3,1,6,0x40);
+  reg_rmw32(&DMAC_CHCFG_3,1,5,0x20);
+  reg_rmw32(&DMAC_CHCFG_3,0,4,0x10);
+  reg_rmw32(&DMAC_CHCFG_3,1,3,8);
+  reg_rmw32(&DMAC_CHCFG_3,3,0,7);
+  DMAC_CHITVL_3 = 0;
+  DMAC_CHEXT_3 = 0;
+  DMAC_N0SA_3 = param_1;
+  DMAC_N0DA_3 = param_2;
+  DMAC_N0TB_3 = param_3;
+  reg_rmw32(&DMAC_DCTRL_0_7,1,0);
+  uVar1 = itron_acre_isr(0,0x204200b0);
+  if (0 < (int)uVar1) {
     gic_enable_irq(0x2c);
     return;
   }
@@ -1279,50 +1300,49 @@ void dmac3_rspi4_tx_setup(undefined4 param_1,undefined4 param_2,undefined4 param
 
 /* DMARS 0x12A, 0x6A4 B */
 
-void dmac5_rspi2_rx_setup(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  undefined4 uVar2;
   
-  uVar3 = 0;
-  uVar1 = DAT_e8200168;
-  DAT_e8200168 = uVar1 | 2;
-  uVar1 = DAT_e8200168;
-  DAT_e8200168 = uVar1 | 8;
+  uVar2 = 0;
+  uVar1 = DMAC_CHCTRL_5;
+  DMAC_CHCTRL_5 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_5;
+  DMAC_CHCTRL_5 = uVar1 | 8;
   gic_disable_irq(0x2e);
   DAT_20808a94 = 0;
-  uVar1 = DAT_fcfe1008;
-  DAT_fcfe1008 = uVar1 | 0x12a0000;
-  DAT_e820016c = 0;
-  FUN_20157160(&DAT_e820016c,0,0x10,0xf0000,uVar3);
-  FUN_20157160(&DAT_e820016c,0,0xc,0xf000);
-  FUN_20157160(&DAT_e820016c,0,0x15,0x200000);
-  FUN_20157160(&DAT_e820016c,1,0x14,0x100000);
-  FUN_20157160(&DAT_e820016c,0,0x1f,0x80000000);
-  FUN_20157160(&DAT_e820016c,0,0x1c,0x10000000);
-  FUN_20157160(&DAT_e820016c,1,0x1b,0x8000000);
-  FUN_20157160(&DAT_e820016c,0,0x18,0x1000000);
-  FUN_20157160(&DAT_e820016c,0,0x1e,0x40000000);
-  FUN_20157160(&DAT_e820016c,0,0x1d,0x20000000);
-  FUN_20157160(&DAT_e820016c,0,0x16,0x400000);
-  FUN_20157160(&DAT_e820016c,2,8,0x700);
-  FUN_20157160(&DAT_e820016c,1,6,0x40);
-  FUN_20157160(&DAT_e820016c,1,5,0x20);
-  FUN_20157160(&DAT_e820016c,0,4,0x10);
-  FUN_20157160(&DAT_e820016c,0,3,8);
-  FUN_20157160(&DAT_e820016c,5,0,7);
-  DAT_e8200170 = 0;
-  DAT_e8200174 = 0;
-  DAT_e8200140 = param_1;
-  DAT_e8200144 = param_2;
-  DAT_e8200148 = param_3;
-  FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = itron_acre_isr(0,&DAT_204200d8);
-  if (0 < iVar2) {
+  uVar1 = DMAC_DMARS2;
+  DMAC_DMARS2 = uVar1 | 0x12a0000;
+  DMAC_CHCFG_5 = 0;
+  reg_rmw32(&DMAC_CHCFG_5,0,0x10,0xf0000,uVar2);
+  reg_rmw32(&DMAC_CHCFG_5,0,0xc,0xf000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x15,0x200000);
+  reg_rmw32(&DMAC_CHCFG_5,1,0x14,0x100000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x1f,0x80000000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x1c,0x10000000);
+  reg_rmw32(&DMAC_CHCFG_5,1,0x1b,0x8000000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x18,0x1000000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x1e,0x40000000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x1d,0x20000000);
+  reg_rmw32(&DMAC_CHCFG_5,0,0x16,0x400000);
+  reg_rmw32(&DMAC_CHCFG_5,2,8,0x700);
+  reg_rmw32(&DMAC_CHCFG_5,1,6,0x40);
+  reg_rmw32(&DMAC_CHCFG_5,1,5,0x20);
+  reg_rmw32(&DMAC_CHCFG_5,0,4,0x10);
+  reg_rmw32(&DMAC_CHCFG_5,0,3,8);
+  reg_rmw32(&DMAC_CHCFG_5,5,0,7);
+  DMAC_CHITVL_5 = 0;
+  DMAC_CHEXT_5 = 0;
+  DMAC_N0SA_5 = param_1;
+  DMAC_N0DA_5 = param_2;
+  DMAC_N0TB_5 = param_3;
+  reg_rmw32(&DMAC_DCTRL_0_7,1,0);
+  uVar1 = itron_acre_isr(0,0x204200d8);
+  if (0 < (int)uVar1) {
     gic_enable_irq(0x2e);
-    FUN_20157160(&DAT_e8200168,1,0);
+    reg_rmw32(&DMAC_CHCTRL_5,1,0);
     return;
   }
   return;
@@ -1359,50 +1379,49 @@ void dmac5_isr(void)
 
 /* DMARS 0x132, 0x11F8 B */
 
-void dmac4_rspi4_rx_setup(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  undefined4 uVar2;
   
-  uVar3 = 0;
-  uVar1 = DAT_e8200128;
-  DAT_e8200128 = uVar1 | 2;
-  uVar1 = DAT_e8200128;
-  DAT_e8200128 = uVar1 | 8;
+  uVar2 = 0;
+  uVar1 = DMAC_CHCTRL_4;
+  DMAC_CHCTRL_4 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_4;
+  DMAC_CHCTRL_4 = uVar1 | 8;
   gic_disable_irq(0x2d);
   DAT_20808a90 = 0;
-  uVar1 = DAT_fcfe1008;
-  DAT_fcfe1008 = uVar1 | 0x132;
-  DAT_e820012c = 0;
-  FUN_20157160(&DAT_e820012c,1,0x10,0xf0000,uVar3);
-  FUN_20157160(&DAT_e820012c,0,0xc,0xf000);
-  FUN_20157160(&DAT_e820012c,0,0x15,0x200000);
-  FUN_20157160(&DAT_e820012c,1,0x14,0x100000);
-  FUN_20157160(&DAT_e820012c,0,0x1f,0x80000000);
-  FUN_20157160(&DAT_e820012c,0,0x1c,0x10000000);
-  FUN_20157160(&DAT_e820012c,1,0x1b,0x8000000);
-  FUN_20157160(&DAT_e820012c,0,0x18,0x1000000);
-  FUN_20157160(&DAT_e820012c,0,0x1e,0x40000000);
-  FUN_20157160(&DAT_e820012c,0,0x1d,0x20000000);
-  FUN_20157160(&DAT_e820012c,0,0x16,0x400000);
-  FUN_20157160(&DAT_e820012c,2,8,0x700);
-  FUN_20157160(&DAT_e820012c,1,6,0x40);
-  FUN_20157160(&DAT_e820012c,1,5,0x20);
-  FUN_20157160(&DAT_e820012c,0,4,0x10);
-  FUN_20157160(&DAT_e820012c,0,3,8);
-  FUN_20157160(&DAT_e820012c,4,0,7);
-  DAT_e8200130 = 0;
-  DAT_e8200134 = 0;
-  DAT_e8200100 = param_1;
-  DAT_e8200104 = param_2;
-  DAT_e8200108 = param_3;
-  FUN_20157160(&DAT_e8200300,1,0);
-  iVar2 = itron_acre_isr(0,&DAT_204200c4);
-  if (0 < iVar2) {
+  uVar1 = DMAC_DMARS2;
+  DMAC_DMARS2 = uVar1 | 0x132;
+  DMAC_CHCFG_4 = 0;
+  reg_rmw32(&DMAC_CHCFG_4,1,0x10,0xf0000,uVar2);
+  reg_rmw32(&DMAC_CHCFG_4,0,0xc,0xf000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x15,0x200000);
+  reg_rmw32(&DMAC_CHCFG_4,1,0x14,0x100000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x1f,0x80000000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x1c,0x10000000);
+  reg_rmw32(&DMAC_CHCFG_4,1,0x1b,0x8000000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x18,0x1000000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x1e,0x40000000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x1d,0x20000000);
+  reg_rmw32(&DMAC_CHCFG_4,0,0x16,0x400000);
+  reg_rmw32(&DMAC_CHCFG_4,2,8,0x700);
+  reg_rmw32(&DMAC_CHCFG_4,1,6,0x40);
+  reg_rmw32(&DMAC_CHCFG_4,1,5,0x20);
+  reg_rmw32(&DMAC_CHCFG_4,0,4,0x10);
+  reg_rmw32(&DMAC_CHCFG_4,0,3,8);
+  reg_rmw32(&DMAC_CHCFG_4,4,0,7);
+  DMAC_CHITVL_4 = 0;
+  DMAC_CHEXT_4 = 0;
+  DMAC_N0SA_4 = param_1;
+  DMAC_N0DA_4 = param_2;
+  DMAC_N0TB_4 = param_3;
+  reg_rmw32(&DMAC_DCTRL_0_7,1,0);
+  uVar1 = itron_acre_isr(0,0x204200c4);
+  if (0 < (int)uVar1) {
     gic_enable_irq(0x2d);
-    FUN_20157160(&DAT_e8200128,1,0);
+    reg_rmw32(&DMAC_CHCTRL_4,1,0);
     return;
   }
   return;
@@ -1432,33 +1451,33 @@ void dmac8_m2m_init(void)
 {
   uint uVar1;
   
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 2;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 8;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 4;
-  DAT_e820042c = 0;
-  FUN_20157160(&DAT_e820042c,7,0x10,0xf0000);
-  FUN_20157160(&DAT_e820042c,7,0xc,0xf000);
-  FUN_20157160(&DAT_e820042c,0,0x15,0x200000);
-  FUN_20157160(&DAT_e820042c,0,0x14,0x100000);
-  FUN_20157160(&DAT_e820042c,0,0x1f,0x80000000);
-  FUN_20157160(&DAT_e820042c,0,0x1c,0x10000000);
-  FUN_20157160(&DAT_e820042c,0,0x1b,0x8000000);
-  FUN_20157160(&DAT_e820042c,1,0x18,0x1000000);
-  FUN_20157160(&DAT_e820042c,0,0x1e,0x40000000);
-  FUN_20157160(&DAT_e820042c,0,0x1d,0x20000000);
-  FUN_20157160(&DAT_e820042c,1,0x16,0x400000);
-  FUN_20157160(&DAT_e820042c,4,8,0x700);
-  FUN_20157160(&DAT_e820042c,1,6,0x40);
-  FUN_20157160(&DAT_e820042c,1,5,0x20);
-  FUN_20157160(&DAT_e820042c,0,4,0x10);
-  FUN_20157160(&DAT_e820042c,0,3,8);
-  FUN_20157160(&DAT_e820042c,0,0,7);
-  DAT_e8200430 = 0;
-  DAT_e8200434 = 0;
-  FUN_20157160(&DAT_e8200700,1,0);
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 4;
+  DMAC_CHCFG_8 = 0;
+  reg_rmw32(&DMAC_CHCFG_8,7,0x10,0xf0000);
+  reg_rmw32(&DMAC_CHCFG_8,7,0xc,0xf000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x15,0x200000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x14,0x100000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x1f,0x80000000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x1c,0x10000000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x1b,0x8000000);
+  reg_rmw32(&DMAC_CHCFG_8,1,0x18,0x1000000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x1e,0x40000000);
+  reg_rmw32(&DMAC_CHCFG_8,0,0x1d,0x20000000);
+  reg_rmw32(&DMAC_CHCFG_8,1,0x16,0x400000);
+  reg_rmw32(&DMAC_CHCFG_8,4,8,0x700);
+  reg_rmw32(&DMAC_CHCFG_8,1,6,0x40);
+  reg_rmw32(&DMAC_CHCFG_8,1,5,0x20);
+  reg_rmw32(&DMAC_CHCFG_8,0,4,0x10);
+  reg_rmw32(&DMAC_CHCFG_8,0,3,8);
+  reg_rmw32(&DMAC_CHCFG_8,0,0,7);
+  DMAC_CHITVL_8 = 0;
+  DMAC_CHEXT_8 = 0;
+  reg_rmw32(&DMAC_DCTRL_8_15,1,0);
   return;
 }
 
@@ -1467,31 +1486,21 @@ void dmac8_m2m_init(void)
 
 /* DMAC ch8 (0xE8200400) memory-to-memory copy, 0xBB800 B (frame buffer copy-forward) */
 
-void dmac8_m2m_start(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
   
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 2;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 8;
-  uVar1 = DAT_e8200428;
-  DAT_e8200428 = uVar1 | 4;
-  DAT_e8200400 = param_2;
-  DAT_e8200404 = param_1;
-  DAT_e8200408 = param_3;
-  FUN_20157160(&DAT_e8200428,1,0);
-  return;
-}
-
-
-// ===== dmac9_register_isr @ 20137904 (12 bytes)
-
-void dmac9_register_isr(void)
-
-{
-  itron_acre_isr(0,&DAT_204200ec);
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 2;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_8;
+  DMAC_CHCTRL_8 = uVar1 | 4;
+  DMAC_N0SA_8 = param_2;
+  DMAC_N0DA_8 = param_1;
+  DMAC_N0TB_8 = param_3;
+  reg_rmw32(&DMAC_CHCTRL_8,1,0);
   return;
 }
 

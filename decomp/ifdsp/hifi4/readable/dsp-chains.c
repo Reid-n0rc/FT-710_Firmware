@@ -171,7 +171,7 @@ void apf_design_fir(void)
         fVar6 = (float)uVar8 * (float)uVar11;
         cosf_();
         uVar10 = ae_l32_i(uVar2);
-        uVar8 = ae_l32_i(&DAT_40000000);
+        uVar8 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
         uVar2 = ae_s32_l_ip((ulonglong)(uint)(fVar6 * (float)uVar10 * (float)uVar8));
         *puVar3 = uVar2;
         puVar3 = puVar3 + 1;
@@ -588,7 +588,7 @@ LAB_0021ccb6:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar15 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar5);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar15) * (float)uVar12);
@@ -640,7 +640,7 @@ LAB_0021ccb6:
     divf_();
     uVar12 = ae_l32_i(uVar5);
     uVar19 = ae_l32_i(0xbf800000);
-    uVar15 = ae_l32_i(&DAT_40000000);
+    uVar15 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar12 + (float)uVar19) * (float)uVar15);
@@ -785,7 +785,7 @@ void zeroin_goertzel_tune(void)
     puVar3[3] = uVar1;
     uVar4 = ae_l32_i(uVar2);
     cosf();
-    uVar6 = ae_l32_i(&DAT_40000000);
+    uVar6 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar4);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * (float)uVar6));
@@ -3778,7 +3778,7 @@ void ctcss_init(void)
     puVar3[3] = uVar1;
     uVar10 = ae_l32_i(uVar2);
     cosf_();
-    uVar11 = ae_l32_i(&DAT_40000000);
+    uVar11 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar10);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar10 * (float)uVar11));
@@ -4611,7 +4611,7 @@ LAB_0022054b:
       divf_();
       uVar17 = ae_l32_i(uVar1);
       uVar16 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar2);
       uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -4657,7 +4657,7 @@ LAB_0022054b:
     divf_();
     uVar17 = ae_l32_i(uVar5);
     uVar16 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -4844,7 +4844,7 @@ LAB_00220860:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar18 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar7 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar3);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -4890,7 +4890,7 @@ LAB_00220860:
     divf_();
     uVar19 = ae_l32_i(uVar5);
     uVar18 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar7 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar3);
     uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -5210,7 +5210,7 @@ LAB_002212fb:
       divf_();
       uVar17 = ae_l32_i(uVar1);
       uVar16 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar2);
       uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -5256,7 +5256,7 @@ LAB_002212fb:
     divf_();
     uVar17 = ae_l32_i(uVar5);
     uVar16 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar17 + (float)uVar16) * (float)uVar12);
@@ -5443,7 +5443,7 @@ LAB_00221610:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar18 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar7 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar3);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -5489,7 +5489,7 @@ LAB_00221610:
     divf_();
     uVar19 = ae_l32_i(uVar5);
     uVar18 = ae_l32_i(0xbf800000);
-    uVar12 = ae_l32_i(&DAT_40000000);
+    uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar7 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar3);
     uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar18) * (float)uVar12);
@@ -8707,13 +8707,13 @@ void tx_mute_ctrl(void)
     if (uVar4 != 0) {
       FUN_0022548c();
       memw();
-      DAT_40100044 = uVar2;
+      GPIO_B2_4 = uVar2;
       return;
     }
     FUN_00225478(&DAT_002c757c);
   }
   memw();
-  DAT_40100044 = uVar2;
+  GPIO_B2_4 = uVar2;
   return;
 }
 

@@ -5,10 +5,10 @@
 void FUN_fffbd25d(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x03') {
+  if (PTR_g_ui_00025d54->popup_code != 3) {
     return;
   }
-  FUN_fffc0b2f(0x28);
+  ui_softkey_dispatch(0x28);
   return;
 }
 
@@ -28,10 +28,10 @@ void FUN_fffbd274(void)
 void FUN_fffbd278(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc0b2f(0x29);
+  ui_softkey_dispatch(0x29);
   return;
 }
 
@@ -41,10 +41,10 @@ void FUN_fffbd278(void)
 void FUN_fffbd28f(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc078d();
+  popup_open_2000();
   return;
 }
 
@@ -54,10 +54,10 @@ void FUN_fffbd28f(void)
 void FUN_fffbd2a3(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc0b2f(0x2a);
+  ui_softkey_dispatch(0x2a);
   return;
 }
 
@@ -77,10 +77,10 @@ void FUN_fffbd2ba(void)
 void FUN_fffbd2be(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc0b2f(0x2b);
+  ui_softkey_dispatch(0x2b);
   return;
 }
 
@@ -100,10 +100,10 @@ void FUN_fffbd2d5(void)
 void FUN_fffbd2d9(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc0b2f(0x2c);
+  ui_softkey_dispatch(0x2c);
   return;
 }
 
@@ -123,10 +123,10 @@ void FUN_fffbd2f0(void)
 void FUN_fffbd2f4(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x04') {
+  if (PTR_g_ui_00025d54->popup_code != 4) {
     return;
   }
-  FUN_fffc0b2f(0x2d);
+  ui_softkey_dispatch(0x2d);
   return;
 }
 
@@ -146,23 +146,25 @@ void FUN_fffbd30b(void)
 void FUN_fffbd30f(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x30);
+  ui_softkey_dispatch(0x30);
   return;
 }
 
 
-// ===== FUN_fffbd326 @ fffbd326 (20 bytes)
+// ===== popup0_refresh @ fffbd326 (20 bytes)
 
-void FUN_fffbd326(void)
+/* popup_open_2000 when the pop-up code UI +0x1C2 is 0 (METER) [fact] */
+
+void popup0_refresh(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc078d();
+  popup_open_2000();
   return;
 }
 
@@ -172,10 +174,10 @@ void FUN_fffbd326(void)
 void FUN_fffbd33a(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x31);
+  ui_softkey_dispatch(0x31);
   return;
 }
 
@@ -185,7 +187,7 @@ void FUN_fffbd33a(void)
 void FUN_fffbd351(void)
 
 {
-  FUN_fffbd326();
+  popup0_refresh();
   return;
 }
 
@@ -195,10 +197,10 @@ void FUN_fffbd351(void)
 void FUN_fffbd355(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x32);
+  ui_softkey_dispatch(0x32);
   return;
 }
 
@@ -208,7 +210,7 @@ void FUN_fffbd355(void)
 void FUN_fffbd36c(void)
 
 {
-  FUN_fffbd326();
+  popup0_refresh();
   return;
 }
 
@@ -218,10 +220,10 @@ void FUN_fffbd36c(void)
 void FUN_fffbd370(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x33);
+  ui_softkey_dispatch(0x33);
   return;
 }
 
@@ -231,7 +233,7 @@ void FUN_fffbd370(void)
 void FUN_fffbd387(void)
 
 {
-  FUN_fffbd326();
+  popup0_refresh();
   return;
 }
 
@@ -241,10 +243,10 @@ void FUN_fffbd387(void)
 void FUN_fffbd38b(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x34);
+  ui_softkey_dispatch(0x34);
   return;
 }
 
@@ -254,7 +256,7 @@ void FUN_fffbd38b(void)
 void FUN_fffbd3a2(void)
 
 {
-  FUN_fffbd326();
+  popup0_refresh();
   return;
 }
 
@@ -264,10 +266,10 @@ void FUN_fffbd3a2(void)
 void FUN_fffbd3a6(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\0') {
+  if (PTR_g_ui_00025d54->popup_code != 0) {
     return;
   }
-  FUN_fffc0b2f(0x35);
+  ui_softkey_dispatch(0x35);
   return;
 }
 
@@ -277,7 +279,7 @@ void FUN_fffbd3a6(void)
 void FUN_fffbd3bd(void)
 
 {
-  FUN_fffbd326();
+  popup0_refresh();
   return;
 }
 
@@ -287,10 +289,10 @@ void FUN_fffbd3bd(void)
 void FUN_fffbd3c1(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x36);
+  ui_softkey_dispatch(0x36);
   return;
 }
 
@@ -300,10 +302,10 @@ void FUN_fffbd3c1(void)
 void FUN_fffbd3d8(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x37);
+  ui_softkey_dispatch(0x37);
   return;
 }
 
@@ -313,10 +315,10 @@ void FUN_fffbd3d8(void)
 void FUN_fffbd3ef(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x38);
+  ui_softkey_dispatch(0x38);
   return;
 }
 
@@ -326,10 +328,10 @@ void FUN_fffbd3ef(void)
 void FUN_fffbd406(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x39);
+  ui_softkey_dispatch(0x39);
   return;
 }
 
@@ -339,10 +341,10 @@ void FUN_fffbd406(void)
 void FUN_fffbd41d(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3a);
+  ui_softkey_dispatch(0x3a);
   return;
 }
 
@@ -352,10 +354,10 @@ void FUN_fffbd41d(void)
 void FUN_fffbd434(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3b);
+  ui_softkey_dispatch(0x3b);
   return;
 }
 
@@ -365,10 +367,10 @@ void FUN_fffbd434(void)
 void FUN_fffbd44b(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3c);
+  ui_softkey_dispatch(0x3c);
   return;
 }
 
@@ -378,10 +380,10 @@ void FUN_fffbd44b(void)
 void FUN_fffbd462(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3d);
+  ui_softkey_dispatch(0x3d);
   return;
 }
 
@@ -391,10 +393,10 @@ void FUN_fffbd462(void)
 void FUN_fffbd479(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3e);
+  ui_softkey_dispatch(0x3e);
   return;
 }
 
@@ -404,10 +406,10 @@ void FUN_fffbd479(void)
 void FUN_fffbd490(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\x06') {
+  if (PTR_g_ui_00025d54->popup_code != 6) {
     return;
   }
-  FUN_fffc0b2f(0x3f);
+  ui_softkey_dispatch(0x3f);
   return;
 }
 
@@ -417,10 +419,10 @@ void FUN_fffbd490(void)
 void FUN_fffbd4a7(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\r') {
+  if (PTR_g_ui_00025d54->popup_code != 0xd) {
     return;
   }
-  FUN_fffc0b2f(0x40);
+  ui_softkey_dispatch(0x40);
   return;
 }
 
@@ -430,10 +432,10 @@ void FUN_fffbd4a7(void)
 void FUN_fffbd4be(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\r') {
+  if (PTR_g_ui_00025d54->popup_code != 0xd) {
     return;
   }
-  FUN_fffc0b2f(0x41);
+  ui_softkey_dispatch(0x41);
   return;
 }
 
@@ -443,10 +445,10 @@ void FUN_fffbd4be(void)
 void FUN_fffbd4d5(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\r') {
+  if (PTR_g_ui_00025d54->popup_code != 0xd) {
     return;
   }
-  FUN_fffc0b2f(0x42);
+  ui_softkey_dispatch(0x42);
   return;
 }
 
@@ -456,10 +458,10 @@ void FUN_fffbd4d5(void)
 void FUN_fffbd4ec(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\r') {
+  if (PTR_g_ui_00025d54->popup_code != 0xd) {
     return;
   }
-  FUN_fffc0b2f(0x43);
+  ui_softkey_dispatch(0x43);
   return;
 }
 
@@ -469,10 +471,10 @@ void FUN_fffbd4ec(void)
 void FUN_fffbd503(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\r') {
+  if (PTR_g_ui_00025d54->popup_code != 0xd) {
     return;
   }
-  FUN_fffc0b2f(0x44);
+  ui_softkey_dispatch(0x44);
   return;
 }
 
@@ -482,10 +484,10 @@ void FUN_fffbd503(void)
 void FUN_fffbd51a(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x45);
+  ui_softkey_dispatch(0x45);
   return;
 }
 
@@ -495,10 +497,10 @@ void FUN_fffbd51a(void)
 void FUN_fffbd531(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x46);
+  ui_softkey_dispatch(0x46);
   return;
 }
 
@@ -508,10 +510,10 @@ void FUN_fffbd531(void)
 void FUN_fffbd548(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x47);
+  ui_softkey_dispatch(0x47);
   return;
 }
 
@@ -521,10 +523,10 @@ void FUN_fffbd548(void)
 void FUN_fffbd55f(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x48);
+  ui_softkey_dispatch(0x48);
   return;
 }
 
@@ -534,10 +536,10 @@ void FUN_fffbd55f(void)
 void FUN_fffbd576(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x49);
+  ui_softkey_dispatch(0x49);
   return;
 }
 
@@ -547,10 +549,10 @@ void FUN_fffbd576(void)
 void FUN_fffbd58d(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4a);
+  ui_softkey_dispatch(0x4a);
   return;
 }
 
@@ -560,10 +562,10 @@ void FUN_fffbd58d(void)
 void FUN_fffbd5a4(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4b);
+  ui_softkey_dispatch(0x4b);
   return;
 }
 
@@ -573,10 +575,10 @@ void FUN_fffbd5a4(void)
 void FUN_fffbd5bb(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4c);
+  ui_softkey_dispatch(0x4c);
   return;
 }
 
@@ -586,10 +588,10 @@ void FUN_fffbd5bb(void)
 void FUN_fffbd5d2(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4d);
+  ui_softkey_dispatch(0x4d);
   return;
 }
 
@@ -599,10 +601,10 @@ void FUN_fffbd5d2(void)
 void FUN_fffbd5e9(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4e);
+  ui_softkey_dispatch(0x4e);
   return;
 }
 
@@ -612,10 +614,10 @@ void FUN_fffbd5e9(void)
 void FUN_fffbd600(void)
 
 {
-  if (PTR_DAT_00025d54[0x1c2] != '\v') {
+  if (PTR_g_ui_00025d54->popup_code != 0xb) {
     return;
   }
-  FUN_fffc0b2f(0x4f);
+  ui_softkey_dispatch(0x4f);
   return;
 }
 

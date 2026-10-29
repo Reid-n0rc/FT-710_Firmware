@@ -9,25 +9,25 @@ void backlight_pwm_init(void)
 {
   byte bVar1;
   
-  DAT_fcff0200 = 0x40;
-  DAT_fcff0210 = 0;
-  DAT_fcff0212 = 0;
-  DAT_fcff0218 = 0;
-  DAT_fcff021a = 0x13f;
-  DAT_fcff0224 = 0;
-  DAT_fcff0226 = 0x13f;
-  DAT_fcff021c = 0;
-  DAT_fcff021e = 0;
-  DAT_fcff0228 = 0;
-  DAT_fcff022a = 0;
-  DAT_fcff020e = 0x47;
-  DAT_fcff020f = 0x7f;
-  DAT_fcff0236 = 0x3f;
-  DAT_fcff0202 = 0x38;
-  bVar1 = DAT_fcff020a;
-  DAT_fcff020a = bVar1 | 0x20;
-  bVar1 = DAT_fcff0280;
-  DAT_fcff0280 = bVar1 | 0x40;
+  MTU2_TCR_3 = 0x40;
+  MTU2_TCNT_3 = 0;
+  MTU2_TCNT_4 = 0;
+  MTU2_TGRA_3 = 0;
+  MTU2_TGRB_3 = 0x13f;
+  MTU2_TGRC_3 = 0;
+  MTU2_TGRD_3 = 0x13f;
+  MTU2_TGRA_4 = 0;
+  MTU2_TGRB_4 = 0;
+  MTU2_TGRC_4 = 0;
+  MTU2_TGRD_4 = 0;
+  MTU2_TOCR1 = 0x47;
+  MTU2_TOCR2 = 0x7f;
+  MTU2_TOLBR = 0x3f;
+  MTU2_TMDR_3 = 0x38;
+  bVar1 = MTU2_TOER;
+  MTU2_TOER = bVar1 | 0x20;
+  bVar1 = MTU2_TSTR;
+  MTU2_TSTR = bVar1 | 0x40;
   return;
 }
 
@@ -39,7 +39,8 @@ void backlight_pwm_init(void)
 void backlight_set_pct(int param_1)
 
 {
-  int iVar1;
+  uint uVar1;
+  int iVar2;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -47,12 +48,12 @@ void backlight_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  iVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 0x140) {
-    iVar1 = 0x13f;
+  uVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
+  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
+  if (iVar2 == 0x140) {
+    iVar2 = 0x13f;
   }
-  DAT_fcff022a = (short)iVar1 + -1;
+  MTU2_TGRD_4 = (short)iVar2 + -1;
   return;
 }
 
@@ -61,7 +62,7 @@ void backlight_set_pct(int param_1)
 
 /* thunk: backlight_set_pct */
 
-void backlight_set(undefined4 param_1)
+void backlight_set(uint param_1)
 
 {
   backlight_set_pct(param_1,1);
@@ -96,7 +97,7 @@ void touch_cal_load(int *param_1,int *param_2)
   
   if ((*param_1 != -1) && (*param_1 == -0x5a3cffff)) {
     crc32_make_table();
-    uVar1 = crc32_update(0xffffffff,0x30,param_1 + 2);
+    uVar1 = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
     if (param_1[0xe] == ~uVar1) {
       iVar2 = param_1[3];
       iVar3 = param_1[4];
@@ -129,7 +130,7 @@ void touch_cal_load(int *param_1,int *param_2)
 
 /* erase + write the 0x40-byte calibration record at flash 0x3D0000 */
 
-void touch_cal_save(undefined4 *param_1)
+void touch_cal_save(void *param_1)
 
 {
   undefined4 local_50 [2];
@@ -148,23 +149,23 @@ void touch_cal_save(undefined4 *param_1)
   uint local_18;
   
   local_50[0] = 0xa5c30001;
-  local_48 = *param_1;
-  uStack_44 = param_1[1];
-  uStack_40 = param_1[2];
-  uStack_3c = param_1[3];
-  local_38 = param_1[4];
-  uStack_34 = param_1[5];
-  uStack_30 = param_1[6];
-  uStack_2c = param_1[7];
-  local_28 = param_1[8];
-  uStack_24 = param_1[9];
-  uStack_20 = param_1[10];
-  uStack_1c = param_1[0xb];
+  local_48 = *(undefined4 *)param_1;
+  uStack_44 = *(undefined4 *)((int)param_1 + 4);
+  uStack_40 = *(undefined4 *)((int)param_1 + 8);
+  uStack_3c = *(undefined4 *)((int)param_1 + 0xc);
+  local_38 = *(undefined4 *)((int)param_1 + 0x10);
+  uStack_34 = *(undefined4 *)((int)param_1 + 0x14);
+  uStack_30 = *(undefined4 *)((int)param_1 + 0x18);
+  uStack_2c = *(undefined4 *)((int)param_1 + 0x1c);
+  local_28 = *(undefined4 *)((int)param_1 + 0x20);
+  uStack_24 = *(undefined4 *)((int)param_1 + 0x24);
+  uStack_20 = *(undefined4 *)((int)param_1 + 0x28);
+  uStack_1c = *(undefined4 *)((int)param_1 + 0x2c);
   crc32_make_table();
-  local_18 = crc32_update(0xffffffff,0x30,&local_48);
+  local_18 = crc32_update(0xffffffff,0x30,(uint)&local_48);
   local_18 = ~local_18;
   spiflash_erase(0,0x3d0000,0x40);
-  spiflash_write(0x3d0000,local_50,0x40);
+  spiflash_write(0x3d0000,(uint)local_50,0x40);
   return;
 }
 
@@ -173,7 +174,7 @@ void touch_cal_save(undefined4 *param_1)
 
 /* least-squares affine fit of 5 measured vs 5 reference points */
 
-void touch_cal_fit(undefined8 *param_1)
+void touch_cal_fit(void *param_1)
 
 {
   int iVar1;
@@ -240,22 +241,22 @@ void touch_cal_fit(undefined8 *param_1)
   iVar3 = 0;
   do {
     local_68 = uVar16;
-    uVar16 = FUN_20164d54((int)(short)(&DAT_20808bf8)[iVar3 * 2]);
+    uVar16 = __aeabi_i2d((int)(short)(&DAT_20808bf8)[iVar3 * 2]);
     uVar11 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar4 = (undefined4)uVar16;
     uVar16 = FUN_20164888(uVar4,uVar11,(undefined4)local_d0,local_d0._4_4_);
     local_d0 = uVar16;
-    uVar16 = FUN_20164d54((int)(short)(&DAT_20808bfa)[iVar3 * 2]);
+    uVar16 = __aeabi_i2d((int)(short)(&DAT_20808bfa)[iVar3 * 2]);
     uVar12 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar5 = (undefined4)uVar16;
     uVar16 = FUN_20164888(uVar5,uVar12,(undefined4)local_48,local_48._4_4_);
     local_48 = uVar16;
-    uVar16 = FUN_20164d54((int)(short)(&DAT_20800060)[iVar3 * 2]);
+    uVar16 = __aeabi_i2d((int)(short)(&DAT_20800060)[iVar3 * 2]);
     uVar13 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar6 = (undefined4)uVar16;
     uVar16 = FUN_20164888(uVar6,uVar13,(undefined4)local_30,local_30._4_4_);
     local_30 = uVar16;
-    uVar16 = FUN_20164d54((int)(short)(&DAT_20800062)[iVar3 * 2]);
+    uVar16 = __aeabi_i2d((int)(short)(&DAT_20800062)[iVar3 * 2]);
     uVar14 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar7 = (undefined4)uVar16;
     uVar16 = FUN_20164888(uVar7,uVar14,(undefined4)local_60,local_60._4_4_);
@@ -357,13 +358,13 @@ void touch_cal_fit(undefined8 *param_1)
   uVar19 = FUN_20164fa4((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),(undefined4)local_90,
                         local_90._4_4_);
   uVar19 = FUN_201649d8((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),uVar9,uVar15);
-  *param_1 = uVar19;
+  *(undefined8 *)param_1 = uVar19;
   uVar18 = FUN_20164da8((undefined4)local_b0,local_b0._4_4_,(int)uVar18,uVar6);
   uVar16 = FUN_20164da8((int)uVar17,uVar5,(int)uVar16,uVar4);
   uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(int)uVar18,
                         (int)((ulonglong)uVar18 >> 0x20));
   uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
-  param_1[1] = uVar16;
+  *(undefined8 *)((int)param_1 + 8) = uVar16;
   local_b0._4_4_ = (undefined4)local_c0;
   local_b0._0_4_ = uVar11;
   local_98._0_4_ = uVar12;
@@ -396,7 +397,7 @@ void touch_cal_fit(undefined8 *param_1)
   uVar16 = FUN_20164888((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
   uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
-  param_1[2] = uVar16;
+  *(undefined8 *)((int)param_1 + 0x10) = uVar16;
   uVar16 = FUN_20164fa4((undefined4)local_c8,local_c8._4_4_,(undefined4)local_c0,local_c0._4_4_);
   uVar14 = local_60._4_4_;
   uVar13 = (undefined4)local_60;
@@ -416,7 +417,7 @@ void touch_cal_fit(undefined8 *param_1)
   uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         local_b0._4_4_);
   uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
-  param_1[3] = uVar16;
+  *(undefined8 *)((int)param_1 + 0x18) = uVar16;
   uVar16 = FUN_20164fa4(uVar4,uVar5,uVar6,uVar7);
   uVar16 = FUN_20164da8((undefined4)local_a8,local_a8._4_4_,(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
@@ -426,7 +427,7 @@ void touch_cal_fit(undefined8 *param_1)
   uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         local_b0._4_4_);
   uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
-  param_1[4] = uVar16;
+  *(undefined8 *)((int)param_1 + 0x20) = uVar16;
   uVar16 = FUN_20164da8(uVar8,(undefined4)local_98,(undefined4)local_90,local_90._4_4_);
   local_b0 = uVar16;
   uVar16 = FUN_20164da8(uVar4,uVar5,uVar11,uVar12);
@@ -453,7 +454,7 @@ void touch_cal_fit(undefined8 *param_1)
   uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         (undefined4)local_c0);
   uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
-  param_1[5] = uVar16;
+  *(undefined8 *)((int)param_1 + 0x28) = uVar16;
   return;
 }
 
@@ -465,7 +466,7 @@ void touch_cal_fit(undefined8 *param_1)
 void touch_cal_init(void)
 
 {
-  undefined4 local_38;
+  int local_38;
   undefined4 uStack_34;
   undefined4 uStack_30;
   undefined4 uStack_2c;
@@ -480,7 +481,7 @@ void touch_cal_init(void)
   
   memcpy(&DAT_20808bf8,&DAT_20800060,0x14);
   touch_cal_fit(&local_38);
-  touch_cal_load(&DAT_183d0000,&local_38);
+  touch_cal_load((int *)&DAT_183d0000,&local_38);
   DAT_20808c10 = local_38;
   DAT_20808c14 = uStack_34;
   DAT_20808c18 = uStack_30;
@@ -499,17 +500,17 @@ void touch_cal_init(void)
 
 // ===== touch_cal_set_point @ 20102f8c (68 bytes)
 
-void touch_cal_set_point(int param_1,uint param_2,undefined2 *param_3)
+void touch_cal_set_point(int param_1,uint param_2,void *param_3)
 
 {
   if (param_2 < 5) {
     if (param_1 == 0) {
-      (&DAT_20800060)[param_2 * 2] = *param_3;
-      (&DAT_20800062)[param_2 * 2] = param_3[1];
+      (&DAT_20800060)[param_2 * 2] = *(undefined2 *)param_3;
+      (&DAT_20800062)[param_2 * 2] = *(undefined2 *)((int)param_3 + 2);
       return;
     }
-    (&DAT_20808bf8)[param_2 * 2] = *param_3;
-    (&DAT_20808bfa)[param_2 * 2] = param_3[1];
+    (&DAT_20808bf8)[param_2 * 2] = *(undefined2 *)param_3;
+    (&DAT_20808bfa)[param_2 * 2] = *(undefined2 *)((int)param_3 + 2);
   }
   return;
 }
@@ -535,10 +536,10 @@ void touch_cal_store_points(int param_1,int param_2)
   undefined4 uStack_18;
   undefined4 uStack_14;
   
-  touch_cal_set_point(param_1,2,param_2);
-  touch_cal_set_point(param_1,3,param_2 + 4);
-  touch_cal_set_point(param_1,0,param_2 + 8);
-  touch_cal_set_point(param_1,1,param_2 + 0xc);
+  touch_cal_set_point(param_1,2,(void *)param_2);
+  touch_cal_set_point(param_1,3,(void *)(param_2 + 4));
+  touch_cal_set_point(param_1,0,(void *)(param_2 + 8));
+  touch_cal_set_point(param_1,1,(void *)(param_2 + 0xc));
   if (param_1 != 0) {
     touch_cal_fit(&local_40);
     touch_cal_save(&local_40);
@@ -563,7 +564,7 @@ void touch_cal_store_points(int param_1,int param_2)
 
 /* (x, y) -> calibrated pixel, clamp 0..799 / 0..479 */
 
-void touch_cal_apply(undefined4 param_1,undefined4 param_2,short *param_3,short *param_4)
+void touch_cal_apply(uint param_1,uint param_2,short *param_3,short *param_4)
 
 {
   short sVar1;
@@ -575,10 +576,10 @@ void touch_cal_apply(undefined4 param_1,undefined4 param_2,short *param_3,short 
   undefined8 uVar7;
   undefined8 uVar8;
   
-  uVar5 = FUN_20164d54(param_2);
+  uVar5 = __aeabi_i2d(param_2);
   uVar3 = (undefined4)((ulonglong)uVar5 >> 0x20);
   uVar6 = FUN_20164da8((int)uVar5,uVar3,DAT_20808c18,DAT_20808c1c);
-  uVar7 = FUN_20164d54(param_1);
+  uVar7 = __aeabi_i2d(param_1);
   uVar4 = (undefined4)((ulonglong)uVar7 >> 0x20);
   uVar8 = FUN_20164da8((int)uVar7,uVar4,DAT_20808c10,DAT_20808c14);
   uVar6 = FUN_20164888((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar6,
@@ -618,11 +619,11 @@ void touch_cal_apply(undefined4 param_1,undefined4 param_2,short *param_3,short 
 void touch_cal_selftest(void)
 
 {
-  undefined1 auStack_10 [4];
-  undefined1 auStack_c [8];
+  short asStack_10 [2];
+  short asStack_c [4];
   
   touch_cal_init();
-  touch_cal_apply(100,100,auStack_10,auStack_c);
+  touch_cal_apply(100,100,asStack_10,asStack_c);
   return;
 }
 
@@ -641,7 +642,7 @@ undefined4 tsc2007_write_cmd(undefined4 param_1)
   FUN_20120674(2,0);
   iVar1 = FUN_20120750(2,0x90,0);
   if (iVar1 == 0) {
-    FUN_2012081c(2,&uStack_10,1);
+    FUN_2012081c(2,(int)&uStack_10,1);
   }
   FUN_20120674(2);
   FUN_20120bc8(2);
@@ -666,7 +667,7 @@ uint tsc2007_read12(undefined4 param_1)
   iVar1 = FUN_20120674(2,0);
   if (iVar1 == 0) {
     iVar1 = FUN_20120750(2,0x90,0);
-    if ((iVar1 == 0) && (iVar1 = FUN_2012081c(2,&uStack_10,1), iVar1 == 0)) {
+    if ((iVar1 == 0) && (iVar1 = FUN_2012081c(2,(int)&uStack_10,1), iVar1 == 0)) {
       itron_dly_tsk(1);
       FUN_20120674(2,1);
       iVar1 = FUN_20120750(2,0x91,1,0);
@@ -695,10 +696,10 @@ uint tsc2007_read12(undefined4 param_1)
 
 /* Rtouch = 400 * X/4096 * (Z2/Z1 - 1) */
 
-undefined4 tsc2007_pressure(short *param_1)
+uint tsc2007_pressure(short *param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   undefined8 uVar2;
   undefined8 uVar3;
   
@@ -707,12 +708,12 @@ undefined4 tsc2007_pressure(short *param_1)
     *param_1 = 0;
   }
   if ((*param_1 != 0) && (param_1[2] != 0)) {
-    uVar2 = FUN_20164d82(param_1[2]);
-    uVar3 = FUN_20164d82(param_1[3]);
+    uVar2 = __aeabi_ui2d(param_1[2]);
+    uVar3 = __aeabi_ui2d(param_1[3]);
     uVar2 = FUN_201649d8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
                          (int)((ulonglong)uVar2 >> 0x20));
     uVar2 = FUN_20164fa4((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x3ff00000);
-    uVar3 = FUN_20164d82(*param_1);
+    uVar3 = __aeabi_ui2d(*param_1);
     uVar3 = FUN_201649d8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x40b00000);
     uVar3 = FUN_20164da8(0,0x40790000,(int)uVar3,(int)((ulonglong)uVar3 >> 0x20));
     FUN_20164da8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
@@ -736,10 +737,10 @@ void tsc2007_tint_isr(void)
   DAT_20808c40 = DAT_20808c40 + 1;
   DAT_20800074 = DAT_20800074 + 1;
   itron_iwup_tsk(DAT_20800088);
-  uVar1 = DAT_fcfef804;
+  uVar1 = INTC_IRQRR;
   if ((uVar1 & 8) != 0) {
-    uVar1 = DAT_fcfef804;
-    DAT_fcfef804 = uVar1 & 0xfff7;
+    uVar1 = INTC_IRQRR;
+    INTC_IRQRR = uVar1 & 0xfff7;
   }
   return;
 }
@@ -752,93 +753,116 @@ void task_tsc2007(void)
 {
   ushort uVar1;
   int iVar2;
-  int iVar3;
+  uint uVar3;
   int iVar4;
+  uint uVar5;
+  undefined4 *extraout_r1;
+  undefined4 *extraout_r1_00;
+  undefined4 *extraout_r1_01;
+  undefined4 *extraout_r1_02;
+  undefined4 *extraout_r1_03;
+  undefined4 *extraout_r1_04;
+  undefined4 *puVar6;
+  ulonglong uVar7;
+  ulonglong uVar8;
   undefined4 local_30;
   undefined4 local_2c;
   uint local_28;
   
   iVar2 = FUN_20120454(2);
   if (iVar2 == 0) {
-    uVar1 = DAT_fcfef802;
-    DAT_fcfef802 = uVar1 & 0xff3f;
-    uVar1 = DAT_fcfef802;
+    uVar1 = INTC_ICR1;
+    INTC_ICR1 = uVar1 & 0xff3f;
+    uVar1 = INTC_ICR1;
     local_28 = (uint)uVar1;
-    uVar1 = DAT_fcfef802;
-    DAT_fcfef802 = uVar1 | 0x40;
-    iVar2 = itron_acre_isr(0,&DAT_20165194);
-    if (0 < iVar2) {
-      FUN_20150ba0(&DAT_20800088);
+    uVar1 = INTC_ICR1;
+    INTC_ICR1 = uVar1 | 0x40;
+    uVar3 = itron_acre_isr(0,0x20165194);
+    if (0 < (int)uVar3) {
+      itron_get_tid(&DAT_20800088);
       itron_iwup_tsk(DAT_2080008c);
       tsc2007_write_cmd(0xb0);
       itron_dly_tsk(10);
+      puVar6 = extraout_r1;
       do {
         while( true ) {
           local_30 = 0;
           local_2c = 0;
-          iVar2 = tsc2007_write_cmd();
+          iVar2 = tsc2007_write_cmd(0,puVar6);
           if (-1 < iVar2) break;
           itron_dly_tsk(10);
+          puVar6 = extraout_r1_00;
         }
         while( true ) {
           itron_dly_tsk(1);
-          uVar1 = DAT_fcfe3204;
+          uVar1 = PORT_PPR1;
           if ((uVar1 & 8) != 0) break;
           DAT_20808c48 = DAT_20808c48 + 1;
         }
         DAT_20808c44 = DAT_20808c44 + 1;
         touch_set_up();
-        uVar1 = DAT_fcfef804;
+        uVar1 = INTC_IRQRR;
         if ((uVar1 & 8) != 0) {
-          uVar1 = DAT_fcfef804;
-          DAT_fcfef804 = uVar1 & 0xfff7;
+          uVar1 = INTC_IRQRR;
+          INTC_IRQRR = uVar1 & 0xfff7;
         }
-        uVar1 = DAT_fcfef804;
+        uVar1 = INTC_IRQRR;
         local_28 = (uint)uVar1;
         gic_enable_irq(0x23);
-        FUN_201525f8(0xffffffff);
+        itron_tslp_tsk(0xffffffff);
         iVar2 = 2;
         do {
           iVar2 = iVar2 + -1;
-          iVar3 = tsc2007_read12(0xd4);
-          if (iVar3 < 0) {
+          iVar4 = tsc2007_read12(0xd4);
+          if (iVar4 < 0) {
             itron_dly_tsk(10);
+            puVar6 = extraout_r1_01;
             break;
           }
-          DAT_2080007c = (undefined2)iVar3;
+          DAT_2080007c = (undefined2)iVar4;
           local_30._2_2_ = DAT_2080007c;
-          iVar3 = tsc2007_read12(0xc4);
-          if (iVar3 < 0) {
+          iVar4 = tsc2007_read12(0xc4);
+          if (iVar4 < 0) {
             itron_dly_tsk(10);
+            puVar6 = extraout_r1_02;
             break;
           }
-          DAT_2080007a = (undefined2)iVar3;
+          DAT_2080007a = (undefined2)iVar4;
           local_30 = CONCAT22(local_30._2_2_,DAT_2080007a);
-          iVar3 = tsc2007_read12(0xe4);
-          if (iVar3 < 0) {
+          iVar4 = tsc2007_read12(0xe4);
+          if (iVar4 < 0) {
             itron_dly_tsk(10);
+            puVar6 = extraout_r1_03;
             break;
           }
-          local_2c = CONCAT22(local_2c._2_2_,(short)iVar3);
-          iVar3 = tsc2007_read12(0xf4);
-          if (iVar3 < 0) {
+          local_2c = CONCAT22(local_2c._2_2_,(short)iVar4);
+          iVar4 = tsc2007_read12(0xf4);
+          if (iVar4 < 0) {
             itron_dly_tsk(10);
+            puVar6 = extraout_r1_04;
             break;
           }
-          local_2c = CONCAT22((short)iVar3,(undefined2)local_2c);
-          iVar3 = __aeabi_uidivmod(((local_30 & 0xffff) - 0xf3c) * 10000,0xfffff178);
-          iVar3 = __aeabi_uidivmod(iVar3 * 800,10000);
-          iVar4 = __aeabi_uidivmod(((local_30 >> 0x10) - 0x15e) * 10000,0xcb2);
-          iVar4 = __aeabi_uidivmod(iVar4 * -0x1e0 + 4800000,10000);
-          if ((((iVar3 < 0) || (799 < iVar3)) || (iVar4 < 0)) ||
-             ((0x1df < iVar4 || (DAT_20800080 = tsc2007_pressure(&local_30), DAT_20800080 == 0))))
-          break;
+          local_2c = CONCAT22((short)iVar4,(undefined2)local_2c);
+          uVar7 = __aeabi_idivmod(((local_30 & 0xffff) - 0xf3c) * 10000,0xfffff178);
+          uVar7 = __aeabi_idivmod((int)uVar7 * 800,10000);
+          uVar3 = (uint)uVar7;
+          uVar8 = __aeabi_idivmod(((local_30 >> 0x10) - 0x15e) * 10000,0xcb2);
+          uVar8 = __aeabi_idivmod((int)uVar8 * -0x1e0 + 4800000,10000);
+          puVar6 = (undefined4 *)(uVar8 >> 0x20);
+          uVar5 = (uint)uVar8;
+          if (((((int)uVar3 < 0) || (799 < (int)uVar3)) || ((int)uVar5 < 0)) || (0x1df < (int)uVar5)
+             ) break;
+          DAT_20800080 = tsc2007_pressure((short *)&local_30);
+          puVar6 = &DAT_20800080;
+          if (DAT_20800080 == 0) break;
+          puVar6 = (undefined4 *)0x514;
           if (DAT_20800080 < 0x514) {
             if (((DAT_20800495 != '\0') || (DAT_20800496 != '\0')) || (DAT_20808532 != '\0')) {
-              touch_set_down(iVar3,iVar4);
-              DAT_20800076 = (undefined2)iVar3;
-              DAT_20800078 = (undefined2)iVar4;
+              touch_set_down(uVar3,uVar5);
+              DAT_20800076 = (undefined2)uVar7;
+              DAT_20800078 = (undefined2)uVar8;
               DAT_20800084 = DAT_20800084 + 1;
+              puVar6 = (undefined4 *)&DAT_20800084;
             }
             break;
           }
@@ -870,16 +894,16 @@ void task_tsc2007_irq(void)
   int iVar1;
   int iVar2;
   
-  FUN_20150ba0(&DAT_2080008c);
+  itron_get_tid(&DAT_2080008c);
   do {
     do {
-      FUN_201525f8(0xffffffff);
+      itron_tslp_tsk(0xffffffff);
       iVar1 = FUN_2012001c();
       itron_dly_tsk(100);
       iVar2 = FUN_2012001c();
     } while (iVar1 != iVar2);
     DAT_20800090 = 1;
-    FUN_20151934(DAT_20800088);
+    itron_sus_tsk(DAT_20800088);
   } while( true );
 }
 
@@ -891,12 +915,12 @@ void task_tsc2007_irq(void)
 void touch_init(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
-  iVar1 = itron_acre_tsk(0,&DAT_201651c4);
-  if (((0 < iVar1) && (iVar1 = itron_sta_tsk(iVar1,0), iVar1 == 0)) &&
-     (iVar1 = itron_acre_tsk(0,&DAT_201651a8), 0 < iVar1)) {
-    itron_sta_tsk(iVar1,0);
+  uVar1 = itron_acre_tsk(0,&DAT_201651c4);
+  if (((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
+     (uVar1 = itron_acre_tsk(0,&DAT_201651a8), 0 < (int)uVar1)) {
+    itron_sta_tsk(uVar1,0);
   }
   return;
 }
@@ -964,9 +988,9 @@ void FUN_20103a94(int param_1,undefined4 param_2)
   
   while( true ) {
     iVar1 = FUN_2013faf4(param_2);
-    FUN_2014d95c();
+    fs_task_ctx_get();
     if (((param_1 != 0) && (iVar1 == 1)) || (param_1 == 0 && iVar1 == 0)) break;
-    FUN_201525f8(10);
+    itron_tslp_tsk(10);
   }
   return;
 }
@@ -987,13 +1011,13 @@ void FUN_20103adc(undefined4 param_1,undefined4 param_2)
     if (-1 < (int)uVar1) {
       _DAT_20800094 = uVar1;
     }
-    FUN_201525f8(10);
+    itron_tslp_tsk(10);
     if (DAT_20800098 != 0) {
       uVar1 = 0;
       _DAT_20800094 = _DAT_20800094 & 0xffffff7f;
       FUN_2013fd50(param_2);
       while (DAT_20800098 != 0) {
-        FUN_201525f8(10);
+        itron_tslp_tsk(10);
       }
     }
   } while( true );
@@ -1013,12 +1037,12 @@ undefined4 FUN_20103b4c(void)
   _DAT_20800094 = 0;
   FUN_2013fc10();
   FUN_20103adc(1,0);
-  iVar1 = FUN_2014e5b0(&DAT_201651e0,"sdTask");
+  iVar1 = os_create_tsk_named(&DAT_201651e0,"sdTask");
   if (iVar1 < 1) {
     uVar2 = 0xffffffff;
   }
   else {
-    FUN_2014e73c(iVar1);
+    itron_act_tsk(iVar1);
     uVar2 = 0;
   }
   return uVar2;
@@ -1035,30 +1059,36 @@ undefined4 sd_task_create(void)
   int iVar1;
   undefined4 uVar2;
   
-  iVar1 = FUN_2014e5b0(&DAT_201651e0,"sdTask");
+  iVar1 = os_create_tsk_named(&DAT_201651e0,"sdTask");
   if (iVar1 < 1) {
     uVar2 = 0xffffffff;
   }
   else {
-    FUN_2014e73c(iVar1);
+    itron_act_tsk(iVar1);
     uVar2 = 0;
   }
   return uVar2;
 }
 
 
-// ===== FUN_20103ba0 @ 20103ba0 (16 bytes)
+// ===== sd_state_bit6 @ 20103ba0 (16 bytes)
 
-uint FUN_20103ba0(void)
+/* Bit 6 of the SD state 0x20800094; 0 is used as "no SD card" (error -1) [fact for the bit; meaning
+   inference] (update.md, display-link.md) */
+
+uint sd_state_bit6(void)
 
 {
   return (DAT_20800094 & 0x7f) >> 6;
 }
 
 
-// ===== FUN_20103bb0 @ 20103bb0 (16 bytes)
+// ===== sd_state_bit7 @ 20103bb0 (16 bytes)
 
-byte FUN_20103bb0(void)
+/* Bit 7 of the SD state 0x20800094 (cleared by the SD task on a card change) [fact]; card ready
+   [inference] (update.md) */
+
+byte sd_state_bit7(void)
 
 {
   return DAT_20800094 >> 7;
@@ -1196,39 +1226,40 @@ int FUN_20103cc8(int param_1,int param_2)
 undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  uint uVar1;
+  int iVar2;
   uint uVar3;
-  int iVar4;
-  undefined8 uVar5;
+  undefined4 uVar4;
+  int iVar5;
   undefined8 uVar6;
+  undefined8 uVar7;
   
-  iVar4 = 0;
+  iVar5 = 0;
   if (param_1 != 0) {
-    progress_scale(param_1,param_2,0,0);
-    progress_set();
+    uVar1 = progress_scale(param_1,param_2,0,0);
+    progress_set(uVar1);
   }
   FUN_20105060();
-  iVar1 = FUN_20103c14();
-  if (-1 < iVar1) {
-    uVar3 = 0;
-    while (iVar1 = FUN_20103c70(iVar4), -1 < iVar1) {
-      iVar1 = FUN_20103bdc(uVar3);
-      iVar4 = iVar4 + iVar1;
+  iVar2 = FUN_20103c14();
+  if (-1 < iVar2) {
+    uVar1 = 0;
+    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
+      iVar2 = FUN_20103bdc(uVar1);
+      iVar5 = iVar5 + iVar2;
       if (param_1 != 0) {
-        uVar5 = FUN_20164d54(0x88);
-        uVar6 = FUN_20164d54(uVar3);
-        uVar5 = FUN_201649d8((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
-                             (int)((ulonglong)uVar5 >> 0x20));
-        uVar2 = (undefined4)((ulonglong)uVar5 >> 0x20);
-        progress_scale(param_1,uVar2,(int)uVar5,uVar2);
-        progress_set();
-        if ((uVar3 & 7) == 0) {
-          FUN_20150dcc(0);
+        uVar6 = __aeabi_i2d(0x88);
+        uVar7 = __aeabi_i2d(uVar1);
+        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+                             (int)((ulonglong)uVar6 >> 0x20));
+        uVar4 = (undefined4)((ulonglong)uVar6 >> 0x20);
+        uVar3 = progress_scale(param_1,uVar4,(int)uVar6,uVar4);
+        progress_set(uVar3);
+        if ((uVar1 & 7) == 0) {
+          itron_rot_rdq(0);
         }
       }
-      uVar3 = uVar3 + 1;
-      if (0x87 < (int)uVar3) {
+      uVar1 = uVar1 + 1;
+      if (0x87 < (int)uVar1) {
         return 0;
       }
     }
@@ -1241,7 +1272,7 @@ undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
 
 /* writes, then checks against the XIP window 0x18000000 */
 
-uint spiflash_write(int param_1,undefined4 param_2,undefined4 param_3)
+uint spiflash_write(int param_1,uint param_2,uint param_3)
 
 {
   int iVar1;
@@ -1276,48 +1307,49 @@ uint spiflash_write(int param_1,undefined4 param_2,undefined4 param_3)
 
 /* erases 64 KiB blocks */
 
-undefined4 spiflash_erase(int param_1,int param_2,int param_3)
+uint spiflash_erase(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  uint uVar2;
+  int iVar3;
   uint uVar4;
-  undefined8 uVar5;
+  undefined4 uVar5;
   undefined8 uVar6;
+  undefined8 uVar7;
   
   uVar1 = param_3 + 0xffffU >> 0x10;
   if (param_1 != 0) {
-    progress_scale(param_1,param_2,0,0);
-    progress_set();
+    uVar2 = progress_scale(param_1,param_2,0,0);
+    progress_set(uVar2);
   }
   FUN_20105060();
-  iVar2 = FUN_20103c14();
-  if (iVar2 < 0) {
+  iVar3 = FUN_20103c14();
+  if (iVar3 < 0) {
     return 0xffffffff;
   }
-  uVar4 = 0;
+  uVar2 = 0;
   if (uVar1 != 0) {
     do {
-      iVar2 = FUN_20103c70(param_2);
-      if (iVar2 < 0) {
+      iVar3 = FUN_20103c70(param_2);
+      if (iVar3 < 0) {
         return 0xffffffff;
       }
       param_2 = param_2 + 0x10000;
       if (param_1 != 0) {
-        uVar5 = FUN_20164d82(uVar1);
-        uVar6 = FUN_20164d54(uVar4);
-        uVar5 = FUN_201649d8((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
-                             (int)((ulonglong)uVar5 >> 0x20));
-        uVar3 = (undefined4)((ulonglong)uVar5 >> 0x20);
-        progress_scale(param_1,uVar3,(int)uVar5,uVar3);
-        progress_set();
-        if ((uVar4 & 0xf) == 0) {
-          FUN_20150dcc(0);
+        uVar6 = __aeabi_ui2d(uVar1);
+        uVar7 = __aeabi_i2d(uVar2);
+        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+                             (int)((ulonglong)uVar6 >> 0x20));
+        uVar5 = (undefined4)((ulonglong)uVar6 >> 0x20);
+        uVar4 = progress_scale(param_1,uVar5,(int)uVar6,uVar5);
+        progress_set(uVar4);
+        if ((uVar2 & 0xf) == 0) {
+          itron_rot_rdq(0);
         }
       }
-      uVar4 = uVar4 + 1;
-    } while (uVar4 < uVar1);
+      uVar2 = uVar2 + 1;
+    } while (uVar2 < uVar1);
   }
   return 0;
 }
@@ -1328,38 +1360,39 @@ undefined4 spiflash_erase(int param_1,int param_2,int param_3)
 undefined4 FUN_20103f44(int param_1)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  uint uVar1;
+  int iVar2;
   uint uVar3;
-  int iVar4;
-  undefined8 uVar5;
+  undefined4 uVar4;
+  int iVar5;
   undefined8 uVar6;
+  undefined8 uVar7;
   
-  iVar4 = 0;
+  iVar5 = 0;
   if (param_1 != 0) {
-    progress_scale();
-    progress_set();
+    uVar1 = progress_scale();
+    progress_set(uVar1);
   }
   FUN_20105060();
-  iVar1 = FUN_20103c14();
-  if (-1 < iVar1) {
-    uVar3 = 0;
-    while (iVar1 = FUN_20103c70(iVar4), -1 < iVar1) {
-      iVar4 = iVar4 + 0x10000;
+  iVar2 = FUN_20103c14();
+  if (-1 < iVar2) {
+    uVar1 = 0;
+    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
+      iVar5 = iVar5 + 0x10000;
       if (param_1 != 0) {
-        uVar5 = FUN_20164d54(0x100);
-        uVar6 = FUN_20164d54(uVar3);
-        uVar5 = FUN_201649d8((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
-                             (int)((ulonglong)uVar5 >> 0x20));
-        uVar2 = (undefined4)((ulonglong)uVar5 >> 0x20);
-        progress_scale(param_1,uVar2,(int)uVar5,uVar2);
-        progress_set();
-        if ((uVar3 & 0xf) == 0) {
-          FUN_20150dcc(0);
+        uVar6 = __aeabi_i2d(0x100);
+        uVar7 = __aeabi_i2d(uVar1);
+        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+                             (int)((ulonglong)uVar6 >> 0x20));
+        uVar4 = (undefined4)((ulonglong)uVar6 >> 0x20);
+        uVar3 = progress_scale(param_1,uVar4,(int)uVar6,uVar4);
+        progress_set(uVar3);
+        if ((uVar1 & 0xf) == 0) {
+          itron_rot_rdq(0);
         }
       }
-      uVar3 = uVar3 + 1;
-      if (0xff < (int)uVar3) {
+      uVar1 = uVar1 + 1;
+      if (0xff < (int)uVar1) {
         return 0;
       }
     }
@@ -1376,12 +1409,12 @@ undefined1 FUN_20104000(void)
   undefined4 uVar1;
   undefined4 uVar2;
   
-  uVar1 = DAT_3fefa010;
-  uVar2 = DAT_3fefa01c;
-  DAT_3fefa010 = 0x9f0000;
-  DAT_3fefa01c = 0x4000;
-  DAT_3fefa010 = uVar1;
-  DAT_3fefa01c = uVar2;
+  uVar1 = SPIBSC_DRCMR_0;
+  uVar2 = SPIBSC_DRENR_0;
+  SPIBSC_DRCMR_0 = 0x9f0000;
+  SPIBSC_DRENR_0 = 0x4000;
+  SPIBSC_DRCMR_0 = uVar1;
+  SPIBSC_DRENR_0 = uVar2;
   return DAT_18000000;
 }
 

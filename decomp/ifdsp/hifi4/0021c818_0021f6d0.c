@@ -370,7 +370,7 @@ LAB_0021ccb6:
       divf_();
       uVar19 = ae_l32_i(uVar1);
       uVar15 = ae_l32_i(0xbf800000);
-      uVar12 = ae_l32_i(&DAT_40000000);
+      uVar12 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
       uVar8 = ae_s32_l_i(uVar11);
       ae_l32_i(uVar5);
       uVar11 = (ulonglong)(uint)(((float)uVar19 + (float)uVar15) * (float)uVar12);
@@ -422,7 +422,7 @@ LAB_0021ccb6:
     divf_();
     uVar12 = ae_l32_i(uVar5);
     uVar19 = ae_l32_i(0xbf800000);
-    uVar15 = ae_l32_i(&DAT_40000000);
+    uVar15 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar8 = ae_s32_l_i(uVar11);
     ae_l32_i(uVar2);
     uVar11 = (ulonglong)(uint)(((float)uVar12 + (float)uVar19) * (float)uVar15);
@@ -611,7 +611,7 @@ void zeroin_goertzel_tune(void)
     puVar3[3] = uVar1;
     uVar4 = ae_l32_i(uVar2);
     cosf();
-    uVar6 = ae_l32_i(&DAT_40000000);
+    uVar6 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar4);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * (float)uVar6));
@@ -3300,7 +3300,7 @@ void ctcss_init(void)
     puVar3[3] = uVar1;
     uVar10 = ae_l32_i(uVar2);
     cosf_();
-    uVar11 = ae_l32_i(&DAT_40000000);
+    uVar11 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
     uVar1 = ae_s32_l_i(uVar10);
     puVar3[4] = uVar1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar10 * (float)uVar11));

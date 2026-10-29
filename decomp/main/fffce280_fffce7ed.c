@@ -7,7 +7,7 @@
 void menu_ex010302_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a53);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010302_af_middle_tone_gain);
   return;
 }
 
@@ -19,7 +19,7 @@ void menu_ex010302_step(void)
 void menu_ex010303_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a54);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010303_af_bass_gain);
   return;
 }
 
@@ -31,7 +31,7 @@ void menu_ex010303_step(void)
 void menu_ex010304_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a55);
+  menu_step_u8(0,199,&g_opstate.ex010304_agc_fast_delay);
   return;
 }
 
@@ -43,7 +43,7 @@ void menu_ex010304_step(void)
 void menu_ex010305_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a56);
+  menu_step_u8(0,199,&g_opstate.ex010305_agc_mid_delay);
   return;
 }
 
@@ -55,7 +55,7 @@ void menu_ex010305_step(void)
 void menu_ex010306_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a57);
+  menu_step_u8(0,199,&g_opstate.ex010306_agc_slow_delay);
   return;
 }
 
@@ -67,7 +67,7 @@ void menu_ex010306_step(void)
 void menu_ex010307_step(void)
 
 {
-  FUN_fffcdecf(&DAT_00009a58);
+  menu_step_lcut_freq(0x9a58);
   return;
 }
 
@@ -79,7 +79,7 @@ void menu_ex010307_step(void)
 void menu_ex010308_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009a59);
+  menu_step_u8(0,1,&g_opstate.ex010308_lcut_slope);
   return;
 }
 
@@ -91,7 +91,7 @@ void menu_ex010308_step(void)
 void menu_ex010309_step(void)
 
 {
-  FUN_fffcdf37(&DAT_00009a5a);
+  menu_step_hcut_freq(0x9a5a);
   return;
 }
 
@@ -103,7 +103,7 @@ void menu_ex010309_step(void)
 void menu_ex010310_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009a5b);
+  menu_step_u8(0,1,&g_opstate.ex010310_hcut_slope);
   return;
 }
 
@@ -115,7 +115,7 @@ void menu_ex010310_step(void)
 void menu_ex010311_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a5c);
+  menu_step_u8(0,100,&g_opstate.ex010311_usb_out_level);
   return;
 }
 
@@ -127,7 +127,7 @@ void menu_ex010311_step(void)
 void menu_ex010312_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a5d);
+  menu_step_u8(0,100,&g_opstate.ex010312_rear_out_level);
   return;
 }
 
@@ -139,7 +139,7 @@ void menu_ex010312_step(void)
 void menu_ex010313_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009a5e);
+  menu_step_u8(0,3,&g_opstate.ex010313_mod_source);
   return;
 }
 
@@ -151,7 +151,7 @@ void menu_ex010313_step(void)
 void menu_ex010314_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a5f);
+  menu_step_u8(0,100,&g_opstate.ex010314_usb_mod_gain);
   return;
 }
 
@@ -163,7 +163,7 @@ void menu_ex010314_step(void)
 void menu_ex010315_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a60);
+  menu_step_u8(0,100,&g_opstate.ex010315_rear_mod_gain);
   return;
 }
 
@@ -175,7 +175,7 @@ void menu_ex010315_step(void)
 void menu_ex010316_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009a61);
+  menu_step_u8(0,3,&g_opstate.ex010316_rptt_select);
   return;
 }
 
@@ -190,14 +190,14 @@ void menu_ex010317_step(void)
 {
   bool local_9;
   byte *local_8;
-  byte *local_4;
+  vfo_rec *local_4;
   
-  local_4 = vfo_rec_ptr(1);
-  local_8 = local_4 + 2;
+  local_4 = vfo_rec_ptr(VFO_TX);
+  local_8 = &local_4->flags2;
   local_9 = (bool)(*local_8 >> 2 & 3);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 0xf3 | (local_9 & 3U) << 2;
-  local_9 = local_4 != &DAT_00009d09;
+  local_9 = local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;
@@ -211,10 +211,10 @@ void menu_ex010317_step(void)
 byte menu_fm_rptshift_get(void)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return pbVar1[2] >> 2 & 3;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  return pvVar1->flags2 >> 2 & 3;
 }
 
 
@@ -226,10 +226,10 @@ byte menu_fm_rptshift_get(void)
 void menu_fm_rptshift_set(byte param_1)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  pbVar1[2] = pbVar1[2] & 0xf3 | (param_1 & 3) << 2;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  pvVar1->flags2 = pvVar1->flags2 & 0xf3 | (param_1 & 3) << 2;
   return;
 }
 
@@ -241,7 +241,7 @@ void menu_fm_rptshift_set(byte param_1)
 void menu_ex010318_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a62);
+  menu_step_u8(0,100,&g_opstate.ex010318_rpt_shift_28mhz);
   return;
 }
 
@@ -254,14 +254,14 @@ void menu_ex010318_step(void)
 void menu_ex010319_step(void)
 
 {
-  undefined1 local_2;
-  undefined1 uStack_1;
+  byte local_2;
+  byte bStack_1;
   
-  local_2 = DAT_00009a64;
-  uStack_1 = DAT_00009a63;
+  local_2 = g_opstate.ex010319_rpt_shift_50mhz_be[1];
+  bStack_1 = g_opstate.ex010319_rpt_shift_50mhz_be[0];
   FUN_fffce495(0,400,&local_2);
-  DAT_00009a63 = uStack_1;
-  DAT_00009a64 = local_2;
+  g_opstate.ex010319_rpt_shift_50mhz_be[0] = bStack_1;
+  g_opstate.ex010319_rpt_shift_50mhz_be[1] = local_2;
   return;
 }
 
@@ -272,7 +272,7 @@ void FUN_fffce495(ushort param_1,ushort param_2,ushort *param_3)
 
 {
   if (DAT_00015dfc != '\x01') {
-    if (PTR_DAT_00025d60[0x421] == '\0') {
+    if (PTR_g_ui_00025d60->menu_step_dir == 0) {
       if (*param_3 < param_2) {
         *param_3 = *param_3 + 1;
         return;
@@ -297,14 +297,14 @@ void menu_ex010320_step(void)
 {
   bool local_9;
   byte *local_8;
-  byte *local_4;
+  vfo_rec *local_4;
   
-  local_4 = vfo_rec_ptr(1);
-  local_8 = local_4 + 3;
+  local_4 = vfo_rec_ptr(VFO_TX);
+  local_8 = &local_4->flags3;
   local_9 = (bool)(*local_8 >> 3 & 7);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 199 | (local_9 & 7U) << 3;
-  local_9 = local_4 != &DAT_00009d09;
+  local_9 = local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;
@@ -318,10 +318,10 @@ void menu_ex010320_step(void)
 byte menu_fm_encdec_get(void)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return pbVar1[3] >> 3 & 7;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  return pvVar1->flags3 >> 3 & 7;
 }
 
 
@@ -333,10 +333,10 @@ byte menu_fm_encdec_get(void)
 void menu_fm_encdec_set(byte param_1)
 
 {
-  byte *pbVar1;
+  vfo_rec *pvVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  pbVar1[3] = pbVar1[3] & 199 | (param_1 & 7) << 3;
+  pvVar1 = vfo_rec_ptr(VFO_TX);
+  pvVar1->flags3 = pvVar1->flags3 & 199 | (param_1 & 7) << 3;
   return;
 }
 
@@ -348,14 +348,16 @@ void menu_fm_encdec_set(byte param_1)
 void menu_ex010321_step(void)
 
 {
+  vfo_rec *pvVar1;
   byte *local_4;
   
-  if (DAT_00009dbd == '\0') {
-    local_4 = &DAT_00009d4f;
+  if (g_opstate.active_vfo == 0) {
+    pvVar1 = &g_opstate.vfo_a;
   }
   else {
-    local_4 = &DAT_00009da9;
+    pvVar1 = &g_opstate.vfo_b;
   }
+  local_4 = &pvVar1->tone_num;
   menu_step_u8(0,0x31,local_4);
   return;
 }
@@ -368,14 +370,16 @@ void menu_ex010321_step(void)
 byte menu_fm_tone_get(void)
 
 {
+  vfo_rec *pvVar1;
   byte *local_8;
   
-  if (DAT_00009dbd == '\0') {
-    local_8 = &DAT_00009d4f;
+  if (g_opstate.active_vfo == 0) {
+    pvVar1 = &g_opstate.vfo_a;
   }
   else {
-    local_8 = &DAT_00009da9;
+    pvVar1 = &g_opstate.vfo_b;
   }
+  local_8 = &pvVar1->tone_num;
   return *local_8;
 }
 
@@ -387,14 +391,16 @@ byte menu_fm_tone_get(void)
 void menu_fm_tone_set(byte param_1)
 
 {
+  vfo_rec *pvVar1;
   byte *local_8;
   
-  if (DAT_00009dbd == '\0') {
-    local_8 = &DAT_00009d4f;
+  if (g_opstate.active_vfo == 0) {
+    pvVar1 = &g_opstate.vfo_a;
   }
   else {
-    local_8 = &DAT_00009da9;
+    pvVar1 = &g_opstate.vfo_b;
   }
+  local_8 = &pvVar1->tone_num;
   *local_8 = param_1;
   return;
 }
@@ -407,7 +413,7 @@ void menu_fm_tone_set(byte param_1)
 void menu_ex010401_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a67);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010401_af_treble_gain);
   return;
 }
 
@@ -419,7 +425,7 @@ void menu_ex010401_step(void)
 void menu_ex010402_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a68);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010402_af_middle_tone_gain);
   return;
 }
 
@@ -431,7 +437,7 @@ void menu_ex010402_step(void)
 void menu_ex010403_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a69);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010403_af_bass_gain);
   return;
 }
 
@@ -443,7 +449,7 @@ void menu_ex010403_step(void)
 void menu_ex010404_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a6a);
+  menu_step_u8(0,199,&g_opstate.ex010404_agc_fast_delay);
   return;
 }
 
@@ -455,7 +461,7 @@ void menu_ex010404_step(void)
 void menu_ex010405_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a6b);
+  menu_step_u8(0,199,&g_opstate.ex010405_agc_mid_delay);
   return;
 }
 
@@ -467,7 +473,7 @@ void menu_ex010405_step(void)
 void menu_ex010406_step(void)
 
 {
-  menu_step_u8(0,199,&DAT_00009a6c);
+  menu_step_u8(0,199,&g_opstate.ex010406_agc_slow_delay);
   return;
 }
 
@@ -479,7 +485,7 @@ void menu_ex010406_step(void)
 void menu_ex010407_step(void)
 
 {
-  FUN_fffcdecf(&DAT_00009a6d);
+  menu_step_lcut_freq(0x9a6d);
   return;
 }
 
@@ -491,7 +497,7 @@ void menu_ex010407_step(void)
 void menu_ex010408_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009a6e);
+  menu_step_u8(0,1,&g_opstate.ex010408_lcut_slope);
   return;
 }
 
@@ -503,7 +509,7 @@ void menu_ex010408_step(void)
 void menu_ex010409_step(void)
 
 {
-  FUN_fffcdf37(&DAT_00009a6f);
+  menu_step_hcut_freq(0x9a6f);
   return;
 }
 
@@ -515,7 +521,7 @@ void menu_ex010409_step(void)
 void menu_ex010410_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009a70);
+  menu_step_u8(0,1,&g_opstate.ex010410_hcut_slope);
   return;
 }
 
@@ -527,7 +533,7 @@ void menu_ex010410_step(void)
 void menu_ex010411_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a71);
+  menu_step_u8(0,100,&g_opstate.ex010411_usb_out_level);
   return;
 }
 
@@ -539,7 +545,7 @@ void menu_ex010411_step(void)
 void menu_ex010412_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a72);
+  menu_step_u8(0,100,&g_opstate.ex010412_rear_out_level);
   return;
 }
 
@@ -551,7 +557,7 @@ void menu_ex010412_step(void)
 void menu_ex010413_step(void)
 
 {
-  menu_step_u8(0,4,&DAT_00009a73);
+  menu_step_u8(0,4,&g_opstate.ex010413_tx_bpf_sel);
   return;
 }
 
@@ -563,7 +569,7 @@ void menu_ex010413_step(void)
 void menu_ex010414_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009a74);
+  menu_step_u8(0,3,&g_opstate.ex010414_mod_source);
   return;
 }
 
@@ -575,7 +581,7 @@ void menu_ex010414_step(void)
 void menu_ex010415_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a75);
+  menu_step_u8(0,100,&g_opstate.ex010415_usb_mod_gain);
   return;
 }
 
@@ -587,7 +593,7 @@ void menu_ex010415_step(void)
 void menu_ex010416_step(void)
 
 {
-  menu_step_u8(0,100,&DAT_00009a76);
+  menu_step_u8(0,100,&g_opstate.ex010416_rear_mod_gain);
   return;
 }
 
@@ -599,7 +605,7 @@ void menu_ex010416_step(void)
 void menu_ex010417_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009a77);
+  menu_step_u8(0,3,&g_opstate.ex010417_rptt_select);
   return;
 }
 
@@ -611,7 +617,7 @@ void menu_ex010417_step(void)
 void menu_ex010418_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009a78);
+  menu_step_u8(0,0x14,&g_opstate.ex010418_nar_width);
   return;
 }
 
@@ -623,7 +629,7 @@ void menu_ex010418_step(void)
 void menu_ex010419_step(void)
 
 {
-  menu_step_u8(0,2,&DAT_00009a79);
+  menu_step_u8(0,2,&g_opstate.ex010419_psk_tone);
   return;
 }
 
@@ -636,14 +642,14 @@ void menu_ex010419_step(void)
 void menu_ex010420_step(void)
 
 {
-  undefined1 local_2;
-  undefined1 uStack_1;
+  byte local_2;
+  byte bStack_1;
   
-  local_2 = DAT_00009a7b;
-  uStack_1 = DAT_00009a7a;
+  local_2 = g_opstate.ex010420_data_shift_ssb_be[1];
+  bStack_1 = g_opstate.ex010420_data_shift_ssb_be[0];
   FUN_fffce495(0,300,&local_2);
-  DAT_00009a7a = uStack_1;
-  DAT_00009a7b = local_2;
+  g_opstate.ex010420_data_shift_ssb_be[0] = bStack_1;
+  g_opstate.ex010420_data_shift_ssb_be[1] = local_2;
   return;
 }
 
@@ -655,7 +661,7 @@ void menu_ex010420_step(void)
 void menu_ex010501_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a7e);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010501_af_treble_gain);
   return;
 }
 
@@ -667,7 +673,7 @@ void menu_ex010501_step(void)
 void menu_ex010502_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a7f);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010502_af_middle_tone_gain);
   return;
 }
 
@@ -679,7 +685,7 @@ void menu_ex010502_step(void)
 void menu_ex010503_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009a80);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex010503_af_bass_gain);
   return;
 }
 

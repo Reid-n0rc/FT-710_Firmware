@@ -141,8 +141,8 @@
 000864d2	virtqueue_kick	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 00086518	vq_ring_init	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 00086542	vPortYield	void	void	asm	asm: live-in - (= decompiler 0), 0/14 call sites read r0, writes r0 0, return void
-00086596	vPortRaiseBASEPRI	uint32	void	asm	asm: live-in - (= decompiler 0), 3/67 call sites read r0, writes r0 1, return value
-000865ac	vPortClearBASEPRI	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 0, return void
+00086596	ulSetInterruptMask	uint32	void	asm	asm: live-in - (= decompiler 0), 3/67 call sites read r0, writes r0 1, return value
+000865ac	vClearInterruptMask	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 0, return void
 000865ba	xEventGroupCreate	void *	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 000865d4	xEventGroupWaitBits	uint32	uint32 *, uint32, int32, int32, int32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 5), 1/1 call sites read r0, writes r0 1, return value
 00086716	vListInitialise	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/10 call sites read r0, writes r0 0, return void

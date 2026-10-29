@@ -7,7 +7,7 @@
 void menu_ex030106_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009aba);
+  menu_step_u8(0,3,&g_opstate.ex030106_cat_1_time_out_timer);
   return;
 }
 
@@ -19,7 +19,7 @@ void menu_ex030106_step(void)
 void menu_ex030107_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009abb);
+  menu_step_u8(0,1,&g_opstate.ex030107_cat_1_cat_3_stop_bit);
   sci2_configure();
   sci3_set_baud();
   return;
@@ -33,7 +33,7 @@ void menu_ex030107_step(void)
 void menu_ex030108_step(void)
 
 {
-  menu_step_u8(0,4,&DAT_00009abc);
+  menu_step_u8(0,4,&g_opstate.ex030108_cat_2_rate);
   sci0_set_baud();
   return;
 }
@@ -46,7 +46,7 @@ void menu_ex030108_step(void)
 void menu_ex030109_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009abd);
+  menu_step_u8(0,3,&g_opstate.ex030109_cat_2_time_out_timer);
   return;
 }
 
@@ -58,7 +58,7 @@ void menu_ex030109_step(void)
 void menu_ex030110_step(void)
 
 {
-  menu_step_u8(0,4,&DAT_00009abe);
+  menu_step_u8(0,4,&g_opstate.ex030110_cat_3_rate);
   sci2_configure();
   return;
 }
@@ -71,7 +71,7 @@ void menu_ex030110_step(void)
 void menu_ex030111_step(void)
 
 {
-  menu_step_u8(0,3,&DAT_00009abf);
+  menu_step_u8(0,3,&g_opstate.ex030111_cat_3_time_out_timer);
   return;
 }
 
@@ -83,7 +83,7 @@ void menu_ex030111_step(void)
 void menu_ex030112_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ac0);
+  menu_step_u8(0,1,&g_opstate.ex030112_qmb_ch);
   FUN_fffc4a8e();
   return;
 }
@@ -96,7 +96,7 @@ void menu_ex030112_step(void)
 void menu_ex030113_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ac1);
+  menu_step_u8(0,1,&g_opstate.ex030113_band_stack);
   return;
 }
 
@@ -108,7 +108,7 @@ void menu_ex030113_step(void)
 void menu_ex030114_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ac2);
+  menu_step_u8(0,1,&g_opstate.ex030114_mem_group);
   return;
 }
 
@@ -120,7 +120,7 @@ void menu_ex030114_step(void)
 void menu_ex030115_step(void)
 
 {
-  menu_step_u8(0,0x1e,&DAT_00009ac3);
+  menu_step_u8(0,0x1e,&g_opstate.ex030115_tx_time_out_timer);
   return;
 }
 
@@ -132,7 +132,7 @@ void menu_ex030115_step(void)
 void menu_ex030116_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ac4);
+  menu_step_u8(0,1,&g_opstate.ex030116_mic_scan);
   return;
 }
 
@@ -144,7 +144,7 @@ void menu_ex030116_step(void)
 void menu_ex030117_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ac5);
+  menu_step_u8(0,1,&g_opstate.ex030117_mic_scan_resume);
   return;
 }
 
@@ -156,7 +156,7 @@ void menu_ex030117_step(void)
 void menu_ex030118_step(void)
 
 {
-  menu_step_s8(-0x19,'\x19',&DAT_00009ac6);
+  menu_step_s8(-0x19,'\x19',&g_opstate.ex030118_ref_freq_fine_adj);
   return;
 }
 
@@ -168,13 +168,13 @@ void menu_ex030118_step(void)
 void menu_ex030119_step(void)
 
 {
-  menu_step_u8(0,10,(byte *)&DAT_00009ac7);
-  if (PTR_s_V01_12_0001b4fd._1_1_ == DAT_00009ac7) {
+  menu_step_u8(0,10,&g_opstate.ex030119_keyboard_language);
+  if (PTR_s_V01_12_0001b4fd._1_1_ == g_opstate.ex030119_keyboard_language) {
     return;
   }
-  PTR_s_V01_12_0001b4fd._1_1_ = DAT_00009ac7;
+  PTR_s_V01_12_0001b4fd._1_1_ = g_opstate.ex030119_keyboard_language;
   swtimer_start(0x2b,100);
-  PTR_DAT_00025d60[0x401] = 1;
+  PTR_g_ui_00025d60->dl_req_24_later = 1;
   return;
 }
 
@@ -186,7 +186,7 @@ void menu_ex030119_step(void)
 void menu_ex030120_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009ac8);
+  menu_step_u8(0,0x14,&g_opstate.ex030120_mic_p1);
   return;
 }
 
@@ -198,7 +198,7 @@ void menu_ex030120_step(void)
 void menu_ex030121_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009ac9);
+  menu_step_u8(0,0x14,&g_opstate.ex030121_mic_p2);
   return;
 }
 
@@ -210,7 +210,7 @@ void menu_ex030121_step(void)
 void menu_ex030122_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009aca);
+  menu_step_u8(0,0x14,&g_opstate.ex030122_mic_p3);
   return;
 }
 
@@ -222,7 +222,7 @@ void menu_ex030122_step(void)
 void menu_ex030123_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009acb);
+  menu_step_u8(0,0x14,&g_opstate.ex030123_mic_p4);
   return;
 }
 
@@ -234,7 +234,7 @@ void menu_ex030123_step(void)
 void menu_ex030124_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009acc);
+  menu_step_u8(0,0x14,&g_opstate.ex030124_mic_up);
   return;
 }
 
@@ -246,7 +246,7 @@ void menu_ex030124_step(void)
 void menu_ex030125_step(void)
 
 {
-  menu_step_u8(0,0x14,&DAT_00009acd);
+  menu_step_u8(0,0x14,&g_opstate.ex030125_mic_down);
   return;
 }
 
@@ -258,13 +258,13 @@ void menu_ex030125_step(void)
 void menu_ex030126_step(void)
 
 {
-  menu_step_u8(0,1,(byte *)&DAT_00009ace);
-  if (PTR_s_V01_12_0001b4fd._2_1_ == DAT_00009ace) {
+  menu_step_u8(0,1,&g_opstate.ex030126_scu_lan10);
+  if (PTR_s_V01_12_0001b4fd._2_1_ == g_opstate.ex030126_scu_lan10) {
     return;
   }
-  PTR_s_V01_12_0001b4fd._2_1_ = DAT_00009ace;
+  PTR_s_V01_12_0001b4fd._2_1_ = g_opstate.ex030126_scu_lan10;
   swtimer_start(0x2b,100);
-  PTR_DAT_00025d60[0x401] = 1;
+  PTR_g_ui_00025d60->dl_req_24_later = 1;
   return;
 }
 
@@ -276,7 +276,7 @@ void menu_ex030126_step(void)
 void menu_ex030201_step(void)
 
 {
-  menu_step_u8(0,1,&DAT_00009ad1);
+  menu_step_u8(0,1,&g_opstate.ex030201_if_notch_width);
   return;
 }
 
@@ -288,7 +288,7 @@ void menu_ex030201_step(void)
 void menu_ex030202_step(void)
 
 {
-  menu_step_u8(0,2,&DAT_00009ad2);
+  menu_step_u8(0,2,&g_opstate.ex030202_nb_rejection);
   return;
 }
 
@@ -300,7 +300,7 @@ void menu_ex030202_step(void)
 void menu_ex030203_step(void)
 
 {
-  menu_step_u8(0,2,&DAT_00009ad3);
+  menu_step_u8(0,2,&g_opstate.ex030203_nb_width);
   return;
 }
 
@@ -312,7 +312,7 @@ void menu_ex030203_step(void)
 void menu_ex030204_step(void)
 
 {
-  menu_step_u8(0,2,&DAT_00009ad4);
+  menu_step_u8(0,2,&g_opstate.ex030204_apf_width);
   return;
 }
 
@@ -324,7 +324,7 @@ void menu_ex030204_step(void)
 void menu_ex030205_step(void)
 
 {
-  menu_step_s8(-0x28,'\x14',&DAT_00009ad5);
+  menu_step_s8(-0x28,'\x14',&g_opstate.ex030205_contour_level);
   return;
 }
 
@@ -336,7 +336,7 @@ void menu_ex030205_step(void)
 void menu_ex030206_step(void)
 
 {
-  menu_step_u8(1,0xb,&DAT_00009ad6);
+  menu_step_u8(1,0xb,&g_opstate.ex030206_contour_width);
   return;
 }
 
@@ -348,7 +348,7 @@ void menu_ex030206_step(void)
 void menu_ex030301_step(void)
 
 {
-  menu_step_u8(0,2,&DAT_00009ad9);
+  menu_step_u8(0,2,&g_opstate.ex030301_amc_release_time);
   return;
 }
 
@@ -360,7 +360,7 @@ void menu_ex030301_step(void)
 void menu_ex030302_step(void)
 
 {
-  menu_step_u8(0,7,&DAT_00009ada);
+  menu_step_u8(0,7,&g_opstate.ex030302_prmtrc_eq1_freq);
   return;
 }
 
@@ -372,7 +372,7 @@ void menu_ex030302_step(void)
 void menu_ex030303_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009adb);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030303_prmtrc_eq1_level);
   return;
 }
 
@@ -384,7 +384,7 @@ void menu_ex030303_step(void)
 void menu_ex030304_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009adc);
+  menu_step_u8(0,10,&g_opstate.ex030304_prmtrc_eq1_bwth);
   return;
 }
 
@@ -396,7 +396,7 @@ void menu_ex030304_step(void)
 void menu_ex030305_step(void)
 
 {
-  menu_step_u8(0,9,&DAT_00009add);
+  menu_step_u8(0,9,&g_opstate.ex030305_prmtrc_eq2_freq);
   return;
 }
 
@@ -408,7 +408,7 @@ void menu_ex030305_step(void)
 void menu_ex030306_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009ade);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030306_prmtrc_eq2_level);
   return;
 }
 
@@ -420,7 +420,7 @@ void menu_ex030306_step(void)
 void menu_ex030307_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009adf);
+  menu_step_u8(0,10,&g_opstate.ex030307_prmtrc_eq2_bwth);
   return;
 }
 
@@ -432,7 +432,7 @@ void menu_ex030307_step(void)
 void menu_ex030308_step(void)
 
 {
-  menu_step_u8(0,0x12,&DAT_00009ae0);
+  menu_step_u8(0,0x12,&g_opstate.ex030308_prmtrc_eq3_freq);
   return;
 }
 
@@ -444,7 +444,7 @@ void menu_ex030308_step(void)
 void menu_ex030309_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009ae1);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030309_prmtrc_eq3_level);
   return;
 }
 
@@ -456,7 +456,7 @@ void menu_ex030309_step(void)
 void menu_ex030310_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009ae2);
+  menu_step_u8(0,10,&g_opstate.ex030310_prmtrc_eq3_bwth);
   return;
 }
 
@@ -468,7 +468,7 @@ void menu_ex030310_step(void)
 void menu_ex030311_step(void)
 
 {
-  menu_step_u8(0,7,&DAT_00009ae3);
+  menu_step_u8(0,7,&g_opstate.ex030311_p_prmtrc_eq1_freq);
   return;
 }
 
@@ -480,7 +480,7 @@ void menu_ex030311_step(void)
 void menu_ex030312_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009ae4);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030312_p_prmtrc_eq1_level);
   return;
 }
 
@@ -492,7 +492,7 @@ void menu_ex030312_step(void)
 void menu_ex030313_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009ae5);
+  menu_step_u8(0,10,&g_opstate.ex030313_p_prmtrc_eq1_bwth);
   return;
 }
 
@@ -504,7 +504,7 @@ void menu_ex030313_step(void)
 void menu_ex030314_step(void)
 
 {
-  menu_step_u8(0,9,&DAT_00009ae6);
+  menu_step_u8(0,9,&g_opstate.ex030314_p_prmtrc_eq2_freq);
   return;
 }
 
@@ -516,7 +516,7 @@ void menu_ex030314_step(void)
 void menu_ex030315_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009ae7);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030315_p_prmtrc_eq2_level);
   return;
 }
 
@@ -528,7 +528,7 @@ void menu_ex030315_step(void)
 void menu_ex030316_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009ae8);
+  menu_step_u8(0,10,&g_opstate.ex030316_p_prmtrc_eq2_bwth);
   return;
 }
 
@@ -540,7 +540,7 @@ void menu_ex030316_step(void)
 void menu_ex030317_step(void)
 
 {
-  menu_step_u8(0,0x12,&DAT_00009ae9);
+  menu_step_u8(0,0x12,&g_opstate.ex030317_p_prmtrc_eq3_freq);
   return;
 }
 
@@ -552,7 +552,7 @@ void menu_ex030317_step(void)
 void menu_ex030318_step(void)
 
 {
-  menu_step_s8(-0x14,'\n',&DAT_00009aea);
+  menu_step_s8(-0x14,'\n',&g_opstate.ex030318_p_prmtrc_eq3_level);
   return;
 }
 
@@ -564,7 +564,7 @@ void menu_ex030318_step(void)
 void menu_ex030319_step(void)
 
 {
-  menu_step_u8(0,10,&DAT_00009aeb);
+  menu_step_u8(0,10,&g_opstate.ex030319_p_prmtrc_eq3_bwth);
   return;
 }
 
@@ -578,8 +578,8 @@ void menu_ex030401_step(void)
 {
   byte bVar1;
   
-  bVar1 = FUN_fffb3e6f(0);
-  menu_step_u8(5,bVar1,&DAT_00009aee);
+  bVar1 = max_power_limit(0);
+  menu_step_u8(5,bVar1,&g_opstate.ex030401_hf_max_power);
   return;
 }
 
@@ -593,8 +593,8 @@ void menu_ex030402_step(void)
 {
   byte bVar1;
   
-  bVar1 = FUN_fffb3e6f(1);
-  menu_step_u8(5,bVar1,&DAT_00009aef);
+  bVar1 = max_power_limit(1);
+  menu_step_u8(5,bVar1,&g_opstate.ex030402_50m_max_power);
   return;
 }
 
@@ -608,8 +608,8 @@ void menu_ex030403_step(void)
 {
   byte bVar1;
   
-  bVar1 = FUN_fffb3e6f(2);
-  menu_step_u8(5,bVar1,&DAT_00009af0);
+  bVar1 = max_power_limit(2);
+  menu_step_u8(5,bVar1,&g_opstate.ex030403_70m_max_power);
   return;
 }
 
@@ -632,8 +632,8 @@ void menu_ex030404_step(void)
   else {
     local_1 = 3;
   }
-  bVar1 = FUN_fffb3e6f(local_1);
-  menu_step_u8(5,bVar1,&DAT_00009af1);
+  bVar1 = max_power_limit(local_1);
+  menu_step_u8(5,bVar1,&g_opstate.ex030404_am_max_power);
   return;
 }
 

@@ -1,5 +1,28 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fs_task_ctx_get @ 2014d95c (48 bytes)
+
+/* Per-task FS context 0x2091D0BC[tskid] (itron_get_tid), -72 for an ID out of range [fact] */
+
+uint fs_task_ctx_get(void)
+
+{
+  uint uVar1;
+  int in_r3;
+  int local_8;
+  
+  local_8 = in_r3;
+  itron_get_tid(&local_8);
+  if (local_8 - 1U < 0x100) {
+    uVar1 = *(uint *)(&DAT_2091d0bc + local_8 * 4);
+  }
+  else {
+    uVar1 = 0xffffffb8;
+  }
+  return uVar1;
+}
+
+
 // ===== FUN_2014d98c @ 2014d98c (48 bytes)
 
 void FUN_2014d98c(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
@@ -8,7 +31,7 @@ void FUN_2014d98c(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
   int local_10;
   
   local_10 = param_4;
-  FUN_20150ba0(&local_10);
+  itron_get_tid(&local_10);
   if (local_10 - 1U < 0x100) {
     *(undefined4 *)(&DAT_2091d0bc + local_10 * 4) = param_1;
   }
@@ -16,9 +39,12 @@ void FUN_2014d98c(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
 }
 
 
-// ===== FUN_2014d9c0 @ 2014d9c0 (164 bytes)
+// ===== fs_lock_a @ 2014d9c0 (164 bytes)
 
-int FUN_2014d9c0(int param_1)
+/* Locks the per-drive semaphore of table 0x2091D4C0 (itron_twai_sem, 300 ms); -37 without one
+   [fact] */
+
+int fs_lock_a(int param_1)
 
 {
   int iVar1;
@@ -30,7 +56,7 @@ int FUN_2014d9c0(int param_1)
       if ((&DAT_2091d4c0)[iVar2 * 2] == 0) {
         return -0x25;
       }
-      iVar1 = FUN_20152bb0((&DAT_2091d4c0)[iVar2 * 2],300);
+      iVar1 = itron_twai_sem((&DAT_2091d4c0)[iVar2 * 2],300);
       goto joined_r0x2014da50;
     }
     iVar2 = iVar2 + 1;
@@ -45,7 +71,7 @@ int FUN_2014d9c0(int param_1)
   if ((&DAT_2091d4c0)[iVar2 * 2] == 0) {
     return -0x25;
   }
-  iVar1 = FUN_20152bb0((&DAT_2091d4c0)[iVar2 * 2],300);
+  iVar1 = itron_twai_sem((&DAT_2091d4c0)[iVar2 * 2],300);
 joined_r0x2014da50:
   if (iVar1 != 0) {
     return iVar1;
@@ -55,9 +81,11 @@ joined_r0x2014da50:
 }
 
 
-// ===== FUN_2014da64 @ 2014da64 (108 bytes)
+// ===== fs_unlock_a @ 2014da64 (108 bytes)
 
-int FUN_2014da64(int param_1)
+/* Releases it (itron_sig_sem); -38 without one [fact] */
+
+int fs_unlock_a(int param_1)
 
 {
   int iVar1;
@@ -69,12 +97,12 @@ int FUN_2014da64(int param_1)
       if ((&DAT_2091d4c0)[iVar2 * 2] == 0) {
         return -0x26;
       }
-      FUN_20150678();
-      iVar1 = FUN_201511e8((&DAT_2091d4c0)[iVar2 * 2]);
+      itron_dis_dsp();
+      iVar1 = itron_sig_sem((&DAT_2091d4c0)[iVar2 * 2]);
       if (iVar1 == 0) {
         (&DAT_2091d4c4)[iVar2 * 8] = 0;
       }
-      FUN_2015080c();
+      itron_ena_dsp();
       return iVar1;
     }
     iVar2 = iVar2 + 1;
@@ -88,18 +116,18 @@ int FUN_2014da64(int param_1)
 void FUN_2014dad0(void)
 
 {
-  int iVar1;
+  uint uVar1;
   int iVar2;
   
-  FUN_2014d148(&DAT_2091d4c0,0,0x28,0x200);
+  fs_memset(&DAT_2091d4c0,0,0x28,0x200);
   iVar2 = 0;
   do {
-    iVar1 = os_create_sem_named(&DAT_20427e4c,"dir_sem");
-    if (iVar1 < 1) {
+    uVar1 = os_create_sem_named(&DAT_20427e4c,0x2014db20);
+    if ((int)uVar1 < 1) {
       return;
     }
-    (&DAT_2091d4c0)[iVar2 * 2] = iVar1;
-    FUN_201511e8();
+    (&DAT_2091d4c0)[iVar2 * 2] = uVar1;
+    itron_sig_sem();
     iVar2 = iVar2 + 1;
   } while (iVar2 < 5);
   return;
@@ -118,7 +146,7 @@ undefined4 FUN_2014db2c(void)
   iVar2 = 0;
   do {
     if ((&DAT_2091d4c0)[iVar2 * 2] != 0) {
-      uVar1 = FUN_201504d0();
+      uVar1 = itron_del_sem();
       (&DAT_2091d4c0)[iVar2 * 2] = 0;
     }
     iVar2 = iVar2 + 1;
@@ -127,9 +155,11 @@ undefined4 FUN_2014db2c(void)
 }
 
 
-// ===== FUN_2014db6c @ 2014db6c (164 bytes)
+// ===== fs_lock_b @ 2014db6c (164 bytes)
 
-int FUN_2014db6c(int param_1)
+/* Same for the second table 0x2091D4E8 (-34) [fact] */
+
+int fs_lock_b(int param_1)
 
 {
   int iVar1;
@@ -141,7 +171,7 @@ int FUN_2014db6c(int param_1)
       if ((&DAT_2091d4e8)[iVar2 * 2] == 0) {
         return -0x22;
       }
-      iVar1 = FUN_20152bb0((&DAT_2091d4e8)[iVar2 * 2],300);
+      iVar1 = itron_twai_sem((&DAT_2091d4e8)[iVar2 * 2],300);
       goto joined_r0x2014dbfc;
     }
     iVar2 = iVar2 + 1;
@@ -156,7 +186,7 @@ int FUN_2014db6c(int param_1)
   if ((&DAT_2091d4e8)[iVar2 * 2] == 0) {
     return -0x22;
   }
-  iVar1 = FUN_20152bb0((&DAT_2091d4e8)[iVar2 * 2],300);
+  iVar1 = itron_twai_sem((&DAT_2091d4e8)[iVar2 * 2],300);
 joined_r0x2014dbfc:
   if (iVar1 != 0) {
     return iVar1;
@@ -166,9 +196,11 @@ joined_r0x2014dbfc:
 }
 
 
-// ===== FUN_2014dc10 @ 2014dc10 (108 bytes)
+// ===== fs_unlock_b @ 2014dc10 (108 bytes)
 
-int FUN_2014dc10(int param_1)
+/* Same release for 0x2091D4E8 (-35) [fact] */
+
+int fs_unlock_b(int param_1)
 
 {
   int iVar1;
@@ -180,12 +212,12 @@ int FUN_2014dc10(int param_1)
       if ((&DAT_2091d4e8)[iVar2 * 2] == 0) {
         return -0x23;
       }
-      FUN_20150678();
-      iVar1 = FUN_201511e8((&DAT_2091d4e8)[iVar2 * 2]);
+      itron_dis_dsp();
+      iVar1 = itron_sig_sem((&DAT_2091d4e8)[iVar2 * 2]);
       if (iVar1 == 0) {
         (&DAT_2091d4ec)[iVar2 * 8] = 0;
       }
-      FUN_2015080c();
+      itron_ena_dsp();
       return iVar1;
     }
     iVar2 = iVar2 + 1;
@@ -199,18 +231,18 @@ int FUN_2014dc10(int param_1)
 void FUN_2014dc7c(void)
 
 {
-  int iVar1;
+  uint uVar1;
   int iVar2;
   
-  FUN_2014d148(&DAT_2091d4e8,0,0x28,0x200);
+  fs_memset(&DAT_2091d4e8,0,0x28,0x200);
   iVar2 = 0;
   do {
-    iVar1 = os_create_sem_named(&DAT_20427e5c,"fat_sem");
-    if (iVar1 < 1) {
+    uVar1 = os_create_sem_named(&DAT_20427e5c,0x2014dccc);
+    if ((int)uVar1 < 1) {
       return;
     }
-    (&DAT_2091d4e8)[iVar2 * 2] = iVar1;
-    FUN_201511e8();
+    (&DAT_2091d4e8)[iVar2 * 2] = uVar1;
+    itron_sig_sem();
     iVar2 = iVar2 + 1;
   } while (iVar2 < 5);
   return;
@@ -229,7 +261,7 @@ undefined4 FUN_2014dcd8(void)
   iVar2 = 0;
   do {
     if ((&DAT_2091d4e8)[iVar2 * 2] != 0) {
-      uVar1 = FUN_201504d0();
+      uVar1 = itron_del_sem();
       (&DAT_2091d4e8)[iVar2 * 2] = 0;
     }
     iVar2 = iVar2 + 1;
@@ -246,7 +278,7 @@ undefined4 FUN_2014dd18(int param_1)
   undefined4 uVar1;
   
   if (0 < param_1) {
-    uVar1 = FUN_20152bb0(param_1,1000);
+    uVar1 = itron_twai_sem(param_1,1000);
     return uVar1;
   }
   return 0xffffffd6;
@@ -261,7 +293,7 @@ undefined4 FUN_2014dd34(int param_1)
   undefined4 uVar1;
   
   if (0 < param_1) {
-    uVar1 = FUN_201511e8(param_1);
+    uVar1 = itron_sig_sem(param_1);
     return uVar1;
   }
   return 0xffffffd6;
@@ -270,27 +302,28 @@ undefined4 FUN_2014dd34(int param_1)
 
 // ===== FUN_2014dd4c @ 2014dd4c (112 bytes)
 
-int FUN_2014dd4c(int *param_1)
+uint FUN_2014dd4c(int *param_1)
 
 {
   int iVar1;
-  int *piVar2;
+  uint uVar2;
+  int *piVar3;
   
-  piVar2 = DAT_20808ba0;
-  while ((piVar2[6] != param_1[6] || (piVar2 == param_1))) {
-    iVar1 = *piVar2;
-    piVar2 = (int *)*piVar2;
+  piVar3 = DAT_20808ba0;
+  while ((piVar3[6] != param_1[6] || (piVar3 == param_1))) {
+    iVar1 = *piVar3;
+    piVar3 = (int *)*piVar3;
     if (iVar1 == 0) {
-      iVar1 = os_create_sem_named(&DAT_20427e6c,"disk_sem");
-      if (iVar1 < 1) {
-        return iVar1;
+      uVar2 = os_create_sem_named(&DAT_20427e6c,0x2014ddc0);
+      if ((int)uVar2 < 1) {
+        return uVar2;
       }
-      param_1[0x1c] = iVar1;
-      iVar1 = FUN_201511e8();
-      return iVar1;
+      param_1[0x1c] = uVar2;
+      uVar2 = itron_sig_sem();
+      return uVar2;
     }
   }
-  param_1[0x1c] = piVar2[0x1c];
+  param_1[0x1c] = piVar3[0x1c];
   return 0;
 }
 
@@ -314,7 +347,7 @@ undefined4 FUN_2014ddd0(int *param_1)
       iVar2 = *piVar3;
       piVar3 = (int *)*piVar3;
     } while (iVar2 != 0);
-    uVar1 = FUN_201504d0(param_1[0x1c]);
+    uVar1 = itron_del_sem(param_1[0x1c]);
     param_1[0x1c] = 0;
   }
   return uVar1;
@@ -330,7 +363,7 @@ undefined4 FUN_2014de30(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb4) {
-    uVar1 = FUN_20152bb0(DAT_20808bb4,300);
+    uVar1 = itron_twai_sem(DAT_20808bb4,300);
   }
   return uVar1;
 }
@@ -345,7 +378,7 @@ undefined4 FUN_2014de5c(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb4) {
-    uVar1 = FUN_201511e8();
+    uVar1 = itron_sig_sem();
   }
   return uVar1;
 }
@@ -356,13 +389,13 @@ undefined4 FUN_2014de5c(void)
 void FUN_2014de84(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
   DAT_20808bb4 = 0;
-  iVar1 = os_create_sem_named(&DAT_20427e7c,"filestr_sem");
-  if (0 < iVar1) {
-    DAT_20808bb4 = iVar1;
-    FUN_201511e8();
+  uVar1 = os_create_sem_named(&DAT_20427e7c,0x2014debc);
+  if (0 < (int)uVar1) {
+    DAT_20808bb4 = uVar1;
+    itron_sig_sem();
     return;
   }
   return;
@@ -378,7 +411,7 @@ undefined4 FUN_2014decc(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb4) {
-    uVar1 = FUN_201504d0();
+    uVar1 = itron_del_sem();
   }
   return uVar1;
 }
@@ -393,7 +426,7 @@ undefined4 FUN_2014def4(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb8) {
-    uVar1 = FUN_20152bb0(DAT_20808bb8,300);
+    uVar1 = itron_twai_sem(DAT_20808bb8,300);
   }
   return uVar1;
 }
@@ -408,7 +441,7 @@ undefined4 FUN_2014df20(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb8) {
-    uVar1 = FUN_201511e8();
+    uVar1 = itron_sig_sem();
   }
   return uVar1;
 }
@@ -419,13 +452,13 @@ undefined4 FUN_2014df20(void)
 void FUN_2014df48(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
   DAT_20808bb8 = 0;
-  iVar1 = os_create_sem_named(&DAT_20427e8c,"dirstr_sem");
-  if (0 < iVar1) {
-    DAT_20808bb8 = iVar1;
-    FUN_201511e8();
+  uVar1 = os_create_sem_named(&DAT_20427e8c,0x2014df7c);
+  if (0 < (int)uVar1) {
+    DAT_20808bb8 = uVar1;
+    itron_sig_sem();
     return;
   }
   return;
@@ -441,7 +474,7 @@ undefined4 FUN_2014df8c(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bb8) {
-    uVar1 = FUN_201504d0();
+    uVar1 = itron_del_sem();
   }
   return uVar1;
 }
@@ -453,7 +486,7 @@ void FUN_2014dfb4(void)
 
 {
   if (0 < DAT_20808bbc) {
-    DAT_20808bc0 = FUN_20152bb0(DAT_20808bbc,300);
+    DAT_20808bc0 = itron_twai_sem(DAT_20808bbc,300);
   }
   return;
 }
@@ -465,7 +498,7 @@ void FUN_2014dfdc(void)
 
 {
   if (0 < DAT_20808bbc) {
-    DAT_20808bc0 = FUN_201511e8(DAT_20808bbc);
+    DAT_20808bc0 = itron_sig_sem(DAT_20808bbc);
   }
   return;
 }
@@ -478,13 +511,13 @@ void FUN_2014dfdc(void)
 void fsys_init_sem(void)
 
 {
-  int iVar1;
+  uint uVar1;
   
   DAT_20808bbc = 0;
-  iVar1 = os_create_sem_named(&DAT_20427e9c,"fsys_sem");
-  if (0 < iVar1) {
-    DAT_20808bbc = iVar1;
-    FUN_201511e8();
+  uVar1 = os_create_sem_named(&DAT_20427e9c,0x2014e034);
+  if (0 < (int)uVar1) {
+    DAT_20808bbc = uVar1;
+    itron_sig_sem();
     return;
   }
   return;
@@ -500,7 +533,7 @@ undefined4 FUN_2014e044(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bbc) {
-    uVar1 = FUN_201504d0();
+    uVar1 = itron_del_sem();
   }
   return uVar1;
 }
@@ -518,7 +551,7 @@ undefined4 FUN_2014e06c(uint param_1,undefined4 param_2,undefined4 param_3,undef
     return 0;
   }
   if ((DAT_20808bc4 < 1) ||
-     (local_8 = param_4, iVar1 = FUN_20151aa4(DAT_20808bc4,&local_8,0), iVar1 != 0)) {
+     (local_8 = param_4, iVar1 = itron_tget_mpf(DAT_20808bc4,&local_8,0), iVar1 != 0)) {
     local_8 = 0;
   }
   return local_8;
@@ -531,7 +564,7 @@ void FUN_2014e0ac(undefined4 param_1)
 
 {
   if (0 < DAT_20808bc4) {
-    FUN_20150c70(DAT_20808bc4,param_1);
+    itron_rel_mpf(DAT_20808bc4,param_1);
     return;
   }
   return;
@@ -543,7 +576,7 @@ void FUN_2014e0ac(undefined4 param_1)
 void FUN_2014e0c8(void)
 
 {
-  DAT_20808bc4 = FUN_2014e690(&DAT_20427eac,"fsys_mpf");
+  DAT_20808bc4 = os_create_mpf_named(&DAT_20427eac,"fsys_mpf");
   if (DAT_20808bc4 < 1) {
     DAT_20808bc4 = 0;
   }
@@ -557,16 +590,18 @@ void FUN_2014e100(void)
 
 {
   if (0 < DAT_20808bc4) {
-    FUN_201502f4();
+    itron_del_mpf();
     return;
   }
   return;
 }
 
 
-// ===== FUN_2014e118 @ 2014e118 (52 bytes)
+// ===== fs_work_alloc @ 2014e118 (52 bytes)
 
-undefined4 FUN_2014e118(void)
+/* itron_tget_mpf from pool 0x20808BC8, 0 on failure [fact] */
+
+undefined4 fs_work_alloc(void)
 
 {
   int iVar1;
@@ -574,23 +609,25 @@ undefined4 FUN_2014e118(void)
   undefined4 local_8;
   
   if ((DAT_20808bc8 < 1) ||
-     (local_8 = in_r3, iVar1 = FUN_20151aa4(DAT_20808bc8,&local_8,0), iVar1 != 0)) {
+     (local_8 = in_r3, iVar1 = itron_tget_mpf(DAT_20808bc8,&local_8,0), iVar1 != 0)) {
     local_8 = 0;
   }
   return local_8;
 }
 
 
-// ===== FUN_2014e14c @ 2014e14c (44 bytes)
+// ===== fs_work_free @ 2014e14c (44 bytes)
 
-undefined4 FUN_2014e14c(undefined4 param_1)
+/* itron_rel_mpf to pool 0x20808BC8 [fact] */
+
+undefined4 fs_work_free(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
   uVar1 = 0;
   if (0 < DAT_20808bc8) {
-    uVar1 = FUN_20150c70(DAT_20808bc8,param_1);
+    uVar1 = itron_rel_mpf(DAT_20808bc8,param_1);
   }
   return uVar1;
 }
@@ -603,7 +640,7 @@ int FUN_2014e178(void)
 {
   int iVar1;
   
-  iVar1 = FUN_2014e690(&DAT_20427ec0,"FSYS Work");
+  iVar1 = os_create_mpf_named(&DAT_20427ec0,"FSYS Work");
   if (iVar1 < 1) {
     DAT_20808bc8 = 0;
   }
@@ -624,7 +661,7 @@ undefined4 FUN_2014e1b4(void)
   
   uVar1 = 0;
   if (0 < DAT_20808bc8) {
-    uVar1 = FUN_201502f4();
+    uVar1 = itron_del_mpf();
   }
   return uVar1;
 }
@@ -632,10 +669,10 @@ undefined4 FUN_2014e1b4(void)
 
 // ===== FUN_2014e1dc @ 2014e1dc (16 bytes)
 
-undefined4 FUN_2014e1dc(void)
+undefined4 FUN_2014e1dc(int *param_1)
 
 {
-  rtc_get_tm();
+  rtc_get_tm(param_1);
   return 1;
 }
 
@@ -648,7 +685,7 @@ undefined4 FUN_2014e1ec(void)
   undefined1 auStack_10 [4];
   undefined4 local_c;
   
-  FUN_20150bd4(auStack_10);
+  itron_get_tim(auStack_10);
   return local_c;
 }
 
@@ -664,9 +701,9 @@ int FUN_2014e208(undefined1 *param_1,undefined1 *param_2)
   
   do {
     uVar1 = *param_2;
-    uVar2 = FUN_201549e4(*param_1);
+    uVar2 = tolower(*param_1);
     uVar2 = uVar2 & 0xff;
-    uVar3 = FUN_201549e4(uVar1);
+    uVar3 = tolower(uVar1);
     if (uVar2 != (uVar3 & 0xff)) {
       return uVar2 - (uVar3 & 0xff);
     }
@@ -694,9 +731,9 @@ int FUN_2014e250(undefined1 *param_1,undefined1 *param_2,int param_3)
       return 0;
     }
     uVar1 = *param_2;
-    uVar2 = FUN_201549e4(*param_1);
+    uVar2 = tolower(*param_1);
     uVar2 = uVar2 & 0xff;
-    uVar3 = FUN_201549e4(uVar1);
+    uVar3 = tolower(uVar1);
     if (uVar2 != (uVar3 & 0xff)) break;
     param_2 = param_2 + 1;
     param_1 = param_1 + 1;
@@ -824,7 +861,7 @@ char * FUN_2014e320(char *param_1,char *param_2,undefined4 *param_3)
 
 /* WARNING: Removing unreachable block (ram,0x2014e53c) */
 
-uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,int param_3)
+uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,uint param_3)
 
 {
   byte bVar1;
@@ -844,9 +881,9 @@ uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,int param_3)
   
   bVar3 = false;
   pbVar9 = param_1;
-  if (((-1 < param_3) && (param_3 != 1)) && (param_3 < 0x25)) {
+  if (((-1 < (int)param_3) && (param_3 != 1)) && ((int)param_3 < 0x25)) {
     uVar8 = (uint)*param_1;
-    piVar6 = (int *)FUN_20154974();
+    piVar6 = (int *)__rt_ctype_table();
     iVar11 = *piVar6;
     bVar1 = *(byte *)(iVar11 + uVar8);
     pbVar5 = param_1;
@@ -879,10 +916,10 @@ uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,int param_3)
       uVar10 = 0;
       bVar2 = false;
       if (bVar12) {
-        uVar14 = FUN_20156260(0x80000000);
+        uVar14 = __aeabi_uidivmod(0x80000000);
       }
       else {
-        uVar14 = __aeabi_uidivmod(0x7fffffff,param_3);
+        uVar14 = __aeabi_idivmod(0x7fffffff,param_3);
       }
       do {
         if (*(byte *)(iVar11 + uVar8) == 0x20) {
@@ -898,7 +935,7 @@ uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,int param_3)
           }
         }
         uVar7 = uVar8 & 0xff;
-        if (param_3 <= (int)uVar7) goto LAB_2014e52c;
+        if ((int)param_3 <= (int)uVar7) goto LAB_2014e52c;
         if (!bVar2) {
           bVar13 = (uint)uVar14 <= uVar10;
           if (uVar10 == (uint)uVar14) {
@@ -951,26 +988,30 @@ LAB_2014e52c:
 
 /* wrapper around itron_acre_sem with a name string */
 
-void os_create_sem_named(undefined4 *param_1,undefined4 param_2)
+uint os_create_sem_named(void *param_1,uint param_2)
 
 {
+  uint uVar1;
   undefined4 local_18;
   undefined4 uStack_14;
   undefined4 local_10;
-  undefined4 uStack_c;
+  uint uStack_c;
   
-  local_18 = *param_1;
-  uStack_14 = param_1[1];
-  local_10 = param_1[2];
+  local_18 = *(undefined4 *)param_1;
+  uStack_14 = *(undefined4 *)((int)param_1 + 4);
+  local_10 = *(undefined4 *)((int)param_1 + 8);
   uStack_c = param_2;
-  itron_acre_sem(0,&local_18);
-  return;
+  uVar1 = itron_acre_sem(0,&local_18);
+  return uVar1;
 }
 
 
-// ===== FUN_2014e5b0 @ 2014e5b0 (52 bytes)
+// ===== os_create_tsk_named @ 2014e5b0 (52 bytes)
 
-void FUN_2014e5b0(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): copies a 6-word T_CTSK and appends
+   the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named [inference] */
+
+void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_28;
@@ -988,14 +1029,17 @@ void FUN_2014e5b0(undefined4 *param_1,undefined4 param_2)
   local_18 = param_1[4];
   local_14 = param_1[5];
   uStack_10 = param_2;
-  itron_acre_tsk(0,&local_28);
+  itron_acre_tsk(0,(byte *)&local_28);
   return;
 }
 
 
-// ===== FUN_2014e5e4 @ 2014e5e4 (44 bytes)
+// ===== os_create_flg_named @ 2014e5e4 (44 bytes)
 
-void FUN_2014e5e4(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_flg
+   [inference] */
+
+void os_create_flg_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_10;
@@ -1005,14 +1049,17 @@ void FUN_2014e5e4(undefined4 *param_1,undefined4 param_2)
   local_10 = *param_1;
   local_c = param_1[1];
   uStack_8 = param_2;
-  itron_acre_flg(0,&local_10);
+  itron_acre_flg(0,(byte *)&local_10);
   return;
 }
 
 
-// ===== FUN_2014e610 @ 2014e610 (40 bytes)
+// ===== os_create_mbf_named @ 2014e610 (40 bytes)
 
-void FUN_2014e610(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mbf
+   [inference] */
+
+void os_create_mbf_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_18;
@@ -1026,14 +1073,17 @@ void FUN_2014e610(undefined4 *param_1,undefined4 param_2)
   uStack_10 = param_1[2];
   uStack_c = param_1[3];
   local_8 = param_2;
-  FUN_2014f3e4(0,&local_18);
+  itron_acre_mbf(0,&local_18);
   return;
 }
 
 
-// ===== FUN_2014e638 @ 2014e638 (44 bytes)
+// ===== os_create_mbx_named @ 2014e638 (44 bytes)
 
-void FUN_2014e638(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mbx
+   [inference] */
+
+void os_create_mbx_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_18;
@@ -1045,14 +1095,17 @@ void FUN_2014e638(undefined4 *param_1,undefined4 param_2)
   uStack_14 = param_1[1];
   local_10 = param_1[2];
   uStack_c = param_2;
-  FUN_2014f67c(0,&local_18);
+  itron_acre_mbx(0,&local_18);
   return;
 }
 
 
-// ===== FUN_2014e664 @ 2014e664 (44 bytes)
+// ===== os_create_mtx_named @ 2014e664 (44 bytes)
 
-void FUN_2014e664(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mtx
+   [inference] */
+
+void os_create_mtx_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_10;
@@ -1062,14 +1115,17 @@ void FUN_2014e664(undefined4 *param_1,undefined4 param_2)
   local_10 = *param_1;
   local_c = param_1[1];
   uStack_8 = param_2;
-  FUN_2014fd24(0,&local_10);
+  itron_acre_mtx(0,&local_10);
   return;
 }
 
 
-// ===== FUN_2014e690 @ 2014e690 (40 bytes)
+// ===== os_create_mpf_named @ 2014e690 (40 bytes)
 
-void FUN_2014e690(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mpf
+   [inference] */
+
+void os_create_mpf_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_18;
@@ -1083,14 +1139,17 @@ void FUN_2014e690(undefined4 *param_1,undefined4 param_2)
   uStack_10 = param_1[2];
   uStack_c = param_1[3];
   local_8 = param_2;
-  FUN_2014f8b8(0,&local_18);
+  itron_acre_mpf(0,&local_18);
   return;
 }
 
 
-// ===== FUN_2014e6b8 @ 2014e6b8 (44 bytes)
+// ===== os_create_mpl_named @ 2014e6b8 (44 bytes)
 
-void FUN_2014e6b8(undefined4 *param_1,undefined4 param_2)
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mpl
+   [inference] */
+
+void os_create_mpl_named(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 local_18;
@@ -1102,26 +1161,7 @@ void FUN_2014e6b8(undefined4 *param_1,undefined4 param_2)
   uStack_14 = param_1[1];
   local_10 = param_1[2];
   uStack_c = param_2;
-  FUN_2014fb04(0,&local_18);
-  return;
-}
-
-
-// ===== FUN_2014e6e4 @ 2014e6e4 (44 bytes)
-
-void FUN_2014e6e4(undefined4 *param_1,undefined4 param_2)
-
-{
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  
-  local_18 = *param_1;
-  uStack_14 = param_1[1];
-  local_10 = param_1[2];
-  uStack_c = param_2;
-  FUN_2014edf4(0,&local_18);
+  itron_acre_mpl(0,&local_18);
   return;
 }
 

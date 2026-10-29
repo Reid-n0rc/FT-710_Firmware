@@ -1,4 +1,18 @@
-// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 12 functions
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 13 functions
+
+// ===== FUN_20164828 @ 20164828 (48 bytes)
+
+int FUN_20164828(int *param_1,int param_2)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  uVar2 = param_2 + 0x1e + *param_1;
+  iVar1 = (int)((longlong)(int)uVar2 * -0x77777777 + ((ulonglong)uVar2 << 0x20) >> 0x20);
+  return uVar2 + ((iVar1 >> 4) - (iVar1 >> 0x1f)) * -0x1e;
+}
+
 
 // ===== FUN_2016485c @ 2016485c (20 bytes)
 
@@ -480,9 +494,11 @@ uint FUN_20164cf0(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_20164d54 @ 20164d54 (46 bytes)
+// ===== __aeabi_i2d @ 20164d54 (46 bytes)
 
-undefined8 FUN_20164d54(uint param_1)
+/* int -> IEEE double (sign, exponent 0x41D - clz, mantissa) [fact] */
+
+undefined8 __aeabi_i2d(uint param_1)
 
 {
   uint uVar1;
@@ -500,9 +516,11 @@ undefined8 FUN_20164d54(uint param_1)
 }
 
 
-// ===== FUN_20164d82 @ 20164d82 (38 bytes)
+// ===== __aeabi_ui2d @ 20164d82 (38 bytes)
 
-undefined8 FUN_20164d82(int param_1)
+/* unsigned int -> IEEE double [fact] */
+
+undefined8 __aeabi_ui2d(int param_1)
 
 {
   uint uVar1;

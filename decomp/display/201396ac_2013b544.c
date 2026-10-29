@@ -1,5 +1,14 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_201396ac @ 201396ac (4 bytes)
+
+void FUN_201396ac(void)
+
+{
+  return;
+}
+
+
 // ===== FUN_201396b0 @ 201396b0 (488 bytes)
 
 void FUN_201396b0(int param_1,int param_2)
@@ -117,8 +126,8 @@ undefined4 FUN_201398a0(int param_1,uint param_2)
            *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[iVar4 * 7]) & 0xf7ff;
       *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a8)[iVar4 * 7]) =
            *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a8)[iVar4 * 7]) & 0xf7ff;
-      FUN_2014eb94(*(undefined4 *)(param_1 + 0x14),~uVar5);
-      thunk_FUN_20152d28(uVar1);
+      itron_clr_flg(*(undefined4 *)(param_1 + 0x14),~uVar5);
+      itron_unl_cpu(uVar1);
       iVar3 = *(int *)(param_1 + 8);
       uVar2 = *(ushort *)(iVar3 + (&DAT_204201b4)[iVar4 * 7]);
       if ((*(ushort *)(iVar3 + (&DAT_204201ac)[iVar4 * 7]) & 2) == 0) {
@@ -183,7 +192,7 @@ LAB_20139a10:
     if (!bVar2) {
       uVar4 = FUN_2013b524();
       *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x200;
-      thunk_FUN_20152d28(uVar4);
+      itron_unl_cpu(uVar4);
       return 0;
     }
   } while( true );
@@ -226,7 +235,7 @@ undefined4 FUN_20139a50(int param_1,int param_2)
   iVar4 = iVar7 + *(int *)(iVar3 + 0x9c) * 2;
   uVar9 = *(int *)(iVar7 + 8) + (uint)*(ushort *)(iVar4 + 0x24);
   iVar4 = (*(int *)(iVar7 + 8) + (uint)*(ushort *)(iVar4 + 0x26)) - uVar9;
-  FUN_20152bb0(uVar1,0xffffffff);
+  itron_twai_sem(uVar1,0xffffffff);
   uVar5 = (ushort)param_2;
   if ((uVar9 & 1) == 0) {
     uVar5 = uVar5 | 0x400;
@@ -236,7 +245,7 @@ undefined4 FUN_20139a50(int param_1,int param_2)
   }
   *(ushort *)(*(int *)(param_1 + 8) + iVar8) =
        *(ushort *)(*(int *)(param_1 + 8) + iVar8) & 0x100 | uVar5;
-  FUN_20138740(param_1,iVar8);
+  reg_wait_bits27(param_1,iVar8);
   if (iVar4 == 0) {
     *(undefined2 *)(*(int *)(param_1 + 8) + iVar2) = 0xc000;
   }
@@ -252,7 +261,7 @@ undefined4 FUN_20139a50(int param_1,int param_2)
   if (iVar6 != 2 && iVar4 != 0) {
     *(ushort *)(*(int *)(param_1 + 8) + iVar8) = *(ushort *)(*(int *)(param_1 + 8) + iVar8) & 0x100;
   }
-  FUN_201511e8(uVar1);
+  itron_sig_sem(uVar1);
   uVar9 = *(int *)(iVar3 + 0x9c) + 1;
   *(uint *)(iVar3 + 0x9c) = uVar9;
   if (*(uint *)(iVar7 + 0x20) <= uVar9) {
@@ -309,7 +318,7 @@ undefined4 FUN_20139c68(int param_1)
   } while (bVar2);
   uVar4 = FUN_2013b524();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x400;
-  thunk_FUN_20152d28(uVar4);
+  itron_unl_cpu(uVar4);
   return 0;
 }
 
@@ -342,61 +351,62 @@ void FUN_20139d10(int param_1,int param_2)
 void FUN_20139d78(int param_1)
 
 {
-  int iVar1;
+  void *pvVar1;
   undefined4 uVar2;
-  undefined *puVar3;
+  int iVar3;
+  undefined *puVar4;
   uint local_c;
-  undefined4 local_8;
+  uint local_8;
   
   if (-1 < param_1) {
     param_1 = param_1 * 0x4d8;
-    puVar3 = &DAT_2090b660 + param_1;
-    local_8 = *(undefined4 *)(&DAT_2090b674 + param_1);
+    puVar4 = &DAT_2090b660 + param_1;
+    local_8 = *(uint *)(&DAT_2090b674 + param_1);
     do {
       while( true ) {
-        iVar1 = itron_twai_flg(local_8,0xffff,1,&local_c,0xffffffff);
-        if (iVar1 == 0) break;
+        pvVar1 = itron_twai_flg(local_8,0xffff,1,&local_c,-1);
+        if (pvVar1 == (void *)0x0) break;
         itron_dly_tsk(200);
       }
       if ((local_c & 0x101) != 0) {
-        iVar1 = 0;
+        iVar3 = 0;
         do {
-          if ((((&DAT_204201a0)[iVar1 * 7] & local_c) != 0) &&
-             ((*(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar1 * 7]) & 0x1000)
+          if ((((&DAT_204201a0)[iVar3 * 7] & local_c) != 0) &&
+             ((*(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) & 0x1000)
               != 0)) {
             uVar2 = FUN_2013b524();
-            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar1 * 7]) =
-                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar1 * 7]) &
+            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) =
+                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) &
                  0xefff;
-            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201b0)[iVar1 * 7]) =
-                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201b0)[iVar1 * 7]) &
+            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201b0)[iVar3 * 7]) =
+                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201b0)[iVar3 * 7]) &
                  0xffef;
-            thunk_FUN_20152d28(uVar2);
+            itron_unl_cpu(uVar2);
             itron_dly_tsk(10);
             uVar2 = FUN_2013b524();
-            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar1 * 7]) =
-                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar1 * 7]) | 0x800
+            *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) =
+                 *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) | 0x800
             ;
-            thunk_FUN_20152d28(uVar2);
-            FUN_2013ae40(puVar3,0,0,0,iVar1,iVar1,7);
-            FUN_20139d10(puVar3,iVar1);
+            itron_unl_cpu(uVar2);
+            FUN_2013ae40(puVar4,0,0,0,iVar3,iVar3,7);
+            FUN_20139d10(puVar4,iVar3);
           }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < 1);
+          iVar3 = iVar3 + 1;
+        } while (iVar3 < 1);
       }
       if ((local_c & 0x202) != 0) {
-        FUN_201398a0(puVar3);
+        FUN_201398a0(puVar4);
       }
       if ((local_c & 8) != 0) {
-        FUN_20139c68(puVar3);
+        FUN_20139c68(puVar4);
       }
       if ((local_c & 0x10) != 0) {
-        FUN_20139970(puVar3);
+        FUN_20139970(puVar4);
       }
     } while( true );
   }
   do {
-    FUN_201525f8(0xffffffff);
+    itron_tslp_tsk(0xffffffff);
   } while( true );
 }
 
@@ -440,19 +450,15 @@ undefined4 FUN_20139f6c(int param_1,int param_2)
   int iVar6;
   undefined4 uVar7;
   ushort *puVar8;
-  int extraout_r1;
-  int extraout_r1_00;
   undefined4 uVar9;
-  uint extraout_r1_01;
-  uint extraout_r1_02;
   ushort uVar10;
   int iVar11;
   int iVar12;
-  uint uVar13;
+  uint n;
+  int iVar13;
   int iVar14;
   int iVar15;
-  int iVar16;
-  undefined8 uVar17;
+  ulonglong uVar16;
   undefined1 local_2c [8];
   
   if (param_2 == 1 || param_2 == 2) {
@@ -462,14 +468,14 @@ undefined4 FUN_20139f6c(int param_1,int param_2)
     iVar12 = 2;
   }
   uVar2 = *(undefined4 *)(param_1 + iVar12 * 4 + 0x30);
-  iVar14 = *(int *)(&DAT_2042016c + iVar12 * 4);
+  iVar13 = *(int *)(&DAT_2042016c + iVar12 * 4);
   iVar3 = *(int *)(&DAT_20420178 + iVar12 * 4);
   iVar4 = (&DAT_20420144)[param_2];
   iVar11 = param_1 + param_2 * 0x70;
   uVar5 = *(uint *)(iVar11 + 0x70);
-  iVar15 = *(int *)(iVar11 + 0x74);
-  iVar16 = *(int *)(iVar11 + 0x78);
-  FUN_20152bb0(uVar2,0xffffffff);
+  iVar14 = *(int *)(iVar11 + 0x74);
+  iVar15 = *(int *)(iVar11 + 0x78);
+  itron_twai_sem(uVar2,0xffffffff);
   uVar10 = (ushort)param_2;
   if ((uVar5 & 1) == 0) {
     uVar10 = uVar10 | 0x400;
@@ -477,28 +483,28 @@ undefined4 FUN_20139f6c(int param_1,int param_2)
   if (iVar12 != 2) {
     uVar10 = uVar10 | 0x1000;
   }
-  *(ushort *)(*(int *)(param_1 + 8) + iVar14) =
-       *(ushort *)(*(int *)(param_1 + 8) + iVar14) & 0x100 | uVar10;
-  FUN_20138740(param_1,iVar14);
+  *(ushort *)(*(int *)(param_1 + 8) + iVar13) =
+       *(ushort *)(*(int *)(param_1 + 8) + iVar13) & 0x100 | uVar10;
+  reg_wait_bits27(param_1,iVar13);
   iVar6 = *(int *)(param_1 + 8);
   uVar10 = *(ushort *)(iVar6 + iVar3);
-  uVar13 = uVar10 & 0xffff0fff;
-  iVar16 = iVar16 + uVar13;
+  n = uVar10 & 0xffff0fff;
+  iVar15 = iVar15 + n;
   if (param_2 == 0) {
     if ((((uVar10 & 0xfff) == 0) ||
-        (__aeabi_uidivmod(uVar13,*(undefined4 *)(param_1 + 0x6c)), extraout_r1_00 != 0)) ||
-       (iVar15 <= iVar16)) goto LAB_2013a090;
+        (uVar16 = __aeabi_idivmod(n,*(uint *)(param_1 + 0x6c)), (int)(uVar16 >> 0x20) != 0)) ||
+       (iVar14 <= iVar15)) goto LAB_2013a090;
 LAB_2013a098:
     bVar1 = false;
   }
   else {
-    if (((*(uint *)(*(int *)(param_1 + 0x4d4) + param_2 * 4 + -4) <= uVar13) &&
-        (__aeabi_uidivmod(uVar13,*(undefined4 *)(iVar11 + 0x6c)), extraout_r1 == 0)) &&
-       (iVar16 < iVar15)) goto LAB_2013a098;
+    if (((*(uint *)(*(int *)(param_1 + 0x4d4) + param_2 * 4 + -4) <= n) &&
+        (uVar16 = __aeabi_idivmod(n,*(uint *)(iVar11 + 0x6c)), (int)(uVar16 >> 0x20) == 0)) &&
+       (iVar15 < iVar14)) goto LAB_2013a098;
 LAB_2013a090:
     bVar1 = true;
   }
-  if (iVar15 < iVar16) {
+  if (iVar14 < iVar15) {
     uVar7 = *(undefined4 *)(iVar11 + 100);
     uVar9 = 0x10;
   }
@@ -507,34 +513,28 @@ LAB_2013a090:
       puVar8 = (ushort *)(iVar6 + iVar4);
       *puVar8 = *puVar8 & 0xfffc;
     }
-    *(uint *)(iVar11 + 0x70) = uVar5 + uVar13;
+    *(uint *)(iVar11 + 0x70) = uVar5 + n;
     if ((uVar10 & 0xfff) == 0) {
-      uVar13 = 0x4000;
       *(undefined2 *)(*(int *)(param_1 + 8) + iVar3) = 0x4000;
     }
     else if (iVar12 == 2) {
-      FUN_20139f04(param_1,uVar5,uVar13);
-      uVar13 = extraout_r1_01;
+      FUN_20139f04(param_1,uVar5,n);
     }
     else {
-      uVar17 = FUN_20138f30(iVar12,local_2c);
-      if ((int)uVar17 != 0) {
-        uVar13 = (uint)((ulonglong)uVar17 >> 0x20);
-      }
+      FUN_20138f30(iVar12,local_2c);
     }
-    *(int *)(iVar11 + 0x78) = iVar16;
+    *(int *)(iVar11 + 0x78) = iVar15;
     if (!bVar1) goto LAB_2013a160;
     uVar7 = *(undefined4 *)(iVar11 + 100);
     uVar9 = 1;
   }
   itron_set_flg(uVar7,uVar9);
-  uVar13 = extraout_r1_02;
 LAB_2013a160:
   if (iVar12 != 2) {
-    uVar13 = *(ushort *)(*(int *)(param_1 + 8) + iVar14) & 0xffffeff8;
-    *(short *)(*(int *)(param_1 + 8) + iVar14) = (short)uVar13;
+    *(ushort *)(*(int *)(param_1 + 8) + iVar13) =
+         *(ushort *)(*(int *)(param_1 + 8) + iVar13) & 0xeff8;
   }
-  FUN_201511e8(uVar2,uVar13);
+  itron_sig_sem(uVar2);
   return 0;
 }
 
@@ -577,7 +577,7 @@ undefined4 FUN_2013a198(int param_1,int param_2)
     uVar10 = *(uint *)(iVar6 + 0x1c);
     uVar8 = *(int *)(iVar6 + 8) + (uint)*(ushort *)(iVar6 + *(int *)(iVar4 + 0x9c) * 2 + 0x24);
   }
-  FUN_20152bb0(uVar1,0xffffffff);
+  itron_twai_sem(uVar1,0xffffffff);
   uVar5 = (ushort)param_2;
   if ((uVar8 & 1) == 0) {
     uVar5 = uVar5 | 0x400;
@@ -587,7 +587,7 @@ undefined4 FUN_2013a198(int param_1,int param_2)
   }
   *(ushort *)(*(int *)(param_1 + 8) + iVar9) =
        *(ushort *)(*(int *)(param_1 + 8) + iVar9) & 0x100 | uVar5;
-  FUN_20138740(param_1,iVar9);
+  reg_wait_bits27(param_1,iVar9);
   uVar11 = *(ushort *)(*(int *)(param_1 + 8) + iVar2) & 0xffff0fff;
   if ((int)uVar10 < (int)uVar11) {
     uVar11 = uVar10;
@@ -625,7 +625,7 @@ LAB_2013a368:
   if (iVar7 != 2) {
     *(ushort *)(*(int *)(param_1 + 8) + iVar9) = *(ushort *)(*(int *)(param_1 + 8) + iVar9) & 0x100;
   }
-  FUN_201511e8(uVar1);
+  itron_sig_sem(uVar1);
   return 0;
 }
 
@@ -668,7 +668,7 @@ undefined4 FUN_2013a394(int param_1)
   } while (bVar2);
   uVar3 = FUN_2013b524();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x100;
-  thunk_FUN_20152d28(uVar3);
+  itron_unl_cpu(uVar3);
   return 0;
 }
 
@@ -678,20 +678,20 @@ undefined4 FUN_2013a394(int param_1)
 void FUN_2013a444(int param_1)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  void *pvVar1;
+  uint uVar2;
   uint local_4;
   
   if (param_1 < 0) {
     do {
-      FUN_201525f8(0xffffffff);
+      itron_tslp_tsk(0xffffffff);
     } while( true );
   }
-  uVar2 = *(undefined4 *)(&DAT_2090b680 + param_1 * 0x4d8);
+  uVar2 = *(uint *)(&DAT_2090b680 + param_1 * 0x4d8);
   do {
     while( true ) {
-      iVar1 = itron_twai_flg(uVar2,0xffff,1,&local_4,0xffffffff);
-      if (iVar1 == 0) break;
+      pvVar1 = itron_twai_flg(uVar2,0xffff,1,&local_4,-1);
+      if (pvVar1 == (void *)0x0) break;
       itron_dly_tsk(200);
     }
     if ((local_4 & 1) != 0) {
@@ -739,7 +739,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
              *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) & 0xffef;
         *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) =
              *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) | 0x800;
-        thunk_FUN_20152d28();
+        itron_unl_cpu();
         return 7;
       }
       uVar1 = *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6);
@@ -763,7 +763,7 @@ LAB_2013a5c8:
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) & 0xefff;
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) | 0x1000;
-  thunk_FUN_20152d28();
+  itron_unl_cpu();
   return uVar7;
 }
 
@@ -838,7 +838,7 @@ undefined4 FUN_2013a690(int param_1)
       *(ushort *)(*(int *)(iVar2 + 8) + 0x6c) =
            *(ushort *)(param_1 + 0x2c) | (ushort)*(byte *)(iVar7 + 0xc) << 0xc;
       *(undefined2 *)(*(int *)(iVar2 + 8) + (&DAT_20420144)[iVar3]) = 0x100;
-      FUN_2014eb94(*(undefined4 *)(param_1 + 0x24),0);
+      itron_clr_flg(*(undefined4 *)(param_1 + 0x24),0);
       *(undefined4 *)(param_1 + 0x54) = 0;
       *(undefined4 *)(param_1 + 0x40) = *(undefined4 *)(iVar7 + 0xc);
       uVar1 = 0;
@@ -1003,7 +1003,7 @@ undefined4 FUN_2013a9e8(int param_1)
   *(ushort *)(*(int *)(param_1 + 8) + 0x3a) = *(ushort *)(*(int *)(param_1 + 8) + 0x3a) | 0x3ff;
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x700;
   *(ushort *)(*(int *)(param_1 + 8) + 0x32) = *(ushort *)(*(int *)(param_1 + 8) + 0x32) | 0x830;
-  thunk_FUN_20152d28(uVar1);
+  itron_unl_cpu(uVar1);
   return 0;
 }
 
@@ -1051,10 +1051,10 @@ undefined4 FUN_2013aab4(undefined4 *param_1)
 {
   ushort uVar1;
   
-  uVar1 = DAT_e8010000;
+  uVar1 = USB_SYSCFG0_0;
   if ((uVar1 & 2) == 0) {
-    uVar1 = DAT_e8010000;
-    DAT_e8010000 = uVar1 | 2;
+    uVar1 = USB_SYSCFG0_0;
+    USB_SYSCFG0_0 = uVar1 | 2;
     itron_dly_tsk(2);
   }
   *(undefined2 *)(param_1[2] + 0x102) = 0x4000;
@@ -1201,10 +1201,10 @@ FUN_2013ae40(int *param_1,uint param_2,uint param_3,uint param_4,uint param_5,ui
   int iVar1;
   undefined4 uVar2;
   
-  iVar1 = FUN_20151308(*(undefined4 *)(&DAT_2091c214 + *param_1 * 8),
-                       *param_1 << 0x18 | (param_2 & 0xf) << 0x14 | (param_3 & 0xf) << 0x10 |
-                       (param_4 & 0xf) << 0xc | (param_5 & 0xf) << 8 | (param_6 & 0xf) << 4 |
-                       param_7 & 0xf,0);
+  iVar1 = itron_tsnd_dtq(*(undefined4 *)(&DAT_2091c214 + *param_1 * 8),
+                         *param_1 << 0x18 | (param_2 & 0xf) << 0x14 | (param_3 & 0xf) << 0x10 |
+                         (param_4 & 0xf) << 0xc | (param_5 & 0xf) << 8 | (param_6 & 0xf) << 4 |
+                         param_7 & 0xf,0);
   uVar2 = 0;
   if (iVar1 != 0) {
     uVar2 = 0xffffffff;
@@ -1409,7 +1409,7 @@ void FUN_2013b238(int param_1)
   
   uVar7 = *(undefined4 *)(&DAT_2091c214 + param_1 * 8);
   do {
-    while (iVar4 = FUN_20151e68(uVar7,auStack_8,0xffffffff), uVar3 = auStack_8[0], iVar4 != 0) {
+    while (iVar4 = itron_trcv_dtq(uVar7,auStack_8,0xffffffff), uVar3 = auStack_8[0], iVar4 != 0) {
       itron_dly_tsk(500);
     }
     uVar1 = auStack_8[0] & 0xffff;
@@ -1586,12 +1586,12 @@ void FUN_2013b484(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 void FUN_2013b4cc(void)
 
 {
-  gic_def_inh(0x49,&DAT_204201b8);
+  gic_def_inh(0x49,0x204201b8);
   gic_enable_irq(0x49);
-  FUN_2013ab9c(0,&DAT_e8010000,2,&DAT_20808ac0);
-  gic_def_inh(0x4a,&DAT_204201c4);
+  FUN_2013ab9c(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
+  gic_def_inh(0x4a,0x204201c4);
   gic_enable_irq(0x4a);
-  FUN_2013ab9c(1,&DAT_e8207000,2,&DAT_20808ac0);
+  FUN_2013ab9c(1,&USB_SYSCFG0_1,2,&DAT_20808ac0);
   return;
 }
 
@@ -1601,7 +1601,7 @@ void FUN_2013b4cc(void)
 undefined4 FUN_2013b524(void)
 
 {
-  FUN_20150c3c();
+  itron_loc_cpu();
   return 0;
 }
 
@@ -1636,24 +1636,5 @@ undefined4 FUN_2013b544(void)
   
   uVar1 = coprocessor_movefromRt(0xf,0,0,in_cr9,in_cr13);
   return uVar1;
-}
-
-
-// ===== FUN_2013b54c @ 2013b54c (64 bytes)
-
-void FUN_2013b54c(void)
-
-{
-  int iVar1;
-  int iVar2;
-  undefined4 in_cr9;
-  undefined4 in_cr13;
-  
-  iVar1 = coprocessor_movefromRt(0xf,0,0,in_cr9,in_cr13);
-  do {
-    iVar2 = coprocessor_movefromRt(0xf,0,0,in_cr9,in_cr13);
-  } while ((uint)(iVar2 - iVar1) < 4);
-  DAT_20808abc = iVar2 - iVar1;
-  return;
 }
 

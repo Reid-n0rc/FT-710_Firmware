@@ -14,19 +14,19 @@
 void CLOCK_AttachClk(uint param_1)
 
 {
-  undefined *puVar1;
+  dword *pdVar1;
   uint uVar2;
   
   uVar2 = 0;
   while( true ) {
     param_1 = param_1 >> (uVar2 & 0x1f);
-    puVar1 = &DAT_40001000;
+    pdVar1 = &CLKCTL0_BASE;
     if ((param_1 & 0x80008000) != 0) {
-      puVar1 = &DAT_40021000;
+      pdVar1 = &CLKCTL1_BASE;
     }
     if ((param_1 & 0xfff) == 0) break;
     memw();
-    *(uint *)(puVar1 + (param_1 & 0xfff)) = param_1 >> 0xc & 7;
+    *(uint *)((int)pdVar1 + (param_1 & 0xfff)) = param_1 >> 0xc & 7;
     uVar2 = uVar2 + 0x10;
     if (0x10 < uVar2) {
       return;
@@ -49,36 +49,36 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
 {
   uint uVar1;
   uint uVar2;
-  int iVar3;
+  dword dVar3;
   
   if (param_1 < 8) {
     memw();
-    iVar3 = *(int *)(&DAT_40021508 + param_1 * 0x20);
+    dVar3 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[param_1 * 8];
   }
   else if (param_1 == 0xe) {
     memw();
-    iVar3 = DAT_400216c8;
+    dVar3 = CLKCTL1_FC14FCLKSEL;
   }
   else {
     if (param_1 != 0xf) {
       return 16000000;
     }
     memw();
-    iVar3 = DAT_400216e8;
+    dVar3 = CLKCTL1_FC15FCLKSEL;
   }
-  if (iVar3 == 0) {
+  if (dVar3 == 0) {
     return 16000000;
   }
-  if (iVar3 == 1) {
+  if (dVar3 == 1) {
     uVar2 = FUN_002086b4();
     return uVar2;
   }
-  if (iVar3 != 2) {
-    if (iVar3 == 3) {
+  if (dVar3 != 2) {
+    if (dVar3 == 3) {
       memw();
       return DAT_00238424;
     }
-    if (iVar3 == 4) {
+    if (dVar3 == 4) {
       uVar2 = FUN_00208d94(param_1);
       return uVar2;
     }
@@ -86,7 +86,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
   }
   uVar1 = FUN_002088a8(0);
   memw();
-  uVar2 = DAT_40021240;
+  uVar2 = CLKCTL1_AUDIOPLLCLKDIV;
   return uVar1 / ((uVar2 & 0xff) + 1);
 }
 
@@ -99,7 +99,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
  */
 // ===== DMA_Init @ 0020a528 (282 bytes)
 
-void DMA_Init(uint *param_1)
+void DMA_Init(dword *param_1)
 
 {
   uint uVar1;
@@ -107,42 +107,42 @@ void DMA_Init(uint *param_1)
   uint uVar3;
   
   iVar2 = 0;
-  if (param_1 != (uint *)&DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
   uVar1 = *(uint *)((int)&DAT_00200190 + iVar2);
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
-    DAT_40001040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
-    DAT_40001044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
-    DAT_40001048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
-    DAT_40021040 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
-    DAT_40021044 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
-    DAT_40021048 = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
-  if (param_1 != (uint *)&DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
   FUN_00213910(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
-  param_1[2] = (uint)(&PTR_DAT_00236828)[param_1 != (uint *)&DAT_40104000];
+  param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
   memw();
   memw();
   *param_1 = *param_1 | 1;
@@ -162,14 +162,14 @@ void DMA_Init(uint *param_1)
 /* WARNING: Removing unreachable block (ram,0x0020aafd) */
 /* WARNING: Removing unreachable block (ram,0x0020ab00) */
 
-void DMA_CreateHandle(undefined4 *param_1,undefined *param_2,int param_3)
+void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
 
 {
   int iVar1;
   
   iVar1 = 0;
-  if (param_2 != &DAT_40104000) {
-    if (param_2 != &DAT_40104000) {
+  if (param_2 != &DMA0_CTRL) {
+    if (param_2 != &DMA0_CTRL) {
       iVar1 = 0x21;
     }
   }
@@ -199,7 +199,7 @@ void DMA_CreateHandle(undefined4 *param_1,undefined *param_2,int param_3)
 /* WARNING: Removing unreachable block (ram,0x0020af72) */
 /* WARNING: Removing unreachable block (ram,0x0020af75) */
 
-void DMA_IRQHandle(undefined *param_1)
+void DMA_IRQHandle(dword *param_1)
 
 {
   undefined4 *puVar1;
@@ -210,9 +210,9 @@ void DMA_IRQHandle(undefined *param_1)
   code *pcVar6;
   
   iVar4 = 0x21;
-  if (param_1 != &DAT_40104000) {
+  if (param_1 != &DMA0_CTRL) {
     iVar5 = 0;
-    if (param_1 != &DAT_40104000) {
+    if (param_1 != &DMA0_CTRL) {
       iVar5 = 0x21;
     }
   }
@@ -270,7 +270,7 @@ void DMA_IRQHandle(undefined *param_1)
  */
 // ===== I2S_TxInit @ 0020edac (285 bytes)
 
-void I2S_TxInit(undefined *param_1,uint *param_2)
+void I2S_TxInit(dword *param_1,uint *param_2)
 
 {
   byte bVar1;
@@ -281,27 +281,27 @@ void I2S_TxInit(undefined *param_1,uint *param_2)
   FUN_0020b7b0(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
-  if (param_1 == &DAT_40106000) {
+  if (param_1 == &USART0_CFG) {
     uVar4 = uVar4 | (*(byte *)((int)param_2 + 10) & 1) << 0xb;
   }
   uVar2 = *(ushort *)((int)param_2 + 0x12);
   uVar3 = param_2[5];
   memw();
-  *(uint *)(param_1 + 0xc00) =
+  param_1[0x300] =
        uVar4 | (*(byte *)((int)param_2 + 0xb) & 1) << 0xc | ((byte)param_2[3] & 1) << 0xd |
        ((byte)param_2[4] & 1) << 10 |
        (*(byte *)((int)param_2 + 0x11) - 1) * 0x10000 & (uint)&DAT_001f0000;
   memw();
-  *(uint *)(param_1 + 0xc04) = uVar2 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
+  param_1[0x301] = uVar2 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
   memw();
   bVar1 = *(byte *)((int)param_2 + 0x16);
   uVar4 = param_2[6];
-  *(uint *)(param_1 + 0xc1c) = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
+  param_1[0x307] = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
   memw();
-  *(uint *)(param_1 + 0xe00) =
+  param_1[0x380] =
        (*(byte *)((int)param_2 + 0x17) & 1) << 2 | ((byte)uVar4 & 1) << 3 | (uint)&DAT_00010001;
   memw();
-  *(uint *)(param_1 + 0xe08) = (bVar1 & 0xf) << 8 | 1;
+  param_1[0x382] = (bVar1 & 0xf) << 8 | 1;
   return;
 }
 
@@ -314,7 +314,7 @@ void I2S_TxInit(undefined *param_1,uint *param_2)
  */
 // ===== I2S_RxInit @ 0020eecc (272 bytes)
 
-void I2S_RxInit(undefined *param_1,uint *param_2)
+void I2S_RxInit(dword *param_1,uint *param_2)
 
 {
   ushort uVar1;
@@ -325,25 +325,25 @@ void I2S_RxInit(undefined *param_1,uint *param_2)
   FUN_0020b7b0(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
-  if (param_1 == &DAT_40106000) {
+  if (param_1 == &USART0_CFG) {
     uVar4 = uVar4 | (*(byte *)((int)param_2 + 10) & 1) << 0xb;
   }
   uVar1 = *(ushort *)((int)param_2 + 0x12);
   uVar3 = param_2[5];
   memw();
-  *(uint *)(param_1 + 0xc00) =
+  param_1[0x300] =
        uVar4 | (*(byte *)((int)param_2 + 0xb) & 1) << 0xc | ((byte)param_2[3] & 1) << 0xd |
        ((byte)param_2[4] & 1) << 10 |
        (*(byte *)((int)param_2 + 0x11) - 1) * 0x10000 & (uint)&DAT_001f0000;
   memw();
-  *(uint *)(param_1 + 0xc04) = uVar1 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
+  param_1[0x301] = uVar1 - 1 & 0x7ff | ((ushort)uVar3 & 0x7ff) << 0x10;
   memw();
   bVar2 = *(byte *)((int)param_2 + 0x16);
-  *(uint *)(param_1 + 0xc1c) = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
+  param_1[0x307] = *(ushort *)((int)param_2 + 0xe) - 1 & 0xfff;
   memw();
-  *(uint *)(param_1 + 0xe00) = ((byte)param_2[6] & 1) << 3 | (uint)&DAT_00020002;
+  param_1[0x380] = ((byte)param_2[6] & 1) << 3 | (uint)&DAT_00020002;
   memw();
-  *(uint *)(param_1 + 0xe08) = (bVar2 & 0xf) << 0x10 | 2;
+  param_1[0x382] = (bVar2 & 0xf) << 0x10 | 2;
   return;
 }
 
@@ -1133,9 +1133,9 @@ void tx_gpio_to_reg4004(void)
   
   sVar3 = regfile_gpio_sel();
   memw();
-  bVar1 = DAT_40100015;
+  bVar1 = GPIO_B0_21;
   memw();
-  bVar2 = DAT_40100016;
+  bVar2 = GPIO_B0_22;
   DAT_20078008 = (ushort)bVar2 | sVar3 << 2 | (ushort)bVar1 << 1;
   return;
 }
@@ -1306,7 +1306,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
   undefined1 auStack_dc [32];
   undefined1 auStack_bc [188];
   
-  MU_Init(&DAT_40111000);
+  MU_Init(&MUB_VER);
   FUN_0022700c(param_1 + 0x3ac,0,0);
   uVar2 = FUN_0022ba40(0x618);
   param_1[2] = uVar2;
@@ -1320,21 +1320,21 @@ void Thread_Ipc_entry(undefined4 *param_1)
   uVar2 = rpmsg_lite_create_ept(*param_1,0x1e,ipc_ept_rx_cb,param_1[2],auStack_dc);
   param_1[1] = uVar2;
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   while ((uVar1 & 7) != 1) {
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
   }
-  MU_SetFlags(&DAT_40111000,1);
+  MU_SetFlags(&MUB_VER,1);
   memw();
-  uVar1 = DAT_40111060;
+  uVar1 = MUB_SR;
   while ((uVar1 & 7) != 2) {
     memw();
-    uVar1 = DAT_40111060;
+    uVar1 = MUB_SR;
   }
-  SEMA42_Init(&DAT_40112000);
-  SEMA42_Lock(&DAT_40112000,0,3);
-  MU_SetFlags(&DAT_40111000,3);
+  SEMA42_Init(&SEMA42_GATE3);
+  SEMA42_Lock(&SEMA42_GATE3,0,3);
+  MU_SetFlags(&MUB_VER,3);
   do {
     xos_msgq_get(param_1[2],auStack_bc);
     ipc_handle_msg(param_1,auStack_bc);
@@ -1560,8 +1560,8 @@ void fc1_spi_dma_init(void)
   undefined4 uStack_38;
   
   DAT_0025abb0 = 0;
-  INPUTMUX_AttachSignal(&DAT_40026000,0x11,0x14000013);
-  xos_register_interrupt_handler(0x16,DMA_IRQHandle,&DAT_40104000);
+  INPUTMUX_AttachSignal(&INPUTMUX_SCT0_IN_SEL0,0x11,0x14000013);
+  xos_register_interrupt_handler(0x16,DMA_IRQHandle,&DMA0_CTRL);
   xos_interrupt_enable(0x16);
   CLOCK_AttachClk(0x80002528);
   uVar2 = CLOCK_GetFlexCommClkFreq(1);
@@ -1569,26 +1569,26 @@ void fc1_spi_dma_init(void)
   uStack_38 = 0;
   puStack_40 = &DAT_000f4240;
   uStack_4c = 1;
-  SPI_MasterInit(&DAT_40107000,auStack_50,uVar2);
-  DMA_Init(&DAT_40104000);
+  SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
+  DMA_Init(&DMA0_CTRL);
   memw();
-  uVar1 = DAT_40104020;
+  uVar1 = DMA0_ENABLESET0;
   memw();
-  DAT_40104020 = uVar1 | 8;
+  DMA0_ENABLESET0 = uVar1 | 8;
   memw();
-  uVar1 = DAT_40104020;
+  uVar1 = DMA0_ENABLESET0;
   memw();
-  DAT_40104020 = uVar1 | 4;
+  DMA0_ENABLESET0 = uVar1 | 4;
   memw();
-  uVar1 = DAT_40104430;
+  uVar1 = DMA0_CHANNEL3_CFG;
   memw();
-  DAT_40104430 = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
+  DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
-  uVar1 = DAT_40104420;
+  uVar1 = DMA0_CHANNEL2_CFG;
   memw();
-  DAT_40104420 = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
-  DMA_CreateHandle(&DAT_0025abb4,&DAT_40104000,3);
-  DMA_CreateHandle(&DAT_0025abc4,&DAT_40104000,2);
+  DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
+  DMA_CreateHandle(&DAT_0025abb4,&DMA0_CTRL,3);
+  DMA_CreateHandle(&DAT_0025abc4,&DMA0_CTRL,2);
   return;
 }
 
@@ -2103,7 +2103,7 @@ void create_rx_tx_path_threads(void)
   uint uVar1;
   undefined8 uVar2;
   
-  INPUTMUX_AttachSignal(&DAT_40026000,0x12,0x14000014);
+  INPUTMUX_AttachSignal(&INPUTMUX_SCT0_IN_SEL0,0x12,0x14000014);
   CLOCK_AttachClk(0x80002548);
   CLOCK_AttachClk(0x80002568);
   CLOCK_AttachClk(0x80002588);
@@ -2115,16 +2115,16 @@ void create_rx_tx_path_threads(void)
   CLOCK_AttachClk(0x80001740);
   FUN_00208654(0x80000744,1);
   memw();
-  DAT_40022010 = 1;
+  SYSCTL1_MCLKPINDIR = 1;
   memw();
-  DAT_40022080 = 0x22;
+  SYSCTL1_SHAREDCTRLSET0 = 0x22;
   memw();
-  DAT_4002204c = 0x101;
+  SYSCTL1_FCCTRLSEL3 = 0x101;
   memw();
-  DAT_40022084 = 0x55;
+  SYSCTL1_SHAREDCTRLSET1 = 0x55;
   memw();
-  DAT_40022050 = 0x202;
-  xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DAT_40105000);
+  SYSCTL1_FCCTRLSEL4 = 0x202;
+  xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DMA1_CTRL);
   xos_interrupt_enable(0x17);
   I2S_TxGetDefaultConfig(&DAT_002c8208);
   DAT_002c8216 = 1;
@@ -2146,47 +2146,47 @@ void create_rx_tx_path_threads(void)
   DAT_002c825c = 0;
   DAT_002c826d = 0x20;
   DAT_002c826e = 0x40;
-  I2S_TxInit(&DAT_40108000,&DAT_002c8208);
-  I2S_RxInit(&DAT_40109000,&DAT_002c8240);
-  I2S_TxInit(&DAT_40123000,&DAT_002c8224);
-  I2S_RxInit(&DAT_40122000,&DAT_002c825c);
-  DMA_Init(&DAT_40105000);
+  I2S_TxInit(&I2S2_BASE,&DAT_002c8208);
+  I2S_RxInit(&I2S3_BASE,&DAT_002c8240);
+  I2S_TxInit(&I2S5_BASE,&DAT_002c8224);
+  I2S_RxInit(&I2S4_BASE,&DAT_002c825c);
+  DMA_Init(&DMA1_CTRL);
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x20;
+  DMA1_ENABLESET0 = uVar1 | 0x20;
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x40;
+  DMA1_ENABLESET0 = uVar1 | 0x40;
   memw();
-  uVar1 = DAT_40105450;
+  uVar1 = DMA1_CHANNEL5_CFG;
   memw();
-  DAT_40105450 = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
+  DMA1_CHANNEL5_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
   memw();
-  uVar1 = DAT_40105460;
+  uVar1 = DMA1_CHANNEL6_CFG;
   memw();
-  DAT_40105460 = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
-  DMA_CreateHandle(&DAT_002c8278,&DAT_40105000,5);
-  DMA_CreateHandle(&DAT_002c8288,&DAT_40105000,6);
+  DMA1_CHANNEL6_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
+  DMA_CreateHandle(&DAT_002c8278,&DMA1_CTRL,5);
+  DMA_CreateHandle(&DAT_002c8288,&DMA1_CTRL,6);
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x800;
+  DMA1_ENABLESET0 = uVar1 | 0x800;
   memw();
-  uVar1 = DAT_40105020;
+  uVar1 = DMA1_ENABLESET0;
   memw();
-  DAT_40105020 = uVar1 | 0x100;
+  DMA1_ENABLESET0 = uVar1 | 0x100;
   memw();
-  uVar1 = DAT_401054b0;
+  uVar1 = DMA1_CHANNEL11_CFG;
   memw();
-  DAT_401054b0 = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
+  DMA1_CHANNEL11_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
   memw();
-  uVar1 = DAT_40105480;
+  uVar1 = DMA1_CHANNEL8_CFG;
   memw();
-  DAT_40105480 = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
-  DMA_CreateHandle(&DAT_002c8298,&DAT_40105000,0xb);
-  DMA_CreateHandle(&DAT_002c82a8,&DAT_40105000,8);
+  DMA1_CHANNEL8_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
+  DMA_CreateHandle(&DAT_002c8298,&DMA1_CTRL,0xb);
+  DMA_CreateHandle(&DAT_002c82a8,&DMA1_CTRL,8);
   FUN_00225af0();
   FUN_002244e0();
   xos_thread_create(&DAT_002c7890,0,Thread_Rx_Path_entry,0,"Thread_Rx_Path",&DAT_002c83b0,
@@ -2232,13 +2232,13 @@ void audio_i2s_fc3_fc4_fc5_init(void)
   DAT_002c82bc = 0;
   DAT_002cab50 = &DAT_20062be0;
   I2S_TxTransferCreateHandleDMA
-            (&DAT_40108000,&DAT_002c82c0,&DAT_002c8278,fc2_txaf_dma_done,&DAT_002c82bc);
+            (&I2S2_BASE,&DAT_002c82c0,&DAT_002c8278,fc2_txaf_dma_done,&DAT_002c82bc);
   I2S_RxTransferCreateHandleDMA
-            (&DAT_40109000,&DAT_002c82f8,&DAT_002c8288,fc3_rxif_dma_done,&DAT_002c82b8);
-  I2S_RxTransferReceiveDMA(&DAT_40109000,&DAT_002c82f8,DAT_002cab60,DAT_002cab64);
-  I2S_RxTransferReceiveDMA(&DAT_40109000,&DAT_002c82f8,DAT_002cab68,DAT_002cab6c);
-  I2S_TxTransferSendDMA(&DAT_40108000,&DAT_002c82c0,DAT_002cab50,DAT_002cab54);
-  I2S_TxTransferSendDMA(&DAT_40108000,&DAT_002c82c0,DAT_002cab58,DAT_002cab5c);
+            (&I2S3_BASE,&DAT_002c82f8,&DAT_002c8288,fc3_rxif_dma_done,&DAT_002c82b8);
+  I2S_RxTransferReceiveDMA(&I2S3_BASE,&DAT_002c82f8,DAT_002cab60,DAT_002cab64);
+  I2S_RxTransferReceiveDMA(&I2S3_BASE,&DAT_002c82f8,DAT_002cab68,DAT_002cab6c);
+  I2S_TxTransferSendDMA(&I2S2_BASE,&DAT_002c82c0,DAT_002cab50,DAT_002cab54);
+  I2S_TxTransferSendDMA(&I2S2_BASE,&DAT_002c82c0,DAT_002cab58,DAT_002cab5c);
   DAT_002cab74 = 0xc0;
   DAT_002cab7c = 0xc0;
   DAT_002cab84 = 0xc0;
@@ -2250,13 +2250,13 @@ void audio_i2s_fc3_fc4_fc5_init(void)
   DAT_002c8330 = 0;
   DAT_002c8334 = 0;
   I2S_TxTransferCreateHandleDMA
-            (&DAT_40123000,&DAT_002c8338,&DAT_002c8298,fc5_codec_out_dma_done,&DAT_002c8334);
+            (&I2S5_BASE,&DAT_002c8338,&DAT_002c8298,fc5_codec_out_dma_done,&DAT_002c8334);
   I2S_RxTransferCreateHandleDMA
-            (&DAT_40122000,&DAT_002c8370,&DAT_002c82a8,fc4_codec_in_dma_done,&DAT_002c8330);
-  I2S_RxTransferReceiveDMA(&DAT_40122000,&DAT_002c8370,DAT_002cab80,DAT_002cab84);
-  I2S_RxTransferReceiveDMA(&DAT_40122000,&DAT_002c8370,DAT_002cab88,DAT_002cab8c);
-  I2S_TxTransferSendDMA(&DAT_40123000,&DAT_002c8338,DAT_002cab70,DAT_002cab74);
-  I2S_TxTransferSendDMA(&DAT_40123000,&DAT_002c8338,DAT_002cab78,DAT_002cab7c);
+            (&I2S4_BASE,&DAT_002c8370,&DAT_002c82a8,fc4_codec_in_dma_done,&DAT_002c8330);
+  I2S_RxTransferReceiveDMA(&I2S4_BASE,&DAT_002c8370,DAT_002cab80,DAT_002cab84);
+  I2S_RxTransferReceiveDMA(&I2S4_BASE,&DAT_002c8370,DAT_002cab88,DAT_002cab8c);
+  I2S_TxTransferSendDMA(&I2S5_BASE,&DAT_002c8338,DAT_002cab70,DAT_002cab74);
+  I2S_TxTransferSendDMA(&I2S5_BASE,&DAT_002c8338,DAT_002cab78,DAT_002cab7c);
   return;
 }
 
