@@ -369,8 +369,19 @@ playback (3, state 14) as TX input; in all other states reg 9 = 0, so nothing fe
 carry the RX audio block 0x2CAC50 (out 0 gets 0x2CACB0 with output select B), and with reg 10 = 0x52/0x50 (n1 = 5) the recorder
 gets 0x2CAC50 too.
 
-Which board connectors the codec's DAC/ADC channels reach (speaker amplifier, PHONES, rear ACC, the CM119B USB codec) needs the
-schematic and stays open (#176).
+**Where the codec channels and the HiFi4 GPIOs go on the board** (service manual p19/p20, parts list p37; #176) **[fact: schematic]**:
+
+| Signal | Board path |
+|---|---|
+| DAC out 0 → **LOR** (pin 23) | `AF_OUT1` → `RX AF` → R2A20178 CH5 → TDA2003G Q2636 → **rear EXT SP jack J2606**; `RX AF` also feeds CH2 USB audio out (CM119B) and the rear DATA OUT ([hardware.md](../../hardware.md)) |
+| DAC out 1 → **LOL** (pin 22) | `AF_OUT2` → R2A20178 CH8 → CH1 → TDA2003G Q2619 → **internal speaker J2607** and **phones** (J2603 pin 4) |
+| ADC **IN1L** (pin 13) | `AIC_IN1L` ← Q2005 ← `AF_IN` ← R2109 ← **`MOD_AF`**: the TX audio from the AF block's source mux (front MIC / USB / rear DATA, Q2615) and Q2602 buffer. This is the only fitted input |
+| ADC IN1R, IN2R | `RX_AF` / `C4FM_BB` paths through Q2004/Q2005: all parts marked `***` and absent from the parts list (R2009/R2010/R2014–R2017/R2028/R2029, Q2004), so **not fitted**; they belong to the "C4-Block" option (DAC0_OUT/DAC1_OUT via unfitted R2096/R2097) |
+| **PIO0_4** (ball J1) | **`AF_MUTE`** from MAIN through R2095: the TX/RX sequencer's mute (`af_mute_set`, [main/tx-protection.md](../main/tx-protection.md)); `tx_mute_ctrl` mutes both codec outputs and the TX AF while it is set (reg 0xC top nibble = 1) |
+| GPIO byte 0x40100044 = **PIO2_4** | `SCT0_OUT2` → TP2007 "for DEBUG" ([m33-platform.md](m33-platform.md)); the VOX state that `tx_mute_ctrl` writes there only reaches a test point |
+
+So the left/right order: DAC out 0 = I2S right slot, out 1 = left slot, given the owner's statement that the AESS speaker is the rear
+EXT SP ([dsp-chains.md](dsp-chains.md)) **[inference, strong]**.
 
 Regs **0x2000–0x2007** are the per-thread CPU load (`cpu_load_to_regs_2000`, [hifi4.md](hifi4.md)); MAIN never reads them, but `SPDR2000;`
 can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.
