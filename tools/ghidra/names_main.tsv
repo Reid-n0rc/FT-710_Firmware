@@ -2195,3 +2195,16 @@ fffbbc8e	align_store_ui2	cal[item] = UI-state +2 (0x20B06) >> 4 (54 items from 7
 fffbbcb8	align_store_dsp_async	Starts a DSP status read (dsp_status1_raw, timer 0x42 30 ms); the result goes to cal[item] later (items 45..47)
 fffbbcff	align_store_ui8_scaled	cal[item] = (0x20B0C >> 4) * 0x4666 / 137 rounded (item 245)
 fffbbd52	align_store_nop	Empty store handler (191 of the 261 items)
+# --- #173 (CAT remainders): names from reading decomp/main; they show in decomp/ after the next Ghidra re-export
+fffb012c	mem_find_byte	(buf, c, n): index of the first byte == c in buf[0..n), else n; returned in R1 (EM, KM)
+fff9ba18	displink_39_keyer_texts	Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32)
+fff9baa0	displink_39_rtty_labels	Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes 0xC0..0xE7 (0x1801..)
+fffe4407	msg_type_select	Sets UI +0x1C7 (message type) from vfo_mode(1): CW 1, RTTY 2, PSK 3, voice modes 0
+fffe481d	keyer_text_endmark	Front-panel keyer text editor: length up to the first } (0x7D) or appends } after the last non-space char
+fffe538f	msg_slot_select	(n): UI +0x1C8 = n, +0xBF = +0x1CE = n-1 (KY)
+fffb521a	tx_breakin_on	Bit 1 (BI break-in flag) of the TX VFO per-mode byte (vfo_rec_ptr(1)/vfo_mode(1))
+fffc2937	memtune_flags_clear	(side): UI +0x43F/+0x441 (A) or +0x440/+0x442 (B) = 0
+fffc3b22	func_menu_select	FUNC menu: runs the item at cursor 0x9C08 (func_knob_assign(n) for adjustable items, one-shot actions otherwise)
+fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +0x1C5 = 1, beep
+fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
+fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
