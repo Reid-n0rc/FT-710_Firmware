@@ -1,6 +1,6 @@
 # Manuals and datasheets
 
-Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 15 PDFs the project keeps are
+Every manual and datasheet the project uses or cites, where to get it, and what it was used for. The 16 PDFs the project keeps are
 **committed in `Manuals/`** (owner decision, 2026-10-28; Renesas files in `Manuals/Renesas/`), under the file names below, so the paths in
 the docs work. The documents in the second list are cited but not kept; get them from the links. The SHA-256 values identify the exact revision the project read; a newer
 revision from the vendor is fine for reading, but page numbers in the docs refer to these files.
@@ -47,6 +47,14 @@ Downloaded from renesas.com on 2026-10-28 (owner decision, 2026-10-29, to keep i
 |---|---|---|---|
 | `r01uh0403ej0700-rza1h.pdf` | RZ/A1H Group, RZ/A1M Group User's Manual: Hardware, R01UH0403EJ0700 Rev.7.00 (Sep. 2024, 3,413 pages); https://www.renesas.com/document/mah/rza1h-group-rza1m-group-users-manual-hardware | DISPLAY register names, STBCR bits, INTC IDs, SCIF/RSPI/RIIC/VDC5/SPIBSC ([code/display/](code/display/README.md)). Table 5.5 and Table 53.1 (on-chip RAM pages and their mirror) settled O9 (2026-10-28) | `8a84a7149f95e50be2020e3d0966aa6a130afd7636a6ee5c219b22f80831d4ca` |
 
+## AMD/Xilinx 7 Series (SDR module FPGA, XC7A50T)
+
+Supplied by the owner (2026-10-29).
+
+| File (in `Manuals/AMD/`) | Document | Used for | SHA-256 |
+|---|---|---|---|
+| `ug474_7Series_CLB.pdf` | UG474 7 Series FPGAs Configurable Logic Block User Guide, v1.9 (April 1, 2025), 81 pages | SLICE model, LUT/MUXF7/CARRY4 ([code/sdr/netlist.md](code/sdr/netlist.md)); Figure 7 (RAM32M, p. 23) and Figure 18 (dual SRL16, p. 35) give the DI1/DI2 data pins of the two LUT halves (#92) | `52904ee835809e51fb5a62a2b87a6e949dfcf8225c00c8c74f2ca064b2fd293c` |
+
 ## Cited but not in `Manuals/` (read online or from general knowledge)
 
 These are cited in the docs for register meanings, formats or encodings. The project did not keep a copy, so claims that rest on them
@@ -58,7 +66,6 @@ are tagged **[inference]** unless the code confirms them. Getting a copy and che
 | **i.MX RT600** (RT685) reference manual UM11147 and datasheet | NXP, https://www.nxp.com (search "RT685"; the reference manual needs a free account) | IFDSP memory map, boot ROM / FlexSPI boot header, PLL formula, FLEXCOMM/MU/DMA request map ([code/ifdsp/](code/ifdsp/README.md), [memory-maps.md](memory-maps.md)) |
 | **UG470** 7 Series FPGAs Configuration User Guide | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug470_7Series_Config | Bitstream packets, registers, frame/ECC layout, XC7A50T length and IDCODE ([decomp/sdr/README.md](../decomp/sdr/README.md), [code/sdr/bitstream.md](code/sdr/bitstream.md)) |
 | **UG473** 7 Series FPGAs Memory Resources | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug473_7Series_Memory_Resources | BRAM widths and parity layout ([code/sdr/bram-tables.md](code/sdr/bram-tables.md)) |
-| **UG474** 7 Series FPGAs CLB User Guide | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug474_7Series_CLB | SLICE model, LUT/MUXF7/CARRY4 ([code/sdr/netlist.md](code/sdr/netlist.md)) |
 | **XAPP888** MMCM and PLL Dynamic Reconfiguration | AMD/Xilinx, https://docs.amd.com/v/u/en-US/xapp888_7Series_DynamicRecon | MMCM divider encoding ([code/sdr/resources.md](code/sdr/resources.md), [netlist.md](code/sdr/netlist.md)) |
 | Project X-Ray documentation and database | https://github.com/f4pga/prjxray, https://github.com/f4pga/prjxray-db | Frame/tile/bit mapping behind every `xc7_*` tool (pinned commits in [tooling.md](tooling.md)) |
 | **TLV320AIC3204** audio codec datasheet | TI, https://www.ti.com/product/TLV320AIC3204 | Register meanings of the 67-entry `aic3204_init` table ([ifdsp/control-link.md](code/ifdsp/control-link.md)) |
