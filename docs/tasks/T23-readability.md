@@ -25,7 +25,7 @@ an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time thr
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
-| T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | todo |
+| T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
 field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last.
@@ -153,6 +153,53 @@ Rules for every sub-task:
 ## T23g — Readable view (optional)
 - `decomp/<image>/readable/<subsystem>.c`: the same functions grouped by the `docs/code/<image>/` subsystem pages, each
   with a header comment (inferred name, purpose, [fact]/[inference]); generated from the export, never edited by hand.
+
+**Status:** done (2026-10-29).
+
+### Plan
+1. `tools/readable_view.py` reads only committed files: `decomp/<image>/*.c` (split at the `// ===== name @ addr`
+   markers), `functions.tsv` (callers) and the function tables of `docs/code/<dir>/*.md`.
+2. Deterministic output, a `check` mode for staleness, hooked into `tools/bootstrap.sh` (`export` builds, `verify` checks).
+3. Commit the generated `decomp/*/readable/`.
+
+### How it works
+- **Tables:** every Markdown table whose header has an address column (`Address`, `Entry`, `ISR (entry)`) and/or a name
+  column (`Ghidra name`, `Name`, `Helper`); tables with a `Size` or `Type` column are data and skipped. The variants seen
+  on the pages: `Address | Ghidra name | Inferred name | Purpose` (most), `… | Proposed name | …` (radio-control),
+  `… | Inferred name / role | …` (cat), `Address | Ghidra name | What it computes | Registers | Tag` (dsp-chains),
+  `Address | Name | Notes` (display boot-rtos), `Step`/`#` + `Address` (main README), `Task | Entry | …` (display input,
+  mainlink), `Helper | Proposed name | …` without addresses (sdr-link). Cells with several addresses
+  (`0x201326FC / 0x20132E78` with `` `a` / `b` ``) are paired by position; an address range of at most 0x400 bytes in a
+  table with a name column (`0xFFFB7051..0xFFFB70F7`) covers every function entry in it.
+- **Assignment:** a hex number in the address column that is a function entry of this image assigns it; rows whose
+  addresses are not functions of this image (data, the other IFDSP core) are ignored. Rows without an address match by
+  the backticked names against the current Ghidra name. Pages are searched in name order with README.md last (its file
+  is `overview.c`); the first page that lists the address wins, otherwise the first that lists the name; the others are
+  listed as "Also on". Unlisted functions go to `unassigned.c`, in sections by export file.
+- **Header comment** per function: Ghidra name, address, size, callers, export file; the doc's name if it differs from
+  the Ghidra name (so a stale doc name after a rename is visible), the inferred/proposed name, the purpose columns,
+  the tags found in the row (`[fact]`, `[inference]`, `[guess]`, or a `Tag` column; "none in the table row" when the
+  page tags the claim elsewhere), the page link. The body from the marker line to the next marker is copied byte for
+  byte (the script asserts that the chunks rebuild each export file exactly).
+- **Bootstrap:** `step_export` runs `readable_view.py build` after `readability_stats.py readme` when `DECOMP_OUT` is the
+  repo's `decomp/`. `verify` leaves `readable/` out of the export comparison in both modes (it is derived, not
+  exported; with a separate `DECOMP_OUT` it does not exist there) and runs `readable_view.py check` instead, which
+  regenerates into a temp dir and fails if the committed view differs from committed `decomp/` + `docs/code/`.
+  After a re-export with new names, `bootstrap.sh --only export` (or `python3 -I tools/readable_view.py build`)
+  refreshes it with no manual step; commit it with the export. A docs-only change also makes it stale (rerun `build`).
+
+### Findings (first build, 2026-10-29, export as of commit 66edeac)
+| Image | Functions | On a subsystem page | Unassigned |
+|---|---:|---:|---:|
+| main | 3,793 | 521 | 3,272 |
+| display | 2,212 | 561 | 1,651 |
+| ifdsp/m33 | 427 | 143 | 284 |
+| ifdsp/hifi4 | 1,083 | 196 | 887 |
+
+- Size: 7.4 MB in all (main 3.0, display 2.4, hifi4 1.7, m33 0.4 MB) against 6.3 MB of exported `*.c`; the header
+  comments add about 1.1 MB. Unassigned functions get a one-line header (the marker already gives name, address, size).
+- Only function **tables** count; a function named only in the prose of a page stays unassigned. Moving prose-only
+  functions into the tables raises the assigned share without touching the script.
 
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.
