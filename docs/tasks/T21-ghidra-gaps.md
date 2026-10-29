@@ -406,6 +406,28 @@ DISPLAY and IFDSP are ARM/Xtensa and do not use the RX module; their re-export i
 - `MVTACHI`/`MVTACLO` still have empty semantics (writes to ACC are lost) and A1/`MVFACGU`/guard bits are not modelled; left to T22a's
   `rx62t-semantics-fix.patch` to avoid two patches editing the same constructors.
 
+### T21i
+**Status:** in progress (2026-10-28). MAIN: give the RX string instructions a memory effect again (T22e follow-up, regression of
+T21c's B4 pcodeops).
+
+**Problem [fact, T22e].** T21c made `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` named pcodeops. The decompiler treats a CALLOTHER as touching
+no memory, so stores into a stack buffer that only a string op reads are dead: 34 CAT/AI reply builders (0xFFFDE064–0xFFFE1774)
+lose 119 stores and 31 `nib2hex` results. #97 B4 asked for pcodeops "for readability only" with "no other output changes", so
+correctness wins over B4 here.
+
+**Plan.**
+1. Patch `tools/ghidra/rx62t-stringmem-fix.patch` (after T22a's `rx62t-semantics-fix.patch`): `SMOVF`, `SMOVB`, `SMOVU` and the
+   three `SSTR` sizes go back to explicit byte/element loops (T17's, with `R2:1`/`R2:2` for the narrow `SSTR` stores and
+   the register results of the manual pp. 189-192). The compare/search ops `SCMPU`/`SUNTIL`/`SWHILE` (12 uses, read only) stay
+   pcodeops unless step 3 shows lost stores for them too.
+2. `rx_semcheck.py`: model the copy/store bytes for `SMOVF`/`SSTR` instead of a call, and keep R3 small (0–40) for them, so the
+   emulator's p-code loop terminates; rerun gen/emulate/check on a scratch import (expect 0 failures).
+3. Private Ghidra copy (`~/opt/t21i-ghidra-tmp`: hard links, own RX module), fresh MAIN import with the bootstrap recipe,
+   `ExportDecomp`; `decomp_behavior_diff.py` against pre-T21 MAIN (`9622a8f^`) and against the current `decomp/main`:
+   `lost_buffer_stores` and `dropped_result=F_fffb2e9c` go to 0, nothing else regresses; `decomp_quality.py compare`.
+4. Sixth `bootstrap.sh --only rx` stage, rebuild canonical MAIN and re-export (one Ghidra job at a time), update
+   `decomp/main/INDEX.md`, `docs/tooling.md`, `tools/README.md`, this section; board and `issues_sync.py`.
+
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
 
