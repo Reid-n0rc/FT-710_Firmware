@@ -2,6 +2,8 @@
 // Build: OBJ=obj_pins hdl/sdr/sim/build_full.sh with this file instead of full_main.cpp (MAIN=pins_main.cpp).
 // Run:   Vft710_sdr CLOCKS [FRAME ...]   FRAME = MAIN register frame without checksum, e.g. w00152000 (sent on UART B
 //        from clock 60000, sum8 + CR added). LOGPINS="io_R16 io_P17" LOGTO=CLOCK prints "E clock pin level" per edge.
+//        CONSOLE="x\r" sends that text on UART A from clock 80000 and prints what UART A answers ("A clock hex char").
+//        INPUTS="io_T13=1,io_A14=1" holds those input pins at the given level for the whole run (default 0).
 #include "Vft710_sdr.h"
 #include "verilated.h"
 #include <cstdio>
@@ -32,12 +34,43 @@ int main(int argc, char** argv) {
         for (int i = 0; i < 300; i++) bits.push_back(1);
     }
     double next = 60000; int level = 1;
+    std::deque<int> abits;                       // UART A player (CONSOLE)
+    if (getenv("CONSOLE")) {
+        std::string t = getenv("CONSOLE"), u;
+        for (size_t i = 0; i < t.size(); i++) {
+            if (t[i] == '\\' && i + 1 < t.size()) { char e = t[++i]; u += e == 'r' ? '\r' : e == 'n' ? '\n' : e; }
+            else u += t[i];
+        }
+        for (unsigned char c : u) { abits.push_back(0); for (int i = 0; i < 8; i++) abits.push_back((c >> i) & 1); abits.push_back(1);
+                                    for (int i = 0; i < 20; i++) abits.push_back(1); }
+    }
+    double anext = 80000; int alevel = 1;
+    int arx_state = 0, arx_last = 1, arx_n = 0; unsigned arx_byte = 0; double arx_t0 = 0;
+    struct In { const char* name; CData* p; };
+    std::vector<In> ins = {
+#define I(x) {#x, &top->x},
+        I(io_U13) I(io_T13) I(io_V10) I(io_T11) I(io_T14) I(io_R15) I(io_P15) I(io_L15) I(io_B18) I(io_A14) I(io_A13) I(io_A16)
+    };
+    const char* inspec = getenv("INPUTS") ? getenv("INPUTS") : "";
     top->uart_a_rx = 1; top->uart_b_rx = 1;
     for (uint64_t clk = 1; clk <= N; clk++) {
         if (clk >= next && !bits.empty()) { level = bits.front(); bits.pop_front(); next += 125e6 / 115200.0; }
         top->uart_b_rx = level;
+        if (clk >= anext && !abits.empty()) { alevel = abits.front(); abits.pop_front(); anext += 125e6 / 115200.0; }
+        top->uart_a_rx = alevel;
+        for (auto& in : ins) { const char* f = strstr(inspec, in.name); *in.p = (f && f[strlen(in.name)] == '=') ? (f[strlen(in.name) + 1] == '1') : 0; }
         top->adc_clk_p = 0; top->adc_clk_n = 1; top->adc_dco_p = 0; top->adc_dco_n = 1; top->eval();
         top->adc_clk_p = 1; top->adc_clk_n = 0; top->adc_dco_p = 1; top->adc_dco_n = 0; top->eval();
+        {   // software UART on uart_a_tx
+            int v = top->uart_a_tx & 1;
+            if (arx_state == 0) { if (arx_last == 1 && v == 0) { arx_state = 1; arx_t0 = clk; arx_n = 0; arx_byte = 0; } }
+            else if (clk >= arx_t0 + 125e6 / 115200.0 * (arx_n + 1.5)) {
+                if (arx_n < 8) arx_byte |= v << arx_n;
+                else { if (getenv("CONSOLE")) printf("A %llu %02X %c\n", (unsigned long long)clk, arx_byte, arx_byte >= 32 && arx_byte < 127 ? arx_byte : '.'); arx_state = 0; }
+                arx_n++;
+            }
+            arx_last = v;
+        }
         for (auto& q : pins) {
             int v = *q.p & 1;
             if (q.last >= 0 && v != q.last && clk <= logto && strstr(logpins, q.name)) printf("E %llu %s %d\n", (unsigned long long)clk, q.name, v);

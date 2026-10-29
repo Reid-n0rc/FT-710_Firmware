@@ -390,8 +390,12 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 ### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
 
 - After reset it prints the prompt **`[IF]>`** (no CR/LF before it).
-- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). `#` comes back as
-  0x06 and the line then fails with `Err` **[fact, meaning unknown]**. LF is echoed and does nothing.
+- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). LF is echoed and does nothing.
+- **`#` and BS are hex digits** (#89, `hdl/sdr/sim/pins_main.cpp` with `CONSOLE=`) **[fact]**: the console's hex decoder reads
+  `#` (0x23) as **E** and BS (0x08) as **B**. `#` is echoed as 0x06, BS as `B`. So `r 000#` reads register 0x0E (`1200`),
+  `r 000<BS>` reads 0x0B (`0058`), `w 0015 12<BS>4` stores 0x12B4 (read back as `12B4`), and BS does not edit the line. The
+  earlier "`#` then `Err`" came from lines whose digit count the extra character broke; `r ####` reads 0xEEEE (unmapped,
+  `CCCC`). Unmapped registers read `CCCC`.
 - On CR: `r AAAA` prints CR LF `VVVV ` CR LF `[IF]>`; `w AAAA VVVV` or `w AAAA,VVVV` writes silently and prints CR LF
   `[IF]>`. Exactly four hex digits and one separator (space or comma) are required; anything else (`r0`, `r 15`,
   `r  0001`, trailing space, `0x` prefixes, two operands for `r`) prints `Err` CR LF `[IF]>`.
@@ -400,9 +404,11 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 - **`x`**: accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
   `x 0000,0000`, `x 0000 0000 0000`, `x0015`, also after `w 0037 BCC5`) gives `Err`, as on the link. So `x` is in the
   character tables of both engines but has **no reachable function** in this bitstream with the other inputs at 0
-  **[fact for the tried forms, inference that it is unused or gated by an input pin]**.
-- BS echo is garbled in simulation (overlapping frames on the TX line) **[open]**: a console quirk or a modelling
-  gap of this harness; not followed up.
+  **[fact for the tried forms]**. **Not gated by an input pin** (#89): with each of the 12 unassigned inputs (U13, T13, V10,
+  T11, T14, R15, P15, L15, B18, A14, A13, A16) held high in turn, and with all of them high, `x` and `x 0000` still give `Err`
+  **[fact, simulation]**; so `x` is unused in this bitstream, or needs a register state no tried sequence reaches **[inference]**.
+- The "garbled BS echo" was the echo `B` overlapping the next frame in the old harness; with a gap between characters
+  it is a clean `B` (above).
 - The console's transmit cone also drives the three open-drain-style pins N14, T18, R18 (shared tri-state enable)
   **[fact for the wiring, function open]**.
 
