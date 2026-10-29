@@ -44,7 +44,7 @@
 #   JAVA_HOME            JDK 21 [Homebrew openjdk@21 if present, else $OPT_DIR/jdk-21.0.13+9]
 #   RX_MODULE_DIR        where the RX module goes [$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX]
 #   RX_SRC               clone of rx-proc-ghidra [$OPT_DIR/rx-proc-ghidra]
-#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, AGENTS.md "Hardware use"]
+#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, docs/tooling.md "Owner's tower server"]
 #   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [a quarter of the RAM, 2G to 3G]; Ghidra runs go through tools/ghidra-cap.sh
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
@@ -180,7 +180,7 @@ headless() {  # headless <project> <analyzeHeadless args...>
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
-  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
+  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
     "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
@@ -371,9 +371,9 @@ G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
   local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
-    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
+    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplySfr"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
@@ -382,7 +382,8 @@ build_main() {
     -postScript FixFuncEntries.java "$G/entries_main_menu.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
-    -postScript ApplySignatures.java "$G/signatures_main.tsv"
+    -postScript ApplySignatures.java "$G/signatures_main.tsv" \
+    -postScript ApplySfr.java "$G/sfr_rx651.tsv"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {

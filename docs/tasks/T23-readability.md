@@ -15,7 +15,8 @@ to the top of the website and `tools/guide_to_wiki.py` to the top of the wiki's 
 ## Plan
 Owner: Claude session on branch `claude/friendly-euler-urlgry`, 2026-10-29. The owner asked to **hold off on Ghidra
 steps** for now: this session writes the tables, scripts and task plan, and leaves every Ghidra run (apply, re-export) as
-an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time through `tools/ghidra-cap.sh`, heap per image).
+an explicit open step below. (On 2026-10-29 the owner allowed installs and Ghidra in Claude cloud sessions, with no CPU/RAM cap; the
+caps in docs/tooling.md apply only to the owner's tower server.)
 
 | Sub-task | Deliverable | Ghidra? | Status |
 |---|---|---|---|
@@ -96,7 +97,7 @@ Rules for every sub-task:
 
 ### Open steps (Ghidra; wait for the owner's go-ahead)
 1. Apply to the canonical project (MAIN heap 3 GB, AGENTS.md):
-   `tools/ghidra-cap.sh 3772 -- tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplySfr.java tools/ghidra/sfr_rx651.tsv`
+   `tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplySfr.java tools/ghidra/sfr_rx651.tsv`
    (with `GHIDRA_HEADLESS_MAXMEM=3G`). Expect about 4,600 labels and the "not in memory" count for OFSM only.
 2. Re-export: `tools/bootstrap.sh --only export`, then `--only verify`. Check that `R_IWDT_Create` shows
    `IWDT_IWDTCR = 0x3350`, that `decomp_quality.py compare` shows no count worse, and that

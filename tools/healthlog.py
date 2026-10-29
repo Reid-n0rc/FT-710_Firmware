@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Log machine health while a heavy job runs, so a host hang leaves evidence (AGENTS.md "Hardware use").
+"""Log machine health while a heavy job runs, so a host hang leaves evidence (docs/tooling.md "Owner's tower server").
 
 Usage: tools/healthlog.py [--watch PID] [--label TEXT] [--interval SEC] [--dir DIR]
   --watch PID   stop when PID exits (tools/ghidra-cap.sh passes the job's PID); without it, run until killed

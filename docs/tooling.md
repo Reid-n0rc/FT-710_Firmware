@@ -336,6 +336,23 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin
   0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
 ```
 
+## Owner's tower server: hardware caps
+
+These limits apply **only on the owner's local "tower" server** (an Unraid host with no swap, where running out of memory kills
+processes and three parallel Ghidra jobs once hung the machine). Elsewhere, including Claude Code cloud sessions, there is no core or
+RAM limit: run `tools/ghidra-headless.sh` directly and set `JOBS=$(nproc) CAP_CPUS=$(nproc)` for `tools/bootstrap.sh`. Moved here from
+AGENTS.md on 2026-10-29 (owner: "that only applies to my local setup"); the rules date from 2026-10-27/28.
+
+Always use the most the hardware will support ("always do the max the hardware will support").
+
+**Ghidra/REA cap (owner rule, 2026-10-28, raised from 50 % to 75 % the same day, then cut to one job at a time because 3 jobs hung the host; overrides the "max" rule above for Ghidra and REA):** Ghidra and REA may use only about 75 % of the hardware, and must leave RAM headroom. Start every Ghidra headless or REA run through `tools/ghidra-cap.sh <reserve_mb> -- <command>`. It allows only 1 such job at a time machine-wide, pins it to 3/4 of the cores (`taskset`) at nice 10, sizes GC threads to the cap, and admits it through `memgate.py` with a 3 GB free-RAM margin. `tools/bootstrap.sh` already does this and defaults `JOBS` to 3/4 of `nproc`. All agents on the machine must share one `CAP_DIR` (default `~/.cache/ft710-ghidra-cap`) and one `MEMGATE_DIR`.
+
+- **CPU:** for Ghidra, pass `-max-cpu $CAP_CPUS` (3/4 of `nproc`, exported by `ghidra-cap.sh`), never `$(nproc)`. REA's vitest takes `--maxWorkers` of 3/4 of `nproc` too. Other builds may use `-j$(nproc)`. Run independent agents in parallel, but their Ghidra/REA jobs queue for the single slot.
+- **RAM:** `memgate.py` (called by `ghidra-cap.sh`) starts a job as soon as `MemAvailable` covers its reservation plus a 3 GB margin (`MEMGATE_SAFETY_MB`, default 3072). It counts the memory that jobs already running can still grow into, so a burst of starts can't over-commit. All agents on the machine must share one `MEMGATE_DIR` (default `~/.cache/ft710-memgate`).
+- **Heap size:** pick the heap per image: 2 GB for DISPLAY and IFDSP, 3 GB for MAIN, via `GHIDRA_HEADLESS_MAXMEM` (never more than 3 GB). Reserve the heap plus about 700 MB. On the owner's container, `free` shows the whole Unraid host and there is no swap, so running out of memory kills processes instead of slowing them down.
+- **Health log:** `ghidra-cap.sh` starts `tools/healthlog.py` beside every job. Every 10 s it records CPU, board, NVMe and GPU temperatures, fan speeds, CPU clock and thermal-throttle events, load, I/O wait, free RAM, major page faults per second (thrashing), OOM kills and the job's RSS. It also flags late samples (`GAP`, meaning the host stalled), matching kernel messages, and a previous log with no `END` line (the run was cut off by a hang or reset). Every line goes to the owner's syslog server over UDP (`HEALTH_SYSLOG`, default `192.168.10.50:514`, facility local0, tag `ft710-health`; `GAP`/`WARN`/`KERNEL` at warning level) and to a local fallback file in `$HEALTH_DIR` (default `~/.cache/ft710-health`, newest at `health-latest.log`, fsynced per line so it survives a reset). Set `HEALTH_LOG=0` to turn it off, `HEALTH_SYSLOG=` to keep only the file. After a hang, read the last lines of the cut-off log first.
+- **Overrides:** override tool caps with command-line flags or environment variables, never by editing upstream config files that would land in commits.
+
 ## Side effects outside the repo
 
 Ghidra writes per-user state to `~/Library/ghidra/ghidra_12.1.4_PUBLIC/` (settings, logs) and `/var/tmp/<user>-ghidra/` (caches). Both are safe to delete. T05 also added the per-user RX extension in `~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX/` (see above).
