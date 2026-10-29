@@ -255,8 +255,10 @@ Plug a USB cable into the rear USB-B jack and the PC finds a 4-port hub (Cypress
 - **[CP2105](#glossary)**, a dual USB-to-serial bridge. It shows up as **two COM ports**. The "Enhanced" port goes to MAIN's CAT port 1 (38400 baud
   after a reset), the "Standard" port to CAT port 2 (4800 baud after a reset). You can change both rates in the menu. The RTS and DTR lines
   of the Standard port can key the radio (PTT) or key CW/RTTY, if the PC KEYING menu setting says so.
-- **CM119B**, a USB sound card. A menu setting (MOD SOURCE) can select USB audio as the transmit audio. How its analog side is wired was
-  not traced in the schematic, and no firmware touches the chip.
+- **CM119B**, a USB sound card. A menu setting (MOD SOURCE) can select USB audio as the transmit audio. The PC's left and right playback
+  channels are mixed to mono and go to the transmit-source switch; the receive audio comes back to the PC as a mono "microphone" signal.
+  Both directions pass a 5 kHz low-pass filter and an electronic volume control that MAIN sets (USB MOD GAIN, USB OUT LEVEL). No
+  firmware talks to the chip itself.
 - **[FT4222H](#glossary)**, a USB-to-SPI bridge on the DISPLAY unit. Through it the DISPLAY streams 4 KB frames to the PC: a copy of the spectrum
   scope, the audio spectrum and a 151-byte status block. The DISPLAY holds the bridge in reset until a setting from MAIN switches it on.
   Which PC program reads this stream is not known.

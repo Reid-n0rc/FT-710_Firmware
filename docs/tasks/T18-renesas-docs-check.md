@@ -49,7 +49,8 @@ Citations: HWM = hardware manual R01UH0590EJ0240, DS = datasheet R01DS0276EJ0240
      is the limit on MAIN updates [inference].
 4. **Boot mode confirmed [fact: HWM Table 3.1 p180, Table 59.7 p2564, §59.13 pp2577–2612].**
    - MD low and PC7/UB low at reset select SCI boot on SCI1 (P30 RXD1 / P26 TXD1). MD low, then high 20–100 ms after reset, selects FINE.
-     MAIN never drives PC7 (input, no function), so it must be low on the board for DISPLAY's update to work [inference].
+     MAIN never drives PC7 (input, no function), so it must be low on the board for DISPLAY's update to work. **Confirmed (#79):** net `UB`
+     is pulled to ground by R1072 10 kΩ on the MAIN CNTL sheet (p17; fitted, parts list p38) [fact].
    - Every command DISPLAY sends matches §59.13, in the required order: `38` device type, `36` endian, `32` frequency, `34` bit rate,
      `00` sync, `2C` ID mode, `30` ID check, `53`/`54` area count/info, `50` area erase, `13` program, `15` read, `51`/`52` configuration
      program/read. Errors are the OK code + 0x80, and `C2` is the sync-phase checksum-error code.
@@ -75,4 +76,4 @@ Citations: HWM = hardware manual R01UH0590EJ0240, DS = datasheet R01DS0276EJ0240
    - TN-RX*-A0276B: see 3.
 
 ## Follow-ups
-- None blocking. Read the board level of PC7/UB on the MAIN schematic (p17) to turn the inference in 4 into a fact.
+- None. (The board level of PC7/UB was read in #79: R1072 10 kΩ to ground.)

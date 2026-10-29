@@ -71,17 +71,18 @@ Multi-byte values are **big-endian**. Offsets are from the start of the record.
 | +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]** | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR` **[fact]** |
 | +0x02 | u8 | bits 2–3 = **repeater shift**: 0 = minus, 1 = simplex, 2 = plus | `tx_freq_repeater_shift` (TX shift), `cat_MW` (`'2'`→0, `'0'`→1, `'1'`→2) **[fact]** |
 | +0x03 | u8 | bits 3–5 = **tone mode** (CT: 0 off, 1 = CTCSS ENC/DEC, 2 = CTCSS ENC, 3 = DCS **[inference]**). bit 3 alone is tested by the scan engine (`FUN_fffe600f`) | `cat_CT`, `cat_IF_OI`, `cat_MW` **[fact]** |
-| +0x04 | u8 | unknown | |
+| +0x04 | u8 | NARROW flags per mode class (bit 7 SSB, 5 CW, 3 RTTY, 2 DATA); see [eeprom.md](eeprom.md#90-byte-vfo--memory-record) | `cat_NA`, `key_nar_short` **[fact]** (#73) |
 | +0x05 | u8 | bit 7 = memory tag shown (MT P2) | `cat_MT` **[fact]**; `vfo_clear_tag` clears it |
-| +0x06..+0x09 | 4 | unknown | |
+| +0x06 | u8 | bits 0–3 = **DNR level** 1..15 (`RL`), bit 4 = **DNR on** (`NR`). The DSP setters `dsp_set_dnr_*` (0xFFF9E750, 0xFFF9FCD0..0xFFF9FFB1) index their coefficient tables with the level and send 0 when bit 4 is clear or the mode is FM/DATA-FM (6/7, 10/11). Bits 5–7: no reader or writer found; the defaults write 0 | `cat_RL` 0xFFFADA46 (`& 0xF0 \| level`), `cat_NR`, `key_dnr_short`/`key_dnr_long`, `FUN_fffc7d41` (DNR knob, clamps 1..15), the AI reporters `FUN_fffdff9c` (`NR`) / `FUN_fffe0839` (`RL`) **[fact]** |
+| +0x07..+0x09 | 3 | **unused** in V01-12: no field access anywhere in MAIN; only copied with the whole record. The defaults write 0 | see [below](#record-bytes-without-users) **[fact for the absence of users]**; reserved **[inference]** |
 | +0x0A..+0x13 | 10 | **per-mode block, SSB** (modes 0/1). +0x0B bit 7 is the BC flag. +0x12/+0x13 (s16) is the SSB offset; SDR RX adds +1500 Hz to it | `cat_BC`, `sdr_upd_r18_rx_freq`, `vfo_display_offset` **[fact]** |
 | +0x14..+0x1D | 10 | **per-mode block, CW** (2/3). +0x14 bit 1 = BI. +0x15 bit 7 = BC. +0x1C/+0x1D (s16) is the CW offset, combined with the CW pitch (0x9C04×10 + 300 Hz) | `cat_BI`, `cat_BC`, `sdr_upd_r18_rx_freq` **[fact]** |
 | +0x1E..+0x27 | 10 | **per-mode block, RTTY** (12/13). +0x1F bit 7 = BC. +0x26/+0x27 is the RTTY offset; the base comes from setting 0x9A8D (85/105/215/425 Hz) | `cat_BC`, `sdr_upd_r18_rx_freq` **[fact]** |
 | +0x28..+0x31 | 10 | **per-mode block, DATA and PSK** (8/9, 14). +0x29 bit 7 = BC. +0x30/+0x31 (s16) is the DATA/PSK offset. DATA adds setting 0x9A7A:0x9A7B × 10 Hz | `cat_BC`, `sdr_upd_r18_rx_freq`, `vfo_display_offset` **[fact]** |
 | +0x32..+0x3B | 10 | **per-mode block, AM** (4/5). +0x32 bit 1 and +0x33 bit 7 are used by BI/BC | `cat_BI`, `cat_BC` **[fact]** |
-| +0x3C..+0x45 | 10 | probably the per-mode block for FM / DATA-FM (6/7, 10/11) | by the 10-byte stride **[inference]** |
+| +0x3C..+0x45 | 10 | **per-mode block, FM and DATA-FM** (6/7, 10/11). Same layout as the other blocks ([below](#per-mode-block-layout)); in FM only the AGC byte and the BI bit have an effect | `cat_BP`/`cat_BI`/`cat_CO`/`cat_GT`/`cat_IS` map modes 6/7 and 10/11 to +0x3C **[fact]** |
 | +0x46 | u8 | CTCSS/DCS tone number (`CN`, 0..49) | `cat_CN` **[fact]** |
-| +0x47 | u8 | unknown | |
+| +0x47 | u8 | **unused** in V01-12: no field access; the default (ROM 0xFFF80948) is 0 | **[fact for the absence of users]**; reserved, perhaps for a DCS code the FT-710 does not offer **[guess]** |
 | +0x48..+0x49 | s16 | **clarifier offset** in Hz, two's complement (CF: ±9999) | `vfo_freq_clar`, `cat_CF` **[fact]** |
 | +0x4A..+0x4D | u32 | **frequency in Hz** (dial frequency, without clarifier) | `vfo_freq`, `cat_FA_FB` **[fact]** |
 | +0x4E..+0x59 | 12 | memory tag, ASCII 0x20..0x7D, padded with spaces | `cat_MT`, `vfo_clear_tag` **[fact]** |
@@ -97,6 +98,58 @@ The modes come in pairs: SSB 0/1, CW 2/3, AM 4/5, FM 6/7, DATA 8/9, DATA-FM 10/1
 menu settings use the same groups, through `FUN_fffb54a0`/`FUN_fffb552c` (base 0x9BCA). **[fact]**
 `vfo_mode` returns mode 2 (CW-L) while a tuner cycle or tune carrier is active (0x20F0C = 1/2,
 0x20B40/0x20B41 = 2, 0x20B25 = 1). **[fact]** That this is the CW tune carrier is **[inference]**.
+
+
+### Per-mode block layout
+
+Six 10-byte blocks, one per mode class: SSB +0x0A, CW +0x14, RTTY +0x1E, DATA/PSK +0x28, AM +0x32, FM/DATA-FM +0x3C
+(the mode → block map is the same in `cat_BP` 0xFFFA7A71, `cat_CO`, `cat_BI`, `cat_GT` and `cat_IS`) **[fact]**. Offsets are from the
+block start; 16-bit values are big-endian.
+
+| Block offset | Field | Evidence |
+|---|---|---|
+| +0 bit 7 | manual NOTCH on (`BP` P2=0) | `cat_BP`, `sdr_upd_r1d_notch` 0xFFFA20F7, `dsp_set_am_notch` (AM) **[fact]** |
+| +0 bit 6 | CONTOUR on (`CO` P2=0) | `cat_CO`, `dsp_set_contour` 0xFFF9E871 (`\| 0x1000` on reg 0x42) **[fact]** |
+| +0 bit 5 | APF on (`CO` P2=2; CW block only) | `cat_CO`, `dsp_set_apf`, `FUN_fffbde58` **[fact]** |
+| +0 bit 1 | `BI` flag; set and cleared by `keyer_task` in the CW block, toggled by `FUN_fffc79b8` (a knob step; SSB, CW, AM, FM blocks), read for the TX side by `FUN_fffb521a` | **[fact]**; break-in (CW) / VOX (voice) per mode **[inference]** |
+| +0 bits 0, 2 | defaults set bit 2 (bit 0 in the FM block); no reader found | `FUN_fffb0664` **[fact]** |
+| +1 bit 7 | `BC` flag (not in the FM block: `BC` rejects modes 6/7, 10/11) | `cat_BC` **[fact]** |
+| +1 bits 4–6 | AGC (`GT`): bit 6 = set, bits 4–5 = speed 1..3; field 0 reads back as 4/5/6 by mode class (AUTO **[inference]**) | `cat_GT`, `dsp_set_agc` 0xFFF9F681 **[fact]** |
+| +2..+3 | CONTOUR frequency / 10 Hz (`CO` P2=1) | `cat_CO`, `dsp_set_contour` **[fact]** |
+| +4..+5 | NOTCH frequency / 10 Hz (`BP` P2=1, 1..320) | `cat_BP`, `sdr_upd_r1d_notch` **[fact]** |
+| +6..+7 | WIDTH in Hz (`SH`) | `cat_SH` 0xFFFAE2CA, `FUN_fffc3582` **[fact]** |
+| +8..+9 | s16 IF SHIFT in Hz (`IS`) | `cat_IS`, `sdr_upd_r18_rx_freq` **[fact]** |
+
+**Defaults** (`FUN_fffb0664` 0xFFFB0664, called by `defaults_vfo` and `defaults_memch` for every record; the stores are little-endian
+u32s, so the bytes below are in record order) **[fact]**:
+
+| Block | +0 | +1 | +2..+3 contour | +4..+5 notch | +6..+7 width | +8..+9 shift |
+|---|---|---|---|---|---|---|
+| SSB +0x0A | 0x04 | 0x40 | 150 (1500 Hz) | 150 (1500 Hz) | 3000 | 0 |
+| CW +0x14 | 0x05 | 0x40 | 150 | 150 | 500 | 0 |
+| RTTY +0x1E | 0x04 | 0x40 | 150 | 150 | 500 | 0 |
+| DATA +0x28 | 0x04 | 0x40 | 150 | 150 | 3200 | 0 |
+| AM +0x32 | 0x04 | 0x70 | 150 | 150 | 9000 | 0 |
+| FM +0x3C | 0x01 | 0x40 | 150 | 150 | 16000 | 0 |
+
+**The FM block in use** **[fact]**: `dsp_set_agc` reads +0x3D, and the BI bit (+0x3C bit 1) is toggled and read as for the other voice
+modes. Nothing applies the other FM fields: `dsp_set_contour` sends 0 for modes 6/7 and 10/11, `sdr_upd_r1d_notch` handles only CW,
+RTTY, DATA/PSK and SSB, `SH` is fixed for FM (the width at +0x42 has no reader), and the shift at +0x44 is read only by `cat_IS` and its
+AI reporter `FUN_fffdf66f`. `CO`/`BP`/`IS` still store values there in FM. DNR is also off in FM and DATA-FM (record +0x06 above).
+
+### Record bytes without users
+
+A scan of the whole MAIN decompile (every pointer that comes from `vfo_rec_ptr` or the working records 0x9D09/0x9D63, and every
+pointer that is also indexed at the frequency/tag offsets) finds **no field access** to +0x07, +0x08, +0x09 or +0x47, and none to
+bits 5–7 of +0x06 **[fact]**. They are written only by the defaults (`defaults_vfo` 0xFFFB06E5, `defaults_memch` 0xFFFB0A8F):
+
+- `+0x00..+0x03` = `40 00 04 80`, `+0x04..+0x07` = `00 02 01 00`, `+0x08..+0x09` = `00 00` for the VFOs and memories 001–P9U (LSB,
+  simplex, DNR level 1); the dest-specific 60 m channels get `01 01 04 80`, `00 02 03 00`, `00 00` (USB, DNR level 3).
+- `+0x46..+0x59` = 20 bytes from ROM 0xFFF80947 (`0C 00 0000 006ACFC0` + 12 spaces: tone 12, +0x47 = 0, no clarifier, 7.000 MHz,
+  empty tag), or 0xFFF80B4F + n·0x14 for the 60 m channels. Some destinations (codes 0x020B, 0x4380, 0x60E6) then set the VFO tone to 8.
+
+The bytes are otherwise moved with the whole record (EEPROM save/load, band stack, QMB, A↔B copies, the E8/E9 clone), so they survive a
+clone. That they are reserved space is **[inference]**.
 
 ## VFO and memory states
 
@@ -562,8 +615,8 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
   The offsets on this page do not depend on them. For `vfo_rec_ptr`/`vfo_freq`/`vfo_freq_clar`/`vfo_mode`, the
   disassembly was used instead of the decompile.
 
-- The record bytes +0x04, +0x06..+0x09, +0x47, the high nibble of +0x00 and the FM per-mode block (+0x3C) are not
-  identified yet.
+- The high nibble of +0x00, bit 4 of +0x04 (set by `align_load_preset`), bits 0/2 of each per-mode block's first byte and the bits of
+  +0x01/+0x02/+0x03/+0x05 not listed above have no known meaning. +0x07..+0x09 and +0x47 have no users at all (#161).
 - States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.
 - `BS12;`: does the out-of-row band-stack index have a visible effect? Test this on the radio only with the owner's
   approval.
