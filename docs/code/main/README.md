@@ -181,6 +181,9 @@ stateDiagram-v2
   **[fact]**; the flag 0x20B3A is set only in `displink_rx_F0_hello`, the handler of DISPLAY frame 0xF0, which also stores the
   DISPLAY version string (0x1436, `ver_display`) and a power-on reason byte at 0x20B9F **[fact]**. So power-on is triggered
   by the DISPLAY `F0` frame (0x20B3A = global state block +0x36): MAIN asks the DISPLAY CPU and waits for it **[inference]**.
+  The request is frame `0x60` (#57): `cat_PS` also sets 0x9DC5 = 1, +0x98 = 1 turns MAIN's link transmitter on (it is silent
+  while the radio is off), and 0x1B3D0 = 1 makes the scheduler send `0x60`, whose byte 0xB3 is 0x9DC5. A DISPLAY that is off and
+  has already seen one `0x60` switches the radio on when byte 0xB3 = 1 ([system.md](../system.md), item C6) **[fact]**.
   The frame format is in [display-link.md](display-link.md).
 - **Power-off ends in a software reset.** `sw_reset` writes PRCR (0x803FE) = 0xA502 and 0x800C2 = 0xA501
   **[fact]**, which is the RX65x software-reset register SWRR **[inference]**. The CPU then restarts in `PowerON_Reset`
@@ -266,7 +269,7 @@ To find all users of a field, search for both forms. Other pointers there: 0x25D
 | 0x20B45 | +0x41 | settings defaults were loaded at boot **[fact]** |
 | 0x20B46 | +0x42 | CAT disabled (set by DISPLAY) **[fact]** |
 | 0x20B6B | +0x67 | RX/TX or VFO selector watched by the SDR and DSP link tasks **[fact for the use; meaning guess]** |
-| 0x20B9C | +0x98 | power-on request to DISPLAY (`PS1`) **[fact]** |
+| 0x20B9C | +0x98 | link transmitter enabled: `displink_tx_poll` sends only while it is 1; set by `PS1` (`power_on_request`) and the `F0` hello **[fact]** (#57) |
 | 0x20F1C | +0x418 | scan running (`cat_SC`) **[fact]** |
 | 0x20F8C / 0x20F90 | +0x488 / +0x48C | command words from DISPLAY frames 0xE7 / 0xE8 **[fact]** |
 

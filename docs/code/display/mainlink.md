@@ -277,7 +277,7 @@ to the dispatcher. `task_mainlink_dispatch` 0x201600A8 (r7 = 0x2045006D, r6 = 0x
 | 0x21 | payload → 0x20450035, flag 0x20450025 |
 | 0x23 | 0x208084D4 = 1 |
 | 0x24 | 6 bytes from +0x98 → 0x2045006D, flag 0x20450024 |
-| 0x60 | flag 0x20450026, copy → 0x2045FB00. On the 2nd and later 0x60 with byte 0xB3 = 1 and the radio off, `FUN_20117288(1)` (radio-on flag 0x208003A0) |
+| 0x60 | flag 0x20450026, copy → 0x2045FB00. On the 2nd and later 0x60 with byte 0xB3 = 1 and the radio off, `FUN_20117288(1)` (radio-on flag 0x208003A0). Byte 0xB3 is MAIN's 0x9DC5, which `PS1;` sets before it sends this frame: this is how CAT `PS1;` powers the radio on (#57) |
 | all but 06/15/1B | copy → 0x2045F260 and **0x2045F8C0** (the GUI snapshot, 0x240 bytes) |
 
 ## 8. How the GUI is driven
