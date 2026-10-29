@@ -162,9 +162,42 @@ master once (`rspi_hw_config(2, 0)`, flag 0x208001B4, about 2 MHz, mode 1). It t
 go another way (`sdr_reg_write`/`sdr_reg_read` → `sdr_relay_xfer`, see [update.md](update.md), T11c). After the update the channel stays in master
 mode until the next reset **[inference: nothing switches it back]**.
 
-**Rate.** The DISPLAY does not set the slave clock, and nothing in this image fixes the frame rate. 1700 B per frame is about 13.6 kbit, so 30
-frames/s would need only about 0.4 Mbit/s **[inference]**. The debug overlay (`debug_overlay_draw`, only with `debug_enabled`) shows the SS-IRQ
-counters as "S" (SDR) and "D" (DSP) **[fact: labels at 0x20136C48/0x20136C50]**, so the rate can be read on a debug-enabled unit.
+**Header, trailer and rate: what the firmware says (#62).**
+
+- **The DISPLAY never parses the header or the trailer.** No code reads a single byte of the record at 0x204832BB–0x204832D3 (header,
+  25 B) or 0x2048360D–… / +0x339..+0x351 (trailer, 25 B). The record goes to three places, all as a block **[fact: every reference to
+  0x204832BB, 0x2048360D, 0x204832D4]**:
+  1. `scope_history_push` takes only the 800 points at +0x19 (→ GUI, [gui.md](gui.md#scope-drawing-83)).
+  2. `FUN_20134390` copies all 850 bytes to 0x2048360D, the copy the GUI draws from while the scope is on hold (0x20800498).
+  3. `pclink_tx_copy_scope` (0x20112128) copies all 850 bytes, header included, to offset 0 of the 4096-byte FT4222 frame for the PC
+     (Link 3 below), every 4 ms.
+
+  So the header and trailer are meant for the **PC scope software**, not for the panel, and their layout is set by the FPGA (or that PC
+  software). The DISPLAY cannot tell us what they mean **[inference]**.
+- **The second 850 bytes** of each 1700-byte DMA frame are never referenced (0x605C03F2..) **[fact]**. Most likely the FPGA sends two
+  850-byte halves (for example main and sub, or two resolutions) and this build uses only the first **[guess]**.
+- **Rate on the DISPLAY side.** The GUI uses at most one record per 33 ms frame: `scope_draw_frame` runs once per `gui_main_loop` pass,
+  pushes the newest record into the history and draws it **[fact]**. Records that arrive in between overwrite each other in 0x204832BB, so a
+  faster SDR frame rate is invisible on the panel; only the PC link (every 4 ms) could see more. The 3DSS adds a line every N GUI frames,
+  N = {20, 17, 13, 9, 5} (≈ 0.67 s … 0.17 s) from the SPEED byte, taking the per-point maximum of the frames in between **[fact: code;
+  SPEED = inference]**.
+- **Rate on the SDR side.** Nothing in the DISPLAY or MAIN code fixes the FPGA's scope frame period. MAIN sends the scope registers
+  0x15 = 0x2000 and 0x24 = 0x0317 once, then centre, span, RBW, sensitivity and level ([main/sdr-link.md](../main/sdr-link.md)) **[fact]**.
+  0x0317 = 791 equals the 3DSS front-line width on the DISPLAY, which may be a coincidence **[guess]**.
+- **Netlist simulation (#62).** I ran `hdl/sdr/sim/pins_main.cpp` for 16 M clocks (128 ms at 125 MHz), 4 × the #90 run. It sent MAIN's scope set-up frames: 0x15 = 0x2000, 0x24 = 0x0317, 0x20/0x21, span 0x22 = 6, RBW 0x23 = 0x8000, 0x26 = 0x0610 and level 0x27. No scope pin toggled; only the I2S port (U16/V17/V16) ran **[fact]**. The netlist narrows the candidates **[fact: `build/sdr/ft710_sdr.v`]**:
+  - V15, T16 and T15 are tied to constant 0, so they cannot carry the scope link.
+  - Of the remaining outputs, T9 is driven by a LUT (`SLICE_X36Y56/ALUT`) and U17 by a flip-flop on the 125 MHz fabric clock.
+  - M17 is driven by a flip-flop on the `dsp_clk` MMCM clock (`BUFHCE_X1Y8`), the clock that also drives the I2S port.
+
+  So `FFT_CLK/FRM/DAT` are most likely T9/U17/M17 **[inference]**. Their logic waits on a condition the harness does not drive, perhaps ADC data or a DISPLAY-side input **[guess]**.
+
+**What stays open** (#186): the header/trailer field meanings and the SDR frame period. They need either the FPGA scope serializer located
+in the netlist, or a capture on the radio. A capture needs the owner's approval: either the debug overlay's "S" counter on a debug-enabled
+unit, or the FT4222 PC stream, which carries the header unchanged.
+
+The debug overlay (`debug_overlay_draw`, only with `debug_enabled`) shows the SS-IRQ counters as "S" (SDR) and "D" (DSP) **[fact: labels at
+0x20136C48/0x20136C50]**, so the rate can be read on a debug-enabled unit. 1700 B per frame is about 13.6 kbit, so even 30 frames/s need only
+about 0.4 Mbit/s **[inference]**.
 
 ## Link 2: IF DSP FFT/REC/PLAY (RSPI4)
 
