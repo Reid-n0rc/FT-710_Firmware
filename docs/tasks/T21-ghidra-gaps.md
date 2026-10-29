@@ -1,6 +1,6 @@
 # T21 — Close the Ghidra decompile gaps (issue #97)
 
-**Status:** in progress · **Depends on:** T05, T07, T11, T12e, T17, T20 · **Issue:** [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97)
+**Status:** done (2026-10-28) · **Depends on:** T05, T07, T11, T12e, T17, T20 · **Issue:** [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97)
 
 ## Goal
 Close every known gap in the Ghidra decompiles listed in #97, so `decomp/` is decompiled C that can be trusted. Part A (HiFi4 FLIX
@@ -619,5 +619,33 @@ list the order. `decomp/` not re-exported (T21g).
   addresses, e.g. the band and filter tables in the subsystem pages).
 
 ## Findings
+Every #97 item is closed; details in the sub-task sections, numbers in `decomp/*/INDEX.md` and `decomp/*/quality.tsv` **[fact]**.
+
+| # | Result | Sub-tasks |
+|---|---|---|
+| A | Generated language `Xtensa:LE:32:rt600hifi4` (FLIX bundles, HiFi4/FPU ops) from Cadence's `xtensa-modules.c`: selftest 49,389/49,389 instructions = objdump; Ghidra listing vs `flix.dis` 95.85 % (bundles 99.66 %), every mismatch an instruction analysis does not reach; decompile failures 1,054 → 0 (1 `halt_baddata` on data), warnings 2,038 → 258 | T21a, T21b, T21g, T21k |
+| B1 | RXv2 coverage diff against binutils; missing/mis-decoded forms patched (MUL/XCHG memory forms, SCCnd, RTSD, MVFACxx, MVTACxx); Ghidra = objdump on all 131,274 MAIN instructions; T22a's semantics check 28,772/28,772 | T21c, T21h, T21i, T22a |
+| B2 | spacebase warnings 8 → 0 (RTSD frame size) | T21d |
+| B3 | 1,217 locked prototypes (`signatures_main.tsv`); call-argument/return checker; JSR Rs is a call (T22a) | T21d, T21i, T22a |
+| B4 | compare/search string ops are named calls; copy/store ops are loops again because as calls their stores were lost | T21c, T21i |
+| B5 | MAIN undefined non-0xFF bytes 20,622 → 0 | T21d, T21h |
+| B6 | DISPLAY: 86 jump-table sites, all decompile to a switch | T21e |
+| B7 | DISPLAY: 205 hand-checked entries (`entries_display.tsv`), incl. the 2-byte-late 0x2016385A | T21e, T21j |
+| B8 | DISPLAY undefined non-0xFF bytes 4,258 → 86 | T21e, T21j |
+| B9 | `FUN_0020bb74` decompiles | T21b |
+| B10 | HiFi4 function list = reference list (1,065 `flix.dis` functions + 4 documented extras), checked with `flix_compare.py funcs` | T21b, T21j |
+| B11 | `quality.tsv` per image from the export; `bootstrap.sh --only verify` fails when a count gets worse | T21f |
+
+Also from T22's independent checks: M33 `SystemCoreClockUpdate` entry, M33/HiFi4 data typed, HiFi4 rodata in its own read-only
+block (HiFi4 undefined bytes 29,161 → 6,377, mostly alignment), five MAIN intrinsic helpers with locked signatures (T21i, T21j).
 
 ## Follow-ups
+Known, small, left on purpose (none changes decompiled behaviour that MAIN, DISPLAY or the DSP use):
+- HiFi4 jump table at 0x206290 (cases 0x2316F1, 0x231549, 0x231517): no instruction loads its address, so Ghidra cannot recover it
+  without a jump-table override; the 13-byte case at 0x2316F1 is disassembled (T21j).
+- RX module: `JMP Rs` (no branch op, like `JSR Rs` before T22a) and `BNOT Rs,Rd` (`Rd ^ (Rs & 31)`) are still wrong; MAIN has no
+  such instruction, so nothing can test a fix (T22a).
+- The default RX prototype lists R1–R4/R14 as alternative return registers; only five unreferenced MAIN helpers were affected and
+  they are locked now (T21i). A cspec change would touch every unsigned function.
+- REA feature requests from T22 that are not device support (prototype seeds, analysis reuse across CLI calls, `.sla` digest in the
+  analysis profile, a rizin deep provider, pseudocode-set import): see T22f in `T22-rea-verification.md`.

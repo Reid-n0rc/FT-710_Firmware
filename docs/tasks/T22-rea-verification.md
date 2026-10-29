@@ -1,6 +1,6 @@
 # T22 — Verify the #97 decompile fixes with independent REA and rizin tools (issue #104)
 
-**Status:** in progress · **Depends on:** T21 · **Issue:** [#104](https://github.com/Reid-n0rc/FT-710_Firmware/issues/104)
+**Status:** done (2026-10-28) · **Depends on:** T21 · **Issue:** [#104](https://github.com/Reid-n0rc/FT-710_Firmware/issues/104)
 
 ## Goal
 T21 checks each fix against one reference (`flix.dis`, GNU binutils, Ghidra's own counts). T22 re-reads the same results with tools
@@ -744,6 +744,15 @@ Owner follow-ups, done 2026-10-28: fork branch pushed; MCP entry gained `REA_RIZ
 from 10G to 3G (10 GB was two thirds of the host's RAM and bypassed the one-job cap). Both take effect after a Claude Code restart.
 
 ## Findings
+Independent tools agree with the #97 fixes, and where they did not, the fix went back into T21 **[fact]**:
+- MAIN (T22a): Ghidra = binutils objdump on every instruction, rizin differs only by its own gaps; the RX p-code had nine classes
+  of semantic bugs (1,040 of 28,748 emulated cases), fixed by `rx62t-semantics-fix.patch`; signatures re-read through REA, all 11
+  differences settled for `signatures_main.tsv`.
+- DISPLAY (T22b): jump tables, starts and fragments recovered again with an own tool, rizin and REA; every difference settled.
+- HiFi4 (T22c): rizin's base-ISA decode agrees outside bundles; REA's decompile with the new language matches the canonical one.
+- All images (T22d): the undefined bytes left are classified; its recommended fixes were applied in T21j.
+- Before/after (T22e): one real regression (stores lost in MAIN's SMOVF reply builders), fixed in T21i; the cosmetic items in T21j/T21k.
+- REA fork (T22f): the device support the others needed, pushed to github.com/Reid-n0rc/rea `feat-ft710-devices`.
 
 ## Follow-ups
 - **Done in T21i (2026-10-28):** T22e → T21/T21h: give the RX string pcodeops (`smovf`/`smovb`/`smovu`/`sstr`) a memory effect (or keep the copy loop for them).
