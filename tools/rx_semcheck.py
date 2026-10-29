@@ -10,8 +10,9 @@ gen picks real instruction sites from the ListingExport.java TSV (up to N sites 
 shapes of the modelled mnemonics), builds K random start states per site (registers, PSW flags, the memory the
 instruction reads) and writes the expected end state from the model into the case file. RxEmuStep.java executes each
 case once with Ghidra's p-code emulator; check compares registers R0-R15, PC, the four PSW flags and the exact set of
-bytes written. User pcodeops (scmpu, smovf, sstr, suntil, ...) are not executed: the emulator records their arguments
-and returns the case's "uop" value, and the model checks the arguments and the register/flag effects around them.
+bytes written. User pcodeops (scmpu, suntil, swhile) are not executed: the emulator records their arguments and returns
+the case's "uop" value, and the model checks the arguments and the register/flag effects around them. SMOVF and SSTR are
+p-code loops since T21i, so the model copies/stores their bytes and the generator keeps R3 small (0-40).
 
 The model takes operands from Ghidra's operand text (decoding was checked against binutils and rizin, rx_compare.py);
 the semantics (what each operand form reads or writes, extension, flags, stack effects) come from the manual.
@@ -386,14 +387,16 @@ def model(st, addr, ln, mn, ops_txt):
         st.wr(a, n, st.r[rd])
         st.r[rd] = (sext(v, 8 * n) & M32) if SIGNED[ex] else v
         return
-    if base == "SMOVF":
-        st.calls.append(("smovf", [st.r["R1"], st.r["R2"], st.r["R3"]]))
+    if base == "SMOVF":                          # p. 190: byte by byte, forward (overlap as the loop does it)
+        for i in range(st.r["R3"]):
+            st.wr((st.r["R1"] + i) & M32, 1, st.rd((st.r["R2"] + i) & M32, 1))
         st.r["R1"] = (st.r["R1"] + st.r["R3"]) & M32
         st.r["R2"] = (st.r["R2"] + st.r["R3"]) & M32
         st.r["R3"] = 0
         return
-    if base == "SSTR" and sz == "B":
-        st.calls.append(("sstr", [st.r["R1"], st.r["R2"] & 0xFF, st.r["R3"]]))
+    if base == "SSTR" and sz == "B":             # p. 192
+        for i in range(st.r["R3"]):
+            st.wr((st.r["R1"] + i) & M32, 1, st.r["R2"] & 0xFF)
         st.r["R1"] = (st.r["R1"] + st.r["R3"]) & M32
         st.r["R3"] = 0
         return
@@ -512,8 +515,11 @@ def gen(a):
                         uop = (regs["R1"] + k) & M32
                         mem[(uop - 1) & M32] = rng.choice([regs["R2"] & 0xFF, rng.getrandbits(8)])
                         regs["R2"] = rng.choice([regs["R2"] & 0xFF, regs["R2"]])
-                    if base in ("SMOVF", "SSTR") and t == 0:
-                        regs["R3"] = rng.randrange(0, 40)
+                    if base in ("SMOVF", "SSTR"):           # loops since T21i: keep the count small
+                        regs["R3"] = rng.choice([0, 1, rng.randrange(2, 41)])
+                        if base == "SMOVF":
+                            for i in range(regs["R3"]):
+                                mem[(regs["R2"] + i) & M32] = rng.getrandbits(8)
                     if base == "BRA" and sz == "L" or base == "BSR" and sz == "L":
                         regs[oplist[0][1]] = rng.randrange(-0x400, 0x400) & M32
                     st = State(regs, flags, mem)

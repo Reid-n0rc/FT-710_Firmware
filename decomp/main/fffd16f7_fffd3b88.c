@@ -424,38 +424,38 @@ void FUN_fffd1c25(byte param_1,byte *param_2)
 
 // ===== FUN_fffd1d86 @ fffd1d86 (234 bytes)
 
-byte * FUN_fffd1d86(byte param_1,byte *param_2)
+void FUN_fffd1d86(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bb6;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b59;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b78;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b97;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b3a;
   }
@@ -470,47 +470,53 @@ byte * FUN_fffd1d86(byte param_1,byte *param_2)
   if (4 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x1047,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x1047);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd1eb1 @ fffd1eb1 (235 bytes)
 
-byte * FUN_fffd1eb1(byte param_1,byte *param_2)
+void FUN_fffd1eb1(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bb7;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b5a;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b79;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b98;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b3b;
   }
@@ -525,47 +531,53 @@ byte * FUN_fffd1eb1(byte param_1,byte *param_2)
   if (3 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x10b0,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x10b0);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd1fdd @ fffd1fdd (234 bytes)
 
-byte * FUN_fffd1fdd(byte param_1,byte *param_2)
+void FUN_fffd1fdd(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bb8;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b5b;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b7a;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b99;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b3c;
   }
@@ -580,10 +592,16 @@ byte * FUN_fffd1fdd(byte param_1,byte *param_2)
   if (1 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (int)(&DAT_00002328 + (uint)local_b * 0x15),0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (int)(&DAT_00002328 + (uint)local_b * 0x15));
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
@@ -751,38 +769,38 @@ void FUN_fffd236b(byte param_1,byte *param_2)
 
 // ===== FUN_fffd249d @ fffd249d (235 bytes)
 
-byte * FUN_fffd249d(byte param_1,byte *param_2)
+void FUN_fffd249d(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bbc;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b5f;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b7e;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b9d;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b40;
   }
@@ -797,47 +815,53 @@ byte * FUN_fffd249d(byte param_1,byte *param_2)
   if (0x13 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x1b87,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x1b87);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd25c9 @ fffd25c9 (234 bytes)
 
-byte * FUN_fffd25c9(byte param_1,byte *param_2)
+void FUN_fffd25c9(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bbd;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b60;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b7f;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b9e;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b41;
   }
@@ -852,47 +876,53 @@ byte * FUN_fffd25c9(byte param_1,byte *param_2)
   if (1 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x1d7,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x1d7);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd26f4 @ fffd26f4 (236 bytes)
 
-byte * FUN_fffd26f4(byte param_1,byte *param_2)
+void FUN_fffd26f4(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bbe;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b61;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b80;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009b9f;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b42;
   }
@@ -907,47 +937,53 @@ byte * FUN_fffd26f4(byte param_1,byte *param_2)
   if (0x43 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x1d2b,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x1d2b);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd2821 @ fffd2821 (234 bytes)
 
-byte * FUN_fffd2821(byte param_1,byte *param_2)
+void FUN_fffd2821(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bbf;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b62;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b81;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009ba0;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b43;
   }
@@ -962,10 +998,16 @@ byte * FUN_fffd2821(byte param_1,byte *param_2)
   if (1 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x1d7,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x1d7);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
@@ -1067,38 +1109,38 @@ void FUN_fffd2a63(byte param_1,byte *param_2)
 
 // ===== FUN_fffd2b7a @ fffd2b7a (234 bytes)
 
-byte * FUN_fffd2b7a(byte param_1,byte *param_2)
+void FUN_fffd2b7a(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bc2;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b65;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b84;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009ba3;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b46;
   }
@@ -1113,47 +1155,53 @@ byte * FUN_fffd2b7a(byte param_1,byte *param_2)
   if (4 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x22bf,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x22bf);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
 // ===== FUN_fffd2ca5 @ fffd2ca5 (234 bytes)
 
-byte * FUN_fffd2ca5(byte param_1,byte *param_2)
+void FUN_fffd2ca5(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bc3;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b66;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b85;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009ba4;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b47;
   }
@@ -1168,10 +1216,16 @@ byte * FUN_fffd2ca5(byte param_1,byte *param_2)
   if (3 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x2e8,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x2e8);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 
@@ -1273,38 +1327,38 @@ void FUN_fffd2ee7(byte param_1,byte *param_2)
 
 // ===== FUN_fffd2ffe @ fffd2ffe (234 bytes)
 
-byte * FUN_fffd2ffe(byte param_1,byte *param_2)
+void FUN_fffd2ffe(byte param_1,byte *param_2)
 
 {
-  byte *pbVar1;
-  byte *local_10;
+  bool bVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
-    local_10 = (byte *)0x1;
+    bVar1 = true;
   }
   else {
-    local_10 = (byte *)0x0;
+    bVar1 = false;
   }
-  if (local_10 != (byte *)0x0) {
-    return local_10;
+  if (bVar1) {
+    return;
   }
-  pbVar1 = (byte *)(uint)param_1;
-  if (pbVar1 == (byte *)0x5) {
+  if (param_1 == 5) {
     local_b = DAT_00009bc6;
   }
-  else if (pbVar1 == (byte *)0x2) {
+  else if (param_1 == 2) {
     local_b = DAT_00009b69;
   }
-  else if (pbVar1 == (byte *)0x3) {
+  else if (param_1 == 3) {
     local_b = DAT_00009b88;
   }
-  else if (pbVar1 == (byte *)0x4) {
+  else if (param_1 == 4) {
     local_b = DAT_00009ba7;
   }
   else {
-    if (pbVar1 != (byte *)0x1) {
-      return pbVar1;
+    if (param_1 != 1) {
+      return;
     }
     local_b = DAT_00009b4a;
   }
@@ -1319,10 +1373,16 @@ byte * FUN_fffd2ffe(byte param_1,byte *param_2)
   if (3 < local_b) {
     local_b = 0;
   }
-  smovf(param_2 + 0x18,
-        "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
-        + (uint)local_b * 0x15 + 0x33c,0x15);
-  return param_2 + 0x2d;
+  pbVar2 = (byte *)(
+                   "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
+                   + (uint)local_b * 0x15 + 0x33c);
+  param_2 = param_2 + 0x18;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *param_2 = *pbVar2;
+    param_2 = param_2 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
+  return;
 }
 
 

@@ -584,7 +584,17 @@ void FUN_fffc18e1(void)
 void memtune_backup_a(void)
 
 {
-  smovf(0x9dce,0x9d09,0x5a);
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
+  puVar2 = &DAT_00009d09;
+  puVar1 = &DAT_00009dce;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
   return;
 }
 
@@ -596,7 +606,17 @@ void memtune_backup_a(void)
 void memtune_backup_b(void)
 
 {
-  smovf(0x9e28,0x9d63,0x5a);
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
+  puVar2 = &DAT_00009d63;
+  puVar1 = &DAT_00009e28;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
   return;
 }
 
@@ -610,10 +630,11 @@ void bandstack_save(void)
 {
   uint uVar1;
   int iVar2;
+  undefined1 *puVar3;
   bool local_13;
   byte bStack_12;
   byte bStack_11;
-  undefined *puStack_c;
+  undefined1 *puStack_c;
   undefined1 *puStack_4;
   
   local_13 = DAT_00009dbd == '\0';
@@ -639,7 +660,12 @@ void bandstack_save(void)
   if (iVar2 == 0) {
     return;
   }
-  smovf(puStack_c,puStack_4,0x5a);
+  puVar3 = puStack_c;
+  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar3 = *puStack_4;
+    puVar3 = puVar3 + 1;
+    puStack_4 = puStack_4 + 1;
+  }
   eeprom_save_bandstack(local_13,bStack_11,bStack_12,(uint)puStack_c);
   return;
 }
@@ -866,11 +892,21 @@ void vfo_reload_bandstack(byte param_1)
 void bandstack_load(byte param_1)
 
 {
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  undefined *puVar3;
+  int iVar4;
+  
   if (param_1 == 0) {
     if (DAT_00009dbe != '\x05') {
-      smovf(0x9d09,&DAT_00004761 +
-                   (uint)DAT_00009dc3 * 0x5a + (uint)(byte)(&DAT_000060b1)[DAT_00009dc3] * 0x438,
-            0x5a);
+      puVar1 = &DAT_00009d09;
+      puVar2 = &DAT_00004761 +
+               (uint)DAT_00009dc3 * 0x5a + (uint)(byte)(&DAT_000060b1)[DAT_00009dc3] * 0x438;
+      for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+        *puVar1 = *puVar2;
+        puVar1 = puVar1 + 1;
+        puVar2 = puVar2 + 1;
+      }
       return;
     }
     FUN_fffc31a7(0,1);
@@ -878,9 +914,14 @@ void bandstack_load(byte param_1)
     return;
   }
   if (DAT_00009dbf != '\x05') {
-    smovf(0x9d63,&DAT_00005409 +
-                 (uint)DAT_00009dc4 * 0x5a + (uint)(byte)(&DAT_000060bd)[DAT_00009dc4] * 0x438,0x5a)
-    ;
+    puVar1 = &DAT_00009d63;
+    puVar3 = &DAT_00005409 +
+             (uint)DAT_00009dc4 * 0x5a + (uint)(byte)(&DAT_000060bd)[DAT_00009dc4] * 0x438;
+    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar1 = *puVar3;
+      puVar1 = puVar1 + 1;
+      puVar3 = puVar3 + 1;
+    }
     return;
   }
   FUN_fffc31a7(param_1,1);
@@ -967,7 +1008,17 @@ void vfo_reload_memory(byte param_1)
 void memtune_restore_a(void)
 
 {
-  smovf(0x9d09,0x9dce,0x5a);
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
+  puVar2 = &DAT_00009dce;
+  puVar1 = &DAT_00009d09;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
   return;
 }
 
@@ -979,7 +1030,17 @@ void memtune_restore_a(void)
 void memtune_restore_b(void)
 
 {
-  smovf(0x9d63,0x9e28,0x5a);
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
+  puVar2 = &DAT_00009e28;
+  puVar1 = &DAT_00009d63;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
   return;
 }
 
@@ -1011,13 +1072,35 @@ void FUN_fffc1e52(void)
 void FUN_fffc1e6f(void)
 
 {
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
   if (PTR_DAT_00025d54[0x405] != '\x01') {
     return;
   }
   PTR_DAT_00025d54[0x405] = 0;
-  smovf(0x1216d,0x9d09,0x5a);
-  smovf(0x9d09,0x9d63,0x5a);
-  smovf(0x9d63,0x1216d,0x5a);
+  puVar2 = &DAT_00009d09;
+  puVar1 = &DAT_0001216d;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar2 = &DAT_00009d63;
+  puVar1 = &DAT_00009d09;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar1 = &DAT_00009d63;
+  puVar2 = &DAT_0001216d;
+  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
   PTR_DAT_00025d54[0x40b] = 1;
   beep_request(1);
   return;
@@ -1188,7 +1271,8 @@ void FUN_fffc2137(void)
 {
   undefined *puVar1;
   bool bVar2;
-  int iVar3;
+  undefined1 *puVar3;
+  int iVar4;
   byte *pbStack_4;
   
   bVar2 = memch_valid(PTR_DAT_00025d54[0x43a],&pbStack_4);
@@ -1196,12 +1280,15 @@ void FUN_fffc2137(void)
     PTR_DAT_00025d54[0x90] = 1;
     PTR_DAT_00025d54[0xbe] = 1;
     PTR_DAT_00025d54[0xc1] = 0;
-    puVar1 = PTR_DAT_00025d54;
-    sstr(PTR_DAT_00025d54 + 0xc2,0x20,0x32);
-    iVar3 = (uint)(byte)PTR_DAT_00025d54[0x43a] * 0x5a;
-    *(undefined4 *)(PTR_DAT_00025d54 + 0xca) = *(undefined4 *)(&DAT_000061a6 + iVar3);
-    *(undefined4 *)(puVar1 + 0xc6) = *(undefined4 *)(&DAT_000061a2 + iVar3);
-    *(undefined4 *)(puVar1 + 0xc2) = *(undefined4 *)(&DAT_0000619e + iVar3);
+    puVar3 = PTR_DAT_00025d54 + 0xc2;
+    for (iVar4 = 0x32; puVar1 = PTR_DAT_00025d54, iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar3 = 0x20;
+      puVar3 = puVar3 + 1;
+    }
+    iVar4 = (uint)(byte)PTR_DAT_00025d54[0x43a] * 0x5a;
+    *(undefined4 *)(PTR_DAT_00025d54 + 0xca) = *(undefined4 *)(&DAT_000061a6 + iVar4);
+    *(undefined4 *)(puVar1 + 0xc6) = *(undefined4 *)(&DAT_000061a2 + iVar4);
+    *(undefined4 *)(puVar1 + 0xc2) = *(undefined4 *)(&DAT_0000619e + iVar4);
     beep_request(1);
     return;
   }

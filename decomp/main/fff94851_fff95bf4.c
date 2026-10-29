@@ -607,7 +607,10 @@ void displink_task(void)
   char cVar4;
   ushort uVar5;
   char *pcVar6;
-  int iVar7;
+  char *pcVar7;
+  int iVar8;
+  char *pcVar9;
+  uint uVar10;
   
   freq_cache_update();
   FUN_fffc8b55();
@@ -618,7 +621,13 @@ void displink_task(void)
     bVar1 = false;
     pcVar6 = (char *)displink_rx_buf();
     uVar5 = displink_rx_len_of(*pcVar6);
-    smovf(0x198f,pcVar6,(uint)uVar5);
+    pcVar7 = &DAT_0000198f;
+    pcVar9 = pcVar6;
+    for (uVar10 = (uint)uVar5; uVar10 != 0; uVar10 = uVar10 - 1) {
+      *pcVar7 = *pcVar9;
+      pcVar7 = pcVar7 + 1;
+      pcVar9 = pcVar9 + 1;
+    }
     displink_rx_rearm();
     if (uVar5 == 0) {
       DAT_0001b3cd = '\x01';
@@ -702,8 +711,8 @@ void displink_task(void)
         displink_send_nak();
       }
     }
-    iVar7 = FUN_fffc911e();
-    if (iVar7 == 0) {
+    iVar8 = FUN_fffc911e();
+    if (iVar8 == 0) {
       cVar4 = FUN_fff9ccd3();
       if (cVar4 == '\0') {
         PTR_DAT_00025d38[0x6a] = 1;

@@ -928,6 +928,10 @@ void menu_reset_exec(void)
 void reset_select(char param_1)
 
 {
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
   if (param_1 == '\x02') {
     FUN_fffd02f9();
   }
@@ -937,10 +941,22 @@ void reset_select(char param_1)
   else if (param_1 == '\0') {
     FUN_fffd02ef();
     if (DAT_00009dbd == '\0') {
-      smovf(0x9d09,0x6150,0x5a);
+      puVar2 = &DAT_00006150;
+      puVar1 = &DAT_00009d09;
+      for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+        *puVar1 = *puVar2;
+        puVar1 = puVar1 + 1;
+        puVar2 = puVar2 + 1;
+      }
     }
     else {
-      smovf(0x9d63,0x6150,0x5a);
+      puVar2 = &DAT_00006150;
+      puVar1 = &DAT_00009d63;
+      for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+        *puVar1 = *puVar2;
+        puVar1 = puVar1 + 1;
+        puVar2 = puVar2 + 1;
+      }
     }
   }
   beep_request(8);

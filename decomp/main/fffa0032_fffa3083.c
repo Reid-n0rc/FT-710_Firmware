@@ -656,12 +656,12 @@ void dsp_isp_bridge(void)
   byte bVar2;
   char cVar3;
   ushort uVar4;
-  uint uVar5;
+  char *pcVar5;
+  char *pcVar6;
+  int iVar7;
+  uint uVar8;
   char acStack_40c [516];
-  char cStack_208;
-  char cStack_207;
-  undefined1 uStack_206;
-  undefined1 auStack_205 [513];
+  char acStack_208 [516];
   
   sci4_send(0x1a5e,0);
   DAT_00001c63 = 0;
@@ -693,11 +693,16 @@ void dsp_isp_bridge(void)
     wdt_kick();
     bVar2 = displink_rx_ready();
     if (bVar2 == 1) {
-      uVar5 = displink_rx_buf();
-      smovf(&cStack_208,uVar5,0x204);
+      pcVar5 = (char *)displink_rx_buf();
+      pcVar6 = acStack_208;
+      for (iVar7 = 0x204; iVar7 != 0; iVar7 = iVar7 + -1) {
+        *pcVar6 = *pcVar5;
+        pcVar6 = pcVar6 + 1;
+        pcVar5 = pcVar5 + 1;
+      }
       displink_rx_rearm();
-      if (cStack_208 != '\x06') {
-        if ((cStack_208 == -0xf) && (cStack_207 == -0x7e)) {
+      if (acStack_208[0] != '\x06') {
+        if ((acStack_208[0] == -0xf) && (acStack_208[1] == -0x7e)) {
           bVar1 = true;
         }
         else {
@@ -711,20 +716,27 @@ void dsp_isp_bridge(void)
           displink_uart_send((uint)acStack_40c,1);
           return;
         }
-        if (cStack_208 == 'Z') {
+        if (acStack_208[0] == 'Z') {
           do {
             bVar2 = sci1_tx_end();
           } while (bVar2 == 0);
           acStack_40c[0] = '\x06';
           displink_uart_send((uint)acStack_40c,1);
-          smovf(0x1a5e,auStack_205,(uint)CONCAT11(uStack_206,cStack_207));
-          sci4_send(0x1a5e,CONCAT11(uStack_206,cStack_207));
+          pcVar6 = acStack_208 + 3;
+          pcVar5 = &DAT_00001a5e;
+          for (uVar8 = (uint)CONCAT11(acStack_208[2],acStack_208[1]); uVar8 != 0; uVar8 = uVar8 - 1)
+          {
+            *pcVar5 = *pcVar6;
+            pcVar5 = pcVar5 + 1;
+            pcVar6 = pcVar6 + 1;
+          }
+          sci4_send(0x1a5e,CONCAT11(acStack_208[2],acStack_208[1]));
         }
       }
     }
     bVar2 = sci4_rx_ready();
     if (bVar2 == 1) {
-      uVar5 = sci4_rx_buf();
+      pcVar5 = (char *)sci4_rx_buf();
       uVar4 = sci4_rx_len();
       do {
         bVar2 = sci1_tx_end();
@@ -732,7 +744,12 @@ void dsp_isp_bridge(void)
       acStack_40c[0] = 'Z';
       acStack_40c[1] = (char)uVar4;
       acStack_40c[2] = (char)(uVar4 >> 8);
-      smovf(acStack_40c + 3,uVar5,(uint)uVar4);
+      pcVar6 = acStack_40c + 3;
+      for (uVar8 = (uint)uVar4; uVar8 != 0; uVar8 = uVar8 - 1) {
+        *pcVar6 = *pcVar5;
+        pcVar6 = pcVar6 + 1;
+        pcVar5 = pcVar5 + 1;
+      }
       cVar3 = dsp_sum8((int)acStack_40c,(byte)(uVar4 + 3));
       acStack_40c[(ushort)(uVar4 + 3)] = cVar3;
       displink_uart_send((uint)acStack_40c,uVar4 + 4);
@@ -982,6 +999,8 @@ void sdr_init(void)
 
 {
   byte bVar1;
+  undefined2 *puVar2;
+  int iVar3;
   undefined1 uStack_b;
   undefined1 uStack_a;
   undefined1 uStack_9;
@@ -1006,7 +1025,11 @@ void sdr_init(void)
   do {
     bVar1 = swtimer_expired(0x1f);
   } while (bVar1 != 1);
-  sstr(0x1b736,0xff,0x4e);
+  puVar2 = &DAT_0001b736;
+  for (iVar3 = 0x4e; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *(undefined1 *)puVar2 = 0xff;
+    puVar2 = (undefined2 *)((int)puVar2 + 1);
+  }
   DAT_00001c8b = 0;
   DAT_00001c8d = 0;
   sdr_req_reg0();

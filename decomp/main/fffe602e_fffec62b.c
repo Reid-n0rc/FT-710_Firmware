@@ -139,6 +139,8 @@ void FUN_fffe61ca(void)
 byte ex_command(char *text,byte is_set,ushort len,byte *reply,ushort *reply_len)
 
 {
+  byte *pbVar1;
+  uint uVar2;
   byte bStack_1c;
   char acStack_1b [3];
   byte bStack_18;
@@ -169,7 +171,12 @@ byte ex_command(char *text,byte is_set,ushort len,byte *reply,ushort *reply_len)
       if (local_5 == 1) {
         menu_apply_from_cat((uint)acStack_1b);
       }
-      smovf(local_c,0x18878,(uint)DAT_0001ff10);
+      pbVar1 = &DAT_00018878;
+      for (uVar2 = (uint)DAT_0001ff10; uVar2 != 0; uVar2 = uVar2 - 1) {
+        *local_c = *pbVar1;
+        local_c = local_c + 1;
+        pbVar1 = pbVar1 + 1;
+      }
       *local_10 = DAT_0001ff10;
       bStack_1c = DAT_0001b234;
     }
@@ -191,8 +198,14 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
 {
   byte lim [16];
   byte lim_00 [16];
+  ushort len_00;
+  char *out;
+  char *key_00;
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   undefined1 in_stack_ffffffcc [12];
-  undefined4 uVar1;
+  undefined4 uVar4;
   byte abStack_20 [8];
   char cStack_18;
   byte bStack_e;
@@ -201,20 +214,29 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
   char *local_8;
   char *local_4;
   
-  uVar1 = 0xfffe62ad;
+  uVar4 = 0xfffe62ad;
   local_c = len;
   local_9 = is_set;
   local_8 = text;
   local_4 = key;
   bStack_e = menu_get_limits(key,abStack_20);
+  key_00 = local_4;
+  out = local_8;
+  len_00 = local_c;
+  pbVar2 = abStack_20;
   if (bStack_e == 1) {
     if (cStack_18 == '\0') {
       if (local_9 == 0) {
-        smovf(&stack0xffffffcc,abStack_20,0x10);
-        lim[0xc] = (char)uVar1;
-        lim[0xd] = (char)((uint)uVar1 >> 8);
-        lim[0xe] = (char)((uint)uVar1 >> 0x10);
-        lim[0xf] = (char)((uint)uVar1 >> 0x18);
+        pbVar1 = &stack0xffffffcc;
+        for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
+          *pbVar1 = *pbVar2;
+          pbVar1 = pbVar1 + 1;
+          pbVar2 = pbVar2 + 1;
+        }
+        lim[0xc] = (char)uVar4;
+        lim[0xd] = (char)((uint)uVar4 >> 8);
+        lim[0xe] = (char)((uint)uVar4 >> 0x10);
+        lim[0xf] = (char)((uint)uVar4 >> 0x18);
         lim[0] = in_stack_ffffffcc[0];
         lim[1] = in_stack_ffffffcc[1];
         lim[2] = in_stack_ffffffcc[2];
@@ -227,14 +249,19 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
         lim[9] = in_stack_ffffffcc[9];
         lim[10] = in_stack_ffffffcc[10];
         lim[0xb] = in_stack_ffffffcc[0xb];
-        bStack_e = ex_read_value(local_4,local_8,lim);
+        bStack_e = ex_read_value(key_00,out,lim);
       }
       else {
-        smovf(&stack0xffffffcc,abStack_20,0x10);
-        lim_00[0xc] = (char)uVar1;
-        lim_00[0xd] = (char)((uint)uVar1 >> 8);
-        lim_00[0xe] = (char)((uint)uVar1 >> 0x10);
-        lim_00[0xf] = (char)((uint)uVar1 >> 0x18);
+        pbVar1 = &stack0xffffffcc;
+        for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
+          *pbVar1 = *pbVar2;
+          pbVar1 = pbVar1 + 1;
+          pbVar2 = pbVar2 + 1;
+        }
+        lim_00[0xc] = (char)uVar4;
+        lim_00[0xd] = (char)((uint)uVar4 >> 8);
+        lim_00[0xe] = (char)((uint)uVar4 >> 0x10);
+        lim_00[0xf] = (char)((uint)uVar4 >> 0x18);
         lim_00[0] = in_stack_ffffffcc[0];
         lim_00[1] = in_stack_ffffffcc[1];
         lim_00[2] = in_stack_ffffffcc[2];
@@ -247,7 +274,7 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
         lim_00[9] = in_stack_ffffffcc[9];
         lim_00[10] = in_stack_ffffffcc[10];
         lim_00[0xb] = in_stack_ffffffcc[0xb];
-        bStack_e = ex_write_value(local_4,local_8,local_c,lim_00);
+        bStack_e = ex_write_value(key_00,out,len_00,lim_00);
       }
     }
     else if (local_9 == 0) {
@@ -263,6 +290,7 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
 
 // ===== ex_read_string @ fffe6335 (198 bytes)
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Reply EXkkkkkk + 12-char text */
 
 byte ex_read_string(int param_1,void *param_2)
@@ -299,7 +327,7 @@ byte ex_read_string(int param_1,void *param_2)
     }
     else {
       DAT_0001887c = local_8[1];
-      DAT_00018878 = *local_8;
+      _DAT_00018878 = *local_8;
       DAT_00018888 = local_f;
       DAT_00018884 = local_13;
       DAT_00018880 = local_17;
@@ -365,6 +393,7 @@ LAB_fffe6458:
 // ===== ex_read_value @ fffe646c (228 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe654d) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Format value: 1 digit, 2/3 digits (+sign), or 4 digits (u16 or scaled x10 / x20+20) */
 
 byte ex_read_value(char *key,char *out,byte lim [16])
@@ -378,7 +407,7 @@ byte ex_read_value(char *key,char *out,byte lim [16])
   char *local_8;
   
   DAT_0001887c = *(undefined4 *)(out + 4);
-  DAT_00018878 = *(undefined4 *)out;
+  _DAT_00018878 = *(undefined4 *)out;
   local_c = out;
   local_8 = key;
   bVar1 = menu_value_get(key,auStack_10);
@@ -978,10 +1007,12 @@ byte ex_parse_key(char *param_1,byte *param_2)
 
 /* WARNING: Removing unreachable block (ram,0xfffe6dac) */
 
-ushort FUN_fffe6d7a(undefined4 param_1)
+ushort FUN_fffe6d7a(undefined1 *param_1)
 
 {
   byte bVar1;
+  undefined1 *puVar2;
+  uint uVar3;
   byte bStack_9;
   ushort local_8;
   
@@ -998,7 +1029,12 @@ ushort FUN_fffe6d7a(undefined4 param_1)
          "EX010101EX010102EX010103EX010104EX010105EX010106EX010107EX010108EX010109EX010110EX010111EX010112EX010113EX010114EX010115EX010116EX010117EX010118EX010119EX010201EX010202EX010203EX010204EX010205EX010206EX010207EX010208EX010209EX010210EX010211EX010212EX010213EX010214EX010215EX010216EX010217EX010301EX010302EX010303EX010304EX010305EX010306EX010307EX010308EX010309EX010310EX010311EX010312EX010313EX010314EX010315EX010316EX010317EX010318EX010319EX010320EX010321EX010401EX010402EX010403EX010404EX010405EX010406EX010407EX010408EX010409EX010410EX010411EX010412EX010413EX010414EX010415EX010416EX010417EX010418EX010419EX010420EX010501EX010502EX010503EX010504EX010505EX010506EX010507EX010508EX010509EX010510EX010511EX010512EX010513EX010514EX010515EX010516EX010517EX020101EX020102EX020103EX020104EX020105EX020106EX020107EX020108EX020109EX020110EX020111EX020112EX020113EX020114EX020115EX020116EX020117EX020118EX020119EX020120EX020201EX020202EX020203EX020204EX020205EX020206EX020207EX020208EX020209EX020210EX020211EX030101EX030102EX030103EX030104EX030105EX030106EX030107EX030108EX030109EX030110EX030111EX030112EX030113EX030114EX030115EX030116EX030117EX030118EX030119EX030120EX030121EX030122EX030123EX030124EX030125EX030126EX030201EX030202EX030203EX030204EX030205EX030206EX030301EX030302EX030303EX030304EX030305EX030306EX030307EX030308EX030309EX030310EX030311EX030312EX030313EX030314EX030315EX030316EX030317EX030318EX030319EX030401EX030402EX030403EX030404EX030405EX030406EX030407EX030408EX030501EX030502EX030503EX030504EX030505EX030506EX040101EX040102EX040103EX040104EX040105EX040106EX040201EX040202EX040203EX040204EX040301EX040302EX040303EX040304EX040401EX040402EX060101EX060102EX060103EX060104EX060105EX060106EX060107EX060108EX060109EX060110EX060111EX060112EX060113EX060114EX060115EX060116EX060117EX060118EX060201EX060202EX060203EX060204EX060205EX060206EX060207EX060208EX060209EX060210EX060211EX060212EX060213EX060214EX060215EX060216EX060217EX060218EX060301EX060302EX060303EX060304EX060305EX060306EX060307EX060308EX060309EX060310EX060311EX060312EX060313EX060314..." /* TRUNCATED STRING LITERAL */
          [(uint)bStack_9 + (uint)local_8 * 8];
   }
-  smovf(param_1,0x1b235,(uint)DAT_0001ff12);
+  puVar2 = &DAT_0001b235;
+  for (uVar3 = (uint)DAT_0001ff12; uVar3 != 0; uVar3 = uVar3 - 1) {
+    *param_1 = *puVar2;
+    param_1 = param_1 + 1;
+    puVar2 = puVar2 + 1;
+  }
 LAB_fffe6df2:
   if (DAT_0001b299 == '\x01') {
     bVar1 = swtimer_expired(0x32);

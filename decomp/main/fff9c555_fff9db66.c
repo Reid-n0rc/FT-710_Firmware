@@ -74,7 +74,12 @@ bool displink_check_sum(int param_1,short param_2)
 void mem_zero(ushort param_1,int param_2)
 
 {
-  sstr(param_2,0,(uint)param_1);
+  uint uVar1;
+  
+  for (uVar1 = (uint)param_1; uVar1 != 0; uVar1 = uVar1 - 1) {
+    *(undefined1 *)param_2 = 0;
+    param_2 = param_2 + 1;
+  }
   return;
 }
 
@@ -86,6 +91,7 @@ void mem_zero(ushort param_1,int param_2)
 byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
 
 {
+  uint uVar1;
   ushort local_e;
   
   local_e = 0;
@@ -96,7 +102,11 @@ byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
     if (*(char *)((uint)local_e + param_2) != *(char *)((uint)local_e + param_1)) break;
     local_e = local_e + 1;
   }
-  smovf(param_2,param_1,(uint)param_3);
+  for (uVar1 = (uint)param_3; uVar1 != 0; uVar1 = uVar1 - 1) {
+    *(undefined1 *)param_2 = *(undefined1 *)param_1;
+    param_2 = param_2 + 1;
+    param_1 = param_1 + 1;
+  }
   return 1;
 }
 
@@ -108,7 +118,7 @@ uint FUN_fff9c6ab(void)
 {
   byte bVar1;
   uint freq;
-  undefined *puStack_10;
+  undefined1 *puStack_10;
   
   freq = vfo_freq(0,2);
   bVar1 = freq_range_index(freq);
@@ -694,6 +704,8 @@ void dsp_link_init(void)
 {
   bool bVar1;
   byte bVar2;
+  undefined2 *puVar3;
+  int iVar4;
   int iStack_10;
   undefined1 uStack_b;
   undefined1 uStack_a;
@@ -725,7 +737,11 @@ void dsp_link_init(void)
   do {
     bVar2 = swtimer_expired(0x2e);
   } while (bVar2 != 1);
-  sstr(0x1b634,0xff,0xaa);
+  puVar3 = &DAT_0001b634;
+  for (iVar4 = 0xaa; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *(undefined1 *)puVar3 = 0xff;
+    puVar3 = (undefined2 *)((int)puVar3 + 1);
+  }
   DAT_00001c5e = 0;
   dsp_read_version();
   do {

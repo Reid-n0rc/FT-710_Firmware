@@ -319,25 +319,44 @@ void memch_load_to_vfo(char param_1)
 
 {
   byte bVar1;
+  undefined1 *puVar2;
+  undefined1 *puVar3;
+  int iVar4;
   
   bVar1 = memch_current_valid(param_1);
   if (bVar1 == 0) {
     return;
   }
   bVar1 = memch_current(param_1);
-  if (param_1 != '\0') {
-    smovf(0x9d63,&DAT_00006150 + (uint)bVar1 * 0x5a,0x5a);
-    PTR_DAT_00025d54[0x426] = 0;
-    DAT_00009d64 = DAT_00009d64 & 0xe7;
-    DAT_00009dab = 0;
-    DAT_00009dac = 0;
+  if (param_1 == '\0') {
+    puVar3 = &DAT_00006150 + (uint)bVar1 * 0x5a;
+    puVar2 = &DAT_00009d09;
+    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar2 = *puVar3;
+      puVar2 = puVar2 + 1;
+      puVar3 = puVar3 + 1;
+    }
+  }
+  else {
+    puVar3 = &DAT_00006150 + (uint)bVar1 * 0x5a;
+    puVar2 = &DAT_00009d63;
+    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar2 = *puVar3;
+      puVar2 = puVar2 + 1;
+      puVar3 = puVar3 + 1;
+    }
+  }
+  if (param_1 == '\0') {
+    PTR_DAT_00025d54[0x425] = 0;
+    DAT_00009d0a = DAT_00009d0a & 0xe7;
+    DAT_00009d51 = 0;
+    DAT_00009d52 = 0;
     return;
   }
-  smovf(0x9d09,&DAT_00006150 + (uint)bVar1 * 0x5a,0x5a);
-  PTR_DAT_00025d54[0x425] = 0;
-  DAT_00009d0a = DAT_00009d0a & 0xe7;
-  DAT_00009d51 = 0;
-  DAT_00009d52 = 0;
+  PTR_DAT_00025d54[0x426] = 0;
+  DAT_00009d64 = DAT_00009d64 & 0xe7;
+  DAT_00009dab = 0;
+  DAT_00009dac = 0;
   return;
 }
 
@@ -714,15 +733,29 @@ void FUN_fffc2c4f(void)
 void FUN_fffc2c66(int param_1)
 
 {
+  undefined1 *puVar1;
+  int iVar2;
+  undefined1 *puVar3;
   byte *apbStack_c [2];
   undefined1 local_1;
   
   local_1 = (undefined1)param_1;
+  puVar3 = &DAT_00006150 + (uint)(byte)PTR_DAT_00025d54[0x43a] * 0x5a;
   if (param_1 == 0) {
-    smovf(&DAT_00006150 + (uint)(byte)PTR_DAT_00025d54[0x43a] * 0x5a,0x9d09,0x5a);
+    puVar1 = &DAT_00009d09;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *puVar3 = *puVar1;
+      puVar3 = puVar3 + 1;
+      puVar1 = puVar1 + 1;
+    }
   }
   else {
-    smovf(&DAT_00006150 + (uint)(byte)PTR_DAT_00025d54[0x43a] * 0x5a,0x9d63,0x5a);
+    puVar1 = &DAT_00009d63;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *puVar3 = *puVar1;
+      puVar3 = puVar3 + 1;
+      puVar1 = puVar1 + 1;
+    }
   }
   memch_valid(PTR_DAT_00025d54[0x43a],apbStack_c);
   *apbStack_c[0] = 1;
@@ -759,18 +792,33 @@ void FUN_fffc2cdf(char param_1,undefined1 param_2)
 undefined1 FUN_fffc2d05(void)
 
 {
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
   FUN_fffc8beb();
   FUN_fffbc638();
   FUN_fffc3c85();
   FUN_fffc23b6();
   FUN_fffc4caa();
+  puVar1 = &DAT_00004761 +
+           (uint)DAT_00009dc3 * 0x5a + (uint)(byte)(&DAT_000060b1)[DAT_00009dc3] * 0x438;
   if (DAT_00009dbe == '\x01') {
-    smovf(0x9d63,0x9d09,0x5a);
+    puVar2 = &DAT_00009d09;
+    puVar1 = &DAT_00009d63;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
   }
   else {
-    smovf(0x9d63,&DAT_00004761 +
-                 (uint)DAT_00009dc3 * 0x5a + (uint)(byte)(&DAT_000060b1)[DAT_00009dc3] * 0x438,0x5a)
-    ;
+    puVar2 = &DAT_00009d63;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar2 = *puVar1;
+      puVar2 = puVar2 + 1;
+      puVar1 = puVar1 + 1;
+    }
   }
   DAT_00020f10 = 1;
   return 1;
@@ -957,18 +1005,34 @@ bool FUN_fffc2f1d(int param_1)
 undefined1 FUN_fffc2f50(void)
 
 {
+  undefined *puVar1;
+  undefined1 *puVar2;
+  undefined1 *puVar3;
+  int iVar4;
+  
   FUN_fffc8beb();
   FUN_fffbc638();
   FUN_fffc3c85();
   FUN_fffc23b6();
   FUN_fffc4caa();
+  puVar1 = &DAT_00005409 +
+           (uint)DAT_00009dc4 * 0x5a + (uint)(byte)(&DAT_000060bd)[DAT_00009dc4] * 0x438;
   if (DAT_00009dbf == '\x01') {
-    smovf(0x9d09,0x9d63,0x5a);
+    puVar3 = &DAT_00009d63;
+    puVar2 = &DAT_00009d09;
+    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar2 = *puVar3;
+      puVar2 = puVar2 + 1;
+      puVar3 = puVar3 + 1;
+    }
   }
   else {
-    smovf(0x9d09,&DAT_00005409 +
-                 (uint)DAT_00009dc4 * 0x5a + (uint)(byte)(&DAT_000060bd)[DAT_00009dc4] * 0x438,0x5a)
-    ;
+    puVar2 = &DAT_00009d09;
+    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *puVar2 = *puVar1;
+      puVar2 = puVar2 + 1;
+      puVar1 = puVar1 + 1;
+    }
   }
   DAT_00020f10 = 1;
   return 1;

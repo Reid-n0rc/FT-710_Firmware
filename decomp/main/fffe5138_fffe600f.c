@@ -367,27 +367,35 @@ undefined1 FUN_fffe56bf(void)
 
 // ===== FUN_fffe56e4 @ fffe56e4 (159 bytes)
 
-code * FUN_fffe56e4(byte param_1)
+void FUN_fffe56e4(byte param_1)
 
 {
   undefined *puVar1;
-  code *pcVar2;
+  char *pcVar2;
+  char *pcVar3;
+  int iVar4;
   undefined1 local_84 [4];
   undefined4 *local_80;
-  undefined1 auStack_79 [120];
+  char acStack_79 [120];
   byte local_1;
   
-  smovf(auStack_79,0xfff8f5e0,0x78);
-  if ((param_1 == 0) || (0xc < param_1)) {
+  pcVar3 = "     RM 1";
+  pcVar2 = acStack_79;
+  local_1 = param_1;
+  for (iVar4 = 0x78; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *pcVar2 = *pcVar3;
+    pcVar2 = pcVar2 + 1;
+    pcVar3 = pcVar3 + 1;
+  }
+  if ((local_1 == 0) || (0xc < local_1)) {
     local_84 = (undefined1  [4])0x0;
   }
   else {
     local_84 = (undefined1  [4])0x1;
   }
   if ((local_84 != (undefined1  [4])0x0) &&
-     (local_80 = (undefined4 *)(local_84 + (uint)param_1 * 10 + 1),
+     (local_80 = (undefined4 *)(local_84 + (uint)local_1 * 10 + 1),
      PTR_DAT_00025d78[0x437] == '\x01')) {
-    local_1 = param_1;
     beep_request(1);
     FUN_fffc8beb();
     PTR_DAT_00025d78[0x1c2] = 0x5e;
@@ -396,11 +404,11 @@ code * FUN_fffe56e4(byte param_1)
     *(undefined4 *)(puVar1 + 0x42b) = local_80[1];
     *(undefined4 *)(puVar1 + 0x427) = *local_80;
     FUN_fffc8cbb(0x5e);
-    pcVar2 = (code *)FUN_fffc8d8c();
+    FUN_fffc8d8c();
     PTR_DAT_00025d78[0x409] = 1;
-    return pcVar2;
+    return;
   }
-  return main;
+  return;
 }
 
 

@@ -36,8 +36,17 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   functions**, 0 decompile failures, **0 undefined non-0xFF bytes** (161 → 0: both fragments are code), warnings 1,229 → 1,217
   (unreachable-block 1,187 → 1,175: wrong flags had made branches look constant), functions with `in_`/`unaff_`/`extraout_` 8 → 7.
   The 23 `JSR Rs` sites now show as indirect calls, e.g. `FUN_fffbba0f` calls the handler table at 0xFFF89910 before `return 1;`.
+- T21i rebuild (2026-10-28, #97): `rx62t-stringmem-fix.patch` turns `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` back into loops. The CAT/AI
+  reply builders (0xFFFDE064–0xFFFE1774) have their reply bytes again: `FUN_fffe0ba1` builds `"SF00;"` and sets `local_9[3]`,
+  `FUN_fffdebd1` stores the `nib2hex` digit in `local_6[2]`, `FUN_fffde887` starts from `"CN00000;"`; 0 functions drop a
+  `nib2hex` result (17 before). Copy sources show as string literals (51 → 66 distinct literals in the C, e.g. `"MEMORY NAME"`),
+  and false parameters/returns that the pcodeop's register reads made up are gone (`FUN_fffe56e4` returned `main`).
+  2,328 functions, 0 failures, 0 undefined non-0xFF bytes; warnings 1,217 → 1,222 (all "Globals starting with '_' overlap",
+  24 → 29, from byte accesses in the loops).
 - Known decompiler artifacts **[fact]**:
-  - `SCMPU`/`SMOVF`/`SSTR`/`SUNTIL`/`SWHILE` string instructions are p-code loops, so they decompile as loops (`cat_parse` shows one). The underlying code is `strncmp(cmd, table+2*i, 2)`.
+  - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
+    `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
+    because as calls the decompiler dropped the stores into the copied buffer.
   - Some call arguments used to be dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Since
     T21g the locked signatures fix all but 2 (at functions without a signature); check the disassembly when an argument count looks wrong.
   - **Fixed in T17:** `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11) used to be shown as a memory load `[Rs]` (107 sites in 49 functions, found by T10e with
@@ -55,22 +64,22 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 |---|---:|
 | Functions exported (non-thunk) | 2,328 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,217 |
-| Functions with a warning | 352 |
+| Decompiler warnings (all kinds) | 1,222 |
+| Functions with a warning | 354 |
 | "Unable to track spacebase" | 0 |
 | "Removing unreachable block" | 1,175 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
 | Functions with `in_*` variables | 7 |
 | Functions with `unaff_*` variables | 0 |
-| Functions with `extraout_*` variables | 1 |
+| Functions with `extraout_*` variables | 0 |
 | Functions with any of `in_`/`unaff_`/`extraout_` | 7 |
 | Undefined non-0xFF bytes in executable blocks | 0 |
 | … in block `ROM` | 0 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Do nothing block with infinite loop | 2 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 24 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
 | warning: Ignoring partial resolution of indirect | 16 |
 | warning: Removing unreachable block (#) | 1,175 |
 <!-- quality:end -->

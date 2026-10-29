@@ -252,23 +252,30 @@ void pc_keying(void)
 void keyer_init(void)
 
 {
+  undefined1 *puVar1;
+  int iVar2;
+  
   DAT_00020b2f = 0;
   DAT_0001215f = 0;
-  sstr(0x120bc,0,0xa0);
+  puVar1 = &DAT_000120bc;
+  for (iVar2 = 0xa0; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar1 = 0;
+    puVar1 = puVar1 + 1;
+  }
   return;
 }
 
 
 // ===== keyer_task @ fffb98e9 (2120 bytes)
 
-/* WARNING: Removing unreachable block (ram,0xfffb9e42) */
 /* WARNING: Removing unreachable block (ram,0xfffb99ff) */
 /* WARNING: Removing unreachable block (ram,0xfffb9dba) */
 /* WARNING: Removing unreachable block (ram,0xfffb9dc9) */
 /* WARNING: Removing unreachable block (ram,0xfffb9e12) */
-/* WARNING: Removing unreachable block (ram,0xfffb9e51) */
 /* WARNING: Removing unreachable block (ram,0xfffb9fbe) */
 /* WARNING: Removing unreachable block (ram,0xfffb9d50) */
+/* WARNING: Removing unreachable block (ram,0xfffb9e51) */
+/* WARNING: Removing unreachable block (ram,0xfffb9e42) */
 /* WARNING: Removing unreachable block (ram,0xfffb9e7a) */
 /* main_loop task 12: CW keyer (speed 0x9C03, 0x20B97) [inference] */
 
@@ -279,9 +286,11 @@ void keyer_task(void)
   bool bVar2;
   byte bVar3;
   char cVar4;
-  uint uVar5;
-  int iVar6;
-  ushort uVar7;
+  undefined1 *puVar5;
+  uint uVar6;
+  int iVar7;
+  undefined *puVar8;
+  ushort uVar9;
   char cStack_19;
   char cStack_18;
   char cStack_17;
@@ -408,7 +417,11 @@ void keyer_task(void)
     if (DAT_0001215d != '\x01') {
       return;
     }
-    sstr(0x120bc,0,0xa0);
+    puVar5 = &DAT_000120bc;
+    for (iVar7 = 0xa0; iVar7 != 0; iVar7 = iVar7 + -1) {
+      *puVar5 = 0;
+      puVar5 = puVar5 + 1;
+    }
     DAT_0001fa3a = 0;
     DAT_0001fa38 = 0;
     DAT_00020b2f = 3;
@@ -416,8 +429,8 @@ void keyer_task(void)
     swtimer_start(0x1b,10000);
     FUN_fffbaff6();
     DAT_00021040 = vfo_rec_ptr(1);
-    iVar6 = FUN_fffb521a();
-    if (iVar6 == 1) {
+    iVar7 = FUN_fffb521a();
+    if (iVar7 == 1) {
       DAT_00012166 = '\x01';
       DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
     }
@@ -446,11 +459,17 @@ void keyer_task(void)
       if (bVar1) {
         bStack_9 = 1;
       }
-      iVar6 = (uint)bStack_9 * 0x98;
-      (&DAT_0000930f)[iVar6] = (char)(DAT_0001fa38 >> 8);
-      (&DAT_00009310)[iVar6] = (char)DAT_0001fa3a;
-      puStack_8 = (undefined *)(iVar6 + 0x9311);
-      smovf(puStack_8,0x120bc,0x96);
+      iVar7 = (uint)bStack_9 * 0x98;
+      (&DAT_0000930f)[iVar7] = (char)(DAT_0001fa38 >> 8);
+      (&DAT_00009310)[iVar7] = (char)DAT_0001fa3a;
+      puStack_8 = &DAT_00009311 + iVar7;
+      puVar5 = &DAT_000120bc;
+      puVar8 = puStack_8;
+      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
+        *puVar8 = *puVar5;
+        puVar8 = puVar8 + 1;
+        puVar5 = puVar5 + 1;
+      }
       eeprom_save_msg(0,(uint)bStack_9);
     }
     DAT_0001fa38 = 0;
@@ -481,10 +500,16 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     DAT_0001fa3a = 0;
     if ((&DAT_00009aad)[bStack_9] == '\x01') {
-      iVar6 = (uint)bStack_9 * 0x98;
-      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar6],(&DAT_000093a8)[iVar6]);
-      puStack_8 = (undefined *)(iVar6 + 0x93a9);
-      smovf(0x120bc,puStack_8,0x96);
+      iVar7 = (uint)bStack_9 * 0x98;
+      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar7],(&DAT_000093a8)[iVar7]);
+      puStack_8 = &DAT_000093a9 + iVar7;
+      puVar5 = &DAT_000120bc;
+      puVar8 = puStack_8;
+      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
+        *puVar5 = *puVar8;
+        puVar5 = puVar5 + 1;
+        puVar8 = puVar8 + 1;
+      }
     }
     else {
       bStack_f = (&DAT_0000969f)[(uint)bStack_9 * 0x33];
@@ -499,16 +524,16 @@ void keyer_task(void)
           uStack_e = FUN_fffba30c();
           uStack_c = 1000;
           for (bStack_11 = 0; bStack_11 < 4; bStack_11 = bStack_11 + 1) {
-            uVar5 = (uint)uStack_e;
+            uVar6 = (uint)uStack_e;
             if (uStack_c != 0) {
-              uVar5 = uVar5 / uStack_c;
+              uVar6 = uVar6 / uStack_c;
             }
-            bStack_12 = (byte)uVar5;
-            uVar7 = uStack_e;
+            bStack_12 = (byte)uVar6;
+            uVar9 = uStack_e;
             if (uStack_c != 0) {
-              uVar7 = uStack_e / uStack_c;
+              uVar9 = uStack_e / uStack_c;
             }
-            uStack_e = uStack_e - uVar7 * uStack_c;
+            uStack_e = uStack_e - uVar9 * uStack_c;
             uStack_c = uStack_c / 10;
             bStack_14 = nib2hex(bStack_12);
             if ((bStack_11 == 0) && (bStack_14 == 0x30)) {
@@ -538,15 +563,15 @@ void keyer_task(void)
           }
         }
         else if (bStack_14 == 0x3c) {
-          iVar6 = FUN_fffb521a();
-          if ((iVar6 == 1) && (uStack_e = FUN_fffba30c(), uStack_e < 9999)) {
+          iVar7 = FUN_fffb521a();
+          if ((iVar7 == 1) && (uStack_e = FUN_fffba30c(), uStack_e < 9999)) {
             uStack_e = uStack_e + 1;
             FUN_fffba336(uStack_e);
           }
         }
         else if (bStack_14 == 0x3e) {
-          iVar6 = FUN_fffb521a();
-          if ((iVar6 == 1) && (uStack_e = FUN_fffba30c(), 1 < uStack_e)) {
+          iVar7 = FUN_fffb521a();
+          if ((iVar7 == 1) && (uStack_e = FUN_fffba30c(), 1 < uStack_e)) {
             uStack_e = uStack_e - 1;
             FUN_fffba336(uStack_e);
           }
@@ -657,11 +682,13 @@ void keyer_task(void)
 
 // ===== FUN_fffba131 @ fffba131 (97 bytes)
 
-undefined * FUN_fffba131(undefined4 param_1,int param_2,byte param_3)
+void FUN_fffba131(undefined1 *param_1,int param_2,byte param_3)
 
 {
   bool bVar1;
   int iVar2;
+  undefined1 *puVar3;
+  uint uVar4;
   byte local_9;
   int local_8;
   
@@ -681,8 +708,13 @@ undefined * FUN_fffba131(undefined4 param_1,int param_2,byte param_3)
   }
   iVar2 = (local_8 + -1) * 0x33;
   (&DAT_0000969f)[iVar2] = local_9;
-  smovf(&DAT_000096a0 + iVar2,param_1,(uint)local_9);
-  return &DAT_000096a0 + iVar2 + local_9;
+  puVar3 = &DAT_000096a0 + iVar2;
+  for (uVar4 = (uint)local_9; uVar4 != 0; uVar4 = uVar4 - 1) {
+    *puVar3 = *param_1;
+    puVar3 = puVar3 + 1;
+    param_1 = param_1 + 1;
+  }
+  return;
 }
 
 
@@ -1932,7 +1964,9 @@ void FUN_fffbb567(void)
 {
   byte bVar1;
   bool bVar2;
-  undefined *local_10;
+  byte *pbVar3;
+  int iVar4;
+  byte *local_10;
   byte *local_c;
   byte bStack_5;
   byte local_4;
@@ -1957,7 +1991,12 @@ void FUN_fffbb567(void)
     local_2 = (&DAT_000060bd)[local_1];
     local_10 = &DAT_00005409 + (uint)local_2 * 0x438 + (uint)local_1 * 0x5a;
   }
-  smovf(local_c,local_10,0x5a);
+  pbVar3 = local_c;
+  for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *pbVar3 = *local_10;
+    pbVar3 = pbVar3 + 1;
+    local_10 = local_10 + 1;
+  }
   if ((bVar1 & 0x20) == 0) {
     local_c[4] = local_c[4] & 0x7f;
   }

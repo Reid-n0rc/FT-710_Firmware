@@ -222,6 +222,9 @@ byte menu_register(byte *desc)
 
 {
   byte bVar1;
+  byte *pbVar2;
+  byte *pbVar3;
+  int iVar4;
   byte local_6;
   
   if (desc == (byte *)0x0) {
@@ -231,7 +234,13 @@ byte menu_register(byte *desc)
     local_6 = 0;
   }
   else {
-    smovf(&DAT_0002105c + (uint)DAT_0001fa4e * 0x38,desc,0x38);
+    pbVar2 = &DAT_0002105c + (uint)DAT_0001fa4e * 0x38;
+    pbVar3 = desc;
+    for (iVar4 = 0x38; iVar4 != 0; iVar4 = iVar4 + -1) {
+      *pbVar2 = *pbVar3;
+      pbVar2 = pbVar2 + 1;
+      pbVar3 = pbVar3 + 1;
+    }
     bVar1 = desc[3];
     if (bVar1 == 5) {
       *(ushort *)(&DAT_0001fe38 + (uint)DAT_0001b4fb * 2) = DAT_0001fa4e;
@@ -387,6 +396,8 @@ byte menu_get_desc(char *key,byte *desc)
 {
   bool bVar1;
   ushort uVar2;
+  byte *pbVar3;
+  int iVar4;
   byte local_d;
   
   if ((key == (char *)0x0) || (desc == (byte *)0x0)) {
@@ -404,7 +415,12 @@ byte menu_get_desc(char *key,byte *desc)
       local_d = 0;
     }
     else {
-      smovf(desc,&DAT_0002105c + (uint)uVar2 * 0x38,0x38);
+      pbVar3 = &DAT_0002105c + (uint)uVar2 * 0x38;
+      for (iVar4 = 0x38; iVar4 != 0; iVar4 = iVar4 + -1) {
+        *desc = *pbVar3;
+        desc = desc + 1;
+        pbVar3 = pbVar3 + 1;
+      }
       local_d = 1;
     }
   }
@@ -421,6 +437,8 @@ byte menu_get_name(char *key,char *name)
 {
   bool bVar1;
   ushort uVar2;
+  char *pcVar3;
+  int iVar4;
   byte local_d;
   
   if ((key == (char *)0x0) || (name == (char *)0x0)) {
@@ -438,7 +456,12 @@ byte menu_get_name(char *key,char *name)
       local_d = 0;
     }
     else {
-      smovf(name,(uint)uVar2 * 0x38 + 0x21062,0x15);
+      pcVar3 = &DAT_00021062 + (uint)uVar2 * 0x38;
+      for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1) {
+        *name = *pcVar3;
+        name = name + 1;
+        pcVar3 = pcVar3 + 1;
+      }
       local_d = 1;
     }
   }
@@ -1137,10 +1160,12 @@ byte menu_get_limits(char *key,byte *lim)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte *pbVar2;
+  int iVar3;
   byte local_45;
   byte abStack_44 [40];
-  undefined1 auStack_1c [20];
+  byte abStack_1c [18];
+  byte bStack_a;
   byte *local_8;
   char *local_4;
   
@@ -1156,12 +1181,17 @@ byte menu_get_limits(char *key,byte *lim)
   else {
     local_8 = lim;
     local_4 = key;
-    bVar2 = menu_get_desc(key,abStack_44);
-    if (bVar2 == 0) {
+    bStack_a = menu_get_desc(key,abStack_44);
+    if (bStack_a == 0) {
       local_45 = 0;
     }
     else {
-      smovf(local_8,auStack_1c,0x10);
+      pbVar2 = abStack_1c;
+      for (iVar3 = 0x10; iVar3 != 0; iVar3 = iVar3 + -1) {
+        *local_8 = *pbVar2;
+        local_8 = local_8 + 1;
+        pbVar2 = pbVar2 + 1;
+      }
       local_45 = 1;
     }
   }
@@ -1330,11 +1360,12 @@ byte menu_string_rw(int param_1,char param_2,int param_3,byte param_4)
 {
   bool bVar1;
   byte bVar2;
+  uint uVar3;
   byte local_4d;
   byte abStack_4c [44];
   undefined4 *puStack_20;
   byte local_d;
-  int local_c;
+  undefined1 *local_c;
   char local_5;
   int local_4;
   
@@ -1362,7 +1393,7 @@ byte menu_string_rw(int param_1,char param_2,int param_3,byte param_4)
     }
     else {
       local_d = param_4;
-      local_c = param_3;
+      local_c = (undefined1 *)param_3;
       local_5 = param_2;
       local_4 = param_1;
       bVar2 = menu_get_desc((char *)param_1,abStack_4c);
@@ -1371,13 +1402,21 @@ byte menu_string_rw(int param_1,char param_2,int param_3,byte param_4)
       }
       else {
         if (local_5 == '\0') {
-          smovf(local_c,puStack_20,(uint)local_d);
+          for (uVar3 = (uint)local_d; uVar3 != 0; uVar3 = uVar3 - 1) {
+            *local_c = *(undefined1 *)puStack_20;
+            local_c = local_c + 1;
+            puStack_20 = (undefined4 *)((int)puStack_20 + 1);
+          }
         }
         else {
           puStack_20[2] = 0;
           puStack_20[1] = 0;
           *puStack_20 = 0;
-          smovf(puStack_20,local_c,(uint)local_d);
+          for (uVar3 = (uint)local_d; uVar3 != 0; uVar3 = uVar3 - 1) {
+            *(undefined1 *)puStack_20 = *local_c;
+            puStack_20 = (undefined4 *)((int)puStack_20 + 1);
+            local_c = local_c + 1;
+          }
         }
         local_4d = 1;
       }
@@ -1485,6 +1524,9 @@ byte menu_p1_range(char param_1,void *param_2,void *param_3)
 void menuitem_EX010101(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1505,7 +1547,13 @@ void menuitem_EX010101(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0;
-  smovf(local_38 + 6,0xfff85866,0x15);
+  pbVar2 = (byte *)0xfff85866;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9b6b;
   local_18 = &LAB_fffcde05;
   local_14 = &LAB_fffcdc78;
@@ -1530,6 +1578,9 @@ void menuitem_EX010101(void)
 void menuitem_EX010102(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1550,7 +1601,13 @@ void menuitem_EX010102(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 1;
-  smovf(local_38 + 6,0xfff8587b,0x15);
+  pbVar2 = (byte *)0xfff8587b;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9be2;
   local_18 = &LAB_fffcde62;
   local_14 = &LAB_fffcdc78;
@@ -1575,6 +1632,9 @@ void menuitem_EX010102(void)
 void menuitem_EX010103(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1595,7 +1655,13 @@ void menuitem_EX010103(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 2;
-  smovf(local_38 + 6,0xfff85890,0x15);
+  pbVar2 = (byte *)0xfff85890;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9bfa;
   local_18 = &LAB_fffcde75;
   local_14 = &LAB_fffcdc78;
@@ -1620,6 +1686,9 @@ void menuitem_EX010103(void)
 void menuitem_EX010104(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1640,7 +1709,13 @@ void menuitem_EX010104(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 3;
-  smovf(local_38 + 6,0xfff858a5,0x15);
+  pbVar2 = (byte *)0xfff858a5;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9c12;
   local_18 = &LAB_fffcde88;
   local_14 = &LAB_fffcdc78;
@@ -1665,6 +1740,9 @@ void menuitem_EX010104(void)
 void menuitem_EX010105(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1685,7 +1763,13 @@ void menuitem_EX010105(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 4;
-  smovf(local_38 + 6,0xfff858ba,0x15);
+  pbVar2 = (byte *)0xfff858ba;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9cab;
   local_18 = &LAB_fffcde9b;
   local_14 = &LAB_fffcdc78;
@@ -1710,6 +1794,9 @@ void menuitem_EX010105(void)
 void menuitem_EX010106(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1730,7 +1817,13 @@ void menuitem_EX010106(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 5;
-  smovf(local_38 + 6,0xfff858cf,0x15);
+  pbVar2 = (byte *)0xfff858cf;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9cc2;
   local_18 = &LAB_fffcdeae;
   local_14 = &LAB_fffcdc78;
@@ -1755,6 +1848,9 @@ void menuitem_EX010106(void)
 void menuitem_EX010107(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1775,7 +1871,13 @@ void menuitem_EX010107(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 6;
-  smovf(local_38 + 6,0xfff858e4,0x15);
+  pbVar2 = (byte *)0xfff858e4;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9cd9;
   local_18 = &LAB_fffcdec1;
   local_14 = &LAB_fffcdc78;
@@ -1800,6 +1902,9 @@ void menuitem_EX010107(void)
 void menuitem_EX010108(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1820,7 +1925,13 @@ void menuitem_EX010108(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 7;
-  smovf(local_38 + 6,0xfff858f9,0x15);
+  pbVar2 = (byte *)0xfff858f9;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9d85;
   local_18 = &LAB_fffcdf17;
   local_14 = &LAB_fffcdc78;
@@ -1845,6 +1956,9 @@ void menuitem_EX010108(void)
 void menuitem_EX010109(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1865,7 +1979,13 @@ void menuitem_EX010109(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 8;
-  smovf(local_38 + 6,0xfff8590e,0x15);
+  pbVar2 = (byte *)0xfff8590e;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9e11;
   local_18 = &LAB_fffcdf29;
   local_14 = &LAB_fffcdc78;
@@ -1890,6 +2010,9 @@ void menuitem_EX010109(void)
 void menuitem_EX010110(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1910,7 +2033,13 @@ void menuitem_EX010110(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 9;
-  smovf(local_38 + 6,0xfff85923,0x15);
+  pbVar2 = (byte *)0xfff85923;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9ebf;
   local_18 = &LAB_fffcdf93;
   local_14 = &LAB_fffcdc78;
@@ -1935,6 +2064,9 @@ void menuitem_EX010110(void)
 void menuitem_EX010111(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -1955,7 +2087,13 @@ void menuitem_EX010111(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 10;
-  smovf(local_38 + 6,0xfff85938,0x15);
+  pbVar2 = (byte *)0xfff85938;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9f4b;
   local_18 = &LAB_fffcdfa5;
   local_14 = &LAB_fffcdc78;
@@ -1980,6 +2118,9 @@ void menuitem_EX010111(void)
 void menuitem_EX010112(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2000,7 +2141,13 @@ void menuitem_EX010112(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0xb;
-  smovf(local_38 + 6,0xfff8594d,0x15);
+  pbVar2 = (byte *)0xfff8594d;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9fc3;
   local_18 = &LAB_fffce000;
   local_14 = &LAB_fffcdc78;
@@ -2025,6 +2172,9 @@ void menuitem_EX010112(void)
 void menuitem_EX010113(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2045,7 +2195,13 @@ void menuitem_EX010113(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0xc;
-  smovf(local_38 + 6,0xfff85962,0x15);
+  pbVar2 = (byte *)0xfff85962;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffc9fd9;
   local_18 = &LAB_fffce013;
   local_14 = &LAB_fffcdc78;
@@ -2070,6 +2226,9 @@ void menuitem_EX010113(void)
 void menuitem_EX010114(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2090,7 +2249,13 @@ void menuitem_EX010114(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0xd;
-  smovf(local_38 + 6,0xfff85977,0x15);
+  pbVar2 = (byte *)0xfff85977;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca110;
   local_18 = &LAB_fffce0ca;
   local_14 = &LAB_fffcdc78;
@@ -2115,6 +2280,9 @@ void menuitem_EX010114(void)
 void menuitem_EX010115(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2135,7 +2303,13 @@ void menuitem_EX010115(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0xe;
-  smovf(local_38 + 6,0xfff8598c,0x15);
+  pbVar2 = (byte *)0xfff8598c;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca19c;
   local_18 = &LAB_fffce0dc;
   local_14 = &LAB_fffcdc78;
@@ -2160,6 +2334,9 @@ void menuitem_EX010115(void)
 void menuitem_EX010116(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2180,7 +2357,13 @@ void menuitem_EX010116(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0xf;
-  smovf(local_38 + 6,0xfff859a1,0x15);
+  pbVar2 = (byte *)0xfff859a1;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca214;
   local_18 = &LAB_fffce0ef;
   local_14 = &LAB_fffcdc78;
@@ -2205,6 +2388,9 @@ void menuitem_EX010116(void)
 void menuitem_EX010117(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2225,7 +2411,13 @@ void menuitem_EX010117(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0x10;
-  smovf(local_38 + 6,0xfff859b6,0x15);
+  pbVar2 = (byte *)0xfff859b6;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca28c;
   local_18 = &LAB_fffce102;
   local_14 = &LAB_fffcdc78;
@@ -2250,6 +2442,9 @@ void menuitem_EX010117(void)
 void menuitem_EX010118(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2270,7 +2465,13 @@ void menuitem_EX010118(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0x11;
-  smovf(local_38 + 6,0xfff859cb,0x15);
+  pbVar2 = (byte *)0xfff859cb;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca318;
   local_18 = &LAB_fffce114;
   local_14 = &LAB_fffcdc78;
@@ -2295,6 +2496,9 @@ void menuitem_EX010118(void)
 void menuitem_EX010119(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2315,7 +2519,13 @@ void menuitem_EX010119(void)
   local_38[3] = 0;
   local_38[4] = 0;
   local_38[5] = 0x12;
-  smovf(local_38 + 6,0xfff859e0,0x15);
+  pbVar2 = (byte *)0xfff859e0;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca396;
   local_18 = &LAB_fffce127;
   local_14 = &LAB_fffcdc78;
@@ -2340,6 +2550,9 @@ void menuitem_EX010119(void)
 void menuitem_EX010201(void)
 
 {
+  byte *pbVar1;
+  byte *pbVar2;
+  int iVar3;
   byte local_38 [28];
   undefined1 *local_1c;
   undefined1 *local_18;
@@ -2360,7 +2573,13 @@ void menuitem_EX010201(void)
   local_38[3] = 0;
   local_38[4] = 1;
   local_38[5] = 0;
-  smovf(local_38 + 6,0xfff859f5,0x15);
+  pbVar2 = (byte *)0xfff859f5;
+  pbVar1 = local_38 + 6;
+  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pbVar1 = *pbVar2;
+    pbVar1 = pbVar1 + 1;
+    pbVar2 = pbVar2 + 1;
+  }
   local_1c = &LAB_fffca422;
   local_18 = &LAB_fffce139;
   local_14 = &LAB_fffcdc78;

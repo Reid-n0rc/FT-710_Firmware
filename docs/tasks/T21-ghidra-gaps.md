@@ -407,7 +407,7 @@ DISPLAY and IFDSP are ARM/Xtensa and do not use the RX module; their re-export i
   `rx62t-semantics-fix.patch` to avoid two patches editing the same constructors.
 
 ### T21i
-**Status:** in progress (2026-10-28). MAIN: give the RX string instructions a memory effect again (T22e follow-up, regression of
+**Status:** done (2026-10-28). MAIN: give the RX string instructions a memory effect again (T22e follow-up, regression of
 T21c's B4 pcodeops).
 
 **Problem [fact, T22e].** T21c made `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` named pcodeops. The decompiler treats a CALLOTHER as touching
@@ -427,6 +427,24 @@ correctness wins over B4 here.
    `lost_buffer_stores` and `dropped_result=F_fffb2e9c` go to 0, nothing else regresses; `decomp_quality.py compare`.
 4. Sixth `bootstrap.sh --only rx` stage, rebuild canonical MAIN and re-export (one Ghidra job at a time), update
    `decomp/main/INDEX.md`, `docs/tooling.md`, `tools/README.md`, this section; board and `issues_sync.py`.
+
+**Findings [fact].**
+- Patch `tools/ghidra/rx62t-stringmem-fix.patch` (3 hunks): `rx62t.sinc` `c4d71924…c3d0` → `30af4806…c69d`; sleigh: the usual 8 NOP
+  warnings. `SCMPU`/`SUNTIL`/`SWHILE` stay pcodeops: all 12 MAIN calls read a ROM constant, a parameter, or `cat_parse`'s
+  `uStack_d`, which also goes to `toupper_inplace` (a real call), so no store can be lost.
+- Semantics (`rx_semcheck.py`, model now copies/stores the bytes, R3 0–40): 28,772 cases from 286 shapes, **0 fail**, 0
+  emulation errors (SMOVF 160, SSTR 84).
+- Test import (private Ghidra `~/opt/t21i-ghidra-tmp`, bootstrap recipe) and the canonical rebuild are file-for-file identical.
+  `decomp_behavior_diff.py` against the T22a export: 1,799 unchanged, 341 `other`, 108 `data`, 72 `signature`, 7 moved; checked
+  by hand: reply builders have their stores back (`FUN_fffe0ba1` `"SF00;"` + `local_9[3]`, `FUN_fffdebd1` `local_6[2] =
+  nib2hex(…)`, `FUN_fffde887` `"CN00000;"`); `fewer_args` (20) and `dropped_result` (2) are false parameters/returns the pcodeop
+  made up by reading R1–R3 (`FUN_fff9a869` loads R1 at its entry and takes no arguments; `FUN_fffe56e4` returned `main`);
+  `lost_strings` are fragments replaced by the whole literal. Against pre-T21 MAIN (`9622a8f^`): 0 functions drop a `nib2hex`
+  (F_fffb2e9c) result (T22e: 17).
+- `quality.tsv`: functions 2,328, failures 0, undefined non-0xFF 0, warnings 1,217 → 1,222 (Globals-overlap 24 → 29),
+  `functions_with_extraout_vars` 1 → 0. DefineRomData defines 2 strings and 3 zero runs fewer (analysis types those bytes
+  first now; still 0 B undefined); the C shows more literals (51 → 66 distinct).
+- DISPLAY and IFDSP exports byte-identical.
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).

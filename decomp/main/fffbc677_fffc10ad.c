@@ -855,6 +855,8 @@ void qmb_store(void)
   bool bVar1;
   bool bVar2;
   byte bVar3;
+  undefined *puVar4;
+  int iVar5;
   undefined1 *puStack_10;
   bool bStack_5;
   ushort uStack_4;
@@ -884,20 +886,25 @@ void qmb_store(void)
     (&DAT_0000901e)[-(uint)bStack_5] = *(undefined1 *)(0x901d - (uint)bStack_5);
   }
   DAT_00009015 = bStack_2;
+  puVar4 = &DAT_00009023 + (uint)bStack_2 * 0x5a;
   if (bVar1) {
     puStack_10 = &DAT_00009d63;
   }
   else {
     puStack_10 = &DAT_00009d09;
   }
-  smovf(&DAT_00009023 + (uint)bStack_2 * 0x5a,puStack_10,0x5a);
+  for (iVar5 = 0x5a; iVar5 != 0; iVar5 = iVar5 + -1) {
+    *puVar4 = *puStack_10;
+    puVar4 = puVar4 + 1;
+    puStack_10 = puStack_10 + 1;
+  }
   bVar2 = 7 < bStack_2;
   if (bVar2) {
     bStack_2 = bStack_2 - 8;
   }
   bStack_5 = !bVar2;
   (&DAT_00009012)[bStack_5] = (byte)(1 << (bStack_2 & 0x1f)) | (&DAT_00009012)[bStack_5];
-  FUN_fffc3408(bVar1,puStack_10 + 0x5a,0);
+  FUN_fffc3408(bVar1);
   if (DAT_00009014 < 10) {
     DAT_00009014 = DAT_00009014 + 1;
   }

@@ -138,9 +138,16 @@ void displink_rx_E8(int param_1)
 void displink_rx_C3(int param_1)
 
 {
+  undefined1 *puVar1;
+  int iVar2;
+  
   DAT_0001b3cc = 1;
   PTR_DAT_00025d38[0x3f6] = 1;
-  smovf(PTR_DAT_00025d38 + 0x2ed,param_1 + 1,0x109);
+  puVar1 = PTR_DAT_00025d38 + 0x2ed;
+  for (iVar2 = 0x109; param_1 = param_1 + 1, iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar1 = *(undefined1 *)param_1;
+    puVar1 = puVar1 + 1;
+  }
   return;
 }
 
@@ -152,9 +159,16 @@ void displink_rx_C3(int param_1)
 void displink_rx_C4_C5(int param_1)
 
 {
+  undefined1 *puVar1;
+  int iVar2;
+  
   DAT_0001b3cc = 1;
   PTR_DAT_00025d38[0x3f6] = 1;
-  smovf(PTR_DAT_00025d38 + 0x2ed,param_1 + 1,0x109);
+  puVar1 = PTR_DAT_00025d38 + 0x2ed;
+  for (iVar2 = 0x109; param_1 = param_1 + 1, iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar1 = *(undefined1 *)param_1;
+    puVar1 = puVar1 + 1;
+  }
   return;
 }
 
@@ -428,6 +442,9 @@ void displink_build_60(void)
   char cVar1;
   byte bVar2;
   undefined4 *puVar3;
+  undefined1 *puVar4;
+  undefined1 *puVar5;
+  int iVar6;
   
   mem_zero(0xb5,0x1456);
   DAT_00001456 = 0x60;
@@ -482,7 +499,13 @@ void displink_build_60(void)
   DAT_00001464 = (undefined1)*(undefined2 *)(PTR_DAT_00025d38 + 0x32);
   *(undefined2 *)(PTR_DAT_00025d38 + 0x32) = 0;
   displink_build_status();
-  smovf(0x1465,0x16a1,0x97);
+  puVar5 = &DAT_000016a1;
+  puVar4 = &DAT_00001465;
+  for (iVar6 = 0x97; iVar6 != 0; iVar6 = iVar6 + -1) {
+    *puVar4 = *puVar5;
+    puVar4 = puVar4 + 1;
+    puVar5 = puVar5 + 1;
+  }
   DAT_000014fc = DAT_00009b0d;
   DAT_00001505 = DAT_00009b09;
   DAT_00001501 = DAT_00009b05;
@@ -511,6 +534,8 @@ ushort displink_build_status(void)
   byte bVar4;
   ushort uVar5;
   int iVar6;
+  undefined1 *puVar7;
+  undefined1 *puVar8;
   bool local_a;
   byte local_9;
   short sStack_8;
@@ -667,8 +692,13 @@ ushort displink_build_status(void)
   else {
     ui_numentry_to_bcd();
     local_9 = 5;
-    smovf(&DAT_000016a0 + local_6,PTR_DAT_00025d38 + 0x7b,5);
-    uVar5 = local_6;
+    puVar8 = PTR_DAT_00025d38 + 0x7b;
+    puVar7 = &DAT_000016a0 + local_6;
+    for (iVar6 = 5; uVar5 = local_6, iVar6 != 0; iVar6 = iVar6 + -1) {
+      *puVar7 = *puVar8;
+      puVar7 = puVar7 + 1;
+      puVar8 = puVar8 + 1;
+    }
   }
   local_6 = uVar5 + 5;
   uVar1 = (uint)local_6;

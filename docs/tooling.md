@@ -230,7 +230,19 @@ for the register forms of `SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF` (the memex 
 The patch (21 hunks) applies after `rx62t-rtsd-fix.patch` (`618938bb…4b36` → `c80b4ed7…73d3`, `rx62t.sla` `30eb8a06…f3ea`) and,
 with line offsets only, after T21h's MVFAC fix. Tested in a private Ghidra copy (`~/opt/t22a-ghidra-tmp`: hard links, own
 `Ghidra/Processors/RX`). Since 2026-10-28 it is the fifth stage of `bootstrap.sh --only rx` (`RX_SINC_MVFAC` `9efea07b…82a5` →
-`RX_SINC_FIXED` `c4d71924…c3d0`), installed in the container's Ghidra, and MAIN was rebuilt and re-exported with it.
+`RX_SINC_SEMANTICS` `c4d71924…c3d0`), installed in the container's Ghidra, and MAIN was rebuilt and re-exported with it.
+
+### String instructions with a memory effect (T21i, 2026-10-28): `tools/ghidra/rx62t-stringmem-fix.patch`
+
+T21c (#97 B4) made all seven RX string instructions named pcodeops. The decompiler treats a pcodeop as touching no memory, so
+stores into a buffer that only `SMOVF` read were dead code to it: 34 MAIN reply builders (0xFFFDE064–0xFFFE1774) lost their
+reply bytes and `nib2hex` digits (T22e) **[fact]**. The patch turns `SMOVF`, `SMOVB`, `SMOVU` and `SSTR.B/.W/.L` back into
+explicit loops (T17's, with `R2:1`/`R2:2` for the narrow `SSTR` stores; manual R01US0071EJ0100 pp. 189-192) and drops their
+pcodeops. `SCMPU`/`SUNTIL`/`SWHILE` stay pcodeops: they only read, and every MAIN use reads a ROM constant, a parameter or a
+buffer that already escapes into a real call (`cat_parse`'s `uStack_d` goes to `toupper_inplace`). If a later image compares a
+stack buffer filled only by plain stores, it needs the same treatment. Sixth `bootstrap.sh --only rx` stage
+(`RX_SINC_SEMANTICS` `c4d71924…c3d0` → `RX_SINC_FIXED` `30af4806…c69d`); `rx_semcheck.py` models the copied/stored bytes and
+keeps R3 at 0–40 for these two ops so the emulated loop ends (28,772 cases, 0 fail).
 
 ## Bootstrap (T20)
 

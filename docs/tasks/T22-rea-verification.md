@@ -709,16 +709,6 @@ of memory (the entropy run waited about 40 minutes in memgate); the strings abov
 6. Leave: zero fill, alignment `nop`s, the unreferenced `bx lr` / `b .` / `break; j .` stubs and the unknown bytes.
 
 
-## Findings
-
-## Follow-ups
-- T22e → T21/T21h: give the RX string pcodeops (`smovf`/`smovb`/`smovu`/`sstr`) a memory effect (or keep the copy loop for them).
-  Until then 34 MAIN reply builders (0xFFFDE064–0xFFFE1774) lose their reply bytes in the C. Re-run `tools/decomp_behavior_diff.py`
-  after that: `lost_buffer_stores` and `dropped_result=F_fffb2e9c` should go to 0.
-- T22e: optional cosmetic fixes. In the HiFi4 generator, one pcodeop per special-register write instead of one per iclass output
-  (`wsr_ps` ×6, `xsr_excsave1` ×2). In DISPLAY, `0x20154B64`–`0x20154BE0` should be strings again (`""`, `"-"`, `"+"`, `" "`), not
-  dwords.
-
 ### T22f
 **Status:** done (2026-10-28). REA fork `~/opt/rea`, branch `feat-ft710-devices` (pushed to github.com/Reid-n0rc/rea 2026-10-28), on top of the RX lane
 `db2bfd303`. Installed as the `rea` CLI from `~/opt/rea-dist/rea-agents-6.8.0-ft710-76eeda78f.tgz`.
@@ -752,3 +742,13 @@ Requests (scratchpad `rea-requests/`):
 
 Owner follow-ups, done 2026-10-28: fork branch pushed; MCP entry gained `REA_RIZIN_COMMAND`, and its `GHIDRA_HEADLESS_MAXMEM` went
 from 10G to 3G (10 GB was two thirds of the host's RAM and bypassed the one-job cap). Both take effect after a Claude Code restart.
+
+## Findings
+
+## Follow-ups
+- **Done in T21i (2026-10-28):** T22e → T21/T21h: give the RX string pcodeops (`smovf`/`smovb`/`smovu`/`sstr`) a memory effect (or keep the copy loop for them).
+  Until then 34 MAIN reply builders (0xFFFDE064–0xFFFE1774) lose their reply bytes in the C. Re-run `tools/decomp_behavior_diff.py`
+  after that: `lost_buffer_stores` and `dropped_result=F_fffb2e9c` should go to 0.
+- T22e: optional cosmetic fixes. In the HiFi4 generator, one pcodeop per special-register write instead of one per iclass output
+  (`wsr_ps` ×6, `xsr_excsave1` ×2). In DISPLAY, `0x20154B64`–`0x20154BE0` should be strings again (`""`, `"-"`, `"+"`, `" "`), not
+  dwords.

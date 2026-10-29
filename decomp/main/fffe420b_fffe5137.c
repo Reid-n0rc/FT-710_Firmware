@@ -475,38 +475,38 @@ void FUN_fffe47c8(void)
 
 // ===== FUN_fffe481d @ fffe481d (478 bytes)
 
-undefined * FUN_fffe481d(void)
+void FUN_fffe481d(void)
 
 {
   char cVar1;
   char *pcVar2;
-  undefined *puVar3;
+  int iVar3;
   byte bStack_a;
   byte local_9;
   byte *pbStack_8;
-  undefined *puStack_4;
+  char *pcStack_4;
   
   local_9 = 1;
   pcVar2 = (char *)FUN_fffe52a1();
   cVar1 = PTR_DAT_00025d78[0xbf];
   if (cVar1 == '\x04') {
-    puStack_4 = &DAT_0000976c;
+    pcStack_4 = &DAT_0000976c;
     pbStack_8 = &DAT_0000976b;
   }
   else if (cVar1 == '\x01') {
-    puStack_4 = &DAT_000096d3;
+    pcStack_4 = &DAT_000096d3;
     pbStack_8 = &DAT_000096d2;
   }
   else if (cVar1 == '\x02') {
-    puStack_4 = &DAT_00009706;
+    pcStack_4 = &DAT_00009706;
     pbStack_8 = &DAT_00009705;
   }
   else if (cVar1 == '\x03') {
-    puStack_4 = &DAT_00009739;
+    pcStack_4 = &DAT_00009739;
     pbStack_8 = &DAT_00009738;
   }
   else if (cVar1 == '\0') {
-    puStack_4 = &DAT_000096a0;
+    pcStack_4 = &DAT_000096a0;
     pbStack_8 = &DAT_0000969f;
   }
   for (bStack_a = 0; bStack_a < 0x32; bStack_a = bStack_a + 1) {
@@ -543,33 +543,32 @@ undefined * FUN_fffe481d(void)
     pcVar2[bStack_a] = ' ';
   }
   *pbStack_8 = local_9;
-  smovf(puStack_4,pcVar2,0x32);
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *pcStack_4 = *pcVar2;
+    pcStack_4 = pcStack_4 + 1;
+    pcVar2 = pcVar2 + 1;
+  }
   if (PTR_DAT_00025d78[0xbf] == '\0') {
-    puVar3 = (undefined *)0x1;
     eeprom_save_msg(1,1);
-    return puVar3;
+    return;
   }
   if (PTR_DAT_00025d78[0xbf] == '\x01') {
-    puVar3 = (undefined *)0x1;
     eeprom_save_msg(1,2);
-    return puVar3;
+    return;
   }
   if (PTR_DAT_00025d78[0xbf] == '\x02') {
-    puVar3 = (undefined *)0x1;
     eeprom_save_msg(1,3);
-    return puVar3;
+    return;
   }
   if (PTR_DAT_00025d78[0xbf] == '\x03') {
-    puVar3 = (undefined *)0x1;
     eeprom_save_msg(1,4);
-    return puVar3;
+    return;
   }
   if (PTR_DAT_00025d78[0xbf] == '\x04') {
-    puVar3 = (undefined *)0x1;
     eeprom_save_msg(1,5);
-    return puVar3;
+    return;
   }
-  return puStack_4 + 0x32;
+  return;
 }
 
 

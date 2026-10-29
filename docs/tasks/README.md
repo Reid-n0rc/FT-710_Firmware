@@ -68,7 +68,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T21f | [All images: decompile-quality counts and regression check](T21-ghidra-gaps.md) | T21 | done |
 | T21g | [Integration: rebuild the canonical projects, re-export decomp/](T21-ghidra-gaps.md) | T21a–f | done |
 | T21h | [MAIN: decode the two RX fragments left undefined](T21-ghidra-gaps.md) | T21c, T21g | done |
-| T21i | [MAIN: memory effect for the RX string instructions](T21-ghidra-gaps.md) | T21c, T22e | in progress |
+| T21i | [MAIN: memory effect for the RX string instructions](T21-ghidra-gaps.md) | T21c, T22e | done |
 | T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | in progress |
 | T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | done |
 | T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | done |

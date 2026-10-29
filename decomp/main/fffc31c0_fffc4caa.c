@@ -39,11 +39,27 @@ void FUN_fffc31c0(uint param_1)
 void FUN_fffc3240(byte param_1,int param_2)
 
 {
+  undefined1 *puVar1;
+  undefined *puVar2;
+  int iVar3;
+  
   if (param_2 == 0) {
-    smovf(0x9d09,&DAT_00009023 + (uint)param_1 * 0x5a,0x5a);
+    puVar2 = &DAT_00009023 + (uint)param_1 * 0x5a;
+    puVar1 = &DAT_00009d09;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
   }
   else {
-    smovf(0x9d63,&DAT_00009023 + (uint)param_1 * 0x5a,0x5a);
+    puVar2 = &DAT_00009023 + (uint)param_1 * 0x5a;
+    puVar1 = &DAT_00009d63;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
   }
   vfo_retune((byte)param_2);
   return;
@@ -1019,22 +1035,44 @@ void FUN_fffc3f9c(void)
 
 // ===== FUN_fffc3fef @ fffc3fef (117 bytes)
 
-undefined1 * FUN_fffc3fef(undefined1 *param_1)
+void FUN_fffc3fef(void)
 
 {
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
   if (PTR_DAT_00025d54[0x418] != '\x01') {
     FUN_fffbc638();
     FUN_fffc23b6();
     FUN_fffc4caa();
     PTR_DAT_00025d54[0x405] = 1;
-    smovf(0x121c7,0x9d09,0x5a);
-    smovf(0x9d09,0x9d63,0x5a);
-    smovf(0x9d63,0x121c7,0x5a);
+    puVar2 = &DAT_00009d09;
+    puVar1 = &DAT_000121c7;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
+    puVar2 = &DAT_00009d63;
+    puVar1 = &DAT_00009d09;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
+    puVar1 = &DAT_00009d63;
+    puVar2 = &DAT_000121c7;
+    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *puVar1 = *puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = puVar2 + 1;
+    }
     PTR_DAT_00025d54[0x40b] = 1;
-    return &DAT_00009dbd;
+    return;
   }
   scan_stop();
-  return param_1;
+  return;
 }
 
 

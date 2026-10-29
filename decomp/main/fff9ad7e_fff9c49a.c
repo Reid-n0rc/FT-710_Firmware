@@ -11,9 +11,9 @@ void FUN_fff9ad7e(ushort param_1)
   (&DAT_00001741)[(ushort)(param_1 + 1)] = 2;
   iVar1 = (uint)(DAT_00009be7 == '\x01') * 9;
   *(undefined4 *)(&DAT_00001745 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + iVar1 + 0x351);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + iVar1 + 0x25e);
   *(undefined4 *)(&DAT_00001741 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + iVar1 + 0x34d);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + iVar1 + 0x25a);
   return;
 }
 
@@ -122,9 +122,9 @@ void FUN_fff9af40(ushort param_1)
   (&DAT_00001741)[param_1] = uStack_3;
   (&DAT_00001741)[(ushort)(param_1 + 1)] = 8;
   *(undefined4 *)(&DAT_00001745 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_4 * 9 + 0x351);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_4 * 9 + 0x25e);
   *(undefined4 *)(&DAT_00001741 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_4 * 9 + 0x34d);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_4 * 9 + 0x25a);
   return;
 }
 
@@ -262,9 +262,9 @@ void FUN_fff9b195(ushort param_1)
   (&DAT_00001741)[param_1] = uStack_9;
   (&DAT_00001741)[(ushort)(param_1 + 1)] = 0x10;
   *(undefined4 *)(&DAT_00001745 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_a * 9 + 0x351);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_a * 9 + 0x25e);
   *(undefined4 *)(&DAT_00001741 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_a * 9 + 0x34d);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_a * 9 + 0x25a);
   return;
 }
 
@@ -305,9 +305,9 @@ void FUN_fff9b212(ushort param_1)
   (&DAT_00001741)[param_1] = uStack_9;
   (&DAT_00001741)[(ushort)(param_1 + 1)] = 0x11;
   *(undefined4 *)(&DAT_00001745 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_a * 9 + 0x351);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_a * 9 + 0x25e);
   *(undefined4 *)(&DAT_00001741 + (ushort)(param_1 + 2)) =
-       *(undefined4 *)(BYTE_ARRAY_fff80000 + (uint)bStack_a * 9 + 0x34d);
+       *(undefined4 *)(BYTE_ARRAY_fff800f3 + (uint)bStack_a * 9 + 0x25a);
   return;
 }
 
@@ -554,6 +554,9 @@ void displink_build_39(void)
 {
   char cVar1;
   bool bVar2;
+  byte *pbVar3;
+  byte *pbVar4;
+  int iVar5;
   undefined1 uStack_4;
   byte bStack_1;
   
@@ -562,7 +565,13 @@ void displink_build_39(void)
   DAT_00001741 = 0x39;
   FUN_fff98cd3();
   bStack_1 = PTR_DAT_00025d38[0x1c7];
-  smovf(0x17d9,(uint)bStack_1 * 0x19 + -0x7fd40,0x19);
+  pbVar4 = BYTE_ARRAY_fff800f3 + (uint)bStack_1 * 0x19 + 0x1cd;
+  pbVar3 = &DAT_000017d9;
+  for (iVar5 = 0x19; iVar5 != 0; iVar5 = iVar5 + -1) {
+    *pbVar3 = *pbVar4;
+    pbVar3 = pbVar3 + 1;
+    pbVar4 = pbVar4 + 1;
+  }
   if (PTR_DAT_00025d38[0x1d0] == '\x01') {
     bStack_1 = bStack_1 | 8;
   }
@@ -676,15 +685,49 @@ void displink_build_39(void)
 
 // ===== FUN_fff9ba18 @ fff9ba18 (136 bytes)
 
-undefined * FUN_fff9ba18(void)
+void FUN_fff9ba18(void)
 
 {
-  smovf(PTR_DAT_00025d38 + 0xc2,0x96a0,0x32);
-  smovf(PTR_DAT_00025d38 + 0xf4,0x96d3,0x32);
-  smovf(PTR_DAT_00025d38 + 0x126,0x9706,0x32);
-  smovf(PTR_DAT_00025d38 + 0x158,0x9739,0x32);
-  smovf(PTR_DAT_00025d38 + 0x18a,0x976c,0x32);
-  return PTR_DAT_00025d38 + 0x1bc;
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  int iVar3;
+  
+  puVar2 = &DAT_000096a0;
+  puVar1 = PTR_DAT_00025d38 + 0xc2;
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar2 = &DAT_000096d3;
+  puVar1 = PTR_DAT_00025d38 + 0xf4;
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar2 = &DAT_00009706;
+  puVar1 = PTR_DAT_00025d38 + 0x126;
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar2 = &DAT_00009739;
+  puVar1 = PTR_DAT_00025d38 + 0x158;
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  puVar2 = &DAT_0000976c;
+  puVar1 = PTR_DAT_00025d38 + 0x18a;
+  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar1 = *puVar2;
+    puVar1 = puVar1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  return;
 }
 
 
@@ -735,7 +778,6 @@ void displink_tx_41(void)
 /* WARNING: Removing unreachable block (ram,0xfff9bbf2) */
 /* WARNING: Removing unreachable block (ram,0xfff9bbf8) */
 /* WARNING: Removing unreachable block (ram,0xfff9be3f) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void displink_build_41(void)
 
@@ -744,8 +786,10 @@ void displink_build_41(void)
   byte *pbVar2;
   bool bVar3;
   byte bVar4;
-  int iVar5;
-  ushort uVar6;
+  undefined1 *puVar5;
+  undefined1 *puVar6;
+  int iVar7;
+  ushort uVar8;
   byte bStack_6;
   byte bStack_5;
   byte bStack_4;
@@ -779,10 +823,18 @@ void displink_build_41(void)
   }
   DAT_000017d9 = PTR_DAT_00025d38[0x1d8] << 7 | PTR_DAT_00025d38[0x1d9] << 6;
   DAT_000017da = PTR_DAT_00025d38[0x1da] << 4 | PTR_DAT_00025d38[0x1db];
-  smovf(0x17dd,0xfff804c4,0xf);
-  DAT_0001b632 = 0xab;
+  DAT_0001b632 = 0x9c;
+  puVar5 = &DAT_000017dd;
+  puVar6 = &DAT_fff804c4;
+  for (iVar7 = 0xf; iVar7 != 0; iVar7 = iVar7 + -1) {
+    *puVar5 = *puVar6;
+    puVar5 = puVar5 + 1;
+    puVar6 = puVar6 + 1;
+  }
+  uVar8 = DAT_0001b632 + 0xf;
+  DAT_0001b632 = uVar8;
   if (DAT_00009ac2 == '\x01') {
-    bStack_1 = FUN_fff9bfe1(bStack_1,&DAT_fff804d3,0);
+    bStack_1 = FUN_fff9bfe1(bStack_1);
     uVar1 = (uint)DAT_0001b632;
     *(undefined2 *)(&DAT_00001745 + uVar1) = 0x2050;
     *(undefined4 *)(&DAT_00001741 + uVar1) = 0x554f5247;
@@ -805,10 +857,10 @@ void displink_build_41(void)
     }
   }
   else {
-    _DAT_000017f0 = 0x20202020;
-    DAT_000017ec = 0x20202020;
-    _DAT_000017f4 = 0x2020;
-    DAT_0001b632 = 0xb5;
+    *(undefined4 *)(&DAT_00001745 + uVar8) = 0x20202020;
+    *(undefined4 *)(&DAT_00001741 + uVar8) = 0x20202020;
+    *(undefined2 *)(&DAT_00001749 + uVar8) = 0x2020;
+    DAT_0001b632 = DAT_0001b632 + 10;
   }
   bStack_4 = PTR_DAT_00025d38[0x439];
   for (bStack_3 = 0; bStack_3 < 4; bStack_3 = bStack_3 + 1) {
@@ -832,30 +884,30 @@ void displink_build_41(void)
       *(undefined4 *)(&DAT_00001741 + uVar1) =
            *(undefined4 *)(BYTE_ARRAY_fff8035e + (uint)bStack_1 * 8 + 0x1e);
       pbVar2 = DAT_00020884;
-      uVar6 = DAT_0001b632 + 8;
-      DAT_0001b632 = uVar6;
-      *(undefined4 *)(&DAT_00001749 + uVar6) = *(undefined4 *)(DAT_00020884 + 0x56);
-      *(undefined4 *)(&DAT_00001745 + uVar6) = *(undefined4 *)(pbVar2 + 0x52);
-      *(undefined4 *)(&DAT_00001741 + uVar6) = *(undefined4 *)(pbVar2 + 0x4e);
+      uVar8 = DAT_0001b632 + 8;
+      DAT_0001b632 = uVar8;
+      *(undefined4 *)(&DAT_00001749 + uVar8) = *(undefined4 *)(DAT_00020884 + 0x56);
+      *(undefined4 *)(&DAT_00001745 + uVar8) = *(undefined4 *)(pbVar2 + 0x52);
+      *(undefined4 *)(&DAT_00001741 + uVar8) = *(undefined4 *)(pbVar2 + 0x4e);
     }
     else {
       (&DAT_00001741)[DAT_0001b632] = 0;
       DAT_0001b632 = DAT_0001b632 + 1;
       FUN_fff9c089(&DAT_00001741 + DAT_0001b632,bStack_4);
-      uVar6 = DAT_0001b632 + 5;
-      DAT_0001b632 = uVar6;
-      *(undefined4 *)(&DAT_00001745 + uVar6) = 0x2d2e2d2d;
-      *(undefined4 *)(&DAT_00001741 + uVar6) = 0x2d2e2d2d;
-      *(undefined2 *)(&DAT_00001749 + uVar6) = 0x2d2d;
+      uVar8 = DAT_0001b632 + 5;
+      DAT_0001b632 = uVar8;
+      *(undefined4 *)(&DAT_00001745 + uVar8) = 0x2d2e2d2d;
+      *(undefined4 *)(&DAT_00001741 + uVar8) = 0x2d2e2d2d;
+      *(undefined2 *)(&DAT_00001749 + uVar8) = 0x2d2d;
       DAT_0001b632 = DAT_0001b632 + 10;
       uVar1 = (uint)DAT_0001b632;
       *(undefined4 *)(&DAT_00001745 + DAT_0001b632) = 0x2d2d2d2d;
       *(undefined4 *)(&DAT_00001741 + uVar1) = 0x2d2d2d2d;
-      uVar6 = DAT_0001b632 + 8;
-      DAT_0001b632 = uVar6;
-      *(undefined4 *)(&DAT_00001749 + uVar6) = 0x2d2d2d2d;
-      *(undefined4 *)(&DAT_00001745 + uVar6) = 0x2d2d2d2d;
-      *(undefined4 *)(&DAT_00001741 + uVar6) = 0x2d2d2d2d;
+      uVar8 = DAT_0001b632 + 8;
+      DAT_0001b632 = uVar8;
+      *(undefined4 *)(&DAT_00001749 + uVar8) = 0x2d2d2d2d;
+      *(undefined4 *)(&DAT_00001745 + uVar8) = 0x2d2d2d2d;
+      *(undefined4 *)(&DAT_00001741 + uVar8) = 0x2d2d2d2d;
     }
     DAT_0001b632 = DAT_0001b632 + 0xc;
     FUN_fff9c1a1((char *)&bStack_5,(char *)&bStack_6);
@@ -873,7 +925,7 @@ void displink_build_41(void)
           bVar3 = false;
         }
       } while ((bVar3) &&
-              ((iVar5 = FUN_fff9c2cd(), iVar5 != 1 ||
+              ((iVar7 = FUN_fff9c2cd(), iVar7 != 1 ||
                (bVar4 = memch_dest_blocked(bStack_4), bVar4 != 0))));
     }
   }
@@ -1247,6 +1299,9 @@ void displink_tx_62(void)
 void displink_build_62(void)
 
 {
+  char *pcVar1;
+  char *pcVar2;
+  int iVar3;
   ushort uStack_4;
   byte bStack_1;
   
@@ -1260,10 +1315,15 @@ void displink_build_62(void)
     uStack_4 = uStack_4 + 0x105;
   }
   for (bStack_1 = 0; bStack_1 < 9; bStack_1 = bStack_1 + 1) {
-    smovf(&DAT_000017db + (uint)bStack_1 * 0x1c,
-          " 001 [GN] VDD MTR         002 [GN] FAN             003 [GN] REF FREQ        004 [GN] TX INH          005 [GN] --RESERVED--    006 [GN] --RESERVED--    007 [GN] --RESERVED--    008 [GN] DBG MODE ENABLE 009 [MT] PO MTR 100W POS 010 [MT] PO MTR  50W POS 011 [MT] PO MTR  20W POS 012 [MT] PO MTR  10W POS 013 [MT] PO MTR   5W POS 014 [MT] ALC MTR POS     015 [MT] VDD MTR POS     016 [MT] IDD MTR POS     017 [MT] SWR 1.5 MTR POS 018 [MT] SWR 2.0 MTR POS 019 [MT] SWR 3.0 MTR POS 020 [MT] --RESERVED--    021 [MT] --RESERVED--    022 [MT] --RESERVED--    023 [RX] RF-AGC  7       024 [RX] RF-AGC 14       025 [RX] RF-AGC 21       026 [RX] RF-AGC 28       027 [RX] RF-AGC 50       028 [RX] IF-AGC  7       029 [RX] IF-AGC 14       030 [RX] IF-AGC 21       031 [RX] IF-AGC 28       032 [RX] IF-AGC 50       033 [RX] S-MTR 0         034 [RX] S-MTR 2         035 [RX] S-MTR 5         036 [RX] S-MTR 7         037 [RX] S-MTR 9         038 [RX] S-MTR +10       039 [RX] S-MTR +20       040 [RX] S-MTR +30       041 [RX] S-MTR +40       042 [RX] S-MTR +50       043 [RX] S-MTR +60       044 [RX] --RESERVED--    045 [RX] --RESERVED--    046 [RX] FM SQL THW      047 [RX] FM SQL THN      048 [RX] FM SQL TI       049 [RX] SCOPE SDR REF   050 [TX] MF PREDR BIAS   051 [TX] MF DRIVE BIAS   052 [TX] MF FINAL BIAS   053 [TX] HF PREDR BIAS   054 [TX] HF DRIVE BIAS   055 [TX] HF FINAL BIAS   056 [TX] VHF PREDR BIAS  057 [TX] VHF DRIVE BIAS  058 [TX] VHF FINAL BIAS  059 [TX] I-ALC 1.8       060 [TX] I-ALC 3.5       061 [TX] I-ALC 7         062 [TX] I-ALC 10        063 [TX] I-ALC 14        064 [TX] I-ALC 18        065 [TX] I-ALC 21        066 [TX] I-ALC 24        067 [TX] I-ALC 28        068 [TX] I-ALC 50        069 [TX] I-ALC 70        070 [TX] 100W FALC 1.8   071 [TX] 100W MTR  1.8   072 [TX] 100W TXG  1.8   073 [TX]  50W FALC 1.8   074 [TX]  50W MTR  1.8   075 [TX]  50W TXG  1.8   076 [TX]  20W FALC 1.8   077 [TX]  20W MTR  1.8   078 [TX]  20W TXG  1.8   079 [TX]  10W FALC 1.8   080 [TX]  10W MTR  1.8   081 [TX]  10W TXG  1.8   082 [TX]   5W FALC 1.8..." /* TRUNCATED STRING LITERAL */
-          + (uint)uStack_4 * 0x19,0x19);
-    FUN_fff9c555(uStack_4,(uint)bStack_1 * 0x1c + 0xb3,0);
+    pcVar2 = " 001 [GN] VDD MTR         002 [GN] FAN             003 [GN] REF FREQ        004 [GN] TX INH          005 [GN] --RESERVED--    006 [GN] --RESERVED--    007 [GN] --RESERVED--    008 [GN] DBG MODE ENABLE 009 [MT] PO MTR 100W POS 010 [MT] PO MTR  50W POS 011 [MT] PO MTR  20W POS 012 [MT] PO MTR  10W POS 013 [MT] PO MTR   5W POS 014 [MT] ALC MTR POS     015 [MT] VDD MTR POS     016 [MT] IDD MTR POS     017 [MT] SWR 1.5 MTR POS 018 [MT] SWR 2.0 MTR POS 019 [MT] SWR 3.0 MTR POS 020 [MT] --RESERVED--    021 [MT] --RESERVED--    022 [MT] --RESERVED--    023 [RX] RF-AGC  7       024 [RX] RF-AGC 14       025 [RX] RF-AGC 21       026 [RX] RF-AGC 28       027 [RX] RF-AGC 50       028 [RX] IF-AGC  7       029 [RX] IF-AGC 14       030 [RX] IF-AGC 21       031 [RX] IF-AGC 28       032 [RX] IF-AGC 50       033 [RX] S-MTR 0         034 [RX] S-MTR 2         035 [RX] S-MTR 5         036 [RX] S-MTR 7         037 [RX] S-MTR 9         038 [RX] S-MTR +10       039 [RX] S-MTR +20       040 [RX] S-MTR +30       041 [RX] S-MTR +40       042 [RX] S-MTR +50       043 [RX] S-MTR +60       044 [RX] --RESERVED--    045 [RX] --RESERVED--    046 [RX] FM SQL THW      047 [RX] FM SQL THN      048 [RX] FM SQL TI       049 [RX] SCOPE SDR REF   050 [TX] MF PREDR BIAS   051 [TX] MF DRIVE BIAS   052 [TX] MF FINAL BIAS   053 [TX] HF PREDR BIAS   054 [TX] HF DRIVE BIAS   055 [TX] HF FINAL BIAS   056 [TX] VHF PREDR BIAS  057 [TX] VHF DRIVE BIAS  058 [TX] VHF FINAL BIAS  059 [TX] I-ALC 1.8       060 [TX] I-ALC 3.5       061 [TX] I-ALC 7         062 [TX] I-ALC 10        063 [TX] I-ALC 14        064 [TX] I-ALC 18        065 [TX] I-ALC 21        066 [TX] I-ALC 24        067 [TX] I-ALC 28        068 [TX] I-ALC 50        069 [TX] I-ALC 70        070 [TX] 100W FALC 1.8   071 [TX] 100W MTR  1.8   072 [TX] 100W TXG  1.8   073 [TX]  50W FALC 1.8   074 [TX]  50W MTR  1.8   075 [TX]  50W TXG  1.8   076 [TX]  20W FALC 1.8   077 [TX]  20W MTR  1.8   078 [TX]  20W TXG  1.8   079 [TX]  10W FALC 1.8   080 [TX]  10W MTR  1.8   081 [TX]  10W TXG  1.8   082 [TX]   5W FALC 1.8..." /* TRUNCATED STRING LITERAL */
+             + (uint)uStack_4 * 0x19;
+    pcVar1 = &DAT_000017db + (uint)bStack_1 * 0x1c;
+    for (iVar3 = 0x19; iVar3 != 0; iVar3 = iVar3 + -1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
+      pcVar2 = pcVar2 + 1;
+    }
+    FUN_fff9c555(uStack_4,(uint)bStack_1 * 0x1c + 0xb3);
     uStack_4 = uStack_4 + 1;
     if (0x104 < uStack_4) {
       uStack_4 = 0;

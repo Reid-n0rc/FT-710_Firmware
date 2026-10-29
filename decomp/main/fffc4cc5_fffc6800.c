@@ -50,18 +50,24 @@ undefined1 FUN_fffc4cc5(short param_1,uint param_2)
 void FUN_fffc4d93(void)
 
 {
-  int iVar1;
+  undefined1 *puVar1;
   int iVar2;
+  undefined *puVar3;
   byte local_2;
   
   local_2 = DAT_00009bc9;
   if (4 < DAT_00009bc9) {
     local_2 = 4;
   }
-  iVar1 = (int)&DAT_00009b2e + (uint)local_2 * 0x1f;
-  iVar2 = FUN_fffede1d(&DAT_00020b4c,iVar1,0x1f);
+  puVar1 = (undefined1 *)((int)&DAT_00009b2e + (uint)local_2 * 0x1f);
+  iVar2 = FUN_fffede1d(&DAT_00020b4c,puVar1,0x1f);
   if (iVar2 != 0) {
-    smovf(0x20b4c,iVar1,0x1f);
+    puVar3 = &DAT_00020b4c;
+    for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *puVar3 = *puVar1;
+      puVar3 = puVar3 + 1;
+      puVar1 = puVar1 + 1;
+    }
     sci3_set_baud();
     return;
   }

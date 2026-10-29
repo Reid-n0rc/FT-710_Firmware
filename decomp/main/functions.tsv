@@ -1,5 +1,5 @@
 entry	name	size	callers	file
-fff8f658	main	5	2	fff8f658_fff9086c.c
+fff8f658	main	5	1	fff8f658_fff9086c.c
 fff8f65e	R_Systeminit	358	1	fff8f658_fff9086c.c
 fff8f7c4	FUN_fff8f7c4	5	1	fff8f658_fff9086c.c
 fff8f7c9	FUN_fff8f7c9	1	1	fff8f658_fff9086c.c

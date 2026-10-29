@@ -29,7 +29,7 @@ void bandmem_set(char param_1,uint param_2)
     }
   }
   else {
-    puStack_10 = (undefined1 *)((uint)bVar1 * 4 + 0x9c69);
+    puStack_10 = &DAT_00009c69 + (uint)bVar1 * 4;
   }
   for (bStack_b = 0; bStack_b < 4; bStack_b = bStack_b + 1) {
     puStack_10[bStack_b] = (char)(param_2 >> ((3 - bStack_b & 3) << 3));
@@ -68,7 +68,7 @@ uint bandmem_get(char param_1)
     }
   }
   else {
-    puStack_14 = (undefined1 *)((uint)bVar1 * 4 + 0x9c69);
+    puStack_14 = &DAT_00009c69 + (uint)bVar1 * 4;
   }
   uStack_c = 0;
   for (bStack_e = 0; bStack_e < 4; bStack_e = bStack_e + 1) {
@@ -894,10 +894,10 @@ void pa_dac_update(void)
     bu2505_write(4,5,sVar6);
     DAT_00020fb0 = sVar6;
   }
-  if (bVar3 < bRam0000465a) {
+  if (bVar3 < DAT_0000465a) {
     uStack_a = 0xad;
   }
-  else if (bRam0000465a + 10 < (uint)bVar3) {
+  else if (DAT_0000465a + 10 < (uint)bVar3) {
     uStack_a = 0;
   }
   else {
