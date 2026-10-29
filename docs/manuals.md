@@ -47,7 +47,7 @@ are tagged **[inference]** unless the code confirms them. Getting a copy and che
 
 | Part / document | Vendor (where to get it) | Used for |
 |---|---|---|
-| **RZ/A1H** Group User's Manual: Hardware (R01UH0403EJ) | Renesas, https://www.renesas.com (search "RZ/A1H hardware manual") | DISPLAY register names, STBCR bits, INTC IDs, SCIF/RSPI/RIIC/VDC5/SPIBSC ([code/display/](code/display/README.md)). The address-map chapter is needed for open item O9 (what 0x60000000 decodes to) |
+| **RZ/A1H** Group, RZ/A1M Group User's Manual: Hardware, **R01UH0403EJ0700 Rev.7.00** (Sep. 2024, 3,413 pages, SHA-256 `8a84a714…`) | Renesas, https://www.renesas.com/document/mah/rza1h-group-rza1m-group-users-manual-hardware (direct PDF) | DISPLAY register names, STBCR bits, INTC IDs, SCIF/RSPI/RIIC/VDC5/SPIBSC ([code/display/](code/display/README.md)). Table 5.5 and Table 53.1 (on-chip RAM pages and their mirror) settled O9 (2026-10-28) |
 | **i.MX RT600** (RT685) reference manual UM11147 and datasheet | NXP, https://www.nxp.com (search "RT685"; the reference manual needs a free account) | IFDSP memory map, boot ROM / FlexSPI boot header, PLL formula, FLEXCOMM/MU/DMA request map ([code/ifdsp/](code/ifdsp/README.md), [memory-maps.md](memory-maps.md)) |
 | **UG470** 7 Series FPGAs Configuration User Guide | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug470_7Series_Config | Bitstream packets, registers, frame/ECC layout, XC7A50T length and IDCODE ([decomp/sdr/README.md](../decomp/sdr/README.md), [code/sdr/bitstream.md](code/sdr/bitstream.md)) |
 | **UG473** 7 Series FPGAs Memory Resources | AMD/Xilinx, https://docs.amd.com/v/u/en-US/ug473_7Series_Memory_Resources | BRAM widths and parity layout ([code/sdr/bram-tables.md](code/sdr/bram-tables.md)) |
