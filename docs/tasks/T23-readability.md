@@ -23,7 +23,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
-| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
+| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); Ghidra steps open; HiFi4 not started |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
@@ -288,14 +288,59 @@ if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
   replaces the structures in place.
 
 ## T23d — Library identification
-- MAIN: CC-RX runtime (`_INITSCT`, stdio, `malloc`, the helpers for 64-bit and float arithmetic) and the Renesas
-  code-generator drivers (`R_*_Create`). Build the matching objects with CC-RX (or use the Renesas FIT sources), make Ghidra
-  FunctionID databases, apply, list matches in a TSV.
-- DISPLAY: armcc runtime (`__aeabi_*`, `__rt_*`) and the NORTi µITRON kernel (service calls by their standard API).
-- IFDSP: FreeRTOS kernel and NXP Redlib on the M33 (open source, build the matching version); Cadence NatureDSP on the
-  HiFi4. This is the main reason the HiFi4 is only about 30 % named.
-- Output: `tools/ghidra/names_<image>.lib.tsv` (address, name, library, version, match score), merged by
-  `tools/names_merge.py`.
+Done 2026-10-29 (worktree agent, branch `worktree-agent-a00920445fc29dc23`) as tables merged into the name TSVs; the Ghidra
+apply and re-export are open (T23d-1). Output per image: `tools/ghidra/names_<image>.lib.tsv` with the columns address,
+name, library, version, method, score, previous (the name in `decomp/<image>/functions.tsv`), evidence (starts with
+`same`, `new` or `renamed`). `python3 -I tools/lib_match.py totsv` turns it into the `names_<image>.T23d.tsv` proposal
+(only rows that change a name, comment = library, method, score, evidence, `was <old name>`), merged with
+`tools/names_merge.py merge` (MAIN, DISPLAY: under a `# --- T23d` block of `names_<image>.tsv`, renames in place; IFDSP:
+through `ifdsp_names_java.py totsv/tojava` into `IfdspM33Names.java`). Only clear matches are named; method and score per row.
+
+| Image | Library, version | Method | Rows | New names | Renamed (old hand name) |
+|---|---|---|---|---|---|
+| IFDSP M33 | FreeRTOS kernel **V10.3.0** (V10.3.x; NXP MCUXpresso SDK 2.8 era), port `ARM_CM33_NTZ`, heap_4 | `lib_match` structural match against FreeRTOS compiled with arm-none-eabi-gcc 13.2.1 `-Os` (score 0.80–1.00, 24 exact) | 67 | 0 (65 confirm the T07/T12 names) | `vPortRaiseBASEPRI` → `ulSetInterruptMask`, `vPortClearBASEPRI` → `vClearInterruptMask` (the V10.3.0 CM33 `portasm.c` names) |
+| IFDSP M33 | GNU ld long-branch veneers, startup | `veneer_pattern` (push {r0}; ldr r0,=target; mov ip,r0; pop {r0}; bx ip), `idiom` | 37 | 35 `__<target>_veneer` (34 IRQ driver handlers, `____aeabi_uldivmod_veneer`), `DefaultHandler` | none: `call_main` (= ld's `__main_veneer`) kept |
+| DISPLAY | armcc C library (RVCT / ARM Compiler 5) | `idiom` / `veneer_pattern` from objdump listings | 40 | 38 (`__aeabi_memset/memclr/memclr4/memcpy4`, `__aeabi_uidivmod`, `__aeabi_ldivmod/uldivmod`, `strcpy/strlen/strcat/strstr/memcmp`, `snprintf`, `tolower`, `__rt_entry` helpers: `__user_setup_stackheap`, `__rt_lib_init`, `exit`, `_sys_exit`, `__cxa_pure_virtual`, ...; A32→Thumb veneers) | `memclr` → `__aeabi_memclr4`; `__aeabi_uidivmod` (0x20155480) → `__aeabi_idivmod` (it is the signed divider; the unsigned entry is 0x20156260) |
+| DISPLAY | NORTi µITRON 4.0 (MiSPO) | `uitron_api_shape`: object table, id range, error codes, semantics read in the decompiler | 45 | 37 service calls (`itron_act_tsk`, `chg_pri`, `sus_tsk`, `ext_tsk`, `get_pri/tid/tim`, `tslp_tsk`, `rot_rdq`, `dis/ena_dsp`, `loc/unl_cpu`, `sig_sem`, `twai_sem`, `del_sem`, `clr_flg`, `tsnd/trcv_dtq`, `snd/trcv_mbx`, `tsnd/trcv_mbf`, `tget/rel_mpf`, `del_mpf`, `tloc/unl_mtx`, `sta/stp_cyc`, `acre_cyc/dtq/mbf/mbx/mpf/mpl/mtx`) + 8 `os_create_*_named` wrappers | none |
+| MAIN | Renesas Code Generator (r_cg_*) for RX651 | `cg_registers`: registers touched (named by `sfr_rx651.tsv`), position after the module's `R_*_Create`, size equal to the sibling drivers | 28 | `R_SCI1/4/6/7_Stop`, `R_SCI7_Start/Serial_Send/Serial_Receive`, `R_SCI6_Start`, `R_SCI6_IIC_StartCondition/Master_Send/Master_Receive`, `R_TPU0/3_Stop`, `R_DA0_Stop`, `R_MTU2_Start/Stop`, 9 `R_*_Create_UserInit`, 2 `r_sci6_callback_*` | `sci6_iic_condition` → `R_SCI6_IIC_StopCondition` |
+| MAIN | CC-RX runtime | `idiom` | 1 | `__udiv64` (64-bit unsigned divide; the real CC-RX symbol is unknown) | none |
+
+Findings:
+- The M33 kernel is FreeRTOS **V10.3.x** [fact]: no FPU context save in `PendSV_Handler` (configENABLE_FPU 0), non-indexed task
+  notifications (V10.4 added indices), `xTaskGenericNotify`/`vTaskInternalSetTimeOutState`/`xQueueSemaphoreTake` (V10.0+),
+  and the `ARM_CM33_NTZ` port; V10.3.0 and `V10.3.1-kernel-only` match identically, V10.2.1 matches 33 functions instead of 67.
+  The build is `-Os` (67 matches vs 22 at `-O1`, 15 at `-O2`).
+- Four more hand-named kernel functions agree with the source but fall under the uniqueness margin (`prvInsertBlockIntoFreeList`,
+  `xTaskGetSchedulerState`, `xTaskGenericNotify`, `xQueueReceive`, score 0.69–0.86); tiny accessors (`xTaskGetTickCount`, 3
+  instructions) are not distinctive. None of the 39 `FUN_` M33 functions is a FreeRTOS function.
+- Redlib (NXP's closed C library), the MCUXpresso drivers and rpmsg-lite were not compiled: their M33 functions already
+  carry their SDK names from T07/T12.
+- The DISPLAY armcc library is A32 (division, `memcpy`, `strcmp`) and Thumb-2 (`memset` family, string functions, printf
+  helpers, `__rt_entry` path); A32 callers reach the Thumb code through `add ip,pc,#1; bx ip` veneers [fact].
+- NORTi object tables [fact]: TCB pointers 0x208DBBA0, semaphores 0x208DBCA4 (64), flags 0x208DBDA4 (64), mailboxes
+  0x208DBEA4 (8), message buffers 0x208DBEC4 (8), variable pools 0x208DBF04 (8), fixed pools 0x208DBF24 (16), cyclic
+  handlers 0x208DBF64 (8), data queues 0x208DBFA4 (8), mutexes 0x208DBFC4 (32), interrupt service routines 0x208DC044;
+  ready queues 0x208DC18C, kernel state 0x208003D4.. (last error 0x208003D4, dispatch/CPU-lock state 0x208003DB).
+- Not named (unclear): the NORTi internals (wait-queue, timer-queue and dispatcher helpers 0x201535B4..0x20156878, kernel
+  start 0x201530FC), the armcc printf core (0x20100C7C, 0x20154C48, 0x20155F72), floating-point printing (0x201560A0,
+  0x20155B5C), `__user_libspace` (0x201556D8, an alias of `__user_perproc_libspace`), MAIN `FUN_fff92e25`/`FUN_fff9321e`.
+
+Open steps:
+- **T23d-1** apply: MAIN and DISPLAY with `ApplyNames.java` (`names_<image>.tsv`), IFDSP with `IfdspM33Names.java`, on the
+  canonical projects; re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together (rules above).
+- **T23d-2** HiFi4 NatureDSP-like kernels (FLIX patterns in `decomp/ifdsp/hifi4/flix.dis`): not started.
+- **T23d-3** optional: Ghidra FunctionID `.fidb` from the same FreeRTOS objects, for porting to other firmware with Ghidra's
+  own matcher (`lib_match.py` already covers this image).
+
+Redo:
+- IFDSP: `FRTOS=<FreeRTOS-Kernel V10.3.0>/FreeRTOS/Source BUILD=build tools/t23d_lib.sh` rewrites `names_ifdsp.lib.tsv`; then
+  `python3 -I tools/lib_match.py totsv --skip 080017a8 tools/ghidra/names_ifdsp.lib.tsv > tools/ghidra/names_ifdsp.T23d.tsv`,
+  `ifdsp_names_java.py totsv IfdspM33Names.java m33.tsv`, `names_merge.py merge m33.tsv out.tsv names_ifdsp.T23d.tsv`,
+  `ifdsp_names_java.py tojava IfdspM33Names.java out.tsv`. On new firmware rerun the version sweep first (build each candidate
+  tag, keep the one with the most matches).
+- DISPLAY, MAIN: the tables are reviewed by hand; on new firmware port the rows by function matcher (the evidence column says
+  what to look for), then `lib_match.py totsv names_<image>.lib.tsv > names_<image>.T23d.tsv` and
+  `names_merge.py merge names_<image>.tsv names_<image>.tsv names_<image>.T23d.tsv`.
 
 ## T23e — Name the most-called functions
 

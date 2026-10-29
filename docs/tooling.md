@@ -425,6 +425,16 @@ Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
 | Remove | `rm ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*` |
 | Details | [docs/code/ifdsp/ghidra-flix.md](code/ifdsp/ghidra-flix.md), "The SLEIGH language" |
 
+## Library matching (T23d, 2026-10-29)
+
+| Item | Value |
+|---|---|
+| ARM GCC | `gcc-arm-none-eabi` 15:13.2.rel1-2 (`arm-none-eabi-gcc` 13.2.1 20231009, with its binutils `arm-none-eabi-objdump`), Ubuntu apt in the cloud container (`apt-get install -y gcc-arm-none-eabi`), `/usr/bin` |
+| FreeRTOS kernel | https://github.com/FreeRTOS/FreeRTOS-Kernel tag **V10.3.0** = commit `1049fc776a191006831e9802dd4f9c1246bb67ef` (kernel in `FreeRTOS/Source`), shallow clone at `~/opt/t23d/frk-V10.3.0`. Compared against: V10.2.1 (`5d78b82acbf69c25925a6df8e267fc71da755a79`, far fewer matches) and `V10.3.1-kernel-only` (identical result to V10.3.0, so the image is V10.3.x; NXP's SDK 2.8 shipped V10.3.0) |
+| Build | `tools/t23d_lib.sh` (`FRTOS=~/opt/t23d/frk-V10.3.0/FreeRTOS/Source`): `-mcpu=cortex-m33 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -Os -ffunction-sections`, port `GCC/ARM_CM33_NTZ/non_secure`, `heap_4`, config `tools/t23d_FreeRTOSConfig.h`. `-Os` matched 67 functions, `-O1` 22, `-O2` 15 |
+| Matcher | `tools/lib_match.py` (stdlib Python + objdump; no Ghidra FunctionID database needed) |
+| Remove | `apt-get remove gcc-arm-none-eabi; rm -rf ~/opt/t23d` |
+
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
