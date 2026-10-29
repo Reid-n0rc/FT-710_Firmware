@@ -236,9 +236,9 @@ WIDTH and MIC P1..DOWN code lists), the real differences are:
 
 | EX key | Item | Firmware | Manual | Tag |
 |---|---|---|---|---|
-| `010113` | MODE SSB / TX BPF SEL | Range **0..6**. Labels at ROM 0xFFF83716: 50-3050, 100-2900, 200-2800, 300-2700, 400-2600, **50-4000Hz**, **TTBF**. `ex_value_allowed` refuses 5, so **`EX0101136;` (TTBF) is accepted on every destination**. On the front panel, `on_step` (0xFFFCE013) skips 5 and allows 6 only for destinations 0x315B/0x50E2/0x1CB9 with the hidden flag 0x4760 set; otherwise it clamps to 4. 0x4760 is toggled by a power-on option in `displink_rx_F0_hello` (case 5), which also resets the value to 1 when it is turned off | 0..4 | **[fact]** (code). What TTBF does is unknown **[guess]**: a wide or flat TX filter |
+| `010113` | MODE SSB / TX BPF SEL | Range **0..6**. Labels at ROM 0xFFF83716: 50-3050, 100-2900, 200-2800, 300-2700, 400-2600, **50-4000Hz**, **TTBF**. `ex_value_allowed` refuses 5, so **`EX0101136;` (TTBF) is accepted on every destination**. On the front panel, `on_step` (0xFFFCE013) skips 5 and allows 6 only for destinations 0x315B/0x50E2/0x1CB9 with the hidden flag 0x4760 set; otherwise it clamps to 4. 0x4760 is toggled by a power-on option in `displink_rx_F0_hello` (case 5), which also resets the value to 1 when it is turned off | 0..4 | **[fact]** (code). **TTBF** selects the widest TX voice bandpass (#74): the value goes to DSP register 0x2F as value + 1 (`dsp_set_tx_bpf`), and the HiFi4 (`FUN_002221D0`) runs biquad set 0x236C50[reg − 1], so 0..6 → sets 0..6 and TTBF → 0x237150, about **23–4137 Hz** (−3 dB at 12 kHz; reg 0 would bypass the filter) **[fact]** ([ifdsp/hifi4.md](../ifdsp/hifi4.md)). 0x4760 is toggled by power-on combination 5 (MODE + NB, #75) |
 | `010321` | MODE FM / TONE FREQ | 3 digits (`digits` = 3) | 2 digits | **[fact]** |
-| `020203` | KEYER / CW WEIGHT | EX P4 = 00..20 (raw, no scale) | "2.5 - 4.5 (P4 = 25 - 45)" | **[fact]** for the wire format. `EX02020325;` would be out of range. That the panel shows 2.5 + raw/10 is **[inference]** |
+| `020203` | KEYER / CW WEIGHT | EX P4 = 00..20 (raw, no scale) | "2.5 - 4.5 (P4 = 25 - 45)" | **[fact]** for the wire format. `EX02020325;` would be out of range. The panel shows `(raw + 25) / 10` `.` `(raw + 25) % 10` (`menu_ex020203_draw`), so 2.5..4.5; row flag bit 7 marks the default raw 5 (3.0) **[fact]** (#74) |
 | `010515` | MODE RTTY / MARK FREQUENCY | 0..1 | "1: 1275 Hz 2: 2125 Hz" | **[fact]**, manual typo |
 | `010516` | MODE RTTY / SHIFT FREQUENCY | 0..3 | "1: 170 1: 200 2: 425 3: 850" | **[fact]**, manual typo |
 | `010106` | AGC SLOW DELAY (SSB) | Name "AGC SLOW DELY" | AGC SLOW DELAY | **[fact]**, cosmetic |
@@ -271,6 +271,19 @@ All other ranges, scalings (AGC 20..4000 step 20, RPT SHIFT ×10 kHz, DATA SHIFT
 All of these are visible on the front panel in the standard operating manual, so none of them is a "secret" menu. The
 only hidden content found is the extra SSB TX BPF values above. **[inference]** No other service or hidden items are
 registered. All 314 `menuitem_*` calls are listed by the tool. **[fact]**
+
+## Non-trivial steppers (#74) **[fact]**
+
+The `on_step` callbacks get the direction from UI-state +0x421 (0 = up) and do nothing while 0x15DFC = 1 (the EX apply hook).
+
+| Item | Stepper | Behaviour |
+|---|---|---|
+| LCUT FREQ (all modes) | `FUN_fffcdecf` | 0 = OFF, 1..19; clamps at both ends, no wrap |
+| HCUT FREQ (all modes) | `FUN_fffcdf37` | 1..67, then 0 = OFF **above** the top: down from OFF goes to 67, up from 67 goes to OFF, up from OFF stays OFF, down stops at 1 |
+| CAT-1/2/3 RATE | `menu_step_u8(0, 4)` then `sci3_set_baud` (CAT-1) | the new baud rate applies at once |
+| KEYBOARD LANGUAGE | `menu_step_u8(0, 10)` | on a change it also stores the value at 0x1B4FE, starts timer 0x2B (100) and sets +0x401, which sends the layout to the DISPLAY |
+| HF / 50M / 70M / AM MAX POWER | `menu_step_u8(5, FUN_fffb3e6f(0..3))` | the upper limit is the destination-dependent maximum that also sets the default |
+| TX BPF SEL | `menu_ex010113_step` 0xFFFCE013 | skips 5; 6 (TTBF) only with 0x4760 set on destinations 0x315B/0x50E2/0x1CB9 (see the EX table above) |
 
 ## Tool
 
