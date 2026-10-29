@@ -970,21 +970,14 @@ void FUN_2013c710(int param_1,undefined1 param_2,undefined1 param_3,undefined2 p
 
 // ===== FUN_2013c76c @ 2013c76c (44 bytes)
 
-void FUN_2013c76c(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+void FUN_2013c76c(int param_1,int param_2)
 
 {
   int iVar1;
   
-  if ((&DAT_2091cb78)[param_1 * 6] == 0) {
-    return;
-  }
-  iVar1 = *(int *)((&DAT_2091cb78)[param_1 * 6] + param_2 * 4 + 0x8d8);
+  iVar1 = (&DAT_2091cb78)[param_1 * 6];
   if (iVar1 != 0) {
-    if (*(int *)(iVar1 + 0x18) == 0) {
-      FUN_20139344(iVar1,param_3,param_4);
-      return;
-    }
-    FUN_20139590();
+    FUN_20139624(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + param_2 * 4 + 0x8d8));
     return;
   }
   return;
