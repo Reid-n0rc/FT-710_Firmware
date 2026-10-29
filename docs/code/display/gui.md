@@ -176,7 +176,7 @@ marked.
 |---|---|---|---|
 | 0x20 ` ` | 0x97 | `scr_main_layout`, `audio_error_check` | main operating screen (scope/3DSS, mode, filter, status) |
 | 0x21 `!` | 3 | `led_set_one` | backlight / dimmer level (no redraw) |
-| 0x23 `#` | 0x35 | `FUN_20131354` | decoder text stream, feeds the 0x40 text screen **[guess]** |
+| 0x23 `#` | 0x35 | `FUN_20131354` | TX text line (bytes 4…) of the scope-area text view, see [Scope drawing](#scope-drawing-83) **[fact for the buffer, inference for the use]** |
 | 0x24 `$` | 0x9D | `gui_apply_display_cfg`, `backlight_set`, `dimmer_set`, `gpio_ft4222_reset` | display settings: DVI on/off and 800×480/800×600, contrast; byte 0 bit 2 drives P2_7 (`FT4222_RESET`) **[fact for the pins]** |
 | 0x30 `0` | 0x9E | `scr_select_popup` | METER / MODE selection popups (PO, COMP, ALC, VDD, ID, SWR; LSB … DATA-L) |
 | 0x31 `1` | 0xA1 | `scr_value_popup` | big value popup: one of 45 setting names (LEVEL, CONTRAST, MIC GAIN, RF POWER, …, LOCK, TUNE, SCREEN SHOT) + value; tables at 0x208026DC–0x20802CE4 |
@@ -257,6 +257,56 @@ panel, origin top left, as in the drawing primitives. Main results:
 So the popup box is 492 × 88 at (154, 184), centred horizontally (154 + 246 = 400), or 240 × 88 at (280, 184) **[inference]**. Slots 2, 3, 16, 22–25,
 29–33 and 45–63 except 55 and 58 are empty in V01-08 **[fact]**.
 
+**Which slot is which setting (#178).** The slot is byte **0x98** of packet 0x31 (`scr_value_popup` 0x2012ADE0 reads `pkt[0x98]`), and the
+value text is the 9 characters at 0x99 **[fact]**. MAIN fills it in `displink_build_31` (0xFFF99297) as `frame[0x98] = popup_id − 0x1E`.
+`popup_id` is the UI byte +0x1C2 (0x20CC6). `displink_tx_30_31` (0xFFF98ECB) sends 0x30 for ids < 0x1E (or 0xFF) and 0x31 for ids 0x1E–0x5E, so
+the 65 slots are exactly ids 0x1E–0x5E **[fact]**. The setting comes from the MAIN code that stores the id, and from the formatter that
+`displink_build_31` picks for that id:
+
+| Slot | id | Stored by (MAIN) | Value text (formatter) | Setting |
+|---|---|---|---|---|
+| 0 | 0x1E | FUNC-knob step `FUN_fffc6ffe` → `FUN_fffc7016` (0..120) | `FUN_fff99475` (`….0dB`) | **SCOPE LEVEL** **[inference: −30…+30 dB in 0.5 dB steps, as in `SS` sel 4]** |
+| 1 | 0x1F | `FUN_fffc7053` (0x9BE6, 0..4) | `FUN_fff9959f` | **PEAK** (`SS` sel 1) **[fact: variable]** |
+| 4 | 0x22 | `FUN_fffc70db` (0x9BE9, 0..20) | `FUN_fff99e15` | **CONTRAST** **[inference: `DA` byte, FUNC order of `SF`]** |
+| 5 | 0x23 | `FUN_fffc7145` (0x9BEA, 0..20) | `FUN_fff9a00f` | **DIMMER** **[inference, as above]** |
+| 6 | 0x24 | `FUN_fffc71af` (steps the memory channel, `eeprom_save_memch`) | `FUN_fff99abf` | **M-GROUP** **[inference]** |
+| 7 | 0x25 | `FUN_fffc74ee`, `cat_MG` | `FUN_fff99837` | **MIC GAIN** **[fact]** |
+| 8 | 0x26 | `FUN_fffc754b` (0x9BF0 on/off) | `FUN_fff99ddb` (OFF/ON) | **PROC** on/off **[fact: variable]** |
+| 9 | 0x27 | `FUN_fffc75bc`, `cat_PL` | `FUN_fff997df` | **PROC LEVEL** (0x9BF1) **[fact]** |
+| 10 | 0x28 | `FUN_fffc7619`, `cat_AO` | `FUN_fff99a8a` | **AMC LEVEL** (0x9BF2) **[fact]** |
+| 11 | 0x29 | `FUN_fffc7674`, `cat_VG` | `FUN_fff996e2` | **VOX GAIN** (0x9BF3) **[fact]** |
+| 12 | 0x2A | `FUN_fffc76d1`, `cat_VD` | `FUN_fff99717` | **VOX DELAY** (0x9BF4) **[fact]** |
+| 13 | 0x2B | `FUN_fffc774c`, `cat_AV` | `FUN_fff9978c` | **ANTI VOX** (0x9BF6) **[fact]** |
+| 14 | 0x2C | `FUN_fffc77c7`, `cat_PC` | `FUN_fff995cc` | **RF POWER** **[fact]** |
+| 15 | 0x2D | `FUN_fffc790b`, `cat_ML` | `FUN_fff9960e` | **MONI LEVEL** **[fact]** |
+| 17 | 0x2F | `FUN_fffc79b8` (BI bit of the TX VFO's per-mode block) | `FUN_fff99d82` (OFF/ON) | **BK-IN** on/off **[fact: variable, see [radio-control.md](../main/radio-control.md)]** |
+| 18 | 0x30 | `FUN_fffc7a8f`, `cat_KS` | `FUN_fff998e2` | **CW SPEED** (0x9C03, 4..60) **[fact]** |
+| 19 | 0x31 | `FUN_fffc7aea`, `cat_KP` | `FUN_fff9992a` | **CW PITCH** (0x9C04) **[fact]** |
+| 20 | 0x32 | `FUN_fffc7b47`, `cat_SD` | `FUN_fff99989` | **BK-IN DELAY** (0x9C05) **[fact]** |
+| 21 | 0x33 | `FUN_fffc7ba4` (0..20), `cat_AS` P1 = 1 | `FUN_fff999e3` | **AESS LEVEL** **[fact]** |
+| 26 | 0x38 | `cat_NL`, `key_nb_long` | `FUN_fff99b70` | **NB LEVEL** **[fact]** |
+| 27 | 0x39 | `cat_RL`, `key_dnr_long` | `FUN_fff99ba5` | **DNR LEVEL** **[fact]** |
+| 37 | 0x43 | `FUN_fffc33ef` | `FUN_fff99bfe` (channel number from 0x901F / 0x9021) | **QMB** (DISPLAY title text `QMB`) **[fact]** |
+| 38 | 0x44 | `FUN_fffc224e` (memory-list button 2) | `FUN_fff99ca2`: `SCAN` / `SKIP` (memory byte +1 bit 7) | memory **SCAN** **[fact]** |
+| 39 | 0x45 | `FUN_fffc2296` (memory-list button 3) | `FUN_fff99cf2`: `FREQ` / `NAME` (memory byte +5 bit 7) | memory **TYPE** **[fact]** |
+| 40 | 0x46 | `FUN_fffc7975` (0x9C02 on/off) | `FUN_fff99d48` (OFF/ON) | **KEYER** on/off **[fact]** |
+| 41 / 42 | 0x47 / 0x48 | `cat_LK`, `key_lock_pwr_short`, `enc3_step`, `key_event_filter` | none | **LOCK** / **UNLOCK** (DISPLAY title text) **[fact]** |
+| 43 | 0x49 | `FUN_fffec493` (saves the meter 0x9C5B and sets it to 5 = SWR) | none | **TUNE** (tuner start) **[fact]** |
+| 44 | (0x4A) | never stored by MAIN | | **SCREEN SHOT**, drawn by the DISPLAY itself (`screenshot_popup` 0x2013059C reads the slot-44 entries 0x2080278C / 0x20802CE4) **[fact]** |
+| 55 | 0x55 | `FUN_fffc21e8` (memory-list button 1) | `FUN_fff99c58`: mode name from ROM 0xFFF803F4 | memory **MODE** **[fact]** |
+| 58 | 0x58 | FUNC code `:` → `FUN_fffc7bfd` (0..1), `cat_AS` P1 = 2 | `FUN_fff99a29` | **AESS-CF** (700 / 1000 Hz) **[fact]** |
+| 64 | 0x5E | `FUN_fffc4cc5`, `FUN_fffc89ef`, `FUN_fffc8a90`, `FUN_fffe56e4` | `FUN_fff9a044`: 9 characters from UI +0x427 | free-text popup **[inference]** |
+
+The memory-list buttons are 0 NAME (keyboard), 1 MODE, 2 SCAN, 3 TYPE, 4 `FUN_fffc22de`, 5 close (`FUN_fffc20dd`), which matches the labels of
+the 0x41 screen **[fact for the dispatch, inference for the label order]**. That is why slots 38, 39 and 55 sit higher on the screen, at (154, 90), above the list.
+`FUN_fffc8cbb(id)` is not a store: it returns the display time of popup *id* for POP-UP TIME (0x9B0E). It is also called with 0x56 / 0x57 by
+`FUN_fffc6b34` / `FUN_fffc6b86`, which step the same SCAN / TYPE bits **[fact]**.
+
+Still open: slots **28** (id 0x3A: `displink_build_31` has an empty formatter, `FUN_fff99d42`) and **34–36** (ids 0x40–0x42) have title sprites in
+the DISPLAY, but no store of these ids is in the MAIN V01-12 export **[fact: grep of `decomp/main` for `[0x1c2] =` and `DAT_00020cc6 =`]**.
+A store through another pointer, which a Ghidra xref on 0x20CC6 would find, or rendering the sprites 0x208029E8[28, 34–36] with
+`tools/display_assets.py` (this needs the decoded image), would settle them. Slot 64's DISPLAY entries also still need the image.
+
 ## Scope drawing (#83)
 
 The scope area of the main screen is drawn by `scope_draw_frame` (`FUN_20124528`, every GUI frame from `gui_main_loop`) from the **scope
@@ -267,17 +317,22 @@ bits 0–2 change) **[fact: code]**:
 
 | Field | Global | Meaning |
 |---|---|---|
-| byte 1 = 1 | 0x20800482 = 1 | small scope (the 3DSS uses 14 lines); otherwise large (29 lines) |
+| byte 1 = 1 | 0x20800482 = 1 | small scope (the 3DSS uses 14 lines) plus the oscilloscope / AF-FFT panel (`FUN_2015D334`, below); otherwise large (29 lines). This is **MULTI** **[inference: the manual's MULTI key adds the oscilloscope and AF-FFT; MAIN sends 0x9C37]** |
 | byte 2 (0–11) → `scope_mode_is_2d` (`FUN_2012D458`) | 0x208004D0 | 0 for values 0–2 = **3DSS**, 1 for 3–11 = **2D spectrum / waterfall** |
-| byte 2 → `scope_mode_sub` (`FUN_2012D404`) | 0x208004D1 | 0 for {0, 3, 4, 5}, 1 for {1, 6, 7, 8}, 2 for {2, 9, 10, 11} |
-| byte 2 → `scope_mode_split` (`FUN_2012D3B8`) | 0x208004D2 | 0 for {3, 6, 9}, 2 for {5, 8, 11}, 1 otherwise; the small layout forces 1 |
-| byte 3 bit 2 | 0x208004D0 = 3 | a third view; then `FUN_2012470C` draws a different widget set (it returns early unless 0x208004D0 = 3) |
-| byte 5 bit 5 | expanded | scope area starts at y 0x80 (128) and is 0x124 (292) high, else y 0xB4 (180) and 0xF0 (240) high for the 3DSS, y 0xC9 (201) and 0xDB (219) for 2D |
+| byte 2 → `scope_mode_sub` (`FUN_2012D404`) | 0x208004D1 | 0 for {0, 3, 4, 5}, 1 for {1, 6, 7, 8}, 2 for {2, 9, 10, 11}: **CENTER / CURSOR / FIX** |
+| byte 2 → `scope_mode_split` (`FUN_2012D3B8`) | 0x208004D2 | 0 for {3, 6, 9}, 2 for {5, 8, 11}, 1 otherwise; the small layout forces 1. This is the **waterfall size** (MAIN 0x9C38: 1 NORMAL, 2 EXPAND; 0 is never written) |
+| byte 3 bit 2 | 0x208004D0 = 3 | a third view, the scope-area text terminal (below); `FUN_2012470C` returns early unless 0x208004D0 = 3 |
+| byte 5 bit 5 | expanded | scope area starts at y 0x80 (128) and is 0x124 (292) high, else y 0xB4 (180) and 0xF0 (240) high for the 3DSS, y 0xC9 (201) and 0xDB (219) for 2D. MAIN sends the EXPAND flag 0x9C3D |
 | byte 7 bit 7 | | resets the 3D engine object (`FUN_201342D0`(0)) |
-| byte 0x12 bits 4–7 (clamped to 5) | 0x208085B0 | **history step**: a new 3DSS line every N GUI frames, N = {20, 17, 13, 9, 5, 0} from 0x203A70A8 (the scope SPEED setting **[inference]**) |
+| byte 0x10 bits 0–2 (clamped to 4) | | **PEAK** LV1–LV5 (MAIN 0x9BE6), passed to the two 3D objects 0x20470294 / 0x20474C68 by `FUN_20133DEC` |
+| byte 0x12 bits 0–3 (clamped to 10) | 0x208084CC | **COLOR** 1–11 (MAIN 0x9BE8, `FUN_2012E3C8`): the 3D palette (`FUN_201342DC`) and the 2D spectrum fill colour (`FUN_2015D2A8`: 0xB5BF for 0, 1, 4; 0xFFFF for 2, 8; 0xFEF0 for 3, 10; 0xFDB6, 0xE71F, 0xFE1F, 0x6FED for 5, 6, 7, 9) |
+| byte 0x12 bits 4–7 (clamped to 5) | 0x208085B0, 0x208084CE / D2 | **SPEED** SLOW1, SLOW2, FAST1, FAST2, FAST3, STOP (MAIN 0x9C5A; 0x50 for STOP). 3DSS: a new line every N GUI frames, N = {20, 17, 13, 9, 5, 0} from 0x203A70A8. 2D: `FUN_2015D1C4` (below) |
 
-So byte 2 encodes 3 × 4 combinations: the 3DSS with a 3-way sub-setting, or 2D with the same sub-setting and a 3-way spectrum/waterfall split
-(value = 3 + 3 · sub + split) **[inference from the case lists]**.
+MAIN builds byte 2 in `FUN_fff96dde`: 3DSS (0x9C36 = 1) → 0x9C35 (0–2); waterfall → 3 + 3 · 0x9C35 + 0x9C38. During TX (UI +0x67) CURSOR and
+FIX are sent as CENTER **[fact]**. That is the `SS` sel 6 coding: 0–2 3DSS CENTER / CURSOR / FIX, then W/F CENTER, CURSOR, FIX, each NORMAL (4, 7, A) or EXPAND (5, 8, B as
+sent; the manual lists 3/6/9 as EXPAND, see [cat-commands-primary.md](../../cat-commands-primary.md#ss)) **[fact]**. The front-panel EXPAND key
+flips 0x9C38 and 0x9C3D together, so in practice NORMAL comes with the normal area and EXPAND with the expanded area **[fact, MAIN]**. The
+STOP value 5 is also what sets 0x20800498 (the frozen 0x2048360D copy), so "hold" = SPEED STOP **[fact: manual SPEED list and code]**.
 
 **3DSS renderer** (`FUN_201335D8` → `scope3d_render_large` `FUN_2015B9CC`, mode 8; `FUN_201335F8` → `scope3d_render_small` `FUN_2015BB7C`,
 mode 9) **[fact: code]**:
@@ -294,10 +349,93 @@ mode 9) **[fact: code]**:
 5. The finished image (0xDE = 222 or 0x112 = 274 rows for mode 8, 0x68 = 104 or 0x9C = 156 rows for mode 9) is copied into graphics 1
    at the scope origin.
 
-The 2D spectrum and waterfall views are the `thunk_FUN_2015D49C` / `D874` / `D958` / `D5E8` / `D508` / `D3B8` / `D334` group selected by
-0x208004D0 / 0x208004D2 in `scope_draw_frame` **[fact: dispatch]**; their bodies are not decoded yet (#178). While the GUI freezes the scope (0x204832B8–BA,
-0x208004A0) the record holds 0xFF and nothing is pushed **[fact]**. The 0x2048360D copy of the record is used instead of the live one when packet
-byte 0x12 bits 4–7 = 5 (0x20800498) **[fact]**, which is the "hold" setting **[inference]**.
+While the GUI freezes the scope (0x204832B8–BA, 0x208004A0) the record holds 0xFF and nothing is pushed **[fact]**. The 0x2048360D copy of the
+record is used instead of the live one when packet byte 0x12 bits 4–7 = 5 (0x20800498), which is SPEED **STOP** **[fact]**.
+
+**The other renderers (#178).** `scope_draw_frame` calls seven more renderers through thunks. Their bodies are all in the export, in
+`decomp/display/2015c2d4_2015f1f0.c` **[fact]**. All draw into graphics 1 (`fb_get_layer_addr(0x208085B8)`) at x 4 with width 0x317 (791). `exp` is
+byte 5 bit 5 (expanded area), and `range` is the {u16 x, u16 width} pair at 0x208007D4, which `FUN_201244D8` (the scope marker code, red 0xF800
+marks) clears **[fact]**:
+
+| Renderer | Called when | Draws **[fact: code]** |
+|---|---|---|
+| `FUN_2015D49C` | large, 3DSS (after `scope3d_render_large`) | **3DSS front trace**: `FUN_2015D70C`, mode 8, height 0xBA (186) or 0xF0 (240) if `exp`, bottom at y 0x192 (402), colour stride 30 |
+| `FUN_2015D5E8` | MULTI, 3DSS (after `scope3d_render_small`) | the same with mode 9, height 0x50 (80) or 0x90 (144), bottom at y 0x11C (284), stride 15 |
+| `FUN_2015D3B8` | large, 2D, waterfall size 1 (NORMAL) | spectrum (layout index 0 / 3 if `exp`) above a **waterfall of 100 / 133 px**, bottom at y 402 |
+| `FUN_2015D874` | large, 2D, size 0 (never sent) | index 1 / 4, waterfall 60 / 63 px |
+| `FUN_2015D958` | large, 2D, size 2 (EXPAND) | index 2 / 5, waterfall 140 / 213 px |
+| `FUN_2015D508` | MULTI, 2D | index 6 / 7, waterfall 42 / 75 px, bottom at y 284 |
+| `FUN_2015D334` | MULTI, 3DSS or 2D | the **oscilloscope / AF-FFT panel** at y 0x145 (325): see below |
+
+`scope_draw_frame` calls `thunk_FUN_2015D3B8()` without arguments in the decompile, but the target takes the same (exp, range) pair as its siblings. The arguments are presumably still in r0/r1 from the earlier code **[inference]**.
+
+The 2D renderers share one body. With waterfall height *h* and spectrum height *s* = u16 table **0x203A1EE0**[index]:
+
+1. `FUN_2015DB80` draws the **spectrum** as a filled graph at y = bottom − *h* − *s* − 1. For each of the 791 columns, the level comes from
+   `FUN_2013437C`(index) (the 3D object 0x2047963C, `FUN_20157C50`). Pixels up to the level get the COLOR fill 0x208084CC, the rest get 0 (black).
+   The code has an "inside `range`" and an "outside" branch, but they are identical, so `range` has no visible effect in 2D.
+2. `scope_history_push`(depth 0x208084D2) adds the record to the history ring. If the frame flag `0x208F463E[phase]` is set, `FUN_20134414`
+   (`FUN_20157D3C` on the same object) adds a **waterfall row**. Then phase = (phase + 1) mod 0x208084CE, with `FUN_20156260` as the divmod
+   helper.
+3. `FUN_2015DA9C` draws the **waterfall** at y = bottom − *h*: a black line at y − 1, then *h* / 2 rows from the row ring, each drawn **twice**
+   (2 px per row), plus one more if *h* is odd. Row *i* comes from `FUN_20134434`(i) = 0x2049476C + 0x20450280 · 0x33F40 + slot · 0x640, so
+   there are two banks of 133 rows × 800 RGB565 pixels.
+
+**Waterfall speed** (`FUN_2015D1C4`, from `FUN_2012C6C4` when byte 0x12 bits 4–7 change): SPEED 0–4 set the period 0x208084CE = 600, 450, 300,
+150, 30 GUI frames and the history depth 0x208084D2 = 20, 15, 10, 5, 1. STOP falls to the last case (30 / 1). The flag table
+0x208F463E[i] = (⌊100 · i / P⌋ > ⌊100 · (i − 1) / P⌋), so **exactly 100 waterfall rows are added per period** **[fact]**. At about 30 GUI frames
+a second, that is 100 rows per 20 s (SLOW1) … 100 rows per second (FAST3) **[inference: frame time from the 33 ms count in `opening_screen`]**.
+
+**3DSS front trace** (`FUN_2015D70C`): it takes the per-column levels for mode 8 / 9 from `FUN_2013437C` and two per-row colour ramps: one from the
+same call, and one from `FUN_20134398`(mode), the objects 0x20474D04 / 0x20478550. It fills each column from its level down to the bottom with
+the ramp, using the second ramp inside `range`. Nothing above the level is cleared, so it is painted over the 3D image **[fact]**. So it is the
+newest, nearest line of the 3DSS drawn as a solid gradient trace **[inference]**. `range` is probably the receive passband or marker zone
+**[guess]**: the code that sets it non-zero is not visible in the decompile.
+
+**Oscilloscope / AF-FFT panel** (`FUN_2015D334`, MULTI only), fed by the IF DSP's 600-byte record 0x208DD73C
+([spi-links.md](spi-links.md)) **[fact: code]**:
+
+| Part | Function | Position | Content |
+|---|---|---|---|
+| oscilloscope | `FUN_2015D650` | (x 4, y 325), 391 × 79 | per column a {max, min} pair from the 400-byte half at 0x208DD804 (`FUN_20120DA4`), drawn as a vertical bar in 0x065F (cyan). This is a min/max waveform envelope **[inference]** |
+| AF-FFT spectrum | `FUN_2015DC90` | (x 405, y 325), 391 × 39 | the 200 AF-FFT bins stretched to 391 columns (`FUN_20120D60`, height 0x27), filled in 0x529B |
+| AF-FFT waterfall | `FUN_20120D90` + `FUN_2015DA3C` | (x 405, y 365), 391 × 39 | `FUN_20120D90` writes one colour-mapped row (0x208DD53C palette) into the ring 0x208DD99C (0x30E B per row). `FUN_2015DA3C` blits the 39 newest rows (`FUN_20120D98`), 1 px each |
+
+So the panel's left half is the **oscilloscope** and its right half is the **AF-FFT** with its own waterfall. This matches the manual's MULTI
+description and `SS` sel 7 (AF-FFT ATT, OSC level / time) **[inference]**.
+
+**The third view** (0x208004D0 = 3, packet 0x20 byte 3 bit 2; `FUN_2012470C`, called every frame from `gui_main_loop`). It clears two rectangles (words
+0x208084E8–0x208084FA) and draws **text lines in the scope area** **[fact]**. The text comes from two places:
+
+- **RX line** 0x208F48C8 (length 0x208F489A, up to 39 characters; LF or the limit scrolls it into a 16-line history of 0x29-byte lines at
+  0x208F48F1, newest at 0x208F4B58; line count 0x208F4899, capped at 16). It is filled by `FUN_20131154` from `task_uart4_rx` (0x20158930). That filter keeps only characters found in 47-entry character
+  sets at 0x20801DE0–0x20801EFA, chosen by 0x208084D9 = packet byte 0x70 low nibble (1: two sets, 4: two other sets, else three), and
+  turns the rest into spaces **[fact]**.
+- **TX line** 0x208F489F (length 0x208F489B) from packet **0x23** (`FUN_20131354`, bytes 4…). It is drawn in two colours split at the send
+  position 0x208F4BAB, which the send code advances one character at a time (`0x1D` + character) **[fact]**.
+
+So this is a scope-area **decoder / keyboard-text terminal** (RTTY or PSK text, judging by the restricted character sets) **[inference]**. It
+is dormant in this firmware pair: the SCIF4 link that `task_uart4_rx` reads is never started (`uart4_link_init` has no caller,
+[mainlink.md](mainlink.md#10-the-unused-scif4-link-fact)). MAIN's byte-3 builder `FUN_fff96f3e` sets only bits 4–7, and the Japanese
+operating manual describes no decoder screen. Ghidra reports one removed unreachable block at 0xFFF96F69, so a listing check of `FUN_fff96f3e` would confirm
+that bit 2 is never sent **[fact for the code read; inference that the view is unreachable]**.
+
+```mermaid
+flowchart TD
+  SDF["scope_draw_frame"] --> L{"byte 1<br/>MULTI?"}
+  L -->|no| M1{"0x208004D0"}
+  L -->|yes| M2{"0x208004D0"}
+  M1 -->|0 3DSS| R3L["scope3d_render_large<br/>+ D49C front trace"]
+  M1 -->|1 2D| SZ{"waterfall size<br/>0x208004D2"}
+  SZ -->|1 NORMAL| D3B8["D3B8<br/>wf 100/133"]
+  SZ -->|2 EXPAND| D958["D958<br/>wf 140/213"]
+  SZ -->|0 unused| D874["D874<br/>wf 60/63"]
+  M2 -->|0 3DSS| R3S["scope3d_render_small<br/>+ D5E8 front trace"]
+  M2 -->|1 2D| D508["D508<br/>wf 42/75"]
+  R3S --> D334["D334 oscilloscope<br/>+ AF-FFT + AF waterfall"]
+  D508 --> D334
+  M1 -.->|3: nothing here| TXT["FUN_2012470C text view<br/>(called from gui_main_loop)"]
+```
 
 ```mermaid
 flowchart LR
@@ -439,6 +577,11 @@ purpose]**. The T06 name is misleading: the function reads `SEND_CMD.TXT`, it do
 | 0x201367B4 / 0x20134854 | `debug_overlay_draw` / `debug_screenshot_root` | `debug_overlay_draw` / `debug_screenshot_root` |
 | 0x20134E0C / 0x2013512C | `test_disp_init` / `task_test_disp` | replay task |
 | 0x20134FDC / 0x20134E70 | `debug_replay_send_cmd` / `debug_cmd_line_read` | `debug_replay_send_cmd` / `debug_cmd_line_read` |
+| 0x2015D49C / 0x2015D5E8 / 0x2015D70C | `scope3d_front_large` / `scope3d_front_small` / `scope_front_trace_draw` | 3DSS front trace (#178; names pending re-export) |
+| 0x2015D3B8 / 0x2015D874 / 0x2015D958 / 0x2015D508 | `scope2d_draw_normal` / `scope2d_draw_size0` / `scope2d_draw_expand` / `scope2d_draw_multi` | 2D spectrum + waterfall per layout (#178) |
+| 0x2015DB80 / 0x2015DA9C / 0x2015D1C4 / 0x2015D2A8 | `scope2d_spectrum_fill` / `scope2d_waterfall_blit` / `scope2d_set_speed` / `scope2d_set_color` | 2D parts (#178) |
+| 0x2015D334 / 0x2015D650 / 0x2015DC90 / 0x2015DA3C | `multi_panel_draw` / `osc_draw` / `affft_spectrum_draw` / `affft_waterfall_blit` | MULTI oscilloscope / AF-FFT panel (#178) |
+| 0x2012470C / 0x20131154 / 0x20131354 | `scope_text_view_draw` / `decode_text_rx` / `pkt23_tx_text` | third scope view: text terminal (#178) |
 
 The screen handlers are in the packet table above; all names are in `tools/ghidra/names_display.T11e.tsv` (105 entries).
 
@@ -467,4 +610,5 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 
 - Which physical keys the codes 0x303–0x311 are (combos 4 and 6): [input.md](input.md) (T11f).
 - What the MAIN firmware does to send packet 0x64 (LCD test) or 0x34: a MAIN-side menu or service key sequence (T10).
-- Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Still open (#178): which value-popup slot is which setting (the titles are sprites), and the bodies of the 2D spectrum / waterfall renderers.
+- Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Done (#178): the value-popup slots are mapped from MAIN's popup id (slot = id − 0x1E, [table](#screen-layout-data2-coordinate-words-83)); the 2D / 3DSS-front / oscilloscope / AF-FFT renderers and the third (text) view are decoded ([Scope drawing](#scope-drawing-83)).
+- Still open (#178): slots 28 and 34–36 (sprite titles, no MAIN V01-12 store found: needs a Ghidra xref on 0x20CC6 or rendering the sprites 0x208029E8[28, 34–36] from the decoded image) and slot 64's DISPLAY entries. The spectrum heights in the u16 table 0x203A1EE0[0..7] and the text-view layout words 0x208084E8–0x2080850A are initialised data, so they need the image (`tools/display_layout.py`-style read). Who sets the `range` pair 0x208007D4 non-zero is not visible in the decompile (struct store; needs a Ghidra xref). Whether MAIN can ever set packet 0x20 byte 3 bit 2 needs a listing check of the unreachable block at 0xFFF96F69.
