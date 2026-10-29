@@ -237,9 +237,11 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
 - Branch B shares the NR, notch, contour, APF and limiter with A, but not MAIN's HCUT/LCUT (0x46/0x47) or the AF tone EQ. Its own
   hi/lo-cut (0x54/0x55) is never written, so it is off. It then runs `aess_lowpass_fir`: with AESS on (`dsp_set_aess`: level ≠ 0) a
   steep 700 or 1000 Hz low-pass, and branch A is delayed by the FIR's 128-sample group delay. So with both speakers on and AESS on,
-  one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**. Which
-  speaker is which, where the AESS level `AS1` is applied (it is not sent to the DSP), and why B gets 32 more samples of delay (reg
-  0x56) are in #193.
+  one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**. The
+  AESS speaker is the rear-panel EXT SP jack (owner), which the schematic feeds from codec LOR, so **branch B (DAC channel 0) → LOR →
+  EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
+  [hardware.md](../../hardware.md)]**. Where the AESS level `AS1` is applied (it is not sent to the DSP) and why B gets 32 more
+  samples of delay (reg 0x56) are in #193.
 - **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
   (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
   skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the
@@ -313,4 +315,4 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement, the AESS speaker assignment and level, and the per-band reg 0x63 values: #193.
+- The SDR FPGA's per-mode IF placement, the AESS level and delay, and the per-band reg 0x63 values: #193 (the AESS speaker is settled: EXT SP).

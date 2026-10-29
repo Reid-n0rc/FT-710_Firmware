@@ -236,9 +236,11 @@ registers: p56–57, p74).
     "INT SP/PHONE"** → **J2607 INT SP** (pin 2, R2822) and the phones line to J2603 pin 4 (JACK unit).
   - Muting: Q2623/Q2634 QH8KA4TCR switches on the amp outputs, driven by `INT_SP_SW` / `EXT_SP_SW` ("L: MUTE").
   - So **LOL = internal speaker and phones, LOR = external speaker** (and USB/DATA out). The codec init routes left DAC → LOL and right
-    DAC → LOR ([code/ifdsp/control-link.md](code/ifdsp/control-link.md)). Which HiFi4 output object (`FUN_00224604(0/1)`, reg 8 n1/n0)
-    lands in the I2S left slot is not settled, so which speaker gets the AESS branch B is still open (#193) **[open]**. AESS's purpose
-    (low frequencies to the external SP-40) suggests branch B = LOR = EXT SP **[guess]**.
+    DAC → LOR ([code/ifdsp/control-link.md](code/ifdsp/control-link.md)).
+  - **AESS speaker = the rear-panel EXT SP jack** (owner, 2026-10-29: "AESS speaker would be on the back panel"); J2606 is the rear
+    EXT SP jack, fed from LOR **[fact: owner + schematic]**. The HiFi4 puts the AESS branch B on codec DAC channel 0 (reg 8 = 0x3263,
+    [code/ifdsp/dsp-chains.md](code/ifdsp/dsp-chains.md)), so DAC channel 0 (`FUN_00224604(0)`, reg 8 n1) is the I2S **right** slot →
+    LOR → EXT SP, and channel 1 (branch A, full audio) is the left slot → LOL → internal speaker and phones **[inference, strong]**.
 - **TX audio source select (Q2615)** **[fact: schematic + code]**: `tx_audio_select` writes PODR8 bit 1 (P81, `TX_SEL_A`) and bit 2 (P82,
   `TX_SEL_B`): source 0 → A=0 B=0 → `1Y0` front MIC; 1 → A=0 B=1 → `1Y2` **USB**; 2 → A=1 B=0 → `1Y1` rear DATA; 3 (CW, RTTY) → A=1 B=1
   → `1Y3`. That matches the firmware's gain index (0 MIC, 1 USB, 2 REAR) through the 4052's pin wiring. The truth table printed next to
