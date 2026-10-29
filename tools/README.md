@@ -77,6 +77,7 @@ The `xc7_*` tools need the Project X-Ray checkouts (`~/.local/share/ft710-tools/
 |---|---|---|---|
 | `xbit_parse.py` | Config packet log, register decode, CRC check, leading-word CRC (`--lead`), FDRI and BRAM frame statistics | `build/FT-710_SDR_V0104.bin` → stdout | T08 |
 | `xc7_db.py` | Maps the bitstream onto prjxray tiles: `frames` (prints `MATCH`), `bram`, `bramcfg`, `usage`, `sites`, `config`, `tilebits` | SDR image + prjxray-db → stdout | T13 |
+| `xc7_crc_search.py` | Looks for CRC logic in the SDR FPGA: CRC-32/CRC-16 tables and polynomials in the FASM BRAM contents, and XOR-linear register groups in `netlist.json` (affine-LUT share; adders also score high, check cone sizes). #84 |
 | `xc7_bram_tables.py` | Rebuilds and characterises the logical BRAM tables (`tables`, `show`, `lanes`, `halfsym`, `selftest`) | SDR image → stdout | T13 |
 | `xc7_package_fit.py` | Which XC7A50T packages bond every used IOB | FASM → stdout | T16 |
 | `xc7_fasm.py` | Bitstream → prjxray `.bits` → FASM (prjxray's `FasmDisassembler`, in the venv), `summary` per tile type | SDR image → `build/sdr/FT-710_SDR_V0104.fasm` | T15a |

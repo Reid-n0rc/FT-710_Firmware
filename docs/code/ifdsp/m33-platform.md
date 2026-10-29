@@ -127,7 +127,12 @@ the pin chosen is the one the firmware configures **[inference]**.
 | PIO2_30 | 0x045 | CLKIN | `DSP_CLK` | 18.432 MHz |
 
 Clock gates set for this: CLKCTL1 PSCCTL1_SET bits 0/1/2 (HS GPIO0/1/2), bit 28 (MU-A, `MU_Init`), PSCCTL2_SET bit 31 before
-`INPUTMUX_AttachSignal(…, 1, 0x14000015)` **[fact]** (the INPUTMUX selection is in [ipc.md](ipc.md) **[guess]**). Resets released
+`INPUTMUX_AttachSignal(INPUTMUX 0x40026000, 1, 0x14000015)` **[fact]**. The connection value is `21 + (0x140 << 20)` =
+`kINPUTMUX_MuBToDspInterrupt` of the NXP SDK (`fsl_inputmux_connections.h`, MIMXRT685S: `DSP_INT_PMUX_ID` 0x140, source 21 = MU-B),
+so the call writes 21 to `DSP_INT_SEL[1]` (INPUTMUX + 0x140 + 1·4): the messaging unit's B-side interrupt drives HiFi4 interrupt
+input 1, which the DSP sees as **IRQ 6**, where `env_register_isr` installs `MU_B_IRQHandler`
+(`xos_register_interrupt_handler(6, MU_B_IRQHandler, 0)`, `xos_interrupt_enable(6)`). This is the rpmsg-lite doorbell from the M33
+(MU-A) to the DSP ([ipc.md](ipc.md)) **[fact, #88]**. Resets released
 in `app_main`: RSTCTL1 bits 28/29 (MU-A, SEMA42) **[inference]**.
 
 ## 5. DSP image loader (`BOARD_DSP_Init` 0x00084AD8)

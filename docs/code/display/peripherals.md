@@ -2,8 +2,9 @@
 
 Back to the [DISPLAY overview](README.md). Addresses are CPU addresses (image base 0x20100000). Names in backticks are current Ghidra names.
 Function names are the names applied in Ghidra (`tools/ghidra/names_display.tsv`, merged by T17) and match `decomp/display/`; a name still in *italics* is a description that was not applied as a Ghidra name. Function entries the project
-is missing are listed in `tools/ghidra/entries_display.T11g.tsv`. Register names are from the RZ/A1H hardware manual. Where a bit or ID meaning
-comes from that manual and was not checked against a printed copy, the tag is **[inference]**.
+is missing are listed in `tools/ghidra/entries_display.T11g.tsv`. Register names are from the RZ/A1H hardware manual. The STBCR bits, the GIC
+IDs, the TINT pins, the RSPI pin functions and the TCLK pins were checked against **R01UH0403EJ0700 Rev.7.00** (#82; table numbers
+below); other bit meanings from that manual are still tagged **[inference]**.
 
 ## Summary
 
@@ -59,17 +60,17 @@ OSTM0 counts 320000 per 10 ms and OSTM1 32000 per 1 ms (`ostm_init`, `periodic_w
 "MD_CLK:1" (USB_X1 as source) fits this (docs/hardware.md).
 
 `cpg_set_clock_profile(n)` (0x201020A0) writes **STBCR2 (0xFCFE0024) and STBCR3..STBCR12 (0xFCFE0420–0xFCFE0444)** from a byte-pair table at
-0x2016517C. Each register has two entries, one for profile 0 and one for profile 1 **[fact]**. (boot-rtos.md calls the first one FRQCR. It is STBCR2.) A 1 bit stops a module.
+0x2016517C. Each register has two entries, one for profile 0 and one for profile 1 **[fact]**. Bit meanings checked against R01UH0403EJ0700 section 55.2 (STBCR2..STBCR13); the ADC needs both MSTP31 (analog supply, STBCR3) and MSTP67 (clock, STBCR6) **[fact, #82]**. (boot-rtos.md calls the first one FRQCR. It is STBCR2.) A 1 bit stops a module.
 
 | Register | Profile 0 (standby, `task_root`) | Profile 1 (full, `power_on_full_init`, also `cpg_early_init`) | Running in profile 0 **[inference: RZ/A1H bit map]** |
 |---|---|---|---|
 | STBCR2 | 0x6A | 0x6A | |
-| STBCR3 | 0xF4 | 0x00 | MTU2 (bit 3) and bits 1–0 |
+| STBCR3 | 0xF4 | 0x00 | MTU2 (bit 3), ADC analog supply (bit 1, MSTP31), motor-control PWM timer (bit 0, MSTP30) |
 | STBCR4 | 0xDB | 0x00 | SCIF2, **SCIF5** (MAIN link) |
 | STBCR5 | 0xFC | 0x00 | **OSTM0, OSTM1** |
 | STBCR6 | 0x7E | 0x00 | ADC (bit 7), RTC (bit 0) |
-| STBCR7 | 0xFC | 0x24 | USB0, USB1 (bits 1–0) |
-| STBCR8 | 0xFF | 0x05 | none |
+| STBCR7 | 0xFC | 0x24 | USB0, USB1 (bits 1–0); profile 1 sets the reserved bits 5 and 2 |
+| STBCR8 | 0xFF | 0x05 | none (profile 1 stops EthernetAVB, bit 2, and reserved bit 0) |
 | STBCR9 | 0xFF | 0x00 | none (RIIC0–3, SPIBSC, VDC5 stopped) |
 | STBCR10 | 0x57 | 0x00 | RSPI0, RSPI2, RSPI4 |
 | STBCR11 | 0xFF | 0xC0 | none |
@@ -106,7 +107,7 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P2_0 | alt 6 | PWR_SW | **IRQ5** = GIC 37, `powon_isr` **[fact]** |
 | P2_1..P2_6 | in | – | |
 | P2_7 | out low | FT4222_RESET | `gpio_ft4222_reset` |
-| P2_8..P2_11 | alt 8 | DSP_SCLK / SS / MOSI / MISO | RSPI (DSP link), see [spi-links.md](spi-links.md) |
+| P2_8..P2_11 | alt 8 | DSP_SCLK / SS / MOSI / MISO | **RSPI4**: RSPCK4 / SSL40 / MOSI4 / MISO4 (DSP link); P2_9 is also TINT33 **[fact, manual]**, see [spi-links.md](spi-links.md) |
 | P2_12..P2_15 | alt 2 | ACC_FS / SCLK / MISO / MOSI | RSPI from the FT4222H |
 | P3_0, P3_6 | in | KEY1, KEY2 | keys |
 | P3_1 / P3_3 | alt 3 | ENC3_A / ENC2_A | P3_3 = IRQ4 edge input of firmware encoder **id 3** (`renc_irq4_isr` compares PPR3 bits 3 and 5) **[fact]**. P3_1 (ENC3_A): no ISR or reader found, so ENC3 is unused or unfitted **[inference]**. See the note below the table |
@@ -134,7 +135,7 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P7_12 | out low | SDPWS | SD power switch, `sd_power` |
 | P7_13..P7_15, P8_0, P8_9 | in | KDAT0..KDAT3, KDAT4 | key matrix inputs |
 | P8_1, P8_2, P8_7, P8_8 | out low | KSCAN0..KSCAN3 | key matrix scan |
-| P8_3..P8_6 | alt 3 | SDR_SCLK / SS / MOSI / MISO | RSPI (SDR link) |
+| P8_3..P8_6 | alt 3 | SDR_SCLK / SS / MOSI / MISO | **RSPI2**: RSPCK2 / SSL20 / MOSI2 / MISO2 (SDR link); P8_4 is also TINT119 **[fact, manual]** |
 | P8_10 | out low | USB0_EN | `gpio_usb0_en` (0x20101DA4) |
 | P8_11 / P8_12 / P8_13 | in | USB0_PG / USB_DET / USB1_PG | |
 | P8_14 | out low | 5VON | `gpio_p8_14` (1 on the full path) |
@@ -151,7 +152,9 @@ when it comes from the alt number, and **[fact]** when the driver code uses that
 | P11_13 / P11_14 | in | VSYNC / HSYNC (pulled down) | unused |
 | P11_15 | (not in `pinmux_init`) | LCD_CLK | `lcd_pins_enable` sets alt 5 |
 
-**Encoder pins vs. [input.md](input.md#rotary-encoders-and-pots) (T14).** The two pages describe two layers of the same thing, so they do not contradict each other. input.md gives the counters: encoders 1 and 2 are MTU2 ch1/ch2 in phase-counting mode (`renc_mtu2_init` 0x20112AEC) and encoder 3 is IRQ4 with P3_3/P3_5 **[fact]**. This table gives the pins. The schematic numbers the encoders from 0, so schematic ENC*n* is firmware id *n*+1: ENC2 on P3_3/P3_5 is id 3 **[fact: `renc_irq4_isr` reads PPR3 bits 3 and 5]**. ENC0 (P10_0/P10_1) and ENC1 (P9_0/P10_3) are the only other encoder pins put in a peripheral function (`pinmux_init`: `gpio_cfg_alt(10,0,2)`, `(10,1,2)`, `(10,3,2)`, `(9,0,4)`), so they must be the MTU2 TCLK inputs of ch1 and ch2 **[inference]**. Which pin is TCLKA..D, and so which of ENC0/ENC1 is ch1, needs the RZ/A1H pin-function table, which is not in the repo. That ENC0 = ch1 = main dial (id 1) is **[inference]** from the order.
+**Encoder pins vs. [input.md](input.md#rotary-encoders-and-pots) (T14).** The two pages describe two layers of the same thing, so they do not contradict each other. input.md gives the counters: encoders 1 and 2 are MTU2 ch1/ch2 in phase-counting mode (`renc_mtu2_init` 0x20112AEC) and encoder 3 is IRQ4 with P3_3/P3_5 **[fact]**. This table gives the pins. The schematic numbers the encoders from 0, so schematic ENC*n* is firmware id *n*+1: ENC2 on P3_3/P3_5 is id 3 **[fact: `renc_irq4_isr` reads PPR3 bits 3 and 5]**. ENC0 (P10_0/P10_1) and ENC1 (P9_0/P10_3) are the only other encoder pins put in a peripheral function (`pinmux_init`: `gpio_cfg_alt(10,0,2)`, `(10,1,2)`, `(10,3,2)`, `(9,0,4)`), so they must be the MTU2 TCLK inputs of ch1 and ch2 **[inference]**. **Settled (#82, R01UH0403EJ0700 pin-function table and MTU2 pin table) [fact]:** P10_0 alt 2 = TCLKA, P10_1 alt 2 = TCLKB, P9_0 alt 4 =
+TCLKC, P10_3 alt 2 = TCLKD; TCLKA/TCLKB are channel 1's phase-counting A/B inputs and TCLKC/TCLKD channel 2's. So **ENC0 (P10_0/P10_1)
+is MTU2 ch1 = encoder id 1 (main dial)** and ENC1 (P9_0/P10_3) is ch2 = id 2.
 
 Cross-check against docs/hardware.md: everything listed there matches (RTC P1_0..2, TINT/TSCL/TSDA P1_3..5, DSP P2_8..11, ACC P2_12..15, FT4222_RESET
 P2_7, RX_UPDATE P4_3, DISP UART P6_6/7, RX_RESET P7_10, SDR P8_3..6, QF P9_2..7, QF_RESETn P11_2). The power latch nets RX_PWR_ON / RZ_PWR_ON on P7_9 / P7_11, 5VON on P8_14,
@@ -184,8 +187,8 @@ There are two ways to register a handler:
 Then `gic_enable_irq` sets the enable bit, and `gic_disable_irq` clears it.
 
 The complete set of sources found (all static descriptors, the three SCIF objects of `uart_obj_init`, and the three `def_inh` calls). The ID → source
-mapping is from the RZ/A1H interrupt table **[inference]**. It is consistent with OSTM0/1 = 134/135, IRQ5 = 37 on P2_0 and the RIIC/RSPI channel
-order in the code.
+mapping was checked row by row against the RZ/A1H interrupt-ID table (R01UH0403EJ0700 section 7.5) **[fact, #82]**; the TINT
+rows also against its TINT pin table (TINT33 = P2_9, TINT119 = P8_4).
 
 | GIC ID | Source | ISR (entry) | Pri | Registered by | Page |
 |---|---|---|---|---|---|
@@ -195,7 +198,7 @@ order in the code.
 | 44 / 45 / 46 (0x2C–0x2E) | DMAC ch3 / ch4 / ch5 end | 0x20137490 (sets a flag) / 0x201376C4 / 0x201374A0 (callback pointers) | 5 | `dmac4_rspi4_rx_setup`… (DMA set-up) | [spi-links.md](spi-links.md) |
 | 50 / 51 (0x32, 0x33) | DMAC ch9 / ch10 end | 0x20137AEC / 0x20137D1C (callbacks) | 5 | `dmac9_rspi_tx_setup` | [spi-links.md](spi-links.md) |
 | 73 / 74 (0x49, 0x4A) | USBI0 / USBI1 | 0x2013B58C / 0x2013B598 → `FUN_201396b0(port)` | 8 | `gic_def_inh` in `FUN_2013a394` area | [input.md](input.md) |
-| 78 (0x4E) | VDC5 ch0 (line/vsync) | `FUN_20118638` | 5 | `FUN_20130c70` area | [gui.md](gui.md) |
+| 78 (0x4E) | VDC5 ch0 **GR3_VLINE0** (graphics 3 line interrupt) | `FUN_20118638` | 5 | `FUN_20130c70` area | [gui.md](gui.md) |
 | 134 (0x86) | OSTM0 | `ostm0_tick_isr` (10 ms tick) | 5 | `ostm_init` | [boot-rtos.md](boot-rtos.md) |
 | 135 (0x87) | OSTM1 | `periodic_wakeup_isr` (1 ms) | 5 | `periodic_wakeup_start` | [boot-rtos.md](boot-rtos.md) |
 | 189 / 190 / 191 | RIIC0 TEI / RI / TI | 0x201203E4 / 0x201203D4 / 0x201203DC → 0x20120CB0 / 0x20120C04 / 0x20120C54 (ch 0) | 9 | `FUN_2011fc8c` | [input.md](input.md) |
@@ -210,9 +213,9 @@ order in the code.
 | 277 / 278 | RSPI2 SPRI / SPTI | 0x2011ECFC / 0x2011ECF4 | 10 | | |
 | 279 / 280 / 281 | RSPI3 SPEI / SPRI / SPTI | 0x2011ED0C (SPRI) / 0x2011ED04 (SPTI); 279 is enabled with no handler of its own | 10 | | |
 | 283 / 284 | RSPI4 SPRI / SPTI | 0x2011ED1C / 0x2011ED14 | 10 | | |
-| 303 (0x12F) | SDHI0 | 0x2013FDE0 → `FUN_20140b9c` | 7 | `gic_def_inh` in `FUN_2013fde8` area | [update.md](update.md) |
-| 449 (0x1C1) | TINT33 (pin of the DSP SPI group P2_8..11) | 0x20133418 → `rspi_start`(4)`, frame counter 0x208085AC | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
-| 535 (0x217) | TINT119 (pin of the SDR SPI group P8_3..6) | 0x201333F0 → `rspi_start`(2)`, frame counter 0x208085A8 | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
+| 303 (0x12F) | SDHI0 **SDHI0_0** (302 = SDHI0_3, 304 = SDHI0_1) | 0x2013FDE0 → `FUN_20140b9c` | 7 | `gic_def_inh` in `FUN_2013fde8` area | [update.md](update.md) |
+| 449 (0x1C1) | TINT33 = **P2_9**, the DSP link's SS pin (SSL40) | 0x20133418 → `rspi_start`(4)`, frame counter 0x208085AC | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
+| 535 (0x217) | TINT119 = **P8_4**, the SDR link's SS pin (SSL20) | 0x201333F0 → `rspi_start`(2)`, frame counter 0x208085A8 | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
 
 The two TINT rows: the TINT numbers follow from IDs 416 + n **[inference]**. The DSP/SDR assignment rests on the RSPI channel the ISR serves: RSPI4 carries
 the DSP audio frames (DMA to/from 0xE800E804, section 5) and RSPI2 is then the SDR link **[inference]**. Which pin of the group it is (most likely SS, the end-of-frame
