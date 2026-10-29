@@ -25,10 +25,13 @@
 #           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
-#   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
+#   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv; into the
+#           repo's decomp/ it also refreshes the README progress block and decomp/*/readable/ (tools/readable_view.py).
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
-#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared), and
+#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared;
+#           readable/ is generated from the export by tools/readable_view.py, so it is left out of the diff and checked
+#           on its own with `readable_view.py check`), and
 #           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
 #           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
@@ -462,6 +465,8 @@ step_export() {
   # T23: the progress figures in README.md (shown on the website and the wiki) follow the committed export.
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
     (cd "$REPO" && python3 -I tools/readability_stats.py readme) | sed 's/^/   /'
+    # T23g: the readable view decomp/<image>/readable/ is generated from the export and docs/code/.
+    (cd "$REPO" && python3 -I tools/readable_view.py build) | sed 's/^/   /'
   fi
 }
 
@@ -485,15 +490,18 @@ step_verify() {
   local rc=0 qrc=0 noflix="" d old
   [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
   # quality.tsv is not diffed byte for byte: it is compared metric by metric below (T21f, #97 B11).
+  # readable/ (T23g) is not an export output but derived from it and docs/code/: it is left out of the comparison in
+  # both modes and checked by `readable_view.py check` (committed readable/ against committed decomp/ + docs).
+  local ex=(':(exclude,glob)decomp/**/quality.tsv' ':(exclude,glob)decomp/**/readable/**')
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
-    git -C "$REPO" diff --stat -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' | tail -n 5
-    git -C "$REPO" diff --quiet -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' \
-      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ ':(exclude,glob)decomp/**/quality.tsv')" ] || rc=1
+    git -C "$REPO" diff --stat -- decomp/ "${ex[@]}" | tail -n 5
+    git -C "$REPO" diff --quiet -- decomp/ "${ex[@]}" \
+      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ "${ex[@]}")" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x readable -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x readable -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
@@ -510,8 +518,12 @@ step_verify() {
     fi
     py "$REPO/tools/decomp_quality.py" compare "$old" "$DECOMP_OUT/$d/quality.tsv" "$d" | sed 's/^/   /' || qrc=1  # pipefail
   done
+  # T23g: the committed readable view must match decomp/ and docs/code/ (stale = rerun readable_view.py build).
+  local vrc=0
+  (cd "$REPO" && python3 -I tools/readable_view.py check) | sed 's/^/   /' || vrc=1  # pipefail
   [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
   [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
+  [ "$vrc" -eq 0 ] || die "decomp/*/readable/ is stale: run python3 -I tools/readable_view.py build and commit it"
 }
 
 # ---------------------------------------------------------------- sdr
