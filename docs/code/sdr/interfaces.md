@@ -123,7 +123,13 @@ sequenceDiagram
 Details: MAIN side [../main/sdr-link.md](../main/sdr-link.md) (`sdr_bridge_mode` 0xFFFA3226), DISPLAY side
 [../display/update.md](../display/update.md) §8 (`sdr_flash_write` 0x20110AB8). The bitstream proper (file binary 0x1000..) goes to
 flash 0x240000 and the header with the CRC-32/BZIP2 word last to 0x480000, so an interrupted update leaves no valid header
-**[inference]**. Whether the FPGA boots 0x240000 directly or through a golden/multiboot image at 0 is open **[guess]**.
+**[inference]**. Whether the FPGA boots 0x240000 directly or through a golden/multiboot image at 0: the shipped image answers half of it (#58). Its
+configuration packets (`tools/xbit_parse.py`) write **WBSTAR = 0**, contain **no IPROG**, and set **CTL0 ConfigFallback** (0x501) **[fact]**. So this image
+never jumps anywhere itself, and if it fails its CRC after a warm boot the FPGA falls back to the image at flash 0. A plain power-up
+(master SPI) always starts at address 0, so for the 0x240000 copy to run there must be a **golden/loader image at 0** that writes
+WBSTAR = 0x240000 and issues IPROG, the standard 7-series MultiBoot layout (UG470) **[inference, strong]**. The fabric drives the flash
+clock itself through STARTUPE2 (#93), which is how the update writes the slot. Reading flash 0 over J2001 (#101, needs the radio)
+would confirm the golden image.
 
 ### To confirm
 
