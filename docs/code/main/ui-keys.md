@@ -76,7 +76,7 @@ stateDiagram-v2
   Pressed --> Idle: release (act 0): class 1 short handler, class 2 release handler
   Pressed --> Idle: a different code arrives (class 2: release handler)
   Held --> Idle: next event: class 2 release handler
-  Idle --> Idle: code 0x340 released: cancel (key_cancel_check)
+  Idle --> Idle: code 0x340 (MIC PTT) released: key_cancel_check
 ```
 
 - Each handler call is `JSR` through a 863-entry (codes 0..0x35E) table of code pointers, after `FUN_fffc519d(code, 0)` allows it **[fact: `7F 1E`
@@ -85,7 +85,7 @@ stateDiagram-v2
   action-2 event. Codes 0x300 and up get their hold event from the DISPLAY **[fact for the branch, inference for the DISPLAY part]**.
 - **Repeat** (table 0xFFF8C608) runs when 0x1B4DC is set and timer 0x40 expires; the code that sets 0x1B4DC is in the handlers **[fact]**.
 - The handler flag +0x409 suppresses the short handler after a press handler that consumed the key **[fact]**.
-- Code 0x340 released with source ≠ 4: `key_cancel_check` 0xFFFBC103 clears +0x78 (and 0x20CCC, 0x20B2E), and the event is dropped **[fact]**.
+- Code 0x340 is the **MIC PTT** (DISPLAY P10_5, [display/input.md](../display/input.md)). Its press handler sets PTT source 0x20B2B ([tx-protection.md](tx-protection.md), #75). Released with source ≠ 4, `key_cancel_check` 0xFFFBC103 clears that source and +0x78 (and 0x20CCC, 0x20B2E: a voice message on the air stops), and the event is dropped **[fact]**.
 
 ### Key classes and handler tables
 
@@ -126,7 +126,7 @@ Code ranges (codes with at least one handler) **[fact]**:
 | 0x140..0x1BF | 26 | 0 | press handlers only (0x140..0x17F) |
 | 0x200..0x288 | 106 | mostly 0 | the set allowed in mode 0x20B98, likely an on-screen keypad/list **[guess]** |
 | 0x300..0x312 | 19 | 15 × 1, 2 × 0, 2 × 2 | **physical front-panel keys** (the targets of `key_assign_map`) **[inference]** |
-| 0x340..0x35E | 9 | mixed | 0x340 cancel, 0x341, 0x348/0x34E (assignable; also targets of the map, so probably knob pushes **[guess]**), 0x35A, 0x35B..0x35E assignable |
+| 0x340..0x35E | 9 | mixed | 0x340 MIC PTT, 0x341, 0x348/0x34E (assignable; also targets of the map, so probably knob pushes **[guess]**), 0x35A, 0x35B..0x35E assignable |
 
 Codes below 0x300 are most likely GUI touch keys, since the DISPLAY draws the soft keys and MAIN times their long press itself **[inference]**.
 
@@ -200,7 +200,7 @@ multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs 
 | 0xFFFB44F7 | `key_event_filter` | | mode gates and key remap |
 | 0xFFFBBD58 | `key_task` | `key_task` | key state machine (`main_loop`) |
 | 0xFFFBBD53 | `key_task_init` | `key_task_init` | called in `app_main` (→ `FUN_fffc4d93`) **[inference]** |
-| 0xFFFBC103 | `key_cancel_check` | `key_cancel_check` | 0x340 release handling |
+| 0xFFFBC103 | `key_cancel_check` | `key_cancel_check` | 0x340 (MIC PTT) release handling |
 | 0xFFFBC1D0 | `key_class_of` | `key_class_of` | class from 0xFFF83164, or by assigned slot |
 | 0xFFFBC225 | `key_assign_slot` | `key_assign_slot` | assignable code → slot (0xFF if none) |
 | 0xFFFBC35F / 0xFFFBC38E / 0xFFFBC3BD / 0xFFFBC406 / 0xFFFBC435 | `key_call_press` … | `key_call_press` / `key_call_short` / `key_call_long` / `key_call_repeat` / `key_call_release` | JSR through the five tables |

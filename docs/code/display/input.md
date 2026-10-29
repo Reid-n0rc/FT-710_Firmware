@@ -172,17 +172,17 @@ jack's key lines is **[inference]**.
 
 | n | Keys | Effect on DISPLAY |
 |---|---|---|
-| 1 | FINE/FAST + STEP/MCH | sent to MAIN only |
-| 2 | QMB + NAR + BAND | sent to MAIN only |
-| 3 | MODE + ZIN/SPOT | sent to MAIN only |
+| 1 | FINE/FAST + STEP/MCH | sent to MAIN: **settings reset** (`settings_defaults(0)`) |
+| 2 | QMB + NAR + BAND | sent to MAIN: **factory alignment mode** (as `ZZPE071000`) |
+| 3 | MODE + ZIN/SPOT | sent to MAIN, which has no case for 3 (normal power-on) |
 | 4 | MODE + SPLIT | also `pclink_set_testmode`(1) (0x201121A8) every GUI frame: SDR-SPI test statistics on screen (`pclink_stats_print`, [spi-links.md](spi-links.md)) |
-| 5 | MODE + NB | sent to MAIN only |
+| 5 | MODE + NB | sent to MAIN: toggles the **TTBF unlock** flag 0x4760 |
 | 6 | DNR + A/B + QMB | `boot_mode_full` forces the full start. The GUI then sets boot-info word 0x208DBB4C = 2, draws a fixed screen and loops (`logo_fade_in`), a service/update mode **[inference]**, see [update.md](update.md) |
-| 7 | FINE/FAST + MODE | sent to MAIN only |
+| 7 | FINE/FAST + MODE | sent to MAIN: **region swap** (destination code, then restart) |
 
 `mainlink_hello_poweron` (0x201165F4) sends the power-up frame **`F0 01 08 20 23 06 29 n 00`** (`mainlink_send_hello` 0x201162A4) up to 30 times,
-5 ms apart, until MAIN answers (0x20450028). n is the combination, or 0x10 for a second power-up without a combination **[fact]**. What MAIN does
-with n (resets or service modes) belongs to T10b. The operating manual documents no power-on key combinations, so these are hidden service
+5 ms apart, until MAIN answers (0x20450028). n is the combination, or 0x10 for a second power-up without a combination **[fact]**. MAIN's reaction to each n is in
+[main/display-link.md](../main/display-link.md#f0-boot-codes) (#75). The operating manual documents no power-on key combinations, so these are hidden service
 functions **[inference]**.
 
 ## Rotary encoders and pots

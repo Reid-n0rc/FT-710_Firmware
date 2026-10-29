@@ -147,9 +147,9 @@ code 6 from `FUN_2011668c` **[fact, DISPLAY side]**. MAIN acts on them in `displ
 |---|---|---|
 | 0x00 | power on | normal power-on **[inference]** |
 | 0x01 | `settings_defaults(0)`, 0x20B45 = 1, `dest_jumper_apply` | **full reset** of the settings **[fact]** |
-| 0x02 | +0xBA = 1, `FUN_fffbb567` | a maintenance screen that makes the scheduler send `0x62`/`0x30`/`0x31` **[fact; purpose unknown]** |
+| 0x02 | +0xBA = 1 (0x20BBE), `align_load_preset` | **factory alignment mode**, the same as `ZZPE071000` (TX band limits off, DSP key stores calibration items; [cat-commands.md](../../cat-commands.md#ext-zz)); the scheduler also sends `0x62`/`0x30`/`0x31` **[fact]** (#75) |
 | 0x04 | +0x437 = 1, +0x34 = 0 | a numeric-entry/adjust mode: encoders 2/3/4/5 and the main dial go to the 0x25D3C counter (0..99,999,999) **[fact; purpose guess: service/alignment entry]** |
-| 0x05 | toggles 0x4760; on the second toggle 0x9A36 is limited to ≤ 4 | unknown **[fact]** |
+| 0x05 | toggles 0x4760; when it turns it off, TX BPF SEL (0x9A36, `EX010113`) above 4 is set back to 1 | **TTBF unlock**: 0x4760 is the hidden flag that lets TX BPF SEL reach value 6 (TTBF) on the front panel ([menu.md](menu.md)) **[fact]** (#75) |
 | 0x06 | link down (+0x98 = 0), no power on | the DISPLAY is in its maintenance/loader screen (boot combination 6, `mainlink_hello_key6` from `logo_fade_in`), or this is the first hello after a MAIN update **[fact for the DISPLAY call path, T14]** |
 | 0x07 | swaps the destination code: 0xA983 / 0xB5A7 → 0xD950, 0xD950 / 0xA4C5 → 0xA983 (`dest_code_set`, which also resets settings and restarts) | **region change** at power-on **[fact for the values]** |
 | 0x10 | power on only if 0x9DC5 ≠ 0 | 0x9DC5 is set by `PS1;`, by a low-voltage power-down and by the `0x7F` power frame, so a DISPLAY restart only powers the radio up if it was on **[inference]** |
