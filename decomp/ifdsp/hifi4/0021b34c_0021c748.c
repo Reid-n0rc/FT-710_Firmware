@@ -1213,7 +1213,7 @@ void FUN_0021c140(void)
     }
     uVar1 = ae_s32_l_i(uVar3);
     uVar4 = ae_l32_i(uVar1);
-    FUN_00218fc0();
+    cosf_();
     uVar7 = ae_l32_i(uVar1);
     uVar1 = ae_s32_l_ip(uVar4);
     *puVar6 = uVar1;
@@ -1497,9 +1497,11 @@ void FUN_0021c600(void)
 }
 
 
-// ===== FUN_0021c610 @ 0021c610 (96 bytes)
+// ===== apf_config @ 0021c610 (96 bytes)
 
-void FUN_0021c610(void)
+/* reg 0x45 */
+
+void apf_config(void)
 
 {
   uint uVar1;
@@ -1522,22 +1524,22 @@ void FUN_0021c610(void)
         iVar2 = 1;
       }
       uVar3 = ae_zext16(iVar2);
-      FUN_00234730(uVar3,0);
+      i2f_scaled(uVar3,0);
       DAT_00244514 = ae_s32_l_i(in_aed0);
     }
     else {
       ae_s16i_n(0,&DAT_00244510,2);
     }
-    FUN_0021c670();
-    FUN_0021c748();
+    apf_design_iir();
+    apf_design_fir();
   }
   return;
 }
 
 
-// ===== FUN_0021c670 @ 0021c670 (215 bytes)
+// ===== apf_design_iir @ 0021c670 (215 bytes)
 
-void FUN_0021c670(void)
+void apf_design_iir(void)
 
 {
   undefined4 uVar1;
@@ -1559,13 +1561,13 @@ void FUN_0021c670(void)
   }
   uVar7 = ae_l32_i(DAT_00244514);
   uVar5 = (ulonglong)(uint)((float)uVar7 * 3.1415927 * 8.333333e-05);
-  uVar12 = FUN_00219690();
+  uVar12 = tanf_();
   uVar1 = ae_s32_l_i(uVar5);
   uVar7 = const_s(1);
   fVar11 = (float)uVar7;
   uVar7 = ae_mov(uVar5);
   uVar2 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * (float)uVar7));
-  FUN_00235ba8((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),0x3d088889);
+  divf_((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),0x3d088889);
   uVar7 = ae_l32_i(uVar1);
   fVar6 = (float)uVar7;
   uVar7 = ae_l32_i(uVar2);
@@ -1588,9 +1590,9 @@ void FUN_0021c670(void)
 }
 
 
-// ===== FUN_0021c748 @ 0021c748 (207 bytes)
+// ===== apf_design_fir @ 0021c748 (207 bytes)
 
-void FUN_0021c748(void)
+void apf_design_fir(void)
 
 {
   undefined4 uVar1;
@@ -1634,7 +1636,7 @@ void FUN_0021c748(void)
         uVar10 = ae_l32_i(*local_30);
         uVar2 = ae_s32_l_i(uVar10);
         fVar6 = (float)uVar8 * (float)uVar11;
-        FUN_00218fc0();
+        cosf_();
         uVar10 = ae_l32_i(uVar2);
         uVar8 = ae_l32_i(&DAT_40000000);
         uVar2 = ae_s32_l_ip((ulonglong)(uint)(fVar6 * (float)uVar10 * (float)uVar8));
@@ -1644,7 +1646,7 @@ void FUN_0021c748(void)
         local_30 = local_30 + 1;
       } while (iVar7 != iVar9 - (iVar4 >> 1));
     }
-    DAT_0024451c = FUN_00233984(&DAT_00244a00,iVar9,&DAT_00244560);
+    DAT_0024451c = fir_init(&DAT_00244a00,iVar9,&DAT_00244560);
     return;
   }
   return;

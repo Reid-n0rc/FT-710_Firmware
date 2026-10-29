@@ -301,7 +301,7 @@ strings]**. Files and folders the DISPLAY reads or writes:
 
 | Path | Written by | Format |
 |---|---|---|
-| `I:\FT-710\` + `Capture`, `MemList`, `Menu`, `PlayList` | `sd_make_dirs` 0x2010FB90 | created after `FUN_2013f984('I')` (probably the SD **format** command: it runs from `sd_format_request` with a progress percent) **[inference]** |
+| `I:\FT-710\` + `Capture`, `MemList`, `Menu`, `PlayList` | `sd_make_dirs` 0x2010FB90 | created after `sd_format`('I') (`FUN_2013F984` → `sd_fat_format` `FUN_2013F83C`): card init and identify (3 tries), then `fat_clear_root_dir` (`FUN_2013F79C`) writes zeroed sectors over the root directory (32 sectors for FAT12/16, one cluster for FAT32) with `sd_write_sectors` (`FUN_2013E2B4`, −7 = write-protected). Only caller: `sd_make_dirs`, request 3 of `task_sdmenu`. So it is the SD **FORMAT**, not a mount (#83) **[fact: write calls; inference: format]** |
 | `I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` (fallback `I:\20YYMMDD_HHMMSS.bmp`) | `screen_capture_bmp` (MAIN message 0x7A) | BMP screenshot, see [gui.md](gui.md) |
 | `I:\FT-710\MemList\<name>.dat`, `I:\FT-710\Menu\<name>.dat` | `sdmenu_save_file` 0x2010F60C, read by `sdmenu_load_file` 0x2010F81C (now `sdmenu_load_file`) | below |
 | `I:\FT-710\PlayList\*.wav`, `I:\FT-710\MESSAGE\*.wav` | recorder | section 5 |
@@ -335,7 +335,7 @@ The `sdmenu` task (`task_sdmenu`) serves three event-flag requests: 1 = save, 2 
 | 0x201026E0 / 0x201026E8 | `backlight_set` / `backlight_init` | brightness from MAIN message 0x24 byte & 0x7F; 60 % at start-up, 100 % on some screens |
 | 0x20113D20 | `dimmer_pwm_init` | MTU2 ch0 PWM mode 1, P0φ/16, period 20000 = **100 Hz**, TIOC0A (P10_4 LED_DIMR) |
 | 0x20113D6C / 0x20113DB8 / 0x20113DC0 | `dimmer_set_pct` (new entry) / `dimmer_set` / `dimmer_init` | LED/key dimmer from message 0x24 (second byte & 0x7F); 60 % at start-up |
-| 0x20102708 / 0x20102774 | `touch_cal_load` / `touch_cal_save` | 48-byte record in SPI flash at 0x183D0000 (magic 0xA5C30001, CRC-32), probably the touch calibration **[guess]** |
+| 0x20102708 / 0x20102774 | `touch_cal_load` / `touch_cal_save` | 48-byte record in SPI flash at 0x183D0000 (magic 0xA5C30001, 6 doubles, CRC-32): the **touch-screen calibration** (affine a…f), loaded by `touch_cal_init` and saved by `touch_cal_step`, see [input.md](input.md) **[fact, #83]** |
 
 MAIN message 0x24 also carries the LED bits (`led_set_mask`) and the FT4222 reset bit (bit 2 of its first byte) **[fact]**.
 

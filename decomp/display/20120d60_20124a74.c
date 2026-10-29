@@ -2302,9 +2302,11 @@ LAB_2012442c:
 }
 
 
-// ===== FUN_20124528 @ 20124528 (484 bytes)
+// ===== scope_draw_frame @ 20124528 (484 bytes)
 
-void FUN_20124528(void)
+/* per GUI frame: 3DSS (mode 8/9) or 2D renderers by 0x208004D0/D2 (gui.md Scope drawing) */
+
+void scope_draw_frame(void)
 
 {
   char cVar1;
@@ -2330,7 +2332,7 @@ void FUN_20124528(void)
         else {
           iVar3 = 0x80;
         }
-        FUN_201335d8(DAT_208007c8,iVar4,&DAT_208007d4,iVar2 + iVar3 * 0x640);
+        scope3d_render_large_thunk(DAT_208007c8,iVar4,&DAT_208007d4,iVar2 + iVar3 * 0x640);
       }
       thunk_FUN_2015d49c(iVar4,&DAT_208007d4);
     }
@@ -2355,7 +2357,7 @@ void FUN_20124528(void)
         else {
           iVar3 = 0x80;
         }
-        FUN_201335f8(DAT_208007c8,iVar4,&DAT_208007d4,iVar2 + iVar3 * 0x640);
+        scope3d_render_small_thunk(DAT_208007c8,iVar4,&DAT_208007d4,iVar2 + iVar3 * 0x640);
       }
       thunk_FUN_2015d5e8(iVar4,&DAT_208007d4);
     }

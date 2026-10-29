@@ -916,13 +916,13 @@ void FUN_00216e00(undefined4 *param_1,undefined8 *param_2,uint param_3)
 }
 
 
-// ===== FUN_002174b0 @ 002174b0 (2144 bytes)
+// ===== fft512_cplx @ 002174b0 (2144 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00217730) */
 
 undefined1  [16]
-FUN_002174b0(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefined8 *param_4,
-            int param_5)
+fft512_cplx(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefined8 *param_4,
+           int param_5)
 
 {
   float fVar1;
@@ -1555,14 +1555,14 @@ FUN_002174b0(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
 }
 
 
-// ===== FUN_00217d10 @ 00217d10 (2329 bytes)
+// ===== ifft512_cplx @ 00217d10 (2329 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
 /* WARNING: Removing unreachable block (ram,0x00218632) */
 
 undefined1  [16]
-FUN_00217d10(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int param_4,int param_5)
+ifft512_cplx(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int param_4,int param_5)
 
 {
   float fVar1;
@@ -2396,9 +2396,11 @@ void FUN_00218640(int param_1,int param_2,uint param_3,int param_4)
 }
 
 
-// ===== FUN_00218b70 @ 00218b70 (375 bytes)
+// ===== pow10f_ @ 00218b70 (375 bytes)
 
-void FUN_00218b70(void)
+/* 10^x */
+
+void pow10f_(void)
 
 {
   undefined4 *puVar1;
@@ -2621,9 +2623,11 @@ void FUN_00218cf0(void)
 }
 
 
-// ===== FUN_00218e60 @ 00218e60 (346 bytes)
+// ===== atan2f_ @ 00218e60 (346 bytes)
 
-void FUN_00218e60(void)
+/* atan2 */
+
+void atan2f_(void)
 
 {
   float fVar1;
@@ -2722,9 +2726,11 @@ void FUN_00218e60(void)
 }
 
 
-// ===== FUN_00218fc0 @ 00218fc0 (299 bytes)
+// ===== cosf_ @ 00218fc0 (299 bytes)
 
-void FUN_00218fc0(void)
+/* cos */
+
+void cosf_(void)
 
 {
   float fVar1;
@@ -2808,12 +2814,13 @@ void FUN_00218fc0(void)
 }
 
 
-// ===== FUN_002190f0 @ 002190f0 (558 bytes)
+// ===== log10f_ @ 002190f0 (558 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002192b0) */
 /* WARNING: Removing unreachable block (ram,0x00219251) */
+/* log10 */
 
-undefined4 FUN_002190f0(undefined4 param_1)
+undefined4 log10f_(undefined4 param_1)
 
 {
   float fVar1;
@@ -3117,9 +3124,11 @@ undefined4 FUN_00219320(undefined4 param_1)
 }
 
 
-// ===== FUN_00219560 @ 00219560 (291 bytes)
+// ===== sinf_ @ 00219560 (291 bytes)
 
-void FUN_00219560(void)
+/* sin */
+
+void sinf_(void)
 
 {
   float fVar1;
@@ -3204,9 +3213,11 @@ void FUN_00219560(void)
 }
 
 
-// ===== FUN_00219690 @ 00219690 (363 bytes)
+// ===== tanf_ @ 00219690 (363 bytes)
 
-void FUN_00219690(void)
+/* tan (polynomial table 0x200890) */
+
+void tanf_(void)
 
 {
   float fVar1;
@@ -4822,7 +4833,7 @@ void FUN_0021aa20(void)
     ole_s(uVar2,in_aed0);
     return;
   }
-  FUN_00218e60();
+  atan2f_();
   return;
 }
 

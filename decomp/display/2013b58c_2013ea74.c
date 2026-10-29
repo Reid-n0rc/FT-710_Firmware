@@ -2042,9 +2042,11 @@ LAB_2013dca4:
 }
 
 
-// ===== FUN_2013dff0 @ 2013dff0 (624 bytes)
+// ===== sd_card_identify @ 2013dff0 (624 bytes)
 
-int FUN_2013dff0(int *param_1)
+/* card reset/identify, card-type flags at +0x2C0/+0x2C2 */
+
+int sd_card_identify(int *param_1)
 
 {
   ushort uVar1;
@@ -2214,9 +2216,11 @@ int FUN_2013e1e4(int *param_1)
 }
 
 
-// ===== FUN_2013e230 @ 2013e230 (132 bytes)
+// ===== sd_read_sectors @ 2013e230 (132 bytes)
 
-void FUN_2013e230(int param_1,undefined4 param_2,undefined4 param_3,int *param_4)
+/* driver op +0x58 */
+
+void sd_read_sectors(int param_1,undefined4 param_2,undefined4 param_3,int *param_4)
 
 {
   int iVar1;
@@ -2237,9 +2241,11 @@ void FUN_2013e230(int param_1,undefined4 param_2,undefined4 param_3,int *param_4
 }
 
 
-// ===== FUN_2013e2b4 @ 2013e2b4 (156 bytes)
+// ===== sd_write_sectors @ 2013e2b4 (156 bytes)
 
-int FUN_2013e2b4(int param_1,undefined4 param_2,undefined4 param_3,int *param_4)
+/* driver op +0x60; -7 = write-protected */
+
+int sd_write_sectors(int param_1,undefined4 param_2,undefined4 param_3,int *param_4)
 
 {
   int iVar1;
@@ -2281,7 +2287,7 @@ int FUN_2013e35c(int param_1,uint param_2,undefined4 param_3,undefined4 param_4,
       if (iVar1 != 0) {
         return iVar1;
       }
-      iVar1 = FUN_2013e230(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
+      iVar1 = sd_read_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
       if (iVar1 == 0) {
         return 0;
       }
@@ -2310,7 +2316,7 @@ int FUN_2013e3cc(int param_1,uint param_2,undefined4 param_3,undefined4 param_4,
       if (iVar1 != 0) {
         return iVar1;
       }
-      iVar1 = FUN_2013e2b4(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
+      iVar1 = sd_write_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
       if (iVar1 == 0) {
         return 0;
       }
@@ -2331,19 +2337,19 @@ int FUN_2013e43c(int param_1,int *param_2)
 {
   int iVar1;
   
-  iVar1 = FUN_2013e230(0,*param_2 + 1,1,param_2);
+  iVar1 = sd_read_sectors(0,*param_2 + 1,1,param_2);
   if (iVar1 == 0) {
     iVar1 = FUN_201490f8(param_1,*param_2 + 1);
     if (iVar1 == 0) {
-      iVar1 = FUN_2013e230(*(undefined4 *)(param_1 + 0x30),*param_2 + 1,1,param_2);
+      iVar1 = sd_read_sectors(*(undefined4 *)(param_1 + 0x30),*param_2 + 1,1,param_2);
       if (iVar1 != 0) {
         return iVar1;
       }
       iVar1 = fat_mount(param_1,*param_2 + 1);
       if (-1 < iVar1) {
         if (*(char *)(param_1 + 0x10) == ' ') {
-          iVar1 = FUN_2013e230(*(int *)(param_1 + 0x30) + (uint)*(ushort *)(param_1 + 0x3a),
-                               *param_2 + 1,1,param_2);
+          iVar1 = sd_read_sectors(*(int *)(param_1 + 0x30) + (uint)*(ushort *)(param_1 + 0x3a),
+                                  *param_2 + 1,1,param_2);
           if (iVar1 != 0) {
             return iVar1;
           }
@@ -2397,7 +2403,7 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
         iVar3 = 0;
         do {
           iVar2 = (**(code **)(param_6[1] + 0x20))(2);
-          if ((((((iVar2 == 0) && (iVar2 = FUN_2013dff0(param_6), iVar2 == 0)) &&
+          if ((((((iVar2 == 0) && (iVar2 = sd_card_identify(param_6), iVar2 == 0)) &&
                 (iVar2 = FUN_2013e124(param_6), iVar2 == 0)) &&
                ((iVar2 = FUN_2013e190(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6), iVar2 == 0
                 && (iVar2 = FUN_2013d434(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
@@ -2498,11 +2504,11 @@ int FUN_2013e8d0(int *param_1)
     FUN_2014d128(*param_1 + 1,&DAT_204202f3,0xc);
   }
   iVar6 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4);
-  iVar3 = FUN_2013e2b4(iVar6,*param_1 + 1,1,param_1);
+  iVar3 = sd_write_sectors(iVar6,*param_1 + 1,1,param_1);
   if (iVar3 == 0) {
     if (*(char *)(iVar2 + 0x2dc) != '@') {
       iVar7 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) + *(int *)(iVar2 + 0x2e0);
-      iVar4 = FUN_2013e2b4(iVar7,*param_1 + 1,1,param_1);
+      iVar4 = sd_write_sectors(iVar7,*param_1 + 1,1,param_1);
       iVar3 = 0;
       if (iVar4 != 0) {
         return iVar4;
@@ -2515,11 +2521,11 @@ int FUN_2013e8d0(int *param_1)
       do {
         iVar7 = iVar7 + 1;
         iVar6 = iVar6 + 1;
-        iVar2 = FUN_2013e2b4(iVar6,*param_1 + 1,1,param_1);
+        iVar2 = sd_write_sectors(iVar6,*param_1 + 1,1,param_1);
         if (iVar2 != 0) {
           return iVar2;
         }
-        iVar2 = FUN_2013e2b4(iVar7,*param_1 + 1,1,param_1);
+        iVar2 = sd_write_sectors(iVar7,*param_1 + 1,1,param_1);
         if (iVar2 != 0) {
           return iVar2;
         }
@@ -2551,15 +2557,15 @@ void FUN_2013ea74(int *param_1)
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   iVar2 = *(int *)(iVar1 + 0x2d0);
-  iVar3 = FUN_2013e2b4(iVar2 + 1,*param_1 + 1,1,param_1);
-  if ((iVar3 == 0) && (iVar2 = FUN_2013e2b4(iVar2 + 7,*param_1 + 1,1,param_1), iVar2 == 0)) {
+  iVar3 = sd_write_sectors(iVar2 + 1,*param_1 + 1,1,param_1);
+  if ((iVar3 == 0) && (iVar2 = sd_write_sectors(iVar2 + 7,*param_1 + 1,1,param_1), iVar2 == 0)) {
     FUN_2014d148(*param_1 + 1,0,0x200);
     *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
     *(undefined1 *)(*param_1 + 0x200) = 0xaa;
     iVar1 = *(int *)(iVar1 + 0x2d0);
-    iVar2 = FUN_2013e2b4(iVar1 + 2,*param_1 + 1,1,param_1);
+    iVar2 = sd_write_sectors(iVar1 + 2,*param_1 + 1,1,param_1);
     if (iVar2 == 0) {
-      FUN_2013e2b4(iVar1 + 8,*param_1 + 1,1,param_1);
+      sd_write_sectors(iVar1 + 8,*param_1 + 1,1,param_1);
       return;
     }
   }
