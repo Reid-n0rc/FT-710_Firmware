@@ -32,7 +32,7 @@ void ctcss_config(void)
       DAT_00253648 = iir_cascade_init(&DAT_00253980,4,&DAT_00236940,1);
       DAT_0025364c = iir_cascade_init(&DAT_00253a20,8,&DAT_00236990,1);
       ae_l32_i(FLOAT_ARRAY_00204be0[uVar3 & 0xfff]);
-      FUN_0021f968();
+      ctcss_goertzel_init();
     }
     DAT_00253646 = 0;
     uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
@@ -58,9 +58,12 @@ void ctcss_config(void)
 }
 
 
-// ===== FUN_0021f8bc @ 0021f8bc (166 bytes)
+// ===== ctcss_goertzel_retune @ 0021f8bc (166 bytes)
 
-void FUN_0021f8bc(void)
+/* (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2
+   cos of 2 pi f / 1500 per bin (#184) */
+
+void ctcss_goertzel_retune(void)
 
 {
   undefined4 uVar1;
@@ -119,9 +122,12 @@ void FUN_0021f8bc(void)
 }
 
 
-// ===== FUN_0021f968 @ 0021f968 (221 bytes)
+// ===== ctcss_goertzel_init @ 0021f968 (221 bytes)
 
-void FUN_0021f968(void)
+/* (f): as ctcss_goertzel_retune, then clears the 3 Goertzel states and the 200-sample window (#184)
+    */
+
+void ctcss_goertzel_init(void)
 
 {
   undefined4 uVar1;
@@ -366,7 +372,7 @@ LAB_0021fcb9:
 LAB_0021fc50:
   DAT_00253646 = uVar18;
   ae_l32_i(0);
-  FUN_0021f8bc();
+  ctcss_goertzel_retune();
   uVar10 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL);
   uVar11 = uVar10 & 0xf;
   if (uVar11 < 2) {
@@ -2622,7 +2628,8 @@ void FUN_00221e40(void)
 
 // ===== tx_alc_update @ 00221e84 (266 bytes)
 
-/* regs 0x31-0x34 */
+/* reg 0x34 bit 12 on, bits 11-0 level % (1..100); 0x31/0x32 10^(x/40); 0x33 release coefficient
+   powf(0.5, x) per 72 kHz sample (#184) */
 
 void tx_alc_update(void)
 
@@ -2680,7 +2687,7 @@ void tx_alc_update(void)
     i2f_scaled(uVar6 & 0xfff,0);
     ae_mov(in_aed0);
     uVar4 = const_s(3);
-    FUN_002294e0();
+    powf();
     DAT_0025b5e0 = ae_s32_l_i(uVar4);
     return;
   }

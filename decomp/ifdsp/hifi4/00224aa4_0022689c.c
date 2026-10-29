@@ -1815,7 +1815,7 @@ void Thread_Rx_Path_entry(void)
     rx_demod_dispatch(&DAT_002cab90,&DAT_002cab90);
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), iVar1 == 1)) {
       codec_in_fifo_pop(1,&DAT_002cabf0);
-      rx_loop_gain(&DAT_002cabf0);
+      rx_aux_in_gain(&DAT_002cabf0);
       rx_audio_push_block(&DAT_002cabf0,&DAT_002cac50,&DAT_002cacb0);
       memcpy(&DAT_002cad10,&DAT_002cab90,0x60);
     }

@@ -23261,14 +23261,14 @@
   21bd73:	0c02                          	movi.n	a2, 0
   21bd75:	1df0                          	retw.n
   21bd77:	ae92030b26fd              	{ mov.n	a10, a2; mov.n	a11, a3 }
-  21bd7d:	650d00                      	call8	0x21be54  ; handle_msg_audio
+  21bd7d:	650d00                      	call8	0x21be54  ; handle_msg_version
   21bd80:	46fbff                      	j	0x21bd71
   21bd83:	ae92030b26fd              	{ mov.n	a10, a2; mov.n	a11, a3 }
   21bd89:	250400                      	call8	0x21bdcc  ; handle_msg_general
   21bd8c:	46f8ff                      	j	0x21bd71
   21bd8f:	00                               	.byte 00
   21bd90:	ae92030b26fd              	{ mov.n	a10, a2; mov.n	a11, a3 }
-  21bd96:	a50800                      	call8	0x21be20  ; FUN_0021be20
+  21bd96:	a50800                      	call8	0x21be20  ; handle_msg_audio
   21bd99:	5664fd                      	bnez	a4, 0x21bd73
   21bd9c:	42d20f                      	addmi	a4, a2, 0xf00
   21bd9f:	4e0401b812e0              	{ addi	a4, a4, -80; movi	a8, 1 }
@@ -23314,7 +23314,7 @@
   21be1b:	1df0                          	retw.n
   21be1d:	000000                      	ill
 
-;; ---- 0021be20 FUN_0021be20 (52 bytes)
+;; ---- 0021be20 handle_msg_audio (52 bytes)
   21be20:	364100                      	entry	a1, 32
   21be23:	42030c                      	l8ui	a4, a3, 12
   21be26:	2e0203081be0              	{ movi	a2, 2; movi	a8, 3 }
@@ -23331,7 +23331,7 @@
   21be4f:	2953                          	s32i.n	a2, a3, 20
   21be51:	1df0                          	retw.n
 
-;; ---- 0021be54 handle_msg_audio (44 bytes)
+;; ---- 0021be54 handle_msg_version (44 bytes)
   21be54:	364100                      	entry	a1, 32
   21be57:	42030c                      	l8ui	a4, a3, 12
   21be5a:	9e0203081be0              	{ movi	a9, 2; movi	a8, 3 }
@@ -24609,7 +24609,7 @@
   21d0a1:	92547f                      	s16i	a9, a4, 254
   21d0a4:	1df0                          	retw.n
 
-;; ---- 0021d0a8 FUN_0021d0a8 (40 bytes)
+;; ---- 0021d0a8 zeroin_goertzel_reset (40 bytes)
   21d0a8:	364100                      	entry	a1, 32
   21d0ab:	314aa7                      	l32r	a3, 0x206dd4 (0x246cd8)
   21d0ae:	3000fa                      	const.s	aed0, 0
@@ -24624,7 +24624,7 @@
   21d0c9:	7403e1                      	ae_s32.l.ip	aed0, a3, 28
   21d0cc:	1df0                          	retw.n
 
-;; ---- 0021d0d0 FUN_0021d0d0 (112 bytes)
+;; ---- 0021d0d0 zeroin_goertzel_tune (112 bytes)
   21d0d0:	366100                      	entry	a1, 48
   21d0d3:	a142a7                      	l32r	a10, 0x206ddc (0xc1700000)
   21d0d6:	b142a7                      	l32r	a11, 0x206de0 (0x41700000)
@@ -24648,19 +24648,19 @@
   21d114:	d4babd                      	ae_l32.i	aed11, a10, -12
   21d117:	a0b02a                      	mul.s	aed0, aed10, aed11
   21d11a:	0401e0                      	ae_s32.l.i	aed0, a1, 0
-  21d11d:	25340c                      	call8	0x229460  ; FUN_00229460
+  21d11d:	25340c                      	call8	0x229460  ; sinf
   21d120:	3e0201f023fa              	{ ae_s32.l.i	aed0, a2, 12; ae_l32.i	aed0, a1, 0 }
-  21d126:	a52b0c                      	call8	0x2293e0  ; FUN_002293e0
+  21d126:	a52b0c                      	call8	0x2293e0  ; cosf
   21d129:	b12fa7                      	l32r	a11, 0x206de8 (0x203ac0)
   21d12c:	043bbd                      	ae_l32.i	aed3, a11, 0
   21d12f:	00322a                      	mul.s	aed2, aed0, aed3
   21d132:	4402e0                      	ae_s32.l.i	aed0, a2, 16
   21d135:	7422e1                      	ae_s32.l.ip	aed2, a2, 28
   21d138:	3792bb                      	bne	a2, a3, 0x21d0f7
-  21d13b:	e5f6ff                      	call8	0x21d0a8  ; FUN_0021d0a8
+  21d13b:	e5f6ff                      	call8	0x21d0a8  ; zeroin_goertzel_reset
   21d13e:	1df0                          	retw.n
 
-;; ---- 0021d140 FUN_0021d140 (80 bytes)
+;; ---- 0021d140 zeroin_goertzel_step (80 bytes)
   21d140:	364100                      	entry	a1, 32
   21d143:	312aa7                      	l32r	a3, 0x206dec (0x246cc8)
   21d146:	0ee333bf22fa              	{ ae_l32.i	aed14, a3, 0; ae_l32.i	aed3, a3, -4 }
@@ -24686,7 +24686,7 @@
   21d18b:	7413e1                      	ae_s32.l.ip	aed1, a3, 28
   21d18e:	1df0                          	retw.n
 
-;; ---- 0021d190 FUN_0021d190 (80 bytes)
+;; ---- 0021d190 zeroin_goertzel_mag (80 bytes)
   21d190:	366100                      	entry	a1, 48
   21d193:	2110a7                      	l32r	a2, 0x206dd4 (0x246cd8)
   21d196:	32c254                      	addi	a3, a2, 84
@@ -24708,7 +24708,7 @@
   21d1d8:	65840c                      	call8	0x229a20  ; FUN_00229a20
   21d1db:	86fbff                      	j	0x21d1cd
 
-;; ---- 0021d1e0 FUN_0021d1e0 (84 bytes)
+;; ---- 0021d1e0 zeroin_tone_gate (84 bytes)
   21d1e0:	364100                      	entry	a1, 32
   21d1e3:	5103a7                      	l32r	a5, 0x206df0 (0x246cf8)
   21d1e6:	4103a7                      	l32r	a4, 0x206df4 (0x2469c8)
@@ -24734,7 +24734,7 @@
   21d230:	1df0                          	retw.n
   21d232:	1df0                          	retw.n
 
-;; ---- 0021d234 FUN_0021d234 (60 bytes)
+;; ---- 0021d234 cw_zero_in_init (60 bytes)
   21d234:	364100                      	entry	a1, 32
   21d237:	a1f2a6                      	l32r	a10, 0x206e00 (0x2469d0)
   21d23a:	91efa6                      	l32r	a9, 0x206df8 (0x2465e0)
@@ -24862,7 +24862,7 @@
   21d406:	c02000                      	memw
   21d409:	b185a6                      	l32r	a11, 0x206e20 (0x246eac)
   21d40c:	040bbd                      	ae_l32.i	aed0, a11, 0
-  21d40f:	25ccff                      	call8	0x21d0d0  ; FUN_0021d0d0
+  21d40f:	25ccff                      	call8	0x21d0d0  ; zeroin_goertzel_tune
   21d412:	c02000                      	memw
   21d415:	c183a6                      	l32r	a12, 0x206e24 (0x203aac)
   21d418:	04ccbd                      	ae_l32.i	aed12, a12, 0
@@ -24878,7 +24878,7 @@
   21d43e:	0403e0                      	ae_s32.l.i	aed0, a3, 0
   21d441:	c02000                      	memw
   21d444:	0403bd                      	ae_l32.i	aed0, a3, 0
-  21d447:	a5cfff                      	call8	0x21d140  ; FUN_0021d140
+  21d447:	a5cfff                      	call8	0x21d140  ; zeroin_goertzel_step
   21d44a:	c02000                      	memw
   21d44d:	04f7bd                      	ae_l32.i	aed15, a7, 0
   21d450:	c02000                      	memw
@@ -24892,7 +24892,7 @@
   21d468:	0ed712f223c8              	{ ae_s32.l.i	aed13, a7, 0; addi	a2, a2, 1 }
   21d46e:	f792af                      	bne	a2, a15, 0x21d421
   21d471:	2161a6                      	l32r	a2, 0x206df8 (0x2465e0)
-  21d474:	a5d1ff                      	call8	0x21d190  ; FUN_0021d190
+  21d474:	a5d1ff                      	call8	0x21d190  ; zeroin_goertzel_mag
   21d477:	c02000                      	memw
   21d47a:	8168a6                      	l32r	a8, 0x206e1c (0x203ab0)
   21d47d:	0437bd                      	ae_l32.i	aed3, a7, 0
@@ -24933,7 +24933,7 @@
   21d4f1:	761502                      	bt	b5, 0x21d4f7
   21d4f4:	c683ff                      	j	0x21d307
   21d4f7:	a2140a                      	l16ui	a10, a4, 20
-  21d4fa:	65ceff                      	call8	0x21d1e0  ; FUN_0021d1e0
+  21d4fa:	65ceff                      	call8	0x21d1e0  ; zeroin_tone_gate
   21d4fd:	ed9a                          	ae_zext16	a14, a10
   21d4ff:	eea4310b18d8              	{ s16i	a14, a4, 20; l32i	a11, a1, 12 }
   21d505:	0fae02021a2010f8eb8e00 	{ beqz.w15	a14, 0x21d30c; ae_l32.i	aed0, a2, 8; nop }
@@ -26120,7 +26120,7 @@
   21e74f:	1df0                          	retw.n
   21e751:	000000                      	ill
 
-;; ---- 0021e754 cw_fir_lowpass (216 bytes)
+;; ---- 0021e754 aess_lowpass_fir (216 bytes)
   21e754:	364100                      	entry	a1, 32
   21e757:	a13ba1                      	l32r	a10, 0x206c44 (0x20077f00)
   21e75a:	5112a2                      	l32r	a5, 0x206fa4 (0x251fa0)
@@ -26984,7 +26984,7 @@
   21f44d:	e5ca14                      	call8	0x2340fc  ; iir_cascade_init
   21f450:	a924                          	s32i.n	a10, a4, 8
   21f452:	e56d01                      	call8	0x220b30  ; FUN_00220b30
-  21f455:	e5ddfd                      	call8	0x21d234  ; FUN_0021d234
+  21f455:	e5ddfd                      	call8	0x21d234  ; cw_zero_in_init
   21f458:	650cff                      	call8	0x21e520  ; FUN_0021e520
   21f45b:	6575fe                      	call8	0x21dbb0  ; FUN_0021dbb0
   21f45e:	25acfe                      	call8	0x21df20  ; spectral_nr_init
@@ -27055,7 +27055,7 @@
   21f54e:	be95050c26fd              	{ mov.n	a11, a5; mov.n	a12, a5 }
   21f554:	a535ff                      	call8	0x21e8b0  ; af_locut
   21f557:	ae95050b26fd              	{ mov.n	a10, a5; mov.n	a11, a5 }
-  21f55d:	651fff                      	call8	0x21e754  ; cw_fir_lowpass
+  21f55d:	651fff                      	call8	0x21e754  ; aess_lowpass_fir
   21f560:	ae95050b26fd              	{ mov.n	a10, a5; mov.n	a11, a5 }
   21f566:	e515ff                      	call8	0x21e6c4  ; branch_b_delay
   21f569:	ad07                          	mov.n	a10, a7
@@ -27256,10 +27256,10 @@
   21f8a9:	e1039e                      	l32r	a14, 0x2070b8 (0x204be0)
   21f8ac:	e0e5a0                      	addx4	a14, a5, a14
   21f8af:	ae320e0019fa              	{ s32i	a10, a2, 12; ae_l32.i	aed0, a14, 0 }
-  21f8b5:	250b00                      	call8	0x21f968  ; FUN_0021f968
+  21f8b5:	250b00                      	call8	0x21f968  ; ctcss_goertzel_init
   21f8b8:	06d9ff                      	j	0x21f820
 
-;; ---- 0021f8bc FUN_0021f8bc (172 bytes)
+;; ---- 0021f8bc ctcss_goertzel_retune (172 bytes)
   21f8bc:	366100                      	entry	a1, 48
   21f8bf:	81fb9d                      	l32r	a8, 0x2070ac (0x253640)
   21f8c2:	3010fa                      	const.s	aed1, 0
@@ -27314,7 +27314,7 @@
   21f962:	6459e0                      	ae_s32.l.i	aed5, a9, 24
   21f965:	46e7ff                      	j	0x21f906
 
-;; ---- 0021f968 FUN_0021f968 (224 bytes)
+;; ---- 0021f968 ctcss_goertzel_init (224 bytes)
   21f968:	366100                      	entry	a1, 48
   21f96b:	41d09d                      	l32r	a4, 0x2070ac (0x253640)
   21f96e:	3010fa                      	const.s	aed1, 0
@@ -27520,7 +27520,7 @@
   21fc4d:	060c0a                      	j	0x222481
   21fc50:	d12d9d                      	l32r	a13, 0x207104 (0x204cc4)
   21fc53:	ae330d0018fa              	{ s16i	a10, a3, 6; ae_l32.i	aed0, a13, 0 }
-  21fc59:	25c6ff                      	call8	0x21f8bc  ; FUN_0021f8bc
+  21fc59:	25c6ff                      	call8	0x21f8bc  ; ctcss_goertzel_retune
   21fc5c:	90e603                      	rsr.ps	a9
   21fc5f:	9ea0f06cd0e3              	{ extui	a10, a9, 0, 4; movi	a12, -16 }
   21fc65:	2eea0f0280b5              	{ bgeui.w15	a10, 2, 0x21fc77; movi.n	a15, 2 }
@@ -29848,7 +29848,7 @@
   221f79:	aea0006b11e0              	{ extui	a10, a10, 0, 12; movi	a11, 0 }
   221f7f:	257b12                      	call8	0x234730  ; i2f_scaled
   221f82:	1f0170063da46de4c77f39 	{ ae_mov	aed1, aed0; nop; const.s	aed0, 3; nop }
-  221f8d:	255507                      	call8	0x2294e0  ; FUN_002294e0
+  221f8d:	255507                      	call8	0x2294e0  ; powf
   221f90:	7403e0                      	ae_s32.l.i	aed0, a3, 28
   221f93:	1df0                          	retw.n
   221f95:	000000                      	ill
@@ -31716,7 +31716,7 @@
   223ac0:	650e12                      	call8	0x235ba8  ; divf_
   223ac3:	9e0d10d188fc              	{ l32r	a9, 0x206ef8 (0x41200000); ae_mov	aed1, aed0 }
   223ac9:	5009fa                      	wfr	aed0, a9
-  223acc:	25a105                      	call8	0x2294e0  ; FUN_002294e0
+  223acc:	25a105                      	call8	0x2294e0  ; powf
   223acf:	0e1102ba22fd              	{ ae_l32.i	aed1, a1, 0; mov.n	a10, a2 }
   223ad5:	a5fbff                      	call8	0x223a90  ; FUN_00223a90
   223ad8:	1df0                          	retw.n
@@ -32682,7 +32682,7 @@
   22495a:	06f2ff                      	j	0x224926
   22495d:	000000                      	ill
 
-;; ---- 00224960 rx_loop_gain (80 bytes)
+;; ---- 00224960 rx_aux_in_gain (80 bytes)
   224960:	364100                      	entry	a1, 32
   224963:	41f18a                      	l32r	a4, 0x207528 (0x263cd0)
   224966:	a1b888                      	l32r	a10, 0x206c48 (0x2006ff00)
@@ -34567,7 +34567,7 @@
   2263bd:	a53dfe                      	call8	0x224798  ; codec_in_fifo_pop
   2263c0:	b1e684                      	l32r	a11, 0x207758 (0x2cabf0)
   2263c3:	ad0b                          	mov.n	a10, a11
-  2263c5:	a559fe                      	call8	0x224960  ; rx_loop_gain
+  2263c5:	a559fe                      	call8	0x224960  ; rx_aux_in_gain
   2263c8:	a1e484                      	l32r	a10, 0x207758 (0x2cabf0)
   2263cb:	be96050c26fd              	{ mov.n	a11, a6; mov.n	a12, a5 }
   2263d1:	25bafa                      	call8	0x220f74  ; rx_audio_push_block
@@ -38358,7 +38358,7 @@
   2293cf:	a5d8fe                      	call8	0x228158  ; FUN_00228158
   2293d2:	1df0                          	retw.n
 
-;; ---- 002293e0 FUN_002293e0 (128 bytes)
+;; ---- 002293e0 cosf (128 bytes)
   2293e0:	366100                      	entry	a1, 48
   2293e3:	b1eb74                      	l32r	a11, 0x206790 (0x7fffffff)
   2293e6:	0401e0                      	ae_s32.l.i	aed0, a1, 0
@@ -38402,7 +38402,7 @@
   22944d:	6000fa                      	neg.s	aed0, aed0
   229450:	1df0                          	retw.n
 
-;; ---- 00229460 FUN_00229460 (128 bytes)
+;; ---- 00229460 sinf (128 bytes)
   229460:	366100                      	entry	a1, 48
   229463:	b1cb74                      	l32r	a11, 0x206790 (0x7fffffff)
   229466:	0401e0                      	ae_s32.l.i	aed0, a1, 0
@@ -38438,7 +38438,7 @@
   2294da:	651301                      	call8	0x22a610  ; FUN_0022a610
   2294dd:	1df0                          	retw.n
 
-;; ---- 002294e0 FUN_002294e0 (1344 bytes)
+;; ---- 002294e0 powf (1344 bytes)
   2294e0:	36e100                      	entry	a1, 112
   2294e3:	a2c164                      	addi	a10, a1, 100
   2294e6:	8e1a01fba3c9              	{ ae_s32.l.i	aed1, a10, -32; addi	a11, a1, 96 }
@@ -49035,7 +49035,7 @@
   233441:	de6a8b218192              	{ bany.w15	a10, a13, 0x23356b; addi.n	a8, a11, 1 }
   233447:	8e0d902081b2              	{ bany.w15	a13, a8, 0x23356b; nop }
   23344d:	f02000                      	nop
-  233450:	e51200                      	call8	0x233580  ; FUN_00233580
+  233450:	e51200                      	call8	0x233580  ; xthal_get_cacheattr
   233453:	be960a0326fd              	{ mov.n	a11, a6; mov.n	a3, a10 }
   233459:	6e350c1001b8              	{ bltu.w15	a5, a6, 0x233570; movi.n	a12, 0 }
   23345f:	4911                          	s32i.n	a4, a1, 4
@@ -49066,7 +49066,7 @@
   2334dc:	371a05                      	beq	a10, a3, 0x2334e5
   2334df:	be44909000b0              	{ bbci.w15	a4, 11, 0x233577; nop }
   2334e5:	30a320                      	or	a10, a3, a3
-  2334e8:	650b00                      	call8	0x2335a0  ; FUN_002335a0
+  2334e8:	650b00                      	call8	0x2335a0  ; xthal_set_cacheattr
   2334eb:	922100                      	l32i	a9, a1, 0
   2334ee:	165907                      	beqz	a9, 0x233567
   2334f1:	c7e472                      	bbsi	a4, 12, 0x233567
@@ -49109,11 +49109,11 @@
   233570:	0c0d                          	movi.n	a13, 0
   233572:	d901                          	s32i.n	a13, a1, 0
   233574:	06d9ff                      	j	0x2334dc
-  233577:	a50200                      	call8	0x2335a0  ; FUN_002335a0
+  233577:	a50200                      	call8	0x2335a0  ; xthal_set_cacheattr
   23357a:	65ed02                      	call8	0x236450  ; FUN_00236450
   23357d:	06d9ff                      	j	0x2334e5
 
-;; ---- 00233580 FUN_00233580 (32 bytes)
+;; ---- 00233580 xthal_get_cacheattr (32 bytes)
   233580:	362100                      	entry	a1, 16
   233583:	51f250                      	l32r	a5, 0x20794c (0xe0000000)
   233586:	0c02                          	movi.n	a2, 0
@@ -49127,7 +49127,7 @@
   23359b:	f6b3eb                      	bgeui	a3, 16, 0x23358a
   23359e:	1df0                          	retw.n
 
-;; ---- 002335a0 FUN_002335a0 (96 bytes)
+;; ---- 002335a0 xthal_set_cacheattr (96 bytes)
   2335a0:	362100                      	entry	a1, 16
   2335a3:	51ea50                      	l32r	a5, 0x20794c (0xe0000000)
   2335a6:	619a51                      	l32r	a6, 0x207c10 (0x2335d3)

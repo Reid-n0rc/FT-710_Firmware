@@ -805,9 +805,11 @@ void FUN_002293cc(void)
 }
 
 
-// ===== FUN_002293e0 @ 002293e0 (100 bytes)
+// ===== cosf @ 002293e0 (100 bytes)
 
-void FUN_002293e0(void)
+/* newlib cosf: |x| <= pi/4 -> kernel 0x22A610, else rem_pio2 switch (#184) */
+
+void cosf(void)
 
 {
   uint uVar1;
@@ -845,9 +847,11 @@ void FUN_002293e0(void)
 }
 
 
-// ===== FUN_00229460 @ 00229460 (105 bytes)
+// ===== sinf @ 00229460 (105 bytes)
 
-void FUN_00229460(void)
+/* newlib sinf: |x| <= pi/4 -> kernel 0x22B420, else rem_pio2 0x22A320 switch (#184) */
+
+void sinf(void)
 
 {
   uint uVar1;
@@ -885,9 +889,12 @@ void FUN_00229460(void)
 }
 
 
-// ===== FUN_002294e0 @ 002294e0 (1240 bytes)
+// ===== powf @ 002294e0 (1240 bytes)
 
-void FUN_002294e0(void)
+/* newlib w_powf wrapper (matherr name string powf at 0x206414): powf(aed0, aed1); tx_alc_update
+   powf(0.5, reg 0x33), FUN_00223AB4 10^(x/20) (#184) */
+
+void powf(void)
 
 {
   int iVar1;
