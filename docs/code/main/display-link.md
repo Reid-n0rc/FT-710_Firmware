@@ -256,7 +256,7 @@ Bytes 97–102, 114 and 133–151 are **always 0** **[fact]**: every frame build
 from text alone. The gaps look like fields of the shared Yaesu status layout that the FT-710 does not use **[guess]**. Of the single bits
 listed in #179, UI +0x68 and +0x6F are always 0; 0x9C5C (byte 9 bit 3) is the soft-key-0x011 long-press toggle that the DISPLAY reads as
 the AF-FFT overlay of the filter graph, and byte 8 (+0x34) is the front-panel LED mask (`led_set_mask`) (see the rows above; #179); `affft_bins_get` and `filter_graph_affft_overlay` are new rows in `tools/ghidra/names_display.tsv` and appear in `decomp/display/` after the next Ghidra re-export). Which
-on-screen area sends soft key 0x011 is still open: it is in the DISPLAY's touch hit tables, which were not traced.
+on-screen area sends soft key 0x011 is still open: it is in the DISPLAY's touch hit tables, which were not traced (#212).
 
 ### Small frames and mode flags (#72)
 
@@ -383,7 +383,7 @@ Function ids, in slot order **[fact for the sources; the names 0..0x14 match the
 | 0x12 / 0x13 / 0x14 | CW SPEED / CW PITCH / BK-DELAY | 0x9C03 ("wp") / 0x9C04 / 0x9C05 ("ms") |
 | 0x16, 0x17 (0x35 while recording, UI +0x92), 0x18, 0x2D, 0xFF, 0x15, 0x3A, 0x30..0x34 | not named | 0x16 is greyed in DATA/RTTY/PSK and has no text; 0x15 and 0x3A show per-mode settings (`FUN_fffb54a0` / `FUN_fffb552c`, base 0x9BCA); 0x30..0x34 have no text and the DISPLAY adds an icon |
 
-The names of ids 0x15..0x18, 0x2D, 0x30..0x35 and 0x3A are open. Their labels are bitmaps in the DISPLAY image and the `SF` command
+The names of ids 0x15..0x18, 0x2D, 0x30..0x35 and 0x3A are open (#212). Their labels are bitmaps in the DISPLAY image and the `SF` command
 does not list them; neither image holds a text table of the FUNC function names (a search of both for the known labels, for example
 `CW PITCH`, `BK-DELAY`, `MIC GAIN`, finds none of them; `PITCH` occurs only in menu texts such as `PITCH OFFSET`) **[fact]** (#179), so naming them needs the bitmaps decoded or a screenshot. 0x30..0x34 are five of a kind, perhaps the five message memories **[guess]**.
 
