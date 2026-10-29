@@ -286,11 +286,42 @@ def const_bus(c, base, width):
     return v
 
 
+def dsp_inversions(c):
+    """IS_*_INVERTED of a DSP48E1 (#91). prjxray's ZIS_<pin>_INVERTED bit = 1 means the pin is NOT inverted
+    (same Z convention as ZINV_* on BRAMs and ZINI on flip-flops); an absent feature means inverted."""
+    p = c["params"]
+    return {"OPMODE": ~p.get("ZIS_OPMODE_INVERTED", 0) & 0x7F, "ALUMODE": ~p.get("ZIS_ALUMODE_INVERTED", 0) & 0xF,
+            "INMODE": ~p.get("ZIS_INMODE_INVERTED", 0) & 0x1F, "CARRYIN": 0 if p.get("ZIS_CARRYIN_INVERTED") else 1,
+            "CLK": 0 if p.get("ZIS_CLK_INVERTED") else 1}
+
+
 def dsp_modes(c):
-    """Static OPMODE/ALUMODE/INMODE (None = driven by logic) and a constant A or B operand."""
-    return {"OPMODE": const_bus(c, "OPMODE", 7), "ALUMODE": const_bus(c, "ALUMODE", 4),
-            "INMODE": const_bus(c, "INMODE", 5), "CARRYINSEL": const_bus(c, "CARRYINSEL", 3),
+    """Effective static OPMODE/ALUMODE/INMODE (pin constant XOR IS_*_INVERTED; None = driven by logic),
+    CARRYINSEL, and a constant A or B operand. Unrouted control pins sit at VCC and Vivado clears them through
+    the inversion, so the raw pin values alone are meaningless (#91)."""
+    inv = dsp_inversions(c)
+
+    def eff(base, w):
+        v = const_bus(c, base, w)
+        return None if v is None else v ^ inv[base]
+    ci = c["pins"].get("CARRYIN", ["1'b1"])[0]
+    return {"OPMODE": eff("OPMODE", 7), "ALUMODE": eff("ALUMODE", 4), "INMODE": eff("INMODE", 5),
+            "CARRYINSEL": const_bus(c, "CARRYINSEL", 3),
+            "CARRYIN": None if not ci.startswith("1'b") else int(ci[-1]) ^ inv["CARRYIN"],
             "A": const_bus(c, "A", 30), "B": const_bus(c, "B", 18)}
+
+
+OPMODE_X = {0: "0", 1: "M", 2: "P", 3: "A:B"}
+OPMODE_Y = {0: "0", 1: "M", 2: "ones", 3: "C"}
+OPMODE_Z = {0: "0", 1: "PCIN", 2: "P", 3: "C", 4: "P(MACC)", 5: "PCIN>>17", 6: "P>>17", 7: "reserved"}
+ALUMODE_OP = {0: "Z+X+Y+CIN", 1: "-Z+(X+Y+CIN)-1", 2: "-Z-X-Y-CIN-1", 3: "Z-(X+Y+CIN)"}
+
+
+def opmode_text(op):
+    """UG479 Table 2-7..2-9 reading of an OPMODE value."""
+    if op is None:
+        return "dynamic"
+    return "X=%s Y=%s Z=%s" % (OPMODE_X[op & 3], OPMODE_Y[(op >> 2) & 3], OPMODE_Z[op >> 4])
 
 
 def dsp_chains(g):
@@ -298,7 +329,7 @@ def dsp_chains(g):
     nxt, prv = {}, {}
     for c in dsps:
         p = dsp_params(c)
-        op = const_bus(c, "OPMODE", 7)
+        op = dsp_modes(c)["OPMODE"]
         zsel = None if op is None else (op >> 4) & 7
         used = {"A": p["A_INPUT"] == "CASCADE", "B": p["B_INPUT"] == "CASCADE",
                 # cascade wires are always physically joined; P is used when OPMODE Z selects PCIN
@@ -334,12 +365,13 @@ def cmd_dsp(g):
     print("== DSP48E1 register configurations")
     for k, v in cfg.most_common():
         print("%3d  %s" % (v, " ".join("%s=%s" % kv for kv in k)))
-    print("== static modes (OPMODE as ZYX octal digits; None = from logic)")
+    print("== effective static modes (pins XOR IS_*_INVERTED, #91; OPMODE as ZYX octal digits; None = from logic)")
     mc = collections.Counter()
     for c in dsps:
         m = dsp_modes(c)
-        mc[("OPMODE=%s" % (None if m["OPMODE"] is None else "%03o" % m["OPMODE"]),
-            "ALUMODE=%s" % m["ALUMODE"], "INMODE=%s" % (None if m["INMODE"] is None else format(m["INMODE"], "05b")),
+        mc[("OPMODE=%s" % (None if m["OPMODE"] is None else "%03o" % m["OPMODE"]), "(%s)" % opmode_text(m["OPMODE"]),
+            "ALUMODE=%s" % ALUMODE_OP.get(m["ALUMODE"], m["ALUMODE"]),
+            "INMODE=%s" % (None if m["INMODE"] is None else format(m["INMODE"], "05b")), "CIN=%s" % m["CARRYIN"],
             "constA" if m["A"] is not None else "", "constB" if m["B"] is not None else "")] += 1
     for k, v in mc.most_common():
         print("%3d  %s" % (v, " ".join(x for x in k if x)))

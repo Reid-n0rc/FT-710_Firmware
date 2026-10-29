@@ -111,7 +111,11 @@ see [section 3](#3-recognized-blocks-t15c).
 **Corrections to T13 [fact].** prjxray's DSP fuzzer (`100-dsp-mskpat`) writes `Z<reg>` when the register value is
 **0**, so the earlier reading "all 119 DSPs fully pipelined" in [resources.md](resources.md) was inverted: `ZMREG` is
 set in 55 DSPs (MREG = 0), `ZPREG` in 9 (PREG = 0), `ZOPMODEREG` in 36, `ZCREG` in 107; `USE_DPORT` (pre-adder) is set
-in 12. `USE_MULT` has no segbits in prjxray-db (it is probably among the 198 unexplained DSP bits).
+in 12. `USE_MULT` has no segbits in prjxray-db. #91: 196 of the 198 unexplained DSP bits are *not* USE_MULT but the
+`AREG_1`/`BREG_1` marker bits that the openXC7 fork of prjxray-db (`openXC7/prjxray-db`, HEAD `a8b0926`) adds (tile
+bits 27_111, 27_38, 27_271, 27_198); they sit on exactly the 104 A and 92 B registers that this decode already reads as
+AREG = 1 / BREG = 1 **[fact]**. The upstream `f4pga/prjxray-db` master is still `0a0adde`, the checkout used here. Two DSP_R
+bits (26_245) and the 86 RIOB33 bits (8 positions, 38_88..39_125) stay unexplained by either database.
 
 **Approximations** (marked `approx` on the cells): the O5 halves of SRL16/RAM32 pairs take their data from the X
 bypass pin; LUT RAM wider than 64 is not merged into RAM128/256 cells; IDELAY taps and ISERDES modes beyond
@@ -258,10 +262,33 @@ i.e. the control-register bank of the whole design **[fact for the cone size]**.
   share one operand, the shape of one sample multiplied by two coefficients (an I/Q mixer, or a complex multiply)
   **[inference]**. One chain has three DSPs. Only 2 DSPs add PCIN (OPMODE Z = PCIN). The adder trees after the
   multipliers are in fabric (`CARRY4` on the P outputs).
-- **Static control pins**. In 117 of the 119 DSPs the OPMODE/ALUMODE/INMODE pins are tied to constants: ALUMODE reads 3
-  everywhere, OPMODE reads `0o077` on 81 and `0o177` on 36 **[fact for the routed constants]**. Taken literally, `0o177`
-  has an illegal Z code, so either the pins' inversion bits or the "unrouted DSP pin = VCC" reading is still wrong; the
-  mode decode stays **[open]**.
+- **Static control pins (#91)**. In 117 of the 119 DSPs the OPMODE/ALUMODE/INMODE pins are tied to constants. The raw
+  pin values (ALUMODE 3, OPMODE `0o077`/`0o177`) are not the modes: the DSP has programmable inverters on these pins, and
+  prjxray's `ZIS_<pin>_INVERTED` bit = 1 means **not inverted** (the same Z convention as `ZINV_*` on block RAMs and `ZINI`
+  on flip-flops), an absent bit means inverted. Effective value = pin XOR `IS_*_INVERTED` **[inference, high]**:
+
+  | DSPs | effective OPMODE | ALUMODE | INMODE | Reading |
+  |---|---|---|---|---|
+  | 36 | `005` X=M Y=M Z=0 | 0 (Z+X+Y+CIN) | 00000 | P = A*B |
+  | 35 | `065` X=M Y=M Z=C | 0 | 00000 (2: 00100) | P = A*B + C, C routed to constant 0 |
+  | 36 | `125` X=M Y=M Z=PCIN>>17 | 0 | 00000 | upper half of a wide product: P = A*B + (PCIN >> 17) |
+  | 10 | `025` X=M Y=M Z=PCIN | 0 | 00100 / dynamic | systolic chain with pre-adder: P = (D+A)*B + PCIN |
+  | 2 | dynamic: X in {0, P}, Z in {0, PCIN} (OPMODE[1], OPMODE[4] from two fabric nets) | 0 | 00100 | accumulate / load / clear at the top of a PCIN chain |
+
+  Every other reading fails: raw pins give X = A:B, Y = C, ALUMODE = subtract and an illegal Z on 36 DSPs; the opposite
+  polarity gives X = P, Y = all-ones and ALUMODE 15 (a logic op) on every DSP. The chosen polarity is checked by the
+  routing **[fact for each check]**: (1) X = Y = M (`0101`) on all 117 static DSPs, the only legal multiply setting;
+  (2) the C bus is routed to constant 0 on every Z = C DSP and left unrouted (VCC, all ones) on every Z = 0 and
+  Z = PCIN>>17 DSP, where C is unused;
+  (3) INMODE[2] = 1 (D into the pre-adder) on the 10 `USE_DPORT` DSPs whose D bus is routed; (4) 33 of the 36 Z = PCIN>>17 DSPs
+  sit directly above a Z = C DSP (the others above a PCIN>>17 or PCIN DSP: longer chains), and most Z = C DSPs send
+  exactly 17 P bits to the fabric: the usual split of a multiply wider than 25 x 18 into a low and a high partial product; (5) CARRYIN is unrouted (VCC) with
+  `ZIS_CARRYIN_INVERTED` clear, i.e. CIN = 0, with CARRYINSEL = 000. `tools/xc7_blocks.py ... dsp` prints the effective
+  modes; `tools/xc7_netlist_verilog.py` writes `IS_OPMODE/ALUMODE/INMODE/CARRYIN/CLK_INVERTED`.
+- **USE_MULT (#91)**. It has no configuration bit that prjxray or the openXC7 fork knows. Every static DSP selects
+  X = Y = M, which is illegal unless `USE_MULT` is `MULTIPLY` (or `DYNAMIC`), so those 117 are `MULTIPLY`
+  **[inference, high]**; the 2 dynamic accumulators never select M, so their setting (likely `NONE`) does not change
+  their function. The netlist keeps `MULTIPLY` on all 119.
 - **Block RAM to DSP** **[fact for the connections]**:
 
 | Table ([bram-tables.md](bram-tables.md)) | Site | Read by | Reading |
@@ -305,7 +332,7 @@ and O5, SHIFTIN2 (AX) to DI2 and O6/MC31) **[fact, `Manuals/AMD/ug474_7Series_CL
 affected. UART B and the console give identical answers with the old and the new netlist; data paths that use these cells
 should be re-simulated.
 
-**Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits),
+**Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits; see 3.5, #91),
 RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not decoded, OLOGIC T inversion not decoded (tri-state
 enables as routed), MMCM `CLKIN1_PERIOD` assumed 8 ns, BUFR/BUFIO inputs from undecodable PERF/CCIO PIPs.
 
@@ -398,6 +425,15 @@ I2S data that #90 saw from clock 65,541 came from the swapped SRL/LUT-RAM data p
 at 0 the RX stream is silent, as it should be **[inference]**. M17 is driven through block-RAM contents and the
 RAMB36 parity bits change its pattern; it is followed up in #145. The DSP48E1s still run with the wrong mode-pin
 polarity in these builds (#91), so no DSP data path is checked yet.
+
+**DSP polarity in simulation (#91) [fact].** Before #91 the Verilog DSPs had no `IS_*_INVERTED`, so in every whole-design
+run they computed `Z - (A:B + C)` with nonsense operands instead of products. With the polarity written, the UART link and
+console answer as before, and the pin harness gives identical pins with the ADC inputs at 0. With pseudo-random bits on
+the 14 ADC pairs (`ADC=noise` in `pins_main.cpp`), V16 (I2S data) and U17 come alive from clock 65,541 / 65,578, but
+identically with and without the DSP fix: at the power-up register state the path to these pins does not depend on
+DSP results. U17's whole fan-in is 175 cells reaching 7 of the 14 IDDR pairs and no DSP or BRAM (a serializer of
+raw ADC bits); V16's reaches everything through the register bank. Exercising the DSP chain needs register settings
+MAIN writes (#146).
 
 ## 5. Whole-design simulation and the UART protocols (T15e)
 

@@ -252,6 +252,10 @@ class Writer:
                   ("INMODEREG", p["INMODEREG"]), ("CARRYINREG", p["CARRYINREG"]),
                   ("CARRYINSELREG", p["CARRYINSELREG"]), ("USE_DPORT", '"%s"' % p["USE_DPORT"]),
                   ("USE_MULT", '"MULTIPLY"'), ("MASK", lit(48, p["MASK"])), ("PATTERN", lit(48, p["PATTERN"]))]
+        inv = xc7_blocks.dsp_inversions(c)        # ZIS_*_INVERTED = 1: not inverted (#91)
+        params += [("IS_OPMODE_INVERTED", lit(7, inv["OPMODE"])), ("IS_ALUMODE_INVERTED", lit(4, inv["ALUMODE"])),
+                   ("IS_INMODE_INVERTED", lit(5, inv["INMODE"])), ("IS_CARRYIN_INVERTED", lit(1, inv["CARRYIN"])),
+                   ("IS_CLK_INVERTED", lit(1, inv["CLK"]))]
         conns = []
         for base, wdt in (("A", 30), ("B", 18), ("C", 48), ("D", 25), ("ACIN", 30), ("BCIN", 18),
                           ("PCIN", 48), ("OPMODE", 7), ("ALUMODE", 4), ("INMODE", 5), ("CARRYINSEL", 3)):
@@ -265,7 +269,7 @@ class Writer:
         for s in ("CARRYCASCOUT", "MULTSIGNOUT", "OVERFLOW", "UNDERFLOW", "PATTERNDETECT", "PATTERNBDETECT"):
             conns.append((s, self.outpin(c, s)))
         self.inst("DSP48E1", c["name"], [(k, v if isinstance(v, str) else str(v)) for k, v in params], conns,
-                  "USE_MULT has no prjxray segbits; MULTIPLY assumed [approx]")
+                  "USE_MULT has no prjxray segbits; MULTIPLY (every static OPMODE selects M, #91)")
 
     # FIFO18E1-type site (the Y0 half of a BRAM tile) names its pins after the FIFO; the tile wires show
     # DO[15:0] = DOADO, DO[31:16] = DOBDO, DOP[1:0] = DOPADOP, DOP[3:2] = DOPBDOP (tile_type_BRAM_*.json)
