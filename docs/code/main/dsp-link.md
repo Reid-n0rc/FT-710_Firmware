@@ -233,13 +233,13 @@ The RX DSP group starts at 0x9AD1: IF NOTCH WIDTH, NB REJECTION, NB WIDTH, APF W
 | 8 | 0x1B640 | `dsp_set_r08` | route table: 0x2022 (states 3–7, 10–12), 0x2222 (13, 14), else 0x20B34 | route state; 0x20B34 = 0x2222 in TX, 0x3233 / 0x3263 by output select 0x20FCC in RX | A | AF routing word, nibble-coded **[guess]** |
 | 9 | 0x1B642 | `dsp_set_r09` | 2 in states 13, 14, else 0 | route state | A | TX audio path flag **[guess]** |
 | 10 | 0x1B644 | `dsp_set_r0a` | 0x52 (0, 2, 8), 0x50 (1, 9), 2 (3, 4), 3 (5, 11, 12, 14), 0x22 (6, 7, 10, 13) | route state | A | input/route select **[inference]**. T12b: the M33 also writes codec reg P1/0x37 from it (low nibble 1 → IN1R); no value MAIN sends has low nibble 1 **[fact]** |
-| 0x0C | 0x1B646 | `dsp_set_r0c` | 0 | constant | C | unknown |
-| 0x0D, 0x0E | 0x1B648, 0x1B64A | `dsp_set_r0d`, `dsp_set_r0e` | 0xF000 in state 6, else 0 | route state | A | mute or level during CW TX (sidetone?) **[guess]** |
-| 0x0F | 0x1B64C | `dsp_set_r0f` | 0x2B | constant | C | unknown |
-| 0x11, 0x12, 0x13 | 0x1B650.. | `dsp_set_r11`, `…db97`, `…dbc6` | 0xFFA2 (−94), 8, 0xFFF8 (−8) | constants | C | unknown (dB-like values) **[guess]** |
-| 0x36, 0x37, 0x38, 0x51 | 0x1B67E.., 0x1B6AA | `dsp_set_r36`, `…e5e4`, `…e614`, `dsp_set_r51` | 0 | constants | C | unknown |
-| 0x56 | 0x1B6B4 | `dsp_set_r56` | 0x20 | constant | B | unknown |
-| 0x68 | 0x1B6CE | `dsp_set_r68` | 0x94 | constant | C | unknown |
+| 0x0C | 0x1B646 | `dsp_set_r0c` | 0 | constant | C | DSP: top nibble ≠ 1 keeps the output mute on GPIO P0_4 (`regfile_gpio_sel`); low nibble configures the adaptive (NLMS) blocks `FUN_002233FC`/`FUN_00223734` (bit 0 copied as their enable, a change resets their state); bit 8 tested by `FUN_0022309C` **[fact: DSP reads]**. MAIN's 0 = mute by P0_4, adaptive blocks off **[inference]** |
+| 0x0D, 0x0E | 0x1B648, 0x1B64A | `dsp_set_r0d`, `dsp_set_r0e` | 0xF000 in state 6, else 0 | route state | A | **gain in dB of codec DAC channel 1 / channel 0** (the two routing outputs): `FUN_00224814` converts each with 10^(x/20) for `FUN_00224604`. 0xF000 = −4096 dB, i.e. both codec outputs muted in state 6 **[fact: DSP use]** |
+| 0x0F | 0x1B64C | `dsp_set_r0f` | 0x2B | constant | C | **gain of the TX audio to the SDR**: +43 dB (`FUN_00225DC4` → `FUN_00225BE8`, the reg 9 sink) **[fact: DSP use]** |
+| 0x11, 0x12, 0x13 | 0x1B650.. | `dsp_set_r11`, `…db97`, `…dbc6` | 0xFFA2 (−94), 8, 0xFFF8 (−8) | constants | C | gains in dB **[fact: DSP converts 10^(x/20)]**: 0x11 = level of the CTCSS encoder tone (`FUN_00222510`, with reg 0x35, TX chain) **[inference: level]**; 0x12 = +8 dB into the **recorder** sink (`FUN_002255B4`, reg 10 n1); 0x13 = −8 dB on the **DISPLAY playback** audio entering TX (`FUN_002259E4`, TX source 3) **[fact]** |
+| 0x36, 0x37, 0x38, 0x51 | 0x1B67E.., 0x1B6AA | `dsp_set_r36`, `…e5e4`, `…e614`, `dsp_set_r51` | 0 | constants | C | 0x36–0x38: bit 12 = on, 12-bit value, read by the TX tone blocks `FUN_00222AF0`/`FUN_00222688` next to the CTCSS encoder; 0x51: same format, `FUN_0021FDBC` (RX). 0 = off **[fact for the format; function unknown]** |
+| 0x56 | 0x1B6B4 | `dsp_set_r56` | 0x20 | constant | B | **RX audio delay** in samples (`FUN_0021E6C4` in the Rx_Audio chain: a ring of up to 1200 samples, 0 = bypass). 32 samples ≈ 2.7 ms at 12 kHz **[fact for the delay line; time inference]** |
+| 0x68 | 0x1B6CE | `dsp_set_r68` | 0x94 | constant | C | +148 dB scale on the level value of the RX AGC block (`FUN_0021F2D0`, called by `FUN_0021F0DC` right after `FUN_0021F004`, which reads the AGC regs 0x62/0x63/0x66/0x67) **[fact for the call; AGC reference level inference]** |
 
 ### Receive processing
 
@@ -282,13 +282,13 @@ The RX DSP group starts at 0x9AD1: IF NOTCH WIDTH, NB REJECTION, NB WIDTH, APF W
 | 0x27, 0x2A, 0x2D | 0x1B668, 0x1B66A, 0x1B66C | `dsp_set_peq_bw`(0..2)` | raw | EQ BWTH 0x9ADC/DF/E2 or 0x9AE5/E8/EB | A | mic EQ bandwidth (0..10) |
 | 0x2E | 0x1B66E | `dsp_set_proc` | level \| 0x1000 in TX modes LSB/USB, else 0; 0 during playback | 0x9BF1 (`PL`; `PR0` off = 0) | A | speech processor level |
 | 0x2F | 0x1B670 | `dsp_set_tx_bpf` | TX BPF + 1 (SSB 0x9A36, AM 0x9A4B, DATA/PSK 0x9A73, or 0x20B64), else 0; 0 during playback | TX mode | A | TX BPF SEL |
-| 0x30 | 0x1B672 | `dsp_set_r30` | 0xFF, sent only in FM modes and never reset | TX mode | A | unknown FM-only setting **[fact: never cleared]** |
-| 0x31, 0x32 | 0x1B674, 0x1B676 | `dsp_set_r31`, `dsp_set_r32` | −43 (SSB, CW, DATA, RTTY, PSK), −54 (AM), −56 (FM, DATA-FM); −43 during playback | TX mode | A | per-mode TX level trims **[guess]** |
-| 0x3B | 0x1B686 | `dsp_set_r3b` | −39 / −50 (AM) / −52 (FM) | TX mode | A | per-mode level trim **[guess]** |
+| 0x30 | 0x1B672 | `dsp_set_r30` | 0xFF, sent only in FM modes and never reset | TX mode | A | linear gain x/255 in the TX block `FUN_00222D34` (TX chain); 0xFF = ×1.0, also the DSP default, so it has no effect as sent **[fact]** |
+| 0x31, 0x32 | 0x1B674, 0x1B676 | `dsp_set_r31`, `dsp_set_r32` | −43 (SSB, CW, DATA, RTTY, PSK), −54 (AM), −56 (FM, DATA-FM); −43 during playback | TX mode | A | two dB gains of the AMC block `FUN_00221E84`, each multiplied by the AMC output level (reg 0x34)/100 **[fact]**; per-mode TX level trims **[inference]** |
+| 0x3B | 0x1B686 | `dsp_set_r3b` | −39 / −50 (AM) / −52 (FM) | TX mode | A | **no reader in the HiFi4 decompile** (only the default 0x2C4) **[fact: no direct access]**; unused or read indirectly |
 | 0x33 | 0x1B678 | `dsp_set_amc_release` | 0x11 / 0x12 / 0x13 for 0x9AD9 = 0 / 1 / 2; 0x0C in FM; 0x11 during playback | 0x9AD9 | A | AMC RELEASE TIME (FAST/MID/SLOW) |
 | 0x34 | 0x1B67A | `dsp_set_amc_level` | level \| 0x1000; 100 in FM; 0 in CW and RTTY | 0x9BF2 (`AO`) | A | AMC OUTPUT LEVEL |
 | 0x35 | 0x1B67C | `dsp_set_ctcss_enc` | FM and tone mode ≠ 0: tone index + 1 \| 0x1000 | TX VFO rec+3, rec+0x46 | A | CTCSS encoder tone |
-| 0x3A | 0x1B684 | `dsp_set_fm_flag` | 1 in FM modes | PTT VFO mode | A | FM flag (pre-emphasis?) **[guess]** |
+| 0x3A | 0x1B684 | `dsp_set_fm_flag` | 1 in FM modes | PTT VFO mode | A | bit 0 switches in an 8-section IIR (`iir_cascade_init(…, 8, 0x237240, …)`) in the TX block `FUN_00222D34`, and a filter in the RX block `FUN_00220B5C` **[fact]**: FM pre-/de-emphasis **[inference]** |
 
 Shadows that exist in `dsp_shadow_store` but that no setter writes: regs 0x10, 0x54, 0x55, 0x57, 0x58, 0x60, 0x64, 0x65 **[fact]**
 (probably left over from removed features **[guess]**).
@@ -350,6 +350,6 @@ returns with P72 still high and the DSP in ISP mode; the radio is presumably res
 
 - The menu-item identities of the per-mode and RX DSP bytes are matched by layout and range only; T10f's menu table can
   confirm them (and 0x9AD7/0x9AD8, 0x9DC6/0x20B5B..0x20B67, 0x9DC2).
-- The routing values (regs 8, 9, 10) are decoded on the DSP side in [ifdsp/control-link.md](../ifdsp/control-link.md#audio-routing-registers-8-9-10-77-fact) (#77): per-sink source selectors. Still open: which physical outputs the sinks are, and the constants (0x0C–0x13, 0x30–0x3B, 0x56, 0x68)
-  (T12b/T12e: which DSP code reads which register).
+- The routing values (regs 8, 9, 10) are decoded on the DSP side in [ifdsp/control-link.md](../ifdsp/control-link.md#audio-routing-registers-8-9-10-77-fact) (#77): per-sink source selectors. The sinks and the constants are traced in #151 (tables above and [ifdsp/control-link.md](../ifdsp/control-link.md#where-the-sinks-go-151)).
+  Still open (#176): the board connectors behind the codec's two DAC and ADC channels, and the effect of reg 0x3B.
 - The tick period of the soft timers (100 µs) should be checked against the CMT setup (T10a/T10h).

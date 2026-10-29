@@ -347,8 +347,30 @@ MAIN's values ([main/dsp-link.md](../main/dsp-link.md)) decode as:
 | 0x3263 | RX, output select B | RX 3 | TX 2 | RX 6 | RX 3 |
 
 Both threads run all the time (each is driven by its own DMA), so a selector acts in whichever path has a case for its value. So in RX the DISPLAY stream and both outputs carry RX block 3, and the output-select setting moves output 0 to RX block 6; in TX
-everything carries TX block 2 **[fact for the copies]**. Which physical outputs (codec DAC L/R, USB, rear jack) the two output objects
-and `FUN_00223734` / `FUN_002255B4` / `FUN_00225BE8` feed is not traced, so the meaning of each block stays open.
+everything carries TX block 2 **[fact for the copies]**. Where each sink goes is traced below (#151).
+
+#### Where the sinks go (#151)
+
+| Sink | Goes to | Evidence |
+|---|---|---|
+| out 0 / out 1 (`FUN_00224604(0/1)`, reg 8 n1 / n0) | **codec DAC channel 0 / 1**: `codec_out_fill_dma` pops object 0 into 0x263870 and object 1 into 0x2638D0 and interleaves them (`FUN_0021C598`) into the FC5 I2S buffer, so object 0 is the first slot (left **[inference]**) → AIC3204 left DAC → LOL, right → LOR (init table) | **[fact]** |
+| per-output gain / mute | gain = reg 0x0E (out 0) / 0x0D (out 1) in dB; both fade out over 72 samples (`FUN_00225408`, table 0x2375D0) while `reg 0x10 bit 0 \| regfile_gpio_sel()` is non-zero (GPIO P0_4 unless reg 0x0C top nibble = 1), and fade back in when it clears | `FUN_00224814`, `FUN_0022548C`/`FUN_00225478` **[fact]** |
+| `FUN_00225BE8` (reg 9 n0) | **TX audio to the SDR**: ring 0x2C7584, popped by `txaf_fifo_pop_to_dma` into the FC2 I2S TX AF stream. Gain reg 0x0F (dB), same fade on `reg 0x10 bit 1 \| P0_4` (`FUN_00225DC4`, which also writes GPIO byte 0x40100044) | **[fact]** |
+| `FUN_002255B4` (reg 10 n1) | **recorder → DISPLAY**: gain reg 0x12, 2/9 resampler into the 4000-sample ring 0x266ED8 that `FUN_00225790` packs into the SPI frames ([hifi4.md](hifi4.md)) | **[fact]** |
+| `FUN_00223734` (reg 8 n2) | not an output: the second input of the adaptive (NLMS) pair `FUN_002233FC`/`FUN_00223734` (regs 0x0C, 0x4011, 0x4012), whose other half filters the TX input (TX source 7 = its output) | **[fact for the regs]**; echo/anti-VOX reference **[guess]** |
+| reg 8 n3 | `spi_fifo_push`: the block stream to the DISPLAY | **[fact]** |
+
+Inputs of the TX path **[fact]**: TX source 2 = codec ADC channel 0 (`FUN_00224798(0)`, 0x2CAD70); 5 = ADC channel 1 (`FUN_00224798(1)`, only
+when reg 6 = 10); 3 = **DISPLAY playback** (`FUN_002259E4`: the SPI audio unpacked and up-sampled ×9 by `FUN_00225834`, gain reg 0x13);
+4 = the generator `FUN_00225264`; 7 = the TX input after the adaptive block; 1/2 = the two outputs of the TX chain `FUN_0022313C`. RX
+source 4 = the raw RX block from the SDR (0x2CAB90, before `FUN_00220EE0`). In MAIN's terms: in voice TX (states 13/14) reg 9 = 2 sends the
+TX-chain output 0x2CAFB0 to the SDR (value 1 would send ADC channel 1, 0x2CADD0), and reg 10 n0 picks the mic (2, state 13) or the
+playback (3, state 14) as TX input; in all other states reg 9 = 0, so nothing feeds the SDR's AF input. In RX both codec outputs
+carry the RX audio block 0x2CAC50 (out 0 gets 0x2CACB0 with output select B), and with reg 10 = 0x52/0x50 (n1 = 5) the recorder
+gets 0x2CAC50 too.
+
+Which board connectors the codec's DAC/ADC channels reach (speaker amplifier, PHONES, rear ACC, the CM119B USB codec) needs the
+schematic and stays open (#176).
 
 Regs **0x2000–0x2007** are the per-thread CPU load (`cpu_load_to_regs_2000`, [hifi4.md](hifi4.md)); MAIN never reads them, but `SPDR2000;`
 can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.
