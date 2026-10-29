@@ -245,7 +245,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Four parameters: two on/off bits (P2=0,2), a 10-3200 value in steps of 10 (P2=1), a global signed -25..+25 value (P2=3) [fact]; feature unknown (resembles contour/APF controls) [guess].
 - **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); 0x9C5F; 0x20F10
 - **Risk:** low-medium: DSP shaping parameters
-- **Resolved in part (#69):** the loops use 1000/100/10/1 and 10/1 in the current decompile **[fact]**; the P2=2 sentinel logic is still open.
+- **Resolved (#69, #173):** the loops use 1000/100/10/1 and 10/1 in the current decompile **[fact]**. The P2=2 sentinel: `cat_CO` @ fffa8698 keeps three pointers per mode (contour flag byte, APF flag byte, contour frequency). For SSB (0/1), AM (4/5), FM (6/7) and DATA-FM (10/11) the APF pointer is aimed at a local byte preset to 0xFF instead of the record, so `CO0P2`=`2…` set answers `?;` in those modes; for CW (2/3, +0x14), RTTY (12/13, +0x1E) and DATA-L/U/PSK (8/9/14, +0x28) it points at the same record byte as the contour flag, and bit 5 of it is the APF on/off **[fact]**. Side effect: in those three groups a record byte that is itself 0xFF also refuses the set **[fact]**, which a valid record never holds **[inference]**. The read form has no such check and always reports bit 5 of the mode's contour byte, so `CO02` reads `0000` in SSB/AM/FM rather than erroring **[fact]**. The APF frequency (P2=3) is one global byte 0x9C5F for all modes **[fact]**. So CAT can switch APF in CW, RTTY, DATA-L/U and PSK; the CAT manual names no mode restriction **[fact]**.
 
 ### CS
 
@@ -334,7 +334,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/writes five user text strings (50 chars max) in RAM; FUN_fff9baa0 mirrors the first/5th bytes of each to 0x1801..0x1825 [fact]; purpose unknown (message/label slots) [guess].
 - **Globals / callees:** 0x979E-0x9897; fffb012c
 - **Risk:** low: text in RAM; no dirty flag seen
-- **Resolved in part (#69):** 0x979E is the 5 × 0x32 text-slot block at EEPROM 0x514F. `eeprom_save_msg(2, n)` has no caller, so it is saved only by the full save ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**. Still open: the purpose of the `FUN_fff9baa0` copy.
+- **Resolved in part (#69):** 0x979E is the 5 × 0x32 text-slot block at EEPROM 0x514F. `eeprom_save_msg(2, n)` has no caller, so it is saved only by the full save ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**.
+- **Resolved (#173):** `FUN_fff9baa0` is called only from `displink_build_39` @ fff9b6c8 (MAIN → DISPLAY frame `0x39`, built at 0x1741) when UI +0x1C7 (0x20CCB) = 2. It copies the first 8 bytes of each of the five slots (0x979E, 0x97D0, 0x9802, 0x9834, 0x9866) into frame bytes 0xC0..0xE7 (0x1801..0x1828), five 8-character labels **[fact]**. +0x1C7 is the message type that `FUN_fffe4407` @ fffe4407 sets from the TX mode (`vfo_mode`(1)): 1 for CW (2/3), 2 for RTTY (12/13), 3 for PSK (14), 0 for the voice modes; for type 1 the sibling `FUN_fff9ba18` @ fff9ba18 copies the five KM keyer texts (0x96A0 + n·0x33) instead **[fact]**. So the `EM` slots are the **RTTY text memories** and `FUN_fff9baa0` shows their names on the DISPLAY's message screen **[inference]**; no other MAIN code reads 0x979E, so the text is sent from the DISPLAY/DSP side or not by MAIN **[fact for the readers; the rest inference]**. Still open: as decompiled, `displink_build_39` overwrites 0x1801..0x1828 from UI +0xC2.. right after the call, which would make these stores dead; this needs the disassembly (Ghidra hold) to settle **[fact for the decompile]**.
 
 ### EN
 
