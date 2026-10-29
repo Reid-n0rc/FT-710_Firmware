@@ -43,8 +43,9 @@ flowchart LR
   [inference, high; T02, `update_main_cpu` 0x2010EA90, T11].
 - **DISPLAY** updates itself by writing the other bank (running bank 1 → bank 2 at 0x18A00000, else bank 1 at 0x18400000; `fwobj_display_run` 0x201607E8, display/update.md §6; corrected by T19h: this line used to name 0x2015F1F0 `display_flash_write_bank`, but 0x2015F1F0 is `fwdbg_verify_bank1`, the `fw1chk` debug verifier, §9/§10) and picks the bank at
   boot (`boot_select_bank` 0x20100ABC) [fact, T06]. `loader_selfinstall` 0x20110F0C rewrites the loader region
-  (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11]. That value is an on-chip
-  RAM word, so a JTAG write (J6003) is the way to trigger it [inference]. **Maintenance mode** [fact, display/update.md "Other
+  (0..0x340000) when 0xFCFF400C == 0xAABBCCDD; who sets that value is open [fact for the code; T11]. 0xFCFF400C lies in the
+  RZ/A1H peripheral area, not in RAM the image uses; which register it is, and so whether a JTAG write (J6003) can set it, is
+  open [unknown]. **Maintenance mode** [fact, display/update.md "Other
   entry points"]: power on with key line 6 held → the update screen; more than 4 encoder steps there turn it into
   `YAESU FT-710 BOOT LOADER V01-02` and the next DISPLAY update goes to the loader region instead of a bank. A failed bank update
   is recovered from this screen or from the loader's own screen [inference].
