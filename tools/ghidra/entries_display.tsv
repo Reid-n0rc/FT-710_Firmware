@@ -183,7 +183,7 @@
 20158590		after_return_undef: after 2015858c b 0x201576f4
 2015a8dc		after_return_undef: after 2015a8c0 ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}
 2015fd60		after_return_undef: after 2015fd54 ldmia sp!,{r4,r5,r6,r7,r8,pc}
-2016385c	thumb	dataptr (Thumb): push {r4,lr}; bl 0x20155fde; pop -- address in the .data word 0x2042807c (function table)
+2016385a	thumb	dataptr (Thumb): movs r0, #0; push {r4,lr}; bl 0x20155fde; pop -- the .data word 0x2042807c (function table) points at 0x2016385B (T22d; was 2016385c, which lost the movs)
 # --- T21e (#97 B7): tail_target = an unconditional `b` from one function lands inside another function body, at code that
 # its owner reaches only by a jump: a function that analysis merged into the first function that tail-branched to it.
 20114880		tail_target: jump from 20162f88 in scif_txi_isr@20162f10 into scif_rxi_isr@20162dd8

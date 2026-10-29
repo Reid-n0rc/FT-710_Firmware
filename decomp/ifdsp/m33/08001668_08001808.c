@@ -1,4 +1,14 @@
-// FT-710_IFDSP_V0101.bin — Ghidra decompile, 26 functions
+// FT-710_IFDSP_V0101.bin — Ghidra decompile, 27 functions
+
+// ===== FUN_08001668 @ 08001668 (10 bytes)
+
+void FUN_08001668(undefined4 param_1)
+
+{
+  UTICK0_DriverIRQHandler(param_1);
+  return;
+}
+
 
 // ===== FUN_08001678 @ 08001678 (10 bytes)
 

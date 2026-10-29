@@ -1328,6 +1328,15 @@ undefined * USART_Init(uint *param_1,uint *param_2,int param_3,undefined4 param_
 }
 
 
+// ===== FUN_00087232 @ 00087232 (2 bytes)
+
+void FUN_00087232(void)
+
+{
+  return;
+}
+
+
 // ===== BOARD_FlexspiClockSafeConfig @ 00087234 (8 bytes)
 
 /* BOARD_SetFlexspiClock(3 = FFRO, /1) before the main clock switch [inference] */
@@ -1615,26 +1624,6 @@ void strncpy(uint *param_1,uint *param_2,uint param_3)
   for (; puVar4 != puVar3; puVar4 = (uint *)((int)puVar4 + 1)) {
     *(char *)puVar4 = '\0';
   }
-  return;
-}
-
-
-// ===== _Cflush_read @ 00087470 (64 bytes)
-
-/* [guess] */
-
-void _Cflush_read(undefined4 *param_1)
-
-{
-  param_1[3] = param_1[3] & 0xffffffdf;
-  if (param_1[6] != param_1[10]) {
-    _Cflush_write();
-    param_1[3] = param_1[3] & 0xffffcfef | 0x10;
-    param_1[6] = param_1[10];
-    param_1[0xb] = param_1[4];
-    *param_1 = param_1[4];
-  }
-  param_1[3] = param_1[3] & 0xffffbfbf;
   return;
 }
 

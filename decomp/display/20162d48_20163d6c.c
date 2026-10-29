@@ -655,12 +655,12 @@ uint FUN_20163808(int param_1,uint param_2)
 }
 
 
-// ===== FUN_2016385c @ 2016385c (8 bytes)
+// ===== FUN_2016385a @ 2016385a (10 bytes)
 
-void FUN_2016385c(void)
+void FUN_2016385a(void)
 
 {
-  FUN_20155fde();
+  FUN_20155fde(0);
   return;
 }
 

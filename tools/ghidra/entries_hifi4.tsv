@@ -855,6 +855,8 @@ entry	source	note
 002286fc	flix.dis	
 00228734	flix.dis	
 00228748	flix.dis	
+002287f8	extra	pointer in the .data handler table 0x237A94..0x237AA4 (5 words); ret.n (empty default handler) [fact: image bytes, T21j]
+00228b08	extra	l32r literal 0x207864, stored by 0x227859 into a thread context; rsr.ccount .. waiti 0; j . (idle thread) [fact: flix.dis, T22d]
 00228c44	flix.dis	
 00228cfc	flix.dis	
 00228d68	flix.dis	

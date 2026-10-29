@@ -24,6 +24,9 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
   function body. Undefined non-0xFF bytes in `.text`: 4,258 → 242 (15 fragments, all in the armcc Thumb library: fplib code
   reached through inline-parameter calls, lookup tables). The other fragments are defined as data (`T21e B8:` EOL comments).
   Warning counts of the 2076 functions that exist before and after are unchanged; the 134 new functions add 46 warnings.
+- T21j (#97, from T22d): the Thumb function in the `.data` table 0x2042807C starts at 0x2016385A (`movs r0, #0` first; T21e's
+  0x2016385C lost that argument); `data_display.tsv` types the printf sign-prefix tables 0x20154B64/0x20154BE0 as `char[4][4]`
+  (`""`, `"-"`, `"+"`, `" "`) and the fplib reciprocal seed table 0x20164C00 as `byte[128]`. Undefined non-0xFF bytes 242 → 86.
 - Rebuild commands (from the repo root; `tools/bootstrap.sh --only ghidra` runs the same steps):
   ```sh
   H="tools/ghidra-headless.sh $PWD/ghidra FT710_DISPLAY"; P="-process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra"
@@ -63,8 +66,8 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | Functions with `unaff_*` variables | 63 |
 | Functions with `extraout_*` variables | 80 |
 | Functions with any of `in_`/`unaff_`/`extraout_` | 182 |
-| Undefined non-0xFF bytes in executable blocks | 242 |
-| … in block `.text` | 242 |
+| Undefined non-0xFF bytes in executable blocks | 86 |
+| … in block `.text` | 86 |
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Bad instruction - Truncating control flow here | 4 |

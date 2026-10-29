@@ -1,5 +1,25 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== _Cflush_read @ 00087470 (64 bytes)
+
+/* [guess] */
+
+void _Cflush_read(undefined4 *param_1)
+
+{
+  param_1[3] = param_1[3] & 0xffffffdf;
+  if (param_1[6] != param_1[10]) {
+    _Cflush_write();
+    param_1[3] = param_1[3] & 0xffffcfef | 0x10;
+    param_1[6] = param_1[10];
+    param_1[0xb] = param_1[4];
+    *param_1 = param_1[4];
+  }
+  param_1[3] = param_1[3] & 0xffffbfbf;
+  return;
+}
+
+
 // ===== fputc @ 000874b0 (320 bytes)
 
 /* FILE output slow path, 19 callers (printf engine) [inference] */
@@ -982,16 +1002,6 @@ void FLEXCOMM15_IRQHandler(void)
 
 {
   FUN_080016a8();
-  return;
-}
-
-
-// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
-
-void ADC0_IRQHandler(void)
-
-{
-  FUN_08001220();
   return;
 }
 

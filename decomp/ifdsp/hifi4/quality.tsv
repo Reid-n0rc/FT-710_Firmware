@@ -1,5 +1,5 @@
 metric	value
-functions	1081
+functions	1083
 decompile_failures	0
 warnings	258
 functions_with_warnings	99
@@ -7,12 +7,12 @@ spacebase_warnings	0
 unreachable_block_warnings	187
 halt_baddata	1
 functions_with_halt_baddata	1
-functions_with_in_vars	161
+functions_with_in_vars	162
 functions_with_unaff_vars	14
 functions_with_extraout_vars	10
-functions_with_in_unaff_extraout	171
-undefined_nonff_bytes	29161
-undefined_nonff_bytes:sram_dsp_text	28185
+functions_with_in_unaff_extraout	172
+undefined_nonff_bytes	6377
+undefined_nonff_bytes:sram_dsp_text	5401
 undefined_nonff_bytes:dsp_itcm	976
 bookmarks_error	1
 bookmarks_bad_instruction	1

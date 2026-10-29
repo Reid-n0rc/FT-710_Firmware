@@ -954,7 +954,7 @@ int vTaskStartScheduler(undefined4 param_1,undefined4 param_2,undefined4 param_3
   uint uVar1;
   int iVar2;
   
-  iVar2 = xTaskCreate(0x821d1,&DAT_08001834,0x80,0,0,&DAT_000888a8,param_3);
+  iVar2 = xTaskCreate(0x821d1,"IDLE",0x80,0,0,&DAT_000888a8,param_3);
   if ((iVar2 == 1) && (iVar2 = xTimerCreateTimerTask(), iVar2 == 1)) {
     vPortRaiseBASEPRI();
     DAT_000888ac = 0xffffffff;

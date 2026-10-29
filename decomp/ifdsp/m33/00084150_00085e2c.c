@@ -1091,7 +1091,7 @@ int _Csys_alloc(void)
 int tolower(int param_1)
 
 {
-  if ((int)((uint)(byte)(&DAT_00087d84)[param_1] << 0x1b) < 0) {
+  if ((int)((uint)ctype_table[param_1] << 0x1b) < 0) {
     param_1 = param_1 + 0x20;
   }
   return param_1;
@@ -1105,11 +1105,11 @@ int tolower(int param_1)
 void stdio_init(void)
 
 {
-  _Cfdopen(0,&DAT_00087e84,&DAT_00088b78);
+  _Cfdopen(0,"r",&DAT_00088b78);
   setvbuf(&DAT_00088b78,0,0x400,0x100);
-  _Cfdopen(1,&DAT_00087e86,&DAT_00088bb4);
+  _Cfdopen(1,"w",&DAT_00088bb4);
   setvbuf(&DAT_00088bb4,0,0x400,0x100);
-  _Cfdopen(2,&DAT_00087e86,&DAT_00088bf0);
+  _Cfdopen(2,"w",&DAT_00088bf0);
   setvbuf(&DAT_00088bf0,0,0x400,0x100);
   return;
 }
@@ -2167,7 +2167,7 @@ int _Cdigit_value(int param_1,int param_2)
 {
   uint uVar1;
   
-  uVar1 = (uint)(byte)(&DAT_00087d84)[param_1];
+  uVar1 = (uint)ctype_table[param_1];
   if ((int)(uVar1 << 0x1a) < 0) {
     param_1 = param_1 + -0x30;
   }
@@ -2209,7 +2209,7 @@ uint _strtoul_core(byte *param_1,undefined4 *param_2,uint param_3)
     pbVar6 = pbVar5 + 1;
     uVar3 = (uint)*pbVar5;
     if (uVar3 == 0) goto LAB_00085c30;
-  } while ((int)((uint)(byte)(&DAT_00087d84)[uVar3] << 0x1f) < 0);
+  } while ((int)((uint)ctype_table[uVar3] << 0x1f) < 0);
   if (uVar3 == 0x30) {
     uVar3 = (uint)*pbVar6;
     pbVar6 = pbVar5 + 2;
@@ -2295,8 +2295,8 @@ int strtoul(byte *param_1,byte *param_2,undefined4 param_3)
       pbVar5 = pbVar4;
       goto LAB_00085cfa;
     }
-    uVar6 = (byte)(&DAT_00087d84)[uVar3] & 1;
-  } while (((&DAT_00087d84)[uVar3] & 1) != 0);
+    uVar6 = ctype_table[uVar3] & 1;
+  } while ((ctype_table[uVar3] & 1) != 0);
   if (uVar3 != 0x2b) {
     if (uVar3 == 0x2d) {
       uVar6 = 0x200;

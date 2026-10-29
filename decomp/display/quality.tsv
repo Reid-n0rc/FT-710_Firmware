@@ -11,8 +11,8 @@ functions_with_in_vars	61
 functions_with_unaff_vars	63
 functions_with_extraout_vars	80
 functions_with_in_unaff_extraout	182
-undefined_nonff_bytes	242
-undefined_nonff_bytes:.text	242
+undefined_nonff_bytes	86
+undefined_nonff_bytes:.text	86
 bookmarks_error	1
 bookmarks_bad_instruction	1
 warning:Bad instruction - Truncating control flow here	4

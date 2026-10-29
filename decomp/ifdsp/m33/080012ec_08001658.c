@@ -1,5 +1,15 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
+
+void ADC0_IRQHandler(void)
+
+{
+  FUN_08001220();
+  return;
+}
+
+
 // ===== Reserved39_IRQHandler @ 080012f4 (8 bytes)
 
 void Reserved39_IRQHandler(void)
@@ -380,29 +390,35 @@ undefined4 FUN_08001414(void)
 }
 
 
-// ===== FUN_0800143e @ 0800143e (238 bytes)
+// ===== SystemCoreClockUpdate @ 0800143c (240 bytes)
 
-void FUN_0800143e(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
+/* flash copy; entry fixed by entries_m33.tsv (T21j), docs/code/ifdsp/m33-platform.md */
+
+void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   longlong lVar1;
-  uint uVar2;
+  undefined4 uVar2;
   uint uVar3;
-  undefined4 uVar4;
+  uint uVar4;
   undefined *puVar5;
   uint uVar6;
   int iVar7;
   uint uVar8;
   
-  uVar8 = *(uint *)(param_4 + 0x434) & 3;
+  uVar8 = DAT_40001434;
+  uVar8 = uVar8 & 3;
   if (uVar8 == 2) {
-    uVar8 = *(uint *)(param_4 + 0x200) & 7;
+    uVar8 = DAT_40001200;
+    uVar8 = uVar8 & 7;
     if (uVar8 == 1) {
-      if (*(int *)(param_4 + 0x168) == 0) {
+      iVar7 = DAT_40001168;
+      if (iVar7 == 0) {
         uVar6 = 24000000;
       }
       else {
         uVar6 = 0;
+        uVar2 = DAT_40001168;
       }
     }
     else if (uVar8 == 2) {
@@ -418,15 +434,15 @@ void FUN_0800143e(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
     uVar8 = DAT_40001204;
     uVar8 = uVar8 & 1;
     if (uVar8 == 0) {
-      uVar3 = DAT_40001210;
-      uVar4 = DAT_40001214;
-      uVar2 = DAT_40001204;
-      iVar7 = FUN_08001618((int)((ulonglong)uVar6 * (ulonglong)uVar3),
-                           (int)((ulonglong)uVar6 * (ulonglong)uVar3 >> 0x20),uVar4,0,param_1,0,
+      uVar4 = DAT_40001210;
+      uVar2 = DAT_40001214;
+      uVar3 = DAT_40001204;
+      iVar7 = FUN_08001618((int)((ulonglong)uVar6 * (ulonglong)uVar4),
+                           (int)((ulonglong)uVar6 * (ulonglong)uVar4 >> 0x20),uVar2,0,param_1,0,
                            param_3);
-      uVar3 = DAT_40001218;
-      lVar1 = (ulonglong)(iVar7 + uVar6 * ((uVar2 & 0xffffff) >> 0x10)) * 0x12;
-      uVar6 = FUN_08001618((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar3 & 0x3f,uVar8);
+      uVar4 = DAT_40001218;
+      lVar1 = (ulonglong)(iVar7 + uVar6 * ((uVar3 & 0xffffff) >> 0x10)) * 0x12;
+      uVar6 = FUN_08001618((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar4 & 0x3f,uVar8);
     }
     uVar8 = DAT_40001240;
     puVar5 = (undefined *)(uVar6 / ((uVar8 & 0xff) + 1));
@@ -438,7 +454,8 @@ void FUN_0800143e(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
     puVar5 = (undefined *)0xf42400;
   }
   else {
-    uVar8 = *(uint *)(param_4 + 0x430) & 3;
+    uVar8 = DAT_40001430;
+    uVar8 = uVar8 & 3;
     if (uVar8 == 2) {
       puVar5 = &DAT_000f4240;
     }
@@ -446,11 +463,13 @@ void FUN_0800143e(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
       puVar5 = (undefined *)FUN_08001414();
     }
     else if (uVar8 == 1) {
-      if (*(int *)(param_4 + 0x168) == 0) {
+      iVar7 = DAT_40001168;
+      if (iVar7 == 0) {
         puVar5 = (undefined *)0x16e3600;
       }
       else {
         puVar5 = (undefined *)0x0;
+        uVar2 = DAT_40001168;
       }
     }
     else {
@@ -594,16 +613,6 @@ void FUN_08001658(undefined4 param_1)
 
 {
   CTIMER0_DriverIRQHandler(param_1);
-  return;
-}
-
-
-// ===== FUN_08001668 @ 08001668 (10 bytes)
-
-void FUN_08001668(undefined4 param_1)
-
-{
-  UTICK0_DriverIRQHandler(param_1);
   return;
 }
 

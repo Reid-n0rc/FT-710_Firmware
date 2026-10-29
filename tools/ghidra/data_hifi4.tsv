@@ -1,0 +1,36 @@
+# FT-710 IFDSP HiFi4: data types for the SRAM rodata 0x200000..0x207CEF (T21j, from docs/tasks/T22d-undefined-classes.tsv).
+# Applied with ApplyData.java after IfdspHifi4FindFuncs.java. address<TAB>type<TAB>count<TAB>name<TAB>comment
+# --- float32 tables (FFT twiddles, FIR/window coefficients, ramps, libm); arrays are split at referenced elements
+0x0020073c	float	15
+0x002008f0	float	256
+0x00200d00	float	2304		FFT twiddle (cos/sin) tables; separate tables start at referenced elements (0x200D18, 0x201918)
+0x00203124	float	295
+0x002035c4	float	199
+0x002038e4	float	102
+0x00203b64	float	1040
+0x00204be0	float	52
+0x00204dd0	float	52
+0x00204f78	float	130
+0x002051c0	float	221
+0x00205540	float	77
+0x00205674	float	9		rising ramp 0.00348743..0.121464
+0x00205698	float	8		falling ramp 0.118497..0.00348743
+0x002056b8	float	77
+0x002059e8	float	9		libm polynomial coefficients (1/6, ...) [inference]
+0x00205a10	float	36
+# --- int tables
+0x00205aa0	int32	201	two_over_pi	libm 2/pi bits for argument reduction (a2 f9 83 6e 4e 44 15 29 ...), one byte value per word
+# --- XOS / libm names
+0x002063c4	string	5
+0x002063e4	string	5
+0x002063f4	string	5
+0x00206404	string	4
+0x00206408	string	5
+0x00206414	string	5
+0x00206428	string	4
+0x0020642c	string	4
+0x00206430	string	4
+0x00206474	string	4
+# --- code that analysis does not reach (disassembled, no function)
+0x002316f1	code	1		switch case (the pointer table at 0x206290 holds 0x2316F1, 0x231549, 0x231517); jump table not recovered
+0x002287fc	code	1		level-2 interrupt epilogue (l32r/callx0 hook, rsr.excsave2 a0; rfi 2), reached by computed flow [inference]

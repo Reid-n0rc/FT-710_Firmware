@@ -1047,7 +1047,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
   undefined4 *puVar3;
   uint *puVar4;
   char extraout_r2;
-  dword *pdVar5;
+  char (*pacVar5) [4];
   undefined4 uVar6;
   int iVar7;
   int iVar8;
@@ -1158,20 +1158,20 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
     if (param_2 == 0x78) {
       uVar2 = *param_3;
       if ((int)((uint)(ushort)*param_1 << 0x14) < 0) {
-        pdVar5 = (dword *)"0123456789ABCDEF@0X";
+        pacVar5 = (char (*) [4])"0123456789ABCDEF@0X";
       }
       else {
-        pdVar5 = (dword *)"0123456789abcdef@0x";
+        pacVar5 = (char (*) [4])"0123456789abcdef@0x";
       }
       iVar8 = 0;
       for (; uVar2 != 0; uVar2 = uVar2 >> 4) {
-        *(byte *)((int)param_1 + iVar8 + 0x24) = *(byte *)((int)pdVar5 + (uVar2 & 0xf));
+        *(char *)((int)param_1 + iVar8 + 0x24) = *(char *)((int)pacVar5 + (uVar2 & 0xf));
         iVar8 = iVar8 + 1;
       }
       iVar7 = 0;
       if (((int)((uint)(byte)*param_1 << 0x1c) < 0) && (iVar8 != 0)) {
         iVar7 = 2;
-        pdVar5 = (dword *)((int)pdVar5 + 0x11);
+        pacVar5 = (char (*) [4])((int)pacVar5 + 0x11);
       }
     }
     else {
@@ -1195,7 +1195,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
         return 1;
       }
       lVar14 = *(longlong *)((uint)((int)param_3 + 7) & 0xfffffff8);
-      pdVar5 = &DWORD_20154be0;
+      pacVar5 = printf_sign_prefix_2;
       iVar7 = 0;
       iVar8 = 0;
       while (lVar14 != 0) {
@@ -1208,22 +1208,22 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
   }
   iVar7 = 0;
   uVar2 = *param_3;
-  pdVar5 = (dword *)&UNK_20154b64;
+  pacVar5 = printf_sign_prefix;
   puVar4 = param_1;
   if (param_2 != 0x75) {
     if ((int)uVar2 < 0) {
       uVar2 = -uVar2;
-      pdVar5 = (dword *)&UNK_20154b68;
+      pacVar5 = (char (*) [4])0x20154b68;
     }
     else {
       puVar4 = (uint *)*param_1;
       if ((int)puVar4 << 0x1e < 0) {
-        pdVar5 = (dword *)&UNK_20154b6c;
+        pacVar5 = (char (*) [4])0x20154b6c;
       }
       else {
         puVar4 = (uint *)((int)puVar4 << 0x1d);
         if (-1 < (int)puVar4) goto LAB_20154b3e;
-        pdVar5 = (dword *)&UNK_20154b70;
+        pacVar5 = (char (*) [4])0x20154b70;
       }
     }
     iVar7 = 1;
@@ -1256,7 +1256,7 @@ LAB_20155aa8:
     FUN_20154a64(param_1);
   }
   for (iVar9 = 0; iVar9 < iVar7; iVar9 = iVar9 + 1) {
-    (*(code *)param_1[1])(*(char *)((int)pdVar5 + iVar9),param_1[2]);
+    (*(code *)param_1[1])(*(char *)((int)pacVar5 + iVar9),param_1[2]);
     param_1[8] = param_1[8] + 1;
   }
   if ((int)((uint)(byte)*param_1 << 0x1b) < 0) {

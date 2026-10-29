@@ -1,5 +1,73 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_002304f0 @ 002304f0 (159 bytes)
+
+int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+
+{
+  byte *pbVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  byte *pbVar5;
+  
+  iVar4 = (param_4 + 8) / 9;
+  if (iVar4 < 2) {
+    iVar3 = 0;
+  }
+  else {
+    iVar3 = 0;
+    iVar2 = 1;
+    do {
+      iVar2 = iVar2 << 1;
+      iVar3 = iVar3 + 1;
+    } while (iVar2 < iVar4);
+  }
+  iVar4 = FUN_002303d0(param_1,iVar3);
+  *(undefined4 *)(iVar4 + 0x14) = param_5;
+  *(undefined4 *)(iVar4 + 0x10) = 1;
+  if (param_3 < 10) {
+    pbVar5 = (byte *)(param_2 + 10);
+    iVar3 = 9;
+  }
+  else {
+    iVar2 = param_3 + -9;
+    if (iVar2 < 1) {
+      iVar2 = 1;
+    }
+    iVar3 = param_2 + 0x12;
+    do {
+      iVar4 = FUN_00230440(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < param_3 + param_2 + 9);
+    iVar3 = iVar2 + 9;
+    pbVar5 = (byte *)(param_2 + 9 + iVar2 + 1);
+  }
+  if (iVar3 < param_4) {
+    pbVar1 = pbVar5 + (param_4 - iVar3);
+    do {
+      iVar4 = FUN_00230440(param_1,iVar4,10,*pbVar5 - 0x30);
+      pbVar5 = pbVar5 + 1;
+    } while (pbVar5 != pbVar1);
+  }
+  return iVar4;
+}
+
+
+// ===== FUN_002305a0 @ 002305a0 (29 bytes)
+
+int FUN_002305a0(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_002303d0(param_1,1);
+  *(undefined4 *)(iVar1 + 0x14) = param_2;
+  *(undefined4 *)(iVar1 + 0x10) = 1;
+  return iVar1;
+}
+
+
 // ===== FUN_002305c0 @ 002305c0 (388 bytes)
 
 void FUN_002305c0(undefined4 param_1,int param_2,int param_3)
@@ -3476,306 +3544,5 @@ LAB_002339ce:
   }
 LAB_002339f5:
   return CONCAT44(param_2,puVar4);
-}
-
-
-// ===== FUN_00233a10 @ 00233a10 (731 bytes)
-
-void FUN_00233a10(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
-
-{
-  float fVar1;
-  float fVar2;
-  float fVar3;
-  float fVar4;
-  float fVar5;
-  float fVar6;
-  float fVar7;
-  float fVar8;
-  float fVar9;
-  float fVar10;
-  float fVar11;
-  undefined4 uVar12;
-  undefined4 uVar13;
-  int iVar14;
-  undefined8 *puVar15;
-  undefined8 *puVar16;
-  undefined4 uVar17;
-  undefined8 uVar18;
-  undefined8 uVar19;
-  undefined4 uVar20;
-  int iVar21;
-  int iVar22;
-  float fVar23;
-  uint uVar24;
-  undefined8 uVar25;
-  undefined8 uVar26;
-  undefined8 *puVar27;
-  undefined8 uVar28;
-  undefined8 uVar29;
-  undefined8 uVar30;
-  undefined8 uVar31;
-  undefined8 uVar32;
-  undefined8 uVar33;
-  ulonglong uVar34;
-  ulonglong uVar35;
-  undefined8 uVar36;
-  ulonglong uVar37;
-  ulonglong uVar38;
-  
-  if (0 < (int)param_4) {
-    iVar14 = *param_1;
-    puVar15 = (undefined8 *)param_1[3];
-    uVar12 = wur_ae_cbegin0(param_1[2]);
-    puVar16 = (undefined8 *)param_1[1];
-    wur_ae_cbegin1(puVar16);
-    uVar28 = const_s(0);
-    uVar13 = wur_ae_cend0(iVar14 * 4 + param_1[2]);
-    wur_ae_cend1(iVar14 * 4 + (int)puVar16);
-    puVar27 = puVar16 + 1;
-    iVar14 = iVar14 >> 2;
-    if (((uint)puVar15 >> 2 & 1) != 0) {
-      uVar17 = ae_addcirc_xc(puVar15,0xfffffffc,uVar13,uVar12);
-      uVar25 = ae_l32x2_xc1(*puVar16);
-      puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-      fVar1 = (float)uVar25;
-      uVar18 = ae_l32_ip(*param_3);
-      param_3 = param_3 + 1;
-      uVar20 = ae_s32_l_xc(uVar18);
-      *(undefined4 *)puVar15 = uVar20;
-      puVar15 = (undefined8 *)ae_circ0(puVar15,4);
-      uVar25 = ae_l32x2_xc1(*puVar27);
-      puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-      fVar6 = (float)uVar25;
-      uVar25 = ae_la32x2neg_pc(uVar17,uVar12,uVar13);
-      uVar20 = ae_la32x2neg_pc_1(uVar17,uVar12,uVar13);
-      uVar26 = ae_la32x2_ric(uVar25,uVar20,uVar13,uVar12);
-      uVar29 = ae_la32x2_ric_1(uVar25,uVar20,uVar13,uVar12);
-      uVar20 = ae_la32x2_ric_2(uVar25,uVar20,uVar13,uVar12);
-      uVar25 = ae_la32x2_ric(uVar29,uVar20,uVar13,uVar12);
-      uVar30 = ae_la32x2_ric_1(uVar29,uVar20,uVar13,uVar12);
-      uVar20 = ae_la32x2_ric_2(uVar29,uVar20,uVar13,uVar12);
-      uVar29 = ae_mov(uVar28);
-      fVar8 = (float)uVar29;
-      iVar21 = iVar14 + -1;
-      uVar29 = ae_sel16i_n(uVar18,uVar26,0);
-      uVar18 = ae_mov(uVar28);
-      fVar5 = (float)uVar29;
-      fVar7 = (float)uVar18;
-      uVar26 = ae_sel16i(uVar26,uVar25,0);
-      fVar3 = (float)uVar26;
-      if ((0 < iVar21) && ((iVar21 == 1 || (0 < iVar21)))) {
-        uVar26 = ae_la32x2_ric(uVar30,uVar20,uVar13,uVar12);
-        uVar29 = ae_la32x2_ric_1(uVar30,uVar20,uVar13,uVar12);
-        uVar20 = ae_la32x2_ric_2(uVar30,uVar20,uVar13,uVar12);
-        fVar7 = fVar7 + fVar5 * fVar1;
-        fVar8 = fVar8 + fVar3 * fVar6;
-        uVar30 = ae_la32x2_ric(uVar29,uVar20,uVar13,uVar12);
-        ae_la32x2_ric_1(uVar29,uVar20,uVar13,uVar12);
-        ae_la32x2_ric_2(uVar29,uVar20,uVar13,uVar12);
-        uVar25 = ae_sel16i(uVar25,uVar26,0);
-        uVar29 = ae_l32x2_xc1(*puVar27);
-        puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-        fVar5 = (float)uVar25;
-        fVar6 = (float)uVar29;
-        ae_mov(uVar30);
-        uVar25 = ae_l32x2_xc1(*puVar16);
-        puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-        uVar30 = ae_sel16i_n(uVar26,uVar30,0);
-        fVar1 = (float)uVar25;
-        fVar3 = (float)uVar30;
-      }
-      fVar7 = fVar7 + fVar5 * fVar1 + fVar8 + fVar3 * fVar6;
-      uVar25 = ae_sel16i((ulonglong)(uint)fVar7,(ulonglong)(uint)fVar7,0);
-      param_4 = param_4 - 1;
-      uVar20 = ae_s32_l_ip((ulonglong)(uint)((float)uVar25 + fVar7));
-      *param_2 = uVar20;
-      param_2 = param_2 + 1;
-    }
-    uVar30 = ae_la64_pp(param_3);
-    uVar25 = ae_zalign64();
-    if (0 < (int)param_4 >> 2) {
-      uVar19 = ae_mov(uVar28);
-      uVar31 = ae_mov(uVar28);
-      uVar36 = ae_mov(uVar28);
-      iVar21 = 0;
-      uVar32 = ae_mov(uVar28);
-      uVar26 = ae_mov(uVar28);
-      uVar20 = ae_addcirc_xc(puVar15,0xfffffff8,uVar13,uVar12);
-      uVar18 = ae_mov(uVar28);
-      uVar29 = ae_mov(uVar28);
-      do {
-        fVar11 = (float)uVar19;
-        fVar10 = (float)uVar31;
-        fVar6 = (float)uVar36;
-        fVar8 = (float)uVar32;
-        uVar19 = ae_la32x2_ip(uVar30,param_3);
-        uVar32 = ae_la32x2_ip_1(uVar30,param_3);
-        uVar17 = ae_la32x2_ip_2(uVar30,param_3);
-        uVar31 = ae_la32x2_ip(uVar32,uVar17);
-        uVar30 = ae_la32x2_ip_1(uVar32,uVar17);
-        param_3 = (undefined4 *)ae_la32x2_ip_2(uVar32,uVar17);
-        iVar21 = iVar21 + 1;
-        uVar32 = ae_l32x2_xc1(*puVar16);
-        puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-        uVar36 = ae_sel16i_n(uVar19,uVar19,0);
-        fVar2 = (float)uVar32;
-        uVar32 = ae_l32x2_ric(uVar20,uVar13,uVar12);
-        uVar20 = ae_l32x2_ric_1(uVar20,uVar13,uVar12);
-        iVar22 = iVar14 + -1;
-        uVar33 = ae_sel16i_n(uVar31,uVar19,2);
-        fVar9 = (float)uVar36;
-        fVar5 = (float)uVar18 + fVar9 * fVar2;
-        uVar18 = ae_sel16i(uVar36,uVar32,0);
-        fVar4 = (float)uVar18;
-        uVar18 = ae_l32x2_xc1(*puVar27);
-        fVar23 = (float)uVar18;
-        puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-        fVar7 = (float)uVar29 + (float)uVar33 * fVar2;
-        uVar18 = ae_sel16i(uVar31,uVar31,0);
-        uVar29 = ae_mov(uVar28);
-        fVar1 = (float)uVar29;
-        fVar3 = (float)uVar26 + (float)uVar18 * fVar2;
-        if ((0 < iVar22) && ((iVar22 == 1 || (0 < iVar22)))) {
-          uVar26 = ae_l32x2_xc1(*puVar16);
-          puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-          fVar8 = fVar8 + fVar4 * fVar2;
-          fVar6 = fVar6 + fVar4 * fVar23;
-          fVar2 = (float)uVar26;
-          uVar36 = ae_l32x2_ric(uVar20,uVar13,uVar12);
-          uVar20 = ae_l32x2_ric_1(uVar20,uVar13,uVar12);
-          fVar1 = fVar1 + fVar9 * fVar23;
-          fVar4 = (float)uVar32;
-          fVar10 = fVar10 + fVar4 * fVar23;
-          uVar26 = ae_sel16i(uVar32,uVar36,0);
-          uVar32 = ae_l32x2_ric(uVar20,uVar13,uVar12);
-          uVar20 = ae_l32x2_ric_1(uVar20,uVar13,uVar12);
-          fVar3 = fVar3 + fVar4 * fVar2;
-          fVar5 = fVar5 + (float)uVar36 * fVar2;
-          uVar29 = ae_sel16i(uVar36,uVar32,0);
-          uVar18 = ae_l32x2_xc1(*puVar27);
-          puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-          fVar7 = fVar7 + (float)uVar26 * fVar2;
-          fVar11 = fVar11 + (float)uVar26 * fVar23;
-          fVar4 = (float)uVar29;
-          fVar23 = (float)uVar18;
-        }
-        uVar26 = ae_l32x2_ric(uVar20,uVar13,uVar12);
-        ae_l32x2_ric_1(uVar20,uVar13,uVar12);
-        uVar26 = ae_sel16i(uVar32,uVar26,0);
-        uVar34 = (ulonglong)(uint)(fVar3 + fVar1 + (float)uVar36 * fVar23);
-        uVar37 = (ulonglong)(uint)(fVar7 + fVar6 + fVar4 * fVar23);
-        uVar35 = (ulonglong)(uint)(fVar5 + fVar10 + (float)uVar32 * fVar23);
-        uVar38 = (ulonglong)(uint)(fVar8 + fVar4 * fVar2 + fVar11 + (float)uVar26 * fVar23);
-        uVar26 = ae_sel16i(uVar38,uVar35,0);
-        uVar18 = ae_sel16i_n(uVar38,uVar35,2);
-        uVar29 = ae_sel16i(uVar37,uVar34,0);
-        uVar35 = (ulonglong)(uint)((float)uVar18 + (float)uVar26);
-        uVar26 = ae_sel16i(uVar37,uVar34,2);
-        uVar34 = (ulonglong)(uint)((float)uVar26 + (float)uVar29);
-        uVar26 = ae_s32x2_xc(uVar19);
-        *puVar15 = uVar26;
-        puVar15 = (undefined8 *)ae_circ0(puVar15,8);
-        uVar26 = ae_s32x2_xc(uVar31);
-        *puVar15 = uVar26;
-        puVar15 = (undefined8 *)ae_circ0(puVar15,8);
-        uVar31 = ae_mov(uVar28);
-        uVar19 = ae_mov(uVar28);
-        uVar26 = ae_sa32x2_ip(uVar35,uVar25,param_2);
-        uVar20 = ae_sa32x2_ip_1(uVar35,uVar25,param_2);
-        uVar32 = ae_mov(uVar28);
-        uVar36 = ae_mov(uVar28);
-        uVar25 = ae_sa32x2_ip(uVar34,uVar26,uVar20);
-        param_2 = (undefined4 *)ae_sa32x2_ip_1(uVar34,uVar26,uVar20);
-        uVar20 = ae_addcirc_xc(puVar15,0xfffffff8,uVar13,uVar12);
-        uVar18 = ae_mov(uVar28);
-        uVar29 = ae_mov(uVar28);
-        uVar26 = ae_mov(uVar28);
-      } while ((int)param_4 >> 2 != iVar21);
-    }
-    ae_sa64pos_fp(uVar25,param_2);
-    uVar24 = param_4 & 0xfffffffc;
-    if ((int)uVar24 < (int)param_4) {
-      uVar20 = ae_addcirc_xc(puVar15,0xfffffffc,uVar13,uVar12);
-      uVar30 = ae_mov(uVar28);
-      uVar25 = ae_mov(uVar28);
-      do {
-        iVar21 = iVar14 + -1;
-        fVar8 = (float)uVar30;
-        fVar7 = (float)uVar25;
-        uVar30 = ae_la32x2neg_pc(uVar20,uVar12,uVar13);
-        uVar17 = ae_la32x2neg_pc_1(uVar20,uVar12,uVar13);
-        uVar18 = ae_l32_ip(*param_3);
-        param_3 = param_3 + 1;
-        uVar20 = ae_s32_l_xc(uVar18);
-        *(undefined4 *)puVar15 = uVar20;
-        puVar15 = (undefined8 *)ae_circ0(puVar15,4);
-        uVar24 = uVar24 + 1;
-        uVar25 = ae_la32x2_ric(uVar30,uVar17,uVar13,uVar12);
-        uVar26 = ae_la32x2_ric_1(uVar30,uVar17,uVar13,uVar12);
-        uVar20 = ae_la32x2_ric_2(uVar30,uVar17,uVar13,uVar12);
-        uVar30 = ae_l32x2_xc1(*puVar16);
-        puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-        fVar1 = (float)uVar30;
-        uVar30 = ae_la32x2_ric(uVar26,uVar20,uVar13,uVar12);
-        uVar29 = ae_la32x2_ric_1(uVar26,uVar20,uVar13,uVar12);
-        uVar20 = ae_la32x2_ric_2(uVar26,uVar20,uVar13,uVar12);
-        uVar26 = ae_l32x2_xc1(*puVar27);
-        puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-        fVar6 = (float)uVar26;
-        uVar26 = ae_sel16i_n(uVar18,uVar25,0);
-        fVar5 = (float)uVar26;
-        uVar25 = ae_sel16i(uVar25,uVar30,0);
-        fVar3 = (float)uVar25;
-        if ((0 < iVar21) && ((iVar21 == 1 || (0 < iVar21)))) {
-          uVar25 = ae_la32x2_ric(uVar29,uVar20,uVar13,uVar12);
-          uVar26 = ae_la32x2_ric_1(uVar29,uVar20,uVar13,uVar12);
-          uVar20 = ae_la32x2_ric_2(uVar29,uVar20,uVar13,uVar12);
-          fVar7 = fVar7 + fVar5 * fVar1;
-          fVar8 = fVar8 + fVar3 * fVar6;
-          uVar29 = ae_la32x2_ric(uVar26,uVar20,uVar13,uVar12);
-          ae_la32x2_ric_1(uVar26,uVar20,uVar13,uVar12);
-          ae_la32x2_ric_2(uVar26,uVar20,uVar13,uVar12);
-          uVar30 = ae_sel16i(uVar30,uVar25,0);
-          uVar26 = ae_l32x2_xc1(*puVar27);
-          puVar27 = (undefined8 *)ae_circ1(puVar27,0x10);
-          fVar5 = (float)uVar30;
-          fVar6 = (float)uVar26;
-          ae_mov(uVar29);
-          uVar30 = ae_l32x2_xc1(*puVar16);
-          puVar16 = (undefined8 *)ae_circ1(puVar16,0x10);
-          uVar25 = ae_sel16i_n(uVar25,uVar29,0);
-          fVar1 = (float)uVar30;
-          fVar3 = (float)uVar25;
-        }
-        fVar7 = fVar7 + fVar5 * fVar1 + fVar8 + fVar3 * fVar6;
-        uVar25 = ae_sel16i((ulonglong)(uint)fVar7,(ulonglong)(uint)fVar7,0);
-        uVar20 = ae_s32_l_ip((ulonglong)(uint)((float)uVar25 + fVar7));
-        *param_2 = uVar20;
-        param_2 = param_2 + 1;
-        uVar20 = ae_addcirc_xc(puVar15,0xfffffffc,uVar13,uVar12);
-        uVar30 = ae_mov(uVar28);
-        uVar25 = ae_mov(uVar28);
-      } while (param_4 != uVar24);
-    }
-    param_1[3] = (int)puVar15;
-    return;
-  }
-  return;
-}
-
-
-// ===== FUN_00233cf0 @ 00233cf0 (22 bytes)
-
-int FUN_00233cf0(int param_1,int param_2)
-
-{
-  int iVar1;
-  
-  iVar1 = param_1 << 2;
-  if (param_2 != 0) {
-    iVar1 = 0;
-  }
-  return param_1 * 4 + iVar1 + 0x17;
 }
 

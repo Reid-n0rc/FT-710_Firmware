@@ -1,4 +1,87 @@
-// FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 31 functions
+// FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 33 functions
+
+// ===== FUN_002360e0 @ 002360e0 (131 bytes)
+
+int FUN_002360e0(uint *param_1)
+
+{
+  int iVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar2 = *param_1;
+  if ((uVar2 & 7) == 0) {
+    iVar3 = ae_zext16(uVar2);
+    iVar1 = 0;
+    if (iVar3 == 0) {
+      iVar1 = 0x10;
+      uVar2 = uVar2 >> 0x10;
+    }
+    if ((uVar2 & 0xff) == 0) {
+      iVar1 = iVar1 + 8;
+      uVar2 = uVar2 >> 8;
+    }
+    if ((uVar2 & 0xf) == 0) {
+      iVar1 = iVar1 + 4;
+      uVar2 = uVar2 >> 4;
+    }
+    if ((uVar2 & 3) == 0) {
+      iVar1 = iVar1 + 2;
+      uVar2 = uVar2 >> 2;
+    }
+    if ((uVar2 & 1) == 0) {
+      uVar2 = uVar2 >> 1;
+      iVar1 = iVar1 + 1;
+      if (uVar2 == 0) {
+        return 0x20;
+      }
+    }
+    *param_1 = uVar2;
+    return iVar1;
+  }
+  if ((uVar2 & 1) == 0) {
+    if ((uVar2 >> 1 & 1) != 0) {
+      *param_1 = uVar2 >> 1;
+      return 1;
+    }
+    *param_1 = uVar2 >> 2;
+    return 2;
+  }
+  return 0;
+}
+
+
+// ===== FUN_00236170 @ 00236170 (74 bytes)
+
+int FUN_00236170(int param_1,int param_2)
+
+{
+  uint *puVar1;
+  int iVar2;
+  int iVar3;
+  uint *puVar4;
+  
+  iVar3 = *(int *)(param_2 + 0x10);
+  iVar2 = *(int *)(param_1 + 0x10) - iVar3;
+  if (iVar2 != 0) {
+    return iVar2;
+  }
+  param_2 = iVar3 * 4 + param_2;
+  puVar4 = (uint *)(iVar3 * 4 + param_1 + 0x14);
+  do {
+    puVar4 = puVar4 + -1;
+    puVar1 = (uint *)(param_2 + 0x10);
+    param_2 = param_2 + -4;
+    if (*puVar4 != *puVar1) {
+      if (*puVar4 < *puVar1) {
+        return -1;
+      }
+      return 1;
+    }
+  } while ((uint *)(param_1 + 0x14) < puVar4);
+  return 0;
+}
+
 
 // ===== FUN_002361d0 @ 002361d0 (157 bytes)
 

@@ -289,8 +289,8 @@ touch FLEXCOMM1–5 or the codec. The I2S/SPI/codec work is on the DSP side (see
 |---|---|---|
 | 0x24000000–0x2400FFFF | `dsp_dtcm` | image 0, first 64 KB. The first 3 words are pointers into SRAM (0x00228818, 0x002354E0, 0x00228834), and the rest is zeros |
 | 0x24020000–0x24020643 | `dsp_itcm` | `_ResetVector` @0x24020000 (J over literals → 0x24020044: sets INTENABLE=0, **VECBASE=0x24020400**, ATOMCTL, invalidates caches). Window vectors @0x24020400+n·0x40; level/exception vectors at 0x2402057C, 0x2402059C, 0x240205BC, 0x240205DC, 0x2402061C, 0x2402063C |
-| 0x00200000–~0x00206FFF | `sram_dsp_text` | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
-| ~0x00207000–0x002367FF | `sram_dsp_text` | `.text`: 1081 4-aligned `entry a1,N` prologues |
+| 0x00200000–0x00207CEF | `sram_dsp_rodata` (read-only, not executable since T21j) | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
+| 0x00207CF0–0x002367FF | `sram_dsp_text` (read-only) | `.text`: 1081 4-aligned `entry a1,N` prologues (first function 0x207CF0) |
 | 0x00236800–0x002383B3 | `sram_dsp_data` | `.data`: float tables (biquad/filter coefficients, e.g. near 0x236D00) **[inference]** |
 | 0x002383B4–~0x002FFFFF | `sram_dsp_bss` | .bss: thread stacks and TCBs, FIFOs, filter states, used up to ~0x2CC000 (e.g. TCB `Thread_Rx_Path` 0x2C7890) **[fact, T12e]**, see [code/ifdsp/hifi4.md](code/ifdsp/hifi4.md) |
 | 0x20040000–0x200431DF | `sram_shared` | image 2 (zeros): shared/non-cached buffer area |

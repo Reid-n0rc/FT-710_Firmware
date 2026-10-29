@@ -69,6 +69,8 @@ SRAM_LO, SRAM_HI = 0x00200000, 0x00300000   # DSP image 1 and its bss (functions
 EXTRA_ENTRIES = [
     (0x002332C4, "call0 target from 0x228aa1, 0x228d18, 0x2333f7; reads WINDOWBASE/WINDOWSTART (window spill helper) [fact: flix.dis]"),
     (0x002354E0, "pointer at DTCM 0x24000004 (handler table); saves a0 in EXCSAVE4 (level-4 interrupt handler) [fact: image bytes]"),
+    (0x002287F8, "pointer in the .data handler table 0x237A94..0x237AA4 (5 words); ret.n (empty default handler) [fact: image bytes, T21j]"),
+    (0x00228B08, "l32r literal 0x207864, stored by 0x227859 into a thread context; rsr.ccount .. waiti 0; j . (idle thread) [fact: flix.dis, T22d]"),
 ]
 DEFAULT_DIS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "decomp", "ifdsp", "hifi4", "flix.dis")
 

@@ -1695,9 +1695,8 @@ void console_rx_char(int param_1)
   uint uVar15;
   int iVar16;
   uint uVar17;
-  undefined *puVar18;
-  int *piVar19;
-  byte *pbVar20;
+  int *piVar18;
+  byte *pbVar19;
   byte local_41;
   undefined1 auStack_40 [2];
   undefined1 auStack_3e [2];
@@ -1721,67 +1720,66 @@ LAB_000814ac:
         memset(&DAT_00088d2f,0,0x40);
         iVar8 = strlen(&DAT_00088d6f);
         pbVar9 = &DAT_00088d70 + iVar8;
-        pbVar20 = &DAT_00088d6f;
+        pbVar19 = &DAT_00088d6f;
         do {
-          pbVar13 = pbVar20;
+          pbVar13 = pbVar19;
           if (pbVar13 == pbVar9) {
             DAT_00088708 = 0;
             DAT_00088def = 0;
             return;
           }
-          uVar15 = (byte)(&DAT_00087d84)[*pbVar13] & 1;
-          pbVar20 = pbVar13 + 1;
-        } while (((&DAT_00087d84)[*pbVar13] & 1) != 0);
+          uVar15 = ctype_table[*pbVar13] & 1;
+          pbVar19 = pbVar13 + 1;
+        } while ((ctype_table[*pbVar13] & 1) != 0);
         uVar17 = uVar15;
         if (pbVar13 < pbVar9) {
           do {
             bVar1 = *pbVar13;
-            if ((((&DAT_00087d84)[bVar1] & 1) != 0) || (bVar1 == 0)) {
+            if (((ctype_table[bVar1] & 1) != 0) || (bVar1 == 0)) {
               while( true ) {
                 if (pbVar9 == pbVar13) goto LAB_00081626;
                 uVar12 = (uint)*pbVar13;
-                pbVar20 = pbVar13 + 1;
-                uVar15 = (byte)(&DAT_00087d84)[uVar12] & 1;
-                if (((&DAT_00087d84)[uVar12] & 1) == 0) break;
-                pbVar13 = pbVar20;
+                pbVar19 = pbVar13 + 1;
+                uVar15 = ctype_table[uVar12] & 1;
+                if ((ctype_table[uVar12] & 1) == 0) break;
+                pbVar13 = pbVar19;
                 if ((uVar12 < 0xe) && ((int)((0x2401U >> uVar12) << 0x1f) < 0)) goto LAB_00081596;
               }
               if (uVar12 == 0) {
 LAB_00081596:
                 iVar8 = 0;
                 iVar16 = uVar17 + 1;
-                piVar19 = (int *)&DAT_000886f8;
+                piVar18 = (int *)&DAT_000886f8;
                 do {
-                  iVar10 = strlen(*piVar19);
+                  iVar10 = strlen(*piVar18);
                   if (DAT_00088d2d != '\0') {
                     for (iVar14 = 0; iVar14 < iVar10; iVar14 = iVar14 + 1) {
-                      uVar3 = tolower(*(undefined1 *)(*piVar19 + iVar14));
-                      *(undefined1 *)(*piVar19 + iVar14) = uVar3;
+                      uVar3 = tolower(*(undefined1 *)(*piVar18 + iVar14));
+                      *(undefined1 *)(*piVar18 + iVar14) = uVar3;
                     }
                   }
-                  iVar14 = *piVar19;
+                  iVar14 = *piVar18;
                   iVar10 = strlen(iVar14);
                   if (iVar10 != 0) {
                     while (iVar10 = iVar10 + -1, -1 < iVar10) {
-                      if ((int)((uint)(byte)(&DAT_00087d84)[*(byte *)(iVar14 + iVar10)] << 0x1f) < 0
-                         ) {
+                      if ((int)((uint)ctype_table[*(byte *)(iVar14 + iVar10)] << 0x1f) < 0) {
                         *(undefined1 *)(iVar14 + iVar10) = 0;
                       }
                     }
                   }
                   cVar2 = DAT_00088d2d;
-                  pbVar20 = DAT_000886f8;
+                  pbVar19 = DAT_000886f8;
                   iVar8 = iVar8 + 1;
-                  piVar19 = piVar19 + 1;
+                  piVar18 = piVar18 + 1;
                 } while (iVar8 != iVar16);
                 if (DAT_00088d2d == '\0') {
                   pbVar9 = DAT_000886f8 + 1;
                   bVar1 = *DAT_000886f8;
                   iVar8 = is_hex_string(pbVar9);
                   if (iVar8 != 0) {
-                    iVar8 = strlen(pbVar20);
+                    iVar8 = strlen(pbVar19);
                     if (iVar8 == 7) {
-                      iVar8 = frame_checksum_ok(pbVar20,5);
+                      iVar8 = frame_checksum_ok(pbVar19,5);
                       if (iVar8 != 0) {
                         memcpy(auStack_40,pbVar9,4);
                         local_3c = cVar2;
@@ -1828,9 +1826,8 @@ LAB_0008172a:
                           pcVar7 = local_38;
                           goto LAB_00081772;
                         }
-                        iVar8 = strncmp(auStack_40,&DAT_00087cb1,2);
-                        if ((iVar8 == 0) ||
-                           (iVar8 = strncmp(auStack_40,&DAT_00087cb4,2), iVar8 == 0)) {
+                        iVar8 = strncmp(auStack_40,"db",2);
+                        if ((iVar8 == 0) || (iVar8 = strncmp(auStack_40,"DB",2), iVar8 == 0)) {
                           iVar8 = strncmp(auStack_3e,"00",2);
                           if (iVar8 == 0) {
                             DAT_00088d2d = '\0';
@@ -1850,12 +1847,12 @@ LAB_00081828:
                       pcVar7 = "?";
                     }
                     else {
-                      if ((iVar8 != 0xb) || (iVar8 = frame_checksum_ok(pbVar20,9), iVar8 == 0))
+                      if ((iVar8 != 0xb) || (iVar8 = frame_checksum_ok(pbVar19,9), iVar8 == 0))
                       goto LAB_00081828;
                       memcpy(auStack_40,pbVar9,4);
                       local_3c = cVar2;
                       uVar5 = strtoul(auStack_40,0);
-                      memcpy(auStack_40,pbVar20 + 5,4);
+                      memcpy(auStack_40,pbVar19 + 5,4);
                       uVar6 = strtoul(auStack_40,0);
                       if ((bVar1 & 0xdf) != 0x57) goto LAB_00081716;
                       regfile_write(uVar5,uVar6);
@@ -1872,10 +1869,10 @@ LAB_00081716:
                   }
                 }
                 else {
-                  puVar18 = &DAT_0008795c;
+                  pcVar7 = "r";
                   iVar8 = 0;
                   do {
-                    iVar10 = strcmp(DAT_000886f8,puVar18);
+                    iVar10 = strcmp(DAT_000886f8,pcVar7);
                     if (iVar10 == 0) {
                       (*(code *)(&DAT_0008796c)[iVar8 * 5])(&DAT_000886f8,iVar16);
                       DAT_00088708 = 0;
@@ -1883,7 +1880,7 @@ LAB_00081716:
                       return;
                     }
                     iVar8 = iVar8 + 1;
-                    puVar18 = puVar18 + 0x14;
+                    pcVar7 = pcVar7 + 0x14;
                   } while (iVar8 != 4);
                 }
                 if (DAT_00088d2d == '\0') {
@@ -1923,7 +1920,7 @@ LAB_00081676:
       DAT_00088def = 0;
       return;
     }
-    if (-1 < (int)((uint)(byte)(&DAT_00087d84)[local_41] << 0x1f)) {
+    if (-1 < (int)((uint)ctype_table[local_41] << 0x1f)) {
       DAT_00088708 = 1;
       DAT_00088d6f = local_41;
       DAT_00088def = 1;

@@ -29,7 +29,7 @@ void FUN_0021f7ec(void)
       DAT_00253644 = DAT_200700a6;
       DAT_00253648 = iir_cascade_init(&DAT_00253980,4,&DAT_00236940,1);
       DAT_0025364c = iir_cascade_init(&DAT_00253a20,8,&DAT_00236990,1);
-      ae_l32_i(*(undefined4 *)(&DAT_00204be0 + (uVar1 & 0xfff) * 4));
+      ae_l32_i(FLOAT_ARRAY_00204be0[uVar1 & 0xfff]);
       FUN_0021f968();
     }
     DAT_00253646 = 0;
@@ -424,7 +424,7 @@ void FUN_0021fd20(void)
   
   memset(&DAT_00253c80,0,0x184);
   DAT_00253e04 = iir_cascade_init(&DAT_00253e10,4,&DAT_00236a30,1);
-  DAT_00253e08 = FUN_00233984(&DAT_00253eb0,0x6d,&DAT_002051c0);
+  DAT_00253e08 = FUN_00233984(&DAT_00253eb0,0x6d,FLOAT_ARRAY_002051c0);
   uVar1 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL);
   uVar2 = uVar1 & 0xf;
   uVar1 = uVar1 & 0xfffffff0 | 2;
@@ -1473,7 +1473,7 @@ undefined4 FUN_00220da4(int param_1,int param_2)
   undefined1 in_st_PSCALLINC;
   undefined1 in_st_PSOWB;
   
-  param_1 = param_1 * 0x908;
+  param_1 = param_1 * (int)&DAT_00000908;
   if ((byte)(&DAT_002580f0)[param_1] < 0xd) {
     uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
@@ -1529,7 +1529,7 @@ undefined4 FUN_00220e34(int param_1,undefined4 param_2)
   undefined1 in_st_PSOWB;
   uint uVar2;
   
-  param_1 = param_1 * 0x908;
+  param_1 = param_1 * (int)&DAT_00000908;
   if ((&DAT_002580f0)[param_1] == '\0') {
     memset(param_2,0,0x60);
     return 0;

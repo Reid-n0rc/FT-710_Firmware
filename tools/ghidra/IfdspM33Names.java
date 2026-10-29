@@ -33,6 +33,7 @@ public class IfdspM33Names extends GhidraScript {
         {0x08001222L, "data_init"},
         {0x08001234L, "bss_init"},
         {0x08001540L, "SystemInit"},
+        {0x0800143CL, "SystemCoreClockUpdate", "flash copy; entry fixed by entries_m33.tsv (T21j), docs/code/ifdsp/m33-platform.md"},
         {0x080017A8L, "call_main"},
         // application
         {0x000872AEL, "main"},

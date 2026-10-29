@@ -1,0 +1,4 @@
+# FT-710 IFDSP Cortex-M33: function entries analysis gets wrong (T21j, from T22d). Applied with FixFuncEntries.java after
+# IfdspFindFuncs.java. address<TAB>drop|thumb<TAB>comment
+0800143c	thumb	pointer 0x0800143D at 0x080015C8; the function starts with ldr r3, [pc, #236] (Ghidra started it at 0x0800143E)
+00087232	thumb	bx lr, called through the pointer 0x00087233 at 0x00080A10 (empty function)

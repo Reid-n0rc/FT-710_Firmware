@@ -1,5 +1,5 @@
 metric	value
-functions	426
+functions	427
 decompile_failures	0
 warnings	181
 functions_with_warnings	93
@@ -11,9 +11,9 @@ functions_with_in_vars	13
 functions_with_unaff_vars	3
 functions_with_extraout_vars	16
 functions_with_in_unaff_extraout	25
-undefined_nonff_bytes	5162
-undefined_nonff_bytes:sram_text_rodata	951
-undefined_nonff_bytes:flexspi_xip	4211
+undefined_nonff_bytes	4363
+undefined_nonff_bytes:sram_text_rodata	675
+undefined_nonff_bytes:flexspi_xip	3688
 bookmarks_error	1
 bookmarks_bad_instruction	1
 warning:Bad instruction - Truncating control flow here	1

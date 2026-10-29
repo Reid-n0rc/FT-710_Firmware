@@ -1791,7 +1791,7 @@ void FUN_0021e24c(undefined4 *param_1,undefined4 *param_2)
   uVar14 = ae_l32_ip(param_1[1]);
   DAT_0024cb4c = ae_s32_l_i(uVar18);
   DAT_0024cb48 = ae_s32_l_ip((ulonglong)(uint)((float)uVar15 * (float)uVar14));
-  FUN_002174b0(&DAT_0024db40,&DAT_0024cb40,&DAT_00200d00,1,0x200);
+  FUN_002174b0(&DAT_0024db40,&DAT_0024cb40,FLOAT_ARRAY_00200d00,1,0x200);
   FUN_00216e00(&DAT_0024eb40,&DAT_0024db40,0x200);
   uVar14 = ae_l32_ip(DAT_0024db40);
   DAT_0024f340 = ae_s32_l_ip(uVar14);
@@ -1918,7 +1918,7 @@ void FUN_0021e24c(undefined4 *param_1,undefined4 *param_2)
       uVar14 = ae_l32_i(0);
     } while (iVar13 != 0);
   }
-  FUN_00217d10(&DAT_0024db40,&DAT_0024cb40,&DAT_00200d00,1,0x200);
+  FUN_00217d10(&DAT_0024db40,&DAT_0024cb40,FLOAT_ARRAY_00200d00,1,0x200);
   uVar14 = ae_l32_ip(DAT_0024db40);
   uVar3 = ae_s32_l_ip(uVar14);
   *param_2 = uVar3;
@@ -2130,17 +2130,17 @@ void FUN_0021e754(undefined *param_1,undefined *param_2)
       DAT_00251fa4 = (undefined2)uVar2;
       if (uVar3 == 1) {
         if (uVar2 == 700) {
-          DAT_00251fa8 = &DAT_00203b70;
+          DAT_00251fa8 = FLOAT_ARRAY_00203b70;
         }
         else {
-          DAT_00251fa8 = &DAT_00203f80;
+          DAT_00251fa8 = FLOAT_ARRAY_00203f80;
         }
       }
       else if (uVar2 == 700) {
-        DAT_00251fa8 = &DAT_00204390;
+        DAT_00251fa8 = FLOAT_ARRAY_00204390;
       }
       else {
-        DAT_00251fa8 = &DAT_002047a0;
+        DAT_00251fa8 = FLOAT_ARRAY_002047a0;
       }
       ae_s16i_n(uVar3,&DAT_00251fa0,2);
       DAT_002521b0 = FUN_00233984(&DAT_002521c0,0x101);
@@ -3234,7 +3234,7 @@ void FUN_0021f6d0(void)
   _DAT_00253644 = 0;
   DAT_00253648 = iir_cascade_init(&DAT_00253980,4,&DAT_00236940,1);
   DAT_0025364c = iir_cascade_init(&DAT_00253a20,8,&DAT_00236990,1);
-  uVar10 = ae_l32_i(*(undefined4 *)(&DAT_00204be0 + (_DAT_00253644 & 0xffff) * 4));
+  uVar10 = ae_l32_i(FLOAT_ARRAY_00204be0[_DAT_00253644 & 0xffff]);
   uVar11 = const_s(0);
   uVar4 = oeq_s(uVar10,uVar11);
   if (SUB21(uVar4,0)) {

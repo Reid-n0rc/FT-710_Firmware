@@ -58,7 +58,7 @@ LAB_00222610:
       }
       return;
     }
-    uVar5 = ae_l32_i(*(undefined4 *)(&DAT_00204dd0 + uVar2 * 4));
+    uVar5 = ae_l32_i(FLOAT_ARRAY_00204dd0[uVar2]);
     DAT_0025ba08 = '\x01';
     DAT_0025ba04 = ae_s32_l_i((ulonglong)(uint)((float)uVar5 * 8.726647e-05));
   }
@@ -120,7 +120,7 @@ void FUN_00222640(void)
   DAT_0025ba20 = 0;
   DAT_0025ba24 = 0;
   DAT_0025ba28 = 0;
-  DAT_0025ba2c = FUN_00233984(0x25ba40,0x6d,&DAT_00205380);
+  DAT_0025ba2c = FUN_00233984(0x25ba40,0x6d,FLOAT_ARRAY_00205380);
   DAT_0025ba30 = iir_cascade_init(&DAT_0025bde0,5,&DAT_002373d0,1);
   return;
 }
@@ -1582,7 +1582,7 @@ uint FUN_00223c8c(undefined4 *param_1)
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * (float)uVar5));
     (&DAT_0025ec34)[uVar4 * 0x80] = uVar1;
     if (uVar4 == 3) {
-      FUN_00233670(&DAT_0025fc30,&DAT_0025ec30,&DAT_00200d00,1,0x200);
+      FUN_00233670(&DAT_0025fc30,&DAT_0025ec30,FLOAT_ARRAY_00200d00,1,0x200);
       FUN_00218640(&DAT_00260c40,&DAT_0025fc30,0x200,1);
       memcpy(&DAT_00261450,&DAT_00260c40 + (uint)DAT_0025d354 * 4,800);
       ae_l32_i(DAT_0025d358);
@@ -1624,7 +1624,7 @@ uint FUN_00223c8c(undefined4 *param_1)
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * (float)uVar5));
     (&DAT_0025ec34)[uVar4 * 0x80] = uVar1;
     if (uVar4 == 7) {
-      FUN_00233670(&DAT_0025fc30,&DAT_0025ec30,&DAT_00201900,1,0x400);
+      FUN_00233670(&DAT_0025fc30,&DAT_0025ec30,FLOAT_ARRAY_00201900,1,0x400);
       FUN_00218640(&DAT_00260c40,&DAT_0025fc30,0x400,1);
       memcpy(&DAT_00261450,&DAT_00260c40 + (uint)DAT_0025d354 * 4,800);
       ae_l32_i(DAT_0025d358);
@@ -1683,7 +1683,7 @@ void FUN_00224000(void)
 
 {
   memset(&DAT_00261a90,0,0x348);
-  DAT_00261dd8 = FUN_00233984(&DAT_00261de0,0x7b,&DAT_00204f80);
+  DAT_00261dd8 = FUN_00233984(&DAT_00261de0,0x7b,FLOAT_ARRAY_00204f80);
   DAT_00261a94 = 0;
   DAT_00261aa4 = 0;
   DAT_00261aa8 = 0;
@@ -1722,7 +1722,7 @@ undefined4 FUN_00224060(undefined4 *param_1)
       DAT_00261aa8 = 0;
       DAT_00261aac = 0;
       DAT_00261ab0 = 0;
-      uVar6 = ae_l32_i(*(undefined4 *)(&DAT_00205170 + uVar8 * 4));
+      uVar6 = ae_l32_i(FLOAT_ARRAY_00205170[uVar8]);
       DAT_00261a98 = ae_s32_l_i(uVar6);
       DAT_00261aa0 = *(undefined4 *)(&DAT_00205190 + uVar9 * 4);
       DAT_00261a96 = *(ushort *)((int)&PTR_DAT_00205180 + uVar9 * 2);
@@ -2485,7 +2485,7 @@ void create_Thread_Spi(void)
   wsr_ps_4(uVar2);
   wsr_ps_5(uVar2);
   rsync();
-  DAT_002642a8 = FUN_00233984(&DAT_00264b70,0xab,&DAT_00205540,uVar2);
+  DAT_002642a8 = FUN_00233984(&DAT_00264b70,0xab,FLOAT_ARRAY_00205540,uVar2);
   xos_thread_create(&DAT_002642b0,0,Thread_Spi_entry,0,"Thread_Spi",&DAT_002650f0,&DAT_00001398,5,0,
                     0);
   xos_msgq_create(PTR_DAT_002374f4,4,4,0);

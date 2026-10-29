@@ -1,5 +1,84 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_0022b8ac @ 0022b8ac (188 bytes)
+
+uint FUN_0022b8ac(int param_1,uint param_2)
+
+{
+  ulonglong uVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  uVar3 = param_2 + 0xc8000000;
+  if (((int)(param_2 ^ uVar3) < 0) || (uVar4 = uVar3 >> 0x14 & 0x7ff, uVar4 == 0)) {
+    uVar3 = 0x381 - (param_2 >> 0x14 & 0x7ff);
+    if (0x1f < uVar3) {
+      return param_2 & 0x80000000;
+    }
+    uVar1 = ((CONCAT44(param_2,param_1) | 0x70000000000000) & 0x1fffffffffffff) >> 0x1d;
+    uVar5 = uVar3 & 0x1f;
+    uVar6 = (uint)((uVar1 << 0x20 | (ulonglong)(uint)(param_1 << 3)) >> uVar5);
+    uVar4 = (uint)uVar1 >> uVar5;
+    if ((param_1 << 3) << 0x20 - uVar5 != 0) {
+      uVar6 = uVar6 | uVar3;
+    }
+  }
+  else {
+    if (0xfe < uVar4) {
+      iVar2 = 0x7ff00000;
+      if (((~param_2 & 0x7ff00000) == 0) && ((param_2 & 0xfffff) != 0 || param_1 != 0)) {
+        iVar2 = 0x3ff80000;
+      }
+      return (uint)(CONCAT44(param_2 >> 0x1f,iVar2 << 4) >> 1);
+    }
+    uVar6 = param_1 << 3;
+    uVar4 = (uint)(CONCAT44(uVar3,param_1) >> 0x1d);
+  }
+  uVar4 = param_2 & 0x80000000 | uVar4;
+  if (((int)uVar6 < 0) && (uVar4 = uVar4 + 1, (uVar6 & 0x7fffffff) == 0)) {
+    return uVar4 & 0xfffffffe;
+  }
+  return uVar4;
+}
+
+
+// ===== FUN_0022b96c @ 0022b96c (100 bytes)
+
+longlong FUN_0022b96c(void)
+
+{
+  uint in_aed0;
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar2 = in_aed0 >> 0x17 & 0xff;
+  uVar1 = in_aed0 & 0x80000000;
+  iVar3 = in_aed0 << 1;
+  if (uVar2 == 0) {
+    uVar2 = 0;
+    if (iVar3 != 0) {
+      uVar2 = iVar3 << 0x20 - (0x20 - (LZCOUNT(iVar3) - 8U & 0x1f));
+      return CONCAT44((uVar2 >> 3) + (0x37f - (LZCOUNT(iVar3) - 8U)) * 0x100000 | uVar1,
+                      uVar2 << 0x1d);
+    }
+  }
+  else {
+    if (uVar2 != 0xff) {
+      return CONCAT44(((in_aed0 & 0x7fffffff) >> 3) + 0x38000000 | uVar1,in_aed0 << 0x1d);
+    }
+    uVar2 = 0x7ff00000;
+    if ((in_aed0 & 0x7fffff) != 0) {
+      uVar2 = 0x7ff80000;
+    }
+  }
+  return (ulonglong)(uVar2 | uVar1) << 0x20;
+}
+
+
 // ===== FUN_0022b9e0 @ 0022b9e0 (35 bytes)
 
 void FUN_0022b9e0(undefined4 param_1,undefined4 *param_2,undefined *param_3,code *param_4,
@@ -1270,7 +1349,7 @@ LAB_0022c758:
           ppuStack_90 = &PTR_DAT_00206424;
         }
         else {
-          ppuStack_90 = (undefined **)&DAT_00206428;
+          ppuStack_90 = (undefined **)0x206428;
         }
         pcStack_84 = (char *)0x3;
         pcStack_74 = (char *)((uint)pcStack_74 & 0xffffff7f);
@@ -1279,10 +1358,10 @@ LAB_0022c758:
       iVar34 = FUN_00230d10(uVar5,uStack_e4);
       if (iVar34 == 0) {
         if ((int)uStack_70 < 0x48) {
-          ppuStack_90 = (undefined **)&DAT_0020642c;
+          ppuStack_90 = (undefined **)0x20642c;
         }
         else {
-          ppuStack_90 = (undefined **)&DAT_00206430;
+          ppuStack_90 = (undefined **)0x206430;
         }
         pcStack_84 = (char *)0x3;
         pcStack_74 = (char *)((uint)pcStack_74 & 0xffffff7f);
@@ -4665,73 +4744,5 @@ int FUN_00230440(undefined4 param_1,int param_2,int param_3,uint param_4)
     return param_2;
   }
   return param_2;
-}
-
-
-// ===== FUN_002304f0 @ 002304f0 (159 bytes)
-
-int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
-
-{
-  byte *pbVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  byte *pbVar5;
-  
-  iVar4 = (param_4 + 8) / 9;
-  if (iVar4 < 2) {
-    iVar3 = 0;
-  }
-  else {
-    iVar3 = 0;
-    iVar2 = 1;
-    do {
-      iVar2 = iVar2 << 1;
-      iVar3 = iVar3 + 1;
-    } while (iVar2 < iVar4);
-  }
-  iVar4 = FUN_002303d0(param_1,iVar3);
-  *(undefined4 *)(iVar4 + 0x14) = param_5;
-  *(undefined4 *)(iVar4 + 0x10) = 1;
-  if (param_3 < 10) {
-    pbVar5 = (byte *)(param_2 + 10);
-    iVar3 = 9;
-  }
-  else {
-    iVar2 = param_3 + -9;
-    if (iVar2 < 1) {
-      iVar2 = 1;
-    }
-    iVar3 = param_2 + 0x12;
-    do {
-      iVar4 = FUN_00230440(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
-      iVar3 = iVar3 + 1;
-    } while (iVar3 < param_3 + param_2 + 9);
-    iVar3 = iVar2 + 9;
-    pbVar5 = (byte *)(param_2 + 9 + iVar2 + 1);
-  }
-  if (iVar3 < param_4) {
-    pbVar1 = pbVar5 + (param_4 - iVar3);
-    do {
-      iVar4 = FUN_00230440(param_1,iVar4,10,*pbVar5 - 0x30);
-      pbVar5 = pbVar5 + 1;
-    } while (pbVar5 != pbVar1);
-  }
-  return iVar4;
-}
-
-
-// ===== FUN_002305a0 @ 002305a0 (29 bytes)
-
-int FUN_002305a0(undefined4 param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  
-  iVar1 = FUN_002303d0(param_1,1);
-  *(undefined4 *)(iVar1 + 0x14) = param_2;
-  *(undefined4 *)(iVar1 + 0x10) = 1;
-  return iVar1;
 }
 

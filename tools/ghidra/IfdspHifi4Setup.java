@@ -52,10 +52,13 @@ public class IfdspHifi4Setup extends GhidraScript {
         init("dsp_itcm", 0x24020000L, IMG0 + 0x20000, IMG0_LEN - 0x20000, true,
                 "DSP image 0, ResetVector @0x24020000, VECBASE @0x24020400");
         uninit("dsp_itcm_free", 0x24020000L + IMG0_LEN - 0x20000, 0x10000 - (IMG0_LEN - 0x20000), true, false);
-        // Image 1 = .rodata/.literal (0x200000..~0x207000), .text (..0x236800), then .data (float filter
-        // coefficient tables etc.). The first part is read-only so the decompiler resolves L32R literals.
-        init("sram_dsp_text", 0x00200000L, IMG1, 0x36800, true, "DSP image 1: rodata, literals, text");
+        // Image 1 = .rodata/.literal (0x200000..0x207CEF), .text (0x207CF0..0x2367FF), then .data (float filter
+        // coefficient tables etc.). Both read-only so the decompiler resolves L32R literals; the rodata is not
+        // executable, so analysis does not treat its tables as code space (T21j, from T22d).
+        init("sram_dsp_rodata", 0x00200000L, IMG1, 0x7CF0, false, "DSP image 1: rodata, l32r literal pool");
         mem.getBlock(toAddr(0x00200000L)).setWrite(false);
+        init("sram_dsp_text", 0x00207CF0L, IMG1 + 0x7CF0, 0x36800 - 0x7CF0, true, "DSP image 1: text");
+        mem.getBlock(toAddr(0x00207CF0L)).setWrite(false);
         init("sram_dsp_data", 0x00236800L, IMG1 + 0x36800, IMG1_LEN - 0x36800, false, "DSP image 1: .data");
         uninit("sram_dsp_bss", 0x00200000L + IMG1_LEN, 0x300000L - (0x00200000L + IMG1_LEN), false, false);
         uninit("sram_m33", 0x0, 0x200000L, false, false);

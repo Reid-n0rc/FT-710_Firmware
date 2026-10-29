@@ -329,7 +329,7 @@ undefined4 FUN_00209b30(undefined4 param_1,uint param_2)
     puVar3 = (undefined *)0x1c00000;
   }
   memw();
-  DAT_4013b0a4 = &DAT_00201000;
+  DAT_4013b0a4 = FLOAT_ARRAY_00201000;
   memw();
   uVar1 = DAT_4013b0a0;
   memw();

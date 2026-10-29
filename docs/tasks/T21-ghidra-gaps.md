@@ -456,7 +456,7 @@ correctness wins over B4 here.
   against the first T21i export: exactly the five helpers changed (`signature`), ApplySignatures 1,217 applied.
 
 ### T21j
-**Status:** in progress (2026-10-28). DISPLAY and IFDSP: apply T22d's recommended Ghidra fixes (items 1, 2, 3, 5 of its list).
+**Status:** done (2026-10-28). DISPLAY and IFDSP: apply T22d's recommended Ghidra fixes (items 1, 2, 3, 5 of its list).
 
 **Plan.**
 1. `tools/ghidra/ApplyData.java` + `data_<image>.tsv` (address, type, count, name, note): clears the range and applies the type;
@@ -474,6 +474,20 @@ correctness wins over B4 here.
    one job at a time; re-export; `decomp_quality.py compare` and `decomp_behavior_diff.py` per image; docs, board, sync.
 Left on purpose: the jump table at 0x206290 (no load of its address; needs a jump-table override for one 13-byte case), the
 other T22d "leave" items (fill, alignment, unreferenced stubs, unknown bytes).
+
+**Findings [fact].** Canonical rebuild of DISPLAY, M33 and HiFi4 (one Ghidra job at a time), all exports re-done; MAIN unchanged.
+- Scripts: `FixFuncEntries` DISPLAY 205 created, 28 late starts removed, 0 failed; M33 2 created, 1 removed; `ApplyData` DISPLAY 3/3,
+  M33 12/12, HiFi4 30/30 rows (29 data items after splitting at referenced elements), 0 failed.
+- Functions: DISPLAY 2,210 (0x2016385A replaces 0x2016385C); M33 426 → 427 (`SystemCoreClockUpdate` 0x0800143C replaces
+  0x0800143E, + 0x00087232); HiFi4 1,081 → 1,083 (+ idle thread 0x228B08, + 0x2287F8: once 0x2287FC was disassembled, analysis
+  found this `ret.n` through five pointers in `.data` 0x237A94–0x237AA4, the empty default handler; both are `EXTRA_ENTRIES` now,
+  and `flix_compare.py funcs`: 1,069 SRAM functions = reference list, MATCH).
+- `quality.tsv`: undefined non-0xFF bytes DISPLAY 242 → 86, M33 5,162 → 4,363, HiFi4 29,161 → 6,377; warnings and failures
+  unchanged; HiFi4 functions with `in_` variables 161 → 162 (the new idle thread reads CCOUNT).
+- `decomp_behavior_diff.py`: DISPLAY 2,208 unchanged (+ the moved entry); M33 412 unchanged, 6 moved, 7 `data`; HiFi4 1,044
+  unchanged, 8 moved, 16 `data`, 13 `other`, all checked in samples to be typed table reads (`*(undefined4 *)(&DAT_00204be0 + i*4)`
+  → `FLOAT_ARRAY_00204be0[i]`, `&DAT_00201900` → `FLOAT_ARRAY_00201900` as an FFT argument).
+- The idle thread shows T22e's cosmetic `wsr_ps` … `wsr_ps_5` (one pcodeop per iclass output for one `wsr.ps`); still open.
 
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
