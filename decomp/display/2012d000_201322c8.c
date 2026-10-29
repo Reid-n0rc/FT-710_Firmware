@@ -53,9 +53,11 @@ void FUN_2012d000(int param_1,short param_2,short param_3,int param_4,int param_
 }
 
 
-// ===== FUN_2012d19c @ 2012d19c (380 bytes)
+// ===== scope_area_frame_draw @ 2012d19c (380 bytes)
 
-void FUN_2012d19c(uint param_1)
+/* scope frame sprites (layout words 0x208004F4/F6) */
+
+void scope_area_frame_draw(uint param_1)
 
 {
   byte *pbVar1;
@@ -151,9 +153,11 @@ undefined4 FUN_2012d318(int param_1)
 }
 
 
-// ===== FUN_2012d3b8 @ 2012d3b8 (40 bytes)
+// ===== scope_mode_split @ 2012d3b8 (40 bytes)
 
-undefined4 FUN_2012d3b8(undefined4 param_1)
+/* byte 2 -> 0/1/2 spectrum/waterfall split (inference) */
+
+undefined4 scope_mode_split(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -171,9 +175,11 @@ undefined4 FUN_2012d3b8(undefined4 param_1)
 }
 
 
-// ===== FUN_2012d404 @ 2012d404 (36 bytes)
+// ===== scope_mode_sub @ 2012d404 (36 bytes)
 
-undefined4 FUN_2012d404(undefined4 param_1)
+/* byte 2 -> 0/1/2 sub-setting */
+
+undefined4 scope_mode_sub(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -193,9 +199,11 @@ undefined4 FUN_2012d404(undefined4 param_1)
 }
 
 
-// ===== FUN_2012d458 @ 2012d458 (28 bytes)
+// ===== scope_mode_is_2d @ 2012d458 (28 bytes)
 
-undefined4 FUN_2012d458(undefined4 param_1)
+/* byte 2: 0-2 -> 0 (3DSS), 3-11 -> 1 */
+
+undefined4 scope_mode_is_2d(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -215,21 +223,23 @@ undefined4 FUN_2012d458(undefined4 param_1)
 }
 
 
-// ===== FUN_2012d4a4 @ 2012d4a4 (164 bytes)
+// ===== scope_mode_decode @ 2012d4a4 (164 bytes)
 
-void FUN_2012d4a4(int param_1)
+/* packet 0x20 bytes 1-3 -> 0x20800482, 0x208004D0..D2 */
+
+void scope_mode_decode(int param_1)
 
 {
   if ((*(char *)(param_1 + 1) == '\0') || (*(char *)(param_1 + 1) != '\x01')) {
     DAT_20800482 = 0;
-    DAT_208004d0 = FUN_2012d458(*(undefined1 *)(param_1 + 2));
-    DAT_208004d1 = FUN_2012d404(*(undefined1 *)(param_1 + 2));
-    DAT_208004d2 = FUN_2012d3b8(*(undefined1 *)(param_1 + 2));
+    DAT_208004d0 = scope_mode_is_2d(*(undefined1 *)(param_1 + 2));
+    DAT_208004d1 = scope_mode_sub(*(undefined1 *)(param_1 + 2));
+    DAT_208004d2 = scope_mode_split(*(undefined1 *)(param_1 + 2));
   }
   else {
     DAT_20800482 = 1;
-    DAT_208004d0 = FUN_2012d458(*(undefined1 *)(param_1 + 2));
-    DAT_208004d1 = FUN_2012d404(*(undefined1 *)(param_1 + 2));
+    DAT_208004d0 = scope_mode_is_2d(*(undefined1 *)(param_1 + 2));
+    DAT_208004d1 = scope_mode_sub(*(undefined1 *)(param_1 + 2));
     DAT_208004d2 = 1;
   }
   if ((*(byte *)(param_1 + 3) & 4) != 0) {
@@ -239,9 +249,11 @@ void FUN_2012d4a4(int param_1)
 }
 
 
-// ===== FUN_2012d52c @ 2012d52c (864 bytes)
+// ===== scope_area_setup @ 2012d52c (864 bytes)
 
-void FUN_2012d52c(int param_1,int param_2,int param_3)
+/* packet 0x20 scope bytes changed: clear area, decode mode, reset history */
+
+void scope_area_setup(int param_1,int param_2,int param_3)
 
 {
   byte bVar1;
@@ -264,7 +276,7 @@ void FUN_2012d52c(int param_1,int param_2,int param_3)
      ((*(byte *)(param_1 + 3) & 7) == (*(byte *)(param_2 + 3) & 7))) {
     return;
   }
-  FUN_2012d4a4(param_1);
+  scope_mode_decode(param_1);
   if (iVar6 == 0) {
     local_2c = &DAT_2016d2d0;
     if (DAT_208004d0 == 0) {
@@ -303,7 +315,7 @@ void FUN_2012d52c(int param_1,int param_2,int param_3)
   DAT_208007c8 = 0;
   if (DAT_20800482 == '\0') {
     if (DAT_208004d0 == 0) {
-      FUN_2012d19c(0);
+      scope_area_frame_draw(0);
       gui_draw_runs32(uVar2,sVar8,4,local_2c);
       return;
     }
@@ -317,7 +329,7 @@ void FUN_2012d52c(int param_1,int param_2,int param_3)
     }
     uVar2 = FUN_2012d318(iVar6);
     FUN_20134444(uVar2,uVar4);
-    FUN_2012d19c(0);
+    scope_area_frame_draw(0);
     uVar3 = 1;
     uVar2 = 0;
     uVar5 = DAT_208004d2;
@@ -328,13 +340,13 @@ void FUN_2012d52c(int param_1,int param_2,int param_3)
       return;
     }
     if (DAT_208004d0 == 0) {
-      FUN_2012d19c(1);
+      scope_area_frame_draw(1);
       gui_draw_runs32(uVar2,sVar8,4,local_2c + 0x10);
     }
     else if (DAT_208004d0 == 1) {
       uVar3 = FUN_2012d318(iVar6);
       FUN_20134444(uVar3,uVar4);
-      FUN_2012d19c(1);
+      scope_area_frame_draw(1);
       FUN_2012d000(1,sVar8,1,1,iVar6);
     }
     else {
@@ -348,10 +360,10 @@ void FUN_2012d52c(int param_1,int param_2,int param_3)
       return;
     }
     gui_draw_runs(uVar2,0x12e,1,&DAT_2016d320);
-    FUN_2012d19c(3);
+    scope_area_frame_draw(3);
     FUN_2012d000(3,0x12e,1,1,iVar6);
     gui_draw_runs(uVar2,0x12e,0x192,&DAT_2016d320);
-    FUN_2012d19c(2);
+    scope_area_frame_draw(2);
     uVar3 = 0x192;
     sVar8 = 0x12e;
     uVar2 = 2;
@@ -811,7 +823,7 @@ LAB_2012e4d4:
     param_3 = 1;
   }
   FUN_2012d8bc(param_1,param_2,param_3);
-  FUN_2012d52c(param_1,param_2,param_3);
+  scope_area_setup(param_1,param_2,param_3);
   FUN_2012cf30(param_1,param_2,param_3);
   FUN_2012caac(param_1,param_2,param_3);
   FUN_2012c6c4(param_1,param_2,param_3);
@@ -870,9 +882,11 @@ void FUN_2012e678(int param_1,int param_2)
 }
 
 
-// ===== FUN_2012e6c8 @ 2012e6c8 (124 bytes)
+// ===== screen_saver_exit @ 2012e6c8 (124 bytes)
 
-void FUN_2012e6c8(void)
+/* layers back after 0x7B */
+
+void screen_saver_exit(void)
 
 {
   undefined4 uVar1;
@@ -1230,7 +1244,7 @@ LAB_2012ecdc:
       return;
     }
     if (((DAT_208f0b2a == 0x7b) && (local_270 != 0x7b)) &&
-       ((FUN_2012e6c8(&local_270), DAT_208f4636 != '\0' || (local_270 == 0x3a)))) {
+       ((screen_saver_exit(&local_270), DAT_208f4636 != '\0' || (local_270 == 0x3a)))) {
       FUN_2012616c(0);
     }
   }
@@ -1342,7 +1356,7 @@ LAB_2012f2d8:
 LAB_2012f2f8:
         if (((local_270 == 0x20 || local_270 == 0x39) || local_270 == 0x37) &&
            (DAT_208f0b2a != 0x70)) {
-          FUN_2012c4a0(&local_270);
+          audio_error_check(&local_270);
         }
       }
       else {
@@ -1376,7 +1390,7 @@ LAB_2012f320:
       if (iVar2 != 0) {
         if (local_270 == 0x39) {
           scr_vfo(&local_270,puVar6,uVar5);
-          FUN_201293f8(&local_270,uVar5);
+          vfo_audio_status_draw(&local_270,uVar5);
         }
         else if (local_270 < 0x3a) {
           if (local_270 == 0x31) {
@@ -2041,7 +2055,7 @@ LAB_20130450:
         }
       }
       else if ((DAT_20800483 == '\0') && (DAT_208f0b2a != 'z')) {
-        FUN_20124528();
+        scope_draw_frame();
         FUN_201244d8();
       }
       if (DAT_20800484 == '\0') {

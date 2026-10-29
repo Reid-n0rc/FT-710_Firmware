@@ -550,7 +550,7 @@ void update_error_screen(void)
   local_78 = auStack_74;
   local_7c = 0xbf;
   local_80 = 0x105;
-  FUN_20126a58(1,1,1,0);
+  confirm_dialog_draw(1,1,1,0);
   uVar6 = **(ushort **)(&DAT_2080228c + (uint)DAT_20800655 * 4) + 0x119 & 0xffff;
   uVar5 = (*(ushort **)(&DAT_2080228c + (uint)DAT_20800655 * 4))[1] + 0x11d & 0xffff;
   FUN_20159320();
@@ -637,7 +637,7 @@ void FUN_2015933c(void)
   undefined1 auStack_4c [68];
   
   FUN_20155310(auStack_4c,"INSERT FIRMWARE",0x44);
-  FUN_20126a58(1,1,3,0,0xe6,0xb7,auStack_4c);
+  confirm_dialog_draw(1,1,3,0,0xe6,0xb7,auStack_4c);
   return;
 }
 
@@ -2232,8 +2232,8 @@ void FUN_2015b8f8(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
   uVar2 = FUN_20134398(param_5);
   uVar3 = FUN_20134408(param_2);
   uVar4 = FUN_20134358(param_2,param_5);
-  FUN_2015bc6c(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,uVar4
-               ,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
+  scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
+                    uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
 }
 
@@ -2249,10 +2249,13 @@ void FUN_2015b9a8(void)
 }
 
 
-// ===== FUN_2015b9cc @ 2015b9cc (240 bytes)
+// ===== scope3d_render_large @ 2015b9cc (240 bytes)
 
-void FUN_2015b9cc(undefined4 *param_1,undefined4 param_2,int param_3,ushort *param_4,
-                 undefined4 param_5)
+/* mode 8: 29 lines, 222/274 rows */
+
+void scope3d_render_large
+               (undefined4 *param_1,undefined4 param_2,int param_3,ushort *param_4,
+               undefined4 param_5)
 
 {
   short sVar1;
@@ -2281,10 +2284,10 @@ void FUN_2015b9cc(undefined4 *param_1,undefined4 param_2,int param_3,ushort *par
     local_28 = CONCAT22(param_4[1],*param_4);
   }
   scope_history_push(DAT_208085b0,&local_28);
-  FUN_20134328(8,DAT_208085b0,param_3);
+  scope3d_add_line(8,DAT_208085b0,param_3);
   __aeabi_uidivmod(param_2,DAT_208085b0);
   if (extraout_r1 == 0) {
-    FUN_20134318(8,param_3);
+    scope3d_redraw_history(8,param_3);
   }
   FUN_20155274(*param_1,0x6b080);
   iVar2 = 1;
@@ -2327,16 +2330,19 @@ void FUN_2015bacc(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
   uVar2 = FUN_20134398(param_5);
   uVar3 = FUN_20134408(param_2);
   uVar4 = FUN_20134358(param_2,param_5);
-  FUN_2015bc6c(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,uVar4
-               ,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
+  scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
+                    uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
 }
 
 
-// ===== FUN_2015bb7c @ 2015bb7c (236 bytes)
+// ===== scope3d_render_small @ 2015bb7c (236 bytes)
 
-void FUN_2015bb7c(undefined4 *param_1,undefined4 param_2,int param_3,ushort *param_4,
-                 undefined4 param_5)
+/* mode 9: 14 lines, 104/156 rows */
+
+void scope3d_render_small
+               (undefined4 *param_1,undefined4 param_2,int param_3,ushort *param_4,
+               undefined4 param_5)
 
 {
   int extraout_r1;
@@ -2363,10 +2369,10 @@ void FUN_2015bb7c(undefined4 *param_1,undefined4 param_2,int param_3,ushort *par
     local_28 = CONCAT22(param_4[1],*param_4);
   }
   scope_history_push(DAT_208085b0,&local_28);
-  FUN_20134328(9,DAT_208085b0,param_3);
+  scope3d_add_line(9,DAT_208085b0,param_3);
   __aeabi_uidivmod(param_2,DAT_208085b0);
   if (extraout_r1 == 0) {
-    FUN_20134318(9,param_3);
+    scope3d_redraw_history(9,param_3);
   }
   uVar2 = *param_1;
   FUN_20155274(uVar2,unaff_r4 * 0x640);
@@ -2380,12 +2386,13 @@ void FUN_2015bb7c(undefined4 *param_1,undefined4 param_2,int param_3,ushort *par
 }
 
 
-// ===== FUN_2015bc6c @ 2015bc6c (484 bytes)
+// ===== scope3d_draw_line @ 2015bc6c (484 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* line i at x = 5i+4, width 791-10i */
 
-void FUN_2015bc6c(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6,
-                 ushort *param_7,int param_8,int param_9,int *param_10,int param_11)
+void scope3d_draw_line(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6,
+                      ushort *param_7,int param_8,int param_9,int *param_10,int param_11)
 
 {
   ushort uVar1;

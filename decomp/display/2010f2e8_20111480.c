@@ -379,7 +379,7 @@ undefined4 sd_make_dirs(void)
   
   FUN_20103bc8(1);
   itron_dly_tsk(0x14);
-  iVar1 = FUN_2013f984(0x49);
+  iVar1 = sd_format(0x49);
   if ((iVar1 != 0) && (iVar2 = sd_card_detect(), iVar2 != 0)) {
     iVar1 = -1;
     DAT_208001a2 = 5;
