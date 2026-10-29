@@ -775,7 +775,7 @@ void FUN_201571e8(int param_1)
 
 {
   memclr(param_1 + 0xb60,0x13178);
-  *(undefined4 *)(param_1 + 0x13cd8) = 0;
+  FUN_2016437c(param_1 + 0x13cd8);
   return;
 }
 
@@ -800,8 +800,7 @@ void FUN_201572f8(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0xb59) = 0;
-  memclr(param_1 + 0xb60,0x13178);
-  *(undefined4 *)(param_1 + 0x13cd8) = 0;
+  FUN_201571e8();
   return;
 }
 
@@ -832,8 +831,7 @@ void FUN_201575f8(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0xb59) = 0;
-  memclr(param_1 + 0xb60,0x13178);
-  *(undefined4 *)(param_1 + 0x13cd8) = 0;
+  FUN_201571e8();
   return;
 }
 
@@ -917,56 +915,16 @@ void FUN_201576f4(int param_1,int param_2)
 
 // ===== FUN_20157778 @ 20157778 (116 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x201552fe) */
-/* WARNING: Removing unreachable block (ram,0x201552f4) */
-/* WARNING: Removing unreachable block (ram,0x201552fc) */
-/* WARNING: Removing unreachable block (ram,0x20155302) */
-/* WARNING: Removing unreachable block (ram,0x20155308) */
-/* WARNING: Removing unreachable block (ram,0x2015530c) */
-
-undefined4 * FUN_20157778(int param_1)
+void FUN_20157778(int param_1)
 
 {
-  undefined4 *puVar1;
-  uint uVar2;
-  bool bVar3;
-  
   FUN_2015525c(param_1 + 0x9c7f,0x352,0xff);
   FUN_2015525c(param_1 + 0x9fd1,0x352,0xff);
   memclr(param_1 + 0x10abc,0x6798);
   FUN_20155274(param_1 + 0xa323,24000);
   memclr(param_1 + 0x17258,0x3ed4);
-  puVar1 = (undefined4 *)(param_1 + 0x100e4);
-  bVar3 = true;
-  uVar2 = 0x9b8;
-  do {
-    if (bVar3) {
-      *puVar1 = 0;
-      puVar1[1] = 0;
-      puVar1[2] = 0;
-      puVar1[3] = 0;
-      puVar1[4] = 0;
-      puVar1[5] = 0;
-      puVar1[6] = 0;
-      puVar1[7] = 0;
-      puVar1 = puVar1 + 8;
-      bVar3 = 0x1f < uVar2;
-      uVar2 = uVar2 - 0x20;
-    }
-  } while (bVar3);
-  if ((uVar2 & 0x10) != 0) {
-    *puVar1 = 0;
-    puVar1[1] = 0;
-    puVar1[2] = 0;
-    puVar1[3] = 0;
-    puVar1 = puVar1 + 4;
-  }
-  if ((int)(uVar2 << 0x1c) < 0) {
-    *puVar1 = 0;
-    puVar1[1] = 0;
-    puVar1 = puVar1 + 2;
-  }
-  return puVar1;
+  FUN_201552b8(param_1 + 0x100e4,0x9d8);
+  return;
 }
 
 
@@ -998,7 +956,7 @@ void FUN_201578c8(int param_1)
 
 // ===== FUN_20157c50 @ 20157c50 (224 bytes)
 
-undefined4 FUN_20157c50(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+void FUN_20157c50(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -1012,16 +970,19 @@ undefined4 FUN_20157c50(int param_1,int param_2,undefined4 param_3,undefined4 pa
     iVar1 = param_1 + 0x9fea;
   }
   if (param_2 == 8) {
-    FUN_201633a0(param_1,param_3,iVar1,param_4,0xff);
-    return DAT_20473b78;
+    FUN_201633a0(param_1,param_3,iVar1,param_4);
+    FUN_20164674(0x20470330);
+    return;
   }
   if (param_2 == 9) {
-    FUN_201633a0(param_1 + 0x1e00,param_3,iVar1,param_4,0xff);
-    return DAT_20474c64;
+    FUN_201633a0(param_1 + 0x1e00,param_3,iVar1,param_4);
+    FUN_20164654(0x20473b7c);
+    return;
   }
 LAB_20157cc4:
-  FUN_201633a0(param_1 + 0x2d00,param_3,iVar1,param_4,0xff);
-  return DAT_2047032c;
+  FUN_201633a0(param_1 + 0x2d00,param_3,iVar1,param_4);
+  FUN_2016466c(0x204702a4);
+  return;
 }
 
 
@@ -1210,43 +1171,13 @@ int FUN_20158590(int param_1)
 
 // ===== FUN_20158618 @ 20158618 (24 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x201552fe) */
-/* WARNING: Removing unreachable block (ram,0x201552f4) */
-/* WARNING: Removing unreachable block (ram,0x201552e4) */
-/* WARNING: Removing unreachable block (ram,0x201552ea) */
-/* WARNING: Removing unreachable block (ram,0x201552fc) */
-/* WARNING: Removing unreachable block (ram,0x20155302) */
-/* WARNING: Removing unreachable block (ram,0x20155308) */
-/* WARNING: Removing unreachable block (ram,0x2015530c) */
-
-undefined4 * FUN_20158618(int param_1)
+void FUN_20158618(int param_1)
 
 {
-  undefined4 *puVar1;
-  uint uVar2;
-  bool bVar3;
-  
   *(undefined2 *)(param_1 + 4) = 0;
   *(undefined2 *)(param_1 + 6) = 0;
-  puVar1 = (undefined4 *)(param_1 + 8);
-  bVar3 = true;
-  uVar2 = 0x60;
-  do {
-    if (bVar3) {
-      *puVar1 = 0;
-      puVar1[1] = 0;
-      puVar1[2] = 0;
-      puVar1[3] = 0;
-      puVar1[4] = 0;
-      puVar1[5] = 0;
-      puVar1[6] = 0;
-      puVar1[7] = 0;
-      puVar1 = puVar1 + 8;
-      bVar3 = 0x1f < uVar2;
-      uVar2 = uVar2 - 0x20;
-    }
-  } while (bVar3);
-  return puVar1;
+  FUN_201552b8(param_1 + 8,0x80);
+  return;
 }
 
 
@@ -1254,19 +1185,11 @@ undefined4 * FUN_20158618(int param_1)
 
 /* gets a free 0x408-byte buffer */
 
-undefined4 mainlink_tx_alloc(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void mainlink_tx_alloc(int param_1)
 
 {
-  int iVar1;
-  undefined4 uVar2;
-  undefined4 uStack_10;
-  
-  uStack_10 = param_4;
-  FUN_201571b8(&uStack_10,*(undefined4 *)(param_1 + 0x81a0),1);
-  iVar1 = FUN_201643f0(param_1 + 0x811c);
-  uVar2 = *(undefined4 *)(param_1 + 0x811c + iVar1 * 4 + 4);
-  FUN_201571d4(&uStack_10);
-  return uVar2;
+  FUN_201644ac(param_1 + 0x811c);
+  return;
 }
 
 
