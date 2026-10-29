@@ -21,7 +21,7 @@ an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time thr
 |---|---|---|---|
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33 (RT685) register labels, same TSV format and `ApplySfr.java` | apply + re-export | todo |
-| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | todo |
+| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
@@ -119,12 +119,88 @@ Rules for every sub-task:
 - Add each image's TSV and ranges to `IMAGES` in `tools/readability_stats.py` so its "Registers named" column fills in.
 
 ## T23c — Global state structs
-- For each hot base (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a` with 462 references, `DAT_0001ff12` …): list
-  every offset and access width from the C (a script over `decomp/main`, output `build/`), name the fields from
-  `docs/code/main/radio-control.md`, `eeprom.md`, `menu.md` and the CAT handlers (a CAT handler that reads offset X for
-  command `YY` names field X), and write the struct as a committed C header or TSV (`tools/ghidra/structs_main.h`).
-- Apply with a new `ApplyStructs.java` (parse the header with Ghidra's C parser, then retype the globals); re-export.
-- Field names must cite their evidence ([fact] address or [inference]) in a comment in the header.
+
+**Status:** MAIN done in a per-task Ghidra copy (2026-10-29); the apply to the canonical project and the re-export of
+`decomp/main` are the parent's step (below). DISPLAY is open.
+
+### Approach
+1. `tools/ghidra/StructAccessDump.java` (read-only) decompiles every function and lists each RAM global access with its
+   width from the high p-code. The C text alone cannot give widths: `DAT_00020b08` is a u16 (it is compared with 0x7DD),
+   yet the decompiler prints it without a cast **[fact]**.
+2. `tools/struct_offsets.py scan decomp/main build/t23c/off --access build/t23c/access.tsv` lists every offset per block
+   with its widths, reference forms (`PTR[0x..]`, `*(type *)(PTR + 0x..)`, `PTR + 0x..`, absolute `DAT_`, `&DAT_`) and
+   the functions that use it (output in `build/`, not committed).
+3. The fields were named from `docs/code/main/*.md`, `docs/memory-maps.md`, `docs/cat-commands*.md` and the CAT
+   handlers; the operating-state block from the 314 menu descriptors (`tools/main_menu_table.py`, RAM address per item)
+   and cfg105 from its 261 alignment labels (ROM 0xFFF817C3). Accessed fields without a known meaning get neutral names
+   `f_0xOFF_u8/u16/u32` with the widths and some users in the comment.
+4. `tools/ghidra/structs_main.h` holds the result (valid C, `gcc -fsyntax-only` passes), and `tools/ghidra/ApplyStructs.java`
+   applies it with its own line parser (simpler and more predictable headless than Ghidra's CParser; the format is
+   described at the top of the header).
+
+### Findings
+- **One UI/radio state block, not eleven.** All eleven `.data` pointers 0x25D38, 0x25D4C, 0x25D54..0x25D60, 0x25D6C..0x25D7C
+  hold 0x20B04, and 0x25D50 holds 0x4659 (cfg105) **[fact]**. The highest offset used through them is +0x490, and the next
+  object starts at 0x20F98 (u32s at 0x20F98..0x20FCC), so `struct ui_state` is 0x494 bytes **[fact for the accesses;
+  the padding to 0x494 is an inference]**. 0x25D34 points to 0x203F4 and is the heap break of the C library's `sbrk`
+  (`PTR_DAT_00025d34 + n <= &DAT_000207f4`), not a struct **[fact]**.
+- The 31 bytes at UI +0x48 are a **copy of the selected PRESET** (menu EX06): `FUN_fffc4d93` copies 0x9B2E + 0x1F·n there,
+  and the per-mode setters (AGC delays 0x20B5B.., LCUT/HCUT, TX BPF, MOD GAIN, the CAT-1 baud rate 0x20B58 and time-out
+  0x20B59) read it instead of the menu values while 0x9DC6 is set **[fact]**. So `struct preset` describes both.
+- UI +0x409 is a **"key consumed" flag**: the press handlers set it (`FUN_fffc0b2f` sets it on every branch) and `key_task`
+  skips `key_call_short`/`key_call_long` while it is set **[fact]**.
+- UI +0xC2 holds **five 50-byte message texts** (the stride 0x32 shows in the accesses at +0xC2/+0xF4/+0x126/+0x158/+0x18A)
+  **[fact]**; UI +0x2ED is the 0x109-byte answer buffer of DISPLAY frames C3/C4/C5 **[fact]**.
+- The 90-byte record keeps multi-byte values big-endian and the code reads them byte by byte (`[0x4a]`..`[0x4d]` appear
+  ten times each, a 4-byte read only five times) **[fact]**, so those fields are byte arrays named `*_be`.
+- `vfo_rec_ptr` (0xFFFB324C) now returns `struct vfo_rec *`; its callers print `pvVar->blk[i].notch_be` instead of
+  `pbVar[0x13]` (109 `->mode`, 108 `->flags1`, 44 `->blk[].flags2`, … in the export) **[fact]**.
+
+### Result (per-task copy `ghidra/FT710_MAIN_T23c`)
+| Structure | Size | Fields | Neutral `f_0x..` | Instances |
+|---|---|---|---|---|
+| `ui_state` | 0x494 | 265 | 69 | `g_ui` 0x20B04 + 11 pointers |
+| `opstate` | 0x45C | 296 | 5 | `g_opstate` 0x9A2A |
+| `cfg105` | 0x105 | 261 | 0 | `g_cfg105` 0x4659 + pointer 0x25D50 |
+| `vfo_rec` / `mode_blk` / `preset` | 0x5A / 0xA / 0x1F | 14 / 6 / 19 | 0 | `bandstack_a/b[3][12]`, `memch[133]`, `qmb[10]`, `vfo_a/b`, `memtune_a/b`, `presets[5]`, `preset_active` |
+| `ee_hdr` / `mem_hdr` / `qmb_hdr` | 10 / 0x87 / 0x11 | 3 / 3 / 6 | 0 / 0 / 2 | 0x464F / 0x60C9 / 0x9012 |
+| scalars and arrays | | | | `cat_error` 0x464A (462 references), `cat_spn_save_pending`, `cat_port`, `rf_gain_alt`, `dest_code[3]`, `bandstack_level_a/b[12]` |
+
+873 fields in 9 structures, 29 typed globals, 1 return type. `ApplyStructs: 9 structures, 873 fields, 29 globals (931 data
+units replaced, 17 labels), 1 return types, 0 errors`; a second run replaces nothing (idempotent) **[fact]**.
+`tools/struct_offsets.py fields` on the export: **8,835 accesses print as named fields** and 672 as neutral `f_0x..`
+fields; of the 9,175 raw block accesses in the committed `decomp/main` (`PTR_DAT_00025d54[0x86]`, `DAT_0000464a`, …) 3
+are left (`DAT_0000464e`, not declared). `tools/decomp_quality.py compare decomp/main/quality.tsv` → no metric worse,
+warnings 1249 → 1246, functions with a warning 371 → 368, "Globals starting with '_' overlap smaller symbols" 29 → 26.
+The retyped pointers get Ghidra's default label for a pointer to `g_ui`: `PTR_DAT_00025d54` now prints as
+`PTR_g_ui_00025d54` (the address stays in the name, so a search for `00025d54` still finds both forms).
+
+Before / after (`FUN_fffc0b2f`, `FUN_fffe2622`, `cat_TS`):
+```c
+if (PTR_DAT_00025d54[0x86] == '\x01') { ... PTR_DAT_00025d54[0x409] = 1;      /* before */
+if (PTR_g_ui_00025d54->dialog_shown == 1) { ... PTR_g_ui_00025d54->key_consumed = 1;   /* after */
+cVar1 = PTR_DAT_00025d6c[0xbe];  if (cVar1 == '\x06') ...                       /* before */
+bVar1 = PTR_g_ui_00025d6c->kbd_target;  if (bVar1 == 6) ...                    /* after */
+if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
+```
+
+### Open steps
+1. Parent: apply to the canonical project (MAIN heap 3 GB):
+   `tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra -postScript ApplyStructs.java tools/ghidra/structs_main.h`,
+   then re-export (`tools/bootstrap.sh --only export`), `decomp_quality.py compare`, `readability_stats.py readme`, and
+   commit the project and `decomp/main` together. `build_main` in `tools/bootstrap.sh` already runs `ApplyStructs.java`
+   after `ApplySignatures.java` (both files are in its stamp list).
+2. Docs that cite `PTR_DAT_00025dxx[0x..]` or `DAT_0000464a` can keep doing so; new text should use the field names.
+3. Name the 76 neutral fields as their meaning is found (the largest: UI +0x3F7 (44 uses), +0x43A (36), +0x46B (32),
+   +0x468 (29)); 0x1FF12 (301 references, the value a menu `on_step` returns) and 0x464E are scalars outside these blocks.
+4. DISPLAY: the same scan and header for its big blocks (`struct_offsets.py` takes a different `BLOCKS` table).
+
+### Redo
+- New firmware: re-run `StructAccessDump.java` and `struct_offsets.py scan --access` on the new export; offsets that are new
+  or changed width show up as rows the header does not cover. The block addresses move with the build, so check the
+  pointer table in `.data` (`tools/ghidra/StructAccessDump.java` output, kind `ptr`) and the menu table first.
+- New information: edit the field in `structs_main.h` (name, type, tag, evidence) and re-apply; `ApplyStructs.java`
+  replaces the structures in place.
 
 ## T23d — Library identification
 - MAIN: CC-RX runtime (`_INITSCT`, stdio, `malloc`, the helpers for 64-bit and float arithmetic) and the Renesas

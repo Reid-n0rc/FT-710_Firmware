@@ -371,9 +371,9 @@ G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
   local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
-    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
+    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyStructs"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
@@ -382,7 +382,8 @@ build_main() {
     -postScript FixFuncEntries.java "$G/entries_main_menu.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
-    -postScript ApplySignatures.java "$G/signatures_main.tsv"
+    -postScript ApplySignatures.java "$G/signatures_main.tsv" \
+    -postScript ApplyStructs.java "$G/structs_main.h"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {
