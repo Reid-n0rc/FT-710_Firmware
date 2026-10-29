@@ -246,9 +246,16 @@ Notes **[fact unless marked]**:
   `meter_s` 0xFFFB7959 uses `S-MTR +40` and a 10-segment ROM curve (0xFFF88BFC) **[fact]**. The only ROM pointer table into the TX
   rows, 0xFFF8861C (`sdr_upd_r25_tx_drive`), reads the `TXG` offsets +2..+14 only, and `FUN_fffb667a` reads the `FALC` offsets and
   +1 **[fact]**. No frame carries the table to the DISPLAY in binary ([display/mainlink.md](../display/mainlink.md)). So in V01-12
-  these items are dead: aligned values are stored and shown but have no effect **[inference: the remaining gap is a ROM pointer
-  table not visible in the decompile; a Ghidra data-xref listing on 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683 and 0x46A2.. would
-  close it]**. The fixed ROM curves were probably fitted to the `POS` defaults; the curve values are in ROM and not in the
+  these items are dead: aligned values are stored and shown but have no effect **[fact for MAIN, #205 Ghidra check]**. Ghidra has no
+  reference at all to 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683, the band-row `MTR` bytes 0x46A2/A5/A8/AB + 15·*b* or 0x473B/3E/41;
+  the referenced row bytes are only +0, +1, +3, +6, +9, +12 (`FUN_fffb667a`) and the row starts in the pointer table 0xFFF8861C..0xFFF88644
+  **[fact]**. The code that keeps 0x4659 in a register and adds a constant was read in the listing: `main_dac_update` uses +22..+25,
+  `pa_dac_update` +1, +49..+56, +58..+68 and +234..+244, `FUN_fffb667a` only the `FALC` and 100 W `MTR` offsets above **[fact]**. The
+  other users of the base or of the pointer 0x25D50 are by index or whole-table: `FUN_fff9c555`, `cat_SP_table`, `cal_adjust`, the
+  `align_store_*` handlers, `eeprom_load_all`, `eeprom_save_cfg105`, `settings_defaults`, `vdd_scale_calc` (items 001 and 015) and
+  `align_ialc_park` 0xFFFBBA9F, which, while an `I-ALC` item (059..069, index 0x3A..0x44 in 0x20CE2) is selected, saves that band's
+  100 W `FALC` and `TXG` (row +0, +2; 50 W on 70 MHz) to 0x12167/0x12168, sets them to 0xFF and restores them when the selection moves
+  **[fact]**. This matches `tools/rx_const_refs.py`. The fixed ROM curves were probably fitted to the `POS` defaults; the curve values are in ROM and not in the
   decompile, so that is **[guess]** until the bytes at 0xFFF88C74/0xFFF88BFC are read from the image.
 - **`DBG MODE ENABLE` (008, 0x4660)** (#205) **[fact]**:
   - `displink_build_60` 0xFFF96241: if UI +0x32 (0x20B36, the boot error code) is 0 and 0x4660 ≠ 0, it sends 0xDB in that field.

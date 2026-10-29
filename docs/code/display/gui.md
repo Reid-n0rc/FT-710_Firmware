@@ -303,9 +303,15 @@ the 0x41 screen **[fact for the dispatch, inference for the label order]**. That
 `FUN_fffc6b34` / `FUN_fffc6b86`, which step the same SCAN / TYPE bits **[fact]**.
 
 Still open: slots **28** (id 0x3A: `displink_build_31` has an empty formatter, `FUN_fff99d42`) and **34–36** (ids 0x40–0x42) have title sprites in
-the DISPLAY, but no store of these ids is in the MAIN V01-12 export **[fact: grep of `decomp/main` for `[0x1c2] =` and `DAT_00020cc6 =`]**.
-A store through another pointer, which a Ghidra xref on 0x20CC6 would find, or rendering the sprites 0x208029E8[28, 34–36] with
-`tools/display_assets.py` (this needs the decoded image), would settle them. Slot 64's DISPLAY entries also still need the image.
+the DISPLAY, but MAIN V01-12 never stores these ids **[fact, #178 listing check]**: Ghidra lists 68 writers of 0x20CC6, and every one is
+`mov.b #imm, 0x1C2[r14]` (the same 68 are the only stores to `450[rN]` in an `rx-elf-objdump` sweep of the image; no instruction loads the
+address 0x20CC6 itself). The immediates are 0–13, 0x1E, 0x1F, 0x22–0x25, 0x27–0x2D, 0x30–0x33, 0x38, 0x39, 0x43–0x45, 0x47–0x49, 0x55,
+0x58, 0x5E and 0xFF, so 0x3A and 0x40–0x42 are never stored, and they are not passed to the popup-time lookup `FUN_fffc8cbb` either
+**[fact]**. The same check shows that the on/off ids 0x26 (PROC), 0x2F (BK-IN) and 0x46 (KEYER) are not stored either: `FUN_fffc754b`,
+`FUN_fffc79b8` and `FUN_fffc7975` pass them only to `FUN_fffc8cbb` and then start the popup timer (`FUN_fffc8d8c`: 0x1B4EF, UI +0x1C0/+0x1C1 = 1)
+without writing +0x1C2 **[fact]**, so the popup then shows whatever id was stored last **[inference]**. Slots 28 and 34–36 are leftovers
+for this firmware pair **[inference]**; their titles still need the sprites 0x208029E8[28, 34–36] rendered with `tools/display_assets.py`
+(this needs the decoded image). Slot 64's DISPLAY entries also still need the image.
 
 ## Scope drawing (#83)
 
@@ -417,8 +423,13 @@ description and `SS` sel 7 (AF-FFT ATT, OSC level / time) **[inference]**.
 So this is a scope-area **decoder / keyboard-text terminal** (RTTY or PSK text, judging by the restricted character sets) **[inference]**. It
 is dormant in this firmware pair: the SCIF4 link that `task_uart4_rx` reads is never started (`uart4_link_init` has no caller,
 [mainlink.md](mainlink.md#10-the-unused-scif4-link-fact)). MAIN's byte-3 builder `FUN_fff96f3e` sets only bits 4–7, and the Japanese
-operating manual describes no decoder screen. Ghidra reports one removed unreachable block at 0xFFF96F69, so a listing check of `FUN_fff96f3e` would confirm
-that bit 2 is never sent **[fact for the code read; inference that the view is unreachable]**.
+operating manual describes no decoder screen. **Listing check (#178):** the "unreachable block at 0xFFF96F69" is not machine code. 0xFFF96F69 is
+`SHLL #7, R1`, and the removed block is the p-code branch of that instruction for a shift count of 0 (`CBRANCH` on `count == 0` in the
+flag semantics), which a constant count of 7 can never take **[fact: PcodeDump of fff96f69]**. The function (fff96f3e..fff96fb6) has no other
+branch: bit 7 = active VFO (0x9DBD) or its inverse when UI +0x405 = 1, then exactly one of bit 5 (0x9C5E = 1), bit 6 (UI +0x425/+0x426
+of the active VFO non-zero) or bit 4 (else), and it returns that byte at fff96fb5 **[fact]**. `displink_build_status` stores the result
+straight into frame byte 3 (fff964e4 `bsr`, fff964ed `mov.b r1, [0x16A0 + 3]`) and Ghidra has no other reference to 0x16A3 **[fact]**. So
+MAIN V01-12 never sets byte 3 bit 2, and the text view cannot be selected from MAIN **[fact for MAIN; inference that the view is unreachable]**.
 
 ```mermaid
 flowchart TD
@@ -611,4 +622,4 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 - Which physical keys the codes 0x303–0x311 are (combos 4 and 6): [input.md](input.md) (T11f).
 - What the MAIN firmware does to send packet 0x64 (LCD test) or 0x34: a MAIN-side menu or service key sequence (T10).
 - Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Done (#178): the value-popup slots are mapped from MAIN's popup id (slot = id − 0x1E, [table](#screen-layout-data2-coordinate-words-83)); the 2D / 3DSS-front / oscilloscope / AF-FFT renderers and the third (text) view are decoded ([Scope drawing](#scope-drawing-83)).
-- Still open (#178): slots 28 and 34–36 (sprite titles, no MAIN V01-12 store found: needs a Ghidra xref on 0x20CC6 or rendering the sprites 0x208029E8[28, 34–36] from the decoded image) and slot 64's DISPLAY entries. The spectrum heights in the u16 table 0x203A1EE0[0..7] and the text-view layout words 0x208084E8–0x2080850A are initialised data, so they need the image (`tools/display_layout.py`-style read). Who sets the `range` pair 0x208007D4 non-zero is not visible in the decompile (struct store; needs a Ghidra xref). Whether MAIN can ever set packet 0x20 byte 3 bit 2 needs a listing check of the unreachable block at 0xFFF96F69.
+- Still open (#178): the titles of slots 28 and 34–36 (MAIN V01-12 never stores their ids, settled by the listing check; the sprites 0x208029E8[28, 34–36] still need rendering from the decoded image) and slot 64's DISPLAY entries. The spectrum heights in the u16 table 0x203A1EE0[0..7] and the text-view layout words 0x208084E8–0x2080850A are initialised data, so they need the image (`tools/display_layout.py`-style read). Who sets the `range` pair 0x208007D4 non-zero is not visible in the decompile (struct store; needs a Ghidra xref). Done (#178): MAIN never sets packet 0x20 byte 3 bit 2 (the block Ghidra removes at 0xFFF96F69 is SHLL p-code, see [the text view](#scope-drawing-83)).
