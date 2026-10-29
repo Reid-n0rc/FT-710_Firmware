@@ -2227,3 +2227,7 @@ fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) =
 fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
 fffc47dd	preamp_step	Record +0x05 bits 0-1: IPO(0) -> AMP1(2) -> AMP2(3) -> IPO, beep 1 [fact]; the IPO key [inference] (#205)
 fffc4850	preamp_ipo	Record +0x05 bits 0-1 = 0 (IPO), beep 2 [fact] (#205)
+fff88bfc	@s_meter_curve	10 x {f32 slope, f32 offset, f32 limit} (limit at +8): S-meter position = slope*x + offset, x = cfg 0x4681 (S-MTR +40) - dsp_signal_level, first row with x <= limit; limits -120..40 hit positions 33..255 = S-MTR 2..+60 defaults (meter_s) [fact] (#205)
+fff88c74	@po_meter_curve	8 x {f32 watts, f32 slope, f32 offset}: PO position = slope*P + offset for the first row with P >= watts (100, 50, 40, 30, 20, 10, 5, 0 W); hits 196/138/89/64/46 = PO MTR POS defaults (meter_po) [fact] (#205)
+fff8861c	@tx_row_ptrs	11 x u32 cfg105 TX-row pointers (0x469E + 15*band, 70 MHz 0x4734); sdr_upd_r25_tx_drive reads +2/+5/+8/+11/+14 (TXG) only [fact] (#205)
+fffc4b3d	vfo_filter_byte_ptr	Returns VFO-A/B record (0x9D09/0x9D63) + the per-mode filter byte offset (+0x0B/+0x15/+0x1F/+0x29/+0x33/+0x3D by mode nibble) [fact: disassembly]; the decompile shows void (#205)
