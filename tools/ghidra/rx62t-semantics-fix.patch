@@ -1,0 +1,282 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -136,6 +136,29 @@
+ 	$(S_flag) = (result s< 0);
+ }
+ 
++## T22a (#104): ADC/SBB with the carry-in taken before the flags change (manual R01US0071EJ0100 ADC p. 59, SBB p. 181).
++macro adcOp(dst, src) {
++	local a:4 = dst;
++	local b:4 = src;
++	local c:4 = zext($(C_flag));
++	local r:4 = a + b + c;
++	$(C_flag) = carry(a, b) || carry(a + b, c);
++	$(O_flag) = ((a ^ r) & (b ^ r)) s< 0;
++	dst = r;
++	setResultFlags(r);
++}
++
++macro sbbOp(dst, src) {
++	local a:4 = dst;
++	local b:4 = src;
++	local bw:4 = zext($(C_flag) == 0);
++	local r:4 = a - b - bw;
++	$(C_flag) = (a > b) || ((a == b) && (bw == 0));
++	$(O_flag) = ((a ^ b) & (a ^ r)) s< 0;
++	dst = r;
++	setResultFlags(r);
++}
++
+ macro setAddCarryFlags(op1,op2) {
+ 	$(C_flag) = (carry(op1,zext($(C_flag))) || carry(op2,op1 + zext($(C_flag))));
+ }
+@@ -321,7 +344,9 @@
+ 
+ 
+ ## Memory infix version of LD source operand with displacement that scales by size of data
+-ld_src: szld_src          is mode_ld = 0x3  & szld_src         [ mode_sz = mode_mi; ] { build szld_src; export szld_src; }
++## T22a fix (#104): ld = 11 means Rs (32 bits, manual R01US0071EJ0100 SUB (2) code p. 296, SUB p. 195, CMP p. 75); the memex of the
++## memory forms (UB for 4x/5x/FC xx) must not apply, the module used zext(Rs:1) for SUB/CMP/AND/OR/DIV/DIVU/ITOF/... Rs,Rd.
++ld_src: reg4_4            is mode_ld = 0x3  & reg4_4               { export reg4_4; }
+ ld_src: szld_src^szdsc    is mode_ld != 0x3 & szld_src & szdsc [ mode_sz = mode_mi; ] { build szld_src; export szld_src; }
+ 
+ ldu_src: szldu_src        is mode_ld = 0x3  & szldu_src         [ mode_sz = mode_mi; ] { build szldu_src; export szldu_src; }
+@@ -440,27 +465,18 @@
+ ### ADC src, dest
+ ### ADC #SIMM, Rd
+ :ADC liop, reg0_4 is op0_8 = 0xFD; (op4_4 = 0x7 & li2_2 & ld0_2 = 0x0); (op4_4 = 0x2 & reg0_4); liop [ mode_li = li2_2; ] {
+-     setAddCarryFlags(reg0_4, liop);
+-     setAddOverflowFlags(reg0_4, liop);
+-     reg0_4 = reg0_4 + liop + zext($(C_flag));
+-     setResultFlags(reg0_4);
++     adcOp(reg0_4, liop);   # T22a fix: the sum used the new C
+ }
+ 
+ ## ADC Rs, Rd
+ :ADC reg4_4, reg0_4 is op0_8 = 0xFC; op0_8 = 0x0B; reg4_4 & reg0_4 {
+-     setAddCarryFlags(reg0_4, reg4_4);
+-     setAddOverflowFlags(reg0_4, reg4_4);
+-     reg0_4 = reg0_4 + reg4_4 + zext($(C_flag));
+-     setResultFlags(reg0_4);
++     adcOp(reg0_4, reg4_4);   # T22a fix: the sum used the new C
+ }
+ 
+ ## ADC dsp[Rs].L, Rd
+ :ADC ld_src, reg0_4 is op0_8 = 0x06; (mi6_2 = 0x02 & mi6_2 & op2_4 = 0x08 & ld0_2 < 0b11 & ld0_2); op0_8 = 0x02; (reg4_4 & reg0_4) ... & ld_src
+ 	[ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+-	setAddCarryFlags(ld_src, reg0_4);
+-	setAddOverflowFlags(ld_src, reg0_4);
+-	reg0_4 = reg0_4 + ld_src + zext($(C_flag));
+-	setResultFlags(reg0_4);
++	adcOp(reg0_4, ld_src);   # T22a fix: the sum used the new C
+ }
+ 
+ # ADD - addition without carry
+@@ -561,7 +577,7 @@
+ 
+ ## BCLR Rs, dsp[Rd]
+ :BCLR reg0_4, ld_dst       is op0_8 = 0xFC; op2_6 = 0b11001 & ld0_2 != 0b11 & ld0_2; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = 0; ] {
+-	*:4 ld_dst = (*:4 ld_dst) & ~(1 << (reg0_4 & 31));
++	*:1 ld_dst = (*:1 ld_dst) & ~(1 << (reg0_4:1 & 7));   # T22a fix (#104): was a 32-bit access, bit & 31
+ }
+ 
+ 
+@@ -629,7 +645,7 @@
+ 
+ ## BNOT reg, dsp[Rd]
+ :BNOT reg0_4, ld_dst    is op0_8 = 0xFC; op2_6 = 0b11011 & ld0_2 != 0b11 & ld0_2; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = 0; ] {
+-	*:4 ld_dst = (*:4 ld_dst) ^ (1 << (reg0_4 & 31));
++	*:1 ld_dst = (*:1 ld_dst) ^ (1 << (reg0_4:1 & 7));   # T22a fix (#104): was a 32-bit access, bit & 31
+ }
+ 
+ ## BNOT #IMM:5, reg
+@@ -697,8 +713,8 @@
+ 
+ ## BSET Rs, dsp[Rd]
+ :BSET reg0_4, ld_dst    is op0_8 = 0xFC; op2_6 = 0b11000 & ld0_2 != 0b11 & ld0_2; reg0_4 ... & ld_dst [ mode_ld = ld0_2; mode_mi = 0; ] {
+-	local bitmask:4 = 1 << (reg0_4 & 31);
+-	*:4 ld_dst = (*:4 ld_dst) | bitmask;
++	local bitmask:1 = 1 << (reg0_4:1 & 7);   # T22a fix (#104): was a 32-bit access, bit & 31
++	*:1 ld_dst = (*:1 ld_dst) | bitmask;
+ }
+ 
+ ## BSET #IMM:5, Rd
+@@ -835,8 +851,9 @@
+ # DIV
+ ## DIV #SIMM, Rd
+ :DIV liop, reg0_4    is op0_8 = 0xFD; op4_4 = 0x7 & li2_2 & op0_2 = 0b00; op4_4 = 8 & reg0_4; liop [ mode_li = li2_2; ] {
+-	if (liop == 0 || (liop == -2147483648 && reg0_4 == -1)) goto <overflow>;
++	if (liop == 0 || (reg0_4 == 0x80000000 && liop == -1)) goto <overflow>;   # T22a fix: operands were swapped
+ 		reg0_4 = reg0_4 s/ liop;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -846,8 +863,9 @@
+ ## DIV dsp[Rs].memex, Rd
+ ## when memex == UB or src == Rs
+ :DIV ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1000 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+-	if (ld_src == 0 || (ld_src == -2147483648 && reg0_4 == -1)) goto <overflow>;
++	if (ld_src == 0 || (reg0_4 == 0x80000000 && ld_src == -1)) goto <overflow>;   # T22a fix: operands were swapped
+ 		reg0_4 = reg0_4 s/ ld_src;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -856,8 +874,9 @@
+ 
+ ## when memex != UB
+ :DIV  ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0b1000 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x08; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+-	if (ld_src == 0 || (ld_src == -2147483648 && reg0_4 == -1)) goto <overflow>;
++	if (ld_src == 0 || (reg0_4 == 0x80000000 && ld_src == -1)) goto <overflow>;   # T22a fix: operands were swapped
+ 		reg0_4 = reg0_4 s/ ld_src;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -870,6 +889,7 @@
+ :DIVU liop, reg0_4    is op0_8 = 0xFD; op4_4 = 0x7 & li2_2 & op0_2 = 0b00; op4_4 = 0x9 & reg0_4; liop [ mode_li = li2_2; ] {
+ 	if (liop == 0) goto <overflow>;
+ 		reg0_4 = reg0_4 / liop;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -881,6 +901,7 @@
+ :DIVU ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b1001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+ 	if (ld_src == 0) goto <overflow>;
+ 		reg0_4 = reg0_4 / ld_src;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -891,6 +912,7 @@
+ :DIVU ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0b1000 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x09; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+ 	if (ld_src == 0) goto <overflow>;
+ 		reg0_4 = reg0_4 / ld_src;
++		$(O_flag) = 0;   # T22a fix: O is cleared without overflow
+ 		goto <end>;
+ 	<overflow>
+ 		$(O_flag) = 1;
+@@ -1111,6 +1133,8 @@
+     # TODO: Use RM bits of FPSW for rounding mode
+     # TODO: FPSW flags
+     reg0_4 = int2float(ld_src);
++    $(Z_flag) = (reg0_4 == 0);   # T22a fix (#104): Z/S were not set
++    $(S_flag) = (reg0_4 s< 0);
+ }
+ 
+ ## when memex != UB
+@@ -1118,6 +1142,8 @@
+     # TODO: Use RM bits of FPSW for rounding mode
+     # TODO: FPSW flags
+     reg0_4 = int2float(ld_src);
++    $(Z_flag) = (reg0_4 == 0);   # T22a fix (#104): Z/S were not set
++    $(S_flag) = (reg0_4 s< 0);
+ }
+ 
+ 
+@@ -1131,7 +1157,7 @@
+ :JSR reg0_4    is op0_8 = 0x7F; op4_4 = 0x1 & reg0_4 {
+ 	local tmp:4 = inst_next;
+ 	push32(tmp);
+-	PC = reg0_4;
++	call [reg0_4];   # T22a fix (#104): was "PC = reg0_4" (no branch; the decompiler dropped the call)
+ }
+ 
+ 
+@@ -1721,28 +1747,18 @@
+ 
+ ## ROLC - rotation with carry to left
+ :ROLC reg0_4    is op0_8 = 0x7E; op4_4 = 0x5 & reg0_4 {
+-    local highbit:1 = reg0_4[31,1];
+-    $(C_flag) = highbit;
+-    reg0_4 = reg0_4 << 1;
+-
+-    if (highbit == 0) goto <end>;
+-    reg0_4 = reg0_4 | 1;
+-
+-    <end>
++    local oldc:4 = zext($(C_flag));   # T22a fix (#104): shift in the old C (was the old MSB)
++    $(C_flag) = reg0_4[31,1];
++    reg0_4 = (reg0_4 << 1) | oldc;
+     setResultFlags(reg0_4);
+ }
+ 
+ 
+ ## RORC - rotation with carry to right
+ :RORC reg0_4    is op0_8 = 0x7E; op4_4 = 0x4 & reg0_4 {
+-    local lowbit:1 = reg0_4[0,1];
+-    $(C_flag) = lowbit;
+-    reg0_4 = reg0_4 >> 1;
+-
+-    if (lowbit == 0) goto <end>;
+-    reg0_4[31,1] = 1;
+-
+-    <end>
++    local oldc:4 = zext($(C_flag));   # T22a fix (#104): shift in the old C (was the old LSB)
++    $(C_flag) = reg0_4[0,1];
++    reg0_4 = (reg0_4 >> 1) | (oldc << 31);
+     setResultFlags(reg0_4);
+ }
+ 
+@@ -1934,21 +1950,13 @@
+ ## SBB - subtraction with borrow
+ ### (1) SBB Rs, Rd
+ :SBB reg4_4, reg0_4    is op0_8 = 0xFC; op0_8 = 0x03; reg4_4 & reg0_4 {
+-    local tmp:4 = reg4_4 - zext(($(C_flag) == 0));
+-    setSubtractFlags(reg0_4, tmp);
+-    setSubtractOverflowFlags(reg0_4, tmp);
+-    reg0_4 = reg0_4 - tmp;
+-    setResultFlags(reg0_4);
++    sbbOp(reg0_4, reg4_4);   # T22a fix: was dest - (src - !C)
+ }
+ 
+ 
+ ### (2) SBB dsp[Rs], Rd
+ :SBB ld_src, reg0_4    is op0_8 = 0x06; op2_6 = 0b101000 & ld0_2 < 3 & ld0_2; op0_8 = 0x00; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x2; ] {
+-    local tmp:4 = ld_src - zext(($(C_flag) == 0));
+-    setSubtractFlags(reg0_4, tmp);
+-    setSubtractOverflowFlags(reg0_4, tmp);
+-    reg0_4 = reg0_4 - tmp;
+-    setResultFlags(reg0_4);
++    sbbOp(reg0_4, ld_src);   # T22a fix: was dest - (src - !C)
+ }
+ 
+ 
+@@ -2041,7 +2049,7 @@
+     local carrybit = (original >> (shift - 1)) & 1;
+     reg0_4 = original s>> shift;
+     $(C_flag) = carrybit:1;
+-    setResultFlags(reg4_4);
++    setResultFlags(reg0_4);   # T22a fix: was the source Rs
+     $(O_flag) = 0;
+ }
+ 
+@@ -2061,7 +2069,7 @@
+     if (shift == 0) goto <unseto>;
+     local tmp:4 = original >> (32 - shift - 1);
+     if (tmp == 0) goto <unseto>;
+-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
++    if (tmp == ((1 << (shift + 1)) - 1)) goto <unseto>;   # T22a fix: MSB + n shifted-out bits = n+1 ones
+     goto <seto>;
+ 
+     <unseto>
+@@ -2085,7 +2093,7 @@
+     if (shift == 0) goto <unseto>;
+     local tmp:4 = original >> (32 - shift - 1);
+     if (tmp == 0) goto <unseto>;
+-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
++    if (tmp == ((1 << (shift + 1)) - 1)) goto <unseto>;   # T22a fix: MSB + n shifted-out bits = n+1 ones
+     goto <seto>;
+ 
+     <unseto>
+@@ -2109,7 +2117,7 @@
+     if (shift == 0) goto <unseto>;
+     local tmp:4 = original >> (32 - shift - 1);
+     if (tmp == 0) goto <unseto>;
+-    if (tmp == ((1 << shift) - 1)) goto <unseto>;
++    if (tmp == ((1 << (shift + 1)) - 1)) goto <unseto>;   # T22a fix: MSB + n shifted-out bits = n+1 ones
+     goto <seto>;
+ 
+     <unseto>

@@ -5,8 +5,8 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
 
 ## Export stats
 - Ghidra 12.1.4 project `ghidra/FT710_DISPLAY`. Pipeline: `DisplaySetup.java` (preScript) → auto-analysis → `DisplayFindCode.java` (pointer-table,
-  prologue and orphan-code passes) → `FixFuncEntries.java tools/ghidra/entries_display.tsv` (T11) → `ApplyNames.java tools/ghidra/names_display.tsv` →
-  `ExportDecomp.java decomp/display 50`.
+  prologue and orphan-code passes) → `FixFuncEntries.java tools/ghidra/entries_display.tsv` (T11) → `DisplayJumpTables.java apply` → `DisplayGaps.java <starts.tsv> <fragments.tsv> .text define`
+  (T21e) → `ApplyNames.java tools/ghidra/names_display.tsv` → `ExportDecomp.java decomp/display 50`. `tools/bootstrap.sh` runs these steps; the commands are below.
 - T11 (2026-10-27): the project was rebuilt on the Linux host and the re-export matched the T06 commit byte for byte. `FixFuncEntries.java` then
   created 14 function entries that analysis had missed (RTOS task entries such as `task_root` 0x201170C8, which start with an `ldr` before the
   `push`, so the prologue pass had started them 4–8 bytes late or the previous function had swallowed them). Detailed docs: `docs/code/display/`.
@@ -16,9 +16,71 @@ Source: `build/FT-710_DISPLAY_V0108.bin` (RZ/A1H Cortex-A9, `ARM:LE:32:v7`, base
   50 functions each, about 81k lines (2.0 MB). Before T17: 2041 exported, 151 named.
 - Code coverage of `.text` (0x20100000–0x20165177, 414,072 B): about 95% instructions and 4% data (literal pools, tables). About 2.7 KB of small
   unreferenced fragments remain undefined.
+- T21e (#97 B6–B8; measured on a scratch rebuild; T21g rebuilt the canonical project with these steps and re-exported, identical to T21e's fresh rebuild, all 772 names kept): 86 ARM jump-table sites, all
+  switches with every case (before: 80 of the 85 then disassembled; the five RSPI helpers `rspi_open/start/stop/reset_buffers/wait_tx_end` were not: they
+  carried a RETURN flow override and stray references from a table guessed one word early). 137 new entries in
+  `entries_display.tsv` (dead helpers after a return, tail-branch targets that analysis had merged into another function, one
+  Thumb function reached from a .data table): 2210 functions exported (was 2087), 0 decompile failures, no call target inside a
+  function body. Undefined non-0xFF bytes in `.text`: 4,258 → 242 (15 fragments, all in the armcc Thumb library: fplib code
+  reached through inline-parameter calls, lookup tables). The other fragments are defined as data (`T21e B8:` EOL comments).
+  Warning counts of the 2076 functions that exist before and after are unchanged; the 134 new functions add 46 warnings.
+- T21j (#97, from T22d): the Thumb function in the `.data` table 0x2042807C starts at 0x2016385A (`movs r0, #0` first; T21e's
+  0x2016385C lost that argument); `data_display.tsv` types the printf sign-prefix tables 0x20154B64/0x20154BE0 as `char[4][4]`
+  (`""`, `"-"`, `"+"`, `" "`) and the fplib reciprocal seed table 0x20164C00 as `byte[128]`. Undefined non-0xFF bytes 242 → 86.
+- Rebuild commands (from the repo root; `tools/bootstrap.sh --only ghidra` runs the same steps):
+  ```sh
+  H="tools/ghidra-headless.sh $PWD/ghidra FT710_DISPLAY"; P="-process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra"
+  $H -import build/FT-710_DISPLAY_V0108.bin -overwrite -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
+     -scriptPath tools/ghidra -preScript DisplaySetup.java -analysisTimeoutPerFile 3600
+  $H $P -analysisTimeoutPerFile 3600 -postScript DisplayFindCode.java      # twice
+  $H $P -postScript FixFuncEntries.java tools/ghidra/entries_display.tsv
+  $H $P -postScript DisplayJumpTables.java apply /tmp/jumptables.tsv
+  $H $P -postScript DisplayGaps.java /tmp/gaps_starts.tsv /tmp/gaps_fragments.tsv .text define
+  $H $P -postScript ApplyNames.java tools/ghidra/names_display.tsv
+  $H $P -readOnly -postScript ExportDecomp.java decomp/display 50
+  # tests (read only): every jump-table site a full switch; no call target inside a body; remaining fragments
+  $H $P -readOnly -postScript DisplayJumpTables.java check -postScript DisplayGaps.java /tmp/starts.tsv /tmp/fragments.tsv
+  ```
 - `functions.tsv` lists entry, name, size, reference count, and file for every exported function.
 - File names are `<first entry>_<last entry>.c`. The first file starts with two stub "functions" at 0x18400000/0x18A00000. These are the
   jump targets into the flash banks, not real code in this image.
+
+## Decompile quality (`quality.tsv`)
+Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same decompile pass as the `.c` files (T21f, #97 B11). `tools/bootstrap.sh verify` fails if any count is higher than in the committed file, so a gap cannot come back unnoticed after a re-import. Lower is better for every row except the function count. Warning kinds are the decompiler's `WARNING:` comments with addresses and numbers replaced by `#`. Regenerate the table with
+`python3 -I tools/decomp_quality.py index decomp/display/INDEX.md DISPLAY=decomp/display/quality.tsv`.
+
+<!-- quality:begin -->
+<!-- generated by tools/decomp_quality.py index from quality.tsv (ExportDecomp.java); do not edit by hand -->
+
+| Metric | DISPLAY |
+|---|---:|
+| Functions exported (non-thunk) | 2,210 |
+| Decompile failures | 0 |
+| Decompiler warnings (all kinds) | 393 |
+| Functions with a warning | 96 |
+| "Unable to track spacebase" | 0 |
+| "Removing unreachable block" | 267 |
+| `halt_baddata()` calls | 4 |
+| Functions with `halt_baddata()` | 4 |
+| Functions with `in_*` variables | 61 |
+| Functions with `unaff_*` variables | 63 |
+| Functions with `extraout_*` variables | 80 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 182 |
+| Undefined non-0xFF bytes in executable blocks | 86 |
+| … in block `.text` | 86 |
+| Error bookmarks | 1 |
+| "Bad Instruction" bookmarks | 1 |
+| warning: Bad instruction - Truncating control flow here | 4 |
+| warning: Control flow encountered bad instruction data | 4 |
+| warning: Could not find normalized switch variable to match jumptable | 10 |
+| warning: Could not recover jumptable at #. Too many branches | 17 |
+| warning: Do nothing block with infinite loop | 6 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 13 |
+| warning: Removing unreachable block (#) | 267 |
+| warning: This code block may not be properly labeled as switch case | 50 |
+| warning: Treating indirect jump as call | 17 |
+| warning: Type propagation algorithm not settling | 5 |
+<!-- quality:end -->
 
 ## Notable functions
 Names are **[inference]** unless noted. "File" is the export file that holds the function.
@@ -26,13 +88,13 @@ Names are **[inference]** unless noted. "File" is the export file that holds the
 ### Startup / runtime
 | Address | Name | Notes | File |
 |---|---|---|---|
-| 0x2010002C | `Reset_Handler` | Vector 0. Relocates the image to 0x20100000 if it runs elsewhere **[fact]** | 18400000_20101ba4.c |
-| 0x20100080 | `reset_in_ram` | SPIBSC0 init, bank select, copies the rest of the image **[fact]** | 18400000_20101ba4.c |
-| 0x20100ABC | `boot_select_bank` | Flags at 0x183E0000/0x183F0000 → calls 0x18400000 or 0x18A00000. Uses SPIBSC1 reg 0x3FEFB018 as a "stage ran" marker **[fact]** | 18400000_20101ba4.c |
-| 0x20100828 | `spibsc0_init` | SPI flash controller setup | 18400000_20101ba4.c |
-| 0x20100BC8 / 0x20100BFC / 0x20100C60 | `__scatterload` / `__decompress` / `__scatterload_zeroinit` | armcc runtime **[fact]** | 18400000_20101ba4.c |
-| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20116ec8_20118598.c |
-| 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20101ba4.c |
+| 0x2010002C | `Reset_Handler` | Vector 0. Relocates the image to 0x20100000 if it runs elsewhere **[fact]** | 18400000_20100f64.c |
+| 0x20100080 | `reset_in_ram` | SPIBSC0 init, bank select, copies the rest of the image **[fact]** | 18400000_20100f64.c |
+| 0x20100ABC | `boot_select_bank` | Flags at 0x183E0000/0x183F0000 → calls 0x18400000 or 0x18A00000. Uses SPIBSC1 reg 0x3FEFB018 as a "stage ran" marker **[fact]** | 18400000_20100f64.c |
+| 0x20100828 | `spibsc0_init` | SPI flash controller setup | 18400000_20100f64.c |
+| 0x20100BC8 / 0x20100BFC / 0x20100C60 | `__scatterload` / `__decompress` / `__scatterload_zeroinit` | armcc runtime **[fact]** | 18400000_20100f64.c |
+| 0x20117294 | `main` | Called from `__rt_entry`. Creates the first task, then loops | 20116368_20117728.c |
+| 0x201001D8 | `IRQ_Handler` | Calls the GIC dispatcher 0x201176B4 | 18400000_20100f64.c |
 
 ### RTOS (NORTi µITRON 4.0 kernel from MiSPO; string `NORTi(c)MiSPO` at 0x20156290 **[fact]**)
 | Address | Name | Notes |

@@ -1,0 +1,14 @@
+# FT-710 IFDSP Cortex-M33: data types (T21j, from T22d). Applied with ApplyData.java after IfdspM33Names.java.
+# address<TAB>type<TAB>count<TAB>name<TAB>comment
+0x08000400	byte	512	flexspi_fcfb	FlexSPI NOR configuration block ("FCFB" tag), read by the boot ROM; see docs/memory-maps.md
+0x08001830	pointer	1		-> "Cortex-M33"
+0x08001834	string	5
+0x08001839	string	11
+0x00087d84	byte	256	ctype_table	C ctype table: digits 0x20, upper 0x10, lower 0x08
+0x0008795c	string	2
+0x00087cb1	string	3
+0x00087cb4	string	3
+0x00087e84	string	2
+0x00087e86	string	2
+0x00087e8f	string	3
+0x00087e92	string	3

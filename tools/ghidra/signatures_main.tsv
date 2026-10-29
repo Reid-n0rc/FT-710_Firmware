@@ -1,0 +1,1223 @@
+# FT-710 MAIN V01-12 function signatures (T21d, #97 B3), applied with ApplySignatures.java after ApplyNames.java.
+# address<TAB>name<TAB>return type<TAB>parameters ("type [name][@stack:N], ..." or void; unnamed = param_N)<TAB>source<TAB>note
+# source: doc = reviewed against the disassembly and docs/code/main (kept by tools/signatures_draft.py);
+#         asm = drafted by tools/signatures_draft.py from CallArgCheck.java protos (overwritten on redraft).
+# Types: void bool char int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double, '*' for pointers.
+# CC-RX: parameters R1..R4 in order, return R1 (64-bit R1:R2, low word in R1).
+fff8f658	main	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8f65e	R_Systeminit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8f7ec	hardware_setup	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8f8f5	_INIT_IOLIB	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8f9dd	_CLOSEALL	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8facd	FUN_fff8facd	uint32	int32, void *, int32	asm	asm: live-in R1:L,R2:L,R3:L, 1/1 call sites read R1, return load SL
+fff8fbdb	PowerON_Reset	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff8fc4d	FUN_fff8fc4d	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load -
+fff8fc57	FUN_fff8fc57	uint8	uint32, void *	asm	asm: live-in R1:L,R2:L, 0/1 call sites read R1, return load UB
+fff8ff5f	bsp_callbacks_clear	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8ffc4	bsp_interrupt_open	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff8fffb	R_BSP_InterruptWrite	uint32	int32, int32	asm	asm: live-in R1:L,R2:L, 0/17 call sites read R1, return load SL
+fff90097	R_BSP_InterruptControl	uint32	uint32, int32, void *	asm	asm: live-in R1:L,R2:L,R3:L, 0/88 call sites read R1, return load SL
+fff90181	FUN_fff90181	uint32	char, uint32 *	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load SL
+fff901f8	FUN_fff901f8	uint32	int32, char, uint32	asm	asm: live-in R1:L,R2:B,R3:L, 2/2 call sites read R1, return load SL
+fff9089e	FUN_fff9089e	uint32	int32	asm	asm: live-in R1:L, 0/2 call sites read R1, return load SL
+fff90c76	FUN_fff90c76	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
+fff90d85	FUN_fff90d85	uint32	int32, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load SL
+fff90e3c	FUN_fff90e3c	uint32	int32	asm	asm: live-in R1:L, 1/1 call sites read R1, return load SL
+fff90f9b	FUN_fff90f9b	uint32	int32, uint32, char *	asm	asm: live-in R1:L,R2:L,R3:L, 0/6 call sites read R1, return load SL
+fff91303	FUN_fff91303	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
+fff913d7	hw_init_clock	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff916ac	FUN_fff916ac	uint32	int32, char	asm	asm: live-in R1:L,R2:B, 2/2 call sites read R1, return load SL
+fff92014	icu_select_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff927a9	R_IWDT_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff927ce	iwdt_refresh	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff927e5	R_DA_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92826	R_DA0_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9283d	dac0_write	void	uint16	asm	asm: live-in R1:W, 0/3 call sites read R1, return load -
+fff92851	R_S12AD0_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff929f7	R_S12AD0_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92a13	R_S12AD0_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92a31	R_S12AD0_Get_ValueResult	void	int32, void *	asm	asm: live-in R1:L,R2:L, 0/6 call sites read R1, return load -
+fff92b01	r_s12ad0_scan_end_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff92b17	R_S12AD1_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92c74	R_S12AD1_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92c90	R_S12AD1_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff92cae	R_S12AD1_Get_ValueResult	void	uint32, void *	asm	asm: live-in R1:L,R2:L, 0/4 call sites read R1, return load -
+fff92e0f	r_s12ad1_scan_end_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff92e49	R_Pins_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9321f	R_SCI0_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff932c2	R_SCI0_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93302	R_SCI0_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9336a	R_SCI0_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/2 call sites read R1, return load UW
+fff933ae	R_SCI0_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff9340d	R_SCI0_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9340e	r_sci0_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff9345a	r_sci0_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff9347f	r_sci0_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff934f1	r_sci0_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff93518	r_sci0_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9351d	r_sci0_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9352c	r_sci0_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9352d	r_sci0_rx_byte_hook	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9354e	R_SCI1_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff935ef	R_SCI1_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93697	R_SCI1_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/2 call sites read R1, return load UW
+fff936db	R_SCI1_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff9373a	R_SCI1_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9373b	r_sci1_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff93787	r_sci1_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff937ac	r_sci1_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff9381e	r_sci1_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff93845	r_sci1_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93846	r_sci1_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9384b	r_sci1_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9384c	displink_rx_frame_len	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93a86	R_SCI2_Create	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fff93b29	R_SCI2_Start	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff93b69	R_SCI2_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93bd1	R_SCI2_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/3 call sites read R1, return load UW
+fff93c15	R_SCI2_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/2 call sites read R1, return load UW
+fff93c7b	R_SCI2_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93c7c	r_sci2_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff93cc8	r_sci2_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff93ced	r_sci2_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff93d5f	r_sci2_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff93d86	r_sci2_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93d97	r_sci2_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93db3	r_sci2_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93db4	sci2_rx_byte_hook	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93f0d	R_SCI3_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93fb0	R_SCI3_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff93ff0	R_SCI3_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94058	R_SCI3_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/2 call sites read R1, return load UW
+fff9409c	R_SCI3_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff940fb	R_SCI3_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff940fc	r_sci3_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff94148	r_sci3_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff9416d	r_sci3_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff941df	r_sci3_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff94206	r_sci3_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9420b	r_sci3_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9421a	r_sci3_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9421b	sci3_rx_byte_hook	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9423c	R_SCI4_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff942df	R_SCI4_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94387	R_SCI4_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff943cb	R_SCI4_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff9442a	R_SCI4_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9442b	r_sci4_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff94477	r_sci4_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff9449c	r_sci4_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff9450e	r_sci4_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff94535	r_sci4_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94536	sci4_rx_frame_done	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94547	r_sci4_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94548	sci4_rx_frame_len	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94662	R_SCI5_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94705	R_SCI5_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94745	R_SCI5_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff947ad	R_SCI5_Serial_Receive	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff947f1	R_SCI5_Serial_Send	uint16	uint32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load UW
+fff94850	R_SCI5_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94851	r_sci5_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fff9489d	r_sci5_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff948c2	r_sci5_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff94934	r_sci5_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fff9495b	r_sci5_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9495c	r_sci5_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94961	r_sci5_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94962	sci5_rx_byte_hook	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff949b4	R_TPU0_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94a38	R_TPU0_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94a57	r_tpu0_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff94a65	R_TPU1_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94acd	R_TPU1_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94adc	R_TPU1_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94aec	r_tpu1_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fff94afa	app_main	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94b8b	main_loop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94bcd	ver_main	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load -
+fff94bf1	ver_display	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load SL
+fff94c2d	ver_dsp	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load SL
+fff94c39	ver_dsp_set	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff94c4b	ver_sdr	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load SL
+fff94cab	qmb_boot_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff94d6f	displink_task	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff951ff	displink_tx_poll	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff95277	displink_rx_len_of	uint16	char	asm	asm: live-in R1:B, 1/1 call sites read R1, return load UW
+fff95331	displink_rx_dispatch	void	char *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff9541e	displink_rx_ack	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff95469	displink_rx_nak	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9546a	displink_rx_F0_hello	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff957e6	displink_rx_F1_sys	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95829	displink_rx_E0_key	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff9588b	displink_rx_E1_encoder	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95a64	ui_numentry_step	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff95ace	ui_numentry_to_bcd	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff95bf4	displink_rx_E2	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95c6a	displink_rx_E4	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff95c74	displink_rx_E5	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff95c8a	displink_rx_E6_beep	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95cbc	displink_rx_E7	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95dad	displink_rx_E8	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95e65	displink_rx_C3	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95e97	displink_rx_C4_C5	void	int32	asm	asm: live-in R1:L, 0/2 call sites read R1, return load -
+fff95ed3	displink_rx_E3_clock	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff95f26	displink_send_ack	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff95f3f	displink_send_nak	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff95f58	displink_tx_schedule	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff96209	displink_tx_resend	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff96225	displink_tx_60_hello	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff96241	displink_build_60	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff96455	displink_build_status	uint16	void	asm	asm: live-in -, 0/3 call sites read R1, return load SW
+fff9772f	scope_span_index	uint8	uint8	asm	asm: live-in R1:B, 5/5 call sites read R1, return load UB
+fff97784	range_cmp3	uint8	uint32 * v, uint32 * range	doc	0 if *v < range[0], 1 if *v > range[1], else 2 [fact, 0xFFF97784]
+fff9782b	FUN_fff9782b	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff97ba6	FUN_fff97ba6	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff97cf7	FUN_fff97cf7	uint8	char, uint8 *	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load UB
+fff97ebf	FUN_fff97ebf	uint8	char, uint8	asm	asm: live-in R1:B,R2:B, 5/5 call sites read R1, return load UB
+fff9810e	FUN_fff9810e	void	char, uint32	asm	asm: live-in R1:B,R2:L, 0/3 call sites read R1, return load -
+fff981ba	FUN_fff981ba	void	char, int32, char, uint32	asm	asm: live-in R1:B,R2:L,R3:B,R4:L, 0/3 call sites read R1, return load -
+fff982aa	FUN_fff982aa	void	uint8, uint32, uint32	asm	asm: live-in R1:B,R2:L,R3:L, 0/2 call sites read R1, return load -
+fff98566	disp_put_op_freq	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff985c5	disp_put_tx_freq	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff985f5	disp_put_dial_freq	void	void *	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff98691	disp_put_scope_start	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fff986e0	displink_tx_64	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98797	power_down_save	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98869	displink_tx_7C	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9889c	displink_tx_7B	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff988f2	displink_tx_7A	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98925	displink_tx_70	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9894f	displink_build_70	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98bcd	displink_tx_req	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98c1f	displink_build_req	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98e39	displink_tx_23	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98e96	displink_build_23	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98ecb	displink_tx_30_31	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fff98f7c	displink_tx_34	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff98fb1	displink_build_30	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff99297	displink_build_31	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff99669	FUN_fff99669	uint32	void	asm	asm: live-in -, 3/3 call sites read R1, return load SL
+fff99877	FUN_fff99877	uint32	void	asm	asm: live-in -, 4/4 call sites read R1, return load SL
+fff9a06e	displink_build_34	void	uint8, uint8	asm	asm: live-in R1:B,R2:B, 0/1 call sites read R1, return load -
+fff9a0cc	displink_tx_65_clock	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a100	displink_build_65	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a17d	displink_tx_24	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a1a7	displink_build_24	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a2d1	displink_tx_50	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff9a2fb	displink_build_50	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a89b	displink_tx_3F	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a8e3	displink_tx_3A	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9a925	displink_build_3A	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9aaad	displink_tx_40	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9aaf7	displink_build_40	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9ab2a	displink_tx_37	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9ab57	displink_build_37	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9b69e	displink_tx_39	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9b6c8	displink_build_39	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9bb23	displink_tx_41	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9bb50	displink_build_41	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9c1a1	FUN_fff9c1a1	void	char *, char *	asm	asm: live-in R1:L,R2:L, 0/3 call sites read R1, return load -
+fff9c42a	displink_tx_20_status	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9c454	displink_build_20	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9c46d	displink_tx_62	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9c49a	displink_build_62	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9c5b2	displink_tx_start	void	uint16	asm	asm: live-in R1:W, 0/25 call sites read R1, return load -
+fff9c5d8	displink_put_sum	void	int32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load -
+fff9c60f	displink_check_sum	bool	int32, int16	asm	asm: live-in R1:L,R2:W, 1/1 call sites read R1, return load UB
+fff9c655	mem_zero	void	uint16, int32	asm	asm: live-in R1:W,R2:L, 0/29 call sites read R1, return load -
+fff9c667	displink_copy_if_changed	uint8	int32, int32, uint16	asm	asm: live-in R1:L,R2:L,R3:W, 13/13 call sites read R1, return load UB
+fff9c6ab	FUN_fff9c6ab	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load SL
+fff9cb8e	power_on_request	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9cba4	FUN_fff9cba4	uint32	uint32, uint8	asm	asm: live-in R1:L,R2:B, 3/3 call sites read R1, return load SL
+fff9cc77	FUN_fff9cc77	void	char, uint32 *	asm	asm: live-in R1:B,R2:L, 0/5 call sites read R1, return load -
+fff9cdb0	FUN_fff9cdb0	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9cee1	freq_cache_update	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff9d06c	dsp_link_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d1b9	dsp_link_poll	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff9d7f0	dsp_status1_raw	uint16	void	doc	DSP status word 0x1B636 [fact]
+fff9d800	dsp_fm_noise	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fff9d838	dsp_tone_detect	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fff9d857	dsp_comp_level	uint16	void	asm	asm: live-in -, 2/2 call sites read R1, return load UW
+fff9d866	dsp_signal_level	uint16	void	asm	asm: live-in -, 2/2 call sites read R1, return load UW
+fff9d895	dsp_tune_offset	uint16	void	asm	asm: live-in -, 2/2 call sites read R1, return load UW
+fff9d8a4	dsp_reg_access	uint8	uint16, void *, char	asm	asm: live-in R1:W,R2:L,R3:B, 1/1 call sites read R1, return load UB
+fff9d94d	dsp_isp_request	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d957	dsp_read_version	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d967	dsp_read_status1	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fff9d977	dsp_read_status2	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d987	dsp_read_status3	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d997	dsp_read_status4	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9d9a7	dsp_set_demod	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9da09	dsp_set_r08	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9da3c	dsp_set_r09	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9da6f	dsp_set_r0a	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9daa2	dsp_set_r0c	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dad1	dsp_set_r0d	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9db04	dsp_set_r0e	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9db37	dsp_set_r0f	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9db66	dsp_set_r11	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9db97	dsp_set_r12	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dbc6	dsp_set_r13	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dbf7	dsp_set_tx_gain	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dc8a	dsp_set_vox_gain	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dce4	dsp_set_antivox	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9dd6a	dsp_set_peq_freq	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9dee6	dsp_set_peq_level	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9dfd5	dsp_set_peq_bw	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9e0ad	dsp_set_proc	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e12b	dsp_set_tx_bpf	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e21f	dsp_set_r30	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e26b	dsp_set_r31	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e330	dsp_set_r32	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e3f5	dsp_set_amc_release	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e480	dsp_set_amc_level	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e51c	dsp_set_ctcss_enc	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e5b4	dsp_set_r36	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e5e4	dsp_set_r37	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e614	dsp_set_r38	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e644	dsp_set_fm_flag	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9e6b9	dsp_set_r3b	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e750	dsp_set_dnr_r40	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9e7c4	dsp_set_dnf	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9e871	dsp_set_contour	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9e9a4	dsp_set_contour_level	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9e9fa	dsp_set_contour_width	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9ea39	dsp_set_apf	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9eae7	dsp_set_hcut	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9ed0e	dsp_set_lcut	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9ef34	dsp_set_tone_freq	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9f0b1	dsp_set_tone_gain	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9f291	dsp_set_tone_type	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9f400	dsp_set_r51	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f430	dsp_set_am_notch	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f4c8	dsp_set_ctcss_dec	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f54b	dsp_set_r56	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f57b	dsp_set_affft_att	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f5c6	dsp_set_osc	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9f638	dsp_set_cw_pitch	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9f681	dsp_set_agc	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9fb6e	dsp_set_freq_range_param	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9fc2a	dsp_set_rf_gain	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9fca0	dsp_set_r68	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9fcd0	dsp_set_dnr_400b	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9fd51	dsp_set_dnr_400d	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9fdd2	dsp_set_aess	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fff9fe2a	dsp_set_dnr_4022	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9feaf	dsp_set_dnr_4023	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9ff30	dsp_set_dnr_4025	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fff9ffb1	dsp_set_dnr_4026	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa0032	dsp_status1_filter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa0140	dsp_status2_filter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa01f2	dsp_status3_filter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa0265	dsp_status4_filter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa037a	dsp_shadow_store	void	void	asm	asm: live-in -, 0/4 call sites read R1, return load -
+fffa0ad6	dsp_check_reply	uint8	char, void *	asm	asm: live-in R1:B,R2:L, 6/6 call sites read R1, return load UB
+fffa0b4c	dsp_send_frame	void	char	asm	asm: live-in R1:B, 0/67 call sites read R1, return load -
+fffa0c01	dsp_sum8	char	int32, uint8	asm	asm: live-in R1:L,R2:B, 3/3 call sites read R1, return load UB
+fffa0c2e	dsp_reply_sum_ok	uint8	int32, uint8	asm	asm: live-in R1:L,R2:B, 1/1 call sites read R1, return load UB
+fffa0c79	dsp_isp_bridge	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa0e3a	dsp_route_param	uint16	uint16	asm	asm: live-in R1:W, 7/7 call sites read R1, return load UW
+fffa1132	sdr_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa11ed	sdr_task	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffa1485	sdr_reg_access	uint8	uint16, void *, char	asm	asm: live-in R1:W,R2:L,R3:B, 1/1 call sites read R1, return load UB
+fffa150c	scope_level_ptr	uint32	uint32, uint8	asm	asm: live-in R1:L,R2:B, 4/4 call sites read R1, return load SL
+fffa1541	scope_span_ptr	uint32	uint32	asm	asm: live-in R1:L, 4/4 call sites read R1, return load SL
+fffa1576	sdr_bridge_request	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1580	sdr_req_reg0	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1590	sdr_req_reg1	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa15a0	sdr_upd_r03	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa15f3	sdr_upd_r04	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa162c	sdr_upd_r08_tx_freq	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1738	sdr_upd_r0a_demod	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa17dc	sdr_upd_r0b_band	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa183d	sdr_upd_r0c_rtty_shift	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa18ae	sdr_upd_r0d	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa18f8	sdr_upd_r0e	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1929	sdr_upd_r0f_band	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa19ac	sdr_upd_r12	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa19dd	sdr_upd_r13	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1a0e	sdr_upd_r14_mode	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1a8a	sdr_init_r15	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1abb	sdr_upd_r16_filter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1c69	sdr_upd_r18_rx_freq	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa1fd1	sdr_upd_r1a_nb_level	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa2049	sdr_upd_r1b	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa20af	sdr_upd_r1c	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa20f7	sdr_upd_r1d_notch	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa2478	sdr_upd_r1e_passband	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa26cf	sdr_upd_r1f_width	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa2758	sdr_upd_r20_scope_freq	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa28ea	sdr_upd_r22_scope_span	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa2992	sdr_upd_r23	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa29e5	sdr_init_r24	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa2a16	sdr_upd_r25_tx_drive	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa2b8f	sdr_upd_r26	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa2c03	sdr_upd_r27_scope_level	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa2c9f	sdr_shadow_update	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffa2ff7	sdr_wait_reply	uint8	char, char	asm	asm: live-in R1:B,R2:B, 7/7 call sites read R1, return load UB
+fffa3083	sdr_poll_reply	uint8	char, void *	asm	asm: live-in R1:B,R2:L, 3/3 call sites read R1, return load UB
+fffa30f9	sdr_send_frame	void	char	asm	asm: live-in R1:B, 0/38 call sites read R1, return load -
+fffa31ae	sdr_sum8	char	int32, uint8	asm	asm: live-in R1:L,R2:B, 4/4 call sites read R1, return load UB
+fffa31db	sdr_check_hex_sum	uint8	int32, uint8	asm	asm: live-in R1:L,R2:B, 1/1 call sites read R1, return load UB
+fffa3226	sdr_bridge_mode	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa347c	cat_parse	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffa36f2	cat_ext_SP	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa3a2a	cat_dispatch_ext	void	int32, char, int16	asm	asm: live-in R1:L,R2:B,R3:W, 0/1 call sites read R1, return load -
+fffa3b6e	cat_dispatch	void	int32, char, uint16	asm	asm: live-in R1:L,R2:B,R3:W, 0/1 call sites read R1, return load -
+fffa4e31	cat_SP_sdr_reg	void	uint32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa4e8f	cat_SP_dev4_reg	void	uint32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa4eed	cat_SP_adc_dump	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa50f9	cat_SP_table	void	int32, char, int16	asm	asm: live-in R1:L,R2:B,R3:W, 0/3 call sites read R1, return load -
+fffa520b	cat_SP_eeprom_byte	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa5284	cat_SP_meters	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa53a4	cat_ext_E8	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa54b3	cat_ext_VE	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffa556b	cat_ext_JP	void	uint32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa58a1	cat_ext_ZZ	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa5985	cat_ext_E9	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa5a51	cat_ext_FD	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa5c90	cat_ext_EO	void	int32, uint8	asm	asm: live-in R1:L,R2:B, 0/1 call sites read R1, return load -
+fffa5fdf	cat_ext_PE	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa646d	cat_AB	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa65d4	cat_AC	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa6867	cat_AG	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa6946	cat_AI	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa6a26	cat_AM	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa6b6f	cat_AO	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa6c9d	cat_AS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa6edc	cat_AV	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa7018	cat_BA	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa717f	cat_BC	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa72d9	cat_BD	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa756c	cat_BU	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa77ec	cat_BI	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa7928	cat_BM	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa7a71	cat_BP	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa7db5	cat_BS	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa7fa1	cat_CF	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa8375	cat_CH	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa8513	cat_CN	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa8698	cat_CO	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa8b98	cat_CS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa8c79	cat_CT	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa8d8a	cat_DA	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9029	cat_DN	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa9155	cat_UP	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffa9281	cat_DT	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9648	cat_EM	void	int32, uint8	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9928	cat_EN	void	uint32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffa9937	cat_EX	void	uint32, char, uint16	asm	asm: live-in R1:L,R2:B,R3:W, 0/2 call sites read R1, return load -
+fffa99bd	cat_FA_FB	void	int32, char, char	asm	asm: live-in R1:L,R2:B,R3:B, 0/2 call sites read R1, return load -
+fffa9c96	cat_FN	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9d3d	cat_FS	void	uint32, uint8	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9d4e	cat_FT	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffa9f23	cat_GT	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaa21f	cat_GP	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaa365	cat_ID	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffaa39c	cat_IF_OI	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffaa6e3	cat_IS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaa905	cat_KM	void	int32, char, uint16	asm	asm: live-in R1:L,R2:B,R3:W, 0/2 call sites read R1, return load -
+fffaac36	cat_KP	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaad52	cat_KR	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaadea	cat_KS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaaf19	cat_KY	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffab09f	cat_LK	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffab16f	cat_LM	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffab3fd	cat_MA	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffab478	cat_MB	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffab4f3	cat_MC	void	int32, uint8	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffab7d1	cat_MD	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaba64	cat_MG	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffabbfa	cat_ML	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffabea5	cat_MR	void	int32, uint8	asm	asm: live-in R1:L,R2:B, 0/1 call sites read R1, return load -
+fffac285	cat_MT	void	int32, char, uint16	asm	asm: live-in R1:L,R2:B,R3:W, 0/2 call sites read R1, return load -
+fffac4b6	cat_MS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffac534	cat_MW	void	int32, uint8	asm	asm: live-in R1:L,R2:B, 0/1 call sites read R1, return load -
+fffac9ad	cat_MX	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaca47	cat_NA	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffacc65	cat_NB	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffacce8	cat_NL	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+ffface21	cat_NR	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffacebe	cat_OS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad001	cat_PA	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad0a2	cat_PB	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad241	cat_PC	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad467	cat_PL	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad595	cat_PR	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad696	cat_PS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad704	cat_QI	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffad709	cat_QR	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffad70e	cat_QS	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffad718	cat_RA	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad7ae	cat_RG	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffad8e3	cat_RI	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffada46	cat_RL	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffadb7d	cat_RM	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffadcd6	cat_SC	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffadd9a	cat_SD	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffadeb6	cat_SF	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffae2ca	cat_SH	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffae64b	cat_SM	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffae6cc	cat_SQ	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffae850	cat_SS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaf3b5	cat_ST	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaf46e	cat_SV	void	uint32, uint8	asm	asm: live-in R1:L,R2:B, 0/1 call sites read R1, return load -
+fffaf5c7	cat_TS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaf7b8	cat_TX	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaf874	cat_VD	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaf9c0	cat_VG	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffafadb	cat_VM	void	int32, int16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load -
+fffafdbd	cat_VS	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffaffa0	cat_VX	void	int32, char	asm	asm: live-in R1:L,R2:B, 0/2 call sites read R1, return load -
+fffb006e	cat_ZI	void	int32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffb0166	cat_reply_error	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb0182	cat_checksum_ok	bool	int32, uint16	asm	asm: live-in R1:L,R2:W, 4/4 call sites read R1, return load UB
+fffb01af	sum8	char	int32, uint16	asm	asm: live-in R1:L,R2:W, 4/4 call sites read R1, return load UB
+fffb01f3	eeprom_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0229	eeprom_load_all	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb02af	eeprom_save_all	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb02cf	eeprom_save_opstate	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb0303	eeprom_save_bandstack	void	char, uint8, uint8, uint32	asm	asm: live-in R1:B,R2:B,R3:B,R4:L, 0/1 call sites read R1, return load -
+fffb0356	eeprom_save_image	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0376	eeprom_save_memch	void	uint8	asm	asm: live-in R1:B, 0/16 call sites read R1, return load -
+fffb03c1	eeprom_save_qmb	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb03e1	eeprom_save_qmb_slot	void	uint8	asm	asm: live-in R1:B, 0/8 call sites read R1, return load -
+fffb0450	eeprom_save_msg	void	int32, int32	asm	asm: live-in R1:L,R2:L, 0/11 call sites read R1, return load -
+fffb0509	eeprom_save_atu_mem	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0532	eeprom_save_cfg105	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb0544	eeprom_save_dest	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb0558	settings_defaults	void	uint8	asm	asm: live-in R1:B, 0/7 call sites read R1, return load -
+fffb0636	reset_memch	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb063a	reset_menu	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb063e	eeprom_read_raw	void	uint16 addr, uint8 * buf, uint16 n	doc	wrapper of eeprom_read [fact]
+fffb0651	eeprom_write_raw	void	uint16, uint32, uint16	asm	asm: live-in R1:W,R2:L,R3:W, 0/1 call sites read R1, return load -
+fffb06e5	defaults_vfo	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0a28	defaults_bandstack	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0a7c	defaults_qmb	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb0a8f	defaults_memch	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb10a4	defaults_msg	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1168	menu_defaults_load	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb1193	menu_defaults_mode	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb11f0	menu_defaults_cw	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb120d	menu_defaults_operation	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb12e6	menu_defaults_display	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1325	menu_defaults_presets	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb142b	eeprom_hdr_update	void	uint8	asm	asm: live-in R1:B, 0/18 call sites read R1, return load -
+fffb14a4	eeprom_read	void	uint16 addr, uint8 * buf, uint16 n	doc	SPI READ 0x03, addr_hi, addr_lo, then n bytes into buf (MOV.W R1 spill; middle eeprom_spi_tx gets addr>>8); no caller reads R1 [fact, 0xFFFB14A4]
+fffb14ed	eeprom_write	void	uint16 addr, uint8 * buf, uint16 n	doc	64-byte page writes (docs/code/main/eeprom.md); R1 spilled with MOV.W [fact]
+fffb15aa	eeprom_spi_tx	void	uint8 b	doc	shifts one byte out MSB first (MOV.B R1 spill) [fact]
+fffb15ef	eeprom_spi_rx	uint8	void	doc	shifts one byte in; returns it (MOVU.B ..,R1; RTSD) [fact]
+fffb1632	sci_start_all	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1645	sci0_set_baud	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1702	displink_uart_start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb171e	displink_rx_ready	uint8	void	asm	asm: live-in -, 3/3 call sites read R1, return load UB
+fffb172d	displink_rx_rearm	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb1745	displink_rx_done	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb174f	displink_rx_buf	uint32	void	asm	asm: live-in -, 3/3 call sites read R1, return load SL
+fffb175b	displink_uart_send	void	uint32, uint16	asm	asm: live-in R1:L,R2:W, 0/18 call sites read R1, return load -
+fffb176b	sci1_tx_end	uint8	void	asm	asm: live-in -, 6/6 call sites read R1, return load UB
+fffb177e	sci2_configure	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1900	tunlin_port_mode	uint8	void	asm	asm: live-in -, 7/7 call sites read R1, return load UB
+fffb198f	sci3_set_baud	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb1a8f	sci4_rx_ready	uint8	void	asm	asm: live-in -, 2/2 call sites read R1, return load UB
+fffb1a9e	sci4_rx_set_ready	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1aa8	sci4_rx_buf	uint32	void	asm	asm: live-in -, 2/2 call sites read R1, return load SL
+fffb1ab4	sci4_send	void	uint32, uint16	asm	asm: live-in R1:L,R2:W, 0/7 call sites read R1, return load -
+fffb1adb	sci4_rx_set_len	void	uint16	asm	asm: live-in R1:W, 0/1 call sites read R1, return load -
+fffb1ae9	sci4_rx_len	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffb1af8	sdr_link_start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1b06	sdr_rx_ready	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb1b15	sdr_rx_done_cb	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1b1f	sdr_rx_buf	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
+fffb1b2b	sdr_send_cmd	void	uint32, uint16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load -
+fffb1b50	cat_rx_complete	void	int32, uint16	asm	asm: live-in R1:L,R2:W, 0/3 call sites read R1, return load -
+fffb1c91	cat_ring_head	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb1ca0	cat_ring_tail	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb1caf	cat_ring_unpop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1cd2	cat_ring_pop	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
+fffb1d06	cat_e9_slot	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
+fffb1d12	cat_send_reply	void	int32, uint32, uint16	asm	asm: live-in R1:L,R2:L,R3:W, 0/5 call sites read R1, return load -
+fffb1d5b	cat_tx_done_sci0	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1d65	cat_tx_done_sci2	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1d6f	cat_tx_done_sci3	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1dad	cat_rx_byte_hook	uint32	uint16 *, int16 *, char *, int32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 3/3 call sites read R1, return load SL
+fffb1f42	sci_tx_end	uint8	int32	asm	asm: live-in R1:L, 1/1 call sites read R1, return load UB
+fffb1f83	shreg_bus_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb1fef	bu2505_write	void	int32, uint8, int16	asm	asm: live-in R1:L,R2:B,R3:W, 0/10 call sites read R1, return load -
+fffb208d	sst2_write12	void	char, uint8	asm	asm: live-in R1:B,R2:B, 0/8 call sites read R1, return load -
+fffb214c	shreg_write24	void	int32, uint32	asm	asm: live-in R1:L,R2:L, 0/3 call sites read R1, return load -
+fffb2228	timers_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb2288	swtimer_tick	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb237a	swtimer_start	void	int32, uint16	asm	asm: live-in R1:L,R2:W, 0/133 call sites read R1, return load -
+fffb23b4	timer_start_us	void	int32, int32	asm	asm: live-in R1:L,R2:L, 0/6 call sites read R1, return load -
+fffb23f3	swtimer_expired	uint8	int32	asm	asm: live-in R1:L, 115/115 call sites read R1, return load UB
+fffb2406	blink_phase	uint8	int32	asm	asm: live-in R1:L, 7/7 call sites read R1, return load UB
+fffb2419	blink_set	void	int32, uint16, uint16	asm	asm: live-in R1:L,R2:W,R3:W, 0/2 call sites read R1, return load -
+fffb2469	tone_sample_isr	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb24a3	tone_play	void	uint32, uint16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load -
+fffb24ca	tone_stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb24d8	spk_softstart_isr	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb259c	slowtimer_tick	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb263d	cat_apo_reset	void	void	asm	asm: live-in -, 0/6 call sites read R1, return load -
+fffb268e	tot_start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb26bf	tot_expired	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb26e5	tot_prewarn	char	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb2718	cat_rand8	char	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb2734	R_TPU3_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb27b2	R_TPU3_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb27d1	r_tpu3_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fffb27e0	adc_scan_start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb27fb	adc0_store	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb284e	adc0_done	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb2858	adc1_store	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb2894	adc1_done	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb289e	adc_scan_done	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb28d1	dac_init_idle	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb28e2	beep_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb2da6	beep_request	void	int32	asm	asm: live-in R1:L, 0/188 call sites read R1, return load -
+fffb2df4	beep_stop	void	void	asm	asm: live-in -, 0/18 call sites read R1, return load -
+fffb2dfe	FUN_fffb2dfe	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb2e0d	tone_idle	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffb2e1e	tone_set	void	float, uint16	asm	asm: live-in R1:L,R2:W, 0/35 call sites read R1, return load -
+fffb2e9c	nib2hex	char	uint8 n	doc	"0123456789ABCDEF"[n & 15] [fact]
+fffb2eb7	byte2hex	void	char *, uint8	asm	asm: live-in R1:L,R2:B, 0/24 call sites read R1, return load -
+fffb2ee7	word2hex	void	int32, uint16	asm	asm: live-in R1:L,R2:W, 0/22 call sites read R1, return load -
+fffb2f07	hex2nib	char	uint8	asm	asm: live-in R1:B, 75/79 call sites read R1, return load UB
+fffb2f79	hex2byte	uint8	char * s	doc	two hex digits at s -> byte [fact]
+fffb2f9e	hex2word	uint16	char * s	doc	four hex digits at s -> word [fact]
+fffb2fc0	FUN_fffb2fc0	char	uint8	asm	asm: live-in R1:B, 5/5 call sites read R1, return load UB
+fffb3168	toupper_inplace	void	char * c	doc	upper-cases *c if a..z [fact]
+fffb3196	vfo_mode	uint8	uint8 which	doc	mode code of VFO which; all 111 callers read R1 [fact]
+fffb324c	vfo_rec_ptr	uint8 *	uint8 which	doc	pointer to the VFO record (base 0x9D09 = 0x464F+0x56BA); all 79 callers read R1 [fact]
+fffb33e5	band_of_freq	uint8	uint32 freq	doc	index into band_table 0xFFF8876C (12 rows of lo/hi), 0xFF if none [fact]
+fffb3445	gen_subband_of_freq	uint8	uint32 freq	doc	index into gen_subband_table 0xFFF887CC (18 rows), 0xFF if none [fact]
+fffb3480	freq_range_index	uint8	uint32 freq	doc	index into freq_range_table 0xFFF88814 (14 rows), 0xFF if none [fact]
+fffb357c	vfo_freq	uint32	uint8 which, uint8 side	doc	BE u32 at rec+0x4A; side 0=A 1=B 2=vfo_rec_ptr(which); result in R1 (0x4[SP]) at RTSD [fact, 0xFFFB35CF]
+fffb35d7	vfo_freq_clar	uint32	uint8 which, uint8 side	doc	vfo_freq + clarifier offset; 7 of 8 callers read R1 [fact]
+fffb37fe	tx_freq_allowed	bool	uint32 freq	doc	1 = TX allowed for freq (docs/code/main/tx-protection.md, #103) [fact]
+fffb3aa1	freq_in_range	uint8	void *	asm	asm: live-in R1:L, 4/4 call sites read R1, return load UB
+fffb3b33	dest_code_get	uint16	void	doc	destination code (0x475E << 8 | 0x475F) [fact]
+fffb3b5d	dest_code_set	void	uint16	asm	asm: live-in R1:W, 0/13 call sites read R1, return load -
+fffb3ba6	dest_jumper_apply	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb3d11	FUN_fffb3d11	char	uint8	asm	asm: live-in R1:B, 4/4 call sites read R1, return load UB
+fffb3e55	sw_reset	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb3e6a	wdt_kick	void	void	asm	asm: live-in -, 0/6 call sites read R1, return load -
+fffb3fa7	FUN_fffb3fa7	uint32	void	asm	asm: live-in -, 0/0 call sites read R1, return load SL
+fffb4135	FUN_fffb4135	uint32	uint32	asm	asm: live-in R1:L, 2/2 call sites read R1, return load SL
+fffb4219	audio_route_state	uint32	void	asm	asm: live-in -, 5/5 call sites read R1, return load SL
+fffb44f7	key_event_filter	uint8	uint16, uint8	asm	asm: live-in R1:W,R2:B, 29/29 call sites read R1, return load UB
+fffb4b28	supply_undervolt_check	char	void	asm	asm: live-in -, 6/6 call sites read R1, return load UB
+fffb4bba	vfo_tune_locked	uint8	char	asm	asm: live-in R1:B, 7/7 call sites read R1, return load UB
+fffb4c45	vfo_display_offset	uint16	void	asm	asm: live-in -, 2/2 call sites read R1, return load UW
+fffb4e18	bandmem_set	void	char, uint32	asm	asm: live-in R1:B,R2:L, 0/5 call sites read R1, return load -
+fffb4ebe	bandmem_get	uint32	char	asm	asm: live-in R1:B, 5/5 call sites read R1, return load SL
+fffb4f52	tx_freq_repeater_shift	uint32	uint32	asm	asm: live-in R1:L, 2/3 call sites read R1, return load SL
+fffb527c	tx_mod_gain	uint8	void	asm	asm: live-in -, 2/4 call sites read R1, return load UB
+fffb54a0	FUN_fffb54a0	uint32	void	asm	asm: live-in -, 7/7 call sites read R1, return load SL
+fffb552c	FUN_fffb552c	uint32	void	asm	asm: live-in -, 5/5 call sites read R1, return load SL
+fffb55b8	portctl_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb55c2	rf_ctrl_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb55eb	pa_relay_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb56a5	rf_bpf_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb5786	atu_relay_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb5874	main_dac_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb5976	pa_dac_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb5d68	FUN_fffb5d68	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb6cde	trx_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb6d56	io_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb6e03	meter_get_vdd	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6e12	meter_get_idd	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6e21	meter_get_alc	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6e30	meter_get_swr	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6e3f	meter_get_swr_raw	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb6e6a	meter_get_po	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6e98	meter_get_comp	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6ea7	meter_get_s	uint8	void	asm	asm: live-in -, 5/5 call sites read R1, return load UB
+fffb6eb6	remote_key_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb6ec5	ptt_source_get	uint8	void	asm	asm: live-in -, 6/6 call sites read R1, return load UB
+fffb6ed4	ckey_det	bool	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6ef3	ckey_dot	bool	void	asm	asm: live-in -, 3/3 call sites read R1, return load UB
+fffb6f0b	ckey_dash	bool	void	asm	asm: live-in -, 2/2 call sites read R1, return load UB
+fffb6f2a	jp_p51_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb6f76	atas_det	bool	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb6fac	tx_line_get	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffb6fbf	send_a_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb6fd2	send_a_set	void	uint8	asm	asm: live-in R1:B, 0/20 call sites read R1, return load -
+fffb7011	send_b_set	void	uint8	asm	asm: live-in R1:B, 0/20 call sites read R1, return load -
+fffb7051	sdr_reset_set	void	char	asm	asm: live-in R1:B, 0/5 call sites read R1, return load -
+fffb7067	sdr_update_set	void	uint8	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffb7080	dsp_reset_set	void	uint8	asm	asm: live-in R1:B, 0/5 call sites read R1, return load -
+fffb7098	dsp_update_set	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffb70b0	af_reset_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb70c9	pa_pon_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb70df	tun_lin_sel_set	void	uint8	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffb70f7	rem_key_sel_set	void	uint8	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffb7110	gpo_a_dir_out	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb711c	gpo_b_dir_out	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7128	gpo_c_dir	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffb714d	gpo_a_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb7165	gpo_b_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb717d	gpo_c_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb7193	gpo_d_set	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffb71ab	gpo_a_get	uint8	void	asm	asm: live-in -, 0/1 call sites read R1, return load UB
+fffb71be	gpo_b_get	uint8	void	asm	asm: live-in -, 0/1 call sites read R1, return load UB
+fffb71d1	gpo_c_get	uint8	void	asm	asm: live-in -, 0/1 call sites read R1, return load UB
+fffb71e2	gpo_d_get	uint8	void	asm	asm: live-in -, 0/1 call sites read R1, return load UB
+fffb71ff	etun_reset_set	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffb721a	rx_line_get	uint8	void	asm	asm: live-in -, 3/3 call sites read R1, return load UB
+fffb722b	af_mute_get	bool	void	asm	asm: live-in -, 21/21 call sites read R1, return load UB
+fffb7243	af_mute_set	void	char	asm	asm: live-in R1:B, 0/19 call sites read R1, return load -
+fffb730a	ear_det	bool	void	asm	asm: live-in -, 13/13 call sites read R1, return load UB
+fffb7322	speaker_switch_set	void	uint8	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffb73a6	power_off_io	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffb73dd	meter_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb741e	adc_scan_blocking	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb742b	vdd_scale_calc	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb747c	meter_vdd	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb74b8	meter_idd	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb74ff	meter_alc	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7545	swr_meter_protect	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7772	meter_po	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7869	meter_comp	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7959	meter_s	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7a40	remote_keypad_scan	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7b43	io_poll	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7b65	af_mute_update	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb7f6f	ptt_inputs_read	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb80f9	trx_sequencer	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb85a2	ptt_source_select	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffb86e8	ptt_arbiter	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb8a02	tx_audio_select	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb8a8c	speaker_route	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb8f7d	linear_band_data	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb9774	pc_keying	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffb98c8	keyer_init	void	void	asm	asm: live-in -, 0/5 call sites read R1, return load -
+fffb98e9	keyer_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffba192	FUN_fffba192	uint8	void	asm	asm: live-in -, 11/11 call sites read R1, return load UB
+fffba377	FUN_fffba377	void	char, char	asm	asm: live-in R1:B,R2:B, 0/2 call sites read R1, return load -
+fffba840	FUN_fffba840	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffbaa81	FUN_fffbaa81	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffbb283	FUN_fffbb283	void	void *, void *	asm	asm: live-in R1:L,R2:L, 0/5 call sites read R1, return load -
+fffbba2e	FUN_fffbba2e	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbbc0a	cal_adjust	void	uint8, uint8, char	asm	asm: live-in R1:B,R2:B,R3:B, 0/2 call sites read R1, return load -
+fffbbd53	key_task_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbbd58	key_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbc103	key_cancel_check	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffbc1d0	key_class_of	uint8	uint16	asm	asm: live-in R1:W, 1/1 call sites read R1, return load UB
+fffbc225	key_assign_slot	uint8	int16	asm	asm: live-in R1:W, 1/1 call sites read R1, return load UB
+fffbc29f	scope_cursor_follow	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbc35f	key_call_press	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffbc38e	key_call_short	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffbc3bd	key_call_long	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbc406	key_call_repeat	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbc435	key_call_release	void	void	asm	asm: live-in -, 0/4 call sites read R1, return load -
+fffbc464	key_touch_scope_tune	void	uint16	asm	asm: live-in R1:W, 0/1 call sites read R1, return load -
+fffbc6e9	scope_cursor_center	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbeca5	split_toggle	void	void	asm	asm: live-in -, 0/4 call sites read R1, return load -
+fffbf41f	vm_toggle	void	void	asm	asm: live-in -, 0/12 call sites read R1, return load -
+fffbf4bb	vfo_ab_toggle	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffbf924	qmb_recall	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffbfac4	qmb_store	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc10c3	freq_clamp	uint32	char, uint32	asm	asm: live-in R1:B,R2:L, 7/7 call sites read R1, return load SL
+fffc11a8	freq_clamp_pms	uint32	uint32	asm	asm: live-in R1:L, 2/2 call sites read R1, return load SL
+fffc125a	vfo_mark_tuned	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc127b	qmb_exit_to_vfo	void	uint8	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffc130b	freq_fix_below	void	void *, void *	asm	asm: live-in R1:L,R2:L, 0/2 call sites read R1, return load -
+fffc1378	freq_fix_above	void	void *, void *	asm	asm: live-in R1:L,R2:L, 0/2 call sites read R1, return load -
+fffc1663	band_select	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc16f6	vfo_store_back	void	uint8	asm	asm: live-in R1:B, 0/24 call sites read R1, return load -
+fffc18ff	memtune_backup_a	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc1913	memtune_backup_b	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc1927	bandstack_save	void	void	asm	asm: live-in -, 0/5 call sites read R1, return load -
+fffc1a5f	band_select_pms	void	char, uint8	asm	asm: live-in R1:B,R2:B, 0/1 call sites read R1, return load -
+fffc1aa8	band_select_mem	void	uint8, uint8	asm	asm: live-in R1:B,R2:B, 0/2 call sites read R1, return load -
+fffc1acf	band_select_memtune	void	uint8, uint8	asm	asm: live-in R1:B,R2:B, 0/1 call sites read R1, return load -
+fffc1ae6	band_select_vfo	void	char, uint8	asm	asm: live-in R1:B,R2:B, 0/1 call sites read R1, return load -
+fffc1b2f	band_select_stack	void	char, uint8	asm	asm: live-in R1:B,R2:B, 0/3 call sites read R1, return load -
+fffc1c04	vfo_reload	void	uint8	asm	asm: live-in R1:B, 0/14 call sites read R1, return load -
+fffc1cbe	vfo_reload_bandstack	void	uint8	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffc1cd9	bandstack_load	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffc1dff	vfo_reload_memory	void	uint8	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffc1e0f	memtune_restore_a	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc1e23	memtune_restore_b	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc21e8	FUN_fffc21e8	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc22de	FUN_fffc22de	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffc2681	memch_load_to_vfo	void	char	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffc273e	vfo_clear_tag	void	uint8	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffc27ad	vm_toggle_core	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffc28fb	vfo_enter_mem_state	void	uint8	asm	asm: live-in R1:B, 0/5 call sites read R1, return load -
+fffc2d93	vfo_is_memory	uint8	uint8	asm	asm: live-in R1:B, 16/16 call sites read R1, return load UB
+fffc2de9	memch_current_valid	uint8	uint8	asm	asm: live-in R1:B, 4/4 call sites read R1, return load UB
+fffc2e01	memch_valid	bool	uint8 ch, uint8 ** rec	doc	memory channel ch valid; stores the record pointer to *rec [fact]
+fffc2e65	memch_current	uint8	uint8	asm	asm: live-in R1:B, 16/16 call sites read R1, return load UB
+fffc2e8d	memch_dest_blocked	uint8	uint8	asm	asm: live-in R1:B, 7/7 call sites read R1, return load UB
+fffc2ecb	memch_current_is_special	uint8	uint8	asm	asm: live-in R1:B, 11/11 call sites read R1, return load UB
+fffc2ee1	memch_is_special	bool	uint8	asm	asm: live-in R1:B, 2/2 call sites read R1, return load UB
+fffc2fde	vfo_mark_edited	void	uint8	asm	asm: live-in R1:B, 0/19 call sites read R1, return load -
+fffc3081	vfo_enter_vfo_state	void	char	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffc311a	qmb_set_depth	void	char	asm	asm: live-in R1:B, 0/6 call sites read R1, return load -
+fffc316c	qmb_enter	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc3287	vfo_retune	void	uint8	asm	asm: live-in R1:B, 0/4 call sites read R1, return load -
+fffc4064	FUN_fffc4064	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fffc4a8d	key_nop	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fffc4c4e	band_select_on	void	uint8, uint8	asm	asm: live-in R1:B,R2:B, 0/5 call sites read R1, return load -
+fffc4e4f	FUN_fffc4e4f	uint16	void *	asm	asm: live-in R1:L, 1/7 call sites read R1, return load UW
+fffc4fce	FUN_fffc4fce	uint32	void *	asm	asm: live-in R1:L, 6/6 call sites read R1, return load SL
+fffc506b	FUN_fffc506b	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffc50a0	FUN_fffc50a0	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffc50d5	FUN_fffc50d5	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffc50fe	FUN_fffc50fe	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffc5127	FUN_fffc5127	void	uint8	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffc515d	FUN_fffc515d	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffc52d7	enc_main_dial	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffc5541	FUN_fffc5541	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc55d7	FUN_fffc55d7	void	uint8	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc5ce0	vfo_mem_to_memtune	void	char	asm	asm: live-in R1:B, 0/6 call sites read R1, return load -
+fffc5d13	pms_load_limits	uint8	uint8	asm	asm: live-in R1:B, 1/3 call sites read R1, return load UB
+fffc5ec4	FUN_fffc5ec4	uint32	uint8, uint32	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load SL
+fffc5f2c	FUN_fffc5f2c	uint8	uint8, void *	asm	asm: live-in R1:B,R2:L, 3/3 call sites read R1, return load UB
+fffc5f9d	FUN_fffc5f9d	uint8	char, uint32	asm	asm: live-in R1:B,R2:L, 1/1 call sites read R1, return load UB
+fffc6073	FUN_fffc6073	uint32	uint8, uint32	asm	asm: live-in R1:B,R2:L, 2/2 call sites read R1, return load SL
+fffc6103	FUN_fffc6103	bool	uint8, uint32 *, int32 *	asm	asm: live-in R1:B,R2:L,R3:L, 1/2 call sites read R1, return load UB
+fffc616e	FUN_fffc616e	uint32	uint8	asm	asm: live-in R1:B, 3/3 call sites read R1, return load SL
+fffc62ae	FUN_fffc62ae	int16	uint8	asm	asm: live-in R1:B, 3/3 call sites read R1, return load UW
+fffc63e6	FUN_fffc63e6	uint32	uint8	asm	asm: live-in R1:B, 2/2 call sites read R1, return load SL
+fffc648c	FUN_fffc648c	uint32	uint32	asm	asm: live-in R1:L, 3/3 call sites read R1, return load SL
+fffc64c0	enc2_step	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffc77df	FUN_fffc77df	void	char	asm	asm: live-in R1:B, 0/2 call sites read R1, return load -
+fffc7827	FUN_fffc7827	void *	void *, uint8 *	asm	asm: live-in R1:L,R2:L, 2/2 call sites read R1, return load SL
+fffc7daf	enc3_step	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fffc84f9	FUN_fffc84f9	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffc913b	R_MTU2_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc91b3	R_SCI6_Create_IIC	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc9311	sci6_iic_condition	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffc93a3	R_SCI6_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc93a4	r_sci6_iic_txi	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fffc93ef	r_sci6_iic_tei	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fffc9467	r_sci6_iic_rxi	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fffc95b1	R_SCI7_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc979f	R_SCI7_Create_UserInit	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc97a0	r_sci7_transmit_interrupt	void	void	asm	interrupt handler (entry PUSHM R1-R2)
+fffc97ec	r_sci7_transmitend_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fffc9811	r_sci7_receive_interrupt	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fffc9880	r_sci7_receiveerror_interrupt	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
+fffc98a7	r_sci7_callback_transmitend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc98a8	r_sci7_callback_receiveend	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc98a9	r_sci7_callback_receiveerror	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc98aa	menu_subsys_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffc98f9	menu_page_serialize	void	int32, uint16	asm	asm: live-in R1:L,R2:W, 0/1 call sites read R1, return load -
+fffc9b83	menu_draw_flags	void	uint8 *, char	asm	asm: live-in R1:L,R2:B, 0/0 call sites read R1, return load -
+fffcdc1f	menu_ui_enter	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffcdd7e	menu_ui_step	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffcdddb	menu_apply_from_cat	void	uint32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffcde18	menu_step_s8	void	char, char, char *	asm	asm: live-in R1:B,R2:B,R3:L, 0/0 call sites read R1, return load -
+fffcdfb8	menu_step_u8	void	uint8, uint8, uint8 *	asm	asm: live-in R1:B,R2:B,R3:L, 0/17 call sites read R1, return load -
+fffce3eb	menu_fm_rptshift_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffce411	menu_fm_rptshift_set	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffce53c	menu_fm_encdec_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffce562	menu_fm_encdec_set	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffce5be	menu_fm_tone_get	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffce5f5	menu_fm_tone_set	void	uint8	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffd0279	menu_reset_exec	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd0288	reset_select	void	char	asm	asm: live-in R1:B, 0/1 call sites read R1, return load -
+fffd30e8	FUN_fffd30e8	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load SL
+fffd442f	menu_register	uint8	uint8 * desc	doc	copies the 0x38-byte descriptor (menu.md) [fact]; the SMOVF before each call is the descriptor copy, not arguments
+fffd45a8	menu_group_visible	uint8	char, char	asm	asm: live-in R1:B,R2:B, 1/1 call sites read R1, return load UB
+fffd4651	menu_find	uint16	char *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load UW
+fffd4795	menu_get_desc	uint8	char * key, uint8 * desc	doc	copies the 0x38-byte descriptor of key into desc; 1 = found (menu.md) [fact]
+fffd47ea	menu_get_name	uint8	char * key, char * name	doc	1 = found [inference for the second argument]
+fffd4841	menu_count_items	char	char	asm	asm: live-in R1:B, 6/6 call sites read R1, return load UB
+fffd48d1	menu_count_groups	char	char	asm	asm: live-in R1:B, 3/3 call sites read R1, return load UB
+fffd49a0	menu_call_draw	void	uint32, uint32	asm	asm: live-in R1:L,R2:L, 0/1 call sites read R1, return load -
+fffd49c0	menu_call_step	void	uint32	asm	asm: live-in R1:L, 0/2 call sites read R1, return load -
+fffd49da	menu_call_enter	void	uint32	asm	asm: live-in R1:L, 0/1 call sites read R1, return load -
+fffd49f4	menu_p2_global	char	char, char	asm	asm: live-in R1:B,R2:B, 11/11 call sites read R1, return load UB
+fffd4a4f	menu_dest_mask	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffd4ada	menu_cursor_of	uint32	uint8	asm	asm: live-in R1:B, 8/8 call sites read R1, return load SL
+fffd4c30	menu_build_all	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd4ff1	menu_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd4ffe	menu_get_limits	uint8	char * key, uint8 * lim	doc	fills the 16-byte limits block passed by value to ex_read_value/ex_write_value [fact]
+fffd504c	menu_value_rw	uint8	int32, char, uint16 *	asm	asm: live-in R1:L,R2:B,R3:L, 2/2 call sites read R1, return load UB
+fffd51a3	menu_value_get	uint8	char * key, uint16 * val	doc	[inference for the value width]
+fffd51ca	menu_value_set	uint8	char * key, uint16 * val	doc	called with &u16 from ex_write_value [fact, 0xFFFE660F]
+fffd51f1	menu_string_rw	uint8	int32, char, int32, uint8	asm	asm: live-in R1:L,R2:B,R3:L,R4:B, 2/2 call sites read R1, return load UB
+fffd528d	menu_string_get	uint8	int32, uint32, uint8	asm	asm: live-in R1:L,R2:L,R3:B, 1/1 call sites read R1, return load UB
+fffd52b6	menu_string_set	uint8	int32, uint32, uint8	asm	asm: live-in R1:L,R2:L,R3:B, 1/1 call sites read R1, return load UB
+fffd52df	menu_p1_range	uint8	char, void *, void *	asm	asm: live-in R1:B,R2:L,R3:L, 1/1 call sites read R1, return load UB
+fffd5373	menuitem_EX010101	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd53e1	menuitem_EX010102	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd544f	menuitem_EX010103	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd54bd	menuitem_EX010104	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5529	menuitem_EX010105	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5595	menuitem_EX010106	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5601	menuitem_EX010107	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd566d	menuitem_EX010108	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd56d9	menuitem_EX010109	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5745	menuitem_EX010110	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd57b1	menuitem_EX010111	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd581d	menuitem_EX010112	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5889	menuitem_EX010113	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd58f5	menuitem_EX010114	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5961	menuitem_EX010115	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd59cd	menuitem_EX010116	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5a39	menuitem_EX010117	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5aa5	menuitem_EX010118	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5b11	menuitem_EX010119	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5b7d	menuitem_EX010201	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5beb	menuitem_EX010202	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5c59	menuitem_EX010203	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5cc7	menuitem_EX010204	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5d33	menuitem_EX010205	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5d9f	menuitem_EX010206	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5e0b	menuitem_EX010207	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5e77	menuitem_EX010208	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5ee3	menuitem_EX010209	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5f4f	menuitem_EX010210	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd5fbb	menuitem_EX010211	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6027	menuitem_EX010212	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6093	menuitem_EX010213	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd60ff	menuitem_EX010214	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd616b	menuitem_EX010215	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd61d7	menuitem_EX010216	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6243	menuitem_EX010217	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd62af	menuitem_EX010301	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd631d	menuitem_EX010302	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd638b	menuitem_EX010303	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd63f9	menuitem_EX010304	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6465	menuitem_EX010305	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd64d1	menuitem_EX010306	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd653d	menuitem_EX010307	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd65a9	menuitem_EX010308	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6615	menuitem_EX010309	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6681	menuitem_EX010310	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd66ed	menuitem_EX010311	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6759	menuitem_EX010312	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd67c5	menuitem_EX010313	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6831	menuitem_EX010314	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd689d	menuitem_EX010315	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6909	menuitem_EX010316	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6975	menuitem_EX010317	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd69d8	menuitem_EX010318	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6a44	menuitem_EX010319	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6ab2	menuitem_EX010320	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6b15	menuitem_EX010321	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6b78	menuitem_EX010401	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6be6	menuitem_EX010402	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6c54	menuitem_EX010403	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6cc2	menuitem_EX010404	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6d2e	menuitem_EX010405	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6d9a	menuitem_EX010406	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6e06	menuitem_EX010407	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6e72	menuitem_EX010408	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6ede	menuitem_EX010409	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6f4a	menuitem_EX010410	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd6fb6	menuitem_EX010411	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7022	menuitem_EX010412	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd708e	menuitem_EX010413	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd70fa	menuitem_EX010414	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7166	menuitem_EX010415	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd71d2	menuitem_EX010416	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd723e	menuitem_EX010417	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd72aa	menuitem_EX010418	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7316	menuitem_EX010419	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7382	menuitem_EX010420	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd73f0	menuitem_EX010501	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd745e	menuitem_EX010502	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd74cc	menuitem_EX010503	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd753a	menuitem_EX010504	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd75a6	menuitem_EX010505	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7612	menuitem_EX010506	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd767e	menuitem_EX010507	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd76ea	menuitem_EX010508	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7756	menuitem_EX010509	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd77c2	menuitem_EX010510	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd782e	menuitem_EX010511	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd789a	menuitem_EX010512	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7906	menuitem_EX010513	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7972	menuitem_EX010514	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd79de	menuitem_EX010515	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7a4a	menuitem_EX010516	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7ab6	menuitem_EX010517	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7b22	menuitem_EX020101	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7b90	menuitem_EX020102	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7bfe	menuitem_EX020103	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7c6c	menuitem_EX020104	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7cd8	menuitem_EX020105	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7d44	menuitem_EX020106	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7db0	menuitem_EX020107	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7e1c	menuitem_EX020108	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7e88	menuitem_EX020109	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7ef4	menuitem_EX020110	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7f60	menuitem_EX020111	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd7fcc	menuitem_EX020112	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8038	menuitem_EX020113	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd80a4	menuitem_EX020114	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8110	menuitem_EX020115	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd817c	menuitem_EX020116	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd81e8	menuitem_EX020117	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8254	menuitem_EX020118	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd82c0	menuitem_EX020119	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd832c	menuitem_EX020120	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8398	menuitem_EX020201	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8404	menuitem_EX020202	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8470	menuitem_EX020203	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd84dc	menuitem_EX020204	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8548	menuitem_EX020205	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd85b6	menuitem_EX020206	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8622	menuitem_EX020207	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd868e	menuitem_EX020208	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd86fa	menuitem_EX020209	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8766	menuitem_EX020210	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd87d2	menuitem_EX020211	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd883e	menuitem_EX030101	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd88aa	menuitem_EX030102	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8916	menuitem_EX030103	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8982	menuitem_EX030104	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd89ee	menuitem_EX030105	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8a5a	menuitem_EX030106	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8ac6	menuitem_EX030107	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8b32	menuitem_EX030108	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8b9e	menuitem_EX030109	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8c0a	menuitem_EX030110	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8c76	menuitem_EX030111	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8ce2	menuitem_EX030112	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8d4e	menuitem_EX030113	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8dba	menuitem_EX030114	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8e26	menuitem_EX030115	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8e92	menuitem_EX030116	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8efe	menuitem_EX030117	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8f6a	menuitem_EX030118	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd8fd8	menuitem_EX030119	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9044	menuitem_EX030120	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd90b0	menuitem_EX030121	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd911c	menuitem_EX030122	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9188	menuitem_EX030123	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd91f4	menuitem_EX030124	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9260	menuitem_EX030125	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd92cc	menuitem_EX030126	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9338	menuitem_EX030201	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd93a4	menuitem_EX030202	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9410	menuitem_EX030203	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd947c	menuitem_EX030204	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd94e8	menuitem_EX030205	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9556	menuitem_EX030206	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd95c2	menuitem_EX030301	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd962e	menuitem_EX030302	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd969a	menuitem_EX030303	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9708	menuitem_EX030304	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9774	menuitem_EX030305	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd97e0	menuitem_EX030306	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd984e	menuitem_EX030307	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd98ba	menuitem_EX030308	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9926	menuitem_EX030309	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9994	menuitem_EX030310	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9a00	menuitem_EX030311	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9a6c	menuitem_EX030312	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9ada	menuitem_EX030313	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9b46	menuitem_EX030314	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9bb2	menuitem_EX030315	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9c20	menuitem_EX030316	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9c8c	menuitem_EX030317	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9cf8	menuitem_EX030318	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9d66	menuitem_EX030319	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9dd2	menuitem_EX030401	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9e3e	menuitem_EX030402	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9eaa	menuitem_EX030403	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9f16	menuitem_EX030404	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9f82	menuitem_EX030405	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffd9fee	menuitem_EX030406	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda05a	menuitem_EX030407	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda0c6	menuitem_EX030408	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda132	menuitem_EX030501	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda19e	menuitem_EX030502	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda20a	menuitem_EX030503	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda276	menuitem_EX030504	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda2e2	menuitem_EX030505	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda34e	menuitem_EX030506	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda3ba	menuitem_EX040101	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda426	menuitem_EX040102	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda492	menuitem_EX040103	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda4fe	menuitem_EX040104	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda56a	menuitem_EX040105	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda5d6	menuitem_EX040106	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda642	menuitem_EX040201	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda6ae	menuitem_EX040202	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda71a	menuitem_EX040203	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda786	menuitem_EX040204	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda7f2	menuitem_EX040301	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda85e	menuitem_EX040302	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda8ca	menuitem_EX040303	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda936	menuitem_EX040304	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffda9a2	menuitem_EX040401	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaa0e	menuitem_EX040402	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaa7a	menuitem_int4_16_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaadd	menuitem_int4_16_01	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdab40	menuitem_int4_16_02	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaba3	menuitem_int4_16_03	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdac06	menuitem_int4_16_04	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdac69	menuitem_int4_17_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaccc	menuitem_int4_17_01	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdad2f	menuitem_int4_17_02	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdad92	menuitem_int4_17_03	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdadf5	menuitem_int4_17_04	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdae58	menuitem_int4_17_05	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaebb	menuitem_int4_17_06	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaf1e	menuitem_int4_18_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdaf81	menuitem_int4_19_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdafe4	menuitem_int4_20_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb047	menuitem_int4_20_01	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb0aa	menuitem_int4_20_02	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb10d	menuitem_int4_21_00	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb170	menuitem_EX060101	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb1dc	menuitem_EX060102	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb248	menuitem_EX060103	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb2b4	menuitem_EX060104	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb320	menuitem_EX060105	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb38c	menuitem_EX060106	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb3f8	menuitem_EX060107	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb464	menuitem_EX060108	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb4d0	menuitem_EX060109	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb53c	menuitem_EX060110	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb5a8	menuitem_EX060111	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb614	menuitem_EX060112	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb680	menuitem_EX060113	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb6ec	menuitem_EX060114	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb758	menuitem_EX060115	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb7c4	menuitem_EX060116	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb830	menuitem_EX060117	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb89c	menuitem_EX060118	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb908	menuitem_EX060201	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb974	menuitem_EX060202	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdb9e0	menuitem_EX060203	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdba4c	menuitem_EX060204	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbab8	menuitem_EX060205	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbb24	menuitem_EX060206	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbb90	menuitem_EX060207	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbbfc	menuitem_EX060208	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbc68	menuitem_EX060209	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbcd4	menuitem_EX060210	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbd40	menuitem_EX060211	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbdac	menuitem_EX060212	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbe18	menuitem_EX060213	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbe84	menuitem_EX060214	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbef0	menuitem_EX060215	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbf5c	menuitem_EX060216	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdbfc8	menuitem_EX060217	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc034	menuitem_EX060218	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc0a0	menuitem_EX060301	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc10c	menuitem_EX060302	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc178	menuitem_EX060303	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc1e4	menuitem_EX060304	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc250	menuitem_EX060305	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc2bc	menuitem_EX060306	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc328	menuitem_EX060307	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc394	menuitem_EX060308	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc401	menuitem_EX060309	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc46e	menuitem_EX060310	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc4db	menuitem_EX060311	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc548	menuitem_EX060312	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc5b5	menuitem_EX060313	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc622	menuitem_EX060314	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc68f	menuitem_EX060315	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc6fc	menuitem_EX060316	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc769	menuitem_EX060317	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc7d6	menuitem_EX060318	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc843	menuitem_EX060401	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc8b0	menuitem_EX060402	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc91d	menuitem_EX060403	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc98a	menuitem_EX060404	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdc9f7	menuitem_EX060405	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdca64	menuitem_EX060406	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcad1	menuitem_EX060407	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcb3e	menuitem_EX060408	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcbab	menuitem_EX060409	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcc18	menuitem_EX060410	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcc85	menuitem_EX060411	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdccf2	menuitem_EX060412	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcd5f	menuitem_EX060413	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcdcc	menuitem_EX060414	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdce39	menuitem_EX060415	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcea6	menuitem_EX060416	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcf13	menuitem_EX060417	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcf80	menuitem_EX060418	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdcfed	menuitem_EX060501	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd05a	menuitem_EX060502	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd0c7	menuitem_EX060503	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd134	menuitem_EX060504	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd1a1	menuitem_EX060505	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd20e	menuitem_EX060506	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd27b	menuitem_EX060507	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd2e8	menuitem_EX060508	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd355	menuitem_EX060509	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd3c2	menuitem_EX060510	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd42f	menuitem_EX060511	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd49c	menuitem_EX060512	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd509	menuitem_EX060513	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd576	menuitem_EX060514	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd5e3	menuitem_EX060515	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd650	menuitem_EX060516	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd6bd	menuitem_EX060517	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd72a	menuitem_EX060518	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffdd797	cat_ai_poll	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffddb6a	cat_ai_holdoff	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffddb7e	cat_ai_FD	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdebd1	FUN_fffdebd1	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdee2c	FUN_fffdee2c	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdef13	FUN_fffdef13	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdf85c	FUN_fffdf85c	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdf981	FUN_fffdf981	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdfbe4	FUN_fffdfbe4	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdfd36	FUN_fffdfd36	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdfda4	FUN_fffdfda4	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdfe0a	FUN_fffdfe0a	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdfe7a	FUN_fffdfe7a	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffdff9c	FUN_fffdff9c	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe02f4	FUN_fffe02f4	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe0394	FUN_fffe0394	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe0839	FUN_fffe0839	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe0fe6	FUN_fffe0fe6	uint16	char	asm	asm: live-in R1:B, 9/9 call sites read R1, return load UW
+fffe170a	FUN_fffe170a	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe1774	FUN_fffe1774	uint16	void	asm	asm: live-in -, 1/1 call sites read R1, return load UW
+fffe207f	FUN_fffe207f	void	char	asm	asm: live-in R1:B, 0/0 call sites read R1, return load -
+fffe2cd0	dispreq_e7_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffe360e	dispreq_e8_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffe3e2a	ladder_key_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffe5783	FUN_fffe5783	uint8	void	asm	asm: live-in -, 1/1 call sites read R1, return load UB
+fffe584e	FUN_fffe584e	uint8	int32	asm	asm: live-in R1:L, 5/5 call sites read R1, return load UB
+fffe587f	scan_task	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffe5aff	scan_allowed	uint8	void	asm	asm: live-in -, 4/4 call sites read R1, return load UB
+fffe5c26	FUN_fffe5c26	uint8	char, uint8	asm	asm: live-in R1:B,R2:B, 5/5 call sites read R1, return load UB
+fffe5c7e	scan_start_up	void	void	asm	asm: live-in -, 0/5 call sites read R1, return load -
+fffe5caf	scan_start_down	void	void	asm	asm: live-in -, 0/5 call sites read R1, return load -
+fffe5ce0	scan_stop	void	void	asm	asm: live-in -, 0/17 call sites read R1, return load -
+fffe5d7c	scan_step	void	void	asm	asm: live-in -, 0/3 call sites read R1, return load -
+fffe61e7	ex_command	uint8	char * text, uint8 is_set, uint16 len, uint8 * reply, uint16 * reply_len@stack:4	doc	cat_EX passes reply 0x1C8E in R4 and &u16 on the stack [fact, 0xFFFA9950]
+fffe6299	ex_read_or_write	bool	char * key, char * text, uint8 is_set, uint16 len	doc	[fact: dispatch to ex_read_value/ex_write_value/ex_read_string/ex_write_string]
+fffe6335	ex_read_string	uint8	int32, void *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load UB
+fffe63fb	ex_write_string	bool	uint32, int32	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load UB
+fffe646c	ex_read_value	uint8	char * key, char * out, uint8[16] lim@stack:4	doc	16-byte limits block copied onto the stack with SMOVF [fact, 0xFFFE62D6]
+fffe6550	ex_write_value	uint8	char * key, char * text, uint16 len, uint8[16] lim@stack:4	doc	16-byte limits block by value [fact, 0xFFFE62F8]; reads lim bytes 0..0xC
+fffe668a	ex_value_allowed	uint8	char *, int16	asm	asm: live-in R1:L,R2:W, 1/1 call sites read R1, return load UB
+fffe66e2	ex_fmt_byte	int16	uint8, char, uint8	asm	asm: live-in R1:B,R2:B,R3:B, 1/1 call sites read R1, return load UW
+fffe67f5	ex_fmt_4digits	int16	uint16	asm	asm: live-in R1:W, 3/3 call sites read R1, return load UW
+fffe6869	ex_parse_4digits	bool	char * text, uint16 * out, uint16 min, uint16 max, uint8 digits@stack:4, uint16 len@stack:6	doc	stack args packed (CC-RX): byte at SP+4, word at SP+6 [fact, 0xFFFE6874]
+fffe693b	ex_parse_byte	uint8	char * text, uint8 * out, uint8 digits, uint8 is_signed, uint8 min@stack:4, uint8 max@stack:5, uint16 len@stack:6	doc	stack args packed [fact, 0xFFFE6946]; names of R3/R4 [inference]
+fffe6c27	ex_parse_key	uint8	char *, uint8 *	asm	asm: live-in R1:L,R2:L, 1/1 call sites read R1, return load UB
+fffec46c	tuner_init	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffec473	tuner_task	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffecea5	atu_mem_store	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffedbea	FUN_fffedbea	void	void	asm	asm: live-in -, 0/2 call sites read R1, return load -
+fffedd07	R_TPU2_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffedd6d	R_TPU2_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffedd7c	R_TPU2_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
+fffedd8c	r_tpu2_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
+fffedd9a	FUN_fffedd9a	uint32	uint32, uint32, uint16 *	asm	asm: live-in R1:L,R2:L,R3:L, 3/3 call sites read R1, return load -
+fffede41	FUN_fffede41	uint64	uint32, uint32, uint32, uint32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 1/1 call sites read R1, return load -
+fffededa	_INITSCT	void	void	asm	interrupt handler (entry PUSHM R1-R5)
+fffedf24	FUN_fffedf24	uint32	uint16 *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load -
+fff9124c	get_bpsw	uint32	void	doc	returns BPSW in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff91263	get_bpc	uint32	void	doc	returns BPC in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff9127a	get_extb	uint32	void	doc	returns EXTB in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff91295	get_acc_hi	uint32	void	doc	returns ACC bits 63..32 (MVFACHI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
+fff912a8	get_acc_mi	uint32	void	doc	returns ACC bits 47..16 (MVFACMI #0,A0) in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]

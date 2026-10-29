@@ -74,7 +74,7 @@ Ghidra 12.1.4 ships no Renesas RX language. T05 installed a **community SLEIGH m
 | Remove | `rm -rf ~/Library/ghidra/ghidra_12.1.4_PUBLIC/Extensions/RX` |
 | Re-install | `git clone https://github.com/stefan00lpf/rx-proc-ghidra && git -C rx-proc-ghidra checkout ea4cd20403c2e359f0de0cead2850d6be173b67a`, then copy the six `data/languages/rx62t.*` files and create the two small files as above. |
 
-Known module limitations: the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) are modelled as p-code loops, so the decompiler renders them as loops instead of `strncmp`/`memcpy`/`memset`/`memchr`; the PSW flag bits are modelled as bit-ranges of PSW. Read those spots in the disassembly.
+Known module limitations: the PSW flag bits are modelled as bit-ranges of PSW. Until T21c the string instructions (SCMPU, SMOVF, SSTR, SUNTIL, SWHILE) were p-code loops that decompiled as loops; since T21c they are named pcodeops (see below), and since T21i the copy/store ones (SMOVF, SMOVB, SMOVU, SSTR) are loops again, because as pcodeops their stores were lost.
 
 ### Local SLEIGH fix (T17, 2026-10-27): `tools/ghidra/rx62t-movu-fix.patch`
 
@@ -99,13 +99,160 @@ SHA-256 of `rx62t.sinc`: original `42f51c2c…0f12`, patched `d32178a9…011b`. 
 instructions until they are re-disassembled, so MAIN was re-imported (T17). Undo: copy the two `.orig-ea4cd204` files back.
 The fix is local; it is not sent upstream.
 
-GNU binutils `rx-elf` (the fallback route) was **not** needed and not built.
+GNU binutils `rx-elf` (the fallback route) was not needed in T17; T21c built it as the reference disassembler (below).
+
+### RXv2 coverage check and second SLEIGH fix (T21c, 2026-10-28, #97 B1/B4): `tools/ghidra/rx62t-rxv2-fix.patch`
+
+**Reference disassembler.** No Debian package targets RX, so GNU binutils was built from source:
+
+| Item | Value |
+|---|---|
+| Source | https://ftp.gnu.org/gnu/binutils/binutils-2.47.tar.xz (latest release on 2026-10-28), SHA-256 `154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff`; `.sig` verified with key `3A24BC1E8FB409FA9F14371813FCEF89DD9E3C4F` (Nick Clifton, binutils maintainer) |
+| Build | `configure --target=rx-elf --prefix=$HOME/opt/rx-binutils-2.47 --disable-nls --disable-werror --disable-gdb --disable-gprofng --disable-sim`, `make -j$(nproc) MAKEINFO=true`, `make install MAKEINFO=true` (tarball and build tree in `~/opt/dl/binutils-2.47`, `~/opt/build/`) |
+| Location | `~/opt/rx-binutils-2.47/bin/rx-elf-objdump` (`GNU objdump (GNU Binutils) 2.47.20260726`) |
+| RXv2 support | **[fact]** the 2.47 RX disassembler (`opcodes/rx-decode.opc`) decodes the RXv2 set (EMACA, EMSBA, EMULA, MACLH, MSBHI/LH/LO, MULLH, MVFACGU, MVTACGU, RACL, RDACL/RDACW, FSQRT, FTOU, UTOF, MOVCO/MOVLI) and the RXv3 additions |
+| Remove | `rm -rf ~/opt/rx-binutils-2.47 ~/opt/build/binutils-2.47* ~/opt/dl/binutils-2.47` |
+
+**Method.** `tools/ghidra/ListingExport.java` writes every Ghidra instruction (address, length, bytes, mnemonic, operands,
+function) plus any undefined hole inside a function body. `tools/rx_compare.py` re-disassembles every run of back-to-back
+Ghidra instructions with `rx-elf-objdump -D -b binary -m rx --adjust-vma=0xFFF80000 --start-address --stop-address` and
+compares each instruction on length, mnemonic and operands after notation-only normalisation (rules N1–N10 in its
+docstring: case, SP = R0, `#`, numbers as integers with two's-complement for negatives, objdump's 3-operand `OP src,Rn,Rn`,
+zero displacement, `.L` memex, C/NC condition synonyms, register ranges, SETPSW/CLRPSW flag operand).
+
+```sh
+tools/ghidra-headless.sh <projdir> FT710_MAIN -process -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ListingExport.java /tmp/main_listing.tsv
+python3 -I tools/rx_compare.py /tmp/main_listing.tsv build/FT-710_MAIN_V0112.bin --all --diffs /tmp/diffs.tsv
+```
+
+**Result [fact].** All 129,938 instructions (384,437 code bytes; 112,045 of them in function bodies) were compared, plus
+a check that no flow runs into undecoded bytes (none does):
+
+| | `ea4cd204` + T17 patch | + T21c patch |
+|---|---|---|
+| same | 129,881 | 129,936 (all) |
+| different | **57** (56 in functions): all `MUL dsp[Rs].UB,Rd` (`4C`–`4E`) | 0 |
+| missing / bad (objdump cannot decode) / undefined holes | 0 / 0 / 0 | 0 / 0 / 0 |
+
+- **The firmware uses no RXv2-only instruction that the module lacks.** The only RXv2-only instruction in MAIN is `FTOU`
+  (12 sites), which the module decodes identically to objdump. No DSP accumulator op (EMACA etc.) occurs in disassembled
+  code, and no code flow stops at an undecodable instruction. The single "Bad Instruction" bookmark (0xFFF88FE5,
+  `BRA.A 0xFFD88FE5`) is data in the 0xFFF80000..0xFFF8FFFF constant area that analysis disassembled, not a decoder gap (B5).
+- The 57 differences were a module bug, not an RXv2 gap: the `MUL` memory forms always loaded `.L`, so
+  `MUL 25[R0].UB,R1` (`4D 01 19`) read a 32-bit word from SP+100. Example **[fact]**: `cat_ext_EO` (0xFFFA5C90) multiplies
+  the digits by a byte power of ten held on the stack; before the fix the C showed `sVar4 * in_stack_00000044`, after it
+  `sVar4 * bStack_7` with `bStack_7 = 100; … bStack_7 /= 10`.
+
+The listing diff only checks decoding. Reading the decompile of the changed functions found two **semantic** bugs that
+the diff cannot see, also fixed in the patch:
+
+| Instruction | Defect in `ea4cd204` (+T17) | Manual R01US0071EJ0100 | Sites in MAIN | Fix |
+|---|---|---|---|---|
+| `MUL dsp[Rs].memex,Rd` (`4C`–`4F`, `06 0C`–`06 CF`) | always `.L`; the UB form scaled dsp by 4 | MUL (2)/(3) | 57 UB (+6 memex .L, unchanged) | as ADD/SUB/CMP: UB = zero-extended byte, `06` forms use memex `mi` |
+| `XCHG [Rs].memex,Rd` | `unimpl`: 3 functions decompiled to `halt_unimplemented()` | p. 204 | 3 (`06 A0 10 xx`) | memory and LSB byte/word/long of Rd swapped, memex extension |
+| `SCCnd.size dest` | used `COND` (skips the store when the condition is false) and, for `SCCnd.L Rd`, stored to **memory at [Rd]** | p. 182: dest = 1 or 0, always written | 56 `.L Rd` | always writes; `.L Rd` writes the register |
+
+**String instructions (B4) [fact].** Uses in MAIN: `SMOVF` 689 (634 in 498 functions), `SSTR.B` 21, `SUNTIL.B` 6,
+`SCMPU` 6, `SMOVB`/`SMOVU`/`SWHILE` 0. The T17 loops were exact but decompiled as loops; the patch replaces them with named
+pcodeops (the decompiler prints a call), keeping every register and flag effect the manual defines:
+
+| Instruction | p-code | Manual |
+|---|---|---|
+| `SCMPU` | if R3≠0: `d = scmpu(R1,R2,R3)` (last `*R1 − *R2`, unsigned bytes); Z = (d = 0), C = (d ≥ 0); R1/R2 undefined (left) | p. 184 |
+| `SMOVF` / `SMOVB` | `smovf(R1,R2,R3)` / `smovb(…)`; R1, R2 ± R3; R3 = 0 | pp. 190, 189 |
+| `SMOVU` | if R3≠0: `R3 = smovu(R1,R2,R3)`; R1/R2 undefined (left) | p. 191 |
+| `SSTR.B/W/L` | `sstr(R1, R2:size, R3)`; R1 += R3 × size; R3 = 0 | p. 192 |
+| `SUNTIL.sz` / `SWHILE.sz` | if R3≠0: `p = suntil(R1,R2,R3,size)` (new R1); R3 −= (p − R1)/size; Z/C from `zext(*(p − size)) − R2` | pp. 196, 198 |
+
+`cat_parse` (0xFFFA347C) now reads `iVar3 = scmpu(&uStack_d,&cat_mnemonics + (uint)bStack_e * 2,2); if (-1 < iVar3 == iVar3 < 1)`
+(that is `strncmp(cmd, cat_mnemonics + 2*i, 2) == 0`); before, a byte loop compared with `puVar4 + -0x1fe51` and the
+`SCGEU`/`SCLEU` result showed as stores through registers. Memory clears read `sstr(0x4761,0,0x1968)`, copies `smovf(dst,src,n)`.
+
+**Decompile check [fact]** (fresh MAIN imports with the canonical recipe, old vs new module, `ExportDecomp.java`): 2268
+functions, 0 failures in both. 586 functions' C changed: 570 contain a patched instruction (SMOVF 498, SCCnd 36, MUL 42,
+SSTR 15, SUNTIL 6, XCHG 3, SCMPU 2), 16 others changed only in types or global names propagated from those (e.g.
+`(&DAT_000120bc)[i]` instead of `*(byte *)((int)&DAT_000120bc + i)`, `DAT_00015e06` instead of `_DAT_00015e06`).
+`quality.tsv` (`tools/decomp_quality.py compare`): warnings 1294 → 1218, unreachable-block 1226 → 1167, unimplemented 3 → 0,
+`in_` variables 51 → 6 functions, in/unaff/extraout 61 → 22; worse: `extraout_` 14 → 17 functions (callers of patched
+functions, parameter inference, see B3) and undefined non-0xFF bytes 20,622 → 20,688 (the loops' byte reads used to create
+64 one-byte `undefined1` items at copy sources such as 0xFFF80016; these placeholders are gone, the strings remain for B5).
+
+Apply (on top of the T17 patch; `tools/bootstrap.sh --only rx` does this):
+```sh
+cd ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX
+cp data/languages/rx62t.sinc data/languages/rx62t.sinc.t17; cp data/languages/rx62t.sla data/languages/rx62t.sla.t17
+patch -p1 < /workspace/FT-710_Firmware/tools/ghidra/rx62t-rxv2-fix.patch
+JAVA_HOME=~/opt/jdk-21.0.13+9 ~/opt/ghidra_12.1.4_PUBLIC/support/sleigh data/languages/rx62t.slaspec   # 8 NOP warnings
+```
+SHA-256 of `rx62t.sinc`: T17 `d32178a9…011b`, T21c `9eadf83b…6a11` (`rx62t.sla` `2581e5e3…6ed3`). Installed in the
+container's Ghidra on 2026-10-28. Undo: copy the two `.t17` files back. Re-import MAIN to get the new instructions (T21g).
+Not fixed (unused by this firmware): `UTOF` memory .UB form (`szldu_src` has no UB case), `SATR` (`unimpl`).
+
+### Local SLEIGH fix (T21d, 2026-10-28): `tools/ghidra/rx62t-rtsd-fix.patch`
+
+`RTSD #uimm,Rd-Rd2` (bytes `3F rd rd2 uimm`, manual R01US0071EJ0100 RTSD: SP += uimm×4 − (number of registers)×4, then pop Rd..Rd2 and
+return) computed the register count as `reg0_4 - reg4_4 + 1`, i.e. from the **contents** of Rd2 and Rd. SP after the frame release then
+depended on data, and the decompiler gave up on the stack ("Unable to track spacebase fully for stack") in the 8 MAIN functions where it
+mattered (`eeprom_read`, `displink_build_60`, `cat_SP_meters`, `menu_page_serialize` and four runtime functions at 0xFFFEDD9A..0xFFFEDFA7)
+**[fact]**. The patch uses the operand fields (`rs2 - rs1 + 1`). With it the 8 warnings go away and no other line of the MAIN C changes
+**[fact, T21d export]**. It applies on top of the T17 patch (and of T21c's, with an offset). Since T21g, `bootstrap.sh --only rx` applies it as the third
+stage after T21c's patch: `rx62t.sinc` SHA-256 T21c `9eadf83b…6a11` → `618938bb…4b36` (`RX_SINC_FIXED`); installed in the container's
+Ghidra on 2026-10-28.
+
+### Local SLEIGH fix (T21h, 2026-10-28): `tools/ghidra/rx62t-mvfac-fix.patch`
+
+The module had no constructor for the RXv2 accumulator reads `MVFACHI`/`MVFACMI`/`MVFACLO #imm,As,Rd` (bytes `FD 1E|i1 a:i0:op:rd`,
+manual R01US0071EJ0100 pp. 135-137 and 265-266; imm `i1:i0` = 10 → #0, 11 → #1, 00 → #2, 01 reserved; op 00 HI, 01 LO, 10 MI), so
+MAIN's `FD 1F 02` at 0xFFF9129B (`MVFACHI #0,A0,R2`) and `FD 1F 22` at 0xFFF912AE (`MVFACMI #0,A0,R2`) did not decode **[fact]**. The
+patch adds the token field `acci6_1` and six constructors: Rd = (ACC << imm) bits 63..32 / 47..16 / 31..0. The module's ACC is 64 bits
+(no guard bits 71..64); for imm ≤ 2 those bits come from ACC bits 63..0 only, so the result is exact. A1 is not decoded (as for
+`MVTACHI`/`MVTACLO`, whose empty semantics are left to T22a); `MVFACGU` is not modelled. Ghidra prints the accumulator as `ACC`
+(`rx_compare.py` rule N11: ACC = A0). `bootstrap.sh --only rx` applies it as the fourth stage after the RTSD patch: `rx62t.sinc` SHA-256
+`618938bb…4b36` (`RX_SINC_RTSD`) → `9efea07b…82a5` (`RX_SINC_FIXED`); sleigh still reports 8 NOP constructors. Installed in the
+container's Ghidra on 2026-10-28.
+
+### SLEIGH semantics check and fix (T22a, 2026-10-28): `tools/ghidra/rx62t-semantics-fix.patch`
+
+Decoding: on all 131,213 MAIN listing entries, Ghidra (`618938bb…4b36`) and binutils 2.47 `rx-elf-objdump` agree except the two
+undecoded T21h fragments and the `ACC`/`a0` name of `MVTACHI`/`MVTACLO` **[fact, T22a step 1]**. rizin 0.9.1's `rx` plugin is a
+weaker third decoder: it rejects `BRA.S`/`BEQ.S`/`BNE.S` with pcdsp 8–10 (`dsp[2:0]` 000b–010b; 1,034 MAIN instructions), prints
+only Rd2 of `RTSD #imm,Rd-Rd2`, and lacks RXv2 `FTOU`, 3-operand `FSUB` and control register EXTB; it has no ESIL/RzIL.
+
+Semantics: `tools/rx_semcheck.py` (model from R01US0071EJ0100) + `tools/ghidra/RxEmuStep.java` (p-code emulator, one instruction
+per case) found nine classes of p-code bugs in the module as installed by T17 + T21c + T21d (details and pages:
+docs/tasks/T22-rea-verification.md, T22a step 2). The ones that change decompiled C: `ld_src` with ld = 11 read only `zext(Rs:1)`
+for the register forms of `SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF` (the memex of the memory forms leaked in), `JSR Rs` was
+`PC = Rs` (no `call`, so the decompiler dropped all 23 indirect calls in MAIN), and the flag bugs (`DIV`/`DIVU` O, `ITOF` Z/S,
+`SHLL` O, `ROLC`/`RORC`, `ADC`/`SBB`, `SHAR #imm,Rs,Rd`) plus byte-sized `BSET`/`BCLR`/`BNOT Rs,[Rd]`. Known but not in the patch
+(no MAIN instruction to back them): `JMP Rs` (`PC = Rs`, same as JSR), `BNOT Rs,Rd` (`Rd ^ (Rs & 31)`).
+
+The patch (21 hunks) applies after `rx62t-rtsd-fix.patch` (`618938bb…4b36` → `c80b4ed7…73d3`, `rx62t.sla` `30eb8a06…f3ea`) and,
+with line offsets only, after T21h's MVFAC fix. Tested in a private Ghidra copy (`~/opt/t22a-ghidra-tmp`: hard links, own
+`Ghidra/Processors/RX`). Since 2026-10-28 it is the fifth stage of `bootstrap.sh --only rx` (`RX_SINC_MVFAC` `9efea07b…82a5` →
+`RX_SINC_SEMANTICS` `c4d71924…c3d0`), installed in the container's Ghidra, and MAIN was rebuilt and re-exported with it.
+
+### String instructions with a memory effect (T21i, 2026-10-28): `tools/ghidra/rx62t-stringmem-fix.patch`
+
+T21c (#97 B4) made all seven RX string instructions named pcodeops. The decompiler treats a pcodeop as touching no memory, so
+stores into a buffer that only `SMOVF` read were dead code to it: 34 MAIN reply builders (0xFFFDE064–0xFFFE1774) lost their
+reply bytes and `nib2hex` digits (T22e) **[fact]**. The patch turns `SMOVF`, `SMOVB`, `SMOVU` and `SSTR.B/.W/.L` back into
+explicit loops (T17's, with `R2:1`/`R2:2` for the narrow `SSTR` stores; manual R01US0071EJ0100 pp. 189-192) and drops their
+pcodeops. `SCMPU`/`SUNTIL`/`SWHILE` stay pcodeops: they only read, and every MAIN use reads a ROM constant, a parameter or a
+buffer that already escapes into a real call (`cat_parse`'s `uStack_d` goes to `toupper_inplace`). If a later image compares a
+stack buffer filled only by plain stores, it needs the same treatment. Sixth `bootstrap.sh --only rx` stage
+(`RX_SINC_SEMANTICS` `c4d71924…c3d0` → `RX_SINC_FIXED` `30af4806…c69d`); `rx_semcheck.py` models the copied/stored bytes and
+keeps R3 at 0–40 for these two ops so the emulated loop ends (28,772 cases, 0 fail).
+
+`tools/ghidra/rx62t-mvtac-fix.patch` (T21i, seventh stage: `30af4806…c69d` → `73d417d2…8290` = `RX_SINC_FIXED`) fills the empty
+`MVTACHI`/`MVTACLO` bodies: ACC bits 63..32 / 31..0 = Rs (manual pp. 267-268; the module's ACC is 64 bits, no guard bits). sleigh
+now reports 6 NOP constructors (was 8).
 
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
 download with SHA-256 checks (`--only deps`, Linux x86_64), the RX module install from `stefan00lpf/rx-proc-ghidra` @ `ea4cd204` plus the
-T17 patch and `sleigh` compile (`--only rx`), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
+T17, T21c, T21d and T21h patches and `sleigh` compile (`--only rx`), the generated HiFi4 language `Xtensa:LE:32:rt600hifi4` (`--only hifi4`, T21a), the four Ghidra programs, the decomp re-export and diff, and the Project X-Ray checkouts +
 venv + SDR netlist/Verilator chain (`--only sdr`). Newcomer walk-through: [getting-started.md](getting-started.md); catalogue of all
 scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` takes `JOBS` (default 16) and `tools/xc7_fasm.py` takes
 `FT710_VENV` (default `~/.local/share/ft710-tools/venv`) since T20.
@@ -114,7 +261,7 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 
 | Script | Purpose |
 |---|---|
-| `ExportDecomp.java` | shared export: decompiled C in 50-function files plus `functions.tsv` (T01/T05) |
+| `ExportDecomp.java` | shared export: decompiled C in 50-function files plus `functions.tsv` (T01/T05) and `quality.tsv` (T21f, see below) |
 | `SetupRX651.java` | pre-script for RX651 raw images: RAM/IO/data-flash blocks, `.data` copy-down (`copy=SRC:END:DST`), fixed and relocatable vectors → functions (T05) |
 | `ApplyNames.java` + `names_main.tsv` | reproducible function names and labels for MAIN (T05) |
 | `CatDispatch.java` | dumps the MAIN CAT mnemonic → switch case → handler table (T05) |
@@ -126,10 +273,11 @@ scripts: [tools/README.md](../tools/README.md). `hdl/sdr/sim/build_full.sh` take
 | `IfdspFindFuncs.java` | post-script: finds missed Thumb `push {…,lr}` prologues in the M33 code ranges and defines rodata strings (T07) |
 | `IfdspM33Names.java` | reproducible function names for the IFDSP M33 program (T07) |
 | `IfdspHifi4Setup.java` | pre-script for the carved HiFi4 images: maps each one at its DSP load address and seeds the vectors (T07) |
-| `IfdspHifi4FindFuncs.java` | post-script: creates functions at 4-aligned `entry a1,N` prologues and drops artifacts in uninitialized memory (T07) |
+| `IfdspHifi4FindFuncs.java` | post-script: makes the SRAM function list exactly `tools/ghidra/entries_hifi4.tsv` (the `flix.dis` functions plus 2 documented extras; T07, reworked in T21b) |
 | `IfdspHifi4Names.java` | reproducible function names (+ plate comments) for the IFDSP HiFi4 program (T12e, merged in T17) |
 | `DisplaySetup.java` / `DisplayFindCode.java` / `DisplayReport.java` | DISPLAY (RZ/A1H) pre-script memory map + seeding, second code-discovery pass (pointer tables, prologues, orphans), read-only report (T06) |
 | `FixFuncEntries.java` + `entries_display.tsv` | creates function entries that analysis missed or started late (T11); run before ApplyNames |
+| `DisplayJumpTables.java` / `DisplayGaps.java` | DISPLAY ARM jump-table repair + check; missed-start and undefined-fragment report, `define` mode for the fragments (T21e, #97 B6–B8); run after FixFuncEntries, before ApplyNames |
 | `XrefsList.java`, `T10eXrefs.java`, `XrefsT10d.java` | print references to addresses or ranges with the containing function (T10 helpers; one would do, the others are kept for the task logs) |
 | `T10eMovuRegCount.java` | lists every `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11); after the T17 SLEIGH fix all 107 print as register forms |
 | `rx62t-movu-fix.patch` | the T17 SLEIGH fix for the RX module (see above) |
@@ -155,9 +303,20 @@ Python helpers in `tools/` (stdlib only; run with `python3 -I`):
 | `ifdsp_names_java.py` | converts the IFDSP name scripts (`IfdspM33Names.java`, `IfdspHifi4Names.java`) to/from TSV (T17) |
 | `pages_final_names.py` | switches code pages from proposed (italic) names to the applied Ghidra names (T17) |
 | `index_refresh.py` | refreshes the export-file column of a `decomp/*/INDEX.md` from `functions.tsv` (T17) |
+| `decomp_quality.py` | compares two `quality.tsv` files (fails if any count went up) and renders them into `INDEX.md` (T21f) |
 | `issues_sync.py` | mirrors `docs/tasks/` into GitHub issues (run by the parent agent only) |
 
-`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The IFDSP programs use only stock Ghidra languages (`ARM:LE:32:v8-m`, `Xtensa:LE:32:default`). The Xtensa module decodes only the base ISA, not HiFi4 FLIX bundles (see T07).
+**Decompile-quality check (T21f, #97 B11).** `ExportDecomp.java` also writes `decomp/<image>/quality.tsv` (`metric<TAB>value`) from
+the same decompile pass: functions, decompile failures, all warnings and each warning kind (the `WARNING:` comment text with
+addresses and numbers replaced by `#`, e.g. "Unable to track spacebase fully for stack", "Removing unreachable block (#)"),
+`halt_baddata()` calls, functions with `in_*`/`unaff_*`/`extraout_*` variables (a proxy for wrong signatures), undefined non-0xFF
+bytes in initialized executable blocks (total and per block), and Error / "Bad Instruction" bookmarks. `tools/bootstrap.sh verify`
+leaves `quality.tsv` out of the byte diff and runs `tools/decomp_quality.py compare <committed> <new>` per image instead: every
+count except `functions` must not go up (lower is better; improvements are printed). When a change makes a count worse on purpose
+(for example more functions found, so more warnings), commit the new `quality.tsv` with the export and refresh the table in
+`INDEX.md` with `tools/decomp_quality.py index`.
+
+`tools/ifdsp_dsp_images.py` (stdlib) carves the three HiFi4 images out of the decoded IFDSP image. `tools/ifdsp_l32r.py` (heuristic L32R literal scan per HiFi4 function) and `tools/ifdsp_regscan.py` (HiFi4 accesses to the shared register file) work around the missing FLIX decode (T12). The IFDSP rebuild commands are in `decomp/ifdsp/INDEX.md`. The M33 program uses the stock `ARM:LE:32:v8-m`; since T21g the HiFi4 program uses the generated `Xtensa:LE:32:rt600hifi4` (below), which decodes the FLIX bundles that the stock `Xtensa:LE:32:default` (base ISA only, T07) could not.
 
 MAIN full rebuild (from the repo root; ~1 minute in total):
 ```sh
@@ -165,7 +324,9 @@ tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -import build/FT-710_MAIN_V011
   -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile 3600 \
   -scriptPath tools/ghidra -preScript SetupRX651.java \
     copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
-  -postScript ApplyNames.java tools/ghidra/names_main.tsv -postScript ExportDecomp.java decomp/main 50
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv \
+  -postScript DefineRomData.java build/main_undefined.tsv code=0xFFF8F658 \
+  -postScript ApplySignatures.java tools/ghidra/signatures_main.tsv -postScript ExportDecomp.java decomp/main 50
 tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly \
   -scriptPath tools/ghidra -postScript CatDispatch.java decomp/main/cat_dispatch.tsv \
   0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
@@ -184,13 +345,14 @@ The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is in
 | Ghidra | 12.1.4 PUBLIC 20260921 | GitHub release `Ghidra_12.1.4_build`; SHA-256 `ddac49f9…d4db` matches the release notes | `~/opt/ghidra_12.1.4_PUBLIC` |
 | JDK 21 | Temurin 21.0.13+9 | Adoptium API; SHA-256 matches Adoptium's published checksum | `~/opt/jdk-21.0.13+9` |
 | RX module | stefan00lpf/rx-proc-ghidra `ea4cd204` (same commit as T05) | six `data/languages/rx62t.*` files only, plus an empty `Module.manifest`; `sleigh` compile shows the same 8 NOP warnings | `~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/RX/` (inside this Ghidra copy, so the REA MCP server sees it too) |
-| REA MCP | **Fork** github.com/Reid-n0rc/rea, branch `feat-ghidra-rx-raw` at `db2bfd303` (based on upstream morluto/rea `baec375c3` = `rea-agents` 6.8.0) | `npm pack` in `~/opt/rea`, then `npm install --global --prefix ~/.local ~/opt/rea-dist/rea-agents-6.8.0-rx-db2bfd303.tgz`; `rea setup --client claude_code --skill-client claude_code --skill --yes` refreshed the skill; the user-scope MCP entry runs `/usr/local/bin/node ~/.local/bin/rea mcp` with `env` `GHIDRA_INSTALL_DIR`, `JAVA_HOME`, `GHIDRA_HEADLESS_MAXMEM=10G` | `~/.local/bin/rea`, `~/.claude.json` (`mcpServers.rea`), `~/.claude/skills/reverse-engineer-anything`; source clone `~/opt/rea` (remotes `origin` = fork, `upstream` = morluto/rea) |
+| REA MCP | **Fork** github.com/Reid-n0rc/rea, branch `feat-ft710-devices` at `76eeda78f` (T22f, on top of `feat-ghidra-rx-raw` `db2bfd303`; based on upstream morluto/rea `baec375c3` = `rea-agents` 6.8.0) | `npm pack` in `~/opt/rea`, then `npm install --global --prefix ~/.local ~/opt/rea-dist/rea-agents-6.8.0-ft710-76eeda78f.tgz` (2026-10-28; was `-rx-db2bfd303`); `rea setup --client claude_code --skill-client claude_code --skill --yes` refreshed the skill; the user-scope MCP entry runs `/usr/local/bin/node ~/.local/bin/rea mcp` with `env` `GHIDRA_INSTALL_DIR`, `JAVA_HOME`, `GHIDRA_HEADLESS_MAXMEM=3G` (was 10G until 2026-10-28; owner's RAM cap), `REA_RIZIN_COMMAND=~/opt/rizin-0.9.1/bin/rizin` | `~/.local/bin/rea`, `~/.claude.json` (`mcpServers.rea`), `~/.claude/skills/reverse-engineer-anything`; source clone `~/opt/rea` (remotes `origin` = fork, `upstream` = morluto/rea) |
+| rizin | 0.9.1 (commit `c3a90e92`), static x86_64 release | GitHub release `v0.9.1`, `rizin-v0.9.1-static-x86_64.tar.xz` (SHA-256 `9102249a…47e8cf`, no published checksum to compare with), unpacked by hand on 2026-10-28 (first used by T22; recorded by T22a). Its `rx` plugin is disassembly + analysis only (no ESIL/RzIL, so no emulation) and decodes RXv1 only, see T22a in `docs/tasks/T22-rea-verification.md`. `tools/rx_compare.py --ref rizin` uses it. Run by full path (it is not on PATH). Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-*0.9.1` | `~/opt/rizin-0.9.1/bin/{rizin,rz-asm,...}`; tarball `~/opt/dl/rizin-0.9.1/` |
 
 - `binutils-arm-none-eabi` 2.40 (Debian, `persist-apt binutils-arm-none-eabi`, 2026-10-27, T11): `arm-none-eabi-objdump -D -b binary -m arm --adjust-vma=0x20100000` for quick DISPLAY disassembly checks outside Ghidra.
 - `tools/ghidra-headless.sh` uses the Homebrew paths when `/opt/homebrew/opt/ghidra` exists, else the `~/opt` paths above.
 - Ghidra's per-user state on Linux is `~/.config/ghidra/ghidra_12.1.4_PUBLIC/`.
 - The first JVM start after install takes over 10 s while it reads files from the array share for the first time, which can trip REA's doctor timeout. Re-run it.
-- **REA and MAIN (Renesas RX).** [fact] Stock rea-agents 6.8.0 cannot take RX: its ELF machines and raw-binary families are hard-coded, and raw-binary cannot reuse a Ghidra project. The fork adds (1) a raw-binary `rx` family bound to the installed `rx62t:LE:32:default` module, refused with `capability_unavailable` if the module is missing, and (2) an optional `base_address` separate from `entry_point`, because MAIN's ROM starts with data, not code. Open MAIN with `open_binary {path: "/workspace/FT-710_Firmware/build/FT-710_MAIN_V0112.bin", format: "raw-binary", architecture: "rx", base_address: "0xFFF80000", entry_point: "0xFFF8FBDB", provider_id: "ghidra"}` (CLI: `--target-format raw-binary --architecture rx --base-address 0xFFF80000 --entry-point 0xFFF8FBDB --provider ghidra`). Checked 2026-10-27: the load image is `verified`, and `cat_parse` @ 0xFFFA347C decompiles the same as the committed `decomp/main`, apart from names. Limits: REA re-imports from scratch, so the RAM/IO blocks, `.data` copy-down, named vectors and `names_main.tsv` names from `SetupRX651.java`/`ApplyNames.java` are absent; RAM globals show as unmapped `DAT_`/`_DAT_`. `REA_GHIDRA_SEED_FILE` works for raw imports (function/label seeds). Keep using `tools/ghidra-headless.sh` and the scripts in `tools/ghidra/` for the canonical, named MAIN project and `decomp/main` exports. Upstream context: morluto/rea#4246 (a generic comment was posted 2026-10-27; it does not mention the fork). Upstream's `src/gpu/GpuPayloadCodec.test.ts` zstd test fails on unmodified `baec375c3` too; it is not caused by the fork. REA hard-codes Ghidra `-XX:ParallelGCThreads=2`, and its vitest config caps workers at 2: pass `--maxWorkers=$(nproc)` to vitest directly.
+- **REA and MAIN (Renesas RX).** [fact] Stock rea-agents 6.8.0 cannot take RX: its ELF machines and raw-binary families are hard-coded, and raw-binary cannot reuse a Ghidra project. The fork adds (1) a raw-binary `rx` family bound to the installed `rx62t:LE:32:default` module, refused with `capability_unavailable` if the module is missing, and (2) an optional `base_address` separate from `entry_point`, because MAIN's ROM starts with data, not code. Open MAIN with `open_binary {path: "/workspace/FT-710_Firmware/build/FT-710_MAIN_V0112.bin", format: "raw-binary", architecture: "rx", base_address: "0xFFF80000", entry_point: "0xFFF8FBDB", provider_id: "ghidra"}` (CLI: `--target-format raw-binary --architecture rx --base-address 0xFFF80000 --entry-point 0xFFF8FBDB --provider ghidra`). Checked 2026-10-27: the load image is `verified`, and `cat_parse` @ 0xFFFA347C decompiles the same as the committed `decomp/main`, apart from names. Limits: REA re-imports from scratch, so the RAM/IO blocks, `.data` copy-down, named vectors and `names_main.tsv` names from `SetupRX651.java`/`ApplyNames.java` are absent; RAM globals show as unmapped `DAT_`/`_DAT_`. `REA_GHIDRA_SEED_FILE` works for raw imports (function/label seeds). Keep using `tools/ghidra-headless.sh` and the scripts in `tools/ghidra/` for the canonical, named MAIN project and `decomp/main` exports. Upstream context: morluto/rea#4246 (a generic comment was posted 2026-10-27; it does not mention the fork). Upstream's `src/gpu/GpuPayloadCodec.test.ts` zstd test fails on unmodified `baec375c3` too; it is not caused by the fork. REA hard-codes Ghidra `-XX:ParallelGCThreads=2`, and its vitest config caps workers at 2: pass `--maxWorkers` (3/4 of `nproc`, the owner's Ghidra/REA cap in AGENTS.md) to vitest directly, and run REA through `tools/ghidra-cap.sh`.
 - Remove REA: `claude mcp remove --scope user rea; rm -rf ~/.claude/skills/reverse-engineer-anything; npm uninstall -g --prefix ~/.local rea-agents`. Back to stock npm: `npm install -g --prefix ~/.local rea-agents@6.8.0`, then `rea setup --client claude_code --skill-client claude_code --skill --yes`. Update the fork: `git -C ~/opt/rea fetch upstream && git -C ~/opt/rea rebase upstream/main`, rerun the checks and `npm run verify:ghidra:rx`, then repack and reinstall as above.
 
 ## Zephyr SDK RT600 HiFi4 toolchain (T12e)
@@ -204,6 +366,31 @@ The repo moved to a Docker container on Tower (Unraid, x86_64). Everything is in
 | Used by | `tools/ifdsp_hifi4_dis.py` (bootstrap step `flix` → committed `decomp/ifdsp/hifi4/flix.dis`), `tools/ifdsp_hifi4_regscan.py` (command in `decomp/ifdsp/INDEX.md`) |
 | Not tried | Espressif overlays (ESP32 cores): different core configuration |
 | Remove | `rm -rf ~/opt/zephyr-sdk-0.17.0` |
+
+## rizin (T22a/T22c, 2026-10-28)
+
+rizin **0.9.1** (2026-06-29, commit `c3a90e9`), the official static Linux build `rizin-v0.9.1-static-x86_64.tar.xz` from
+github.com/rizinorg/rizin/releases (SHA-256 `9102249a…e8cf`, matches the release digest), unpacked to `~/opt/rizin-0.9.1/`
+(tarball in `~/opt/dl/rizin-0.9.1/`); installed by T22a, used by T22c too. Not on `PATH`; call `~/opt/rizin-0.9.1/bin/rizin`.
+Its Xtensa plugin is **Capstone-based** (LLVM tables), so it shares no code with GNU libisa / `xtensa-modules.c`.
+Known limits seen on the HiFi4 image (T22c, `tools/hifi4_rizin_compare.py`) **[fact]**: no `beqz.n`/`bnez.n`/`nop.n`
+(returned as invalid), `2cff` (`movi.n a15, 47`) shown as `break.n`, `slli` with shift 32 printed with an empty operand,
+`any8` names the raw `s` field (`b14`) instead of the BR8 group, no HiFi4/`f64*`/cache/MPU/`l32ai`/`s32nb` ops, and the FPU
+decoded with the standard FP-option layout on `f0..f15` (this core's VFPU uses `aed` registers and other fields).
+Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
+
+## HiFi4 SLEIGH language Xtensa:LE:32:rt600hifi4 (T21a, #97)
+
+| Item | Value |
+|---|---|
+| What | A Ghidra language variant for the RT600 HiFi4 DSP core: all 7 FLIX bundle formats (6 and 11 bytes, 2–4 slots), every opcode-in-slot encoding of the core (1,713 opcodes), `aed0..15`, `u0..3`, `aep0..3`, BR groups, the HiFi4 states, the FPU on the `aed` registers. Extends the stock Xtensa module, which stays unchanged (`Xtensa:LE:32:default`) |
+| Input | Cadence `xtensa-modules.c` for this core, MIT-licensed: https://raw.githubusercontent.com/zephyrproject-rtos/sdk-ng/15daabb558517dd735b41542709391fdc254cacc/overlays/xtensa_nxp_rt600_adsp/binutils/bfd/xtensa-modules.c (sdk-ng commit `15daabb558517dd735b41542709391fdc254cacc`, 2023-12-11; 2,996,889 bytes; SHA-256 `9e218b19033b93ad53b042f86a643034033a2322cfd09c138592c6255e53f372`, pinned in `tools/bootstrap.sh` and `tools/xtensa_sleigh_gen.py`). Downloaded to `~/opt/dl/xtensa-modules.c` |
+| Generator | `tools/xtensa_sleigh_gen.py` + `tools/xtensa_isa_dump.c` (a probe compiled with `cc` against `xtensa-modules.c`; own shim headers, no binutils code needed). Output committed in `tools/ghidra/xtensa-rt600hifi4/` (the generated `.sinc` files plus copies of three stock Ghidra files, Apache 2.0) |
+| Check | `python3 -I tools/xtensa_sleigh_gen.py selftest`: the generator's own model disassembles all 49,389 `flix.dis` instructions exactly as objdump does. Ghidra: `tools/flix_oracle.sh Xtensa:LE:32:rt600hifi4` (T21b): decode mode 49,389 / 49,389 = 100 % |
+| Opaque operations | An instruction without a semantics template becomes a pcodeop per register output (`op`, `op_1`, …). Since T21k, two or more state outputs (the fields of one special-register write, e.g. `wsr.ps`: WOE, CALLINC, OWB, UM, EXCM, INTLEVEL) share one call whose result is cut into disjoint bytes, one per field, so `wsr.ps a3` decompiles as one `wsr_ps(…)` and no two fields look equal. `xsr` keeps two calls (AR gets the old SR, SR the old AR). |
+| Install | `tools/bootstrap.sh --only hifi4` (copies the files into `$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages/` and compiles `xtensa_rt600hifi4.sla` with `support/sleigh`; `HIFI4_REGEN=1` regenerates from the download first). Installed in the container's `~/opt/ghidra_12.1.4_PUBLIC` on 2026-10-28. Use with `-processor Xtensa:LE:32:rt600hifi4`. Since T21g the canonical `ghidra/FT710_IFDSP` HiFi4 program and `tools/bootstrap.sh` (`build_ifdsp`) use it; its `.slaspec`/`.sinc`/`.pspec`/`.ldefs` files are part of the program's rebuild stamp |
+| Remove | `rm ~/opt/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*` |
+| Details | [docs/code/ifdsp/ghidra-flix.md](code/ifdsp/ghidra-flix.md), "The SLEIGH language" |
 
 ## Python
 

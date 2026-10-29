@@ -59,6 +59,25 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T19g | [Guide: Hacking and custom firmware](T19g-guide-hacking-and-custom-firmware.md) | T19 | done |
 | T19h | [Fix reference-page issues found while writing the guide](T19h-reference-fixes.md) | T19a–g | done |
 | T20 | [Onboarding: rebuild everything from the official downloads + getting-started manual](T20-onboarding.md) | T01–T19 | done |
+| T21 | [Close the Ghidra decompile gaps (#97)](T21-ghidra-gaps.md) | T05, T07, T11, T12e, T17, T20 | done |
+| T21a | [HiFi4: SLEIGH generator and the language Xtensa:LE:32:rt600hifi4](T21-ghidra-gaps.md) | T21 | done |
+| T21b | [HiFi4: test oracle against flix.dis, function list](T21-ghidra-gaps.md) | T21 | done |
+| T21c | [MAIN: RXv2 coverage diff, string ops as pcodeops](T21-ghidra-gaps.md) | T21 | done |
+| T21d | [MAIN: spacebase, call signatures, ROM data definition](T21-ghidra-gaps.md) | T21 | done |
+| T21e | [DISPLAY: jump tables, missed function starts, fragments](T21-ghidra-gaps.md) | T21 | done |
+| T21f | [All images: decompile-quality counts and regression check](T21-ghidra-gaps.md) | T21 | done |
+| T21g | [Integration: rebuild the canonical projects, re-export decomp/](T21-ghidra-gaps.md) | T21a–f | done |
+| T21h | [MAIN: decode the two RX fragments left undefined](T21-ghidra-gaps.md) | T21c, T21g | done |
+| T21i | [MAIN: memory effect for the RX string instructions](T21-ghidra-gaps.md) | T21c, T22e | done |
+| T21j | [DISPLAY/IFDSP: T22d's entry, block and data fixes](T21-ghidra-gaps.md) | T21g, T22d | done |
+| T21k | [HiFi4: one pcodeop per special-register write](T21-ghidra-gaps.md) | T21a, T22e | done |
+| T22 | [Verify the #97 fixes with independent REA and rizin tools](T22-rea-verification.md) | T21 | done |
+| T22a | [MAIN: RX fixes and signatures, third-decoder check](T22-rea-verification.md) | T21c, T21d | done |
+| T22b | [DISPLAY: jump tables, starts and fragments, second analyser](T22-rea-verification.md) | T21e | done |
+| T22c | [HiFi4: rizin base-ISA check, REA decompile with the new language](T22-rea-verification.md) | T21a, T22f | done |
+| T22d | [All images: classify the undefined bytes left](T22-rea-verification.md) | T21 | done |
+| T22e | [All images: before/after behaviour diff](T22-rea-verification.md) | T21g | done |
+| T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | done |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 

@@ -1,0 +1,5 @@
+# FT-710 DISPLAY: data types T21e's DisplayGaps pass defines too coarsely (T21j, from T22d). Applied with ApplyData.java after
+# DisplayGaps.java. address<TAB>type<TAB>count<TAB>name<TAB>comment
+0x20154b64	char[4]	4	printf_sign_prefix	printf sign prefix strings "", "-", "+", " " (selected by adr r6 at 0x20154B88..0x20154BB2)
+0x20154be0	char[4]	4	printf_sign_prefix_2	twin of printf_sign_prefix
+0x20164c00	byte	128	fplib_recip_seed	fplib divider reciprocal seed table ff fd fb .. 81 80 (addw r6, pc, #320; ldrb at 0x20164A3C)

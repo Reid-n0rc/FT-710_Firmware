@@ -1,0 +1,131 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -2011,22 +2011,20 @@
+ }
+ 
+ 
+-## String instructions as named pcodeops (T21c, #97 B4). The T17 p-code loops were exact but decompiled as loops;
+-## the decompiler now shows one call per instruction. Register and flag effects follow the RXv2 software manual
+-## R01US0071EJ0100 (SCMPU p. 184, SMOVB p. 189, SMOVF p. 190, SMOVU p. 191, SSTR p. 192, SUNTIL p. 196, SWHILE p. 198):
++## String instructions (T21c, #97 B4; T21i). The compare/search ops are named pcodeops, so the decompiler shows one call
++## per instruction. The copy/store ops are explicit loops again (T21i): the decompiler treats a pcodeop as touching no
++## memory, so stores into a buffer that only SMOVF read were dead (34 MAIN reply builders lost their reply bytes).
++## Register and flag effects follow the RXv2 software manual R01US0071EJ0100 (SCMPU p. 184, SMOVB p. 189, SMOVF p. 190,
++## SMOVU p. 191, SSTR p. 192, SUNTIL p. 196, SWHILE p. 198):
+ ##   scmpu(R1, R2, R3)        returns *R1 - *R2 (unsigned bytes, zero-extended) of the last compared pair: 0 when the
+ ##                            strings matched (Z), >= 0 when C is set. R1/R2 are undefined afterwards (left unchanged).
+-##   smovf/smovb(R1, R2, R3)  copies R3 bytes from R2 to R1; R1/R2 end one past (before) the last byte, R3 = 0.
+-##   smovu(R1, R2, R3)        copies up to R3 bytes up to and including NUL; returns the new R3. R1/R2 undefined (unchanged).
+-##   sstr(R1, R2:size, R3)    stores R2 (.B/.W/.L) R3 times at R1; R1 ends one element past the last store, R3 = 0.
++##   SMOVF/SMOVB              copy R3 bytes from R2 to R1 forward/backward; R1/R2 end one past (before) the last byte, R3 = 0.
++##   SMOVU                    copies up to R3 bytes up to and including NUL; R1/R2 end one past the last byte copied.
++##   SSTR.size                stores R2 (.B/.W/.L) R3 times at R1; R1 ends one element past the last store, R3 = 0.
+ ##   suntil/swhile(R1, R2, R3, size)  returns the new R1 (one element past the last compared one); R3 is reduced by the
+ ##                            number of compares, Z/C come from that last element - R2 (unsigned).
+-## Every instruction is a no-op when R3 = 0 (manual), so the call is skipped then.
++## Every instruction is a no-op when R3 = 0 (manual).
+ define pcodeop scmpu;
+-define pcodeop smovf;
+-define pcodeop smovb;
+-define pcodeop smovu;
+-define pcodeop sstr;
+ define pcodeop suntil;
+ define pcodeop swhile;
+ 
+@@ -2193,26 +2191,42 @@
+ 
+ ## SMOVB - string move backward p. 189
+ :SMOVB    is op0_8 = 0x7F; op0_8 = 0x8B {
+-    smovb(R1, R2, R3);
+-    R1 = R1 - R3;
+-    R2 = R2 - R3;
+-    R3 = 0;
++    <loop>
++    if (R3 == 0) goto <end>;
++        *:1 R1 = *:1 R2;
++        R1 = R1 - 1;
++        R2 = R2 - 1;
++        R3 = R3 - 1;
++        goto <loop>;
++    <end>
+ }
+ 
+ 
+ ## SMOVF - string move forward p. 190
+ :SMOVF    is op0_8 = 0x7F; op0_8 = 0x8F {
+-    smovf(R1, R2, R3);
+-    R1 = R1 + R3;
+-    R2 = R2 + R3;
+-    R3 = 0;
++    <loop>
++    if (R3 == 0) goto <end>;
++        *:1 R1 = *:1 R2;
++        R1 = R1 + 1;
++        R2 = R2 + 1;
++        R3 = R3 - 1;
++        goto <loop>;
++    <end>
+ }
+ 
+ 
+ ## SMOVU - string move while unequal to zero p. 191
+ :SMOVU    is op0_8 = 0x7F; op0_8 = 0x87 {
++    local tmp:1;
++    <loop>
+     if (R3 == 0) goto <end>;
+-    R3 = smovu(R1, R2, R3);
++        tmp = *:1 R2;
++        R2 = R2 + 1;
++        *:1 R1 = tmp;
++        R1 = R1 + 1;
++        R3 = R3 - 1;
++        if (tmp == 0) goto <end>;
++        goto <loop>;
+     <end>
+ }
+ 
+@@ -2220,23 +2234,35 @@
+ ## SSTR.size - storing a string p. 192
+ ### SSTR.B
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 0 & sz0_2 [ mode_sz = sz0_2; ] {
+-    sstr(R1, R2:1, R3);
+-    R1 = R1 + R3 * 1;
+-    R3 = 0;
++    <loop>
++    if (R3 == 0) goto <end>;
++        *:1 R1 = R2:1;
++        R1 = R1 + 1;
++        R3 = R3 - 1;
++        goto <loop>;
++    <end>
+ }
+ 
+ ### SSTR.W
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 1 & sz0_2 [ mode_sz = sz0_2; ] {
+-    sstr(R1, R2:2, R3);
+-    R1 = R1 + R3 * 2;
+-    R3 = 0;
++    <loop>
++    if (R3 == 0) goto <end>;
++        *:2 R1 = R2:2;
++        R1 = R1 + 2;
++        R3 = R3 - 1;
++        goto <loop>;
++    <end>
+ }
+ 
+ ### SSTR.L
+ :SSTR^szdsc    is szdsc & op0_8 = 0x7F; op2_6 = 0b100010 & sz0_2 = 2 & sz0_2 [ mode_sz = sz0_2; ] {
+-    sstr(R1, R2, R3);
+-    R1 = R1 + R3 * 4;
+-    R3 = 0;
++    <loop>
++    if (R3 == 0) goto <end>;
++        *:4 R1 = R2;
++        R1 = R1 + 4;
++        R3 = R3 - 1;
++        goto <loop>;
++    <end>
+ }
+ 
+ 

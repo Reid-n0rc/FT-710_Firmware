@@ -8,6 +8,12 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `<first>_<last>.c`: decompiled C, 50 functions per file in address order (`tools/ghidra/ExportDecomp.java`).
 - `functions.tsv`: entry, name, size, reference count, file for every function.
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
+- Rebuild (`tools/bootstrap.sh --only ghidra,export` does the same; full command in `docs/tooling.md`, "MAIN full rebuild"): import with
+  `SetupRX651.java`, then the post-scripts in this order: `ApplyNames.java tools/ghidra/names_main.tsv`,
+  `DefineRomData.java <report.tsv> code=0xFFF8F658` (strings, pointer/zero runs, unreferenced functions, const tables; T21d, #97 B5),
+  `ApplySignatures.java tools/ghidra/signatures_main.tsv` (locked prototypes; T21d, #97 B3), `ExportDecomp.java decomp/main 50`.
+  Check call arguments with the read-only `CallArgCheck.java <mismatch.tsv> [<protos.tsv>]`; redraft the signatures with
+  `tools/signatures_draft.py` (see `tools/README.md`).
 - Function names come from `tools/ghidra/names_main.tsv` (T05, T09 and T10a–h, applied with `tools/ghidra/ApplyNames.java` in T17). Everything else is `FUN_<addr>`. Subsystem pages: [docs/code/main/](../../docs/code/main/README.md).
 
 ## Numbers
@@ -17,13 +23,68 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   failures**; 1136 functions carry a name. The 16 extra functions over T05 are entries that ApplyNames created at names the sub-tasks gave to
   code labels (SCI TEI/ERI callbacks, menu item callbacks, tail-call targets).
 - About 384 KB of the ~451 KB non-0xFF ROM bytes are disassembled as code (129,938 instructions, T05 count), and about 50 KB are defined data. About 20 KB of non-0xFF bytes remain undefined, mostly string/const areas in 0xFFF80000..0xFFF8FFFF.
-- Decompiler warnings: 1226 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
+- T17 decompiler warnings: 1226 "Removing unreachable block" (harmless, from the `-O0`-style code) and 8 "Unable to track spacebase".
+- T21g rebuild (2026-10-28, #97): full re-import with the RX module patched for T17, T21c (RXv2 ops: `MUL`/`XCHG` memory forms, `SCCnd`,
+  string ops as named pcodeops) and T21d (`RTSD` frame size), then ApplyNames → DefineRomData → ApplySignatures (1,212 locked prototypes).
+  **2,324 functions exported**, 0 decompile failures. Against the T17 export: "Unable to track spacebase" 8 → 0, functions with
+  `in_`/`unaff_`/`extraout_` variables 61 → 8, undefined non-0xFF bytes 20,622 → 161 (two RX fragments the module cannot decode, at
+  0xFFF8FEF3 and 0xFFF9129B), warnings 1,294 → 1,229, unimplemented-instruction warnings 3 → 0. Functions with a warning go 347 → 352
+  because of the 56 new functions and "Removing unreachable block" in byte-parameter setters; this baseline was committed on purpose.
+- T21h + T22a rebuild (2026-10-28, #112, #113): MAIN rebuilt with two more RX stages, `rx62t-mvfac-fix.patch` (RXv2
+  `MVFACHI`/`MVFACMI`/`MVFACLO`) and `rx62t-semantics-fix.patch` (`SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF Rs,Rd` read all of Rs,
+  `JSR Rs` is a call, flag fixes), and `DefineRomData` scanning the code area for strings only after its code pass. **2,328
+  functions**, 0 decompile failures, **0 undefined non-0xFF bytes** (161 → 0: both fragments are code), warnings 1,229 → 1,217
+  (unreachable-block 1,187 → 1,175: wrong flags had made branches look constant), functions with `in_`/`unaff_`/`extraout_` 8 → 7.
+  The 23 `JSR Rs` sites now show as indirect calls, e.g. `FUN_fffbba0f` calls the handler table at 0xFFF89910 before `return 1;`.
+- T21i rebuild (2026-10-28, #97): `rx62t-stringmem-fix.patch` turns `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` back into loops. The CAT/AI
+  reply builders (0xFFFDE064–0xFFFE1774) have their reply bytes again: `FUN_fffe0ba1` builds `"SF00;"` and sets `local_9[3]`,
+  `FUN_fffdebd1` stores the `nib2hex` digit in `local_6[2]`, `FUN_fffde887` starts from `"CN00000;"`; 0 functions drop a
+  `nib2hex` result (17 before). Copy sources show as string literals (51 → 66 distinct literals in the C, e.g. `"MEMORY NAME"`),
+  and false parameters/returns that the pcodeop's register reads made up are gone (`FUN_fffe56e4` returned `main`).
+  2,328 functions, 0 failures, 0 undefined non-0xFF bytes; warnings 1,217 → 1,222 (all "Globals starting with '_' overlap",
+  24 → 29, from byte accesses in the loops). Same task: `MVTACHI`/`MVTACLO` write ACC, and the five CC-RX intrinsic helpers
+  `get_bpsw`/`get_bpc`/`get_extb`/`get_acc_hi`/`get_acc_mi` (0xFFF9124C–0xFFF912A8, no callers) have locked `uint32 f(void)`
+  signatures (Ghidra's default prototype had picked R2 as their return register).
 - Known decompiler artifacts **[fact]**:
-  - `SCMPU`/`SMOVF`/`SSTR`/`SUNTIL`/`SWHILE` string instructions are p-code loops, so they decompile as loops (`cat_parse` shows one). The underlying code is `strncmp(cmd, table+2*i, 2)`.
-  - Some call arguments are dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Check the disassembly when an argument count looks wrong.
+  - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
+    `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
+    because as calls the decompiler dropped the stores into the copied buffer.
+  - Some call arguments used to be dropped, e.g. the middle `eeprom_spi_tx()` in `eeprom_read` really sends the address high byte. Since
+    T21g the locked signatures fix all but 2 (at functions without a signature); check the disassembly when an argument count looks wrong.
   - **Fixed in T17:** `MOVU.B/W Rs,Rd` (0x5B/0x5F, ld=11) used to be shown as a memory load `[Rs]` (107 sites in 49 functions, found by T10e with
     `tools/ghidra/T10eMovuRegCount.java`). After the fix all 107 decode as register zero-extends, e.g. `cat_ext_SP` now calls
     `cat_checksum_ok(cmd+4, len-2)` and `displink_tx_req` passes `len-1` instead of loading from address `len-1`.
+
+## Decompile quality (`quality.tsv`)
+Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same decompile pass as the `.c` files (T21f, #97 B11). `tools/bootstrap.sh verify` fails if any count is higher than in the committed file, so a gap cannot come back unnoticed after a re-import. Lower is better for every row except the function count. Warning kinds are the decompiler's `WARNING:` comments with addresses and numbers replaced by `#`. Regenerate the table with
+`python3 -I tools/decomp_quality.py index decomp/main/INDEX.md MAIN=decomp/main/quality.tsv`.
+
+<!-- quality:begin -->
+<!-- generated by tools/decomp_quality.py index from quality.tsv (ExportDecomp.java); do not edit by hand -->
+
+| Metric | MAIN |
+|---|---:|
+| Functions exported (non-thunk) | 2,328 |
+| Decompile failures | 0 |
+| Decompiler warnings (all kinds) | 1,222 |
+| Functions with a warning | 354 |
+| "Unable to track spacebase" | 0 |
+| "Removing unreachable block" | 1,175 |
+| `halt_baddata()` calls | 0 |
+| Functions with `halt_baddata()` | 0 |
+| Functions with `in_*` variables | 12 |
+| Functions with `unaff_*` variables | 0 |
+| Functions with `extraout_*` variables | 0 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 12 |
+| Undefined non-0xFF bytes in executable blocks | 0 |
+| … in block `ROM` | 0 |
+| Error bookmarks | 1 |
+| "Bad Instruction" bookmarks | 1 |
+| warning: Do nothing block with infinite loop | 2 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
+| warning: Ignoring partial resolution of indirect | 16 |
+| warning: Removing unreachable block (#) | 1,175 |
+<!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]
 Full boot flow, main-loop task table and power states: [docs/code/main/README.md](../../docs/code/main/README.md).

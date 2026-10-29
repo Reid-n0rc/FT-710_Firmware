@@ -1,0 +1,25 @@
+metric	value
+functions	427
+decompile_failures	0
+warnings	181
+functions_with_warnings	93
+spacebase_warnings	0
+unreachable_block_warnings	37
+halt_baddata	1
+functions_with_halt_baddata	1
+functions_with_in_vars	13
+functions_with_unaff_vars	3
+functions_with_extraout_vars	16
+functions_with_in_unaff_extraout	25
+undefined_nonff_bytes	4363
+undefined_nonff_bytes:sram_text_rodata	675
+undefined_nonff_bytes:flexspi_xip	3688
+bookmarks_error	1
+bookmarks_bad_instruction	1
+warning:Bad instruction - Truncating control flow here	1
+warning:Control flow encountered bad instruction data	1
+warning:Could not recover jumptable at #. Too many branches	28
+warning:Do nothing block with infinite loop	85
+warning:Globals starting with '_' overlap smaller symbols at the same address	1
+warning:Removing unreachable block (#)	37
+warning:Treating indirect jump as call	28

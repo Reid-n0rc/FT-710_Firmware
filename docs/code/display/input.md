@@ -374,7 +374,7 @@ users; the meanings are inferences from what they draw]**:
 |---|---|
 | 0 (F1) | overlay: CPU load, bank and version words, boot-info, touch IRQ count, raw and pixel X/Y, touch count, pressure "p", Ton/Toff. Also ends a wait loop at 0x2011446C |
 | 1 (F2) | hex dump of the MAIN-link RX buffers (0x2045F260, 0x2045F4A0) |
-| 4 (F5) | copies byte 0 of a GUI record into bytes 0x1A8/0x1A9 (function around 0x20131xxx, file `20130c70_20133140.c`); purpose unknown |
+| 4 (F5) | copies byte 0 of a GUI record into bytes 0x1A8/0x1A9 (function around 0x20131xxx, file `2012d000_201322c8.c`); purpose unknown |
 | 5 (F6) | log capture: `mainlink_trace_toggle` uses frame-buffer layer 4 as a 2048 × 256-byte ring that `mainlink_trace` (0x20111480) fills with link frames (µs time + 252 bytes), "F6" marker |
 | 6 (F7) | `mainlink_trace_pause`: recording on/off, "F7" marker |
 | 7 (F8) | `mainlink_trace_dump`: write the ring to `I:\debug_1.log` |

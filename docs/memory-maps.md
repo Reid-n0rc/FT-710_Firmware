@@ -125,6 +125,8 @@ start of flash ("YAESU FT-710 BOOT LOADER V01-02", "FIRMWARE BOOT ERROR") and as
   `tools/display_assets.py`; formats in [code/display/gui.md](code/display/gui.md#asset-formats).
 - **0x20427ED4–0x204286A0:** UI and update-screen strings (`YAESU FT-710 BOOT LOADER V01-02`, `INSERT FIRMWARE SD CARD.`, …).
 - `.rodata` is a non-executable block, and the `DisplayReport.java` check finds 1 stray instruction there (at 0x20165178) and none elsewhere.
+  That instruction is a linker long-branch veneer, Thumb `b.w 0x20155D0A`, reached from `beq.w` at 0x20100C7E (T22b) **[fact]**:
+  the code really ends at 0x2016517C.
 
 ## MAIN (MC image, `FT-710_MAIN_V0112.SFL`) — T05
 
@@ -213,7 +215,7 @@ small M33 flash stub, three HiFi4 images, and the M33 application, which runs en
 | Program | Language | Source file | Built by |
 |---|---|---|---|
 | `FT-710_IFDSP_V0101.bin` | `ARM:LE:32:v8-m` (the only ARMv8-M language in Ghidra 12.1.4; Thumb-only `ARMCortex.pspec`) | `build/FT-710_IFDSP_V0101.bin`, BinaryLoader base 0x08000000 | `tools/ghidra/IfdspM33Setup.java` (pre), `IfdspFindFuncs.java`, `IfdspM33Names.java` (post) |
-| `FT-710_IFDSP_V0101_hifi4.bin` | `Xtensa:LE:32:default` | `build/FT-710_IFDSP_V0101_hifi4.bin` from `tools/ifdsp_dsp_images.py` | `tools/ghidra/IfdspHifi4Setup.java` (pre), `IfdspHifi4FindFuncs.java` (post) |
+| `FT-710_IFDSP_V0101_hifi4.bin` | `Xtensa:LE:32:rt600hifi4` (generated FLIX-aware language, T21a; `Xtensa:LE:32:default` until T21g) | `build/FT-710_IFDSP_V0101_hifi4.bin` from `tools/ifdsp_dsp_images.py` | `tools/ghidra/IfdspHifi4Setup.java` (pre), `IfdspHifi4FindFuncs.java` + `entries_hifi4.tsv`, `IfdspHifi4Names.java` (post) |
 
 The exact commands are in `decomp/ifdsp/INDEX.md`.
 
@@ -287,8 +289,8 @@ touch FLEXCOMM1–5 or the codec. The I2S/SPI/codec work is on the DSP side (see
 |---|---|---|
 | 0x24000000–0x2400FFFF | `dsp_dtcm` | image 0, first 64 KB. The first 3 words are pointers into SRAM (0x00228818, 0x002354E0, 0x00228834), and the rest is zeros |
 | 0x24020000–0x24020643 | `dsp_itcm` | `_ResetVector` @0x24020000 (J over literals → 0x24020044: sets INTENABLE=0, **VECBASE=0x24020400**, ATOMCTL, invalidates caches). Window vectors @0x24020400+n·0x40; level/exception vectors at 0x2402057C, 0x2402059C, 0x240205BC, 0x240205DC, 0x2402061C, 0x2402063C |
-| 0x00200000–~0x00206FFF | `sram_dsp_text` | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
-| ~0x00207000–0x002367FF | `sram_dsp_text` | `.text`: 1081 4-aligned `entry a1,N` prologues |
+| 0x00200000–0x00207CEF | `sram_dsp_rodata` (read-only, not executable since T21j) | rodata and `.literal` pools (XOS thread names `Thread_Main/Ipc/Rx_Audio/Spi/Rx_Path/Tx_Path`, rpmsg `rx_vq/tx_vq`, libc tables) |
+| 0x00207CF0–0x002367FF | `sram_dsp_text` (read-only) | `.text`: 1081 4-aligned `entry a1,N` prologues (first function 0x207CF0) |
 | 0x00236800–0x002383B3 | `sram_dsp_data` | `.data`: float tables (biquad/filter coefficients, e.g. near 0x236D00) **[inference]** |
 | 0x002383B4–~0x002FFFFF | `sram_dsp_bss` | .bss: thread stacks and TCBs, FIFOs, filter states, used up to ~0x2CC000 (e.g. TCB `Thread_Rx_Path` 0x2C7890) **[fact, T12e]**, see [code/ifdsp/hifi4.md](code/ifdsp/hifi4.md) |
 | 0x20040000–0x200431DF | `sram_shared` | image 2 (zeros): shared/non-cached buffer area |

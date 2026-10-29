@@ -29,7 +29,7 @@ flowchart TD
   RX["step rx: RX SLEIGH module<br/>+ rx62t-movu-fix.patch"] --> GH
   BIN --> GH["step ghidra: 4 programs<br/>setup scripts + names TSVs"]
   GH -->|"step export:<br/>ExportDecomp.java"| EXP["decomp/ (re-exported)"]
-  EXP -->|"step verify: diff"| OK{"identical to<br/>committed decomp/?"}
+  EXP -->|"step verify: diff +<br/>quality.tsv counts"| OK{"identical to committed<br/>decomp/, no count worse?"}
   BIN -->|"step sdr (optional):<br/>prjxray, xc7_*.py"| NET["build/sdr/ FASM, netlist,<br/>Verilog, Verilator model"]
   OK -->|yes| WT["working tree ready:<br/>open ghidra/ in Ghidra,<br/>read docs/, pick an issue"]
 ```
@@ -99,13 +99,13 @@ tools/bootstrap.sh --only export,verify   # after you change names: re-export an
 | `ghidra` | build `ghidra/FT710_MAIN`, `FT710_DISPLAY` and `FT710_IFDSP` (two programs: Cortex-M33 and HiFi4) with the committed setup, code-discovery and names scripts. In a clone, the committed projects are kept as they are; elsewhere a program is rebuilt only when one of its inputs changed (`FORCE=1` rebuilds) | about 3 min |
 | `export` | re-export `decomp/` with `tools/ghidra/ExportDecomp.java` and regenerate `decomp/main/cat_dispatch.tsv` | about 1 min |
 | `flix` | the FLIX-aware HiFi4 listing `decomp/ifdsp/hifi4/flix.dis` with the Zephyr SDK objdump (`tools/ifdsp_hifi4_dis.py`). Skipped with a warning when the objdump is missing; `verify` then leaves `flix.dis` out | about 5 s |
-| `verify` | compare the export with the committed `decomp/` | seconds |
+| `verify` | compare the export with the committed `decomp/`, and each `decomp/*/quality.tsv` (decompile-quality counts) with the committed one: fails if any count got worse (`tools/decomp_quality.py`) | seconds |
 | `sdr` | Project X-Ray checkouts + venv (pinned commits and versions), bitstream → FASM → cell netlist → structural Verilog/XDC → Verilator model of the whole FPGA, and a UART smoke test | netlist about 1 min, Verilator build several minutes |
 
 The exact Ghidra command lines (language, base address, scripts and their order for each program) are in the script itself, which is the
 reference: MAIN is `rx62t:LE:32:default` at 0xFFF80000 with `SetupRX651.java` and three `.data` copy-downs; DISPLAY is `ARM:LE:32:v7` at
 0x20100000 with `DisplaySetup.java`, two `DisplayFindCode.java` passes and `FixFuncEntries.java`; IFDSP is `ARM:LE:32:v8-m` at 0x08000000
-plus `Xtensa:LE:32:default` at 0. Logs go to `<out>/logs/`.
+plus `Xtensa:LE:32:rt600hifi4` (the generated HiFi4 language that step `hifi4` installs, T21a) at 0. Logs go to `<out>/logs/`.
 
 **Settings** are environment variables (all listed by `--help`). The useful ones:
 
@@ -130,8 +130,10 @@ an empty output directory:
   426, HiFi4 1148) and an identical `cat_dispatch.tsv`; a second run with `FORCE=1` was identical again, so the export is deterministic;
 - the SDR chain reproduced the owner's FASM, `netlist.json`, `ft710_sdr.v`/`.xdc` and primitive files byte for byte.
 
-The expected exceptions: `decomp/*/INDEX.md` and `decomp/sdr/README.md` are hand-written and not compared; the HiFi4 export always has one
-decompile failure (`FUN_0020bb74`, the decompiler process dies on it). A different Ghidra version, JDK or RX module commit can change the
+Those counts are from T20. Since T21 (#97) the pipeline has more steps (T21c RX fixes, T21d MAIN data/signatures, T21e DISPLAY jump
+tables and entries, the HiFi4 language `Xtensa:LE:32:rt600hifi4`), so today's export has DISPLAY 2210 and HiFi4 1081 functions, and no
+decompile failure in any program (the HiFi4 failure `FUN_0020bb74` of the stock language is gone); `decomp/*/quality.tsv` holds the
+current counts. The expected exceptions: `decomp/*/INDEX.md` and `decomp/sdr/README.md` are hand-written and not compared. A different Ghidra version, JDK or RX module commit can change the
 output; then the diff (`<out>/decomp.diff`) shows by how much.
 
 ## 5. Tour of the repo
@@ -173,8 +175,9 @@ committed names file: `tools/ghidra/names_main.tsv`, `names_display.tsv` (+ `ent
 `BOOTSTRAP_OUT` unset it updates `decomp/` in place), and commit the names file, the new `decomp/` and the pages that use the name together.
 `tools/index_refresh.py` fixes the file column in `decomp/*/INDEX.md` afterwards.
 
-Known decompiler limits are listed in each `decomp/*/INDEX.md` (for example RX string instructions shown as loops, and HiFi4 FLIX bundles
-that Ghidra cannot decode; use `tools/ifdsp_hifi4_dis.py` with the Zephyr SDK objdump for those, see [tooling.md](tooling.md)).
+Known decompiler limits are listed in each `decomp/*/INDEX.md` (for example HiFi4 `ae_*` operations that are named p-code calls without arithmetic; the
+FLIX-aware objdump listing `decomp/ifdsp/hifi4/flix.dis`, made by `tools/ifdsp_hifi4_dis.py` with the Zephyr SDK objdump, is the
+reference for those, see [tooling.md](tooling.md)).
 
 ### Optional: REA (an AI-agent reverse-engineering server)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # FT-710 firmware project bootstrap (T20): rebuild everything that is not in git from the official downloads.
 #
-#   tools/bootstrap.sh                    # default steps: inputs decode rx ghidra export flix verify
+#   tools/bootstrap.sh                    # default steps: inputs decode rx hifi4 ghidra export flix verify
 #   tools/bootstrap.sh --only decode      # one step (repeat --only for several, or give a comma list)
 #   tools/bootstrap.sh --skip verify      # all default steps but one
 #   tools/bootstrap.sh --all              # default steps + sdr (the slow FPGA netlist chain)
@@ -14,13 +14,23 @@
 #   inputs  check Firmware/ against docs/inputs.sha256; unpacks the Yaesu zip first if only the zip is there.
 #   decode  SFL -> build/*.bin (tools/sfl_decode.py), carve the HiFi4 images (tools/ifdsp_dsp_images.py), check hashes.
 #   rx      install the community RX SLEIGH module (stefan00lpf/rx-proc-ghidra @ ea4cd204, data files only) into
-#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch and compile it. Skipped when already installed and patched.
+#           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17), tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
+#           tools/ghidra/rx62t-rtsd-fix.patch (T21d), tools/ghidra/rx62t-mvfac-fix.patch (T21h),
+#           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch and
+#           tools/ghidra/rx62t-mvtac-fix.patch (T21i) and compile it.
+#           Skipped when already installed and patched.
+#   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
+#           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
+#           module and compile it; the stock Xtensa:LE:32:default is not changed. HIFI4_REGEN=1 first downloads
+#           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
 #           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv.
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
-#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared).
+#   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared), and
+#           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
+#           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
 #           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
 #
@@ -34,8 +44,8 @@
 #   JAVA_HOME            JDK 21 [Homebrew openjdk@21 if present, else $OPT_DIR/jdk-21.0.13+9]
 #   RX_MODULE_DIR        where the RX module goes [$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX]
 #   RX_SRC               clone of rx-proc-ghidra [$OPT_DIR/rx-proc-ghidra]
-#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [all: nproc]
-#   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [half the RAM, at most 8G]
+#   JOBS                 CPUs for Ghidra (-max-cpu) and Verilator [3/4 of nproc: owner cap, AGENTS.md "Hardware use"]
+#   GHIDRA_HEADLESS_MAXMEM  Ghidra heap [a quarter of the RAM, 2G to 3G]; Ghidra runs go through tools/ghidra-cap.sh
 #   GHIDRA_TIMEOUT       -analysisTimeoutPerFile seconds [3600];  FORCE=1  rebuild Ghidra programs even if up to date
 #   FT710_TOOLS          prjxray checkouts + venv [$HOME/.local/share/ft710-tools];  PRJXRAY, PRJXRAY_DB, FT710_VENV
 #   SDR_OUT              SDR derived files [$BOOTSTRAP_OUT/build/sdr]
@@ -73,11 +83,11 @@ RX_MODULE_DIR=${RX_MODULE_DIR:-$GHIDRA_INSTALL_DIR/Ghidra/Processors/RX}
 RX_SRC=${RX_SRC:-$OPT_DIR/rx-proc-ghidra}
 
 if command -v nproc >/dev/null 2>&1; then ncpu=$(nproc); else ncpu=$(sysctl -n hw.ncpu 2>/dev/null || echo 4); fi
-JOBS=${JOBS:-$ncpu}
+JOBS=${JOBS:-$(( ncpu * 3 / 4 > 0 ? ncpu * 3 / 4 : 1 ))}
 if [ -z "${GHIDRA_HEADLESS_MAXMEM:-}" ]; then
   if [ -r /proc/meminfo ]; then memk=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
   else memk=$(( $(sysctl -n hw.memsize 2>/dev/null || echo 8589934592) / 1024 )); fi
-  memg=$(( memk / 1024 / 1024 / 2 )); [ "$memg" -gt 8 ] && memg=8; [ "$memg" -lt 2 ] && memg=2
+  memg=$(( memk / 1024 / 1024 / 4 )); [ "$memg" -gt 3 ] && memg=3; [ "$memg" -lt 2 ] && memg=2
   GHIDRA_HEADLESS_MAXMEM=${memg}G
 fi
 export GHIDRA_HEADLESS_MAXMEM
@@ -101,7 +111,13 @@ JDK_SHA=d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c
 RX_GIT=https://github.com/stefan00lpf/rx-proc-ghidra
 RX_COMMIT=ea4cd20403c2e359f0de0cead2850d6be173b67a
 RX_SINC_ORIG=42f51c2cc890cb4b396b1e1dce2dc85048ceaa3124c217088d58b5cba0758f12
-RX_SINC_FIXED=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_T17=d32178a96244f0c28202b6f1b76dfedbef7d2edbafe086354e17520b51c0011b
+RX_SINC_T21C=9eadf83b841c0545e80044954d45f1f5b176c3df97035bb5720bb347ea156a11
+RX_SINC_RTSD=618938bbd851134261c441cdfd2d34dca327b261c2c5acb49d63651b219e4b36
+RX_SINC_MVFAC=9efea07b76390e708c29f7e2ed8a7a044976d58d67a991cf4687319954b882a5
+RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3d0
+RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
+RX_SINC_FIXED=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -114,8 +130,8 @@ ZEPHYR_SHA_macos_aarch64=31b6072b911d2324443d58ec0176bd560eba3b3095c9aba18c3f40c
 ZEPHYR_SHA_macos_x86_64=f95f8a3fa5fc864a5f731f492dfe8bb96e1c3b3a1ae5455dc68ffddb04c609cd
 VENV_PKGS="fasm==0.0.2.post88 textX==4.4.0 Arpeggio==2.0.3 simplejson==4.2.0 intervaltree==3.2.1 sortedcontainers==2.4.0 PyYAML==6.0.3"
 
-ALL_STEPS="deps inputs decode rx ghidra export flix verify sdr"
-DEFAULT_STEPS="inputs decode rx ghidra export flix verify"
+ALL_STEPS="deps inputs decode rx hifi4 ghidra export flix verify sdr"
+DEFAULT_STEPS="inputs decode rx hifi4 ghidra export flix verify"
 
 log()  { printf '\n== [%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 info() { printf '   %s\n' "$*"; }
@@ -145,13 +161,15 @@ headless() {  # headless <project> <analyzeHeadless args...>
   [ -x "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" ] || die "no analyzeHeadless in $GHIDRA_INSTALL_DIR (step deps, or set GHIDRA_INSTALL_DIR)"
   mkdir -p "$PROJ" "$OUT/logs"
   local run=$OUT/logs/ghidra_last_run.log rc=0
-  GHIDRA_JAVA_HOME=$JAVA_HOME GHIDRA_HEADLESS=$GHIDRA_INSTALL_DIR/support/analyzeHeadless \
-    "$REPO/tools/ghidra-headless.sh" "$PROJ" "$p" "$@" -max-cpu "$JOBS" -scriptPath "$REPO/tools/ghidra" \
+  local heap=${GHIDRA_HEADLESS_MAXMEM%[GgMm]} reserve
+  case $GHIDRA_HEADLESS_MAXMEM in *[Mm]) reserve=$(( heap + 700 ));; *) reserve=$(( heap * 1024 + 700 ));; esac
+  GHIDRA_JAVA_HOME=$JAVA_HOME GHIDRA_HEADLESS=$GHIDRA_INSTALL_DIR/support/analyzeHeadless CAP_CPUS=$JOBS \
+    "$REPO/tools/ghidra-cap.sh" "$reserve" -- "$REPO/tools/ghidra-headless.sh" "$PROJ" "$p" "$@" -max-cpu "$JOBS" -scriptPath "$REPO/tools/ghidra" \
     > "$run" 2>&1 || rc=$?
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
-  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
+  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
     "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
@@ -275,32 +293,90 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-movu-fix.patch")
     info "applied tools/ghidra/rx62t-movu-fix.patch (T17)"
   fi
-  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor the T17-patched file"
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_T17" ]; then
+    [ -f "$lang/rx62t.sinc.t17" ] || cp "$lang/rx62t.sinc" "$lang/rx62t.sinc.t17"
+    [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.t17" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.t17"
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rxv2-fix.patch")
+    info "applied tools/ghidra/rx62t-rxv2-fix.patch (T21c: MUL .UB, XCHG memory, SCCnd, string ops as pcodeops)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_T21C" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-rtsd-fix.patch")
+    info "applied tools/ghidra/rx62t-rtsd-fix.patch (T21d: RTSD frame size from register numbers)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_RTSD" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-mvfac-fix.patch")
+    info "applied tools/ghidra/rx62t-mvfac-fix.patch (T21h: RXv2 MVFACHI/MVFACMI/MVFACLO)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_MVFAC" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-semantics-fix.patch")
+    info "applied tools/ghidra/rx62t-semantics-fix.patch (T22a: Rs,Rd source width, JSR call, flag fixes)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_SEMANTICS" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-stringmem-fix.patch")
+    info "applied tools/ghidra/rx62t-stringmem-fix.patch (T21i: SMOVF/SMOVB/SMOVU/SSTR as loops again)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_STRINGMEM" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-mvtac-fix.patch")
+    info "applied tools/ghidra/rx62t-mvtac-fix.patch (T21i: MVTACHI/MVTACLO write ACC)"
+  fi
+  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
-  info "compiled rx62t.sla (log: $OUT/logs/sleigh.txt; the 8 NOP-constructor warnings are expected)"
+  info "compiled rx62t.sla (log: $OUT/logs/sleigh.txt; the 6 NOP-constructor warnings are expected)"
+}
+
+# ---------------------------------------------------------------- hifi4
+XTMOD_URL=https://raw.githubusercontent.com/zephyrproject-rtos/sdk-ng/15daabb558517dd735b41542709391fdc254cacc/overlays/xtensa_nxp_rt600_adsp/binutils/bfd/xtensa-modules.c
+XTMOD_SHA=9e218b19033b93ad53b042f86a643034033a2322cfd09c138592c6255e53f372
+step_hifi4() {
+  local src=$REPO/tools/ghidra/xtensa-rt600hifi4 lang=$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages f same=1
+  log "hifi4: SLEIGH language Xtensa:LE:32:rt600hifi4 in $lang"
+  [ -d "$lang" ] || die "no Xtensa module at $lang (step deps, or set GHIDRA_INSTALL_DIR)"
+  if [ "${HIFI4_REGEN:-0}" = 1 ]; then
+    mkdir -p "$DL_DIR/xtensa-rt600"
+    fetch "$XTMOD_URL" "$DL_DIR/xtensa-rt600/xtensa-modules.c" "$XTMOD_SHA"
+    need cc "a C compiler"
+    py "$REPO/tools/xtensa_sleigh_gen.py" generate --modules "$DL_DIR/xtensa-rt600/xtensa-modules.c" \
+      --build "$BUILD/xtensa_sleigh_gen" --stock "$lang" --out "$src"
+    py "$REPO/tools/xtensa_sleigh_gen.py" selftest --modules "$DL_DIR/xtensa-rt600/xtensa-modules.c" \
+      --build "$BUILD/xtensa_sleigh_gen" --dis "$REPO/decomp/ifdsp/hifi4/flix.dis"
+  fi
+  for f in "$src"/xtensa_rt600hifi4*; do
+    cmp -s "$f" "$lang/$(basename "$f")" || same=0
+  done
+  if [ "$same" = 1 ] && [ -f "$lang/xtensa_rt600hifi4.sla" ] && [ "$lang/xtensa_rt600hifi4.sla" -nt "$lang/xtensa_rt600hifi4.slaspec" ]; then
+    info "installed and compiled"; return 0
+  fi
+  cp "$src"/xtensa_rt600hifi4* "$lang/"
+  "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/xtensa_rt600hifi4.slaspec" "$lang/xtensa_rt600hifi4.sla" > "$OUT/logs/sleigh_hifi4.txt" 2>&1 \
+    || { tail -20 "$OUT/logs/sleigh_hifi4.txt" >&2; die "sleigh compile of xtensa_rt600hifi4 failed"; }
+  grep -q "ERROR" "$OUT/logs/sleigh_hifi4.txt" && { tail -20 "$OUT/logs/sleigh_hifi4.txt" >&2; die "sleigh errors (xtensa_rt600hifi4)"; }
+  info "compiled xtensa_rt600hifi4.sla (log: $OUT/logs/sleigh_hifi4.txt; NOP-constructor warnings are expected)"
 }
 
 # ---------------------------------------------------------------- ghidra
 G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
-  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/ApplyNames.java" "$G/names_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
+  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
+    "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, ApplyNames names_main.tsv"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, ApplyNames, DefineRomData, ApplySignatures"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
     -preScript SetupRX651.java copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
-    -postScript ApplyNames.java "$G/names_main.tsv"
+    -postScript ApplyNames.java "$G/names_main.tsv" \
+    -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
+    -postScript ApplySignatures.java "$G/signatures_main.tsv"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/ApplyNames.java" "$G/names_display.tsv")
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, ApplyNames"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -308,29 +384,39 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" -postScript DisplayFindCode.java
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.tsv"
-  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv"
+  # T21e (#97 B6, B8): repair the ARM jump tables the decompiler does not turn into switches; then define the undefined
+  # fragments that are not code as data (reports next to the project)
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript DisplayJumpTables.java apply "$PROJ/display_jumptables.tsv"
+  headless FT710_DISPLAY -process "$prog" -noanalysis \
+    -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
+    -postScript ApplyData.java "$G/data_display.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
   local m33=$BUILD/FT-710_IFDSP_V0101.bin hifi=$BUILD/FT-710_IFDSP_V0101_hifi4.bin st
-  st=$(stamp_of "$m33" "$G/IfdspM33Setup.java" "$G/IfdspFindFuncs.java" "$G/IfdspM33Names.java")
+  st=$(stamp_of "$m33" "$G/IfdspM33Setup.java" "$G/IfdspFindFuncs.java" "$G/IfdspM33Names.java" "$G/FixFuncEntries.java" \
+    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv")
   if stamp_ok FT710_IFDSP ifdsp_m33 "$st"; then info "FT710_IFDSP/M33 up to date"
   else
-    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, IfdspM33Names"
+    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData"
     rm -f "$PROJ/.stamp_ifdsp_m33"
     headless FT710_IFDSP -import "$m33" -overwrite \
       -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 \
-      -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript IfdspM33Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript FixFuncEntries.java "$G/entries_m33.tsv" \
+      -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
-  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/IfdspHifi4Names.java")
+  st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java" "$G/ApplyData.java" "$G/data_hifi4.tsv" \
+    "$GHIDRA_INSTALL_DIR"/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*.{slaspec,sinc,pspec,ldefs})
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
-    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:default @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names"
+    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData"
     rm -f "$PROJ/.stamp_ifdsp_hifi4"
     headless FT710_IFDSP -import "$hifi" -overwrite \
-      -processor Xtensa:LE:32:default -loader BinaryLoader -loader-baseAddr 0x0 \
-      -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
+      -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
+      -postScript ApplyData.java "$G/data_hifi4.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
 }
@@ -338,6 +424,7 @@ step_ghidra() {
   log "ghidra: projects in $PROJ (JOBS=$JOBS, heap $GHIDRA_HEADLESS_MAXMEM; logs in $OUT/logs/)"
   [ -f "$BUILD/FT-710_MAIN_V0112.bin" ] || die "no decoded images in $BUILD (run step decode)"
   [ -f "$RX_MODULE_DIR/data/languages/rx62t.sla" ] || die "RX module missing (run step rx)"
+  [ -f "$GHIDRA_INSTALL_DIR/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4.sla" ] || die "HiFi4 language missing (run step hifi4)"
   build_main
   build_display
   build_ifdsp
@@ -356,7 +443,7 @@ step_export() {
   headless FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/m33" 50
   headless FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -readOnly -postScript ExportDecomp.java "$DECOMP_OUT/ifdsp/hifi4" 50
   local d; for d in main display ifdsp/m33 ifdsp/hifi4; do
-    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure"
+    info "$d: $(($(wc -l < "$DECOMP_OUT/$d/functions.tsv") - 1)) functions, $(grep -l 'decompile failed' "$DECOMP_OUT/$d"/*.c 2>/dev/null | wc -l | tr -d ' ') file(s) with a failure, $(awk -F'\t' '$1=="warnings"{print $2}' "$DECOMP_OUT/$d/quality.tsv" 2>/dev/null) warnings (quality.tsv)"
   done
 }
 
@@ -377,21 +464,36 @@ step_flix() {
 }
 step_verify() {
   log "verify: $DECOMP_OUT against the committed decomp/"
-  local rc=0 noflix=""
+  local rc=0 qrc=0 noflix="" d old
   [ "$FLIX_DONE" = 1 ] || noflix="-x flix.dis"
+  # quality.tsv is not diffed byte for byte: it is compared metric by metric below (T21f, #97 B11).
   if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
-    git -C "$REPO" diff --stat -- decomp/ | tail -n 5
-    git -C "$REPO" diff --quiet -- decomp/ && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/)" ] || rc=1
+    git -C "$REPO" diff --stat -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' | tail -n 5
+    git -C "$REPO" diff --quiet -- decomp/ ':(exclude,glob)decomp/**/quality.tsv' \
+      && [ -z "$(git -C "$REPO" ls-files --others --exclude-standard -- decomp/ ':(exclude,glob)decomp/**/quality.tsv')" ] || rc=1
   else
-    diff -r -q -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
+    diff -r -q -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/logs/verify.txt" 2>&1 || rc=1
     if [ "$rc" -ne 0 ]; then
       sed 's/^/   /' "$OUT/logs/verify.txt" | head -n 20
-      diff -r -u -x INDEX.md -x README.md -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
+      diff -r -u -x INDEX.md -x README.md -x quality.tsv -x sdr $noflix "$REPO/decomp" "$DECOMP_OUT" > "$OUT/decomp.diff" || true
       info "full diff: $OUT/decomp.diff ($(wc -l < "$OUT/decomp.diff") lines)"
     fi
   fi
-  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"
-  else die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"; fi
+  if [ "$rc" -eq 0 ]; then info "IDENTICAL: the re-exported decomps match decomp/ byte for byte"; fi
+  # Decompile-quality regression check: no count in the fresh quality.tsv may be higher than in the committed one.
+  for d in main display ifdsp/m33 ifdsp/hifi4; do
+    [ -f "$DECOMP_OUT/$d/quality.tsv" ] || { info "$d: no quality.tsv in the export (old ExportDecomp?)"; qrc=1; continue; }
+    old=$OUT/logs/quality_committed_${d//\//_}.tsv
+    if [ "$DECOMP_OUT" = "$REPO/decomp" ]; then
+      git -C "$REPO" show "HEAD:decomp/$d/quality.tsv" > "$old" 2>/dev/null || { info "$d: no committed quality.tsv; skipped"; continue; }
+    else
+      [ -f "$REPO/decomp/$d/quality.tsv" ] || { info "$d: no committed quality.tsv; skipped"; continue; }
+      cp "$REPO/decomp/$d/quality.tsv" "$old"
+    fi
+    py "$REPO/tools/decomp_quality.py" compare "$old" "$DECOMP_OUT/$d/quality.tsv" "$d" | sed 's/^/   /' || qrc=1  # pipefail
+  done
+  [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
+  [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
 }
 
 # ---------------------------------------------------------------- sdr
@@ -440,7 +542,7 @@ step_sdr() {
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,44p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in

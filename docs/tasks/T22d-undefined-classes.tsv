@@ -1,0 +1,197 @@
+image	range_start	range_end	sub_start	sub_end	size	nonff	class	evidence	ghidra_refs_in	ghidra_prev	ghidra_next
+main	0xfff8fec0	0xfff8fef4	0xfff8fec0	0xfff8fef4	53	52	code	RX 19 insns, 3 flow, last movu.w; branch to 0xfff8fec0 from 0xfff8ff2e (1 targets in run)	2	I	D:TerminatedCString
+main	0xfff91295	0xfff91302	0xfff91295	0xfff91302	110	109	code	RX 43 insns, 8 flow, last rtsd; branch to 0xfff912e7 from 0xfff912e0 (2 targets in run)	1	I	I
+display	0x2015497e	0x20154983	0x2015497e	0x20154983	6	6	unknown	entropy 1.79 bits/byte, 00bff5ee0000	0	I	I
+display	0x20154b64	0x20154b73	0x20154b68	0x20154b73	12	12	int_table	3 u32, 3 < 0x10000, e.g. 45, 43, 32	0	I	I
+display	0x20154be5	0x20154bef	0x20154be5	0x20154bef	11	11	unknown	entropy 0.87 bits/byte, 0000002b00000020	0	D:undefined1	I
+display	0x20155b5a	0x20155b5b	0x20155b5a	0x20155b5b	2	2	code_weak	T32 1 insns, 1 flow, last bx; ends in a control-flow instruction	0	I	I
+display	0x2015625c	0x2015625f	0x2015625c	0x2015625d	2	2	code_weak	T32 1 insns, 1 flow, last bx; ends in a control-flow instruction	0	I	I
+display	0x2016385a	0x2016385b	0x2016385a	0x2016385b	2	2	code	T32 1 insns, 0 flow, last movs; pointer to 0x2016385b at 0x2042807c	0	I	I
+display	0x20164988	0x20164993	0x20164988	0x20164993	12	12	code	T32 5 insns, 2 flow, last b.n; ends in a control-flow instruction	0	I	I
+display	0x201649d0	0x201649d3	0x201649d0	0x201649d3	4	4	unknown	entropy 2.00 bits/byte, 64fbbe3e	0	I	D:undefined4
+display	0x20164bdc	0x20164be9	0x20164bdc	0x20164be9	14	14	code	T32 4 insns, 1 flow, last bx; ends in a control-flow instruction	0	I	I
+display	0x20164c00	0x20164c7f	0x20164c00	0x20164c7f	128	127	int_table	u32 falling 0xf9fbfdff..0x80818182, 32 words	0	I	D:undefined4
+display	0x20164cec	0x20164cef	0x20164cec	0x20164ced	2	2	code_weak	T32 1 insns, 1 flow, last b.n; ends in a control-flow instruction	0	I	I
+display	0x20164d48	0x20164d4b	0x20164d48	0x20164d49	2	2	code_weak	T32 1 insns, 1 flow, last b.n; ends in a control-flow instruction	0	I	I
+display	0x20164ecc	0x20164ed9	0x20164ecc	0x20164ed9	14	14	code	T32 4 insns, 2 flow, last beq.n	0	I	I
+display	0x20164ee2	0x20164ef3	0x20164ee2	0x20164ef3	18	18	code	T32 6 insns, 2 flow, last bx; ends in a control-flow instruction	0	I	D:undefined4
+display	0x20164ef8	0x20164efb	0x20164ef8	0x20164efb	4	4	unknown	entropy 1.50 bits/byte, 0000f87f	0	D:undefined4	I
+m33	0x00087232	0x00087233	0x00087232	0x00087233	2	2	code	T32 1 insns, 1 flow, last bx; pointer to 0x87233 at 0x80a10	0	I	I
+m33	0x0008795c	0x0008796b	0x0008795c	0x0008795f	4	4	string_ascii	'r'; pointer to start	2	I	D:undefined4
+m33	0x0008795c	0x0008796b	0x00087960	0x0008796b	12	12	int_table	3 u32, 3 < 0x10000, e.g. 0, 0, 0	2	I	D:undefined4
+m33	0x00087970	0x000879ab	0x00087970	0x00087970	1	1	unknown	entropy -0.00 bits/byte, 77	1	D:undefined4	D:undefined_*
+m33	0x00087970	0x000879ab	0x00087980	0x00087983	4	4	pointer	1 word(s), first 0x000812c5	1	D:undefined4	D:undefined_*
+m33	0x00087970	0x000879ab	0x00087984	0x00087984	1	1	unknown	entropy -0.00 bits/byte, 64	1	D:undefined4	D:undefined_*
+m33	0x00087970	0x000879ab	0x00087994	0x00087997	4	4	pointer	1 word(s), first 0x000812fd	1	D:undefined4	D:undefined_*
+m33	0x00087970	0x000879ab	0x00087998	0x00087998	1	1	unknown	entropy -0.00 bits/byte, 69	1	D:undefined4	D:undefined_*
+m33	0x00087970	0x000879ab	0x000879a8	0x000879ab	4	4	pointer	1 word(s), first 0x00081275	1	D:undefined4	D:undefined_*
+m33	0x000879f8	0x00087a17	0x000879f8	0x000879ff	8	8	int_table	2 u32, 2 < 0x10000, e.g. 1, 5040	2	D:undefined_*	D:undefined4
+m33	0x000879f8	0x00087a17	0x00087a00	0x00087a03	4	4	string_ascii	'xi'	2	D:undefined_*	D:undefined4
+m33	0x000879f8	0x00087a17	0x00087a04	0x00087a17	20	20	int_table	5 u32, 5 < 0x10000, e.g. 6, 1, 31, 64	2	D:undefined_*	D:undefined4
+m33	0x00087a22	0x00087a5b	0x00087a22	0x00087a33	18	18	int_table	9 u16, 8 < 0x1000, e.g. 1000, 256, 1, 2049	0	D:undefined1	D:undefined_*
+m33	0x00087a22	0x00087a5b	0x00087a38	0x00087a5b	36	36	int_table	9 u32, 8 < 0x10000, e.g. 15387, 28, 772, 1286	0	D:undefined1	D:undefined_*
+m33	0x00087a78	0x00087a7b	0x00087a78	0x00087a7b	4	4	int_table	2 u16, 2 < 0x1000, e.g. 1, 0	0	D:undefined_*	D:undefined_*
+m33	0x00087ad0	0x00087aff	0x00087ad0	0x00087ad9	10	10	int_table	5 u16, 5 < 0x1000, e.g. 256, 0, 2062, 0	0	D:undefined_*	D:undefined_*
+m33	0x00087ad0	0x00087aff	0x00087ae0	0x00087aff	32	32	int_table	8 u32, 7 < 0x10000, e.g. 576, 65, 54335, 256	0	D:undefined_*	D:undefined_*
+m33	0x00087b10	0x00087b4b	0x00087b10	0x00087b14	5	5	unknown	entropy 1.37 bits/byte, 3b0000003c	8	D:undefined_*	D:TerminatedCString
+m33	0x00087b10	0x00087b4b	0x00087b1c	0x00087b1f	4	4	unknown	entropy 1.50 bits/byte, 51c00000; branch to 0x87b1c from 0x87ac4 (1 targets in run)	8	D:undefined_*	D:TerminatedCString
+m33	0x00087b10	0x00087b4b	0x00087b20	0x00087b4b	44	44	int_table	u32 rising 0x00000052..0x04070406, 11 words	8	D:undefined_*	D:TerminatedCString
+m33	0x00087cb1	0x00087cba	0x00087cb1	0x00087cb3	3	3	string_ascii	'db'; pointer to start	10	D:TerminatedCString	D:undefined2
+m33	0x00087cb1	0x00087cba	0x00087cb4	0x00087cb6	3	3	string_ascii	'DB'; pointer to start	10	D:TerminatedCString	D:undefined2
+m33	0x00087cb1	0x00087cba	0x00087cb7	0x00087cba	4	4	data_ref	pointer to start; entropy 1.50 bits/byte, 3f000600; pointer to 0x87cb7 at 0x818a8	10	D:TerminatedCString	D:undefined2
+m33	0x00087d04	0x00087e87	0x00087d84	0x00087e83	256	256	int_table	ctype table (digits 0x20, upper bit 0x10, lower bit 0x08)	15	D:TerminatedCString	D:TerminatedCString
+m33	0x00087d04	0x00087e87	0x00087e84	0x00087e85	2	2	string_ascii	'r'; pointer to start	15	D:TerminatedCString	D:TerminatedCString
+m33	0x00087d04	0x00087e87	0x00087e86	0x00087e87	2	2	string_ascii	'w'; pointer to start	15	D:TerminatedCString	D:TerminatedCString
+m33	0x00087e8f	0x00087e98	0x00087e8f	0x00087e91	3	3	string_ascii	'0X'; pointer to start	3	D:TerminatedCString	D:TerminatedCString
+m33	0x00087e8f	0x00087e98	0x00087e92	0x00087e94	3	3	string_ascii	'0x'; pointer to start	3	D:TerminatedCString	D:TerminatedCString
+m33	0x00087e8f	0x00087e98	0x00087e95	0x00087e98	4	4	data_ref	pointer to start; entropy 1.50 bits/byte, 2d002b00; pointer to 0x87e95 at 0x85838	3	D:TerminatedCString	D:TerminatedCString
+m33	0x08000000	0x08000fff	0x08000400	0x080005ff	512	512	struct	FlexSPI NOR config block (FCFB tag at 0x08000400), docs/memory-maps.md	2	-	D:dword
+m33	0x0800120e	0x0800120f	0x0800120e	0x0800120f	2	2	code	T32 1 insns, 1 flow, last b.n; branch to 0x800120e from 0x800120e (1 targets in run)	0	I	I
+m33	0x08001218	0x08001219	0x08001218	0x08001219	2	2	code	T32 1 insns, 1 flow, last b.n; branch to 0x8001218 from 0x8001218 (1 targets in run)	0	I	I
+m33	0x0800121c	0x0800121f	0x0800121c	0x0800121f	4	4	code	T32 2 insns, 2 flow, last b.n; branch to 0x800121c from 0x800121c (2 targets in run)	0	I	I
+m33	0x0800143c	0x0800143d	0x0800143c	0x0800143d	2	2	code	T32 1 insns, 0 flow, last ldr; pointer to 0x800143d at 0x80015c8	0	D:undefined4	I
+m33	0x08001818	0x08001838	0x08001818	0x0800182a	19	19	unknown	entropy 3.22 bits/byte, 01030a0300040004	1	D:undefined4	D:string
+m33	0x08001818	0x08001838	0x08001830	0x08001833	4	4	pointer	1 word(s), first 0x08001839	1	D:undefined4	D:string
+m33	0x08001818	0x08001838	0x08001834	0x08001838	5	5	string_ascii	'IDLE'; pointer to start	1	D:undefined4	D:string
+hifi4	0x00200000	0x00200001	0x00200000	0x00200001	2	2	data_ref	pointer to start; entropy 1.00 bits/byte, 0502; pointer to 0x200000 at 0x206630	4	-	D:undefined1
+hifi4	0x00200003	0x0020005f	0x00200003	0x00200004	2	2	unknown	entropy -0.00 bits/byte, 0303	2	D:undefined1	D:undefined4
+hifi4	0x00200003	0x0020005f	0x00200024	0x0020002f	12	9	unknown	entropy 1.90 bits/byte, e0ff00000600ff00	2	D:undefined1	D:undefined4
+hifi4	0x00200003	0x0020005f	0x00200034	0x00200034	1	1	unknown	entropy -0.00 bits/byte, 01	2	D:undefined1	D:undefined4
+hifi4	0x00200064	0x0020006f	0x00200064	0x00200067	4	4	int_table	2 u16, 2 < 0x1000, e.g. 3, 0	0	D:undefined4	D:pointer
+hifi4	0x00200074	0x00200083	0x00200074	0x00200076	3	3	unknown	entropy 0.92 bits/byte, 030308	0	D:pointer	D:undefined1
+hifi4	0x00200074	0x00200083	0x00200080	0x00200083	4	4	pointer	1 word(s), first 0x40139000	0	D:pointer	D:undefined1
+hifi4	0x00200085	0x00200087	0x00200085	0x00200087	3	3	unknown	entropy 0.92 bits/byte, 010000	0	D:undefined1	D:undefined1
+hifi4	0x00200164	0x00200187	0x00200170	0x00200180	17	17	unknown	entropy 1.56 bits/byte, 190000001a000000	0	D:undefined_*	D:pointer
+hifi4	0x0020018c	0x0020018f	0x0020018c	0x0020018f	4	4	pointer	1 word(s), first 0x40105000	0	D:pointer	D:undefined4
+hifi4	0x002001a0	0x002001cf	0x002001a0	0x002001a4	5	5	unknown	entropy 1.37 bits/byte, 1300000014	4	D:undefined4	D:pointer
+hifi4	0x002001a0	0x002001cf	0x002001a9	0x002001b4	12	12	data_ref	pointer to start; entropy 2.62 bits/byte, 1012401803000020; pointer to 0x2001ac at 0x2066ac	4	D:undefined4	D:pointer
+hifi4	0x002001f8	0x0020029f	0x00200200	0x00200225	38	38	int_table	19 u16, 19 < 0x1000, e.g. 776, 0, 777, 0	8	D:undefined_*	D:undefined_*
+hifi4	0x002001f8	0x0020029f	0x00200230	0x00200255	38	38	int_table	19 u16, 19 < 0x1000, e.g. 776, 0, 777, 0	8	D:undefined_*	D:undefined_*
+hifi4	0x002001f8	0x0020029f	0x00200264	0x00200287	36	30	int_table	9 u32, 7 < 0x10000, e.g. 1, 2, 3, 4	8	D:undefined_*	D:undefined_*
+hifi4	0x002001f8	0x0020029f	0x00200288	0x0020028b	4	4	pointer	1 word(s), first 0x40134000	8	D:undefined_*	D:undefined_*
+hifi4	0x002001f8	0x0020029f	0x0020028c	0x00200290	5	5	data_ref	pointer to start; entropy 1.37 bits/byte, 1000000022; pointer to 0x20028c at 0x206720	8	D:undefined_*	D:undefined_*
+hifi4	0x00200304	0x0020039f	0x00200314	0x00200333	32	29	int_table	8 u32, 7 < 0x10000, e.g. 1, 2, 3, 4	4	D:undefined_*	D:pointer
+hifi4	0x00200304	0x0020039f	0x00200360	0x0020036c	13	13	data_ref	pointer to start; entropy 1.51 bits/byte, fa00000064000000; pointer to 0x200360 at 0x2067e8	4	D:undefined_*	D:pointer
+hifi4	0x00200304	0x0020039f	0x00200374	0x00200393	32	29	int_table	8 u32, 7 < 0x10000, e.g. 1, 2, 3, 4	4	D:undefined_*	D:pointer
+hifi4	0x002003c0	0x002003df	0x002003c0	0x002003df	32	32	int_table	u32 rising 0x00000000..0x00000007, 8 words	0	D:undefined_*	D:pointer
+hifi4	0x00200404	0x00200463	0x00200404	0x00200414	17	17	data_ref	pointer to start; entropy 1.90 bits/byte, 1005000010050000; pointer to 0x200404 at 0x2068c4	20	D:undefined_*	D:undefined1
+hifi4	0x00200404	0x00200463	0x00200424	0x0020043f	28	28	int_table	7 u32, 7 < 0x10000, e.g. 1, 2, 3, 4	20	D:undefined_*	D:undefined1
+hifi4	0x00200404	0x00200463	0x00200454	0x0020045c	9	9	unknown	entropy 1.45 bits/byte, 0100000002000000	20	D:undefined_*	D:undefined1
+hifi4	0x00200404	0x00200463	0x00200461	0x00200463	3	3	unknown	entropy 1.58 bits/byte, a01340	20	D:undefined_*	D:undefined1
+hifi4	0x00200465	0x00200467	0x00200465	0x00200467	3	3	unknown	entropy 0.92 bits/byte, 010000	0	D:undefined1	D:pointer
+hifi4	0x0020046d	0x0020046f	0x0020046d	0x0020046f	3	3	code_weak	Xtensa 1 insns, 1 flow, last call0	0	D:undefined1	D:undefined1
+hifi4	0x00200471	0x00200473	0x00200471	0x00200473	3	3	code_weak	Xtensa 1 insns, 1 flow, last call0	0	D:undefined1	D:pointer
+hifi4	0x00200479	0x0020047b	0x00200479	0x0020047b	3	3	unknown	entropy 0.92 bits/byte, 040000	0	D:undefined1	D:undefined1
+hifi4	0x0020047d	0x0020049f	0x00200480	0x0020049f	32	32	int_table	u32 rising 0x00000008..0x0000000f, 8 words	0	D:undefined1	D:undefined4
+hifi4	0x002004ad	0x002004cf	0x002004b4	0x002004c9	22	22	int_table	11 u16, 11 < 0x1000, e.g. 31, 59, 90, 120	3	D:undefined1	D:undefined4
+hifi4	0x002004dd	0x002004ef	0x002004e1	0x002004e5	5	5	unknown	entropy 2.32 bits/byte, 2011401d04; pointer to 0x2004e2 at 0x230cd0	3	D:undefined1	D:pointer
+hifi4	0x00200514	0x00200553	0x00200524	0x00200543	32	29	int_table	8 u32, 7 < 0x10000, e.g. 1, 2, 3, 4	1	D:undefined_*	D:undefined4
+hifi4	0x0020059c	0x0020059f	0x0020059c	0x0020059f	4	4	pointer	1 word(s), first 0x40138000	0	D:undefined4	D:undefined1
+hifi4	0x002005d0	0x00200617	0x002005d0	0x0020060f	64	64	int_table	16 u32 byte values, e.g. 00 01 02 03 04 05 06 07	0	D:undefined_*	D:undefined1
+hifi4	0x002005d0	0x00200617	0x00200610	0x00200613	4	4	pointer	1 word(s), first 0x4000f000	0	D:undefined_*	D:undefined1
+hifi4	0x002005d0	0x00200617	0x00200614	0x00200617	4	4	int_table	2 u16, 2 < 0x1000, e.g. 22, 0	0	D:undefined_*	D:undefined1
+hifi4	0x00200619	0x0020061b	0x00200619	0x0020061b	3	3	unknown	entropy 0.92 bits/byte, 020000	0	D:undefined1	D:undefined1
+hifi4	0x0020061d	0x0020061f	0x0020061d	0x0020061f	3	3	unknown	entropy 0.92 bits/byte, 020000	0	D:undefined1	D:pointer
+hifi4	0x00200624	0x00200627	0x00200624	0x00200627	4	4	pointer	1 word(s), first 0x4002e000	0	D:pointer	D:undefined4
+hifi4	0x0020073c	0x00200777	0x0020073c	0x00200777	60	59	float_table	15 float32 words, e.g. 0, -103.279, 88.7228, 0	0	D:pointer	D:undefined4
+hifi4	0x00200780	0x00200793	0x00200780	0x00200783	4	2	unknown	entropy 1.00 bits/byte, ffff7f7f	0	D:undefined4	D:undefined4
+hifi4	0x00200780	0x00200793	0x00200788	0x00200793	12	12	unknown	entropy 3.42 bits/byte, 83c8c96d305f1400	0	D:undefined4	D:undefined4
+hifi4	0x00200798	0x002007a3	0x002007a0	0x002007a3	4	4	unknown	entropy 2.00 bits/byte, 9b209a3e	0	D:undefined4	D:undefined4
+hifi4	0x00200810	0x00200813	0x00200810	0x00200813	4	4	unknown	entropy 2.00 bits/byte, 0100807f	0	D:undefined4	D:undefined4
+hifi4	0x00200818	0x0020081f	0x00200818	0x0020081f	8	6	unknown	entropy 2.16 bits/byte, 010080ff0000c0ff	0	D:undefined4	D:undefined4
+hifi4	0x00200828	0x0020082f	0x00200828	0x0020082f	8	8	unknown	entropy 2.75 bits/byte, db0f493fb51f123f	0	D:undefined4	D:undefined4
+hifi4	0x00200834	0x0020084f	0x00200845	0x0020084f	11	11	unknown	entropy 3.28 bits/byte, 22e93f9ee59e4bef	0	D:undefined4	D:undefined4
+hifi4	0x0020086c	0x00200873	0x00200870	0x00200873	4	4	unknown	entropy 2.00 bits/byte, f304b53f	0	D:undefined4	D:undefined4
+hifi4	0x002008c0	0x002008cf	0x002008c4	0x002008cb	8	8	unknown	entropy 2.25 bits/byte, bd3786b5bd378635	0	D:undefined4	D:pointer
+hifi4	0x002008f0	0x00200cef	0x002008f0	0x00200cef	1024	1022	float_table	256 float32 words, e.g. 0.000489998, 0.00139763, 0.00207772, 0.00240757	0	D:undefined_*	D:undefined4
+hifi4	0x00200d00	0x0020310f	0x00200d00	0x002030ff	9216	9212	float_table	2304 float32 words, e.g. 1, 0, 1, 0	7	D:undefined4	D:undefined4
+hifi4	0x00200d00	0x0020310f	0x00203100	0x00203108	9	9	data_ref	pointer to start; entropy 1.88 bits/byte, 27010000c5000000; pointer to 0x203100 at 0x206d28	7	D:undefined4	D:undefined4
+hifi4	0x00203124	0x002035bf	0x00203124	0x002035bf	1180	1180	float_table	295 float32 words, e.g. 4.13956e-05, 5.35397e-05, 6.64325e-05, 8.00889e-05	0	D:undefined4	D:undefined4
+hifi4	0x002035c4	0x002038df	0x002035c4	0x002038df	796	792	float_table	199 float32 words, e.g. -0.000239666, -0.000245852, -0.000250413, -0.000253174	0	D:undefined4	D:undefined4
+hifi4	0x002038e4	0x00203a7b	0x002038e4	0x00203a7b	408	404	float_table	102 float32 words, e.g. 0.00110941, 0.00129934, 0.00150488, 0.00172615	0	D:undefined4	D:undefined4
+hifi4	0x00203a8c	0x00203a93	0x00203a8c	0x00203a93	8	8	unknown	entropy 2.16 bits/byte, 00803b460000803f	0	D:undefined4	D:undefined2
+hifi4	0x00203b0c	0x00203b0f	0x00203b0c	0x00203b0f	4	4	unknown	entropy 1.50 bits/byte, 0000c040	0	D:undefined4	D:undefined4
+hifi4	0x00203b14	0x00203b23	0x00203b1a	0x00203b23	10	10	unknown	entropy 1.85 bits/byte, 2041000020410000	0	D:undefined4	D:undefined4
+hifi4	0x00203b28	0x00203b33	0x00203b28	0x00203b33	12	12	float_table	3 words, 3 plausible float32, e.g. 8.33333e-05, 1, 1.8	0	D:undefined4	D:undefined4
+hifi4	0x00203b64	0x00204ba3	0x00203b64	0x00204ba3	4160	4148	float_table	1040 float32 words, e.g. 0, 0, 0, 6.50344e-07	11	D:undefined4	D:undefined4
+hifi4	0x00204be0	0x00204caf	0x00204be0	0x00204caf	208	208	float_table	52 float32 words, e.g. 88.5, 67, 69.3, 71.9	7	D:undefined4	D:undefined4
+hifi4	0x00204d0c	0x00204d17	0x00204d14	0x00204d17	4	4	int_table	2 u16, 2 < 0x1000, e.g. 600, 0	2	D:pointer	D:undefined_*
+hifi4	0x00204d24	0x00204d43	0x00204d30	0x00204d43	20	20	int_table	5 u32, 5 < 0x10000, e.g. 600, 1000, 1000, 1000	1	D:undefined_*	D:undefined4
+hifi4	0x00204d9c	0x00204d9f	0x00204d9c	0x00204d9f	4	4	unknown	entropy 1.50 bits/byte, 0000c040	1	D:undefined4	D:undefined_*
+hifi4	0x00204dac	0x00204daf	0x00204dac	0x00204daf	4	4	int_table	2 u16, 2 < 0x1000, e.g. 8, 0	0	D:undefined_*	D:undefined4
+hifi4	0x00204dd0	0x00204e9f	0x00204dd0	0x00204e9f	208	208	float_table	52 float32 words, e.g. 88.5, 67, 69.3, 71.9	2	D:undefined4	D:undefined4
+hifi4	0x00204eac	0x00204eb3	0x00204eac	0x00204eb3	8	8	unknown	entropy 1.75 bits/byte, 0000803f000080bf	0	D:undefined4	D:undefined4
+hifi4	0x00204f28	0x00204f2b	0x00204f28	0x00204f2b	4	4	unknown	entropy 1.50 bits/byte, 6666e63f	0	D:undefined4	D:undefined4
+hifi4	0x00204f3c	0x00204f4f	0x00204f42	0x00204f4b	10	10	unknown	entropy 3.12 bits/byte, 2041c2624a400000	2	D:undefined4	D:undefined4
+hifi4	0x00204f78	0x0020517f	0x00204f78	0x0020517f	520	520	float_table	130 float32 words, e.g. 0, 0, 9.57276e-05, 7.97527e-05	4	D:undefined4	D:pointer
+hifi4	0x00205184	0x002051af	0x00205184	0x0020518b	8	8	int_table	4 u16, 4 < 0x1000, e.g. 10, 30, 100, 300	1	D:pointer	D:undefined4
+hifi4	0x00205184	0x002051af	0x002051a0	0x002051a4	5	5	unknown	entropy 1.37 bits/byte, 1900000008	1	D:pointer	D:undefined4
+hifi4	0x002051be	0x002057ef	0x002051c0	0x00205533	884	882	float_table	221 float32 words, e.g. 0.000219374, 0.000259994, 0.000307158, 0.000361728	8	D:undefined2	D:undefined4
+hifi4	0x002051be	0x002057ef	0x00205534	0x00205534	1	1	data_ref	pointer to start; entropy -0.00 bits/byte, 01; pointer to 0x205534 at 0x206e90	8	D:undefined2	D:undefined4
+hifi4	0x002051be	0x002057ef	0x00205540	0x00205673	308	307	float_table	77 words, 77 plausible float32, e.g. 6.46656e-05, 5.43188e-05, 2.68986e-05, -1.73817e-05	8	D:undefined2	D:undefined4
+hifi4	0x002051be	0x002057ef	0x00205674	0x00205697	36	35	float_table	float32 rising 0.00348743..0.121464, 9 words	8	D:undefined2	D:undefined4
+hifi4	0x002051be	0x002057ef	0x00205698	0x002056b7	32	31	float_table	float32 falling 0.118497..0.00348743, 8 words	8	D:undefined2	D:undefined4
+hifi4	0x002051be	0x002057ef	0x002056b8	0x002057eb	308	307	float_table	77 words, 77 plausible float32, e.g. -0.00988581, -0.0191581, -0.0241137, -0.0249784	8	D:undefined2	D:undefined4
+hifi4	0x00205800	0x0020580f	0x00205800	0x0020580f	16	16	float_table	4 words, 4 plausible float32, e.g. -124, 0.5, 124, 126	0	D:undefined4	D:undefined4
+hifi4	0x00205838	0x0020595b	0x00205840	0x002058cb	140	140	data_ref	pointer to start; entropy 6.10 bits/byte, a8219abaeac97826; pointer to 0x205840 at 0x2075c0	2	D:undefined4	D:undefined4
+hifi4	0x00205838	0x0020595b	0x002058d0	0x0020595b	140	140	unknown	entropy 6.19 bits/byte, f5ab223fb1399024	2	D:undefined4	D:undefined4
+hifi4	0x00205984	0x00205987	0x00205984	0x00205987	4	4	pointer	1 word(s), first 0x00206404	0	D:pointer	D:pointer
+hifi4	0x0020598c	0x002059a3	0x0020598c	0x00205996	11	11	unknown	entropy 1.49 bits/byte, 0000480001000000; pointer to 0x205990 at 0x207900	6	D:pointer	D:undefined4
+hifi4	0x0020598c	0x002059a3	0x002059a0	0x002059a3	4	4	string_ascii	'0'; pointer to start	6	D:pointer	D:undefined4
+hifi4	0x002059a8	0x002059bf	0x002059a8	0x002059bf	24	24	int_table	6 u32, 6 < 0x10000, e.g. 256, 256, 256, 256	0	D:undefined4	D:undefined4
+hifi4	0x002059c4	0x002059cb	0x002059c4	0x002059cb	8	8	unknown	entropy 1.30 bits/byte, 0000003f0000803f; pointer to 0x2059c8 at 0x207974	3	D:undefined4	D:undefined4
+hifi4	0x002059d0	0x002059df	0x002059d4	0x002059d7	4	4	unknown	entropy 2.00 bits/byte, dccfd135	3	D:undefined4	D:undefined4
+hifi4	0x002059d0	0x002059df	0x002059dd	0x002059df	3	3	unknown	entropy 1.58 bits/byte, c0153f	3	D:undefined4	D:undefined4
+hifi4	0x002059e4	0x00205dc3	0x002059e4	0x002059e7	4	4	unknown	entropy 1.50 bits/byte, 0000807f	3	D:undefined4	D:undefined4
+hifi4	0x002059e4	0x00205dc3	0x002059e8	0x00205a0b	36	36	float_table	9 float32 words, e.g. 1.42861e-06, 0.166667, 6.61376e-05, 4.13814e-08	3	D:undefined4	D:undefined4
+hifi4	0x002059e4	0x00205dc3	0x00205a0c	0x00205a0f	4	4	unknown	entropy 2.00 bits/byte, caf24971	3	D:undefined4	D:undefined4
+hifi4	0x002059e4	0x00205dc3	0x00205a10	0x00205a9f	144	144	float_table	36 float32 words, e.g. 1e-30, 0, 0, 0	3	D:undefined4	D:undefined4
+hifi4	0x002059e4	0x00205dc3	0x00205aa0	0x00205dc3	804	802	int_table	201 u32 byte values, e.g. a2 f9 83 6e 4e 44 15 29	3	D:undefined4	D:undefined4
+hifi4	0x00205dd4	0x00205def	0x00205dd4	0x00205dd7	4	4	unknown	entropy 1.50 bits/byte, 0000803f	2	D:undefined4	D:undefined4
+hifi4	0x00205dd4	0x00205def	0x00205de0	0x00205de8	9	9	data_ref	pointer to start; entropy 1.45 bits/byte, 0400000007000000; pointer to 0x205de0 at 0x207a6c	2	D:undefined4	D:undefined4
+hifi4	0x00205df8	0x00205e1f	0x00205df8	0x00205e1f	40	40	int_table	u32 falling 0x37da0000..0x00000000, 10 words	1	D:undefined4	D:undefined4
+hifi4	0x00205e40	0x00205e5f	0x00205e40	0x00205e43	4	4	unknown	entropy 2.00 bits/byte, abaa2abe	5	D:undefined4	D:undefined4
+hifi4	0x00205e40	0x00205e5f	0x00205e56	0x00205e57	2	2	unknown	entropy 1.00 bits/byte, 3043	5	D:undefined4	D:undefined4
+hifi4	0x00205e40	0x00205e5f	0x00205e5e	0x00205e5f	2	2	unknown	entropy 1.00 bits/byte, 30c3	5	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206016	0x00206017	2	2	unknown	entropy 1.00 bits/byte, f03f	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020601e	0x0020601f	2	2	unknown	entropy 1.00 bits/byte, 2440	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206026	0x00206027	2	2	unknown	entropy 1.00 bits/byte, 5940	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020602d	0x0020602f	3	3	unknown	entropy 0.92 bits/byte, 408f40	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206035	0x00206037	3	3	unknown	entropy 1.58 bits/byte, 88c340	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020603d	0x0020603f	3	3	unknown	entropy 1.58 bits/byte, 6af840	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206044	0x00206047	4	4	unknown	entropy 2.00 bits/byte, 80842e41	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020604c	0x0020604f	4	4	unknown	entropy 2.00 bits/byte, d0126341	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206054	0x00206057	4	4	unknown	entropy 2.00 bits/byte, 84d79741	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020605c	0x0020606b	16	16	unknown	entropy 2.91 bits/byte, 65cdcd4100000020	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020606c	0x00206072	7	7	string_ascii	'vH7B'	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x00206073	0x0020609b	41	41	unknown	entropy 4.56 bits/byte, a2941a6d42000040	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x0020609c	0x002060a0	5	5	string_ascii	'W4vC'	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x002060a1	0x002060d7	55	55	unknown	entropy 5.34 bits/byte, c84e676dc1ab4300	12	D:undefined4	D:undefined4
+hifi4	0x00206008	0x0020610f	0x002060e0	0x00206107	40	40	unknown	entropy 5.22 bits/byte, bc89d897b2d29c3c	12	D:undefined4	D:undefined4
+hifi4	0x00206120	0x0020612f	0x00206120	0x0020612f	16	16	unknown	entropy 3.88 bits/byte, f5f93fe9034f384d	0	D:undefined4	D:undefined4
+hifi4	0x00206138	0x0020615f	0x00206140	0x00206148	9	9	unknown	entropy 1.45 bits/byte, 0500000019000000	6	D:undefined4	D:undefined_*
+hifi4	0x00206290	0x00206297	0x00206290	0x00206297	8	8	pointer	2 word(s), first 0x002316f1	0	D:pointer	D:undefined_*
+hifi4	0x002062ac	0x002062af	0x002062ac	0x002062af	4	4	pointer	1 word(s), first 0x00231549	0	D:undefined_*	D:undefined_*
+hifi4	0x002062c4	0x002062c7	0x002062c4	0x002062c7	4	4	pointer	1 word(s), first 0x00231517	0	D:undefined_*	D:undefined_*
+hifi4	0x002063c3	0x002063cb	0x002063c4	0x002063cb	8	8	string_ascii	'idle' between NULs	5	D:string	D:string
+hifi4	0x002063e3	0x002063eb	0x002063e4	0x002063eb	8	8	string_ascii	'join' between NULs	3	D:string	D:string
+hifi4	0x002063f2	0x002063fb	0x002063f4	0x002063fb	8	8	string_ascii	'cond' between NULs	1	D:string	D:string
+hifi4	0x00206402	0x0020641b	0x00206404	0x00206407	4	4	string_ascii	'sem'; pointer to start	39	D:string	D:string
+hifi4	0x00206402	0x0020641b	0x00206408	0x0020640f	8	8	string_ascii	'msgq'; pointer to start	39	D:string	D:string
+hifi4	0x00206402	0x0020641b	0x00206410	0x00206413	4	4	string_ascii	'C'; pointer to start	39	D:string	D:string
+hifi4	0x00206402	0x0020641b	0x00206414	0x0020641b	8	8	string_ascii	'powf'; pointer to start	39	D:string	D:string
+hifi4	0x00206428	0x00206433	0x00206428	0x0020642b	4	4	string_ascii	'inf'; pointer to start	6	D:pointer	D:string
+hifi4	0x00206428	0x00206433	0x0020642c	0x0020642f	4	4	string_ascii	'NAN'; pointer to start	6	D:pointer	D:string
+hifi4	0x00206428	0x00206433	0x00206430	0x00206433	4	4	string_ascii	'nan'; pointer to start	6	D:pointer	D:string
+hifi4	0x00206461	0x00206467	0x00206464	0x00206467	4	4	string_ascii	'0' between NULs	9	D:string	D:string
+hifi4	0x00206474	0x00206476	0x00206474	0x00206476	3	3	string_ascii	'NaN'; pointer to start	2	D:string	D:undefined1
+hifi4	0x002078a0	0x002078a3	0x002078a0	0x002078a3	4	4	pointer	1 word(s), first 0x00237aa8	0	D:pointer	D:pointer
+hifi4	0x0021847d	0x0021847f	0x0021847d	0x0021847f	3	3	unknown	entropy 1.58 bits/byte, 7f9170	0	I	I
+hifi4	0x00218483	0x00218487	0x00218483	0x00218483	1	1	unknown	entropy -0.00 bits/byte, 6f	0	I	I
+hifi4	0x00218483	0x00218487	0x00218484	0x00218485	2	2	code	flix.dis: 1 insns, 0 FLIX bundles	0	I	I
+hifi4	0x00218483	0x00218487	0x00218486	0x00218487	2	2	unknown	entropy 1.00 bits/byte, 83f1	0	I	I
+hifi4	0x002287fa	0x00228817	0x002287fa	0x00228815	28	28	code	flix.dis: 11 insns, 0 FLIX bundles	0	I	I
+hifi4	0x00228b05	0x00228b32	0x00228b08	0x00228b32	43	41	code	flix.dis: 14 insns, 1 FLIX bundles	2	I	I
+hifi4	0x002316f1	0x002316fe	0x002316f1	0x002316fe	14	13	code	flix.dis: 5 insns, 0 FLIX bundles	0	I	I
+hifi4	0x00233815	0x00233817	0x00233815	0x00233817	3	3	unknown	entropy 1.58 bits/byte, 1f1570	0	I	I
+hifi4	0x240205ff	0x2402061b	0x240205ff	0x24020604	6	5	code_weak	Xtensa 2 insns, 2 flow, last j	0	I	I

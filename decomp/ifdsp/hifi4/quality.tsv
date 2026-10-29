@@ -1,0 +1,29 @@
+metric	value
+functions	1083
+decompile_failures	0
+warnings	258
+functions_with_warnings	99
+spacebase_warnings	0
+unreachable_block_warnings	187
+halt_baddata	1
+functions_with_halt_baddata	1
+functions_with_in_vars	162
+functions_with_unaff_vars	14
+functions_with_extraout_vars	10
+functions_with_in_unaff_extraout	172
+undefined_nonff_bytes	6377
+undefined_nonff_bytes:sram_dsp_text	5401
+undefined_nonff_bytes:dsp_itcm	976
+bookmarks_error	1
+bookmarks_bad_instruction	1
+warning:Bad instruction - Truncating control flow here	1
+warning:Control flow encountered bad instruction data	1
+warning:Could not recover jumptable at #. Too many branches	4
+warning:Do nothing block with infinite loop	20
+warning:Does not return	3
+warning:Globals starting with '_' overlap smaller symbols at the same address	26
+warning:Possible PIC construction at #: Changing call to branch	4
+warning:Removing unreachable block (#)	187
+warning:This function may have set the stack pointer	1
+warning:Treating indirect jump as call	4
+warning:Type propagation algorithm not settling	7

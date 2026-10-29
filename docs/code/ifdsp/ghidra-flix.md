@@ -1,8 +1,11 @@
 # What Ghidra needs to decode the HiFi4 FLIX bundles
 
-Ghidra 12.1.4 cannot decode most of the IF DSP's HiFi4 code, so `decomp/ifdsp/hifi4/` is close to useless and the DSP is known
-mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). This page measures the gap, says exactly what is missing, and
-proposes how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
+**Status: done (T21, 2026-10-28).** The generated language `Xtensa:LE:32:rt600hifi4` (T21a) decodes every instruction of the image,
+and since T21g the canonical project `ghidra/FT710_IFDSP` and `decomp/ifdsp/hifi4/` use it (before → after in
+[the table below](#in-the-canonical-project-t21g)). The first sections are the analysis as written before the work (T21 plan):
+stock Ghidra 12.1.4 could not decode most of the IF DSP's HiFi4 code, so `decomp/ifdsp/hifi4/` was close to useless and the DSP was
+known mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). They measure the gap, say exactly what was missing, and
+propose how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
 [FT-710_Custom_Firmware#1](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/1) (RADE in the DSP, formerly #102, which needs this code understood). Claims are
 tagged **[fact]**, **[inference]** or **[guess]**; counts come from `flix.dis` (V01-01, 1,065 functions) and the core's ISA
 description, and are reproducible with the commands at the end.
@@ -22,9 +25,9 @@ description, and are reproducible with the commands at the end.
 | … not in Ghidra's Xtensa module | **197**: 158 HiFi4 `ae_*` plus 39 FPU and other ops (`div0.s`, `recip0.s`, `f64*`, `maddn.s`, …); 6,508 of 66,254 operations (9.8 %) **[fact]** |
 | … in Ghidra's module but on the wrong registers | **30 FPU ops** (`mul.s`, `add.s`, `sub.s`, `madd.s`, `wfr`, …), 3,159 uses: this core's FPU works on the 64-bit `aed` registers, Ghidra's on `f0..f15` **[fact]** |
 | Operations Ghidra cannot represent correctly | about **14.6 %** of all operations (the two rows above) **[fact]** |
-| What Ghidra does today | `op0 = 0xE` becomes a 3-byte placeholder `FLIX` (the real bundle is 6 bytes, so the next instructions are decoded from the middle of the bundle); `op0 = 0xF` (the 11-byte bundles) has no constructor, so disassembly stops; one function (`FUN_0020bb74`) crashes the decompiler **[fact: `flix.sinc`, `xtensaArch.sinc`, `decomp/ifdsp/INDEX.md`]** |
+| What stock Ghidra does (before T21) | `op0 = 0xE` becomes a 3-byte placeholder `FLIX` (the real bundle is 6 bytes, so the next instructions are decoded from the middle of the bundle); `op0 = 0xF` (the 11-byte bundles) has no constructor, so disassembly stops; one function (`FUN_0020bb74`) crashes the decompiler **[fact: `flix.sinc`, `xtensaArch.sinc`, `decomp/ifdsp/INDEX.md`]** |
 
-So even with the FLIX listing, the DSP has **no usable decompiled C**: every reading of the audio chain is done from assembly.
+So, before T21, even with the FLIX listing the DSP had **no usable decompiled C**: every reading of the audio chain was done from assembly.
 
 ## What the core is
 
@@ -82,9 +85,120 @@ Recommended order: B as the first milestone of A (it already fixes the 84 % of f
 operations with correct in/out, then the parallel commit, then exact semantics only where an algorithm needs them. Every step is
 checked against `flix.dis`. Nothing here touches the radio.
 
-Open points: whether SLEIGH accepts the 11-byte bundles as one constructor across three tokens without problems
-**[inference: Ghidra allows instructions up to 16 bytes]**; how the decompiler copes with about 1,700 named p-code operations;
-whether `FUN_0020bb74` still crashes once its bundles decode.
+The open points of this plan are answered in the next section (T21a).
+
+## The SLEIGH language Xtensa:LE:32:rt600hifi4 (T21a)
+
+Option A is built: `tools/xtensa_sleigh_gen.py` generates the language from `xtensa-modules.c`, and the result is committed in
+`tools/ghidra/xtensa-rt600hifi4/` and installed by `tools/bootstrap.sh --only hifi4` (pinning and install: [tooling.md](../../tooling.md)).
+
+### Result
+
+| Check | Result |
+|---|---|
+| Generator model vs objdump (`xtensa_sleigh_gen.py selftest`, exact text) | **49,389 / 49,389** instructions **[fact]** |
+| Ghidra decode of every `flix.dis` address (T21b oracle, decode mode) | **49,389 / 49,389 = 100 %**, bundles 12,676 / 12,676, 1,065 / 1,065 functions clean **[fact]** |
+| Ghidra analysed listing (oracle, listing mode) | 47,312 / 49,389 = 95.8 %; every mismatch is "missing": bytes `flix.dis` decodes by linear sweep that no code flow reaches (padding, data), no wrong decodes **[fact]** |
+| Function list (with `tools/ghidra/entries_hifi4.tsv`) | 1,067 = reference (B10) **[fact]** |
+| `FUN_0020bb74` (B9) | decompiles, and the C is correct for the parallel bundles in it (e.g. `{ l32r a3, …; and a14, a14, a3 }` ANDs with the old `a3`) **[fact: oracle b9.txt]** |
+| Full HiFi4 decompile (`ExportDecomp.java`, scratch project) vs the committed stock-language one | decompile failures 1 → **0**; `halt_baddata` 1,054 → **1** (`FUN_00218480`, which objdump cannot decode either: it is data); bad-instruction bookmarks 1,098 → 1; warnings 2,038 → 258; undefined non-0xFF bytes 186,167 → 29,161 **[fact]** |
+
+### How it is made
+
+```mermaid
+flowchart LR
+  MOD["xtensa-modules.c<br/>(Cadence, MIT)"] --> PROBE["xtensa_isa_dump.c<br/>compiled against it"]
+  PROBE -->|"JSON: slot/field bit maps,<br/>opcode encodings, operand<br/>decode tables, reloc forms"| GEN["xtensa_sleigh_gen.py"]
+  MOD -->|"slot decode functions<br/>(parsed C)"| GEN
+  STOCK["Ghidra stock Xtensa<br/>.sinc files"] --> GEN
+  GEN --> SELF["selftest: model vs flix.dis"]
+  GEN --> OUT["tools/ghidra/xtensa-rt600hifi4/<br/>slaspec, .sinc, ldefs, pspec"]
+  OUT --> SLEIGH["support/sleigh"] --> SLA["xtensa_rt600hifi4.sla<br/>in the Ghidra install"]
+```
+
+- **Probing instead of parsing C** **[fact]**: the slot `get`, field `get`, opcode `encode` and operand `decode`/`undo_reloc`
+  functions are run in a small C probe that includes `xtensa-modules.c`. Single-bit probes give every slot bit's bundle bit and every
+  field bit's slot bit; operand decoders are tabulated over their whole field range and fitted to `((sext|zext)(field) × k) + c`
+  (everything in this core fits, the rest would become one constructor per value); PC-relative operands fit
+  `((pc + a) & ~m) + value` (`l32r`: a = 3, m = 3; calls: a = 0, m = 3; branches, loops: pc + value). Only the slot decode functions
+  are parsed from the C text (nested `if` with `&&`/`||` on field equalities); the parsed decoder is checked against the C decoder
+  on 4,000 random slot values per slot and on every opcode's encoding (0 mismatches).
+- **Tokens** **[fact]**: SLEIGH accepts tokens wider than 64 bits, so each bundle is one token: `fx48(48)` and `fx88(88)`, with bit
+  numbering identical to libisa's little-endian 32-bit words (`insn[0]` = bits 0–31). A scattered field is assembled from its
+  contiguous runs in a disassembly action. No `;` sequencing is needed.
+- **Decode order** **[fact]**: libisa decodes first-match; SLEIGH picks the most specific constructor. The generator checks that every
+  earlier, overlapping decode entry is more specific than the later one (or the later one is unreachable and dropped); no partial
+  overlaps exist in this core.
+- **Display** **[fact]**: bundles show as `{ l32r a5, 0x206510; extui a9, a9, 0x0, 0x2 }` (mnemonic `{`), the slot order and
+  operand order of objdump, register groups as `b0:b1`. Numbers are Ghidra's hex; the oracle compares them by value.
+- **Base formats** **[fact]**: the 24/16-bit instructions keep the stock constructors (and their p-code) where the stock module is
+  right for this core; 71 stock mnemonics are dropped — not in this core (`lsi`, `mov.s`, …), on the `f0..f15` registers this core
+  does not have (the FPU uses `aed`), printing wrongly (`movi.n` negative values, `bany`/`bnone`/`ball`/`bnall` operand order,
+  `remu`/`rems` trailing comma), with a wrong constant (`bgeui`/`bltui` 0x1000 for 0x10000), or shadowing other encodings
+  (`ret` over `jx a0`, `licw` over `rems`, `mul.dd.lh` over `ae_pksr24`, stock `mula.da.*.ldinc` on the `mula.dd.*.ldinc`
+  encodings) — and 559 generated constructors replace them and add the 24-bit HiFi4, FPU, `rsr.*`/`wsr.*`/`xsr.*`/`rur.*`/`wur.*`
+  forms.
+
+### Bundle constructors and parallel semantics
+
+```mermaid
+flowchart TB
+  B["bundle constructor<br/>format bits & S_a & S_b & S_aw & S_bw"] --> SA["S_a: slot a compute<br/>reads real registers,<br/>writes w&lt;pos&gt;_&lt;k&gt; staging"]
+  B --> SB["S_b: slot b compute"]
+  SA --> WA["S_bw: commit slot b<br/>(no control flow)"]
+  SB --> WA
+  WA --> WB["S_aw: commit slot a last<br/>(branch: if (bcond) goto;<br/>loop: LBEG/LEND/LCOUNT)"]
+```
+
+- **Temporaries** **[fact]**: SLEIGH `local` temporaries belong to one constructor, so sibling slot sub-constructors cannot share
+  them. Every slot therefore computes into global staging registers `w<position>_<output>_<size>` (overlapping 1/2/4/8/16-byte
+  names), and a second sub-table per slot, `S<slot>w`, with the same patterns, copies them to the real operands. `build` runs in the
+  order written, so the bundle builds every compute part, then every commit part, with the slot that can hold a branch or loop
+  (always position 0 in this core) last. Memory stores are not staged (no bundle in the firmware stores and loads the same address
+  is known **[guess]**).
+- **Semantics levels** **[fact: generator tables]**: base-ISA operations in slots (`add`, `l32i`, `extui`, `movi`, `s32i`, …) and
+  the 30 FPU operations (single precision in the low 32 bits of `aed`, upper half written as 0 **[guess]**) have real p-code from a
+  hand table; `.w15` branches use the base branch conditions with targets relative to the bundle start; `loop`/`loopgtz`/`loopnez`
+  in slots use the stock module's loop context trick. The simple HiFi4 loads and stores (`ae_l*`/`ae_s*` with `.i .x .iu .xu .ip
+  .xp .xc .xc1`) have a real memory access and a real base-register update (circular `.xc` updates are `ae_circ0`/`ae_circ1`
+  p-code ops); only the data conversion is a named operation (`aed2 = ae_l32_ip(*:4 ea)`). Every other operation is a named p-code
+  operation per opcode with the iclass's register inputs and outputs and its HiFi4 states (`AE_OVERFLOW`, `AE_SAR`, …; `CPENABLE`
+  and the FP exception flags are left out as noise); several outputs use one operation each (`op`, `op_1`, …). 2,090 named
+  operations in all.
+- **Decompiler with ~2,100 p-code operations** **[fact]**: no problem; the full HiFi4 export (1,081 functions) runs in about two minutes.
+
+### What is left
+
+- Exact arithmetic for the HiFi4 operations that matter (multiply-accumulates in the filter kernels) — by hand, per kernel (#86, #102).
+- The aligning loads/stores (`ae_la*`, `ae_sa*` with `AE_VALIGN`) and the `.ri*`/`.ic*` forms are named operations without a
+  memory access yet.
+- The FPU lane layout (whether the `.s` operations also act on the high half) is a guess; the FP compares write a BR pair (`b0:b1`)
+  and are named operations.
+
+### In the canonical project (T21g)
+
+`tools/bootstrap.sh` (step `ghidra`, `build_ifdsp`) imports the HiFi4 program with `-processor Xtensa:LE:32:rt600hifi4` (after step
+`hifi4` has installed it; the language files are part of the program's rebuild stamp), then `IfdspHifi4Setup.java`,
+`IfdspHifi4FindFuncs.java` with the reference list `entries_hifi4.tsv`, and `IfdspHifi4Names.java`. The canonical
+`ghidra/FT710_IFDSP` was rebuilt that way and `decomp/ifdsp/hifi4/` re-exported **[fact: `quality.tsv`, `functions.tsv`, 2026-10-28]**:
+
+| Count | stock `Xtensa:LE:32:default` | `Xtensa:LE:32:rt600hifi4` |
+|---|---:|---:|
+| functions exported | 1,148 (84 artefacts, 1 missing) | 1,081 (1,067 SRAM = reference, 14 TCM) |
+| decompile failures | 1 (`FUN_0020bb74`) | **0** |
+| average body | 26 B | 167 B |
+| `flix.dis` bytes inside a Ghidra function body | 27,519 of 191,248 (14 %) | 178,629 (93 %) |
+| `flix.dis` functions with a body ≥ 90 % of their listing span | 133 | 860 of 1,065 |
+| warnings (functions with one) | 2,038 (861) | **258 (99)** |
+| `halt_baddata()` (functions) | 1,054 (819) | **1 (1)** |
+| "Bad Instruction" bookmarks | 1,098 | 1 |
+| functions with `in_`/`unaff_`/`extraout_` | 317 | 171 |
+| undefined non-0xFF bytes in executable blocks | 186,167 | 29,161 |
+| names (`IfdspHifi4Names.java`) | 111 | 111 (none lost) |
+
+The warning kinds that went up (unreachable blocks 47 → 187, infinite-loop traps 9 → 20 and a few others) all sit in bodies that the
+stock language had cut short, or are now-correct exception vectors; the per-kind explanation is in `decomp/ifdsp/INDEX.md`
+("HiFi4 decompile quality"). `flix.dis` rebuilt from the new `functions.tsv` is identical except for the list of dropped entries.
 
 ## Reproduce the counts
 
