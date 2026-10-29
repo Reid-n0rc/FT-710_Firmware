@@ -1242,7 +1242,7 @@ undefined4 FUN_20140298(undefined1 *param_1)
 void FUN_2014030c(void)
 
 {
-  itron_set_flg(DAT_20808b74,4);
+  FUN_20140148(4);
   return;
 }
 

@@ -64,49 +64,23 @@ void dimmer_set_pct(int param_1)
 
 /* thunk: dimmer_set_pct */
 
-void dimmer_set(int param_1)
+void dimmer_set(undefined4 param_1)
 
 {
-  int iVar1;
-  
-  if (param_1 < 0) {
-    param_1 = 0;
-  }
-  else if (99 < param_1) {
-    param_1 = 100;
-  }
-  iVar1 = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 20000) {
-    iVar1 = 19999;
-  }
-  DAT_fcff030a = (short)iVar1 + -1;
+  dimmer_set_pct(param_1,1);
   return;
 }
 
 
 // ===== dimmer_init @ 20113dc0 (24 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20113d74) */
-/* WARNING: Removing unreachable block (ram,0x20113d80) */
 /* dimmer_pwm_init + 60 % */
 
 void dimmer_init(void)
 
 {
-  int iVar1;
-  undefined4 extraout_r2;
-  undefined4 extraout_r3;
-  undefined4 unaff_r4;
-  undefined4 unaff_lr;
-  
   dimmer_pwm_init();
-  iVar1 = div10_round(1200000,0,extraout_r2,extraout_r3,unaff_r4,unaff_lr);
-  iVar1 = div10_round(iVar1,iVar1 >> 0x1f);
-  if (iVar1 == 20000) {
-    iVar1 = 19999;
-  }
-  DAT_fcff030a = (short)iVar1 + -1;
+  dimmer_set_pct(0x3c,1);
   return;
 }
 
@@ -168,7 +142,7 @@ void mouse_attach_post(void)
   *(undefined4 *)(iVar1 + 0x1c) = 0;
   *(undefined4 *)(iVar1 + 0x20) = 0;
   *(undefined4 *)(iVar1 + 0x24) = 0;
-  FUN_20162d3c(DAT_20800330 + 4,*(undefined4 *)(DAT_20800330 + 0x590),iVar1);
+  FUN_2015ff64(DAT_20800330 + 4,iVar1);
   return;
 }
 
@@ -192,7 +166,7 @@ void mouse_detach_post(void)
   *(undefined4 *)(iVar1 + 0x1c) = 0;
   *(undefined4 *)(iVar1 + 0x20) = 0;
   *(undefined4 *)(iVar1 + 0x24) = 0;
-  FUN_20162d3c(DAT_20800330 + 4,*(undefined4 *)(DAT_20800330 + 0x590),iVar1);
+  FUN_2015ff64(DAT_20800330 + 4,iVar1);
   return;
 }
 
@@ -225,7 +199,7 @@ void mouse_report_post(undefined4 *param_1)
   *(undefined4 *)(iVar1 + 0x1c) = uVar2;
   *(undefined4 *)(iVar1 + 0x20) = uVar3;
   *(undefined4 *)(iVar1 + 0x24) = uVar4;
-  FUN_20162d3c(DAT_20800330 + 4,*(undefined4 *)(DAT_20800330 + 0x590),iVar1);
+  FUN_2015ff64(DAT_20800330 + 4,iVar1);
   return;
 }
 
@@ -944,7 +918,7 @@ void scif3_rxi_isr(void)
     }
     itron_set_flg(iRam208da9f8,1);
     iRam208daa00 = iRam208daa00 + 1;
-    FUN_20114850(0x208daa20);
+    thunk_FUN_20114850(0x208daa20);
     return;
   }
   iRam208daa0c = iRam208daa0c + 1;
@@ -957,21 +931,7 @@ void scif3_rxi_isr(void)
 void scif3_txi_isr(void)
 
 {
-  iRam208daa10 = iRam208daa10 + 1;
-  if ((*(ushort *)(iRam208da1e4 + 0x10) & 0x20) == 0) {
-    iRam208daa18 = iRam208daa18 + 1;
-    return;
-  }
-  if (uRam208da5ec != uRam208da5ee) {
-    *(undefined1 *)(iRam208da1e4 + 0xc) = *(undefined1 *)(uRam208da5ec + 0x208da5f0);
-    DataMemoryBarrier(2);
-    uRam208da5ec = uRam208da5ec + 1 & 0x3ff;
-    *(ushort *)(iRam208da1e4 + 0x10) = *(ushort *)(iRam208da1e4 + 0x10) & 0xff9f;
-    iRam208daa14 = iRam208daa14 + 1;
-    FUN_20114850(0x208daa28);
-    return;
-  }
-  *(ushort *)(iRam208da1e4 + 8) = *(ushort *)(iRam208da1e4 + 8) & 0xff7f;
+  scif_txi_isr(&DAT_208da1e0);
   return;
 }
 
@@ -1003,7 +963,7 @@ void scif4_rxi_isr(void)
     }
     itron_set_flg(iRam208db248,1);
     iRam208db250 = iRam208db250 + 1;
-    FUN_20114850(0x208db270);
+    thunk_FUN_20114850(0x208db270);
     return;
   }
   iRam208db25c = iRam208db25c + 1;
@@ -1016,21 +976,7 @@ void scif4_rxi_isr(void)
 void scif4_txi_isr(void)
 
 {
-  iRam208db260 = iRam208db260 + 1;
-  if ((*(ushort *)(iRam208daa34 + 0x10) & 0x20) == 0) {
-    iRam208db268 = iRam208db268 + 1;
-    return;
-  }
-  if (uRam208dae3c != uRam208dae3e) {
-    *(undefined1 *)(iRam208daa34 + 0xc) = *(undefined1 *)(uRam208dae3c + 0x208dae40);
-    DataMemoryBarrier(2);
-    uRam208dae3c = uRam208dae3c + 1 & 0x3ff;
-    *(ushort *)(iRam208daa34 + 0x10) = *(ushort *)(iRam208daa34 + 0x10) & 0xff9f;
-    iRam208db264 = iRam208db264 + 1;
-    FUN_20114850(0x208db278);
-    return;
-  }
-  *(ushort *)(iRam208daa34 + 8) = *(ushort *)(iRam208daa34 + 8) & 0xff7f;
+  scif_txi_isr(&DAT_208daa30);
   return;
 }
 

@@ -654,21 +654,18 @@ void FUN_20140b9c(void)
 
 {
   ushort uVar1;
-  undefined4 uVar2;
   
   uVar1 = DAT_e804e01e;
-  if ((uVar1 & 0x100) == 0) {
-    if ((uVar1 & 0x200) == 0) {
-      return;
-    }
-    DAT_e804e01e = 0xfdff;
-    uVar2 = 2;
-  }
-  else {
+  if ((uVar1 & 0x100) != 0) {
     DAT_e804e01e = 0xfeff;
-    uVar2 = 1;
+    FUN_20140148(1);
+    return;
   }
-  itron_set_flg(DAT_20808b74,uVar2);
+  if ((uVar1 & 0x200) != 0) {
+    DAT_e804e01e = 0xfdff;
+    FUN_20140148(2);
+    return;
+  }
   return;
 }
 

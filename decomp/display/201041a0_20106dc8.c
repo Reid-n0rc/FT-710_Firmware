@@ -1673,22 +1673,9 @@ int play_prime(int param_1)
 
 // ===== rec_close_abort @ 20106018 (72 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x201552fe) */
-/* WARNING: Removing unreachable block (ram,0x201552f4) */
-/* WARNING: Removing unreachable block (ram,0x201552e4) */
-/* WARNING: Removing unreachable block (ram,0x201552ea) */
-/* WARNING: Removing unreachable block (ram,0x201552fc) */
-/* WARNING: Removing unreachable block (ram,0x20155302) */
-/* WARNING: Removing unreachable block (ram,0x20155308) */
-/* WARNING: Removing unreachable block (ram,0x2015530c) */
-
-undefined4 * rec_close_abort(void)
+void rec_close_abort(void)
 
 {
-  undefined4 *puVar1;
-  uint uVar2;
-  bool bVar3;
-  
   if (DAT_208000dc != 0) {
     FUN_20141ff0();
   }
@@ -1697,25 +1684,8 @@ undefined4 * rec_close_abort(void)
   if (DAT_20810fcc != '\0') {
     FUN_20143b20(&DAT_20810fcc);
   }
-  puVar1 = (undefined4 *)&DAT_20810fcc;
-  bVar3 = true;
-  uVar2 = 0x60;
-  do {
-    if (bVar3) {
-      *puVar1 = 0;
-      puVar1[1] = 0;
-      puVar1[2] = 0;
-      puVar1[3] = 0;
-      puVar1[4] = 0;
-      puVar1[5] = 0;
-      puVar1[6] = 0;
-      puVar1[7] = 0;
-      puVar1 = puVar1 + 8;
-      bVar3 = 0x1f < uVar2;
-      uVar2 = uVar2 - 0x20;
-    }
-  } while (bVar3);
-  return puVar1;
+  FUN_201552b8(&DAT_20810fcc,0x80);
+  return;
 }
 
 
