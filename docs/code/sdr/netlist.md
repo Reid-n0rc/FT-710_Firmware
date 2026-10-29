@@ -192,11 +192,11 @@ flowchart LR
 | 14 (3.3 V) | L13 `FCS_B` out (FDPE), K17 `D00_MOSI` in/out, K18 `D01_DIN`, L14 `D02`, M14 `D03` in | **QSPI master in fabric on the configuration-flash pins**: chip select and bidirectional D0, with D1-D3 captured together under a shared enable (`SLICE_X1Y60`), i.e. quad reads. Together with T13's WP finding, this is how the FPGA **rewrites its own configuration flash** during an update | [fact] wiring, [inference] purpose |
 | 14 | **M18 in / L18 out** (`IO_L4N/L4P_T0_D05/D04`) | **UART A = debug console** (`UART_DBG`, prompt `[IF]>`): 115,200 8N1 receiver, transmitter and ASCII command parser (3.4, 5.3) | [fact] |
 | 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B = MAIN's UART5** register link: same receiver, 11-character frame window (3.4, 5.2) | [fact] |
-| 14 | N14, T18, R18 in/out | Each has an output FDPE (INIT 1, MMCM domain) enabled from a LUT, and an input synchronized in the 125 MHz domain: open-drain-style lines, I2C or similar | [guess] |
+| 14 | **N14 (data), T18 (select), R18 (clock) in/out** | **Scope link to the DISPLAY** (#186, `FFT_DAT/FFT_FRM/FFT_CLK`): one tri-state net `SLICE_X1Y36/ALUT = ~R15` drives all three T pins, so the FPGA drives them while input **R15** is high. Out: the scope frame serializer in the `dsp_clk` domain (5.6), 1,700-byte frames every 614,400 `dsp_clk` cycles. In (R15 low, update): an SPI slave in the 125 MHz domain that samples N14 on falling R18 edges. Earlier read as open-drain lines | [fact] wiring and behaviour, [inference] J2002 pins |
 | 14 | P14 out | forwarded MMCM clock (`DSP_CLK`?) | [guess] |
 | 14 | **U16 out, V17 out, V16 out** | **I2S-style serial port, running from reset** (#90, simulation): U16 toggles every 2 cycles (31.25 MHz bit clock), V17 every 128 cycles (frame, 64 bit clocks = 2 × 32-bit slots, 125 MHz / 256 = 488.28 kHz), V16 data from clock 65,541. Fits J2002 24 `TX_CLKA` / 26 `TX_FRMA` (the shared RX/TX audio clock and frame) and 33 `RX_DATA`, the RX IQ/audio stream to the RT685  *#154:* the U16 and V17 flip-flops are clocked by `BUFHCE_X0Y9`, the buffer that drives the `dsp_clk` pin (MMCM_X0Y0), and the simulation's MMCM stand-in passes 125 MHz through, so the real frame is `dsp_clk` / 256 (72 kHz at 18.432 MHz), not 488 kHz | [fact] behaviour and clocking, [inference] J2002 pins |
 | 14 | **R16 out (clock), P17 out (select), N16 out (data)** | **16-bit SPI write sequence at power-up** (14 words, clocks 155–13,979, same on either edge): `0002 0000` (bit 1 of reg 0 set then cleared: soft reset), then reg 0x10 = C0, 11 = 00, 12 = 2D, 13 = 10, 14 = 20, 16 = 00, 17 = 00, 18 = 00, 19 = 00, 1A = 80, 1B = 03, 1D = 00 (8-bit address + 8-bit data). A 3.3 V chip on the module configured once; which part is open | [fact] words, open part |
-| 14 | **M17 out** | **Second data line of the U16/V17 port** (#145): a shift register in the `dsp_clk` domain (`SLICE_X59Y39`) loaded from bit 15 of the SDP x36 buffer RAMB18_X2Y15, which is written from DSP48_X1Y18 (the mixer after the cosine NCO, 3.6). Sampled on the rising U16 edge in 32-bit V17 half-frames it carries bursts of ~10 words (`051EBC00 051EBB85 451EBB85 ... 64196F85 5F410385 ... 40000000`) every 4,096 `dsp_clk` cycles (16 frames), from cycle 6,920 after reset, with no MAIN frame and the ADC at 0. Earlier runs saw it idle because the block RAMs read 0 (#164) | [fact] wiring and behaviour, [inference] scope data |
+| 14 | **M17 out** | **Second data line of the U16/V17 port** (#145): a shift register in the `dsp_clk` domain (`SLICE_X59Y39`) loaded from bit 15 of the SDP x36 buffer RAMB18_X2Y15, which is written from DSP48_X1Y18 (the mixer after the cosine NCO, 3.6). Sampled on the rising U16 edge in 32-bit V17 half-frames it carries bursts of ~10 words (`051EBC00 051EBB85 451EBB85 ... 64196F85 5F410385 ... 40000000`) every 4,096 `dsp_clk` cycles (16 frames), from cycle 6,920 after reset, with no MAIN frame and the ADC at 0. Earlier runs saw it idle because the block RAMs read 0 (#164) Not the DISPLAY scope link (that is N14/T18/R18, 5.6, #186) | [fact] wiring and behaviour |
 | 14 | T9, U17, V15, T16, T15 out; N15 = 1; L16, F13 one edge after reset | V15/T16/T15 are tied to 0 and N15 to 1 in the bitstream (no logic behind them). T9 is a register-selected mux of status flops (3.6). U17 serializes ADC group 1 (3.6) and toggles once the ADC inputs move (#91) | [fact] |
 | 15 (1.8 V) | B14, B13 out and C14 in/out, all driven from one slice (`SLICE_X42Y80`) | **3-wire SPI master** (clock, select, bidirectional data) at 1.8 V, the usual ADC configuration port | [inference] |
 | 15 | B13 = SCK, B14 = CS, C14 = SDIO (data from `SLICE_X42Y80/A5FF`) | **ADC configuration at power-up** (#90, probed simulation): 27 frames of 24 bits, SCK period 8 cycles (15.6 MHz), 72-cycle gaps, MSB first, sampled on the falling edge: `000020 002001 007918 0080AD 00E11A 0014E7 0015C4 0012C0 001200 005E00 005F08 002800 002340 002501 002500 802500 802400 002764 003F20 004020 004330 003001 0018F9 001901 001AF9 001B01 000100`. Bit 23 set on the two `0x025`/`0x024` frames = reads: an Analog Devices-style 24-bit frame (R/W, length, 13-bit address, 8-bit data). The register map is not identified, so the ADC part stays open | [fact] frames, [inference] format |
@@ -697,8 +697,8 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
   and its testbench register bank models only the registers listed in 5.2.
 - **How to reach it on the radio [fact: schematic p19].** TP2025 = UART OUT (`SDR_DBG_OUT`, J2002 pin 47) and TP2024 = UART IN
   (`SDR_DBG_IN`, J2002 pin 45) on the MAIN unit's "DEBUG UART" test points ([interfaces.md](interfaces.md)).
-- The console's transmit cone also drives the three open-drain-style pins N14, T18, R18 (shared tri-state enable)
-  **[fact for the wiring, function open]**.
+- N14, T18, R18 are not console lines: they are the scope link (5.6). Their shared tri-state net is `~R15`; the register
+  bank shares flip-flops with the console, which is why the console's transmit cone reaches them **[fact]**.
 
 ### 5.4 RTL equivalence (T15e) [fact]
 
@@ -723,9 +723,10 @@ RAMB18_X2Y15, an SDP x36 buffer that DSP48_X1Y18 (the mixer behind the cosine NC
 
 So the port has two data lines on one clock and frame: V16 (125 MHz domain, ADC group 2, I2S `RX_DATA`) and M17
 (`dsp_clk` domain, a buffered DSP stream in bursts). No other output of the bitstream can be a clock or frame for a
-second port: V15/T16/T15 are tied to 0 and N15 to 1 in the configuration, T9 is a status mux, U17 a raw ADC serializer
-**[fact]**. The reading that the DISPLAY scope data is M17, sharing `TX_CLKA`/`TX_FRMA` (or wired to `FFT_CLK/FRM` on the
-module) is **[inference]**; the J2002 pin of M17 is not in the service manual. Reproduce:
+second port among the output-only pins: V15/T16/T15 are tied to 0 and N15 to 1 in the configuration, T9 is a status mux, U17 a raw ADC serializer
+**[fact]**. *#186 correction:* the DISPLAY scope link is **not** M17 but the three bidirectional pins N14/T18/R18 (5.6), which the
+whole-netlist harnesses could not see because the IOBUF model never drives its pad. M17 stays the second data line of the
+U16/V17 port, most likely toward the RT685 **[inference]**. Reproduce:
 `ADC=noise LOGPINS="io_U16 io_V17 io_M17 " LOGTO=30000 build/sdr/vl/obj_pins/Vft710_sdr 30000` with a netlist written after
 #164/#91, then sample M17 on rising U16 edges between V17 edges.
 
@@ -737,7 +738,87 @@ the ADC has its own 1.8 V port **[guess]**. No register map checked here matches
 module's IC marking (follow-up #191). Candidates with the evidence for and against them (none confirmed):
 [hardware.md](../../hardware.md#candidates-not-confirmed-171-191).
 
-### 5.6 Remaining pins
+### 5.6 Scope frame serializer: the DISPLAY's RSPI2 link (#186)
+
+**Which pins [fact, routing and FASM].** The DISPLAY's scope link must be bidirectional: in normal use the FPGA is the SPI
+master, during an SDR update the DISPLAY drives the same `SDR_SCLK/SS/MOSI` lines as master ([display/spi-links.md](../display/spi-links.md#link-1-sdr-module-scope-data-rspi2)).
+The only bank-14 pins that are both driven and read are N14, T18 and R18. Their three IOB `T` inputs share one net,
+`SLICE_X1Y36/ALUT = ~R15` (input pin R15, `IO_L13N_T2_MRCC_14`), and the OLOGIC tiles carry `ZINV_T1` (not inverted), so the
+FPGA **drives the three lines while R15 is high and releases them while R15 is low**. R15 is also synchronized
+(`SLICE_X1Y41/AFF`) into a register read mux (`SLICE_X39Y60/BLUT`), so MAIN can read its level. That R15 is `SDR_UPDATE`
+(J2002 pin 53 "WP", held low by MAIN for the whole update) is **[inference]**: it is the one MAIN line whose timing fits.
+
+| Pin | Out (R15 = 1) | In (R15 = 0, update) | J2002 [inference] |
+|---|---|---|---|
+| R18 | bit clock `SLICE_X12Y49/AFF` (FDPE, `dsp_clk`) | synchronized by `SLICE_X1Y57/D5FF`, falling edge detected by `SLICE_X4Y59/CLUT` | 23 `FFT_CLK` |
+| T18 | select, active low, `SLICE_X5Y50/AFF` | `SLICE_X3Y52/CFF`, resets the receive counters (`SLICE_X11Y62` ...) | 25 `FFT_FRM` |
+| N14 | data `SLICE_X12Y48/AFF` | sampled into `SLICE_X4Y61/AFF` on the falling R18 edge | 27 `FFT_DAT` |
+
+Of the candidates #62 left, T9 (`SLICE_X36Y56/ALUT`, an AND-OR of status flops) and U17 (`SLICE_X6Y64/BFF`, a carry-out
+of the ADC group-1 logic) are output-only, and M17 belongs to the U16/V17 port (5.5) **[fact]**.
+
+**Serializer [fact, netlist equations; behaviour from the slice simulation].** All in the `dsp_clk` domain (MMCM_X0Y0
+CLKOUT0 through BUFHCE_X0Y9/X0Y21/X1Y8/X1Y20); 119 cells:
+
+| Part | Cells | Function |
+|---|---|---|
+| frame counter | `SLICE_X14Y50`..`X14Y54` (5 CARRY4, 20 FDCE), wrap decode `SLICE_X15Y51/BLUT` | counts 0..614,399, then 0 again |
+| phase decode | `SLICE_X15Y48`..`X15Y51`, `SLICE_X13Y51/52`, `SLICE_X12Y51` | select window, bit-clock window, byte loads, second-half flag |
+| byte register | `SLICE_X57Y48/49/50` (8 FDCE, enable `SLICE_X47Y49/DLUT`), bit select `SLICE_X57Y49/F7AMUX` from counter bits 5-7 | one byte every 256 clocks, MSB first |
+| byte source | LUTs in front of the byte register, select `SLICE_X40Y60/BFF` | RAMB18_X2Y21 port B `DOBDO0..7`, or the read address low byte (test pattern) |
+| read address | `SLICE_X15Y49/AFF`, `SLICE_X58Y49`, `SLICE_X58Y50` (10 bits), bank `SLICE_X34Y53/AFF` | index 0..850 per half, bank toggles at every frame wrap |
+| clear | `SLICE_X13Y53/CLUT = ~SLICE_X28Y73/A5FF \| SLICE_X1Y47/AFF` | asynchronous: counters cleared, the three pin flops preset to 1 (idle high) |
+
+**Frame-start condition.** Nothing external starts a frame: once the clear is released the counter free-runs and every
+wrap starts the next frame. The clear is the enable flop `SLICE_X28Y73/A5FF` (125 MHz domain), a mux of two register bits:
+`SLICE_X33Y73/AFF` = **register 0x04 bit 3** when `SLICE_X41Y70/B5FF` = 0, and `SLICE_X32Y73/AFF` = **register 0x03 bit 3** when
+it is 1 **[fact, whole-netlist simulation: `w0004 0008` sets X33Y73 and starts frames 481 clocks later; 0x4000, 0x2000, 0x0400
+and 0x0001 do not; a 0xFFFF write to reg 0x03 sets X32Y73]**. `SLICE_X41Y70/B5FF` is a mux of input P15 and register flops
+(`SLICE_X41Y71`), so it most likely follows TX/RX (J2002 43 `TRX`) **[inference]**. MAIN writes reg 0x04 = 0xE519 (RX) and
+reg 0x03 = 0xE63D/0xE61D ([main/sdr-link.md](../main/sdr-link.md)), both with bit 3 set, so the scope runs as soon as MAIN has
+initialized the module **[fact for the values]**. Both bits reset to 0, which is why no earlier run started the scope.
+**Register 0x06** sets the test-pattern flop `SLICE_X40Y60/BFF` (a 0xFFFF write did; bit not isolated; reset value 0x020A
+leaves it 0) **[fact]**.
+
+**Frame format [fact, slice simulation; cycle-exact RTL `hdl/sdr/scope_spi.v`].** Counter values `c` (in `dsp_clk` cycles):
+
+| Item | Value |
+|---|---|
+| period | 614,400 cycles (one frame per counter wrap) |
+| select (T18) low | c = 481 .. 435,713 (435,233 cycles) |
+| bit clock (R18) | idles high; low for 16 cycles from c = 529 + 32 k, k = 0..13,599: 32 cycles per bit, **13,600 bits = 1,700 bytes** |
+| data (N14) | changes on the rising edge (bit j of the frame from c = 513 + 32 j), sampled on the falling edge, MSB first; 0 outside the bytes |
+| bytes 0..849 | RAMB18_X2Y21 bank b, index 0..849 (byte k loaded at c = 512 + 256 k); test mode: k mod 256 |
+| bytes 850..1699 | **constant 0xCC** (produced by the counter-bit logic; also in test mode) |
+| bank | toggles at each wrap: frames alternate between RAM halves 0..1023 and 1024..2047 |
+
+So the **second 850 bytes** that the DISPLAY never reads are filler, not a second trace. The frame period is **614,400
+`dsp_clk` cycles**: 21.81 ms (45.8 frames/s) at the 28.166 MHz that the MMCM reading gives, or exactly **33.33 ms (30
+frames/s)** if `dsp_clk` is 18.432 MHz, the RT685's `CLKIN` ([system.md O8](../system.md#8-contradictions-and-open-questions)).
+That 30 Hz equals the DISPLAY GUI's one-record-per-33-ms rate is **[inference]** support for 18.432 MHz; the bit rate is then
+576 kbit/s. The bit clock idles high and data changes on its rising edge; the DISPLAY's RSPI2 slave is set to CPOL 0, CPHA 1,
+which also samples on the falling edge, so the bits agree; only the idle level differs **[inference]**.
+
+**Writer side and the header/trailer [fact for the wiring].** Port A of RAMB18_X2Y21 (x9, 125 MHz clock BUFHCE_X1Y21) is
+written in the other bank (`SLICE_X41Y110/AFF = ~SLICE_X34Y53/AFF`): ping-pong, so a frame is never read while it is written.
+Write enable `SLICE_X35Y127/BFF`, address from two counters muxed by `SLICE_X35Y127/CLUT` (`SLICE_X35Y120`, `SLICE_X40Y120`),
+data = a 10-bit value (`SLICE_X41Y64`, `X41Y65`, `X40Y66`) plus a rounding bit through the carry chain `SLICE_X57Y53..X57Y55`,
+clamped by `SLICE_X58Y53/54` when bits 8-10 are set (to 0xFE: the clamp clears bit 0) **[fact for the equations; 0xFE reading
+inference]**.
+In the whole-netlist runs with MAIN's register set-up (`scope_main.cpp`, ADC noise or a sine) the writer fills **all 850
+positions of a bank alike**: before the #172 DSP-mode fix, bytes 0..849 were all values 0x0F..0x38 with no distinct bytes at
+0..24 or 825..849; with the fix every byte, header and trailer positions included, reads 0xCC (the first frame after the
+enable is all 0, the bank not yet written) **[fact, simulation]**. So the serializer adds no header, counter or register
+field of its own, and in the simulated state the writer treats positions 0..24 and 825..849 like the 800 points: the
+DISPLAY's "25-byte header / trailer" look like 25 extra trace bins on each side of the 800 drawn ones **[inference]**. Real
+values depend on the DSP chain and register state that simulation does not reproduce yet; a capture of the FT4222 PC stream
+would settle them.
+
+Reproduce: the slice and `hdl/sdr/tb_scope_spi.v` (commands in [hdl/sdr/README.md](../../../hdl/sdr/README.md)); the whole
+netlist with `hdl/sdr/sim/scope_main.cpp` (probe and build commands in the file), e.g.
+`GAP=20 LOGTO=2600000 ADC=noise Vft710_sdr 2600000 w00152000 w00240317 w0003E63D w00040519 w00200000 w00210000 w00220006 w00238000 w00260610 w00278044`.
+
+### 5.7 Remaining pins
 
 Not done in T15e (see 5.5 for #145): matching the DISPLAY scope SPI and the I2S lines to the remaining bank 14/15 pins (section 3.3). #90 (2026-10-28) found the I2S port (U16/V17/V16) and decoded the two power-up configuration transfers (R16/P17/N16 and
 B13/B14/C14) with `hdl/sdr/sim/pins_main.cpp`; the scope SPI did not start in simulation (table in 3.3).

@@ -62,6 +62,12 @@ MAIN net `FSK_SHIFT` agrees) **[fact for 14, 30, 32; high-confidence reading for
   commands over its UART5. Fabric logic that writes flash needs user access to the flash clock (STARTUPE2 `USRCCLKO`):
   the design does drive it (#93, [netlist.md](netlist.md) "STARTUPE2 / CCLK") **[fact, routing]**, so the fabric QSPI master on
   D00..D03/FCS_B also owns CCLK ([resources.md](resources.md#io)).
+- **The FPGA side of the scope port is N14/T18/R18 (#186)** **[fact: netlist; J2002 mapping inference]**: three bidirectional
+  bank-14 pins, driven by the FPGA while input R15 is high (normal operation) and read by an SPI slave while R15 is low (the
+  update, DISPLAY as master). R18 = `FFT_CLK`, T18 = `FFT_FRM` (active low), N14 = `FFT_DAT`. Each frame is 1,700 bytes every
+  614,400 `dsp_clk` cycles (30 frames/s if `dsp_clk` is 18.432 MHz), started by register 0x04 bit 3 (0x03 bit 3 in the other
+  TX/RX state); details in [netlist.md 5.6](netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186). R15 fits
+  `SDR_UPDATE` (pin 53) **[inference]**.
 - A volatile JTAG test bitstream (SRAM only) is planned in [docs/patches/fpga-jtag-hello.md](../../patches/fpga-jtag-hello.md) (T16).
 - `SDR_DBG_IN/OUT` is a second UART ("UART_DBG"), and JTAG (`SDR_TDI/TDO/TMS/TCK`) also goes to header J2001.
 - **Reaching the debug console (#147) [fact: schematic p19].** The MAIN/DSP sheet's "DEBUG UART" box ("For Debug") brings
@@ -85,7 +91,7 @@ flowchart LR
   DDC -- "I2S RX_IF_DAT (pin 33)" --> DSP["RT685 IF DSP"]
   DSP -- "I2S TX_AF_CLK/FRM/DAT (24/26/28)" --> DUC
   FPGA -- "DSP_CLK (22)" --> DSP
-  FFT -- "SPI FFT_CLK/FRM/DAT (23/25/27, 42)" --> DISP["DISPLAY RZ/A1H<br/>scope"]
+  FFT -- "SPI FFT_CLK/FRM/DAT (23/25/27)<br/>FPGA R18/T18/N14 (#186)" --> DISP["DISPLAY RZ/A1H<br/>scope"]
   MAIN["MAIN RX651"] -- "UART5 (46/48)" --> REG
   MAIN -- "TX, SEND_A, FSK_SHIFT" --> FPGA
   FPGA -- "SDR_OVF, FADC0/1, SDR_DET/DET2" --> MAIN
