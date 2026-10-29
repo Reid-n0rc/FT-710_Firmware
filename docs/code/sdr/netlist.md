@@ -644,7 +644,8 @@ the part is written, never read back. Format: 16 bits, MSB first, 8-bit address 
 of register 0) set and cleared, then registers 0x10-0x1B and 0x1D, on 3.3 V bank 14 **[fact]**. The TX DAC behind the 16
 LVDS DDR output pairs (2.5 V bank 34) is the obvious candidate, since nothing else on the module needs configuring and
 the ADC has its own 1.8 V port **[guess]**. No register map checked here matches the values; the part needs the
-module's IC marking (follow-up #191).
+module's IC marking (follow-up #191). Candidates with the evidence for and against them (none confirmed):
+[hardware.md](../../hardware.md#candidates-not-confirmed-171-191).
 
 ### 5.6 Remaining pins
 
