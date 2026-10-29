@@ -25,7 +25,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Antenna-tuner style control: P3=0/1 clear/set a tuner-enable bit, P3=3 requests a tune cycle (0x20B41=1 / 0x20B40=1 / 0x20F0C=1) [inference, from state vars 20F0C/20B3C/20B41]; key-event gate 0x301 [fact].
 - **Globals / callees:** R/W 0x9AB8, 0x20F0C, 0x20B3C, 0x20B3D, 0x20B3F, 0x20B40, 0x20B41, VFO block+1 bit2; callees fffb44f7(0x301), fffec537, fffed24e, fffed206, fffec55a, fffe6e26
 - **Risk:** high: P3=3 (and P2=2 P3=1/2/3) can start an antenna-tune cycle which keys the transmitter [inference]
-- **Open (needs disassembly):** Confirm FUN_fffed371 / fffec493 (started by fffed206) really key TX; meaning of 9AB8 values 0..3
+- **Resolved (#69):** the tuner code keys TX through PTT source 10 (0x20B2D, set by `FUN_fffec7f9`/`FUN_fffed48f`/`FUN_fffed8ab`; [code/main/tx-protection.md](code/main/tx-protection.md)) **[fact]**. 0x9AB8 is the menu item **TUNER TYPE SELECT** (`EX030104`, 0..3) **[fact]**; the meaning of each value is in the operating manual's menu chart.
 
 ### AG
 
@@ -37,7 +37,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Gets/sets an 8-bit level held in 0x20BA8 [fact]; no apply call here so just a RAM variable [inference: consumed by another task; AF-gain-like level unknown].
 - **Globals / callees:** R/W 0x20BA8
 - **Risk:** low: single RAM byte, no dirty flag
-- **Open (needs disassembly):** Which task consumes 0x20BA8 (xrefs) to name the level
+- **Resolved (#69):** 0x20BA8 is UI-state +0xA4, the **AF GAIN** value (encoder/pot id 5 from the DISPLAY). `FUN_fffb5d68` turns it into the speaker/phones levels on /SST2 channels 1 and 5 through table 0xFFF81362 ([code/main/tx-protection.md](code/main/tx-protection.md), #143) **[fact]**.
 
 ### AI
 
@@ -163,7 +163,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Per-mode enable bit 7 plus a 1-320 value (16-bit) in VFO block [fact]; feature unknown (value may be x10 Hz) [guess].
 - **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); block bytes; 0x20F10; fffc2fde, fffc16f6
 - **Risk:** low-medium: VFO setting, dirty flag set
-- **Open (needs disassembly):** Digit weights in P2=1 loop (dropped multiplier; expected 100/10/1)
+- **Resolved (#69):** the current decompile (T21i string/loop fixes) shows the weights 100/10/1 in both the read and the set loop **[fact]**.
 
 ### BS
 
@@ -208,7 +208,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Clarifier-style RX/TX on-off flags (P3=0) and signed offset (P3=1, 4 digits) per VFO [inference from sign+4-digit structure; flags are fact].
 - **Globals / callees:** R/W 0x20F29/0x20F2A, block 0x9D09/0x9D63 +1,+0x48,+0x49; 0x9C5E; fffb44f7(0x306,0), fffb4bba; 0x20F10
 - **Risk:** medium: changes RX/TX clarifier offsets (affects tuning, not TX keying)
-- **Open (needs disassembly):** Digit weights in offset loop (decompiler dropped multiplier, expected 1000/100/10/1); unit of offset
+- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**; the unit of the offset is still open.
 
 ### CH
 
@@ -243,7 +243,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Four parameters: two on/off bits (P2=0,2), a 10-3200 value in steps of 10 (P2=1), a global signed -25..+25 value (P2=3) [fact]; feature unknown (resembles contour/APF controls) [guess].
 - **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); 0x9C5F; 0x20F10
 - **Risk:** low-medium: DSP shaping parameters
-- **Open (needs disassembly):** Digit weights in P2=1/3 loops (dropped multipliers); sentinel logic for P2=2 set (stack var 0xFF)
+- **Resolved in part (#69):** the loops use 1000/100/10/1 and 10/1 in the current decompile **[fact]**; the P2=2 sentinel logic is still open.
 
 ### CS
 
@@ -288,7 +288,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Executes the configured DOWN action (like a mic DOWN key): FUN_fffc037b -> FUN_fffc40d7(DAT_9ACD) jump-table dispatch by setting 0x9ACD [inference].
 - **Globals / callees:** Gates: key_event_filter(0x34E,0)==0 -> error; guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1). W 0x20F6F=0. Callee FUN_fffc037b
 - **Risk:** medium: moves frequency/channel as configured
-- **Open (needs disassembly):** Targets of FUN_fffc40d7 table (fff8e0cc / fff89d94, fff88534) for each 0x9ACD value
+- **Resolved (#69):** 0x9ACD is the menu item **MIC DOWN** (`EX030125`, 0..20). Values 0..12 act as the front-panel keys LOCK, QMB, A/B, V/M, TUNER, VOX/MOX, MODE, ZIN/SPOT, SPLIT, FINE, NAR, NB, DNR (key codes from the u16 list 0xFFF88534); 13..20 are FREQ UP, FREQ DOWN, BAND UP, BAND DOWN, ATT, IPO, DNF, AGC, whose handlers are in the 8-entry tables at 0xFFF8E100 (labels from the menu text at 0xFFF84753) **[fact]**. See [code/main/ui-keys.md](code/main/ui-keys.md).
 
 ### DT
 
@@ -332,7 +332,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/writes five user text strings (50 chars max) in RAM; FUN_fff9baa0 mirrors the first/5th bytes of each to 0x1801..0x1825 [fact]; purpose unknown (message/label slots) [guess].
 - **Globals / callees:** 0x979E-0x9897; fffb012c
 - **Risk:** low: text in RAM; no dirty flag seen
-- **Open (needs disassembly):** Who persists 0x979E..0x9897 to EEPROM (xrefs); purpose of FUN_fff9baa0 copy
+- **Resolved in part (#69):** 0x979E is the 5 × 0x32 text-slot block at EEPROM 0x514F. `eeprom_save_msg(2, n)` has no caller, so it is saved only by the full save ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**. Still open: the purpose of the `FUN_fff9baa0` copy.
 
 ### EN
 
@@ -364,7 +364,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Generic setup-menu get/set by menu number across groups 1-4 and 6 [fact for decode; 'menu' is inference].
 - **Globals / callees:** `ex_command`, fffe6c27, fffe6299, fffd4ffe, fffd4795, fffe6335/63fb/646c/6550, fffcdddb; buffers 0x18878, 0x1FF10, 0x1B234
 - **Risk:** medium-high: menu items include persistent config and probably TX-related settings and port/baud settings
-- **Open (needs disassembly):** Menu table layout (`menu_get_desc` / fffd528d / fffd49c0), per-item value formats; whether hidden/service items reachable (group 05 rejected, 06 allowed); not analysed
+- **Resolved (#69):** the descriptor layout, value formats and all 314 items are in [code/main/menu.md](code/main/menu.md) and `tools/main_menu_table.py` **[fact]**.
 
 ### FA
 
@@ -423,7 +423,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Turns split (0x9C5E) off/on, the same flag as `ST`: `split_toggle` @ fffbeca5 toggles 0x9C5E, saves/restores VFO states (0x9DBE/0x9DBF vs 0x9DC7/0x9DC8) and refreshes UI [fact] (T10g, [radio-control.md](code/main/radio-control.md#split-clarifier-ab)). While split is on, `vfo_rec_ptr`(1) selects the other VFO as TX [fact]
 - **Globals / callees:** RW 0x9C5E; callee `split_toggle` (also writes 0x9DBE,0x9DBF,0x9DC7,0x9DC8,0x20F09, PTR_DAT_00025d54 fields)
 - **Risk:** medium: changes TX/RX VFO configuration (no direct key-down)
-- **Open (needs disassembly):** meaning of the busy flags (0x20F1C,0x20F70,0x20B8A,...) unresolved
+- **Resolved in part (#69):** 0x20F1C = scan running (UI +0x418); 0x20F70 = UI +0x46C, a timed flag of the MIC slot/remote-keypad handlers ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. 0x20B8A and the others are still open.
 
 ### GT
 
@@ -447,7 +447,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/drives four general purpose output pins directly (MCU port data registers 0x8C021/0x8C025/0x8C022), enabled only when config byte 0x9AB7==3 [fact]; 'GP OUT' naming [inference]
 - **Globals / callees:** R/W MMIO 0x8C021 (bits3,2), 0x8C025 (bit0), 0x8C022 (bit2); R 0x9AB7; getters `gpo_a_get`/be/d1/e2, setters `gpo_a_set`/65/7d/93
 - **Risk:** medium: toggles hardware output pins (external equipment), no EEPROM
-- **Open (needs disassembly):** what 0x9AB7==3 means; which physical signals the pins are
+- **Resolved in part (#69):** 0x9AB7 is **TUN/LIN PORT SELECT** (`EX030103`, 0..3) **[fact]**; the pins are still open.
 
 ### ID
 
@@ -482,7 +482,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Per-mode-class signed 16-bit value in the main-side record at offset by `vfo_mode`(0): {0,1}->+0x12, {2,3}->+0x1C, {4,5}->+0x3A, {6,7}->+0x44, {8,9}->+0x30, {10,11}->+0x44, {12,13}->+0x26, {14}->+0x30 [fact]; probably IF shift in Hz [guess]
 - **Globals / callees:** R/W record(`vfo_rec_ptr`(0)) offsets above (2 bytes); W 0x20F10; `vfo_mode`(0), `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes per-mode DSP setting (persisted)
-- **Open (needs disassembly):** digit weights hidden by decompiler (assumed 1000/100/10/1); `vfo_rec_ptr`/fffb3196 side selection
+- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**; the side selection of `vfo_rec_ptr`/fffb3196 is still open.
 
 ### KM
 
@@ -506,7 +506,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores a 0..75 byte at 0x9C04 (CW pitch-like setting, [guess] by range and UI popup pattern shared with KS)
 - **Globals / callees:** RW 0x9C04; W 0x20CC6; R 0x9ACE; FUN_fffc8cbb/8d8c (UI popup)
 - **Risk:** low: RAM byte (persistence not shown here)
-- **Open (needs disassembly):** what 0x9ACE is; units of 0x9C04
+- **Resolved (#69):** 0x9ACE is **SCU-LAN10** (`EX030126`) **[fact]**. 0x9C04 is the CW pitch index; the status block sends it as 0x9C04 + 30, and `KP` 00..75 is 300..1050 Hz, so pitch = 300 + 10 · 0x9C04 Hz **[inference from the ranges]**.
 
 ### KR
 
@@ -681,7 +681,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Programs a memory channel (freq, mode, tone mode, shift) and writes it to EEPROM. Unlike MT it does NOT require the channel to exist: it marks it valid (0x60CB+idx=1) [fact]. Also makes it the current memory channel of the active VFO (0x60C9/0x60CA) and re-applies it (`vfo_mark_edited`/16f6).
 - **Globals / callees:** 0x60C9/0x60CA (current mem ch per VFO, written BEFORE later fields validated), rec 0x6150+idx*0x5A (+0..3 flags, +0x48/49=0, +0x4A..4D freq BE), 0x60CB+idx valid; FUN_fffb01df, eeprom_save_memch (EEPROM), `vfo_mark_edited`, `vfo_store_back`, `freq_in_range`
 - **Risk:** medium - EEPROM memory-channel write and changes active memory channel; a late validation error still leaves 0x60C9/0x60CA changed
-- **Open (needs disassembly):** meaning of [22]=='1' (selector char table fff806df) and digit weights of freq loop (decompile dropped multiplier, assumed 1e8..1): fffac534..fffac9ad
+- **Resolved in part (#69):** the frequency loop uses 100,000,000 down to 1 (and 100/10/1, 1000..1 for the other fields) in the current decompile **[fact]**; the meaning of [22]=='1' is still open.
 
 ### MX
 
@@ -693,7 +693,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** [inference] MOX-style transmit on/off from CAT: MX1 sets 0x1B4D9=2 and flag PTR_DAT_00025d54[0x28]=1 (transmit request), MX0 ends it. Key event 0x302 gate.
 - **Globals / callees:** 0x20B2C (state), 0x1B4D9, 0x9C5D (toggled by FUN_fffbe83f), PTR_DAT_00025d54[0x28]; key_event_filter(0x302,2), FUN_fffbe8d2, FUN_fffbe7e7, FUN_fffbe83f
 - **Risk:** high - MX1 keys the transmitter
-- **Open (needs disassembly):** consumer of 0x1B4D9==2 / flag 0x28 (TX request) and what FUN_fffbe83f toggling 0x9C5D does on MX0
+- **Resolved (#69):** UI +0x28 (0x20B2C) is **PTT source 9 (MOX)**, read by `ptt_inputs_read`/`ptt_source_select`; 0x1B4D9 = 2 marks MOX on. `FUN_fffbe83f` (`key_mox_vox_short`) toggles **VOX** (0x9C5D) **[fact]** ([code/main/tx-protection.md](code/main/tx-protection.md), #144).
 
 ### NA
 
@@ -785,7 +785,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** [inference] Plays/stops a stored voice message (slots 1-5); starts audio playback and, when the mode's TX bit is set (FUN_fffb521a), flags 0x20B2E which most likely transmits the message.
 - **Globals / callees:** 0x20B7C,0x20B7D,0x20CCC,0x20B2E,0x20CD3,0x20CD4,0x20F1B,0x20CCE,0x20B97; key_event_filter(0x87), FUN_fffe56bf, FUN_fffb521a
 - **Risk:** high - may key the transmitter to play a voice message
-- **Open (needs disassembly):** chars below '0' pass the >0x35 test and give slot 0xFF; consumers of 0x20B7C / 0x20B2E (TX path) not traced
+- **Resolved in part (#69):** 0x20B2E is **PTT source 11** (voice message on the air), cleared by the E8 status and the MIC PTT release ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. Still open: 0x20B7C states, and the chars-below-'0' quirk (still true).
 
 ### PC
 
@@ -832,7 +832,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** PS0 requests radio power OFF [inference: the same 0x20F4B/0x20B39 pair is used by the low-voltage shutdown `supply_undervolt_check` after power_off_io(), with code 0x90]. PS1 only sets flags (power-on style notice) [guess]; read always answers PS1.
 - **Globals / callees:** 0x20F4B, 0x20B39, 0x9DC5, 0x1B3D0, PTR_DAT_00025d38[0x98]; `power_on_request`
 - **Risk:** high - PS0 switches the radio off (remote loses control)
-- **Open (needs disassembly):** consumer of 0x20F4B/0x20B39=0x10 (power-off sequencer) not traced; what PS1 does downstream
+- **Resolved (#69):** 0x20F4B makes `displink_tx_schedule` call `power_down_save` (frame `0x7F`, EEPROM save, `sw_reset`); code 0x10 stores 0x9DC5 = 0, so the radio stays off ([cat-commands.md](cat-commands.md#ext-zz), #142). `PS1` sends frame `0x60` with byte 0xB3 = 1, which makes the DISPLAY switch the radio on ([code/system.md](code/system.md) C6, #140) **[fact]**.
 
 ### QI
 
@@ -984,7 +984,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores a 0-33 setting; if DAT_00009ace==0 also sets DAT_00020cc6=0x32, calls FUN_fffc8cbb(0x32) (menu-item table lookup) and FUN_fffc8d8c (display refresh/value popup). Same shape as VD and VG. [fact] Which radio parameter it is cannot be derived from this code alone; adjacency with VD/VG makes a break-in/VOX-style timing setting plausible [guess]
 - **Globals / callees:** DAT_00009c05 (rw); DAT_00009ace (r); DAT_00020cc6 (w=0x32); FUN_fffc8cbb@fffc8cbb; FUN_fffc8d8c@fffc8d8c; nib2hex
 - **Risk:** medium: persistent-looking radio setting, no key/TX action
-- **Open (needs disassembly):** Meaning of menu id 0x32 (FUN_fffc8cbb(0x32), tables at fff834cb/fff8854e) and what DAT_00009c05 feeds
+- **Resolved in part (#69):** 0x9C05 is the CW break-in delay; the keyer's TX function `FUN_fffbaa81` reads it ([code/main/eeprom.md](code/main/eeprom.md) menu block, #149) **[fact]**. Menu id 0x32 is still open.
 
 ### SF
 
@@ -1031,7 +1031,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Squelch-type level 0-100%, stored as 0-255 byte in one of two RAM cells selected by DAT_00009ab6 [inference]
 - **Globals / callees:** DAT_0000464e (rw), DAT_00020ba7 (rw), DAT_00009ab6 (r)
 - **Risk:** low: level setting, RAM cells only (no EEPROM call seen here)
-- **Open (needs disassembly):** Whether DAT_0000464e/DAT_00020ba7 are persisted by the settings saver; meaning of DAT_00009ab6
+- **Resolved in part (#69):** 0x9AB6 is **RF/SQL VR** (`EX030102`, 0..2: what the RF/SQL knob controls) **[fact]**. 0x464E lies just below the EEPROM mirror (0x464F..), so it is not saved; 0x20BA7 is RAM-only UI state **[fact for the addresses]**.
 
 ### SS
 
@@ -1091,7 +1091,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** TX1 raises the CAT transmit flag DAT_00020b28; the TX-source resolver `ptt_source_select` (line ~1397) checks DAT_00020b28==1 first (when DAT_00020b97==0) and yields source code 5, so the radio goes to transmit; TX0 clears it. DAT_00020b28 is also cleared by the periodic task in the fffb2fc0 file (~line 698) when DAT_00020b8c==1 or DAT_00020b9e==1 (protection/fault style conditions) [inference]. The handler has no timeout or confirmation [fact]
 - **Globals / callees:** DAT_00020b28 (w; read in `ptt_source_select`, cleared ~fffb2fc0:698), DAT_0001204d (r via `ptt_source_get`@fffb6ec5), DAT_00020f1c, DAT_00020f70 (guards), hex2nib
 - **Risk:** high: keys the transmitter via CAT; not routed through the key-event filter
-- **Open (needs disassembly):** Confirm TX-source priority and any interlock in `ptt_source_select`@fffb85a2; what DAT_00020f1c/DAT_00020f70 are
+- **Resolved (#69):** priority order and all 11 sources are in [code/main/tx-protection.md](code/main/tx-protection.md); 0x20B97 blocks every source. 0x20F1C = scan running, 0x20F70 = UI +0x46C timed flag (#144) **[fact]**.
 
 ### UP
 
@@ -1102,7 +1102,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Executes the configured UP action (like a mic UP key): FUN_fffc0335 -> FUN_fffc40d7(DAT_9ACC) jump-table dispatch by setting 0x9ACC [inference].
 - **Globals / callees:** Gates: key_event_filter(0x348,0)==0 -> error; guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1). W 0x20F6F=0. Callee FUN_fffc0335
 - **Risk:** medium: moves frequency/channel as configured
-- **Open (needs disassembly):** Targets of FUN_fffc40d7 table for each 0x9ACC value
+- **Resolved (#69):** 0x9ACC is **MIC UP** (`EX030124`); the same 21 functions as `DN` (0x9ACD) **[fact]**.
 
 ### VD
 
@@ -1114,7 +1114,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores a 0-33 setting in one of two cells chosen by DAT_00009af3 (meaning unknown). Adjacent to VG (0-100), VM, VX; looks like a VOX-family setting (delay) [guess]
 - **Globals / callees:** DAT_00009bf4/bf5 (rw), DAT_00009af3 (r), DAT_00009ace (r), DAT_00020cc6 (w=0x2a), FUN_fffc8cbb@fffc8cbb, FUN_fffc8d8c
 - **Risk:** medium: probably TX-related setting [guess], RAM only here
-- **Open (needs disassembly):** DAT_00009af3 meaning; menu id 0x2a
+- **Resolved in part (#69):** 0x9AF3 is **VOX SELECT** (`EX030405`, 0..2), which picks the VOX source and the anti-VOX value (0x9BF6/0x9BF7) **[fact]**. Menu id 0x2A is still open.
 
 ### VG
 

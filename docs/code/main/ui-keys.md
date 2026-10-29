@@ -105,8 +105,10 @@ The empty slot handler is `key_nop` 0xFFFC4A8D (a single `RTS`) **[fact]**. The 
 - **0xFFF8E100..0xFFF8E19F**, five 8-entry tables, one per role (press, short, long, repeat, release in that order, 0x20 apart). Five
   helpers 0xFFFC40D7 / 0xFFFC410A / 0xFFFC413D / 0xFFFC4170 / 0xFFFC41A3 (one per role) take a slot number: slots 0..0xC are mapped to a key
   code through the u16 list at 0xFFF88534 and call the 863-entry table; slots 0xD..0x14 call these small tables. 31 distinct handlers.
-  The callers pass the assignment settings 0x9ACC, 0x9ACD, 0x9AC8.. (the same slots as in `key_event_filter`), so slots 0xD..0x14 are the
-  eight assignable functions that have no front-panel key of their own **[fact for the settings, inference for the meaning]**.
+  The callers pass the **microphone button assignments** MIC UP 0x9ACC, MIC DOWN 0x9ACD and MIC P1..P4 0x9AC8..0x9ACB (`EX030120`..`EX030125`,
+  values 0..20; the SSM-75E keys 0x348/0x34E/0x35B..0x35E). Values 0..12 act as LOCK, QMB, A/B, V/M, TUNER, VOX/MOX, MODE, ZIN/SPOT, SPLIT,
+  FINE, NAR, NB, DNR; 13..20 are FREQ UP, FREQ DOWN, BAND UP, BAND DOWN, ATT, IPO, DNF, AGC, which have no front-panel key and use these small
+  tables (labels: menu text at 0xFFF84753) **[fact]** (#69; this paragraph used to guess "eight functions with no key").
 - **0xFFF8E1A0..0xFFF8E63F**, 296 entries: the **CAT auto-information change detectors for the EX menu**, not a key table. Entry *i* belongs to
   the *i*-th ID of the 296 × 8-character list at 0xFFF872B1 (`EX010101` … `EX060518`); `cat_ai_ex_scan` 0xFFFE6D7A calls them in turn
   ([cat.md](../cat.md)).
