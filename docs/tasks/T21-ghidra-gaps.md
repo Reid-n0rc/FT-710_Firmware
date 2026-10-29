@@ -489,6 +489,16 @@ other T22d "leave" items (fill, alignment, unreferenced stubs, unknown bytes).
   → `FLOAT_ARRAY_00204be0[i]`, `&DAT_00201900` → `FLOAT_ARRAY_00201900` as an FFT argument).
 - The idle thread shows T22e's cosmetic `wsr_ps` … `wsr_ps_5` (one pcodeop per iclass output for one `wsr.ps`); still open.
 
+### T21k
+**Status:** in progress (2026-10-28). HiFi4: one pcodeop per special-register write (T22e cosmetic follow-up).
+
+**Problem [fact, T22e].** `xtensa_sleigh_gen.py` emits one opaque pcodeop per iclass output, so one `wsr.ps a3` decompiles as six
+calls `wsr_ps` … `wsr_ps_5` (one per PS field state). **Plan.** Generator: keep one pcodeop per register output (their values
+differ: `xsr` gives AR the old SR and SR the old AR, so `xsr_excsave1` ×2 stays), but give two or more state outputs one call whose
+result is cut into disjoint byte ranges, one per field (no false equalities between fields). Regenerate from the pinned
+`xtensa-modules.c` (the old generator reproduces the committed files), selftest, private Ghidra copy, scratch HiFi4 import:
+`flix_compare.py compare` unchanged, decomp diff; then install, rebuild HiFi4, re-export, docs.
+
 ### T21d
 Branch `worktree-agent-a1563dabd320e565e` (off `issue-97-ghidra-gaps`), scratch project `<scratchpad>/t21d/ghidra/FT710_MAIN_T21d` (copy of the canonical one).
 
