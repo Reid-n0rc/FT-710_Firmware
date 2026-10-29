@@ -573,7 +573,8 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
   `r  0001`, trailing space, `0x` prefixes, two operands for `r`) prints `Err` CR LF `[IF]>`.
 - It reads the same register bank as the link (register 0 = 0104, writes to 0x15 read back) **[fact]**; the two
   command engines meet at the shared bus flip-flops around `SLICE_X10..X15Y85..Y89` **[inference]**.
-- **`x`**: accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
+- **`x`** (re-checked in #147 with working block RAMs and DSP polarity: still `Err` for every form below; open in #204):
+  accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
   `x 0000,0000`, `x 0000 0000 0000`, `x0015`, also after `w 0037 BCC5`) gives `Err`, as on the link. So `x` is in the
   character tables of both engines but has **no reachable function** in this bitstream with the other inputs at 0
   **[fact for the tried forms]**. **Not gated by an input pin** (#89): with each of the 12 unassigned inputs (U13, T13, V10,
@@ -581,6 +582,31 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
   **[fact, simulation]**; so `x` is unused in this bitstream, or needs a register state no tried sequence reaches **[inference]**.
 - The "garbled BS echo" was the echo `B` overlapping the next frame in the old harness; with a gap between characters
   it is a clean `B` (above).
+- **Line grammar and echo (#147) [fact, whole-netlist simulation with the #164/#91 models, 255-byte echo sweep and 35
+  directed lines].** The console does not buffer the line; it parses character by character:
+
+  | Input | Effect |
+  |---|---|
+  | `r`, `w`, `x` | start a new command wherever they appear: `qr 0000`, `rr 0000`, `wr 0001`, `\nr 0004` all execute the last read |
+  | space | after `r` / `w`: field separator; anywhere else an error (`r  0000` = Err) |
+  | `,` | only between the two `w` fields (`w 0003,ABCD` works, `r,0000` and `w,0015 ...` = Err) |
+  | hex digit `0-9 A-F a-f`, `#` (= E), `G` (value unknown) | 4 per field; a 5th, or one outside a field, is an error |
+  | LF | echoed; makes the line an error (`r 0000<LF><CR>` = Err) |
+  | any other byte | echoed `?`; drops the command silently (`r 0000q<CR>` prints only CR LF prompt; digits after it are errors) |
+  | `s` right after `r` | echoed `:`, error (meaning open) |
+  | CR | `r` SP hhhh: CR LF `vvvv ` CR LF prompt; `w` SP hhhh (SP or `,`) hhhh: write, CR LF prompt; nothing pending: CR LF prompt; else `Err` CR LF prompt |
+
+  Echo: the character set comes back as itself, `a-f` in upper case, `#` as 0x06, everything else as `?` (all 255 bytes
+  other than CR swept). `x` lines always end in `Err`. BS (0x08) is echoed as 0x08 and behaves unlike #89's reading in the
+  current models (`r 000<BS>` = Err; `w 0015 12<BS>4` makes the netlist send garbage); BS, TAB, the `rs` echo and `x` are
+  open in **#204**.
+- **RTL (#147).** `hdl/sdr/uart_console.v` (`ft710_uart_console`, with `uart_console_echo.vh`, `uart_rx.v`, `uart_tx.v`)
+  implements the table above. `tools/sdr_console_check.py` plays `hdl/sdr/sim/console_lines.txt` (33 lines in 11 groups that each start from reset and run as parallel netlist processes, cached per group: reads, writes,
+  every error class, restarts, dropped commands, `#`, `G`, `x`) into the Verilator netlist and into the RTL testbench
+  `hdl/sdr/tb_uart_console.v` and compares the UART A bytes: **all 11 groups identical** (whole run ~6 min with the groups in parallel) **[fact]**. The RTL is byte-level, not cycle-accurate,
+  and its testbench register bank models only the registers listed in 5.2.
+- **How to reach it on the radio [fact: schematic p19].** TP2025 = UART OUT (`SDR_DBG_OUT`, J2002 pin 47) and TP2024 = UART IN
+  (`SDR_DBG_IN`, J2002 pin 45) on the MAIN unit's "DEBUG UART" test points ([interfaces.md](interfaces.md)).
 - The console's transmit cone also drives the three open-drain-style pins N14, T18, R18 (shared tri-state enable)
   **[fact for the wiring, function open]**.
 
