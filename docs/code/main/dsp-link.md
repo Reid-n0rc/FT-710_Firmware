@@ -350,6 +350,6 @@ returns with P72 still high and the DSP in ISP mode; the radio is presumably res
 
 - The menu-item identities of the per-mode and RX DSP bytes are matched by layout and range only; T10f's menu table can
   confirm them (and 0x9AD7/0x9AD8, 0x9DC6/0x20B5B..0x20B67, 0x9DC2).
-- Meaning of the routing values (regs 8, 9, 10) and of the constants (0x0C–0x13, 0x30–0x3B, 0x56, 0x68) needs the DSP side
+- The routing values (regs 8, 9, 10) are decoded on the DSP side in [ifdsp/control-link.md](../ifdsp/control-link.md#audio-routing-registers-8-9-10-77-fact) (#77): per-sink source selectors. Still open: which physical outputs the sinks are, and the constants (0x0C–0x13, 0x30–0x3B, 0x56, 0x68)
   (T12b/T12e: which DSP code reads which register).
 - The tick period of the soft timers (100 µs) should be checked against the CMT setup (T10a/T10h).
