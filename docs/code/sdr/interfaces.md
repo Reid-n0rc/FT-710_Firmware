@@ -57,9 +57,9 @@ marked "?" were hard to read at the scan resolution.
   flash's /WP cannot be told from the code. (T13 first read it as "MAIN lifts WP".)
 - **The image goes over the FFT/FRM SPI port** **[fact for DISPLAY]**: the DISPLAY switches RSPI2 to master (about 2 MHz) on
   the `SDR_SCLK/SS/MOSI` pins (`sdr_spi_master_write` 0x201107C0) and sends 4 KiB blocks, while MAIN bridges the register
-  commands over its UART5. Fabric logic that writes flash needs user access to the flash clock (STARTUPE2 `USRCCLKO`);
-  the QSPI pins D00/FCS_B are driven and D01–D03 are user inputs, so STARTUPE2 is likely used
-  ([resources.md](resources.md#io)) **[inference]**.
+  commands over its UART5. Fabric logic that writes flash needs user access to the flash clock (STARTUPE2 `USRCCLKO`):
+  the design does drive it (#93, [netlist.md](netlist.md) "STARTUPE2 / CCLK") **[fact, routing]**, so the fabric QSPI master on
+  D00..D03/FCS_B also owns CCLK ([resources.md](resources.md#io)).
 - A volatile JTAG test bitstream (SRAM only) is planned in [docs/patches/fpga-jtag-hello.md](../../patches/fpga-jtag-hello.md) (T16).
 - `SDR_DBG_IN/OUT` is a second UART ("UART_DBG"), and JTAG (`SDR_TDI/TDO/TMS/TCK`) also goes to header J2001.
 
