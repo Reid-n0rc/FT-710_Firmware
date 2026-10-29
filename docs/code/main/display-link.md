@@ -148,7 +148,7 @@ code 6 from `FUN_2011668c` **[fact, DISPLAY side]**. MAIN acts on them in `displ
 | 0x00 | power on | normal power-on **[inference]** |
 | 0x01 | `settings_defaults(0)`, 0x20B45 = 1, `dest_jumper_apply` | **full reset** of the settings **[fact]** |
 | 0x02 | +0xBA = 1 (0x20BBE), `align_load_preset` | **factory alignment mode**, the same as `ZZPE071000` (TX band limits off, DSP key stores calibration items; [cat-commands.md](../../cat-commands.md#ext-zz)); the scheduler also sends `0x62`/`0x30`/`0x31` **[fact]** (#75) |
-| 0x04 | +0x437 = 1, +0x34 = 0 | a numeric-entry/adjust mode: encoders 2/3/4/5 and the main dial go to the 0x25D3C counter (0..99,999,999) **[fact; purpose guess: service/alignment entry]** |
+| 0x04 | +0x437 = 1, +0x34 = 0 | a numeric-entry/adjust mode: encoders 2/3/4/5 and the main dial go to the 0x25D3C counter (0..99,999,999); encoder 3 also steps the `0x64` LCD test patterns (#72) **[fact; purpose: service mode, inference]** |
 | 0x05 | toggles 0x4760; when it turns it off, TX BPF SEL (0x9A36, `EX010113`) above 4 is set back to 1 | **TTBF unlock**: 0x4760 is the hidden flag that lets TX BPF SEL reach value 6 (TTBF) on the front panel ([menu.md](menu.md)) **[fact]** (#75) |
 | 0x06 | link down (+0x98 = 0), no power on | the DISPLAY is in its maintenance/loader screen (boot combination 6, `mainlink_hello_key6` from `logo_fade_in`), or this is the first hello after a MAIN update **[fact for the DISPLAY call path, T14]** |
 | 0x07 | swaps the destination code: 0xA983 / 0xB5A7 → 0xD950, 0xD950 / 0xA4C5 → 0xA983 (`dest_code_set`, which also resets settings and restarts) | **region change** at power-on **[fact for the values]** |
@@ -189,8 +189,84 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 Types in the DISPLAY table that MAIN V01-12 never sends: **0x21, 0x42, 0x71** (no builder writes them) **[fact: none of the type stores in the
 image use these values]**.
 
-The detailed payload layout of the large frames (0x20, 0x24, 0x30/0x31, 0x37, 0x39, 0x3A, 0x40, 0x41, 0x50, 0x62, 0x70) is left for the
-subsystem pages that own the data (T10f menu, T10g radio state) and for the DISPLAY-side parser (T11b).
+The payload layouts of the frames that carry their own data after the status block (0x24, 0x30/0x31, 0x37, 0x39, 0x3A, 0x40, 0x41,
+0x50, 0x62, 0x70) are still open (#179). The status block itself is mapped below (#72).
+
+### The 0x97-byte radio status block (`0x20`, #72)
+
+`displink_build_status` (0xFFF96455) fills the frame buffer 0x16A0 (byte 0 = type) and returns 0x98, the index of the checksum. The
+same block follows the header in `0x60` and starts every "status + …" frame **[fact]**. Indexes are frame bytes (the DISPLAY's
+`mainlink_status_valid` 0x2015E354 range-checks the same bytes). "rec" = the **active** VFO record (0x9D09, or 0x9D63 when 0x9DBD = 1);
+"UI" = the UI-state struct 0x20B04; per-mode values come from rec's per-mode block ([radio-control.md](radio-control.md#per-mode-block-layout)).
+Sources are **[fact]**; names in *italics* are **[inference]**.
+
+| Byte | Source | Content |
+|---|---|---|
+| 1 | 0x9C37 | *scope flag* (also drives byte 39) |
+| 2 | `FUN_fff96dde` | scope mode 0..B, the `SS` sel-6 coding ([cat-commands-primary.md](../../cat-commands-primary.md#ss)) |
+| 3 | `FUN_fff96f3e` | bit 7 = active VFO is B (inverted while UI +0x405), bit 5 = split 0x9C5E, else bit 4/bit 6 from UI +0x425/+0x426 (side flag) |
+| 4 | `FUN_fff96fb7` | bit 5 when UI +0x95, +0x96 or +0x97 is set |
+| 5 | `FUN_fff9700b` | split 0x9C5E \| waterfall EXPAND 0x9C3D << 5 \| 0x9DC6 << 6 |
+| 6 | `FUN_fff97049` | 0x9B17 bit 0 << 6 \| 0x9B16 << 7 (menu settings) |
+| 7 | `FUN_fff97075` | UI +0x69 (2 bits) << 4 \| +0x68 << 6 \| **TX** (+0x67 = 0x20B6B) << 7 |
+| 8 | `FUN_fff970b8` | UI +0x34, high nibble only when 0x9B10 (or +0x480 in numeric-entry mode) is 0 |
+| 9 | `FUN_fff97105` | 0x9C5C << 3 \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
+| 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
+| 12 | `FUN_fff971fc` | rec+3 bits 0–1 \| (rec+5 bits 0–1, minus 1) << 2 \| {2 in FM modes, else `FUN_fff9921f` bit 7} << 4 |
+| 13 | `FUN_fff9728c` | 0x80 = 0x9AA4 in CW, 0x40 = APF on (CW block bit 5), bits 4–5 from `FUN_fff973bc`, bits 0–2 = AGC (`GT`) speed + 1, 0 = AUTO/off |
+| 14 | `FUN_fff97430` | TX-VFO flags: bit 6 `FUN_fff9752b`, bit 5 keyer on (0x9C02) with `FUN_fffc3e3c`, bit 4 `FUN_fff99669`, bit 2 `FUN_fff973bc` bit 1; FM modes: repeater shift + 1 in bits 0–1 |
+| 15 | `FUN_fff97567` | UI +0x6E (2 bits) \| +0x6D << 3 \| message/keyer state << 6 (1 recording, 2 playing, 3 +0x92) |
+| 16 | `FUN_fff976d2` | PEAK 0x9BE6 & 7 (`SS01`) \| (UI +0x6F << 4, or 0x40 while timer 0x2A runs) |
+| 17 | `FUN_fff9770b` | span index (`scope_span_index`) \| CENTER/CURSOR/FIX 0x9C35 << 6 |
+| 18 | 0x9C5A, 0x9BE8 | scope speed << 4 \| colour; with speed STOP (`FUN_fffc4f8f`) 0x50 \| colour |
+| 19–20 | `FUN_fff977b3` | default WIDTH of the mode (3000, 500, 9000, 16000, 3200 Hz) |
+| 21–24 | `FUN_fff9782b` | CW only: zero-in indicator, 4 bytes from table 0xFFF804DE by `dsp_tune_offset` (±99 → 0..24), refreshed every 100 units |
+| 25–26 | `FUN_fff978eb` | CONTOUR frequency/10 (block +2); bit 7 of byte 25 = CONTOUR LEVEL 0x9AD5 negative |
+| 27–28 | `FUN_fff9795f` | NOTCH frequency/10 (block +4) |
+| 29–30 | `FUN_fff979d3` | WIDTH (block +6; fixed 6000 AM-N, 16000 FM-N/DATA-FM-N) |
+| 31–32 | `FUN_fff97a44` | IF SHIFT (block +8) |
+| 33 | 0x9C5F | APF offset (`CO03`) |
+| 34 | 0x9C04 + 30 | CW pitch / 10 Hz |
+| 35 | `FUN_fff97abc` | bit 7 UI +0x70 (FUNC panel open), bit 6 +0x71, bit 5 shift ≠ 0, bit 4 width ≠ default, bit 2 +0x47A, bits 0–1 +0x73 |
+| 36 | `FUN_fff97b7b` | UI +0x79 & 0xF \| DVS state +0x78 << 4 (0x20B7C: 1 play, 2 record) |
+| 37–42 | `FUN_fff97ba6` | scope: CENTER/CURSOR/FIX (0 in TX), 0x84/3 (3DSS 0x9C36), 0x86/5 (0x9C37), 0x88/7 (EXPAND 0x9C3D), 9, 10; skipped while UI +0x41A |
+| 43 | 0xFF | |
+| 44 | `FUN_fff97c74` | FUNC-knob function (0x9DC9, or a code for the open setting +0x1C2: 0x0B→3, '&'→8, '/'→0x11, 'T'→0x36, '9' DNR→0x1B, 'F'→0x10, '8'→0x1A); 0x2D while TXW (UI +0x483) |
+| 45–69 | VFO block, **main side** | 45 mode (rec+0 & 0xF); 46 VFO state code (`FUN_fff97cf7`: 1 VFO, 0 state 0, 2 memory, 3 memory tune, 4 PMS, 5 QMB, 7 60 m, 8 EMG; 9 = split RX); 47 channel number; 48 `FUN_fff97e1d` flags; 49–53 frequency digits (`FUN_fff982bb`, or the numeric-entry BCD at UI +0x7B in mode +0x437); 54–65 memory tag (rec+0x4E); 66 UI +0x425; 67–68 clarifier offset (rec+0x48) |
+| 70–94 | VFO block, **sub side** | same layout for the other VFO (state 10 = split TX). The two blocks are built for A then B and swapped when B is active |
+| 95 | `FUN_fff9849e` | meter value: S-meter in RX, else PO/COMP/ALC/VDD/IDD/SWR by byte 11 |
+| 96 | `FUN_fff98526` | 0x9C61 \| 0x9C62 << 2 \| rec+2 bit 1 << 3 \| DNR on (rec+6 bit 4) << 4 |
+| 103 | 0 | |
+| 104 | 0x9A8D, 0x9A8C | RTTY shift (2 bits) \| polarity << 7 |
+| 105 | 0x9A79 | (2 bits) << 4 (PSK/DATA setting) |
+| 106 | 0x9C03 | key speed (`KS`) |
+| 107–112 | 0 | |
+| 113 | 0x9C3C, 0x9C39 | OSC time (3 bits) \| AF-FFT att << 5 \| 0x18 (`SS07`) |
+| 115–116 | 0x9A7A:7B × 10 | DATA offset in Hz |
+| 117–120 | `disp_put_op_freq` | operating frequency (UI +0x458 while TX, else +0x450/+0x454), u32 BE |
+| 121–124 | `disp_put_tx_freq` | TX frequency 0x20F50 |
+| 125–128 | `disp_put_dial_freq` | dial frequency |
+| 129–132 | `disp_put_scope_start` | scope start frequency (0x20F60, or the FIX band memory) |
+
+Bytes 97–102, 114 and 133–151 are not written by this builder (they keep whatever the buffer holds) **[fact]**. The exact
+meaning of several single bits above (UI +0x34, +0x68, +0x69, +0x6D..+0x6F, +0x73, +0x79, 0x9B16/0x9B17, 0x9C5C/0x9C61/0x9C62) is open
+(#179).
+
+### Small frames and mode flags (#72)
+
+- **`0x64` LCD test** **[fact]**: `displink_tx_64` (0xFFF986E0, from the scheduler) sends UI +0xB8 when it changes. +0xB8 is set by
+  `FUN_fffc82b7`, which `enc3_step` calls while UI +0x437 = 1, i.e. in **boot mode 4**: the knob steps 0x1B4EC through the test
+  patterns and the first position sends 0xFF (off). So boot code 4 is the service mode that holds the LCD test as well as the numeric
+  entry **[inference]**.
+- **`0x34` info** **[fact]**: `displink_tx_34` (0xFFF98F7C, `displink_build_34(1, 0x1B3D6)`) runs when UI +0x99 is set, by the
+  menu item **CERTIFICATION** (`menu_m4_21_0_enter`) and by `FUN_fffbe4e8` (a page step).
+- **Mode flags**: 0x20BBE = UI +0xBA, factory alignment mode (boot code 2); 0x20B8A = +0x86, a message pop-up is shown (`FUN_fffcfa3d`) and frame `0x70` is due;
+  0x20B7C = +0x78, DVS state (0 idle, 1 play, 2 record; [cat-commands-primary.md](../../cat-commands-primary.md#pb)); 0x20B98 = +0x94,
+  the request flag of frame `0x39` **[fact for the writers/readers]**.
+- **E2, E7/E8 result codes, boot code 5**: as in the tables above; E7/E8 codes 1..5 in +0x488/+0x48C are consumed by `dispreq_e7_task`,
+  whose per-code actions are open (#179).
+
 
 ## Boot error report
 
