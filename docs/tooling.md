@@ -451,6 +451,21 @@ CLAUDE.md): Debian bookworm **iverilog 11.0-1.1+b1** and **yosys 0.23-6** (+ dep
   libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2). Run it as `mmdc -p pp.json`
   with `{"args":["--no-sandbox"]}`, because the container has no user namespaces. Used to check that every Mermaid block renders.
 
+## Peripheral-register sources (T23b, 2026-10-29)
+
+`tools/sfr_table.py` builds the register tables from vendor data. The RX651 and RZ/A1H manuals are committed
+(`Manuals/Renesas/`, parsed with poppler `pdftotext -layout` 24.02.0). The i.MX RT685 inputs are NXP's public BSD-3-Clause
+files, downloaded at build time and **not committed** (7 MB and 1.7 MB); the script refuses any other hash.
+
+| File | Source (pinned commit) | SHA-256 |
+|---|---|---|
+| `MIMXRT685S_cm33.xml` (CMSIS SVD, Cortex-M33 view; NXP does not publish a HiFi4 SVD) | https://github.com/nxp-mcuxpresso/mcux-soc-svd, commit `7c1f00bdd6263f0b93466f5e73e5fc55a744b879`, path `MIMXRT685S/MIMXRT685S_cm33.xml` | `751c25d4fcf4986825ff8e3a1d399b43012ccd9fb6035d9e3529ced68d9bff1b` |
+| `MIMXRT685S_dsp.h` (device header of the DSP build: which peripherals the HiFi4 sees, and where) | https://github.com/nxp-mcuxpresso/mcux-sdk, commit `8a289764d763ad06e0c3a05c885644ed98b970af` (`main`, 2026-10-29), path `devices/MIMXRT685S/MIMXRT685S_dsp.h` | `903348aa34ad7e7ea27d4b32530fc341f67aeffc9ee9e2c6879c921a88775439` |
+
+mcux-sdk itself has no SVD files (only the generated headers); `mcux-soc-svd` is NXP's SVD repository. Fetch them with
+`curl -L -o <dir>/<file> https://raw.githubusercontent.com/nxp-mcuxpresso/<repo>/<commit>/<path>` into an empty directory
+outside the repo, then `python3 -I tools/sfr_table.py build --chip rt685 --svd <dir>/MIMXRT685S_cm33.xml --dsp-header <dir>/MIMXRT685S_dsp.h`.
+
 ## Commit signing (2026-10-28)
 
 The owner wants commits signed, but not required. `ssh-keygen -t ed25519` created `~/.ssh/ft710_signing_ed25519` (no passphrase, so

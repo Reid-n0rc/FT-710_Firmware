@@ -387,9 +387,10 @@ build_main() {
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv")
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
+    "$G/ApplySfr.java" "$G/sfr_rza1h.tsv")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySfr"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -403,33 +404,36 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis \
     -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
-    -postScript ApplyData.java "$G/data_display.tsv"
+    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
   local m33=$BUILD/FT-710_IFDSP_V0101.bin hifi=$BUILD/FT-710_IFDSP_V0101_hifi4.bin st
   st=$(stamp_of "$m33" "$G/IfdspM33Setup.java" "$G/IfdspFindFuncs.java" "$G/IfdspM33Names.java" "$G/FixFuncEntries.java" \
-    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv")
+    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv" "$G/ApplySfr.java" "$G/sfr_rt685.tsv")
   if stamp_ok FT710_IFDSP ifdsp_m33 "$st"; then info "FT710_IFDSP/M33 up to date"
   else
-    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData"
+    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData, ApplySfr"
     rm -f "$PROJ/.stamp_ifdsp_m33"
     headless FT710_IFDSP -import "$m33" -overwrite \
       -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 \
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript FixFuncEntries.java "$G/entries_m33.tsv" \
-      -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -postScript ApplySfr.java "$G/sfr_rt685.tsv" \
+      -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
   st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java" "$G/ApplyData.java" "$G/data_hifi4.tsv" \
+    "$G/ApplySfr.java" "$G/sfr_rt685_hifi4.tsv" \
     "$GHIDRA_INSTALL_DIR"/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*.{slaspec,sinc,pspec,ldefs})
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
-    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData"
+    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData, ApplySfr"
     rm -f "$PROJ/.stamp_ifdsp_hifi4"
     headless FT710_IFDSP -import "$hifi" -overwrite \
       -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
       -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
-      -postScript ApplyData.java "$G/data_hifi4.tsv" -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
+      -postScript ApplyData.java "$G/data_hifi4.tsv" -postScript ApplySfr.java "$G/sfr_rt685_hifi4.tsv" \
+      -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
 }

@@ -23,7 +23,7 @@ Definitions (also printed under the table):
   Documented   share of code bytes in named functions whose name appears on the image's docs/code/ pages.
   Calls named  share of call sites in the decompiled C whose callee has a real name.
   Registers    share of peripheral-register references printed with a register name instead of DAT_<address>
-               ("not mapped yet" until a register table exists for that chip, tasks T23a/T23b).
+               ("not mapped yet" until a register table exists for that chip; T23a MAIN, T23b DISPLAY and IFDSP).
 """
 import glob
 import os
@@ -36,9 +36,11 @@ README = 'README.md'
 # image dir under decomp/, label, docs/code/ dir, register table and the address ranges it covers (None = no table yet)
 IMAGES = [
     ('main', 'MAIN (RX651)', 'main', 'tools/ghidra/sfr_rx651.tsv', [(0x00080000, 0x00100000), (0x007FC000, 0x00800000)]),
-    ('display', 'DISPLAY (RZ/A1H)', 'display', None, None),
-    ('ifdsp/m33', 'IFDSP M33 (RT685)', 'ifdsp', None, None),
-    ('ifdsp/hifi4', 'IFDSP HiFi4 (RT685)', 'ifdsp', None, None),
+    ('display', 'DISPLAY (RZ/A1H)', 'display', 'tools/ghidra/sfr_rza1h.tsv',
+     [(0x3FE00000, 0x40000000), (0xE8000000, 0xE8300000), (0xFCFE0000, 0xFD000000)]),
+    ('ifdsp/m33', 'IFDSP M33 (RT685)', 'ifdsp', 'tools/ghidra/sfr_rt685.tsv',
+     [(0x40000000, 0x40160000), (0x50000000, 0x50160000), (0xE0000000, 0xE0100000)]),
+    ('ifdsp/hifi4', 'IFDSP HiFi4 (RT685)', 'ifdsp', 'tools/ghidra/sfr_rt685_hifi4.tsv', [(0x40000000, 0x40160000)]),
 ]
 DEFAULT_NAME = re.compile(r'^(thunk_)?FUN_[0-9a-f]+$')
 CALL = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
@@ -147,7 +149,8 @@ def table(stats):
     for x in stats + [dict(tot, image='**All CPU images**', reg_refs=None, reg_named=None)]:
         reg = 'not mapped yet' if x['reg_refs'] is None else pct(x['reg_named'], x['reg_refs'])
         if x['image'].startswith('**'):
-            reg = pct(sum(r['reg_named'] for r in regs), sum(r['reg_refs'] for r in regs)) + ' (MAIN)' if regs else '—'
+            part = '' if len(regs) == len(stats) else ' (' + ', '.join(r['image'].split(' (')[0] for r in regs) + ')'
+            reg = pct(sum(r['reg_named'] for r in regs), sum(r['reg_refs'] for r in regs)) + part if regs else '—'
         out.append(f"| {x['image']} | {x['named_functions']:,} / {x['functions']:,} | {x['bytes'] / 1024:,.0f} KB | "
                    f"{pct(x['decompiled_bytes'], x['bytes'])} | {pct(x['named_bytes'], x['bytes'])} | "
                    f"{pct(x['documented_bytes'], x['bytes'])} | {pct(x['calls_named'], x['calls'])} | {reg} |")

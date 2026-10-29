@@ -20,7 +20,7 @@ an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time thr
 | Sub-task | Deliverable | Ghidra? | Status |
 |---|---|---|---|
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
-| T23b | DISPLAY (RZ/A1H) and IFDSP M33 (RT685) register labels, same TSV format and `ApplySfr.java` | apply + re-export | todo |
+| T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | todo |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
@@ -109,14 +109,98 @@ Rules for every sub-task:
    names alone are not enough.
 
 ## T23b — DISPLAY and IFDSP register names
-- DISPLAY (RZ/A1H): the committed manual `Manuals/Renesas/r01uh0403ej0700-rza1h.pdf` has no single address-order table;
-  each chapter has a "Register Configuration" table. Parse those into `tools/ghidra/sfr_rza1h.tsv` with the same columns
-  (or add an `rza1h` mode to `tools/sfr_table.py`), check with known registers from `docs/code/display/peripherals.md`,
-  then apply with `ApplySfr.java`. 965 references to `DAT_e*/DAT_f*` addresses in `decomp/display` are the target.
-- IFDSP M33 (i.MX RT685): NXP publishes the CMSIS SVD file (`MIMXRT685S_cm33.xml`) in the open-source mcux-sdk; convert
-  it to `tools/ghidra/sfr_rt685.tsv` (pin the commit and its SHA-256 in the TSV header). The HiFi4 sees the same
-  peripherals at its own addresses (check `docs/code/ifdsp/hifi4.md`).
-- Add each image's TSV and ranges to `IMAGES` in `tools/readability_stats.py` so its "Registers named" column fills in.
+
+**Status:** tables, script, bootstrap steps and a Ghidra test on per-task copies done (2026-10-29); the apply to the
+canonical projects and the re-export are left to the parent session.
+
+### Plan
+1. DISPLAY: find the register lists in the committed RZ/A1H manual, parse them with `pdftotext -layout`, expand channel
+   and parameterised rows, check against registers the DISPLAY docs name. Extend `tools/sfr_table.py` with a `--chip`
+   mode (one file, shared checks/TSV/coverage code; `python3 -I` cannot import a sibling module).
+2. IFDSP: fetch NXP's SVD (pinned commit, SHA-256 checked) and the DSP device header, convert to one table per core.
+3. `coverage` per image, Ghidra test on `ghidra/FT710_{DISPLAY,IFDSP}_T23b` (apply + `ExportDecomp`, then
+   `decomp_quality.py compare`), then `readability_stats.py` IMAGES, `bootstrap.sh`, docs.
+
+### Findings
+- **The RZ/A1H manual does have one register list**: section 58 "List of Registers", **Table 58.1 "Register Addresses"**
+  (R01UH0403EJ0700 Rev.7.00, PDF pages 2959–3047, 89 pages). It lists every module's registers per channel (`SCSMR_0` …
+  `SCSMR_7`), with name, symbol, width, address and access size, so `--chip rza1h` parses it instead of the 60 chapter
+  "Register Configuration" tables **[fact]**. Module symbols come from a 46-entry map (`RZA_MODULES`, Renesas iodefine
+  names; each with its chapter number, which becomes the `section` column and the `(HWM s14)` comment). The power-down
+  registers (STBCR*, SYSCR*) go under `CPG`, as in Renesas' `cpg_iodefine.h`.
+- The parser handles: wrapped names and symbols (`CPU_CTICS_` + `CTITRIGINSTATUS`), parameterised rows
+  (`RSCAN0CmCFG (m = 0 to 4)` at `H'E803A000 + m * H'0010` → `RSCAN0C0CFG` …), the CEU's `Plane A/B/Mirror` addresses
+  (`CEU_CAMOR_A/_B/_M`), `to` ranges (JCU tables as one byte array, PFV FIFO windows as words), and modules that the table
+  repeats per channel under the same symbols (VDC5 → `VDC50`/`VDC51`, PFV → `PFV0`/`PFV1`, DISC → `DISC0`/`DISC1`).
+- **Four misprints in Table 58.1**, corrected in the script with their source (`RZA_ERRATA_*`) **[fact unless noted]**:
+  `CKDLY_1`/`SPODLY_1` printed at channel 0's H'3FEFA050/H'3FEFA068 (Table 17.2: H'3FEFB050/H'3FEFB068);
+  `RSCAN0TXQCCm` stride printed `* H'0010` (Table 21.10: 03A0H + 4 m); the PFV output-buffer windows end at H'E840505C /
+  H'E840585C (2 MB; the input windows are 32 bytes, so H'E820505C / H'E820585C); and the PTM-A9 CoreSight management
+  registers printed in the CA9-PMU block H'FC031FA0.. instead of H'FC03CFA0.. **[inference: section 56 has no address
+  table]**. After the fixes no two registers share an address.
+- Output `tools/ghidra/sfr_rza1h.tsv`: **5,466 registers at 5,466 addresses in 48 modules**, 0 unparsed rows, no
+  overlaps; deterministic. 30 known registers are checked (CPG FRQCR/STBCR2..12/STBREQ2/STBACK2/SYSCR3, GIC ICDDCR/ICDISER0/
+  ICDIPR0/ICCICR, INTC ICR1/IRQRR, OSTM0/1, WDT, SCIF0/SCIF5, RSPI0/RSPI4, PORT, VDC50/VDC51, CEU planes, RSCAN rows,
+  JCU, L2C power control, SPIBSC).
+- **i.MX RT685**: NXP's SVD is not in `mcux-sdk` (only the generated headers); it is in
+  [nxp-mcuxpresso/mcux-soc-svd](https://github.com/nxp-mcuxpresso/mcux-soc-svd) (`MIMXRT685S/MIMXRT685S_cm33.xml`, commit
+  `7c1f00bd…`, SHA-256 `751c25d4…`). There is **no DSP SVD**; the DSP view comes from the DSP device header
+  `mcux-sdk/devices/MIMXRT685S/MIMXRT685S_dsp.h` (commit `8a289764…`, SHA-256 `903348aa…`). Full URLs and hashes:
+  [docs/tooling.md](../tooling.md#peripheral-register-sources-t23b-2026-10-29) and the TSV headers. The downloads are not
+  committed.
+- Address variants **[fact]**: the SVD gives the non-secure addresses 0x4xxxxxxx, which both cores' code uses (no
+  0x5xxxxxxx reference in `decomp/ifdsp`). `IfdspM33Setup.java` maps 0x4…, the secure alias 0x5… and the PPB 0xE00…;
+  `IfdspHifi4Setup.java` maps only 0x4…. So:
+  - `sfr_rt685.tsv` (M33): the 101 SVD peripherals at 0x4… (module = SVD peripheral, `USART0_FIFOWR`), again at the secure
+    alias +0x10000000 (module `<P>_S`, `SYSCTL0_S_DSPSTALL`), the SVD's own SCnSCB/NVIC/SCB/MPU/SAU, and the Armv8-M SCS
+    registers the SVD lacks (SysTick, FPU, CoreDebug, ICTR/ACTLR; `RT_SCS`): **10,085 registers at 9,509 addresses,
+    200 modules**.
+  - `sfr_rt685_hifi4.tsv` (HiFi4): the 83 SVD peripherals the DSP header lists (the header bases equal the SVD bases),
+    plus the two DSP-side blocks the SVD lacks, laid out like the M33 block of the same struct: **MUB** (as MUA, `MU_Type`)
+    and **OSTIMER1** (as OSTIMER0): **3,728 registers at 3,483 addresses, 85 modules**. Not visible to the DSP:
+    AHB_SECURE_CTRL, CASPER, ESPI, HASHCRYPT, MUA, OSTIMER0, PMC, POWERQUAD, SCT0, SECGPIO, USB HS, and the Arm SCS.
+- Each FLEXCOMM is one block with USART/SPI/I2C/I2S views at one address. The view the firmware uses comes first, so it
+  gets the type and the primary label (`RT_PREFER`): FC0 = USART0, FC1 = SPI1, FC2..FC5 = I2S2..I2S5 (from
+  m33-platform.md / hifi4.md) **[fact]**; the other views are secondary labels. Peripherals without a register at offset 0
+  get a `<P>_BASE` label (CLKCTL0/1, SYSCTL0/1, FLEXCOMM14/15 …), because the SDK drivers pass the block base around
+  (`&CLKCTL0_BASE` in the clock code). SVD descriptions are cut to their first sentence (≤ 100 characters).
+- **Coverage before Ghidra** (`tools/sfr_table.py coverage`, `DAT_` references in the mapped I/O blocks):
+
+  | Image | Unnamed I/O refs (addresses) | On a table register | Left after the Ghidra test |
+  |---|---:|---:|---|
+  | DISPLAY | 985 (295) | 980 (99.5 %) | 5: `DAT_3fe99999`/`DAT_3fe33333` (high words of the doubles 0.8/0.6, not registers), `DAT_e8205580` (read in `ostm_time_us`, bit 6; no register there in the manual, open) |
+  | IFDSP M33 | 619 (213) | 617 (99.7 %) | 2: `DAT_40135020` (PMC +0x20, set to 0x04040808 if it differs, in the first code file; not in the SVD, open) |
+  | IFDSP HiFi4 | 711 (164) | 708 (99.6 %) | 3: `DAT_40060a92` and `DAT_40140000` (outside every peripheral block) |
+
+- **Ghidra test** (per-task copies `ghidra/FT710_DISPLAY_T23b`, `FT710_IFDSP_T23b`, owner `root`, `-noanalysis`,
+  `ApplySfr.java` then `ExportDecomp.java` into a scratch directory; Ghidra 12.1.4, JDK 21): `ApplySfr` added 5,116 / 10,085
+  / 3,728 labels, typed 4,860 / 9,316 / 3,352, kept 256 / 193 / 131 existing data items, skipped 350 / 0 / 0 rows not in
+  memory (the RZ/A1H debug registers at 0xFC000000..), 0 failures. `decomp_quality.py compare` against the committed
+  `quality.tsv`: **no metric worse** for DISPLAY, M33 and HiFi4 (0 decompile failures, warnings and `halt_baddata`
+  unchanged). "Registers named" (readability_stats definition) on the test exports: **DISPLAY 99.5 %, M33 99.7 %,
+  HiFi4 99.6 %** (0.0 % before). Example: `FLEXCOMM0_IRQHandler` now reads `USART0_FIFOSTAT`, `USART0_FIFORD`,
+  `USART0_FIFOWR`, `SCB_ICSR = 0x10000000`; `ostm_time_us` reads `OSTM_OSTM0CNT`, `OSTM_OSTM0TE`.
+- `ApplySfr.java` needed no change for these chips (only its header comment); MAIN's behaviour is unchanged, and
+  `sfr_table.py build` (rx651) rewrites `sfr_rx651.tsv` byte for byte.
+- `tools/bootstrap.sh`: `build_display` and `build_ifdsp` (M33 and HiFi4) run `ApplySfr.java` last, and their `stamp_of`
+  lists include `ApplySfr.java` and the TSV. `tools/readability_stats.py` IMAGES now has the three tables and their ranges
+  (the README block is regenerated by the parent after the canonical re-export).
+
+### Open steps (parent session)
+1. Apply to the canonical projects (DISPLAY, then IFDSP M33 and HiFi4, as in the test above), re-export `decomp/display`
+   and `decomp/ifdsp/{m33,hifi4}`, run `decomp_quality.py compare`, `python3 -I tools/readability_stats.py readme`, and
+   commit the projects with the re-export.
+2. Look up `0xE8205580` (DISPLAY) and PMC `+0x20` (M33) in other sources; add sourced rows if found.
+
+### Redo
+- New RZ/A1H manual revision: `python3 -I tools/sfr_table.py build --chip rza1h --pdf <new.pdf>` (finds Table N.1
+  "Register Addresses" in the last fifth of the manual). A new module name fails the build until it is added to
+  `RZA_MODULES`; re-check the `RZA_ERRATA_*` entries against the new revision (drop the ones it fixes).
+- New SVD or SDK: download the files (docs/tooling.md), `build --chip rt685 --svd … --dsp-header … --any-hash`, review
+  the TSV diff, then put the new URLs and hashes into `RT_SOURCES` and docs/tooling.md and rebuild without `--any-hash`.
+- New DISPLAY or IFDSP firmware: after the re-export, `python3 -I tools/sfr_table.py coverage decomp/display --chip rza1h`
+  (and `decomp/ifdsp/m33 --chip rt685`, `decomp/ifdsp/hifi4 --chip rt685_hifi4`); each `missing:` line is an address to
+  look up.
 
 ## T23c — Global state structs
 - For each hot base (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a` with 462 references, `DAT_0001ff12` …): list
