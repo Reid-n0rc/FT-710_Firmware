@@ -4,7 +4,7 @@
 Usage: python3 -I tools/main_key_tables.py [out.tsv [entries.tsv]]
 Reads build/FT-710_MAIN_V0112.bin (base 0xFFF80000) and decomp/main/functions.tsv (relative to the repo root,
 override with FT710_ROOT). Prints a summary; with out.tsv writes one row per key code that has a handler; with entries.tsv
-also writes every distinct handler (except key_nop) of these and of the two tables after them (0xFFF8E100, 0xFFF8E1A0) as a
+also writes every distinct handler (except key_nop) of these and of the two tables after them (0xFFF8E100, 0xFFF8E1A0) and of the alignment table 0xFFF89910 as a
 FixFuncEntries row, commented with its codes (#70).
 """
 import os
@@ -50,8 +50,11 @@ if len(sys.argv) > 2:
         if x != NUL: users.setdefault(x, []).append('%s slot 0x%x' % (names[c // 8], 0xD + c % 8))
     for c in range(296):
         users.setdefault(u32(0xFFF8E1A0 + 4*c), []).append('table 0xFFF8E1A0[%d]' % c)
+    # ZZPE071000 alignment mode (#76): the DSP key runs entry [0x20CE2] of this 261-entry table (one per calibration byte)
+    for c in range(261):
+        users.setdefault(u32(0xFFF89910 + 4*c), []).append('align 0xFFF89910[%d]' % c)
     with open(sys.argv[2], 'w') as f:
-        f.write('# MAIN handlers from the five key tables 0xFFF89D94.., the slot tables 0xFFF8E100 and the table 0xFFF8E1A0 (tools/main_key_tables.py, #70); FixFuncEntries.java nolate\n')
+        f.write('# MAIN handlers from the five key tables 0xFFF89D94.., the slot tables 0xFFF8E100, the table 0xFFF8E1A0 (#70) and the alignment table 0xFFF89910 (#76) (tools/main_key_tables.py); FixFuncEntries.java nolate\n')
         for x in sorted(users):
             u = users[x]
             f.write('%08x\t\t%s\n' % (x, ', '.join(u[:6]) + (', +%d more' % (len(u) - 6) if len(u) > 6 else '')))

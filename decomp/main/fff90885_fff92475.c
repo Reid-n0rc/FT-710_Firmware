@@ -65,15 +65,15 @@ uint FUN_fff9089e(int param_1)
 void FUN_fff909af(int param_1)
 
 {
-  byte bStack_11;
+  byte local_11;
   
   if (param_1 < 2) {
     FUN_fff90f9b(param_1,2,(char *)0x10000000);
     FUN_fff90f9b(param_1,5,(char *)0x10000000);
-    for (bStack_11 = 0; bStack_11 < 9; bStack_11 = bStack_11 + 1) {
-      *(undefined4 *)(&DAT_00020318 + (uint)bStack_11 * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)bStack_11 * 0xc + 0x2031c) = &LAB_fff910bc;
-      *(undefined4 *)(param_1 * 0x6c + (uint)bStack_11 * 0xc + 0x20320) = 0x10000000;
+    for (local_11 = 0; local_11 < 9; local_11 = local_11 + 1) {
+      *(undefined4 *)(&DAT_00020318 + (uint)local_11 * 0xc + param_1 * 0x6c) = 0;
+      *(undefined1 **)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined4 *)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
     (&DAT_00001430)[param_1] = 0;
@@ -97,51 +97,50 @@ void FUN_fff90a96(int param_1,undefined4 param_2,int param_3,undefined4 param_4)
 {
   bool bVar1;
   int iVar2;
-  undefined4 uStack_1c;
-  undefined4 uStack_18;
-  int iStack_10;
-  undefined4 uStack_c;
-  int iStack_8;
-  undefined4 uStack_4;
+  undefined4 local_1c;
+  undefined4 local_18;
+  int local_10;
+  undefined4 local_c;
+  int local_8;
+  undefined4 local_4;
   
   if (param_1 < 2) {
-    uStack_1c = 0;
-    iStack_10 = param_1;
-    uStack_c = param_2;
-    iStack_8 = param_3;
-    uStack_4 = param_4;
+    local_1c = 0;
+    local_10 = param_1;
+    local_c = param_2;
+    local_8 = param_3;
+    local_4 = param_4;
     iVar2 = FUN_fff91059(param_1);
     if (iVar2 == 1) {
-      if ((iStack_8 == 0x10000000) || (iStack_8 == 0)) {
+      if ((local_8 == 0x10000000) || (local_8 == 0)) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        uStack_18 = 6;
+        local_18 = 6;
       }
-      else if ((byte)(&DAT_0000142c)[iStack_10] < 8) {
-        if ((byte)(&DAT_0000142e)[iStack_10] < 8) {
-          (&DAT_0000142e)[iStack_10] = (&DAT_0000142e)[iStack_10] + '\x01';
+      else if ((byte)(&DAT_0000142c)[local_10] < 8) {
+        if ((byte)(&DAT_0000142e)[local_10] < 8) {
+          (&DAT_0000142e)[local_10] = (&DAT_0000142e)[local_10] + '\x01';
         }
         else {
-          (&DAT_0000142e)[iStack_10] = 0;
+          (&DAT_0000142e)[local_10] = 0;
         }
-        (&DAT_0000142c)[iStack_10] = (&DAT_0000142c)[iStack_10] + '\x01';
+        (&DAT_0000142c)[local_10] = (&DAT_0000142c)[local_10] + '\x01';
         *(undefined4 *)
-         (&DAT_00020318 + (uint)(byte)(&DAT_0000142e)[iStack_10] * 0xc + iStack_10 * 0x6c) = 1;
-        *(int *)(iStack_10 * 0x6c + (uint)(byte)(&DAT_0000142e)[iStack_10] * 0xc + 0x2031c) =
-             iStack_8;
-        *(undefined4 *)(iStack_10 * 0x6c + (uint)(byte)(&DAT_0000142e)[iStack_10] * 0xc + 0x20320) =
-             uStack_4;
-        uStack_18 = 0;
+         (&DAT_00020318 + (uint)(byte)(&DAT_0000142e)[local_10] * 0xc + local_10 * 0x6c) = 1;
+        *(int *)(local_10 * 0x6c + (uint)(byte)(&DAT_0000142e)[local_10] * 0xc + 0x2031c) = local_8;
+        *(undefined4 *)(local_10 * 0x6c + (uint)(byte)(&DAT_0000142e)[local_10] * 0xc + 0x20320) =
+             local_4;
+        local_18 = 0;
       }
       else {
-        uStack_18 = 9;
+        local_18 = 9;
       }
-      FUN_fff91087(iStack_10,&uStack_1c);
-      FUN_fff90f9b(iStack_10,4,(char *)0x10000000);
+      FUN_fff91087(local_10,&local_1c);
+      FUN_fff90f9b(local_10,4,(char *)0x10000000);
     }
   }
   return;
@@ -769,8 +768,8 @@ void FUN_fff912c3(byte *param_1,byte param_2)
 void sbrk(int param_1)
 
 {
-  if ((undefined4 *)(param_1 + iRam00025d34) <= &DAT_000207f4) {
-    iRam00025d34 = iRam00025d34 + param_1;
+  if (PTR_DAT_00025d34 + param_1 <= &DAT_000207f4) {
+    PTR_DAT_00025d34 = PTR_DAT_00025d34 + param_1;
   }
   return;
 }

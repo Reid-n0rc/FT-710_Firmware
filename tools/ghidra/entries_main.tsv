@@ -1,4 +1,10 @@
-# MAIN handlers from the five key tables 0xFFF89D94.., the slot tables 0xFFF8E100 and the table 0xFFF8E1A0 (tools/main_key_tables.py, #70); FixFuncEntries.java nolate
+# MAIN handlers from the five key tables 0xFFF89D94.., the slot tables 0xFFF8E100, the table 0xFFF8E1A0 (#70) and the alignment table 0xFFF89910 (#76) (tools/main_key_tables.py); FixFuncEntries.java nolate
+fffbbc54		align 0xFFF89910[0]
+fffbbc6f		align 0xFFF89910[32], align 0xFFF89910[33], align 0xFFF89910[34], align 0xFFF89910[35], align 0xFFF89910[36], align 0xFFF89910[37], +5 more
+fffbbc8e		align 0xFFF89910[70], align 0xFFF89910[73], align 0xFFF89910[76], align 0xFFF89910[79], align 0xFFF89910[82], align 0xFFF89910[85], +48 more
+fffbbcb8		align 0xFFF89910[45], align 0xFFF89910[46], align 0xFFF89910[47]
+fffbbcff		align 0xFFF89910[245]
+fffbbd52		align 0xFFF89910[1], align 0xFFF89910[2], align 0xFFF89910[3], align 0xFFF89910[4], align 0xFFF89910[5], align 0xFFF89910[6], +185 more
 fffbc5f9		short 0x000
 fffbc5fd		short 0x001
 fffbc601		press 0x002
