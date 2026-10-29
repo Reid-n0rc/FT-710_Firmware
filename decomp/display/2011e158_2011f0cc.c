@@ -669,361 +669,121 @@ void rspi4_delay(void)
 
 // ===== rspi0_spti_isr @ 2011ecd4 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
-/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
-/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
 /* stub, needs entries_display.T11d.tsv */
 
-undefined4 rspi0_spti_isr(void)
+void rspi0_spti_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f8cc) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_tx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_tx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_tx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_tx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_tx_isr();
-  }
-  return 0;
+  rspi_tx_isr(0);
+  return;
 }
 
 
 // ===== rspi0_spri_isr @ 2011ecdc (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f844) */
-/* WARNING: Removing unreachable block (ram,0x2011f848) */
-/* WARNING: Removing unreachable block (ram,0x2011f858) */
 /* stub */
 
-undefined4 rspi0_spri_isr(void)
+void rspi0_spri_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f870) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_rx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_rx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_rx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_rx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_rx_isr();
-  }
-  return 0;
+  rspi_rx_isr(0);
+  return;
 }
 
 
 // ===== rspi1_spti_isr @ 2011ece4 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
-/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
-/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
 /* stub */
 
-undefined4 rspi1_spti_isr(void)
+void rspi1_spti_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f8d4) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_tx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_tx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_tx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_tx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_tx_isr();
-  }
-  return 0;
+  rspi_tx_isr(1);
+  return;
 }
 
 
 // ===== rspi1_spri_isr @ 2011ecec (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f844) */
-/* WARNING: Removing unreachable block (ram,0x2011f848) */
-/* WARNING: Removing unreachable block (ram,0x2011f858) */
 /* stub */
 
-undefined4 rspi1_spri_isr(void)
+void rspi1_spri_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f878) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_rx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_rx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_rx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_rx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_rx_isr();
-  }
-  return 0;
+  rspi_rx_isr(1);
+  return;
 }
 
 
 // ===== rspi2_spti_isr @ 2011ecf4 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
-/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
-/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
 /* stub */
 
-undefined4 rspi2_spti_isr(void)
+void rspi2_spti_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f8dc) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_tx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_tx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_tx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_tx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_tx_isr();
-  }
-  return 0;
+  rspi_tx_isr(2);
+  return;
 }
 
 
 // ===== rspi2_spri_isr @ 2011ecfc (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f844) */
-/* WARNING: Removing unreachable block (ram,0x2011f848) */
-/* WARNING: Removing unreachable block (ram,0x2011f858) */
 /* stub */
 
-undefined4 rspi2_spri_isr(void)
+void rspi2_spri_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f880) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_rx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_rx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_rx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_rx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_rx_isr();
-  }
-  return 0;
+  rspi_rx_isr(2);
+  return;
 }
 
 
 // ===== rspi3_spti_isr @ 2011ed04 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
-/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
-/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
 /* stub */
 
-undefined4 rspi3_spti_isr(void)
+void rspi3_spti_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f8e4) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_tx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_tx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_tx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_tx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_tx_isr();
-  }
-  return 0;
+  rspi_tx_isr(3);
+  return;
 }
 
 
 // ===== rspi3_spri_isr @ 2011ed0c (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f844) */
-/* WARNING: Removing unreachable block (ram,0x2011f848) */
-/* WARNING: Removing unreachable block (ram,0x2011f858) */
 /* stub */
 
-undefined4 rspi3_spri_isr(void)
+void rspi3_spri_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f888) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_rx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_rx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_rx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_rx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_rx_isr();
-  }
-  return 0;
+  rspi_rx_isr(3);
+  return;
 }
 
 
 // ===== rspi4_spti_isr @ 2011ed14 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f8a0) */
-/* WARNING: Removing unreachable block (ram,0x2011f8a4) */
-/* WARNING: Removing unreachable block (ram,0x2011f8b4) */
 /* stub */
 
-undefined4 rspi4_spti_isr(void)
+void rspi4_spti_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f8ec) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_tx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_tx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_tx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_tx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_tx_isr();
-  }
-  return 0;
+  rspi_tx_isr(4);
+  return;
 }
 
 
 // ===== rspi4_spri_isr @ 2011ed1c (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x2011f844) */
-/* WARNING: Removing unreachable block (ram,0x2011f848) */
-/* WARNING: Removing unreachable block (ram,0x2011f858) */
 /* stub */
 
-undefined4 rspi4_spri_isr(void)
+void rspi4_spri_isr(void)
 
 {
-                    /* WARNING: Could not find normalized switch variable to match jumptable */
-  switch((undefined *)0x2011f890) {
-  case (undefined *)0x0:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi0_rx_isr();
-    break;
-  case (undefined *)0x1:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi1_rx_isr();
-    break;
-  case (undefined *)0x2:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi2_rx_isr();
-    break;
-  case (undefined *)0x3:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi3_rx_isr();
-    break;
-  case (undefined *)0x4:
-                    /* WARNING: This code block may not be properly labeled as switch case */
-    rspi4_rx_isr();
-  }
-  return 0;
+  rspi_rx_isr(4);
+  return;
 }
 
 

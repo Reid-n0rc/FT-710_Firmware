@@ -1,5 +1,126 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_2015c2d4 @ 2015c2d4 (112 bytes)
+
+bool FUN_2015c2d4(int param_1)
+
+{
+  int iVar1;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 local_10;
+  undefined4 local_c;
+  
+  local_20 = 0;
+  local_1c = 0;
+  local_18 = 0;
+  local_14 = 0;
+  local_10 = 0;
+  local_c = 0;
+  memcpy(&local_20,(param_1 - 0x1128U & 0xff) * 0x2d + 0x208f0c46,0x15);
+  iVar1 = strcmp("FIRMWARE UPDATE      ",&local_20);
+  return iVar1 == 0;
+}
+
+
+// ===== FUN_2015c34c @ 2015c34c (224 bytes)
+
+int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = FUN_2015c978();
+  if (iVar1 == 0x1ff) {
+    iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,1);
+  }
+  if (iVar1 == 0x1ff) {
+    iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
+  }
+  if ((((iVar1 == 0x1ff) && (iVar1 = FUN_2015cdd4(param_1,param_2), iVar1 != 0x1ff)) &&
+      (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
+     ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
+    DAT_20800494 = 1;
+  }
+  if (iVar1 == 0x1ff) {
+    iVar1 = FUN_2015bf88(param_1,param_2,&DAT_202665d8,2);
+  }
+  if (iVar1 == 0x1ff) {
+    iVar1 = 0xff;
+  }
+  return iVar1;
+}
+
+
+// ===== FUN_2015c43c @ 2015c43c (376 bytes)
+
+undefined4 FUN_2015c43c(undefined4 param_1,undefined4 param_2,int param_3)
+
+{
+  undefined4 uVar1;
+  
+  switch(param_3) {
+  case 0:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016dd44,7);
+    return uVar1;
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+    break;
+  case 5:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e734,0x11);
+    return uVar1;
+  case 6:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e6a4,0xb);
+    return uVar1;
+  case 7:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016da0c,0x10);
+    return uVar1;
+  case 8:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2024bc94,0x10);
+    return uVar1;
+  case 9:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016d358,4);
+    return uVar1;
+  case 10:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016dffc,0xd);
+    return uVar1;
+  case 0xb:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016e530,0xd);
+    return uVar1;
+  case 0xc:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016ea38,0xd);
+    return uVar1;
+  case 0xd:
+    uVar1 = FUN_2015bf88(param_1,param_2,&DAT_2016ed68,7);
+    return uVar1;
+  default:
+    return 0x1ff;
+  }
+  uVar1 = 0x1ff;
+  if (param_3 == 1) {
+    uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3a0,4,DAT_208f0bc3,DAT_208f0bc4);
+    return uVar1;
+  }
+  if (param_3 != 2) {
+    if (param_3 == 3) {
+      uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca418,2,DAT_208f0bc3,DAT_208f0bc4);
+      return uVar1;
+    }
+    if (param_3 == 4) {
+      uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3e6,5,DAT_208f0bc3,DAT_208f0bc4);
+    }
+    return uVar1;
+  }
+  uVar1 = FUN_2015cfb4(param_1,param_2,&DAT_202ca3c8,3,DAT_208f0bc3,DAT_208f0bc4);
+  return uVar1;
+}
+
+
 // ===== FUN_2015c558 @ 2015c558 (304 bytes)
 
 undefined4 FUN_2015c558(undefined4 param_1,undefined4 param_2)
@@ -1635,62 +1756,30 @@ switchD_2015dfdc_default:
 
 /* trace, 'D'/'E' block handlers, else post to the dispatcher */
 
-undefined4 mainlink_rx_deliver(int param_1,char *param_2,undefined4 param_3)
+void mainlink_rx_deliver(int param_1,char *param_2,undefined4 param_3)
 
 {
-  uint uVar1;
-  uint uVar2;
-  uint uVar3;
-  int iVar4;
-  undefined4 uVar5;
-  undefined1 uStack_120;
-  char cStack_11f;
-  char cStack_11e;
-  char cStack_11d;
-  undefined4 uStack_11c;
-  undefined1 auStack_118 [256];
+  int iVar1;
   
   *(int *)(param_1 + 0x28) = *(int *)(param_1 + 0x28) + 1;
   if (*param_2 != '\x06' && *param_2 != '\x15') {
     mainlink_trace(param_2,param_3);
     *(char *)(param_1 + 0x24) = *param_2;
   }
-  if (*param_2 == 'D') {
-    uVar1 = be16_load(param_2 + 2);
-    uVar1 = uVar1 & 0xffff;
-    uVar2 = be16_load(param_2 + 4);
-    if (((uVar1 < DAT_208116a2) && (uVar3 = uVar1 + (uVar2 & 0xffff), uVar3 <= DAT_208116a2)) &&
-       (DAT_208116a0 == param_2[1])) {
-      DAT_208116a4 = (undefined2)uVar3;
-      memclr(auStack_118,0xfe);
-      _uStack_120 = CONCAT13(param_2[3],CONCAT12(param_2[2],CONCAT11(param_2[1],0xc4)));
-      uStack_11c = (uint)*(ushort *)(param_2 + 4);
-      memcpy((int)&uStack_11c + 2,&DAT_208116a6 + uVar1,uVar2 & 0xffff);
-      mainlink_queue_frame(&uStack_120,0x106);
-      return 1;
+  if (*param_2 != 'D') {
+    if (*param_2 != 'E') {
+      iVar1 = mainlink_disp_alloc(*(undefined4 *)(param_1 + 0x18));
+      *(undefined2 *)(iVar1 + 4) = 0xaa;
+      *(short *)(iVar1 + 6) = (short)param_3;
+      memcpy(iVar1 + 8,param_2,param_3);
+      mainlink_disp_post(*(undefined4 *)(param_1 + 0x18),iVar1);
+      return;
     }
-    return 0;
+    mainlink_rx_block_write(param_2 + 1);
+    return;
   }
-  if (*param_2 != 'E') {
-    iVar4 = mainlink_disp_alloc(*(undefined4 *)(param_1 + 0x18));
-    *(undefined2 *)(iVar4 + 4) = 0xaa;
-    *(short *)(iVar4 + 6) = (short)param_3;
-    memcpy(iVar4 + 8,param_2,param_3);
-    uVar5 = FUN_20162d3c(*(int *)(param_1 + 0x18),*(undefined4 *)(*(int *)(param_1 + 0x18) + 0x819c)
-                         ,iVar4);
-    return uVar5;
-  }
-  uVar1 = be16_load(param_2 + 2);
-  uVar1 = uVar1 & 0xffff;
-  uVar2 = be16_load(param_2 + 4);
-  if (((uVar1 < DAT_208116a2) && (uVar2 = uVar1 + (uVar2 & 0xffff), uVar2 <= DAT_208116a2)) &&
-     (DAT_208116a0 == param_2[1])) {
-    DAT_208116a4 = (undefined2)uVar2;
-    memcpy(&DAT_208116a6 + uVar1,param_2 + 6);
-    mainlink_queue_frame(&stack0xffffffe8,6);
-    return 1;
-  }
-  return 0;
+  mainlink_rx_block_read(param_2 + 1);
+  return;
 }
 
 
@@ -2219,301 +2308,5 @@ undefined4 fwdbg_verify_bank1(int param_1,undefined4 param_2)
     }
   }
   return uVar3;
-}
-
-
-// ===== fwdbg_write_other_bank @ 2015f348 (512 bytes)
-
-/* fw1up: raw I:\AH076H_DISPLAY.bin to the non-running bank + flag */
-
-undefined4 fwdbg_write_other_bank(int param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  undefined4 *puVar6;
-  int iVar7;
-  uint local_48;
-  undefined4 local_44;
-  undefined4 local_40;
-  undefined4 local_3c;
-  undefined4 local_38;
-  uint local_34;
-  undefined4 local_30;
-  int iStack_2c;
-  undefined4 local_28;
-  
-  iStack_2c = param_1;
-  local_28 = param_2;
-  iVar1 = fs_fopen(param_2,&DAT_204281a6);
-  if (iVar1 == 0) {
-    uVar2 = 1;
-  }
-  else {
-    thunk_FUN_2014af64(iVar1,&local_30);
-    local_44 = 0;
-    local_40 = 0;
-    local_3c = 0;
-    local_38 = 0;
-    local_34 = 0;
-    if (DAT_208dbb44 == 1) {
-      puVar5 = &DAT_208dbb84;
-      puVar6 = &DAT_208dbb64;
-    }
-    else if (DAT_208dbb44 == 2) {
-      puVar5 = &DAT_208dbb64;
-      puVar6 = &DAT_208dbb84;
-    }
-    else {
-      puVar5 = &DAT_208dbb64;
-      puVar6 = &DAT_208dbb84;
-    }
-    iVar7 = puVar5[1];
-    kbd_led_status(3,7);
-    iVar3 = spiflash_erase(0,*puVar5,0x14);
-    if (iVar3 == 0) {
-      iVar3 = spiflash_erase(0,puVar5[1],local_30);
-      if (iVar3 == 0) {
-        kbd_led_status(4,7);
-        local_48 = 0xffffffff;
-        crc32_make_table();
-        do {
-          iVar3 = fs_fread(param_1 + 4,1,0x100,iVar1);
-          if (iVar3 == 0) break;
-          iVar4 = spiflash_write(iVar7,param_1 + 4,iVar3);
-          if (iVar4 != 0) {
-            FUN_20141ff0(iVar1);
-            return 3;
-          }
-          local_48 = crc32_update(local_48,iVar3,param_1 + 4);
-          iVar7 = iVar7 + 0x100;
-        } while (iVar3 != 0);
-        FUN_20141ff0(iVar1);
-        local_44 = 0x11111111;
-        local_34 = ~local_48;
-        local_40 = local_30;
-        iVar1 = spiflash_write(*puVar5,&local_44,0x14);
-        if (iVar1 == 0) {
-          iVar1 = spiflash_erase(0,*puVar6,0x14);
-          if (iVar1 == 0) {
-            uVar2 = 0;
-          }
-          else {
-            uVar2 = 3;
-          }
-        }
-        else {
-          uVar2 = 3;
-        }
-      }
-      else {
-        FUN_20141ff0(iVar1);
-        uVar2 = 3;
-      }
-    }
-    else {
-      FUN_20141ff0(iVar1);
-      uVar2 = 3;
-    }
-  }
-  return uVar2;
-}
-
-
-// ===== fwdbg_task_create @ 2015f55c (200 bytes)
-
-/* event flag + task (entry 0x2015F0E0, pri 5, stack 0x2000) */
-
-undefined4 fwdbg_task_create(int *param_1)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  undefined4 local_38;
-  undefined4 local_34;
-  undefined4 local_30;
-  undefined4 local_2c;
-  undefined4 local_28;
-  code *local_24;
-  undefined4 local_20;
-  undefined4 local_1c;
-  undefined4 local_18;
-  undefined4 local_14;
-  
-  local_2c = 0;
-  local_28 = 0;
-  local_24 = task_fwdbg;
-  local_20 = 5;
-  local_1c = 0x2000;
-  local_18 = 0;
-  local_14 = 0;
-  local_38 = 2;
-  local_34 = 0;
-  local_30 = 0;
-  iVar1 = itron_acre_flg(0,&local_38);
-  *param_1 = iVar1;
-  if (*param_1 < 1) {
-    uVar2 = 0xffffffff;
-  }
-  else {
-    iVar1 = itron_acre_tsk(0,&local_2c);
-    if (iVar1 < 1) {
-      uVar2 = 0xffffffff;
-    }
-    else {
-      iVar1 = itron_sta_tsk(iVar1,param_1);
-      if (iVar1 == 0) {
-        uVar2 = 0;
-      }
-      else {
-        uVar2 = 0xffffffff;
-      }
-    }
-  }
-  return uVar2;
-}
-
-
-// ===== update_display_self @ 2015f62c (1028 bytes)
-
-/* I:\AH076H_DISPLAY.bin, I:\AH068_DISPLAY_Loader.bin */
-
-void update_display_self(undefined4 *param_1)
-
-{
-  bool bVar1;
-  int iVar2;
-  int iVar3;
-  uint uVar4;
-  uint uVar5;
-  int iVar6;
-  int iVar7;
-  int iVar8;
-  undefined4 local_68;
-  int local_64;
-  undefined4 local_60;
-  undefined4 local_5c;
-  uint local_58;
-  uint local_54;
-  uint local_50;
-  int local_4c;
-  undefined1 auStack_48 [52];
-  int local_14;
-  char *local_10;
-  undefined4 local_c;
-  uint local_8 [2];
-  
-LAB_2015f638:
-  do {
-    local_68 = 0xffffffff;
-    local_c = itron_twai_flg(*param_1,0xffff,5,local_8);
-    iVar8 = 0;
-    iVar6 = 0;
-    if ((local_8[0] & 1) == 0) {
-      if ((local_8[0] & 2) == 0) {
-        if ((local_8[0] & 4) != 0) {
-          iVar6 = 0xa00000;
-          iVar8 = 0x3f0000;
-        }
-      }
-      else {
-        iVar6 = 0x400000;
-        iVar8 = 0x3e0000;
-      }
-    }
-    else {
-      iVar6 = 0;
-    }
-    kbd_led_status(0,7);
-    do {
-      do {
-        kbd_led_status(0,7);
-        itron_dly_tsk(100);
-        kbd_led_status(1,7);
-        local_10 = "I:\\AH076H_DISPLAY.bin";
-        if (local_8[0] == 1) {
-          local_10 = "I:\\AH068_DISPLAY_Loader.bin";
-        }
-        local_4c = FUN_2014aec8(local_10,auStack_48);
-      } while ((local_4c != 0) || (iVar2 = fs_fopen(local_10,&DAT_204281da), iVar2 == 0));
-      kbd_led_status(2,7);
-      iVar7 = 0;
-      do {
-        iVar3 = fs_fread(param_1 + 1,1,0x100,iVar2);
-        iVar7 = iVar7 + iVar3;
-      } while (iVar3 != 0);
-      if (local_14 != iVar7) goto LAB_2015f638;
-      FUN_20141ff0(iVar2);
-      if (local_8[0] == 0x1001) {
-        local_58 = fwdbg_write_other_bank(param_1,local_10);
-        if (local_58 == 0) {
-          kbd_led_status(7);
-        }
-        else {
-          kbd_led_status(5,7);
-        }
-        goto LAB_2015f638;
-      }
-      if (local_8[0] == 0x3001) {
-        do {
-          local_58 = fwdbg_verify_bank1(param_1,local_10);
-          if (local_58 == 0) {
-            kbd_led_status(7);
-          }
-          else {
-            kbd_led_status(5,7);
-          }
-          itron_dly_tsk(0x32);
-        } while( true );
-      }
-      kbd_led_status(3,7);
-      if ((((iVar8 != 0) || ((local_8[0] & 0x1000) != 0)) &&
-          ((iVar2 = spiflash_erase(0,0x3e0000,0x14), iVar2 != 0 ||
-           (iVar2 = spiflash_erase(0,0x3f0000,0x14), iVar2 != 0)))) ||
-         (iVar2 = spiflash_erase(0,iVar6,iVar7), iVar2 != 0)) goto LAB_2015f638;
-      kbd_led_status(4,7);
-      iVar2 = fs_fopen(local_10,&DAT_204281da);
-    } while (iVar2 == 0);
-    bVar1 = false;
-    local_50 = 0;
-    local_54 = 0xffffffff;
-    crc32_make_table();
-    do {
-      uVar4 = fs_fread(param_1 + 1,1,0x100,iVar2);
-      if (uVar4 == 0) break;
-      for (uVar5 = 0; uVar5 < uVar4; uVar5 = uVar5 + 1) {
-        local_50 = (uint)*(byte *)((int)param_1 + uVar5 + 4) + (local_50 & 0xff) & 0xff;
-      }
-      local_54 = crc32_update(local_54,uVar4,param_1 + 1);
-      iVar3 = spiflash_write(iVar6,param_1 + 1,uVar4);
-      if (iVar3 != 0) {
-        bVar1 = false;
-        break;
-      }
-      iVar6 = iVar6 + 0x100;
-      bVar1 = true;
-    } while (uVar4 != 0);
-    FUN_20141ff0(iVar2);
-    if ((bVar1) && (iVar8 != 0)) {
-      local_60 = 0;
-      local_5c = 0;
-      local_68 = 0x11111111;
-      local_58 = ~local_54;
-      local_64 = iVar7;
-      iVar6 = spiflash_write(iVar8,&local_68,0x14);
-      if (iVar6 != 0) {
-        bVar1 = false;
-      }
-    }
-    if (bVar1) {
-      kbd_led_status(7);
-    }
-    else {
-      kbd_led_status(5,7);
-    }
-  } while( true );
 }
 
