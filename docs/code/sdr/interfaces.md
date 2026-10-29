@@ -14,7 +14,7 @@ drawn on the MAIN side. `x` marks a line drawn crossed (not connected) on MAIN.
 |---|---|---|---|---|---|---|
 | 1, 3, 5 | RF_+5V | (+5 V, C2112/C2115/C2121) | | 2, 4, 6, 8, 10 | DIG_+5V | (+5 V) |
 | 7 | GND | | | 12 | GND | |
-| 9 | MISO | (none) | | 14 | FRM? (unclear) | (none) |
+| 9 | MISO | (none) | | 14 | FRM | (none) |
 | 11 | MOSI | (none) | | 16 | TDO | SDR_TDO |
 | 13 | SCLK | (none) | | 18 | TDI | SDR_TDI |
 | 15 | TMS | SDR_TMS | | 20 | GND | |
@@ -22,13 +22,13 @@ drawn on the MAIN side. `x` marks a line drawn crossed (not connected) on MAIN.
 | 19 | DIG_+3.3V | SDR_VDD | | 24 | TX_CLKA | TX_AF_CLK |
 | 21 | GND | | | 26 | TX_FRMA | TX_AF_FRM |
 | 23 | FFT_CLK | SDR_SCLK (RB2008) | | 28 | TX_DATA | TX_AF_DAT |
-| 25 | FFT_FRM | SDR_SS | | 30 | FW_S | SDR_DET2 |
-| 27 | FFT_DAT | SDR_MOSI | | 32 | FW_H | SDR_DET |
+| 25 | FFT_FRM | SDR_SS | | 30 | ENV_S | SDR_DET2 |
+| 27 | FFT_DAT | SDR_MOSI | | 32 | ENV_H | SDR_DET |
 | 29 | RX_CLKA | TX_AF_CLK (crossed, "N/A") | | 34 | ADC0 | FADC0 |
 | 31 | RX_FRMA | RX_IF_FRM (R2085 33 ohm, "N/A") | | 36 | GND | |
 | 33 | RX_DATA | RX_IF_DAT (R2086 33 ohm) | | 38 | FRM_CLK | x ("N/A") |
 | 35 | GND | | | 40 | FRM_FRM | x ("N/A") |
-| 37 | BITTY? (FSK) | FSK_SHIFT | | 42 | FRM_DAT | SDR_MISO ("N/A" in the legend) |
+| 37 | RTTY | FSK_SHIFT | | 42 | FRM_DAT | SDR_MISO ("N/A" in the legend) |
 | 39 | CW_KEY | SEND_A | | 44 | ADC1 | FADC1 |
 | 41 | OFLW | SDR_OVF | | 46 | UART_RX | SDR_UMOSI (R2087 470 ohm) |
 | 43 | TRX | TX | | 48 | UART_TX | SDR_UMISO |
@@ -40,8 +40,10 @@ drawn on the MAIN side. `x` marks a line drawn crossed (not connected) on MAIN.
 | 55, 57, 59 | GND | | | | | |
 
 The legend printed next to the connector says: "Pin24 CLK, Pin26 FRAME, Pin28 TX DATA, Pin29 N/A, Pin31 N/A, Pin33 RX
-DATA; Pin23 FFT/FRM CLK, Pin25 FFT/FRM FRAME, Pin27 FFT/FRM DATA, Pin38 N/A, Pin40 N/A, Pin42 N/A" **[fact]**. Labels
-marked "?" were hard to read at the scan resolution.
+DATA; Pin23 FFT/FRM CLK, Pin25 FFT/FRM FRAME, Pin27 FFT/FRM DATA, Pin38 N/A, Pin40 N/A, Pin42 N/A" **[fact]**. The
+labels of pins 14, 30, 32 and 37 were re-read from a 2,400 dpi render of the vector page (`pdftoppm -r 2400`, #94): 14 is
+`FRM` (no MAIN net), 30/32 are `ENV_S`/`ENV_H` (earlier read as FW_S/FW_H), 37 is `RTTY` (a bus line crosses the glyphs; the
+MAIN net `FSK_SHIFT` agrees) **[fact for 14, 30, 32; high-confidence reading for 37]**.
 
 ### What the pin map changes [inference]
 
