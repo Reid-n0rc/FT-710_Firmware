@@ -1,0 +1,89 @@
+# FT-710 DISPLAY library functions (T23d): armcc C library (ARM Compiler 5 / RVCT) and NORTi uITRON 4.0 service calls.
+# Reviewed table, written by hand from the evidence column (instruction idioms in arm-none-eabi-objdump listings, the
+# uITRON 4.0 API: object tables, id ranges, error codes E_ID/E_NOEXS/E_OBJ/E_QOVR/E_TMOUT/...). Method and score per row.
+# address	name	library	version	method	score	previous	evidence
+20155254	__aeabi_memset_veneer	armcc C library	RVCT/ARM Compiler 5	veneer_pattern	1.000	FUN_20155254	new; A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memset 0x2015525C
+2015525c	__aeabi_memset	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	FUN_2015525c	new; (dst, n, c): replicates c (and #0xff, orr lsl 8/16) then joins _memset at 0x20155278
+2015526c	__aeabi_memclr_veneer	armcc C library	RVCT/ARM Compiler 5	veneer_pattern	1.000	FUN_2015526c	new; A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memclr 0x20155274
+20155274	__aeabi_memclr	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	FUN_20155274	new; mov.w r2,#0 then _memset: byte/halfword head, word fill, tail via lsls #31 flags
+201552b8	__aeabi_memclr4_veneer	armcc C library	RVCT/ARM Compiler 5	veneer_pattern	1.000	FUN_201552b8	new; A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memclr4 0x201552C0
+201552c0	__aeabi_memclr4	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	memclr	renamed; r2=0, 32-byte stmia loop of {r2,r3,ip,lr}, tail by lsls #28/#2 flags (rt_memclr_w); aliases __aeabi_memclr8, __rt_memclr_w
+20155310	__aeabi_memcpy4	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_20155310	new; aligned path of memcpy 0x20155180 (beq when src word aligned): pld + ldm/stm 8 regs (rt_memcpy_w); aliases __aeabi_memcpy8, __rt_memcpy_w
+20155480	__aeabi_idivmod	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	__aeabi_uidivmod	renamed; orrs r3,r0,r1; bmi -> signed path (negate, eors sign, unrolled rsbs/subcs/adcs), divide-by-zero path returns 0; quotient r0, remainder r1; alias __aeabi_idiv
+20156260	__aeabi_uidivmod	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	FUN_20156260	new; movs r2,#0 then the rsbs r3,r1,r0,lsr #n ladder jumping into the shared unsigned body of 0x20155480; alias __aeabi_uidiv
+201556e0	__aeabi_uldivmod	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_201556e0	new; (u64 n in r0:r1, u64 d in r2:r3) -> quotient r0:r1, remainder r2:r3; called by __aeabi_ldivmod
+20154984	__aeabi_ldivmod	armcc C library	RVCT/ARM Compiler 5	idiom	0.950	FUN_20154984	new; A32: takes signs of r1/r3, negates 64-bit pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs
+201550d4	strcpy_veneer	armcc C library	RVCT/ARM Compiler 5	veneer_pattern	1.000	FUN_201550d4	new; A32 add ip,pc,#1; bx ip -> Thumb strcpy 0x201550DC
+201550dc	strcpy	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_201550dc	new; word copy while no zero byte (uqsub8 test), then byte tail; returns nothing used
+20155058	strstr	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20155058	new; restarting byte compare of needle against haystack, returns start or 0
+2015507c	memcmp	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_2015507c	new; word compare when both aligned (rev for ordering), then byte compare, returns -1/1/diff
+20155122	strlen	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_20155122	new; byte loop to alignment, word loop with uqsub8 zero test, position of the zero byte
+2015515c	strcat	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_2015515c	new; scan dst to NUL, copy src including NUL
+20154974	__rt_ctype_table	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20154974	new; returns __rt_locale()+4; tolower indexes the table it points to
+201556d0	__rt_locale	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_201556d0	new; returns 0x2091D530 (C library libspace); used by __rt_ctype_table and __rt_lib_init
+201549e4	tolower	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_201549e4	new; ctype bit 0x10 (upper) -> c+32
+20154a00	sprintf_veneer	armcc C library	RVCT/ARM Compiler 5	veneer_pattern	1.000	FUN_20154a00	new; A32 add ip,pc,#1; bx ip -> Thumb sprintf 0x20154A08
+20154a30	snprintf	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_20154a30	new; (buf, n, fmt, ...): end = buf+n-1, output fn _snputc 0x20155FA3, NUL-terminates when n != 0
+20155f98	_sputc	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20155f98	new; *(*p)++ = c; the sprintf output function
+20155fa2	_snputc	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20155fa2	new; stores c only while p < end; the snprintf output function
+20155fec	__rt_udiv10	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_20155fec	new; n - n/4, +>>4, +>>8, +>>16, >>3, remainder fix-up: quotient and remainder of n/10
+20154a64	_printf_pre_padding	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_20154a64	new; emits width-1.. pad chars (0x30 if the 0 flag, else 0x20) unless the - flag (bit 0), counts in +0x20
+20154a90	_printf_post_padding	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_20154a90	new; emits trailing spaces when the - flag (bit 0) is set
+20156020	_printf_infnan	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_20156020	new; prints inf/INF/nan/NAN with padding
+201556ac	__cpp_initialize__aeabi_	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_201556ac	new; walks a table of self-relative offsets and calls each (C++ static constructors); called by __rt_lib_init
+20100cb4	__rt_lib_init	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20100cb4	new; called by __rt_entry after __user_setup_stackheap: __rt_locale, two clock/time inits, __cpp_initialize__aeabi_
+20100cd8	__rt_lib_shutdown	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_20100cd8	new; empty push/pop; called on the exit path before _sys_exit
+201561c0	__user_setup_stackheap	armcc C library	RVCT/ARM Compiler 5	idiom	0.900	FUN_201561c0	new; gets __user_perproc_libspace, calls __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry
+20156018	__user_perproc_libspace	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_20156018	new; returns 0x2091D510; called by __user_setup_stackheap
+201172ec	__user_initial_stackheap	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_201172ec	new; retarget hook: r0 = heap base (two literals), r2 = r3; called by __user_setup_stackheap
+2015620a	exit	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_2015620a	new; called by __rt_entry with main()s result (blx main; bl exit)
+201561b4	_sys_exit	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_201561b4	new; semihosting svc 0xAB then b . (no return)
+2015624e	_ttywrch	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_2015624e	new; semihosting SYS_WRITEC (r0=3, svc 0xAB) of one character
+2015621c	__default_signal_display	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_2015621c	new; writes a newline, the message and the extra string with _ttywrch
+20156184	__rt_SIGPVFN	armcc C library	RVCT/ARM Compiler 5	idiom	0.850	FUN_20156184	new; shows "SIGPVFN: Pure virtual fn called" and returns 1
+20155fde	__cxa_pure_virtual	armcc C library	RVCT/ARM Compiler 5	idiom	0.800	FUN_20155fde	new; __rt_SIGPVFN, then _sys_exit
+2014e73c	itron_act_tsk	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_2014e73c	new; TCB table 0x208DBBA0, id 0 = self; dormant -> start like sta_tsk with exinf, else activation count +0x26 ++ (E_QOVR)
+2014e884	itron_chg_pri	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_2014e884	new; (tskid, tskpri <= 8, 0 = initial): E_OBJ dormant, E_ILUSE mutex ceiling, requeues ready/wait queues
+2014eb94	itron_clr_flg	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_2014eb94	new; flag table 0x208DBDA4 (64): flgptn &= clrptn
+2014ec30	itron_acre_cyc	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_2014ec30	new; object table 0x208DBF64, max id 8; 0x20-byte block, cycatr/exinf/cychdr/cyctim/cycphs, TA_STA starts it on timer queue 0x208003C4; id 0 = auto (E_NOID)
+2014edf4	itron_acre_dtq	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_2014edf4	new; object table 0x208DBFA4, max id 8; id 0 = auto (E_NOID); same table as tsnd_dtq/trcv_dtq
+2014f3e4	itron_acre_mbf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_2014f3e4	new; object table 0x208DBEC4, max id 8; allocates the buffer (E_NOMEM); same table as tsnd_mbf/trcv_mbf
+2014f67c	itron_acre_mbx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_2014f67c	new; object table 0x208DBEA4, max id 8; same table as snd_mbx/trcv_mbx
+2014f8b8	itron_acre_mpf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_2014f8b8	new; object table 0x208DBF24, max id 16; E_PAR on block count/size, E_NOMEM; same table as tget_mpf/rel_mpf
+2014fb04	itron_acre_mpl	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.800	FUN_2014fb04	new; object table 0x208DBF04, max id 8; pool memory from pk+8 or the kernel heap (E_NOMEM); id 0 = auto
+2014fd24	itron_acre_mtx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_2014fd24	new; object table 0x208DBFC4, max id 32; E_RSATR, ceiling priority; same table as tloc_mtx/unl_mtx
+201502f4	itron_del_mpf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.800	FUN_201502f4	new; mpf table 0x208DBF24: releases waiting tasks with E_DLT, frees the block and the pool
+201504d0	itron_del_sem	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_201504d0	new; sem table 0x208DBCA4: releases waiting tasks with E_DLT, frees the block
+20150678	itron_dis_dsp	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20150678	new; E_CTX in ISR/CPU-locked; sets the dispatch-disabled bits (|= 9) of 0x208003DB
+2015080c	itron_ena_dsp	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_2015080c	new; clears the dispatch-disabled bits of 0x208003DB, dispatches when a switch is pending (0x208003D9)
+201508ec	itron_ext_tsk	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_201508ec	new; current task: back to the initial priority, unlocks its mutexes, dormant or restarts when the activation count +0x26 > 0
+20150aac	itron_get_pri	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_20150aac	new; (tskid, p_tskpri): id 0 = self, E_OBJ when dormant, *p = TCB+4
+20150ba0	itron_get_tid	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_20150ba0	new; (p_tskid): running task id or 0 (TSK_NONE)
+20150bd4	itron_get_tim	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20150bd4	new; (p_systim): SYSTIM {H utime, UW ltime} from 0x208003BC..C8 with carry
+20150c3c	itron_loc_cpu	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_20150c3c	new; masks interrupts and sets the CPU-locked state 0x13/0x1B in 0x208003DB
+20150c70	itron_rel_mpf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_20150c70	new; (mpfid, blk): mpf table 0x208DBF24, E_PAR if blk misaligned/outside the pool, hands the block to a waiter
+20150dcc	itron_rot_rdq	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20150dcc	new; (tskpri <= 8, 0 = own priority): rotates the ready queue 0x208DC18C[pri], E_PAR
+201511e8	itron_sig_sem	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_201511e8	new; sem table 0x208DBCA4 (64): wakes the first waiter or count++, E_QOVR at maxsem
+20151308	itron_tsnd_dtq	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151308	new; (dtqid, data, tmout): dtq table 0x208DBFA4, hands data to a receiver or the ring buffer, E_TMOUT on polling, waits otherwise
+20151520	itron_snd_mbx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151520	new; (mbxid, pk_msg): mbx table 0x208DBEA4, priority queues by msgpri (E_PAR), or wakes a receiver
+20151680	itron_sta_cyc	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151680	new; cyc table 0x208DBF64: (re)inserts the handler into timer queue 0x208003C4, sets TCYC_STA
+20151878	itron_stp_cyc	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151878	new; cyc table 0x208DBF64: removes it from the timer queue, clears TCYC_STA
+20151934	itron_sus_tsk	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151934	new; id 0 = self, E_OBJ dormant, suspend count TCB+9 ++ (E_QOVR at 255), E_CTX for self with dispatch disabled
+20151aa4	itron_tget_mpf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_20151aa4	new; (mpfid, p_blk, tmout): mpf table 0x208DBF24, pops the free list, E_TMOUT polling, waits otherwise
+20151c3c	itron_tloc_mtx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151c3c	new; (mtxid, tmout): mtx table 0x208DBFC4 (32), owner +10, ceiling/inherit, E_ILUSE, E_TMOUT
+20151e68	itron_trcv_dtq	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20151e68	new; (dtqid, p_data, tmout): dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT
+201521a8	itron_trcv_mbf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_201521a8	new; (mbfid, msg, tmout): mbf table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size
+20152434	itron_trcv_mbx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20152434	new; (mbxid, ppk_msg, tmout): mbx table 0x208DBEA4, takes the first queued message, E_TMOUT
+201525f8	itron_tslp_tsk	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_201525f8	new; (tmout): wakeup count TCB+8 -- or waits (state 0x20/0x22), E_TMOUT when polling, E_CTX
+201526f4	itron_tsnd_mbf	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_201526f4	new; (mbfid, msg, msgsz, tmout): mbf table 0x208DBEC4, E_PAR when msgsz > maxmsz, copies to a receiver or the ring
+20152bb0	itron_twai_sem	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.950	FUN_20152bb0	new; (semid, tmout): sem table 0x208DBCA4, count-- or waits (state 0x90/0x92), E_TMOUT
+20152d28	itron_unl_cpu	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.850	FUN_20152d28	new; clears the CPU-locked state of 0x208003DB and dispatches when pending
+20152df4	itron_unl_mtx	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	uitron_api_shape	0.900	FUN_20152df4	new; (mtxid): mtx table 0x208DBFC4, E_ILUSE when not the owner, restores the priority, passes it to a waiter
+2014e5b0	os_create_tsk_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e5b0	new; copies a 6-word T_CTSK and appends the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named
+2014e5e4	os_create_flg_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e5e4	new; same wrapper around itron_acre_flg
+2014e610	os_create_mbf_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e610	new; same wrapper around itron_acre_mbf
+2014e638	os_create_mbx_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e638	new; same wrapper around itron_acre_mbx
+2014e664	os_create_mtx_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e664	new; same wrapper around itron_acre_mtx
+2014e690	os_create_mpf_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e690	new; same wrapper around itron_acre_mpf
+2014e6b8	os_create_mpl_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e6b8	new; same wrapper around itron_acre_mpl
+2014e6e4	os_create_dtq_named	NORTi uITRON 4.0	NORTi Version 4 (MiSPO)	wrapper	0.850	FUN_2014e6e4	new; same wrapper around itron_acre_dtq
