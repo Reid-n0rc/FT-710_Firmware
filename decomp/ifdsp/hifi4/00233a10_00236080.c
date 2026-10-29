@@ -1,8 +1,8 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00233a10 @ 00233a10 (731 bytes)
+// ===== fir_process @ 00233a10 (731 bytes)
 
-void FUN_00233a10(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
+void fir_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
 
 {
   float fVar1;
@@ -620,7 +620,7 @@ void FUN_00233eb0(undefined8 *param_1,int param_2,undefined8 *param_3,undefined8
   uVar17 = ae_l32_i(uVar1);
   ae_l32_i(uVar2);
   iVar22 = 0;
-  FUN_00235ba8();
+  divf_();
   uVar17 = ae_s32x2_i(uVar17);
   puVar3 = puVar14;
   do {
@@ -712,6 +712,8 @@ int FUN_002340f0(int param_1)
 
 // ===== iir_cascade_init @ 002340fc (194 bytes)
 
+/* (state, sections, coefs b0 b1 b2 a1 a2, ?) */
+
 undefined1  [16] iir_cascade_init(int param_1,int param_2,undefined4 *param_3,undefined4 *param_4)
 
 {
@@ -791,6 +793,8 @@ undefined1  [16] iir_cascade_init(int param_1,int param_2,undefined4 *param_3,un
 
 
 // ===== iir_cascade_process @ 002341c0 (1352 bytes)
+
+/* (state, out, in, n) */
 
 void iir_cascade_process(uint *param_1,undefined8 *param_2,undefined8 *param_3,uint param_4)
 
@@ -1229,9 +1233,11 @@ void iir_cascade_process(uint *param_1,undefined8 *param_2,undefined8 *param_3,u
 }
 
 
-// ===== FUN_00234710 @ 00234710 (31 bytes)
+// ===== f2i_scaled @ 00234710 (31 bytes)
 
-undefined4 FUN_00234710(int param_1)
+/* trunc(x * 2^-s) */
+
+undefined4 f2i_scaled(int param_1)
 
 {
   float in_aed0;
@@ -1242,9 +1248,11 @@ undefined4 FUN_00234710(int param_1)
 }
 
 
-// ===== FUN_00234730 @ 00234730 (25 bytes)
+// ===== i2f_scaled @ 00234730 (25 bytes)
 
-void FUN_00234730(undefined4 param_1)
+/* float(i) * 2^s; s = -1 turns half-dB registers into dB */
+
+void i2f_scaled(undefined4 param_1)
 
 {
   float_s(param_1,0);
@@ -1718,9 +1726,11 @@ void FUN_00234b50(undefined8 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00234be0 @ 00234be0 (533 bytes)
+// ===== vec_sum_sq @ 00234be0 (533 bytes)
 
-void FUN_00234be0(undefined8 *param_1,uint param_2)
+/* sum of squares (madd.s loop) */
+
+void vec_sum_sq(undefined8 *param_1,uint param_2)
 
 {
   float fVar1;
@@ -2005,9 +2015,11 @@ void FUN_00234e00(undefined4 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00234f40 @ 00234f40 (568 bytes)
+// ===== vec_scale_f32 @ 00234f40 (568 bytes)
 
-void FUN_00234f40(undefined4 *param_1,undefined8 *param_2,uint param_3)
+/* y[i] = x[i] * scalar */
+
+void vec_scale_f32(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 {
   undefined8 *puVar1;
@@ -3546,9 +3558,11 @@ void FUN_00235b80(void)
 }
 
 
-// ===== FUN_00235ba8 @ 00235ba8 (164 bytes)
+// ===== divf_ @ 00235ba8 (164 bytes)
 
-void FUN_00235ba8(void)
+/* float divide */
+
+void divf_(void)
 
 {
   undefined8 in_aed0;
@@ -3617,9 +3631,11 @@ void FUN_00235c50(void)
 }
 
 
-// ===== FUN_00235c8c @ 00235c8c (160 bytes)
+// ===== sqrtf_ @ 00235c8c (160 bytes)
 
-void FUN_00235c8c(void)
+/* sqrt */
+
+void sqrtf_(void)
 
 {
   undefined8 in_aed0;

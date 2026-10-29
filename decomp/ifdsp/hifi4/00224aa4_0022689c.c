@@ -61,7 +61,7 @@ void Thread_Spi_entry(void)
       uStack_30 = ae_s32_l_i(uVar7);
     }
     uVar14 = ae_l32_i(uStack_30);
-    FUN_00218fc0();
+    cosf_();
     uStack_40 = ae_s32_l_i(uVar14);
     FUN_00224df0(&uStack_40,auStack_3c,1);
     puVar11[1] = auStack_3c[0];
@@ -89,7 +89,7 @@ void Thread_Spi_entry(void)
         if (iStack_38 == 0) break;
         if (iStack_38 == 1) {
           FUN_002211c0();
-          FUN_00225834();
+          playback_ring_fill();
         }
       }
     } while (DAT_002642a0 < 7);
@@ -130,7 +130,7 @@ void Thread_Spi_entry(void)
     in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
     in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
     rsync();
-    FUN_00233a10(DAT_002642a8,&DAT_00266b20,&DAT_00266620,0xa8);
+    fir_process(DAT_002642a8,&DAT_00266b20,&DAT_00266620,0xa8);
     uVar14 = ae_l32_ip(DAT_00266b20);
     DAT_002668c0 = ae_s32_l_ip(uVar14);
     uVar14 = ae_l32_ip(DAT_00266b3c);
@@ -280,9 +280,9 @@ undefined8 FUN_00224df0(undefined4 *param_1,char *param_2,int param_3)
 }
 
 
-// ===== FUN_00224e80 @ 00224e80 (85 bytes)
+// ===== peak_limiter_init @ 00224e80 (85 bytes)
 
-void FUN_00224e80(int param_1)
+void peak_limiter_init(int param_1)
 
 {
   undefined4 uVar1;
@@ -307,9 +307,12 @@ void FUN_00224e80(int param_1)
 }
 
 
-// ===== FUN_00224ed8 @ 00224ed8 (873 bytes)
+// ===== peak_limiter @ 00224ed8 (873 bytes)
 
-void FUN_00224ed8(int param_1,undefined4 *param_2,undefined4 *param_3)
+/* (inst, in, out): inst 0 = TX speech processor (0x2E/0x3B, reg 2 lo), 1 = RX AF limiter
+   (0x57/0x58) */
+
+void peak_limiter(int param_1,undefined4 *param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;
@@ -354,10 +357,10 @@ LAB_002251f0:
     if ((uVar20 >> 0xb & 1) != 0) {
       uVar5 = uVar20 | 0xfffff000;
     }
-    FUN_00234730(uVar5,0xffffffff);
+    i2f_scaled(uVar5,0xffffffff);
     uVar15 = ae_l32_i(0x3d4ccccd);
     uVar8 = (ulonglong)(uint)(in_aed0 * (float)uVar15);
-    FUN_00218b70();
+    pow10f_();
     uVar1 = ae_s32_l_i(uVar8);
     *(undefined4 *)(&DAT_00266e20 + iVar4) = uVar1;
     uVar15 = ae_l32_i(0x3d4ccccd);
@@ -378,13 +381,13 @@ LAB_002251f0:
   if (uVar18 != 0) {
     uVar15 = float_s((uint)*(ushort *)(&DAT_00266e1a + iVar4),0);
     uVar8 = (ulonglong)(uint)((float)uVar15 * 0.06 * fVar9);
-    FUN_00218b70();
+    pow10f_();
     uVar1 = ae_s32_l_i(uVar8);
     *(undefined4 *)(&DAT_00266e24 + iVar4) = uVar1;
-    FUN_00234730(*(undefined2 *)(&DAT_00237500 + (uint)*(ushort *)(&DAT_00266e1a + iVar4) * 2),0);
+    i2f_scaled(*(undefined2 *)(&DAT_00237500 + (uint)*(ushort *)(&DAT_00266e1a + iVar4) * 2),0);
     const_s(2);
     uVar15 = ae_l32_i(0x3f800000);
-    FUN_00235ba8();
+    divf_();
     uVar1 = ae_s32_l_i(uVar15);
     *(undefined4 *)(&DAT_00266e28 + iVar4) = uVar1;
     uVar1 = ae_s32_l_i(uVar15);
@@ -430,7 +433,7 @@ LAB_00224f7d:
                         (float)uVar12 * (float)uVar12 + (float)uVar10 * (float)uVar10) *
                       (float)uVar13);
         uVar3 = ae_s32_l_i(uVar8);
-        FUN_00235c8c();
+        sqrtf_();
         uVar7 = oeq_s(uVar8,uVar8);
         uVar16 = ae_l32_i(0x3f800000);
         uVar15 = ae_l32_i(0);
@@ -447,7 +450,7 @@ LAB_00224f7d:
         uVar3 = ae_s32_l_i(uVar8);
         *(undefined4 *)(&DAT_00266e58 + iVar4) = uVar3;
         if (SUB21(uVar7,0)) {
-          FUN_00235ba8();
+          divf_();
           uVar15 = ae_l32_i(0x38d1b717);
           uVar7 = olt_s(uVar15,uVar21);
           uVar16 = ae_l32_i(0x3f800000);
@@ -525,8 +528,8 @@ LAB_00225114:
       }
       DAT_00266e00 = 0;
       ae_l32_i(DAT_00266e34);
-      FUN_002190f0();
-      iVar6 = FUN_00234710(0xffffffff,extraout_a3,0xc1a00000);
+      log10f_();
+      iVar6 = f2i_scaled(0xffffffff,extraout_a3,0xc1a00000);
       uVar15 = ae_l32_i(0x3f800000);
       DAT_00266e34 = ae_s32_l_i(uVar15);
       iVar4 = iVar6;
@@ -558,9 +561,11 @@ void FUN_00225250(void)
 }
 
 
-// ===== FUN_00225264 @ 00225264 (213 bytes)
+// ===== test_tone_gen @ 00225264 (213 bytes)
 
-void FUN_00225264(undefined4 *param_1,int param_2)
+/* regs 0x4013 Hz, 0x4014 level */
+
+void test_tone_gen(undefined4 *param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -576,14 +581,14 @@ void FUN_00225264(undefined4 *param_1,int param_2)
   
   if ((short)DAT_00266ea8 != DAT_20078026) {
     DAT_00266ea8._0_2_ = DAT_20078026;
-    FUN_00234730(DAT_20078026,0);
+    i2f_scaled(DAT_20078026,0);
     DAT_00266eb0 = ae_s32_l_i((ulonglong)(uint)(in_aed0 * 8.726647e-05));
   }
   if ((int)DAT_00266ea8._2_2_ != (int)DAT_20078028) {
     DAT_00266ea8._2_2_ = DAT_20078028;
-    FUN_00234730((int)DAT_20078028,0xffffffff);
+    i2f_scaled((int)DAT_20078028,0xffffffff);
     uVar5 = (ulonglong)(uint)(in_aed0 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_00266eb4 = ae_s32_l_i(uVar5);
   }
   if (param_2 != 0) {
@@ -613,7 +618,7 @@ void FUN_00225264(undefined4 *param_1,int param_2)
         } while (SUB21(uVar3,0));
       }
       fVar4 = (float)uVar5;
-      FUN_00218fc0();
+      cosf_();
       uVar6 = ae_l32_i(DAT_00266eb4);
       iVar2 = iVar2 + 1;
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * fVar4));
@@ -636,16 +641,17 @@ void FUN_00225340(int param_1)
   
   memset(param_1 + 600,0,0x8c);
   *(undefined2 *)(param_1 + 0x2e4) = 0;
-  uVar1 = FUN_00233984(param_1,0x47,&DAT_00205840);
+  uVar1 = fir_init(param_1,0x47,&DAT_00205840);
   *(undefined4 *)(param_1 + 0x2e8) = uVar1;
   return;
 }
 
 
-// ===== FUN_00225370 @ 00225370 (119 bytes)
+// ===== hilbert_iq @ 00225370 (119 bytes)
 
-void FUN_00225370(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 param_4,int param_5
-                 )
+/* 71-tap Hilbert FIR 0x205840, I delayed 35 */
+
+void hilbert_iq(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 param_4,int param_5)
 
 {
   undefined4 uVar1;
@@ -670,7 +676,7 @@ void FUN_00225370(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4
       uVar4 = 0;
     }
   }
-  FUN_00233a10(*(undefined4 *)(param_1 + 0x2e8),param_4,param_2,param_5,uVar4);
+  fir_process(*(undefined4 *)(param_1 + 0x2e8),param_4,param_2,param_5,uVar4);
   return;
 }
 
@@ -692,9 +698,11 @@ void FUN_002253f0(int param_1)
 }
 
 
-// ===== FUN_00225408 @ 00225408 (111 bytes)
+// ===== mute_ramp_step @ 00225408 (111 bytes)
 
-void FUN_00225408(int param_1)
+/* 1 ms raised-cosine fade (0x2375D0) */
+
+void mute_ramp_step(int param_1)
 
 {
   undefined4 uVar1;
@@ -877,9 +885,11 @@ void FUN_00225550(void)
 }
 
 
-// ===== FUN_002255b4 @ 002255b4 (465 bytes)
+// ===== rec_resample_sink @ 002255b4 (465 bytes)
 
-void FUN_002255b4(undefined4 param_1)
+/* x2/9 to 16 kHz, int16 ring 0x266ED8 (#59, #154) */
+
+void rec_resample_sink(undefined4 param_1)
 
 {
   undefined6 uVar1;
@@ -1085,9 +1095,9 @@ void FUN_00225790(int param_1)
 }
 
 
-// ===== FUN_00225834 @ 00225834 (426 bytes)
+// ===== playback_ring_fill @ 00225834 (426 bytes)
 
-void FUN_00225834(int param_1)
+void playback_ring_fill(int param_1)
 
 {
   undefined6 uVar1;
@@ -1199,9 +1209,11 @@ void FUN_00225834(int param_1)
 }
 
 
-// ===== FUN_002259e4 @ 002259e4 (159 bytes)
+// ===== playback_ring_read @ 002259e4 (159 bytes)
 
-void FUN_002259e4(undefined4 param_1)
+/* ring 0x268E20, gain reg 0x13 */
+
+void playback_ring_read(undefined4 param_1)
 
 {
   undefined6 uVar1;
@@ -1250,9 +1262,11 @@ void FUN_002259e4(undefined4 param_1)
 }
 
 
-// ===== FUN_00225a84 @ 00225a84 (46 bytes)
+// ===== rec_gain_update @ 00225a84 (46 bytes)
 
-void FUN_00225a84(void)
+/* reg 0x12 */
+
+void rec_gain_update(void)
 
 {
   float in_aed0;
@@ -1262,17 +1276,19 @@ void FUN_00225a84(void)
     return;
   }
   DAT_00266ec8 = DAT_20070024;
-  FUN_00234730((int)DAT_20070024,0xffffffff);
+  i2f_scaled((int)DAT_20070024,0xffffffff);
   uVar1 = (ulonglong)(uint)(in_aed0 * 0.05);
-  FUN_00218b70();
+  pow10f_();
   DAT_00266ecc = ae_s32_l_i(uVar1);
   return;
 }
 
 
-// ===== FUN_00225ab4 @ 00225ab4 (46 bytes)
+// ===== play_gain_update @ 00225ab4 (46 bytes)
 
-void FUN_00225ab4(void)
+/* reg 0x13 */
+
+void play_gain_update(void)
 
 {
   float in_aed0;
@@ -1282,9 +1298,9 @@ void FUN_00225ab4(void)
     return;
   }
   DAT_00266ed0 = DAT_20070026;
-  FUN_00234730((int)DAT_20070026,0xffffffff);
+  i2f_scaled((int)DAT_20070026,0xffffffff);
   uVar1 = (ulonglong)(uint)(in_aed0 * 0.05);
-  FUN_00218b70();
+  pow10f_();
   DAT_00266ed4 = ae_s32_l_i(uVar1);
   return;
 }
@@ -1392,9 +1408,11 @@ uint FUN_00225b8c(uint param_1)
 }
 
 
-// ===== FUN_00225be8 @ 00225be8 (178 bytes)
+// ===== txaf_out_push @ 00225be8 (178 bytes)
 
-void FUN_00225be8(undefined4 param_1)
+/* reg 0xF gain, clip, mute ramp, FC2 FIFO */
+
+void txaf_out_push(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -1433,7 +1451,7 @@ void FUN_00225be8(undefined4 param_1)
       uVar7 = ae_l32_i(*puVar3);
       uVar1 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * (float)uVar6));
       *puVar3 = uVar1;
-      FUN_00225408(&DAT_002c757c);
+      mute_ramp_step(&DAT_002c757c);
       puVar3 = puVar3 + 1;
     } while (puVar3 != (undefined4 *)&DAT_002c7890);
     FUN_00234750(&DAT_002c7584 + (uint)DAT_002c7645 * 0x60,&DAT_002c7830,0xffffffe1,0x18);
@@ -1525,9 +1543,11 @@ void FUN_00225d48(undefined4 param_1)
 }
 
 
-// ===== FUN_00225dc4 @ 00225dc4 (112 bytes)
+// ===== tx_mute_ctrl @ 00225dc4 (112 bytes)
 
-void FUN_00225dc4(void)
+/* reg 0x10 bit 1 or GPIO P0_4 */
+
+void tx_mute_ctrl(void)
 
 {
   ushort uVar1;
@@ -1539,14 +1559,14 @@ void FUN_00225dc4(void)
   
   if ((int)DAT_002c7570 != (int)DAT_2007001e) {
     DAT_002c7570 = DAT_2007001e;
-    FUN_00234730((int)DAT_2007001e,0xffffffff);
+    i2f_scaled((int)DAT_2007001e,0xffffffff);
     uVar5 = (ulonglong)(uint)(in_aed0 * 0.05);
-    FUN_00218b70();
+    pow10f_();
     DAT_002c7574 = ae_s32_l_i(uVar5);
   }
   uVar1 = DAT_20070020 >> 1;
   uVar3 = regfile_gpio_sel();
-  uVar2 = FUN_00223a74();
+  uVar2 = vox_state();
   uVar3 = uVar1 & 1 | uVar3;
   uVar4 = ae_zext16(uVar3);
   if (DAT_002c7578 != uVar4) {
@@ -1792,10 +1812,10 @@ void Thread_Rx_Path_entry(void)
       iVar1 = xos_msgq_get(PTR_DAT_0023773c,auStack_30);
     } while (iVar1 != 0);
     FUN_00225d48(&DAT_002cab90);
-    FUN_00220ee0(&DAT_002cab90,&DAT_002cab90);
+    rx_demod_dispatch(&DAT_002cab90,&DAT_002cab90);
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), iVar1 == 1)) {
-      FUN_00224798(1,&DAT_002cabf0);
-      FUN_00224960(&DAT_002cabf0);
+      codec_in_fifo_pop(1,&DAT_002cabf0);
+      rx_loop_gain(&DAT_002cabf0);
       rx_audio_push_block(&DAT_002cabf0,&DAT_002cac50,&DAT_002cacb0);
       memcpy(&DAT_002cad10,&DAT_002cab90,0x60);
     }
@@ -1804,30 +1824,30 @@ void Thread_Rx_Path_entry(void)
     }
     iVar1 = ae_l16ui_n(&DAT_00263d56,0);
     if (iVar1 == 3) {
-      FUN_00224604(1,&DAT_002cac50);
+      codec_out_sink(1,&DAT_002cac50);
     }
     else if (iVar1 == 4) {
-      FUN_00224604(1,&DAT_002cad10);
+      codec_out_sink(1,&DAT_002cad10);
     }
     else if (iVar1 == 6) {
-      FUN_00224604(1,&DAT_002cacb0);
+      codec_out_sink(1,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
     if (iVar1 == 3) {
-      FUN_00224604(0,&DAT_002cac50);
+      codec_out_sink(0,&DAT_002cac50);
     }
     else if (iVar1 == 4) {
-      FUN_00224604(0,&DAT_002cad10);
+      codec_out_sink(0,&DAT_002cad10);
     }
     else if (iVar1 == 6) {
-      FUN_00224604(0,&DAT_002cacb0);
+      codec_out_sink(0,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d52,0);
     if (iVar1 == 3) {
-      FUN_00223734(&DAT_002cac50,0);
+      antivox_detector(&DAT_002cac50,0);
     }
     else if (iVar1 == 6) {
-      FUN_00223734(&DAT_002cacb0,0);
+      antivox_detector(&DAT_002cacb0,0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d50,0);
     if (iVar1 == 3) {
@@ -1838,13 +1858,13 @@ void Thread_Rx_Path_entry(void)
     }
     iVar1 = ae_l16ui_n(&DAT_00263d5a,0);
     if (iVar1 == 5) {
-      FUN_002255b4(&DAT_002cac50);
+      rec_resample_sink(&DAT_002cac50);
     }
     else if (iVar1 == 6) {
-      FUN_002255b4(&DAT_002cacb0);
+      rec_resample_sink(&DAT_002cacb0);
     }
-    FUN_00224814();
-    FUN_00225ab4();
+    rx_out_gain_mute_update();
+    play_gain_update();
   } while( true );
 }
 
@@ -1867,25 +1887,25 @@ void Thread_Tx_Path_entry(void)
       iVar1 = xos_msgq_get(PTR_DAT_00237740,auStack_30);
       fVar3 = (float)in_aed0;
     } while (iVar1 != 0);
-    FUN_002249d0();
-    FUN_00224798(0,&DAT_002cad70);
+    routing_regs_decode();
+    codec_in_fifo_pop(0,&DAT_002cad70);
     uVar2 = 0;
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), uVar2 = 0, iVar1 != 1)) {
-      FUN_00224798(1,&DAT_002cadd0);
+      codec_in_fifo_pop(1,&DAT_002cadd0);
       uVar2 = 1;
     }
-    FUN_002248d8(uVar2,&DAT_002cadd0);
-    FUN_002259e4(&DAT_002cae30);
+    aux_in_gain_lp(uVar2,&DAT_002cadd0);
+    playback_ring_read(&DAT_002cae30);
     iVar1 = ae_l16ui_n(&DAT_00263d5a,0);
     if (iVar1 == 2) {
-      FUN_002255b4(&DAT_002cad70);
+      rec_resample_sink(&DAT_002cad70);
     }
     else if (iVar1 == 3) {
-      FUN_002255b4(&DAT_002cae30);
+      rec_resample_sink(&DAT_002cae30);
     }
     else if (iVar1 == 4) {
-      FUN_00225264(&DAT_002cae90,0x18);
-      FUN_002255b4(&DAT_002cae90);
+      test_tone_gen(&DAT_002cae90,0x18);
+      rec_resample_sink(&DAT_002cae90);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d5c,0);
     if (iVar1 == 2) {
@@ -1895,56 +1915,56 @@ void Thread_Tx_Path_entry(void)
       memcpy(&DAT_002cae90,&DAT_002cae30,0x60);
     }
     else if (iVar1 == 4) {
-      FUN_00225264(&DAT_002cae90,0x18);
+      test_tone_gen(&DAT_002cae90,0x18);
     }
     else {
       memset(&DAT_002cae90,0,0x60);
     }
-    FUN_002233fc(&DAT_002cae90,&DAT_002caef0);
+    vox_detector(&DAT_002cae90,&DAT_002caef0);
     if ((int)(short)DAT_20070040 != (uint)DAT_002c8200) {
       DAT_002c8200 = DAT_20070040;
-      FUN_00234730((int)(short)DAT_20070040,0xffffffff);
+      i2f_scaled((int)(short)DAT_20070040,0xffffffff);
       uVar5 = ae_l32_i(0x3d4ccccd);
       uVar4 = (ulonglong)(uint)(fVar3 * (float)uVar5);
-      FUN_00218b70();
+      pow10f_();
       DAT_002c8204 = ae_s32_l_i(uVar4);
     }
     memcpy(&DAT_002cb010,&DAT_002cae90,0x60);
     in_aed0 = ae_l32_i(DAT_002c8204);
-    FUN_00234f40(&DAT_002cae90,&DAT_002cb010,0x18);
-    FUN_0022313c(&DAT_002cae90,&DAT_002caf50,&DAT_002cafb0);
+    vec_scale_f32(&DAT_002cae90,&DAT_002cb010,0x18);
+    tx_chain(&DAT_002cae90,&DAT_002caf50,&DAT_002cafb0);
     iVar1 = ae_l16ui_n(&DAT_00263d56,0);
     if (iVar1 == 1) {
-      FUN_00224604(1,&DAT_002cafb0);
+      codec_out_sink(1,&DAT_002cafb0);
     }
     else if (iVar1 == 2) {
-      FUN_00224604(1,&DAT_002caf50);
+      codec_out_sink(1,&DAT_002caf50);
     }
     else if (iVar1 == 5) {
-      FUN_00224604(1,&DAT_002cadd0);
+      codec_out_sink(1,&DAT_002cadd0);
     }
     else if (iVar1 == 7) {
-      FUN_00224604(1,&DAT_002caef0);
+      codec_out_sink(1,&DAT_002caef0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
     if (iVar1 == 1) {
-      FUN_00224604(0,&DAT_002cafb0);
+      codec_out_sink(0,&DAT_002cafb0);
     }
     else if (iVar1 == 2) {
-      FUN_00224604(0,&DAT_002caf50);
+      codec_out_sink(0,&DAT_002caf50);
     }
     else if (iVar1 == 5) {
-      FUN_00224604(0,&DAT_002cadd0);
+      codec_out_sink(0,&DAT_002cadd0);
     }
     else if (iVar1 == 7) {
-      FUN_00224604(0,&DAT_002caef0);
+      codec_out_sink(0,&DAT_002caef0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d52,0);
     if (iVar1 == 1) {
-      FUN_00223734(&DAT_002cafb0,0);
+      antivox_detector(&DAT_002cafb0,0);
     }
     else if (iVar1 == 2) {
-      FUN_00223734(&DAT_002caf50,0);
+      antivox_detector(&DAT_002caf50,0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d50,0);
     if (iVar1 == 0) {
@@ -1958,13 +1978,13 @@ void Thread_Tx_Path_entry(void)
     }
     iVar1 = ae_l16ui_n(&DAT_00263d58,0);
     if (iVar1 == 1) {
-      FUN_00225be8(&DAT_002cadd0);
+      txaf_out_push(&DAT_002cadd0);
     }
     else if (iVar1 == 2) {
-      FUN_00225be8(&DAT_002cafb0);
+      txaf_out_push(&DAT_002cafb0);
     }
-    FUN_00225dc4();
-    FUN_00225a84();
+    tx_mute_ctrl();
+    rec_gain_update();
   } while( true );
 }
 
