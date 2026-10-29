@@ -622,7 +622,7 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
 - The high nibble of +0x00, bit 0 of +0x01, bit 4 of +0x04 (set by `align_load_preset`), bits 6–7 of +0x03 and bits 0/2 of each
   per-mode block's first byte have no known reader (#205: +0x02 bit 1, +0x03 bits 0–1, +0x05 bits 0–1 and +0x01 bit 7 are now
   known). A disassembly search for byte stores and `BSET`/`BCLR` at record offsets 0 and 1 would show whether the decompile misses a user. +0x07..+0x09 and +0x47 have no users at all (#161).
-- States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.
+- ~~States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.~~ Settled in #173 ([cat-commands-primary.md](../../cat-commands-primary.md), `IF`): state 4 is PMS, and states 0 and 6–9 are never written by MAIN V01-12, so P7 `F` (and `OI`'s `1`) cannot occur **[fact]**.
 - `BS12;`: does the out-of-row band-stack index have a visible effect? Test this on the radio only with the owner's
   approval.
 - The front-panel paths (dial encoder `FUN_fffc5e0a` → `FUN_fffc5ec4`/`FUN_fffc6073`, keys through the 0xFFF89D94
