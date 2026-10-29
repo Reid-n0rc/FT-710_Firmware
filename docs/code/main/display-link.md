@@ -135,7 +135,7 @@ Offsets are into the frame (byte 0 = type). "UI state" is the struct at **0x20B0
 | 0xE7 | 10 | `displink_rx_E7` 0xFFF95CBC | b1 = 0 / 1 / 0xFF, b5 = value → +0xA8, +0xAA/+0xAB/+0xAC and a result code 1..5 in +0x488 (0xFF: also `beep_stop`). Consumed by `dispreq_e7_task`. Status of the DISPLAY's **PlayList recorder/player** (sent while its audio owner flag 0x2080048E = 1); b1 = 0xFF is an error with code b5 **[fact, DISPLAY side: `FUN_20124744`]** (#65) | ACK |
 | 0xE8 | 10 | `displink_rx_E8` 0xFFF95DAD | as E7, result in +0x48C **[fact]**; sent for the other audio screens (0x2080048E = 2/3), most likely voice messages **[inference]** (#65) | ACK |
 | 0xC3 | 35 | `displink_rx_C3` 0xFFF95E65 | copies the payload to +0x2ED (0x109 bytes are copied whatever the frame length), sets +0x3F6: the answer to MAIN's `0x43` **[fact]** | ACK |
-| 0xC4 / 0xC5 | 263 / 7 | `displink_rx_C4_C5` 0xFFF95E97 | same as C3: answers to `0x45` / `0x44` **[fact]** | ACK |
+| 0xC4 / 0xC5 | 263 / 7 | `displink_rx_C4_C5` 0xFFF95E97 | same as C3: C4 answers `0x44` (block read, carries the data), C5 answers `0x45` (block write, echo only) **[fact, DISPLAY side: `mainlink_rx_block_read` / `mainlink_rx_block_write`]** (corrected in #61; this row used to pair them the other way round). Layout in [SD CARD transfers](#sd-card-transfers-0x43--0x44--0x45) | ACK |
 | 0xB3 | — | 0xFFF95EC9 | has a case in the dispatcher (sets ACK) but no length entry, so it can never arrive **[fact]** | — |
 
 ### F0 boot codes
@@ -191,6 +191,37 @@ image use these values]**.
 
 The detailed payload layout of the large frames (0x20, 0x24, 0x30/0x31, 0x37, 0x39, 0x3A, 0x40, 0x41, 0x50, 0x62, 0x70) is left for the
 subsystem pages that own the data (T10f menu, T10g radio state) and for the DISPLAY-side parser (T11b).
+
+## SD CARD transfers (0x43 / 0x44 / 0x45)
+
+The SD card is on the DISPLAY, so MEM LIST LOAD/SAVE and MENU LOAD/SAVE move the data through the DISPLAY's 32000-byte transfer buffer
+0x208116A6 (#61). `sd_menu_task` (task 13, [README.md](README.md)) drives it; `displink_build_req` builds every request as
+`type, +0x1E4, +0x1E5…` with the length in +0x1E2 **[fact]**.
+
+| Frame | Bytes after the type | Built by | Answer (stored at +0x2ED by `displink_rx_C3` / `displink_rx_C4_C5`, flag +0x3F6) |
+|---|---|---|---|
+| `0x43` (0x23 bytes) | op, 4 bytes | the `sd_*_start` functions (op 1 MEM LIST LOAD, 2 MEM LIST SAVE, 3 MENU LOAD, 4 MENU SAVE, 5 INFORMATIONS, 8 FORMAT; bytes 0) and, with op = transfer id, three steps: `FUN_fffd0902` sub 1 (`1, 0x15DE7, 0x15DE8, 0`), `FUN_fffd04dd` sub 0x10 (`0x10, 0x15DE7 + 0x15DE8, 0x50, 0`) and, for a save, `FUN_fffd041e` sub 4 (`4`, then a 16-bit value) | `C3`, 0x23 bytes |
+| `0x44` (7 bytes) | id, offset u16 BE, length u16 BE | `FUN_fffd0980` | `C4`: id, offset, length, then the data (frame 0x106 bytes) |
+| `0x45` (0x107 bytes) | id, offset u16 BE, length u16 BE, 0x100 data bytes | `FUN_fffd0fde` (data from `FUN_fffd1078`) | `C5`: id, offset, length |
+
+All facts are from both images **[fact]**, except where noted:
+
+- **Transfer id.** Load uses `0x41` (memory list) / `0x43` (menu), from `FUN_fffd0566`. Save uses `0x42` / `0x44`, from `FUN_fffd04c1`.
+  The DISPLAY accepts a block frame only if its id equals the id it armed in 0x208116A0. Its names `sdmenu_req_save` (0x41/0x43) and
+  `sdmenu_req_load` (0x42/0x44) have the directions the wrong way round: 0x41/0x43 is the buffer that MAIN *reads* after the DISPLAY
+  loaded a file.
+- **Data.** The image is a 2-byte destination code (`dest_code_get`) followed by the RAM block: the **menu settings 0x9012..0x9C34**
+  (0xC23 bytes, 0x15DE5 = 0; staged at 0x12273, total 0xC25) or the **memory list 0x60C9..0x9011** (0x2F49 bytes, 0x15DE5 = 1; staged at
+  0x12E98, total 0x2F4B). It moves in **0x100-byte blocks**: 13 for the menu, 0x30 for the memory list, the last one shorter (offset
+  0x1FF02, length 0x1FF04, count 0x15DE4).
+- **Load.** MAIN reads every block and checks the echoed offset and length (+0x2EE..+0x2F1). Data starts at +0x2F2. At the end it
+  compares the destination code with its own, and copies the staged image over the live RAM only if they match; otherwise
+  `beep_request(3)`. So a file from a radio with a different destination code is refused.
+- **Save.** MAIN copies the live RAM into the staging area on the first block (offset 0) and writes it block by block with 0x45.
+- **0x43 payload.** `0x15DE7` / `0x15DE8` are set by the file-list stepping code 0xFFFCFB26..0xFFFCFFD6 (values 0xFE/0xFF at the ends),
+  so they are a page and a row in the DISPLAY's file list, sub 1 asks for a list page and sub 0x10 opens the file at page + row
+  **[inference for the meanings; the bytes are fact]**.
+- **Not traced.** The meaning of the C3 answer bytes beyond the echo, and the INFORMATIONS (op 5) and FORMAT (op 8) exchanges.
 
 ## Tunnel modes
 
