@@ -59,7 +59,7 @@ All of this is **[fact]** from the code cited in the sections below, except the 
 | renc (0x201655CC) | `task_renc` 0x20112774 | 5 | event flag from `renc_irq4_isr` | sends encoder 3 |
 | tsc2007 (0x201651A8) | `task_tsc2007` 0x20103464 | 5 | woken by `tsc2007_tint_isr` (IRQ3) | touch sampling |
 | tsc2007 (0x201651C4) | `task_tsc2007_irq` 0x20103804 | 4 | slp_tsk; checks a RIIC status twice 100 ms apart, then sets 0x20800090 and signals sem 0x20800088 | touch bus watchdog **[inference]** |
-| mouse_cursor (0x201656E4/0x20165700) | `cpp_task_thunk` → `mouse_cursor_run` 0x2015FD64 | 7 | message box | mouse reports, cursor |
+| mouse_cursor (0x201656E4/0x20165700) | `cpp_task_thunk` → `mouse_cursor_run` 0x2015FD60 | 7 | message box | mouse reports, cursor |
 | keycode (0x2016552C) | `task_keycode` 0x20111794 | 5 | event flag 0x208001D0 | debug commands `date`/`time`/`dsp` and F6–F8 |
 | cli (0x20165968) | `task_cli` 0x20116AB0 | 5 | event flag 0x20800394 | memory monitor |
 
@@ -296,7 +296,7 @@ sequenceDiagram
   text editors (callsign, memory names, CW text, per the manual) use the 64-character buffer 0x20811240 (`kbd_text_append` / *`_backspace`* /
   *`_clear`*). `usbkbd_capslock_for_mode` (0x201073A4) turns CapsLock on for text modes 0, 3, 5, 8 and 10. Usage 0x53 toggles NumLock and
   0x47 toggles ScrollLock; `FUN_2013baac` sends the LED report.
-- **Mouse** **[fact]**: `mouse_cursor_run` (0x2015FD64). Type 1 (attach) shows the cursor (layer 6) at (400,240). Type 0 hides it. Type 2 moves
+- **Mouse** **[fact]**: `mouse_cursor_run` (0x2015FD60). Type 1 (attach) shows the cursor (layer 6) at (400,240). Type 0 hides it. Type 2 moves
   it by dx·(s+150)/100, where s is a speed value **[inference: the MOUSE POINTER SPEED setting, 0–20]**. Button bit 0 = left (pointer source
   "mouse", like touch), bit 1 = right, bit 2 = middle. The wheel (+0x22, when flag 0x100 is set) goes to `mouse_wheel_event` (0x2015FAC4).
   On the main screen 0x20 it becomes encoder id 6, on the menu-type screens id 2 (negated), on 0x41 id 3 (negated), and on screen 0x30 it scrolls
@@ -457,7 +457,7 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 | 0x20107210 / 0x20107378 / 0x201073A4 | `usbkbd_get_char` / `usbkbd_set_layout` / `usbkbd_capslock_for_mode` | layouts, CapsLock |
 | 0x201072D8 / 0x201072FC / 0x20107324 | `kbd_text_append` / `kbd_text_backspace` / `kbd_text_clear` | text buffer |
 | 0x20107EFC / 0x2010A630 / 0x2010A758 | `vk_key_name` / `kbd_layout_tables_init` / `vk_name_lookup` | VK name and layout tables |
-| 0x20113DF8 / 0x2015EFF4 / 0x2015FCC4 / 0x2015FD64 | `mouse_cursor_init` / `mouse_cursor_task_create` / `mouse_cursor_obj_init` / `mouse_cursor_run` | mouse task |
+| 0x20113DF8 / 0x2015EFF4 / 0x2015FCC4 / 0x2015FD60 | `mouse_cursor_init` / `mouse_cursor_task_create` / `mouse_cursor_obj_init` / `mouse_cursor_run` | mouse task |
 | 0x20113E4C / 0x20113EA0 / 0x20113EF0 | `mouse_attach_post` / `mouse_detach_post` / `mouse_report_post` | messages |
 | 0x20113F38 / 0x20113F50 / 0x20113F60 / 0x2015FA54 | `mouse_cursor_set_pos` / `mouse_cursor_visible` / `mouse_cursor_get_pos` / `mouse_cursor_move` | cursor |
 | 0x2015FAC4 | `mouse_wheel_event` | wheel |
