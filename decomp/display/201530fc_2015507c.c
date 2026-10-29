@@ -1197,57 +1197,11 @@ void FUN_20154704(undefined4 param_1)
 
 // ===== FUN_20154710 @ 20154710 (16 bytes)
 
-undefined4 FUN_20154710(undefined4 *param_1,int param_2)
+void FUN_20154710(undefined4 param_1,undefined4 param_2)
 
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
-  uint uVar5;
-  
-  uVar5 = param_2 + 7U & 0xfffffff8;
-  iVar3 = 0;
-  puVar1 = &DAT_208003fc;
-  puVar4 = DAT_208003fc;
-  do {
-    if (puVar4 == (undefined4 *)0x0) {
-LAB_2015463c:
-      if ((undefined4 *)((int)puVar1 + iVar3) == param_1) {
-        uVar5 = uVar5 + iVar3;
-        param_1 = puVar1;
-      }
-      else {
-        *puVar1 = param_1;
-      }
-      if (puVar4 == (undefined4 *)0x0) {
-        *param_1 = 0;
-      }
-      else {
-        if ((undefined4 *)((int)param_1 + uVar5) == puVar4) {
-          *param_1 = *puVar4;
-          param_1[1] = puVar4[1] + uVar5;
-          return 0;
-        }
-        *param_1 = puVar4;
-      }
-      param_1[1] = uVar5;
-      return 0;
-    }
-    if (param_1 < puVar4) {
-      if (puVar4 < (undefined4 *)((int)param_1 + uVar5)) {
-        return 0xffffffef;
-      }
-      goto LAB_2015463c;
-    }
-    iVar3 = puVar4[1];
-    puVar2 = (undefined4 *)((int)puVar4 + iVar3);
-    puVar1 = puVar4;
-    puVar4 = (undefined4 *)*puVar4;
-    if (param_1 < puVar2) {
-      return 0xffffffef;
-    }
-  } while( true );
+  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  return;
 }
 
 
@@ -1267,57 +1221,11 @@ void FUN_20154720(undefined4 param_1)
 
 /* WARNING: Removing unreachable block (ram,0x2015475c) */
 
-undefined4 FUN_20154744(undefined4 *param_1,int param_2)
+void FUN_20154744(undefined4 param_1,undefined4 param_2)
 
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
-  uint uVar5;
-  
-  uVar5 = param_2 + 7U & 0xfffffff8;
-  iVar3 = 0;
-  puVar1 = &DAT_208003fc;
-  puVar4 = DAT_208003fc;
-  do {
-    if (puVar4 == (undefined4 *)0x0) {
-LAB_2015463c:
-      if ((undefined4 *)((int)puVar1 + iVar3) == param_1) {
-        uVar5 = uVar5 + iVar3;
-        param_1 = puVar1;
-      }
-      else {
-        *puVar1 = param_1;
-      }
-      if (puVar4 == (undefined4 *)0x0) {
-        *param_1 = 0;
-      }
-      else {
-        if ((undefined4 *)((int)param_1 + uVar5) == puVar4) {
-          *param_1 = *puVar4;
-          param_1[1] = puVar4[1] + uVar5;
-          return 0;
-        }
-        *param_1 = puVar4;
-      }
-      param_1[1] = uVar5;
-      return 0;
-    }
-    if (param_1 < puVar4) {
-      if (puVar4 < (undefined4 *)((int)param_1 + uVar5)) {
-        return 0xffffffef;
-      }
-      goto LAB_2015463c;
-    }
-    iVar3 = puVar4[1];
-    puVar2 = (undefined4 *)((int)puVar4 + iVar3);
-    puVar1 = puVar4;
-    puVar4 = (undefined4 *)*puVar4;
-    if (param_1 < puVar2) {
-      return 0xffffffef;
-    }
-  } while( true );
+  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  return;
 }
 
 
@@ -1337,57 +1245,11 @@ void FUN_2015476c(undefined4 param_1)
 
 /* WARNING: Removing unreachable block (ram,0x201547a8) */
 
-undefined4 FUN_20154790(undefined4 *param_1,int param_2)
+void FUN_20154790(undefined4 param_1,undefined4 param_2)
 
 {
-  undefined4 *puVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
-  uint uVar5;
-  
-  uVar5 = param_2 + 7U & 0xfffffff8;
-  iVar3 = 0;
-  puVar1 = &DAT_208003fc;
-  puVar4 = DAT_208003fc;
-  do {
-    if (puVar4 == (undefined4 *)0x0) {
-LAB_2015463c:
-      if ((undefined4 *)((int)puVar1 + iVar3) == param_1) {
-        uVar5 = uVar5 + iVar3;
-        param_1 = puVar1;
-      }
-      else {
-        *puVar1 = param_1;
-      }
-      if (puVar4 == (undefined4 *)0x0) {
-        *param_1 = 0;
-      }
-      else {
-        if ((undefined4 *)((int)param_1 + uVar5) == puVar4) {
-          *param_1 = *puVar4;
-          param_1[1] = puVar4[1] + uVar5;
-          return 0;
-        }
-        *param_1 = puVar4;
-      }
-      param_1[1] = uVar5;
-      return 0;
-    }
-    if (param_1 < puVar4) {
-      if (puVar4 < (undefined4 *)((int)param_1 + uVar5)) {
-        return 0xffffffef;
-      }
-      goto LAB_2015463c;
-    }
-    iVar3 = puVar4[1];
-    puVar2 = (undefined4 *)((int)puVar4 + iVar3);
-    puVar1 = puVar4;
-    puVar4 = (undefined4 *)*puVar4;
-    if (param_1 < puVar2) {
-      return 0xffffffef;
-    }
-  } while( true );
+  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  return;
 }
 
 

@@ -226,39 +226,21 @@ void FUN_201203b0(void)
 
 // ===== FUN_201203d4 @ 201203d4 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c0c) */
-/* WARNING: Removing unreachable block (ram,0x20120c30) */
-/* WARNING: Removing unreachable block (ram,0x20120c1c) */
-/* WARNING: Removing unreachable block (ram,0x20120c24) */
-/* WARNING: Removing unreachable block (ram,0x20120c2c) */
-/* WARNING: Removing unreachable block (ram,0x20120c34) */
-/* WARNING: Removing unreachable block (ram,0x20120c48) */
-/* WARNING: Removing unreachable block (ram,0x20120c40) */
-
-undefined4 FUN_201203d4(void)
+void FUN_201203d4(void)
 
 {
-  FUN_2011ff9c();
-  return 0;
+  FUN_20120c04(0);
+  return;
 }
 
 
 // ===== FUN_201203dc @ 201203dc (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c5c) */
-/* WARNING: Removing unreachable block (ram,0x20120c80) */
-/* WARNING: Removing unreachable block (ram,0x20120c6c) */
-/* WARNING: Removing unreachable block (ram,0x20120c74) */
-/* WARNING: Removing unreachable block (ram,0x20120c7c) */
-/* WARNING: Removing unreachable block (ram,0x20120c84) */
-/* WARNING: Removing unreachable block (ram,0x20120c98) */
-/* WARNING: Removing unreachable block (ram,0x20120c90) */
-
-undefined4 FUN_201203dc(void)
+void FUN_201203dc(void)
 
 {
-  FUN_2011ffdc();
-  return 0;
+  FUN_20120c54(0);
+  return;
 }
 
 
@@ -289,37 +271,21 @@ undefined4 FUN_201203e4(void)
 
 // ===== FUN_201203ec @ 201203ec (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c0c) */
-/* WARNING: Removing unreachable block (ram,0x20120c30) */
-/* WARNING: Removing unreachable block (ram,0x20120c24) */
-/* WARNING: Removing unreachable block (ram,0x20120c2c) */
-/* WARNING: Removing unreachable block (ram,0x20120c34) */
-/* WARNING: Removing unreachable block (ram,0x20120c48) */
-/* WARNING: Removing unreachable block (ram,0x20120c38) */
-
-undefined4 FUN_201203ec(void)
+void FUN_201203ec(void)
 
 {
-  FUN_2011ffac();
-  return 0;
+  FUN_20120c04(1);
+  return;
 }
 
 
 // ===== FUN_201203f4 @ 201203f4 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c5c) */
-/* WARNING: Removing unreachable block (ram,0x20120c80) */
-/* WARNING: Removing unreachable block (ram,0x20120c74) */
-/* WARNING: Removing unreachable block (ram,0x20120c7c) */
-/* WARNING: Removing unreachable block (ram,0x20120c84) */
-/* WARNING: Removing unreachable block (ram,0x20120c98) */
-/* WARNING: Removing unreachable block (ram,0x20120c88) */
-
-undefined4 FUN_201203f4(void)
+void FUN_201203f4(void)
 
 {
-  FUN_2011ffec();
-  return 0;
+  FUN_20120c54(1);
+  return;
 }
 
 
@@ -349,35 +315,21 @@ undefined4 FUN_201203fc(void)
 
 // ===== FUN_20120404 @ 20120404 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c0c) */
-/* WARNING: Removing unreachable block (ram,0x20120c30) */
-/* WARNING: Removing unreachable block (ram,0x20120c2c) */
-/* WARNING: Removing unreachable block (ram,0x20120c34) */
-/* WARNING: Removing unreachable block (ram,0x20120c40) */
-/* WARNING: Removing unreachable block (ram,0x20120c38) */
-
-undefined4 FUN_20120404(void)
+void FUN_20120404(void)
 
 {
-  FUN_2011ffbc();
-  return 0;
+  FUN_20120c04(2);
+  return;
 }
 
 
 // ===== FUN_2012040c @ 2012040c (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c5c) */
-/* WARNING: Removing unreachable block (ram,0x20120c80) */
-/* WARNING: Removing unreachable block (ram,0x20120c7c) */
-/* WARNING: Removing unreachable block (ram,0x20120c84) */
-/* WARNING: Removing unreachable block (ram,0x20120c90) */
-/* WARNING: Removing unreachable block (ram,0x20120c88) */
-
-undefined4 FUN_2012040c(void)
+void FUN_2012040c(void)
 
 {
-  FUN_2011fffc();
-  return 0;
+  FUN_20120c54(2);
+  return;
 }
 
 
@@ -406,31 +358,21 @@ undefined4 FUN_20120414(void)
 
 // ===== FUN_2012041c @ 2012041c (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c0c) */
-/* WARNING: Removing unreachable block (ram,0x20120c48) */
-/* WARNING: Removing unreachable block (ram,0x20120c40) */
-/* WARNING: Removing unreachable block (ram,0x20120c38) */
-
-undefined4 FUN_2012041c(void)
+void FUN_2012041c(void)
 
 {
-  FUN_2011ffcc();
-  return 0;
+  FUN_20120c04(3);
+  return;
 }
 
 
 // ===== FUN_20120424 @ 20120424 (8 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x20120c5c) */
-/* WARNING: Removing unreachable block (ram,0x20120c98) */
-/* WARNING: Removing unreachable block (ram,0x20120c90) */
-/* WARNING: Removing unreachable block (ram,0x20120c88) */
-
-undefined4 FUN_20120424(void)
+void FUN_20120424(void)
 
 {
-  FUN_20120028();
-  return 0;
+  FUN_20120c54(3);
+  return;
 }
 
 
@@ -1067,8 +1009,7 @@ void FUN_20120d4c(undefined1 param_1)
 void FUN_20120d58(void)
 
 {
-  memclr(&DAT_208dd99c,0x13178);
-  DAT_208f0b14 = 0;
+  FUN_201571e8(&DAT_208dce3c);
   return;
 }
 
