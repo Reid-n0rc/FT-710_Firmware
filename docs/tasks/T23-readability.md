@@ -24,7 +24,7 @@ an explicit open step below. Ghidra runs follow AGENTS.md (one job at a time thr
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | todo |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | FunctionID/BSim | todo |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side | ApplyNames + re-export | todo |
-| T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | todo |
+| T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | todo |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
@@ -149,6 +149,66 @@ Rules for every sub-task:
   `ApplySignatures.java`. Fix the pointer-typed constants (`FUN_fff8fc57(0x19, &DAT_000f4240)` is 1,000,000).
 - Enums for mode, band, VFO and the CAT command ids (`decomp/main/cat_dispatch.tsv`), applied to the parameters and
   struct fields that hold them.
+
+**Status:** done on per-task copies (2026-10-29, worktree agent). Open: apply to the canonical projects and re-export
+`decomp/` (the parent's step; `tools/bootstrap.sh` already runs the new scripts on a rebuild).
+
+### Plan
+1. MAIN enums as a committed C header with per-value evidence, a uses TSV and `ApplyEnums.java` (after ApplySignatures).
+2. `FUN_fff8fc57`: reviewed `doc` row in `signatures_main.tsv` (two `uint32`), plus `doc` rows for the mode setters the
+   enums need.
+3. `CallArgCheck.java` and `signatures_draft.py` learn ARM AAPCS; draft `signatures_display.tsv` / `signatures_m33.tsv`
+   with only clear rows; apply with `ApplySignatures.java` on copies; `decomp_quality.py compare` must show nothing worse.
+4. bootstrap steps, tools/README, this section.
+
+### Findings
+- **Enums** (`tools/ghidra/enums_main.h`, 10 enums, 178 values, each with its evidence): `radio_mode` (0..15 from
+  `cat_mode_codes` 0xFFF806D0, plus `MODE_NONE` 0xFF), `band_idx` (band_table 0xFFF8876C rows 0..11, `BAND_COUNT`,
+  `BAND_NONE`), `vfo_which` (RX/TX), `vfo_side` (A/B/selected), `vfo_state` (0x9DBE/0x9DBF: 1 VFO, 2 memory,
+  3 memory tune, 4 PMS, 5 QMB, 7/8 locked; 0/6/9 named as never written, #173), `cat_cmd` (the 104 `cat_mnemonics`
+  indices + `CAT_COUNT`/`CAT_NONE`), `cat_ext_cmd` (10), `sdr_mod_class` (SDR reg 0x0A), `dsp_demod` (DSP reg 6),
+  `tunlin_mode` (0x9AB7). `tools/ghidra/enum_uses_main.tsv`: 30 parameters, 3 returns (`vfo_mode`, `band_of_freq`,
+  `tunlin_port_mode`), 11 globals (0x9DBD, 0x9DBE/F, 0x9DC3/4, 0x9DC7/8, 0x20F28, 0x9AB7, shadows 0x1B742 and 0x1B63E).
+  All applied, 0 failed **[fact: ApplyEnums log]**. The decompiler now prints `radio_mode vfo_mode(vfo_which which)`,
+  `switch(mode) { case MODE_LSB: ...` in `FUN_fffc4bd5`, `case CAT_AG:` in `cat_dispatch`,
+  `if (vfo_side_00009dbd == VFO_A)` and `param_1 < BAND_GEN` in `band_select`.
+- Enum caveats: Ghidra prints an enum's type into arithmetic on it (`rStack_e + MODE_USB` in the cat_MD lookup loop,
+  `& ~MODE_15` for the 0xF0 mask, `cStack_e < CAT_BD` for the extended-table loop that shares cat_parse's counter).
+  `cat_ext_cmd` is therefore defined but not applied (applying it turned the primary loop into `CATX_` values). Values
+  that are not named print as an OR of named ones, so every bound the code compares with has a name.
+- **Pointer-typed constant fixed:** `FUN_fff8fc57` compares R2 with #0xF4240, #1000 and 1 and divides by it, so it is a
+  time unit, not a pointer (`doc` row `uint8 FUN_fff8fc57(uint32 delay, uint32 units)`; Renesas BSP software delay
+  [inference]). The call now reads `FUN_fff8fc57(0x19,1000000)`. `FUN_fffc616e` still has a local `&DAT_000f4240`
+  (a stack variable, not a signature matter).
+- **MAIN quality** (copy with the new rows + enums, compared with the committed `decomp/main/quality.tsv`): no metric
+  changed.
+- **CallArgCheck on ARM** (slot k = r(k-1)): tail calls (`b func`, 512 in DISPLAY, 102 in the M33) were read as calls
+  whose following bytes were their return use; they are now left out of the stats (DISPLAY lost_ret 170 → 17, M33 13 → 0
+  before any signature). A call reads its callee's live-in (wrappers pass r0..r3 on), PUSH counts as no use (armcc and
+  gcc push r0-r3 to reserve stack). The M33 code is built with gcc `-fipa-ra`: callers keep r0..r3 across a callee that
+  never writes them (`power_set_deepsleep_pmc_cfg` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
+  (transitive over the call graph) and `sites_keep_scratch` (r2/r3/r12 live after the call, or r0/r1 the callee never
+  writes), and the drafter leaves such functions out.
+- **Signatures**: `signatures_display.tsv` 578 rows (575 asm, 1 doc `__aeabi_uidivmod` as uint64 per the RTABI,
+  2 skip), `signatures_m33.tsv` 222 rows (216 asm, 2 doc `__aeabi_uldivmod`, `rpmsg_queue_nocopy_free`, 4 skip);
+  246 / 166 named functions left out as not clear. Rules in `draft_arm()`: same count as the decompiler, or more with a
+  caller that sets them; never fewer (17 functions got `in_` variables when that was tried: the decompiler's extra
+  parameters are mostly real reads the block liveness misses); >4 parameters keep the decompiler's stack arguments;
+  no gaps. `skip` rows (not applied, kept on redraft) are the six whose lock made the export worse
+  (`gic_dispatch`, `debug_cmd_line_write`, `RESET_SetPeripheralReset`, the two `PINT_` helpers, `memset`).
+- **Quality on the copies** vs the committed `quality.tsv`: DISPLAY warnings 212 → 211, functions with `in_` 62 → 60,
+  `unaff_` 44 → 42, `extraout_` 78 → 68, any of them 166 → 158; M33 `in_` 13 → 9, any 25 → 21; nothing worse
+  **[fact: decomp_quality.py compare]**. Example: `scr_select_popup` loses all 66 `unaff_` variables once
+  `fb_get_layer_addr` is `void *(uint32)`.
+
+### Open steps (parent)
+1. Apply to the canonical projects (`ApplySignatures.java signatures_main.tsv` + `ApplyEnums.java enums_main.h
+   enum_uses_main.tsv` on MAIN; `ApplySignatures.java` with `signatures_display.tsv` / `signatures_m33.tsv` on
+   DISPLAY / IFDSP M33), re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together.
+2. Redraft after naming batches (T23e): `CallArgCheck.java` on a project without the ARM signatures, then
+   `python3 -I tools/signatures_draft.py protos.tsv - tools/ghidra/signatures_display.tsv mismatch.tsv display`
+   (or `... signatures_m33.tsv ... m33`); check the export and turn any row that makes it worse into a `skip` row.
+3. More enum uses once T23c's structs exist (per-mode block fields, UI +0x424, the record's mode nibble).
 
 ## T23g — Readable view (optional)
 - `decomp/<image>/readable/<subsystem>.c`: the same functions grouped by the `docs/code/<image>/` subsystem pages, each
