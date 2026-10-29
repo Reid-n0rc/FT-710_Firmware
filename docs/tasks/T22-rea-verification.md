@@ -720,7 +720,7 @@ of memory (the entropy run waited about 40 minutes in memgate); the strings abov
   dwords.
 
 ### T22f
-**Status:** done (2026-10-28). REA fork `~/opt/rea`, branch `feat-ft710-devices` (local; not pushed), on top of the RX lane
+**Status:** done (2026-10-28). REA fork `~/opt/rea`, branch `feat-ft710-devices` (pushed to github.com/Reid-n0rc/rea 2026-10-28), on top of the RX lane
 `db2bfd303`. Installed as the `rea` CLI from `~/opt/rea-dist/rea-agents-6.8.0-ft710-76eeda78f.tgz`.
 
 Fork commits **[fact]**:
@@ -743,12 +743,12 @@ its load address.
 
 Requests (scratchpad `rea-requests/`):
 - T22a-rizin-raw-rx §2, T22b-rizin-raw-arm §2: done (`b7c2c2303`). §1 of both: `REA_RIZIN_COMMAND=~/opt/rizin-0.9.1/bin/rizin`
-  belongs in the owner's MCP entry (`~/.claude.json` `mcpServers.rea.env`); until then pass it per CLI call.
+  is set in the owner's MCP entry (`~/.claude.json` `mcpServers.rea.env`, 2026-10-28); CLI calls still pass it themselves.
 - T22b §1 (a rizin deep-analysis provider for raw images): declined, documented (`b9c5ee48b`).
 - T22c-raw-readonly-range: done (`020f940b3`); extra uninitialised RAM ranges not done (optional ask).
 - T22e-pseudocode-version-diff: declined (a new Evidence producer, not device support); `tools/decomp_behavior_diff.py` covers it.
 - T22a-rx-native-api: not in T22f. §1 prototype seeds and §3 reusing one analysed program across CLI calls are new REA
   features (a task each if wanted); §2 depends on §1; §4 (`.sla` digest in the analysis profile) is a small follow-up.
 
-Follow-ups for the owner: push `feat-ft710-devices` to the fork; add `REA_RIZIN_COMMAND` to the MCP entry; the MCP entry's
-`GHIDRA_HEADLESS_MAXMEM=10G` bypasses the AGENTS.md cap (3 GB heap, one job) and is two thirds of the host's RAM.
+Owner follow-ups, done 2026-10-28: fork branch pushed; MCP entry gained `REA_RIZIN_COMMAND`, and its `GHIDRA_HEADLESS_MAXMEM` went
+from 10G to 3G (10 GB was two thirds of the host's RAM and bypassed the one-job cap). Both take effect after a Claude Code restart.
