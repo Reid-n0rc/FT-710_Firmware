@@ -1422,17 +1422,10 @@ void FUN_20139624(undefined4 param_1,int param_2,undefined4 param_3,undefined4 p
 
 // ===== FUN_20139654 @ 20139654 (4 bytes)
 
-void FUN_20139654(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+void FUN_20139654(void)
 
 {
-  if (param_2 == 0) {
-    return;
-  }
-  if (*(int *)(param_2 + 0x18) == 0) {
-    FUN_20139344(param_2,param_3,param_4);
-    return;
-  }
-  FUN_20139590();
+  FUN_20139624();
   return;
 }
 

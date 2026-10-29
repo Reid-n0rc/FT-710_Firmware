@@ -1,5 +1,82 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_20163d44 @ 20163d44 (40 bytes)
+
+void FUN_20163d44(int param_1,undefined2 param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  do {
+    iVar1 = iVar2 * 2;
+    iVar2 = iVar2 + 1;
+    *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
+  } while (iVar2 < 0x40);
+  *(int *)(param_1 + 4) = param_1 + 8;
+  *(int *)(param_1 + 0x88) = param_1;
+  return;
+}
+
+
+// ===== FUN_20163d6c @ 20163d6c (264 bytes)
+
+void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                 ushort *param_5,int param_6,int param_7)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  uint uVar6;
+  int iVar7;
+  undefined8 uVar8;
+  undefined4 uVar9;
+  
+  uVar9 = param_4;
+  uVar8 = FUN_20164d54(param_6);
+  FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+  iVar2 = FUN_20164c90();
+  uVar6 = (uint)*param_5;
+  *param_1 = *(undefined4 *)param_5;
+  iVar3 = (param_5[1] - 1) * uVar6;
+  iVar7 = *(int *)(param_5 + 2) + iVar3 * 2;
+  iVar3 = iVar3 * 2 + 8;
+  iVar4 = 0;
+  if (0 < param_6) {
+    do {
+      iVar1 = iVar4 * uVar6;
+      iVar4 = iVar4 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar1) * 2 + iVar3) = 0;
+    } while (iVar4 < param_6);
+  }
+  iVar4 = 0;
+  if (0 < param_6) {
+    do {
+      uVar8 = FUN_20164d54(iVar4);
+      FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
+      iVar5 = FUN_20164c90();
+      iVar1 = iVar4 * uVar6;
+      iVar4 = iVar4 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar5 * uVar6) * 2 + iVar3) =
+           *(undefined2 *)(iVar7 + (param_7 - iVar1) * 2);
+    } while (iVar4 < param_6);
+  }
+  if (iVar2 < param_6) {
+    do {
+      iVar4 = iVar2 * uVar6;
+      iVar2 = iVar2 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar4) * 2 + iVar3) =
+           *(undefined2 *)(iVar7 + (param_7 - (param_6 + -1) * uVar6) * 2);
+    } while (iVar2 < param_6);
+  }
+  return;
+}
+
+
 // ===== FUN_20163e74 @ 20163e74 (160 bytes)
 
 void FUN_20163e74(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -711,35 +788,5 @@ int FUN_20164828(int *param_1,int param_2)
   uVar2 = param_2 + 0x1e + *param_1;
   iVar1 = (int)((longlong)(int)uVar2 * -0x77777777 + ((ulonglong)uVar2 << 0x20) >> 0x20);
   return uVar2 + ((iVar1 >> 4) - (iVar1 >> 0x1f)) * -0x1e;
-}
-
-
-// ===== FUN_2016485c @ 2016485c (20 bytes)
-
-int FUN_2016485c(int *param_1)
-
-{
-  int iVar1;
-  
-  iVar1 = *param_1 + 1;
-  if (iVar1 == 0x1e) {
-    iVar1 = 0;
-  }
-  return iVar1;
-}
-
-
-// ===== FUN_20164870 @ 20164870 (24 bytes)
-
-short FUN_20164870(short *param_1)
-
-{
-  short sVar1;
-  
-  sVar1 = *param_1 + 1;
-  if (sVar1 == 0x20) {
-    sVar1 = 0;
-  }
-  return sVar1;
 }
 
