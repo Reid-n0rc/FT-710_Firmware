@@ -10,7 +10,9 @@
 // For each address: (1) functions that start within the first 8 fall-through instructions after it are removed (late
 // starts; the walk stops at a call, and a function that has call references is kept, T21e); (2) the function containing it, if it starts earlier, is removed and later re-created at its old entry (so its
 // body is recomputed and stops at the new entry), unless column 2 is "drop" (the old entry was data); (3) the function at
-// the address is (re)created. The script is idempotent.
+// the address is (re)created. (4) Every unconditional branch from another function to a created entry gets the flow
+// override CALL_RETURN, so the decompiler shows a tail call instead of inlining the target (a branch disassembled before
+// the target was a function stays a jump; #81: the update-UI thunks `ldr r0,=obj; b method`). The script is idempotent.
 // @category FT710
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
@@ -29,7 +31,8 @@ public class FixFuncEntries extends GhidraScript {
 
     @Override
     protected void run() throws Exception {
-        int made = 0, late = 0, bad = 0;
+        int made = 0, late = 0, bad = 0, tail = 0;
+        java.util.List<Address> entries = new java.util.ArrayList<>();
         for (String line : Files.readAllLines(Paths.get(getScriptArgs()[0]))) {
             if (line.isBlank() || line.startsWith("#")) continue;
             String[] p = line.split("\t");
@@ -64,10 +67,23 @@ public class FixFuncEntries extends GhidraScript {
             Function f = createFunction(a, null);
             if (f == null) { printerr("FixFuncEntries: cannot create function at " + a); bad++; continue; }
             made++;
+            entries.add(a);
             if (oldEntry != null && !drop && getFunctionAt(oldEntry) == null) {
                 if (createFunction(oldEntry, null) == null) printerr("FixFuncEntries: cannot re-create " + oldEntry);
             }
         }
-        println("FixFuncEntries: " + made + " created, " + late + " late starts removed, " + bad + " failed");
+        for (Address a : entries) {
+            for (ghidra.program.model.symbol.Reference r : getReferencesTo(a)) {
+                if (!r.getReferenceType().isJump() || r.getReferenceType().isConditional()) continue;
+                Instruction br = getInstructionAt(r.getFromAddress());
+                Function from = getFunctionContaining(r.getFromAddress());
+                if (br == null || from == null || from.getEntryPoint().equals(a)) continue;
+                if (br.getFlowOverride() == ghidra.program.model.listing.FlowOverride.CALL_RETURN) continue;
+                br.setFlowOverride(ghidra.program.model.listing.FlowOverride.CALL_RETURN);
+                tail++;
+            }
+        }
+        println("FixFuncEntries: " + made + " created, " + late + " late starts removed, " + bad + " failed, "
+            + tail + " branches to them marked as tail calls");
     }
 }
