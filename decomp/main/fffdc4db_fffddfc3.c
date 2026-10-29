@@ -2864,7 +2864,7 @@ undefined2 FUN_fffddcb5(void)
         }
       }
     }
-    iVar2 = FUN_fffede1d(&DAT_0001b504,local_f,6);
+    iVar2 = strncmp(&DAT_0001b504,local_f,6);
     if (iVar2 != 0) {
       local_4 = 6;
       pcVar4 = local_f;

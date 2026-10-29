@@ -656,7 +656,7 @@ void bandstack_save(void)
   }
   local_13 = !local_13;
   puStack_c = puStack_c + (uint)bStack_11 * 0x5a;
-  iVar2 = FUN_fffede1d(puStack_c,puStack_4,0x5a);
+  iVar2 = strncmp(puStack_c,puStack_4,0x5a);
   if (iVar2 == 0) {
     return;
   }

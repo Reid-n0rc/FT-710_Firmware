@@ -247,12 +247,14 @@ void r_tpu2_tgia_isr(void)
 }
 
 
-// ===== FUN_fffedd9a @ fffedd9a (47 bytes)
+// ===== freopen @ fffedd9a (47 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffedd9a) */
 /* WARNING: Removing unreachable block (ram,0xfffeddc6) */
+/* freopen(name, mode, fp): fclose(fp) then _freopen_core; called by _INIT_IOLIB for
+   stdin/stdout/stderr [inference for the name] */
 
-uint FUN_fffedd9a(uint param_1,uint param_2,ushort *param_3)
+uint freopen(uint param_1,uint param_2,ushort *param_3)
 
 {
   ushort uVar1;
@@ -260,49 +262,53 @@ uint FUN_fffedd9a(uint param_1,uint param_2,ushort *param_3)
   
   uVar1 = *param_3;
   *(byte *)param_3 = (byte)*param_3 & 0x7f;
-  FUN_fffeddc9(param_3);
+  fclose(param_3);
   *param_3 = uVar1 & 0x80;
-  uVar2 = FUN_fffedfa7(param_1,param_2,param_3,0xffffffff);
+  uVar2 = _freopen_core(param_1,param_2,param_3,0xffffffff);
   return uVar2;
 }
 
 
-// ===== FUN_fffeddc9 @ fffeddc9 (84 bytes)
+// ===== fclose @ fffeddc9 (84 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffede1a) */
 /* WARNING: Removing unreachable block (ram,0xfffeddc9) */
+/* fclose(fp): fflush, free the buffer, close(fd), release the FILE slot; called by freopen and
+   _CLOSEALL [inference for the name] */
 
-uint FUN_fffeddc9(ushort *param_1)
+uint fclose(ushort *param_1)
 
 {
   int iVar1;
   uint uVar2;
   
   if (((*param_1 & 3) == 0) || (*(char *)((int)param_1 + 3) < '\0')) {
-    FUN_fffee0c2(param_1);
+    _file_release(param_1);
     uVar2 = 0xffffffff;
     DAT_00025d1c = 9;
   }
   else {
-    uVar2 = FUN_fffedf24(param_1);
+    uVar2 = fflush(param_1);
     if ((*param_1 & 0x40) != 0) {
-      FUN_fffee10b(*(undefined4 *)(param_1 + 2));
+      free(*(undefined4 *)(param_1 + 2));
     }
     param_1[2] = 0;
     param_1[3] = 0;
-    iVar1 = FUN_fff8fac2((int)*(char *)((int)param_1 + 3));
+    iVar1 = close((int)*(char *)((int)param_1 + 3));
     if (iVar1 != 0) {
       uVar2 = 0xffffffff;
     }
-    FUN_fffee0c2(param_1);
+    _file_release(param_1);
   }
   return uVar2;
 }
 
 
-// ===== FUN_fffede1d @ fffede1d (36 bytes)
+// ===== strncmp @ fffede1d (36 bytes)
 
-int FUN_fffede1d(char *param_1,char *param_2,uint param_3)
+/* strncmp(a, b, n), byte compare up to n [inference for the name] */
+
+int strncmp(char *param_1,char *param_2,uint param_3)
 
 {
   char cVar1;
@@ -460,12 +466,14 @@ void _INITSCT(void)
 }
 
 
-// ===== FUN_fffedf24 @ fffedf24 (131 bytes)
+// ===== fflush @ fffedf24 (131 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffedfa4) */
 /* WARNING: Removing unreachable block (ram,0xfffedf24) */
+/* fflush(fp) (fp=0: all 20 slots at 0x1FF74), writes the pending buffer with write() [inference for
+   the name] */
 
-uint FUN_fffedf24(ushort *param_1)
+uint fflush(ushort *param_1)
 
 {
   undefined4 uVar1;
@@ -481,7 +489,7 @@ uint FUN_fffedf24(ushort *param_1)
     uVar7 = 0;
     for (iVar4 = 0; iVar4 < 0x14; iVar4 = iVar4 + 1) {
       if (((ushort *)*puVar5 != (ushort *)0x0) &&
-         (uVar2 = FUN_fffedf24((ushort *)*puVar5), (int)uVar2 < 0)) {
+         (uVar2 = fflush((ushort *)*puVar5), (int)uVar2 < 0)) {
         uVar7 = 0xffffffff;
       }
       puVar5 = puVar5 + 1;
@@ -495,8 +503,8 @@ uint FUN_fffedf24(ushort *param_1)
       while( true ) {
         pvVar3 = (void *)(iVar6 + iVar4);
         if (*(void **)(param_1 + 6) <= pvVar3) break;
-        uVar7 = FUN_fff8facd((int)*(char *)((int)param_1 + 3),pvVar3,
-                             (int)*(void **)(param_1 + 6) - (int)pvVar3);
+        uVar7 = write((int)*(char *)((int)param_1 + 3),pvVar3,
+                      (int)*(void **)(param_1 + 6) - (int)pvVar3);
         if ((int)uVar7 < 1) {
           uVar1 = *(undefined4 *)(param_1 + 2);
           *(undefined4 *)(param_1 + 6) = uVar1;
@@ -519,12 +527,14 @@ uint FUN_fffedf24(ushort *param_1)
 }
 
 
-// ===== FUN_fffedfa7 @ fffedfa7 (214 bytes)
+// ===== _freopen_core @ fffedfa7 (214 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffee07a) */
 /* WARNING: Removing unreachable block (ram,0xfffedfa7) */
+/* Parses the mode string ("r"/"w"/"a", "+", "b"), calls _fopen_open, sets up the FILE [inference
+   for the name] */
 
-ushort * FUN_fffedfa7(int param_1,char *param_2,ushort *param_3,int param_4)
+ushort * _freopen_core(int param_1,char *param_2,ushort *param_3,int param_4)
 
 {
   char cVar1;
@@ -572,7 +582,7 @@ ushort * FUN_fffedfa7(int param_1,char *param_2,ushort *param_3,int param_4)
     uVar5 = uVar6 | uVar5 & 0x80;
     *param_3 = uVar5;
     if ((uVar6 & 3) == 0) {
-      FUN_fffeddc9(param_3);
+      fclose(param_3);
       DAT_00025d1c = 0x16;
     }
     else {
@@ -600,14 +610,14 @@ ushort * FUN_fffedfa7(int param_1,char *param_2,ushort *param_3,int param_4)
         if (in_stack_0000000c != 0) {
           uVar5 = uVar5 | 0x40;
         }
-        iVar7 = FUN_fffee18e(param_1,uVar5,in_stack_0000000c == 0x55);
+        iVar7 = _fopen_open(param_1,uVar5,in_stack_0000000c == 0x55);
         *(char *)((int)param_3 + 3) = (char)iVar7;
         if (-1 < iVar7) {
           return param_3;
         }
       }
       uVar2 = DAT_00025d1c;
-      FUN_fffeddc9(param_3);
+      fclose(param_3);
       DAT_00025d1c = uVar2;
     }
   }
@@ -615,12 +625,14 @@ ushort * FUN_fffedfa7(int param_1,char *param_2,ushort *param_3,int param_4)
 }
 
 
-// ===== FUN_fffee07d @ fffee07d (69 bytes)
+// ===== _file_alloc @ fffee07d (69 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffee07d) */
 /* WARNING: Removing unreachable block (ram,0xfffee0bf) */
+/* Takes a free FILE from the 20 slots at 0x1FF74 or mallocs a new 0x48-byte one; no callers (fopen
+   not linked) [inference for the name] */
 
-short * FUN_fffee07d(void)
+short * _file_alloc(void)
 
 {
   short *psVar1;
@@ -642,7 +654,7 @@ short * FUN_fffee07d(void)
     puVar3 = puVar3 + 1;
     uVar2 = uVar2 + 1;
   }
-  psVar1 = (short *)FUN_fffee239(0x48);
+  psVar1 = (short *)malloc(0x48);
   if (psVar1 == (short *)0x0) {
     return (short *)0x0;
   }
@@ -653,9 +665,12 @@ short * FUN_fffee07d(void)
 }
 
 
-// ===== FUN_fffee0c2 @ fffee0c2 (73 bytes)
+// ===== _file_release @ fffee0c2 (73 bytes)
 
-void FUN_fffee0c2(ushort *param_1)
+/* Resets a static FILE (std streams) or drops a malloc'ed one from the slot table and frees it
+   [inference for the name] */
+
+void _file_release(ushort *param_1)
 
 {
   ushort *puVar1;
@@ -681,7 +696,7 @@ void FUN_fffee0c2(ushort *param_1)
   do {
     if (0x13 < uVar3) {
 LAB_fffee106:
-      FUN_fffee10b();
+      free();
       return;
     }
     if (param_1 == (ushort *)*puVar2) {
@@ -694,11 +709,13 @@ LAB_fffee106:
 }
 
 
-// ===== FUN_fffee10b @ fffee10b (131 bytes)
+// ===== free @ fffee10b (131 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffee18b) */
+/* free(p): 8-byte header (size, next), inserts into the address-ordered free list at 0x25E5C and
+   merges neighbours [inference for the name] */
 
-int * FUN_fffee10b(int *param_1)
+int * free(int *param_1)
 
 {
   uint uVar1;
@@ -753,9 +770,12 @@ int * FUN_fffee10b(int *param_1)
 }
 
 
-// ===== FUN_fffee18e @ fffee18e (48 bytes)
+// ===== _fopen_open @ fffee18e (48 bytes)
 
-int FUN_fffee18e(undefined4 param_1,uint param_2,int param_3)
+/* Maps the parsed mode bits to open() flags (perm 0666, or 0600 for exclusive) and calls open
+   [inference for the name] */
+
+int _fopen_open(undefined4 param_1,uint param_2,int param_3)
 
 {
   char cVar1;
@@ -776,17 +796,20 @@ int FUN_fffee18e(undefined4 param_1,uint param_2,int param_3)
   if (param_3 != 0) {
     uVar2 = 0x180;
   }
-  cVar1 = FUN_fff8fa1b(param_1,uVar3,uVar2);
+  cVar1 = open(param_1,uVar3,uVar2);
   return (int)cVar1;
 }
 
 
-// ===== FUN_fffee1be @ fffee1be (123 bytes)
+// ===== _heap_find @ fffee1be (123 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffee1be) */
 /* WARNING: Removing unreachable block (ram,0xfffee236) */
+/* First-fit search of the free list at 0x25E5C (from the rover 0x25E58); grows the heap via
+   heap_getmem in >= 1 KB steps; the 244 bytes T05 saw as undefined data (#78) [inference for the
+   name] */
 
-uint * FUN_fffee1be(uint param_1)
+uint * _heap_find(uint param_1)
 
 {
   uint *puVar1;
@@ -826,7 +849,7 @@ uint * FUN_fffee1be(uint param_1)
       if (param_1 <= uVar4) {
         uVar3 = uVar4;
       }
-      puVar2 = (uint *)FUN_fffee29c(uVar3);
+      puVar2 = (uint *)heap_getmem(uVar3);
       if (puVar2 != (uint *)0x0) break;
       if (uVar3 == param_1) {
         return (uint *)0x0;
@@ -834,16 +857,18 @@ uint * FUN_fffee1be(uint param_1)
       uVar4 = uVar3 >> 1;
     }
     *puVar2 = uVar3;
-    FUN_fffee10b();
+    free();
   } while( true );
 }
 
 
-// ===== FUN_fffee239 @ fffee239 (99 bytes)
+// ===== malloc @ fffee239 (99 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffee299) */
+/* malloc(n): size (n+15)&~7, minimum 8, splits the block from _heap_find; only caller _file_alloc
+   (unreferenced), so dead code [inference for the name] */
 
-uint * FUN_fffee239(uint param_1)
+uint * malloc(uint param_1)
 
 {
   uint *puVar1;
@@ -855,7 +880,7 @@ uint * FUN_fffee239(uint param_1)
     if (uVar3 < 8) {
       uVar3 = 8;
     }
-    puVar2 = (uint *)FUN_fffee1be(uVar3);
+    puVar2 = (uint *)_heap_find(uVar3);
     if (puVar2 != (uint *)0x0) {
       puVar1 = (uint *)*puVar2;
       if (*puVar1 - 8 < uVar3) {
@@ -878,9 +903,11 @@ uint * FUN_fffee239(uint param_1)
 }
 
 
-// ===== FUN_fffee29c @ fffee29c (27 bytes)
+// ===== heap_getmem @ fffee29c (27 bytes)
 
-int FUN_fffee29c(int param_1)
+/* sbrk wrapper: returns 0 for size < 1 or when sbrk fails [inference for the name] */
+
+int heap_getmem(int param_1)
 
 {
   bool bVar1;
@@ -889,7 +916,7 @@ int FUN_fffee29c(int param_1)
     bVar1 = false;
   }
   else {
-    param_1 = FUN_fff912c7();
+    param_1 = sbrk();
     bVar1 = false;
     if (param_1 != -1) {
       bVar1 = true;

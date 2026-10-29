@@ -1785,13 +1785,13 @@ byte FUN_fff97abc(undefined4 param_1)
   local_4 = param_1;
   FUN_fff979d3(auStack_8,param_1);
   FUN_fff977b3(&uStack_a,local_4);
-  iVar1 = FUN_fffede1d(auStack_8,&uStack_a,2);
+  iVar1 = strncmp(auStack_8,&uStack_a,2);
   if (iVar1 != 0) {
     local_6 = local_6 | 0x10;
   }
   FUN_fff97a44(auStack_8,local_4);
   uStack_a = 0;
-  iVar1 = FUN_fffede1d(auStack_8,&uStack_a,2);
+  iVar1 = strncmp(auStack_8,&uStack_a,2);
   if (iVar1 != 0) {
     local_6 = local_6 | 0x20;
   }

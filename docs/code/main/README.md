@@ -244,7 +244,7 @@ Full table: [docs/memory-maps.md](../../memory-maps.md#main-mc-image-ft-710_main
 | 0x00080000..0x000FFFFF | peripheral I/O (SYSTEM, ICU 0x87000, IWDT 0x88030, DA 0x88040, TPU 0x88100, S12AD 0x89000/0x89100, SCI 0x8A000.., ports 0x8C000..) |
 | 0x00100000..0x00107FFF | E2 data flash: **not present** on the R5F56514 (512 KB parts have none) **[fact: datasheet Table 1.3, T18]**; nothing references it, and settings live in the SPI EEPROM ([eeprom.md](eeprom.md)) **[fact, T10e]** |
 | 0xFFF80000..0xFFF8FFFF | constants: CAT tables (0xFFF805EC), menu strings, **key handler tables 0xFFF89D94..0xFFF8E0FF** (5 × 863, [ui-keys.md](ui-keys.md)), vector table 0xFFF8E6DC, DTBL/BTBL, .data images, CAT switch/reply tables (0xFFF8F014, 0xFFF8F480) |
-| 0xFFF8FBDB..~0xFFFEE1BE | code (2252 functions) |
+| 0xFFF8FBDB..0xFFFEE2B7 | code (2252 functions in T05; 2328 after T21); 0xFFFEDD9A..0xFFFEE2B7 is CC-RX C library stdio and `malloc`/`free` (#78) |
 | 0xFFFFFF00 / 0xFFFFFF80 | version string `V01-12` / fixed vectors |
 
 ### Global state block 0x20B04 **[fact]**

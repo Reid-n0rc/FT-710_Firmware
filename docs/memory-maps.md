@@ -176,7 +176,7 @@ Ghidra language **`rx62t:LE:32:default`** (community RX SLEIGH module, see `docs
 | 0x007FC000..0x007FFFFF | 16 KB | flash control registers (volatile) | IO_flash |
 | 0xFE7F5D00..0xFE7F5D73 | 116 B | option-setting memory, all 0xFF: little-endian, linear mode, no watchdog auto-start, serial programmer allowed with ID 16 × 0xFF, no access-window/ROM-code/Trusted-Memory protection **[fact: HWM §7; [T18](tasks/T18-renesas-docs-check.md) finding 3]** | not loaded |
 | 0xFFF80000..0xFFF8FFFF | | const data: strings (menus, CAT tables at 0xFFF805EC, reply templates at 0xFFF8F480), menu defaults 0xFFF80E4A.., menu titles 0xFFF83514 (P1, 6 × 20) / 0xFFF8358C (P2, 27 × 13), key class table 0xFFF83164, the **five 863-entry key handler tables** 0xFFF89D94 / 0xFFF8AB10 / 0xFFF8B88C / 0xFFF8C608 / 0xFFF8D384 (press … release, ending at 0xFFF8E100; [ui-keys.md](code/main/ui-keys.md)), the relocatable vector table at **0xFFF8E6DC** (256 × 4), DTBL/BTBL, .data images | ROM |
-| 0xFFF8FBDB.. | | code (PowerON_Reset at 0xFFF8FBDB; code reaches ~0xFFFEE1BE, then 0xFF fill) | ROM |
+| 0xFFF8FBDB.. | | code (PowerON_Reset at 0xFFF8FBDB; code ends at 0xFFFEE2B7 with the CC-RX C library (stdio, `malloc`/`free`, #78), then 0xFF fill) | ROM |
 | 0xFFFFFF00 | | version string `V01-12` | ROM |
 | 0xFFFFFF80..0xFFFFFFFF | | fixed vector table (EXTB). Entries 0xD0..0xFC are used | ROM |
 

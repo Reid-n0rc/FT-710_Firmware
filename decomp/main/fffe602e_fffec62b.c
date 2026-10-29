@@ -1072,7 +1072,7 @@ void FUN_fffea63a(char param_1)
   
   local_1 = param_1;
   if (param_1 == '\x05') {
-    iVar1 = FUN_fffede1d(&DAT_0001b3a0,&DAT_00009baa,0xc);
+    iVar1 = strncmp(&DAT_0001b3a0,&DAT_00009baa,0xc);
     if (iVar1 != 0) {
       DAT_0001b3a8 = DAT_00009bb2;
       DAT_0001b3a4 = DAT_00009bae;
@@ -1084,7 +1084,7 @@ void FUN_fffea63a(char param_1)
     }
   }
   else if (param_1 == '\x02') {
-    iVar1 = FUN_fffede1d(&DAT_0001b37c,&DAT_00009b4d,0xc);
+    iVar1 = strncmp(&DAT_0001b37c,&DAT_00009b4d,0xc);
     if (iVar1 != 0) {
       DAT_0001b384 = DAT_00009b55;
       DAT_0001b380 = DAT_00009b51;
@@ -1096,7 +1096,7 @@ void FUN_fffea63a(char param_1)
     }
   }
   else if (param_1 == '\x03') {
-    iVar1 = FUN_fffede1d(&DAT_0001b388,&DAT_00009b6c,0xc);
+    iVar1 = strncmp(&DAT_0001b388,&DAT_00009b6c,0xc);
     if (iVar1 != 0) {
       DAT_0001b390 = DAT_00009b74;
       DAT_0001b38c = DAT_00009b70;
@@ -1108,7 +1108,7 @@ void FUN_fffea63a(char param_1)
     }
   }
   else if (param_1 == '\x04') {
-    iVar1 = FUN_fffede1d(&DAT_0001b394,&DAT_00009b8b,0xc);
+    iVar1 = strncmp(&DAT_0001b394,&DAT_00009b8b,0xc);
     if (iVar1 != 0) {
       DAT_0001b39c = DAT_00009b93;
       DAT_0001b398 = DAT_00009b8f;
@@ -1119,8 +1119,7 @@ void FUN_fffea63a(char param_1)
       DAT_0001ff12 = 0x15;
     }
   }
-  else if ((param_1 == '\x01') &&
-          (iVar1 = FUN_fffede1d(&DAT_0001b370,&DAT_00009b2e,0xc), iVar1 != 0)) {
+  else if ((param_1 == '\x01') && (iVar1 = strncmp(&DAT_0001b370,&DAT_00009b2e,0xc), iVar1 != 0)) {
     DAT_0001b378 = DAT_00009b36;
     DAT_0001b374 = DAT_00009b32;
     DAT_0001b370 = DAT_00009b2e;
