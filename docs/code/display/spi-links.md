@@ -19,10 +19,11 @@ RSPI1 and RSPI3 are not used (`rspi_open` is only called for channels 2 and 4, a
 SPI data mode is the same on every channel: **8-bit, MSB first, CPOL 0, CPHA 1 (SPI mode 1)** **[fact: SPCMD0 written by `rspi_hw_config`
 0x2011D9A8]**.
 
-How the channels map to the pins is **[inference]**. RSPI2 is the channel that the SDR update code switches to master mode, and the debug overlay
+How the channels map to the pins is **[fact, #82]**: in the RZ/A1H pin-function table (R01UH0403EJ0700) P8_3..P8_6 alt 3 are
+RSPCK2/SSL20/MOSI2/MISO2 and P2_8..P2_11 alt 8 are RSPCK4/SSL40/MOSI4/MISO4, and the two SS pins are also the TINT inputs whose ISRs
+start the transfers (P8_4 = TINT119, GIC 535 → `rspi_start(2)`; P2_9 = TINT33, GIC 449 → `rspi_start(4)`). It also fits the code: RSPI2 is the channel that the SDR update code switches to master mode, and the debug overlay
 labels its frame counter "S". RSPI4 carries the DSP's REC/PLAY audio, and its counter is labelled "D". The RSPI0 test screen polls P2_13, which is
-in the FT4222H pin group (docs/hardware.md, service manual p62). The pin-to-function table of the RZ/A1H is not in the repo, so the alt-function
-numbers have not been checked against the datasheet.
+in the FT4222H pin group (docs/hardware.md, service manual p62).
 
 ```mermaid
 flowchart LR

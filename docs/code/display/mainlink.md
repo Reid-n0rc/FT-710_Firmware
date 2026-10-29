@@ -187,6 +187,25 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 MAIN's RX length table (`FUN_fff95277`) and the DISPLAY table agree for every command they share (C3 0x23, C4 0x107, C5 7, E0 6, E1 7, E2 7,
 E3 9, E4–E6 5, E7/E8 10, F0 10, F1 8) **[fact]**. MAIN also knows 0xFD (length 0xB), which the DISPLAY never sends.
 
+### Where the DISPLAY's own version comes from and where it shows (#85) [fact]
+The DISPLAY image holds its version and date as **4 + 2 BCD bytes in `.rodata`**, not as text: 0x20165A3C–0x20165A3D = `01 08`
+(V01-08) and 0x20165A3E–0x20165A41 = `20 23 06 29` (2023-06-29); file offsets 0x65A3C–0x65A41. There is no `"V01-08"` string in the
+image. Two functions copy these bytes into a frame 0xF0 (literal pools 0x20116324–0x20116330 and 0x2010DBD0–0x2010DBDC; no other
+literal points at them):
+- `mainlink_send_hello` 0x201162A4, at power-up: `F0 01 08 20 23 06 29 <key code>`;
+- `rx_boot_program` 0x2010D50C, after it has reprogrammed MAIN over the RX boot interface (0x2010D83C–0x2010D88C builds the same frame).
+
+MAIN (`displink_rx_F0_hello` 0xFFF9546A) turns b1, b2 into the text `"Vxx-yy"` at 0x1436 (`ver_display`) and b4..b6 into
+`"yy-mm-dd"`. From there it shows up in two places:
+- **CAT `VE1;`** (`cat_ext_VE` 0xFFFA54B3) → `VE10108;` (confirmed on the radio, [cat-commands.md](../../cat-commands.md));
+- **frame 0x60** (`displink_build_60` 0xFFF96241): MAIN sends all four versions back as BCD pairs, and the DISPLAY keeps them at
+  0x208F4BF4..0x208F4BFA (`fw_installed_versions_set`), which the firmware-update menu shows as the installed version and compares
+  with the file versions to pre-mark newer files ([update.md](update.md)).
+
+So a normal-mode version marker for a modified DISPLAY image is the two bytes at file offset 0x65A3C (and, if wanted, the date at
+0x65A3F–0x65A41; MAIN ignores the century byte 0x65A3E): CAT `VE1;` and the update menu then report it. A value above the next real release would stop that release from being
+pre-marked in the update menu (it can still be ticked by hand) **[inference from the compare]**.
+
 ## 5. One exchange
 
 ```mermaid
