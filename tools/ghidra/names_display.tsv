@@ -817,3 +817,22 @@
 2012c4a0	audio_error_check	audio_state/audio_error/audio_clear_error
 2012e6c8	screen_saver_exit	layers back after 0x7B
 20128f4c	text_list_draw	scr_text_list body
+# --- #178: scope renderers, MULTI panel, text view (docs/code/display/gui.md "Scope drawing"); show in decomp/ after the next re-export
+2015d49c	scope3d_front_large	3DSS front trace, large layout (mode 8, h 186/240)
+2015d5e8	scope3d_front_small	3DSS front trace, MULTI layout (mode 9, h 80/144)
+2015d70c	scope_front_trace_draw	(fb, y, x, w, h, mode, range, stride): gradient-filled level trace
+2015d3b8	scope2d_draw_normal	2D spectrum + waterfall 100/133 px (waterfall size 1 NORMAL)
+2015d874	scope2d_draw_size0	2D spectrum + waterfall 60/63 px (size 0, never sent by MAIN)
+2015d958	scope2d_draw_expand	2D spectrum + waterfall 140/213 px (size 2 EXPAND)
+2015d508	scope2d_draw_multi	2D spectrum + waterfall 42/75 px, MULTI layout
+2015db80	scope2d_spectrum_fill	filled spectrum, colour 0x208084CC; height table 0x203A1EE0
+2015da9c	scope2d_waterfall_blit	h/2 rows x 2 px from ring 0x2049476C
+2015d1c4	scope2d_set_speed	SPEED -> period 0x208084CE (600..30), depth 0x208084D2 (20..1), 100 rows/period
+2015d2a8	scope2d_set_color	COLOR 0..10 -> spectrum fill 0x208084CC
+2015d334	multi_panel_draw	MULTI: oscilloscope + AF-FFT spectrum + AF-FFT waterfall at y 325
+2015d650	osc_draw	oscilloscope min/max envelope, 391 x 79 at (4, 325)
+2015dc90	affft_spectrum_draw	AF-FFT spectrum 391 x 39 at (405, 325)
+2015da3c	affft_waterfall_blit	AF-FFT waterfall 39 rows at (405, 365)
+2012470c	scope_text_view_draw	third scope view (0x208004D0 = 3): RX/TX text lines
+20131154	decode_text_rx	RX text filter (47-char sets 0x20801DE0..) -> 0x208F48C8 (inference: decoder)
+20131354	pkt23_tx_text	packet 0x23: TX text line 0x208F489F
