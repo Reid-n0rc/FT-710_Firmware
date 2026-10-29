@@ -375,17 +375,25 @@ Function ids, in slot order **[fact for the sources; the names 0..0x14 match the
 | 4 / 5 | CONTRAST / DIMMER | 0x9BE9 / 0x9BEA |
 | 6 | M-GROUP | no text in `0x37` (the `0x31` pop-up shows the group of the current channel) |
 | 7 | MIC GAIN | 0x9BEC..0x9BEF by mode class |
-| 8 | PROC on/off | 0x9BF0; greyed outside SSB/AM/FM (`FUN_fffc3d75`) |
+| 8 | MIC EQ on/off (DISPLAY label `MIC EQ`; 0x9BF0 is the parametric-EQ flag `PR1`) | 0x9BF0; greyed outside SSB/AM/FM (`FUN_fffc3d75`) |
 | 9 / 0x0A | PROC LEVEL / AMC LEVEL | 0x9BF1 ("OFF" at 0) / 0x9BF2 |
 | 0x0B / 0x0C / 0x0D | VOX GAIN / VOX DELAY / ANTI VOX | 0x9BF3 / 0x9BF4 or 0x9BF5 ("ms") / 0x9BF6 or 0x9BF7, the pair chosen by VOX SELECT 0x9AF3 |
 | 0x0E / 0x0F | RF POWER / MONI LEVEL | "W" / 0x9BFC..0x9C00 by mode ("OFF" at 0) |
 | 0x10 / 0x11 | KEYER on/off / BK-IN (VOX) on/off | 0x9C02, greyed outside CW / block+0 bit 1 (`FUN_fff99dbf`) |
 | 0x12 / 0x13 / 0x14 | CW SPEED / CW PITCH / BK-DELAY | 0x9C03 ("wp") / 0x9C04 / 0x9C05 ("ms") |
-| 0x16, 0x17 (0x35 while recording, UI +0x92), 0x18, 0x2D, 0xFF, 0x15, 0x3A, 0x30..0x34 | not named | 0x16 is greyed in DATA/RTTY/PSK and has no text; 0x15 and 0x3A show per-mode settings (`FUN_fffb54a0` / `FUN_fffb552c`, base 0x9BCA); 0x30..0x34 have no text and the DISPLAY adds an icon |
+| 0x15 / 0x3A | AESS / AESS-CF | per-mode settings (`FUN_fffb54a0` / `FUN_fffb552c`, base 0x9BCA); the same as the `0x31` pop-ups 0x33 / 0x58 |
+| 0x16 | MESSAGE | greyed in DATA/RTTY/PSK, no text (opens the message-memory screen `0x39`) |
+| 0x17 / 0x35 | RECORD / STOP | 0x35 replaces 0x17 while recording (UI +0x92) |
+| 0x18 | PLAY | no text (opens the PlayList `0x3A`) |
+| 0x2D | TXW | TX watch (listen on the TX frequency in split) **[guess from the label]** |
+| 0x30..0x34 | RADIO / CW / OPERATION / DISPLAY / EXTENSION | no text, and the DISPLAY adds an icon: shortcuts to the five setting-menu groups RADIO SETTING … EXTENSION SETTING |
+| 0xFF | (empty slot) | |
 
-The names of ids 0x15..0x18, 0x2D, 0x30..0x35 and 0x3A are open (#212). Their labels are bitmaps in the DISPLAY image and the `SF` command
-does not list them; neither image holds a text table of the FUNC function names (a search of both for the known labels, for example
-`CW PITCH`, `BK-DELAY`, `MIC GAIN`, finds none of them; `PITCH` occurs only in menu texts such as `PITCH OFFSET`) **[fact]** (#179), so naming them needs the bitmaps decoded or a screenshot. 0x30..0x34 are five of a kind, perhaps the five message memories **[guess]**.
+Labels **[fact]**: rendered from the DISPLAY V01-08 image, sprite table 0x208019EC[id] (normal) and 0x20801AD8[id] (greyed, used when the slot's
+flag bit 7 is set; it has sprites only for ids 6, 8, 0x10, 0x11, 0x14–0x16, 0x2D, 0x3A and 0x40), read by `scr_func_panel` 0x2012A9EC. Ids 0x19..0x2C,
+0x2E, 0x2F, 0x36..0x39 and 0x3B..0x40 have no normal label. The `SF` command does not list ids above 0x14. That MESSAGE / PLAY open those screens,
+and that 0x30..0x34 jump to the menu groups (named like MAIN's P1 titles at ROM `RADIO SETTING`…), is an **[inference]** from the labels; the
+"five message memories" guess is withdrawn.
 
 #### `0x39` message-memory screen (0xE9 bytes; DISPLAY `scr_vfo` / `FUN_201293f8`)
 
