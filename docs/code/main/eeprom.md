@@ -82,7 +82,7 @@ Derived from every `eeprom_read`/`eeprom_write` call (19 call sites). The blocks
 | 0x4D58 | 0x93A7 | 5×0x98 | **Message memory type 0**: u16 length + 150 bytes = a **CW keying bitstream** (#148). `keyer_task` loads it into the keyer's element buffer 0x120BC (a 1,200-bit ring; `FUN_fffbb024` appends 1 bit per mark unit, 3 for a dash, 0 for a space; position 0x1FA38) **[fact]**; that the stored messages are recorded from the paddle is **[inference]** | `eeprom_save_msg`(0,n)` |
 | 0x5050 | 0x969F | 5×0x33 | **Keyer memory text** (`KM`): length + 50 characters | `eeprom_save_msg`(1,n)`: `cat_KM`, the menu editor `FUN_fffe481d` |
 | 0x514F | 0x979E | 5×0x32 | **Text slots** (`EM`). Never saved on their own, only by the full save | `eeprom_save_msg`(2,n)` (no caller) |
-| 0x5249 | 0x9898 | 0x192 | **Tuner memory** **[fact]** (#148): write index 0x9898, count 0x9899, 100 × {u16 frequency key, 0x1B3AF, 0x1B3AD}. 0x1B3AD/0x1B3AF are two of the three internal-tuner relay bytes that `atu_relay_update` sends on /SST6 (getters `FUN_fffec500`/`FUN_fffec50f`); a successful tune copies the search values 0x1B3AE/0x1B3B0 into them (`FUN_fffed12f`), and `atu_mem_store` keeps them per frequency so a later tune can start from them. Which byte is the L and which a C bank is not traced | `eeprom_save_atu_mem` from `atu_mem_store` |
+| 0x5249 | 0x9898 | 0x192 | **Tuner memory** **[fact]** (#148): write index 0x9898, count 0x9899, 100 × {u16 frequency key, 0x1B3AF, 0x1B3AD}. 0x1B3AD/0x1B3AF are two of the three internal-tuner relay bytes that `atu_relay_update` sends on /SST6 (getters `FUN_fffec500`/`FUN_fffec50f`); a successful tune copies the search values 0x1B3AE/0x1B3B0 into them (`FUN_fffed12f`), and `atu_mem_store` keeps them per frequency so a later tune can start from them. Which byte is the L and which the C bank cannot be told from the code: the tune search steps both the same way from the per-band table at 0xFFF87BFC ({max, start, step, fine step}); open in #166 | `eeprom_save_atu_mem` from `atu_mem_store` |
 | 0x53DB | 0x9A2A | 0x45C | **Operating state**: menu values (0x9A2A.., defaults from ROM 0xFFF80E4A.. at the same offset), PE parameters 0x9ADA, APO 0x9B0F, band memories 0x9C69/0x9C99, VFO-A record 0x9D09, VFO-B record 0x9D63, active VFO 0x9DBD, VFO states 0x9DBE/0x9DBF, bands 0x9DC3/0x9DC4, auto-power-on flag 0x9DC5, memory backups 0x9DCE/0x9E28. The block ends at 0x9E85 | `eeprom_save_opstate` `eeprom_save_opstate` |
 
 Sizes check: 0x0112 + 2·0xCA8 = 0x1A62; 0x1B01 + 133·0x5A = 0x49C3; 0x49C3 + 0x395 = 0x4D58; … 0x53DB + 0x45C = 0x5837. **[fact]**
@@ -116,9 +116,11 @@ More fields **[fact]** (#73):
 | Offset | Field |
 |---|---|
 | +0x04 | NARROW flags per mode class (`cat_NA`, `key_nar_short`): bit 7 SSB (modes 0/1), bit 5 CW (2/3), bit 3 RTTY (0xC/0xD), bit 2 DATA (8/9/0xE). AM and FM have no flag: NAR switches the mode itself (AM ↔ AM-N, FM ↔ FM-N, DATA-FM ↔ D-FM-N, `FUN_fffc4bd5`). `align_load_preset` also sets bit 4 from preset flag 0x08 (meaning not traced) |
-| +0x06 | bit 4 = DNR on (`key_dnr_short` toggles it; `key_dnr_long` also uses this byte) |
+| +0x06 | bits 0–3 = DNR level 1..15 (`RL`, `cat_RL` 0xFFFADA46), bit 4 = DNR on (`NR`, `key_dnr_short`); bits 5–7 unused (#161) |
+| +0x07..+0x09, +0x47 | no users in MAIN; written 0 by the defaults (#161) |
+| +0x3C..+0x45 | the FM / DATA-FM per-mode block, same layout as the others (#161) |
 
-Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200`, `0x0000`. The 20 bytes from +0x46 come from ROM 0xFFF80947, or from 0xFFF80B4F.. for the dest-specific 60 m channels. T10g owns the full field map.
+Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200`, `0x0000`. The 20 bytes from +0x46 come from ROM 0xFFF80947, or from 0xFFF80B4F.. for the dest-specific 60 m channels. The full field map, the per-mode block layout and its defaults are in [radio-control.md](radio-control.md#the-0x5a-byte-channel-record).
 
 ### Menu block 0x9A2A..0x9C34 (EEPROM 0x53DB..0x55E5) **[fact]** (#73)
 
