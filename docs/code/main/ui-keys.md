@@ -103,7 +103,7 @@ The empty slot handler is `key_nop` 0xFFFC4A8D (a single `RTS`) **[fact]**. The 
 **[fact]** (#70):
 
 - **0xFFF8E100..0xFFF8E19F**, five 8-entry tables, one per role (press, short, long, repeat, release in that order, 0x20 apart). Five
-  helpers 0xFFFC40D7 / 0xFFFC410A / 0xFFFC413D / 0xFFFC4170 / 0xFFFC41A3 (one per role) take a slot number: slots 0..0xC are mapped to a key
+  helpers 0xFFFC40D7 / 0xFFFC410A / 0xFFFC413D / 0xFFFC4170 / 0xFFFC41A3 (`key_slot_press` / `_short` / `_long` / `_repeat` / `_release`, T23e; one per role) take a slot number: slots 0..0xC are mapped to a key
   code through the u16 list at 0xFFF88534 and call the 863-entry table; slots 0xD..0x14 call these small tables. 31 distinct handlers.
   The callers pass the **microphone button assignments** MIC UP 0x9ACC, MIC DOWN 0x9ACD and MIC P1..P4 0x9AC8..0x9ACB (`EX030120`..`EX030125`,
   values 0..20; the SSM-75E keys 0x348/0x34E/0x35B..0x35E). Values 0..12 act as LOCK, QMB, A/B, V/M, TUNER, VOX/MOX, MODE, ZIN/SPOT, SPLIT,

@@ -217,7 +217,7 @@ flowchart TD
 |---|---|---|---|
 | `menu_defaults_mode` `menu_defaults_mode` | 0x9A2A..0x9A90 | ROM 0xFFF80E4A.. | 5 mode groups (copied in 6 chunks) |
 | `menu_defaults_cw` `menu_defaults_cw` | 0x9A91..0x9AB4 | ROM 0xFFF80EB1 | |
-| `menu_defaults_operation` `menu_defaults_operation` | 0x9AB5..0x9B00 | ROM 0xFFF80ED5 | Then destination-dependent: HF/50M/70M/AM MAX POWER = `FUN_fffb3e6f(0..4)`. KEYBOARD LANGUAGE (0x9AC7) = 0 (JAPANESE) for 0x4380/0x60E6/0x020B, 1 (ENGLISH US) for 0x1CB9/0x306F/0x315B/0x50E2/0x7753/0x9CF7/0xD32D, 2 (ENGLISH UK) + TX TOT 10 min for 0xD950/0xA4C5, else 5 (GERMAN) + TX TOT 10 min |
+| `menu_defaults_operation` `menu_defaults_operation` | 0x9AB5..0x9B00 | ROM 0xFFF80ED5 | Then destination-dependent: HF/50M/70M/AM MAX POWER = `max_power_limit(0..4)` (0xFFFB3E6F). KEYBOARD LANGUAGE (0x9AC7) = 0 (JAPANESE) for 0x4380/0x60E6/0x020B, 1 (ENGLISH US) for 0x1CB9/0x306F/0x315B/0x50E2/0x7753/0x9CF7/0xD32D, 2 (ENGLISH UK) + TX TOT 10 min for 0xD950/0xA4C5, else 5 (GERMAN) + TX TOT 10 min |
 | `menu_defaults_display` `menu_defaults_display` | 0x9B01..0x9B23 | ROM 0xFFF80F21 | MY CALL default "FT-710" |
 | `FUN_fffb1303` | 0x9B24..0x9B2D | ROM 0xFFF80F44 | Unused bytes after EXT MONITOR |
 | `menu_defaults_presets` `menu_defaults_presets` | 0x9B2E + 0x1F × n | ROM 0xFFF80F4E (×5) | Names "FT-8", "PRESET2".."PRESET5" patched in |
@@ -278,11 +278,11 @@ The `on_step` callbacks get the direction from UI-state +0x421 (0 = up) and do n
 
 | Item | Stepper | Behaviour |
 |---|---|---|
-| LCUT FREQ (all modes) | `FUN_fffcdecf` | 0 = OFF, 1..19; clamps at both ends, no wrap |
-| HCUT FREQ (all modes) | `FUN_fffcdf37` | 1..67, then 0 = OFF **above** the top: down from OFF goes to 67, up from 67 goes to OFF, up from OFF stays OFF, down stops at 1 |
+| LCUT FREQ (all modes) | `menu_step_lcut_freq` 0xFFFCDECF (T23e) | 0 = OFF, 1..19; clamps at both ends, no wrap |
+| HCUT FREQ (all modes) | `menu_step_hcut_freq` 0xFFFCDF37 (T23e) | 1..67, then 0 = OFF **above** the top: down from OFF goes to 67, up from 67 goes to OFF, up from OFF stays OFF, down stops at 1 |
 | CAT-1/2/3 RATE | `menu_step_u8(0, 4)` then `sci3_set_baud` (CAT-1) | the new baud rate applies at once |
 | KEYBOARD LANGUAGE | `menu_step_u8(0, 10)` | on a change it also stores the value at 0x1B4FE, starts timer 0x2B (100) and sets +0x401, which sends the layout to the DISPLAY |
-| HF / 50M / 70M / AM MAX POWER | `menu_step_u8(5, FUN_fffb3e6f(0..3))` | the upper limit is the destination-dependent maximum that also sets the default |
+| HF / 50M / 70M / AM MAX POWER | `menu_step_u8(5, max_power_limit(0..3))` (`max_power_limit` 0xFFFB3E6F, T23e) | the upper limit is the destination-dependent maximum that also sets the default |
 | TX BPF SEL | `menu_ex010113_step` 0xFFFCE013 | skips 5; 6 (TTBF) only with 0x4760 set on destinations 0x315B/0x50E2/0x1CB9 (see the EX table above) |
 | SCREEN SAVER | `menu_ex040104_step` 0xFFFCF123: `menu_step_u8(0, 3)` | then `screensaver_timer_restart` 0xFFFB263D (named `cat_apo_reset` in the committed decompile until the next re-export), so the new time applies at once: 0 = OFF, 1/2/3 = 15/30/60 min ([README.md](README.md#screen-saver-timer-slow-timer-0), #208) |
 

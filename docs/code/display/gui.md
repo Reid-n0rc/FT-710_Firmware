@@ -121,7 +121,7 @@ sequenceDiagram
   participant ML as MAIN link RX (mainlink.md)
   participant R as root task: gui_main_loop
   participant V as VDC5 ch0+ch1
-  Note over R: wake-up every 33 ms (periodic slot 0), FUN_201525F8 = slp_tsk
+  Note over R: wake-up every 33 ms (periodic slot 0), itron_tslp_tsk 0x201525F8 (T23e)
   ML->>R: latest screen packet (`mainlink_get_last_frame`, 0x240 B)
   R->>R: gui_screen_update: compare with 0x208F0B2A, dispatch on byte 0
   R->>R: per-frame widgets: status icons, filter graph, meter, scope, markers
@@ -319,7 +319,7 @@ firmware) still carries **[inference]**. The Ghidra listing confirms it: all 68 
 stores to `450[rN]` in an `rx-elf-objdump` sweep), with immediates 0–13, 0x1E, 0x1F, 0x22–0x25, 0x27–0x2D, 0x30–0x33, 0x38, 0x39,
 0x43–0x45, 0x47–0x49, 0x55, 0x58, 0x5E and 0xFF, so 0x3A and 0x40–0x42 are never stored, not even through a computed pointer **[fact]**.
 The on/off ids 0x26 (PROC), 0x2F (BK-IN) and 0x46 (KEYER) are not stored either: `FUN_fffc754b`, `FUN_fffc79b8` and `FUN_fffc7975` pass
-them only to `popup_time_get` (`FUN_fffc8cbb`) and start the popup timer (`popup_timer_start`, `FUN_fffc8d8c`: 0x1B4EF, UI +0x1C0/+0x1C1 = 1)
+them only to `popup_duration_get` (`FUN_fffc8cbb`) and start the popup timer (`popup_open_timed`, `FUN_fffc8d8c`: 0x1B4EF, UI +0x1C0/+0x1C1 = 1)
 without writing +0x1C2 **[fact]**, so that popup shows whatever id was stored last **[inference]**. Slot 64 has no title at all (above).
 
 ## Scope drawing (#83)

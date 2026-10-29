@@ -55,9 +55,9 @@ flowchart LR
 
 This is a table-driven driver in the Renesas sample-code style. `rspi_hw_config` gets the register addresses for channel *n* from an 11-word
 table at **0x20166B4C + n·0x2C**: SPCR, SPPCR, SPBR, SPDCR, SPCKD, SSLND, SPND, SPSCR, SPCMD0, SPBFCR, SSLP **[fact]**. The bases are
-RSPI0..4 = 0xE800C800, 0xE800D000, 0xE800D800, 0xE800E000, 0xE800E800. The bit-field helpers are `FUN_20157138` (8-bit RMW
-`(reg, val, shift, mask)`), `FUN_2015714c` (16-bit), `FUN_20157160` (32-bit), `FUN_20157174` / `FUN_20157184` (8/16-bit field read
-`(reg, shift, mask)`) **[fact]**.
+RSPI0..4 = 0xE800C800, 0xE800D000, 0xE800D800, 0xE800E000, 0xE800E800. The bit-field helpers are `reg_rmw8` 0x20157138 (8-bit RMW
+`(reg, val, shift, mask)`), `reg_rmw16` 0x2015714C, `reg_rmw32` 0x20157160, `reg_read8` / `reg_read16` 0x20157174 / 0x20157184 (8/16-bit
+field read `(reg, shift, mask)`) **[fact]** (names from T23e).
 
 `rspi_hw_config(ch, mode)` 0x2011D9A8 **[fact]**:
 

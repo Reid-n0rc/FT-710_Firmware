@@ -21,7 +21,7 @@
 2015538c	strcmp
 2014e2a4	strncmp
 20154a08	sprintf
-20155480	__aeabi_uidivmod
+20155480	__aeabi_idivmod	Signed divide: negates negative operands ((a | b) < 0), then the shared unsigned loop [fact]; was named __aeabi_uidivmod, which is the unsigned entry 0x20156260 [inference for the ABI names]
 # --- uITRON-style kernel (error codes E_ID -18, E_NOEXS -42, E_CTX -25)
 201500f4	itron_acre_tsk	create task, id 0 = auto-assign; TCB table 0x208DBBA0
 20151768	itron_sta_tsk
@@ -841,3 +841,69 @@
 # --- #178 (image read): scope marker code; 0x20123EC4 has no function yet, ApplyNames creates it; show in decomp/ after the next re-export
 20123ec4	scope_markers_draw	(r0 = 1 MULTI / 0 large) red 0xF800 RX/TX marker frames on graphics 1; zeroes range 0x208007D4
 201244d8	scope_markers_update	checks 0x20800482 / 0x208004D0, tail-branches to scope_markers_draw(layout)
+# --- T23e (merged from names_display.T23e.tsv with tools/names_merge.py)
+20156260	__aeabi_uidivmod	Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the shared loop at 0x201554DC [fact]; the 71-caller divide [fact]
+2015507c	memcmp	(a, b, n): word compare when both are aligned, byte compare otherwise, returns the difference [fact]
+20155122	strlen	Word-at-a-time string length [fact]
+201550dc	strcpy	(dst, src): word copy while aligned, then bytes up to the NUL [inference]
+2015525c	__aeabi_memset	(dst, n, c): replicates c into a word and joins the fill loop of __aeabi_memclr [fact]; armcc argument order [inference]
+20155274	__aeabi_memclr	(dst, n): zero fill with alignment fix-up, 32-byte blocks [fact]
+20155310	__aeabi_memcpy4	(dst, src, n): word copy in 32-byte blocks with preload, no alignment check [fact]; the aligned memcpy entry [inference]
+20164d54	__aeabi_i2d	int -> IEEE double (sign, exponent 0x41D - clz, mantissa) [fact]
+20164d82	__aeabi_ui2d	unsigned int -> IEEE double [fact]
+20101030	dcache_clean_range	(addr, len): CP15 clean D-cache line by MVA over the range (line size from CTR), then DSB [fact]
+20157138	reg_rmw8	(reg, val, shift, mask): *reg = *reg & ~mask | val << shift, 8-bit [fact]
+2015714c	reg_rmw16	16-bit read-modify-write, same arguments (spi-links.md) [fact]
+20157160	reg_rmw32	32-bit read-modify-write, same arguments [fact]
+20157174	reg_read8	(reg, shift, mask): (*reg & mask) >> shift, 8-bit [fact]
+20157184	reg_read16	16-bit field read (spi-links.md) [fact]
+201204a4	riic_base	(ch 0..3): RIIC register base 0xFCFEE000 + 0x400*ch (docs/memory-maps.md) [fact]
+201525f8	itron_tslp_tsk	(tmout): E_CTX in a non-task context; consumes a wake-up count or waits (TMO_FEVR -1 at 40 call sites, 10 ms at 12) [fact]; the wake-up wait of the periodic tasks (gui.md) [fact]
+201511e8	itron_sig_sem	(semid 1..0x40): semaphore table 0x208DBCA4, E_ID / E_NOEXS, releases a waiting task or counts up [fact]
+20152bb0	itron_twai_sem	(semid, tmout): semaphore table 0x208DBCA4, E_CTX, waits with time-out (300, 1000 or TMO_FEVR) [fact]; paired with itron_sig_sem around the FS and link code [fact]
+2014eb94	itron_clr_flg	(flgid 1..0x40, clrptn): flag table 0x208DBDA4; callers pass 0 or ~ptn [fact]
+20150dcc	itron_rot_rdq	(tskpri): 0 = own priority, 1..8: rotates the ready queue 0x208DC18C[pri] and dispatches [fact]
+2014e884	itron_chg_pri	(tskid, tskpri): 0 = self / initial priority, pri < 9, requeues the TCB [fact]
+20151c3c	itron_tloc_mtx	(mtxid 1..0x20, tmout): table 0x208DBFC4, E_ILUSE, E_TMOUT [fact]; the RTC I2C lock (rtc_read_* / rtc_write_*) [fact]
+20152df4	itron_unl_mtx	(mtxid 1..0x20): table 0x208DBFC4, E_ILUSE when not the owner [fact]
+20151aa4	itron_tget_mpf	(mpfid 1..0x10, *p_blk, tmout): takes a block from the free list of pool table 0x208DBF24 or waits; E_TMOUT for tmout 0 [fact]
+20150c70	itron_rel_mpf	(mpfid, blk): returns a block to the pool; used by fs_work_free [inference]
+20150ba0	itron_get_tid	(*p_tskid): current task ID [inference]; fs_task_ctx_get indexes 0x2091D0BC[1..0x100] with it [fact]
+201545f0	knl_memcpy	Byte copy used by the acre_* calls to copy the creation packet [fact]
+2011758c	knl_addr_in_image	1 if p is within __main .. 0x20428834 (the code and rodata image) [fact]; check of entry/name pointers in acre_* [inference]
+20154498	knl_timeout_add	(tmout, tcb, tskid): due time = tmout + system time 0x208003C8, links the TCB into the timer wheel 0x20800400 (mask 0x208003E0) [fact]
+20153ad4	knl_timeout_remove	(tcb, tskid): unlinks the TCB from its timer-wheel slot [fact]
+20144800	fs_set_error	(err, file): last error 0x20808BA4 = err, FUN_2014d98c(err), file+0x10 = err; returns -1 for err < 0 [fact]
+2014485c	fs_set_error_ret	(err, ret): last error 0x20808BA4 = err, returns ret [fact]
+2014a4a4	fs_check_ready	-18 when the FS is not initialised (0x20808B90), -17 without a drive list (0x20808BA0), else 0 [fact]
+20144918	fs_find_drive	(letter, *drv): walks the drive list 0x20808BA0 for +0x11 == letter; -12 when missing [fact]
+20141ff0	fs_fclose	(fd): work buffer, FUN_20141f44(fd, buf), free; error -31 without a buffer [fact]; close (update.md) [fact]
+2014e118	fs_work_alloc	itron_tget_mpf from pool 0x20808BC8, 0 on failure [fact]
+2014e14c	fs_work_free	itron_rel_mpf to pool 0x20808BC8 [fact]
+2014d95c	fs_task_ctx_get	Per-task FS context 0x2091D0BC[tskid] (itron_get_tid), -72 for an ID out of range [fact]
+2014d148	fs_memset	(dst, c, n): word fill for aligned 0x200-byte blocks, else bytes [fact]
+2014d128	fs_memcpy	(dst, src, n): byte copy [fact]
+2014d220	fs_strlen	Byte-wise string length [fact]
+2014d35c	fs_toupper	'a'..'z' -> 'A'..'Z' [fact]
+2014ca90	sjis_is_lead	1 for Shift-JIS lead bytes 0x81..0x9F and 0xE0..0xFC [fact]
+2014d93c	fat_ld_dword	32-bit field read from an on-disk structure (fat_mount) [fact]
+2014d900	fat_ld_word	16-bit field read from an on-disk structure (fat_mount) [fact]
+20144980	fat_clust2sect	(vol, cluster): 0 for cluster < 2, else data start + (cluster - 2) * sectors per cluster [fact]
+2014d9c0	fs_lock_a	Locks the per-drive semaphore of table 0x2091D4C0 (itron_twai_sem, 300 ms); -37 without one [fact]
+2014da64	fs_unlock_a	Releases it (itron_sig_sem); -38 without one [fact]
+2014db6c	fs_lock_b	Same for the second table 0x2091D4E8 (-34) [fact]
+2014dc10	fs_unlock_b	Same release for 0x2091D4E8 (-35) [fact]
+20144a10	fs_dev_op1	(drv, ...): device op +0x18 with command 1 between the device locks of drv+0x70; -46 / -47 on lock errors [fact]
+20144ac0	fs_dev_op2	Same with command 2 [fact]
+20103ba0	sd_state_bit6	Bit 6 of the SD state 0x20800094; 0 is used as "no SD card" (error -1) [fact for the bit; meaning inference] (update.md, display-link.md)
+20103bb0	sd_state_bit7	Bit 7 of the SD state 0x20800094 (cleared by the SD task on a card change) [fact]; card ready [inference] (update.md)
+20111174	work_buf_get	(n): the shared 0xC0000-byte work buffer 0x20819560, n bytes cleared first (n < 0: all) [fact]
+20132f44	gui_area_dirty_set	(i): 0x208F4D80[i] = 1 [fact]; a redraw request per screen area (meter, scope) [inference]
+201219b8	gui_draw_progress_bar	(fb, x, y, percent): frame and bar 0xCE x 0x10, percent clamped to 100 [fact]
+20124744	mainlink_send_audio_error	(code): E7 (PlayList owner 0x2080048E = 1) or E8 status frame with b1 = 0xFF and the error code (mainlink.md) [fact]
+2011d84c	r_vdc5_shrd_get_resource	(ch, id): resource state 0x208DCE04[ch*9 + id] [fact]; VDC5 driver shared parameters [inference]
+2011d860	r_vdc5_shrd_rw_enable	(ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use [fact]
+2011d8b4	r_vdc5_shrd_rw_disable	(ch, id): the same flag = 0 [fact]
+2013b54c	cpu_delay_cycles4	Spins on the CP15 cycle counter until 4 counts have passed [fact]
+20138740	reg_wait_bits27	(base, off, val): cpu_delay_cycles4, then waits until (*(base->regs + off) & 0x27) == (val & 0x27) [fact]
+20126160	gui_scope_draw_hold_set	(v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after; scope_draw_frame, main_filter_graph and FUN_201233d4 draw only while it is 0 [fact]; pauses the scope drawing [inference]

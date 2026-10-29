@@ -104,6 +104,13 @@ descriptor layouts **[inference]**.
 | 0x20152FAC | `itron_iwup_tsk` | called from `periodic_wakeup_isr` **[inference]** |
 | 0x2014FF2C / 0x2014E584 | `itron_acre_sem` / `os_create_sem_named` | |
 | 0x2014EFFC / 0x20150F00 / 0x20152988 | `itron_acre_flg` / `itron_set_flg` / `itron_twai_flg` | |
+| 0x201525F8 | `itron_tslp_tsk` | (tmout); E_CTX outside a task; TMO_FEVR at 40 call sites (T23e) |
+| 0x201511E8 / 0x20152BB0 | `itron_sig_sem` / `itron_twai_sem` | semaphore table 0x208DBCA4, IDs 1..0x40 (T23e) |
+| 0x2014EB94 | `itron_clr_flg` | flag table 0x208DBDA4; callers pass `~ptn` (T23e) |
+| 0x20150DCC / 0x2014E884 | `itron_rot_rdq` / `itron_chg_pri` | ready queues 0x208DC18C per priority 1..8 (T23e) |
+| 0x20151C3C / 0x20152DF4 | `itron_tloc_mtx` / `itron_unl_mtx` | mutex table 0x208DBFC4 (IDs 1..0x20, E_ILUSE); the RTC I2C lock (T23e) |
+| 0x20151AA4 / 0x20150C70 | `itron_tget_mpf` / `itron_rel_mpf` | fixed-size pools 0x208DBF24 (IDs 1..0x10); the FS work buffers (T23e) |
+| 0x20150BA0 | `itron_get_tid` | **[inference]** (T23e) |
 | 0x2014F1A8 | `itron_acre_isr` | T_CISR `{attr, exinf, intno, isr}`; IDs count down from 0x40 |
 | 0x2011775C | `gic_enable_irq` | enables one GIC interrupt ID |
 | 0x201176B4 | `gic_dispatch` | `IRQ_Handler` → handler table 0x208DC1E0 (one entry per GIC ID, default `gic_default_handler`) |

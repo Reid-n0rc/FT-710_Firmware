@@ -527,6 +527,8 @@ All texts are space-padded to 22 characters **[fact]**. The questions (`?`, and 
 notices use 4, so 4 is most likely a single OK button and 0/2 the YES/NO kinds **[guess]**; the names `displink_70_msg`/`_query` were
 given before the texts were known and do not follow this split. After the texts the ROM continues at 0xFFF80268 with the 44-character
 warnings `Memory channels are   overwritten.` and `Menu settings are     overwritten.` **[fact]**; their user was not traced.
+So `dialog_insert_fw_sd` (0xFFFCF4D5, n = 2) and `dialog_no_sd_card` (0xFFFCF4F2, n = 3) are the SD CARD menu's "no card"
+dialogs (names from T23e).
 
 ### E7 / E8 result codes (#179)
 
