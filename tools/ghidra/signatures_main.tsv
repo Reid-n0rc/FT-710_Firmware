@@ -9,7 +9,7 @@ fff8f65e	R_Systeminit	void	void	asm	asm: live-in -, 0/1 call sites read R1, retu
 fff8f7ec	hardware_setup	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8f8f5	_INIT_IOLIB	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff8f9dd	_CLOSEALL	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
-fff8facd	FUN_fff8facd	uint32	int32, void *, int32	asm	asm: live-in R1:L,R2:L,R3:L, 1/1 call sites read R1, return load SL
+fff8facd	write	uint32	int32, void *, int32	asm	asm: live-in R1:L,R2:L,R3:L, 1/1 call sites read R1, return load SL
 fff8fbdb	PowerON_Reset	void	void	asm	asm: live-in -, 0/0 call sites read R1, return load -
 fff8fc4d	FUN_fff8fc4d	uint32	void	asm	asm: live-in -, 1/1 call sites read R1, return load -
 fff8fc57	FUN_fff8fc57	uint8	uint32, void *	asm	asm: live-in R1:L,R2:L, 0/1 call sites read R1, return load UB
@@ -1212,10 +1212,10 @@ fffedd07	R_TPU2_Create	void	void	asm	asm: live-in -, 0/1 call sites read R1, ret
 fffedd6d	R_TPU2_Start	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffedd7c	R_TPU2_Stop	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fffedd8c	r_tpu2_tgia_isr	void	void	asm	interrupt handler (entry PUSHM R14-R15)
-fffedd9a	FUN_fffedd9a	uint32	uint32, uint32, uint16 *	asm	asm: live-in R1:L,R2:L,R3:L, 3/3 call sites read R1, return load -
+fffedd9a	freopen	uint32	uint32, uint32, uint16 *	asm	asm: live-in R1:L,R2:L,R3:L, 3/3 call sites read R1, return load -
 fffede41	FUN_fffede41	uint64	uint32, uint32, uint32, uint32	asm	asm: live-in R1:L,R2:L,R3:L,R4:L, 1/1 call sites read R1, return load -
 fffededa	_INITSCT	void	void	asm	interrupt handler (entry PUSHM R1-R5)
-fffedf24	FUN_fffedf24	uint32	uint16 *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load -
+fffedf24	fflush	uint32	uint16 *	asm	asm: live-in R1:L, 2/2 call sites read R1, return load -
 fff9124c	get_bpsw	uint32	void	doc	returns BPSW in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff91263	get_bpc	uint32	void	doc	returns BPC in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
 fff9127a	get_extb	uint32	void	doc	returns EXTB in R1 (MOV.L [SP],R1 before RTSD #8); Ghidra's default proto picked R2 (the POP R2 restore) [fact, T21i]
