@@ -31,6 +31,7 @@ Import the decoded MAIN image into Ghidra with the correct language and base add
 - **UARTs**: SCI0 (USB Standard CAT), SCI1 (DISPLAY), SCI2 (tuner, maybe a CAT port too), SCI3 (USB Enhanced CAT), SCI4 (role unknown), SCI5 (SDR FPGA; `sdr_send_cmd` 0xFFFB1B2B), SCI6 (**simple-I2C mode**), SCI7 (C4/DSP). Functions are listed in `INDEX.md`.
 - **EEPROM**: no RSPI is used. The BR25G256 is **bit-banged on port E** (PE0 /CS, PE5 SCK, PE6 MOSI, PE7 MISO): `eeprom_read` 0xFFFB14A4 and `eeprom_write` 0xFFFB14ED (64-byte pages, RDSR/WREN/WRITE) **[fact]**.
 - A large code-pointer table at 0xFFF89D94 (4651 entries, 863 distinct handlers) is unexplained, probably the menu/UI **[inference]**.
+  - *Answered (T10b, #71):* five 863-entry key handler tables indexed by key code, then two smaller tables (key slots 0xD..0x14 at 0xFFF8E100, the 296 EX-menu AI detectors at 0xFFF8E1A0); see [ui-keys.md](../code/main/ui-keys.md). #70 made all their targets functions.
 
 ## Follow-ups
 - T09: use `decomp/main/cat_dispatch.tsv`. Decode each `cat_XX` and the 10 extended commands (`cat_ext_*`, especially `SP`, `EO`, `E8`, `ZZ`, `JP`, `VE`, `FD`, `PE`, and `E9` on the second input path in `cat_parse`). Read the `len==0` cases in the disassembly (compound length tests). Check whether SCI2 really carries CAT.

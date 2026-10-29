@@ -1751,7 +1751,7 @@ void cat_ZI(int param_1)
     DAT_0000464a = 1;
     return;
   }
-  FUN_fffbf0b6();
+  key_zin_spot_short();
   return;
 }
 

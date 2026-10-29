@@ -9,7 +9,8 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
 - `functions.tsv`: entry, name, size, reference count, file for every function.
 - `cat_dispatch.tsv`: the CAT mnemonic → case → handler table (`tools/ghidra/CatDispatch.java`).
 - Rebuild (`tools/bootstrap.sh --only ghidra,export` does the same; full command in `docs/tooling.md`, "MAIN full rebuild"): import with
-  `SetupRX651.java`, then the post-scripts in this order: `ApplyNames.java tools/ghidra/names_main.tsv`,
+  `SetupRX651.java`, then the post-scripts in this order: `FixFuncEntries.java tools/ghidra/entries_main.tsv nolate` (the key handlers,
+  #70), `ApplyNames.java tools/ghidra/names_main.tsv`,
   `DefineRomData.java <report.tsv> code=0xFFF8F658` (strings, pointer/zero runs, unreferenced functions, const tables; T21d, #97 B5),
   `ApplySignatures.java tools/ghidra/signatures_main.tsv` (locked prototypes; T21d, #97 B3), `ExportDecomp.java decomp/main 50`.
   Check call arguments with the read-only `CallArgCheck.java <mismatch.tsv> [<protos.tsv>]`; redraft the signatures with
@@ -45,6 +46,11 @@ Ghidra project `ghidra/FT710_MAIN` (not in git), language `rx62t:LE:32:default` 
   24 → 29, from byte accesses in the loops). Same task: `MVTACHI`/`MVTACLO` write ACC, and the five CC-RX intrinsic helpers
   `get_bpsw`/`get_bpc`/`get_extb`/`get_acc_hi`/`get_acc_mi` (0xFFF9124C–0xFFF912A8, no callers) have locked `uint32 f(void)`
   signatures (Ghidra's default prototype had picked R2 as their return register).
+- #78 / #70 rebuild (2026-10-29): the CC-RX C library at the end of the code is named (#78), and `FixFuncEntries.java
+  tools/ghidra/entries_main.tsv nolate` creates the 862 entries reached only through the `JSR` tables at 0xFFF89D94..0xFFF8E63F: 535 key
+  handlers, 31 key-slot handlers and the 296 EX-menu AI detectors (0xFFFE6E3A..0xFFFEA639 had no function before). Full rebuild:
+  **3,161 functions** (2,328 before), 0 failures, 0 undefined non-0xFF bytes; warnings 1,222 → 1,226 and functions with a warning
+  354 → 358, all "Removing unreachable block" in new small handlers (the compiler's dead `bool` tails); committed on purpose.
 - Known decompiler artifacts **[fact]**:
   - String instructions (T21c, T21i): `SCMPU`/`SUNTIL`/`SWHILE` show as calls (`cat_parse`: `scmpu(&uStack_d, …, 2)`, really
     `strncmp(cmd, table+2*i, 2)`); `SMOVF`/`SMOVB`/`SMOVU`/`SSTR` show as copy/fill loops (`for (n; n != 0; n--) *d++ = *s++;`),
@@ -64,12 +70,12 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 2,328 |
+| Functions exported (non-thunk) | 3,161 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,222 |
-| Functions with a warning | 354 |
+| Decompiler warnings (all kinds) | 1,226 |
+| Functions with a warning | 358 |
 | "Unable to track spacebase" | 0 |
-| "Removing unreachable block" | 1,175 |
+| "Removing unreachable block" | 1,179 |
 | `halt_baddata()` calls | 0 |
 | Functions with `halt_baddata()` | 0 |
 | Functions with `in_*` variables | 12 |
@@ -83,7 +89,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | warning: Do nothing block with infinite loop | 2 |
 | warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
 | warning: Ignoring partial resolution of indirect | 16 |
-| warning: Removing unreachable block (#) | 1,175 |
+| warning: Removing unreachable block (#) | 1,179 |
 <!-- quality:end -->
 
 ## Boot and main loop  [fact unless marked]

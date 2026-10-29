@@ -5,6 +5,8 @@
 // Headless usage (from the repo root), run before ApplyNames.java:
 //   tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis \
 //     -scriptPath tools/ghidra -postScript FixFuncEntries.java tools/ghidra/entries_display.tsv
+// A second script argument "nolate" skips step (1): for tables of entries that are only reached through pointers
+// (MAIN key handlers, entries_main.tsv, #70), where a neighbour without call references is still a real entry.
 // TSV format: address[<TAB>drop|thumb][<TAB>comment]; "#" lines and blank lines are ignored. "thumb" disassembles a
 // still-undefined entry as Thumb (ARM images; T21e).
 // For each address: (1) functions that start within the first 8 fall-through instructions after it are removed (late
@@ -33,6 +35,7 @@ public class FixFuncEntries extends GhidraScript {
     protected void run() throws Exception {
         int made = 0, late = 0, bad = 0, tail = 0;
         java.util.List<Address> entries = new java.util.ArrayList<>();
+        boolean nolate = getScriptArgs().length > 1 && getScriptArgs()[1].equals("nolate");
         for (String line : Files.readAllLines(Paths.get(getScriptArgs()[0]))) {
             if (line.isBlank() || line.startsWith("#")) continue;
             String[] p = line.split("\t");
@@ -54,7 +57,7 @@ public class FixFuncEntries extends GhidraScript {
                 else disassemble(a);
             }
             Instruction ins = getInstructionAt(a);
-            for (int i = 0; i < 8 && ins != null; i++) {
+            for (int i = 0; i < 8 && ins != null && !nolate; i++) {
                 Address next = ins.getFallThrough();
                 // stop at a call: the code after it may follow a call that never returns (T21e: an entry that ends
                 // in `bl task_loop` sits right before sd_task_create, which is no late start)

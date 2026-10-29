@@ -25,6 +25,9 @@ All addresses are MAIN ROM/RAM addresses, and the tags follow AGENTS.md: **[fact
 - **Auto information (AI).** AI is enabled per port with flags 0x20B20/0x20B21/0x20B22 (port 1/2/3). The broadcaster `cat_ai_poll` @ 0xFFFDD797 runs at the end of every `cat_parse` call. It walks about 70 change detectors (one per AI-capable item; each keeps a shadow copy of the last value it sent), formats at most one changed item into 0x15E06, and sends it to every port whose AI flag is set. **[fact]**
   - After a successful AI-relevant set, handlers call `cat_ai_holdoff` @ 0xFFFDDB6A. It starts timer 0x32 for 200 ms and sets 0x187C2, which delays the next AI frame. **[fact]**
   - Reading `AI1` also triggers the holdoff. **[fact]**
+  - The EX menu has its own detector `cat_ai_ex` 0xFFFDECEC. `cat_ai_ex_scan` 0xFFFE6D7A calls 296 detectors from the table 0xFFF8E1A0, one per
+    menu item in the order of the ID list at 0xFFF872B1 (`EX010101` … `EX060518`; named `ai_ex010101` …). The first that sees a change formats
+    the value, and the frame is `EX` + ID + value + `;`. An EX set starts `cat_ai_ex_holdoff` 0xFFFE6E26 (timer 0x32, 200; flag 0x1B299) **[fact]** (#70).
 - **Power-off gate.** While the radio is "off" (0x20B3A == 0), `cat_parse` drops every command except `PS1`, primary index 71 with a parameter of `1`. **[fact]**
 - **Global CAT disable.** While 0x20B46 == 1, `cat_parse` returns at once without consuming anything. The DISPLAY link sets this flag: `displink_rx_F1_sys` sub-command 3. **[fact]** Most likely it is used during firmware update or SD operations **[guess]**.
 - **APO reset.** Every command received through the ring restarts the auto-power-off timer (`cat_apo_reset`). The timer is set to 900, 1800 or 3600 units, according to setting 0x9B0F (1, 2 or 3). **[fact]**

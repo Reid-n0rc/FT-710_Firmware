@@ -2871,8 +2871,8 @@ void cat_MX(int param_1,char param_2)
   cVar3 = hex2nib(*(byte *)(param_1 + 2));
   if (cVar3 == '\0') {
     if (bVar1 != 0) {
-      FUN_fffbe7e7();
-      FUN_fffbe83f();
+      key_mox_vox_press();
+      key_mox_vox_short();
       return;
     }
   }
@@ -2882,7 +2882,7 @@ void cat_MX(int param_1,char param_2)
       return;
     }
     if (bVar1 == 0) {
-      FUN_fffbe8d2();
+      key_mox_vox_long();
       return;
     }
   }

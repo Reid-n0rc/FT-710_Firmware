@@ -1,10 +1,10 @@
 metric	value
-functions	2328
+functions	3161
 decompile_failures	0
-warnings	1222
-functions_with_warnings	354
+warnings	1226
+functions_with_warnings	358
 spacebase_warnings	0
-unreachable_block_warnings	1175
+unreachable_block_warnings	1179
 halt_baddata	0
 functions_with_halt_baddata	0
 functions_with_in_vars	12
@@ -18,4 +18,4 @@ bookmarks_bad_instruction	1
 warning:Do nothing block with infinite loop	2
 warning:Globals starting with '_' overlap smaller symbols at the same address	29
 warning:Ignoring partial resolution of indirect	16
-warning:Removing unreachable block (#)	1175
+warning:Removing unreachable block (#)	1179
