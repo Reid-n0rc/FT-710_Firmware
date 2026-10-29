@@ -74,7 +74,7 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T22c | [HiFi4: rizin base-ISA check, REA decompile with the new language](T22-rea-verification.md) | T21a, T22f | done |
 | T22d | [All images: classify the undefined bytes left](T22-rea-verification.md) | T21 | done |
 | T22e | [All images: before/after behaviour diff](T22-rea-verification.md) | T21g | done |
-| T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | in progress |
+| T22f | [REA fork: add the missing device support](T22-rea-verification.md) | – | done |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.
 

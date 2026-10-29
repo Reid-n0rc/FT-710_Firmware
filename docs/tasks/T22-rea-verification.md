@@ -718,3 +718,37 @@ of memory (the entropy run waited about 40 minutes in memgate); the strings abov
 - T22e: optional cosmetic fixes. In the HiFi4 generator, one pcodeop per special-register write instead of one per iclass output
   (`wsr_ps` ×6, `xsr_excsave1` ×2). In DISPLAY, `0x20154B64`–`0x20154BE0` should be strings again (`""`, `"-"`, `"+"`, `" "`), not
   dwords.
+
+### T22f
+**Status:** done (2026-10-28). REA fork `~/opt/rea`, branch `feat-ft710-devices` (local; not pushed), on top of the RX lane
+`db2bfd303`. Installed as the `rea` CLI from `~/opt/rea-dist/rea-agents-6.8.0-ft710-76eeda78f.tgz`.
+
+Fork commits **[fact]**:
+
+| Commit | What | For |
+|---|---|---|
+| `e167615fb` | `GHIDRA_HEADLESS_GC_THREADS` sets the analysis JVM's GC threads (was hard-coded 2) | the hardware cap |
+| `b7c2c2303` | `execute-rizin-command --arch/--bits/--base-address` (MCP `arch`, `bits`, `base_address`) → rizin `-a/-b/-m`; addresses are load addresses | T22a, T22b |
+| `0483be621` | `scripts/verify-real-ghidra-firmware-lanes.mjs`: armv8m, xtensa and `xtensa-hifi4` raw lanes against real Ghidra | T22c |
+| `020f940b3` | `REA_GHIDRA_RAW_READONLY_RANGES=0x200000-0x206fff[,…]`: raw pre-script maps those ranges read-only before analysis; in the analysis profile and attested by the load image | T22c |
+| `b9c5ee48b` | docs: raw-binary analysis is Ghidra-only; the one-shot rizin command is the second decoder | T22b |
+| `76eeda78f` | test types: `npm run typecheck` failed on two `020f940b3` tests (union not narrowed) | – |
+
+Checks (2026-10-28 20:2x, after the host hang): `npm run typecheck` passes; vitest on the changed areas (read-only ranges, raw
+load image, profile digest, rizin arguments, Ghidra launch/launcher, `ghidraEvidenceMcp`) 5 files / 56 tests pass, plus
+`GhidraRawBinaryLoadImage.test.ts` 28/28. The first agent's full-suite run (10 workers, browser suites over an hour) was cut off
+by the host hang at 17:52 and is not a result; its failures were time-outs. Installed CLI: `rea execute-rizin-command
+build/FT-710_MAIN_V0112.bin 'pd 3 @ 0xFFFA347C' --arch rx --bits 32 --base-address 0xFFF80000` disassembles `cat_parse` at
+its load address.
+
+Requests (scratchpad `rea-requests/`):
+- T22a-rizin-raw-rx §2, T22b-rizin-raw-arm §2: done (`b7c2c2303`). §1 of both: `REA_RIZIN_COMMAND=~/opt/rizin-0.9.1/bin/rizin`
+  belongs in the owner's MCP entry (`~/.claude.json` `mcpServers.rea.env`); until then pass it per CLI call.
+- T22b §1 (a rizin deep-analysis provider for raw images): declined, documented (`b9c5ee48b`).
+- T22c-raw-readonly-range: done (`020f940b3`); extra uninitialised RAM ranges not done (optional ask).
+- T22e-pseudocode-version-diff: declined (a new Evidence producer, not device support); `tools/decomp_behavior_diff.py` covers it.
+- T22a-rx-native-api: not in T22f. §1 prototype seeds and §3 reusing one analysed program across CLI calls are new REA
+  features (a task each if wanted); §2 depends on §1; §4 (`.sla` digest in the analysis profile) is a small follow-up.
+
+Follow-ups for the owner: push `feat-ft710-devices` to the fork; add `REA_RIZIN_COMMAND` to the MCP entry; the MCP entry's
+`GHIDRA_HEADLESS_MAXMEM=10G` bypasses the AGENTS.md cap (3 GB heap, one job) and is two thirds of the host's RAM.
