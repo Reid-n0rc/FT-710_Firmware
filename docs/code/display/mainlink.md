@@ -149,7 +149,7 @@ falls back to 0x20 when nothing else is pending. The validation column refers to
 | 0x44 'D' | 5 | (block-transfer code) | `mainlink_rx_block_read` 0x2010EEB4 → reply C4 | **MAIN reads** a block of the 32000-byte buffer 0x208116A6: `id, off u16 BE, len u16 BE` |
 | 0x45 'E' | 0x105 | (block-transfer code) | `mainlink_rx_block_write` 0x2010EDE8 → reply C5 | **MAIN writes** up to 0xFF bytes into 0x208116A6: `id, off, len, data` |
 | 0x50 'P' | 0xF3 | `FUN_fff9a2d1` | status redraw | status + one mode byte |
-| 0x60 '`' | 0xB4 | `FUN_fff96225`, sent after the F0 hello | copy into 0x2045FB00 + flag 0x20450026. Byte 0xE = 1/2/3 changes the power-up path. u16 at +0xD = 0xDB sets 0x20450029 ("show error box instead of reset") | **Power-up / identity frame** (status block at +0xF) |
+| 0x60 '`' | 0xB4 | `FUN_fff96225`, sent after the F0 hello | copy into 0x2045FB00 + flag 0x20450026. Byte 0xE = 1/2/3 (MAIN boot error: 2 = DSP, 3 = SDR) shows the `ERROR CODE : 00n` screen (`FUN_201322AC`), #60. u16 at +0xD = 0xDB sets 0x20450029 ("show error box instead of reset") | **Power-up / identity frame** (status block at +0xF) |
 | 0x62 'b' | 0x195 | `FUN_fff9c46d` (after F0 key code 2) | status redraw | status + large page |
 | 0x64 'd' | 1 | `FUN_fff986e0` | `scr_lcd_test` 0x20125F6C: black, white, red, green, blue, colour bars | **LCD test pattern** (service) **[fact for the drawing]** |
 | 0x65 'e' | 7 | `FUN_fff9a0cc` | `rtc_set_from_main` 0x2012E8F4 (BCD YY MM DD hh mm, clamped) | **set the DISPLAY RTC** from MAIN **[inference]** |

@@ -192,6 +192,27 @@ image use these values]**.
 The detailed payload layout of the large frames (0x20, 0x24, 0x30/0x31, 0x37, 0x39, 0x3A, 0x40, 0x41, 0x50, 0x62, 0x70) is left for the
 subsystem pages that own the data (T10f menu, T10g radio state) and for the DISPLAY-side parser (T11b).
 
+## Boot error report
+
+Bytes 13..14 of frame `0x60` (frame offsets +0xD/+0xE) are the u16 UI-state field +0x32 (0x20B36/0x20B37), big-endian, cleared after
+each `0x60` **[fact]** (#60):
+
+| Value | Set by | DISPLAY reaction |
+|---|---|---|
+| 0 | normal | power-up continues; with an opening-message time (`0x20800481`) it first shows the 12-character text from the frame |
+| 2 | the DSP did not answer at boot ([dsp-link.md](dsp-link.md)) | error screen, `ERROR CODE : 002` |
+| 3 | the SDR did not answer register 1 at boot (`sdr_init`, [sdr-link.md](sdr-link.md)) | error screen, `ERROR CODE : 003` |
+| 0xDB | `displink_build_60` when +0x32 is 0 and the flag 0x4660 is set | as 0, and the DISPLAY sets 0x20450029, which makes its link-error handler (`mainlink_on_nak`) show an error box instead of resetting |
+
+- **DISPLAY side** **[fact]**: `mainlink_rx_validate` accepts `0x60` only if the u16 is 0..4, 0xDB or 0xFF. `opening_screen` calls
+  `FUN_201322AC` when byte 0xE is 1, 2 or 3, or when no `0x60` arrives within about 5 s. That screen draws three text lines from the
+  table at 0x20808558 (`INSERT FIRMWARE SD CARD.`, `TOUCH THE SCREEN TO CONTINUE.`, see [display/gui.md](../display/gui.md)) and
+  `ERROR CODE : %03d` with byte 0xE (any other value is shown as 1). It then waits for a touch or key and opens the boot-loader
+  (firmware update) screen. So **001 = MAIN did not answer, 002 = DSP, 003 = SDR (FPGA)**. Value 1 is never set by MAIN; it is the
+  DISPLAY's own default **[fact]**.
+- **0x4660** is the RAM copy of EEPROM byte 0x0011 (RAM = EEPROM + 0x464F); nothing in the code writes it. When it is set, the
+  SOFTVERSION menu row also appends a `-` suffix to the MAIN version, so it looks like a factory/test-build flag **[inference]**.
+
 ## SD CARD transfers (0x43 / 0x44 / 0x45)
 
 The SD card is on the DISPLAY, so MEM LIST LOAD/SAVE and MENU LOAD/SAVE move the data through the DISPLAY's 32000-byte transfer buffer
