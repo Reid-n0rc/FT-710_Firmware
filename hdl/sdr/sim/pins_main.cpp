@@ -4,11 +4,15 @@
 //        from clock 60000, sum8 + CR added). LOGPINS="io_R16 io_P17" LOGTO=CLOCK prints "E clock pin level" per edge.
 //        CONSOLE="x\r" sends that text on UART A from clock 80000 and prints what UART A answers ("A clock hex char").
 //        INPUTS="io_T13=1,io_A14=1" holds those input pins at the given level for the whole run (default 0).
+//        ADC=noise drives the 14 LVDS ADC data pairs (bank 35) with new pseudo-random bits on both clock edges (#91);
+//        ADC=sine:PERIOD drives them with a 14-bit two's-complement sine of PERIOD clocks, pair i = bit i
+//        (pair order = port order io_H6..io_B7, an assumption: the ADC bit map is unknown), same value on both edges.
 #include "Vft710_sdr.h"
 #include "verilated.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 #include <vector>
 #include <string>
 #include <deque>
@@ -52,6 +56,20 @@ int main(int argc, char** argv) {
         I(io_U13) I(io_T13) I(io_V10) I(io_T11) I(io_T14) I(io_R15) I(io_P15) I(io_L15) I(io_B18) I(io_A14) I(io_A13) I(io_A16)
     };
     const char* inspec = getenv("INPUTS") ? getenv("INPUTS") : "";
+    CData* adc[14] = {&top->io_H6_p, &top->io_K2_p, &top->io_J3_p, &top->io_J4_p, &top->io_G4_p, &top->io_F1_p,
+                      &top->io_H1_p, &top->io_C2_p, &top->io_H2_p, &top->io_E2_p, &top->io_D5_p, &top->io_B3_p,
+                      &top->io_B1_p, &top->io_B7_p};
+    const char* adcmode = getenv("ADC") ? getenv("ADC") : "";
+    double adcper = strncmp(adcmode, "sine:", 5) == 0 ? atof(adcmode + 5) : 0;
+    uint32_t lfsr = 0xACE1u;
+    auto adcset = [&](uint64_t clk) {
+        if (!strcmp(adcmode, "noise")) {
+            for (int i = 0; i < 14; i++) { lfsr = lfsr * 1664525u + 1013904223u; *adc[i] = (lfsr >> 31) & 1; }
+        } else if (adcper > 0) {
+            int v = (int)lround(6000.0 * sin(2 * M_PI * clk / adcper)) & 0x3FFF;
+            for (int i = 0; i < 14; i++) *adc[i] = (v >> i) & 1;
+        }
+    };
     top->uart_a_rx = 1; top->uart_b_rx = 1;
     for (uint64_t clk = 1; clk <= N; clk++) {
         if (clk >= next && !bits.empty()) { level = bits.front(); bits.pop_front(); next += 125e6 / 115200.0; }
@@ -59,7 +77,9 @@ int main(int argc, char** argv) {
         if (clk >= anext && !abits.empty()) { alevel = abits.front(); abits.pop_front(); anext += 125e6 / 115200.0; }
         top->uart_a_rx = alevel;
         for (auto& in : ins) { const char* f = strstr(inspec, in.name); *in.p = (f && f[strlen(in.name)] == '=') ? (f[strlen(in.name) + 1] == '1') : 0; }
+        adcset(clk);
         top->adc_clk_p = 0; top->adc_clk_n = 1; top->adc_dco_p = 0; top->adc_dco_n = 1; top->eval();
+        if (!strcmp(adcmode, "noise")) adcset(clk);
         top->adc_clk_p = 1; top->adc_clk_n = 0; top->adc_dco_p = 1; top->adc_dco_n = 0; top->eval();
         {   // software UART on uart_a_tx
             int v = top->uart_a_tx & 1;
