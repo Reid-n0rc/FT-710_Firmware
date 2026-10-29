@@ -27,8 +27,8 @@ through the fork's CLI build until the MCP server is restarted.
 ## Sub-task status
 
 ### T22a
-**Status:** in progress (2026-10-28, resumed after the first agent was cut off; its tools `rx_compare.py --ref rizin` /
-`three-way`, `rx_semcheck.py` and `RxEmuStep.java` are committed). MAIN (RX).
+**Status:** done (2026-10-28). MAIN (RX). Follow-up for the parent: fold `rx62t-semantics-fix.patch` into `bootstrap.sh`
+after T21h's MVFAC stage, then rebuild and re-export MAIN (together with T21h's pending rebuild).
 
 Plan:
 1. **Decoder, third opinion.** Copy canonical `ghidra/FT710_MAIN` (T21g rebuild, RX module `rx62t.sinc` `618938bb…4b36` =
@@ -107,6 +107,55 @@ compare and subtract forms (`CMP Rs,Rd` alone is in 40/40 sampled sites); it fai
 the decompile reads plausibly. Not used in MAIN, so not checked: `JMP Rs` (same `PC = Rs` construction as `JSR`) and `BNOT Rs,Rd`
 (`Rd ^ (Rs & 31)` instead of `^ (1 << …)`). `BNOT Rs,[Rd].B` (32-bit access, like F) occurs once, at 0xFFF912C3 inside T21h's
 undecoded fragment 0xFFF91295–0xFFF91302: emulated from a synthetic listing row (`fc6c12`), 4 / 4 cases fail as in class F.
+
+**Step 3 — patch [fact].** The first agent's patch, rebased onto `618938bb`: its RTSD hunk dropped (T21d), and the `JMP Rs` and
+`BNOT Rs,Rd` hunks dropped (no MAIN instruction backs them, see step 2); manual page references in its comments corrected. Kept:
+21 hunks, every one tied to a step 2 class and a manual page:
+[`tools/ghidra/rx62t-semantics-fix.patch`](../../tools/ghidra/rx62t-semantics-fix.patch) (`rx62t.sinc` → `c80b4ed7…73d3`).
+It also applies, with line offsets only, on T21h's module (`9efea07b…82a5`, installed in the shared Ghidra at 15:55 during
+this run). Built in a private Ghidra copy `~/opt/t22a-ghidra-tmp` (hard links, own `Ghidra/Processors/RX`, `sleigh`: the
+usual 8 NOP warnings); MAIN re-imported into a scratch project with the `bootstrap.sh` recipe (`SetupRX651`, analysis,
+`ApplyNames`, `DefineRomData`, `ApplySignatures` 1,212 applied).
+
+- Decoding is unchanged: the new listing equals the step 1 listing in address, length, bytes, mnemonic and operands (131,213).
+- Step 2 re-run on the patched program (`RxEmuStep.java` on the re-imported scratch project, the same 28,748 cases plus the 4
+  synthetic `BNOT Rs,[Rd].B` ones): **28,752 ok, 0 fail**, 0 emulation errors (all nine classes fixed). Re-run 2026-10-28 20:07
+  under the one-job cap after the first attempt was cut off by a host hang.
+- Decompile, base (the scratch copy of canonical, = committed `decomp/main` byte for byte) vs patched, `decomp_behavior_diff.py`
+  with the 541 functions holding an affected instruction as `--marked`: **124 of 2,324 functions change** (122 `insn`, the
+  two 1-byte T21h fragment functions), none added or removed, 0 decompile failures either side; warnings 1,229 → 1,217
+  (unreachable-block warnings 1,187 → 1,175: wrong flags had made branches look constant). Examples: `FUN_fffbba0f` gains
+  `(*(code *)(&PTR_LAB_fff89910)[*(ushort *)(PTR_DAT_00025d4c + 0x1de)])();` before `return 1;` (JSR, 18 indirect calls appear
+  in all); `FUN_fffe6d7a` was `do { } while( true );` behind 11 "unreachable block" warnings and is now a 0x128-entry loop that
+  returns a value; `FUN_fff8fec0` loses a false `& 0xff` on an `OR Rs,Rd` operand. Per-function list: scratch
+  `t22a/out3/diff.tsv` (not committed; regenerate with the recipe above).
+- Not installed and not in `bootstrap.sh`: the parent folds it in after T21h (as the fifth `step_rx` stage), then MAIN is
+  rebuilt and re-exported.
+
+**Step 4 — signatures through REA [fact unless marked].** REA fork CLI `inspect-native-api` on the raw MAIN image (`rx`, base
+0xFFF80000, the 2,324 function entries as `REA_GHIDRA_SEED_FILE`; Ghidra under the 50 % cap) for all 33 `doc` rows and every
+40th `asm` row (30) of `signatures_main.tsv`. REA imports from scratch and cannot take a prototype file, so its
+`boundary` is Ghidra's default recovery (`signature_source: default`), an independent view rather than a re-read of the locked
+signatures. Comparison per function (parameter count by storage, void/non-void return):
+[`T22a-signatures-rea.tsv`](T22a-signatures-rea.tsv).
+
+| | Rows | Same count and return | Differ |
+|---|---:|---:|---:|
+| `doc` | 33 | 24 (+1 same count, but REA's stack args are R15/temporaries) | 8 |
+| `asm` sample | 30 | 27 | 3 |
+
+All 11 differences settled from the listing in favour of `signatures_main.tsv`:
+- return: `eeprom_read` (REA non-void; R1 is the `MOV.W` spill of `addr`, no caller reads it), `vfo_freq`/`vfo_freq_clar` (REA
+  void; R1 loaded from 4[SP] before `RTSD`, 30/33 and 7/8 callers read it), `vfo_rec_ptr` (REA void and no parameter; R1 is
+  read at 0xFFFB324F and the record pointer is returned), `sci2_rx_byte_hook` (REA non-void; the one caller ignores R1).
+- parameters: the CC-RX stack arguments of `ex_command`, `ex_read_value`, `ex_write_value`, `ex_parse_byte` (and
+  `ex_parse_4digits`) come out of REA as R15 or stack temporaries; `cat_rx_complete`: REA's R3 parameter is false (R3 is
+  written at 0xFFFB1BEC before any read); `cat_EN`: R1 is spilled at 0xFFFA992A and never read, so REA drops it, the table keeps
+  it as an unused parameter of the CAT handler ABI **[inference]**.
+- Type-only differences (REA `int`/`undefined4` where the table has `char *`, `uint8 *`, `uint16`; `vfo_clear_tag` `uint8` vs
+  `int@R1:4`) are the absence of types in a fresh import, not disagreements about registers.
+REA gaps (no prototype seeds, stack args, one re-import per CLI call, no `.sla` digest in the Evidence): scratchpad
+`rea-requests/T22a-rx-native-api.md`. rizin cannot help here: `afi`-style analysis needs ESIL, which its `rx` plugin lacks.
 
 ### T22c
 **Status:** done (2026-10-28). IFDSP HiFi4.

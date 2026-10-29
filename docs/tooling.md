@@ -200,6 +200,25 @@ mattered (`eeprom_read`, `displink_build_60`, `cat_SP_meters`, `menu_page_serial
 stage after T21c's patch: `rx62t.sinc` SHA-256 T21c `9eadf83b…6a11` → `618938bb…4b36` (`RX_SINC_FIXED`); installed in the container's
 Ghidra on 2026-10-28.
 
+### SLEIGH semantics check and fix (T22a, 2026-10-28): `tools/ghidra/rx62t-semantics-fix.patch`
+
+Decoding: on all 131,213 MAIN listing entries, Ghidra (`618938bb…4b36`) and binutils 2.47 `rx-elf-objdump` agree except the two
+undecoded T21h fragments and the `ACC`/`a0` name of `MVTACHI`/`MVTACLO` **[fact, T22a step 1]**. rizin 0.9.1's `rx` plugin is a
+weaker third decoder: it rejects `BRA.S`/`BEQ.S`/`BNE.S` with pcdsp 8–10 (`dsp[2:0]` 000b–010b; 1,034 MAIN instructions), prints
+only Rd2 of `RTSD #imm,Rd-Rd2`, and lacks RXv2 `FTOU`, 3-operand `FSUB` and control register EXTB; it has no ESIL/RzIL.
+
+Semantics: `tools/rx_semcheck.py` (model from R01US0071EJ0100) + `tools/ghidra/RxEmuStep.java` (p-code emulator, one instruction
+per case) found nine classes of p-code bugs in the module as installed by T17 + T21c + T21d (details and pages:
+docs/tasks/T22-rea-verification.md, T22a step 2). The ones that change decompiled C: `ld_src` with ld = 11 read only `zext(Rs:1)`
+for the register forms of `SUB`/`CMP`/`AND`/`OR`/`DIV`/`DIVU`/`ITOF` (the memex of the memory forms leaked in), `JSR Rs` was
+`PC = Rs` (no `call`, so the decompiler dropped all 23 indirect calls in MAIN), and the flag bugs (`DIV`/`DIVU` O, `ITOF` Z/S,
+`SHLL` O, `ROLC`/`RORC`, `ADC`/`SBB`, `SHAR #imm,Rs,Rd`) plus byte-sized `BSET`/`BCLR`/`BNOT Rs,[Rd]`. Known but not in the patch
+(no MAIN instruction to back them): `JMP Rs` (`PC = Rs`, same as JSR), `BNOT Rs,Rd` (`Rd ^ (Rs & 31)`).
+
+The patch (21 hunks) applies after `rx62t-rtsd-fix.patch` (`618938bb…4b36` → `c80b4ed7…73d3`, `rx62t.sla` `30eb8a06…f3ea`) and,
+with line offsets only, after T21h's MVFAC fix. Tested in a private Ghidra copy (`~/opt/t22a-ghidra-tmp`: hard links, own
+`Ghidra/Processors/RX`); not installed in the shared Ghidra and not in `bootstrap.sh --only rx` yet (T21h owns that step).
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
