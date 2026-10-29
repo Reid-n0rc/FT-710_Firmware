@@ -177,9 +177,9 @@ stateDiagram-v2
 - Location: SRAM `0x20070000..0x2007FFFF`, 32768 × 16-bit words; register *n* is at `0x20070000 + 2n` **[fact]**.
 - M33: cleared at boot (`regfile_clear`, before the DSP is released), then `reg0 = 0x0101`, `reg 0x4000 = 1`, `reg1 |= 1` after the
   MU handshake (`app_main` 0x0008106C) **[fact]**.
-- HiFi4: `0x0021C498` (DSP main init) sets the region's cache attribute (`call8 0x233410(0x20070000, 0x10000, 2, 0)`, probably
-  `xthal_set_region_attribute` = bypass **[inference]**), calls `regfile_set_defaults` 0x0021BE80 and `regfile_capture_init`
-  0x0021C090 **[fact]**. The defaults function writes every register in the map below except 0, 1 and 0x4000 (the M33's) **[fact]**.
+- HiFi4: `0x0021C498` (DSP main init) calls `regfile_set_defaults` 0x0021BE80, which first calls `xthal_set_region_attribute`
+  (0x20070000, 0x10000, 2, 0), and then `regfile_capture_init` 0x0021C090 **[fact]**. cattr 2 = bypass on the whole 512 MB region
+  0x20000000–0x3FFFFFFF, which the main's own call for the DMA buffers has already set **[fact: HAL code, #184; encoding inference]**. The defaults function writes every register in the map below except 0, 1 and 0x4000 (the M33's) **[fact]**.
 - The DSP addresses the file through three base literals: `0x2006FF00` (+0x100 + 2n → regs 0x00–0x7F), `0x20073F00` (regs
   0x2000–0x207F) and `0x20077F00` (regs 0x4000–0x407F), because the `l16ui`/`s16i` offset only reaches 510 bytes **[fact]**.
 - The bands: 0x0000–0x0068 parameters and status shared with MAIN; 0x2000–0x200F zeroed only; 0x4000–0x4026 mostly DSP-internal
@@ -264,8 +264,8 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0051 | 0x0000 | w `FUN_fff9f400` |  |  | 0 written once [fact] |
 | 0x0052 | 0x0000 | w `FUN_fff9f430` |  | R 0x0021E530 | from 0x9AD1 and the RX mode [fact] |
 | 0x0053 | 0x0000 | w `FUN_fff9f4c8` |  | R 0x0021F7EC | from 0x20B72 and the RX mode [fact] |
-| 0x0054 | 0x0000 |  |  |  |  |
-| 0x0055 | 0x0000 |  |  |  |  |
+| 0x0054 | 0x0000 |  |  | R 0x0021EC40 (inst 1) | Rx_Audio branch B (AESS) high-cut; no writer, so off [fact, #184] |
+| 0x0055 | 0x0000 |  |  | R 0x0021E8B0 (inst 1) | Rx_Audio branch B (AESS) low-cut; no writer, so off [fact, #184] |
 | 0x0056 | 0x0000 | w `FUN_fff9f54b` |  | R 0x0021E6C4 | constant 0x20 [fact] |
 | 0x0057 | 0x0000 |  |  |  |  |
 | 0x0058 | 0x02C4 |  |  |  |  |
@@ -274,7 +274,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0060 | 0x0000 |  |  | R 0x00224960 |  |
 | 0x0061 | 0x0000 | w `FUN_fff9f638` |  | R 0x0021D270 | from 0x9C04, bit 12 flag [fact] |
 | 0x0062 | 0x0001 | w `FUN_fff9f681` |  | R 0x0021F004 | per-mode settings (`FUN_fff9f681`) [fact] |
-| 0x0063 | 0x00E7 | w `FUN_fff9fb6e` |  | R 0x0021F004 | from 0x4674..0x4678 (`FUN_fff9fb6e`) [fact] |
+| 0x0063 | 0x00E7 | w `FUN_fff9fb6e` |  | R 0x0021F004 | from 0x4674..0x4678 (`FUN_fff9fb6e`) [fact]; IF AGC gain ceiling, 0.5 dB steps below 255 [fact, #184] |
 | 0x0066 | 0x0BB8 | w `FUN_fff9f681` |  | R 0x0021F004 | per-mode settings (`FUN_fff9f681`) [fact] |
 | 0x0067 | 0x00FF | w `FUN_fff9fc2a` |  | R 0x0021F004 | from 0x9AB6/0x20BA7 [fact] |
 | 0x0068 | 0x0000 | w `FUN_fff9fca0` |  | R 0x0021F2D0 | constant 0x94 written once [fact] |
@@ -283,7 +283,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x4001 | 0x0001 |  |  |  | DSP default 1; no other access found [fact] |
 | 0x4004 |  |  |  | W 0x0021C060 | DSP writes `(f()<<2) OR (GPIO P0_21<<1) OR GPIO P0_22` from Thread_Main (0x0021C060) [fact]; board input status [inference] |
 | 0x4005 | 0x0000 |  | R every 20 ms (`sct0_pwm_callback`) | W 0x0021F348 | DSP writes a 0..99 level (0x0021F348: `min(255, v>>8)×100>>8`, v = float×65535) [fact]; M33 sets SCT0 PWM duty = clamp(reg, 1, 99) % → RC filter → TP2005 (p19) [fact]; analog test output [inference] |
-| 0x4006 | 0x0000 |  |  | R 0x0022313C | DSP R [fact] |
+| 0x4006 | 0x0000 |  |  | R 0x0022313C | TX modulator gate; only the default 0 is ever stored [fact, #184] |
 | 0x4007 | 0x003A |  |  | R 0x00221A30 | DSP R, default 0x3A [fact] |
 | 0x4008 | 0x0000 |  |  | ptr 0x00223320 | DSP pointer (channel 0, with reg 0x21) [fact] |
 | 0x4009 | 0x0000 |  |  | ptr 0x0022338C | DSP pointer (channel 1, with reg 0x22) [fact] |
@@ -308,7 +308,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x401D | 0x012C |  |  | R 0x00222244 |  |
 | 0x401E | 0x0000 |  |  | R 0x00222244 |  |
 | 0x401F | 0x000A |  |  | R 0x00222244 |  |
-| 0x4020 | 0x0000 | w `FUN_fff9fdd2` |  | R 0x0021E754 | 0x22BC or 0x23E8 (`FUN_fffb54a0`/`FUN_fffb552c`) [fact] |
+| 0x4020 | 0x0000 | w `FUN_fff9fdd2` |  | R 0x0021E754 | 0x22BC or 0x23E8 (`FUN_fffb54a0`/`FUN_fffb552c`) [fact]: AESS low-pass 700 / 1000 Hz, steep, on branch B [fact, #184] |
 | 0x4021 | 0x0000 |  |  |  |  |
 | 0x4022 | 0x0000 | w `FUN_fff9fe2a` |  | R 0x0021DFE4 | RX mode/VFO dependent [fact] |
 | 0x4023 | 0x0064 | w `FUN_fff9feaf` |  | R 0x0021DFE4 | RX mode/VFO dependent [fact] |
@@ -369,8 +369,19 @@ playback (3, state 14) as TX input; in all other states reg 9 = 0, so nothing fe
 carry the RX audio block 0x2CAC50 (out 0 gets 0x2CACB0 with output select B), and with reg 10 = 0x52/0x50 (n1 = 5) the recorder
 gets 0x2CAC50 too.
 
-Which board connectors the codec's DAC/ADC channels reach (speaker amplifier, PHONES, rear ACC, the CM119B USB codec) needs the
-schematic and stays open (#176).
+**Where the codec channels and the HiFi4 GPIOs go on the board** (service manual p19/p20, parts list p37; #176) **[fact: schematic]**:
+
+| Signal | Board path |
+|---|---|
+| DAC out 0 → **LOR** (pin 23) | `AF_OUT1` → `RX AF` → R2A20178 CH5 → TDA2003G Q2636 → **rear EXT SP jack J2606**; `RX AF` also feeds CH2 USB audio out (CM119B) and the rear DATA OUT ([hardware.md](../../hardware.md)) |
+| DAC out 1 → **LOL** (pin 22) | `AF_OUT2` → R2A20178 CH8 → CH1 → TDA2003G Q2619 → **internal speaker J2607** and **phones** (J2603 pin 4) |
+| ADC **IN1L** (pin 13) | `AIC_IN1L` ← Q2005 ← `AF_IN` ← R2109 ← **`MOD_AF`**: the TX audio from the AF block's source mux (front MIC / USB / rear DATA, Q2615) and Q2602 buffer. This is the only fitted input |
+| ADC IN1R, IN2R | `RX_AF` / `C4FM_BB` paths through Q2004/Q2005: all parts marked `***` and absent from the parts list (R2009/R2010/R2014–R2017/R2028/R2029, Q2004), so **not fitted**; they belong to the "C4-Block" option (DAC0_OUT/DAC1_OUT via unfitted R2096/R2097) |
+| **PIO0_4** (ball J1) | **`AF_MUTE`** from MAIN through R2095: the TX/RX sequencer's mute (`af_mute_set`, [main/tx-protection.md](../main/tx-protection.md)); `tx_mute_ctrl` mutes both codec outputs and the TX AF while it is set (reg 0xC top nibble = 1) |
+| GPIO byte 0x40100044 = **PIO2_4** | `SCT0_OUT2` → TP2007 "for DEBUG" ([m33-platform.md](m33-platform.md)); the VOX state that `tx_mute_ctrl` writes there only reaches a test point |
+
+So the left/right order: DAC out 0 = I2S right slot, out 1 = left slot, given the owner's statement that the AESS speaker is the rear
+EXT SP ([dsp-chains.md](dsp-chains.md)) **[inference, strong]**.
 
 Regs **0x2000–0x2007** are the per-thread CPU load (`cpu_load_to_regs_2000`, [hifi4.md](hifi4.md)); MAIN never reads them, but `SPDR2000;`
 can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.

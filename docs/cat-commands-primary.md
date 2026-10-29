@@ -83,7 +83,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Two parameters selected by P1: P1=1 a 0-100 level in steps of 5, P1=2 a 2-state selector (1/2) [fact]; meaning unknown.
 - **Globals / callees:** FUN_fffb54a0, fffb552c (return pointers; decompiler lost them), fffb3196(0), 0x9ACE, 0x20CC6, fffc8cbb(0x33/0x58)
 - **Risk:** low: DSP/audio-style setting
-- **Resolved (#157):** `FUN_fffb54a0` / `FUN_fffb552c` return a **pointer to the active mode's AESS byte** (by `vfo_mode`(0)): level at 0x9C06 (SSB), 0x9C09 (CW), 0x9C0A (DATA-L/U), 0x9C0B (RTTY), 0x9C0C (DATA-FM), 0x9C0D (PSK), 0x9C0E (AM), 0x9C0F (FM); centre at 0x9C07 (SSB), 0x9C10 (CW), 0x9C11, 0x9C12, 0x9C13, 0x9C14 (PSK), 0x9C15 (AM), 0x9C16 (FM) **[fact]**. They sit in the front-panel block 0x9BC9..0x9C34 ([code/main/eeprom.md](code/main/eeprom.md)).
+- **Resolved (#157):** `FUN_fffb54a0` / `FUN_fffb552c` return a **pointer to the active mode's AESS byte** (by `vfo_mode`(0)): level at 0x9C06 (SSB), 0x9C09 (CW), 0x9C0A (DATA-L/U), 0x9C0B (RTTY), 0x9C0C (DATA-FM), 0x9C0D (PSK), 0x9C0E (AM), 0x9C0F (FM); centre at 0x9C07 (SSB), 0x9C10 (CW), 0x9C11, 0x9C12, 0x9C13, 0x9C14 (PSK), 0x9C15 (AM), 0x9C16 (FM) **[fact]**. They sit in the front-panel block 0x9BC9..0x9C34 ([code/main/eeprom.md](code/main/eeprom.md)). The level is applied on the analog side, not in the DSP: 0 selects the external speaker alone, non-zero both speakers and sets R2A20178 channel 8 from it (`speaker_route`, [code/main/peripherals.md](code/main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact)) **[fact, #203]**. ROM defaults: SSB, AM and FM 10 (`AS1050`), the other modes 0.
 
 ### AV
 

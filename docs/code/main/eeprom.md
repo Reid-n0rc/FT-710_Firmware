@@ -71,7 +71,7 @@ Derived from every `eeprom_read`/`eeprom_write` call (19 call sites). The blocks
 | EEPROM | RAM | Size | Block | Written by |
 |---|---|---|---|---|
 | 0x0000 | 0x464F | 10 | **Header**. Bytes 0..4: a 5-byte date/time stamp (0x20BB1..5 from `DT`, BCD yy mm dd hh mm), copied in by `JP` set; the tested radio holds 23 06 26 08 56 (`JP0710;` read, 2026-10-28) **[fact, radio]**. Bytes 5..8: a big-endian save counter. Byte 9: state flag (0 = write in progress, 1 = clean) | `eeprom_hdr_update` (twice per save) |
-| 0x000A | 0x4659 | 0x105 | `cfg105`: the **factory alignment / calibration table** **[inference]**. Consumers: TX power interpolation at 100/50/30/10/5 W in `FUN_fffb667a` (15-byte records from 0x469E), SWR/meter maths in `vdd_scale_calc`..`FUN_fffb7cec`. ROM defaults at `cfg105_defaults` 0xFFF8074F | `eeprom_save_cfg105`: SPAWE, ZZ99, first-boot init, a key in ZZ00 mode (0xFFFBFD76) |
+| 0x000A | 0x4659 | 0x105 | `cfg105`: the **factory alignment table**, 261 one-byte items that the firmware's own alignment menu names (`001 [GN] VDD MTR` … `261 [TX] IDD MTR`, ROM 0xFFF817C3) **[fact]**. Full map in [cfg105: the alignment table](#cfg105-the-alignment-table-fact). ROM defaults at `cfg105_defaults` 0xFFF8074F | `eeprom_save_cfg105`: SPAWE, ZZ99, first-boot init, a key in ZZ00 mode (0xFFFBFD76) |
 | 0x010F | 0x475E | 3 | **Destination code** (u16 BE 0x475E, default 0x8043) + flag 0x4760, which DISPLAY startup code 5 toggles | `eeprom_save_dest`: JP, ZZ99, `dest_code_set`, first boot |
 | 0x0112 | 0x4761 | 3×0x438 | **Band stack, VFO-A**: 3 slots × 12 bands × 90-byte VFO record. Address = 0x0112 + slot·0x438 + band·0x5A | `eeprom_save_bandstack` `eeprom_save_bandstack` |
 | 0x0DBA | 0x5409 | 3×0x438 | **Band stack, VFO-B**, same layout | same |
@@ -82,7 +82,7 @@ Derived from every `eeprom_read`/`eeprom_write` call (19 call sites). The blocks
 | 0x4D58 | 0x93A7 | 5×0x98 | **Message memory type 0**: u16 length + 150 bytes = a **CW keying bitstream** (#148). `keyer_task` loads it into the keyer's element buffer 0x120BC (a 1,200-bit ring; `FUN_fffbb024` appends 1 bit per mark unit, 3 for a dash, 0 for a space; position 0x1FA38) **[fact]**; that the stored messages are recorded from the paddle is **[inference]** | `eeprom_save_msg`(0,n)` |
 | 0x5050 | 0x969F | 5×0x33 | **Keyer memory text** (`KM`): length + 50 characters | `eeprom_save_msg`(1,n)`: `cat_KM`, the menu editor `FUN_fffe481d` |
 | 0x514F | 0x979E | 5×0x32 | **Text slots** (`EM`). Never saved on their own, only by the full save | `eeprom_save_msg`(2,n)` (no caller) |
-| 0x5249 | 0x9898 | 0x192 | **Tuner memory** **[fact]** (#148): write index 0x9898, count 0x9899, 100 × {u16 frequency key, 0x1B3AF, 0x1B3AD}. 0x1B3AD/0x1B3AF are two of the three internal-tuner relay bytes that `atu_relay_update` sends on /SST6 (getters `FUN_fffec500`/`FUN_fffec50f`); a successful tune copies the search values 0x1B3AE/0x1B3B0 into them (`FUN_fffed12f`), and `atu_mem_store` keeps them per frequency so a later tune can start from them. Which byte is the L and which the C bank cannot be told from the code: the tune search steps both the same way from the per-band table at 0xFFF87BFC ({max, start, step, fine step}); open in #166 | `eeprom_save_atu_mem` from `atu_mem_store` |
+| 0x5249 | 0x9898 | 0x192 | **Tuner memory** **[fact]** (#148): write index 0x9898, count 0x9899, 100 × {u16 frequency key, 0x1B3AF, 0x1B3AD}. The key is the top four BCD digits of the frequency in Hz (`FUN_fffb4135`), i.e. 10 kHz steps: 0x1420 = 14.20 MHz. 0x1B3AD/0x1B3AF are two of the three internal-tuner relay bytes that `atu_relay_update` sends on /SST6 (getters `FUN_fffec500`/`FUN_fffec50f`); a successful tune copies the search values 0x1B3AE/0x1B3B0 into them (`FUN_fffed12f`), and `atu_mem_store` keeps them per frequency so a later tune can start from them. **Both stored bytes are capacitor banks; the third byte is the L bank** (#166): see [Internal tuner relay bytes](#internal-tuner-relay-bytes-166) | `eeprom_save_atu_mem` from `atu_mem_store` |
 | 0x53DB | 0x9A2A | 0x45C | **Operating state**: menu values (0x9A2A.., defaults from ROM 0xFFF80E4A.. at the same offset), PE parameters 0x9ADA, APO 0x9B0F, band memories 0x9C69/0x9C99, VFO-A record 0x9D09, VFO-B record 0x9D63, active VFO 0x9DBD, VFO states 0x9DBE/0x9DBF, bands 0x9DC3/0x9DC4, auto-power-on flag 0x9DC5, memory backups 0x9DCE/0x9E28. The block ends at 0x9E85 | `eeprom_save_opstate` `eeprom_save_opstate` |
 
 Sizes check: 0x0112 + 2·0xCA8 = 0x1A62; 0x1B01 + 133·0x5A = 0x49C3; 0x49C3 + 0x395 = 0x4D58; … 0x53DB + 0x45C = 0x5837. **[fact]**
@@ -117,7 +117,7 @@ More fields **[fact]** (#73):
 |---|---|
 | +0x04 | NARROW flags per mode class (`cat_NA`, `key_nar_short`): bit 7 SSB (modes 0/1), bit 5 CW (2/3), bit 3 RTTY (0xC/0xD), bit 2 DATA (8/9/0xE). AM and FM have no flag: NAR switches the mode itself (AM ↔ AM-N, FM ↔ FM-N, DATA-FM ↔ D-FM-N, `FUN_fffc4bd5`). `align_load_preset` also sets bit 4 from preset flag 0x08 (meaning not traced) |
 | +0x06 | bits 0–3 = DNR level 1..15 (`RL`, `cat_RL` 0xFFFADA46), bit 4 = DNR on (`NR`, `key_dnr_short`); bits 5–7 unused (#161) |
-| +0x07..+0x09, +0x47 | no users in MAIN; written 0 by the defaults (#161) |
+| +0x07..+0x09, +0x47 | no users in MAIN (#161). The defaults write 0, except that the band-stack defaults (`FUN_fffb0779`, a u16 store of 1 at record +0x08 of band 10) give the **50 MHz** band-stack records **+0x08 = 1**. The owner's dump shows exactly that in the four untouched 50 MHz slots (A and B, levels 1 and 2) **[fact: code + dump]** |
 | +0x3C..+0x45 | the FM / DATA-FM per-mode block, same layout as the others (#161) |
 
 Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200`, `0x0000`. The 20 bytes from +0x46 come from ROM 0xFFF80947, or from 0xFFF80B4F.. for the dest-specific 60 m channels. The full field map, the per-mode block layout and its defaults are in [radio-control.md](radio-control.md#the-0x5a-byte-channel-record).
@@ -151,11 +151,135 @@ Defaults (`defaults_memch`) write the first 8 bytes as `0x80040040`, `0x00010200
 | 0x9C03 | `KS`, `keyer_task` | key speed |
 | 0x9C04 | `KP`, `dsp_set_cw_pitch`, `beep_task`, `sdr_upd_r08/r18` | CW pitch |
 | 0x9C05 | `SD`, `FUN_fffbaa81` (keyer TX) | CW break-in delay |
+| 0x9C06, 0x9C09..0x9C0F | `AS1` (`FUN_fffb54a0` returns the pointer for the current mode), `dsp_set_aess`, `speaker_route`, `sdr_upd_r16_filter` | **AESS level** per mode: SSB 0x9C06, CW 0x9C09, DATA 0x9C0A, RTTY 0x9C0B, DATA-FM 0x9C0C, PSK 0x9C0D, AM 0x9C0E, FM 0x9C0F; `AS1` = byte × 5 **[fact, #157]** |
+| 0x9C07, 0x9C10..0x9C16 | `AS2` (`FUN_fffb552c`), `dsp_set_aess` | **AESS centre** per mode (0 = 700 Hz, 1 = 1000 Hz), same mode order **[fact, #157]** |
 | 0x9C08 | `SF`, `displink_build_37` | sub-dial (FUNC knob) function |
-| 0x9C17 | `menu_defaults_load` | default 0x1E; not traced |
+| 0x9C17..0x9C34 | `menu_defaults_load` | 30 bytes copied from ROM 0xFFF80FD6, which are all 0 (the "0x1E" in the old reading of this row is the copy length). No other reference **[fact]**; all 0 in the owner's dump |
 
 The "Value" column comes from the CAT command's meaning in [cat-commands.md](../../cat-commands.md) **[inference for the per-byte split
-of multi-byte entries]**. 0x9C09..0x9C34 has no direct references apart from 0x9C17.
+of multi-byte entries]**. The AESS bytes 0x9C06..0x9C16 are reached only through the pointers that `FUN_fffb54a0`/`FUN_fffb552c`
+return, so a search for direct references misses them; that is why this page used to say 0x9C09..0x9C34 had no users.
+
+## cfg105: the alignment table **[fact]**
+
+(#203.) The 261 bytes at RAM 0x4659 (EEPROM 0x000A..0x010E) are the items of the factory **alignment mode**, one byte per item.
+MAIN holds the menu labels itself: a table of 261 × 25 characters at **ROM 0xFFF817C3** (`" 001 [GN] VDD MTR        "` …
+`" 261 [TX] IDD MTR        "`), which `displink_build_62` sends to the DISPLAY nine lines at a time, each with its value
+(`FUN_fff9c555`) **[fact]**. Item *n* is byte 0x4659 + *n* − 1, `SPN` index *n* and the label "*nnn*"; the store handler is
+0xFFF89910[*n* − 1] and the set-up preset is 0xFFF88CD4[*n* − 1] (`align_load_preset`). The service manual's alignment chapter
+(FT-710 Technical Supplement, "ALIGNMENT-1..9") uses the same labels and numbers, and enters the mode by holding **[BAND] + [QMB] +
+[NAR]** at power-on **[fact: manual]** — the DISPLAY boot code 0x02 in [display-link.md](display-link.md#f0-boot-codes)
+**[inference]**. `tools/eeprom_decode.py` prints the table from a dump, with the ROM default next to each value (`--main`).
+
+| Items (RAM) | Label | Read by | ROM default | Owner's radio (dump 2026-10-28) |
+|---|---|---|---|---|
+| 001 (0x4659) | `[GN] VDD MTR` | `vdd_scale_calc`; stored from AN003 `PA_VDD` >> 4 (`align_store_ui4`, manual: 13.8 V supply, press the DSP knob) | 200 | 193 |
+| 002 (0x465A) | `[GN] FAN` | `pa_dac_update`: fan DAC on while the `PA_HF_TH` reading is below it, off above it + 10 | 180 | 195 |
+| 003 (0x465B) | `[GN] REF FREQ` | `main_dac_update`: Q1005 ch3 `FADJ` = (item − REF FREQ menu 0x9AC6) × 4; `cal_adjust` clamps it to 25..230 (manual: 250.000000 MHz ± 20 Hz at TP1005) | 128 | 96 |
+| 004 (0x465C) | `[GN] TX INH` | `tx_freq_allowed`: TX refused when non-zero | 0 | 0 |
+| 005..007 | `[GN] --RESERVED--` | none | 0xFF | 0xFF |
+| 008 (0x4660) | `[GN] DBG MODE ENABLE` | `displink_build_60`, `menu_m4_18_0_draw` | 0 | 0 |
+| 009..013 (0x4661..) | `[MT] PO MTR 100W/50W/20W/10W/5W POS` | no reader found in MAIN | 197 139 89 63 46 | same |
+| 014..016 (0x4666..) | `[MT] ALC / VDD / IDD MTR POS` | `meter_alc`, `vdd_scale_calc`, `meter_idd`; 014 also scales the `ALC MTR` store (245) | 146 210 175 | same |
+| 017..019 (0x4669..) | `[MT] SWR 1.5 / 2.0 / 3.0 MTR POS` | `swr_meter_protect` | 60 90 128 | same |
+| 020..022 | `[MT] --RESERVED--` | none | 0xFF | 0xFF |
+| 023..027 (0x466F..) | `[RX] RF-AGC 7 / 14 / 21 / 28 / 50` | `main_dac_update`: Q1005 ch5 by RX band (manual: set to 255) | 255 | 255 × 5 |
+| 028..032 (0x4674..) | `[RX] IF-AGC 7 / 14 / 21 / 28 / 50` | `dsp_set_freq_range_param` → IFDSP reg 0x63, the IF AGC gain ceiling ([dsp-chains.md](../ifdsp/dsp-chains.md)); manual: −2.0 dB ± 0.5 dB of AF at 10 dBµV | **0** | 190 190 189 188 199 |
+| 033..043 (0x4679..) | `[RX] S-MTR 0, 2, 5, 7, 9, +10 … +60` | only 041 (`S-MTR +40`, 0x4681) is read: `meter_s` and `FUN_fffb7e61`; all 11 are stored from `dsp_signal_level` | 8 33 74 101 125 140 158 177 198 216 255 | 255 247 74 101 125 140 158 177 **127** 216 87 |
+| 044, 045 | `[RX] --RESERVED--` | none | 0xFF | 0xFF |
+| 046..048 (0x4686..) | `[RX] FM SQL THW / THN / TI` | `FUN_fffb7cec` (FM squelch); stored from a DSP status read (`align_store_dsp_async`) | 127 37 46 | 126 34 80 |
+| 049 (0x4689) | `[RX] SCOPE SDR REF` | `sdr_upd_r27_scope_level` | 170 | 170 |
+| 050..058 (0x468A..) | `[TX] MF / HF / VHF PREDR, DRIVE, FINAL BIAS` | `pa_dac_update`: PA DAC Q4041 ch5 `PBIAS` / ch4 `DBIAS` / ch3 `FBIAS`, by band group (`FUN_fffb3337`: 0 = MF, 1..5 = HF, else VHF) | **0** | 168 197 187 / 169 196 196 / 170 196 195 |
+| 059..069 (0x4693..) | `[TX] I-ALC 1.8 … 50, 70` | `pa_dac_update`: Q4041 ch10 `IALC` by TX band (manual: 110 W, 60 W on 70 MHz) | 80 | 181 166 169 170 161 171 168 163 156 179 167 |
+| 070..219 (0x469E..0x4733) | `[TX] 100W/50W/20W/10W/5W FALC / MTR / TXG <band>`, 15 items per band for 1.8, 3.5, 7, 10, 14, 18, 21, 24, 28, 50 MHz | **FALC** (+0, +3, …): `FUN_fffb667a` interpolates it by power → Q4041 ch2 `FALC`. **TXG** (+2, +5, …): `sdr_upd_r25_tx_drive` interpolates it → SDR reg 0x25. **MTR**: only the 100 W one is read (`FUN_fffb667a` → 0x20B1E, the PO-meter scale of `meter_get_po`); it is stored from AN002 `MCUP_FOR` >> 4 (`align_store_ui2`) | FALC 175 115 62 37 19, MTR 193 140 94 70 52, TXG 192 136 86 61 43 | 14 MHz: FALC 194 131 72 41 22, MTR 82 140 94 70 52, TXG 88 56 37 27 20. Across the ten bands: 100 W FALC 167..196, 100 W MTR 72..82, 100 W TXG 87..164 (1.8 and 50 MHz highest) |
+| 220..222 | `[TX] --RESERVED--` (no 100 W on 70 MHz) | none | 0xFF | 0xFF |
+| 223..234 (0x4737..0x4742) | `[TX] 50W/20W/10W/5W FALC / MTR / TXG 70` | as above for band index ≥ 10 (pointer table 0xFFF8861C entry 10); `50W MTR 70` is the PO scale there | as the HF defaults | aligned values (not the defaults) |
+| 235..245 (0x4743..) | `[TX] REV ALC 1.8 … 50, 70` | `pa_dac_update`: Q4041 ch1 `RALC` by TX band (manual: 50 W into 16.6 Ω) | 50 | 38 43 45 37 45 43 49 42 42 45 7 |
+| 246 (0x474E) | `[TX] ALC MTR` | `meter_alc` divisor; stored as AN005 `ALCM` × item 014 / 137 (`align_store_ui8_scaled`) | 128 | 27 |
+| 247..260 | `[TX] --RESERVED--` | none | 0xFF | 0xFF |
+| 261 (0x475D) | `[TX] IDD MTR` | `meter_idd` divisor | 60 | 60 |
+
+Notes **[fact unless marked]**:
+
+- **The power points are 100, 50, 20, 10 and 5 W.** `FUN_fffb667a` interpolates between them with spans 50, 30, 10, 5; the span 30
+  (20 → 50 W) was misread on this page as a "30 W" point. `align_load_preset` sets 100/50/20/10/5 W for items 070..219 and 50/20/10/5 W
+  for 223..234, and the labels agree.
+- **Only the 100 W `MTR` items are aligned.** The manual's procedure stores `100W MTR` and then adjusts `FALC` and `TXG` at each power;
+  the owner's 50/20/10/5 W `MTR` values are exactly the ROM defaults, as are `PO MTR … POS`, the meter positions 014..019, `SCOPE SDR
+  REF` and `IDD MTR`. Of the `S-MTR` points only 033, 034, 041 and 043 differ from the defaults, and only 041 is read.
+- **Items that must be aligned have a ROM default of 0**: `IF-AGC` 028..032 and the nine bias items. A radio that falls back to
+  `cfg105_defaults` (blank EEPROM, `ZZPE071099`) loses its bias and IF-AGC settings **[inference: the PA would run without bias until
+  realigned]**.
+- 162 of the 261 bytes in the owner's dump differ from the ROM defaults.
+- The alignment item numbers of this table replace the earlier readings "per-band TX power calibration" (sdr-link.md, cat.md) and
+  "per-band DSP calibration" (dsp-link.md) with their names.
+
+## Internal tuner relay bytes (#166)
+
+`atu_relay_update` shifts 24 bits MSB first on /SST6 as `[0x1B3AF][0x1B3AD][0x1B3B1]` (`shreg_write24`(5, …)) **[fact]**. The PA
+schematic (Technical Supplement p47, PA unit) shows where they go **[fact: schematic]**:
+
+- /SST6 strobes **Q4030 BU2152FS**, a 24-bit serial-in parallel-out driver (SDAT0/SCLK0 shared). Its outputs P1..P8 are `LX0..LX7`,
+  P9..P16 `AC0..AC7`, P17..P24 `TC0..TC7`. Each drives a DTC114EU transistor and one FTR-F3AA012E relay:
+  - `LX0..LX7` → relays `L0..L7` (RL4017, RL4021, RL4024, RL4028, RL4031, RL4034, RL4037, RL4040), each across one inductor of the
+    series string L4052..L4060: the **L bank**.
+  - `AC0..AC7` → relays `C0..C7` (RL4041 … RL4018) and `TC0..TC7` → relays `C8..CF` (RL4042 … RL4019): two **capacitor banks**, each
+    switching binary-weighted pairs of 3 kV SL capacitors (C7 and CF: 2 × 150 pF; the smallest steps are about 10 pF).
+- **Bit order.** The /SST4 register Q4040 (same part, same bus) shows the mapping: `pa_relay_update` bit 7 (internal ATU in line),
+  bit 8 (AM), bit 9 (RX line) and bit 10 land on Q4040 P8 `TNRON`, P9 `TAM`, P10 `RX` and P11 `4m`, so word bit *n* drives output
+  P(*n* + 1) **[fact: code bits vs. schematic labels]**. Applied to /SST6: **0x1B3B1 (bits 0–7) = `LX` = L bank, 0x1B3AD (bits 8–15)
+  = `AC` = C0..C7, 0x1B3AF (bits 16–23) = `TC` = C8..CF** **[inference, strong: same part and bus]**.
+- **The L bank is not searched.** `FUN_fffed12f` sets 0x1B3B1 from ROM **0xFFF87BF1**[0x1B3BB]. 0x1B3BB is `FUN_fffb3371`(TX
+  frequency), the 11 TX ranges of the power table (upper limits at 0xFFF8870C: 2.1, 4.7, 7.5, 11.5, 14.5, 20.9, 22, 25.5, 41.5, 60,
+  75 MHz, i.e. 1.8, 3.5, 5–7, 10, 14, 18, 21, 24, 28, 50, 70 MHz). The bytes are 00, 80, C0, E0, F0, F8, FC, FC, FE, FF, FF **[fact]**.
+  One more relay closes per range step, shorting one more inductor, so the inductance falls with frequency **[inference]**. The tune
+  search steps only the two capacitor bytes (0x1B3AE → 0x1B3AD, 0x1B3B0 → 0x1B3AF), from the per-range table at 0xFFF87BFC ({max,
+  start, step, fine step}; max 239, 174, 88, 71, 54, 53, 36, 36, 28, 28, 28) **[fact]**.
+- So the tuner memory stores **the two C banks**, and the old question "which byte is L and which is C" has the answer: neither
+  stored byte is L. That `TC` is the transmitter-side and `AC` the antenna-side bank is **[guess, from the net names]**.
+- **Dump check.** The owner's tuner memory is full (count 100, write index 24, so the ring has wrapped). Both bytes use the whole
+  range their band allows (TC 0..126, AC 0..86; both fall roughly as 1/f, correlation 0.96 and 0.93) and every stored value is
+  below its band's search maximum; 15 entries are (0, 0), i.e. no capacitor needed. No byte behaves like a smaller bank, which fits
+  two 8-relay capacitor banks **[fact: dump]**.
+
+## Check against the owner's dump (2026-10-28)
+
+(#203.) The owner's dump (`tools/cat_backup.py --eeprom`, two identical reads; the `E8` image equals EEPROM 0x1A7A.. byte for
+byte) was decoded with `tools/eeprom_decode.py`. Only structure and calibration/settings values are given here; frequencies,
+memory tags and messages are personal data and stay out of the repository.
+
+**Agrees with this page [fact: dump]:**
+
+- Header: stamp 23 06 26 08 56, save counter 312,810, state flag 1 (clean). Destination 0x50E2 (the `JP` reply), flag 0x4760 = 0
+  (TTBF unlock off).
+- All 261 `cfg105` bytes are in range; every `--RESERVED--` item is 0xFF; `TX INH` and `DBG MODE ENABLE` are 0.
+- Band stacks: 72 records, every mode nibble valid, every frequency inside its band, tone numbers ≤ 49, clarifier 0, tags blank;
+  +0x06 bits 5–7, +0x07, +0x09 and +0x47 are 0 everywhere. Current levels 0x60B1/0x60BD are all 0.
+- Memory header: the 133 valid flags are 0/1 only (1 regular channel and the 15 destination 60 m channels are valid; the other
+  records hold the defaults). QMB: header and all ten records zero (never used). CW message memories: length 0.
+- Keyer texts (`KM`): a length byte ≤ 50 and space padding. Text slots (`EM`): 50 bytes, the text ends with **0xFE**, then spaces;
+  an empty slot starts with 0xFE **[fact: dump; new detail]**.
+- Operating state: active VFO A, both VFO states 1 (VFO), 0x9DC5 = 0 (the last power-off was a normal one), the AESS centre bytes are
+  0 (700 Hz) and the AESS levels ≤ 20; 0x9C17..0x9C34 all 0.
+
+**Disagreed, and fixed on this page:**
+
+- The band-stack defaults do not leave +0x08 at 0 in every record: the 50 MHz records get +0x08 = 1 (code and dump, above).
+- 0x9C17 is not a single byte with default 0x1E; 0x9C09..0x9C16 are not unused (the AESS bytes).
+- The TX power points are 100/50/20/10/5 W, not 100/50/30/10/5 W.
+- The `IF-AGC` items 028..032 really do default to 0 in ROM (`cfg105_defaults` 0xFFF8074F + 0x1B..0x1F); the owner's values are
+  190/190/189/188/199.
+
+**New [fact: dump, meaning inference/guess as marked]:**
+
+- **Mode byte +0x00, bits 4–7.** The defaults write 0x40 (0xC1 in the USB band-stack defaults). In the dump, the band-stack records
+  that differ from their default have bit 7 clear; bit 6 is clear in 21 of the 23 and still set in 2 whose mode was changed (for
+  example a default USB record now in DATA-U with high nibble 4). No reader is known; the meaning is open.
+- **+0x01, +0x02, +0x05** in used records: +0x01 = 0x05 (bit 2, the ATU flag read by `AC`, and bit 0), +0x02 bit 1 set in some
+  bands, +0x05 bits 0–1 = 2 or 3 (the bits `align_load_preset` sets from its preset). Their meaning is open **[fact for the values]**.
+- AESS: the owner's levels are SSB 15, CW 14, DATA 15, AM 10, FM 17 (`AS1` 75/70/75/50/85), RTTY/DATA-FM/PSK 0. The ROM defaults
+  (0xFFF80F6D + 0x3C.., the table `FUN_fffb13e2` copies to 0x9BCA..0x9C16) are SSB/AM/FM 10, the rest 0. Where the level acts:
+  [peripherals.md](peripherals.md#speaker-routing-speaker_route-0x20fcc-fact).
 
 ## Boot load **[fact]**
 
@@ -243,7 +367,7 @@ sequenceDiagram
 | 4 | `defaults_memch` `defaults_memch` | Clears 0x60C9..0x9011. Channel 1 is marked valid. Sets default records for 117 channels and dest-specific 60 m channels (e.g. dest 0xD950) |
 | 5 | `defaults_msg` `defaults_msg` | Clears 0x93A7..0x9897 and loads the keyer texts from ROM 0xFFF80C53/0xFFF80C86/0xFFF80CB9 |
 | 6 | (inline) | Clears the tuner memory 0x9898 (0x192). Copies ROM 0xFFF80D82 → 0x9C69 (0xA0) and 0xFFF80E22 → 0x9C35 (0x28) |
-| 7 | `menu_defaults_load` `menu_defaults_load` | Menu values 0x9A2A..0x9C16 from ROM 0xFFF80E4A.. (`menu_defaults_mode`..`FUN_fffb13e2`), and 0x9C17 ← 0xFFF80FD6 (0x1E) |
+| 7 | `menu_defaults_load` `menu_defaults_load` | Menu values 0x9A2A..0x9C16 from ROM 0xFFF80E4A.. (`menu_defaults_mode`..`FUN_fffb13e2`, piecewise: the cursor bytes are skipped, the presets get their names, and 0x9BCA..0x9C16 come from a separate 0x4D-byte table), and 0x9C17..0x9C34 ← 30 zero bytes from 0xFFF80FD6 |
 | 8 | (inline) | 0x9C5D..0x9C65, then clears 0x9DBE..0x9E85 and copies 0xFFF80FC6 → 0x9DBE (0x10) |
 
 `settings_defaults` changes RAM only. The EEPROM is updated by the full save in the restart that follows, or by the first-boot save. **[fact]**

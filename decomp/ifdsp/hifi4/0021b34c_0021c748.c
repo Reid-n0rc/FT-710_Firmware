@@ -826,8 +826,9 @@ void FUN_0021bd24(int param_1)
 
 // ===== ipc_handle_msg @ 0021bd40 (139 bytes)
 
-/* checks version byte, dispatch on category (+8): 0 general, 1 audio, else error at +0x14; if type
-   (+0xB) == request, reply with rpmsg_lite_send under mutex */
+/* needs +9 == 1 and +10 == 2 (version); category (+8): 0 general, 1 audio (mute), 3 version, else
+   error 3 at +0x14; if type (+0xB) == 0 (request): type = 1, reply 0x98 bytes to endpoint 40 under
+   a mutex (#184) */
 
 undefined4 ipc_handle_msg(undefined4 *param_1,int param_2)
 
@@ -844,10 +845,10 @@ undefined4 ipc_handle_msg(undefined4 *param_1,int param_2)
     handle_msg_general(param_1,param_2);
   }
   else if (cVar2 == '\x01') {
-    FUN_0021be20(param_1,param_2);
+    handle_msg_audio(param_1,param_2);
   }
   else if (cVar2 == '\x03') {
-    handle_msg_audio(param_1,param_2);
+    handle_msg_version(param_1,param_2);
   }
   else {
     *(undefined1 *)(param_2 + 0xb) = 2;
@@ -891,9 +892,12 @@ undefined4 handle_msg_general(undefined4 param_1,int param_2)
 }
 
 
-// ===== FUN_0021be20 @ 0021be20 (51 bytes)
+// ===== handle_msg_audio @ 0021be20 (51 bytes)
 
-undefined4 FUN_0021be20(undefined4 param_1,int param_2)
+/* category 1 (M33: Mute on/off): command 0 with param[0] (+0x18) 0 or 1 is accepted and nothing
+   else is done; other param error 2, other command error 3 (#184) */
+
+undefined4 handle_msg_audio(undefined4 param_1,int param_2)
 
 {
   if (*(char *)(param_2 + 0xc) != '\0') {
@@ -911,11 +915,12 @@ undefined4 FUN_0021be20(undefined4 param_1,int param_2)
 }
 
 
-// ===== handle_msg_audio @ 0021be54 (37 bytes)
+// ===== handle_msg_version @ 0021be54 (37 bytes)
 
-/* category 1 (M33 prints it as Mute on/off): command (+0xC), result in +0x14/+0x18 */
+/* category 3 (M33: DSP Version %04X): command 0 -> param[0] (+0x18) = 1, else error 3 (#184; was
+   handle_msg_audio) */
 
-undefined4 handle_msg_audio(undefined4 param_1,int param_2)
+undefined4 handle_msg_version(undefined4 param_1,int param_2)
 
 {
   if (*(char *)(param_2 + 0xc) != '\0') {
@@ -1403,8 +1408,9 @@ void Thread_Ipc_entry(undefined4 *param_1)
 
 // ===== xos_create_main_ipc_threads @ 0021c498 (193 bytes)
 
-/* XOS main: zero DMA area 0x20060000..0x200631E0, regfile_init_defaults, clock globals (24 MHz,
-   18.432 MHz), creates Thread_Main, Thread_Ipc, others, xos_start */
+/* XOS main: xthal_set_region_attribute(0x20060000, 0x31E0, 2 = bypass, 0) (#184; not a memset),
+   regfile_set_defaults, clock globals (24 MHz, 18.432 MHz), creates Thread_Main, Thread_Ipc,
+   others, xos_start */
 
 undefined4 xos_create_main_ipc_threads(void)
 

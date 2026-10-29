@@ -966,7 +966,8 @@ void FUN_0022338c(void)
 
 // ===== vox_detector @ 002233fc (820 bytes)
 
-/* ch0, threshold reg 0x21, 20 ms level, 100 ms hang */
+/* ch0, threshold reg 0x21, 20 ms level, 100 ms hang; with reg 0xC bit 0 the NLMS gets raw 72 kHz
+   samples (bundle 0x2234BC, bug, #184) */
 
 undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
 
@@ -1127,7 +1128,7 @@ undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
 
 // ===== antivox_detector @ 00223734 (823 bytes)
 
-/* ch1, threshold reg 0x22; reg 0x400A, reg 1 bit 4 */
+/* ch1, threshold reg 0x22; reg 0x400A, reg 1 bit 4; same raw-sample NLMS bug at 0x2237F4 (#184) */
 
 undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
 
@@ -1337,7 +1338,7 @@ void FUN_00223ab4(undefined4 param_1)
   uVar1 = ae_s32_l_i(in_aed1);
   divf_();
   ae_mov(in_aed0);
-  FUN_002294e0();
+  powf();
   ae_l32_i(uVar1);
   FUN_00223a90(param_1);
   return;
@@ -2324,11 +2325,12 @@ LAB_002248f9:
 }
 
 
-// ===== rx_loop_gain @ 00224960 (66 bytes)
+// ===== rx_aux_in_gain @ 00224960 (66 bytes)
 
-/* reg 0x60, only with reg 6 = 10 */
+/* reg 0x60 gain on codec ADC channel 1, which replaces the demodulator output into Rx_Audio when
+   reg 6 = 10 and reg 10 n0 = 1 (#184; was rx_loop_gain) */
 
-void rx_loop_gain(undefined4 param_1,undefined4 param_2)
+void rx_aux_in_gain(undefined4 param_1,undefined4 param_2)
 
 {
   ulonglong uVar1;

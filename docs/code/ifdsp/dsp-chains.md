@@ -19,7 +19,7 @@ side of each register is in [control-link.md](control-link.md#register-map).
 
 Library helpers used below **[fact: code and polynomial tables]**: `vec_sum_sq` 0x234BE0 (Σx²), `sqrtf_` 0x235C8C, `divf_` 0x235BA8,
 `log10f_` 0x2190F0, `pow10f_` 0x218B70, `tanf_` 0x219690 (table 0x200890: 1/3, 0.1333, 0.0540), `cosf_` 0x218FC0, `sinf_` 0x219560,
-`atan2f_` 0x218E60, `i2f_scaled` 0x234730 (float(i)·2^s), `f2i_scaled` 0x234710, `vec_scale_f32` 0x234F40, `fir_init` 0x233984,
+`atan2f_` 0x218E60, newlib `powf` 0x2294E0, `cosf` 0x2293E0 and `sinf` 0x229460 (#184), `i2f_scaled` 0x234730 (float(i)·2^s), `f2i_scaled` 0x234710, `vec_scale_f32` 0x234F40, `fir_init` 0x233984,
 `fir_process` 0x233A10, `iir_cascade_init` 0x2340FC, `iir_cascade_process` 0x2341C0.
 
 ## Receive chain
@@ -47,11 +47,11 @@ flowchart TB
     CON --> APF["apf_peak_filter<br/>reg 0x45"]
     APF --> LIM["af_limiter<br/>regs 0x57/0x58"]
     LIM --> BA["branch A: hi/lo-cut 0x46/0x47<br/>RX EQ 0x48–0x50, delay"]
-    LIM --> BB["branch B: hi/lo-cut 0x54/0x55<br/>CW FIR 0x4020, delay 0x56"]
+    LIM --> BB["branch B: hi/lo-cut 0x54/0x55<br/>AESS low-pass 0x4020, delay 0x56"]
     BA & BB --> INT["×6 each"]
   end
   PUSH --> DEC
-  INT --> OUT["blocks 5 / 6 → routing<br/>(codec, SPI, recorder)"]
+  INT --> OUT["A → RX block 0x2CAC50, B → 0x2CACB0<br/>→ routing (codec, SPI, recorder)"]
 ```
 
 ### Rx_Path (72 kHz)
@@ -59,12 +59,12 @@ flowchart TB
 | Address | Ghidra name | What it computes | Registers | Tag |
 |---|---|---|---|---|
 | 0x220EE0 | `rx_demod_dispatch` | Copies the block, runs `if_agc_process`, then by reg 6: 0, 2, 4, 6 → `ssb_weaver_init`(0) + `ssb_weaver_demod`; 1, 3, 5, 7 → (1); 8 → AM; 9 → FM; anything else passes through | 6 | [fact] |
-| 0x21F0DC (+0x21EF90 init, 0x21F004 params) | `if_agc_process` | **Feed-forward AGC, one gain per block.** Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6), averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = **−12 dBFS** (0x3E809BCC at 0x21F088). **Attack** is immediate and the gain is applied to the previous block (one block = 333 µs look-ahead). **Hang** 20 ms (counter step 1/60 per block, 0x3C888889). **Decay** linear in dB, 40 dB per reg-0x66 ms | 0x62 ≠ 0: AGC on (0: fixed gain Gmax). 0x66: decay time in ms, 20–4000 (default 3000). 0x67: gain 10^((x − 255)·0.025) (0x204BD0 = 0.025). 0x63: Gmax = g67 · 10^((255 − x)/40). 0x68: fixed input gain, 0.5 dB steps (MAIN writes 0x94 = +74 dB) | [fact] constants and flow; units of 0x66 [inference] |
+| 0x21F0DC (+0x21EF90 init, 0x21F004 params) | `if_agc_process` | **Feed-forward AGC, one gain per block.** Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6), averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = **−12 dBFS** (0x3E809BCC at 0x21F088). **Attack** is immediate and the gain is applied to the previous block (one block = 333 µs look-ahead). **Hang** 20 ms (counter step 1/60 per block, 0x3C888889). **Decay** linear in dB, 40 dB per reg-0x66 ms | 0x62 ≠ 0: AGC on (0: fixed gain Gmax). 0x66: decay time in ms, 20–4000 (default 3000). 0x67: gain 10^((x − 255)·0.025) (0x204BD0 = 0.025). 0x63: Gmax = g67 · 0.2512 · 10^((255 − x)/40) (`if_agc_params` 0x21F06B–0x21F091, used as the ceiling at 0x21F137), i.e. the **AGC gain ceiling** in 0.5 dB steps below 255; the DSP default 0xE7 gives Gmax = g67 exactly. MAIN sends a per-band factory byte (below). 0x68: fixed input gain, 0.5 dB steps (MAIN writes 0x94 = +74 dB) | [fact] constants and flow; units of 0x66 [inference] |
 | 0x21F320 (+0x21F348 `meter_to_reg4005`, 0x21F388 `status_reg3_update`) | `if_meter_tick` | Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = **AGC gain reduction in 0.5 dB steps** | writes 3, 0x4005 | [fact]; reg 3 low byte as S-meter source [inference, MAIN averages it] |
 | 0x21D8A0 / 0x21D940 | `ssb_weaver_init` / `ssb_weaver_demod` | **Weaver SSB/CW demodulator.** NCO 1 at (±2000 + 18000) Hz, 2π/72000 (0x206EA8/0x206EAC), I/Q mix; ÷6 with 0x2373D0 (LP 4.9 kHz); 9-section LP 0x237440 (1.97 kHz at 12 kHz) on I and Q; NCO 2 at 2 kHz (π/3 per sample at 12 kHz) and I·cos + s·Q·sin; ×6 with gain 6 and 0x2373D0. Param 0 (CW-U, USB) sets s = −1 → NCO 1 at 16 kHz; param 1 (CW-L, LSB) → 20 kHz. So the SDR delivers the signal with its (suppressed) carrier at **18 kHz** in a real 72 kHz stream, and the audio passband is 0–4 kHz | 6 | [fact: constants]; carrier position [inference] |
 | 0x21D5B0 / 0x21D5C8 | `am_demod_init` / `am_demod` | Analytic signal (`hilbert_iq` 0x225370: 71-tap FIR 0x205840 for Q, I = input delayed 35 samples), envelope √(I² + Q²), DC blocker y = x − x₋₁ + 0.999·y₋₁ | — | [fact: structure]; coefficient values [fact per the FLIX listing, not re-checked] |
 | 0x21D650 / 0x21D68C | `fm_demod_init` / `fm_demod` | Analytic signal, mix by an NCO of −2π/3 per sample (−24 kHz, fs/3; 0xC0060A92), polar discriminator atan2(x·conj(x₋₁)) × 1.6225, hold on zero input. **Noise squelch level:** discriminator output through the 5-section BP 0x2368D0 (9–15 kHz at 72 kHz), Σ\|n\| over 1800 samples (25 ms), scaled into **reg 1 high byte** | writes reg 1 bits 15–8 | [fact]; why FM sits at 24 kHz and SSB at 18 kHz is open |
-| 0x224960 | `rx_loop_gain` | Gain from reg 0x60 (0.5 dB) on a block taken from output FIFO 1 instead of the demodulator; only when reg 6 = 10 and the reg-10 selector = 1. MAIN never sends 10 | 0x60 | [fact]; purpose (loop-back test) [guess] |
+| 0x224960 | `rx_aux_in_gain` (was `rx_loop_gain`) | Gain from reg 0x60 (0.5 dB) on **codec ADC channel 1** (`codec_in_fifo_pop`(1)), which then replaces the demodulator output as the Rx_Audio input; only when reg 6 = 10 and reg 10 n0 = 1 (`Thread_Rx_Path_entry` 0x2262FC). MAIN never sends 10 (#184) | 0x60 | [fact]; purpose [inference, below] |
 | 0x224814 | `rx_out_gain_mute_update` | Per-output gain from regs 0xE / 0xD (0.5 dB; MAIN's 0xF000 in FM = mute), applied with a ±1 clip in the sink `codec_out_sink` (0x224604); reg 0x10 bit 0 or the GPIO select starts a soft mute through the 1 ms raised-cosine ramp (`mute_ramp_step`) | 0xD, 0xE, 0x10 | [fact] |
 | 0x225AB4 | `play_gain_update` | reg 0x13 → 10^(x/40), the gain of the playback reader `playback_ring_read` | 0x13 | [fact] |
 
@@ -72,10 +72,11 @@ flowchart TB
 
 | Address | Ghidra name | What it computes | Registers | Tag |
 |---|---|---|---|---|
-| 0x21F484 | `rx_audio_chain` | ÷6 (0x2373D0), the stages below in order, ×6 per branch | 6 | [fact] |
-| 0x21D270 (+0x21D234) | `cw_zero_in_estimator` (was `status_reg4_update`) | Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms) → frequency f. If f ≥ 10 Hz and the amplitude ≥ 1e-5 (with debounce): reg 4 = round(clamp(f − pitch, ±999) / 10), else 0x7FFF. MAIN adds reg 4 × 10 Hz to the VFO: **CW auto zero-in** | 0x61: bit 12 on, bits 11–0 = CW pitch | [fact] |
+| 0x21F484 | `rx_audio_chain` | ÷6 (0x2373D0), the stages below in order, ×6 per branch. reg 6 = 9 runs `fm_audio_post`, reg 6 = 10 runs neither it nor the zero-in, anything else runs `cw_zero_in_estimator` | 6 | [fact] |
+| 0x21D270 (+0x21D234 `cw_zero_in_init`) | `cw_zero_in_estimator` (was `status_reg4_update`) | Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms) → frequency f (× 12000/2π, 0x203AC8). If f ≥ 10 Hz and the amplitude A = √2·RMS ≥ 1e-5, a **3-bin Goertzel tone gate** checks that the 240 samples really hold one tone at f (below); while the gate is open: reg 4 = round(clamp(f − pitch, ±999) / 10), else 0x7FFF. MAIN adds reg 4 × 10 Hz to the VFO: **CW auto zero-in** | 0x61: bit 12 on, bits 11–0 = CW pitch | [fact] |
+| 0x21D0D0 / 0x21D140 / 0x21D190 / 0x21D1E0 (+0x21D0A8 reset) | `zeroin_goertzel_tune` / `_step` / `_mag` / `zeroin_tone_gate` | The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at 0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x + c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: \|X\| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): **closed → open** when the centre bin > 90.83·A (0x203ACC; an ideal tone gives 120·A over 240 samples, so ≈ −2.4 dB) **and** beats both ±15 Hz bins; **open → closed** only when the centre bin drops below 90.83·A. So reg 4 follows only a clean single carrier, and the side-bin test is the hysteresis | — | [fact] |
 | 0x220B5C (+0x220B30) | `fm_audio_post` | FM only: CTCSS and DCS decoders, then 5-section HP 0x236AB0 (−70 dB below 200 Hz, flat above 300 Hz: removes the subtone); if reg 0x3A bit 0, 8-section 0x236B20 (≈ −6 dB/octave above 400 Hz: **de-emphasis**) | 0x3A | [fact: response]; names [inference] |
-| 0x21F6D0 / 0x21F7EC / 0x21FA48 | `ctcss_init` / `ctcss_config` / `ctcss_detect` | LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. **Sliding Goertzel** over 200 samples (133 ms) at 0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6 | 0x53: bit 12 on, tone index 1–50 into 0x204BE0 | [fact] |
+| 0x21F6D0 / 0x21F7EC / 0x21FA48 | `ctcss_init` / `ctcss_config` / `ctcss_detect` | LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. **Sliding Goertzel** over 200 samples (133 ms) at 0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init` 0x21F968 (on a tone change: also clears the 3 bin states and the 200-sample window) and `ctcss_goertzel_retune` 0x21F8BC (on every lock change): sin and 2·cos of 2π f_bin / 1500 (2π, 200, 1/200, 1/1500 at 0x204CB0..BC); **side bins at 0.985 / 1.015 f while unlocked and 0.98 / 1.02 f while locked** (0x3F7C28F6 / 0x3F81EB85 vs 0x3F7AE148 / 0x3F828F5C), so a locked tone may drift ±2 % before a side bin wins (#184) | 0x53: bit 12 on, tone index 1–50 into 0x204BE0 | [fact]; purpose of the wider locked spacing [inference] |
 | 0x21FD20 / 0x21FDBC (+0x220224) | `dcs_init` / `dcs_config` / `dcs_detect` | **DCS decoder.** Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted / either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search, slicing at ±0.7 × RMS. Result → reg 1 bit 7 | 0x51 (MAIN writes 0) | [fact: structure]; Golay [inference] |
 | 0x21E530 (+0x21E520) | `manual_notch` | Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 + α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz) | 0x52: type in bits 15–12, frequency bits 11–0 | [fact] |
 | 0x21E0F4 (+0x21DF20, 0x21DFE4, 0x21E24C) | `spectral_nr` | **STFT Wiener noise reduction.** 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add, complex FFT `fft512_cplx` 0x2174B0 with twiddles 0x200D00, inverse 0x217D10. Per bin γ = \|X\|² / N; **decision-directed** a-priori SNR ξ = 0.98·G²·γ₋₁ + 0.02·max(γ − 1, 0); G = ξ / (1 + ξ); out = \|X\|·(1 − β + β·G) with the input phase. Noise PSD N: mode 1 learns (pass-through), 2 freezes the average, 3 tracks N = 0.99 N + 0.01 \|X\|² | 0x4022: mode 0–3 (0 bypass); 0x4023: depth β in % (≤ 100) | [fact] |
@@ -87,9 +88,9 @@ flowchart TB
 | 0x21EC40 (+0x21EC20) | `af_hicut` | Type 1: 1st-order bilinear low-pass (6 dB/oct); type 2: 3rd-order (18 dB/oct) | instance 0: 0x46; instance 1: 0x54 | [fact]; HI-CUT menu [inference] |
 | 0x21E8B0 (+0x21E890) | `af_locut` | Same structure as high-pass | 0x47; 0x55 | [fact] |
 | 0x220AA4 / 0x220470 (+0x220420, band 0x220790) | `rx_eq_3band` / `rx_eq_update` | Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10 | 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50 | [fact] |
-| 0x21E82C | `branch_a_align_delay` | 128-sample delay, active only while the branch-B FIR is on: matches the 257-tap FIR's group delay | (0x4020) | [fact]; purpose [inference] |
-| 0x21E754 (+0x21E740) | `cw_fir_lowpass` | 257-tap FIR: 700 or 1000 Hz, gentle or sharp (0x203B70, 0x204390, 0x203F80, 0x2047A0) | 0x4020 | [fact] |
-| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples; MAIN writes 32 (2.7 ms) | 0x56 | [fact]; why [guess] |
+| 0x21E82C | `branch_a_align_delay` | 128-sample delay, active only while the branch-B FIR is on: (257 − 1) / 2 = 128 = the FIR's group delay, so both branches stay time-aligned | (0x4020) | [fact] |
+| 0x21E754 (+0x21E740) | `aess_lowpass_fir` (was `cw_fir_lowpass`) | **AESS crossover low-pass** on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle: 0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four tables; steep: −12.2 dB at 1000 Hz (700) and −13.5 dB at 1500 Hz (1000), −40.7 / −31.4 dB at 3 kHz; gentle ≈ −6 dB/octave). MAIN's `dsp_set_aess` sends 0x2000 \| 700 or 0x2000 \| 1000 (steep), 0 when the AESS level is 0 | 0x4020 | [fact: responses computed from the tables]; AESS crossover [inference, strong] |
+| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms) | 0x56 | [fact]; why (acoustic alignment of the two speakers) [guess] |
 
 **No noise blanker on the HiFi4.** None of the stages above is an impulse blanker, and MAIN sends its NB level to the SDR FPGA
 (register 0x1A, [main/sdr-link.md](../main/sdr-link.md)), so the NB runs in the FPGA **[inference]**.
@@ -132,7 +133,7 @@ flowchart TB
 | 0x2248D8 (+0x2248A0) | `aux_in_gain_lp` | Block 5: gain reg 0x23, LP 0x2373A0 (4.9 kHz); only when reg 6 = 10 | 0x23 | [fact] |
 | 0x2259E4 | `playback_ring_read` | Next block from the 4000-block ring 0x268E20 (filled by `playback_ring_fill` 0x225834 from the DISPLAY PLAY stream, ÷2 + IIR), gain from reg 0x13, clip ±1 | 0x13 | [fact]; PLAY source [inference] |
 | 0x225264 | `test_tone_gen` | Sine, phase += f·2π/72000 (0x38B702D4), amplitude 10^(L/40); defaults 1000 Hz, −12 dB | 0x4013 f, 0x4014 L | [fact] |
-| 0x2233FC / 0x223734 (+0x223320, 0x22338C) | `vox_detector` / `antivox_detector` | 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS predictor (`nlms_51tap_update`) is used as a line enhancer first. Level = 20 log10(Σ\|x\| / 160) over 20 ms; above the threshold → flag with 100 ms hang. Writes level·2 to reg 0x4008/0x4009, reg 0x400A = ch0 \| ch1 << 1 \| VOX << 2, reg 1 bit 4 = VOX = mic ∧ ¬speaker (`vox_state` 0x223A74) | 0x21 (VOX gain), 0x22 (anti-VOX), 0xC bit 0, 0x4011 μ, 0x4012 leak | [fact: 0x22354D, 0x223559, 0x223584]; VOX / anti-VOX [inference, strong] |
+| 0x2233FC / 0x223734 (+0x223320, 0x22338C) | `vox_detector` / `antivox_detector` | 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ\|x\| / 160) over 20 ms; above the threshold → flag with 100 ms hang. Writes level·2 to reg 0x4008/0x4009, reg 0x400A = ch0 \| ch1 << 1 \| VOX << 2, reg 1 bit 4 = VOX = mic ∧ ¬speaker (`vox_state` 0x223A74) | 0x21 (VOX gain), 0x22 (anti-VOX), 0xC bit 0, 0x4011 μ, 0x4012 leak | [fact: 0x22354D, 0x223559, 0x223584]; VOX / anti-VOX [inference, strong] |
 | 0x22313C | `tx_chain` | `tx_core_12k` → `tx_alc` → (FM: `fm_post_lpf`) → block 2 → `ctcss_encoder` → `two_tone_test_gen` → `dcs_encoder` → **if reg 0x4006 ≠ 0**: modulator by reg 6 (jump table 0x204EF0: 0/2/4/6 Weaver(0), 1/3/5/7 Weaver(1), 8 AM, 9 FM, 10 none) → block 1 | 6, 0x4006 | [fact: gate `beqz` at 0x2231BD on reg 0x4006 (0x20077F00 + 0x10C)] |
 | 0x2220E8 (+0x2220A0) | `tx_core_12k` | ÷6 (0x2373D0) → EQ → processor → compressor → BPF → FM block → limiter → ×6 (gain 6, 0x2373D0) | 6 | [fact] |
 | 0x221854 + 0x221220 / 0x221540 | `tx_param_eq_3band` + `tx_eq_band3_update` / `tx_eq_band_update` | Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10 | 0x25–0x2D | [fact] |
@@ -141,7 +142,7 @@ flowchart TB
 | 0x2221D0 | `tx_bpf_select` | reg 0x2F = 1–7 picks the cascade 0x236C50[v − 1] (section counts 0x204DA0: 9, 9, 10, 11, 12, 9, 8): passbands 35–3199, 70–3035, 117–2930, 246–2824, 363–2766, 23–3352, 23–4137 Hz at 12 kHz, i.e. the SSB TX BPF menu | 0x2F | [fact] |
 | 0x222D34 (+0x222D00) | `fm_tx_audio` | HP 0x2371F0 (293 Hz) → gain (reg 0x30 & 0xFF)/255 → if reg 0x3A bit 0, 0x237240 (+6 dB/octave 200 Hz – 3 kHz): **pre-emphasis** | 0x30, 0x3A | [fact: response]; name [inference] |
 | 0x222E30 (+0x222E10) | `soft_knee_limiter` | Same gain computer with R = ∞ | 0x4015 on (off), 0x4016–0x4019 | [fact] |
-| 0x221F98 + 0x221E84 (+0x221E40) | `tx_alc` + `tx_alc_update` | Peak envelope (fast rise, release from reg 0x33), gain = P·G1 / max(e, P·G2); **reg 2 high byte** = ALC gain reduction | 0x31/0x32 (−43 SSB, −54 AM, −56 FM half-dB), 0x33, 0x34 | [fact: structure]; operand order and the reg 0x33 mapping [inference] |
+| 0x221F98 + 0x221E84 (+0x221E40) | `tx_alc` + `tx_alc_update` | Per 72 kHz sample: envelope e ← c·\|x\| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when \|x\| ≥ e, else c = **powf(0.5, reg 0x33)** (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y = x·gain (`divf_` 0x22200A); **reg 2 high byte** = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through), bits 11–0 = level P in % (0 → 1, clamped to 100). G1 = 10^(reg 0x31 / 40), G2 = 10^(reg 0x32 / 40) (half-dB). So G1 is the output ceiling and G2·P the level below which the gain stops rising | 0x31/0x32 (−43 SSB, −54 AM, −56 FM half-dB), 0x33, 0x34 | [fact: flix.dis 0x221E84–0x22202A] |
 | 0x22309C (+0x223080) | `fm_post_lpf` | LP 0x2372E0 (3.0 kHz at 72 kHz), bypassed by reg 0xC bit 8 | 0xC | [fact] |
 | 0x222510 (+0x2224E0) | `ctcss_encoder` | Adds A·sin φ, φ += tone·2π/72000 (table 0x204DD0), A from reg 0x11 | 0x35 (bit 12 + index 1–50), 0x11 | [fact] |
 | 0x222AF0 (+0x222AB0) | `two_tone_test_gen` | Two sine generators, on when reg 0x36/0x37 top nibble = 1, f = bits 11–0 | 0x36, 0x37 (MAIN writes 0) | [fact]; name [inference] |
@@ -155,7 +156,7 @@ flowchart TB
 | 0x225A84 | `rec_gain_update` | Recorder gain from reg 0x12 (MAIN 8 = +4 dB) for `rec_resample_sink` (`FUN_002255B4`) | 0x12 | [fact] |
 
 **The modulators are gated off.** `tx_chain` runs the Weaver / AM / FM modulators only when reg 0x4006 ≠ 0; its default is 0 and neither MAIN
-nor the M33 writes it (register scan) **[fact]**. So in normal use block 1 (the TX AF stream to the SDR) is **baseband audio** from the
+nor the M33 writes it (register scan; checked store by store in #184, below) **[fact]**. So in normal use block 1 (the TX AF stream to the SDR) is **baseband audio** from the
 12 kHz core, and the modulation is done in the SDR FPGA **[inference]**. The DSP has no CW keying or side-tone source of its own; MAIN sets reg
 10 to the mic in CW, so CW is generated in the FPGA too **[inference]**.
 
@@ -167,14 +168,165 @@ nor the M33 writes it (register scan) **[fact]**. So in normal use block 1 (the 
 - Gain registers are half-dB (above).
 - The 7 voice passbands (0x236C50) are the 12 kHz TX BPF, selected by reg 0x2F **[fact]**.
 - `FUN_002233FC`'s 51-tap NLMS is part of the VOX detector, not a TX signal stage **[fact]**.
+- #184: MAIN's DNR does write regs 0x40 and 0x4022/0x4023 (levels 1–7 Wiener, 8–15 LMS ALE). The branch-B FIR is the AESS
+  low-pass, not a CW filter (`aess_lowpass_fir`). `rx_loop_gain` reads codec ADC channel 1, not an output FIFO (`rx_aux_in_gain`).
+  0x21BE54 is the IPC category-3 (version) handler and 0x21BE20 the category-1 (mute) one. 0x233410 is called from
+  `regfile_set_defaults` too, and the register file is cleared by the M33, not by that call (details below) **[fact]**.
 
-## Open points (#184)
+## Answers to the #86 open points (#184)
 
-- Why the FM demodulator and the AM/FM modulators sit at 24 kHz while the Weaver works around 18 kHz, and what the FPGA sends in each
-  mode (with reg 0x4006 = 0 the DSP modulators are unused).
-- Which NR MAIN's DNR setting drives: MAIN writes neither 0x40 nor 0x4022/0x4023 in the register scan.
-- The reg-0x33 → ALC release mapping (`FUN_002294E0`, a double-precision pow-like routine), reg 0x34's meaning, reg 0x63's role.
-- Branch B of Rx_Audio (spare hi/lo-cut 0x54/0x55, CW FIR, delay 0x56) and the reg-6 value 10 path: who uses them.
-- The VOX NLMS takes its desired signal from raw 72 kHz samples, not the decimated ones (bundle 0x2234BC): a bug or a misread.
-- `FUN_0021D0D0`/`D140`/`D190`/`D1E0` (zero-in level gate and debounce) and `FUN_0021F8BC`/`F968` (CTCSS coefficient refresh) are not read.
+The points left open by #86, answered from the firmware where possible. What needs the FPGA netlist or the board is in #193.
+
+### IF placement, what the FPGA gets, and who writes reg 0x4006
+
+- **What the DSP expects** **[fact: constants above]**: a real 72 kHz RX IF. SSB/CW: carrier at 18 kHz (fs/4) with the sideband
+  inverted (USB → NCO 1 at 16 kHz, LSB → 20 kHz). FM: carrier at 24 kHz (NCO −2π/3 per sample). AM: anywhere, because `am_demod`
+  takes the Hilbert envelope. The TX modulators mirror this: Weaver at 18 ∓ 2 kHz, AM and FM carriers at 2π/3 = 24 kHz.
+- **Who writes reg 0x4006.** On the HiFi4 only `regfile_set_defaults`: `s16i a12, a9, 0x10c` at 0x21BFDC with a9 = 0x20077F00 and
+  a12 = 0 (set at 0x21BEDD), i.e. the default 0. No other store to 0x2007800C exists among the 14 users of the 0x20077F00 base; the
+  only other access is `tx_chain`'s read. The M33 writes only regs 0, 1 and 0x4000 ([ipc.md](ipc.md)), and MAIN has no setter and no
+  0x4006 operand. So only the console `w` command or CAT `SPDW4006…` can set it **[fact: flix.dis, decomp/ifdsp/m33,
+  decomp/main]**. In service the TX AF stream is the 12 kHz core's audio up-sampled to 72 kHz, and the SDR FPGA modulates
+  **[inference, strong]**. The DSP modulators are a development or test path **[inference]**.
+- **Why 24 kHz for FM.** fs/3 makes the NCO a 3-sample cycle (cos = −1/2, sin = ±√3/2), so the FM mixer and both AM/FM modulators
+  need no phase accumulator or table, and the same carrier serves RX and TX **[inference]**. MAIN cannot be the one that moves the
+  carrier: it tunes the SDR RX NCO with ±(1500 + shift) in SSB and no offset in AM/FM (SDR reg 0x18/0x19, `sdr_upd_r18_rx_freq`), and sends the modulation
+  class in SDR reg 0x0A (0 CW, 1 AM, 2 FM, 3 LSB, 4 USB, 5 RTTY) ([main/sdr-link.md](../main/sdr-link.md)). A single fixed IF in the
+  FPGA cannot put the SSB carrier at 18 kHz and the FM carrier at 24 kHz, so the FPGA must shift the IF by class **[inference]**.
+  Confirming that needs the DDC in the netlist (#193).
+
+### DNR: MAIN drives both noise reductions, split by level
+
+The #86 page said MAIN writes neither NR register. That was wrong: the register map in [control-link.md](control-link.md#register-map)
+already lists the writers. `dsp_link_poll` calls `dsp_set_dnr_r40`, `_400b`, `_400d`, `_4022`, `_4023`, `_4025` and `_4026` in one
+pass (decomp/main 0xFFF9C555 file). Each of them reads the PTT-side VFO record +0x06 (bit 4 = DNR on, bits 0–3 = level 1–15, #161),
+sends 0 when DNR is off or the mode is FM / DATA-FM (6, 7, 10, 11), and otherwise indexes a 16-entry table by the level
+**[fact: `dsp_set_dnr_r40` 0xFFF9E750, `dsp_set_dnr_4022` 0xFFF9FE2A; tables read from the MAIN image]**:
+
+| DNR level | 0x4022 (Wiener mode) | 0x4023 (depth β %) | 0x40 (LMS ALE) | 0x400B (μ ×1000) | 0x400D (leak ×1e-6) | 0x4025 (in gain, half-dB) |
+|---|---|---|---|---|---|---|
+| 1–7 | 3 (track N) | 32, 40, 48, 56, 64, 72, 80 | 0 | 0 | 0 | 0 |
+| 8–15 | 0 (bypass) | 0 | 1 | 2304, 1792, 1280, 768, 256, 224, 192, 160 | 32, 64, 96, …, 256 | −17, −17, −18, −19, −20, −21, −20, −21 |
+
+Tables 0xFFF87F5A, 0xFFF87F7A, 0xFFF87FBA, 0xFFF87F1A, 0xFFF87F3A, 0xFFF87F9A; reg 0x4026 (0xFFF87FDA) is 0 at every level. So
+**levels 1–7 are the STFT Wiener NR** in its tracking mode with a deeper mix per step, and **levels 8–15 are the LMS line enhancer**,
+with μ falling from 1.8 (2304 is clamped) to 0.16, the leak rising, and −8.5 … −10.5 dB of input gain **[fact]**. The DSP's own
+defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
+
+### ALC (AMC) release, regs 0x33, 0x34 and 0x63
+
+- **reg 0x33** → release coefficient c = powf(0.5, x) per 72 kHz sample (`tx_alc_update` 0x221F79–0x221F90; `FUN_002294E0` is
+  newlib's `powf` wrapper: its matherr record names `"powf"` (0x206414), and `FUN_00223AB4` uses it as powf(10, x/20)). Below
+  the envelope, e ← c·|x| + (1 − c)·e, so e decays with a time constant of 2^x / 72000 s **[fact: code; arithmetic]**. MAIN's AMC RELEASE TIME
+  FAST / MID / SLOW = 0x11 / 0x12 / 0x13 → **1.8 / 3.6 / 7.3 s**; FM 0x0C → 57 ms. The attack coefficient is 0.5 per sample.
+- **reg 0x34** = bit 12 ALC on, bits 11–0 = output level P in % (clamped 1–100). P scales both G1 and G2. MAIN sends `AO` | 0x1000
+  in SSB, AM and DATA, 100 | 0x1000 in FM, and 0 (ALC off) in CW, RTTY and during voice playback (`dsp_set_amc_level` 0xFFF9E480)
+  **[fact]**. This block is MAIN's AMC (automatic mic gain control) **[inference, strong]**.
+- **reg 0x63** = the IF AGC **gain ceiling**: Gmax = g67 · 0.2512 · 10^((255 − x)/40), 0.5 dB per step (`if_agc_params` 0x21F06B)
+  **[fact]**. MAIN sends one of the five cfg105 bytes 0x4674..0x4678 (`SPN` entries 28..32) by RX band ≤ 7.5 / 14.5 / 21.5 / 41.5 /
+  75 MHz (`dsp_set_freq_range_param` 0xFFF9FB6E) **[fact]**. Because reg 3's low byte (the S-meter source) is 255 − 2·(Gmax_dB −
+  gain_dB), these bytes are a per-band gain and S-meter calibration **[inference]**. The owner's radio (EEPROM dump 2026-10-28,
+  `tools/cat_backup.py --eeprom`, EEPROM 0x0025..0x0029; header stamp 2306260856) holds **[fact: dump]**:
+
+  | RX band | ≤ 7.5 MHz | ≤ 14.5 MHz | ≤ 21.5 MHz | ≤ 41.5 MHz | ≤ 75 MHz |
+  |---|---|---|---|---|---|
+  | byte (`SPN` 28..32) | 190 (0xBE) | 190 (0xBE) | 189 (0xBD) | 188 (0xBC) | 199 (0xC7) |
+  | ceiling 10^((255 − x)/40) · 0.2512, in dB above g67 | +20.5 | +20.5 | +21.0 | +21.5 | +16.0 |
+
+  So the HF bands sit within 1 dB of each other and 6 m gets about 5 dB less IF gain headroom, consistent with a per-band
+  gain/S-meter trim **[inference]**. Values differ between radios (factory alignment), so these are one sample, not defaults.
+  MAIN's own alignment menu names the five bytes `028..032 [RX] IF-AGC 7 / 14 / 21 / 28 / 50`, and their ROM default is 0
+  (`cfg105_defaults` 0xFFF8074F) **[fact, #203]**. The service manual aligns each at 7.150 / 14.200 / 21.200 / 28.100 / 50.500 MHz
+  for −2.0 dB ± 0.5 dB of AF with a 10 dBµV signal, after setting 0 dB with 40 dBµV: a per-band IF-gain (AGC threshold) trim
+  **[fact: manual]**. Map of the whole table: [main/eeprom.md](../main/eeprom.md#cfg105-the-alignment-table-fact).
+
+### Rx_Audio branch B is the AESS speaker feed; reg 6 = 10 is an external-audio mode
+
+- `Thread_Rx_Audio_entry` (0x220F90) runs `rx_audio_chain`(in, A, B) and pushes A into FIFO 0 and B into FIFO 1. `rx_audio_push_block`
+  (0x220F74) pops them into RX blocks 0x2CAC50 (A, routing source 3) and 0x2CACB0 (B, routing source 6) **[fact]**.
+- MAIN sets reg 8 = 0x3263 only for speaker route 2 (internal and external speaker both on, `speaker_route` 0x20FCC, see
+  [main/peripherals.md](../main/peripherals.md)); every other RX route uses 0x3233 **[fact: decomp/main fffb70c9 file]**. With 0x3263,
+  codec DAC channel 0 gets branch B and channel 1 gets branch A ([control-link.md](control-link.md#audio-routing-registers-8-9-10-77-fact)).
+- Branch B shares the NR, notch, contour, APF and limiter with A, but not MAIN's HCUT/LCUT (0x46/0x47) or the AF tone EQ. Its own
+  hi/lo-cut (0x54/0x55) is never written, so it is off. It then runs `aess_lowpass_fir`: with AESS on (`dsp_set_aess`: level ≠ 0) a
+  steep 700 or 1000 Hz low-pass, and branch A is delayed by the FIR's 128-sample group delay. So with both speakers on and AESS on,
+  one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**. The
+  AESS speaker is the rear-panel EXT SP jack (owner), which the schematic feeds from codec LOR, so **branch B (DAC channel 0) → LOR →
+  EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
+  [hardware.md](../../hardware.md)]**. The AESS level `AS1` is not sent to the DSP: MAIN applies it on the analog side
+  (route 2 only when it is non-zero, and R2A20178 channel 8 from it; [main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact),
+  #203) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is still open in #193.
+- **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
+  (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
+  skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the
+  modulator table has no entry for 10 **[fact]**. A value 1 in reg 10's low nibble also makes the M33 switch the codec's right
+  MICPGA to IN1R ([control-link.md](control-link.md)). So reg 6 = 10 runs an external analog input through the DSP audio chain, with
+  no demodulator. A factory test mode is likely **[inference]**. MAIN sends neither 6 = 10, a reg 10 low nibble of 1, reg 0x23 nor
+  reg 0x60 **[fact]**.
+
+### The VOX / anti-VOX NLMS is fed the wrong samples (a bug, dormant)
+
+In `vox_detector` (and identically in `antivox_detector` at 0x2237F4) the enabled path is **[fact: flix.dis 0x2234B9–0x223534]**:
+
+1. 72 samples (3 blocks) are low-passed (0x237360) and every 9th is kept: 8 samples at 8 kHz, written back to the start of the
+   input buffer (+40).
+2. Bundle 0x2234BC `{ addi a2, a9, −108; mov.n a11, a2 }` then `memcpy(hist + 101, a11, 32)`. All slots of a FLIX bundle read their
+   operands before any slot writes, so a11 is the **old a2**, the function's first argument: the raw 72 kHz block. The 8 newest
+   history samples, which are also the NLMS desired signal d (`nlms_51tap_update`(x = hist, w, d = hist + 101, e, y, μ, leak)), are
+   therefore samples 0–7 of the last raw block, not the 8 decimated ones.
+3. The NLMS output y (0x25C75C) then overwrites the decimated samples, and the level is summed from y.
+
+So with reg 0xC bit 0 set, the low-pass and decimation are thrown away, and the predictor sees 8 adjacent 72 kHz samples out of
+every 1 ms. Even if the bundle ran its slots in order (it does not), a11 would equal a2 and the copy would be a no-op, so the
+decimated samples never reach the predictor either way. This is a source-level bug (the wrong pointer passed to the copy)
+**[inference, strong]**. It has no effect in service: MAIN writes reg 0xC = 0, so the plain path (Σ|x| over the decimated samples)
+runs **[fact]**.
+
+### Helpers that were unread
+
+- `FUN_0021D0D0` / `D140` / `D190` / `D1E0` are the zero-in's three-bin Goertzel tone gate, and `FUN_0021D234` its init (rows in the
+  Rx_Audio table) **[fact]**.
+- `FUN_0021F8BC` / `F968` are the CTCSS Goertzel coefficient retune / init. The side bins widen from ±1.5 % to ±2 % while a tone is
+  locked (`ctcss_detect` row) **[fact]**.
+- `FUN_002293E0` / `FUN_00229460` are newlib `cosf` / `sinf` (|x| ≤ π/4 goes straight to the kernels 0x22A610 / 0x22B420, else
+  `rem_pio2f` 0x22A320 and the quadrant switch), and `FUN_002294E0` is `powf` **[fact]**.
+
+### IPC: the FLIX-hidden operands, and `xthal_set_region_attribute`
+
+Read from the objdump listing at the branch targets where the per-function listing had desynchronised (0x21C438, 0x21C460)
+**[fact]**:
+
+| Address | Code | Value |
+|---|---|---|
+| 0x21C405 | `{ addi a14, a1, 127; movi a11, 30 }` → `rpmsg_lite_create_ept` | DSP endpoint **30 = 0x1E** |
+| 0x21C438 | `{ l32r a10, 0x40111000; movi a11, 1 }` → `MU_SetFlags` | flag **1** to the M33 |
+| 0x21C460 / 0x21C463 | `SEMA42_Init(0x40112000)` | |
+| 0x21C469 | `{ movi a11, 0; movi a12, 3 }` → `SEMA42_Lock` | **gate 0, processor 3** |
+| 0x21C472 | `{ l32r a10, 0x40111000; movi a11, 3 }` → `MU_SetFlags` | flag **3** |
+| 0x21BD49–0x21BD63 | `ipc_handle_msg`: `bnei +9, 1`, `beqi +10, 2`, then category 0 / 1 / `beqi.w15 a9, 3` | version 1.2; categories **0, 1 and 3** |
+| 0x21BDB4–0x21BDC0 | `rpmsg_lite_send(rl, ept, 40, msg, 152, 0)` | reply to endpoint **40**, 0x98 bytes |
+
+Corrections to [ipc.md](ipc.md): the DSP does handle **category 3**. Category 1 goes to 0x21BE20 (now `handle_msg_audio`): it
+accepts command 0 with param[0] = 0 or 1 (the M33's "Mute off / on") and does nothing else; another param gives error 2, another
+command error 3. Category 3 goes to 0x21BE54 (now `handle_msg_version`, formerly misnamed `handle_msg_audio`): command 0 sets param[0]
+= 1, so the M33 would print `DSP Version 0001`. Any other category gives type 2, error 3. The literal 0x40112000 (pool 0x2069B0) is
+used only by `SEMA42_GetInstance` and `Thread_Ipc`, so the DSP never releases gate 0.
+
+**0x233410 is the Cadence HAL `xthal_set_region_attribute`**, in its region-protection (cacheattr) variant **[fact: structure]**.
+It returns 0 for size 0, −3 when vaddr + size wraps, and −2 for a partial region when flag bit 9 (`XTHAL_CAFLAG_EXACT`) is set.
+It reads the current attributes with `FUN_00233580` (now `xthal_get_cacheattr`: `rdtlb1` at 0xE0000000, 0xC0000000, …, 0 for the 8 × 512 MB
+regions, one nibble each). It then rewrites the nibbles of the regions the range touches, with the "no partial" (bit 10), expand
+(bit 8), no-writeback (bit 11) and no-invalidate (bit 12) flag tests and the class table at 0x200070. Finally it writes them with
+`FUN_002335A0` (now `xthal_set_cacheattr`: `witlb`, skipping the region it runs from, then `wdtlb` for each region) and calls
+0x236450 / 0x2364B0 / 0x2364D0, the cache writeback / invalidate helpers **[inference]**. cattr 2 is `XCHAL_CA_BYPASS` (the code special-cases 2 and 6
+as bypass and 4 and 5 as write-back) **[inference: HAL encoding]**. There are three calls **[fact]**: the DSP main (0x21C4AD,
+0x21C4C2) passes (0x20060000, 0x31E0, 2, 0) and (0x20060000, 0x20060000 − 0x20060000 = 0, 2, 0), which returns at once, and
+`regfile_set_defaults` (0x21BE8F) passes (0x20070000, 0x10000, 2, 0). Earlier pages read the last one as a memset of the register
+file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. With flags 0 the first call already switches the
+**whole region 0x20000000–0x3FFFFFFF** (DMA buffers, register file, rpmsg shared memory) to bypass, so the third changes nothing
+**[inference: HAL semantics]**. The DSP's own code and data at 0x0020_0000 (region 0) keep their attribute.
+
+### Still open
+
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
+- The SDR FPGA's per-mode IF placement and the AESS branch delay: #193 (the AESS speaker, the AESS level (#203) and the reg 0x63 values are settled).
