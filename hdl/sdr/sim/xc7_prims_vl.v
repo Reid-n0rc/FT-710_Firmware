@@ -1,9 +1,9 @@
 // Minimal functional models of the 7-series primitives used by the recovered FT-710 SDR netlist (T15e).
 //
 // Written for Verilator 5 (cycle-based, single 125 MHz domain): Yosys' cells_sim.v trips Verilator 5.006 on
-// CARRY4 with constant inputs (V3Gate internal error), so the small primitives are re-modelled here. DSP48E1 and
-// RAMB18E1 still come from Yosys (extracted from cells_sim.v with the $fatal mode checks removed, see
-// hdl/sdr/README.md). No timing, no X propagation, flip-flops start at INIT. Not for synthesis.
+// CARRY4 with constant inputs (V3Gate internal error), so the small primitives are re-modelled here. DSP48E1 still
+// comes from Yosys (extracted from cells_sim.v with the $fatal mode checks removed, see hdl/sdr/README.md); the block
+// RAMs are in xc7_bram_vl.v (#164). No timing, no X propagation, flip-flops start at INIT. Not for synthesis.
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
 /* verilator lint_off MULTIDRIVEN */

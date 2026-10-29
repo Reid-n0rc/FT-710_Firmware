@@ -15,6 +15,8 @@ in `build/` (never committed).
 | `tb_uart_tx.v` | TX looped back into RX | PASS |
 | `tb_uart_link.v` | link on its own with a register model: boot read of reg 0 (`r010437`), write + read-back, bad/lower-case checksum, junk prefix, empty line | PASS (Icarus, 7 s) |
 | `sim/xc7_prims_vl.v` | Verilator models of LUT6/LUT6_2/CARRY4/FD*/SRLC32E/RAMD*/BUF*/IO/IDDR/ODDR/MMCM for the recovered netlist | |
+| `sim/xc7_bram_vl.v` | Behavioural RAMB18E1 / RAMB36E1 (UG473 widths, INIT layout, byte enables, write modes, output register, inverted pins) (#164). Before #164 the Yosys declarations were used and every block RAM read 0 | `sim/tb_bram.v`: PASS |
+| `sim/tb_bram.v` | BRAM model test: RAMB36 x9 against two RAMB18 x4 halves with interleaved INIT (data + parity), x9 writes, x18 byte enables, SDP x36 | PASS (Icarus) |
 | `sim/full_main.cpp`, `sim/build_full.sh` | Verilator harness and build for the **whole** netlist (UART players/decoders, probe and snapshot output) | 63k cells, ~15,000 clocks/s |
 | `sim/pins_main.cpp` | Pin-activity harness for the whole netlist (#90): toggle counts, burst gaps and optional edge logs of the unassigned outputs, with MAIN register frames played on UART B. Build with `MAIN=pins_main.cpp OBJ=obj_pins hdl/sdr/sim/build_full.sh` | found the I2S port and the two power-up SPI transfers; `CONSOLE=`/`INPUTS=` (#89) showed `#` = hex E, BS = hex B on the console and that no input gates `x` |
 | `sim/cosim_top.v`, `sim/cosim_directed.sh`, `sim/cosim_random.sh` | netlist and `ft710_uart_link` side by side, TX compared every clock | see results |
@@ -59,7 +61,14 @@ iverilog -g2012 -DSTRUCT -o /tmp/rxc.vvp hdl/sdr/tb_uart_rx.v hdl/sdr/uart_rx.v 
   /usr/share/yosys/xilinx/cells_sim.v && vvp -n /tmp/rxc.vvp
 ```
 
-Whole netlist in Verilator (needs `build/sdr/ft710_sdr.v` from T15d; ~2.5 min build with `-j 16`):
+Block-RAM model (#164):
+
+```sh
+iverilog -g2012 -o /tmp/tbb.vvp hdl/sdr/sim/tb_bram.v hdl/sdr/sim/xc7_bram_vl.v && vvp -n /tmp/tbb.vvp
+```
+
+Whole netlist in Verilator (needs `build/sdr/ft710_sdr.v` from T15d; ~2.5 min build with `-j 16`; `BRAM=yosys` with a
+`--ramb18` netlist rebuilds the pre-#164 model whose block RAMs read 0):
 
 ```sh
 hdl/sdr/sim/build_full.sh                                   # -> build/sdr/vl/obj_full/Vft710_sdr

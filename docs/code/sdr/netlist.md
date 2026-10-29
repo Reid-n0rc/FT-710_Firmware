@@ -286,7 +286,7 @@ python3 -I tools/xc7_netlist_verilog.py slice build/sdr/netlist.json OUT.v --see
 
 **Level-1 netlist [fact for the counts].** `build/sdr/ft710_sdr.v` (15 MB, never committed) is one module,
 `ft710_sdr`, with 116 ports and 63,474 UNISIM instances: LUT6 19,431, LUT6_2 7,177, FDRE 22,044, FDCE 8,784, FDSE 498,
-FDPE 58, CARRY4 3,692, MUXF7 251, MUXF8 30, SRLC32E 441, RAMD64E 336, RAMD32 336, DSP48E1 119, RAMB18E1 137 (with their
+FDPE 58, CARRY4 3,692, MUXF7 251, MUXF8 30, SRLC32E 441, RAMD64E 336, RAMD32 336, DSP48E1 119, RAMB18E1 75 + RAMB36E1 31 (#164; 137 RAMB18E1 with `--ramb18`) (with their
 INIT_xx/INITP_xx contents), IDDR 14, ODDR 17, MMCME2_ADV 2, BUFGCTRL 7, BUFHCE 16, BUFR 1, BUFIO 1, and on the pins
 IBUFDS 16, OBUFTDS 18, IBUF 19, OBUF 24, IOBUF 5. Parameters are the recovered ones: LUT INIT, FF INIT and clock
 inversion, DSP register attributes, A/B_INPUT, USE_DPORT, MASK/PATTERN, BRAM widths, output registers, write modes,
@@ -306,7 +306,7 @@ affected. UART B and the console give identical answers with the old and the new
 should be re-simulated.
 
 **Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits),
-RAMB36 pairs written as two RAMB18E1 halves (31 of them are certain RAMB36 x9 by the BRAM36 width flag, #92; see [bram-tables.md](bram-tables.md)), IDDR edge mode not decoded, OLOGIC T inversion not decoded (tri-state
+RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not decoded, OLOGIC T inversion not decoded (tri-state
 enables as routed), MMCM `CLKIN1_PERIOD` assumed 8 ns, BUFR/BUFIO inputs from undecodable PERF/CCIO PIPs.
 
 ### 4.1 Smoke test
@@ -344,6 +344,61 @@ including senders 2 % slow and fast) **[fact]**.
   over ten hours; it was stopped **[fact]**. A compiled simulator (Verilator) is the way to run the whole design
 (section 5).
 
+### 4.4 True RAMB36E1 and a working block-RAM model (#164)
+
+**Block RAMs did nothing in every earlier whole-design simulation [fact].** Yosys 0.23's `cells_sim.v` declares
+RAMB18E1 and RAMB36E1 with ports, parameters and timing only, no behaviour, and `build_full.sh` used that declaration,
+so all 137 block-RAM outputs read 0 in the runs of #89, #90 and T15e. `hdl/sdr/sim/xc7_bram_vl.v` now models both
+primitives from UG473: widths 1-36 (RAMB18 SDP 36, RAMB36 SDP 72), the INIT/INITP layout, byte write enables,
+WRITE_FIRST / READ_FIRST / NO_CHANGE, the output register with RSTREG_PRIORITY, and the inverted control pins. Not
+modelled: cascade, ECC, FIFO mode, non-zero INIT_A/B or SRVAL (all are 0 here), port collisions.
+`hdl/sdr/sim/tb_bram.v` checks it (Icarus: PASS).
+
+**Control-pin inversion [fact].** prjxray's `ZINV_<pin>` = 1 means *not* inverted. Every used BRAM leaves its four
+RST pins unrouted (VCC) with `ZINV_RST*` clear, i.e. inverted to an inactive 0; 5 `ENARDEN` and 44 `ENBWREN` pins are
+inverted the same way (unused ports held disabled). The writer now passes `IS_*_INVERTED`; without it every BRAM
+would sit in reset.
+
+**RAMB36E1 for the 31 flagged pairs.** A tile with `RAMB36.BRAM36_*_WIDTH_1` is a true RAMB36 in x9 (#92), so
+`tools/xc7_netlist.py` copies the tile's RAMB36 features onto both halves (`RAMB36.<feature>` params) and
+`tools/xc7_netlist_verilog.py` writes one RAMB36E1 per flagged pair (`--ramb18` restores the old two-half reading):
+
+| RAMB36E1 port | from the halves | source |
+|---|---|---|
+| DOADO/DOBDO/DIADI/DIBDI bit 2k, 2k+1 | lower half (Y0) pin k, upper half (Y1) pin k | `tile_type_BRAM_*.json`: RAMB36 pin DOADO1 = wire `BRAM_FIFO36_DOADOU0`, which drives the same `LOGIC_OUTS` wire as the Y1 RAMB18's DOADO0 [fact] |
+| DOPADOP/DIPADIP bit 0, 1 | Y0 pin 0, Y1 pin 0 | same (`DIPADIP1` = `..._DIPADIPU0`) [fact] |
+| ADDR bit k+1 | RAMB18 address pin k | `BRAM_ADDRARDADDRL<k+1>` feeds FIFO18 `ADDRARDADDR<k>` [fact]; bit 0 and the cascade bit 15 are tied 1 (unused at x9) |
+| INIT/INITP bit j | bit j/2 of half Y(j mod 2) | the interleave rule of [bram-tables.md](bram-tables.md) |
+
+Checks **[fact]**: in all 31 pairs the two halves share every clock, enable, reset, address and write-enable net
+(the writer reports any difference; there is none). The data bits are 4 + 4 and the parity output is read from the
+lower half only (23 pairs read `DOP` on Y0, none on Y1), while the parity *input* is routed to both halves with the
+same net (20 pairs; the DIP net equals on both halves in all of them). That is what a RAMB36 x9 needs if entry i's parity bit lives in half (i mod 2): the INITP
+interleave. The contents agree: for the 9-bit phase table RAMB36_X0Y5, 100 % of the second differences modulo 512
+lie within +-3 of 0 with the interleaved parity, against 52-59 % with the parity concatenated, taken from one half,
+or dropped; RAMB36_X1Y4 gives 100 % against 95-98 % **[fact for the numbers, inference that the interleave is the
+hardware layout]**. The 8 data bits are the same in the RAMB36 and the two-half reading (same pins, same INIT bits);
+what the halves lose is the parity bit, which is the MSB of the 9-bit tables and the 9th bit of the x9 RAMs.
+
+**Data-path re-check (#164) [fact, `pins_main.cpp`, 300,000 clocks, inputs 0].** Four builds of the pin harness:
+(1) the old netlist (before the #92 LUT-RAM DI fix, BRAMs 0), (2) DI fix, BRAMs 0, (3) DI fix + BRAM model with the
+pairs as two RAMB18, (4) DI fix + BRAM model + RAMB36E1:
+
+| Output | (1) | (2) | (3) | (4) |
+|---|---|---|---|---|
+| I2S clock U16 / frame V17 | 2-cycle / 128-cycle | same | same | same |
+| I2S data V16 | toggles from clock 65,541 | **constant 0** | 0 | 0 |
+| R16/P17/N16 power-up SPI | 14 words `0002 0000 10C0 ... 1D00`, clocks 155-13,979 | same | same | same |
+| B13/B14 ADC SPI clock/select | 27 frames, clocks 2-6,876 | same | same | same |
+| M17 | idle | idle | **active from clock 6,920**, 38,330 edges | active from 6,928, 36,162 edges (differs from (3)) |
+| UART A console, UART B link | | same console bytes in (2) and (4) | | `full_main` build: `r010437` at clock 225,163, ACK, read-back `1234`, reg 6 = `020A`, reg 0x30 = `0023`; console `0104`, `1234`, `r 000#` = `1200`, `x` = `Err`: all as documented in section 5 |
+
+So the power-up SPI and ADC configuration sequences and the I2S timing do not depend on LUT RAM or block RAM. The
+I2S data that #90 saw from clock 65,541 came from the swapped SRL/LUT-RAM data pins: with the fix and all ADC inputs
+at 0 the RX stream is silent, as it should be **[inference]**. M17 is driven through block-RAM contents and the
+RAMB36 parity bits change its pattern; it is followed up in #145. The DSP48E1s still run with the wrong mode-pin
+polarity in these builds (#91), so no DSP data path is checked yet.
+
 ## 5. Whole-design simulation and the UART protocols (T15e)
 
 ```sh
@@ -354,7 +409,7 @@ python3 -I tools/xc7_probe_netlist.py ...                      # expose internal
 ```
 
 The Yosys `cells_sim.v` models trip Verilator 5.006 (an internal error on CARRY4 with constant inputs), so the small
-primitives have their own models in `hdl/sdr/sim/xc7_prims_vl.v`; DSP48E1 and RAMB18E1 still come from Yosys (with
+primitives have their own models in `hdl/sdr/sim/xc7_prims_vl.v`, the block RAMs in `hdl/sdr/sim/xc7_bram_vl.v` (#164, section 4.4); DSP48E1 still comes from Yosys (with
 the `$fatal` mode checks removed). One detail mattered: the recovered BUFGCTRLs have `S1 = I1 = 1` because unrouted
 pins sit at their tie value, so the model must pass I0; with a textbook BUFGCTRL model the whole design has no
 clock. All inputs other than the clock and the two RX pins are tied to 0. The model runs at **~15,000 clocks/s**
