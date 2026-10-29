@@ -98,7 +98,7 @@ The "Init dir" column is the PDR value written by `R_Pins_Create` (O = output, I
 | P60..P64 | 117..112 | `C4_SS3/SS2/SS1/RQST/BUSY_DSP` | mixed | "C4" bus to the DSP (T10d) |
 | P65 | 100 | `E2P_WP` | O | EEPROM write protect (`eeprom_init`) |
 | P66 | 99 | `SST1` | O | strobe of the MAIN BU2505 DAC Q1005 (`bu2505_write` dev 0) |
-| P67 | 98 | `/SST2` | O | 12-bit shift register (`sst2_write12`). Cleared by `power_off_io` |
+| P67 | 98 | `/SST2` | O | 12-bit serial word to the 8-channel audio level device (`sst2_write12`: 4-bit channel + 8-bit level, [tx-protection.md](tx-protection.md), #143). Cleared by `power_off_io` |
 | P70 | 104 | `INT_SP_SW` | O | internal speaker on |
 | P71 / P72 | 86 / 85 | `DSP_RESET` / `DSP_UPDATE` | O | `dsp_reset_set` / `dsp_update_set` |
 | P73 | 77 | `TX` | O | TX line → Q1014/Q1020 → **TX8** rail |
