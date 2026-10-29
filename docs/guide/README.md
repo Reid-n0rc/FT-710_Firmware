@@ -1256,7 +1256,7 @@ same port. One more kind of traffic goes the other way on its own: [auto informa
 
 Two rules hold for every port. While the radio is switched off, MAIN ignores everything except `PS1;` (power on). And while the
 DISPLAY board is updating its own firmware, it tells MAIN to stop reading CAT altogether (see
-[chapter 4](#4-firmware-files-and-how-updates-work)). Every received command also restarts the auto-power-off timer.
+[chapter 4](#4-firmware-files-and-how-updates-work)). Every received command also restarts the screen-saver timer.
 
 ### 5.2 Anatomy of a command
 

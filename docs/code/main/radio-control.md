@@ -67,12 +67,12 @@ Multi-byte values are **big-endian**. Offsets are from the start of the record.
 
 | Offset | Size | Field | Evidence |
 |---|---|---|---|
-| +0x00 | u8 | bits 0–3 = **mode index** (table below). Bits 4–7 have no known reader. The defaults write 0x4_ (0xC_ for the USB band-stack defaults); in the owner's dump the records changed from their default have bit 7 clear and bit 6 set in some, clear in most (dump 2026-10-28, [eeprom.md](eeprom.md#check-against-the-owners-dump-2026-10-28)) **[fact: dump]**; meaning open. | `vfo_mode` (`AND #0xF`), IF/MD/MR via `cat_mode_codes` 0xFFF806D0 **[fact]** |
-| +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]** | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR` **[fact]** |
-| +0x02 | u8 | bits 2–3 = **repeater shift**: 0 = minus, 1 = simplex, 2 = plus | `tx_freq_repeater_shift` (TX shift), `cat_MW` (`'2'`→0, `'0'`→1, `'1'`→2) **[fact]** |
-| +0x03 | u8 | bits 3–5 = **tone mode** (CT: 0 off, 1 = CTCSS ENC/DEC, 2 = CTCSS ENC, 3 = DCS **[inference]**). bit 3 alone is tested by the scan engine (`FUN_fffe600f`) | `cat_CT`, `cat_IF_OI`, `cat_MW` **[fact]** |
+| +0x00 | u8 | bits 0–3 = **mode index** (table below). Bits 4–7 have no reader and no writer in V01-12 other than the defaults and whole-record copies; every mode setter keeps them (`& 0xF0 \| mode`) (#205). The defaults write 0x4_ (0xC_ for the USB band-stack defaults); in the owner's dump the records changed from their default have bit 7 clear and bit 6 set in some, clear in most (dump 2026-10-28, [eeprom.md](eeprom.md#check-against-the-owners-dump-2026-10-28)) **[fact: dump]**; meaning open. | `vfo_mode` (`AND #0xF`), IF/MD/MR via `cat_mode_codes` 0xFFF806D0 **[fact]** |
+| +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]**. bit 7 = memory-scan **SKIP**: the scan steps `FUN_fffe5d8f`/`FUN_fffe5dd5` pass over a channel with it set (`FUN_fffe5e3b`), and the memory list shows `SKIP`/`SCAN` (`FUN_fff99ca2`) (#205). bit 0: no reader or writer | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR`, `FUN_fffe5e3b` **[fact]** |
+| +0x02 | u8 | bits 2–3 = **repeater shift**: 0 = minus, 1 = simplex, 2 = plus. bit 1 = **NB on** (#205): SDR reg 0x1A is 0 while it is clear | `tx_freq_repeater_shift` (TX shift), `cat_MW` (`'2'`→0, `'0'`→1, `'1'`→2); `cat_NB`, `key_nb_short`/`key_nb_long`, `sdr_upd_r1a_nb_level` **[fact]** |
+| +0x03 | u8 | bits 0–1 = **ATT** (0 off, 1 = 6 dB, 2 = 12 dB, 3 = 18 dB; `cat_RA`, `rf_bpf_update`, #205). bits 3–5 = **tone mode** (CT: 0 off, 1 = CTCSS ENC/DEC, 2 = CTCSS ENC, 3 = DCS **[inference]**). bit 3 alone is tested by the scan engine (`FUN_fffe600f`) | `cat_CT`, `cat_IF_OI`, `cat_MW` **[fact]** |
 | +0x04 | u8 | NARROW flags per mode class (bit 7 SSB, 5 CW, 3 RTTY, 2 DATA); see [eeprom.md](eeprom.md#90-byte-vfo--memory-record) | `cat_NA`, `key_nar_short` **[fact]** (#73) |
-| +0x05 | u8 | bit 7 = memory tag shown (MT P2) | `cat_MT` **[fact]**; `vfo_clear_tag` clears it |
+| +0x05 | u8 | bits 0–1 = **preamp**: 0 IPO, 2 AMP1, 3 AMP2 (#205; the defaults write 2 = AMP1). bit 7 = memory tag shown (MT P2) | `cat_PA`, `rf_bpf_update`, `FUN_fffc47dd` (IPO → AMP1 → AMP2 step), `FUN_fffc4850` (IPO), `displink_build_30`; `cat_MT` **[fact]**; `vfo_clear_tag` clears it |
 | +0x06 | u8 | bits 0–3 = **DNR level** 1..15 (`RL`), bit 4 = **DNR on** (`NR`). The DSP setters `dsp_set_dnr_*` (0xFFF9E750, 0xFFF9FCD0..0xFFF9FFB1) index their coefficient tables with the level and send 0 when bit 4 is clear or the mode is FM/DATA-FM (6/7, 10/11). Bits 5–7: no reader or writer found; the defaults write 0 | `cat_RL` 0xFFFADA46 (`& 0xF0 \| level`), `cat_NR`, `key_dnr_short`/`key_dnr_long`, `FUN_fffc7d41` (DNR knob, clamps 1..15), the AI reporters `FUN_fffdff9c` (`NR`) / `FUN_fffe0839` (`RL`) **[fact]** |
 | +0x07..+0x09 | 3 | **unused** in V01-12: no field access anywhere in MAIN; only copied with the whole record. The defaults write 0, except +0x08 = 1 in the 50 MHz band-stack records (`FUN_fffb0779`; seen in the owner's dump) | see [below](#record-bytes-without-users) **[fact for the absence of users]**; reserved **[inference]** |
 | +0x0A..+0x13 | 10 | **per-mode block, SSB** (modes 0/1). +0x0B bit 7 is the BC flag. +0x12/+0x13 (s16) is the SSB offset; SDR RX adds +1500 Hz to it | `cat_BC`, `sdr_upd_r18_rx_freq`, `vfo_display_offset` **[fact]** |
@@ -619,9 +619,10 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
   The offsets on this page do not depend on them. For `vfo_rec_ptr`/`vfo_freq`/`vfo_freq_clar`/`vfo_mode`, the
   disassembly was used instead of the decompile.
 
-- The high nibble of +0x00, bit 4 of +0x04 (set by `align_load_preset`), bits 0/2 of each per-mode block's first byte and the bits of
-  +0x01/+0x02/+0x03/+0x05 not listed above have no known meaning. +0x07..+0x09 and +0x47 have no users at all (#161).
-- States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.
+- The high nibble of +0x00, bit 0 of +0x01, bit 4 of +0x04 (set by `align_load_preset`), bits 6–7 of +0x03 and bits 0/2 of each
+  per-mode block's first byte have no known reader (#205: +0x02 bit 1, +0x03 bits 0–1, +0x05 bits 0–1 and +0x01 bit 7 are now
+  known). A disassembly search for byte stores and `BSET`/`BCLR` at record offsets 0 and 1 would show whether the decompile misses a user. +0x07..+0x09 and +0x47 have no users at all (#161).
+- ~~States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.~~ Settled in #173 ([cat-commands-primary.md](../../cat-commands-primary.md), `IF`): state 4 is PMS, and states 0 and 6–9 are never written by MAIN V01-12, so P7 `F` (and `OI`'s `1`) cannot occur **[fact]**.
 - `BS12;`: does the out-of-row band-stack index have a visible effect? Test this on the radio only with the owner's
   approval.
 - The front-panel paths (dial encoder `FUN_fffc5e0a` → `FUN_fffc5ec4`/`FUN_fffc6073`, keys through the 0xFFF89D94

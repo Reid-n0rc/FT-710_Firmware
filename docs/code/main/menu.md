@@ -284,6 +284,7 @@ The `on_step` callbacks get the direction from UI-state +0x421 (0 = up) and do n
 | KEYBOARD LANGUAGE | `menu_step_u8(0, 10)` | on a change it also stores the value at 0x1B4FE, starts timer 0x2B (100) and sets +0x401, which sends the layout to the DISPLAY |
 | HF / 50M / 70M / AM MAX POWER | `menu_step_u8(5, FUN_fffb3e6f(0..3))` | the upper limit is the destination-dependent maximum that also sets the default |
 | TX BPF SEL | `menu_ex010113_step` 0xFFFCE013 | skips 5; 6 (TTBF) only with 0x4760 set on destinations 0x315B/0x50E2/0x1CB9 (see the EX table above) |
+| SCREEN SAVER | `menu_ex040104_step` 0xFFFCF123: `menu_step_u8(0, 3)` | then `screensaver_timer_restart` 0xFFFB263D (named `cat_apo_reset` in the committed decompile until the next re-export), so the new time applies at once: 0 = OFF, 1/2/3 = 15/30/60 min ([README.md](README.md#screen-saver-timer-slow-timer-0), #208) |
 
 ## Tool
 
@@ -519,7 +520,7 @@ output).
 | `040101` | DISPLAY | MY CALL | text | 12 | - | 0x9b01 | string, 12 chars, default "FT-710" |
 | `040102` | DISPLAY | MY CALL TIME | 0..5 | 1 | 1 | 0x9b0d |  |
 | `040103` | DISPLAY | POP-UP TIME | 0..2 | 1 | 1 | 0x9b0e |  |
-| `040104` | DISPLAY | SCREEN SAVER | 0..3 | 1 | 3 | 0x9b0f |  |
+| `040104` | DISPLAY | SCREEN SAVER | 0..3 | 1 | 3 | 0x9b0f | 0 OFF, 1/2/3 = 15/30/60 min (slow timer 0, #208) |
 | `040105` | DISPLAY | LED DIMMER | 0..20 | 2 | 20 | 0x9b10 | firmware name "LED DIMMER" |
 | `040106` | DISPLAY | MOUSE POINTER SPEED | 0..20 | 2 | 10 | 0x9b11 |  |
 | `040201` | SCOPE | RBW | 0..2 | 1 | 0 | 0x9b14 |  |

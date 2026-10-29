@@ -13,7 +13,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Copies the VFO-A data block (0x5A bytes at 0x9D09) into the VFO-B block (0x9D63), sets VFO-B state 0x9DBF=1 and applies it; i.e. A=>B copy [fact for copy, name inference].
 - **Globals / callees:** R: guard flags (busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, 20b98==1); `vfo_tune_locked`(1) (error if B is in a special state); W: 0x9D63..+0x5A, 0x9DBF=1, 0x20F10=1 (frequency-cache refresh request, see [radio-control.md](code/main/radio-control.md)); callees `vfo_mark_edited`(1), `vfo_store_back`(1)
 - **Risk:** low-medium: changes VFO-B contents (RAM + dirty flag)
-- **Resolved in part (#157):** `vfo_store_back` stores the operating record back to where it came from, by state: the band stack (`FUN_fffc17df`), a pending copy (+0x443/+0x43D), or the memory-tune backup for states 3/4 (memory tune, PMS) **[fact]**. Whether it also retunes is still open.
+- **Resolved (#157):** `vfo_store_back` stores the operating record back to where it came from, by state: the band stack (`FUN_fffc17df`), a pending copy (+0x443/+0x43D), or the memory-tune backup for states 3/4 (memory tune, PMS) **[fact]**.
+- **Resolved (#173):** `vfo_store_back` does **not** retune. Every path ends in a store: `bandstack_save` @ fffc1927 (record → band-stack slot, `eeprom_save_bandstack` only if the 0x5A bytes differ), the memory-tune backup (`FUN_fffc18e1` → `memtune_backup_b` @ fffc1913, 0x9D63 → 0x9E28, UI +0x440/+0x442 = 1; or `FUN_fffc1a35` @ fffc1a35, a partial copy to 0x9E28 and UI +0x43F = 1), or nothing in state 2; none of `FUN_fffc184f`, `FUN_fffc18bf`, `FUN_fffc18e1` calls `vfo_reload`/`vfo_retune` **[fact]**. `cat_AB` itself also calls no retune; the new B frequency reaches the hardware only through the 0x20F10 frequency-cache refresh request it sets **[fact for the code, inference that this is the retune path]**. Quirk: `bandstack_save` takes no side argument and saves the record of the **active** VFO (0x9DBD), so `vfo_store_back(1)` from `AB` while VFO-A is active rewrites A's band-stack slot (a no-op unless A changed), not B's **[fact, current decompile]**; B's slot then follows on the next store with B active **[inference]**.
 
 ### AC
 
@@ -59,7 +60,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores the VFO-A data block into memory channel (number 0x60C9) in RAM (0x6150+ch*0x5A) and writes it to EEPROM; A=>Memory [name inference; copy and EEPROM write are facts].
 - **Globals / callees:** R: 0x60C9 (error if in 0x75..0x84), 0x9DBE state (1,3,4,5,else), 0x9DC3, 0x60B1[], 0x9D09; W: 0x6150+ch*0x5A (0x5A), 0x9D09 (states 1? no: 4 and default), 0x20F10; callees `vm_toggle` (state 4), `vfo_mark_edited`/fffc16f6(0x9DBD), eeprom_save_memch(ch) = eeprom_write(0x1A7A,&0x60C9,0x87) + eeprom_write(slot,0x5A)
 - **Risk:** medium: overwrites a memory channel in EEPROM (user data)
-- **Resolved in part (#157):** the band-stack records are at 0x4761 + band·0x438 + slot·0x5A for VFO A and 0x5409 + … for VFO B, with the current slot per band in 0x60B1[band] / 0x60BD[band] (the same addressing `align_load_preset` uses) **[fact]**. `vm_toggle` is still open.
+- **Resolved (#157, #173):** the band-stack records are at 0x4761 + level·0x438 + band·0x5A for VFO A and 0x5409 + … for VFO B, with the current stack level per band in 0x60B1[band] / 0x60BD[band] (the same addressing `align_load_preset` and `bandstack_save` @ fffc1927 use; the #157 note had band and level swapped) **[fact]**. `vm_toggle` @ fffbf41f is the V/M key: unless UI +0x97 (0x20B9B) is 1 (then it only clears +0x97/+0x90, `FUN_fffc2794`), it cancels a keyer/message send (`FUN_fffe3d24`), runs `vm_toggle_core` @ fffc27ad and re-arms the tuner (`FUN_fffec578`) **[fact]**. For state 4 (PMS) `vm_toggle_core` stores the record back (`vfo_store_back`), sets state 2 (`vfo_enter_mem_state` @ fffc28fb), clears the memory-tune flags (`FUN_fffc2937`) and reloads (`vfo_reload`) **[fact]**. So `AM` in PMS first drops back to the memory channel, then stores VFO-A's band-stack record (not the PMS-tuned frequency) into the channel and into 0x9D09 **[fact for the copies; reading as "leave PMS first" is inference]**. By state: 1 (VFO) stores the live record 0x9D09; 3 (memory tune) stores the band-stack slot into the channel only; 2 and every other state store the slot into the channel and also load it into 0x9D09; 5 (QMB) stores the slot and writes EEPROM at once, skipping `vfo_mark_edited`/`vfo_store_back`/0x20F10 **[fact]**. `vm_toggle` works on the **active** side (0x9DBD), see `BM`.
 
 ### AO
 
@@ -128,7 +129,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Steps the band down one (wraps 0 -> 11) on VFO selected by P1: '0' = currently selected VFO (0x9DBD), '1' = the other VFO [inference]; band index from band_of_freq(freq) (12-entry table) then `band_select_on`(newBand,vfo) changes band.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. W 0x9C5E=0, 0x9DBE/0x9DBF=1 (VFO state) or restored from 0x20F88/89; callees fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency of the radio
-- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. P1 meaning still to confirm.
+- **Resolved (#157, #173):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. P1 is relative to the active VFO: the side is 0x9DBD XOR P1, so `0` = the active (operating) VFO and `1` = the other one; any other P1 answers `?;` **[fact]** (`cat_BD` @ fffa72d9). The manual's "main/sub" therefore means active/inactive VFO, not A/B **[inference]**. Side effects: with split on (0x9C5E = 1) split is cleared and, for P1 `0`, both states are forced to 1 (VFO), for P1 `1` both are restored from 0x20F88/0x20F89 (UI +0x484/+0x485, saved by `split_toggle` @ fffbeca5 when split was turned on); with split off, P1 `0` forces the active side to state 1, while P1 `1` leaves the other side's state as it is **[fact]**. The band is stepped with `band_select_on`(band, side) @ fffc4c4e, which sets 0x9DBD to the side for one `band_select` call, clears split and re-arms the tuner (`FUN_fffec578`) **[fact]**.
 
 ### BI
 
@@ -151,7 +152,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Stores the VFO-B data block into memory channel (number 0x60CA) in RAM and EEPROM; twin of AM using B state 0x9DBF and block 0x9D63 [name inference; copy and EEPROM write are facts].
 - **Globals / callees:** R 0x60CA (error if 0x75..0x84), 0x9DBF, 0x9DC4, 0x60BD[]; W 0x6150+ch*0x5A, 0x9D63, 0x20F10; fffbf41f, fffc2fde/16f6, eeprom_save_memch(ch) (EEPROM)
 - **Risk:** medium: overwrites a memory channel in EEPROM
-- **Resolved in part (#157):** as AM.
+- **Resolved (#157, #173):** as AM (B side: 0x5409 + level·0x438 + band·0x5A, level 0x60BD[band], band 0x9DC4) **[fact]**. Quirk: in B state 4 `cat_BM` calls the same `vm_toggle`, which acts on the **active** VFO (0x9DBD), so with VFO-A active it toggles A, not B **[fact, current decompile]**; `vfo_mark_edited`/`vfo_store_back` are also called with 0x9DBD, not 1 **[fact]**.
 
 ### BP
 
@@ -186,7 +187,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Steps the band up one (wraps after 11 to 0) on VFO selected by P1 ('0' = selected VFO 0x9DBD, '1' = other) via `band_select_on`; twin of BD.
 - **Globals / callees:** Guard: busy/lockout guard (any true -> '?;'): DAT_20f0c!=0, 20b8a==1, 20b3d!=0, 20cce==1, 20f1b==1, 20ccd==1, 20b7c!=0, 20cd0==1, 20cd1==1, 20f11==1, plus 20f1c==1 or 20f70==1. Same state writes as BD; fffb357c, fffb33e5, fffc4c4e
 - **Risk:** medium: changes band/frequency
-- **Resolved in part (#157):** as BD.
+- **Resolved (#157, #173):** as BD: same P1 = 0x9DBD XOR P1 side selection and split handling in `cat_BU` @ fffa756c; it steps band+1 with 11 (GEN) wrapping to 0 **[fact]**.
 
 ### BY
 
@@ -244,7 +245,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Four parameters: two on/off bits (P2=0,2), a 10-3200 value in steps of 10 (P2=1), a global signed -25..+25 value (P2=3) [fact]; feature unknown (resembles contour/APF controls) [guess].
 - **Globals / callees:** `vfo_rec_ptr`(0), fffb3196(0); 0x9C5F; 0x20F10
 - **Risk:** low-medium: DSP shaping parameters
-- **Resolved in part (#69):** the loops use 1000/100/10/1 and 10/1 in the current decompile **[fact]**; the P2=2 sentinel logic is still open.
+- **Resolved (#69, #173):** the loops use 1000/100/10/1 and 10/1 in the current decompile **[fact]**. The P2=2 sentinel: `cat_CO` @ fffa8698 keeps three pointers per mode (contour flag byte, APF flag byte, contour frequency). For SSB (0/1), AM (4/5), FM (6/7) and DATA-FM (10/11) the APF pointer is aimed at a local byte preset to 0xFF instead of the record, so `CO0P2`=`2…` set answers `?;` in those modes; for CW (2/3, +0x14), RTTY (12/13, +0x1E) and DATA-L/U/PSK (8/9/14, +0x28) it points at the same record byte as the contour flag, and bit 5 of it is the APF on/off **[fact]**. Side effect: in those three groups a record byte that is itself 0xFF also refuses the set **[fact]**, which a valid record never holds **[inference]**. The read form has no such check and always reports bit 5 of the mode's contour byte, so `CO02` reads `0000` in SSB/AM/FM rather than erroring **[fact]**. The APF frequency (P2=3) is one global byte 0x9C5F for all modes **[fact]**. So CAT can switch APF in CW, RTTY, DATA-L/U and PSK; the CAT manual names no mode restriction **[fact]**.
 
 ### CS
 
@@ -333,7 +334,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/writes five user text strings (50 chars max) in RAM; FUN_fff9baa0 mirrors the first/5th bytes of each to 0x1801..0x1825 [fact]; purpose unknown (message/label slots) [guess].
 - **Globals / callees:** 0x979E-0x9897; fffb012c
 - **Risk:** low: text in RAM; no dirty flag seen
-- **Resolved in part (#69):** 0x979E is the 5 × 0x32 text-slot block at EEPROM 0x514F. `eeprom_save_msg(2, n)` has no caller, so it is saved only by the full save ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**. Still open: the purpose of the `FUN_fff9baa0` copy.
+- **Resolved (#69):** 0x979E is the 5 × 0x32 text-slot block at EEPROM 0x514F. `eeprom_save_msg(2, n)` has no caller, so it is saved only by the full save ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**.
+- **Resolved (#173):** `FUN_fff9baa0` is called only from `displink_build_39` @ fff9b6c8 (MAIN → DISPLAY frame `0x39`, built at 0x1741) when UI +0x1C7 (0x20CCB) = 2. It copies the first 8 bytes of each of the five slots (0x979E, 0x97D0, 0x9802, 0x9834, 0x9866) into frame bytes 0xC0..0xE7 (0x1801..0x1828), five 8-character labels **[fact]**. +0x1C7 is the message type that `FUN_fffe4407` @ fffe4407 sets from the TX mode (`vfo_mode`(1)): 1 for CW (2/3), 2 for RTTY (12/13), 3 for PSK (14), 0 for the voice modes; for type 1 the sibling `FUN_fff9ba18` @ fff9ba18 copies the five KM keyer texts (0x96A0 + n·0x33) instead **[fact]**. So the `EM` slots are the **RTTY text memories** and `FUN_fff9baa0` shows their names on the DISPLAY's message screen **[inference]**; no other MAIN code reads 0x979E, so the text is sent from the DISPLAY/DSP side or not by MAIN **[fact for the readers; the rest inference]**. Still open: as decompiled, `displink_build_39` overwrites 0x1801..0x1828 from UI +0xC2.. right after the call, which would make these stores dead; this needs the disassembly (Ghidra hold) to settle **[fact for the decompile]**.
 
 ### EN
 
@@ -449,7 +451,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/drives four general purpose output pins directly (MCU port data registers 0x8C021/0x8C025/0x8C022), enabled only when config byte 0x9AB7==3 [fact]; 'GP OUT' naming [inference]
 - **Globals / callees:** R/W MMIO 0x8C021 (bits3,2), 0x8C025 (bit0), 0x8C022 (bit2); R 0x9AB7; getters `gpo_a_get`/be/d1/e2, setters `gpo_a_set`/65/7d/93
 - **Risk:** medium: toggles hardware output pins (external equipment), no EEPROM
-- **Resolved in part (#69):** 0x9AB7 is **TUN/LIN PORT SELECT** (`EX030103`, 0..3) **[fact]**; the pins are still open.
+- **Resolved (#69, #173):** 0x9AB7 is **TUN/LIN PORT SELECT** (`EX030103`, 0..3) **[fact]**. The pins: the port-data bits are the RX651 PODR registers (0x8C020 + port), so A = **P13** (0x8C021 b3, `gpo_a_set` @ fffb714d), B = **P12** (0x8C021 b2, `gpo_b_set` @ fffb7165), C = **P50** (0x8C025 b0, `gpo_c_set` @ fffb717d), D = **P22** (0x8C022 b2, `gpo_d_set` @ fffb7193) **[fact]**. On the MAIN schematic these are the tuner-port nets `ETUN_UMOSI` (TXD2), `ETUN_UMISO` (RXD2), `ETUN_DET` and `ETUN_RESET` ([code/main/peripherals.md](code/main/peripherals.md#sci2-tunerlinear-port)) **[fact]**, i.e. the four signal pins of the rear **TUNER/LINEAR** jack that the operating manual labels TX D (BAND A), RX D (BAND B), BAND C and RESET (BAND D) (JPN OM, rear-panel page) **[fact for the labels]**. So GP OUT A..D are the same four lines as the linear-amp BAND DATA A..D. Polarity: `linear_band_data` @ fffb8f7d writes the same bits with no inversion and its codes match the manual's BAND DATA table (e.g. band code 0 = A H, B L, C H, D H, the manual's 400 kHz row), so `1` drives the jack pin high **[inference]**. `sci2_configure` makes all four outputs and starts them at 0 in GPO mode ([peripherals.md](code/main/peripherals.md)) **[fact]**.
 
 ### ID
 
@@ -472,7 +474,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Answers with the whole state of the VFO-A record 0x9D09 (channel, frequency, clarifier offset and flags, mode, VFO/memory state, two small selectors); always side 0 regardless of the selected VFO [fact]
 - **Globals / callees:** R: 0x60C9,0x9DBE,0x20F29,0x9D09[0,2,3,0x48,0x49,0x4A..0x4D], tables @0xFFF806D0/DF/E9; callees `vfo_freq`(0,0), nib2hex
 - **Risk:** low: read-only
-- **Resolved in part (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**. Still open: meaning of P7 for states 4, 6–9.
+- **Resolved (#157):** `vfo_freq`(which, side) (fffb357c) returns the big-endian u32 frequency in Hz at record +0x4A (side 0 = A, 1 = B, 2 = `vfo_rec_ptr`(which)) **[fact]**.
+- **Resolved (#173):** P7 by state: 4 is **PMS** (written only by `vfo_mem_to_memtune` @ fffc5ce0, which stores 4 when `pms_load_limits` succeeds and 3 otherwise), and the table gives `5`, which is the manual's "5 PMS" **[fact]**. States 0 and 6–9 are never produced by MAIN V01-12: every write to 0x9DBE/0x9DBF is a constant 1, 2, 3, 5, the PMS setter's 3/4, or a copy of a saved state (0x9DC7, UI +0x484, 0x20F88, 0x18809, the `cat_FA_FB` restore) or the operating-state EEPROM block / ROM default 0xFFF80FC6 **[fact]**. So `F` (0/6/9) and `1` (7/8) are defensive table entries; `vfo_tune_locked` and `vfo_is_memory` also test 7/8, which suggests a memory sub-state from an earlier firmware or the sister model **[inference]**. A P7 of `F` would only appear after a corrupted operating-state block **[inference]**. Also, the manual's P7 `4` is never emitted **[fact]**.
 - **Resolved (#159):** rec[2] bits 2–3 are the repeater shift (0 minus, 1 simplex, 2 plus) and rec[3] bits 3–5 the tone mode (`CT`); see [the record table](code/main/radio-control.md#the-0x5a-byte-channel-record) **[fact]**.
 
 ### IS
@@ -485,7 +488,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Per-mode-class signed 16-bit value in the main-side record at offset by `vfo_mode`(0): {0,1}->+0x12, {2,3}->+0x1C, {4,5}->+0x3A, {6,7}->+0x44, {8,9}->+0x30, {10,11}->+0x44, {12,13}->+0x26, {14}->+0x30 [fact]; probably IF shift in Hz [guess]
 - **Globals / callees:** R/W record(`vfo_rec_ptr`(0)) offsets above (2 bytes); W 0x20F10; `vfo_mode`(0), `vfo_mark_edited`, `vfo_store_back`
 - **Risk:** medium: changes per-mode DSP setting (persisted)
-- **Resolved in part (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**; the side selection of `vfo_rec_ptr`/fffb3196 is still open.
+- **Resolved (#69):** the weights are 1000/100/10/1 in the current decompile **[fact]**.
+- **Resolved (#173):** `cat_IS` @ fffaa6e3 calls `vfo_rec_ptr`(0) @ fffb324c and `vfo_mode`(0) (fffb3196) with argument 0, which always selects the **active** VFO record (0x9DBD: 0x9D09 or 0x9D63) and ignores split; it then marks and stores back that same side (`vfo_mark_edited`/`vfo_store_back`(0x9DBD)) **[fact]**. So IF SHIFT reads and writes the operating VFO's per-mode value, never the TX VFO, and P1 (documented as fixed `0`) does not choose a side **[fact]**. The magnitude test is `12000 < value`, so 4 digits accept 0000–9999, not the manual's 0000–1200 (no 20 Hz step check either) **[fact]**.
 
 ### KM
 
@@ -497,7 +501,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Reads/writes five 50-char text message memories (CW keyer text, [inference] from KY/LM using the same slots) and saves slot n to EEPROM [fact: eeprom_write in `eeprom_save_msg`]
 - **Globals / callees:** RW 0x969F+0x33*(n-1) (len), +1 (text); R 0x20B94,0x20BC2,0x20BC3; callees FUN_fffb012c, `eeprom_save_msg` -> eeprom_write (addr table @0x5050+0x33*i, 0x33 bytes)
 - **Risk:** medium: EEPROM write of message memory on every set
-- **Resolved in part (#157):** `FUN_fffb012c(buf, c, n)` is a bounded search: it returns (in R1; the decompiler's `void` signature drops it) the index of the first byte equal to `c` in `buf[0..n)`, or `n`. `cat_EM` uses it with c = 0xFE as a text-length function **[fact]**. The off-by-one check in `cat_KM` is still open.
+- **Resolved (#157):** `FUN_fffb012c(buf, c, n)` is a bounded search: it returns (in R1; the decompiler's `void` signature drops it) the index of the first byte equal to `c` in `buf[0..n)`, or `n`. `cat_EM` uses it with c = 0xFE as a text-length function **[fact]**.
+- **Resolved (#173):** no off-by-one in the length. The command is `KM` + n + text + `;`, so text length = total length − 4 (the dispatcher's length includes the `;`), the text starts at cmd[3], and 5..54 bytes give 1..50 characters, as in the manual **[fact]** (`cat_KM` @ fffaa905: `bVar2 = len − 4`, copy from `param_1 + 3`). `}` (0x7D) is the keyer-text **end mark**: the front-panel editor `FUN_fffe481d` @ fffe481d ends a text at the first `}` or appends one after the last non-space character and counts it in the length **[fact]**. `cat_KM` searches 50 bytes from cmd[3] for `}` (so the search runs past the `;` into the rest of the CAT buffer for short texts) and may append `}` at text[len] without counting it in the length byte **[fact]**; which result triggers the append is still unsure because the decompile compares the search result with `param_1 + 3` (the lost R1 return of `FUN_fffb012c`) and needs the disassembly (Ghidra hold) **[fact for the decompile]**. Visible edge case: if the append runs for a 50-character text it writes 0x7D at text[50], which is the **length byte of the next slot** (0x96D2/0x9705/0x9738/0x976B) or, for slot 5, the first byte of the `EM` text block 0x979E; that slot would then read back with length 125 **[fact for the addresses; whether the branch is taken is the open point above]**.
 
 ### KP
 
@@ -544,7 +549,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Starts playback of message slot b (1..5) (source set chosen by a, KM text slots are one source), b=0 stops: selects slot via FUN_fffe538f then FUN_fffe53c0 sets state byte (PTR 0x25D78)+0x2B = 7 [fact]; that this transmits CW is [inference] from slots, CW-class gating and TX-state flags
 - **Globals / callees:** W 0x20CCB=1 (even on early error), 0x9AAC[1..5], 0x20CD0/CD1, 0x20B2F, 0x20CD6; R 0x20B97; PTR 0x25D78 fields (+0x1C8,+0xBF,+0x1CE,+0x1CC,+0x1CD,+0x417,+0x1D1,+0x2B); callees key_event_filter(0x87), FUN_fffe5690, FUN_fffe564b, FUN_fffe5401, FUN_fffe538f, FUN_fffe53c0
 - **Risk:** high: starts keyed CW message transmission (keys TX)
-- **Resolved in part (#157):** +0x2B = 7 is what `FUN_fffe3d24` sets when it cancels a running playback/keyer send, so 7 is the idle/stopped keyer state **[inference]**. The invalid-`a` quirk (0xFF stored into 0x9AAC[b] before the error) is real code **[fact]**.
+- **Resolved (#157):** +0x2B = 7 is what `FUN_fffe3d24` sets when it cancels a running playback/keyer send, so 7 is the idle/stopped keyer state **[inference]**. The invalid-`a` quirk (0xFF stored into 0x9AAC[b] before the error) is real code **[fact]**.
+- **Resolved (#173), chars below `0`:** P1 is only checked with `cmd[2] > '1'` → `?;`, so any byte 0x00..0x2F passes. Visible effect, in `cat_KY` @ fffaaf19 **[fact]**: with P2 = `1`..`5` the handler stores `hex2nib`(P1) = 0xFF into 0x9AAC[n], i.e. the menu item **CW MEMORY n** (0x9AAD..0x9AB1, `EX020206`..`EX020210`, range 0..1, [code/main/menu.md](code/main/menu.md)), selects slot n (`FUN_fffe538f`: UI +0x1C8 = n, +0xBF/+0x1CE = n−1) and only then answers `?;`. The out-of-range 0xFF stays in RAM and goes to EEPROM with the next full save; frame `0x39` tests these bytes `== 1`, so the DISPLAY shows that memory as type 0 **[fact for the code; what the menu screen shows for 0xFF is not traced]**. With P2 = `0` and such a P1 the stop (0x20B2F = 7) runs and no error is returned **[fact]**. A valid `KY0n`/`KY1n` also rewrites CW MEMORY n to 0/1 as a side effect **[fact]**.
 
 ### LK
 
@@ -567,7 +573,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Message-memory job control: LM0n starts slot n (1..5) / stops (0), state 0x20B7C, slot in 0x20B7D, flags 0x20F1B/0x20CCE (also block FT/MD); LM1n sets a 0/1 flag 0x20B96 [fact for flags; record/playback meaning is inference]
 - **Globals / callees:** RW 0x20B7C,0x20B7D,0x20B96,0x20B95,0x20F1B,0x20CCE,0x20CCC,0x20CCB; R 0x20CCD,0x20CD0,0x20CD1; callees key_event_filter(0x87,0), FUN_fffe56bf, FUN_fffe4efc
 - **Risk:** high: may start message/recorder operation (possibly TX), same key filter 0x87 as KY
-- **Resolved in part (#157):** `FUN_fffe4efc` only sets UI +0x1CB = 1 and starts timer 0x37 (10,000 units); it does not key TX itself **[fact]**. +0x1CB is one of the message states that `FUN_fffe3d24` and the E8 status clear, so it arms a message recording **[inference]**. 0x20B7C (+0x78) is the voice-message playback state (see `SV`). Still open: the chars-below-'0' quirk (real code).
+- **Resolved (#157):** `FUN_fffe4efc` only sets UI +0x1CB = 1 and starts timer 0x37 (10,000 units); it does not key TX itself **[fact]**. +0x1CB is one of the message states that `FUN_fffe3d24` and the E8 status clear, so it arms a message recording **[inference]**. 0x20B7C (+0x78) is the voice-message playback state (see `SV`).
+- **Resolved (#173), chars below `0`:** `LM0n` tests only `n < '6'`, so a P2 byte 0x00..0x2F (other than `0`) is accepted like a channel. Visible effect, in `cat_LM` @ fffab16f **[fact]**: 0x20CCC = `hex2nib` = 0xFF, 0x20B7D = 0xFE, and the record is armed (0x20F1B, 0x20CCE = 1, `FUN_fffe4efc` timer) with no `?;`. When recording starts, `LM0;` then answers `LM0F;` (`nib2hex`(0xFF)), and the DISPLAY status byte 36 (`FUN_fff97b7b`: +0x79 & 0xF | +0x78 << 4) carries channel nibble 0xE, a channel that does not exist ([code/main/display-link.md](code/main/display-link.md)) **[fact]**; what the DISPLAY does with it is not traced. `keyer_task` @ fffb98e9 clamps 0x20CCC to 1 when it is 0 or > 5, so the CW side is not affected **[fact]**. `LM1n` is not affected (only `0`/`1` are accepted) **[fact]**.
 - **Resolved (#159):** **0x20B96** is the DVS **RECORD** flag of `LM1`: `LM11;` sets it, `LM10;` clears it, `LM1;` reads it, and `RI` P3 reports it as 1 (recording) **[fact, `cat_LM` 0xFFFAB16F]**. `LM0n;` (n = 1..5) sets 0x20F1B and **0x20CCE (UI +0x1CA) = 1** (record armed for channel n, 0x20B7D = n−1); `LM00;` clears both. When the record starts, `FUN_fffc0210` clears +0x1CA and sets +0x78 = 2 **[fact]**.
 
 ### MA
@@ -602,7 +609,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Selects/recalls a memory channel into the selected VFO (memory state) [fact]
 - **Globals / callees:** R/W 0x60C9,0x60CA,0x9DBD,0x9DBE,0x9DBF,0x9DCE[0x5A],0x9E28[0x5A], record `vfo_rec_ptr`(0) (0x5A), table 0x6150; R 0x20B3D,0x9AF4; callees `memch_valid`,`memch_dest_blocked`,FUN_fff9c2cd,eeprom_save_memch,FUN_fffede1d,toupper_inplace
 - **Risk:** medium: changes current VFO contents (persisted), no TX
-- **Resolved in part (#157):** `vfo_rec_ptr`/`vfo_mode`(0) return the **active** VFO (0x9DBD: 0 = A record 0x9D09, 1 = B 0x9D63); with argument 1 they return the **TX** VFO, i.e. the other VFO while split (0x9C5E) is on. `vfo_mode` returns 2 (CW-L) during tune/EXT-PA cycles (0x20F0C, 0x20B40, 0x20B41, 0x20B25) **[fact, current decompile]**. The `memch_valid` test is still open.
+- **Resolved (#157):** `vfo_rec_ptr`/`vfo_mode`(0) return the **active** VFO (0x9DBD: 0 = A record 0x9D09, 1 = B 0x9D63); with argument 1 they return the **TX** VFO, i.e. the other VFO while split (0x9C5E) is on. `vfo_mode` returns 2 (CW-L) during tune/EXT-PA cycles (0x20F0C, 0x20B40, 0x20B41, 0x20B25) **[fact, current decompile]**.
+- **Resolved (#173):** `memch_valid`(ch, &flagptr) @ fffc2e01: for ch < 117 (001–099 and P1L–P9U) it is true only if the channel-written flag 0x60CB[ch] is 1, so `MC` on an **empty** channel or PMS pair answers `?;`; for 117..132 (501–515, EMG) it is `!memch_dest_blocked`(ch); ch 133 always passes **[fact]**. In `cat_MC` the 117..131 path has already checked `FUN_fff9c2cd` (destination 0x315B/0x50E2/0xA4C5/0xD950 has 5 MHz channels) and `memch_dest_blocked` (@ fffc2e8d: 508–515 and EMG blocked for 0xA4C5/0xA983/0xB5A7/0xD950), and EMG (132) needs EMERGENCY FREQ TX (0x9AF4, `EX030406`) on, so for those channels the `memch_valid` call is a repeat; the used flag is not consulted for them **[fact]**. Channel 133 cannot be reached from `MC` (the name table ends at EMG = 132) **[fact]**.
 
 ### MD
 
@@ -623,10 +631,10 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Read / answer (firmware):** MGnnn; nnn=per-mode level byte, 3-digit dec 000-100
 - **Set parameters (firmware):** P1 nnn = 3 dec digits [2..4], each must be '0'..'9' and value <=100 else error; stored as byte into the per-mode variable; also sets 0x20F10=1 and (if 0x9ACE==0) notifies display/panel with param id 0x25 (FUN_fffc8cbb/8d8c) [inference]
 - **Class:** read+set
-- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=`vfo_mode`(0): m=0,1->0x9BEC; m=2,3->0x9BEE; m=4,6->0x9BEF; m=5,14->0x9BED; any other m -> error '?;' [fact from C, but decompiler removed 7 unreachable blocks]. Mode m is an index into cat_mode_codes @fff806d0.
+- **Behaviour:** Mic-gain-like per-mode TX audio level 0-100 [guess for label]: variable chosen by current mode m=`vfo_mode`(0): m=0,1 (SSB)->0x9BEC; m=4,5 (AM)->0x9BEE; m=6,7,10,11 (FM, DATA-FM)->0x9BEF; m=8,9,14 (DATA-L/U, PSK)->0x9BED; m=2,3 (CW) and 12,13 (RTTY) -> '?;' [fact; corrected in #173, the earlier mapping misread the branch tree]. Mode m is the internal mode index (LSB, USB, CW-L, CW-U, AM, AM-N, FM, FM-N, DATA-L, DATA-U, DATA-FM, D-FM-N, RTTY-L, RTTY-U, PSK).
 - **Globals / callees:** 0x9BEC-0x9BEF (per-mode level), 0x9ACE, 0x20F10, 0x20CC6=0x25; callees `vfo_mode` (current VFO mode), FUN_fffc8cbb, FUN_fffc8d8c
 - **Risk:** medium - TX-related audio level, RAM only in handler (no EEPROM call)
-- **Resolved in part (#157):** the TX audio code `FUN_fffb5d68` uses MIC GAIN 0x9BEC for SSB (0/1), 0x9BED for DATA-L/U and PSK (8/9/14), 0x9BEE for AM (4/5), 0x9BEF for FM and DATA-FM (6/7/10/11) **[fact]**; that `cat_MG`'s branch tree uses the same split is **[inference]**.
+- **Resolved (#157, #173):** the TX audio code `FUN_fffb5d68` uses MIC GAIN 0x9BEC for SSB (0/1), 0x9BED for DATA-L/U and PSK (8/9/14), 0x9BEE for AM (4/5), 0x9BEF for FM and DATA-FM (6/7/10/11) **[fact]**; `cat_MG`'s branch tree uses the same split is now **[fact]** (#173): in `cat_MG` @ fffaba64, m = 14 or 8/9 → 0x9BED, 4/5 → 0x9BEE, 6/7 and 10/11 → 0x9BEF, 0/1 → 0x9BEC, CW and RTTY → `?;`. Both read `vfo_mode`(0), the active VFO, so in split the CAT value is the active VFO's mode's gain, the same one the TX audio code uses **[fact]**.
 
 ### ML
 
@@ -686,7 +694,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Programs a memory channel (freq, mode, tone mode, shift) and writes it to EEPROM. Unlike MT it does NOT require the channel to exist: it marks it valid (0x60CB+idx=1) [fact]. Also makes it the current memory channel of the active VFO (0x60C9/0x60CA) and re-applies it (`vfo_mark_edited`/16f6).
 - **Globals / callees:** 0x60C9/0x60CA (current mem ch per VFO, written BEFORE later fields validated), rec 0x6150+idx*0x5A (+0..3 flags, +0x48/49=0, +0x4A..4D freq BE), 0x60CB+idx valid; FUN_fffb01df, eeprom_save_memch (EEPROM), `vfo_mark_edited`, `vfo_store_back`, `freq_in_range`
 - **Risk:** medium - EEPROM memory-channel write and changes active memory channel; a late validation error still leaves 0x60C9/0x60CA changed
-- **Resolved in part (#69):** the frequency loop uses 100,000,000 down to 1 (and 100/10/1, 1000..1 for the other fields) in the current decompile **[fact]**; the meaning of [22]=='1' is still open.
+- **Resolved (#69):** the frequency loop uses 100,000,000 down to 1 (and 100/10/1, 1000..1 for the other fields) in the current decompile **[fact]**.
+- **Resolved (#173):** byte [22] is the manual's **P7** (bytes 23 in the manual's 1-based layout: [21] P6 mode, [22] P7, [23] P8 tone, [24..25] P9, [26] P10), the VFO/memory state field of the `IF`/`OI` answer (0 VFO, 1 memory channel, 2 memory tune, 3 QMB, 5 PMS) **[fact: manual 2306-C p16; `cat_MW` @ fffac534 tests `cmd[0x16] != '1'` between the mode table lookup at [0x15] and the tone field at [0x17]]**. `MW` accepts only `1` (memory channel) and stores nothing from it, so a host must send P7 = 1; an `IF` answer copied back with P7 = 0/2/3/5 is refused with `?;` **[fact]**.
 
 ### MX
 
@@ -755,7 +764,7 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Same as IF but reports VFO-B (side 1) [fact: dispatch calls cat_IF_OI(1) for table idx 64 '@']
 - **Globals / callees:** R 0x60CA,0x9DBF,0x20F2A,0x9D63[...]; `vfo_freq`(0,1)
 - **Risk:** low: read-only
-- **Resolved in part (#157):** as IF.
+- **Resolved (#157, #173):** as IF (same P7 table, indexed by 0x9DBF).
 
 ### OS
 
@@ -790,7 +799,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** [inference] Plays/stops a stored voice message (slots 1-5); starts audio playback and, when the mode's TX bit is set (FUN_fffb521a), flags 0x20B2E which most likely transmits the message.
 - **Globals / callees:** 0x20B7C,0x20B7D,0x20CCC,0x20B2E,0x20CD3,0x20CD4,0x20F1B,0x20CCE,0x20B97; key_event_filter(0x87), FUN_fffe56bf, FUN_fffb521a
 - **Risk:** high - may key the transmitter to play a voice message
-- **Resolved in part (#69):** 0x20B2E is **PTT source 11** (voice message on the air), cleared by the E8 status and the MIC PTT release ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**. Still open: the chars-below-'0' quirk (still true).
+- **Resolved (#69):** 0x20B2E is **PTT source 11** (voice message on the air), cleared by the E8 status and the MIC PTT release ([code/main/tx-protection.md](code/main/tx-protection.md), #144) **[fact]**.
+- **Resolved (#173), chars below `0`:** `PB0n` tests only `n > '5'` → `?;`, so P2 bytes 0x00..0x2F start playback of a non-existent channel. Visible effect, in `cat_PB` @ fffad0a2 **[fact]**: when idle, 0x20B7C = 1 (playback), 0x20CCC = 0xFF, 0x20B7D = 0xFE, and if the TX mode's break-in bit is set (`FUN_fffb521a`, per-mode byte bit 1, the `BI` flag) **0x20B2E = 1, PTT source 11, so the radio keys up** for a voice message that does not exist; `PB0;` then answers `PB0F;` and the DISPLAY gets channel nibble 0xE **[fact for MAIN; the DISPLAY's reaction is not traced]**. A second `PB0n` (any n) or `PB00;` stops it and releases source 11 **[fact]**. Do not test this on the radio without the owner's approval.
 - **Resolved (#159):** **0x20B7C (UI +0x78)**: 0 = idle, 1 = playback (`PB0n;` sets it with the channel in 0x20B7D; a second `PB0n;` or `PB00;` stops it), 2 = recording (set by `FUN_fffc0210` from the armed `LM0n` state +0x1CA). `LM0;` answers the channel only while it is 2, and `RI` P3 maps it to 1/2 **[fact for the writers; the names follow the manual's RI P3]**.
 
 ### PC
@@ -1007,7 +1017,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Two-part selector: P1='0' picks one of 17 values (letters up to H) kept in DAT_00009dc9/DAT_00009c08; P1='1' picks one of 5 items (0x1d-0x21) of a DSP/IF-filter style selector (SH also writes DAT_00020b7e=0x1e / DAT_00020b77=1 and calls the same FUN_fffc89b0, so item '2' is the width item) [inference]. Exact UI meaning unknown. Decompiler lost the 'P1==0' flag (in_R14) so the P1 split is reconstructed from control flow [inference]
 - **Globals / callees:** DAT_00009dc9 (rw), DAT_00009c08 (w), DAT_00020b7e (rw), DAT_00020b77 (w), FUN_fffc89b0@fffc89b0
 - **Risk:** medium: changes selector state that probably feeds RX DSP/filter menus; no TX
-- **Resolved in part (#157):** the current decompile (T21 fixes, no `in_`/`unaff_` variables in this handler) computes the flag as `cmd[2] != '0'` **[fact]**. `FUN_fffc89b0` opens the FUNC-knob function display (UI +0x70 = 1, 5 s timer 0x44) **[fact]**. 0x9C08 (read by `displink_build_37`) and 0x9DC9 (read by the status block and `FUN_fffc6c20`) are the stored function selections **[inference]**.
+- **Resolved (#157):** the current decompile (T21 fixes, no `in_`/`unaff_` variables in this handler) computes the flag as `cmd[2] != '0'` **[fact]**. `FUN_fffc89b0` opens the FUNC-knob function display (UI +0x70 = 1, 5 s timer 0x44) **[fact]**. 0x9C08 (read by `displink_build_37`) and 0x9DC9 (read by the status block and `FUN_fffc6c20`) are the stored function selections **[fact, confirmed in #173]**:
+- **Resolved (#173):** **0x9C08 is the FUNC-menu cursor** and **0x9DC9 the function assigned to the FUNC knob** **[fact]**. `FUN_fffc7c55` @ fffc7c55 steps 0x9C08 over 0..0x21 (skipping 0x19) while UI +0x490 ≠ 1; pressing the knob in the menu (`FUN_fffc3a10` @ fffc3a10, UI +0x96 = 1) runs `FUN_fffc3b22` @ fffc3b22 (0x9C08), whose cases call `FUN_fffc3c23`(n) @ fffc3c23 for the adjustable items: it stores 0x9DC9 = n, sets UI +0x490 = 1 (cursor locked) and +0x1C5, beeps; the other cases (2, 3, 8, 0x10, 0x11, 0x15..0x18, 0x1C..0x22) run one-shot actions instead **[fact]**. Turning the knob then calls `FUN_fffc6c20` @ fffc6c20 → `FUN_fffc6f11`(0x9DC9, step), which adjusts the selected function; `displink_build_37` sends 0x9C08 to the DISPLAY (frame byte 0x17DA), and `FUN_fffe0ba1` / `FUN_fff97c74` read 0x9DC9 for the display **[fact]**. Both bytes lie in the operating-state block saved at EEPROM 0x53DB (0x9A2A..0x9E85) ([code/main/eeprom.md](code/main/eeprom.md)) **[fact]**. `SF0x` writes both to the same value, so the menu cursor follows, but it skips `FUN_fffc3c23`'s side effects (no beep, no +0x490 lock) **[fact]**.
 
 ### SH
 
@@ -1042,7 +1053,8 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Squelch-type level 0-100%, stored as 0-255 byte in one of two RAM cells selected by DAT_00009ab6 [inference]
 - **Globals / callees:** DAT_0000464e (rw), DAT_00020ba7 (rw), DAT_00009ab6 (r)
 - **Risk:** low: level setting, RAM cells only (no EEPROM call seen here)
-- **Resolved in part (#69):** 0x9AB6 is **RF/SQL VR** (`EX030102`, 0..2: what the RF/SQL knob controls) **[fact]**. 0x464E lies just below the EEPROM mirror (0x464F..), so it is not saved; 0x20BA7 is RAM-only UI state **[fact for the addresses]**.
+- **Resolved (#69):** 0x9AB6 is **RF/SQL VR** (`EX030102`, 0..2: what the RF/SQL knob controls) **[fact]**. 0x464E lies just below the EEPROM mirror (0x464F..), so it is not saved; 0x20BA7 is RAM-only UI state **[fact for the addresses]**.
+- **Resolved (#173), entry closed:** 0x20BA7 (UI +0xA3) is the **RF/SQL knob value**, written by the DISPLAY encoder frame (`displink_rx_E1_encoder` @ fff9588b) and shared with `RG` **[fact]**. With RF/SQL VR = 0 (RF) the knob is RF gain (`dsp_set_rf_gain` @ fff9fc2a, DSP reg 0x67) and `SQ` only updates the shadow 0x464E, which no code other than `cat_SQ` reads, so `SQ` then has no audible effect and reads back its own value **[fact]**. With VR = 1 (SQL) `SQ` sets the knob value used by both squelch paths in `af_mute_update` @ fffb7b65 (`FUN_fffb7cec` FM noise squelch, `FUN_fffb7e61` signal-level squelch for the other modes) and RF gain is forced to 0xFF **[fact]**. With VR = 2 (SQL, FM only) only the FM path runs and `dsp_set_rf_gain` forces 0xFF only in FM/DATA-FM, so in the other modes `SQ` writes the value that is the **RF gain** there **[fact]**. `RG` mirrors this with its shadow 0x464D. Nothing is left open.
 
 ### SS
 
@@ -1206,4 +1218,5 @@ Conventions [fact]: handler(text, is_set) where text[0..1] is the mnemonic and t
 - **Behaviour:** Zero-in style action for modes 2/3: FUN_fffbf0b6 reads an offset `dsp_tune_offset`() (short, must be within +/-35), multiplies by 10, adds (subtracts in mode 2) to the stored VFO frequency (bytes +0x4a..0x4d), applies via `freq_clamp` and refreshes (FUN_fffc2efb, `vfo_mark_edited`, `vfo_store_back`). Changes the operating frequency [inference: CW-style zero-in/auto-tune]. Key code 0x307
 - **Globals / callees:** key_event_filter(0x307), `vfo_rec_ptr`, DAT_00020b6b, FUN_fffbf0b6@fffbf0b6, `dsp_tune_offset`, `freq_clamp` (freq set), VFO block DAT_00009d09/d63 (+0x4a..0x4d)
 - **Risk:** medium: retunes the VFO (up to +/-350 Hz) but does not key TX
-- **Resolved in part (#157):** `dsp_tune_offset` returns 0x1B6E4, the mode (most frequent of the last 8 samples) of DSP status register 4, the measured CW tuning error; `FUN_fffbf0b6` applies it × 10 Hz ([code/main/dsp-link.md](code/main/dsp-link.md)) **[fact]**. How the HiFi4 computes reg 4 is not traced.
+- **Resolved (#157):** `dsp_tune_offset` returns 0x1B6E4, the mode (most frequent of the last 8 samples) of DSP status register 4, the measured CW tuning error; `FUN_fffbf0b6` applies it × 10 Hz ([code/main/dsp-link.md](code/main/dsp-link.md)) **[fact]**.
+- **Resolved (#173), IFDSP side:** reg 4 (shared register file word 0x20070008) is written only by the HiFi4's `cw_zero_in_estimator` @ 0x0021D270, run from `rx_audio_chain` @ 0x0021F484 for every demod class except FM (reg 6 = 9) and reg 6 = 10 ([code/ifdsp/dsp-chains.md](code/ifdsp/dsp-chains.md)) **[fact]**. Per 20 ms block (240 samples at 12 kHz) it forms the analytic signal (`hilbert_iq`), sums the phase step to get the tone frequency f, and runs a three-bin Goertzel gate at f and f ± 15 Hz (`zeroin_goertzel_tune`/`_step`/`_mag` @ 0x0021D0D0/D140/D190, `zeroin_tone_gate` @ 0x0021D1E0) **[fact]**. While the gate is open (a single clean carrier) reg 4 = round(clamp(f − pitch, ±999.0) × 0.1), a signed count of 10 Hz; otherwise 0x7FFF **[fact: constants 999.0 = 0x4479C000, 0.1 = 0x3DCCCCCD in the decompile]**. The pitch comes from reg 0x61 (0x200700C2), which MAIN writes from 0x9C04: bits 11..0 = CW pitch in Hz (clamped to 1..5999), bit 12 = zero-in enable; a change of reg 0x61 resets reg 4 to 0 **[fact]**. On MAIN, 0x7FFF and anything beyond ±35 is rejected by `FUN_fffbf0b6`, so `ZI` corrects by at most ±350 Hz and does nothing without a gated tone **[fact]**.

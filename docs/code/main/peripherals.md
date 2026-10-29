@@ -321,7 +321,9 @@ So the `AS1` AESS level is applied on the analog side, never in the DSP: level 0
 `dsp_set_aess` sends reg 0x4020 = 0), and a non-zero level sets R2A20178 channel 8 (0xFF in route 0, 0 in route 3; with phones in,
 `FUN_fffb5d68` derives channel 8 from the AF gain instead) **[fact]**. That channel 8 sets the loudness of the AESS (low-passed) speaker
 feed is **[guess]**: the schematic legend only says `BOOST LEVEL`. `sdr_upd_r16_filter` also adds 10 to 0x20B4A when the level is
-non-zero (meaning not traced). The owner's levels (dump 2026-10-28): SSB 15, CW 14, DATA 15, AM 10, FM 17, RTTY/DATA-FM/PSK 0
+non-zero. 0x20B4A is the **TX→RX audio-unmute delay** in ms: `trx_sequencer` 0xFFFB80F9 starts soft timer 0x0D with 0x20B4A +
+2·(CW WAVE SHAPE 0x9AA1) + 4 in state 5 and releases AF_MUTE when it expires in state 7 (#205) **[fact]**. So with AESS on, the
+speaker stays muted 10 ms longer after each transmission **[fact]**, presumably to let the AESS low-pass path settle **[guess]**. The owner's levels (dump 2026-10-28): SSB 15, CW 14, DATA 15, AM 10, FM 17, RTTY/DATA-FM/PSK 0
 (`AS1` 75/70/75/50/85/0).
 
 ## Data structures and globals

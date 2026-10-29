@@ -74,7 +74,7 @@ fffb175b	displink_uart_send	R_SCI1_Serial_Send(buf,len)
 fff94cab	ui_link_init	UI/link state init before the power-off loop [inference]
 fff94d6f	displink_task	DISPLAY link task (main_loop and power-off loop): rx validate/dispatch, ACK/NAK, gap 2 / ACK-wait 30 units, scheduler, 3 retries
 fff95277	displink_rx_len_of	Frame length by type for received frames (0 = unknown -> NAK)
-fff95331	displink_rx_dispatch	Switch on received type; APO reset for all but 06/15/E3
+fff95331	displink_rx_dispatch	Switch on received type; screen-saver timer restart for all but 06/15/E3
 fff951ff	displink_tx_poll	Next frame (scheduler) or resend; after 3 retries drop, link down if hello
 fff9541e	displink_rx_ack	ACK: clear outstanding; after the hello reply sets +0x400 (send 0x24)
 fff95469	displink_rx_nak	NAK: no action

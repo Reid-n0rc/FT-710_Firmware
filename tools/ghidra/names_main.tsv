@@ -188,7 +188,7 @@ fffb1caf	cat_ring_unpop	Steps the CAT ring tail back (port TX busy: retry later)
 fffb1d06	cat_e9_slot	Returns 0x1B78C: single-slot buffer for frames starting E1/E9 (flag, port, len, data)
 fffb1d12	cat_send_reply	Send buffer on CAT port (1=SCI3, 2=SCI0, else SCI2), sets per-port busy flag
 fffb0166	cat_reply_error	Builds the '?;' error reply (len 2)
-fffb263d	cat_apo_reset	Restarts the auto-power-off timer from setting 0x9B0F (called per received command)
+fffb263d	screensaver_timer_restart	Restarts slow timer 0 (screen saver) from menu 040104 SCREEN SAVER 0x9B0F: 0 off, 1/2/3 = 15/30/60 min; called on any user/CAT/link activity (#208; was cat_apo_reset)
 fffdd797	cat_ai_poll	Auto-information broadcaster: runs ~70 change detectors, sends one changed item to every port with AI on (0x20B20..22)
 fffddb6a	cat_ai_holdoff	Arms timer 0x32 (200 ms) and 0x187C2 to hold off the next AI frame after a CAT set
 fffddb7e	cat_ai_FD	AI detector for the undocumented FD command (FD00n + 9 digits)
@@ -262,6 +262,8 @@ fff92b01	r_s12ad0_scan_end_isr	vec186: stop unit 0, copy results to 0x20B04.., s
 fff92e0f	r_s12ad1_scan_end_isr	vec189: stop unit 1, copy results to 0x20B10.., set 0x1203F
 fffb2288	swtimer_tick	TPU0 ISR body: 75 one-shot timers (flags 0x11FED) + 2 blink timers (0x12038)
 fffb259c	slowtimer_tick	TPU3 ISR body: 4 timers in 100 ms units (flags 0x1203A)
+fffb2604	slowtimer_start	slowtimer_start(id 0..3, seconds): counter 0x1FA24[id] = 0, limit 0x1FA2C[id] = seconds x 10 (100 ms ticks), flag 0x1203A[id] = 0; 0 s = stopped (#208)
+fffb267f	screensaver_timer_expired	Returns slow-timer-0 flag 0x1203A (screen-saver timeout reached); read by io_task (#208)
 fffb24d8	spk_softstart_isr	TPU2 ISR body: pulses the selected speaker switch with a shrinking duty cycle [inference: pop suppression]
 fffb2469	tone_sample_isr	TPU1 ISR body: next sample of the table at *0x20B00 -> DADR0
 fff9283d	dac0_write	DADR0 = v & 0xFFF
@@ -300,7 +302,7 @@ fffe2cd0	dispreq_e7_task	main_loop task 11: acts on the E7 status (+0x488) of th
 fffb98c8	keyer_init	Clears keyer state 0x120BC (0xA0 B)
 fffb98e9	keyer_task	main_loop task 12: CW keyer (speed 0x9C03, 0x20B97) [inference]
 fff94d6f	displink_task	DISPLAY link task (main_loop and power-off loop): rx validate/dispatch, ACK/NAK, gap 2 / ACK-wait 30 units, scheduler, 3 retries
-fff95331	displink_rx_dispatch	Switch on received type; APO reset for all but 06/15/E3
+fff95331	displink_rx_dispatch	Switch on received type; screen-saver timer restart for all but 06/15/E3
 fff9546a	displink_rx_F0_hello	F0: DISPLAY version/date, boot code b7 (1 reset, 2, 4 numeric mode, 5, 6 link down, 7 destination swap, 0x10 warm), link up, power on (+0x36)
 fffbbd58	key_task	Key state machine (main_loop): press/short/long/repeat/release tables by key class
 fffbc35f	key_call_press	JSR key_press_table[code]
@@ -435,6 +437,15 @@ fff9c454	displink_build_20
 fff9c46d	displink_tx_62	0x62 (0x197 bytes)
 fff9c49a	displink_build_62
 fff9c5b2	displink_tx_start	put sum, mark outstanding, send
+fff98cd3	displink_copy_status	build the 0x97-byte status block and copy it to staging frame bytes 1..0x97 (0x1742) (#179)
+fff98cec	displink_70_msg	0x70 dialog: style 3, no buttons, 22 bytes of ROM text (#179)
+fff98d5b	displink_70_msg2	0x70 dialog: style 1, buttons 4, 44 bytes of ROM text (#179)
+fff98dca	displink_70_query	0x70 dialog: style 3, buttons 4, 22 bytes of ROM text (#179)
+fff973bc	mode_block_byte0	active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) (#179)
+fff9921f	mode_block_byte1	active mode's per-mode block byte +1 (BC bit 7, AGC bits 4-6) (#179)
+fff98727	ui_lamp_set	set/clear one bit of UI +0x34 (status byte 8); lamp/LED meaning is inference (#179)
+fff9c555	displink_62_value	3-character value of alignment item n (cfg 0x4659+n) for frame 0x62 (#179)
+fffe376a	dispreq_e8_result	E8 code actions (+0x48C 1..5), called by dispreq_e8_task (#179)
 fff9c5d8	displink_put_sum	8-bit sum of bytes 0..len-2 into byte len-1
 fff9c60f	displink_check_sum	verify 8-bit sum
 fff9c655	mem_zero	mem_zero(n, ptr)
@@ -2195,3 +2206,24 @@ fffbbc8e	align_store_ui2	cal[item] = UI-state +2 (0x20B06) >> 4 (54 items from 7
 fffbbcb8	align_store_dsp_async	Starts a DSP status read (dsp_status1_raw, timer 0x42 30 ms); the result goes to cal[item] later (items 45..47)
 fffbbcff	align_store_ui8_scaled	cal[item] = (0x20B0C >> 4) * 0x4666 / 137 rounded (item 245)
 fffbbd52	align_store_nop	Empty store handler (191 of the 261 items)
+# --- #173 (CAT remainders): names from reading decomp/main; they show in decomp/ after the next Ghidra re-export
+fffb012c	mem_find_byte	(buf, c, n): index of the first byte == c in buf[0..n), else n; returned in R1 (EM, KM)
+fff9ba18	displink_39_keyer_texts	Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32)
+fff9baa0	displink_39_rtty_labels	Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes 0xC0..0xE7 (0x1801..)
+fffe4407	msg_type_select	Sets UI +0x1C7 (message type) from vfo_mode(1): CW 1, RTTY 2, PSK 3, voice modes 0
+fffe481d	keyer_text_endmark	Front-panel keyer text editor: length up to the first } (0x7D) or appends } after the last non-space char
+fffe538f	msg_slot_select	(n): UI +0x1C8 = n, +0xBF = +0x1CE = n-1 (KY)
+fffb521a	tx_breakin_on	Bit 1 (BI break-in flag) of the TX VFO per-mode byte (vfo_rec_ptr(1)/vfo_mode(1))
+fffc2937	memtune_flags_clear	(side): UI +0x43F/+0x441 (A) or +0x440/+0x442 (B) = 0
+fffc3b22	func_menu_select	FUNC menu: runs the item at cursor 0x9C08 (func_knob_assign(n) for adjustable items, one-shot actions otherwise)
+fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +0x1C5 = 1, beep
+fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
+fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
+# --- #205 (EEPROM leftovers)
+fff94bd9	ver_main_ext1	Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; build date/time [guess] (#205)
+fff94be5	ver_main_ext2	Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C [fact] (#205)
+fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP [fact] (#205)
+fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
+fffc47dd	preamp_step	Record +0x05 bits 0-1: IPO(0) -> AMP1(2) -> AMP2(3) -> IPO, beep 1 [fact]; the IPO key [inference] (#205)
+fffc4850	preamp_ipo	Record +0x05 bits 0-1 = 0 (IPO), beep 2 [fact] (#205)
