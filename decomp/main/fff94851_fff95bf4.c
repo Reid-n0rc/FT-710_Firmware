@@ -399,7 +399,7 @@ void main_loop(void)
     dispreq_e8_task();
     dispreq_e7_task();
     keyer_task();
-    FUN_fffd0582();
+    sd_menu_task();
     displink_task();
     key_task();
     tuner_task();

@@ -8,8 +8,8 @@ void FUN_fffbdf98(void)
   byte bVar1;
   bool bVar2;
   uint uVar3;
-  byte *local_8;
-  byte *local_4;
+  byte *pbStack_8;
+  byte *pbStack_4;
   
   bVar2 = false;
   if (PTR_DAT_00025d54[0x74] != '\0') {
@@ -20,79 +20,79 @@ void FUN_fffbdf98(void)
   }
   PTR_DAT_00025d54[0x74] = 1;
   if (DAT_00009dbd == '\0') {
-    local_4 = &DAT_00009d09;
+    pbStack_4 = &DAT_00009d09;
   }
   else {
-    local_4 = &DAT_00009d63;
+    pbStack_4 = &DAT_00009d63;
   }
-  uVar3 = *local_4 & 0xf;
+  uVar3 = *pbStack_4 & 0xf;
   if (uVar3 == 0xe) {
 LAB_fffbe052:
-    local_8 = local_4 + 0x28;
+    pbStack_8 = pbStack_4 + 0x28;
   }
   else if (uVar3 - 2 < 2) {
-    local_8 = local_4 + 0x14;
+    pbStack_8 = pbStack_4 + 0x14;
     bVar2 = true;
   }
   else if (uVar3 - 4 < 2) {
-    local_8 = local_4 + 0x32;
+    pbStack_8 = pbStack_4 + 0x32;
   }
   else {
     if (1 < uVar3 - 6) {
       if (uVar3 - 8 < 2) goto LAB_fffbe052;
       if (1 < uVar3 - 10) {
         if (uVar3 - 0xc < 2) {
-          local_8 = local_4 + 0x1e;
+          pbStack_8 = pbStack_4 + 0x1e;
         }
         else {
-          if ((*local_4 & 0xf) != 0 && uVar3 != 1) {
+          if ((*pbStack_4 & 0xf) != 0 && uVar3 != 1) {
             return;
           }
-          local_8 = local_4 + 10;
+          pbStack_8 = pbStack_4 + 10;
         }
         goto LAB_fffbe05b;
       }
     }
-    local_8 = local_4 + 0x3c;
+    pbStack_8 = pbStack_4 + 0x3c;
   }
 LAB_fffbe05b:
   if (PTR_DAT_00025d54[0x73] == '\x02') {
-    bVar1 = *local_8;
+    bVar1 = *pbStack_8;
     if ((bVar1 & 0x80) == 0) {
-      *local_8 = bVar1 | 0x80;
+      *pbStack_8 = bVar1 | 0x80;
     }
     else {
-      *local_8 = bVar1 & 0x7f;
+      *pbStack_8 = bVar1 & 0x7f;
     }
   }
   else if (PTR_DAT_00025d54[0x73] == '\x03') {
     if (bVar2) {
       if (PTR_DAT_00025d54[0x47a] == '\0') {
-        bVar1 = *local_8;
+        bVar1 = *pbStack_8;
         if ((bVar1 & 0x40) == 0) {
-          *local_8 = bVar1 | 0x40;
+          *pbStack_8 = bVar1 | 0x40;
         }
         else {
-          *local_8 = bVar1 & 0xbf;
+          *pbStack_8 = bVar1 & 0xbf;
         }
       }
       else if (PTR_DAT_00025d54[0x47a] == '\x01') {
-        bVar1 = *local_8;
+        bVar1 = *pbStack_8;
         if ((bVar1 & 0x20) == 0) {
-          *local_8 = bVar1 | 0x20;
+          *pbStack_8 = bVar1 | 0x20;
         }
         else {
-          *local_8 = bVar1 & 0xdf;
+          *pbStack_8 = bVar1 & 0xdf;
         }
       }
     }
     else {
-      bVar1 = *local_8;
+      bVar1 = *pbStack_8;
       if ((bVar1 & 0x40) == 0) {
-        *local_8 = bVar1 | 0x40;
+        *pbStack_8 = bVar1 | 0x40;
       }
       else {
-        *local_8 = bVar1 & 0xbf;
+        *pbStack_8 = bVar1 & 0xbf;
       }
     }
   }
