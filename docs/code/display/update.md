@@ -280,7 +280,9 @@ Block data is the decoded hex text converted to binary (`hex_to_bin`), CRC-16 re
 0x20110834 sends address 0x240000 + index × 0x1000, `sdr_flash_write` 0x20110AB8 calls it for indexes 0..0x217 (536 blocks) and then
 once with index 0x240 for the header, so 537 blocks are written in all (wording clarified by T19h). So the update writes a second
 image slot and commits it with the header at the end; an interrupted update leaves no valid header **[inference]**. Whether the FPGA
-reads 0x240000 directly or through a multiboot/golden image at 0 (T08 saw the sync at 0x1030 for flash 0) is open **[guess]**.
+reads 0x240000 directly or through a multiboot/golden image at 0: the update image itself has WBSTAR = 0, no IPROG and ConfigFallback on,
+so a golden image at 0 that jumps to 0x240000 is the only way it runs after power-up **[inference, strong; #58, [sdr/interfaces.md](../sdr/interfaces.md)]**.
+(T08's "sync at 0x1030" is the offset in the file, whose first 0x1000 bytes are the header.)
 
 On `SDR_UPDATE`: MAIN holds it **low during the update** and pulses `SDR_RESET` with it high afterwards (T10c). DISPLAY never touches
 the FPGA flash pins; the FPGA fabric writes the flash from its registers **[fact for DISPLAY]**. So the module pin labelled `WP` is not a
