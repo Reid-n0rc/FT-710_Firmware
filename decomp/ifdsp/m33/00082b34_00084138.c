@@ -361,7 +361,8 @@ switchD_00082e62_default:
 
 // ===== CLOCK_GetOsc32KFreq @ 00082f70 (18 bytes)
 
-/* OSC32KHZCTL0 bit0 ? 32768 : 0 [inference] */
+/* OSC32KHZCTL0 bit 0 ? 32768 : 0 [fact: 0x82F70]; same as CLOCK_GetOsc32KFreq in mcux-sdk@8a289764
+   devices/MIMXRT685S/drivers/fsl_clock.c [inference] */
 
 undefined4 CLOCK_GetOsc32KFreq(void)
 
@@ -380,7 +381,8 @@ undefined4 CLOCK_GetOsc32KFreq(void)
 
 // ===== CLOCK_GetXtalInClkFreq @ 00082f88 (30 bytes)
 
-/* SYSOSCBYPASS 0 -> g_xtalFreq (0x88930), 1 -> g_clkinFreq (0x88928) [inference] */
+/* SYSOSCBYPASS 0 -> word 0x88930, 1 -> word 0x88928, else 0 [fact: 0x82F88]; same as
+   CLOCK_GetXtalInClkFreq (g_xtalFreq / g_clkinFreq) in mcux-sdk@8a289764 fsl_clock.c [inference] */
 
 undefined4 CLOCK_GetXtalInClkFreq(void)
 

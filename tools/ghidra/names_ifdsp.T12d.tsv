@@ -21,13 +21,13 @@
 00080914	BOARD_DeinitXip	Wait FlexSPI STS0 ARBIDLE+SEQIDLE, MCR0 |= MDIS [inference]
 0008092e	BOARD_InitXip	MCR0 &= ~MDIS, SWRESET, wait DLL lock if DLLCR0 enabled, 100 NOPs [inference]
 00087234	BOARD_FlexspiClockSafeConfig	BOARD_SetFlexspiClock(3 = FFRO, /1) before the main clock switch [inference]
-00087240	app_init_nop	body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear [fact]. Open: which source function this was (SDK examples call BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the vendor's source or link map
+00087240	app_init_nop	body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear [fact]. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232 [fact: literal 0x80A10]. Open: which source function this was; would be settled by the vendor's source or link map
 00087242	BOARD_InitPins_flexcomm	IOPCTL: PIO0_1/2 FC0 USART, PIO0_7..10 FC1 SPI, PIO1_10 MCLK, PIO2_2 SCT0_OUT0, PIO2_30 CLKIN [fact]
 0008726c	BOARD_InitPins_i2s	IOPCTL: PIO0_14..16 FC2 (SCK input inverted), PIO0_23 FC3 data in, PIO0_30 FC4 data in, PIO1_3..5 FC5 [fact]
 00084c90	BOARD_InitPins_debug_gpio	NEW (tail call from BOARD_InitPins). GPIO outputs low: PIO0_28/29/31 (TP2043/2046/2044), PIO2_4/5/6 (TP2007/2008/2009) [fact]
 # --- fsl_clock.c (RT600)
-00082f70	CLOCK_GetOsc32KFreq	OSC32KHZCTL0 bit0 ? 32768 : 0 [inference]
-00082f88	CLOCK_GetXtalInClkFreq	SYSOSCBYPASS 0 -> g_xtalFreq (0x88930), 1 -> g_clkinFreq (0x88928) [inference]
+00082f70	CLOCK_GetOsc32KFreq	OSC32KHZCTL0 bit 0 ? 32768 : 0 [fact: 0x82F70]; same as CLOCK_GetOsc32KFreq in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_clock.c [inference]
+00082f88	CLOCK_GetXtalInClkFreq	SYSOSCBYPASS 0 -> word 0x88930, 1 -> word 0x88928, else 0 [fact: 0x82F88]; same as CLOCK_GetXtalInClkFreq (g_xtalFreq / g_clkinFreq) in mcux-sdk@8a289764 fsl_clock.c [inference]
 00082fb4	CLOCK_GetFFroFreq	FFROCTL0 trim range: 48 or 60 MHz [inference]
 00082fdc	CLOCK_GetSysPllFreq	SYSPLL0 source (SFRO/SYSOSC/FFRO/2) x (MULT + NUM/DENOM) [inference]
 00083038	CLOCK_GetSysPfdFreq	SYSPLL x 18 / PFDn [inference]
@@ -124,10 +124,10 @@
 00082cc4	xTimerGenericCommand	Posts to TmrQ 0x88920 [inference]
 00082d10	prvSampleTimeNow	With prvSwitchTimerLists inlined [inference]
 000866a4	xEventGroupSetBits	[inference]
-00086716	vListInitialise	[inference]
-0008672c	vListInitialiseItem	[inference]
+00086716	vListInitialise	list+8 (xListEnd) = item value 0xFFFFFFFF, pxIndex/next/previous = &xListEnd, count = 0 [fact: 0x86716]; same as vListInitialise in FreeRTOS 10.3.0 list.c without the integrity-check fields [inference]
+0008672c	vListInitialiseItem	item+0x10 (pvContainer) = 0 [fact: 0x8672C]; same as vListInitialiseItem in FreeRTOS 10.3.0 list.c [inference]
 00086732	vListInsertEnd	[inference]
-0008674a	vListInsert	[inference]
+0008674a	vListInsert	value 0xFFFFFFFF goes before xListEnd, else walk from xListEnd while next value <= new value, link in, set pvContainer, count+1 [fact: 0x8674A]; same as vListInsert in FreeRTOS 10.3.0 list.c [inference]
 00086778	uxListRemove	[inference]
 00086798	prvIsQueueEmpty	[inference]
 000867ae	prvCopyDataToQueue	[inference]
@@ -189,3 +189,6 @@
 0008794c	__sys_seek	returns -1 [fact]
 00087952	__sys_tmpnam	returns -1 [fact]. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) [fact] = SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec (ARM-software/abi-aa@36203f2c semihosting.rst) [inference]
 00087958	__sys_write	returns len (nothing written: stdio goes nowhere) [fact]
+08001414	getFFroFreq	FFROCTL0 trim range 0 -> 48 MHz, 3 -> 60 MHz, else 0 [fact: 0x08001414]; its 3 callers are the 3 FFRO cases of SystemCoreClockUpdate; same as static getFFroFreq in mcux-sdk@8a289764 devices/MIMXRT685S/system_MIMXRT685S_cm33.c [inference]
+080015d4	SystemInitHook	empty (bx lr) [fact: 0x080015D4]; the last call in SystemInit 0x08001540, as the weak SystemInitHook() at the end of SystemInit in mcux-sdk@8a289764 system_MIMXRT685S_cm33.c [inference]
+00087232	BOARD_InitDebugConsole	empty (bx lr), no callers [fact: 0x87232]; its address (0x87233, Thumb bit) is the literal at 0x80A10 that BOARD_SetFlexspiClock masks with 0xE8000000 and compares with 0x08000000 before BOARD_DeinitXip/BOARD_InitXip [fact: 0x809BC..0x80A06], which is the BOARD_IS_XIP_FLEXSPI() test on &BOARD_InitDebugConsole in mcux-sdk@8a289764 boards/evkmimxrt685/board.c [inference]; the vendor built it empty

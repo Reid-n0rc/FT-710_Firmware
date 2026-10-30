@@ -1043,7 +1043,9 @@ LAB_00086702:
 
 // ===== vListInitialise @ 00086716 (22 bytes)
 
-/* [inference] */
+/* list+8 (xListEnd) = item value 0xFFFFFFFF, pxIndex/next/previous = &xListEnd, count = 0 [fact:
+   0x86716]; same as vListInitialise in FreeRTOS 10.3.0 list.c without the integrity-check fields
+   [inference] */
 
 void vListInitialise(void *param_1)
 
@@ -1062,7 +1064,8 @@ void vListInitialise(void *param_1)
 
 // ===== vListInitialiseItem @ 0008672c (6 bytes)
 
-/* [inference] */
+/* item+0x10 (pvContainer) = 0 [fact: 0x8672C]; same as vListInitialiseItem in FreeRTOS 10.3.0
+   list.c [inference] */
 
 void vListInitialiseItem(int param_1)
 
@@ -1097,7 +1100,9 @@ void vListInsertEnd(int *param_1,int param_2)
 
 // ===== vListInsert @ 0008674a (46 bytes)
 
-/* [inference] */
+/* value 0xFFFFFFFF goes before xListEnd, else walk from xListEnd while next value <= new value,
+   link in, set pvContainer, count+1 [fact: 0x8674A]; same as vListInsert in FreeRTOS 10.3.0 list.c
+   [inference] */
 
 void vListInsert(int *param_1,uint *param_2)
 

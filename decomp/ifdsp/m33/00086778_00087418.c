@@ -1338,9 +1338,15 @@ undefined ** USART_Init(uint *param_1,uint *param_2,uint param_3)
 }
 
 
-// ===== FUN_00087232 @ 00087232 (2 bytes)
+// ===== BOARD_InitDebugConsole @ 00087232 (2 bytes)
 
-void FUN_00087232(void)
+/* empty (bx lr), no callers [fact: 0x87232]; its address (0x87233, Thumb bit) is the literal at
+   0x80A10 that BOARD_SetFlexspiClock masks with 0xE8000000 and compares with 0x08000000 before
+   BOARD_DeinitXip/BOARD_InitXip [fact: 0x809BC..0x80A06], which is the BOARD_IS_XIP_FLEXSPI() test
+   on &BOARD_InitDebugConsole in mcux-sdk@8a289764 boards/evkmimxrt685/board.c [inference]; the
+   vendor built it empty */
+
+void BOARD_InitDebugConsole(void)
 
 {
   return;
@@ -1362,9 +1368,9 @@ void BOARD_FlexspiClockSafeConfig(void)
 // ===== app_init_nop @ 00087240 (2 bytes)
 
 /* body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and
-   regfile_clear [fact]. Open: which source function this was (SDK examples call
-   BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the
-   vendor's source or link map */
+   regfile_clear [fact]. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232
+   [fact: literal 0x80A10]. Open: which source function this was; would be settled by the vendor's
+   source or link map */
 
 void app_init_nop(void)
 
