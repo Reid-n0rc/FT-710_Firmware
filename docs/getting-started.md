@@ -190,7 +190,7 @@ for quick questions.
 
 ## 7. Conventions
 
-- **Evidence tags.** Every claim is **[fact]** (seen in code or data, with the address), **[inference]** or **[guess]**.
+- **Evidence tags.** Every claim is **[fact]** (seen in code or data, with the address) or **[inference]** (evidence and reasoning written out). Never guess: anything unsupported is written as an open question ("Open: …; would be settled by …").
 - **Figures.** Mermaid in Markdown (`flowchart`, `sequenceDiagram`, `stateDiagram-v2`), about 25 nodes or fewer; hand-written SVG in
   `docs/guide/img/` for the guide. Check that a Mermaid block renders (GitHub preview, or `mmdc`) before you commit it.
 - **Tools.** Python standard library only where possible; run with `python3 -I`. Derived output goes to `build/`.

@@ -8,7 +8,7 @@ What the files are is on [peripherals.md](peripherals.md#6-sd-card-user-files) (
 
 Sources: `decomp/display/` (addresses 0x2013DFF0..0x2014E14C, plus `sd_fs_init` / `sd_task_create` near 0x201039B0), the plate
 comments in `tools/ghidra/names_display.tsv` and `names_display.T11c.tsv` / `T11g.tsv`. Claims are tagged **[fact]** (seen in the
-code), **[inference]** or **[guess]**.
+code) or **[inference]** (evidence and reasoning given); anything not supported is listed as an open question.
 
 ## Overview
 
@@ -122,8 +122,10 @@ to the same driver / FAT library is an **[inference]** from the address range an
 
 ## Open questions
 
-- The library behind the FAT layer (the error codes -12 ... -72 and the exFAT support suggest a commercial embedded FAT; MiSPO
-  ships one with NORTi) **[guess]**.
+- Open: which library the FAT layer is. The image names no FAT library: its only vendor string is the kernel's `NORTi(c)MiSPO`
+  (file offset 0x56290), and the FAT-related strings are the type names (`EXFAT` at 0x48F20, `FAT12/16/32`) and a semaphore name
+  ` fat_sem` (0x4DCCB) **[fact: `strings` over `build/FT-710_DISPLAY_V0108.bin`; the compressed `.data` initialiser was not searched]**. Would be settled by matching the layer's
+  functions and error codes (-12 ... -72) against a candidate library's binary or manual.
 - The 94 functions of the block still unnamed after T23e round 2 (directory and cluster-chain code mostly); the round-2 names
   describe what the code does, so the layer's own API names stay open until the library is identified.
 

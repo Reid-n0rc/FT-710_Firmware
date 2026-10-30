@@ -4,7 +4,7 @@ Status of what stands between a user and running their own code (or FPGA logic) 
 collects the evidence from T02–T13. Work items are tracked as **T15** (FPGA netlist recovery) and **T16** (custom-firmware
 groundwork) on the [task board](tasks/README.md).
 
-Claims are tagged **[fact]** (seen in code or data, with the address or source), **[inference]** or **[guess]**.
+Claims are tagged **[fact]** (seen in code or data, with the address or source) or **[inference]** (evidence and reasoning given); anything unsupported is an open question.
 
 > **Ground rule (AGENTS.md):** nothing is written to the radio (flashing, EEPROM writes, untested CAT set-commands, JTAG
 > loads) without the owner's explicit approval each time. Everything below is analysis and planning.

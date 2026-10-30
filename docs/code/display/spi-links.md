@@ -122,9 +122,9 @@ itself after N0TB bytes.
 uncached mirror), callback `sdr_rx_done_cb`, `rspi_open(2)` (slave), `rspi_reset_buffers(2)`, DMA ch5 enable, `rspi_start(2)`.
 `link_ss_irq_init` 0x20133440 (in `task_root`'s full path) registers two more interrupts. GIC ID **0x217 (535)** → `sdr_ss_isr` 0x201333F0
 and **0x1C1 (449)** → `dsp_ss_isr` 0x20133418 **[fact]**. Each ISR stamps the cycle counter, counts (0x208085A8 / 0x208085AC) and calls
-`rspi_start` for its channel **[fact]**. These are most likely port (TINT) interrupts on the SS lines, so that each frame re-arms the slave
-at a frame boundary **[inference]**. Which pins they are cannot be checked without the RZ/A1H interrupt table **[guess: TINT119 / TINT33 if
-TINT0 = ID 416]**.
+`rspi_start` for its channel **[fact]**. They are pin interrupts on the two SS lines: R01UH0403EJ0700 Table 7.3 gives ID 535 = TINT119 on P8_4
+(`SDR_SS`, SSL20) and ID 449 = TINT33 on P2_9 (`DSP_SS`, SSL40) **[fact, manual; nets p62]**. So each frame re-arms the slave at a frame
+boundary **[inference]**.
 
 ```mermaid
 sequenceDiagram
@@ -174,8 +174,7 @@ mode until the next reset **[inference: nothing switches it back]**.
 
   So the header and trailer are meant for the **PC scope software**, not for the panel, and their layout is set by the FPGA (or that PC
   software). The DISPLAY cannot tell us what they mean **[inference]**.
-- **The second 850 bytes** of each 1700-byte DMA frame are never referenced (0x605C03F2..) **[fact]**. Most likely the FPGA sends two
-  850-byte halves (for example main and sub, or two resolutions) and this build uses only the first **[guess]**. *#186:* the FPGA fills them with the constant 0xCC (netlist), so they are padding **[fact]**.
+- **The second 850 bytes** of each 1700-byte DMA frame are never referenced (0x605C03F2..) **[fact]**. *#186:* the FPGA fills them with the constant 0xCC (netlist), so they are padding **[fact]**.
 - **Rate on the DISPLAY side.** The GUI uses at most one record per 33 ms frame: `scope_draw_frame` runs once per `gui_main_loop` pass,
   pushes the newest record into the history and draws it **[fact]**. Records that arrive in between overwrite each other in 0x204832BB, so a
   faster SDR frame rate is invisible on the panel; only the PC link (every 4 ms) could see more. The 3DSS adds a line every N GUI frames,
@@ -183,13 +182,15 @@ mode until the next reset **[inference: nothing switches it back]**.
   SPEED = inference]**.
 - **Rate on the SDR side.** Nothing in the DISPLAY or MAIN code fixes the FPGA's scope frame period. MAIN sends the scope registers
   0x15 = 0x2000 and 0x24 = 0x0317 once, then centre, span, RBW, sensitivity and level ([main/sdr-link.md](../main/sdr-link.md)) **[fact]**.
-  0x0317 = 791 equals the 3DSS front-line width on the DISPLAY, which may be a coincidence **[guess]**.
+  0x0317 = 791 is also the number of columns the DISPLAY draws from each 800-point record (spectrum and 3DSS width, [gui.md](gui.md#scope-drawing-83))
+  **[fact]**. Open: what register 0x24 does in the FPGA ([main/sdr-link.md](../main/sdr-link.md) lists it as unknown); would be settled by
+  tracing register 0x24 in the netlist (`build/sdr/ft710_sdr.v`) or by changing it on the radio and comparing the scope record.
 - **Netlist simulation (#62).** I ran `hdl/sdr/sim/pins_main.cpp` for 16 M clocks (128 ms at 125 MHz), 4 × the #90 run. It sent MAIN's scope set-up frames: 0x15 = 0x2000, 0x24 = 0x0317, 0x20/0x21, span 0x22 = 6, RBW 0x23 = 0x8000, 0x26 = 0x0610 and level 0x27. No scope pin toggled; only the I2S port (U16/V17/V16) ran **[fact]**. The netlist narrows the candidates **[fact: `build/sdr/ft710_sdr.v`]**:
   - V15, T16 and T15 are tied to constant 0, so they cannot carry the scope link.
   - Of the remaining outputs, T9 is driven by a LUT (`SLICE_X36Y56/ALUT`) and U17 by a flip-flop on the 125 MHz fabric clock.
   - M17 is driven by a flip-flop on the `dsp_clk` MMCM clock (`BUFHCE_X1Y8`), the clock that also drives the I2S port.
 
-  So `FFT_CLK/FRM/DAT` are most likely T9/U17/M17 **[inference]**. Their logic waits on a condition the harness does not drive, perhaps ADC data or a DISPLAY-side input **[guess]**.
+  So `FFT_CLK/FRM/DAT` are most likely T9/U17/M17 **[inference]**.
   *#186 correction:* none of the three. The link is on the **bidirectional** pins R18 (`FFT_CLK`), T18 (`FFT_FRM`), N14 (`FFT_DAT`),
   which the harness could not watch (its IOBUF model never drives a pad), and it starts only when MAIN sets register 0x04 bit 3
   (MAIN's 0xE519 does); the #62 run did not write reg 0x04.
@@ -287,7 +288,9 @@ a MAIN-side setting **[fact for the code path, inference for the meaning]**.
 
 So the PC can draw the radio's spectrum scope and AF-FFT and see the radio status over USB, without going through the CAT ports
 **[inference]**. The TX block is refreshed every 4 ms while the DMA keeps sending it, so a PC frame can mix two refreshes
-(there is no double buffer) **[inference]**. The PC-side software is not known (Yaesu's PC scope / SCU-LAN10-type remote software is a **[guess]**).
+(there is no double buffer) **[inference]**. Open: which PC software reads this stream; the operating manual mentions PC control software for the
+SCU-LAN10 LAN unit (OM JPN, SCU-LAN10 section) **[fact]**, and nothing found so far ties any program to this USB stream. Would be settled by a USB capture of the FT4222 port while
+Yaesu PC software runs, or by finding a Yaesu program that loads FTDI's LibFT4222.
 
 **PC → DISPLAY frame (test mode only, 0x60500000)** **[fact]**: `pclink_rx_parse` 0x201121B4 checks the magic **0xEEAFCCBA** at offset 0
 (`MOSI_NG` +1 if it is wrong, `MOSI_OK` +1 if it matches) and copies 11 words: +0x04 `FRAMES`, +0x08 `MISO_OK`, +0x0C `MISO_NG`, +0x10..+0x28

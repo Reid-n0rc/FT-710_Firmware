@@ -162,7 +162,11 @@ matches 13 matrix keys + 4 front direct keys (LOCK/PWR, TUNE, MOX/VOX, and FUNC 
 
 **[fact]** for the table. The 6 named codes are the SSM-75E keys (UP/DWN, P1–P4, MUTE). MAIN remaps 0x348, 0x34E and 0x35B–0x35E through its
 "MIC P1–P4 / MIC UP / MIC DOWN" settings (`key_event_filter` 0xFFFB44F7, bytes 0x9AC8–0x9ACD) **[fact in MAIN]**. The 16 unnamed codes form a
-4×4 grid (AN3 level 0–3 × AN4 level 1–4), which looks like a 16-key DTMF keypad microphone **[guess]**. That the two ADC channels are the mic
+4×4 grid (AN3 level 0–3 × AN4 level 1–4) **[fact]**. No MAIN code compares against any of them as a literal (a search of `decomp/main/`
+for 0x343..0x358 finds only 0x348, 0x34E and an unrelated 0x352 RTTY shift) **[fact]**. The operating manual lists the SSM-75E, M-100 and
+M-70D microphones and the FH-2 keypad (which MAIN reads on its own ADC, `remote_keypad_scan`) as options (OM JPN, accessory list) **[fact]**;
+no keypad microphone is listed. Open: which device, if any, produces these 16 codes; would be settled by a MAIN key-table entry
+for them or by a mic-jack ladder measurement. That the two ADC channels are the mic
 jack's key lines is **[inference]**.
 
 ### Boot key combinations
@@ -219,8 +223,10 @@ flowchart LR
   counts 0x2045F224). Deltas of ids 1–3 merge into the last slot, clamped to ±127, and ids 4–5 keep the latest value **[fact]**. The ack that
   clears 0x2045002A is in the RX side ([mainlink.md](mainlink.md)).
 - **Which knob is which [inference]:** id 1 (hardware quadrature counter, ×4 mode) = main dial (REL20-50LD). id 2 = [FUNC] (MULTI) knob, because
-  the mouse wheel sends id 2 on the menu-type screens. id 3 = [STEP/MCH (DSP)] knob. ids 4/5 = the two front pots VR6001/VR6002 (AF gain and
-  RF/SQL) **[guess for which is which]**. id 6 = mouse wheel on the main screen: `mouse_wheel_event` 0x2015FAC4 sends id 6 when the
+  the mouse wheel sends id 2 on the menu-type screens. id 3 = [STEP/MCH (DSP)] knob. ids 4/5 = the two front pots VR6001/VR6002.
+  **id 4 = RF gain, id 5 = AF gain** **[fact: MAIN `displink_rx_E1_encoder` 0xFFF9588B stores id 4's value in UI +0xA3 `rf_gain` (read by
+  `cat_RG`) and id 5's in UI +0xA4 `af_gain` (read by `cat_AG`), `decomp/main/fff94851_fff95bf4.c`, `structs_main.h`]**. Which of VR6001 /
+  VR6002 feeds which ADC channel is not traced. id 6 = mouse wheel on the main screen: `mouse_wheel_event` 0x2015FAC4 sends id 6 when the
   screen id 0x208F0B2A is 0x20, id 2 or 3 on other screens **[fact]**.
 
 ## Touch panel (TSC2003, driver named "tsc2007")
@@ -566,7 +572,8 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 ## Open points
 
 - MAIN-side meaning of the E0/E1/E4/E5/F0 frames and of the boot combinations 1–7 (T10b, [mainlink.md](mainlink.md)).
-- Which pot is AF and which RF/SQL, and the exact knob ↔ encoder id mapping (needs MAIN's E1 handler or a schematic read of p62/p63).
+- The physical pot behind each ADC channel (VR6001 / VR6002 → AN0 / AN1) and the exact knob ↔ encoder id mapping for ids 2/3 (needs a
+  schematic read of p62/p63). Settled: id 4 = RF gain, id 5 = AF gain (MAIN `displink_rx_E1_encoder`).
 - What `task_tsc2007_irq` really guards (0x20800090 is read by `tsc2007_irq_flag`, whose caller was not traced).
 - The 16 unnamed ADC codes 0x343–0x358.
 

@@ -5,7 +5,7 @@ write to the radio (SD-card update, JTAG load, RAM write) needs the owner's expl
 Patched images and SFL files are firmware-derived: they live only in `build/` (gitignored) and are never committed or
 published. This page records only the few patched bytes.
 
-Claims are tagged **[fact]** (seen in code or data, address given), **[inference]** or **[guess]**.
+Claims are tagged **[fact]** (seen in code or data, address given) or **[inference]** (evidence and reasoning given); anything unsupported is an open question.
 
 | Page / tool | Contents |
 |---|---|
