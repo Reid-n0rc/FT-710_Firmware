@@ -40,16 +40,16 @@ void key_nar_short(void)
     local_d = 0x20;
     break;
   case 4:
-    FUN_fffc0e3e();
+    mode_select_am_n();
     break;
   case 5:
-    FUN_fffc0e31();
+    mode_select_am();
     break;
   case 6:
-    FUN_fffc0e58();
+    mode_select_fm_n();
     break;
   case 7:
-    FUN_fffc0e4b();
+    mode_select_fm();
     break;
   case 8:
   case 9:
@@ -58,10 +58,10 @@ void key_nar_short(void)
     local_d = 4;
     break;
   case 10:
-    FUN_fffc0e72();
+    mode_select_data_fm_n();
     break;
   case 0xb:
-    FUN_fffc0e65();
+    mode_select_data_fm();
     break;
   case 0xc:
   case 0xd:
@@ -253,7 +253,7 @@ void qmb_store(void)
   }
   FUN_fffc34d8(bVar1);
   beep_request(5);
-  FUN_fffc33ef();
+  qmb_popup_open();
   PTR_g_ui_00025d54->qmb_pending_slot = g_qmb_hdr.order[0] + 1;
   return;
 }
@@ -450,11 +450,11 @@ void key_step_mch_long(void)
   bool bVar1;
   
   bVar1 = g_opstate.active_vfo != VFO_A;
-  FUN_fffc3503(bVar1);
-  FUN_fffc3582(bVar1);
-  FUN_fffc3659(bVar1);
-  FUN_fffc3773(bVar1);
-  FUN_fffc388d(bVar1);
+  vfo_shift_reset(bVar1);
+  vfo_width_reset(bVar1);
+  vfo_notch_reset(bVar1);
+  vfo_contour_reset(bVar1);
+  vfo_apf_reset(bVar1);
   vfo_mark_edited(bVar1);
   vfo_store_back(bVar1);
   PTR_g_ui_00025d54->freq_refresh_req = 1;
@@ -625,7 +625,7 @@ void key_dsp_release(void)
     if (PTR_g_ui_00025d54->func_panel_open == 1) {
       if (PTR_g_ui_00025d54->dsp_key_func_short == 1) {
         if (PTR_g_ui_00025d54->dsp_key_func_long == 1) {
-          FUN_fffc4dec();
+          dsp_knob_reset();
           PTR_g_ui_00025d54->dsp_key_func_long = 0;
           PTR_g_ui_00025d54->dsp_key_func_short = 0;
         }
@@ -637,20 +637,20 @@ void key_dsp_release(void)
             bVar2 = PTR_g_ui_00025d54->dsp_knob_func;
             if (bVar2 == 3) {
               if (PTR_g_ui_00025d54->dsp_knob_apf == 0) {
-                FUN_fffbdcb0();
+                dsp_knob_contour_toggle();
               }
               else {
-                FUN_fffbde58();
+                dsp_knob_apf_toggle();
               }
             }
             else if (bVar2 == 1) {
-              FUN_fffbdad5();
+              dsp_knob_width_toggle();
             }
             else if (bVar2 == 2) {
-              FUN_fffbdb63();
+              dsp_knob_notch_toggle();
             }
             else if (bVar2 == 0) {
-              FUN_fffbda47();
+              dsp_knob_shift_toggle();
             }
           }
           else {
@@ -772,9 +772,11 @@ void FUN_fffc0334(void)
 }
 
 
-// ===== FUN_fffc0335 @ fffc0335 (14 bytes)
+// ===== mic_up_key_press @ fffc0335 (14 bytes)
 
-void FUN_fffc0335(void)
+/* key_slot_press(EX030124 MIC UP assignment) [fact: fffc0335]; only caller cat_UP */
+
+void mic_up_key_press(void)
 
 {
   key_slot_press(g_opstate.ex030124_mic_up);
@@ -822,9 +824,11 @@ void FUN_fffc036d(void)
 }
 
 
-// ===== FUN_fffc037b @ fffc037b (14 bytes)
+// ===== mic_down_key_press @ fffc037b (14 bytes)
 
-void FUN_fffc037b(void)
+/* key_slot_press(EX030125 MIC DOWN assignment) [fact: fffc037b]; only caller cat_DN */
+
+void mic_down_key_press(void)
 
 {
   key_slot_press(g_opstate.ex030125_mic_down);

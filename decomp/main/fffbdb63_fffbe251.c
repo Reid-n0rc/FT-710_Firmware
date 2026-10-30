@@ -1,8 +1,11 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffbdb63 @ fffbdb63 (298 bytes)
+// ===== dsp_knob_notch_toggle @ fffbdb63 (298 bytes)
 
-void FUN_fffbdb63(void)
+/* DSP key short press with knob function 2 (NOTCH): toggles dsp_knob_edit, FUNC item 0x1F, and in
+   edit mode bit 0x80 of the active VFO mode-block flags [fact: fffbdb63]; caller key_dsp_release */
+
+void dsp_knob_notch_toggle(void)
 
 {
   byte bVar1;
@@ -69,20 +72,27 @@ LAB_fffbdc83:
 }
 
 
-// ===== FUN_fffbdc8d @ fffbdc8d (35 bytes)
+// ===== notch_reset_beep @ fffbdc8d (35 bytes)
 
-void FUN_fffbdc8d(void)
+/* vfo_notch_reset(active VFO), beep 2 [fact: fffbdc8d]; no direct caller (reached through a table)
+    */
+
+void notch_reset_beep(void)
 
 {
-  FUN_fffc3659(g_opstate.active_vfo != VFO_A);
+  vfo_notch_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
 
 
-// ===== FUN_fffbdcb0 @ fffbdcb0 (389 bytes)
+// ===== dsp_knob_contour_toggle @ fffbdcb0 (389 bytes)
 
-void FUN_fffbdcb0(void)
+/* DSP key short press with knob function 3 and APF off: toggles dsp_knob_edit, FUNC item 0x20
+   (CONTOUR), changes bit 0x40 of the active VFO mode-block flags [fact: fffbdcb0]; caller
+   key_dsp_release */
+
+void dsp_knob_contour_toggle(void)
 
 {
   byte bVar1;
@@ -169,20 +179,26 @@ LAB_fffbde2b:
 }
 
 
-// ===== FUN_fffbde35 @ fffbde35 (35 bytes)
+// ===== contour_reset_beep @ fffbde35 (35 bytes)
 
-void FUN_fffbde35(void)
+/* vfo_contour_reset(active VFO), beep 2 [fact: fffbde35]; no direct caller (reached through a
+   table) */
+
+void contour_reset_beep(void)
 
 {
-  FUN_fffc3773(g_opstate.active_vfo != VFO_A);
+  vfo_contour_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
 
 
-// ===== FUN_fffbde58 @ fffbde58 (285 bytes)
+// ===== dsp_knob_apf_toggle @ fffbde58 (285 bytes)
 
-void FUN_fffbde58(void)
+/* DSP key short press with knob function 3 and dsp_knob_apf set: toggles dsp_knob_edit, FUNC item
+   0x21 (APF) [fact: fffbde58]; caller key_dsp_release */
+
+void dsp_knob_apf_toggle(void)
 
 {
   bool bVar1;
@@ -238,12 +254,14 @@ void FUN_fffbde58(void)
 }
 
 
-// ===== FUN_fffbdf75 @ fffbdf75 (35 bytes)
+// ===== apf_reset_beep @ fffbdf75 (35 bytes)
 
-void FUN_fffbdf75(void)
+/* vfo_apf_reset(active VFO), beep 2 [fact: fffbdf75]; no direct caller (reached through a table) */
+
+void apf_reset_beep(void)
 
 {
-  FUN_fffc388d(g_opstate.active_vfo != VFO_A);
+  vfo_apf_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }

@@ -306,9 +306,12 @@ void ui_softkey_dispatch(ushort param_1)
 }
 
 
-// ===== FUN_fffc0c8f @ fffc0c8f (164 bytes)
+// ===== mode_key_select @ fffc0c8f (164 bytes)
 
-void FUN_fffc0c8f(ushort param_1)
+/* (code 0x77..0x86): mode buttons: popup_open_timed(1000) then the same per-mode selection as
+   vfo_mode_select [fact: fffc0c8f]; caller FUN_fffc396d */
+
+void mode_key_select(ushort param_1)
 
 {
   bool bVar1;
@@ -323,52 +326,52 @@ void FUN_fffc0c8f(ushort param_1)
     popup_open_timed(1000);
     switch(param_1) {
     case 0x77:
-      FUN_fffc0d33(0);
+      mode_select_simple(0);
       return;
     case 0x78:
-      FUN_fffc0d33(1);
+      mode_select_simple(1);
       return;
     case 0x79:
-      FUN_fffc0d33(2);
+      mode_select_simple(2);
       return;
     case 0x7a:
-      FUN_fffc0d33(3);
+      mode_select_simple(3);
       return;
     case 0x7b:
-      FUN_fffc0e31();
+      mode_select_am();
       return;
     case 0x7c:
-      FUN_fffc0e3e();
+      mode_select_am_n();
       return;
     case 0x7d:
-      FUN_fffc0e4b();
+      mode_select_fm();
       return;
     case 0x7e:
-      FUN_fffc0e58();
+      mode_select_fm_n();
       return;
     case 0x7f:
-      FUN_fffc0d33(8);
+      mode_select_simple(8);
       return;
     case 0x80:
-      FUN_fffc0d33(9);
+      mode_select_simple(9);
       return;
     case 0x81:
-      FUN_fffc0e65();
+      mode_select_data_fm();
       return;
     case 0x82:
-      FUN_fffc0e72();
+      mode_select_data_fm_n();
       return;
     case 0x83:
-      FUN_fffc0d33(0xc);
+      mode_select_simple(0xc);
       return;
     case 0x84:
-      FUN_fffc0d33(0xd);
+      mode_select_simple(0xd);
       return;
     case 0x85:
-      FUN_fffc0d33(0xe);
+      mode_select_simple(0xe);
       return;
     case 0x86:
-      FUN_fffc0e7f();
+      preset_toggle();
       return;
     }
   }
@@ -376,9 +379,12 @@ void FUN_fffc0c8f(ushort param_1)
 }
 
 
-// ===== FUN_fffc0d33 @ fffc0d33 (54 bytes)
+// ===== mode_select_simple @ fffc0d33 (54 bytes)
 
-void FUN_fffc0d33(byte mode)
+/* (mode): if vfo_edit_begin succeeds, vfo_mode_set(mode), beep while a pop-up is shown,
+   popup_cursor = mode [fact: fffc0d33] */
+
+void mode_select_simple(byte mode)
 
 {
   int iVar1;
@@ -458,9 +464,11 @@ void mode_popup_select(byte param_1)
 }
 
 
-// ===== FUN_fffc0e31 @ fffc0e31 (13 bytes)
+// ===== mode_select_am @ fffc0e31 (13 bytes)
 
-void FUN_fffc0e31(void)
+/* vfo_edit_begin, then mode_popup_select(4 = AM) [fact: fffc0e31] */
+
+void mode_select_am(void)
 
 {
   int iVar1;
@@ -474,9 +482,11 @@ void FUN_fffc0e31(void)
 }
 
 
-// ===== FUN_fffc0e3e @ fffc0e3e (13 bytes)
+// ===== mode_select_am_n @ fffc0e3e (13 bytes)
 
-void FUN_fffc0e3e(void)
+/* vfo_edit_begin, then mode_popup_select(5 = AM-N) [fact: fffc0e3e] */
+
+void mode_select_am_n(void)
 
 {
   int iVar1;
@@ -490,9 +500,11 @@ void FUN_fffc0e3e(void)
 }
 
 
-// ===== FUN_fffc0e4b @ fffc0e4b (13 bytes)
+// ===== mode_select_fm @ fffc0e4b (13 bytes)
 
-void FUN_fffc0e4b(void)
+/* vfo_edit_begin, then mode_popup_select(6 = FM) [fact: fffc0e4b] */
+
+void mode_select_fm(void)
 
 {
   int iVar1;
@@ -506,9 +518,11 @@ void FUN_fffc0e4b(void)
 }
 
 
-// ===== FUN_fffc0e58 @ fffc0e58 (13 bytes)
+// ===== mode_select_fm_n @ fffc0e58 (13 bytes)
 
-void FUN_fffc0e58(void)
+/* vfo_edit_begin, then mode_popup_select(7 = FM-N) [fact: fffc0e58] */
+
+void mode_select_fm_n(void)
 
 {
   int iVar1;
@@ -522,9 +536,11 @@ void FUN_fffc0e58(void)
 }
 
 
-// ===== FUN_fffc0e65 @ fffc0e65 (13 bytes)
+// ===== mode_select_data_fm @ fffc0e65 (13 bytes)
 
-void FUN_fffc0e65(void)
+/* vfo_edit_begin, then mode_popup_select(10 = DATA-FM) [fact: fffc0e65] */
+
+void mode_select_data_fm(void)
 
 {
   int iVar1;
@@ -538,9 +554,11 @@ void FUN_fffc0e65(void)
 }
 
 
-// ===== FUN_fffc0e72 @ fffc0e72 (13 bytes)
+// ===== mode_select_data_fm_n @ fffc0e72 (13 bytes)
 
-void FUN_fffc0e72(void)
+/* vfo_edit_begin, then mode_popup_select(11 = DATA-FM-N) [fact: fffc0e72] */
+
+void mode_select_data_fm_n(void)
 
 {
   int iVar1;
@@ -554,9 +572,13 @@ void FUN_fffc0e72(void)
 }
 
 
-// ===== FUN_fffc0e7f @ fffc0e7f (57 bytes)
+// ===== preset_toggle @ fffc0e7f (57 bytes)
 
-void FUN_fffc0e7f(void)
+/* popup_open_timed(3000), toggles g_opstate.preset_on, sci3_set_baud, beep [fact: fffc0e7f]; the
+   baud reset follows the PRESET's own CAT-1 RATE (presets[].cat1_rate) [inference]; reached as mode
+   15 from vfo_mode_select and mode_key_select */
+
+void preset_toggle(void)
 
 {
   popup_open_timed(3000);

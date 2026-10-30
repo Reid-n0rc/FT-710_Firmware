@@ -5184,7 +5184,7 @@ byte tx_mod_gain(void)
   byte bStack_b;
   
   bVar2 = vfo_mode(g_ui.transmitting);
-  cVar3 = FUN_fffb3d11(bVar2);
+  cVar3 = tx_mod_source(bVar2);
   bStack_b = 0;
   uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {

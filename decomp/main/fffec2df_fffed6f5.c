@@ -7,7 +7,7 @@
 void ai_ex060518(void)
 
 {
-  FUN_fffebf4d(5);
+  ai_ex_preset_rptt_select(5);
   return;
 }
 
@@ -139,14 +139,14 @@ void tuner_task(void)
 
 {
   if (g_opstate.ex030104_tuner_type_select == 3) {
-    FUN_fffed165();
+    tuner_atas_task();
     return;
   }
   if (1 < g_opstate.ex030104_tuner_type_select) {
-    FUN_fffed62a();
+    tuner_ext_task();
     return;
   }
-  FUN_fffec62b();
+  tuner_int_task();
   return;
 }
 
@@ -241,9 +241,12 @@ void vfo_tuner_bit_set(char param_1)
 }
 
 
-// ===== FUN_fffec55a @ fffec55a (30 bytes)
+// ===== vfo_tuner_bit_get @ fffec55a (30 bytes)
 
-bool FUN_fffec55a(void)
+/* Returns bit 2 of the TX VFO record's flags1 (the tuner bit that vfo_tuner_bit_set writes) [fact:
+   fffec55a]; callers cat_AC, key_tune_short, cat_ai_AC, tuner_rearm */
+
+bool vfo_tuner_bit_get(void)
 
 {
   byte *pbVar1;
@@ -267,7 +270,7 @@ void tuner_rearm(void)
   if (g_opstate.ex030104_tuner_type_select == 2) {
     iVar2 = FUN_fffed6f5();
     if (iVar2 == 1) {
-      iVar2 = FUN_fffec55a();
+      iVar2 = vfo_tuner_bit_get();
       if (iVar2 == 0) {
         if ((g_ui.atu_state == 4) || (g_ui.atu_state == 5)) {
           bVar1 = true;
@@ -287,7 +290,7 @@ void tuner_rearm(void)
     }
   }
   else if (g_opstate.ex030104_tuner_type_select < 2) {
-    iVar2 = FUN_fffec55a();
+    iVar2 = vfo_tuner_bit_get();
     if (iVar2 == 0) {
       if ((g_ui.atu_state == 1) || (g_ui.atu_state == 2)) {
         bVar1 = true;
@@ -309,9 +312,14 @@ void tuner_rearm(void)
 }
 
 
-// ===== FUN_fffec62b @ fffec62b (223 bytes)
+// ===== tuner_int_task @ fffec62b (223 bytes)
 
-void FUN_fffec62b(void)
+/* tuner_task for TUNER TYPE SELECT 0/1 (INT, INT(FAST); ROM labels at 0xFFF84530..): sets
+   g_ui.tuner_indicator from atu_state (blinking while tune_cycle_3d = 2), then runs the
+   internal-tuner state 0x1B3AC (cases 1..0x10, one step function each) [fact: fffec62b and
+   tuner_task's test] */
+
+void tuner_int_task(void)
 
 {
   bool bVar1;
@@ -999,9 +1007,11 @@ void FUN_fffed12f(void)
 }
 
 
-// ===== FUN_fffed165 @ fffed165 (161 bytes)
+// ===== tuner_atas_task @ fffed165 (161 bytes)
 
-void FUN_fffed165(void)
+/* tuner_task for TUNER TYPE SELECT 3 (ATAS) [fact: tuner_task's test; label from ROM 0xFFF84546] */
+
+void tuner_atas_task(void)
 
 {
   byte bVar1;
@@ -1064,9 +1074,12 @@ void tuner_tune_state_set(byte param_1)
 }
 
 
-// ===== FUN_fffed24e @ fffed24e (91 bytes)
+// ===== tuner_result_set @ fffed24e (91 bytes)
 
-void FUN_fffed24e(char param_1)
+/* (code): 0x1B3C3 = 1, timer 0x22 = 50, g_ui.tuner_result = 2 (code 1), 3 (code 2) or 1; ends a
+   tune cycle (tuner_tune_state_set(0)) [fact: fffed24e]; only caller cat_AC */
+
+void tuner_result_set(char param_1)
 
 {
   DAT_0001b3c3 = 1;
@@ -1355,9 +1368,13 @@ bool FUN_fffed61e(void)
 }
 
 
-// ===== FUN_fffed62a @ fffed62a (203 bytes)
+// ===== tuner_ext_task @ fffed62a (203 bytes)
 
-void FUN_fffed62a(void)
+/* tuner_task for TUNER TYPE SELECT 2 (EXT): with the TUN/LIN port in EXT-TUNER mode sets the tuner
+   indicator from atu_state 5, then runs the external-tuner state 0x1B3C8 (cases 1..0x10) [fact:
+   fffed62a and tuner_task's test] */
+
+void tuner_ext_task(void)
 
 {
   bool bVar1;

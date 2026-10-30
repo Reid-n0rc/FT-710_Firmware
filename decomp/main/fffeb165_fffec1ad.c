@@ -1,8 +1,12 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffeb165 @ fffeb165 (340 bytes)
+// ===== ai_ex_preset_lcut_freq @ fffeb165 (340 bytes)
 
-void FUN_fffeb165(char param_1)
+/* Shared AI detector for EX060n08 (PRESET n lcut_freq): called by ai_ex06{01..05}08 with n = 1..5;
+   compares g_opstate.presets[n-1].lcut_freq with its shadow, formats with ai_ex_fmt_u8 [fact:
+   fffeb165] */
+
+void ai_ex_preset_lcut_freq(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -42,9 +46,13 @@ void FUN_fffeb165(char param_1)
 }
 
 
-// ===== FUN_fffeb2b9 @ fffeb2b9 (380 bytes)
+// ===== ai_ex_preset_lcut_slope @ fffeb2b9 (380 bytes)
 
-void FUN_fffeb2b9(char param_1)
+/* Shared AI detector for EX060n09 (PRESET n lcut_slope): called by ai_ex06{01..05}09 with n = 1..5;
+   compares g_opstate.presets[n-1].lcut_slope with its shadow, formats with nib2hex [fact: fffeb2b9]
+    */
+
+void ai_ex_preset_lcut_slope(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -85,9 +93,13 @@ void FUN_fffeb2b9(char param_1)
 }
 
 
-// ===== FUN_fffeb435 @ fffeb435 (340 bytes)
+// ===== ai_ex_preset_hcut_freq @ fffeb435 (340 bytes)
 
-void FUN_fffeb435(char param_1)
+/* Shared AI detector for EX060n10 (PRESET n hcut_freq): called by ai_ex06{01..05}10 with n = 1..5;
+   compares g_opstate.presets[n-1].hcut_freq with its shadow, formats with ai_ex_fmt_u8 [fact:
+   fffeb435] */
+
+void ai_ex_preset_hcut_freq(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -127,9 +139,13 @@ void FUN_fffeb435(char param_1)
 }
 
 
-// ===== FUN_fffeb589 @ fffeb589 (380 bytes)
+// ===== ai_ex_preset_hcut_slope @ fffeb589 (380 bytes)
 
-void FUN_fffeb589(char param_1)
+/* Shared AI detector for EX060n11 (PRESET n hcut_slope): called by ai_ex06{01..05}11 with n = 1..5;
+   compares g_opstate.presets[n-1].hcut_slope with its shadow, formats with nib2hex [fact: fffeb589]
+    */
+
+void ai_ex_preset_hcut_slope(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -170,9 +186,13 @@ void FUN_fffeb589(char param_1)
 }
 
 
-// ===== FUN_fffeb705 @ fffeb705 (340 bytes)
+// ===== ai_ex_preset_usb_out_level @ fffeb705 (340 bytes)
 
-void FUN_fffeb705(char param_1)
+/* Shared AI detector for EX060n12 (PRESET n usb_out_level): called by ai_ex06{01..05}12 with n =
+   1..5; compares g_opstate.presets[n-1].usb_out_level with its shadow, formats with ai_ex_fmt_u8
+   [fact: fffeb705] */
+
+void ai_ex_preset_usb_out_level(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -212,9 +232,13 @@ void FUN_fffeb705(char param_1)
 }
 
 
-// ===== FUN_fffeb859 @ fffeb859 (340 bytes)
+// ===== ai_ex_preset_rear_out_level @ fffeb859 (340 bytes)
 
-void FUN_fffeb859(char param_1)
+/* Shared AI detector for EX060n13 (PRESET n rear_out_level): called by ai_ex06{01..05}13 with n =
+   1..5; compares g_opstate.presets[n-1].rear_out_level with its shadow, formats with ai_ex_fmt_u8
+   [fact: fffeb859] */
+
+void ai_ex_preset_rear_out_level(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -254,9 +278,13 @@ void FUN_fffeb859(char param_1)
 }
 
 
-// ===== FUN_fffeb9ad @ fffeb9ad (380 bytes)
+// ===== ai_ex_preset_tx_bpf_sel @ fffeb9ad (380 bytes)
 
-void FUN_fffeb9ad(char param_1)
+/* Shared AI detector for EX060n14 (PRESET n tx_bpf_sel): called by ai_ex06{01..05}14 with n = 1..5;
+   compares g_opstate.presets[n-1].tx_bpf_sel with its shadow, formats with nib2hex [fact: fffeb9ad]
+    */
+
+void ai_ex_preset_tx_bpf_sel(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -297,9 +325,13 @@ void FUN_fffeb9ad(char param_1)
 }
 
 
-// ===== FUN_fffebb29 @ fffebb29 (380 bytes)
+// ===== ai_ex_preset_mod_source @ fffebb29 (380 bytes)
 
-void FUN_fffebb29(char param_1)
+/* Shared AI detector for EX060n15 (PRESET n mod_source): called by ai_ex06{01..05}15 with n = 1..5;
+   compares g_opstate.presets[n-1].mod_source with its shadow, formats with nib2hex [fact: fffebb29]
+    */
+
+void ai_ex_preset_mod_source(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -340,9 +372,13 @@ void FUN_fffebb29(char param_1)
 }
 
 
-// ===== FUN_fffebca5 @ fffebca5 (340 bytes)
+// ===== ai_ex_preset_usb_mod_gain @ fffebca5 (340 bytes)
 
-void FUN_fffebca5(char param_1)
+/* Shared AI detector for EX060n16 (PRESET n usb_mod_gain): called by ai_ex06{01..05}16 with n =
+   1..5; compares g_opstate.presets[n-1].usb_mod_gain with its shadow, formats with ai_ex_fmt_u8
+   [fact: fffebca5] */
+
+void ai_ex_preset_usb_mod_gain(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -382,9 +418,13 @@ void FUN_fffebca5(char param_1)
 }
 
 
-// ===== FUN_fffebdf9 @ fffebdf9 (340 bytes)
+// ===== ai_ex_preset_rear_mod_gain @ fffebdf9 (340 bytes)
 
-void FUN_fffebdf9(char param_1)
+/* Shared AI detector for EX060n17 (PRESET n rear_mod_gain): called by ai_ex06{01..05}17 with n =
+   1..5; compares g_opstate.presets[n-1].rear_mod_gain with its shadow, formats with ai_ex_fmt_u8
+   [fact: fffebdf9] */
+
+void ai_ex_preset_rear_mod_gain(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -424,9 +464,13 @@ void FUN_fffebdf9(char param_1)
 }
 
 
-// ===== FUN_fffebf4d @ fffebf4d (380 bytes)
+// ===== ai_ex_preset_rptt_select @ fffebf4d (380 bytes)
 
-void FUN_fffebf4d(char param_1)
+/* Shared AI detector for EX060n18 (PRESET n rptt_select): called by ai_ex06{01..05}18 with n =
+   1..5; compares g_opstate.presets[n-1].rptt_select with its shadow, formats with nib2hex [fact:
+   fffebf4d] */
+
+void ai_ex_preset_rptt_select(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -474,7 +518,7 @@ void FUN_fffebf4d(char param_1)
 void ai_ex060101(void)
 
 {
-  FUN_fffea63a(1);
+  ai_ex_preset_name(1);
   return;
 }
 
@@ -486,7 +530,7 @@ void ai_ex060101(void)
 void ai_ex060102(void)
 
 {
-  FUN_fffea88c(1);
+  ai_ex_preset_cat1_rate(1);
   return;
 }
 
@@ -498,7 +542,7 @@ void ai_ex060102(void)
 void ai_ex060103(void)
 
 {
-  FUN_fffeaa08(1);
+  ai_ex_preset_cat1_tot(1);
   return;
 }
 
@@ -510,7 +554,7 @@ void ai_ex060103(void)
 void ai_ex060104(void)
 
 {
-  FUN_fffeab84(1);
+  ai_ex_preset_cat1_cat3_stop_bit(1);
   return;
 }
 
@@ -522,7 +566,7 @@ void ai_ex060104(void)
 void ai_ex060105(void)
 
 {
-  FUN_fffead00(1);
+  ai_ex_preset_agc_fast_delay(1);
   return;
 }
 
@@ -534,7 +578,7 @@ void ai_ex060105(void)
 void ai_ex060106(void)
 
 {
-  FUN_fffeae77(1);
+  ai_ex_preset_agc_mid_delay(1);
   return;
 }
 
@@ -546,7 +590,7 @@ void ai_ex060106(void)
 void ai_ex060107(void)
 
 {
-  FUN_fffeafee(1);
+  ai_ex_preset_agc_slow_delay(1);
   return;
 }
 
@@ -558,7 +602,7 @@ void ai_ex060107(void)
 void ai_ex060108(void)
 
 {
-  FUN_fffeb165(1);
+  ai_ex_preset_lcut_freq(1);
   return;
 }
 
@@ -570,7 +614,7 @@ void ai_ex060108(void)
 void ai_ex060109(void)
 
 {
-  FUN_fffeb2b9(1);
+  ai_ex_preset_lcut_slope(1);
   return;
 }
 
@@ -582,7 +626,7 @@ void ai_ex060109(void)
 void ai_ex060110(void)
 
 {
-  FUN_fffeb435(1);
+  ai_ex_preset_hcut_freq(1);
   return;
 }
 
@@ -594,7 +638,7 @@ void ai_ex060110(void)
 void ai_ex060111(void)
 
 {
-  FUN_fffeb589(1);
+  ai_ex_preset_hcut_slope(1);
   return;
 }
 
@@ -606,7 +650,7 @@ void ai_ex060111(void)
 void ai_ex060112(void)
 
 {
-  FUN_fffeb705(1);
+  ai_ex_preset_usb_out_level(1);
   return;
 }
 
@@ -618,7 +662,7 @@ void ai_ex060112(void)
 void ai_ex060113(void)
 
 {
-  FUN_fffeb859(1);
+  ai_ex_preset_rear_out_level(1);
   return;
 }
 
@@ -630,7 +674,7 @@ void ai_ex060113(void)
 void ai_ex060114(void)
 
 {
-  FUN_fffeb9ad(1);
+  ai_ex_preset_tx_bpf_sel(1);
   return;
 }
 
@@ -642,7 +686,7 @@ void ai_ex060114(void)
 void ai_ex060115(void)
 
 {
-  FUN_fffebb29(1);
+  ai_ex_preset_mod_source(1);
   return;
 }
 
@@ -654,7 +698,7 @@ void ai_ex060115(void)
 void ai_ex060116(void)
 
 {
-  FUN_fffebca5(1);
+  ai_ex_preset_usb_mod_gain(1);
   return;
 }
 
@@ -666,7 +710,7 @@ void ai_ex060116(void)
 void ai_ex060117(void)
 
 {
-  FUN_fffebdf9(1);
+  ai_ex_preset_rear_mod_gain(1);
   return;
 }
 
@@ -678,7 +722,7 @@ void ai_ex060117(void)
 void ai_ex060118(void)
 
 {
-  FUN_fffebf4d(1);
+  ai_ex_preset_rptt_select(1);
   return;
 }
 
@@ -690,7 +734,7 @@ void ai_ex060118(void)
 void ai_ex060201(void)
 
 {
-  FUN_fffea63a(2);
+  ai_ex_preset_name(2);
   return;
 }
 
@@ -702,7 +746,7 @@ void ai_ex060201(void)
 void ai_ex060202(void)
 
 {
-  FUN_fffea88c(2);
+  ai_ex_preset_cat1_rate(2);
   return;
 }
 
@@ -714,7 +758,7 @@ void ai_ex060202(void)
 void ai_ex060203(void)
 
 {
-  FUN_fffeaa08(2);
+  ai_ex_preset_cat1_tot(2);
   return;
 }
 
@@ -726,7 +770,7 @@ void ai_ex060203(void)
 void ai_ex060204(void)
 
 {
-  FUN_fffeab84(2);
+  ai_ex_preset_cat1_cat3_stop_bit(2);
   return;
 }
 
@@ -738,7 +782,7 @@ void ai_ex060204(void)
 void ai_ex060205(void)
 
 {
-  FUN_fffead00(2);
+  ai_ex_preset_agc_fast_delay(2);
   return;
 }
 
@@ -750,7 +794,7 @@ void ai_ex060205(void)
 void ai_ex060206(void)
 
 {
-  FUN_fffeae77(2);
+  ai_ex_preset_agc_mid_delay(2);
   return;
 }
 
@@ -762,7 +806,7 @@ void ai_ex060206(void)
 void ai_ex060207(void)
 
 {
-  FUN_fffeafee(2);
+  ai_ex_preset_agc_slow_delay(2);
   return;
 }
 
@@ -774,7 +818,7 @@ void ai_ex060207(void)
 void ai_ex060208(void)
 
 {
-  FUN_fffeb165(2);
+  ai_ex_preset_lcut_freq(2);
   return;
 }
 
@@ -786,7 +830,7 @@ void ai_ex060208(void)
 void ai_ex060209(void)
 
 {
-  FUN_fffeb2b9(2);
+  ai_ex_preset_lcut_slope(2);
   return;
 }
 
@@ -798,7 +842,7 @@ void ai_ex060209(void)
 void ai_ex060210(void)
 
 {
-  FUN_fffeb435(2);
+  ai_ex_preset_hcut_freq(2);
   return;
 }
 
@@ -810,7 +854,7 @@ void ai_ex060210(void)
 void ai_ex060211(void)
 
 {
-  FUN_fffeb589(2);
+  ai_ex_preset_hcut_slope(2);
   return;
 }
 
@@ -822,7 +866,7 @@ void ai_ex060211(void)
 void ai_ex060212(void)
 
 {
-  FUN_fffeb705(2);
+  ai_ex_preset_usb_out_level(2);
   return;
 }
 
@@ -834,7 +878,7 @@ void ai_ex060212(void)
 void ai_ex060213(void)
 
 {
-  FUN_fffeb859(2);
+  ai_ex_preset_rear_out_level(2);
   return;
 }
 
@@ -846,7 +890,7 @@ void ai_ex060213(void)
 void ai_ex060214(void)
 
 {
-  FUN_fffeb9ad(2);
+  ai_ex_preset_tx_bpf_sel(2);
   return;
 }
 
@@ -858,7 +902,7 @@ void ai_ex060214(void)
 void ai_ex060215(void)
 
 {
-  FUN_fffebb29(2);
+  ai_ex_preset_mod_source(2);
   return;
 }
 
@@ -870,7 +914,7 @@ void ai_ex060215(void)
 void ai_ex060216(void)
 
 {
-  FUN_fffebca5(2);
+  ai_ex_preset_usb_mod_gain(2);
   return;
 }
 
@@ -882,7 +926,7 @@ void ai_ex060216(void)
 void ai_ex060217(void)
 
 {
-  FUN_fffebdf9(2);
+  ai_ex_preset_rear_mod_gain(2);
   return;
 }
 
@@ -894,7 +938,7 @@ void ai_ex060217(void)
 void ai_ex060218(void)
 
 {
-  FUN_fffebf4d(2);
+  ai_ex_preset_rptt_select(2);
   return;
 }
 
@@ -906,7 +950,7 @@ void ai_ex060218(void)
 void ai_ex060301(void)
 
 {
-  FUN_fffea63a(3);
+  ai_ex_preset_name(3);
   return;
 }
 
@@ -918,7 +962,7 @@ void ai_ex060301(void)
 void ai_ex060302(void)
 
 {
-  FUN_fffea88c(3);
+  ai_ex_preset_cat1_rate(3);
   return;
 }
 
@@ -930,7 +974,7 @@ void ai_ex060302(void)
 void ai_ex060303(void)
 
 {
-  FUN_fffeaa08(3);
+  ai_ex_preset_cat1_tot(3);
   return;
 }
 

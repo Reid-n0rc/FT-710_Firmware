@@ -195,9 +195,12 @@ bool FUN_fff9847e(void)
 }
 
 
-// ===== FUN_fff9849e @ fff9849e (136 bytes)
+// ===== dlstat_meter @ fff9849e (136 bytes)
 
-byte FUN_fff9849e(void)
+/* Status-block byte 95 of displink_build_status (0xFFF96455): meter value: S-meter in RX, else the
+   selected TX meter [fact: display-link.md "0x97-byte radio status block" table, row 95] */
+
+byte dlstat_meter(void)
 
 {
   byte local_2;
@@ -235,9 +238,12 @@ byte FUN_fff9849e(void)
 }
 
 
-// ===== FUN_fff98526 @ fff98526 (64 bytes)
+// ===== dlstat_tuning_flags @ fff98526 (64 bytes)
 
-byte FUN_fff98526(int param_1)
+/* Status-block byte 96 of displink_build_status (0xFFF96455): FINE/FAST, dial LOCK, DNR and rec+2
+   bit 1 [fact: display-link.md "0x97-byte radio status block" table, row 96] */
+
+byte dlstat_tuning_flags(int param_1)
 
 {
   undefined1 local_6;
@@ -1168,133 +1174,135 @@ void displink_build_31(void)
   _DAT_000017da = 0x20202020;
   bVar1 = PTR_g_ui_00025d38->popup_code;
   if (bVar1 == 0x5e) {
-    FUN_fff9a044(0x99);
+    popup_fmt_free_text(0x99);
     return;
   }
   if (bVar1 == 0x1f) {
-    FUN_fff9959f(0x99);
+    popup_fmt_peak(0x99);
     return;
   }
   if (bVar1 == 0x22) {
-    FUN_fff99e15(0x99);
+    popup_fmt_contrast(0x99);
     return;
   }
   if (bVar1 == 0x23) {
-    FUN_fff9a00f(0x99);
+    popup_fmt_dimmer(0x99);
     return;
   }
   if (bVar1 == 0x24) {
-    FUN_fff99abf(0x99);
+    popup_fmt_mgroup(0x99);
     return;
   }
   if (bVar1 == 0x25) {
-    FUN_fff99837(0x99);
+    popup_fmt_mic_gain(0x99);
     return;
   }
   if (bVar1 == 0x26) {
-    FUN_fff99ddb(0x99);
+    popup_fmt_mic_eq(0x99);
     return;
   }
   if (bVar1 == 0x27) {
-    FUN_fff997df(0x99);
+    popup_fmt_proc_level(0x99);
     return;
   }
   if (bVar1 == 0x28) {
-    FUN_fff99a8a(0x99);
+    popup_fmt_amc_level(0x99);
     return;
   }
   if (bVar1 == 0x29) {
-    FUN_fff996e2(0x99);
+    popup_fmt_vox_gain(0x99);
     return;
   }
   if (bVar1 == 0x2a) {
-    FUN_fff99717(0x99);
+    popup_fmt_vox_delay(0x99);
     return;
   }
   if (bVar1 == 0x2b) {
-    FUN_fff9978c(0x99);
+    popup_fmt_anti_vox(0x99);
     return;
   }
   if (bVar1 == 0x2c) {
-    FUN_fff995cc(0x99);
+    popup_fmt_rf_power(0x99);
     return;
   }
   if (bVar1 == 0x2d) {
-    FUN_fff9960e(0x99);
+    popup_fmt_moni_level(0x99);
     return;
   }
   if (bVar1 == 0x2f) {
-    FUN_fff99d82(0x99);
+    popup_fmt_bk_in(0x99);
     return;
   }
   if (bVar1 == 0x30) {
-    FUN_fff998e2(0x99);
+    popup_fmt_cw_speed(0x99);
     return;
   }
   if (bVar1 == 0x31) {
-    FUN_fff9992a(0x99);
+    popup_fmt_cw_pitch(0x99);
     return;
   }
   if (bVar1 == 0x32) {
-    FUN_fff99989(0x99);
+    popup_fmt_bk_delay(0x99);
     return;
   }
   if (bVar1 == 0x33) {
-    FUN_fff999e3(0x99);
+    popup_fmt_aess_level(0x99);
     return;
   }
   if (bVar1 == 0x38) {
-    FUN_fff99b70(0x99);
+    popup_fmt_nb_level(0x99);
     return;
   }
   if (bVar1 == 0x39) {
-    FUN_fff99ba5(0x99);
+    popup_fmt_dnr_level(0x99);
     return;
   }
   if (bVar1 == 0x3a) {
-    FUN_fff99d42(0x99);
+    popup_fmt_dec_level(0x99);
     return;
   }
   if (bVar1 == 0x43) {
-    FUN_fff99bfe(0x99);
+    popup_fmt_qmb(0x99);
     return;
   }
   if (bVar1 == 0x44) {
-    FUN_fff99ca2(0x99);
+    popup_fmt_mem_scan(0x99);
     return;
   }
   if (bVar1 == 0x45) {
-    FUN_fff99cf2(0x99);
+    popup_fmt_mem_type(0x99);
     return;
   }
   if (bVar1 == 0x46) {
-    FUN_fff99d48(0x99);
+    popup_fmt_keyer(0x99);
     return;
   }
   if (bVar1 == 0x55) {
-    FUN_fff99c58(0x99);
+    popup_fmt_mem_mode(0x99);
     return;
   }
   if (bVar1 == 0x58) {
-    FUN_fff99a29(0x99);
+    popup_fmt_aess_cf(0x99);
     return;
   }
   if (bVar1 != 0x1e) {
     return;
   }
-  FUN_fff99475(0x99);
+  popup_fmt_scope_level(0x99);
   return;
 }
 
 
-// ===== FUN_fff99475 @ fff99475 (298 bytes)
+// ===== popup_fmt_scope_level @ fff99475 (298 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff99588) */
 /* WARNING: Removing unreachable block (ram,0xfff994d7) */
 /* WARNING: Removing unreachable block (ram,0xfff99568) */
 /* WARNING: Removing unreachable block (ram,0xfff9953b) */
+/* Value text of the SCOPE LEVEL pop-up (id 0x1E) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
 
-void FUN_fff99475(ushort param_1)
+void popup_fmt_scope_level(ushort param_1)
 
 {
   byte bVar1;
@@ -1304,7 +1312,7 @@ void FUN_fff99475(ushort param_1)
   
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x4264302e;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  pbVar2 = (byte *)FUN_fff9c6ab();
+  pbVar2 = (byte *)scope_level_cur_ptr();
   bVar1 = *pbVar2;
   if (bVar1 == 0x3c) {
     (&DAT_00001744)[param_1] = 0x30;
@@ -1347,11 +1355,13 @@ void FUN_fff99475(ushort param_1)
 }
 
 
-// ===== FUN_fff9959f @ fff9959f (45 bytes)
+// ===== popup_fmt_peak @ fff9959f (45 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff995b0) */
+/* Value text of the PEAK pop-up (id 0x1F) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
 
-void FUN_fff9959f(ushort param_1)
+void popup_fmt_peak(ushort param_1)
 
 {
   uint uVar1;
@@ -1365,9 +1375,12 @@ void FUN_fff9959f(ushort param_1)
 }
 
 
-// ===== FUN_fff995cc @ fff995cc (66 bytes)
+// ===== popup_fmt_rf_power @ fff995cc (66 bytes)
 
-void FUN_fff995cc(ushort param_1)
+/* Value text of the RF POWER pop-up (id 0x2C) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_rf_power(ushort param_1)
 
 {
   undefined1 uVar1;
@@ -1391,9 +1404,12 @@ void FUN_fff995cc(ushort param_1)
 }
 
 
-// ===== FUN_fff9960e @ fff9960e (91 bytes)
+// ===== popup_fmt_moni_level @ fff9960e (91 bytes)
 
-void FUN_fff9960e(ushort param_1)
+/* Value text of the MONI LEVEL pop-up (id 0x2D) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_moni_level(ushort param_1)
 
 {
   byte bVar1;
@@ -1403,7 +1419,7 @@ void FUN_fff9960e(ushort param_1)
   uint uVar5;
   char cStack_3;
   
-  pcVar2 = (char *)FUN_fff99669();
+  pcVar2 = (char *)moni_level_ptr();
   if (pcVar2 == (char *)0x0) {
     cStack_3 = '\0';
   }
@@ -1428,9 +1444,13 @@ void FUN_fff9960e(ushort param_1)
 }
 
 
-// ===== FUN_fff99669 @ fff99669 (121 bytes)
+// ===== moni_level_ptr @ fff99669 (121 bytes)
 
-uint FUN_fff99669(void)
+/* Returns the address of the MONI LEVEL byte for the TX mode: 0x9BFC SSB, 0x9BFD CW, 0x9BFE RTTY,
+   0x9BFF DATA/PSK, 0x9C00 AM, 0 for FM [fact: fff99669]; callers popup_fmt_moni_level,
+   funcknob_moni_level_step, displink frame code */
+
+uint moni_level_ptr(void)
 
 {
   byte bVar1;
@@ -1459,9 +1479,12 @@ uint FUN_fff99669(void)
 }
 
 
-// ===== FUN_fff996e2 @ fff996e2 (53 bytes)
+// ===== popup_fmt_vox_gain @ fff996e2 (53 bytes)
 
-void FUN_fff996e2(ushort param_1)
+/* Value text of the VOX GAIN pop-up (id 0x29) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_vox_gain(ushort param_1)
 
 {
   byte bVar1;
@@ -1482,9 +1505,12 @@ void FUN_fff996e2(ushort param_1)
 }
 
 
-// ===== FUN_fff99717 @ fff99717 (117 bytes)
+// ===== popup_fmt_vox_delay @ fff99717 (117 bytes)
 
-void FUN_fff99717(ushort param_1)
+/* Value text of the VOX DELAY pop-up (id 0x2A) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_vox_delay(ushort param_1)
 
 {
   byte bVar1;
@@ -1517,9 +1543,12 @@ void FUN_fff99717(ushort param_1)
 }
 
 
-// ===== FUN_fff9978c @ fff9978c (83 bytes)
+// ===== popup_fmt_anti_vox @ fff9978c (83 bytes)
 
-void FUN_fff9978c(ushort param_1)
+/* Value text of the ANTI VOX pop-up (id 0x2B) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_anti_vox(ushort param_1)
 
 {
   byte bVar1;
@@ -1547,9 +1576,12 @@ void FUN_fff9978c(ushort param_1)
 }
 
 
-// ===== FUN_fff997df @ fff997df (88 bytes)
+// ===== popup_fmt_proc_level @ fff997df (88 bytes)
 
-void FUN_fff997df(ushort param_1)
+/* Value text of the PROC LEVEL pop-up (id 0x27) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_proc_level(ushort param_1)
 
 {
   byte bVar1;
@@ -1575,9 +1607,12 @@ void FUN_fff997df(ushort param_1)
 }
 
 
-// ===== FUN_fff99837 @ fff99837 (64 bytes)
+// ===== popup_fmt_mic_gain @ fff99837 (64 bytes)
 
-void FUN_fff99837(ushort param_1)
+/* Value text of the MIC GAIN pop-up (id 0x25) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_mic_gain(ushort param_1)
 
 {
   byte bVar1;
@@ -1586,7 +1621,7 @@ void FUN_fff99837(ushort param_1)
   uint uVar4;
   undefined1 uStack_3;
   
-  puVar2 = (undefined1 *)FUN_fff99877();
+  puVar2 = (undefined1 *)mic_gain_ptr();
   if (puVar2 == (undefined1 *)0x0) {
     uStack_3 = 0;
   }

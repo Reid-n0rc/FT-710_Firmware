@@ -533,9 +533,13 @@ void func_knob_assign_key(short param_1)
 }
 
 
-// ===== FUN_fffc1f2a @ fffc1f2a (106 bytes)
+// ===== func_menu_group_open @ fffc1f2a (106 bytes)
 
-void FUN_fffc1f2a(byte param_1)
+/* (group 0..4): opens the setting menu at P1 = group (RADIO / CW / OPERATION / DISPLAY / EXTENSION
+   SETTING, FUNC slots 28..32), closes the FUNC panel [fact: fffc1f2a]; callers func_menu_select,
+   FUN_fffbd8c9, FUN_fffc4c8b */
+
+void func_menu_group_open(byte param_1)
 
 {
   PTR_g_ui_00025d54->menu_p1 = param_1;
@@ -555,9 +559,12 @@ void FUN_fffc1f2a(byte param_1)
 }
 
 
-// ===== FUN_fffc1f94 @ fffc1f94 (34 bytes)
+// ===== func_slot_empty @ fffc1f94 (34 bytes)
 
-void FUN_fffc1f94(void)
+/* FUNC menu slots 0x21/0x22 (empty): closes the FUNC panel, beep unless 0x1B4DA is set [fact:
+   fffc1f94] */
+
+void func_slot_empty(void)
 
 {
   func_panel_close();
@@ -586,7 +593,7 @@ void memlist_key(byte param_1)
     if (uVar1 == 9) {
       if (PTR_g_ui_00025d54->memlist_flag == 1) {
         PTR_g_ui_00025d54->memlist_group = param_1 - 4;
-        FUN_fffc20dd();
+        memlist_btn_press();
         return;
       }
       memlist_close();
@@ -612,11 +619,11 @@ void memlist_key(byte param_1)
       if (PTR_g_ui_00025d54->memlist_flag == 0) {
         memlist_cursor_channel();
       }
-      FUN_fffc20dd();
+      memlist_btn_press();
       return;
     }
     if (uVar1 == 8) {
-      FUN_fffc22de();
+      memlist_btn_valid_toggle();
       eeprom_save_memch(PTR_g_ui_00025d54->memlist_ch);
       return;
     }
@@ -633,9 +640,13 @@ void memlist_key(byte param_1)
 }
 
 
-// ===== FUN_fffc20dd @ fffc20dd (90 bytes)
+// ===== memlist_btn_press @ fffc20dd (90 bytes)
 
-void FUN_fffc20dd(void)
+/* Memory-list button by g_ui.memlist_group: 0 NAME (FUN_fffc2137), 1 MODE, 2 SCAN, 3 TYPE, 4
+   memlist_btn_valid_toggle, 5 close (memlist_flag = 0) [fact: fffc20dd]; callers memlist_key,
+   FUN_fffc38fa (display gui.md button order) */
+
+void memlist_btn_press(void)
 
 {
   byte bVar1;
@@ -648,32 +659,35 @@ void FUN_fffc20dd(void)
     return;
   }
   if (bVar1 == 1) {
-    FUN_fffc21e8();
+    memlist_btn_mode();
     return;
   }
   if (bVar1 == 2) {
-    FUN_fffc224e();
+    memlist_btn_scan();
     return;
   }
   if (bVar1 == 3) {
-    FUN_fffc2296();
+    memlist_btn_type();
     return;
   }
   if (bVar1 == 4) {
-    FUN_fffc22de();
+    memlist_btn_valid_toggle();
     return;
   }
   if (bVar1 != 0) {
     return;
   }
-  FUN_fffc2137();
+  memlist_btn_name();
   return;
 }
 
 
-// ===== FUN_fffc2137 @ fffc2137 (144 bytes)
+// ===== memlist_btn_name @ fffc2137 (144 bytes)
 
-void FUN_fffc2137(void)
+/* Memory-list button 0 NAME: for a valid channel opens the text keyboard (kbd_open, kbd_target 1)
+   preloaded with the channel's 12-char tag [fact: fffc2137] */
+
+void memlist_btn_name(void)
 
 {
   byte bVar1;
@@ -719,9 +733,12 @@ void ui_key_reject(void)
 }
 
 
-// ===== FUN_fffc21e8 @ fffc21e8 (102 bytes)
+// ===== memlist_btn_mode @ fffc21e8 (102 bytes)
 
-void FUN_fffc21e8(void)
+/* Memory-list button 1: for a valid channel < 0x75 opens the MODE pop-up 0x55 (memlist_popup55 =
+   1), else ui_key_reject [fact: fffc21e8] */
+
+void memlist_btn_mode(void)
 
 {
   bool bVar1;
@@ -747,9 +764,12 @@ void FUN_fffc21e8(void)
 }
 
 
-// ===== FUN_fffc224e @ fffc224e (72 bytes)
+// ===== memlist_btn_scan @ fffc224e (72 bytes)
 
-void FUN_fffc224e(void)
+/* Memory-list button 2: opens the memory SCAN pop-up 0x44 [fact: display gui.md popup table, slot
+   38] */
+
+void memlist_btn_scan(void)
 
 {
   bool bVar1;
@@ -769,9 +789,12 @@ void FUN_fffc224e(void)
 }
 
 
-// ===== FUN_fffc2296 @ fffc2296 (72 bytes)
+// ===== memlist_btn_type @ fffc2296 (72 bytes)
 
-void FUN_fffc2296(void)
+/* Memory-list button 3: opens the memory TYPE (FREQ/NAME) pop-up 0x45 [fact: display gui.md popup
+   table, slot 39] */
+
+void memlist_btn_type(void)
 
 {
   bool bVar1;
@@ -791,9 +814,12 @@ void FUN_fffc2296(void)
 }
 
 
-// ===== FUN_fffc22de @ fffc22de (120 bytes)
+// ===== memlist_btn_valid_toggle @ fffc22de (120 bytes)
 
-void FUN_fffc22de(void)
+/* Memory-list button 4: for channels 1..0x74 flips the channel's valid byte (memch_valid), beep;
+   else ui_key_reject [fact: fffc22de] */
+
+void memlist_btn_valid_toggle(void)
 
 {
   bool bVar1;
@@ -918,9 +944,13 @@ void FUN_fffc2403(void)
 }
 
 
-// ===== FUN_fffc2426 @ fffc2426 (486 bytes)
+// ===== m_to_v_exec @ fffc2426 (486 bytes)
 
-undefined1 FUN_fffc2426(void)
+/* M>V: from the open memory list copies its channel (memch_current_set), else leaves split / QMB
+   state first; refuses channels 0x75..0x83 for region 0x315B; then memch_to_vfo_copy [fact:
+   fffc2426]; only caller key_m_to_v_short */
+
+undefined1 m_to_v_exec(void)
 
 {
   bool bVar1;
@@ -987,14 +1017,17 @@ undefined1 FUN_fffc2426(void)
       return 0;
     }
   }
-  uVar3 = FUN_fffc260c(bVar1);
+  uVar3 = memch_to_vfo_copy(bVar1);
   return uVar3;
 }
 
 
-// ===== FUN_fffc260c @ fffc260c (117 bytes)
+// ===== memch_to_vfo_copy @ fffc260c (117 bytes)
 
-undefined1 FUN_fffc260c(byte param_1)
+/* (side): if memch_current_valid, leaves QMB, qmb_set_depth, memch_load_to_vfo, vfo_clear_tag,
+   vfo_enter_vfo_state, memlist_close, VFO refresh; returns 1, else 0 [fact: fffc260c] */
+
+undefined1 memch_to_vfo_copy(byte param_1)
 
 {
   byte bVar1;

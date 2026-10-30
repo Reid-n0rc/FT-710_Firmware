@@ -2917,7 +2917,7 @@ void cat_AC(int param_1,char param_2)
         DAT_00001c92 = '3';
       }
       else {
-        bVar3 = FUN_fffec55a();
+        bVar3 = vfo_tuner_bit_get();
         DAT_00001c92 = nib2hex(bVar3);
       }
     }
@@ -2938,15 +2938,15 @@ void cat_AC(int param_1,char param_2)
         return;
       }
       if (*(char *)(param_1 + 4) == '0') {
-        FUN_fffed24e(0);
+        tuner_result_set(0);
       }
       else if (*(char *)(param_1 + 4) == '1') {
         tuner_tune_state_set(2);
-        FUN_fffed24e(1);
+        tuner_result_set(1);
       }
       else if (*(char *)(param_1 + 4) == '2') {
         tuner_tune_state_set(2);
-        FUN_fffed24e(2);
+        tuner_result_set(2);
       }
       else {
         if (*(char *)(param_1 + 4) != '3') {
@@ -5534,7 +5534,7 @@ void cat_DN(void)
     cat_error = 1;
     return;
   }
-  FUN_fffc037b();
+  mic_down_key_press();
   g_ui.ch_step_mode = 0;
   return;
 }
@@ -5611,7 +5611,7 @@ void cat_UP(void)
     cat_error = 1;
     return;
   }
-  FUN_fffc0335();
+  mic_up_key_press();
   g_ui.ch_step_mode = 0;
   return;
 }
@@ -5642,16 +5642,16 @@ void cat_DT(int param_1,char param_2)
     if (bVar1) {
       DAT_00001c91 = 0x32;
       DAT_00001c92 = 0x30;
-      FUN_fffb311d(&DAT_00001c93,g_ui.rtc_yy);
-      FUN_fffb311d(0x1c95,g_ui.rtc_mm);
-      FUN_fffb311d(&DAT_00001c97,g_ui.rtc_dd);
+      bcd_to_ascii2(&DAT_00001c93,g_ui.rtc_yy);
+      bcd_to_ascii2(0x1c95,g_ui.rtc_mm);
+      bcd_to_ascii2(&DAT_00001c97,g_ui.rtc_dd);
       DAT_00001c99 = 0x3b;
       DAT_0001b788 = 0xc;
       return;
     }
     if (*(char *)(param_1 + 2) == '1') {
-      FUN_fffb311d(&DAT_00001c91,g_ui.rtc_hh);
-      FUN_fffb311d(&DAT_00001c93,g_ui.rtc_min);
+      bcd_to_ascii2(&DAT_00001c91,g_ui.rtc_hh);
+      bcd_to_ascii2(&DAT_00001c93,g_ui.rtc_min);
       DAT_00001c93._3_1_ = 0x30;
       DAT_00001c93._2_1_ = 0x30;
       DAT_00001c97 = 0x3b;
@@ -5734,11 +5734,11 @@ void cat_DT(int param_1,char param_2)
         cat_error = 1;
         return;
       }
-      g_ui.rtc_yy = FUN_fffb30b5(param_1 + 5);
+      g_ui.rtc_yy = ascii2_to_bcd(param_1 + 5);
       g_ui.rtc_set[0] = g_ui.rtc_yy;
-      g_ui.rtc_mm = FUN_fffb30b5(param_1 + 7);
+      g_ui.rtc_mm = ascii2_to_bcd(param_1 + 7);
       g_ui.rtc_set[1] = g_ui.rtc_mm;
-      g_ui.rtc_dd = FUN_fffb30b5(param_1 + 9);
+      g_ui.rtc_dd = ascii2_to_bcd(param_1 + 9);
       g_ui.rtc_set[2] = g_ui.rtc_dd;
       g_ui.dl_req_65_clock = 1;
       return;
@@ -5780,9 +5780,9 @@ void cat_DT(int param_1,char param_2)
       cat_error = 1;
       return;
     }
-    g_ui.rtc_hh = FUN_fffb30b5(param_1 + 3);
+    g_ui.rtc_hh = ascii2_to_bcd(param_1 + 3);
     g_ui.rtc_set[3] = g_ui.rtc_hh;
-    g_ui.rtc_set[4] = FUN_fffb30b5(param_1 + 5);
+    g_ui.rtc_set[4] = ascii2_to_bcd(param_1 + 5);
     g_ui.rtc_min = g_ui.rtc_set[4];
     g_ui.dl_req_65_clock = 1;
     return;

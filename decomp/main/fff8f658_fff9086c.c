@@ -460,21 +460,26 @@ undefined4 FUN_fff8fc3f(void)
 }
 
 
-// ===== FUN_fff8fc4d @ fff8fc4d (10 bytes)
+// ===== R_BSP_GetIClkFreqHz @ fff8fc4d (10 bytes)
 
-uint FUN_fff8fc4d(void)
+/* Returns get_iclk_freq_hz() [fact: fff8fc4d]; Renesas BSP API name [inference] */
+
+uint R_BSP_GetIClkFreqHz(void)
 
 {
   uint uVar1;
   
-  uVar1 = FUN_fff91303();
+  uVar1 = get_iclk_freq_hz();
   return uVar1;
 }
 
 
-// ===== FUN_fff8fc57 @ fff8fc57 (277 bytes)
+// ===== R_BSP_SoftwareDelay @ fff8fc57 (277 bytes)
 
-byte FUN_fff8fc57(uint delay,uint units)
+/* (delay, units): units must be 1000000 / 1000 / 1 (us / ms / s); cycles = ICLK * delay / units,
+   minus overhead, / 4, then a spin loop [fact: fff8fc57]; Renesas BSP API [inference] */
+
+byte R_BSP_SoftwareDelay(uint delay,uint units)
 
 {
   bool bVar1;
@@ -498,7 +503,7 @@ byte FUN_fff8fc57(uint delay,uint units)
   if (bVar1) {
     return 0;
   }
-  uStack_14 = FUN_fff8fc4d();
+  uStack_14 = R_BSP_GetIClkFreqHz();
   if ((undefined *)units == &DAT_000f4240) {
     uVar2 = 0xffffffff;
     if (uStack_14 != 0) {
@@ -645,9 +650,12 @@ undefined1 FUN_fff8fdb8(undefined4 param_1)
 }
 
 
-// ===== FUN_fff8fe3c @ fff8fe3c (132 bytes)
+// ===== R_BSP_RegisterProtectEnable @ fff8fe3c (132 bytes)
 
-void FUN_fff8fe3c(int param_1)
+/* (region): the counterpart of R_BSP_RegisterProtectDisable (counter 0x1B5FC, PWPR / PRCR) [fact:
+   fff8fe3c]; BSP name [inference] */
+
+void R_BSP_RegisterProtectEnable(int param_1)
 
 {
   ushort uVar1;
@@ -679,9 +687,13 @@ void FUN_fff8fe3c(int param_1)
 }
 
 
-// ===== FUN_fff8fec0 @ fff8fec0 (108 bytes)
+// ===== R_BSP_RegisterProtectDisable @ fff8fec0 (108 bytes)
 
-void FUN_fff8fec0(int param_1)
+/* (region): counter 0x1B5FC[region]; on the first disable clears MPC PWPR.B0WI and sets PFSWE
+   (region 3) or ORs the PRCR bit with key 0xA5 (others), inside R_BSP_InterruptControl(0x5E, 6/5)
+   [fact: fff8fec0]; Renesas BSP API [inference] */
+
+void R_BSP_RegisterProtectDisable(int param_1)
 
 {
   ushort uVar1;
@@ -778,8 +790,8 @@ void bsp_interrupt_open(void)
     *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
   }
   icu_select_init();
-  FUN_fff9089e(0);
-  FUN_fff9089e(1);
+  R_BSP_SoftwareInterruptOpen(0);
+  R_BSP_SoftwareInterruptOpen(1);
   return;
 }
 
@@ -866,14 +878,14 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
       bVar1 = true;
     }
     if (bVar1) {
-      local_14 = FUN_fff901f8(param_1,'\x01',*(uint *)param_3);
+      local_14 = bsp_interrupt_group_enable_disable(param_1,'\x01',*(uint *)param_3);
     }
     else {
       local_14 = 2;
     }
   }
   else if (param_2 == 4) {
-    local_14 = FUN_fff901f8(param_1,'\0',0);
+    local_14 = bsp_interrupt_group_enable_disable(param_1,'\0',0);
   }
   else if (param_2 == 5) {
     local_14 = FUN_fff90181('\x01',param_3);
@@ -956,9 +968,14 @@ uint FUN_fff90181(char param_1,uint *param_2)
 }
 
 
-// ===== FUN_fff901f8 @ fff901f8 (949 bytes)
+// ===== bsp_interrupt_group_enable_disable @ fff901f8 (949 bytes)
 
-uint FUN_fff901f8(int param_1,char param_2,uint param_3)
+/* (vector, enable, ipl) of R_BSP_InterruptControl: for the group vectors sets/clears ICU IPR106
+   (GROUPBE0, checking GENBE0) / IPR110 (GROUPBL0) etc. with R_BSP_InterruptRequestDisable/Enable
+   around it; ipl 1..15 checked [fact: fff901f8]; matches the Renesas BSP static function of that
+   name [inference] */
+
+uint bsp_interrupt_group_enable_disable(int param_1,char param_2,uint param_3)
 
 {
   byte bVar1;
@@ -1414,9 +1431,12 @@ undefined4 vec016_BSC_BUSERR(undefined4 param_1)
 }
 
 
-// ===== FUN_fff90837 @ fff90837 (39 bytes)
+// ===== R_BSP_SoftwareLock @ fff90837 (39 bytes)
 
-bool FUN_fff90837(int *param_1)
+/* (*lock): exchanges 1 into the lock word, returns true when it was 0 [fact: fff90837]; Renesas BSP
+   name [inference] */
+
+bool R_BSP_SoftwareLock(int *param_1)
 
 {
   int iVar1;
@@ -1427,9 +1447,11 @@ bool FUN_fff90837(int *param_1)
 }
 
 
-// ===== FUN_fff9085e @ fff9085e (14 bytes)
+// ===== R_BSP_SoftwareUnlock @ fff9085e (14 bytes)
 
-undefined1 FUN_fff9085e(undefined4 *param_1)
+/* (*lock): writes 0, returns true [fact: fff9085e]; Renesas BSP name [inference] */
+
+undefined1 R_BSP_SoftwareUnlock(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -1437,14 +1459,17 @@ undefined1 FUN_fff9085e(undefined4 *param_1)
 }
 
 
-// ===== FUN_fff9086c @ fff9086c (25 bytes)
+// ===== R_BSP_HardwareLock @ fff9086c (25 bytes)
 
-undefined1 FUN_fff9086c(int param_1)
+/* (lock id): R_BSP_SoftwareLock on the lock word 0x1FFC4 + id*4 [fact: fff9086c]; Renesas BSP name
+   [inference] */
+
+undefined1 R_BSP_HardwareLock(int param_1)
 
 {
   undefined1 uVar1;
   
-  uVar1 = FUN_fff90837(&DAT_0001ffc4 + param_1 * 4);
+  uVar1 = R_BSP_SoftwareLock(&DAT_0001ffc4 + param_1 * 4);
   return uVar1;
 }
 

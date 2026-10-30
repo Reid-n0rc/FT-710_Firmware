@@ -399,7 +399,7 @@ void FUN_fffbd8c9(void)
     return;
   }
   popup_close();
-  FUN_fffc1f2a(5);
+  func_menu_group_open(5);
   FUN_fffd3caf();
   beep_request(2);
   return;
@@ -601,9 +601,12 @@ void FUN_fffbda30(void)
 }
 
 
-// ===== FUN_fffbda47 @ fffbda47 (107 bytes)
+// ===== dsp_knob_shift_toggle @ fffbda47 (107 bytes)
 
-void FUN_fffbda47(void)
+/* DSP key short press with knob function 0 (SHIFT): toggles g_ui.dsp_knob_edit, FUNC item 0x1D
+   [fact: fffbda47]; caller key_dsp_release (structs_main.h dsp_knob_func 0 SHIFT) */
+
+void dsp_knob_shift_toggle(void)
 
 {
   if (PTR_g_ui_00025d54->dsp_knob_edit == 0) {
@@ -624,20 +627,26 @@ void FUN_fffbda47(void)
 }
 
 
-// ===== FUN_fffbdab2 @ fffbdab2 (35 bytes)
+// ===== shift_reset_beep @ fffbdab2 (35 bytes)
 
-void FUN_fffbdab2(void)
+/* vfo_shift_reset(active VFO), beep 2 [fact: fffbdab2]; no direct caller (reached through a table)
+    */
+
+void shift_reset_beep(void)
 
 {
-  FUN_fffc3503(g_opstate.active_vfo != VFO_A);
+  vfo_shift_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
 
 
-// ===== FUN_fffbdad5 @ fffbdad5 (107 bytes)
+// ===== dsp_knob_width_toggle @ fffbdad5 (107 bytes)
 
-void FUN_fffbdad5(void)
+/* DSP key short press with knob function 1 (WIDTH): toggles dsp_knob_edit, FUNC item 0x1E [fact:
+   fffbdad5]; caller key_dsp_release */
+
+void dsp_knob_width_toggle(void)
 
 {
   if (PTR_g_ui_00025d54->dsp_knob_edit == 0) {
@@ -658,12 +667,15 @@ void FUN_fffbdad5(void)
 }
 
 
-// ===== FUN_fffbdb40 @ fffbdb40 (35 bytes)
+// ===== width_reset_beep @ fffbdb40 (35 bytes)
 
-void FUN_fffbdb40(void)
+/* vfo_width_reset(active VFO), beep 2 [fact: fffbdb40]; no direct caller (reached through a table)
+    */
+
+void width_reset_beep(void)
 
 {
-  FUN_fffc3582(g_opstate.active_vfo != VFO_A);
+  vfo_width_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
