@@ -1221,21 +1221,20 @@ void sci2_configure(void)
 {
   uint uVar1;
   byte bVar2;
-  tunlin_mode tVar3;
   byte bStack_3;
   byte bStack_1;
   
-  tVar3 = tunlin_port_mode();
+  bVar2 = tunlin_port_mode();
   R_SCI2_Stop();
   do {
   } while (DAT_00011fe9 != '\0');
-  if (tVar3 != TUNLIN_LINEAR) {
+  if (bVar2 != 1) {
     gpo_a_set(0);
     gpo_b_set(0);
     gpo_c_set(0);
     gpo_d_set(0);
   }
-  if ((tVar3 == TUNLIN_GPO) || (tVar3 == TUNLIN_LINEAR)) {
+  if ((bVar2 == 3) || (bVar2 == 1)) {
     uVar1 = SYSTEM_MSTPCRB;
     SYSTEM_MSTPCRB = uVar1 | 0x20000000;
     MPC_P12PFS = 0;
@@ -1249,7 +1248,7 @@ void sci2_configure(void)
     rem_key_sel_set(1);
     return;
   }
-  if (tVar3 == TUNLIN_CAT3) {
+  if (bVar2 == 2) {
     R_SCI2_Create();
     bStack_1 = g_opstate.ex030110_cat_3_rate;
     if (4 < g_opstate.ex030110_cat_3_rate) {
@@ -1273,7 +1272,7 @@ void sci2_configure(void)
     rem_key_sel_set(0);
     return;
   }
-  if (tVar3 == TUNLIN_EXT_TUNER) {
+  if (bVar2 == 0) {
     R_SCI2_Create();
     R_SCI2_Start();
     gpo_c_dir('\0');
@@ -1297,7 +1296,7 @@ void sci2_configure(void)
 
 /* setting 0x9AB7: 0 EXT-TUNER 1 LINEAR 2 CAT-3 3 GPO */
 
-tunlin_mode tunlin_port_mode(void)
+byte tunlin_port_mode(void)
 
 {
   undefined1 local_2;
@@ -2120,12 +2119,12 @@ void tone_set(float param_1,ushort param_2)
 uint aess_level_ptr(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   undefined4 uStack_c;
   uint uVar2;
   
-  rVar1 = vfo_mode(VFO_RX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(0);
+  uVar2 = (uint)bVar1;
   if (uVar2 - 2 < 2) {
     uStack_c = 0x9c09;
   }
@@ -2964,15 +2963,14 @@ void linear_band_data(void)
 
 {
   byte bVar1;
-  tunlin_mode tVar2;
-  char cVar3;
+  char cVar2;
   
-  tVar2 = tunlin_port_mode();
-  if (tVar2 == TUNLIN_LINEAR) {
-    cVar3 = FUN_fffb33ab(g_ui.freq_tx);
-    if (DAT_0001b4d0 != cVar3) {
-      DAT_0001b4d0 = cVar3;
-      switch(cVar3) {
+  bVar1 = tunlin_port_mode();
+  if (bVar1 == 1) {
+    cVar2 = FUN_fffb33ab(g_ui.freq_tx);
+    if (DAT_0001b4d0 != cVar2) {
+      DAT_0001b4d0 = cVar2;
+      switch(cVar2) {
       case '\0':
         bVar1 = PORT1_PODR;
         PORT1_PODR = bVar1 | 8;

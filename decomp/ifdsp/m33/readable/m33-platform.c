@@ -4,17 +4,26 @@
 // 338 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * rom_api_1c_guarded_call @ 0008000c  (32 bytes, 0 callers, export file 0008000c_000818b8.c)
- * Purpose: Calls ROM API table *(0x1303F01C): if fn7 == 0 then fn1; no callers [guess]
- * Tag: [guess]
+ * IAP_FlexspiNorAutoConfig @ 0008000c  (32 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * Purpose: r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C) ->get_config
+ *     (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1 [fact: 0x8000C-0x8002A].
+ *     Same calls in the same order as IAP_FlexspiNorAutoConfig in mcux-sdk@8a289764
+ *     devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay loop first) [inference]. No
+ *     BL/B.W/literal reference anywhere in the image [fact: branch+literal scan]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== rom_api_1c_guarded_call @ 0008000c (32 bytes)
+// ===== IAP_FlexspiNorAutoConfig @ 0008000c (32 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers [guess] */
+/* r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C)
+   ->get_config (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1
+   [fact: 0x8000C-0x8002A]. Same calls in the same order as IAP_FlexspiNorAutoConfig in
+   mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay
+   loop first) [inference]. No BL/B.W/literal reference anywhere in the image [fact: branch+literal
+   scan] */
 
-void rom_api_1c_guarded_call(undefined4 param_1,undefined4 param_2)
+void IAP_FlexspiNorAutoConfig(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -31,17 +40,22 @@ void rom_api_1c_guarded_call(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * power_set_deepsleep_pmc_cfg @ 00080030  (24 bytes, 3 callers, export file 0008000c_000818b8.c)
- * Purpose: PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep [guess]
- * Tag: [guess]
+ * POWER_SetBiasConfig @ 00080030  (24 bytes, 3 callers, export file 0008000c_000818b8.c)
+ * Purpose: if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 [fact: 0x80030]. Identical
+ *     to static POWER_SetBiasConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7
+ *     V deep sleep) [inference]. Called from 0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA
+ *     (POWER_EnterDeepSleep) [fact]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== power_set_deepsleep_pmc_cfg @ 00080030 (24 bytes)
+// ===== POWER_SetBiasConfig @ 00080030 (24 bytes)
 
-/* PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep
-   [guess] */
+/* if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 [fact: 0x80030].
+   Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764
+   devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) [inference]. Called from
+   0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA (POWER_EnterDeepSleep) [fact] */
 
-void power_set_deepsleep_pmc_cfg(void)
+void POWER_SetBiasConfig(void)
 
 {
   int iVar1;
@@ -103,16 +117,22 @@ void deinitXip(void)
 
 
 /* -----------------------------------------------------------------------------
- * power_sram_pd_differs @ 0008009c  (68 bytes, 1 callers, export file 0008000c_000818b8.c)
- * Purpose: Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess]
- * Tag: [guess]
+ * countPartitionSwitches @ 0008009c  (68 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * Purpose: returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks 0x1F000FFF,
+ *     0x3FFFFFFF, 0x3FFFFFFF), else 0 [fact: 0x8009C]. Same expression and masks as static countPartitionSwitches
+ *     in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is POWER_CalculateSafetyCount, as in the SDK
+ *     [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== power_sram_pd_differs @ 0008009c (68 bytes)
+// ===== countPartitionSwitches @ 0008009c (68 bytes)
 
-/* Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess] */
+/* returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks
+   0x1F000FFF, 0x3FFFFFFF, 0x3FFFFFFF), else 0 [fact: 0x8009C]. Same expression and masks as static
+   countPartitionSwitches in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is
+   POWER_CalculateSafetyCount, as in the SDK [inference] */
 
-bool power_sram_pd_differs(void)
+bool countPartitionSwitches(void)
 
 {
   uint uVar1;
@@ -209,7 +229,7 @@ uint POWER_CalculateSafetyCount(int param_1)
     iVar13 = 0x1cd;
     puVar7 = &DAT_00006590;
   }
-  bVar14 = power_sram_pd_differs();
+  bVar14 = countPartitionSwitches();
   iVar10 = SYSCTL0_PDSLEEPCFG1;
   if (iVar10 < 0) {
     iVar10 = 8000;
@@ -368,8 +388,7 @@ void initXip(void)
 
 /* -----------------------------------------------------------------------------
  * POWER_EnterSleep_mode1 @ 0008034c  (182 bytes, 0 callers, export file 0008000c_000818b8.c)
- * Purpose: names-file group "NXP SDK drivers"; calls `power_set_deepsleep_pmc_cfg`; 182 B, callers: 0 [fact] (code
- *     shape)
+ * Purpose: names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
@@ -390,7 +409,7 @@ void POWER_EnterSleep_mode1(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
+  uVar5 = POWER_SetBiasConfig(uVar4);
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
   iVar3 = NVIC_ISER1;
@@ -433,8 +452,7 @@ void POWER_EnterSleep_mode1(void)
 
 /* -----------------------------------------------------------------------------
  * POWER_EnterSleep_mode2 @ 00080414  (182 bytes, 0 callers, export file 0008000c_000818b8.c)
- * Purpose: names-file group "NXP SDK drivers"; calls `power_set_deepsleep_pmc_cfg`; 182 B, callers: 0 [fact] (code
- *     shape)
+ * Purpose: names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
@@ -455,7 +473,7 @@ void POWER_EnterSleep_mode2(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
+  uVar5 = POWER_SetBiasConfig(uVar4);
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
   iVar3 = NVIC_ISER1;
@@ -601,7 +619,7 @@ void POWER_EnterDeepSleep(void)
     uVar13 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  puVar8 = (uint *)power_set_deepsleep_pmc_cfg();
+  puVar8 = (uint *)POWER_SetBiasConfig();
   uVar3 = SCB_SCR;
   SCB_SCR = uVar3 | 4;
   uVar3 = CLKCTL0_MAINCLKSELA;
@@ -905,14 +923,20 @@ void BOARD_SetFlexspiClock(uint param_1,int param_2)
 
 /* -----------------------------------------------------------------------------
  * OTFAD_Init @ 00080a18  (44 bytes, 0 callers, export file 0008000c_000818b8.c)
- * Purpose: true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE; unused [guess]
- * Tag: [guess]
+ * Purpose: true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE); waits
+ *     until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) |= bits [fact: 0x80A18]. Same as OTFAD_Init in
+ *     mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM, forceLDM, restrictedRegAccess,
+ *     enableOTFAD, flexspiBaseAddr) [inference]. No reference in the image [fact: branch+literal scan]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
 // ===== OTFAD_Init @ 00080a18 (44 bytes)
 
-/* NEW true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE;
-   unused [guess] */
+/* true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE);
+   waits until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) |= bits [fact: 0x80A18].
+   Same as OTFAD_Init in mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM,
+   forceLDM, restrictedRegAccess, enableOTFAD, flexspiBaseAddr) [inference]. No reference in the
+   image [fact: branch+literal scan] */
 
 void OTFAD_Init(int param_1,int param_2)
 
@@ -929,13 +953,15 @@ void OTFAD_Init(int param_1,int param_2)
 
 /* -----------------------------------------------------------------------------
  * OTFAD_Deinit @ 00080a44  (14 bytes, 0 callers, export file 0008000c_000818b8.c)
- * Purpose: OTFAD CR &= ~GE; unused [guess]
- * Tag: [guess]
+ * Purpose: base->CR (+0xC00) &= ~0x80000000 (GE) [fact: 0x80A44]; same as OTFAD_Deinit in mcux-sdk@8a289764
+ *     fsl_otfad.c [inference]. No reference in the image [fact: branch+literal scan]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
 // ===== OTFAD_Deinit @ 00080a44 (14 bytes)
 
-/* NEW: OTFAD CR &= ~GE; unused [guess] */
+/* base->CR (+0xC00) &= ~0x80000000 (GE) [fact: 0x80A44]; same as OTFAD_Deinit in mcux-sdk@8a289764
+   fsl_otfad.c [inference]. No reference in the image [fact: branch+literal scan] */
 
 void OTFAD_Deinit(int param_1)
 
@@ -4925,7 +4951,7 @@ void HASHCRYPT_DriverIRQHandler(void)
     }
     HASHCRYPT_INTENCLR = 6;
     HASHCRYPT_MEMCTRL = 0;
-    hashcrypt_get_digest(0x40158000,DAT_00088ab0);
+    hashcrypt_save_running_hash(0x40158000,DAT_00088ab0);
     uVar3 = 0;
   }
   if (*(code **)(iVar2 + 0x50) == (code *)0x0) {
@@ -9060,18 +9086,23 @@ void DSP_CopyImage(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * hashcrypt_get_digest @ 00086ec4  (44 bytes, 1 callers, export file 00086778_00087418.c)
- * Purpose: Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the
- *     HASHCRYPT IRQ handler [guess]
- * Tag: [guess]
+ * hashcrypt_save_running_hash @ 00086ec4  (44 bytes, 1 callers, export file 00086778_00087418.c)
+ * Purpose: n = 5 if ctx byte +0x44 == 1 (kHASHCRYPT_Sha1) else 8; wait HASHCRYPT STATUS bit 1 (DIGEST); copy
+ *     DIGEST0[0..n) (base+0x40) to ctx+0x58 [fact: 0x86EC4]. Only caller 0x8425A in the HASHCRYPT IRQ handler after
+ *     INTENCLR/MEMCTRL=0 [fact]. Same as static hashcrypt_save_running_hash in mcux-sdk@8a289764
+ *     drivers/hashcrypt/fsl_hashcrypt.c, minus its ERROR check and status return (older SDK version) [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== hashcrypt_get_digest @ 00086ec4 (44 bytes)
+// ===== hashcrypt_save_running_hash @ 00086ec4 (44 bytes)
 
-/* Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the
-   HASHCRYPT IRQ handler [guess] */
+/* n = 5 if ctx byte +0x44 == 1 (kHASHCRYPT_Sha1) else 8; wait HASHCRYPT STATUS bit 1 (DIGEST); copy
+   DIGEST0[0..n) (base+0x40) to ctx+0x58 [fact: 0x86EC4]. Only caller 0x8425A in the HASHCRYPT IRQ
+   handler after INTENCLR/MEMCTRL=0 [fact]. Same as static hashcrypt_save_running_hash in
+   mcux-sdk@8a289764 drivers/hashcrypt/fsl_hashcrypt.c, minus its ERROR check and status return
+   (older SDK version) [inference] */
 
-void hashcrypt_get_digest(int param_1,int param_2)
+void hashcrypt_save_running_hash(int param_1,int param_2)
 
 {
   undefined4 *puVar1;
@@ -9469,16 +9500,21 @@ void BOARD_FlexspiClockSafeConfig(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitDebugConsole @ 00087240  (2 bytes, 1 callers, export file 00086778_00087418.c)
- * Purpose: Empty stub called from app_main right after BOARD_BootClockRUN [guess]
- * Tag: [guess]
+ * app_init_nop @ 00087240  (2 bytes, 1 callers, export file 00086778_00087418.c)
+ * Purpose: body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and
+ *     regfile_clear [fact]. Open: which source function this was (SDK examples call BOARD_InitDebugConsole at this
+ *     point, but that one is not empty); would be settled by the vendor's source or link map
+ * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== BOARD_InitDebugConsole @ 00087240 (2 bytes)
+// ===== app_init_nop @ 00087240 (2 bytes)
 
-/* Empty stub called from app_main right after BOARD_BootClockRUN [guess] */
+/* body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and
+   regfile_clear [fact]. Open: which source function this was (SDK examples call
+   BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the
+   vendor's source or link map */
 
-void BOARD_InitDebugConsole(void)
+void app_init_nop(void)
 
 {
   return;
@@ -9820,21 +9856,27 @@ void strncpy(uint *param_1,uint *param_2,uint param_3)
 }
 
 /* -----------------------------------------------------------------------------
- * _Cflush_read @ 00087470  (64 bytes, 3 callers, export file 00087470_080012e4.c)
- * Purpose: calls `_Cflush_write`; 64 B, callers: 3 [fact] (code shape)
+ * file_clear_flag20 @ 00087470  (64 bytes, 3 callers, export file 00087470_080012e4.c)
+ * Purpose: FILE flags (+0xC) &= ~0x20; if +0x18 != +0x28: call file_flush_write_buffer, flags = (flags & ~0x3010) |
+ *     0x10, +0x18 = +0x28, +0x2C = +0 = buffer (+0x10); then flags &= ~0x4040 [fact: 0x87470]. Callers fputc (x2)
+ *     and _Cfflush1 call it only when flag 0x20 is set [fact]. Open: the Redlib name and the meaning of flag 0x20;
+ *     would be settled by Redlib source or symbols
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== _Cflush_read @ 00087470 (64 bytes)
+// ===== file_clear_flag20 @ 00087470 (64 bytes)
 
-/* [guess] */
+/* FILE flags (+0xC) &= ~0x20; if +0x18 != +0x28: call file_flush_write_buffer, flags = (flags &
+   ~0x3010) | 0x10, +0x18 = +0x28, +0x2C = +0 = buffer (+0x10); then flags &= ~0x4040 [fact:
+   0x87470]. Callers fputc (x2) and _Cfflush1 call it only when flag 0x20 is set [fact]. Open: the
+   Redlib name and the meaning of flag 0x20; would be settled by Redlib source or symbols */
 
-void _Cflush_read(void *param_1)
+void file_clear_flag20(void *param_1)
 
 {
   *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffffdf;
   if (*(int *)((int)param_1 + 0x18) != *(int *)((int)param_1 + 0x28)) {
-    _Cflush_write();
+    file_flush_write_buffer();
     *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffcfef | 0x10;
     *(undefined4 *)((int)param_1 + 0x18) = *(undefined4 *)((int)param_1 + 0x28);
     *(undefined4 *)((int)param_1 + 0x2c) = *(undefined4 *)((int)param_1 + 0x10);
@@ -9868,7 +9910,7 @@ uint fputc(byte param_1,uint *param_2)
   uVar3 = param_2[3];
   param_2[3] = uVar3 & 0xfff7ffff;
   if ((int)(uVar3 << 0x1a) < 0) {
-    _Cflush_read(param_2);
+    file_clear_flag20(param_2);
   }
   uVar3 = param_2[3];
   if (((int)param_2[2] < -1) && (-1 < (int)(uVar3 << 0x16))) {
@@ -9885,7 +9927,7 @@ LAB_000874ee:
       if ((uVar3 & 0xa010) == 0x8000) {
         fseek(param_2,0);
         if ((int)(param_2[3] << 0x1a) < 0) {
-          _Cflush_read(param_2);
+          file_clear_flag20(param_2);
         }
         uVar3 = param_2[3];
       }
@@ -10015,16 +10057,20 @@ int _Cfdopen(undefined4 param_1,char *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _Cflush_write @ 00087658  (82 bytes, 2 callers, export file 00087470_080012e4.c)
- * Purpose: calls `_Cwrite_buffer`; 82 B, callers: 2 [fact] (code shape)
+ * file_flush_write_buffer @ 00087658  (82 bytes, 2 callers, export file 00087470_080012e4.c)
+ * Purpose: clears flag 0x80000; if (flags & 0x82) == 2 and flag 0x10000 set, writes buffer (+0x10) .. max(ptr,
+ *     +0x2C) with _Cwrite_buffer, then resets the pointers and clears 0x10000; returns 0, or -1 on error / wrong
+ *     mode [fact: 0x87658]. Redlib's own name unknown
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== _Cflush_write @ 00087658 (82 bytes)
+// ===== file_flush_write_buffer @ 00087658 (82 bytes)
 
-/* [guess] */
+/* clears flag 0x80000; if (flags & 0x82) == 2 and flag 0x10000 set, writes buffer (+0x10) ..
+   max(ptr, +0x2C) with _Cwrite_buffer, then resets the pointers and clears 0x10000; returns 0, or
+   -1 on error / wrong mode [fact: 0x87658]. Redlib's own name unknown */
 
-undefined4 _Cflush_write(uint *param_1)
+undefined4 file_flush_write_buffer(uint *param_1)
 
 {
   uint uVar1;
@@ -10099,13 +10145,17 @@ undefined4 _Cfclose(int param_1)
 
 /* -----------------------------------------------------------------------------
  * remove @ 00087702  (20 bytes, 1 callers, export file 00087470_080012e4.c)
- * Purpose: Stub: strlen then return -1 [guess]
- * Tag: [guess]
+ * Purpose: strlen(name), then tail-calls __sys_remove(name, len) which returns -1 [fact: 0x87702]. Only caller
+ *     _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by __sys_tmpnam: the C
+ *     rule that closing a tmpfile() deletes it [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
 // ===== remove @ 00087702 (20 bytes)
 
-/* Stub: strlen then return -1 [guess] */
+/* strlen(name), then tail-calls __sys_remove(name, len) which returns -1 [fact: 0x87702]. Only
+   caller _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by
+   __sys_tmpnam: the C rule that closing a tmpfile() deletes it [inference] */
 
 void remove(uint param_1)
 
@@ -10113,14 +10163,14 @@ void remove(uint param_1)
   int iVar1;
   
   iVar1 = strlen((uint *)param_1);
-  __sys_readc(param_1,iVar1);
+  __sys_remove(param_1,iVar1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
  * _Cfflush1 @ 00087716  (64 bytes, 2 callers, export file 00087470_080012e4.c)
- * Purpose: calls `_Cflush_read`, `_Cflush_write`, `fseek`; 64 B, callers: 2 [fact] (code shape)
+ * Purpose: calls `file_clear_flag20`, `file_flush_write_buffer`, `fseek`; 64 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
@@ -10138,13 +10188,13 @@ uint _Cfflush1(int *param_1)
   if ((param_1[3] & 3U) != 0) {
     if (param_1[3] << 0x1a < 0) {
       iVar2 = param_1[10];
-      _Cflush_read(param_1);
+      file_clear_flag20(param_1);
     }
     else {
       iVar2 = (*param_1 + param_1[6]) - param_1[4];
     }
     param_1[3] = param_1[3] & 0xffffcfff;
-    uVar1 = _Cflush_write(param_1);
+    uVar1 = file_flush_write_buffer(param_1);
     fseek(param_1,iVar2,0);
   }
   return uVar1;
@@ -10189,10 +10239,10 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
     }
     iVar3 = 0;
     if (uVar6 <= uVar5) {
-      iVar3 = __udivmoddi_core(uVar5,0);
+      iVar3 = udiv64by32_helper(uVar5,0);
       n = n & 0xffffffff;
     }
-    uVar4 = __udivmoddi_core((int)n);
+    uVar4 = udiv64by32_helper((int)n);
     uVar7 = extraout_r12;
   }
   else if ((longlong)d < 0) {
@@ -10223,8 +10273,8 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
       uVar4 = uVar4 << 1;
     }
     uVar8 = 0x20 - uVar7;
-    uVar10 = __udivmoddi_core(uVar2 >> (uVar8 & 0xff) | uVar5 << uVar7,uVar5 >> (uVar8 & 0xff),
-                              uVar4 | uVar6 >> (uVar8 & 0xff));
+    uVar10 = udiv64by32_helper(uVar2 >> (uVar8 & 0xff) | uVar5 << uVar7,uVar5 >> (uVar8 & 0xff),
+                               uVar4 | uVar6 >> (uVar8 & 0xff));
     uVar5 = (uint)(uVar10 >> 0x20);
     uVar4 = (uint)uVar10;
     lVar1 = (ulonglong)(uVar6 << uVar7) * (uVar10 & 0xffffffff);
@@ -10251,16 +10301,19 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
 
 
 /* -----------------------------------------------------------------------------
- * __udivmoddi_core @ 00087850  (122 bytes, 3 callers, export file 00087470_080012e4.c)
- * Purpose: no direct calls; 122 B, callers: 3 [fact] (code shape)
+ * udiv64by32_helper @ 00087850  (122 bytes, 3 callers, export file 00087470_080012e4.c)
+ * Purpose: shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit steps)
+ *     [fact: 0x87850]; the 3 call sites are all in __aeabi_uldivmod [fact]. Library's own name unknown
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== __udivmoddi_core @ 00087850 (122 bytes)
+// ===== udiv64by32_helper @ 00087850 (122 bytes)
 
-/* [guess] */
+/* shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit
+   steps) [fact: 0x87850]; the 3 call sites are all in __aeabi_uldivmod [fact]. Library's own name
+   unknown */
 
-void __udivmoddi_core(uint param_1,uint param_2,uint param_3)
+void udiv64by32_helper(uint param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -10533,16 +10586,20 @@ uint __sys_istty(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_readc @ 00087946  (6 bytes, 1 callers, export file 00087470_080012e4.c)
- * Purpose: returns -1 [guess]
- * Tag: [guess]
+ * __sys_remove @ 00087946  (6 bytes, 1 callers, export file 00087470_080012e4.c)
+ * Purpose: returns -1 [fact]. Only caller is remove (b.w at 0x87712) with r0 = path, r1 = strlen(path) [fact],
+ *     which is the SYS_REMOVE (0x0E) argument pair (path, length) in the ARM semihosting spec
+ *     (ARM-software/abi-aa@36203f2c semihosting.rst); SYS_READC takes no argument [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== __sys_readc @ 00087946 (6 bytes)
+// ===== __sys_remove @ 00087946 (6 bytes)
 
-/* NEW: returns -1 [guess: name] */
+/* returns -1 [fact]. Only caller is remove (b.w at 0x87712) with r0 = path, r1 = strlen(path)
+   [fact], which is the SYS_REMOVE (0x0E) argument pair (path, length) in the ARM semihosting spec
+   (ARM-software/abi-aa@36203f2c semihosting.rst); SYS_READC takes no argument [inference] */
 
-undefined4 __sys_readc(void)
+undefined4 __sys_remove(void)
 
 {
   return 0xffffffff;
@@ -10568,13 +10625,17 @@ uint __sys_seek(void)
 
 /* -----------------------------------------------------------------------------
  * __sys_tmpnam @ 00087952  (6 bytes, 1 callers, export file 00087470_080012e4.c)
- * Purpose: returns -1 [guess]
- * Tag: [guess]
+ * Purpose: returns -1 [fact]. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) [fact] =
+ *     SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec
+ *     (ARM-software/abi-aa@36203f2c semihosting.rst) [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
 // ===== __sys_tmpnam @ 00087952 (6 bytes)
 
-/* returns -1 [guess: name] */
+/* returns -1 [fact]. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) [fact] =
+   SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec
+   (ARM-software/abi-aa@36203f2c semihosting.rst) [inference] */
 
 undefined4 __sys_tmpnam(void)
 

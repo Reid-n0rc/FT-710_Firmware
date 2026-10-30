@@ -796,13 +796,13 @@ void pa_relay_update(void)
 {
   bool bVar1;
   uint uVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bVar4;
   char cVar5;
   int iVar6;
   uint uStack_8;
   
-  rVar3 = vfo_mode(VFO_TX);
+  bVar3 = vfo_mode(1);
   uVar2 = g_ui.freq_tx;
   bVar4 = FUN_fffb3337(g_ui.freq_tx);
   uStack_8 = 1 << (bVar4 & 0x1f);
@@ -818,11 +818,11 @@ void pa_relay_update(void)
       uStack_8 = uStack_8 | 0x80;
     }
   }
-  if (rVar3 == MODE_AM) {
+  if (bVar3 == 4) {
     uStack_8 = uStack_8 | 0x100;
   }
-  bVar4 = rx_line_get();
-  if (bVar4 == 1) {
+  bVar3 = rx_line_get();
+  if (bVar3 == 1) {
     uStack_8 = uStack_8 | 0x200;
   }
   cVar5 = tx_band_of_freq(uVar2);
@@ -857,22 +857,22 @@ void pa_relay_update(void)
 void rf_bpf_update(void)
 
 {
-  bool bVar1;
-  byte bVar2;
+  byte bVar1;
+  bool bVar2;
   byte bVar3;
   byte bVar4;
-  vfo_rec *pvVar5;
+  byte *pbVar5;
   uint uStack_c;
   uint uStack_8;
   
-  pvVar5 = vfo_rec_ptr(g_ui.transmitting);
-  bVar2 = pvVar5->flags3 & 3;
-  bVar3 = pvVar5->flags5 & 3;
+  pbVar5 = vfo_rec_ptr(g_ui.transmitting);
+  bVar3 = pbVar5[3] & 3;
+  bVar1 = pbVar5[5];
   if (g_ui.transmitting == 1) {
     uStack_8 = g_ui.freq_tx;
   }
   else {
-    uStack_8 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+    uStack_8 = vfo_freq(0,2);
     bVar4 = tx_line_get();
     if (bVar4 != 0) {
       return;
@@ -880,29 +880,29 @@ void rf_bpf_update(void)
   }
   bVar4 = FUN_fffb32fd(uStack_8);
   uStack_c = 1 << (bVar4 & 0x1f);
-  if (bVar2 == 1) {
+  if (bVar3 == 1) {
     uStack_c = uStack_c | 0x8000;
   }
-  else if (bVar2 == 2) {
+  else if (bVar3 == 2) {
     uStack_c = uStack_c | 0x10000;
   }
-  else if (bVar2 != 3) {
+  else if (bVar3 != 3) {
     uStack_c = uStack_c | 0x18000;
   }
-  if (bVar3 == 3) {
+  if ((bVar1 & 3) == 3) {
     uStack_c = uStack_c | 0x40000;
   }
-  else if (bVar3 == 0) {
+  else if ((bVar1 & 3) == 0) {
     uStack_c = uStack_c | 0x20000;
   }
   uStack_c = uStack_c | 0x200000;
   if ((DAT_00020f9c == uStack_c) && (DAT_00012042 != '\0')) {
-    bVar1 = false;
+    bVar2 = false;
   }
   else {
-    bVar1 = true;
+    bVar2 = true;
   }
-  if (!bVar1) {
+  if (!bVar2) {
     return;
   }
   shreg_write24(2,uStack_c);
@@ -1009,7 +1009,7 @@ void main_dac_update(void)
     bu2505_write(0,3,sVar3);
     DAT_00020fa4 = sVar3;
   }
-  uVar4 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+  uVar4 = vfo_freq(0,2);
   bVar2 = FUN_fffb33ab(uVar4);
   if (bVar2 < 5) {
     local_a = (ushort)g_cfg105.a023_rx_rf_agc_7;
@@ -2366,14 +2366,13 @@ void af_mute_update(void)
   byte bVar1;
   byte bVar2;
   bool bVar3;
-  radio_mode rVar4;
-  byte bVar5;
-  vfo_rec *pvVar6;
-  uint uVar7;
+  byte bVar4;
+  byte *pbVar5;
+  uint uVar6;
   
-  pvVar6 = vfo_rec_ptr(g_ui.transmitting);
+  pbVar5 = vfo_rec_ptr(g_ui.transmitting);
   bVar1 = g_opstate.ex030102_rf_sql_vr;
-  bVar5 = pvVar6->flags3;
+  bVar4 = pbVar5[3];
   bVar2 = swtimer_expired(0x2a);
   if (bVar2 != 0) {
     if (g_ui.trx_state == 8) {
@@ -2390,16 +2389,16 @@ void af_mute_update(void)
         DAT_0001204f = 0;
         return;
       }
-      uVar7 = audio_route_state();
-      if (((uVar7 - 4 < 2) || (uVar7 == 0xb || uVar7 == 0xc)) && (bVar3 = af_mute_get(), bVar3)) {
+      uVar6 = audio_route_state();
+      if (((uVar6 - 4 < 2) || (uVar6 == 0xb || uVar6 == 0xc)) && (bVar3 = af_mute_get(), bVar3)) {
         af_mute_set('\0');
       }
-      if ((char)((bVar5 & 0x38) >> 3) == '\x02') {
-        rVar4 = vfo_mode(VFO_RX);
-        uVar7 = (uint)rVar4;
-        if ((uVar7 - 6 < 2) || (uVar7 == 10 || uVar7 == 0xb)) {
-          bVar5 = dsp_tone_detect();
-          if (bVar5 == 0) {
+      if ((char)((bVar4 & 0x38) >> 3) == '\x02') {
+        bVar4 = vfo_mode(0);
+        uVar6 = (uint)bVar4;
+        if ((uVar6 - 6 < 2) || (uVar6 == 10 || uVar6 == 0xb)) {
+          bVar4 = dsp_tone_detect();
+          if (bVar4 == 0) {
             g_ui.squelch_open = 0;
             bVar3 = af_mute_get();
             if (!bVar3) {
@@ -2423,8 +2422,8 @@ void af_mute_update(void)
       }
       else {
         if (bVar1 == 0) {
-          bVar5 = PORT2_PODR;
-          PORT2_PODR = bVar5 & 0xef;
+          bVar4 = PORT2_PODR;
+          PORT2_PODR = bVar4 & 0xef;
           bVar3 = af_mute_get();
           if (!bVar3) {
             return;
@@ -2439,16 +2438,16 @@ void af_mute_update(void)
         }
       }
       if (g_ui.squelch_open != 1) {
-        bVar5 = PORT2_PODR;
-        PORT2_PODR = bVar5 | 0x10;
+        bVar4 = PORT2_PODR;
+        PORT2_PODR = bVar4 | 0x10;
         return;
       }
-      bVar5 = PORT2_PODR;
-      PORT2_PODR = bVar5 & 0xef;
+      bVar4 = PORT2_PODR;
+      PORT2_PODR = bVar4 & 0xef;
       return;
     }
-    bVar5 = PORT2_PODR;
-    PORT2_PODR = bVar5 | 0x10;
+    bVar4 = PORT2_PODR;
+    PORT2_PODR = bVar4 | 0x10;
     bVar3 = af_mute_get();
     if ((bVar3) && (g_ui.trx_state == 3)) {
       bVar3 = true;
@@ -2479,7 +2478,7 @@ void ptt_inputs_read(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   byte bVar4;
   ushort uVar5;
@@ -2487,8 +2486,8 @@ void ptt_inputs_read(void)
   byte bStack_4;
   byte bStack_2;
   
-  rVar2 = vfo_mode(VFO_TX);
-  bStack_2 = FUN_fffb50d7(rVar2);
+  bVar2 = vfo_mode(1);
+  bStack_2 = FUN_fffb50d7(bVar2);
   bVar3 = tx_cw_keying_class();
   g_ui.ptt_data = 0;
   g_ui.ptt_usb_rts = 0;
@@ -2555,7 +2554,7 @@ joined_r0xfffb8040:
     }
 LAB_fffb80ab:
   }
-  if ((((1 < rVar2 - 2) && (1 < rVar2 - 0xc)) && (g_opstate.vox_on != 0)) &&
+  if ((((1 < bVar2 - 2) && (1 < bVar2 - 0xc)) && (g_opstate.vox_on != 0)) &&
      ((uVar5 = dsp_status1_raw(), (uVar5 & 0x10) != 0 && (bVar4 = swtimer_expired(0x2f), bVar4 == 1)
       ))) {
     g_ui.ptt_vox = 1;
@@ -2874,7 +2873,7 @@ byte ptt_source_select(void)
   byte bStack_5;
   byte bStack_3;
   
-  vfo_mode(VFO_TX);
+  vfo_mode(1);
   bStack_3 = 0;
   bVar3 = tx_cw_keying_class();
   if (g_ui.playlist_open == 0) {
@@ -2962,7 +2961,7 @@ void ptt_arbiter(void)
   char cStack_c;
   
   uVar1 = g_ui.freq_tx;
-  vfo_mode(VFO_TX);
+  vfo_mode(1);
   bVar2 = tx_cw_keying_class();
   bVar3 = ptt_source_select();
   if (DAT_0001204d != bVar3) {
@@ -3134,12 +3133,11 @@ void tx_audio_select(void)
 {
   uint uVar1;
   byte bVar2;
-  radio_mode rVar3;
   char cStack_2;
   
-  rVar3 = vfo_mode(VFO_TX);
-  cStack_2 = FUN_fffb3d11(rVar3);
-  uVar1 = (uint)rVar3;
+  bVar2 = vfo_mode(1);
+  cStack_2 = FUN_fffb3d11(bVar2);
+  uVar1 = (uint)bVar2;
   if ((uVar1 - 2 < 2) || (uVar1 == 0xc || uVar1 == 0xd)) {
     cStack_2 = '\x03';
   }
@@ -3286,18 +3284,18 @@ byte tx_cw_keying_class(void)
   bool bVar2;
   byte bVar3;
   byte bVar4;
-  radio_mode rVar5;
+  byte bVar5;
   char cVar6;
   int iVar7;
   byte bStack_5;
   
   bVar4 = ptt_source_get();
-  rVar5 = vfo_mode(VFO_TX);
+  bVar5 = vfo_mode(1);
   bStack_5 = 0;
-  cVar6 = FUN_fffb50d7(rVar5);
+  cVar6 = FUN_fffb50d7(bVar5);
   bVar3 = g_opstate.ex020115_pc_keying;
   DAT_0001215d = 0;
-  if ((rVar5 == MODE_CW_U) || (rVar5 == MODE_CW_L)) {
+  if ((bVar5 == 3) || (bVar5 == 2)) {
     bVar2 = true;
   }
   else {
@@ -3307,7 +3305,7 @@ byte tx_cw_keying_class(void)
     DAT_0001215d = 1;
   }
   else {
-    if ((rVar5 == MODE_LSB) || (rVar5 == MODE_USB)) {
+    if ((bVar5 == 0) || (bVar5 == 1)) {
       bVar2 = true;
     }
     else {
@@ -3317,7 +3315,7 @@ byte tx_cw_keying_class(void)
       DAT_0001215d = 2;
     }
   }
-  if ((rVar5 == MODE_CW_U) || (rVar5 == MODE_CW_L)) {
+  if ((bVar5 == 3) || (bVar5 == 2)) {
     bVar2 = true;
   }
   else {
@@ -3326,7 +3324,7 @@ byte tx_cw_keying_class(void)
   if (bVar2) {
     return 1;
   }
-  if ((rVar5 == MODE_LSB) || (rVar5 == MODE_USB)) {
+  if ((bVar5 == 0) || (bVar5 == 1)) {
     bVar2 = true;
   }
   else {

@@ -593,10 +593,11 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
 
 /* -----------------------------------------------------------------------------
  * rpmsg_lite_master_init @ 0021b34c  (503 bytes, 0 callers, export file 0021b34c_0021c748.c)
- * Name on the doc page: FUN_0021b34c
- * Inferred name: (rpmsg init variant, uses `"rx_vq"`/`"tx_vq"` and callbacks 0x0021AED4 / 0x0021AF90)
- * Purpose: no callers found; possibly master init linked in [guess]
- * Tag: [guess]
+ * Purpose: names `"rx_vq"` then `"tx_vq"` with `rpmsg_lite_rx_callback` then `rpmsg_lite_tx_callback` and the
+ *     `vq_tx_master` ops table (0x002008D0): the master-side order of `rpmsg_lite_master_init` in rpmsg-lite
+ *     `lib/rpmsg_lite/rpmsg_lite.c` (nxp-mcuxpresso/rpmsg-lite@251ab927; the remote init swaps both) [inference].
+ *     No `call8`/literal reference in the DSP image, so it is linked in but unused [fact: `flix.dis` + word scan]
+ * Tag: [inference] [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
 // ===== rpmsg_lite_master_init @ 0021b34c (503 bytes)

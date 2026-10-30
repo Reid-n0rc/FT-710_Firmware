@@ -6914,14 +6914,14 @@ void menu_ex010317_step(void)
 {
   bool local_9;
   byte *local_8;
-  vfo_rec *local_4;
+  byte *local_4;
   
-  local_4 = vfo_rec_ptr(VFO_TX);
-  local_8 = &local_4->flags2;
+  local_4 = vfo_rec_ptr(1);
+  local_8 = local_4 + 2;
   local_9 = (bool)(*local_8 >> 2 & 3);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 0xf3 | (local_9 & 3U) << 2;
-  local_9 = local_4 != &g_opstate.vfo_a;
+  local_9 = (vfo_rec *)local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;
@@ -6988,14 +6988,14 @@ void menu_ex010320_step(void)
 {
   bool local_9;
   byte *local_8;
-  vfo_rec *local_4;
+  byte *local_4;
   
-  local_4 = vfo_rec_ptr(VFO_TX);
-  local_8 = &local_4->flags3;
+  local_4 = vfo_rec_ptr(1);
+  local_8 = local_4 + 3;
   local_9 = (bool)(*local_8 >> 3 & 7);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 199 | (local_9 & 7U) << 3;
-  local_9 = local_4 != &g_opstate.vfo_a;
+  local_9 = (vfo_rec *)local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;

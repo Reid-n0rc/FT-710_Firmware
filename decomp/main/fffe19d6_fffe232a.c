@@ -243,12 +243,12 @@ void FUN_fffe1d96(uint param_1)
 void FUN_fffe1da4(uint param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   byte bStack_9;
   
-  pvVar1 = vfo_rec_ptr(VFO_RX);
+  pbVar1 = vfo_rec_ptr(0);
   for (bStack_9 = 0; bStack_9 < 4; bStack_9 = bStack_9 + 1) {
-    pvVar1->freq_be[bStack_9] = (byte)(param_1 >> ((3 - bStack_9 & 3) << 3));
+    pbVar1[bStack_9 + 0x4a] = (byte)(param_1 >> ((3 - bStack_9 & 3) << 3));
   }
   return;
 }

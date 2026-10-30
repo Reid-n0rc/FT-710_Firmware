@@ -171,7 +171,7 @@ undefined4 app_main(void)
   GPIO_PortInit(&GPIO_B0_0,2);
   BOARD_InitPins();
   BOARD_BootClockRUN();
-  BOARD_InitDebugConsole();
+  app_init_nop();
   regfile_clear();
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);

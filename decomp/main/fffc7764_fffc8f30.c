@@ -76,17 +76,17 @@ void * FUN_fffc7827(void *param_1,byte *param_2)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   undefined1 uVar4;
   uint uVar5;
   byte *pbStack_1c;
   undefined1 uStack_17;
   
-  uVar5 = vfo_freq(VFO_TX,VFO_SIDE_SEL);
-  rVar2 = vfo_mode(VFO_TX);
+  uVar5 = vfo_freq(1,2);
+  bVar2 = vfo_mode(1);
   bVar3 = tx_band_of_freq(uVar5);
-  if ((rVar2 == MODE_AM) || (rVar2 == MODE_AM_N)) {
+  if ((bVar2 == 4) || (bVar2 == 5)) {
     bVar1 = true;
   }
   else {
@@ -96,8 +96,8 @@ void * FUN_fffc7827(void *param_1,byte *param_2)
     *param_2 = g_opstate.ex030404_am_max_power;
     pbStack_1c = g_opstate.rf_power + 3;
     uStack_17 = 3;
-    if ((bVar3 < 9) && (bVar3 = max_power_limit(3), bVar3 < *param_2)) {
-      *param_2 = bVar3;
+    if ((bVar3 < 9) && (bVar2 = max_power_limit(3), bVar2 < *param_2)) {
+      *param_2 = bVar2;
     }
   }
   else if (bVar3 < 9) {

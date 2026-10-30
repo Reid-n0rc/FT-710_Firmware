@@ -45,7 +45,7 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,uint param_4)
 
 // ===== FUN_fff98258 @ fff98258 (82 bytes)
 
-void FUN_fff98258(vfo_side param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void FUN_fff98258(char param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   byte bVar1;
@@ -55,7 +55,7 @@ void FUN_fff98258(vfo_side param_1,undefined4 param_2,undefined4 param_3,undefin
   local_14 = PTR_g_ui_00025d38->freq_tx;
   bVar1 = vfo_tune_locked(param_1);
   if (bVar1 == 1) {
-    if (param_1 == VFO_A) {
+    if (param_1 == '\0') {
       bStack_15 = g_mem_hdr.chan_a;
     }
     else {
@@ -1433,11 +1433,11 @@ void FUN_fff9960e(ushort param_1)
 uint FUN_fff99669(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   uint uVar2;
   
-  rVar1 = vfo_mode(VFO_TX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(1);
+  uVar2 = (uint)bVar1;
   if (uVar2 != 0xe) {
     if (uVar2 - 2 < 2) {
       return 0x9bfd;

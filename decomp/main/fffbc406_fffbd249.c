@@ -241,8 +241,7 @@ void FUN_fffbc677(void)
 void scope_cursor_center(void)
 
 {
-  band_idx bVar1;
-  byte bVar2;
+  byte bVar1;
   bool local_b;
   byte bStack_a;
   uint local_8;
@@ -255,11 +254,11 @@ void scope_cursor_center(void)
   }
   local_b = g_opstate.active_vfo != VFO_A;
   bVar1 = band_of_freq(local_8);
-  if (bVar1 == BAND_NONE) {
+  if (bVar1 == 0xff) {
     return;
   }
-  bVar2 = scope_span_index(local_b);
-  local_8 = local_8 - (*(uint *)(scope_span_table + (uint)bVar2 * 4) >> 1);
+  bVar1 = scope_span_index(local_b);
+  local_8 = local_8 - (*(uint *)(scope_span_table + (uint)bVar1 * 4) >> 1);
   PTR_g_ui_00025d54->scope_cursor_start = local_8;
   for (bStack_a = 0; bStack_a < 4; bStack_a = bStack_a + 1) {
     g_opstate.scope_cursor_start_be[bStack_a] = (byte)(local_8 >> ((3 - bStack_a & 3) << 3));
@@ -514,7 +513,7 @@ void key_011_press(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   uint uVar3;
   
   bVar1 = false;
@@ -526,8 +525,8 @@ void key_011_press(void)
     bVar1 = true;
   }
   else {
-    rVar2 = vfo_mode(VFO_RX);
-    uVar3 = (uint)rVar2;
+    bVar2 = vfo_mode(0);
+    uVar3 = (uint)bVar2;
     if ((uVar3 - 6 < 2) || (uVar3 == 10 || uVar3 == 0xb)) {
       bVar1 = true;
     }
@@ -826,7 +825,7 @@ void FUN_fffbcf91(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   
   menu_close_if_open();
   func_panel_close();
@@ -838,20 +837,20 @@ void FUN_fffbcf91(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  rVar2 = vfo_mode(VFO_RX);
-  if ((rVar2 == MODE_FM) || (rVar2 == MODE_FM_N)) {
+  bVar2 = vfo_mode(0);
+  if ((bVar2 == 6) || (bVar2 == 7)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM)) {
+  if ((bVar1) || (bVar2 == 10)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM_N)) {
+  if ((bVar1) || (bVar2 == 0xb)) {
     bVar1 = true;
   }
   else {

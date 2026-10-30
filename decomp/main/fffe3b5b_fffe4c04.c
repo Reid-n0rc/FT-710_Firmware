@@ -437,18 +437,18 @@ void FUN_fffe40e5(void)
 {
   uint uVar1;
   vfo_side vVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bVar4;
   
   vVar2 = g_opstate.active_vfo;
-  rVar3 = vfo_mode(VFO_RX);
+  bVar3 = vfo_mode(0);
   bVar4 = vfo_is_memory(vVar2);
   if (bVar4 == 1) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,0xfa);
     return;
   }
-  uVar1 = (uint)rVar3;
+  uVar1 = (uint)bVar3;
   if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,5);
@@ -719,9 +719,9 @@ void msg_type_select(void)
 {
   uint uVar1;
   bool bVar2;
-  radio_mode rVar3;
+  byte bVar3;
   
-  rVar3 = vfo_mode(VFO_TX);
+  bVar3 = vfo_mode(1);
   if (PTR_g_ui_00025d78->kbd_open == 1) {
     if ((PTR_g_ui_00025d78->kbd_target == 2) || (PTR_g_ui_00025d78->kbd_target == 3)) {
       bVar2 = true;
@@ -783,7 +783,7 @@ void msg_type_select(void)
       beep_request(1);
       return;
     }
-    uVar1 = (uint)rVar3;
+    uVar1 = (uint)bVar3;
     if (uVar1 == 0xe) {
       PTR_g_ui_00025d78->msgmem_type = 3;
       return;

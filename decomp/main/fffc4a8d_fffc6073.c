@@ -71,56 +71,56 @@ void vfo_filter_byte_ptr(void)
 
 // ===== FUN_fffc4bd5 @ fffc4bd5 (121 bytes)
 
-void FUN_fffc4bd5(radio_mode mode)
+void FUN_fffc4bd5(byte mode)
 
 {
   switch(mode) {
-  case MODE_LSB:
-    FUN_fffc0d33(MODE_LSB);
+  case 0:
+    FUN_fffc0d33(0);
     return;
-  case MODE_USB:
-    FUN_fffc0d33(MODE_USB);
+  case 1:
+    FUN_fffc0d33(1);
     return;
-  case MODE_CW_L:
-    FUN_fffc0d33(MODE_CW_L);
+  case 2:
+    FUN_fffc0d33(2);
     return;
-  case MODE_CW_U:
-    FUN_fffc0d33(MODE_CW_U);
+  case 3:
+    FUN_fffc0d33(3);
     return;
-  case MODE_AM:
+  case 4:
     FUN_fffc0e31();
     return;
-  case MODE_AM_N:
+  case 5:
     FUN_fffc0e3e();
     return;
-  case MODE_FM:
+  case 6:
     FUN_fffc0e4b();
     return;
-  case MODE_FM_N:
+  case 7:
     FUN_fffc0e58();
     return;
-  case MODE_DATA_L:
-    FUN_fffc0d33(MODE_DATA_L);
+  case 8:
+    FUN_fffc0d33(8);
     return;
-  case MODE_DATA_U:
-    FUN_fffc0d33(MODE_DATA_U);
+  case 9:
+    FUN_fffc0d33(9);
     return;
-  case MODE_DATA_FM:
+  case 10:
     FUN_fffc0e65();
     return;
-  case MODE_DATA_FM_N:
+  case 0xb:
     FUN_fffc0e72();
     return;
-  case MODE_RTTY_L:
-    FUN_fffc0d33(MODE_RTTY_L);
+  case 0xc:
+    FUN_fffc0d33(0xc);
     return;
-  case MODE_RTTY_U:
-    FUN_fffc0d33(MODE_RTTY_U);
+  case 0xd:
+    FUN_fffc0d33(0xd);
     return;
-  case MODE_PSK:
-    FUN_fffc0d33(MODE_PSK);
+  case 0xe:
+    FUN_fffc0d33(0xe);
     return;
-  case MODE_15:
+  case 0xf:
     FUN_fffc0e7f();
     return;
   default:
@@ -133,7 +133,7 @@ void FUN_fffc4bd5(radio_mode mode)
 
 /* (band, side): band_select with 0x9DBD temporarily = side (CAT BS/BU/BD) */
 
-void band_select_on(band_idx param_1,vfo_side param_2)
+void band_select_on(byte param_1,byte param_2)
 
 {
   vfo_side vVar1;
@@ -1055,7 +1055,7 @@ void FUN_fffc56cd(undefined1 param_1)
 
 // ===== FUN_fffc5767 @ fffc5767 (49 bytes)
 
-void FUN_fffc5767(vfo_side param_1)
+void FUN_fffc5767(byte param_1)
 
 {
   bool bVar1;

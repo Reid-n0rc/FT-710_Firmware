@@ -259,9 +259,11 @@ void uart0_init(void)
 /* -----------------------------------------------------------------------------
  * CommandTask @ 00080d78  (152 bytes, 0 callers, export file 0008000c_000818b8.c)
  * Purpose: `console_init`, reset both rings, `uart0_init`, set GPIO P2_5 = 1 (0x40100045), then loop: wait event
- *     bit 0, feed each RX byte to `console_rx_char` while the TX ring is not full [fact]. P2_5's function is
- *     unknown [guess: a "DSP ready" line]
- * Tag: [fact] [guess]
+ *     bit 0, feed each RX byte to `console_rx_char` while the TX ring is not full [fact]. P2_5 (PIO2_5) is wired
+ *     only to test point TP2008, one of TP2007–2009 marked "for DEBUG" on the schematic (service manual p19,
+ *     docs/hardware.md, pin table in m33-platform.md) [fact], so it is a debug marker for "command task running",
+ *     not a signal another chip reads [inference]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
  */
 // ===== CommandTask @ 00080d78 (152 bytes)

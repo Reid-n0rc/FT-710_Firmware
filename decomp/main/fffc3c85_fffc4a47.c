@@ -69,34 +69,34 @@ undefined1 FUN_fffc3d75(void)
 {
   bool bVar1;
   undefined1 uVar2;
-  radio_mode rVar3;
+  byte bVar3;
   
-  rVar3 = vfo_mode(VFO_RX);
-  if ((rVar3 == MODE_LSB) || (rVar3 == MODE_USB)) {
+  bVar3 = vfo_mode(0);
+  if ((bVar3 == 0) || (bVar3 == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_AM)) {
+  if ((bVar1) || (bVar3 == 4)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_AM_N)) {
+  if ((bVar1) || (bVar3 == 5)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_FM)) {
+  if ((bVar1) || (bVar3 == 6)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_FM_N)) {
+  if ((bVar1) || (bVar3 == 7)) {
     uVar2 = 1;
   }
   else {
@@ -111,11 +111,11 @@ undefined1 FUN_fffc3d75(void)
 void FUN_fffc3de8(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = keyer_mode_class(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = keyer_mode_class(pbVar1);
   if (iVar2 == 0) {
     return;
   }
@@ -178,12 +178,12 @@ void FUN_fffc3eaa(void)
 
 {
   bool bVar1;
-  vfo_rec *pvVar2;
+  byte *pbVar2;
   int iVar3;
   
-  pvVar2 = vfo_rec_ptr(VFO_TX);
-  iVar3 = FUN_fffc3f1b(pvVar2);
-  if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pvVar2), iVar3 == 0)) {
+  pbVar2 = vfo_rec_ptr(1);
+  iVar3 = FUN_fffc3f1b(pbVar2);
+  if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pbVar2), iVar3 == 0)) {
     bVar1 = true;
   }
   else {
@@ -194,7 +194,7 @@ void FUN_fffc3eaa(void)
       PTR_g_ui_00025d54->key_consumed = 1;
       return;
     }
-    FUN_fffc3f40(pvVar2);
+    FUN_fffc3f40(pbVar2);
     keyer_init();
     beep_request(1);
     PTR_g_ui_00025d54->key_consumed = 1;
@@ -1021,25 +1021,25 @@ void FUN_fffc4899(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   int iVar3;
   
   iVar3 = ui_close_overlays();
   if (iVar3 != 0) {
-    rVar2 = vfo_mode(VFO_RX);
-    if ((rVar2 == MODE_FM) || (rVar2 == MODE_FM_N)) {
+    bVar2 = vfo_mode(0);
+    if ((bVar2 == 6) || (bVar2 == 7)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (rVar2 == MODE_DATA_FM)) {
+    if ((bVar1) || (bVar2 == 10)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (rVar2 == MODE_DATA_FM_N)) {
+    if ((bVar1) || (bVar2 == 0xb)) {
       bVar1 = true;
     }
     else {

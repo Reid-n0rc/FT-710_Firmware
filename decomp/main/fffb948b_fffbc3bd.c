@@ -79,20 +79,20 @@ void FUN_fffb9605(void)
   uint uVar2;
   byte bVar3;
   byte bVar4;
-  radio_mode rVar5;
+  byte bVar5;
   byte bVar6;
-  vfo_rec *pvVar7;
+  byte *pbVar7;
   uint uVar8;
   bool bStack_11;
   char cStack_a;
   ushort uStack_6;
   
-  pvVar7 = vfo_rec_ptr(VFO_RX);
+  pbVar7 = vfo_rec_ptr(0);
   uStack_6 = 100;
-  bVar3 = pvVar7->flags5 & 3;
-  uVar8 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+  bVar3 = pbVar7[5] & 3;
+  uVar8 = vfo_freq(0,2);
   bVar4 = gen_subband_of_freq(uVar8);
-  rVar5 = vfo_mode(VFO_RX);
+  bVar5 = vfo_mode(0);
   bVar6 = g_ui.trx_state;
   uVar8 = audio_route_state();
   bVar1 = DAT_000120ba != bVar3;
@@ -106,10 +106,10 @@ void FUN_fffb9605(void)
   }
   DAT_000120b9 = bVar4;
   bStack_11 = bStack_11 || bVar1;
-  if (DAT_000120bb != rVar5) {
+  if (DAT_000120bb != bVar5) {
     bStack_11 = true;
     g_ui.squelch_open = 0;
-    DAT_000120bb = rVar5;
+    DAT_000120bb = bVar5;
   }
   if (bVar6 < 7) {
     cStack_a = '\x03';
@@ -118,8 +118,7 @@ void FUN_fffb9605(void)
     cStack_a = '\b';
   }
   if (((DAT_0001b4d2 != cStack_a) && (DAT_0001b4d2 = cStack_a, cStack_a == '\b')) &&
-     ((rVar5 = vfo_mode(VFO_TX), MODE_CW_U < rVar5 || (bVar6 = tx_cw_keying_class(), bVar6 == 0))))
-  {
+     ((bVar6 = vfo_mode(1), 3 < bVar6 || (bVar6 = tx_cw_keying_class(), bVar6 == 0)))) {
     bStack_11 = true;
     uStack_6 = 0x28;
   }
@@ -429,11 +428,11 @@ void keyer_task(void)
     swtimer_start(0x19,(ushort)DAT_0001215c);
     swtimer_start(0x1b,10000);
     FUN_fffbaff6();
-    DAT_00021040 = vfo_rec_ptr(VFO_TX);
+    DAT_00021040 = vfo_rec_ptr(1);
     iVar7 = tx_breakin_on();
     if (iVar7 == 1) {
       DAT_00012166 = '\x01';
-      DAT_00021040->blk[1].flags = DAT_00021040->blk[1].flags & 0xfd;
+      DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
     }
     else {
       DAT_00012166 = '\0';
@@ -446,7 +445,7 @@ void keyer_task(void)
   case 4:
     if (DAT_00012166 == '\x01') {
       DAT_00012166 = '\0';
-      DAT_00021040->blk[1].flags = DAT_00021040->blk[1].flags | 2;
+      DAT_00021040[0x14] = DAT_00021040[0x14] | 2;
     }
     DAT_0001fa3a = DAT_0001fa38;
     if (DAT_0001fa38 != 0) {
@@ -731,18 +730,18 @@ byte tx_cw_keying_class(void)
   bool bVar2;
   byte bVar3;
   byte bVar4;
-  radio_mode rVar5;
+  byte bVar5;
   char cVar6;
   int iVar7;
   byte bStack_5;
   
   bVar4 = ptt_source_get();
-  rVar5 = vfo_mode(VFO_TX);
+  bVar5 = vfo_mode(1);
   bStack_5 = 0;
-  cVar6 = FUN_fffb50d7(rVar5);
+  cVar6 = FUN_fffb50d7(bVar5);
   bVar3 = g_opstate.ex020115_pc_keying;
   DAT_0001215d = 0;
-  if ((rVar5 == MODE_CW_U) || (rVar5 == MODE_CW_L)) {
+  if ((bVar5 == 3) || (bVar5 == 2)) {
     bVar2 = true;
   }
   else {
@@ -752,7 +751,7 @@ byte tx_cw_keying_class(void)
     DAT_0001215d = 1;
   }
   else {
-    if ((rVar5 == MODE_LSB) || (rVar5 == MODE_USB)) {
+    if ((bVar5 == 0) || (bVar5 == 1)) {
       bVar2 = true;
     }
     else {
@@ -762,7 +761,7 @@ byte tx_cw_keying_class(void)
       DAT_0001215d = 2;
     }
   }
-  if ((rVar5 == MODE_CW_U) || (rVar5 == MODE_CW_L)) {
+  if ((bVar5 == 3) || (bVar5 == 2)) {
     bVar2 = true;
   }
   else {
@@ -771,7 +770,7 @@ byte tx_cw_keying_class(void)
   if (bVar2) {
     return 1;
   }
-  if ((rVar5 == MODE_LSB) || (rVar5 == MODE_USB)) {
+  if ((bVar5 == 0) || (bVar5 == 1)) {
     bVar2 = true;
   }
   else {
@@ -1307,7 +1306,7 @@ void FUN_fffbaa81(byte param_1)
   uint uStack_10;
   
   freq = g_ui.freq_tx;
-  vfo_rec_ptr(VFO_TX);
+  vfo_rec_ptr(1);
   bVar4 = g_ui.trx_state;
   cStack_16 = -1;
   bVar3 = false;
@@ -1659,11 +1658,11 @@ ushort FUN_fffbb16b(short param_1)
 void FUN_fffbb185(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   undefined1 uStack_1;
   
-  rVar1 = vfo_mode(VFO_TX);
-  if (rVar1 < MODE_CW_L) {
+  bVar1 = vfo_mode(1);
+  if (bVar1 < 2) {
     uStack_1 = g_opstate.monitor[0];
   }
   else {

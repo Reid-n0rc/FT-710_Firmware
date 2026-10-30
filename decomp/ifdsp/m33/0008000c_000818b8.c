@@ -1,11 +1,16 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
-// ===== rom_api_1c_guarded_call @ 0008000c (32 bytes)
+// ===== IAP_FlexspiNorAutoConfig @ 0008000c (32 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers [guess] */
+/* r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C)
+   ->get_config (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1
+   [fact: 0x8000C-0x8002A]. Same calls in the same order as IAP_FlexspiNorAutoConfig in
+   mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay
+   loop first) [inference]. No BL/B.W/literal reference anywhere in the image [fact: branch+literal
+   scan] */
 
-void rom_api_1c_guarded_call(undefined4 param_1,undefined4 param_2)
+void IAP_FlexspiNorAutoConfig(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -21,12 +26,14 @@ void rom_api_1c_guarded_call(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== power_set_deepsleep_pmc_cfg @ 00080030 (24 bytes)
+// ===== POWER_SetBiasConfig @ 00080030 (24 bytes)
 
-/* PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep
-   [guess] */
+/* if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 [fact: 0x80030].
+   Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764
+   devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) [inference]. Called from
+   0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA (POWER_EnterDeepSleep) [fact] */
 
-void power_set_deepsleep_pmc_cfg(void)
+void POWER_SetBiasConfig(void)
 
 {
   int iVar1;
@@ -74,11 +81,14 @@ void deinitXip(void)
 }
 
 
-// ===== power_sram_pd_differs @ 0008009c (68 bytes)
+// ===== countPartitionSwitches @ 0008009c (68 bytes)
 
-/* Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess] */
+/* returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks
+   0x1F000FFF, 0x3FFFFFFF, 0x3FFFFFFF), else 0 [fact: 0x8009C]. Same expression and masks as static
+   countPartitionSwitches in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is
+   POWER_CalculateSafetyCount, as in the SDK [inference] */
 
-bool power_sram_pd_differs(void)
+bool countPartitionSwitches(void)
 
 {
   uint uVar1;
@@ -169,7 +179,7 @@ uint POWER_CalculateSafetyCount(int param_1)
     iVar13 = 0x1cd;
     puVar7 = &DAT_00006590;
   }
-  bVar14 = power_sram_pd_differs();
+  bVar14 = countPartitionSwitches();
   iVar10 = SYSCTL0_PDSLEEPCFG1;
   if (iVar10 < 0) {
     iVar10 = 8000;
@@ -330,7 +340,7 @@ void POWER_EnterSleep_mode1(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
+  uVar5 = POWER_SetBiasConfig(uVar4);
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
   iVar3 = NVIC_ISER1;
@@ -388,7 +398,7 @@ void POWER_EnterSleep_mode2(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = power_set_deepsleep_pmc_cfg(uVar4);
+  uVar5 = POWER_SetBiasConfig(uVar4);
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
   iVar3 = NVIC_ISER1;
@@ -521,7 +531,7 @@ void POWER_EnterDeepSleep(void)
     uVar13 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  puVar8 = (uint *)power_set_deepsleep_pmc_cfg();
+  puVar8 = (uint *)POWER_SetBiasConfig();
   uVar3 = SCB_SCR;
   SCB_SCR = uVar3 | 4;
   uVar3 = CLKCTL0_MAINCLKSELA;
@@ -807,8 +817,11 @@ void BOARD_SetFlexspiClock(uint param_1,int param_2)
 
 // ===== OTFAD_Init @ 00080a18 (44 bytes)
 
-/* NEW true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE;
-   unused [guess] */
+/* true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE);
+   waits until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) |= bits [fact: 0x80A18].
+   Same as OTFAD_Init in mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM,
+   forceLDM, restrictedRegAccess, enableOTFAD, flexspiBaseAddr) [inference]. No reference in the
+   image [fact: branch+literal scan] */
 
 void OTFAD_Init(int param_1,int param_2)
 
@@ -825,7 +838,8 @@ void OTFAD_Init(int param_1,int param_2)
 
 // ===== OTFAD_Deinit @ 00080a44 (14 bytes)
 
-/* NEW: OTFAD CR &= ~GE; unused [guess] */
+/* base->CR (+0xC00) &= ~0x80000000 (GE) [fact: 0x80A44]; same as OTFAD_Deinit in mcux-sdk@8a289764
+   fsl_otfad.c [inference]. No reference in the image [fact: branch+literal scan] */
 
 void OTFAD_Deinit(int param_1)
 
@@ -1415,7 +1429,7 @@ undefined4 app_main(void)
   GPIO_PortInit(&GPIO_B0_0,2);
   BOARD_InitPins();
   BOARD_BootClockRUN();
-  BOARD_InitDebugConsole();
+  app_init_nop();
   regfile_clear();
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);

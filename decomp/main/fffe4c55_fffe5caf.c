@@ -782,11 +782,11 @@ undefined1 FUN_fffe564b(void)
 bool vfo_mode_is_cw(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   bool bStack_3;
   
-  rVar1 = vfo_mode(VFO_TX);
-  if ((rVar1 == MODE_CW_U) || (rVar1 == MODE_CW_L)) {
+  bVar1 = vfo_mode(1);
+  if ((bVar1 == 3) || (bVar1 == 2)) {
     bStack_3 = false;
   }
   else {
@@ -804,11 +804,11 @@ bool vfo_mode_is_cw(void)
 undefined1 msg_voice_mode_ok(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   undefined1 uStack_3;
   
-  rVar1 = vfo_mode(VFO_TX);
-  if ((rVar1 < 2) || (rVar1 - 4 < 4)) {
+  bVar1 = vfo_mode(1);
+  if ((bVar1 < 2) || (bVar1 - 4 < 4)) {
     uStack_3 = 1;
   }
   else {

@@ -4425,7 +4425,7 @@ LAB_0021e59c:
  * branch_b_delay_init @ 0021e6b0  (17 bytes, 1 callers, export file 0021c818_0021f6d0.c)
  * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
  * Registers: 0x56
- * Tag: [fact] [guess]
+ * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
 // ===== branch_b_delay_init @ 0021e6b0 (17 bytes)
@@ -4445,7 +4445,7 @@ void branch_b_delay_init(void)
  * branch_b_delay @ 0021e6c4  (124 bytes, 1 callers, export file 0021c818_0021f6d0.c)
  * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
  * Registers: 0x56
- * Tag: [fact] [guess]
+ * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
 // ===== branch_b_delay @ 0021e6c4 (124 bytes)

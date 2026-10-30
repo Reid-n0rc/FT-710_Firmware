@@ -239,13 +239,13 @@ void FUN_fff9b150(ushort param_1)
 void FUN_fff9b195(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   byte bStack_a;
   undefined1 uStack_9;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = keyer_mode_class(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = keyer_mode_class(pbVar1);
   if (iVar2 == 0) {
     uStack_9 = 0x80;
     bStack_a = 0;
@@ -275,14 +275,14 @@ void FUN_fff9b212(ushort param_1)
 
 {
   bool bVar1;
-  vfo_rec *pvVar2;
+  byte *pbVar2;
   int iVar3;
   byte bStack_a;
   undefined1 uStack_9;
   
-  pvVar2 = vfo_rec_ptr(VFO_TX);
-  iVar3 = FUN_fffc3f1b(pvVar2);
-  if ((iVar3 == 1) || (iVar3 = keyer_mode_class(pvVar2), iVar3 != 0)) {
+  pbVar2 = vfo_rec_ptr(1);
+  iVar3 = FUN_fffc3f1b(pbVar2);
+  if ((iVar3 == 1) || (iVar3 = keyer_mode_class(pbVar2), iVar3 != 0)) {
     bVar1 = true;
   }
   else {
@@ -290,7 +290,7 @@ void FUN_fff9b212(ushort param_1)
   }
   if (bVar1) {
     uStack_9 = 0;
-    iVar3 = FUN_fff99dbf(pvVar2);
+    iVar3 = FUN_fff99dbf(pbVar2);
     if (iVar3 == 0) {
       bStack_a = 0;
     }
@@ -362,11 +362,11 @@ void FUN_fff9b32d(ushort param_1)
 void FUN_fff9b373(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   ushort local_2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  if ((pvVar1->mode & 0xf) - 8 < 7) {
+  pbVar1 = vfo_rec_ptr(1);
+  if ((*pbVar1 & 0xf) - 8 < 7) {
     (&DAT_00001741)[param_1] = 0x80;
   }
   else {

@@ -1067,7 +1067,7 @@ void sdr_task(void)
   byte bVar2;
   undefined1 auStack_8 [6];
   byte local_2;
-  vfo_which local_1;
+  byte local_1;
   
   local_1 = g_ui.transmitting;
   local_2 = g_ui.trx_state;
@@ -1082,7 +1082,7 @@ void sdr_task(void)
     sdr_bridge_mode();
   }
   if (DAT_0001b3dd != local_1) {
-    if ((local_1 == VFO_TX) && (bVar2 = rx_line_get(), bVar2 != 0)) {
+    if ((local_1 == 1) && (bVar2 = rx_line_get(), bVar2 != 0)) {
       bVar1 = true;
     }
     else {
@@ -1091,7 +1091,7 @@ void sdr_task(void)
     if (bVar1) {
       return;
     }
-    if ((local_1 == VFO_RX) && (bVar2 = tx_line_get(), bVar2 != 0)) {
+    if ((local_1 == 0) && (bVar2 = tx_line_get(), bVar2 != 0)) {
       bVar1 = true;
     }
     else {
@@ -1115,7 +1115,7 @@ void sdr_task(void)
            (sdr_upd_r03(), DAT_00001c8b == '\0')))))))) &&
        ((sdr_upd_r08_tx_freq(), DAT_00001c8b == '\0' && (sdr_upd_r0e(), DAT_00001c8b == '\0')))) &&
       (sdr_upd_r14_mode(), DAT_00001c8b == '\0')) &&
-     ((local_1 != VFO_RX ||
+     ((local_1 != 0 ||
       ((((sdr_upd_r04(), DAT_00001c8b == '\0' && (sdr_upd_r12(), DAT_00001c8b == '\0')) &&
         ((sdr_upd_r13(), DAT_00001c8b == '\0' &&
          (((sdr_upd_r16_filter(), DAT_00001c8b == '\0' &&
@@ -1286,7 +1286,7 @@ void sdr_upd_r03(void)
   uint uVar1;
   undefined2 uStack_6;
   
-  uVar1 = vfo_freq(VFO_TX,VFO_SIDE_SEL);
+  uVar1 = vfo_freq(1,2);
   if (uVar1 < 0x3b9aca1) {
     uStack_6 = -0x19c3;
   }
@@ -1310,7 +1310,7 @@ void sdr_upd_r03(void)
 void sdr_upd_r04(void)
 
 {
-  vfo_rec_ptr(VFO_RX);
+  vfo_rec_ptr(0);
   if (DAT_0001b73c == -0x1ae7) {
     return;
   }
@@ -1329,15 +1329,15 @@ void sdr_upd_r04(void)
 void sdr_upd_r08_tx_freq(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   byte bVar2;
   ushort uVar3;
   ushort uStack_6;
   undefined4 uStack_4;
   
-  rVar1 = vfo_mode(VFO_TX);
+  bVar1 = vfo_mode(1);
   uStack_4 = g_ui.freq_tx;
-  if (rVar1 == MODE_PSK) {
+  if (bVar1 == 0xe) {
     if (g_opstate.ex010419_psk_tone == 1) {
       uStack_6 = 0x5dc;
     }
@@ -1353,17 +1353,17 @@ void sdr_upd_r08_tx_freq(void)
     bVar2 = tx_cw_keying_class();
     if (bVar2 == 3) {
       uVar3 = (ushort)g_opstate.cw_pitch * 10 + 300;
-      if (rVar1 == MODE_LSB) {
+      if (bVar1 == 0) {
         uStack_4 = uStack_4 - uVar3;
       }
-      else if (rVar1 == MODE_USB) {
+      else if (bVar1 == 1) {
         uStack_4 = uStack_4 + uVar3;
       }
       DAT_0001b3de = '\x01';
     }
     else if (DAT_0001b3de == '\x01') {
-      bVar2 = tx_line_get();
-      if (bVar2 == 1) {
+      bVar1 = tx_line_get();
+      if (bVar1 == 1) {
         return;
       }
       DAT_0001b3de = '\0';
@@ -1391,25 +1391,25 @@ void sdr_upd_r08_tx_freq(void)
 /* Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while
    0x1204D != 0 */
 
-void sdr_upd_r0a_demod(vfo_which param_1)
+void sdr_upd_r0a_demod(byte param_1)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   sdr_mod_class sStack_4;
   
-  rVar2 = vfo_mode(param_1);
+  bVar2 = vfo_mode(param_1);
   bVar3 = ptt_source_get();
   if (bVar3 == 0) {
     return;
   }
-  uVar1 = (uint)rVar2;
+  uVar1 = (uint)bVar2;
   if (uVar1 == 0) {
 LAB_fffa1791:
     sStack_4 = SDR_MOD_LSB;
-    bVar3 = tx_cw_keying_class();
-    if (bVar3 == 3) {
+    bVar2 = tx_cw_keying_class();
+    if (bVar2 == 3) {
       sStack_4 = SDR_MOD_CW;
     }
   }
@@ -1417,8 +1417,8 @@ LAB_fffa1791:
     if ((uVar1 == 1) || (uVar1 == 0xe)) {
 LAB_fffa17a1:
       sStack_4 = SDR_MOD_USB;
-      bVar3 = tx_cw_keying_class();
-      if (bVar3 == 3) {
+      bVar2 = tx_cw_keying_class();
+      if (bVar2 == 3) {
         sStack_4 = SDR_MOD_CW;
       }
       goto LAB_fffa17b2;
@@ -1466,7 +1466,7 @@ void sdr_upd_r0b_band(char param_1)
   short sStack_a;
   
   vfo_mode(param_1);
-  freq = vfo_freq(param_1,VFO_SIDE_SEL);
+  freq = vfo_freq(param_1,2);
   bVar1 = gen_subband_of_freq(freq);
   if (param_1 == '\0') {
     sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8);
@@ -1582,7 +1582,7 @@ void sdr_upd_r0f_band(char param_1)
     if (0x9b2 < g_ui.adc_sdr_det) {
       return;
     }
-    freq = vfo_freq(param_1,VFO_SIDE_SEL);
+    freq = vfo_freq(param_1,2);
     bVar1 = gen_subband_of_freq(freq);
     if (param_1 == '\0') {
       sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 2);
@@ -1645,36 +1645,36 @@ void sdr_upd_r13(void)
 void sdr_upd_r14_mode(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   short sStack_2;
   
-  rVar1 = vfo_mode(VFO_TX);
-  switch(rVar1) {
-  case MODE_CW_L:
-  case MODE_CW_U:
+  bVar1 = vfo_mode(1);
+  switch(bVar1) {
+  case 2:
+  case 3:
     sStack_2 = 0x2000;
     break;
-  case MODE_AM:
-  case MODE_AM_N:
+  case 4:
+  case 5:
     sStack_2 = 0x3200;
     break;
-  case MODE_FM:
-  case MODE_DATA_FM:
+  case 6:
+  case 10:
     sStack_2 = 0x7800;
     break;
-  case MODE_FM_N:
-  case MODE_DATA_FM_N:
+  case 7:
+  case 0xb:
     sStack_2 = 0x3c00;
     break;
-  case MODE_DATA_L:
-  case MODE_DATA_U:
+  case 8:
+  case 9:
     sStack_2 = 0x2000;
     break;
-  case MODE_RTTY_L:
-  case MODE_RTTY_U:
+  case 0xc:
+  case 0xd:
     sStack_2 = 0x2000;
     break;
-  case MODE_PSK:
+  case 0xe:
     sStack_2 = 0x2000;
     break;
   default:
@@ -1722,15 +1722,15 @@ void sdr_upd_r16_filter(void)
   char *pcVar4;
   undefined1 uStack_7;
   undefined1 uStack_6;
-  radio_mode rStack_5;
+  byte bStack_5;
   short sStack_2;
   
-  rStack_5 = vfo_mode(VFO_RX);
+  bStack_5 = vfo_mode(0);
   pcVar4 = (char *)aess_level_ptr();
   bVar1 = *pcVar4 == '\0';
   vfo_filter_width_hz(&uStack_7);
   uVar3 = CONCAT11(uStack_7,uStack_6);
-  uVar2 = (uint)rStack_5;
+  uVar2 = (uint)bStack_5;
   if (1 < uVar2 - 10) {
     if (uVar2 == 4) {
       sStack_2 = 0x21;
@@ -1835,32 +1835,30 @@ LAB_fffa1c3f:
 void sdr_upd_r18_rx_freq(void)
 
 {
-  byte bVar1;
-  uint uVar2;
-  bool bVar3;
-  short sVar4;
+  uint uVar1;
+  bool bVar2;
+  short sVar3;
   undefined1 uStack_16;
   undefined1 uStack_15;
-  radio_mode rStack_14;
+  byte bStack_14;
   byte bStack_13;
   short sStack_12;
   short sStack_10;
   ushort uStack_e;
   ushort uStack_a;
   undefined4 uStack_8;
-  vfo_rec *pvStack_4;
+  byte *pbStack_4;
   
-  pvStack_4 = vfo_rec_ptr(VFO_RX);
-  rStack_14 = vfo_mode(VFO_RX);
+  pbStack_4 = vfo_rec_ptr(0);
+  bStack_14 = vfo_mode(0);
   uStack_a = 0;
-  uStack_8 = vfo_freq_clar(VFO_RX,VFO_SIDE_SEL);
+  uStack_8 = vfo_freq_clar(0,2);
   sStack_10 = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                        g_opstate.ex010420_data_shift_ssb_be[1]);
-  uVar2 = (uint)rStack_14;
-  if (uVar2 == 0xe) {
-    bVar1 = pvStack_4->blk[3].shift_be[0];
-    uStack_a = CONCAT11(bVar1,pvStack_4->blk[3].shift_be[1]);
-    if ((bVar1 & 0x80) == 0) {
+  uVar1 = (uint)bStack_14;
+  if (uVar1 == 0xe) {
+    uStack_a = CONCAT11(pbStack_4[0x30],pbStack_4[0x31]);
+    if ((pbStack_4[0x30] & 0x80) == 0) {
       uStack_8 = uStack_a + uStack_8;
     }
     else {
@@ -1868,14 +1866,14 @@ void sdr_upd_r18_rx_freq(void)
       uStack_8 = uStack_8 - uStack_a;
     }
   }
-  else if (uVar2 - 2 < 2) {
-    uStack_a = CONCAT11(pvStack_4->blk[1].shift_be[0],pvStack_4->blk[1].shift_be[1]);
+  else if (uVar1 - 2 < 2) {
+    uStack_a = CONCAT11(pbStack_4[0x1c],pbStack_4[0x1d]);
     vfo_filter_width_hz(&uStack_16);
     uStack_e = (ushort)g_opstate.cw_pitch * 10 + 300;
     if (CONCAT11(uStack_16,uStack_15) < uStack_e) {
-      bVar3 = (uStack_a & 0x8000) != 0;
-      if (rStack_14 == MODE_CW_L) {
-        if (bVar3) {
+      bVar2 = (uStack_a & 0x8000) != 0;
+      if (bStack_14 == 2) {
+        if (bVar2) {
           uStack_a = ~uStack_a + 1;
           uStack_8 = uStack_8 + uStack_a;
         }
@@ -1883,7 +1881,7 @@ void sdr_upd_r18_rx_freq(void)
           uStack_8 = uStack_8 - uStack_a;
         }
       }
-      else if (bVar3) {
+      else if (bVar2) {
         uStack_a = ~uStack_a + 1;
         uStack_8 = uStack_8 - uStack_a;
       }
@@ -1894,9 +1892,9 @@ void sdr_upd_r18_rx_freq(void)
     else {
       uStack_a = (short)((int)((uint)CONCAT11(uStack_16,uStack_15) - (uint)uStack_e) / 2) + uStack_a
       ;
-      bVar3 = (uStack_a & 0x8000) != 0;
-      if (rStack_14 == MODE_CW_L) {
-        if (bVar3) {
+      bVar2 = (uStack_a & 0x8000) != 0;
+      if (bStack_14 == 2) {
+        if (bVar2) {
           uStack_a = ~uStack_a + 1;
           uStack_8 = uStack_8 + uStack_a;
         }
@@ -1904,7 +1902,7 @@ void sdr_upd_r18_rx_freq(void)
           uStack_8 = uStack_8 - uStack_a;
         }
       }
-      else if (bVar3) {
+      else if (bVar2) {
         uStack_a = ~uStack_a + 1;
         uStack_8 = uStack_8 - uStack_a;
       }
@@ -1913,12 +1911,11 @@ void sdr_upd_r18_rx_freq(void)
       }
     }
   }
-  else if (uVar2 - 8 < 2) {
-    uStack_a = sStack_10 * 10 +
-               CONCAT11(pvStack_4->blk[3].shift_be[0],pvStack_4->blk[3].shift_be[1]);
-    bVar3 = (uStack_a & 0x8000) != 0;
-    if (rStack_14 == MODE_DATA_L) {
-      if (bVar3) {
+  else if (uVar1 - 8 < 2) {
+    uStack_a = sStack_10 * 10 + CONCAT11(pbStack_4[0x30],pbStack_4[0x31]);
+    bVar2 = (uStack_a & 0x8000) != 0;
+    if (bStack_14 == 8) {
+      if (bVar2) {
         uStack_a = ~uStack_a + 1;
         uStack_8 = uStack_8 + uStack_a;
       }
@@ -1926,7 +1923,7 @@ void sdr_upd_r18_rx_freq(void)
         uStack_8 = uStack_8 - uStack_a;
       }
     }
-    else if (bVar3) {
+    else if (bVar2) {
       uStack_a = ~uStack_a + 1;
       uStack_8 = uStack_8 - uStack_a;
     }
@@ -1934,8 +1931,8 @@ void sdr_upd_r18_rx_freq(void)
       uStack_8 = uStack_8 + uStack_a;
     }
   }
-  else if (uVar2 - 0xc < 2) {
-    sVar4 = CONCAT11(pvStack_4->blk[2].shift_be[0],pvStack_4->blk[2].shift_be[1]);
+  else if (uVar1 - 0xc < 2) {
+    sVar3 = CONCAT11(pbStack_4[0x26],pbStack_4[0x27]);
     bStack_13 = g_opstate.ex010516_shift_frequency;
     if (g_opstate.ex010516_shift_frequency == 1) {
       sStack_12 = 0x69;
@@ -1949,10 +1946,10 @@ void sdr_upd_r18_rx_freq(void)
     else {
       sStack_12 = 0x55;
     }
-    if (rStack_14 != MODE_RTTY_L) {
-      sVar4 = -sVar4;
+    if (bStack_14 != 0xc) {
+      sVar3 = -sVar3;
     }
-    uStack_a = sStack_12 + sVar4;
+    uStack_a = sStack_12 + sVar3;
     if ((uStack_a & 0x8000) == 0) {
       uStack_8 = uStack_8 - uStack_a;
     }
@@ -1961,11 +1958,11 @@ void sdr_upd_r18_rx_freq(void)
       uStack_8 = uStack_8 + uStack_a;
     }
   }
-  else if (uVar2 < 2) {
-    uStack_a = CONCAT11(pvStack_4->blk[0].shift_be[0],pvStack_4->blk[0].shift_be[1]) + 0x5dc;
-    bVar3 = (uStack_a & 0x8000) != 0;
-    if (rStack_14 == MODE_LSB) {
-      if (bVar3) {
+  else if (uVar1 < 2) {
+    uStack_a = CONCAT11(pbStack_4[0x12],pbStack_4[0x13]) + 0x5dc;
+    bVar2 = (uStack_a & 0x8000) != 0;
+    if (bStack_14 == 0) {
+      if (bVar2) {
         uStack_a = ~uStack_a + 1;
         uStack_8 = uStack_8 + uStack_a;
       }
@@ -1973,7 +1970,7 @@ void sdr_upd_r18_rx_freq(void)
         uStack_8 = uStack_8 - uStack_a;
       }
     }
-    else if (bVar3) {
+    else if (bVar2) {
       uStack_a = ~uStack_a + 1;
       uStack_8 = uStack_8 - uStack_a;
     }
@@ -2006,18 +2003,18 @@ void sdr_upd_r1a_nb_level(void)
 
 {
   byte bVar1;
-  radio_mode rVar2;
-  vfo_rec *pvVar3;
+  byte bVar2;
+  byte *pbVar3;
   short sStack_6;
   
-  pvVar3 = vfo_rec_ptr(VFO_RX);
+  pbVar3 = vfo_rec_ptr(0);
   bVar1 = g_opstate.nb_level;
-  if ((pvVar3->flags2 & 2) == 0) {
+  if ((pbVar3[2] & 2) == 0) {
     sStack_6 = 0;
   }
   else {
-    rVar2 = vfo_mode(VFO_RX);
-    if (rVar2 == MODE_AM || rVar2 == MODE_AM_N) {
+    bVar2 = vfo_mode(0);
+    if (bVar2 == 4 || bVar2 == 5) {
       sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0x90);
     }
     else {
@@ -2036,19 +2033,20 @@ void sdr_upd_r1a_nb_level(void)
 
 // ===== sdr_upd_r1b @ fffa2049 (102 bytes)
 
-/* Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 [guess: NB parameter] */
+/* Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by NB WIDTH 0x9AD3 (EX030203) [fact]; NB
+   width parameter [inference: only input] */
 
 void sdr_upd_r1b(void)
 
 {
   byte bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   short sStack_2;
   
-  vfo_mode(VFO_RX);
+  vfo_mode(0);
   bVar1 = g_opstate.ex030203_nb_width;
-  rVar2 = vfo_mode(VFO_RX);
-  if (rVar2 == MODE_AM || rVar2 == MODE_AM_N) {
+  bVar2 = vfo_mode(0);
+  if (bVar2 == 4 || bVar2 == 5) {
     sStack_2 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0xbc);
   }
   else {
@@ -2066,7 +2064,8 @@ void sdr_upd_r1b(void)
 
 // ===== sdr_upd_r1c @ fffa20af (72 bytes)
 
-/* Reg 0x1C = 2/5/10 from setting 0x9AD2 [guess: NB parameter] */
+/* Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 (EX030202) [fact]; NB rejection parameter [inference:
+   only input] */
 
 void sdr_upd_r1c(void)
 
@@ -2121,17 +2120,17 @@ void sdr_upd_r1d_notch(void)
   byte bStack_15;
   byte bStack_14;
   byte bStack_13;
-  radio_mode rStack_12;
+  byte bStack_12;
   byte bStack_11;
   ushort uStack_10;
   short sStack_c;
   short sStack_a;
   short sStack_8;
   ushort uStack_6;
-  vfo_rec *pvStack_4;
+  byte *pbStack_4;
   
-  pvStack_4 = vfo_rec_ptr(VFO_RX);
-  rStack_12 = vfo_mode(VFO_RX);
+  pbStack_4 = vfo_rec_ptr(0);
+  bStack_12 = vfo_mode(0);
   bStack_13 = g_opstate.ex030201_if_notch_width;
   sStack_c = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                       g_opstate.ex010420_data_shift_ssb_be[1]);
@@ -2139,11 +2138,10 @@ void sdr_upd_r1d_notch(void)
   sStack_8 = 0;
   uStack_6 = 0;
   bStack_11 = 0;
-  uVar1 = (uint)rStack_12;
+  uVar1 = (uint)bStack_12;
   if (uVar1 == 0xe) {
-    bStack_11 = pvStack_4->blk[3].flags & 0x80;
-    sVar2 = CONCAT11(pvStack_4->blk[3].notch_be[0],pvStack_4->blk[3].notch_be[1]);
-    sStack_8 = sVar2 * 10;
+    bStack_11 = pbStack_4[0x28] & 0x80;
+    sStack_8 = CONCAT11(pbStack_4[0x2c],pbStack_4[0x2d]) * 10;
     if (g_opstate.ex010419_psk_tone == 1) {
       sStack_a = 0x5dc;
     }
@@ -2154,12 +2152,12 @@ void sdr_upd_r1d_notch(void)
       sStack_a = 1000;
     }
     sStack_a = sStack_c * 10 + sStack_a;
-    uStack_6 = sStack_a + sVar2 * -10;
+    uStack_6 = sStack_a + CONCAT11(pbStack_4[0x2c],pbStack_4[0x2d]) * -10;
   }
   else if (uVar1 - 2 < 2) {
-    bStack_11 = pvStack_4->blk[1].flags & 0x80;
-    sStack_8 = CONCAT11(pvStack_4->blk[1].notch_be[0],pvStack_4->blk[1].notch_be[1]) * 10;
-    sStack_a = CONCAT11(pvStack_4->blk[1].shift_be[0],pvStack_4->blk[1].shift_be[1]);
+    bStack_11 = pbStack_4[0x14] & 0x80;
+    sStack_8 = CONCAT11(pbStack_4[0x18],pbStack_4[0x19]) * 10;
+    sStack_a = CONCAT11(pbStack_4[0x1c],pbStack_4[0x1d]);
     vfo_filter_width_hz(&uStack_17);
     uStack_10 = (ushort)g_opstate.cw_pitch * 10 + 300;
     if (CONCAT11(uStack_17,uStack_16) < uStack_10) {
@@ -2171,18 +2169,16 @@ void sdr_upd_r1d_notch(void)
     }
   }
   else if (uVar1 - 8 < 2) {
-    bStack_11 = pvStack_4->blk[3].flags & 0x80;
-    sVar2 = CONCAT11(pvStack_4->blk[3].notch_be[0],pvStack_4->blk[3].notch_be[1]);
-    sStack_8 = sVar2 * 10;
-    sStack_a = sStack_c * 10 + CONCAT11(pvStack_4->blk[3].shift_be[0],pvStack_4->blk[3].shift_be[1])
-    ;
-    uStack_6 = sStack_a + sVar2 * -10;
+    bStack_11 = pbStack_4[0x28] & 0x80;
+    sStack_8 = CONCAT11(pbStack_4[0x2c],pbStack_4[0x2d]) * 10;
+    sStack_a = sStack_c * 10 + CONCAT11(pbStack_4[0x30],pbStack_4[0x31]);
+    uStack_6 = sStack_a + CONCAT11(pbStack_4[0x2c],pbStack_4[0x2d]) * -10;
   }
   else if (uVar1 - 0xc < 2) {
-    bStack_11 = pvStack_4->blk[2].flags & 0x80;
-    sVar2 = CONCAT11(pvStack_4->blk[2].notch_be[0],pvStack_4->blk[2].notch_be[1]);
+    bStack_11 = pbStack_4[0x1e] & 0x80;
+    sVar2 = CONCAT11(pbStack_4[0x22],pbStack_4[0x23]);
     sStack_8 = sVar2 * 10;
-    sStack_a = CONCAT11(pvStack_4->blk[2].shift_be[0],pvStack_4->blk[2].shift_be[1]);
+    sStack_a = CONCAT11(pbStack_4[0x26],pbStack_4[0x27]);
     bStack_14 = g_opstate.ex010515_mark_frequency;
     bStack_15 = g_opstate.ex010516_shift_frequency;
     if (g_opstate.ex010515_mark_frequency == 0) {
@@ -2213,11 +2209,10 @@ void sdr_upd_r1d_notch(void)
     }
   }
   else if (uVar1 < 2) {
-    bStack_11 = pvStack_4->blk[0].flags & 0x80;
-    sVar2 = CONCAT11(pvStack_4->blk[0].notch_be[0],pvStack_4->blk[0].notch_be[1]);
-    sStack_8 = sVar2 * 10;
-    sStack_a = CONCAT11(pvStack_4->blk[0].shift_be[0],pvStack_4->blk[0].shift_be[1]);
-    uStack_6 = sStack_a + 0x5dc + sVar2 * -10;
+    bStack_11 = pbStack_4[10] & 0x80;
+    sStack_8 = CONCAT11(pbStack_4[0xe],pbStack_4[0xf]) * 10;
+    sStack_a = CONCAT11(pbStack_4[0x12],pbStack_4[0x13]);
+    uStack_6 = sStack_a + 0x5dc + CONCAT11(pbStack_4[0xe],pbStack_4[0xf]) * -10;
   }
   if ((uStack_6 & 0x8000) == 0) {
     uStack_6 = uStack_6 / 5;
@@ -2225,8 +2220,8 @@ void sdr_upd_r1d_notch(void)
   else {
     uStack_6 = ~((ushort)(~uStack_6 + 1) / 5) + 1;
   }
-  if ((((rStack_12 == MODE_USB) || (rStack_12 == MODE_CW_U)) || (rStack_12 == MODE_DATA_U)) ||
-     (rStack_12 == MODE_RTTY_U || rStack_12 == MODE_PSK)) {
+  if ((((bStack_12 == 1) || (bStack_12 == 3)) || (bStack_12 == 9)) ||
+     (bStack_12 == 0xd || bStack_12 == 0xe)) {
     uStack_6 = ~uStack_6 + 1;
   }
   if ((uStack_6 & 0x8000) != 0) {
@@ -2272,22 +2267,22 @@ void sdr_upd_r1e_passband(void)
   short sVar2;
   undefined1 uStack_11;
   undefined1 uStack_10;
-  radio_mode rStack_f;
+  byte bStack_f;
   byte bStack_e;
   byte bStack_d;
   short sStack_c;
   ushort uStack_a;
   ushort uStack_6;
-  vfo_rec *pvStack_4;
+  byte *pbStack_4;
   
-  pvStack_4 = vfo_rec_ptr(VFO_RX);
-  rStack_f = vfo_mode(VFO_RX);
+  pbStack_4 = vfo_rec_ptr(0);
+  bStack_f = vfo_mode(0);
   sStack_c = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                       g_opstate.ex010420_data_shift_ssb_be[1]);
   uStack_6 = 0;
-  uVar1 = (uint)rStack_f;
+  uVar1 = (uint)bStack_f;
   if (uVar1 == 0xe) {
-    sVar2 = CONCAT11(pvStack_4->blk[3].shift_be[0],pvStack_4->blk[3].shift_be[1]);
+    sVar2 = CONCAT11(pbStack_4[0x30],pbStack_4[0x31]);
     if (g_opstate.ex010419_psk_tone == 1) {
       uStack_6 = sVar2 + 0x5dc;
     }
@@ -2299,7 +2294,7 @@ void sdr_upd_r1e_passband(void)
     }
   }
   else if (uVar1 - 2 < 2) {
-    uStack_6 = CONCAT11(pvStack_4->blk[1].shift_be[0],pvStack_4->blk[1].shift_be[1]);
+    uStack_6 = CONCAT11(pbStack_4[0x1c],pbStack_4[0x1d]);
     vfo_filter_width_hz(&uStack_11);
     uStack_a = (ushort)g_opstate.cw_pitch * 10 + 300;
     if (CONCAT11(uStack_11,uStack_10) < uStack_a) {
@@ -2310,11 +2305,10 @@ void sdr_upd_r1e_passband(void)
     }
   }
   else if (uVar1 - 8 < 2) {
-    uStack_6 = sStack_c * 10 + CONCAT11(pvStack_4->blk[3].shift_be[0],pvStack_4->blk[3].shift_be[1])
-    ;
+    uStack_6 = sStack_c * 10 + CONCAT11(pbStack_4[0x30],pbStack_4[0x31]);
   }
   else if (uVar1 - 0xc < 2) {
-    sVar2 = CONCAT11(pvStack_4->blk[2].shift_be[0],pvStack_4->blk[2].shift_be[1]);
+    sVar2 = CONCAT11(pbStack_4[0x26],pbStack_4[0x27]);
     bStack_d = g_opstate.ex010515_mark_frequency;
     bStack_e = g_opstate.ex010516_shift_frequency;
     if (g_opstate.ex010515_mark_frequency == 0) {
@@ -2345,7 +2339,7 @@ void sdr_upd_r1e_passband(void)
     }
   }
   else if (uVar1 < 2) {
-    uStack_6 = CONCAT11(pvStack_4->blk[0].shift_be[0],pvStack_4->blk[0].shift_be[1]) + 0x5dc;
+    uStack_6 = CONCAT11(pbStack_4[0x12],pbStack_4[0x13]) + 0x5dc;
   }
   if ((uStack_6 & 0x8000) == 0) {
     uStack_6 = uStack_6 / 5;
@@ -2353,8 +2347,8 @@ void sdr_upd_r1e_passband(void)
   else {
     uStack_6 = ~((ushort)(~uStack_6 + 1) / 5) + 1;
   }
-  if ((((rStack_f == MODE_USB) || (rStack_f == MODE_CW_U)) || (rStack_f == MODE_DATA_U)) ||
-     (rStack_f == MODE_RTTY_U || rStack_f == MODE_PSK)) {
+  if ((((bStack_f == 1) || (bStack_f == 3)) || (bStack_f == 9)) ||
+     (bStack_f == 0xd || bStack_f == 0xe)) {
     uStack_6 = ~uStack_6 + 1;
   }
   if (DAT_0001b764 == uStack_6) {
@@ -2376,15 +2370,15 @@ void sdr_upd_r1e_passband(void)
 void sdr_upd_r1f_width(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   undefined1 uStack_4;
   undefined1 uStack_3;
   short local_2;
   uint uVar2;
   
   local_2 = 0;
-  rVar1 = vfo_mode(VFO_RX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(0);
+  uVar2 = (uint)bVar1;
   if (uVar2 < 4) goto LAB_fffa2703;
   if (uVar2 != 4) {
     if (uVar2 == 5) {
@@ -2436,7 +2430,7 @@ void sdr_upd_r20_scope_freq(char param_1)
   undefined4 uStack_10;
   undefined *puStack_c;
   
-  uVar3 = vfo_freq(param_1,VFO_SIDE_SEL);
+  uVar3 = vfo_freq(param_1,2);
   bVar1 = g_opstate.scope_mode;
   puVar4 = (undefined1 *)scope_span_ptr(uVar3);
   if (param_1 == '\0') {
@@ -2536,7 +2530,7 @@ void sdr_upd_r22_scope_span(byte param_1)
   short sStack_a;
   
   bVar1 = g_opstate.scope_mode;
-  freq = vfo_freq(param_1,VFO_SIDE_SEL);
+  freq = vfo_freq(param_1,2);
   bVar2 = freq_range_index(freq);
   sStack_a = 1000;
   if (bVar1 == 2) {
@@ -2585,7 +2579,8 @@ void sdr_upd_r22_scope_span(byte param_1)
 
 // ===== sdr_upd_r23 @ fffa2992 (83 bytes)
 
-/* Reg 0x23 = 0x8000/0x7000/0x5000 from setting 0x9B14 [guess: scope/gain] */
+/* Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 (EX040201) [fact]; scope RBW parameter
+   [inference: only input] */
 
 void sdr_upd_r23(void)
 
@@ -2764,7 +2759,7 @@ void sdr_upd_r27_scope_level(char param_1)
   
   bVar2 = g_opstate.ex040201_rbw;
   bVar1 = g_cfg105.a049_rx_scope_sdr_ref;
-  uVar4 = vfo_freq(param_1,VFO_SIDE_SEL);
+  uVar4 = vfo_freq(param_1,2);
   pcVar5 = (char *)scope_level_ptr(uVar4,param_1);
   if (bVar2 == 1) {
     uStack_14 = '\x02';

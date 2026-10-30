@@ -2091,17 +2091,17 @@ byte FUN_fff97430(void)
   char cVar2;
   byte bVar3;
   byte bVar4;
-  vfo_rec *pvVar5;
+  byte *pbVar5;
   int iVar6;
   int iVar7;
   char *pcVar8;
   byte bStack_a;
   char cStack_9;
   
-  pvVar5 = vfo_rec_ptr(VFO_TX);
-  bVar3 = pvVar5->mode & 0xf;
-  iVar6 = FUN_fff9752b(pvVar5);
-  iVar7 = keyer_mode_class(pvVar5);
+  pbVar5 = vfo_rec_ptr(1);
+  bVar3 = *pbVar5 & 0xf;
+  iVar6 = FUN_fff9752b(pbVar5);
+  iVar7 = keyer_mode_class(pbVar5);
   if ((iVar7 == 0) || (g_opstate.keyer_on != 1)) {
     cVar2 = '\0';
   }
@@ -2118,7 +2118,7 @@ byte FUN_fff97430(void)
   else {
     cStack_9 = '\x01';
   }
-  bVar4 = mode_block_byte0(pvVar5);
+  bVar4 = mode_block_byte0(pbVar5);
   bStack_a = ((bVar4 & 2) != 0) << 2 | cStack_9 << 4 | cVar2 << 5 | (iVar6 != 0) << 6;
   if ((bVar3 == 6) || (bVar3 == 7)) {
     bVar1 = true;
@@ -2139,7 +2139,7 @@ byte FUN_fff97430(void)
     bVar1 = false;
   }
   if (bVar1) {
-    bStack_a = bStack_a | (pvVar5->flags2 >> 2 & 3) + 1;
+    bStack_a = bStack_a | (pbVar5[2] >> 2 & 3) + 1;
   }
   return bStack_a;
 }
@@ -2813,7 +2813,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
   byte bStack_5;
   byte local_4;
   byte local_2;
-  vfo_side local_1;
+  byte local_1;
   
   bVar2 = param_2 & 0xf0;
   local_4 = bVar2 | 0xd4;
@@ -2854,7 +2854,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
     if (g_opstate.split_on == 1) {
       bVar1 = PTR_g_ui_00025d38->split_long_on != 0;
       if (g_opstate.active_vfo == VFO_A) {
-        if ((bVar1) || (local_1 != VFO_B)) {
+        if ((bVar1) || (local_1 != 1)) {
           bVar1 = false;
         }
         else {
@@ -2863,7 +2863,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         if (bVar1) {
           local_4 = local_4 & 0xf0 | 5;
         }
-        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == VFO_A)) {
+        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == 0)) {
           bVar1 = true;
         }
         else {
@@ -2874,7 +2874,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         }
       }
       else {
-        if ((bVar1) || (local_1 != VFO_A)) {
+        if ((bVar1) || (local_1 != 0)) {
           bVar1 = false;
         }
         else {
@@ -2883,7 +2883,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         if (bVar1) {
           local_4 = local_4 & 0xf0 | 5;
         }
-        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == VFO_B)) {
+        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == 1)) {
           bVar1 = true;
         }
         else {
@@ -2895,15 +2895,15 @@ byte FUN_fff97ebf(char param_1,byte param_2)
       }
     }
     if (g_opstate.active_vfo == VFO_A) {
-      if ((PTR_g_ui_00025d38->clar_flags_a != 0) && (local_1 == VFO_B)) {
+      if ((PTR_g_ui_00025d38->clar_flags_a != 0) && (local_1 == 1)) {
         local_4 = local_4 & 0xf0 | 9;
       }
     }
-    else if ((PTR_g_ui_00025d38->clar_flags_b != 0) && (local_1 == VFO_A)) {
+    else if ((PTR_g_ui_00025d38->clar_flags_b != 0) && (local_1 == 0)) {
       local_4 = local_4 & 0xf0 | 9;
     }
   }
-  if (local_1 == VFO_A) {
+  if (local_1 == 0) {
     bStack_5 = g_opstate.vfo_a.flags5;
   }
   else {
@@ -3012,7 +3012,7 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,uint param_4)
 /* -- FUN_fff98258: 2 callers, export file fff981ba_fff99837.c; not on a subsystem page */
 // ===== FUN_fff98258 @ fff98258 (82 bytes)
 
-void FUN_fff98258(vfo_side param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void FUN_fff98258(char param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   byte bVar1;
@@ -3022,7 +3022,7 @@ void FUN_fff98258(vfo_side param_1,undefined4 param_2,undefined4 param_3,undefin
   local_14 = PTR_g_ui_00025d38->freq_tx;
   bVar1 = vfo_tune_locked(param_1);
   if (bVar1 == 1) {
-    if (param_1 == VFO_A) {
+    if (param_1 == '\0') {
       bStack_15 = g_mem_hdr.chan_a;
     }
     else {
@@ -3477,11 +3477,11 @@ void FUN_fff9960e(ushort param_1)
 uint FUN_fff99669(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   uint uVar2;
   
-  rVar1 = vfo_mode(VFO_TX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(1);
+  uVar2 = (uint)bVar1;
   if (uVar2 != 0xe) {
     if (uVar2 - 2 < 2) {
       return 0x9bfd;
@@ -3665,12 +3665,12 @@ void FUN_fff99837(ushort param_1)
 uint FUN_fff99877(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   uint local_8;
   uint uVar2;
   
-  rVar1 = vfo_mode(VFO_TX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(1);
+  uVar2 = (uint)bVar1;
   if (uVar2 == 0xe) {
 LAB_fff998d0:
     local_8 = 0x9bed;
@@ -4066,11 +4066,11 @@ void FUN_fff99d48(ushort param_1)
 void FUN_fff99d82(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = FUN_fff99dbf(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = FUN_fff99dbf(pbVar1);
   iVar2 = (uint)(iVar2 != 0) * 9;
   (&DAT_00001749)[param_1] = BYTE_ARRAY_fff800f3[iVar2 + 0x261];
   *(undefined4 *)(&DAT_00001745 + param_1) = *(undefined4 *)(BYTE_ARRAY_fff800f3 + iVar2 + 0x25d);
@@ -4715,13 +4715,13 @@ void FUN_fff9b150(ushort param_1)
 void FUN_fff9b195(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   byte bStack_a;
   undefined1 uStack_9;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = keyer_mode_class(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = keyer_mode_class(pbVar1);
   if (iVar2 == 0) {
     uStack_9 = 0x80;
     bStack_a = 0;
@@ -4752,14 +4752,14 @@ void FUN_fff9b212(ushort param_1)
 
 {
   bool bVar1;
-  vfo_rec *pvVar2;
+  byte *pbVar2;
   int iVar3;
   byte bStack_a;
   undefined1 uStack_9;
   
-  pvVar2 = vfo_rec_ptr(VFO_TX);
-  iVar3 = FUN_fffc3f1b(pvVar2);
-  if ((iVar3 == 1) || (iVar3 = keyer_mode_class(pvVar2), iVar3 != 0)) {
+  pbVar2 = vfo_rec_ptr(1);
+  iVar3 = FUN_fffc3f1b(pbVar2);
+  if ((iVar3 == 1) || (iVar3 = keyer_mode_class(pbVar2), iVar3 != 0)) {
     bVar1 = true;
   }
   else {
@@ -4767,7 +4767,7 @@ void FUN_fff9b212(ushort param_1)
   }
   if (bVar1) {
     uStack_9 = 0;
-    iVar3 = FUN_fff99dbf(pvVar2);
+    iVar3 = FUN_fff99dbf(pbVar2);
     if (iVar3 == 0) {
       bStack_a = 0;
     }
@@ -4843,11 +4843,11 @@ void FUN_fff9b32d(ushort param_1)
 void FUN_fff9b373(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   ushort local_2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  if ((pvVar1->mode & 0xf) - 8 < 7) {
+  pbVar1 = vfo_rec_ptr(1);
+  if ((*pbVar1 & 0xf) - 8 < 7) {
     (&DAT_00001741)[param_1] = 0x80;
   }
   else {
@@ -5329,7 +5329,7 @@ uint FUN_fff9c6ab(void)
   uint freq;
   undefined4 uStack_10;
   
-  freq = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+  freq = vfo_freq(0,2);
   bVar1 = freq_range_index(freq);
   if (g_ui.transmitting == 0) {
     uStack_10 = 0x9bca;
@@ -6744,17 +6744,17 @@ byte FUN_fffb4062(void)
 {
   bool bVar1;
   byte bVar2;
-  radio_mode rVar3;
+  byte bVar3;
   char cVar4;
   ushort uVar5;
   uint uVar6;
   byte bStack_f;
   
-  uVar6 = vfo_freq(VFO_TX,VFO_SIDE_SEL);
-  rVar3 = vfo_mode(VFO_TX);
+  uVar6 = vfo_freq(1,2);
+  bVar3 = vfo_mode(1);
   cVar4 = tx_band_of_freq(uVar6);
   bVar2 = g_opstate.rf_power[3];
-  if ((rVar3 == MODE_AM) || (rVar3 == MODE_AM_N)) {
+  if ((bVar3 == 4) || (bVar3 == 5)) {
     bVar1 = true;
   }
   else {
@@ -6833,20 +6833,20 @@ uint FUN_fffb4135(uint param_1)
 /* -- FUN_fffb418a: 2 callers, export file fffb2fc0_fffb4c45.c; not on a subsystem page */
 // ===== FUN_fffb418a @ fffb418a (143 bytes)
 
-byte FUN_fffb418a(vfo_which param_1)
+byte FUN_fffb418a(byte param_1)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   byte local_9;
-  vfo_which local_1;
+  byte local_1;
   uint uVar2;
   
   local_1 = param_1;
   if (g_opstate.split_on != 0) {
-    local_1 = VFO_TX;
+    local_1 = 1;
   }
-  rVar1 = vfo_mode(local_1);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(local_1);
+  uVar2 = (uint)bVar1;
   if (uVar2 == 0xe) {
 LAB_fffb41fc:
     local_9 = g_opstate.monitor[3];
@@ -6959,15 +6959,14 @@ void FUN_fffb5d68(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   char cVar4;
-  byte bVar5;
+  bool bVar5;
   bool bVar6;
-  bool bVar7;
-  byte bVar8;
-  uint uVar9;
-  int iVar10;
+  byte bVar7;
+  uint uVar8;
+  int iVar9;
   byte bStack_f;
   byte bStack_e;
   byte bStack_d;
@@ -6977,12 +6976,12 @@ void FUN_fffb5d68(void)
   byte bStack_8;
   byte bStack_7;
   
-  uVar9 = audio_route_state();
-  rVar2 = vfo_mode(VFO_RX);
+  uVar8 = audio_route_state();
+  bVar2 = vfo_mode(0);
   bVar3 = FUN_fffb2dfe();
-  FUN_fffb3d11(rVar2);
-  bVar8 = g_ui.transmitting;
-  bVar7 = false;
+  FUN_fffb3d11(bVar2);
+  bVar7 = g_ui.transmitting;
+  bVar6 = false;
   bStack_e = 0;
   bStack_d = 0;
   bStack_b = 0;
@@ -6990,8 +6989,8 @@ void FUN_fffb5d68(void)
   bStack_9 = 0;
   bStack_8 = 0;
   bStack_f = g_ui.spk_boost_level;
-  cVar4 = FUN_fffb3d11(rVar2);
-  uVar1 = (uint)rVar2;
+  cVar4 = FUN_fffb3d11(bVar2);
+  uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {
 LAB_fffb6009:
     if (g_opstate.preset_on == 0) {
@@ -7136,67 +7135,67 @@ LAB_fffb6009:
     }
   }
 LAB_fffb612b:
-  bVar5 = FUN_fffb418a(bVar8);
-  bVar8 = g_ui.af_gain;
-  switch(uVar9) {
+  bVar2 = FUN_fffb418a(bVar7);
+  bVar7 = g_ui.af_gain;
+  switch(uVar8) {
   case 0:
-    bVar7 = ear_det();
-    if (bVar7) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar6 = ear_det();
+    if (bVar6) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar7 = true;
+    bVar6 = true;
     break;
   case 1:
-    bVar7 = ear_det();
-    if (bVar7) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar6 = ear_det();
+    if (bVar6) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar7 = true;
+    bVar6 = true;
     break;
   case 2:
-    bVar6 = ear_det();
-    if (bVar6) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar5 = ear_det();
+    if (bVar5) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bStack_e = bVar5;
+    bStack_e = bVar2;
     break;
   case 3:
-    bVar6 = ear_det();
-    if (bVar6) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar5 = ear_det();
+    if (bVar5) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bStack_e = bVar5;
+    bStack_e = bVar2;
     break;
   case 4:
-    bVar6 = ear_det();
-    if (bVar6) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar5 = ear_det();
+    if (bVar5) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bStack_e = bVar5;
+    bStack_e = bVar2;
     break;
   case 5:
     bStack_8 = g_opstate.play_volume;
@@ -7204,50 +7203,50 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x32);
     break;
   case 6:
-    bVar6 = ear_det();
-    if (bVar6) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar5 = ear_det();
+    if (bVar5) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_d = 0xff;
     bStack_b = FUN_fffb34cf(0x1a);
-    bStack_e = bVar5;
+    bStack_e = bVar2;
     break;
   case 7:
-    bStack_8 = FUN_fffb34f9(bVar5);
+    bStack_8 = FUN_fffb34f9(bVar2);
     bStack_d = 0xff;
     bStack_b = FUN_fffb34cf(0x1a);
     break;
   case 8:
-    bVar7 = ear_det();
-    if (bVar7) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar6 = ear_det();
+    if (bVar6) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar8 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar8);
-    bVar7 = true;
+    bVar7 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar7);
+    bVar6 = true;
     break;
   case 9:
-    bVar7 = ear_det();
-    if (bVar7) {
-      bStack_8 = FUN_fffb354d(bVar8);
-      bStack_f = FUN_fffb3564(bVar8);
+    bVar6 = ear_det();
+    if (bVar6) {
+      bStack_8 = FUN_fffb354d(bVar7);
+      bStack_f = FUN_fffb3564(bVar7);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar7 = true;
+    bVar6 = true;
     break;
   case 10:
-    bStack_8 = FUN_fffb34f9(bVar5);
+    bStack_8 = FUN_fffb34f9(bVar2);
     bStack_b = FUN_fffb34cf(0x32);
     break;
   case 0xb:
@@ -7256,9 +7255,9 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x32);
     break;
   case 0xd:
-    bStack_8 = FUN_fffb34f9(bVar5);
-    bVar8 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar8);
+    bStack_8 = FUN_fffb34f9(bVar2);
+    bVar7 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar7);
     break;
   case 0xe:
     bStack_8 = g_opstate.play_volume;
@@ -7270,47 +7269,47 @@ LAB_fffb612b:
     if (g_opstate.ex030101_beep_level != 0) goto LAB_fffb6432;
   }
   if (g_ui.af_gain == 0) {
-    if ((uVar9 == 4) || (uVar9 == 7)) {
-      bVar6 = true;
+    if ((uVar8 == 4) || (uVar8 == 7)) {
+      bVar5 = true;
     }
     else {
-      bVar6 = false;
+      bVar5 = false;
     }
-    if (bVar6) {
-      iVar10 = FUN_fffb418a(g_ui.transmitting);
-      if (iVar10 == 0) {
+    if (bVar5) {
+      iVar9 = FUN_fffb418a(g_ui.transmitting);
+      if (iVar9 == 0) {
         FUN_fffb71f5();
       }
     }
-    else if (bVar7) {
+    else if (bVar6) {
       FUN_fffb71f5();
     }
   }
 LAB_fffb6432:
-  if ((g_ui.trx_state < 3) && (bVar8 = swtimer_expired(0xe), bVar8 != 1)) {
-    bVar7 = true;
+  if ((g_ui.trx_state < 3) && (bVar7 = swtimer_expired(0xe), bVar7 != 1)) {
+    bVar6 = true;
   }
   else {
-    bVar7 = false;
+    bVar6 = false;
   }
-  if ((!bVar7) && (g_ui.tx_lamp != 2)) {
+  if ((!bVar6) && (g_ui.tx_lamp != 2)) {
     if ((DAT_00020fbd == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar7 = false;
+      bVar6 = false;
     }
     else {
-      bVar7 = true;
+      bVar6 = true;
     }
-    if (bVar7) {
+    if (bVar6) {
       sst2_write12('\x01',bStack_8);
       DAT_00020fbd = bStack_8;
     }
     if ((DAT_00020fbc == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar7 = false;
+      bVar6 = false;
     }
     else {
-      bVar7 = true;
+      bVar6 = true;
     }
-    if (bVar7) {
+    if (bVar6) {
       sst2_write12('\x05',bStack_8);
       DAT_00020fbc = bStack_8;
     }
@@ -7320,64 +7319,64 @@ LAB_fffb6432:
     bStack_7 = 0;
   }
   if ((DAT_00020fb8 == bStack_7) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
+  if (bVar6) {
     sst2_write12('\x02',bStack_7);
     DAT_00020fb8 = bStack_7;
   }
-  bVar8 = FUN_fffb34f9(bStack_a);
-  if ((DAT_00020fb9 == bVar8) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+  bVar7 = FUN_fffb34f9(bStack_a);
+  if ((DAT_00020fb9 == bVar7) && (DAT_00012042 != '\0')) {
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
-    sst2_write12('\x03',bVar8);
-    DAT_00020fb9 = bVar8;
+  if (bVar6) {
+    sst2_write12('\x03',bVar7);
+    DAT_00020fb9 = bVar7;
   }
   if ((DAT_00020fba == bStack_b) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
+  if (bVar6) {
     sst2_write12('\x04',bStack_b);
     DAT_00020fba = bStack_b;
   }
   if ((DAT_00020fbe == bStack_d) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
+  if (bVar6) {
     sst2_write12('\x06',bStack_d);
     DAT_00020fbe = bStack_d;
   }
-  bVar8 = FUN_fffb34f9(bStack_e);
-  if ((DAT_00020fbf == bVar8) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+  bVar7 = FUN_fffb34f9(bStack_e);
+  if ((DAT_00020fbf == bVar7) && (DAT_00012042 != '\0')) {
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
-    sst2_write12('\a',bVar8);
-    DAT_00020fbf = bVar8;
+  if (bVar6) {
+    sst2_write12('\a',bVar7);
+    DAT_00020fbf = bVar7;
   }
   if ((DAT_00020fbb == bStack_f) && (DAT_00012042 != '\0')) {
-    bVar7 = false;
+    bVar6 = false;
   }
   else {
-    bVar7 = true;
+    bVar6 = true;
   }
-  if (bVar7) {
+  if (bVar6) {
     sst2_write12('\b',bStack_f);
     DAT_00020fbb = bStack_f;
     return;
@@ -7857,17 +7856,17 @@ void FUN_fffb7cec(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   bool bVar4;
   float fStack_1c;
   float fStack_18;
   float fStack_8;
   
-  rVar2 = vfo_mode(VFO_RX);
+  bVar2 = vfo_mode(0);
   bVar3 = g_cfg105.a047_rx_fm_sql_thn;
-  if ((((rVar2 == MODE_DATA_FM_N) || (rVar2 == MODE_FM_N)) ||
-      (bVar3 = g_cfg105.a046_rx_fm_sql_thw, rVar2 == MODE_DATA_FM)) || (rVar2 == MODE_FM)) {
+  if ((((bVar2 == 0xb) || (bVar2 == 7)) || (bVar3 = g_cfg105.a046_rx_fm_sql_thw, bVar2 == 10)) ||
+     (bVar2 == 6)) {
     fStack_8 = (float)bVar3;
     fStack_18 = (float)g_cfg105.a048_rx_fm_sql_ti;
     if (g_ui.rf_gain < 0x19) {
@@ -7897,7 +7896,7 @@ void FUN_fffb7cec(void)
     else {
       fStack_1c = 25.0;
     }
-    DAT_0001b4cb = rVar2;
+    DAT_0001b4cb = bVar2;
     bVar3 = dsp_fm_noise();
     if ((float)bVar3 < fStack_18) {
       g_ui.squelch_open = 1;
@@ -7919,7 +7918,7 @@ void FUN_fffb7cec(void)
   else {
     uVar1 = (uint)DAT_0001b4cb;
     if (((uVar1 - 6 < 2) || (uVar1 == 10 || uVar1 == 0xb)) &&
-       (DAT_0001b4cb = rVar2, bVar4 = af_mute_get(), bVar4)) {
+       (DAT_0001b4cb = bVar2, bVar4 = af_mute_get(), bVar4)) {
       af_mute_set('\0');
       return;
     }
@@ -7935,7 +7934,7 @@ void FUN_fffb7e61(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   bool bVar3;
   ushort uVar4;
   float fVar6;
@@ -7944,8 +7943,8 @@ void FUN_fffb7e61(void)
   uint uVar5;
   
   uVar1 = (uint)g_cfg105.a041_rx_s_mtr_40;
-  rVar2 = vfo_mode(VFO_RX);
-  uVar5 = (uint)rVar2;
+  bVar2 = vfo_mode(0);
+  uVar5 = (uint)bVar2;
   if (((uVar5 < 6) || (uVar5 - 8 < 2)) || (uVar5 - 0xc < 3)) {
     fVar6 = (float)uVar1 + 110.0;
     fStack_20 = (float)uVar1 + 80.0;
@@ -7995,9 +7994,8 @@ void FUN_fffb8d77(void)
   byte bVar4;
   byte bVar5;
   vfo_side vVar6;
-  radio_mode rVar7;
+  byte bVar7;
   bool bVar8;
-  byte bVar9;
   byte local_b;
   byte local_a;
   byte local_9;
@@ -8016,8 +8014,8 @@ void FUN_fffb8d77(void)
     if (g_ui.squelch_open == 1) {
       local_5 = 0x10;
     }
-    rVar7 = vfo_mode(VFO_TX);
-    if (((1 < rVar7 - 2) && (1 < rVar7 - 0xc)) && (g_opstate.vox_on != 0)) {
+    bVar7 = vfo_mode(1);
+    if (((1 < bVar7 - 2) && (1 < bVar7 - 0xc)) && (g_opstate.vox_on != 0)) {
       local_5 = local_5 | 0x80;
     }
     g_ui.tx_lamp = 0;
@@ -8034,8 +8032,8 @@ void FUN_fffb8d77(void)
       }
       if (bVar8) {
         local_5 = local_5 & 0xef;
-        bVar9 = blink_phase(0);
-        if (bVar9 != 0) {
+        bVar7 = blink_phase(0);
+        if (bVar7 != 0) {
           local_5 = local_5 | 0x20;
         }
         g_ui.tx_lamp = 2;
@@ -8127,7 +8125,7 @@ void FUN_fffb915e(void)
 {
   byte bVar1;
   bool bVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bStack_4;
   byte bStack_3;
   
@@ -8135,13 +8133,13 @@ void FUN_fffb915e(void)
     if (DAT_0001b4d1 != '\0') {
       DAT_0001b4d1 = 0;
       beep_stop();
-      bVar1 = PORTC_PODR;
-      PORTC_PODR = bVar1 | 0x10;
+      bVar3 = PORTC_PODR;
+      PORTC_PODR = bVar3 | 0x10;
       return;
     }
   }
   else {
-    rVar3 = vfo_mode(VFO_TX);
+    bVar3 = vfo_mode(1);
     if (g_opstate.preset_on == 0) {
       bStack_3 = g_opstate.ex010513_rptt_select;
     }
@@ -8163,7 +8161,7 @@ void FUN_fffb915e(void)
       bVar1 = PORTC_PIDR;
       bStack_4 = bVar1 >> 5 & 1;
     }
-    if ((rVar3 == MODE_RTTY_L) || (rVar3 == MODE_RTTY_U)) {
+    if ((bVar3 == 0xc) || (bVar3 == 0xd)) {
       bVar2 = true;
     }
     else {
@@ -8172,8 +8170,8 @@ void FUN_fffb915e(void)
     if (bVar2) {
       if (g_opstate.ex010517_polarity_tx == 0) {
         if (bStack_4 == 0) {
-          bVar1 = PORTC_PODR;
-          PORTC_PODR = bVar1 & 0xef;
+          bVar3 = PORTC_PODR;
+          PORTC_PODR = bVar3 & 0xef;
           if (DAT_0001b4d1 != '\x03') {
             DAT_0001b4d1 = 3;
             beep_request(0xb);
@@ -8181,8 +8179,8 @@ void FUN_fffb915e(void)
           }
         }
         else {
-          bVar1 = PORTC_PODR;
-          PORTC_PODR = bVar1 | 0x10;
+          bVar3 = PORTC_PODR;
+          PORTC_PODR = bVar3 | 0x10;
           if (DAT_0001b4d1 != '\x01') {
             DAT_0001b4d1 = 1;
             beep_request(9);
@@ -8191,8 +8189,8 @@ void FUN_fffb915e(void)
         }
       }
       else if (bStack_4 == 0) {
-        bVar1 = PORTC_PODR;
-        PORTC_PODR = bVar1 | 0x10;
+        bVar3 = PORTC_PODR;
+        PORTC_PODR = bVar3 | 0x10;
         if (DAT_0001b4d1 != '\x01') {
           DAT_0001b4d1 = 1;
           beep_request(9);
@@ -8200,8 +8198,8 @@ void FUN_fffb915e(void)
         }
       }
       else {
-        bVar1 = PORTC_PODR;
-        PORTC_PODR = bVar1 & 0xef;
+        bVar3 = PORTC_PODR;
+        PORTC_PODR = bVar3 & 0xef;
         if (DAT_0001b4d1 != '\x03') {
           DAT_0001b4d1 = 3;
           beep_request(0xb);
@@ -8212,8 +8210,8 @@ void FUN_fffb915e(void)
     else if (DAT_0001b4d1 != '\0') {
       DAT_0001b4d1 = 0;
       beep_stop();
-      bVar1 = PORTC_PODR;
-      PORTC_PODR = bVar1 | 0x10;
+      bVar3 = PORTC_PODR;
+      PORTC_PODR = bVar3 | 0x10;
       return;
     }
   }
@@ -8396,20 +8394,20 @@ void FUN_fffb9605(void)
   uint uVar2;
   byte bVar3;
   byte bVar4;
-  radio_mode rVar5;
+  byte bVar5;
   byte bVar6;
-  vfo_rec *pvVar7;
+  byte *pbVar7;
   uint uVar8;
   bool bStack_11;
   char cStack_a;
   ushort uStack_6;
   
-  pvVar7 = vfo_rec_ptr(VFO_RX);
+  pbVar7 = vfo_rec_ptr(0);
   uStack_6 = 100;
-  bVar3 = pvVar7->flags5 & 3;
-  uVar8 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+  bVar3 = pbVar7[5] & 3;
+  uVar8 = vfo_freq(0,2);
   bVar4 = gen_subband_of_freq(uVar8);
-  rVar5 = vfo_mode(VFO_RX);
+  bVar5 = vfo_mode(0);
   bVar6 = g_ui.trx_state;
   uVar8 = audio_route_state();
   bVar1 = DAT_000120ba != bVar3;
@@ -8423,10 +8421,10 @@ void FUN_fffb9605(void)
   }
   DAT_000120b9 = bVar4;
   bStack_11 = bStack_11 || bVar1;
-  if (DAT_000120bb != rVar5) {
+  if (DAT_000120bb != bVar5) {
     bStack_11 = true;
     g_ui.squelch_open = 0;
-    DAT_000120bb = rVar5;
+    DAT_000120bb = bVar5;
   }
   if (bVar6 < 7) {
     cStack_a = '\x03';
@@ -8435,8 +8433,7 @@ void FUN_fffb9605(void)
     cStack_a = '\b';
   }
   if (((DAT_0001b4d2 != cStack_a) && (DAT_0001b4d2 = cStack_a, cStack_a == '\b')) &&
-     ((rVar5 = vfo_mode(VFO_TX), MODE_CW_U < rVar5 || (bVar6 = tx_cw_keying_class(), bVar6 == 0))))
-  {
+     ((bVar6 = vfo_mode(1), 3 < bVar6 || (bVar6 = tx_cw_keying_class(), bVar6 == 0)))) {
     bStack_11 = true;
     uStack_6 = 0x28;
   }
@@ -8963,7 +8960,7 @@ void FUN_fffbaa81(byte param_1)
   uint uStack_10;
   
   freq = g_ui.freq_tx;
-  vfo_rec_ptr(VFO_TX);
+  vfo_rec_ptr(1);
   bVar4 = g_ui.trx_state;
   cStack_16 = -1;
   bVar3 = false;
@@ -9320,11 +9317,11 @@ ushort FUN_fffbb16b(short param_1)
 void FUN_fffbb185(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   undefined1 uStack_1;
   
-  rVar1 = vfo_mode(VFO_TX);
-  if (rVar1 < MODE_CW_L) {
+  bVar1 = vfo_mode(1);
+  if (bVar1 < 2) {
     uStack_1 = g_opstate.monitor[0];
   }
   else {
@@ -10345,7 +10342,7 @@ void FUN_fffbcf91(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   
   menu_close_if_open();
   func_panel_close();
@@ -10357,20 +10354,20 @@ void FUN_fffbcf91(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  rVar2 = vfo_mode(VFO_RX);
-  if ((rVar2 == MODE_FM) || (rVar2 == MODE_FM_N)) {
+  bVar2 = vfo_mode(0);
+  if ((bVar2 == 6) || (bVar2 == 7)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM)) {
+  if ((bVar1) || (bVar2 == 10)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM_N)) {
+  if ((bVar1) || (bVar2 == 0xb)) {
     bVar1 = true;
   }
   else {
@@ -14121,12 +14118,12 @@ void FUN_fffc052b(byte param_1)
   
   PTR_g_ui_00025d54->freq_refresh_req = 1;
   if (g_opstate.scope_mode == 2) {
-    uVar2 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+    uVar2 = vfo_freq(0,2);
     bVar1 = freq_range_index(uVar2);
     g_opstate.scope_span_idx_b[bVar1] = param_1;
     return;
   }
-  uVar2 = vfo_freq_clar(VFO_RX,VFO_SIDE_SEL);
+  uVar2 = vfo_freq_clar(0,2);
   bVar1 = freq_range_index(uVar2);
   if (bVar1 == 0xff) {
     return;
@@ -14285,16 +14282,16 @@ void FUN_fffc0c8f(ushort param_1)
     popup_open_timed(1000);
     switch(param_1) {
     case 0x77:
-      FUN_fffc0d33(MODE_LSB);
+      FUN_fffc0d33(0);
       return;
     case 0x78:
-      FUN_fffc0d33(MODE_USB);
+      FUN_fffc0d33(1);
       return;
     case 0x79:
-      FUN_fffc0d33(MODE_CW_L);
+      FUN_fffc0d33(2);
       return;
     case 0x7a:
-      FUN_fffc0d33(MODE_CW_U);
+      FUN_fffc0d33(3);
       return;
     case 0x7b:
       FUN_fffc0e31();
@@ -14309,10 +14306,10 @@ void FUN_fffc0c8f(ushort param_1)
       FUN_fffc0e58();
       return;
     case 0x7f:
-      FUN_fffc0d33(MODE_DATA_L);
+      FUN_fffc0d33(8);
       return;
     case 0x80:
-      FUN_fffc0d33(MODE_DATA_U);
+      FUN_fffc0d33(9);
       return;
     case 0x81:
       FUN_fffc0e65();
@@ -14321,13 +14318,13 @@ void FUN_fffc0c8f(ushort param_1)
       FUN_fffc0e72();
       return;
     case 0x83:
-      FUN_fffc0d33(MODE_RTTY_L);
+      FUN_fffc0d33(0xc);
       return;
     case 0x84:
-      FUN_fffc0d33(MODE_RTTY_U);
+      FUN_fffc0d33(0xd);
       return;
     case 0x85:
-      FUN_fffc0d33(MODE_PSK);
+      FUN_fffc0d33(0xe);
       return;
     case 0x86:
       FUN_fffc0e7f();
@@ -14341,7 +14338,7 @@ void FUN_fffc0c8f(ushort param_1)
 /* -- FUN_fffc0d33: 18 callers, export file fffc04a0_fffc18ff.c; not on a subsystem page */
 // ===== FUN_fffc0d33 @ fffc0d33 (54 bytes)
 
-void FUN_fffc0d33(radio_mode mode)
+void FUN_fffc0d33(byte mode)
 
 {
   int iVar1;
@@ -14478,7 +14475,7 @@ void FUN_fffc0e7f(void)
 /* -- FUN_fffc0f10: 1 callers, export file fffc04a0_fffc18ff.c; not on a subsystem page */
 // ===== FUN_fffc0f10 @ fffc0f10 (188 bytes)
 
-void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
+void FUN_fffc0f10(byte old_mode,byte new_mode,byte *rec)
 
 {
   uint uVar1;
@@ -14488,12 +14485,12 @@ void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
   if (g_opstate.ex020118_cw_freq_display != 0) {
     uVar1 = (uint)old_mode;
     if (uVar1 - 4 < 0xb) {
-      if (new_mode == MODE_USB) {
+      if (new_mode == 1) {
         iVar3 = FUN_fffc10ad();
         FUN_fffc0fcc(-iVar3,rec);
         return;
       }
-      if (new_mode == MODE_LSB) {
+      if (new_mode == 0) {
         uVar2 = FUN_fffc10ad();
         FUN_fffc0fcc(uVar2,rec);
         return;
@@ -14512,12 +14509,12 @@ void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
       }
     }
     else if (uVar1 - 2 < 2) {
-      if (new_mode == MODE_USB) {
+      if (new_mode == 1) {
         iVar3 = FUN_fffc10ad();
         FUN_fffc0fcc(-iVar3,rec);
         return;
       }
-      if (new_mode == MODE_LSB) {
+      if (new_mode == 0) {
         uVar2 = FUN_fffc10ad();
         FUN_fffc0fcc(uVar2,rec);
         return;
@@ -14738,7 +14735,7 @@ void FUN_fffc1605(byte param_1)
 /* -- FUN_fffc1625: 1 callers, export file fffc04a0_fffc18ff.c; not on a subsystem page */
 // ===== FUN_fffc1625 @ fffc1625 (62 bytes)
 
-void FUN_fffc1625(band_idx param_1)
+void FUN_fffc1625(byte param_1)
 
 {
   if (PTR_g_ui_00025d54->scan_running != 1) {
@@ -15754,16 +15751,16 @@ undefined1 FUN_fffc2f50(void)
 /* -- FUN_fffc3006: 1 callers, export file fffc29f3_fffc3c23.c; not on a subsystem page */
 // ===== FUN_fffc3006 @ fffc3006 (37 bytes)
 
-band_idx FUN_fffc3006(void)
+byte FUN_fffc3006(void)
 
 {
   uint freq;
   undefined1 uStack_9;
   
-  freq = vfo_freq_clar(VFO_RX,VFO_SIDE_SEL);
+  freq = vfo_freq_clar(0,2);
   uStack_9 = band_of_freq(freq);
-  if (uStack_9 == BAND_NONE) {
-    uStack_9 = BAND_GEN;
+  if (uStack_9 == 0xff) {
+    uStack_9 = 0xb;
   }
   return uStack_9;
 }
@@ -16516,34 +16513,34 @@ undefined1 FUN_fffc3d75(void)
 {
   bool bVar1;
   undefined1 uVar2;
-  radio_mode rVar3;
+  byte bVar3;
   
-  rVar3 = vfo_mode(VFO_RX);
-  if ((rVar3 == MODE_LSB) || (rVar3 == MODE_USB)) {
+  bVar3 = vfo_mode(0);
+  if ((bVar3 == 0) || (bVar3 == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_AM)) {
+  if ((bVar1) || (bVar3 == 4)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_AM_N)) {
+  if ((bVar1) || (bVar3 == 5)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_FM)) {
+  if ((bVar1) || (bVar3 == 6)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar3 == MODE_FM_N)) {
+  if ((bVar1) || (bVar3 == 7)) {
     uVar2 = 1;
   }
   else {
@@ -16559,11 +16556,11 @@ undefined1 FUN_fffc3d75(void)
 void FUN_fffc3de8(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = keyer_mode_class(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = keyer_mode_class(pbVar1);
   if (iVar2 == 0) {
     return;
   }
@@ -16582,12 +16579,12 @@ void FUN_fffc3eaa(void)
 
 {
   bool bVar1;
-  vfo_rec *pvVar2;
+  byte *pbVar2;
   int iVar3;
   
-  pvVar2 = vfo_rec_ptr(VFO_TX);
-  iVar3 = FUN_fffc3f1b(pvVar2);
-  if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pvVar2), iVar3 == 0)) {
+  pbVar2 = vfo_rec_ptr(1);
+  iVar3 = FUN_fffc3f1b(pbVar2);
+  if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pbVar2), iVar3 == 0)) {
     bVar1 = true;
   }
   else {
@@ -16598,7 +16595,7 @@ void FUN_fffc3eaa(void)
       PTR_g_ui_00025d54->key_consumed = 1;
       return;
     }
-    FUN_fffc3f40(pvVar2);
+    FUN_fffc3f40(pbVar2);
     keyer_init();
     beep_request(1);
     PTR_g_ui_00025d54->key_consumed = 1;
@@ -17274,25 +17271,25 @@ void FUN_fffc4899(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   int iVar3;
   
   iVar3 = ui_close_overlays();
   if (iVar3 != 0) {
-    rVar2 = vfo_mode(VFO_RX);
-    if ((rVar2 == MODE_FM) || (rVar2 == MODE_FM_N)) {
+    bVar2 = vfo_mode(0);
+    if ((bVar2 == 6) || (bVar2 == 7)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (rVar2 == MODE_DATA_FM)) {
+    if ((bVar1) || (bVar2 == 10)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (rVar2 == MODE_DATA_FM_N)) {
+    if ((bVar1) || (bVar2 == 0xb)) {
       bVar1 = true;
     }
     else {
@@ -17483,56 +17480,56 @@ void FUN_fffc4af5(void)
 /* -- FUN_fffc4bd5: 7 callers, export file fffc4a8d_fffc6073.c; not on a subsystem page */
 // ===== FUN_fffc4bd5 @ fffc4bd5 (121 bytes)
 
-void FUN_fffc4bd5(radio_mode mode)
+void FUN_fffc4bd5(byte mode)
 
 {
   switch(mode) {
-  case MODE_LSB:
-    FUN_fffc0d33(MODE_LSB);
+  case 0:
+    FUN_fffc0d33(0);
     return;
-  case MODE_USB:
-    FUN_fffc0d33(MODE_USB);
+  case 1:
+    FUN_fffc0d33(1);
     return;
-  case MODE_CW_L:
-    FUN_fffc0d33(MODE_CW_L);
+  case 2:
+    FUN_fffc0d33(2);
     return;
-  case MODE_CW_U:
-    FUN_fffc0d33(MODE_CW_U);
+  case 3:
+    FUN_fffc0d33(3);
     return;
-  case MODE_AM:
+  case 4:
     FUN_fffc0e31();
     return;
-  case MODE_AM_N:
+  case 5:
     FUN_fffc0e3e();
     return;
-  case MODE_FM:
+  case 6:
     FUN_fffc0e4b();
     return;
-  case MODE_FM_N:
+  case 7:
     FUN_fffc0e58();
     return;
-  case MODE_DATA_L:
-    FUN_fffc0d33(MODE_DATA_L);
+  case 8:
+    FUN_fffc0d33(8);
     return;
-  case MODE_DATA_U:
-    FUN_fffc0d33(MODE_DATA_U);
+  case 9:
+    FUN_fffc0d33(9);
     return;
-  case MODE_DATA_FM:
+  case 10:
     FUN_fffc0e65();
     return;
-  case MODE_DATA_FM_N:
+  case 0xb:
     FUN_fffc0e72();
     return;
-  case MODE_RTTY_L:
-    FUN_fffc0d33(MODE_RTTY_L);
+  case 0xc:
+    FUN_fffc0d33(0xc);
     return;
-  case MODE_RTTY_U:
-    FUN_fffc0d33(MODE_RTTY_U);
+  case 0xd:
+    FUN_fffc0d33(0xd);
     return;
-  case MODE_PSK:
-    FUN_fffc0d33(MODE_PSK);
+  case 0xe:
+    FUN_fffc0d33(0xe);
     return;
-  case MODE_15:
+  case 0xf:
     FUN_fffc0e7f();
     return;
   default:
@@ -18060,7 +18057,7 @@ void FUN_fffc56cd(undefined1 param_1)
 /* -- FUN_fffc5767: 1 callers, export file fffc4a8d_fffc6073.c; not on a subsystem page */
 // ===== FUN_fffc5767 @ fffc5767 (49 bytes)
 
-void FUN_fffc5767(vfo_side param_1)
+void FUN_fffc5767(byte param_1)
 
 {
   bool bVar1;
@@ -20349,17 +20346,17 @@ void * FUN_fffc7827(void *param_1,byte *param_2)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   byte bVar3;
   undefined1 uVar4;
   uint uVar5;
   byte *pbStack_1c;
   undefined1 uStack_17;
   
-  uVar5 = vfo_freq(VFO_TX,VFO_SIDE_SEL);
-  rVar2 = vfo_mode(VFO_TX);
+  uVar5 = vfo_freq(1,2);
+  bVar2 = vfo_mode(1);
   bVar3 = tx_band_of_freq(uVar5);
-  if ((rVar2 == MODE_AM) || (rVar2 == MODE_AM_N)) {
+  if ((bVar2 == 4) || (bVar2 == 5)) {
     bVar1 = true;
   }
   else {
@@ -20369,8 +20366,8 @@ void * FUN_fffc7827(void *param_1,byte *param_2)
     *param_2 = g_opstate.ex030404_am_max_power;
     pbStack_1c = g_opstate.rf_power + 3;
     uStack_17 = 3;
-    if ((bVar3 < 9) && (bVar3 = max_power_limit(3), bVar3 < *param_2)) {
-      *param_2 = bVar3;
+    if ((bVar3 < 9) && (bVar2 = max_power_limit(3), bVar2 < *param_2)) {
+      *param_2 = bVar2;
     }
   }
   else if (bVar3 < 9) {
@@ -26748,20 +26745,20 @@ undefined2 FUN_fffde263(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
-  vfo_rec *pvVar3;
+  byte bVar2;
+  byte *pbVar3;
   undefined2 uStack_12;
   undefined4 uStack_f;
   byte bStack_a;
   
-  pvVar3 = vfo_rec_ptr(VFO_RX);
-  rVar2 = vfo_mode(VFO_RX);
-  uVar1 = (uint)rVar2;
+  pbVar3 = vfo_rec_ptr(0);
+  bVar2 = vfo_mode(0);
+  uVar1 = (uint)bVar2;
   if (uVar1 - 2 < 2) {
-    bStack_a = pvVar3->blk[1].flags2;
+    bStack_a = pbVar3[0x15];
   }
   else if (uVar1 - 4 < 2) {
-    bStack_a = pvVar3->blk[4].flags2;
+    bStack_a = pbVar3[0x33];
   }
   else {
     if (uVar1 - 6 < 2) {
@@ -26772,15 +26769,15 @@ undefined2 FUN_fffde263(void)
         return 0;
       }
       if (uVar1 - 0xc < 2) {
-        bStack_a = pvVar3->blk[2].flags2;
+        bStack_a = pbVar3[0x1f];
         goto LAB_fffde2eb;
       }
       if (uVar1 != 0xe) {
-        bStack_a = pvVar3->blk[0].flags2;
+        bStack_a = pbVar3[0xb];
         goto LAB_fffde2eb;
       }
     }
-    bStack_a = pvVar3->blk[3].flags2;
+    bStack_a = pbVar3[0x29];
   }
 LAB_fffde2eb:
   bStack_a = bStack_a & 0x80;
@@ -26812,20 +26809,20 @@ undefined2 FUN_fffde332(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
-  vfo_rec *pvVar3;
+  byte bVar2;
+  byte *pbVar3;
   undefined2 uStack_10;
   undefined4 uStack_e;
   byte bStack_a;
   
-  pvVar3 = vfo_rec_ptr(VFO_RX);
-  rVar2 = vfo_mode(VFO_RX);
-  uVar1 = (uint)rVar2;
+  pbVar3 = vfo_rec_ptr(0);
+  bVar2 = vfo_mode(0);
+  uVar1 = (uint)bVar2;
   if (uVar1 - 2 < 2) {
-    bStack_a = pvVar3->blk[1].flags;
+    bStack_a = pbVar3[0x14];
   }
   else if (uVar1 - 4 < 2) {
-    bStack_a = pvVar3->blk[4].flags;
+    bStack_a = pbVar3[0x32];
   }
   else {
     if (1 < uVar1 - 6) {
@@ -26839,11 +26836,11 @@ undefined2 FUN_fffde332(void)
         if (uVar1 == 0xe) {
           return 0;
         }
-        bStack_a = pvVar3->blk[0].flags;
+        bStack_a = pbVar3[10];
         goto LAB_fffde3b1;
       }
     }
-    bStack_a = pvVar3->blk[5].flags;
+    bStack_a = pbVar3[0x3c];
   }
 LAB_fffde3b1:
   bStack_a = bStack_a & 2;
@@ -26890,52 +26887,52 @@ ushort FUN_fffde3f1(void)
   byte bStack_10;
   byte bStack_f;
   byte bStack_e;
-  radio_mode rStack_d;
-  vfo_rec *pvStack_c;
+  byte bStack_d;
+  byte *pbStack_c;
   
   pcVar3 = acStack_20;
-  pvStack_c = vfo_rec_ptr(VFO_RX);
-  rStack_d = vfo_mode(VFO_RX);
+  pbStack_c = vfo_rec_ptr(0);
+  bStack_d = vfo_mode(0);
   uStack_18 = 0;
   builtin_strncpy(acStack_20,"BP00000;",8);
-  uVar4 = (uint)rStack_d;
+  uVar4 = (uint)bStack_d;
   if (uVar4 - 2 < 2) {
-    bStack_f = pvStack_c->blk[1].flags;
-    bStack_13 = pvStack_c->blk[1].notch_be[0];
-    bStack_12 = pvStack_c->blk[1].notch_be[1];
+    bStack_f = pbStack_c[0x14];
+    bStack_13 = pbStack_c[0x18];
+    bStack_12 = pbStack_c[0x19];
     goto LAB_fffde4d3;
   }
   if (uVar4 - 4 < 2) {
-    bStack_f = pvStack_c->blk[4].flags;
-    bStack_13 = pvStack_c->blk[4].notch_be[0];
-    bStack_12 = pvStack_c->blk[4].notch_be[1];
+    bStack_f = pbStack_c[0x32];
+    bStack_13 = pbStack_c[0x36];
+    bStack_12 = pbStack_c[0x37];
     goto LAB_fffde4d3;
   }
   if (uVar4 - 6 < 2) {
 LAB_fffde4c1:
-    bStack_f = pvStack_c->blk[5].flags;
-    bStack_13 = pvStack_c->blk[5].notch_be[0];
-    bStack_12 = pvStack_c->blk[5].notch_be[1];
+    bStack_f = pbStack_c[0x3c];
+    bStack_13 = pbStack_c[0x40];
+    bStack_12 = pbStack_c[0x41];
   }
   else {
     if (1 < uVar4 - 8) {
       if (uVar4 - 10 < 2) goto LAB_fffde4c1;
       if (uVar4 - 0xc < 2) {
-        bStack_f = pvStack_c->blk[2].flags;
-        bStack_13 = pvStack_c->blk[2].notch_be[0];
-        bStack_12 = pvStack_c->blk[2].notch_be[1];
+        bStack_f = pbStack_c[0x1e];
+        bStack_13 = pbStack_c[0x22];
+        bStack_12 = pbStack_c[0x23];
         goto LAB_fffde4d3;
       }
       if (uVar4 != 0xe) {
-        bStack_f = pvStack_c->blk[0].flags;
-        bStack_13 = pvStack_c->blk[0].notch_be[0];
-        bStack_12 = pvStack_c->blk[0].notch_be[1];
+        bStack_f = pbStack_c[10];
+        bStack_13 = pbStack_c[0xe];
+        bStack_12 = pbStack_c[0xf];
         goto LAB_fffde4d3;
       }
     }
-    bStack_f = pvStack_c->blk[3].flags;
-    bStack_13 = pvStack_c->blk[3].notch_be[0];
-    bStack_12 = pvStack_c->blk[3].notch_be[1];
+    bStack_f = pbStack_c[0x28];
+    bStack_13 = pbStack_c[0x2c];
+    bStack_12 = pbStack_c[0x2d];
   }
 LAB_fffde4d3:
   uStack_16 = CONCAT11(bStack_13,bStack_12);
@@ -27281,46 +27278,46 @@ ushort FUN_fffde9a8(void)
   byte bStack_10;
   byte bStack_f;
   byte bStack_e;
-  radio_mode rStack_d;
-  vfo_rec *pvStack_c;
+  byte bStack_d;
+  byte *pbStack_c;
   
-  pvStack_c = vfo_rec_ptr(VFO_RX);
-  rStack_d = vfo_mode(VFO_RX);
+  pbStack_c = vfo_rec_ptr(0);
+  bStack_d = vfo_mode(0);
   uStack_18 = 0;
   builtin_strncpy(acStack_1d,"0000;",5);
   uStack_21 = 0x30304f43;
-  uVar4 = (uint)rStack_d;
+  uVar4 = (uint)bStack_d;
   if (uVar4 - 2 < 2) {
-    bStack_e = pvStack_c->blk[1].flags;
-    uStack_14 = CONCAT11(pvStack_c->blk[1].contour_be[0],pvStack_c->blk[1].contour_be[1]);
+    bStack_e = pbStack_c[0x14];
+    uStack_14 = CONCAT11(pbStack_c[0x16],pbStack_c[0x17]);
     goto LAB_fffdea79;
   }
   if (uVar4 - 4 < 2) {
-    bStack_e = pvStack_c->blk[4].flags;
-    uStack_14 = CONCAT11(pvStack_c->blk[4].contour_be[0],pvStack_c->blk[4].contour_be[1]);
+    bStack_e = pbStack_c[0x32];
+    uStack_14 = CONCAT11(pbStack_c[0x34],pbStack_c[0x35]);
     goto LAB_fffdea79;
   }
   if (uVar4 - 6 < 2) {
 LAB_fffdea67:
-    bStack_e = pvStack_c->blk[5].flags;
-    uStack_14 = CONCAT11(pvStack_c->blk[5].contour_be[0],pvStack_c->blk[5].contour_be[1]);
+    bStack_e = pbStack_c[0x3c];
+    uStack_14 = CONCAT11(pbStack_c[0x3e],pbStack_c[0x3f]);
   }
   else {
     if (1 < uVar4 - 8) {
       if (uVar4 - 10 < 2) goto LAB_fffdea67;
       if (uVar4 - 0xc < 2) {
-        bStack_e = pvStack_c->blk[2].flags;
-        uStack_14 = CONCAT11(pvStack_c->blk[2].contour_be[0],pvStack_c->blk[2].contour_be[1]);
+        bStack_e = pbStack_c[0x1e];
+        uStack_14 = CONCAT11(pbStack_c[0x20],pbStack_c[0x21]);
         goto LAB_fffdea79;
       }
       if (uVar4 != 0xe) {
-        bStack_e = pvStack_c->blk[0].flags;
-        uStack_14 = CONCAT11(pvStack_c->blk[0].contour_be[0],pvStack_c->blk[0].contour_be[1]);
+        bStack_e = pbStack_c[10];
+        uStack_14 = CONCAT11(pbStack_c[0xc],pbStack_c[0xd]);
         goto LAB_fffdea79;
       }
     }
-    bStack_e = pvStack_c->blk[3].flags;
-    uStack_14 = CONCAT11(pvStack_c->blk[3].contour_be[0],pvStack_c->blk[3].contour_be[1]);
+    bStack_e = pbStack_c[0x28];
+    uStack_14 = CONCAT11(pbStack_c[0x2a],pbStack_c[0x2b]);
   }
 LAB_fffdea79:
   bStack_11 = g_opstate.apf_freq + 0x19;
@@ -27658,131 +27655,125 @@ ushort FUN_fffdef13(void)
 
 {
   byte bVar1;
-  radio_mode rVar2;
-  vfo_rec *pvVar3;
+  byte *pbVar2;
+  char *pcVar3;
   char *pcVar4;
-  char *pcVar5;
-  uint uVar6;
+  uint uVar5;
   ushort uStack_12;
   byte bStack_e;
   char local_7 [7];
   
   builtin_strncpy(local_7,"GT00;",5);
-  pvVar3 = vfo_rec_ptr(VFO_RX);
-  rVar2 = vfo_mode(VFO_RX);
+  pbVar2 = vfo_rec_ptr(0);
+  bVar1 = vfo_mode(0);
   uStack_12 = 0;
   bStack_e = 0;
-  uVar6 = (uint)rVar2;
-  if (uVar6 == 0xe) {
+  uVar5 = (uint)bVar1;
+  if (uVar5 == 0xe) {
 LAB_fffdf011:
-    bVar1 = pvVar3->blk[3].flags2;
-    if ((bVar1 & 0x40) != 0) {
-      uVar6 = (bVar1 & 0x30) >> 4;
-      if (uVar6 == 0) {
+    if ((pbVar2[0x29] & 0x40) != 0) {
+      uVar5 = (pbVar2[0x29] & 0x30) >> 4;
+      if (uVar5 == 0) {
         bStack_e = 5;
       }
-      else if (uVar6 == 3) {
+      else if (uVar5 == 3) {
         bStack_e = 3;
       }
-      else if (uVar6 == 2) {
+      else if (uVar5 == 2) {
         bStack_e = 2;
       }
-      else if (uVar6 == 1) {
+      else if (uVar5 == 1) {
         bStack_e = 1;
       }
     }
   }
   else {
-    if (uVar6 - 2 < 2) {
-      bVar1 = pvVar3->blk[1].flags2;
-      if ((bVar1 & 0x40) != 0) {
-        uVar6 = (bVar1 & 0x30) >> 4;
-        if (uVar6 == 3) {
+    if (uVar5 - 2 < 2) {
+      if ((pbVar2[0x15] & 0x40) != 0) {
+        uVar5 = (pbVar2[0x15] & 0x30) >> 4;
+        if (uVar5 == 3) {
           bStack_e = 3;
         }
-        else if (uVar6 == 1) {
+        else if (uVar5 == 1) {
           bStack_e = 1;
         }
-        else if (uVar6 == 2) {
+        else if (uVar5 == 2) {
           bStack_e = 2;
         }
-        else if (uVar6 == 0) {
+        else if (uVar5 == 0) {
           bStack_e = 4;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (uVar6 - 4 < 2) {
-      bVar1 = pvVar3->blk[4].flags2;
-      if ((bVar1 & 0x40) != 0) {
-        uVar6 = (bVar1 & 0x30) >> 4;
-        if (uVar6 == 0) {
+    if (uVar5 - 4 < 2) {
+      if ((pbVar2[0x33] & 0x40) != 0) {
+        uVar5 = (pbVar2[0x33] & 0x30) >> 4;
+        if (uVar5 == 0) {
           bStack_e = 6;
         }
-        else if (uVar6 == 3) {
+        else if (uVar5 == 3) {
           bStack_e = 3;
         }
-        else if (uVar6 == 2) {
+        else if (uVar5 == 2) {
           bStack_e = 2;
         }
-        else if (uVar6 == 1) {
+        else if (uVar5 == 1) {
           bStack_e = 1;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (1 < uVar6 - 6) {
-      if (uVar6 - 8 < 2) goto LAB_fffdf011;
-      if (1 < uVar6 - 10) {
-        if (uVar6 - 0xc < 2) {
-          bVar1 = pvVar3->blk[2].flags2;
-          if ((bVar1 & 0x40) != 0) {
-            uVar6 = (bVar1 & 0x30) >> 4;
-            if (uVar6 == 0) {
+    if (1 < uVar5 - 6) {
+      if (uVar5 - 8 < 2) goto LAB_fffdf011;
+      if (1 < uVar5 - 10) {
+        if (uVar5 - 0xc < 2) {
+          if ((pbVar2[0x1f] & 0x40) != 0) {
+            uVar5 = (pbVar2[0x1f] & 0x30) >> 4;
+            if (uVar5 == 0) {
               bStack_e = 5;
             }
-            else if (uVar6 == 3) {
+            else if (uVar5 == 3) {
               bStack_e = 3;
             }
-            else if (uVar6 == 2) {
+            else if (uVar5 == 2) {
               bStack_e = 2;
             }
-            else if (uVar6 == 1) {
+            else if (uVar5 == 1) {
               bStack_e = 1;
             }
           }
         }
-        else if ((uVar6 < 2) && (bVar1 = pvVar3->blk[0].flags2, (bVar1 & 0x40) != 0)) {
-          uVar6 = (bVar1 & 0x30) >> 4;
-          if (uVar6 == 0) {
+        else if ((uVar5 < 2) && ((pbVar2[0xb] & 0x40) != 0)) {
+          uVar5 = (pbVar2[0xb] & 0x30) >> 4;
+          if (uVar5 == 0) {
             bStack_e = 6;
           }
-          else if (uVar6 == 3) {
+          else if (uVar5 == 3) {
             bStack_e = 3;
           }
-          else if (uVar6 == 2) {
+          else if (uVar5 == 2) {
             bStack_e = 2;
           }
-          else if (uVar6 == 1) {
+          else if (uVar5 == 1) {
             bStack_e = 1;
           }
         }
         goto LAB_fffdf0fe;
       }
     }
-    bVar1 = pvVar3->blk[5].flags2;
-    if ((bVar1 & 0x40) != 0) {
-      uVar6 = (bVar1 & 0x30) >> 4;
-      if (uVar6 == 3) {
+    if ((pbVar2[0x3d] & 0x40) != 0) {
+      uVar5 = (pbVar2[0x3d] & 0x30) >> 4;
+      if (uVar5 == 3) {
         bStack_e = 3;
       }
-      else if (uVar6 == 1) {
+      else if (uVar5 == 1) {
         bStack_e = 1;
       }
-      else if (uVar6 == 2) {
+      else if (uVar5 == 2) {
         bStack_e = 2;
       }
-      else if (uVar6 == 0) {
+      else if (uVar5 == 0) {
         bStack_e = 4;
       }
     }
@@ -27794,12 +27785,12 @@ LAB_fffdf0fe:
     uStack_12 = 5;
   }
   if (uStack_12 != 0) {
-    pcVar5 = local_7;
-    pcVar4 = &DAT_00015e06;
-    for (uVar6 = (uint)uStack_12; uVar6 != 0; uVar6 = uVar6 - 1) {
-      *pcVar4 = *pcVar5;
+    pcVar4 = local_7;
+    pcVar3 = &DAT_00015e06;
+    for (uVar5 = (uint)uStack_12; uVar5 != 0; uVar5 = uVar5 - 1) {
+      *pcVar3 = *pcVar4;
+      pcVar3 = pcVar3 + 1;
       pcVar4 = pcVar4 + 1;
-      pcVar5 = pcVar5 + 1;
     }
   }
   return uStack_12;
@@ -27819,7 +27810,7 @@ LAB_fffdf0fe:
 /* WARNING: Removing unreachable block (ram,0xfffdf3ab) */
 /* WARNING: Removing unreachable block (ram,0xfffdf438) */
 
-ushort FUN_fffdf13a(vfo_side param_1)
+ushort FUN_fffdf13a(byte param_1)
 
 {
   bool bVar1;
@@ -27857,7 +27848,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
   uint uStack_14;
   uint uStack_10;
   vfo_rec *local_c;
-  vfo_side local_5;
+  byte local_5;
   
   pcVar6 = 
   "IF0000000000000000000000000;IS0000000;KP00;KR0;KS000;LK0;MD00;MG000;ML0000;MS00;MX0;NA00;NB00;NL0000;NR00;OS00;PA00;PC000;PL000;PR00;RA00;RG0000;RI00000000;RL000;RM0000000;SC0;SD00;SF00;SH0000;SQ0000;SS0000000;ST0;TS0;TX0;VD00;VG000;VS0;VX0;     RM 1"
@@ -27870,7 +27861,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     pcVar6 = pcVar6 + 1;
   }
   local_46 = 0;
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     local_c = &g_opstate.vfo_a;
     local_43[0] = 'I';
     local_43[1] = 0x46;
@@ -27933,7 +27924,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     local_41 = 0x3030;
     local_3f = '0';
   }
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     iVar7 = strncmp(&DAT_0001b50c,&local_41,3);
     if (iVar7 != 0) {
       DAT_0001b50e = local_3f;
@@ -27949,8 +27940,8 @@ ushort FUN_fffdf13a(vfo_side param_1)
       local_46 = 0x1c;
     }
   }
-  uStack_10 = vfo_freq(VFO_RX,local_5);
-  if (local_5 == VFO_A) {
+  uStack_10 = vfo_freq(0,local_5);
+  if (local_5 == 0) {
     if (DAT_00025d64 != uStack_10) {
       local_46 = 0x1c;
       DAT_00025d64 = uStack_10;
@@ -27980,7 +27971,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     acStack_3e[uVar5] = cVar2;
   }
   uStack_16 = CONCAT11(local_c->clar_offset_be[0],local_c->clar_offset_be[1]);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001ff6e != uStack_16) {
       local_46 = 0x1c;
       DAT_0001ff6e = uStack_16;
@@ -28016,7 +28007,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     cVar2 = nib2hex(abStack_24[uVar5]);
     acStack_34[uVar5] = cVar2;
   }
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b513 != local_27) {
       DAT_0001b513 = local_27;
       local_46 = 0x1c;
@@ -28043,7 +28034,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     uStack_2f = 0x31;
   }
   bVar3 = local_c->mode & 0xf;
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b512 != bVar3) {
       local_46 = 0x1c;
       DAT_0001b512 = bVar3;
@@ -28057,7 +28048,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
               [bVar3 + 0x3d14];
   cStack_2d = "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
               [local_25 + 0x3d23];
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b516 != local_25) {
       DAT_0001b516 = local_25;
       local_46 = 0x1c;
@@ -28068,7 +28059,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     local_46 = 0x1c;
   }
   cVar2 = (char)((local_c->flags3 & 0x38) >> 3);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b515 != cVar2) {
       local_46 = 0x1c;
       DAT_0001b515 = cVar2;
@@ -28090,7 +28081,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
   uStack_2a = 0x30;
   uStack_2b = 0x30;
   local_1a = (byte)((local_c->flags2 & 0xc) >> 2);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b514 != local_1a) {
       local_46 = 0x1c;
       DAT_0001b514 = local_1a;
@@ -28131,13 +28122,12 @@ ushort FUN_fffdf13a(vfo_side param_1)
 ushort FUN_fffdf66f(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   char cVar2;
-  vfo_rec *pvVar3;
-  uint uVar4;
-  undefined1 *puVar5;
-  undefined4 *puVar6;
-  ushort uVar7;
+  uint uVar3;
+  undefined1 *puVar4;
+  undefined4 *puVar5;
+  ushort uVar6;
   ushort uStack_22;
   byte *pbStack_20;
   byte bStack_1b;
@@ -28150,35 +28140,35 @@ ushort FUN_fffdf66f(void)
   local_8 = 0x3b30;
   local_c = 0x30303030;
   local_10 = 0x30305349;
-  pvVar3 = vfo_rec_ptr(VFO_RX);
-  rVar1 = vfo_mode(VFO_RX);
+  pbStack_20 = vfo_rec_ptr(0);
+  bVar1 = vfo_mode(0);
   uStack_22 = 0;
-  uVar4 = (uint)rVar1;
-  if (uVar4 - 2 < 2) {
-    pbStack_20 = pvVar3->blk[1].shift_be;
+  uVar3 = (uint)bVar1;
+  if (uVar3 - 2 < 2) {
+    pbStack_20 = pbStack_20 + 0x1c;
     goto LAB_fffdf6fd;
   }
-  if (uVar4 - 4 < 2) {
-    pbStack_20 = pvVar3->blk[4].shift_be;
+  if (uVar3 - 4 < 2) {
+    pbStack_20 = pbStack_20 + 0x3a;
     goto LAB_fffdf6fd;
   }
-  if (uVar4 - 6 < 2) {
+  if (uVar3 - 6 < 2) {
 LAB_fffdf6f6:
-    pbStack_20 = pvVar3->blk[5].shift_be;
+    pbStack_20 = pbStack_20 + 0x44;
   }
   else {
-    if (1 < uVar4 - 8) {
-      if (uVar4 - 10 < 2) goto LAB_fffdf6f6;
-      if (uVar4 - 0xc < 2) {
-        pbStack_20 = pvVar3->blk[2].shift_be;
+    if (1 < uVar3 - 8) {
+      if (uVar3 - 10 < 2) goto LAB_fffdf6f6;
+      if (uVar3 - 0xc < 2) {
+        pbStack_20 = pbStack_20 + 0x26;
         goto LAB_fffdf6fd;
       }
-      if (uVar4 != 0xe) {
-        pbStack_20 = pvVar3->blk[0].shift_be;
+      if (uVar3 != 0xe) {
+        pbStack_20 = pbStack_20 + 0x12;
         goto LAB_fffdf6fd;
       }
     }
-    pbStack_20 = pvVar3->blk[3].shift_be;
+    pbStack_20 = pbStack_20 + 0x30;
   }
 LAB_fffdf6fd:
   uStack_16 = 0;
@@ -28198,26 +28188,26 @@ LAB_fffdf6fd:
   }
   uStack_18 = 1000;
   for (bStack_1b = 0; bStack_1b < 4; bStack_1b = bStack_1b + 1) {
-    uVar4 = (uint)uStack_16;
+    uVar3 = (uint)uStack_16;
     if (uStack_18 != 0) {
-      uVar4 = uVar4 / uStack_18;
+      uVar3 = uVar3 / uStack_18;
     }
-    uVar7 = uStack_16;
+    uVar6 = uStack_16;
     if (uStack_18 != 0) {
-      uVar7 = uStack_16 / uStack_18;
+      uVar6 = uStack_16 / uStack_18;
     }
-    uStack_16 = uStack_16 - uVar7 * uStack_18;
+    uStack_16 = uStack_16 - uVar6 * uStack_18;
     uStack_18 = uStack_18 / 10;
-    cVar2 = nib2hex((byte)uVar4);
+    cVar2 = nib2hex((byte)uVar3);
     *(char *)((int)&local_c + bStack_1b + 1) = cVar2;
   }
   if (uStack_22 != 0) {
-    puVar6 = &local_10;
-    puVar5 = &DAT_00015e06;
-    for (uVar4 = (uint)uStack_22; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *puVar5 = *(undefined1 *)puVar6;
-      puVar5 = puVar5 + 1;
-      puVar6 = (undefined4 *)((int)puVar6 + 1);
+    puVar5 = &local_10;
+    puVar4 = &DAT_00015e06;
+    for (uVar3 = (uint)uStack_22; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *puVar4 = *(undefined1 *)puVar5;
+      puVar4 = puVar4 + 1;
+      puVar5 = (undefined4 *)((int)puVar5 + 1);
     }
   }
   return uStack_22;
@@ -28472,12 +28462,11 @@ undefined2 FUN_fffdfae4(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   char cVar3;
   char *pcVar4;
   char *pcVar5;
   int iVar6;
-  byte n;
   undefined2 uStack_1a;
   undefined2 uStack_18;
   byte bStack_15;
@@ -28486,8 +28475,8 @@ undefined2 FUN_fffdfae4(void)
   char local_c [8];
   
   builtin_strncpy(local_c,"MG000;",6);
-  rVar2 = vfo_mode(VFO_RX);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(0);
+  uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {
 LAB_fffdfb48:
     bStack_15 = g_opstate.mic_gain[1];
@@ -28517,13 +28506,13 @@ LAB_fffdfb64:
     DAT_000187e7 = bStack_15;
     bStack_14 = 100;
     for (bStack_13 = 0; bStack_13 < 3; bStack_13 = bStack_13 + 1) {
-      n = bStack_15;
+      bVar2 = bStack_15;
       if (bStack_14 != 0) {
-        n = bStack_15 / bStack_14;
+        bVar2 = bStack_15 / bStack_14;
       }
-      bStack_15 = bStack_15 - n * bStack_14;
+      bStack_15 = bStack_15 - bVar2 * bStack_14;
       bStack_14 = bStack_14 / 10;
-      cVar3 = nib2hex(n);
+      cVar3 = nib2hex(bVar2);
       local_c[bStack_13 + 2] = cVar3;
     }
     pcVar5 = local_c;
@@ -28556,15 +28545,15 @@ ushort FUN_fffdfbe4(void)
   char *pcVar4;
   int iVar5;
   char acStack_18 [11];
-  radio_mode rStack_d;
+  byte bStack_d;
   int local_c;
   
   local_c = 0x9bca;
-  rStack_d = vfo_mode(VFO_RX);
+  bStack_d = vfo_mode(0);
   acStack_18[0] = 'M';
   acStack_18[1] = 'L';
   builtin_strncpy(acStack_18 + 3,"000;",4);
-  uVar1 = (uint)rStack_d;
+  uVar1 = (uint)bStack_d;
   if (uVar1 == 0xe) {
 LAB_fffdfc6d:
     acStack_18[10] = *(byte *)(local_c + 0x35);
@@ -28750,12 +28739,12 @@ ushort FUN_fffdfe7a(void)
   uint uVar3;
   ushort uStack_10;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"NB00;",5);
   uStack_10 = 0;
-  acStack_e[5] = (char)((pvStack_8->flags2 & 2) >> 1);
+  acStack_e[5] = (char)((pbStack_8[2] & 2) >> 1);
   if (DAT_000187ec != acStack_e[5]) {
     DAT_000187ec = acStack_e[5];
     acStack_e[3] = nib2hex(acStack_e[5]);
@@ -28840,10 +28829,10 @@ ushort FUN_fffdff9c(void)
   int iVar3;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
-  acStack_e[5] = (char)((pvStack_8->dnr & 0x10) >> 4);
+  pbStack_8 = vfo_rec_ptr(0);
+  acStack_e[5] = (char)((pbStack_8[6] & 0x10) >> 4);
   builtin_strncpy(acStack_e,"NR00;",5);
   if (DAT_000187ee == acStack_e[5]) {
     uStack_12 = 0;
@@ -28930,14 +28919,14 @@ undefined2 FUN_fffe00be(void)
   int iVar3;
   undefined2 uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   acStack_e[0] = 'P';
   acStack_e[1] = 'A';
   acStack_e[2] = '0';
   acStack_e[4] = ';';
-  acStack_e[5] = pvStack_8->flags5 & 3;
+  acStack_e[5] = pbStack_8[5] & 3;
   if (DAT_000187f0 == acStack_e[5]) {
     uStack_12 = 0;
   }
@@ -28987,16 +28976,16 @@ undefined2 FUN_fffe0143(void)
   byte bStack_14;
   byte bStack_13;
   char cStack_12;
-  radio_mode rStack_11;
+  byte bStack_11;
   uint uStack_10;
   int local_c;
   
   local_c = 0x9bca;
-  uStack_10 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
-  rStack_11 = vfo_mode(VFO_RX);
+  uStack_10 = vfo_freq(0,2);
+  bStack_11 = vfo_mode(0);
   builtin_strncpy(acStack_1c,"PC000;",6);
   cStack_12 = tx_band_of_freq(uStack_10);
-  if ((rStack_11 == MODE_AM) || (rStack_11 == MODE_AM_N)) {
+  if ((bStack_11 == 4) || (bStack_11 == 5)) {
     bVar2 = true;
   }
   else {
@@ -29153,11 +29142,11 @@ ushort FUN_fffe0394(void)
   int iVar3;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"RA00;",5);
-  acStack_e[5] = pvStack_8->flags3 & 3;
+  acStack_e[5] = pbStack_8[3] & 3;
   if (DAT_000187f5 == acStack_e[5]) {
     uStack_12 = 0;
   }
@@ -29470,11 +29459,11 @@ ushort FUN_fffe0839(void)
   int iVar3;
   ushort uStack_14;
   char acStack_f [7];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_f,"RL000;",6);
-  acStack_f[6] = pvStack_8->dnr & 0xf;
+  acStack_f[6] = pbStack_8[6] & 0xf;
   if (DAT_000187f7 == acStack_f[6]) {
     uStack_14 = 0;
   }
@@ -29623,9 +29612,9 @@ ushort FUN_fffe0a60(void)
   ushort uStack_10;
   char acStack_e [5];
   byte bStack_9;
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"SC0;",4);
   uStack_10 = 0;
   bStack_9 = g_ui.scan_running;
@@ -29851,60 +29840,60 @@ ushort FUN_fffe0d06(void)
   uint uVar4;
   ushort uStack_1c;
   char acStack_1a [11];
-  radio_mode rStack_f;
+  byte bStack_f;
   undefined2 uStack_e;
-  vfo_rec *pvStack_c;
+  byte *pbStack_c;
   
-  pvStack_c = vfo_rec_ptr(VFO_RX);
-  rStack_f = vfo_mode(VFO_RX);
+  pbStack_c = vfo_rec_ptr(0);
+  bStack_f = vfo_mode(0);
   builtin_strncpy(acStack_1a,"SH0000;",7);
   uStack_1c = 0;
   uStack_e = 0;
-  switch(rStack_f) {
-  case MODE_LSB:
-  case MODE_USB:
-    uStack_e = CONCAT11(pvStack_c->blk[0].width_be[0],pvStack_c->blk[0].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  switch(bStack_f) {
+  case 0:
+  case 1:
+    uStack_e = CONCAT11(pbStack_c[0x10],pbStack_c[0x11]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x17 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_CW_L:
-  case MODE_CW_U:
-    uStack_e = CONCAT11(pvStack_c->blk[1].width_be[0],pvStack_c->blk[1].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 2:
+  case 3:
+    uStack_e = CONCAT11(pbStack_c[0x1a],pbStack_c[0x1b]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_AM:
-  case MODE_FM_N:
-  case MODE_DATA_FM_N:
+  case 4:
+  case 7:
+  case 0xb:
     acStack_1a[7] = 2;
     break;
-  case MODE_AM_N:
+  case 5:
     acStack_1a[7] = 1;
     break;
-  case MODE_FM:
-  case MODE_DATA_FM:
+  case 6:
+  case 10:
     acStack_1a[7] = 3;
     break;
-  case MODE_DATA_L:
-  case MODE_DATA_U:
-  case MODE_PSK:
-    uStack_e = CONCAT11(pvStack_c->blk[3].width_be[0],pvStack_c->blk[3].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 8:
+  case 9:
+  case 0xe:
+    uStack_e = CONCAT11(pbStack_c[0x2e],pbStack_c[0x2f]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_RTTY_L:
-  case MODE_RTTY_U:
-    uStack_e = CONCAT11(pvStack_c->blk[2].width_be[0],pvStack_c->blk[2].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 0xc:
+  case 0xd:
+    uStack_e = CONCAT11(pbStack_c[0x24],pbStack_c[0x25]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -30099,7 +30088,7 @@ ushort FUN_fffe0fe6(char param_1)
     local_1b = CONCAT31(local_1b._1_3_,cVar1);
   }
   else if (param_1 == '\x04') {
-    uStack_c = vfo_freq(g_ui.transmitting,VFO_SIDE_SEL);
+    uStack_c = vfo_freq(g_ui.transmitting,2);
     pbStack_14 = (byte *)scope_level_ptr(uStack_c,g_ui.transmitting);
     local_1f = CONCAT13(0x34,(undefined3)local_1f);
     if (g_ui.transmitting == 0) {
@@ -30145,7 +30134,7 @@ ushort FUN_fffe0fe6(char param_1)
     }
   }
   else if (param_1 == '\x05') {
-    uStack_c = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+    uStack_c = vfo_freq(0,2);
     pbStack_14 = (byte *)scope_span_ptr(uStack_c);
     if (DAT_0001b538 == *pbStack_14) {
       return 0;
@@ -30552,10 +30541,10 @@ ushort FUN_fffe1774(void)
   int iVar4;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
-  acStack_e[5] = vfo_mode(VFO_TX);
+  pbStack_8 = vfo_rec_ptr(0);
+  acStack_e[5] = vfo_mode(1);
   builtin_strncpy(acStack_e,"VX0;",4);
   uVar1 = (uint)(byte)acStack_e[5];
   if ((uVar1 - 2 < 2) || (uVar1 == 0xc || uVar1 == 0xd)) {
@@ -30872,12 +30861,12 @@ void FUN_fffe1d96(uint param_1)
 void FUN_fffe1da4(uint param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   byte bStack_9;
   
-  pvVar1 = vfo_rec_ptr(VFO_RX);
+  pbVar1 = vfo_rec_ptr(0);
   for (bStack_9 = 0; bStack_9 < 4; bStack_9 = bStack_9 + 1) {
-    pvVar1->freq_be[bStack_9] = (byte)(param_1 >> ((3 - bStack_9 & 3) << 3));
+    pbVar1[bStack_9 + 0x4a] = (byte)(param_1 >> ((3 - bStack_9 & 3) << 3));
   }
   return;
 }
@@ -33432,13 +33421,13 @@ uint FUN_fffe3615(void)
 {
   byte bVar1;
   ui_state *puVar2;
-  radio_mode rVar3;
+  byte bVar3;
   uint uVar4;
   uint uStack_c;
   
   bVar1 = g_ui.keyer_state;
-  rVar3 = vfo_mode(VFO_TX);
-  if ((rVar3 == MODE_CW_U) || (rVar3 == MODE_CW_L)) {
+  bVar3 = vfo_mode(1);
+  if ((bVar3 == 3) || (bVar3 == 2)) {
     uStack_c = 0;
   }
   else {
@@ -33894,18 +33883,18 @@ void FUN_fffe40e5(void)
 {
   uint uVar1;
   vfo_side vVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bVar4;
   
   vVar2 = g_opstate.active_vfo;
-  rVar3 = vfo_mode(VFO_RX);
+  bVar3 = vfo_mode(0);
   bVar4 = vfo_is_memory(vVar2);
   if (bVar4 == 1) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,0xfa);
     return;
   }
-  uVar1 = (uint)rVar3;
+  uVar1 = (uint)bVar3;
   if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,5);
@@ -35670,10 +35659,10 @@ undefined1 FUN_fffe5f4d(void)
 bool FUN_fffe5f82(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   
-  rVar1 = vfo_mode(g_opstate.active_vfo);
-  return rVar1 < MODE_AM;
+  bVar1 = vfo_mode(g_opstate.active_vfo);
+  return bVar1 < 4;
 }
 
 
@@ -35684,11 +35673,11 @@ undefined1 FUN_fffe5fab(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   undefined1 uStack_4;
   
-  rVar2 = vfo_mode(g_opstate.active_vfo);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(g_opstate.active_vfo);
+  uVar1 = (uint)bVar2;
   if ((uVar1 - 4 < 4) || (uVar1 == 10 || uVar1 == 0xb)) {
     uStack_4 = 1;
   }
@@ -35706,11 +35695,11 @@ undefined1 FUN_fffe5fdd(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   undefined1 uStack_4;
   
-  rVar2 = vfo_mode(g_opstate.active_vfo);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(g_opstate.active_vfo);
+  uVar1 = (uint)bVar2;
   if ((uVar1 - 6 < 2) || (uVar1 == 10 || uVar1 == 0xb)) {
     uStack_4 = 1;
   }
@@ -35727,10 +35716,10 @@ undefined1 FUN_fffe5fdd(void)
 bool FUN_fffe600f(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_RX);
-  return (pvVar1->flags3 & 8) != 0;
+  pbVar1 = vfo_rec_ptr(0);
+  return (pbVar1[3] & 8) != 0;
 }
 
 
@@ -35742,18 +35731,18 @@ void FUN_fffe602e(void)
 {
   uint uVar1;
   vfo_side vVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bVar4;
   
   vVar2 = g_opstate.active_vfo;
-  rVar3 = vfo_mode(VFO_RX);
+  bVar3 = vfo_mode(0);
   bVar4 = vfo_is_memory(vVar2);
   if (bVar4 == 1) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,200);
     return;
   }
-  uVar1 = (uint)rVar3;
+  uVar1 = (uint)bVar3;
   if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,10);
@@ -36872,10 +36861,10 @@ void FUN_fffec52d(void)
 bool FUN_fffec55a(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  return (pvVar1->flags1 & 4) != 0;
+  pbVar1 = vfo_rec_ptr(1);
+  return (pbVar1[1] & 4) != 0;
 }
 
 
@@ -37883,15 +37872,14 @@ void FUN_fffed62a(void)
 
 {
   bool bVar1;
-  tunlin_mode tVar2;
-  byte bVar3;
+  byte bVar2;
   
   g_ui.tuner_indicator = 0;
-  tVar2 = tunlin_port_mode();
-  if (tVar2 == TUNLIN_EXT_TUNER) {
+  bVar2 = tunlin_port_mode();
+  if (bVar2 == 0) {
     if (g_ui.atu_state == 5) {
       g_ui.tuner_indicator = 1;
-      if ((g_ui.tune_cycle_3c == 2) && (bVar3 = blink_phase(0), bVar3 == 0)) {
+      if ((g_ui.tune_cycle_3c == 2) && (bVar2 = blink_phase(0), bVar2 == 0)) {
         bVar1 = true;
       }
       else {

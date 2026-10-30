@@ -8,7 +8,7 @@
 /* WARNING: Removing unreachable block (ram,0xfffdf3ab) */
 /* WARNING: Removing unreachable block (ram,0xfffdf438) */
 
-ushort FUN_fffdf13a(vfo_side param_1)
+ushort FUN_fffdf13a(byte param_1)
 
 {
   bool bVar1;
@@ -46,7 +46,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
   uint uStack_14;
   uint uStack_10;
   vfo_rec *local_c;
-  vfo_side local_5;
+  byte local_5;
   
   pcVar6 = 
   "IF0000000000000000000000000;IS0000000;KP00;KR0;KS000;LK0;MD00;MG000;ML0000;MS00;MX0;NA00;NB00;NL0000;NR00;OS00;PA00;PC000;PL000;PR00;RA00;RG0000;RI00000000;RL000;RM0000000;SC0;SD00;SF00;SH0000;SQ0000;SS0000000;ST0;TS0;TX0;VD00;VG000;VS0;VX0;     RM 1"
@@ -59,7 +59,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     pcVar6 = pcVar6 + 1;
   }
   local_46 = 0;
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     local_c = &g_opstate.vfo_a;
     local_43[0] = 'I';
     local_43[1] = 0x46;
@@ -122,7 +122,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     local_41 = 0x3030;
     local_3f = '0';
   }
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     iVar7 = strncmp(&DAT_0001b50c,&local_41,3);
     if (iVar7 != 0) {
       DAT_0001b50e = local_3f;
@@ -138,8 +138,8 @@ ushort FUN_fffdf13a(vfo_side param_1)
       local_46 = 0x1c;
     }
   }
-  uStack_10 = vfo_freq(VFO_RX,local_5);
-  if (local_5 == VFO_A) {
+  uStack_10 = vfo_freq(0,local_5);
+  if (local_5 == 0) {
     if (DAT_00025d64 != uStack_10) {
       local_46 = 0x1c;
       DAT_00025d64 = uStack_10;
@@ -169,7 +169,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     acStack_3e[uVar5] = cVar2;
   }
   uStack_16 = CONCAT11(local_c->clar_offset_be[0],local_c->clar_offset_be[1]);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001ff6e != uStack_16) {
       local_46 = 0x1c;
       DAT_0001ff6e = uStack_16;
@@ -205,7 +205,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     cVar2 = nib2hex(abStack_24[uVar5]);
     acStack_34[uVar5] = cVar2;
   }
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b513 != local_27) {
       DAT_0001b513 = local_27;
       local_46 = 0x1c;
@@ -232,7 +232,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     uStack_2f = 0x31;
   }
   bVar3 = local_c->mode & 0xf;
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b512 != bVar3) {
       local_46 = 0x1c;
       DAT_0001b512 = bVar3;
@@ -246,7 +246,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
               [bVar3 + 0x3d14];
   cStack_2d = "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
               [local_25 + 0x3d23];
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b516 != local_25) {
       DAT_0001b516 = local_25;
       local_46 = 0x1c;
@@ -257,7 +257,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
     local_46 = 0x1c;
   }
   cVar2 = (char)((local_c->flags3 & 0x38) >> 3);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b515 != cVar2) {
       local_46 = 0x1c;
       DAT_0001b515 = cVar2;
@@ -279,7 +279,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
   uStack_2a = 0x30;
   uStack_2b = 0x30;
   local_1a = (byte)((local_c->flags2 & 0xc) >> 2);
-  if (local_5 == VFO_A) {
+  if (local_5 == 0) {
     if (DAT_0001b514 != local_1a) {
       local_46 = 0x1c;
       DAT_0001b514 = local_1a;
@@ -319,13 +319,12 @@ ushort FUN_fffdf13a(vfo_side param_1)
 ushort FUN_fffdf66f(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   char cVar2;
-  vfo_rec *pvVar3;
-  uint uVar4;
-  undefined1 *puVar5;
-  undefined4 *puVar6;
-  ushort uVar7;
+  uint uVar3;
+  undefined1 *puVar4;
+  undefined4 *puVar5;
+  ushort uVar6;
   ushort uStack_22;
   byte *pbStack_20;
   byte bStack_1b;
@@ -338,35 +337,35 @@ ushort FUN_fffdf66f(void)
   local_8 = 0x3b30;
   local_c = 0x30303030;
   local_10 = 0x30305349;
-  pvVar3 = vfo_rec_ptr(VFO_RX);
-  rVar1 = vfo_mode(VFO_RX);
+  pbStack_20 = vfo_rec_ptr(0);
+  bVar1 = vfo_mode(0);
   uStack_22 = 0;
-  uVar4 = (uint)rVar1;
-  if (uVar4 - 2 < 2) {
-    pbStack_20 = pvVar3->blk[1].shift_be;
+  uVar3 = (uint)bVar1;
+  if (uVar3 - 2 < 2) {
+    pbStack_20 = pbStack_20 + 0x1c;
     goto LAB_fffdf6fd;
   }
-  if (uVar4 - 4 < 2) {
-    pbStack_20 = pvVar3->blk[4].shift_be;
+  if (uVar3 - 4 < 2) {
+    pbStack_20 = pbStack_20 + 0x3a;
     goto LAB_fffdf6fd;
   }
-  if (uVar4 - 6 < 2) {
+  if (uVar3 - 6 < 2) {
 LAB_fffdf6f6:
-    pbStack_20 = pvVar3->blk[5].shift_be;
+    pbStack_20 = pbStack_20 + 0x44;
   }
   else {
-    if (1 < uVar4 - 8) {
-      if (uVar4 - 10 < 2) goto LAB_fffdf6f6;
-      if (uVar4 - 0xc < 2) {
-        pbStack_20 = pvVar3->blk[2].shift_be;
+    if (1 < uVar3 - 8) {
+      if (uVar3 - 10 < 2) goto LAB_fffdf6f6;
+      if (uVar3 - 0xc < 2) {
+        pbStack_20 = pbStack_20 + 0x26;
         goto LAB_fffdf6fd;
       }
-      if (uVar4 != 0xe) {
-        pbStack_20 = pvVar3->blk[0].shift_be;
+      if (uVar3 != 0xe) {
+        pbStack_20 = pbStack_20 + 0x12;
         goto LAB_fffdf6fd;
       }
     }
-    pbStack_20 = pvVar3->blk[3].shift_be;
+    pbStack_20 = pbStack_20 + 0x30;
   }
 LAB_fffdf6fd:
   uStack_16 = 0;
@@ -386,26 +385,26 @@ LAB_fffdf6fd:
   }
   uStack_18 = 1000;
   for (bStack_1b = 0; bStack_1b < 4; bStack_1b = bStack_1b + 1) {
-    uVar4 = (uint)uStack_16;
+    uVar3 = (uint)uStack_16;
     if (uStack_18 != 0) {
-      uVar4 = uVar4 / uStack_18;
+      uVar3 = uVar3 / uStack_18;
     }
-    uVar7 = uStack_16;
+    uVar6 = uStack_16;
     if (uStack_18 != 0) {
-      uVar7 = uStack_16 / uStack_18;
+      uVar6 = uStack_16 / uStack_18;
     }
-    uStack_16 = uStack_16 - uVar7 * uStack_18;
+    uStack_16 = uStack_16 - uVar6 * uStack_18;
     uStack_18 = uStack_18 / 10;
-    cVar2 = nib2hex((byte)uVar4);
+    cVar2 = nib2hex((byte)uVar3);
     *(char *)((int)&local_c + bStack_1b + 1) = cVar2;
   }
   if (uStack_22 != 0) {
-    puVar6 = &local_10;
-    puVar5 = &DAT_00015e06;
-    for (uVar4 = (uint)uStack_22; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *puVar5 = *(undefined1 *)puVar6;
-      puVar5 = puVar5 + 1;
-      puVar6 = (undefined4 *)((int)puVar6 + 1);
+    puVar5 = &local_10;
+    puVar4 = &DAT_00015e06;
+    for (uVar3 = (uint)uStack_22; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *puVar4 = *(undefined1 *)puVar5;
+      puVar4 = puVar4 + 1;
+      puVar5 = (undefined4 *)((int)puVar5 + 1);
     }
   }
   return uStack_22;
@@ -654,12 +653,11 @@ undefined2 FUN_fffdfae4(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   char cVar3;
   char *pcVar4;
   char *pcVar5;
   int iVar6;
-  byte n;
   undefined2 uStack_1a;
   undefined2 uStack_18;
   byte bStack_15;
@@ -668,8 +666,8 @@ undefined2 FUN_fffdfae4(void)
   char local_c [8];
   
   builtin_strncpy(local_c,"MG000;",6);
-  rVar2 = vfo_mode(VFO_RX);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(0);
+  uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {
 LAB_fffdfb48:
     bStack_15 = g_opstate.mic_gain[1];
@@ -699,13 +697,13 @@ LAB_fffdfb64:
     DAT_000187e7 = bStack_15;
     bStack_14 = 100;
     for (bStack_13 = 0; bStack_13 < 3; bStack_13 = bStack_13 + 1) {
-      n = bStack_15;
+      bVar2 = bStack_15;
       if (bStack_14 != 0) {
-        n = bStack_15 / bStack_14;
+        bVar2 = bStack_15 / bStack_14;
       }
-      bStack_15 = bStack_15 - n * bStack_14;
+      bStack_15 = bStack_15 - bVar2 * bStack_14;
       bStack_14 = bStack_14 / 10;
-      cVar3 = nib2hex(n);
+      cVar3 = nib2hex(bVar2);
       local_c[bStack_13 + 2] = cVar3;
     }
     pcVar5 = local_c;
@@ -737,15 +735,15 @@ ushort FUN_fffdfbe4(void)
   char *pcVar4;
   int iVar5;
   char acStack_18 [11];
-  radio_mode rStack_d;
+  byte bStack_d;
   int local_c;
   
   local_c = 0x9bca;
-  rStack_d = vfo_mode(VFO_RX);
+  bStack_d = vfo_mode(0);
   acStack_18[0] = 'M';
   acStack_18[1] = 'L';
   builtin_strncpy(acStack_18 + 3,"000;",4);
-  uVar1 = (uint)rStack_d;
+  uVar1 = (uint)bStack_d;
   if (uVar1 == 0xe) {
 LAB_fffdfc6d:
     acStack_18[10] = *(byte *)(local_c + 0x35);
@@ -927,12 +925,12 @@ ushort FUN_fffdfe7a(void)
   uint uVar3;
   ushort uStack_10;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"NB00;",5);
   uStack_10 = 0;
-  acStack_e[5] = (char)((pvStack_8->flags2 & 2) >> 1);
+  acStack_e[5] = (char)((pbStack_8[2] & 2) >> 1);
   if (DAT_000187ec != acStack_e[5]) {
     DAT_000187ec = acStack_e[5];
     acStack_e[3] = nib2hex(acStack_e[5]);
@@ -1015,10 +1013,10 @@ ushort FUN_fffdff9c(void)
   int iVar3;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
-  acStack_e[5] = (char)((pvStack_8->dnr & 0x10) >> 4);
+  pbStack_8 = vfo_rec_ptr(0);
+  acStack_e[5] = (char)((pbStack_8[6] & 0x10) >> 4);
   builtin_strncpy(acStack_e,"NR00;",5);
   if (DAT_000187ee == acStack_e[5]) {
     uStack_12 = 0;
@@ -1103,14 +1101,14 @@ undefined2 FUN_fffe00be(void)
   int iVar3;
   undefined2 uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   acStack_e[0] = 'P';
   acStack_e[1] = 'A';
   acStack_e[2] = '0';
   acStack_e[4] = ';';
-  acStack_e[5] = pvStack_8->flags5 & 3;
+  acStack_e[5] = pbStack_8[5] & 3;
   if (DAT_000187f0 == acStack_e[5]) {
     uStack_12 = 0;
   }
@@ -1159,16 +1157,16 @@ undefined2 FUN_fffe0143(void)
   byte bStack_14;
   byte bStack_13;
   char cStack_12;
-  radio_mode rStack_11;
+  byte bStack_11;
   uint uStack_10;
   int local_c;
   
   local_c = 0x9bca;
-  uStack_10 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
-  rStack_11 = vfo_mode(VFO_RX);
+  uStack_10 = vfo_freq(0,2);
+  bStack_11 = vfo_mode(0);
   builtin_strncpy(acStack_1c,"PC000;",6);
   cStack_12 = tx_band_of_freq(uStack_10);
-  if ((rStack_11 == MODE_AM) || (rStack_11 == MODE_AM_N)) {
+  if ((bStack_11 == 4) || (bStack_11 == 5)) {
     bVar2 = true;
   }
   else {
@@ -1322,11 +1320,11 @@ ushort FUN_fffe0394(void)
   int iVar3;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"RA00;",5);
-  acStack_e[5] = pvStack_8->flags3 & 3;
+  acStack_e[5] = pbStack_8[3] & 3;
   if (DAT_000187f5 == acStack_e[5]) {
     uStack_12 = 0;
   }
@@ -1635,11 +1633,11 @@ ushort FUN_fffe0839(void)
   int iVar3;
   ushort uStack_14;
   char acStack_f [7];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_f,"RL000;",6);
-  acStack_f[6] = pvStack_8->dnr & 0xf;
+  acStack_f[6] = pbStack_8[6] & 0xf;
   if (DAT_000187f7 == acStack_f[6]) {
     uStack_14 = 0;
   }
@@ -1786,9 +1784,9 @@ ushort FUN_fffe0a60(void)
   ushort uStack_10;
   char acStack_e [5];
   byte bStack_9;
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
+  pbStack_8 = vfo_rec_ptr(0);
   builtin_strncpy(acStack_e,"SC0;",4);
   uStack_10 = 0;
   bStack_9 = g_ui.scan_running;
@@ -2011,60 +2009,60 @@ ushort FUN_fffe0d06(void)
   uint uVar4;
   ushort uStack_1c;
   char acStack_1a [11];
-  radio_mode rStack_f;
+  byte bStack_f;
   undefined2 uStack_e;
-  vfo_rec *pvStack_c;
+  byte *pbStack_c;
   
-  pvStack_c = vfo_rec_ptr(VFO_RX);
-  rStack_f = vfo_mode(VFO_RX);
+  pbStack_c = vfo_rec_ptr(0);
+  bStack_f = vfo_mode(0);
   builtin_strncpy(acStack_1a,"SH0000;",7);
   uStack_1c = 0;
   uStack_e = 0;
-  switch(rStack_f) {
-  case MODE_LSB:
-  case MODE_USB:
-    uStack_e = CONCAT11(pvStack_c->blk[0].width_be[0],pvStack_c->blk[0].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  switch(bStack_f) {
+  case 0:
+  case 1:
+    uStack_e = CONCAT11(pbStack_c[0x10],pbStack_c[0x11]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x17 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_CW_L:
-  case MODE_CW_U:
-    uStack_e = CONCAT11(pvStack_c->blk[1].width_be[0],pvStack_c->blk[1].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 2:
+  case 3:
+    uStack_e = CONCAT11(pbStack_c[0x1a],pbStack_c[0x1b]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_AM:
-  case MODE_FM_N:
-  case MODE_DATA_FM_N:
+  case 4:
+  case 7:
+  case 0xb:
     acStack_1a[7] = 2;
     break;
-  case MODE_AM_N:
+  case 5:
     acStack_1a[7] = 1;
     break;
-  case MODE_FM:
-  case MODE_DATA_FM:
+  case 6:
+  case 10:
     acStack_1a[7] = 3;
     break;
-  case MODE_DATA_L:
-  case MODE_DATA_U:
-  case MODE_PSK:
-    uStack_e = CONCAT11(pvStack_c->blk[3].width_be[0],pvStack_c->blk[3].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 8:
+  case 9:
+  case 0xe:
+    uStack_e = CONCAT11(pbStack_c[0x2e],pbStack_c[0x2f]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
     }
     break;
-  case MODE_RTTY_L:
-  case MODE_RTTY_U:
-    uStack_e = CONCAT11(pvStack_c->blk[2].width_be[0],pvStack_c->blk[2].width_be[1]);
-    cVar1 = FUN_fffb36ff(rStack_f,uStack_e);
+  case 0xc:
+  case 0xd:
+    uStack_e = CONCAT11(pbStack_c[0x24],pbStack_c[0x25]);
+    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -2257,7 +2255,7 @@ ushort FUN_fffe0fe6(char param_1)
     local_1b = CONCAT31(local_1b._1_3_,cVar1);
   }
   else if (param_1 == '\x04') {
-    uStack_c = vfo_freq(g_ui.transmitting,VFO_SIDE_SEL);
+    uStack_c = vfo_freq(g_ui.transmitting,2);
     pbStack_14 = (byte *)scope_level_ptr(uStack_c,g_ui.transmitting);
     local_1f = CONCAT13(0x34,(undefined3)local_1f);
     if (g_ui.transmitting == 0) {
@@ -2303,7 +2301,7 @@ ushort FUN_fffe0fe6(char param_1)
     }
   }
   else if (param_1 == '\x05') {
-    uStack_c = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+    uStack_c = vfo_freq(0,2);
     pbStack_14 = (byte *)scope_span_ptr(uStack_c);
     if (DAT_0001b538 == *pbStack_14) {
       return 0;
@@ -2703,10 +2701,10 @@ ushort FUN_fffe1774(void)
   int iVar4;
   ushort uStack_12;
   char acStack_e [6];
-  vfo_rec *pvStack_8;
+  byte *pbStack_8;
   
-  pvStack_8 = vfo_rec_ptr(VFO_RX);
-  acStack_e[5] = vfo_mode(VFO_TX);
+  pbStack_8 = vfo_rec_ptr(0);
+  acStack_e[5] = vfo_mode(1);
   builtin_strncpy(acStack_e,"VX0;",4);
   uVar1 = (uint)(byte)acStack_e[5];
   if ((uVar1 - 2 < 2) || (uVar1 == 0xc || uVar1 == 0xd)) {
