@@ -53,8 +53,9 @@ Returns 1 if the event may run. It is also called by the CAT handlers (T09) with
 - `FUN_fffc4cc5(code, b1)` = 1 blocks every code except 0xFF0..0xFF2 **[fact]**.
 - **Key assignment.** Codes 0x348, 0x34E, 0x35B, 0x35C, 0x35D, 0x35E look up a slot from settings 0x9ACC, 0x9ACD, 0x9AC8, 0x9AC9, 0x9ACA, 0x9ACB and are
   replaced by `key_assign_map` 0xFFF88312[slot] (15 entries: 0x300, 0x30E, 0x30A, 0x309, 0x301, 0x302, 0x30C, 0x307, 0x305, 0x311, 0x30D, 0x303,
-  0x304, 0x348, 0x34E). So these six codes are **user-assignable keys/knob pushes** that act as one of the fixed keys **[fact for the remap,
-  inference for "user-assignable"]**. `key_assign_slot` 0xFFFBC225 does the same lookup for `key_task`.
+  0x304, 0x348, 0x34E). So these six codes are the **microphone buttons** UP, DOWN, P1..P4, whose function is set by the MIC UP / MIC DOWN / MIC P1..P4
+  menu items (`EX030120`..`EX030125`), and act as one of the fixed keys **[fact: the settings are those menu items (menu descriptors,
+  tools/ghidra/structs_main.h)]**. `key_assign_slot` 0xFFFBC225 does the same lookup for `key_task`.
 - Code 0x300 with action 2 (hold) sets 0x20B30 = 2 and is not passed on **[fact]**.
 - Mode gates (each rejects with `beep_request(3)` on a press) **[fact]**:
   - 0x20BBE = 1: rejects source 4 and codes < 8 and 0x16..0x19.
@@ -108,7 +109,7 @@ The empty slot handler is `key_nop` 0xFFFC4A8D (a single `RTS`) **[fact]**. The 
   The callers pass the **microphone button assignments** MIC UP 0x9ACC, MIC DOWN 0x9ACD and MIC P1..P4 0x9AC8..0x9ACB (`EX030120`..`EX030125`,
   values 0..20; the SSM-75E keys 0x348/0x34E/0x35B..0x35E). Values 0..12 act as LOCK, QMB, A/B, V/M, TUNER, VOX/MOX, MODE, ZIN/SPOT, SPLIT,
   FINE, NAR, NB, DNR; 13..20 are FREQ UP, FREQ DOWN, BAND UP, BAND DOWN, ATT, IPO, DNF, AGC, which have no front-panel key and use these small
-  tables (labels: menu text at 0xFFF84753) **[fact]** (#69; this paragraph used to guess "eight functions with no key").
+  tables (labels: menu text at 0xFFF84753) **[fact]** (#69; this paragraph used to say "eight functions with no key" without evidence).
 - **0xFFF8E1A0..0xFFF8E63F**, 296 entries: the **CAT auto-information change detectors for the EX menu**, not a key table. Entry *i* belongs to
   the *i*-th ID of the 296 × 8-character list at 0xFFF872B1 (`EX010101` … `EX060518`); `cat_ai_ex_scan` 0xFFFE6D7A calls them in turn
   ([cat.md](../cat.md)).
@@ -126,9 +127,9 @@ Code ranges (codes with at least one handler) **[fact]**:
 | 0x000..0x03F | 51 | 28 × 0, 3 × 1, 20 × 2 | 20 press-and-hold codes; `key_event_filter` mode 0x20BBE blocks 0..7 and 0x16..0x19 |
 | 0x040..0x13F | 183 | mostly 0 | soft keys (short handler only); 0x100..0x13F has 22 press handlers and 4 repeat handlers |
 | 0x140..0x1BF | 26 | 0 | press handlers only (0x140..0x17F) |
-| 0x200..0x288 | 106 | mostly 0 | the set allowed in mode 0x20B98, likely an on-screen keypad/list **[guess]** |
+| 0x200..0x288 | 106 | mostly 0 | the set allowed while 0x20B98 (UI +0x94, message-memory screen, frame `0x39`) is open **[fact]**. That screen's own DISPLAY touch tables (0x2016EBDC / 0x2016EC4A / 0x20376520, chosen by its payload byte 0x19) send 0x1087..0x1090, i.e. MAIN codes 0x87..0x90, not these **[fact: DISPLAY `touch_hit_test` 0x2015C048 and the tables]**. Open: which input produces 0x200..0x288; would be settled by searching the DISPLAY for a sender of codes 0x2xx (other hit tables, the USB-keyboard path) |
 | 0x300..0x312 | 19 | 15 × 1, 2 × 0, 2 × 2 | **physical front-panel keys** (the targets of `key_assign_map`) **[inference]** |
-| 0x340..0x35E | 9 | mixed | 0x340 MIC PTT, 0x341, 0x348/0x34E (assignable; also targets of the map, so probably knob pushes **[guess]**), 0x35A, 0x35B..0x35E assignable |
+| 0x340..0x35E | 9 | mixed | 0x340 MIC PTT, 0x341, 0x348/0x34E = the microphone **UP / DOWN** buttons: `key_assign_slot` looks them up in MIC UP 0x9ACC / MIC DOWN 0x9ACD (`EX030124`/`EX030125`), and they are also the map's entries 13/14, the FREQ UP / FREQ DOWN functions **[fact: key_assign_map 0xFFF88312, menu descriptors]**, 0x35A, 0x35B..0x35E assignable |
 
 Codes below 0x300 are most likely GUI touch keys, since the DISPLAY draws the soft keys and MAIN times their long press itself **[inference]**.
 
@@ -167,7 +168,7 @@ a code below 0x317 it computes **f = start + span · code / 0x316** (span from t
 VFO record +0x4A..+0x4D minus half the span, or from 0x20F60 / `bandmem_get`(2)` depending on 0x9C35), checks it with `freq_in_range`, writes it to the
 active VFO (0x9D09 or 0x9D63) and calls `vfo_store_back`. Then `beep_request(1)`, or `beep_request(3)` if out of range **[fact]**. So the code is the
 x pixel on a 790-pixel-wide scope (0x316 = 790) and **touching the spectrum tunes the VFO** there **[inference, high]**. The scope modes 0/1/2 in
-0x9C35 are likely CENTER / FIX / CURSOR **[guess]**.
+0x9C35 are **CENTER / CURSOR / FIX**: `cat_SS` (0xFFFAE850) reports P2 = 6 as 0/1/2 (3DSS) or 3..0xB (waterfall) in that order, and the CAT manual 2306-C SS table names those values CENTER, CURSOR, FIX **[fact]**.
 
 ## Encoders (`E1`)
 
@@ -185,7 +186,7 @@ in +0xA1 and dispatches **[fact]**:
 
 So id 1 is the main tuning dial **[fact: it tunes]**. Id 6 is the **USB mouse wheel on the main screen**: the DISPLAY's `mouse_wheel_event`
 0x2015FAC4 sends id 6 only when its screen id is 0x20 **[fact, DISPLAY code; see [display/input.md](../display/input.md#rotary-encoders-and-pots)]**, and MAIN
-tunes with it like the main dial. (Corrected by T19h: this page used to guess "the main dial in a high-resolution or alternate mode".) Ids 2/3 are the
+tunes with it like the main dial. (Corrected by T19h: this page used to say "the main dial in a high-resolution or alternate mode" without evidence.) Ids 2/3 are the
 multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs of the front panel needs the DISPLAY side (T11f).
 
 ## Other input-related frames

@@ -327,8 +327,10 @@ Notes **[fact unless marked]**:
     0xFFFFFF10 (`FUN_fff94bd9`) and 8 from 0xFFFFFF20 (`FUN_fff94be5`), and the DISPLAY row gets 8 more characters from
     `FUN_fff94c0f`. That getter returns 0x143C, the `"yy-mm-dd"` date `displink_rx_F0_hello` builds from hello bytes 4..6 (stored by
     `FUN_fff94c1b`); the decompile shows it as `void`, the pattern of its neighbours (`ver_display` 0x1436 / setter 0xFFF94BFD)
-    gives the address **[inference]**. So the DISPLAY row reads `V01-08  23-06-29`. The MAIN strings are most likely the build date
-    and time (MAIN V01-12 is dated 2024-02-16) **[guess: the ROM bytes at 0xFFFFFF10..0xFFFFFF27 are not in the decompile]**.
+    gives the address **[inference]**. So the DISPLAY row reads `V01-08  23-06-29`. The MAIN ROM holds `"2101"` at 0xFFFFFF10 and `"24-02-16"` at 0xFFFFFF20
+    (after `"V01-12"` at 0xFFFFFF00), so the MAIN row shows `V01-12-2101` and `24-02-16` **[fact: MAIN image]**. `24-02-16` is the release
+    date: the SFL header of the same file says `[DATE] : 2024/02/16` **[fact: FT-710_MAIN_V0112.SFL header]**. Open: what `2101`
+    encodes; would be settled by a second MAIN release to compare, or the dev string in Yaesu's tools.
   - Nothing else reads it, and nothing but `SPN`, the alignment menu and the defaults writes it. It is a factory/debug display flag,
     not a hidden feature switch **[inference]**.
 - The alignment item numbers of this table replace the earlier readings "per-band TX power calibration" (sdr-link.md, cat.md) and
@@ -373,7 +375,7 @@ schematic (Technical Supplement p47, PA unit) shows where they go **[fact: schem
   start, step, fine step}; max 239, 174, 88, 71, 54, 53, 36, 36, 28, 28, 28) **[fact]**.
 - So the tuner memory stores **the two C banks**, and the old question "which byte is L and which is C" has the answer: neither
   stored byte is L. `TC` (0x1B3AF, `[0x1B3AF]` first on the wire) is the **transmitter-side** series capacitor and `AC` (0x1B3AD) the
-  **antenna-side** one (#205; previously a guess from the names) **[inference, strong: schematic trace above]**. The trace that remains
+  **antenna-side** one (#205; previously read from the net names alone) **[inference, strong: schematic trace above]**. The trace that remains
   open is the rest position of RL4016/RL4020/RL4027, which only matters for which state is "tuner in"; a continuity check on the PA
   board (with the owner's approval, radio unpowered) or a clearer copy of p47 would settle it.
 - **Dump check.** The owner's tuner memory is full (count 100, write index 24, so the ring has wrapped). Both bytes use the whole
@@ -414,7 +416,7 @@ differ from `cfg105_defaults`, as above **[fact: tool output]**.
 - The `IF-AGC` items 028..032 really do default to 0 in ROM (`cfg105_defaults` 0xFFF8074F + 0x1B..0x1F); the owner's values are
   190/190/189/188/199.
 
-**New [fact: dump, meaning inference/guess as marked]:**
+**New [fact: dump; meanings tagged inference or left open as marked]:**
 
 - **Mode byte +0x00, bits 4–7.** The defaults write 0x40 (0xC1 in the USB band-stack defaults). In the dump, the band-stack records
   that differ from their default have bit 7 clear; bit 6 is clear in 21 of the 23 and still set in 2 whose mode was changed (for
@@ -572,7 +574,7 @@ sequenceDiagram
 | 0xFFFC1927 | `bandstack_save` | `bandstack_save` | **[fact]** |
 | 0xFFFECEA5 | `atu_mem_store` | `atu_mem_store` | **[fact]** for the data movement, **[inference]** that it is the tuner |
 | 0xFFFBBC0A | `cal_adjust` | `cal_adjust` | Pointer table 0x25D50 = 0x4659 and 0x25D4C = 0x20B04 (the DTBL init data at 0xFFF8EADC) give `cfg105[0x20CE2]` **[fact]** |
-| 0xFFFB3BA6 | `dest_jumper_apply` | `dest_jumper_apply` | Swaps between paired destination codes by `jp_p51_get`()` (a hardware option?) **[guess]** |
+| 0xFFFB3BA6 | `dest_jumper_apply` | `dest_jumper_apply` | Swaps between paired destination codes (restricted ↔ wide TX coverage) by `jp_p51_get`, the P51 input on net `JP_P51` (schematic, [peripherals.md](peripherals.md)); runs only from `displink_rx_F0_hello` for start modes 1 and 7 **[fact, see [tx-protection.md](tx-protection.md#the-jp_p51-strap-toggles-restricted--wide-dest_jumper_apply-0xfffb3ba6-fact)]** |
 | 0xFFF94CAB | `qmb_boot_init` | `qmb_boot_init` | **[fact]** |
 | 0xFFFD0288 | `reset_select` | `reset_select` | **[fact]** |
 
@@ -607,8 +609,8 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0xFFF94BD9 | `ver_main_ext1` |  | Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set; build date/time (#205) **[fact]** |
-| 0xFFF94BE5 | `ver_main_ext2` |  | Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set (#205) **[fact]** |
+| 0xFFF94BD9 | `ver_main_ext1` |  | Returns 0xFFFFFF10, the ROM string `"2101"`, shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set (#205) **[fact]**; its meaning is open (see above) |
+| 0xFFF94BE5 | `ver_main_ext2` |  | Returns 0xFFFFFF20, the ROM string `"24-02-16"` (the release date, as in the SFL header), shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set (#205) **[fact]** |
 | 0xFFF94C1B | `ver_display_date_set` |  | Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C (#205) **[fact]** |
 | 0xFFFB0636 | `reset_memch` |  | -> defaults_memch **[inference]** |
 | 0xFFFB063A | `reset_menu` |  | -> defaults_menu **[inference]** |

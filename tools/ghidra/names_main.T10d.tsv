@@ -77,7 +77,7 @@ fff9eae7	dsp_set_hcut	reg 0x46: HCUT freq (700+50(n-1)) | slope<<12
 fff9ed0e	dsp_set_lcut	reg 0x47: LCUT freq (100+50(n-1)) | slope<<12
 fff9ef34	dsp_set_tone_freq	regs 0x48/0x4B/0x4E: AF tone band frequency 200/400/1200 Hz | 0x1000
 fff9f0b1	dsp_set_tone_gain	regs 0x49/0x4C/0x4F: AF BASS/MIDDLE/TREBLE GAIN (signed)
-fff9f291	dsp_set_tone_type	regs 0x4A/0x4D/0x50: AF tone band type 2/1/1
+fff9f291	dsp_set_tone_q	regs 0x4A/0x4D/0x50: Q of the three AF tone (BASS/MIDDLE/TREBLE) peaking bands, constant 2/1/1 in every mode [fact: HiFi4 rx_eq_band_update 0x220790 uses the third reg of each triple as Q, 0 -> 0.5 else clamped 1..10]; was dsp_set_tone_type
 fff9f400	dsp_set_r51	reg 0x51 = 0 (once)
 fff9f430	dsp_set_am_notch	reg 0x52: manual notch freq | width<<12 (AM only)
 fff9f4c8	dsp_set_ctcss_dec	reg 0x53: RX tone index+1 | 0x1000 (FM, tone on); sets 0x20B72
