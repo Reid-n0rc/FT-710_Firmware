@@ -46,8 +46,9 @@ Its first word is stored in 0x20800398 (the running bank, used by the update cod
 
 `task_root` registers the two USB-keyboard handler chains (section 6), then reads the inputs that pick the mode:
 
-- `DAT_208003A1/A2 = gpio_p2_0_debounced()`: P2_0, 3 equal samples 10 ms apart. P2_0 is also the IRQ5 pin watched by `powon` **[fact]**. It is
-  probably the power switch / `RX_PWR_ON` line **[guess]**.
+- `DAT_208003A1/A2 = gpio_p2_0_debounced()`: P2_0, 3 equal samples 10 ms apart. P2_0 is also the IRQ5 pin watched by `powon` **[fact]**. Its net is
+  `PWR_SW`, the power switch (service manual p62, [peripherals.md](peripherals.md#2-pin-multiplexing)), and its level is key code 0x300
+  LOCK/PWR ([input.md](input.md)) **[fact]**. `RX_PWR_ON` is a different pin, P7_9 **[fact, p62]**.
 - `DAT_208003A3 = gpio_read_bit(8, 12)` (P8_12) **[fact]**, meaning unknown.
 - `powon_init` and `key_init` start the power-switch and key tasks.
 - `boot_mode_full()` (0x20116E84) returns 0 (standby) only when the first active key line from `key_scan_first` is not 6, the force flag 0x208003A4 is
@@ -198,8 +199,9 @@ flowchart LR
   writer is `debug_unlock` (0x20107E68): when `debug_unlock_check` sees P4_3 and P8_3 low (P4_2 is also sampled) and, after 30 ms, a report with a
   Ctrl modifier (mask 0x11) and Backspace (0x2A) **[fact]**. `debug_unlock` has **no caller**: no B/BL, no literal pointer in `.text`, and REA's
   `xrefs` on an independent import returns none **[fact]**. So in V01-08 the debug commands cannot be reached without patching the image or
-  writing that RAM word, for example over JTAG (J6003) **[inference]**. P4_3 is `RX_UPDATE` in hardware.md, so the pin check may have been a factory
-  jig condition **[guess]**.
+  writing that RAM word, for example over JTAG (J6003) **[inference]**. P4_3 is `RX_UPDATE` and P8_3 is `SDR_SCLK` (p62, hardware.md)
+  **[fact]**. Open: why the unlock wants those two lines low; would be settled by a firmware version that calls `debug_unlock`, or by
+  Yaesu service documentation of a debug/jig connection.
 
 ## Functions named in T11a
 
