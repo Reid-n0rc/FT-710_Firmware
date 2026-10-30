@@ -591,8 +591,8 @@ each `0x60` **[fact]** (#60):
   DISPLAY's own default **[fact]**.
 - **0x4660** is the RAM copy of EEPROM byte 0x0011 (RAM = EEPROM + 0x464F), alignment item 008 `DBG MODE ENABLE`; only `SPN`, the
   alignment menu and the defaults write it. When it is set, the SOFT VERSION rows (`menu_m4_18_0_draw`) also show `-` + 4 + 8
-  characters from ROM 0xFFFFFF10/0xFFFFFF20 after the MAIN version and the DISPLAY's hello date (`yy-mm-dd`) after the DISPLAY
-  version (#205, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)). A factory/debug display flag **[inference]**.
+  characters from ROM 0xFFFFFF10/0xFFFFFF20 (`2101`, `24-02-16`) after the MAIN version and the DISPLAY's hello date (`yy-mm-dd`,
+  `23-06-29`) after the DISPLAY version (#205, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)). A factory/debug display flag **[inference]**.
 
 ## SD CARD transfers (0x43 / 0x44 / 0x45)
 

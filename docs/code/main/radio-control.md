@@ -68,7 +68,7 @@ Multi-byte values are **big-endian**. Offsets are from the start of the record.
 | Offset | Size | Field | Evidence |
 |---|---|---|---|
 | +0x00 | u8 | bits 0–3 = **mode index** (table below). Bits 4–7 have no reader and no writer in V01-12 other than the defaults and whole-record copies; every mode setter keeps them (`& 0xF0 \| mode`) (#205). The defaults write 0x4_ (0xC_ for the USB band-stack defaults); in the owner's dump the records changed from their default have bit 7 clear and bit 6 set in some, clear in most (dump 2026-10-28, [eeprom.md](eeprom.md#check-against-the-owners-dump-2026-10-28)) **[fact: dump]**; meaning open. | `vfo_mode` (`AND #0xF`), IF/MD/MR via `cat_mode_codes` 0xFFF806D0 **[fact]** |
-| +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]**. bit 7 = memory-scan **SKIP**: the scan steps `FUN_fffe5d8f`/`FUN_fffe5dd5` pass over a channel with it set (`FUN_fffe5e3b`), and the memory list shows `SKIP`/`SCAN` (`FUN_fff99ca2`) (#205). bit 0: no reader or writer | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR`, `FUN_fffe5e3b` **[fact]** |
+| +0x01 | u8 | bit 4 = RX clarifier on, bit 3 = TX clarifier on (both cleared with `& 0xE7` on memory recall and by `MW`). bit 2 is read by `AC` (`FUN_fffec55a`), probably the ATU on/off **[inference]**. bit 7 = memory-scan **SKIP**: the scan steps `FUN_fffe5d8f`/`FUN_fffe5dd5` pass over a channel with it set (`FUN_fffe5e3b`), and the memory list shows `SKIP`/`SCAN` (`FUN_fff99ca2`) (#205). bit 0: no reader (#205 scan); written only by the defaults (`defaults_memch`, 60 m channels) and carried by whole-record copies | `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MR`, `FUN_fffe5e3b` **[fact]** |
 | +0x02 | u8 | bits 2–3 = **repeater shift**: 0 = minus, 1 = simplex, 2 = plus. bit 1 = **NB on** (#205): SDR reg 0x1A is 0 while it is clear | `tx_freq_repeater_shift` (TX shift), `cat_MW` (`'2'`→0, `'0'`→1, `'1'`→2); `cat_NB`, `key_nb_short`/`key_nb_long`, `sdr_upd_r1a_nb_level` **[fact]** |
 | +0x03 | u8 | bits 0–1 = **ATT** (0 off, 1 = 6 dB, 2 = 12 dB, 3 = 18 dB; `cat_RA`, `rf_bpf_update`, #205). bits 3–5 = **tone mode** (CT: 0 off, 1 = CTCSS ENC/DEC, 2 = CTCSS ENC, 3 = DCS **[inference]**). bit 3 alone is tested by the scan engine (`FUN_fffe600f`) | `cat_CT`, `cat_IF_OI`, `cat_MW` **[fact]** |
 | +0x04 | u8 | NARROW flags per mode class (bit 7 SSB, 5 CW, 3 RTTY, 2 DATA); see [eeprom.md](eeprom.md#90-byte-vfo--memory-record) | `cat_NA`, `key_nar_short` **[fact]** (#73) |
@@ -619,9 +619,12 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
   The offsets on this page do not depend on them. For `vfo_rec_ptr`/`vfo_freq`/`vfo_freq_clar`/`vfo_mode`, the
   disassembly was used instead of the decompile.
 
-- The high nibble of +0x00, bit 0 of +0x01, bit 4 of +0x04 (set by `align_load_preset`), bits 6–7 of +0x03 and bits 0/2 of each
-  per-mode block's first byte have no known reader (#205: +0x02 bit 1, +0x03 bits 0–1, +0x05 bits 0–1 and +0x01 bit 7 are now
-  known). A disassembly search for byte stores and `BSET`/`BCLR` at record offsets 0 and 1 would show whether the decompile misses a user. +0x07..+0x09 and +0x47 have no users at all (#161).
+- The high nibble of +0x00, bit 0 of +0x01 and bit 4 of +0x04 (set by `align_load_preset`) have no reader in MAIN V01-12, and
+  no MAIN-to-DISPLAY frame carries them **[fact: #205 disassembly scan of byte loads, masks and bit instructions on record
+  pointers, [eeprom.md](eeprom.md#check-against-the-owners-dump-2026-10-28)]**. Open: what they meant to the firmware's authors;
+  a Yaesu firmware version that reads them would settle it. Bits 6–7 of +0x03 and bits 0/2 of each per-mode block's first byte
+  were not part of that scan and still have no known reader. +0x02 bit 1, +0x03 bits 0–1, +0x05 bits 0–1 and +0x01 bit 7 are
+  known (#205). +0x07..+0x09 and +0x47 have no users at all (#161).
 - ~~States 0, 6 and 9 (IF P7 = `F`), and when states 7/8 are entered.~~ Settled in #173 ([cat-commands-primary.md](../../cat-commands-primary.md), `IF`): state 4 is PMS, and states 0 and 6–9 are never written by MAIN V01-12, so P7 `F` (and `OI`'s `1`) cannot occur **[fact]**.
 - `BS12;`: does the out-of-row band-stack index have a visible effect? Test this on the radio only with the owner's
   approval.

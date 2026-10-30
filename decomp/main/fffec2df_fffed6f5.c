@@ -178,18 +178,25 @@ void FUN_fffec4db(void)
 }
 
 
-// ===== FUN_fffec500 @ fffec500 (15 bytes)
+// ===== atu_ac_get @ fffec500 (15 bytes)
 
-undefined1 FUN_fffec500(void)
+/* Returns 0x1B3AD, the internal tuner AC byte (/SST6 bits 8-15, relays C0..C7) [fact]; the
+   antenna-side series C bank [inference, strong: p47 + bit order] (#205) */
+
+undefined1 atu_ac_get(void)
 
 {
   return DAT_0001b3ad;
 }
 
 
-// ===== FUN_fffec50f @ fffec50f (15 bytes)
+// ===== atu_tc_get @ fffec50f (15 bytes)
 
-undefined1 FUN_fffec50f(void)
+/* Returns 0x1B3AF, the internal tuner TC byte (/SST6 bits 16-23, relays C8..CF) [fact]; the
+   transmitter-side series C bank [inference, strong: p47 + bit order]. pa_relay_update sets TNRON
+   only if this or atu_ac_get is non-zero [fact] (#205) */
+
+undefined1 atu_tc_get(void)
 
 {
   return DAT_0001b3af;

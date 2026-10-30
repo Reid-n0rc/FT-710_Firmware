@@ -101,8 +101,8 @@ VFO-A (0x9D09), VFO-B (0x9D63), memory channels, band-stack slots and QMB slots 
 
 | Offset | Field |
 |---|---|
-| +0x00 | Low nibble = mode (index into `cat_mode_codes`). High nibble: no reader (#205, below) |
-| +0x01 | Bits 3/4: clarifier RX/TX flags. Bit 2: internal ATU on (`AC`). Bit 7: memory-scan **SKIP** (#205) |
+| +0x00 | Low nibble = mode (index into `cat_mode_codes`). High nibble: no reader in MAIN, and the DISPLAY never receives it (#205 scan, [below](#check-against-the-owners-dump-2026-10-28)) |
+| +0x01 | Bits 3/4: clarifier RX/TX flags. Bit 2: internal ATU on (`AC`). Bit 7: memory-scan **SKIP** (#205). Bit 0: no reader in MAIN or DISPLAY (#205 scan) |
 | +0x02 | Bits 2–3: repeater shift. Bit 1: **NB on** (#205) |
 | +0x03 | Bits 0–1: **ATT** (#205). Bits 3–5: tone/CTCSS mode |
 | +0x05 | Bits 0–1: **preamp** IPO/AMP1/AMP2 (#205). Bit 7: name-tag on |
@@ -115,7 +115,7 @@ More fields **[fact]** (#73):
 
 | Offset | Field |
 |---|---|
-| +0x04 | NARROW flags per mode class (`cat_NA`, `key_nar_short`): bit 7 SSB (modes 0/1), bit 5 CW (2/3), bit 3 RTTY (0xC/0xD), bit 2 DATA (8/9/0xE). AM and FM have no flag: NAR switches the mode itself (AM ↔ AM-N, FM ↔ FM-N, DATA-FM ↔ D-FM-N, `FUN_fffc4bd5`). `align_load_preset` also sets bit 4 from preset flag 0x08; bit 4 has no reader in MAIN (#205) **[fact for the scanned forms]** |
+| +0x04 | NARROW flags per mode class (`cat_NA`, `key_nar_short`): bit 7 SSB (modes 0/1), bit 5 CW (2/3), bit 3 RTTY (0xC/0xD), bit 2 DATA (8/9/0xE). AM and FM have no flag: NAR switches the mode itself (AM ↔ AM-N, FM ↔ FM-N, DATA-FM ↔ D-FM-N, `FUN_fffc4bd5`). `align_load_preset` also sets bit 4 from preset flag 0x08; bit 4 has no reader in MAIN or DISPLAY (#205 scan, [below](#check-against-the-owners-dump-2026-10-28)) **[fact for the scanned paths]** |
 | +0x06 | bits 0–3 = DNR level 1..15 (`RL`, `cat_RL` 0xFFFADA46), bit 4 = DNR on (`NR`, `key_dnr_short`); bits 5–7 unused (#161) |
 | +0x07..+0x09, +0x47 | no users in MAIN (#161). The defaults write 0, except that the band-stack defaults (`FUN_fffb0779`, a u16 store of 1 at record +0x08 of band 10) give the **50 MHz** band-stack records **+0x08 = 1**. The owner's dump shows exactly that in the four untouched 50 MHz slots (A and B, levels 1 and 2) **[fact: code + dump]** |
 | +0x3C..+0x45 | the FM / DATA-FM per-mode block, same layout as the others (#161) |
@@ -282,6 +282,14 @@ Notes **[fact unless marked]**:
     `PTR_DAT_00025d50` (`align_store_*`, `cal_adjust`, and `FUN_fffbba9f`, which writes only the `FALC` and `TXG` of a
     band row, +0 and +2). The pointer table 0xFFF8861C is read only by `sdr_upd_r25_tx_drive` 0xFFFA2A40, at row offsets
     +2, +5, +8, +11, +14 (the `TXG` items) **[fact: disassembly 0xFFFA2A58..0xFFFA2B20]**.
+  - **DISPLAY and other paths** (#205, 2026-10-30) **[fact]**. The DISPLAY never gets these bytes as numbers. The only frame
+    that carries `cfg105` values is `0x62`, and `displink_62_value` (`FUN_fff9c555`, the indexed read at 0xFFF9C569) formats
+    each value as text. In the DISPLAY, `scr_setup_menu` (0x20126F28, packet 0x62) `strncpy`s the 5 + 20 + 3 characters of
+    each of the nine rows and draws them with `gui_draw_text`, and does nothing else with them. The DISPLAY's meters draw the
+    positions MAIN has already computed (`meter_po`, `meter_s` and the others). No other MAIN code reads the items, so the IFDSP
+    and SDR, which only get what MAIN sends, cannot use them either. The one way out of the radio is CAT: `SPN` reads any item
+    by index (`cat_SP_table` 0xFFFA5179) and `cat_SP_eeprom_byte` writes them, so an alignment program on a PC can read and set
+    them. Nothing in the radio acts on them.
   - So aligned values in these items are stored and shown in the alignment menu but have no effect. The Ghidra data-xref
     listing confirms it: no reference at all to 0x4661..0x4665, 0x4679..0x4680, 0x4682, 0x4683 or the band-row `MTR` bytes
     0x46A2/A5/A8/AB + 15·*b* and 0x473B/3E/41; the code that keeps 0x4659 in a register and adds a constant (`main_dac_update`
@@ -323,14 +331,21 @@ Notes **[fact unless marked]**:
   - `displink_build_60` 0xFFF96241: if UI +0x32 (0x20B36, the boot error code) is 0 and 0x4660 ≠ 0, it sends 0xDB in that field.
     The DISPLAY then sets 0x20450029, so on a MAIN-link failure `gui_link_error_popup` shows the unanswered command in hex instead of
     resetting the link ([display-link.md](display-link.md#boot-error-report)).
-  - `menu_m4_18_0_draw` 0xFFFCD89B (SOFT VERSION): with 0x4660 ≠ 0 the MAIN row becomes `V01-12-` + 4 characters from ROM
-    0xFFFFFF10 (`FUN_fff94bd9`) and 8 from 0xFFFFFF20 (`FUN_fff94be5`), and the DISPLAY row gets 8 more characters from
-    `FUN_fff94c0f`. That getter returns 0x143C, the `"yy-mm-dd"` date `displink_rx_F0_hello` builds from hello bytes 4..6 (stored by
-    `FUN_fff94c1b`); the decompile shows it as `void`, the pattern of its neighbours (`ver_display` 0x1436 / setter 0xFFF94BFD)
-    gives the address **[inference]**. So the DISPLAY row reads `V01-08  23-06-29`. The MAIN ROM holds `"2101"` at 0xFFFFFF10 and `"24-02-16"` at 0xFFFFFF20
-    (after `"V01-12"` at 0xFFFFFF00), so the MAIN row shows `V01-12-2101` and `24-02-16` **[fact: MAIN image]**. `24-02-16` is the release
-    date: the SFL header of the same file says `[DATE] : 2024/02/16` **[fact: FT-710_MAIN_V0112.SFL header]**. Open: what `2101`
-    encodes; would be settled by a second MAIN release to compare, or the dev string in Yaesu's tools.
+  - `menu_m4_18_0_draw` 0xFFFCD89B (SOFT VERSION) builds 30-character rows. With 0x4660 ≠ 0 the MAIN row gets `-` at column 16,
+    then 4 characters from ROM 0xFFFFFF10 (`ver_main_ext1` 0xFFF94BD9) at columns 17..20 and 8 from 0xFFFFFF20 (`ver_main_ext2`
+    0xFFF94BE5) at columns 22..29. The DISPLAY row gets 8 characters at columns 22..29 from `ver_display_date` 0xFFF94C0F, which
+    returns **0x143C** (`mov.l #0x143c, r1` at 0xFFF94C11; the decompile still shows it as `void FUN_fff94c0f`). That is the `"yy-mm-dd"` date `ver_display_date_set` 0xFFF94C1B stores from F0 hello bytes 4..6
+    **[fact: disassembly]**. The ROM strings are **[fact: MAIN image]**: 0xFFFFFF00 `"V01-12"`, 0xFFFFFF10 `"2101"`,
+    0xFFFFFF20 `"24-02-16"`. So with the flag set, the screen reads:
+
+    ```
+    MAIN    : V01-12-2101 24-02-16
+    DISPLAY : V01-08      23-06-29
+    ```
+
+    `24-02-16` is the release date of MAIN V01-12: the SFL header of the same file says `[DATE] : 2024/02/16` **[fact: FT-710_MAIN_V0112.SFL header]**, and `23-06-29` is the DISPLAY V01-08 date
+    from its hello. Open: what `2101` counts (a build or revision number is not shown anywhere else in the image); a second
+    MAIN version's ROM string at 0xFFFFFF10 would settle that.
   - Nothing else reads it, and nothing but `SPN`, the alignment menu and the defaults writes it. It is a factory/debug display flag,
     not a hidden feature switch **[inference]**.
 - The alignment item numbers of this table replace the earlier readings "per-band TX power calibration" (sdr-link.md, cat.md) and
@@ -357,15 +372,38 @@ schematic (Technical Supplement p47, PA unit) shows where they go **[fact: schem
   bit 8 (AM), bit 9 (RX line) and bit 10 land on Q4040 P8 `TNRON`, P9 `TAM`, P10 `RX` and P11 `4m`, so word bit *n* drives output
   P(*n* + 1) **[fact: code bits vs. schematic labels]**. Applied to /SST6: **0x1B3B1 (bits 0–7) = `LX` = L bank, 0x1B3AD (bits 8–15)
   = `AC` = C0..C7, 0x1B3AF (bits 16–23) = `TC` = C8..CF** **[inference, strong: same part and bus]**.
-- **Network: a high-pass T** (#205) **[inference, strong: schematic trace]**. The `TC` bus (contacts ① of RL4019 … RL4042) runs down
-  the left edge to contact ② of RL4016 (G5Q-14), whose contact ⑤ is on the line that comes from the left, from the PA low-pass
-  filters past the C4575/C4576 sampler, i.e. the **transmitter side**. The `AC` bus (contacts ① of RL4018 … RL4041) runs down the right edge to contact ② of
-  RL4020 (G5Q-14), whose common goes through RL4027 (FTR-B4SA012Z) to the C4537/C4538 coupling capacitors and the **ANT** jack: the
-  **antenna side**. Contacts ⑤ of RL4016 and RL4020 are joined, which is the bypass path (tuner out); both coils hang on the `TUNER`
-  net **[fact for the wiring; which contact is the rest position is not printed]**. So the tuner is TX — C(`TC`, 0x1B3AF) — node —
-  C(`AC`, 0x1B3AD) — ANT, with the shunt L (`LX`, 0x1B3B1) from the node to ground. The bus label `ANTS` on the same drawing is a
-  separate net that leaves the bus towards the transistor circuit near Q4072..Q4076; it is not either bank's bus, and it was not
-  followed to its end **[fact: schematic; purpose open]**. The trace was read from 400–800 dpi renders of p47 (`pdftoppm -r 800 -x … -y …`).
+- **Network: a high-pass T, TX side `TC`, antenna side `AC`** (#205) **[fact: schematic, read at 600–1200 dpi; bank roles from the
+  bit order above]**. Both bypass relays RL4016 and RL4020 are Omron G5Q-14 (one changeover contact: common ①, contacts ② and ⑤);
+  the coil of each sits between the `TUNER` net (through R4181 / R4185, 100 Ω) and ground.
+  - **RL4016 (transmitter end).** Common ① is on the line from the left, which comes from the PA low-pass filters through the
+    directional coupler JP4001 / L4050 (detectors D4038 / D4039) and the C4575 / C4576 sampler. Contact ② is the `TC` bus (contacts
+    ① of RL4019 … RL4042, down the left edge of the bank). Contact ⑤ goes right, to contact ⑤ of RL4020.
+  - **RL4020 (antenna end).** Contact ② is the `AC` bus (contacts ① of RL4018 … RL4041, down the right edge). Common ① goes to
+    contacts ⑤ and ④ of RL4027 (FTR-B4SA012Z, two changeover poles, commons ⑥ and ③). The two RL4027 commons are joined and go
+    through C4537 / C4538 (0.1 µF + 0.01 µF, 250 V) to the **ANT** jack.
+  - The ⑤–⑤ link between RL4016 and RL4020 is the **bypass**. So, with both relays on their ② side, the signal runs TX —
+    C(`TC`, 0x1B3AF) — common node — C(`AC`, 0x1B3AD) — ANT, with the shunt L (`LX`, 0x1B3B1) from the node to ground.
+- **Which state is "tuner in"** **[inference, strong]**. `pa_relay_update` sets bit 7 of the /SST4 word (Q4040 P8 `TNRON`) only when
+  `g_ui.atu_state` = 2 *and* at least one capacitor byte is non-zero (`atu_tc_get` 0xFFFEC50F returns 0x1B3AF, `atu_ac_get`
+  0xFFFEC500 returns 0x1B3AD) **[fact: decompile]**. `TNRON` drives Q4052 (UMD5N): its NPN half (base ② from `TNRON`, emitter ① to ground) pulls
+  the base of the PNP half, whose collector ③ is the `TUNER` net, so `TNRON` high puts the supply on `TUNER` and energizes RL4016
+  and RL4020 **[fact: schematic]**. With both capacitor bytes 0, no capacitor connects either bus to the common node, and the T
+  would be an open circuit. Because the firmware drops `TNRON` in exactly that case, `TNRON` low must be the bypass (①–⑤ on both
+  relays), and `TNRON` high must switch the banks in (①–②).
+  - **Unpowered rest position** **[inference]**: bypass. Each changeover contact on p47 is drawn with one filled and one hollow
+    triangle. Reading the filled one as closed at rest fits every relay checked. RL4016 and RL4020 draw ⑤ (bypass) filled and ②
+    (bank) hollow, which matches the logic above (energized = banks in). The single-contact bank relays FTR-F3AA012E are drawn
+    hollow only: a make contact that a 1 bit closes. On that reading the shunt-L table (0x00 at 1.8 MHz = no tap closed = the
+    whole string) gives an L that falls with frequency, as a high-pass match needs.
+  - **RL4027**: by the same reading, at rest its commons (ANT) sit on ⑦/②. That line runs down to RL4043 ④ and to the RF
+    sampler C4491 / C4492 → D4062 → Q4059, the circuit that drives RL4043. Energized, ANT goes to ⑤/④, the tuner path. Its coil
+    + ① is fed from the `T13` net through R4192 (100 Ω) **[fact: schematic]**. So RL4027 is the antenna T/R changeover, energized
+    for TX **[inference: the `T13` net name, next to the `TX8` net, and the rest-contact reading]**. Open:
+    whether `T13` is on only in TX, and what RL4043 / J4009 `RX` (P1091155) switch. Tracing `T13` and `RX` to their sources on
+    p47 / the RF unit page would settle both.
+  - The bus label `ANTS` is a separate net. It is the ANT jack behind the RF choke L4062 (120 µH), with C4539 … C4541 to ground,
+    so it carries only the DC / low-frequency state of the antenna line **[fact: schematic]**. It is not either bank's bus.
+    Open: where it ends and what reads it (near Q4072..Q4076, per the earlier trace); following it on p47 would settle that.
 - **The L bank is not searched.** `FUN_fffed12f` sets 0x1B3B1 from ROM **0xFFF87BF1**[0x1B3BB]. 0x1B3BB is `FUN_fffb3371`(TX
   frequency), the 11 TX ranges of the power table (upper limits at 0xFFF8870C: 2.1, 4.7, 7.5, 11.5, 14.5, 20.9, 22, 25.5, 41.5, 60,
   75 MHz, i.e. 1.8, 3.5, 5–7, 10, 14, 18, 21, 24, 28, 50, 70 MHz). The bytes are 00, 80, C0, E0, F0, F8, FC, FC, FE, FF, FF **[fact]**.
@@ -374,10 +412,10 @@ schematic (Technical Supplement p47, PA unit) shows where they go **[fact: schem
   search steps only the two capacitor bytes (0x1B3AE → 0x1B3AD, 0x1B3B0 → 0x1B3AF), from the per-range table at 0xFFF87BFC ({max,
   start, step, fine step}; max 239, 174, 88, 71, 54, 53, 36, 36, 28, 28, 28) **[fact]**.
 - So the tuner memory stores **the two C banks**, and the old question "which byte is L and which is C" has the answer: neither
-  stored byte is L. `TC` (0x1B3AF, `[0x1B3AF]` first on the wire) is the **transmitter-side** series capacitor and `AC` (0x1B3AD) the
-  **antenna-side** one (#205; previously read from the net names alone) **[inference, strong: schematic trace above]**. The trace that remains
-  open is the rest position of RL4016/RL4020/RL4027, which only matters for which state is "tuner in"; a continuity check on the PA
-  board (with the owner's approval, radio unpowered) or a clearer copy of p47 would settle it.
+  stored byte is L. `TC` (0x1B3AF, `[0x1B3AF]` first on the wire) is the **transmitter-side** series capacitor and `AC` (0x1B3AD)
+  the **antenna-side** one (#205; the issue text called this "a guess from net names") **[fact: schematic wiring above; that
+  0x1B3AF is `TC` and 0x1B3AD is `AC` is the bit-order inference, strong]**. A continuity check on the PA board (only with the
+  owner's approval, radio unpowered) would confirm the relay rest positions directly; the firmware logic does not depend on them.
 - **Dump check.** The owner's tuner memory is full (count 100, write index 24, so the ring has wrapped). Both bytes use the whole
   range their band allows (TC 0..126, AC 0..86; both fall roughly as 1/f, correlation 0.96 and 0.93) and every stored value is
   below its band's search maximum; 15 entries are (0, 0), i.e. no switched capacitor in either bank. No byte behaves like a smaller bank, which fits
@@ -440,6 +478,33 @@ differ from `cfg105_defaults`, as above **[fact: tool output]**.
   not two independent flags **[inference]**. The operating records can get the 0x01 form only by a whole-record copy (memory
   recall and the like) from a record that holds it; the disassembly search is in the
   [flag-bit section above](#90-byte-vfo--memory-record) **[fact]**.
+- **Readers of the unexplained bits: none in MAIN or DISPLAY** (#205 disassembly scan, 2026-10-30) **[fact for the paths
+  listed]**. The bits are +0x00 bits 4–7, +0x01 bit 0 and +0x04 bit 4. +0x02 bit 1 (NB) and +0x05 bits 0–1 (preamp) are settled
+  above. The scan used the `rx-elf-objdump` listing with `tools/rx_const_refs.py`, extended for this check so that a call to
+  `vfo_rec_ptr` returns a record base in r1. It covers every way MAIN reaches a record:
+  - the fixed VFO records (0x464F + 0x56BA / 0x5714, and 0x9D09 / 0x9D63);
+  - memory channels at 0x6150 + 90·*n* (base + register);
+  - the band-stack, QMB and copy loops (`bandstack_load`, `qmb_store`: whole-record copies);
+  - every record pointer returned by `vfo_rec_ptr`.
+
+  Every byte load of +0x00 is followed by `and #15` (about 50 sites: `vfo_mode` 0xFFFB3244, `displink_build_status`
+  0xFFF9682D / 0xFFF96992, `displink_build_30` 0xFFF99118, `cat_IF_OI`, `cat_MR` 0xFFFAC1CD, `cat_ZI`, the key handlers, …). The
+  only other accesses are the mode setters, which keep the nibble (`and #0xF0` + `or` mode: `vfo_mode_set` 0xFFFC0EE6, `cat_MD`
+  0xFFFABA45, `cat_MW` 0xFFFAC961, `align_load_preset` 0xFFFBB6CB), and whole-record copies. +0x01 is only tested at bits 2, 3,
+  4 and 7 (`FUN_fffec55a` / `vfo_tuner_bit_set`, `cat_MR` 0xFFFAC197 / 0xFFFAC1B1, `key_clar_short`, `memch_skip_get`,
+  `FUN_fff99ca2`) and cleared with masks that keep bit 0 (`& 0xE7` in `memch_load_to_vfo`, `vm_toggle_core`, `cat_CF`, `cat_MW`).
+  +0x04 is only tested at bits 7, 5, 3 and 2 (`vfo_filter_width_hz` 0xFFFC4ED0..0xFFFC4F2A, `FUN_fffc84f9`, `cat_NA`). The
+  DISPLAY gets no record byte raw. The frames that carry record data (`0x30`, status, memory list) take the mode as
+  `& 0x0F`, +0x03 as `& 3`, and only bit 7 of +0x01 and +0x05 (`FUN_fff99ca2` / `FUN_fff99cf2`), so the DISPLAY cannot see these
+  bits either **[fact: the MAIN frame builders]**. So in V01-12 the bits are written (defaults, `align_load_preset`) and copied,
+  and nothing reads them. What remains open is their meaning. They may be left over from the firmware this code was derived from;
+  a Yaesu firmware version that reads them, or Yaesu documentation of the record, would settle it. Not covered by the scan: a
+  record pointer passed into a function as an argument and then read at +0x00 / +0x01 with a mask other than those above. A
+  generic scan narrows that gap. It took every byte load at displacement 0, 1 or 4 that is followed by an `and`/`tst`/`btst`/`shlr`
+  touching these bits, and every bit instruction on them: 552 sites, almost all on I/O registers or the stack. The sites outside
+  those that touch a pointer were read by hand. They are per-mode block bytes (pointers from `vfo_filter_byte_ptr` or record
+  + 10/11/20/21/…, e.g. `FUN_fffc0ad4`, `FUN_fffc49c1`, `FUN_fffbdf98`, `cat_CO`), UI fields (`FUN_fff98363` on UI +0x40F) or
+  text buffers (`FUN_fff9c2f9`), never record +0x00 / +0x01 / +0x04 **[fact]**.
 - Other bits across the same 90 records **[fact: dump]**: ATT (+0x03 bits 0–1) is 0 and memory-scan SKIP (+0x01 bit 7) is clear
   everywhere; the preamp is only ever 2 (79) or 3 (11), never the 1 that reads back as IPO; +0x03 bits 6–7 are 2 everywhere,
   as every default writes (+0x03 = 0x80); +0x04 bit 4 is 0 everywhere. NB is on in the VFO-A level-0 band stacks of every band

@@ -392,7 +392,7 @@ documented on the DSP-link page.
 | 0x144A | 6 | `sdr_version` | `Vxx-yy` from register 0, read by `VE2;` **[fact]** |
 | 0x20B36 | u8 | `boot_error` | 3 = SDR not answering at boot, 2 = DSP **[fact for the values]**. It is the low byte of the u16 UI-state field +0x32 (0x20B04 + 0x32), sent in frame `0x60` bytes 13..14; the DISPLAY then shows `ERROR CODE : 003` / `002` ([display-link.md](display-link.md#boot-error-report), #60) **[fact]** |
 | 0x20B19 | u8 | | SDR settled for the TX sequencer **[inference]** |
-| 0x20B4A | u8 | | Filter-dependent value set with register 0x16 **[fact]**; use not traced |
+| 0x20B4A | u16 | | **TX→RX AF-unmute delay** in ms, set with register 0x16 by `sdr_upd_r16_filter` (16 `mov.w #n, 70[r14]` stores with r14 = 0x20B04, 0xFFFA1B2E..0xFFFA1C3B; `g_ui.rx_unmute_delay_ms`): CW 74/39/23 for widths <251/<800/≥800 Hz, SSB/DATA/RTTY/PSK 31/23/21 for <1101/<2000/≥2000 Hz, AM/FM 30; +10 when the mode's AESS level (`aess_level_ptr`) is non-zero, except AM/FM. Its only reader is `trx_sequencer` 0xFFFB842C (`movu.w 70[r14]` with r14 = 0x20B04), which starts soft timer 0x0D = 0x20B4A + *d* on TX→RX ([tx-protection.md](tx-protection.md)) **[fact: disassembly scan, #205]** |
 | timer 2 / 0x1E / 0x1F | | | SDR reply timeout (6) / bridge delays (100, 2000) / boot wait (1000) **[fact]** |
 
 ## Consistency with the SDR pages (T13)
@@ -442,7 +442,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFA19DD | `sdr_upd_r13` |  | Reg 0x13 = 0x8000 (constant; RX only) **[inference]** |
 | 0xFFFA1A0E | `sdr_upd_r14_mode` |  | Reg 0x14 = 0x2000/0x3200 (AM)/0x7800 (FM, DATA-FM)/0x3C00 (FM-N, DATA-FM-N) by TX-side mode **[inference]** |
 | 0xFFFA1A8A | `sdr_init_r15` |  | Reg 0x15 = 0x2000, sent once after the first full sync **[inference]** |
-| 0xFFFA1ABB | `sdr_upd_r16_filter` |  | Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A **[inference]** |
+| 0xFFFA1ABB | `sdr_upd_r16_filter` |  | Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31) **[inference]**; also sets 0x20B4A, the TX→RX AF-unmute delay read by `trx_sequencer` **[fact]** (#205) |
 | 0xFFFA1FD1 | `sdr_upd_r1a_nb_level` |  | Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off **[inference]** |
 | 0xFFFA2049 | `sdr_upd_r1b` |  | Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by NB WIDTH 0x9AD3 (`EX030203`) **[fact]**; the FPGA noise blanker's width parameter **[inference: that setting is its only input]** |
 | 0xFFFA20AF | `sdr_upd_r1c` |  | Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 (`EX030202`) **[fact]**; the noise blanker's rejection parameter **[inference: that setting is its only input]** |

@@ -5819,7 +5819,7 @@ char * menu_m4_18_0_draw(char *param_1)
   *(undefined2 *)(param_1 + 0x2c) = *(undefined2 *)(puVar3 + 1);
   *(undefined4 *)(param_1 + 0x28) = *puVar3;
   if (bVar1 != 0) {
-    puVar3 = (undefined4 *)FUN_fff94c0f();
+    puVar3 = (undefined4 *)ver_display_date();
     *(undefined4 *)(param_1 + 0x38) = puVar3[1];
     *(undefined4 *)(param_1 + 0x34) = *puVar3;
   }
