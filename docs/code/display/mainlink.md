@@ -132,8 +132,8 @@ falls back to 0x20 when nothing else is pending. The validation column refers to
 | cmd | n | MAIN sender | DISPLAY use | Meaning |
 |---|---|---|---|---|
 | 0x20 ' ' | 0x97 | `FUN_fff9c42a` (default) | redraw of the main screen | Base **radio status block** (0x97 bytes, range-checked by `mainlink_status_valid`). Every status frame below starts with it, and the command-specific part starts at offset 0x98 **[fact for the layout]** |
-| 0x21 '!' | 3 | not found in MAIN V01-12 | copy into 0x20450035, `led_set_one`(b1, b2)` (P6 pin from a table) | **[guess]** LED / output select |
-| 0x23 '#' | 0x35 | `FUN_fff98e39/58/77` | `FUN_20131354` text line (bit 7 of byte 1 = flag), 0x208084D4 = 1 | **[guess]** text/message line (decoder or memo) |
+| 0x21 '!' | 3 | not found in MAIN V01-12 | copy into 0x20450035, `led_set_one`(b1, b2)` (P6 pin from a table) | **one front-panel LED on/off**: `led_set_one` 0x20101FA4 drives P6 pin {10, 13, 11, 14, 4, 9, 5, 8, 12}[b2] high when b1 ≠ 0, else low; the `LED_*` nets are on P6 (p62, [peripherals.md](peripherals.md#2-pin-multiplexing)) **[fact]**. No MAIN V01-12 sender |
+| 0x23 '#' | 0x35 | `FUN_fff98e39/58/77` | `FUN_20131354` text line (bit 7 of byte 1 = flag), 0x208084D4 = 1 | text line of the DISPLAY's scope-area text view (TX line, [gui.md](gui.md#scope-drawing-83)) **[inference, gui.md]**. MAIN V01-12 fills only bytes 1–3 (`displink_build_23` 0xFFF98E96: b1 = high byte of UI +0x1BE plus 1, then 0, 0) and the other two senders have empty fill functions, so the rest is whatever 0x1456 last held **[fact, [main/display-link.md](../main/display-link.md)]** |
 | 0x24 '$' | 0x9D | `FUN_fff9a17d` | copy of the tail into 0x2045006D. Backlight `backlight_set` (PWM 0xFCFF022A, 0..100 %), `dimmer_set`, `gui_apply_display_cfg` | **Display settings**: EXT DISPLAY / PIXEL / SCU-LAN10 bits, keyboard language, mouse speed, TFT brightness, LED dimmer, contrast **[fact, MAIN `displink_build_24`]**; [layout](../main/display-link.md#0x24-display-settings-0x9f-bytes-display-mainlink_get_settings24-gui_apply_display_cfg) (#179) |
 | 0x30 '0' | 0x9E | `FUN_fff98ecb` | `scr_select_popup` | status + pop-up code at +0x98 (0 METER, 1 ATT, 2 IPO, 3 DNF, 4 AGC, 5 MODE, 6 SPAN, 9/0xA scope audio, 0xB COLOR, 0xC BAND, 0xD SPEED; 0xFF none) and its values; [layout](../main/display-link.md#0x30-select-pop-up-and-0x31-value-pop-up) (#179) |
 | 0x31 '1' | 0xA1 | `FUN_fff98ecb`, `FUN_fff98f7c` | `scr_value_popup` | status + function id at +0x98 (pop-up code − 0x1E, the `0x37` id space) and a 9-character value text at +0x99; [layout](../main/display-link.md#0x30-select-pop-up-and-0x31-value-pop-up) (#179) |
@@ -145,7 +145,7 @@ falls back to 0x20 when nothing else is pending. The validation column refers to
 | 0x40 '@' | 0x1F9 | `FUN_fff9aaad` | main screen. Five 0x2D-byte text slots at +0x11A. Slot text "FIRMWARE UPDATE" + SD card + touch → firmware-update mode (0x20800494) | status + **menu page** from MAIN `menu_page_serialize` (title, 8 tabs, 5 rows of 45 bytes from +0x119) **[fact]**; [layout](../main/display-link.md#0x40-menu-page-0x1fb-bytes-display-main-screen-scr_text_list) (#179) |
 | 0x41 'A' | 0x144 | `FUN_fff9bb23` | status redraw | status + **MEMORY CH LIST** (header, group, 4 rows of 36 bytes from +0xB5); [layout](../main/display-link.md#0x41-memory-ch-list-0x146-bytes-display-scr_memory_list) (#179) |
 | 0x42 'B' | 0xFD | not found | accepted, stored only | **[unknown]** |
-| 0x43 'C' | 0x21 | `FUN_fff98bcd` (variable length) **[inference]** | `scr_sd_menu` overlay with 0x21 bytes | **[guess]** pop-up text |
+| 0x43 'C' | 0x21 | `FUN_fff98bcd` (variable length) **[inference]** | `scr_sd_menu` overlay with 0x21 bytes | **SD CARD menu request** (op 1 MEM LIST LOAD, 2 MEM LIST SAVE, 3 MENU LOAD, 4 MENU SAVE, 5 INFORMATIONS, 8 FORMAT, plus transfer steps); the DISPLAY answers with `C3` **[fact, MAIN side: [main/display-link.md](../main/display-link.md#sd-card-transfers-0x43--0x44--0x45)]** |
 | 0x44 'D' | 5 | (block-transfer code) | `mainlink_rx_block_read` 0x2010EEB4 → reply C4 | **MAIN reads** a block of the 32000-byte buffer 0x208116A6: `id, off u16 BE, len u16 BE` |
 | 0x45 'E' | 0x105 | (block-transfer code) | `mainlink_rx_block_write` 0x2010EDE8 → reply C5 | **MAIN writes** up to 0xFF bytes into 0x208116A6: `id, off, len, data` |
 | 0x50 'P' | 0xF3 | `FUN_fff9a2d1` | status redraw | status + **on-screen keyboard** (layout byte, cursor, title, text); [layout](../main/display-link.md#0x50-on-screen-keyboard-0xf5-bytes-display-scr_keyboard) (#179) |
@@ -167,7 +167,7 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 
 | cmd | n | DISPLAY sender | MAIN handler | Meaning |
 |---|---|---|---|---|
-| 0xE0 | 4 | `mainlink_send_key` 0x20113294, `mainlink_send_touch_key` 0x20120E9C, `mainlink_send_e0` 0x20121858 | `FUN_fff95829` → `key_event_filter(code, flags)` | **Key / soft-key event**: `flags` (bit 0 = release, 0x40/0x41 for code 0x1016), `code` u16 BE. The DISPLAY treats codes 0x0300 / 0x030F specially (power-key path **[guess]**) |
+| 0xE0 | 4 | `mainlink_send_key` 0x20113294, `mainlink_send_touch_key` 0x20120E9C, `mainlink_send_e0` 0x20121858 | `FUN_fff95829` → `key_event_filter(code, flags)` | **Key / soft-key event**: `flags` (bit 0 = release, 0x40/0x41 for code 0x1016), `code` u16 BE. 0x0300 is LOCK/PWR and 0x030F is FUNC ([input.md](input.md)). `mainlink_send_key` gates them: while 0x20800495 is 0, only these two codes are sent (0x030F with any flags, 0x0300 only with flags ≠ 0), and only once frame `0x60` has arrived; afterwards a flags-0 0x0300 is dropped unless a flags ≠ 0 0x0300 went before it (0x20800216) **[fact]**. Open: what 0x20800495 marks; would be settled by tracing its writers |
 | 0xE1 | 5 | `mainlink_send_enc` 0x20115780 (from `mainlink_renc_event` 0x20115B04) | `FUN_fff9588b` | **Encoder**: `id, delta s8, …`. id 1/6 = main dial (0xFF0), 2 → 0xFF1, 3 → 0xFF2, 4/5 = ADC knobs |
 | 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `mainlink_send_sd_absent` 0x20160ED8 (byte 1 = 0 when the SD menu finds no card) | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
 | 0xE3 | 7 | `mainlink_send_rtc` 0x20121D90 | `FUN_fff95ed3` (+0xAD..+0xB1) | **RTC date/time** (S-35190A read), when the minute changes |
@@ -175,7 +175,7 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 | 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
 | 0xE6 | 3 | `mainlink_send_e6` 0x20121830 | `FUN_fff95c8a` → `FUN_fffb2da6(1..3)` | **beep request**: MAIN calls `beep_request`(1..3) **[inference from the MAIN handler]** |
 | 0xE7 / 0xE8 | 8 | `FUN_20124744`, `FUN_20124848`, `FUN_201248a4`, `FUN_20124adc`, `FUN_20124bc0` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **audio status** of the PlayList (E7) and voice-message (E8) screens: b1 = 0 file count, 1 state (0 stopped, 1 playing, 2 recording), 0xFF error index **[fact]**; MAIN's per-code actions in [E7 / E8 result codes](../main/display-link.md#e7--e8-result-codes-179) (#179) |
-| 0xC3 | 0x21 | `FUN_20134978`..`FUN_20134a08`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | 0x21-byte settings/name record **[guess]** |
+| 0xC3 | 0x21 | `FUN_20134978`..`FUN_20134a08`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | **reply to MAIN's `0x43` SD CARD request**: MAIN's `displink_rx_C3` copies it to +0x2ED and sets the "answered" flag +0x3F6 **[fact, MAIN; [main/display-link.md](../main/display-link.md#sd-card-transfers-0x43--0x44--0x45)]**. Open: the meaning of the reply bytes beyond the echo; would be settled by tracing MAIN's readers of +0x2ED |
 | 0xC4 | 0x105 | `mainlink_rx_block_read` | `FUN_fff95e97` | reply to 'D': `id, off, len, data` |
 | 0xC5 | 5 | `mainlink_rx_block_write` | `FUN_fff95e97` | reply to 'E': `id, off, len` |
 | 0xF0 | 8 | `mainlink_send_hello` 0x201162A4 | `FUN_fff9546a` | **Hello**: `01 08` (version V01-08), `20 23 06 29` (date), key code at power-up. MAIN stores the version/date text and answers with 0x60. Key code 1 = `settings_defaults(0)` (**reset**), 7 = `dest_code_set` (swap destination code), 2 = start 0x62 page, 4/5 = other start modes, 6 = sent only by `mainlink_hello_key6` 0x2011668C from `logo_fade_in` (boot combination 6, maintenance/loader screen) and by the MAIN-update writer to the new MAIN; MAIN then marks the link down and stays off **[fact for the call path; T14]** |
@@ -321,7 +321,11 @@ MAIN had sent it**, which redraws the previous screen. It does not transmit anyt
 `uart4_obj_run` 0x20158C44 probes with 0xF0 bytes (5 two-byte answers), sets 0x2045001C, then sends `1E 00 31` and `1F 00 32`. It has **no
 caller** (B/BL/literal scan of the whole image), so in V01-08 SCIF4 is never started, and `uart4_send` (used by `task_keycode`, `FUN_20130c90`,
 `FUN_20131638`) would use a null object pointer **[inference: those paths must not be reached]**. `update_dsp` waits on 0x2045001C/0x2045001D
-for it (T11c). The SCIF4 pins probably go to the unpopulated `ACC_UMOSI/UMISO` accessory bus **[guess]**.
+for it (T11c). The accessory UART test points `ACC_UMISO/ACC_UMOSI` are on P6_2/P6_3, which `pinmux_init` sets to alt 7 = RxD2/TxD2,
+i.e. **SCIF2**, not SCIF4 **[fact: `gpio_cfg_alt(6,2,7)` / `(6,3,7)`; R01UH0403EJ0700 Tables 1.4–1.6]**. TxD4/RxD4 exist only on
+P5_0/P5_1 (LVDS on this board), P7_1/P7_2 (no net on p62) and P8_14/P8_15 (`5VON`, `ENC1_S`) **[fact: same tables; p62]**, and no
+code sets any of them to the SCIF4 function, so in V01-08 SCIF4 has no pins **[inference]**. Open: where a SCIF4 link was meant to go;
+would be settled by a firmware version that starts it.
 
 ## 11. Functions
 
