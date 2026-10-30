@@ -16,7 +16,7 @@ How the parser, replies, AI and ports work is described in [code/main/cat.md](co
 The manual parameter summaries below are short paraphrases. Ranges and digit counts are copied as printed.
 
 ## Tags and columns
-- **[fact]**: seen in the code or data at the address given. **[inference]**: follows from the code but is not proven. **[guess]**: plausible, weakly supported.
+- **[fact]**: seen in the code or data at the address given. **[inference]**: follows from the code but is not proven; the evidence and reasoning are given. **Open:** not settled; says what would settle it.
 - **FW lengths accepted**: total characters, including the 2-letter mnemonic and `;`, that the dispatch case accepts. The firmware checks the **length only**. Digits are validated inside the handler.
 - **Class**:
   - `read-only`
@@ -266,7 +266,7 @@ Only frames that start with `E9` (or `E1`, which is then ignored) received into 
 
 <a id="ext-kt"></a>
 ### KT (undocumented; none)
-`KT` is in the table, but `cat_dispatch_ext` has no case for index 5, so it gets no reply and no error. **[fact]** It may be a leftover from another model **[guess]**.
+`KT` is in the table, but `cat_dispatch_ext` has no case for index 5, so it gets no reply and no error. **[fact]** **Open:** why `KT` is in the table; MAIN V01-12 has no other reference to it, so it would be settled only by a firmware that handles index 5 (a later FT-710 release, or a related Yaesu model that shares the table).
 
 <a id="ext-pe"></a>
 ### PE — 18 byte parameters, probably parametric EQ (undocumented; medium)
@@ -346,7 +346,7 @@ All replies match the formats decoded from V01-12 **[fact, radio]**. The `E8` du
 ## Undocumented primary-table commands
 | Command | What the firmware does | Risk |
 |---|---|---|
-| `EM` | `EM0n;` reads and `EM0n<text>;` (≤ 50 characters) writes one of five text slots at 0x979E + 0x32·(n-1) (n = 1..5), terminated by 0xFE. A 50-character text spills its terminator into the next slot. No EEPROM write was seen. These are user text or message slots **[guess]**. | low |
+| `EM` | `EM0n;` reads and `EM0n<text>;` (≤ 50 characters) writes one of five text slots at 0x979E + 0x32·(n-1) (n = 1..5), terminated by 0xFE. A 50-character text spills its terminator into the next slot. No EEPROM write was seen. They are the RTTY text memories **[inference]**: their only other reader, `FUN_fff9baa0`, runs for message type 2, which `FUN_fffe4407` sets for RTTY ([cat-commands-primary.md](cat-commands-primary.md#em), #173). | low |
 | `EN`, `FS`, `QS` | Stubs: the case accepts a length (EN 5, FS 3/4, QS 3), but the handler only sets the error flag, so they always answer `?;` | none |
 | `BY ED EK EU RC RD RS RT RU` | In the table, but routed to the switch default, so they answer `?;` | none |
 

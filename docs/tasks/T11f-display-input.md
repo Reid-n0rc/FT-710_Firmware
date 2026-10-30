@@ -18,7 +18,7 @@ Part of T11 (document the DISPLAY firmware). Deliverable: `docs/code/display/inp
 4. Touch: RIIC/TSC2003 commands, IRQ (TINT), filtering, calibration math and where the constants are stored; the GUI hand-off.
 5. USB HID: keyboard report path, VK names, the mouse cursor task; full debug console: both chains, every registered handler, every
    `fwdbg_cmd`/`cli`/`keycode` command, unlock condition, what T16 must patch.
-6. Write `docs/code/display/input.md` (tables, globals, Mermaid figures, [fact]/[inference]/[guess]); propose names; commit.
+6. Write `docs/code/display/input.md` (tables, globals, Mermaid figures, [fact]/[inference] (or an open question; the former guess tag is retired)); propose names; commit.
 
 ## Findings
 Page: [docs/code/display/input.md](../code/display/input.md). 111 name proposals in `tools/ghidra/names_display.T11f.tsv`, 3 missed entries in
@@ -27,7 +27,7 @@ raw image were used).
 
 - **Key codes are MAIN's key codes** [fact]: MAIN has a name table at 0xFFF883C4 (`{u16 code, char[10]}`). The DISPLAY keys map 1:1. 6 direct
   GPIO keys (LOCK/PWR 0x300 on P2_0/IRQ5, TUNE, MOX/VOX, FUNC, DSP, MIC FAST), MIC PTT (P10_5, handled separately), a 4x4 matrix (13 keys) and a
-  2-channel ADC ladder on AN3/AN4 (MIC UP/DOWN/MUTE/P1-P4 plus 16 unnamed codes 0x343-0x358, probably a DTMF keypad mic [guess]).
+  2-channel ADC ladder on AN3/AN4 (MIC UP/DOWN/MUTE/P1-P4 plus 16 unnamed codes 0x343-0x358, whose source is open: no MAIN code references 0x343-0x358 [fact, grep of decomp/main]; would be settled by the schematic of a 16-key keypad microphone, or by logging E0 frames while pressing such a mic's keys with the owner's approval).
 - Key frame `E0 state hi lo 00` (1 press, 0 release, 2 held 1 s); one key at a time; 3-sample debounce at 1 ms [fact]. Holding LOCK/PWR 1 s
   switches standby to full or sets the shutdown flag 0x20800493 [fact].
 - **Boot key combinations** 1-7 (table 0x20165678) go to MAIN in the power-up frame `F0 01 08 20 23 06 29 n 00` [fact]. Combo 4 (MODE+SPLIT)

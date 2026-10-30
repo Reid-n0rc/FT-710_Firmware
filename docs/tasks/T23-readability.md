@@ -219,7 +219,8 @@ canonical projects and the re-export are left to the parent session.
      `ostm_time_us` tests bit 6 of it while OSTM0 runs and, if set, adds one more 320000-count period. Bit 6 of the GIC
      word 4 is interrupt ID 134 = **OSTM0TINT** (manual Table 7.3, "List of Interrupt IDs"), whose pending flag is `INTC_ICDISPR4` (0xE8201210)
      bit 6, so the code means "OSTM0 tick pending, the counter has already wrapped" **[inference]**, and the address looks
-     like a slip in Yaesu's code **[guess]**; if the location reads 0, the correction never fires and the time can step
+     like a slip in Yaesu's code (**open**: `ostm_time_us` 0x20117860 is the only DISPLAY code that reads it (grep of decomp/display) to 0xE8205580; reading it on
+     a running radio over JTAG, with the owner's approval, would settle it); if the location reads 0, the correction never fires and the time can step
      back by up to one 10 ms tick between the wrap and the tick interrupt **[inference]**. No row added (the TSVs list
      only documented or sourced registers); the reason is a comment next to `RT_EXTRA`.
 
@@ -753,7 +754,7 @@ canonical projects).
   listed as "Also on". Unlisted functions go to `unassigned.c`, in sections by export file.
 - **Header comment** per function: Ghidra name, address, size, callers, export file; the doc's name if it differs from
   the Ghidra name (so a stale doc name after a rename is visible), the inferred/proposed name, the purpose columns,
-  the tags found in the row (`[fact]`, `[inference]`, `[guess]`, or a `Tag` column; "none in the table row" when the
+  the tags found in the row (`[fact]`, `[inference]`, the former guess tag, or a `Tag` column; "none in the table row" when the
   page tags the claim elsewhere), the page link. The body from the marker line to the next marker is copied byte for
   byte (the script asserts that the chunks rebuild each export file exactly).
 - **Bootstrap:** `step_export` runs `readable_view.py build` after `readability_stats.py readme` when `DECOMP_OUT` is the
