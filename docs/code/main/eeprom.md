@@ -328,7 +328,7 @@ Notes **[fact unless marked]**:
     `FUN_fff94c0f`. That getter returns 0x143C, the `"yy-mm-dd"` date `displink_rx_F0_hello` builds from hello bytes 4..6 (stored by
     `FUN_fff94c1b`); the decompile shows it as `void`, the pattern of its neighbours (`ver_display` 0x1436 / setter 0xFFF94BFD)
     gives the address **[inference]**. So the DISPLAY row reads `V01-08  23-06-29`. The MAIN ROM holds `"2101"` at 0xFFFFFF10 and `"24-02-16"` at 0xFFFFFF20
-    (after `"V01-12"` at 0xFFFFFF00), so the MAIN row reads `V01-12-2101 24-02-16` **[fact: MAIN image]**. `24-02-16` is the release
+    (after `"V01-12"` at 0xFFFFFF00), so the MAIN row shows `V01-12-2101` and `24-02-16` **[fact: MAIN image]**. `24-02-16` is the release
     date: the SFL header of the same file says `[DATE] : 2024/02/16` **[fact: FT-710_MAIN_V0112.SFL header]**. Open: what `2101`
     encodes; would be settled by a second MAIN release to compare, or the dev string in Yaesu's tools.
   - Nothing else reads it, and nothing but `SPN`, the alignment menu and the defaults writes it. It is a factory/debug display flag,
