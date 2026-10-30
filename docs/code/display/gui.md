@@ -176,7 +176,7 @@ marked.
 | ID | Len | Handler | Screen |
 |---|---|---|---|
 | 0x20 ` ` | 0x97 | `scr_main_layout`, `audio_error_check` | main operating screen (scope/3DSS, mode, filter, status) |
-| 0x21 `!` | 3 | `led_set_one` | backlight / dimmer level (no redraw) |
+| 0x21 `!` | 3 | `led_set_one` | one front-panel LED on/off (byte 1 = on, byte 2 = index into the P6 pin table of `led_set_one` 0x20101FA4); no redraw **[fact]** |
 | 0x23 `#` | 0x35 | `FUN_20131354` | TX text line (bytes 4…) of the scope-area text view, see [Scope drawing](#scope-drawing-83) **[fact for the buffer, inference for the use]** |
 | 0x24 `$` | 0x9D | `gui_apply_display_cfg`, `backlight_set`, `dimmer_set`, `gpio_ft4222_reset` | display settings: DVI on/off and 800×480/800×600, contrast; byte 0 bit 2 drives P2_7 (`FT4222_RESET`) **[fact for the pins]** |
 | 0x30 `0` | 0x9E | `scr_select_popup` | METER / MODE selection popups (PO, COMP, ALC, VDD, ID, SWR; LSB … DATA-L) |
@@ -186,7 +186,7 @@ marked.
 | 0x39 `9` | 0xE7 | `scr_vfo`, `vfo_audio_status_draw` | frequency display (large green/white/red digit sprites) |
 | 0x3A `:` | 0xA0 | `scr_playlist` | PLAY LIST / voice messages (`%02d:%02d:%02d`, RX LEVEL, DELETE) |
 | 0x3F `?` | 3 | `rec_start_stop` | start/stop recording to SD, file name `20YYMMDD_HHMMSS` (no screen) |
-| 0x40 `@` | 0x1F9 | `scr_text_list` | text list with LF/CR glyphs, DONE/BACK (30-char rows) **[guess: RTTY/PSK text memories or decode]** |
+| 0x40 `@` | 0x1F9 | `scr_text_list` | text list with LF/CR glyphs, DONE/BACK (30-char rows). The content is a **MAIN menu page**: MAIN builds frame 0x40 with `menu_page_serialize` (P1 title, 8 P2 tab names, 5 rows of item name + value) **[fact, MAIN `displink_build_40`; [main/display-link.md](../main/display-link.md#0x40-menu-page-0x1fb-bytes-display-main-screen-scr_text_list)]** |
 | 0x41 `A` | 0x144 | `scr_memory_list` | MEMORY CH LIST (NAME, MODE, SCAN, TYPE, ERASE, RESTORE) |
 | 0x43 `C` | 0x21 | `scr_sd_menu` | SD card: MEM LIST LOAD/SAVE, MENU LOAD/SAVE, INFORMATIONS, FORMAT, `FREE SPACE`/`CAPACITY` (shares code with [update.md](update.md)) |
 | 0x50 `P` | 0xF3 | `scr_keyboard` | on-screen keyboard (Caps, Space, ENT, ←/→, ABC, #%^, End) |
@@ -436,7 +436,8 @@ r0 = 1 for MULTI or 0 for large, so the decompile shows the body under the wrapp
 renderers, and `scope3d_render_large` / `_small` only read it (they push it to the history only when x > 3) **[fact]**. No neighbouring word
 (0x208007BC/C0, 0x208007A0–B8) is used as a base for it **[fact: literal search, the 0x208007BC pair is a sprite position]**. So no writer
 stores a non-zero value, the "inside `range`" branches never run, and the second colour ramp is never used **[inference: only a pointer
-computed at run time could still reach it]**. It looks like a passband/marker zone that this firmware leaves off **[guess]**.
+computed at run time could still reach it]**. Open: what `range` was meant to mark; would be settled by a DISPLAY version that writes
+it.
 
 **Oscilloscope / AF-FFT panel** (`FUN_2015D334`, MULTI only), fed by the IF DSP's 600-byte record 0x208DD73C
 ([spi-links.md](spi-links.md)) **[fact: code]**:
