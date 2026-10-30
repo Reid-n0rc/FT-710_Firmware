@@ -6,7 +6,7 @@
 # Types: void bool char int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double, '*' for pointers.
 # AAPCS (gcc, Thumb-2): parameters r0..r3 in order, return r0 (64-bit r0:r1). Rows only where the evidence is clear.
 0008005e	deinitXip	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
-0008009c	power_sram_pd_differs	bool	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
+0008009c	countPartitionSwitches	bool	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 0008032c	initXip	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008092e	BOARD_InitXip	void	uint32 *	asm	asm: live-in r0:L (= decompiler 1), 0/0 call sites read r0, writes r0 0, return void
 000809a0	BOARD_SetFlexspiClock	void	uint32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 1, return void
@@ -163,7 +163,7 @@
 00086e1c	CLOCK_AttachClk	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/4 call sites read r0, writes r0 1, return void
 00086e58	CLOCK_SetClkDiv	void	uint32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/6 call sites read r0, writes r0 0, return void
 00086eaa	DSP_CopyImage	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/3 call sites read r0, writes r0 1, return void
-00086ec4	hashcrypt_get_digest	void	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
+00086ec4	hashcrypt_save_running_hash	void	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
 00086ef0	INPUTMUX_AttachSignal	void	int32, int32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 0, return void
 00086efe	MU_SendMsg	void	int32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 0, return void
 00086f14	MU_SetFlags	void	int32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/2 call sites read r0, writes r0 0, return void
@@ -175,7 +175,7 @@
 0008702c	USART_GetDefaultConfig	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 0008704e	USART_SetBaudRate	void *	uint32 *, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00087234	BOARD_FlexspiClockSafeConfig	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
-00087240	BOARD_InitDebugConsole	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
+00087240	app_init_nop	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 00087242	BOARD_InitPins_flexcomm	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008726c	BOARD_InitPins_i2s	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 00087294	BOARD_InitPins	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
@@ -184,7 +184,7 @@
 0008737a	strlen	int32	uint32 *	asm	asm: live-in r0:L (= decompiler 1), 10/10 call sites read r0, writes r0 1, return value
 000873c2	strncmp	int32	uint32 *, uint32 *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 4/4 call sites read r0, writes r0 1, return value
 00087418	strncpy	void	uint32 *, uint32 *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 0, return void
-00087470	_Cflush_read	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/3 call sites read r0, writes r0 1, return void
+00087470	file_clear_flag20	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/3 call sites read r0, writes r0 1, return void
 00087702	remove	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 00087716	_Cfflush1	uint32	int32 *	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 00087756	__aeabi_uldivmod	uint64	uint64 n, uint64 d	doc	ARM RTABI (IHI 0043) 4.3.1: n in r0:r1, d in r2:r3, quotient in r0:r1 (the remainder in r2:r3 is not modelled) [fact]

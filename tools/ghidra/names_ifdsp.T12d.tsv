@@ -1,6 +1,6 @@
 # FT-710 IFDSP V01-01 Cortex-M33 (program FT-710_IFDSP_V0101.bin) name proposals from T12d. address<TAB>name<TAB>plate comment
 # Entries marked NEW are not functions in Ghidra yet (code reached only through veneers, tail calls or pointers); create them.
-# Tags: [fact] seen in code/data, [inference] SDK/FreeRTOS pattern match, [guess] weak.
+# Tags: [fact] seen in code/data, [inference] SDK/FreeRTOS pattern match (evidence stated); unsettled points are written as "Open: ...; would be settled by ...".
 # --- T12a review list (corrections)
 000809a0	BOARD_SetFlexspiClock	Replaces CLOCK_SetDiv_0x620. board.c: if FLEXSPIFCLKSEL/DIV (CLKCTL0 0x620/0x624) differ: BOARD_DeinitXip, PSCCTL0_CLR FlexSPI, set sel/div, PSCCTL0_SET, BOARD_InitXip [inference]
 000800e8	POWER_CalculateSafetyCount	Real entry (movw r1,#0x21A; ldr r2,=SYSCTL0) that falls into 0x800EE; fsl_power.c deep-sleep wake-up safety count from PDRUNCFG/PDSLEEPCFG [inference]
@@ -8,11 +8,11 @@
 00084d3c	malloc	Replaces redlib_malloc: Redlib heap malloc, free-list blocks tagged 0x10000000 (free) / 0x20000000 (used), grows with _sbrk 0x85D48 [inference]
 00084e04	_Csys_alloc	Replaces _Csys_alloc_failed: malloc wrapper; on NULL writes "*** _Csys_alloc failed" via __sys_write and calls __sys_appexit (hang) [fact]
 # --- fsl_power.c (all unused: POWER_EnterDeepSleep has no caller)
-0008000c	rom_api_1c_guarded_call	Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers [guess]
-00080030	power_set_deepsleep_pmc_cfg	PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep [guess]
+0008000c	IAP_FlexspiNorAutoConfig	r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C) ->get_config (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1 [fact: 0x8000C-0x8002A]. Same calls in the same order as IAP_FlexspiNorAutoConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay loop first) [inference]. No BL/B.W/literal reference anywhere in the image [fact: branch+literal scan]
+00080030	POWER_SetBiasConfig	if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 [fact: 0x80030]. Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) [inference]. Called from 0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA (POWER_EnterDeepSleep) [fact]
 00080050	delay	fsl_power.c busy loop (count iterations) [inference]
 0008005e	deinitXip	fsl_power.c: if running XIP (PC in 0x08xxxxxx) wait FlexSPI idle, MDIS, PSCCTL0_CLR FlexSPI clock [inference]
-0008009c	power_sram_pd_differs	Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) [guess]
+0008009c	countPartitionSwitches	returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks 0x1F000FFF, 0x3FFFFFFF, 0x3FFFFFFF), else 0 [fact: 0x8009C]. Same expression and masks as static countPartitionSwitches in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is POWER_CalculateSafetyCount, as in the SDK [inference]
 000802aa	initFlexSPI	fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) [inference]
 0008032c	initXip	fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra) [inference]
 0008448c	POWER_UpdateOscSettlingTime	Stores osc settling time (us) at 0x80A58, read by POWER_EnterDeepSleep [inference]
@@ -21,7 +21,7 @@
 00080914	BOARD_DeinitXip	Wait FlexSPI STS0 ARBIDLE+SEQIDLE, MCR0 |= MDIS [inference]
 0008092e	BOARD_InitXip	MCR0 &= ~MDIS, SWRESET, wait DLL lock if DLLCR0 enabled, 100 NOPs [inference]
 00087234	BOARD_FlexspiClockSafeConfig	BOARD_SetFlexspiClock(3 = FFRO, /1) before the main clock switch [inference]
-00087240	BOARD_InitDebugConsole	Empty stub called from app_main right after BOARD_BootClockRUN [guess]
+00087240	app_init_nop	body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear [fact]. Open: which source function this was (SDK examples call BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the vendor's source or link map
 00087242	BOARD_InitPins_flexcomm	IOPCTL: PIO0_1/2 FC0 USART, PIO0_7..10 FC1 SPI, PIO1_10 MCLK, PIO2_2 SCT0_OUT0, PIO2_30 CLKIN [fact]
 0008726c	BOARD_InitPins_i2s	IOPCTL: PIO0_14..16 FC2 (SCK input inverted), PIO0_23 FC3 data in, PIO0_30 FC4 data in, PIO1_3..5 FC5 [fact]
 00084c90	BOARD_InitPins_debug_gpio	NEW (tail call from BOARD_InitPins). GPIO outputs low: PIO0_28/29/31 (TP2043/2046/2044), PIO2_4/5/6 (TP2007/2008/2009) [fact]
@@ -61,10 +61,10 @@
 00086f2e	PINT_PatternMatchResetDetectLogic	PMCTRL PMAT != 0 -> PMSRC = PMSRC [inference]
 00086f3c	PINT_PinInterruptClrStatus	NEW [inference]
 00086efe	MU_SendMsg	Wait TE bit in SR (0x60), write TR[n] [inference]
-00086ec4	hashcrypt_get_digest	Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the HASHCRYPT IRQ handler [guess]
-00080a18	OTFAD_Init	NEW true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) |= cfg bits | GE; unused [guess]
+00086ec4	hashcrypt_save_running_hash	n = 5 if ctx byte +0x44 == 1 (kHASHCRYPT_Sha1) else 8; wait HASHCRYPT STATUS bit 1 (DIGEST); copy DIGEST0[0..n) (base+0x40) to ctx+0x58 [fact: 0x86EC4]. Only caller 0x8425A in the HASHCRYPT IRQ handler after INTENCLR/MEMCTRL=0 [fact]. Same as static hashcrypt_save_running_hash in mcux-sdk@8a289764 drivers/hashcrypt/fsl_hashcrypt.c, minus its ERROR check and status return (older SDK version) [inference]
+00080a18	OTFAD_Init	true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE); waits until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) |= bits [fact: 0x80A18]. Same as OTFAD_Init in mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM, forceLDM, restrictedRegAccess, enableOTFAD, flexspiBaseAddr) [inference]. No reference in the image [fact: branch+literal scan]
 00080a24	OTFAD_Init_body	Ghidra entry 12 bytes into OTFAD_Init; remove and let 0x80A18 own it [fact]
-00080a44	OTFAD_Deinit	NEW: OTFAD CR &= ~GE; unused [guess]
+00080a44	OTFAD_Deinit	base->CR (+0xC00) &= ~0x80000000 (GE) [fact: 0x80A44]; same as OTFAD_Deinit in mcux-sdk@8a289764 fsl_otfad.c [inference]. No reference in the image [fact: branch+literal scan]
 # --- driver IRQ handlers in SRAM, reached from the flash IRQ stubs through veneers at 0x080015D8..0x08001808 (all NEW)
 00083e10	DMA0_DriverIRQHandler	IRQ1 -> DMA_IRQHandle(DMA0) [fact: vector]
 00083e1c	DMA1_DriverIRQHandler	IRQ54 [fact: vector]
@@ -172,20 +172,20 @@
 000872c4	free	Marks block 0x10000000 and merges free successors [inference]
 000872f8	setvbuf	_IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 [inference]
 00087418	strncpy	[inference]
-00087470	_Cflush_read	[guess]
+00087470	file_clear_flag20	FILE flags (+0xC) &= ~0x20; if +0x18 != +0x28: call file_flush_write_buffer, flags = (flags & ~0x3010) | 0x10, +0x18 = +0x28, +0x2C = +0 = buffer (+0x10); then flags &= ~0x4040 [fact: 0x87470]. Callers fputc (x2) and _Cfflush1 call it only when flag 0x20 is set [fact]. Open: the Redlib name and the meaning of flag 0x20; would be settled by Redlib source or symbols
 000874b0	fputc	FILE output slow path, 19 callers (printf engine) [inference]
 000875f0	_Cfdopen	Opens fd with mode "r"/"w"/"a"[+][b] into a FILE (used by stdio_init) [inference]
-00087658	_Cflush_write	[guess]
+00087658	file_flush_write_buffer	clears flag 0x80000; if (flags & 0x82) == 2 and flag 0x10000 set, writes buffer (+0x10) .. max(ptr, +0x2C) with _Cwrite_buffer, then resets the pointers and clears 0x10000; returns 0, or -1 on error / wrong mode [fact: 0x87658]. Redlib's own name unknown
 000876aa	_Cfclose	[inference]
-00087702	remove	Stub: strlen then return -1 [guess]
+00087702	remove	strlen(name), then tail-calls __sys_remove(name, len) which returns -1 [fact: 0x87702]. Only caller _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by __sys_tmpnam: the C rule that closing a tmpfile() deletes it [inference]
 00087716	_Cfflush1	[inference]
 00087756	__aeabi_uldivmod	64-bit unsigned divide (also reached by the flash veneer 0x08001618) [inference]
-00087850	__udivmoddi_core	[guess]
+00087850	udiv64by32_helper	shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit steps) [fact: 0x87850]; the 3 call sites are all in __aeabi_uldivmod [fact]. Library's own name unknown
 00087932	__sys_appexit	b . (hang) [fact]
 00087934	__sys_close	returns -1 (no host) [fact]
 0008793a	__sys_flen	returns -1 [fact]
 00087940	__sys_istty	returns -1 [fact]
-00087946	__sys_readc	NEW: returns -1 [guess: name]
+00087946	__sys_remove	returns -1 [fact]. Only caller is remove (b.w at 0x87712) with r0 = path, r1 = strlen(path) [fact], which is the SYS_REMOVE (0x0E) argument pair (path, length) in the ARM semihosting spec (ARM-software/abi-aa@36203f2c semihosting.rst); SYS_READC takes no argument [inference]
 0008794c	__sys_seek	returns -1 [fact]
-00087952	__sys_tmpnam	returns -1 [guess: name]
+00087952	__sys_tmpnam	returns -1 [fact]. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) [fact] = SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec (ARM-software/abi-aa@36203f2c semihosting.rst) [inference]
 00087958	__sys_write	returns len (nothing written: stdio goes nowhere) [fact]
