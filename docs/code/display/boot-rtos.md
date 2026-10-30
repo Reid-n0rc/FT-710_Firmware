@@ -74,7 +74,7 @@ so the standby → on transition does not reboot the CPU **[fact for the code, i
 | 1 | `bootinfo_load` 0x20116C4C | see section 1 |
 | 2 | `fb_clear_all` 0x20132F84 | clears 0x60000000 + 0x2FF300 and the layer at 0x605048A0 |
 | 3 | `rtc_init` | creates a kernel object from {2,0,0} (event flag or mailbox) into 0x20800368, after `rtc_port_idle`/`rtc_write_reg` port set-up |
-| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`FUN_2014a4d0`), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
+| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`fs_init` 0x2014A4D0: drive and file tables, pools, semaphores), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
 | 5 | `fwdbg_init` 0x20111064 | self-update debug task (`fwdbg_task_create`) + `fwdbg_line` handler |
 | 6 | `loader_selfinstall` 0x20110F0C | only when 0xFCFF400C holds 0xAABBCCDD: erases flash 0..0x340000 and the two flag sectors, then writes this running image (from `vec_reset`) to flash 0 and new flags. This is how a new **loader** gets installed **[fact for the code, inference for the purpose]**. No code writes 0xFCFF400C; a JTAG factory script sets it ([update.md](update.md) §6) **[inference]** |
 | 7 | `gpio_p2_0_debounced`, `gpio_read_bit(8,12)` | mode inputs |

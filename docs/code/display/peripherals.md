@@ -295,7 +295,7 @@ sequenceDiagram
 
 ## 6. SD card user files
 
-Drive `I:` is the SD card on SDHI0 (driver `FUN_201401dc`–`FUN_20140b9c`, power `sd_power`, detect `sd_card_detect`). The FAT layer (FAT12/16/32
+Drive `I:` is the SD card on SDHI0 (driver `sdhi_*` 0x20140148–`FUN_20140b9c`, T23e round 2, power `sd_power`, detect `sd_card_detect`). The FAT layer (FAT12/16/32
 and exFAT names at 0x20148F20, the `fsys_*` semaphores and `fs_fopen`/`fs_fread`/`fs_fwrite`/`fs_fseek`) is summarised in [update.md](update.md) **[fact for the
 strings]**. Files and folders the DISPLAY reads or writes:
 

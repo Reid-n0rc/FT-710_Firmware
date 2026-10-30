@@ -295,7 +295,7 @@ sequenceDiagram
   0x2080010E (`usbkbd_set_layout`, 0..10 = JPN, US, UK, FRA(AZ), FRA(QW), DEU, POR, POR(BR), ESP, ESP(LA), ITA, names at 0x20800134). The GUI
   text editors (callsign, memory names, CW text, per the manual) use the 64-character buffer 0x20811240 (`kbd_text_append` / *`_backspace`* /
   *`_clear`*). `usbkbd_capslock_for_mode` (0x201073A4) turns CapsLock on for text modes 0, 3, 5, 8 and 10. Usage 0x53 toggles NumLock and
-  0x47 toggles ScrollLock; `FUN_2013baac` sends the LED report.
+  0x47 toggles ScrollLock; `usbkbd_set_leds` (0x2013BAAC) sends the LED report as HID SET_REPORT (0x21, 9, wValue 0x0200, 1 byte) **[fact]**.
 - **Mouse** **[fact]**: `mouse_cursor_run` (0x2015FD60). Type 1 (attach) shows the cursor (layer 6) at (400,240). Type 0 hides it. Type 2 moves
   it by dx·(s+150)/100, where s is a speed value **[inference: the MOUSE POINTER SPEED setting, 0–20]**. Button bit 0 = left (pointer source
   "mouse", like touch), bit 1 = right, bit 2 = middle. The wheel (+0x22, when flag 0x100 is set) goes to `mouse_wheel_event` (0x2015FAC4).
