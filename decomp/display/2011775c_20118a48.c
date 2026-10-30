@@ -10,9 +10,9 @@ undefined4 gic_enable_irq(uint param_1)
   undefined4 uVar1;
   
   if (param_1 < 0x24b) {
-    FUN_2015686c();
+    knl_int_disable();
     (&INTC_ICDISER0)[param_1 >> 5] = 1 << (param_1 & 0x1f);
-    FUN_2015688c();
+    knl_int_restore();
     uVar1 = 0;
   }
   else {
@@ -32,9 +32,9 @@ undefined4 gic_disable_irq(uint param_1)
   undefined4 uVar1;
   
   if (param_1 < 0x24b) {
-    FUN_2015686c();
+    knl_int_disable();
     (&INTC_ICDICER0)[param_1 >> 5] = 1 << (param_1 & 0x1f);
-    FUN_2015688c();
+    knl_int_restore();
     uVar1 = 0;
   }
   else {
@@ -58,7 +58,7 @@ uint ostm_init(void)
   bVar1 = OSTM_OSTM0CTL;
   OSTM_OSTM0CTL = bVar1 & 0xfd;
   OSTM_OSTM0CTL = 1;
-  uVar2 = itron_acre_isr(0,0x20165a60);
+  uVar2 = itron_acre_isr(0,&cisr_ostm0_tick_isr);
   if (0 < (int)uVar2) {
     gic_enable_irq(0x86);
     bVar1 = OSTM_OSTM0TS;
@@ -76,12 +76,12 @@ uint ostm_init(void)
 void ostm0_tick_isr(void)
 
 {
-  FUN_2015686c();
+  knl_int_disable();
   DAT_20800408 = DAT_20800408 + 10000;
-  FUN_2015688c();
+  knl_int_restore();
   DAT_208dc17c = 0;
-  DAT_208003dc = (char)DAT_201659d0 + '\x01';
-  DAT_208003dd = DAT_208003dd + '\x01';
+  knl_sys.f_0x34_u8 = (char)DAT_201659d0 + 1;
+  knl_sys.tick_pending = knl_sys.tick_pending + 1;
   return;
 }
 
@@ -157,7 +157,7 @@ uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
   
   uVar2 = 0;
   FUN_2011d080();
-  iVar1 = FUN_2011d830(param_1,4);
+  iVar1 = vdc5_shrd_get_state(param_1,4);
   if ((iVar1 == 0) || (*(int *)(param_2 + 4) == 0)) {
     FUN_2011d19c(param_1,param_2);
     if (param_3 != (void *)0x0) {
@@ -165,9 +165,9 @@ uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
     }
     FUN_201193ec(param_1,param_2);
     vdc5_int_callbacks_clear(param_1);
-    FUN_2011d7d8(param_1,0,1);
+    vdc5_shrd_set_state(param_1,0,1);
     if (*(int *)(param_2 + 4) != 0) {
-      FUN_2011d7d8(param_1,4,1);
+      vdc5_shrd_set_state(param_1,4,1);
     }
   }
   else {
@@ -177,14 +177,17 @@ uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
 }
 
 
-// ===== FUN_20117ad4 @ 20117ad4 (56 bytes)
+// ===== r_vdc5_terminate @ 20117ad4 (56 bytes)
 
-undefined4 FUN_20117ad4(undefined4 param_1,undefined4 param_2)
+/* (ch, quit_func): driver shutdown of a channel, then state 0 = 1 again [inference: between
+   initialize and sync_control in the API order] */
+
+undefined4 r_vdc5_terminate(undefined4 param_1,undefined4 param_2)
 
 {
   FUN_2011d1f4();
   FUN_201197c0(param_1,param_2);
-  FUN_2011d7d8(param_1,1);
+  vdc5_shrd_set_state(param_1,1);
   return 0;
 }
 
@@ -201,21 +204,21 @@ undefined4 r_vdc5_sync_control(uint param_1,char *param_2)
   undefined4 uVar3;
   
   uVar3 = 0;
-  iVar1 = FUN_2011d830(param_1,0);
+  iVar1 = vdc5_shrd_get_state(param_1,0);
   if (iVar1 == 1) {
     if (*param_2 == '\0') {
       uVar2 = param_1;
       if (param_2[1] != '\0') {
         uVar2 = (uint)(param_1 == 0);
       }
-      iVar1 = FUN_2011d830(uVar2,1);
+      iVar1 = vdc5_shrd_get_state(uVar2,1);
       if (iVar1 != 1) {
         return 0xb;
       }
     }
     FUN_2011d248(param_1,param_2);
     FUN_20119990(param_1,param_2);
-    FUN_2011d7d8(param_1,2,1);
+    vdc5_shrd_set_state(param_1,2,1);
   }
   else {
     uVar3 = 9;
@@ -235,13 +238,13 @@ undefined4 r_vdc5_display_output(undefined4 param_1,undefined4 param_2)
   undefined4 uVar2;
   
   uVar2 = 0;
-  iVar1 = FUN_2011d830(param_1,0);
+  iVar1 = vdc5_shrd_get_state(param_1,0);
   if (iVar1 == 1) {
-    iVar1 = FUN_2011d830(param_1,2);
+    iVar1 = vdc5_shrd_get_state(param_1,2);
     if (iVar1 == 1) {
       FUN_2011d2b4(param_1,param_2);
       FUN_20119e60(param_1,param_2);
-      FUN_2011d7d8(param_1,3,1);
+      vdc5_shrd_set_state(param_1,3,1);
     }
     else {
       uVar2 = 10;
@@ -254,18 +257,21 @@ undefined4 r_vdc5_display_output(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20117c14 @ 20117c14 (80 bytes)
+// ===== r_vdc5_callback_isr_checked @ 20117c14 (80 bytes)
 
-undefined4 FUN_20117c14(int param_1,byte *param_2)
+/* Checks channel states 0 and 2 (errors 9/10) and calls r_vdc5_callback_isr [fact]; the public
+   R_VDC5_CallbackISR [inference] */
+
+undefined4 r_vdc5_callback_isr_checked(int param_1,byte *param_2)
 
 {
   int iVar1;
   undefined4 uVar2;
   
   uVar2 = 0;
-  iVar1 = FUN_2011d830(param_1,0);
+  iVar1 = vdc5_shrd_get_state(param_1,0);
   if (iVar1 == 1) {
-    iVar1 = FUN_2011d830(param_1,2);
+    iVar1 = vdc5_shrd_get_state(param_1,2);
     if (iVar1 == 1) {
       r_vdc5_callback_isr(param_1,param_2);
     }
@@ -280,9 +286,11 @@ undefined4 FUN_20117c14(int param_1,byte *param_2)
 }
 
 
-// ===== FUN_20117c64 @ 20117c64 (24 bytes)
+// ===== vdc5_layer_to_wr @ 20117c64 (24 bytes)
 
-uint FUN_20117c64(uint param_1)
+/* Layer id 0/1/2 (write layers) unchanged, other ids to 3 [fact] */
+
+uint vdc5_layer_to_wr(uint param_1)
 
 {
   if ((1 < param_1) && (param_1 != 2)) {
@@ -292,15 +300,18 @@ uint FUN_20117c64(uint param_1)
 }
 
 
-// ===== FUN_20117c7c @ 20117c7c (176 bytes)
+// ===== r_vdc5_write_data_control @ 20117c7c (176 bytes)
 
-undefined4 FUN_20117c7c(int param_1,int param_2,ushort *param_3)
+/* (ch, layer 0..2, param): checks resources (error 14/11), writes the scaler write registers
+   (vdc5_config) and marks the resource [inference: API order, write-layer ids] */
+
+undefined4 r_vdc5_write_data_control(int param_1,int param_2,ushort *param_3)
 
 {
   int iVar1;
   int iVar2;
   
-  iVar1 = FUN_20117c64(param_2);
+  iVar1 = vdc5_layer_to_wr(param_2);
   iVar2 = r_vdc5_shrd_get_resource(param_1,param_2);
   if (iVar2 != 0) {
     return 0xe;
@@ -315,30 +326,32 @@ undefined4 FUN_20117c7c(int param_1,int param_2,ushort *param_3)
       iVar2 = 0;
     }
   }
-  iVar2 = FUN_2011d830(iVar2,1);
+  iVar2 = vdc5_shrd_get_state(iVar2,1);
   if (iVar2 != 1) {
     return 0xb;
   }
 LAB_20117cf4:
   FUN_2011d374(param_1,iVar1,param_3);
   vdc5_config(param_1,iVar1,param_3);
-  FUN_2011d7f0(param_1,param_2,1);
+  vdc5_shrd_set_resource(param_1,param_2,1);
   return 0;
 }
 
 
-// ===== FUN_20117d2c @ 20117d2c (96 bytes)
+// ===== r_vdc5_change_write_process @ 20117d2c (96 bytes)
 
-undefined4 FUN_20117d2c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (ch, layer, param): needs a busy write resource (error 14) [inference] */
+
+undefined4 r_vdc5_change_write_process(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
   int iVar2;
   undefined4 uVar3;
   
-  uVar1 = FUN_20117c64(param_2);
+  uVar1 = vdc5_layer_to_wr(param_2);
   uVar3 = 0;
-  iVar2 = FUN_2011d920(param_1,param_2);
+  iVar2 = vdc5_shrd_res_busy(param_1,param_2);
   if (iVar2 == 0) {
     uVar3 = 0xe;
   }
@@ -393,7 +406,7 @@ uint r_vdc5_read_data_control(uint param_1,uint param_2,uint param_3)
   if (iVar2 == 0) {
     FUN_2011d438(param_1,uVar1,param_3);
     FUN_2011af34(param_1,uVar1,param_3);
-    FUN_2011d7f0(param_1,param_2,1);
+    vdc5_shrd_set_resource(param_1,param_2,1);
   }
   else {
     uVar3 = 0xe;
@@ -415,7 +428,7 @@ undefined4 r_vdc5_change_read_process(undefined4 param_1,uint param_2,undefined4
   
   uVar1 = vdc5_layer_to_gr(param_2);
   uVar3 = 0;
-  iVar2 = FUN_2011d920(param_1,param_2);
+  iVar2 = vdc5_shrd_res_busy(param_1,param_2);
   if (iVar2 == 0) {
     uVar3 = 0xe;
   }
@@ -438,7 +451,7 @@ byte r_vdc5_start_process(uint param_1,int param_2,uint param_3)
   byte bVar2;
   
   bVar2 = 0;
-  if ((param_2 == -1) || (iVar1 = FUN_2011d8e8(), iVar1 != 0)) {
+  if ((param_2 == -1) || (iVar1 = vdc5_shrd_res_idle(), iVar1 != 0)) {
     FUN_2011b8b8(param_1,param_2,param_3);
   }
   else {
@@ -459,7 +472,7 @@ byte r_vdc5_stop_process(uint param_1,int param_2)
   byte bVar2;
   
   bVar2 = 0;
-  if ((param_2 == -1) || (iVar1 = FUN_2011d920(), iVar1 != 0)) {
+  if ((param_2 == -1) || (iVar1 = vdc5_shrd_res_busy(), iVar1 != 0)) {
     FUN_2011b988(param_1,param_2);
   }
   else {
@@ -469,16 +482,18 @@ byte r_vdc5_stop_process(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20117f88 @ 20117f88 (64 bytes)
+// ===== r_vdc5_video_noise_reduction @ 20117f88 (64 bytes)
 
-undefined4 FUN_20117f88(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (ch, on, param): needs state 1 (error 11) [inference: API order] */
+
+undefined4 r_vdc5_video_noise_reduction(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
   undefined4 uVar2;
   
   uVar2 = 0;
-  iVar1 = FUN_2011d830(param_1,1);
+  iVar1 = vdc5_shrd_get_state(param_1,1);
   if (iVar1 == 1) {
     FUN_2011bb84(param_1,param_2,param_3);
   }
@@ -489,9 +504,11 @@ undefined4 FUN_20117f88(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_20117fc8 @ 20117fc8 (140 bytes)
+// ===== r_vdc5_image_color_matrix @ 20117fc8 (140 bytes)
 
-undefined4 FUN_20117fc8(uint param_1,char *param_2)
+/* (ch, {module 0/1/2, ...}): resource check by module, then the matrix registers [inference] */
+
+undefined4 r_vdc5_image_color_matrix(uint param_1,char *param_2)
 
 {
   int iVar1;
@@ -523,11 +540,14 @@ LAB_2011801c:
 }
 
 
-// ===== FUN_20118054 @ 20118054 (140 bytes)
+// ===== r_vdc5_image_enhancement @ 20118054 (140 bytes)
+
+/* (ch, imgimprv id 0/1, sharpness, area): resource 3 or 4 (error 14/8) [inference] */
 
 undefined4
-FUN_20118054(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5
-            ,undefined4 param_6,undefined4 param_7)
+r_vdc5_image_enhancement
+          (undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
+          undefined4 param_6,undefined4 param_7)
 
 {
   int iVar1;
@@ -558,9 +578,12 @@ FUN_20118054(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_
 }
 
 
-// ===== FUN_201180e0 @ 201180e0 (108 bytes)
+// ===== r_vdc5_image_black_stretch @ 201180e0 (108 bytes)
 
-undefined4 FUN_201180e0(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* (ch, imgimprv id, param): resource 3 or 4 [inference] */
+
+undefined4
+r_vdc5_image_black_stretch(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -591,9 +614,12 @@ undefined4 FUN_201180e0(undefined4 param_1,int param_2,undefined4 param_3,undefi
 }
 
 
-// ===== FUN_2011814c @ 2011814c (80 bytes)
+// ===== r_vdc5_alpha_blending @ 2011814c (80 bytes)
 
-undefined4 FUN_2011814c(undefined4 param_1,uint param_2,undefined4 param_3)
+/* (ch, layer, param): graphics index from vdc5_layer_to_gr, resource check (error 14) [inference]
+    */
+
+undefined4 r_vdc5_alpha_blending(undefined4 param_1,uint param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -669,9 +695,11 @@ uint r_vdc5_chromakey(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20118284 @ 20118284 (80 bytes)
+// ===== r_vdc5_clut @ 20118284 (80 bytes)
 
-undefined4 FUN_20118284(undefined4 param_1,uint param_2,undefined4 param_3)
+/* (ch, layer, param): same checks, CLUT write [inference: API order after chromakey] */
+
+undefined4 r_vdc5_clut(undefined4 param_1,uint param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -702,7 +730,7 @@ byte r_vdc5_display_calibration(uint param_1,uint param_2)
   byte bVar2;
   
   bVar2 = 0;
-  iVar1 = FUN_2011d830(param_1,3);
+  iVar1 = vdc5_shrd_get_state(param_1,3);
   if (iVar1 == 1) {
     FUN_2011c6ec(param_1,param_2);
   }
@@ -713,16 +741,18 @@ byte r_vdc5_display_calibration(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_2011830c @ 2011830c (64 bytes)
+// ===== r_vdc5_gamma_correction @ 2011830c (64 bytes)
 
-undefined4 FUN_2011830c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (ch, on, param): needs state 3 (error 12) [inference: API order after display_calibration] */
+
+undefined4 r_vdc5_gamma_correction(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
   undefined4 uVar2;
   
   uVar2 = 0;
-  iVar1 = FUN_2011d830(param_1,3);
+  iVar1 = vdc5_shrd_get_state(param_1,3);
   if (iVar1 == 1) {
     FUN_2011c950(param_1,param_2,param_3);
   }
@@ -733,12 +763,15 @@ undefined4 FUN_2011830c(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_2011834c @ 2011834c (24 bytes)
+// ===== r_vdc5_get_isr @ 2011834c (24 bytes)
 
-undefined * FUN_2011834c(int param_1,int param_2)
+/* (ch, type): ISR pointer from table 0x20165A74, 23 per channel (the vdc5_chN_isr_* handlers) [fact
+   for the table; inference for the API name] */
+
+undefined * r_vdc5_get_isr(int param_1,int param_2)
 
 {
-  return (&PTR_FUN_20165a74)[param_1 * 0x17 + param_2];
+  return (&PTR_vdc5_ch0_isr_s0_vi_vsync_20165a74)[param_1 * 0x17 + param_2];
 }
 
 
@@ -833,9 +866,13 @@ void r_vdc5_callback_isr(int param_1,byte *param_2)
 }
 
 
-// ===== FUN_20118548 @ 20118548 (80 bytes)
+// ===== vdc5_ch0_isr_s0_vi_vsync @ 20118548 (80 bytes)
 
-void FUN_20118548(void)
+/* VDC5 ch0 interrupt 0: enabled in VDC50_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC0C with type 0 [fact]; type = VDC5_INT_TYPE_S0_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s0_vi_vsync(void)
 
 {
   uint uVar1;
@@ -853,9 +890,13 @@ void FUN_20118548(void)
 }
 
 
-// ===== FUN_20118598 @ 20118598 (80 bytes)
+// ===== vdc5_ch0_isr_s0_lo_vsync @ 20118598 (80 bytes)
 
-void FUN_20118598(void)
+/* VDC5 ch0 interrupt 1: enabled in VDC50_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC10 with type 1 [fact]; type = VDC5_INT_TYPE_S0_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s0_lo_vsync(void)
 
 {
   uint uVar1;
@@ -873,9 +914,13 @@ void FUN_20118598(void)
 }
 
 
-// ===== FUN_201185e8 @ 201185e8 (80 bytes)
+// ===== vdc5_ch0_isr_s0_vsyncerr @ 201185e8 (80 bytes)
 
-void FUN_201185e8(void)
+/* VDC5 ch0 interrupt 2: enabled in VDC50_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC14 with type 2 [fact]; type = VDC5_INT_TYPE_S0_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s0_vsyncerr(void)
 
 {
   uint uVar1;
@@ -893,9 +938,13 @@ void FUN_201185e8(void)
 }
 
 
-// ===== FUN_20118638 @ 20118638 (80 bytes)
+// ===== vdc5_ch0_isr_gr3_vline @ 20118638 (80 bytes)
 
-void FUN_20118638(void)
+/* VDC5 ch0 interrupt 3: enabled in VDC50_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC18 with type 3 [fact]; type = VDC5_INT_TYPE_GR3_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_gr3_vline(void)
 
 {
   uint uVar1;
@@ -913,9 +962,13 @@ void FUN_20118638(void)
 }
 
 
-// ===== FUN_20118688 @ 20118688 (80 bytes)
+// ===== vdc5_ch0_isr_s0_vfield @ 20118688 (80 bytes)
 
-void FUN_20118688(void)
+/* VDC5 ch0 interrupt 4: enabled in VDC50_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC1C with type 4 [fact]; type = VDC5_INT_TYPE_S0_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s0_vfield(void)
 
 {
   uint uVar1;
@@ -933,9 +986,13 @@ void FUN_20118688(void)
 }
 
 
-// ===== FUN_201186d8 @ 201186d8 (80 bytes)
+// ===== vdc5_ch0_isr_iv1_vbuferr @ 201186d8 (80 bytes)
 
-void FUN_201186d8(void)
+/* VDC5 ch0 interrupt 5: enabled in VDC50_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC20 with type 5 [fact]; type = VDC5_INT_TYPE_IV1_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv1_vbuferr(void)
 
 {
   uint uVar1;
@@ -953,9 +1010,13 @@ void FUN_201186d8(void)
 }
 
 
-// ===== FUN_20118728 @ 20118728 (80 bytes)
+// ===== vdc5_ch0_isr_iv3_vbuferr @ 20118728 (80 bytes)
 
-void FUN_20118728(void)
+/* VDC5 ch0 interrupt 6: enabled in VDC50_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC24 with type 6 [fact]; type = VDC5_INT_TYPE_IV3_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv3_vbuferr(void)
 
 {
   uint uVar1;
@@ -973,9 +1034,13 @@ void FUN_20118728(void)
 }
 
 
-// ===== FUN_20118778 @ 20118778 (80 bytes)
+// ===== vdc5_ch0_isr_iv5_vbuferr @ 20118778 (80 bytes)
 
-void FUN_20118778(void)
+/* VDC5 ch0 interrupt 7: enabled in VDC50_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC28 with type 7 [fact]; type = VDC5_INT_TYPE_IV5_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv5_vbuferr(void)
 
 {
   uint uVar1;
@@ -993,9 +1058,13 @@ void FUN_20118778(void)
 }
 
 
-// ===== FUN_201187c8 @ 201187c8 (80 bytes)
+// ===== vdc5_ch0_isr_iv6_vbuferr @ 201187c8 (80 bytes)
 
-void FUN_201187c8(void)
+/* VDC5 ch0 interrupt 8: enabled in VDC50_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC2C with type 8 [fact]; type = VDC5_INT_TYPE_IV6_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv6_vbuferr(void)
 
 {
   uint uVar1;
@@ -1013,9 +1082,13 @@ void FUN_201187c8(void)
 }
 
 
-// ===== FUN_20118818 @ 20118818 (80 bytes)
+// ===== vdc5_ch0_isr_s0_wline @ 20118818 (80 bytes)
 
-void FUN_20118818(void)
+/* VDC5 ch0 interrupt 9: enabled in VDC50_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC30 with type 9 [fact]; type = VDC5_INT_TYPE_S0_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s0_wline(void)
 
 {
   uint uVar1;
@@ -1033,9 +1106,13 @@ void FUN_20118818(void)
 }
 
 
-// ===== FUN_20118868 @ 20118868 (80 bytes)
+// ===== vdc5_ch0_isr_s1_vi_vsync @ 20118868 (80 bytes)
 
-void FUN_20118868(void)
+/* VDC5 ch0 interrupt 10: enabled in VDC50_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC34 with type 10 [fact]; type = VDC5_INT_TYPE_S1_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_vi_vsync(void)
 
 {
   uint uVar1;
@@ -1053,9 +1130,13 @@ void FUN_20118868(void)
 }
 
 
-// ===== FUN_201188b8 @ 201188b8 (80 bytes)
+// ===== vdc5_ch0_isr_s1_lo_vsync @ 201188b8 (80 bytes)
 
-void FUN_201188b8(void)
+/* VDC5 ch0 interrupt 11: enabled in VDC50_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC38 with type 11 [fact]; type = VDC5_INT_TYPE_S1_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_lo_vsync(void)
 
 {
   uint uVar1;
@@ -1073,9 +1154,13 @@ void FUN_201188b8(void)
 }
 
 
-// ===== FUN_20118908 @ 20118908 (80 bytes)
+// ===== vdc5_ch0_isr_s1_vsyncerr @ 20118908 (80 bytes)
 
-void FUN_20118908(void)
+/* VDC5 ch0 interrupt 12: enabled in VDC50_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC3C with type 12 [fact]; type = VDC5_INT_TYPE_S1_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_vsyncerr(void)
 
 {
   uint uVar1;
@@ -1093,9 +1178,13 @@ void FUN_20118908(void)
 }
 
 
-// ===== FUN_20118958 @ 20118958 (80 bytes)
+// ===== vdc5_ch0_isr_s1_vfield @ 20118958 (80 bytes)
 
-void FUN_20118958(void)
+/* VDC5 ch0 interrupt 13: enabled in VDC50_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC40 with type 13 [fact]; type = VDC5_INT_TYPE_S1_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_vfield(void)
 
 {
   uint uVar1;
@@ -1113,9 +1202,13 @@ void FUN_20118958(void)
 }
 
 
-// ===== FUN_201189a8 @ 201189a8 (80 bytes)
+// ===== vdc5_ch0_isr_iv2_vbuferr @ 201189a8 (80 bytes)
 
-void FUN_201189a8(void)
+/* VDC5 ch0 interrupt 14: enabled in VDC50_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC44 with type 14 [fact]; type = VDC5_INT_TYPE_IV2_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv2_vbuferr(void)
 
 {
   uint uVar1;
@@ -1133,9 +1226,13 @@ void FUN_201189a8(void)
 }
 
 
-// ===== FUN_201189f8 @ 201189f8 (80 bytes)
+// ===== vdc5_ch0_isr_iv4_vbuferr @ 201189f8 (80 bytes)
 
-void FUN_201189f8(void)
+/* VDC5 ch0 interrupt 15: enabled in VDC50_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC48 with type 15 [fact]; type = VDC5_INT_TYPE_IV4_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv4_vbuferr(void)
 
 {
   uint uVar1;
@@ -1153,9 +1250,13 @@ void FUN_201189f8(void)
 }
 
 
-// ===== FUN_20118a48 @ 20118a48 (80 bytes)
+// ===== vdc5_ch0_isr_s1_wline @ 20118a48 (80 bytes)
 
-void FUN_20118a48(void)
+/* VDC5 ch0 interrupt 16: enabled in VDC50_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC4C with type 16 [fact]; type = VDC5_INT_TYPE_S1_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_wline(void)
 
 {
   uint uVar1;

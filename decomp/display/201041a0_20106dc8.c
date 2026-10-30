@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_201041a0 @ 201041a0 (84 bytes)
+// ===== spibsc_wait_tend @ 201041a0 (84 bytes)
 
-undefined4 FUN_201041a0(undefined4 param_1)
+/* Polls CMNSR (0x48) bit 0 TEND, 100000 tries, -1 on timeout [fact for the code; bit name from the
+   manual] */
+
+undefined4 spibsc_wait_tend(undefined4 param_1)
 
 {
   uint uVar1;
@@ -10,7 +13,7 @@ undefined4 FUN_201041a0(undefined4 param_1)
   
   local_10 = 100000;
   do {
-    uVar1 = FUN_20104104(param_1,0x48);
+    uVar1 = spibsc_reg_read32(param_1,0x48);
     if ((uVar1 & 1) != 0) {
       return 0;
     }
@@ -20,25 +23,28 @@ undefined4 FUN_201041a0(undefined4 param_1)
 }
 
 
-// ===== FUN_201041f4 @ 201041f4 (136 bytes)
+// ===== spibsc_ensure_idle @ 201041f4 (136 bytes)
 
-undefined4 FUN_201041f4(undefined4 param_1)
+/* Waits for TEND; if CMNSR is still not 1, pulses SMCR (0x20) and waits again; -1 on failure [fact]
+    */
+
+undefined4 spibsc_ensure_idle(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_20104104(param_1,0x48);
+  iVar1 = spibsc_reg_read32(param_1,0x48);
   if (iVar1 != 1) {
-    iVar1 = FUN_201041a0(param_1);
+    iVar1 = spibsc_wait_tend(param_1);
     if (iVar1 != 0) {
       return 0xffffffff;
     }
-    iVar1 = FUN_20104104(param_1,0x48);
+    iVar1 = spibsc_reg_read32(param_1,0x48);
     if (iVar1 != 1) {
-      FUN_20104110(param_1,0x20,1);
-      FUN_20104110(param_1,0x20,0);
-      FUN_201041a0(param_1);
-      iVar1 = FUN_20104104(param_1,0x48);
+      spibsc_reg_write32(param_1,0x20,1);
+      spibsc_reg_write32(param_1,0x20,0);
+      spibsc_wait_tend(param_1);
+      iVar1 = spibsc_reg_read32(param_1,0x48);
       if (iVar1 != 1) {
         return 0xffffffff;
       }
@@ -48,9 +54,12 @@ undefined4 FUN_201041f4(undefined4 param_1)
 }
 
 
-// ===== FUN_2010427c @ 2010427c (528 bytes)
+// ===== spibsc_xfer @ 2010427c (528 bytes)
 
-int FUN_2010427c(int param_1,ushort *param_2,uint param_3,int param_4)
+/* SPI-mode transfer of n bytes through SMENR/SMWDR/SMRDR in 1/2/4-byte steps (size codes
+   0x2016525C), keeps SSL asserted between calls when asked [inference] */
+
+int spibsc_xfer(int param_1,ushort *param_2,uint param_3,int param_4)
 
 {
   ushort uVar1;
@@ -67,7 +76,7 @@ int FUN_2010427c(int param_1,ushort *param_2,uint param_3,int param_4)
   bVar9 = 0;
   uVar10 = 0;
   bVar2 = true;
-  iVar3 = FUN_201041a0();
+  iVar3 = spibsc_wait_tend();
   do {
     if (iVar3 < 0) {
       return iVar3;
@@ -103,12 +112,12 @@ int FUN_2010427c(int param_1,ushort *param_2,uint param_3,int param_4)
       uVar4 = uVar4 | (uint)(byte)*puVar6 << 0x18;
 LAB_201043b4:
       if (uVar8 == 1) {
-        FUN_20104138(param_1,uVar4 & 0xff,0x40);
+        spibsc_reg_write8(param_1,uVar4 & 0xff,0x40);
       }
       else {
-        FUN_20104110(param_1,uVar4,0x40);
+        spibsc_reg_write32(param_1,uVar4,0x40);
         if (uVar8 == 8) {
-          FUN_20104110(param_1,uVar10,0x44);
+          spibsc_reg_write32(param_1,uVar10,0x44);
         }
       }
     }
@@ -136,30 +145,33 @@ LAB_201043b4:
       }
 LAB_201043ac:
       if (uVar8 != 2) goto LAB_201043b4;
-      FUN_20104124(param_1,uVar4 & 0xffff,0x40);
+      spibsc_reg_write16(param_1,uVar4 & 0xffff,0x40);
     }
     param_3 = param_3 - uVar8;
     if (param_3 == 0) {
       bVar2 = false;
     }
-    FUN_20104110(param_1,0,0x24);
-    FUN_20104110(param_1,0,0x28);
-    FUN_20104110(param_1,0,0x2c);
-    FUN_20104110(param_1,bVar9,0x30);
+    spibsc_reg_write32(param_1,0,0x24);
+    spibsc_reg_write32(param_1,0,0x28);
+    spibsc_reg_write32(param_1,0,0x2c);
+    spibsc_reg_write32(param_1,bVar9,0x30);
     uVar5 = 3;
     if (bVar2 || param_4 != 0) {
       uVar5 = 0x103;
     }
-    FUN_20104110(param_1,uVar5,0x20);
-    iVar3 = FUN_201041a0(param_1);
+    spibsc_reg_write32(param_1,uVar5,0x20);
+    iVar3 = spibsc_wait_tend(param_1);
     param_2 = puVar7;
   } while( true );
 }
 
 
-// ===== FUN_2010448c @ 2010448c (704 bytes)
+// ===== sflash_cmd_read @ 2010448c (704 bytes)
 
-int FUN_2010448c(int param_1,byte *param_2,uint param_3,int param_4)
+/* Reads response bytes (spibsc_xfer read side) [inference: pairs with sflash_cmd_write in the
+   status reads] */
+
+int sflash_cmd_read(int param_1,byte *param_2,uint param_3,int param_4)
 
 {
   undefined1 uVar1;
@@ -182,7 +194,7 @@ int FUN_2010448c(int param_1,byte *param_2,uint param_3,int param_4)
   
   bVar10 = true;
   bVar9 = false;
-  iVar12 = FUN_201041a0();
+  iVar12 = spibsc_wait_tend();
   if (iVar12 < 0) {
     return iVar12;
   }
@@ -231,19 +243,19 @@ int FUN_2010448c(int param_1,byte *param_2,uint param_3,int param_4)
       bVar10 = false;
     }
     uVar1 = puVar13[uVar17];
-    FUN_20104110(param_1,0,0x24);
-    FUN_20104110(param_1,0,0x28);
-    FUN_20104110(param_1,0,0x2c);
-    FUN_20104110(param_1,uVar1,0x30);
+    spibsc_reg_write32(param_1,0,0x24);
+    spibsc_reg_write32(param_1,0,0x28);
+    spibsc_reg_write32(param_1,0,0x2c);
+    spibsc_reg_write32(param_1,uVar1,0x30);
     uVar15 = 7;
     if (bVar10 || param_4 != 0) {
       uVar15 = 0x107;
     }
-    FUN_20104110(param_1,uVar15,0x20);
-    iVar12 = FUN_201041a0(param_1);
+    spibsc_reg_write32(param_1,uVar15,0x20);
+    iVar12 = spibsc_wait_tend(param_1);
     if (iVar12 < 0) break;
-    uVar15 = FUN_20104104(param_1,0x38);
-    uVar14 = FUN_20104104(param_1,0x3c);
+    uVar15 = spibsc_reg_read32(param_1,0x38);
+    uVar14 = spibsc_reg_read32(param_1,0x3c);
     bVar2 = (byte)uVar14;
     bVar3 = (byte)((uint)uVar14 >> 8);
     bVar4 = (byte)((uint)uVar14 >> 0x10);
@@ -318,9 +330,11 @@ int FUN_2010448c(int param_1,byte *param_2,uint param_3,int param_4)
 }
 
 
-// ===== FUN_2010474c @ 2010474c (104 bytes)
+// ===== sflash_cmd_write @ 2010474c (104 bytes)
 
-void FUN_2010474c(int param_1,undefined1 *param_2,uint param_3)
+/* Sends command/address bytes; with two flash chips in parallel (+4) each byte is doubled [fact] */
+
+void sflash_cmd_write(int param_1,undefined1 *param_2,uint param_3)
 
 {
   undefined1 *puVar1;
@@ -348,14 +362,16 @@ void FUN_2010474c(int param_1,undefined1 *param_2,uint param_3)
     param_3 = param_3 << 1;
     param_2 = local_20;
   }
-  FUN_2010427c(param_1,param_2,param_3);
+  spibsc_xfer(param_1,param_2,param_3);
   return;
 }
 
 
-// ===== FUN_201047b4 @ 201047b4 (148 bytes)
+// ===== sflash_wait_ready @ 201047b4 (148 bytes)
 
-undefined4 FUN_201047b4(undefined4 param_1)
+/* RDSR (0x05) until bits 0x81 (busy) are clear, 1000000 tries [fact] */
+
+undefined4 sflash_wait_ready(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -366,13 +382,13 @@ undefined4 FUN_201047b4(undefined4 param_1)
   iVar2 = 1000000;
   local_14[0] = 5;
   local_18 = 0;
-  FUN_2010474c(param_1,local_14,1);
+  sflash_cmd_write(param_1,local_14,1);
   do {
-    FUN_2010448c(param_1,&local_18,1);
+    sflash_cmd_read(param_1,&local_18,1);
     if ((local_18 & 0x81) == 0) break;
     iVar2 = iVar2 + -1;
   } while (iVar2 != 0);
-  FUN_2010448c(param_1,&local_18,1,0);
+  sflash_cmd_read(param_1,&local_18,1,0);
   if (iVar2 == 0) {
     uVar1 = 0xffffffff;
   }
@@ -383,9 +399,11 @@ undefined4 FUN_201047b4(undefined4 param_1)
 }
 
 
-// ===== FUN_20104848 @ 20104848 (156 bytes)
+// ===== sflash_wait_wel @ 20104848 (156 bytes)
 
-undefined4 FUN_20104848(undefined4 param_1)
+/* RDSR until WEL (bit 1) is set and not busy [fact] */
+
+undefined4 sflash_wait_wel(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -396,13 +414,13 @@ undefined4 FUN_20104848(undefined4 param_1)
   iVar2 = 1000000;
   local_14[0] = 5;
   local_18 = 0;
-  FUN_2010474c(param_1,local_14,1);
+  sflash_cmd_write(param_1,local_14,1);
   do {
-    FUN_2010448c(param_1,&local_18,1);
+    sflash_cmd_read(param_1,&local_18,1);
     if (((local_18 & 2) != 0) && ((local_18 & 0x81) == 0)) break;
     iVar2 = iVar2 + -1;
   } while (iVar2 != 0);
-  FUN_2010448c(param_1,&local_18,1,0);
+  sflash_cmd_read(param_1,&local_18,1,0);
   if (iVar2 == 0) {
     uVar1 = 0xffffffff;
   }
@@ -413,9 +431,12 @@ undefined4 FUN_20104848(undefined4 param_1)
 }
 
 
-// ===== FUN_201048e4 @ 201048e4 (96 bytes)
+// ===== sflash_read_sr2 @ 201048e4 (96 bytes)
 
-uint FUN_201048e4(undefined4 param_1)
+/* Command 0x35, returns the byte [fact]; Read Status Register-2 of the W25Q128 (update.md flash
+   layout) [inference] */
+
+uint sflash_read_sr2(undefined4 param_1)
 
 {
   uint local_10;
@@ -423,16 +444,18 @@ uint FUN_201048e4(undefined4 param_1)
   
   local_c[0] = 0x35;
   local_10 = 0;
-  FUN_2010474c(param_1,local_c,1);
-  FUN_2010448c(param_1,&local_10,1);
-  FUN_2010448c(param_1,&local_10,1,0);
+  sflash_cmd_write(param_1,local_c,1);
+  sflash_cmd_read(param_1,&local_10,1);
+  sflash_cmd_read(param_1,&local_10,1,0);
   return local_10 & 0xff;
 }
 
 
-// ===== FUN_20104944 @ 20104944 (36 bytes)
+// ===== spibsc_cmncr_set @ 20104944 (36 bytes)
 
-undefined4 FUN_20104944(int param_1)
+/* CMNCR = 0x81FFF320, | 1 (BSZ) for dual flash [fact] */
+
+undefined4 spibsc_cmncr_set(int param_1)
 
 {
   undefined4 uVar1;
@@ -441,61 +464,69 @@ undefined4 FUN_20104944(int param_1)
   if (*(int *)(param_1 + 4) != 0) {
     uVar1 = 0x81fff321;
   }
-  FUN_20104110(param_1,uVar1,0);
+  spibsc_reg_write32(param_1,uVar1,0);
   return 0;
 }
 
 
-// ===== FUN_20104968 @ 20104968 (140 bytes)
+// ===== spibsc_enter_spi_mode @ 20104968 (140 bytes)
 
-undefined4 FUN_20104968(int param_1)
+/* Saves DRCR and CMNCR (+0x24/+0x20), sets DRCR, SMCR = 0, waits for TEND and SSL negate, sets
+   CMNCR MD (bit 31) = SPI mode [fact] */
+
+undefined4 spibsc_enter_spi_mode(int param_1)
 
 {
   undefined4 uVar1;
   int iVar2;
   uint uVar3;
   
-  uVar1 = FUN_20104104(param_1,0xc);
+  uVar1 = spibsc_reg_read32(param_1,0xc);
   *(undefined4 *)(param_1 + 0x24) = uVar1;
-  FUN_20104110(param_1,0x1000000,0xc);
-  FUN_20104110(param_1,0,0x20);
-  FUN_201041a0(param_1);
-  iVar2 = FUN_20104188(param_1);
+  spibsc_reg_write32(param_1,0x1000000,0xc);
+  spibsc_reg_write32(param_1,0,0x20);
+  spibsc_wait_tend(param_1);
+  iVar2 = spibsc_ssl_negated(param_1);
   if (iVar2 == 0) {
     uVar1 = 0xffffffff;
   }
   else {
-    uVar1 = FUN_20104104(param_1,0);
+    uVar1 = spibsc_reg_read32(param_1,0);
     *(undefined4 *)(param_1 + 0x20) = uVar1;
-    uVar3 = FUN_20104104(param_1,0);
-    FUN_20104110(param_1,uVar3 | 0x80000000,0);
-    FUN_20104944(param_1);
+    uVar3 = spibsc_reg_read32(param_1,0);
+    spibsc_reg_write32(param_1,uVar3 | 0x80000000,0);
+    spibsc_cmncr_set(param_1);
     uVar1 = 0;
   }
   return uVar1;
 }
 
 
-// ===== FUN_20104a08 @ 20104a08 (92 bytes)
+// ===== spibsc_exit_spi_mode @ 20104a08 (92 bytes)
 
-undefined4 FUN_20104a08(int param_1)
+/* Restores DRCR and CMNCR and flushes the read cache (DRCR RCF 0x200) back to XIP mode [fact] */
+
+undefined4 spibsc_exit_spi_mode(int param_1)
 
 {
   uint uVar1;
   
-  FUN_201041f4();
-  FUN_20104110(param_1,*(undefined4 *)(param_1 + 0x24),0xc);
-  FUN_20104110(param_1,*(undefined4 *)(param_1 + 0x20),0);
-  uVar1 = FUN_20104104(param_1,0xc);
-  FUN_20104110(param_1,uVar1 | 0x200,0xc);
-  FUN_20104104(param_1,0xc);
+  spibsc_ensure_idle();
+  spibsc_reg_write32(param_1,*(undefined4 *)(param_1 + 0x24),0xc);
+  spibsc_reg_write32(param_1,*(undefined4 *)(param_1 + 0x20),0);
+  uVar1 = spibsc_reg_read32(param_1,0xc);
+  spibsc_reg_write32(param_1,uVar1 | 0x200,0xc);
+  spibsc_reg_read32(param_1,0xc);
   return 0;
 }
 
 
-// ===== FUN_20104a64 @ 20104a64 (188 bytes)
+// ===== sflash_fast_read @ 20104a64 (188 bytes)
 
-int FUN_20104a64(int param_1,undefined4 param_2,int param_3)
+/* FAST_READ (0x0B) at the object's address +0xC, advances it (half the count with dual flash)
+   [fact] */
+
+int sflash_fast_read(int param_1,undefined4 param_2,int param_3)
 
 {
   int iVar1;
@@ -510,25 +541,27 @@ int FUN_20104a64(int param_1,undefined4 param_2,int param_3)
                                 CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),0xb)))
   ;
   local_14 = 0x80000ff;
-  iVar1 = FUN_20104968(param_1);
+  iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
-    FUN_201048e4(param_1);
-    FUN_2010474c(param_1,&local_18,5,1);
-    FUN_2010448c(param_1,param_2,param_3,0);
+    sflash_read_sr2(param_1);
+    sflash_cmd_write(param_1,&local_18,5,1);
+    sflash_cmd_read(param_1,param_2,param_3,0);
     if (*(int *)(param_1 + 4) != 0) {
       param_3 = param_3 / 2;
     }
     *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + param_3;
-    FUN_20104a08(&DAT_20810d90);
+    spibsc_exit_spi_mode(&DAT_20810d90);
     iVar1 = 0;
   }
   return iVar1;
 }
 
 
-// ===== FUN_20104b20 @ 20104b20 (184 bytes)
+// ===== sflash_erase_block @ 20104b20 (184 bytes)
 
-int FUN_20104b20(int param_1)
+/* WREN (0x06) and 64 KB block erase (0xD8) at the object's address, waits ready [fact] */
+
+int sflash_erase_block(int param_1)
 
 {
   int iVar1;
@@ -543,25 +576,28 @@ int FUN_20104b20(int param_1)
                        CONCAT12((char)((ushort)*(undefined2 *)(param_1 + 0xc) >> 8),
                                 CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),0xd8))
                       );
-  iVar1 = FUN_20104968(param_1);
+  iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
-    FUN_2010474c(param_1,local_c,1,0);
-    iVar1 = FUN_20104848(param_1);
+    sflash_cmd_write(param_1,local_c,1,0);
+    iVar1 = sflash_wait_wel(param_1);
     if (iVar1 == 0) {
       thunk_FUN_20104154(&DAT_208000a8);
-      FUN_2010474c(param_1,&local_10,4,0);
-      iVar1 = FUN_201047b4(param_1);
+      sflash_cmd_write(param_1,&local_10,4,0);
+      iVar1 = sflash_wait_ready(param_1);
       thunk_FUN_20104154(&DAT_208000a8);
-      FUN_20104a08(&DAT_20810d90);
+      spibsc_exit_spi_mode(&DAT_20810d90);
     }
   }
   return iVar1;
 }
 
 
-// ===== FUN_20104bd8 @ 20104bd8 (452 bytes)
+// ===== sflash_page_program @ 20104bd8 (452 bytes)
 
-int FUN_20104bd8(int param_1,undefined1 *param_2,int param_3)
+/* WREN and page program (0x02) in 256-byte pages (x2 for dual flash), with the partial-page buffer
+   0x20810DBC [fact] */
+
+int sflash_page_program(int param_1,undefined1 *param_2,int param_3)
 
 {
   int iVar1;
@@ -572,7 +608,7 @@ int FUN_20104bd8(int param_1,undefined1 *param_2,int param_3)
   local_30 = 2;
   local_2c[0] = 6;
   iVar2 = *(int *)(param_1 + 4) * 0x100 + 0x100;
-  iVar1 = FUN_20104968(param_1);
+  iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
     if (param_3 != 0) {
       while( true ) {
@@ -580,31 +616,31 @@ int FUN_20104bd8(int param_1,undefined1 *param_2,int param_3)
                             CONCAT12((char)((ushort)*(undefined2 *)(param_1 + 0xc) >> 8),
                                      CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),
                                               (undefined1)local_30)));
-        FUN_2010474c(param_1,local_2c,1,0);
-        iVar1 = FUN_20104848(param_1);
+        sflash_cmd_write(param_1,local_2c,1,0);
+        iVar1 = sflash_wait_wel(param_1);
         if (iVar1 != 0) {
           return iVar1;
         }
         if (DAT_208000a0 == 0) {
           if (iVar2 <= param_3) {
-            FUN_2010474c(param_1,&local_30,4,1);
-            FUN_2010427c(param_1,param_2,iVar2,0);
+            sflash_cmd_write(param_1,&local_30,4,1);
+            spibsc_xfer(param_1,param_2,iVar2,0);
             param_3 = param_3 - iVar2;
             param_2 = param_2 + iVar2;
             *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 0x100;
           }
         }
         else if (iVar2 <= DAT_208000a0 + param_3) {
-          FUN_2010474c(param_1,&local_30,4,1);
-          FUN_2010427c(param_1,&DAT_20810dbc,DAT_208000a0,1);
-          FUN_2010427c(param_1,param_2,iVar2 - DAT_208000a0,0);
+          sflash_cmd_write(param_1,&local_30,4,1);
+          spibsc_xfer(param_1,&DAT_20810dbc,DAT_208000a0,1);
+          spibsc_xfer(param_1,param_2,iVar2 - DAT_208000a0,0);
           iVar1 = DAT_208000a0;
           DAT_208000a0 = 0;
           param_3 = param_3 - (iVar2 - iVar1);
           param_2 = param_2 + (iVar2 - iVar1);
           *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 0x100;
         }
-        iVar1 = FUN_201047b4(param_1);
+        iVar1 = sflash_wait_ready(param_1);
         if (*(int *)(param_1 + 0x10) != 0) break;
         if (param_3 < iVar2) {
           for (; param_3 != 0; param_3 = param_3 + -1) {
@@ -616,15 +652,18 @@ int FUN_20104bd8(int param_1,undefined1 *param_2,int param_3)
         if ((iVar1 != 0) || (param_3 == 0)) break;
       }
     }
-    FUN_20104a08(&DAT_20810d90);
+    spibsc_exit_spi_mode(&DAT_20810d90);
   }
   return iVar1;
 }
 
 
-// ===== FUN_20104d9c @ 20104d9c (132 bytes)
+// ===== sflash_global_unlock @ 20104d9c (132 bytes)
 
-int FUN_20104d9c(undefined4 param_1)
+/* WREN and command 0x98, waits ready [fact]; 0x98 = Global Block Unlock on the W25Q128 [inference]
+    */
+
+int sflash_global_unlock(undefined4 param_1)
 
 {
   int iVar1;
@@ -633,23 +672,26 @@ int FUN_20104d9c(undefined4 param_1)
   
   local_10[0] = 0x98;
   local_c[0] = 6;
-  iVar1 = FUN_20104968(param_1);
+  iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
-    FUN_2010474c(param_1,local_c,1,0);
-    iVar1 = FUN_20104848(param_1);
+    sflash_cmd_write(param_1,local_c,1,0);
+    iVar1 = sflash_wait_wel(param_1);
     if (iVar1 == 0) {
-      FUN_2010474c(param_1,local_10,1,0);
-      iVar1 = FUN_201047b4(param_1);
-      FUN_20104a08(&DAT_20810d90);
+      sflash_cmd_write(param_1,local_10,1,0);
+      iVar1 = sflash_wait_ready(param_1);
+      spibsc_exit_spi_mode(&DAT_20810d90);
     }
   }
   return iVar1;
 }
 
 
-// ===== FUN_20104e20 @ 20104e20 (276 bytes)
+// ===== sflash_dev_read @ 20104e20 (276 bytes)
 
-uint FUN_20104e20(undefined1 *param_1,uint param_2)
+/* Read side of the flash device object (mode 0x20810D98: 1 = read data with sflash_fast_read, 2/3 =
+   return a status byte, flushes a partial page) [fact] */
+
+uint sflash_dev_read(undefined1 *param_1,uint param_2)
 
 {
   undefined1 uVar1;
@@ -666,7 +708,7 @@ uint FUN_20104e20(undefined1 *param_1,uint param_2)
           (&DAT_20810dbc)[DAT_208000a0] = 0xff;
         }
         DAT_208000a0 = 0;
-        FUN_20104bd8(&DAT_20810d90);
+        sflash_page_program(&DAT_20810d90);
       }
     }
     else if (DAT_20810d98 != 2) {
@@ -685,7 +727,7 @@ uint FUN_20104e20(undefined1 *param_1,uint param_2)
   if (bVar3 && bVar4) {
     param_2 = param_2 + 1;
   }
-  iVar2 = FUN_20104a64(&DAT_20810d90,param_1,param_2);
+  iVar2 = sflash_fast_read(&DAT_20810d90,param_1,param_2);
   if (DAT_20810da0 == 0) {
     if (bVar3 && bVar4) {
       param_2 = param_2 - 1;
@@ -702,9 +744,12 @@ uint FUN_20104e20(undefined1 *param_1,uint param_2)
 }
 
 
-// ===== FUN_20104f34 @ 20104f34 (300 bytes)
+// ===== sflash_dev_write @ 20104f34 (300 bytes)
 
-uint FUN_20104f34(char *param_1,uint param_2)
+/* Command side: 'r' + address (read), 'e' + address (erase block), program data in the other mode
+   [fact] */
+
+uint sflash_dev_write(char *param_1,uint param_2)
 
 {
   char cVar1;
@@ -737,7 +782,7 @@ uint FUN_20104f34(char *param_1,uint param_2)
     if (5 < param_2) {
       DAT_20810d98 = 2;
       DAT_20810d9c = *(undefined4 *)(param_1 + 2);
-      uVar2 = FUN_20104b20(&DAT_20810d90);
+      uVar2 = sflash_erase_block(&DAT_20810d90);
       return uVar2;
     }
     return 0xfffffffc;
@@ -751,7 +796,7 @@ uint FUN_20104f34(char *param_1,uint param_2)
       return 0xfffffffc;
     }
     if (cVar1 == 'b') {
-      FUN_20104d9c(&DAT_20810d90);
+      sflash_global_unlock(&DAT_20810d90);
       return param_2;
     }
     return 0xfffffffc;
@@ -768,14 +813,17 @@ uint FUN_20104f34(char *param_1,uint param_2)
   param_1 = param_1 + 6;
   uVar2 = param_2 - 6;
 LAB_20105028:
-  FUN_20104bd8(&DAT_20810d90,param_1,uVar2);
+  sflash_page_program(&DAT_20810d90,param_1,uVar2);
   return param_2;
 }
 
 
-// ===== FUN_20105060 @ 20105060 (20 bytes)
+// ===== sflash_dev_open @ 20105060 (20 bytes)
 
-undefined4 FUN_20105060(void)
+/* Object 0x20810D90 base = SPIBSC_CMNCR_0 [fact]; spiflash_erase and spiflash_write start with it
+   [fact] */
+
+undefined4 sflash_dev_open(void)
 
 {
   DAT_20810d90 = &SPIBSC_CMNCR_0;
@@ -1067,7 +1115,7 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       }
       pcVar3 = "I:\\FT-710\\MESSAGE";
     }
-    local_34 = FUN_2014c410(pcVar3);
+    local_34 = fs_opendir(pcVar3);
     if (local_34 == 0) {
       iVar2 = -4;
     }
@@ -1076,9 +1124,9 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       iVar4 = work_buf_get(0x33cc);
       iVar2 = 0;
 LAB_201055b8:
-      piVar5 = (int *)FUN_2014ca4c(local_34);
+      piVar5 = (int *)fs_readdir(local_34);
       if (piVar5 != (int *)0x0) {
-        iVar6 = FUN_201476f0((int)*(char *)(*piVar5 + 0xb),0);
+        iVar6 = fs_attr_check((int)*(char *)(*piVar5 + 0xb),0);
         if (iVar6 == 0) {
           iVar6 = (int)piVar5 + 10;
           if (piVar5 == (int *)0xfffffff6) goto LAB_20105660;
@@ -1089,14 +1137,14 @@ LAB_201055b8:
               uVar9 = uVar9 - 1;
               if ((int)uVar9 < 1) goto LAB_201055b8;
             } while ((*(char *)(iVar6 + uVar9) != '.') ||
-                    (iVar8 = FUN_2014e208(iVar6 + uVar9,0x20105528), iVar8 != 0));
+                    (iVar8 = strcasecmp(iVar6 + uVar9,0x20105528), iVar8 != 0));
             iVar8 = iVar2 + 1;
             if ((0xff < iVar8) || (local_2c < iVar8)) {
               bVar1 = true;
               goto LAB_20105660;
             }
             iVar2 = iVar4 + iVar2 * 0x34;
-            FUN_2014e2e4(iVar2,iVar6,uVar7 - 4);
+            strncpy(iVar2,iVar6,uVar7 - 4);
             local_44 = 0;
             local_4c = 0;
             local_48 = 0;
@@ -1117,7 +1165,7 @@ LAB_201055b8:
         goto LAB_201055b8;
       }
 LAB_20105660:
-      thunk_FUN_2014c474(local_34);
+      fs_closedir(local_34);
       if (bVar1) {
         iVar2 = -5;
       }
@@ -1125,7 +1173,7 @@ LAB_20105660:
         iVar2 = -4;
       }
       else {
-        FUN_20154fca(iVar4,iVar2,0x34,FUN_2014e208);
+        FUN_20154fca(iVar4,iVar2,0x34,strcasecmp);
         __aeabi_memclr4(local_30,0x33cc);
         iVar6 = 0;
         do {
@@ -1145,7 +1193,7 @@ LAB_20105660:
           puVar13[0xc] = puVar14[0xc];
         } while (iVar6 < iVar2);
       }
-      FUN_20133620();
+      scope3d_tables_init();
       gui_scope_draw_hold_set(0);
     }
   }
@@ -1227,7 +1275,7 @@ LAB_20105820:
       strcpy(auStack_a0,pcVar3);
       strcat(auStack_a0,0x20105524);
       strcat(auStack_a0,param_1);
-      iVar2 = FUN_20143b20(auStack_a0);
+      iVar2 = fs_remove(auStack_a0);
       if (iVar2 == 0) {
         uVar1 = wav_list_dir(param_2,param_3,param_4);
         return uVar1;
@@ -1288,7 +1336,7 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
             *(undefined1 *)((int)param_2 + 3),*(undefined1 *)((int)param_2 + 4),
             *(undefined1 *)((int)param_2 + 5),*(undefined1 *)((int)param_2 + 6),
             *(undefined1 *)((int)param_2 + 7));
-    FUN_2014e2e4(0x20811067,&UNK_20165274 + param_3 * 10,10);
+    strncpy(0x20811067,&UNK_20165274 + param_3 * 10,10);
     DAT_208000d0 = 1;
     DAT_208000b3 = param_4;
     audio_clear_error();
@@ -1465,14 +1513,12 @@ void audio_codec_init(void)
 
 {
   uint uVar1;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 local_8;
+  t_cflg local_10;
   
-  local_10 = 2;
-  uStack_c = 0;
-  local_8 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = 2;
+  local_10.iflgptn = 0;
+  local_10.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_10);
   if (0 < (int)uVar1) {
     DAT_2081104c = 0;
     DAT_20811050 = 0;
@@ -1488,7 +1534,7 @@ void audio_codec_init(void)
     DAT_20811078 = 0;
     DAT_2081107c = 0;
     DAT_208000c8 = uVar1;
-    uVar1 = itron_acre_tsk(0,&DAT_20165314);
+    uVar1 = itron_acre_tsk(0,&ctsk_audio_codec);
     if (0 < (int)uVar1) {
       itron_sta_tsk(uVar1,0);
     }
@@ -1685,7 +1731,7 @@ void rec_close_abort(void)
   DAT_208000dc = 0;
   DAT_208000e8 = 0;
   if (DAT_20810fcc != '\0') {
-    FUN_20143b20(&DAT_20810fcc);
+    fs_remove(&DAT_20810fcc);
   }
   __aeabi_memclr4_veneer(&DAT_20810fcc,0x80);
   return;
@@ -1871,13 +1917,13 @@ uint rec_open_wav(void *param_1,int param_2)
         strcat(&DAT_20810fcc,*(undefined4 *)param_1);
         strcat(&DAT_20810fcc,0x20106570);
         if (param_2 == 2) {
-          FUN_20143b20(&DAT_20810fcc);
+          fs_remove(&DAT_20810fcc);
         }
         DAT_208000dc = fs_fopen(0x20810fcc,0x20106578);
         if ((DAT_208000dc == 0) &&
-           (((DAT_208000bc = FUN_2014beec(pcVar4), DAT_208000bc != 0 &&
-             ((DAT_208000bc = FUN_2014beec("I:\\FT-710"), DAT_208000bc != 0 ||
-              (DAT_208000bc = FUN_2014beec(pcVar4), DAT_208000bc != 0)))) ||
+           (((DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0 &&
+             ((DAT_208000bc = fs_mkdir("I:\\FT-710"), DAT_208000bc != 0 ||
+              (DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0)))) ||
             (DAT_208000dc = fs_fopen(0x20810fcc,0x20106578), DAT_208000dc == 0)))) {
           DAT_208000bc = fs_task_ctx_get();
         }
@@ -1909,7 +1955,7 @@ uint sd_is_full(char param_1)
   int iStack_c;
   
   uVar2 = 0;
-  iVar1 = FUN_2014b880((int)param_1,&local_10,&iStack_c);
+  iVar1 = fs_disk_free((int)param_1,&local_10,&iStack_c);
   if ((iVar1 == 0) && (local_10 == 0 && iStack_c == 0)) {
     uVar2 = 1;
   }

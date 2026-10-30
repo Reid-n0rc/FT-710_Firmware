@@ -13,8 +13,8 @@ void FUN_2013ea74(int *param_1)
   fs_memset(iVar1 + 1,0,0x200);
   fs_memcpy(*param_1 + 1,DAT_20808b4c,4);
   fs_memcpy(*param_1 + 0x1e5,DAT_20808b50,4);
-  FUN_2014d918(*param_1 + 0x1e9,0xffffffff);
-  FUN_2014d918(*param_1 + 0x1ed,0xffffffff);
+  fat_st_dword(*param_1 + 0x1e9,0xffffffff);
+  fat_st_dword(*param_1 + 0x1ed,0xffffffff);
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   iVar2 = *(int *)(iVar1 + 0x2d0);
@@ -46,7 +46,7 @@ uint FUN_2013ebc0(void)
   int local_18;
   int local_14;
   
-  FUN_2014e1dc(&local_28);
+  fs_get_time_tm(&local_28);
   return local_14 + 0x76cU & 0xffff | local_24 & 0xffff | (local_20 & 0xff) << 8 |
          ((local_28 & 0xff) * 0x100 + (local_1c | (local_18 + 1) * 0x100 & 0xff00U)) * 0x10000;
 }
@@ -65,21 +65,21 @@ void FUN_2013ec30(int *param_1)
   fs_memset(iVar1 + 1,0,0x200);
   if (*(char *)(iVar1 + 0x2dc) != ' ') {
     fs_memcpy(*param_1 + 1,&DAT_2042025b,0x3e);
-    FUN_2014d8ec(*param_1 + 0xc,*(undefined2 *)(iVar1 + 0x2da));
+    fat_st_word(*param_1 + 0xc,*(undefined2 *)(iVar1 + 0x2da));
     *(undefined1 *)(*param_1 + 0xe) = *(undefined1 *)(iVar1 + 0x2d8);
-    FUN_2014d8ec(*param_1 + 0xf,*(undefined2 *)(iVar1 + 0x2e4));
-    FUN_2014d8ec(*param_1 + 0x17,*(undefined2 *)(iVar1 + 0x2e0));
-    FUN_2014d8ec(*param_1 + 0x19,*(undefined2 *)(iVar1 + 0x2c8));
-    FUN_2014d8ec(*param_1 + 0x1b,*(undefined2 *)(iVar1 + 0x2ca));
-    FUN_2014d918(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
+    fat_st_word(*param_1 + 0xf,*(undefined2 *)(iVar1 + 0x2e4));
+    fat_st_word(*param_1 + 0x17,*(undefined2 *)(iVar1 + 0x2e0));
+    fat_st_word(*param_1 + 0x19,*(undefined2 *)(iVar1 + 0x2c8));
+    fat_st_word(*param_1 + 0x1b,*(undefined2 *)(iVar1 + 0x2ca));
+    fat_st_dword(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
     if (*(uint *)(iVar1 + 0x2d4) < 0x10000) {
-      FUN_2014d8ec(*param_1 + 0x14,*(uint *)(iVar1 + 0x2d4) & 0xffff);
+      fat_st_word(*param_1 + 0x14,*(uint *)(iVar1 + 0x2d4) & 0xffff);
     }
     else {
-      FUN_2014d918(*param_1 + 0x21);
+      fat_st_dword(*param_1 + 0x21);
     }
     uVar2 = FUN_2013ebc0();
-    FUN_2014d918(*param_1 + 0x28,uVar2);
+    fat_st_dword(*param_1 + 0x28,uVar2);
     if (*(char *)(iVar1 + 0x2dc) == '\f') {
       *(undefined1 *)(*param_1 + 0x3b) = 0x32;
     }
@@ -89,16 +89,16 @@ void FUN_2013ec30(int *param_1)
     return;
   }
   fs_memcpy(*param_1 + 1,&DAT_20420299,0x5a);
-  FUN_2014d8ec(*param_1 + 0xc,*(undefined2 *)(iVar1 + 0x2da));
+  fat_st_word(*param_1 + 0xc,*(undefined2 *)(iVar1 + 0x2da));
   *(undefined1 *)(*param_1 + 0xe) = *(undefined1 *)(iVar1 + 0x2d8);
-  FUN_2014d8ec(*param_1 + 0xf,*(undefined2 *)(iVar1 + 0x2e4));
-  FUN_2014d8ec(*param_1 + 0x19,*(undefined2 *)(iVar1 + 0x2c8));
-  FUN_2014d8ec(*param_1 + 0x1b,*(undefined2 *)(iVar1 + 0x2ca));
-  FUN_2014d918(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
-  FUN_2014d918(*param_1 + 0x21,*(undefined4 *)(iVar1 + 0x2d4));
-  FUN_2014d918(*param_1 + 0x25,*(undefined4 *)(iVar1 + 0x2e0));
+  fat_st_word(*param_1 + 0xf,*(undefined2 *)(iVar1 + 0x2e4));
+  fat_st_word(*param_1 + 0x19,*(undefined2 *)(iVar1 + 0x2c8));
+  fat_st_word(*param_1 + 0x1b,*(undefined2 *)(iVar1 + 0x2ca));
+  fat_st_dword(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
+  fat_st_dword(*param_1 + 0x21,*(undefined4 *)(iVar1 + 0x2d4));
+  fat_st_dword(*param_1 + 0x25,*(undefined4 *)(iVar1 + 0x2e0));
   uVar2 = FUN_2013ebc0();
-  FUN_2014d918(*param_1 + 0x44,uVar2);
+  fat_st_dword(*param_1 + 0x44,uVar2);
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   iVar3 = *(int *)(iVar1 + 0x2d0);
@@ -274,8 +274,8 @@ void FUN_2013f088(int *param_1)
   FUN_2013ef3c(iVar3,iVar2 + 0x1c3);
   FUN_2013ef9c(iVar3,iVar2 + 0x1c4);
   FUN_2013f000(iVar3,iVar2 + 0x1c5);
-  FUN_2014d918(iVar2 + 0x1c7,*(undefined4 *)(iVar1 + 0x2d0));
-  FUN_2014d918(iVar2 + 0x1cb,*(undefined4 *)(iVar1 + 0x2d4));
+  fat_st_dword(iVar2 + 0x1c7,*(undefined4 *)(iVar1 + 0x2d0));
+  fat_st_dword(iVar2 + 0x1cb,*(undefined4 *)(iVar1 + 0x2d4));
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   sd_write_sectors(0,*param_1 + 1,1,param_1);
@@ -810,8 +810,8 @@ int FUN_2013faf4(int param_1)
       if ((uVar2 & 0x80) != 0) {
         return 1;
       }
-      FUN_201446d0((&DAT_20808b60)[param_1]);
-      iVar3 = FUN_2014a9d4((&DAT_20808b60)[param_1]);
+      fs_cache_invalidate((&DAT_20808b60)[param_1]);
+      iVar3 = fs_drive_mount((&DAT_20808b60)[param_1]);
       goto joined_r0x2013fb7c;
     }
   }
@@ -819,7 +819,7 @@ int FUN_2013faf4(int param_1)
   if ((*(byte *)((&DAT_20808b60)[param_1] + 0x68) & 0x80) == 0) {
     return 0;
   }
-  iVar3 = FUN_2014aaf0();
+  iVar3 = fs_drive_unmount();
 joined_r0x2013fb7c:
   if (iVar3 != 0) {
     iVar1 = iVar3;
@@ -850,7 +850,7 @@ int FUN_2013fba0(void)
   if ((DAT_20808b64 != 0) && (DAT_20808b68 == 0)) {
     itron_chg_pri(0,6);
     uVar1 = FUN_20132f6c();
-    iVar2 = FUN_2014a304(0x49,uVar1,0x20000);
+    iVar2 = fs_clmap_attach_scan(0x49,uVar1,0x20000);
     itron_chg_pri(0);
     if (iVar2 == 0) {
       DAT_20808b68 = 1;
@@ -866,14 +866,12 @@ int FUN_2013fba0(void)
 void FUN_2013fc10(void)
 
 {
-  undefined4 uStack_10;
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  t_cmtx tStack_10;
   
-  uStack_10 = 2;
-  uStack_c = 0;
-  uStack_8 = 0;
-  DAT_20808b6c = itron_acre_mtx(0,&uStack_10);
+  tStack_10.mtxatr = 2;
+  tStack_10.ceilpri = 0;
+  tStack_10.name = (char *)0x0;
+  DAT_20808b6c = itron_acre_mtx(0,&tStack_10);
   return;
 }
 
@@ -908,8 +906,8 @@ uint FUN_2013fc68(int param_1,uint param_2)
       if ((param_2 & 0x40) == 0) {
         if (((int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0x80U) == 0) {
           itron_tloc_mtx(DAT_20808b6c,0xffffffff);
-          FUN_201446d0((&DAT_20808b60)[param_1]);
-          iVar1 = FUN_2014a9d4((&DAT_20808b60)[param_1]);
+          fs_cache_invalidate((&DAT_20808b60)[param_1]);
+          iVar1 = fs_drive_mount((&DAT_20808b60)[param_1]);
           itron_unl_mtx(DAT_20808b6c);
           if (iVar1 != 0) {
             return 0x40;
@@ -923,7 +921,7 @@ uint FUN_2013fc68(int param_1,uint param_2)
       param_2 = (int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0xffffff3f;
       if (((int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0x80U) != 0) {
         FUN_2013fb8c(0);
-        iVar1 = FUN_2014aaf0((&DAT_20808b60)[param_1]);
+        iVar1 = fs_drive_unmount((&DAT_20808b60)[param_1]);
         if (iVar1 == 0) {
           param_2 = 0;
         }
@@ -971,7 +969,7 @@ void FUN_2013fd50(int param_1)
     fs_set_error(0,0);
     return;
   }
-  FUN_20144834();
+  fs_set_error_m2();
   return;
 }
 
@@ -983,7 +981,7 @@ void FUN_2013fd98(void)
 {
   DAT_2091cba8 = 0;
   DAT_20808b44 = &DAT_2091cba8;
-  DAT_20808b48 = &PTR_FUN_20420564;
+  DAT_20808b48 = &PTR_sdhi_wait_idle_20420564;
   FUN_2013e71c();
   return;
 }
@@ -1015,9 +1013,9 @@ undefined4 FUN_2013fde8(void)
     DAT_20808b70 = 1;
   }
   INTC_ICDIPR75 = uVar1 & 0xffffff | 0x38000000;
-  FUN_2015686c();
+  knl_int_disable();
   INTC_ICDISER9 = 0x8000;
-  FUN_2015688c();
+  knl_int_restore();
   return 0;
 }
 
@@ -1146,9 +1144,11 @@ uint sdhi_init(void)
 }
 
 
-// ===== FUN_20140148 @ 20140148 (16 bytes)
+// ===== sdhi_flag_set @ 20140148 (16 bytes)
 
-void FUN_20140148(undefined4 param_1)
+/* itron_set_flg on the SDHI event flag 0x20808B74 [fact] */
+
+void sdhi_flag_set(undefined4 param_1)
 
 {
   itron_set_flg(DAT_20808b74,param_1);
@@ -1156,9 +1156,11 @@ void FUN_20140148(undefined4 param_1)
 }
 
 
-// ===== FUN_20140158 @ 20140158 (84 bytes)
+// ===== sdhi_flag_wait @ 20140158 (84 bytes)
 
-void * FUN_20140158(uint param_1,int param_2)
+/* (pattern, ms): itron_twai_flg on 0x20808B74 for ms/10 ticks, then clears the pattern [fact] */
+
+void * sdhi_flag_wait(uint param_1,int param_2)
 
 {
   void *pvVar1;
@@ -1170,9 +1172,11 @@ void * FUN_20140158(uint param_1,int param_2)
 }
 
 
-// ===== FUN_201401ac @ 201401ac (48 bytes)
+// ===== sdhi_card_absent @ 201401ac (48 bytes)
 
-bool FUN_201401ac(void)
+/* Samples sd_card_detect (P11_4 SD_CD) 32 times; true when any sample is high [fact] */
+
+bool sdhi_card_absent(void)
 
 {
   uint uVar1;
@@ -1190,9 +1194,12 @@ bool FUN_201401ac(void)
 }
 
 
-// ===== FUN_201401dc @ 201401dc (44 bytes)
+// ===== sdhi_write_protected @ 201401dc (44 bytes)
 
-bool FUN_201401dc(void)
+/* SD_INFO1 bit 7 (WP) clear [fact for the register]; -7 = write-protected in 0x2014040C [inference]
+    */
+
+bool sdhi_write_protected(void)
 
 {
   ushort uVar1;
@@ -1202,9 +1209,12 @@ bool FUN_201401dc(void)
 }
 
 
-// ===== FUN_20140210 @ 20140210 (136 bytes)
+// ===== sdhi_read_block @ 20140210 (136 bytes)
 
-undefined4 FUN_20140210(undefined1 *param_1)
+/* Reads one 512-byte block through a 32-byte aligned bounce buffer 0x2091CEC0 (cache maintenance
+   around the transfer), waits for access end [fact] */
+
+undefined4 sdhi_read_block(undefined1 *param_1)
 
 {
   int iVar1;
@@ -1219,7 +1229,7 @@ undefined4 FUN_20140210(undefined1 *param_1)
   }
   thunk_FUN_20101088(puVar3,0x200);
   FUN_2013ffec(puVar3,&SDHI_SD_CMD_0);
-  iVar1 = FUN_20140158(4,500);
+  iVar1 = sdhi_flag_wait(4,500);
   FUN_20140030();
   thunk_FUN_20101088(puVar3,0x200);
   if (iVar1 == 0) {
@@ -1242,9 +1252,12 @@ undefined4 FUN_20140210(undefined1 *param_1)
 }
 
 
-// ===== FUN_20140298 @ 20140298 (116 bytes)
+// ===== sdhi_write_block @ 20140298 (116 bytes)
 
-undefined4 FUN_20140298(undefined1 *param_1)
+/* Writes one 512-byte block through the bounce buffer (dcache_clean_range first), -16 on timeout
+   [fact] */
+
+undefined4 sdhi_write_block(undefined1 *param_1)
 
 {
   undefined1 *puVar1;
@@ -1267,7 +1280,7 @@ undefined4 FUN_20140298(undefined1 *param_1)
   }
   dcache_clean_range(param_1,0x200);
   FUN_20140060(&SDHI_SD_CMD_0,param_1);
-  iVar2 = FUN_20140158(4,500);
+  iVar2 = sdhi_flag_wait(4,500);
   FUN_201400a4();
   uVar3 = 0;
   if (iVar2 != 0) {
@@ -1277,25 +1290,29 @@ undefined4 FUN_20140298(undefined1 *param_1)
 }
 
 
-// ===== FUN_2014030c @ 2014030c (20 bytes)
+// ===== sdhi_flag_set_4 @ 2014030c (20 bytes)
 
-void FUN_2014030c(void)
+/* Sets event bit 4, the bit the sector transfers wait for (sdhi_flag_wait(4, 500)) [fact] */
+
+void sdhi_flag_set_4(void)
 
 {
-  FUN_20140148(4);
+  sdhi_flag_set(4);
   return;
 }
 
 
-// ===== FUN_20140320 @ 20140320 (20 bytes)
+// ===== sdhi_check_card @ 20140320 (20 bytes)
 
-undefined4 FUN_20140320(void)
+/* -6 when sdhi_card_absent, else 0 [fact] */
+
+undefined4 sdhi_check_card(void)
 
 {
   int iVar1;
   undefined4 uVar2;
   
-  iVar1 = FUN_201401ac();
+  iVar1 = sdhi_card_absent();
   uVar2 = 0;
   if (iVar1 != 0) {
     uVar2 = 0xfffffffa;
@@ -1304,9 +1321,12 @@ undefined4 FUN_20140320(void)
 }
 
 
-// ===== FUN_20140334 @ 20140334 (164 bytes)
+// ===== sdhi_wait_idle @ 20140334 (164 bytes)
 
-int FUN_20140334(int param_1)
+/* Polls SD_INFO2 until not CBSY (bit 14) and SCLKDIVEN (bit 13); -9 on an error bit, card check, -1
+   after 0x900000 tries [fact] */
+
+int sdhi_wait_idle(int param_1)
 
 {
   ushort uVar1;
@@ -1319,7 +1339,7 @@ int FUN_20140334(int param_1)
     if ((uVar1 & 0x807f) != 0) {
       return -9;
     }
-    iVar3 = FUN_20140320();
+    iVar3 = sdhi_check_card();
     if (iVar3 != 0) {
       return iVar3;
     }
@@ -1361,9 +1381,11 @@ void FUN_201403d8(void)
 }
 
 
-// ===== FUN_201403e8 @ 201403e8 (12 bytes)
+// ===== sdhi_set_block_size @ 201403e8 (12 bytes)
 
-void FUN_201403e8(undefined2 param_1)
+/* SD_SIZE = n [fact] */
+
+void sdhi_set_block_size(undefined2 param_1)
 
 {
   SDHI_SD_SIZE_0 = param_1;
@@ -1371,9 +1393,11 @@ void FUN_201403e8(undefined2 param_1)
 }
 
 
-// ===== FUN_201403f4 @ 201403f4 (12 bytes)
+// ===== sdhi_set_sector_count @ 201403f4 (12 bytes)
 
-void FUN_201403f4(undefined2 param_1)
+/* SD_SECCNT = n [fact] */
+
+void sdhi_set_sector_count(undefined2 param_1)
 
 {
   SDHI_SD_SECCNT_0 = param_1;

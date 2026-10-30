@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2014b93c @ 2014b93c (300 bytes)
+// ===== dir_init_dot_entries @ 2014b93c (300 bytes)
 
-int FUN_2014b93c(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
+/* Writes the "." and ".." entries (attribute 0x10) into a new directory cluster and zeroes the
+   other sectors [fact] */
+
+int dir_init_dot_entries(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
 
 {
   int iVar1;
@@ -18,11 +21,11 @@ int FUN_2014b93c(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
   fs_memset(iVar4,0,0x200);
   fs_memset(&local_28,0x20,0xb,*(undefined4 *)(param_1 + 0x6c));
   local_28 = 0x2e;
-  FUN_2014b8d4(auStack_48,&local_28,0x10,param_2,param_1);
-  FUN_2014d1c4(iVar4,auStack_48,0x20);
+  dirent_init(auStack_48,&local_28,0x10,param_2,param_1);
+  fs_memmove(iVar4,auStack_48,0x20);
   local_27 = 0x2e;
-  FUN_2014b8d4(auStack_48,&local_28,0x10,param_3,param_1);
-  FUN_2014d1c4(param_4 + 0xc2c,auStack_48,0x20);
+  dirent_init(auStack_48,&local_28,0x10,param_3,param_1);
+  fs_memmove(param_4 + 0xc2c,auStack_48,0x20);
   iVar2 = fs_dev_op2(param_1,iVar1,iVar4,1);
   if (iVar2 == 0) {
     fs_memset(iVar4,0,0x200);
@@ -42,9 +45,11 @@ int FUN_2014b93c(int param_1,undefined4 param_2,undefined4 param_3,int param_4)
 }
 
 
-// ===== FUN_2014ba68 @ 2014ba68 (956 bytes)
+// ===== dir_create_core @ 2014ba68 (956 bytes)
 
-int FUN_2014ba68(char *param_1,char *param_2)
+/* Directory creation body behind fs_mkdir_work [inference: only caller] */
+
+int dir_create_core(char *param_1,char *param_2)
 
 {
   char cVar1;
@@ -63,37 +68,38 @@ int FUN_2014ba68(char *param_1,char *param_2)
   local_54 = DAT_20808ba0;
   uVar2 = fs_toupper((int)*param_1);
   iVar3 = fs_find_drive(uVar2,&local_54);
-  if (((iVar3 == 0) && (iVar3 = FUN_20144950(local_54), iVar3 == 0)) &&
-     (iVar3 = FUN_20144970(local_54), iVar3 == 0)) {
+  if (((iVar3 == 0) && (iVar3 = fs_drive_check_mounted(local_54), iVar3 == 0)) &&
+     (iVar3 = fs_drive_check_writable(local_54), iVar3 == 0)) {
     param_1 = param_1 + 2;
     iVar3 = *(int *)(local_54 + 0x34);
     if (*(char *)(local_54 + 0x10) != ' ') {
-      param_1 = (char *)FUN_20147248(param_1,param_2);
+      param_1 = (char *)path_next_component(param_1,param_2);
       if ((param_1 == (char *)0x0) || (*param_2 == '\0')) {
         return -1;
       }
-      iVar3 = FUN_20146338(local_54,param_2,auStack_50,0,0,auStack_28,param_2);
+      iVar3 = root_dir_find_locked(local_54,param_2,auStack_50,0,0,auStack_28,param_2);
       if (*param_1 == '\0') {
         if (iVar3 == 0) {
           return -2;
         }
       }
-      else if ((iVar3 != 0) || (iVar3 = FUN_201476f0((int)local_45,0x10), iVar3 != 0)) {
+      else if ((iVar3 != 0) || (iVar3 = fs_attr_check((int)local_45,0x10), iVar3 != 0)) {
         return -4;
       }
-      iVar3 = FUN_20146884(auStack_50,(int)*(char *)(local_54 + 0x10));
+      iVar3 = dirent_get_cluster(auStack_50,(int)*(char *)(local_54 + 0x10));
     }
     cVar1 = *param_1;
     iVar4 = 0;
     while (cVar1 != '\0') {
-      param_1 = (char *)FUN_20147248(param_1,param_2);
+      param_1 = (char *)path_next_component(param_1,param_2);
       if (param_1 == (char *)0x0) {
         return -1;
       }
       if (*param_2 == '\0') {
         return -1;
       }
-      iVar4 = FUN_201471cc(local_54,iVar3,param_2,auStack_50,0,0,auStack_28,auStack_24,param_2);
+      iVar4 = subdir_find_locked(local_54,iVar3,param_2,auStack_50,0,0,auStack_28,auStack_24,param_2
+                                );
       if (*param_1 == '\0') {
         if (iVar4 == 0) {
           return -2;
@@ -103,18 +109,18 @@ int FUN_2014ba68(char *param_1,char *param_2)
         if (iVar4 != 0) {
           return iVar4;
         }
-        iVar4 = FUN_201476f0((int)local_45,0x10);
+        iVar4 = fs_attr_check((int)local_45,0x10);
         if (iVar4 != 0) {
           return -4;
         }
       }
-      iVar5 = FUN_20146884(auStack_50,(int)*(char *)(local_54 + 0x10));
+      iVar5 = dirent_get_cluster(auStack_50,(int)*(char *)(local_54 + 0x10));
       iVar4 = iVar3;
       iVar3 = iVar5;
       cVar1 = *param_1;
     }
     fs_memset(auStack_50,0,0x20,*(undefined4 *)(local_54 + 0x6c));
-    iVar3 = FUN_20149dec(local_54,0,&local_30,param_2);
+    iVar3 = fat_alloc_cluster_locked(local_54,0,&local_30,param_2);
     if (iVar3 == 0) {
       if (local_30 == 0) {
         iVar3 = -0xb;
@@ -124,36 +130,36 @@ int FUN_2014ba68(char *param_1,char *param_2)
         if ((*(char *)(local_54 + 0x10) == ' ') && (*(int *)(local_54 + 0x34) == iVar4)) {
           iVar3 = 0;
         }
-        iVar5 = FUN_2014b93c(local_54,local_30,iVar3,param_2);
+        iVar5 = dir_init_dot_entries(local_54,local_30,iVar3,param_2);
         if (iVar5 == 0) {
-          FUN_20147588(auStack_50,local_30,(int)*(char *)(local_54 + 0x10));
+          dirent_set_cluster(auStack_50,local_30,(int)*(char *)(local_54 + 0x10));
           local_45 = 0x10;
-          FUN_201474a4(auStack_50,0,7);
+          dirent_set_time(auStack_50,0,7);
           if (iVar4 == 0) {
-            iVar5 = FUN_20146338(local_54,param_2,auStack_50,1,0,auStack_28,param_2);
+            iVar5 = root_dir_find_locked(local_54,param_2,auStack_50,1,0,auStack_28,param_2);
           }
           else {
-            iVar5 = FUN_201471cc(local_54,iVar4,param_2,auStack_50,1,0,auStack_28,auStack_24,param_2
-                                );
+            iVar5 = subdir_find_locked(local_54,iVar4,param_2,auStack_50,1,0,auStack_28,auStack_24,
+                                       param_2);
           }
           if (iVar5 == 0) {
-            iVar3 = FUN_2014a0a4(local_54,param_2);
+            iVar3 = fat32_fsinfo_write_locked(local_54,param_2);
             return iVar3;
           }
-          iVar3 = FUN_201497cc(local_54,auStack_2c,local_30,0,0x77,param_2);
+          iVar3 = fat_entry_rw_locked(local_54,auStack_2c,local_30,0,0x77,param_2);
           if (iVar3 == 0) {
             if ((*(int *)(local_54 + 0x58) != 0) && (local_30 < *(uint *)(local_54 + 0x60))) {
-              FUN_2014969c();
+              clmap_clear();
             }
             cVar1 = *(char *)(local_54 + 0x10);
             goto joined_r0x2014be00;
           }
         }
         else {
-          iVar3 = FUN_201497cc(local_54,auStack_2c,local_30,0,0x77,param_2);
+          iVar3 = fat_entry_rw_locked(local_54,auStack_2c,local_30,0,0x77,param_2);
           if (iVar3 == 0) {
             if ((*(int *)(local_54 + 0x58) != 0) && (local_30 < *(uint *)(local_54 + 0x60))) {
-              FUN_2014969c();
+              clmap_clear();
             }
             cVar1 = *(char *)(local_54 + 0x10);
 joined_r0x2014be00:
@@ -170,9 +176,11 @@ joined_r0x2014be00:
 }
 
 
-// ===== FUN_2014be24 @ 2014be24 (200 bytes)
+// ===== fs_mkdir_work @ 2014be24 (200 bytes)
 
-void FUN_2014be24(int param_1,int param_2)
+/* Validates and normalises the path, creates the directory (0x2014BA68), fs_flush [fact] */
+
+void fs_mkdir_work(int param_1,int param_2)
 
 {
   undefined1 uVar1;
@@ -190,16 +198,16 @@ LAB_2014bee4:
       fs_set_error(uVar4,0);
       return;
     }
-    iVar2 = FUN_201473c4(param_1);
+    iVar2 = fs_path_validate(param_1);
     if (iVar2 == 0) {
       iVar2 = fs_strlen(param_1);
       iVar3 = param_2 + 0x100c;
-      FUN_2014d288(iVar3,param_1,iVar2 + 1);
-      FUN_2014cd68(iVar3);
+      fs_strncpy(iVar3,param_1,iVar2 + 1);
+      sjis_map_ext_chars(iVar3);
       uVar1 = fs_toupper((int)*(char *)(param_2 + 0x100c));
       iVar2 = fs_find_drive(uVar1,&local_10);
-      if ((iVar2 == 0) && (iVar2 = FUN_2014ba68(iVar3,param_2), iVar2 == 0)) {
-        uVar4 = FUN_20144688(local_10);
+      if ((iVar2 == 0) && (iVar2 = dir_create_core(iVar3,param_2), iVar2 == 0)) {
+        uVar4 = fs_flush(local_10);
         goto LAB_2014bee4;
       }
     }
@@ -209,9 +217,11 @@ LAB_2014bee4:
 }
 
 
-// ===== FUN_2014beec @ 2014beec (68 bytes)
+// ===== fs_mkdir @ 2014beec (68 bytes)
 
-undefined4 FUN_2014beec(undefined4 param_1)
+/* (path): creates a directory; sd_make_dirs makes the FT-710 folders with it [fact] */
+
+undefined4 fs_mkdir(undefined4 param_1)
 
 {
   int iVar1;
@@ -219,7 +229,7 @@ undefined4 FUN_2014beec(undefined4 param_1)
   
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
-    uVar2 = FUN_2014be24(param_1,iVar1);
+    uVar2 = fs_mkdir_work(param_1,iVar1);
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -228,9 +238,11 @@ undefined4 FUN_2014beec(undefined4 param_1)
 }
 
 
-// ===== FUN_2014bf30 @ 2014bf30 (812 bytes)
+// ===== dir_open_core @ 2014bf30 (812 bytes)
 
-int * FUN_2014bf30(char *param_1,int *param_2,char *param_3)
+/* Opens a directory by path for fs_opendir_work [inference: only caller] */
+
+int * dir_open_core(char *param_1,int *param_2,char *param_3)
 
 {
   undefined1 uVar1;
@@ -247,7 +259,7 @@ int * FUN_2014bf30(char *param_1,int *param_2,char *param_3)
   
   local_54 = DAT_20808ba0;
   fs_set_error_ret(0);
-  iVar2 = FUN_2014def4();
+  iVar2 = fs_sem2_wait();
   if (iVar2 != 0) {
     piVar3 = (int *)fs_set_error_ret(0xffffffd5,0);
     return piVar3;
@@ -264,14 +276,14 @@ int * FUN_2014bf30(char *param_1,int *param_2,char *param_3)
       } while (iVar2 < iVar5);
     }
     if (iVar2 == iVar5) {
-      FUN_2014df20();
+      fs_sem2_signal();
       iVar2 = -0xf;
       param_2 = (int *)0x0;
       goto LAB_2014c04c;
     }
   }
   *(undefined1 *)(param_2 + 1) = 0xff;
-  FUN_2014df20();
+  fs_sem2_signal();
   fs_memset(auStack_50,0,0x20,*(undefined4 *)(local_54 + 0x6c));
   if (local_54 == 0) {
     *(undefined1 *)(param_2 + 1) = 0;
@@ -288,7 +300,7 @@ int * FUN_2014bf30(char *param_1,int *param_2,char *param_3)
   }
   uVar1 = fs_toupper();
   iVar2 = fs_find_drive(uVar1,&local_54);
-  if ((iVar2 != 0) || (iVar2 = FUN_20144950(local_54), iVar2 != 0)) {
+  if ((iVar2 != 0) || (iVar2 = fs_drive_check_mounted(local_54), iVar2 != 0)) {
     *(undefined1 *)(param_2 + 1) = 0;
     param_2 = (int *)0x0;
     goto LAB_2014c04c;
@@ -318,14 +330,14 @@ int * FUN_2014bf30(char *param_1,int *param_2,char *param_3)
 LAB_2014c17c:
     if (*param_1 != '\0') {
       do {
-        param_1 = (char *)FUN_20147248(param_1,param_3);
+        param_1 = (char *)path_next_component(param_1,param_3);
         if ((param_1 == (char *)0x0) || (*param_3 == '\0')) goto LAB_2014c158;
-        iVar2 = FUN_201468c0(local_54,uVar6,param_3,auStack_50,0,0,auStack_2c,auStack_30,param_3);
+        iVar2 = subdir_find(local_54,uVar6,param_3,auStack_50,0,0,auStack_2c,auStack_30,param_3);
         if (iVar2 != 0) goto LAB_2014c24c;
-        uVar6 = FUN_20146884(auStack_50,(int)*(char *)(local_54 + 0x10));
+        uVar6 = dirent_get_cluster(auStack_50,(int)*(char *)(local_54 + 0x10));
       } while (*param_1 != '\0');
     }
-    iVar2 = FUN_20146884(auStack_50,(int)*(char *)(local_54 + 0x10));
+    iVar2 = dirent_get_cluster(auStack_50,(int)*(char *)(local_54 + 0x10));
     if ((local_45 & 0x10) != 0) {
       *(undefined1 *)((int)param_2 + 5) = 1;
       *(undefined1 *)(param_2 + 1) = 1;
@@ -338,7 +350,7 @@ LAB_2014c17c:
     }
   }
   else {
-    param_1 = (char *)FUN_20147248(param_1,param_3);
+    param_1 = (char *)path_next_component(param_1,param_3);
     if ((param_1 == (char *)0x0) || (*param_3 == '\0')) {
 LAB_2014c158:
       *(undefined1 *)(param_2 + 1) = 0;
@@ -346,9 +358,9 @@ LAB_2014c158:
       iVar2 = -1;
       goto LAB_2014c04c;
     }
-    iVar2 = FUN_20145df0(local_54,param_3,auStack_50,0,0,auStack_2c,param_3);
+    iVar2 = root_dir_find(local_54,param_3,auStack_50,0,0,auStack_2c,param_3);
     if (iVar2 == 0) {
-      uVar6 = FUN_20146884(auStack_50,(int)*(char *)(local_54 + 0x10));
+      uVar6 = dirent_get_cluster(auStack_50,(int)*(char *)(local_54 + 0x10));
       goto LAB_2014c17c;
     }
   }
@@ -362,9 +374,12 @@ LAB_2014c04c:
 }
 
 
-// ===== FUN_2014c31c @ 2014c31c (424 bytes)
+// ===== fs_opendir_work @ 2014c31c (424 bytes)
 
-void FUN_2014c31c(int param_1,int param_2)
+/* fs_opendir body: copies and normalises the path, opens the root or a subdirectory (0x2014BF30)
+   [fact] */
+
+void fs_opendir_work(int param_1,int param_2)
 
 {
   undefined1 uVar1;
@@ -388,8 +403,8 @@ LAB_2014c3ec:
   }
   iVar3 = fs_strlen(param_1);
   pcVar4 = (char *)(param_2 + 0x100c);
-  FUN_2014d288(pcVar4,param_1,iVar3 + 1);
-  FUN_2014cd68(pcVar4);
+  fs_strncpy(pcVar4,param_1,iVar3 + 1);
+  sjis_map_ext_chars(pcVar4);
   iVar3 = fs_strlen(pcVar4);
   if (iVar3 == 1) {
     if (*(char *)(param_2 + 0x100c) != '/' && *(char *)(param_2 + 0x100c) != '\\') {
@@ -404,12 +419,12 @@ LAB_2014c3d0:
     if (*(char *)(param_2 + 0x100d) != ':') goto LAB_2014c3ec;
   }
   else {
-    iVar3 = FUN_201473c4(pcVar4);
+    iVar3 = fs_path_validate(pcVar4);
     if (iVar3 != 0) goto LAB_2014c394;
   }
   local_18[0] = DAT_20808ba0;
   if (*pcVar4 == '/' || *pcVar4 == '\\') {
-    uVar5 = FUN_2014bf30(pcVar4,0,param_2);
+    uVar5 = dir_open_core(pcVar4,0,param_2);
     uVar2 = fs_task_ctx_get();
   }
   else {
@@ -419,7 +434,7 @@ LAB_2014c3d0:
     if (uVar2 == 0) {
       iVar3 = fs_lock_a(local_18[0],(int)((ulonglong)uVar6 >> 0x20));
       if (iVar3 == 0) {
-        uVar5 = FUN_2014bf30(pcVar4,0,param_2);
+        uVar5 = dir_open_core(pcVar4,0,param_2);
         uVar2 = fs_task_ctx_get();
         fs_unlock_a(local_18[0]);
       }
@@ -437,9 +452,12 @@ LAB_2014c3d0:
 }
 
 
-// ===== FUN_2014c410 @ 2014c410 (68 bytes)
+// ===== fs_opendir @ 2014c410 (68 bytes)
 
-undefined4 FUN_2014c410(undefined4 param_1)
+/* (path): directory handle, 0 on error; wav_list_dir, fwfile_status_text, sdmenu_save_file,
+   screen_capture_bmp [fact for callers] */
+
+undefined4 fs_opendir(undefined4 param_1)
 
 {
   int iVar1;
@@ -447,7 +465,7 @@ undefined4 FUN_2014c410(undefined4 param_1)
   
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
-    uVar2 = FUN_2014c31c(param_1,iVar1);
+    uVar2 = fs_opendir_work(param_1,iVar1);
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -456,9 +474,11 @@ undefined4 FUN_2014c410(undefined4 param_1)
 }
 
 
-// ===== FUN_2014c454 @ 2014c454 (32 bytes)
+// ===== dir_close @ 2014c454 (32 bytes)
 
-undefined4 FUN_2014c454(int param_1)
+/* Clears the handle's open flag +4, -13 when it was not open [fact] */
+
+undefined4 dir_close(int param_1)
 
 {
   undefined4 uVar1;
@@ -474,17 +494,19 @@ undefined4 FUN_2014c454(int param_1)
 }
 
 
-// ===== FUN_2014c474 @ 2014c474 (68 bytes)
+// ===== fs_closedir @ 2014c474 (68 bytes)
 
-void FUN_2014c474(undefined4 param_1)
+/* Checked dir_close [fact] */
+
+void fs_closedir(undefined4 param_1)
 
 {
   int iVar1;
   undefined4 uVar2;
   
   iVar1 = fs_check_ready();
-  if ((iVar1 == 0) && (iVar1 = FUN_20144898(param_1), iVar1 == 0)) {
-    uVar2 = FUN_2014c454(param_1);
+  if ((iVar1 == 0) && (iVar1 = fs_dir_check(param_1), iVar1 == 0)) {
+    uVar2 = dir_close(param_1);
     fs_set_error(uVar2,0);
     return;
   }
@@ -493,16 +515,18 @@ void FUN_2014c474(undefined4 param_1)
 }
 
 
-// ===== FUN_2014c4bc @ 2014c4bc (80 bytes)
+// ===== dirent_read @ 2014c4bc (80 bytes)
 
-int FUN_2014c4bc(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5)
+/* Copies 32-byte entry n of a directory sector (dir_sector_get) [fact] */
+
+int dirent_read(undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4,int param_5)
 
 {
   int iVar1;
   int local_10;
   
   local_10 = param_5 + 0xe0c;
-  iVar1 = FUN_20144c5c(param_1,param_2,&local_10);
+  iVar1 = dir_sector_get(param_1,param_2,&local_10);
   if (iVar1 == 0) {
     fs_memcpy(param_4,local_10 + param_3 * 0x20,0x20);
     iVar1 = 0;
@@ -511,9 +535,12 @@ int FUN_2014c4bc(undefined4 param_1,undefined4 param_2,int param_3,undefined4 pa
 }
 
 
-// ===== FUN_2014c50c @ 2014c50c (380 bytes)
+// ===== dir_next_entry @ 2014c50c (380 bytes)
 
-void FUN_2014c50c(int *param_1,undefined4 param_2)
+/* Advances a directory handle (+0xC sector, +6 index) to the next 32-byte entry, through the
+   cluster chain [inference] */
+
+void dir_next_entry(int *param_1,undefined4 param_2)
 
 {
   short sVar1;
@@ -538,9 +565,9 @@ void FUN_2014c50c(int *param_1,undefined4 param_2)
     iVar2 = -0xd;
     goto LAB_2014c574;
   }
-  iVar2 = FUN_20144950(iVar6);
+  iVar2 = fs_drive_check_mounted(iVar6);
   if ((iVar2 != 0) ||
-     (iVar2 = FUN_2014c4bc(*param_1,uVar7,*(undefined2 *)((int)param_1 + 6),param_1 + 6,param_2),
+     (iVar2 = dirent_read(*param_1,uVar7,*(undefined2 *)((int)param_1 + 6),param_1 + 6,param_2),
      iVar2 != 0)) {
 LAB_2014c5a0:
     piVar4 = (int *)0x0;
@@ -569,7 +596,7 @@ LAB_2014c5a0:
       }
       else {
         if (uVar5 != uVar7) {
-          iVar2 = FUN_20149f68(*param_1,uVar7,local_24,param_2);
+          iVar2 = fat_next_sector(*param_1,uVar7,local_24,param_2);
           if (iVar2 != 0) goto LAB_2014c5a0;
           if (local_24[0] != 0) {
             param_1[3] = local_24[0];
@@ -588,9 +615,11 @@ LAB_2014c574:
 }
 
 
-// ===== FUN_2014c688 @ 2014c688 (812 bytes)
+// ===== dir_read_core @ 2014c688 (812 bytes)
 
-int * FUN_2014c688(int *param_1,int param_2)
+/* readdir body: next used entry, long name (UTF-16 to 8-bit by 0x2014CC1C) [inference] */
+
+int * dir_read_core(int *param_1,int param_2)
 
 {
   char cVar1;
@@ -617,15 +646,15 @@ int * FUN_2014c688(int *param_1,int param_2)
       param_1[0xe] = (int)(param_1 + 6);
       *(undefined1 *)(param_1 + 6) = *(undefined1 *)(*param_1 + 0x11);
       *(undefined1 *)((int)param_1 + 0x42) = *(undefined1 *)(*param_1 + 0x11);
-      FUN_2014d270((int)param_1 + 0x19,&DWORD_2014c9b4);
-      FUN_2014d270((int)param_1 + 0x43,&DWORD_2014c9b4);
+      fs_strcpy((int)param_1 + 0x19,&DWORD_2014c9b4);
+      fs_strcpy((int)param_1 + 0x43,&DWORD_2014c9b4);
       *param_1 = *(int *)*param_1;
       piVar3 = param_1 + 0xe;
     }
   }
   else {
     while( true ) {
-      pbVar4 = (byte *)FUN_2014c50c(param_1,param_2);
+      pbVar4 = (byte *)dir_next_entry(param_1,param_2);
       piVar3 = (int *)0x0;
       if (pbVar4 == (byte *)0x0) break;
       uVar5 = (uint)*pbVar4;
@@ -637,7 +666,7 @@ int * FUN_2014c688(int *param_1,int param_2)
         if (pbVar4[0xb] != 0xf) {
           param_1[0xe] = (int)pbVar4;
           if (uVar10 == 0) {
-            FUN_20147640((int)param_1 + 0x42,pbVar4,(int)(char)pbVar4[0xc]);
+            dirent_name_to_str((int)param_1 + 0x42,pbVar4,(int)(char)pbVar4[0xc]);
             if ((param_1[2] == *(int *)(iVar8 + 0x34)) && (*(char *)(iVar8 + 0x10) != ' ')) {
               *(short *)(param_1 + 0x10) =
                    ((short)param_1[5] -
@@ -647,12 +676,12 @@ int * FUN_2014c688(int *param_1,int param_2)
               iVar8 = 0;
             }
             else {
-              uVar7 = FUN_201449cc(*param_1,param_1[5]);
+              uVar7 = fat_sect2clust(*param_1,param_1[5]);
               sVar2 = fat_clust2sect(*param_1,uVar7);
               *(short *)(param_1 + 0x10) =
                    ((short)param_1[5] - sVar2) * (short)(*(uint *)(iVar8 + 0x6c) >> 5) +
                    (short)param_1[4];
-              iVar8 = FUN_201449cc(*param_1);
+              iVar8 = fat_sect2clust(*param_1);
             }
             param_1[0xf] = iVar8;
           }
@@ -665,8 +694,8 @@ int * FUN_2014c688(int *param_1,int param_2)
             uVar10 = (uint)cVar1;
             uVar9 = 0;
             do {
-              iVar8 = FUN_2014cc1c((int)param_1 + uVar11 + 0x42,
-                                   param_2 + uVar10 * 0x1a + uVar9 + 0x1418);
+              iVar8 = ucs2_to_ascii_char((int)param_1 + uVar11 + 0x42,
+                                         param_2 + uVar10 * 0x1a + uVar9 + 0x1418);
               if ((iVar8 == 0) || (*(char *)((int)param_1 + uVar11 + 0x42) == '\0')) break;
               uVar11 = iVar8 + uVar11 & 0xffff;
               uVar9 = uVar9 + 2 & 0xff;
@@ -699,12 +728,12 @@ LAB_2014c79c:
             iVar6 = 0;
           }
           else {
-            uVar7 = FUN_201449cc(*param_1,param_1[5]);
+            uVar7 = fat_sect2clust(*param_1,param_1[5]);
             sVar2 = fat_clust2sect(*param_1,uVar7);
             *(short *)(param_1 + 0x10) =
                  ((short)param_1[5] - sVar2) * (short)(*(uint *)(iVar8 + 0x6c) >> 5) +
                  (short)param_1[4];
-            iVar6 = FUN_201449cc(*param_1);
+            iVar6 = fat_sect2clust(*param_1);
           }
           param_1[0xf] = iVar6;
 LAB_2014c83c:
@@ -721,9 +750,11 @@ LAB_2014c83c:
 }
 
 
-// ===== FUN_2014ca08 @ 2014ca08 (148 bytes)
+// ===== fs_readdir_work @ 2014ca08 (148 bytes)
 
-undefined4 FUN_2014ca08(undefined4 *param_1,undefined4 param_2)
+/* Checked readdir under fs_lock_a [fact] */
+
+undefined4 fs_readdir_work(undefined4 *param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -737,15 +768,15 @@ undefined4 FUN_2014ca08(undefined4 *param_1,undefined4 param_2)
   undefined4 unaff_lr;
   
   iVar2 = fs_check_ready();
-  if ((iVar2 == 0) && (iVar2 = FUN_20144898(param_1), iVar2 == 0)) {
+  if ((iVar2 == 0) && (iVar2 = fs_dir_check(param_1), iVar2 == 0)) {
     uVar3 = *param_1;
     iVar2 = fs_lock_a(uVar3);
     if (iVar2 != 0) {
       uVar3 = fs_set_error_ret(0xffffffdb,0);
       return uVar3;
     }
-    uVar1 = FUN_2014c688(param_1,param_2,extraout_r2,extraout_r3,unaff_r4,unaff_r5,unaff_r6,unaff_lr
-                        );
+    uVar1 = dir_read_core(param_1,param_2,extraout_r2,extraout_r3,unaff_r4,unaff_r5,unaff_r6,
+                          unaff_lr);
     fs_unlock_a(uVar3);
     return uVar1;
   }
@@ -754,9 +785,11 @@ undefined4 FUN_2014ca08(undefined4 *param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2014ca4c @ 2014ca4c (68 bytes)
+// ===== fs_readdir @ 2014ca4c (68 bytes)
 
-undefined4 FUN_2014ca4c(undefined4 param_1)
+/* (dir): next directory entry or 0 at the end; callers read the attribute at entry +0x0B [fact] */
+
+undefined4 fs_readdir(undefined4 param_1)
 
 {
   int iVar1;
@@ -764,7 +797,7 @@ undefined4 FUN_2014ca4c(undefined4 param_1)
   
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
-    uVar2 = FUN_2014ca08(param_1,iVar1);
+    uVar2 = fs_readdir_work(param_1,iVar1);
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -790,9 +823,12 @@ undefined4 sjis_is_lead(int param_1)
 }
 
 
-// ===== FUN_2014cab8 @ 2014cab8 (204 bytes)
+// ===== sjis_to_ucs2_char @ 2014cab8 (204 bytes)
 
-uint FUN_2014cab8(byte *param_1)
+/* Shift-JIS character to UTF-16 (byte-swapped) via the tables 0x20420756 (0x81..0x9F) and
+   0x204244D0 (0xE0..0xFC); ASCII and half-width kana directly [fact] */
+
+uint sjis_to_ucs2_char(byte *param_1)
 
 {
   uint uVar1;
@@ -828,9 +864,12 @@ uint FUN_2014cab8(byte *param_1)
 }
 
 
-// ===== FUN_2014cb84 @ 2014cb84 (152 bytes)
+// ===== sjis_to_ucs2_str @ 2014cb84 (152 bytes)
 
-int FUN_2014cb84(char *param_1,undefined1 *param_2,undefined1 *param_3)
+/* Shift-JIS string to UTF-16, returns the length, sets *flag when there is a double-byte character
+   [fact] */
+
+int sjis_to_ucs2_str(char *param_1,undefined1 *param_2,undefined1 *param_3)
 
 {
   char cVar1;
@@ -847,11 +886,11 @@ int FUN_2014cb84(char *param_1,undefined1 *param_2,undefined1 *param_3)
     }
     iVar2 = sjis_is_lead(*param_1);
     if (iVar2 == 0) {
-      iVar2 = FUN_2014cab8(param_1);
+      iVar2 = sjis_to_ucs2_char(param_1);
       param_1 = param_1 + 1;
     }
     else {
-      iVar2 = FUN_2014cab8(param_1);
+      iVar2 = sjis_to_ucs2_char(param_1);
       *param_3 = 1;
       param_1 = param_1 + 2;
     }
@@ -866,9 +905,12 @@ int FUN_2014cb84(char *param_1,undefined1 *param_2,undefined1 *param_3)
 }
 
 
-// ===== FUN_2014cc1c @ 2014cc1c (332 bytes)
+// ===== ucs2_to_ascii_char @ 2014cc1c (332 bytes)
 
-undefined4 FUN_2014cc1c(byte *param_1,byte *param_2)
+/* One UTF-16 character to 8 bits, same mapping as fs_ucs2_to_ascii_upper without upper-casing
+   [fact] */
+
+undefined4 ucs2_to_ascii_char(byte *param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -921,9 +963,12 @@ undefined4 FUN_2014cc1c(byte *param_1,byte *param_2)
 }
 
 
-// ===== FUN_2014cd68 @ 2014cd68 (652 bytes)
+// ===== sjis_map_ext_chars @ 2014cd68 (652 bytes)
 
-void FUN_2014cd68(byte *param_1)
+/* Rewrites NEC/IBM extension codes in a path (0xED40.., 0x8790..) to one form before a lookup
+   [inference from the ranges] */
+
+void sjis_map_ext_chars(byte *param_1)
 
 {
   byte bVar1;
@@ -1027,9 +1072,11 @@ LAB_2014cfe4:
 }
 
 
-// ===== FUN_2014cff4 @ 2014cff4 (92 bytes)
+// ===== fs_wstrcpy_len @ 2014cff4 (92 bytes)
 
-int FUN_2014cff4(char *param_1,char *param_2,undefined1 *param_3)
+/* Copies a 0-terminated UTF-16 string, returns its length in characters, sets *flag = 1 [fact] */
+
+int fs_wstrcpy_len(char *param_1,char *param_2,undefined1 *param_3)
 
 {
   int iVar1;
@@ -1048,9 +1095,12 @@ int FUN_2014cff4(char *param_1,char *param_2,undefined1 *param_3)
 }
 
 
-// ===== FUN_2014d050 @ 2014d050 (196 bytes)
+// ===== fs_ucs2_to_ascii_upper @ 2014d050 (196 bytes)
 
-int FUN_2014d050(char *param_1,byte *param_2)
+/* UTF-16 name to 8-bit upper case: 0x00A5 -> '\\', 0x203E -> '~', U+FF61..FF9F -> half-width kana
+   0xA1..0xDF, 0 for any other character outside 0x20..0x7E [fact] */
+
+int fs_ucs2_to_ascii_upper(char *param_1,byte *param_2)
 
 {
   char cVar1;
@@ -1152,9 +1202,11 @@ void fs_memset(undefined4 *param_1,undefined1 param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_2014d1c4 @ 2014d1c4 (92 bytes)
+// ===== fs_memmove @ 2014d1c4 (92 bytes)
 
-void FUN_2014d1c4(undefined1 *param_1,undefined1 *param_2,int param_3)
+/* Byte copy that copies backwards when the areas overlap [fact] */
+
+void fs_memmove(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 {
   undefined1 *puVar1;
@@ -1203,9 +1255,11 @@ int fs_strlen(char *param_1)
 }
 
 
-// ===== FUN_2014d248 @ 2014d248 (40 bytes)
+// ===== fs_wstrlen_bytes @ 2014d248 (40 bytes)
 
-int FUN_2014d248(short *param_1)
+/* Length of a UTF-16 string in bytes [fact] */
+
+int fs_wstrlen_bytes(short *param_1)
 
 {
   short sVar1;
@@ -1222,9 +1276,11 @@ int FUN_2014d248(short *param_1)
 }
 
 
-// ===== FUN_2014d270 @ 2014d270 (24 bytes)
+// ===== fs_strcpy @ 2014d270 (24 bytes)
 
-void FUN_2014d270(char *param_1,char *param_2)
+/* Byte string copy including the terminator [fact] */
+
+void fs_strcpy(char *param_1,char *param_2)
 
 {
   char cVar1;
@@ -1239,9 +1295,11 @@ void FUN_2014d270(char *param_1,char *param_2)
 }
 
 
-// ===== FUN_2014d288 @ 2014d288 (68 bytes)
+// ===== fs_strncpy @ 2014d288 (68 bytes)
 
-void FUN_2014d288(char *param_1,char *param_2,uint param_3)
+/* Copies up to n bytes, pads with 0 after the terminator [fact] */
+
+void fs_strncpy(char *param_1,char *param_2,uint param_3)
 
 {
   uint uVar1;
@@ -1265,9 +1323,11 @@ void FUN_2014d288(char *param_1,char *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d2cc @ 2014d2cc (108 bytes)
+// ===== fs_wstrncpy @ 2014d2cc (108 bytes)
 
-void FUN_2014d2cc(char *param_1,char *param_2,uint param_3)
+/* UTF-16 version of fs_strncpy [fact] */
+
+void fs_wstrncpy(char *param_1,char *param_2,uint param_3)
 
 {
   char *pcVar1;
@@ -1295,9 +1355,11 @@ void FUN_2014d2cc(char *param_1,char *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d338 @ 2014d338 (36 bytes)
+// ===== fs_strchr @ 2014d338 (36 bytes)
 
-char * FUN_2014d338(char *param_1,char param_2)
+/* First occurrence of a character, 0 when missing [fact] */
+
+char * fs_strchr(char *param_1,char param_2)
 
 {
   while( true ) {
@@ -1325,9 +1387,11 @@ int fs_toupper(int param_1)
 }
 
 
-// ===== FUN_2014d374 @ 2014d374 (24 bytes)
+// ===== fs_tolower @ 2014d374 (24 bytes)
 
-int FUN_2014d374(int param_1)
+/* 'A'..'Z' -> 'a'..'z' (pair of fs_toupper) [fact] */
+
+int fs_tolower(int param_1)
 
 {
   if (param_1 - 0x41U < 0x1a) {
@@ -1337,9 +1401,11 @@ int FUN_2014d374(int param_1)
 }
 
 
-// ===== FUN_2014d38c @ 2014d38c (108 bytes)
+// ===== fs_stricmp @ 2014d38c (108 bytes)
 
-int FUN_2014d38c(byte *param_1,byte *param_2)
+/* Case-insensitive string compare (fs_toupper on both) [fact] */
+
+int fs_stricmp(byte *param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -1371,9 +1437,11 @@ int FUN_2014d38c(byte *param_1,byte *param_2)
 }
 
 
-// ===== FUN_2014d3f8 @ 2014d3f8 (148 bytes)
+// ===== fs_wstricmp @ 2014d3f8 (148 bytes)
 
-int FUN_2014d3f8(ushort *param_1,ushort *param_2)
+/* Case-insensitive compare of UTF-16 strings (folds only characters < 0x100) [fact] */
+
+int fs_wstricmp(ushort *param_1,ushort *param_2)
 
 {
   char *pcVar1;
@@ -1427,9 +1495,11 @@ int FUN_2014d3f8(ushort *param_1,ushort *param_2)
 }
 
 
-// ===== FUN_2014d48c @ 2014d48c (124 bytes)
+// ===== fs_strnicmp @ 2014d48c (124 bytes)
 
-int FUN_2014d48c(char *param_1,char *param_2,int param_3)
+/* Case-insensitive compare of at most n bytes [fact] */
+
+int fs_strnicmp(char *param_1,char *param_2,int param_3)
 
 {
   char cVar1;
@@ -1463,9 +1533,11 @@ int FUN_2014d48c(char *param_1,char *param_2,int param_3)
 }
 
 
-// ===== FUN_2014d508 @ 2014d508 (172 bytes)
+// ===== fs_wstrnicmp @ 2014d508 (172 bytes)
 
-int FUN_2014d508(ushort *param_1,ushort *param_2,uint param_3)
+/* UTF-16 version of fs_strnicmp [fact] */
+
+int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
 
 {
   char *pcVar1;
@@ -1525,9 +1597,11 @@ int FUN_2014d508(ushort *param_1,ushort *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d5b4 @ 2014d5b4 (76 bytes)
+// ===== fs_strlwr_sjis @ 2014d5b4 (76 bytes)
 
-byte * FUN_2014d5b4(byte *param_1)
+/* Lower-cases a string in place, skipping Shift-JIS pairs [fact] */
+
+byte * fs_strlwr_sjis(byte *param_1)
 
 {
   int iVar1;
@@ -1550,9 +1624,11 @@ byte * FUN_2014d5b4(byte *param_1)
 }
 
 
-// ===== FUN_2014d600 @ 2014d600 (48 bytes)
+// ===== fs_atoi @ 2014d600 (48 bytes)
 
-int FUN_2014d600(char *param_1)
+/* Decimal digits to int (no sign, no checks) [fact] */
+
+int fs_atoi(char *param_1)
 
 {
   char cVar1;
@@ -1569,9 +1645,11 @@ int FUN_2014d600(char *param_1)
 }
 
 
-// ===== FUN_2014d630 @ 2014d630 (72 bytes)
+// ===== fs_utoa_digits @ 2014d630 (72 bytes)
 
-char * FUN_2014d630(uint param_1,char *param_2,uint param_3)
+/* Recursive digit writer for radix 2..36 ('a'.. for 10+), returns the end pointer [fact] */
+
+char * fs_utoa_digits(uint param_1,char *param_2,uint param_3)
 
 {
   char cVar1;
@@ -1580,7 +1658,7 @@ char * FUN_2014d630(uint param_1,char *param_2,uint param_3)
   
   uVar2 = __aeabi_uidivmod(param_1,param_3);
   if (uVar2 != 0) {
-    param_2 = FUN_2014d630(uVar2,param_2,param_3);
+    param_2 = fs_utoa_digits(uVar2,param_2,param_3);
   }
   if (extraout_r1 < '\n') {
     cVar1 = extraout_r1 + '0';
@@ -1593,9 +1671,12 @@ char * FUN_2014d630(uint param_1,char *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d678 @ 2014d678 (80 bytes)
+// ===== fs_itoa @ 2014d678 (80 bytes)
 
-char * FUN_2014d678(uint param_1,char *param_2,uint param_3)
+/* (value, buf, radix 2..36): '-' for negative decimal, 0-terminated; empty for a bad radix [fact]
+    */
+
+char * fs_itoa(uint param_1,char *param_2,uint param_3)
 
 {
   char *pcVar1;
@@ -1607,7 +1688,7 @@ char * FUN_2014d678(uint param_1,char *param_2,uint param_3)
       pcVar1 = param_2 + 1;
       param_1 = -param_1;
     }
-    pcVar1 = FUN_2014d630(param_1,pcVar1,param_3);
+    pcVar1 = fs_utoa_digits(param_1,pcVar1,param_3);
     *pcVar1 = '\0';
   }
   else {
@@ -1617,9 +1698,12 @@ char * FUN_2014d678(uint param_1,char *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d6c8 @ 2014d6c8 (168 bytes)
+// ===== fs_stricmp_sjis @ 2014d6c8 (168 bytes)
 
-int FUN_2014d6c8(char *param_1,char *param_2)
+/* Case-insensitive compare that compares the trail byte of a Shift-JIS pair exactly (sjis_is_lead)
+   [fact] */
+
+int fs_stricmp_sjis(char *param_1,char *param_2)
 
 {
   bool bVar1;
@@ -1675,9 +1759,11 @@ int FUN_2014d6c8(char *param_1,char *param_2)
 }
 
 
-// ===== FUN_2014d770 @ 2014d770 (196 bytes)
+// ===== fs_strnicmp_sjis @ 2014d770 (196 bytes)
 
-int FUN_2014d770(char *param_1,char *param_2,uint param_3)
+/* Length-limited version of fs_stricmp_sjis [fact] */
+
+int fs_strnicmp_sjis(char *param_1,char *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -1733,9 +1819,11 @@ joined_r0x2014d7ec:
 }
 
 
-// ===== FUN_2014d834 @ 2014d834 (48 bytes)
+// ===== fs_atoi_2 @ 2014d834 (48 bytes)
 
-int FUN_2014d834(char *param_1)
+/* Second identical copy of fs_atoi [fact] */
+
+int fs_atoi_2(char *param_1)
 
 {
   char cVar1;
@@ -1752,9 +1840,11 @@ int FUN_2014d834(char *param_1)
 }
 
 
-// ===== FUN_2014d864 @ 2014d864 (80 bytes)
+// ===== fs_itoa_2 @ 2014d864 (80 bytes)
 
-char * FUN_2014d864(uint param_1,char *param_2,uint param_3)
+/* Second identical copy of fs_itoa [fact] */
+
+char * fs_itoa_2(uint param_1,char *param_2,uint param_3)
 
 {
   char *pcVar1;
@@ -1766,7 +1856,7 @@ char * FUN_2014d864(uint param_1,char *param_2,uint param_3)
       pcVar1 = param_2 + 1;
       param_1 = -param_1;
     }
-    pcVar1 = FUN_2014d630(param_1,pcVar1,param_3);
+    pcVar1 = fs_utoa_digits(param_1,pcVar1,param_3);
     *pcVar1 = '\0';
   }
   else {
@@ -1785,9 +1875,11 @@ int FUN_2014d8b4(undefined4 param_1)
 }
 
 
-// ===== FUN_2014d8c8 @ 2014d8c8 (36 bytes)
+// ===== fs_wstr_store_le @ 2014d8c8 (36 bytes)
 
-void FUN_2014d8c8(undefined1 *param_1,short *param_2)
+/* Copies a 0-terminated UTF-16 string to bytes, little-endian, including the terminator [fact] */
+
+void fs_wstr_store_le(undefined1 *param_1,short *param_2)
 
 {
   short sVar1;
@@ -1804,9 +1896,11 @@ void FUN_2014d8c8(undefined1 *param_1,short *param_2)
 }
 
 
-// ===== FUN_2014d8ec @ 2014d8ec (20 bytes)
+// ===== fat_st_word @ 2014d8ec (20 bytes)
 
-void FUN_2014d8ec(undefined1 *param_1,undefined4 param_2)
+/* Stores a 16-bit value little-endian at an unaligned address (pair of fat_ld_word) [fact] */
+
+void fat_st_word(undefined1 *param_1,undefined4 param_2)
 
 {
   *param_1 = (char)param_2;
@@ -1826,9 +1920,11 @@ undefined2 fat_ld_word(undefined2 *param_1)
 }
 
 
-// ===== FUN_2014d918 @ 2014d918 (36 bytes)
+// ===== fat_st_dword @ 2014d918 (36 bytes)
 
-void FUN_2014d918(undefined1 *param_1,undefined4 param_2)
+/* Stores a 32-bit value little-endian at an unaligned address (pair of fat_ld_dword) [fact] */
+
+void fat_st_dword(undefined1 *param_1,undefined4 param_2)
 
 {
   *param_1 = (char)param_2;

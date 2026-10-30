@@ -46,16 +46,16 @@ uint FUN_fffc616e(byte param_1)
     local_d = g_opstate.vfo_b.mode;
   }
   local_d = local_d & 0xf;
-  if (PTR_g_ui_00025d58->f_0x415_u8 == 1) {
-    if (PTR_g_ui_00025d58->f_0x416_u8 == 0) {
+  if (PTR_g_ui_00025d58->digit_step_on == 1) {
+    if (PTR_g_ui_00025d58->digit_step_khz == 0) {
       local_c = &DAT_000f4240;
     }
     else {
       local_c = (undefined *)0x3e8;
     }
   }
-  else if (PTR_g_ui_00025d58->f_0x46a_u8 == 1) {
-    if (PTR_g_ui_00025d58->f_0x479_u8 == 1) {
+  else if (PTR_g_ui_00025d58->step_fast_req == 1) {
+    if (PTR_g_ui_00025d58->step_fast_100k == 1) {
       local_c = &DAT_000186a0;
     }
     else {
@@ -63,7 +63,7 @@ uint FUN_fffc616e(byte param_1)
     }
   }
   else {
-    if ((PTR_g_ui_00025d58->scan_running == 1) || (PTR_g_ui_00025d58->f_0x46b_u8 == 1)) {
+    if ((PTR_g_ui_00025d58->scan_running == 1) || (PTR_g_ui_00025d58->ch_step_mode == 1)) {
       bVar1 = true;
     }
     else {
@@ -108,11 +108,11 @@ uint FUN_fffc616e(byte param_1)
         local_c = (undefined *)(int)sVar2;
       }
     }
-    else if (PTR_g_ui_00025d58->f_0x46d_u8 == 1) {
+    else if (PTR_g_ui_00025d58->step_dial_req == 1) {
       sVar2 = FUN_fffc62ae(local_d);
       local_c = (undefined *)(int)sVar2;
     }
-    else if (PTR_g_ui_00025d58->f_0x478_u8 == 1) {
+    else if (PTR_g_ui_00025d58->step_ch_req == 1) {
       local_c = (undefined *)FUN_fffc63e6(local_d);
     }
     else {
@@ -305,7 +305,7 @@ void enc2_step(char param_1)
       FUN_fffbb963((int)param_1);
       return;
     }
-    if (PTR_g_ui_00025d58->f_0x448_u8 == 1) {
+    if (PTR_g_ui_00025d58->dialog_has_choice == 1) {
       if ('\0' < param_1) {
         PTR_g_ui_00025d58->dialog_button = 1;
         return;
@@ -428,12 +428,12 @@ void FUN_fffc6800(char param_1)
 {
   byte bVar1;
   
-  if (PTR_g_ui_00025d58->f_0x43c_u8 == 0) {
+  if (PTR_g_ui_00025d58->memlist_edit_on == 0) {
     if (PTR_g_ui_00025d58->memlist_flag == 0) {
       FUN_fffc686f((int)param_1);
       return;
     }
-    if (PTR_g_ui_00025d58->f_0x43b_u8 == 0) {
+    if (PTR_g_ui_00025d58->memlist_popup55 == 0) {
       FUN_fffc6bd8((int)param_1);
       return;
     }
@@ -622,7 +622,7 @@ void FUN_fffc6ac4(char param_1)
   
   popup_duration_get(0x55);
   popup_open_timed();
-  pvVar1 = memch + PTR_g_ui_00025d58->f_0x43a_u8;
+  pvVar1 = memch + PTR_g_ui_00025d58->memlist_ch;
   bStack_9 = pvVar1->mode & 0xf;
   if (param_1 < '\x01') {
     if (bStack_9 != 0) {
@@ -633,7 +633,7 @@ void FUN_fffc6ac4(char param_1)
     bStack_9 = bStack_9 + 1;
   }
   pvVar1->mode = pvVar1->mode & 0xf0 | bStack_9;
-  eeprom_save_memch(PTR_g_ui_00025d58->f_0x43a_u8);
+  eeprom_save_memch(PTR_g_ui_00025d58->memlist_ch);
   return;
 }
 
@@ -647,14 +647,14 @@ void FUN_fffc6b34(char param_1)
   
   popup_duration_get(0x56);
   popup_open_timed();
-  pbVar1 = &memch[PTR_g_ui_00025d58->f_0x43a_u8].flags1;
+  pbVar1 = &memch[PTR_g_ui_00025d58->memlist_ch].flags1;
   if (param_1 < '\x01') {
     *pbVar1 = *pbVar1 & 0x7f;
   }
   else {
     *pbVar1 = *pbVar1 | 0x80;
   }
-  eeprom_save_memch(PTR_g_ui_00025d58->f_0x43a_u8);
+  eeprom_save_memch(PTR_g_ui_00025d58->memlist_ch);
   return;
 }
 
@@ -668,14 +668,14 @@ void FUN_fffc6b86(char param_1)
   
   popup_duration_get(0x57);
   popup_open_timed();
-  pbVar1 = &memch[PTR_g_ui_00025d58->f_0x43a_u8].flags5;
+  pbVar1 = &memch[PTR_g_ui_00025d58->memlist_ch].flags5;
   if (param_1 < '\x01') {
     *pbVar1 = *pbVar1 & 0x7f;
   }
   else {
     *pbVar1 = *pbVar1 | 0x80;
   }
-  eeprom_save_memch(PTR_g_ui_00025d58->f_0x43a_u8);
+  eeprom_save_memch(PTR_g_ui_00025d58->memlist_ch);
   return;
 }
 
@@ -757,7 +757,7 @@ void FUN_fffc6cd7(char param_1)
 {
   short local_4;
   
-  local_4 = (ushort)PTR_g_ui_00025d58->band_cur + (short)param_1;
+  local_4 = (ushort)PTR_g_ui_00025d58->popup_cursor + (short)param_1;
   if (param_1 < '\x01') {
     if ((param_1 < '\0') && (local_4 < 0)) {
       local_4 = 0;
@@ -766,7 +766,7 @@ void FUN_fffc6cd7(char param_1)
   else if (0xf < local_4) {
     local_4 = 0xf;
   }
-  PTR_g_ui_00025d58->band_cur = (byte)local_4;
+  PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
   popup_duration_get(5);
   popup_open_timed();
   return;
@@ -781,23 +781,23 @@ void FUN_fffc6d28(char param_1)
   short sVar1;
   byte local_4;
   
-  sVar1 = (ushort)PTR_g_ui_00025d58->band_cur + (short)param_1;
+  sVar1 = (ushort)PTR_g_ui_00025d58->popup_cursor + (short)param_1;
   local_4 = (byte)sVar1;
   if (param_1 < '\x01') {
     if (param_1 < '\0') {
       if (sVar1 < 0) {
-        PTR_g_ui_00025d58->band_cur = 0;
+        PTR_g_ui_00025d58->popup_cursor = 0;
       }
       else {
-        PTR_g_ui_00025d58->band_cur = local_4;
+        PTR_g_ui_00025d58->popup_cursor = local_4;
       }
     }
   }
   else if (sVar1 < 0xc) {
-    PTR_g_ui_00025d58->band_cur = local_4;
+    PTR_g_ui_00025d58->popup_cursor = local_4;
   }
   else {
-    PTR_g_ui_00025d58->band_cur = 0xb;
+    PTR_g_ui_00025d58->popup_cursor = 0xb;
   }
   popup_duration_get(0xb);
   popup_open_timed();
@@ -812,7 +812,7 @@ void FUN_fffc6d8c(char param_1)
 {
   short local_4;
   
-  local_4 = (ushort)PTR_g_ui_00025d58->band_cur + (short)param_1;
+  local_4 = (ushort)PTR_g_ui_00025d58->popup_cursor + (short)param_1;
   if (param_1 < '\x01') {
     if ((param_1 < '\0') && (local_4 < 0)) {
       local_4 = 0;
@@ -821,7 +821,7 @@ void FUN_fffc6d8c(char param_1)
   else if (0xb < local_4) {
     local_4 = 0xb;
   }
-  PTR_g_ui_00025d58->band_cur = (byte)local_4;
+  PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
   popup_duration_get(0xc);
   popup_open_timed();
   return;
@@ -1093,7 +1093,7 @@ void FUN_fffc70af(void)
   popup_duration_get(0xb);
   popup_open_timed();
   PTR_g_ui_00025d58->popup_code = 0xb;
-  PTR_g_ui_00025d58->band_cur = g_opstate.ss03_value;
+  PTR_g_ui_00025d58->popup_cursor = g_opstate.ss03_value;
   return;
 }
 
@@ -1201,20 +1201,20 @@ void FUN_fffc71c7(char param_1)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (PTR_g_ui_00025d58->f_0x46b_u8 == 1)) {
+  if ((bVar1) || (PTR_g_ui_00025d58->ch_step_mode == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (PTR_g_ui_00025d58->f_0x40d_u8 == 1)) {
+  if ((bVar1) || (PTR_g_ui_00025d58->keypad_open == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (!bVar1) {
-    bVar1 = g_opstate.active_vfo != 0;
+    bVar1 = g_opstate.active_vfo != VFO_A;
     bVar2 = vfo_is_memory(bVar1);
     if (bVar2 != 0) {
       if (param_1 < '\x01') {

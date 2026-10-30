@@ -8,7 +8,7 @@ void FUN_fffe4c55(void)
   bool bVar1;
   
   if (PTR_g_ui_00025d78->kbd_open == 0) {
-    if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->f_0x40d_u8 != 1)) {
+    if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->keypad_open != 1)) {
       bVar1 = false;
     }
     else {
@@ -45,7 +45,7 @@ void FUN_fffe4cc1(void)
     FUN_fffe5092();
     return;
   }
-  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->f_0x40d_u8 != 1)) {
+  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->keypad_open != 1)) {
     bVar1 = false;
   }
   else {
@@ -73,7 +73,7 @@ void FUN_fffe4d28(void)
 {
   bool bVar1;
   
-  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->f_0x40d_u8 != 1)) {
+  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->keypad_open != 1)) {
     bVar1 = false;
   }
   else {
@@ -111,7 +111,7 @@ void FUN_fffe4da3(void)
   if (DAT_00018872 == '\x01') {
     iVar1 = FUN_fffe415d();
     if (iVar1 == 1) {
-      if (PTR_g_ui_00025d78->f_0x46b_u8 == 1) {
+      if (PTR_g_ui_00025d78->ch_step_mode == 1) {
         vfo_step_down(g_opstate.active_vfo);
       }
       FUN_fffe40e5();
@@ -251,7 +251,7 @@ void FUN_fffe4f15(void)
     return;
   }
   beep_request(1);
-  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->f_0x40d_u8 != 1)) {
+  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->keypad_open != 1)) {
     bVar1 = false;
   }
   else {
@@ -336,7 +336,7 @@ void FUN_fffe5000(void)
     return;
   }
   beep_request(1);
-  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->f_0x40d_u8 != 1)) {
+  if ((PTR_g_ui_00025d78->tx_lamp == 0) && (PTR_g_ui_00025d78->keypad_open != 1)) {
     bVar1 = false;
   }
   else {
@@ -583,14 +583,14 @@ void FUN_fffe52dd(void)
 void FUN_fffe5302(void)
 
 {
-  byte bVar1;
+  vfo_side vVar1;
   
-  bVar1 = g_opstate.active_vfo;
-  PTR_g_ui_00025d78->f_0x46a_u8 = 1;
-  PTR_g_ui_00025d78->f_0x479_u8 = 1;
-  FUN_fffc5c8f(bVar1,1);
-  PTR_g_ui_00025d78->f_0x46a_u8 = 0;
-  PTR_g_ui_00025d78->f_0x479_u8 = 0;
+  vVar1 = g_opstate.active_vfo;
+  PTR_g_ui_00025d78->step_fast_req = 1;
+  PTR_g_ui_00025d78->step_fast_100k = 1;
+  FUN_fffc5c8f(vVar1,1);
+  PTR_g_ui_00025d78->step_fast_req = 0;
+  PTR_g_ui_00025d78->step_fast_100k = 0;
   return;
 }
 
@@ -602,7 +602,7 @@ void FUN_fffe5350(undefined1 param_1)
 {
   PTR_g_ui_00025d78->kbd_open = 1;
   PTR_g_ui_00025d78->kbd_target = 2;
-  PTR_g_ui_00025d78->f_0x0c0_u8 = 0;
+  PTR_g_ui_00025d78->kbd_layout = 0;
   PTR_g_ui_00025d78->kbd_cursor = 0;
   msg_slot_select(param_1);
   displink_39_keyer_texts();
@@ -1086,13 +1086,14 @@ void FUN_fffe5a47(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  int iVar3;
+  vfo_side vVar2;
+  byte bVar3;
+  int iVar4;
   
-  bVar2 = g_opstate.active_vfo;
+  vVar2 = g_opstate.active_vfo;
   PTR_g_ui_00025d7c->scan_hold = 1;
-  iVar3 = FUN_fffe5f82();
-  if ((iVar3 == 0) || (bVar2 = vfo_is_memory(bVar2), bVar2 == 1)) {
+  iVar4 = FUN_fffe5f82();
+  if ((iVar4 == 0) || (bVar3 = vfo_is_memory(vVar2), bVar3 == 1)) {
     bVar1 = true;
   }
   else {
@@ -1159,13 +1160,13 @@ byte scan_allowed(void)
     local_4 = 0;
   }
   else {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_3 = g_opstate.vfo_state_a;
     }
     else {
       local_3 = g_opstate.vfo_state_b;
     }
-    if (local_3 == 2) {
+    if (local_3 == VFO_STATE_MEMORY) {
       local_4 = FUN_fffe5b51();
     }
     else {

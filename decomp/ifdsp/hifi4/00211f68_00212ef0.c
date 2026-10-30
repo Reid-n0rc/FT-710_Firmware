@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00211f68 @ 00211f68 (135 bytes)
+// ===== I3C_SlaveSend @ 00211f68 (135 bytes)
 
-int FUN_00211f68(int param_1,byte *param_2,int param_3)
+/* fsl_i3c.c order [inference] */
+
+int I3C_SlaveSend(int param_1,byte *param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -20,8 +22,8 @@ int FUN_00211f68(int param_1,byte *param_2,int param_3)
     do {
       memw();
       uVar3 = *(uint *)(param_1 + 0x2c);
-      uVar1 = FUN_0021055c(param_1);
-      iVar2 = FUN_002106ec(param_1,uVar1);
+      uVar1 = I3C_SlaveGetErrorStatusFlags(param_1);
+      iVar2 = I3C_SlaveCheckAndClearError(param_1,uVar1);
       if (iVar2 != 0) {
         return iVar2;
       }
@@ -42,9 +44,11 @@ int FUN_00211f68(int param_1,byte *param_2,int param_3)
 }
 
 
-// ===== FUN_00211ff0 @ 00211ff0 (59 bytes)
+// ===== I3C_SlaveReceive @ 00211ff0 (59 bytes)
 
-int FUN_00211ff0(int param_1,undefined1 *param_2,int param_3)
+/* fsl_i3c.c order [inference] */
+
+int I3C_SlaveReceive(int param_1,undefined1 *param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -54,8 +58,8 @@ int FUN_00211ff0(int param_1,undefined1 *param_2,int param_3)
     return 0;
   }
   do {
-    uVar1 = FUN_0021055c(param_1);
-    iVar2 = FUN_002106ec(param_1,uVar1);
+    uVar1 = I3C_SlaveGetErrorStatusFlags(param_1);
+    iVar2 = I3C_SlaveCheckAndClearError(param_1,uVar1);
     if (iVar2 != 0) {
       return iVar2;
     }
@@ -71,33 +75,38 @@ int FUN_00211ff0(int param_1,undefined1 *param_2,int param_3)
 }
 
 
-// ===== FUN_0021202c @ 0021202c (52 bytes)
+// ===== I3C_SlaveTransferCreateHandle @ 0021202c (52 bytes)
 
-void FUN_0021202c(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_i3c.c: handler 0x2120F4 [inference] */
+
+void I3C_SlaveTransferCreateHandle
+               (undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
   memset(param_2,0,0x38);
-  iVar1 = FUN_002105ac(param_1);
+  iVar1 = I3C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x2c) = param_4;
   *(undefined4 *)(param_2 + 0x28) = param_3;
-  DAT_00238e34 = FUN_002120f4;
+  DAT_00238e34 = I3C_SlaveTransferHandleIRQ;
   (&DAT_00238f10)[iVar1] = param_2;
-  FUN_00210588(param_1,&DAT_0007ef00);
+  I3C_SlaveDisableInterrupts(param_1,&DAT_0007ef00);
   return;
 }
 
 
-// ===== FUN_00212060 @ 00212060 (69 bytes)
+// ===== I3C_SlaveTransferNonBlocking @ 00212060 (69 bytes)
 
-undefined * FUN_00212060(int param_1,undefined4 *param_2,uint param_3)
+/* fsl_i3c.c order [inference] */
+
+undefined * I3C_SlaveTransferNonBlocking(int param_1,undefined4 *param_2,uint param_3)
 
 {
   if (*(char *)(param_2 + 7) != '\0') {
     return &DAT_00001edc;
   }
-  FUN_00210588(param_1,&DAT_0007ef00);
+  I3C_SlaveDisableInterrupts(param_1,&DAT_0007ef00);
   param_2[6] = 0;
   param_2[5] = 0;
   param_2[4] = 0;
@@ -108,14 +117,16 @@ undefined * FUN_00212060(int param_1,undefined4 *param_2,uint param_3)
   param_2[8] = param_3 | 6;
   memw();
   *(undefined4 *)(param_1 + 8) = 0x700;
-  FUN_00210574(param_1,&DAT_0007ef00);
+  I3C_SlaveEnableInterrupts(param_1,&DAT_0007ef00);
   return (undefined *)0x0;
 }
 
 
-// ===== FUN_002120a8 @ 002120a8 (34 bytes)
+// ===== I3C_SlaveTransferGetCount @ 002120a8 (34 bytes)
 
-undefined4 FUN_002120a8(undefined4 param_1,int param_2,undefined4 *param_3)
+/* fsl_i3c.c order [inference] */
+
+undefined4 I3C_SlaveTransferGetCount(undefined4 param_1,int param_2,undefined4 *param_3)
 
 {
   if (param_3 == (undefined4 *)0x0) {
@@ -130,13 +141,15 @@ undefined4 FUN_002120a8(undefined4 param_1,int param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_002120cc @ 002120cc (40 bytes)
+// ===== I3C_SlaveTransferAbort @ 002120cc (40 bytes)
 
-void FUN_002120cc(undefined4 param_1,undefined4 *param_2)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveTransferAbort(undefined4 param_1,undefined4 *param_2)
 
 {
   if (*(char *)(param_2 + 7) != '\0') {
-    FUN_00210588(param_1,&DAT_0007ef00);
+    I3C_SlaveDisableInterrupts(param_1,&DAT_0007ef00);
     *param_2 = 0;
     param_2[1] = 0;
     param_2[2] = 0;
@@ -151,9 +164,11 @@ void FUN_002120cc(undefined4 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_002120f4 @ 002120f4 (745 bytes)
+// ===== I3C_SlaveTransferHandleIRQ @ 002120f4 (745 bytes)
 
-void FUN_002120f4(int param_1,undefined4 *param_2)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveTransferHandleIRQ(int param_1,undefined4 *param_2)
 
 {
   char cVar1;
@@ -175,12 +190,12 @@ void FUN_002120f4(int param_1,undefined4 *param_2)
   }
   memw();
   uVar8 = *(uint *)(param_1 + 8) & 0xfcfffff;
-  uVar2 = FUN_0021055c(param_1);
-  uStack_24 = FUN_002105a0(param_1);
-  uVar3 = FUN_00210594(param_1);
+  uVar2 = I3C_SlaveGetErrorStatusFlags(param_1);
+  uStack_24 = I3C_SlaveGetPendingInterrupts(param_1);
+  uVar3 = I3C_SlaveGetEnabledInterrupts(param_1);
   if ((uVar2 & (uint)&DAT_00030f1f) != 0) {
     *param_2 = 0x40;
-    uVar4 = FUN_002106ec(param_1,uVar2);
+    uVar4 = I3C_SlaveCheckAndClearError(param_1,uVar2);
     param_2[5] = uVar4;
     if ((param_2[8] & 0x40) == 0) {
       return;
@@ -198,7 +213,7 @@ void FUN_002120f4(int param_1,undefined4 *param_2)
     memw();
     *(uint *)(param_1 + 0x2c) = *(uint *)(param_1 + 0x2c) | 3;
     param_2[2] = 0;
-    FUN_00210574(param_1,&DAT_00001000);
+    I3C_SlaveEnableInterrupts(param_1,&DAT_00001000);
     uStack_24 = uStack_24 | (uint)&DAT_00001000;
     memw();
     uVar8 = *(uint *)(param_1 + 8) & 0xfcfffff;
@@ -225,7 +240,7 @@ void FUN_002120f4(int param_1,undefined4 *param_2)
     }
   }
   if ((uVar8 >> 10 & 1) != 0) {
-    FUN_00210588(param_1,&DAT_00001000);
+    I3C_SlaveDisableInterrupts(param_1,&DAT_00001000);
     memw();
     memw();
     cVar1 = *(char *)(param_2 + 7);
@@ -286,7 +301,7 @@ void FUN_002120f4(int param_1,undefined4 *param_2)
         param_2[1] = pbVar10;
         memw();
         *(uint *)(param_1 + 0x34) = uVar7;
-        FUN_00210588(param_1,&DAT_00001000);
+        I3C_SlaveDisableInterrupts(param_1,&DAT_00001000);
         uVar2 = param_2[2];
       }
       else {
@@ -312,7 +327,7 @@ LAB_00212243:
       }
       param_2[9] = 0;
     }
-    uVar2 = FUN_00210594(param_1);
+    uVar2 = I3C_SlaveGetEnabledInterrupts(param_1);
     if ((((uVar2 & 0x800) != 0) && (uVar5 != 0)) &&
        (puVar6 = (undefined1 *)param_2[3], puVar6 != (undefined1 *)0x0)) {
       iVar9 = param_2[4];
@@ -338,9 +353,11 @@ LAB_00212243:
 }
 
 
-// ===== FUN_002123e0 @ 002123e0 (67 bytes)
+// ===== I3C0_DriverIRQHandler @ 002123e0 (67 bytes)
 
-void FUN_002123e0(void)
+/* fsl_i3c.c (I3C_CommonIRQHandler inlined) [inference] */
+
+void I3C0_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -359,11 +376,12 @@ void FUN_002123e0(void)
 }
 
 
-// ===== FUN_00212430 @ 00212430 (16 bytes)
+// ===== IAP_RunBootLoader @ 00212430 (16 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: ROM API tree 0x1303EE00 + 0x200 (runBootloader) [fact for the code] */
 
-void FUN_00212430(undefined4 param_1)
+void IAP_RunBootLoader(undefined4 param_1)
 
 {
   (*_DAT_1303f000)(param_1);
@@ -371,11 +389,12 @@ void FUN_00212430(undefined4 param_1)
 }
 
 
-// ===== FUN_00212440 @ 00212440 (24 bytes)
+// ===== IAP_FlexspiNorInit @ 00212440 (24 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver (tree + 0x21C) -> init (+4) [fact for the code] */
 
-undefined4 FUN_00212440(undefined4 param_1,undefined4 param_2)
+undefined4 IAP_FlexspiNorInit(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -385,11 +404,14 @@ undefined4 FUN_00212440(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00212458 @ 00212458 (30 bytes)
+// ===== IAP_FlexspiNorPageProgram @ 00212458 (30 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> page_program (+8) [fact for the code] */
 
-undefined4 FUN_00212458(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined4
+IAP_FlexspiNorPageProgram
+          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined4 uVar1;
@@ -399,11 +421,12 @@ undefined4 FUN_00212458(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212478 @ 00212478 (24 bytes)
+// ===== IAP_FlexspiNorEraseAll @ 00212478 (24 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> erase_all (+12) [fact for the code] */
 
-undefined4 FUN_00212478(undefined4 param_1,undefined4 param_2)
+undefined4 IAP_FlexspiNorEraseAll(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -413,11 +436,13 @@ undefined4 FUN_00212478(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00212490 @ 00212490 (30 bytes)
+// ===== IAP_FlexspiNorErase @ 00212490 (30 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> erase (+16) [fact for the code] */
 
-undefined4 FUN_00212490(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined4
+IAP_FlexspiNorErase(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined4 uVar1;
@@ -427,11 +452,12 @@ undefined4 FUN_00212490(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_002124b0 @ 002124b0 (26 bytes)
+// ===== IAP_FlexspiNorEraseSector @ 002124b0 (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> erase_sector (+20) [fact for the code] */
 
-undefined4 FUN_002124b0(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_FlexspiNorEraseSector(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -441,11 +467,12 @@ undefined4 FUN_002124b0(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_002124cc @ 002124cc (26 bytes)
+// ===== IAP_FlexspiNorEraseBlock @ 002124cc (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> erase_block (+24) [fact for the code] */
 
-undefined4 FUN_002124cc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_FlexspiNorEraseBlock(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -455,11 +482,12 @@ undefined4 FUN_002124cc(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_002124e8 @ 002124e8 (26 bytes)
+// ===== IAP_FlexspiNorGetConfig @ 002124e8 (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> get_config (+28) [fact for the code] */
 
-undefined4 FUN_002124e8(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_FlexspiNorGetConfig(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -469,13 +497,14 @@ undefined4 FUN_002124e8(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212504 @ 00212504 (34 bytes)
+// ===== IAP_FlexspiNorRead @ 00212504 (34 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> read (+32) [fact for the code] */
 
 undefined4
-FUN_00212504(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5)
+IAP_FlexspiNorRead(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                  undefined4 param_5)
 
 {
   undefined4 uVar1;
@@ -485,11 +514,12 @@ FUN_00212504(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 }
 
 
-// ===== FUN_00212528 @ 00212528 (24 bytes)
+// ===== IAP_FlexspiXfer @ 00212528 (24 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> xfer (+36) [fact for the code] */
 
-undefined4 FUN_00212528(undefined4 param_1,undefined4 param_2)
+undefined4 IAP_FlexspiXfer(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -499,11 +529,13 @@ undefined4 FUN_00212528(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00212540 @ 00212540 (30 bytes)
+// ===== IAP_FlexspiUpdateLut @ 00212540 (30 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> update_lut (+40) [fact for the code] */
 
-undefined4 FUN_00212540(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined4
+IAP_FlexspiUpdateLut(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined4 uVar1;
@@ -513,11 +545,12 @@ undefined4 FUN_00212540(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212560 @ 00212560 (20 bytes)
+// ===== IAP_FlexspiSetClockSource @ 00212560 (20 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> set_clock_source (+44) [fact for the code] */
 
-undefined4 FUN_00212560(undefined4 param_1)
+undefined4 IAP_FlexspiSetClockSource(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -527,11 +560,12 @@ undefined4 FUN_00212560(undefined4 param_1)
 }
 
 
-// ===== FUN_00212574 @ 00212574 (24 bytes)
+// ===== IAP_FlexspiConfigClock @ 00212574 (24 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: flexspiNorDriver -> config_clock (+48) [fact for the code] */
 
-void FUN_00212574(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+void IAP_FlexspiConfigClock(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   (**(code **)(_DAT_1303f01c + 0x30))(param_1,param_2,param_3);
@@ -539,11 +573,12 @@ void FUN_00212574(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0021258c @ 0021258c (46 bytes)
+// ===== IAP_FlexspiNorAutoConfig @ 0021258c (46 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: get_config then init [fact for the code] */
 
-int FUN_0021258c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+int IAP_FlexspiNorAutoConfig(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -557,11 +592,12 @@ int FUN_0021258c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_002125bc @ 002125bc (20 bytes)
+// ===== IAP_OtpInit @ 002125bc (20 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver (tree + 0x220) -> init (+0) [fact for the code] */
 
-undefined4 FUN_002125bc(undefined4 param_1)
+undefined4 IAP_OtpInit(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -571,11 +607,12 @@ undefined4 FUN_002125bc(undefined4 param_1)
 }
 
 
-// ===== FUN_002125d0 @ 002125d0 (18 bytes)
+// ===== IAP_OtpDeinit @ 002125d0 (18 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> deinit (+4) [fact for the code] */
 
-undefined4 FUN_002125d0(void)
+undefined4 IAP_OtpDeinit(void)
 
 {
   undefined4 uVar1;
@@ -585,11 +622,12 @@ undefined4 FUN_002125d0(void)
 }
 
 
-// ===== FUN_002125e4 @ 002125e4 (24 bytes)
+// ===== IAP_OtpFuseRead @ 002125e4 (24 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> fuse_read [inference] */
 
-undefined4 FUN_002125e4(undefined4 param_1,undefined4 param_2)
+undefined4 IAP_OtpFuseRead(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -599,11 +637,12 @@ undefined4 FUN_002125e4(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_002125fc @ 002125fc (26 bytes)
+// ===== IAP_OtpFuseProgram @ 002125fc (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> fuse_program [inference] */
 
-undefined4 FUN_002125fc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_OtpFuseProgram(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -613,11 +652,12 @@ undefined4 FUN_002125fc(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212618 @ 00212618 (26 bytes)
+// ===== IAP_OtpCrcCalc @ 00212618 (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> crc_calc [inference] */
 
-undefined4 FUN_00212618(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_OtpCrcCalc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -627,11 +667,12 @@ undefined4 FUN_00212618(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212634 @ 00212634 (18 bytes)
+// ===== IAP_OtpShadowRegisterReload @ 00212634 (18 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> reload [inference] */
 
-undefined4 FUN_00212634(void)
+undefined4 IAP_OtpShadowRegisterReload(void)
 
 {
   undefined4 uVar1;
@@ -641,11 +682,12 @@ undefined4 FUN_00212634(void)
 }
 
 
-// ===== FUN_00212648 @ 00212648 (26 bytes)
+// ===== IAP_OtpCrcCheck @ 00212648 (26 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* fsl_iap.c: otpDriver -> crc_check [inference] */
 
-undefined4 FUN_00212648(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 IAP_OtpCrcCheck(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
@@ -655,9 +697,11 @@ undefined4 FUN_00212648(undefined4 param_1,undefined4 param_2,undefined4 param_3
 }
 
 
-// ===== FUN_00212670 @ 00212670 (17 bytes)
+// ===== INPUTMUX_Init @ 00212670 (17 bytes)
 
-void FUN_00212670(void)
+/* fsl_inputmux.c: clock enable (CLKCTL1) [inference] */
+
+void INPUTMUX_Init(void)
 
 {
   memw();
@@ -677,9 +721,11 @@ void INPUTMUX_AttachSignal(int param_1,int param_2,uint param_3)
 }
 
 
-// ===== FUN_002126a0 @ 002126a0 (63 bytes)
+// ===== INPUTMUX_EnableSignal @ 002126a0 (63 bytes)
 
-void FUN_002126a0(int param_1,uint param_2,int param_3)
+/* fsl_inputmux.c order [inference] */
+
+void INPUTMUX_EnableSignal(int param_1,uint param_2,int param_3)
 
 {
   uint *puVar1;
@@ -700,9 +746,11 @@ void FUN_002126a0(int param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_002126e0 @ 002126e0 (17 bytes)
+// ===== INPUTMUX_Deinit @ 002126e0 (17 bytes)
 
-void FUN_002126e0(void)
+/* fsl_inputmux.c: clock disable [inference] */
+
+void INPUTMUX_Deinit(void)
 
 {
   memw();
@@ -711,7 +759,7 @@ void FUN_002126e0(void)
 }
 
 
-// ===== FUN_00212700 @ 00212700 (437 bytes)
+// ===== LPADC_Init @ 00212700 (437 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002128a4) */
 /* WARNING: Removing unreachable block (ram,0x00212880) */
@@ -719,8 +767,9 @@ void FUN_002126e0(void)
 /* WARNING: Removing unreachable block (ram,0x00212892) */
 /* WARNING: Removing unreachable block (ram,0x0021273b) */
 /* WARNING: Removing unreachable block (ram,0x0021286d) */
+/* fsl_lpadc.c: ADC0 0x4013A000 [inference] */
 
-void FUN_00212700(dword *param_1,char *param_2)
+void LPADC_Init(dword *param_1,char *param_2)
 
 {
   char cVar1;
@@ -781,9 +830,11 @@ void FUN_00212700(dword *param_1,char *param_2)
 }
 
 
-// ===== FUN_002128b8 @ 002128b8 (48 bytes)
+// ===== LPADC_GetDefaultConfig @ 002128b8 (48 bytes)
 
-void FUN_002128b8(undefined1 *param_1)
+/* fsl_lpadc.c order [inference] */
+
+void LPADC_GetDefaultConfig(undefined1 *param_1)
 
 {
   memset(param_1,0,0x20);
@@ -800,7 +851,7 @@ void FUN_002128b8(undefined1 *param_1)
 }
 
 
-// ===== FUN_002128e8 @ 002128e8 (188 bytes)
+// ===== LPADC_Deinit @ 002128e8 (188 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00212995) */
 /* WARNING: Removing unreachable block (ram,0x00212973) */
@@ -808,8 +859,9 @@ void FUN_002128b8(undefined1 *param_1)
 /* WARNING: Removing unreachable block (ram,0x00212984) */
 /* WARNING: Removing unreachable block (ram,0x00212940) */
 /* WARNING: Removing unreachable block (ram,0x00212962) */
+/* fsl_lpadc.c order [inference] */
 
-void FUN_002128e8(dword *param_1)
+void LPADC_Deinit(dword *param_1)
 
 {
   memw();
@@ -824,9 +876,11 @@ void FUN_002128e8(dword *param_1)
 }
 
 
-// ===== FUN_002129a8 @ 002129a8 (42 bytes)
+// ===== LPADC_GetConvResult @ 002129a8 (42 bytes)
 
-undefined4 FUN_002129a8(int param_1,uint *param_2)
+/* fsl_lpadc.c order [inference] */
+
+undefined4 LPADC_GetConvResult(int param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -844,9 +898,11 @@ undefined4 FUN_002129a8(int param_1,uint *param_2)
 }
 
 
-// ===== FUN_002129d4 @ 002129d4 (67 bytes)
+// ===== LPADC_SetConvTriggerConfig @ 002129d4 (67 bytes)
 
-void FUN_002129d4(int param_1,int param_2,uint *param_3)
+/* fsl_lpadc.c order [inference] */
+
+void LPADC_SetConvTriggerConfig(int param_1,int param_2,uint *param_3)
 
 {
   uint uVar1;
@@ -861,9 +917,11 @@ void FUN_002129d4(int param_1,int param_2,uint *param_3)
 }
 
 
-// ===== FUN_00212a18 @ 00212a18 (18 bytes)
+// ===== LPADC_GetDefaultConvTriggerConfig @ 00212a18 (18 bytes)
 
-void FUN_00212a18(undefined4 *param_1)
+/* fsl_lpadc.c order [inference] */
+
+void LPADC_GetDefaultConvTriggerConfig(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -875,9 +933,11 @@ void FUN_00212a18(undefined4 *param_1)
 }
 
 
-// ===== FUN_00212a2c @ 00212a2c (200 bytes)
+// ===== LPADC_SetConvCommandConfig @ 00212a2c (200 bytes)
 
-void FUN_00212a2c(int param_1,int param_2,uint *param_3)
+/* fsl_lpadc.c order [inference] */
+
+void LPADC_SetConvCommandConfig(int param_1,int param_2,uint *param_3)
 
 {
   uint uVar1;
@@ -915,9 +975,11 @@ void FUN_00212a2c(int param_1,int param_2,uint *param_3)
 }
 
 
-// ===== FUN_00212af4 @ 00212af4 (45 bytes)
+// ===== LPADC_GetDefaultConvCommandConfig @ 00212af4 (45 bytes)
 
-void FUN_00212af4(undefined4 *param_1)
+/* fsl_lpadc.c order (calibration functions excluded by feature macros) [inference] */
+
+void LPADC_GetDefaultConvCommandConfig(undefined4 *param_1)
 
 {
   memset(param_1,0,0x2c);
@@ -936,29 +998,31 @@ void FUN_00212af4(undefined4 *param_1)
 }
 
 
-// ===== FUN_00212b30 @ 00212b30 (209 bytes)
+// ===== MRT_Init @ 00212b30 (209 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00212bf2) */
 /* WARNING: Removing unreachable block (ram,0x00212bcc) */
 /* WARNING: Removing unreachable block (ram,0x00212bba) */
 /* WARNING: Removing unreachable block (ram,0x00212be0) */
 /* WARNING: Removing unreachable block (ram,0x00212ba8) */
+/* fsl_mrt.c: MRT0 0x4002D000, clock, reset [inference] */
 
-void FUN_00212b30(dword *param_1,byte *param_2)
+void MRT_Init(dword *param_1,byte *param_2)
 
 {
   memw();
   CLKCTL1_PSCCTL2_SET =
        1 << 0x20 - (0x20 - ((byte)(&DAT_0020046c)[(uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4] &
                            0x1f));
-  FUN_00213910(*(undefined4 *)(&DAT_00200470 + (uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4));
+  RESET_PeripheralReset
+            (*(undefined4 *)(&DAT_00200470 + (uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4));
   memw();
   param_1[0x3c] = (uint)*param_2 << 0x1f;
   return;
 }
 
 
-// ===== FUN_00212c04 @ 00212c04 (196 bytes)
+// ===== MRT_Deinit @ 00212c04 (196 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00212cb7) */
 /* WARNING: Removing unreachable block (ram,0x00212c95) */
@@ -966,8 +1030,9 @@ void FUN_00212b30(dword *param_1,byte *param_2)
 /* WARNING: Removing unreachable block (ram,0x00212ca6) */
 /* WARNING: Removing unreachable block (ram,0x00212c49) */
 /* WARNING: Removing unreachable block (ram,0x00212c73) */
+/* fsl_mrt.c order [inference] */
 
-void FUN_00212c04(dword *param_1)
+void MRT_Deinit(dword *param_1)
 
 {
   memw();
@@ -989,9 +1054,11 @@ void FUN_00212c04(dword *param_1)
 }
 
 
-// ===== FUN_00212cc8 @ 00212cc8 (50 bytes)
+// ===== MRT_UpdateTimerPeriod @ 00212cc8 (50 bytes)
 
-void FUN_00212cc8(int param_1,int param_2,uint param_3,int param_4)
+/* fsl_mrt.c order [inference] */
+
+void MRT_UpdateTimerPeriod(int param_1,int param_2,uint param_3,int param_4)
 
 {
   uint *puVar1;
@@ -1038,7 +1105,7 @@ void MU_Init(dword *param_1)
 }
 
 
-// ===== FUN_00212dac @ 00212dac (172 bytes)
+// ===== MU_Deinit @ 00212dac (172 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00212e47) */
 /* WARNING: Removing unreachable block (ram,0x00212df2) */
@@ -1051,8 +1118,9 @@ void MU_Init(dword *param_1)
 /* WARNING: Removing unreachable block (ram,0x00212e14) */
 /* WARNING: Removing unreachable block (ram,0x00212e36) */
 /* WARNING: Removing unreachable block (ram,0x00212e25) */
+/* fsl_mu.c order (MU-B 0x40111000) [inference] */
 
-void FUN_00212dac(dword *param_1)
+void MU_Deinit(dword *param_1)
 
 {
   if (param_1 != &MUB_VER) {
@@ -1129,9 +1197,11 @@ void MU_SetFlags(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00212ef0 @ 00212ef0 (36 bytes)
+// ===== MU_TriggerInterrupts @ 00212ef0 (36 bytes)
 
-undefined4 FUN_00212ef0(int param_1,uint param_2)
+/* fsl_mu.c order [inference] */
+
+undefined4 MU_TriggerInterrupts(int param_1,uint param_2)
 
 {
   memw();

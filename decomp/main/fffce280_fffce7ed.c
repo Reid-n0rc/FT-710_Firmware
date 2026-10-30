@@ -351,7 +351,7 @@ void menu_ex010321_step(void)
   vfo_rec *pvVar1;
   byte *local_4;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     pvVar1 = &g_opstate.vfo_a;
   }
   else {
@@ -373,7 +373,7 @@ byte menu_fm_tone_get(void)
   vfo_rec *pvVar1;
   byte *local_8;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     pvVar1 = &g_opstate.vfo_a;
   }
   else {
@@ -394,7 +394,7 @@ void menu_fm_tone_set(byte param_1)
   vfo_rec *pvVar1;
   byte *local_8;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     pvVar1 = &g_opstate.vfo_a;
   }
   else {

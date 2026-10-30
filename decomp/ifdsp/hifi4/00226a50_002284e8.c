@@ -35,9 +35,11 @@ undefined4 xos_msgq_create(int param_1,int param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_00226aa4 @ 00226aa4 (147 bytes)
+// ===== xos_msgq_delete @ 00226aa4 (147 bytes)
 
-undefined4 FUN_00226aa4(ushort *param_1)
+/* XOS: wakes the waiters with 0xFFFF000E [inference] */
+
+undefined4 xos_msgq_delete(ushort *param_1)
 
 {
   undefined6 uVar1;
@@ -167,9 +169,11 @@ int xos_msgq_put(int param_1,int param_2)
 }
 
 
-// ===== FUN_00226bc4 @ 00226bc4 (293 bytes)
+// ===== xos_msgq_put_timeout @ 00226bc4 (293 bytes)
 
-int FUN_00226bc4(int param_1,int param_2,int param_3,int param_4)
+/* XOS: 0xFFFF000C (full) and a timer (0x2283E0) [inference] */
+
+int xos_msgq_put_timeout(int param_1,int param_2,int param_3,int param_4)
 
 {
   undefined6 uVar1;
@@ -338,9 +342,11 @@ int xos_msgq_get(int param_1,int param_2)
 }
 
 
-// ===== FUN_00226d7c @ 00226d7c (295 bytes)
+// ===== xos_msgq_get_timeout @ 00226d7c (295 bytes)
 
-int FUN_00226d7c(int param_1,int param_2,int param_3,int param_4)
+/* XOS: 0xFFFF000D (empty) and a timer [inference] */
+
+int xos_msgq_get_timeout(int param_1,int param_2,int param_3,int param_4)
 
 {
   undefined6 uVar1;
@@ -554,9 +560,11 @@ undefined8 FUN_00226f70(int param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_0022700c @ 0022700c (73 bytes)
+// ===== xos_mutex_create @ 0022700c (73 bytes)
 
-undefined4 FUN_0022700c(undefined4 *param_1,uint param_2,int param_3)
+/* XOS; called by Thread_Ipc_entry for the reply mutex and by the clib lock init [inference] */
+
+undefined4 xos_mutex_create(undefined4 *param_1,uint param_2,int param_3)
 
 {
   if (((param_1 != (undefined4 *)0x0) && (-1 < param_3)) && (param_3 < 0x10)) {
@@ -577,9 +585,11 @@ undefined4 FUN_0022700c(undefined4 *param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_00227058 @ 00227058 (122 bytes)
+// ===== xos_mutex_delete @ 00227058 (122 bytes)
 
-undefined4 FUN_00227058(int *param_1)
+/* XOS: 0xFFFF0007 [inference] */
+
+undefined4 xos_mutex_delete(int *param_1)
 
 {
   int iVar1;
@@ -684,9 +694,11 @@ int xos_mutex_lock(int *param_1)
 }
 
 
-// ===== FUN_00227168 @ 00227168 (197 bytes)
+// ===== xos_mutex_lock_timeout @ 00227168 (197 bytes)
 
-int FUN_00227168(int *param_1,undefined4 param_2,int param_3,int param_4)
+/* XOS: as xos_mutex_lock plus a timer [inference] */
+
+int xos_mutex_lock_timeout(int *param_1,undefined4 param_2,int param_3,int param_4)
 
 {
   bool bVar1;
@@ -808,9 +820,11 @@ undefined4 xos_mutex_unlock(int *param_1)
 }
 
 
-// ===== FUN_00227294 @ 00227294 (84 bytes)
+// ===== xos_mutex_trylock @ 00227294 (84 bytes)
 
-undefined4 FUN_00227294(int *param_1)
+/* XOS: returns 0xFFFF0004 when locked [inference] */
+
+undefined4 xos_mutex_trylock(int *param_1)
 
 {
   int iVar1;
@@ -1007,7 +1021,7 @@ undefined4 xos_get_cpu_load(int *param_1,int *param_2,int param_3)
       *param_2 = iVar7;
       if (0 < iVar7) {
         do {
-          uVar17 = FUN_002358e0(param_1[4],param_1[5],100,0);
+          uVar17 = __muldi3(param_1[4],param_1[5],100,0);
           iVar10 = __udivdi3((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),uVar14 + uVar11,iVar16);
           param_1[1] = iVar10;
           iVar7 = iVar7 + -1;
@@ -1150,7 +1164,7 @@ LAB_0022754e:
   *(char *)((int)param_1 + 0x33) = param_8;
   param_1[0xe] = param_5;
   param_1[0xd] = param_10;
-  FUN_00228e84(param_1);
+  xos_clib_reent_init(param_1);
   if (param_9 != (uint *)0x0) {
     if (uVar3 == 0) {
       uVar3 = *param_9;

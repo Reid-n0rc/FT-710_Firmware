@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_002304f0 @ 002304f0 (159 bytes)
+// ===== __s2b @ 002304f0 (159 bytes)
 
-int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+/* newlib mprec.c: __multadd [inference] */
+
+int __s2b(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
 
 {
   byte *pbVar1;
@@ -23,7 +25,7 @@ int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefine
       iVar3 = iVar3 + 1;
     } while (iVar2 < iVar4);
   }
-  iVar4 = FUN_002303d0(param_1,iVar3);
+  iVar4 = _Balloc(param_1,iVar3);
   *(undefined4 *)(iVar4 + 0x14) = param_5;
   *(undefined4 *)(iVar4 + 0x10) = 1;
   if (param_3 < 10) {
@@ -37,7 +39,7 @@ int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefine
     }
     iVar3 = param_2 + 0x12;
     do {
-      iVar4 = FUN_00230440(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
+      iVar4 = __multadd(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
       iVar3 = iVar3 + 1;
     } while (iVar3 < param_3 + param_2 + 9);
     iVar3 = iVar2 + 9;
@@ -46,7 +48,7 @@ int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefine
   if (iVar3 < param_4) {
     pbVar1 = pbVar5 + (param_4 - iVar3);
     do {
-      iVar4 = FUN_00230440(param_1,iVar4,10,*pbVar5 - 0x30);
+      iVar4 = __multadd(param_1,iVar4,10,*pbVar5 - 0x30);
       pbVar5 = pbVar5 + 1;
     } while (pbVar5 != pbVar1);
   }
@@ -54,23 +56,27 @@ int FUN_002304f0(undefined4 param_1,int param_2,int param_3,int param_4,undefine
 }
 
 
-// ===== FUN_002305a0 @ 002305a0 (29 bytes)
+// ===== __i2b @ 002305a0 (29 bytes)
 
-int FUN_002305a0(undefined4 param_1,undefined4 param_2)
+/* newlib mprec.c: _Balloc(1) [inference] */
+
+int __i2b(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_002303d0(param_1,1);
+  iVar1 = _Balloc(param_1,1);
   *(undefined4 *)(iVar1 + 0x14) = param_2;
   *(undefined4 *)(iVar1 + 0x10) = 1;
   return iVar1;
 }
 
 
-// ===== FUN_002305c0 @ 002305c0 (388 bytes)
+// ===== __multiply @ 002305c0 (388 bytes)
 
-void FUN_002305c0(undefined4 param_1,int param_2,int param_3)
+/* newlib mprec.c [inference] */
+
+void __multiply(undefined4 param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -107,7 +113,7 @@ void FUN_002305c0(undefined4 param_1,int param_2,int param_3)
   if (*(int *)(param_2 + 8) < iVar1) {
     iVar3 = *(int *)(param_2 + 4) + 1;
   }
-  iVar3 = FUN_002303d0(param_1,iVar3);
+  iVar3 = _Balloc(param_1,iVar3);
   if (iVar1 * 4 < 1) {
     local_30 = (int *)(iVar1 * 4 + iVar3 + 0x14);
   }
@@ -184,9 +190,11 @@ void FUN_002305c0(undefined4 param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_00230750 @ 00230750 (157 bytes)
+// ===== __pow5mult @ 00230750 (157 bytes)
 
-void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
+/* newlib mprec.c: p05 table {5, 25, 125} 0x205F40 [inference] */
+
+void __pow5mult(int param_1,undefined4 param_2,uint param_3)
 
 {
   undefined4 *puVar1;
@@ -195,7 +203,7 @@ void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
   undefined4 *puVar4;
   
   if ((param_3 & 3) != 0) {
-    param_2 = FUN_00230440(param_1,param_2,*(undefined4 *)(&DAT_0020613c + (param_3 & 3) * 4),0);
+    param_2 = __multadd(param_1,param_2,*(undefined4 *)(&DAT_0020613c + (param_3 & 3) * 4),0);
   }
   param_3 = (int)param_3 >> 2;
   if (param_3 == 0) {
@@ -203,7 +211,7 @@ void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
   }
   puVar4 = *(undefined4 **)(param_1 + 0x48);
   if (*(undefined4 **)(param_1 + 0x48) == (undefined4 *)0x0) {
-    puVar4 = (undefined4 *)FUN_002305a0(param_1,0x271);
+    puVar4 = (undefined4 *)__i2b(param_1,0x271);
     *(undefined4 **)(param_1 + 0x48) = puVar4;
     *puVar4 = 0;
   }
@@ -218,8 +226,8 @@ void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
       puVar4 = (undefined4 *)*puVar1;
     }
     else {
-      uVar3 = FUN_002305c0(param_1,param_2,puVar1);
-      FUN_00236060(param_1,param_2);
+      uVar3 = __multiply(param_1,param_2,puVar1);
+      _Bfree(param_1,param_2);
       if (param_3 == 0) {
         return;
       }
@@ -227,7 +235,7 @@ void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
       param_2 = uVar3;
     }
     if (puVar4 == (undefined4 *)0x0) {
-      puVar4 = (undefined4 *)FUN_002305c0(param_1,puVar1,puVar1);
+      puVar4 = (undefined4 *)__multiply(param_1,puVar1,puVar1);
       *puVar1 = puVar4;
       *puVar4 = 0;
     }
@@ -235,9 +243,11 @@ void FUN_00230750(int param_1,undefined4 param_2,uint param_3)
 }
 
 
-// ===== FUN_00230800 @ 00230800 (197 bytes)
+// ===== __lshift @ 00230800 (197 bytes)
 
-void FUN_00230800(undefined4 param_1,int param_2,uint param_3)
+/* newlib mprec.c [inference] */
+
+void __lshift(undefined4 param_1,int param_2,uint param_3)
 
 {
   int iVar1;
@@ -257,7 +267,7 @@ void FUN_00230800(undefined4 param_1,int param_2,uint param_3)
   for (iVar7 = *(int *)(param_2 + 8); iVar7 < iVar4; iVar7 = iVar7 << 1) {
     iVar8 = iVar8 + 1;
   }
-  iVar7 = FUN_002303d0(param_1,iVar8);
+  iVar7 = _Balloc(param_1,iVar8);
   if ((0 < iVar3) && ((iVar3 == 1 || (0 < iVar3)))) {
     *(undefined4 *)(iVar7 + 0x14) = 0;
   }
@@ -292,14 +302,16 @@ void FUN_00230800(undefined4 param_1,int param_2,uint param_3)
     }
   }
   *(int *)(iVar7 + 0x10) = iVar4 + -1;
-  FUN_00236060(param_1,param_2);
+  _Bfree(param_1,param_2);
   return;
 }
 
 
-// ===== FUN_002308e0 @ 002308e0 (316 bytes)
+// ===== __mdiff @ 002308e0 (316 bytes)
 
-int FUN_002308e0(undefined4 param_1,int param_2,int param_3)
+/* newlib mprec.c: __mcmp, _Balloc [inference] */
+
+int __mdiff(undefined4 param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -316,14 +328,14 @@ int FUN_002308e0(undefined4 param_1,int param_2,int param_3)
   int iVar12;
   int iVar13;
   
-  iVar1 = FUN_00236170(param_2,param_3);
+  iVar1 = __mcmp(param_2,param_3);
   if (iVar1 != 0) {
     iVar12 = param_2;
     if (iVar1 >= 0) {
       iVar12 = param_3;
       param_3 = param_2;
     }
-    iVar2 = FUN_002303d0(param_1,*(undefined4 *)(param_3 + 4));
+    iVar2 = _Balloc(param_1,*(undefined4 *)(param_3 + 4));
     puVar9 = (uint *)(param_3 + 0x14);
     iVar13 = *(int *)(param_3 + 0x10);
     iVar10 = *(int *)(iVar12 + 0x10);
@@ -374,16 +386,18 @@ int FUN_002308e0(undefined4 param_1,int param_2,int param_3)
     *(int *)(iVar2 + 0x10) = iVar13 - iVar1;
     return iVar2;
   }
-  iVar1 = FUN_002303d0(param_1,0);
+  iVar1 = _Balloc(param_1,0);
   *(undefined4 *)(iVar1 + 0x10) = 1;
   *(undefined4 *)(iVar1 + 0x14) = 0;
   return iVar1;
 }
 
 
-// ===== FUN_00230a30 @ 00230a30 (88 bytes)
+// ===== __ulp @ 00230a30 (88 bytes)
 
-ulonglong FUN_00230a30(undefined4 param_1,uint param_2)
+/* newlib mprec.c: (P-1) << 20 = 0xFCC00000 [fact for the constants] */
+
+ulonglong __ulp(undefined4 param_1,uint param_2)
 
 {
   uint uVar1;
@@ -403,9 +417,11 @@ ulonglong FUN_00230a30(undefined4 param_1,uint param_2)
 }
 
 
-// ===== FUN_00230a90 @ 00230a90 (223 bytes)
+// ===== __b2d @ 00230a90 (223 bytes)
 
-ulonglong FUN_00230a90(int param_1,int *param_2)
+/* newlib mprec.c: __hi0bits, 0x3FF00000 [inference] */
+
+ulonglong __b2d(int param_1,int *param_2)
 
 {
   int iVar1;
@@ -422,7 +438,7 @@ ulonglong FUN_00230a90(int param_1,int *param_2)
   uVar3 = *(uint *)(iVar2 + 0x10);
   uVar7 = iVar2 + 0x10;
   iVar8 = iVar2 + -0x1f0;
-  iVar1 = FUN_00236080(uVar3);
+  iVar1 = __hi0bits(uVar3);
   uVar9 = param_1 + 0x14;
   *param_2 = 0x20 - iVar1;
   if (iVar1 < 0xb) {
@@ -456,10 +472,12 @@ ulonglong FUN_00230a90(int param_1,int *param_2)
 }
 
 
-// ===== FUN_00230b70 @ 00230b70 (202 bytes)
+// ===== __d2b @ 00230b70 (202 bytes)
 
-void FUN_00230b70(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4,int *param_5,
-                 int *param_6)
+/* newlib mprec.c: __lo0bits, __hi0bits [inference] */
+
+void __d2b(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4,int *param_5,int *param_6
+          )
 
 {
   int iVar1;
@@ -470,14 +488,14 @@ void FUN_00230b70(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
   uint uStack_28;
   uint auStack_24 [9];
   
-  iVar1 = FUN_002303d0(param_1,1);
+  iVar1 = _Balloc(param_1,1);
   uVar4 = param_4 >> 0x14 & 0x7ff;
   uStack_28 = param_4 & (uint)&DAT_000fffff;
   if (uVar4 != 0) {
     uStack_28 = param_4 & (uint)&DAT_000fffff | (uint)&DAT_00100000;
   }
   if (param_3 == 0) {
-    iVar3 = FUN_002360e0(&uStack_28);
+    iVar3 = __lo0bits(&uStack_28);
     *(uint *)(iVar1 + 0x14) = uStack_28;
     uVar5 = 1;
     *(undefined4 *)(iVar1 + 0x10) = 1;
@@ -485,7 +503,7 @@ void FUN_00230b70(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
   }
   else {
     auStack_24[0] = param_3;
-    uVar2 = FUN_002360e0(auStack_24);
+    uVar2 = __lo0bits(auStack_24);
     uVar5 = uStack_28;
     if (uVar2 == 0) {
       *(uint *)(iVar1 + 0x14) = auStack_24[0];
@@ -506,15 +524,17 @@ void FUN_00230b70(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
     return;
   }
   *param_5 = uVar2 + uVar4 + -0x432;
-  iVar1 = FUN_00236080(*(undefined4 *)(uVar5 * 4 + iVar1 + 0x10));
+  iVar1 = __hi0bits(*(undefined4 *)(uVar5 * 4 + iVar1 + 0x10));
   *param_6 = uVar5 * 0x20 - iVar1;
   return;
 }
 
 
-// ===== FUN_00230c40 @ 00230c40 (115 bytes)
+// ===== __ratio @ 00230c40 (115 bytes)
 
-undefined4 FUN_00230c40(int param_1,int param_2)
+/* newlib mprec.c: __b2d twice, __divdf3 [inference] */
+
+undefined4 __ratio(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -530,9 +550,9 @@ undefined4 FUN_00230c40(int param_1,int param_2)
   undefined4 uStack_30;
   int iStack_2c;
   
-  uVar5 = FUN_00230a90(param_1,&iStack_40);
+  uVar5 = __b2d(param_1,&iStack_40);
   iVar3 = (int)((ulonglong)uVar5 >> 0x20);
-  uVar6 = FUN_00230a90(param_2,&iStack_3c);
+  uVar6 = __b2d(param_2,&iStack_3c);
   iVar4 = (int)((ulonglong)uVar6 >> 0x20);
   iVar2 = (*(int *)(param_1 + 0x10) - *(int *)(param_2 + 0x10)) * 0x20 + (iStack_40 - iStack_3c);
   if (iVar2 < 1) {
@@ -545,14 +565,16 @@ undefined4 FUN_00230c40(int param_1,int param_2)
     uStack_38 = (int)uVar5;
     iStack_34 = iVar3;
   }
-  uVar1 = FUN_002357c0((int)uVar5,iVar3,(int)uVar6,iVar4);
+  uVar1 = __divdf3((int)uVar5,iVar3,(int)uVar6,iVar4);
   return uVar1;
 }
 
 
-// ===== FUN_00230cc0 @ 00230cc0 (73 bytes)
+// ===== _mprec_log10 @ 00230cc0 (73 bytes)
 
-undefined8 FUN_00230cc0(int param_1)
+/* newlib mprec.c: tens table 0x206010, x10.0 (0x40240000) loop [fact for the constants] */
+
+undefined8 _mprec_log10(int param_1)
 
 {
   int iVar1;
@@ -567,7 +589,7 @@ undefined8 FUN_00230cc0(int param_1)
     return 0;
   }
   do {
-    uVar2 = FUN_00235630((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x40240000);
+    uVar2 = __muldf3((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x40240000);
     iVar1 = iVar1 + 1;
   } while (iVar1 != param_1);
   return uVar2;
@@ -598,14 +620,16 @@ undefined4 FUN_00230d10(int param_1,undefined *param_2)
 }
 
 
-// ===== FUN_00230d80 @ 00230d80 (54 bytes)
+// ===== __sread @ 00230d80 (54 bytes)
 
-int FUN_00230d80(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* newlib stdio.c: _read_r [inference] */
+
+int __sread(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_00233220(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
+  iVar1 = _read_r(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
   if (-1 < iVar1) {
     *(int *)(param_2 + 0x50) = *(int *)(param_2 + 0x50) + iVar1;
     return iVar1;
@@ -615,9 +639,11 @@ int FUN_00230d80(undefined4 param_1,int param_2,undefined4 param_3,undefined4 pa
 }
 
 
-// ===== FUN_00230dc0 @ 00230dc0 (58 bytes)
+// ===== __swrite @ 00230dc0 (58 bytes)
 
-undefined4 FUN_00230dc0(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* newlib stdio.c: _lseek_r on append, _write_r [inference] */
+
+undefined4 __swrite(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   ushort uVar1;
@@ -625,23 +651,25 @@ undefined4 FUN_00230dc0(undefined4 param_1,int param_2,undefined4 param_3,undefi
   
   uVar1 = *(ushort *)(param_2 + 0xc);
   if ((uVar1 & 0x100) != 0) {
-    FUN_00236430(param_1,(int)*(short *)(param_2 + 0xe),0,2);
+    _lseek_r(param_1,(int)*(short *)(param_2 + 0xe),0,2);
     uVar1 = *(ushort *)(param_2 + 0xc);
   }
   *(ushort *)(param_2 + 0xc) = uVar1 & 0xefff;
-  uVar2 = FUN_00233250(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
+  uVar2 = _write_r(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
   return uVar2;
 }
 
 
-// ===== FUN_00230e00 @ 00230e00 (63 bytes)
+// ===== __sseek @ 00230e00 (63 bytes)
 
-int FUN_00230e00(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* newlib stdio.c: _lseek_r, __SOFF 0x1000 [inference] */
+
+int __sseek(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_00236430(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
+  iVar1 = _lseek_r(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
   if (iVar1 != -1) {
     *(int *)(param_2 + 0x50) = iVar1;
     *(ushort *)(param_2 + 0xc) = *(ushort *)(param_2 + 0xc) | 0x1000;
@@ -652,23 +680,26 @@ int FUN_00230e00(undefined4 param_1,int param_2,undefined4 param_3,undefined4 pa
 }
 
 
-// ===== FUN_00230e40 @ 00230e40 (16 bytes)
+// ===== __sclose @ 00230e40 (16 bytes)
 
-undefined4 FUN_00230e40(undefined4 param_1,int param_2)
+/* newlib stdio.c: _close_r [inference] */
+
+undefined4 __sclose(undefined4 param_1,int param_2)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_00236420(param_1,(int)*(short *)(param_2 + 0xe));
+  uVar1 = _close_r(param_1,(int)*(short *)(param_2 + 0xe));
   return uVar1;
 }
 
 
-// ===== FUN_00230e50 @ 00230e50 (102 bytes)
+// ===== strlen @ 00230e50 (102 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00230e8d) */
+/* newlib strlen (word-at-a-time) [inference] */
 
-char * FUN_00230e50(uint *param_1)
+char * strlen(uint *param_1)
 
 {
   uint *puVar1;
@@ -706,9 +737,11 @@ LAB_00230ea5:
 }
 
 
-// ===== FUN_00230ec0 @ 00230ec0 (145 bytes)
+// ===== __sprint_r @ 00230ec0 (145 bytes)
 
-undefined4 FUN_00230ec0(undefined4 param_1,int param_2,undefined4 *param_3)
+/* newlib vfprintf.c: __sfputwc loop (wide streams) or __sfvwrite_r [inference] */
+
+undefined4 __sprint_r(undefined4 param_1,int param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;
@@ -736,7 +769,7 @@ undefined4 FUN_00230ec0(undefined4 param_1,int param_2,undefined4 *param_3)
       else {
         local_30 = uVar4 << 1;
         do {
-          iVar5 = FUN_002325f0(param_1,*puVar2,param_2);
+          iVar5 = __fputwc(param_1,*puVar2,param_2);
           puVar2 = puVar2 + 1;
           if (iVar5 == -1) {
             param_3[2] = 0;
@@ -754,16 +787,18 @@ undefined4 FUN_00230ec0(undefined4 param_1,int param_2,undefined4 *param_3)
     param_3[1] = 0;
     return 0;
   }
-  uVar1 = FUN_00232730(param_1,param_2,param_3);
+  uVar1 = __sfvwrite_r(param_1,param_2,param_3);
   param_3[2] = 0;
   param_3[1] = 0;
   return uVar1;
 }
 
 
-// ===== FUN_00230f60 @ 00230f60 (175 bytes)
+// ===== __sbprintf_i @ 00230f60 (175 bytes)
 
-int FUN_00230f60(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
+/* newlib vfiprintf.c copy of __sbprintf (vfiprintf into a stack buffer, fflush) [inference] */
+
+int __sbprintf_i(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
                 undefined4 param_5,undefined4 param_6)
 
 {
@@ -797,8 +832,8 @@ int FUN_00230f60(undefined4 param_1,int param_2,undefined4 param_3,undefined4 pa
   uStack_34 = param_4;
   uStack_30 = param_5;
   uStack_2c = param_6;
-  iVar1 = FUN_00231040(param_1,apuStack_4b0,param_3,param_4,param_5,param_6);
-  if ((-1 < iVar1) && (iVar2 = FUN_0022fb80(param_1,apuStack_4b0), iVar2 != 0)) {
+  iVar1 = _vfiprintf_r(param_1,apuStack_4b0,param_3,param_4,param_5,param_6);
+  if ((-1 < iVar1) && (iVar2 = _fflush_r(param_1,apuStack_4b0), iVar2 != 0)) {
     iVar1 = -1;
   }
   if (((uint)(int)(short)uStack_4a4 >> 6 & 1) != 0) {
@@ -809,21 +844,23 @@ int FUN_00230f60(undefined4 param_1,int param_2,undefined4 param_3,undefined4 pa
 }
 
 
-// ===== FUN_00231020 @ 00231020 (31 bytes)
+// ===== vfiprintf @ 00231020 (31 bytes)
+
+/* newlib vfiprintf.c: _vfiprintf_r(_impure_ptr) [inference] */
 
 undefined4
-FUN_00231020(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5)
+vfiprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+         undefined4 param_5)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_00231040(PTR_DAT_00237f00,param_1,param_2,param_3,param_4,param_5);
+  uVar1 = _vfiprintf_r(PTR_DAT_00237f00,param_1,param_2,param_3,param_4,param_5);
   return uVar1;
 }
 
 
-// ===== FUN_00231040 @ 00231040 (1298 bytes)
+// ===== _vfiprintf_r @ 00231040 (1298 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00231887) */
 /* WARNING: Removing unreachable block (ram,0x00232270) */
@@ -848,8 +885,9 @@ FUN_00231020(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 /* WARNING: Removing unreachable block (ram,0x002322e9) */
 /* WARNING: Removing unreachable block (ram,0x002322f5) */
 /* WARNING: Type propagation algorithm not settling */
+/* newlib vfiprintf.c (integer-only printf, 5,168 bytes) [inference] */
 
-char * FUN_00231040(int param_1,int param_2,byte *param_3,int param_4,int param_5,int param_6)
+char * _vfiprintf_r(int param_1,int param_2,byte *param_3,int param_4,int param_5,int param_6)
 
 {
   bool bVar1;
@@ -917,7 +955,7 @@ char * FUN_00231040(int param_1,int param_2,byte *param_3,int param_4,int param_
   iStack_30 = param_5;
   iStack_2c = param_6;
   if ((param_1 != 0) && (*(int *)(param_1 + 0x38) == 0)) {
-    FUN_0022fd00(param_1);
+    __sinit(param_1);
   }
   uVar8 = (uint)*(short *)(param_2 + 0xc);
   if ((uVar8 >> 0xd & 1) == 0) {
@@ -926,14 +964,14 @@ char * FUN_00231040(int param_1,int param_2,byte *param_3,int param_4,int param_
     *(uint *)(param_2 + 100) = *(uint *)(param_2 + 100) & 0xffffdfff;
   }
   if (((uVar8 >> 3 & 1) == 0) || (*(int *)(param_2 + 0x10) == 0)) {
-    iVar6 = FUN_0022e630(iStack_60,param_2);
+    iVar6 = __swsetup_r(iStack_60,param_2);
     if (iVar6 != 0) {
       return (char *)0xffffffff;
     }
     uVar8 = (uint)*(short *)(param_2 + 0xc);
   }
   if (((uVar8 & 0x1a) == 10) && (-1 < *(short *)(param_2 + 0xe))) {
-    pcVar10 = (char *)FUN_00230f60(iStack_60,param_2,param_3,iStack_34,iStack_30,iStack_2c);
+    pcVar10 = (char *)__sbprintf_i(iStack_60,param_2,param_3,iStack_34,iStack_30,iStack_2c);
     return pcVar10;
   }
   iStack_e8 = 0;
@@ -950,7 +988,7 @@ LAB_002310cd:
   if (*pbStack_64 == 0) {
 LAB_002315d8:
     if (iStack_e8 != 0) {
-      FUN_00230ec0(iStack_60,param_2,&puStack_f0);
+      __sprint_r(iStack_60,param_2,&puStack_f0);
       ppcVar2 = &pcStack_78;
       if ((*(ushort *)(param_2 + 0xc) & 0x40) == 0) {
         ppcVar2 = &pcStack_70;
@@ -980,7 +1018,7 @@ LAB_002312c9:
       iStack_ec = iStack_ec + 1;
       piVar5 = piVar5 + 2;
       if ((7 < iStack_ec) &&
-         (iVar4 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130,
+         (iVar4 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130,
          pbVar9 = pbStack_54, iVar4 != 0)) goto LAB_002312c9;
       pcStack_70 = pcStack_70 + iVar6;
       bVar13 = *pbVar9;
@@ -1556,11 +1594,11 @@ joined_r0x0023224b:
     if (pcStack_a8 != (char *)0x0) {
       if ((int)pcVar10 < 0) {
         pcStack_9c = pcVar10;
-        pcStack_7c = (char *)FUN_00230e50(pcStack_a8);
+        pcStack_7c = (char *)strlen(pcStack_a8);
       }
       else {
         pcStack_9c = pcVar10;
-        iVar6 = FUN_00230340(pcStack_a8,0);
+        iVar6 = memchr(pcStack_a8,0);
         iVar4 = iVar6 - (int)pcStack_a8;
         pcStack_7c = (char *)((uint)((int)pcStack_9c < iVar4) * (int)pcStack_9c +
                              (uint)((int)pcStack_9c >= iVar4) * iVar4);
@@ -1752,7 +1790,7 @@ joined_r0x002311be:
         iStack_ec = iVar6 + 1;
         piVar5 = piVar5 + 2;
         if ((7 < iStack_ec) &&
-           (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+           (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
         goto LAB_002312c9;
         pcVar18 = pcVar18 + -0x10;
         iVar6 = iStack_ec;
@@ -1778,7 +1816,7 @@ LAB_002311fa:
   iStack_ec = iVar6 + 1;
   piVar5 = piVar5 + 2;
   if ((7 < iStack_ec) &&
-     (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+     (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
   goto LAB_002312c9;
   uVar8 = (uint)abStack_ae[0];
 LAB_0023121b:
@@ -1790,7 +1828,7 @@ LAB_0023121d:
     iStack_ec = iStack_ec + 1;
     piVar5 = piVar5 + 2;
     if ((7 < iStack_ec) &&
-       (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+       (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
     goto LAB_002312c9;
   }
 LAB_00231244:
@@ -1801,7 +1839,7 @@ LAB_00231244:
     iStack_ec = iStack_ec + 1;
     piVar5 = piVar5 + 2;
     if ((7 < iStack_ec) &&
-       (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+       (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
     goto LAB_002312c9;
   }
   if ((pcStack_94 == (char *)0x80) &&
@@ -1814,7 +1852,7 @@ LAB_00231244:
       iStack_ec = iVar4 + 1;
       piVar5 = piVar5 + 2;
       if ((7 < iStack_ec) &&
-         (iVar4 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
+         (iVar4 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
       goto LAB_002312c9;
       iVar4 = iStack_ec;
       iVar20 = iStack_e8;
@@ -1825,7 +1863,7 @@ LAB_00231244:
     iStack_ec = iVar4 + 1;
     piVar5 = piVar5 + 2;
     if ((7 < iStack_ec) &&
-       (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+       (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
     goto LAB_002312c9;
   }
   iVar6 = (int)pcStack_8c - (int)pcStack_7c;
@@ -1839,7 +1877,7 @@ LAB_00231244:
       iStack_ec = iVar4 + 1;
       piVar5 = piVar5 + 2;
       if ((7 < iStack_ec) &&
-         (iVar4 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
+         (iVar4 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
       goto LAB_002312c9;
       iVar4 = iStack_ec;
       iVar20 = iStack_e8;
@@ -1850,7 +1888,7 @@ LAB_00231244:
     iStack_ec = iVar4 + 1;
     piVar5 = piVar5 + 2;
     if ((7 < iStack_ec) &&
-       (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+       (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
     goto LAB_002312c9;
   }
   pcVar10 = pcStack_7c;
@@ -1860,7 +1898,7 @@ LAB_00231244:
   iStack_ec = iStack_ec + 1;
   piVar5 = piVar5 + 2;
   if ((7 < iStack_ec) &&
-     (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
+     (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar6 != 0))
   goto LAB_002312c9;
   if ((((uint)pcStack_68 & 4) != 0) &&
      (iVar6 = (int)pcStack_74 - (int)pcStack_80, iVar4 = iStack_ec, iVar20 = iStack_e8, 0 < iVar6))
@@ -1872,7 +1910,7 @@ LAB_00231244:
       iStack_ec = iVar4 + 1;
       piVar5 = piVar5 + 2;
       if ((7 < iStack_ec) &&
-         (iVar4 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
+         (iVar4 = __sprint_r(iStack_60,param_2,&puStack_f0), piVar5 = aiStack_130, iVar4 != 0))
       goto LAB_002312c9;
       iVar4 = iStack_ec;
       iVar20 = iStack_e8;
@@ -1881,7 +1919,7 @@ LAB_00231244:
     *piVar5 = (int)&PTR_DAT_00206160;
     iStack_e8 = iVar20 + iVar6;
     iStack_ec = iVar4 + 1;
-    if ((7 < iStack_ec) && (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), iVar6 != 0))
+    if ((7 < iStack_ec) && (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), iVar6 != 0))
     goto LAB_002312c9;
   }
   pcVar10 = pcStack_80;
@@ -1889,7 +1927,7 @@ LAB_00231244:
     pcVar10 = pcStack_74;
   }
   pcStack_70 = pcStack_70 + (int)pcVar10;
-  if ((iStack_e8 != 0) && (iVar6 = FUN_00230ec0(iStack_60,param_2,&puStack_f0), iVar6 != 0))
+  if ((iStack_e8 != 0) && (iVar6 = __sprint_r(iStack_60,param_2,&puStack_f0), iVar6 != 0))
   goto LAB_002312c9;
   iStack_ec = 0;
   piVar5 = aiStack_130;
@@ -1903,9 +1941,11 @@ LAB_00231636:
 }
 
 
-// ===== FUN_00232470 @ 00232470 (44 bytes)
+// ===== __swhatbuf_r @ 00232470 (44 bytes)
 
-undefined4 FUN_00232470(undefined4 param_1,undefined4 param_2)
+/* newlib makebuf.c [inference] */
+
+undefined4 __swhatbuf_r(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -1920,16 +1960,18 @@ undefined4 FUN_00232470(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_002324a0 @ 002324a0 (112 bytes)
+// ===== _calloc_r @ 002324a0 (112 bytes)
 
-undefined4 * FUN_002324a0(undefined4 param_1,int param_2,int param_3)
+/* newlib: _malloc_r then memset; called by _Balloc [inference] */
+
+undefined4 * _calloc_r(undefined4 param_1,int param_2,int param_3)
 
 {
   undefined4 *puVar1;
   undefined4 *puVar2;
   uint uVar3;
   
-  puVar1 = (undefined4 *)FUN_0022ba80(param_1,param_2 * param_3);
+  puVar1 = (undefined4 *)_malloc_r(param_1,param_2 * param_3);
   if (puVar1 == (undefined4 *)0x0) {
     return (undefined4 *)0x0;
   }
@@ -1964,9 +2006,12 @@ undefined4 * FUN_002324a0(undefined4 param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_00232520 @ 00232520 (146 bytes)
+// ===== _fclose_r @ 00232520 (146 bytes)
 
-undefined4 FUN_00232520(int param_1,int param_2)
+/* newlib fclose.c: _fflush_r, _free_r, sfp locks; fclose follows inside this listing entry
+   (0x2325D0, used by _cleanup_r) [inference] */
+
+undefined4 _fclose_r(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -1974,31 +2019,31 @@ undefined4 FUN_00232520(int param_1,int param_2)
   
   if (param_2 != 0) {
     if ((param_1 != 0) && (*(int *)(param_1 + 0x38) == 0)) {
-      FUN_0022fd00(param_1);
+      __sinit(param_1);
     }
     if (*(short *)(param_2 + 0xc) != 0) {
-      uVar1 = FUN_0022fb80(param_1,param_2);
+      uVar1 = _fflush_r(param_1,param_2);
       if ((*(code **)(param_2 + 0x2c) != (code *)0x0) &&
          (iVar2 = (**(code **)(param_2 + 0x2c))(param_1,*(undefined4 *)(param_2 + 0x1c)), iVar2 < 0)
          ) {
         uVar1 = 0xffffffff;
       }
       if ((*(ushort *)(param_2 + 0xc) & 0x80) != 0) {
-        FUN_0022fe50(param_1,*(undefined4 *)(param_2 + 0x10));
+        _free_r(param_1,*(undefined4 *)(param_2 + 0x10));
       }
       if (*(int *)(param_2 + 0x30) != 0) {
         if (*(int *)(param_2 + 0x30) != param_2 + 0x40) {
-          FUN_0022fe50(param_1);
+          _free_r(param_1);
         }
         *(undefined4 *)(param_2 + 0x30) = 0;
       }
       if (*(int *)(param_2 + 0x44) != 0) {
-        FUN_0022fe50(param_1);
+        _free_r(param_1);
         *(undefined4 *)(param_2 + 0x44) = 0;
       }
-      FUN_00235f40();
+      __sfp_lock_acquire();
       *(undefined2 *)(param_2 + 0xc) = 0;
-      FUN_00235f50();
+      __sfp_lock_release();
       return uVar1;
     }
   }
@@ -2006,9 +2051,11 @@ undefined4 FUN_00232520(int param_1,int param_2)
 }
 
 
-// ===== FUN_002325f0 @ 002325f0 (245 bytes)
+// ===== __fputwc @ 002325f0 (245 bytes)
 
-uint FUN_002325f0(undefined4 param_1,uint param_2,undefined4 *param_3)
+/* newlib fputwc.c: __locale_mb_cur_max, _wcrtomb_r, __swbuf_r [inference] */
+
+uint __fputwc(undefined4 param_1,uint param_2,undefined4 *param_3)
 
 {
   undefined1 uVar1;
@@ -2024,12 +2071,12 @@ uint FUN_002325f0(undefined4 param_1,uint param_2,undefined4 *param_3)
     *(ushort *)(param_3 + 3) = *(ushort *)(param_3 + 3) | 0x2000;
     param_3[0x19] = param_3[0x19] | (uint)&DAT_00002000;
   }
-  iVar3 = FUN_002301b0();
+  iVar3 = __locale_mb_cur_max();
   if (((iVar3 == 1) && (param_2 != 0)) && (iVar3 = 1, param_2 < 0x100)) {
     local_30[0] = (char)param_2;
   }
   else {
-    iVar3 = FUN_00233100(param_1,local_30,param_2,param_3 + 0x17);
+    iVar3 = _wcrtomb_r(param_1,local_30,param_2,param_3 + 0x17);
     if (iVar3 == -1) {
       *(ushort *)(param_3 + 3) = *(ushort *)(param_3 + 3) | 0x40;
       return 0xffffffff;
@@ -2044,14 +2091,14 @@ uint FUN_002325f0(undefined4 param_1,uint param_2,undefined4 *param_3)
     uVar1 = *puVar4;
     if (iVar6 < 0) {
       if (iVar6 < (int)param_3[6]) {
-        iVar6 = FUN_00233010(param_1,uVar1,param_3);
+        iVar6 = __swbuf_r(param_1,uVar1,param_3);
         bVar2 = iVar6 == -1;
       }
       else {
         *(undefined1 *)*param_3 = uVar1;
         uVar5 = (uint)*(byte *)*param_3;
         if (uVar5 == 10) {
-          iVar6 = FUN_00233010(param_1,10,param_3);
+          iVar6 = __swbuf_r(param_1,10,param_3);
           bVar2 = iVar6 == -1;
         }
         else {
@@ -2082,24 +2129,28 @@ uint FUN_002325f0(undefined4 param_1,uint param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_00232700 @ 00232700 (40 bytes)
+// ===== fputwc @ 00232700 (40 bytes)
 
-undefined4 FUN_00232700(undefined4 param_1,undefined4 param_2)
+/* newlib fputwc.c: _impure_ptr, __sinit, __fputwc [inference] */
+
+undefined4 fputwc(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
   
   if ((PTR_DAT_00237f00 != (undefined *)0x0) && (*(int *)(PTR_DAT_00237f00 + 0x38) == 0)) {
-    FUN_0022fd00();
+    __sinit();
   }
-  uVar1 = FUN_002325f0(PTR_DAT_00237f00,param_1,param_2);
+  uVar1 = __fputwc(PTR_DAT_00237f00,param_1,param_2);
   return uVar1;
 }
 
 
-// ===== FUN_00232730 @ 00232730 (895 bytes)
+// ===== __sfvwrite_r @ 00232730 (895 bytes)
 
-undefined4 FUN_00232730(undefined4 *param_1,uint *param_2,undefined4 *param_3)
+/* newlib fvwrite.c: __swsetup_r, _realloc_r, memchr, _fflush_r [inference] */
+
+undefined4 __sfvwrite_r(undefined4 *param_1,uint *param_2,undefined4 *param_3)
 
 {
   uint *puVar1;
@@ -2118,7 +2169,7 @@ undefined4 FUN_00232730(undefined4 *param_1,uint *param_2,undefined4 *param_3)
   if (param_3[2] != 0) {
     uVar5 = (uint)(short)param_2[3];
     if (((uVar5 >> 3 & 1) == 0) || (param_2[4] == 0)) {
-      iVar3 = FUN_0022e630(param_1,param_2);
+      iVar3 = __swsetup_r(param_1,param_2);
       if (iVar3 != 0) {
         return 0xffffffff;
       }
@@ -2148,7 +2199,7 @@ LAB_0023295e:
           piVar8 = piVar8 + iVar9 * 2;
 LAB_00232977:
           do {
-            FUN_00230340(iVar3,10,uVar5);
+            memchr(iVar3,10,uVar5);
             uVar7 = uVar5 + 1;
             bVar2 = true;
 LAB_0023299a:
@@ -2159,14 +2210,14 @@ LAB_0023299a:
               local_40 = uVar5;
             }
             if ((param_2[4] < uVar10) && ((int)uVar11 < (int)local_40)) {
-              FUN_00236300(uVar10,iVar3,uVar11);
+              memmove(uVar10,iVar3,uVar11);
               *param_2 = uVar11 + *param_2;
-              iVar9 = FUN_0022fb80(param_1,param_2);
+              iVar9 = _fflush_r(param_1,param_2);
               local_40 = uVar11;
               if (iVar9 != 0) goto LAB_00232919;
             }
             else if ((int)local_40 < (int)param_2[5]) {
-              FUN_00236300(uVar10,iVar3);
+              memmove(uVar10,iVar3);
               param_2[2] = param_2[2] - local_40;
               *param_2 = *param_2 + local_40;
             }
@@ -2185,7 +2236,7 @@ LAB_0023299a:
               }
               goto LAB_0023295e;
             }
-            iVar9 = FUN_0022fb80(param_1,param_2);
+            iVar9 = _fflush_r(param_1,param_2);
             if (iVar9 != 0) goto LAB_00232919;
             iVar9 = param_3[2];
             param_3[2] = iVar9 - local_40;
@@ -2215,13 +2266,13 @@ LAB_0023299a:
         if ((uVar7 >> 9 & 1) == 0) {
           uVar7 = *param_2;
           if ((param_2[4] < uVar7) && (local_40 < uVar5)) {
-            FUN_00236300(uVar7,iVar3,local_40);
+            memmove(uVar7,iVar3,local_40);
             *param_2 = local_40 + *param_2;
-            iVar9 = FUN_0022fb80(param_1,param_2);
+            iVar9 = _fflush_r(param_1,param_2);
             if (iVar9 != 0) goto LAB_00232919;
           }
           else if (uVar5 < param_2[5]) {
-            FUN_00236300(uVar7,iVar3,uVar5);
+            memmove(uVar7,iVar3,uVar5);
             param_2[2] = param_2[2] - uVar5;
             *param_2 = *param_2 + uVar5;
             local_40 = uVar5;
@@ -2247,9 +2298,9 @@ LAB_0023299a:
               uVar11 = iVar6 + uVar5 + 1;
               uVar11 = (uVar11 < uVar10) * uVar10 + (uVar11 >= uVar10) * uVar11;
               if ((uVar7 >> 10 & 1) == 0) {
-                uVar10 = FUN_00232af0(param_1,param_2[4],uVar11);
+                uVar10 = _realloc_r(param_1,param_2[4],uVar11);
                 if (uVar10 == 0) {
-                  FUN_0022fe50(param_1,param_2[4]);
+                  _free_r(param_1,param_2[4]);
                   uVar5 = param_2[3];
                   *param_1 = 0xc;
                   *(ushort *)(param_2 + 3) = (ushort)uVar5 & 0xff7f | 0x40;
@@ -2257,7 +2308,7 @@ LAB_0023299a:
                 }
               }
               else {
-                uVar10 = FUN_0022ba80(param_1,uVar11);
+                uVar10 = _malloc_r(param_1,uVar11);
                 if (uVar10 == 0) {
                   uVar5 = param_2[3];
                   *param_1 = 0xc;
@@ -2276,7 +2327,7 @@ LAB_0023299a:
             }
           }
           iVar9 = (uVar5 < local_40) * uVar5 + (uVar5 >= local_40) * local_40;
-          FUN_00236300(uVar10,iVar3);
+          memmove(uVar10,iVar3);
           param_2[2] = param_2[2] - iVar9;
           *param_2 = iVar9 + *param_2;
           local_40 = uVar5;
@@ -2322,9 +2373,11 @@ LAB_00232919:
 }
 
 
-// ===== FUN_00232af0 @ 00232af0 (1270 bytes)
+// ===== _realloc_r @ 00232af0 (1270 bytes)
 
-int * FUN_00232af0(undefined4 *param_1,int *param_2,uint param_3)
+/* newlib mallocr.c: malloc lock, memmove, _free_r [inference] */
+
+int * _realloc_r(undefined4 *param_1,int *param_2,uint param_3)
 
 {
   int *piVar1;
@@ -2340,10 +2393,10 @@ int * FUN_00232af0(undefined4 *param_1,int *param_2,uint param_3)
   uint uStack_28;
   
   if (param_2 == (int *)0x0) {
-    piVar1 = (int *)FUN_0022ba80(param_1,param_3);
+    piVar1 = (int *)_malloc_r(param_1,param_3);
     return piVar1;
   }
-  FUN_00228dc0(param_1);
+  __malloc_lock(param_1);
   uVar7 = param_2[-1];
   piVar1 = param_2 + -2;
   uVar8 = uVar7 & 0xfffffffc;
@@ -2404,7 +2457,7 @@ LAB_00232e07:
         PTR_DAT_00237f28 = (undefined *)((int)param_2 + (uVar2 - 8));
         *(uint *)((int)param_2 + (uVar2 - 4)) = iVar4 - uVar2 | 1;
         param_2[-1] = uVar2 | param_2[-1] & 1U;
-        FUN_00228df0(param_1);
+        __malloc_unlock(param_1);
         return param_2;
       }
     }
@@ -2468,12 +2521,12 @@ LAB_00232d54:
               piVar1[2] = piVar9[2];
             }
             else {
-              FUN_00236300(piVar3,param_2);
+              memmove(piVar3,param_2);
             }
             PTR_DAT_00237f28 = (undefined *)((int)piVar3 + (uVar2 - 8));
             *(uint *)(PTR_DAT_00237f28 + 4) = uStack_28 - uVar2 | 1;
             piVar3[-1] = uVar2 | piVar3[-1] & 1U;
-            FUN_00228df0(param_1);
+            __malloc_unlock(param_1);
             return piVar3;
           }
         }
@@ -2515,7 +2568,7 @@ LAB_00232f46:
             piVar9[2] = piVar5[2];
           }
           else {
-            FUN_00236300(piVar3,param_2);
+            memmove(piVar3,param_2);
           }
           goto LAB_00232ca3;
         }
@@ -2554,15 +2607,15 @@ LAB_00232c19:
           piVar9[2] = piVar5[2];
         }
         else {
-          FUN_00236300(piVar3,param_2);
+          memmove(piVar3,param_2);
         }
         goto LAB_00232ca3;
       }
     }
 LAB_00232e44:
-    piVar9 = (int *)FUN_0022ba80(param_1,param_3);
+    piVar9 = (int *)_malloc_r(param_1,param_3);
     if (piVar9 == (int *)0x0) {
-      FUN_00228df0(param_1);
+      __malloc_unlock(param_1);
       return (int *)0x0;
     }
     if (piVar9 != (int *)((int)param_2 + (param_2[-1] & 0xfffffffeU))) {
@@ -2593,10 +2646,10 @@ LAB_00232e44:
         piVar1[2] = piVar3[2];
       }
       else {
-        FUN_00236300(piVar9,param_2);
+        memmove(piVar9,param_2);
       }
-      FUN_0022fe50(param_1,param_2);
-      FUN_00228df0(param_1);
+      _free_r(param_1,param_2);
+      __malloc_unlock(param_1);
       return piVar9;
     }
     uStack_28 = uVar8 + (piVar9[-1] & 0xfffffffcU);
@@ -2612,29 +2665,31 @@ joined_r0x00232bf4:
     piVar1[1] = uVar2 | piVar1[1] & 1U;
     *(uint *)((int)piVar1 + uVar2 + 4) = uVar8 | 1;
     *(uint *)((int)piVar1 + uStack_28 + 4) = *(uint *)((int)piVar1 + uStack_28 + 4) | 1;
-    FUN_0022fe50(param_1,(int)piVar1 + uVar2 + 8);
+    _free_r(param_1,(int)piVar1 + uVar2 + 8);
   }
-  FUN_00228df0(param_1);
+  __malloc_unlock(param_1);
   return piVar1 + 2;
 }
 
 
-// ===== FUN_00233010 @ 00233010 (194 bytes)
+// ===== __swbuf_r @ 00233010 (194 bytes)
 
-uint FUN_00233010(int param_1,byte param_2,int *param_3)
+/* newlib wbuf.c: __sinit, __swsetup_r, _fflush_r [inference] */
+
+uint __swbuf_r(int param_1,byte param_2,int *param_3)
 
 {
   uint uVar1;
   int iVar2;
   
   if ((param_1 != 0) && (*(int *)(param_1 + 0x38) == 0)) {
-    FUN_0022fd00(param_1);
+    __sinit(param_1);
   }
   param_3[2] = param_3[6];
   uVar1 = (uint)(short)param_3[3];
   iVar2 = param_3[4];
   if (((uVar1 >> 3 & 1) == 0) || (iVar2 == 0)) {
-    iVar2 = FUN_0022e630(param_1,param_3);
+    iVar2 = __swsetup_r(param_1,param_3);
     if (iVar2 != 0) {
       return 0xffffffff;
     }
@@ -2656,7 +2711,7 @@ LAB_0023306c:
     }
   }
   else {
-    iVar2 = FUN_0022fb80(param_1,param_3);
+    iVar2 = _fflush_r(param_1,param_3);
     if (iVar2 != 0) {
       return 0xffffffff;
     }
@@ -2665,7 +2720,7 @@ LAB_0023306c:
     *param_3 = *param_3 + 1;
     if (param_3[5] != 1) goto LAB_0023306c;
   }
-  iVar2 = FUN_0022fb80(param_1,param_3);
+  iVar2 = _fflush_r(param_1,param_3);
   if (iVar2 != 0) {
     return 0xffffffff;
   }
@@ -2674,21 +2729,25 @@ LAB_00233075:
 }
 
 
-// ===== FUN_002330e0 @ 002330e0 (24 bytes)
+// ===== __swbuf @ 002330e0 (24 bytes)
 
-undefined4 FUN_002330e0(undefined4 param_1,undefined4 param_2)
+/* newlib wbuf.c: _impure_ptr [inference] */
+
+undefined4 __swbuf(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_00233010(PTR_DAT_00237f00,param_1,param_2);
+  uVar1 = __swbuf_r(PTR_DAT_00237f00,param_1,param_2);
   return uVar1;
 }
 
 
-// ===== FUN_00233100 @ 00233100 (85 bytes)
+// ===== _wcrtomb_r @ 00233100 (85 bytes)
 
-int FUN_00233100(undefined4 *param_1,int param_2,undefined4 param_3,undefined4 *param_4)
+/* newlib wcrtomb.c [inference] */
+
+int _wcrtomb_r(undefined4 *param_1,int param_2,undefined4 param_3,undefined4 *param_4)
 
 {
   undefined4 uVar1;
@@ -2712,9 +2771,11 @@ int FUN_00233100(undefined4 *param_1,int param_2,undefined4 param_3,undefined4 *
 }
 
 
-// ===== FUN_00233160 @ 00233160 (97 bytes)
+// ===== wcrtomb @ 00233160 (97 bytes)
 
-int FUN_00233160(int param_1,undefined4 param_2,undefined4 *param_3)
+/* newlib wcrtomb.c: _impure_ptr [inference] */
+
+int wcrtomb(int param_1,undefined4 param_2,undefined4 *param_3)
 
 {
   undefined4 *puVar1;
@@ -2769,9 +2830,11 @@ void FUN_00233200(undefined4 param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_00233220 @ 00233220 (37 bytes)
+// ===== _read_r @ 00233220 (37 bytes)
 
-int FUN_00233220(undefined4 param_1,undefined4 param_2,undefined1 *param_3,int param_4)
+/* newlib reent read: calls the 8-byte read stub 0x23329C [inference] */
+
+int _read_r(undefined4 param_1,undefined4 param_2,undefined1 *param_3,int param_4)
 
 {
   int iVar1;
@@ -2790,9 +2853,11 @@ int FUN_00233220(undefined4 param_1,undefined4 param_2,undefined1 *param_3,int p
 }
 
 
-// ===== FUN_00233250 @ 00233250 (40 bytes)
+// ===== _write_r @ 00233250 (40 bytes)
 
-void FUN_00233250(undefined4 param_1,undefined4 param_2,char *param_3,int param_4)
+/* newlib reent write [inference] */
+
+void _write_r(undefined4 param_1,undefined4 param_2,char *param_3,int param_4)
 
 {
   char cVar1;
@@ -2834,12 +2899,14 @@ undefined4 FUN_0023329c(void)
 }
 
 
-// ===== FUN_002332a4 @ 002332a4 (29 bytes)
+// ===== _exit @ 002332a4 (29 bytes)
 
-void FUN_002332a4(void)
+/* board/runtime exit: data cache write-back (0x236450), then halts [inference] */
+
+void _exit(void)
 
 {
-  FUN_00236450();
+  xthal_dcache_all_writeback();
   extw();
   do {
     simcall();
@@ -3059,13 +3126,13 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
     }
     if ((uVar5 != uVar2) && ((param_4 >> 0xb & 1) == 0)) {
       xthal_set_cacheattr(uVar5,uVar6);
-      FUN_00236450();
+      xthal_dcache_all_writeback();
       uVar6 = extraout_a3;
     }
     xthal_set_cacheattr(uVar2,uVar6);
     if ((bVar1) && ((param_4 & 0x1000) == 0)) {
-      FUN_002364b0();
-      FUN_002364d0();
+      xthal_dcache_all_writeback_inv();
+      xthal_icache_all_invalidate();
       return 0;
     }
   }
@@ -3181,9 +3248,11 @@ void FUN_00233650(void)
 }
 
 
-// ===== FUN_00233670 @ 00233670 (631 bytes)
+// ===== fft_realf_ie @ 00233670 (631 bytes)
 
-longlong FUN_00233670(undefined8 *param_1,undefined8 *param_2,int param_3,int param_4,int param_5)
+/* NDSP fft/fft_ief: real FFT, calls fft_cplxf_ie then splits with conjc.s [inference] */
+
+longlong fft_realf_ie(undefined8 *param_1,undefined8 *param_2,int param_3,int param_4,int param_5)
 
 {
   float fVar1;
@@ -3254,7 +3323,7 @@ longlong FUN_00233670(undefined8 *param_1,undefined8 *param_2,int param_3,int pa
     param_1[3] = uVar11;
     return ZEXT48(puVar17 + param_4 * 3) << 0x20;
   }
-  fft512_cplx(param_1,param_2,param_3,param_4 << 1,param_5 >> 1);
+  fft_cplxf_ie(param_1,param_2,param_3,param_4 << 1,param_5 >> 1);
   puVar4 = param_1 + (param_5 >> 1);
   uVar16 = ae_l32x2_ip(*param_1);
   puVar3 = param_1 + 1;
@@ -3478,18 +3547,22 @@ undefined4 FUN_00233818(undefined8 *param_1,int param_2)
 }
 
 
-// ===== FUN_00233970 @ 00233970 (20 bytes)
+// ===== bkfiraf_alloc @ 00233970 (20 bytes)
 
-int FUN_00233970(int param_1)
+/* NDSP fir/firblkf: 8 * align4(M) + 23 bytes [inference] */
+
+int bkfiraf_alloc(int param_1)
 
 {
   return (param_1 + 3U & 0xfffffffc) * 8 + 0x17;
 }
 
 
-// ===== fir_init @ 00233984 (126 bytes)
+// ===== bkfiraf_init @ 00233984 (126 bytes)
 
-undefined8 fir_init(int param_1,undefined4 *param_2,undefined4 *param_3)
+/* NDSP fir/firblkf (was fir_init) [inference] */
+
+undefined8 bkfiraf_init(int param_1,undefined4 *param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;

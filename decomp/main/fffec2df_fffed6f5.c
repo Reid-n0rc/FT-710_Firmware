@@ -1105,21 +1105,21 @@ void FUN_fffed2a9(void)
     tuner_tune_state_set(0);
     return;
   }
-  if (g_ui.f_0x03a_u8 == 1) {
+  if (g_ui.tuner_key_req == 1) {
     g_ui.tuner_result = 2;
     send_a_set(1);
     send_b_set(1);
     return;
   }
-  if (g_ui.f_0x03a_u8 != 2) {
-    if (g_ui.f_0x03a_u8 != 3) {
+  if (g_ui.tuner_key_req != 2) {
+    if (g_ui.tuner_key_req != 3) {
       g_ui.tuner_result = 0;
       return;
     }
     g_ui.tuner_result = 1;
     bVar2 = swtimer_expired(0x20);
     if (bVar2 != 0) {
-      g_ui.f_0x03a_u8 = 0;
+      g_ui.tuner_key_req = 0;
       return;
     }
     return;

@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0021b34c @ 0021b34c (503 bytes)
+// ===== rpmsg_lite_master_init @ 0021b34c (503 bytes)
 
-int * FUN_0021b34c(int param_1,int param_2,uint param_3,undefined4 param_4,int *param_5)
+/* rpmsg_lite.c: vq names rx_vq/tx_vq 0x2062D4, callbacks 0x21AE00/0x21AED4 [inference] */
+
+int * rpmsg_lite_master_init(int param_1,int param_2,uint param_3,undefined4 param_4,int *param_5)
 
 {
   bool bVar1;
@@ -40,8 +42,8 @@ int * FUN_0021b34c(int param_1,int param_2,uint param_3,undefined4 param_4,int *
   }
 LAB_0021b36c:
   if (((param_3 < 2) && (param_1 != 0)) && (param_5 != (int *)0x0)) {
-    FUN_0021aafc(param_5,0,0xf4);
-    iVar2 = FUN_0021aa90();
+    env_memset(param_5,0,0xf4);
+    iVar2 = env_init();
     if (iVar2 == 0) {
       uVar8 = param_1 + 0x800;
       if ((uVar8 & 3) != 0) {
@@ -52,14 +54,14 @@ LAB_0021b36c:
       param_5[6] = uVar11 >> 9;
       param_5[7] = uVar11 >> 9;
       ppcStack_38 = &pcStack_60;
-      param_5[8] = (int)&PTR_FUN_002008d0;
+      param_5[8] = (int)&PTR_vq_tx_master_002008d0;
       pcStack_60 = "rx_vq";
-      apcStack_58[0] = FUN_0021ae00;
+      apcStack_58[0] = rpmsg_lite_rx_callback;
       ppcVar5 = apcStack_58;
       pcStack_5c = "tx_vq";
       piVar4 = local_50;
       piVar6 = param_5 + 9;
-      apcStack_58[1] = FUN_0021aed4;
+      apcStack_58[1] = rpmsg_lite_tx_callback;
       uVar11 = 0;
       do {
         local_50[3] = 0x10;
@@ -69,14 +71,15 @@ LAB_0021b36c:
           local_50[2] = 0;
         }
         local_50[2] = param_1 + local_50[2];
-        FUN_0021aafc(local_50[2],0,0x4e);
+        env_memset(local_50[2],0,0x4e);
         uVar9 = ae_zext16(uStack_3c | uVar11 & 1);
-        iVar2 = FUN_0021b854(uVar9,*ppcStack_38,local_50 + 2,*ppcVar5,FUN_0021af90,piVar4,piVar6);
+        iVar2 = virtqueue_create_static
+                          (uVar9,*ppcStack_38,local_50 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar6);
         if (iVar2 != 0) {
           return (int *)0x0;
         }
-        FUN_0021bc54(*piVar4);
-        FUN_0021bb54(*piVar4);
+        vq_ring_init(*piVar4);
+        virtqueue_disable_cb(*piVar4);
         ppcVar5 = ppcVar5 + 1;
         piVar6 = piVar6 + 0x1a;
         *(int **)(*piVar4 + 100) = param_5;
@@ -84,7 +87,7 @@ LAB_0021b36c:
         uVar11 = uVar11 + 1;
         piVar4 = piVar4 + 1;
       } while (uVar11 != 2);
-      iVar2 = FUN_0021ab80(param_5 + 3,1);
+      iVar2 = env_create_mutex(param_5 + 3,1);
       if (iVar2 == 0) {
         param_5[1] = local_50[1];
         piVar4 = local_50;
@@ -104,21 +107,21 @@ LAB_0021b537:
               param_5[6] = iVar7 + -1;
               iVar7 = param_5[5] + (uVar11 - iVar7) * 0x200;
               if (iVar7 == 0) goto LAB_0021b537;
-              FUN_0021aafc(iVar7,0,0x200);
+              env_memset(iVar7,0,0x200);
               iVar10 = *piVar4;
               if (*param_5 == iVar10) {
-                iVar3 = FUN_0021b938(iVar10,iVar7,0x200);
+                iVar3 = virtqueue_fill_avail_buffers(iVar10,iVar7,0x200);
                 iVar2 = 0;
               }
               else {
                 iVar3 = iVar2;
                 if (param_5[1] == iVar10) {
-                  iVar2 = FUN_0021bae0(iVar10,iVar7,0x200);
+                  iVar2 = virtqueue_fill_used_buffers(iVar10,iVar7,0x200);
                   iVar3 = iVar2;
                 }
               }
               if (iVar3 != 0) {
-                FUN_0021ab8c(param_5[3]);
+                env_delete_mutex(param_5[3]);
                 return (int *)0x0;
               }
               uVar8 = uVar8 + 1;
@@ -129,12 +132,12 @@ LAB_0021b537:
           if (piVar4 == local_50 + 2) {
             platform_init_interrupt(*(undefined2 *)(*param_5 + 0x50));
             platform_init_interrupt(*(undefined2 *)(param_5[1] + 0x50));
-            FUN_0021abe8(*(undefined2 *)(*param_5 + 0x50));
-            FUN_0021abe8(*(undefined2 *)(param_5[1] + 0x50));
+            env_disable_interrupt(*(undefined2 *)(*param_5 + 0x50));
+            env_disable_interrupt(*(undefined2 *)(param_5[1] + 0x50));
             param_5[4] = 1;
-            FUN_0021abdc(*(undefined2 *)(*param_5 + 0x50));
-            FUN_0021abdc(*(undefined2 *)(param_5[1] + 0x50));
-            FUN_0021bb84(*param_5);
+            env_enable_interrupt(*(undefined2 *)(*param_5 + 0x50));
+            env_enable_interrupt(*(undefined2 *)(param_5[1] + 0x50));
+            virtqueue_kick(*param_5);
             return param_5;
           }
         } while( true );
@@ -168,18 +171,18 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
   char **ppcStack_28;
   
   if (((param_2 < 2) && (param_1 != 0)) && (param_4 != (int *)0x0)) {
-    FUN_0021aafc(param_4,0,0xf4);
-    iVar1 = FUN_0021aa90();
+    env_memset(param_4,0,0xf4);
+    iVar1 = env_init();
     if (iVar1 == 0) {
       ppcVar5 = apcStack_48;
       piVar4 = local_40;
       uVar7 = param_1 + 0x800;
       pcStack_50 = "tx_vq";
       pcStack_4c = "rx_vq";
-      apcStack_48[0] = FUN_0021aed4;
-      apcStack_48[1] = FUN_0021ae00;
+      apcStack_48[0] = rpmsg_lite_tx_callback;
+      apcStack_48[1] = rpmsg_lite_rx_callback;
       ppcStack_28 = &pcStack_50;
-      param_4[8] = (int)&PTR_FUN_002008e0;
+      param_4[8] = (int)&PTR_vq_tx_remote_002008e0;
       piVar3 = param_4 + 9;
       uStack_2c = param_2 << 1;
       uVar2 = 0;
@@ -192,7 +195,8 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
         local_40[3] = 0x10;
         uVar6 = ae_zext16(uStack_2c | uVar2 & 1);
         local_40[2] = param_1;
-        iVar1 = FUN_0021b854(uVar6,*ppcStack_28,local_40 + 2,*ppcVar5,FUN_0021af90,piVar4,piVar3);
+        iVar1 = virtqueue_create_static
+                          (uVar6,*ppcStack_28,local_40 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar3);
         if (iVar1 != 0) {
           return (int *)0x0;
         }
@@ -203,17 +207,17 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
         uVar2 = uVar2 + 1;
         piVar4 = piVar4 + 1;
       } while (uVar2 != 2);
-      iVar1 = FUN_0021ab80(param_4 + 3,1);
+      iVar1 = env_create_mutex(param_4 + 3,1);
       if (iVar1 == 0) {
         param_4[1] = local_40[0];
         *param_4 = local_40[1];
         platform_init_interrupt(*(undefined2 *)(local_40[1] + 0x50));
         platform_init_interrupt(*(undefined2 *)(param_4[1] + 0x50));
-        FUN_0021abe8(*(undefined2 *)(*param_4 + 0x50));
-        FUN_0021abe8(*(undefined2 *)(param_4[1] + 0x50));
+        env_disable_interrupt(*(undefined2 *)(*param_4 + 0x50));
+        env_disable_interrupt(*(undefined2 *)(param_4[1] + 0x50));
         param_4[4] = 0;
-        FUN_0021abdc(*(undefined2 *)(*param_4 + 0x50));
-        FUN_0021abdc(*(undefined2 *)(param_4[1] + 0x50));
+        env_enable_interrupt(*(undefined2 *)(*param_4 + 0x50));
+        env_enable_interrupt(*(undefined2 *)(param_4[1] + 0x50));
         return param_4;
       }
     }
@@ -222,26 +226,28 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
 }
 
 
-// ===== FUN_0021b664 @ 0021b664 (104 bytes)
+// ===== rpmsg_lite_deinit @ 0021b664 (104 bytes)
 
-undefined4 FUN_0021b664(int *param_1)
+/* rpmsg_lite.c order [inference] */
+
+undefined4 rpmsg_lite_deinit(int *param_1)
 
 {
   if (param_1 == (int *)0x0) {
     return 0xffffec75;
   }
   if (((*param_1 != 0) && (param_1[1] != 0)) && (param_1[3] != 0)) {
-    FUN_0021abe8(*(undefined2 *)(*param_1 + 0x50));
-    FUN_0021abe8(*(undefined2 *)(param_1[1] + 0x50));
+    env_disable_interrupt(*(undefined2 *)(*param_1 + 0x50));
+    env_disable_interrupt(*(undefined2 *)(param_1[1] + 0x50));
     param_1[4] = 0;
-    FUN_0021abdc(*(undefined2 *)(*param_1 + 0x50));
-    FUN_0021abdc(*(undefined2 *)(param_1[1] + 0x50));
+    env_enable_interrupt(*(undefined2 *)(*param_1 + 0x50));
+    env_enable_interrupt(*(undefined2 *)(param_1[1] + 0x50));
     platform_deinit_interrupt(*(undefined2 *)(*param_1 + 0x50));
     platform_deinit_interrupt(*(undefined2 *)(param_1[1] + 0x50));
-    FUN_0021ba3c(*param_1);
-    FUN_0021ba3c(param_1[1]);
-    FUN_0021ab8c(param_1[3]);
-    FUN_0021aac0();
+    virtqueue_free_static(*param_1);
+    virtqueue_free_static(param_1[1]);
+    env_delete_mutex(param_1[3]);
+    env_deinit();
     return 0;
   }
   do {
@@ -250,9 +256,11 @@ undefined4 FUN_0021b664(int *param_1)
 }
 
 
-// ===== FUN_0021b6d0 @ 0021b6d0 (99 bytes)
+// ===== rpmsg_ns_rx_cb @ 0021b6d0 (99 bytes)
 
-undefined4 FUN_0021b6d0(int param_1,int param_2,undefined4 param_3,undefined4 *param_4)
+/* rpmsg_ns.c static; passed to rpmsg_lite_create_ept by rpmsg_ns_bind [inference] */
+
+undefined4 rpmsg_ns_rx_cb(int param_1,int param_2,undefined4 param_3,undefined4 *param_4)
 
 {
   if (param_4 == (undefined4 *)0x0) {
@@ -287,7 +295,7 @@ int rpmsg_ns_bind(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
     *(undefined4 *)(param_4 + 0x24) = param_3;
     *(int *)(param_4 + 0x20) = param_2;
     *(int *)(param_4 + 0x2c) = param_4 + 0x20;
-    uVar1 = rpmsg_lite_create_ept(param_1,0x35,FUN_0021b6d0,param_4 + 0x20,param_4);
+    uVar1 = rpmsg_lite_create_ept(param_1,0x35,rpmsg_ns_rx_cb,param_4 + 0x20,param_4);
     *(undefined4 *)(param_4 + 0x28) = uVar1;
     return param_4 + 0x28;
   }
@@ -295,14 +303,16 @@ int rpmsg_ns_bind(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
 }
 
 
-// ===== FUN_0021b768 @ 0021b768 (16 bytes)
+// ===== rpmsg_ns_unbind @ 0021b768 (16 bytes)
 
-undefined4 FUN_0021b768(undefined4 param_1,undefined4 *param_2)
+/* rpmsg_ns.c: rpmsg_lite_destroy_ept [inference] */
+
+undefined4 rpmsg_ns_unbind(undefined4 param_1,undefined4 *param_2)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021b034(param_1,*param_2);
+  uVar1 = rpmsg_lite_destroy_ept(param_1,*param_2);
   return uVar1;
 }
 
@@ -320,7 +330,7 @@ undefined4 rpmsg_ns_announce(undefined4 param_1,undefined4 *param_2,int param_3,
   undefined4 uStack_2c;
   
   if ((param_3 != 0) && (param_2 != (undefined4 *)0x0)) {
-    FUN_0021ab2c(auStack_50,param_3,0x20);
+    env_strncpy(auStack_50,param_3,0x20);
     uStack_30 = *param_2;
     uStack_2c = param_4;
     uVar1 = rpmsg_lite_send(param_1,param_2,0x35,auStack_50,0x28,0xffffffff);
@@ -330,13 +340,14 @@ undefined4 rpmsg_ns_announce(undefined4 param_1,undefined4 *param_2,int param_3,
 }
 
 
-// ===== FUN_0021b7c0 @ 0021b7c0 (148 bytes)
+// ===== virtqueue_create @ 0021b7c0 (148 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0021b7d1) */
+/* virtqueue.c: env_allocate_memory, ERROR_VQUEUE_INVLD_PARAM -3004 [inference] */
 
 undefined4
-FUN_0021b7c0(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param_4,
-            undefined4 param_5,int *param_6)
+virtqueue_create(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param_4,
+                undefined4 param_5,int *param_6)
 
 {
   ushort uVar1;
@@ -347,10 +358,10 @@ FUN_0021b7c0(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param
   
   memw();
   memw();
-  iVar2 = FUN_0021aae4(0x68);
+  iVar2 = env_allocate_memory(0x68);
   if (iVar2 != 0) {
-    FUN_0021aafc(iVar2,0,0x68);
-    FUN_0021ab2c(iVar2,param_2,0x20);
+    env_memset(iVar2,0,0x68);
+    env_strncpy(iVar2,param_2,0x20);
     *(undefined4 *)(iVar2 + 0x34) = param_5;
     *(undefined4 *)(iVar2 + 0x30) = param_4;
     *(undefined2 *)(iVar2 + 0x50) = param_1;
@@ -374,13 +385,15 @@ FUN_0021b7c0(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param
 }
 
 
-// ===== FUN_0021b854 @ 0021b854 (140 bytes)
+// ===== virtqueue_create_static @ 0021b854 (140 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0021b865) */
+/* virtqueue.c; called by both init functions [inference] */
 
 undefined4
-FUN_0021b854(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param_4,
-            undefined4 param_5,int *param_6,int param_7)
+virtqueue_create_static
+          (undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param_4,undefined4 param_5,
+          int *param_6,int param_7)
 
 {
   ushort uVar1;
@@ -390,8 +403,8 @@ FUN_0021b854(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param
   
   memw();
   memw();
-  FUN_0021aafc(param_7,0,0x68);
-  FUN_0021ab2c(param_7,param_2,0x20);
+  env_memset(param_7,0,0x68);
+  env_strncpy(param_7,param_2,0x20);
   *(undefined4 *)(param_7 + 0x34) = param_5;
   *(undefined4 *)(param_7 + 0x30) = param_4;
   uVar1 = *(ushort *)(param_3 + 2);
@@ -413,11 +426,12 @@ FUN_0021b854(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 param
 }
 
 
-// ===== FUN_0021b8e8 @ 0021b8e8 (77 bytes)
+// ===== virtqueue_add_buffer @ 0021b8e8 (77 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0021b8f9) */
+/* virtqueue.c order [inference] */
 
-undefined4 FUN_0021b8e8(int param_1,undefined2 param_2)
+undefined4 virtqueue_add_buffer(int param_1,undefined2 param_2)
 
 {
   short sVar1;
@@ -430,7 +444,7 @@ undefined4 FUN_0021b8e8(int param_1,undefined2 param_2)
   uVar2 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
   iVar3 = ae_zext16(uVar2 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
   *(undefined2 *)(iVar3 * 2 + *(int *)(param_1 + 0x48) + 4) = param_2;
-  FUN_0021ab60();
+  env_wmb();
   uVar4 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
   sVar1 = *(short *)(param_1 + 0x56);
   *(short *)(*(int *)(param_1 + 0x48) + 2) = (short)uVar4 + 1;
@@ -440,11 +454,12 @@ undefined4 FUN_0021b8e8(int param_1,undefined2 param_2)
 }
 
 
-// ===== FUN_0021b938 @ 0021b938 (123 bytes)
+// ===== virtqueue_fill_avail_buffers @ 0021b938 (123 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0021b949) */
+/* virtqueue.c order [inference] */
 
-undefined4 FUN_0021b938(int param_1,undefined4 param_2,undefined4 param_3)
+undefined4 virtqueue_fill_avail_buffers(int param_1,undefined4 param_2,undefined4 param_3)
 
 {
   ushort uVar1;
@@ -460,7 +475,7 @@ undefined4 FUN_0021b938(int param_1,undefined4 param_2,undefined4 param_3)
   memw();
   uVar4 = *(ushort *)(param_1 + 0x58);
   puVar7 = (undefined4 *)(*(int *)(param_1 + 0x44) + (uint)uVar4 * 0x10);
-  uVar5 = FUN_0021ab68(param_2);
+  uVar5 = env_map_vatopa(param_2);
   puVar7[2] = param_3;
   iVar8 = *(int *)(param_1 + 0x48);
   sVar2 = *(short *)(param_1 + 0x58);
@@ -472,7 +487,7 @@ undefined4 FUN_0021b938(int param_1,undefined4 param_2,undefined4 param_3)
   iVar6 = ae_zext16((uint)uVar1 & (uint)(&DAT_0000ffff + uVar3));
   *(short *)(param_1 + 0x58) = sVar2 + 1;
   *(ushort *)(iVar6 * 2 + iVar8 + 4) = uVar4;
-  FUN_0021ab60();
+  env_wmb();
   uVar5 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
   sVar2 = *(short *)(param_1 + 0x56);
   *(short *)(*(int *)(param_1 + 0x48) + 2) = (short)uVar5 + 1;
@@ -482,9 +497,11 @@ undefined4 FUN_0021b938(int param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0021b9b4 @ 0021b9b4 (95 bytes)
+// ===== virtqueue_get_buffer @ 0021b9b4 (95 bytes)
 
-undefined4 FUN_0021b9b4(int param_1,undefined4 *param_2,int param_3)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_get_buffer(int param_1,undefined4 *param_2,int param_3)
 
 {
   int iVar1;
@@ -496,7 +513,7 @@ undefined4 FUN_0021b9b4(int param_1,undefined4 *param_2,int param_3)
       iVar1 = ae_zext16((uint)*(ushort *)(param_1 + 0x5a) &
                         (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
       iVar1 = iVar1 * 8 + *(int *)(param_1 + 0x4c);
-      FUN_0021ab58();
+      env_rmb();
       uVar2 = (uint)*(ushort *)(iVar1 + 4);
       if (param_2 != (undefined4 *)0x0) {
         *param_2 = *(undefined4 *)(iVar1 + 8);
@@ -506,7 +523,7 @@ undefined4 FUN_0021b9b4(int param_1,undefined4 *param_2,int param_3)
       }
       uVar3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + uVar2 * 0x10);
       *(short *)(param_1 + 0x5a) = *(short *)(param_1 + 0x5a) + 1;
-      uVar3 = FUN_0021ab74(uVar3);
+      uVar3 = env_map_patova(uVar3);
       return uVar3;
     }
   }
@@ -514,18 +531,22 @@ undefined4 FUN_0021b9b4(int param_1,undefined4 *param_2,int param_3)
 }
 
 
-// ===== FUN_0021ba14 @ 0021ba14 (15 bytes)
+// ===== virtqueue_get_buffer_length @ 0021ba14 (15 bytes)
 
-undefined4 FUN_0021ba14(int param_1,int param_2)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_get_buffer_length(int param_1,int param_2)
 
 {
   return *(undefined4 *)(*(int *)(param_1 + 0x44) + param_2 * 0x10 + 8);
 }
 
 
-// ===== FUN_0021ba24 @ 0021ba24 (24 bytes)
+// ===== virtqueue_free @ 0021ba24 (24 bytes)
 
-void FUN_0021ba24(int param_1)
+/* virtqueue.c: env_free_memory [inference] */
+
+void virtqueue_free(int param_1)
 
 {
   if (param_1 != 0) {
@@ -533,15 +554,17 @@ void FUN_0021ba24(int param_1)
       *(undefined4 *)(param_1 + 0x28) = 0;
       *(undefined4 *)(param_1 + 0x2c) = 0;
     }
-    FUN_0021aaf0(param_1);
+    env_free_memory(param_1);
   }
   return;
 }
 
 
-// ===== FUN_0021ba3c @ 0021ba3c (21 bytes)
+// ===== virtqueue_free_static @ 0021ba3c (21 bytes)
 
-void FUN_0021ba3c(int param_1)
+/* virtqueue.c order [inference] */
+
+void virtqueue_free_static(int param_1)
 
 {
   if ((param_1 != 0) && (*(int *)(param_1 + 0x2c) != 0)) {
@@ -553,9 +576,11 @@ void FUN_0021ba3c(int param_1)
 }
 
 
-// ===== FUN_0021ba54 @ 0021ba54 (84 bytes)
+// ===== virtqueue_get_available_buffer @ 0021ba54 (84 bytes)
 
-undefined4 FUN_0021ba54(int param_1,undefined4 param_2,undefined4 *param_3)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_get_available_buffer(int param_1,undefined4 param_2,undefined4 *param_3)
 
 {
   ushort uVar1;
@@ -569,18 +594,20 @@ undefined4 FUN_0021ba54(int param_1,undefined4 param_2,undefined4 *param_3)
   iVar3 = ae_zext16((uint)uVar1 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
   *(ushort *)(param_1 + 0x5c) = uVar1 + 1;
   ae_s16i_n((uint)*(ushort *)(iVar3 * 2 + *(int *)(param_1 + 0x48) + 4),param_2,0);
-  FUN_0021ab58();
+  env_rmb();
   iVar3 = ae_l16ui_n(param_2,0);
-  uVar2 = FUN_0021ab74(*(undefined4 *)(*(int *)(param_1 + 0x44) + iVar3 * 0x10));
+  uVar2 = env_map_patova(*(undefined4 *)(*(int *)(param_1 + 0x44) + iVar3 * 0x10));
   iVar3 = ae_l16ui_n(param_2,0);
   *param_3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + iVar3 * 0x10 + 8);
   return uVar2;
 }
 
 
-// ===== FUN_0021baa8 @ 0021baa8 (54 bytes)
+// ===== virtqueue_add_consumed_buffer @ 0021baa8 (54 bytes)
 
-undefined4 FUN_0021baa8(int param_1,uint param_2,undefined4 param_3)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_add_consumed_buffer(int param_1,uint param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -595,16 +622,18 @@ undefined4 FUN_0021baa8(int param_1,uint param_2,undefined4 param_3)
   iVar2 = iVar2 * 8 + *(int *)(param_1 + 0x4c);
   *(uint *)(iVar2 + 4) = param_2;
   *(undefined4 *)(iVar2 + 8) = param_3;
-  FUN_0021ab60();
+  env_wmb();
   uVar3 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
   *(short *)(*(int *)(param_1 + 0x4c) + 2) = (short)uVar3 + 1;
   return 0;
 }
 
 
-// ===== FUN_0021bae0 @ 0021bae0 (98 bytes)
+// ===== virtqueue_fill_used_buffers @ 0021bae0 (98 bytes)
 
-undefined4 FUN_0021bae0(int param_1,int param_2,undefined4 param_3)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_fill_used_buffers(int param_1,int param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -618,7 +647,7 @@ undefined4 FUN_0021bae0(int param_1,int param_2,undefined4 param_3)
   uVar1 = (uint)uVar5;
   iVar6 = *(int *)(param_1 + 0x44);
   if (param_2 != 0) {
-    uVar3 = FUN_0021ab68(param_2);
+    uVar3 = env_map_vatopa(param_2);
     puVar4 = (undefined4 *)(iVar6 + uVar1 * 0x10);
     puVar4[1] = 0;
     puVar4[2] = param_3;
@@ -632,28 +661,32 @@ undefined4 FUN_0021bae0(int param_1,int param_2,undefined4 param_3)
   iVar6 = iVar6 * 8 + *(int *)(param_1 + 0x4c);
   *(uint *)(iVar6 + 4) = uVar1;
   *(undefined4 *)(iVar6 + 8) = param_3;
-  FUN_0021ab60();
+  env_wmb();
   uVar3 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
   *(short *)(*(int *)(param_1 + 0x4c) + 2) = (short)uVar3 + 1;
   return 0;
 }
 
 
-// ===== FUN_0021bb44 @ 0021bb44 (16 bytes)
+// ===== virtqueue_enable_cb @ 0021bb44 (16 bytes)
 
-undefined4 FUN_0021bb44(undefined4 param_1)
+/* virtqueue.c: vq_ring_enable_interrupt [inference] */
+
+undefined4 virtqueue_enable_cb(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021bcd8(param_1,0);
+  uVar1 = vq_ring_enable_interrupt(param_1,0);
   return uVar1;
 }
 
 
-// ===== FUN_0021bb54 @ 0021bb54 (46 bytes)
+// ===== virtqueue_disable_cb @ 0021bb54 (46 bytes)
 
-void FUN_0021bb54(int param_1)
+/* virtqueue.c order [inference] */
+
+void virtqueue_disable_cb(int param_1)
 
 {
   uint uVar1;
@@ -671,15 +704,17 @@ void FUN_0021bb54(int param_1)
 }
 
 
-// ===== FUN_0021bb84 @ 0021bb84 (90 bytes)
+// ===== virtqueue_kick @ 0021bb84 (90 bytes)
 
-void FUN_0021bb84(int param_1)
+/* virtqueue.c order [inference] */
+
+void virtqueue_kick(int param_1)
 
 {
   uint uVar1;
   bool bVar2;
   
-  FUN_0021ab50();
+  env_mb();
   if ((*(uint *)(param_1 + 0x20) >> 1 & 1) == 0) {
     uVar1 = ae_l16ui_n(*(int *)(param_1 + 0x4c),0);
     bVar2 = false;
@@ -700,9 +735,11 @@ void FUN_0021bb84(int param_1)
 }
 
 
-// ===== FUN_0021bbe0 @ 0021bbe0 (62 bytes)
+// ===== virtqueue_dump @ 0021bbe0 (62 bytes)
 
-void FUN_0021bbe0(int param_1)
+/* virtqueue.c: printf of "VQ: %s - size=%d; ..." 0x2062E4 [fact for the string] */
+
+void virtqueue_dump(int param_1)
 
 {
   undefined4 uVar1;
@@ -717,17 +754,19 @@ void FUN_0021bbe0(int param_1)
   uVar3 = ae_zext16(uVar4 - *(ushort *)(param_1 + 0x5a));
   uVar2 = ae_l16ui_n(*(int *)(param_1 + 0x48),0);
   uVar1 = ae_l16ui_n(*(int *)(param_1 + 0x4c),0);
-  FUN_0022bff0("VQ: %s - size=%d; used=%d; queued=%d; desc_head_idx=%d; avail.idx=%d; used_cons_idx=%d; used.idx=%d; avail.flags=0x%x; used.flags=0x%x\r\n"
-               ,param_1,*(undefined2 *)(param_1 + 0x52),uVar3,*(undefined2 *)(param_1 + 0x56),
-               *(undefined2 *)(param_1 + 0x58),*(undefined2 *)(*(int *)(param_1 + 0x48) + 2),
-               (uint)*(ushort *)(param_1 + 0x5a),uVar4,uVar2,uVar1);
+  printf("VQ: %s - size=%d; used=%d; queued=%d; desc_head_idx=%d; avail.idx=%d; used_cons_idx=%d; used.idx=%d; avail.flags=0x%x; used.flags=0x%x\r\n"
+         ,param_1,*(undefined2 *)(param_1 + 0x52),uVar3,*(undefined2 *)(param_1 + 0x56),
+         *(undefined2 *)(param_1 + 0x58),*(undefined2 *)(*(int *)(param_1 + 0x48) + 2),
+         (uint)*(ushort *)(param_1 + 0x5a),uVar4,uVar2,uVar1);
   return;
 }
 
 
-// ===== FUN_0021bc20 @ 0021bc20 (50 bytes)
+// ===== virtqueue_get_desc_size @ 0021bc20 (50 bytes)
 
-undefined4 FUN_0021bc20(int param_1)
+/* virtqueue.c order [inference] */
+
+undefined4 virtqueue_get_desc_size(int param_1)
 
 {
   int iVar1;
@@ -743,9 +782,11 @@ undefined4 FUN_0021bc20(int param_1)
 }
 
 
-// ===== FUN_0021bc54 @ 0021bc54 (130 bytes)
+// ===== vq_ring_init @ 0021bc54 (130 bytes)
 
-ulonglong FUN_0021bc54(uint param_1)
+/* virtqueue.c; called by rpmsg_lite_master_init [inference] */
+
+ulonglong vq_ring_init(uint param_1)
 
 {
   short sVar1;
@@ -785,9 +826,11 @@ ulonglong FUN_0021bc54(uint param_1)
 }
 
 
-// ===== FUN_0021bcd8 @ 0021bcd8 (73 bytes)
+// ===== vq_ring_enable_interrupt @ 0021bcd8 (73 bytes)
 
-undefined4 FUN_0021bcd8(int param_1,uint param_2)
+/* virtqueue.c static; called by virtqueue_enable_cb [inference] */
+
+undefined4 vq_ring_enable_interrupt(int param_1,uint param_2)
 
 {
   int iVar1;
@@ -802,7 +845,7 @@ undefined4 FUN_0021bcd8(int param_1,uint param_2)
     *(short *)(*(int *)(param_1 + 0x40) * 2 + iVar1 + 4) =
          *(short *)(param_1 + 0x5a) + (short)param_2;
   }
-  FUN_0021ab50();
+  env_mb();
   uVar2 = ae_zext16((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) -
                     (uint)*(ushort *)(param_1 + 0x5a));
   if (param_2 < uVar2) {
@@ -812,9 +855,11 @@ undefined4 FUN_0021bcd8(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0021bd24 @ 0021bd24 (16 bytes)
+// ===== virtqueue_notification @ 0021bd24 (16 bytes)
 
-void FUN_0021bd24(int param_1)
+/* virtqueue.c: called by env_isr [inference] */
+
+void virtqueue_notification(int param_1)
 
 {
   if ((param_1 != 0) && (*(code **)(param_1 + 0x30) != (code *)0x0)) {
@@ -1177,9 +1222,12 @@ void regfile_capture_append(uint param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0021c140 @ 0021c140 (211 bytes)
+// ===== sincos_fft_tables_init @ 0021c140 (211 bytes)
 
-void FUN_0021c140(void)
+/* DSP main: memset 0x239100, 2*pi constant, fft_realf_ie and fft_spectrumf on tables 0x200CF8 /
+   0x201900, manual_notch_init [inference] */
+
+void sincos_fft_tables_init(void)
 
 {
   undefined4 uVar1;
@@ -1218,7 +1266,7 @@ void FUN_0021c140(void)
     }
     uVar1 = ae_s32_l_i(uVar3);
     uVar4 = ae_l32_i(uVar1);
-    cosf_();
+    scl_cosinef();
     uVar7 = ae_l32_i(uVar1);
     uVar1 = ae_s32_l_ip(uVar4);
     *puVar6 = uVar1;
@@ -1227,8 +1275,8 @@ void FUN_0021c140(void)
     uVar8 = ae_l32_i(0);
   } while (puVar6 != (undefined4 *)&DAT_0023b110);
   DAT_002390f0 = rsr_ccount(in_CCOUNT);
-  FUN_00233670(&DAT_00239100,&DAT_0023a110,FLOAT_ARRAY_00201900,1,0x400);
-  FUN_00218640(&DAT_0023b110,&DAT_00239100,0x400,1);
+  fft_realf_ie(&DAT_00239100,&DAT_0023a110,FLOAT_ARRAY_00201900,1,0x400);
+  fft_spectrumf(&DAT_0023b110,&DAT_00239100,0x400,1);
   DAT_002390f4 = rsr_ccount(in_CCOUNT);
   DAT_002390f8 = DAT_002390f4 - DAT_002390f0;
   return;
@@ -1371,8 +1419,8 @@ void Thread_Ipc_entry(undefined4 *param_1)
   undefined1 auStack_bc [188];
   
   MU_Init(&MUB_VER);
-  FUN_0022700c(param_1 + 0x3ac,0,0);
-  uVar2 = FUN_0022ba40(0x618);
+  xos_mutex_create(param_1 + 0x3ac,0,0);
+  uVar2 = malloc(0x618);
   param_1[2] = uVar2;
   xos_msgq_create(uVar2,10,0x98,0);
   uVar2 = rpmsg_lite_remote_init(&DAT_20020000,1,0,auStack_1d0);
@@ -1427,7 +1475,7 @@ undefined4 xos_create_main_ipc_threads(void)
   DAT_0023841c = 0x1194000;
   create_rx_tx_path_threads();
   fc1_spi_dma_init();
-  FUN_0021c140();
+  sincos_fft_tables_init();
   xos_thread_create(&DAT_0023f920,0,Thread_Main_entry,0,"Thread_Main",&DAT_00241170,&DAT_00001398,4,
                     0,0);
   xos_thread_create(&DAT_0023fdd8,0,Thread_Ipc_entry,&DAT_00240290,"Thread_Ipc",&DAT_00242510,
@@ -1438,9 +1486,13 @@ undefined4 xos_create_main_ipc_threads(void)
 }
 
 
-// ===== FUN_0021c560 @ 0021c560 (54 bytes)
+// ===== deinterleave2_u32 @ 0021c560 (54 bytes)
 
-undefined4 * FUN_0021c560(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,int param_4)
+/* (dst0, dst1, src, n): src[2i] -> dst0[i], src[2i+1] -> dst1[i]; used by codec_in_from_dma and
+   rxif_dma_to_fifo [fact for the code] */
+
+undefined4 *
+deinterleave2_u32(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,int param_4)
 
 {
   undefined4 *puVar1;
@@ -1455,9 +1507,13 @@ undefined4 * FUN_0021c560(undefined4 *param_1,undefined4 *param_2,undefined4 *pa
 }
 
 
-// ===== FUN_0021c598 @ 0021c598 (52 bytes)
+// ===== interleave2_u32 @ 0021c598 (52 bytes)
 
-undefined4 * FUN_0021c598(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,int param_4)
+/* (dst, src0, src1, n): the inverse; used by codec_out_fill_dma and txaf_fifo_pop_to_dma [fact for
+   the code] */
+
+undefined4 *
+interleave2_u32(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,int param_4)
 
 {
   undefined4 uVar1;
@@ -1492,9 +1548,12 @@ undefined1 regfile_gpio_sel(void)
 }
 
 
-// ===== FUN_0021c600 @ 0021c600 (15 bytes)
+// ===== apf_init @ 0021c600 (15 bytes)
 
-void FUN_0021c600(void)
+/* clears the APF state 0x244510; called by rx_audio_chain_init, placed before apf_config
+   [inference] */
+
+void apf_init(void)
 
 {
   DAT_00244510 = 0;
@@ -1530,7 +1589,7 @@ void apf_config(void)
         iVar2 = 1;
       }
       uVar3 = ae_zext16(iVar2);
-      i2f_scaled(uVar3,0);
+      scl_int2float(uVar3,0);
       DAT_00244514 = ae_s32_l_i(in_aed0);
     }
     else {
@@ -1567,13 +1626,13 @@ void apf_design_iir(void)
   }
   uVar7 = ae_l32_i(DAT_00244514);
   uVar5 = (ulonglong)(uint)((float)uVar7 * 3.1415927 * 8.333333e-05);
-  uVar12 = tanf_();
+  uVar12 = scl_tanf();
   uVar1 = ae_s32_l_i(uVar5);
   uVar7 = const_s(1);
   fVar11 = (float)uVar7;
   uVar7 = ae_mov(uVar5);
   uVar2 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * (float)uVar7));
-  divf_((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),0x3d088889);
+  __divsf3((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),0x3d088889);
   uVar7 = ae_l32_i(uVar1);
   fVar6 = (float)uVar7;
   uVar7 = ae_l32_i(uVar2);
@@ -1642,7 +1701,7 @@ void apf_design_fir(void)
         uVar10 = ae_l32_i(*local_30);
         uVar2 = ae_s32_l_i(uVar10);
         fVar6 = (float)uVar8 * (float)uVar11;
-        cosf_();
+        scl_cosinef();
         uVar10 = ae_l32_i(uVar2);
         uVar8 = ae_l32_i(&RSTCTL0_SYSRSTSTAT);
         uVar2 = ae_s32_l_ip((ulonglong)(uint)(fVar6 * (float)uVar10 * (float)uVar8));
@@ -1652,7 +1711,7 @@ void apf_design_fir(void)
         local_30 = local_30 + 1;
       } while (iVar7 != iVar9 - (iVar4 >> 1));
     }
-    DAT_0024451c = fir_init(&DAT_00244a00,iVar9,&DAT_00244560);
+    DAT_0024451c = bkfiraf_init(&DAT_00244a00,iVar9,&DAT_00244560);
     return;
   }
   return;

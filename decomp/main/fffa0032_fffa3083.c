@@ -1204,10 +1204,10 @@ uint scope_level_ptr(uint param_1,byte param_2)
   
   bVar1 = freq_range_index(param_1);
   if (param_2 == 0) {
-    puStack_14 = (&PTR_g_opstate_f_0x1a0_u8_fff88648)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_rx_0__fff88648)[bVar1];
   }
   else {
-    puStack_14 = (&PTR_g_opstate_f_0x1ae_u8_fff88680)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_tx_0__fff88680)[bVar1];
   }
   return (uint)puStack_14;
 }

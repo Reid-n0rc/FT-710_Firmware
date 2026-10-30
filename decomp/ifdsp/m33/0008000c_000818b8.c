@@ -31,9 +31,9 @@ void power_set_deepsleep_pmc_cfg(void)
 {
   int iVar1;
   
-  iVar1 = DAT_40135020;
+  iVar1 = PMC_BIASCFG;
   if (iVar1 != 0x4040808) {
-    DAT_40135020 = 0x4040808;
+    PMC_BIASCFG = 0x4040808;
   }
   iVar1 = PMC_SLEEPCTRL;
   if (iVar1 != 10) {

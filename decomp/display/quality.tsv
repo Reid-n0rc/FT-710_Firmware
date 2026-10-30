@@ -9,8 +9,8 @@ halt_baddata	4
 functions_with_halt_baddata	4
 functions_with_in_vars	60
 functions_with_unaff_vars	43
-functions_with_extraout_vars	68
-functions_with_in_unaff_extraout	159
+functions_with_extraout_vars	67
+functions_with_in_unaff_extraout	158
 undefined_nonff_bytes	86
 undefined_nonff_bytes:.text	86
 bookmarks_error	1

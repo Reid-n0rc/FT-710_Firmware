@@ -2636,7 +2636,7 @@ short FUN_fffde58a(char param_1)
     pcVar5 = pcVar5 + 1;
   }
   if (local_5 == '\0') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_c = 0x9d09;
       local_13 = g_ui.clar_flags_a & 1;
       local_14 = g_ui.clar_flags_a & 2;
@@ -2649,7 +2649,7 @@ short FUN_fffde58a(char param_1)
       local_10 = CONCAT11(g_opstate.vfo_b.clar_offset_be[0],g_opstate.vfo_b.clar_offset_be[1]);
     }
   }
-  else if (g_opstate.active_vfo == 0) {
+  else if (g_opstate.active_vfo == VFO_A) {
     local_c = 0x9d63;
     local_13 = g_ui.clar_flags_b & 1;
     local_14 = g_ui.clar_flags_b & 2;
@@ -3144,7 +3144,7 @@ ushort FUN_fffded19(void)
   local_10 = g_ui.freq_a;
   local_14 = g_ui.freq_b;
   if (g_ui.transmitting == 1) {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_10 = g_ui.freq_tx;
     }
     else {

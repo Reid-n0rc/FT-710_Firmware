@@ -66,7 +66,7 @@ void FUN_201322c8(undefined4 param_1)
   uVar2 = fwfile_status_text(0x208f4bfc,0);
   gui_update_layers();
   uStack_4c = fb_get_layer_addr(DAT_208085bc);
-  FUN_20133620();
+  scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   itron_dly_tsk(0x32);
   iVar3 = sd_state_bit6();
@@ -117,7 +117,7 @@ void FUN_201322c8(undefined4 param_1)
   iVar3 = 0;
   do {
     sprintf(&stack0xffffff88,&DAT_2042813c,(&DAT_208f4bf4)[iVar3]);
-    iVar4 = FUN_2014e208(iVar3 * 0x48 + 0x208f4c25,&stack0xffffff88);
+    iVar4 = strcasecmp(iVar3 * 0x48 + 0x208f4c25,&stack0xffffff88);
     if (0 < iVar4) {
       uStack_70 = CONCAT13(uStack_70._3_1_ | (byte)(1 << (7U - iVar3 & 0xff)),(uint3)uStack_70);
     }
@@ -609,7 +609,7 @@ int vdc5_layers_stop(uint param_1)
     uVar2 = (uint)bVar1;
     if (uVar2 == 0) {
       FUN_2011ba48(param_1,0xffffffff);
-      FUN_2011d7f0(param_1,0xffffffff,0,extraout_r3,unaff_r4);
+      vdc5_shrd_set_resource(param_1,0xffffffff,0,extraout_r3,unaff_r4);
       return 0;
     }
   }
@@ -635,10 +635,10 @@ int vdc5_channel_shutdown(uint param_1)
   FUN_2011d1e0();
   vdc5_int_callbacks_clear(param_1);
   FUN_201195e8(param_1);
-  FUN_2011d7d8(param_1,0,0,extraout_r3,unaff_r4);
+  vdc5_shrd_set_state(param_1,0,0,extraout_r3,unaff_r4);
   iVar1 = FUN_2011d5a8();
   if (iVar1 == 0) {
-    FUN_2011d7d8(param_1,4,0);
+    vdc5_shrd_set_state(param_1,4,0);
   }
   vdc5_module_stop((char)param_1);
   return 0;
@@ -707,7 +707,7 @@ void gui_start(void)
   FUN_201340a4();
   FUN_201342b4();
   FUN_20120d38();
-  FUN_20133620();
+  scope3d_tables_init();
   dmac8_m2m_init();
   sdr_dsp_link_init();
   iVar1 = vdc5_isr_create();
@@ -1011,7 +1011,7 @@ uint vdc5_vline_int_setup(uint param_1)
   DAT_20907f58 = 3;
   DAT_20907f5c = 0;
   DAT_20907f60 = 0;
-  uVar1 = FUN_20117c14();
+  uVar1 = r_vdc5_callback_isr_checked();
   return uVar1;
 }
 
@@ -1026,7 +1026,7 @@ uint vdc5_vline_cb_enable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = vdc5_vline_cb;
-  uVar1 = FUN_20117c14(param_1,&DAT_20907f58);
+  uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
 
@@ -1039,7 +1039,7 @@ uint vdc5_vline_cb_disable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = 0;
-  uVar1 = FUN_20117c14(param_1,&DAT_20907f58);
+  uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
 
@@ -1067,7 +1067,7 @@ int vdc5_isr_create(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,0x203a706c);
+  uVar1 = itron_acre_isr(0,&cisr_int78);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x4e);
     uVar1 = 0;
@@ -1260,10 +1260,10 @@ void link_ss_irq_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,0x203a7080);
+  uVar1 = itron_acre_isr(0,&cisr_sdr_ss_isr);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x217);
-    uVar1 = itron_acre_isr(0,0x203a7094);
+    uVar1 = itron_acre_isr(0,&cisr_dsp_ss_isr);
     if (0 < (int)uVar1) {
       gic_enable_irq(0x1c1);
       return;

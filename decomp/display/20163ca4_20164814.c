@@ -69,8 +69,8 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
-  FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
-  iVar2 = FUN_20164c90();
+  __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+  iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
   iVar3 = (param_5[1] - 1) * uVar6;
@@ -88,8 +88,8 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   if (0 < param_6) {
     do {
       uVar8 = __aeabi_i2d(iVar4);
-      FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
-      iVar5 = FUN_20164c90();
+      __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
+      iVar5 = __aeabi_d2iz();
       iVar1 = iVar4 * uVar6;
       iVar4 = iVar4 + 1;
       *(undefined2 *)((int)param_1 + (param_7 - iVar5 * uVar6) * 2 + iVar3) =
@@ -409,16 +409,18 @@ undefined4 FUN_201643cc(undefined4 *param_1)
 }
 
 
-// ===== FUN_201643f0 @ 201643f0 (28 bytes)
+// ===== ring32_post_inc @ 201643f0 (28 bytes)
 
-undefined2 FUN_201643f0(undefined2 *param_1)
+/* Returns *idx and sets it to the next value mod 32 [fact] */
+
+undefined2 ring32_post_inc(undefined2 *param_1)
 
 {
   undefined2 uVar1;
   undefined2 uVar2;
   
   uVar1 = *param_1;
-  uVar2 = FUN_20164870();
+  uVar2 = ring32_next();
   *param_1 = uVar2;
   return uVar1;
 }
@@ -439,16 +441,14 @@ void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
 void FUN_20164414(int param_1)
 
 {
-  undefined4 uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
+  uint uVar1;
+  t_cmtx local_18;
   
-  local_18 = 2;
-  uStack_14 = 0;
-  local_10 = 0;
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
   uVar1 = itron_acre_mtx(0,&local_18);
-  *(undefined4 *)(param_1 + 0x44) = uVar1;
+  *(uint *)(param_1 + 0x44) = uVar1;
   return;
 }
 
@@ -463,28 +463,31 @@ void FUN_20164454(int param_1,int param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_20164460 @ 20164460 (60 bytes)
+// ===== txpool_init_mutex @ 20164460 (60 bytes)
 
-void FUN_20164460(int param_1)
+/* Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init /
+   uart4_tx_init / mainlink_disp_init [fact] */
+
+void txpool_init_mutex(int param_1)
 
 {
-  undefined4 uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
+  uint uVar1;
+  t_cmtx local_18;
   
-  local_18 = 2;
-  uStack_14 = 0;
-  local_10 = 0;
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
   uVar1 = itron_acre_mtx(0,&local_18);
-  *(undefined4 *)(param_1 + 0x84) = uVar1;
+  *(uint *)(param_1 + 0x84) = uVar1;
   return;
 }
 
 
-// ===== FUN_201644a0 @ 201644a0 (12 bytes)
+// ===== txpool_set_slot @ 201644a0 (12 bytes)
 
-void FUN_201644a0(int param_1,int param_2,undefined4 param_3)
+/* obj->slot[n] (obj+4+4n) = buffer [fact] */
+
+void txpool_set_slot(int param_1,int param_2,undefined4 param_3)
 
 {
   *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
@@ -492,9 +495,12 @@ void FUN_201644a0(int param_1,int param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_201644ac @ 201644ac (56 bytes)
+// ===== txpool_next_slot @ 201644ac (56 bytes)
 
-undefined4 FUN_201644ac(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc /
+   uart4_tx_alloc / mainlink_disp_alloc [fact] */
+
+undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -502,10 +508,10 @@ undefined4 FUN_201644ac(int param_1,undefined4 param_2,undefined4 param_3,undefi
   undefined4 uStack_10;
   
   uStack_10 = param_4;
-  FUN_201571b8(&uStack_10,*(undefined4 *)(param_1 + 0x84),1);
-  iVar1 = FUN_201643f0(param_1);
+  mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x84),1);
+  iVar1 = ring32_post_inc(param_1);
   uVar2 = *(undefined4 *)(param_1 + iVar1 * 4 + 4);
-  FUN_201571d4(&uStack_10);
+  mutex_guard_dtor(&uStack_10);
   return uVar2;
 }
 
@@ -515,16 +521,14 @@ undefined4 FUN_201644ac(int param_1,undefined4 param_2,undefined4 param_3,undefi
 void FUN_201644e4(int param_1)
 
 {
-  undefined4 uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
+  uint uVar1;
+  t_cmtx local_18;
   
-  local_18 = 2;
-  uStack_14 = 0;
-  local_10 = 0;
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
   uVar1 = itron_acre_mtx(0,&local_18);
-  *(undefined4 *)(param_1 + 0x84) = uVar1;
+  *(uint *)(param_1 + 0x84) = uVar1;
   return;
 }
 
@@ -568,9 +572,11 @@ uint FUN_20164568(char *param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_201645a0 @ 201645a0 (68 bytes)
+// ===== ring16_push @ 201645a0 (68 bytes)
 
-void FUN_201645a0(ushort *param_1,undefined4 *param_2)
+/* Copies an 8-byte item into the slot at the tail if count < 16 [fact]; usbkbd_queue_key [fact] */
+
+void ring16_push(ushort *param_1,undefined4 *param_2)
 
 {
   ushort uVar1;
@@ -590,9 +596,11 @@ void FUN_201645a0(ushort *param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_201645e4 @ 201645e4 (20 bytes)
+// ===== ring16_reset @ 201645e4 (20 bytes)
 
-void FUN_201645e4(undefined2 *param_1)
+/* Clears count, head and tail of a 16-entry ring {count, head, tail, slots} [fact] */
+
+void ring16_reset(undefined2 *param_1)
 
 {
   *param_1 = 0;
@@ -602,9 +610,11 @@ void FUN_201645e4(undefined2 *param_1)
 }
 
 
-// ===== FUN_201645f8 @ 201645f8 (12 bytes)
+// ===== ring16_set_slot @ 201645f8 (12 bytes)
 
-void FUN_201645f8(int param_1,int param_2,undefined4 param_3)
+/* ring->slot[n] (obj+8+4n) = pointer [fact] */
+
+void ring16_set_slot(int param_1,int param_2,undefined4 param_3)
 
 {
   *(undefined4 *)(param_1 + param_2 * 4 + 8) = param_3;
@@ -612,9 +622,12 @@ void FUN_201645f8(int param_1,int param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_20164604 @ 20164604 (52 bytes)
+// ===== ring16_pop @ 20164604 (52 bytes)
 
-undefined4 FUN_20164604(short *param_1)
+/* Returns the slot at the head and advances it (mod 16), 0 when empty [fact]; usbkbd_pop_key [fact]
+    */
+
+undefined4 ring16_pop(short *param_1)
 
 {
   ushort uVar1;
@@ -633,12 +646,14 @@ undefined4 FUN_20164604(short *param_1)
 }
 
 
-// ===== FUN_20164638 @ 20164638 (20 bytes)
+// ===== ring16_ctor @ 20164638 (20 bytes)
 
-undefined4 FUN_20164638(undefined4 param_1)
+/* ring16_reset, returns this [fact] */
+
+undefined4 ring16_ctor(undefined4 param_1)
 
 {
-  FUN_201645e4();
+  ring16_reset();
   return param_1;
 }
 

@@ -721,13 +721,13 @@ void gui_draw_text_words(uint param_1,uint param_2,uint param_3,int param_4,uint
   local_28 = 0;
   uVar1 = strlen(param_2);
   memcpy(&local_60,param_2,uVar1);
-  iVar2 = FUN_2014e320(&local_60,&DWORD_20135fec,local_24);
+  iVar2 = strtok_r(&local_60,&DWORD_20135fec,local_24);
   gui_draw_text(param_1,iVar2,param_3,param_4,param_5,param_6);
   iVar3 = strlen(iVar2);
   uVar4 = iVar3 * param_5 + param_4;
   if (iVar2 != 0) {
     while( true ) {
-      iVar2 = FUN_2014e320(local_24[0],&DWORD_20135fec,local_24);
+      iVar2 = strtok_r(local_24[0],&DWORD_20135fec,local_24);
       if (iVar2 == 0) break;
       uVar4 = (uVar4 & 0xffff) + (param_5 >> 1) & 0xffff;
       gui_draw_text(param_1,iVar2,param_3,uVar4,param_5,param_6);
@@ -884,7 +884,7 @@ void FUN_20136188(int param_1,int param_2,int param_3)
       iVar2 = iVar2 + 0x15;
     } while ((int)uVar3 < param_3);
   }
-  gui_draw_hex_color(uVar1,DAT_20450034,1,sVar4 * 0xe + 0x10,2,unaff_r8,unaff_r7);
+  gui_draw_hex_color(uVar1,g_ml.last_rx_cmd,1,sVar4 * 0xe + 0x10,2,unaff_r8,unaff_r7);
   return;
 }
 
@@ -918,9 +918,12 @@ void fb_draw_round_frame(uint param_1,uint param_2,uint param_3,int param_4,int 
 }
 
 
-// ===== FUN_20136398 @ 20136398 (40 bytes)
+// ===== fb_draw_round_frame_wrap @ 20136398 (40 bytes)
 
-void FUN_20136398(void)
+/* Tail call to fb_draw_round_frame (arguments lost in the decompile); list and pop-up screens frame
+   their boxes with it [fact] */
+
+void fb_draw_round_frame_wrap(void)
 
 {
   fb_draw_round_frame();
@@ -1129,13 +1132,13 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 1) != 0) {
       gui_draw_text(iVar3,DAT_2080039c,1,2,10,&DAT_20803730);
       if (DAT_20808a74 == 0) {
-        if (DAT_208dbb44 == 1) {
+        if (g_bootinfo.bank == 1) {
           DAT_20808a78 = DAT_183e0010;
         }
-        else if (DAT_208dbb44 == 2) {
+        else if (g_bootinfo.bank == 2) {
           DAT_20808a78 = DAT_183f0010;
         }
-        else if (DAT_208dbb44 == 0xbbbb) {
+        else if (g_bootinfo.bank == 0xbbbb) {
           DAT_20808a78 = DAT_183c0010;
         }
         DAT_20808a74 = 1;
@@ -1161,8 +1164,8 @@ void debug_overlay_draw(int param_1)
       gui_draw_text(iVar3,0x20136c5c,2,0x1cc,10,&DAT_20803730);
       uVar5 = mainlink_stat_nak_sent();
       gui_draw_dec(iVar3,uVar5,2,2,0x1db);
-      bVar7 = (byte)DAT_208dbb4c & 0xf;
-      bVar1 = (char)DAT_208dbb44 << 4;
+      bVar7 = (byte)g_bootinfo.mode & 0xf;
+      bVar1 = (char)g_bootinfo.bank << 4;
       gui_draw_text(iVar3,0x20136c60,2,0x1fe,10,&DAT_20803730);
       gui_draw_hex(iVar3,bVar7 | bVar1,1,2,0x20d);
       gui_draw_text(iVar3,0x20136c64,2,0x230,10,&DAT_20803730);
@@ -1187,10 +1190,10 @@ void debug_overlay_draw(int param_1)
       gui_draw_dec(iVar3,DAT_20800080,10,0x15c,0x69);
     }
     if ((DAT_20808a84 & 2) != 0) {
-      iVar6 = memcmp(&DAT_2045f260,&DAT_20909db4,0x200);
+      iVar6 = memcmp(&ml_rx_frame,&DAT_20909db4,0x200);
       if (iVar6 != 0) {
-        FUN_201360b0(&DAT_2045f260,&DAT_20909db4,0x200);
-        memcpy(&DAT_20909db4,&DAT_2045f260,0x240);
+        FUN_201360b0(&ml_rx_frame,&DAT_20909db4,0x200);
+        memcpy(&DAT_20909db4,&ml_rx_frame,0x240);
       }
       iVar6 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
       if (iVar6 != 0) {
@@ -1287,7 +1290,7 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_3 = param_2;
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,0x204200b0);
+  uVar1 = itron_acre_isr(0,&cisr_dmac3_isr);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2c);
     return;
@@ -1339,7 +1342,7 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_5 = param_2;
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,0x204200d8);
+  uVar1 = itron_acre_isr(0,&cisr_dmac5_isr);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2e);
     reg_rmw32(&DMAC_CHCTRL_5,1,0);
@@ -1418,7 +1421,7 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_4 = param_2;
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,0x204200c4);
+  uVar1 = itron_acre_isr(0,&cisr_dmac4_isr);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2d);
     reg_rmw32(&DMAC_CHCTRL_4,1,0);

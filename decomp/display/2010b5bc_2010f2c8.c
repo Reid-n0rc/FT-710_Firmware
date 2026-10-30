@@ -111,7 +111,7 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
 
 {
   uint uVar1;
-  int *piVar2;
+  scif_uart *psVar2;
   uint uVar3;
   undefined4 extraout_r1;
   undefined4 extraout_r1_00;
@@ -132,22 +132,22 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
   }
   else {
     mainlink_rx_ctrl(1);
-    piVar2 = scif5_get(0);
+    psVar2 = scif5_get(0);
     uVar1 = progress_scale(&DAT_20800178);
     progress_set(uVar1);
     DAT_2080016c = 0x1e4;
     local_18 = 2;
-    (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
+    (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
     uVar1 = progress_scale(&DAT_20800178,extraout_r1_00,0,0x3fe00000);
     progress_set(uVar1);
-    uVar3 = isp_relay_mode_cmd(piVar2,'\x02');
+    uVar3 = isp_relay_mode_cmd((int *)psVar2,'\x02');
     uVar1 = 0;
-    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping(piVar2), uVar1 = 0, uVar3 != 0)) &&
-        (uVar3 = dsp_isp_fill_option(piVar2), uVar1 = 0, uVar3 != 0)) &&
-       (((uVar3 = dsp_isp_configure_memory(piVar2), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = dsp_isp_erase_region(piVar2), uVar1 = 0, uVar3 != 0)) &&
-        ((uVar3 = dsp_isp_write_image(piVar2,param_1), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = isp_relay_mode_cmd(piVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
+    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
+        (uVar3 = dsp_isp_fill_option((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
+       (((uVar3 = dsp_isp_configure_memory((int *)psVar2), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = dsp_isp_erase_region((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
+        ((uVar3 = dsp_isp_write_image((int *)psVar2,param_1), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = isp_relay_mode_cmd((int *)psVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
       uVar1 = 1;
     }
   }
@@ -1317,7 +1317,7 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
 
 {
   char *pcVar1;
-  int *piVar2;
+  scif_uart *psVar2;
   uint uVar3;
   int iVar4;
   int iVar5;
@@ -1346,48 +1346,48 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
   progress_range_init(&local_130,0,100);
   DAT_20800178 = local_130;
   DAT_2080017c = puStack_12c;
-  piVar2 = scif5_get(0);
+  psVar2 = scif5_get(0);
   local_130 = (uint *)0x1;
-  (**(code **)(*piVar2 + 4))(piVar2,0x2580,8,0);
-  uVar3 = rx_boot_sync(piVar2);
+  (*(code *)psVar2->vtbl[1])(psVar2,0x2580,8,0);
+  uVar3 = rx_boot_sync((int *)psVar2);
   uVar6 = 0;
   if (uVar3 != 0) {
-    uVar3 = rx_boot_signature(piVar2);
+    uVar3 = rx_boot_signature((int *)psVar2);
     uVar6 = 0;
     if (uVar3 != 0) {
-      uVar3 = rx_boot_endian(piVar2);
+      uVar3 = rx_boot_endian((int *)psVar2);
       uVar6 = 0;
       if (uVar3 != 0) {
-        uVar3 = rx_boot_set_freq(piVar2);
+        uVar3 = rx_boot_set_freq((int *)psVar2);
         uVar6 = 0;
         if (uVar3 != 0) {
           progress_set(5);
-          uVar3 = rx_boot_set_baud(piVar2);
+          uVar3 = rx_boot_set_baud((int *)psVar2);
           uVar6 = 0;
           if (uVar3 != 0) {
-            (**(code **)(*piVar2 + 8))(piVar2);
+            (*(code *)psVar2->vtbl[2])(psVar2);
             local_130 = (uint *)0x1;
-            (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
+            (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
             itron_dly_tsk(0x32);
             progress_set(6);
-            uVar3 = rx_boot_sync_cmd(piVar2);
+            uVar3 = rx_boot_sync_cmd((int *)psVar2);
             uVar6 = 0;
             if (uVar3 != 0) {
               progress_set(7);
-              uVar3 = rx_boot_cmd_2c(piVar2);
+              uVar3 = rx_boot_cmd_2c((int *)psVar2);
               uVar6 = 0;
               if (uVar3 != 0) {
-                uVar3 = rx_boot_id_auth(piVar2);
+                uVar3 = rx_boot_id_auth((int *)psVar2);
                 uVar6 = 0;
                 if (uVar3 != 0) {
                   progress_set(8);
                   local_3c = 0;
-                  uVar3 = rx_boot_area_count(piVar2,&local_3c);
+                  uVar3 = rx_boot_area_count((int *)psVar2,&local_3c);
                   uVar6 = 0;
                   if (uVar3 != 0) {
                     progress_set(9);
                     __aeabi_memclr4(local_128,0xe0);
-                    uVar3 = rx_boot_area_info(piVar2,local_3c,(int)local_128);
+                    uVar3 = rx_boot_area_info((int *)psVar2,local_3c,(int)local_128);
                     uVar6 = 0;
                     if (uVar3 != 0) {
                       DAT_20800164 = 0;
@@ -1421,16 +1421,16 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                           }
                         }
                       }
-                      uVar3 = rx_boot_erase(piVar2);
+                      uVar3 = rx_boot_erase((int *)psVar2);
                       uVar6 = 0;
                       if (uVar3 != 0) {
                         progress_set(10);
                         local_130 = param_2;
-                        iVar5 = rx_boot_write_areas(piVar2,local_3c,local_128,local_2c);
+                        iVar5 = rx_boot_write_areas(psVar2,local_3c,local_128,local_2c);
                         uVar6 = 0;
                         if (iVar5 != 0) {
                           local_130 = param_2;
-                          iVar5 = rx_boot_verify_areas(piVar2,local_3c,local_128,local_2c);
+                          iVar5 = rx_boot_verify_areas(psVar2,local_3c,local_128,local_2c);
                           uVar6 = 0;
                           if (iVar5 != 0) {
                             progress_set(100);
@@ -1440,10 +1440,10 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                             itron_dly_tsk(10);
                             gpio_rx_reset(1);
                             itron_dly_tsk(500);
-                            (**(code **)(*piVar2 + 8))(piVar2);
+                            (*(code *)psVar2->vtbl[2])(psVar2);
                             local_130 = (uint *)0x2;
-                            pcVar8 = *(code **)(*piVar2 + 4);
-                            (*pcVar8)(piVar2,0x54600,8,0);
+                            pcVar8 = (code *)psVar2->vtbl[1];
+                            (*pcVar8)(psVar2,0x54600,8,0);
                             local_48[0] = -0x10;
                             local_48[1] = 1;
                             local_48[2] = 8;
@@ -1467,12 +1467,11 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                               bVar10 = pcVar8 == (code *)0x0;
                               pcVar8 = pcVar8 + -1;
                               if ((bVar10) ||
-                                 (local_130 = (uint *)(**(code **)(*piVar2 + 0x24))
-                                                                (piVar2,local_48,10),
-                                 local_130 != (uint *)0xa)) {
+                                 (local_130 = (uint *)(*(code *)psVar2->vtbl[9])(psVar2,local_48,10)
+                                 , local_130 != (uint *)0xa)) {
                                 return 0;
                               }
-                              iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_38,1,5);
+                              iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_38,1,5);
                             } while ((iVar5 == -1) || (local_38[0] != '\x06'));
                             uVar6 = 1;
                           }
@@ -1619,17 +1618,15 @@ undefined8 dspup_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  t_cflg local_10;
   
-  local_10 = 2;
-  uStack_c = 0;
-  uStack_8 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = 2;
+  local_10.iflgptn = 0;
+  local_10.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_10);
   if (0 < (int)uVar1) {
     DAT_20800168 = uVar1;
-    uVar1 = itron_acre_tsk(0,&DAT_20165478);
+    uVar1 = itron_acre_tsk(0,&ctsk_dspup);
     if ((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
       pcVar2 = dsp_debug_cmd;
       goto LAB_2010dd14;
@@ -1637,7 +1634,7 @@ undefined8 dspup_init(void)
   }
   pcVar2 = (code *)0x0;
 LAB_2010dd14:
-  return CONCAT44(local_10,pcVar2);
+  return CONCAT44(local_10.flgatr,pcVar2);
 }
 
 
@@ -1735,7 +1732,7 @@ uint fwfile_status_text(int param_1,int param_2)
     *(undefined1 *)(param_1 + iVar5 * 0x48) = 2;
     iVar5 = iVar1;
   } while (iVar1 < 4);
-  uVar2 = FUN_2014c410("I:\\FT-710");
+  uVar2 = fs_opendir("I:\\FT-710");
   iVar5 = 0;
   do {
     FUN_2016040c((&DAT_2081166c)[iVar5]);
@@ -1743,9 +1740,9 @@ uint fwfile_status_text(int param_1,int param_2)
   } while (iVar5 < 4);
   do {
     do {
-      piVar3 = (int *)FUN_2014ca4c(uVar2);
+      piVar3 = (int *)fs_readdir(uVar2);
       if (piVar3 == (int *)0x0) {
-        thunk_FUN_2014c474(uVar2);
+        fs_closedir(uVar2);
         iVar5 = 0;
         do {
           if (*(char *)((&DAT_2081166c)[iVar5] + 0x57) == '\0') {
@@ -1779,7 +1776,7 @@ uint fwfile_status_text(int param_1,int param_2)
         } while (iVar5 < 4);
         return 0;
       }
-      iVar5 = FUN_201476f0((int)*(char *)(*piVar3 + 0xb),0x20);
+      iVar5 = fs_attr_check((int)*(char *)(*piVar3 + 0xb),0x20);
     } while (iVar5 != 0);
     iVar5 = 0;
     do {
@@ -1932,18 +1929,16 @@ void fwupdate_init(void)
 
 {
   uint uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
+  t_cflg local_18;
   
   fwobj_create_all();
-  local_18 = 2;
-  uStack_14 = 0;
-  local_10 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_18);
+  local_18.flgatr = 2;
+  local_18.iflgptn = 0;
+  local_18.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_18);
   if (0 < (int)uVar1) {
     DAT_20800188 = uVar1;
-    uVar1 = itron_acre_tsk(0,&DAT_201654a0);
+    uVar1 = itron_acre_tsk(0,&ctsk_fwupdate);
     if (0 < (int)uVar1) {
       DAT_20800184 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -1961,7 +1956,7 @@ uint mainlink_fw_mode_cmd(char param_1)
 
 {
   byte bVar1;
-  int *piVar2;
+  scif_uart *psVar2;
   int iVar3;
   int iVar4;
   int iVar5;
@@ -1974,9 +1969,9 @@ uint mainlink_fw_mode_cmd(char param_1)
   local_18 = 0;
   iVar5 = 0;
   mainlink_rx_ctrl(1);
-  piVar2 = scif5_get(0);
+  psVar2 = scif5_get(0);
   iVar4 = 2;
-  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2,iVar5);
+  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2,iVar5);
   bVar1 = mainlink_got_frame60();
   if (bVar1 == 0) {
     return 1;
@@ -1985,12 +1980,11 @@ uint mainlink_fw_mode_cmd(char param_1)
   iVar3 = 0;
   local_14 = CONCAT13(param_1 + -0xf,(undefined3)local_14);
   while( true ) {
-    iVar4 = (**(code **)(*piVar2 + 0x24))(piVar2,&local_18,8,*(code **)(*piVar2 + 0x24),iVar4,iVar5)
-    ;
+    iVar4 = (*(code *)psVar2->vtbl[9])(psVar2,&local_18,8,(code *)psVar2->vtbl[9],iVar4,iVar5);
     if (iVar4 != 8) {
       return 0;
     }
-    iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_20,1,0xdc);
+    iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_20,1,0xdc);
     if ((iVar5 != -1) && (local_20[0] == '\x06')) break;
     iVar3 = iVar3 + 1;
     if (4 < iVar3) {
@@ -2408,7 +2402,7 @@ LAB_2010ea9c:
     uVar6 = 10;
   }
   itron_dly_tsk(uVar6);
-  FUN_20133620();
+  scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   goto LAB_2010ea9c;
 }
@@ -2469,16 +2463,14 @@ uint uptest_init(void)
 
 {
   uint uVar1;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  t_cflg local_10;
   
-  local_10 = 2;
-  uStack_c = 0;
-  uStack_8 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = 2;
+  local_10.iflgptn = 0;
+  local_10.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_10);
   if (((0 < (int)uVar1) &&
-      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,&DAT_201654c8), 0 < (int)uVar1)) &&
+      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,&ctsk_uptest), 0 < (int)uVar1)) &&
      (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
     return 0x2010ec44;
   }
@@ -2566,7 +2558,7 @@ int FUN_2010ef88(int param_1,int param_2,int param_3)
   int iVar8;
   bool bVar9;
   
-  iVar2 = FUN_2014c410(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
+  iVar2 = fs_opendir(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
   iVar5 = 0;
   if (iVar2 != 0) {
     gui_scope_draw_hold_set(1);
@@ -2576,10 +2568,10 @@ LAB_2010efc4:
     do {
       do {
         do {
-          piVar4 = (int *)FUN_2014ca4c(iVar2);
+          piVar4 = (int *)fs_readdir(iVar2);
           iVar5 = iVar8;
           if (piVar4 == (int *)0x0) goto LAB_2010f068;
-          iVar5 = FUN_201476f0((int)*(char *)(*piVar4 + 0xb),0x20);
+          iVar5 = fs_attr_check((int)*(char *)(*piVar4 + 0xb),0x20);
         } while (iVar5 != 0);
         iVar5 = (int)piVar4 + 10;
         uVar6 = strlen(iVar5);
@@ -2589,8 +2581,8 @@ LAB_2010efc4:
         uVar1 = uVar1 - 1;
         if ((int)uVar1 < 1) goto LAB_2010efc4;
       } while ((*(char *)(iVar5 + uVar1) != '.') ||
-              (iVar7 = FUN_2014e208(iVar5 + uVar1,".dat"), iVar7 != 0));
-      FUN_2014e2e4(iVar3 + iVar8 * 0x10,iVar5,uVar6 - 4);
+              (iVar7 = strcasecmp(iVar5 + uVar1,".dat"), iVar7 != 0));
+      strncpy(iVar3 + iVar8 * 0x10,iVar5,uVar6 - 4);
       iVar5 = iVar8 + 1;
       bVar9 = SBORROW4(iVar5,100);
       iVar7 = iVar8 + -99;
@@ -2601,9 +2593,9 @@ LAB_2010efc4:
       iVar8 = iVar5;
     } while (iVar7 < 0 != bVar9);
 LAB_2010f068:
-    thunk_FUN_2014c474(iVar2);
+    fs_closedir(iVar2);
     if (iVar5 != 0) {
-      FUN_20154fca(iVar3,iVar5,0x10,FUN_2014e208);
+      FUN_20154fca(iVar3,iVar5,0x10,strcasecmp);
       iVar2 = 0;
       if (0 < iVar5) {
         do {
@@ -2612,7 +2604,7 @@ LAB_2010f068:
         } while (iVar2 < iVar5);
       }
     }
-    FUN_20133620();
+    scope3d_tables_init();
     gui_scope_draw_hold_set(0);
   }
   return iVar5;
@@ -2672,8 +2664,8 @@ uint sdmenu_file_exists(int param_1,uint param_2)
   undefined1 auStack_30 [44];
   
   sprintf(auStack_30,"%s\\%s.dat",*(undefined4 *)(&DAT_208001ac + param_1 * 4),param_2);
-  iVar1 = FUN_2014af14(auStack_30);
-  if ((iVar1 == -1) || (iVar1 = FUN_201476f0((int)(char)iVar1,1), iVar1 != 0)) {
+  iVar1 = fs_get_attr(auStack_30);
+  if ((iVar1 == -1) || (iVar1 = fs_attr_check((int)(char)iVar1,1), iVar1 != 0)) {
     uVar2 = 0;
   }
   else {

@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00209720 @ 00209720 (338 bytes)
+// ===== CLOCK_InitSysPll @ 00209720 (338 bytes)
 
-void FUN_00209720(undefined4 *param_1)
+/* fsl_clock.c: SYSPLL0, POWER PDRUNCFG (SYSCTL0 0x40002600), SDK_DelayAtLeastUs [inference] */
+
+void CLOCK_InitSysPll(undefined4 *param_1)
 
 {
   undefined4 uVar1;
@@ -68,7 +70,7 @@ void FUN_00209720(undefined4 *param_1)
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00060000;
   memw();
   uVar3 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
-  FUN_00209c70(uVar3 >> 1 & 0x7fff,600000000);
+  SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
   memw();
   uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
@@ -76,7 +78,7 @@ void FUN_00209720(undefined4 *param_1)
   memw();
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
-  FUN_00209c70(uVar3 / 6,600000000);
+  SDK_DelayAtLeastUs(uVar3 / 6,600000000);
   memw();
   uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
@@ -84,14 +86,16 @@ void FUN_00209720(undefined4 *param_1)
   memw();
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
-  FUN_00209c70(uVar3 / 3,600000000);
+  SDK_DelayAtLeastUs(uVar3 / 3,600000000);
   return;
 }
 
 
-// ===== FUN_00209878 @ 00209878 (114 bytes)
+// ===== CLOCK_InitSysPfd @ 00209878 (114 bytes)
 
-void FUN_00209878(int param_1,uint param_2)
+/* fsl_clock.c order [inference] */
+
+void CLOCK_InitSysPfd(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -120,9 +124,11 @@ void FUN_00209878(int param_1,uint param_2)
 }
 
 
-// ===== FUN_002098ec @ 002098ec (338 bytes)
+// ===== CLOCK_InitAudioPll @ 002098ec (338 bytes)
 
-void FUN_002098ec(undefined4 *param_1)
+/* fsl_clock.c: AUDIOPLL0 (0x40021200) [inference] */
+
+void CLOCK_InitAudioPll(undefined4 *param_1)
 
 {
   undefined4 uVar1;
@@ -188,7 +194,7 @@ void FUN_002098ec(undefined4 *param_1)
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00180000;
   memw();
   uVar3 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
-  FUN_00209c70(uVar3 >> 1 & 0x7fff,600000000);
+  SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
   memw();
   uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
@@ -196,7 +202,7 @@ void FUN_002098ec(undefined4 *param_1)
   memw();
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
-  FUN_00209c70(uVar3 / 6,600000000);
+  SDK_DelayAtLeastUs(uVar3 / 6,600000000);
   memw();
   uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
@@ -204,14 +210,16 @@ void FUN_002098ec(undefined4 *param_1)
   memw();
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   uVar3 = ae_zext16(uVar1);
-  FUN_00209c70(uVar3 / 3,600000000);
+  SDK_DelayAtLeastUs(uVar3 / 3,600000000);
   return;
 }
 
 
-// ===== FUN_00209a40 @ 00209a40 (114 bytes)
+// ===== CLOCK_InitAudioPfd @ 00209a40 (114 bytes)
 
-void FUN_00209a40(int param_1,uint param_2)
+/* fsl_clock.c order [inference] */
+
+void CLOCK_InitAudioPfd(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -240,9 +248,11 @@ void FUN_00209a40(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00209ab4 @ 00209ab4 (52 bytes)
+// ===== CLOCK_EnableSysOscClk @ 00209ab4 (52 bytes)
 
-void FUN_00209ab4(int param_1,uint param_2,undefined4 param_3)
+/* fsl_clock.c order, SDK_DelayAtLeastUs [inference] */
+
+void CLOCK_EnableSysOscClk(int param_1,uint param_2,undefined4 param_3)
 
 {
   if (param_1 != 0) {
@@ -250,7 +260,7 @@ void FUN_00209ab4(int param_1,uint param_2,undefined4 param_3)
     CLKCTL0_SYSOSCCTL0 = param_2;
     memw();
     CLKCTL0_SYSOSCBYPASS = 0;
-    FUN_00209c70(param_3,600000000);
+    SDK_DelayAtLeastUs(param_3,600000000);
     return;
   }
   memw();
@@ -259,9 +269,11 @@ void FUN_00209ab4(int param_1,uint param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00209ae8 @ 00209ae8 (35 bytes)
+// ===== CLOCK_EnableUsbhsDeviceClock @ 00209ae8 (35 bytes)
 
-void FUN_00209ae8(void)
+/* fsl_clock.c order [inference] */
+
+void CLOCK_EnableUsbhsDeviceClock(void)
 
 {
   memw();
@@ -274,9 +286,11 @@ void FUN_00209ae8(void)
 }
 
 
-// ===== FUN_00209b0c @ 00209b0c (35 bytes)
+// ===== CLOCK_EnableUsbhsHostClock @ 00209b0c (35 bytes)
 
-void FUN_00209b0c(void)
+/* fsl_clock.c order [inference] */
+
+void CLOCK_EnableUsbhsHostClock(void)
 
 {
   memw();
@@ -289,9 +303,11 @@ void FUN_00209b0c(void)
 }
 
 
-// ===== FUN_00209b30 @ 00209b30 (219 bytes)
+// ===== CLOCK_EnableUsbhsPhyClock @ 00209b30 (219 bytes)
 
-undefined4 FUN_00209b30(undefined4 param_1,uint param_2)
+/* fsl_clock.c order; USBPHY 0x4013B000 [inference] */
+
+undefined4 CLOCK_EnableUsbhsPhyClock(undefined4 param_1,uint param_2)
 
 {
   uint uVar1;
@@ -352,9 +368,12 @@ undefined4 FUN_00209b30(undefined4 param_1,uint param_2)
 }
 
 
-// ===== FUN_00209c10 @ 00209c10 (68 bytes)
+// ===== SDK_Malloc @ 00209c10 (68 bytes)
 
-uint FUN_00209c10(uint param_1,int param_2)
+/* fsl_common.c: malloc(aligned size + 4), magic 0x3039 (SDK_MEM_MAGIC_NUMBER 12345) and offset
+   below the result; SDK >= 2.9 overflow checks [fact for the code] */
+
+uint SDK_Malloc(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -362,7 +381,7 @@ uint FUN_00209c10(uint param_1,int param_2)
   
   uVar2 = -param_2 & (param_1 + param_2) - 1;
   if ((param_1 <= uVar2) && (uVar2 <= -param_2 - 5U)) {
-    iVar1 = FUN_0022ba40(uVar2 + param_2 + 4);
+    iVar1 = malloc(uVar2 + param_2 + 4);
     if (iVar1 != 0) {
       uVar2 = -param_2 & iVar1 + param_2 + 3U;
       ae_s16i_n(uVar2 - iVar1,uVar2 - 4,2);
@@ -374,24 +393,27 @@ uint FUN_00209c10(uint param_1,int param_2)
 }
 
 
-// ===== FUN_00209c54 @ 00209c54 (28 bytes)
+// ===== SDK_Free @ 00209c54 (28 bytes)
 
-void FUN_00209c54(int param_1)
+/* fsl_common.c: checks magic 0x3039, free(ptr - offset) [fact for the code] */
+
+void SDK_Free(int param_1)
 
 {
   if (*(short *)(param_1 + -4) != 0x3039) {
     return;
   }
-  FUN_0022ba60(param_1 - (uint)*(ushort *)(param_1 + -2));
+  free(param_1 - (uint)*(ushort *)(param_1 + -2));
   return;
 }
 
 
-// ===== FUN_00209c70 @ 00209c70 (166 bytes)
+// ===== SDK_DelayAtLeastUs @ 00209c70 (166 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00209d05) */
+/* fsl_common.c (XCC path: CCOUNT cycles, 1,000,000 divisor) [inference] */
 
-void FUN_00209c70(uint param_1,uint param_2)
+void SDK_DelayAtLeastUs(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -403,7 +425,7 @@ void FUN_00209c70(uint param_1,uint param_2)
   undefined8 uVar7;
   
   if (param_1 != 0) {
-    uVar2 = FUN_00236470();
+    uVar2 = xthal_get_ccount();
     uVar7 = __udivdi3(param_1 * param_2,(int)((ulonglong)param_1 * (ulonglong)param_2 >> 0x20),
                       &DAT_000f4240,0);
     iVar3 = (int)((ulonglong)uVar7 >> 0x20);
@@ -418,7 +440,7 @@ void FUN_00209c70(uint param_1,uint param_2)
         iVar1 = iVar3;
       }
       iVar3 = iVar1;
-      uVar6 = FUN_00236470();
+      uVar6 = xthal_get_ccount();
       bVar5 = false;
       if ((iVar3 == 0) && (uVar2 < uVar6)) {
         bVar5 = true;
@@ -426,7 +448,7 @@ void FUN_00209c70(uint param_1,uint param_2)
       uVar6 = uVar2;
       if (bVar5) {
         do {
-          uVar4 = FUN_00236470();
+          uVar4 = xthal_get_ccount();
           bVar5 = false;
           if ((iVar3 == 0) && (uVar2 < uVar4)) {
             bVar5 = true;
@@ -434,14 +456,14 @@ void FUN_00209c70(uint param_1,uint param_2)
         } while (bVar5);
       }
     }
-    uVar2 = FUN_00236470();
+    uVar2 = xthal_get_ccount();
     bVar5 = false;
     if ((iVar3 != 0) || (uVar2 < uVar6)) {
       bVar5 = true;
     }
     if (bVar5) {
       do {
-        uVar2 = FUN_00236470();
+        uVar2 = xthal_get_ccount();
         bVar5 = false;
         if ((iVar3 != 0) || (uVar2 < uVar6)) {
           bVar5 = true;
@@ -453,14 +475,16 @@ void FUN_00209c70(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_00209d20 @ 00209d20 (101 bytes)
+// ===== CRC_Init @ 00209d20 (101 bytes)
 
-void FUN_00209d20(uint *param_1,uint *param_2)
+/* fsl_crc.c (lpc_crc) order [inference] */
+
+void CRC_Init(uint *param_1,uint *param_2)
 
 {
   memw();
   CLKCTL1_PSCCTL1_SET = &DAT_00010000;
-  FUN_00213910(0x410);
+  RESET_PeripheralReset(0x410);
   memw();
   *param_1 = (*(byte *)((int)param_2 + 5) & 1) << 3 | *param_2 & 3 | ((byte)param_2[1] & 1) << 2 |
              (*(byte *)((int)param_2 + 6) & 1) << 4 | (*(byte *)((int)param_2 + 7) & 1) << 5;
@@ -470,9 +494,12 @@ void FUN_00209d20(uint *param_1,uint *param_2)
 }
 
 
-// ===== FUN_00209d88 @ 00209d88 (45 bytes)
+// ===== CRC_GetDefaultConfig @ 00209d88 (45 bytes)
 
-void FUN_00209d88(undefined4 *param_1)
+/* fsl_crc.c: copies default_config 0x2000FC; CRC_Reset (0x209DB8) follows inside this listing entry
+   [fact for the code] */
+
+void CRC_GetDefaultConfig(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -486,9 +513,11 @@ void FUN_00209d88(undefined4 *param_1)
 }
 
 
-// ===== FUN_00209dcc @ 00209dcc (10 bytes)
+// ===== CRC_WriteSeed @ 00209dcc (10 bytes)
 
-void FUN_00209dcc(int param_1,undefined4 param_2)
+/* fsl_crc.c: base->SEED = seed [fact for the code] */
+
+void CRC_WriteSeed(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -497,9 +526,11 @@ void FUN_00209dcc(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00209dd8 @ 00209dd8 (62 bytes)
+// ===== CRC_GetConfig @ 00209dd8 (62 bytes)
 
-void FUN_00209dd8(uint *param_1,uint *param_2)
+/* fsl_crc.c order [inference] */
+
+void CRC_GetConfig(uint *param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -521,9 +552,11 @@ void FUN_00209dd8(uint *param_1,uint *param_2)
 }
 
 
-// ===== FUN_00209e18 @ 00209e18 (112 bytes)
+// ===== CRC_WriteData @ 00209e18 (112 bytes)
 
-undefined4 * FUN_00209e18(int param_1,undefined4 *param_2,uint param_3)
+/* fsl_crc.c order [inference] */
+
+undefined4 * CRC_WriteData(int param_1,undefined4 *param_2,uint param_3)
 
 {
   uint uVar1;
@@ -551,9 +584,11 @@ undefined4 * FUN_00209e18(int param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00209e90 @ 00209e90 (266 bytes)
+// ===== CTIMER_Init @ 00209e90 (266 bytes)
 
-void FUN_00209e90(undefined4 *param_1,uint *param_2)
+/* fsl_ctimer.c: s_ctimerBases 0x200110, clocks 0x200130 [inference] */
+
+void CTIMER_Init(undefined4 *param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -594,7 +629,7 @@ void FUN_00209e90(undefined4 *param_1,uint *param_2)
   if (param_1 != &CTIMER0_IR) {
     iVar2 = 4;
   }
-  FUN_00213910(*(undefined4 *)((int)&PTR_DAT_00200150 + iVar2));
+  RESET_PeripheralReset(*(undefined4 *)((int)&PTR_DAT_00200150 + iVar2));
   memw();
   param_1[0x1c] = *param_2 & 3 | (param_2[1] & 3) << 2;
   memw();
@@ -603,9 +638,11 @@ void FUN_00209e90(undefined4 *param_1,uint *param_2)
 }
 
 
-// ===== FUN_00209f9c @ 00209f9c (190 bytes)
+// ===== CTIMER_Deinit @ 00209f9c (190 bytes)
 
-void FUN_00209f9c(undefined4 *param_1)
+/* fsl_ctimer.c order [inference] */
+
+void CTIMER_Deinit(undefined4 *param_1)
 
 {
   uint uVar1;
@@ -655,9 +692,11 @@ void FUN_00209f9c(undefined4 *param_1)
 }
 
 
-// ===== FUN_0020a05c @ 0020a05c (13 bytes)
+// ===== CTIMER_GetDefaultConfig @ 0020a05c (13 bytes)
 
-void FUN_0020a05c(undefined4 *param_1)
+/* fsl_ctimer.c order [inference] */
+
+void CTIMER_GetDefaultConfig(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -667,11 +706,13 @@ void FUN_0020a05c(undefined4 *param_1)
 }
 
 
-// ===== FUN_0020a06c @ 0020a06c (203 bytes)
+// ===== CTIMER_SetupPwm @ 0020a06c (203 bytes)
+
+/* fsl_ctimer.c order [inference] */
 
 undefined4
-FUN_0020a06c(uint *param_1,uint param_2,uint param_3,int param_4,uint param_5,uint param_6,
-            char param_7)
+CTIMER_SetupPwm(uint *param_1,uint param_2,uint param_3,int param_4,uint param_5,uint param_6,
+               char param_7)
 
 {
   uint uVar1;
@@ -713,10 +754,12 @@ FUN_0020a06c(uint *param_1,uint param_2,uint param_3,int param_4,uint param_5,ui
 }
 
 
-// ===== FUN_0020a138 @ 0020a138 (145 bytes)
+// ===== CTIMER_SetupPwmPeriod @ 0020a138 (145 bytes)
+
+/* fsl_ctimer.c order [inference] */
 
 undefined4
-FUN_0020a138(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5,int param_6)
+CTIMER_SetupPwmPeriod(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5,int param_6)
 
 {
   uint uVar1;
@@ -747,9 +790,11 @@ FUN_0020a138(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5,i
 }
 
 
-// ===== FUN_0020a1cc @ 0020a1cc (48 bytes)
+// ===== CTIMER_UpdatePwmDutycycle @ 0020a1cc (48 bytes)
 
-void FUN_0020a1cc(int param_1,int param_2,int param_3,int param_4)
+/* fsl_ctimer.c order [inference] */
+
+void CTIMER_UpdatePwmDutycycle(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -767,9 +812,11 @@ void FUN_0020a1cc(int param_1,int param_2,int param_3,int param_4)
 }
 
 
-// ===== FUN_0020a200 @ 0020a200 (185 bytes)
+// ===== CTIMER_SetupMatch @ 0020a200 (185 bytes)
 
-void FUN_0020a200(uint *param_1,uint param_2,uint *param_3)
+/* fsl_ctimer.c order [inference] */
+
+void CTIMER_SetupMatch(uint *param_1,uint param_2,uint *param_3)
 
 {
   uint uVar1;
@@ -795,9 +842,11 @@ void FUN_0020a200(uint *param_1,uint param_2,uint *param_3)
 }
 
 
-// ===== FUN_0020a2bc @ 0020a2bc (13 bytes)
+// ===== CTIMER_GetOutputMatchStatus @ 0020a2bc (13 bytes)
 
-uint FUN_0020a2bc(int param_1,uint param_2)
+/* fsl_ctimer.c order [inference] */
+
+uint CTIMER_GetOutputMatchStatus(int param_1,uint param_2)
 
 {
   memw();
@@ -805,9 +854,11 @@ uint FUN_0020a2bc(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020a2cc @ 0020a2cc (97 bytes)
+// ===== CTIMER_SetupCapture @ 0020a2cc (97 bytes)
 
-void FUN_0020a2cc(int *param_1,uint param_2,int param_3,int param_4)
+/* fsl_ctimer.c order [inference] */
+
+void CTIMER_SetupCapture(int *param_1,uint param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -829,9 +880,11 @@ void FUN_0020a2cc(int *param_1,uint param_2,int param_3,int param_4)
 }
 
 
-// ===== FUN_0020a330 @ 0020a330 (71 bytes)
+// ===== CTIMER_RegisterCallBack @ 0020a330 (71 bytes)
 
-void FUN_0020a330(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+/* fsl_ctimer.c: callback table 0x238430 [inference] */
+
+void CTIMER_RegisterCallBack(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 
 {
   if (param_1 != &CTIMER0_IR) {
@@ -845,9 +898,11 @@ void FUN_0020a330(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0020a378 @ 0020a378 (74 bytes)
+// ===== CTIMER0_DriverIRQHandler @ 0020a378 (74 bytes)
 
-void FUN_0020a378(void)
+/* fsl_ctimer.c (CTIMER_GenericIRQHandler inlined, CTIMER0 0x40028000) [inference] */
+
+void CTIMER0_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -880,9 +935,11 @@ void FUN_0020a378(void)
 }
 
 
-// ===== FUN_0020a3c4 @ 0020a3c4 (76 bytes)
+// ===== CTIMER1_DriverIRQHandler @ 0020a3c4 (76 bytes)
 
-void FUN_0020a3c4(void)
+/* fsl_ctimer.c [inference] */
+
+void CTIMER1_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -915,9 +972,11 @@ void FUN_0020a3c4(void)
 }
 
 
-// ===== FUN_0020a410 @ 0020a410 (75 bytes)
+// ===== CTIMER2_DriverIRQHandler @ 0020a410 (75 bytes)
 
-void FUN_0020a410(void)
+/* fsl_ctimer.c [inference] */
+
+void CTIMER2_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -950,9 +1009,11 @@ void FUN_0020a410(void)
 }
 
 
-// ===== FUN_0020a45c @ 0020a45c (76 bytes)
+// ===== CTIMER3_DriverIRQHandler @ 0020a45c (76 bytes)
 
-void FUN_0020a45c(void)
+/* fsl_ctimer.c [inference] */
+
+void CTIMER3_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -985,9 +1046,11 @@ void FUN_0020a45c(void)
 }
 
 
-// ===== FUN_0020a4a8 @ 0020a4a8 (75 bytes)
+// ===== CTIMER4_DriverIRQHandler @ 0020a4a8 (75 bytes)
 
-void FUN_0020a4a8(void)
+/* fsl_ctimer.c [inference] */
+
+void CTIMER4_DriverIRQHandler(void)
 
 {
   uint uVar1;
@@ -1020,9 +1083,11 @@ void FUN_0020a4a8(void)
 }
 
 
-// ===== FUN_0020a500 @ 0020a500 (38 bytes)
+// ===== DMA_GetVirtualStartChannel @ 0020a500 (38 bytes)
 
-void FUN_0020a500(int param_1,uint param_2)
+/* fsl_dma.c static, called by DMA_CreateHandle [inference] */
+
+void DMA_GetVirtualStartChannel(int param_1,uint param_2)
 
 {
   param_1 = (param_2 >> 5 & 7) * 4 + param_1;
@@ -1076,7 +1141,7 @@ void DMA_Init(dword *param_1)
   if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
-  FUN_00213910(*(undefined4 *)((int)&DAT_00200198 + iVar2));
+  RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
   param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
   memw();
@@ -1086,9 +1151,11 @@ void DMA_Init(dword *param_1)
 }
 
 
-// ===== FUN_0020a644 @ 0020a644 (192 bytes)
+// ===== DMA_Deinit @ 0020a644 (192 bytes)
 
-void FUN_0020a644(dword *param_1)
+/* fsl_dma.c order [inference] */
+
+void DMA_Deinit(dword *param_1)
 
 {
   uint uVar1;
@@ -1138,9 +1205,11 @@ void FUN_0020a644(dword *param_1)
 }
 
 
-// ===== FUN_0020a708 @ 0020a708 (51 bytes)
+// ===== DMA_ConfigureChannelTrigger @ 0020a708 (51 bytes)
 
-void FUN_0020a708(int param_1,int param_2,uint *param_3)
+/* fsl_dma.c order [inference] */
+
+void DMA_ConfigureChannelTrigger(int param_1,int param_2,uint *param_3)
 
 {
   param_1 = param_1 + param_2 * 0x10;
@@ -1152,9 +1221,11 @@ void FUN_0020a708(int param_1,int param_2,uint *param_3)
 }
 
 
-// ===== FUN_0020a73c @ 0020a73c (80 bytes)
+// ===== DMA_GetRemainingBytes @ 0020a73c (80 bytes)
 
-int FUN_0020a73c(int param_1,uint param_2)
+/* fsl_dma.c; called by the *_TransferGet*CountDMA functions [inference] */
+
+int DMA_GetRemainingBytes(int param_1,uint param_2)
 
 {
   int iVar1;
@@ -1170,9 +1241,11 @@ int FUN_0020a73c(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020a78c @ 0020a78c (140 bytes)
+// ===== DMA_SetupDescriptor @ 0020a78c (140 bytes)
 
-void FUN_0020a78c(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5)
+/* fsl_dma.c; called by DMA_CreateDescriptor and the I2S/DMIC/SPI DMA drivers [inference] */
+
+void DMA_SetupDescriptor(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5)
 
 {
   uint uVar1;
@@ -1217,10 +1290,13 @@ LAB_0020a7d3:
 }
 
 
-// ===== FUN_0020a818 @ 0020a818 (305 bytes)
+// ===== DMA_SetupChannelDescriptor @ 0020a818 (305 bytes)
 
-void FUN_0020a818(uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5,
-                 undefined *param_6,uint param_7)
+/* fsl_dma.c order [inference] */
+
+void DMA_SetupChannelDescriptor
+               (uint *param_1,uint param_2,uint param_3,uint param_4,uint param_5,undefined *param_6
+               ,uint param_7)
 
 {
   uint uVar1;
@@ -1281,10 +1357,13 @@ LAB_0020a875:
 }
 
 
-// ===== FUN_0020a94c @ 0020a94c (211 bytes)
+// ===== DMA_CreateDescriptor @ 0020a94c (211 bytes)
 
-void FUN_0020a94c(undefined4 param_1,byte *param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+/* fsl_dma.c; calls DMA_SetupDescriptor [inference] */
+
+void DMA_CreateDescriptor
+               (undefined4 param_1,byte *param_2,undefined4 param_3,undefined4 param_4,
+               undefined4 param_5)
 
 {
   uint uVar1;
@@ -1305,19 +1384,22 @@ void FUN_0020a94c(undefined4 param_1,byte *param_2,undefined4 param_3,undefined4
   if (param_2[8] == 4) {
     uVar3 = 0xc000;
   }
-  FUN_0020a78c(param_1,uVar3 & (uint)&DAT_0000c000 |
-                       (*(ushort *)(param_2 + 10) - 1) * 0x10000 & 0x3ff0000 |
-                       uVar1 | uVar2 & (uint)&DAT_00003000 |
-                       (param_2[4] & 1) << 4 | (param_2[5] & 1) << 5 |
-                       (uint)*param_2 | (param_2[1] & 1) << 1 |
-                       (param_2[2] & 1) << 2 | (param_2[3] & 1) << 3,param_3,param_4,param_5);
+  DMA_SetupDescriptor(param_1,uVar3 & (uint)&DAT_0000c000 |
+                              (*(ushort *)(param_2 + 10) - 1) * 0x10000 & 0x3ff0000 |
+                              uVar1 | uVar2 & (uint)&DAT_00003000 |
+                              (param_2[4] & 1) << 4 | (param_2[5] & 1) << 5 |
+                              (uint)*param_2 | (param_2[1] & 1) << 1 |
+                              (param_2[2] & 1) << 2 | (param_2[3] & 1) << 3,param_3,param_4,param_5)
+  ;
   return;
 }
 
 
-// ===== FUN_0020aa20 @ 0020aa20 (145 bytes)
+// ===== DMA_AbortTransfer @ 0020aa20 (145 bytes)
 
-void FUN_0020aa20(int param_1)
+/* fsl_dma.c; called by every *_TransferAbort*DMA [inference] */
+
+void DMA_AbortTransfer(int param_1)
 
 {
   uint uVar1;
@@ -1375,14 +1457,16 @@ void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
   param_1[3] = 0;
   *(char *)(param_1 + 3) = (char)param_3;
   (&DAT_00238470)[param_3 + iVar1] = param_1;
-  FUN_0020a500();
+  DMA_GetVirtualStartChannel();
   return;
 }
 
 
-// ===== FUN_0020ab28 @ 0020ab28 (9 bytes)
+// ===== DMA_SetCallback @ 0020ab28 (9 bytes)
 
-void FUN_0020ab28(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+/* fsl_dma.c order [inference] */
+
+void DMA_SetCallback(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 
 {
   *param_1 = param_2;
@@ -1391,10 +1475,12 @@ void FUN_0020ab28(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0020ab34 @ 0020ab34 (205 bytes)
+// ===== DMA_PrepareTransfer @ 0020ab34 (205 bytes)
 
-void FUN_0020ab34(undefined4 *param_1,undefined4 param_2,undefined4 param_3,uint param_4,
-                 uint param_5,int param_6,int param_7)
+/* fsl_dma.c order [inference] */
+
+void DMA_PrepareTransfer(undefined4 *param_1,undefined4 param_2,undefined4 param_3,uint param_4,
+                        uint param_5,int param_6,int param_7)
 
 {
   undefined1 uVar1;
@@ -1464,9 +1550,11 @@ void FUN_0020ab34(undefined4 *param_1,undefined4 param_2,undefined4 param_3,uint
 }
 
 
-// ===== FUN_0020ac04 @ 0020ac04 (79 bytes)
+// ===== DMA_SetChannelConfig @ 0020ac04 (79 bytes)
 
-void FUN_0020ac04(int param_1,int param_2,uint *param_3,uint param_4)
+/* fsl_dma.c order [inference] */
+
+void DMA_SetChannelConfig(int param_1,int param_2,uint *param_3,uint param_4)
 
 {
   uint uVar1;
@@ -1489,10 +1577,13 @@ void FUN_0020ac04(int param_1,int param_2,uint *param_3,uint param_4)
 }
 
 
-// ===== FUN_0020ac54 @ 0020ac54 (82 bytes)
+// ===== DMA_PrepareChannelTransfer @ 0020ac54 (82 bytes)
 
-void FUN_0020ac54(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 int param_5,undefined4 param_6,undefined4 param_7)
+/* fsl_dma.c order [inference] */
+
+void DMA_PrepareChannelTransfer
+               (undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+               int param_5,undefined4 param_6,undefined4 param_7)
 
 {
   *param_1 = 0;
@@ -1529,9 +1620,11 @@ void FUN_0020ac54(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
 }
 
 
-// ===== FUN_0020aca8 @ 0020aca8 (91 bytes)
+// ===== DMA_LoadChannelDescriptor @ 0020aca8 (91 bytes)
 
-void FUN_0020aca8(dword *param_1,int param_2,dword *param_3)
+/* fsl_dma.c order [inference] */
+
+void DMA_LoadChannelDescriptor(dword *param_1,int param_2,dword *param_3)
 
 {
   int iVar1;
@@ -1555,9 +1648,11 @@ void FUN_0020aca8(dword *param_1,int param_2,dword *param_3)
 }
 
 
-// ===== FUN_0020ad04 @ 0020ad04 (10 bytes)
+// ===== DMA_InstallDescriptorMemory @ 0020ad04 (10 bytes)
 
-void FUN_0020ad04(int param_1,undefined4 param_2)
+/* fsl_dma.c order [inference] */
+
+void DMA_InstallDescriptorMemory(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -1566,10 +1661,13 @@ void FUN_0020ad04(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020ad10 @ 0020ad10 (88 bytes)
+// ===== DMA_SubmitChannelTransferParameter @ 0020ad10 (88 bytes)
 
-void FUN_0020ad10(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+/* fsl_dma.c order [inference] */
+
+void DMA_SubmitChannelTransferParameter
+               (int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+               undefined4 param_5)
 
 {
   int iVar1;
@@ -1578,27 +1676,31 @@ void FUN_0020ad10(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
   if (*(dword **)(param_1 + 8) != &DMA0_CTRL) {
     iVar1 = 4;
   }
-  FUN_0020a78c(*(int *)((int)&PTR_DAT_00236828 + iVar1) + (uint)*(byte *)(param_1 + 0xc) * 0x10,
-               param_2,param_3,param_4,param_5);
+  DMA_SetupDescriptor(*(int *)((int)&PTR_DAT_00236828 + iVar1) +
+                      (uint)*(byte *)(param_1 + 0xc) * 0x10,param_2,param_3,param_4,param_5);
   memw();
   *(undefined4 *)(*(int *)(param_1 + 8) + (uint)*(byte *)(param_1 + 0xc) * 0x10 + 0x408) = param_2;
   return;
 }
 
 
-// ===== FUN_0020ad68 @ 0020ad68 (16 bytes)
+// ===== DMA_SubmitChannelDescriptor @ 0020ad68 (16 bytes)
 
-void FUN_0020ad68(int param_1,undefined4 param_2)
+/* fsl_dma.c; calls DMA_LoadChannelDescriptor [inference] */
+
+void DMA_SubmitChannelDescriptor(int param_1,undefined4 param_2)
 
 {
-  FUN_0020aca8(*(undefined4 *)(param_1 + 8),*(undefined1 *)(param_1 + 0xc),param_2);
+  DMA_LoadChannelDescriptor(*(undefined4 *)(param_1 + 8),*(undefined1 *)(param_1 + 0xc),param_2);
   return;
 }
 
 
-// ===== FUN_0020ad78 @ 0020ad78 (159 bytes)
+// ===== DMA_SubmitChannelTransfer @ 0020ad78 (159 bytes)
 
-undefined * FUN_0020ad78(int param_1,undefined4 *param_2)
+/* fsl_dma.c order [inference] */
+
+undefined * DMA_SubmitChannelTransfer(int param_1,undefined4 *param_2)
 
 {
   uint uVar1;
@@ -1619,7 +1721,7 @@ undefined * FUN_0020ad78(int param_1,undefined4 *param_2)
   if ((pdVar5[(*(byte *)(param_1 + 0xc) >> 5) + 0xc] >> (uVar6 & 0x1f) & 1) != 0) {
     return &DAT_00001388;
   }
-  FUN_0020ac04(pdVar5,uVar6,param_2[4],*(undefined1 *)(param_2 + 5));
+  DMA_SetChannelConfig(pdVar5,uVar6,param_2[4],*(undefined1 *)(param_2 + 5));
   iVar2 = param_2[4];
   uVar4 = 0;
   uVar1 = 0;
@@ -1627,7 +1729,8 @@ undefined * FUN_0020ad78(int param_1,undefined4 *param_2)
     uVar1 = *(uint *)(iVar2 + 4) >> 8 & 0xf;
     uVar4 = *(undefined4 *)(iVar2 + 8);
   }
-  FUN_0020a818(iVar3 + uVar6 * 0x10,param_2[3],*param_2,param_2[1],param_2[2],uVar4,uVar1);
+  DMA_SetupChannelDescriptor
+            (iVar3 + uVar6 * 0x10,param_2[3],*param_2,param_2[1],param_2[2],uVar4,uVar1);
   memw();
   *(undefined4 *)(*(int *)(param_1 + 8) + (uint)*(byte *)(param_1 + 0xc) * 0x10 + 0x408) =
        param_2[3];

@@ -1,8 +1,12 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0020e0c8 @ 0020e0c8 (119 bytes)
+// ===== I2C_SlaveSetReceiveBuffer @ 0020e0c8 (119 bytes)
 
-undefined4 FUN_0020e0c8(int param_1,int *param_2,undefined4 param_3,undefined4 param_4,uint param_5)
+/* fsl_i2c.c order [inference] */
+
+undefined4
+I2C_SlaveSetReceiveBuffer
+          (int param_1,int *param_2,undefined4 param_3,undefined4 param_4,uint param_5)
 
 {
   undefined4 uVar1;
@@ -10,7 +14,7 @@ undefined4 FUN_0020e0c8(int param_1,int *param_2,undefined4 param_3,undefined4 p
   
   memw();
   iVar2 = *param_2;
-  FUN_0020d4e0(param_1,&DAT_00008100);
+  I2C_DisableInterrupts(param_1,&DAT_00008100);
   uVar1 = 0;
   memw();
   if (*(char *)(iVar2 + 0x28) != '\0') {
@@ -35,14 +39,16 @@ undefined4 FUN_0020e0c8(int param_1,int *param_2,undefined4 param_3,undefined4 p
   memw();
   memw();
   *(undefined4 *)(param_1 + 0x804) = *(undefined4 *)(param_1 + 0x804);
-  FUN_0020d4d0(param_1,&DAT_00008100);
+  I2C_EnableInterrupts(param_1,&DAT_00008100);
   return uVar1;
 }
 
 
-// ===== FUN_0020e140 @ 0020e140 (29 bytes)
+// ===== I2C_SlaveSetAddress @ 0020e140 (29 bytes)
 
-void FUN_0020e140(int param_1,int param_2,uint param_3,uint param_4)
+/* fsl_i2c.c; called by I2C_SlaveInit [inference] */
+
+void I2C_SlaveSetAddress(int param_1,int param_2,uint param_3,uint param_4)
 
 {
   memw();
@@ -51,9 +57,11 @@ void FUN_0020e140(int param_1,int param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_0020e160 @ 0020e160 (44 bytes)
+// ===== I2C_SlaveGetDefaultConfig @ 0020e160 (44 bytes)
 
-void FUN_0020e160(undefined4 param_1)
+/* fsl_i2c.c: copies 0x200340 [inference] */
+
+void I2C_SlaveGetDefaultConfig(undefined4 param_1)
 
 {
   undefined1 auStack_40 [3];
@@ -72,9 +80,11 @@ void FUN_0020e160(undefined4 param_1)
 }
 
 
-// ===== FUN_0020e18c @ 0020e18c (185 bytes)
+// ===== I2C_SlaveInit @ 0020e18c (185 bytes)
 
-undefined4 FUN_0020e18c(int param_1,undefined1 *param_2,uint param_3)
+/* fsl_i2c.c order [inference] */
+
+undefined4 I2C_SlaveInit(int param_1,undefined1 *param_2,uint param_3)
 
 {
   undefined *puVar1;
@@ -89,13 +99,13 @@ undefined4 FUN_0020e18c(int param_1,undefined1 *param_2,uint param_3)
     if (puVar1 < &DAT_0000ffff) {
       puVar2 = puVar1;
     }
-    FUN_0020b7b0(param_1,3);
+    FLEXCOMM_Init(param_1,3);
     memw();
     *(undefined **)(param_1 + 0x814) = puVar2;
-    FUN_0020e140(param_1,0,*param_2,param_2[1]);
-    FUN_0020e140(param_1,1,param_2[2],param_2[3]);
-    FUN_0020e140(param_1,2,param_2[4],param_2[5]);
-    FUN_0020e140(param_1,3,param_2[6],param_2[7]);
+    I2C_SlaveSetAddress(param_1,0,*param_2,param_2[1]);
+    I2C_SlaveSetAddress(param_1,1,param_2[2],param_2[3]);
+    I2C_SlaveSetAddress(param_1,2,param_2[4],param_2[5]);
+    I2C_SlaveSetAddress(param_1,3,param_2[6],param_2[7]);
     memw();
     *(uint *)(param_1 + 0x858) = *(uint *)(param_2 + 8) & 1 | ((byte)param_2[0xc] & 0x7f) << 1;
     memw();
@@ -106,9 +116,11 @@ undefined4 FUN_0020e18c(int param_1,undefined1 *param_2,uint param_3)
 }
 
 
-// ===== FUN_0020e248 @ 0020e248 (16 bytes)
+// ===== I2C_SlaveDeinit @ 0020e248 (16 bytes)
 
-void FUN_0020e248(int param_1)
+/* fsl_i2c.c order [inference] */
+
+void I2C_SlaveDeinit(int param_1)
 
 {
   memw();
@@ -117,9 +129,11 @@ void FUN_0020e248(int param_1)
 }
 
 
-// ===== FUN_0020e258 @ 0020e258 (192 bytes)
+// ===== I2C_SlaveWriteBlocking @ 0020e258 (192 bytes)
 
-undefined4 FUN_0020e258(int param_1,byte *param_2,int param_3)
+/* fsl_i2c.c order [inference] */
+
+undefined4 I2C_SlaveWriteBlocking(int param_1,byte *param_2,int param_3)
 
 {
   uint uVar1;
@@ -178,9 +192,11 @@ undefined4 FUN_0020e258(int param_1,byte *param_2,int param_3)
 }
 
 
-// ===== FUN_0020e31c @ 0020e31c (192 bytes)
+// ===== I2C_SlaveReadBlocking @ 0020e31c (192 bytes)
 
-undefined4 FUN_0020e31c(int param_1,undefined1 *param_2,int param_3)
+/* fsl_i2c.c order [inference] */
+
+undefined4 I2C_SlaveReadBlocking(int param_1,undefined1 *param_2,int param_3)
 
 {
   uint uVar1;
@@ -239,33 +255,38 @@ undefined4 FUN_0020e31c(int param_1,undefined1 *param_2,int param_3)
 }
 
 
-// ===== FUN_0020e3e0 @ 0020e3e0 (59 bytes)
+// ===== I2C_SlaveTransferCreateHandle @ 0020e3e0 (59 bytes)
 
-void FUN_0020e3e0(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_i2c.c: IRQ handler 0x20E4E8 [inference] */
+
+void I2C_SlaveTransferCreateHandle
+               (undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   memset(param_2,0,0x38);
-  FUN_0020d4f0(param_1);
+  I2C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x34) = param_4;
   *(undefined4 *)(param_2 + 0x30) = param_3;
   memw();
   *(undefined4 *)(param_2 + 0x2c) = 0;
   memw();
   *(int *)param_2 = param_2;
-  FUN_0020b8e4(param_1,FUN_0020e4e8,param_2);
-  FUN_0020d4e0(param_1,&DAT_00008100);
+  FLEXCOMM_SetIRQHandler(param_1,I2C_SlaveTransferHandleIRQ,param_2);
+  I2C_DisableInterrupts(param_1,&DAT_00008100);
   return;
 }
 
 
-// ===== FUN_0020e41c @ 0020e41c (114 bytes)
+// ===== I2C_SlaveTransferNonBlocking @ 0020e41c (114 bytes)
 
-undefined4 FUN_0020e41c(int param_1,int param_2,uint param_3)
+/* fsl_i2c.c order [inference] */
+
+undefined4 I2C_SlaveTransferNonBlocking(int param_1,int param_2,uint param_3)
 
 {
   undefined4 uVar1;
   
-  FUN_0020d4e0(param_1,&DAT_00008100);
+  I2C_DisableInterrupts(param_1,&DAT_00008100);
   uVar1 = 0;
   memw();
   if (*(char *)(param_2 + 0x28) != '\0') {
@@ -290,14 +311,16 @@ undefined4 FUN_0020e41c(int param_1,int param_2,uint param_3)
   memw();
   memw();
   *(undefined4 *)(param_1 + 0x804) = *(undefined4 *)(param_1 + 0x804);
-  FUN_0020d4d0(param_1,&DAT_00008100);
+  I2C_EnableInterrupts(param_1,&DAT_00008100);
   return uVar1;
 }
 
 
-// ===== FUN_0020e490 @ 0020e490 (42 bytes)
+// ===== I2C_SlaveTransferGetCount @ 0020e490 (42 bytes)
 
-undefined4 FUN_0020e490(undefined4 param_1,int param_2,undefined4 *param_3)
+/* fsl_i2c.c order [inference] */
+
+undefined4 I2C_SlaveTransferGetCount(undefined4 param_1,int param_2,undefined4 *param_3)
 
 {
   if (param_3 == (undefined4 *)0x0) {
@@ -314,12 +337,14 @@ undefined4 FUN_0020e490(undefined4 param_1,int param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_0020e4bc @ 0020e4bc (41 bytes)
+// ===== I2C_SlaveTransferAbort @ 0020e4bc (41 bytes)
 
-void FUN_0020e4bc(int param_1,int param_2)
+/* fsl_i2c.c order [inference] */
+
+void I2C_SlaveTransferAbort(int param_1,int param_2)
 
 {
-  FUN_0020d4e0(param_1,&DAT_00008100);
+  I2C_DisableInterrupts(param_1,&DAT_00008100);
   memw();
   *(undefined4 *)(param_1 + 0x800) = 0;
   memw();
@@ -332,9 +357,11 @@ void FUN_0020e4bc(int param_1,int param_2)
 }
 
 
-// ===== FUN_0020e4e8 @ 0020e4e8 (555 bytes)
+// ===== I2C_SlaveTransferHandleIRQ @ 0020e4e8 (555 bytes)
 
-void FUN_0020e4e8(int param_1,int param_2)
+/* fsl_i2c.c order [inference] */
+
+void I2C_SlaveTransferHandleIRQ(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -342,7 +369,7 @@ void FUN_0020e4e8(int param_1,int param_2)
   memw();
   uVar1 = *(uint *)(param_1 + 0x804);
   if ((uVar1 >> 0xf & 1) != 0) {
-    FUN_0020dfe8(param_1,param_2,0x40);
+    I2C_SlaveAddressIRQ(param_1,param_2,0x40);
     memw();
     *(undefined **)(param_1 + 0x804) = &DAT_00008000;
   }
@@ -361,7 +388,7 @@ void FUN_0020e4e8(int param_1,int param_2)
       memw();
       memw();
       if ((*(int *)(param_2 + 0x10) == 0) || (*(int *)(param_2 + 0x1c) == 0)) {
-        FUN_0020dfe8(param_1,param_2,4);
+        I2C_SlaveAddressIRQ(param_1,param_2,4);
       }
       memw();
       memw();
@@ -391,7 +418,7 @@ void FUN_0020e4e8(int param_1,int param_2)
       }
       memw();
       *(undefined1 *)(param_2 + 0x28) = 0;
-      FUN_0020dfe8(param_1,param_2,0x20);
+      I2C_SlaveAddressIRQ(param_1,param_2,0x20);
       return;
     }
     if (*(int *)(param_2 + 0x2c) != 3) {
@@ -401,7 +428,7 @@ void FUN_0020e4e8(int param_1,int param_2)
       memw();
       memw();
       if ((*(int *)(param_2 + 0x14) == 0) || (*(int *)(param_2 + 0x18) == 0)) {
-        FUN_0020dfe8(param_1,param_2,2);
+        I2C_SlaveAddressIRQ(param_1,param_2,2);
       }
       memw();
       memw();
@@ -431,7 +458,7 @@ void FUN_0020e4e8(int param_1,int param_2)
       }
       memw();
       *(undefined1 *)(param_2 + 0x28) = 0;
-      FUN_0020dfe8(param_1,param_2,0x20);
+      I2C_SlaveAddressIRQ(param_1,param_2,0x20);
       return;
     }
     memw();
@@ -446,7 +473,7 @@ void FUN_0020e4e8(int param_1,int param_2)
     memw();
     memw();
     if ((*(int *)(param_2 + 0x10) == 0) || (*(int *)(param_2 + 0x1c) == 0)) {
-      FUN_0020dfe8(param_1,param_2,4);
+      I2C_SlaveAddressIRQ(param_1,param_2,4);
     }
     memw();
     memw();
@@ -462,7 +489,7 @@ void FUN_0020e4e8(int param_1,int param_2)
     memw();
     memw();
     if ((*(int *)(param_2 + 0x14) == 0) || (*(int *)(param_2 + 0x18) == 0)) {
-      FUN_0020dfe8(param_1,param_2,2);
+      I2C_SlaveAddressIRQ(param_1,param_2,2);
     }
     memw();
     memw();
@@ -477,14 +504,17 @@ void FUN_0020e4e8(int param_1,int param_2)
   memw();
   *(undefined4 *)(param_1 + 0x840) = 1;
 LAB_0020e6a0:
-  FUN_0020dfe8(param_1,param_2,1);
+  I2C_SlaveAddressIRQ(param_1,param_2,1);
   return;
 }
 
 
-// ===== FUN_0020e720 @ 0020e720 (13 bytes)
+// ===== I2C_EnableInterrupts_dma @ 0020e720 (13 bytes)
 
-void FUN_0020e720(int param_1,undefined4 param_2)
+/* fsl_i2c.h inline, fsl_i2c_dma.c copy: INTENSET = mask (suffix keeps the name unique) [fact for
+   the code] */
+
+void I2C_EnableInterrupts_dma(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -493,9 +523,11 @@ void FUN_0020e720(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020e730 @ 0020e730 (13 bytes)
+// ===== I2C_DisableInterrupts_dma @ 0020e730 (13 bytes)
 
-void FUN_0020e730(int param_1,undefined4 param_2)
+/* fsl_i2c.h inline, fsl_i2c_dma.c copy: INTENCLR = mask [fact for the code] */
+
+void I2C_DisableInterrupts_dma(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -504,9 +536,11 @@ void FUN_0020e730(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020e740 @ 0020e740 (137 bytes)
+// ===== I2C_RunDMATransfer @ 0020e740 (137 bytes)
 
-void FUN_0020e740(int param_1,int param_2)
+/* fsl_i2c_dma.c static: DMA_PrepareTransfer / SubmitTransfer / StartTransfer [inference] */
+
+void I2C_RunDMATransfer(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -523,13 +557,13 @@ void FUN_0020e740(int param_1,int param_2)
   }
   if (uVar1 != 0) {
     if (*(int *)(param_2 + 0x28) == 0) {
-      FUN_0020ab34(auStack_40,iVar2,param_1 + 0x828,1,uVar3,2,0);
+      DMA_PrepareTransfer(auStack_40,iVar2,param_1 + 0x828,1,uVar3,2,0);
     }
     else if (*(int *)(param_2 + 0x28) == 1) {
-      FUN_0020ab34(auStack_40,param_1 + 0x828,iVar2,1,uVar3,1,0);
+      DMA_PrepareTransfer(auStack_40,param_1 + 0x828,iVar2,1,uVar3,1,0);
     }
-    FUN_0020ae18(*(undefined4 *)(param_2 + 0x1c),auStack_40);
-    FUN_0020aed8(*(undefined4 *)(param_2 + 0x1c));
+    DMA_SubmitTransfer(*(undefined4 *)(param_2 + 0x1c),auStack_40);
+    DMA_StartTransfer(*(undefined4 *)(param_2 + 0x1c));
     *(undefined1 *)(param_2 + 0x18) = 0;
     *(uint *)(param_2 + 8) = *(int *)(param_2 + 8) - uVar3;
     *(uint *)(param_2 + 0xc) = *(int *)(param_2 + 0xc) + uVar3;
@@ -541,9 +575,11 @@ void FUN_0020e740(int param_1,int param_2)
 }
 
 
-// ===== FUN_0020e7d0 @ 0020e7d0 (782 bytes)
+// ===== I2C_MasterTransferDMAHandleIRQ @ 0020e7d0 (782 bytes)
 
-void FUN_0020e7d0(int param_1,char *param_2)
+/* fsl_i2c_dma.c static, registered by I2C_MasterTransferCreateHandleDMA [inference] */
+
+void I2C_MasterTransferDMAHandleIRQ(int param_1,char *param_2)
 
 {
   uint uVar1;
@@ -557,11 +593,11 @@ void FUN_0020e7d0(int param_1,char *param_2)
   if (param_2 == (char *)0x0) {
     return;
   }
-  uVar1 = FUN_0020d5a0(param_1);
+  uVar1 = I2C_GetStatusFlags(param_1);
   if ((uVar1 >> 4 & 1) != 0) {
     memw();
     *(undefined4 *)(param_1 + 0x804) = 0x10;
-    FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+    DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
     memw();
     *(undefined4 *)(param_1 + 0x820) = 0;
     uVar2 = 0xa2d;
@@ -570,7 +606,7 @@ void FUN_0020e7d0(int param_1,char *param_2)
   if ((uVar1 >> 6 & 1) != 0) {
     memw();
     *(undefined4 *)(param_1 + 0x804) = 0x40;
-    FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+    DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
     memw();
     *(undefined4 *)(param_1 + 0x820) = 0;
     uVar2 = 0xa30;
@@ -579,7 +615,7 @@ void FUN_0020e7d0(int param_1,char *param_2)
   if ((uVar1 >> 0x18 & 1) != 0) {
     memw();
     *(undefined4 *)(param_1 + 0x804) = 0x1000000;
-    FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+    DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
     memw();
     *(undefined4 *)(param_1 + 0x820) = 0;
     uVar2 = 0xa34;
@@ -588,7 +624,7 @@ void FUN_0020e7d0(int param_1,char *param_2)
   if ((uVar1 >> 0x19 & 1) != 0) {
     memw();
     *(undefined4 *)(param_1 + 0x804) = 0x2000000;
-    FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+    DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
     memw();
     *(undefined4 *)(param_1 + 0x820) = 0;
     uVar2 = 0xa35;
@@ -601,7 +637,7 @@ void FUN_0020e7d0(int param_1,char *param_2)
   memw();
   uVar1 = (*(uint *)(param_1 + 0x804) & 0xe) >> 1;
   if ((uVar1 == 3) || (uVar1 == 4)) {
-    FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+    DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
     memw();
     *(undefined4 *)(param_1 + 0x820) = 4;
     *param_2 = '\b';
@@ -659,9 +695,9 @@ void FUN_0020e7d0(int param_1,char *param_2)
 LAB_0020e95c:
       memw();
       *(uint *)(param_1 + 0x820) = uVar1 | 8;
-      FUN_0020ab34(auStack_40,param_2 + 0x14,param_1 + 0x828,1,iVar5,2,0);
-      FUN_0020ae18(*(undefined4 *)(param_2 + 0x1c),auStack_40);
-      FUN_0020aed8(*(undefined4 *)(param_2 + 0x1c));
+      DMA_PrepareTransfer(auStack_40,param_2 + 0x14,param_1 + 0x828,1,iVar5,2,0);
+      DMA_SubmitTransfer(*(undefined4 *)(param_2 + 0x1c),auStack_40);
+      DMA_StartTransfer(*(undefined4 *)(param_2 + 0x1c));
       cVar3 = '\x02';
       param_2[0x10] = '\0';
       param_2[0x11] = '\0';
@@ -683,7 +719,7 @@ LAB_0020e9b0:
       memw();
       *(uint *)(param_1 + 0x820) = uVar1 | 8;
       *(undefined4 *)(param_2 + 8) = *(undefined4 *)(param_2 + 0x38);
-      FUN_0020e740(param_1,param_2);
+      I2C_RunDMATransfer(param_1,param_2);
       param_2[0x18] = '\0';
       *param_2 = '\a';
       return;
@@ -699,7 +735,7 @@ LAB_0020e9e2:
       if ((uVar6 & 1) != 0) {
         memw();
       }
-      FUN_0020e740(param_1,param_2);
+      I2C_RunDMATransfer(param_1,param_2);
       *param_2 = '\x05';
       param_2[0x18] = '\0';
       return;
@@ -759,7 +795,7 @@ LAB_0020e883:
   uVar2 = 0xa31;
 LAB_0020e80d:
   *param_2 = '\0';
-  FUN_0020e730(param_1,0x1000051);
+  I2C_DisableInterrupts_dma(param_1,0x1000051);
   if (*(code **)(param_2 + 0x3c) == (code *)0x0) {
     return;
   }
@@ -768,9 +804,11 @@ LAB_0020e80d:
 }
 
 
-// ===== FUN_0020eaec @ 0020eaec (148 bytes)
+// ===== I2C_MasterTransferCallbackDMA @ 0020eaec (148 bytes)
 
-void FUN_0020eaec(int param_1,int *param_2)
+/* fsl_i2c_dma.c static DMA callback [inference] */
+
+void I2C_MasterTransferCallbackDMA(int param_1,int *param_2)
 
 {
   int iVar1;
@@ -794,13 +832,13 @@ void FUN_0020eaec(int param_1,int *param_2)
   }
   if (uVar2 != 0) {
     if (*(int *)(iVar1 + 0x28) == 0) {
-      FUN_0020ab34(auStack_40,iVar3,iVar4 + 0x828,1,uVar5,2,0);
+      DMA_PrepareTransfer(auStack_40,iVar3,iVar4 + 0x828,1,uVar5,2,0);
     }
     else if (*(int *)(iVar1 + 0x28) == 1) {
-      FUN_0020ab34(auStack_40,iVar4 + 0x828,iVar3,1,uVar5,1,0);
+      DMA_PrepareTransfer(auStack_40,iVar4 + 0x828,iVar3,1,uVar5,1,0);
     }
-    FUN_0020ae18(*(undefined4 *)(iVar1 + 0x1c),auStack_40);
-    FUN_0020aed8(*(undefined4 *)(iVar1 + 0x1c));
+    DMA_SubmitTransfer(*(undefined4 *)(iVar1 + 0x1c),auStack_40);
+    DMA_StartTransfer(*(undefined4 *)(iVar1 + 0x1c));
     *(undefined1 *)(iVar1 + 0x18) = 0;
     *(uint *)(iVar1 + 8) = *(int *)(iVar1 + 8) - uVar5;
     *(uint *)(iVar1 + 0xc) = *(int *)(iVar1 + 0xc) + uVar5;
@@ -812,31 +850,36 @@ void FUN_0020eaec(int param_1,int *param_2)
 }
 
 
-// ===== FUN_0020eb84 @ 0020eb84 (74 bytes)
+// ===== I2C_MasterTransferCreateHandleDMA @ 0020eb84 (74 bytes)
 
-void FUN_0020eb84(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+/* fsl_i2c_dma.c order [inference] */
+
+void I2C_MasterTransferCreateHandleDMA
+               (undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
+               undefined4 param_5)
 
 {
   int iVar1;
   
   memset(param_2,0,0x44);
-  iVar1 = FUN_0020d4f0(param_1);
+  iVar1 = I2C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x40) = param_4;
   *(undefined4 *)(param_2 + 0x3c) = param_3;
-  FUN_0020b8e4(param_1,FUN_0020e7d0,param_2);
-  FUN_0020e730(param_1,0x1000051);
+  FLEXCOMM_SetIRQHandler(param_1,I2C_MasterTransferDMAHandleIRQ,param_2);
+  I2C_DisableInterrupts_dma(param_1,0x1000051);
   *(undefined4 *)(param_2 + 0x1c) = param_5;
   *(undefined4 *)(&DAT_00238c10 + iVar1 * 8) = param_1;
   *(int *)(&DAT_00238c14 + iVar1 * 8) = param_2;
-  FUN_0020ab28(param_5,FUN_0020eaec);
+  DMA_SetCallback(param_5,I2C_MasterTransferCallbackDMA);
   return;
 }
 
 
-// ===== FUN_0020ebd0 @ 0020ebd0 (250 bytes)
+// ===== I2C_MasterTransferDMA @ 0020ebd0 (250 bytes)
 
-undefined4 FUN_0020ebd0(int param_1,char *param_2,int param_3)
+/* fsl_i2c_dma.c order [inference] */
+
+undefined4 I2C_MasterTransferDMA(int param_1,char *param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -918,14 +961,16 @@ LAB_0020ec17:
 LAB_0020ec90:
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x50;
-  FUN_0020e720(param_1,0x1000051);
+  I2C_EnableInterrupts_dma(param_1,0x1000051);
   return uVar1;
 }
 
 
-// ===== FUN_0020eccc @ 0020eccc (34 bytes)
+// ===== I2C_MasterTransferGetCountDMA @ 0020eccc (34 bytes)
 
-undefined4 FUN_0020eccc(undefined4 param_1,char *param_2,undefined4 *param_3)
+/* fsl_i2c_dma.c order [inference] */
+
+undefined4 I2C_MasterTransferGetCountDMA(undefined4 param_1,char *param_2,undefined4 *param_3)
 
 {
   if (param_3 == (undefined4 *)0x0) {
@@ -940,9 +985,11 @@ undefined4 FUN_0020eccc(undefined4 param_1,char *param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_0020ecf0 @ 0020ecf0 (113 bytes)
+// ===== I2C_MasterTransferAbortDMA @ 0020ecf0 (113 bytes)
 
-void FUN_0020ecf0(int param_1,char *param_2)
+/* fsl_i2c_dma.c order [inference] */
+
+void I2C_MasterTransferAbortDMA(int param_1,char *param_2)
 
 {
   uint uVar1;
@@ -950,12 +997,12 @@ void FUN_0020ecf0(int param_1,char *param_2)
   if (*param_2 == '\0') {
     return;
   }
-  FUN_0020aa20(*(undefined4 *)(param_2 + 0x1c));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
   memw();
   *(undefined4 *)(param_1 + 0x820) = 0;
-  FUN_0020e730(param_1,0x1000051);
+  I2C_DisableInterrupts_dma(param_1,0x1000051);
   do {
-    uVar1 = FUN_0020d5a0(param_1);
+    uVar1 = I2C_GetStatusFlags(param_1);
   } while ((uVar1 & 1) == 0);
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x50;
@@ -964,7 +1011,7 @@ void FUN_0020ecf0(int param_1,char *param_2)
     memw();
     *(undefined4 *)(param_1 + 0x820) = 4;
     do {
-      uVar1 = FUN_0020d5a0(param_1);
+      uVar1 = I2C_GetStatusFlags(param_1);
     } while ((uVar1 & 1) == 0);
     memw();
     *(undefined4 *)(param_1 + 0x804) = 0x50;
@@ -976,9 +1023,11 @@ void FUN_0020ecf0(int param_1,char *param_2)
 }
 
 
-// ===== FUN_0020ed70 @ 0020ed70 (13 bytes)
+// ===== I2S_EnableInterrupts @ 0020ed70 (13 bytes)
 
-void FUN_0020ed70(int param_1,undefined4 param_2)
+/* fsl_i2s.h inline: FIFOINTENSET (+0xE10) = mask [fact for the code] */
+
+void I2S_EnableInterrupts(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -987,9 +1036,11 @@ void FUN_0020ed70(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020ed80 @ 0020ed80 (13 bytes)
+// ===== I2S_DisableInterrupts @ 0020ed80 (13 bytes)
 
-void FUN_0020ed80(int param_1,undefined4 param_2)
+/* fsl_i2s.h inline: FIFOINTENCLR (+0xE14) = mask [fact for the code] */
+
+void I2S_DisableInterrupts(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -998,9 +1049,12 @@ void FUN_0020ed80(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020ed90 @ 0020ed90 (28 bytes)
+// ===== I2S_SetBitClockRate @ 0020ed90 (28 bytes)
 
-void FUN_0020ed90(int param_1,uint param_2,uint param_3,uint param_4,uint param_5)
+/* fsl_i2s.c: DIV (+0xC1C) = sourceClock / sampleRate / bitWidth / channels - 1 [fact for the code]
+    */
+
+void I2S_SetBitClockRate(int param_1,uint param_2,uint param_3,uint param_4,uint param_5)
 
 {
   memw();
@@ -1019,7 +1073,7 @@ void I2S_TxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
-  FUN_0020b7b0(param_1,4);
+  FLEXCOMM_Init(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
   if (param_1 == &USART0_CFG) {
@@ -1057,7 +1111,7 @@ void I2S_RxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
-  FUN_0020b7b0(param_1,5);
+  FLEXCOMM_Init(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
   if (param_1 == &USART0_CFG) {
@@ -1131,18 +1185,22 @@ void I2S_RxGetDefaultConfig(undefined4 *param_1)
 }
 
 
-// ===== FUN_0020f060 @ 0020f060 (5 bytes)
+// ===== I2S_Deinit @ 0020f060 (5 bytes)
 
-void FUN_0020f060(void)
+/* fsl_i2s.c order [inference] */
+
+void I2S_Deinit(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0020f068 @ 0020f068 (82 bytes)
+// ===== I2S_EnableSecondaryChannel @ 0020f068 (82 bytes)
 
-void FUN_0020f068(int param_1,int param_2,uint param_3,uint param_4)
+/* fsl_i2s.c order [inference] */
+
+void I2S_EnableSecondaryChannel(int param_1,int param_2,uint param_3,uint param_4)
 
 {
   param_1 = param_1 + param_2 * 0x20;
@@ -1156,9 +1214,11 @@ void FUN_0020f068(int param_1,int param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_0020f0bc @ 0020f0bc (152 bytes)
+// ===== I2S_TxTransferCreateHandle @ 0020f0bc (152 bytes)
 
-void FUN_0020f0bc(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_i2s.c: IRQ handler 0x20F518 [inference] */
+
+void I2S_TxTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined1 uVar1;
@@ -1182,17 +1242,18 @@ void FUN_0020f0bc(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
   uVar2 = *(uint *)(param_1 + 0xe00);
   *(undefined1 *)(param_2 + 0x10) = 0;
   *(bool *)(param_2 + 0xe) = (uVar2 & 8) != 0;
-  FUN_0020b8e4(param_1,FUN_0020f518,param_2);
-  FUN_0020ed80(param_1,5);
+  FLEXCOMM_SetIRQHandler(param_1,I2S_TxHandleIRQ,param_2);
+  I2S_DisableInterrupts(param_1,5);
   return;
 }
 
 
-// ===== FUN_0020f154 @ 0020f154 (266 bytes)
+// ===== I2S_TxTransferNonBlocking @ 0020f154 (266 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* fsl_i2s.c order, kStatus_I2S_Busy 0xA8E [inference] */
 
-undefined4 FUN_0020f154(int param_1,undefined4 *param_2,uint param_3,uint param_4)
+undefined4 I2S_TxTransferNonBlocking(int param_1,undefined4 *param_2,uint param_3,uint param_4)
 
 {
   uint uVar1;
@@ -1271,17 +1332,19 @@ LAB_0020f17d:
   memw();
   memw();
   *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) | 1;
-  FUN_0020ed70(param_1,5);
+  I2S_EnableInterrupts(param_1,5);
   return 0;
 }
 
 
-// ===== FUN_0020f260 @ 0020f260 (95 bytes)
+// ===== I2S_TxTransferAbort @ 0020f260 (95 bytes)
 
-void FUN_0020f260(int param_1,undefined4 *param_2)
+/* fsl_i2s.c order [inference] */
+
+void I2S_TxTransferAbort(int param_1,undefined4 *param_2)
 
 {
-  FUN_0020ed80(param_1,5);
+  I2S_DisableInterrupts(param_1,5);
   memw();
   memw();
   *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0xfffffffe;
@@ -1299,9 +1362,11 @@ void FUN_0020f260(int param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_0020f2c0 @ 0020f2c0 (155 bytes)
+// ===== I2S_RxTransferCreateHandle @ 0020f2c0 (155 bytes)
 
-void FUN_0020f2c0(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_i2s.c: IRQ handler 0x20F8A0 [inference] */
+
+void I2S_RxTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined1 uVar1;
@@ -1325,17 +1390,18 @@ void FUN_0020f2c0(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
   uVar2 = *(uint *)(param_1 + 0xe00);
   *(undefined1 *)(param_2 + 0x10) = 0;
   *(bool *)(param_2 + 0xe) = (uVar2 & 8) != 0;
-  FUN_0020b8e4(param_1,FUN_0020f8a0,param_2);
-  FUN_0020ed80(param_1,10);
+  FLEXCOMM_SetIRQHandler(param_1,I2S_RxHandleIRQ,param_2);
+  I2S_DisableInterrupts(param_1,10);
   return;
 }
 
 
-// ===== FUN_0020f35c @ 0020f35c (268 bytes)
+// ===== I2S_RxTransferNonBlocking @ 0020f35c (268 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* fsl_i2s.c order [inference] */
 
-undefined4 FUN_0020f35c(int param_1,undefined4 *param_2,uint param_3,uint param_4)
+undefined4 I2S_RxTransferNonBlocking(int param_1,undefined4 *param_2,uint param_3,uint param_4)
 
 {
   uint uVar1;
@@ -1414,17 +1480,19 @@ LAB_0020f385:
   memw();
   memw();
   *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) | 1;
-  FUN_0020ed70(param_1,10);
+  I2S_EnableInterrupts(param_1,10);
   return 0;
 }
 
 
-// ===== FUN_0020f468 @ 0020f468 (95 bytes)
+// ===== I2S_RxTransferAbort @ 0020f468 (95 bytes)
 
-void FUN_0020f468(int param_1,undefined4 *param_2)
+/* fsl_i2s.c order [inference] */
+
+void I2S_RxTransferAbort(int param_1,undefined4 *param_2)
 
 {
-  FUN_0020ed80(param_1,10);
+  I2S_DisableInterrupts(param_1,10);
   memw();
   memw();
   *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0xfffffffe;
@@ -1442,9 +1510,11 @@ void FUN_0020f468(int param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_0020f4c8 @ 0020f4c8 (39 bytes)
+// ===== I2S_TransferGetCount @ 0020f4c8 (39 bytes)
 
-undefined4 FUN_0020f4c8(undefined4 param_1,int *param_2,int *param_3)
+/* fsl_i2s.c order [inference] */
+
+undefined4 I2S_TransferGetCount(undefined4 param_1,int *param_2,int *param_3)
 
 {
   if ((param_2 != (int *)0x0) && (param_3 != (int *)0x0)) {
@@ -1460,9 +1530,11 @@ undefined4 FUN_0020f4c8(undefined4 param_1,int *param_2,int *param_3)
 }
 
 
-// ===== FUN_0020f4f0 @ 0020f4f0 (39 bytes)
+// ===== I2S_TransferGetErrorCount @ 0020f4f0 (39 bytes)
 
-undefined4 FUN_0020f4f0(undefined4 param_1,int *param_2,int *param_3)
+/* fsl_i2s.c order [inference] */
+
+undefined4 I2S_TransferGetErrorCount(undefined4 param_1,int *param_2,int *param_3)
 
 {
   if ((param_2 != (int *)0x0) && (param_3 != (int *)0x0)) {
@@ -1478,9 +1550,11 @@ undefined4 FUN_0020f4f0(undefined4 param_1,int *param_2,int *param_3)
 }
 
 
-// ===== FUN_0020f518 @ 0020f518 (898 bytes)
+// ===== I2S_TxHandleIRQ @ 0020f518 (898 bytes)
 
-void FUN_0020f518(int param_1,int *param_2)
+/* fsl_i2s.c order [inference] */
+
+void I2S_TxHandleIRQ(int param_1,int *param_2)
 
 {
   byte bVar1;
@@ -1698,7 +1772,7 @@ LAB_0020f687:
       memw();
       memw();
       *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0xfffffffe;
-      FUN_0020ed80(param_1,5);
+      I2S_DisableInterrupts(param_1,5);
       memw();
       memw();
       *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00010000;
@@ -1718,9 +1792,11 @@ LAB_0020f687:
 }
 
 
-// ===== FUN_0020f8a0 @ 0020f8a0 (701 bytes)
+// ===== I2S_RxHandleIRQ @ 0020f8a0 (701 bytes)
 
-void FUN_0020f8a0(int param_1,undefined4 *param_2)
+/* fsl_i2s.c order [inference] */
+
+void I2S_RxHandleIRQ(int param_1,undefined4 *param_2)
 
 {
   byte bVar1;
@@ -1881,7 +1957,7 @@ LAB_0020f98e:
           memw();
           memw();
           *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) & 0xfffffffe;
-          FUN_0020ed80(param_1,10);
+          I2S_DisableInterrupts(param_1,10);
           memw();
           memw();
           *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00020000;
@@ -1904,9 +1980,11 @@ LAB_0020f98e:
 }
 
 
-// ===== FUN_0020fb70 @ 0020fb70 (38 bytes)
+// ===== DMA_EnableChannelInterrupts @ 0020fb70 (38 bytes)
 
-void FUN_0020fb70(int param_1,uint param_2)
+/* fsl_dma.h inline (fsl_i2s_dma.c copy): COMMON INTENSET (+0x48) |= bit [fact for the code] */
+
+void DMA_EnableChannelInterrupts(int param_1,uint param_2)
 
 {
   param_1 = (param_2 >> 5 & 7) * 4 + param_1;
@@ -1917,9 +1995,11 @@ void FUN_0020fb70(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020fb98 @ 0020fb98 (38 bytes)
+// ===== DMA_DisableChannelInterrupts @ 0020fb98 (38 bytes)
 
-void FUN_0020fb98(int param_1,uint param_2)
+/* fsl_dma.h inline: COMMON INTENCLR (+0x50) [fact for the code] */
+
+void DMA_DisableChannelInterrupts(int param_1,uint param_2)
 
 {
   param_1 = (param_2 >> 5 & 7) * 4 + param_1;
@@ -1930,24 +2010,29 @@ void FUN_0020fb98(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020fbc0 @ 0020fbc0 (16 bytes)
+// ===== I2S_DisableDMAInterrupts @ 0020fbc0 (16 bytes)
 
-void FUN_0020fbc0(int param_1)
+/* fsl_i2s_dma.c static inline [inference] */
+
+void I2S_DisableDMAInterrupts(int param_1)
 
 {
-  FUN_0020fb98(*(undefined4 *)(*(int *)(param_1 + 0x10) + 8),
-               *(undefined1 *)(*(int *)(param_1 + 0x10) + 0xc));
+  DMA_DisableChannelInterrupts
+            (*(undefined4 *)(*(int *)(param_1 + 0x10) + 8),
+             *(undefined1 *)(*(int *)(param_1 + 0x10) + 0xc));
   return;
 }
 
 
-// ===== FUN_0020fbd0 @ 0020fbd0 (20 bytes)
+// ===== I2S_EnableDMAInterrupts @ 0020fbd0 (20 bytes)
 
-void FUN_0020fbd0(int *param_1)
+/* fsl_i2s_dma.c static inline [inference] */
+
+void I2S_EnableDMAInterrupts(int *param_1)
 
 {
   if (*param_1 != 0) {
-    FUN_0020fb70(*(undefined4 *)(param_1[4] + 8),*(undefined1 *)(param_1[4] + 0xc));
+    DMA_EnableChannelInterrupts(*(undefined4 *)(param_1[4] + 8),*(undefined1 *)(param_1[4] + 0xc));
   }
   return;
 }
@@ -1978,7 +2063,7 @@ void I2S_TxTransferCreateHandleDMA
   memset(&DAT_00238c70,0,0x38);
   DAT_00238c70 = param_1;
   DAT_00238c74 = param_2;
-  FUN_0020ab28(param_3,FUN_00210420,&DAT_00238c70);
+  DMA_SetCallback(param_3,I2S_DMACallback,&DAT_00238c70);
   return;
 }
 
@@ -1990,7 +2075,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
 {
   int iVar1;
   
-  FUN_0020fbc0(param_2);
+  I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
     iVar1 = 4;
@@ -2016,32 +2101,34 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
       *(byte *)(param_2 + 0xd) = (char)param_2[0xd] + 1U & 3;
       if (*param_2 == 0) {
         *param_2 = 1;
-        iVar1 = FUN_0020ff80(param_1,param_2);
+        iVar1 = I2S_StartTransferDMA(param_1,param_2);
         if (iVar1 != 0) {
-          FUN_0020fbd0(param_2);
+          I2S_EnableDMAInterrupts(param_2);
           return iVar1;
         }
       }
-      FUN_002101ec(param_1,param_2);
-      FUN_0020fbd0(param_2);
+      I2S_AddTransferDMA(param_1,param_2);
+      I2S_EnableDMAInterrupts(param_2);
       return 0;
     }
     iVar1 = 0xa8e;
   }
-  FUN_0020fbd0(param_2);
+  I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
 
 
-// ===== FUN_0020fd54 @ 0020fd54 (313 bytes)
+// ===== I2S_TransferAbortDMA @ 0020fd54 (313 bytes)
 
-void FUN_0020fd54(dword *param_1,int *param_2)
+/* fsl_i2s_dma.c: DMA_AbortTransfer [inference] */
+
+void I2S_TransferAbortDMA(dword *param_1,int *param_2)
 
 {
   uint uVar1;
   
-  FUN_0020fbc0(param_2,param_1 != &USART0_CFG);
-  FUN_0020aa20(param_2[4]);
+  I2S_DisableDMAInterrupts(param_2,param_1 != &USART0_CFG);
+  DMA_AbortTransfer(param_2[4]);
   if (*param_2 == 1) {
     memw();
     uVar1 = param_1[0x381] >> 4 & 1;
@@ -2118,7 +2205,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
 {
   int iVar1;
   
-  FUN_0020fbc0(param_2);
+  I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
     iVar1 = 4;
@@ -2144,26 +2231,28 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
       *(byte *)(param_2 + 0xd) = (char)param_2[0xd] + 1U & 3;
       if (*param_2 == 0) {
         *param_2 = 2;
-        iVar1 = FUN_0020ff80(param_1,param_2);
+        iVar1 = I2S_StartTransferDMA(param_1,param_2);
         if (iVar1 != 0) {
-          FUN_0020fbd0(param_2);
+          I2S_EnableDMAInterrupts(param_2);
           return iVar1;
         }
       }
-      FUN_002101ec(param_1,param_2);
-      FUN_0020fbd0(param_2);
+      I2S_AddTransferDMA(param_1,param_2);
+      I2S_EnableDMAInterrupts(param_2);
       return 0;
     }
     iVar1 = 0xa8e;
   }
-  FUN_0020fbd0(param_2);
+  I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
 
 
-// ===== FUN_0020ff80 @ 0020ff80 (620 bytes)
+// ===== I2S_StartTransferDMA @ 0020ff80 (620 bytes)
 
-undefined4 FUN_0020ff80(int param_1,int *param_2)
+/* fsl_i2s_dma.c static [inference] */
+
+undefined4 I2S_StartTransferDMA(int param_1,int *param_2)
 
 {
   int *piVar1;
@@ -2226,10 +2315,11 @@ undefined4 FUN_0020ff80(int param_1,int *param_2)
   if (!bVar9 == 4) {
     uVar8 = 0xc000;
   }
-  FUN_0020ad10(param_2[4],
-               uVar5 | uVar7 |
-               uVar8 | ((uint)puStack_2c / (uint)*(byte *)(param_2 + 1) - 1) * 0x10000 & 0x3ff0000,
-               puVar6,puVar2,&DAT_20060610);
+  DMA_SubmitChannelTransferParameter
+            (param_2[4],
+             uVar5 | uVar7 |
+             uVar8 | ((uint)puStack_2c / (uint)*(byte *)(param_2 + 1) - 1) * 0x10000 & 0x3ff0000,
+             puVar6,puVar2,&DAT_20060610);
   memw();
   memw();
   *(short *)((int)&DAT_00238c78 + (uint)DAT_00238c7d * 2) = (short)puStack_2c;
@@ -2261,7 +2351,7 @@ undefined4 FUN_0020ff80(int param_1,int *param_2)
     if (*param_2 != 1) {
       puVar3 = &DAT_00238c64;
     }
-    FUN_0020a78c(puVar6,&DAT_00010203,puVar2,puVar3,&DAT_20060610 + (uVar5 & 1) * 0x10);
+    DMA_SetupDescriptor(puVar6,&DAT_00010203,puVar2,puVar3,&DAT_20060610 + (uVar5 & 1) * 0x10);
     uVar5 = uVar5 + 1;
     puVar6 = puVar6 + 0x10;
   } while (uVar5 != 3);
@@ -2279,7 +2369,7 @@ undefined4 FUN_0020ff80(int param_1,int *param_2)
   memw();
   memw();
   *(uint *)(iVar4 + 0x400) = *(uint *)(iVar4 + 0x400) | 1;
-  FUN_0020aed8(param_2[4]);
+  DMA_StartTransfer(param_2[4]);
   memw();
   memw();
   *(uint *)(param_1 + 0xc00) = *(uint *)(param_1 + 0xc00) | 1;

@@ -89,7 +89,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
     iVar8 = iVar7;
     iVar7 = iVar8 + 0x40;
     uVar9 = __aeabi_i2d(iVar7);
-    uVar9 = FUN_201649d8((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
+    uVar9 = __aeabi_ddiv((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
     uVar4 = (undefined4)((ulonglong)uVar9 >> 0x20);
     uVar2 = progress_scale(param_6,uVar4,(int)uVar9,uVar4);
     progress_set(uVar2);
@@ -115,7 +115,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
   iVar8 = iVar8 + 0x80;
   auStack_78[iVar7] = 0x20;
   uVar9 = __aeabi_i2d(iVar8);
-  uVar9 = FUN_201649d8((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
+  uVar9 = __aeabi_ddiv((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
   uVar4 = (undefined4)((ulonglong)uVar9 >> 0x20);
   uVar2 = progress_scale(param_6,uVar4,(int)uVar9,uVar4);
   progress_set(uVar2);
@@ -128,7 +128,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
       do {
         iVar8 = iVar8 + 0x100;
         uVar9 = __aeabi_i2d(iVar8);
-        uVar9 = FUN_201649d8((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
+        uVar9 = __aeabi_ddiv((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
         uVar4 = (undefined4)((ulonglong)uVar9 >> 0x20);
         uVar2 = progress_scale(param_6,uVar4,(int)uVar9,uVar4);
         progress_set(uVar2);
@@ -143,7 +143,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
     }
     if (extraout_r1 != 0) {
       uVar9 = __aeabi_i2d(iVar8 + extraout_r1);
-      uVar9 = FUN_201649d8((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
+      uVar9 = __aeabi_ddiv((int)uVar9,(int)((ulonglong)uVar9 >> 0x20),uVar1,uVar3);
       uVar1 = (undefined4)((ulonglong)uVar9 >> 0x20);
       uVar2 = progress_scale(param_6,uVar1,(int)uVar9,uVar1);
       progress_set(uVar2);
@@ -183,22 +183,22 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
   if (iVar1 != 0) {
     return iVar1;
   }
-  iVar1 = FUN_2014c410(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
+  iVar1 = fs_opendir(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
   if (iVar1 == 0) {
-    iVar1 = FUN_2014c410("I:\\FT-710");
+    iVar1 = fs_opendir("I:\\FT-710");
     if (iVar1 == 0) {
-      iVar1 = FUN_2014beec("I:\\FT-710");
+      iVar1 = fs_mkdir("I:\\FT-710");
       if (iVar1 != 0) goto LAB_2010f7b8;
     }
     else {
-      thunk_FUN_2014c474();
+      fs_closedir();
     }
-    uVar5 = FUN_2014beec(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
+    uVar5 = fs_mkdir(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
     uVar4 = (undefined4)((ulonglong)uVar5 >> 0x20);
     if ((int)uVar5 != 0) goto LAB_2010f7b8;
   }
   else {
-    thunk_FUN_2014c474();
+    fs_closedir();
     uVar4 = extraout_r1;
   }
   uVar2 = progress_scale(&local_28,uVar4,0,0x3fe00000);
@@ -223,7 +223,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
     progress_set(uVar3);
     progress_range_init(auStack_20,local_24,99);
     iVar1 = sdmenu_write_dat(uVar2,param_1,param_3,iVar1 + 0x640,0x7d10,auStack_20);
-    FUN_20133620();
+    scope3d_tables_init();
     gui_scope_draw_hold_set(0);
     if (iVar1 == 0) {
       FUN_2013fc4c(1);
@@ -283,7 +283,7 @@ undefined4 sdmenu_load_file(uint *param_1)
   sprintf(auStack_a8,"%s\\%s.dat",*(undefined4 *)(&DAT_208001ac + (uint)DAT_2080019d * 4),
           &DAT_208193a6);
   if (DAT_2080019d < 2) {
-    iVar3 = FUN_2014aec8(auStack_a8,auStack_78);
+    iVar3 = fs_stat(auStack_a8,auStack_78);
     if (iVar3 == 0) {
       if ((local_44 == 0x7f50) && (local_80 = fs_fopen((uint)auStack_a8,0x2010fb88), local_80 != 0))
       {
@@ -295,7 +295,7 @@ undefined4 sdmenu_load_file(uint *param_1)
         do {
           iVar3 = iVar3 + 0x40;
           uVar12 = __aeabi_i2d(iVar3);
-          uVar12 = FUN_201649d8((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),(int)uVar11,uVar7);
+          uVar12 = __aeabi_ddiv((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),(int)uVar11,uVar7);
           uVar8 = (undefined4)((ulonglong)uVar12 >> 0x20);
           uVar4 = progress_scale(local_28,uVar8,(int)uVar12,uVar8);
           progress_set(uVar4);
@@ -306,10 +306,9 @@ undefined4 sdmenu_load_file(uint *param_1)
         } while (iVar9 < 9);
         local_168 = 0;
         iVar9 = strlen(auStack_1a8);
-        if ((((iVar9 == 0x40) &&
-             (iVar9 = FUN_2014e320(auStack_1a8,0x2010fb8c,&local_7c), iVar9 != 0)) &&
-            (iVar9 = FUN_2014e320(local_7c,0x2010fb8c,&local_7c), iVar9 != 0)) &&
-           (pbVar5 = (byte *)FUN_2014e320(local_7c,0x2010fb8c,&local_7c), pbVar5 != (byte *)0x0)) {
+        if ((((iVar9 == 0x40) && (iVar9 = strtok_r(auStack_1a8,0x2010fb8c,&local_7c), iVar9 != 0))
+            && (iVar9 = strtok_r(local_7c,0x2010fb8c,&local_7c), iVar9 != 0)) &&
+           (pbVar5 = (byte *)strtok_r(local_7c,0x2010fb8c,&local_7c), pbVar5 != (byte *)0x0)) {
           uVar2 = hex_parse(pbVar5,8,&local_34);
           local_2c = (uint)uVar2;
           if (local_34 != pbVar5) {
@@ -324,7 +323,7 @@ undefined4 sdmenu_load_file(uint *param_1)
             while (uVar4 = fs_fread((uint)auStack_1a8,1,0x100,local_80), uVar4 != 0) {
               iVar3 = iVar3 + uVar4;
               uVar12 = __aeabi_i2d(iVar3);
-              uVar12 = FUN_201649d8((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),(int)uVar11,uVar7);
+              uVar12 = __aeabi_ddiv((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),(int)uVar11,uVar7);
               uVar8 = (undefined4)((ulonglong)uVar12 >> 0x20);
               uVar6 = progress_scale(local_28,uVar8,(int)uVar12,uVar8);
               progress_set(uVar6);
@@ -352,7 +351,7 @@ undefined4 sdmenu_load_file(uint *param_1)
             else {
               DAT_208001a1 = 1;
             }
-            FUN_20133620();
+            scope3d_tables_init();
             gui_scope_draw_hold_set(0);
             return local_38;
           }
@@ -397,15 +396,15 @@ byte sd_make_dirs(void)
   FUN_20103bc8(0);
   itron_dly_tsk(0x14);
   if (uVar1 == 0) {
-    iVar3 = FUN_2014beec("I:\\FT-710");
+    iVar3 = fs_mkdir("I:\\FT-710");
     if (iVar3 == 0) {
-      iVar3 = FUN_2014beec("I:\\FT-710\\Capture");
+      iVar3 = fs_mkdir("I:\\FT-710\\Capture");
       if (iVar3 == 0) {
-        iVar3 = FUN_2014beec("I:\\FT-710\\MemList");
+        iVar3 = fs_mkdir("I:\\FT-710\\MemList");
         if (iVar3 == 0) {
-          iVar3 = FUN_2014beec("I:\\FT-710\\Menu");
+          iVar3 = fs_mkdir("I:\\FT-710\\Menu");
           if (iVar3 == 0) {
-            iVar3 = FUN_2014beec("I:\\FT-710\\PlayList");
+            iVar3 = fs_mkdir("I:\\FT-710\\PlayList");
             if (iVar3 == 0) {
               DAT_208001a2 = 0;
               return 1;
@@ -453,7 +452,7 @@ void fmt_size_str(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
   uVar1 = param_4 * 100 + (int)((ulonglong)param_3 * 100 >> 0x20);
   if (param_4 == 0 && (0x27ff < param_3) <= param_4) {
     uVar5 = __aeabi_ui2d(uVar1 * 0x400000 | uVar3 >> 10);
-    uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
+    uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
     sprintf(param_1,"%.2f KB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
   }
   else {
@@ -461,7 +460,7 @@ void fmt_size_str(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
     uVar2 = param_4 * 10 + (int)((ulonglong)param_3 * 10 >> 0x20);
     if (param_4 == 0 && (0x18fff < param_3) <= param_4) {
       uVar5 = __aeabi_ui2d(uVar4 >> 10 | uVar2 * 0x400000);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
       sprintf(param_1,"%.1f KB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 == 0 && (0xf9fff < param_3) <= param_4) {
@@ -469,12 +468,12 @@ void fmt_size_str(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
     }
     else if (param_4 == 0 && (0x9fffff < param_3) <= param_4) {
       uVar5 = __aeabi_ui2d(uVar1 * 0x1000 | uVar3 >> 0x14);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
       sprintf(param_1,"%.2f MB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 == 0 && (0x63fffff < param_3) <= param_4) {
       uVar5 = __aeabi_ui2d(uVar4 >> 0x14 | uVar2 * 0x1000);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
       sprintf(param_1,"%.1f MB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 == 0 && (0x3e7fffff < param_3) <= param_4) {
@@ -482,12 +481,12 @@ void fmt_size_str(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
     }
     else if (param_4 < 3 && (uint)(0x7fffffff < param_3) <= param_4 - 2) {
       uVar5 = __aeabi_ui2d(uVar1 * 4 | uVar3 >> 0x1e);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
       sprintf(param_1,"%.2f GB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 < 0x19) {
       uVar5 = __aeabi_ui2d(uVar4 >> 0x1e | uVar2 * 4);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
       sprintf(param_1,"%.1f GB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 < 0xfa) {
@@ -495,12 +494,12 @@ void fmt_size_str(undefined4 param_1,undefined4 param_2,uint param_3,uint param_
     }
     else if (param_4 < 0xa00) {
       uVar5 = __aeabi_ui2d(uVar1 >> 8);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40590000);
       sprintf(param_1,"%.2f TB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 < 0x6400) {
       uVar5 = __aeabi_ui2d(uVar2 >> 8);
-      uVar5 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
+      uVar5 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x40240000);
       sprintf(param_1,"%.1f TB",(int)uVar5,(int)((ulonglong)uVar5 >> 0x20));
     }
     else if (param_4 < 0x3e800) {
@@ -528,7 +527,7 @@ void sd_info_screen(int param_1)
   undefined4 local_18;
   undefined4 auStack_14 [2];
   
-  iVar1 = FUN_2014b880(0x49,&local_18,auStack_14);
+  iVar1 = fs_disk_free(0x49,&local_18,auStack_14);
   if (iVar1 == 0) {
     fmt_size_str(auStack_58,auStack_14[0],auStack_14[0],local_18);
   }
@@ -536,7 +535,7 @@ void sd_info_screen(int param_1)
     sprintf(auStack_58,"Unknown");
   }
   sprintf(param_1,"FREE SPACE : %s",auStack_58);
-  iVar1 = thunk_FUN_2014b140(0x49,&local_18,auStack_14);
+  iVar1 = fs_disk_size(0x49,&local_18,auStack_14);
   if (iVar1 == 0) {
     fmt_size_str(auStack_58,auStack_14[0],auStack_14[0],local_18);
   }
@@ -659,10 +658,10 @@ char sd_format_request(undefined4 *param_1,uint *param_2,undefined4 param_3,int 
       iVar3 = *(int *)(DAT_20808b44 + 0x2f4);
       uVar4 = __aeabi_ui2d();
       uVar5 = __aeabi_ui2d(iVar1 - iVar3);
-      uVar4 = FUN_201649d8((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar4,
+      uVar4 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar4,
                            (int)((ulonglong)uVar4 >> 0x20));
-      FUN_20164da8((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x40590000);
-      uVar2 = FUN_20164c90();
+      __aeabi_dmul((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x40590000);
+      uVar2 = __aeabi_d2iz();
       *param_1 = uVar2;
     }
     if (DAT_2080019f != '\0') {
@@ -703,17 +702,15 @@ void sdmenu_init(void)
 
 {
   uint uVar1;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 local_8;
+  t_cflg local_10;
   
-  local_10 = 2;
-  uStack_c = 0;
-  local_8 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = 2;
+  local_10.iflgptn = 0;
+  local_10.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_10);
   if (0 < (int)uVar1) {
     DAT_208001a8 = uVar1;
-    uVar1 = itron_acre_tsk(0,&DAT_201654f8);
+    uVar1 = itron_acre_tsk(0,&ctsk_sdmenu);
     if (0 < (int)uVar1) {
       itron_sta_tsk(uVar1,0);
     }
@@ -1071,7 +1068,7 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
 
 {
   uint uVar1;
-  int *piVar2;
+  scif_uart *psVar2;
   uint uVar3;
   int iVar4;
   undefined4 uVar5;
@@ -1085,9 +1082,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
   progress_set(uVar1);
   sfl_stream_init(auStack_3c,param_1,0,param_2);
   mainlink_rx_ctrl(1);
-  piVar2 = scif5_get(0);
-  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2);
-  uVar3 = sdr_relay_mode_cmd(piVar2,'\x01');
+  psVar2 = scif5_get(0);
+  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2);
+  uVar3 = sdr_relay_mode_cmd((int *)psVar2,'\x01');
   uVar1 = 0;
   if (uVar3 != 0) {
     if (param_3 == 0) {
@@ -1104,11 +1101,11 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
       iVar4 = 0;
       do {
         uVar7 = __aeabi_i2d(iVar4);
-        uVar7 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),0,0x4080c000);
+        uVar7 = __aeabi_ddiv((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),0,0x4080c000);
         uVar5 = (undefined4)((ulonglong)uVar7 >> 0x20);
         uVar1 = progress_scale(auStack_24,uVar5,(int)uVar7,uVar5);
         progress_set(uVar1);
-        uVar1 = sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,iVar4,uVar6);
+        uVar1 = sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,iVar4,uVar6);
         if (uVar1 == 0) {
           return 0;
         }
@@ -1124,9 +1121,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
       if (uVar1 == 0) {
         progress_set(100);
         sfl_stream_init(auStack_3c,param_1,0,param_2);
-        sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,0x240,uVar6);
+        sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,0x240,uVar6);
       }
-      uVar1 = sdr_relay_mode_cmd(piVar2,-0x7f);
+      uVar1 = sdr_relay_mode_cmd((int *)psVar2,-0x7f);
     }
   }
   return uVar1;
@@ -1184,14 +1181,12 @@ uint sdr_debug_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  t_cflg local_10;
   
-  local_10 = 2;
-  uStack_c = 0;
-  uStack_8 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = 2;
+  local_10.iflgptn = 0;
+  local_10.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_10);
   if ((int)uVar1 < 1) {
     pcVar2 = (code *)0x0;
   }
@@ -1524,7 +1519,7 @@ void kbd_led_status(byte param_1,byte param_2)
 
 {
   DAT_2080010c = DAT_2080010c & ~(param_2 & 7) | param_1 & 7;
-  FUN_2013baac(DAT_208001c8,0,&DAT_2080010c);
+  usbkbd_set_leds(DAT_208001c8,0,&DAT_2080010c);
   itron_dly_tsk(1);
   return;
 }
@@ -1536,7 +1531,7 @@ void FUN_20111270(byte param_1,byte param_2)
 
 {
   DAT_2080010c = DAT_2080010c & ~(param_2 & 7) | param_1 & 7;
-  FUN_2013baac(DAT_208001c8,0,&DAT_2080010c);
+  usbkbd_set_leds(DAT_208001c8,0,&DAT_2080010c);
   return;
 }
 

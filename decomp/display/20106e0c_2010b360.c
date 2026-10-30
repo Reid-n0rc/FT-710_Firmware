@@ -11,7 +11,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   
   bVar1 = false;
   local_20 = param_4;
-  FUN_201571b8(&local_20,DAT_20800118,1);
+  mutex_guard_ctor(&local_20,DAT_20800118,1);
   FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,1);
   iVar2 = 0;
   do {
@@ -23,11 +23,11 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   } while (iVar2 < 2);
   FUN_2015f0b4(&DAT_20811080 + param_1 * 0xd0);
 LAB_20106e8c:
-  FUN_201571d4(&local_20);
+  mutex_guard_dtor(&local_20);
   if (bVar1) {
     return;
   }
-  FUN_2013baac(param_1,0,&DAT_2080010c,local_20);
+  usbkbd_set_leds(param_1,0,&DAT_2080010c,local_20);
   return;
 }
 
@@ -43,7 +43,7 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   
   iVar2 = -1;
   local_18 = param_4;
-  FUN_201571b8(&local_18,DAT_20800118,1);
+  mutex_guard_ctor(&local_18,DAT_20800118,1);
   FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,0);
   iVar1 = 0;
   do {
@@ -54,9 +54,9 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
     }
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
-  FUN_201571d4(&local_18);
+  mutex_guard_dtor(&local_18);
   if (iVar2 != -1) {
-    FUN_2013baac(iVar2,0,&DAT_2080010c,local_18);
+    usbkbd_set_leds(iVar2,0,&DAT_2080010c,local_18);
     return;
   }
   return;
@@ -79,9 +79,9 @@ void usbkbd_queue_key(int param_1,int param_2)
   }
   local_17 = *(undefined1 *)(param_2 + 0xc);
   local_18 = *(undefined1 *)(param_2 + 5);
-  FUN_201571b8(auStack_10,DAT_20800118,1);
-  FUN_201645a0(param_1 * 0xd0 + 0x20811108,&local_18);
-  FUN_201571d4(auStack_10);
+  mutex_guard_ctor(auStack_10,DAT_20800118,1);
+  ring16_push(param_1 * 0xd0 + 0x20811108,&local_18);
+  mutex_guard_dtor(auStack_10);
   return;
 }
 
@@ -109,11 +109,11 @@ void usbkbd_report(uint param_1,void *param_2)
   if (*(char *)((int)param_2 + 0xd) == '\0') {
     if (DAT_2080010d == 'S') {
       DAT_2080010c = DAT_2080010c ^ 1;
-      FUN_2013baac(param_1,0,&DAT_2080010c);
+      usbkbd_set_leds(param_1,0,&DAT_2080010c);
     }
     else if (DAT_2080010d == 'G') {
       DAT_2080010c = DAT_2080010c ^ 4;
-      FUN_2013baac(param_1,0,&DAT_2080010c);
+      usbkbd_set_leds(param_1,0,&DAT_2080010c);
     }
   }
   if (DAT_20800110 != (code *)0x0) {
@@ -159,16 +159,16 @@ usbkbd_get_device(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   undefined4 uStack_10;
   
   uStack_10 = param_4;
-  FUN_201571b8(&uStack_10,DAT_20800118,1);
+  mutex_guard_ctor(&uStack_10,DAT_20800118,1);
   pvVar1 = usbkbd_active();
   if (pvVar1 != (void *)0x0) {
     uVar2 = *(undefined4 *)((int)pvVar1 + 0x84);
     *param_1 = *(undefined4 *)((int)pvVar1 + 0x80);
     param_1[1] = uVar2;
-    FUN_201571d4(&uStack_10);
+    mutex_guard_dtor(&uStack_10);
     return *(undefined1 *)param_1;
   }
-  FUN_201571d4(&uStack_10);
+  mutex_guard_dtor(&uStack_10);
   return 0;
 }
 
@@ -186,23 +186,23 @@ usbkbd_pop_key(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefin
   undefined4 uStack_10;
   
   uStack_10 = param_4;
-  FUN_201571b8(&uStack_10,DAT_20800118,1);
+  mutex_guard_ctor(&uStack_10,DAT_20800118,1);
   pvVar1 = usbkbd_active();
   if (pvVar1 != (void *)0x0) {
     uVar4 = *(undefined4 *)((int)pvVar1 + 0x80);
     iVar2 = *(int *)((int)pvVar1 + 0x84);
     param_1[1] = iVar2;
     *param_1 = uVar4;
-    puVar3 = (undefined4 *)FUN_20164604(iVar2 * 0xd0 + 0x20811108);
+    puVar3 = (undefined4 *)ring16_pop(iVar2 * 0xd0 + 0x20811108);
     if (puVar3 != (undefined4 *)0x0) {
       uVar4 = puVar3[1];
       param_1[2] = *puVar3;
       param_1[3] = uVar4;
-      FUN_201571d4(&uStack_10);
+      mutex_guard_dtor(&uStack_10);
       return 1;
     }
   }
-  FUN_201571d4(&uStack_10);
+  mutex_guard_dtor(&uStack_10);
   return 0;
 }
 
@@ -215,13 +215,13 @@ void usbkbd_flush_all(void)
   int iVar1;
   undefined1 auStack_10 [4];
   
-  FUN_201571b8(auStack_10,DAT_20800118,1);
+  mutex_guard_ctor(auStack_10,DAT_20800118,1);
   iVar1 = 0;
   do {
     FUN_2015f0c4(&DAT_20811080 + iVar1 * 0xd0);
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
-  FUN_201571d4(auStack_10);
+  mutex_guard_dtor(auStack_10);
   return;
 }
 
@@ -1077,7 +1077,7 @@ LAB_20107db8:
     DAT_2080010c = DAT_2080010c | 2;
   }
   if ((uVar2 & 3) >> 1 != uVar3 && iVar1 != 0) {
-    FUN_2013baac(local_14,0,&DAT_2080010c);
+    usbkbd_set_leds(local_14,0,&DAT_2080010c);
   }
   return;
 }
@@ -1144,7 +1144,7 @@ void FUN_20107e9c(void)
 {
   int iVar1;
   
-  DAT_20800118 = itron_acre_mtx(0,&DAT_2016533c);
+  DAT_20800118 = itron_acre_mtx(0,&cmtx_2016533c);
   iVar1 = 0;
   do {
     FUN_2015f05c(&DAT_20811080 + iVar1 * 0xd0);
@@ -3040,7 +3040,7 @@ uint dsp_isp_write_image(int *param_1,uint param_2)
   local_65 = 0;
   local_64 = 0;
   local_183 = 0x100;
-  thunk_FUN_2014af64(param_2,&local_194);
+  fs_fsize(param_2,&local_194);
   uVar5 = 0;
   if (local_194 != 0) {
     uVar5 = progress_scale(&DAT_20800178,extraout_r1,0,0x3ff00000);
@@ -3182,7 +3182,7 @@ LAB_2010aed8:
   iVar10 = iVar10 + local_190;
   uVar12 = __aeabi_ui2d(local_194);
   uVar13 = __aeabi_ui2d(iVar10);
-  uVar12 = FUN_201649d8((int)uVar13,(int)((ulonglong)uVar13 >> 0x20),(int)uVar12,
+  uVar12 = __aeabi_ddiv((int)uVar13,(int)((ulonglong)uVar13 >> 0x20),(int)uVar12,
                         (int)((ulonglong)uVar12 >> 0x20));
   uVar8 = (undefined4)((ulonglong)uVar12 >> 0x20);
   uVar5 = progress_scale(auStack_30,uVar8,(int)uVar12,uVar8);

@@ -1,59 +1,71 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0021ab50 @ 0021ab50 (7 bytes)
+// ===== env_mb @ 0021ab50 (7 bytes)
 
-void FUN_0021ab50(void)
+/* rpmsg_env_bm.c [inference] */
 
-{
-  return;
-}
-
-
-// ===== FUN_0021ab58 @ 0021ab58 (7 bytes)
-
-void FUN_0021ab58(void)
+void env_mb(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021ab60 @ 0021ab60 (7 bytes)
+// ===== env_rmb @ 0021ab58 (7 bytes)
 
-void FUN_0021ab60(void)
+/* rpmsg_env_bm.c [inference] */
+
+void env_rmb(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021ab68 @ 0021ab68 (12 bytes)
+// ===== env_wmb @ 0021ab60 (7 bytes)
 
-undefined4 FUN_0021ab68(undefined4 param_1)
+/* rpmsg_env_bm.c [inference] */
+
+void env_wmb(void)
+
+{
+  return;
+}
+
+
+// ===== env_map_vatopa @ 0021ab68 (12 bytes)
+
+/* rpmsg_env_bm.c: platform_vatopa [inference] */
+
+undefined4 env_map_vatopa(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021adbc(param_1);
+  uVar1 = platform_vatopa(param_1);
   return uVar1;
 }
 
 
-// ===== FUN_0021ab74 @ 0021ab74 (12 bytes)
+// ===== env_map_patova @ 0021ab74 (12 bytes)
 
-undefined4 FUN_0021ab74(undefined4 param_1)
+/* rpmsg_env_bm.c: platform_patova [inference] */
+
+undefined4 env_map_patova(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021adc4(param_1);
+  uVar1 = platform_patova(param_1);
   return uVar1;
 }
 
 
-// ===== FUN_0021ab80 @ 0021ab80 (11 bytes)
+// ===== env_create_mutex @ 0021ab80 (11 bytes)
 
-undefined4 FUN_0021ab80(undefined4 param_1)
+/* rpmsg_env_bm.c [inference] */
+
+undefined4 env_create_mutex(undefined4 param_1)
 
 {
   *(undefined4 *)param_1 = param_1;
@@ -61,9 +73,11 @@ undefined4 FUN_0021ab80(undefined4 param_1)
 }
 
 
-// ===== FUN_0021ab8c @ 0021ab8c (5 bytes)
+// ===== env_delete_mutex @ 0021ab8c (5 bytes)
 
-void FUN_0021ab8c(void)
+/* rpmsg_env_bm.c [inference] */
+
+void env_delete_mutex(void)
 
 {
   return;
@@ -92,9 +106,11 @@ void env_unlock_mutex(void)
 }
 
 
-// ===== FUN_0021aba4 @ 0021aba4 (10 bytes)
+// ===== env_sleep_msec @ 0021aba4 (10 bytes)
 
-void FUN_0021aba4(undefined4 param_1)
+/* rpmsg_env_bm.c: platform_time_delay [inference] */
+
+void env_sleep_msec(undefined4 param_1)
 
 {
   platform_time_delay(param_1);
@@ -119,9 +135,11 @@ void env_register_isr(uint param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0021abc4 @ 0021abc4 (22 bytes)
+// ===== env_unregister_isr @ 0021abc4 (22 bytes)
 
-void FUN_0021abc4(uint param_1)
+/* rpmsg_env_bm.c: isr_table 0x2390A0 [inference] */
+
+void env_unregister_isr(uint param_1)
 
 {
   if (0xb < param_1) {
@@ -134,43 +152,51 @@ void FUN_0021abc4(uint param_1)
 }
 
 
-// ===== FUN_0021abdc @ 0021abdc (10 bytes)
+// ===== env_enable_interrupt @ 0021abdc (10 bytes)
 
-void FUN_0021abdc(undefined4 param_1)
+/* rpmsg_env_bm.c: platform_interrupt_enable [inference] */
+
+void env_enable_interrupt(undefined4 param_1)
 
 {
-  FUN_0021ad6c(param_1);
+  platform_interrupt_enable(param_1);
   return;
 }
 
 
-// ===== FUN_0021abe8 @ 0021abe8 (10 bytes)
+// ===== env_disable_interrupt @ 0021abe8 (10 bytes)
 
-void FUN_0021abe8(undefined4 param_1)
+/* rpmsg_env_bm.c: platform_interrupt_disable [inference] */
+
+void env_disable_interrupt(undefined4 param_1)
 
 {
-  FUN_0021ad88(param_1);
+  platform_interrupt_disable(param_1);
   return;
 }
 
 
-// ===== FUN_0021abf4 @ 0021abf4 (20 bytes)
+// ===== env_map_memory @ 0021abf4 (20 bytes)
 
-void FUN_0021abf4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* rpmsg_env_bm.c: platform_map_mem_region [inference] */
+
+void env_map_memory(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  FUN_0021ada4(param_2,param_1,param_3,param_4);
+  platform_map_mem_region(param_2,param_1,param_3,param_4);
   return;
 }
 
 
-// ===== FUN_0021ac08 @ 0021ac08 (11 bytes)
+// ===== env_disable_cache @ 0021ac08 (11 bytes)
 
-void FUN_0021ac08(void)
+/* rpmsg_env_bm.c: platform cache flush/disable [inference] */
+
+void env_disable_cache(void)
 
 {
-  FUN_0021adac();
-  FUN_0021adb4();
+  platform_cache_all_flush_invalidate();
+  platform_cache_disable();
   return;
 }
 
@@ -183,7 +209,7 @@ void env_isr(uint param_1)
 
 {
   if (param_1 < 0xc) {
-    FUN_0021bd24(*(undefined4 *)(&DAT_002390a0 + param_1 * 4));
+    virtqueue_notification(*(undefined4 *)(&DAT_002390a0 + param_1 * 4));
     return;
   }
   do {
@@ -263,7 +289,7 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
       MUB_CR = uVar1 & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
-    FUN_0021abc4(param_1);
+    env_unregister_isr(param_1);
     env_unlock_mutex(DAT_002390d0);
     return 0;
   }
@@ -320,18 +346,22 @@ void platform_time_delay(int param_1)
 }
 
 
-// ===== FUN_0021ad64 @ 0021ad64 (7 bytes)
+// ===== platform_in_isr @ 0021ad64 (7 bytes)
 
-undefined4 FUN_0021ad64(void)
+/* rpmsg_platform.c (imxrt600_hifi4) [inference] */
+
+undefined4 platform_in_isr(void)
 
 {
   return 0;
 }
 
 
-// ===== FUN_0021ad6c @ 0021ad6c (27 bytes)
+// ===== platform_interrupt_enable @ 0021ad6c (27 bytes)
 
-void FUN_0021ad6c(void)
+/* rpmsg_platform.c: xos_interrupt_enable [inference] */
+
+void platform_interrupt_enable(void)
 
 {
   if (0 < DAT_002390d8) {
@@ -345,9 +375,11 @@ void FUN_0021ad6c(void)
 }
 
 
-// ===== FUN_0021ad88 @ 0021ad88 (27 bytes)
+// ===== platform_interrupt_disable @ 0021ad88 (27 bytes)
 
-void FUN_0021ad88(void)
+/* rpmsg_platform.c: xos_interrupt_disable [inference] */
+
+void platform_interrupt_disable(void)
 
 {
   if (-1 < DAT_002390d8) {
@@ -361,60 +393,72 @@ void FUN_0021ad88(void)
 }
 
 
-// ===== FUN_0021ada4 @ 0021ada4 (5 bytes)
+// ===== platform_map_mem_region @ 0021ada4 (5 bytes)
 
-void FUN_0021ada4(void)
+/* rpmsg_platform.c [inference] */
 
-{
-  return;
-}
-
-
-// ===== FUN_0021adac @ 0021adac (5 bytes)
-
-void FUN_0021adac(void)
+void platform_map_mem_region(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021adb4 @ 0021adb4 (5 bytes)
+// ===== platform_cache_all_flush_invalidate @ 0021adac (5 bytes)
 
-void FUN_0021adb4(void)
+/* rpmsg_platform.c [inference] */
 
-{
-  return;
-}
-
-
-// ===== FUN_0021adbc @ 0021adbc (5 bytes)
-
-void FUN_0021adbc(void)
+void platform_cache_all_flush_invalidate(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021adc4 @ 0021adc4 (5 bytes)
+// ===== platform_cache_disable @ 0021adb4 (5 bytes)
 
-void FUN_0021adc4(void)
+/* rpmsg_platform.c [inference] */
+
+void platform_cache_disable(void)
 
 {
   return;
 }
 
 
-// ===== FUN_0021adcc @ 0021adcc (23 bytes)
+// ===== platform_vatopa @ 0021adbc (5 bytes)
 
-undefined4 FUN_0021adcc(void)
+/* rpmsg_platform.c [inference] */
+
+void platform_vatopa(void)
+
+{
+  return;
+}
+
+
+// ===== platform_patova @ 0021adc4 (5 bytes)
+
+/* rpmsg_platform.c [inference] */
+
+void platform_patova(void)
+
+{
+  return;
+}
+
+
+// ===== platform_init @ 0021adcc (23 bytes)
+
+/* rpmsg_platform.c: env_create_mutex(platform lock 0x2390D0) [inference] */
+
+undefined4 platform_init(void)
 
 {
   int iVar1;
   undefined4 uVar2;
   
-  iVar1 = FUN_0021ab80(&DAT_002390d0,1);
+  iVar1 = env_create_mutex(&DAT_002390d0,1);
   uVar2 = 0xffffffff;
   if (iVar1 == 0) {
     uVar2 = 0;
@@ -423,20 +467,24 @@ undefined4 FUN_0021adcc(void)
 }
 
 
-// ===== FUN_0021ade4 @ 0021ade4 (18 bytes)
+// ===== platform_deinit @ 0021ade4 (18 bytes)
 
-void FUN_0021ade4(void)
+/* rpmsg_platform.c: env_delete_mutex [inference] */
+
+void platform_deinit(void)
 
 {
-  FUN_0021ab8c(DAT_002390d0);
+  env_delete_mutex(DAT_002390d0);
   DAT_002390d0 = 0;
   return;
 }
 
 
-// ===== FUN_0021ae00 @ 0021ae00 (207 bytes)
+// ===== rpmsg_lite_rx_callback @ 0021ae00 (207 bytes)
 
-void FUN_0021ae00(int param_1)
+/* rpmsg_lite.c static; passed to virtqueue_create by the init functions [inference] */
+
+void rpmsg_lite_rx_callback(int param_1)
 
 {
   undefined4 *puVar1;
@@ -482,9 +530,11 @@ LAB_0021ae71:
 }
 
 
-// ===== FUN_0021aed4 @ 0021aed4 (19 bytes)
+// ===== rpmsg_lite_tx_callback @ 0021aed4 (19 bytes)
 
-void FUN_0021aed4(int param_1)
+/* rpmsg_lite.c static [inference] */
+
+void rpmsg_lite_tx_callback(int param_1)
 
 {
   if (*(int *)(param_1 + 100) == 0) {
@@ -497,14 +547,16 @@ void FUN_0021aed4(int param_1)
 }
 
 
-// ===== FUN_0021aee8 @ 0021aee8 (21 bytes)
+// ===== vq_tx_remote @ 0021aee8 (21 bytes)
 
-void FUN_0021aee8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* rpmsg_lite.c: virtqueue_add_consumed_buffer [inference] */
+
+void vq_tx_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0021baa8(param_1,param_4,param_3);
+  iVar1 = virtqueue_add_consumed_buffer(param_1,param_4,param_3);
   if (iVar1 != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -514,38 +566,44 @@ void FUN_0021aee8(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_0021af00 @ 0021af00 (18 bytes)
+// ===== vq_tx_alloc_remote @ 0021af00 (18 bytes)
 
-undefined4 FUN_0021af00(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_lite.c: virtqueue_get_available_buffer [inference] */
 
-{
-  undefined4 uVar1;
-  
-  uVar1 = FUN_0021ba54(param_1,param_3,param_2);
-  return uVar1;
-}
-
-
-// ===== FUN_0021af14 @ 0021af14 (18 bytes)
-
-undefined4 FUN_0021af14(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 vq_tx_alloc_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021ba54(param_1,param_3,param_2);
+  uVar1 = virtqueue_get_available_buffer(param_1,param_3,param_2);
   return uVar1;
 }
 
 
-// ===== FUN_0021af28 @ 0021af28 (21 bytes)
+// ===== vq_rx_remote @ 0021af14 (18 bytes)
 
-void FUN_0021af28(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* rpmsg_lite.c: virtqueue_get_available_buffer [inference] */
+
+undefined4 vq_rx_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = virtqueue_get_available_buffer(param_1,param_3,param_2);
+  return uVar1;
+}
+
+
+// ===== vq_rx_free_remote @ 0021af28 (21 bytes)
+
+/* rpmsg_lite.c: virtqueue_add_consumed_buffer [inference] */
+
+void vq_rx_free_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0021baa8(param_1,param_4,param_3);
+  iVar1 = virtqueue_add_consumed_buffer(param_1,param_4,param_3);
   if (iVar1 != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -555,14 +613,16 @@ void FUN_0021af28(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_0021af40 @ 0021af40 (19 bytes)
+// ===== vq_tx_master @ 0021af40 (19 bytes)
 
-void FUN_0021af40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* rpmsg_lite.c: virtqueue_add_buffer [inference] */
+
+void vq_tx_master(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0021b8e8(param_1,param_4);
+  iVar1 = virtqueue_add_buffer(param_1,param_4);
   if (iVar1 != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -572,38 +632,44 @@ void FUN_0021af40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_0021af54 @ 0021af54 (18 bytes)
+// ===== vq_tx_alloc_master @ 0021af54 (18 bytes)
 
-undefined4 FUN_0021af54(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_lite.c: virtqueue_get_buffer [inference] */
 
-{
-  undefined4 uVar1;
-  
-  uVar1 = FUN_0021b9b4(param_1,param_2,param_3);
-  return uVar1;
-}
-
-
-// ===== FUN_0021af68 @ 0021af68 (18 bytes)
-
-undefined4 FUN_0021af68(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+undefined4 vq_tx_alloc_master(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0021b9b4(param_1,param_2,param_3);
+  uVar1 = virtqueue_get_buffer(param_1,param_2,param_3);
   return uVar1;
 }
 
 
-// ===== FUN_0021af7c @ 0021af7c (19 bytes)
+// ===== vq_rx_master @ 0021af68 (18 bytes)
 
-void FUN_0021af7c(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* rpmsg_lite.c: virtqueue_get_buffer [inference] */
+
+undefined4 vq_rx_master(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = virtqueue_get_buffer(param_1,param_2,param_3);
+  return uVar1;
+}
+
+
+// ===== vq_rx_free_master @ 0021af7c (19 bytes)
+
+/* rpmsg_lite.c: virtqueue_add_buffer [inference] */
+
+void vq_rx_free_master(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0021b8e8(param_1,param_4);
+  iVar1 = virtqueue_add_buffer(param_1,param_4);
   if (iVar1 != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -613,9 +679,11 @@ void FUN_0021af7c(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_0021af90 @ 0021af90 (11 bytes)
+// ===== virtqueue_notify @ 0021af90 (11 bytes)
 
-void FUN_0021af90(int param_1)
+/* rpmsg_lite.c static: platform_notify [inference] */
+
+void virtqueue_notify(int param_1)
 
 {
   platform_notify(*(undefined2 *)(param_1 + 0x50));
@@ -668,7 +736,7 @@ LAB_0021aff6:
     }
   }
   if (param_5 != (int *)0x0) {
-    FUN_0021aafc(param_5,0,0x10);
+    env_memset(param_5,0,0x10);
     *param_5 = param_2;
     param_5[1] = param_3;
     param_5[2] = param_4;
@@ -682,9 +750,11 @@ LAB_0021aff6:
 }
 
 
-// ===== FUN_0021b034 @ 0021b034 (63 bytes)
+// ===== rpmsg_lite_destroy_ept @ 0021b034 (63 bytes)
 
-undefined4 FUN_0021b034(int param_1,int *param_2)
+/* rpmsg_lite.c: RL_ERR_PARAM -5003; called by rpmsg_ns_unbind [inference] */
+
+undefined4 rpmsg_lite_destroy_ept(int param_1,int *param_2)
 
 {
   undefined4 *puVar1;
@@ -766,7 +836,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
     }
     uVar2 = 0;
     do {
-      FUN_0021aba4(1);
+      env_sleep_msec(1);
       env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
       puStack_24 = (undefined1 *)
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
@@ -794,19 +864,21 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
   puVar1[1] = (char)((uint)uStack_28 >> 8);
   puVar1[2] = (char)((uint)uStack_28 >> 0x10);
   puVar1[3] = (char)((uint)uStack_28 >> 0x18);
-  FUN_0021ab0c(puVar1 + 0x10,param_4,param_5);
+  env_memcpy(puVar1 + 0x10,param_4,param_5);
   env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
   (*(code *)**(undefined4 **)(param_1 + 0x20))
             (*(undefined4 *)(param_1 + 4),puVar1,uStack_30,auStack_2c[0]);
-  FUN_0021bb84(*(undefined4 *)(param_1 + 4));
+  virtqueue_kick(*(undefined4 *)(param_1 + 4));
   env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
   return 0;
 }
 
 
-// ===== FUN_0021b190 @ 0021b190 (166 bytes)
+// ===== rpmsg_lite_alloc_tx_buffer @ 0021b190 (166 bytes)
 
-int FUN_0021b190(int param_1,int *param_2,uint param_3)
+/* rpmsg_lite.c: waits with env_sleep_msec [inference] */
+
+int rpmsg_lite_alloc_tx_buffer(int param_1,int *param_2,uint param_3)
 
 {
   int iVar1;
@@ -841,7 +913,7 @@ LAB_0021b230:
     return 0;
   }
   do {
-    FUN_0021aba4(1);
+    env_sleep_msec(1);
     env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
     iVar1 = (**(code **)(*(int *)(param_1 + 0x20) + 4))
                       (*(undefined4 *)(param_1 + 4),param_2,auStack_30);
@@ -861,9 +933,12 @@ LAB_0021b230:
 }
 
 
-// ===== FUN_0021b238 @ 0021b238 (188 bytes)
+// ===== rpmsg_lite_send_nocopy @ 0021b238 (188 bytes)
 
-undefined4 FUN_0021b238(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,uint param_5)
+/* rpmsg_lite.c order [inference] */
+
+undefined4
+rpmsg_lite_send_nocopy(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,uint param_5)
 
 {
   undefined4 uVar1;
@@ -891,26 +966,28 @@ undefined4 FUN_0021b238(int param_1,undefined4 *param_2,undefined4 param_3,int p
   *(undefined1 *)(param_4 + -2) = 0;
   *(undefined1 *)(param_4 + -1) = 0;
   env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
-  uVar1 = FUN_0021ba14(*(undefined4 *)(param_1 + 4),*(undefined2 *)(param_4 + -6));
+  uVar1 = virtqueue_get_buffer_length(*(undefined4 *)(param_1 + 4),*(undefined2 *)(param_4 + -6));
   (*(code *)**(undefined4 **)(param_1 + 0x20))
             (*(undefined4 *)(param_1 + 4),(undefined1 *)(param_4 + -0x10),uVar1,
              *(undefined2 *)(param_4 + -6));
-  FUN_0021bb84(*(undefined4 *)(param_1 + 4));
+  virtqueue_kick(*(undefined4 *)(param_1 + 4));
   env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
   return 0;
 }
 
 
-// ===== FUN_0021b2f8 @ 0021b2f8 (81 bytes)
+// ===== rpmsg_lite_release_rx_buffer @ 0021b2f8 (81 bytes)
 
-undefined4 FUN_0021b2f8(undefined4 *param_1,int param_2)
+/* rpmsg_lite.c order [inference] */
+
+undefined4 rpmsg_lite_release_rx_buffer(undefined4 *param_1,int param_2)
 
 {
   undefined4 uVar1;
   
   if ((param_1 != (undefined4 *)0x0) && (param_2 != 0)) {
     env_lock_mutex(param_1[3]);
-    uVar1 = FUN_0021ba14(*param_1,*(undefined2 *)(param_2 + -6));
+    uVar1 = virtqueue_get_buffer_length(*param_1,*(undefined2 *)(param_2 + -6));
     (**(code **)(param_1[8] + 0xc))(*param_1,param_2 + -0x10,uVar1,*(undefined2 *)(param_2 + -6));
     env_unlock_mutex(param_1[3]);
     return 0;

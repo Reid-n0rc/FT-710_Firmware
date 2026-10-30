@@ -244,216 +244,216 @@ void touch_cal_fit(void *param_1)
     uVar16 = __aeabi_i2d((int)(short)(&DAT_20808bf8)[iVar3 * 2]);
     uVar11 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar4 = (undefined4)uVar16;
-    uVar16 = FUN_20164888(uVar4,uVar11,(undefined4)local_d0,local_d0._4_4_);
+    uVar16 = __aeabi_dadd(uVar4,uVar11,(undefined4)local_d0,local_d0._4_4_);
     local_d0 = uVar16;
     uVar16 = __aeabi_i2d((int)(short)(&DAT_20808bfa)[iVar3 * 2]);
     uVar12 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar5 = (undefined4)uVar16;
-    uVar16 = FUN_20164888(uVar5,uVar12,(undefined4)local_48,local_48._4_4_);
+    uVar16 = __aeabi_dadd(uVar5,uVar12,(undefined4)local_48,local_48._4_4_);
     local_48 = uVar16;
     uVar16 = __aeabi_i2d((int)(short)(&DAT_20800060)[iVar3 * 2]);
     uVar13 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar6 = (undefined4)uVar16;
-    uVar16 = FUN_20164888(uVar6,uVar13,(undefined4)local_30,local_30._4_4_);
+    uVar16 = __aeabi_dadd(uVar6,uVar13,(undefined4)local_30,local_30._4_4_);
     local_30 = uVar16;
     uVar16 = __aeabi_i2d((int)(short)(&DAT_20800062)[iVar3 * 2]);
     uVar14 = (undefined4)((ulonglong)uVar16 >> 0x20);
     uVar7 = (undefined4)uVar16;
-    uVar16 = FUN_20164888(uVar7,uVar14,(undefined4)local_60,local_60._4_4_);
+    uVar16 = __aeabi_dadd(uVar7,uVar14,(undefined4)local_60,local_60._4_4_);
     local_60 = uVar16;
-    uVar16 = FUN_20164da8(uVar4,uVar11,uVar4,uVar11);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_e0,
+    uVar16 = __aeabi_dmul(uVar4,uVar11,uVar4,uVar11);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_e0,
                           local_e0._4_4_);
     local_e0 = uVar16;
-    uVar16 = FUN_20164da8(uVar4,uVar11,uVar5,uVar12);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_d8,
+    uVar16 = __aeabi_dmul(uVar4,uVar11,uVar5,uVar12);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_d8,
                           local_d8._4_4_);
     local_d8 = uVar16;
     local_58 = uVar16;
-    uVar16 = FUN_20164da8(uVar5,uVar12,uVar5,uVar12);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_50,
+    uVar16 = __aeabi_dmul(uVar5,uVar12,uVar5,uVar12);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_50,
                           local_50._4_4_);
     local_50 = uVar16;
-    uVar16 = FUN_20164da8(uVar4,uVar11,uVar6,uVar13);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_40,
+    uVar16 = __aeabi_dmul(uVar4,uVar11,uVar6,uVar13);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_40,
                           local_40._4_4_);
     local_40 = uVar16;
-    uVar16 = FUN_20164da8(uVar5,uVar12,uVar6,uVar13);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_38,
+    uVar16 = __aeabi_dmul(uVar5,uVar12,uVar6,uVar13);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_38,
                           local_38._4_4_);
     local_38 = uVar16;
-    uVar16 = FUN_20164da8(uVar4,uVar11,uVar7,uVar14);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_70,
+    uVar16 = __aeabi_dmul(uVar4,uVar11,uVar7,uVar14);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_70,
                           local_70._4_4_);
     local_70 = uVar16;
-    uVar16 = FUN_20164da8(uVar5,uVar12,uVar7,uVar14);
-    uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_68,
+    uVar16 = __aeabi_dmul(uVar5,uVar12,uVar7,uVar14);
+    uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_68,
                           local_68._4_4_);
     uVar5 = local_d0._4_4_;
     uVar4 = (undefined4)local_d0;
     iVar3 = iVar3 + 1;
   } while (iVar3 < 5);
   local_68 = uVar16;
-  uVar16 = FUN_201649d8((undefined4)local_e0,local_e0._4_4_);
+  uVar16 = __aeabi_ddiv((undefined4)local_e0,local_e0._4_4_);
   uVar7 = local_48._4_4_;
   uVar6 = (undefined4)local_48;
   uVar12 = (undefined4)((ulonglong)uVar16 >> 0x20);
   uVar8 = (undefined4)uVar16;
   local_e0 = uVar16;
-  uVar16 = FUN_201649d8((undefined4)local_d8,local_d8._4_4_,(undefined4)local_48,local_48._4_4_);
+  uVar16 = __aeabi_ddiv((undefined4)local_d8,local_d8._4_4_,(undefined4)local_48,local_48._4_4_);
   local_d8 = uVar16;
-  local_78 = FUN_201649d8((undefined4)local_58,local_58._4_4_,uVar4,uVar5);
+  local_78 = __aeabi_ddiv((undefined4)local_58,local_58._4_4_,uVar4,uVar5);
   local_58 = local_78;
-  local_88 = FUN_201649d8((undefined4)local_50,local_50._4_4_,uVar6,uVar7);
+  local_88 = __aeabi_ddiv((undefined4)local_50,local_50._4_4_,uVar6,uVar7);
   local_50 = local_88;
-  local_98 = FUN_201649d8((undefined4)local_40,local_40._4_4_,uVar4,uVar5);
+  local_98 = __aeabi_ddiv((undefined4)local_40,local_40._4_4_,uVar4,uVar5);
   local_40 = local_98;
-  uVar17 = FUN_201649d8((undefined4)local_38,local_38._4_4_,uVar6,uVar7);
+  uVar17 = __aeabi_ddiv((undefined4)local_38,local_38._4_4_,uVar6,uVar7);
   local_c8._0_4_ = (undefined4)((ulonglong)uVar17 >> 0x20);
   uVar11 = (undefined4)uVar17;
   local_c0._0_4_ = (undefined4)local_c8;
   local_38 = uVar17;
-  uVar17 = FUN_201649d8((undefined4)local_70,local_70._4_4_,uVar4,uVar5);
+  uVar17 = __aeabi_ddiv((undefined4)local_70,local_70._4_4_,uVar4,uVar5);
   local_70 = uVar17;
-  uVar17 = FUN_201649d8((undefined4)local_68,local_68._4_4_,uVar6,uVar7);
+  uVar17 = __aeabi_ddiv((undefined4)local_68,local_68._4_4_,uVar6,uVar7);
   local_68 = uVar17;
-  uVar17 = FUN_201649d8(uVar4,uVar5,0,0x40140000);
+  uVar17 = __aeabi_ddiv(uVar4,uVar5,0,0x40140000);
   uVar5 = (undefined4)((ulonglong)uVar17 >> 0x20);
   local_d0 = uVar17;
-  uVar18 = FUN_201649d8(uVar6,uVar7,0,0x40140000);
+  uVar18 = __aeabi_ddiv(uVar6,uVar7,0,0x40140000);
   uVar4 = (undefined4)((ulonglong)uVar18 >> 0x20);
   local_48 = uVar18;
-  uVar19 = FUN_201649d8((undefined4)local_30,local_30._4_4_,0,0x40140000);
+  uVar19 = __aeabi_ddiv((undefined4)local_30,local_30._4_4_,0,0x40140000);
   uVar6 = (undefined4)((ulonglong)uVar19 >> 0x20);
   local_30 = uVar19;
-  uVar20 = FUN_201649d8((undefined4)local_60,local_60._4_4_,0,0x40140000);
+  uVar20 = __aeabi_ddiv((undefined4)local_60,local_60._4_4_,0,0x40140000);
   local_60 = uVar20;
-  uVar20 = FUN_20164fa4((undefined4)local_78,local_78._4_4_,(int)uVar18,uVar4);
+  uVar20 = __aeabi_dsub((undefined4)local_78,local_78._4_4_,(int)uVar18,uVar4);
   local_80 = (undefined4)((ulonglong)uVar20 >> 0x20);
   local_7c = (undefined4)uVar20;
   local_78._0_4_ = local_7c;
   local_78._4_4_ = local_80;
-  local_b0 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(int)uVar17,uVar5);
-  uVar16 = FUN_20164da8((int)local_b0,(int)((ulonglong)local_b0 >> 0x20),(undefined4)local_78,
+  local_b0 = __aeabi_dsub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(int)uVar17,uVar5);
+  uVar16 = __aeabi_dmul((int)local_b0,(int)((ulonglong)local_b0 >> 0x20),(undefined4)local_78,
                         local_78._4_4_);
-  local_a8 = FUN_20164fa4((undefined4)local_88,local_88._4_4_,(int)uVar18,uVar4);
+  local_a8 = __aeabi_dsub((undefined4)local_88,local_88._4_4_,(int)uVar18,uVar4);
   uVar2 = (ulonglong)local_a8 >> 0x20;
   uVar4 = (undefined4)local_a8;
-  uVar17 = FUN_20164fa4(uVar8,uVar12,(int)uVar17,uVar5);
+  uVar17 = __aeabi_dsub(uVar8,uVar12,(int)uVar17,uVar5);
   uVar5 = (undefined4)((ulonglong)uVar17 >> 0x20);
-  uVar18 = FUN_20164da8((int)uVar17,uVar5,uVar4,(int)uVar2);
-  uVar16 = FUN_20164fa4((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar16,
+  uVar18 = __aeabi_dmul((int)uVar17,uVar5,uVar4,(int)uVar2);
+  uVar16 = __aeabi_dsub((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
   uVar15 = (undefined4)((ulonglong)uVar16 >> 0x20);
   uVar9 = (undefined4)uVar16;
   local_90._4_4_ = local_80;
   local_90._0_4_ = local_7c;
-  uVar16 = FUN_20164fa4(uVar11,(undefined4)local_c8,(int)uVar19,uVar6);
+  uVar16 = __aeabi_dsub(uVar11,(undefined4)local_c8,(int)uVar19,uVar6);
   uVar4 = (undefined4)((ulonglong)uVar16 >> 0x20);
-  local_90 = FUN_20164da8((int)uVar16,uVar4,(undefined4)local_90,local_90._4_4_);
+  local_90 = __aeabi_dmul((int)uVar16,uVar4,(undefined4)local_90,local_90._4_4_);
   local_c8 = local_a8;
-  uVar18 = FUN_20164fa4((undefined4)local_98,local_98._4_4_,(int)uVar19,uVar6);
+  uVar18 = __aeabi_dsub((undefined4)local_98,local_98._4_4_,(int)uVar19,uVar6);
   uVar6 = (undefined4)((ulonglong)uVar18 >> 0x20);
-  uVar19 = FUN_20164da8((int)uVar18,uVar6,(undefined4)local_c8,local_c8._4_4_);
-  uVar19 = FUN_20164fa4((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),(undefined4)local_90,
+  uVar19 = __aeabi_dmul((int)uVar18,uVar6,(undefined4)local_c8,local_c8._4_4_);
+  uVar19 = __aeabi_dsub((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),(undefined4)local_90,
                         local_90._4_4_);
-  uVar19 = FUN_201649d8((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),uVar9,uVar15);
+  uVar19 = __aeabi_ddiv((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),uVar9,uVar15);
   *(undefined8 *)param_1 = uVar19;
-  uVar18 = FUN_20164da8((undefined4)local_b0,local_b0._4_4_,(int)uVar18,uVar6);
-  uVar16 = FUN_20164da8((int)uVar17,uVar5,(int)uVar16,uVar4);
-  uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(int)uVar18,
+  uVar18 = __aeabi_dmul((undefined4)local_b0,local_b0._4_4_,(int)uVar18,uVar6);
+  uVar16 = __aeabi_dmul((int)uVar17,uVar5,(int)uVar16,uVar4);
+  uVar16 = __aeabi_dsub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(int)uVar18,
                         (int)((ulonglong)uVar18 >> 0x20));
-  uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
+  uVar16 = __aeabi_ddiv((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
   *(undefined8 *)((int)param_1 + 8) = uVar16;
   local_b0._4_4_ = (undefined4)local_c0;
   local_b0._0_4_ = uVar11;
   local_98._0_4_ = uVar12;
-  uVar16 = FUN_20164da8(uVar8,uVar12,uVar11);
+  uVar16 = __aeabi_dmul(uVar8,uVar12,uVar11);
   uVar5 = local_d8._4_4_;
   uVar4 = (undefined4)local_d8;
   local_c8 = local_40;
-  uVar17 = FUN_20164da8((undefined4)local_d8,local_d8._4_4_);
-  FUN_20164fa4((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
+  uVar17 = __aeabi_dmul((undefined4)local_d8,local_d8._4_4_);
+  __aeabi_dsub((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
                (int)((ulonglong)uVar16 >> 0x20));
   local_c0 = local_48;
-  uVar16 = FUN_20164da8();
+  uVar16 = __aeabi_dmul();
   uVar7 = local_d0._4_4_;
   uVar6 = (undefined4)local_d0;
-  uVar17 = FUN_20164da8((undefined4)local_d0,local_d0._4_4_,(undefined4)local_c8,local_c8._4_4_);
+  uVar17 = __aeabi_dmul((undefined4)local_d0,local_d0._4_4_,(undefined4)local_c8,local_c8._4_4_);
   local_90 = local_30;
-  uVar18 = FUN_20164da8(uVar8,(undefined4)local_98);
-  FUN_20164fa4((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
+  uVar18 = __aeabi_dmul(uVar8,(undefined4)local_98);
+  __aeabi_dsub((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
                (int)((ulonglong)uVar17 >> 0x20));
   local_b8 = local_50;
-  uVar17 = FUN_20164da8();
-  uVar18 = FUN_20164da8(uVar4,uVar5,(undefined4)local_90,local_90._4_4_);
+  uVar17 = __aeabi_dmul();
+  uVar18 = __aeabi_dmul(uVar4,uVar5,(undefined4)local_90,local_90._4_4_);
   local_c8 = uVar18;
-  uVar18 = FUN_20164da8(uVar6,uVar7,(undefined4)local_b0,local_b0._4_4_);
-  FUN_20164fa4((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(undefined4)local_c8,local_c8._4_4_);
+  uVar18 = __aeabi_dmul(uVar6,uVar7,(undefined4)local_b0,local_b0._4_4_);
+  __aeabi_dsub((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(undefined4)local_c8,local_c8._4_4_);
   local_c8 = local_58;
-  uVar18 = FUN_20164da8();
-  uVar17 = FUN_20164888((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
+  uVar18 = __aeabi_dmul();
+  uVar17 = __aeabi_dadd((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
                         (int)((ulonglong)uVar17 >> 0x20));
-  uVar16 = FUN_20164888((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
+  uVar16 = __aeabi_dadd((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
-  uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
+  uVar16 = __aeabi_ddiv((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
   *(undefined8 *)((int)param_1 + 0x10) = uVar16;
-  uVar16 = FUN_20164fa4((undefined4)local_c8,local_c8._4_4_,(undefined4)local_c0,local_c0._4_4_);
+  uVar16 = __aeabi_dsub((undefined4)local_c8,local_c8._4_4_,(undefined4)local_c0,local_c0._4_4_);
   uVar14 = local_60._4_4_;
   uVar13 = (undefined4)local_60;
   local_90 = local_68;
-  uVar17 = FUN_20164fa4();
+  uVar17 = __aeabi_dsub();
   local_98._4_4_ = (undefined4)((ulonglong)uVar17 >> 0x20);
   local_9c = (undefined4)uVar17;
-  local_b0 = FUN_20164da8(local_9c,local_98._4_4_,(int)uVar16,(int)((ulonglong)uVar16 >> 0x20));
-  uVar16 = FUN_20164fa4((undefined4)local_b8,local_b8._4_4_,(undefined4)local_c0,local_c0._4_4_);
+  local_b0 = __aeabi_dmul(local_9c,local_98._4_4_,(int)uVar16,(int)((ulonglong)uVar16 >> 0x20));
+  uVar16 = __aeabi_dsub((undefined4)local_b8,local_b8._4_4_,(undefined4)local_c0,local_c0._4_4_);
   uVar12 = local_70._4_4_;
   uVar11 = (undefined4)local_70;
   local_88._0_4_ = (undefined4)((ulonglong)uVar16 >> 0x20);
   local_a0 = (undefined4)uVar16;
-  uVar16 = FUN_20164fa4((undefined4)local_70,local_70._4_4_,uVar13,uVar14);
+  uVar16 = __aeabi_dsub((undefined4)local_70,local_70._4_4_,uVar13,uVar14);
   local_a8 = uVar16;
-  uVar16 = FUN_20164da8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),local_a0,(undefined4)local_88);
-  uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
+  uVar16 = __aeabi_dmul((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),local_a0,(undefined4)local_88);
+  uVar16 = __aeabi_dsub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         local_b0._4_4_);
-  uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
+  uVar16 = __aeabi_ddiv((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
   *(undefined8 *)((int)param_1 + 0x18) = uVar16;
-  uVar16 = FUN_20164fa4(uVar4,uVar5,uVar6,uVar7);
-  uVar16 = FUN_20164da8((undefined4)local_a8,local_a8._4_4_,(int)uVar16,
+  uVar16 = __aeabi_dsub(uVar4,uVar5,uVar6,uVar7);
+  uVar16 = __aeabi_dmul((undefined4)local_a8,local_a8._4_4_,(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
   local_b0 = uVar16;
-  uVar16 = FUN_20164fa4(uVar8,(undefined4)local_98,uVar6,uVar7);
-  uVar16 = FUN_20164da8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),local_9c,local_98._4_4_);
-  uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
+  uVar16 = __aeabi_dsub(uVar8,(undefined4)local_98,uVar6,uVar7);
+  uVar16 = __aeabi_dmul((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),local_9c,local_98._4_4_);
+  uVar16 = __aeabi_dsub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         local_b0._4_4_);
-  uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
+  uVar16 = __aeabi_ddiv((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
   *(undefined8 *)((int)param_1 + 0x20) = uVar16;
-  uVar16 = FUN_20164da8(uVar8,(undefined4)local_98,(undefined4)local_90,local_90._4_4_);
+  uVar16 = __aeabi_dmul(uVar8,(undefined4)local_98,(undefined4)local_90,local_90._4_4_);
   local_b0 = uVar16;
-  uVar16 = FUN_20164da8(uVar4,uVar5,uVar11,uVar12);
-  uVar16 = FUN_20164fa4((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
+  uVar16 = __aeabi_dmul(uVar4,uVar5,uVar11,uVar12);
+  uVar16 = __aeabi_dsub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         local_b0._4_4_);
-  uVar16 = FUN_20164da8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_c0,
+  uVar16 = __aeabi_dmul((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_c0,
                         local_c0._4_4_);
   local_c0._0_4_ = (undefined4)((ulonglong)uVar16 >> 0x20);
   local_b0._0_4_ = (undefined4)uVar16;
-  uVar16 = FUN_20164da8(uVar6,uVar7,uVar11,uVar12);
-  uVar17 = FUN_20164da8(uVar8,(undefined4)local_98,uVar13,uVar14);
-  uVar16 = FUN_20164fa4((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
+  uVar16 = __aeabi_dmul(uVar6,uVar7,uVar11,uVar12);
+  uVar17 = __aeabi_dmul(uVar8,(undefined4)local_98,uVar13,uVar14);
+  uVar16 = __aeabi_dsub((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
-  uVar16 = FUN_20164da8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b8,
+  uVar16 = __aeabi_dmul((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b8,
                         local_b8._4_4_);
-  uVar17 = FUN_20164da8(uVar4,uVar5,uVar13,uVar14);
-  uVar18 = FUN_20164da8(uVar6,uVar7,(undefined4)local_90,local_90._4_4_);
-  uVar17 = FUN_20164fa4((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
+  uVar17 = __aeabi_dmul(uVar4,uVar5,uVar13,uVar14);
+  uVar18 = __aeabi_dmul(uVar6,uVar7,(undefined4)local_90,local_90._4_4_);
+  uVar17 = __aeabi_dsub((int)uVar18,(int)((ulonglong)uVar18 >> 0x20),(int)uVar17,
                         (int)((ulonglong)uVar17 >> 0x20));
-  uVar17 = FUN_20164da8((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(undefined4)local_c8,
+  uVar17 = __aeabi_dmul((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(undefined4)local_c8,
                         local_c8._4_4_);
-  uVar16 = FUN_20164888((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
+  uVar16 = __aeabi_dadd((int)uVar17,(int)((ulonglong)uVar17 >> 0x20),(int)uVar16,
                         (int)((ulonglong)uVar16 >> 0x20));
-  uVar16 = FUN_20164888((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
+  uVar16 = __aeabi_dadd((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),(undefined4)local_b0,
                         (undefined4)local_c0);
-  uVar16 = FUN_201649d8((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
+  uVar16 = __aeabi_ddiv((int)uVar16,(int)((ulonglong)uVar16 >> 0x20),uVar9,uVar15);
   *(undefined8 *)((int)param_1 + 0x28) = uVar16;
   return;
 }
@@ -578,22 +578,22 @@ void touch_cal_apply(uint param_1,uint param_2,short *param_3,short *param_4)
   
   uVar5 = __aeabi_i2d(param_2);
   uVar3 = (undefined4)((ulonglong)uVar5 >> 0x20);
-  uVar6 = FUN_20164da8((int)uVar5,uVar3,DAT_20808c18,DAT_20808c1c);
+  uVar6 = __aeabi_dmul((int)uVar5,uVar3,DAT_20808c18,DAT_20808c1c);
   uVar7 = __aeabi_i2d(param_1);
   uVar4 = (undefined4)((ulonglong)uVar7 >> 0x20);
-  uVar8 = FUN_20164da8((int)uVar7,uVar4,DAT_20808c10,DAT_20808c14);
-  uVar6 = FUN_20164888((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar6,
+  uVar8 = __aeabi_dmul((int)uVar7,uVar4,DAT_20808c10,DAT_20808c14);
+  uVar6 = __aeabi_dadd((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar6,
                        (int)((ulonglong)uVar6 >> 0x20));
-  uVar6 = FUN_20164888((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),DAT_20808c20,DAT_20808c24);
-  FUN_20164888((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),0,0x3fe00000);
-  sVar1 = FUN_20164c90();
-  uVar5 = FUN_20164da8((int)uVar5,uVar3,DAT_20808c30,DAT_20808c34);
-  uVar6 = FUN_20164da8((int)uVar7,uVar4,DAT_20808c28,DAT_20808c2c);
-  uVar5 = FUN_20164888((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
+  uVar6 = __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),DAT_20808c20,DAT_20808c24);
+  __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),0,0x3fe00000);
+  sVar1 = __aeabi_d2iz();
+  uVar5 = __aeabi_dmul((int)uVar5,uVar3,DAT_20808c30,DAT_20808c34);
+  uVar6 = __aeabi_dmul((int)uVar7,uVar4,DAT_20808c28,DAT_20808c2c);
+  uVar5 = __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
                        (int)((ulonglong)uVar5 >> 0x20));
-  uVar5 = FUN_20164888((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),DAT_20808c38,DAT_20808c3c);
-  FUN_20164888((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x3fe00000);
-  sVar2 = FUN_20164c90();
+  uVar5 = __aeabi_dadd((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),DAT_20808c38,DAT_20808c3c);
+  __aeabi_dadd((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0x3fe00000);
+  sVar2 = __aeabi_d2iz();
   if (sVar1 < 0) {
     sVar1 = 0;
   }
@@ -710,15 +710,15 @@ uint tsc2007_pressure(short *param_1)
   if ((*param_1 != 0) && (param_1[2] != 0)) {
     uVar2 = __aeabi_ui2d(param_1[2]);
     uVar3 = __aeabi_ui2d(param_1[3]);
-    uVar2 = FUN_201649d8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
+    uVar2 = __aeabi_ddiv((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
                          (int)((ulonglong)uVar2 >> 0x20));
-    uVar2 = FUN_20164fa4((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x3ff00000);
+    uVar2 = __aeabi_dsub((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x3ff00000);
     uVar3 = __aeabi_ui2d(*param_1);
-    uVar3 = FUN_201649d8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x40b00000);
-    uVar3 = FUN_20164da8(0,0x40790000,(int)uVar3,(int)((ulonglong)uVar3 >> 0x20));
-    FUN_20164da8((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
+    uVar3 = __aeabi_ddiv((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x40b00000);
+    uVar3 = __aeabi_dmul(0,0x40790000,(int)uVar3,(int)((ulonglong)uVar3 >> 0x20));
+    __aeabi_dmul((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
                  (int)((ulonglong)uVar2 >> 0x20));
-    uVar1 = FUN_20164cf0();
+    uVar1 = __aeabi_d2uiz();
   }
   return uVar1;
 }
@@ -777,7 +777,7 @@ void task_tsc2007(void)
     local_28 = (uint)uVar1;
     uVar1 = INTC_ICR1;
     INTC_ICR1 = uVar1 | 0x40;
-    uVar3 = itron_acre_isr(0,0x20165194);
+    uVar3 = itron_acre_isr(0,&cisr_tsc2007_tint_isr);
     if (0 < (int)uVar3) {
       itron_get_tid(&DAT_20800088);
       itron_iwup_tsk(DAT_2080008c);
@@ -917,9 +917,9 @@ void touch_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&DAT_201651c4);
+  uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51c4);
   if (((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
-     (uVar1 = itron_acre_tsk(0,&DAT_201651a8), 0 < (int)uVar1)) {
+     (uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51a8), 0 < (int)uVar1)) {
     itron_sta_tsk(uVar1,0);
   }
   return;
@@ -934,9 +934,9 @@ void FUN_20103934(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 {
   int iVar1;
   
-  iVar1 = FUN_2014a5dc(param_1,param_2,param_3,0,1,0x200);
-  if ((iVar1 == 0) && (iVar1 = FUN_20143c34(param_1,param_4,0x3296,5), iVar1 == 0)) {
-    FUN_20143eac(param_1,param_5,0x4100,8);
+  iVar1 = fs_drive_attach(param_1,param_2,param_3,0,1,0x200);
+  if ((iVar1 == 0) && (iVar1 = fs_fatcache_setup_b(param_1,param_4,0x3296,5), iVar1 == 0)) {
+    fs_dircache_setup(param_1,param_5,0x4100,8);
     return;
   }
   return;
@@ -952,7 +952,7 @@ void sd_fs_init(void)
 {
   int iVar1;
   
-  iVar1 = FUN_2014a4d0(&DAT_20808c4c,2);
+  iVar1 = fs_init(&DAT_20808c4c,2);
   if (iVar1 == 0) {
     iVar1 = FUN_20103934(&DAT_20809984,0x49,FUN_2013fd98,&DAT_208099f8,&DAT_2080cc8e,0);
     if (iVar1 == 0) {
@@ -970,9 +970,9 @@ void FUN_20103a4c(int param_1)
 {
   int iVar1;
   
-  iVar1 = FUN_201446bc();
+  iVar1 = fs_sync();
   if (iVar1 == 0) {
-    FUN_201446d0(&DAT_20809984 + param_1 * 0x74);
+    fs_cache_invalidate(&DAT_20809984 + param_1 * 0x74);
     return;
   }
   return;
@@ -1162,12 +1162,12 @@ uint FUN_20103c14(void)
   local_c[0] = 0xff;
   local_20 = 0x62;
   local_1f = 0x70;
-  iVar1 = FUN_20104f34(&local_20,6);
+  iVar1 = sflash_dev_write(&local_20,6);
   if (iVar1 < 0) {
     local_c[0] = 1;
   }
   else {
-    FUN_20104e20(local_c,1);
+    sflash_dev_read(local_c,1);
     local_c[0] = local_c[0] & 0xff;
   }
   return local_c[0];
@@ -1189,12 +1189,12 @@ uint FUN_20103c70(undefined4 param_1)
   local_20 = 0x65;
   local_1f = 0x72;
   local_1e = param_1;
-  iVar1 = FUN_20104f34(&local_20,6);
+  iVar1 = sflash_dev_write(&local_20,6);
   if (iVar1 < 0) {
     local_c[0] = 1;
   }
   else {
-    FUN_20104e20(local_c,1);
+    sflash_dev_read(local_c,1);
     local_c[0] = local_c[0] & 0xff;
   }
   return local_c[0];
@@ -1239,7 +1239,7 @@ undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
     uVar1 = progress_scale(param_1,param_2,0,0);
     progress_set(uVar1);
   }
-  FUN_20105060();
+  sflash_dev_open();
   iVar2 = FUN_20103c14();
   if (-1 < iVar2) {
     uVar1 = 0;
@@ -1249,7 +1249,7 @@ undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x88);
         uVar7 = __aeabi_i2d(uVar1);
-        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+        uVar6 = __aeabi_ddiv((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
                              (int)((ulonglong)uVar6 >> 0x20));
         uVar4 = (undefined4)((ulonglong)uVar6 >> 0x20);
         uVar3 = progress_scale(param_1,uVar4,(int)uVar6,uVar4);
@@ -1287,9 +1287,9 @@ uint spiflash_write(int param_1,uint param_2,uint param_3)
   local_30 = 0x70;
   local_2f = 0x72;
   local_2e = param_1;
-  iVar2 = FUN_20104f34(&local_30,6);
-  if ((-1 < iVar2) && (iVar2 = FUN_20104f34(param_2,param_3), -1 < iVar2)) {
-    FUN_20104e20(local_1c,1);
+  iVar2 = sflash_dev_write(&local_30,6);
+  if ((-1 < iVar2) && (iVar2 = sflash_dev_write(param_2,param_3), -1 < iVar2)) {
+    sflash_dev_read(local_1c,1);
     iVar2 = FUN_20103cc8(param_1 + 0x18000000,param_3);
     if (iVar2 == iVar1) {
       local_1c[0] = local_1c[0] & 0xff;
@@ -1323,7 +1323,7 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
     uVar2 = progress_scale(param_1,param_2,0,0);
     progress_set(uVar2);
   }
-  FUN_20105060();
+  sflash_dev_open();
   iVar3 = FUN_20103c14();
   if (iVar3 < 0) {
     return 0xffffffff;
@@ -1339,7 +1339,7 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
       if (param_1 != 0) {
         uVar6 = __aeabi_ui2d(uVar1);
         uVar7 = __aeabi_i2d(uVar2);
-        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+        uVar6 = __aeabi_ddiv((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
                              (int)((ulonglong)uVar6 >> 0x20));
         uVar5 = (undefined4)((ulonglong)uVar6 >> 0x20);
         uVar4 = progress_scale(param_1,uVar5,(int)uVar6,uVar5);
@@ -1373,7 +1373,7 @@ undefined4 FUN_20103f44(int param_1)
     uVar1 = progress_scale();
     progress_set(uVar1);
   }
-  FUN_20105060();
+  sflash_dev_open();
   iVar2 = FUN_20103c14();
   if (-1 < iVar2) {
     uVar1 = 0;
@@ -1382,7 +1382,7 @@ undefined4 FUN_20103f44(int param_1)
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x100);
         uVar7 = __aeabi_i2d(uVar1);
-        uVar6 = FUN_201649d8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
+        uVar6 = __aeabi_ddiv((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),(int)uVar6,
                              (int)((ulonglong)uVar6 >> 0x20));
         uVar4 = (undefined4)((ulonglong)uVar6 >> 0x20);
         uVar3 = progress_scale(param_1,uVar4,(int)uVar6,uVar4);
@@ -1447,33 +1447,37 @@ undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3
   undefined1 local_27;
   undefined4 local_26;
   
-  FUN_20105060();
+  sflash_dev_open();
   local_28 = 0x72;
   local_27 = 100;
   local_26 = param_1;
-  iVar1 = FUN_20104f34(&local_28,6);
+  iVar1 = sflash_dev_write(&local_28,6);
   if (iVar1 < 0) {
     uVar2 = 1;
   }
   else {
-    uVar2 = FUN_20104e20(param_3,param_2);
+    uVar2 = sflash_dev_read(param_3,param_2);
   }
   return uVar2;
 }
 
 
-// ===== FUN_20104104 @ 20104104 (20 bytes)
+// ===== spibsc_reg_read32 @ 20104104 (20 bytes)
 
-undefined4 FUN_20104104(int *param_1,int param_2)
+/* *(base + off) for a register object {base, ...} [fact] */
+
+undefined4 spibsc_reg_read32(int *param_1,int param_2)
 
 {
   return *(undefined4 *)(*param_1 + param_2);
 }
 
 
-// ===== FUN_20104110 @ 20104110 (28 bytes)
+// ===== spibsc_reg_write32 @ 20104110 (28 bytes)
 
-void FUN_20104110(int *param_1,undefined4 param_2,int param_3)
+/* *(base + off) = value [fact] */
+
+void spibsc_reg_write32(int *param_1,undefined4 param_2,int param_3)
 
 {
   *(undefined4 *)(*param_1 + param_3) = param_2;
@@ -1481,9 +1485,11 @@ void FUN_20104110(int *param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_20104124 @ 20104124 (28 bytes)
+// ===== spibsc_reg_write16 @ 20104124 (28 bytes)
 
-void FUN_20104124(int *param_1,undefined2 param_2,int param_3)
+/* 16-bit register store [fact] */
+
+void spibsc_reg_write16(int *param_1,undefined2 param_2,int param_3)
 
 {
   *(undefined2 *)(*param_1 + param_3) = param_2;
@@ -1491,9 +1497,11 @@ void FUN_20104124(int *param_1,undefined2 param_2,int param_3)
 }
 
 
-// ===== FUN_20104138 @ 20104138 (28 bytes)
+// ===== spibsc_reg_write8 @ 20104138 (28 bytes)
 
-void FUN_20104138(int *param_1,undefined1 param_2,int param_3)
+/* 8-bit register store [fact] */
+
+void spibsc_reg_write8(int *param_1,undefined1 param_2,int param_3)
 
 {
   *(undefined1 *)(*param_1 + param_3) = param_2;
@@ -1531,14 +1539,16 @@ int FUN_20104154(int *param_1)
 }
 
 
-// ===== FUN_20104188 @ 20104188 (24 bytes)
+// ===== spibsc_ssl_negated @ 20104188 (24 bytes)
 
-uint FUN_20104188(undefined4 param_1)
+/* 1 when CMNSR bit 1 (SSLF) is clear [fact] */
+
+uint spibsc_ssl_negated(undefined4 param_1)
 
 {
   uint uVar1;
   
-  uVar1 = FUN_20104104(param_1,0x48);
+  uVar1 = spibsc_reg_read32(param_1,0x48);
   return ~(uVar1 >> 1) & 1;
 }
 

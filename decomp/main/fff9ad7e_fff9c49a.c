@@ -946,7 +946,7 @@ undefined1 FUN_fff9bfb8(void)
   byte bVar1;
   undefined1 uVar2;
   
-  bVar1 = memch_current(g_opstate.active_vfo != 0);
+  bVar1 = memch_current(g_opstate.active_vfo != VFO_A);
   uVar2 = FUN_fff9bfe1(bVar1);
   return uVar2;
 }

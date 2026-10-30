@@ -915,14 +915,14 @@ void menu_ex030102_draw(byte *param_1)
 void menu_ex030103_draw(byte *param_1)
 
 {
-  byte bVar1;
+  tunlin_mode tVar1;
   byte *pbVar2;
   int iVar3;
-  byte local_7;
+  tunlin_mode local_7;
   
-  bVar1 = g_opstate.ex030103_tun_lin_port_select;
+  tVar1 = g_opstate.ex030103_tun_lin_port_select;
   local_7 = g_opstate.ex030103_tun_lin_port_select;
-  if (g_opstate.ex030103_tun_lin_port_select == 0) {
+  if (g_opstate.ex030103_tun_lin_port_select == TUNLIN_EXT_TUNER) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -930,8 +930,8 @@ void menu_ex030103_draw(byte *param_1)
   }
   param_1[1] = 9;
   param_1[2] = 0;
-  if (3 < bVar1) {
-    local_7 = 0;
+  if (TUNLIN_GPO < tVar1) {
+    local_7 = TUNLIN_EXT_TUNER;
   }
   pbVar2 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */

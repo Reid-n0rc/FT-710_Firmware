@@ -2101,7 +2101,7 @@ LAB_fff9fa98:
   if (bVar3 == 0) {
     bStack_9 = 0;
   }
-  if ((g_ui.scan_running == 1) || (g_ui.f_0x46b_u8 == 1)) {
+  if ((g_ui.scan_running == 1) || (g_ui.ch_step_mode == 1)) {
     bVar1 = true;
   }
   else {

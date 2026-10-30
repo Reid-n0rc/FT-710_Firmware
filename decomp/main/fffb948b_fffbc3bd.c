@@ -2469,7 +2469,7 @@ void key_task(void)
       if (PTR_g_ui_00025d54->key_ev_type == 1) {
         PTR_g_ui_00025d54->key_consumed = 0;
         DAT_0001216b = '\x01';
-        DAT_0001216a = PTR_g_ui_00025d54->f_0x09c_u8;
+        DAT_0001216a = PTR_g_ui_00025d54->key_ev_src;
         uVar1 = PTR_g_ui_00025d54->key_ev_code;
         if (DAT_0001216a == 4) {
           key_touch_scope_tune(uVar1);
@@ -2603,7 +2603,7 @@ byte key_cancel_check(void)
     local_2 = 0;
   }
   else {
-    if ((PTR_g_ui_00025d54->f_0x09c_u8 == 4) || (PTR_g_ui_00025d54->key_ev_code != 0x340)) {
+    if ((PTR_g_ui_00025d54->key_ev_src == 4) || (PTR_g_ui_00025d54->key_ev_code != 0x340)) {
       bVar1 = false;
     }
     else {
@@ -2711,13 +2711,13 @@ void scope_cursor_follow(void)
   byte bStack_6;
   uint local_4;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_4 = PTR_g_ui_00025d54->freq_a;
   }
   else {
     local_4 = PTR_g_ui_00025d54->freq_b;
   }
-  local_7 = g_opstate.active_vfo != 0;
+  local_7 = g_opstate.active_vfo != VFO_A;
   bVar1 = scope_span_index(local_7);
   if (local_4 < PTR_g_ui_00025d54->scope_cursor_start) {
     local_4 = FUN_fffb3aee();

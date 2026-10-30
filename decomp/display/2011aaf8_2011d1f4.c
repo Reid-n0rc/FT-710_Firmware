@@ -440,7 +440,7 @@ void FUN_2011b8b8(int param_1,int param_2,int *param_3)
   if (param_2 == -1) {
     uVar3 = 0;
     do {
-      iVar2 = FUN_2011d8e8(param_1,(int)(char)uVar3);
+      iVar2 = vdc5_shrd_res_idle(param_1,(int)(char)uVar3);
       if (iVar2 != 0) {
         (*(code *)(&PTR_FUN_20165bd8)[uVar3])(param_1,1);
       }
@@ -475,7 +475,7 @@ void FUN_2011b988(int param_1,int param_2)
   if (param_2 == -1) {
     uVar3 = 0;
     do {
-      iVar2 = FUN_2011d920(param_1,(int)(char)uVar3);
+      iVar2 = vdc5_shrd_res_busy(param_1,(int)(char)uVar3);
       if (iVar2 != 0) {
         (*(code *)(&PTR_FUN_20165bd8)[uVar3])(param_1,0);
       }
@@ -504,7 +504,7 @@ void FUN_2011ba48(int param_1,int param_2)
 {
   int iVar1;
   
-  iVar1 = FUN_2011d8e8(param_1,4);
+  iVar1 = vdc5_shrd_res_idle(param_1,4);
   if ((param_2 == 4) || ((param_2 == -1 && (iVar1 != 0)))) {
     FUN_201198dc(param_1);
     iVar1 = param_1 * 0x228;
@@ -514,7 +514,7 @@ void FUN_2011ba48(int param_1,int param_2)
     **(uint **)(&DAT_20165d98 + iVar1) = **(uint **)(&DAT_20165d98 + iVar1) | 0x100;
     FUN_2011a800(param_1,1,0);
   }
-  iVar1 = FUN_2011d8e8(param_1,3);
+  iVar1 = vdc5_shrd_res_idle(param_1,3);
   if ((param_2 == 3) || ((param_2 == -1 && (iVar1 != 0)))) {
     param_1 = param_1 * 0x210;
     **(uint **)(&DAT_20166440 + param_1) = **(uint **)(&DAT_20166440 + param_1) & 0xffffefff;

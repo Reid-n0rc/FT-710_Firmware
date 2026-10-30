@@ -259,7 +259,7 @@ void FUN_fff99ba5(ushort param_1)
   byte local_4;
   
   local_4 = g_opstate.vfo_a.dnr;
-  if (g_opstate.active_vfo != 0) {
+  if (g_opstate.active_vfo != VFO_A) {
     local_4 = g_opstate.vfo_b.dnr;
   }
   local_4 = local_4 & 0xf;
@@ -288,7 +288,7 @@ void FUN_fff99bfe(ushort param_1)
   uint uVar5;
   byte local_3;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_3 = g_qmb_hdr.ptr_a[0];
   }
   else {
@@ -317,7 +317,7 @@ void FUN_fff99c58(ushort param_1)
 {
   byte local_3;
   
-  local_3 = memch[PTR_g_ui_00025d38->f_0x43a_u8].mode & 0xf;
+  local_3 = memch[PTR_g_ui_00025d38->memlist_ch].mode & 0xf;
   if (0xd < local_3) {
     local_3 = 0xe;
   }
@@ -334,7 +334,7 @@ void FUN_fff99c58(ushort param_1)
 void FUN_fff99ca2(ushort param_1)
 
 {
-  if ((memch[PTR_g_ui_00025d38->f_0x43a_u8].flags1 & 0x80) != 0) {
+  if ((memch[PTR_g_ui_00025d38->memlist_ch].flags1 & 0x80) != 0) {
     *(undefined4 *)(&DAT_00001745 + param_1) = 0x50494b53;
     *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
     return;
@@ -350,7 +350,7 @@ void FUN_fff99ca2(ushort param_1)
 void FUN_fff99cf2(ushort param_1)
 
 {
-  if ((memch[PTR_g_ui_00025d38->f_0x43a_u8].flags5 & 0x80) != 0) {
+  if ((memch[PTR_g_ui_00025d38->memlist_ch].flags5 & 0x80) != 0) {
     *(undefined4 *)(&DAT_00001745 + param_1) = 0x454d414e;
     *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
     return;
@@ -770,10 +770,10 @@ void displink_build_50(void)
 void FUN_fff9a364(void)
 
 {
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0;
   }
-  else if (PTR_g_ui_00025d38->f_0x0c0_u8 == 1) {
+  else if (PTR_g_ui_00025d38->kbd_layout == 1) {
     DAT_000017d9 = 1;
   }
   else {
@@ -802,17 +802,17 @@ void FUN_fff9a42f(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0;
   }
-  else if (PTR_g_ui_00025d38->f_0x0c0_u8 == 1) {
+  else if (PTR_g_ui_00025d38->kbd_layout == 1) {
     DAT_000017d9 = 1;
   }
   else {
     DAT_000017d9 = 2;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
-  FUN_fff9c089(&DAT_000017db,PTR_g_ui_00025d38->f_0x43a_u8);
+  FUN_fff9c089(&DAT_000017db,PTR_g_ui_00025d38->memlist_ch);
   iVar3 = suntil(0xfff8f350,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
   pcVar2 = "MEMORY NAME";
@@ -836,7 +836,7 @@ void FUN_fff9a4f4(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0x10;
   }
   else {
@@ -866,7 +866,7 @@ void FUN_fff9a55e(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0x30;
   }
   else {
@@ -896,10 +896,10 @@ void FUN_fff9a5c8(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0x20;
   }
-  else if (PTR_g_ui_00025d38->f_0x0c0_u8 == 1) {
+  else if (PTR_g_ui_00025d38->kbd_layout == 1) {
     DAT_000017d9 = 0x21;
   }
   else {
@@ -929,10 +929,10 @@ void FUN_fff9a64f(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0x40;
   }
-  else if (PTR_g_ui_00025d38->f_0x0c0_u8 == 1) {
+  else if (PTR_g_ui_00025d38->kbd_layout == 1) {
     DAT_000017d9 = 0x41;
   }
   else {
@@ -962,10 +962,10 @@ void FUN_fff9a6f9(void)
   char *pcVar2;
   int iVar3;
   
-  if (PTR_g_ui_00025d38->f_0x0c0_u8 == 0) {
+  if (PTR_g_ui_00025d38->kbd_layout == 0) {
     DAT_000017d9 = 0;
   }
-  else if (PTR_g_ui_00025d38->f_0x0c0_u8 == 1) {
+  else if (PTR_g_ui_00025d38->kbd_layout == 1) {
     DAT_000017d9 = 1;
   }
   else {
@@ -1167,10 +1167,10 @@ void displink_tx_40(void)
   displink_build_40();
   bVar1 = displink_copy_if_changed(0x1741,0x1456,0x1fa);
   if (bVar1 == 0) {
-    if (PTR_g_ui_00025d38->f_0x47b_u8 == 0) {
+    if (PTR_g_ui_00025d38->dl_40_force == 0) {
       return;
     }
-    PTR_g_ui_00025d38->f_0x47b_u8 = 0;
+    PTR_g_ui_00025d38->dl_40_force = 0;
   }
   DAT_0001b628 = 0x1fb;
   displink_tx_start(0x1fb);
@@ -1225,10 +1225,10 @@ void displink_build_37(void)
   mem_zero(0x24a,0x1741);
   DAT_00001741 = 0x37;
   displink_copy_status();
-  PTR_g_ui_00025d38->f_0x1c4_u8 = 1;
-  PTR_g_ui_00025d38->f_0x1c6_u8 = 0;
-  DAT_000017d9 = PTR_g_ui_00025d38->f_0x1c4_u8 << 7 | PTR_g_ui_00025d38->f_0x1c5_u8 << 6 |
-                 PTR_g_ui_00025d38->f_0x1c6_u8 << 5;
+  PTR_g_ui_00025d38->dl37_bit7 = 1;
+  PTR_g_ui_00025d38->dl37_bit5 = 0;
+  DAT_000017d9 = PTR_g_ui_00025d38->dl37_bit7 << 7 | PTR_g_ui_00025d38->func_assigned << 6 |
+                 PTR_g_ui_00025d38->dl37_bit5 << 5;
   DAT_000017da = g_opstate.func_knob_sf;
   DAT_000017db = 0;
   FUN_fff9acf4(0x9b);

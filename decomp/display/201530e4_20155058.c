@@ -17,163 +17,163 @@ undefined4 FUN_201530e4(undefined4 *param_1,uint param_2)
 /* WARNING: Removing unreachable block (ram,0x20153188) */
 /* WARNING: Removing unreachable block (ram,0x201531b0) */
 
-undefined4 FUN_201530fc(undefined4 *param_1,int param_2)
+undefined4 FUN_201530fc(uint *param_1,int param_2)
 
 {
   int iVar1;
   int iVar2;
-  undefined1 *puVar3;
+  byte *pbVar3;
   int iVar4;
   bool bVar5;
   
   software_interrupt(0);
-  puVar3 = (undefined1 *)(param_2 + -0x400);
-  iVar2 = 0x400;
+  pbVar3 = (byte *)(param_2 + -0x400);
+  iVar1 = 0x400;
   bVar5 = true;
-  DAT_208003f0 = puVar3;
+  knl_sys.isr_area = pbVar3;
   while (bVar5) {
-    iVar2 = iVar2 + -1;
-    bVar5 = iVar2 != 0;
-    puVar3 = puVar3 + -1;
-    *puVar3 = 0;
+    iVar1 = iVar1 + -1;
+    bVar5 = iVar1 != 0;
+    pbVar3 = pbVar3 + -1;
+    *pbVar3 = 0;
   }
-  DAT_208003fc = param_1;
-  param_1[1] = (int)puVar3 - (int)param_1 & 0xfffffff8;
+  knl_sys.heap = param_1;
+  param_1[1] = (int)pbVar3 - (int)param_1 & 0xfffffff8;
   *param_1 = 0;
-  DAT_208003f8 = 0;
-  DAT_208003f4 = 0;
-  DAT_208003c4 = 0;
-  DAT_208003bc = 0;
-  DAT_208003c8 = 0;
-  DAT_208003c0 = 0;
-  DAT_208003d0 = 0;
-  DAT_208003d8 = 0;
-  DAT_208003d4 = 0;
-  DAT_208003d9 = 0;
-  DAT_208003da = 0;
-  DAT_208003dc = 0;
-  DAT_208003dd = 0;
-  DAT_208003de = 0;
-  DAT_208003df = 9;
-  DAT_208003b8 = 0;
-  DAT_208003b0 = 0;
+  knl_sys.f_0x50_u32 = 0;
+  knl_sys.f_0x4c_u32 = 0;
+  knl_sys.tick_hi = 0;
+  knl_sys.tim_base_hi = 0;
+  knl_sys.tick_lo = 0;
+  knl_sys.tim_base_lo = 0;
+  knl_sys.f_0x28_u32 = 0;
+  knl_sys.f_0x30_u8 = 0;
+  knl_sys.last_ercd = 0;
+  knl_sys.dsp_pending = 0;
+  knl_sys.ctx_isr = 0;
+  knl_sys.f_0x34_u8 = 0;
+  knl_sys.tick_pending = 0;
+  knl_sys.f_0x36_u8 = 0;
+  knl_sys.run_pri = 9;
+  knl_sys.f_0x10_u32 = 0;
+  knl_sys.idle_hook = 0;
   DAT_208dc174 = 0;
-  iVar2 = 1;
   iVar4 = DAT_201659d0 + 1;
+  iVar1 = 1;
   if (0 < iVar4) {
     do {
-      iVar1 = iVar2 * 4;
-      iVar2 = iVar2 + 1;
-      *(undefined4 *)(&DAT_208dbba0 + iVar1) = 0;
+      iVar2 = iVar1 + 1;
+      knl_tsk_tab[iVar1] = (knl_tcb *)0x0;
+      iVar1 = iVar2;
     } while (iVar2 <= iVar4);
   }
-  iVar2 = 1;
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 + 1;
-    (&DAT_208dbca4)[iVar2] = 0;
-    iVar2 = iVar4;
+    iVar4 = iVar1 + 1;
+    knl_sem_tab[iVar1] = (knl_sem *)0x0;
+    iVar1 = iVar4;
   } while (iVar4 < 0x41);
-  iVar2 = 1;
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
-    *(undefined4 *)(&DAT_208dbda4 + iVar4) = 0;
-  } while (iVar2 < 0x41);
-  iVar2 = 1;
+    iVar4 = iVar1 + 1;
+    knl_flg_tab[iVar1] = (knl_flg *)0x0;
+    iVar1 = iVar4;
+  } while (iVar4 < 0x41);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(&DAT_208dbea4 + iVar4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(&DAT_208dbec4 + iVar4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(iVar4 + 0x208dbee4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(&DAT_208dbf04 + iVar4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 + 1;
-    (&DAT_208dbf24)[iVar2] = 0;
-    iVar2 = iVar4;
+    iVar4 = iVar1 + 1;
+    knl_mpf_tab[iVar1] = (knl_mpf *)0x0;
+    iVar1 = iVar4;
   } while (iVar4 < 0x11);
-  iVar2 = 1;
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(&DAT_208dbfa4 + iVar4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(&DAT_208dbf64 + iVar4) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 + 1;
-    (&DAT_208dbf84)[iVar2] = 0;
-    iVar2 = iVar4;
+    iVar4 = iVar1 + 1;
+    (&DAT_208dbf84)[iVar1] = 0;
+    iVar1 = iVar4;
   } while (iVar4 < 9);
-  iVar2 = 1;
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
-    *(undefined4 *)(&DAT_208dbfc4 + iVar4) = 0;
-  } while (iVar2 < 0x21);
-  iVar2 = 1;
+    iVar4 = iVar1 + 1;
+    knl_mtx_tab[iVar1] = (knl_mtx *)0x0;
+    iVar1 = iVar4;
+  } while (iVar4 < 0x21);
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 + 1;
-    (&DAT_208dc044)[iVar2] = 0;
-    iVar2 = iVar4;
+    iVar4 = iVar1 + 1;
+    (&DAT_208dc044)[iVar1] = 0;
+    iVar1 = iVar4;
   } while (iVar4 < 0x41);
-  iVar2 = 1;
+  iVar1 = 1;
   do {
-    iVar4 = iVar2 * 4;
-    iVar2 = iVar2 + 1;
+    iVar4 = iVar1 * 4;
+    iVar1 = iVar1 + 1;
     *(undefined4 *)(iVar4 + 0x208dc144) = 0;
-  } while (iVar2 < 9);
-  iVar2 = 1;
+  } while (iVar1 < 9);
+  iVar1 = 1;
   do {
-    (&DAT_208dc18c)[iVar2] = 0;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 10);
-  iVar2 = 0;
+    knl_rdq[iVar1] = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 10);
+  iVar1 = 0;
   do {
-    (&DAT_20800400)[iVar2] = 0;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 1);
-  iVar2 = 0;
+    (&DAT_20800400)[iVar1] = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 1);
+  iVar1 = 0;
   do {
-    (&DAT_20800401)[iVar2] = 0;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 1);
-  iVar2 = 0;
+    (&DAT_20800401)[iVar1] = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 1);
+  iVar1 = 0;
   do {
-    (&DAT_20800402)[iVar2] = 0;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 1);
-  DAT_208003db = 1;
-  DAT_208003e0 = 0;
-  DAT_208003e1 = 0;
-  DAT_208003e2 = 0;
-  iVar2 = DAT_201659d0 + 1;
-  DAT_208003b4 = 8;
-  *(undefined **)(&DAT_208dbba0 + iVar2 * 4) = &DAT_208dc178;
-  DAT_208dc195 = (undefined1)iVar2;
-  DAT_208dc18c = DAT_208dc195;
+    (&DAT_20800402)[iVar1] = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 1);
+  knl_sys.dsp_state = 1;
+  knl_sys.tmo_mask = 0;
+  knl_sys.tmo_mask_1 = 0;
+  knl_sys.tmo_mask_2 = 0;
+  iVar1 = DAT_201659d0 + 1;
+  knl_sys.f_0x0c_u32 = 8;
+  knl_tsk_tab[iVar1] = (knl_tcb *)&DAT_208dc178;
+  knl_rdq[9] = (byte)iVar1;
+  knl_rdq[0] = knl_rdq[9];
   return 0;
 }
 
@@ -189,10 +189,10 @@ void FUN_201535b4(undefined *param_1,int param_2,uint param_3)
   undefined1 *puVar4;
   
   if (param_1 == &DAT_208dbf64) {
-    pbVar3 = &DAT_208003e1;
+    pbVar3 = &knl_sys.tmo_mask_1;
   }
   else {
-    pbVar3 = &DAT_208003e2;
+    pbVar3 = &knl_sys.tmo_mask_2;
   }
   if (param_1 == &DAT_208dbf64) {
     puVar4 = &DAT_20800401;
@@ -236,9 +236,9 @@ void FUN_20153620(void)
   uint uVar9;
   bool bVar10;
   
-  uVar3 = DAT_208003c8;
-  uVar9 = (uint)DAT_208003c4;
-  uVar4 = DAT_208003e2 & DAT_208003c8;
+  uVar3 = knl_sys.tick_lo;
+  uVar9 = (uint)(short)knl_sys.tick_hi;
+  uVar4 = knl_sys.tmo_mask_2 & knl_sys.tick_lo;
   bVar1 = (&DAT_20800402)[uVar4];
   do {
     uVar5 = (uint)bVar1;
@@ -261,7 +261,7 @@ void FUN_20153620(void)
       psVar8 = (short *)(&DAT_208dbf84)[uVar5];
     }
     bVar1 = *(byte *)((int)psVar8 + 9);
-    pbVar6 = &DAT_20800402 + (*(uint *)(psVar8 + 2) & (uint)DAT_208003e2);
+    pbVar6 = &DAT_20800402 + (*(uint *)(psVar8 + 2) & (uint)knl_sys.tmo_mask_2);
     if (bVar1 == uVar5) {
       *pbVar6 = 0;
     }
@@ -294,10 +294,10 @@ void FUN_20153720(undefined *param_1,int param_2,byte param_3)
   undefined1 *puVar4;
   
   if (param_1 == &DAT_208dbf64) {
-    pbVar3 = &DAT_208003e1;
+    pbVar3 = &knl_sys.tmo_mask_1;
   }
   else {
-    pbVar3 = &DAT_208003e2;
+    pbVar3 = &knl_sys.tmo_mask_2;
   }
   if (param_1 == &DAT_208dbf64) {
     puVar4 = &DAT_20800401;
@@ -329,7 +329,7 @@ void FUN_20153788(void)
   byte bVar1;
   byte bVar2;
   byte bVar3;
-  short sVar4;
+  ushort uVar4;
   uint uVar5;
   uint uVar6;
   uint uVar7;
@@ -339,10 +339,10 @@ void FUN_20153788(void)
   uint uVar11;
   bool bVar12;
   
-  uVar5 = DAT_208003c8;
-  sVar4 = DAT_208003c4;
-  uVar11 = (uint)DAT_208003c4;
-  uVar6 = DAT_208003e1 & DAT_208003c8;
+  uVar5 = knl_sys.tick_lo;
+  uVar4 = knl_sys.tick_hi;
+  uVar11 = (uint)(short)knl_sys.tick_hi;
+  uVar6 = knl_sys.tmo_mask_1 & knl_sys.tick_lo;
   do {
     uVar7 = (uint)(byte)(&DAT_20800401)[uVar6];
     if (uVar7 == 0) {
@@ -364,7 +364,7 @@ void FUN_20153788(void)
       psVar10 = *(short **)(&DAT_208dbf64 + uVar7 * 4);
     }
     bVar1 = *(byte *)((int)psVar10 + 9);
-    pbVar9 = &DAT_20800401 + (*(uint *)(psVar10 + 2) & (uint)DAT_208003e1);
+    pbVar9 = &DAT_20800401 + (*(uint *)(psVar10 + 2) & (uint)knl_sys.tmo_mask_1);
     if (bVar1 == uVar7) {
       *pbVar9 = 0;
     }
@@ -378,14 +378,14 @@ void FUN_20153788(void)
     }
     uVar8 = *(uint *)(psVar10 + 10) + uVar5;
     *(uint *)(psVar10 + 2) = uVar8;
-    *psVar10 = psVar10[8] + sVar4;
+    *psVar10 = psVar10[8] + uVar4;
     if (uVar8 < *(uint *)(psVar10 + 10)) {
-      *psVar10 = psVar10[8] + sVar4 + 1;
+      *psVar10 = psVar10[8] + uVar4 + 1;
     }
-    bVar1 = (&DAT_20800401)[DAT_208003e1 & uVar8];
+    bVar1 = (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar8];
     bVar2 = (byte)uVar7;
     if (bVar1 == 0) {
-      (&DAT_20800401)[DAT_208003e1 & uVar8] = bVar2;
+      (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar8] = bVar2;
       *(byte *)(psVar10 + 4) = bVar2;
       *(byte *)((int)psVar10 + 9) = bVar2;
     }
@@ -407,58 +407,65 @@ void FUN_20153788(void)
 
 // ===== FUN_201538d4 @ 201538d4 (80 bytes)
 
-void FUN_201538d4(byte *param_1,int param_2,byte param_3)
+void FUN_201538d4(byte *queue,knl_tcb *tcb,byte tskid)
 
 {
   byte bVar1;
   byte bVar2;
   
-  *(byte **)(param_2 + 0x10) = param_1;
-  bVar1 = *param_1;
+  tcb->queue = queue;
+  bVar1 = *queue;
   if (bVar1 != 0) {
-    *(byte *)(param_2 + 6) = bVar1;
-    bVar2 = *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7);
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7) = param_3;
-    *(byte *)(param_2 + 7) = bVar2;
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 6) = param_3;
+    tcb->q_next = bVar1;
+    bVar2 = knl_tsk_tab[bVar1]->q_prev;
+    knl_tsk_tab[bVar1]->q_prev = tskid;
+    tcb->q_prev = bVar2;
+    knl_tsk_tab[bVar2]->q_next = tskid;
     return;
   }
-  *param_1 = param_3;
-  *(byte *)(param_2 + 6) = param_3;
-  *(byte *)(param_2 + 7) = param_3;
+  *queue = tskid;
+  tcb->q_next = tskid;
+  tcb->q_prev = tskid;
   return;
 }
 
 
-// ===== FUN_201539ec @ 201539ec (76 bytes)
+// ===== knl_queue_remove @ 201539ec (76 bytes)
 
-void FUN_201539ec(int param_1,uint param_2)
+/* Unlinks TCB param_1 (id param_2) from its ring (+6/+7 links, head at +0x10), the first half of
+   knl_queue_move [fact] */
+
+void knl_queue_remove(knl_tcb *tcb,uint tskid)
 
 {
   byte bVar1;
   byte bVar2;
   byte *pbVar3;
   
-  bVar1 = *(byte *)(param_1 + 7);
-  pbVar3 = *(byte **)(param_1 + 0x10);
-  if (bVar1 == param_2) {
+  bVar1 = tcb->q_prev;
+  pbVar3 = tcb->queue;
+  if (bVar1 == tskid) {
     *pbVar3 = 0;
   }
   else {
-    bVar2 = *(byte *)(param_1 + 6);
-    if ((uint)*pbVar3 == (param_2 & 0xff)) {
+    bVar2 = tcb->q_next;
+    if ((uint)*pbVar3 == (tskid & 0xff)) {
       *pbVar3 = bVar2;
     }
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 7) = bVar1;
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 6) = bVar2;
+    knl_tsk_tab[bVar2]->q_prev = bVar1;
+    knl_tsk_tab[bVar1]->q_next = bVar2;
   }
   return;
 }
 
 
-// ===== FUN_20153a38 @ 20153a38 (156 bytes)
+// ===== knl_queue_move @ 20153a38 (156 bytes)
 
-void FUN_20153a38(byte *param_1,int param_2,uint param_3)
+/* Unlinks TCB param_2 (id param_3) from the id-linked ring it is in (+6 prev / +7 next, head byte
+   at +0x10) and appends it to ring head param_1; TCB table 0x208DBBA0 [fact]; used by the wait and
+   ready paths of itron_* [inference] */
+
+void knl_queue_move(byte *queue,knl_tcb *tcb,uint tskid)
 
 {
   byte bVar1;
@@ -466,33 +473,33 @@ void FUN_20153a38(byte *param_1,int param_2,uint param_3)
   byte bVar3;
   byte *pbVar4;
   
-  bVar1 = *(byte *)(param_2 + 7);
-  pbVar4 = *(byte **)(param_2 + 0x10);
-  if (bVar1 == param_3) {
+  bVar1 = tcb->q_prev;
+  pbVar4 = tcb->queue;
+  if (bVar1 == tskid) {
     *pbVar4 = 0;
   }
   else {
-    bVar2 = *(byte *)(param_2 + 6);
-    if (*pbVar4 == param_3) {
+    bVar2 = tcb->q_next;
+    if (*pbVar4 == tskid) {
       *pbVar4 = bVar2;
     }
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 7) = bVar1;
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 6) = bVar2;
+    knl_tsk_tab[bVar2]->q_prev = bVar1;
+    knl_tsk_tab[bVar1]->q_next = bVar2;
   }
-  bVar2 = (byte)param_3;
-  *(byte **)(param_2 + 0x10) = param_1;
-  bVar1 = *param_1;
+  bVar2 = (byte)tskid;
+  tcb->queue = queue;
+  bVar1 = *queue;
   if (bVar1 == 0) {
-    *param_1 = bVar2;
-    *(byte *)(param_2 + 6) = bVar2;
-    *(byte *)(param_2 + 7) = bVar2;
+    *queue = bVar2;
+    tcb->q_next = bVar2;
+    tcb->q_prev = bVar2;
     return;
   }
-  *(byte *)(param_2 + 6) = bVar1;
-  bVar3 = *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7);
-  *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7) = bVar2;
-  *(byte *)(param_2 + 7) = bVar3;
-  *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar3 * 4) + 6) = bVar2;
+  tcb->q_next = bVar1;
+  bVar3 = knl_tsk_tab[bVar1]->q_prev;
+  knl_tsk_tab[bVar1]->q_prev = bVar2;
+  tcb->q_prev = bVar3;
+  knl_tsk_tab[bVar3]->q_next = bVar2;
   return;
 }
 
@@ -501,33 +508,36 @@ void FUN_20153a38(byte *param_1,int param_2,uint param_3)
 
 /* (tcb, tskid): unlinks the TCB from its timer-wheel slot [fact] */
 
-void knl_timeout_remove(int param_1,uint param_2)
+void knl_timeout_remove(knl_tcb *tcb,uint tskid)
 
 {
   byte bVar1;
   byte bVar2;
   byte *pbVar3;
   
-  pbVar3 = &DAT_20800400 + (*(uint *)(param_1 + 0xc) & (uint)DAT_208003e0);
-  bVar1 = *(byte *)(param_1 + 0xb);
-  if (bVar1 == param_2) {
+  pbVar3 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
+  bVar1 = tcb->tmo_prev;
+  if (bVar1 == tskid) {
     *pbVar3 = 0;
   }
   else {
-    bVar2 = *(byte *)(param_1 + 10);
-    if ((uint)*pbVar3 == (param_2 & 0xff)) {
+    bVar2 = tcb->tmo_next;
+    if ((uint)*pbVar3 == (tskid & 0xff)) {
       *pbVar3 = bVar2;
     }
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 0xb) = bVar1;
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 10) = bVar2;
+    knl_tsk_tab[bVar2]->tmo_prev = bVar1;
+    knl_tsk_tab[bVar1]->tmo_next = bVar2;
   }
   return;
 }
 
 
-// ===== FUN_20153b34 @ 20153b34 (88 bytes)
+// ===== knl_freelist_alloc @ 20153b34 (88 bytes)
 
-void FUN_20153b34(undefined4 *param_1,int param_2)
+/* First-fit allocator on a free list {next, size}: rounds the size up to 8, splits or unlinks the
+   block [fact] */
+
+void knl_freelist_alloc(undefined4 *param_1,int param_2)
 
 {
   undefined4 *puVar1;
@@ -570,61 +580,61 @@ byte FUN_20153b8c(int param_1)
   byte bVar2;
   int *piVar3;
   byte *pbVar4;
-  int *piVar5;
-  uint uVar6;
-  byte *pbVar7;
-  byte bVar8;
-  int iVar9;
-  int iVar10;
+  knl_tcb *tcb;
+  uint tskid;
+  byte *pbVar5;
+  byte bVar6;
+  int iVar7;
+  int iVar8;
   
-  bVar8 = 0;
-  iVar10 = *(int *)(&DAT_208dbf04 + param_1 * 4);
-  pbVar7 = (byte *)(iVar10 + 0x10);
-  bVar1 = *(byte *)(iVar10 + 0x10);
+  bVar6 = 0;
+  iVar8 = *(int *)(&DAT_208dbf04 + param_1 * 4);
+  pbVar5 = (byte *)(iVar8 + 0x10);
+  bVar1 = *(byte *)(iVar8 + 0x10);
   do {
-    uVar6 = (uint)bVar1;
-    if (0xfd < uVar6) {
-      return bVar8;
+    tskid = (uint)bVar1;
+    if (0xfd < tskid) {
+      return bVar6;
     }
-    while (uVar6 != 0) {
-      piVar5 = *(int **)(&DAT_208dbba0 + uVar6 * 4);
-      iVar9 = *(int *)(*piVar5 + 8) + 8;
-      piVar3 = (int *)FUN_20153b34(iVar10 + 4,iVar9);
+    while (tskid != 0) {
+      tcb = knl_tsk_tab[tskid];
+      iVar7 = *(int *)(tcb->sp + 8) + 8;
+      piVar3 = (int *)knl_freelist_alloc(iVar8 + 4,iVar7);
       if (piVar3 == (int *)0x0) {
-        return bVar8;
+        return bVar6;
       }
-      *piVar3 = iVar9;
-      **(int **)(*piVar5 + 0xc) = (int)(piVar3 + 2);
-      if ((*(byte *)((int)piVar5 + 5) & 2) != 0) {
-        pbVar4 = &DAT_20800400 + (piVar5[3] & (uint)DAT_208003e0);
-        bVar1 = *(byte *)((int)piVar5 + 0xb);
-        if (bVar1 == uVar6) {
+      *piVar3 = iVar7;
+      **(int **)(tcb->sp + 0xc) = (int)(piVar3 + 2);
+      if ((tcb->state & 2) != 0) {
+        pbVar4 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
+        bVar1 = tcb->tmo_prev;
+        if (bVar1 == tskid) {
           *pbVar4 = 0;
         }
         else {
-          bVar2 = *(byte *)((int)piVar5 + 10);
-          if (*pbVar4 == uVar6) {
+          bVar2 = tcb->tmo_next;
+          if (*pbVar4 == tskid) {
             *pbVar4 = bVar2;
           }
-          *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 0xb) = bVar1;
-          *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 10) = bVar2;
+          knl_tsk_tab[bVar2]->tmo_prev = bVar1;
+          knl_tsk_tab[bVar1]->tmo_next = bVar2;
         }
       }
-      *(undefined1 *)((int)piVar5 + 5) = 0x10;
-      if (*(char *)((int)piVar5 + 9) == '\0') {
-        iVar9 = (int)(char)piVar5[1];
-        if (iVar9 < DAT_208003df) {
-          bVar8 = bVar8 | iVar9 < DAT_208003df;
+      tcb->state = 0x10;
+      if (tcb->f_0x09_u8 == 0) {
+        iVar7 = (int)tcb->pri;
+        if (iVar7 < knl_sys.run_pri) {
+          bVar6 = bVar6 | iVar7 < knl_sys.run_pri;
         }
-        FUN_20153a38(&DAT_208dc18c + iVar9,piVar5,uVar6);
+        knl_queue_move(knl_rdq + iVar7,tcb,tskid);
       }
       else {
-        FUN_201539ec(piVar5,uVar6);
+        knl_queue_remove(tcb,tskid);
       }
-      uVar6 = (uint)*pbVar7;
+      tskid = (uint)*pbVar5;
     }
-    pbVar7 = pbVar7 + 1;
-    bVar1 = *pbVar7;
+    pbVar5 = pbVar5 + 1;
+    bVar1 = *pbVar5;
   } while( true );
 }
 
@@ -705,59 +715,59 @@ byte FUN_20153dec(int param_1)
   int iVar3;
   int iVar4;
   byte *pbVar5;
-  int *piVar6;
-  uint uVar7;
-  byte *pbVar8;
-  byte bVar9;
+  knl_tcb *tcb;
+  uint tskid;
+  byte *pbVar6;
+  byte bVar7;
   
-  bVar9 = 0;
+  bVar7 = 0;
   iVar3 = *(int *)(&DAT_208dbec4 + param_1 * 4);
-  pbVar8 = (byte *)(iVar3 + 0x13);
+  pbVar6 = (byte *)(iVar3 + 0x13);
   do {
-    uVar7 = (uint)*pbVar8;
-    if (uVar7 != 0) {
-      if (0xfd < uVar7) {
-        return bVar9;
+    tskid = (uint)*pbVar6;
+    if (tskid != 0) {
+      if (0xfd < tskid) {
+        return bVar7;
       }
       do {
-        piVar6 = *(int **)(&DAT_208dbba0 + uVar7 * 4);
-        if (*(int *)(*piVar6 + 8) == 0) {
-          return bVar9;
+        tcb = knl_tsk_tab[tskid];
+        if (*(int *)(tcb->sp + 8) == 0) {
+          return bVar7;
         }
-        iVar4 = FUN_20153cd4(iVar3,*(undefined4 *)(*piVar6 + 0xc));
+        iVar4 = FUN_20153cd4(iVar3,*(undefined4 *)(tcb->sp + 0xc));
         if (iVar4 == 0) {
-          return bVar9;
+          return bVar7;
         }
-        if ((*(byte *)((int)piVar6 + 5) & 2) != 0) {
-          bVar1 = *(byte *)((int)piVar6 + 0xb);
-          pbVar5 = &DAT_20800400 + (piVar6[3] & (uint)DAT_208003e0);
-          if (bVar1 == uVar7) {
+        if ((tcb->state & 2) != 0) {
+          bVar1 = tcb->tmo_prev;
+          pbVar5 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
+          if (bVar1 == tskid) {
             *pbVar5 = 0;
           }
           else {
-            bVar2 = *(byte *)((int)piVar6 + 10);
-            if (*pbVar5 == uVar7) {
+            bVar2 = tcb->tmo_next;
+            if (*pbVar5 == tskid) {
               *pbVar5 = bVar2;
             }
-            *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 0xb) = bVar1;
-            *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 10) = bVar2;
+            knl_tsk_tab[bVar2]->tmo_prev = bVar1;
+            knl_tsk_tab[bVar1]->tmo_next = bVar2;
           }
         }
-        *(undefined1 *)((int)piVar6 + 5) = 0x10;
-        if (*(char *)((int)piVar6 + 9) == '\0') {
-          iVar4 = (int)(char)piVar6[1];
-          if (iVar4 < DAT_208003df) {
-            bVar9 = bVar9 | iVar4 < DAT_208003df;
+        tcb->state = 0x10;
+        if (tcb->f_0x09_u8 == 0) {
+          iVar4 = (int)tcb->pri;
+          if (iVar4 < knl_sys.run_pri) {
+            bVar7 = bVar7 | iVar4 < knl_sys.run_pri;
           }
-          FUN_20153a38(&DAT_208dc18c + iVar4,piVar6,uVar7);
+          knl_queue_move(knl_rdq + iVar4,tcb,tskid);
         }
         else {
-          FUN_201539ec(piVar6,uVar7);
+          knl_queue_remove(tcb,tskid);
         }
-        uVar7 = (uint)*pbVar8;
-      } while (uVar7 != 0);
+        tskid = (uint)*pbVar6;
+      } while (tskid != 0);
     }
-    pbVar8 = pbVar8 + 1;
+    pbVar6 = pbVar6 + 1;
   } while( true );
 }
 
@@ -767,73 +777,74 @@ byte FUN_20153dec(int param_1)
 void FUN_20153f28(uint param_1)
 
 {
-  int iVar1;
-  char *pcVar2;
+  sbyte sVar1;
+  int iVar2;
   int iVar3;
-  int iVar4;
-  int *piVar5;
+  byte *pbVar4;
+  knl_mtx *pkVar5;
+  knl_tcb *tcb;
   
-  piVar5 = *(int **)(&DAT_208dbba0 + param_1 * 4);
+  tcb = knl_tsk_tab[param_1];
   while( true ) {
-    iVar1 = (int)(short)piVar5[9];
-    iVar3 = (int)*(char *)((int)piVar5 + 0x27);
+    iVar2 = (int)tcb->mtx_held;
+    iVar3 = (int)tcb->bpri;
     do {
-      iVar1 = *(int *)(&DAT_208dbfc4 + iVar1 * 4);
-      if (*(int *)(iVar1 + 4) == 2) {
-        iVar4 = 1;
-        for (pcVar2 = (char *)(iVar1 + 0xc); *pcVar2 == '\0'; pcVar2 = pcVar2 + 1) {
-          iVar4 = iVar4 + 1;
+      pkVar5 = knl_mtx_tab[iVar2];
+      if (pkVar5->mtxatr == 2) {
+        iVar2 = 1;
+        for (pbVar4 = pkVar5->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
+          iVar2 = iVar2 + 1;
         }
-        if (iVar4 < iVar3) {
-          iVar3 = iVar4;
+        if (iVar2 < iVar3) {
+          iVar3 = iVar2;
         }
-        *(char *)(iVar1 + 0xb) = (char)iVar4;
+        pkVar5->pri = (sbyte)iVar2;
       }
-      else if ((*(int *)(iVar1 + 4) == 3) && (*(char *)(iVar1 + 0xb) < iVar3)) {
-        iVar3 = (int)*(char *)(iVar1 + 0xb);
+      else if ((pkVar5->mtxatr == 3) && (pkVar5->pri < iVar3)) {
+        iVar3 = (int)pkVar5->pri;
       }
-      iVar1 = (int)*(short *)(iVar1 + 8);
-    } while (iVar1 != 0);
-    iVar1 = piVar5[1];
-    if ((char)iVar1 == iVar3) {
+      iVar2 = (int)pkVar5->prev_held;
+    } while (iVar2 != 0);
+    sVar1 = tcb->pri;
+    if (sVar1 == iVar3) {
       return;
     }
-    *(char *)(piVar5 + 1) = (char)iVar3;
-    if (*(char *)((int)piVar5 + 5) == '\x10') {
-      if (*(char *)((int)piVar5 + 9) != '\0') {
+    tcb->pri = (sbyte)iVar3;
+    if (tcb->state == 0x10) {
+      if (tcb->f_0x09_u8 != 0) {
         return;
       }
-      FUN_20153a38(&DAT_208dc18c + iVar3,piVar5,param_1);
+      knl_queue_move(knl_rdq + iVar3,tcb,param_1);
     }
-    if (*(byte *)((int)piVar5 + 5) < 0x50) {
+    if (tcb->state < 0x50) {
       return;
     }
-    if (*(char *)(piVar5[4] + 1) != -2) {
-      FUN_20153a38(piVar5[4] - ((int)(char)iVar1 - (int)(char)iVar3),piVar5,param_1);
+    if (tcb->queue[1] != 0xfe) {
+      knl_queue_move(tcb->queue + -((int)sVar1 - (int)(sbyte)iVar3),tcb,param_1);
     }
-    if ((*(byte *)((int)piVar5 + 5) & 0xfc) != 0x94) {
-      if ((*(byte *)((int)piVar5 + 5) & 0xfc) == 0x60) {
-        FUN_20153dec(*(undefined4 *)(*piVar5 + 4));
+    if ((tcb->state & 0xfc) != 0x94) {
+      if ((tcb->state & 0xfc) == 0x60) {
+        FUN_20153dec(*(undefined4 *)(tcb->sp + 4));
         return;
       }
-      if ((*(byte *)((int)piVar5 + 5) & 0xf0) != 0xc0) {
+      if ((tcb->state & 0xf0) != 0xc0) {
         return;
       }
-      FUN_20153b8c(*(undefined4 *)(*piVar5 + 4));
+      FUN_20153b8c(*(undefined4 *)(tcb->sp + 4));
       return;
     }
-    iVar3 = *(int *)(&DAT_208dbfc4 + *(int *)(*piVar5 + 4) * 4);
-    if (*(int *)(iVar3 + 4) != 2) {
+    pkVar5 = knl_mtx_tab[*(int *)(tcb->sp + 4)];
+    if (pkVar5->mtxatr != 2) {
       return;
     }
-    iVar1 = 1;
-    for (pcVar2 = (char *)(iVar3 + 0xc); *pcVar2 == '\0'; pcVar2 = pcVar2 + 1) {
-      iVar1 = iVar1 + 1;
+    iVar3 = 1;
+    for (pbVar4 = pkVar5->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
+      iVar3 = iVar3 + 1;
     }
-    if (*(char *)(iVar3 + 0xb) == iVar1) break;
-    param_1 = (uint)*(byte *)(iVar3 + 10);
-    *(char *)(iVar3 + 0xb) = (char)iVar1;
-    piVar5 = *(int **)(&DAT_208dbba0 + param_1 * 4);
+    if (pkVar5->pri == iVar3) break;
+    param_1 = (uint)pkVar5->owner;
+    pkVar5->pri = (sbyte)iVar3;
+    tcb = knl_tsk_tab[param_1];
   }
   return;
 }
@@ -849,84 +860,84 @@ code * FUN_201540c4(void)
   byte bVar3;
   uint uVar4;
   code *pcVar5;
-  int iVar6;
+  knl_mtx *pkVar6;
   uint uVar7;
   byte *pbVar8;
-  int *piVar9;
-  code *pcVar10;
+  knl_tcb *tcb;
+  code *tskid;
   
-  uVar4 = DAT_208003c8;
-  pcVar5 = (code *)&DAT_208003e0;
-  uVar7 = DAT_208003c8 & DAT_208003e0;
+  uVar4 = knl_sys.tick_lo;
+  pcVar5 = (code *)0x208003e0;
+  uVar7 = knl_sys.tick_lo & knl_sys.tmo_mask;
   do {
-    pcVar10 = (code *)(uint)(byte)(&DAT_20800400)[uVar7];
-    if (pcVar10 == (code *)0x0) {
+    tskid = (code *)(uint)(byte)(&DAT_20800400)[uVar7];
+    if (tskid == (code *)0x0) {
       return pcVar5;
     }
-    piVar9 = *(int **)(&DAT_208dbba0 + (int)pcVar10 * 4);
-    pbVar8 = (byte *)((int)piVar9 + 0xb);
-    while (piVar9[3] != uVar4) {
-      if (pcVar10 == (code *)(uint)*pbVar8) {
+    tcb = knl_tsk_tab[(int)tskid];
+    pbVar8 = &tcb->tmo_prev;
+    while (tcb->tmo_due != uVar4) {
+      if (tskid == (code *)(uint)*pbVar8) {
         return (code *)(uint)*pbVar8;
       }
-      pcVar10 = (code *)(uint)*(byte *)((int)piVar9 + 10);
-      piVar9 = *(int **)(&DAT_208dbba0 + (int)pcVar10 * 4);
+      tskid = (code *)(uint)tcb->tmo_next;
+      tcb = knl_tsk_tab[(int)tskid];
     }
-    pbVar8 = &DAT_20800400 + (piVar9[3] & (uint)DAT_208003e0);
-    bVar1 = *(byte *)((int)piVar9 + 0xb);
-    if ((code *)(uint)bVar1 == pcVar10) {
+    pbVar8 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
+    bVar1 = tcb->tmo_prev;
+    if ((code *)(uint)bVar1 == tskid) {
       *pbVar8 = 0;
     }
     else {
-      bVar2 = *(byte *)((int)piVar9 + 10);
-      if ((code *)(uint)*pbVar8 == pcVar10) {
+      bVar2 = tcb->tmo_next;
+      if ((code *)(uint)*pbVar8 == tskid) {
         *pbVar8 = bVar2;
       }
-      *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 0xb) = bVar1;
-      *(byte *)(*(int *)(&DAT_208dbba0 + (int)(uint)bVar1 * 4) + 10) = bVar2;
+      knl_tsk_tab[bVar2]->tmo_prev = bVar1;
+      knl_tsk_tab[(int)(uint)bVar1]->tmo_next = bVar2;
     }
-    bVar1 = *(byte *)((int)piVar9 + 5);
-    *(undefined1 *)((int)piVar9 + 5) = 0x10;
+    bVar1 = tcb->state;
+    tcb->state = 0x10;
     if ((bVar1 & 0xf0) == 0x30) {
-      *(undefined4 *)*piVar9 = 0;
+      *(undefined4 *)tcb->sp = 0;
     }
     else {
-      *(undefined4 *)*piVar9 = 0xffffffce;
+      *(undefined4 *)tcb->sp = 0xffffffce;
       if (0x4f < bVar1) {
-        FUN_201539ec(piVar9,pcVar10);
+        knl_queue_remove(tcb,(uint)tskid);
         if ((bVar1 & 0xfc) == 0x94) {
-          iVar6 = *(int *)(&DAT_208dbfc4 + *(int *)(*piVar9 + 4) * 4);
-          if ((*(int *)(iVar6 + 4) == 2) && ((char)piVar9[1] <= *(char *)(iVar6 + 0xb))) {
-            FUN_20153f28(*(undefined1 *)(iVar6 + 10));
+          pkVar6 = knl_mtx_tab[*(int *)(tcb->sp + 4)];
+          if ((pkVar6->mtxatr == 2) && (tcb->pri <= pkVar6->pri)) {
+            FUN_20153f28(pkVar6->owner);
           }
         }
         else if ((bVar1 & 0xfc) == 0x60) {
-          FUN_20153dec(*(undefined4 *)(*piVar9 + 4));
+          FUN_20153dec(*(undefined4 *)(tcb->sp + 4));
         }
         else if ((bVar1 & 0xf0) == 0xc0) {
-          FUN_20153b8c(*(undefined4 *)(*piVar9 + 4));
+          FUN_20153b8c(*(undefined4 *)(tcb->sp + 4));
         }
       }
     }
-    if (*(char *)((int)piVar9 + 9) == '\0') {
-      if ((int)(char)piVar9[1] < (int)DAT_208003df) {
-        DAT_208003d9 = 1;
+    if (tcb->f_0x09_u8 == 0) {
+      if ((int)tcb->pri < (int)knl_sys.run_pri) {
+        knl_sys.dsp_pending = 1;
       }
-      pbVar8 = &DAT_208dc18c + (char)piVar9[1];
-      piVar9[4] = (int)pbVar8;
+      pbVar8 = knl_rdq + tcb->pri;
+      tcb->queue = pbVar8;
       bVar1 = *pbVar8;
-      bVar2 = (byte)pcVar10;
+      bVar2 = (byte)tskid;
       if (bVar1 == 0) {
         *pbVar8 = bVar2;
-        *(byte *)((int)piVar9 + 6) = bVar2;
-        *(byte *)((int)piVar9 + 7) = bVar2;
+        tcb->q_next = bVar2;
+        tcb->q_prev = bVar2;
       }
       else {
-        *(byte *)((int)piVar9 + 6) = bVar1;
-        bVar3 = *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7);
-        *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 7) = bVar2;
-        *(byte *)((int)piVar9 + 7) = bVar3;
-        *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar3 * 4) + 6) = bVar2;
+        tcb->q_next = bVar1;
+        bVar3 = knl_tsk_tab[bVar1]->q_prev;
+        knl_tsk_tab[bVar1]->q_prev = bVar2;
+        tcb->q_prev = bVar3;
+        knl_tsk_tab[bVar3]->q_next = bVar2;
       }
     }
     pcVar5 = FUN_20156830;
@@ -1001,105 +1012,116 @@ void FUN_2015441c(short *param_1,short *param_2,short *param_3)
 /* (tmout, tcb, tskid): due time = tmout + system time 0x208003C8, links the TCB into the timer
    wheel 0x20800400 (mask 0x208003E0) [fact] */
 
-void knl_timeout_add(int param_1,int param_2,byte param_3)
+void knl_timeout_add(int tmout,knl_tcb *tcb,byte tskid)
 
 {
   byte bVar1;
   byte bVar2;
   uint uVar3;
   
-  uVar3 = param_1 + DAT_208003c8;
-  *(uint *)(param_2 + 0xc) = uVar3;
-  bVar1 = (&DAT_20800400)[uVar3 & DAT_208003e0];
+  uVar3 = tmout + knl_sys.tick_lo;
+  tcb->tmo_due = uVar3;
+  bVar1 = (&DAT_20800400)[uVar3 & knl_sys.tmo_mask];
   if (bVar1 != 0) {
-    *(byte *)(param_2 + 10) = bVar1;
-    bVar2 = *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 0xb);
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar1 * 4) + 0xb) = param_3;
-    *(byte *)(param_2 + 0xb) = bVar2;
-    *(byte *)(*(int *)(&DAT_208dbba0 + (uint)bVar2 * 4) + 10) = param_3;
+    tcb->tmo_next = bVar1;
+    bVar2 = knl_tsk_tab[bVar1]->tmo_prev;
+    knl_tsk_tab[bVar1]->tmo_prev = tskid;
+    tcb->tmo_prev = bVar2;
+    knl_tsk_tab[bVar2]->tmo_next = tskid;
     return;
   }
-  (&DAT_20800400)[uVar3 & DAT_208003e0] = param_3;
-  *(byte *)(param_2 + 10) = param_3;
-  *(byte *)(param_2 + 0xb) = param_3;
+  (&DAT_20800400)[uVar3 & knl_sys.tmo_mask] = tskid;
+  tcb->tmo_next = tskid;
+  tcb->tmo_prev = tskid;
   return;
 }
 
 
 // ===== FUN_20154508 @ 20154508 (28 bytes)
 
-void FUN_20154508(int param_1,undefined4 param_2)
+void FUN_20154508(knl_tcb *param_1,uint param_2)
 
 {
-  FUN_20153a38(&DAT_208dc18c + *(char *)(param_1 + 4),param_1,param_2);
+  knl_queue_move(knl_rdq + param_1->pri,param_1,param_2);
   return;
 }
 
 
-// ===== FUN_20154524 @ 20154524 (20 bytes)
+// ===== knl_release_suspended @ 20154524 (20 bytes)
 
-code * FUN_20154524(void)
+/* Unlinks the woken task from the wait queue and returns without dispatch; itron_sig_sem takes this
+   path when TCB +9 (suspend count) is non-zero [fact] */
+
+code * knl_release_suspended(knl_tcb *param_1,uint param_2)
 
 {
-  FUN_201539ec();
+  knl_queue_remove(param_1,param_2);
   software_interrupt(0);
-  return FUN_201567f4;
+  return knl_svc_return;
 }
 
 
 // ===== FUN_20154538 @ 20154538 (72 bytes)
 
-code * FUN_20154538(int param_1,undefined4 param_2)
+code * FUN_20154538(knl_tcb *param_1,byte param_2)
 
 {
-  char cVar1;
+  sbyte sVar1;
   
-  cVar1 = *(char *)(param_1 + 4);
-  FUN_201538d4(&DAT_208dc18c + cVar1,param_1,param_2);
-  if ((int)cVar1 < (int)DAT_208003df) {
+  sVar1 = param_1->pri;
+  FUN_201538d4(knl_rdq + sVar1,param_1,param_2);
+  if ((int)sVar1 < (int)knl_sys.run_pri) {
     software_interrupt(0);
-    return FUN_2015655c;
+    return knl_dispatch;
   }
   software_interrupt(0);
-  return FUN_201567f4;
+  return knl_svc_return;
 }
 
 
-// ===== FUN_20154580 @ 20154580 (72 bytes)
+// ===== knl_make_ready @ 20154580 (72 bytes)
 
-code * FUN_20154580(int param_1,undefined4 param_2)
+/* Appends the TCB to ready queue 0x208DC18C + priority (TCB +4) and returns the dispatcher
+   0x2015655C if it beats the running priority 0x208003DF, else the plain return 0x201567F4 [fact];
+   called by itron_sig_sem/set_flg/snd_mbx when a waiter is released [inference] */
+
+code * knl_make_ready(knl_tcb *param_1,uint param_2)
 
 {
-  char cVar1;
+  sbyte sVar1;
   
-  cVar1 = *(char *)(param_1 + 4);
-  FUN_20153a38(&DAT_208dc18c + cVar1,param_1,param_2);
-  if ((int)cVar1 < (int)DAT_208003df) {
+  sVar1 = param_1->pri;
+  knl_queue_move(knl_rdq + sVar1,param_1,param_2);
+  if ((int)sVar1 < (int)knl_sys.run_pri) {
     software_interrupt(0);
-    return FUN_2015655c;
+    return knl_dispatch;
   }
   software_interrupt(0);
-  return FUN_201567f4;
+  return knl_svc_return;
 }
 
 
 // ===== FUN_201545c8 @ 201545c8 (20 bytes)
 
-code * FUN_201545c8(void)
+code * FUN_201545c8(knl_tcb *param_1,uint param_2)
 
 {
-  FUN_201539ec();
+  knl_queue_remove(param_1,param_2);
   software_interrupt(0);
   return FUN_201566f0;
 }
 
 
-// ===== FUN_201545dc @ 201545dc (20 bytes)
+// ===== knl_wait_enter @ 201545dc (20 bytes)
 
-code * FUN_201545dc(void)
+/* Moves the running task into an object's wait queue (knl_queue_move) and returns through
+   0x201566F0; the tail of every blocking itron_t* call (twai_sem, twai_flg, trcv_*, tsnd_*,
+   tget_mpf, tloc_mtx) [fact for callers, inference for the role] */
+
+code * knl_wait_enter(byte *param_1,knl_tcb *param_2,uint param_3)
 
 {
-  FUN_20153a38();
+  knl_queue_move(param_1,param_2,param_3);
   software_interrupt(0);
   return FUN_201566f0;
 }
@@ -1208,7 +1230,7 @@ uint FUN_201546bc(uint *param_1,int *param_2)
 void FUN_20154704(undefined4 param_1)
 
 {
-  FUN_20153b34(&DAT_208003fc,param_1);
+  knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
 
@@ -1218,7 +1240,7 @@ void FUN_20154704(undefined4 param_1)
 void FUN_20154710(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  FUN_2015460c(0x208003fc,param_1,param_2);
   return;
 }
 
@@ -1230,7 +1252,7 @@ void FUN_20154710(undefined4 param_1,undefined4 param_2)
 void FUN_20154720(undefined4 param_1)
 
 {
-  FUN_20153b34(&DAT_208003fc,param_1);
+  knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
 
@@ -1242,19 +1264,21 @@ void FUN_20154720(undefined4 param_1)
 void FUN_20154744(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  FUN_2015460c(0x208003fc,param_1,param_2);
   return;
 }
 
 
-// ===== FUN_2015476c @ 2015476c (36 bytes)
+// ===== knl_sys_alloc @ 2015476c (36 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20154780) */
+/* knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their
+   control blocks here [fact] */
 
-void FUN_2015476c(undefined4 param_1)
+void knl_sys_alloc(undefined4 param_1)
 
 {
-  FUN_20153b34(&DAT_208003fc,param_1);
+  knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
 
@@ -1266,80 +1290,79 @@ void FUN_2015476c(undefined4 param_1)
 void FUN_20154790(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(&DAT_208003fc,param_1,param_2);
+  FUN_2015460c(0x208003fc,param_1,param_2);
   return;
 }
 
 
 // ===== FUN_201547d0 @ 201547d0 (352 bytes)
 
-byte FUN_201547d0(int param_1,undefined2 param_2)
+byte FUN_201547d0(int param_1,short param_2)
 
 {
-  undefined2 uVar1;
-  char cVar2;
-  undefined4 extraout_r3;
-  undefined4 *puVar3;
-  uint uVar4;
-  byte *pbVar5;
-  byte bVar6;
-  int iVar7;
-  int iVar8;
+  short sVar1;
+  sbyte sVar2;
+  byte tskid;
+  knl_tcb *tcb;
+  uint tskid_00;
+  byte *pbVar3;
+  byte bVar4;
+  int iVar5;
   
-  bVar6 = 0;
+  bVar4 = 0;
   *(undefined1 *)(param_1 + 10) = 0;
-  iVar7 = *(int *)(param_1 + 4);
-  pbVar5 = (byte *)(param_1 + 0xc);
-  cVar2 = *(char *)(param_1 + 0xb);
-  iVar8 = param_1;
+  iVar5 = *(int *)(param_1 + 4);
+  pbVar3 = (byte *)(param_1 + 0xc);
+  sVar2 = *(sbyte *)(param_1 + 0xb);
   do {
-    uVar4 = (uint)*pbVar5;
-    if (0xfd < uVar4) {
-      return bVar6;
+    tskid_00 = (uint)*pbVar3;
+    if (0xfd < tskid_00) {
+      return bVar4;
     }
-    while (uVar4 != 0) {
-      puVar3 = *(undefined4 **)(&DAT_208dbba0 + uVar4 * 4);
-      if ((*(byte *)((int)puVar3 + 5) & 2) != 0) {
-        knl_timeout_remove(puVar3,uVar4);
+    while (tskid_00 != 0) {
+      tcb = knl_tsk_tab[tskid_00];
+      if ((tcb->state & 2) != 0) {
+        knl_timeout_remove(tcb,tskid_00);
       }
-      FUN_201539ec(puVar3,uVar4);
-      *(undefined1 *)((int)puVar3 + 5) = 0x10;
-      if (iVar7 != 3) {
+      knl_queue_remove(tcb,tskid_00);
+      tcb->state = 0x10;
+      tskid = (byte)tskid_00;
+      if (iVar5 != 3) {
 LAB_201548b0:
-        if (cVar2 != '\0') {
-          *(undefined1 *)(param_1 + 0xb) = *(undefined1 *)(puVar3 + 1);
+        if (sVar2 != 0) {
+          *(sbyte *)(param_1 + 0xb) = tcb->pri;
         }
 LAB_201548bc:
-        *(char *)(param_1 + 10) = (char)uVar4;
-        uVar1 = *(undefined2 *)(puVar3 + 9);
-        *(undefined2 *)(puVar3 + 9) = param_2;
-        *(undefined2 *)(param_1 + 8) = uVar1;
-        if (*(char *)((int)puVar3 + 9) == '\0') {
-          FUN_201538d4(&DAT_208dc18c + *(char *)(puVar3 + 1),puVar3,uVar4,extraout_r3,iVar8);
+        *(byte *)(param_1 + 10) = tskid;
+        sVar1 = tcb->mtx_held;
+        tcb->mtx_held = param_2;
+        *(short *)(param_1 + 8) = sVar1;
+        if (tcb->f_0x09_u8 == 0) {
+          FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
         }
-        if ((bVar6 == 0) && (DAT_208003df <= *(char *)(puVar3 + 1))) {
-          bVar6 = 0;
+        if ((bVar4 == 0) && (knl_sys.run_pri <= tcb->pri)) {
+          bVar4 = 0;
         }
         else {
-          bVar6 = 1;
+          bVar4 = 1;
         }
-        return bVar6;
+        return bVar4;
       }
-      if (cVar2 <= *(char *)((int)puVar3 + 0x27)) {
-        if (cVar2 <= *(char *)(puVar3 + 1)) {
-          *(char *)(puVar3 + 1) = cVar2;
+      if (sVar2 <= tcb->bpri) {
+        if (sVar2 <= tcb->pri) {
+          tcb->pri = sVar2;
           goto LAB_201548bc;
         }
         goto LAB_201548b0;
       }
-      *(undefined4 *)*puVar3 = 0xffffffe4;
-      if (*(char *)((int)puVar3 + 9) == '\0') {
-        FUN_201538d4(&DAT_208dc18c + *(char *)(puVar3 + 1),puVar3,uVar4,extraout_r3,iVar8);
+      *(undefined4 *)tcb->sp = 0xffffffe4;
+      if (tcb->f_0x09_u8 == 0) {
+        FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
       }
-      bVar6 = bVar6 | *(char *)(puVar3 + 1) < DAT_208003df;
-      uVar4 = (uint)*pbVar5;
+      bVar4 = bVar4 | tcb->pri < knl_sys.run_pri;
+      tskid_00 = (uint)*pbVar3;
     }
-    pbVar5 = pbVar5 + 1;
+    pbVar3 = pbVar3 + 1;
   } while( true );
 }
 
@@ -1350,13 +1373,13 @@ void FUN_20154930(int param_1)
 
 {
   short sVar1;
-  int iVar2;
+  knl_mtx *pkVar2;
   
   do {
-    iVar2 = *(int *)(&DAT_208dbfc4 + param_1 * 4);
-    sVar1 = *(short *)(iVar2 + 8);
-    *(undefined2 *)(iVar2 + 8) = 0;
-    FUN_201547d0(iVar2,param_1);
+    pkVar2 = knl_mtx_tab[param_1];
+    sVar1 = pkVar2->prev_held;
+    pkVar2->prev_held = 0;
+    FUN_201547d0(pkVar2,param_1);
     param_1 = (int)sVar1;
   } while (sVar1 != 0);
   return;
@@ -1717,7 +1740,7 @@ void FUN_20154dd0(undefined4 param_1)
   
   puVar1 = (undefined4 *)FUN_201556d8();
   uVar2 = *puVar1;
-  FUN_2014e3c4(param_1,0,10);
+  str_to_long(param_1,0,10);
   *puVar1 = uVar2;
   return;
 }

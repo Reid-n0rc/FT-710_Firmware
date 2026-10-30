@@ -2844,7 +2844,7 @@ void cat_AB(void)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -2862,7 +2862,7 @@ void cat_AB(void)
       cat_error = 1;
       return;
     }
-    g_opstate.vfo_state_b = 1;
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
     pvVar4 = &g_opstate.vfo_a;
     pvVar3 = &g_opstate.vfo_b;
     for (iVar5 = 0x5a; iVar5 != 0; iVar5 = iVar5 + -1) {
@@ -3139,7 +3139,7 @@ void cat_AM(void)
     bVar1 = true;
   }
   if (!bVar1) {
-    if (g_opstate.vfo_state_a == 1) {
+    if (g_opstate.vfo_state_a == VFO_STATE_VFO) {
       pvVar5 = &g_opstate.vfo_a;
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
         pvVar3->mode = pvVar5->mode;
@@ -3147,7 +3147,7 @@ void cat_AM(void)
         pvVar5 = (vfo_rec *)&pvVar5->flags1;
       }
     }
-    else if (g_opstate.vfo_state_a == 4) {
+    else if (g_opstate.vfo_state_a == VFO_STATE_PMS) {
       vm_toggle();
       pvVar4 = pvVar5;
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
@@ -3162,7 +3162,7 @@ void cat_AM(void)
         pvVar5 = (vfo_rec *)&pvVar5->flags1;
       }
     }
-    else if (g_opstate.vfo_state_a == 3) {
+    else if (g_opstate.vfo_state_a == VFO_STATE_MEMTUNE) {
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
         pvVar3->mode = pvVar5->mode;
         pvVar3 = (vfo_rec *)&pvVar3->flags1;
@@ -3170,7 +3170,7 @@ void cat_AM(void)
       }
     }
     else {
-      if (g_opstate.vfo_state_a == 5) {
+      if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
         for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
           pvVar3->mode = pvVar5->mode;
           pvVar3 = (vfo_rec *)&pvVar3->flags1;
@@ -3548,7 +3548,7 @@ void cat_BA(void)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -3566,7 +3566,7 @@ void cat_BA(void)
       cat_error = 1;
       return;
     }
-    g_opstate.vfo_state_a = 1;
+    g_opstate.vfo_state_a = VFO_STATE_VFO;
     pvVar4 = &g_opstate.vfo_b;
     pvVar3 = &g_opstate.vfo_a;
     for (iVar5 = 0x5a; iVar5 != 0; iVar5 = iVar5 + -1) {
@@ -3691,12 +3691,12 @@ void cat_BD(int param_1)
 
 {
   bool bVar1;
-  byte bVar2;
+  vfo_side vVar2;
   uint freq;
   vfo_side local_d;
   band_idx bStack_5;
   
-  bVar2 = g_opstate.active_vfo;
+  vVar2 = g_opstate.active_vfo;
   if ((g_ui.scan_running == 1) || (g_ui.mic_key_hold == 1)) {
     bVar1 = true;
   }
@@ -3757,7 +3757,7 @@ void cat_BD(int param_1)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -3768,7 +3768,7 @@ void cat_BD(int param_1)
     return;
   }
   bVar1 = *(char *)(param_1 + 2) == '0';
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     if (bVar1) {
       local_d = VFO_A;
     }
@@ -3793,8 +3793,8 @@ void cat_BD(int param_1)
   if (g_opstate.split_on == 1) {
     g_opstate.split_on = 0;
     if (*(char *)(param_1 + 2) == '0') {
-      g_opstate.vfo_state_a = 1;
-      g_opstate.vfo_state_b = 1;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
     }
     else {
       g_opstate.vfo_state_a = g_ui.split_saved_state_a;
@@ -3802,24 +3802,24 @@ void cat_BD(int param_1)
     }
   }
   else {
-    if ((g_opstate.active_vfo == 0) && (*(char *)(param_1 + 2) == '0')) {
+    if ((g_opstate.active_vfo == VFO_A) && (*(char *)(param_1 + 2) == '0')) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (bVar1) {
-      g_opstate.vfo_state_a = 1;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
     else {
-      if ((g_opstate.active_vfo == 1) && (*(char *)(param_1 + 2) == '0')) {
+      if ((g_opstate.active_vfo == VFO_B) && (*(char *)(param_1 + 2) == '0')) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        g_opstate.vfo_state_b = 1;
+        g_opstate.vfo_state_b = VFO_STATE_VFO;
       }
     }
   }
@@ -3838,7 +3838,7 @@ void cat_BD(int param_1)
     bStack_5 = BAND_GEN;
   }
   if (*(char *)(param_1 + 2) == '0') {
-    band_select_on(bStack_5,bVar2);
+    band_select_on(bStack_5,vVar2);
     return;
   }
   band_select_on(bStack_5,local_d);
@@ -3852,12 +3852,12 @@ void cat_BU(int param_1)
 
 {
   bool bVar1;
-  byte bVar2;
+  vfo_side vVar2;
   uint freq;
   vfo_side local_d;
   band_idx bStack_5;
   
-  bVar2 = g_opstate.active_vfo;
+  vVar2 = g_opstate.active_vfo;
   if ((g_ui.scan_running == 1) || (g_ui.mic_key_hold == 1)) {
     bVar1 = true;
   }
@@ -3918,7 +3918,7 @@ void cat_BU(int param_1)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -3929,7 +3929,7 @@ void cat_BU(int param_1)
     return;
   }
   bVar1 = *(char *)(param_1 + 2) == '0';
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     if (bVar1) {
       local_d = VFO_A;
     }
@@ -3954,8 +3954,8 @@ void cat_BU(int param_1)
   if (g_opstate.split_on == 1) {
     g_opstate.split_on = 0;
     if (*(char *)(param_1 + 2) == '0') {
-      g_opstate.vfo_state_a = 1;
-      g_opstate.vfo_state_b = 1;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
     }
     else {
       g_opstate.vfo_state_a = g_ui.split_saved_state_a;
@@ -3963,24 +3963,24 @@ void cat_BU(int param_1)
     }
   }
   else {
-    if ((g_opstate.active_vfo == 0) && (*(char *)(param_1 + 2) == '0')) {
+    if ((g_opstate.active_vfo == VFO_A) && (*(char *)(param_1 + 2) == '0')) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (bVar1) {
-      g_opstate.vfo_state_a = 1;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
     else {
-      if ((g_opstate.active_vfo == 1) && (*(char *)(param_1 + 2) == '0')) {
+      if ((g_opstate.active_vfo == VFO_B) && (*(char *)(param_1 + 2) == '0')) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        g_opstate.vfo_state_b = 1;
+        g_opstate.vfo_state_b = VFO_STATE_VFO;
       }
     }
   }
@@ -3993,7 +3993,7 @@ void cat_BU(int param_1)
     bStack_5 = BAND_1_8MHZ;
   }
   if (*(char *)(param_1 + 2) == '0') {
-    band_select_on(bStack_5,bVar2);
+    band_select_on(bStack_5,vVar2);
     return;
   }
   band_select_on(bStack_5,local_d);
@@ -4119,7 +4119,7 @@ void cat_BM(void)
     bVar1 = true;
   }
   if (!bVar1) {
-    if (g_opstate.vfo_state_b == 1) {
+    if (g_opstate.vfo_state_b == VFO_STATE_VFO) {
       pvVar5 = &g_opstate.vfo_b;
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
         pvVar3->mode = pvVar5->mode;
@@ -4127,7 +4127,7 @@ void cat_BM(void)
         pvVar5 = (vfo_rec *)&pvVar5->flags1;
       }
     }
-    else if (g_opstate.vfo_state_b == 4) {
+    else if (g_opstate.vfo_state_b == VFO_STATE_PMS) {
       vm_toggle();
       pvVar4 = pvVar5;
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
@@ -4142,7 +4142,7 @@ void cat_BM(void)
         pvVar5 = (vfo_rec *)&pvVar5->flags1;
       }
     }
-    else if (g_opstate.vfo_state_b == 3) {
+    else if (g_opstate.vfo_state_b == VFO_STATE_MEMTUNE) {
       for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
         pvVar3->mode = pvVar5->mode;
         pvVar3 = (vfo_rec *)&pvVar3->flags1;
@@ -4150,7 +4150,7 @@ void cat_BM(void)
       }
     }
     else {
-      if (g_opstate.vfo_state_b == 5) {
+      if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
         for (iVar6 = 0x5a; iVar6 != 0; iVar6 = iVar6 + -1) {
           pvVar3->mode = pvVar5->mode;
           pvVar3 = (vfo_rec *)&pvVar3->flags1;
@@ -4397,12 +4397,12 @@ void cat_BS(int param_1)
 
 {
   bool bVar1;
-  byte bVar2;
+  vfo_side vVar2;
   char cVar3;
   char cVar4;
   band_idx bVar5;
   
-  bVar2 = g_opstate.active_vfo;
+  vVar2 = g_opstate.active_vfo;
   if ((g_ui.scan_running == 1) || (g_ui.mic_key_hold == 1)) {
     bVar1 = true;
   }
@@ -4463,7 +4463,7 @@ void cat_BS(int param_1)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -4491,10 +4491,10 @@ void cat_BS(int param_1)
           cat_error = 1;
           return;
         }
-        band_select_on(bVar5,bVar2);
+        band_select_on(bVar5,vVar2);
         g_opstate.split_on = 0;
-        g_opstate.vfo_state_a = 1;
-        g_opstate.vfo_state_b = 1;
+        g_opstate.vfo_state_a = VFO_STATE_VFO;
+        g_opstate.vfo_state_b = VFO_STATE_VFO;
         return;
       }
       cat_error = 1;
@@ -4545,7 +4545,7 @@ void cat_CF(int param_1,char param_2)
   int local_10;
   
   if (*(char *)(param_1 + 2) == '0') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_10 = 0x9d09;
       local_1c = &g_ui.clar_flags_a;
       local_1d = g_ui.clar_flags_a;
@@ -4561,7 +4561,7 @@ void cat_CF(int param_1,char param_2)
       cat_error = 1;
       return;
     }
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_10 = 0x9d63;
       local_1c = &g_ui.clar_flags_b;
       local_1d = g_ui.clar_flags_b;
@@ -4722,7 +4722,7 @@ void cat_CH(int param_1)
 
 {
   bool bVar1;
-  byte local_6;
+  vfo_state local_6;
   
   if ((g_ui.tune_cycle == 0) && (g_ui.dialog_shown != 1)) {
     bVar1 = false;
@@ -4772,7 +4772,7 @@ void cat_CH(int param_1)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -4788,13 +4788,13 @@ void cat_CH(int param_1)
     cat_error = 1;
     return;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_6 = g_opstate.vfo_state_a;
   }
   else {
     local_6 = g_opstate.vfo_state_b;
   }
-  if (local_6 != 2) {
+  if (local_6 != VFO_STATE_MEMORY) {
     cat_error = 1;
     return;
   }
@@ -4839,7 +4839,7 @@ void cat_CN(int param_1,char param_2)
     return;
   }
   if (*(char *)(param_1 + 2) == '0') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_10 = 0x9d09;
       local_15 = 0;
     }
@@ -4849,7 +4849,7 @@ void cat_CN(int param_1,char param_2)
     }
   }
   else if (*(char *)(param_1 + 2) == '1') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_10 = 0x9d63;
       local_15 = 1;
     }
@@ -5275,7 +5275,7 @@ void cat_CT(int param_1,char param_2)
     cat_error = 1;
     return;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_c = 0x9d09;
   }
   else {
@@ -5526,7 +5526,7 @@ void cat_DN(void)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -5537,7 +5537,7 @@ void cat_DN(void)
     return;
   }
   FUN_fffc037b();
-  g_ui.f_0x46b_u8 = 0;
+  g_ui.ch_step_mode = 0;
   return;
 }
 
@@ -5603,7 +5603,7 @@ void cat_UP(void)
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (g_ui.f_0x40d_u8 == 1)) {
+  if ((bVar1) || (g_ui.keypad_open == 1)) {
     bVar1 = true;
   }
   else {
@@ -5614,7 +5614,7 @@ void cat_UP(void)
     return;
   }
   FUN_fffc0335();
-  g_ui.f_0x46b_u8 = 0;
+  g_ui.ch_step_mode = 0;
   return;
 }
 

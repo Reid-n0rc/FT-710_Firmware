@@ -23,9 +23,12 @@ uint fs_task_ctx_get(void)
 }
 
 
-// ===== FUN_2014d98c @ 2014d98c (48 bytes)
+// ===== fs_task_err_set @ 2014d98c (48 bytes)
 
-void FUN_2014d98c(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
+/* Stores the last error of the calling task in 0x2091D0BC[tskid] (itron_get_tid, ids 1..256);
+   fs_set_error calls it [fact] */
+
+void fs_task_err_set(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
 
 {
   int local_10;
@@ -111,9 +114,12 @@ int fs_unlock_a(int param_1)
 }
 
 
-// ===== FUN_2014dad0 @ 2014dad0 (76 bytes)
+// ===== fs_sem_a_create @ 2014dad0 (76 bytes)
 
-void FUN_2014dad0(void)
+/* Creates the five semaphores of table 0x2091D4C0 (os_create_sem_named, signalled once) used by
+   fs_lock_a [fact] */
+
+void fs_sem_a_create(void)
 
 {
   uint uVar1;
@@ -134,9 +140,11 @@ void FUN_2014dad0(void)
 }
 
 
-// ===== FUN_2014db2c @ 2014db2c (64 bytes)
+// ===== fs_sem_a_delete @ 2014db2c (64 bytes)
 
-undefined4 FUN_2014db2c(void)
+/* Deletes them (itron_del_sem) [fact] */
+
+undefined4 fs_sem_a_delete(void)
 
 {
   undefined4 uVar1;
@@ -226,9 +234,11 @@ int fs_unlock_b(int param_1)
 }
 
 
-// ===== FUN_2014dc7c @ 2014dc7c (76 bytes)
+// ===== fs_sem_b_create @ 2014dc7c (76 bytes)
 
-void FUN_2014dc7c(void)
+/* Same for table 0x2091D4E8 (fs_lock_b) [fact] */
+
+void fs_sem_b_create(void)
 
 {
   uint uVar1;
@@ -249,9 +259,11 @@ void FUN_2014dc7c(void)
 }
 
 
-// ===== FUN_2014dcd8 @ 2014dcd8 (64 bytes)
+// ===== fs_sem_b_delete @ 2014dcd8 (64 bytes)
 
-undefined4 FUN_2014dcd8(void)
+/* Deletes them [fact] */
+
+undefined4 fs_sem_b_delete(void)
 
 {
   undefined4 uVar1;
@@ -270,9 +282,11 @@ undefined4 FUN_2014dcd8(void)
 }
 
 
-// ===== FUN_2014dd18 @ 2014dd18 (28 bytes)
+// ===== fs_sem_wait_1s @ 2014dd18 (28 bytes)
 
-undefined4 FUN_2014dd18(int param_1)
+/* itron_twai_sem(id, 1000), E_NOEXS (-42) for id <= 0 [fact] */
+
+undefined4 fs_sem_wait_1s(int param_1)
 
 {
   undefined4 uVar1;
@@ -285,9 +299,11 @@ undefined4 FUN_2014dd18(int param_1)
 }
 
 
-// ===== FUN_2014dd34 @ 2014dd34 (24 bytes)
+// ===== fs_sem_signal @ 2014dd34 (24 bytes)
 
-undefined4 FUN_2014dd34(int param_1)
+/* itron_sig_sem(id), E_NOEXS (-42) for id <= 0 [fact] */
+
+undefined4 fs_sem_signal(int param_1)
 
 {
   undefined4 uVar1;
@@ -300,9 +316,12 @@ undefined4 FUN_2014dd34(int param_1)
 }
 
 
-// ===== FUN_2014dd4c @ 2014dd4c (112 bytes)
+// ===== fs_drive_sem_create @ 2014dd4c (112 bytes)
 
-uint FUN_2014dd4c(int *param_1)
+/* Gives the drive (+0x70) the semaphore of another drive on the same device (+0x18) or creates one
+   [fact] */
+
+uint fs_drive_sem_create(int *param_1)
 
 {
   int iVar1;
@@ -328,9 +347,11 @@ uint FUN_2014dd4c(int *param_1)
 }
 
 
-// ===== FUN_2014ddd0 @ 2014ddd0 (96 bytes)
+// ===== fs_drive_sem_delete @ 2014ddd0 (96 bytes)
 
-undefined4 FUN_2014ddd0(int *param_1)
+/* Deletes the drive semaphore and clears it in the drives that share the device [fact] */
+
+undefined4 fs_drive_sem_delete(int *param_1)
 
 {
   undefined4 uVar1;
@@ -354,9 +375,11 @@ undefined4 FUN_2014ddd0(int *param_1)
 }
 
 
-// ===== FUN_2014de30 @ 2014de30 (44 bytes)
+// ===== fs_sem1_wait @ 2014de30 (44 bytes)
 
-undefined4 FUN_2014de30(void)
+/* itron_twai_sem(0x20808BB4, 300) [fact] */
+
+undefined4 fs_sem1_wait(void)
 
 {
   undefined4 uVar1;
@@ -369,9 +392,11 @@ undefined4 FUN_2014de30(void)
 }
 
 
-// ===== FUN_2014de5c @ 2014de5c (40 bytes)
+// ===== fs_sem1_signal @ 2014de5c (40 bytes)
 
-undefined4 FUN_2014de5c(void)
+/* itron_sig_sem(0x20808BB4) [fact] */
+
+undefined4 fs_sem1_signal(void)
 
 {
   undefined4 uVar1;
@@ -384,9 +409,11 @@ undefined4 FUN_2014de5c(void)
 }
 
 
-// ===== FUN_2014de84 @ 2014de84 (52 bytes)
+// ===== fs_sem1_create @ 2014de84 (52 bytes)
 
-void FUN_2014de84(void)
+/* Creates semaphore 0x20808BB4 (os_create_sem_named) [fact] */
+
+void fs_sem1_create(void)
 
 {
   uint uVar1;
@@ -402,9 +429,11 @@ void FUN_2014de84(void)
 }
 
 
-// ===== FUN_2014decc @ 2014decc (40 bytes)
+// ===== fs_sem1_delete @ 2014decc (40 bytes)
 
-undefined4 FUN_2014decc(void)
+/* itron_del_sem(0x20808BB4) [fact] */
+
+undefined4 fs_sem1_delete(void)
 
 {
   undefined4 uVar1;
@@ -417,9 +446,11 @@ undefined4 FUN_2014decc(void)
 }
 
 
-// ===== FUN_2014def4 @ 2014def4 (44 bytes)
+// ===== fs_sem2_wait @ 2014def4 (44 bytes)
 
-undefined4 FUN_2014def4(void)
+/* itron_twai_sem(0x20808BB8, 300) [fact] */
+
+undefined4 fs_sem2_wait(void)
 
 {
   undefined4 uVar1;
@@ -432,9 +463,11 @@ undefined4 FUN_2014def4(void)
 }
 
 
-// ===== FUN_2014df20 @ 2014df20 (40 bytes)
+// ===== fs_sem2_signal @ 2014df20 (40 bytes)
 
-undefined4 FUN_2014df20(void)
+/* itron_sig_sem(0x20808BB8) [fact] */
+
+undefined4 fs_sem2_signal(void)
 
 {
   undefined4 uVar1;
@@ -447,9 +480,11 @@ undefined4 FUN_2014df20(void)
 }
 
 
-// ===== FUN_2014df48 @ 2014df48 (52 bytes)
+// ===== fs_sem2_create @ 2014df48 (52 bytes)
 
-void FUN_2014df48(void)
+/* Creates semaphore 0x20808BB8 [fact] */
+
+void fs_sem2_create(void)
 
 {
   uint uVar1;
@@ -465,9 +500,11 @@ void FUN_2014df48(void)
 }
 
 
-// ===== FUN_2014df8c @ 2014df8c (40 bytes)
+// ===== fs_sem2_delete @ 2014df8c (40 bytes)
 
-undefined4 FUN_2014df8c(void)
+/* itron_del_sem(0x20808BB8) [fact] */
+
+undefined4 fs_sem2_delete(void)
 
 {
   undefined4 uVar1;
@@ -480,9 +517,11 @@ undefined4 FUN_2014df8c(void)
 }
 
 
-// ===== FUN_2014dfb4 @ 2014dfb4 (40 bytes)
+// ===== fsys_sem_wait @ 2014dfb4 (40 bytes)
 
-void FUN_2014dfb4(void)
+/* itron_twai_sem on the fsys semaphore 0x20808BBC (fsys_init_sem), result in 0x20808BC0 [fact] */
+
+void fsys_sem_wait(void)
 
 {
   if (0 < DAT_20808bbc) {
@@ -492,9 +531,11 @@ void FUN_2014dfb4(void)
 }
 
 
-// ===== FUN_2014dfdc @ 2014dfdc (36 bytes)
+// ===== fsys_sem_signal @ 2014dfdc (36 bytes)
 
-void FUN_2014dfdc(void)
+/* itron_sig_sem on 0x20808BBC, result in 0x20808BC0 [fact] */
+
+void fsys_sem_signal(void)
 
 {
   if (0 < DAT_20808bbc) {
@@ -524,9 +565,11 @@ void fsys_init_sem(void)
 }
 
 
-// ===== FUN_2014e044 @ 2014e044 (40 bytes)
+// ===== fsys_sem_delete @ 2014e044 (40 bytes)
 
-undefined4 FUN_2014e044(void)
+/* itron_del_sem(0x20808BBC) [fact] */
+
+undefined4 fsys_sem_delete(void)
 
 {
   undefined4 uVar1;
@@ -539,9 +582,11 @@ undefined4 FUN_2014e044(void)
 }
 
 
-// ===== FUN_2014e06c @ 2014e06c (64 bytes)
+// ===== fs_mpf_alloc @ 2014e06c (64 bytes)
 
-undefined4 FUN_2014e06c(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* Block from pool 0x20808BC4 (itron_tget_mpf, no wait) for sizes <= 0x10000, 0 otherwise [fact] */
+
+undefined4 fs_mpf_alloc(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -558,9 +603,11 @@ undefined4 FUN_2014e06c(uint param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_2014e0ac @ 2014e0ac (28 bytes)
+// ===== fs_mpf_free @ 2014e0ac (28 bytes)
 
-void FUN_2014e0ac(undefined4 param_1)
+/* itron_rel_mpf to pool 0x20808BC4 [fact] */
+
+void fs_mpf_free(undefined4 param_1)
 
 {
   if (0 < DAT_20808bc4) {
@@ -571,9 +618,11 @@ void FUN_2014e0ac(undefined4 param_1)
 }
 
 
-// ===== FUN_2014e0c8 @ 2014e0c8 (36 bytes)
+// ===== fs_mpf_create @ 2014e0c8 (36 bytes)
 
-void FUN_2014e0c8(void)
+/* Creates the "fsys_mpf" fixed pool 0x20808BC4 [fact] */
+
+void fs_mpf_create(void)
 
 {
   DAT_20808bc4 = os_create_mpf_named(&DAT_20427eac,"fsys_mpf");
@@ -584,9 +633,11 @@ void FUN_2014e0c8(void)
 }
 
 
-// ===== FUN_2014e100 @ 2014e100 (24 bytes)
+// ===== fs_mpf_delete @ 2014e100 (24 bytes)
 
-void FUN_2014e100(void)
+/* itron_del_mpf of pool 0x20808BC4 [fact] */
+
+void fs_mpf_delete(void)
 
 {
   if (0 < DAT_20808bc4) {
@@ -633,9 +684,11 @@ undefined4 fs_work_free(undefined4 param_1)
 }
 
 
-// ===== FUN_2014e178 @ 2014e178 (44 bytes)
+// ===== fs_work_pool_create @ 2014e178 (44 bytes)
 
-int FUN_2014e178(void)
+/* Creates the "FSYS Work" pool 0x20808BC8 used by fs_work_alloc [fact] */
+
+int fs_work_pool_create(void)
 
 {
   int iVar1;
@@ -652,9 +705,11 @@ int FUN_2014e178(void)
 }
 
 
-// ===== FUN_2014e1b4 @ 2014e1b4 (40 bytes)
+// ===== fs_work_pool_delete @ 2014e1b4 (40 bytes)
 
-undefined4 FUN_2014e1b4(void)
+/* itron_del_mpf of pool 0x20808BC8 [fact] */
+
+undefined4 fs_work_pool_delete(void)
 
 {
   undefined4 uVar1;
@@ -667,9 +722,11 @@ undefined4 FUN_2014e1b4(void)
 }
 
 
-// ===== FUN_2014e1dc @ 2014e1dc (16 bytes)
+// ===== fs_get_time_tm @ 2014e1dc (16 bytes)
 
-undefined4 FUN_2014e1dc(int *param_1)
+/* rtc_get_tm into the caller's struct tm, returns 1 (time stamps of FAT entries) [fact] */
+
+undefined4 fs_get_time_tm(int *param_1)
 
 {
   rtc_get_tm(param_1);
@@ -677,9 +734,11 @@ undefined4 FUN_2014e1dc(int *param_1)
 }
 
 
-// ===== FUN_2014e1ec @ 2014e1ec (28 bytes)
+// ===== fs_get_tick @ 2014e1ec (28 bytes)
 
-undefined4 FUN_2014e1ec(void)
+/* Low word of itron_get_tim [fact] */
+
+undefined4 fs_get_tick(void)
 
 {
   undefined1 auStack_10 [4];
@@ -690,9 +749,11 @@ undefined4 FUN_2014e1ec(void)
 }
 
 
-// ===== FUN_2014e208 @ 2014e208 (72 bytes)
+// ===== strcasecmp @ 2014e208 (72 bytes)
 
-int FUN_2014e208(undefined1 *param_1,undefined1 *param_2)
+/* Case-insensitive compare with tolower; cli_run_file, wav_list_dir [fact] */
+
+int strcasecmp(undefined1 *param_1,undefined1 *param_2)
 
 {
   undefined1 uVar1;
@@ -714,9 +775,11 @@ int FUN_2014e208(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_2014e250 @ 2014e250 (84 bytes)
+// ===== strncasecmp @ 2014e250 (84 bytes)
 
-int FUN_2014e250(undefined1 *param_1,undefined1 *param_2,int param_3)
+/* Length-limited strcasecmp; fwname_pattern_match [fact] */
+
+int strncasecmp(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 {
   undefined1 uVar1;
@@ -771,9 +834,11 @@ int strncmp(byte *param_1,byte *param_2,int param_3)
 }
 
 
-// ===== FUN_2014e2e4 @ 2014e2e4 (60 bytes)
+// ===== strncpy @ 2014e2e4 (60 bytes)
 
-char * FUN_2014e2e4(char *param_1,char *param_2,int param_3)
+/* Copies up to n bytes and pads with 0 [fact] */
+
+char * strncpy(char *param_1,char *param_2,int param_3)
 
 {
   char cVar1;
@@ -808,9 +873,12 @@ char * FUN_2014e2e4(char *param_1,char *param_2,int param_3)
 }
 
 
-// ===== FUN_2014e320 @ 2014e320 (164 bytes)
+// ===== strtok_r @ 2014e320 (164 bytes)
 
-char * FUN_2014e320(char *param_1,char *param_2,undefined4 *param_3)
+/* (s, delims, &save): next token, 0 at the end; sfl_read_header, sdmenu_load_file, task_keycode
+   [fact] */
+
+char * strtok_r(char *param_1,char *param_2,undefined4 *param_3)
 
 {
   char cVar1;
@@ -857,11 +925,13 @@ char * FUN_2014e320(char *param_1,char *param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_2014e3c4 @ 2014e3c4 (448 bytes)
+// ===== str_to_long @ 2014e3c4 (448 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2014e53c) */
+/* strtol/strtoul body: skips ctype spaces (__rt_ctype_table), sign, base 0 or 2..36 [fact for the
+   code; which of the two is open] */
 
-uint FUN_2014e3c4(byte *param_1,undefined4 *param_2,uint param_3)
+uint str_to_long(byte *param_1,undefined4 *param_2,uint param_3)
 
 {
   byte bVar1;
@@ -992,15 +1062,12 @@ uint os_create_sem_named(void *param_1,uint param_2)
 
 {
   uint uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
-  uint uStack_c;
+  t_csem local_18;
   
-  local_18 = *(undefined4 *)param_1;
-  uStack_14 = *(undefined4 *)((int)param_1 + 4);
-  local_10 = *(undefined4 *)((int)param_1 + 8);
-  uStack_c = param_2;
+  local_18.sematr = *(uint *)param_1;
+  local_18.isemcnt = *(uint *)((int)param_1 + 4);
+  local_18.maxsem = *(uint *)((int)param_1 + 8);
+  local_18.name = (char *)param_2;
   uVar1 = itron_acre_sem(0,&local_18);
   return uVar1;
 }
@@ -1011,25 +1078,19 @@ uint os_create_sem_named(void *param_1,uint param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): copies a 6-word T_CTSK and appends
    the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named [inference] */
 
-void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
+void os_create_tsk_named(uint *param_1,char *param_2)
 
 {
-  undefined4 local_28;
-  undefined4 uStack_24;
-  undefined4 uStack_20;
-  undefined4 uStack_1c;
-  undefined4 local_18;
-  undefined4 local_14;
-  undefined4 uStack_10;
+  t_ctsk local_28;
   
-  local_28 = *param_1;
-  uStack_24 = param_1[1];
-  uStack_20 = param_1[2];
-  uStack_1c = param_1[3];
-  local_18 = param_1[4];
-  local_14 = param_1[5];
-  uStack_10 = param_2;
-  itron_acre_tsk(0,(byte *)&local_28);
+  local_28.tskatr = *param_1;
+  local_28.exinf = param_1[1];
+  local_28.task = param_1[2];
+  local_28.itskpri = param_1[3];
+  local_28.stksz = param_1[4];
+  local_28.stk = (byte *)param_1[5];
+  local_28.name = param_2;
+  itron_acre_tsk(0,&local_28);
   return;
 }
 
@@ -1039,17 +1100,15 @@ void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_flg
    [inference] */
 
-void os_create_flg_named(undefined4 *param_1,undefined4 param_2)
+void os_create_flg_named(uint *param_1,char *param_2)
 
 {
-  undefined4 local_10;
-  undefined4 local_c;
-  undefined4 uStack_8;
+  t_cflg local_10;
   
-  local_10 = *param_1;
-  local_c = param_1[1];
-  uStack_8 = param_2;
-  itron_acre_flg(0,(byte *)&local_10);
+  local_10.flgatr = *param_1;
+  local_10.iflgptn = param_1[1];
+  local_10.name = param_2;
+  itron_acre_flg(0,&local_10);
   return;
 }
 
@@ -1105,16 +1164,14 @@ void os_create_mbx_named(undefined4 *param_1,undefined4 param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mtx
    [inference] */
 
-void os_create_mtx_named(undefined4 *param_1,undefined4 param_2)
+void os_create_mtx_named(uint *param_1,char *param_2)
 
 {
-  undefined4 local_10;
-  undefined4 local_c;
-  undefined4 uStack_8;
+  t_cmtx local_10;
   
-  local_10 = *param_1;
-  local_c = param_1[1];
-  uStack_8 = param_2;
+  local_10.mtxatr = *param_1;
+  local_10.ceilpri = param_1[1];
+  local_10.name = param_2;
   itron_acre_mtx(0,&local_10);
   return;
 }
@@ -1125,20 +1182,16 @@ void os_create_mtx_named(undefined4 *param_1,undefined4 param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_mpf
    [inference] */
 
-void os_create_mpf_named(undefined4 *param_1,undefined4 param_2)
+void os_create_mpf_named(uint *param_1,char *param_2)
 
 {
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 uStack_10;
-  undefined4 uStack_c;
-  undefined4 local_8;
+  t_cmpf local_18;
   
-  local_18 = *param_1;
-  uStack_14 = param_1[1];
-  uStack_10 = param_1[2];
-  uStack_c = param_1[3];
-  local_8 = param_2;
+  local_18.mpfatr = *param_1;
+  local_18.blkcnt = param_1[1];
+  local_18.blksz = param_1[2];
+  local_18.mpf = (byte *)param_1[3];
+  local_18.name = param_2;
   itron_acre_mpf(0,&local_18);
   return;
 }
