@@ -442,3 +442,13 @@ So the codec is used as a line-level stereo ADC/DAC (line outputs only, no headp
 3. The CAT service commands `SPDR`/`SPDW` give raw access to this register file **[fact]**.
 4. Two 4 KB **capture blocks** at regs 0x7000/0x7800 exist in the DSP, but no code appends to them in this build **[fact]**.
 5. Reg 10 controls the codec's right input mux on the M33 side; MAIN's values make it always IN2R after the first write **[inference]**.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+### HiFi4 (`decomp/ifdsp/hifi4`)
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0x0021C0E8 | `regfile_capture_append` |  | append u32 if ctrl bit 0, count at +2 (max 0x3FE), wrap if ctrl bit 1; no caller **[inference]** |
