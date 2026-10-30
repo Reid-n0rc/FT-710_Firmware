@@ -2,7 +2,7 @@
 
 Program: `FT-710_IFDSP_V0101_hifi4.bin` (Ghidra project `FT710_IFDSP`, `Xtensa:LE:32:rt600hifi4` since T21g; `Xtensa:LE:32:default` before), carved by
 `tools/ifdsp_dsp_images.py`. Overview: [README.md](README.md). Sub-task: T12e. Claims are tagged **[fact]** (seen in the
-disassembly or data, address cited), **[inference]** or **[guess]**. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
+disassembly or data, address cited) or **[inference]** (evidence and reasoning stated); unsettled points are written as *Open: …; would be settled by …*. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 
 ## Understanding at a glance (2026-10-28)
 
@@ -16,7 +16,7 @@ from `tools/flix_stats.py` and the files named.
 | Described in the IFDSP docs | about 96 functions (9 %) mentioned by name or address in this page, [control-link.md](control-link.md) or [ipc.md](ipc.md) **[fact: text search]** |
 | Readable as decompiled C | **since T21g (2026-10-28): all 1,067 functions decompile**, 0 failures, 982 of 1,081 exported functions without any decompiler warning, 1 `halt_baddata()` (data). Ghidra bodies cover 93 % of the listing's bytes (14 % before). Control flow, base-ISA and FPU operations and the simple HiFi4 loads/stores are real C; most `ae_*` operations are named calls with the right inputs and outputs but no arithmetic. Before T21, with the stock language: **none in practice** (891 functions, 84 %, contain FLIX bundles it could not decode) **[fact: `decomp/ifdsp/hifi4/quality.tsv`, [ghidra-flix.md](ghidra-flix.md)]** |
 | Signal-processing algorithms | **documented stage by stage since #86** in [dsp-chains.md](dsp-chains.md): IF AGC, Weaver SSB/CW, AM and FM demodulators, CW zero-in, CTCSS/DCS decoders, manual notch, STFT Wiener NR, LMS line-enhancer NR, NLMS auto-notch, contour, APF, AF limiter, hi/lo-cut, RX EQ, CW FIR; TX EQ, speech processor, compressor, BPF, ALC, VOX/anti-VOX, CTCSS/DCS encoders, modulators. There is no noise blanker on the HiFi4 **[fact: stage list; inference: NB in the FPGA]** |
-| Evidence tags on this page | 47 **[fact]**, 29 **[inference]**, 9 **[guess]** |
+| Evidence tags on this page | 106 **[fact]**, 53 **[inference]** (this row included; counted with `grep -o` on 2026-10-30, after the former guesses were settled) |
 
 ## How this page was made: a FLIX-aware disassembler
 
@@ -244,7 +244,7 @@ towards the DISPLAY CPU (FFT/REC/PLAY on the schematic) **[fact: MasterInit]**. 
 - `tx_gpio_to_reg4004` (0x0021C060), every 100 ms: reg 0x4004 = (`regfile_gpio_sel`() << 2) | (P0_21 << 1) | P0_22 (GPIO byte registers
   0x40100015/16); `regfile_gpio_sel` returns P0_4 unless reg 0xC & 0xF000 == 0x1000 **[fact]**. MAIN polls these bits **[inference]**.
 - `meter_to_reg4005` (0x0021F348, Rx_Path): float level × 65535 → 8 bit → ×100/256 → **reg 0x4005**, which the M33 copies into
-  the SCT0 PWM duty (T12d) — an analogue meter output **[fact: code]**, which meter **[guess: S-meter/ALC]**.
+  the SCT0 PWM duty (T12d) **[fact: code]**. The level is the linear IF RMS before the AGC ([dsp-chains.md](dsp-chains.md), `if_meter_tick`) and the PWM pin SCT0_OUT0 goes only through R2041/C2003 to test point TP2005 (service manual p19, [control-link.md](control-link.md)) **[fact]**, so it drives no front-panel meter: an analogue IF-level test output **[inference]**.
 - `cpu_load_to_regs_2000` (0x0021C230), every 1 s: `xos_get_cpu_load(stats[8], &n, reset=1)` and writes each thread's
   `cpu_pct` to **regs 0x2000–0x2007** — a diagnostics view that MAIN (or a service tool) can read over the console **[fact: code;
   XOS struct layout = inference]**.
@@ -273,7 +273,7 @@ S = Spi, M = Main; "fp" = only reached through a function pointer.
 | 0xD, 0xE, 0x10 | 0x224814 | — | RP | |
 | 0xF, 0x10 | 0x225DC4 | — | TP | |
 | 0x11 | 0x222510, 0x222688, 0x222AF0 | — | TP | with 0x35–0x38: tone/CTCSS encoder block (uses the CTCSS table 0x204DD0) **[inference]** |
-| 0x12 / 0x13 | 0x225A84 / 0x225AB4 | — | TP / RP | gains **[guess]** |
+| 0x12 / 0x13 | 0x225A84 / 0x225AB4 | — | TP / RP | `rec_gain_update` / `play_gain_update`: on change, gain = 10^(0.05 · `i2f_scaled`(reg, −1)), i.e. signed half-dB → linear, stored at 0x266ECC / 0x266ED4; 0x12 is the recorder (REC → DISPLAY, `rec_resample_sink`) gain and 0x13 the playback (`playback_ring_read`) gain **[fact: 0x225A84–0x225AE0]** |
 | 0x20 | Tx_Path | — | TP | signed **half-dB** (#86: `i2f_scaled`(x, −1) first): on change computes 10^(0.05·x) (`FUN_00218B70`) → linear TX gain **[fact: code]** |
 | 0x23 | 0x2248D8 | — | TP | |
 | 0x2B–0x2D | 0x221220 | — | TP | |
@@ -322,7 +322,7 @@ pole check]**. Passband edges are at −3 dB from the peak **[fact: computed]**;
 | 0x2047A0 | 257 | symmetric, DC = 1.000 | LP, −3 dB 1008 Hz, −6 dB 1125 Hz | 0x21E754 | sharp 1000 |
 | 0x2035C0 | 197 | symmetric, DC 0.986 | LP, −3 dB 59 Hz | 0x21C748 (reg 0x45) | narrow lowpass for a notch/peak tracker |
 | 0x2038E0 | 103 | symmetric, all positive, peak 1/60 | LP, −3 dB 82 Hz | 0x21C748 | smoothing window |
-| 0x203120 + 0x203370 | 148 + 147 | rising / falling halves, max 1/150 | — | pointer at 0x206D38 | ramp/window halves (keying shape **[guess]**) |
+| 0x203120 + 0x203370 | 148 + 147 | rising / falling halves, max 1/150 | — | pointer at 0x206D38 | one 295-tap (148 + 147) low-pass prototype: `apf_design_fir` 0x21C748 loads it from pool 0x206D38 at 0x21C800 for APF type 2 (lengths 295/197/103 at 0x203100) **[fact]**. `flix.dis` mis-decodes 0x21C7FF–0x21C807 (starts one byte early); the bytes `a1 4e a9 a9 01 c6 de ff` at 0x21C800 are `l32r a10, 0x206D38; s32i.n a10, a1, 0; j 0x21C784` |
 | 0x204F80 | 123 | symmetric, DC = 1 | LP, −3 dB 984 Hz, −40 dB 1184 Hz | 0x224000 (Spi init) | sharp lowpass before the decimate-by-7 scope path |
 | 0x2051C0 | 109 | symmetric, positive | LP, −3 dB 94 Hz | 0x21FD20 | slow detector smoothing |
 | 0x205380 | 109 | symmetric, positive | LP, −3 dB 59 Hz | 0x222640 | slow detector smoothing |
@@ -341,14 +341,14 @@ pole check]**. Passband edges are at −3 dB from the peak **[fact: computed]**;
 | 0x237150 | 8 | BP 23–4137 Hz | 0x236C50[6] | ″ (AM/wide) |
 | 0x236BD0 | 6 | (head of the same struct) | `FUN_002218E0` (TX filter switch, reg 6) | TX path biquad, `iir_cascade_init(state, coefs, 6, 1)` |
 | 0x236850 | 6 | LP 2812 Hz, sharp | 0x21C8BC, 0x21DBD0 | RX audio lowpass |
-| 0x2368D0 | 5 | BP 1500–2520 Hz (peak 2297) | 0x21D650 | tone/data band (RTTY/PSK tones **[guess]**) |
+| 0x2368D0 | 5 | BP 1500–2520 Hz (peak 2297) | 0x21D650 | `fm_demod_init`: FM noise-squelch band-pass on the discriminator output ([dsp-chains.md](dsp-chains.md)) **[fact]** |
 | 0x236940 | 4 | LP 316 Hz (order 8) | 0x21F6D0, 0x21F7EC, 0x231040 | **CTCSS subtone lowpass** (with table 0x204BE0) **[inference]** |
 | 0x236990 | 8 | BP 234–2133 Hz | 0x21F6D0, 0x21F7EC | FM voice band above the subtone |
 | 0x236A30 | (2 sections, copy of 0x236940 head) | — | 0x21FD20, 0x21FDBC | |
 | 0x236AB0 | 5 | HP 305 Hz (order 9) | 0x220B30 | subtone-removal highpass |
 | 0x2371F0 | 4 | HP 293 Hz (order 7) | 0x222DD4 | ″ (TX) |
 | 0x236B20 | 8 | LP 434 Hz | 0x220B5C (reg 0x3A) | |
-| 0x237240 | 8 | HP 2121 Hz | 0x222D34 (regs 0x30, 0x3A) | pre-emphasis / treble **[guess]** |
+| 0x237240 | 8 | HP 2121 Hz | 0x222D34 (regs 0x30, 0x3A) | `fm_tx_audio`, switched in by reg 0x3A bit 0, which MAIN sets to 1 in FM modes (`dsp_set_fm_flag`); +6 dB/octave 200 Hz – 3 kHz → FM pre-emphasis **[inference]** ([dsp-chains.md](dsp-chains.md)) |
 | 0x2372E0 | 2 | LP 504 Hz | 0x223080 | |
 | 0x237310 | 4 | BP 23–3410 Hz | 0x2230D0 | |
 | 0x237360 | 3 | LP 586 Hz | 0x223320, 0x22338C, 0x2254A0 copy at 0x237700 | level-detector smoothing **[inference]** |
@@ -366,11 +366,11 @@ FLIX) are the generic cascade engine **[inference]**.
 | 0x204BE0, 0x204DD0 | **CTCSS tone list**: 88.5 (default) then the 50 standard tones 67.0 … 254.1 Hz **[fact: values]** | 0x21F6D0/0x21F7EC (decoder side), 0x222510 (TX encoder side) |
 | 0x201900 | 1536 floats = cos/sin pairs, step 2π/1024 (radix-4 twiddles) | 0x21C140, 0x223C8C (Spi) — FFT **[inference]** |
 | 0x200D00 | 192 floats, cos/sin step 2π/512 | 0x21E24C, 0x223C8C |
-| 0x201000 | 576 floats, twiddles starting cos(π/8) | no code reference found: the only literal 0x201000 (at 0x209B88) is the USBPHY PLL_SIC bit mask in `CLOCK_EnableUsbhsPhyClock` **[fact]** (this row used to say "0x209B30, NatureDSP-style FFT [guess]") |
+| 0x201000 | 576 floats, twiddles starting cos(π/8) | no code reference found: the only literal 0x201000 (at 0x209B88) is the USBPHY PLL_SIC bit mask in `CLOCK_EnableUsbhsPhyClock` **[fact]** (an earlier version of this row named 0x209B30 as its user; that was wrong) |
 | 0x2375D0 | 73 floats 0 → 1, raised-cosine ramp | 0x225408 (TX), keying/ALC ramp **[inference]** |
 | 0x200650–0x2008BF | **NatureDSP tables** (T23): the local range-reduction tables of `scl_cosinef`/`scl_sinef`/`scl_tanf` (0x200650/70/90), then `alog10f_tbl`, `atanf_tbl`, `expf_tbl` (`expftbl_Q30` 0x200720, `log2_e`), `inff_tbl`, `inv2pif_tbl`, `log10f_tbl`, `lognf_tbl`, `nanf_tbl`, `pif_tbl`, `sinf_tbl`, `sqrt2f_tbl`, `tanf_tbl`, in NDSP file-name order and equal word for word to NDSP v4.30 **[fact]** | NDSP `scl_*`/`vec_*` 0x218B70–0x21A970 |
-| 0x237500 | 52 int16 pairs, decreasing 600 → … | 0x224ED8 (regs 2) — AGC/ALC curve **[guess]** |
-| 0x204D10 | int32 {0, 600, 1600, 2600, 3600} | 0x22111C (SPI) — scope span/offset steps **[guess]** |
+| 0x237500 | 52 int16 pairs, decreasing 600 → … | `peak_limiter` 0x224ED8 (l32r at 0x224F53): release table T[L] (600 … 6; release lasts 2·T[L] samples), used by the RX AF limiter and the TX speech processor ([dsp-chains.md](dsp-chains.md)) **[fact]** |
+| 0x204D10 | int32 {0, 600, 1600, 2600, 3600}, then at 0x204D30 {600, 1000, 1000, 1000, 1000} | `FUN_0022111C` (FC1 SPI DMA completion): byte offsets and sizes of the five DMA chunks of one 4600-byte (0x11F8) FC1 frame. Chunk *k* goes from 0x200607E0 + offset (RX into +0x1200) via `FUN_00214C8C` on FLEXCOMM1, the last with flag 0x100000; after chunk 4 it posts `spi_post_tx_done` **[fact: 0x22111C–0x221187]** |
 
 No Q15/Q31 coefficient tables were found: all signal processing is in **float32** (the HiFi4 FPU) **[fact: every table is
 float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.

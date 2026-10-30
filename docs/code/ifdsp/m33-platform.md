@@ -3,7 +3,8 @@
 Part of the IFDSP image docs ([README](README.md)). Sub-task T12d. Covers everything on the M33 except the console
 ([control-link.md](control-link.md)) and the rpmsg/MU link ([ipc.md](ipc.md)).
 Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
-Tags: **[fact]** seen in code/data (address given), **[inference]**, **[guess]**.
+Tags: **[fact]** seen in code/data (address given), **[inference]** (evidence and reasoning stated); anything not settled is written as *Open: …; would be settled by …*.
+Nine M33 names were changed when the former guesses were checked (2026-10): `IAP_FlexspiNorAutoConfig` 0x8000C, `POWER_SetBiasConfig` 0x80030, `countPartitionSwitches` 0x8009C, `hashcrypt_save_running_hash` 0x86EC4, `app_init_nop` 0x87240, `file_clear_flag20` 0x87470, `file_flush_write_buffer` 0x87658, `udiv64by32_helper` 0x87850, `__sys_remove` 0x87946. `decomp/ifdsp/m33` shows the old names until it is re-exported after `IfdspM33Names.java` is re-run.
 
 The M33 program is a stock **MCUXpresso SDK** project: MCUXpresso startup (`ResetISR`, copy tables), SDK board files
 (`board.c`, `clock_config.c`, `pin_mux.c`), SDK drivers (clock, power, reset, flexcomm/USART, SCTimer, MU, SEMA42, PINT, DMA,
@@ -271,19 +272,19 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0x0008000C | `rom_api_1c_guarded_call` |  | Calls ROM API table *(0x1303F01C): if fn[7]() == 0 then fn[1](a,b); no callers **[guess]** |
-| 0x00080030 | `power_set_deepsleep_pmc_cfg` |  | PMC 0x40135020 = 0x04040808, PMC 0x40135014 = 10 if different; called by POWER_EnterDeepSleep **[guess]** |
+| 0x0008000C | `IAP_FlexspiNorAutoConfig` |  | r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C) ->get_config (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1 **[fact: 0x8000C-0x8002A]**. Same calls in the same order as IAP_FlexspiNorAutoConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay loop first) **[inference]**. No BL/B.W/literal reference anywhere in the image **[fact: branch+literal scan]** |
+| 0x00080030 | `POWER_SetBiasConfig` |  | if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 **[fact: 0x80030]**. Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) **[inference]**. Called from 0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA (POWER_EnterDeepSleep) **[fact]** |
 | 0x00080050 | `delay` |  | fsl_power.c busy loop (count iterations) **[inference]** |
 | 0x0008005E | `deinitXip` |  | fsl_power.c: if running XIP (PC in 0x08xxxxxx) wait FlexSPI idle, MDIS, PSCCTL0_CLR FlexSPI clock **[inference]** |
-| 0x0008009C | `power_sram_pd_differs` |  | Compares PDSLEEPCFG1..3 with PDRUNCFG1..3 (SYSCTL0 0x604..0x61C) **[guess]** |
+| 0x0008009C | `countPartitionSwitches` |  | returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks 0x1F000FFF, 0x3FFFFFFF, 0x3FFFFFFF), else 0 **[fact: 0x8009C]**. Same expression and masks as static countPartitionSwitches in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is POWER_CalculateSafetyCount, as in the SDK **[inference]** |
 | 0x000802AA | `initFlexSPI` |  | fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) **[inference]** |
 | 0x0008032C | `initXip` |  | fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra) **[inference]** |
-| 0x0008034C | `POWER_EnterSleep_mode1` |  | names-file group "NXP SDK drivers"; calls `power_set_deepsleep_pmc_cfg`; 182 B, callers: 0 **[fact]** (code shape) |
-| 0x00080414 | `POWER_EnterSleep_mode2` |  | names-file group "NXP SDK drivers"; calls `power_set_deepsleep_pmc_cfg`; 182 B, callers: 0 **[fact]** (code shape) |
+| 0x0008034C | `POWER_EnterSleep_mode1` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
+| 0x00080414 | `POWER_EnterSleep_mode2` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
 | 0x000804DC | `POWER_EnterSleep_mode3` |  | names-file group "NXP SDK drivers"; no direct calls; 174 B, callers: 0 **[fact]** (code shape) |
 | 0x0008059C | `POWER_EnterDeepSleep` |  | names-file group "NXP SDK drivers"; calls `POWER_CalculateSafetyCount`, `deinitXip`, `delay`, `initXip` and 1 more; 852 B, callers: 0 **[fact]** (code shape) |
-| 0x00080A18 | `OTFAD_Init` |  | true entry of FUN_00080A24: waits FlexSPI idle, base+0xC00 (OTFAD CR) \|= cfg bits \| GE; unused **[guess]** |
-| 0x00080A44 | `OTFAD_Deinit` |  | OTFAD CR &= ~GE; unused **[guess]** |
+| 0x00080A18 | `OTFAD_Init` |  | true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE); waits until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) \|= bits **[fact: 0x80A18]**. Same as OTFAD_Init in mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM, forceLDM, restrictedRegAccess, enableOTFAD, flexspiBaseAddr) **[inference]**. No reference in the image **[fact: branch+literal scan]** |
+| 0x00080A44 | `OTFAD_Deinit` |  | base->CR (+0xC00) &= ~0x80000000 (GE) **[fact: 0x80A44]**; same as OTFAD_Deinit in mcux-sdk@8a289764 fsl_otfad.c **[inference]**. No reference in the image **[fact: branch+literal scan]** |
 | 0x00080A60 | `vRestoreContextOfFirstTask` |  | PSPLIM/CONTROL=2/PSP from pxCurrentTCB (0x88800), bx to task; reached from vPortSVCHandler_C **[inference]** |
 | 0x00080A90 | `vStartFirstTask` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 1.000, T23d) **[inference]** |
 | 0x00080AC0 | `PendSV_Handler` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.963, T23d) **[inference]** |
@@ -414,7 +415,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00086E98 | `CTIMER2_DriverIRQHandler` |  | IRQ39 **[fact]** |
 | 0x00086E9E | `CTIMER3_DriverIRQHandler` |  | IRQ13 **[fact]** |
 | 0x00086EA4 | `CTIMER4_DriverIRQHandler` |  | IRQ40 **[fact]** |
-| 0x00086EC4 | `hashcrypt_get_digest` |  | Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the HASHCRYPT IRQ handler **[guess]** |
+| 0x00086EC4 | `hashcrypt_save_running_hash` |  | n = 5 if ctx byte +0x44 == 1 (kHASHCRYPT_Sha1) else 8; wait HASHCRYPT STATUS bit 1 (DIGEST); copy DIGEST0[0..n) (base+0x40) to ctx+0x58 **[fact: 0x86EC4]**. Only caller 0x8425A in the HASHCRYPT IRQ handler after INTENCLR/MEMCTRL=0 **[fact]**. Same as static hashcrypt_save_running_hash in mcux-sdk@8a289764 drivers/hashcrypt/fsl_hashcrypt.c, minus its ERROR check and status return (older SDK version) **[inference]** |
 | 0x00086EF0 | `INPUTMUX_AttachSignal` |  | names-file group "NXP SDK drivers"; no direct calls; 14 B, callers: 1 **[fact]** (code shape) |
 | 0x00086F2E | `PINT_PatternMatchResetDetectLogic` |  | PMCTRL PMAT != 0 -> PMSRC = PMSRC **[inference]** |
 | 0x00086F3C | `PINT_PinInterruptClrStatus` |  | no direct calls; 22 B, callers: 8 **[fact]** (code shape) |
@@ -423,30 +424,30 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00086F8A | `SCTIMER_UpdatePwmDutycycle` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `__aeabi_uldivmod`; 98 B, callers: 1 **[fact]** (code shape) |
 | 0x0008702C | `USART_GetDefaultConfig` |  | names-file group "NXP SDK drivers"; calls `memset`; 34 B, callers: 1 **[fact]** (code shape) |
 | 0x00087100 | `USART_Init` |  | names-file group "NXP SDK drivers"; calls `FLEXCOMM_Init`, `USART_SetBaudRate`; 306 B, callers: 1 **[fact]** (code shape) |
-| 0x00087240 | `BOARD_InitDebugConsole` |  | Empty stub called from app_main right after BOARD_BootClockRUN **[guess]** |
+| 0x00087240 | `app_init_nop` |  | body is only bx lr **[fact: 0x87240]**; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear **[fact]**. Open: which source function this was (SDK examples call BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the vendor's source or link map |
 | 0x000872C4 | `free` |  | Marks block 0x10000000 and merges free successors **[inference]** |
 | 0x000872F8 | `setvbuf` |  | _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 **[inference]** |
 | 0x00087336 | `strcmp` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 68 B, callers: 3 **[fact]** (code shape) |
 | 0x0008737A | `strlen` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 72 B, callers: 10 **[fact]** (code shape) |
 | 0x000873C2 | `strncmp` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 86 B, callers: 4 **[fact]** (code shape) |
 | 0x00087418 | `strncpy` |  | no direct calls; 88 B, callers: 2 **[fact]** (code shape) |
-| 0x00087470 | `_Cflush_read` |  | calls `_Cflush_write`; 64 B, callers: 3 **[fact]** (code shape) |
+| 0x00087470 | `file_clear_flag20` |  | FILE flags (+0xC) &= ~0x20; if +0x18 != +0x28: call file_flush_write_buffer, flags = (flags & ~0x3010) \| 0x10, +0x18 = +0x28, +0x2C = +0 = buffer (+0x10); then flags &= ~0x4040 **[fact: 0x87470]**. Callers fputc (x2) and _Cfflush1 call it only when flag 0x20 is set **[fact]**. Open: the Redlib name and the meaning of flag 0x20; would be settled by Redlib source or symbols |
 | 0x000874B0 | `fputc` |  | FILE output slow path, 19 callers (printf engine) **[inference]** |
 | 0x000875F0 | `_Cfdopen` |  | Opens fd with mode "r"/"w"/"a"[+][b] into a FILE (used by stdio_init) **[inference]** |
-| 0x00087658 | `_Cflush_write` |  | calls `_Cwrite_buffer`; 82 B, callers: 2 **[fact]** (code shape) |
+| 0x00087658 | `file_flush_write_buffer` |  | clears flag 0x80000; if (flags & 0x82) == 2 and flag 0x10000 set, writes buffer (+0x10) .. max(ptr, +0x2C) with _Cwrite_buffer, then resets the pointers and clears 0x10000; returns 0, or -1 on error / wrong mode **[fact: 0x87658]**. Redlib's own name unknown |
 | 0x000876AA | `_Cfclose` |  | calls `__sys_close`, `__sys_tmpnam`, `fflush`, `free` and 2 more; 88 B, callers: 1 **[fact]** (code shape) |
-| 0x00087702 | `remove` |  | Stub: strlen then return -1 **[guess]** |
-| 0x00087716 | `_Cfflush1` |  | calls `_Cflush_read`, `_Cflush_write`, `fseek`; 64 B, callers: 2 **[fact]** (code shape) |
-| 0x00087850 | `__udivmoddi_core` |  | no direct calls; 122 B, callers: 3 **[fact]** (code shape) |
+| 0x00087702 | `remove` |  | strlen(name), then tail-calls __sys_remove(name, len) which returns -1 **[fact: 0x87702]**. Only caller _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by __sys_tmpnam: the C rule that closing a tmpfile() deletes it **[inference]** |
+| 0x00087716 | `_Cfflush1` |  | calls `file_clear_flag20`, `file_flush_write_buffer`, `fseek`; 64 B, callers: 2 **[fact]** (code shape) |
+| 0x00087850 | `udiv64by32_helper` |  | shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit steps) **[fact: 0x87850]**; the 3 call sites are all in __aeabi_uldivmod **[fact]**. Library's own name unknown |
 | 0x000878CC | `memcpy` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 52 B, callers: 2 **[fact]** (code shape) |
 | 0x00087900 | `memset` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 50 B, callers: 2 **[fact]** (code shape) |
 | 0x00087932 | `__sys_appexit` |  | b . (hang) **[fact]** |
 | 0x00087934 | `__sys_close` |  | returns -1 (no host) **[fact]** |
 | 0x0008793A | `__sys_flen` |  | returns -1 **[fact]** |
 | 0x00087940 | `__sys_istty` |  | returns -1 **[fact]** |
-| 0x00087946 | `__sys_readc` |  | returns -1 **[guess]** |
+| 0x00087946 | `__sys_remove` |  | returns -1 **[fact]**. Only caller is remove (b.w at 0x87712) with r0 = path, r1 = strlen(path) **[fact]**, which is the SYS_REMOVE (0x0E) argument pair (path, length) in the ARM semihosting spec (ARM-software/abi-aa@36203f2c semihosting.rst); SYS_READC takes no argument **[inference]** |
 | 0x0008794C | `__sys_seek` |  | returns -1 **[fact]** |
-| 0x00087952 | `__sys_tmpnam` |  | returns -1 **[guess]** |
+| 0x00087952 | `__sys_tmpnam` |  | returns -1 **[fact]**. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) **[fact]** = SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec (ARM-software/abi-aa@36203f2c semihosting.rst) **[inference]** |
 | 0x00087958 | `__sys_write` |  | returns len (nothing written: stdio goes nowhere) **[fact]** |
 | 0x0800120C | `NMI_Handler` |  | no direct calls; 2 B, callers: 1 **[fact]** (code shape) |
 | 0x08001210 | `MemManage_Handler` |  | no direct calls; 2 B, callers: 1 **[fact]** (code shape) |

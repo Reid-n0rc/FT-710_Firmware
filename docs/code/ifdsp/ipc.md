@@ -4,7 +4,7 @@ Sub-task T12c. Image `FT-710_IFDSP_V0101` (NXP i.MX RT685). This page covers eve
 HiFi4 DSP: the MU flag handshake, the SEMA42 gate, the rpmsg-lite link, the shared parameter register file, the DSP
 start sequence, and which audio buffers cross the cores (none do). Overview: [README.md](README.md).
 
-Claims are tagged **[fact]** (seen in code or data, address cited), **[inference]** or **[guess]**. M33 addresses are in
+Claims are tagged **[fact]** (seen in code or data, address cited) or **[inference]** (evidence and reasoning stated); anything not settled is written as *Open: …; would be settled by …*. M33 addresses are in
 `decomp/ifdsp/m33` and `build/ifdsp_m33_sram.dis`. HiFi4 addresses are in `decomp/ifdsp/hifi4`. Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 
 **HiFi4 evidence levels.** When this page was written, Ghidra's stock Xtensa module decoded only the base ISA, so the DSP listings broke at every FLIX bundle (since T21, `decomp/ifdsp/hifi4/` uses the FLIX-aware language `Xtensa:LE:32:rt600hifi4`; the evidence below predates it).
@@ -226,7 +226,7 @@ endpoint callback drops anything else (`movi a8, 152; beq a3, a8` at 0x0021C39B)
 
 | Offset | Size | Field (NXP `srtm_message` name) | Seen in code | Tag |
 |---|---|---|---|---|
-| 0x00 | 8 | (unused prefix) | not read by either side | **[fact: no access seen]**, meaning **[guess]** |
+| 0x00 | 8 | (unused prefix) | not read by either side | **[fact: no access seen]**. Open: what the 8 bytes are for (NXP's `srtm_message` has no such prefix); would be settled by a writer of these bytes in another firmware version or the vendor's message header |
 | 0x08 | 1 | `head.category` | M33 `ipc_print_dsp_reply` 0x00080FE8, DSP `ipc_handle_msg` 0x0021BD5B | **[fact]** |
 | 0x09 | 1 | `head.majorVersion` | DSP: +9 must be 1 (`bnei.w15 a8, 1` in the bundle at 0x0021BD49) | **[fact]** (#184), meaning **[inference]** |
 | 0x0A | 1 | `head.minorVersion` | DSP: +10 must be 2 (`beqi a9, 2` at 0x0021BD54) | **[fact]** (#184), meaning **[inference]** |
@@ -303,7 +303,7 @@ MAIN as text. **[fact: `uart0_write` 0x00080CA4]**
 | 0x20020400–0x200207FF | both | vring 1 `tx_vq` (M33 → DSP) | **[fact]** |
 | 0x20020800–0x20020BFF | both | 2 × 512 B rx buffers | **[fact: computed]** |
 | 0x20020C00–0x20020FFF | both | 2 × 512 B tx buffers | **[fact: computed]** |
-| 0x20021000–0x2003FFFF | — | unused part of the rpmsg window (0x1F000 B). The DSP has literals 0x20021001, 0x20022800 (×2), 0x200317E5, 0x20037D38 and 0x2003D400 in code at 0x0021532C / 0x00209250 / 0x002092B0 / …; these are probably float constants or unrelated values, not checked | **[guess]** |
+| 0x20021000–0x2003FFFF | — | unused part of the rpmsg window (0x1F000 B). The aligned words 0x20021001, 0x20022800 (×2), 0x200317E5, 0x20037D38 and 0x2003D400 at 0x0021532C / 0x00209250 / 0x002092B0 / 0x00228FD0 / 0x0022AD08 / 0x002354E0 in image 1 are bytes inside decoded instructions (e.g. 0x00209250 lies in `memw; l32i.n a2, a2, 0` at 0x0020924E/0x00209251), and no `l32r` in `flix.dis` loads any value in 0x20021000–0x2003FFFF | **[fact: word scan of `_hifi4_1_sram_text.bin` + `flix.dis`]** |
 | 0x20040000–0x200431DF | DSP | HiFi4 image 2 (all zero) copied by the M33 | **[fact]** |
 | 0x20060000–0x200631DF | DSP only | DMA/I2S buffers. DSP `main` makes the region uncached (`xthal_set_region_attribute`, cattr 2; earlier read as a memset, #184) and `audio_i2s_fc3_fc4_fc5_init` lists 0x20062BE0.. 0x20063120 per FLEXCOMM; never touched by the M33 | DSP literals **[fact]**, ownership **[inference]** |
 | 0x20070000–0x2007FFFF | both, unsynchronised | parameter register file (32K × 16 bit). Cleared by the M33 before the DSP starts, cleared again and filled with defaults by DSP `regfile_set_defaults` before the handshake ends, then written by the M33 console (MAIN) and read and written by DSP threads | **[fact]** |
@@ -396,7 +396,7 @@ inference: DSP ownership, see T12e]**
 | 0x0021B544 | `rpmsg_lite_remote_init` | `rpmsg_lite_remote_init` | **[inference]** |
 | 0x0021B078 / 0x0021B088 / 0x0021AF9C | `FUN_…` | `rpmsg_lite_is_link_up` / `rpmsg_lite_send` / `rpmsg_lite_create_ept` | **[fact: link_state +0x10; inference others]** |
 | 0x0021B734 / 0x0021B778 | `FUN_…` | `rpmsg_ns_bind` / `rpmsg_ns_announce` | no callers **[inference]** |
-| 0x0021B34C | `FUN_0021b34c` | (rpmsg init variant, uses `"rx_vq"`/`"tx_vq"` and callbacks 0x0021AED4 / 0x0021AF90) | no callers found; possibly master init linked in **[guess]** |
+| 0x0021B34C | `rpmsg_lite_master_init` | `rpmsg_lite_master_init` | names `"rx_vq"` then `"tx_vq"` with `rpmsg_lite_rx_callback` then `rpmsg_lite_tx_callback` and the `vq_tx_master` ops table (0x002008D0): the master-side order of `rpmsg_lite_master_init` in rpmsg-lite `lib/rpmsg_lite/rpmsg_lite.c` (nxp-mcuxpresso/rpmsg-lite@251ab927; the remote init swaps both) **[inference]**. No `call8`/literal reference in the DSP image, so it is linked in but unused **[fact: `flix.dis` + word scan]** |
 | 0x0021AC30 | `MU_B_IRQHandler` | `MU_B_IRQHandler` | SR bit 26 → RR1 → `env_isr` **[fact]** |
 | 0x0021AC58 / 0x0021ACB4 | `FUN_…` | `platform_init_interrupt` / `platform_deinit_interrupt` | MU-B CR RIE1 set/clear, XOS interrupt handler **[fact]** |
 | 0x0021AD04 | `platform_notify` | `platform_notify` | wait TE1 (bit 22), TR1 = vector << 16 **[fact]** |
