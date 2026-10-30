@@ -94,7 +94,7 @@ flowchart TB
 | 0x220AA4 / 0x220470 (+0x220420, band 0x220790) | `rx_eq_3band` / `rx_eq_update` | Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10 | 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50 | [fact] |
 | 0x21E82C | `branch_a_align_delay` | 128-sample delay, active only while the branch-B FIR is on: (257 − 1) / 2 = 128 = the FIR's group delay, so both branches stay time-aligned | (0x4020) | [fact] |
 | 0x21E754 (+0x21E740) | `aess_lowpass_fir` (was `cw_fir_lowpass`) | **AESS crossover low-pass** on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle: 0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four tables; steep: −12.2 dB at 1000 Hz (700) and −13.5 dB at 1500 Hz (1000), −40.7 / −31.4 dB at 3 kHz; gentle ≈ −6 dB/octave). MAIN's `dsp_set_aess` sends 0x2000 \| 700 or 0x2000 \| 1000 (steep), 0 when the AESS level is 0 | 0x4020 | [fact: responses computed from the tables]; AESS crossover [inference, strong] |
-| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms) | 0x56 | [fact]; why (acoustic alignment of the two speakers) [guess] |
+| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples on branch B only, at 12 kHz (48-sample blocks, 0xC0-byte copy when 0); MAIN writes 32 = **2.67 ms**, so the internal (AESS low-pass) speaker lags the SP-40 by 2.67 ms (#193, below) | 0x56 | [fact]; purpose: precedence-effect localization on the SP-40 [inference] |
 
 **No noise blanker on the HiFi4.** None of the stages above is an impulse blanker, and MAIN sends its NB level to the SDR FPGA
 (register 0x1A, [main/sdr-link.md](../main/sdr-link.md)), so the NB runs in the FPGA **[inference]**.
@@ -237,12 +237,19 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
   **[fact]**. MAIN sends one of the five cfg105 bytes 0x4674..0x4678 (`SPN` entries 28..32) by RX band ≤ 7.5 / 14.5 / 21.5 / 41.5 /
   75 MHz (`dsp_set_freq_range_param` 0xFFF9FB6E) **[fact]**. Because reg 3's low byte (the S-meter source) is 255 − 2·(Gmax_dB −
   gain_dB), these bytes are a per-band gain and S-meter calibration **[inference]**. The owner's radio (EEPROM dump 2026-10-28,
-  `tools/cat_backup.py --eeprom`, EEPROM 0x0025..0x0029; header stamp 2306260856) holds **[fact: dump]**:
+  `tools/cat_backup.py --eeprom`, EEPROM 0x0025..0x0029 = dump file offsets 0x25..0x29, since the dump starts at EEPROM 0 and RAM
+  0x4674 = 0x464F + 0x25, [main/eeprom.md](../main/eeprom.md); header stamp 2306260856) holds **[fact: dump]**. The two reads
+  of that day (`radio-backup-2` at 10:26 and `radio-backup-3` at 10:28) are byte-identical, so the five bytes are not a read error
+  (#193):
 
-  | RX band | ≤ 7.5 MHz | ≤ 14.5 MHz | ≤ 21.5 MHz | ≤ 41.5 MHz | ≤ 75 MHz |
+  | RX band (alignment item) | ≤ 7.5 MHz (7) | ≤ 14.5 MHz (14) | ≤ 21.5 MHz (21) | ≤ 41.5 MHz (28) | ≤ 75 MHz (50) |
   |---|---|---|---|---|---|
   | byte (`SPN` 28..32) | 190 (0xBE) | 190 (0xBE) | 189 (0xBD) | 188 (0xBC) | 199 (0xC7) |
-  | ceiling 10^((255 − x)/40) · 0.2512, in dB above g67 | +20.5 | +20.5 | +21.0 | +21.5 | +16.0 |
+  | Gmax / g67 = 0.2512 · 10^((255 − x)/40) | 10.59 | 10.59 | 11.22 | 11.89 | 6.31 |
+  | the same in dB above g67 | +20.5 | +20.5 | +21.0 | +21.5 | +16.0 |
+
+  For comparison, the DSP default 0xE7 (231) gives Gmax = g67 exactly (0 dB), and the ROM default 0 would give +115.5 dB (in effect no ceiling)
+  **[arithmetic]**.
 
   So the HF bands sit within 1 dB of each other and 6 m gets about 5 dB less IF gain headroom, consistent with a per-band
   gain/S-meter trim **[inference]**. Values differ between radios (factory alignment), so these are one sample, not defaults.
@@ -261,13 +268,29 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
 - Branch B shares the NR, notch, contour, APF and limiter with A, but not MAIN's HCUT/LCUT (0x46/0x47) or the AF tone EQ. Its own
   hi/lo-cut (0x54/0x55) is never written, so it is off. It then runs `aess_lowpass_fir`: with AESS on (`dsp_set_aess`: level ≠ 0) a
   steep 700 or 1000 Hz low-pass, and branch A is delayed by the FIR's 128-sample group delay. So with both speakers on and AESS on,
-  one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**. The
-  AESS speaker is the rear-panel EXT SP jack (owner), which the schematic feeds from codec LOR, so **branch B (DAC channel 0) → LOR →
-  EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
-  [hardware.md](../../hardware.md)]**. The AESS level `AS1` is not sent to the DSP: MAIN applies it on the analog side
-  (route 2 only when it is non-zero, and R2A20178 channel 8 from it; [main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact),
-  #203) **[fact]**. The SDR FPGA has no part in it: one RX data line with the same word in both slots, and MAIN sends it no
-  AESS value (#193, [sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is open (HiFi4 side).
+  one speaker plays the full processed audio and the other a low-passed copy: the **AESS crossover** **[inference, strong]**.
+- **Which speaker gets which branch (#193, reverses #197).** The SP-40 plugs into the rear EXT SPKR jack (owner; manual), which the
+  schematic feeds from codec LOR. The manual's AESS controls, however, act on the **main-unit (top, internal) speaker**: AESS level =
+  "the output level of the main-unit speaker" (50 % recommended, i.e. half the SP-40's), AESS-CF = "cut the high-frequency part of
+  the main-unit speaker to improve the sense of localization", 700 or 1000 Hz (Japanese operating manual, AESS section p. 11)
+  **[fact: manual]**. So branch B (the 700/1000 Hz low-pass) feeds the internal speaker and branch A the SP-40: **branch B (DAC
+  channel 0) → I2S left slot → LOL → R2A20178 CH8 → internal speaker; branch A (DAC channel 1) → LOR → EXT SP (SP-40), USB and DATA
+  out** **[inference, strong; [hardware.md](../../hardware.md), [control-link.md](control-link.md)]**. It also explains where the
+  AESS level `AS1` goes: it is not sent to the DSP, but MAIN uses route 2 only when it is non-zero and sets R2A20178 **channel 8**
+  (`BOOST LEVEL`, in the LOL path only) from it through the 0–255 audio-taper curve 0xFFF8117D[level × 5]
+  ([main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact), #203) **[fact]**, i.e. it is the
+  internal speaker's level relative to the SP-40, as the manual says. The SDR FPGA has no part in it: one RX data line with the
+  same word in both slots, and MAIN sends it no AESS value (#193, [sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact]**.
+- **The extra 32-sample delay on branch B (reg 0x56).** `branch_b_delay` runs on the 12 kHz core (`rx_audio_chain` 0x21F484 calls
+  it on the 48-sample block, after `aess_lowpass_fir`), and MAIN always writes 32 (`dsp_set_r56`, constant) **[fact]**. With AESS on,
+  both branches carry the FIR's 128-sample delay (branch A through `branch_a_align_delay`), so branch B lags branch A by exactly
+  32 / 12000 = **2.67 ms**: the internal speaker sounds 2.67 ms after the SP-40 **[fact: code; arithmetic]**. That is far more than
+  the path difference between two speakers on the same radio (2.67 ms ≈ 0.9 m of air; the SP-40 is fixed to the radio's side),
+  so it does not time-align the two drivers. It matches the precedence (Haas) effect instead: a second source that lags by
+  1–30 ms adds loudness and body without pulling the sound image, so the image stays on the first (full-range) source. That is
+  what the manual promises for AESS-CF, a better sense of localization, with the top speaker filling in the low end **[inference]**.
+  Open: Yaesu's own reason for 32 samples rather than another value; would be settled by a design note or a listening/measurement
+  test with the delay changed through `SPDW0056…`.
 - **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
   (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
   skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the

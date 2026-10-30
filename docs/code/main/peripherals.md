@@ -319,8 +319,11 @@ During the RX↔TX switch, `trx_sequencer` clears these switches and then restor
 
 So the `AS1` AESS level is applied on the analog side, never in the DSP: level 0 turns AESS off (route 3 instead of 2, and
 `dsp_set_aess` sends reg 0x4020 = 0), and a non-zero level sets R2A20178 channel 8 (0xFF in route 0, 0 in route 3; with phones in,
-`FUN_fffb5d68` derives channel 8 from the AF gain instead) **[fact]**. That channel 8 sets the loudness of the AESS (low-passed) speaker
-feed is **[guess]**: the schematic legend only says `BOOST LEVEL`. `sdr_upd_r16_filter` also adds 10 to 0x20B4A when the level is
+`FUN_fffb5d68` derives channel 8 from the AF gain instead) **[fact]**. Channel 8 (`BOOST LEVEL`) sits only in the codec-LOL → internal
+speaker path ([hardware.md](../../hardware.md)), and the curve 0xFFF8117D is a monotonic 0–255 audio taper over levels 0–100 **[fact]**.
+The manual describes the AESS level as the main-unit speaker's level relative to the SP-40 (50 % recommended), so channel 8 is the
+internal speaker's AESS level, and that speaker plays the AESS low-pass branch (#193, [dsp-chains.md](../ifdsp/dsp-chains.md))
+**[inference, strong]**. `sdr_upd_r16_filter` also adds 10 to 0x20B4A when the level is
 non-zero. 0x20B4A is the **TX→RX audio-unmute delay** in ms: `trx_sequencer` 0xFFFB80F9 starts soft timer 0x0D with 0x20B4A +
 2·(CW WAVE SHAPE 0x9AA1) + 4 in state 5 and releases AF_MUTE when it expires in state 7 (#205) **[fact]**. So with AESS on, the
 speaker stays muted 10 ms longer after each transmission **[fact]**, presumably to let the AESS low-pass path settle **[guess]**. The owner's levels (dump 2026-10-28): SSB 15, CW 14, DATA 15, AM 10, FM 17, RTTY/DATA-FM/PSK 0
