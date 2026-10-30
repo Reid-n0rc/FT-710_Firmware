@@ -341,3 +341,35 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFEC578 | `tuner_rearm` |  | TUNER TYPE SELECT 0x9AB8 = 2 path: re-arms the tuner state 0x20B3F after VFO/band changes (cat-commands-primary.md) **[fact]** |
 | 0xFFFED206 | `tuner_tune_state_set` |  | (s): 0x20F0C = s; 1 starts (0x1B3BE = 1), 2 swaps the meter (0x9C5B = 5) and CW WAVE SHAPE (0x9AA1 = 0) and opens pop-up 0x49, 0 restores both; a tune cycle **[fact]** |
 | 0xFFFEDC27 | `tuner_port_send` |  | SCI2 tuner port: sends 0xFF, after soft timer 0x23 the frame at 0x1B3C4 (sci2_send) and restarts timers 7, 0x25, 0x24 **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFB548A | `qsk_delay_ticks` |  | Returns EX020119 QSK DELAY TIME x 5 + 15 **[fact: fffb548a]**; callers trx_sequencer, keyer_task |
+| 0xFFFB5D68 | `audio_level_update` |  | rf_ctrl_task's sixth sub-task: picks USB/REAR OUT LEVEL and the MOD GAIN (MIC / USB / REAR by tx_mod_source) per RX mode, from the EX items or the active PRESET, and writes the 8-channel audio level device with sst2_write12 when a value changes **[fact: fffb5d68]** (tx-protection.md #143 already describes this function) |
+| 0xFFFB667A | `pa_falc_interp` |  | (band, watts) -> PA drive DAC value: picks the band's 100/50/20/10/5 W FALC alignment items (g_cfg105.a070..a082 ...) and interpolates between the two that bracket the power **[fact: fffb667a]**; only caller pa_dac_update (BU2505 ch2) |
+| 0xFFFB7CEC | `fm_noise_squelch` |  | FM modes: squelch threshold from the FM SQL alignment items (g_cfg105.a046/a047 THW/THN, a048 TI) and the SQL knob g_ui.rf_gain, with hysteresis; dsp_fm_noise below it opens (squelch_open = 1, AF mute off), above threshold + hysteresis closes **[fact: fffb7cec]**; only caller af_mute_update |
+| 0xFFFB7E61 | `signal_level_squelch` |  | SSB/CW/AM/DATA modes: threshold from g_cfg105.a041_rx_s_mtr_40 (+80 / +110) and the SQL knob g_ui.rf_gain; dsp_signal_level below it opens the squelch (squelch_open = 1, AF mute off), above threshold + 6 closes it **[fact: fffb7e61]**; only caller af_mute_update |
+| 0xFFFB8D77 | `lamp_map_update` |  | Builds g_ui.lamp_map: 0x10 squelch open, 0x80 VOX, 0x20 TX (blinking when TX is refused out of band), VFO-A/B/memory/clar colour bits from EX040301..EX040304 VMI COLOR, 1 in split, 0x40 FUNC panel; also sets g_ui.tx_lamp 0/1/2 **[fact: fffb8d77]**; only caller io_task |
+| 0xFFFB915E | `rtty_fsk_keying` |  | While transmitting RTTY: reads the RPTT SELECT input (1 = PC5, 2 = PC6, 3 = P21; EX010513 or the PRESET), applies EX010517 POLARITY TX and drives FSK_SHIFT PC4 with beep_request 9 / 0xB for the two states; on RX or other modes stops the tone and sets PC4 **[fact: fffb915e]**; only caller io_poll |
+| 0xFFFBA336 | `contest_number_set` |  | Stores a u16 big-endian into g_opstate.ex020205_contest_number_be **[fact: fffba336]**; the setter twin of contest_number_get |
+| 0xFFFBA377 | `keyer_elekey` |  | Keyer for KEYER TYPE 2..5 (ELEKEY-A, -B, -Y, ACS): keyer_task calls it when the type - 2 < 4; iambic squeeze memory for types 3 and 4 **[fact: fffba377 and the caller's test]** |
+| 0xFFFBA840 | `keyer_straight_bug` |  | Keyer for KEYER TYPE 0/1 (OFF = straight key, BUG): keyer_task calls it when the type (0x1215F) < 2; times elements with timer 0x17 and puts them with keyer_elem_put **[fact: fffba840 and the caller's test; type labels from ROM 0xFFF84339 OFF/BUG/ELEKEY-A/-B/-Y/ACS]** |
+| 0xFFFBAA81 | `keyer_output_step` |  | Plays the element ring 0x120BC from the read index 0x1FA3A up to the write index 0x1FA38: raises/clears g_ui.ptt_keyer (break-in), keyer_key_out, sidetone in state 6 **[fact: fffbaa81]** |
+| 0xFFFBAFF6 | `keyer_state_clear` |  | Clears the keyer bytes 0x12160..0x12164 **[fact: fffbaff6]**; keyer_task states 0 and 2 |
+| 0xFFFBB024 | `keyer_elem_put` |  | Appends to the keyer element ring 0x120BC (index 0x1FA38): arg 1 = one mark bit + sidetone on, 0 = one space bit + sidetone off, 2 = three mark bits (dash) **[fact: fffbb024]**; matches eeprom.md's description of the ring |
+| 0xFFFBB10B | `keyer_ring_limit` |  | Helper of keyer_elekey: when timer 0x1B expires drops the last 7 elements and returns 1; caps the ring at 0x4B0 elements (returns 1) **[fact: fffbb10b]** |
+| 0xFFFBB16B | `keyer_ring_next` |  | Ring index + 1, wraps to 0 above 0x4FF **[fact: fffbb16b]**; the keyer element ring 0x120BC |
+| 0xFFFBB185 | `keyer_sidetone_on` |  | When MONITOR (g_opstate.monitor[0] for SSB/AM-type modes, [1] from CW) is on: beep_request(4), flag 0x1215E = 1 **[fact: fffbb185]** |
+| 0xFFFBB1C2 | `keyer_sidetone_off` |  | If flag 0x1215E is set: beep_stop, flag = 0 **[fact: fffbb1c2]** |
+| 0xFFFBB1DD | `keyer_key_out` |  | (on): sets SEND_A/SEND_B (send_a_set / send_b_set) when the PTT source / CW keying class asks for it, and handles EX020116 CW BK-IN TYPE **[fact: fffbb1dd]**; only caller keyer_output_step |
+| 0xFFFBB283 | `keyer_paddles_read` |  | (*dot, *dash): ckey_dot / ckey_dash, swapped when EX020202 KEYER DOT/DASH is reversed **[fact: fffbb283]** |
+| 0xFFFBB2BF | `contest_cut_digit` |  | Cut-number substitution by EX020204 NUMBER STYLE: '1' -> 'A', '2' -> 'U', '9' -> 'N', '0' -> 'T' or 'O', others unchanged **[fact: fffbb2bf]** |
+| 0xFFFBB338 | `keyer_text_msg_encode` |  | (n): turns keyer memory text n (0x969F + n*0x33: length + 50 chars, eeprom.md) into elements via the Morse table 0xFFF815C3 (2 bytes per char), '#' inserts the contest number **[fact: fffbb338]** |
+
+<!-- T23e3:end -->

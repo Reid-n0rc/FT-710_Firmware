@@ -307,3 +307,95 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFE4211 | `msg_slot_key` |  | (ch 1..5): message-memory key: in voice modes plays or stops voice message ch (+0x78 = 1, +0x79 = ch - 1, PTT source 0x20B2E), during a recording FUN_fffe4e6e; in CW +0x1C7 = 1 **[fact]** |
 | 0xFFFE4378 | `msg_cw_slot_key` |  | (ch): stops a latched send (+0x1D1) or msg_cw_send_start(ch) **[fact]** |
 | 0xFFFE4711 | `msg_cw_slot_key_latched` |  | (ch): like msg_cw_slot_key but sets +0x1D1 = 1 after a start; a repeating send **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF99669 | `moni_level_ptr` |  | Returns the address of the MONI LEVEL byte for the TX mode: 0x9BFC SSB, 0x9BFD CW, 0x9BFE RTTY, 0x9BFF DATA/PSK, 0x9C00 AM, 0 for FM **[fact: fff99669]**; callers popup_fmt_moni_level, funcknob_moni_level_step, displink frame code |
+| 0xFFF99877 | `mic_gain_ptr` |  | Returns the address of the MIC GAIN byte for the TX mode: 0x9BEC (LSB/USB), 0x9BED (DATA-L/U, PSK), 0x9BEE (AM), 0x9BEF (FM, DATA-FM), 0 for CW and RTTY **[fact: fff99877]**; callers popup_fmt_mic_gain, funcknob_mic_gain_step |
+| 0xFFF9C6AB | `scope_level_cur_ptr` |  | Returns the scope level byte for the RX dial frequency: 0x9BCA (RX) or 0x9BD8 (while transmitting) + freq_range_index **[fact: fff9c6ab]**; the same tables as scope_level_ptr |
+| 0xFFFBDA47 | `dsp_knob_shift_toggle` |  | DSP key short press with knob function 0 (SHIFT): toggles g_ui.dsp_knob_edit, FUNC item 0x1D **[fact: fffbda47]**; caller key_dsp_release (structs_main.h dsp_knob_func 0 SHIFT) |
+| 0xFFFBDAD5 | `dsp_knob_width_toggle` |  | DSP key short press with knob function 1 (WIDTH): toggles dsp_knob_edit, FUNC item 0x1E **[fact: fffbdad5]**; caller key_dsp_release |
+| 0xFFFBDB63 | `dsp_knob_notch_toggle` |  | DSP key short press with knob function 2 (NOTCH): toggles dsp_knob_edit, FUNC item 0x1F, and in edit mode bit 0x80 of the active VFO mode-block flags **[fact: fffbdb63]**; caller key_dsp_release |
+| 0xFFFBDCB0 | `dsp_knob_contour_toggle` |  | DSP key short press with knob function 3 and APF off: toggles dsp_knob_edit, FUNC item 0x20 (CONTOUR), changes bit 0x40 of the active VFO mode-block flags **[fact: fffbdcb0]**; caller key_dsp_release |
+| 0xFFFBDE58 | `dsp_knob_apf_toggle` |  | DSP key short press with knob function 3 and dsp_knob_apf set: toggles dsp_knob_edit, FUNC item 0x21 (APF) **[fact: fffbde58]**; caller key_dsp_release |
+| 0xFFFC20DD | `memlist_btn_press` |  | Memory-list button by g_ui.memlist_group: 0 NAME (FUN_fffc2137), 1 MODE, 2 SCAN, 3 TYPE, 4 memlist_btn_valid_toggle, 5 close (memlist_flag = 0) **[fact: fffc20dd]**; callers memlist_key, FUN_fffc38fa (display gui.md button order) |
+| 0xFFFC2137 | `memlist_btn_name` |  | Memory-list button 0 NAME: for a valid channel opens the text keyboard (kbd_open, kbd_target 1) preloaded with the channel's 12-char tag **[fact: fffc2137]** |
+| 0xFFFC21E8 | `memlist_btn_mode` |  | Memory-list button 1: for a valid channel < 0x75 opens the MODE pop-up 0x55 (memlist_popup55 = 1), else ui_key_reject **[fact: fffc21e8]** |
+| 0xFFFC224E | `memlist_btn_scan` |  | Memory-list button 2: opens the memory SCAN pop-up 0x44 **[fact: display gui.md popup table, slot 38]** |
+| 0xFFFC2296 | `memlist_btn_type` |  | Memory-list button 3: opens the memory TYPE (FREQ/NAME) pop-up 0x45 **[fact: display gui.md popup table, slot 39]** |
+| 0xFFFC22DE | `memlist_btn_valid_toggle` |  | Memory-list button 4: for channels 1..0x74 flips the channel's valid byte (memch_valid), beep; else ui_key_reject **[fact: fffc22de]** |
+| 0xFFFC2426 | `m_to_v_exec` |  | M>V: from the open memory list copies its channel (memch_current_set), else leaves split / QMB state first; refuses channels 0x75..0x83 for region 0x315B; then memch_to_vfo_copy **[fact: fffc2426]**; only caller key_m_to_v_short |
+| 0xFFFC260C | `memch_to_vfo_copy` |  | (side): if memch_current_valid, leaves QMB, qmb_set_depth, memch_load_to_vfo, vfo_clear_tag, vfo_enter_vfo_state, memlist_close, VFO refresh; returns 1, else 0 **[fact: fffc260c]** |
+| 0xFFFC33EF | `qmb_popup_open` |  | Opens the QMB pop-up: popup_duration_get(0x43), popup_open_timed, popup_code = 0x43 **[fact: fffc33ef]**; callers qmb_store, qmb_enter |
+| 0xFFFC616E | `dial_step_hz` |  | (side): tuning step of the VFO in Hz: 1 MHz / 1 kHz in digit-step mode, 100 kHz / .. with the fast-step request, else the mode's step (dial_step_mode_hz) or the AM/FM channel step (ch_step_hz) **[fact: fffc616e]** |
+| 0xFFFC62AE | `dial_step_mode_hz` |  | (mode): dial step in Hz by g_opstate.fn_select (1 = fine, 2 = x10): SSB/CW 1 or EX030501 SSB/CW DIAL STEP 5/10/20 Hz; RTTY/PSK/DATA 1 or EX030502 5/10/20 Hz; AM 10/100/1000; FM 10/100/1000 **[fact: fffc62ae]**; only caller dial_step_hz |
+| 0xFFFC63E6 | `ch_step_hz` |  | (mode): AM / FM channel step from EX030504 AM CH STEP / EX030505 FM CH STEP via table 0xFFF88514 **[fact: fffc63e6]**; only caller dial_step_hz |
+| 0xFFFC6800 | `memlist_knob_turn` |  | (steps): knob turn in the memory list: moves the row (memlist_row_step) or the button (memlist_group_step), or with a pop-up open steps MODE / SCAN / TYPE of the channel **[fact: fffc6800]**; caller FUN_fffc7eeb (enc3_step) |
+| 0xFFFC686F | `memlist_row_step` |  | (dir): moves the memory-list cursor row 0..3, scrolling the page at the ends, then memlist_cursor_channel **[fact: fffc686f]** |
+| 0xFFFC68C2 | `memlist_page_down` |  | Scrolls the memory list down one channel (memlist_first + 1) up to 0x74 or the region's special channels (dest 0x4380 / 0x020B) **[fact: fffc68c2]**; caller memlist_row_step |
+| 0xFFFC6A0A | `memlist_page_up` |  | Scrolls the memory list up one channel (memlist_first - 1), wrapping by region (dest 0x315B / 0x50E2 to 0x83) **[fact: fffc6a0a]**; caller memlist_row_step |
+| 0xFFFC6AC4 | `memlist_mode_step` |  | (dir): pop-up 0x55: steps the memory channel's mode (low nibble, 0..14), eeprom_save_memch **[fact: fffc6ac4]** |
+| 0xFFFC6B34 | `memlist_scan_bit_step` |  | (dir): pop-up 0x56: sets (dir > 0) or clears bit 7 of memch[memlist_ch].flags1 (SCAN/SKIP), eeprom_save_memch **[fact: fffc6b34]** |
+| 0xFFFC6B86 | `memlist_type_bit_step` |  | (dir): pop-up 0x57: steps the memory TYPE bit (FREQ/NAME), eeprom_save_memch **[fact: fffc6b86 and display gui.md]** |
+| 0xFFFC6BD8 | `memlist_group_step` |  | (dir): moves the selected memory-list button g_ui.memlist_group 0..5 **[fact: fffc6bd8]** |
+| 0xFFFC6CA4 | `funcknob_list_popup_step` |  | (steps): knob turn while a list pop-up (code < 0x1E) is open: code 0xC, 0xB or 5 -> its own step function **[fact: fffc6ca4]**; caller func_knob_turn |
+| 0xFFFC6DDD | `funcknob_popup_step` |  | (popup id, steps): while a value pop-up owns the knob, steps the setting of popup id 0x1F..0x58 (funcknob_*_step) **[fact: fffc6ddd]**; caller func_knob_turn |
+| 0xFFFC6F11 | `funcknob_step` |  | (func, steps): FUNC-knob turn by the assigned function g_opstate.func_knob: 1 PEAK, 3 opens popup 0xB, 4 CONTRAST, 5 DIMMER, 6 M-GROUP, 7 MIC GAIN, 9 PROC LEVEL, 10 AMC, 11 VOX GAIN, 12 VOX DELAY, 13 ANTI VOX, 14 RF POWER, 15 MONI, 0x12 CW SPEED, 0x13 PITCH, 0x14 BK-DELAY, 0x15 AESS, 0x3A AESS-CF, else SCOPE LEVEL **[fact: fffc6f11]**; caller func_knob_turn |
+| 0xFFFC6FFE | `funcknob_scope_level` |  | FUNC-knob function for SCOPE LEVEL: sets popup_code = 0x1E and calls funcknob_scope_level_step **[fact: fffc6ffe]**; called from funcknob_step |
+| 0xFFFC7016 | `funcknob_scope_level_step` |  | (steps): SCOPE LEVEL pop-up (id 0x1E): popup_duration_get(0x1E) + popup_open_timed, then steps and clamps the setting **[fact: fffc7016]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7053 | `funcknob_peak` |  | FUNC-knob function for PEAK: sets popup_code = 0x1F and calls funcknob_peak_step **[fact: fffc7053]**; called from funcknob_step |
+| 0xFFFC706B | `funcknob_peak_step` |  | (steps): PEAK pop-up (id 0x1F): popup_duration_get(0x1F) + popup_open_timed, then steps and clamps the setting **[fact: fffc706b]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC70AF | `funcknob_ss03_popup` |  | FUNC-knob function 3: opens pop-up 0xB (popup_duration_get(0xB), popup_open_timed), popup_code = 0xB, cursor = g_opstate.ss03_value **[fact: fffc70af]** |
+| 0xFFFC70DB | `funcknob_contrast` |  | FUNC-knob function for CONTRAST: sets popup_code = 0x22 and calls funcknob_contrast_step **[fact: fffc70db]**; called from funcknob_step |
+| 0xFFFC70F3 | `funcknob_contrast_step` |  | (steps): CONTRAST pop-up (id 0x22): popup_duration_get(0x22) + popup_open_timed, then steps and clamps the setting **[fact: fffc70f3]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7145 | `funcknob_dimmer` |  | FUNC-knob function for DIMMER: sets popup_code = 0x23 and calls funcknob_dimmer_step **[fact: fffc7145]**; called from funcknob_step |
+| 0xFFFC715D | `funcknob_dimmer_step` |  | (steps): DIMMER pop-up (id 0x23): popup_duration_get(0x23) + popup_open_timed, then steps and clamps the setting **[fact: fffc715d]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC71AF | `funcknob_mgroup` |  | FUNC-knob function for M GROUP: sets popup_code = 0x24 and calls funcknob_mgroup_step **[fact: fffc71af]**; called from funcknob_step |
+| 0xFFFC71C7 | `funcknob_mgroup_step` |  | (steps): M GROUP pop-up (id 0x24): popup_duration_get(0x24) + popup_open_timed, then steps and clamps the setting **[fact: fffc71c7]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC74EE | `funcknob_mic_gain` |  | FUNC-knob function for MIC GAIN: sets popup_code = 0x25 and calls funcknob_mic_gain_step **[fact: fffc74ee]**; called from funcknob_step |
+| 0xFFFC7506 | `funcknob_mic_gain_step` |  | (steps): MIC GAIN pop-up (id 0x25): popup_duration_get(0x25) + popup_open_timed, then steps and clamps the setting **[fact: fffc7506]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC754B | `funcknob_mic_eq_step` |  | (steps): MIC EQ pop-up (id 0x26): popup_duration_get(0x26) + popup_open_timed, then steps and clamps the setting **[fact: fffc754b]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC75BC | `funcknob_proc_level` |  | FUNC-knob function for PROC LEVEL: sets popup_code = 0x27 and calls funcknob_proc_level_step **[fact: fffc75bc]**; called from funcknob_step |
+| 0xFFFC75D4 | `funcknob_proc_level_step` |  | (steps): PROC LEVEL pop-up (id 0x27): popup_duration_get(0x27) + popup_open_timed, then steps and clamps the setting **[fact: fffc75d4]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7619 | `funcknob_amc_level` |  | FUNC-knob function for AMC LEVEL: sets popup_code = 0x28 and calls funcknob_amc_level_step **[fact: fffc7619]**; called from funcknob_step |
+| 0xFFFC7631 | `funcknob_amc_level_step` |  | (steps): AMC LEVEL pop-up (id 0x28): popup_duration_get(0x28) + popup_open_timed, then steps and clamps the setting **[fact: fffc7631]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7674 | `funcknob_vox_gain` |  | FUNC-knob function for VOX GAIN: sets popup_code = 0x29 and calls funcknob_vox_gain_step **[fact: fffc7674]**; called from funcknob_step |
+| 0xFFFC768C | `funcknob_vox_gain_step` |  | (steps): VOX GAIN pop-up (id 0x29): popup_duration_get(0x29) + popup_open_timed, then steps and clamps the setting **[fact: fffc768c]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC76D1 | `funcknob_vox_delay` |  | FUNC-knob function for VOX DELAY: sets popup_code = 0x2A and calls funcknob_vox_delay_step **[fact: fffc76d1]**; called from funcknob_step |
+| 0xFFFC76E9 | `funcknob_vox_delay_step` |  | (steps): VOX DELAY pop-up (id 0x2A): popup_duration_get(0x2A) + popup_open_timed, then steps and clamps the setting **[fact: fffc76e9]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC774C | `funcknob_anti_vox` |  | FUNC-knob function for ANTI VOX: sets popup_code = 0x2B and calls funcknob_anti_vox_step **[fact: fffc774c]**; called from funcknob_step |
+| 0xFFFC7764 | `funcknob_anti_vox_step` |  | (steps): ANTI VOX pop-up (id 0x2B): popup_duration_get(0x2B) + popup_open_timed, then steps and clamps the setting **[fact: fffc7764]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC77C7 | `funcknob_rf_power` |  | FUNC-knob function for RF POWER: sets popup_code = 0x2C and calls funcknob_rf_power_step **[fact: fffc77c7]**; called from funcknob_step |
+| 0xFFFC77DF | `funcknob_rf_power_step` |  | (steps): RF POWER pop-up (id 0x2C): popup_duration_get(0x2C) + popup_open_timed, then steps and clamps the setting **[fact: fffc77df]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7827 | `rf_power_ptr` |  | (*min, *max): returns &g_opstate.rf_power[i] for the TX band (0 HF, 1 50 MHz, 2 70 MHz, 3 AM) with the band's MAX POWER (EX030401..030404, AM capped by max_power_limit) in *max and the minimum from FUN_fffb3f0b **[fact: fffc7827]**; callers align_load_preset, funcknob_rf_power_step |
+| 0xFFFC790B | `funcknob_moni_level` |  | FUNC-knob function for MONI LEVEL: sets popup_code = 0x2D and calls funcknob_moni_level_step **[fact: fffc790b]**; called from funcknob_step |
+| 0xFFFC7923 | `funcknob_moni_level_step` |  | (steps): MONI LEVEL pop-up (id 0x2D): popup_duration_get(0x2D) + popup_open_timed, then steps and clamps the setting **[fact: fffc7923]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7975 | `funcknob_keyer_step` |  | (steps): KEYER pop-up (id 0x46): popup_duration_get(0x46) + popup_open_timed, then steps and clamps the setting **[fact: fffc7975]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC79B8 | `funcknob_bk_in_step` |  | (steps): BK IN pop-up (id 0x2F): popup_duration_get(0x2F) + popup_open_timed, then steps and clamps the setting **[fact: fffc79b8]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7A8F | `funcknob_cw_speed` |  | FUNC-knob function for CW SPEED: sets popup_code = 0x30 and calls funcknob_cw_speed_step **[fact: fffc7a8f]**; called from funcknob_step |
+| 0xFFFC7AA7 | `funcknob_cw_speed_step` |  | (steps): CW SPEED pop-up (id 0x30): popup_duration_get(0x30) + popup_open_timed, then steps and clamps the setting **[fact: fffc7aa7]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7AEA | `funcknob_cw_pitch` |  | FUNC-knob function for CW PITCH: sets popup_code = 0x31 and calls funcknob_cw_pitch_step **[fact: fffc7aea]**; called from funcknob_step |
+| 0xFFFC7B02 | `funcknob_cw_pitch_step` |  | (steps): CW PITCH pop-up (id 0x31): popup_duration_get(0x31) + popup_open_timed, then steps and clamps the setting **[fact: fffc7b02]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7B47 | `funcknob_bk_delay` |  | FUNC-knob function for BK DELAY: sets popup_code = 0x32 and calls funcknob_bk_delay_step **[fact: fffc7b47]**; called from funcknob_step |
+| 0xFFFC7B5F | `funcknob_bk_delay_step` |  | (steps): BK DELAY pop-up (id 0x32): popup_duration_get(0x32) + popup_open_timed, then steps and clamps the setting **[fact: fffc7b5f]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7BA4 | `funcknob_aess_level` |  | FUNC-knob function for AESS: sets popup_code = 0x33 and calls funcknob_aess_level_step **[fact: fffc7ba4]**; called from funcknob_step |
+| 0xFFFC7BBC | `funcknob_aess_level_step` |  | (steps): AESS pop-up (id 0x33): popup_duration_get(0x33) + popup_open_timed, then steps and clamps the setting **[fact: fffc7bbc]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7BFD | `funcknob_aess_cf` |  | FUNC-knob function for AESS CF: sets popup_code = 0x58 and calls funcknob_aess_cf_step **[fact: fffc7bfd]**; called from funcknob_step |
+| 0xFFFC7C15 | `funcknob_aess_cf_step` |  | (steps): AESS CF pop-up (id 0x58): popup_duration_get(0x58) + popup_open_timed, then steps and clamps the setting **[fact: fffc7c15]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7CFD | `funcknob_nb_level_step` |  | (steps): NB LEVEL pop-up (id 0x38): popup_duration_get(0x38) + popup_open_timed, then steps and clamps the setting **[fact: fffc7cfd]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC7D41 | `funcknob_dnr_level_step` |  | (steps): DNR LEVEL pop-up (id 0x39): popup_duration_get(0x39) + popup_open_timed, then steps and clamps the setting **[fact: fffc7d41]**; setting per display gui.md popup-slot table (#178) **[fact]** |
+| 0xFFFC836A | `dsp_knob_turn` |  | (steps): FUNC-panel knob turn for the DSP items: FUNC item 0x1D -> dsp_knob_shift_step (dsp_knob_func 0), 0x1E width, 0x1F notch, 0x20 contour, 0x21 APF (func 3), then func_display_open **[fact: fffc836a]**; only caller enc3_step |
+| 0xFFFC8431 | `dsp_knob_shift_step` |  | (steps): steps the IF SHIFT (shift_be) of the active VFO's mode block **[fact: fffc8431]**; called by dsp_knob_turn for FUNC item 0x1D |
+| 0xFFFC84F9 | `dsp_knob_width_step` |  | (steps): steps the filter WIDTH (width_be) of the active VFO's mode block, first restoring the width from vfo_filter_width_hz when NAR is on **[fact: fffc84f9]**; dsp_knob_turn item 0x1E |
+| 0xFFFC8685 | `dsp_knob_notch_step` |  | (steps): steps the manual NOTCH frequency (notch_be) of the active VFO's mode block **[fact: fffc8685]**; dsp_knob_turn item 0x1F |
+| 0xFFFC87AB | `dsp_knob_contour_step` |  | (steps): steps the CONTOUR frequency (contour_be) of the active VFO's mode block **[fact: fffc87ab]**; dsp_knob_turn item 0x20 |
+| 0xFFFC8930 | `dsp_knob_apf_step` |  | (steps): steps g_opstate.apf_freq **[fact: fffc8930]**; dsp_knob_turn item 0x21 |
+| 0xFFFE3979 | `func_message_open` |  | FUNC menu item 0x15 (case 0x15 of func_menu_select): stops a scan, refuses while DVS / keyer send / recording / PlayList run; otherwise opens the message-memory screen (g_ui.msgmem_open = 1, msgmem_type 0 voice by msg_voice_mode_ok or 1 CW with the contest number) and closes the FUNC panel; beep 3 when neither **[fact: fffe3979]** |
+
+<!-- T23e3:end -->

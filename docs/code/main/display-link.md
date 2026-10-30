@@ -788,3 +788,43 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFCF6AC | `dialog_open` |  | UI +0x86 = 1 (frame 0x70 due), selected button +0xBD = 0, clears +0x70 **[fact]** |
 | 0xFFFCFE77 | `dialog_close_to_menu_ok` |  | dialog_close_to_menu, returns 1; the SD-card dialog key handlers call it at step +0x3F7 = 2 **[fact]** |
 | 0xFFFD0149 | `dialog_close_to_menu` |  | Clears UI +0x88 (keyboard) and +0x86 (dialog), +0x3FF = 2 (the value menu_select_group also sets); back to the menu page **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF99475 | `popup_fmt_scope_level` |  | Value text of the SCOPE LEVEL pop-up (id 0x1E) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9959F | `popup_fmt_peak` |  | Value text of the PEAK pop-up (id 0x1F) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF995CC | `popup_fmt_rf_power` |  | Value text of the RF POWER pop-up (id 0x2C) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9960E | `popup_fmt_moni_level` |  | Value text of the MONI LEVEL pop-up (id 0x2D) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF996E2 | `popup_fmt_vox_gain` |  | Value text of the VOX GAIN pop-up (id 0x29) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99717 | `popup_fmt_vox_delay` |  | Value text of the VOX DELAY pop-up (id 0x2A) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9978C | `popup_fmt_anti_vox` |  | Value text of the ANTI VOX pop-up (id 0x2B) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF997DF | `popup_fmt_proc_level` |  | Value text of the PROC LEVEL pop-up (id 0x27) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99837 | `popup_fmt_mic_gain` |  | Value text of the MIC GAIN pop-up (id 0x25) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF998E2 | `popup_fmt_cw_speed` |  | Value text of the CW SPEED pop-up (id 0x30) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9992A | `popup_fmt_cw_pitch` |  | Value text of the CW PITCH pop-up (id 0x31) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99989 | `popup_fmt_bk_delay` |  | Value text of the BK DELAY pop-up (id 0x32) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF999E3 | `popup_fmt_aess_level` |  | Value text of the AESS pop-up (id 0x33) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99A29 | `popup_fmt_aess_cf` |  | Value text of the AESS CF pop-up (id 0x58) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99A8A | `popup_fmt_amc_level` |  | Value text of the AMC LEVEL pop-up (id 0x28) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99ABF | `popup_fmt_mgroup` |  | Value text of the M GROUP pop-up (id 0x24) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99B70 | `popup_fmt_nb_level` |  | Value text of the NB LEVEL pop-up (id 0x38) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99BA5 | `popup_fmt_dnr_level` |  | Value text of the DNR LEVEL pop-up (id 0x39) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99BFE | `popup_fmt_qmb` |  | Value text of the QMB pop-up (id 0x43) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99C58 | `popup_fmt_mem_mode` |  | Value text of the MODE pop-up (id 0x55) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99CA2 | `popup_fmt_mem_scan` |  | Value text of the SCAN pop-up (id 0x44) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99CF2 | `popup_fmt_mem_type` |  | Value text of the TYPE pop-up (id 0x45) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D42 | `popup_fmt_dec_level` |  | Value text of the DEC LVL pop-up (id 0x3A) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D48 | `popup_fmt_keyer` |  | Value text of the KEYER pop-up (id 0x46) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D82 | `popup_fmt_bk_in` |  | Value text of the BK IN pop-up (id 0x2F) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99DDB | `popup_fmt_mic_eq` |  | Value text of the MIC EQ pop-up (id 0x26) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99E15 | `popup_fmt_contrast` |  | Value text of the CONTRAST pop-up (id 0x22) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9A00F | `popup_fmt_dimmer` |  | Value text of the DIMMER pop-up (id 0x23) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9A044 | `popup_fmt_free_text` |  | Value text of the free text pop-up (id 0x5E) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+
+<!-- T23e3:end -->

@@ -627,3 +627,15 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFC4B3D | `vfo_filter_byte_ptr` |  | Returns VFO-A/B record (0x9D09/0x9D63) + the per-mode filter byte offset (+0x0B/+0x15/+0x1F/+0x29/+0x33/+0x3D by mode nibble); the decompile shows void (#205) **[fact]** |
 | 0xFFFE5E1B | `memch_current_skip` |  | memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set (#205) **[fact]** |
 | 0xFFFE5E3B | `memch_skip_get` |  | Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP (#205) **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFB0779 | `defaults_bandstack_set` |  | Fills one band-stack set: per band record writes 0x800400mm (mode 0x40/0x42/0xC1 ...), 0x10200, a 20-byte ROM template (0xFFF8090B, +0x14 per band) and vfo_rec_mode_defaults, picks the region variant with dest_code_get **[fact: fffb0779]**; only caller defaults_bandstack |
+
+<!-- T23e3:end -->
