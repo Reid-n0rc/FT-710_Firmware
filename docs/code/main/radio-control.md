@@ -667,3 +667,16 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFE5690 | `vfo_mode_is_cw` |  | vfo_mode(1) is 2 or 3 **[fact]** |
 | 0xFFFE56BF | `msg_voice_mode_ok` |  | 1 when the TX mode class (vfo_mode(1)) is < 2 or 4..7, i.e. not CW **[fact]** |
 | 0xFFFEC537 | `vfo_tuner_bit_set` |  | (on): TX-side record rec+1 bit 2, the tuner bit that FUN_fffec55a reads for CAT AC **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFB01DF | `memch_mark_used` |  | (ch): g_mem_hdr.chan_used[ch] = 1 **[fact: fffb01df]**; only caller cat_MW |
+| 0xFFFB0664 | `vfo_rec_mode_defaults` |  | Writes the per-mode block defaults of one VFO / memory record (radio-control.md "Defaults") **[fact: fffb0664]**; callers defaults_vfo, defaults_memch, defaults_bandstack_set |
+
+<!-- T23e3:end -->
