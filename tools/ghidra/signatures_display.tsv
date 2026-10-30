@@ -366,8 +366,8 @@
 2011f758	rspi_fifo_reset	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 20120224	userdef_riic0_wait_bus_master	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 201204a4	riic_base	void *	int32	asm	asm: live-in r0:L (= decompiler 1), 11/12 call sites read r0, writes r0 1, return value
-2012081c	FUN_2012081c	int32	uint32, int32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 2/2 call sites read r0, writes r0 1, return value
-20120a88	FUN_20120a88	void	uint32	asm	asm: live-in r0:L (> decompiler 0), 0/2 call sites read r0, writes r0 1, return void
+2012081c	R_RIIC_Write	int32	uint32, int32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 2/2 call sites read r0, writes r0 1, return value
+20120a88	riic_receive_dummy	void	uint32	asm	asm: live-in r0:L (> decompiler 0), 0/2 call sites read r0, writes r0 1, return void
 20120d40	afscope_store_frame	void	char *	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 20120dc8	afscope_buf_ptr	uint32	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 20120fe4	gui_middle_key	uint16	void	asm	asm: live-in - (= decompiler 0), 5/5 call sites read r0, writes r0 1, return value
@@ -464,7 +464,7 @@
 20134520	rgb565_row_to_bgr24	void	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
 20134644	screen_capture_bmp	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
 20134854	debug_screenshot_root	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
-2013499c	FUN_2013499c	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
+2013499c	sdmenu_scr_load_wait	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 20134abc	meter_draw	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
 20134d24	meter_draw_scale	void	int32, int32, int32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 1, return void
 20134e70	debug_cmd_line_read	uint32	int16 *, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 1/1 call sites read r0, writes r0 1, return value
@@ -526,7 +526,7 @@
 2014367c	fs_fwrite	uint32	uint32, uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (= decompiler 4), 13/18 call sites read r0, writes r0 1, return value
 20143750	fs_fseek	uint32	uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 7/8 call sites read r0, writes r0 1, return value
 20148fcc	fat_mount	uint32	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 1/1 call sites read r0, writes r0 1, return value
-2014d630	FUN_2014d630	char *	uint32, char *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 3/3 call sites read r0, writes r0 1, return value
+2014d630	fs_utoa_digits	char *	uint32, char *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 3/3 call sites read r0, writes r0 1, return value
 2014d95c	fs_task_ctx_get	uint32	void	asm	asm: live-in - (= decompiler 0), 17/22 call sites read r0, writes r0 1, return value
 2014e2a4	strncmp	int32	uint8 *, uint8 *, int32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 6/6 call sites read r0, writes r0 1, return value
 2014e584	os_create_sem_named	uint32	void *, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 12/12 call sites read r0, writes r0 1, return value

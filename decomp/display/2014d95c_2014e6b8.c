@@ -1078,19 +1078,25 @@ uint os_create_sem_named(void *param_1,uint param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): copies a 6-word T_CTSK and appends
    the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named [inference] */
 
-void os_create_tsk_named(uint *param_1,char *param_2)
+void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
 
 {
-  t_ctsk local_28;
+  undefined4 local_28;
+  undefined4 uStack_24;
+  undefined4 uStack_20;
+  undefined4 uStack_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 uStack_10;
   
-  local_28.tskatr = *param_1;
-  local_28.exinf = param_1[1];
-  local_28.task = param_1[2];
-  local_28.itskpri = param_1[3];
-  local_28.stksz = param_1[4];
-  local_28.stk = (byte *)param_1[5];
-  local_28.name = param_2;
-  itron_acre_tsk(0,&local_28);
+  local_28 = *param_1;
+  uStack_24 = param_1[1];
+  uStack_20 = param_1[2];
+  uStack_1c = param_1[3];
+  local_18 = param_1[4];
+  local_14 = param_1[5];
+  uStack_10 = param_2;
+  itron_acre_tsk(0,(byte *)&local_28);
   return;
 }
 
@@ -1100,15 +1106,17 @@ void os_create_tsk_named(uint *param_1,char *param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_flg
    [inference] */
 
-void os_create_flg_named(uint *param_1,char *param_2)
+void os_create_flg_named(undefined4 *param_1,undefined4 param_2)
 
 {
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = *param_1;
-  local_10.iflgptn = param_1[1];
-  local_10.name = param_2;
-  itron_acre_flg(0,&local_10);
+  local_10 = *param_1;
+  local_c = param_1[1];
+  uStack_8 = param_2;
+  itron_acre_flg(0,(byte *)&local_10);
   return;
 }
 

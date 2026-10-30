@@ -267,7 +267,7 @@ void scif5_txi_isr(void)
 
 /* UART object @0x208DB280 on SCIF5 (0xE8009800), MAIN link */
 
-scif_uart * scif5_get(uint param_1)
+void * scif5_get(uint param_1)
 
 {
   uart_obj_init(&scif5_uart,(scif_regs *)&SCIF_SCSMR_5,&cisr_scif5_rxi_isr,&cisr_scif5_txi_isr,
@@ -286,7 +286,7 @@ scif_uart * scif5_get(uint param_1)
 
 /* UART object on SCIF4 (0xE8009000) */
 
-scif_uart * scif4_get(uint param_1)
+void * scif4_get(uint param_1)
 
 {
   uart_obj_init(&scif4_uart,(scif_regs *)&SCIF_SCSMR_4,&cisr_scif4_rxi_isr,&cisr_scif4_txi_isr,
@@ -314,21 +314,23 @@ scif_uart * scif3_get(uint flg)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20114938 @ 20114938  (32 bytes, 0 callers, export file 201148a4_20116334.c)
- * Name on the doc page: scif_uarts_ctor
+ * scif_uarts_ctor @ 20114938  (32 bytes, 0 callers, export file 201148a4_20116334.c)
  * Purpose: Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller (run from
  *     the init table) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20114938 @ 20114938 (32 bytes)
+// ===== scif_uarts_ctor @ 20114938 (32 bytes)
 
-void FUN_20114938(void)
+/* Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller
+   (run from the init table) [fact for the calls] */
+
+void scif_uarts_ctor(void)
 
 {
-  FUN_20163360(&scif3_uart);
-  FUN_20163360(&scif4_uart);
-  FUN_20163360(&scif5_uart);
+  uart_obj_ctor(&scif3_uart);
+  uart_obj_ctor(&scif4_uart);
+  uart_obj_ctor(&scif5_uart);
   return;
 }
 
@@ -379,16 +381,16 @@ void uart4_link_init(void)
 {
   uint uVar1;
   uint uVar2;
-  scif_uart *psVar3;
+  void *pvVar3;
   
   __aeabi_memclr4(&DAT_2045d4e0,0x1ae0);
   DAT_20450020 = uart4_obj_ctor(&DAT_2045d4e0);
-  uVar1 = itron_acre_tsk(0,&ctsk_uart4_57dc);
-  if ((0 < (int)uVar1) && (uVar2 = itron_acre_flg(0,&cflg_uart4), 0 < (int)uVar2)) {
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uart4_57dc);
+  if ((0 < (int)uVar1) && (uVar2 = itron_acre_flg(0,(byte *)&cflg_uart4), 0 < (int)uVar2)) {
     *(uint *)(DAT_20450020 + 0x14) = uVar2;
-    psVar3 = scif4_get(uVar2);
+    pvVar3 = scif4_get(uVar2);
     uVar2 = DAT_20450020;
-    *(scif_uart **)(DAT_20450020 + 0x10) = psVar3;
+    *(void **)(DAT_20450020 + 0x10) = pvVar3;
     itron_sta_tsk(uVar1,uVar2);
     return;
   }
@@ -407,10 +409,10 @@ void uart4_link_init(void)
 
 /* copy of the newest MAIN frame (0x2045F8C0, 0x240 B) */
 
-void mainlink_get_last_frame(ml_frame *dst)
+void mainlink_get_last_frame(uint param_1)
 
 {
-  memcpy(dst,&ml_gui_snapshot,0x240);
+  memcpy(param_1,&ml_gui_snapshot,0x240);
   return;
 }
 
@@ -498,12 +500,12 @@ uint mainlink_got_esc(void)
  */
 // ===== mainlink_last_frame_differs @ 2011506c (32 bytes)
 
-bool mainlink_last_frame_differs(ml_frame *frame)
+bool mainlink_last_frame_differs(uint param_1)
 
 {
   int iVar1;
   
-  iVar1 = memcmp(&ml_gui_snapshot,frame,0x240);
+  iVar1 = memcmp(&ml_gui_snapshot,param_1,0x240);
   return iVar1 != 0;
 }
 
@@ -519,10 +521,10 @@ bool mainlink_last_frame_differs(ml_frame *frame)
 
 /* writes the 0x2045F8C0 snapshot (debug replay, GUI) */
 
-void mainlink_set_last_frame(ml_frame *src)
+void mainlink_set_last_frame(uint param_1)
 
 {
-  memcpy(&ml_gui_snapshot,src,0x240);
+  memcpy(&ml_gui_snapshot,param_1,0x240);
   return;
 }
 
@@ -1369,14 +1371,14 @@ void mainlink_init(void)
   byte *pbVar1;
   uint uVar2;
   uint uVar3;
-  scif_uart *psVar4;
+  void *pvVar4;
   
   uVar2 = os_create_sem_named(&DAT_20165860,0x201164cc);
   if (0 < (int)uVar2) {
     g_ml.pace_sem = uVar2;
     itron_sig_sem();
   }
-  uVar2 = itron_acre_tsk(0,&ctsk_cmd_interval);
+  uVar2 = itron_acre_tsk(0,(byte *)&ctsk_cmd_interval);
   periodic_wakeup_register(uVar2,3);
   if (0 < (int)uVar2) {
     itron_sta_tsk(uVar2,0);
@@ -1387,16 +1389,16 @@ void mainlink_init(void)
     }
     __aeabi_memclr4(&DAT_2045fd40,0x103c0);
     g_ml.link_obj = (byte *)mainlink_obj_ctor(&DAT_2045fd40);
-    uVar2 = itron_acre_tsk(0,&ctsk_uart_5880);
-    if ((0 < (int)uVar2) && (uVar3 = itron_acre_flg(0,&cflg_mainlink_rx), 0 < (int)uVar3)) {
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart_5880);
+    if ((0 < (int)uVar2) && (uVar3 = itron_acre_flg(0,(byte *)&cflg_mainlink_rx), 0 < (int)uVar3)) {
       *(uint *)(g_ml.link_obj + 0x14) = uVar3;
-      psVar4 = scif5_get(uVar3);
+      pvVar4 = scif5_get(uVar3);
       pbVar1 = g_ml.link_obj;
-      *(scif_uart **)(g_ml.link_obj + 0x10) = psVar4;
+      *(void **)(g_ml.link_obj + 0x10) = pvVar4;
       itron_sta_tsk(uVar2,(uint)pbVar1);
-      g_ml.retry_flg = itron_acre_flg(0,&cflg_mainlink_retry);
+      g_ml.retry_flg = itron_acre_flg(0,(byte *)&cflg_mainlink_retry);
       if ((0 < (int)g_ml.retry_flg) &&
-         (((uVar2 = itron_acre_tsk(0,&ctsk_retry), 0 < (int)uVar2 &&
+         (((uVar2 = itron_acre_tsk(0,(byte *)&ctsk_retry), 0 < (int)uVar2 &&
            (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) &&
           (uVar2 = itron_acre_cyc(0,&DAT_201658c4), 0 < (int)uVar2)))) {
         g_ml.ack_tmo_cyc = uVar2;
@@ -1442,7 +1444,7 @@ void mainlink_rx_ctrl(int param_1)
 /* rename (was mainlink_send_cmd): builds a frame from the 0x2B-entry table length and posts it to
    the RX dispatcher mailbox, i.e. replays a frame locally; it does not transmit */
 
-void mainlink_inject_rx(ml_frame *frame)
+void mainlink_inject_rx(char *param_1)
 
 {
   uint uVar1;
@@ -1453,7 +1455,7 @@ void mainlink_inject_rx(ml_frame *frame)
   iVar3 = 0;
   uVar2 = 0;
   do {
-    if (frame->cmd == (&DAT_20450074)[uVar2 * 0xc]) {
+    if (*param_1 == (&DAT_20450074)[uVar2 * 0xc]) {
       iVar3 = (ushort)(&DAT_20450076)[uVar2 * 6] + 2;
       break;
     }
@@ -1462,7 +1464,7 @@ void mainlink_inject_rx(ml_frame *frame)
   if (iVar3 != 0) {
     *(undefined2 *)(uVar1 + 4) = 0xaa;
     *(short *)(uVar1 + 6) = (short)iVar3;
-    memcpy(uVar1 + 8,frame);
+    memcpy(uVar1 + 8,param_1);
     mainlink_disp_post(g_ml.link_obj + 0x58,uVar1);
     return;
   }
@@ -1694,15 +1696,17 @@ void mainlink_send_rtc(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20124848 @ 20124848  (80 bytes, 12 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: mainlink_send_e7_state
+ * mainlink_send_e7_state @ 20124848  (80 bytes, 12 callers, export file 20120d60_201248f8.c)
  * Purpose: (state): E7 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0x7F; returns 1 (mainlink.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20124848 @ 20124848 (80 bytes)
+// ===== mainlink_send_e7_state @ 20124848 (80 bytes)
 
-undefined4 FUN_20124848(byte param_1)
+/* (state): E7 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0x7F; returns 1 (mainlink.md)
+   [fact] */
+
+undefined4 mainlink_send_e7_state(byte param_1)
 
 {
   undefined4 local_18;
@@ -1720,16 +1724,18 @@ undefined4 FUN_20124848(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201248a4 @ 201248a4  (72 bytes, 5 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: mainlink_send_e8_state
+ * mainlink_send_e8_state @ 201248a4  (72 bytes, 5 callers, export file 20120d60_201248f8.c)
  * Purpose: (state): E8 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0 (mainlink.md 0xE7/0xE8 audio
  *     status) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_201248a4 @ 201248a4 (72 bytes)
+// ===== mainlink_send_e8_state @ 201248a4 (72 bytes)
 
-void FUN_201248a4(byte param_1)
+/* (state): E8 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0 (mainlink.md 0xE7/0xE8 audio
+   status) [fact] */
+
+void mainlink_send_e8_state(byte param_1)
 
 {
   undefined4 local_10;
@@ -1747,16 +1753,18 @@ void FUN_201248a4(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20124adc @ 20124adc  (204 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_delete_file
+ * playlist_delete_file @ 20124adc  (204 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Builds the file name from frame +0x9B/+0x9D plus ".wav", wav_delete, answers E7 b1 = 0 with the new
  *     count; -6 when the list is empty (display-link.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20124adc @ 20124adc (204 bytes)
+// ===== playlist_delete_file @ 20124adc (204 bytes)
 
-int FUN_20124adc(int param_1)
+/* Builds the file name from frame +0x9B/+0x9D plus ".wav", wav_delete, answers E7 b1 = 0 with the
+   new count; -6 when the list is empty (display-link.md) [fact] */
+
+int playlist_delete_file(int param_1)
 
 {
   ushort uVar1;
@@ -1782,7 +1790,7 @@ int FUN_20124adc(int param_1)
     local_20 = 0;
     local_1c = 0;
     uVar1 = be16_load((byte *)(param_1 + 0x9b));
-    FUN_20124a98(uVar1,*(undefined1 *)(param_1 + 0x9d),&local_30);
+    playlist_entry_name(uVar1,*(undefined1 *)(param_1 + 0x9d),&local_30);
     strcat(&local_30,".wav");
     uVar2 = wav_delete((int)&local_30,0x208f1234,0xff,1);
     if ((int)uVar2 < 1) {
@@ -1801,16 +1809,18 @@ int FUN_20124adc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20124bc0 @ 20124bc0  (100 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_list_files
+ * playlist_list_files @ 20124bc0  (100 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Lists the .wav files (wav_list_dir 0x208F1234) and answers E7 b1 = 0 with the count, or
  *     mainlink_send_audio_error (display-link.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20124bc0 @ 20124bc0 (100 bytes)
+// ===== playlist_list_files @ 20124bc0 (100 bytes)
 
-int FUN_20124bc0(void)
+/* Lists the .wav files (wav_list_dir 0x208F1234) and answers E7 b1 = 0 with the count, or
+   mainlink_send_audio_error (display-link.md) [fact] */
+
+int playlist_list_files(void)
 
 {
   int iVar1;
@@ -1941,16 +1951,18 @@ void rtc_set_from_main(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20130968 @ 20130968  (48 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: mainlink_audio_ack
+ * mainlink_audio_ack @ 20130968  (48 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: On ACK/NAK (mainlink.md): copies the E7/E8 send state 0x208F1220 (1 or 0xFF) into 0x208F1221, else
  *     clears it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20130968 @ 20130968 (48 bytes)
+// ===== mainlink_audio_ack @ 20130968 (48 bytes)
 
-void FUN_20130968(void)
+/* On ACK/NAK (mainlink.md): copies the E7/E8 send state 0x208F1220 (1 or 0xFF) into 0x208F1221,
+   else clears it [fact] */
+
+void mainlink_audio_ack(void)
 
 {
   if (DAT_208f1220 != '\0') {
@@ -2047,15 +2059,17 @@ void mainlink_set_power_cmd(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20130c70 @ 20130c70  (32 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_clear
+ * textterm_clear @ 20130c70  (32 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: Clears the text-terminal block 0x208F4896 (0x35E bytes) keeping 0x208F4BAA (gui.md "third view") [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20130c70 @ 20130c70 (32 bytes)
+// ===== textterm_clear @ 20130c70 (32 bytes)
 
-void FUN_20130c70(void)
+/* Clears the text-terminal block 0x208F4896 (0x35E bytes) keeping 0x208F4BAA (gui.md "third view")
+   [fact] */
+
+void textterm_clear(void)
 
 {
   undefined1 uVar1;
@@ -2265,11 +2279,11 @@ void mainlink_tx_init(int param_1,uint param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x408;
-    FUN_20158618(iVar3 + 0x1c);
+    msgbuf_init(iVar3 + 0x1c);
     txpool_set_slot(param_1 + 0x811c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x81a4) = uVar1;
   return;
 }
@@ -2308,7 +2322,7 @@ void mainlink_tx_post(int param_1,uint param_2)
   while (g_ml.pace_count != 0) {
     itron_dly_tsk(1);
   }
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
   itron_twai_sem(g_ml.pace_sem,0xffffffff);
   g_ml.pace_count = 3;
   itron_sig_sem(g_ml.pace_sem);
@@ -2412,11 +2426,11 @@ void uart4_tx_init(int param_1,uint param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x88;
-    FUN_20158618(iVar3 + 0x1c);
+    msgbuf_init(iVar3 + 0x1c);
     txpool_set_slot(param_1 + 0x111c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x11a4) = uVar1;
   return;
 }
@@ -2462,7 +2476,7 @@ void task_uart4_tx(int param_1)
 void uart4_tx_post(int param_1,uint param_2)
 
 {
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x11a4),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x11a4),param_2);
   return;
 }
 
@@ -2488,9 +2502,9 @@ void mainlink_obj_run(int param_1)
   uint uVar3;
   uint uVar4;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_uart_5938);
-  if (((0 < (int)uVar1) && (uVar2 = itron_acre_tsk(0,&ctsk_uart_591c), 0 < (int)uVar2)) &&
-     (uVar3 = itron_acre_tsk(0,&ctsk_uart_5900), 0 < (int)uVar3)) {
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uart_5938);
+  if (((0 < (int)uVar1) && (uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart_591c), 0 < (int)uVar2)) &&
+     (uVar3 = itron_acre_tsk(0,(byte *)&ctsk_uart_5900), 0 < (int)uVar3)) {
     uVar4 = param_1 + 0x8218;
     mainlink_tx_init(uVar4,*(uint *)(param_1 + 0x10));
     mainlink_disp_init(param_1 + 0x58,uVar4);
@@ -2576,9 +2590,9 @@ void uart4_obj_run(int param_1)
     }
   } while (iVar6 != 0);
   DAT_2045001c = 1;
-  uVar2 = itron_acre_tsk(0,&ctsk_uart4_583c);
-  if (((0 < (int)uVar2) && (uVar3 = itron_acre_tsk(0,&ctsk_uart4_5820), 0 < (int)uVar3)) &&
-     (uVar4 = itron_acre_tsk(0,&ctsk_uart4_5804), 0 < (int)uVar4)) {
+  uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart4_583c);
+  if (((0 < (int)uVar2) && (uVar3 = itron_acre_tsk(0,(byte *)&ctsk_uart4_5820), 0 < (int)uVar3)) &&
+     (uVar4 = itron_acre_tsk(0,(byte *)&ctsk_uart4_5804), 0 < (int)uVar4)) {
     uVar5 = param_1 + 0x938;
     uart4_tx_init(uVar5,*(uint *)(param_1 + 0x10));
     FUN_2015ff94(param_1 + 0x50,uVar5);
@@ -3497,11 +3511,11 @@ void mainlink_disp_init(int param_1,uint param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x408;
-    FUN_20158618(iVar3 + 0x14);
+    msgbuf_init(iVar3 + 0x14);
     txpool_set_slot(param_1 + 0x8114,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x819c) = uVar1;
   return;
 }
@@ -3518,7 +3532,7 @@ void mainlink_disp_init(int param_1,uint param_2)
 void mainlink_disp_post(int param_1,undefined4 param_2)
 
 {
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x819c),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x819c),param_2);
   return;
 }
 
@@ -3669,8 +3683,8 @@ uint uart_obj_init(scif_uart *uart,scif_regs *regs,t_cisr *rxi,t_cisr *txi,uint 
     uart->rx_flg = flg;
     uart->rxi_isr = rxi;
     uart->txi_isr = txi;
-    uVar1 = itron_acre_isr(0,txi);
-    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,uart->rxi_isr), (int)uVar1 < 1)) {
+    uVar1 = itron_acre_isr(0,(int)txi);
+    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,(int)uart->rxi_isr), (int)uVar1 < 1)) {
       return 0xffffffff;
     }
   }
@@ -3740,7 +3754,7 @@ int scif_read(scif_uart *uart,byte *buf,int n)
 void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 {
-  scif_open(uart,baud,bits,parity,stop);
+  scif_open((int)uart,baud,bits,parity,stop);
   gic_enable_irq(uart->txi_isr->intno);
   gic_enable_irq(uart->rxi_isr->intno);
   return;
@@ -3758,64 +3772,63 @@ void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 /* (baud, bits, parity, stop): SCSMR, SCBRR (0x16 + SEMR 0x81 for 345600), FIFO reset */
 
-void scif_open(scif_uart *uart,uint param_2,int param_3,int param_4,uint param_5)
+void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 {
   char cVar1;
-  byte bVar2;
-  ushort uVar3;
+  ushort uVar2;
   
-  uVar3 = 0;
+  uVar2 = 0;
   if (param_3 == 7) {
-    uVar3 = 0x40;
+    uVar2 = 0x40;
   }
   if (param_4 != 0) {
     if (param_4 == 1) {
-      uVar3 = uVar3 | 0x20;
+      uVar2 = uVar2 | 0x20;
     }
     else if (param_4 == 2) {
-      uVar3 = uVar3 | 0x30;
+      uVar2 = uVar2 | 0x30;
     }
   }
   if (param_5 != 1) {
-    uVar3 = uVar3 | 8;
+    uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
     cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
-    bVar2 = cVar1 - 1;
+    cVar1 = cVar1 + -1;
   }
   else {
-    bVar2 = 0x16;
+    cVar1 = '\x16';
   }
-  uart->rx_wr = 0;
-  uart->rx_rd = 0;
-  uart->tx_wr = 0;
-  uart->tx_rd = 0;
-  uart->rxi_count = 0;
-  uart->rx_count = 0;
-  uart->rx_errors = 0;
-  uart->rxi_no_data = 0;
-  uart->txi_count = 0;
-  uart->tx_count = 0;
-  uart->txi_not_ready = 0;
-  uart->regs->scscr = 0;
-  uart->regs->scfcr = uart->regs->scfcr | 6;
-  uart->regs->scfsr = uart->regs->scfsr & 0xff6e;
-  uart->regs->sclsr = 0;
-  uart->regs->scscr = 0;
-  uart->regs->scsmr = uVar3;
-  uart->regs->scbrr = bVar2;
+  *(undefined2 *)(param_1 + 10) = 0;
+  *(undefined2 *)(param_1 + 8) = 0;
+  *(undefined2 *)(param_1 + 0x40e) = 0;
+  *(undefined2 *)(param_1 + 0x40c) = 0;
+  *(undefined4 *)(param_1 + 0x81c) = 0;
+  *(undefined4 *)(param_1 + 0x820) = 0;
+  *(undefined4 *)(param_1 + 0x828) = 0;
+  *(undefined4 *)(param_1 + 0x82c) = 0;
+  *(undefined4 *)(param_1 + 0x830) = 0;
+  *(undefined4 *)(param_1 + 0x834) = 0;
+  *(undefined4 *)(param_1 + 0x838) = 0;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 6;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x10) = *(ushort *)(*(int *)(param_1 + 4) + 0x10) & 0xff6e;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 0x24) = 0;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
+  **(ushort **)(param_1 + 4) = uVar2;
+  *(char *)(*(int *)(param_1 + 4) + 4) = cVar1;
   if (param_2 < 0x54600) {
-    uart->regs->scemr = 0;
+    *(undefined2 *)(*(int *)(param_1 + 4) + 0x28) = 0;
   }
   else {
-    uart->regs->scemr = uart->regs->scemr | 0x81;
+    *(ushort *)(*(int *)(param_1 + 4) + 0x28) = *(ushort *)(*(int *)(param_1 + 4) + 0x28) | 0x81;
   }
   if ((param_5 & 0x80) != 0) {
-    uart->regs->scfcr = uart->regs->scfcr | 1;
+    *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 1;
   }
-  uart->regs->scfcr = uart->regs->scfcr & 0xfff9;
-  uart->regs->scscr = uart->regs->scscr | 0xf8;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) & 0xfff9;
+  *(ushort *)(*(int *)(param_1 + 4) + 8) = *(ushort *)(*(int *)(param_1 + 4) + 8) | 0xf8;
   return;
 }
 
@@ -3921,15 +3934,16 @@ uint scif_write(scif_uart *uart,byte *buf,uint n)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20163360 @ 20163360  (12 bytes, 3 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: uart_obj_ctor
+ * uart_obj_ctor @ 20163360  (12 bytes, 3 callers, export file 20162d04_20163b9c.c)
  * Purpose: (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
  */
-// ===== FUN_20163360 @ 20163360 (12 bytes)
+// ===== uart_obj_ctor @ 20163360 (12 bytes)
 
-void FUN_20163360(undefined4 *param_1)
+/* (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) [fact] */
+
+void uart_obj_ctor(undefined4 *param_1)
 
 {
   *param_1 = &PTR_uart_obj_init_2042803c;

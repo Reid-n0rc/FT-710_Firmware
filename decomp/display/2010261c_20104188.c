@@ -639,13 +639,13 @@ undefined4 tsc2007_write_cmd(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
-  FUN_20120674(2,0);
-  iVar1 = FUN_20120750(2,0x90,0);
+  R_RIIC_SendCond(2,0);
+  iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
   if (iVar1 == 0) {
-    FUN_2012081c(2,(int)&uStack_10,1);
+    R_RIIC_Write(2,(int)&uStack_10,1);
   }
-  FUN_20120674(2);
-  FUN_20120bc8(2);
+  R_RIIC_SendCond(2);
+  R_RIIC_DetectStop(2);
   return 0;
 }
 
@@ -664,21 +664,21 @@ uint tsc2007_read12(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
-  iVar1 = FUN_20120674(2,0);
+  iVar1 = R_RIIC_SendCond(2,0);
   if (iVar1 == 0) {
-    iVar1 = FUN_20120750(2,0x90,0);
-    if ((iVar1 == 0) && (iVar1 = FUN_2012081c(2,(int)&uStack_10,1), iVar1 == 0)) {
+    iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
+    if ((iVar1 == 0) && (iVar1 = R_RIIC_Write(2,(int)&uStack_10,1), iVar1 == 0)) {
       itron_dly_tsk(1);
-      FUN_20120674(2,1);
-      iVar1 = FUN_20120750(2,0x91,1,0);
+      R_RIIC_SendCond(2,1);
+      iVar1 = R_RIIC_WriteSlaveAddr(2,0x91,1,0);
       if (iVar1 == 0) {
-        iVar1 = FUN_20120a9c(2,&local_14);
+        iVar1 = R_RIIC_Read(2,&local_14);
       }
     }
     if (iVar1 == -2) {
-      FUN_20120674(2);
-      FUN_20120bac(2);
-      FUN_20120bc8(2);
+      R_RIIC_SendCond(2);
+      R_RIIC_ReadDummy(2);
+      R_RIIC_DetectStop(2);
       uVar2 = 0xfffffffe;
     }
     else {
@@ -769,7 +769,7 @@ void task_tsc2007(void)
   undefined4 local_2c;
   uint local_28;
   
-  iVar2 = FUN_20120454(2);
+  iVar2 = R_RIIC_Init(2);
   if (iVar2 == 0) {
     uVar1 = INTC_ICR1;
     INTC_ICR1 = uVar1 & 0xff3f;
@@ -777,7 +777,7 @@ void task_tsc2007(void)
     local_28 = (uint)uVar1;
     uVar1 = INTC_ICR1;
     INTC_ICR1 = uVar1 | 0x40;
-    uVar3 = itron_acre_isr(0,&cisr_tsc2007_tint_isr);
+    uVar3 = itron_acre_isr(0,0x20165194);
     if (0 < (int)uVar3) {
       itron_get_tid(&DAT_20800088);
       itron_iwup_tsk(DAT_2080008c);
@@ -898,9 +898,9 @@ void task_tsc2007_irq(void)
   do {
     do {
       itron_tslp_tsk(0xffffffff);
-      iVar1 = FUN_2012001c();
+      iVar1 = userdef_riic2_tx_count();
       itron_dly_tsk(100);
-      iVar2 = FUN_2012001c();
+      iVar2 = userdef_riic2_tx_count();
     } while (iVar1 != iVar2);
     DAT_20800090 = 1;
     itron_sus_tsk(DAT_20800088);
@@ -917,19 +917,22 @@ void touch_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51c4);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_tsc2007_51c4);
   if (((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
-     (uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51a8), 0 < (int)uVar1)) {
+     (uVar1 = itron_acre_tsk(0,(byte *)&ctsk_tsc2007_51a8), 0 < (int)uVar1)) {
     itron_sta_tsk(uVar1,0);
   }
   return;
 }
 
 
-// ===== FUN_20103934 @ 20103934 (124 bytes)
+// ===== sd_drive_register @ 20103934 (124 bytes)
 
-void FUN_20103934(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+/* (drive rec, letter, driver init, cache bufs): fs_drive_attach (512-B sectors), FAT cache and
+   directory cache set-up; sd_fs_init registers I: with it (filesystem.md) [fact] */
+
+void sd_drive_register(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                      undefined4 param_5)
 
 {
   int iVar1;
@@ -954,7 +957,7 @@ void sd_fs_init(void)
   
   iVar1 = fs_init(&DAT_20808c4c,2);
   if (iVar1 == 0) {
-    iVar1 = FUN_20103934(&DAT_20809984,0x49,FUN_2013fd98,&DAT_208099f8,&DAT_2080cc8e,0);
+    iVar1 = sd_drive_register(&DAT_20809984,0x49,sdhi_drv_init,&DAT_208099f8,&DAT_2080cc8e,0);
     if (iVar1 == 0) {
       sd_task_create();
     }
@@ -963,9 +966,12 @@ void sd_fs_init(void)
 }
 
 
-// ===== FUN_20103a4c @ 20103a4c (52 bytes)
+// ===== sd_drive_flush @ 20103a4c (52 bytes)
 
-void FUN_20103a4c(int param_1)
+/* (drive index): fs_sync, then fs_cache_invalidate of the drive record 0x20809984 + 0x74*i [fact]
+    */
+
+void sd_drive_flush(int param_1)
 
 {
   int iVar1;
@@ -987,7 +993,7 @@ void FUN_20103a94(int param_1,undefined4 param_2)
   int iVar1;
   
   while( true ) {
-    iVar1 = FUN_2013faf4(param_2);
+    iVar1 = sd_card_remount(param_2);
     fs_task_ctx_get();
     if (((param_1 != 0) && (iVar1 == 1)) || (param_1 == 0 && iVar1 == 0)) break;
     itron_tslp_tsk(10);
@@ -996,18 +1002,20 @@ void FUN_20103a94(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20103adc @ 20103adc (112 bytes)
+// ===== sd_card_monitor @ 20103adc (112 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Task body: polls the card state every 10 ms (sd_card_poll -> 0x20800094) and on request
+   0x20800098 clears bit 7 and calls sd_card_unmount (filesystem.md) [fact] */
 
-void FUN_20103adc(undefined4 param_1,undefined4 param_2)
+void sd_card_monitor(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
   
   uVar1 = 0;
   do {
-    uVar1 = FUN_2013fc68(param_2,uVar1);
+    uVar1 = sd_card_poll(param_2,uVar1);
     if (-1 < (int)uVar1) {
       _DAT_20800094 = uVar1;
     }
@@ -1015,7 +1023,7 @@ void FUN_20103adc(undefined4 param_1,undefined4 param_2)
     if (DAT_20800098 != 0) {
       uVar1 = 0;
       _DAT_20800094 = _DAT_20800094 & 0xffffff7f;
-      FUN_2013fd50(param_2);
+      sd_card_unmount(param_2);
       while (DAT_20800098 != 0) {
         itron_tslp_tsk(10);
       }
@@ -1035,8 +1043,8 @@ undefined4 FUN_20103b4c(void)
   undefined4 uVar2;
   
   _DAT_20800094 = 0;
-  FUN_2013fc10();
-  FUN_20103adc(1,0);
+  sd_mutex_create();
+  sd_card_monitor(1,0);
   iVar1 = os_create_tsk_named(&DAT_201651e0,"sdTask");
   if (iVar1 < 1) {
     uVar2 = 0xffffffff;
@@ -1095,9 +1103,12 @@ byte sd_state_bit7(void)
 }
 
 
-// ===== FUN_20103bc0 @ 20103bc0 (40 bytes)
+// ===== sd_drive_flag5 @ 20103bc0 (40 bytes)
 
-uint FUN_20103bc0(void)
+/* Bit 5 of the drive record byte +0x68 of 0x20808B60 when the drive is attached (+0x24), else 0;
+   fs_drive_check_writable returns -58 on the same bit (filesystem.md) [fact] */
+
+uint sd_drive_flag5(void)
 
 {
   uint uVar1;
@@ -1112,9 +1123,12 @@ uint FUN_20103bc0(void)
 }
 
 
-// ===== FUN_20103bc8 @ 20103bc8 (12 bytes)
+// ===== sd_monitor_request @ 20103bc8 (12 bytes)
 
-void FUN_20103bc8(undefined4 param_1)
+/* (v): 0x20800098 = v, the card-monitor request flag of sd_card_monitor (filesystem.md);
+   sd_make_dirs uses it [fact] */
+
+void sd_monitor_request(undefined4 param_1)
 
 {
   DAT_20800098 = param_1;
@@ -1131,9 +1145,12 @@ undefined4 FUN_20103bd4(void)
 }
 
 
-// ===== FUN_20103bdc @ 20103bdc (56 bytes)
+// ===== sflash_sst_block_size @ 20103bdc (56 bytes)
 
-undefined4 FUN_20103bdc(int param_1)
+/* (i): block size of block i from the table 0x20165204 (blocks 0-3 and 132-135: 8 KiB, 4 and 131:
+   32 KiB), else 64 KiB [fact] */
+
+undefined4 sflash_sst_block_size(int param_1)
 
 {
   int iVar1;
@@ -1149,9 +1166,12 @@ undefined4 FUN_20103bdc(int param_1)
 }
 
 
-// ===== FUN_20103c14 @ 20103c14 (84 bytes)
+// ===== sflash_cmd_bp @ 20103c14 (84 bytes)
 
-uint FUN_20103c14(void)
+/* Sends the 2-byte device command "bp" (0x62 0x70) through sflash_dev_write and reads one status
+   byte (1 on a write error); the erase loops send it first [fact] */
+
+uint sflash_cmd_bp(void)
 
 {
   int iVar1;
@@ -1174,9 +1194,12 @@ uint FUN_20103c14(void)
 }
 
 
-// ===== FUN_20103c70 @ 20103c70 (88 bytes)
+// ===== sflash_cmd_erase @ 20103c70 (88 bytes)
 
-uint FUN_20103c70(undefined4 param_1)
+/* (addr): sends the device command "er" (0x65 0x72) with the block address and reads one status
+   byte [fact] */
+
+uint sflash_cmd_erase(undefined4 param_1)
 
 {
   int iVar1;
@@ -1221,9 +1244,13 @@ int FUN_20103cc8(int param_1,int param_2)
 }
 
 
-// ===== FUN_20103cfc @ 20103cfc (212 bytes)
+// ===== sflash_erase_chip_sst @ 20103cfc (212 bytes)
 
-undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
+/* (progress): erases 136 blocks with the sizes of sflash_sst_block_size (4 x 8 KiB, 32 KiB, 126 x
+   64 KiB, 32 KiB, 4 x 8 KiB = 8 MiB), progress bar and a yield every 8 blocks [fact]; the block map
+   of an SST26-type 64-Mbit flash [inference] */
+
+undefined4 sflash_erase_chip_sst(int param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -1240,11 +1267,11 @@ undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
     progress_set(uVar1);
   }
   sflash_dev_open();
-  iVar2 = FUN_20103c14();
+  iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
-    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
-      iVar2 = FUN_20103bdc(uVar1);
+    while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
+      iVar2 = sflash_sst_block_size(uVar1);
       iVar5 = iVar5 + iVar2;
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x88);
@@ -1324,14 +1351,14 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
     progress_set(uVar2);
   }
   sflash_dev_open();
-  iVar3 = FUN_20103c14();
+  iVar3 = sflash_cmd_bp();
   if (iVar3 < 0) {
     return 0xffffffff;
   }
   uVar2 = 0;
   if (uVar1 != 0) {
     do {
-      iVar3 = FUN_20103c70(param_2);
+      iVar3 = sflash_cmd_erase(param_2);
       if (iVar3 < 0) {
         return 0xffffffff;
       }
@@ -1355,9 +1382,12 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_20103f44 @ 20103f44 (188 bytes)
+// ===== sflash_erase_chip_uniform @ 20103f44 (188 bytes)
 
-undefined4 FUN_20103f44(int param_1)
+/* (progress): erases 256 blocks of 64 KiB (16 MiB) with a progress bar and a yield every 16 blocks
+   [fact] */
+
+undefined4 sflash_erase_chip_uniform(int param_1)
 
 {
   uint uVar1;
@@ -1374,10 +1404,10 @@ undefined4 FUN_20103f44(int param_1)
     progress_set(uVar1);
   }
   sflash_dev_open();
-  iVar2 = FUN_20103c14();
+  iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
-    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
+    while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
       iVar5 = iVar5 + 0x10000;
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x100);
@@ -1401,9 +1431,12 @@ undefined4 FUN_20103f44(int param_1)
 }
 
 
-// ===== FUN_20104000 @ 20104000 (80 bytes)
+// ===== sflash_read_mfr_id @ 20104000 (80 bytes)
 
-undefined1 FUN_20104000(void)
+/* Switches SPIBSC0 external reads to command 0x9F (READ JEDEC ID, DRCMR/DRENR), reads the first
+   byte at 0x18000000 and restores the registers: the manufacturer id [fact] */
+
+undefined1 sflash_read_mfr_id(void)
 
 {
   undefined4 uVar1;
@@ -1419,19 +1452,22 @@ undefined1 FUN_20104000(void)
 }
 
 
-// ===== FUN_20104050 @ 20104050 (40 bytes)
+// ===== sflash_erase_chip @ 20104050 (40 bytes)
 
-void FUN_20104050(undefined4 param_1)
+/* (progress): manufacturer 0xBF -> sflash_erase_chip_sst, else sflash_erase_chip_uniform [fact];
+   0xBF is the SST/Microchip JEDEC id [inference] */
+
+void sflash_erase_chip(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_20104000();
+  iVar1 = sflash_read_mfr_id();
   if (iVar1 != 0xbf) {
-    FUN_20103f44();
+    sflash_erase_chip_uniform();
     return;
   }
-  FUN_20103cfc(param_1);
+  sflash_erase_chip_sst(param_1);
   return;
 }
 

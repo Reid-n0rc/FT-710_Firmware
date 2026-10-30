@@ -1037,13 +1037,13 @@ undefined4 tsc2007_write_cmd(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
-  FUN_20120674(2,0);
-  iVar1 = FUN_20120750(2,0x90,0);
+  R_RIIC_SendCond(2,0);
+  iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
   if (iVar1 == 0) {
-    FUN_2012081c(2,(int)&uStack_10,1);
+    R_RIIC_Write(2,(int)&uStack_10,1);
   }
-  FUN_20120674(2);
-  FUN_20120bc8(2);
+  R_RIIC_SendCond(2);
+  R_RIIC_DetectStop(2);
   return 0;
 }
 
@@ -1068,21 +1068,21 @@ uint tsc2007_read12(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
-  iVar1 = FUN_20120674(2,0);
+  iVar1 = R_RIIC_SendCond(2,0);
   if (iVar1 == 0) {
-    iVar1 = FUN_20120750(2,0x90,0);
-    if ((iVar1 == 0) && (iVar1 = FUN_2012081c(2,(int)&uStack_10,1), iVar1 == 0)) {
+    iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
+    if ((iVar1 == 0) && (iVar1 = R_RIIC_Write(2,(int)&uStack_10,1), iVar1 == 0)) {
       itron_dly_tsk(1);
-      FUN_20120674(2,1);
-      iVar1 = FUN_20120750(2,0x91,1,0);
+      R_RIIC_SendCond(2,1);
+      iVar1 = R_RIIC_WriteSlaveAddr(2,0x91,1,0);
       if (iVar1 == 0) {
-        iVar1 = FUN_20120a9c(2,&local_14);
+        iVar1 = R_RIIC_Read(2,&local_14);
       }
     }
     if (iVar1 == -2) {
-      FUN_20120674(2);
-      FUN_20120bac(2);
-      FUN_20120bc8(2);
+      R_RIIC_SendCond(2);
+      R_RIIC_ReadDummy(2);
+      R_RIIC_DetectStop(2);
       uVar2 = 0xfffffffe;
     }
     else {
@@ -1196,9 +1196,9 @@ void touch_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51c4);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_tsc2007_51c4);
   if (((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
-     (uVar1 = itron_acre_tsk(0,&ctsk_tsc2007_51a8), 0 < (int)uVar1)) {
+     (uVar1 = itron_acre_tsk(0,(byte *)&ctsk_tsc2007_51a8), 0 < (int)uVar1)) {
     itron_sta_tsk(uVar1,0);
   }
   return;
@@ -1206,16 +1206,18 @@ void touch_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103bc8 @ 20103bc8  (12 bytes, 2 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sd_monitor_request
+ * sd_monitor_request @ 20103bc8  (12 bytes, 2 callers, export file 2010261c_20104188.c)
  * Purpose: (v): 0x20800098 = v, the card-monitor request flag of sd_card_monitor (filesystem.md); sd_make_dirs uses
  *     it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20103bc8 @ 20103bc8 (12 bytes)
+// ===== sd_monitor_request @ 20103bc8 (12 bytes)
 
-void FUN_20103bc8(undefined4 param_1)
+/* (v): 0x20800098 = v, the card-monitor request flag of sd_card_monitor (filesystem.md);
+   sd_make_dirs uses it [fact] */
+
+void sd_monitor_request(undefined4 param_1)
 
 {
   DAT_20800098 = param_1;
@@ -1241,7 +1243,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   bVar1 = false;
   local_20 = param_4;
   mutex_guard_ctor(&local_20,DAT_20800118,1);
-  FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,1);
+  kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,1);
   iVar2 = 0;
   do {
     if ((&DAT_20811100)[iVar2 * 0xd0] != '\0') {
@@ -1250,7 +1252,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
     }
     iVar2 = iVar2 + 1;
   } while (iVar2 < 2);
-  FUN_2015f0b4(&DAT_20811080 + param_1 * 0xd0);
+  kbdobj_activate(&DAT_20811080 + param_1 * 0xd0);
 LAB_20106e8c:
   mutex_guard_dtor(&local_20);
   if (bVar1) {
@@ -1279,11 +1281,11 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   iVar2 = -1;
   local_18 = param_4;
   mutex_guard_ctor(&local_18,DAT_20800118,1);
-  FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,0);
+  kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,0);
   iVar1 = 0;
   do {
     if ((&DAT_20811101)[iVar1 * 0xd0] != '\0') {
-      FUN_2015f0b4(&DAT_20811080 + iVar1 * 0xd0);
+      kbdobj_activate(&DAT_20811080 + iVar1 * 0xd0);
       iVar2 = iVar1;
       break;
     }
@@ -1439,7 +1441,7 @@ void usbkbd_flush_all(void)
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   iVar1 = 0;
   do {
-    FUN_2015f0c4(&DAT_20811080 + iVar1 * 0xd0);
+    kbdobj_flush(&DAT_20811080 + iVar1 * 0xd0);
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
   mutex_guard_dtor(auStack_10);
@@ -1484,7 +1486,7 @@ uint usbkbd_get_char(byte *param_1)
     else {
       bVar5 = 0xff;
     }
-    uVar3 = FUN_2010a684(param_1[1],bVar5,DAT_2080010e);
+    uVar3 = kbd_char_lookup(param_1[1],bVar5,DAT_2080010e);
     *(undefined4 *)(param_1 + 4) = uVar3;
     uVar4 = 1;
   }
@@ -2309,16 +2311,18 @@ LAB_20107d28:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20107d8c @ 20107d8c  (144 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: usbkbd_leds_refresh
+ * usbkbd_leds_refresh @ 20107d8c  (144 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device,
  *     usbkbd_set_leds) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20107d8c @ 20107d8c (144 bytes)
+// ===== usbkbd_leds_refresh @ 20107d8c (144 bytes)
 
-void FUN_20107d8c(int param_1)
+/* scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device,
+   usbkbd_set_leds) [fact] */
+
+void usbkbd_leds_refresh(int param_1)
 
 {
   int iVar1;
@@ -2355,16 +2359,18 @@ LAB_20107db8:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20107e9c @ 20107e9c  (68 bytes, 2 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: usbkbd_init
+ * usbkbd_init @ 20107e9c  (68 bytes, 2 callers, export file 20106e0c_2010b360.c)
  * Purpose: Creates the keyboard mutex 0x20800118, initialises the two 0xD0-byte keyboard objects 0x20811080 and the
  *     layout tables (kbd_layout_tables_init) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20107e9c @ 20107e9c (68 bytes)
+// ===== usbkbd_init @ 20107e9c (68 bytes)
 
-void FUN_20107e9c(void)
+/* Creates the keyboard mutex 0x20800118, initialises the two 0xD0-byte keyboard objects 0x20811080
+   and the layout tables (kbd_layout_tables_init) [fact] */
+
+void usbkbd_init(void)
 
 {
   int iVar1;
@@ -2665,17 +2671,20 @@ void vk_key_name(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20108bc8 @ 20108bc8  (1240 bytes, 12 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_base_fill
+ * kbd_layout_base_fill @ 20108bc8  (1240 bytes, 12 callers, export file 20106e0c_2010b360.c)
  * Purpose: (layout): fills layout table 0x20450290 + 0x600*layout with the common entries (digits usage 0x1E.. ->
  *     '1'.., letters usage 4.. -> 'A'.., Enter, Esc, Backspace, Tab, Space, arrows) that the per-layout builders
  *     then override [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20108bc8 @ 20108bc8 (1240 bytes)
+// ===== kbd_layout_base_fill @ 20108bc8 (1240 bytes)
 
-void FUN_20108bc8(int param_1)
+/* (layout): fills layout table 0x20450290 + 0x600*layout with the common entries (digits usage
+   0x1E.. -> '1'.., letters usage 4.. -> 'A'.., Enter, Esc, Backspace, Tab, Space, arrows) that the
+   per-layout builders then override [fact] */
+
+void kbd_layout_base_fill(int param_1)
 
 {
   int iVar1;
@@ -2889,37 +2898,41 @@ void FUN_20108bc8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201090a0 @ 201090a0  (8 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_jpn_init
+ * kbd_layout_jpn_init @ 201090a0  (8 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(0) only: table 0 is JPN in the usbkbd_set_layout list (input.md); called from
  *     kbd_layout_tables_init [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201090a0 @ 201090a0 (8 bytes)
+// ===== kbd_layout_jpn_init @ 201090a0 (8 bytes)
 
-void FUN_201090a0(void)
+/* kbd_layout_base_fill(0) only: table 0 is JPN in the usbkbd_set_layout list (input.md); called
+   from kbd_layout_tables_init [fact] */
+
+void kbd_layout_jpn_init(void)
 
 {
-  FUN_20108bc8(0);
+  kbd_layout_base_fill(0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201090a8 @ 201090a8  (432 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_us_init
+ * kbd_layout_us_init @ 201090a8  (432 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(1) plus the overrides of table 1; id 1 is US in the usbkbd_set_layout list
  *     (input.md) and kbd_char_lookup indexes the table by that id [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201090a8 @ 201090a8 (432 bytes)
+// ===== kbd_layout_us_init @ 201090a8 (432 bytes)
 
-void FUN_201090a8(void)
+/* kbd_layout_base_fill(1) plus the overrides of table 1; id 1 is US in the usbkbd_set_layout list
+   (input.md) and kbd_char_lookup indexes the table by that id [fact] */
+
+void kbd_layout_us_init(void)
 
 {
-  FUN_20108bc8(1);
+  kbd_layout_base_fill(1);
   DAT_204508a8 = 0x39;
   DAT_204508ac = 0xfe;
   DAT_204508b0 = 0x14;
@@ -2988,18 +3001,20 @@ void FUN_201090a8(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20109258 @ 20109258  (432 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_uk_init
+ * kbd_layout_uk_init @ 20109258  (432 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(2) plus the overrides of table 2 (UK in the usbkbd_set_layout list) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20109258 @ 20109258 (432 bytes)
+// ===== kbd_layout_uk_init @ 20109258 (432 bytes)
 
-void FUN_20109258(void)
+/* kbd_layout_base_fill(2) plus the overrides of table 2 (UK in the usbkbd_set_layout list) [fact]
+    */
+
+void kbd_layout_uk_init(void)
 
 {
-  FUN_20108bc8(2);
+  kbd_layout_base_fill(2);
   DAT_20450ea8 = 0x39;
   DAT_20450eac = 0xfe;
   DAT_20450eb0 = 0x14;
@@ -3068,21 +3083,22 @@ void FUN_20109258(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010940c @ 2010940c  (816 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_fra_azerty_init
+ * kbd_layout_fra_azerty_init @ 2010940c  (816 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(3) plus the overrides of table 3 (FRA(AZ)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010940c @ 2010940c (816 bytes)
+// ===== kbd_layout_fra_azerty_init @ 2010940c (816 bytes)
 
-void FUN_2010940c(void)
+/* kbd_layout_base_fill(3) plus the overrides of table 3 (FRA(AZ)) [fact] */
+
+void kbd_layout_fra_azerty_init(void)
 
 {
   int iVar1;
   int iVar2;
   
-  FUN_20108bc8(3);
+  kbd_layout_base_fill(3);
   DAT_204514f0 = 0x27;
   DAT_204514f4 = 1;
   DAT_204514f8 = 0x30;
@@ -3213,18 +3229,19 @@ void FUN_2010940c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010973c @ 2010973c  (520 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_fra_qwerty_init
+ * kbd_layout_fra_qwerty_init @ 2010973c  (520 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(4) plus the overrides of table 4 (FRA(QW)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010973c @ 2010973c (520 bytes)
+// ===== kbd_layout_fra_qwerty_init @ 2010973c (520 bytes)
 
-void FUN_2010973c(void)
+/* kbd_layout_base_fill(4) plus the overrides of table 4 (FRA(QW)) [fact] */
+
+void kbd_layout_fra_qwerty_init(void)
 
 {
-  FUN_20108bc8(4);
+  kbd_layout_base_fill(4);
   DAT_20451aa8 = 0x39;
   DAT_20451aac = 0xfe;
   DAT_20451ab0 = 0x14;
@@ -3308,19 +3325,21 @@ void FUN_2010973c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20109944 @ 20109944  (464 bytes, 0 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_fra_qwerty_init_alt
+ * kbd_layout_fra_qwerty_init_alt @ 20109944  (464 bytes, 0 callers, export file 20106e0c_2010b360.c)
  * Purpose: Second builder of table 4 with no caller in the image: kbd_layout_base_fill(4) and a different override
  *     set [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20109944 @ 20109944 (464 bytes)
+// ===== kbd_layout_fra_qwerty_init_alt @ 20109944 (464 bytes)
 
-void FUN_20109944(void)
+/* Second builder of table 4 with no caller in the image: kbd_layout_base_fill(4) and a different
+   override set [fact] */
+
+void kbd_layout_fra_qwerty_init_alt(void)
 
 {
-  FUN_20108bc8(4);
+  kbd_layout_base_fill(4);
   DAT_20451aa8 = 0x39;
   DAT_20451aac = 0xfe;
   DAT_20451ab0 = 0x14;
@@ -3395,18 +3414,19 @@ void FUN_20109944(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20109b14 @ 20109b14  (516 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_deu_init
+ * kbd_layout_deu_init @ 20109b14  (516 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(5) plus the overrides of table 5 (DEU) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20109b14 @ 20109b14 (516 bytes)
+// ===== kbd_layout_deu_init @ 20109b14 (516 bytes)
 
-void FUN_20109b14(void)
+/* kbd_layout_base_fill(5) plus the overrides of table 5 (DEU) [fact] */
+
+void kbd_layout_deu_init(void)
 
 {
-  FUN_20108bc8(5);
+  kbd_layout_base_fill(5);
   DAT_204520a8 = 0x39;
   DAT_204520ac = 0xfe;
   DAT_204520b0 = 0x14;
@@ -3490,18 +3510,19 @@ void FUN_20109b14(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20109d24 @ 20109d24  (464 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_por_init
+ * kbd_layout_por_init @ 20109d24  (464 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(6) plus the overrides of table 6 (POR) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20109d24 @ 20109d24 (464 bytes)
+// ===== kbd_layout_por_init @ 20109d24 (464 bytes)
 
-void FUN_20109d24(void)
+/* kbd_layout_base_fill(6) plus the overrides of table 6 (POR) [fact] */
+
+void kbd_layout_por_init(void)
 
 {
-  FUN_20108bc8(6);
+  kbd_layout_base_fill(6);
   DAT_204526a8 = 0x39;
   DAT_204526ac = 0xfe;
   DAT_204526b0 = 0x14;
@@ -3576,18 +3597,19 @@ void FUN_20109d24(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20109ef4 @ 20109ef4  (408 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_por_br_init
+ * kbd_layout_por_br_init @ 20109ef4  (408 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(7) plus the overrides of table 7 (POR(BR)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20109ef4 @ 20109ef4 (408 bytes)
+// ===== kbd_layout_por_br_init @ 20109ef4 (408 bytes)
 
-void FUN_20109ef4(void)
+/* kbd_layout_base_fill(7) plus the overrides of table 7 (POR(BR)) [fact] */
+
+void kbd_layout_por_br_init(void)
 
 {
-  FUN_20108bc8(7);
+  kbd_layout_base_fill(7);
   DAT_20452ca8 = 0x39;
   DAT_20452cac = 0xfe;
   DAT_20452cb0 = 0x14;
@@ -3653,18 +3675,19 @@ void FUN_20109ef4(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010a08c @ 2010a08c  (488 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_esp_init
+ * kbd_layout_esp_init @ 2010a08c  (488 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(8) plus the overrides of table 8 (ESP) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010a08c @ 2010a08c (488 bytes)
+// ===== kbd_layout_esp_init @ 2010a08c (488 bytes)
 
-void FUN_2010a08c(void)
+/* kbd_layout_base_fill(8) plus the overrides of table 8 (ESP) [fact] */
+
+void kbd_layout_esp_init(void)
 
 {
-  FUN_20108bc8(8);
+  kbd_layout_base_fill(8);
   DAT_204532a8 = 0x39;
   DAT_204532ac = 0xfe;
   DAT_204532b0 = 0x14;
@@ -3742,18 +3765,19 @@ void FUN_2010a08c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010a274 @ 2010a274  (452 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_esp_la_init
+ * kbd_layout_esp_la_init @ 2010a274  (452 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(9) plus the overrides of table 9 (ESP(LA)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010a274 @ 2010a274 (452 bytes)
+// ===== kbd_layout_esp_la_init @ 2010a274 (452 bytes)
 
-void FUN_2010a274(void)
+/* kbd_layout_base_fill(9) plus the overrides of table 9 (ESP(LA)) [fact] */
+
+void kbd_layout_esp_la_init(void)
 
 {
-  FUN_20108bc8(9);
+  kbd_layout_base_fill(9);
   DAT_204538a8 = 0x39;
   DAT_204538ac = 0xfe;
   DAT_204538b0 = 0x14;
@@ -3828,18 +3852,19 @@ void FUN_2010a274(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010a438 @ 2010a438  (484 bytes, 1 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_layout_ita_init
+ * kbd_layout_ita_init @ 2010a438  (484 bytes, 1 callers, export file 20106e0c_2010b360.c)
  * Purpose: kbd_layout_base_fill(10) plus the overrides of table 10 (ITA) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010a438 @ 2010a438 (484 bytes)
+// ===== kbd_layout_ita_init @ 2010a438 (484 bytes)
 
-void FUN_2010a438(void)
+/* kbd_layout_base_fill(10) plus the overrides of table 10 (ITA) [fact] */
+
+void kbd_layout_ita_init(void)
 
 {
-  FUN_20108bc8(10);
+  kbd_layout_base_fill(10);
   DAT_20453ea8 = 0x39;
   DAT_20453eac = 0xfe;
   DAT_20453eb0 = 0x14;
@@ -3932,33 +3957,36 @@ undefined4 kbd_layout_tables_init(void)
   __aeabi_memclr4(&DAT_20450290,0xc000);
   __aeabi_memclr4(&DAT_2045c290,0x1200);
   vk_key_name();
-  FUN_201090a0();
-  FUN_201090a8();
-  FUN_20109258();
-  FUN_20109b14();
-  FUN_2010940c();
-  FUN_2010973c();
-  FUN_20109ef4();
-  FUN_20109d24();
-  FUN_2010a08c();
-  FUN_2010a274();
-  FUN_2010a438();
+  kbd_layout_jpn_init();
+  kbd_layout_us_init();
+  kbd_layout_uk_init();
+  kbd_layout_deu_init();
+  kbd_layout_fra_azerty_init();
+  kbd_layout_fra_qwerty_init();
+  kbd_layout_por_br_init();
+  kbd_layout_por_init();
+  kbd_layout_esp_init();
+  kbd_layout_esp_la_init();
+  kbd_layout_ita_init();
   return 0;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010a684 @ 2010a684  (212 bytes, 2 callers, export file 20106e0c_2010b360.c)
- * Name on the doc page: kbd_char_lookup
+ * kbd_char_lookup @ 2010a684  (212 bytes, 2 callers, export file 20106e0c_2010b360.c)
  * Purpose: (usage, modifier, layout): searches the 12-byte entries of layout table 0x20450290 + 0x600*layout,
  *     letters also match with the shift state, modifier 0xFE matches any; returns the character; usbkbd_get_char
  *     (layout 0x2080010E) and kbdtest_record call it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2010a684 @ 2010a684 (212 bytes)
+// ===== kbd_char_lookup @ 2010a684 (212 bytes)
 
-undefined4 FUN_2010a684(int param_1,int param_2,int param_3)
+/* (usage, modifier, layout): searches the 12-byte entries of layout table 0x20450290 +
+   0x600*layout, letters also match with the shift state, modifier 0xFE matches any; returns the
+   character; usbkbd_get_char (layout 0x2080010E) and kbdtest_record call it [fact] */
+
+undefined4 kbd_char_lookup(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -4072,7 +4100,7 @@ void kbdtest_record(undefined1 param_1)
 {
   int iVar1;
   
-  iVar1 = FUN_2010a684();
+  iVar1 = kbd_char_lookup();
   DAT_20811288 = vk_name_lookup(iVar1);
   DAT_20811282 = param_1;
   DAT_20811284 = iVar1;
@@ -4157,15 +4185,17 @@ undefined8 dspup_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (0 < (int)uVar1) {
     DAT_20800168 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_dspup);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_dspup);
     if ((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
       pcVar2 = dsp_debug_cmd;
       goto LAB_2010dd14;
@@ -4173,7 +4203,7 @@ undefined8 dspup_init(void)
   }
   pcVar2 = (code *)0x0;
 LAB_2010dd14:
-  return CONCAT44(local_10.flgatr,pcVar2);
+  return CONCAT44(local_10,pcVar2);
 }
 
 
@@ -4246,14 +4276,16 @@ uint uptest_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (((0 < (int)uVar1) &&
-      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,&ctsk_uptest), 0 < (int)uVar1)) &&
+      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uptest), 0 < (int)uVar1)) &&
      (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
     return 0x2010ec44;
   }
@@ -4326,12 +4358,14 @@ uint sdr_debug_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if ((int)uVar1 < 1) {
     pcVar2 = (code *)0x0;
   }
@@ -4760,12 +4794,12 @@ void * keycode_init(void)
   code *pcVar1;
   uint uVar2;
   
-  DAT_208001d0 = itron_acre_flg(0,&cflg_keycode);
+  DAT_208001d0 = itron_acre_flg(0,(byte *)&cflg_keycode);
   if ((int)DAT_208001d0 < 1) {
     pcVar1 = (code *)0x0;
   }
   else {
-    uVar2 = itron_acre_tsk(0,&ctsk_keycode);
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_keycode);
     if ((int)uVar2 < 1) {
       pcVar1 = (code *)0x0;
     }
@@ -5080,21 +5114,21 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
   
   FUN_201637d8(&DAT_20800208,0xff,param_3,param_4,param_4);
   FUN_201637d8(&DAT_2080020e,0xff);
-  DAT_208001f8 = itron_acre_flg(0,&cflg_renc);
-  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,&ctsk_renc), 0 < (int)uVar2)) &&
+  DAT_208001f8 = itron_acre_flg(0,(byte *)&cflg_renc);
+  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,(byte *)&ctsk_renc), 0 < (int)uVar2)) &&
      (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) {
     renc_mtu2_init();
-    uVar2 = itron_acre_tsk(0,&ctsk_ad_renc);
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_ad_renc);
     if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
       periodic_wakeup_register(uVar2,1);
-      uVar2 = itron_acre_tsk(0,&ctsk_detect_renc);
+      uVar2 = itron_acre_tsk(0,(byte *)&ctsk_detect_renc);
       if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
         periodic_wakeup_register(uVar2,2);
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 & 0xfcff;
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 | 0x300;
-        uVar2 = itron_acre_isr(0,&cisr_renc_irq4_isr);
+        uVar2 = itron_acre_isr(0,0x20165580);
         if (0 < (int)uVar2) {
           gic_enable_irq(0x24);
           return;
@@ -5121,7 +5155,7 @@ void pot_resend_all(void)
 {
   int iVar1;
   
-  iVar1 = FUN_201309b4();
+  iVar1 = power_key_flag_get();
   if (iVar1 == 0) {
     if ((DAT_208001e7 != '\0') || (DAT_208001e5 == '\x01')) {
       renc_rec_set(4,(byte)DAT_20800208);
@@ -5481,7 +5515,7 @@ void mainlink_send_key(uint param_1,byte param_2)
   puVar3 = &local_20;
   uStack_1c = 0;
   local_20 = CONCAT13((char)param_1,CONCAT12((char)(param_1 >> 8),CONCAT11(param_2,0xe0)));
-  iVar2 = FUN_20116dac();
+  iVar2 = full_mode_get();
   if (iVar2 == 0) goto LAB_20113460;
   if (DAT_20800495 == '\0') {
     if (local_20._1_1_ == '\0') {
@@ -5549,7 +5583,7 @@ LAB_2011343c:
 LAB_20113460:
   if (((local_20._1_1_ == '\x02') && (local_20._2_1_ == '\x03')) && (local_20._3_1_ == '\0')) {
     DAT_20800216 = 0;
-    FUN_2011722c();
+    power_key_on();
     return;
   }
   return;
@@ -5778,7 +5812,7 @@ void key_init(void)
   uint uVar2;
   
   key_set_power_level(1);
-  uVar1 = itron_acre_tsk(0,&ctsk_key);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_key);
   if ((0 < (int)uVar1) && (uVar2 = itron_sta_tsk(uVar1,0), uVar2 == 0)) {
     periodic_wakeup_register(uVar1,4);
     return;
@@ -5837,7 +5871,7 @@ void mouse_cursor_init(void)
   
   __aeabi_memclr4(&DAT_208d9c40,0x5a0);
   DAT_20800330 = FUN_2015f040(&DAT_208d9c40);
-  uVar1 = itron_acre_tsk(0,&ctsk_mouse_cursor_56e4);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_56e4);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,DAT_20800330);
     return;
@@ -5999,15 +6033,16 @@ void mouse_cursor_get_pos(void *param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20114920 @ 20114920  (12 bytes, 1 callers, export file 201148a4_20116334.c)
- * Name on the doc page: scif5_rxi_count_get
+ * scif5_rxi_count_get @ 20114920  (12 bytes, 1 callers, export file 201148a4_20116334.c)
  * Purpose: Returns scif5_uart.rxi_count; debug_overlay_draw shows it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20114920 @ 20114920 (12 bytes)
+// ===== scif5_rxi_count_get @ 20114920 (12 bytes)
 
-uint FUN_20114920(void)
+/* Returns scif5_uart.rxi_count; debug_overlay_draw shows it [fact] */
+
+uint scif5_rxi_count_get(void)
 
 {
   return scif5_uart.rxi_count;
@@ -6015,15 +6050,16 @@ uint FUN_20114920(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011492c @ 2011492c  (12 bytes, 1 callers, export file 201148a4_20116334.c)
- * Name on the doc page: scif4_rxi_count_get
+ * scif4_rxi_count_get @ 2011492c  (12 bytes, 1 callers, export file 201148a4_20116334.c)
  * Purpose: Returns scif4_uart.rxi_count; debug_overlay_draw shows it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2011492c @ 2011492c (12 bytes)
+// ===== scif4_rxi_count_get @ 2011492c (12 bytes)
 
-uint FUN_2011492c(void)
+/* Returns scif4_uart.rxi_count; debug_overlay_draw shows it [fact] */
+
+uint scif4_rxi_count_get(void)
 
 {
   return scif4_uart.rxi_count;
@@ -6091,17 +6127,19 @@ void uart4_send(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011503c @ 2011503c  (36 bytes, 0 callers, export file 201148a4_20116334.c)
- * Name on the doc page: mainlink_get_last21
+ * mainlink_get_last21 @ 2011503c  (36 bytes, 0 callers, export file 201148a4_20116334.c)
  * Purpose: (out): copies the last 0x21 frame payload and its two following bytes (g_ml.last21, +0x12, +0x13) to
  *     out, returns the got21 flag [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  * Also on: mainlink.md
  */
-// ===== FUN_2011503c @ 2011503c (36 bytes)
+// ===== mainlink_get_last21 @ 2011503c (36 bytes)
 
-byte FUN_2011503c(byte *param_1)
+/* (out): copies the last 0x21 frame payload and its two following bytes (g_ml.last21, +0x12, +0x13)
+   to out, returns the got21 flag [fact] */
+
+byte mainlink_get_last21(byte *param_1)
 
 {
   *param_1 = g_ml.last21;
@@ -6350,7 +6388,7 @@ void mainlink_renc_event(byte *param_1,undefined4 param_2,undefined4 param_3,und
     return;
   }
   local_10 = param_4;
-  iVar2 = FUN_20116dac();
+  iVar2 = full_mode_get();
   if (iVar2 == 0) {
     return;
   }
@@ -6516,15 +6554,16 @@ void usbhid_report_event(uint param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20116da0 @ 20116da0  (12 bytes, 4 callers, export file 20116368_20117728.c)
- * Name on the doc page: full_mode_set
+ * full_mode_set @ 20116da0  (12 bytes, 4 callers, export file 20116368_20117728.c)
  * Purpose: (v): 0x208003A4 = v (boot-rtos.md: force flag) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20116da0 @ 20116da0 (12 bytes)
+// ===== full_mode_set @ 20116da0 (12 bytes)
 
-void FUN_20116da0(undefined1 param_1)
+/* (v): 0x208003A4 = v (boot-rtos.md: force flag) [fact] */
+
+void full_mode_set(undefined1 param_1)
 
 {
   DAT_208003a4 = param_1;
@@ -6533,15 +6572,17 @@ void FUN_20116da0(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20116dac @ 20116dac  (12 bytes, 3 callers, export file 20116368_20117728.c)
- * Name on the doc page: full_mode_get
+ * full_mode_get @ 20116dac  (12 bytes, 3 callers, export file 20116368_20117728.c)
  * Purpose: Returns the full-mode flag 0x208003A4 (input.md: matrix and ADC keys scanned only while set) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20116dac @ 20116dac (12 bytes)
+// ===== full_mode_get @ 20116dac (12 bytes)
 
-undefined1 FUN_20116dac(void)
+/* Returns the full-mode flag 0x208003A4 (input.md: matrix and ADC keys scanned only while set)
+   [fact] */
+
+undefined1 full_mode_get(void)
 
 {
   return DAT_208003a4;
@@ -6549,23 +6590,27 @@ undefined1 FUN_20116dac(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20117030 @ 20117030  (152 bytes, 6 callers, export file 20116368_20117728.c)
- * Name on the doc page: display_power_down
+ * display_power_down @ 20117030  (152 bytes, 6 callers, export file 20116368_20117728.c)
  * Purpose: Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off, stops
  *     the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and QF lines, else
  *     switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20117030 @ 20117030 (152 bytes)
+// ===== display_power_down @ 20117030 (152 bytes)
 
-void FUN_20117030(void)
+/* Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off,
+   stops the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and
+   QF lines, else switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low [fact]
+    */
+
+void display_power_down(void)
 
 {
   uint uVar1;
   
   DAT_208003a0 = 0;
-  FUN_20116da0();
+  full_mode_set();
   led_set_one(0,0);
   led_set_mask(0);
   r_vdc5_stop_process(0,-1);
@@ -6589,16 +6634,18 @@ void FUN_20117030(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011722c @ 2011722c  (56 bytes, 1 callers, export file 20116368_20117728.c)
- * Name on the doc page: power_key_on
+ * power_key_on @ 2011722c  (56 bytes, 1 callers, export file 20116368_20117728.c)
  * Purpose: Power key: in standby sets 0x208003A0 = 1 (full mode) and clears 0x208003A1, else sets 0x20800493
  *     (input.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2011722c @ 2011722c (56 bytes)
+// ===== power_key_on @ 2011722c (56 bytes)
 
-void FUN_2011722c(void)
+/* Power key: in standby sets 0x208003A0 = 1 (full mode) and clears 0x208003A1, else sets 0x20800493
+   (input.md) [fact] */
+
+void power_key_on(void)
 
 {
   if (DAT_208003a0 != '\0') {
@@ -6612,16 +6659,18 @@ void FUN_2011722c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011727c @ 2011727c  (12 bytes, 5 callers, export file 20116368_20117728.c)
- * Name on the doc page: radio_on_flag_get
+ * radio_on_flag_get @ 2011727c  (12 bytes, 5 callers, export file 20116368_20117728.c)
  * Purpose: Returns the radio-on flag 0x208003A0 (radio_on_flag_set); mainlink_wait_status, gui_main_loop and
  *     task_mainlink_dispatch read it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2011727c @ 2011727c (12 bytes)
+// ===== radio_on_flag_get @ 2011727c (12 bytes)
 
-undefined1 FUN_2011727c(void)
+/* Returns the radio-on flag 0x208003A0 (radio_on_flag_set); mainlink_wait_status, gui_main_loop and
+   task_mainlink_dispatch read it [fact] */
+
+undefined1 radio_on_flag_get(void)
 
 {
   return DAT_208003a0;
@@ -6629,15 +6678,16 @@ undefined1 FUN_2011727c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20117288 @ 20117288  (12 bytes, 1 callers, export file 20116368_20117728.c)
- * Name on the doc page: radio_on_flag_set
+ * radio_on_flag_set @ 20117288  (12 bytes, 1 callers, export file 20116368_20117728.c)
  * Purpose: (v): 0x208003A0 = v; task_mainlink_dispatch sets 1 for CAT PS1 (mainlink.md 0x60) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20117288 @ 20117288 (12 bytes)
+// ===== radio_on_flag_set @ 20117288 (12 bytes)
 
-void FUN_20117288(undefined1 param_1)
+/* (v): 0x208003A0 = v; task_mainlink_dispatch sets 1 for CAT PS1 (mainlink.md 0x60) [fact] */
+
+void radio_on_flag_set(undefined1 param_1)
 
 {
   DAT_208003a0 = param_1;
@@ -6646,18 +6696,20 @@ void FUN_20117288(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_init @ 20120224  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
- * Name on the doc page: userdef_riic0_wait_bus_master
+ * userdef_riic0_wait_bus_master @ 20120224  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
  * Purpose: RIIC ch0 bus-busy wait (was `riic_init`; the RIIC driver is in peripherals.md)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
  * Also on: peripherals.md
  */
-// ===== riic_init @ 20120224 (72 bytes)
+// ===== userdef_riic0_wait_bus_master @ 20120224 (72 bytes)
 
-/* RIIC 0xFCFEE000 (touch controller TSC2003) */
+/* (mode): spins on RIIC0CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) [fact]; was
+   riic_init, but it opens nothing (the channel open is userdef_riic0_init 0x2011FC8C); Renesas
+   RZ/A1H RIIC sample riic_userdef.c [inference: same call structure, per-channel flag bytes and
+   mode arguments] */
 
-void riic_init(int param_1)
+void userdef_riic0_wait_bus_master(int param_1)
 
 {
   byte bVar1;
@@ -6676,17 +6728,20 @@ void riic_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120de4 @ 20120de4  (184 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: usbkbd_screen_settings
+ * usbkbd_screen_settings @ 20120de4  (184 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: Every GUI frame (gui_input_poll): on the keyboard screen 0x50 with a 0x24 settings frame, sets the
  *     layout from settings byte 1 (usbkbd_set_layout) and CapsLock by the text mode of payload byte 0 (table
  *     0x20801D44, usbkbd_capslock_for_mode); on other screens usbkbd_reset [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20120de4 @ 20120de4 (184 bytes)
+// ===== usbkbd_screen_settings @ 20120de4 (184 bytes)
 
-void FUN_20120de4(void)
+/* Every GUI frame (gui_input_poll): on the keyboard screen 0x50 with a 0x24 settings frame, sets
+   the layout from settings byte 1 (usbkbd_set_layout) and CapsLock by the text mode of payload byte
+   0 (table 0x20801D44, usbkbd_capslock_for_mode); on other screens usbkbd_reset [fact] */
+
+void usbkbd_screen_settings(void)
 
 {
   byte bVar1;
@@ -7151,15 +7206,17 @@ void touch_cal_step(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201309b4 @ 201309b4  (12 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: power_key_flag_get
+ * power_key_flag_get @ 201309b4  (12 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: Returns 0x20800493, which power_key_on sets while the radio is on; pot_resend_all reads it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201309b4 @ 201309b4 (12 bytes)
+// ===== power_key_flag_get @ 201309b4 (12 bytes)
 
-undefined1 FUN_201309b4(void)
+/* Returns 0x20800493, which power_key_on sets while the radio is on; pot_resend_all reads it [fact]
+    */
+
+undefined1 power_key_flag_get(void)
 
 {
   return DAT_20800493;
@@ -7167,17 +7224,20 @@ undefined1 FUN_201309b4(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20137fac @ 20137fac  (1124 bytes, 1 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_enumerate_config
+ * usbh_enumerate_config @ 20137fac  (1124 bytes, 1 callers, export file 20137904_20139658.c)
  * Purpose: Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the configuration and
  *     walks its interfaces and endpoints to set up pipes and the class driver (FUN_20137eac,
  *     usbh_open_endpoint_pipes) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20137fac @ 20137fac (1124 bytes)
+// ===== usbh_enumerate_config @ 20137fac (1124 bytes)
 
-undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
+/* Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the
+   configuration and walks its interfaces and endpoints to set up pipes and the class driver
+   (FUN_20137eac, usbh_open_endpoint_pipes) [fact for the calls] */
+
+undefined4 usbh_enumerate_config(uint param_1,int param_2,undefined4 *param_3)
 
 {
   char cVar1;
@@ -7312,7 +7372,7 @@ undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
                          ((sVar8 != 0x56e || sVar9 != 0x134 || (unaff_r7 == 1)))))) {
 LAB_20138360:
                   *(uint *)(iVar10 + -0xb4) = unaff_r7;
-                  puVar16 = (undefined4 *)FUN_2013a90c(param_3,pbVar13);
+                  puVar16 = (undefined4 *)usbh_open_endpoint_pipes(param_3,pbVar13);
                   if (puVar16 == (undefined4 *)0x0) {
                     iVar21 = 1;
                     if (1 < iVar11) {
@@ -7347,16 +7407,18 @@ LAB_20138360:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201385b4 @ 201385b4  (172 bytes, 2 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_ports_init
+ * usbh_ports_init @ 201385b4  (172 bytes, 2 callers, export file 20137904_20139658.c)
  * Purpose: For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0.., starts the
  *     two port tasks and FUN_2013b2b4 (boot-rtos.md init list) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201385b4 @ 201385b4 (172 bytes)
+// ===== usbh_ports_init @ 201385b4 (172 bytes)
 
-undefined4 FUN_201385b4(void)
+/* For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0..,
+   starts the two port tasks and FUN_2013b2b4 (boot-rtos.md init list) [fact] */
+
+undefined4 usbh_ports_init(void)
 
 {
   uint uVar1;
@@ -7501,16 +7563,18 @@ void usbh_control_req(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013927c @ 2013927c  (180 bytes, 2 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_pipe_write_buf
+ * usbh_pipe_write_buf @ 2013927c  (180 bytes, 2 callers, export file 20137904_20139658.c)
  * Purpose: (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet when
  *     needed [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013927c @ 2013927c (180 bytes)
+// ===== usbh_pipe_write_buf @ 2013927c (180 bytes)
 
-int FUN_2013927c(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet
+   when needed [fact for the calls] */
+
+int usbh_pipe_write_buf(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -7551,16 +7615,18 @@ int FUN_2013927c(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139330 @ 20139330  (20 bytes, 2 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_buf_needs_bounce
+ * usbh_buf_needs_bounce @ 20139330  (20 bytes, 2 callers, export file 20137904_20139658.c)
  * Purpose: (addr): -1 when addr has a bit of the mask 0x20808AB8 set (the buffer must be copied through the pipe
  *     buffer), else 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139330 @ 20139330 (20 bytes)
+// ===== usbh_buf_needs_bounce @ 20139330 (20 bytes)
 
-undefined4 FUN_20139330(uint param_1)
+/* (addr): -1 when addr has a bit of the mask 0x20808AB8 set (the buffer must be copied through the
+   pipe buffer), else 0 [fact] */
+
+undefined4 usbh_buf_needs_bounce(uint param_1)
 
 {
   undefined4 uVar1;
@@ -7574,16 +7640,18 @@ undefined4 FUN_20139330(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139344 @ 20139344  (144 bytes, 1 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_pipe_write
+ * usbh_pipe_write @ 20139344  (144 bytes, 1 callers, export file 20137904_20139658.c)
  * Purpose: (pipe, buf, len): when the buffer needs a bounce (usbh_buf_needs_bounce) copies it in 0x2000-byte pieces
  *     into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139344 @ 20139344 (144 bytes)
+// ===== usbh_pipe_write @ 20139344 (144 bytes)
 
-int FUN_20139344(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): when the buffer needs a bounce (usbh_buf_needs_bounce) copies it in 0x2000-byte
+   pieces into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf [fact] */
+
+int usbh_pipe_write(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -7591,13 +7659,13 @@ int FUN_20139344(int param_1,int param_2,int param_3)
   int iVar3;
   
   iVar3 = 0;
-  iVar1 = FUN_20139330(param_2);
+  iVar1 = usbh_buf_needs_bounce(param_2);
   iVar2 = 0;
   if (iVar1 != 0) {
     iVar2 = param_3;
   }
   if (iVar1 == 0 || param_3 == 0) {
-    iVar3 = FUN_2013927c(param_1,param_2,param_3);
+    iVar3 = usbh_pipe_write_buf(param_1,param_2,param_3);
   }
   else if (-1 < iVar2) {
     do {
@@ -7606,7 +7674,7 @@ int FUN_20139344(int param_1,int param_2,int param_3)
         iVar2 = 0x2000;
       }
       memcpy(*(undefined4 *)(param_1 + 0x48),param_2 + iVar3,iVar2);
-      iVar2 = FUN_2013927c(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
+      iVar2 = usbh_pipe_write_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar2 < 0) {
         return iVar2;
       }
@@ -7619,16 +7687,18 @@ int FUN_20139344(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201393d4 @ 201393d4  (444 bytes, 2 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_pipe_read_buf
+ * usbh_pipe_read_buf @ 201393d4  (444 bytes, 2 callers, export file 20137904_20139658.c)
  * Purpose: (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on the port
  *     event flag, under the port semaphore [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201393d4 @ 201393d4 (444 bytes)
+// ===== usbh_pipe_read_buf @ 201393d4 (444 bytes)
 
-int FUN_201393d4(int param_1,undefined4 param_2,int param_3)
+/* (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on
+   the port event flag, under the port semaphore [fact for the calls] */
+
+int usbh_pipe_read_buf(int param_1,undefined4 param_2,int param_3)
 
 {
   int iVar1;
@@ -7699,16 +7769,18 @@ LAB_2013950c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139590 @ 20139590  (148 bytes, 1 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_pipe_read
+ * usbh_pipe_read @ 20139590  (148 bytes, 1 callers, export file 20137904_20139658.c)
  * Purpose: (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces (usbh_pipe_read_buf) and
  *     copies out, stopping at a short packet [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139590 @ 20139590 (148 bytes)
+// ===== usbh_pipe_read @ 20139590 (148 bytes)
 
-int FUN_20139590(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces
+   (usbh_pipe_read_buf) and copies out, stopping at a short packet [fact] */
+
+int usbh_pipe_read(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -7718,9 +7790,9 @@ int FUN_20139590(int param_1,int param_2,int param_3)
   bool bVar5;
   
   iVar4 = 0;
-  iVar2 = FUN_20139330(param_2);
+  iVar2 = usbh_buf_needs_bounce(param_2);
   if (iVar2 == 0) {
-    iVar4 = FUN_201393d4(param_1,param_2,param_3);
+    iVar4 = usbh_pipe_read_buf(param_1,param_2,param_3);
   }
   else if (0 < param_3) {
     do {
@@ -7728,7 +7800,7 @@ int FUN_20139590(int param_1,int param_2,int param_3)
       if (0x2000 < param_3) {
         iVar2 = 0x2000;
       }
-      iVar3 = FUN_201393d4(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
+      iVar3 = usbh_pipe_read_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar3 < 0) {
         return iVar3;
       }
@@ -7748,42 +7820,47 @@ int FUN_20139590(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139624 @ 20139624  (48 bytes, 2 callers, export file 20137904_20139658.c)
- * Name on the doc page: usbh_pipe_xfer
+ * usbh_pipe_xfer @ 20139624  (48 bytes, 2 callers, export file 20137904_20139658.c)
  * Purpose: (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read uses it
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139624 @ 20139624 (48 bytes)
+// ===== usbh_pipe_xfer @ 20139624 (48 bytes)
 
-void FUN_20139624(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read
+   uses it [fact] */
+
+void usbh_pipe_xfer(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   if (param_2 == 0) {
     return;
   }
   if (*(int *)(param_2 + 0x18) == 0) {
-    FUN_20139344(param_2,param_3,param_4);
+    usbh_pipe_write(param_2,param_3,param_4);
     return;
   }
-  FUN_20139590();
+  usbh_pipe_read();
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201396b0 @ 201396b0  (488 bytes, 2 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_port_isr
+ * usbh_port_isr @ 201396b0  (488 bytes, 2 callers, export file 201396ac_2013b544.c)
  * Purpose: (port): USB interrupt body behind usbh0_isr / usbh1_isr (peripherals.md: GIC 73/74 ->
  *     usbh_port_isr(port)): reads and clears the status, marks pipe 0 done and sets the port event flags 0x2090B674
  *     / 680 / 67C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_201396b0 @ 201396b0 (488 bytes)
+// ===== usbh_port_isr @ 201396b0 (488 bytes)
 
-void FUN_201396b0(int param_1,int param_2)
+/* (port): USB interrupt body behind usbh0_isr / usbh1_isr (peripherals.md: GIC 73/74 ->
+   usbh_port_isr(port)): reads and clears the status, marks pipe 0 done and sets the port event
+   flags 0x2090B674 / 680 / 67C [fact] */
+
+void usbh_port_isr(int param_1,int param_2)
 
 {
   int iVar1;
@@ -7879,17 +7956,20 @@ void FUN_201396b0(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139d78 @ 20139d78  (396 bytes, 0 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_port_task
+ * usbh_port_task @ 20139d78  (396 bytes, 0 callers, export file 201396ac_2013b544.c)
  * Purpose: (port): port task: waits on the port event flag, handles attach (200-tick debounce, bus reset,
  *     enumeration events) and detach, then the pipe, control and class events (FUN_201398a0, FUN_20139c68,
  *     FUN_20139970) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139d78 @ 20139d78 (396 bytes)
+// ===== usbh_port_task @ 20139d78 (396 bytes)
 
-void FUN_20139d78(int param_1)
+/* (port): port task: waits on the port event flag, handles attach (200-tick debounce, bus reset,
+   enumeration events) and detach, then the pipe, control and class events (FUN_201398a0,
+   FUN_20139c68, FUN_20139970) [fact for the calls] */
+
+void usbh_port_task(int param_1)
 
 {
   void *pvVar1;
@@ -7953,16 +8033,19 @@ void FUN_20139d78(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20139f6c @ 20139f6c  (548 bytes, 1 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_brdy_pipe_read
+ * usbh_brdy_pipe_read @ 20139f6c  (548 bytes, 1 callers, export file 201396ac_2013b544.c)
  * Purpose: (port, pipe): BRDY on a receive pipe: reads the FIFO into the pipe buffer under the port semaphore,
  *     completes the transfer on a short packet and sets the pipe's event bit [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_20139f6c @ 20139f6c (548 bytes)
+// ===== usbh_brdy_pipe_read @ 20139f6c (548 bytes)
 
-undefined4 FUN_20139f6c(int param_1,int param_2)
+/* (port, pipe): BRDY on a receive pipe: reads the FIFO into the pipe buffer under the port
+   semaphore, completes the transfer on a short packet and sets the pipe's event bit [fact for the
+   calls] */
+
+undefined4 usbh_brdy_pipe_read(int param_1,int param_2)
 
 {
   bool bVar1;
@@ -8063,16 +8146,18 @@ LAB_2013a160:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013a198 @ 2013a198  (508 bytes, 1 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_brdy_pipe_write
+ * usbh_brdy_pipe_write @ 2013a198  (508 bytes, 1 callers, export file 201396ac_2013b544.c)
  * Purpose: (port, pipe): BRDY on a send pipe: writes the next packet from the pipe buffer into the FIFO under the
  *     port semaphore [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013a198 @ 2013a198 (508 bytes)
+// ===== usbh_brdy_pipe_write @ 2013a198 (508 bytes)
 
-undefined4 FUN_2013a198(int param_1,int param_2)
+/* (port, pipe): BRDY on a send pipe: writes the next packet from the pipe buffer into the FIFO
+   under the port semaphore [fact for the calls] */
+
+undefined4 usbh_brdy_pipe_write(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -8162,16 +8247,18 @@ LAB_2013a368:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013a394 @ 2013a394  (176 bytes, 1 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_brdy_handler
+ * usbh_brdy_handler @ 2013a394  (176 bytes, 1 callers, export file 201396ac_2013b544.c)
  * Purpose: (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to usbh_brdy_pipe_read (read) or
  *     usbh_brdy_pipe_write (write); then re-enables BRDYE in INTENB0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013a394 @ 2013a394 (176 bytes)
+// ===== usbh_brdy_handler @ 2013a394 (176 bytes)
 
-undefined4 FUN_2013a394(int param_1)
+/* (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to usbh_brdy_pipe_read (read) or
+   usbh_brdy_pipe_write (write); then re-enables BRDYE in INTENB0 [fact] */
+
+undefined4 usbh_brdy_handler(int param_1)
 
 {
   ushort uVar1;
@@ -8194,10 +8281,10 @@ undefined4 FUN_2013a394(int param_1)
           bVar2 = true;
           if (*(int *)(iVar4 + 0x94) == 0) {
             *(undefined4 *)(iVar4 + 0x84) = 0;
-            FUN_20139f6c(param_1,iVar5);
+            usbh_brdy_pipe_read(param_1,iVar5);
           }
           else {
-            FUN_2013a198(param_1,iVar5);
+            usbh_brdy_pipe_write(param_1,iVar5);
           }
         }
       }
@@ -8213,15 +8300,16 @@ undefined4 FUN_2013a394(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013a444 @ 2013a444  (120 bytes, 0 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_brdy_task
+ * usbh_brdy_task @ 2013a444  (120 bytes, 0 callers, export file 201396ac_2013b544.c)
  * Purpose: (port): waits on the BRDY event flag and runs usbh_brdy_handler for the port [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013a444 @ 2013a444 (120 bytes)
+// ===== usbh_brdy_task @ 2013a444 (120 bytes)
 
-void FUN_2013a444(int param_1)
+/* (port): waits on the BRDY event flag and runs usbh_brdy_handler for the port [fact] */
+
+void usbh_brdy_task(int param_1)
 
 {
   void *pvVar1;
@@ -8241,24 +8329,27 @@ void FUN_2013a444(int param_1)
       itron_dly_tsk(200);
     }
     if ((local_4 & 1) != 0) {
-      FUN_2013a394(&DAT_2090b660 + param_1 * 0x4d8);
+      usbh_brdy_handler(&DAT_2090b660 + param_1 * 0x4d8);
     }
   } while( true );
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013a90c @ 2013a90c  (120 bytes, 1 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_open_endpoint_pipes
+ * usbh_open_endpoint_pipes @ 2013a90c  (120 bytes, 1 callers, export file 201396ac_2013b544.c)
  * Purpose: (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and sets
  *     it up (FUN_2013a690) [fact for the ranges]; on the RZ/A1H USB controller pipes 6..9 are the interrupt pipes
  *     [inference]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013a90c @ 2013a90c (120 bytes)
+// ===== usbh_open_endpoint_pipes @ 2013a90c (120 bytes)
 
-int FUN_2013a90c(int param_1,int param_2)
+/* (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and
+   sets it up (FUN_2013a690) [fact for the ranges]; on the RZ/A1H USB controller pipes 6..9 are the
+   interrupt pipes [inference] */
+
+int usbh_open_endpoint_pipes(int param_1,int param_2)
 
 {
   int iVar1;
@@ -8286,15 +8377,16 @@ int FUN_2013a90c(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013a9d4 @ 2013a9d4  (20 bytes, 2 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_port_ctx
+ * usbh_port_ctx @ 2013a9d4  (20 bytes, 2 callers, export file 201396ac_2013b544.c)
  * Purpose: (port): 0x2090B660 + 0x4D8 * port, the port context [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013a9d4 @ 2013a9d4 (20 bytes)
+// ===== usbh_port_ctx @ 2013a9d4 (20 bytes)
 
-undefined * FUN_2013a9d4(int param_1)
+/* (port): 0x2090B660 + 0x4D8 * port, the port context [fact] */
+
+undefined * usbh_port_ctx(int param_1)
 
 {
   return &DAT_2090b660 + param_1 * 0x4d8;
@@ -8302,16 +8394,18 @@ undefined * FUN_2013a9d4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ab9c @ 2013ab9c  (104 bytes, 2 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_port_open
+ * usbh_port_open @ 2013ab9c  (104 bytes, 2 callers, export file 201396ac_2013b544.c)
  * Purpose: (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the
  *     controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013ab9c @ 2013ab9c (104 bytes)
+// ===== usbh_port_open @ 2013ab9c (104 bytes)
 
-undefined4 FUN_2013ab9c(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the
+   controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 [fact for the calls] */
+
+undefined4 usbh_port_open(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -8340,17 +8434,20 @@ undefined4 FUN_2013ab9c(uint param_1,undefined4 param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013afa4 @ 2013afa4  (660 bytes, 1 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_enumerate_device
+ * usbh_enumerate_device @ 2013afa4  (660 bytes, 1 callers, export file 201396ac_2013b544.c)
  * Purpose: (task ctx, event): device attach: bus reset (FUN_2013a4bc), GET_DESCRIPTOR device (8 bytes),
  *     SET_ADDRESS, GET_DESCRIPTOR device (18 bytes) and configuration, then usbh_enumerate_config [fact for the
  *     request sequence]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013afa4 @ 2013afa4 (660 bytes)
+// ===== usbh_enumerate_device @ 2013afa4 (660 bytes)
 
-undefined4 FUN_2013afa4(undefined4 param_1,uint param_2)
+/* (task ctx, event): device attach: bus reset (FUN_2013a4bc), GET_DESCRIPTOR device (8 bytes),
+   SET_ADDRESS, GET_DESCRIPTOR device (18 bytes) and configuration, then usbh_enumerate_config [fact
+   for the request sequence] */
+
+undefined4 usbh_enumerate_device(undefined4 param_1,uint param_2)
 
 {
   byte bVar1;
@@ -8386,7 +8483,7 @@ undefined4 FUN_2013afa4(undefined4 param_1,uint param_2)
   uVar12 = (param_2 & 0xffff) >> 0xc;
   uVar11 = (param_2 & 0xfff) >> 8;
   uVar9 = (param_2 & 0xff) >> 4;
-  uVar4 = FUN_2013a9d4();
+  uVar4 = usbh_port_ctx();
   iVar7 = 0;
   do {
     iVar8 = local_30 * 0x34 + 0x2091c220 + iVar7 * 0x34;
@@ -8456,7 +8553,7 @@ LAB_2013b114:
                 iVar8 = iVar8 - (uint)bVar1;
                 pbVar6 = pbVar6 + bVar1;
               } while (0 < iVar8);
-              iVar8 = FUN_20137fac(local_30,uVar4,iVar7);
+              iVar8 = usbh_enumerate_config(local_30,uVar4,iVar7);
               if (iVar8 == 0) {
                 *(code **)(iVar7 + 0x28) = FUN_20138410;
               }
@@ -8479,16 +8576,18 @@ LAB_2013b114:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013b238 @ 2013b238  (124 bytes, 0 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_enum_task
+ * usbh_enum_task @ 2013b238  (124 bytes, 0 callers, export file 201396ac_2013b544.c)
  * Purpose: (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs
  *     usbh_enumerate_device for each; 500-tick retry on a queue error [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013b238 @ 2013b238 (124 bytes)
+// ===== usbh_enum_task @ 2013b238 (124 bytes)
 
-void FUN_2013b238(int param_1)
+/* (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs
+   usbh_enumerate_device for each; 500-tick retry on a queue error [fact] */
+
+void usbh_enum_task(int param_1)
 
 {
   uint uVar1;
@@ -8508,9 +8607,9 @@ void FUN_2013b238(int param_1)
     uVar1 = auStack_8[0] & 0xffff;
     uVar2 = auStack_8[0] & 0xfff;
     uVar6 = auStack_8[0] & 0xf;
-    uVar5 = FUN_2013a9d4(auStack_8[0] >> 0x18);
+    uVar5 = usbh_port_ctx(auStack_8[0] >> 0x18);
     if (uVar6 == 6) {
-      FUN_2013afa4(param_1 * 8 + 0x2091c210,uVar3);
+      usbh_enumerate_device(param_1 * 8 + 0x2091c210,uVar3);
     }
     else if (uVar6 == 7) {
       FUN_2013aea4(uVar5,uVar1 >> 0xc,uVar2 >> 8);
@@ -8694,24 +8793,26 @@ void usbh_get_hub_descriptor(undefined4 param_1,undefined4 param_2,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013b4cc @ 2013b4cc  (88 bytes, 2 callers, export file 201396ac_2013b544.c)
- * Name on the doc page: usbh_hw_init
+ * usbh_hw_init @ 2013b4cc  (88 bytes, 2 callers, export file 201396ac_2013b544.c)
  * Purpose: Registers the USBI0/USBI1 handlers (GIC 73/74) and calls usbh_port_open for USB0 (SYSCFG0 0xE8010000)
  *     and USB1 (peripherals.md: host mode on both ports) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013b4cc @ 2013b4cc (88 bytes)
+// ===== usbh_hw_init @ 2013b4cc (88 bytes)
 
-void FUN_2013b4cc(void)
+/* Registers the USBI0/USBI1 handlers (GIC 73/74) and calls usbh_port_open for USB0 (SYSCFG0
+   0xE8010000) and USB1 (peripherals.md: host mode on both ports) [fact] */
+
+void usbh_hw_init(void)
 
 {
   gic_def_inh(0x49,0x204201b8);
   gic_enable_irq(0x49);
-  FUN_2013ab9c(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
+  usbh_port_open(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
   gic_def_inh(0x4a,0x204201c4);
   gic_enable_irq(0x4a);
-  FUN_2013ab9c(1,&USB_SYSCFG0_1,2,&DAT_20808ac0);
+  usbh_port_open(1,&USB_SYSCFG0_1,2,&DAT_20808ac0);
   return;
 }
 
@@ -8735,19 +8836,20 @@ undefined4 usbh_loc_cpu(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013b58c @ 2013b58c  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbh0_isr
+ * usbh0_isr @ 2013b58c  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in
  *     0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  * Also on: peripherals.md
  */
-// ===== FUN_2013b58c @ 2013b58c (12 bytes)
+// ===== usbh0_isr @ 2013b58c (12 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in
+   0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C [fact] */
 
-void FUN_2013b58c(void)
+void usbh0_isr(void)
 
 {
   word wVar1;
@@ -8839,16 +8941,17 @@ void FUN_2013b58c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013b598 @ 2013b598  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbh1_isr
+ * usbh1_isr @ 2013b598  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) [fact for the vector]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  * Also on: peripherals.md
  */
-// ===== FUN_2013b598 @ 2013b598 (12 bytes)
+// ===== usbh1_isr @ 2013b598 (12 bytes)
 
-void FUN_2013b598(void)
+/* USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) [fact for the vector] */
+
+void usbh1_isr(void)
 
 {
   word wVar1;
@@ -8971,16 +9074,18 @@ uint usbh_hid_init(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013b97c @ 2013b97c  (56 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbh_hid_class_init
+ * usbh_hid_class_init @ 2013b97c  (56 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on error
  *     (boot-rtos.md init list) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013b97c @ 2013b97c (56 bytes)
+// ===== usbh_hid_class_init @ 2013b97c (56 bytes)
 
-undefined4 FUN_2013b97c(void)
+/* Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on
+   error (boot-rtos.md init list) [fact] */
+
+undefined4 usbh_hid_class_init(void)
 
 {
   uint uVar1;
@@ -8989,7 +9094,7 @@ undefined4 FUN_2013b97c(void)
   
   __aeabi_memclr4(&DAT_2091c568,0x610);
   uVar1 = usbh_hid_init((int *)&DAT_2091c568);
-  if (((int)uVar1 < 0) || (iVar2 = FUN_2013c6bc(), iVar2 < 0)) {
+  if (((int)uVar1 < 0) || (iVar2 = usbhid_class_register(), iVar2 < 0)) {
     uVar3 = 0xffffffff;
   }
   else {
@@ -9000,16 +9105,18 @@ undefined4 FUN_2013b97c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ba44 @ 2013ba44  (104 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_device_stop
+ * usbhid_device_stop @ 2013ba44  (104 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (slot): stops a running HID device: clears its run flag, cancels the pipe (usbh_pipe_cancel) and waits
  *     up to 1 s for the task to end [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013ba44 @ 2013ba44 (104 bytes)
+// ===== usbhid_device_stop @ 2013ba44 (104 bytes)
 
-undefined4 FUN_2013ba44(int param_1)
+/* (slot): stops a running HID device: clears its run flag, cancels the pipe (usbh_pipe_cancel) and
+   waits up to 1 s for the task to end [fact] */
+
+undefined4 usbhid_device_stop(int param_1)
 
 {
   undefined4 uVar1;
@@ -9021,7 +9128,8 @@ undefined4 FUN_2013ba44(int param_1)
   }
   else {
     *(undefined4 *)(&DAT_2091c57c + param_1) = 0;
-    FUN_2013c798(*(undefined4 *)(&DAT_2091c56c + param_1),*(undefined4 *)(&DAT_2091c574 + param_1));
+    usbh_pipe_cancel(*(undefined4 *)(&DAT_2091c56c + param_1),
+                     *(undefined4 *)(&DAT_2091c574 + param_1));
     iVar2 = 0;
     do {
       if (*(int *)(&DAT_2091c580 + param_1) == 0) break;
@@ -9094,15 +9202,16 @@ LAB_2013bb6c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013bbb4 @ 2013bbb4  (124 bytes, 3 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: hid_report_bits_get
+ * hid_report_bits_get @ 2013bbb4  (124 bytes, 3 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (report, bit offset, bit count): little-endian bit-field extract from a HID report [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013bbb4 @ 2013bbb4 (124 bytes)
+// ===== hid_report_bits_get @ 2013bbb4 (124 bytes)
 
-uint FUN_2013bbb4(int param_1,uint param_2,uint param_3)
+/* (report, bit offset, bit count): little-endian bit-field extract from a HID report [fact] */
+
+uint hid_report_bits_get(int param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -9134,16 +9243,18 @@ uint FUN_2013bbb4(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013bc30 @ 2013bc30  (240 bytes, 15 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: hid_item_data
+ * hid_item_data @ 2013bc30  (240 bytes, 15 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (*pos, *out, signed): reads the data of one short HID item (size code 0/1/2/4 bytes from the low two
  *     bits of the prefix), sign-extends when asked, advances the pointer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013bc30 @ 2013bc30 (240 bytes)
+// ===== hid_item_data @ 2013bc30 (240 bytes)
 
-void FUN_2013bc30(int *param_1,uint *param_2,int param_3)
+/* (*pos, *out, signed): reads the data of one short HID item (size code 0/1/2/4 bytes from the low
+   two bits of the prefix), sign-extends when asked, advances the pointer [fact] */
+
+void hid_item_data(int *param_1,uint *param_2,int param_3)
 
 {
   ushort uVar1;
@@ -9192,17 +9303,20 @@ void FUN_2013bc30(int *param_1,uint *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013bd20 @ 2013bd20  (1540 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: hid_report_desc_parse
+ * hid_report_desc_parse @ 2013bd20  (1540 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (dev, desc): walks a HID report descriptor item by item (hid_item_data) and records the report id, usage
  *     and the bit offsets and sizes of the fields the driver uses (buttons, X/Y, wheel, keys) [fact for the item
  *     walk; inference for the field roles from usbhid_device_task]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013bd20 @ 2013bd20 (1540 bytes)
+// ===== hid_report_desc_parse @ 2013bd20 (1540 bytes)
 
-undefined4 FUN_2013bd20(int param_1,byte *param_2,int param_3)
+/* (dev, desc): walks a HID report descriptor item by item (hid_item_data) and records the report
+   id, usage and the bit offsets and sizes of the fields the driver uses (buttons, X/Y, wheel, keys)
+   [fact for the item walk; inference for the field roles from usbhid_device_task] */
+
+undefined4 hid_report_desc_parse(int param_1,byte *param_2,int param_3)
 
 {
   byte bVar1;
@@ -9264,7 +9378,7 @@ undefined4 FUN_2013bd20(int param_1,byte *param_2,int param_3)
     do {
       bVar1 = *local_40 & 0xfc;
       if (bVar1 == 0x80) {
-        FUN_2013bc30(&local_40,&local_3c,0);
+        hid_item_data(&local_40,&local_3c,0);
         if ((*(int *)(param_1 + 0x20) < 0) || (local_44 != iVar6)) goto LAB_2013c034;
         if (local_48 == 1) {
           if (local_3c == 2 || local_3c == 6) {
@@ -9349,7 +9463,7 @@ LAB_2013c034:
       }
       else if (bVar1 < 0x80) {
         if (bVar1 == 0x18) {
-          FUN_2013bc30(&local_40,&local_60,0);
+          hid_item_data(&local_40,&local_60,0);
           if ((-1 < local_60) && (iVar3 = local_60, -1 < local_5c)) {
             for (; iVar3 <= local_5c; iVar3 = iVar3 + 1) {
               if (iVar2 < 0x100) {
@@ -9366,10 +9480,10 @@ LAB_2013c034:
         }
         else if (bVar1 < 0x18) {
           if (bVar1 == 4) {
-            FUN_2013bc30(&local_40,&local_48,0);
+            hid_item_data(&local_40,&local_48,0);
           }
           else if (bVar1 == 8) {
-            FUN_2013bc30(&local_40,&local_3c,0);
+            hid_item_data(&local_40,&local_3c,0);
             local_38 = local_3c;
             if (iVar7 == 0) {
               if (((local_48 & 0xff00) == 0) && (*(int *)(param_1 + 0x20) < 0)) {
@@ -9389,14 +9503,14 @@ LAB_2013c034:
           }
           else {
             if (bVar1 != 0x14) goto LAB_2013be4c;
-            FUN_2013bc30(&local_40,&local_50,1);
+            hid_item_data(&local_40,&local_50,1);
           }
         }
         else if (bVar1 == 0x24) {
-          FUN_2013bc30(&local_40,&local_4c,1);
+          hid_item_data(&local_40,&local_4c,1);
         }
         else if (bVar1 == 0x28) {
-          FUN_2013bc30(&local_40,&local_5c,0);
+          hid_item_data(&local_40,&local_5c,0);
           if ((-1 < local_60) && (iVar3 = local_60, -1 < local_5c)) {
             for (; iVar3 <= local_5c; iVar3 = iVar3 + 1) {
               if (iVar2 < 0x100) {
@@ -9413,11 +9527,11 @@ LAB_2013c034:
         }
         else {
           if (bVar1 != 0x74) goto LAB_2013be4c;
-          FUN_2013bc30(&local_40,&local_58,0);
+          hid_item_data(&local_40,&local_58,0);
         }
       }
       else if (bVar1 == 0xa0) {
-        FUN_2013bc30(&local_40,&local_3c,0);
+        hid_item_data(&local_40,&local_3c,0);
         if ((iVar7 == 0) && (local_38 == 6)) {
           local_48 = 7;
         }
@@ -9428,7 +9542,7 @@ LAB_2013c034:
       }
       else if (bVar1 < 0xa1) {
         if (bVar1 == 0x84) {
-          FUN_2013bc30(&local_40,&local_44,0);
+          hid_item_data(&local_40,&local_44,0);
           iVar3 = *(int *)(param_1 + 0x20);
           if (-1 < *(int *)(param_1 + 0x20)) {
             iVar3 = iVar6;
@@ -9441,7 +9555,7 @@ LAB_2013c034:
         }
         else {
           if (bVar1 == 0x90) {
-            FUN_2013bc30(&local_40,&local_3c,0);
+            hid_item_data(&local_40,&local_3c,0);
             if ((-1 < *(int *)(param_1 + 0x20)) && (local_44 == iVar6)) {
               if ((local_48 == 8) && (local_3c == 2)) {
                 if (local_54 < iVar2) {
@@ -9464,16 +9578,16 @@ LAB_2013c034:
             goto LAB_2013c034;
           }
           if (bVar1 != 0x94) goto LAB_2013be4c;
-          FUN_2013bc30(&local_40,&local_54,0);
+          hid_item_data(&local_40,&local_54,0);
         }
       }
       else {
         if (bVar1 == 0xb0) {
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
           goto LAB_2013c034;
         }
         if (bVar1 == 0xc0) {
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
           iVar2 = 0;
           iVar7 = iVar7 + -1;
           local_60 = -1;
@@ -9481,7 +9595,7 @@ LAB_2013c034:
         }
         else {
 LAB_2013be4c:
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
         }
       }
     } while ((int)local_40 - (int)local_2c < local_28);
@@ -9491,8 +9605,7 @@ LAB_2013be4c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c32c @ 2013c32c  (912 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_device_task
+ * usbhid_device_task @ 2013c32c  (912 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Per-device HID task: GET_DESCRIPTOR configuration (0x80/6/0x200), SET_PROTOCOL (0x21/0x0B),
  *     GET_DESCRIPTOR report (0x81/6/0x2200), hid_report_desc_parse, SET_IDLE (0x21/0x0A), usbhid_attach_event, then
  *     reads interrupt reports and passes the extracted fields to usbhid_report_event; detach event and
@@ -9500,9 +9613,14 @@ LAB_2013be4c:
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c32c @ 2013c32c (912 bytes)
+// ===== usbhid_device_task @ 2013c32c (912 bytes)
 
-void FUN_2013c32c(int param_1)
+/* Per-device HID task: GET_DESCRIPTOR configuration (0x80/6/0x200), SET_PROTOCOL (0x21/0x0B),
+   GET_DESCRIPTOR report (0x81/6/0x2200), hid_report_desc_parse, SET_IDLE (0x21/0x0A),
+   usbhid_attach_event, then reads interrupt reports and passes the extracted fields to
+   usbhid_report_event; detach event and itron_ext_tsk at the end [fact] */
+
+void usbhid_device_task(int param_1)
 
 {
   undefined1 uVar1;
@@ -9551,16 +9669,16 @@ void FUN_2013c32c(int param_1)
                          (&DAT_2091c570)[param_1],0,0);
       iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
                                  (&DAT_2091c570)[param_1],pbVar9,uVar7);
-      if (((-1 < iVar3) && (iVar3 = FUN_2013bd20(puVar6,pbVar9), -1 < iVar3)) &&
+      if (((-1 < iVar3) && (iVar3 = hid_report_desc_parse(puVar6,pbVar9), -1 < iVar3)) &&
          ((iVar3 = *(int *)(&DAT_2091c588 + param_1), iVar3 == 2 || iVar3 == 4 ||
           (iVar3 == 5 || iVar3 == 6)))) {
         usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,
                            (&DAT_2091c570)[param_1],0,0);
         usbhid_attach_event(*(int *)(&DAT_2091c56c + param_1),*(int *)(&DAT_2091c588 + param_1));
         while ((*(int *)(&DAT_2091c57c + param_1) != 0 &&
-               (iVar3 = FUN_2013c76c(*(undefined4 *)(&DAT_2091c56c + param_1),
-                                     *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
-                                     *(undefined4 *)(&DAT_2091c578 + param_1)), -1 < iVar3))) {
+               (iVar3 = usbhid_pipe_read(*(undefined4 *)(&DAT_2091c56c + param_1),
+                                         *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
+                                         *(undefined4 *)(&DAT_2091c578 + param_1)), -1 < iVar3))) {
           if (((&DAT_2091c66c)[param_1] == 0) || ((&DAT_2091c66c)[param_1] == *pbVar9)) {
             local_44 = 0;
             local_40 = 0;
@@ -9573,8 +9691,8 @@ void FUN_2013c32c(int param_1)
             if ((local_48 == 2 || local_48 == 4) || local_48 == 5) {
               if (-1 < *(int *)(&DAT_2091c644 + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c64c)[param_1];
-                uVar2 = FUN_2013bbb4(pbVar9,*(undefined4 *)(&DAT_2091c644 + param_1),
-                                     *(undefined4 *)(&DAT_2091c648 + param_1));
+                uVar2 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c644 + param_1),
+                                            *(undefined4 *)(&DAT_2091c648 + param_1));
                 local_44 = CONCAT22(uVar2,(undefined2)local_44);
               }
               uVar8 = 0;
@@ -9582,8 +9700,8 @@ void FUN_2013c32c(int param_1)
                 if (-1 < *(int *)(puVar6 + uVar8 * 0x10 + 0x24)) {
                   local_40 = CONCAT22(local_40._2_2_,
                                       (ushort)local_40 | (ushort)(1 << (uVar8 & 0xff)));
-                  uVar4 = FUN_2013bbb4(pbVar9,*(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x24),
-                                       *(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x28));
+                  uVar4 = hid_report_bits_get(pbVar9,*(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x24),
+                                              *(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x28));
                   if ((*(int *)(puVar6 + uVar8 * 0x10 + 0x30) < 0) &&
                      ((uVar4 & 1 << (*(uint *)(puVar6 + uVar8 * 0x10 + 0x28) - 1 & 0xff)) != 0)) {
                     *(ushort *)((int)&local_40 + uVar8 * 2 + 2) =
@@ -9600,8 +9718,8 @@ void FUN_2013c32c(int param_1)
             else if (local_48 == 6) {
               if (-1 < *(int *)(&DAT_2091c62c + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c634)[param_1];
-                uVar1 = FUN_2013bbb4(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
-                                     *(undefined4 *)(&DAT_2091c630 + param_1));
+                uVar1 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
+                                            *(undefined4 *)(&DAT_2091c630 + param_1));
                 local_44._0_2_ = CONCAT11(uVar1,(undefined1)local_44);
               }
               if (-1 < *(int *)(&DAT_2091c63c + param_1)) {
@@ -9625,16 +9743,18 @@ void FUN_2013c32c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c6bc @ 2013c6bc  (84 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_class_register
+ * usbhid_class_register @ 2013c6bc  (84 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Clears the two HID device slots 0x2091CB78.. and registers the class table 0x204201FC with the host
  *     stack (thunk_FUN_201384d4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c6bc @ 2013c6bc (84 bytes)
+// ===== usbhid_class_register @ 2013c6bc (84 bytes)
 
-undefined4 FUN_2013c6bc(void)
+/* Clears the two HID device slots 0x2091CB78.. and registers the class table 0x204201FC with the
+   host stack (thunk_FUN_201384d4) [fact] */
+
+undefined4 usbhid_class_register(void)
 
 {
   int iVar1;
@@ -9700,22 +9820,23 @@ void usbh_class_request(int param_1,undefined1 param_2,undefined1 param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c76c @ 2013c76c  (44 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_pipe_read
+ * usbhid_pipe_read @ 2013c76c  (44 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (dev, pipe slot): starts a read on the device's interrupt pipe (usbh_pipe_xfer) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c76c @ 2013c76c (44 bytes)
+// ===== usbhid_pipe_read @ 2013c76c (44 bytes)
 
-void FUN_2013c76c(int param_1,int param_2)
+/* (dev, pipe slot): starts a read on the device's interrupt pipe (usbh_pipe_xfer) [fact] */
+
+void usbhid_pipe_read(int param_1,int param_2)
 
 {
   int iVar1;
   
   iVar1 = (&DAT_2091cb78)[param_1 * 6];
   if (iVar1 != 0) {
-    FUN_20139624(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + param_2 * 4 + 0x8d8));
+    usbh_pipe_xfer(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + param_2 * 4 + 0x8d8));
     return;
   }
   return;
@@ -9723,16 +9844,18 @@ void FUN_2013c76c(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c798 @ 2013c798  (316 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbh_pipe_cancel
+ * usbh_pipe_cancel @ 2013c798  (316 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (port, pipe): with the CPU locked, waits for the pipe to go idle (about 50 ticks), clears it in the
  *     controller and signals the port flag and semaphore [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c798 @ 2013c798 (316 bytes)
+// ===== usbh_pipe_cancel @ 2013c798 (316 bytes)
 
-undefined4 FUN_2013c798(int param_1,int param_2)
+/* (port, pipe): with the CPU locked, waits for the pipe to go idle (about 50 ticks), clears it in
+   the controller and signals the port flag and semaphore [fact for the calls] */
+
+undefined4 usbh_pipe_cancel(int param_1,int param_2)
 
 {
   ushort uVar1;
@@ -9787,15 +9910,16 @@ undefined4 FUN_2013c798(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c7c4 @ 2013c7c4  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_find_int_in
+ * usbhid_find_int_in @ 2013c7c4  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (slot, config): first interrupt (type 3) IN endpoint with max packet 1..256; -1 if none [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c7c4 @ 2013c7c4 (156 bytes)
+// ===== usbhid_find_int_in @ 2013c7c4 (156 bytes)
 
-undefined4 FUN_2013c7c4(undefined4 *param_1,int param_2)
+/* (slot, config): first interrupt (type 3) IN endpoint with max packet 1..256; -1 if none [fact] */
+
+undefined4 usbhid_find_int_in(undefined4 *param_1,int param_2)
 
 {
   int iVar1;
@@ -9824,17 +9948,20 @@ undefined4 FUN_2013c7c4(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c860 @ 2013c860  (336 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: usbhid_class_attach
+ * usbhid_class_attach @ 2013c860  (336 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Class attach/detach callback (port, address, config): detach stops the device (usbhid_device_stop);
  *     attach finds the interrupt-IN endpoint (usbhid_find_int_in), fills a free slot (max 2) and starts
  *     usbhid_device_task, waiting up to 1 s for it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2013c860 @ 2013c860 (336 bytes)
+// ===== usbhid_class_attach @ 2013c860 (336 bytes)
 
-int FUN_2013c860(int param_1,int param_2,int param_3)
+/* Class attach/detach callback (port, address, config): detach stops the device
+   (usbhid_device_stop); attach finds the interrupt-IN endpoint (usbhid_find_int_in), fills a free
+   slot (max 2) and starts usbhid_device_task, waiting up to 1 s for it [fact] */
+
+int usbhid_class_attach(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -9852,7 +9979,7 @@ int FUN_2013c860(int param_1,int param_2,int param_3)
         return iVar4;
       }
     }
-    FUN_2013ba44();
+    usbhid_device_stop();
     (&DAT_2091cb78)[iVar4 * 6] = 0;
     return 0;
   }
@@ -9865,7 +9992,7 @@ int FUN_2013c860(int param_1,int param_2,int param_3)
       return iVar1;
     }
   }
-  iVar1 = FUN_2013c7c4(&DAT_2091cb84 + iVar4 * 6,param_3);
+  iVar1 = usbhid_find_int_in(&DAT_2091cb84 + iVar4 * 6,param_3);
   if (iVar1 < 0) {
     return iVar1;
   }
@@ -10001,7 +10128,7 @@ int touch_hit_test(undefined4 param_1,undefined4 param_2)
   undefined4 uVar7;
   
   if (gui_frame.cmd == 0x40) {
-    iVar5 = FUN_2015c34c(param_1,param_2);
+    iVar5 = touch_hit_text_list(param_1,param_2);
 switchD_2015c074_caseD_32:
     if (iVar5 != 0x1ff) {
       return iVar5;
@@ -10012,7 +10139,7 @@ switchD_2015c074_caseD_32:
       iVar5 = 0x1ff;
       switch(gui_frame.cmd) {
       case 0x30:
-        iVar5 = FUN_2015c43c(param_1,param_2,gui_frame.payload[0]);
+        iVar5 = touch_hit_select_popup(param_1,param_2,gui_frame.payload[0]);
         break;
       case 0x31:
         iVar5 = FUN_20130998();
@@ -10055,12 +10182,12 @@ switchD_2015c074_caseD_32:
       }
       else {
         if (gui_frame.cmd != 0x43) goto LAB_2015c240;
-        iVar5 = FUN_2015c750(param_1,param_2);
+        iVar5 = touch_hit_sd_menu(param_1,param_2);
       }
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x70) {
-      iVar5 = FUN_2015ca14(param_1,param_2);
+      iVar5 = touch_hit_dialog(param_1,param_2);
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x7c) {
@@ -10104,7 +10231,7 @@ LAB_2015cc24:
   }
   if (DAT_20800483 == '\0') {
     if (iVar5 == 0x1ff) {
-      iVar5 = FUN_2015c558(param_1,param_2);
+      iVar5 = touch_hit_scope(param_1,param_2);
     }
     if (iVar5 == 0x1ff) {
       iVar5 = touch_hit_table(param_1,param_2,&DAT_2016e304,6);
@@ -10123,16 +10250,18 @@ LAB_2015cc24:
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_2015c34c @ 2015c34c  (224 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_text_list
+ * touch_hit_text_list @ 2015c34c  (224 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through
  *     touch_hit_text_list_rows) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015c34c @ 2015c34c (224 bytes)
+// ===== touch_hit_text_list @ 2015c34c (224 bytes)
 
-int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
+/* touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through
+   touch_hit_text_list_rows) [fact for the dispatch] */
+
+int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -10145,7 +10274,7 @@ int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
   if (iVar1 == 0x1ff) {
     iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
   }
-  if ((((iVar1 == 0x1ff) && (iVar1 = FUN_2015cdd4(param_1,param_2), iVar1 != 0x1ff)) &&
+  if ((((iVar1 == 0x1ff) && (iVar1 = touch_hit_text_list_rows(param_1,param_2), iVar1 != 0x1ff)) &&
       (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
      ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
     DAT_20800494 = 1;
@@ -10161,15 +10290,17 @@ int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015c43c @ 2015c43c  (376 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_select_popup
+ * touch_hit_select_popup @ 2015c43c  (376 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015c43c @ 2015c43c (376 bytes)
+// ===== touch_hit_select_popup @ 2015c43c (376 bytes)
 
-undefined4 FUN_2015c43c(undefined4 param_1,undefined4 param_2,int param_3)
+/* touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) [fact for the
+   dispatch] */
+
+undefined4 touch_hit_select_popup(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -10279,15 +10410,16 @@ ushort touch_hit_rect(uint param_1,uint param_2,ushort *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015c750 @ 2015c750  (500 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_sd_menu
+ * touch_hit_sd_menu @ 2015c750  (500 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: touch_hit_test for screen 0x43 (SD-card menu) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015c750 @ 2015c750 (500 bytes)
+// ===== touch_hit_sd_menu @ 2015c750 (500 bytes)
 
-int FUN_2015c750(uint param_1,uint param_2)
+/* touch_hit_test for screen 0x43 (SD-card menu) [fact for the dispatch] */
+
+int touch_hit_sd_menu(uint param_1,uint param_2)
 
 {
   uint uVar1;
@@ -10404,18 +10536,19 @@ LAB_2015d19c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015c81c @ 2015c81c  (344 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_scope_drag
+ * touch_hit_scope_drag @ 2015c81c  (344 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 / step)
  *     while the finger moves; called by touch_hit_scope [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015c81c @ 2015c81c (344 bytes)
+// ===== touch_hit_scope_drag @ 2015c81c (344 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 /
+   step) while the finger moves; called by touch_hit_scope [fact for the calls] */
 
-undefined4 FUN_2015c81c(uint param_1,uint param_2,int param_3,int param_4)
+undefined4 touch_hit_scope_drag(uint param_1,uint param_2,int param_3,int param_4)
 
 {
   uint uVar1;
@@ -10491,15 +10624,16 @@ LAB_2015c958:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015ca14 @ 2015ca14  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_dialog
+ * touch_hit_dialog @ 2015ca14  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: touch_hit_test for screen 0x70 (dialog / confirm screen) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015ca14 @ 2015ca14 (244 bytes)
+// ===== touch_hit_dialog @ 2015ca14 (244 bytes)
 
-int FUN_2015ca14(uint param_1,uint param_2)
+/* touch_hit_test for screen 0x70 (dialog / confirm screen) [fact for the dispatch] */
+
+int touch_hit_dialog(uint param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -10555,16 +10689,18 @@ int FUN_2015ca14(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015cdd4 @ 2015cdd4  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_text_list_rows
+ * touch_hit_text_list_rows @ 2015cdd4  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row
  *     (0x208F0C5B + 0x2D*row) gives its own code [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015cdd4 @ 2015cdd4 (244 bytes)
+// ===== touch_hit_text_list_rows @ 2015cdd4 (244 bytes)
 
-int FUN_2015cdd4(uint param_1,uint param_2)
+/* (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row
+   (0x208F0C5B + 0x2D*row) gives its own code [fact] */
+
+int touch_hit_text_list_rows(uint param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -10626,7 +10762,7 @@ void mouse_cursor_task_create(int param_1)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_mouse_cursor_5700);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_5700);
   if (0 < (int)uVar1) {
     mouse_cursor_obj_init(param_1 + 4);
     uVar1 = itron_sta_tsk(uVar1,param_1 + 4);
@@ -10640,16 +10776,18 @@ void mouse_cursor_task_create(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015f098 @ 2015f098  (28 bytes, 2 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: kbdobj_set_device
+ * kbdobj_set_device @ 2015f098  (28 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active flag
  *     +0x80 when not present; usbkbd_attach / usbkbd_detach [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015f098 @ 2015f098 (28 bytes)
+// ===== kbdobj_set_device @ 2015f098 (28 bytes)
 
-void FUN_2015f098(int param_1,undefined4 param_2,int param_3)
+/* (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active
+   flag +0x80 when not present; usbkbd_attach / usbkbd_detach [fact] */
+
+void kbdobj_set_device(int param_1,undefined4 param_2,int param_3)
 
 {
   *(char *)(param_1 + 0x81) = (char)param_3;
@@ -10662,15 +10800,16 @@ void FUN_2015f098(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015f0b4 @ 2015f0b4  (16 bytes, 2 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: kbdobj_activate
+ * kbdobj_activate @ 2015f0b4  (16 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015f0b4 @ 2015f0b4 (16 bytes)
+// ===== kbdobj_activate @ 2015f0b4 (16 bytes)
 
-void FUN_2015f0b4(int param_1)
+/* (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) [fact] */
+
+void kbdobj_activate(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x80) = 1;
@@ -10680,15 +10819,16 @@ void FUN_2015f0b4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015f0c4 @ 2015f0c4  (8 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: kbdobj_flush
+ * kbdobj_flush @ 2015f0c4  (8 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015f0c4 @ 2015f0c4 (8 bytes)
+// ===== kbdobj_flush @ 2015f0c4 (8 bytes)
 
-void FUN_2015f0c4(int param_1)
+/* (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all [fact] */
+
+void kbdobj_flush(int param_1)
 
 {
   ring16_reset(param_1 + 0x88);
@@ -10697,15 +10837,16 @@ void FUN_2015f0c4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015f0cc @ 2015f0cc  (20 bytes, 2 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: kbdobj_ctor
+ * kbdobj_ctor @ 2015f0cc  (20 bytes, 2 callers, export file 2015c278_2015f0ec.c)
  * Purpose: (obj): constructs the key ring at +0x88 (ring16_ctor) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== FUN_2015f0cc @ 2015f0cc (20 bytes)
+// ===== kbdobj_ctor @ 2015f0cc (20 bytes)
 
-int FUN_2015f0cc(int param_1)
+/* (obj): constructs the key ring at +0x88 (ring16_ctor) [fact] */
+
+int kbdobj_ctor(int param_1)
 
 {
   int iVar1;
@@ -10968,26 +11109,34 @@ undefined4 fwdbg_task_create(uint *param_1)
 {
   uint uVar1;
   undefined4 uVar2;
-  t_cflg local_38;
-  t_ctsk local_2c;
+  undefined4 local_38;
+  undefined4 local_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  code *local_24;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
   
-  local_2c.tskatr = 0;
-  local_2c.exinf = 0;
-  local_2c.task = (uint)task_fwdbg;
-  local_2c.itskpri = 5;
-  local_2c.stksz = 0x2000;
-  local_2c.stk = (byte *)0x0;
-  local_2c.name = (char *)0x0;
-  local_38.flgatr = 2;
-  local_38.iflgptn = 0;
-  local_38.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_38);
+  local_2c = 0;
+  local_28 = 0;
+  local_24 = task_fwdbg;
+  local_20 = 5;
+  local_1c = 0x2000;
+  local_18 = 0;
+  local_14 = 0;
+  local_38 = 2;
+  local_34 = 0;
+  local_30 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_38);
   *param_1 = uVar1;
   if ((int)*param_1 < 1) {
     uVar2 = 0xffffffff;
   }
   else {
-    uVar1 = itron_acre_tsk(0,&local_2c);
+    uVar1 = itron_acre_tsk(0,(byte *)&local_2c);
     if ((int)uVar1 < 1) {
       uVar2 = 0xffffffff;
     }
@@ -11268,7 +11417,7 @@ void mouse_cursor_obj_init(int param_1)
     FUN_20164524(param_1 + 0x504,uVar2 & 0xffff,iVar3 + 4);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x58c) = uVar1;
   *(undefined1 *)(param_1 + 0x590) = 0;
   *(undefined2 *)(param_1 + 0x592) = 400;

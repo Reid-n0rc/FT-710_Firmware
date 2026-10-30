@@ -4,17 +4,19 @@
 // 359 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * FUN_20103934 @ 20103934  (124 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sd_drive_register
+ * sd_drive_register @ 20103934  (124 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: (drive rec, letter, driver init, cache bufs): fs_drive_attach (512-B sectors), FAT cache and directory
  *     cache set-up; sd_fs_init registers I: with it (filesystem.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20103934 @ 20103934 (124 bytes)
+// ===== sd_drive_register @ 20103934 (124 bytes)
 
-void FUN_20103934(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                 undefined4 param_5)
+/* (drive rec, letter, driver init, cache bufs): fs_drive_attach (512-B sectors), FAT cache and
+   directory cache set-up; sd_fs_init registers I: with it (filesystem.md) [fact] */
+
+void sd_drive_register(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                      undefined4 param_5)
 
 {
   int iVar1;
@@ -45,7 +47,7 @@ void sd_fs_init(void)
   
   iVar1 = fs_init(&DAT_20808c4c,2);
   if (iVar1 == 0) {
-    iVar1 = FUN_20103934(&DAT_20809984,0x49,FUN_2013fd98,&DAT_208099f8,&DAT_2080cc8e,0);
+    iVar1 = sd_drive_register(&DAT_20809984,0x49,sdhi_drv_init,&DAT_208099f8,&DAT_2080cc8e,0);
     if (iVar1 == 0) {
       sd_task_create();
     }
@@ -55,15 +57,17 @@ void sd_fs_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103a4c @ 20103a4c  (52 bytes, 0 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sd_drive_flush
+ * sd_drive_flush @ 20103a4c  (52 bytes, 0 callers, export file 2010261c_20104188.c)
  * Purpose: (drive index): fs_sync, then fs_cache_invalidate of the drive record 0x20809984 + 0x74*i [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20103a4c @ 20103a4c (52 bytes)
+// ===== sd_drive_flush @ 20103a4c (52 bytes)
 
-void FUN_20103a4c(int param_1)
+/* (drive index): fs_sync, then fs_cache_invalidate of the drive record 0x20809984 + 0x74*i [fact]
+    */
+
+void sd_drive_flush(int param_1)
 
 {
   int iVar1;
@@ -78,25 +82,26 @@ void FUN_20103a4c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103adc @ 20103adc  (112 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sd_card_monitor
+ * sd_card_monitor @ 20103adc  (112 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: Task body: polls the card state every 10 ms (sd_card_poll -> 0x20800094) and on request 0x20800098
  *     clears bit 7 and calls sd_card_unmount (filesystem.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20103adc @ 20103adc (112 bytes)
+// ===== sd_card_monitor @ 20103adc (112 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Task body: polls the card state every 10 ms (sd_card_poll -> 0x20800094) and on request
+   0x20800098 clears bit 7 and calls sd_card_unmount (filesystem.md) [fact] */
 
-void FUN_20103adc(undefined4 param_1,undefined4 param_2)
+void sd_card_monitor(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
   
   uVar1 = 0;
   do {
-    uVar1 = FUN_2013fc68(param_2,uVar1);
+    uVar1 = sd_card_poll(param_2,uVar1);
     if (-1 < (int)uVar1) {
       _DAT_20800094 = uVar1;
     }
@@ -104,7 +109,7 @@ void FUN_20103adc(undefined4 param_1,undefined4 param_2)
     if (DAT_20800098 != 0) {
       uVar1 = 0;
       _DAT_20800094 = _DAT_20800094 & 0xffffff7f;
-      FUN_2013fd50(param_2);
+      sd_card_unmount(param_2);
       while (DAT_20800098 != 0) {
         itron_tslp_tsk(10);
       }
@@ -180,16 +185,18 @@ byte sd_state_bit7(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103bc0 @ 20103bc0  (40 bytes, 3 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sd_drive_flag5
+ * sd_drive_flag5 @ 20103bc0  (40 bytes, 3 callers, export file 2010261c_20104188.c)
  * Purpose: Bit 5 of the drive record byte +0x68 of 0x20808B60 when the drive is attached (+0x24), else 0;
  *     fs_drive_check_writable returns -58 on the same bit (filesystem.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20103bc0 @ 20103bc0 (40 bytes)
+// ===== sd_drive_flag5 @ 20103bc0 (40 bytes)
 
-uint FUN_20103bc0(void)
+/* Bit 5 of the drive record byte +0x68 of 0x20808B60 when the drive is attached (+0x24), else 0;
+   fs_drive_check_writable returns -58 on the same bit (filesystem.md) [fact] */
+
+uint sd_drive_flag5(void)
 
 {
   uint uVar1;
@@ -221,14 +228,14 @@ byte sd_make_dirs(void)
   uint uVar2;
   int iVar3;
   
-  FUN_20103bc8(1);
+  sd_monitor_request(1);
   itron_dly_tsk(0x14);
   uVar1 = sd_format('I');
   if ((uVar1 != 0) && (uVar2 = sd_card_detect(), uVar2 != 0)) {
     uVar1 = 0xffffffff;
     DAT_208001a2 = 5;
   }
-  FUN_20103bc8(0);
+  sd_monitor_request(0);
   itron_dly_tsk(0x14);
   if (uVar1 == 0) {
     iVar3 = fs_mkdir("I:\\FT-710");
@@ -395,15 +402,16 @@ void sd_info_screen(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c960 @ 2013c960  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd0_go_idle
+ * sd_cmd0_go_idle @ 2013c960  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD0 (GO_IDLE_STATE), 3 tries; clears the RCA +0x2AC first [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013c960 @ 2013c960 (112 bytes)
+// ===== sd_cmd0_go_idle @ 2013c960 (112 bytes)
 
-undefined4 FUN_2013c960(int *param_1)
+/* CMD0 (GO_IDLE_STATE), 3 tries; clears the RCA +0x2AC first [fact] */
+
+undefined4 sd_cmd0_go_idle(int *param_1)
 
 {
   int iVar1;
@@ -427,16 +435,19 @@ undefined4 FUN_2013c960(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013c9d0 @ 2013c9d0  (488 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_init_v1_or_mmc
+ * sd_init_v1_or_mmc @ 2013c9d0  (488 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Initialisation without a CMD8 answer: ACMD41 (CMD55 + 41) polling until the busy bit 31 of the OCR is
  *     set, or CMD1 (MMC, arg 0xFF8000) when CMD55 fails; MMC sets the card type +0x2C6 = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013c9d0 @ 2013c9d0 (488 bytes)
+// ===== sd_init_v1_or_mmc @ 2013c9d0 (488 bytes)
 
-undefined4 FUN_2013c9d0(int *param_1)
+/* Initialisation without a CMD8 answer: ACMD41 (CMD55 + 41) polling until the busy bit 31 of the
+   OCR is set, or CMD1 (MMC, arg 0xFF8000) when CMD55 fails; MMC sets the card type +0x2C6 = 1
+   [fact] */
+
+undefined4 sd_init_v1_or_mmc(int *param_1)
 
 {
   int iVar1;
@@ -457,7 +468,7 @@ undefined4 FUN_2013c9d0(int *param_1)
         (**(code **)(param_1[1] + 0x4c))(3,*param_1);
         if ((*(uint *)(*param_1 + 0x2b0) & 0x80000000) != 0) break;
         uVar3 = uVar3 + 1;
-        FUN_2013fd3c(1);
+        sd_delay_ms(1);
         if (999 < uVar3) {
           return 0xffffffff;
         }
@@ -488,7 +499,7 @@ undefined4 FUN_2013c9d0(int *param_1)
             }
           }
           uVar4 = uVar4 + 1;
-          FUN_2013fd3c(1);
+          sd_delay_ms(1);
           if (999 < uVar4) {
             return 0xffffffff;
           }
@@ -504,16 +515,18 @@ undefined4 FUN_2013c9d0(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013cbb8 @ 2013cbb8  (560 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_init_v2
+ * sd_init_v2 @ 2013cbb8  (560 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD8 (arg 0x1AA, echo check), then ACMD41 with HCS (0x41000000 / OCR voltage bits) until ready; returns
  *     1 for a standard-capacity card (CCS clear) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013cbb8 @ 2013cbb8 (560 bytes)
+// ===== sd_init_v2 @ 2013cbb8 (560 bytes)
 
-int FUN_2013cbb8(int *param_1)
+/* CMD8 (arg 0x1AA, echo check), then ACMD41 with HCS (0x41000000 | OCR voltage bits) until ready;
+   returns 1 for a standard-capacity card (CCS clear) [fact] */
+
+int sd_init_v2(int *param_1)
 
 {
   int iVar1;
@@ -564,7 +577,7 @@ int FUN_2013cbb8(int *param_1)
                   }
                 }
                 uVar3 = uVar3 + 1;
-                FUN_2013fd3c(1);
+                sd_delay_ms(1);
                 if (999 < uVar3) {
                   return -1;
                 }
@@ -588,15 +601,16 @@ int FUN_2013cbb8(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013cee8 @ 2013cee8  (152 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd2_all_send_cid
+ * sd_cmd2_all_send_cid @ 2013cee8  (152 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD2 (ALL_SEND_CID), 3 tries; copies the 16-byte CID to ctx +0x211 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013cee8 @ 2013cee8 (152 bytes)
+// ===== sd_cmd2_all_send_cid @ 2013cee8 (152 bytes)
 
-undefined4 FUN_2013cee8(int *param_1)
+/* CMD2 (ALL_SEND_CID), 3 tries; copies the 16-byte CID to ctx +0x211 [fact] */
+
+undefined4 sd_cmd2_all_send_cid(int *param_1)
 
 {
   int iVar1;
@@ -625,15 +639,16 @@ undefined4 FUN_2013cee8(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d0bc @ 2013d0bc  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd9_send_csd
+ * sd_cmd9_send_csd @ 2013d0bc  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD9 (SEND_CSD, RCA << 16), 3 tries; copies the 16-byte CSD to ctx +0x201 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d0bc @ 2013d0bc (156 bytes)
+// ===== sd_cmd9_send_csd @ 2013d0bc (156 bytes)
 
-undefined4 FUN_2013d0bc(int *param_1)
+/* CMD9 (SEND_CSD, RCA << 16), 3 tries; copies the 16-byte CSD to ctx +0x201 [fact] */
+
+undefined4 sd_cmd9_send_csd(int *param_1)
 
 {
   int iVar1;
@@ -664,16 +679,18 @@ undefined4 FUN_2013d0bc(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d158 @ 2013d158  (104 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_csd_check
+ * sd_csd_check @ 2013d158  (104 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (csd): range check of an SD CSD (structure < 2, TAAC, read/write-partial bits, READ_BL_LEN < 12, file
  *     format); -5 when invalid [fact for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d158 @ 2013d158 (104 bytes)
+// ===== sd_csd_check @ 2013d158 (104 bytes)
 
-undefined4 FUN_2013d158(byte *param_1)
+/* (csd): range check of an SD CSD (structure < 2, TAAC, read/write-partial bits, READ_BL_LEN < 12,
+   file format); -5 when invalid [fact for the fields] */
+
+undefined4 sd_csd_check(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -690,16 +707,18 @@ undefined4 FUN_2013d158(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d1c8 @ 2013d1c8  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: mmc_csd_check
+ * mmc_csd_check @ 2013d1c8  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (csd): the same check for an MMC CSD (structure < 4, SPEC_VERS < 5, also WRITE_BL_LEN); used when the
  *     card type +0x2C6 = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d1c8 @ 2013d1c8 (112 bytes)
+// ===== mmc_csd_check @ 2013d1c8 (112 bytes)
 
-undefined4 FUN_2013d1c8(byte *param_1)
+/* (csd): the same check for an MMC CSD (structure < 4, SPEC_VERS < 5, also WRITE_BL_LEN); used when
+   the card type +0x2C6 = 1 [fact] */
+
+undefined4 mmc_csd_check(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -717,15 +736,16 @@ undefined4 FUN_2013d1c8(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d238 @ 2013d238  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd10_send_cid
+ * sd_cmd10_send_cid @ 2013d238  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD10 (SEND_CID, RCA << 16), 3 tries; CID to ctx +0x211 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d238 @ 2013d238 (156 bytes)
+// ===== sd_cmd10_send_cid @ 2013d238 (156 bytes)
 
-undefined4 FUN_2013d238(int *param_1)
+/* CMD10 (SEND_CID, RCA << 16), 3 tries; CID to ctx +0x211 [fact] */
+
+undefined4 sd_cmd10_send_cid(int *param_1)
 
 {
   int iVar1;
@@ -756,15 +776,17 @@ undefined4 FUN_2013d238(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d398 @ 2013d398  (156 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd13_send_status
+ * sd_cmd13_send_status @ 2013d398  (156 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD13 (SEND_STATUS, RCA << 16), checks the R1 bits against the mask table 0x2042022C by card type [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d398 @ 2013d398 (156 bytes)
+// ===== sd_cmd13_send_status @ 2013d398 (156 bytes)
 
-undefined4 FUN_2013d398(uint *param_1,int *param_2)
+/* CMD13 (SEND_STATUS, RCA << 16), checks the R1 bits against the mask table 0x2042022C by card type
+   [fact] */
+
+undefined4 sd_cmd13_send_status(uint *param_1,int *param_2)
 
 {
   int iVar1;
@@ -797,16 +819,18 @@ undefined4 FUN_2013d398(uint *param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d434 @ 2013d434  (200 bytes, 6 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd7_select
+ * sd_cmd7_select @ 2013d434  (200 bytes, 6 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (rca, ctx): CMD7 SELECT/DESELECT_CARD (rca 0 deselects), R1 checked against the mask table 0x20420224
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d434 @ 2013d434 (200 bytes)
+// ===== sd_cmd7_select @ 2013d434 (200 bytes)
 
-undefined4 FUN_2013d434(int param_1,int *param_2)
+/* (rca, ctx): CMD7 SELECT/DESELECT_CARD (rca 0 deselects), R1 checked against the mask table
+   0x20420224 [fact] */
+
+undefined4 sd_cmd7_select(int param_1,int *param_2)
 
 {
   int iVar1;
@@ -846,16 +870,18 @@ undefined4 FUN_2013d434(int param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d4fc @ 2013d4fc  (248 bytes, 5 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_select_card
+ * sd_select_card @ 2013d4fc  (248 bytes, 5 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (ctx, ...): makes sure the card is selected (sd_cmd7_select with the RCA +0x2AA); called before data
  *     transfers (sd_read_sectors, sd_write_sectors, SCR/status/switch reads) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d4fc @ 2013d4fc (248 bytes)
+// ===== sd_select_card @ 2013d4fc (248 bytes)
 
-int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+/* (ctx, ...): makes sure the card is selected (sd_cmd7_select with the RCA +0x2AA); called before
+   data transfers (sd_read_sectors, sd_write_sectors, SCR/status/switch reads) [fact] */
+
+int sd_select_card(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
   int iVar1;
@@ -863,13 +889,13 @@ int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4
   uint local_10;
   
   local_10 = param_4;
-  iVar1 = FUN_2013d398(&local_10,param_1);
+  iVar1 = sd_cmd13_send_status(&local_10,param_1);
   if (iVar1 == 0) {
     if ((local_10 & 0x1e00) == 0x800) {
       return 0;
     }
     if ((local_10 & 0x1e00) == 0xa00) {
-      iVar1 = FUN_2013d434(0,param_1);
+      iVar1 = sd_cmd7_select(0,param_1);
       if (iVar1 != 0) {
         return iVar1;
       }
@@ -877,7 +903,7 @@ int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4
     }
     if ((local_10 & 0x1e00) == 0x600) {
 LAB_2013d5d4:
-      iVar1 = FUN_2013d434(*(undefined2 *)(*param_1 + 0x2aa),param_1);
+      iVar1 = sd_cmd7_select(*(undefined2 *)(*param_1 + 0x2aa),param_1);
       return iVar1;
     }
     if ((local_10 & 0x1e00) == 0xc00) {
@@ -885,7 +911,7 @@ LAB_2013d5d4:
       if (iVar1 == 0) {
         uVar2 = 0;
         do {
-          iVar1 = FUN_2013d398(&local_10,param_1);
+          iVar1 = sd_cmd13_send_status(&local_10,param_1);
           if (iVar1 != 0) {
             return iVar1;
           }
@@ -910,15 +936,16 @@ LAB_2013d5d4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d5f4 @ 2013d5f4  (336 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_acmd51_read_scr
+ * sd_acmd51_read_scr @ 2013d5f4  (336 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: ACMD51 (SEND_SCR): CMD55 then CMD51, reads the 8-byte SCR into ctx +0x221 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d5f4 @ 2013d5f4 (336 bytes)
+// ===== sd_acmd51_read_scr @ 2013d5f4 (336 bytes)
 
-int FUN_2013d5f4(int *param_1)
+/* ACMD51 (SEND_SCR): CMD55 then CMD51, reads the 8-byte SCR into ctx +0x221 [fact] */
+
+int sd_acmd51_read_scr(int *param_1)
 
 {
   int iVar1;
@@ -926,7 +953,7 @@ int FUN_2013d5f4(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
-  iVar2 = FUN_2013d4fc(param_1);
+  iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(8,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -968,15 +995,17 @@ int FUN_2013d5f4(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d744 @ 2013d744  (212 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_acmd6_set_bus_width
+ * sd_acmd6_set_bus_width @ 2013d744  (212 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: ACMD6 (SET_BUS_WIDTH) with the width code +0x2AC, then sets the host bus width (op +0x2C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d744 @ 2013d744 (212 bytes)
+// ===== sd_acmd6_set_bus_width @ 2013d744 (212 bytes)
 
-undefined4 FUN_2013d744(int *param_1)
+/* ACMD6 (SET_BUS_WIDTH) with the width code +0x2AC, then sets the host bus width (op +0x2C) [fact]
+    */
+
+undefined4 sd_acmd6_set_bus_width(int *param_1)
 
 {
   int iVar1;
@@ -1006,15 +1035,16 @@ undefined4 FUN_2013d744(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d818 @ 2013d818  (336 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_acmd13_read_status
+ * sd_acmd13_read_status @ 2013d818  (336 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: ACMD13 (SD_STATUS): CMD55 then CMD13 with data, 64 bytes into ctx +0x229 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d818 @ 2013d818 (336 bytes)
+// ===== sd_acmd13_read_status @ 2013d818 (336 bytes)
 
-int FUN_2013d818(int *param_1)
+/* ACMD13 (SD_STATUS): CMD55 then CMD13 with data, 64 bytes into ctx +0x229 [fact] */
+
+int sd_acmd13_read_status(int *param_1)
 
 {
   int iVar1;
@@ -1022,7 +1052,7 @@ int FUN_2013d818(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
-  iVar2 = FUN_2013d4fc(param_1);
+  iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(0x40,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -1064,15 +1094,16 @@ int FUN_2013d818(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013d968 @ 2013d968  (260 bytes, 9 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_cmd6_switch_func
+ * sd_cmd6_switch_func @ 2013d968  (260 bytes, 9 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (arg, ctx): CMD6 (SWITCH_FUNC) with a 64-byte status read into ctx +0x269 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013d968 @ 2013d968 (260 bytes)
+// ===== sd_cmd6_switch_func @ 2013d968 (260 bytes)
 
-int FUN_2013d968(undefined4 param_1,int *param_2)
+/* (arg, ctx): CMD6 (SWITCH_FUNC) with a 64-byte status read into ctx +0x269 [fact] */
+
+int sd_cmd6_switch_func(undefined4 param_1,int *param_2)
 
 {
   int iVar1;
@@ -1080,7 +1111,7 @@ int FUN_2013d968(undefined4 param_1,int *param_2)
   int iVar3;
   
   iVar1 = *param_2;
-  iVar2 = FUN_2013d4fc(param_2);
+  iVar2 = sd_select_card(param_2);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_2[1] + 0x50))(0x40,1,*param_2), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -1115,16 +1146,18 @@ int FUN_2013d968(undefined4 param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013de60 @ 2013de60  (296 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_switch_status_check
+ * sd_switch_status_check @ 2013de60  (296 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a speed
  *     switch [fact for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013de60 @ 2013de60 (296 bytes)
+// ===== sd_switch_status_check @ 2013de60 (296 bytes)
 
-uint FUN_2013de60(int *param_1)
+/* Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a
+   speed switch [fact for the fields] */
+
+uint sd_switch_status_check(int *param_1)
 
 {
   uint uVar1;
@@ -1132,14 +1165,14 @@ uint FUN_2013de60(int *param_1)
   uint uVar3;
   
   (**(code **)(param_1[1] + 0x34))(0);
-  uVar1 = FUN_2013d968(0xffffff,param_1);
+  uVar1 = sd_cmd6_switch_func(0xffffff,param_1);
   if ((uVar1 == 0) &&
      (uVar1 = *(byte *)(*param_1 + 0x272) & 1, (*(byte *)(*param_1 + 0x272) & 1) != 0)) {
     iVar2 = (**(code **)(param_1[1] + 0x18))(0);
     if (iVar2 == 0) {
       uVar3 = 0;
       while ((uVar1 = (**(code **)(param_1[1] + 8))(), uVar1 == 0 &&
-             (uVar1 = FUN_2013d968(0xfff0ff,param_1), uVar1 == 0))) {
+             (uVar1 = sd_cmd6_switch_func(0xfff0ff,param_1), uVar1 == 0))) {
         iVar2 = *param_1;
         if (800 < CONCAT11(*(undefined1 *)(iVar2 + 0x269),*(undefined1 *)(iVar2 + 0x26a)))
         goto LAB_2013df04;
@@ -1147,7 +1180,7 @@ uint FUN_2013de60(int *param_1)
           if ((~*(byte *)(iVar2 + 0x278) & 0xf) == 0) {
             return 0;
           }
-          uVar1 = FUN_2013d968(0x80fff0ff,param_1);
+          uVar1 = sd_cmd6_switch_func(0x80fff0ff,param_1);
           if (uVar1 != 0) {
             return uVar1;
           }
@@ -1172,16 +1205,19 @@ LAB_2013df04:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013df88 @ 2013df88  (1084 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_select_bus_speed
+ * sd_select_bus_speed @ 2013df88  (1084 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants
  *     0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013df88 @ 2013df88 (1084 bytes)
+// ===== sd_select_bus_speed @ 2013df88 (1084 bytes)
 
-uint FUN_2013df88(int *param_1)
+/* For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants
+   0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 [fact]
+    */
+
+uint sd_select_bus_speed(int *param_1)
 
 {
   byte bVar1;
@@ -1201,11 +1237,11 @@ uint FUN_2013df88(int *param_1)
   if (((*(byte *)(iVar7 + 0x221) & 0xf) != 0) &&
      (uVar6 = *(byte *)(iVar7 + 0x205) & 0x40, (*(byte *)(iVar7 + 0x205) & 0x40) != 0)) {
     if ((*(byte *)(iVar7 + 0x2c0) & 4) == 0) {
-      uVar6 = FUN_2013d968(0xffffff,param_1);
+      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
       if ((uVar6 == 0) &&
          (uVar6 = *(byte *)(*param_1 + 0x276) & 2, (*(byte *)(*param_1 + 0x276) & 2) != 0)) {
         uVar8 = 0;
-        while (uVar6 = FUN_2013d968(0xfffff1,param_1), uVar6 == 0) {
+        while (uVar6 = sd_cmd6_switch_func(0xfffff1,param_1), uVar6 == 0) {
           iVar7 = *param_1;
           if (800 < CONCAT11(*(undefined1 *)(iVar7 + 0x269),*(undefined1 *)(iVar7 + 0x26a))) {
             return 0;
@@ -1214,7 +1250,7 @@ uint FUN_2013df88(int *param_1)
             if ((~*(byte *)(iVar7 + 0x279) & 0xf) == 0) {
               return 0;
             }
-            uVar6 = FUN_2013d968(0x80fffff1,param_1);
+            uVar6 = sd_cmd6_switch_func(0x80fffff1,param_1);
             if (uVar6 != 0) {
               return uVar6;
             }
@@ -1236,10 +1272,10 @@ uint FUN_2013df88(int *param_1)
       }
       return uVar6;
     }
-    uVar6 = FUN_2013de60();
+    uVar6 = sd_switch_status_check();
     if (uVar6 == 0) {
       (**(code **)(param_1[1] + 0x3c))(0);
-      uVar6 = FUN_2013d968(0xffffff,param_1);
+      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
       if (uVar6 == 0) {
         uVar6 = 0xfffff1;
         bVar1 = *(byte *)(*param_1 + 0x276);
@@ -1271,7 +1307,7 @@ uint FUN_2013df88(int *param_1)
           if (uVar3 != 0) {
             return uVar3;
           }
-          uVar3 = FUN_2013d968(uVar6,param_1);
+          uVar3 = sd_cmd6_switch_func(uVar6,param_1);
           if (uVar3 != 0) {
             return uVar3;
           }
@@ -1294,7 +1330,7 @@ uint FUN_2013df88(int *param_1)
               if ((~(*(byte *)(iVar4 + 0x278) >> 4) & 0xf) == 0) {
                 return 0;
               }
-              uVar5 = FUN_2013d968(uVar6 | 0x80000000,param_1);
+              uVar5 = sd_cmd6_switch_func(uVar6 | 0x80000000,param_1);
               if (uVar5 != 0) {
                 return uVar5;
               }
@@ -1392,12 +1428,12 @@ int sd_card_identify(int *param_1)
   if (iVar4 != 0) {
     return iVar4;
   }
-  FUN_2013fd3c(1);
-  iVar4 = FUN_2013c960(param_1);
+  sd_delay_ms(1);
+  iVar4 = sd_cmd0_go_idle(param_1);
   if (iVar4 != 0) {
     return iVar4;
   }
-  iVar4 = FUN_2013cbb8(param_1);
+  iVar4 = sd_init_v2(param_1);
   if (iVar4 == 0) {
     uVar1 = *(ushort *)(*param_1 + 0x2c0);
     *(ushort *)(*param_1 + 0x2c0) = uVar1 | 2;
@@ -1413,13 +1449,13 @@ int sd_card_identify(int *param_1)
       return iVar4;
     }
     *(ushort *)(*param_1 + 0x2c0) = *(ushort *)(*param_1 + 0x2c0) | 1;
-    iVar4 = FUN_2013c9d0(param_1);
+    iVar4 = sd_init_v1_or_mmc(param_1);
   }
   if (iVar4 != 0) {
     return iVar4;
   }
 LAB_2013e0c0:
-  iVar4 = FUN_2013cee8(param_1);
+  iVar4 = sd_cmd2_all_send_cid(param_1);
   if (iVar4 != 0) {
     return iVar4;
   }
@@ -1467,28 +1503,29 @@ LAB_2013e0c0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e124 @ 2013e124  (304 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_read_csd_cid
+ * sd_read_csd_cid @ 2013e124  (304 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: CMD9 with sd_csd_check / mmc_csd_check, then CMD10; -5 when the CID is all zero [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e124 @ 2013e124 (304 bytes)
+// ===== sd_read_csd_cid @ 2013e124 (304 bytes)
 
-int FUN_2013e124(int *param_1)
+/* CMD9 with sd_csd_check / mmc_csd_check, then CMD10; -5 when the CID is all zero [fact] */
+
+int sd_read_csd_cid(int *param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d0bc();
+  iVar1 = sd_cmd9_send_csd();
   if (iVar1 == 0) {
     if (*(short *)(*param_1 + 0x2c6) == 1) {
-      iVar1 = FUN_2013d1c8(*param_1 + 0x201);
+      iVar1 = mmc_csd_check(*param_1 + 0x201);
     }
     else {
-      iVar1 = FUN_2013d158();
+      iVar1 = sd_csd_check();
     }
-    if ((iVar1 == 0) && (iVar1 = FUN_2013d238(param_1), iVar1 == 0)) {
+    if ((iVar1 == 0) && (iVar1 = sd_cmd10_send_cid(param_1), iVar1 == 0)) {
       iVar1 = *param_1;
       if ((((*(char *)(iVar1 + 0x211) != '\0') || (*(char *)(iVar1 + 0x212) != '\0')) ||
           (*(char *)(iVar1 + 0x213) != '\0')) &&
@@ -1510,23 +1547,25 @@ int FUN_2013e124(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e190 @ 2013e190  (84 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_selected_op
+ * sd_selected_op @ 2013e190  (84 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (rca, a, b, ctx): selects the card, runs op +0x50(a, b) (block length set-up) and deselects [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e190 @ 2013e190 (84 bytes)
+// ===== sd_selected_op @ 2013e190 (84 bytes)
 
-void FUN_2013e190(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 *param_4)
+/* (rca, a, b, ctx): selects the card, runs op +0x50(a, b) (block length set-up) and deselects
+   [fact] */
+
+void sd_selected_op(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 *param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d434(param_1,param_4);
+  iVar1 = sd_cmd7_select(param_1,param_4);
   if ((iVar1 == 0) &&
      (iVar1 = (**(code **)(param_4[1] + 0x50))(param_2,param_3,*param_4), iVar1 == 0)) {
-    FUN_2013d434(0,param_4);
+    sd_cmd7_select(0,param_4);
     return;
   }
   return;
@@ -1534,20 +1573,22 @@ void FUN_2013e190(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e1e4 @ 2013e1e4  (76 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_scr_bus_width
+ * sd_scr_bus_width @ 2013e1e4  (76 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e1e4 @ 2013e1e4 (76 bytes)
+// ===== sd_scr_bus_width @ 2013e1e4 (76 bytes)
 
-int FUN_2013e1e4(int *param_1)
+/* Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit)
+   [fact] */
+
+int sd_scr_bus_width(int *param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d5f4();
+  iVar1 = sd_acmd51_read_scr();
   if (iVar1 == 0) {
     iVar1 = *param_1;
     if ((*(byte *)(iVar1 + 0x222) & 4) == 0) {
@@ -1579,7 +1620,7 @@ uint sd_read_sectors(int param_1,uint param_2,uint param_3,int *param_4)
   if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
     param_1 = param_1 << 9;
   }
-  uVar1 = FUN_2013d4fc(param_4);
+  uVar1 = sd_select_card(param_4);
   if ((uVar1 == 0) &&
      ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
       (uVar1 = (**(code **)(param_4[1] + 0x40))(), uVar1 == 0)))) {
@@ -1612,7 +1653,7 @@ int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
     if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
       param_1 = param_1 << 9;
     }
-    iVar1 = FUN_2013d4fc(param_4);
+    iVar1 = sd_select_card(param_4);
     if ((iVar1 == 0) &&
        ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
         (iVar1 = (**(code **)(param_4[1] + 0x40))(), iVar1 == 0)))) {
@@ -1630,16 +1671,18 @@ int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e35c @ 2013e35c  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_vol_read
+ * sd_vol_read @ 2013e35c  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3 tries of
  *     sd_read_sectors [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e35c @ 2013e35c (112 bytes)
+// ===== sd_vol_read @ 2013e35c (112 bytes)
 
-uint FUN_2013e35c(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
+/* (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3
+   tries of sd_read_sectors [fact] */
+
+uint sd_vol_read(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
 
 {
   uint uVar1;
@@ -1667,15 +1710,16 @@ uint FUN_2013e35c(int param_1,uint param_2,uint param_3,uint param_4,int *param_
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e3cc @ 2013e3cc  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_vol_write
+ * sd_vol_write @ 2013e3cc  (112 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (vol, sector, buf, n, ctx): partition write, bounds check, one sd_write_sectors try [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e3cc @ 2013e3cc (112 bytes)
+// ===== sd_vol_write @ 2013e3cc (112 bytes)
 
-int FUN_2013e3cc(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
+/* (vol, sector, buf, n, ctx): partition write, bounds check, one sd_write_sectors try [fact] */
+
+int sd_vol_write(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
 
 {
   int iVar1;
@@ -1703,16 +1747,18 @@ int FUN_2013e3cc(int param_1,uint param_2,uint param_3,uint param_4,int *param_5
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e43c @ 2013e43c  (208 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_mount_volume
+ * sd_mount_volume @ 2013e43c  (208 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Reads sector 0 (MBR), finds the partition (fat_find_volume), reads its boot sector, fat_mount and the
  *     FSInfo check (fat32_fsinfo_read) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e43c @ 2013e43c (208 bytes)
+// ===== sd_mount_volume @ 2013e43c (208 bytes)
 
-uint FUN_2013e43c(int param_1,int *param_2)
+/* Reads sector 0 (MBR), finds the partition (fat_find_volume), reads its boot sector, fat_mount and
+   the FSInfo check (fat32_fsinfo_read) [fact] */
+
+uint sd_mount_volume(int param_1,int *param_2)
 
 {
   uint uVar1;
@@ -1720,7 +1766,7 @@ uint FUN_2013e43c(int param_1,int *param_2)
   
   uVar1 = sd_read_sectors(0,*param_2 + 1,1,param_2);
   if (uVar1 == 0) {
-    iVar2 = FUN_201490f8(param_1,*param_2 + 1);
+    iVar2 = fat_find_volume(param_1,*param_2 + 1);
     if (iVar2 == 0) {
       uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30),*param_2 + 1,1,param_2);
       if (uVar1 != 0) {
@@ -1734,7 +1780,7 @@ uint FUN_2013e43c(int param_1,int *param_2)
           if (uVar1 != 0) {
             return uVar1;
           }
-          FUN_20148f40(param_1,*param_2 + 1);
+          fat32_fsinfo_read(param_1,*param_2 + 1);
         }
         return 0;
       }
@@ -1746,17 +1792,20 @@ uint FUN_2013e43c(int param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e71c @ 2013e71c  (700 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_driver_op
+ * sd_driver_op @ 2013e71c  (700 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount (power,
  *     sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume mount), 8 unmount, others
  *     through a table; registered by sdhi_drv_init [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e71c @ 2013e71c (700 bytes)
+// ===== sd_driver_op @ 2013e71c (700 bytes)
 
-int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+/* Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount
+   (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume
+   mount), 8 unmount, others through a table; registered by sdhi_drv_init [fact] */
+
+int sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
                 undefined4 param_5,int *param_6)
 
 {
@@ -1769,19 +1818,19 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
     return -3;
   case 1:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = FUN_2013e35c(param_1,param_3,param_4,param_5,param_6);
+      iVar2 = sd_vol_read(param_1,param_3,param_4,param_5,param_6);
       return iVar2;
     }
     break;
   case 2:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = FUN_2013e3cc(param_1,param_3,param_4,param_5,param_6);
+      iVar2 = sd_vol_write(param_1,param_3,param_4,param_5,param_6);
       return iVar2;
     }
     break;
   case 5:
     iVar2 = (**(code **)(param_6[1] + 100))();
-    if ((iVar2 == 0) && (iVar2 = FUN_2013f9fc(param_1,*(undefined1 *)*param_6), iVar2 == 0)) {
+    if ((iVar2 == 0) && (iVar2 = sd_card_task_start(param_1,*(undefined1 *)*param_6), iVar2 == 0)) {
       *(int **)(param_1 + 0x24) = param_6;
       return 0;
     }
@@ -1794,18 +1843,19 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
         do {
           iVar2 = (**(code **)(param_6[1] + 0x20))(2);
           if ((((((iVar2 == 0) && (iVar2 = sd_card_identify(param_6), iVar2 == 0)) &&
-                (iVar2 = FUN_2013e124(param_6), iVar2 == 0)) &&
-               ((iVar2 = FUN_2013e190(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6), iVar2 == 0
-                && (iVar2 = FUN_2013d434(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
+                (iVar2 = sd_read_csd_cid(param_6), iVar2 == 0)) &&
+               ((iVar2 = sd_selected_op(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6),
+                iVar2 == 0 &&
+                (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
               && ((*(short *)(*param_6 + 0x2c6) == 1 ||
-                  (((iVar2 = FUN_2013e1e4(param_6), iVar2 == 0 &&
-                    (iVar2 = FUN_2013d744(param_6), iVar2 == 0)) &&
-                   ((iVar2 = FUN_2013df88(param_6), iVar2 == 0 &&
-                    (iVar2 = FUN_2013d818(param_6), iVar2 == 0)))))))) &&
+                  (((iVar2 = sd_scr_bus_width(param_6), iVar2 == 0 &&
+                    (iVar2 = sd_acmd6_set_bus_width(param_6), iVar2 == 0)) &&
+                   ((iVar2 = sd_select_bus_speed(param_6), iVar2 == 0 &&
+                    (iVar2 = sd_acmd13_read_status(param_6), iVar2 == 0)))))))) &&
              ((iVar2 = FUN_2013c928(1,param_6), iVar2 == 0 &&
               (((*(short *)(*param_6 + 0x2c2) != 2 && *(short *)(*param_6 + 0x2c2) != 3 ||
                 (iVar2 = (**(code **)(param_6[1] + 0x40))(), iVar2 == 0)) &&
-               (iVar2 = FUN_2013e43c(param_1,param_6), iVar2 == 0)))))) {
+               (iVar2 = sd_mount_volume(param_1,param_6), iVar2 == 0)))))) {
             itron_loc_cpu();
             *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) | 0x80;
             iVar2 = (**(code **)(param_6[1] + 0xc))();
@@ -1842,15 +1892,16 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e7e8 @ 2013e7e8  (24 bytes, 3 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_format_progress_dec
+ * sd_format_progress_dec @ 2013e7e8  (24 bytes, 3 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Decrements the format progress counter ctx +0x2F4 while non-zero [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e7e8 @ 2013e7e8 (24 bytes)
+// ===== sd_format_progress_dec @ 2013e7e8 (24 bytes)
 
-void FUN_2013e7e8(int param_1)
+/* Decrements the format progress counter ctx +0x2F4 while non-zero [fact] */
+
+void sd_format_progress_dec(int param_1)
 
 {
   if (*(int *)(param_1 + 0x2f4) != 0) {
@@ -1861,15 +1912,16 @@ void FUN_2013e7e8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e800 @ 2013e800  (12 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: sd_format_progress_set
+ * sd_format_progress_set @ 2013e800  (12 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: (n, ctx): sets the format progress counters +0x2F4 and +0x2F8 to n [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e800 @ 2013e800 (12 bytes)
+// ===== sd_format_progress_set @ 2013e800 (12 bytes)
 
-void FUN_2013e800(undefined4 param_1,int param_2)
+/* (n, ctx): sets the format progress counters +0x2F4 and +0x2F8 to n [fact] */
+
+void sd_format_progress_set(undefined4 param_1,int param_2)
 
 {
   *(undefined4 *)(param_2 + 0x2f4) = param_1;
@@ -1879,16 +1931,19 @@ void FUN_2013e800(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013e8d0 @ 2013e8d0  (420 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
- * Name on the doc page: fat_format_write_fats
+ * fat_format_write_fats @ 2013e8d0  (420 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
  * Purpose: Format step: writes the first sector of each FAT with the media entries (F8 FF FF / F8 FF FF FF / F8 FF
  *     FF 0F FF FF FF 0F... from 0x20420254..) and zero sectors after them, counting progress [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013e8d0 @ 2013e8d0 (420 bytes)
+// ===== fat_format_write_fats @ 2013e8d0 (420 bytes)
 
-int FUN_2013e8d0(int *param_1)
+/* Format step: writes the first sector of each FAT with the media entries (F8 FF FF / F8 FF FF FF /
+   F8 FF FF 0F FF FF FF 0F... from 0x20420254..) and zero sectors after them, counting progress
+   [fact] */
+
+int fat_format_write_fats(int *param_1)
 
 {
   char cVar1;
@@ -1926,7 +1981,7 @@ int FUN_2013e8d0(int *param_1)
         return iVar4;
       }
     }
-    FUN_2013e7e8(*param_1);
+    sd_format_progress_dec(*param_1);
     fs_memset(*param_1 + 1,0,0x200);
     iVar4 = *(int *)(iVar2 + 0x2e0);
     if ((*(char *)(iVar2 + 0x2dc) != '@') && (uVar5 = 0, iVar4 != 1)) {
@@ -1941,7 +1996,7 @@ int FUN_2013e8d0(int *param_1)
         if (iVar2 != 0) {
           return iVar2;
         }
-        FUN_2013e7e8(*param_1);
+        sd_format_progress_dec(*param_1);
         uVar5 = uVar5 + 1;
         iVar3 = 0;
       } while (uVar5 < iVar4 - 1U);
@@ -1951,16 +2006,18 @@ int FUN_2013e8d0(int *param_1)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ea74 @ 2013ea74  (332 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat32_format_write_fsinfo
+ * fat32_format_write_fsinfo @ 2013ea74  (332 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Format step: FSInfo sector (lead and struct signatures from 0x20808B4C / 0x20808B50, free count and
  *     next-free 0xFFFFFFFF) at sectors 1 and 7 of the volume, zero sectors 2 and 8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ea74 @ 2013ea74 (332 bytes)
+// ===== fat32_format_write_fsinfo @ 2013ea74 (332 bytes)
 
-void FUN_2013ea74(int *param_1)
+/* Format step: FSInfo sector (lead and struct signatures from 0x20808B4C / 0x20808B50, free count
+   and next-free 0xFFFFFFFF) at sectors 1 and 7 of the volume, zero sectors 2 and 8 [fact] */
+
+void fat32_format_write_fsinfo(int *param_1)
 
 {
   int iVar1;
@@ -1993,15 +2050,16 @@ void FUN_2013ea74(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ebc0 @ 2013ebc0  (112 bytes, 2 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_volume_id
+ * fat_format_volume_id @ 2013ebc0  (112 bytes, 2 callers, export file 2013ea74_201403f4.c)
  * Purpose: Volume serial number from the current date and time (fs_get_time_tm) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ebc0 @ 2013ebc0 (112 bytes)
+// ===== fat_format_volume_id @ 2013ebc0 (112 bytes)
 
-uint FUN_2013ebc0(void)
+/* Volume serial number from the current date and time (fs_get_time_tm) [fact] */
+
+uint fat_format_volume_id(void)
 
 {
   uint local_28;
@@ -2018,17 +2076,20 @@ uint FUN_2013ebc0(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ec30 @ 2013ec30  (564 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_write_boot
+ * fat_format_write_boot @ 2013ec30  (564 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Format step: boot sector from the FAT12/16 template 0x2042025B (0x3E bytes) or the FAT32 template
  *     0x20420299 (0x5A bytes) with the computed BPB fields and the volume id; FAT32 also writes the backup at +6
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ec30 @ 2013ec30 (564 bytes)
+// ===== fat_format_write_boot @ 2013ec30 (564 bytes)
 
-void FUN_2013ec30(int *param_1)
+/* Format step: boot sector from the FAT12/16 template 0x2042025B (0x3E bytes) or the FAT32 template
+   0x20420299 (0x5A bytes) with the computed BPB fields and the volume id; FAT32 also writes the
+   backup at +6 [fact] */
+
+void fat_format_write_boot(int *param_1)
 
 {
   int iVar1;
@@ -2052,7 +2113,7 @@ void FUN_2013ec30(int *param_1)
     else {
       fat_st_dword(*param_1 + 0x21);
     }
-    uVar2 = FUN_2013ebc0();
+    uVar2 = fat_format_volume_id();
     fat_st_dword(*param_1 + 0x28,uVar2);
     if (*(char *)(iVar1 + 0x2dc) == '\f') {
       *(undefined1 *)(*param_1 + 0x3b) = 0x32;
@@ -2071,7 +2132,7 @@ void FUN_2013ec30(int *param_1)
   fat_st_dword(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
   fat_st_dword(*param_1 + 0x21,*(undefined4 *)(iVar1 + 0x2d4));
   fat_st_dword(*param_1 + 0x25,*(undefined4 *)(iVar1 + 0x2e0));
-  uVar2 = FUN_2013ebc0();
+  uVar2 = fat_format_volume_id();
   fat_st_dword(*param_1 + 0x44,uVar2);
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
@@ -2086,15 +2147,16 @@ void FUN_2013ec30(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ee64 @ 2013ee64  (88 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: mbr_chs_head
+ * mbr_chs_head @ 2013ee64  (88 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (geometry, *out): CHS head of the partition start, 0xFE beyond the CHS limit 0xFB0400 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ee64 @ 2013ee64 (88 bytes)
+// ===== mbr_chs_head @ 2013ee64 (88 bytes)
 
-void FUN_2013ee64(ushort *param_1,undefined1 *param_2)
+/* (geometry, *out): CHS head of the partition start, 0xFE beyond the CHS limit 0xFB0400 [fact] */
+
+void mbr_chs_head(ushort *param_1,undefined1 *param_2)
 
 {
   undefined1 uVar1;
@@ -2118,15 +2180,16 @@ void FUN_2013ee64(ushort *param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013eebc @ 2013eebc  (128 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: mbr_chs_sector_cyl
+ * mbr_chs_sector_cyl @ 2013eebc  (128 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (geometry, *out): CHS sector/cylinder bytes of the partition start [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013eebc @ 2013eebc (128 bytes)
+// ===== mbr_chs_sector_cyl @ 2013eebc (128 bytes)
 
-void FUN_2013eebc(ushort *param_1,byte *param_2)
+/* (geometry, *out): CHS sector/cylinder bytes of the partition start [fact] */
+
+void mbr_chs_sector_cyl(ushort *param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -2155,16 +2218,18 @@ void FUN_2013eebc(ushort *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ef3c @ 2013ef3c  (96 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: mbr_partition_type
+ * mbr_partition_type @ 2013ef3c  (96 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (geometry, *out): partition type 1 / 4 / 6 for FAT12/16 by size, 0x0B / 0x0C for FAT32 (below / above
  *     the CHS limit) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ef3c @ 2013ef3c (96 bytes)
+// ===== mbr_partition_type @ 2013ef3c (96 bytes)
 
-void FUN_2013ef3c(int param_1,undefined1 *param_2)
+/* (geometry, *out): partition type 1 / 4 / 6 for FAT12/16 by size, 0x0B / 0x0C for FAT32 (below /
+   above the CHS limit) [fact] */
+
+void mbr_partition_type(int param_1,undefined1 *param_2)
 
 {
   char cVar1;
@@ -2198,15 +2263,16 @@ void FUN_2013ef3c(int param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ef9c @ 2013ef9c  (100 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: mbr_chs_end_head
+ * mbr_chs_end_head @ 2013ef9c  (100 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (geometry, *out): CHS head of the partition end (start + size - 1) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ef9c @ 2013ef9c (100 bytes)
+// ===== mbr_chs_end_head @ 2013ef9c (100 bytes)
 
-void FUN_2013ef9c(ushort *param_1,undefined1 *param_2)
+/* (geometry, *out): CHS head of the partition end (start + size - 1) [fact] */
+
+void mbr_chs_end_head(ushort *param_1,undefined1 *param_2)
 
 {
   undefined1 uVar1;
@@ -2230,15 +2296,16 @@ void FUN_2013ef9c(ushort *param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f000 @ 2013f000  (136 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: mbr_chs_end_sector_cyl
+ * mbr_chs_end_sector_cyl @ 2013f000  (136 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (geometry, *out): CHS sector/cylinder of the partition end [fact for the arithmetic]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f000 @ 2013f000 (136 bytes)
+// ===== mbr_chs_end_sector_cyl @ 2013f000 (136 bytes)
 
-void FUN_2013f000(ushort *param_1,byte *param_2)
+/* (geometry, *out): CHS sector/cylinder of the partition end [fact for the arithmetic] */
+
+void mbr_chs_end_sector_cyl(ushort *param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -2267,16 +2334,18 @@ void FUN_2013f000(ushort *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f088 @ 2013f088  (184 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_write_mbr
+ * fat_format_write_mbr @ 2013f088  (184 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Format step: writes sector 0 with one partition entry at 0x1BE (CHS start/end fields, type, LBA start,
  *     size) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f088 @ 2013f088 (184 bytes)
+// ===== fat_format_write_mbr @ 2013f088 (184 bytes)
 
-void FUN_2013f088(int *param_1)
+/* Format step: writes sector 0 with one partition entry at 0x1BE (CHS start/end fields, type, LBA
+   start, size) [fact] */
+
+void fat_format_write_mbr(int *param_1)
 
 {
   int iVar1;
@@ -2287,11 +2356,11 @@ void FUN_2013f088(int *param_1)
   iVar3 = iVar1 + 0x2c8;
   fs_memset(iVar1 + 1,0,0x200);
   iVar2 = *param_1;
-  FUN_2013ee64(iVar3,iVar2 + 0x1c0);
-  FUN_2013eebc(iVar3,iVar2 + 0x1c1);
-  FUN_2013ef3c(iVar3,iVar2 + 0x1c3);
-  FUN_2013ef9c(iVar3,iVar2 + 0x1c4);
-  FUN_2013f000(iVar3,iVar2 + 0x1c5);
+  mbr_chs_head(iVar3,iVar2 + 0x1c0);
+  mbr_chs_sector_cyl(iVar3,iVar2 + 0x1c1);
+  mbr_partition_type(iVar3,iVar2 + 0x1c3);
+  mbr_chs_end_head(iVar3,iVar2 + 0x1c4);
+  mbr_chs_end_sector_cyl(iVar3,iVar2 + 0x1c5);
   fat_st_dword(iVar2 + 0x1c7,*(undefined4 *)(iVar1 + 0x2d0));
   fat_st_dword(iVar2 + 0x1cb,*(undefined4 *)(iVar1 + 0x2d4));
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
@@ -2302,15 +2371,16 @@ void FUN_2013f088(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f15c @ 2013f15c  (36 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: csd_read_bl_len
+ * csd_read_bl_len @ 2013f15c  (36 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (csd): READ_BL_LEN 10 / 11 -> 1024 / 2048, else 512 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f15c @ 2013f15c (36 bytes)
+// ===== csd_read_bl_len @ 2013f15c (36 bytes)
 
-undefined4 FUN_2013f15c(int param_1)
+/* (csd): READ_BL_LEN 10 / 11 -> 1024 / 2048, else 512 [fact] */
+
+undefined4 csd_read_bl_len(int param_1)
 
 {
   byte bVar1;
@@ -2331,15 +2401,16 @@ undefined4 FUN_2013f15c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f180 @ 2013f180  (36 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: csd_c_size
+ * csd_c_size @ 2013f180  (36 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (csd): the 12-bit C_SIZE field of a version-1 CSD [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f180 @ 2013f180 (36 bytes)
+// ===== csd_c_size @ 2013f180 (36 bytes)
 
-uint FUN_2013f180(int param_1)
+/* (csd): the 12-bit C_SIZE field of a version-1 CSD [fact] */
+
+uint csd_c_size(int param_1)
 
 {
   return (*(byte *)(param_1 + 8) & 0xc0 |
@@ -2348,15 +2419,16 @@ uint FUN_2013f180(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f1a4 @ 2013f1a4  (108 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: csd_c_size_mult
+ * csd_c_size_mult @ 2013f1a4  (108 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (csd): 2^(C_SIZE_MULT + 2), 4..512 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f1a4 @ 2013f1a4 (108 bytes)
+// ===== csd_c_size_mult @ 2013f1a4 (108 bytes)
 
-undefined4 FUN_2013f1a4(int param_1)
+/* (csd): 2^(C_SIZE_MULT + 2), 4..512 [fact] */
+
+undefined4 csd_c_size_mult(int param_1)
 
 {
   uint uVar1;
@@ -2392,15 +2464,17 @@ undefined4 FUN_2013f1a4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f210 @ 2013f210  (40 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_geometry_small
+ * fat_format_geometry_small @ 2013f210  (40 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (sectors, out): 0x2C-byte geometry record 0x20420300 below 0x7E0000 sectors, else 0x2042032C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f210 @ 2013f210 (40 bytes)
+// ===== fat_format_geometry_small @ 2013f210 (40 bytes)
 
-void FUN_2013f210(uint param_1,undefined4 param_2)
+/* (sectors, out): 0x2C-byte geometry record 0x20420300 below 0x7E0000 sectors, else 0x2042032C
+   [fact] */
+
+void fat_format_geometry_small(uint param_1,undefined4 param_2)
 
 {
   if (param_1 < 0x7e0000) {
@@ -2413,15 +2487,17 @@ void FUN_2013f210(uint param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f238 @ 2013f238  (264 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_geometry
+ * fat_format_geometry @ 2013f238  (264 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (sectors, out): 0x2C-byte geometry record from the capacity table 0x20420358..0x20420510 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f238 @ 2013f238 (264 bytes)
+// ===== fat_format_geometry @ 2013f238 (264 bytes)
 
-void FUN_2013f238(uint param_1,undefined4 param_2)
+/* (sectors, out): 0x2C-byte geometry record from the capacity table 0x20420358..0x20420510 [fact]
+    */
+
+void fat_format_geometry(uint param_1,undefined4 param_2)
 
 {
   param_1 = param_1 >> 9;
@@ -2471,17 +2547,20 @@ void FUN_2013f238(uint param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f340 @ 2013f340  (1116 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: fat_format_layout
+ * fat_format_layout @ 2013f340  (1116 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Computes the format layout from the CSD capacity: geometry record (fat_format_geometry_small /
  *     fat_format_geometry), sectors per cluster, reserved sectors, FAT size and data start, and the progress count
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f340 @ 2013f340 (1116 bytes)
+// ===== fat_format_layout @ 2013f340 (1116 bytes)
 
-undefined4 FUN_2013f340(int *param_1)
+/* Computes the format layout from the CSD capacity: geometry record (fat_format_geometry_small /
+   fat_format_geometry), sectors per cluster, reserved sectors, FAT size and data start, and the
+   progress count [fact] */
+
+undefined4 fat_format_layout(int *param_1)
 
 {
   undefined2 uVar1;
@@ -2507,7 +2586,7 @@ undefined4 FUN_2013f340(int *param_1)
   if (*pbVar9 >> 6 == 1) {
     uVar10 = (uint)CONCAT21(CONCAT11(*(undefined1 *)(iVar3 + 0x208),*(undefined1 *)(iVar3 + 0x209)),
                             *(undefined1 *)(iVar3 + 0x20a)) * 0x400 + 0x400;
-    FUN_2013f210(uVar10,iVar3 + 0x2c8);
+    fat_format_geometry_small(uVar10,iVar3 + 0x2c8);
     if (uVar10 < 0x4000000) {
       *(uint *)(iVar3 + 0x2d4) = uVar10;
       iVar4 = (int)*(char *)(iVar3 + 0x2dc);
@@ -2576,7 +2655,7 @@ undefined4 FUN_2013f340(int *param_1)
             *(int *)(iVar3 + 0x2f0) = iVar6;
           } while (*(int *)(iVar3 + 0x2e0) != iVar6);
         }
-        FUN_2013e800(*(int *)(iVar3 + 0x2e0) + uVar11,*param_1);
+        sd_format_progress_set(*(int *)(iVar3 + 0x2e0) + uVar11,*param_1);
       }
       *(int *)(iVar3 + 0x2d4) = *(int *)(iVar3 + 0x2d4) - *(int *)(iVar3 + 0x2cc);
     }
@@ -2585,11 +2664,11 @@ undefined4 FUN_2013f340(int *param_1)
     }
   }
   else if (*pbVar9 >> 6 == 0) {
-    iVar4 = FUN_2013f15c(pbVar9);
-    iVar5 = FUN_2013f180(pbVar9);
-    iVar6 = FUN_2013f1a4(pbVar9);
+    iVar4 = csd_read_bl_len(pbVar9);
+    iVar5 = csd_c_size(pbVar9);
+    iVar6 = csd_c_size_mult(pbVar9);
     uVar10 = (iVar5 + 1) * iVar6 * iVar4;
-    FUN_2013f238(uVar10,iVar3 + 0x2c8);
+    fat_format_geometry(uVar10,iVar3 + 0x2c8);
     uVar10 = uVar10 >> 9;
     *(uint *)(iVar3 + 0x2d4) = uVar10;
     uVar1 = *(undefined2 *)(iVar3 + 0x2d8);
@@ -2654,7 +2733,7 @@ undefined4 FUN_2013f340(int *param_1)
         *(uint *)(iVar3 + 0x2f0) = uVar11;
       } while (*(uint *)(iVar3 + 0x2e0) != uVar11);
     }
-    FUN_2013e800(*(int *)(iVar3 + 0x2e0) + 0x20,*param_1);
+    sd_format_progress_set(*(int *)(iVar3 + 0x2e0) + 0x20,*param_1);
     *(int *)(iVar3 + 0x2d4) = *(int *)(iVar3 + 0x2d4) - *(int *)(iVar3 + 0x2d0);
   }
   else {
@@ -2685,12 +2764,13 @@ int fat_clear_root_dir(int *param_1)
   uint uVar5;
   
   fs_memset(*param_1 + 0x2c8,0,0x2c);
-  iVar3 = FUN_2013f340(param_1);
-  if ((((iVar3 == 0) && (iVar3 = FUN_2013f088(param_1), iVar3 == 0)) &&
+  iVar3 = fat_format_layout(param_1);
+  if ((((iVar3 == 0) && (iVar3 = fat_format_write_mbr(param_1), iVar3 == 0)) &&
       ((*(char *)(*param_1 + 0x2dc) == '@' ||
-       ((iVar3 = FUN_2013ec30(param_1), iVar3 == 0 &&
-        ((*(char *)(*param_1 + 0x2dc) != ' ' || (iVar3 = FUN_2013ea74(param_1), iVar3 == 0))))))))
-     && (iVar3 = FUN_2013e8d0(param_1), iVar3 == 0)) {
+       ((iVar3 = fat_format_write_boot(param_1), iVar3 == 0 &&
+        ((*(char *)(*param_1 + 0x2dc) != ' ' ||
+         (iVar3 = fat32_format_write_fsinfo(param_1), iVar3 == 0)))))))) &&
+     (iVar3 = fat_format_write_fats(param_1), iVar3 == 0)) {
     iVar3 = *param_1;
     fs_memset(iVar3 + 1,0,0x200,0,unaff_r4);
     cVar1 = *(char *)(iVar3 + 0x2dc);
@@ -2714,7 +2794,7 @@ int fat_clear_root_dir(int *param_1)
         if (iVar2 != 0) {
           return iVar2;
         }
-        FUN_2013e7e8(*param_1);
+        sd_format_progress_dec(*param_1);
         uVar4 = uVar4 + 1;
         iVar3 = iVar3 + 1;
       } while (uVar4 < uVar5);
@@ -2752,13 +2832,13 @@ int sd_fat_format(int *param_1)
       if (*(short *)(*param_1 + 0x2c6) == 1) {
         return -5;
       }
-      iVar2 = FUN_2013e124(param_1);
+      iVar2 = sd_read_csd_cid(param_1);
       if ((((((iVar2 == 0) &&
-             (iVar2 = FUN_2013e190(*(undefined2 *)(*param_1 + 0x2aa),0x200,1,param_1), iVar2 == 0))
-            && (iVar2 = FUN_2013d434(*(undefined2 *)(*param_1 + 0x2aa),param_1), iVar2 == 0)) &&
-           ((iVar2 = FUN_2013e1e4(param_1), iVar2 == 0 &&
-            (iVar2 = FUN_2013d744(param_1), iVar2 == 0)))) &&
-          ((iVar2 = FUN_2013df88(param_1), iVar2 == 0 &&
+             (iVar2 = sd_selected_op(*(undefined2 *)(*param_1 + 0x2aa),0x200,1,param_1), iVar2 == 0)
+             ) && (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_1 + 0x2aa),param_1), iVar2 == 0))
+           && ((iVar2 = sd_scr_bus_width(param_1), iVar2 == 0 &&
+               (iVar2 = sd_acmd6_set_bus_width(param_1), iVar2 == 0)))) &&
+          ((iVar2 = sd_select_bus_speed(param_1), iVar2 == 0 &&
            (iVar2 = FUN_2013c928(1,param_1), iVar2 == 0)))) &&
          (((*(short *)(*param_1 + 0x2c2) != 2 && *(short *)(*param_1 + 0x2c2) != 3 ||
            (iVar2 = (**(code **)(param_1[1] + 0x40))(), iVar2 == 0)) &&
@@ -2813,16 +2893,18 @@ uint sd_format(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013f9fc @ 2013f9fc  (80 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_card_task_start
+ * sd_card_task_start @ 2013f9fc  (80 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (drive rec, index): stores the drive in 0x20808B60[i] and creates and starts the "SDInsCheck" task once
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013f9fc @ 2013f9fc (80 bytes)
+// ===== sd_card_task_start @ 2013f9fc (80 bytes)
 
-undefined4 FUN_2013f9fc(undefined4 param_1,int param_2)
+/* (drive rec, index): stores the drive in 0x20808B60[i] and creates and starts the "SDInsCheck"
+   task once [fact] */
+
+undefined4 sd_card_task_start(undefined4 param_1,int param_2)
 
 {
   int iVar1;
@@ -2842,16 +2924,18 @@ undefined4 FUN_2013f9fc(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fa60 @ 2013fa60  (148 bytes, 0 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_ins_check_task
+ * sd_ins_check_task @ 2013fa60  (148 bytes, 0 callers, export file 2013ea74_201403f4.c)
  * Purpose: Task "SDInsCheck": every 50 ticks asks the driver (op +8) for the card and sets / clears bit 6 of the
  *     drive byte +0x68 on a change [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fa60 @ 2013fa60 (148 bytes)
+// ===== sd_ins_check_task @ 2013fa60 (148 bytes)
 
-void FUN_2013fa60(void)
+/* Task "SDInsCheck": every 50 ticks asks the driver (op +8) for the card and sets / clears bit 6 of
+   the drive byte +0x68 on a change [fact] */
+
+void sd_ins_check_task(void)
 
 {
   int iVar1;
@@ -2887,15 +2971,17 @@ LAB_2013fadc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013faf4 @ 2013faf4  (152 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_card_remount
+ * sd_card_remount @ 2013faf4  (152 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (index): fs_cache_invalidate + fs_drive_mount, or fs_drive_unmount, as the card state asks [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013faf4 @ 2013faf4 (152 bytes)
+// ===== sd_card_remount @ 2013faf4 (152 bytes)
 
-int FUN_2013faf4(int param_1)
+/* (index): fs_cache_invalidate + fs_drive_mount, or fs_drive_unmount, as the card state asks [fact]
+    */
+
+int sd_card_remount(int param_1)
 
 {
   int iVar1;
@@ -2932,15 +3018,16 @@ joined_r0x2013fb7c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fb8c @ 2013fb8c  (20 bytes, 2 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_clmap_state_set
+ * sd_clmap_state_set @ 2013fb8c  (20 bytes, 2 callers, export file 2013ea74_201403f4.c)
  * Purpose: (v): 0x20808B64 = v (card mounted), clears the cluster-map flag 0x20808B68 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fb8c @ 2013fb8c (20 bytes)
+// ===== sd_clmap_state_set @ 2013fb8c (20 bytes)
 
-void FUN_2013fb8c(undefined4 param_1)
+/* (v): 0x20808B64 = v (card mounted), clears the cluster-map flag 0x20808B68 [fact] */
+
+void sd_clmap_state_set(undefined4 param_1)
 
 {
   DAT_20808b64 = param_1;
@@ -2950,16 +3037,18 @@ void FUN_2013fb8c(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fba0 @ 2013fba0  (112 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_clmap_prepare
+ * sd_clmap_prepare @ 2013fba0  (112 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Once per mount: at priority 6 builds the cluster map of drive I: (fs_clmap_attach_scan with a
  *     0x20000-byte buffer) and sets 0x20808B68 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fba0 @ 2013fba0 (112 bytes)
+// ===== sd_clmap_prepare @ 2013fba0 (112 bytes)
 
-int FUN_2013fba0(void)
+/* Once per mount: at priority 6 builds the cluster map of drive I: (fs_clmap_attach_scan with a
+   0x20000-byte buffer) and sets 0x20808B68 [fact] */
+
+int sd_clmap_prepare(void)
 
 {
   undefined4 uVar1;
@@ -2967,7 +3056,7 @@ int FUN_2013fba0(void)
   
   if ((DAT_20808b64 != 0) && (DAT_20808b68 == 0)) {
     itron_chg_pri(0,6);
-    uVar1 = FUN_20132f6c();
+    uVar1 = clmap_buf_get();
     iVar2 = fs_clmap_attach_scan(0x49,uVar1,0x20000);
     itron_chg_pri(0);
     if (iVar2 == 0) {
@@ -2980,15 +3069,16 @@ int FUN_2013fba0(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fc10 @ 2013fc10  (60 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_mutex_create
+ * sd_mutex_create @ 2013fc10  (60 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Creates the SD mutex 0x20808B6C (TA_INHERIT) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fc10 @ 2013fc10 (60 bytes)
+// ===== sd_mutex_create @ 2013fc10 (60 bytes)
 
-void FUN_2013fc10(void)
+/* Creates the SD mutex 0x20808B6C (TA_INHERIT) [fact] */
+
+void sd_mutex_create(void)
 
 {
   t_cmtx tStack_10;
@@ -3002,15 +3092,16 @@ void FUN_2013fc10(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fc4c @ 2013fc4c  (28 bytes, 2 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_mutex_lock
+ * sd_mutex_lock @ 2013fc4c  (28 bytes, 2 callers, export file 2013ea74_201403f4.c)
  * Purpose: (lock): tloc_mtx when lock != 0, then unl_mtx [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fc4c @ 2013fc4c (28 bytes)
+// ===== sd_mutex_lock @ 2013fc4c (28 bytes)
 
-void FUN_2013fc4c(int param_1)
+/* (lock): tloc_mtx when lock != 0, then unl_mtx [fact for the calls] */
+
+void sd_mutex_lock(int param_1)
 
 {
   if (param_1 != 0) {
@@ -3023,16 +3114,19 @@ void FUN_2013fc4c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fc68 @ 2013fc68  (212 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_card_poll
+ * sd_card_poll @ 2013fc68  (212 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (index, state): card detect state machine of the card monitor: mounts on insertion (fs_cache_invalidate,
  *     fs_drive_mount under the mutex 0x20808B6C) and unmounts on removal; returns the new state [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fc68 @ 2013fc68 (212 bytes)
+// ===== sd_card_poll @ 2013fc68 (212 bytes)
 
-uint FUN_2013fc68(int param_1,uint param_2)
+/* (index, state): card detect state machine of the card monitor: mounts on insertion
+   (fs_cache_invalidate, fs_drive_mount under the mutex 0x20808B6C) and unmounts on removal; returns
+   the new state [fact] */
+
+uint sd_card_poll(int param_1,uint param_2)
 
 {
   int iVar1;
@@ -3052,7 +3146,7 @@ uint FUN_2013fc68(int param_1,uint param_2)
           if (iVar1 != 0) {
             return 0x40;
           }
-          FUN_2013fb8c(1);
+          sd_clmap_state_set(1);
         }
         param_2 = 0xc0;
       }
@@ -3060,7 +3154,7 @@ uint FUN_2013fc68(int param_1,uint param_2)
     else {
       param_2 = (int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0xffffff3f;
       if (((int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0x80U) != 0) {
-        FUN_2013fb8c(0);
+        sd_clmap_state_set(0);
         iVar1 = fs_drive_unmount((&DAT_20808b60)[param_1]);
         if (iVar1 == 0) {
           param_2 = 0;
@@ -3073,15 +3167,16 @@ uint FUN_2013fc68(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fd3c @ 2013fd3c  (20 bytes, 6 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_delay_ms
+ * sd_delay_ms @ 2013fd3c  (20 bytes, 6 callers, export file 2013ea74_201403f4.c)
  * Purpose: (ms): itron_dly_tsk(ms / 10) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fd3c @ 2013fd3c (20 bytes)
+// ===== sd_delay_ms @ 2013fd3c (20 bytes)
 
-void FUN_2013fd3c(int param_1)
+/* (ms): itron_dly_tsk(ms / 10) [fact] */
+
+void sd_delay_ms(int param_1)
 
 {
   itron_dly_tsk(param_1 / 10);
@@ -3090,16 +3185,19 @@ void FUN_2013fd3c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fd50 @ 2013fd50  (32 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sd_card_unmount
+ * sd_card_unmount @ 2013fd50  (32 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (drive): for an attached removable drive (+0x68 bit 0) runs driver op 8 and clears the mounted bit 7;
  *     error to fs_set_error; the card monitor calls it on request 0x20800098 (filesystem.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fd50 @ 2013fd50 (32 bytes)
+// ===== sd_card_unmount @ 2013fd50 (32 bytes)
 
-void FUN_2013fd50(int param_1)
+/* (drive): for an attached removable drive (+0x68 bit 0) runs driver op 8 and clears the mounted
+   bit 7; error to fs_set_error; the card monitor calls it on request 0x20800098 (filesystem.md)
+   [fact] */
+
+void sd_card_unmount(int param_1)
 
 {
   int iVar1;
@@ -3130,37 +3228,41 @@ void FUN_2013fd50(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fd98 @ 2013fd98  (60 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_drv_init
+ * sdhi_drv_init @ 2013fd98  (60 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Driver init callback of drive I:: clears 0x2091CBA8, links the SDHI op table 0x20420564 and calls
  *     sd_driver_op (filesystem.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fd98 @ 2013fd98 (60 bytes)
+// ===== sdhi_drv_init @ 2013fd98 (60 bytes)
 
-void FUN_2013fd98(void)
+/* Driver init callback of drive I:: clears 0x2091CBA8, links the SDHI op table 0x20420564 and calls
+   sd_driver_op (filesystem.md) [fact] */
+
+void sdhi_drv_init(void)
 
 {
   DAT_2091cba8 = 0;
   DAT_20808b44 = &DAT_2091cba8;
   DAT_20808b48 = &PTR_sdhi_wait_idle_20420564;
-  FUN_2013e71c();
+  sd_driver_op();
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013fde8 @ 2013fde8  (104 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi0_irq_enable
+ * sdhi0_irq_enable @ 2013fde8  (104 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Registers the SDHI0 handler for GIC id 303 (0x12F) once (flag 0x20808B70), sets its ICDIPR75 priority
  *     byte and enables it in ICDISER9 (bit 15) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013fde8 @ 2013fde8 (104 bytes)
+// ===== sdhi0_irq_enable @ 2013fde8 (104 bytes)
 
-undefined4 FUN_2013fde8(void)
+/* Registers the SDHI0 handler for GIC id 303 (0x12F) once (flag 0x20808B70), sets its ICDIPR75
+   priority byte and enables it in ICDISER9 (bit 15) [fact] */
+
+undefined4 sdhi0_irq_enable(void)
 
 {
   uint uVar1;
@@ -3204,15 +3306,16 @@ void sdhi0_clock_on(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013ffec @ 2013ffec  (68 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_dma_read_start
+ * sdhi_dma_read_start @ 2013ffec  (68 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2013ffec @ 2013ffec (68 bytes)
+// ===== sdhi_dma_read_start @ 2013ffec (68 bytes)
 
-void FUN_2013ffec(undefined4 param_1,undefined4 param_2)
+/* (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start [fact] */
+
+void sdhi_dma_read_start(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -3232,15 +3335,16 @@ void FUN_2013ffec(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140030 @ 20140030  (48 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_dma_read_wait
+ * sdhi_dma_read_wait @ 20140030  (48 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140030 @ 20140030 (48 bytes)
+// ===== sdhi_dma_read_wait @ 20140030 (48 bytes)
 
-void FUN_20140030(void)
+/* Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_read_wait(void)
 
 {
   uint uVar1;
@@ -3259,15 +3363,16 @@ void FUN_20140030(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140060 @ 20140060  (68 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_dma_write_start
+ * sdhi_dma_write_start @ 20140060  (68 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140060 @ 20140060 (68 bytes)
+// ===== sdhi_dma_write_start @ 20140060 (68 bytes)
 
-void FUN_20140060(undefined4 param_1,undefined4 param_2)
+/* (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start [fact] */
+
+void sdhi_dma_write_start(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -3287,15 +3392,16 @@ void FUN_20140060(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201400a4 @ 201400a4  (48 bytes, 1 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_dma_write_wait
+ * sdhi_dma_write_wait @ 201400a4  (48 bytes, 1 callers, export file 2013ea74_201403f4.c)
  * Purpose: Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201400a4 @ 201400a4 (48 bytes)
+// ===== sdhi_dma_write_wait @ 201400a4 (48 bytes)
 
-void FUN_201400a4(void)
+/* Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_write_wait(void)
 
 {
   uint uVar1;
@@ -3451,11 +3557,11 @@ undefined4 sdhi_read_block(undefined1 *param_1)
   if (((uint)param_1 & 0x1f) != 0) {
     puVar3 = &DAT_2091cec0;
   }
-  thunk_FUN_20101088(puVar3,0x200);
-  FUN_2013ffec(puVar3,&SDHI_SD_CMD_0);
+  dcache_clean_invalidate_range(puVar3,0x200);
+  sdhi_dma_read_start(puVar3,&SDHI_SD_CMD_0);
   iVar1 = sdhi_flag_wait(4,500);
-  FUN_20140030();
-  thunk_FUN_20101088(puVar3,0x200);
+  sdhi_dma_read_wait();
+  dcache_clean_invalidate_range(puVar3,0x200);
   if (iVar1 == 0) {
     if (((uint)param_1 & 0x1f) != 0) {
       iVar1 = 0x1ff;
@@ -3509,9 +3615,9 @@ undefined4 sdhi_write_block(undefined1 *param_1)
     param_1 = &DAT_2091cec0;
   }
   dcache_clean_range(param_1,0x200);
-  FUN_20140060(&SDHI_SD_CMD_0,param_1);
+  sdhi_dma_write_start(&SDHI_SD_CMD_0,param_1);
   iVar2 = sdhi_flag_wait(4,500);
-  FUN_201400a4();
+  sdhi_dma_write_wait();
   uVar3 = 0;
   if (iVar2 != 0) {
     uVar3 = 0xfffffff0;
@@ -3621,15 +3727,16 @@ LAB_201403cc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201403d8 @ 201403d8  (16 bytes, 3 callers, export file 2013ea74_201403f4.c)
- * Name on the doc page: sdhi_clock_set_0x200
+ * sdhi_clock_set_0x200 @ 201403d8  (16 bytes, 3 callers, export file 2013ea74_201403f4.c)
  * Purpose: SD_CLK_CTRL = 0x200 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201403d8 @ 201403d8 (16 bytes)
+// ===== sdhi_clock_set_0x200 @ 201403d8 (16 bytes)
 
-void FUN_201403d8(void)
+/* SD_CLK_CTRL = 0x200 [fact] */
+
+void sdhi_clock_set_0x200(void)
 
 {
   SDHI_SD_CLK_CTRL_0 = 0x200;
@@ -4063,15 +4170,16 @@ undefined4 sd_cmd12_stop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201407bc @ 201407bc  (36 bytes, 3 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_error_reset
+ * sdhi_error_reset @ 201407bc  (36 bytes, 3 callers, export file 20140400_20143478.c)
  * Purpose: Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201407bc @ 201407bc (36 bytes)
+// ===== sdhi_error_reset @ 201407bc (36 bytes)
 
-void FUN_201407bc(undefined4 param_1,undefined4 param_2)
+/* Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) [fact] */
+
+void sdhi_error_reset(undefined4 param_1,undefined4 param_2)
 
 {
   undefined2 uVar1;
@@ -4088,16 +4196,18 @@ void FUN_201407bc(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201407e0 @ 201407e0  (316 bytes, 3 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_read_sectors_cmd
+ * sdhi_read_sectors_cmd @ 201407e0  (316 bytes, 3 callers, export file 20140400_20143478.c)
  * Purpose: (addr, buf, n, ctx): CMD16 block length 512, then CMD17 (one block) or CMD18 (several, with stop),
  *     sdhi_read_block per block and access-end wait [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201407e0 @ 201407e0 (316 bytes)
+// ===== sdhi_read_sectors_cmd @ 201407e0 (316 bytes)
 
-int FUN_201407e0(undefined4 param_1,int param_2,uint param_3,int param_4)
+/* (addr, buf, n, ctx): CMD16 block length 512, then CMD17 (one block) or CMD18 (several, with
+   stop), sdhi_read_block per block and access-end wait [fact] */
+
+int sdhi_read_sectors_cmd(undefined4 param_1,int param_2,uint param_3,int param_4)
 
 {
   ushort uVar1;
@@ -4162,24 +4272,27 @@ LAB_20140880:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2014091c @ 2014091c  (124 bytes, 1 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_read_op
+ * sdhi_read_op @ 2014091c  (124 bytes, 1 callers, export file 20140400_20143478.c)
  * Purpose: (addr, buf, n, ctx): read op of the SDHI op table: two blocks are read one at a time (block or byte
  *     address by card type +0x2C0), else sdhi_read_sectors_cmd; on error sdhi_error_reset [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_2014091c @ 2014091c (124 bytes)
+// ===== sdhi_read_op @ 2014091c (124 bytes)
 
-int FUN_2014091c(int param_1,int param_2,int param_3,int param_4)
+/* (addr, buf, n, ctx): read op of the SDHI op table: two blocks are read one at a time (block or
+   byte address by card type +0x2C0), else sdhi_read_sectors_cmd; on error sdhi_error_reset [fact]
+    */
+
+int sdhi_read_op(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
   
   if (param_3 == 2) {
-    iVar1 = FUN_201407e0(param_1,param_2,1);
+    iVar1 = sdhi_read_sectors_cmd(param_1,param_2,1);
     if (iVar1 != 0) {
-      FUN_201407bc();
+      sdhi_error_reset();
       return iVar1;
     }
     if (*(short *)(param_4 + 0x2c0) == 2) {
@@ -4188,29 +4301,31 @@ int FUN_2014091c(int param_1,int param_2,int param_3,int param_4)
     else {
       param_1 = param_1 + 0x200;
     }
-    iVar1 = FUN_201407e0(param_1,param_2 + 0x200,1,param_4);
+    iVar1 = sdhi_read_sectors_cmd(param_1,param_2 + 0x200,1,param_4);
   }
   else {
-    iVar1 = FUN_201407e0();
+    iVar1 = sdhi_read_sectors_cmd();
   }
   if (iVar1 != 0) {
-    FUN_201407bc();
+    sdhi_error_reset();
   }
   return iVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201409ec @ 201409ec  (316 bytes, 1 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_write_sectors_cmd
+ * sdhi_write_sectors_cmd @ 201409ec  (316 bytes, 1 callers, export file 20140400_20143478.c)
  * Purpose: (addr, buf, n, ctx): CMD16, then CMD24 (one block) or CMD25 (several), sdhi_write_block per block and
  *     access-end wait [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201409ec @ 201409ec (316 bytes)
+// ===== sdhi_write_sectors_cmd @ 201409ec (316 bytes)
 
-int FUN_201409ec(undefined4 param_1,int param_2,uint param_3,int param_4)
+/* (addr, buf, n, ctx): CMD16, then CMD24 (one block) or CMD25 (several), sdhi_write_block per block
+   and access-end wait [fact] */
+
+int sdhi_write_sectors_cmd(undefined4 param_1,int param_2,uint param_3,int param_4)
 
 {
   ushort uVar1;
@@ -4275,38 +4390,41 @@ LAB_20140a8c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140b50 @ 20140b50  (24 bytes, 1 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_write_op
+ * sdhi_write_op @ 20140b50  (24 bytes, 1 callers, export file 20140400_20143478.c)
  * Purpose: sdhi_write_sectors_cmd, on error sdhi_error_reset [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140b50 @ 20140b50 (24 bytes)
+// ===== sdhi_write_op @ 20140b50 (24 bytes)
 
-int FUN_20140b50(void)
+/* sdhi_write_sectors_cmd, on error sdhi_error_reset [fact] */
+
+int sdhi_write_op(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_201409ec();
+  iVar1 = sdhi_write_sectors_cmd();
   if (iVar1 != 0) {
-    FUN_201407bc();
+    sdhi_error_reset();
   }
   return iVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140b68 @ 20140b68  (424 bytes, 1 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi_open
+ * sdhi_open @ 20140b68  (424 bytes, 1 callers, export file 20140400_20143478.c)
  * Purpose: SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers
  *     0x20808B78 / 0x20808B84 with gic_def_inh [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140b68 @ 20140b68 (424 bytes)
+// ===== sdhi_open @ 20140b68 (424 bytes)
 
-uint FUN_20140b68(void)
+/* SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers
+   0x20808B78 / 0x20808B84 with gic_def_inh [fact] */
+
+uint sdhi_open(void)
 
 {
   uint uVar1;
@@ -4315,7 +4433,7 @@ uint FUN_20140b68(void)
   
   sdhi0_clock_on();
   sdhi_soft_reset(2);
-  uVar2 = FUN_2013fde8();
+  uVar2 = sdhi0_irq_enable();
   if ((uVar2 == 0) && (uVar2 = sdhi_init(), uVar2 == 0)) {
     DAT_20808b82 = 0;
     DAT_20808b8e = 0;
@@ -4364,16 +4482,18 @@ uint FUN_20140b68(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140b9c @ 20140b9c  (76 bytes, 2 callers, export file 20140400_20143478.c)
- * Name on the doc page: sdhi0_buf_isr
+ * sdhi0_buf_isr @ 20140b9c  (76 bytes, 2 callers, export file 20140400_20143478.c)
  * Purpose: SDHI0 SDHI0_0 interrupt (GIC 303, peripherals.md): SD_INFO2 BRE (bit 8) -> sdhi_flag_set(1), BWE (bit 9)
  *     -> sdhi_flag_set(2), clearing the bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140b9c @ 20140b9c (76 bytes)
+// ===== sdhi0_buf_isr @ 20140b9c (76 bytes)
 
-void FUN_20140b9c(void)
+/* SDHI0 SDHI0_0 interrupt (GIC 303, peripherals.md): SD_INFO2 BRE (bit 8) -> sdhi_flag_set(1), BWE
+   (bit 9) -> sdhi_flag_set(2), clearing the bit [fact] */
+
+void sdhi0_buf_isr(void)
 
 {
   ushort uVar1;
@@ -4394,17 +4514,21 @@ void FUN_20140b9c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20140be8 @ 20140be8  (940 bytes, 4 callers, export file 20140400_20143478.c)
- * Name on the doc page: file_buf_sync
+ * file_buf_sync @ 20140be8  (940 bytes, 4 callers, export file 20140400_20143478.c)
  * Purpose: (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new position
  *     (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect / fat_sect2clust); used by
  *     fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20140be8 @ 20140be8 (940 bytes)
+// ===== file_buf_sync @ 20140be8 (940 bytes)
 
-int FUN_20140be8(int *param_1,uint param_2,int param_3,undefined4 param_4)
+/* (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new
+   position (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect /
+   fat_sect2clust); used by fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work
+   [fact for the calls] */
+
+int file_buf_sync(int *param_1,uint param_2,int param_3,undefined4 param_4)
 
 {
   bool bVar1;
@@ -5017,7 +5141,7 @@ void fs_fopen_work(char *param_1,char *param_2,int param_3)
               uVar4 = uVar6;
             }
             if (((*param_2 == 'a') && (piVar7 != (int *)0x0)) &&
-               (uVar6 = FUN_20140be8(piVar7,0,2,param_3), uVar6 != 0)) {
+               (uVar6 = file_buf_sync(piVar7,0,2,param_3), uVar6 != 0)) {
               if ((int *)piVar7[1] != piVar7 + 0xd) {
                 fs_mpf_free();
               }
@@ -5093,7 +5217,7 @@ undefined4 file_sync_shared(undefined4 *param_1)
       do {
         if (*(char *)((int)param_1 + 0x44d) == '\x01') {
           if ((((*(short *)(puVar4 + 0x8f) != 0) &&
-               (iVar2 = FUN_20148d74(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
+               (iVar2 = fs_wstricmp_ucs2(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
               (param_1 != puVar4)) && (*(char *)((int)puVar4 + 0x442) == '\x01')) {
             if (puVar4[7] != param_1[7]) {
               puVar4[7] = param_1[7];
@@ -5999,7 +6123,7 @@ LAB_20142cec:
     goto LAB_20143008;
   }
   if ((*(char *)((int)param_4 + 0x442) == ' ' || *(char *)((int)param_4 + 0x442) == '!') &&
-     (iVar5 = FUN_20140be8(param_4,0,2,param_5), iVar5 != 0)) goto LAB_20142d60;
+     (iVar5 = file_buf_sync(param_4,0,2,param_5), iVar5 != 0)) goto LAB_20142d60;
   local_50 = param_4[10];
   __aeabi_uidivmod(local_50,uVar6);
   local_5c = uVar6 - extraout_r1_00;
@@ -6270,7 +6394,7 @@ file_write_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3,int *
   int local_1c;
   
   if (((*(char *)((int)param_4 + 0x442) == ' ' || *(char *)((int)param_4 + 0x442) == '!') &&
-      (param_4[10] != param_4[0xb])) && (iVar1 = FUN_20140be8(param_4,0,2,param_5), iVar1 != 0)) {
+      (param_4[10] != param_4[0xb])) && (iVar1 = file_buf_sync(param_4,0,2,param_5), iVar1 != 0)) {
 LAB_201434f8:
     fs_set_error(iVar1,param_4);
     return 0;
@@ -6390,7 +6514,7 @@ void fs_fseek_work(undefined4 param_1,undefined4 param_2,uint param_3,undefined4
       fs_set_error(0xfffffff3,param_1);
       return;
     }
-    uVar2 = FUN_20140be8(param_1,param_2,param_3,param_4);
+    uVar2 = file_buf_sync(param_1,param_2,param_3,param_4);
     fs_set_error(uVar2,param_1);
     return;
   }
@@ -7961,16 +8085,18 @@ undefined4 root_sector_get(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20144d5c @ 20144d5c  (348 bytes, 2 callers, export file 2014358c_201455f8.c)
- * Name on the doc page: lfn_entry_fill
+ * lfn_entry_fill @ 20144d5c  (348 bytes, 2 callers, export file 2014358c_201455f8.c)
  * Purpose: (entry, name part, vol): fills one 32-byte long-name directory entry: zeroed, 0xFF padding in the three
  *     name fields, then the UCS-2 characters [fact for the fills]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20144d5c @ 20144d5c (348 bytes)
+// ===== lfn_entry_fill @ 20144d5c (348 bytes)
 
-int FUN_20144d5c(int param_1,char *param_2,int param_3)
+/* (entry, name part, vol): fills one 32-byte long-name directory entry: zeroed, 0xFF padding in the
+   three name fields, then the UCS-2 characters [fact for the fills] */
+
+int lfn_entry_fill(int param_1,char *param_2,int param_3)
 
 {
   int iVar1;
@@ -8059,16 +8185,20 @@ uint lfn_checksum(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20144ef4 @ 20144ef4  (432 bytes, 6 callers, export file 2014358c_201455f8.c)
- * Name on the doc page: root_dir_write_lfn
+ * root_dir_write_lfn @ 20144ef4  (432 bytes, 6 callers, export file 2014358c_201455f8.c)
  * Purpose: (vol, slot, sfn entry, long name, n, ...): writes the 8.3 entry and the n long-name entries before it
  *     (lfn_checksum, lfn_entry_fill) into the root directory sectors, marking each sector dirty [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20144ef4 @ 20144ef4 (432 bytes)
+// ===== root_dir_write_lfn @ 20144ef4 (432 bytes)
 
-int FUN_20144ef4(int param_1,undefined4 param_2,int param_3,int param_4,uint param_5,int param_6)
+/* (vol, slot, sfn entry, long name, n, ...): writes the 8.3 entry and the n long-name entries
+   before it (lfn_checksum, lfn_entry_fill) into the root directory sectors, marking each sector
+   dirty [fact] */
+
+int root_dir_write_lfn(int param_1,undefined4 param_2,int param_3,int param_4,uint param_5,
+                      int param_6)
 
 {
   byte bVar1;
@@ -8111,7 +8241,7 @@ int FUN_20144ef4(int param_1,undefined4 param_2,int param_3,int param_4,uint par
     iVar3 = iVar2;
     do {
       pbVar5 = pbVar4 + -0x20;
-      iVar2 = FUN_20144d5c(pbVar5,param_4,param_1);
+      iVar2 = lfn_entry_fill(pbVar5,param_4,param_1);
       *pbVar5 = (byte)uVar6;
       param_4 = param_4 + iVar2 * 2;
       pbVar4[-0x15] = 0xf;
@@ -8263,16 +8393,18 @@ void sjis_fold_case_pair(undefined1 *param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20145254 @ 20145254  (804 bytes, 8 callers, export file 2014358c_201455f8.c)
- * Name on the doc page: sfn_matches_long
+ * sfn_matches_long @ 20145254  (804 bytes, 8 callers, export file 2014358c_201455f8.c)
  * Purpose: (long name, entry, ...): compares a dotted 8.3 candidate with a name using Shift-JIS lead bytes and case
  *     folding (fs_char_lfn_only, sjis_fold_case_pair) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20145254 @ 20145254 (804 bytes)
+// ===== sfn_matches_long @ 20145254 (804 bytes)
 
-undefined4 FUN_20145254(char *param_1,char *param_2,char *param_3)
+/* (long name, entry, ...): compares a dotted 8.3 candidate with a name using Shift-JIS lead bytes
+   and case folding (fs_char_lfn_only, sjis_fold_case_pair) [fact for the calls] */
+
+undefined4 sfn_matches_long(char *param_1,char *param_2,char *param_3)
 
 {
   char cVar1;
@@ -8711,16 +8843,18 @@ int sfn_numtail_match(char *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201458e4 @ 201458e4  (536 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: ucs2_eq_nocase
+ * ucs2_eq_nocase @ 201458e4  (536 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (a, b): case-insensitive equality of two UCS-2 code units for ASCII, full-width (page 0xFF), Greek (page
  *     3) and Cyrillic (page 4) letters [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201458e4 @ 201458e4 (536 bytes)
+// ===== ucs2_eq_nocase @ 201458e4 (536 bytes)
 
-undefined4 FUN_201458e4(byte *param_1,byte *param_2)
+/* (a, b): case-insensitive equality of two UCS-2 code units for ASCII, full-width (page 0xFF),
+   Greek (page 3) and Cyrillic (page 4) letters [fact] */
+
+undefined4 ucs2_eq_nocase(byte *param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -8910,7 +9044,7 @@ int root_lfn_collect(int param_1,int param_2,short *param_3,uint param_4,int par
         psVar3 = local_4c;
         while (iVar1 != 0) {
           iVar1 = iVar1 + -1;
-          if ((*param_3 != *psVar3) && (iVar2 = FUN_201458e4(param_3,psVar3), iVar2 == 0)) {
+          if ((*param_3 != *psVar3) && (iVar2 = ucs2_eq_nocase(param_3,psVar3), iVar2 == 0)) {
             if ((iVar6 != param_5) &&
                (iVar6 = root_sector_get(param_1,param_5,&local_50), iVar6 != 0)) {
               return iVar6;
@@ -9006,7 +9140,7 @@ int root_dir_find(int param_1,undefined4 param_2,undefined4 param_3,int param_4,
   if (iVar3 == -99) {
     return -0x46;
   }
-  cVar2 = FUN_20145254(local_30,auStack_70,&local_60);
+  cVar2 = sfn_matches_long(local_30,auStack_70,&local_60);
   if (cVar2 == '\x01') {
     uVar5 = (iVar3 + -1) / 0xd + 1U & 0xffff;
   }
@@ -9055,7 +9189,7 @@ LAB_20145edc:
           if (uVar9 != 0) {
             fs_utoa6(&local_60,uVar9);
           }
-          cVar2 = FUN_20145254(local_30,auStack_70,&local_60);
+          cVar2 = sfn_matches_long(local_30,auStack_70,&local_60);
           sfn_from_dotted(local_80,auStack_70,local_34);
           if (local_80[0] == -0x1b) {
             local_80[0] = '\x05';
@@ -9071,10 +9205,10 @@ LAB_20145edc:
             *(undefined2 *)(local_58 + 0x22) = uVar1;
             if (param_4 != 3) {
               if (cVar2 != '\x01') {
-                iVar3 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,0,uVar6,param_7);
+                iVar3 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,0,uVar6,param_7);
                 return iVar3;
               }
-              iVar3 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,local_44,uVar6,param_7);
+              iVar3 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,local_44,uVar6,param_7);
               return iVar3;
             }
             return 0;
@@ -9118,7 +9252,7 @@ LAB_201461a8:
               if (uVar9 != 0) {
                 fs_utoa6(&local_60,uVar9);
               }
-              FUN_20145254(local_30,auStack_70,&local_60);
+              sfn_matches_long(local_30,auStack_70,&local_60);
               sfn_from_dotted(local_80,auStack_70,local_34);
               if (local_80[0] == -0x1b) {
                 local_80[0] = '\x05';
@@ -9141,7 +9275,7 @@ LAB_201461a8:
       if (uVar9 != 0) {
         fs_utoa6(&local_60,uVar9);
       }
-      FUN_20145254(local_30,auStack_70,&local_60);
+      sfn_matches_long(local_30,auStack_70,&local_60);
       sfn_from_dotted(local_80,auStack_70,local_34);
       if (local_80[0] == -0x1b) {
         local_80[0] = '\x05';
@@ -9154,7 +9288,7 @@ joined_r0x20146034:
       if (param_4 == 3) {
         return 0;
       }
-      iVar3 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,local_44,uVar6,param_7);
+      iVar3 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,local_44,uVar6,param_7);
       return iVar3;
     }
     if (param_4 == 3) {
@@ -9197,16 +9331,18 @@ root_dir_find_locked
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201463a4 @ 201463a4  (204 bytes, 8 callers, export file 2014570c_20149278.c)
- * Name on the doc page: dir_cluster_alloc_zeroed
+ * dir_cluster_alloc_zeroed @ 201463a4  (204 bytes, 8 callers, export file 2014570c_20149278.c)
  * Purpose: (vol, cluster, work): allocates a cluster for a directory (fat_alloc_cluster_locked) and writes zero
  *     sectors to it (fs_dev_op2); errors to fs_set_error [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201463a4 @ 201463a4 (204 bytes)
+// ===== dir_cluster_alloc_zeroed @ 201463a4 (204 bytes)
 
-int FUN_201463a4(int param_1,undefined4 param_2,int param_3,int param_4)
+/* (vol, cluster, work): allocates a cluster for a directory (fat_alloc_cluster_locked) and writes
+   zero sectors to it (fs_dev_op2); errors to fs_set_error [fact] */
+
+int dir_cluster_alloc_zeroed(int param_1,undefined4 param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -9242,16 +9378,18 @@ LAB_20146424:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20146470 @ 20146470  (176 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: dir_entries_mark_deleted
+ * dir_entries_mark_deleted @ 20146470  (176 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (entry, sector list, count, vol): writes 0xE5 into the 8.3 entry and its long-name entries, walking back
  *     over up to three directory sectors [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20146470 @ 20146470 (176 bytes)
+// ===== dir_entries_mark_deleted @ 20146470 (176 bytes)
 
-undefined4 FUN_20146470(undefined1 *param_1,int param_2,uint param_3,int param_4)
+/* (entry, sector list, count, vol): writes 0xE5 into the 8.3 entry and its long-name entries,
+   walking back over up to three directory sectors [fact] */
+
+undefined4 dir_entries_mark_deleted(undefined1 *param_1,int param_2,uint param_3,int param_4)
 
 {
   int iVar1;
@@ -9292,16 +9430,18 @@ undefined4 FUN_20146470(undefined1 *param_1,int param_2,uint param_3,int param_4
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20146520 @ 20146520  (140 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: sfn_equals
+ * sfn_equals @ 20146520  (140 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: (entry name, dotted name): converts the dotted name to 8.3 (sfn_from_dotted, leading 0xE5 -> 0x05) and
  *     compares, Shift-JIS aware [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20146520 @ 20146520 (140 bytes)
+// ===== sfn_equals @ 20146520 (140 bytes)
 
-undefined4 FUN_20146520(char *param_1)
+/* (entry name, dotted name): converts the dotted name to 8.3 (sfn_from_dotted, leading 0xE5 ->
+   0x05) and compares, Shift-JIS aware [fact] */
+
+undefined4 sfn_equals(char *param_1)
 
 {
   int iVar1;
@@ -9344,16 +9484,18 @@ undefined4 FUN_20146520(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201465ac @ 201465ac  (92 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: sfn_numtail_next
+ * sfn_numtail_next @ 201465ac  (92 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (..., tail string): keeps the next free numeric tail: when the entry's tail (sfn_numtail_match) is >=
  *     the current one, stores tail + 1 as a decimal string; -66 above 9999998 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201465ac @ 201465ac (92 bytes)
+// ===== sfn_numtail_next @ 201465ac (92 bytes)
 
-undefined4 FUN_201465ac(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (..., tail string): keeps the next free numeric tail: when the entry's tail (sfn_numtail_match)
+   is >= the current one, stores tail + 1 as a decimal string; -66 above 9999998 [fact] */
+
+undefined4 sfn_numtail_next(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -9374,16 +9516,18 @@ undefined4 FUN_201465ac(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20146608 @ 20146608  (228 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: subdir_lfn_match
+ * subdir_lfn_match @ 20146608  (228 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (vol, entry, long name): checksum and long-name characters of an entry chain compared with
  *     ucs2_eq_nocase [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20146608 @ 20146608 (228 bytes)
+// ===== subdir_lfn_match @ 20146608 (228 bytes)
 
-undefined4 FUN_20146608(int param_1,byte *param_2,short *param_3,int param_4)
+/* (vol, entry, long name): checksum and long-name characters of an entry chain compared with
+   ucs2_eq_nocase [fact for the calls] */
+
+undefined4 subdir_lfn_match(int param_1,byte *param_2,short *param_3,int param_4)
 
 {
   byte *pbVar1;
@@ -9410,7 +9554,7 @@ undefined4 FUN_20146608(int param_1,byte *param_2,short *param_3,int param_4)
     iVar3 = lfn_entry_get_chars(param_2,local_40);
     psVar6 = local_40;
     for (; 0 < iVar3; iVar3 = iVar3 + -1) {
-      if ((*param_3 != *psVar6) && (iVar4 = FUN_201458e4(param_3,psVar6), iVar4 == 0))
+      if ((*param_3 != *psVar6) && (iVar4 = ucs2_eq_nocase(param_3,psVar6), iVar4 == 0))
       goto LAB_201466e0;
       param_3 = param_3 + 1;
       psVar6 = psVar6 + 1;
@@ -9426,17 +9570,19 @@ LAB_201466e0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201466ec @ 201466ec  (408 bytes, 6 callers, export file 2014570c_20149278.c)
- * Name on the doc page: subdir_write_lfn
+ * subdir_write_lfn @ 201466ec  (408 bytes, 6 callers, export file 2014570c_20149278.c)
  * Purpose: (vol, sector list, slot, sfn entry, long name, ...): the same for a sub-directory, across up to three
  *     sectors (dir_sector_get / dir_sector_dirty) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201466ec @ 201466ec (408 bytes)
+// ===== subdir_write_lfn @ 201466ec (408 bytes)
 
-void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int param_5,int param_6,
-                 int param_7)
+/* (vol, sector list, slot, sfn entry, long name, ...): the same for a sub-directory, across up to
+   three sectors (dir_sector_get / dir_sector_dirty) [fact] */
+
+void subdir_write_lfn(int param_1,undefined4 *param_2,int param_3,char *param_4,int param_5,
+                     int param_6,int param_7)
 
 {
   byte bVar1;
@@ -9480,7 +9626,7 @@ void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int 
   bVar6 = 1;
   do {
     pbVar4 = pbVar3 + -0x20;
-    iVar2 = FUN_20144d5c(pbVar4,param_5,param_1);
+    iVar2 = lfn_entry_fill(pbVar4,param_5,param_1);
     *pbVar4 = bVar6;
     param_5 = param_5 + iVar2 * 2;
     pbVar3[-0x15] = 0xf;
@@ -9631,10 +9777,10 @@ LAB_20146b94:
           fs_strlwr_sjis(local_a0);
         }
         if (local_a0[0] == '\0') {
-          local_70 = FUN_20145254(local_2c,auStack_c8,&DWORD_20146dcc);
+          local_70 = sfn_matches_long(local_2c,auStack_c8,&DWORD_20146dcc);
         }
         else {
-          local_70 = FUN_20145254(local_a0,auStack_c8,&DWORD_20146dcc);
+          local_70 = sfn_matches_long(local_a0,auStack_c8,&DWORD_20146dcc);
         }
         if (local_70 == 1) {
           uVar11 = (iVar4 + -1) / 0xd + 1U & 0xffff;
@@ -9711,12 +9857,12 @@ LAB_20146b94:
                         if (local_ac[0] == -0x1b) {
                           local_ac[0] = '\x05';
                         }
-                        uVar11 = FUN_201465ac(pcVar12,local_ac,&local_88);
+                        uVar11 = sfn_numtail_next(pcVar12,local_ac,&local_88);
                         if (uVar11 != 0) {
                           return uVar11;
                         }
                       }
-                      iVar5 = FUN_20146608(local_b8,pcVar12,local_50,param_1);
+                      iVar5 = subdir_lfn_match(local_b8,pcVar12,local_50,param_1);
                       if (iVar5 == 0) {
 LAB_201470bc:
                         fs_memcpy(local_28,pcVar12,0x20);
@@ -9731,7 +9877,7 @@ LAB_201470bc:
                         if (param_5 != 2) {
                           return 0xfffffff3;
                         }
-                        uVar10 = FUN_20146470(pcVar12,local_b8,uVar9,param_1);
+                        uVar10 = dir_entries_mark_deleted(pcVar12,local_b8,uVar9,param_1);
                         if (uVar10 != 0) {
                           return uVar10;
                         }
@@ -9766,12 +9912,12 @@ LAB_201470bc:
                         if (local_ac[0] == -0x1b) {
                           local_ac[0] = '\x05';
                         }
-                        uVar11 = FUN_201465ac(pcVar12,local_ac,&local_88);
+                        uVar11 = sfn_numtail_next(pcVar12,local_ac,&local_88);
                         if (uVar11 != 0) {
                           return uVar11;
                         }
-                        FUN_20145254(local_2c,auStack_c8,&local_88);
-                        iVar5 = FUN_20146520(pcVar12,auStack_c8,param_1);
+                        sfn_matches_long(local_2c,auStack_c8,&local_88);
+                        iVar5 = sfn_equals(pcVar12,auStack_c8,param_1);
                         if (iVar5 == 0) goto LAB_201470bc;
                       }
                     }
@@ -9802,7 +9948,7 @@ LAB_201470bc:
             }
             if (-1 < (int)uVar14) {
 LAB_20146bf4:
-              FUN_20145254(local_2c,auStack_c8,&local_88);
+              sfn_matches_long(local_2c,auStack_c8,&local_88);
               sfn_from_dotted(local_ac,auStack_c8,param_1);
               fs_memcpy(local_28,local_ac,0xb);
               if (-1 < (int)uVar14) {
@@ -9812,8 +9958,8 @@ LAB_20146bf4:
                 if (param_5 == 3) {
                   return 0;
                 }
-                uVar10 = FUN_201466ec(param_1,auStack_80,uVar14 & 0xffff,local_28,local_50,local_90,
-                                      param_9);
+                uVar10 = subdir_write_lfn(param_1,auStack_80,uVar14 & 0xffff,local_28,local_50,
+                                          local_90,param_9);
                 return uVar10;
               }
               uVar15 = __aeabi_uidivmod(((local_90 + uVar3) - iVar13) + -1,
@@ -9823,7 +9969,7 @@ LAB_20146bf4:
               if ((int)uVar15 < 1) goto LAB_20146d4c;
               goto LAB_20146cb4;
             }
-            local_4c = FUN_201463a4(param_1,local_30,param_9);
+            local_4c = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
             uVar11 = fs_task_ctx_get();
             if (uVar11 != 0) {
               return uVar11;
@@ -9840,7 +9986,7 @@ LAB_20146cb4:
   iVar4 = iVar4 + 1;
   uVar10 = (uint)*(ushort *)(param_1 + 4);
   if (uVar10 == 1) {
-    iVar4 = FUN_201463a4(param_1,local_30,param_9);
+    iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
     local_30 = iVar4;
     uVar10 = fs_task_ctx_get();
     if (uVar10 != 0) {
@@ -9851,7 +9997,7 @@ LAB_20146e24:
   }
   else if (uVar10 == 2) {
     if (local_8c == 1) {
-      iVar4 = FUN_201463a4(param_1,local_30,param_9);
+      iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
       uVar10 = fs_task_ctx_get();
       if (uVar10 != 0) {
         return uVar10;
@@ -9860,7 +10006,7 @@ LAB_20146e24:
     }
   }
   else if (uVar10 - 1 == local_8c) {
-    uVar6 = FUN_201463a4(param_1,local_30,param_9);
+    uVar6 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
     uVar10 = fs_task_ctx_get();
     if (uVar10 != 0) {
       return uVar10;
@@ -9884,10 +10030,10 @@ LAB_20146d4c:
       return 0;
     }
     if (local_70 == 1) {
-      uVar10 = FUN_201466ec(param_1,local_d4,sVar7,local_28,local_50,local_90,param_9);
+      uVar10 = subdir_write_lfn(param_1,local_d4,sVar7,local_28,local_50,local_90,param_9);
       return uVar10;
     }
-    uVar10 = FUN_201466ec(param_1,local_d4,sVar7,local_28,0,local_90,param_9);
+    uVar10 = subdir_write_lfn(param_1,local_d4,sVar7,local_28,0,local_90,param_9);
     return uVar10;
   }
   goto LAB_20146cb4;
@@ -10417,17 +10563,20 @@ int fs_stricmp_sjis_fold(char *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20147850 @ 20147850  (248 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fs_strnicmp_sjis_b
+ * fs_strnicmp_sjis_b @ 20147850  (248 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: (a, b, n): case-insensitive compare of n bytes, Shift-JIS aware (two-byte characters folded with
  *     sjis_fold_case, single bytes with fs_toupper); no caller in the image; a second copy next to fs_strnicmp_sjis
  *     0x2014D770 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20147850 @ 20147850 (248 bytes)
+// ===== fs_strnicmp_sjis_b @ 20147850 (248 bytes)
 
-int FUN_20147850(char *param_1,char *param_2,uint param_3)
+/* (a, b, n): case-insensitive compare of n bytes, Shift-JIS aware (two-byte characters folded with
+   sjis_fold_case, single bytes with fs_toupper); no caller in the image; a second copy next to
+   fs_strnicmp_sjis 0x2014D770 [fact] */
+
+int fs_strnicmp_sjis_b(char *param_1,char *param_2,uint param_3)
 
 {
   char cVar1;
@@ -10481,15 +10630,16 @@ int FUN_20147850(char *param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20147950 @ 20147950  (408 bytes, 4 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fs_utoa_zeropad
+ * fs_utoa_zeropad @ 20147950  (408 bytes, 4 callers, export file 2014570c_20149278.c)
  * Purpose: (value, buf, width): decimal digits of value, zero-padded to width (max 10 digits) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20147950 @ 20147950 (408 bytes)
+// ===== fs_utoa_zeropad @ 20147950 (408 bytes)
 
-void FUN_20147950(uint param_1,char *param_2,int param_3)
+/* (value, buf, width): decimal digits of value, zero-padded to width (max 10 digits) [fact] */
+
+void fs_utoa_zeropad(uint param_1,char *param_2,int param_3)
 
 {
   char *pcVar1;
@@ -10549,16 +10699,18 @@ void FUN_20147950(uint param_1,char *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20147b14 @ 20147b14  (268 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: sfn_pack
+ * sfn_pack @ 20147b14  (268 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (out, name, vol): 11-byte space-padded 8.3 form of a name [fact for the 0x20 fill; inference for the
  *     rest]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20147b14 @ 20147b14 (268 bytes)
+// ===== sfn_pack @ 20147b14 (268 bytes)
 
-undefined4 FUN_20147b14(undefined1 *param_1,int param_2,int param_3)
+/* (out, name, vol): 11-byte space-padded 8.3 form of a name [fact for the 0x20 fill; inference for
+   the rest] */
+
+undefined4 sfn_pack(undefined1 *param_1,int param_2,int param_3)
 
 {
   char cVar1;
@@ -10628,8 +10780,7 @@ undefined4 FUN_20147b14(undefined1 *param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20147c7c @ 20147c7c  (972 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: root_dir_add_entry
+ * root_dir_add_entry @ 20147c7c  (972 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: Creates a directory entry with long name in the root directory: counts the needed long-name entries,
  *     scans the root sectors for a free run, builds the numeric-tail alias (fs_utoa_zeropad) and writes it with
  *     root_dir_write_lfn; an existing name is replaced (root_dirent_delete) [inference: the calls and the free-slot
@@ -10637,10 +10788,15 @@ undefined4 FUN_20147b14(undefined1 *param_1,int param_2,int param_3)
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20147c7c @ 20147c7c (972 bytes)
+// ===== root_dir_add_entry @ 20147c7c (972 bytes)
 
-int FUN_20147c7c(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5,
-                uint *param_6,int param_7)
+/* Creates a directory entry with long name in the root directory: counts the needed long-name
+   entries, scans the root sectors for a free run, builds the numeric-tail alias (fs_utoa_zeropad)
+   and writes it with root_dir_write_lfn; an existing name is replaced (root_dirent_delete)
+   [inference: the calls and the free-slot scan] */
+
+int root_dir_add_entry(int param_1,undefined4 param_2,undefined4 param_3,int param_4,
+                      undefined4 param_5,uint *param_6,int param_7)
 
 {
   undefined2 uVar1;
@@ -10733,13 +10889,13 @@ int FUN_20147c7c(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
             *(short *)(local_58 + 0x20) = (short)uVar8;
             *(undefined2 *)(local_58 + 0x22) = uVar1;
             if (param_4 != 3) {
-              FUN_20147950(*param_6,&puStack_68,8);
+              fs_utoa_zeropad(*param_6,&puStack_68,8);
               fs_memcpy(local_2c,&puStack_68,0xb);
               if (local_38 != 0) {
-                iVar2 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,iVar4,uVar6,param_7);
+                iVar2 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,iVar4,uVar6,param_7);
                 return iVar2;
               }
-              iVar2 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,0,uVar6,param_7);
+              iVar2 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,0,uVar6,param_7);
               return iVar2;
             }
             return 0;
@@ -10792,9 +10948,9 @@ joined_r0x20147df0:
       if (param_4 == 3) {
         return 0;
       }
-      FUN_20147950(*param_6,&puStack_68,8);
+      fs_utoa_zeropad(*param_6,&puStack_68,8);
       fs_memcpy(local_2c,&puStack_68,0xb);
-      iVar2 = FUN_20144ef4(local_34,uVar8 & 0xffff,local_2c,iVar4,uVar6,param_7);
+      iVar2 = root_dir_write_lfn(local_34,uVar8 & 0xffff,local_2c,iVar4,uVar6,param_7);
       return iVar2;
     }
     if (param_4 == 3) {
@@ -10806,17 +10962,19 @@ joined_r0x20147df0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148048 @ 20148048  (108 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: root_dir_add_entry_locked
+ * root_dir_add_entry_locked @ 20148048  (108 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: fs_lock_a, root_dir_add_entry, fs_unlock_a [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148048 @ 20148048 (108 bytes)
+// ===== root_dir_add_entry_locked @ 20148048 (108 bytes)
+
+/* fs_lock_a, root_dir_add_entry, fs_unlock_a [fact] */
 
 undefined4
-FUN_20148048(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5,undefined4 param_6,undefined4 param_7)
+root_dir_add_entry_locked
+          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+          undefined4 param_5,undefined4 param_6,undefined4 param_7)
 
 {
   int iVar1;
@@ -10824,7 +10982,7 @@ FUN_20148048(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   
   iVar1 = fs_lock_a();
   if (iVar1 == 0) {
-    uVar2 = FUN_20147c7c(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
+    uVar2 = root_dir_add_entry(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
     fs_unlock_a(param_1);
   }
   else {
@@ -10835,8 +10993,7 @@ FUN_20148048(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148150 @ 20148150  (2048 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: subdir_add_entry
+ * subdir_add_entry @ 20148150  (2048 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: Sub-directory counterpart of root_dir_add_entry: checks the '.' entry, then scans the cluster chain for
  *     a run of free entries (0xE5 / end) for the long-name count, allocates a cluster if needed
  *     (dir_cluster_alloc_zeroed) and writes the entries (subdir_write_lfn) [inference: the calls and the free-slot
@@ -10844,12 +11001,16 @@ FUN_20148048(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148150 @ 20148150 (2048 bytes)
+// ===== subdir_add_entry @ 20148150 (2048 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* Sub-directory counterpart of root_dir_add_entry: checks the '.' entry, then scans the cluster
+   chain for a run of free entries (0xE5 / end) for the long-name count, allocates a cluster if
+   needed (dir_cluster_alloc_zeroed) and writes the entries (subdir_write_lfn) [inference: the calls
+   and the free-slot scan] */
 
-uint FUN_20148150(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,
-                 undefined4 param_6,uint *param_7,int *param_8,int param_9)
+uint subdir_add_entry(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,
+                     undefined4 param_6,uint *param_7,int *param_8,int param_9)
 
 {
   byte bVar1;
@@ -10988,7 +11149,7 @@ LAB_2014836c:
                       uVar11 = 0;
                     }
                     if (((bVar1 & 8) == 0) && (param_5 != 3)) {
-                      iVar5 = FUN_20146608(local_a0,pcVar12,local_70,param_1);
+                      iVar5 = subdir_lfn_match(local_a0,pcVar12,local_70,param_1);
                       if (iVar5 == 0) {
 LAB_20148840:
                         fs_memcpy(local_28,pcVar12,0x20);
@@ -11003,7 +11164,7 @@ LAB_20148840:
                         if (param_5 != 2) {
                           return 0xfffffff3;
                         }
-                        uVar11 = FUN_20146470(pcVar12,local_a0,uVar10,param_1);
+                        uVar11 = dir_entries_mark_deleted(pcVar12,local_a0,uVar10,param_1);
                         if (uVar11 != 0) {
                           return uVar11;
                         }
@@ -11074,10 +11235,11 @@ LAB_201483cc:
                 if (param_5 == 3) {
                   return 0;
                 }
-                FUN_20147950(local_44 * (*(uint *)(param_1 + 0x6c) >> 5) + uVar14,local_a0 + 3,8);
+                fs_utoa_zeropad(local_44 * (*(uint *)(param_1 + 0x6c) >> 5) + uVar14,local_a0 + 3,8)
+                ;
                 fs_memcpy(local_28,local_a0 + 3,0xb);
-                uVar11 = FUN_201466ec(param_1,auStack_80,uVar14 & 0xffff,local_28,local_70,
-                                      local_b4[3],param_9);
+                uVar11 = subdir_write_lfn(param_1,auStack_80,uVar14 & 0xffff,local_28,local_70,
+                                          local_b4[3],param_9);
                 return uVar11;
               }
               iVar13 = (local_b4[3] + uVar3) - iVar13;
@@ -11087,7 +11249,7 @@ LAB_201483cc:
               if ((int)uVar15 < 1) goto LAB_20148520;
               goto LAB_20148488;
             }
-            local_4c = FUN_201463a4(param_1,local_30,param_9);
+            local_4c = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
             uVar7 = fs_task_ctx_get();
             if (uVar7 != 0) {
               return uVar7;
@@ -11104,7 +11266,7 @@ LAB_20148488:
   iVar4 = iVar4 + 1;
   uVar11 = (uint)*(ushort *)(param_1 + 4);
   if (uVar11 == 1) {
-    iVar4 = FUN_201463a4(param_1,local_30,param_9);
+    iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
     local_30 = iVar4;
     uVar11 = fs_task_ctx_get();
     if (uVar11 != 0) {
@@ -11115,7 +11277,7 @@ LAB_20148620:
   }
   else if (uVar11 == 2) {
     if (local_84 == 1) {
-      iVar4 = FUN_201463a4(param_1,local_30,param_9);
+      iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
       uVar11 = fs_task_ctx_get();
       if (uVar11 != 0) {
         return uVar11;
@@ -11124,7 +11286,7 @@ LAB_20148620:
     }
   }
   else if (uVar11 - 1 == local_84) {
-    uVar6 = FUN_201463a4(param_1,local_30,param_9);
+    uVar6 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
     uVar11 = fs_task_ctx_get();
     if (uVar11 != 0) {
       return uVar11;
@@ -11147,13 +11309,13 @@ LAB_20148520:
     if (param_5 == 3) {
       return 0;
     }
-    FUN_20147950(local_50 * (*(uint *)(param_1 + 0x6c) >> 5) + iVar13 + -1,local_a0 + 3,8);
+    fs_utoa_zeropad(local_50 * (*(uint *)(param_1 + 0x6c) >> 5) + iVar13 + -1,local_a0 + 3,8);
     fs_memcpy(local_28,local_a0 + 3,0xb);
     if (local_38 == 0) {
-      uVar11 = FUN_201466ec(param_1,local_b4,sVar8,local_28,0,local_b4[3],param_9);
+      uVar11 = subdir_write_lfn(param_1,local_b4,sVar8,local_28,0,local_b4[3],param_9);
       return uVar11;
     }
-    uVar11 = FUN_201466ec(param_1,local_b4,sVar8,local_28,local_70,local_b4[3],param_9);
+    uVar11 = subdir_write_lfn(param_1,local_b4,sVar8,local_28,local_70,local_b4[3],param_9);
     return uVar11;
   }
   goto LAB_20148488;
@@ -11161,18 +11323,20 @@ LAB_20148520:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148990 @ 20148990  (124 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: subdir_add_entry_locked
+ * subdir_add_entry_locked @ 20148990  (124 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: fs_lock_a, subdir_add_entry, fs_unlock_a [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148990 @ 20148990 (124 bytes)
+// ===== subdir_add_entry_locked @ 20148990 (124 bytes)
+
+/* fs_lock_a, subdir_add_entry, fs_unlock_a [fact] */
 
 undefined4
-FUN_20148990(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,
-            undefined4 param_9)
+subdir_add_entry_locked
+          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+          undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,
+          undefined4 param_9)
 
 {
   int iVar1;
@@ -11185,8 +11349,8 @@ FUN_20148990(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   uVar4 = param_4;
   iVar1 = fs_lock_a(param_1);
   if (iVar1 == 0) {
-    uVar2 = FUN_20148150(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9,
-                         param_1,uVar2,uVar3,uVar4);
+    uVar2 = subdir_add_entry(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9
+                             ,param_1,uVar2,uVar3,uVar4);
     fs_unlock_a(param_1);
   }
   else {
@@ -11197,15 +11361,16 @@ FUN_20148990(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148a0c @ 20148a0c  (124 bytes, 2 callers, export file 2014570c_20149278.c)
- * Name on the doc page: wpath_next_component
+ * wpath_next_component @ 20148a0c  (124 bytes, 2 callers, export file 2014570c_20149278.c)
  * Purpose: (path, out): copies the next UCS-2 path component up to '\' or the end [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148a0c @ 20148a0c (124 bytes)
+// ===== wpath_next_component @ 20148a0c (124 bytes)
 
-void FUN_20148a0c(char *param_1,char *param_2)
+/* (path, out): copies the next UCS-2 path component up to '\' or the end [fact] */
+
+void wpath_next_component(char *param_1,char *param_2)
 
 {
   char cVar1;
@@ -11238,16 +11403,18 @@ joined_r0x20148a4c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148a88 @ 20148a88  (136 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: wpath_dir_len
+ * wpath_dir_len @ 20148a88  (136 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the last,
  *     with separators) plus 6 [fact for the loop]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148a88 @ 20148a88 (136 bytes)
+// ===== wpath_dir_len @ 20148a88 (136 bytes)
 
-int FUN_20148a88(int param_1)
+/* (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the
+   last, with separators) plus 6 [fact for the loop] */
+
+int wpath_dir_len(int param_1)
 
 {
   int iVar1;
@@ -11259,7 +11426,7 @@ int FUN_20148a88(int param_1)
   iVar3 = 0;
   pcVar2 = (char *)(param_1 + 4);
   while ((((*pcVar2 != '\0' || (pcVar2[1] != '\0')) &&
-          ((pcVar2 = (char *)FUN_20148a0c(pcVar2,&local_218), local_218 != '\0' ||
+          ((pcVar2 = (char *)wpath_next_component(pcVar2,&local_218), local_218 != '\0' ||
            (local_217 != '\0')))) && ((*pcVar2 != '\0' || (pcVar2[1] != '\0'))))) {
     iVar1 = fs_wstrlen_bytes(&local_218);
     iVar3 = iVar1 + iVar3 + 2;
@@ -11269,16 +11436,18 @@ int FUN_20148a88(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148b10 @ 20148b10  (160 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: lfn_name_valid
+ * lfn_name_valid @ 20148b10  (160 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: (UCS-2 name): rejects characters of the invalid set *0x20808BA8 and a trailing '.' or ' ' [fact for the
  *     checks]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148b10 @ 20148b10 (160 bytes)
+// ===== lfn_name_valid @ 20148b10 (160 bytes)
 
-undefined4 FUN_20148b10(char *param_1)
+/* (UCS-2 name): rejects characters of the invalid set *0x20808BA8 and a trailing '.' or ' ' [fact
+   for the checks] */
+
+undefined4 lfn_name_valid(char *param_1)
 
 {
   char cVar1;
@@ -11312,15 +11481,16 @@ undefined4 FUN_20148b10(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148c5c @ 20148c5c  (56 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fs_wstrlen_max
+ * fs_wstrlen_max @ 20148c5c  (56 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: (UCS-2 string): length in bytes, at most 0x204 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148c5c @ 20148c5c (56 bytes)
+// ===== fs_wstrlen_max @ 20148c5c (56 bytes)
 
-undefined4 FUN_20148c5c(short *param_1)
+/* (UCS-2 string): length in bytes, at most 0x204 [fact] */
+
+undefined4 fs_wstrlen_max(short *param_1)
 
 {
   short sVar1;
@@ -11342,16 +11512,18 @@ undefined4 FUN_20148c5c(short *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148c94 @ 20148c94  (224 bytes, 4 callers, export file 2014570c_20149278.c)
- * Name on the doc page: ucs2_to_upper
+ * ucs2_to_upper @ 20148c94  (224 bytes, 4 callers, export file 2014570c_20149278.c)
  * Purpose: (code): upper-case of a UCS-2 code for ASCII, full-width, Greek and Cyrillic letters (the pages of
  *     ucs2_eq_nocase) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148c94 @ 20148c94 (224 bytes)
+// ===== ucs2_to_upper @ 20148c94 (224 bytes)
 
-uint FUN_20148c94(uint param_1)
+/* (code): upper-case of a UCS-2 code for ASCII, full-width, Greek and Cyrillic letters (the pages
+   of ucs2_eq_nocase) [fact] */
+
+uint ucs2_to_upper(uint param_1)
 
 {
   uint uVar1;
@@ -11401,16 +11573,18 @@ LAB_20148cdc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148d74 @ 20148d74  (120 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fs_wstricmp_ucs2
+ * fs_wstricmp_ucs2 @ 20148d74  (120 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: (a, b): case-insensitive UCS-2 string compare through ucs2_to_upper (also Greek, Cyrillic, full-width;
  *     fs_wstricmp 0x2014D3F8 folds only < 0x100); file_sync_shared uses it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148d74 @ 20148d74 (120 bytes)
+// ===== fs_wstricmp_ucs2 @ 20148d74 (120 bytes)
 
-uint FUN_20148d74(short *param_1,short *param_2)
+/* (a, b): case-insensitive UCS-2 string compare through ucs2_to_upper (also Greek, Cyrillic,
+   full-width; fs_wstricmp 0x2014D3F8 folds only < 0x100); file_sync_shared uses it [fact] */
+
+uint fs_wstricmp_ucs2(short *param_1,short *param_2)
 
 {
   uint uVar1;
@@ -11429,8 +11603,8 @@ uint FUN_20148d74(short *param_1,short *param_2)
     if (sVar2 == 0) {
       return 1;
     }
-    iVar3 = FUN_20148c94();
-    iVar4 = FUN_20148c94(sVar2);
+    iVar3 = ucs2_to_upper();
+    iVar4 = ucs2_to_upper(sVar2);
     uVar1 = iVar3 - iVar4 & 0xffff;
     if (uVar1 != 0) break;
     param_2 = param_2 + 1;
@@ -11441,15 +11615,16 @@ uint FUN_20148d74(short *param_1,short *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148dec @ 20148dec  (144 bytes, 0 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fs_wstrnicmp_ucs2
+ * fs_wstrnicmp_ucs2 @ 20148dec  (144 bytes, 0 callers, export file 2014570c_20149278.c)
  * Purpose: (a, b, n): bounded variant of fs_wstricmp_ucs2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148dec @ 20148dec (144 bytes)
+// ===== fs_wstrnicmp_ucs2 @ 20148dec (144 bytes)
 
-uint FUN_20148dec(short *param_1,short *param_2,uint param_3)
+/* (a, b, n): bounded variant of fs_wstricmp_ucs2 [fact] */
+
+uint fs_wstrnicmp_ucs2(short *param_1,short *param_2,uint param_3)
 
 {
   uint uVar1;
@@ -11471,8 +11646,8 @@ uint FUN_20148dec(short *param_1,short *param_2,uint param_3)
       if (sVar2 == 0) {
         return 1;
       }
-      iVar3 = FUN_20148c94();
-      iVar4 = FUN_20148c94(sVar2);
+      iVar3 = ucs2_to_upper();
+      iVar4 = ucs2_to_upper(sVar2);
       uVar1 = iVar3 - iVar4 & 0xffff;
       if (uVar1 != 0) {
         return uVar1;
@@ -11487,16 +11662,18 @@ uint FUN_20148dec(short *param_1,short *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20148f40 @ 20148f40  (124 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fat32_fsinfo_read
+ * fat32_fsinfo_read @ 20148f40  (124 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: (vol, sector): checks the FSInfo signatures "RRaA" / "rrAa" and takes the free count and next-free
  *     cluster [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_20148f40 @ 20148f40 (124 bytes)
+// ===== fat32_fsinfo_read @ 20148f40 (124 bytes)
 
-undefined4 FUN_20148f40(int param_1,int param_2)
+/* (vol, sector): checks the FSInfo signatures "RRaA" / "rrAa" and takes the free count and
+   next-free cluster [fact] */
+
+undefined4 fat32_fsinfo_read(int param_1,int param_2)
 
 {
   int iVar1;
@@ -11589,16 +11766,18 @@ uint fat_mount(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201490f8 @ 201490f8  (324 bytes, 1 callers, export file 2014570c_20149278.c)
- * Name on the doc page: fat_find_volume
+ * fat_find_volume @ 201490f8  (324 bytes, 1 callers, export file 2014570c_20149278.c)
  * Purpose: (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT",
  *     identifies "FAT32" / "FAT12" / "FAT16" by the type strings [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== FUN_201490f8 @ 201490f8 (324 bytes)
+// ===== fat_find_volume @ 201490f8 (324 bytes)
 
-undefined4 FUN_201490f8(int param_1,int param_2)
+/* (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT",
+   identifies "FAT32" / "FAT12" / "FAT16" by the type strings [fact] */
+
+undefined4 fat_find_volume(int param_1,int param_2)
 
 {
   char cVar1;

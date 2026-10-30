@@ -12,7 +12,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   bVar1 = false;
   local_20 = param_4;
   mutex_guard_ctor(&local_20,DAT_20800118,1);
-  FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,1);
+  kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,1);
   iVar2 = 0;
   do {
     if ((&DAT_20811100)[iVar2 * 0xd0] != '\0') {
@@ -21,7 +21,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
     }
     iVar2 = iVar2 + 1;
   } while (iVar2 < 2);
-  FUN_2015f0b4(&DAT_20811080 + param_1 * 0xd0);
+  kbdobj_activate(&DAT_20811080 + param_1 * 0xd0);
 LAB_20106e8c:
   mutex_guard_dtor(&local_20);
   if (bVar1) {
@@ -44,11 +44,11 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   iVar2 = -1;
   local_18 = param_4;
   mutex_guard_ctor(&local_18,DAT_20800118,1);
-  FUN_2015f098(&DAT_20811080 + param_1 * 0xd0,param_1,0);
+  kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,0);
   iVar1 = 0;
   do {
     if ((&DAT_20811101)[iVar1 * 0xd0] != '\0') {
-      FUN_2015f0b4(&DAT_20811080 + iVar1 * 0xd0);
+      kbdobj_activate(&DAT_20811080 + iVar1 * 0xd0);
       iVar2 = iVar1;
       break;
     }
@@ -218,7 +218,7 @@ void usbkbd_flush_all(void)
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   iVar1 = 0;
   do {
-    FUN_2015f0c4(&DAT_20811080 + iVar1 * 0xd0);
+    kbdobj_flush(&DAT_20811080 + iVar1 * 0xd0);
     iVar1 = iVar1 + 1;
   } while (iVar1 < 2);
   mutex_guard_dtor(auStack_10);
@@ -257,7 +257,7 @@ uint usbkbd_get_char(byte *param_1)
     else {
       bVar5 = 0xff;
     }
-    uVar3 = FUN_2010a684(param_1[1],bVar5,DAT_2080010e);
+    uVar3 = kbd_char_lookup(param_1[1],bVar5,DAT_2080010e);
     *(undefined4 *)(param_1 + 4) = uVar3;
     uVar4 = 1;
   }
@@ -1045,9 +1045,12 @@ LAB_20107d28:
 }
 
 
-// ===== FUN_20107d8c @ 20107d8c (144 bytes)
+// ===== usbkbd_leds_refresh @ 20107d8c (144 bytes)
 
-void FUN_20107d8c(int param_1)
+/* scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device,
+   usbkbd_set_leds) [fact] */
+
+void usbkbd_leds_refresh(int param_1)
 
 {
   int iVar1;
@@ -1137,9 +1140,12 @@ undefined1 usbkbd_last_key(void)
 }
 
 
-// ===== FUN_20107e9c @ 20107e9c (68 bytes)
+// ===== usbkbd_init @ 20107e9c (68 bytes)
 
-void FUN_20107e9c(void)
+/* Creates the keyboard mutex 0x20800118, initialises the two 0xD0-byte keyboard objects 0x20811080
+   and the layout tables (kbd_layout_tables_init) [fact] */
+
+void usbkbd_init(void)
 
 {
   int iVar1;
@@ -1167,7 +1173,7 @@ undefined * FUN_20107ee0(void)
   iVar1 = 2;
   puVar2 = &DAT_20811080;
   while (bVar3 = iVar1 != 0, iVar1 = iVar1 + -1, bVar3) {
-    FUN_2015f0cc(puVar2);
+    kbdobj_ctor(puVar2);
     puVar2 = puVar2 + 0xd0;
   }
   return &DAT_20811080;
@@ -1452,9 +1458,13 @@ void vk_key_name(void)
 }
 
 
-// ===== FUN_20108bc8 @ 20108bc8 (1240 bytes)
+// ===== kbd_layout_base_fill @ 20108bc8 (1240 bytes)
 
-void FUN_20108bc8(int param_1)
+/* (layout): fills layout table 0x20450290 + 0x600*layout with the common entries (digits usage
+   0x1E.. -> '1'.., letters usage 4.. -> 'A'.., Enter, Esc, Backspace, Tab, Space, arrows) that the
+   per-layout builders then override [fact] */
+
+void kbd_layout_base_fill(int param_1)
 
 {
   int iVar1;
@@ -1667,22 +1677,28 @@ void FUN_20108bc8(int param_1)
 }
 
 
-// ===== FUN_201090a0 @ 201090a0 (8 bytes)
+// ===== kbd_layout_jpn_init @ 201090a0 (8 bytes)
 
-void FUN_201090a0(void)
+/* kbd_layout_base_fill(0) only: table 0 is JPN in the usbkbd_set_layout list (input.md); called
+   from kbd_layout_tables_init [fact] */
+
+void kbd_layout_jpn_init(void)
 
 {
-  FUN_20108bc8(0);
+  kbd_layout_base_fill(0);
   return;
 }
 
 
-// ===== FUN_201090a8 @ 201090a8 (432 bytes)
+// ===== kbd_layout_us_init @ 201090a8 (432 bytes)
 
-void FUN_201090a8(void)
+/* kbd_layout_base_fill(1) plus the overrides of table 1; id 1 is US in the usbkbd_set_layout list
+   (input.md) and kbd_char_lookup indexes the table by that id [fact] */
+
+void kbd_layout_us_init(void)
 
 {
-  FUN_20108bc8(1);
+  kbd_layout_base_fill(1);
   DAT_204508a8 = 0x39;
   DAT_204508ac = 0xfe;
   DAT_204508b0 = 0x14;
@@ -1750,12 +1766,15 @@ void FUN_201090a8(void)
 }
 
 
-// ===== FUN_20109258 @ 20109258 (432 bytes)
+// ===== kbd_layout_uk_init @ 20109258 (432 bytes)
 
-void FUN_20109258(void)
+/* kbd_layout_base_fill(2) plus the overrides of table 2 (UK in the usbkbd_set_layout list) [fact]
+    */
+
+void kbd_layout_uk_init(void)
 
 {
-  FUN_20108bc8(2);
+  kbd_layout_base_fill(2);
   DAT_20450ea8 = 0x39;
   DAT_20450eac = 0xfe;
   DAT_20450eb0 = 0x14;
@@ -1823,15 +1842,17 @@ void FUN_20109258(void)
 }
 
 
-// ===== FUN_2010940c @ 2010940c (816 bytes)
+// ===== kbd_layout_fra_azerty_init @ 2010940c (816 bytes)
 
-void FUN_2010940c(void)
+/* kbd_layout_base_fill(3) plus the overrides of table 3 (FRA(AZ)) [fact] */
+
+void kbd_layout_fra_azerty_init(void)
 
 {
   int iVar1;
   int iVar2;
   
-  FUN_20108bc8(3);
+  kbd_layout_base_fill(3);
   DAT_204514f0 = 0x27;
   DAT_204514f4 = 1;
   DAT_204514f8 = 0x30;
@@ -1961,12 +1982,14 @@ void FUN_2010940c(void)
 }
 
 
-// ===== FUN_2010973c @ 2010973c (520 bytes)
+// ===== kbd_layout_fra_qwerty_init @ 2010973c (520 bytes)
 
-void FUN_2010973c(void)
+/* kbd_layout_base_fill(4) plus the overrides of table 4 (FRA(QW)) [fact] */
+
+void kbd_layout_fra_qwerty_init(void)
 
 {
-  FUN_20108bc8(4);
+  kbd_layout_base_fill(4);
   DAT_20451aa8 = 0x39;
   DAT_20451aac = 0xfe;
   DAT_20451ab0 = 0x14;
@@ -2049,12 +2072,15 @@ void FUN_2010973c(void)
 }
 
 
-// ===== FUN_20109944 @ 20109944 (464 bytes)
+// ===== kbd_layout_fra_qwerty_init_alt @ 20109944 (464 bytes)
 
-void FUN_20109944(void)
+/* Second builder of table 4 with no caller in the image: kbd_layout_base_fill(4) and a different
+   override set [fact] */
+
+void kbd_layout_fra_qwerty_init_alt(void)
 
 {
-  FUN_20108bc8(4);
+  kbd_layout_base_fill(4);
   DAT_20451aa8 = 0x39;
   DAT_20451aac = 0xfe;
   DAT_20451ab0 = 0x14;
@@ -2128,12 +2154,14 @@ void FUN_20109944(void)
 }
 
 
-// ===== FUN_20109b14 @ 20109b14 (516 bytes)
+// ===== kbd_layout_deu_init @ 20109b14 (516 bytes)
 
-void FUN_20109b14(void)
+/* kbd_layout_base_fill(5) plus the overrides of table 5 (DEU) [fact] */
+
+void kbd_layout_deu_init(void)
 
 {
-  FUN_20108bc8(5);
+  kbd_layout_base_fill(5);
   DAT_204520a8 = 0x39;
   DAT_204520ac = 0xfe;
   DAT_204520b0 = 0x14;
@@ -2216,12 +2244,14 @@ void FUN_20109b14(void)
 }
 
 
-// ===== FUN_20109d24 @ 20109d24 (464 bytes)
+// ===== kbd_layout_por_init @ 20109d24 (464 bytes)
 
-void FUN_20109d24(void)
+/* kbd_layout_base_fill(6) plus the overrides of table 6 (POR) [fact] */
+
+void kbd_layout_por_init(void)
 
 {
-  FUN_20108bc8(6);
+  kbd_layout_base_fill(6);
   DAT_204526a8 = 0x39;
   DAT_204526ac = 0xfe;
   DAT_204526b0 = 0x14;
@@ -2295,12 +2325,14 @@ void FUN_20109d24(void)
 }
 
 
-// ===== FUN_20109ef4 @ 20109ef4 (408 bytes)
+// ===== kbd_layout_por_br_init @ 20109ef4 (408 bytes)
 
-void FUN_20109ef4(void)
+/* kbd_layout_base_fill(7) plus the overrides of table 7 (POR(BR)) [fact] */
+
+void kbd_layout_por_br_init(void)
 
 {
-  FUN_20108bc8(7);
+  kbd_layout_base_fill(7);
   DAT_20452ca8 = 0x39;
   DAT_20452cac = 0xfe;
   DAT_20452cb0 = 0x14;
@@ -2365,12 +2397,14 @@ void FUN_20109ef4(void)
 }
 
 
-// ===== FUN_2010a08c @ 2010a08c (488 bytes)
+// ===== kbd_layout_esp_init @ 2010a08c (488 bytes)
 
-void FUN_2010a08c(void)
+/* kbd_layout_base_fill(8) plus the overrides of table 8 (ESP) [fact] */
+
+void kbd_layout_esp_init(void)
 
 {
-  FUN_20108bc8(8);
+  kbd_layout_base_fill(8);
   DAT_204532a8 = 0x39;
   DAT_204532ac = 0xfe;
   DAT_204532b0 = 0x14;
@@ -2447,12 +2481,14 @@ void FUN_2010a08c(void)
 }
 
 
-// ===== FUN_2010a274 @ 2010a274 (452 bytes)
+// ===== kbd_layout_esp_la_init @ 2010a274 (452 bytes)
 
-void FUN_2010a274(void)
+/* kbd_layout_base_fill(9) plus the overrides of table 9 (ESP(LA)) [fact] */
+
+void kbd_layout_esp_la_init(void)
 
 {
-  FUN_20108bc8(9);
+  kbd_layout_base_fill(9);
   DAT_204538a8 = 0x39;
   DAT_204538ac = 0xfe;
   DAT_204538b0 = 0x14;
@@ -2526,12 +2562,14 @@ void FUN_2010a274(void)
 }
 
 
-// ===== FUN_2010a438 @ 2010a438 (484 bytes)
+// ===== kbd_layout_ita_init @ 2010a438 (484 bytes)
 
-void FUN_2010a438(void)
+/* kbd_layout_base_fill(10) plus the overrides of table 10 (ITA) [fact] */
+
+void kbd_layout_ita_init(void)
 
 {
-  FUN_20108bc8(10);
+  kbd_layout_base_fill(10);
   DAT_20453ea8 = 0x39;
   DAT_20453eac = 0xfe;
   DAT_20453eb0 = 0x14;
@@ -2618,24 +2656,28 @@ undefined4 kbd_layout_tables_init(void)
   __aeabi_memclr4(&DAT_20450290,0xc000);
   __aeabi_memclr4(&DAT_2045c290,0x1200);
   vk_key_name();
-  FUN_201090a0();
-  FUN_201090a8();
-  FUN_20109258();
-  FUN_20109b14();
-  FUN_2010940c();
-  FUN_2010973c();
-  FUN_20109ef4();
-  FUN_20109d24();
-  FUN_2010a08c();
-  FUN_2010a274();
-  FUN_2010a438();
+  kbd_layout_jpn_init();
+  kbd_layout_us_init();
+  kbd_layout_uk_init();
+  kbd_layout_deu_init();
+  kbd_layout_fra_azerty_init();
+  kbd_layout_fra_qwerty_init();
+  kbd_layout_por_br_init();
+  kbd_layout_por_init();
+  kbd_layout_esp_init();
+  kbd_layout_esp_la_init();
+  kbd_layout_ita_init();
   return 0;
 }
 
 
-// ===== FUN_2010a684 @ 2010a684 (212 bytes)
+// ===== kbd_char_lookup @ 2010a684 (212 bytes)
 
-undefined4 FUN_2010a684(int param_1,int param_2,int param_3)
+/* (usage, modifier, layout): searches the 12-byte entries of layout table 0x20450290 +
+   0x600*layout, letters also match with the shift state, modifier 0xFE matches any; returns the
+   character; usbkbd_get_char (layout 0x2080010E) and kbdtest_record call it [fact] */
+
+undefined4 kbd_char_lookup(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -2731,7 +2773,7 @@ void kbdtest_record(undefined1 param_1)
 {
   int iVar1;
   
-  iVar1 = FUN_2010a684();
+  iVar1 = kbd_char_lookup();
   DAT_20811288 = vk_name_lookup(iVar1);
   DAT_20811282 = param_1;
   DAT_20811284 = iVar1;

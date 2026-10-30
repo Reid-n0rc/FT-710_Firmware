@@ -51,13 +51,15 @@ code * knl_int_disable(void)
 
 {
   software_interrupt(0);
-  return FUN_20156878;
+  return knl_psr_set_i;
 }
 
 
-// ===== FUN_20156878 @ 20156878 (20 bytes)
+// ===== knl_psr_set_i @ 20156878 (20 bytes)
 
-ulonglong FUN_20156878(void)
+/* Service-call return helper: saved PSR with bit 7 (I) set (boot-rtos.md knl_int_disable) [fact] */
+
+ulonglong knl_psr_set_i(void)
 
 {
   undefined4 in_stack_00000004;
@@ -74,13 +76,16 @@ undefined8 knl_int_restore(undefined4 param_1)
 
 {
   software_interrupt(0);
-  return CONCAT44(param_1,FUN_2015689c);
+  return CONCAT44(param_1,knl_psr_clear_if);
 }
 
 
-// ===== FUN_2015689c @ 2015689c (20 bytes)
+// ===== knl_psr_clear_if @ 2015689c (20 bytes)
 
-uint FUN_2015689c(void)
+/* Service-call return helper: saved PSR with the I and F bits cleared (boot-rtos.md
+   knl_int_restore) [fact] */
+
+uint knl_psr_clear_if(void)
 
 {
   uint in_stack_00000004;
@@ -835,9 +840,12 @@ undefined4 mutex_guard_dtor(undefined4 param_1)
 }
 
 
-// ===== FUN_201571e8 @ 201571e8 (36 bytes)
+// ===== afscope_obj_clear @ 201571e8 (36 bytes)
 
-void FUN_201571e8(int param_1)
+/* (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8
+   [fact] */
+
+void afscope_obj_clear(int param_1)
 
 {
   __aeabi_memclr4(param_1 + 0xb60,0x13178);
@@ -846,9 +854,11 @@ void FUN_201571e8(int param_1)
 }
 
 
-// ===== FUN_20157214 @ 20157214 (36 bytes)
+// ===== copy_inverted_words @ 20157214 (36 bytes)
 
-void FUN_20157214(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
+/* (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record [fact] */
+
+void copy_inverted_words(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 {
   for (param_4 = param_4 >> 2; param_4 != 0; param_4 = param_4 - 1) {
@@ -866,7 +876,7 @@ void FUN_201572f8(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0xb59) = 0;
-  FUN_201571e8();
+  afscope_obj_clear();
   return;
 }
 
@@ -880,7 +890,7 @@ undefined4 FUN_201574e8(int param_1,undefined4 param_2,undefined4 param_3,int pa
   undefined1 auStack_1a0 [200];
   byte local_d8 [204];
   
-  FUN_20157214(param_1,auStack_1a0,param_1 + 0x900,200);
+  copy_inverted_words(param_1,auStack_1a0,param_1 + 0x900,200);
   FUN_20134084(local_d8,auStack_1a0);
   iVar1 = 0;
   do {
@@ -897,7 +907,7 @@ void FUN_201575f8(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0xb59) = 0;
-  FUN_201571e8();
+  afscope_obj_clear();
   return;
 }
 
@@ -958,21 +968,24 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
 }
 
 
-// ===== FUN_201576f4 @ 201576f4 (108 bytes)
+// ===== scope_wf_bank_set @ 201576f4 (108 bytes)
 
-void FUN_201576f4(int param_1,int param_2)
+/* (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 =
+   0), 1 selects bank 1, 2 clears both banks [fact] */
+
+void scope_wf_bank_set(int param_1,int param_2)
 
 {
   if (param_2 == 0) {
     __aeabi_memclr4(param_1 + 0x1b130,0x33f40);
-    FUN_201643a4(param_1 + 0x82fb4);
+    ring133_reset(param_1 + 0x82fb4);
     DAT_20450280 = 0;
   }
   else {
     if (param_2 != 1) {
       __aeabi_memclr4(param_1 + 0x1b130,0x67e80);
-      FUN_201643a4(param_1 + 0x82fb4);
-      FUN_201643a4(param_1 + 0x82fb0);
+      ring133_reset(param_1 + 0x82fb4);
+      ring133_reset(param_1 + 0x82fb0);
       return;
     }
     DAT_20450280 = 1;
@@ -981,9 +994,12 @@ void FUN_201576f4(int param_1,int param_2)
 }
 
 
-// ===== FUN_20157778 @ 20157778 (116 bytes)
+// ===== scope_obj_history_clear @ 20157778 (116 bytes)
 
-void FUN_20157778(int param_1)
+/* (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope
+   object [fact] */
+
+void scope_obj_history_clear(int param_1)
 
 {
   __aeabi_memset(param_1 + 0x9c7f,0x352,0xff);
@@ -996,9 +1012,12 @@ void FUN_20157778(int param_1)
 }
 
 
-// ===== FUN_201577f8 @ 201577f8 (36 bytes)
+// ===== copy_inverted_words_b @ 201577f8 (36 bytes)
 
-void FUN_201577f8(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
+/* (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words);
+   scope_history_push uses it [fact] */
+
+void copy_inverted_words_b(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 {
   for (param_4 = param_4 >> 2; param_4 != 0; param_4 = param_4 - 1) {
@@ -1010,21 +1029,27 @@ void FUN_201577f8(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 }
 
 
-// ===== FUN_201578c8 @ 201578c8 (40 bytes)
+// ===== scope_obj_reset_bank0 @ 201578c8 (40 bytes)
 
-void FUN_201578c8(int param_1)
+/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact] */
+
+void scope_obj_reset_bank0(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  FUN_20157778();
-  FUN_201576f4(param_1,0);
+  scope_obj_history_clear();
+  scope_wf_bank_set(param_1,0);
   return;
 }
 
 
-// ===== FUN_20157c50 @ 20157c50 (224 bytes)
+// ===== scope_obj_levels_get @ 20157c50 (224 bytes)
 
-void FUN_20157c50(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while
+   SPEED STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method
+   behind scope_levels_get) [fact] */
+
+void scope_obj_levels_get(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -1054,9 +1079,13 @@ LAB_20157cc4:
 }
 
 
-// ===== FUN_20157d3c @ 20157d3c (552 bytes)
+// ===== scope_obj_wf_add_row @ 20157d3c (552 bytes)
 
-void FUN_20157d3c(int param_1,int param_2,int param_3)
+/* (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index
+   obj+0x17254), adds the level offset to each point (clamp_add_u8, 0..255) into the current
+   waterfall bank (gui.md: scope_wf_add_row) [fact for the calls] */
+
+void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -1073,15 +1102,15 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
   
   if ((((DAT_20800498 == '\0') && (*(char *)(param_1 + 0x9c7c) == '\0')) &&
       (*(char *)(param_1 + 0x9c7d) == '\0')) && (*(char *)(param_1 + 0x9c7e) == '\0')) {
-    iVar4 = FUN_20164828(param_1 + 0x17254,0xffffffff);
+    iVar4 = ring30_offset(param_1 + 0x17254,0xffffffff);
     iVar9 = param_1 + iVar4 * 800 + 0x10abc;
     iVar4 = param_1 + 0x1b12c;
-    iVar5 = FUN_201647e4(iVar4,0);
+    iVar5 = ring20_offset(iVar4,0);
     memcpy(iVar9,param_1 + iVar5 * 800 + 0x17258,800);
     iVar5 = 1;
     if (1 < param_2) {
       do {
-        iVar6 = FUN_201647e4(iVar4,-iVar5);
+        iVar6 = ring20_offset(iVar4,-iVar5);
         iVar7 = 0;
         do {
           bVar3 = *(byte *)(param_1 + iVar6 * 800 + 0x17258 + iVar7);
@@ -1093,10 +1122,10 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
         iVar5 = iVar5 + 1;
       } while (iVar5 < param_2);
     }
-    iVar5 = FUN_20164388(param_1 + 0x82fb4);
+    iVar5 = ring133_advance(param_1 + 0x82fb4);
     puVar10 = &DAT_20450278;
     if (DAT_20450280 == 1) {
-      iVar5 = FUN_20164388(param_1 + 0x82fb0);
+      iVar5 = ring133_advance(param_1 + 0x82fb0);
     }
     if (param_3 != 0) {
       puVar10 = (undefined4 *)0x0;
@@ -1104,7 +1133,7 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
     iVar5 = param_1 + DAT_20450280 * 0x33f40 + iVar5 * 0x640 + 0x1b130;
     if (param_3 != 0) {
       do {
-        iVar7 = FUN_201341cc(*(undefined1 *)(iVar9 + (int)puVar10),param_3);
+        iVar7 = clamp_add_u8(*(undefined1 *)(iVar9 + (int)puVar10),param_3);
         iVar6 = (int)puVar10 * 2;
         puVar10 = (undefined4 *)((int)puVar10 + 1);
         *(undefined2 *)(iVar5 + iVar6) = *(undefined2 *)(param_1 + iVar7 * 2 + 0x2e06);
@@ -1123,7 +1152,7 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
     piVar11 = (int *)(param_1 + 0x1b0d8);
     if (0 < *piVar11) {
       do {
-        iVar7 = FUN_201647e4(iVar4,-iVar6);
+        iVar7 = ring20_offset(iVar4,-iVar6);
         uVar8 = (uint)*(ushort *)(piVar11 + iVar7 + 1);
         if (uVar8 < *(ushort *)((int)piVar11 + iVar7 * 4 + 6) + uVar8) {
           do {
@@ -1152,9 +1181,9 @@ void FUN_20157f8c(int param_1)
   
   if (((*(char *)(param_1 + 0x9c7c) == '\0') && (*(char *)(param_1 + 0x9c7d) == '\0')) &&
      (*(char *)(param_1 + 0x9c7e) == '\0')) {
-    FUN_201643b0();
-    iVar1 = FUN_201647e4(param_1 + 0x1b12c,0);
-    FUN_201577f8(param_1,param_1 + iVar1 * 800 + 0x17258,param_1 + 0x9c98,800);
+    ring20_advance();
+    iVar1 = ring20_offset(param_1 + 0x1b12c,0);
+    copy_inverted_words_b(param_1,param_1 + iVar1 * 800 + 0x17258,param_1 + 0x9c98,800);
     return;
   }
   return;
@@ -1212,21 +1241,25 @@ void FUN_20158544(int param_1,int param_2)
 }
 
 
-// ===== FUN_20158568 @ 20158568 (40 bytes)
+// ===== scope_obj_reset_bank1 @ 20158568 (40 bytes)
 
-void FUN_20158568(int param_1)
+/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact] */
+
+void scope_obj_reset_bank1(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  FUN_20157778();
-  FUN_201576f4(param_1,1);
+  scope_obj_history_clear();
+  scope_wf_bank_set(param_1,1);
   return;
 }
 
 
-// ===== FUN_20158590 @ 20158590 (104 bytes)
+// ===== scope_obj_indices_clear @ 20158590 (104 bytes)
 
-int FUN_20158590(int param_1)
+/* (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 [fact] */
+
+int scope_obj_indices_clear(int param_1)
 
 {
   *(undefined4 *)(param_1 + 0x17254) = 0;
@@ -1237,9 +1270,12 @@ int FUN_20158590(int param_1)
 }
 
 
-// ===== FUN_20158618 @ 20158618 (24 bytes)
+// ===== msgbuf_init @ 20158618 (24 bytes)
 
-void FUN_20158618(int param_1)
+/* (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX
+   objects [fact] */
+
+void msgbuf_init(int param_1)
 
 {
   *(undefined2 *)(param_1 + 4) = 0;
@@ -1279,11 +1315,11 @@ void mainlink_tx_init(int param_1,uint param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x408;
-    FUN_20158618(iVar3 + 0x1c);
+    msgbuf_init(iVar3 + 0x1c);
     txpool_set_slot(param_1 + 0x811c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x81a4) = uVar1;
   return;
 }
@@ -1339,7 +1375,7 @@ void mainlink_tx_post(int param_1,uint param_2)
   while (g_ml.pace_count != 0) {
     itron_dly_tsk(1);
   }
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
   itron_twai_sem(g_ml.pace_sem,0xffffffff);
   g_ml.pace_count = 3;
   itron_sig_sem(g_ml.pace_sem);

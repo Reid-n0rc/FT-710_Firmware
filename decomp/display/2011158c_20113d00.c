@@ -316,12 +316,12 @@ void * keycode_init(void)
   code *pcVar1;
   uint uVar2;
   
-  DAT_208001d0 = itron_acre_flg(0,&cflg_keycode);
+  DAT_208001d0 = itron_acre_flg(0,(byte *)&cflg_keycode);
   if ((int)DAT_208001d0 < 1) {
     pcVar1 = (code *)0x0;
   }
   else {
-    uVar2 = itron_acre_tsk(0,&ctsk_keycode);
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_keycode);
     if ((int)uVar2 < 1) {
       pcVar1 = (code *)0x0;
     }
@@ -610,7 +610,7 @@ void spi_slave_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_spi_slave_task);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_spi_slave_task);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,0);
     return;
@@ -966,21 +966,21 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
   
   FUN_201637d8(&DAT_20800208,0xff,param_3,param_4,param_4);
   FUN_201637d8(&DAT_2080020e,0xff);
-  DAT_208001f8 = itron_acre_flg(0,&cflg_renc);
-  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,&ctsk_renc), 0 < (int)uVar2)) &&
+  DAT_208001f8 = itron_acre_flg(0,(byte *)&cflg_renc);
+  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,(byte *)&ctsk_renc), 0 < (int)uVar2)) &&
      (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) {
     renc_mtu2_init();
-    uVar2 = itron_acre_tsk(0,&ctsk_ad_renc);
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_ad_renc);
     if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
       periodic_wakeup_register(uVar2,1);
-      uVar2 = itron_acre_tsk(0,&ctsk_detect_renc);
+      uVar2 = itron_acre_tsk(0,(byte *)&ctsk_detect_renc);
       if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
         periodic_wakeup_register(uVar2,2);
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 & 0xfcff;
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 | 0x300;
-        uVar2 = itron_acre_isr(0,&cisr_renc_irq4_isr);
+        uVar2 = itron_acre_isr(0,0x20165580);
         if (0 < (int)uVar2) {
           gic_enable_irq(0x24);
           return;
@@ -1001,7 +1001,7 @@ void pot_resend_all(void)
 {
   int iVar1;
   
-  iVar1 = FUN_201309b4();
+  iVar1 = power_key_flag_get();
   if (iVar1 == 0) {
     if ((DAT_208001e7 != '\0') || (DAT_208001e5 == '\x01')) {
       renc_rec_set(4,(byte)DAT_20800208);
@@ -1400,7 +1400,7 @@ void mainlink_send_key(uint param_1,byte param_2)
   puVar3 = &local_20;
   uStack_1c = 0;
   local_20 = CONCAT13((char)param_1,CONCAT12((char)(param_1 >> 8),CONCAT11(param_2,0xe0)));
-  iVar2 = FUN_20116dac();
+  iVar2 = full_mode_get();
   if (iVar2 == 0) goto LAB_20113460;
   if (DAT_20800495 == '\0') {
     if (local_20._1_1_ == '\0') {
@@ -1468,7 +1468,7 @@ LAB_2011343c:
 LAB_20113460:
   if (((local_20._1_1_ == '\x02') && (local_20._2_1_ == '\x03')) && (local_20._3_1_ == '\0')) {
     DAT_20800216 = 0;
-    FUN_2011722c();
+    power_key_on();
     return;
   }
   return;
@@ -1737,7 +1737,7 @@ LAB_201139f0:
       }
       iVar3 = iVar3 + 1;
     } while (iVar3 < 6);
-    iVar3 = FUN_20116dac();
+    iVar3 = full_mode_get();
     if ((iVar3 != 0) || (DAT_2080049b != '\0')) {
       iVar3 = 0;
       do {
@@ -1837,7 +1837,7 @@ void key_init(void)
   uint uVar2;
   
   key_set_power_level(1);
-  uVar1 = itron_acre_tsk(0,&ctsk_key);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_key);
   if ((0 < (int)uVar1) && (uVar2 = itron_sta_tsk(uVar1,0), uVar2 == 0)) {
     periodic_wakeup_register(uVar1,4);
     return;

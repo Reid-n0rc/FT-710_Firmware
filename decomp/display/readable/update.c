@@ -166,16 +166,18 @@ void gpio_rx_update_off(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103bdc @ 20103bdc  (56 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_sst_block_size
+ * sflash_sst_block_size @ 20103bdc  (56 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: (i): block size of block i from the table 0x20165204 (blocks 0-3 and 132-135: 8 KiB, 4 and 131: 32 KiB),
  *     else 64 KiB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20103bdc @ 20103bdc (56 bytes)
+// ===== sflash_sst_block_size @ 20103bdc (56 bytes)
 
-undefined4 FUN_20103bdc(int param_1)
+/* (i): block size of block i from the table 0x20165204 (blocks 0-3 and 132-135: 8 KiB, 4 and 131:
+   32 KiB), else 64 KiB [fact] */
+
+undefined4 sflash_sst_block_size(int param_1)
 
 {
   int iVar1;
@@ -192,16 +194,18 @@ undefined4 FUN_20103bdc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103c14 @ 20103c14  (84 bytes, 3 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_cmd_bp
+ * sflash_cmd_bp @ 20103c14  (84 bytes, 3 callers, export file 2010261c_20104188.c)
  * Purpose: Sends the 2-byte device command "bp" (0x62 0x70) through sflash_dev_write and reads one status byte (1
  *     on a write error); the erase loops send it first [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20103c14 @ 20103c14 (84 bytes)
+// ===== sflash_cmd_bp @ 20103c14 (84 bytes)
 
-uint FUN_20103c14(void)
+/* Sends the 2-byte device command "bp" (0x62 0x70) through sflash_dev_write and reads one status
+   byte (1 on a write error); the erase loops send it first [fact] */
+
+uint sflash_cmd_bp(void)
 
 {
   int iVar1;
@@ -225,16 +229,18 @@ uint FUN_20103c14(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103c70 @ 20103c70  (88 bytes, 3 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_cmd_erase
+ * sflash_cmd_erase @ 20103c70  (88 bytes, 3 callers, export file 2010261c_20104188.c)
  * Purpose: (addr): sends the device command "er" (0x65 0x72) with the block address and reads one status byte
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20103c70 @ 20103c70 (88 bytes)
+// ===== sflash_cmd_erase @ 20103c70 (88 bytes)
 
-uint FUN_20103c70(undefined4 param_1)
+/* (addr): sends the device command "er" (0x65 0x72) with the block address and reads one status
+   byte [fact] */
+
+uint sflash_cmd_erase(undefined4 param_1)
 
 {
   int iVar1;
@@ -260,17 +266,20 @@ uint FUN_20103c70(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103cfc @ 20103cfc  (212 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_erase_chip_sst
+ * sflash_erase_chip_sst @ 20103cfc  (212 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: (progress): erases 136 blocks with the sizes of sflash_sst_block_size (4 x 8 KiB, 32 KiB, 126 x 64 KiB,
  *     32 KiB, 4 x 8 KiB = 8 MiB), progress bar and a yield every 8 blocks [fact]; the block map of an SST26-type
  *     64-Mbit flash [inference]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20103cfc @ 20103cfc (212 bytes)
+// ===== sflash_erase_chip_sst @ 20103cfc (212 bytes)
 
-undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
+/* (progress): erases 136 blocks with the sizes of sflash_sst_block_size (4 x 8 KiB, 32 KiB, 126 x
+   64 KiB, 32 KiB, 4 x 8 KiB = 8 MiB), progress bar and a yield every 8 blocks [fact]; the block map
+   of an SST26-type 64-Mbit flash [inference] */
+
+undefined4 sflash_erase_chip_sst(int param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -287,11 +296,11 @@ undefined4 FUN_20103cfc(int param_1,undefined4 param_2)
     progress_set(uVar1);
   }
   sflash_dev_open();
-  iVar2 = FUN_20103c14();
+  iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
-    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
-      iVar2 = FUN_20103bdc(uVar1);
+    while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
+      iVar2 = sflash_sst_block_size(uVar1);
       iVar5 = iVar5 + iVar2;
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x88);
@@ -383,14 +392,14 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
     progress_set(uVar2);
   }
   sflash_dev_open();
-  iVar3 = FUN_20103c14();
+  iVar3 = sflash_cmd_bp();
   if (iVar3 < 0) {
     return 0xffffffff;
   }
   uVar2 = 0;
   if (uVar1 != 0) {
     do {
-      iVar3 = FUN_20103c70(param_2);
+      iVar3 = sflash_cmd_erase(param_2);
       if (iVar3 < 0) {
         return 0xffffffff;
       }
@@ -415,15 +424,17 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20103f44 @ 20103f44  (188 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_erase_chip_uniform
+ * sflash_erase_chip_uniform @ 20103f44  (188 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: (progress): erases 256 blocks of 64 KiB (16 MiB) with a progress bar and a yield every 16 blocks [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20103f44 @ 20103f44 (188 bytes)
+// ===== sflash_erase_chip_uniform @ 20103f44 (188 bytes)
 
-undefined4 FUN_20103f44(int param_1)
+/* (progress): erases 256 blocks of 64 KiB (16 MiB) with a progress bar and a yield every 16 blocks
+   [fact] */
+
+undefined4 sflash_erase_chip_uniform(int param_1)
 
 {
   uint uVar1;
@@ -440,10 +451,10 @@ undefined4 FUN_20103f44(int param_1)
     progress_set(uVar1);
   }
   sflash_dev_open();
-  iVar2 = FUN_20103c14();
+  iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
-    while (iVar2 = FUN_20103c70(iVar5), -1 < iVar2) {
+    while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
       iVar5 = iVar5 + 0x10000;
       if (param_1 != 0) {
         uVar6 = __aeabi_i2d(0x100);
@@ -468,16 +479,18 @@ undefined4 FUN_20103f44(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20104000 @ 20104000  (80 bytes, 1 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_read_mfr_id
+ * sflash_read_mfr_id @ 20104000  (80 bytes, 1 callers, export file 2010261c_20104188.c)
  * Purpose: Switches SPIBSC0 external reads to command 0x9F (READ JEDEC ID, DRCMR/DRENR), reads the first byte at
  *     0x18000000 and restores the registers: the manufacturer id [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20104000 @ 20104000 (80 bytes)
+// ===== sflash_read_mfr_id @ 20104000 (80 bytes)
 
-undefined1 FUN_20104000(void)
+/* Switches SPIBSC0 external reads to command 0x9F (READ JEDEC ID, DRCMR/DRENR), reads the first
+   byte at 0x18000000 and restores the registers: the manufacturer id [fact] */
+
+undefined1 sflash_read_mfr_id(void)
 
 {
   undefined4 uVar1;
@@ -494,26 +507,28 @@ undefined1 FUN_20104000(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20104050 @ 20104050  (40 bytes, 0 callers, export file 2010261c_20104188.c)
- * Name on the doc page: sflash_erase_chip
+ * sflash_erase_chip @ 20104050  (40 bytes, 0 callers, export file 2010261c_20104188.c)
  * Purpose: (progress): manufacturer 0xBF -> sflash_erase_chip_sst, else sflash_erase_chip_uniform [fact]; 0xBF is
  *     the SST/Microchip JEDEC id [inference]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20104050 @ 20104050 (40 bytes)
+// ===== sflash_erase_chip @ 20104050 (40 bytes)
 
-void FUN_20104050(undefined4 param_1)
+/* (progress): manufacturer 0xBF -> sflash_erase_chip_sst, else sflash_erase_chip_uniform [fact];
+   0xBF is the SST/Microchip JEDEC id [inference] */
+
+void sflash_erase_chip(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_20104000();
+  iVar1 = sflash_read_mfr_id();
   if (iVar1 != 0xbf) {
-    FUN_20103f44();
+    sflash_erase_chip_uniform();
     return;
   }
-  FUN_20103cfc(param_1);
+  sflash_erase_chip_sst(param_1);
   return;
 }
 
@@ -2348,7 +2363,7 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
 
 {
   uint uVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   undefined4 extraout_r1;
   undefined4 extraout_r1_00;
@@ -2369,22 +2384,22 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
   }
   else {
     mainlink_rx_ctrl(1);
-    psVar2 = scif5_get(0);
+    piVar2 = scif5_get(0);
     uVar1 = progress_scale(&DAT_20800178);
     progress_set(uVar1);
     DAT_2080016c = 0x1e4;
     local_18 = 2;
-    (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
+    (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
     uVar1 = progress_scale(&DAT_20800178,extraout_r1_00,0,0x3fe00000);
     progress_set(uVar1);
-    uVar3 = isp_relay_mode_cmd((int *)psVar2,'\x02');
+    uVar3 = isp_relay_mode_cmd(piVar2,'\x02');
     uVar1 = 0;
-    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-        (uVar3 = dsp_isp_fill_option((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-       (((uVar3 = dsp_isp_configure_memory((int *)psVar2), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = dsp_isp_erase_region((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-        ((uVar3 = dsp_isp_write_image((int *)psVar2,param_1), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = isp_relay_mode_cmd((int *)psVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
+    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping(piVar2), uVar1 = 0, uVar3 != 0)) &&
+        (uVar3 = dsp_isp_fill_option(piVar2), uVar1 = 0, uVar3 != 0)) &&
+       (((uVar3 = dsp_isp_configure_memory(piVar2), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = dsp_isp_erase_region(piVar2), uVar1 = 0, uVar3 != 0)) &&
+        ((uVar3 = dsp_isp_write_image(piVar2,param_1), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = isp_relay_mode_cmd(piVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
       uVar1 = 1;
     }
   }
@@ -3662,7 +3677,7 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
 
 {
   char *pcVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   int iVar4;
   int iVar5;
@@ -3691,48 +3706,48 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
   progress_range_init(&local_130,0,100);
   DAT_20800178 = local_130;
   DAT_2080017c = puStack_12c;
-  psVar2 = scif5_get(0);
+  piVar2 = scif5_get(0);
   local_130 = (uint *)0x1;
-  (*(code *)psVar2->vtbl[1])(psVar2,0x2580,8,0);
-  uVar3 = rx_boot_sync((int *)psVar2);
+  (**(code **)(*piVar2 + 4))(piVar2,0x2580,8,0);
+  uVar3 = rx_boot_sync(piVar2);
   uVar6 = 0;
   if (uVar3 != 0) {
-    uVar3 = rx_boot_signature((int *)psVar2);
+    uVar3 = rx_boot_signature(piVar2);
     uVar6 = 0;
     if (uVar3 != 0) {
-      uVar3 = rx_boot_endian((int *)psVar2);
+      uVar3 = rx_boot_endian(piVar2);
       uVar6 = 0;
       if (uVar3 != 0) {
-        uVar3 = rx_boot_set_freq((int *)psVar2);
+        uVar3 = rx_boot_set_freq(piVar2);
         uVar6 = 0;
         if (uVar3 != 0) {
           progress_set(5);
-          uVar3 = rx_boot_set_baud((int *)psVar2);
+          uVar3 = rx_boot_set_baud(piVar2);
           uVar6 = 0;
           if (uVar3 != 0) {
-            (*(code *)psVar2->vtbl[2])(psVar2);
+            (**(code **)(*piVar2 + 8))(piVar2);
             local_130 = (uint *)0x1;
-            (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
+            (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
             itron_dly_tsk(0x32);
             progress_set(6);
-            uVar3 = rx_boot_sync_cmd((int *)psVar2);
+            uVar3 = rx_boot_sync_cmd(piVar2);
             uVar6 = 0;
             if (uVar3 != 0) {
               progress_set(7);
-              uVar3 = rx_boot_cmd_2c((int *)psVar2);
+              uVar3 = rx_boot_cmd_2c(piVar2);
               uVar6 = 0;
               if (uVar3 != 0) {
-                uVar3 = rx_boot_id_auth((int *)psVar2);
+                uVar3 = rx_boot_id_auth(piVar2);
                 uVar6 = 0;
                 if (uVar3 != 0) {
                   progress_set(8);
                   local_3c = 0;
-                  uVar3 = rx_boot_area_count((int *)psVar2,&local_3c);
+                  uVar3 = rx_boot_area_count(piVar2,&local_3c);
                   uVar6 = 0;
                   if (uVar3 != 0) {
                     progress_set(9);
                     __aeabi_memclr4(local_128,0xe0);
-                    uVar3 = rx_boot_area_info((int *)psVar2,local_3c,(int)local_128);
+                    uVar3 = rx_boot_area_info(piVar2,local_3c,(int)local_128);
                     uVar6 = 0;
                     if (uVar3 != 0) {
                       DAT_20800164 = 0;
@@ -3766,16 +3781,16 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                           }
                         }
                       }
-                      uVar3 = rx_boot_erase((int *)psVar2);
+                      uVar3 = rx_boot_erase(piVar2);
                       uVar6 = 0;
                       if (uVar3 != 0) {
                         progress_set(10);
                         local_130 = param_2;
-                        iVar5 = rx_boot_write_areas(psVar2,local_3c,local_128,local_2c);
+                        iVar5 = rx_boot_write_areas(piVar2,local_3c,local_128,local_2c);
                         uVar6 = 0;
                         if (iVar5 != 0) {
                           local_130 = param_2;
-                          iVar5 = rx_boot_verify_areas(psVar2,local_3c,local_128,local_2c);
+                          iVar5 = rx_boot_verify_areas(piVar2,local_3c,local_128,local_2c);
                           uVar6 = 0;
                           if (iVar5 != 0) {
                             progress_set(100);
@@ -3785,10 +3800,10 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                             itron_dly_tsk(10);
                             gpio_rx_reset(1);
                             itron_dly_tsk(500);
-                            (*(code *)psVar2->vtbl[2])(psVar2);
+                            (**(code **)(*piVar2 + 8))(piVar2);
                             local_130 = (uint *)0x2;
-                            pcVar8 = (code *)psVar2->vtbl[1];
-                            (*pcVar8)(psVar2,0x54600,8,0);
+                            pcVar8 = *(code **)(*piVar2 + 4);
+                            (*pcVar8)(piVar2,0x54600,8,0);
                             local_48[0] = -0x10;
                             local_48[1] = 1;
                             local_48[2] = 8;
@@ -3812,11 +3827,12 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                               bVar10 = pcVar8 == (code *)0x0;
                               pcVar8 = pcVar8 + -1;
                               if ((bVar10) ||
-                                 (local_130 = (uint *)(*(code *)psVar2->vtbl[9])(psVar2,local_48,10)
-                                 , local_130 != (uint *)0xa)) {
+                                 (local_130 = (uint *)(**(code **)(*piVar2 + 0x24))
+                                                                (piVar2,local_48,10),
+                                 local_130 != (uint *)0xa)) {
                                 return 0;
                               }
-                              iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_38,1,5);
+                              iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_38,1,5);
                             } while ((iVar5 == -1) || (local_38[0] != '\x06'));
                             uVar6 = 1;
                           }
@@ -3924,13 +3940,13 @@ void fwfile_check_versions(int param_1)
   undefined1 auStack_28 [16];
   
   fwobj_create_all();
-  uVar1 = FUN_201640ec(auStack_28,"MAIN");
+  uVar1 = copy10(auStack_28,"MAIN");
   memcpy(DAT_2081166c + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"DISPLAY");
+  uVar1 = copy10(auStack_28,"DISPLAY");
   memcpy(DAT_20811670 + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"DSP");
+  uVar1 = copy10(auStack_28,"DSP");
   memcpy(DAT_20811674 + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"SDR");
+  uVar1 = copy10(auStack_28,"SDR");
   memcpy(DAT_20811678 + 4,uVar1,10);
   fwname_pattern_init((int *)(DAT_2081166c + 0x14),0x2010df70,0x2010df68);
   fwname_pattern_init((int *)(DAT_20811670 + 0x14),0x2010df80,0x2010df68);
@@ -3945,7 +3961,7 @@ void fwfile_check_versions(int param_1)
     *(undefined1 *)((&DAT_2081166c)[iVar2] + 0xa9) = 0;
     *(undefined4 *)(iVar3 + 0x34) = 0;
     *(undefined4 *)(iVar3 + 0x38) = 0;
-    FUN_201635e4((&DAT_2081166c)[iVar2],iVar3 + 1);
+    fwobj_version_text((&DAT_2081166c)[iVar2],iVar3 + 1);
     FUN_201635b8((&DAT_2081166c)[iVar2],iVar3 + 0x29);
     iVar2 = iVar2 + 1;
   } while (iVar2 < 4);
@@ -4032,7 +4048,7 @@ uint fwfile_status_text(int param_1,int param_2)
             }
           }
           iVar1 = param_1 + iVar5 * 0x48;
-          FUN_201635e4((&DAT_2081166c)[iVar5],iVar1 + 1);
+          fwobj_version_text((&DAT_2081166c)[iVar5],iVar1 + 1);
           strcpy(iVar1 + 0x15,(&DAT_2081166c)[iVar5] + 0x89);
           FUN_201635b8((&DAT_2081166c)[iVar5],iVar1 + 0x29);
           FUN_20163770(iVar1 + 0x3c,(&DAT_2081166c)[iVar5] + 0x2c);
@@ -4096,7 +4112,7 @@ byte fwupdate_poll(int param_1)
       strcpy(iVar6 + 0x15,(&DAT_2081166c)[iVar5] + 0x89);
       uVar4 = progress_get();
       *(uint *)(iVar6 + 0x38) = uVar4;
-      FUN_201635e4((&DAT_2081166c)[iVar5],iVar6 + 1);
+      fwobj_version_text((&DAT_2081166c)[iVar5],iVar6 + 1);
       FUN_201635b8((&DAT_2081166c)[iVar5],iVar6 + 0x29);
       iVar5 = iVar5 + 1;
     } while (iVar5 < 4);
@@ -4110,7 +4126,7 @@ byte fwupdate_poll(int param_1)
       *(undefined1 *)(param_1 + iVar5 * 0x48) = *(undefined1 *)((&DAT_2081166c)[iVar5] + 0xa9);
       uVar4 = progress_get();
       *(uint *)(iVar6 + 0x38) = uVar4;
-      FUN_201635e4((&DAT_2081166c)[iVar5],iVar6 + 1);
+      fwobj_version_text((&DAT_2081166c)[iVar5],iVar6 + 1);
       FUN_201635b8((&DAT_2081166c)[iVar5],iVar6 + 0x29);
       iVar5 = iVar5 + 1;
     } while (iVar5 < 4);
@@ -4157,16 +4173,18 @@ void fwupdate_init(void)
 
 {
   uint uVar1;
-  t_cflg local_18;
+  undefined4 local_18;
+  undefined4 uStack_14;
+  undefined4 local_10;
   
   fwobj_create_all();
-  local_18.flgatr = 2;
-  local_18.iflgptn = 0;
-  local_18.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_18);
+  local_18 = 2;
+  uStack_14 = 0;
+  local_10 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_18);
   if (0 < (int)uVar1) {
     DAT_20800188 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_fwupdate);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_fwupdate);
     if (0 < (int)uVar1) {
       DAT_20800184 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -4190,7 +4208,7 @@ uint mainlink_fw_mode_cmd(char param_1)
 
 {
   byte bVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   int iVar3;
   int iVar4;
   int iVar5;
@@ -4203,9 +4221,9 @@ uint mainlink_fw_mode_cmd(char param_1)
   local_18 = 0;
   iVar5 = 0;
   mainlink_rx_ctrl(1);
-  psVar2 = scif5_get(0);
+  piVar2 = scif5_get(0);
   iVar4 = 2;
-  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2,iVar5);
+  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2,iVar5);
   bVar1 = mainlink_got_frame60();
   if (bVar1 == 0) {
     return 1;
@@ -4214,11 +4232,12 @@ uint mainlink_fw_mode_cmd(char param_1)
   iVar3 = 0;
   local_14 = CONCAT13(param_1 + -0xf,(undefined3)local_14);
   while( true ) {
-    iVar4 = (*(code *)psVar2->vtbl[9])(psVar2,&local_18,8,(code *)psVar2->vtbl[9],iVar4,iVar5);
+    iVar4 = (**(code **)(*piVar2 + 0x24))(piVar2,&local_18,8,*(code **)(*piVar2 + 0x24),iVar4,iVar5)
+    ;
     if (iVar4 != 8) {
       return 0;
     }
-    iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_20,1,0xdc);
+    iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_20,1,0xdc);
     if ((iVar5 != -1) && (local_20[0] == '\x06')) break;
     iVar3 = iVar3 + 1;
     if (4 < iVar3) {
@@ -4603,17 +4622,21 @@ uptest_program_stub(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010ef88 @ 2010ef88  (320 bytes, 1 callers, export file 2010b5bc_2010f2c8.c)
- * Name on the doc page: sdmenu_list_files
+ * sdmenu_list_files @ 2010ef88  (320 bytes, 1 callers, export file 2010b5bc_2010f2c8.c)
  * Purpose: (kind, list, max): opens the SD folder for the kind (0x208001AC table), collects the names of the ".dat"
  *     files without the extension in 16-byte slots (work buffer 0x8350 bytes, at most 100), sorts them with
  *     qsort/strcasecmp and copies them to list; holds the scope drawing meanwhile; returns the count [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2010ef88 @ 2010ef88 (320 bytes)
+// ===== sdmenu_list_files @ 2010ef88 (320 bytes)
 
-int FUN_2010ef88(int param_1,int param_2,int param_3)
+/* (kind, list, max): opens the SD folder for the kind (0x208001AC table), collects the names of the
+   ".dat" files without the extension in 16-byte slots (work buffer 0x8350 bytes, at most 100),
+   sorts them with qsort/strcasecmp and copies them to list; holds the scope drawing meanwhile;
+   returns the count [fact] */
+
+int sdmenu_list_files(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -4663,7 +4686,7 @@ LAB_2010efc4:
 LAB_2010f068:
     fs_closedir(iVar2);
     if (iVar5 != 0) {
-      FUN_20154fca(iVar3,iVar5,0x10,strcasecmp);
+      qsort(iVar3,iVar5,0x10,strcasecmp);
       iVar2 = 0;
       if (0 < iVar5) {
         do {
@@ -4825,7 +4848,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
   
   progress_range_init(&local_28,1,5);
   progress_set(local_28);
-  iVar1 = FUN_2013fba0();
+  iVar1 = sd_clmap_prepare();
   if (iVar1 != 0) {
     return iVar1;
   }
@@ -4872,9 +4895,9 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
     scope3d_tables_init();
     gui_scope_draw_hold_set(0);
     if (iVar1 == 0) {
-      FUN_2013fc4c(1);
+      sd_mutex_lock(1);
       uVar3 = fs_fclose(uVar2);
-      FUN_2013fc4c(0);
+      sd_mutex_lock(0);
       progress_set(100);
     }
     else {
@@ -5408,7 +5431,7 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
 
 {
   uint uVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   int iVar4;
   undefined4 uVar5;
@@ -5422,9 +5445,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
   progress_set(uVar1);
   sfl_stream_init(auStack_3c,param_1,0,param_2);
   mainlink_rx_ctrl(1);
-  psVar2 = scif5_get(0);
-  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2);
-  uVar3 = sdr_relay_mode_cmd((int *)psVar2,'\x01');
+  piVar2 = scif5_get(0);
+  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2);
+  uVar3 = sdr_relay_mode_cmd(piVar2,'\x01');
   uVar1 = 0;
   if (uVar3 != 0) {
     if (param_3 == 0) {
@@ -5445,7 +5468,7 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
         uVar5 = (undefined4)((ulonglong)uVar7 >> 0x20);
         uVar1 = progress_scale(auStack_24,uVar5,(int)uVar7,uVar5);
         progress_set(uVar1);
-        uVar1 = sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,iVar4,uVar6);
+        uVar1 = sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,iVar4,uVar6);
         if (uVar1 == 0) {
           return 0;
         }
@@ -5461,9 +5484,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
       if (uVar1 == 0) {
         progress_set(100);
         sfl_stream_init(auStack_3c,param_1,0,param_2);
-        sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,0x240,uVar6);
+        sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,0x240,uVar6);
       }
-      uVar1 = sdr_relay_mode_cmd((int *)psVar2,-0x7f);
+      uVar1 = sdr_relay_mode_cmd(piVar2,-0x7f);
     }
   }
   return uVar1;
@@ -5958,35 +5981,37 @@ void fw_installed_versions_set_thunk(uint param_1)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_201322e4 @ 201322e4  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: bootloader_entry_screen_thunk
+ * bootloader_entry_screen_thunk @ 201322e4  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: ldr r0, =0x208F4BF4; b bootloader_entry_screen (update.md update-UI thunks) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_201322e4 @ 201322e4 (12 bytes)
+// ===== bootloader_entry_screen_thunk @ 201322e4 (12 bytes)
 
-void FUN_201322e4(undefined4 param_1)
+/* ldr r0, =0x208F4BF4; b bootloader_entry_screen (update.md update-UI thunks) [fact] */
+
+void bootloader_entry_screen_thunk(undefined4 param_1)
 
 {
-  FUN_20159058(&DAT_208f4bf4,param_1);
+  bootloader_entry_screen(&DAT_208f4bf4,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201322f0 @ 201322f0  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: fwupdate_title_screen_thunk
+ * fwupdate_title_screen_thunk @ 201322f0  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
  * Purpose: fwupdate_ui_run(0x208F4BF4, "YAESU FT-710 FIRMWARE UPDATE") (update.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_201322f0 @ 201322f0 (12 bytes)
+// ===== fwupdate_title_screen_thunk @ 201322f0 (12 bytes)
 
-void FUN_201322f0(void)
+/* fwupdate_ui_run(0x208F4BF4, "YAESU FT-710 FIRMWARE UPDATE") (update.md) [fact] */
+
+void fwupdate_title_screen_thunk(void)
 
 {
-  FUN_20159d98(&DAT_208f4bf4,"YAESU FT-710 FIRMWARE UPDATE");
+  fwupdate_ui_run(&DAT_208f4bf4,"YAESU FT-710 FIRMWARE UPDATE");
   return;
 }
 
@@ -6048,16 +6073,18 @@ void mainlink_send_ui_c3(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20159058 @ 20159058  (232 bytes, 1 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: bootloader_entry_screen
+ * bootloader_entry_screen @ 20159058  (232 bytes, 1 callers, export file 201587ac_2015c048.c)
  * Purpose: Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT ERROR"
  *     forever, else bootloader_screen (update.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20159058 @ 20159058 (232 bytes)
+// ===== bootloader_entry_screen @ 20159058 (232 bytes)
 
-void FUN_20159058(undefined4 param_1,int param_2)
+/* Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT
+   ERROR" forever, else bootloader_screen (update.md) [fact] */
+
+void bootloader_entry_screen(undefined4 param_1,int param_2)
 
 {
   int iVar1;
@@ -6074,7 +6101,7 @@ void FUN_20159058(undefined4 param_1,int param_2)
     gui_draw_text_centered(uVar2,0x204280a8,100,400,0xc,0x208038c0);
     do {
       if (DAT_20800493 != '\0') {
-        FUN_20117030();
+        display_power_down();
       }
       gui_update_layers();
       fb_get_layer_addr(DAT_208085bc);
@@ -6119,7 +6146,7 @@ void update_error_screen(void)
   do {
     cursor_window_update();
     if (DAT_20800493 != '\0') {
-      FUN_20117030();
+      display_power_down();
     }
     uVar4 = 0;
     uVar3 = 0;
@@ -6232,11 +6259,11 @@ void bootloader_screen(undefined4 param_1,undefined4 *param_2)
     }
     if (uVar2 != 0) {
       *param_2 = 0xbbbb;
-      FUN_20159d98(param_1,"YAESU FT-710 BOOT LOADER V01-02");
+      fwupdate_ui_run(param_1,"YAESU FT-710 BOOT LOADER V01-02");
       return;
     }
     param_2[2] = 1;
-    FUN_20159d98(param_1,DAT_20808540);
+    fwupdate_ui_run(param_1,DAT_20808540);
     DAT_20800496 = 0;
     DAT_20800495 = 1;
   }
@@ -6272,16 +6299,18 @@ void fw_installed_versions_set(ushort *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20159630 @ 20159630  (220 bytes, 1 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: pointer_idle_loop
+ * pointer_idle_loop @ 20159630  (220 bytes, 1 callers, export file 201587ac_2015c048.c)
  * Purpose: Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor,
  *     gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20159630 @ 20159630 (220 bytes)
+// ===== pointer_idle_loop @ 20159630 (220 bytes)
 
-void FUN_20159630(void)
+/* Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor,
+   gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it [fact] */
+
+void pointer_idle_loop(void)
 
 {
   char local_28 [12];
@@ -6358,7 +6387,7 @@ void fwupdate_screen(int param_1)
     uVar4 = uVar4 + 1 & 0xff;
   } while (uVar4 < 4);
   gui_update_layers();
-  FUN_20158fd0();
+  touch_wait_tap();
   bVar1 = usbkbd_last_key();
   fwupdate_set_hotkey(bVar1);
   do {
@@ -6418,7 +6447,7 @@ void fwupdate_screen(int param_1)
     iVar3 = sd_state_bit6();
     while (iVar3 != 0) {
       if (DAT_20800493 != '\0') {
-        FUN_20117030();
+        display_power_down();
       }
       itron_tslp_tsk(0xffffffff);
       gui_update_layers();
@@ -6432,7 +6461,7 @@ void fwupdate_screen(int param_1)
     iVar3 = sd_state_bit7();
     while (iVar3 == 0) {
       if (DAT_20800493 != '\0') {
-        FUN_20117030();
+        display_power_down();
       }
       itron_tslp_tsk(0xffffffff);
       iVar3 = sd_state_bit7();
@@ -6544,17 +6573,20 @@ uint bootloader_unlock_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20159d98 @ 20159d98  (956 bytes, 3 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_ui_run
+ * fwupdate_ui_run @ 20159d98  (956 bytes, 3 callers, export file 201587ac_2015c048.c)
  * Purpose: Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE
  *     UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation (fwupdate_confirm_loop), then
  *     fwupdate_progress_screen; card-missing and error texts [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_20159d98 @ 20159d98 (956 bytes)
+// ===== fwupdate_ui_run @ 20159d98 (956 bytes)
 
-void FUN_20159d98(int param_1,undefined4 param_2)
+/* Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE
+   UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation
+   (fwupdate_confirm_loop), then fwupdate_progress_screen; card-missing and error texts [fact] */
+
+void fwupdate_ui_run(int param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -6595,13 +6627,13 @@ LAB_20159dec:
       }
       local_4b5 = *(char *)(param_1 + 299);
       local_4b3 = FUN_20158fa8(*(undefined1 *)(param_1 + 299));
-      FUN_2015b450(param_1,local_4b8,local_2c);
+      fwupdate_select_draw(param_1,local_4b8,local_2c);
       if (DAT_20800494 == '\0') {
         iVar1 = fb_get_layer_addr(DAT_208085bc);
         fb_clear_rect_checked(iVar1,0x19a,0x1a4,0x17c,0x46);
         gui_update_layers();
       }
-      iVar2 = FUN_2015a910(param_1,local_4b8,local_2c);
+      iVar2 = fwupdate_select_loop(param_1,local_4b8,local_2c);
       if (iVar2 == 0) {
 LAB_20159f50:
         if (DAT_20800493 != '\0') {
@@ -6611,9 +6643,9 @@ LAB_20159f50:
       }
       if ((DAT_20800494 == '\0') || (mainlink_send_e6(0), DAT_20808530 == '\0')) goto LAB_2015a100;
       local_4b3 = 10;
-      FUN_2015b748(param_1,local_4b8);
+      fwupdate_confirm_draw(param_1,local_4b8);
       gui_update_layers();
-      iVar2 = FUN_2015a17c(param_1);
+      iVar2 = fwupdate_confirm_loop(param_1);
       if (iVar2 == 0) goto LAB_20159f50;
       mainlink_send_e6(0);
       if (DAT_20808531 != '\0') goto LAB_2015a100;
@@ -6622,9 +6654,9 @@ LAB_20159f50:
     if (DAT_20800494 != '\0') {
       __aeabi_memclr4(auStack_278,0x240);
       local_273 = 0xb;
-      FUN_2015b450(param_1,auStack_278,local_2c);
+      fwupdate_select_draw(param_1,auStack_278,local_2c);
       gui_update_layers();
-      iVar1 = FUN_2015a910(param_1,auStack_278,local_2c);
+      iVar1 = fwupdate_select_loop(param_1,auStack_278,local_2c);
       if (iVar1 == 0) {
         if (DAT_20800493 != '\0') {
           return;
@@ -6650,7 +6682,7 @@ LAB_20159f50:
 LAB_2015a040:
   if (DAT_20800494 != '\0') {
     FUN_2015933c();
-    FUN_20159630();
+    pointer_idle_loop();
     if (DAT_20800493 == '\0') {
       mainlink_send_e6(0);
     }
@@ -6685,16 +6717,18 @@ LAB_2015a100:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015a17c @ 2015a17c  (832 bytes, 1 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_confirm_loop
+ * fwupdate_confirm_loop @ 2015a17c  (832 bytes, 1 callers, export file 201587ac_2015c048.c)
  * Purpose: Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with
  *     fwupdate_confirm_draw [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2015a17c @ 2015a17c (832 bytes)
+// ===== fwupdate_confirm_loop @ 2015a17c (832 bytes)
 
-undefined4 FUN_2015a17c(int param_1)
+/* Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with
+   fwupdate_confirm_draw [fact] */
+
+undefined4 fwupdate_confirm_loop(int param_1)
 
 {
   int iVar1;
@@ -6840,13 +6874,13 @@ undefined4 FUN_2015a17c(int param_1)
         if (iVar4 != 0xb) {
           iVar4 = 0xb;
           local_293 = 0xb;
-          FUN_2015b748(local_28,auStack_298);
+          fwupdate_confirm_draw(local_28,auStack_298);
         }
       }
       else if (iVar4 != 10) {
         iVar4 = 10;
         local_293 = 10;
-        FUN_2015b748(local_28,auStack_298);
+        fwupdate_confirm_draw(local_28,auStack_298);
       }
       DAT_20808534 = 0;
       sVar5 = DAT_20808536;
@@ -7011,20 +7045,22 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015a8dc @ 2015a8dc  (52 bytes, 1 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_select_screen
+ * fwupdate_select_screen @ 2015a8dc  (52 bytes, 1 callers, export file 201587ac_2015c048.c)
  * Purpose: Update-UI method (thunk 0x201322D8), packet step 1: four target rows with tick boxes and the OK/CANCEL
  *     keys; 2: "UPDATE?"; 3: runs fwupdate_poll with per-row progress bars, then update_error_screen on failure and
  *     system_reboot [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2015a8dc @ 2015a8dc (52 bytes)
+// ===== fwupdate_select_screen @ 2015a8dc (52 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015b1d4) */
 /* WARNING: Removing unreachable block (ram,0x2015b4d4) */
+/* Update-UI method (thunk 0x201322D8), packet step 1: four target rows with tick boxes and the
+   OK/CANCEL keys; 2: "UPDATE?"; 3: runs fwupdate_poll with per-row progress bars, then
+   update_error_screen on failure and system_reboot [fact] */
 
-void FUN_2015a8dc(int param_1,int param_2)
+void fwupdate_select_screen(int param_1,int param_2)
 
 {
   char cVar1;
@@ -7071,7 +7107,7 @@ void FUN_2015a8dc(int param_1,int param_2)
       gui_draw_text(uVar9,iVar4 + 0x1d,uVar3 * 0x44 + 0x43,0x1dc);
       uVar3 = uVar3 + 1 & 0xff;
     } while (uVar3 < 4);
-    FUN_20126914(uVar9,0x19a,0xfa,2);
+    gui_button_draw_shadow(uVar9,0x19a,0xfa,2);
     if (*(char *)(param_2 + 4) == '\0') {
       gui_draw_runs(uVar9,0x1a6,0x10f,&DAT_20255114);
     }
@@ -7082,7 +7118,7 @@ void FUN_2015a8dc(int param_1,int param_2)
       fb_draw_round_frame_wrap(uVar9,0x19a,0xfa,*DAT_20802294);
     }
     if (DAT_20800494 != '\0') {
-      FUN_20126914(uVar9,0x19a,0x1a4,2);
+      gui_button_draw_shadow(uVar9,0x19a,0x1a4,2);
       gui_draw_runs(uVar9,0x1a6,0x1b9,&DAT_20251ec8);
       if (uVar7 == 0xb) {
         fb_draw_round_frame_wrap(uVar9,0x19a,0x1a4,*DAT_20802294);
@@ -7098,12 +7134,12 @@ void FUN_2015a8dc(int param_1,int param_2)
     gui_draw_runs(uVar9,4,400,&DAT_2016dc08);
     gui_draw_runs(uVar9,8,0x168,&DAT_203a56b4);
     gui_draw_text_centered(uVar9,0x20428153,0xf0,400,0xf,0x20800cac);
-    FUN_20126914(uVar9,0x19a,0xfa,2);
+    gui_button_draw_shadow(uVar9,0x19a,0xfa,2);
     gui_draw_runs(uVar9,0x1a6,0x10f,&DAT_20253aec);
     if (cVar1 == '\n') {
       fb_draw_round_frame_wrap(uVar9,0x19a,0xfa,*DAT_20802294);
     }
-    FUN_20126914(uVar9,0x19a,0x1a4,2);
+    gui_button_draw_shadow(uVar9,0x19a,0x1a4,2);
     gui_draw_runs(uVar9,0x1a6,0x1b9,&DAT_20251ec8);
     if (cVar1 == '\v') {
       fb_draw_round_frame_wrap(uVar9,0x19a,0x1a4,*DAT_20802294);
@@ -7180,19 +7216,21 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015a910 @ 2015a910  (1628 bytes, 2 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_select_loop
+ * fwupdate_select_loop @ 2015a910  (1628 bytes, 2 callers, export file 201587ac_2015c048.c)
  * Purpose: Touch/mouse loop of the target list (pointer_get_event, touch_cal_apply, mouse cursor): toggles the tick
  *     boxes of the four rows, OK / CANCEL keys, redraws with fwupdate_select_draw, mirrors the state to MAIN
  *     (mainlink_send_ui_c3, E6) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2015a910 @ 2015a910 (1628 bytes)
+// ===== fwupdate_select_loop @ 2015a910 (1628 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015ae84) */
+/* Touch/mouse loop of the target list (pointer_get_event, touch_cal_apply, mouse cursor): toggles
+   the tick boxes of the four rows, OK / CANCEL keys, redraws with fwupdate_select_draw, mirrors the
+   state to MAIN (mainlink_send_ui_c3, E6) [fact] */
 
-undefined4 FUN_2015a910(int param_1,uint param_2,undefined4 param_3)
+undefined4 fwupdate_select_loop(int param_1,uint param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -7332,7 +7370,7 @@ LAB_2015a994:
         if (iVar15 != iVar4 && iVar1 < 0 == bVar17) {
           local_29c = local_29c ^ (byte)(1 << (7 - uVar7 & 0xff));
           local_29b = (byte)uVar7;
-          FUN_2015b450(local_30,auStack_2a0,local_28);
+          fwupdate_select_draw(local_30,auStack_2a0,local_28);
           if (DAT_20800494 != '\0') {
             mainlink_send_e6(0);
           }
@@ -7393,7 +7431,7 @@ LAB_2015a994:
           if (puVar8 != puVar6 && iVar10 < 0 == bVar17) {
             local_29c = local_29c ^ (byte)(1 << (7 - uVar7 & 0xff));
             local_29b = (byte)uVar7;
-            FUN_2015b450(local_30,auStack_2a0,local_28);
+            fwupdate_select_draw(local_30,auStack_2a0,local_28);
             if (DAT_20800494 != '\0') {
               mainlink_send_e6(0);
             }
@@ -7520,7 +7558,7 @@ LAB_2015aea4:
   local_29b = (byte)uVar7;
 LAB_2015aea8:
   DAT_20808534 = 0;
-  FUN_2015b450(local_30,auStack_2a0,local_28);
+  fwupdate_select_draw(local_30,auStack_2a0,local_28);
   sVar11 = sVar3;
 LAB_2015aec4:
   itron_tslp_tsk(0xffffffff);
@@ -7575,7 +7613,7 @@ void fwupdate_insert_sd_screen(undefined4 param_1)
   gui_update_layers();
   key_task_resume();
   DAT_20808532 = 1;
-  FUN_20158fd0();
+  touch_wait_tap();
   if (DAT_20800493 == '\0') {
     bVar1 = usbkbd_last_key();
     fwupdate_set_hotkey(bVar1);
@@ -7685,16 +7723,18 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015b450 @ 2015b450  (708 bytes, 6 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_select_draw
+ * fwupdate_select_draw @ 2015b450  (708 bytes, 6 callers, export file 201587ac_2015c048.c)
  * Purpose: (ui, state, title): title bar, four target rows (name, status text, tick sprite 0x203A5684/94, cursor
  *     frame) and the OK / CANCEL buttons [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2015b450 @ 2015b450 (708 bytes)
+// ===== fwupdate_select_draw @ 2015b450 (708 bytes)
 
-void FUN_2015b450(int param_1,int param_2,int param_3)
+/* (ui, state, title): title bar, four target rows (name, status text, tick sprite 0x203A5684/94,
+   cursor frame) and the OK / CANCEL buttons [fact] */
+
+void fwupdate_select_draw(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -7737,7 +7777,7 @@ void FUN_2015b450(int param_1,int param_2,int param_3)
     gui_draw_text(uVar2,iVar5 + 0x1d,uVar3 * 0x44 + 0x43,0x1dc,0xf,&DAT_20800b1c);
     uVar3 = uVar3 + 1 & 0xff;
   } while (uVar3 < 4);
-  FUN_20126914(uVar2,0x19a,0xfa,2);
+  gui_button_draw_shadow(uVar2,0x19a,0xfa,2);
   if (*(char *)(param_2 + 4) == '\0') {
     gui_draw_runs(uVar2,0x1a6,0x10f,&DAT_20255114);
   }
@@ -7748,7 +7788,7 @@ void FUN_2015b450(int param_1,int param_2,int param_3)
     fb_draw_round_frame_wrap(uVar2,0x19a,0xfa,*DAT_20802294,DAT_20802294[1],3);
   }
   if (DAT_20800494 != '\0') {
-    FUN_20126914(uVar2,0x19a,0x1a4,2);
+    gui_button_draw_shadow(uVar2,0x19a,0x1a4,2);
     gui_draw_runs(uVar2,0x1a6,0x1b9,&DAT_20251ec8);
     if (uVar6 == 0xb) {
       fb_draw_round_frame_wrap(uVar2,0x19a,0x1a4,*DAT_20802294,DAT_20802294[1],3);
@@ -7759,15 +7799,16 @@ void FUN_2015b450(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015b748 @ 2015b748  (392 bytes, 4 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: fwupdate_confirm_draw
+ * fwupdate_confirm_draw @ 2015b748  (392 bytes, 4 callers, export file 201587ac_2015c048.c)
  * Purpose: (ui, state): "UPDATE?" box with the YES / NO buttons and the cursor frame [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== FUN_2015b748 @ 2015b748 (392 bytes)
+// ===== fwupdate_confirm_draw @ 2015b748 (392 bytes)
 
-void FUN_2015b748(undefined4 param_1,int param_2)
+/* (ui, state): "UPDATE?" box with the YES / NO buttons and the cursor frame [fact] */
+
+void fwupdate_confirm_draw(undefined4 param_1,int param_2)
 
 {
   char cVar1;
@@ -7780,12 +7821,12 @@ void FUN_2015b748(undefined4 param_1,int param_2)
   gui_draw_runs(uVar2,4,400,&DAT_2016dc08);
   gui_draw_runs(uVar2,8,0x168,&DAT_203a56b4);
   gui_draw_text_centered(uVar2,0x20428153,0xf0,400,0xf,0x20800cac);
-  FUN_20126914(uVar2,0x19a,0xfa,2);
+  gui_button_draw_shadow(uVar2,0x19a,0xfa,2);
   gui_draw_runs(uVar2,0x1a6,0x10f,&DAT_20253aec);
   if (cVar1 == '\n') {
     fb_draw_round_frame_wrap(uVar2,0x19a,0xfa,*DAT_20802294,DAT_20802294[1],3);
   }
-  FUN_20126914(uVar2,0x19a,0x1a4,2);
+  gui_button_draw_shadow(uVar2,0x19a,0x1a4,2);
   gui_draw_runs(uVar2,0x1a6,0x1b9,&DAT_20251ec8);
   if (cVar1 == '\v') {
     fb_draw_round_frame_wrap(uVar2,0x19a,0x1a4,*DAT_20802294,DAT_20802294[1],3);
@@ -7916,7 +7957,7 @@ uint fwobj_match_name(int param_1,uint param_2,uint param_3)
   uVar1 = fwname_pattern_match((int *)(param_1 + 0x14),param_2,param_3);
   uVar3 = 0;
   if (uVar1 != 0) {
-    FUN_20164104(auStack_30,param_2);
+    copy32(auStack_30,param_2);
     if (*(char *)(param_1 + 0x57) == '\0') {
       memcpy(param_1 + 0x37,auStack_30,0x20);
       *(undefined1 *)(param_1 + 0x57) = 1;
@@ -7949,7 +7990,7 @@ void fwobj_set_status(int param_1,uint param_2)
   undefined4 uVar1;
   undefined1 auStack_28 [32];
   
-  uVar1 = FUN_20164104(auStack_28);
+  uVar1 = copy32(auStack_28);
   memcpy(param_1 + 0x89,uVar1,0x20);
   return;
 }
@@ -8009,12 +8050,12 @@ int fwobj_base_ctor(void *param_1)
   int iVar1;
   
   *(undefined **)param_1 = &DAT_2042807c;
-  iVar1 = FUN_201640ec((int)param_1 + 4,&DAT_20428430);
+  iVar1 = copy10((int)param_1 + 4,&DAT_20428430);
   iVar1 = FUN_20160c5c(iVar1 + 10,"-----");
-  iVar1 = FUN_201640ec(iVar1 + 0x1e,&DAT_20428430);
-  iVar1 = FUN_20164104(iVar1 + 0xb,&DAT_20428430);
-  iVar1 = FUN_2016411c(iVar1 + 0x21,&DAT_20428430);
-  iVar1 = FUN_20164104(iVar1 + 0x31,&DAT_20428430);
+  iVar1 = copy10(iVar1 + 0x1e,&DAT_20428430);
+  iVar1 = copy32(iVar1 + 0xb,&DAT_20428430);
+  iVar1 = copy48(iVar1 + 0x21,&DAT_20428430);
+  iVar1 = copy32(iVar1 + 0x31,&DAT_20428430);
   return iVar1 + -0x89;
 }
 
@@ -8268,9 +8309,9 @@ undefined4 fwobj_display_run(int param_1,uint param_2,int param_3)
       *(undefined1 *)(iVar3 + 8) = 0;
       iVar4 = memcmp("#UP0    ",iVar3,8);
       if (iVar4 == 0) {
-        uVar5 = FUN_201640ec(auStack_3c,iVar3);
+        uVar5 = copy10(auStack_3c,iVar3);
         memcpy(param_1 + 4,uVar5,10);
-        uVar5 = FUN_201640ec(auStack_30,&DAT_20428210);
+        uVar5 = copy10(auStack_30,&DAT_20428210);
         memcpy(param_1 + 0x2c,uVar5,10);
         bVar1 = true;
       }

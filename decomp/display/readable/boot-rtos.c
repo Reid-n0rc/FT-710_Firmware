@@ -28,12 +28,12 @@ void Reset_Handler(void)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
-  FUN_20101088(0);
+  dcache_clean_invalidate_range(0);
   FUN_20100d0c();
   cpg_early_init();
-  FUN_20100d48();
-  FUN_20100e24(vec_reset,0x400000);
-  FUN_20100e24(&PTR_DAT_20800000,0x200000);
+  mmu_l1_table_init();
+  mmu_set_cacheable(vec_reset,0x400000);
+  mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
@@ -114,9 +114,9 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
     *(undefined4 *)(pbVar3 + 0x1c) = uVar11;
     pbVar3 = pbVar3 + 0x20;
   } while ((int)pbVar3 < 0x2043ffff);
-  FUN_20100d48();
-  FUN_20100e24(vec_reset,0x400000);
-  FUN_20100e24(&PTR_DAT_20800000,0x200000);
+  mmu_l1_table_init();
+  mmu_set_cacheable(vec_reset,0x400000);
+  mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
@@ -172,7 +172,7 @@ void IRQ_Handler(void)
   
   uVar2 = gic_dispatch();
   if ((int)uVar2 != 0) {
-    pcVar1 = (code *)FUN_2015632c((int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
+    pcVar1 = (code *)knl_irq_enter((int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
     (*pcVar1)();
     software_interrupt(0);
     do {
@@ -596,15 +596,14 @@ void __scatterload_zeroinit(undefined4 param_1,undefined4 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100c7c @ 20100c7c  (1176 bytes, 1 callers, export file 18400000_20100f64.c)
- * Name on the doc page: _printf_fp_dec
+ * _printf_fp_dec @ 20100c7c  (1176 bytes, 1 callers, export file 18400000_20100f64.c)
  * Purpose: %e/%f/%g conversion of the armcc printf core: inf/nan (_printf_infnan), decimal digits (_fp_digits,
  *     __rt_udiv10), padding (_printf_pre_padding / _printf_post_padding), locale point (__rt_locale) [inference:
  *     armcc C library _printf_fp_dec_real, from these callees]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100c7c @ 20100c7c (1176 bytes)
+// ===== _printf_fp_dec @ 20100c7c (1176 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20155d76) */
 /* WARNING: Removing unreachable block (ram,0x20155dd4) */
@@ -648,8 +647,11 @@ void __scatterload_zeroinit(undefined4 param_1,undefined4 *param_2,uint param_3)
 /* WARNING: Removing unreachable block (ram,0x20155eaa) */
 /* WARNING: Removing unreachable block (ram,0x20155ea6) */
 /* WARNING: Removing unreachable block (ram,0x20155eac) */
+/* %e/%f/%g conversion of the armcc printf core: inf/nan (_printf_infnan), decimal digits
+   (_fp_digits, __rt_udiv10), padding (_printf_pre_padding / _printf_post_padding), locale point
+   (__rt_locale) [inference: armcc C library _printf_fp_dec_real, from these callees] */
 
-undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
+undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
 
 {
   undefined1 uVar1;
@@ -680,7 +682,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
     puVar3 = (undefined4 *)((uint)((int)param_3 + 7) & 0xfffffff8);
     local_40 = *puVar3;
     local_3c = puVar3[1];
-    iVar8 = FUN_20163808();
+    iVar8 = fp_classify_double();
     if (local_3c < 0) {
       local_44 = 0x2d;
     }
@@ -700,7 +702,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       else {
         uVar2 = 6;
       }
-      FUN_20155b5c(&local_38,local_64,&local_40,uVar2,1);
+      _fp_digits(&local_38,local_64,&local_40,uVar2,1);
       iVar7 = 0;
       iVar8 = local_34;
       if (iStack_30 == 0) {
@@ -809,7 +811,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       iVar7 = 0;
       iVar8 = 0;
       while (lVar14 != 0) {
-        lVar14 = FUN_20155a10();
+        lVar14 = _ll_udiv10();
         *(byte *)((int)param_1 + iVar8 + 0x24) = extraout_r2 + 0x30;
         iVar8 = iVar8 + 1;
       }
@@ -983,16 +985,18 @@ uint __rt_entry(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100d48 @ 20100d48  (36 bytes, 1 callers, export file 18400000_20100f64.c)
- * Name on the doc page: mmu_l1_table_init
+ * mmu_l1_table_init @ 20100d48  (36 bytes, 1 callers, export file 18400000_20100f64.c)
  * Purpose: Fills the 4096-entry L1 table 0x2044C000 with flat 1-MB sections (VA = PA, attributes 0x10C02) [fact];
  *     called from Reset_Handler and reset_in_ram
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100d48 @ 20100d48 (36 bytes)
+// ===== mmu_l1_table_init @ 20100d48 (36 bytes)
 
-void FUN_20100d48(void)
+/* Fills the 4096-entry L1 table 0x2044C000 with flat 1-MB sections (VA = PA, attributes 0x10C02)
+   [fact]; called from Reset_Handler and reset_in_ram */
+
+void mmu_l1_table_init(void)
 
 {
   int iVar1;
@@ -1011,16 +1015,18 @@ void FUN_20100d48(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100e24 @ 20100e24  (104 bytes, 5 callers, export file 18400000_20100f64.c)
- * Name on the doc page: mmu_set_cacheable
+ * mmu_set_cacheable @ 20100e24  (104 bytes, 5 callers, export file 18400000_20100f64.c)
  * Purpose: (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in
  *     0x2044C000, then invalidates the TLB and the I-cache [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100e24 @ 20100e24 (104 bytes)
+// ===== mmu_set_cacheable @ 20100e24 (104 bytes)
 
-void FUN_20100e24(uint param_1,int param_2)
+/* (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in
+   0x2044C000, then invalidates the TLB and the I-cache [fact] */
+
+void mmu_set_cacheable(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -1042,16 +1048,18 @@ void FUN_20100e24(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100e8c @ 20100e8c  (112 bytes, 0 callers, export file 18400000_20100f64.c)
- * Name on the doc page: mmu_map_range
+ * mmu_map_range @ 20100e8c  (112 bytes, 0 callers, export file 18400000_20100f64.c)
  * Purpose: (va, pa, size): rewrites the section base addresses of the L1 table 0x2044C000 for the range, keeping
  *     the attribute bits [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100e8c @ 20100e8c (112 bytes)
+// ===== mmu_map_range @ 20100e8c (112 bytes)
 
-void FUN_20100e8c(uint param_1,uint param_2,int param_3)
+/* (va, pa, size): rewrites the section base addresses of the L1 table 0x2044C000 for the range,
+   keeping the attribute bits [fact] */
+
+void mmu_map_range(uint param_1,uint param_2,int param_3)
 
 {
   uint uVar1;
@@ -1075,15 +1083,16 @@ void FUN_20100e8c(uint param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100efc @ 20100efc  (36 bytes, 0 callers, export file 18400000_20100f64.c)
- * Name on the doc page: icache_disable
+ * icache_disable @ 20100efc  (36 bytes, 0 callers, export file 18400000_20100f64.c)
  * Purpose: SCTLR: clears the I bit (12) when it is set [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100efc @ 20100efc (36 bytes)
+// ===== icache_disable @ 20100efc (36 bytes)
 
-uint FUN_20100efc(void)
+/* SCTLR: clears the I bit (12) when it is set [fact] */
+
+uint icache_disable(void)
 
 {
   uint uVar1;
@@ -1098,15 +1107,16 @@ uint FUN_20100efc(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100f20 @ 20100f20  (36 bytes, 0 callers, export file 18400000_20100f64.c)
- * Name on the doc page: dcache_disable
+ * dcache_disable @ 20100f20  (36 bytes, 0 callers, export file 18400000_20100f64.c)
  * Purpose: SCTLR: clears the C bit (2) when it is set [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100f20 @ 20100f20 (36 bytes)
+// ===== dcache_disable @ 20100f20 (36 bytes)
 
-uint FUN_20100f20(void)
+/* SCTLR: clears the C bit (2) when it is set [fact] */
+
+uint dcache_disable(void)
 
 {
   uint uVar1;
@@ -1121,15 +1131,16 @@ uint FUN_20100f20(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100f44 @ 20100f44  (32 bytes, 0 callers, export file 18400000_20100f64.c)
- * Name on the doc page: icache_enable
+ * icache_enable @ 20100f44  (32 bytes, 0 callers, export file 18400000_20100f64.c)
  * Purpose: SCTLR: sets the I bit (12) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100f44 @ 20100f44 (32 bytes)
+// ===== icache_enable @ 20100f44 (32 bytes)
 
-uint FUN_20100f44(void)
+/* SCTLR: sets the I bit (12) [fact] */
+
+uint icache_enable(void)
 
 {
   uint uVar1;
@@ -1142,15 +1153,16 @@ uint FUN_20100f44(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20100f64 @ 20100f64  (32 bytes, 0 callers, export file 18400000_20100f64.c)
- * Name on the doc page: dcache_enable
+ * dcache_enable @ 20100f64  (32 bytes, 0 callers, export file 18400000_20100f64.c)
  * Purpose: SCTLR: sets the C bit (2) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100f64 @ 20100f64 (32 bytes)
+// ===== dcache_enable @ 20100f64 (32 bytes)
 
-uint FUN_20100f64(void)
+/* SCTLR: sets the C bit (2) [fact] */
+
+uint dcache_enable(void)
 
 {
   uint uVar1;
@@ -1162,16 +1174,18 @@ uint FUN_20100f64(void)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_20100fd8 @ 20100fd8  (68 bytes, 0 callers, export file 20100f84_201025c4.c)
- * Name on the doc page: dcache_invalidate_range
+ * dcache_invalidate_range @ 20100fd8  (68 bytes, 0 callers, export file 20100f84_201025c4.c)
  * Purpose: (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2)) when addr
  *     or size is 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20100fd8 @ 20100fd8 (68 bytes)
+// ===== dcache_invalidate_range @ 20100fd8 (68 bytes)
 
-uint FUN_20100fd8(uint param_1,int param_2)
+/* (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2))
+   when addr or size is 0 [fact] */
+
+uint dcache_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -1189,24 +1203,25 @@ uint FUN_20100fd8(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(2);
+  dcache_setway_all(2);
   return param_1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2010101c @ 2010101c  (20 bytes, 2 callers, export file 20100f84_201025c4.c)
- * Name on the doc page: dcache_invalidate_all
+ * dcache_invalidate_all @ 2010101c  (20 bytes, 2 callers, export file 20100f84_201025c4.c)
  * Purpose: dcache_setway_all(2) (invalidate by set/way) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_2010101c @ 2010101c (20 bytes)
+// ===== dcache_invalidate_all @ 2010101c (20 bytes)
 
-undefined4 FUN_2010101c(undefined4 param_1)
+/* dcache_setway_all(2) (invalidate by set/way) [fact] */
+
+undefined4 dcache_invalidate_all(undefined4 param_1)
 
 {
-  FUN_201010e0(2);
+  dcache_setway_all(2);
   return param_1;
 }
 
@@ -1240,22 +1255,24 @@ uint dcache_clean_range(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(1);
+  dcache_setway_all(1);
   return param_1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20101088 @ 20101088  (88 bytes, 4 callers, export file 20100f84_201025c4.c)
- * Name on the doc page: dcache_clean_invalidate_range
+ * dcache_clean_invalidate_range @ 20101088  (88 bytes, 4 callers, export file 20100f84_201025c4.c)
  * Purpose: (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and
  *     sdhi_read_block use it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20101088 @ 20101088 (88 bytes)
+// ===== dcache_clean_invalidate_range @ 20101088 (88 bytes)
 
-uint FUN_20101088(uint param_1,int param_2)
+/* (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and
+   sdhi_read_block use it [fact] */
+
+uint dcache_clean_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -1273,22 +1290,24 @@ uint FUN_20101088(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(0);
+  dcache_setway_all(0);
   return param_1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201010e0 @ 201010e0  (164 bytes, 3 callers, export file 20100f84_201025c4.c)
- * Name on the doc page: dcache_setway_all
+ * dcache_setway_all @ 201010e0  (164 bytes, 3 callers, export file 20100f84_201025c4.c)
  * Purpose: (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate (DCCISW), 1
  *     clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201010e0 @ 201010e0 (164 bytes)
+// ===== dcache_setway_all @ 201010e0 (164 bytes)
 
-longlong FUN_201010e0(int param_1,uint param_2)
+/* (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate
+   (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations] */
+
+longlong dcache_setway_all(int param_1,uint param_2)
 
 {
   bool bVar1;
@@ -1636,7 +1655,7 @@ void task_tsc2007(void)
   undefined4 local_2c;
   uint local_28;
   
-  iVar2 = FUN_20120454(2);
+  iVar2 = R_RIIC_Init(2);
   if (iVar2 == 0) {
     uVar1 = INTC_ICR1;
     INTC_ICR1 = uVar1 & 0xff3f;
@@ -1644,7 +1663,7 @@ void task_tsc2007(void)
     local_28 = (uint)uVar1;
     uVar1 = INTC_ICR1;
     INTC_ICR1 = uVar1 | 0x40;
-    uVar3 = itron_acre_isr(0,&cisr_tsc2007_tint_isr);
+    uVar3 = itron_acre_isr(0,0x20165194);
     if (0 < (int)uVar3) {
       itron_get_tid(&DAT_20800088);
       itron_iwup_tsk(DAT_2080008c);
@@ -1765,9 +1784,9 @@ void task_tsc2007_irq(void)
   do {
     do {
       itron_tslp_tsk(0xffffffff);
-      iVar1 = FUN_2012001c();
+      iVar1 = userdef_riic2_tx_count();
       itron_dly_tsk(100);
-      iVar2 = FUN_2012001c();
+      iVar2 = userdef_riic2_tx_count();
     } while (iVar1 != iVar2);
     DAT_20800090 = 1;
     itron_sus_tsk(DAT_20800088);
@@ -1913,7 +1932,7 @@ void task_audio_codec(void)
                   }
                   break;
                 }
-                FUN_20101088(local_5c,4000);
+                dcache_clean_invalidate_range(local_5c,4000);
                 DAT_208000e4 = DAT_208000e4 + iVar7 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
               }
@@ -2517,15 +2536,17 @@ void sdmenu_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 local_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  local_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (0 < (int)uVar1) {
     DAT_208001a8 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_sdmenu);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_sdmenu);
     if (0 < (int)uVar1) {
       itron_sta_tsk(uVar1,0);
     }
@@ -3173,7 +3194,7 @@ LAB_201139f0:
       }
       iVar3 = iVar3 + 1;
     } while (iVar3 < 6);
-    iVar3 = FUN_20116dac();
+    iVar3 = full_mode_get();
     if ((iVar3 != 0) || (DAT_2080049b != '\0')) {
       iVar3 = 0;
       do {
@@ -3336,11 +3357,11 @@ void powon_init(void)
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 | 0xc00;
-  DAT_20800358 = itron_acre_flg(0,&cflg_powon);
+  DAT_20800358 = itron_acre_flg(0,(byte *)&cflg_powon);
   if (0 < (int)DAT_20800358) {
-    DAT_2080035c = itron_acre_tsk(0,&ctsk_powon);
+    DAT_2080035c = itron_acre_tsk(0,(byte *)&ctsk_powon);
     if (((0 < (int)DAT_2080035c) && (uVar2 = itron_sta_tsk(DAT_2080035c,0), uVar2 == 0)) &&
-       (uVar2 = itron_acre_isr(0,&cisr_powon_isr), 0 < (int)uVar2)) {
+       (uVar2 = itron_acre_isr(0,0x20165744), 0 < (int)uVar2)) {
       gic_enable_irq(0x25);
       return;
     }
@@ -3507,7 +3528,7 @@ int periodic_wakeup_start(void)
   bVar1 = OSTM_OSTM1CTL;
   OSTM_OSTM1CTL = bVar1 & 0xfd;
   OSTM_OSTM1CTL = 1;
-  uVar2 = itron_acre_isr(0,&cisr_periodic_wakeup_isr);
+  uVar2 = itron_acre_isr(0,0x20165954);
   if ((int)uVar2 < 1) {
     return uVar2;
   }
@@ -3747,14 +3768,16 @@ uint cli_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (((0 < (int)uVar1) &&
-      (DAT_20800394 = uVar1, uVar1 = itron_acre_tsk(0,&ctsk_cli), 0 < (int)uVar1)) &&
+      (DAT_20800394 = uVar1, uVar1 = itron_acre_tsk(0,(byte *)&ctsk_cli), 0 < (int)uVar1)) &&
      (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
     return 0x20116b00;
   }
@@ -3972,7 +3995,7 @@ void power_on_full_init(void)
   r_vdc5_start_process(0,4,(uint)&local_20);
   r_vdc5_start_process(0,5,(uint)&local_20);
   DAT_208003a0 = 1;
-  FUN_20116da0(1);
+  full_mode_set(1);
   key_matrix_press_check();
   if (DAT_208003a5 == '\0') {
     gpio_p7_9_11(1);
@@ -3982,11 +4005,11 @@ void power_on_full_init(void)
     dimmer_init();
     backlight_enable(0);
     backlight_init();
-    FUN_20107e9c();
+    usbkbd_init();
     mouse_cursor_init();
-    FUN_201385b4();
-    FUN_2013b97c();
-    FUN_2013b4cc();
+    usbh_ports_init();
+    usbh_hid_class_init();
+    usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
     DAT_208dc1c8 = cli_init();
@@ -4064,15 +4087,15 @@ void task_root(void)
   else {
     DAT_208003a5 = 1;
     gpio_p8_14(1);
-    FUN_20116da0(1);
+    full_mode_set(1);
     dimmer_init();
     backlight_enable(0);
     backlight_init();
-    FUN_20107e9c();
+    usbkbd_init();
     mouse_cursor_init();
-    FUN_201385b4();
-    FUN_2013b97c();
-    FUN_2013b4cc();
+    usbh_ports_init();
+    usbh_hid_class_init();
+    usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
     DAT_208dc1c8 = cli_init();
@@ -4119,7 +4142,7 @@ void main(void)
   pinmux_init();
   gpio_p7_9_11(1);
   kernel_heap_init();
-  uVar1 = itron_acre_tsk(0,&ctsk_root);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_root);
   if ((int)uVar1 < 1) {
     return;
   }
@@ -4154,9 +4177,9 @@ void main(void)
       if (knl_sys.tick_lo == 0) {
         knl_sys.tick_hi = knl_sys.tick_hi + 1;
       }
-      FUN_201540c4();
-      FUN_20153788();
-      FUN_20153620();
+      knl_tick_task_timeouts();
+      knl_tick_cyclic();
+      knl_tick_table_dbf84();
       knl_sys.tick_pending = knl_sys.tick_pending - 1;
     } while (knl_sys.tick_pending != 0);
   } while( true );
@@ -4333,7 +4356,7 @@ uint ostm_init(void)
   bVar1 = OSTM_OSTM0CTL;
   OSTM_OSTM0CTL = bVar1 & 0xfd;
   OSTM_OSTM0CTL = 1;
-  uVar2 = itron_acre_isr(0,&cisr_ostm0_tick_isr);
+  uVar2 = itron_acre_isr(0,0x20165a60);
   if (0 < (int)uVar2) {
     gic_enable_irq(0x86);
     bVar1 = OSTM_OSTM0TS;
@@ -4395,21 +4418,22 @@ void power_on_request(void)
   }
   g_bootinfo.mode = 2;
   logo_fade_in();
-  FUN_201322e4(&g_bootinfo);
+  bootloader_entry_screen_thunk(&g_bootinfo);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201341cc @ 201341cc  (28 bytes, 2 callers, export file 20133618_20134348.c)
- * Name on the doc page: clamp_add_u8
+ * clamp_add_u8 @ 201341cc  (28 bytes, 2 callers, export file 20133618_20134348.c)
  * Purpose: (a, b): a + b clamped to 0..255 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201341cc @ 201341cc (28 bytes)
+// ===== clamp_add_u8 @ 201341cc (28 bytes)
 
-uint FUN_201341cc(int param_1,int param_2)
+/* (a, b): a + b clamped to 0..255 [fact] */
+
+uint clamp_add_u8(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -4463,15 +4487,16 @@ void task_test_disp(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20135448 @ 20135448  (16 bytes, 0 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: xorshift32_step
+ * xorshift32_step @ 20135448  (16 bytes, 0 callers, export file 201353f8_201378b0.c)
  * Purpose: (x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20135448 @ 20135448 (16 bytes)
+// ===== xorshift32_step @ 20135448 (16 bytes)
 
-uint FUN_20135448(uint param_1)
+/* (x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 [fact] */
+
+uint xorshift32_step(uint param_1)
 
 {
   param_1 = param_1 ^ param_1 << 0xd;
@@ -4481,15 +4506,16 @@ uint FUN_20135448(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20135488 @ 20135488  (16 bytes, 1 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: be16_store
+ * be16_store @ 20135488  (16 bytes, 1 callers, export file 201353f8_201378b0.c)
  * Purpose: (v, dst): stores v big-endian (high byte first) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20135488 @ 20135488 (16 bytes)
+// ===== be16_store @ 20135488 (16 bytes)
 
-void FUN_20135488(undefined4 param_1,undefined1 *param_2)
+/* (v, dst): stores v big-endian (high byte first) [fact] */
+
+void be16_store(undefined4 param_1,undefined1 *param_2)
 
 {
   *param_2 = (char)((uint)param_1 >> 8);
@@ -4499,15 +4525,16 @@ void FUN_20135488(undefined4 param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201354bc @ 201354bc  (48 bytes, 0 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: u32_decimal_digits
+ * u32_decimal_digits @ 201354bc  (48 bytes, 0 callers, export file 201353f8_201378b0.c)
  * Purpose: (v): number of decimal digits of v (1..10) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201354bc @ 201354bc (48 bytes)
+// ===== u32_decimal_digits @ 201354bc (48 bytes)
 
-char FUN_201354bc(uint param_1)
+/* (v): number of decimal digits of v (1..10) [fact] */
+
+char u32_decimal_digits(uint param_1)
 
 {
   char cVar1;
@@ -5009,19 +5036,25 @@ uint os_create_sem_named(void *param_1,uint param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): copies a 6-word T_CTSK and appends
    the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named [inference] */
 
-void os_create_tsk_named(uint *param_1,char *param_2)
+void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
 
 {
-  t_ctsk local_28;
+  undefined4 local_28;
+  undefined4 uStack_24;
+  undefined4 uStack_20;
+  undefined4 uStack_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 uStack_10;
   
-  local_28.tskatr = *param_1;
-  local_28.exinf = param_1[1];
-  local_28.task = param_1[2];
-  local_28.itskpri = param_1[3];
-  local_28.stksz = param_1[4];
-  local_28.stk = (byte *)param_1[5];
-  local_28.name = param_2;
-  itron_acre_tsk(0,&local_28);
+  local_28 = *param_1;
+  uStack_24 = param_1[1];
+  uStack_20 = param_1[2];
+  uStack_1c = param_1[3];
+  local_18 = param_1[4];
+  local_14 = param_1[5];
+  uStack_10 = param_2;
+  itron_acre_tsk(0,(byte *)&local_28);
   return;
 }
 
@@ -5038,15 +5071,17 @@ void os_create_tsk_named(uint *param_1,char *param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (wrapper 0.850): same wrapper around itron_acre_flg
    [inference] */
 
-void os_create_flg_named(uint *param_1,char *param_2)
+void os_create_flg_named(undefined4 *param_1,undefined4 param_2)
 
 {
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = *param_1;
-  local_10.iflgptn = param_1[1];
-  local_10.name = param_2;
-  itron_acre_flg(0,&local_10);
+  local_10 = *param_1;
+  local_c = param_1[1];
+  uStack_8 = param_2;
+  itron_acre_flg(0,(byte *)&local_10);
   return;
 }
 
@@ -5730,7 +5765,7 @@ LAB_2014efa4:
  */
 // ===== itron_acre_flg @ 2014effc (404 bytes)
 
-uint itron_acre_flg(uint param_1,t_cflg *pk_cflg)
+uint itron_acre_flg(uint param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -5770,13 +5805,13 @@ uint itron_acre_flg(uint param_1,t_cflg *pk_cflg)
     }
     uVar7 = 0;
   }
-  if ((pk_cflg->flgatr & 1) == 0) {
+  if ((*param_2 & 1) == 0) {
     uVar6 = 0;
   }
   else {
     uVar6 = 7;
   }
-  iVar2 = knl_addr_in_image(pk_cflg);
+  iVar2 = knl_addr_in_image(param_2);
   if (iVar2 == 0) {
     uVar8 = uVar6 + 0xf & 0xfffffffc;
     uVar1 = uVar8;
@@ -5793,19 +5828,19 @@ uint itron_acre_flg(uint param_1,t_cflg *pk_cflg)
   }
   knl_flg_tab[param_1] = pkVar3;
   if (uVar8 == 0) {
-    pkVar3->cflg = pk_cflg;
+    pkVar3->cflg = (t_cflg *)param_2;
     bVar5 = extraout_r1;
   }
   else {
     pkVar3->cflg = (t_cflg *)(pkVar3->wq + (uVar8 - 9));
-    knl_memcpy((t_cflg *)(pkVar3->wq + (uVar8 - 9)),pk_cflg,0xc);
+    knl_memcpy((t_cflg *)(pkVar3->wq + (uVar8 - 9)),param_2,0xc);
     bVar5 = extraout_r1_00;
   }
   if (-1 < (int)uVar6) {
     bVar5 = 0;
   }
-  pkVar3->flgptn = pk_cflg->iflgptn;
-  pkVar3->flgatr = (byte)pk_cflg->flgatr;
+  pkVar3->flgptn = *(uint *)(param_2 + 4);
+  pkVar3->flgatr = *param_2;
   iVar4 = 0;
   iVar2 = iVar4;
   if (-1 < (int)uVar6) {
@@ -5837,12 +5872,12 @@ LAB_2014f130:
 
 /* create an interrupt service routine object (auto-ID counts down from 0x40) [inference] */
 
-uint itron_acre_isr(uint param_1,t_cisr *pk_cisr)
+uint itron_acre_isr(uint param_1,int param_2)
 
 {
   int iVar1;
   uint uVar2;
-  uint *puVar3;
+  undefined4 *puVar3;
   code *pcVar4;
   uint uVar5;
   int iVar6;
@@ -5850,7 +5885,7 @@ uint itron_acre_isr(uint param_1,t_cisr *pk_cisr)
   
   if (knl_sys.ctx_isr == 0) {
     if (param_1 < 0x41) {
-      uVar2 = isr_desc_check((int)pk_cisr);
+      uVar2 = isr_desc_check(param_2);
       if (uVar2 == 0) {
         software_interrupt(0);
         if (param_1 == 0) {
@@ -5870,34 +5905,34 @@ uint itron_acre_isr(uint param_1,t_cisr *pk_cisr)
             return 0xffffffd7;
           }
         }
-        puVar3 = (uint *)knl_sys_alloc(0x14);
-        if (puVar3 != (uint *)0x0) {
-          pcVar4 = (code *)gic_get_handler((int)pk_cisr);
+        puVar3 = (undefined4 *)knl_sys_alloc(0x14);
+        if (puVar3 != (undefined4 *)0x0) {
+          pcVar4 = (code *)gic_get_handler(param_2);
           if (pcVar4 == gic_default_handler) {
             uVar5 = knl_sys_alloc(0x58);
             if (uVar5 == 0) {
-              FUN_20154790(puVar3,0x14);
+              knl_sys_free(puVar3,0x14);
               software_interrupt(0);
               knl_sys.last_ercd = -5;
               return 0xfffffffb;
             }
             knl_memcpy(uVar5,gic_default_handler,0x58);
-            *(uint **)(uVar5 + 0x4c) = puVar3;
+            *(undefined4 **)(uVar5 + 0x4c) = puVar3;
             puVar3[3] = uVar5 + 0x4c;
-            gic_install_isr_stub(uVar5,(int)pk_cisr);
+            gic_install_isr_stub(uVar5,param_2);
           }
           else {
-            uVar5 = gic_get_handler((int)pk_cisr);
+            uVar5 = gic_get_handler(param_2);
             piVar7 = (int *)(uVar5 + 0x4c);
             iVar6 = *piVar7;
             if (iVar6 == 0) {
               *piVar7 = (int)puVar3;
-              puVar3[3] = (uint)piVar7;
+              puVar3[3] = piVar7;
             }
             else {
               for (iVar1 = *(int *)(iVar6 + 8); iVar1 != 0; iVar1 = *(int *)(iVar1 + 8)) {
                 if (*(int *)(iVar1 + 0xc) != iVar6 + 8) {
-                  FUN_20154790(puVar3,0x14);
+                  knl_sys_free(puVar3,0x14);
                   software_interrupt(0);
                   knl_sys.last_ercd = -0x1c;
                   return 0xffffffe4;
@@ -5905,13 +5940,13 @@ uint itron_acre_isr(uint param_1,t_cisr *pk_cisr)
                 iVar6 = iVar1;
               }
               *(int *)(iVar6 + 8) = (int)puVar3;
-              puVar3[3] = (uint)(iVar6 + 8);
+              puVar3[3] = (int *)(iVar6 + 8);
             }
           }
-          *puVar3 = pk_cisr->isr;
-          puVar3[1] = pk_cisr->exinf;
+          *puVar3 = *(undefined4 *)(param_2 + 0xc);
+          puVar3[1] = *(undefined4 *)(param_2 + 4);
           puVar3[2] = 0;
-          puVar3[4] = pk_cisr->intno;
+          puVar3[4] = *(undefined4 *)(param_2 + 8);
           (&DAT_208dc044)[param_1] = puVar3;
           software_interrupt(0);
           return uVar2;
@@ -6020,7 +6055,7 @@ uint itron_acre_mbf(uint param_1,uint *param_2)
   }
   local_30 = param_2[3];
   uVar11 = param_2[2];
-  if (((local_30 == 0) && (uVar11 != 0)) && (local_30 = FUN_20154720(uVar11), local_30 == 0)) {
+  if (((local_30 == 0) && (uVar11 != 0)) && (local_30 = knl_pool_alloc(uVar11), local_30 == 0)) {
     software_interrupt(0);
     knl_sys.last_ercd = -0x21;
     return 0xffffffdf;
@@ -6297,7 +6332,7 @@ uint itron_acre_mpf(uint mpfid,t_cmpf *pk_cmpf)
   }
   pbVar8 = pk_cmpf->mpf;
   if ((pbVar8 == (byte *)0x0) &&
-     (pbVar8 = (byte *)FUN_20154720(uVar2 * uVar7), pbVar8 == (byte *)0x0)) {
+     (pbVar8 = (byte *)knl_pool_alloc(uVar2 * uVar7), pbVar8 == (byte *)0x0)) {
     software_interrupt(0);
     knl_sys.last_ercd = -0x21;
     return 0xffffffdf;
@@ -6423,7 +6458,7 @@ uint itron_acre_mpl(uint param_1,byte *param_2)
   }
   iVar8 = *(int *)(param_2 + 8);
   iVar10 = *(int *)(param_2 + 4);
-  if ((iVar8 == 0) && (iVar8 = FUN_20154720(iVar10), iVar8 == 0)) {
+  if ((iVar8 == 0) && (iVar8 = knl_pool_alloc(iVar10), iVar8 == 0)) {
     software_interrupt(0);
     knl_sys.last_ercd = -0x21;
     return 0xffffffdf;
@@ -6733,31 +6768,32 @@ LAB_2015007c:
 
 /* create task, id 0 = auto-assign; TCB table 0x208DBBA0 */
 
-uint itron_acre_tsk(uint param_1,t_ctsk *pk_ctsk)
+uint itron_acre_tsk(uint param_1,byte *param_2)
 
 {
-  sbyte sVar1;
+  byte bVar1;
   int iVar2;
   knl_tcb *pkVar3;
   t_ctsk *ptVar4;
   uint uVar5;
-  uint *puVar6;
-  uint uVar7;
-  undefined4 uVar8;
-  uint uVar9;
+  uint uVar6;
+  uint *puVar7;
+  uint uVar8;
+  undefined4 uVar9;
+  int iVar10;
   
   if (knl_sys.ctx_isr == 0) {
     if (DAT_201659d0 < param_1) {
       knl_sys.last_ercd = 0xffffffee;
     }
     else {
-      if (pk_ctsk->itskpri < 9) {
+      if (*(int *)(param_2 + 0xc) < 9) {
         software_interrupt(0);
-        uVar5 = DAT_201659d0;
+        uVar6 = DAT_201659d0;
         if (param_1 == 0) {
-          while (uVar7 = uVar5, knl_tsk_tab[uVar5] != (knl_tcb *)0x0) {
-            uVar5 = uVar5 - 1;
-            if (uVar5 == 0) {
+          while (uVar8 = uVar6, knl_tsk_tab[uVar6] != (knl_tcb *)0x0) {
+            uVar6 = uVar6 - 1;
+            if (uVar6 == 0) {
               software_interrupt(0);
               return 0xffffffde;
             }
@@ -6768,61 +6804,61 @@ uint itron_acre_tsk(uint param_1,t_ctsk *pk_ctsk)
             software_interrupt(0);
             return 0xffffffd7;
           }
-          uVar5 = param_1;
-          uVar7 = 0;
+          uVar6 = param_1;
+          uVar8 = 0;
         }
-        iVar2 = knl_addr_in_image(pk_ctsk);
+        iVar2 = knl_addr_in_image(param_2);
         if (iVar2 == 0) {
-          uVar8 = 0x44;
+          uVar9 = 0x44;
           iVar2 = 0x28;
         }
         else {
-          uVar8 = 0x28;
+          uVar9 = 0x28;
           iVar2 = 0;
         }
-        pkVar3 = (knl_tcb *)knl_sys_alloc(uVar8);
+        pkVar3 = (knl_tcb *)knl_sys_alloc(uVar9);
         if (pkVar3 == (knl_tcb *)0x0) {
           software_interrupt(0);
           knl_sys.last_ercd = -5;
           return 0xfffffffb;
         }
-        puVar6 = (uint *)pk_ctsk->stk;
-        uVar9 = pk_ctsk->stksz;
-        if ((puVar6 == (uint *)0x0) && (puVar6 = (uint *)FUN_20154704(uVar9), puVar6 == (uint *)0x0)
-           ) {
-          FUN_20154790(pkVar3,uVar8);
+        puVar7 = *(uint **)(param_2 + 0x14);
+        iVar10 = *(int *)(param_2 + 0x10);
+        if ((puVar7 == (uint *)0x0) &&
+           (puVar7 = (uint *)knl_stack_alloc(iVar10), puVar7 == (uint *)0x0)) {
+          knl_sys_free(pkVar3,uVar9);
           software_interrupt(0);
           knl_sys.last_ercd = -0x21;
           return 0xffffffdf;
         }
-        knl_tsk_tab[uVar5] = pkVar3;
+        knl_tsk_tab[uVar6] = pkVar3;
         pkVar3->state = 0;
         pkVar3->act_cnt = 0;
         pkVar3->mtx_held = 0;
         if (iVar2 == 0) {
-          pkVar3->ctsk = pk_ctsk;
+          pkVar3->ctsk = (t_ctsk *)param_2;
         }
         else {
           ptVar4 = (t_ctsk *)((int)&pkVar3->sp + iVar2);
           pkVar3->ctsk = ptVar4;
-          knl_memcpy(ptVar4,pk_ctsk,0x1c);
+          knl_memcpy(ptVar4,param_2,0x1c);
         }
-        sVar1 = (sbyte)pk_ctsk->itskpri;
-        pkVar3->pri = sVar1;
-        pkVar3->bpri = sVar1;
-        pkVar3->stk = (byte *)puVar6;
-        uVar9 = uVar9 - 0x48 >> 2;
+        bVar1 = param_2[0xc];
+        pkVar3->pri = bVar1;
+        pkVar3->bpri = bVar1;
+        pkVar3->stk = (byte *)puVar7;
+        uVar5 = iVar10 - 0x48U >> 2;
         pkVar3->f_0x1c_u32 = 0;
         do {
-          uVar9 = uVar9 - 1;
-          *puVar6 = uVar5 << 0x18 | uVar5 << 0x10 | uVar5 << 8 | uVar5;
-          puVar6 = puVar6 + 1;
-        } while (uVar9 != 0);
+          uVar5 = uVar5 - 1;
+          *puVar7 = uVar6 << 0x18 | uVar6 << 0x10 | uVar6 << 8 | uVar6;
+          puVar7 = puVar7 + 1;
+        } while (uVar5 != 0);
         software_interrupt(0);
-        if ((pk_ctsk->tskatr & 2) != 0) {
-          itron_act_tsk(uVar5);
+        if ((*param_2 & 2) != 0) {
+          itron_act_tsk(uVar6);
         }
-        return uVar7;
+        return uVar8;
       }
       knl_sys.last_ercd = 0xffffffef;
     }
@@ -6879,7 +6915,7 @@ code * itron_del_mpf(uint param_1)
             }
             tcb->state = 0x10;
             if (tcb->f_0x09_u8 == 0) {
-              FUN_20154508();
+              knl_ready_requeue();
               bVar2 = (bool)(bVar2 | tcb->pri < knl_sys.run_pri);
             }
             else {
@@ -6892,7 +6928,7 @@ code * itron_del_mpf(uint param_1)
         }
       }
       if (pkVar6->cmpf->mpf == (byte *)0x0) {
-        FUN_20154744(pkVar6->pool,pkVar6->pool_size);
+        knl_pool_free(pkVar6->pool,pkVar6->pool_size);
       }
       iVar4 = 0x14;
       if (pkVar6->wq[1] < 0xfe) {
@@ -6902,7 +6938,7 @@ code * itron_del_mpf(uint param_1)
       if (iVar3 == 0) {
         iVar4 = (iVar4 + 3U & 0xfffffffc) + 0x14;
       }
-      FUN_20154790(pkVar6,iVar4);
+      knl_sys_free(pkVar6,iVar4);
       knl_mpf_tab[param_1] = (knl_mpf *)0x0;
       if (bVar2) {
         software_interrupt(0);
@@ -6964,7 +7000,7 @@ code * itron_del_sem(uint param_1)
             }
             tcb->state = 0x10;
             if (tcb->f_0x09_u8 == 0) {
-              FUN_20154508();
+              knl_ready_requeue();
               bVar1 = (bool)(bVar1 | tcb->pri < knl_sys.run_pri);
             }
             else {
@@ -6984,7 +7020,7 @@ code * itron_del_sem(uint param_1)
       if (iVar2 == 0) {
         iVar3 = (iVar3 + 3U & 0xfffffffc) + 0x10;
       }
-      FUN_20154790(pkVar5,iVar3);
+      knl_sys_free(pkVar5,iVar3);
       knl_sem_tab[param_1] = (knl_sem *)0x0;
       if (!bVar1) {
         software_interrupt(0);
@@ -7059,7 +7095,7 @@ undefined4 itron_dly_tsk(int param_1)
       if (param_1 != 0) {
         knl_timeout_add(param_1,tcb,knl_rdq[0]);
         tcb->state = 0x32;
-        uVar1 = FUN_201545c8(tcb,uVar2);
+        uVar1 = knl_wait_self(tcb,uVar2);
         return uVar1;
       }
       software_interrupt(0);
@@ -8015,7 +8051,7 @@ code * itron_sus_tsk(uint param_1)
       }
       if ((uint)knl_rdq[0] == (param_1 & 0xff)) {
         if (knl_sys.ctx_isr == 0) {
-          pcVar2 = (code *)FUN_201545c8(pkVar1,param_1);
+          pcVar2 = (code *)knl_wait_self(pkVar1,param_1);
           return pcVar2;
         }
         knl_sys.dsp_pending = 1;
@@ -8179,7 +8215,7 @@ code * itron_tloc_mtx(uint param_1,int param_2)
               FUN_20153f28(pkVar5->owner);
             }
             software_interrupt(0);
-            return FUN_201566f0;
+            return knl_resched;
           }
           pkVar5->owner = knl_rdq[0];
           sVar1 = tcb->mtx_held;
@@ -8313,16 +8349,18 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201520b0 @ 201520b0  (248 bytes, 1 callers, export file 2014e6e4_20152fac.c)
- * Name on the doc page: knl_mbf_get
+ * knl_mbf_get @ 201520b0  (248 bytes, 1 callers, export file 2014e6e4_20152fac.c)
  * Purpose: (mbf, buf): copies the next message out of the message-buffer ring (16-bit length prefix, wrap at the
  *     ring size) and returns its size; itron_trcv_mbf calls it (boot-rtos.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201520b0 @ 201520b0 (248 bytes)
+// ===== knl_mbf_get @ 201520b0 (248 bytes)
 
-uint FUN_201520b0(int param_1,undefined1 *param_2)
+/* (mbf, buf): copies the next message out of the message-buffer ring (16-bit length prefix, wrap at
+   the ring size) and returns its size; itron_trcv_mbf calls it (boot-rtos.md) [fact] */
+
+uint knl_mbf_get(int param_1,undefined1 *param_2)
 
 {
   ushort uVar1;
@@ -8416,7 +8454,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
     return -0x2a;
   }
   if (*(short *)(iVar5 + 0xc) != *(short *)(iVar5 + 0xe)) {
-    iVar5 = FUN_201520b0(iVar5,param_2,param_3,param_4,param_1,param_2,param_3);
+    iVar5 = knl_mbf_get(iVar5,param_2,param_3,param_4,param_1,param_2,param_3);
     iVar4 = FUN_20153dec(param_1);
     if (iVar4 == 0) {
       software_interrupt(0);
@@ -8615,7 +8653,7 @@ code * itron_tslp_tsk(int param_1)
         bVar1 = 0x22;
       }
       tcb->state = bVar1;
-      pcVar2 = (code *)FUN_201545c8(tcb,uVar3);
+      pcVar2 = (code *)knl_wait_self(tcb,uVar3);
       return pcVar2;
     }
   }
@@ -8672,7 +8710,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
       for (pbVar3 = (byte *)(iVar5 + 0x13); *pbVar3 == 0; pbVar3 = pbVar3 + 1) {
       }
       if ((0xfd < *pbVar3) &&
-         (iVar4 = FUN_20153cd4(iVar5,param_2,param_3,param_4,param_1,param_2,param_3,param_4),
+         (iVar4 = knl_mbf_put(iVar5,param_2,param_3,param_4,param_1,param_2,param_3,param_4),
          iVar4 != 0)) {
         software_interrupt(0);
         return knl_svc_return;
@@ -8998,7 +9036,7 @@ code * itron_unl_mtx(uint param_1)
       iVar7 = FUN_201547d0(pkVar8,param_1);
       if (iVar7 != 0 || bVar3) {
         software_interrupt(0);
-        return FUN_201566f0;
+        return knl_resched;
       }
       software_interrupt(0);
       return knl_svc_return;
@@ -9075,20 +9113,21 @@ code * itron_iwup_tsk(uint param_1)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_201530fc @ 201530fc  (1208 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_sys_init
+ * knl_sys_init @ 201530fc  (1208 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: Kernel start-up called by kernel_heap_init: sets the NORTi system variables 0x208003A8..
  *     (structs_display.h knl_sys: all set by knl_sys_init) and ends with svc 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201530fc @ 201530fc (1208 bytes)
+// ===== knl_sys_init @ 201530fc (1208 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20153124) */
 /* WARNING: Removing unreachable block (ram,0x20153188) */
 /* WARNING: Removing unreachable block (ram,0x201531b0) */
+/* Kernel start-up called by kernel_heap_init: sets the NORTi system variables 0x208003A8..
+   (structs_display.h knl_sys: all set by knl_sys_init) and ends with svc 0 [fact] */
 
-undefined4 FUN_201530fc(uint *param_1,int param_2)
+undefined4 knl_sys_init(uint *param_1,int param_2)
 
 {
   int iVar1;
@@ -9250,20 +9289,22 @@ undefined4 FUN_201530fc(uint *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20153620 @ 20153620  (256 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_tick_table_dbf84
+ * knl_tick_table_dbf84 @ 20153620  (256 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: Per tick: the same wheel walk for the objects of table 0x208DBF84 (wheel slots 0x20800402, mask
  *     tmo_mask_2) [fact]; which uITRON object kind the table holds is open (it sits between the cyc table
  *     0x208DBF64 and the dtq table 0x208DBFA4)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20153620 @ 20153620 (256 bytes)
+// ===== knl_tick_table_dbf84 @ 20153620 (256 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20153688) */
 /* WARNING: Removing unreachable block (ram,0x2015369c) */
+/* Per tick: the same wheel walk for the objects of table 0x208DBF84 (wheel slots 0x20800402, mask
+   tmo_mask_2) [fact]; which uITRON object kind the table holds is open (it sits between the cyc
+   table 0x208DBF64 and the dtq table 0x208DBFA4) */
 
-void FUN_20153620(void)
+void knl_tick_table_dbf84(void)
 
 {
   byte bVar1;
@@ -9325,17 +9366,20 @@ void FUN_20153620(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20153788 @ 20153788  (332 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_tick_cyclic
+ * knl_tick_cyclic @ 20153788  (332 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: Per tick: walks the cyclic-handler wheel slot 0x20800401[tick_lo & tmo_mask_1] of the cyc table
  *     0x208DBF64 (itron_acre_cyc), re-arms each due handler by its period and runs it [fact for the wheel walk and
  *     the re-arm]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20153788 @ 20153788 (332 bytes)
+// ===== knl_tick_cyclic @ 20153788 (332 bytes)
 
-void FUN_20153788(void)
+/* Per tick: walks the cyclic-handler wheel slot 0x20800401[tick_lo & tmo_mask_1] of the cyc table
+   0x208DBF64 (itron_acre_cyc), re-arms each due handler by its period and runs it [fact for the
+   wheel walk and the re-arm] */
+
+void knl_tick_cyclic(void)
 
 {
   byte bVar1;
@@ -9587,16 +9631,18 @@ void knl_freelist_alloc(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20153cd4 @ 20153cd4  (280 bytes, 2 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_mbf_put
+ * knl_mbf_put @ 20153cd4  (280 bytes, 2 callers, export file 201530e4_20155058.c)
  * Purpose: (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message size is
  *     1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20153cd4 @ 20153cd4 (280 bytes)
+// ===== knl_mbf_put @ 20153cd4 (280 bytes)
 
-undefined4 FUN_20153cd4(int param_1,undefined1 *param_2,uint param_3)
+/* (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message
+   size is 1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room [fact] */
+
+undefined4 knl_mbf_put(int param_1,undefined1 *param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -9661,17 +9707,20 @@ undefined4 FUN_20153cd4(int param_1,undefined1 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201540c4 @ 201540c4  (492 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_tick_task_timeouts
+ * knl_tick_task_timeouts @ 201540c4  (492 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: Per tick: walks the task time-out wheel slot 0x20800400[tick_lo & tmo_mask], unlinks every TCB whose
  *     tmo_due is now and releases it (with E_TMOUT; mutex waits adjust the owner's priority) [fact for the wheel
  *     walk]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201540c4 @ 201540c4 (492 bytes)
+// ===== knl_tick_task_timeouts @ 201540c4 (492 bytes)
 
-code * FUN_201540c4(void)
+/* Per tick: walks the task time-out wheel slot 0x20800400[tick_lo & tmo_mask], unlinks every TCB
+   whose tmo_due is now and releases it (with E_TMOUT; mutex waits adjust the owner's priority)
+   [fact for the wheel walk] */
+
+code * knl_tick_task_timeouts(void)
 
 {
   byte bVar1;
@@ -9803,16 +9852,18 @@ void knl_timeout_add(int tmout,knl_tcb *tcb,byte tskid)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154508 @ 20154508  (28 bytes, 2 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_ready_requeue
+ * knl_ready_requeue @ 20154508  (28 bytes, 2 callers, export file 201530e4_20155058.c)
  * Purpose: (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem use it
  *     for released waiters [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154508 @ 20154508 (28 bytes)
+// ===== knl_ready_requeue @ 20154508 (28 bytes)
 
-void FUN_20154508(knl_tcb *param_1,uint param_2)
+/* (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem
+   use it for released waiters [fact] */
+
+void knl_ready_requeue(knl_tcb *param_1,uint param_2)
 
 {
   knl_queue_move(knl_rdq + param_1->pri,param_1,param_2);
@@ -9872,21 +9923,23 @@ code * knl_make_ready(knl_tcb *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201545c8 @ 201545c8  (20 bytes, 3 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_wait_self
+ * knl_wait_self @ 201545c8  (20 bytes, 3 callers, export file 201530e4_20155058.c)
  * Purpose: (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues at
  *     knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201545c8 @ 201545c8 (20 bytes)
+// ===== knl_wait_self @ 201545c8 (20 bytes)
 
-code * FUN_201545c8(knl_tcb *param_1,uint param_2)
+/* (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues
+   at knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk [fact] */
+
+code * knl_wait_self(knl_tcb *param_1,uint param_2)
 
 {
   knl_queue_remove(param_1,param_2);
   software_interrupt(0);
-  return FUN_201566f0;
+  return knl_resched;
 }
 
 
@@ -9908,7 +9961,7 @@ code * knl_wait_enter(byte *param_1,knl_tcb *param_2,uint param_3)
 {
   knl_queue_move(param_1,param_2,param_3);
   software_interrupt(0);
-  return FUN_201566f0;
+  return knl_resched;
 }
 
 
@@ -9935,16 +9988,19 @@ void knl_memcpy(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015460c @ 2015460c  (176 bytes, 5 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_freelist_free
+ * knl_freelist_free @ 2015460c  (176 bytes, 5 callers, export file 201530e4_20155058.c)
  * Purpose: (list, block, size): returns a block to an address-ordered free list {next, size}, merging with the
  *     neighbours; -17 when it overlaps a free block [fact]; the counterpart of knl_freelist_alloc
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_2015460c @ 2015460c (176 bytes)
+// ===== knl_freelist_free @ 2015460c (176 bytes)
 
-undefined4 FUN_2015460c(undefined4 *param_1,undefined4 *param_2,int param_3)
+/* (list, block, size): returns a block to an address-ordered free list {next, size}, merging with
+   the neighbours; -17 when it overlaps a free block [fact]; the counterpart of knl_freelist_alloc
+    */
+
+undefined4 knl_freelist_free(undefined4 *param_1,undefined4 *param_2,int param_3)
 
 {
   undefined4 *puVar1;
@@ -9997,15 +10053,17 @@ LAB_2015463c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154704 @ 20154704  (12 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_stack_alloc
+ * knl_stack_alloc @ 20154704  (12 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: knl_freelist_alloc on the system pool 0x208003FC; itron_acre_tsk takes the task stack with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154704 @ 20154704 (12 bytes)
+// ===== knl_stack_alloc @ 20154704 (12 bytes)
 
-void FUN_20154704(undefined4 param_1)
+/* knl_freelist_alloc on the system pool 0x208003FC; itron_acre_tsk takes the task stack with it
+   [fact] */
+
+void knl_stack_alloc(undefined4 param_1)
 
 {
   knl_freelist_alloc(0x208003fc,param_1);
@@ -10014,35 +10072,37 @@ void FUN_20154704(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154710 @ 20154710  (16 bytes, 0 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_sys_free_a
+ * knl_sys_free_a @ 20154710  (16 bytes, 0 callers, export file 201530e4_20155058.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC (no caller in the image) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154710 @ 20154710 (16 bytes)
+// ===== knl_sys_free_a @ 20154710 (16 bytes)
 
-void FUN_20154710(undefined4 param_1,undefined4 param_2)
+/* knl_freelist_free on the system pool 0x208003FC (no caller in the image) [fact] */
+
+void knl_sys_free_a(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154720 @ 20154720  (36 bytes, 3 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_pool_alloc
+ * knl_pool_alloc @ 20154720  (36 bytes, 3 callers, export file 201530e4_20155058.c)
  * Purpose: knl_freelist_alloc on the system pool 0x208003FC for the buffers of itron_acre_mbf / acre_mpf / acre_mpl
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154720 @ 20154720 (36 bytes)
+// ===== knl_pool_alloc @ 20154720 (36 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20154734) */
+/* knl_freelist_alloc on the system pool 0x208003FC for the buffers of itron_acre_mbf / acre_mpf /
+   acre_mpl [fact] */
 
-void FUN_20154720(undefined4 param_1)
+void knl_pool_alloc(undefined4 param_1)
 
 {
   knl_freelist_alloc(0x208003fc,param_1);
@@ -10051,20 +10111,21 @@ void FUN_20154720(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154744 @ 20154744  (40 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_pool_free
+ * knl_pool_free @ 20154744  (40 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC; itron_del_mpf frees the pool memory with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154744 @ 20154744 (40 bytes)
+// ===== knl_pool_free @ 20154744 (40 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015475c) */
+/* knl_freelist_free on the system pool 0x208003FC; itron_del_mpf frees the pool memory with it
+   [fact] */
 
-void FUN_20154744(undefined4 param_1,undefined4 param_2)
+void knl_pool_free(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
@@ -10091,21 +10152,22 @@ void knl_sys_alloc(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154790 @ 20154790  (40 bytes, 5 callers, export file 201530e4_20155058.c)
- * Name on the doc page: knl_sys_free
+ * knl_sys_free @ 20154790  (40 bytes, 5 callers, export file 201530e4_20155058.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf and
  *     del_sem free control blocks with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154790 @ 20154790 (40 bytes)
+// ===== knl_sys_free @ 20154790 (40 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x201547a8) */
+/* knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf
+   and del_sem free control blocks with it [fact] */
 
-void FUN_20154790(undefined4 param_1,undefined4 param_2)
+void knl_sys_free(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
@@ -10227,7 +10289,7 @@ void sprintf_veneer(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
   uStack_1c = param_4;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  FUN_20155f72(param_2,&uStack_20,&uStack_8,0x20155f99);
+  _sprintf_body(param_2,&uStack_20,&uStack_8,0x20155f99);
   _sputc(0,&uStack_20);
   return;
 }
@@ -10254,7 +10316,7 @@ void sprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   uStack_1c = param_4;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  FUN_20155f72(param_2,&local_20,&uStack_8,0x20155f99);
+  _sprintf_body(param_2,&local_20,&uStack_8,0x20155f99);
   _sputc(0,&local_20);
   return;
 }
@@ -10285,7 +10347,7 @@ void snprintf(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
   }
   local_20 = param_1;
   uStack_4 = param_4;
-  FUN_20155f72(param_3,&local_20,&uStack_4,0x20155fa3);
+  _sprintf_body(param_3,&local_20,&uStack_4,0x20155fa3);
   if (param_2 != 0) {
     _sputc(0,&local_20);
   }
@@ -10359,16 +10421,19 @@ void _printf_post_padding(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154c48 @ 20154c48  (388 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: _printf_core
+ * _printf_core @ 20154c48  (388 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: Format loop called by the sprintf family (through 0x20155F72): reads the format string and dispatches
  *     conversions, floating point through _printf_fp_dec [inference: armcc C library __printf]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154c48 @ 20154c48 (388 bytes)
+// ===== _printf_core @ 20154c48 (388 bytes)
 
-uint FUN_20154c48(uint *param_1,uint *param_2)
+/* Format loop called by the sprintf family (through 0x20155F72): reads the format string and
+   dispatches conversions, floating point through _printf_fp_dec [inference: armcc C library
+   __printf] */
+
+uint _printf_core(uint *param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -10406,12 +10471,12 @@ uint FUN_20154c48(uint *param_1,uint *param_2)
           }
         }
         else {
-          iVar2 = FUN_20163864(uVar1);
+          iVar2 = is_decimal_digit(uVar1);
           if (iVar2 != 0) {
             param_1[iVar5 + 6] = uVar1 - 0x30;
             while( true ) {
               uVar1 = (*(code *)param_1[3])(param_1);
-              iVar2 = FUN_20163864();
+              iVar2 = is_decimal_digit();
               if (iVar2 == 0) break;
               param_1[iVar5 + 6] = (uVar1 + param_1[iVar5 + 6] * 10) - 0x30;
             }
@@ -10469,7 +10534,7 @@ LAB_20154d80:
         uVar4 = uVar4 | 0x800;
       }
       *param_1 = uVar4;
-      iVar5 = FUN_20100c7c(param_1,uVar1,param_2);
+      iVar5 = _printf_fp_dec(param_1,uVar1,param_2);
       if (iVar5 == 0) goto LAB_20154c6c;
       if (iVar5 == 1) {
         param_2 = param_2 + 1;
@@ -10489,16 +10554,18 @@ LAB_20154c6c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154dea @ 20154dea  (480 bytes, 1 callers, export file 201530e4_20155058.c)
- * Name on the doc page: qsort_partition
+ * qsort_partition @ 20154dea  (480 bytes, 1 callers, export file 201530e4_20155058.c)
  * Purpose: (base, n, size, cmp): the quicksort stage of qsort for n > 10 [inference: only caller qsort, swaps
  *     elements by size around a pivot]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154dea @ 20154dea (480 bytes)
+// ===== qsort_partition @ 20154dea (480 bytes)
 
-void FUN_20154dea(undefined4 param_1,uint param_2,uint param_3,code *param_4)
+/* (base, n, size, cmp): the quicksort stage of qsort for n > 10 [inference: only caller qsort,
+   swaps elements by size around a pivot] */
+
+void qsort_partition(undefined4 param_1,uint param_2,uint param_3,code *param_4)
 
 {
   undefined1 uVar1;
@@ -10745,17 +10812,20 @@ LAB_20154fbc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20154fca @ 20154fca  (134 bytes, 2 callers, export file 201530e4_20155058.c)
- * Name on the doc page: qsort
+ * qsort @ 20154fca  (134 bytes, 2 callers, export file 201530e4_20155058.c)
  * Purpose: (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10;
  *     wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it [fact for the code; the C
  *     library name is an inference from the signature]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20154fca @ 20154fca (134 bytes)
+// ===== qsort @ 20154fca (134 bytes)
 
-void FUN_20154fca(uint param_1,uint param_2,uint param_3,code *param_4)
+/* (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10;
+   wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it [fact for the code;
+   the C library name is an inference from the signature] */
+
+void qsort(uint param_1,uint param_2,uint param_3,code *param_4)
 
 {
   undefined1 uVar1;
@@ -10769,7 +10839,7 @@ void FUN_20154fca(uint param_1,uint param_2,uint param_3,code *param_4)
   
   if ((param_3 != 0) && (param_2 != 0)) {
     if (10 < param_2) {
-      FUN_20154dea();
+      qsort_partition();
     }
     uVar7 = param_1;
     while (uVar7 < (param_2 - 1) * param_3 + param_1) {
@@ -12666,15 +12736,16 @@ ulonglong __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20155a10 @ 20155a10  (152 bytes, 3 callers, export file 2015507c_20156830.c)
- * Name on the doc page: _ll_udiv10
+ * _ll_udiv10 @ 20155a10  (152 bytes, 3 callers, export file 2015507c_20156830.c)
  * Purpose: 64-bit unsigned divide by 10 by shifts and adds (quotient in r0:r1) [fact for the arithmetic]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20155a10 @ 20155a10 (152 bytes)
+// ===== _ll_udiv10 @ 20155a10 (152 bytes)
 
-undefined8 FUN_20155a10(uint param_1,uint param_2)
+/* 64-bit unsigned divide by 10 by shifts and adds (quotient in r0:r1) [fact for the arithmetic] */
+
+undefined8 _ll_udiv10(uint param_1,uint param_2)
 
 {
   uint uVar1;
@@ -12707,18 +12778,19 @@ undefined8 FUN_20155a10(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20155b5c @ 20155b5c  (430 bytes, 3 callers, export file 2015507c_20156830.c)
- * Name on the doc page: _fp_digits
+ * _fp_digits @ 20155b5c  (430 bytes, 3 callers, export file 2015507c_20156830.c)
  * Purpose: (out, buf, *exp, ...): decimal digit generation for _printf_fp_dec using the soft-float helpers and
  *     _ll_udiv10 [inference: callers and callees]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20155b5c @ 20155b5c (430 bytes)
+// ===== _fp_digits @ 20155b5c (430 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20155ba6) */
+/* (out, buf, *exp, ...): decimal digit generation for _printf_fp_dec using the soft-float helpers
+   and _ll_udiv10 [inference: callers and callees] */
 
-void FUN_20155b5c(uint *param_1,char *param_2,int *param_3,uint param_4,uint param_5)
+void _fp_digits(uint *param_1,char *param_2,int *param_3,uint param_4,uint param_5)
 
 {
   char cVar1;
@@ -12826,7 +12898,7 @@ LAB_20155bbe:
       for (uVar9 = 0;
           (uVar12 = CONCAT44(local_60._4_4_,(int)local_60), lVar13 != 0 && ((int)uVar9 < 0x11));
           uVar9 = uVar9 + 1) {
-        lVar13 = FUN_20155a10();
+        lVar13 = _ll_udiv10();
         param_2[uVar9] = extraout_r2_00 + '0';
       }
       if (lVar13 != 0) {
@@ -12852,7 +12924,7 @@ LAB_20155cee:
     }
     while (uVar9 = uVar9 - 1, -1 < (int)uVar9) {
       local_60 = uVar12;
-      lVar13 = FUN_20155a10();
+      lVar13 = _ll_udiv10();
       param_2[uVar9] = extraout_r2 + '0';
       uVar12 = local_60;
     }
@@ -12875,16 +12947,18 @@ LAB_20155cee:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20155f72 @ 20155f72  (32 bytes, 2 callers, export file 2015507c_20156830.c)
- * Name on the doc page: _sprintf_body
+ * _sprintf_body @ 20155f72  (32 bytes, 2 callers, export file 2015507c_20156830.c)
  * Purpose: Builds the string-output descriptor with the _sputc callback 0x20155F69 and runs _printf_core; sprintf,
  *     sprintf_veneer and snprintf call it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20155f72 @ 20155f72 (32 bytes)
+// ===== _sprintf_body @ 20155f72 (32 bytes)
 
-void FUN_20155f72(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* Builds the string-output descriptor with the _sputc callback 0x20155F69 and runs _printf_core;
+   sprintf, sprintf_veneer and snprintf call it [fact] */
+
+void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined1 auStack_40 [4];
@@ -12899,7 +12973,7 @@ void FUN_20155f72(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
   local_3c = param_4;
   uStack_38 = param_2;
   uStack_30 = param_1;
-  FUN_20154c48(auStack_40,param_3);
+  _printf_core(auStack_40,param_3);
   return;
 }
 
@@ -13416,24 +13490,27 @@ void kernel_heap_init(void)
   if (uVar1 == 0) {
     knl_sys.task_cpsr = 0;
     knl_sys.f_0x00_u32 = 0;
-    FUN_201530fc(&DAT_20980000,&stack0xfffffff8);
+    knl_sys_init(&DAT_20980000,&stack0xfffffff8);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015632c @ 2015632c  (192 bytes, 1 callers, export file 2015507c_20156830.c)
- * Name on the doc page: knl_irq_enter
+ * knl_irq_enter @ 2015632c  (192 bytes, 1 callers, export file 2015507c_20156830.c)
  * Purpose: IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the outermost
  *     interrupt saves the running task's SP into its TCB and switches to the interrupt stack knl_sys.isr_area
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_2015632c @ 2015632c (192 bytes)
+// ===== knl_irq_enter @ 2015632c (192 bytes)
 
-ulonglong FUN_2015632c(undefined4 param_1)
+/* IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the
+   outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack
+   knl_sys.isr_area [fact] */
+
+ulonglong knl_irq_enter(undefined4 param_1)
 
 {
   byte *pbVar1;
@@ -13453,17 +13530,20 @@ ulonglong FUN_2015632c(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201563ec @ 201563ec  (368 bytes, 0 callers, export file 2015507c_20156830.c)
- * Name on the doc page: knl_irq_exit
+ * knl_irq_exit @ 201563ec  (368 bytes, 0 callers, export file 2015507c_20156830.c)
  * Purpose: Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with dispatch
  *     allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns the new task's
  *     context, else the old one [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201563ec @ 201563ec (368 bytes)
+// ===== knl_irq_exit @ 201563ec (368 bytes)
 
-undefined8 FUN_201563ec(void)
+/* Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with
+   dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns
+   the new task's context, else the old one [fact] */
+
+undefined8 knl_irq_exit(void)
 
 {
   uint uVar1;
@@ -13582,16 +13662,19 @@ longlong knl_dispatch(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201566f0 @ 201566f0  (88 bytes, 4 callers, export file 2015507c_20156830.c)
- * Name on the doc page: knl_resched
+ * knl_resched @ 201566f0  (88 bytes, 4 callers, export file 2015507c_20156830.c)
  * Purpose: Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
  *     running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201566f0 @ 201566f0 (88 bytes)
+// ===== knl_resched @ 201566f0 (88 bytes)
 
-longlong FUN_201566f0(void)
+/* Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
+   running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
+    */
+
+longlong knl_resched(void)
 
 {
   uint uVar1;
@@ -13667,20 +13750,21 @@ code * knl_int_disable(void)
 
 {
   software_interrupt(0);
-  return FUN_20156878;
+  return knl_psr_set_i;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20156878 @ 20156878  (20 bytes, 1 callers, export file 20156860_20158744.c)
- * Name on the doc page: knl_psr_set_i
+ * knl_psr_set_i @ 20156878  (20 bytes, 1 callers, export file 20156860_20158744.c)
  * Purpose: Service-call return helper: saved PSR with bit 7 (I) set (boot-rtos.md knl_int_disable) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20156878 @ 20156878 (20 bytes)
+// ===== knl_psr_set_i @ 20156878 (20 bytes)
 
-ulonglong FUN_20156878(void)
+/* Service-call return helper: saved PSR with bit 7 (I) set (boot-rtos.md knl_int_disable) [fact] */
+
+ulonglong knl_psr_set_i(void)
 
 {
   undefined4 in_stack_00000004;
@@ -13703,21 +13787,23 @@ undefined8 knl_int_restore(undefined4 param_1)
 
 {
   software_interrupt(0);
-  return CONCAT44(param_1,FUN_2015689c);
+  return CONCAT44(param_1,knl_psr_clear_if);
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015689c @ 2015689c  (20 bytes, 1 callers, export file 20156860_20158744.c)
- * Name on the doc page: knl_psr_clear_if
+ * knl_psr_clear_if @ 2015689c  (20 bytes, 1 callers, export file 20156860_20158744.c)
  * Purpose: Service-call return helper: saved PSR with the I and F bits cleared (boot-rtos.md knl_int_restore)
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_2015689c @ 2015689c (20 bytes)
+// ===== knl_psr_clear_if @ 2015689c (20 bytes)
 
-uint FUN_2015689c(void)
+/* Service-call return helper: saved PSR with the I and F bits cleared (boot-rtos.md
+   knl_int_restore) [fact] */
+
+uint knl_psr_clear_if(void)
 
 {
   uint in_stack_00000004;
@@ -13727,16 +13813,18 @@ uint FUN_2015689c(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20158618 @ 20158618  (24 bytes, 4 callers, export file 20156860_20158744.c)
- * Name on the doc page: msgbuf_init
+ * msgbuf_init @ 20158618  (24 bytes, 4 callers, export file 20156860_20158744.c)
  * Purpose: (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX objects
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20158618 @ 20158618 (24 bytes)
+// ===== msgbuf_init @ 20158618 (24 bytes)
 
-void FUN_20158618(int param_1)
+/* (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX
+   objects [fact] */
+
+void msgbuf_init(int param_1)
 
 {
   *(undefined2 *)(param_1 + 4) = 0;
@@ -13996,7 +14084,7 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 < 0x22) {
       if (bVar1 == 6) {
         *(int *)(param_1 + 0x81a4) = *(int *)(param_1 + 0x81a4) + 1;
-        FUN_20130968();
+        mainlink_audio_ack();
         mainlink_on_ack();
       }
       else if (bVar1 == 0x15) {
@@ -14024,9 +14112,9 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 == 0x60) {
       g_ml.got60 = 1;
       __aeabi_memcpy4(&DAT_2045fb00,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
-      iVar2 = FUN_2011727c();
+      iVar2 = radio_on_flag_get();
       if (((iVar2 == 0) && (*(int *)(param_1 + 0x81b0) != 0)) && (DAT_2045fbb3 == '\x01')) {
-        FUN_20117288(1);
+        radio_on_flag_set(1);
       }
       *(int *)(param_1 + 0x81b0) = *(int *)(param_1 + 0x81b0) + 1;
     }
@@ -14061,16 +14149,18 @@ void cpp_task_thunk(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20162d10 @ 20162d10  (40 bytes, 5 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: os_mbx_create_fifo
+ * os_mbx_create_fifo @ 20162d10  (40 bytes, 5 callers, export file 20162d04_20163b9c.c)
  * Purpose: itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init, uart4_tx_init,
  *     mainlink_disp_init, mouse_cursor_obj_init [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20162d10 @ 20162d10 (40 bytes)
+// ===== os_mbx_create_fifo @ 20162d10 (40 bytes)
 
-void FUN_20162d10(void)
+/* itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init,
+   uart4_tx_init, mainlink_disp_init, mouse_cursor_obj_init [fact] */
+
+void os_mbx_create_fifo(void)
 
 {
   undefined4 local_18;
@@ -14088,15 +14178,16 @@ void FUN_20162d10(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20162d3c @ 20162d3c  (12 bytes, 4 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: os_mbx_send
+ * os_mbx_send @ 20162d3c  (12 bytes, 4 callers, export file 20162d04_20163b9c.c)
  * Purpose: (this, mbxid, msg): itron_snd_mbx(mbxid, msg) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20162d3c @ 20162d3c (12 bytes)
+// ===== os_mbx_send @ 20162d3c (12 bytes)
 
-void FUN_20162d3c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (this, mbxid, msg): itron_snd_mbx(mbxid, msg) [fact] */
+
+void os_mbx_send(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   itron_snd_mbx(param_2,param_3);
@@ -14105,16 +14196,18 @@ void FUN_20162d3c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201635e4 @ 201635e4  (24 bytes, 4 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: fwobj_version_text
+ * fwobj_version_text @ 201635e4  (24 bytes, 4 callers, export file 20162d04_20163b9c.c)
  * Purpose: (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
  *     fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201635e4 @ 201635e4 (24 bytes)
+// ===== fwobj_version_text @ 201635e4 (24 bytes)
 
-void FUN_201635e4(int param_1,undefined4 param_2)
+/* (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
+   fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact] */
+
+void fwobj_version_text(int param_1,undefined4 param_2)
 
 {
   sprintf_veneer(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
@@ -14123,15 +14216,16 @@ void FUN_201635e4(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201637f0 @ 201637f0  (24 bytes, 1 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: fill8
+ * fill8 @ 201637f0  (24 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201637f0 @ 201637f0 (24 bytes)
+// ===== fill8 @ 201637f0 (24 bytes)
 
-void FUN_201637f0(uint *param_1,uint param_2)
+/* (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact] */
+
+void fill8(uint *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -14145,16 +14239,18 @@ void FUN_201637f0(uint *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20163808 @ 20163808  (40 bytes, 1 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: fp_classify_double
+ * fp_classify_double @ 20163808  (40 bytes, 1 callers, export file 20162d04_20163b9c.c)
  * Purpose: (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the exponent 0 /
  *     0x7FF and the mantissa) [fact for the tests]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20163808 @ 20163808 (40 bytes)
+// ===== fp_classify_double @ 20163808 (40 bytes)
 
-uint FUN_20163808(int param_1,uint param_2)
+/* (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the
+   exponent 0 / 0x7FF and the mantissa) [fact for the tests] */
+
+uint fp_classify_double(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -14177,15 +14273,16 @@ uint FUN_20163808(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20163864 @ 20163864  (14 bytes, 2 callers, export file 20162d04_20163b9c.c)
- * Name on the doc page: is_decimal_digit
+ * is_decimal_digit @ 20163864  (14 bytes, 2 callers, export file 20162d04_20163b9c.c)
  * Purpose: (c): 1 for '0'..'9'; _printf_core uses it for widths [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20163864 @ 20163864 (14 bytes)
+// ===== is_decimal_digit @ 20163864 (14 bytes)
 
-undefined4 FUN_20163864(int param_1)
+/* (c): 1 for '0'..'9'; _printf_core uses it for widths [fact] */
+
+undefined4 is_decimal_digit(int param_1)
 
 {
   if (param_1 - 0x30U < 10) {
@@ -14196,16 +14293,18 @@ undefined4 FUN_20163864(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201640ec @ 201640ec  (24 bytes, 8 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: copy10
+ * copy10 @ 201640ec  (24 bytes, 8 callers, export file 20163ca4_20164814.c)
  * Purpose: (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields (fwfile_check_versions,
  *     fwobj_*) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_201640ec @ 201640ec (24 bytes)
+// ===== copy10 @ 201640ec (24 bytes)
 
-undefined4 FUN_201640ec(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields
+   (fwfile_check_versions, fwobj_*) [fact] */
+
+undefined4 copy10(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,10);
@@ -14214,15 +14313,16 @@ undefined4 FUN_201640ec(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164104 @ 20164104  (24 bytes, 4 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: copy32
+ * copy32 @ 20164104  (24 bytes, 4 callers, export file 20163ca4_20164814.c)
  * Purpose: (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_20164104 @ 20164104 (24 bytes)
+// ===== copy32 @ 20164104 (24 bytes)
 
-undefined4 FUN_20164104(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields [fact] */
+
+undefined4 copy32(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,0x20);
@@ -14231,15 +14331,16 @@ undefined4 FUN_20164104(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2016411c @ 2016411c  (24 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: copy48
+ * copy48 @ 2016411c  (24 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
-// ===== FUN_2016411c @ 2016411c (24 bytes)
+// ===== copy48 @ 2016411c (24 bytes)
 
-undefined4 FUN_2016411c(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor [fact] */
+
+undefined4 copy48(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,0x30);

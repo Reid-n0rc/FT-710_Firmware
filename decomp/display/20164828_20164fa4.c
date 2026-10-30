@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 13 functions
 
-// ===== FUN_20164828 @ 20164828 (48 bytes)
+// ===== ring30_offset @ 20164828 (48 bytes)
 
-int FUN_20164828(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history)
+   [fact] */
+
+int ring30_offset(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -14,9 +17,11 @@ int FUN_20164828(int *param_1,int param_2)
 }
 
 
-// ===== FUN_2016485c @ 2016485c (20 bytes)
+// ===== ring30_next @ 2016485c (20 bytes)
 
-int FUN_2016485c(int *param_1)
+/* (idx): *idx + 1, wrapping at 30 [fact] */
+
+int ring30_next(int *param_1)
 
 {
   int iVar1;

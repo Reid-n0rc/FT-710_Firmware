@@ -91,14 +91,14 @@ uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
   uint uVar2;
   
   uVar2 = 0;
-  FUN_2011d080();
+  vdc5_shrd_init();
   iVar1 = vdc5_shrd_get_state(param_1,4);
   if ((iVar1 == 0) || (*(int *)(param_2 + 4) == 0)) {
-    FUN_2011d19c(param_1,param_2);
+    vdc5_shrd_set_init_param(param_1,param_2);
     if (param_3 != (void *)0x0) {
       (*param_3)(param_4);
     }
-    FUN_201193ec(param_1,param_2);
+    vdc5_reg_initialize(param_1,param_2);
     vdc5_int_callbacks_clear(param_1);
     vdc5_shrd_set_state(param_1,0,1);
     if (*(int *)(param_2 + 4) != 0) {
@@ -126,8 +126,8 @@ uint r_vdc5_initialize(uint param_1,int param_2,void *param_3,uint param_4)
 undefined4 r_vdc5_terminate(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2011d1f4();
-  FUN_201197c0(param_1,param_2);
+  vdc5_shrd_terminate();
+  vdc5_reg_terminate(param_1,param_2);
   vdc5_shrd_set_state(param_1,1);
   return 0;
 }
@@ -163,8 +163,8 @@ undefined4 r_vdc5_sync_control(uint param_1,char *param_2)
         return 0xb;
       }
     }
-    FUN_2011d248(param_1,param_2);
-    FUN_20119990(param_1,param_2);
+    vdc5_shrd_set_sync_param(param_1,param_2);
+    vdc5_reg_sync_control(param_1,param_2);
     vdc5_shrd_set_state(param_1,2,1);
   }
   else {
@@ -195,8 +195,8 @@ undefined4 r_vdc5_display_output(undefined4 param_1,undefined4 param_2)
   if (iVar1 == 1) {
     iVar1 = vdc5_shrd_get_state(param_1,2);
     if (iVar1 == 1) {
-      FUN_2011d2b4(param_1,param_2);
-      FUN_20119e60(param_1,param_2);
+      vdc5_shrd_set_output_param(param_1,param_2);
+      vdc5_reg_display_output(param_1,param_2);
       vdc5_shrd_set_state(param_1,3,1);
     }
     else {
@@ -304,7 +304,7 @@ undefined4 r_vdc5_write_data_control(int param_1,int param_2,ushort *param_3)
     return 0xb;
   }
 LAB_20117cf4:
-  FUN_2011d374(param_1,iVar1,param_3);
+  vdc5_shrd_set_write_param(param_1,iVar1,param_3);
   vdc5_config(param_1,iVar1,param_3);
   vdc5_shrd_set_resource(param_1,param_2,1);
   return 0;
@@ -335,8 +335,8 @@ undefined4 r_vdc5_change_write_process(undefined4 param_1,undefined4 param_2,und
     uVar3 = 0xe;
   }
   else {
-    FUN_2011d3f0(param_1,uVar1,param_3);
-    FUN_2011a6c8(param_1,uVar1,param_3);
+    vdc5_shrd_set_chg_write_param(param_1,uVar1,param_3);
+    vdc5_reg_change_write_process(param_1,uVar1,param_3);
   }
   return uVar3;
 }
@@ -395,8 +395,8 @@ uint r_vdc5_read_data_control(uint param_1,uint param_2,uint param_3)
   uVar3 = 0;
   iVar2 = r_vdc5_shrd_get_resource(param_1,param_2);
   if (iVar2 == 0) {
-    FUN_2011d438(param_1,uVar1,param_3);
-    FUN_2011af34(param_1,uVar1,param_3);
+    vdc5_shrd_set_read_param(param_1,uVar1,param_3);
+    vdc5_reg_read_data_control(param_1,uVar1,param_3);
     vdc5_shrd_set_resource(param_1,param_2,1);
   }
   else {
@@ -430,8 +430,8 @@ undefined4 r_vdc5_change_read_process(undefined4 param_1,uint param_2,undefined4
     uVar3 = 0xe;
   }
   else {
-    FUN_2011d514(param_1,uVar1,param_3);
-    FUN_2011b498(param_1,uVar1,param_3);
+    vdc5_shrd_set_chg_read_param(param_1,uVar1,param_3);
+    vdc5_reg_change_read_process(param_1,uVar1,param_3);
   }
   return uVar3;
 }
@@ -455,7 +455,7 @@ byte r_vdc5_start_process(uint param_1,int param_2,uint param_3)
   
   bVar2 = 0;
   if ((param_2 == -1) || (iVar1 = vdc5_shrd_res_idle(), iVar1 != 0)) {
-    FUN_2011b8b8(param_1,param_2,param_3);
+    vdc5_reg_start_process(param_1,param_2,param_3);
   }
   else {
     bVar2 = 0xe;
@@ -482,7 +482,7 @@ byte r_vdc5_stop_process(uint param_1,int param_2)
   
   bVar2 = 0;
   if ((param_2 == -1) || (iVar1 = vdc5_shrd_res_busy(), iVar1 != 0)) {
-    FUN_2011b988(param_1,param_2);
+    vdc5_reg_stop_process(param_1,param_2);
   }
   else {
     bVar2 = 0xe;
@@ -510,7 +510,7 @@ undefined4 r_vdc5_video_noise_reduction(undefined4 param_1,undefined4 param_2,un
   uVar2 = 0;
   iVar1 = vdc5_shrd_get_state(param_1,1);
   if (iVar1 == 1) {
-    FUN_2011bb84(param_1,param_2,param_3);
+    vdc5_reg_video_noise_reduction(param_1,param_2,param_3);
   }
   else {
     uVar2 = 0xb;
@@ -556,7 +556,7 @@ LAB_2011804c:
     return 0xe;
   }
 LAB_2011801c:
-  FUN_2011bc8c(param_1,param_2);
+  vdc5_reg_image_color_matrix(param_1,param_2);
   return 0;
 }
 
@@ -598,7 +598,7 @@ r_vdc5_image_enhancement
       uVar3 = 8;
     }
     else {
-      FUN_2011bf00(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
+      vdc5_reg_image_enhancement(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
     }
   }
   return uVar3;
@@ -640,7 +640,7 @@ r_vdc5_image_black_stretch(undefined4 param_1,int param_2,undefined4 param_3,und
       uVar3 = 8;
     }
     else {
-      FUN_2011bfc4(param_1,param_2,param_3,param_4);
+      vdc5_reg_image_black_stretch(param_1,param_2,param_3,param_4);
     }
   }
   return uVar3;
@@ -672,7 +672,7 @@ undefined4 r_vdc5_alpha_blending(undefined4 param_1,uint param_2,undefined4 para
     uVar3 = 0xe;
   }
   else {
-    FUN_2011c068(param_1,uVar1,param_3);
+    vdc5_reg_alpha_blending(param_1,uVar1,param_3);
   }
   return uVar3;
 }
@@ -705,7 +705,7 @@ uint r_vdc5_alpha_blending_rect(uint param_1,int param_2,uint param_3,uint param
       return 8;
     }
   }
-  FUN_2011c22c(param_1,uVar1,param_3,param_4);
+  vdc5_reg_alpha_blending_rect(param_1,uVar1,param_3,param_4);
   return 0;
 }
 
@@ -739,7 +739,7 @@ uint r_vdc5_chromakey(uint param_1,uint param_2,uint param_3,uint param_4)
       uVar3 = 8;
     }
     else {
-      FUN_2011c4d4(param_1,uVar1,param_3,param_4);
+      vdc5_reg_chromakey(param_1,uVar1,param_3,param_4);
     }
   }
   return uVar3;
@@ -770,7 +770,7 @@ undefined4 r_vdc5_clut(undefined4 param_1,uint param_2,undefined4 param_3)
     uVar3 = 0xe;
   }
   else {
-    FUN_2011c5e4(param_1,uVar1,param_3);
+    vdc5_reg_clut(param_1,uVar1,param_3);
   }
   return uVar3;
 }
@@ -795,7 +795,7 @@ byte r_vdc5_display_calibration(uint param_1,uint param_2)
   bVar2 = 0;
   iVar1 = vdc5_shrd_get_state(param_1,3);
   if (iVar1 == 1) {
-    FUN_2011c6ec(param_1,param_2);
+    vdc5_reg_display_calibration(param_1,param_2);
   }
   else {
     bVar2 = 0xc;
@@ -823,7 +823,7 @@ undefined4 r_vdc5_gamma_correction(undefined4 param_1,undefined4 param_2,undefin
   uVar2 = 0;
   iVar1 = vdc5_shrd_get_state(param_1,3);
   if (iVar1 == 1) {
-    FUN_2011c950(param_1,param_2,param_3);
+    vdc5_reg_gamma_correction(param_1,param_2,param_3);
   }
   else {
     uVar2 = 0xc;
@@ -2425,8 +2425,7 @@ void vdc5_ch1_isr_iv8_vbuferr(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201193ec @ 201193ec  (508 bytes, 1 callers, export file 20118a98_2011aad8.c)
- * Name on the doc page: vdc5_reg_initialize
+ * vdc5_reg_initialize @ 201193ec  (508 bytes, 1 callers, export file 20118a98_2011aad8.c)
  * Purpose: Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR, peripherals.md)
  *     [fact for the call]; Renesas r_vdc5_register.c VDC5_Initialize [inference: one register function per API,
@@ -2434,9 +2433,14 @@ void vdc5_ch1_isr_iv8_vbuferr(void)
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201193ec @ 201193ec (508 bytes)
+// ===== vdc5_reg_initialize @ 201193ec (508 bytes)
 
-void FUN_201193ec(int param_1,byte *param_2)
+/* Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR,
+   peripherals.md) [fact for the call]; Renesas r_vdc5_register.c VDC5_Initialize [inference: one
+   register function per API, same order as the API functions] */
+
+void vdc5_reg_initialize(int param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -2511,17 +2515,20 @@ void FUN_201193ec(int param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201197c0 @ 201197c0  (284 bytes, 1 callers, export file 20118a98_2011aad8.c)
- * Name on the doc page: vdc5_reg_terminate
+ * vdc5_reg_terminate @ 201197c0  (284 bytes, 1 callers, export file 20118a98_2011aad8.c)
  * Purpose: Register part of r_vdc5_terminate: its only callee in the 0x201193EC..0x2011CA00 block, called after the
  *     shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Terminate [inference: one
  *     register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201197c0 @ 201197c0 (284 bytes)
+// ===== vdc5_reg_terminate @ 201197c0 (284 bytes)
 
-void FUN_201197c0(int param_1,char *param_2)
+/* Register part of r_vdc5_terminate: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Terminate
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_terminate(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -2564,17 +2571,20 @@ void FUN_201197c0(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20119990 @ 20119990  (784 bytes, 1 callers, export file 20118a98_2011aad8.c)
- * Name on the doc page: vdc5_reg_sync_control
+ * vdc5_reg_sync_control @ 20119990  (784 bytes, 1 callers, export file 20118a98_2011aad8.c)
  * Purpose: Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_SyncControl [inference: one
  *     register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20119990 @ 20119990 (784 bytes)
+// ===== vdc5_reg_sync_control @ 20119990 (784 bytes)
 
-void FUN_20119990(int param_1,char *param_2)
+/* Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_SyncControl
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_sync_control(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -2656,17 +2666,20 @@ void FUN_20119990(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20119e60 @ 20119e60  (660 bytes, 1 callers, export file 20118a98_2011aad8.c)
- * Name on the doc page: vdc5_reg_display_output
+ * vdc5_reg_display_output @ 20119e60  (660 bytes, 1 callers, export file 20118a98_2011aad8.c)
  * Purpose: Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_DisplayOutput
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20119e60 @ 20119e60 (660 bytes)
+// ===== vdc5_reg_display_output @ 20119e60 (660 bytes)
 
-void FUN_20119e60(int param_1,ushort *param_2)
+/* Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_DisplayOutput [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_display_output(int param_1,ushort *param_2)
 
 {
   int iVar1;
@@ -2910,17 +2923,21 @@ LAB_2011a684:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011a6c8 @ 2011a6c8  (312 bytes, 1 callers, export file 20118a98_2011aad8.c)
- * Name on the doc page: vdc5_reg_change_write_process
+ * vdc5_reg_change_write_process @ 2011a6c8  (312 bytes, 1 callers, export file 20118a98_2011aad8.c)
  * Purpose: Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00 block,
  *     called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
  *     VDC5_ChangeWriteProcess [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011a6c8 @ 2011a6c8 (312 bytes)
+// ===== vdc5_reg_change_write_process @ 2011a6c8 (312 bytes)
 
-void FUN_2011a6c8(int param_1,int param_2,ushort *param_3)
+/* Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00
+   block, called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ChangeWriteProcess [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
 
 {
   undefined4 uVar1;
@@ -2963,17 +2980,21 @@ void FUN_2011a6c8(int param_1,int param_2,ushort *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011af34 @ 2011af34  (1052 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_read_data_control
+ * vdc5_reg_read_data_control @ 2011af34  (1052 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_read_data_control: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ReadDataControl
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011af34 @ 2011af34 (1052 bytes)
+// ===== vdc5_reg_read_data_control @ 2011af34 (1052 bytes)
 
-void FUN_2011af34(int param_1,uint param_2,char *param_3)
+/* Register part of r_vdc5_read_data_control: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ReadDataControl [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
 
 {
   undefined *puVar1;
@@ -3087,17 +3108,21 @@ LAB_2011b244:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011b498 @ 2011b498  (868 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_change_read_process
+ * vdc5_reg_change_read_process @ 2011b498  (868 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ChangeReadProcess
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011b498 @ 2011b498 (868 bytes)
+// ===== vdc5_reg_change_read_process @ 2011b498 (868 bytes)
 
-void FUN_2011b498(int param_1,uint param_2,uint *param_3)
+/* Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ChangeReadProcess [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
 
 {
   undefined *puVar1;
@@ -3187,17 +3212,20 @@ void FUN_2011b498(int param_1,uint param_2,uint *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011b8b8 @ 2011b8b8  (208 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_start_process
+ * vdc5_reg_start_process @ 2011b8b8  (208 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_start_process: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StartProcess [inference: one
  *     register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011b8b8 @ 2011b8b8 (208 bytes)
+// ===== vdc5_reg_start_process @ 2011b8b8 (208 bytes)
 
-void FUN_2011b8b8(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_start_process: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_StartProcess [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_start_process(int param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -3234,17 +3262,20 @@ void FUN_2011b8b8(int param_1,int param_2,int *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011b988 @ 2011b988  (192 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_stop_process
+ * vdc5_reg_stop_process @ 2011b988  (192 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_stop_process: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StopProcess [inference: one
  *     register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011b988 @ 2011b988 (192 bytes)
+// ===== vdc5_reg_stop_process @ 2011b988 (192 bytes)
 
-void FUN_2011b988(int param_1,int param_2)
+/* Register part of r_vdc5_stop_process: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StopProcess
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_stop_process(int param_1,int param_2)
 
 {
   int iVar1;
@@ -3278,17 +3309,21 @@ void FUN_2011b988(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011bb84 @ 2011bb84  (264 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_video_noise_reduction
+ * vdc5_reg_video_noise_reduction @ 2011bb84  (264 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_video_noise_reduction: its only callee in the 0x201193EC..0x2011CA00 block,
  *     called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
  *     VDC5_VideoNoiseReduction [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011bb84 @ 2011bb84 (264 bytes)
+// ===== vdc5_reg_video_noise_reduction @ 2011bb84 (264 bytes)
 
-void FUN_2011bb84(int param_1,int param_2,byte *param_3)
+/* Register part of r_vdc5_video_noise_reduction: its only callee in the 0x201193EC..0x2011CA00
+   block, called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_VideoNoiseReduction [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_video_noise_reduction(int param_1,int param_2,byte *param_3)
 
 {
   int iVar1;
@@ -3327,17 +3362,21 @@ void FUN_2011bb84(int param_1,int param_2,byte *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011bc8c @ 2011bc8c  (36 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_image_color_matrix
+ * vdc5_reg_image_color_matrix @ 2011bc8c  (36 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_image_color_matrix: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageColorMatrix
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011bc8c @ 2011bc8c (36 bytes)
+// ===== vdc5_reg_image_color_matrix @ 2011bc8c (36 bytes)
 
-void FUN_2011bc8c(int param_1,byte *param_2)
+/* Register part of r_vdc5_image_color_matrix: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageColorMatrix [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_image_color_matrix(int param_1,byte *param_2)
 
 {
   FUN_2011a110(param_2[1],param_2 + 2,param_2 + 8,
@@ -3347,18 +3386,23 @@ void FUN_2011bc8c(int param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011bf00 @ 2011bf00  (180 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_image_enhancement
+ * vdc5_reg_image_enhancement @ 2011bf00  (180 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_image_enhancement: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageEnhancement
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011bf00 @ 2011bf00 (180 bytes)
+// ===== vdc5_reg_image_enhancement @ 2011bf00 (180 bytes)
 
-void FUN_2011bf00(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
-                 undefined4 param_6,ushort *param_7)
+/* Register part of r_vdc5_image_enhancement: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageEnhancement [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_image_enhancement
+               (int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
+               undefined4 param_6,ushort *param_7)
 
 {
   undefined4 *puVar1;
@@ -3378,17 +3422,21 @@ void FUN_2011bf00(int param_1,int param_2,undefined4 param_3,undefined4 param_4,
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011bfc4 @ 2011bfc4  (164 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_image_black_stretch
+ * vdc5_reg_image_black_stretch @ 2011bfc4  (164 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_image_black_stretch: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageBlackStretch
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011bfc4 @ 2011bfc4 (164 bytes)
+// ===== vdc5_reg_image_black_stretch @ 2011bfc4 (164 bytes)
 
-void FUN_2011bfc4(int param_1,int param_2,int param_3,ushort *param_4)
+/* Register part of r_vdc5_image_black_stretch: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageBlackStretch [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_image_black_stretch(int param_1,int param_2,int param_3,ushort *param_4)
 
 {
   undefined4 *puVar1;
@@ -3415,17 +3463,20 @@ void FUN_2011bfc4(int param_1,int param_2,int param_3,ushort *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c068 @ 2011c068  (176 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_alpha_blending
+ * vdc5_reg_alpha_blending @ 2011c068  (176 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_alpha_blending: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_AlphaBlending
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c068 @ 2011c068 (176 bytes)
+// ===== vdc5_reg_alpha_blending @ 2011c068 (176 bytes)
 
-void FUN_2011c068(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_alpha_blending: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_AlphaBlending [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_alpha_blending(int param_1,int param_2,int *param_3)
 
 {
   undefined4 *puVar1;
@@ -3454,17 +3505,21 @@ void FUN_2011c068(int param_1,int param_2,int *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c22c @ 2011c22c  (308 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_alpha_blending_rect
+ * vdc5_reg_alpha_blending_rect @ 2011c22c  (308 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_alpha_blending_rect: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_AlphaBlendingRect
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c22c @ 2011c22c (308 bytes)
+// ===== vdc5_reg_alpha_blending_rect @ 2011c22c (308 bytes)
 
-void FUN_2011c22c(int param_1,int param_2,int param_3,undefined4 *param_4)
+/* Register part of r_vdc5_alpha_blending_rect: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_AlphaBlendingRect [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_alpha_blending_rect(int param_1,int param_2,int param_3,undefined4 *param_4)
 
 {
   short *psVar1;
@@ -3518,15 +3573,16 @@ void FUN_2011c22c(int param_1,int param_2,int param_3,undefined4 *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c360 @ 2011c360  (28 bytes, 8 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: rgb5_to_8
+ * rgb5_to_8 @ 2011c360  (28 bytes, 8 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c360 @ 2011c360 (28 bytes)
+// ===== rgb5_to_8 @ 2011c360 (28 bytes)
 
-uint FUN_2011c360(ushort param_1)
+/* (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) [fact] */
+
+uint rgb5_to_8(ushort param_1)
 
 {
   return ((uint)((short)(param_1 & 0x1f) * 0x20e) >> 5) + 1 >> 1;
@@ -3534,15 +3590,16 @@ uint FUN_2011c360(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c37c @ 2011c37c  (12 bytes, 3 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: rgb4_to_8
+ * rgb4_to_8 @ 2011c37c  (12 bytes, 3 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: (v): 4-bit colour component scaled to 8 bits (v * 0x11) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c37c @ 2011c37c (12 bytes)
+// ===== rgb4_to_8 @ 2011c37c (12 bytes)
 
-int FUN_2011c37c(uint param_1)
+/* (v): 4-bit colour component scaled to 8 bits (v * 0x11) [fact] */
+
+int rgb4_to_8(uint param_1)
 
 {
   return (param_1 & 0xf) * 0x11;
@@ -3550,15 +3607,16 @@ int FUN_2011c37c(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c388 @ 2011c388  (28 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: rgb6_to_8
+ * rgb6_to_8 @ 2011c388  (28 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c388 @ 2011c388 (28 bytes)
+// ===== rgb6_to_8 @ 2011c388 (28 bytes)
 
-uint FUN_2011c388(ushort param_1)
+/* (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) [fact] */
+
+uint rgb6_to_8(ushort param_1)
 
 {
   return ((uint)((short)(param_1 & 0x3f) * 0x206) >> 6) + 1 >> 1;
@@ -3566,17 +3624,20 @@ uint FUN_2011c388(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c4d4 @ 2011c4d4  (224 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_chromakey
+ * vdc5_reg_chromakey @ 2011c4d4  (224 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_chromakey: its only callee in the 0x201193EC..0x2011CA00 block, called after the
  *     shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Chromakey [inference: one
  *     register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c4d4 @ 2011c4d4 (224 bytes)
+// ===== vdc5_reg_chromakey @ 2011c4d4 (224 bytes)
 
-void FUN_2011c4d4(int param_1,int param_2,int param_3,byte *param_4)
+/* Register part of r_vdc5_chromakey: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Chromakey
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
 
 {
   int iVar1;
@@ -3621,17 +3682,20 @@ void FUN_2011c4d4(int param_1,int param_2,int param_3,byte *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c5e4 @ 2011c5e4  (264 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_clut
+ * vdc5_reg_clut @ 2011c5e4  (264 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_clut: its only callee in the 0x201193EC..0x2011CA00 block, called after the
  *     shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Clut [inference: one register
  *     function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c5e4 @ 2011c5e4 (264 bytes)
+// ===== vdc5_reg_clut @ 2011c5e4 (264 bytes)
 
-void FUN_2011c5e4(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_clut: its only callee in the 0x201193EC..0x2011CA00 block, called after
+   the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Clut [inference:
+   one register function per API, same order as the API functions] */
+
+void vdc5_reg_clut(int param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -3673,17 +3737,21 @@ LAB_2011c6d8:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c6ec @ 2011c6ec  (368 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_display_calibration
+ * vdc5_reg_display_calibration @ 2011c6ec  (368 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_display_calibration: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_DisplayCalibration
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c6ec @ 2011c6ec (368 bytes)
+// ===== vdc5_reg_display_calibration @ 2011c6ec (368 bytes)
 
-void FUN_2011c6ec(int param_1,char *param_2)
+/* Register part of r_vdc5_display_calibration: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_DisplayCalibration [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_display_calibration(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -3733,17 +3801,21 @@ void FUN_2011c6ec(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011c950 @ 2011c950  (176 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_reg_gamma_correction
+ * vdc5_reg_gamma_correction @ 2011c950  (176 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_GammaCorrection
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011c950 @ 2011c950 (176 bytes)
+// ===== vdc5_reg_gamma_correction @ 2011c950 (176 bytes)
 
-void FUN_2011c950(int param_1,int param_2,undefined4 *param_3)
+/* Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_GammaCorrection [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_gamma_correction(int param_1,int param_2,undefined4 *param_3)
 
 {
   **(uint **)(&DAT_201667d0 + param_1 * 0x130) = (uint)(param_2 != 0);
@@ -3766,8 +3838,7 @@ void FUN_2011c950(int param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d080 @ 2011d080  (284 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_shrd_init
+ * vdc5_shrd_init @ 2011d080  (284 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states
  *     0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4 and the read
  *     records 0x208DCD2C [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables
@@ -3775,9 +3846,14 @@ void FUN_2011c950(int param_1,int param_2,undefined4 *param_3)
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d080 @ 2011d080 (284 bytes)
+// ===== vdc5_shrd_init @ 2011d080 (284 bytes)
 
-void FUN_2011d080(int param_1)
+/* Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states
+   0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4
+   and the read records 0x208DCD2C [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the
+   shared tables 0x208DCxxx] */
+
+void vdc5_shrd_init(int param_1)
 
 {
   int iVar1;
@@ -3835,17 +3911,20 @@ void FUN_2011d080(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d19c @ 2011d19c  (68 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_shrd_set_init_param
+ * vdc5_shrd_set_init_param @ 2011d19c  (68 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param byte 0;
  *     5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d19c @ 2011d19c (68 bytes)
+// ===== vdc5_shrd_set_init_param @ 2011d19c (68 bytes)
 
-void FUN_2011d19c(int param_1,char *param_2)
+/* Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param
+   byte 0; 5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_init_param(int param_1,char *param_2)
 
 {
   (&DAT_208dccc4)[param_1 * 0x10] = *param_2;
@@ -3860,16 +3939,18 @@ void FUN_2011d19c(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d1f4 @ 2011d1f4  (84 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
- * Name on the doc page: vdc5_shrd_terminate
+ * vdc5_shrd_terminate @ 2011d1f4  (84 bytes, 1 callers, export file 2011aaf8_2011d1f4.c)
  * Purpose: Shared-parameter update of r_vdc5_terminate (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d1f4 @ 2011d1f4 (84 bytes)
+// ===== vdc5_shrd_terminate @ 2011d1f4 (84 bytes)
 
-void FUN_2011d1f4(int param_1,char *param_2)
+/* Shared-parameter update of r_vdc5_terminate (its caller) [fact]; Renesas r_vdc5_shared_param.c
+   [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_terminate(int param_1,char *param_2)
 
 {
   (&DAT_2080040e)[param_1] = 1;
@@ -3885,16 +3966,19 @@ void FUN_2011d1f4(int param_1,char *param_2)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d248 @ 2011d248  (20 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_sync_param
+ * vdc5_shrd_set_sync_param @ 2011d248  (20 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 + 0x10*ch
  *     [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d248 @ 2011d248 (20 bytes)
+// ===== vdc5_shrd_set_sync_param @ 2011d248 (20 bytes)
 
-void FUN_2011d248(int param_1,int param_2)
+/* Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 +
+   0x10*ch [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables
+   0x208DCxxx] */
+
+void vdc5_shrd_set_sync_param(int param_1,int param_2)
 
 {
   (&DAT_208dccc8)[param_1 * 0x10] = *(undefined1 *)(param_2 + 1);
@@ -3903,16 +3987,18 @@ void FUN_2011d248(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d2b4 @ 2011d2b4  (192 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_output_param
+ * vdc5_shrd_set_output_param @ 2011d2b4  (192 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_display_output (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d2b4 @ 2011d2b4 (192 bytes)
+// ===== vdc5_shrd_set_output_param @ 2011d2b4 (192 bytes)
 
-void FUN_2011d2b4(int param_1,int param_2)
+/* Shared-parameter update of r_vdc5_display_output (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_output_param(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -3936,17 +4022,20 @@ void FUN_2011d2b4(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d374 @ 2011d374  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_write_param
+ * vdc5_shrd_set_write_param @ 2011d374  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record
  *     0x208DCCE4[ch][layer] (format, swap, frame buffer, size) [fact]; Renesas r_vdc5_shared_param.c [inference:
  *     writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d374 @ 2011d374 (124 bytes)
+// ===== vdc5_shrd_set_write_param @ 2011d374 (124 bytes)
 
-void FUN_2011d374(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record
+   0x208DCCE4[ch][layer] (format, swap, frame buffer, size) [fact]; Renesas r_vdc5_shared_param.c
+   [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_write_param(int param_1,int param_2,int param_3)
 
 {
   undefined1 *puVar1;
@@ -3987,16 +4076,18 @@ void FUN_2011d374(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d3f0 @ 2011d3f0  (72 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_chg_write_param
+ * vdc5_shrd_set_chg_write_param @ 2011d3f0  (72 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_change_write_process (its caller) [fact]; Renesas
  *     r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d3f0 @ 2011d3f0 (72 bytes)
+// ===== vdc5_shrd_set_chg_write_param @ 2011d3f0 (72 bytes)
 
-void FUN_2011d3f0(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_change_write_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_write_param(int param_1,int param_2,int param_3)
 
 {
   undefined *puVar1;
@@ -4018,16 +4109,18 @@ void FUN_2011d3f0(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d438 @ 2011d438  (220 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_read_param
+ * vdc5_shrd_set_read_param @ 2011d438  (220 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_read_data_control (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d438 @ 2011d438 (220 bytes)
+// ===== vdc5_shrd_set_read_param @ 2011d438 (220 bytes)
 
-void FUN_2011d438(int param_1,int param_2,undefined1 *param_3)
+/* Shared-parameter update of r_vdc5_read_data_control (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_read_param(int param_1,int param_2,undefined1 *param_3)
 
 {
   undefined2 uVar1;
@@ -4075,16 +4168,18 @@ void FUN_2011d438(int param_1,int param_2,undefined1 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2011d514 @ 2011d514  (104 bytes, 1 callers, export file 2011d248_2011e148.c)
- * Name on the doc page: vdc5_shrd_set_chg_read_param
+ * vdc5_shrd_set_chg_read_param @ 2011d514  (104 bytes, 1 callers, export file 2011d248_2011e148.c)
  * Purpose: Shared-parameter update of r_vdc5_change_read_process (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2011d514 @ 2011d514 (104 bytes)
+// ===== vdc5_shrd_set_chg_read_param @ 2011d514 (104 bytes)
 
-void FUN_2011d514(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_change_read_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_read_param(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -4339,25 +4434,27 @@ undefined4 vdc5_shrd_res_busy(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d38 @ 20120d38  (108 bytes, 1 callers, export file 201200f0_20120d58.c)
- * Name on the doc page: afscope_init
+ * afscope_init @ 20120d38  (108 bytes, 1 callers, export file 201200f0_20120d58.c)
  * Purpose: gui_start: clears the AF-FFT ring indices, builds the colour tables of 0x208DCE3C / 0x208DD53C and sets
  *     the 600-byte record 0x208DD73C (first 200 bytes 0xFF) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d38 @ 20120d38 (108 bytes)
+// ===== afscope_init @ 20120d38 (108 bytes)
 
-void FUN_20120d38(void)
+/* gui_start: clears the AF-FFT ring indices, builds the colour tables of 0x208DCE3C / 0x208DD53C
+   and sets the 600-byte record 0x208DD73C (first 200 bytes 0xFF) [fact] */
+
+void afscope_init(void)
 
 {
   DAT_208dd994 = 0;
   DAT_208dd995 = 0;
-  FUN_20160c70(&DAT_208dce3c);
-  FUN_20160d50(&DAT_208dce3c);
-  FUN_20160cf0(&DAT_208dce3c);
-  FUN_20160de4(&DAT_208dce3c);
-  FUN_20160e44(&DAT_208dce3c);
+  afscope_map0_init(&DAT_208dce3c);
+  afscope_map1_init(&DAT_208dce3c);
+  afscope_map2_init(&DAT_208dce3c);
+  afscope_map3_init(&DAT_208dce3c);
+  afscope_map4_init(&DAT_208dce3c);
   FUN_20162b50(&DAT_208dd53c);
   __aeabi_memclr4(&DAT_208dd73c,600);
   __aeabi_memset_veneer(&DAT_208dd73c,200,0xff);
@@ -4366,15 +4463,17 @@ void FUN_20120d38(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d4c @ 20120d4c  (20 bytes, 1 callers, export file 201200f0_20120d58.c)
- * Name on the doc page: affft_wf_freeze_set
+ * affft_wf_freeze_set @ 20120d4c  (20 bytes, 1 callers, export file 201200f0_20120d58.c)
  * Purpose: (v): 0x208DD994 = v; affft_wf_add_row adds no row while it is set; gui_screen_update sets it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d4c @ 20120d4c (20 bytes)
+// ===== affft_wf_freeze_set @ 20120d4c (20 bytes)
 
-void FUN_20120d4c(undefined1 param_1)
+/* (v): 0x208DD994 = v; affft_wf_add_row adds no row while it is set; gui_screen_update sets it
+   [fact] */
+
+void affft_wf_freeze_set(undefined1 param_1)
 
 {
   DAT_208dd994 = param_1;
@@ -4383,39 +4482,42 @@ void FUN_20120d4c(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d58 @ 20120d58  (8 bytes, 1 callers, export file 201200f0_20120d58.c)
- * Name on the doc page: afscope_clear
+ * afscope_clear @ 20120d58  (8 bytes, 1 callers, export file 201200f0_20120d58.c)
  * Purpose: afscope_obj_clear(0x208DCE3C); scope_area_setup calls it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d58 @ 20120d58 (8 bytes)
+// ===== afscope_clear @ 20120d58 (8 bytes)
 
-void FUN_20120d58(void)
+/* afscope_obj_clear(0x208DCE3C); scope_area_setup calls it [fact] */
+
+void afscope_clear(void)
 
 {
-  FUN_201571e8(&DAT_208dce3c);
+  afscope_obj_clear(&DAT_208dce3c);
   return;
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d60 @ 20120d60  (152 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: affft_spectrum_columns
+ * affft_spectrum_columns @ 20120d60  (152 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: (colour set, out): the 200 AF-FFT bins stretched to 391 columns through 0x208DCE3C / 0x208DCF3C; returns
  *     the height 0x27 (gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d60 @ 20120d60 (152 bytes)
+// ===== affft_spectrum_columns @ 20120d60 (152 bytes)
 
-undefined4 FUN_20120d60(int param_1,int param_2)
+/* (colour set, out): the 200 AF-FFT bins stretched to 391 columns through 0x208DCE3C / 0x208DCF3C;
+   returns the height 0x27 (gui.md) [fact] */
+
+undefined4 affft_spectrum_columns(int param_1,int param_2)
 
 {
   int iVar1;
   byte local_260 [392];
   undefined1 auStack_d8 [200];
   
-  FUN_20157214(&DAT_208dce3c,auStack_d8,&DAT_208dd73c,200);
+  copy_inverted_words(&DAT_208dce3c,auStack_d8,&DAT_208dd73c,200);
   FUN_20134074(local_260,auStack_d8);
   iVar1 = 0;
   if (param_1 == 0) {
@@ -4452,7 +4554,7 @@ undefined4 affft_bins_get(int param_1)
   int iVar1;
   byte local_d8 [204];
   
-  FUN_20157214(&DAT_208dce3c,local_d8,&DAT_208dd73c,200);
+  copy_inverted_words(&DAT_208dce3c,local_d8,&DAT_208dd73c,200);
   iVar1 = 0;
   do {
     *(undefined *)(param_1 + iVar1) = (&DAT_208dd23c)[local_d8[iVar1]];
@@ -4463,16 +4565,18 @@ undefined4 affft_bins_get(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d90 @ 20120d90  (168 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: affft_wf_add_row
+ * affft_wf_add_row @ 20120d90  (168 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: Writes one colour-mapped AF-FFT row (palette 0x208DD53C) into the next slot of the ring 0x208DD99C
  *     unless 0x208DD994 is set (gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d90 @ 20120d90 (168 bytes)
+// ===== affft_wf_add_row @ 20120d90 (168 bytes)
 
-void FUN_20120d90(void)
+/* Writes one colour-mapped AF-FFT row (palette 0x208DD53C) into the next slot of the ring
+   0x208DD99C unless 0x208DD994 is set (gui.md) [fact] */
+
+void affft_wf_add_row(void)
 
 {
   int iVar1;
@@ -4485,10 +4589,10 @@ void FUN_20120d90(void)
   undefined1 auStack_d8 [200];
   
   if (DAT_208dd994 == '\0') {
-    FUN_20157214(&DAT_208dce3c,auStack_1a0,&DAT_208dd73c,200);
+    copy_inverted_words(&DAT_208dce3c,auStack_1a0,&DAT_208dd73c,200);
     FUN_20134074(local_4b0,auStack_1a0);
     FUN_20134074(auStack_329,auStack_d8);
-    iVar3 = FUN_20164360(&DAT_208f0b14);
+    iVar3 = ring100_advance(&DAT_208f0b14);
     iVar4 = 0;
     do {
       pbVar2 = local_4b0 + iVar4;
@@ -4503,36 +4607,40 @@ void FUN_20120d90(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120d98 @ 20120d98  (56 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: affft_wf_row_addr
+ * affft_wf_row_addr @ 20120d98  (56 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: (i): address of the i-th newest AF-FFT waterfall row in the ring 0x208DD99C (0x30E bytes per row, index
  *     object 0x208F0B14) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120d98 @ 20120d98 (56 bytes)
+// ===== affft_wf_row_addr @ 20120d98 (56 bytes)
 
-undefined * FUN_20120d98(uint param_1)
+/* (i): address of the i-th newest AF-FFT waterfall row in the ring 0x208DD99C (0x30E bytes per row,
+   index object 0x208F0B14) [fact] */
+
+undefined * affft_wf_row_addr(uint param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_20164758(&DAT_208f0b14,~param_1);
+  iVar1 = ring100_offset(&DAT_208f0b14,~param_1);
   return &DAT_208dd99c + iVar1 * 0x30e;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20120da4 @ 20120da4  (192 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: osc_column_pairs
+ * osc_column_pairs @ 20120da4  (192 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: (colour set, out): the oscilloscope {max, min} pairs of the 400-byte half 0x208DD804 stretched to 391
  *     columns and mapped through 0x208DD03C or 0x208DD13C (gui.md osc_draw) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20120da4 @ 20120da4 (192 bytes)
+// ===== osc_column_pairs @ 20120da4 (192 bytes)
 
-void FUN_20120da4(int param_1,int param_2)
+/* (colour set, out): the oscilloscope {max, min} pairs of the 400-byte half 0x208DD804 stretched to
+   391 columns and mapped through 0x208DD03C or 0x208DD13C (gui.md osc_draw) [fact] */
+
+void osc_column_pairs(int param_1,int param_2)
 
 {
   int iVar1;
@@ -4564,16 +4672,18 @@ void FUN_20120da4(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20121044 @ 20121044  (256 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: gui_mouse_middle_poll
+ * gui_mouse_middle_poll @ 20121044  (256 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: Middle mouse button events (mouse_middle_get_event): soft key from gui_middle_key, sent with
  *     mainlink_send_touch_key [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20121044 @ 20121044 (256 bytes)
+// ===== gui_mouse_middle_poll @ 20121044 (256 bytes)
 
-void FUN_20121044(void)
+/* Middle mouse button events (mouse_middle_get_event): soft key from gui_middle_key, sent with
+   mainlink_send_touch_key [fact] */
+
+void gui_mouse_middle_poll(void)
 
 {
   undefined4 uVar1;
@@ -4624,16 +4734,18 @@ switchD_20121064_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20121318 @ 20121318  (372 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: gui_mouse_right_poll
+ * gui_mouse_right_poll @ 20121318  (372 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: Right mouse button events (mouse_right_get_event): soft key from gui_right_key, press / long press /
  *     release sent with mainlink_send_touch_key [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20121318 @ 20121318 (372 bytes)
+// ===== gui_mouse_right_poll @ 20121318 (372 bytes)
 
-void FUN_20121318(void)
+/* Right mouse button events (mouse_right_get_event): soft key from gui_right_key, press / long
+   press / release sent with mainlink_send_touch_key [fact] */
+
+void gui_mouse_right_poll(void)
 
 {
   undefined4 uVar1;
@@ -4700,23 +4812,25 @@ switchD_20121348_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201217b0 @ 201217b0  (128 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: gui_input_poll
+ * gui_input_poll @ 201217b0  (128 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: gui_main_loop: usbkbd_screen_settings, sends E4 (leave screen saver) once on screen 0x7B, polls touch
  *     keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201217b0 @ 201217b0 (128 bytes)
+// ===== gui_input_poll @ 201217b0 (128 bytes)
 
-void FUN_201217b0(void)
+/* gui_main_loop: usbkbd_screen_settings, sends E4 (leave screen saver) once on screen 0x7B, polls
+   touch keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll [fact] */
+
+void gui_input_poll(void)
 
 {
   undefined4 in_r3;
   undefined4 local_8;
   
   local_8 = in_r3;
-  FUN_20120de4();
+  usbkbd_screen_settings();
   local_8 = 0;
   if ((gui_frame.cmd == 0x7b) && (gui_frame.byte1 != 0)) {
     local_8 = 0xe4;
@@ -4729,8 +4843,8 @@ void FUN_201217b0(void)
   }
   touch_key_poll(0);
   touch_key_poll(1);
-  FUN_20121318();
-  FUN_20121044();
+  gui_mouse_right_poll();
+  gui_mouse_middle_poll();
   return;
 }
 
@@ -4876,32 +4990,39 @@ void main_status_icons(void)
   uint uVar2;
   byte bVar3;
   int iVar4;
-  ml_frame local_260;
+  byte local_260 [12];
+  byte local_254;
+  byte local_252;
+  byte local_251;
+  byte local_24f;
+  byte local_24e;
+  byte local_200;
+  char local_1c8;
   
   iVar1 = fb_get_layer_addr(DAT_208085b8);
-  mainlink_get_last_frame(&local_260);
+  mainlink_get_last_frame((uint)local_260);
   bVar3 = gui_frame.cmd;
-  if (((gui_frame.cmd == 0x70) && (local_260.cmd == 0x30)) && (local_260.payload[0] == 0xff)) {
+  if (((gui_frame.cmd == 0x70) && (local_260[0] == 0x30)) && (local_1c8 == -1)) {
     return;
   }
-  if (local_260.cmd != 100) {
-    if (local_260.cmd < 0x65) {
-      if (local_260.cmd != 0x3a) {
-        if (local_260.cmd < 0x3b) {
-          if (local_260.cmd != 0x21 && local_260.cmd != 0x23) goto LAB_20121f38;
+  if (local_260[0] != 100) {
+    if (local_260[0] < 0x65) {
+      if (local_260[0] != 0x3a) {
+        if (local_260[0] < 0x3b) {
+          if (local_260[0] != 0x21 && local_260[0] != 0x23) goto LAB_20121f38;
         }
-        else if (local_260.cmd != 0x3f && local_260.cmd != 0x60) goto LAB_20121f38;
+        else if (local_260[0] != 0x3f && local_260[0] != 0x60) goto LAB_20121f38;
       }
     }
-    else if ((local_260.cmd != 0x65 && local_260.cmd != 0x7a) &&
-            (local_260.cmd != 0x7b && local_260.cmd != 0x7c)) goto LAB_20121f38;
+    else if ((local_260[0] != 0x65 && local_260[0] != 0x7a) &&
+            (local_260[0] != 0x7b && local_260[0] != 0x7c)) goto LAB_20121f38;
   }
-  memcpy(&local_260,&DAT_208f0d8b,0x240);
+  memcpy(local_260,&DAT_208f0d8b,0x240);
 LAB_20121f38:
   if ((DAT_208f4634 == '\0') && ((DAT_208f4633 == '\0' || (bVar3 != 0x37)))) {
-    if ((local_260.cmd == 0x20 || local_260.cmd == 0x37) || local_260.cmd == 0x39) {
+    if ((local_260[0] == 0x20 || local_260[0] == 0x37) || local_260[0] == 0x39) {
       fb_clear_rect(iVar1,(uint)DAT_2080065e,(uint)DAT_2080065c,0x30,0x13);
-      bVar3 = local_260.tone_tuner_msg & 0xc0;
+      bVar3 = local_251 & 0xc0;
       if (bVar3 == 0x40) {
         gui_draw_runs(iVar1,(uint)DAT_20800662,(uint)DAT_20800660,&DAT_2016ddfc);
       }
@@ -4912,7 +5033,7 @@ LAB_20121f38:
         gui_draw_runs(iVar1,(uint)DAT_2080065e,(uint)DAT_2080065c,&DAT_2016de0c);
       }
     }
-    bVar3 = local_260.tune_lock & 3;
+    bVar3 = local_200 & 3;
     fb_clear_rect(iVar1,(uint)DAT_20800666,(uint)DAT_20800664,0x2c,0x13);
     if (bVar3 == 1) {
       gui_draw_runs(iVar1,(uint)DAT_20800666,(uint)DAT_20800664,&DAT_2016de8c);
@@ -4920,18 +5041,18 @@ LAB_20121f38:
     else if (bVar3 == 2) {
       gui_draw_runs(iVar1,(uint)DAT_20800666,(uint)DAT_20800664,&DAT_2016de7c);
     }
-    uVar2 = (uint)local_260.tune_lock;
+    uVar2 = (uint)local_200;
     fb_clear_rect(iVar1,(uint)DAT_2080066a,(uint)DAT_20800668,0x16,0x13);
     if ((int)(uVar2 << 0x1c) < 0) {
       gui_draw_runs(iVar1,(uint)DAT_2080066a,(uint)DAT_20800668,&DAT_2016deac);
     }
-    uVar2 = (uint)local_260.tune_lock;
+    uVar2 = (uint)local_200;
     fb_clear_rect(iVar1,(uint)DAT_2080066e,(uint)DAT_2080066c,0x22,0x13);
     if ((int)(uVar2 << 0x1b) < 0) {
       gui_draw_runs(iVar1,(uint)DAT_2080066e,(uint)DAT_2080066c,&DAT_2016de6c);
     }
     fb_clear_rect(iVar1,(uint)DAT_20800672,(uint)DAT_20800670,0x2c,0xf);
-    if ((int)((uint)local_260.tune_lock << 0x1d) < 0) {
+    if ((int)((uint)local_200 << 0x1d) < 0) {
       gui_draw_runs(iVar1,(uint)DAT_20800672,(uint)DAT_20800670,&DAT_2016de9c);
     }
     if ((DAT_208f4631 == '\0') && (DAT_208f4632 == '\0')) {
@@ -4941,7 +5062,7 @@ LAB_20121f38:
       else {
         iVar4 = 0x6d;
       }
-      bVar3 = local_260.txvfo_flags & 3;
+      bVar3 = local_252 & 3;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004b2,0x11,0x11);
       if (bVar3 == 1) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b2,&DAT_2016de1c);
@@ -4949,7 +5070,7 @@ LAB_20121f38:
       else if (bVar3 == 3) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b2,&DAT_2016de2c);
       }
-      bVar3 = local_260.tone_tuner_msg & 3;
+      bVar3 = local_251 & 3;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004b4,0x22,0x13);
       if (bVar3 == 1) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b4,&DAT_2016ddac);
@@ -4957,30 +5078,30 @@ LAB_20121f38:
       else if (bVar3 == 2) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b4,&DAT_2016de3c);
       }
-      uVar2 = (uint)local_260.txvfo_flags;
+      uVar2 = (uint)local_252;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004b0,0x2d,0x13);
       if ((int)(uVar2 << 0x1d) < 0) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b0,&DAT_2016dd8c);
       }
-      uVar2 = (uint)local_260.txvfo_flags;
+      uVar2 = (uint)local_252;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004ac,0x28,0x13);
       if ((int)(uVar2 << 0x1b) < 0) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004ac,&DAT_2016ddcc);
       }
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004b6,0x22,0x13);
-      if ((int)((uint)local_260.att_amp_dnf << 0x1b) < 0) {
+      if ((int)((uint)local_254 << 0x1b) < 0) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b6,&DAT_2016dd9c);
       }
-      uVar2 = (uint)local_260.txvfo_flags;
+      uVar2 = (uint)local_252;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004a8,0x2e,0x13);
       if ((int)(uVar2 << 0x19) < 0) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004a8,&DAT_2016ddec);
       }
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004aa,0x39,0x13);
-      if ((int)((uint)local_260.txvfo_flags << 0x1a) < 0) {
+      if ((int)((uint)local_252 << 0x1a) < 0) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004aa,&DAT_2016ddbc);
       }
-      uVar2 = (local_260.tone_tuner_msg & 0x1f) >> 3;
+      uVar2 = (local_251 & 0x1f) >> 3;
       fb_clear_rect(iVar1,iVar4,(uint)DAT_208004ae,0x2d,0x13);
       if (uVar2 == 1) {
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004ae,&DAT_2016de4c);
@@ -4989,20 +5110,20 @@ LAB_20121f38:
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004ae,&DAT_2016de5c);
       }
       if (DAT_208f4633 == '\0') {
-        uVar2 = (uint)(local_260.span_ccf >> 6);
+        uVar2 = (uint)(local_24f >> 6);
         fb_clear_rect(iVar1,iVar4,(uint)DAT_208004b8,(uint)*DAT_208025e4,(uint)DAT_208025e4[1]);
         if (2 < uVar2) {
           uVar2 = 2;
         }
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004b8,(&DAT_208025e4)[uVar2]);
-        uVar2 = (uint)(local_260.speed_color >> 4);
+        uVar2 = (uint)(local_24e >> 4);
         fb_clear_rect(iVar1,iVar4,(uint)DAT_208004ba,(uint)*(ushort *)PTR_DAT_208025f0,
                       (uint)*(ushort *)(PTR_DAT_208025f0 + 2));
         if (5 < uVar2) {
           uVar2 = 5;
         }
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004ba,(&PTR_DAT_208025f0)[uVar2]);
-        uVar2 = local_260.span_ccf & 0x1f;
+        uVar2 = local_24f & 0x1f;
         fb_clear_rect(iVar1,iVar4,(uint)DAT_208004bc,0x2d,0x13);
         fb_clear_rect(iVar1,iVar4,(uint)DAT_208004be,(uint)*(ushort *)PTR_DAT_20802608,
                       (uint)*(ushort *)(PTR_DAT_20802608 + 2));
@@ -5013,22 +5134,24 @@ LAB_20121f38:
         gui_draw_runs(iVar1,iVar4,(uint)DAT_208004be,(&PTR_DAT_20802608)[uVar2]);
       }
     }
-    memcpy(&DAT_208f0d8b,&local_260,0x240);
+    memcpy(&DAT_208f0d8b,local_260,0x240);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201224c8 @ 201224c8  (160 bytes, 2 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_draw_markers
+ * filter_graph_draw_markers @ 201224c8  (160 bytes, 2 callers, export file 20120d60_201248f8.c)
  * Purpose: (fb, mode): marker sprites on row 0x81 at the computed positions (0x208007E4 + 0x1B1 ...) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201224c8 @ 201224c8 (160 bytes)
+// ===== filter_graph_draw_markers @ 201224c8 (160 bytes)
 
-void FUN_201224c8(undefined4 param_1,undefined4 param_2)
+/* (fb, mode): marker sprites on row 0x81 at the computed positions (0x208007E4 + 0x1B1 ...) [fact]
+    */
+
+void filter_graph_draw_markers(undefined4 param_1,undefined4 param_2)
 
 {
   short sVar1;
@@ -5063,16 +5186,18 @@ void FUN_201224c8(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20122638 @ 20122638  (356 bytes, 3 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_draw_edges
+ * filter_graph_draw_edges @ 20122638  (356 bytes, 3 callers, export file 20120d60_201248f8.c)
  * Purpose: (fb, mode, ...): draws the passband slopes and edges for the mode group (FUN_20136670 lines,
  *     FUN_20121B90 edge sprites) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20122638 @ 20122638 (356 bytes)
+// ===== filter_graph_draw_edges @ 20122638 (356 bytes)
 
-void FUN_20122638(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
+/* (fb, mode, ...): draws the passband slopes and edges for the mode group (FUN_20136670 lines,
+   FUN_20121B90 edge sprites) [fact for the calls] */
+
+void filter_graph_draw_edges(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
 
 {
   int iVar1;
@@ -5133,16 +5258,18 @@ void FUN_20122638(undefined4 param_1,undefined4 param_2,undefined4 param_3,int p
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20122d00 @ 20122d00  (772 bytes, 4 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_passband_calc
+ * filter_passband_calc @ 20122d00  (772 bytes, 4 callers, export file 20120d60_201248f8.c)
  * Purpose: (out, mode, ...): passband edge pixels for the mode group (SSB/CW/AM/FM/DATA cases; DATA uses
  *     data_offset_be) into the records 0x208007DC / 0x208007E2 [fact for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20122d00 @ 20122d00 (772 bytes)
+// ===== filter_passband_calc @ 20122d00 (772 bytes)
 
-void FUN_20122d00(short *param_1,undefined4 param_2,uint param_3,uint param_4)
+/* (out, mode, ...): passband edge pixels for the mode group (SSB/CW/AM/FM/DATA cases; DATA uses
+   data_offset_be) into the records 0x208007DC / 0x208007E2 [fact for the fields] */
+
+void filter_passband_calc(short *param_1,undefined4 param_2,uint param_3,uint param_4)
 
 {
   int iVar1;
@@ -5262,16 +5389,19 @@ void FUN_20122d00(short *param_1,undefined4 param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20123088 @ 20123088  (784 bytes, 2 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_state_update
+ * filter_graph_state_update @ 20123088  (784 bytes, 2 callers, export file 20120d60_201248f8.c)
  * Purpose: (state 0x208F4600): reads IF SHIFT, NOTCH and CONTOUR from the current frame (shift_be, notch_be,
  *     contour_be) and derives the per-mode graph values [fact for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20123088 @ 20123088 (784 bytes)
+// ===== filter_graph_state_update @ 20123088 (784 bytes)
 
-void FUN_20123088(undefined1 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* (state 0x208F4600): reads IF SHIFT, NOTCH and CONTOUR from the current frame (shift_be, notch_be,
+   contour_be) and derives the per-mode graph values [fact for the fields] */
+
+void filter_graph_state_update
+               (undefined1 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   byte bVar1;
@@ -5437,17 +5567,21 @@ LAB_201233c4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201233d4 @ 201233d4  (472 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_small
+ * filter_graph_small @ 201233d4  (472 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: gui_main_loop draws it instead of main_filter_graph while 0x208F4633 is 0: the same passband computation
  *     (filter_graph_state_update, filter_passband_calc) and curve/edge drawing in the 0x164 x 0x45 box at (x 0x1BB,
  *     y 0x6D), without the value texts and buttons; skipped while gui_scope_draw_hold_set holds [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201233d4 @ 201233d4 (472 bytes)
+// ===== filter_graph_small @ 201233d4 (472 bytes)
 
-void FUN_201233d4(void)
+/* gui_main_loop draws it instead of main_filter_graph while 0x208F4633 is 0: the same passband
+   computation (filter_graph_state_update, filter_passband_calc) and curve/edge drawing in the 0x164
+   x 0x45 box at (x 0x1BB, y 0x6D), without the value texts and buttons; skipped while
+   gui_scope_draw_hold_set holds [fact] */
+
+void filter_graph_small(void)
 
 {
   undefined1 uVar1;
@@ -5461,7 +5595,7 @@ void FUN_201233d4(void)
   int iVar9;
   
   if (DAT_20800480 == '\0') {
-    iVar8 = FUN_20133640();
+    iVar8 = scope3d_buf_get();
   }
   else {
     iVar8 = 0;
@@ -5470,13 +5604,13 @@ void FUN_201233d4(void)
   iVar3 = fb_get_layer_addr(DAT_208085b8);
   uVar4 = (uint)gui_frame.scope_flags;
   uVar5 = (uint)gui_frame.tx_bpf;
-  FUN_20123088(&DAT_208f4600);
+  filter_graph_state_update(&DAT_208f4600);
   uVar1 = DAT_208f4606;
   uVar7 = (uint)DAT_208f4628;
   iVar9 = (int)DAT_208f460a;
   uVar6 = (uint)DAT_208f4616;
-  FUN_20122d00(&DAT_208007dc,DAT_208f4606,DAT_208f460e,uVar7);
-  FUN_20122d00(&DAT_208007e2,uVar1,uVar6,uVar7);
+  filter_passband_calc(&DAT_208007dc,DAT_208f4606,DAT_208f460e,uVar7);
+  filter_passband_calc(&DAT_208007e2,uVar1,uVar6,uVar7);
   if (-1 < (int)(uVar4 << 0x1a)) {
     if (iVar8 != 0) {
       iVar3 = iVar8 + -0x2a940;
@@ -5484,18 +5618,18 @@ void FUN_201233d4(void)
     fb_fill_rect(iVar3,0,0x6d,0x1bb,0x164,0x45);
     gui_draw_runs(iVar3,0x6d,0x1bb,&DAT_2016d380);
     if ((DAT_2080048a == '\0') && (FUN_20122b48(iVar3), DAT_2080048a == '\0')) {
-      FUN_20122638(iVar3,uVar1,iVar9,1);
+      filter_graph_draw_edges(iVar3,uVar1,iVar9,1);
     }
     else if ((gui_frame.tx_bpf & 0x80) != 0) {
       iVar9 = ((uVar5 & 0x7f) >> 4) * 4;
       DAT_208007de = *(undefined2 *)(&DAT_2016d5be + iVar9);
       DAT_208007e0 = *(undefined2 *)(&DAT_2016d5c0 + iVar9);
-      FUN_20122638(iVar3,uVar1,0);
+      filter_graph_draw_edges(iVar3,uVar1,0);
     }
     if ((gui_frame.flags9 & 8) != 0) {
       filter_graph_affft_overlay(iVar3,0x81,0x209,200);
     }
-    FUN_201224c8(iVar3,uVar1);
+    filter_graph_draw_markers(iVar3,uVar1);
     if (iVar8 != 0) {
       iVar2 = iVar2 + 0x2acb6;
       iVar8 = iVar8 + 0x376;
@@ -5513,16 +5647,18 @@ void FUN_201233d4(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201235ac @ 201235ac  (604 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_buttons
+ * filter_graph_buttons @ 201235ac  (604 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: Bottom row of main_filter_graph: four 0x58 x 0x31 sprite buttons at y 0x116, x 0x1BB / 0x214 / 0x26D /
  *     0x2C6 with on/off sprites from the tables 0x208008C8.. [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201235ac @ 201235ac (604 bytes)
+// ===== filter_graph_buttons @ 201235ac (604 bytes)
 
-void FUN_201235ac(int param_1)
+/* Bottom row of main_filter_graph: four 0x58 x 0x31 sprite buttons at y 0x116, x 0x1BB / 0x214 /
+   0x26D / 0x2C6 with on/off sprites from the tables 0x208008C8.. [fact] */
+
+void filter_graph_buttons(int param_1)
 
 {
   uint uVar1;
@@ -5609,16 +5745,18 @@ void FUN_201235ac(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012384c @ 2012384c  (884 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: filter_graph_value_text
+ * filter_graph_value_text @ 2012384c  (884 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: (fb, sel): value line under the graph: tick marks and the "%dHz" values of the selected function
  *     (0x208F460A / 4612 / 461A / 461E / 4626) right-aligned at y 0xE2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012384c @ 2012384c (884 bytes)
+// ===== filter_graph_value_text @ 2012384c (884 bytes)
 
-void FUN_2012384c(uint param_1,int param_2)
+/* (fb, sel): value line under the graph: tick marks and the "%dHz" values of the selected function
+   (0x208F460A / 4612 / 461A / 461E / 4626) right-aligned at y 0xE2 [fact] */
+
+void filter_graph_value_text(uint param_1,int param_2)
 
 {
   short sVar1;
@@ -5765,7 +5903,7 @@ void main_filter_graph(void)
   int iVar10;
   
   if (DAT_20800480 == '\0') {
-    iVar8 = FUN_20133640();
+    iVar8 = scope3d_buf_get();
   }
   else {
     iVar8 = 0;
@@ -5773,13 +5911,13 @@ void main_filter_graph(void)
   iVar4 = fb_get_layer_addr(DAT_208085b8);
   iVar5 = fb_get_layer_addr(DAT_208085b8);
   iVar6 = fb_get_layer_addr(DAT_208085bc);
-  FUN_20123088(&DAT_208f4600);
+  filter_graph_state_update(&DAT_208f4600);
   uVar3 = DAT_208f4628;
   uVar2 = DAT_208f4616;
   uVar1 = DAT_208f4606;
   iVar10 = (int)DAT_208f460a;
-  FUN_20122d00(&DAT_208007dc,DAT_208f4606,DAT_208f460e,DAT_208f4628);
-  FUN_20122d00(&DAT_208007e2,uVar1,uVar2,uVar3);
+  filter_passband_calc(&DAT_208007dc,DAT_208f4606,DAT_208f460e,DAT_208f4628);
+  filter_passband_calc(&DAT_208007e2,uVar1,uVar2,uVar3);
   if (iVar8 != 0) {
     iVar5 = iVar8 + -0x2a940;
   }
@@ -5809,14 +5947,14 @@ void main_filter_graph(void)
   } while (uVar7 < 0x2f);
   gui_draw_runs(iVar6,uVar7 + 0x116,0x1bb,&DAT_2016d6cc);
   FUN_20122b48(iVar9);
-  FUN_20122638(iVar9,uVar1,iVar10,1);
+  filter_graph_draw_edges(iVar9,uVar1,iVar10,1);
   if ((gui_frame.flags9 & 8) != 0) {
     filter_graph_affft_overlay(iVar9,0x81,0x209,200);
   }
-  FUN_201224c8(iVar9,uVar1);
-  FUN_2012384c(iVar6,DAT_208007e2);
+  filter_graph_draw_markers(iVar9,uVar1);
+  filter_graph_value_text(iVar6,DAT_208007e2);
   FUN_20123808(iVar6);
-  FUN_201235ac(iVar6);
+  filter_graph_buttons(iVar6);
   if (iVar8 != 0) {
     iVar5 = 0;
     iVar4 = iVar4 + 0x2acb6;
@@ -6358,7 +6496,7 @@ void scope_draw_frame(void)
   DAT_20800499 = (bool)DAT_20800498 && DAT_208004d0 == 0;
   if ((DAT_20800489 != '\0') &&
      (cVar1 = DAT_20800489 + -1, bVar5 = DAT_20800489 == '\x01', DAT_20800489 = cVar1, bVar5)) {
-    FUN_20134304(0);
+    scope_freeze_b_set(0);
   }
   if (DAT_20800482 == '\0') {
     if (DAT_208004d0 == 0) {
@@ -6676,16 +6814,18 @@ LAB_20124808:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201248f8 @ 201248f8  (380 bytes, 1 callers, export file 20120d60_201248f8.c)
- * Name on the doc page: audio_screen_poll
+ * audio_screen_poll @ 201248f8  (380 bytes, 1 callers, export file 20120d60_201248f8.c)
  * Purpose: gui_screen_update: voice-message / PlayList supervision: stops record or playback when the card goes or
  *     an audio error occurs and reports it (mainlink_send_audio_error, E7/E8 states) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201248f8 @ 201248f8 (380 bytes)
+// ===== audio_screen_poll @ 201248f8 (380 bytes)
 
-undefined4 FUN_201248f8(void)
+/* gui_screen_update: voice-message / PlayList supervision: stops record or playback when the card
+   goes or an audio error occurs and reports it (mainlink_send_audio_error, E7/E8 states) [fact] */
+
+undefined4 audio_screen_poll(void)
 
 {
   int iVar1;
@@ -6707,7 +6847,7 @@ undefined4 FUN_201248f8(void)
           (gui_frame.main_vfo.mode == 6 || gui_frame.main_vfo.mode == 7)) &&
          (((DAT_20800490 == '\x01' || (DAT_2080048f == '\x01')) &&
           (uVar2 = audio_error(), uVar2 != 0)))) {
-        FUN_201248a4(0,1);
+        mainlink_send_e8_state(0,1);
         audio_error();
         mainlink_send_audio_error();
       }
@@ -6722,11 +6862,11 @@ undefined4 FUN_201248f8(void)
         play_stop();
         DAT_20800490 = '\0';
       }
-      FUN_201248a4(0);
+      mainlink_send_e8_state(0);
     }
   }
   if ((DAT_2080048e == '\x01') && (uVar2 = audio_error(), uVar2 != 0)) {
-    FUN_20124848(0,1);
+    mainlink_send_e7_state(0,1);
     audio_error();
     mainlink_send_audio_error();
     DAT_208007d8 = 0;
@@ -6739,15 +6879,16 @@ undefined4 FUN_201248f8(void)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_20124a74 @ 20124a74  (36 bytes, 3 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_entry_size
+ * playlist_entry_size @ 20124a74  (36 bytes, 3 callers, export file 20124a74_2012cb60.c)
  * Purpose: (top, row, *out): word +0x30 of the 0x34-byte PlayList entry 0x208F1234[top + row] [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20124a74 @ 20124a74 (36 bytes)
+// ===== playlist_entry_size @ 20124a74 (36 bytes)
 
-void FUN_20124a74(int param_1,int param_2,undefined4 *param_3)
+/* (top, row, *out): word +0x30 of the 0x34-byte PlayList entry 0x208F1234[top + row] [fact] */
+
+void playlist_entry_size(int param_1,int param_2,undefined4 *param_3)
 
 {
   *param_3 = *(undefined4 *)(&DAT_208f1264 + (param_1 + param_2 & 0xffffU) * 0x34);
@@ -6756,16 +6897,18 @@ void FUN_20124a74(int param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20124a98 @ 20124a98  (32 bytes, 3 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_entry_name
+ * playlist_entry_name @ 20124a98  (32 bytes, 3 callers, export file 20124a74_2012cb60.c)
  * Purpose: (top, row, dst): strcpy of the file name of PlayList entry 0x208F1234[top + row] (0x34 bytes per entry)
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20124a98 @ 20124a98 (32 bytes)
+// ===== playlist_entry_name @ 20124a98 (32 bytes)
 
-void FUN_20124a98(int param_1,int param_2,undefined4 param_3)
+/* (top, row, dst): strcpy of the file name of PlayList entry 0x208F1234[top + row] (0x34 bytes per
+   entry) [fact] */
+
+void playlist_entry_name(int param_1,int param_2,undefined4 param_3)
 
 {
   strcpy_veneer(param_3,&DAT_208f1234 + (param_1 + param_2 & 0xffffU) * 0x34);
@@ -6774,15 +6917,16 @@ void FUN_20124a98(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20124ab8 @ 20124ab8  (36 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_entry_text
+ * playlist_entry_text @ 20124ab8  (36 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (top, row, dst): strcpy of the text at +0x26 of PlayList entry top + row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20124ab8 @ 20124ab8 (36 bytes)
+// ===== playlist_entry_text @ 20124ab8 (36 bytes)
 
-void FUN_20124ab8(int param_1,int param_2,undefined4 param_3)
+/* (top, row, dst): strcpy of the text at +0x26 of PlayList entry top + row [fact] */
+
+void playlist_entry_text(int param_1,int param_2,undefined4 param_3)
 
 {
   strcpy_veneer(param_3,(param_1 + param_2 & 0xffffU) * 0x34 + 0x208f125a);
@@ -6800,10 +6944,10 @@ void FUN_20124ab8(int param_1,int param_2,undefined4 param_3)
 
 /* packet 0x3A: voice/REC PLAY LIST */
 
-void scr_playlist(ml_frame *frame,ml_frame *old)
+void scr_playlist(int param_1,char *param_2)
 
 {
-  byte bVar1;
+  char cVar1;
   int iVar2;
   undefined4 uVar3;
   uint uVar4;
@@ -6832,62 +6976,62 @@ void scr_playlist(ml_frame *frame,ml_frame *old)
   DAT_2080048e = 1;
   DAT_20800483 = 1;
   DAT_20800484 = 1;
-  switch(frame->payload[0]) {
+  switch(*(undefined1 *)(param_1 + 0x98)) {
   case 0:
-    if ((old->cmd != 0x3a) || (old->payload[0] != 0)) {
-      FUN_20124bc0();
+    if ((*param_2 != ':') || (param_2[0x98] != '\0')) {
+      playlist_list_files();
     }
     DAT_2080048d = 0;
     DAT_20800490 = 0;
-    DAT_208004a1 = frame->payload[3];
+    DAT_208004a1 = *(undefined1 *)(param_1 + 0x9b);
     DAT_208f1224 = 0;
     return;
   case 1:
-    DAT_208f1226 = be16_load(frame->payload + 3);
+    DAT_208f1226 = be16_load((byte *)(param_1 + 0x9b));
     puVar6 = DAT_20800810;
     uVar4 = (uint)DAT_208f1226;
-    bVar5 = frame->payload[5] & 0xf;
-    DAT_208f1229 = frame->payload[6] & 0xf;
-    DAT_208f122a = frame->payload[7] >> 7;
+    bVar5 = *(byte *)(param_1 + 0x9d) & 0xf;
+    DAT_208f1229 = *(byte *)(param_1 + 0x9e) & 0xf;
+    DAT_208f122a = *(byte *)(param_1 + 0x9f) >> 7;
     local_54 = DAT_20800818;
     DAT_208f1228 = bVar5;
     play_stop();
     if (DAT_20800490 != '\0') {
-      iVar2 = FUN_20124848(0,1);
+      iVar2 = mainlink_send_e7_state(0,1);
       if (iVar2 == 0) {
         return;
       }
-      DAT_2080048d = 0;
+      DAT_2080048d = '\0';
       DAT_20800490 = '\0';
     }
     DAT_208f1224 = '\0';
     break;
   case 2:
-    DAT_208f122c = be16_load(frame->payload + 3);
+    DAT_208f122c = be16_load((byte *)(param_1 + 0x9b));
     uVar4 = (uint)DAT_208f122c;
-    bVar5 = frame->payload[5];
-    DAT_208f122f = frame->payload[6];
+    bVar5 = *(byte *)(param_1 + 0x9d);
+    DAT_208f122f = *(char *)(param_1 + 0x9e);
     puVar6 = DAT_20800810;
     local_54 = DAT_20800818;
     DAT_208f122e = bVar5;
     break;
   case 3:
-    FUN_20124adc(frame);
-    DAT_208f1226 = be16_load(frame->payload + 3);
+    playlist_delete_file(param_1);
+    DAT_208f1226 = be16_load((byte *)(param_1 + 0x9b));
     uVar4 = (uint)DAT_208f1226;
-    bVar5 = frame->payload[5] & 0xf;
-    DAT_208f1229 = frame->payload[6] & 0xf;
-    DAT_208f122a = frame->payload[7] >> 7;
+    bVar5 = *(byte *)(param_1 + 0x9d) & 0xf;
+    DAT_208f1229 = *(byte *)(param_1 + 0x9e) & 0xf;
+    DAT_208f122a = *(byte *)(param_1 + 0x9f) >> 7;
     local_54 = DAT_20800818;
     DAT_20800490 = '\0';
     DAT_208f1224 = '\0';
-    DAT_208f122f = 0;
+    DAT_208f122f = '\0';
     puVar6 = DAT_20800810;
     DAT_208f1228 = bVar5;
     break;
   case 4:
-    uVar7 = frame->payload[3] & 1;
-    DAT_208004a1 = frame->payload[4];
+    uVar7 = *(byte *)(param_1 + 0x9b) & 1;
+    DAT_208004a1 = *(byte *)(param_1 + 0x9c);
     local_54 = (&DAT_20800818)[uVar7];
     puVar6 = (&DAT_20800810)[uVar7];
     break;
@@ -6903,7 +7047,7 @@ void scr_playlist(ml_frame *frame,ml_frame *old)
     mainlink_send_audio_error(0xffffffff);
     return;
   }
-  if ((frame->payload[0] != old->payload[0]) || (frame->payload[0] == 3)) {
+  if ((*(char *)(param_1 + 0x98) != param_2[0x98]) || (*(char *)(param_1 + 0x98) == '\x03')) {
     if (DAT_208f462d == '\0') {
       fb_fill_rect(local_58,0x4a69,0,0,800,0x1e0);
       fb_fill_rect(local_58,0x2124,(uint)DAT_208006c6,(uint)DAT_208006c4,(uint)DAT_208006c8,
@@ -6916,7 +7060,7 @@ void scr_playlist(ml_frame *frame,ml_frame *old)
     fb_fill_rect(local_58,0x821,0x7e,0x294,(uint)*puVar6,(uint)puVar6[1]);
     gui_draw_runs(local_58,0x7e,0x294,puVar6);
     gui_draw_runs(local_58,DAT_208006f2 + 0x7e & 0xffff,DAT_208006f0 + 0x294 & 0xffff,local_54);
-    if ((DAT_20800490 != '\x01') && (frame->payload[0] != 4)) {
+    if ((DAT_20800490 != '\x01') && (*(char *)(param_1 + 0x98) != '\x04')) {
       local_50 = 0;
       local_4c = 0;
       local_48 = 0;
@@ -6931,7 +7075,7 @@ void scr_playlist(ml_frame *frame,ml_frame *old)
     }
     iVar8 = 1;
   }
-  if (frame->payload[0] == 4 || frame->payload[0] == 2) {
+  if (*(char *)(param_1 + 0x98) == '\x04' || *(char *)(param_1 + 0x98) == '\x02') {
     fb_fill_rect(local_58,0x4a69,(uint)DAT_208006f6,(uint)DAT_208006f4,0x7a,0x12);
     fb_fill_rect(local_58,0x4a69,(uint)DAT_208006fa,(uint)DAT_208006f8,0x44,0x18);
     if (DAT_20800490 != '\0' || uVar7 != 0) {
@@ -6948,24 +7092,24 @@ LAB_201250b4:
       local_50 = CONCAT13(0x25,(undefined3)local_50);
       gui_draw_text(local_58,&local_50,DAT_208006fa,DAT_208006f8,0x11,&DAT_20803030);
 LAB_2012512c:
-      if (frame->payload[0] == 4) {
+      if (*(char *)(param_1 + 0x98) == '\x04') {
         fb_fill_rect(local_58,0x821,0x7e,0x294,(uint)*puVar6,(uint)puVar6[1]);
         gui_draw_runs(local_58,0x7e,0x294,puVar6);
         gui_draw_runs(local_58,DAT_208006f2 + 0x7e & 0xffff,DAT_208006f0 + 0x294 & 0xffff,local_54);
       }
       goto LAB_20125194;
     }
-    if (frame->payload[0] != 2) goto LAB_2012512c;
-    if (DAT_208f122f == 1) goto LAB_201250b4;
+    if (*(char *)(param_1 + 0x98) != '\x02') goto LAB_2012512c;
+    if (DAT_208f122f == '\x01') goto LAB_201250b4;
 LAB_201251a8:
     if (iVar8 == 0) {
-      if (frame->payload[0] != 2) goto LAB_20125284;
-      if (frame->payload[6] != old->payload[6]) goto LAB_201251d0;
+      if (*(char *)(param_1 + 0x98) != '\x02') goto LAB_20125284;
+      if (*(char *)(param_1 + 0x9e) != param_2[0x9e]) goto LAB_201251d0;
     }
     else {
 LAB_201251d0:
-      if ((frame->payload[6] != 3 && frame->payload[6] != 2) &&
-         (old->payload[6] != 3 && old->payload[6] != 2)) {
+      if ((*(char *)(param_1 + 0x9e) != '\x03' && *(char *)(param_1 + 0x9e) != '\x02') &&
+         (param_2[0x9e] != '\x03' && param_2[0x9e] != '\x02')) {
         iVar2 = 0;
         do {
           puVar6 = &DAT_2016e1c4 + iVar2 * 5;
@@ -6982,7 +7126,8 @@ LAB_201251d0:
       }
       if (iVar8 == 0) {
 LAB_20125284:
-        if (frame->payload[0] == 1 || frame->payload[0] == 3) goto LAB_20125294;
+        if (*(char *)(param_1 + 0x98) == '\x01' || *(char *)(param_1 + 0x98) == '\x03')
+        goto LAB_20125294;
       }
       else {
 LAB_20125294:
@@ -6993,7 +7138,7 @@ LAB_20125294:
         local_4c = 0;
         local_48 = 0;
         local_44 = 0;
-        FUN_20124a98(uVar4,bVar5,&local_50);
+        playlist_entry_name(uVar4,bVar5,&local_50);
         strcpy(auStack_3c,&local_50);
         gui_draw_text(local_58,&local_50,DAT_208006d2,DAT_208006d0,0xf,&DAT_20800b1c);
         fb_fill_rect(local_58,0x4a69,(uint)DAT_208006d6,(uint)DAT_208006d4,
@@ -7003,7 +7148,7 @@ LAB_20125294:
         local_4c = 0;
         local_48 = 0;
         local_44 = 0;
-        FUN_20124ab8(uVar4,bVar5,&local_50);
+        playlist_entry_text(uVar4,bVar5,&local_50);
         gui_draw_text(local_58,&local_50,DAT_208006d6,DAT_208006d4,0xf,&DAT_20800b1c);
         iVar8 = 5;
         do {
@@ -7028,7 +7173,7 @@ LAB_20125294:
                         *puVar6 + DAT_208006e8,0xf,&DAT_20800b1c);
           gui_draw_text(local_58,&DAT_208f124f + iVar2,DAT_208006ee + (&DAT_2016e1c6)[iVar8 * 5],
                         *puVar6 + DAT_208006ec,0xf,&DAT_20800b1c);
-          if (((uint)DAT_208f1228 == iVar8 - 5U) && (frame->payload[0] == 1)) {
+          if (((uint)DAT_208f1228 == iVar8 - 5U) && (*(char *)(param_1 + 0x98) == '\x01')) {
             if (DAT_208f122a == 0) {
               uVar3 = 0xf980;
             }
@@ -7062,23 +7207,23 @@ LAB_20125294:
           fb_draw_round_frame(local_58,0x1a2,0x2b4,0x68,0x3c,3,0xf980);
         }
       }
-      if (frame->payload[0] != 2) goto LAB_201256d0;
+      if (*(char *)(param_1 + 0x98) != '\x02') goto LAB_201256d0;
     }
   }
   else {
 LAB_20125194:
-    bVar1 = frame->payload[0];
-    if ((bVar1 == 1 || bVar1 == 2) || bVar1 == 3) goto LAB_201251a8;
+    cVar1 = *(char *)(param_1 + 0x98);
+    if ((cVar1 == '\x01' || cVar1 == '\x02') || cVar1 == '\x03') goto LAB_201251a8;
 LAB_201256d0:
     if (DAT_20800490 == '\0') goto LAB_20125cbc;
   }
   DAT_2080048c = DAT_208f122f;
   if (DAT_208f122f == DAT_2080048d) {
-    if (DAT_208f122f == 1) {
+    if (DAT_208f122f == '\x01') {
       if ((((DAT_20800490 == '\x01') && (uVar4 = audio_state(), uVar4 != 4)) &&
           (uVar4 = audio_state(), uVar4 != 8)) &&
          ((uVar4 = audio_state(), uVar4 != 0x10 && (uVar4 = audio_state(), uVar4 != 0x20)))) {
-        iVar8 = FUN_20124848(0,1);
+        iVar8 = mainlink_send_e7_state(0,1);
         if (iVar8 == 0) {
           return;
         }
@@ -7089,16 +7234,16 @@ LAB_201256d0:
         fb_fill_rect(local_58,0x4a69,(uint)DAT_208006f6,(uint)DAT_208006f4,0x7a,0x12);
         fb_fill_rect(local_58,0x4a69,(uint)DAT_208006fa,(uint)DAT_208006f8,0x44,0x18);
         DAT_20800490 = '\0';
-        frame->payload[0] = 2;
-        frame->payload[6] = 0;
-        DAT_2080048c = 0;
-        DAT_2080048d = 0;
-        mainlink_set_last_frame(frame);
+        *(undefined1 *)(param_1 + 0x98) = 2;
+        *(undefined1 *)(param_1 + 0x9e) = 0;
+        DAT_2080048c = '\0';
+        DAT_2080048d = '\0';
+        mainlink_set_last_frame(param_1);
       }
     }
-    else if (((DAT_208f122f == 3 || DAT_208f122f == 2) && (DAT_20800490 == '\x01')) &&
+    else if (((DAT_208f122f == '\x03' || DAT_208f122f == '\x02') && (DAT_20800490 == '\x01')) &&
             (uVar4 = audio_state(), uVar4 == 0)) {
-      iVar8 = FUN_20124848(0,1);
+      iVar8 = mainlink_send_e7_state(0,1);
       if (iVar8 == 0) {
         return;
       }
@@ -7107,16 +7252,16 @@ LAB_201256d0:
       gui_draw_runs(local_58,DAT_208006e2 + 0x7e & 0xffff,DAT_208006e0 + 0x10e & 0xffff,
                     &DAT_2016e1b4);
       DAT_20800490 = '\0';
-      frame->payload[6] = 0;
-      DAT_2080048c = 0;
-      DAT_2080048d = 0;
-      mainlink_set_last_frame(frame);
+      *(undefined1 *)(param_1 + 0x9e) = 0;
+      DAT_2080048c = '\0';
+      DAT_2080048d = '\0';
+      mainlink_set_last_frame(param_1);
     }
   }
   else {
-    if (DAT_208f122f == 1) {
+    if (DAT_208f122f == '\x01') {
       if (DAT_20800490 == '\0') {
-        FUN_20124a74(uVar4,bVar5,&local_40);
+        playlist_entry_size(uVar4,bVar5,&local_40);
         if (local_40 != 0) {
 LAB_20125a30:
           mainlink_send_audio_error(0xfffffff8);
@@ -7126,7 +7271,7 @@ LAB_20125a30:
           play_stop();
           return;
         }
-        iVar8 = FUN_20124848(1);
+        iVar8 = mainlink_send_e7_state(1);
         if (iVar8 == 0) {
           return;
         }
@@ -7137,7 +7282,7 @@ LAB_20125a30:
           local_4c = 0;
           local_48 = 0;
           local_44 = 0;
-          FUN_20124a98(uVar4,bVar5,&local_50);
+          playlist_entry_name(uVar4,bVar5,&local_50);
           play_start((uint)&local_50,1);
         }
         else {
@@ -7154,7 +7299,7 @@ LAB_20125a30:
         uVar4 = audio_state();
         if ((((uVar4 != 4) && (uVar4 = audio_state(), uVar4 != 8)) &&
             (uVar4 = audio_state(), uVar4 != 0x10)) && (uVar4 = audio_state(), uVar4 != 0x20)) {
-          iVar8 = FUN_20124848(0,1);
+          iVar8 = mainlink_send_e7_state(0,1);
           if (iVar8 == 0) {
             return;
           }
@@ -7165,16 +7310,16 @@ LAB_20125a30:
           fb_fill_rect(local_58,0x4a69,(uint)DAT_208006f6,(uint)DAT_208006f4,0x7a,0x12);
           fb_fill_rect(local_58,0x4a69,(uint)DAT_208006fa,(uint)DAT_208006f8,0x44,0x18);
           DAT_20800490 = '\0';
-          frame->payload[0] = 2;
-          frame->payload[6] = 0;
-          DAT_2080048c = 0;
+          *(undefined1 *)(param_1 + 0x98) = 2;
+          *(undefined1 *)(param_1 + 0x9e) = 0;
+          DAT_2080048c = '\0';
           DAT_2080048d = 0;
-          mainlink_set_last_frame(frame);
+          mainlink_set_last_frame(param_1);
         }
       }
     }
-    else if (DAT_208f122f == 0) {
-      iVar8 = FUN_20124848(0,1);
+    else if (DAT_208f122f == '\0') {
+      iVar8 = mainlink_send_e7_state(0,1);
       if (iVar8 == 0) {
         return;
       }
@@ -7189,19 +7334,19 @@ LAB_20125a30:
         DAT_20800490 = '\0';
       }
     }
-    else if (DAT_208f122f == 3) {
-      FUN_20124a74(uVar4,bVar5,&local_40);
+    else if (DAT_208f122f == '\x03') {
+      playlist_entry_size(uVar4,bVar5,&local_40);
       if (local_40 != 0) goto LAB_20125a30;
-      iVar8 = FUN_20124848(1);
+      iVar8 = mainlink_send_e7_state(1);
       if (iVar8 == 0) {
         return;
       }
       play_ffwd();
-      frame->payload[6] = 1;
-      mainlink_set_last_frame(frame);
+      *(undefined1 *)(param_1 + 0x9e) = 1;
+      mainlink_set_last_frame(param_1);
     }
-    else if (DAT_208f122f == 2) {
-      FUN_20124a74(uVar4,bVar5,&local_40);
+    else if (DAT_208f122f == '\x02') {
+      playlist_entry_size(uVar4,bVar5,&local_40);
       if (local_40 != 0) {
         mainlink_send_audio_error(0xfffffff9);
         DAT_208f1224 = 0;
@@ -7210,13 +7355,13 @@ LAB_20125a30:
         play_stop();
         return;
       }
-      iVar8 = FUN_20124848(1);
+      iVar8 = mainlink_send_e7_state(1);
       if (iVar8 == 0) {
         return;
       }
       play_rewind();
-      frame->payload[6] = 1;
-      mainlink_set_last_frame(frame);
+      *(undefined1 *)(param_1 + 0x9e) = 1;
+      mainlink_set_last_frame(param_1);
     }
     else {
       DAT_20800490 = '\0';
@@ -7246,16 +7391,18 @@ LAB_20125cbc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20125d8c @ 20125d8c  (232 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: playlist_play_poll
+ * playlist_play_poll @ 20125d8c  (232 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: gui_screen_update: PlayList playback supervision: owner 0x2080048E, stops playback at 100 %
  *     (play_progress) or when the screen leaves 0x3A or the card goes, error E7 on loss [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20125d8c @ 20125d8c (232 bytes)
+// ===== playlist_play_poll @ 20125d8c (232 bytes)
 
-bool FUN_20125d8c(void)
+/* gui_screen_update: PlayList playback supervision: owner 0x2080048E, stops playback at 100 %
+   (play_progress) or when the screen leaves 0x3A or the card goes, error E7 on loss [fact] */
+
+bool playlist_play_poll(void)
 
 {
   bool bVar1;
@@ -7404,11 +7551,11 @@ void scr_sd_menu(int param_1)
 switchD_2012629c_caseD_43:
     if (*(char *)(param_1 + 2) == '\x01') {
 LAB_20126304:
-      FUN_20134984(param_1);
+      sdmenu_scr_file_list(param_1);
       return;
     }
-    if ((*(char *)(param_1 + 2) == '\x10') && (iVar2 = FUN_20134990(param_1), iVar2 != 0)) {
-      FUN_2013499c(param_1);
+    if ((*(char *)(param_1 + 2) == '\x10') && (iVar2 = sdmenu_scr_loading(param_1), iVar2 != 0)) {
+      sdmenu_scr_load_wait(param_1);
       return;
     }
   }
@@ -7421,13 +7568,13 @@ LAB_20126304:
       case 2:
       case 3:
       case 4:
-        FUN_20134978(param_1);
+        sdmenu_scr_search_files(param_1);
         return;
       case 5:
-        FUN_201349d8(param_1);
+        sdmenu_scr_info(param_1);
         return;
       case 8:
-        FUN_201349f0(param_1);
+        sdmenu_scr_card_check(param_1);
         return;
       }
     }
@@ -7436,40 +7583,40 @@ LAB_20126304:
     case 0x44:
       bVar1 = *(byte *)(param_1 + 2);
       if (bVar1 == 3) {
-        FUN_201349b4(param_1);
+        sdmenu_scr_name_lookup(param_1);
         return;
       }
       if (3 < bVar1) {
         if (bVar1 == 4) {
-          FUN_201349c0(param_1);
+          sdmenu_scr_save_xfer(param_1);
           return;
         }
         if (bVar1 != 0x10) {
           return;
         }
-        FUN_201349cc(param_1);
+        sdmenu_scr_saving(param_1);
         return;
       }
       if (bVar1 != 1) {
         if (bVar1 != 2) {
           return;
         }
-        FUN_201349a8(param_1);
+        sdmenu_scr_name_check(param_1);
         return;
       }
       goto LAB_20126304;
     case 0x43:
       goto switchD_2012629c_caseD_43;
     case 0x45:
-      FUN_201349e4(param_1);
+      sdmenu_scr_info_text(param_1);
       return;
     case 0x48:
       if (*(char *)(param_1 + 2) == '\x01') {
-        FUN_201349fc(param_1);
+        sdmenu_scr_format_confirm(param_1);
         return;
       }
       if (*(char *)(param_1 + 2) == '\x10') {
-        FUN_20134a08(param_1);
+        sdmenu_scr_format_run(param_1);
         return;
       }
     }
@@ -7488,7 +7635,7 @@ LAB_20126304:
 
 /* packet 0x34: information / CERTIFICATIONS, FCC ID K6620801X50 */
 
-void scr_info(ml_frame *frame)
+void scr_info(int param_1)
 
 {
   uint uVar1;
@@ -7498,14 +7645,15 @@ void scr_info(ml_frame *frame)
   uint uVar5;
   
   uVar1 = fb_get_layer_addr(DAT_208085bc);
-  if ((frame->payload[0] == 1) && (frame->payload[1] != 0)) {
+  if ((*(char *)(param_1 + 0x98) == '\x01') && (*(char *)(param_1 + 0x99) != '\0')) {
     fb_fill_rect(uVar1,0x821,0,0,800,0x1e0);
     fb_fill_rect(uVar1,0x4a69,0x1e,3,0x31a,0x1c2);
     fb_fill_rect(uVar1,0x3186,3,3,0x31a,0x18);
     gui_draw_runs(uVar1,3,3,&DAT_2016dc08);
     gui_draw_text_centered(uVar1,0x201266bc,4,400,0xf,0x20800b1c);
-    FUN_201363c0(uVar1,DAT_20800602,DAT_20800600,DAT_20800604,DAT_20800606,
-                 *(undefined4 *)(&DAT_2016edbc + (uint)frame->payload[1] * 4),0x19,0xc,0x821);
+    gui_scrollbar_draw(uVar1,DAT_20800602,DAT_20800600,DAT_20800604,DAT_20800606,
+                       *(undefined4 *)(&DAT_2016edbc + (uint)*(byte *)(param_1 + 0x99) * 4),0x19,0xc
+                       ,0x821);
     fb_fill_rect(uVar1,0x821,(uint)DAT_208005f2,(uint)DAT_208005f0,0x62,0x3c);
     gui_draw_runs(uVar1,(uint)DAT_208005f2,(uint)DAT_208005f0,&DAT_2016dc48);
     gui_draw_runs(uVar1,(uint)DAT_208005f6,(uint)DAT_208005f4,&DAT_2016dc58);
@@ -7522,7 +7670,7 @@ void scr_info(ml_frame *frame)
     do {
       uVar5 = uVar5 + 0x1e;
       iVar3 = 0x23;
-      iVar2 = *(int *)(&DAT_2016edbc + (uint)frame->payload[1] * 4) + iVar4;
+      iVar2 = *(int *)(&DAT_2016edbc + (uint)*(byte *)(param_1 + 0x99) * 4) + iVar4;
       if (iVar2 == 0 || iVar2 == 0xf) {
         iVar3 = 0x14;
       }
@@ -7600,15 +7748,17 @@ LAB_201267bc:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012681c @ 2012681c  (248 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: gui_button_draw
+ * gui_button_draw @ 2012681c  (248 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (fb, y, x, sprite index): button box (outline boxes) with the sprite from the table 0x208022A0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012681c @ 2012681c (248 bytes)
+// ===== gui_button_draw @ 2012681c (248 bytes)
 
-void FUN_2012681c(uint param_1,uint param_2,uint param_3,int param_4)
+/* (fb, y, x, sprite index): button box (outline boxes) with the sprite from the table 0x208022A0
+   [fact] */
+
+void gui_button_draw(uint param_1,uint param_2,uint param_3,int param_4)
 
 {
   fb_fill_box_t(param_1,param_2 + 1 & 0xffff,param_3,
@@ -7627,16 +7777,18 @@ void FUN_2012681c(uint param_1,uint param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20126914 @ 20126914  (324 bytes, 5 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: gui_button_draw_shadow
+ * gui_button_draw_shadow @ 20126914  (324 bytes, 5 callers, export file 20124a74_2012cb60.c)
  * Purpose: (fb, y, x, sprite index): like gui_button_draw with a 0x4A69 drop shadow, sprites from 0x2080228C; used
  *     by confirm_dialog_draw and the update screens [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20126914 @ 20126914 (324 bytes)
+// ===== gui_button_draw_shadow @ 20126914 (324 bytes)
 
-void FUN_20126914(uint param_1,uint param_2,uint param_3,int param_4)
+/* (fb, y, x, sprite index): like gui_button_draw with a 0x4A69 drop shadow, sprites from
+   0x2080228C; used by confirm_dialog_draw and the update screens [fact] */
+
+void gui_button_draw_shadow(uint param_1,uint param_2,uint param_3,int param_4)
 
 {
   fb_fill_rect(param_1,0x4a69,param_2 + 2 & 0xffff,param_3 + 2 & 0xffff,
@@ -7797,12 +7949,14 @@ void confirm_dialog_draw(int param_1,int param_2,uint param_3,uint param_4,int p
         ppuVar6 = &PTR_DAT_208022f0 + param_3 * 2;
         do {
           puVar4 = (ushort *)(&DAT_2016dcd4 + uVar2 * 4 + param_3 * 8);
-          FUN_20126914(local_3c,uVar5,(uint)*puVar4 + param_5 & 0xffff,(&DAT_20800654)[param_3]);
+          gui_button_draw_shadow
+                    (local_3c,uVar5,(uint)*puVar4 + param_5 & 0xffff,(&DAT_20800654)[param_3]);
           gui_draw_runs(local_3c,*(ushort *)(&DAT_2016dcf6 + param_3 * 4) + uVar5 & 0xffff,
                         (uint)*puVar4 + (uint)*(ushort *)(&DAT_2016dcf4 + param_3 * 4) + param_5 &
                         0xffff,ppuVar6[uVar2]);
           if (uVar2 == local_28) {
-            FUN_2012681c(local_3c,uVar5,(uint)*puVar4 + param_5 & 0xffff,(&DAT_20800654)[param_3]);
+            gui_button_draw(local_3c,uVar5,(uint)*puVar4 + param_5 & 0xffff,(&DAT_20800654)[param_3]
+                           );
           }
           uVar2 = uVar2 + 1 & 0xff;
         } while (uVar2 < (byte)(&DAT_20800650)[param_3]);
@@ -7823,7 +7977,7 @@ void confirm_dialog_draw(int param_1,int param_2,uint param_3,uint param_4,int p
 
 /* packet 0x70: OK / CANCEL dialog */
 
-void scr_confirm(ml_frame *frame,uint param_2)
+void scr_confirm(int param_1,uint param_2)
 
 {
   byte bVar1;
@@ -7832,19 +7986,18 @@ void scr_confirm(ml_frame *frame,uint param_2)
   uint uVar4;
   uint uVar5;
   
-  uVar5 = (uint)frame->payload[0];
-  uVar4 = (uint)frame->payload[1];
-  bVar1 = frame->payload[2];
+  uVar5 = (uint)*(byte *)(param_1 + 0x98);
+  uVar4 = (uint)*(byte *)(param_1 + 0x99);
+  bVar1 = *(byte *)(param_1 + 0x9a);
   if (3 < uVar5) {
     uVar5 = 3;
   }
   if (3 < uVar4) {
     uVar4 = 3;
   }
-  uVar2 = be16_load(frame->payload + 4);
-  uVar3 = be16_load(frame->payload + 6);
-  confirm_dialog_draw(param_2,uVar5,uVar4,(uint)bVar1,(uint)uVar2,(uint)uVar3,
-                      (int)(frame->payload + 8));
+  uVar2 = be16_load((byte *)(param_1 + 0x9c));
+  uVar3 = be16_load((byte *)(param_1 + 0x9e));
+  confirm_dialog_draw(param_2,uVar5,uVar4,(uint)bVar1,(uint)uVar2,(uint)uVar3,param_1 + 0xa0);
   return;
 }
 
@@ -7859,7 +8012,7 @@ void scr_confirm(ml_frame *frame,uint param_2)
 
 /* packet 0x62: MENU list, 8 rows of {5, 20, 3} chars */
 
-void scr_setup_menu(ml_frame *frame,ml_frame *old,int param_3)
+void scr_setup_menu(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -7911,9 +8064,9 @@ void scr_setup_menu(ml_frame *frame,ml_frame *old,int param_3)
   }
   uVar2 = 0;
   do {
-    if (((param_3 != 0) || (frame->payload[0] != old->payload[0])) ||
-       (iVar1 = memcmp(frame->payload + uVar2 * 0x1c + 2,old->payload + uVar2 * 0x1c + 2,0x1c),
-       iVar1 != 0)) {
+    if (((param_3 != 0) || (*(char *)(param_1 + 0x98) != *(char *)(param_2 + 0x98))) ||
+       (iVar1 = memcmp(param_1 + uVar2 * 0x1c + 0x9a,param_2 + uVar2 * 0x1c + 0x9a,0x1c), iVar1 != 0
+       )) {
       local_30 = 0;
       local_2c = 0;
       local_70 = 0;
@@ -7923,11 +8076,12 @@ void scr_setup_menu(ml_frame *frame,ml_frame *old,int param_3)
       local_60 = 0;
       local_5c = 0;
       local_58 = 0;
-      strncpy(&local_30,frame->payload + uVar2 * 0x1c + 2,5);
-      strncpy(&local_70,frame->payload + uVar2 * 0x1c + 7,0x14);
-      strncpy(&local_58,frame->payload + uVar2 * 0x1c + 0x1b,3);
+      iVar1 = param_1 + uVar2 * 0x1c;
+      strncpy(&local_30,iVar1 + 0x9a,5);
+      strncpy(&local_70,iVar1 + 0x9f,0x14);
+      strncpy(&local_58,iVar1 + 0xb3,3);
       fb_fill_rect(local_54,0x821,uVar2 * DAT_208004a6 + (uint)DAT_208004e2 & 0xffff,0,800,0x18);
-      if (frame->payload[0] == uVar2) {
+      if (*(byte *)(param_1 + 0x98) == uVar2) {
         gui_draw_runs(local_54,uVar2 * DAT_208004a6 + (uint)DAT_208004de & 0xffff,(uint)DAT_208004dc
                       ,&DAT_2016d310);
       }
@@ -8121,7 +8275,7 @@ LAB_20127424:
 
 /* packet 0x50: on-screen keyboard (Caps, Space, ENT, ABC, #%^) */
 
-void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
+void scr_keyboard(int param_1,int param_2,int param_3)
 
 {
   byte *pbVar1;
@@ -8149,20 +8303,20 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
   
   local_48 = fb_get_layer_addr(DAT_208085bc);
   iVar7 = 0;
-  bVar2 = frame->payload[0];
+  bVar2 = *(byte *)(param_1 + 0x98);
   uVar3 = bVar2 & 0xf;
-  uVar8 = frame->payload[1] & 0x3f;
-  uVar6 = old->payload[1] & 0x3f;
+  uVar8 = *(byte *)(param_1 + 0x99) & 0x3f;
+  uVar6 = *(byte *)(param_2 + 0x99) & 0x3f;
   local_28 = 0x28;
   DAT_20800464 = (&DAT_20801d44)[uVar3 % 3 + ((uint)(bVar2 >> 4) % 5) * 3];
   uVar4 = (uint)DAT_20800464;
   memcpy(&DAT_20801fb6,(&PTR_DAT_20802198)[uVar4],0x1e0,uVar3 * -0x55555555);
-  if ((param_3 == 0) && ((uint)old->payload[0] == (uint)bVar2)) {
-    memcpy(local_a8,old->payload + 0x2a,0x32);
-    memcpy(local_a8 + 0x34,old->payload + 2,local_28);
+  if ((param_3 == 0) && ((uint)*(byte *)(param_2 + 0x98) == (uint)bVar2)) {
+    memcpy(local_a8,param_2 + 0xc2,0x32);
+    memcpy(local_a8 + 0x34,param_2 + 0x9a,local_28);
   }
   else {
-    FUN_20107d8c(uVar4);
+    usbkbd_leds_refresh(uVar4);
     local_30 = 0;
     local_44 = &local_30;
     local_38 = 0;
@@ -8190,24 +8344,24 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
   do {
     if (uVar8 != uVar6) {
       uVar3 = (uint)DAT_2080055c + uVar6 * 0xf & 0xffff;
-      bVar2 = frame->payload[uVar6 + 0x2a];
+      bVar2 = *(byte *)(param_1 + uVar6 + 0xc2);
       fb_fill_rect(local_48,0x821,(uint)DAT_2080055e,uVar3,0xf,0x18);
       gui_draw_runs(local_48,(uint)DAT_2080055e,uVar3,
                     *(void **)(&DAT_20800cac + (uint)(byte)(&DAT_2080173c)[bVar2] * 4));
       uVar6 = uVar8;
     }
-    bVar2 = frame->payload[iVar5 + 0x2a];
-    if ((uint)local_a8[iVar5] != (uint)bVar2) {
+    uVar3 = (uint)*(byte *)(param_1 + iVar5 + 0xc2);
+    if (local_a8[iVar5] != uVar3) {
       fb_fill_rect(local_48,0x821,(uint)DAT_2080055e,(uint)DAT_2080055c + iVar5 * 0xf & 0xffff,0xf,
                    0x18);
       gui_draw_runs(local_48,(uint)DAT_2080055e,(uint)DAT_2080055c + iVar5 * 0xf & 0xffff,
-                    *(void **)(&DAT_20800cac + (uint)(byte)(&DAT_2080173c)[bVar2] * 4));
+                    *(void **)(&DAT_20800cac + (uint)(byte)(&DAT_2080173c)[uVar3] * 4));
     }
     iVar5 = iVar5 + 1;
   } while (iVar5 < 0x32);
   fb_fill_rect(local_48,0xffff,(uint)DAT_2080055e,(uint)DAT_2080055c + uVar8 * 0xf + 1 & 0xffff,
                (uint)DAT_20800568,(uint)DAT_2080056a);
-  iVar5 = memcmp(frame->payload + 2,local_a8 + 0x34,local_28);
+  iVar5 = memcmp(param_1 + 0x9a,local_a8 + 0x34,local_28);
   if (iVar5 != 0) {
     fb_fill_rect(local_48,0x821,(uint)DAT_2080054e,(uint)DAT_2080054c,(uint)DAT_20800548,
                  0x1e0 - DAT_2080054a & 0xffff);
@@ -8263,7 +8417,7 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
     local_a8[0x31] = 0;
     local_a8[0x32] = 0;
     local_a8[0x33] = 0;
-    memcpy(local_a8,frame->payload + 0xc,0x14);
+    memcpy(local_a8,param_1 + 0xa4,0x14);
     uVar6 = 0;
     iVar5 = strlen(local_a8);
     if (iVar5 != 0) {
@@ -8348,7 +8502,7 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
     local_a8[0x31] = 0;
     local_a8[0x32] = 0;
     local_a8[0x33] = 0;
-    memcpy(local_a8,frame->payload + 2,10);
+    memcpy(local_a8,param_1 + 0x9a,10);
     gui_draw_text_words(local_48,(uint)local_a8,(uint)DAT_20800552,(uint)DAT_20800550,0xf,0x20800cac
                        );
     local_a8[0] = 0;
@@ -8403,7 +8557,7 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
     local_a8[0x31] = 0;
     local_a8[0x32] = 0;
     local_a8[0x33] = 0;
-    memcpy(local_a8,frame->payload + 0x20,10);
+    memcpy(local_a8,param_1 + 0xb8,10);
     gui_draw_text_words(local_48,(uint)local_a8,(uint)DAT_2080055a,(uint)DAT_20800558,0xf,0x20800cac
                        );
   }
@@ -8421,7 +8575,7 @@ void scr_keyboard(ml_frame *frame,ml_frame *old,int param_3)
 
 /* packet 0x41: MEMORY CH LIST */
 
-void scr_memory_list(ml_frame *frame,int param_2)
+void scr_memory_list(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -8441,11 +8595,11 @@ void scr_memory_list(ml_frame *frame,int param_2)
   uint local_2c;
   
   uVar1 = fb_get_layer_addr(DAT_208085b8);
-  iVar7 = (uint)frame->payload[0] << 0x19;
-  local_2c = (uint)(frame->payload[1] >> 4);
-  local_30 = frame->payload[1] & 0xf;
+  iVar7 = (uint)*(byte *)(param_1 + 0x98) << 0x19;
+  local_2c = (uint)(*(byte *)(param_1 + 0x99) >> 4);
+  local_30 = *(byte *)(param_1 + 0x99) & 0xf;
   if (param_2 != 0) {
-    if ((frame->scope_flags & 0x20) == 0) {
+    if ((*(byte *)(param_1 + 5) & 0x20) == 0) {
       iVar3 = 0xb4;
     }
     else {
@@ -8462,12 +8616,12 @@ void scr_memory_list(ml_frame *frame,int param_2)
   local_3c = 0;
   local_38 = 0;
   local_34 = 0;
-  copy5(&local_40,frame->payload + 0x13);
+  copy5(&local_40,param_1 + 0xab);
   gui_draw_text(uVar1,&local_40,DAT_2080059e,DAT_2080059c,0xf,&DAT_2080099c);
   local_3c = 0;
   local_38 = 0;
   local_34 = 0;
-  local_40 = *(undefined4 *)(frame->payload + 0x18);
+  local_40 = *(undefined4 *)(param_1 + 0xb0);
   gui_draw_text(uVar1,&local_40,DAT_208005a2,DAT_208005a0,0xe,&DAT_2080099c);
   uVar6 = 0;
   do {
@@ -8491,7 +8645,8 @@ void scr_memory_list(ml_frame *frame,int param_2)
       }
       fb_draw_round_frame(uVar1,(&DAT_2016db9a)[uVar6 * 5],*puVar5,0x239,0x3c,3,uVar2);
     }
-    if ((frame->payload[uVar6 * 0x24 + 0x1d] & 2) != 0) {
+    iVar3 = param_1 + uVar6 * 0x24;
+    if ((*(byte *)(iVar3 + 0xb5) & 2) != 0) {
       gui_draw_runs(uVar1,(uint)DAT_208005b2 + (uint)(ushort)(&DAT_2016db9a)[uVar6 * 5] & 0xffff,
                     (uint)*puVar5 + (uint)DAT_208005b0 & 0xffff,&DAT_2016daf8);
     }
@@ -8499,34 +8654,34 @@ void scr_memory_list(ml_frame *frame,int param_2)
     local_3c = 0;
     local_38 = 0;
     local_34 = 0;
-    copy5(&local_40,frame->payload + uVar6 * 0x24 + 0x1e);
+    copy5(&local_40,iVar3 + 0xb6);
     gui_draw_text(uVar1,&local_40,DAT_208005b6 + (&DAT_2016db9a)[uVar6 * 5],*puVar5 + DAT_208005b4,
                   0xf,&DAT_20800b1c);
     local_40 = 0;
     local_3c = 0;
     local_38 = 0;
     local_34 = 0;
-    memcpy(&local_40,frame->payload + uVar6 * 0x24 + 0x23,10);
+    memcpy(&local_40,iVar3 + 0xbb,10);
     gui_draw_text(uVar1,&local_40,DAT_208005ba + (&DAT_2016db9a)[uVar6 * 5],*puVar5 + DAT_208005b8,
                   0xf,&DAT_20800b1c);
     local_40 = 0;
     local_3c = 0;
     local_38 = 0;
     local_34 = 0;
-    memcpy(&local_40,frame->payload + uVar6 * 0x24 + 0x2d,7);
+    memcpy(&local_40,iVar3 + 0xc5,7);
     gui_draw_text(uVar1,&local_40,DAT_208005be + (&DAT_2016db9a)[uVar6 * 5],*puVar5 + DAT_208005bc,
                   0xf,&DAT_20800b1c);
     local_40 = 0;
     local_3c = 0;
     local_38 = 0;
-    if ((frame->payload[uVar6 * 0x24 + 0x1d] & 1) == 0) {
+    if ((*(byte *)(iVar3 + 0xb5) & 1) == 0) {
       puVar9 = &DAT_20801134;
     }
     else {
       puVar9 = &DAT_20800cac;
     }
     local_34 = 0;
-    memcpy(&local_40,frame->payload + uVar6 * 0x24 + 0x35,0xc);
+    memcpy(&local_40,iVar3 + 0xcd,0xc);
     gui_draw_text(uVar1,&local_40,DAT_208005c2 + (&DAT_2016db9a)[uVar6 * 5],*puVar5 + DAT_208005c0,
                   0xf,puVar9);
     uVar6 = uVar6 + 1;
@@ -8554,7 +8709,7 @@ void scr_memory_list(ml_frame *frame,int param_2)
   gui_draw_runs(uVar1,DAT_208005ae + 0x118 & 0xffff,DAT_208005ac + 0x2b4 & 0xffff,&DAT_2016db78);
   uVar4 = DAT_208005a4 + 0x2b4 & 0xffff;
   uVar6 = DAT_208005a6 + 0x15d & 0xffff;
-  if ((frame->payload[0] & 0x80) == 0) {
+  if ((*(byte *)(param_1 + 0x98) & 0x80) == 0) {
     gui_draw_runs(uVar1,uVar6,uVar4,&DAT_2016db18);
   }
   else {
@@ -8566,16 +8721,18 @@ void scr_memory_list(ml_frame *frame,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201281c0 @ 201281c0  (540 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_plain_rows
+ * text_list_plain_rows @ 201281c0  (540 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Right pane, plain form: 30-byte text rows from payload +0x119 at the 75-px row pitch 0x2080064E, plus
  *     the BACK button [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201281c0 @ 201281c0 (540 bytes)
+// ===== text_list_plain_rows @ 201281c0 (540 bytes)
 
-void FUN_201281c0(int param_1,int param_2,int param_3)
+/* Right pane, plain form: 30-byte text rows from payload +0x119 at the 75-px row pitch 0x2080064E,
+   plus the BACK button [fact] */
+
+void text_list_plain_rows(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -8634,16 +8791,18 @@ void FUN_201281c0(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201283fc @ 201283fc  (360 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_row_value
+ * text_list_row_value @ 201283fc  (360 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (row, frame): row label (21 characters at +0x11C) and its value text (+0x131, length in +0x11A),
  *     right-trimmed, with the value box sprite [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201283fc @ 201283fc (360 bytes)
+// ===== text_list_row_value @ 201283fc (360 bytes)
 
-void FUN_201283fc(int param_1,int param_2)
+/* (row, frame): row label (21 characters at +0x11C) and its value text (+0x131, length in +0x11A),
+   right-trimmed, with the value box sprite [fact] */
+
+void text_list_row_value(int param_1,int param_2)
 
 {
   char cVar1;
@@ -8695,16 +8854,18 @@ void FUN_201283fc(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20128564 @ 20128564  (416 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_row_slider
+ * text_list_row_slider @ 20128564  (416 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (row, frame): row label and value text with the three bar sprites 0x208022B4 / B8 / BC around the value
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20128564 @ 20128564 (416 bytes)
+// ===== text_list_row_slider @ 20128564 (416 bytes)
 
-void FUN_20128564(int param_1,int param_2)
+/* (row, frame): row label and value text with the three bar sprites 0x208022B4 / B8 / BC around the
+   value [fact] */
+
+void text_list_row_slider(int param_1,int param_2)
 
 {
   char cVar1;
@@ -8757,15 +8918,17 @@ void FUN_20128564(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20128704 @ 20128704  (348 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_row_done
+ * text_list_row_done @ 20128704  (348 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (row, frame): row label and a "DONE" button box; text_list_item_rows frames it when selected [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20128704 @ 20128704 (348 bytes)
+// ===== text_list_row_done @ 20128704 (348 bytes)
 
-void FUN_20128704(int param_1,int param_2)
+/* (row, frame): row label and a "DONE" button box; text_list_item_rows frames it when selected
+   [fact] */
+
+void text_list_row_done(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -8807,17 +8970,20 @@ void FUN_20128704(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20128860 @ 20128860  (1104 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_item_rows
+ * text_list_item_rows @ 20128860  (1104 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Right pane, item form: 45-byte rows from payload +0x119; a row whose value text is "DONE" ->
  *     text_list_row_done, type 3 with a flag -> text_list_row_slider, else text_list_row_value; scroll bar, page
  *     arrows and BACK [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20128860 @ 20128860 (1104 bytes)
+// ===== text_list_item_rows @ 20128860 (1104 bytes)
 
-void FUN_20128860(int param_1,int param_2,int param_3)
+/* Right pane, item form: 45-byte rows from payload +0x119; a row whose value text is "DONE" ->
+   text_list_row_done, type 3 with a flag -> text_list_row_slider, else text_list_row_value; scroll
+   bar, page arrows and BACK [fact] */
+
+void text_list_item_rows(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -8857,7 +9023,7 @@ void FUN_20128860(int param_1,int param_2,int param_3)
       if ((*(byte *)(iVar4 + 0x11a) & 0x1f) != 0) {
         iVar4 = memcmp(iVar4 + 0x131,"DONE",4);
         if (iVar4 == 0) {
-          FUN_20128704(uVar6,param_1);
+          text_list_row_done(uVar6,param_1);
           if (bVar7 == 2 && uVar6 == uVar8) {
             fb_draw_round_frame_wrap
                       (uVar1,DAT_2080064e * uVar6 + (uint)DAT_20800642 & 0xffff,DAT_20800640,
@@ -8865,10 +9031,10 @@ void FUN_20128860(int param_1,int param_2,int param_3)
           }
         }
         else if ((bVar7 == 3) && (uVar5 != 0)) {
-          FUN_20128564(uVar6,param_1);
+          text_list_row_slider(uVar6,param_1);
         }
         else {
-          FUN_201283fc(uVar6,param_1);
+          text_list_row_value(uVar6,param_1);
           if (bVar7 == 2 && uVar6 == uVar8) {
             fb_draw_round_frame_wrap
                       (uVar1,DAT_2080064e * uVar6 + (uint)DAT_2080060e & 0xffff,DAT_2080060c,
@@ -8885,7 +9051,8 @@ void FUN_20128860(int param_1,int param_2,int param_3)
   } while (uVar6 < 5);
   if (((param_3 != 0) || (*(byte *)(param_1 + 0x99) != gui_frame.payload[1])) ||
      (*(byte *)(param_1 + 0x9a) != gui_frame.payload[2])) {
-    FUN_201363c0(uVar1,DAT_20800602,DAT_20800600,DAT_20800604,DAT_20800606,uVar2,uVar3,5,0x821);
+    gui_scrollbar_draw(uVar1,DAT_20800602,DAT_20800600,DAT_20800604,DAT_20800606,uVar2,uVar3,5,0x821
+                      );
     fb_fill_rect(uVar1,0x821,(uint)DAT_208005f2,(uint)DAT_208005f0,0x62,0x3c);
     gui_draw_runs(uVar1,(uint)DAT_208005f2,(uint)DAT_208005f0,&DAT_2016dc48);
     gui_draw_runs(uVar1,(uint)DAT_208005f6,(uint)DAT_208005f4,&DAT_2016dc58);
@@ -8913,16 +9080,18 @@ LAB_20128bf0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20128d00 @ 20128d00  (404 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_left_pane
+ * text_list_left_pane @ 20128d00  (404 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Left pane of the text list: up to 8 entries of 13 characters from payload +0xB1 (0x68 bytes compared for
  *     changes) with their icon sprites from the table 0x2016DC7A [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20128d00 @ 20128d00 (404 bytes)
+// ===== text_list_left_pane @ 20128d00 (404 bytes)
 
-void FUN_20128d00(int param_1,int param_2,int param_3)
+/* Left pane of the text list: up to 8 entries of 13 characters from payload +0xB1 (0x68 bytes
+   compared for changes) with their icon sprites from the table 0x2016DC7A [fact] */
+
+void text_list_left_pane(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -8982,16 +9151,18 @@ void FUN_20128d00(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20128e94 @ 20128e94  (184 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: text_list_background
+ * text_list_background @ 20128e94  (184 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: Clears layer 2 and draws the title bar, the left pane and the right pane boxes from the layout words
  *     0x208005C4.. [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20128e94 @ 20128e94 (184 bytes)
+// ===== text_list_background @ 20128e94 (184 bytes)
 
-void FUN_20128e94(void)
+/* Clears layer 2 and draws the title bar, the left pane and the right pane boxes from the layout
+   words 0x208005C4.. [fact] */
+
+void text_list_background(void)
 
 {
   int iVar1;
@@ -9036,7 +9207,7 @@ void text_list_draw(int param_1,int param_2,int param_3)
     if (iVar2 == 0) goto LAB_20129000;
   }
   else {
-    FUN_20128e94();
+    text_list_background();
   }
   gui_draw_runs(uVar1,(uint)DAT_208005c6,(uint)DAT_208005c4,&DAT_2016dc08);
   local_30 = 0;
@@ -9048,14 +9219,14 @@ void text_list_draw(int param_1,int param_2,int param_3)
   memcpy(&local_30,param_1 + 0x9d,0x14);
   gui_draw_text_centered(uVar1,(int)&local_30,(uint)DAT_208005ca,(uint)DAT_208005c8,0xf,0x20800b1c);
 LAB_20129000:
-  FUN_20128d00(param_1,param_2,param_3);
+  text_list_left_pane(param_1,param_2,param_3);
   if (*(char *)(param_1 + 0x98) != '\0') {
     if (*(char *)(param_1 + 0x98) == '\x01') {
-      FUN_201281c0(param_1,param_2,param_3);
+      text_list_plain_rows(param_1,param_2,param_3);
     }
     return;
   }
-  FUN_20128860(param_1,param_2,param_3);
+  text_list_item_rows(param_1,param_2,param_3);
   return;
 }
 
@@ -9070,7 +9241,7 @@ LAB_20129000:
 
 /* packet 0x40: text list with LF/CR glyphs, DONE/BACK */
 
-void scr_text_list(ml_frame *frame,ml_frame *old,int param_3)
+void scr_text_list(int param_1,int param_2,int param_3)
 
 {
   undefined2 *local_30;
@@ -9100,27 +9271,29 @@ void scr_text_list(ml_frame *frame,ml_frame *old,int param_3)
     layer_alpha_rect_set(0,5,1,&local_30);
     layer_alpha_rect_set(1,5,1,&local_30);
   }
-  if (frame->payload[0] != old->payload[0]) {
+  if (*(byte *)(param_1 + 0x98) != *(byte *)(param_2 + 0x98)) {
     param_3 = 1;
   }
-  if (frame->payload[0] < 2) {
-    text_list_draw((int)frame,(int)old,param_3);
+  if (*(byte *)(param_1 + 0x98) < 2) {
+    text_list_draw(param_1,param_2,param_3);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012910c @ 2012910c  (676 bytes, 2 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: voice_msg_play_rec
+ * voice_msg_play_rec @ 2012910c  (676 bytes, 2 callers, export file 20124a74_2012cb60.c)
  * Purpose: Voice-message screen action: "MSG_CH%d" file in the .wav list: play_start, or rec_start with the TX
  *     frequency "%08d" as tag, rec_stop / play_stop; reports E8 states and audio errors [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012910c @ 2012910c (676 bytes)
+// ===== voice_msg_play_rec @ 2012910c (676 bytes)
 
-void FUN_2012910c(int param_1)
+/* Voice-message screen action: "MSG_CH%d" file in the .wav list: play_start, or rec_start with the
+   TX frequency "%08d" as tag, rec_stop / play_stop; reports E8 states and audio errors [fact] */
+
+void voice_msg_play_rec(int param_1)
 
 {
   byte bVar1;
@@ -9186,7 +9359,7 @@ void FUN_2012910c(int param_1)
         } while (local_24 < 5);
         if (local_28 != '\0') {
           if (DAT_20800490 == '\0') {
-            FUN_201248a4(1);
+            mainlink_send_e8_state(1);
           }
           play_start((uint)&local_48,2);
           DAT_20800490 = 1;
@@ -9205,9 +9378,9 @@ LAB_20129190:
   else {
     if (bVar1 == 2) {
       if (DAT_2080048f == '\0') {
-        iVar2 = FUN_20103bc0();
+        iVar2 = sd_drive_flag5();
         if (iVar2 == 0) {
-          FUN_201248a4(2,1);
+          mainlink_send_e8_state(2,1);
           uVar3 = be32_load(gui_frame.tx_freq_be);
           snprintf(&local_58,0x10,"%08d",uVar3);
           rec_start((int)&local_48,&local_58,uVar5,2);
@@ -9250,7 +9423,7 @@ LAB_20129330:
   }
   DAT_2080048f = '\0';
 LAB_20129398:
-  FUN_201248a4(0);
+  mainlink_send_e8_state(0);
   DAT_2080048e = 0;
   return;
 }
@@ -9266,7 +9439,7 @@ LAB_20129398:
 
 /* REC/PLAY state on the VFO screen (%04d, %3d) (inference) */
 
-void vfo_audio_status_draw(ml_frame *frame,int param_2)
+void vfo_audio_status_draw(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -9295,7 +9468,7 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
   local_30 = fb_get_layer_addr(DAT_208085bc);
   uVar3 = audio_state();
   if ((((uVar3 == 0) && (uVar3 = audio_error(), uVar3 == 0)) &&
-      ((bVar5 = (frame->main_vfo).mode, bVar5 < 2 ||
+      ((bVar5 = *(byte *)(param_1 + 0x2d), bVar5 < 2 ||
        ((bVar5 == 4 || bVar5 == 5 || (bVar5 == 6 || bVar5 == 7)))))) &&
      (iVar4 = sd_state_bit6(), iVar4 == 0)) {
     mainlink_send_audio_error(0xffffffff);
@@ -9312,13 +9485,13 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
   }
   fb_fill_rect(local_30,0x4a69,(uint)DAT_20800792,(uint)DAT_20800790,0x7a,0x12);
   fb_fill_rect(local_30,0x4a69,(uint)DAT_20800796,(uint)DAT_20800794,0x44,0x18);
-  if ((frame->payload[0x19] & 0xc) != 0) {
-    if ((frame->payload[0x19] & 8) == 0) {
-      bVar5 = frame->payload[0x1f];
+  if ((*(byte *)(param_1 + 0xb1) & 0xc) != 0) {
+    if ((*(byte *)(param_1 + 0xb1) & 8) == 0) {
+      bVar5 = *(byte *)(param_1 + 0xb7);
       gui_draw_runs(local_30,(uint)DAT_20800792,(uint)DAT_20800790,&DAT_2016ebac);
     }
     else {
-      bVar5 = frame->payload[0x20];
+      bVar5 = *(byte *)(param_1 + 0xb8);
       gui_draw_runs(local_30,(uint)DAT_20800792,(uint)DAT_20800790,&DAT_2016ebcc);
     }
     local_4c = 0;
@@ -9335,10 +9508,10 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
     local_4c = CONCAT13(0x25,(undefined3)local_4c);
     gui_draw_text(local_30,&local_4c,DAT_20800796,DAT_20800794,0x11,&DAT_20803030);
   }
-  bVar5 = frame->payload[0x19];
+  bVar5 = *(byte *)(param_1 + 0xb1);
   uVar3 = 0;
   bVar7 = bVar5 & 3;
-  local_28 = (uint)frame->payload[0x1c];
+  local_28 = (uint)*(byte *)(param_1 + 0xb4);
   do {
     puVar11 = (undefined *)0x0;
     puVar10 = (undefined *)0x0;
@@ -9381,13 +9554,13 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
                   (uint)(ushort)(&DAT_2016ebdc)[uVar3 * 5] + (uint)*puVar6 & 0xffff,puVar9);
     if (bVar7 == 1) {
       uVar1 = 1 << (uVar3 & 0xff);
-      if ((frame->payload[0x1a] & uVar1) != 0) {
+      if ((*(byte *)(param_1 + 0xb2) & uVar1) != 0) {
         gui_draw_runs(local_30,(uint)(ushort)(&DAT_2016ec4c)[uVar3 * 5] + (uint)DAT_208007a2 &
                                0xffff,
                       (uint)(ushort)(&DAT_2016ec4a)[uVar3 * 5] + (uint)DAT_208007a0 & 0xffff,puVar11
                      );
       }
-      if ((frame->payload[0x1b] & uVar1) != 0) {
+      if ((*(byte *)(param_1 + 0xb3) & uVar1) != 0) {
         gui_draw_runs(local_30,(uint)(ushort)(&DAT_2016ec4c)[uVar3 * 5] + (uint)DAT_208007a6 &
                                0xffff,
                       (uint)(ushort)(&DAT_2016ec4a)[uVar3 * 5] + (uint)DAT_208007a4 & 0xffff,puVar10
@@ -9402,13 +9575,13 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
       local_3c = 0;
       local_38 = 0;
       local_34 = 0;
-      if ((bVar7 == 1) && (((uint)frame->payload[0x1e] & 1 << (uVar3 & 0xff)) != 0)) {
+      if ((bVar7 == 1) && (((uint)*(byte *)(param_1 + 0xb6) & 1 << (uVar3 & 0xff)) != 0)) {
         local_4c = 0x20;
         __aeabi_memset((int)&local_4c + 1,6,0x7f);
         local_48 = CONCAT13(0x20,(undefined3)local_48);
       }
       else {
-        FUN_2016372c(&local_4c,frame->payload + uVar3 * 8 + 0x28);
+        FUN_2016372c(&local_4c,param_1 + uVar3 * 8 + 0xc0);
       }
       gui_draw_text(local_30,&local_4c,(&DAT_2016ec4c)[uVar3 * 5] + DAT_208007aa,
                     (&DAT_2016ec4a)[uVar3 * 5] + DAT_208007a8,0xd,puVar8);
@@ -9448,7 +9621,7 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
       local_3c = 0;
       local_38 = 0;
       local_34 = 0;
-      uVar2 = be16_load(frame->payload + 0x22);
+      uVar2 = be16_load((byte *)(param_1 + 0xba));
       if (9999 < uVar2) {
         uVar2 = 9999;
       }
@@ -9475,22 +9648,24 @@ void vfo_audio_status_draw(ml_frame *frame,int param_2)
   fb_fill_rect(local_30,0x821,0xfc,0x249,0x6e,0x3c);
   gui_draw_runs(local_30,0xfc,0x249,&DAT_2016eb2c);
   gui_draw_runs(local_30,DAT_208007ba + 0xfc & 0xffff,DAT_208007b8 + 0x249 & 0xffff,&DAT_2016eb1c);
-  FUN_2012910c(frame);
+  voice_msg_play_rec(param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20129c44 @ 20129c44  (172 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: clar_offset_format
+ * clar_offset_format @ 20129c44  (172 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (hz, buf): signed offset clamped to -9999..9999 as up to 4 digits right-aligned at buf+4 with a leading
  *     '+' or '-' [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20129c44 @ 20129c44 (172 bytes)
+// ===== clar_offset_format @ 20129c44 (172 bytes)
 
-void FUN_20129c44(int param_1,int param_2)
+/* (hz, buf): signed offset clamped to -9999..9999 as up to 4 digits right-aligned at buf+4 with a
+   leading '+' or '-' [fact] */
+
+void clar_offset_format(int param_1,int param_2)
 
 {
   undefined1 uVar1;
@@ -9541,17 +9716,20 @@ void FUN_20129c44(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20129cf0 @ 20129cf0  (348 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: vfo_clar_draw
+ * vfo_clar_draw @ 20129cf0  (348 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: scr_vfo part: clarifier field from main_vfo.side (+0x42) and main_vfo.clar_be (+0x43), drawn while byte
  *     0x49 low nibble = 9; offset text by clar_offset_format (gui.md frequency display words 0x2080051C..) [fact
  *     for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20129cf0 @ 20129cf0 (348 bytes)
+// ===== vfo_clar_draw @ 20129cf0 (348 bytes)
 
-void FUN_20129cf0(int param_1,int param_2,int param_3)
+/* scr_vfo part: clarifier field from main_vfo.side (+0x42) and main_vfo.clar_be (+0x43), drawn
+   while byte 0x49 low nibble = 9; offset text by clar_offset_format (gui.md frequency display words
+   0x2080051C..) [fact for the fields] */
+
+void vfo_clar_draw(int param_1,int param_2,int param_3)
 
 {
   ushort uVar1;
@@ -9589,9 +9767,9 @@ void FUN_20129cf0(int param_1,int param_2,int param_3)
   }
   if ((param_3 != 0 || uVar5 != uVar6) || (uVar3 != uVar1)) {
     fb_clear_rect(iVar2,(uint)DAT_20800522,(uint)DAT_20800520,(uint)DAT_20800528,0x26);
-    FUN_201637f0(auStack_2c,0x20);
+    fill8(auStack_2c,0x20);
     local_27 = 0;
-    FUN_20129c44(uVar3,auStack_2c);
+    clar_offset_format(uVar3,auStack_2c);
     gui_draw_text(iVar2,auStack_2c,DAT_20800522,DAT_20800520,DAT_20800524,&DAT_20802394);
     gui_draw_runs(iVar2,(uint)DAT_2080052e,(uint)DAT_2080052c,&DAT_2016d64c);
   }
@@ -9600,16 +9778,18 @@ void FUN_20129cf0(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20129e4c @ 20129e4c  (280 bytes, 3 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: vfo_digits_draw
+ * vfo_digits_draw @ 20129e4c  (280 bytes, 3 callers, export file 20124a74_2012cb60.c)
  * Purpose: (digits, mode, layout, glyph table): draws the frequency digits of a VFO block with the per-mode digit
  *     positions from the layout record [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20129e4c @ 20129e4c (280 bytes)
+// ===== vfo_digits_draw @ 20129e4c (280 bytes)
 
-void FUN_20129e4c(byte *param_1,uint param_2,int param_3,int param_4)
+/* (digits, mode, layout, glyph table): draws the frequency digits of a VFO block with the per-mode
+   digit positions from the layout record [fact] */
+
+void vfo_digits_draw(byte *param_1,uint param_2,int param_3,int param_4)
 
 {
   byte bVar1;
@@ -9668,16 +9848,18 @@ LAB_20129ef4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20129f64 @ 20129f64  (1676 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: vfo_sub_draw
+ * vfo_sub_draw @ 20129f64  (1676 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: scr_vfo part: the other side's VFO block (frame +0x46.., digits +0x4A, tag +0x4F) with its state labels,
  *     redrawn on change [fact for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20129f64 @ 20129f64 (1676 bytes)
+// ===== vfo_sub_draw @ 20129f64 (1676 bytes)
 
-void FUN_20129f64(char *param_1,int param_2,int param_3)
+/* scr_vfo part: the other side's VFO block (frame +0x46.., digits +0x4A, tag +0x4F) with its state
+   labels, redrawn on change [fact for the fields] */
+
+void vfo_sub_draw(char *param_1,int param_2,int param_3)
 
 {
   byte bVar1;
@@ -9893,7 +10075,7 @@ LAB_2012a4b4:
       case 4:
       case 5:
       case 7:
-        FUN_20129e4c(&uStack_8b,local_64,&DAT_20801864,unaff_r5);
+        vfo_digits_draw(&uStack_8b,local_64,&DAT_20801864,unaff_r5);
         return;
       }
     }
@@ -9912,15 +10094,15 @@ LAB_2012a4b4:
 
 /* packet 0x39: frequency digits */
 
-void scr_vfo(ml_frame *frame,ml_frame *old,int param_3)
+void scr_vfo(char *param_1,char *param_2,int param_3)
 
 {
   byte bVar1;
-  uint uVar2;
-  int iVar3;
-  byte bVar4;
-  uint uVar5;
-  byte bVar6;
+  byte bVar2;
+  uint uVar3;
+  int iVar4;
+  byte bVar5;
+  uint uVar6;
   int iVar7;
   int iVar8;
   undefined1 auStack_58 [12];
@@ -9935,41 +10117,41 @@ void scr_vfo(ml_frame *frame,ml_frame *old,int param_3)
   local_30 = fb_get_layer_addr(DAT_208085b8);
   iVar8 = 0;
   iVar7 = 0;
-  bVar1 = (frame->main_vfo).flags;
-  uVar5 = (uint)bVar1;
-  bVar4 = (frame->sub_vfo).flags & 0xf;
-  bVar6 = (old->sub_vfo).flags & 0xf;
-  uVar2 = (uint)(old->main_vfo).flags;
-  copy5(&uStack_38,(frame->main_vfo).freq_digits);
-  copy5(auStack_2c,(old->main_vfo).freq_digits);
-  memcpy(auStack_58,(frame->main_vfo).tag,0xd);
+  bVar1 = param_1[0x30];
+  uVar6 = (uint)bVar1;
+  bVar5 = param_1[0x49] & 0xf;
+  bVar2 = param_2[0x49];
+  uVar3 = (uint)(byte)param_2[0x30];
+  copy5(&uStack_38,param_1 + 0x31);
+  copy5(auStack_2c,param_2 + 0x31);
+  memcpy(auStack_58,param_1 + 0x36,0xd);
   local_4c = 0;
-  memcpy(auStack_48,(old->main_vfo).tag,0xd);
+  memcpy(auStack_48,param_2 + 0x36,0xd);
   local_3c = 0;
-  if ((((param_3 != 0) || (uVar5 != uVar2)) || (iVar3 = memcmp(&uStack_38,auStack_2c,5), iVar3 != 0)
-      ) || (iVar3 = memcmp(auStack_58,auStack_48,0xd), iVar3 != 0 || bVar4 != bVar6)) {
+  if ((((param_3 != 0) || (uVar6 != uVar3)) || (iVar4 = memcmp(&uStack_38,auStack_2c,5), iVar4 != 0)
+      ) || (iVar4 = memcmp(auStack_58,auStack_48,0xd), iVar4 != 0 || bVar5 != (bVar2 & 0xf))) {
     fb_clear_rect(local_30,10,0x17e,0x1a2,0x32);
-    uVar2 = uVar5 & 0xf;
+    uVar3 = uVar6 & 0xf;
     if ((bVar1 & 0xf) != 0) {
-      if (uVar2 == 1) {
+      if (uVar3 == 1) {
         gui_draw_text(local_30,auStack_58,DAT_2080076a,DAT_20800768,DAT_2080076c,&DAT_208015bc);
       }
-      else if (uVar2 == 4) {
-        FUN_20129e4c(auStack_37,uVar5,&DAT_2080183c);
+      else if (uVar3 == 4) {
+        vfo_digits_draw(auStack_37,uVar6,&DAT_2080183c);
       }
-      else if (uVar2 == 6) {
-        FUN_20129e4c(auStack_37,uVar5,&DAT_2080183c,&PTR_DAT_208025b0);
+      else if (uVar3 == 6) {
+        vfo_digits_draw(auStack_37,uVar6,&DAT_2080183c,&PTR_DAT_208025b0);
       }
     }
   }
-  if (bVar4 != bVar6) {
+  if (bVar5 != (bVar2 & 0xf)) {
     param_3 = 1;
   }
-  if ((bVar4 == 4 || bVar4 == 5) || bVar4 == 7) {
-    if ((frame->cmd == 0x30) && (frame->payload[0] == 7)) {
+  if ((bVar5 == 4 || bVar5 == 5) || bVar5 == 7) {
+    if ((*param_1 == '0') && (param_1[0x98] == '\a')) {
       iVar8 = 1;
     }
-    if ((old->cmd == 0x30) && (old->payload[0] == 7)) {
+    if ((*param_2 == '0') && (param_2[0x98] == '\a')) {
       iVar7 = 1;
     }
     if (iVar8 == iVar7) goto LAB_2012a868;
@@ -9984,12 +10166,12 @@ LAB_2012a868:
                 & 0xffff,(((uint)*(ushort *)(PTR_DAT_20802ff4 + 2) + (uint)DAT_2080077a) -
                          (uint)DAT_20800692) + 3 & 0xffff);
 LAB_2012a8d8:
-  if ((bVar4 == 4 || bVar4 == 5) || bVar4 == 7) {
-    FUN_20129f64(frame,old,param_3);
+  if ((bVar5 == 4 || bVar5 == 5) || bVar5 == 7) {
+    vfo_sub_draw(param_1,param_2,param_3);
     return;
   }
-  if (bVar4 == 9) {
-    FUN_20129cf0(frame,old,param_3);
+  if (bVar5 == 9) {
+    vfo_clar_draw(param_1,param_2,param_3);
   }
   return;
 }
@@ -10005,7 +10187,7 @@ LAB_2012a8d8:
 
 /* packet 0x37: FUNC panel (CONTRAST, DIMMER, MIC GAIN, ...) */
 
-void scr_func_panel(ml_frame *frame,int param_2)
+void scr_func_panel(int param_1,int param_2)
 
 {
   byte bVar1;
@@ -10017,6 +10199,7 @@ void scr_func_panel(ml_frame *frame,int param_2)
   uint uVar7;
   uint uVar8;
   undefined **ppuVar9;
+  int iVar10;
   undefined4 local_48;
   undefined4 local_44;
   undefined4 local_40;
@@ -10028,9 +10211,9 @@ void scr_func_panel(ml_frame *frame,int param_2)
   uint local_28;
   
   iVar2 = fb_get_layer_addr(DAT_208085b8);
-  local_34 = frame->payload[1] & 0x3f;
-  local_28 = frame->payload[2] & 0x3f;
-  bVar1 = frame->payload[0];
+  local_34 = *(byte *)(param_1 + 0x99) & 0x3f;
+  local_28 = *(byte *)(param_1 + 0x9a) & 0x3f;
+  bVar1 = *(byte *)(param_1 + 0x98);
   if ((bVar1 & 0x40) == 0) {
     local_38 = 0xfc00;
   }
@@ -10058,8 +10241,9 @@ void scr_func_panel(ml_frame *frame,int param_2)
   uVar5 = 0;
   if (0 < local_30) {
     do {
-      uVar8 = (uint)frame->payload[uVar5 * 10 + 4];
-      if ((frame->payload[uVar5 * 10 + 3] & 0x80) == 0) {
+      iVar10 = param_1 + uVar5 * 10;
+      uVar8 = (uint)*(byte *)(iVar10 + 0x9c);
+      if ((*(byte *)(iVar10 + 0x9b) & 0x80) == 0) {
         ppuVar9 = &PTR_DAT_208019ec;
       }
       else {
@@ -10076,7 +10260,7 @@ switchD_2012abd4_caseD_0:
           local_48 = 0;
           local_44 = 0;
           local_40 = 0;
-          FUN_2016372c(&local_48,frame->payload + uVar5 * 10 + 5);
+          FUN_2016372c(&local_48,iVar10 + 0x9d);
           FUN_2012a920(&local_48,DAT_2080053e + (&DAT_2080188e)[uVar5 * 5],*puVar6 + DAT_2080053c);
         }
         else {
@@ -10155,7 +10339,7 @@ switchD_2012abd4_caseD_6:
 
 /* packet 0x31: setting name + value popup (tables at 0x208026DC..) */
 
-void scr_value_popup(ml_frame *frame)
+void scr_value_popup(int param_1)
 
 {
   int iVar1;
@@ -10172,7 +10356,7 @@ void scr_value_popup(ml_frame *frame)
   uint local_2c;
   
   local_2c = fb_get_layer_addr(DAT_208085bc);
-  uVar4 = (uint)frame->payload[0];
+  uVar4 = (uint)*(byte *)(param_1 + 0x98);
   pvVar7 = *(void **)(&DAT_208029e8 + uVar4 * 4);
   puVar6 = *(ushort **)(&DAT_20802c34 + uVar4 * 4);
   if (puVar6 != (ushort *)0x0) {
@@ -10207,7 +10391,7 @@ void scr_value_popup(ml_frame *frame)
       local_38 = 0;
       local_34 = 0;
       local_30 = 0;
-      memcpy(&local_38,frame->payload + 1,9);
+      memcpy(&local_38,param_1 + 0x99,9);
       local_30._0_2_ = (ushort)(byte)local_30;
       str_rtrim((int)&local_38);
       if (*(short *)(&DAT_208027e0 + uVar4 * 4) == 0) {
@@ -10229,15 +10413,17 @@ void scr_value_popup(ml_frame *frame)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012b0f0 @ 2012b0f0  (204 bytes, 5 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: select_popup_frame_draw
+ * select_popup_frame_draw @ 2012b0f0  (204 bytes, 5 callers, export file 20124a74_2012cb60.c)
  * Purpose: (row, x): frame and fill of one item cell of the selection popup (cell sizes 0x2016E620) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012b0f0 @ 2012b0f0 (204 bytes)
+// ===== select_popup_frame_draw @ 2012b0f0 (204 bytes)
 
-void FUN_2012b0f0(uint param_1,uint param_2)
+/* (row, x): frame and fill of one item cell of the selection popup (cell sizes 0x2016E620) [fact]
+    */
+
+void select_popup_frame_draw(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -10271,7 +10457,7 @@ void FUN_2012b0f0(uint param_1,uint param_2)
 
 /* packet 0x30: METER / MODE selection popups */
 
-void scr_select_popup(ml_frame *frame,ml_frame *old,int param_3)
+void scr_select_popup(int param_1,int param_2,int param_3)
 
 {
   byte bVar1;
@@ -10294,17 +10480,17 @@ void scr_select_popup(ml_frame *frame,ml_frame *old,int param_3)
   undefined *in_stack_ffffffc8;
   byte bVar18;
   
-  bVar18 = frame->payload[0];
-  bVar1 = frame->payload[1];
+  bVar18 = *(byte *)(param_1 + 0x98);
+  bVar1 = *(byte *)(param_1 + 0x99);
   uVar12 = (uint)bVar1;
-  uVar14 = frame->payload[2] & 1;
+  uVar14 = *(byte *)(param_1 + 0x9a) & 1;
   fb_get_layer_addr(DAT_208085bc);
   if (bVar18 != 7) {
     if (bVar18 < 8) {
       switch(bVar18) {
       case 0:
         iVar6 = fb_get_layer_addr(DAT_208085bc);
-        FUN_2012b0f0(0,0x6d0000);
+        select_popup_frame_draw(0,0x6d0000);
         gui_draw_runs(iVar6,0x75,0xc5,&DAT_2016dd04);
         if (5 < uVar12) {
           uVar12 = 5;
@@ -10374,8 +10560,8 @@ LAB_2012c03c:
         return;
       case 5:
         iVar6 = fb_get_layer_addr(DAT_208085bc);
-        uVar15 = (uint)frame->payload[3];
-        FUN_2012b0f0(2,0x5b009e);
+        uVar15 = (uint)*(byte *)(param_1 + 0x9b);
+        select_popup_frame_draw(2,0x5b009e);
         gui_draw_runs(iVar6,(uint)DAT_20800782,(uint)DAT_20800780,&DAT_2016e724);
         uVar14 = 0;
         do {
@@ -10401,7 +10587,7 @@ LAB_2012c03c:
               return;
             }
             if (uVar14 != 0xf) break;
-            if ((frame->scope_flags & 0x40) == 0) {
+            if ((*(byte *)(param_1 + 5) & 0x40) == 0) {
               puVar7 = &DAT_20802fe4;
               pvVar16 = (void *)0x208084bc;
             }
@@ -10413,7 +10599,7 @@ LAB_2012c03c:
         } while( true );
       case 6:
         iVar6 = fb_get_layer_addr(DAT_208085bc);
-        FUN_2012b0f0(1,0xa1009e);
+        select_popup_frame_draw(1,0xa1009e);
         gui_draw_runs(iVar6,0xa9,0x163,&DAT_2016e644);
         uVar14 = 0;
         do {
@@ -10439,10 +10625,10 @@ LAB_2012c03c:
     else {
       if (bVar18 == 0xb) {
         uVar12 = fb_get_layer_addr(DAT_208085bc);
-        uVar15 = frame->payload[1] & 0xffffff0f;
-        uVar14 = old->payload[1] & 0xffffff0f;
-        bVar18 = frame->payload[3];
-        uVar13 = (uint)old->payload[3];
+        uVar15 = *(byte *)(param_1 + 0x99) & 0xffffff0f;
+        uVar14 = *(byte *)(param_2 + 0x99) & 0xffffff0f;
+        bVar18 = *(byte *)(param_1 + 0x9b);
+        uVar13 = (uint)*(byte *)(param_2 + 0x9b);
         bVar2 = false;
         if (10 < (byte)uVar15) {
           uVar15 = 10;
@@ -10451,7 +10637,7 @@ LAB_2012c03c:
           bVar18 = 0xb;
         }
         uVar9 = (uint)bVar18;
-        if ((param_3 != 0) || (frame->payload[0] != old->payload[0])) {
+        if ((param_3 != 0) || (*(char *)(param_1 + 0x98) != *(char *)(param_2 + 0x98))) {
           bVar2 = true;
           fb_draw_frame(uVar12,0x821,0xa1,0x3d,0x2a6,0x128,2);
           fb_fill_rect(uVar12,0x821,0xa1,0x3d,0x2a6,0x128);
@@ -10626,8 +10812,8 @@ LAB_2012c03c:
       else {
         if (bVar18 == 0xc) {
           iVar6 = fb_get_layer_addr(DAT_208085bc);
-          uVar15 = (uint)frame->payload[3];
-          FUN_2012b0f0(1,0xa1009e);
+          uVar15 = (uint)*(byte *)(param_1 + 0x9b);
+          select_popup_frame_draw(1,0xa1009e);
           gui_draw_runs(iVar6,(uint)DAT_2080078a,(uint)DAT_20800788,&DAT_2016ea28);
           uVar14 = 0;
           do {
@@ -10653,7 +10839,7 @@ LAB_2012c03c:
         }
         if (bVar18 == 0xd) {
           iVar6 = fb_get_layer_addr(DAT_208085bc);
-          FUN_2012b0f0(0,0xa1009e);
+          select_popup_frame_draw(0,0xa1009e);
           gui_draw_runs(iVar6,0xa9,0x163,&DAT_2016ed28);
           if ((4 < uVar12) && (uVar12 != 5)) {
             uVar12 = 4;
@@ -10717,17 +10903,20 @@ LAB_2012bb34:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012c2d8 @ 2012c2d8  (328 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: gui_payload_changed
+ * gui_payload_changed @ 2012c2d8  (328 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (frame, old): 1 when the screen payload differs from the previous frame for screens
  *     0x30/0x31/0x37/0x39/0x41/0x70 (compare lengths 7/10/0x1A7/0x50/0xAD/0x4A), 0 if not, -1 for a new screen or
  *     other ids [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012c2d8 @ 2012c2d8 (328 bytes)
+// ===== gui_payload_changed @ 2012c2d8 (328 bytes)
 
-uint FUN_2012c2d8(ml_frame *frame,ml_frame *old)
+/* (frame, old): 1 when the screen payload differs from the previous frame for screens
+   0x30/0x31/0x37/0x39/0x41/0x70 (compare lengths 7/10/0x1A7/0x50/0xAD/0x4A), 0 if not, -1 for a new
+   screen or other ids [fact] */
+
+uint gui_payload_changed(ml_frame *frame,ml_frame *old)
 
 {
   byte bVar1;
@@ -10796,7 +10985,7 @@ uint FUN_2012c2d8(ml_frame *frame,ml_frame *old)
 
 /* audio_state/audio_error/audio_clear_error */
 
-void audio_error_check(ml_frame *frame)
+void audio_error_check(int param_1)
 
 {
   byte bVar1;
@@ -10806,7 +10995,7 @@ void audio_error_check(ml_frame *frame)
   if (DAT_2080048e != '\0' && DAT_2080048e != '\x03') {
     return;
   }
-  if (frame->dvs >> 4 == 0) {
+  if (*(byte *)(param_1 + 0x24) >> 4 == 0) {
     uVar2 = audio_error();
     if (uVar2 == 0xffffffff) {
       if ((((gui_frame.main_vfo.mode < 2) ||
@@ -10823,29 +11012,32 @@ void audio_error_check(ml_frame *frame)
   }
   uVar2 = audio_state();
   if ((((uVar2 == 0) && (uVar2 = audio_error(), uVar2 == 0)) &&
-      ((bVar1 = (frame->main_vfo).mode, bVar1 < 2 ||
+      ((bVar1 = *(byte *)(param_1 + 0x2d), bVar1 < 2 ||
        ((bVar1 == 4 || bVar1 == 5 || (bVar1 == 6 || bVar1 == 7)))))) &&
      (iVar3 = sd_state_bit6(), iVar3 == 0)) {
     mainlink_send_audio_error(0xffffffff);
     return;
   }
   DAT_2080048e = 3;
-  FUN_2012910c(frame);
+  voice_msg_play_rec(param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012c6c4 @ 2012c6c4  (108 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: scope_speed_update
+ * scope_speed_update @ 2012c6c4  (108 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: (frame, old, force): on a change of byte 0x12 bits 4-7 (SPEED, clamped to 5) calls scope2d_set_speed
  *     and, unless drawing is held, the 3DSS line period 0x208085B0 from ROM 0x203A70A8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012c6c4 @ 2012c6c4 (108 bytes)
+// ===== scope_speed_update @ 2012c6c4 (108 bytes)
 
-void FUN_2012c6c4(ml_frame *frame,ml_frame *old,int flag)
+/* (frame, old, force): on a change of byte 0x12 bits 4-7 (SPEED, clamped to 5) calls
+   scope2d_set_speed and, unless drawing is held, the 3DSS line period 0x208085B0 from ROM
+   0x203A70A8 [fact] */
+
+void scope_speed_update(ml_frame *frame,ml_frame *old,int flag)
 
 {
   uint uVar1;
@@ -10867,19 +11059,21 @@ void FUN_2012c6c4(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012c71c @ 2012c71c  (912 bytes, 3 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: multi_panel_label_draw
+ * multi_panel_label_draw @ 2012c71c  (912 bytes, 3 callers, export file 20124a74_2012cb60.c)
  * Purpose: (frame, part): labels of the MULTI panel parts (oscilloscope / AF-FFT, from the osc byte +0x71) or the
  *     text-view header (part 0) at the layout words 0x20800722..0x2080074E [fact for the callers; inference for the
  *     part roles]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012c71c @ 2012c71c (912 bytes)
+// ===== multi_panel_label_draw @ 2012c71c (912 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (frame, part): labels of the MULTI panel parts (oscilloscope / AF-FFT, from the osc byte +0x71)
+   or the text-view header (part 0) at the layout words 0x20800722..0x2080074E [fact for the
+   callers; inference for the part roles] */
 
-void FUN_2012c71c(int param_1,int param_2)
+void multi_panel_label_draw(int param_1,int param_2)
 
 {
   undefined2 uVar1;
@@ -10894,7 +11088,7 @@ void FUN_2012c71c(int param_1,int param_2)
   
   iVar3 = fb_get_layer_addr(0);
   if (DAT_20800480 == '\0') {
-    iVar5 = FUN_20133640();
+    iVar5 = scope3d_buf_get();
   }
   else {
     iVar5 = 0;
@@ -10985,16 +11179,19 @@ LAB_2012c814:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012caac @ 2012caac  (180 bytes, 1 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: multi_panel_labels_update
+ * multi_panel_labels_update @ 2012caac  (180 bytes, 1 callers, export file 20124a74_2012cb60.c)
  * Purpose: scr_main_layout part: when byte 1, scope mode, vfo_flags bits or osc (+0x71) change, redraws the panel
  *     labels with multi_panel_label_draw (text view: part 0; MULTI layout: parts 2 and 3) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012caac @ 2012caac (180 bytes)
+// ===== multi_panel_labels_update @ 2012caac (180 bytes)
 
-void FUN_2012caac(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: when byte 1, scope mode, vfo_flags bits or osc (+0x71) change, redraws the
+   panel labels with multi_panel_label_draw (text view: part 0; MULTI layout: parts 2 and 3) [fact]
+    */
+
+void multi_panel_labels_update(ml_frame *frame,ml_frame *old,int flag)
 
 {
   if (((flag == 0) && (frame->byte1 == old->byte1)) && (frame->scope_mode == old->scope_mode)) {
@@ -11005,29 +11202,31 @@ void FUN_2012caac(ml_frame *frame,ml_frame *old,int flag)
     }
   }
   if (DAT_208004d0 == '\x03') {
-    FUN_2012c71c(frame,0);
+    multi_panel_label_draw(frame,0);
     return;
   }
   if (DAT_20800482 != '\x01') {
     return;
   }
-  FUN_2012c71c(frame,2);
-  FUN_2012c71c(frame,3);
+  multi_panel_label_draw(frame,2);
+  multi_panel_label_draw(frame,3);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012cb60 @ 2012cb60  (168 bytes, 2 callers, export file 20124a74_2012cb60.c)
- * Name on the doc page: gui_draw_number_runs
+ * gui_draw_number_runs @ 2012cb60  (168 bytes, 2 callers, export file 20124a74_2012cb60.c)
  * Purpose: (fb, y, x, value): draws a number digit by digit from the glyph table 0x2080092C (value % 10), with a
  *     leading glyph 0x20800924 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012cb60 @ 2012cb60 (168 bytes)
+// ===== gui_draw_number_runs @ 2012cb60 (168 bytes)
 
-void FUN_2012cb60(int param_1,int param_2,uint param_3,uint param_4)
+/* (fb, y, x, value): draws a number digit by digit from the glyph table 0x2080092C (value % 10),
+   with a leading glyph 0x20800924 [fact] */
+
+void gui_draw_number_runs(int param_1,int param_2,uint param_3,uint param_4)
 
 {
   int iVar1;
@@ -11056,17 +11255,20 @@ void FUN_2012cb60(int param_1,int param_2,uint param_3,uint param_4)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_2012cf30 @ 2012cf30  (900 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: scope_freq_scale_draw
+ * scope_freq_scale_draw @ 2012cf30  (900 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: scr_main_layout part: frequency scale of the scope area from op_freq_be, dial_freq_be, scope_start_be
  *     and span_ccf (redrawn on change): numbers with gui_draw_number_runs at the span step table 0x2016D6E8 [fact
  *     for the fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012cf30 @ 2012cf30 (900 bytes)
+// ===== scope_freq_scale_draw @ 2012cf30 (900 bytes)
 
-void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: frequency scale of the scope area from op_freq_be, dial_freq_be,
+   scope_start_be and span_ccf (redrawn on change): numbers with gui_draw_number_runs at the span
+   step table 0x2016D6E8 [fact for the fields] */
+
+void scope_freq_scale_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   char cVar1;
@@ -11113,7 +11315,7 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
   }
   local_30 = fb_get_layer_addr(0);
   if (DAT_20800480 == '\0') {
-    iVar6 = FUN_20133640();
+    iVar6 = scope3d_buf_get();
   }
   else {
     iVar6 = 0;
@@ -11146,7 +11348,7 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
     local_3c = frame->dial_freq_be[0] & 0xf;
     local_39 = frame->dial_freq_be[3];
     uVar3 = be32_load(&local_3c);
-    FUN_2012cb60(local_40,puVar9[1],*puVar9 + DAT_20800758,uVar3);
+    gui_draw_number_runs(local_40,puVar9[1],*puVar9 + DAT_20800758,uVar3);
     iVar8 = 0;
     local_2c = uVar11 * 0x10 + 0x20802dd0;
     iVar4 = uVar11 * 0x18 + 0x20802e70;
@@ -11177,7 +11379,8 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
     iVar4 = __aeabi_uidivmod((*(int *)(&UNK_2016d6e8 + uVar11 * 4) + uVar3) - uVar3,5);
     iVar8 = 0;
     do {
-      FUN_2012cb60(local_40,puVar9[1],*puVar9 + (&DAT_20802db8)[iVar8 * 2],iVar4 * iVar8 + uVar3);
+      gui_draw_number_runs
+                (local_40,puVar9[1],*puVar9 + (&DAT_20802db8)[iVar8 * 2],iVar4 * iVar8 + uVar3);
       iVar8 = iVar8 + 1;
     } while (iVar8 < 6);
   }
@@ -11263,16 +11466,19 @@ void scope_area_frame_draw(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012d318 @ 2012d318  (132 bytes, 3 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: scope2d_spectrum_height
+ * scope2d_spectrum_height @ 2012d318  (132 bytes, 3 callers, export file 2012cf30_201322bc.c)
  * Purpose: (expanded): 2D spectrum height for the current layout (0x208004D0, MULTI 0x20800482, waterfall size
  *     0x208004D2): 100 / 140 / 60 / 210 / 40 / 80, the values of the spectrum height table in gui.md [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012d318 @ 2012d318 (132 bytes)
+// ===== scope2d_spectrum_height @ 2012d318 (132 bytes)
 
-undefined4 FUN_2012d318(int param_1)
+/* (expanded): 2D spectrum height for the current layout (0x208004D0, MULTI 0x20800482, waterfall
+   size 0x208004D2): 100 / 140 / 60 / 210 / 40 / 80, the values of the spectrum height table in
+   gui.md [fact] */
+
+undefined4 scope2d_spectrum_height(int param_1)
 
 {
   undefined4 uVar1;
@@ -11441,7 +11647,7 @@ void scope_mode_decode(int param_1)
 
 /* packet 0x20 scope bytes changed: clear area, decode mode, reset history */
 
-void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
+void scope_area_setup(int param_1,int param_2,int param_3)
 
 {
   byte bVar1;
@@ -11458,14 +11664,15 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
   
   iVar2 = fb_get_layer_addr(0);
   iVar3 = fb_get_layer_addr(DAT_208085b8);
-  uVar4 = frame->disp_sens & 0x80;
-  iVar8 = -((int)((uint)frame->scope_flags << 0x1a) >> 0x1f);
+  uVar4 = *(byte *)(param_1 + 6) & 0x80;
+  iVar8 = -((int)((uint)*(byte *)(param_1 + 5) << 0x1a) >> 0x1f);
   bVar1 = DAT_208f463a | DAT_208f463d;
-  if ((((param_3 == 0) && (frame->byte1 == old->byte1)) && (frame->scope_mode == old->scope_mode))
-     && ((frame->vfo_flags & 7) == (old->vfo_flags & 7))) {
+  if ((((param_3 == 0) && (*(char *)(param_1 + 1) == *(char *)(param_2 + 1))) &&
+      (*(char *)(param_1 + 2) == *(char *)(param_2 + 2))) &&
+     ((*(byte *)(param_1 + 3) & 7) == (*(byte *)(param_2 + 3) & 7))) {
     return;
   }
-  scope_mode_decode((int)frame);
+  scope_mode_decode(param_1);
   if (iVar8 == 0) {
     local_2c = &DAT_2016d2d0;
     if (DAT_208004d0 == 0) {
@@ -11493,13 +11700,13 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
     }
   }
   DAT_20800489 = 3;
-  FUN_20134304(1);
-  if ((frame->tx_swr & 0x80) != 0) {
-    FUN_201342d0(0);
+  scope_freeze_b_set(1);
+  if ((*(byte *)(param_1 + 7) & 0x80) != 0) {
+    scope_obj_bank_reset(0);
   }
-  FUN_20120d58();
+  afscope_clear();
   if (DAT_20800480 == '\0') {
-    FUN_20133618();
+    scope3d_history_clear_thunk();
   }
   DAT_208007c8 = 0;
   if (DAT_20800482 == '\0') {
@@ -11513,10 +11720,10 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
         DAT_208007c8 = 0;
         return;
       }
-      FUN_20131f74(0,0xb8,1,iVar8,bVar1,old);
+      textterm_view_frame(0,0xb8,1,iVar8,bVar1,param_2);
       return;
     }
-    uVar5 = FUN_2012d318(iVar8);
+    uVar5 = scope2d_spectrum_height(iVar8);
     FUN_20134444(uVar5,uVar4);
     scope_area_frame_draw(0);
     uVar6 = 1;
@@ -11533,7 +11740,7 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
       gui_draw_runs32(iVar2,iVar10,4,local_2c + 0x10);
     }
     else if (DAT_208004d0 == 1) {
-      uVar5 = FUN_2012d318(iVar8);
+      uVar5 = scope2d_spectrum_height(iVar8);
       FUN_20134444(uVar5,uVar4);
       scope_area_frame_draw(1);
       FUN_2012d000(1,iVar10,1,1,iVar8);
@@ -11543,7 +11750,7 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
         DAT_208007c8 = 0;
         return;
       }
-      FUN_20131f74(0,0xb8,1,iVar8,bVar1,old);
+      textterm_view_frame(0,0xb8,1,iVar8,bVar1,param_2);
     }
     if (1 < DAT_208004d0) {
       return;
@@ -11564,17 +11771,21 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012d8bc @ 2012d8bc  (828 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: main_left_boxes_draw
+ * main_left_boxes_draw @ 2012d8bc  (828 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte entry of
  *     0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when ATT/IPO/DNF (+0x0C), the
  *     CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change [fact for the table and fields]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012d8bc @ 2012d8bc (828 bytes)
+// ===== main_left_boxes_draw @ 2012d8bc (828 bytes)
 
-void FUN_2012d8bc(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte
+   entry of 0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when
+   ATT/IPO/DNF (+0x0C), the CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change [fact
+   for the table and fields] */
+
+void main_left_boxes_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   uint uVar1;
@@ -11698,16 +11909,18 @@ void FUN_2012d8bc(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012dbf8 @ 2012dbf8  (460 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: main_bottom_row_draw
+ * main_bottom_row_draw @ 2012dbf8  (460 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of 0x2016E304, the
  *     touch table of keys 0x1000..0x1009 (input.md) [fact for the table]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012dbf8 @ 2012dbf8 (460 bytes)
+// ===== main_bottom_row_draw @ 2012dbf8 (460 bytes)
 
-void FUN_2012dbf8(int param_1,int param_2,int param_3)
+/* scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of
+   0x2016E304, the touch table of keys 0x1000..0x1009 (input.md) [fact for the table] */
+
+void main_bottom_row_draw(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -11764,17 +11977,20 @@ void FUN_2012dbf8(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012ddc4 @ 2012ddc4  (828 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: vfo_state_label_draw
+ * vfo_state_label_draw @ 2012ddc4  (828 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: (state, channel, flag): VFO-state indicator next to the mode label: sprite by state 1..10 (VFO, memory,
  *     memory tune, PMS, QMB, 60 m, EMG, split RX/TX per ml_vfo.state) with the channel number [fact for the state
  *     switch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012ddc4 @ 2012ddc4 (828 bytes)
+// ===== vfo_state_label_draw @ 2012ddc4 (828 bytes)
 
-void FUN_2012ddc4(int param_1,uint param_2,int param_3)
+/* (state, channel, flag): VFO-state indicator next to the mode label: sprite by state 1..10 (VFO,
+   memory, memory tune, PMS, QMB, 60 m, EMG, split RX/TX per ml_vfo.state) with the channel number
+   [fact for the state switch] */
+
+void vfo_state_label_draw(int param_1,uint param_2,int param_3)
 
 {
   undefined *puVar1;
@@ -11883,16 +12099,19 @@ void FUN_2012ddc4(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012e1a4 @ 2012e1a4  (216 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: vfo_mode_state_draw
+ * vfo_mode_state_draw @ 2012e1a4  (216 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: scr_main_layout part: draws the mode label (table 0x20802FF4 by main_vfo.mode) and the VFO-state /
  *     channel indicator (vfo_state_label_draw) when main_vfo mode/state/channel or vfo_flags bit 7 change [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012e1a4 @ 2012e1a4 (216 bytes)
+// ===== vfo_mode_state_draw @ 2012e1a4 (216 bytes)
 
-void FUN_2012e1a4(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: draws the mode label (table 0x20802FF4 by main_vfo.mode) and the VFO-state
+   / channel indicator (vfo_state_label_draw) when main_vfo mode/state/channel or vfo_flags bit 7
+   change [fact] */
+
+void vfo_mode_state_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   int iVar1;
@@ -11921,7 +12140,7 @@ void FUN_2012e1a4(ml_frame *frame,ml_frame *old,int flag)
     bVar4 = 0xd1;
   }
   gui_draw_runs(iVar1,10,0x11a,&DAT_2016e714);
-  FUN_2012ddc4(bVar5,bVar4,bVar2);
+  vfo_state_label_draw(bVar5,bVar4,bVar2);
   gui_draw_runs(iVar1,DAT_20800776 + 10 & 0xffff,DAT_20800774 + 0x11a & 0xffff,
                 (&PTR_DAT_20802ff4)[uVar3]);
   return;
@@ -11929,17 +12148,20 @@ void FUN_2012e1a4(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012e27c @ 2012e27c  (332 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: cw_zero_in_draw
+ * cw_zero_in_draw @ 2012e27c  (332 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: scr_main_layout part: when the CW indicator (frame +0x0D bit 7) or the 4-byte zero_in field (+0x15)
  *     changes, draws the CW sprite and one white cell per set bit of the 25-bit zero-in bar at the layout words
  *     0x20800508..0x2080051A (gui.md "main screen parts") [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012e27c @ 2012e27c (332 bytes)
+// ===== cw_zero_in_draw @ 2012e27c (332 bytes)
 
-void FUN_2012e27c(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: when the CW indicator (frame +0x0D bit 7) or the 4-byte zero_in field
+   (+0x15) changes, draws the CW sprite and one white cell per set bit of the 25-bit zero-in bar at
+   the layout words 0x20800508..0x2080051A (gui.md "main screen parts") [fact] */
+
+void cw_zero_in_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   int iVar1;
@@ -11972,16 +12194,18 @@ void FUN_2012e27c(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012e3c8 @ 2012e3c8  (24 bytes, 2 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: scope_color_decode
+ * scope_color_decode @ 2012e3c8  (24 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: (byte, *a, *b): low nibble clamped to 10 into both outputs; the COLOR field of packet 0x20 byte 0x12
  *     (gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012e3c8 @ 2012e3c8 (24 bytes)
+// ===== scope_color_decode @ 2012e3c8 (24 bytes)
 
-void FUN_2012e3c8(byte param_1,byte *param_2,byte *param_3)
+/* (byte, *a, *b): low nibble clamped to 10 into both outputs; the COLOR field of packet 0x20 byte
+   0x12 (gui.md) [fact] */
+
+void scope_color_decode(byte param_1,byte *param_2,byte *param_3)
 
 {
   param_1 = param_1 & 0xf;
@@ -12004,7 +12228,7 @@ void FUN_2012e3c8(byte param_1,byte *param_2,byte *param_3)
 
 /* main screen static parts (scope frame, mode/filter labels) */
 
-void scr_main_layout(ml_frame *frame,ml_frame *old,int param_3)
+void scr_main_layout(int param_1,int param_2,int param_3)
 
 {
   bool bVar1;
@@ -12027,23 +12251,23 @@ void scr_main_layout(ml_frame *frame,ml_frame *old,int param_3)
   bVar2 = false;
   bVar1 = false;
   bVar7 = DAT_208f4638 != '\0';
-  local_38 = frame->speed_color & 0xf;
-  local_34 = old->speed_color & 0xf;
-  bVar3 = frame->peak >> 4;
+  local_38 = *(byte *)(param_1 + 0x12) & 0xf;
+  local_34 = *(byte *)(param_2 + 0x12) & 0xf;
+  bVar3 = *(byte *)(param_1 + 0x10) >> 4;
   FUN_2012616c(2);
   if (param_3 != 0 || bVar7) {
-    FUN_20134480((frame->scope_flags & 0x3f) >> 5);
+    scope3d_layout_set((*(byte *)(param_1 + 5) & 0x3f) >> 5);
   }
-  uVar6 = frame->disp_sens & 0x80;
-  uVar5 = frame->disp_sens & 0x40;
-  if ((param_3 != 0 || bVar7) || ((old->disp_sens & 0x80) != uVar6)) {
+  uVar6 = *(byte *)(param_1 + 6) & 0x80;
+  uVar5 = *(byte *)(param_1 + 6) & 0x40;
+  if ((param_3 != 0 || bVar7) || ((*(byte *)(param_2 + 6) & 0x80) != uVar6)) {
     FUN_20134468(uVar6);
     bVar2 = true;
     if (param_3 == 0 && !bVar7) goto LAB_2012e4b4;
   }
   else {
 LAB_2012e4b4:
-    if ((old->disp_sens & 0x40) == uVar5) goto LAB_2012e4d4;
+    if ((*(byte *)(param_2 + 6) & 0x40) == uVar5) goto LAB_2012e4d4;
   }
   FUN_20134474(uVar5);
   bVar2 = true;
@@ -12051,24 +12275,25 @@ LAB_2012e4d4:
   if (bVar3 != 0) {
     DAT_208004a0 = bVar3 * '\x03';
   }
-  if ((param_3 != 0 || bVar7) || ((frame->peak & 7) != (old->peak & 7))) {
-    bVar3 = frame->peak & 7;
+  if ((param_3 != 0 || bVar7) ||
+     ((*(byte *)(param_1 + 0x10) & 7) != (*(byte *)(param_2 + 0x10) & 7))) {
+    bVar3 = *(byte *)(param_1 + 0x10) & 7;
     if (4 < bVar3) {
       bVar3 = 4;
     }
-    FUN_20133dec(bVar3);
+    scope_peak_set(bVar3);
     bVar1 = true;
   }
   if ((bVar7) || ((local_38 != local_34 || bVar1) || bVar2)) {
-    FUN_2012e3c8(local_38,local_3c,&stack0xffffffc0);
-    FUN_201342dc(local_3c[0],uVar5 & 0xff);
+    scope_color_decode(local_38,local_3c,&stack0xffffffc0);
+    scope_palette_set(local_3c[0],uVar5 & 0xff);
     scope2d_set_color(local_3c[0]);
   }
-  meter_draw_scale(frame,old,param_3);
-  FUN_2012e27c(frame,old,param_3);
-  FUN_2012e1a4(frame,old,param_3);
-  scr_vfo(frame,old,param_3);
-  FUN_2012dbf8(frame,old,param_3);
+  meter_draw_scale(param_1,param_2,param_3);
+  cw_zero_in_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  vfo_mode_state_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scr_vfo((char *)param_1,(char *)param_2,param_3);
+  main_bottom_row_draw(param_1,param_2,param_3);
   if (bVar7) {
     fb_clear_rect(local_28,0x6d,0,800,0x137);
     gui_area_dirty_set(0);
@@ -12076,14 +12301,14 @@ LAB_2012e4d4:
     fb_clear_rect(local_30,0x6d,0,800,0x137);
     param_3 = 1;
   }
-  FUN_2012d8bc(frame,old,param_3);
-  scope_area_setup(frame,old,param_3);
-  FUN_2012cf30(frame,old,param_3);
-  FUN_2012caac(frame,old,param_3);
-  FUN_2012c6c4(frame,old,param_3);
+  main_left_boxes_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scope_area_setup(param_1,param_2,param_3);
+  scope_freq_scale_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  multi_panel_labels_update((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scope_speed_update((ml_frame *)param_1,(ml_frame *)param_2,param_3);
   iVar4 = fb_get_layer_addr(DAT_208085b8);
-  uVar5 = (uint)frame->func_knob;
-  bVar3 = old->func_knob;
+  uVar5 = (uint)*(byte *)(param_1 + 0x2c);
+  bVar3 = *(byte *)(param_2 + 0x2c);
   if (param_3 != 0) {
     fb_fill_rect(iVar4,0x821,(uint)DAT_208007be,(uint)DAT_208007bc,(uint)DAT_208007c0,
                  (uint)DAT_208007c2);
@@ -12125,23 +12350,25 @@ LAB_2012e4d4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012e678 @ 2012e678  (80 bytes, 2 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_frame_update
+ * textterm_frame_update @ 2012e678  (80 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: (frame, old): P2_15 = 1, resets the terminal TX line when the text view or the VFO bits change, then
  *     textterm_send_all [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012e678 @ 2012e678 (80 bytes)
+// ===== textterm_frame_update @ 2012e678 (80 bytes)
 
-void FUN_2012e678(ml_frame *frame,ml_frame *old)
+/* (frame, old): P2_15 = 1, resets the terminal TX line when the text view or the VFO bits change,
+   then textterm_send_all [fact] */
+
+void textterm_frame_update(ml_frame *frame,ml_frame *old)
 
 {
   gpio_p2_15(1);
   if (((frame->vfo_flags & 4) != 0) || ((frame->vfo_flags & 3) != (old->vfo_flags & 3))) {
     DAT_208f4897 = 0;
   }
-  FUN_201310ec(frame,1);
+  textterm_send_all(frame,1);
   return;
 }
 
@@ -12239,12 +12466,12 @@ LAB_2012e7f0:
       return;
     }
     if (cVar1 == '\x01') {
-      iVar2 = FUN_20103bc0(iVar2);
+      iVar2 = sd_drive_flag5(iVar2);
       if (iVar2 != 0) {
         uVar3 = 0xfffffffd;
         goto LAB_2012e7f0;
       }
-      iVar2 = FUN_20124848(2,1);
+      iVar2 = mainlink_send_e7_state(2,1);
       if (iVar2 != 0) {
         rtc_get_date(local_5c,local_18,local_1c);
         rtc_get_time(local_20,local_24,local_28);
@@ -12258,7 +12485,7 @@ LAB_2012e7f0:
       }
     }
     else if (cVar1 == '\0') {
-      iVar2 = FUN_20124848(0);
+      iVar2 = mainlink_send_e7_state(0);
       if (iVar2 != 0) {
         rec_stop();
       }
@@ -12270,17 +12497,20 @@ LAB_2012e7f0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012e9a8 @ 2012e9a8  (204 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: gui_change_flags_update
+ * gui_change_flags_update @ 2012e9a8  (204 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: (frame, old): sets the change flags 0x208F4638..0x208F463D (expanded area, two settings bytes,
  *     filter-graph switch, screens 0x40/0x43/0x3A, popup 0x30 with payload 0xFF, ...) from the saved copy
  *     0x208F0B18 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012e9a8 @ 2012e9a8 (204 bytes)
+// ===== gui_change_flags_update @ 2012e9a8 (204 bytes)
 
-void FUN_2012e9a8(int param_1,int param_2)
+/* (frame, old): sets the change flags 0x208F4638..0x208F463D (expanded area, two settings bytes,
+   filter-graph switch, screens 0x40/0x43/0x3A, popup 0x30 with payload 0xFF, ...) from the saved
+   copy 0x208F0B18 [fact] */
+
+void gui_change_flags_update(int param_1,int param_2)
 
 {
   DAT_208f4638 = 0;
@@ -12309,16 +12539,18 @@ void FUN_2012e9a8(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2012ea74 @ 2012ea74  (324 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: gui_frame_save
+ * gui_frame_save @ 2012ea74  (324 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: gui_screen_update: copies the frame into gui_frame_saved (0x240 bytes), runs gui_change_flags_update and
  *     copies 0x12 bytes 0x208F462C -> 0x208F0B18 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2012ea74 @ 2012ea74 (324 bytes)
+// ===== gui_frame_save @ 2012ea74 (324 bytes)
 
-void FUN_2012ea74(ml_frame *frame,ml_frame *old)
+/* gui_screen_update: copies the frame into gui_frame_saved (0x240 bytes), runs
+   gui_change_flags_update and copies 0x12 bytes 0x208F462C -> 0x208F0B18 [fact] */
+
+void gui_frame_save(ml_frame *frame,ml_frame *old)
 
 {
   byte bVar1;
@@ -12368,7 +12600,7 @@ LAB_2012eb68:
   DAT_208f4637 = 0;
 LAB_2012eb7c:
   DAT_208f462c = bVar1;
-  FUN_2012e9a8(frame,old);
+  gui_change_flags_update(frame,old);
   __aeabi_memcpy4(&DAT_208f0b18,&DAT_208f462c,0x12);
   return;
 }
@@ -12405,11 +12637,11 @@ void gui_screen_update(void)
   old = (ml_frame *)0x0;
   uVar4 = 0;
   if (DAT_20800488 == '\x01') {
-    mainlink_inject_rx(&gui_frame_saved);
+    mainlink_inject_rx((char *)&gui_frame_saved);
     DAT_20800488 = '\0';
   }
-  mainlink_get_last_frame(&local_270);
-  FUN_2012ea74(&local_270,&gui_frame);
+  mainlink_get_last_frame((uint)&local_270);
+  gui_frame_save(&local_270,&gui_frame);
   iVar2 = memcmp(&local_270,&gui_frame,0x240);
   if (iVar2 == 0) goto LAB_2012f698;
   if ((local_270.cmd == 0x39 || local_270.cmd == 0x3a) || local_270.cmd == 0x3f) {
@@ -12520,24 +12752,24 @@ LAB_2012efbc:
       bVar1 = ~DAT_2080048a;
       DAT_2080048a = bVar5;
       if ((bVar5 & bVar1) != 0) {
-        FUN_2013448c();
+        scope_reset_bank0();
         FUN_20120db4();
       }
       if ((DAT_2080048b & ~DAT_2080048a) != 0) {
-        FUN_20134498();
+        scope_reset_bank1();
         FUN_20120dc0();
       }
       if ((local_270.peak & 0xf0) != (gui_frame.peak & 0xf0)) {
         bVar5 = (local_270.peak & 0xf0) == 0;
         if (bVar5) {
-          FUN_201342f8(0);
+          scope_freeze_a_set(0);
         }
         else {
-          FUN_201342f8(1);
+          scope_freeze_a_set(1);
         }
-        FUN_20120d4c(!bVar5);
+        affft_wf_freeze_set(!bVar5);
       }
-      FUN_2012e678(&local_270,&gui_frame);
+      textterm_frame_update(&local_270,&gui_frame);
       if (local_270.cmd != 0x3a) {
         if ((DAT_208f4632 == '\0') && (DAT_208f4636 == '\0')) {
           if (((DAT_20800483 != '\0') || ((local_270.cmd == 0x39 && (gui_frame.cmd != 0x39)))) ||
@@ -12579,7 +12811,7 @@ LAB_2012f09c:
 LAB_2012f188:
           if ((DAT_208f4636 != '\0') || (local_270.cmd == 0x3a)) goto LAB_2012f1c0;
         }
-        scr_main_layout(&local_270,&gui_frame,(uint)DAT_20800485);
+        scr_main_layout((int)&local_270,0x208f0b2a,(uint)DAT_20800485);
         DAT_20800485 = 0;
       }
 LAB_2012f1c0:
@@ -12600,7 +12832,7 @@ LAB_2012f2d8:
 LAB_2012f2f8:
         if (((local_270.cmd == 0x20 || local_270.cmd == 0x39) || local_270.cmd == 0x37) &&
            (gui_frame.cmd != 0x70)) {
-          audio_error_check(&local_270);
+          audio_error_check((int)&local_270);
         }
       }
       else {
@@ -12631,15 +12863,15 @@ LAB_2012f26c:
         else if (local_270.cmd != 0x24) goto LAB_2012f26c;
       }
 LAB_2012f320:
-      uVar3 = FUN_2012c2d8(&local_270,old);
+      uVar3 = gui_payload_changed(&local_270,old);
       if (uVar3 != 0) {
         if (local_270.cmd == 0x39) {
-          scr_vfo(&local_270,old,uVar4);
-          vfo_audio_status_draw(&local_270,uVar4);
+          scr_vfo((char *)&local_270,(char *)old,uVar4);
+          vfo_audio_status_draw((int)&local_270,uVar4);
         }
         else if (local_270.cmd < 0x3a) {
           if (local_270.cmd == 0x31) {
-            scr_value_popup(&local_270);
+            scr_value_popup((int)&local_270);
           }
           else if (local_270.cmd < 0x32) {
             if (local_270.cmd != 0x20) {
@@ -12670,43 +12902,44 @@ LAB_2012f534:
                 DAT_208007ec._1_1_ = local_270.payload[5];
               }
               else if (local_270.cmd == 0x30) {
-                scr_select_popup(&local_270,old,uVar4);
+                scr_select_popup((int)&local_270,(int)old,uVar4);
               }
             }
           }
           else if (local_270.cmd == 0x34) {
-            scr_info(&local_270);
+            scr_info((int)&local_270);
           }
           else if (local_270.cmd == 0x37) {
-            scr_func_panel(&local_270,uVar4);
+            scr_func_panel((int)&local_270,uVar4);
           }
         }
         else if (local_270.cmd == 0x50) {
           if (DAT_208f463b != '\0') {
             uVar4 = 1;
           }
-          scr_keyboard(&local_270,old,uVar4);
+          scr_keyboard((int)&local_270,(int)old,uVar4);
         }
         else if (local_270.cmd < 0x51) {
           if (local_270.cmd == 0x3a) {
-            scr_playlist(&local_270,&gui_frame);
+            scr_playlist((int)&local_270,(char *)&gui_frame);
             FUN_2012616c(1);
           }
           else if (local_270.cmd == 0x40) {
-            scr_text_list(&local_270,old,uVar4);
+            scr_text_list((int)&local_270,(int)old,uVar4);
           }
           else if (local_270.cmd == 0x41) {
-            scr_memory_list(&local_270,uVar4);
+            scr_memory_list((int)&local_270,uVar4);
           }
         }
         else if (local_270.cmd == 0x62) {
           if (DAT_208f463b != '\0') {
             uVar4 = 1;
           }
-          scr_setup_menu(&local_270,old,uVar4);
+          scr_setup_menu((int)&local_270,(int)old,uVar4);
           rtc_int_setup();
         }
-        else if ((local_270.cmd == 0x70) && (scr_confirm(&local_270,uVar4), DAT_208f4636 != '\0')) {
+        else if ((local_270.cmd == 0x70) &&
+                (scr_confirm((int)&local_270,uVar4), DAT_208f4636 != '\0')) {
           FUN_2012616c(1);
         }
       }
@@ -12762,17 +12995,17 @@ LAB_2012f534:
   }
   gui_frame.cmd = local_270.cmd;
 LAB_2012f698:
-  iVar2 = FUN_20125d8c();
+  iVar2 = playlist_play_poll();
   if (iVar2 != 0) {
-    scr_playlist(&local_270,&gui_frame);
+    scr_playlist((int)&local_270,(char *)&gui_frame);
     DAT_2080049e = gui_frame.cmd;
     memcpy(&gui_frame,&local_270,0x240);
   }
-  FUN_201248f8();
+  audio_screen_poll();
   if (DAT_20800491 != '\0') {
     uVar4 = audio_state();
     if (uVar4 == 0) {
-      FUN_20124848(0);
+      mainlink_send_e7_state(0);
       DAT_20800491 = '\0';
     }
     iVar2 = sd_state_bit6();
@@ -12829,7 +13062,7 @@ uint opening_check_main(void)
       uVar1 = fb_get_layer_addr(DAT_208085b8);
       __aeabi_memclr(uVar1,0xbb800);
       gui_update_layers();
-      FUN_201322f0();
+      fwupdate_title_screen_thunk();
       while (DAT_20800493 == '\0') {
         gui_update_layers();
         itron_tslp_tsk(0xffffffff);
@@ -12840,28 +13073,28 @@ uint opening_check_main(void)
       if (4 < local_242) {
         local_242 = 4;
       }
-      FUN_20133dec(local_242);
+      scope_peak_set(local_242);
       DAT_2080048a = (local_24b & 0x80) != 0;
       if ((DAT_2080048a & ~DAT_2080048b) != 0) {
-        FUN_2013448c();
+        scope_reset_bank0();
         FUN_20120db4();
       }
       if ((DAT_2080048b & ~DAT_2080048a) != 0) {
-        FUN_20134498();
+        scope_reset_bank1();
         FUN_20120dc0();
       }
-      FUN_20134480((local_24d & 0x3f) >> 5);
-      uVar1 = FUN_2012d318(local_24d & 0x20);
+      scope3d_layout_set((local_24d & 0x3f) >> 5);
+      uVar1 = scope2d_spectrum_height(local_24d & 0x20);
       FUN_20134444(uVar1,local_24c & 0x80);
       FUN_20134474(local_24c & 0x40);
-      FUN_2012e3c8(local_240,local_20,local_1c);
-      FUN_201342dc(local_20[0],local_1c[0]);
+      scope_color_decode(local_240,local_20,local_1c);
+      scope_palette_set(local_20[0],local_1c[0]);
       scope2d_set_color(local_20[0]);
       fw_installed_versions_set_thunk((uint)local_25f);
       DAT_20800481 = local_1ba & 0xf;
       gui_frame.cmd = 0x20;
       memcpy(0x208f0b2b,auStack_251,0x97);
-      FUN_201310ec(&local_260,0);
+      textterm_send_all(&local_260,0);
       uVar3 = 1;
     }
   }
@@ -13027,10 +13260,10 @@ void opening_screen(void)
       dimmer_set((byte)local_4d4 & 0x7f);
       memcpy(&mStack_4c8.byte1,0x208f0b2b,0x97);
       pclink_tx_set_status(0x208f0b2b);
-      FUN_2012e678(&mStack_4c8,(ml_frame *)0x0);
+      textterm_frame_update(&mStack_4c8,(ml_frame *)0x0);
       gui_apply_display_cfg((byte *)&local_4d8,(byte *)&local_4d8,1);
       gpio_ft4222_reset((byte)local_4d8 & 4);
-      scr_main_layout(&gui_frame,(ml_frame *)0x0,1);
+      scr_main_layout(0x208f0b2a,0,1);
       gui_update_layers();
       return;
     }
@@ -13189,7 +13422,7 @@ bool mainlink_wait_status(void)
      ) {
     return false;
   }
-  iVar3 = FUN_2011727c();
+  iVar3 = radio_on_flag_get();
   return iVar3 != 0;
 }
 
@@ -13224,16 +13457,16 @@ void gui_main_loop(void)
   if (bVar1 == 6) {
     g_bootinfo.mode = 2;
     logo_fade_in();
-    FUN_201322e4(&g_bootinfo);
+    bootloader_entry_screen_thunk(&g_bootinfo);
     do {
       if (DAT_20800493 != '\0') {
-        FUN_20117030();
+        display_power_down();
       }
       gui_update_layers();
       itron_tslp_tsk(0xffffffff);
     } while( true );
   }
-  iVar4 = FUN_2011727c();
+  iVar4 = radio_on_flag_get();
   if (iVar4 == 0) {
     bVar2 = mainlink_wait_status();
     if (!bVar2) {
@@ -13262,7 +13495,7 @@ LAB_20130238:
       iVar3 = sd_state_bit7();
       if (iVar3 != 0) {
         DAT_20800495 = 0;
-        FUN_201322f0();
+        fwupdate_title_screen_thunk();
         __aeabi_memclr(&gui_frame,0x240);
         if (DAT_20800493 == '\0') {
           DAT_20800495 = 1;
@@ -13291,17 +13524,17 @@ LAB_201303a8:
     DAT_20800493 = '\0';
     g_ml.fwupdate_armed = 0;
     DAT_2080049a = '\0';
-    FUN_20117030();
+    display_power_down();
     pclink_set_testmode(0);
     bVar1 = mainlink_get_settings24((uint)abStack_8);
     if (bVar1 != 0) {
       DAT_208007e8._0_1_ = (byte)DAT_208007e8 & 0xfe;
       gui_apply_display_cfg((byte *)&DAT_208007e8,abStack_8,0);
     }
-    iVar3 = FUN_2011727c();
+    iVar3 = radio_on_flag_get();
     while (iVar3 == 0) {
       itron_tslp_tsk(0xffffffff);
-      iVar3 = FUN_2011727c();
+      iVar3 = radio_on_flag_get();
     }
     DAT_20800496 = 0;
     power_on_request();
@@ -13319,7 +13552,7 @@ LAB_20130450:
       }
       if (DAT_20800484 == '\0') {
         if (DAT_208f4633 == '\0') {
-          FUN_201233d4();
+          filter_graph_small();
         }
         else {
           main_filter_graph();
@@ -13332,14 +13565,14 @@ LAB_20130450:
       meter_draw();
       mainlink_send_rtc();
       mainlink_send_sd_state();
-      FUN_201217b0();
+      gui_input_poll();
       if ((gui_frame.cmd == 0x7b) && (gui_frame.byte1 != 0)) {
         scr_screen_saver();
       }
       else {
         cursor_window_update();
       }
-      FUN_20131638();
+      textterm_tx_poll();
       FUN_20121988(&DAT_20800838);
       iVar6 = iVar6 + DAT_20800838;
       if (DAT_208004a2 == 4) {
@@ -13368,7 +13601,7 @@ LAB_20130450:
       DAT_2080048f = 0;
     }
     DAT_20800495 = 0;
-    FUN_20116da0(0);
+    full_mode_set(0);
     led_set_one(0,0);
     led_set_mask(0);
     backlight_enable(0);
@@ -13429,16 +13662,19 @@ void screenshot_popup(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20130c90 @ 20130c90  (1052 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_send_setting
+ * textterm_send_setting @ 20130c90  (1052 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: (item 0..15, frame, force): sends one terminal setting as a 3-byte frame (item + 0x11, value) over
  *     uart4_send when the frame field changed (text sets, osc +0x71, RTTY/PSK bytes +0x67..+0x6F) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20130c90 @ 20130c90 (1052 bytes)
+// ===== textterm_send_setting @ 20130c90 (1052 bytes)
 
-void FUN_20130c90(uint item,ml_frame *frame,int flag)
+/* (item 0..15, frame, force): sends one terminal setting as a 3-byte frame (item + 0x11, value)
+   over uart4_send when the frame field changed (text sets, osc +0x71, RTTY/PSK bytes +0x67..+0x6F)
+   [fact] */
+
+void textterm_send_setting(uint item,ml_frame *frame,int flag)
 
 {
   ushort uVar1;
@@ -13629,22 +13865,23 @@ switchD_20130ca0_caseD_b:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201310ec @ 201310ec  (68 bytes, 2 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_send_all
+ * textterm_send_all @ 201310ec  (68 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: Sends settings 0..15 except 11 and 12 with textterm_send_setting [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201310ec @ 201310ec (68 bytes)
+// ===== textterm_send_all @ 201310ec (68 bytes)
 
-void FUN_201310ec(ml_frame *param_1,int param_2)
+/* Sends settings 0..15 except 11 and 12 with textterm_send_setting [fact] */
+
+void textterm_send_all(ml_frame *param_1,int param_2)
 
 {
   uint item;
   
   item = 0;
   do {
-    FUN_20130c90(item,param_1,param_2);
+    textterm_send_setting(item,param_1,param_2);
     do {
       item = item + 1 & 0xff;
       if (0xf < item) {
@@ -13656,16 +13893,18 @@ void FUN_201310ec(ml_frame *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20131130 @ 20131130  (36 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_rx_push
+ * textterm_rx_push @ 20131130  (36 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC); decode_text_rx
  *     feeds it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20131130 @ 20131130 (36 bytes)
+// ===== textterm_rx_push @ 20131130 (36 bytes)
 
-void FUN_20131130(undefined1 param_1)
+/* (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC);
+   decode_text_rx feeds it [fact] */
+
+void textterm_rx_push(undefined1 param_1)
 
 {
   (&DAT_208f4bac)[DAT_208f4bec] = param_1;
@@ -13699,7 +13938,7 @@ void decode_text_rx(byte *param_1,int param_2)
       bVar4 = *param_1;
       if (bVar4 == 0x10) {
 LAB_20131230:
-        FUN_20131130(bVar4);
+        textterm_rx_push(bVar4);
 LAB_20131238:
         if (bVar4 == 0x20) goto LAB_2013129c;
       }
@@ -13936,15 +14175,16 @@ switchD_201313b0_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201315a4 @ 201315a4  (28 bytes, 7 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_rx_clear
+ * textterm_rx_clear @ 201315a4  (28 bytes, 7 callers, export file 2012cf30_201322bc.c)
  * Purpose: Clears the 64-byte answer ring 0x208F4BAC and its indices 0x208F4BEC/ED [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201315a4 @ 201315a4 (28 bytes)
+// ===== textterm_rx_clear @ 201315a4 (28 bytes)
 
-void FUN_201315a4(void)
+/* Clears the 64-byte answer ring 0x208F4BAC and its indices 0x208F4BEC/ED [fact] */
+
+void textterm_rx_clear(void)
 
 {
   DAT_208f4bed = 0;
@@ -13955,15 +14195,16 @@ void FUN_201315a4(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201315c0 @ 201315c0  (120 bytes, 9 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_rx_expect
+ * textterm_rx_expect @ 201315c0  (120 bytes, 9 callers, export file 2012cf30_201322bc.c)
  * Purpose: (byte): pops the next byte of the answer ring; 1 when it equals byte [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201315c0 @ 201315c0 (120 bytes)
+// ===== textterm_rx_expect @ 201315c0 (120 bytes)
 
-undefined4 FUN_201315c0(uint param_1)
+/* (byte): pops the next byte of the answer ring; 1 when it equals byte [fact] */
+
+undefined4 textterm_rx_expect(uint param_1)
 
 {
   uint uVar1;
@@ -13986,17 +14227,21 @@ undefined4 FUN_201315c0(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20131638 @ 20131638  (1204 bytes, 1 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_tx_poll
+ * textterm_tx_poll @ 20131638  (1204 bytes, 1 callers, export file 2012cf30_201322bc.c)
  * Purpose: gui_main_loop: state machine 0x208F4BAA of the text terminal on the SCIF4 link: ESC (0x1B) setting
  *     frames with the text sets (frame +0x70), 0x10 / 0x110 commands and the TX text one character at a time (0x1D
  *     + character from 0x208F489F), waiting for the answer bytes (textterm_rx_expect) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20131638 @ 20131638 (1204 bytes)
+// ===== textterm_tx_poll @ 20131638 (1204 bytes)
 
-void FUN_20131638(void)
+/* gui_main_loop: state machine 0x208F4BAA of the text terminal on the SCIF4 link: ESC (0x1B)
+   setting frames with the text sets (frame +0x70), 0x10 / 0x110 commands and the TX text one
+   character at a time (0x1D + character from 0x208F489F), waiting for the answer bytes
+   (textterm_rx_expect) [fact] */
+
+void textterm_tx_poll(void)
 
 {
   byte bVar1;
@@ -14025,7 +14270,7 @@ void FUN_20131638(void)
     DAT_208084d7 = 99;
   }
   if (DAT_208f4baa == 0x65) {
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
     goto joined_r0x2013199c;
   }
   uVar2 = local_28._1_3_;
@@ -14035,7 +14280,7 @@ void FUN_20131638(void)
       local_28 = CONCAT13(local_28._3_1_,0x10);
       uart4_send((uint)&local_28,3);
 LAB_20131940:
-      FUN_201315a4();
+      textterm_rx_clear();
     }
     else {
       if (DAT_208f4baa < 0xb) {
@@ -14057,7 +14302,7 @@ LAB_20131940:
                          0xffff0fff;
             }
             uart4_send((uint)&local_28,3);
-            FUN_201315a4();
+            textterm_rx_clear();
             DAT_208f4baa = DAT_208f4baa + 1;
             DAT_208084d8 = 1;
             return;
@@ -14065,12 +14310,12 @@ LAB_20131940:
           DAT_208f4baa = 3;
           return;
         case 2:
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           break;
         case 3:
           goto switchD_2013170c_caseD_3;
         case 4:
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           break;
         case 5:
           if ((DAT_208084d6 != '\0') && (DAT_208084d5 == '\0')) {
@@ -14093,12 +14338,12 @@ LAB_20131940:
       if (DAT_208f4baa == 0xe) {
 LAB_20131904:
         DAT_208f4baa = 0;
-        FUN_201315a4();
+        textterm_rx_clear();
         return;
       }
       if (DAT_208f4baa < 0xf) {
         if (DAT_208f4baa == 0xb) {
-          iVar6 = FUN_201315c0(0x10);
+          iVar6 = textterm_rx_expect(0x10);
           if (iVar6 == 0) {
             return;
           }
@@ -14118,7 +14363,7 @@ LAB_20131904:
             goto LAB_20131940;
           }
           if (DAT_208f4baa != 0xd) goto switchD_2013170c_default;
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           if (iVar6 == 0) {
             return;
           }
@@ -14145,10 +14390,10 @@ LAB_20131904:
 switchD_2013170c_caseD_3:
     local_28 = CONCAT13(local_28._3_1_,0x110);
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     goto LAB_201319a0;
   case 0x67:
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
     if (iVar6 == 0) {
       return;
     }
@@ -14168,11 +14413,11 @@ LAB_20131a8c:
     local_28._0_2_ = CONCAT11((&DAT_208f489f)[uVar7],0x1d);
     local_28._0_3_ = (uint3)(ushort)local_28;
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     DAT_208f4baa = DAT_208f4baa + 1;
     break;
   case 0x6a:
-    iVar6 = FUN_201315c0(0x1d);
+    iVar6 = textterm_rx_expect(0x1d);
     if (iVar6 == 0) {
       return;
     }
@@ -14199,10 +14444,10 @@ LAB_201319d8:
   case 0x6d:
     local_28 = CONCAT13(local_28._3_1_,0x10);
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     goto LAB_201319a0;
   case 0x6e:
-    iVar6 = FUN_201315c0(0x10);
+    iVar6 = textterm_rx_expect(0x10);
     goto joined_r0x2013199c;
   case 0x6f:
     local_28 = CONCAT13(local_28._3_1_,0x1b);
@@ -14210,7 +14455,7 @@ LAB_201319d8:
     DAT_208f4baa = DAT_208f4baa + 1;
     goto LAB_20131af4;
   case 0x70:
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
 joined_r0x2013199c:
     if (iVar6 == 0) {
       return;
@@ -14230,7 +14475,7 @@ LAB_201319a0:
 switchD_2013170c_default:
     DAT_208f4baa = '\0';
 LAB_20131af4:
-    FUN_201315a4();
+    textterm_rx_clear();
     return;
   }
   return;
@@ -14238,24 +14483,27 @@ LAB_20131af4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20131f74 @ 20131f74  (768 bytes, 2 callers, export file 2012cf30_201322bc.c)
- * Name on the doc page: textterm_view_frame
+ * textterm_view_frame @ 20131f74  (768 bytes, 2 callers, export file 2012cf30_201322bc.c)
  * Purpose: scope_area_setup: frame of the text-terminal view (RX area, TX area, two buttons) from the layout words
  *     0x208084DC.. / 0x20808500.. (gui.md "third view"); clears the terminal state first [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20131f74 @ 20131f74 (768 bytes)
+// ===== textterm_view_frame @ 20131f74 (768 bytes)
 
-void FUN_20131f74(undefined1 param_1,uint param_2,uint param_3,undefined4 param_4,int param_5,
-                 char *param_6)
+/* scope_area_setup: frame of the text-terminal view (RX area, TX area, two buttons) from the layout
+   words 0x208084DC.. / 0x20808500.. (gui.md "third view"); clears the terminal state first [fact]
+    */
+
+void textterm_view_frame(undefined1 param_1,uint param_2,uint param_3,undefined4 param_4,int param_5
+                        ,char *param_6)
 
 {
   uint uVar1;
   
   uVar1 = fb_get_layer_addr(0);
   if (*param_6 != '{' && param_5 != 0) {
-    FUN_20130c70();
+    textterm_clear();
   }
   DAT_2080850e = (ushort)param_2;
   DAT_2080850c = (ushort)param_3;
@@ -14293,18 +14541,19 @@ void FUN_20131f74(undefined1 param_1,uint param_2,uint param_3,undefined4 param_
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201322c8 @ 201322c8  (16 bytes, 0 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: fwupdate_menu_screen_thunk
+ * fwupdate_menu_screen_thunk @ 201322c8  (16 bytes, 0 callers, export file 201322c8_201335f8.c)
  * Purpose: mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of the
  *     update-UI thunks of update.md [fact: words at 0x201322C8..0x201322D4]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201322c8 @ 201322c8 (16 bytes)
+// ===== fwupdate_menu_screen_thunk @ 201322c8 (16 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015a584) */
+/* mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of
+   the update-UI thunks of update.md [fact: words at 0x201322C8..0x201322D4] */
 
-void FUN_201322c8(undefined4 param_1)
+void fwupdate_menu_screen_thunk(undefined4 param_1)
 
 {
   byte bVar1;
@@ -14438,18 +14687,19 @@ void FUN_201322c8(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201322d8 @ 201322d8  (12 bytes, 0 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: fwupdate_select_screen_thunk
+ * fwupdate_select_screen_thunk @ 201322d8  (12 bytes, 0 callers, export file 201322c8_201335f8.c)
  * Purpose: fwupdate_select_screen(0x208F4BF4, frame) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201322d8 @ 201322d8 (12 bytes)
+// ===== fwupdate_select_screen_thunk @ 201322d8 (12 bytes)
 
-void FUN_201322d8(undefined4 param_1)
+/* fwupdate_select_screen(0x208F4BF4, frame) [fact] */
+
+void fwupdate_select_screen_thunk(undefined4 param_1)
 
 {
-  FUN_2015a8dc(&DAT_208f4bf4,param_1);
+  fwupdate_select_screen(&DAT_208f4bf4,param_1);
   return;
 }
 
@@ -15076,8 +15326,8 @@ void gui_start(void)
   undefined4 local_1c;
   
   FUN_201340a4();
-  FUN_201342b4();
-  FUN_20120d38();
+  scope_objects_init();
+  afscope_init();
   scope3d_tables_init();
   dmac8_m2m_init();
   sdr_dsp_link_init();
@@ -15170,16 +15420,18 @@ void * fb_get_front_addr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20132ee8 @ 20132ee8  (16 bytes, 0 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: fb_cache_clean_buf
+ * fb_cache_clean_buf @ 20132ee8  (16 bytes, 0 callers, export file 201322c8_201335f8.c)
  * Purpose: (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800,
  *     0x602EE000), 0xBB800 bytes each except the last [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20132ee8 @ 20132ee8 (16 bytes)
+// ===== fb_cache_clean_buf @ 20132ee8 (16 bytes)
 
-void FUN_20132ee8(undefined4 param_1)
+/* (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000,
+   0x60232800, 0x602EE000), 0xBB800 bytes each except the last [fact] */
+
+void fb_cache_clean_buf(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -15226,15 +15478,16 @@ void gui_area_dirty_set(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20132f6c @ 20132f6c  (8 bytes, 1 callers, export file 201322c8_201335f8.c)
- * Name on the doc page: clmap_buf_get
+ * clmap_buf_get @ 20132f6c  (8 bytes, 1 callers, export file 201322c8_201335f8.c)
  * Purpose: Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20132f6c @ 20132f6c (8 bytes)
+// ===== clmap_buf_get @ 20132f6c (8 bytes)
 
-undefined * FUN_20132f6c(void)
+/* Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan [fact] */
+
+undefined * clmap_buf_get(void)
 
 {
   return &DAT_605c0c60;
@@ -15380,7 +15633,7 @@ int vdc5_isr_create(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,&cisr_int78);
+  uVar1 = itron_acre_isr(0,0x203a706c);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x4e);
     uVar1 = 0;
@@ -15425,15 +15678,16 @@ void scope3d_render_small_thunk(uint param_1,uint param_2,uint param_3,uint para
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_20133618 @ 20133618  (8 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope3d_history_clear_thunk
+ * scope3d_history_clear_thunk @ 20133618  (8 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: scope3d_history_clear(0x20907F78); scope_area_setup calls it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20133618 @ 20133618 (8 bytes)
+// ===== scope3d_history_clear_thunk @ 20133618 (8 bytes)
 
-void FUN_20133618(void)
+/* scope3d_history_clear(0x20907F78); scope_area_setup calls it [fact] */
+
+void scope3d_history_clear_thunk(void)
 
 {
   scope3d_history_clear(&DAT_20907f78);
@@ -15516,16 +15770,18 @@ void scope3d_tables_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20133640 @ 20133640  (12 bytes, 4 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope3d_buf_get
+ * scope3d_buf_get @ 20133640  (12 bytes, 4 callers, export file 20133618_20134348.c)
  * Purpose: Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels use it
  *     as a back buffer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20133640 @ 20133640 (12 bytes)
+// ===== scope3d_buf_get @ 20133640 (12 bytes)
 
-undefined4 FUN_20133640(void)
+/* Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels
+   use it as a back buffer [fact] */
+
+undefined4 scope3d_buf_get(void)
 
 {
   return DAT_208085b4;
@@ -15944,15 +16200,16 @@ void gui_flip_one(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20133d7c @ 20133d7c  (44 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: fb_layer2_save
+ * fb_layer2_save @ 20133d7c  (44 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20133d7c @ 20133d7c (44 bytes)
+// ===== fb_layer2_save @ 20133d7c (44 bytes)
 
-void FUN_20133d7c(undefined4 param_1)
+/* (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf [fact] */
+
+void fb_layer2_save(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -15965,15 +16222,16 @@ void FUN_20133d7c(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20133da8 @ 20133da8  (44 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: fb_layer2_restore
+ * fb_layer2_restore @ 20133da8  (44 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20133da8 @ 20133da8 (44 bytes)
+// ===== fb_layer2_restore @ 20133da8 (44 bytes)
 
-void FUN_20133da8(undefined4 param_1)
+/* (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC [fact] */
+
+void fb_layer2_restore(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -15986,16 +16244,18 @@ void FUN_20133da8(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20133dec @ 20133dec  (36 bytes, 2 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_peak_set
+ * scope_peak_set @ 20133dec  (36 bytes, 2 callers, export file 20133618_20134348.c)
  * Purpose: (level): passes the PEAK level to both 3D objects 0x20470294 / 0x20474C68 (gui.md: packet 0x20 byte
  *     0x10) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20133dec @ 20133dec (36 bytes)
+// ===== scope_peak_set @ 20133dec (36 bytes)
 
-void FUN_20133dec(undefined4 param_1)
+/* (level): passes the PEAK level to both 3D objects 0x20470294 / 0x20474C68 (gui.md: packet 0x20
+   byte 0x10) [fact] */
+
+void scope_peak_set(undefined4 param_1)
 
 {
   FUN_20158848(&DAT_20470294,param_1);
@@ -16005,17 +16265,20 @@ void FUN_20133dec(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201342b4 @ 201342b4  (448 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_objects_init
+ * scope_objects_init @ 201342b4  (448 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and its
  *     hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default ramps and resets
  *     the waterfall banks [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201342b4 @ 201342b4 (448 bytes)
+// ===== scope_objects_init @ 201342b4 (448 bytes)
 
-void FUN_201342b4(void)
+/* gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and
+   its hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default
+   ramps and resets the waterfall banks [fact] */
+
+void scope_objects_init(void)
 
 {
   undefined4 uVar1;
@@ -16032,13 +16295,13 @@ void FUN_201342b4(void)
   FUN_20163f80(&DAT_2047f400,0,0xf,&DAT_203d9a9e);
   FUN_20164018(&DAT_2047c848,&DAT_203b6704);
   FUN_20163f44(&DAT_2047f400,&DAT_203daf14);
-  FUN_201587fc(&DAT_20470294);
+  scope3d_obj_init(&DAT_20470294);
   uVar1 = FUN_20164680(&DAT_2047f400);
   uVar2 = FUN_2016469c(&DAT_2047c848);
   FUN_20158838(&DAT_20470294,&DAT_203e58ac,uVar2,uVar1);
   FUN_201640a4(&DAT_2047fd80,&DAT_2047c848);
   FUN_20163fd0(&DAT_20482938,&DAT_2047f400);
-  FUN_201587fc(&DAT_20474c68);
+  scope3d_obj_init(&DAT_20474c68);
   uVar1 = FUN_20164680(&DAT_20482938);
   uVar2 = FUN_2016469c(&DAT_2047fd80);
   FUN_20158838(&DAT_20474c68,&DAT_203e58ac,uVar2,uVar1);
@@ -16047,41 +16310,46 @@ void FUN_201342b4(void)
   FUN_20158544(&DAT_2047963c,0);
   FUN_20162c28(&DAT_2047c442,DAT_2047032c);
   FUN_20162c28(&DAT_2047c644,DAT_20474d00);
-  FUN_201576f4(&DAT_2047963c,2);
-  FUN_20157778(&DAT_2047963c);
+  scope_wf_bank_set(&DAT_2047963c,2);
+  scope_obj_history_clear(&DAT_2047963c);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201342d0 @ 201342d0  (12 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_obj_bank_reset
+ * scope_obj_bank_reset @ 201342d0  (12 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: (mode): scope_wf_bank_set(0x2047963C, mode); packet 0x20 byte 7 bit 7 calls it with 0 (gui.md "resets
  *     the 3D engine object") [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201342d0 @ 201342d0 (12 bytes)
+// ===== scope_obj_bank_reset @ 201342d0 (12 bytes)
 
-void FUN_201342d0(undefined4 param_1)
+/* (mode): scope_wf_bank_set(0x2047963C, mode); packet 0x20 byte 7 bit 7 calls it with 0 (gui.md
+   "resets the 3D engine object") [fact] */
+
+void scope_obj_bank_reset(undefined4 param_1)
 
 {
-  FUN_201576f4(&DAT_2047963c,param_1);
+  scope_wf_bank_set(&DAT_2047963c,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201342dc @ 201342dc  (256 bytes, 2 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_palette_set
+ * scope_palette_set @ 201342dc  (256 bytes, 2 callers, export file 20133618_20134348.c)
  * Purpose: (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68 from the
  *     ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12 bits 0-3) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201342dc @ 201342dc (256 bytes)
+// ===== scope_palette_set @ 201342dc (256 bytes)
 
-void FUN_201342dc(int param_1,int param_2)
+/* (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68
+   from the ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12
+   bits 0-3) [fact] */
+
+void scope_palette_set(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -16104,16 +16372,18 @@ void FUN_201342dc(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201342f8 @ 201342f8  (24 bytes, 2 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_freeze_a_set
+ * scope_freeze_a_set @ 201342f8  (24 bytes, 2 callers, export file 20133618_20134348.c)
  * Purpose: (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md); gui_screen_update sets
  *     it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201342f8 @ 201342f8 (24 bytes)
+// ===== scope_freeze_a_set @ 201342f8 (24 bytes)
 
-void FUN_201342f8(undefined1 param_1)
+/* (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md);
+   gui_screen_update sets it [fact] */
+
+void scope_freeze_a_set(undefined1 param_1)
 
 {
   DAT_204832b8 = param_1;
@@ -16122,15 +16392,16 @@ void FUN_201342f8(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134304 @ 20134304  (24 bytes, 2 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_freeze_b_set
+ * scope_freeze_b_set @ 20134304  (24 bytes, 2 callers, export file 20133618_20134348.c)
  * Purpose: (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134304 @ 20134304 (24 bytes)
+// ===== scope_freeze_b_set @ 20134304 (24 bytes)
 
-void FUN_20134304(undefined1 param_1)
+/* (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it [fact] */
+
+void scope_freeze_b_set(undefined1 param_1)
 
 {
   DAT_204832b9 = param_1;
@@ -16139,19 +16410,21 @@ void FUN_20134304(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134310 @ 20134310  (8 bytes, 1 callers, export file 20133618_20134348.c)
- * Name on the doc page: scope_history_reset
+ * scope_history_reset @ 20134310  (8 bytes, 1 callers, export file 20133618_20134348.c)
  * Purpose: Calls scope_obj_history_clear on the scope object 0x2047963C; scope3d_history_clear uses it (gui.md)
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134310 @ 20134310 (8 bytes)
+// ===== scope_history_reset @ 20134310 (8 bytes)
 
-void FUN_20134310(void)
+/* Calls scope_obj_history_clear on the scope object 0x2047963C; scope3d_history_clear uses it
+   (gui.md) [fact] */
+
+void scope_history_reset(void)
 
 {
-  FUN_20157778(&DAT_2047963c);
+  scope_obj_history_clear(&DAT_2047963c);
   return;
 }
 
@@ -16176,10 +16449,10 @@ void scope3d_redraw_history(int param_1,int param_2)
   int *piVar5;
   
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    FUN_201643cc();
+    ring30_advance();
     iVar2 = 0x1d;
     do {
-      iVar1 = FUN_20164828(&DAT_20490890,-iVar2);
+      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       iVar4 = iVar2 * 800 + 0x2048395f;
       __aeabi_memclr(iVar4,800);
       if (param_1 == 8) {
@@ -16197,7 +16470,7 @@ void scope3d_redraw_history(int param_1,int param_2)
     } while (1 < iVar2);
     iVar2 = 0x1d;
     do {
-      iVar1 = FUN_20164828(&DAT_20490890,-iVar2);
+      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       piVar3 = (int *)(&DAT_2048feb8 + iVar1 * 0x54);
       piVar5 = (int *)(iVar2 * 0x54 + 0x20489720);
       if ((param_1 == 8) || ((param_1 == 9 && (iVar2 < 0xf)))) {
@@ -16249,14 +16522,14 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
   
   iVar1 = DAT_20489774;
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    iVar1 = FUN_20164828(&DAT_20490890,0xffffffff,param_2,param_3,param_3);
+    iVar1 = ring30_offset(&DAT_20490890,0xffffffff,param_2,param_3,param_3);
     puVar7 = &DAT_2048a0f8 + iVar1 * 800;
-    iVar2 = FUN_201647e4(&DAT_20494768,0);
+    iVar2 = ring20_offset(&DAT_20494768,0);
     memcpy(puVar7,&DAT_20490894 + iVar2 * 800,800);
     iVar2 = 1;
     if (1 < param_2) {
       do {
-        iVar3 = FUN_201647e4(&DAT_20494768,-iVar2);
+        iVar3 = ring20_offset(&DAT_20494768,-iVar2);
         iVar4 = 0;
         do {
           if ((byte)puVar7[iVar4] < (byte)(&DAT_20490894)[iVar4 + iVar3 * 800]) {
@@ -16271,7 +16544,7 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
     if (0 < DAT_20494714) {
       puVar5 = &DAT_2047963c + iVar1 * 0x54;
       do {
-        iVar4 = FUN_201647e4(&DAT_20494768,-iVar2);
+        iVar4 = ring20_offset(&DAT_20494768,-iVar2);
         iVar3 = iVar2 * 4;
         iVar2 = iVar2 + 1;
         *(undefined4 *)(puVar5 + iVar3 + 0x16880) = *(undefined4 *)(&DAT_20494718 + iVar4 * 4);
@@ -16314,16 +16587,18 @@ LAB_201582f8:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134358 @ 20134358  (68 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope3d_vscale
+ * scope3d_vscale @ 20134358  (68 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9) (gui.md
  *     3DSS step 4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134358 @ 20134358 (68 bytes)
+// ===== scope3d_vscale @ 20134358 (68 bytes)
 
-undefined2 FUN_20134358(int param_1,int param_2)
+/* (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9)
+   (gui.md 3DSS step 4) [fact] */
+
+undefined2 scope3d_vscale(int param_1,int param_2)
 
 {
   undefined2 uVar1;
@@ -16385,34 +16660,38 @@ undefined2 scope3d_line_offset(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013437c @ 2013437c  (20 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_levels_get
+ * scope_levels_get @ 2013437c  (20 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: (index, out): per-column levels of the scope object for layout index / mode (method 0x20157C50, gui.md)
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2013437c @ 2013437c (20 bytes)
+// ===== scope_levels_get @ 2013437c (20 bytes)
 
-void FUN_2013437c(undefined4 param_1,undefined4 param_2)
+/* (index, out): per-column levels of the scope object for layout index / mode (method 0x20157C50,
+   gui.md) [fact] */
+
+void scope_levels_get(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_20157c50(&DAT_2047963c,param_1,param_2,0);
+  scope_obj_levels_get(&DAT_2047963c,param_1,param_2,0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134390 @ 20134390  (8 bytes, 0 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_record_hold_copy
+ * scope_record_hold_copy @ 20134390  (8 bytes, 0 callers, export file 20134358_201352e8.c)
  * Purpose: Copies the 850-byte scope record to the hold copy 0x2048360D (spi-links.md) [fact for the doc; the
  *     8-byte body tail-calls into 0x20157C50]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134390 @ 20134390 (8 bytes)
+// ===== scope_record_hold_copy @ 20134390 (8 bytes)
 
-void FUN_20134390(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* Copies the 850-byte scope record to the hold copy 0x2048360D (spi-links.md) [fact for the doc;
+   the 8-byte body tail-calls into 0x20157C50] */
+
+void scope_record_hold_copy(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined *puVar1;
@@ -16443,16 +16722,18 @@ LAB_20157cc4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134398 @ 20134398  (44 bytes, 3 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_ramp_get
+ * scope_ramp_get @ 20134398  (44 bytes, 3 callers, export file 20134358_201352e8.c)
  * Purpose: (mode 8/9/other): second colour ramp from the objects 0x20474D04 / 0x20478550 / 0x20474C78 (gui.md 3DSS
  *     front trace) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134398 @ 20134398 (44 bytes)
+// ===== scope_ramp_get @ 20134398 (44 bytes)
 
-void FUN_20134398(int param_1)
+/* (mode 8/9/other): second colour ramp from the objects 0x20474D04 / 0x20478550 / 0x20474C78
+   (gui.md 3DSS front trace) [fact] */
+
+void scope_ramp_get(int param_1)
 
 {
   if (param_1 == 8) {
@@ -16469,15 +16750,17 @@ void FUN_20134398(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134408 @ 20134408  (36 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope3d_line_markers
+ * scope3d_line_markers @ 20134408  (36 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134408 @ 20134408 (36 bytes)
+// ===== scope3d_line_markers @ 20134408 (36 bytes)
 
-int FUN_20134408(int param_1)
+/* (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line)
+   [fact] */
+
+int scope3d_line_markers(int param_1)
 
 {
   return param_1 * 0x54 + 0x20489720;
@@ -16485,73 +16768,81 @@ int FUN_20134408(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134414 @ 20134414  (16 bytes, 4 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_wf_add_row
+ * scope_wf_add_row @ 20134414  (16 bytes, 4 callers, export file 20134358_201352e8.c)
  * Purpose: (record): adds a waterfall row to the scope object (method 0x20157D3C, gui.md 2D renderer step 2) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134414 @ 20134414 (16 bytes)
+// ===== scope_wf_add_row @ 20134414 (16 bytes)
 
-void FUN_20134414(undefined4 param_1)
+/* (record): adds a waterfall row to the scope object (method 0x20157D3C, gui.md 2D renderer step 2)
+   [fact] */
+
+void scope_wf_add_row(undefined4 param_1)
 
 {
-  FUN_20157d3c(&DAT_2047963c,param_1,0);
+  scope_obj_wf_add_row(&DAT_2047963c,param_1,0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134424 @ 20134424  (16 bytes, 0 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_wf_add_row_mode
+ * scope_wf_add_row_mode @ 20134424  (16 bytes, 0 callers, export file 20134358_201352e8.c)
  * Purpose: (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134424 @ 20134424 (16 bytes)
+// ===== scope_wf_add_row_mode @ 20134424 (16 bytes)
 
-void FUN_20134424(undefined4 param_1,undefined4 param_2)
+/* (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0
+   [fact] */
+
+void scope_wf_add_row_mode(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_20157d3c(&DAT_2047963c,param_1,param_2);
+  scope_obj_wf_add_row(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134434 @ 20134434  (116 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_wf_row_addr
+ * scope_wf_row_addr @ 20134434  (116 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row (gui.md)
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134434 @ 20134434 (116 bytes)
+// ===== scope_wf_row_addr @ 20134434 (116 bytes)
 
-int FUN_20134434(uint param_1,undefined4 param_2)
+/* (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row
+   (gui.md) [fact] */
+
+int scope_wf_row_addr(uint param_1,undefined4 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2016479c(&DAT_204fc5f0,~param_1,param_2);
+  iVar1 = ring133_offset(&DAT_204fc5f0,~param_1,param_2);
   if (DAT_20450280 == 1) {
-    iVar1 = FUN_2016479c(&DAT_204fc5ec,~param_1);
+    iVar1 = ring133_offset(&DAT_204fc5ec,~param_1);
   }
   return DAT_20450280 * 0x33f40 + iVar1 * 0x640 + 0x2049476c;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134480 @ 20134480  (120 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope3d_layout_set
+ * scope3d_layout_set @ 20134480  (120 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables
  *     0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134480 @ 20134480 (120 bytes)
+// ===== scope3d_layout_set @ 20134480 (120 bytes)
 
-void FUN_20134480(int param_1)
+/* (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables
+   0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) [fact] */
+
+void scope3d_layout_set(int param_1)
 
 {
   DAT_2047c848 = (undefined1)param_1;
@@ -16575,52 +16866,55 @@ void FUN_20134480(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013448c @ 2013448c  (12 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_reset_bank0
+ * scope_reset_bank0 @ 2013448c  (12 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: scope_obj_reset_bank0(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2013448c @ 2013448c (12 bytes)
+// ===== scope_reset_bank0 @ 2013448c (12 bytes)
 
-void FUN_2013448c(undefined4 param_1)
+/* scope_obj_reset_bank0(0x2047963C) [fact] */
+
+void scope_reset_bank0(undefined4 param_1)
 
 {
-  FUN_201578c8(&DAT_2047963c,param_1);
+  scope_obj_reset_bank0(&DAT_2047963c,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134498 @ 20134498  (8 bytes, 2 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_reset_bank1
+ * scope_reset_bank1 @ 20134498  (8 bytes, 2 callers, export file 20134358_201352e8.c)
  * Purpose: scope_obj_reset_bank1(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134498 @ 20134498 (8 bytes)
+// ===== scope_reset_bank1 @ 20134498 (8 bytes)
 
-void FUN_20134498(void)
+/* scope_obj_reset_bank1(0x2047963C) [fact] */
+
+void scope_reset_bank1(void)
 
 {
-  FUN_20158568(&DAT_2047963c);
+  scope_obj_reset_bank1(&DAT_2047963c);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201344a8 @ 201344a8  (8 bytes, 0 callers, export file 20134358_201352e8.c)
- * Name on the doc page: scope_indices_clear
+ * scope_indices_clear @ 201344a8  (8 bytes, 0 callers, export file 20134358_201352e8.c)
  * Purpose: scope_obj_indices_clear(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201344a8 @ 201344a8 (8 bytes)
+// ===== scope_indices_clear @ 201344a8 (8 bytes)
 
-void FUN_201344a8(void)
+/* scope_obj_indices_clear(0x2047963C) [fact] */
+
+void scope_indices_clear(void)
 
 {
-  FUN_20158590(&DAT_2047963c);
+  scope_obj_indices_clear(&DAT_2047963c);
   return;
 }
 
@@ -16849,17 +17143,20 @@ void debug_screenshot_root(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134978 @ 20134978  (860 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_search_files
+ * sdmenu_scr_search_files @ 20134978  (860 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu byte 1 = 1..4: title from 0x208085FC, "Searching files...", builds the file list
  *     (sdmenu_list_files -> 0x209096B0, count 0x20909CF0) and answers 0xC3 (byte 1 + 0x40); mainlink_send_sd_absent
  *     without a card [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134978 @ 20134978 (860 bytes)
+// ===== sdmenu_scr_search_files @ 20134978 (860 bytes)
 
-void FUN_20134978(int param_1)
+/* scr_sd_menu byte 1 = 1..4: title from 0x208085FC, "Searching files...", builds the file list
+   (sdmenu_list_files -> 0x209096B0, count 0x20909CF0) and answers 0xC3 (byte 1 + 0x40);
+   mainlink_send_sd_absent without a card [fact] */
+
+void sdmenu_scr_search_files(int param_1)
 
 {
   byte bVar1;
@@ -16889,7 +17186,7 @@ void FUN_20134978(int param_1)
   fb_fill_rect(uVar3,0x4a69,0x1e,3,0x31a,0x1c0);
   gui_draw_runs32(uVar3,0x1e,3,&DAT_203e5e2c);
   gui_draw_text_centered(uVar3,0x2042824e,0xdc,400,0xc,0x20803bc0);
-  FUN_201363c0(uVar3,0x60,700,0x5e,0x13b,0,0,5,0x821);
+  gui_scrollbar_draw(uVar3,0x60,700,0x5e,0x13b,0,0,5,0x821);
   fb_fill_rect(uVar3,0x821,0x1f,0x2ba,0x62,0x3c);
   gui_draw_runs(uVar3,0x1f,0x2ba,&DAT_2016dc48);
   gui_draw_runs(uVar3,0x37,0x2dd,&DAT_2016dc58);
@@ -16931,7 +17228,7 @@ void FUN_20134978(int param_1)
     mainlink_queue_frame(&local_64,0x22);
     return;
   }
-  DAT_20909cf0 = FUN_2010ef88(uVar5 != 1 && uVar5 != 2,&DAT_209096b0,100);
+  DAT_20909cf0 = sdmenu_list_files(uVar5 != 1 && uVar5 != 2,&DAT_209096b0,100);
   iVar4 = sd_state_bit7();
   if (iVar4 == 0) {
     mainlink_send_sd_absent();
@@ -16956,16 +17253,18 @@ void FUN_20134978(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134984 @ 20134984  (944 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_file_list
+ * sdmenu_scr_file_list @ 20134984  (944 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x41..0x44 step 1: draws the file rows (75-px pitch, highlight frame 0xF980 for the selected
  *     row, scroll bar gui_scrollbar_draw with count 0x20909CF0) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134984 @ 20134984 (944 bytes)
+// ===== sdmenu_scr_file_list @ 20134984 (944 bytes)
 
-void FUN_20134984(int param_1)
+/* scr_sd_menu 0x41..0x44 step 1: draws the file rows (75-px pitch, highlight frame 0xF980 for the
+   selected row, scroll bar gui_scrollbar_draw with count 0x20909CF0) [fact] */
+
+void sdmenu_scr_file_list(int param_1)
 
 {
   byte bVar1;
@@ -17019,7 +17318,7 @@ void FUN_20134984(int param_1)
     fb_draw_round_frame(uVar2,uVar6 * 0x4b + 0x1e,3,0x2b2,0x4f,3,0xf980);
   }
 LAB_20161e8c:
-  FUN_201363c0(uVar2,0x60,700,0x5e,0x13b,(uint)bVar1,DAT_20909cf0,5,0x821);
+  gui_scrollbar_draw(uVar2,0x60,700,0x5e,0x13b,(uint)bVar1,DAT_20909cf0,5,0x821);
   fb_fill_rect(uVar2,0x821,0x1f,0x2ba,0x62,0x3c);
   gui_draw_runs(uVar2,0x1f,0x2ba,&DAT_2016dc48);
   gui_draw_runs(uVar2,0x37,0x2dd,&DAT_2016dc58);
@@ -17031,16 +17330,18 @@ LAB_20161e8c:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134990 @ 20134990  (692 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_loading
+ * sdmenu_scr_loading @ 20134990  (692 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x41/0x43 step 0x10: "LOADING", sdmenu_select_load + sdmenu_request loop with progress bar,
  *     then sdmenu_req_save; returns non-zero when the transfer to MAIN follows [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134990 @ 20134990 (692 bytes)
+// ===== sdmenu_scr_loading @ 20134990 (692 bytes)
 
-bool FUN_20134990(int param_1)
+/* scr_sd_menu 0x41/0x43 step 0x10: "LOADING", sdmenu_select_load + sdmenu_request loop with
+   progress bar, then sdmenu_req_save; returns non-zero when the transfer to MAIN follows [fact] */
+
+bool sdmenu_scr_loading(int param_1)
 
 {
   byte bVar1;
@@ -17115,7 +17416,7 @@ bool FUN_20134990(int param_1)
   local_60 = 0;
   if (cVar4 == '\x01') {
     local_80 = (uint)(ushort)local_80;
-    FUN_20135488(32000,(int)&local_80 + 3);
+    be16_store(32000,(int)&local_80 + 3);
 LAB_201615c8:
     if (local_34 == 0) {
       sdmenu_req_save((uint)(uVar7 != 0x41),32000);
@@ -17145,16 +17446,18 @@ LAB_201615c8:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2013499c @ 2013499c  (408 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_load_wait
+ * sdmenu_scr_load_wait @ 2013499c  (408 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu step 0x10 after sdmenu_scr_loading: "PROCESSING", progress bar from sdmenu_xfer_len until
  *     all bytes went or MAIN's frame changes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2013499c @ 2013499c (408 bytes)
+// ===== sdmenu_scr_load_wait @ 2013499c (408 bytes)
 
-void FUN_2013499c(int param_1)
+/* scr_sd_menu step 0x10 after sdmenu_scr_loading: "PROCESSING", progress bar from sdmenu_xfer_len
+   until all bytes went or MAIN's frame changes [fact] */
+
+void sdmenu_scr_load_wait(int param_1)
 
 {
   byte bVar1;
@@ -17183,8 +17486,7 @@ void FUN_2013499c(int param_1)
     iVar4 = sdmenu_xfer_len();
     uVar5 = __aeabi_idivmod(iVar4 * 100,d);
     gui_draw_progress_bar(uVar3,0xf0,0x129,(uint)uVar5 & 0xffff);
-    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs((ml_frame *)param_1), bVar2))
-    break;
+    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs(param_1), bVar2)) break;
     vdc5_wait_frames(1);
     gui_update_layers();
     itron_tslp_tsk(0xffffffff);
@@ -17195,16 +17497,18 @@ void FUN_2013499c(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349a8 @ 201349a8  (232 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_name_check
+ * sdmenu_scr_name_check @ 201349a8  (232 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 2: default file name (sdmenu_default_name) or sdmenu_file_exists for the
  *     chosen row, answer in a 0xC3 frame [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349a8 @ 201349a8 (232 bytes)
+// ===== sdmenu_scr_name_check @ 201349a8 (232 bytes)
 
-void FUN_201349a8(int param_1)
+/* scr_sd_menu 0x42/0x44 step 2: default file name (sdmenu_default_name) or sdmenu_file_exists for
+   the chosen row, answer in a 0xC3 frame [fact] */
+
+void sdmenu_scr_name_check(int param_1)
 
 {
   char cVar1;
@@ -17267,16 +17571,18 @@ void FUN_201349a8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349b4 @ 201349b4  (236 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_name_lookup
+ * sdmenu_scr_name_lookup @ 201349b4  (236 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 3: finds the typed name (strcasecmp over the 16-byte list 0x209096B0) and
  *     checks sdmenu_file_exists, answer in 0xC3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349b4 @ 201349b4 (236 bytes)
+// ===== sdmenu_scr_name_lookup @ 201349b4 (236 bytes)
 
-void FUN_201349b4(int param_1)
+/* scr_sd_menu 0x42/0x44 step 3: finds the typed name (strcasecmp over the 16-byte list 0x209096B0)
+   and checks sdmenu_file_exists, answer in 0xC3 [fact] */
+
+void sdmenu_scr_name_lookup(int param_1)
 
 {
   char cVar1;
@@ -17337,16 +17643,18 @@ void FUN_201349b4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349c0 @ 201349c0  (584 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_save_xfer
+ * sdmenu_scr_save_xfer @ 201349c0  (584 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 4: "PROCESSING", sdmenu_req_load, progress from sdmenu_xfer_len until done or
  *     MAIN's frame changes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349c0 @ 201349c0 (584 bytes)
+// ===== sdmenu_scr_save_xfer @ 201349c0 (584 bytes)
 
-void FUN_201349c0(ml_frame *param_1)
+/* scr_sd_menu 0x42/0x44 step 4: "PROCESSING", sdmenu_req_load, progress from sdmenu_xfer_len until
+   done or MAIN's frame changes [fact] */
+
+void sdmenu_scr_save_xfer(uint param_1)
 
 {
   byte bVar1;
@@ -17370,8 +17678,8 @@ void FUN_201349c0(ml_frame *param_1)
   undefined1 auStack_4b [39];
   
   uVar4 = fb_get_layer_addr(DAT_208085bc);
-  bVar1 = param_1->byte1;
-  uVar3 = be16_load(&param_1->vfo_flags);
+  bVar1 = *(byte *)(param_1 + 1);
+  uVar3 = be16_load((byte *)(param_1 + 3));
   fb_clear_rect(uVar4,0,0,800,0x1e0);
   fb_fill_rect(uVar4,0x3186,3,3,0x31a,0x18);
   gui_draw_runs(uVar4,3,3,&DAT_2016dc08);
@@ -17423,16 +17731,18 @@ void FUN_201349c0(ml_frame *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349cc @ 201349cc  (708 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_saving
+ * sdmenu_scr_saving @ 201349cc  (708 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 0x10: "SAVING", blank name -> sdmenu_default_name, sdmenu_select +
  *     sdmenu_request loop with progress bar, answer 0xC3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349cc @ 201349cc (708 bytes)
+// ===== sdmenu_scr_saving @ 201349cc (708 bytes)
 
-void FUN_201349cc(int param_1)
+/* scr_sd_menu 0x42/0x44 step 0x10: "SAVING", blank name -> sdmenu_default_name, sdmenu_select +
+   sdmenu_request loop with progress bar, answer 0xC3 [fact] */
+
+void sdmenu_scr_saving(int param_1)
 
 {
   byte bVar1;
@@ -17540,15 +17850,16 @@ void FUN_201349cc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349d8 @ 201349d8  (424 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_info
+ * sdmenu_scr_info @ 201349d8  (424 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu byte 1 = 5: sd_info_screen(0x20909CF4) and a 0xC3 answer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349d8 @ 201349d8 (424 bytes)
+// ===== sdmenu_scr_info @ 201349d8 (424 bytes)
 
-void FUN_201349d8(int param_1)
+/* scr_sd_menu byte 1 = 5: sd_info_screen(0x20909CF4) and a 0xC3 answer [fact] */
+
+void sdmenu_scr_info(int param_1)
 
 {
   byte bVar1;
@@ -17615,16 +17926,18 @@ void FUN_201349d8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349e4 @ 201349e4  (524 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_info_text
+ * sdmenu_scr_info_text @ 201349e4  (524 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x45: draws the two text lines 0x20909CF4 / 0x20909D34 that sd_info_screen filled, with
  *     separators [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349e4 @ 201349e4 (524 bytes)
+// ===== sdmenu_scr_info_text @ 201349e4 (524 bytes)
 
-void FUN_201349e4(int param_1)
+/* scr_sd_menu 0x45: draws the two text lines 0x20909CF4 / 0x20909D34 that sd_info_screen filled,
+   with separators [fact] */
+
+void sdmenu_scr_info_text(int param_1)
 
 {
   byte bVar1;
@@ -17655,15 +17968,16 @@ void FUN_201349e4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349f0 @ 201349f0  (348 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_card_check
+ * sdmenu_scr_card_check @ 201349f0  (348 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu byte 1 = 8: sd_present -> 0xC3 answer with status 1 (card) or 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349f0 @ 201349f0 (348 bytes)
+// ===== sdmenu_scr_card_check @ 201349f0 (348 bytes)
 
-void FUN_201349f0(int param_1)
+/* scr_sd_menu byte 1 = 8: sd_present -> 0xC3 answer with status 1 (card) or 0 [fact] */
+
+void sdmenu_scr_card_check(int param_1)
 
 {
   byte bVar1;
@@ -17726,15 +18040,16 @@ void FUN_201349f0(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201349fc @ 201349fc  (560 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_format_confirm
+ * sdmenu_scr_format_confirm @ 201349fc  (560 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x48 step 1: "FORMAT SD CARD" confirmation screen [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201349fc @ 201349fc (560 bytes)
+// ===== sdmenu_scr_format_confirm @ 201349fc (560 bytes)
 
-void FUN_201349fc(int param_1)
+/* scr_sd_menu 0x48 step 1: "FORMAT SD CARD" confirmation screen [fact] */
+
+void sdmenu_scr_format_confirm(int param_1)
 
 {
   byte bVar1;
@@ -17769,16 +18084,18 @@ void FUN_201349fc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20134a08 @ 20134a08  (496 bytes, 1 callers, export file 20134358_201352e8.c)
- * Name on the doc page: sdmenu_scr_format_run
+ * sdmenu_scr_format_run @ 20134a08  (496 bytes, 1 callers, export file 20134358_201352e8.c)
  * Purpose: scr_sd_menu 0x48 step 0x10: "Now format in progress...", sd_format_request loop with progress bar,
  *     sd_format_done, answer 0xC3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20134a08 @ 20134a08 (496 bytes)
+// ===== sdmenu_scr_format_run @ 20134a08 (496 bytes)
 
-void FUN_20134a08(int param_1)
+/* scr_sd_menu 0x48 step 0x10: "Now format in progress...", sd_format_request loop with progress
+   bar, sd_format_done, answer 0xC3 [fact] */
+
+void sdmenu_scr_format_run(int param_1)
 
 {
   byte bVar1;
@@ -17980,15 +18297,15 @@ LAB_20134cec:
 
 /* meter scale + type label on graphics 0 */
 
-void meter_draw_scale(ml_frame *frame,ml_frame *old,int param_3)
+void meter_draw_scale(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
   uint uVar2;
   
   iVar1 = fb_get_layer_addr(0);
-  uVar2 = frame->meter_sel & 7;
-  if (param_3 != 0 || uVar2 != (old->meter_sel & 7)) {
+  uVar2 = *(byte *)(param_1 + 0xb) & 7;
+  if (param_3 != 0 || uVar2 != (*(byte *)(param_2 + 0xb) & 7)) {
     if (5 < uVar2) {
       uVar2 = 5;
     }
@@ -18016,15 +18333,17 @@ void test_disp_init(void)
 
 {
   uint uVar1;
-  t_cflg local_18;
+  undefined4 local_18;
+  undefined4 uStack_14;
+  undefined4 local_10;
   
-  local_18.flgatr = 2;
-  local_18.iflgptn = 0;
-  local_18.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_18);
+  local_18 = 2;
+  uStack_14 = 0;
+  local_10 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_18);
   if (0 < (int)uVar1) {
     DAT_20808934 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_test_disp);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_test_disp);
     if (0 < (int)uVar1) {
       DAT_20808938 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -18135,7 +18454,7 @@ undefined4 debug_replay_send_cmd(void)
   ushort local_e5c;
   undefined2 local_e5a;
   char local_e58 [3000];
-  ml_frame local_2a0;
+  char local_2a0 [576];
   undefined1 auStack_60 [64];
   
   iVar2 = sd_state_bit6();
@@ -18151,17 +18470,17 @@ undefined4 debug_replay_send_cmd(void)
         cVar1 = local_e58[0];
         if (uVar4 == 0xffffffff) break;
         if (uVar4 == 1) {
-          __aeabi_memclr4(&local_2a0,0x240);
+          __aeabi_memclr4(local_2a0,0x240);
           uVar4 = 0;
           do {
             if ((&DAT_2080893c)[uVar4 * 0xc] == cVar1) {
-              __aeabi_memcpy4(&local_2a0,local_e58,local_e5a);
+              __aeabi_memcpy4(local_2a0,local_e58,local_e5a);
               break;
             }
             uVar4 = uVar4 + 1;
           } while (uVar4 < 0x1a);
-          if (local_2a0.cmd != 0) {
-            mainlink_set_last_frame(&local_2a0);
+          if (local_2a0[0] != '\0') {
+            mainlink_set_last_frame((uint)local_2a0);
           }
           itron_dly_tsk(local_e5c / 10);
         }
@@ -18969,16 +19288,18 @@ void gui_draw_text_centered
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201360b0 @ 201360b0  (216 bytes, 1 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: debug_dump_rx_frame
+ * debug_dump_rx_frame @ 201360b0  (216 bytes, 1 callers, export file 201353f8_201378b0.c)
  * Purpose: (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200 bytes)
  *     at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201360b0 @ 201360b0 (216 bytes)
+// ===== debug_dump_rx_frame @ 201360b0 (216 bytes)
 
-void FUN_201360b0(int param_1,int param_2,int param_3)
+/* (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200
+   bytes) at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change [fact] */
+
+void debug_dump_rx_frame(int param_1,int param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -19028,16 +19349,18 @@ void FUN_201360b0(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20136188 @ 20136188  (264 bytes, 1 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: debug_dump_rx_buf2
+ * debug_dump_rx_buf2 @ 20136188  (264 bytes, 1 callers, export file 201353f8_201378b0.c)
  * Purpose: (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus the last
  *     received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20136188 @ 20136188 (264 bytes)
+// ===== debug_dump_rx_buf2 @ 20136188 (264 bytes)
 
-void FUN_20136188(int param_1,int param_2,int param_3)
+/* (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus
+   the last received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 [fact] */
+
+void debug_dump_rx_buf2(int param_1,int param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -19145,17 +19468,20 @@ void fb_draw_round_frame_wrap(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201363c0 @ 201363c0  (452 bytes, 5 callers, export file 201353f8_201378b0.c)
- * Name on the doc page: gui_scrollbar_draw
+ * gui_scrollbar_draw @ 201363c0  (452 bytes, 5 callers, export file 201353f8_201378b0.c)
  * Purpose: (fb, y, x, w, h, pos, count, min, colour): framed track with a 0x632C thumb sized and placed from pos /
  *     count (idivmod); used by scr_info, text_list_item_rows and the SD-menu file screens [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201363c0 @ 201363c0 (452 bytes)
+// ===== gui_scrollbar_draw @ 201363c0 (452 bytes)
 
-void FUN_201363c0(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
-                 uint param_7,int param_8,uint param_9)
+/* (fb, y, x, w, h, pos, count, min, colour): framed track with a 0x632C thumb sized and placed from
+   pos / count (idivmod); used by scr_info, text_list_item_rows and the SD-menu file screens [fact]
+    */
+
+void gui_scrollbar_draw(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
+                       uint param_7,int param_8,uint param_9)
 
 {
   int iVar1;
@@ -19239,7 +19565,7 @@ void debug_overlay_draw(int param_1)
                                  ),3,2,0xa5);
       }
       gui_draw_text(iVar3,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
-      uVar4 = FUN_20114920();
+      uVar4 = scif5_rxi_count_get();
       gui_draw_dec(iVar3,uVar4,4,2,0xe1);
       gui_draw_text(iVar3,0x20136c48,2,0x118,10,&DAT_20803730);
       gui_draw_dec(iVar3,DAT_208085a8,3,2,0x127);
@@ -19256,7 +19582,7 @@ void debug_overlay_draw(int param_1)
       gui_draw_text(iVar3,0x20136c60,2,0x1fe,10,&DAT_20803730);
       gui_draw_hex(iVar3,bVar7 | bVar1,1,2,0x20d);
       gui_draw_text(iVar3,0x20136c64,2,0x230,10,&DAT_20803730);
-      uVar4 = FUN_2011492c();
+      uVar4 = scif4_rxi_count_get();
       gui_draw_dec(iVar3,uVar4,4,2,0x23f);
       gui_draw_text(iVar3,0x20136c68,0xd2,0x32,10,&DAT_20803730);
       gui_draw_dec(iVar3,DAT_20800474,2,0xd2,0x69);
@@ -19279,12 +19605,12 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 2) != 0) {
       iVar6 = memcmp(&ml_rx_frame,&DAT_20909db4,0x200);
       if (iVar6 != 0) {
-        FUN_201360b0(&ml_rx_frame,&DAT_20909db4,0x200);
+        debug_dump_rx_frame(&ml_rx_frame,&DAT_20909db4,0x200);
         memcpy(&DAT_20909db4,&ml_rx_frame,0x240);
       }
       iVar6 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
       if (iVar6 != 0) {
-        FUN_20136188(&DAT_2045f4a0,&DAT_20909ff4,0x20);
+        debug_dump_rx_buf2(&DAT_2045f4a0,&DAT_20909ff4,0x20);
         memcpy(&DAT_20909ff4,&DAT_2045f4a0,0x401);
       }
     }
@@ -19366,15 +19692,17 @@ void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_201571e8 @ 201571e8  (36 bytes, 3 callers, export file 20156860_20158744.c)
- * Name on the doc page: afscope_obj_clear
+ * afscope_obj_clear @ 201571e8  (36 bytes, 3 callers, export file 20156860_20158744.c)
  * Purpose: (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201571e8 @ 201571e8 (36 bytes)
+// ===== afscope_obj_clear @ 201571e8 (36 bytes)
 
-void FUN_201571e8(int param_1)
+/* (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8
+   [fact] */
+
+void afscope_obj_clear(int param_1)
 
 {
   __aeabi_memclr4(param_1 + 0xb60,0x13178);
@@ -19384,15 +19712,16 @@ void FUN_201571e8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20157214 @ 20157214  (36 bytes, 4 callers, export file 20156860_20158744.c)
- * Name on the doc page: copy_inverted_words
+ * copy_inverted_words @ 20157214  (36 bytes, 4 callers, export file 20156860_20158744.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20157214 @ 20157214 (36 bytes)
+// ===== copy_inverted_words @ 20157214 (36 bytes)
 
-void FUN_20157214(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
+/* (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record [fact] */
+
+void copy_inverted_words(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 {
   for (param_4 = param_4 >> 2; param_4 != 0; param_4 = param_4 - 1) {
@@ -19405,28 +19734,30 @@ void FUN_20157214(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201576f4 @ 201576f4  (108 bytes, 4 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_wf_bank_set
+ * scope_wf_bank_set @ 201576f4  (108 bytes, 4 callers, export file 20156860_20158744.c)
  * Purpose: (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 = 0), 1
  *     selects bank 1, 2 clears both banks [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201576f4 @ 201576f4 (108 bytes)
+// ===== scope_wf_bank_set @ 201576f4 (108 bytes)
 
-void FUN_201576f4(int param_1,int param_2)
+/* (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 =
+   0), 1 selects bank 1, 2 clears both banks [fact] */
+
+void scope_wf_bank_set(int param_1,int param_2)
 
 {
   if (param_2 == 0) {
     __aeabi_memclr4(param_1 + 0x1b130,0x33f40);
-    FUN_201643a4(param_1 + 0x82fb4);
+    ring133_reset(param_1 + 0x82fb4);
     DAT_20450280 = 0;
   }
   else {
     if (param_2 != 1) {
       __aeabi_memclr4(param_1 + 0x1b130,0x67e80);
-      FUN_201643a4(param_1 + 0x82fb4);
-      FUN_201643a4(param_1 + 0x82fb0);
+      ring133_reset(param_1 + 0x82fb4);
+      ring133_reset(param_1 + 0x82fb0);
       return;
     }
     DAT_20450280 = 1;
@@ -19436,16 +19767,18 @@ void FUN_201576f4(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20157778 @ 20157778  (116 bytes, 4 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_history_clear
+ * scope_obj_history_clear @ 20157778  (116 bytes, 4 callers, export file 20156860_20158744.c)
  * Purpose: (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope object
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20157778 @ 20157778 (116 bytes)
+// ===== scope_obj_history_clear @ 20157778 (116 bytes)
 
-void FUN_20157778(int param_1)
+/* (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope
+   object [fact] */
+
+void scope_obj_history_clear(int param_1)
 
 {
   __aeabi_memset(param_1 + 0x9c7f,0x352,0xff);
@@ -19459,16 +19792,18 @@ void FUN_20157778(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201577f8 @ 201577f8  (36 bytes, 2 callers, export file 20156860_20158744.c)
- * Name on the doc page: copy_inverted_words_b
+ * copy_inverted_words_b @ 201577f8  (36 bytes, 2 callers, export file 20156860_20158744.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words); scope_history_push uses
  *     it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201577f8 @ 201577f8 (36 bytes)
+// ===== copy_inverted_words_b @ 201577f8 (36 bytes)
 
-void FUN_201577f8(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
+/* (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words);
+   scope_history_push uses it [fact] */
+
+void copy_inverted_words_b(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 {
   for (param_4 = param_4 >> 2; param_4 != 0; param_4 = param_4 - 1) {
@@ -19481,36 +19816,40 @@ void FUN_201577f8(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201578c8 @ 201578c8  (40 bytes, 1 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_reset_bank0
+ * scope_obj_reset_bank0 @ 201578c8  (40 bytes, 1 callers, export file 20156860_20158744.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201578c8 @ 201578c8 (40 bytes)
+// ===== scope_obj_reset_bank0 @ 201578c8 (40 bytes)
 
-void FUN_201578c8(int param_1)
+/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact] */
+
+void scope_obj_reset_bank0(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  FUN_20157778();
-  FUN_201576f4(param_1,0);
+  scope_obj_history_clear();
+  scope_wf_bank_set(param_1,0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20157c50 @ 20157c50  (224 bytes, 2 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_levels_get
+ * scope_obj_levels_get @ 20157c50  (224 bytes, 2 callers, export file 20156860_20158744.c)
  * Purpose: (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while SPEED
  *     STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method behind
  *     scope_levels_get) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20157c50 @ 20157c50 (224 bytes)
+// ===== scope_obj_levels_get @ 20157c50 (224 bytes)
 
-void FUN_20157c50(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while
+   SPEED STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method
+   behind scope_levels_get) [fact] */
+
+void scope_obj_levels_get(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -19541,17 +19880,20 @@ LAB_20157cc4:
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20157d3c @ 20157d3c  (552 bytes, 2 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_wf_add_row
+ * scope_obj_wf_add_row @ 20157d3c  (552 bytes, 2 callers, export file 20156860_20158744.c)
  * Purpose: (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), adds
  *     the level offset to each point (clamp_add_u8, 0..255) into the current waterfall bank (gui.md:
  *     scope_wf_add_row) [fact for the calls]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20157d3c @ 20157d3c (552 bytes)
+// ===== scope_obj_wf_add_row @ 20157d3c (552 bytes)
 
-void FUN_20157d3c(int param_1,int param_2,int param_3)
+/* (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index
+   obj+0x17254), adds the level offset to each point (clamp_add_u8, 0..255) into the current
+   waterfall bank (gui.md: scope_wf_add_row) [fact for the calls] */
+
+void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -19568,15 +19910,15 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
   
   if ((((DAT_20800498 == '\0') && (*(char *)(param_1 + 0x9c7c) == '\0')) &&
       (*(char *)(param_1 + 0x9c7d) == '\0')) && (*(char *)(param_1 + 0x9c7e) == '\0')) {
-    iVar4 = FUN_20164828(param_1 + 0x17254,0xffffffff);
+    iVar4 = ring30_offset(param_1 + 0x17254,0xffffffff);
     iVar9 = param_1 + iVar4 * 800 + 0x10abc;
     iVar4 = param_1 + 0x1b12c;
-    iVar5 = FUN_201647e4(iVar4,0);
+    iVar5 = ring20_offset(iVar4,0);
     memcpy(iVar9,param_1 + iVar5 * 800 + 0x17258,800);
     iVar5 = 1;
     if (1 < param_2) {
       do {
-        iVar6 = FUN_201647e4(iVar4,-iVar5);
+        iVar6 = ring20_offset(iVar4,-iVar5);
         iVar7 = 0;
         do {
           bVar3 = *(byte *)(param_1 + iVar6 * 800 + 0x17258 + iVar7);
@@ -19588,10 +19930,10 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
         iVar5 = iVar5 + 1;
       } while (iVar5 < param_2);
     }
-    iVar5 = FUN_20164388(param_1 + 0x82fb4);
+    iVar5 = ring133_advance(param_1 + 0x82fb4);
     puVar10 = &DAT_20450278;
     if (DAT_20450280 == 1) {
-      iVar5 = FUN_20164388(param_1 + 0x82fb0);
+      iVar5 = ring133_advance(param_1 + 0x82fb0);
     }
     if (param_3 != 0) {
       puVar10 = (undefined4 *)0x0;
@@ -19599,7 +19941,7 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
     iVar5 = param_1 + DAT_20450280 * 0x33f40 + iVar5 * 0x640 + 0x1b130;
     if (param_3 != 0) {
       do {
-        iVar7 = FUN_201341cc(*(undefined1 *)(iVar9 + (int)puVar10),param_3);
+        iVar7 = clamp_add_u8(*(undefined1 *)(iVar9 + (int)puVar10),param_3);
         iVar6 = (int)puVar10 * 2;
         puVar10 = (undefined4 *)((int)puVar10 + 1);
         *(undefined2 *)(iVar5 + iVar6) = *(undefined2 *)(param_1 + iVar7 * 2 + 0x2e06);
@@ -19618,7 +19960,7 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
     piVar11 = (int *)(param_1 + 0x1b0d8);
     if (0 < *piVar11) {
       do {
-        iVar7 = FUN_201647e4(iVar4,-iVar6);
+        iVar7 = ring20_offset(iVar4,-iVar6);
         uVar8 = (uint)*(ushort *)(piVar11 + iVar7 + 1);
         if (uVar8 < *(ushort *)((int)piVar11 + iVar7 * 4 + 6) + uVar8) {
           do {
@@ -19639,34 +19981,36 @@ void FUN_20157d3c(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20158568 @ 20158568  (40 bytes, 1 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_reset_bank1
+ * scope_obj_reset_bank1 @ 20158568  (40 bytes, 1 callers, export file 20156860_20158744.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20158568 @ 20158568 (40 bytes)
+// ===== scope_obj_reset_bank1 @ 20158568 (40 bytes)
 
-void FUN_20158568(int param_1)
+/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact] */
+
+void scope_obj_reset_bank1(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  FUN_20157778();
-  FUN_201576f4(param_1,1);
+  scope_obj_history_clear();
+  scope_wf_bank_set(param_1,1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20158590 @ 20158590  (104 bytes, 1 callers, export file 20156860_20158744.c)
- * Name on the doc page: scope_obj_indices_clear
+ * scope_obj_indices_clear @ 20158590  (104 bytes, 1 callers, export file 20156860_20158744.c)
  * Purpose: (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20158590 @ 20158590 (104 bytes)
+// ===== scope_obj_indices_clear @ 20158590 (104 bytes)
 
-int FUN_20158590(int param_1)
+/* (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 [fact] */
+
+int scope_obj_indices_clear(int param_1)
 
 {
   *(undefined4 *)(param_1 + 0x17254) = 0;
@@ -19678,16 +20022,18 @@ int FUN_20158590(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201587fc @ 201587fc  (60 bytes, 2 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: scope3d_obj_init
+ * scope3d_obj_init @ 201587fc  (60 bytes, 2 callers, export file 201587ac_2015c048.c)
  * Purpose: (obj): resets the three sub-objects (+0x10, +0x9C, +0x38E8) and byte 0; used for the 3D objects
  *     0x20470294 / 0x20474C68 by scope_objects_init [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201587fc @ 201587fc (60 bytes)
+// ===== scope3d_obj_init @ 201587fc (60 bytes)
 
-void FUN_201587fc(undefined1 *param_1)
+/* (obj): resets the three sub-objects (+0x10, +0x9C, +0x38E8) and byte 0; used for the 3D objects
+   0x20470294 / 0x20474C68 by scope_objects_init [fact] */
+
+void scope3d_obj_init(undefined1 *param_1)
 
 {
   FUN_20163d44(param_1 + 0x10,0);
@@ -19699,17 +20045,20 @@ void FUN_201587fc(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20158fd0 @ 20158fd0  (132 bytes, 2 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: touch_wait_tap
+ * touch_wait_tap @ 20158fd0  (132 bytes, 2 callers, export file 201587ac_2015c048.c)
  * Purpose: Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or 4), a
  *     release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and fwupdate_insert_sd_screen wait with it
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20158fd0 @ 20158fd0 (132 bytes)
+// ===== touch_wait_tap @ 20158fd0 (132 bytes)
 
-void FUN_20158fd0(void)
+/* Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or
+   4), a release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and
+   fwupdate_insert_sd_screen wait with it [fact] */
+
+void touch_wait_tap(void)
 
 {
   char local_20 [12];
@@ -19737,18 +20086,21 @@ void FUN_20158fd0(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015b8f8 @ 2015b8f8  (176 bytes, 2 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: scope3d_line_render
+ * scope3d_line_render @ 2015b8f8  (176 bytes, 2 callers, export file 201587ac_2015c048.c)
  * Purpose: (buf, i, y, x0, mode, ...): one 3DSS line: levels (FUN_201343c4), colour ramp scope_ramp_get, markers
  *     scope3d_line_markers, scale scope3d_vscale, then scope3d_draw_line at x = 5i + x0, width 0x317 - 10i (gui.md
  *     3DSS step 4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015b8f8 @ 2015b8f8 (176 bytes)
+// ===== scope3d_line_render @ 2015b8f8 (176 bytes)
 
-void FUN_2015b8f8(undefined4 param_1,int param_2,undefined4 param_3,int param_4,undefined4 param_5,
-                 undefined4 param_6)
+/* (buf, i, y, x0, mode, ...): one 3DSS line: levels (FUN_201343c4), colour ramp scope_ramp_get,
+   markers scope3d_line_markers, scale scope3d_vscale, then scope3d_draw_line at x = 5i + x0, width
+   0x317 - 10i (gui.md 3DSS step 4) [fact] */
+
+void scope3d_line_render(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
+                        undefined4 param_5,undefined4 param_6)
 
 {
   undefined4 uVar1;
@@ -19766,9 +20118,9 @@ void FUN_2015b8f8(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
   uStack_2c = param_3;
   iStack_28 = param_4;
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
-  uVar2 = FUN_20134398(param_5);
-  uVar3 = FUN_20134408(param_2);
-  uVar4 = FUN_20134358(param_2,param_5);
+  uVar2 = scope_ramp_get(param_5);
+  uVar3 = scope3d_line_markers(param_2);
+  uVar4 = scope3d_vscale(param_2,param_5);
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -19788,7 +20140,7 @@ void FUN_2015b8f8(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
 void scope3d_history_clear(void)
 
 {
-  FUN_20134310();
+  scope_history_reset();
   __aeabi_memclr_veneer(DAT_208085b4,0x6b080);
   return;
 }
@@ -19824,10 +20176,10 @@ void scope3d_render_large(void *param_1,uint param_2,int param_3,ushort *param_4
     unaff_r7 = (int)param_1 + 4;
   }
   if (bVar4) {
-    pcVar3 = FUN_2015b8f8;
+    pcVar3 = scope3d_line_render;
   }
   else {
-    pcVar3 = FUN_2015bacc;
+    pcVar3 = scope3d_line_render_alt;
   }
   if (3 < *param_4) {
     local_28 = CONCAT22(param_4[1],*param_4);
@@ -19856,17 +20208,20 @@ void scope3d_render_large(void *param_1,uint param_2,int param_3,ushort *param_4
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015bacc @ 2015bacc  (176 bytes, 0 callers, export file 201587ac_2015c048.c)
- * Name on the doc page: scope3d_line_render_alt
+ * scope3d_line_render_alt @ 2015bacc  (176 bytes, 0 callers, export file 201587ac_2015c048.c)
  * Purpose: Identical copy of scope3d_line_render that scope3d_render_large uses when its third argument is non-zero
  *     [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015bacc @ 2015bacc (176 bytes)
+// ===== scope3d_line_render_alt @ 2015bacc (176 bytes)
 
-void FUN_2015bacc(undefined4 param_1,int param_2,undefined4 param_3,int param_4,undefined4 param_5,
-                 undefined4 param_6)
+/* Identical copy of scope3d_line_render that scope3d_render_large uses when its third argument is
+   non-zero [fact] */
+
+void scope3d_line_render_alt
+               (undefined4 param_1,int param_2,undefined4 param_3,int param_4,undefined4 param_5,
+               undefined4 param_6)
 
 {
   undefined4 uVar1;
@@ -19884,9 +20239,9 @@ void FUN_2015bacc(undefined4 param_1,int param_2,undefined4 param_3,int param_4,
   uStack_2c = param_3;
   iStack_28 = param_4;
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
-  uVar2 = FUN_20134398(param_5);
-  uVar3 = FUN_20134408(param_2);
-  uVar4 = FUN_20134358(param_2,param_5);
+  uVar2 = scope_ramp_get(param_5);
+  uVar3 = scope3d_line_markers(param_2);
+  uVar4 = scope3d_vscale(param_2,param_5);
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -19939,7 +20294,8 @@ void scope3d_render_small(void *param_1,uint param_2,int param_3,ushort *param_4
   __aeabi_memclr(uVar2,unaff_r4 * 0x640);
   iVar1 = 1;
   do {
-    FUN_2015b8f8(*(undefined4 *)param_1,iVar1,*(uint *)(unaff_r6 + iVar1 * 4) & 0xffff,4,9,0);
+    scope3d_line_render(*(undefined4 *)param_1,iVar1,*(uint *)(unaff_r6 + iVar1 * 4) & 0xffff,4,9,0)
+    ;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0xf);
   memcpy(param_5,uVar2,unaff_r4 * 0x640);
@@ -20056,16 +20412,18 @@ void scope3d_draw_line(int param_1,int param_2,int param_3,int param_4,int param
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2015c558 @ 2015c558  (304 bytes, 1 callers, export file 2015c278_2015f0ec.c)
- * Name on the doc page: touch_hit_scope
+ * touch_hit_scope @ 2015c558  (304 bytes, 1 callers, export file 2015c278_2015f0ec.c)
  * Purpose: Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2), expanded
  *     flag; input.md lists it for soft keys 0x1016..0x1019 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2015c558 @ 2015c558 (304 bytes)
+// ===== touch_hit_scope @ 2015c558 (304 bytes)
 
-undefined4 FUN_2015c558(undefined4 param_1,undefined4 param_2)
+/* Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2),
+   expanded flag; input.md lists it for soft keys 0x1016..0x1019 [fact] */
+
+undefined4 touch_hit_scope(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -20132,7 +20490,7 @@ undefined4 FUN_2015c558(undefined4 param_1,undefined4 param_2)
       }
     }
   }
-  uVar2 = FUN_2015c81c(param_1,param_2,&DAT_203a53d4,2);
+  uVar2 = touch_hit_scope_drag(param_1,param_2,&DAT_203a53d4,2);
   return uVar2;
 }
 
@@ -20259,7 +20617,7 @@ void multi_panel_draw(undefined4 param_1)
   
   uVar1 = fb_get_layer_addr(DAT_208085b8);
   affft_spectrum_draw(uVar1,0x145,0x195,0x187,param_1);
-  FUN_20120d90();
+  affft_wf_add_row();
   affft_waterfall_blit(uVar1,0x16d,0x195,0x187,0x27);
   osc_draw(uVar1,0x145,4,0,0x4f,param_1);
   return;
@@ -20298,7 +20656,7 @@ void scope2d_draw_normal(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -20370,7 +20728,7 @@ void scope2d_draw_multi(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -20430,7 +20788,7 @@ void osc_draw(int param_1,int param_2,int param_3,undefined4 param_4,int param_5
   byte local_338 [788];
   
   iVar3 = 0;
-  FUN_20120da4(param_6,local_338);
+  osc_column_pairs(param_6,local_338);
   iVar4 = param_3 + 0x187;
   for (; param_3 < iVar4; param_3 = param_3 + 1) {
     iVar1 = 1;
@@ -20482,8 +20840,8 @@ void scope_front_trace_draw
   undefined2 local_3e8 [240];
   undefined2 local_208 [242];
   
-  iVar2 = FUN_2013437c(param_6,abStack_708);
-  iVar3 = FUN_20134398(param_6);
+  iVar2 = scope_levels_get(param_6,abStack_708);
+  iVar3 = scope_ramp_get(param_6);
   iVar8 = *(int *)(iVar2 + 4);
   iVar4 = *(int *)(iVar3 + 4);
   iVar3 = (uint)*param_7 - param_3;
@@ -20572,7 +20930,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -20613,7 +20971,7 @@ void scope2d_draw_expand(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -20638,7 +20996,7 @@ void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int pa
   int iVar1;
   
   while (param_5 = param_5 + -1, -1 < param_5) {
-    iVar1 = FUN_20120d98(param_5);
+    iVar1 = affft_wf_row_addr(param_5);
     fb_blit_raw(param_1,param_2 + param_5 & 0xffff,param_3,iVar1,param_4,1);
   }
   return;
@@ -20662,14 +21020,14 @@ void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,u
   uint uVar2;
   
   if ((param_5 & 1) != 0) {
-    iVar1 = FUN_20134434(param_5 >> 1);
+    iVar1 = scope_wf_row_addr(param_5 >> 1);
     fb_blit_raw(param_1,param_2 + (param_5 >> 1) * 2 & 0xffff,param_3,iVar1 + param_3 * 2,param_4,1)
     ;
   }
   param_5 = param_5 >> 1;
   fb_fill_box(param_1,param_2 - 1U & 0xffff,param_3,param_4,1,0);
   while (param_5 = param_5 - 1, -1 < (int)param_5) {
-    iVar1 = FUN_20134434(param_5);
+    iVar1 = scope_wf_row_addr(param_5);
     uVar2 = param_2 + param_5 * 2;
     iVar1 = iVar1 + param_3 * 2;
     fb_blit_raw(param_1,uVar2 & 0xffff,param_3,iVar1,param_4,1);
@@ -20706,7 +21064,7 @@ void scope2d_spectrum_fill
   byte abStack_348 [800];
   int local_28;
   
-  FUN_2013437c(param_6,abStack_348);
+  scope_levels_get(param_6,abStack_348);
   uVar2 = DAT_208084cc;
   param_4 = param_4 + param_3;
   iVar1 = param_3 + -0x348;
@@ -20783,7 +21141,7 @@ void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefin
   undefined2 *puVar7;
   byte local_1b0 [396];
   
-  iVar2 = FUN_20120d60(param_5,local_1b0);
+  iVar2 = affft_spectrum_columns(param_5,local_1b0);
   param_2 = param_2 * 800;
   iVar5 = 0;
   if (0 < iVar2) {
@@ -20814,16 +21172,18 @@ void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefin
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20160c70 @ 20160c70  (124 bytes, 1 callers, export file 2015f1f0_20162c28.c)
- * Name on the doc page: afscope_map0_init
+ * afscope_map0_init @ 20160c70  (124 bytes, 1 callers, export file 2015f1f0_20162c28.c)
  * Purpose: Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on 0x27
  *     (39, the AF-FFT spectrum height of gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20160c70 @ 20160c70 (124 bytes)
+// ===== afscope_map0_init @ 20160c70 (124 bytes)
 
-void FUN_20160c70(int param_1)
+/* Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on
+   0x27 (39, the AF-FFT spectrum height of gui.md) [fact] */
+
+void afscope_map0_init(int param_1)
 
 {
   int iVar1;
@@ -20857,15 +21217,16 @@ void FUN_20160c70(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20160cf0 @ 20160cf0  (92 bytes, 1 callers, export file 2015f1f0_20162c28.c)
- * Name on the doc page: afscope_map2_init
+ * afscope_map2_init @ 20160cf0  (92 bytes, 1 callers, export file 2015f1f0_20162c28.c)
  * Purpose: Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20160cf0 @ 20160cf0 (92 bytes)
+// ===== afscope_map2_init @ 20160cf0 (92 bytes)
 
-void FUN_20160cf0(int param_1)
+/* Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact] */
+
+void afscope_map2_init(int param_1)
 
 {
   int iVar1;
@@ -20890,15 +21251,16 @@ void FUN_20160cf0(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20160d50 @ 20160d50  (144 bytes, 1 callers, export file 2015f1f0_20162c28.c)
- * Name on the doc page: afscope_map1_init
+ * afscope_map1_init @ 20160d50  (144 bytes, 1 callers, export file 2015f1f0_20162c28.c)
  * Purpose: Map 1 (obj +0x100): the same curve as map 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20160d50 @ 20160d50 (144 bytes)
+// ===== afscope_map1_init @ 20160d50 (144 bytes)
 
-void FUN_20160d50(int param_1)
+/* Map 1 (obj +0x100): the same curve as map 0 [fact] */
+
+void afscope_map1_init(int param_1)
 
 {
   int iVar1;
@@ -20934,15 +21296,16 @@ void FUN_20160d50(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20160de4 @ 20160de4  (92 bytes, 1 callers, export file 2015f1f0_20162c28.c)
- * Name on the doc page: afscope_map3_init
+ * afscope_map3_init @ 20160de4  (92 bytes, 1 callers, export file 2015f1f0_20162c28.c)
  * Purpose: Map 3 (obj +0x300): the same curve as map 2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20160de4 @ 20160de4 (92 bytes)
+// ===== afscope_map3_init @ 20160de4 (92 bytes)
 
-void FUN_20160de4(int param_1)
+/* Map 3 (obj +0x300): the same curve as map 2 [fact] */
+
+void afscope_map3_init(int param_1)
 
 {
   int iVar1;
@@ -20967,16 +21330,18 @@ void FUN_20160de4(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20160e44 @ 20160e44  (144 bytes, 1 callers, export file 2015f1f0_20162c28.c)
- * Name on the doc page: afscope_map4_init
+ * afscope_map4_init @ 20160e44  (144 bytes, 1 callers, export file 2015f1f0_20162c28.c)
  * Purpose: Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the bar
  *     height affft_bins_get returns) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20160e44 @ 20160e44 (144 bytes)
+// ===== afscope_map4_init @ 20160e44 (144 bytes)
 
-void FUN_20160e44(int param_1)
+/* Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the
+   bar height affft_bins_get returns) [fact] */
+
+void afscope_map4_init(int param_1)
 
 {
   int iVar1;
@@ -21012,15 +21377,17 @@ void FUN_20160e44(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164334 @ 20164334  (44 bytes, 2 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: scope3d_widths_init
+ * scope3d_widths_init @ 20164334  (44 bytes, 2 callers, export file 20163ca4_20164814.c)
  * Purpose: (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164334 @ 20164334 (44 bytes)
+// ===== scope3d_widths_init @ 20164334 (44 bytes)
 
-void FUN_20164334(int param_1,undefined4 param_2)
+/* (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide)
+   [fact] */
+
+void scope3d_widths_init(int param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -21041,59 +21408,62 @@ void FUN_20164334(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164360 @ 20164360  (28 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring100_advance
+ * ring100_advance @ 20164360  (28 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): returns *idx and advances it with ring100_next; affft_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164360 @ 20164360 (28 bytes)
+// ===== ring100_advance @ 20164360 (28 bytes)
 
-undefined4 FUN_20164360(undefined4 *param_1)
+/* (idx): returns *idx and advances it with ring100_next; affft_wf_add_row [fact] */
+
+undefined4 ring100_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_20164788();
+  uVar1 = ring100_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164388 @ 20164388  (28 bytes, 2 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring133_advance
+ * ring133_advance @ 20164388  (28 bytes, 2 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): returns *idx and advances it; scope_obj_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164388 @ 20164388 (28 bytes)
+// ===== ring133_advance @ 20164388 (28 bytes)
 
-undefined4 FUN_20164388(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope_obj_wf_add_row [fact] */
+
+undefined4 ring133_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_201647d0();
+  uVar1 = ring133_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201643a4 @ 201643a4  (12 bytes, 3 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring133_reset
+ * ring133_reset @ 201643a4  (12 bytes, 3 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201643a4 @ 201643a4 (12 bytes)
+// ===== ring133_reset @ 201643a4 (12 bytes)
 
-void FUN_201643a4(undefined4 *param_1)
+/* (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact] */
+
+void ring133_reset(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -21102,59 +21472,62 @@ void FUN_201643a4(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201643b0 @ 201643b0  (28 bytes, 2 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring20_advance
+ * ring20_advance @ 201643b0  (28 bytes, 2 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): returns *idx and advances it; scope_history_push [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201643b0 @ 201643b0 (28 bytes)
+// ===== ring20_advance @ 201643b0 (28 bytes)
 
-undefined4 FUN_201643b0(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope_history_push [fact] */
+
+undefined4 ring20_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_20164814();
+  uVar1 = ring20_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201643cc @ 201643cc  (28 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring30_advance
+ * ring30_advance @ 201643cc  (28 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): returns *idx and advances it; scope3d_redraw_history [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201643cc @ 201643cc (28 bytes)
+// ===== ring30_advance @ 201643cc (28 bytes)
 
-undefined4 FUN_201643cc(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope3d_redraw_history [fact] */
+
+undefined4 ring30_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_2016485c();
+  uVar1 = ring30_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164758 @ 20164758  (44 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring100_offset
+ * ring100_offset @ 20164758  (44 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164758 @ 20164758 (44 bytes)
+// ===== ring100_offset @ 20164758 (44 bytes)
 
-int FUN_20164758(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring [fact] */
+
+int ring100_offset(int *param_1,int param_2)
 
 {
   return (*param_1 + param_2 + 100) % 100;
@@ -21162,15 +21535,16 @@ int FUN_20164758(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164788 @ 20164788  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring100_next
+ * ring100_next @ 20164788  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): *idx + 1, wrapping at 100 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164788 @ 20164788 (20 bytes)
+// ===== ring100_next @ 20164788 (20 bytes)
 
-int FUN_20164788(int *param_1)
+/* (idx): *idx + 1, wrapping at 100 [fact] */
+
+int ring100_next(int *param_1)
 
 {
   int iVar1;
@@ -21184,15 +21558,17 @@ int FUN_20164788(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2016479c @ 2016479c  (48 bytes, 2 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring133_offset
+ * ring133_offset @ 2016479c  (48 bytes, 2 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2016479c @ 2016479c (48 bytes)
+// ===== ring133_offset @ 2016479c (48 bytes)
 
-int FUN_2016479c(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) [fact]
+    */
+
+int ring133_offset(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -21205,15 +21581,16 @@ int FUN_2016479c(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201647d0 @ 201647d0  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring133_next
+ * ring133_next @ 201647d0  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): *idx + 1, wrapping at 133 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201647d0 @ 201647d0 (20 bytes)
+// ===== ring133_next @ 201647d0 (20 bytes)
 
-int FUN_201647d0(int *param_1)
+/* (idx): *idx + 1, wrapping at 133 [fact] */
+
+int ring133_next(int *param_1)
 
 {
   int iVar1;
@@ -21227,15 +21604,17 @@ int FUN_201647d0(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_201647e4 @ 201647e4  (44 bytes, 8 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring20_offset
+ * ring20_offset @ 201647e4  (44 bytes, 8 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_201647e4 @ 201647e4 (44 bytes)
+// ===== ring20_offset @ 201647e4 (44 bytes)
 
-int FUN_201647e4(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line)
+   [fact] */
+
+int ring20_offset(int *param_1,int param_2)
 
 {
   return (*param_1 + param_2 + 0x14) % 0x14;
@@ -21243,15 +21622,16 @@ int FUN_201647e4(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_20164814 @ 20164814  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
- * Name on the doc page: ring20_next
+ * ring20_next @ 20164814  (20 bytes, 1 callers, export file 20163ca4_20164814.c)
  * Purpose: (idx): *idx + 1, wrapping at 20 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164814 @ 20164814 (20 bytes)
+// ===== ring20_next @ 20164814 (20 bytes)
 
-int FUN_20164814(int *param_1)
+/* (idx): *idx + 1, wrapping at 20 [fact] */
+
+int ring20_next(int *param_1)
 
 {
   int iVar1;
@@ -21264,15 +21644,17 @@ int FUN_20164814(int *param_1)
 }
 
 /* -----------------------------------------------------------------------------
- * FUN_20164828 @ 20164828  (48 bytes, 4 callers, export file 20164828_20164fa4.c)
- * Name on the doc page: ring30_offset
+ * ring30_offset @ 20164828  (48 bytes, 4 callers, export file 20164828_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_20164828 @ 20164828 (48 bytes)
+// ===== ring30_offset @ 20164828 (48 bytes)
 
-int FUN_20164828(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history)
+   [fact] */
+
+int ring30_offset(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -21285,15 +21667,16 @@ int FUN_20164828(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_2016485c @ 2016485c  (20 bytes, 1 callers, export file 20164828_20164fa4.c)
- * Name on the doc page: ring30_next
+ * ring30_next @ 2016485c  (20 bytes, 1 callers, export file 20164828_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 30 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== FUN_2016485c @ 2016485c (20 bytes)
+// ===== ring30_next @ 2016485c (20 bytes)
 
-int FUN_2016485c(int *param_1)
+/* (idx): *idx + 1, wrapping at 30 [fact] */
+
+int ring30_next(int *param_1)
 
 {
   int iVar1;

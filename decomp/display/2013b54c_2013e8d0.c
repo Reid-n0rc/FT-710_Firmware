@@ -21,11 +21,13 @@ void cpu_delay_cycles4(void)
 }
 
 
-// ===== FUN_2013b58c @ 2013b58c (12 bytes)
+// ===== usbh0_isr @ 2013b58c (12 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in
+   0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C [fact] */
 
-void FUN_2013b58c(void)
+void usbh0_isr(void)
 
 {
   word wVar1;
@@ -116,9 +118,11 @@ void FUN_2013b58c(void)
 }
 
 
-// ===== FUN_2013b598 @ 2013b598 (12 bytes)
+// ===== usbh1_isr @ 2013b598 (12 bytes)
 
-void FUN_2013b598(void)
+/* USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) [fact for the vector] */
+
+void usbh1_isr(void)
 
 {
   word wVar1;
@@ -339,9 +343,12 @@ uint usbh_hid_init(int *param_1)
 }
 
 
-// ===== FUN_2013b97c @ 2013b97c (56 bytes)
+// ===== usbh_hid_class_init @ 2013b97c (56 bytes)
 
-undefined4 FUN_2013b97c(void)
+/* Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on
+   error (boot-rtos.md init list) [fact] */
+
+undefined4 usbh_hid_class_init(void)
 
 {
   uint uVar1;
@@ -350,7 +357,7 @@ undefined4 FUN_2013b97c(void)
   
   __aeabi_memclr4(&DAT_2091c568,0x610);
   uVar1 = usbh_hid_init((int *)&DAT_2091c568);
-  if (((int)uVar1 < 0) || (iVar2 = FUN_2013c6bc(), iVar2 < 0)) {
+  if (((int)uVar1 < 0) || (iVar2 = usbhid_class_register(), iVar2 < 0)) {
     uVar3 = 0xffffffff;
   }
   else {
@@ -360,9 +367,12 @@ undefined4 FUN_2013b97c(void)
 }
 
 
-// ===== FUN_2013ba44 @ 2013ba44 (104 bytes)
+// ===== usbhid_device_stop @ 2013ba44 (104 bytes)
 
-undefined4 FUN_2013ba44(int param_1)
+/* (slot): stops a running HID device: clears its run flag, cancels the pipe (usbh_pipe_cancel) and
+   waits up to 1 s for the task to end [fact] */
+
+undefined4 usbhid_device_stop(int param_1)
 
 {
   undefined4 uVar1;
@@ -374,7 +384,8 @@ undefined4 FUN_2013ba44(int param_1)
   }
   else {
     *(undefined4 *)(&DAT_2091c57c + param_1) = 0;
-    FUN_2013c798(*(undefined4 *)(&DAT_2091c56c + param_1),*(undefined4 *)(&DAT_2091c574 + param_1));
+    usbh_pipe_cancel(*(undefined4 *)(&DAT_2091c56c + param_1),
+                     *(undefined4 *)(&DAT_2091c574 + param_1));
     iVar2 = 0;
     do {
       if (*(int *)(&DAT_2091c580 + param_1) == 0) break;
@@ -439,9 +450,11 @@ LAB_2013bb6c:
 }
 
 
-// ===== FUN_2013bbb4 @ 2013bbb4 (124 bytes)
+// ===== hid_report_bits_get @ 2013bbb4 (124 bytes)
 
-uint FUN_2013bbb4(int param_1,uint param_2,uint param_3)
+/* (report, bit offset, bit count): little-endian bit-field extract from a HID report [fact] */
+
+uint hid_report_bits_get(int param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -472,9 +485,12 @@ uint FUN_2013bbb4(int param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_2013bc30 @ 2013bc30 (240 bytes)
+// ===== hid_item_data @ 2013bc30 (240 bytes)
 
-void FUN_2013bc30(int *param_1,uint *param_2,int param_3)
+/* (*pos, *out, signed): reads the data of one short HID item (size code 0/1/2/4 bytes from the low
+   two bits of the prefix), sign-extends when asked, advances the pointer [fact] */
+
+void hid_item_data(int *param_1,uint *param_2,int param_3)
 
 {
   ushort uVar1;
@@ -522,9 +538,13 @@ void FUN_2013bc30(int *param_1,uint *param_2,int param_3)
 }
 
 
-// ===== FUN_2013bd20 @ 2013bd20 (1540 bytes)
+// ===== hid_report_desc_parse @ 2013bd20 (1540 bytes)
 
-undefined4 FUN_2013bd20(int param_1,byte *param_2,int param_3)
+/* (dev, desc): walks a HID report descriptor item by item (hid_item_data) and records the report
+   id, usage and the bit offsets and sizes of the fields the driver uses (buttons, X/Y, wheel, keys)
+   [fact for the item walk; inference for the field roles from usbhid_device_task] */
+
+undefined4 hid_report_desc_parse(int param_1,byte *param_2,int param_3)
 
 {
   byte bVar1;
@@ -586,7 +606,7 @@ undefined4 FUN_2013bd20(int param_1,byte *param_2,int param_3)
     do {
       bVar1 = *local_40 & 0xfc;
       if (bVar1 == 0x80) {
-        FUN_2013bc30(&local_40,&local_3c,0);
+        hid_item_data(&local_40,&local_3c,0);
         if ((*(int *)(param_1 + 0x20) < 0) || (local_44 != iVar6)) goto LAB_2013c034;
         if (local_48 == 1) {
           if (local_3c == 2 || local_3c == 6) {
@@ -671,7 +691,7 @@ LAB_2013c034:
       }
       else if (bVar1 < 0x80) {
         if (bVar1 == 0x18) {
-          FUN_2013bc30(&local_40,&local_60,0);
+          hid_item_data(&local_40,&local_60,0);
           if ((-1 < local_60) && (iVar3 = local_60, -1 < local_5c)) {
             for (; iVar3 <= local_5c; iVar3 = iVar3 + 1) {
               if (iVar2 < 0x100) {
@@ -688,10 +708,10 @@ LAB_2013c034:
         }
         else if (bVar1 < 0x18) {
           if (bVar1 == 4) {
-            FUN_2013bc30(&local_40,&local_48,0);
+            hid_item_data(&local_40,&local_48,0);
           }
           else if (bVar1 == 8) {
-            FUN_2013bc30(&local_40,&local_3c,0);
+            hid_item_data(&local_40,&local_3c,0);
             local_38 = local_3c;
             if (iVar7 == 0) {
               if (((local_48 & 0xff00) == 0) && (*(int *)(param_1 + 0x20) < 0)) {
@@ -711,14 +731,14 @@ LAB_2013c034:
           }
           else {
             if (bVar1 != 0x14) goto LAB_2013be4c;
-            FUN_2013bc30(&local_40,&local_50,1);
+            hid_item_data(&local_40,&local_50,1);
           }
         }
         else if (bVar1 == 0x24) {
-          FUN_2013bc30(&local_40,&local_4c,1);
+          hid_item_data(&local_40,&local_4c,1);
         }
         else if (bVar1 == 0x28) {
-          FUN_2013bc30(&local_40,&local_5c,0);
+          hid_item_data(&local_40,&local_5c,0);
           if ((-1 < local_60) && (iVar3 = local_60, -1 < local_5c)) {
             for (; iVar3 <= local_5c; iVar3 = iVar3 + 1) {
               if (iVar2 < 0x100) {
@@ -735,11 +755,11 @@ LAB_2013c034:
         }
         else {
           if (bVar1 != 0x74) goto LAB_2013be4c;
-          FUN_2013bc30(&local_40,&local_58,0);
+          hid_item_data(&local_40,&local_58,0);
         }
       }
       else if (bVar1 == 0xa0) {
-        FUN_2013bc30(&local_40,&local_3c,0);
+        hid_item_data(&local_40,&local_3c,0);
         if ((iVar7 == 0) && (local_38 == 6)) {
           local_48 = 7;
         }
@@ -750,7 +770,7 @@ LAB_2013c034:
       }
       else if (bVar1 < 0xa1) {
         if (bVar1 == 0x84) {
-          FUN_2013bc30(&local_40,&local_44,0);
+          hid_item_data(&local_40,&local_44,0);
           iVar3 = *(int *)(param_1 + 0x20);
           if (-1 < *(int *)(param_1 + 0x20)) {
             iVar3 = iVar6;
@@ -763,7 +783,7 @@ LAB_2013c034:
         }
         else {
           if (bVar1 == 0x90) {
-            FUN_2013bc30(&local_40,&local_3c,0);
+            hid_item_data(&local_40,&local_3c,0);
             if ((-1 < *(int *)(param_1 + 0x20)) && (local_44 == iVar6)) {
               if ((local_48 == 8) && (local_3c == 2)) {
                 if (local_54 < iVar2) {
@@ -786,16 +806,16 @@ LAB_2013c034:
             goto LAB_2013c034;
           }
           if (bVar1 != 0x94) goto LAB_2013be4c;
-          FUN_2013bc30(&local_40,&local_54,0);
+          hid_item_data(&local_40,&local_54,0);
         }
       }
       else {
         if (bVar1 == 0xb0) {
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
           goto LAB_2013c034;
         }
         if (bVar1 == 0xc0) {
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
           iVar2 = 0;
           iVar7 = iVar7 + -1;
           local_60 = -1;
@@ -803,7 +823,7 @@ LAB_2013c034:
         }
         else {
 LAB_2013be4c:
-          FUN_2013bc30(&local_40,&local_3c,0);
+          hid_item_data(&local_40,&local_3c,0);
         }
       }
     } while ((int)local_40 - (int)local_2c < local_28);
@@ -812,9 +832,14 @@ LAB_2013be4c:
 }
 
 
-// ===== FUN_2013c32c @ 2013c32c (912 bytes)
+// ===== usbhid_device_task @ 2013c32c (912 bytes)
 
-void FUN_2013c32c(int param_1)
+/* Per-device HID task: GET_DESCRIPTOR configuration (0x80/6/0x200), SET_PROTOCOL (0x21/0x0B),
+   GET_DESCRIPTOR report (0x81/6/0x2200), hid_report_desc_parse, SET_IDLE (0x21/0x0A),
+   usbhid_attach_event, then reads interrupt reports and passes the extracted fields to
+   usbhid_report_event; detach event and itron_ext_tsk at the end [fact] */
+
+void usbhid_device_task(int param_1)
 
 {
   undefined1 uVar1;
@@ -863,16 +888,16 @@ void FUN_2013c32c(int param_1)
                          (&DAT_2091c570)[param_1],0,0);
       iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
                                  (&DAT_2091c570)[param_1],pbVar9,uVar7);
-      if (((-1 < iVar3) && (iVar3 = FUN_2013bd20(puVar6,pbVar9), -1 < iVar3)) &&
+      if (((-1 < iVar3) && (iVar3 = hid_report_desc_parse(puVar6,pbVar9), -1 < iVar3)) &&
          ((iVar3 = *(int *)(&DAT_2091c588 + param_1), iVar3 == 2 || iVar3 == 4 ||
           (iVar3 == 5 || iVar3 == 6)))) {
         usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,
                            (&DAT_2091c570)[param_1],0,0);
         usbhid_attach_event(*(int *)(&DAT_2091c56c + param_1),*(int *)(&DAT_2091c588 + param_1));
         while ((*(int *)(&DAT_2091c57c + param_1) != 0 &&
-               (iVar3 = FUN_2013c76c(*(undefined4 *)(&DAT_2091c56c + param_1),
-                                     *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
-                                     *(undefined4 *)(&DAT_2091c578 + param_1)), -1 < iVar3))) {
+               (iVar3 = usbhid_pipe_read(*(undefined4 *)(&DAT_2091c56c + param_1),
+                                         *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
+                                         *(undefined4 *)(&DAT_2091c578 + param_1)), -1 < iVar3))) {
           if (((&DAT_2091c66c)[param_1] == 0) || ((&DAT_2091c66c)[param_1] == *pbVar9)) {
             local_44 = 0;
             local_40 = 0;
@@ -885,8 +910,8 @@ void FUN_2013c32c(int param_1)
             if ((local_48 == 2 || local_48 == 4) || local_48 == 5) {
               if (-1 < *(int *)(&DAT_2091c644 + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c64c)[param_1];
-                uVar2 = FUN_2013bbb4(pbVar9,*(undefined4 *)(&DAT_2091c644 + param_1),
-                                     *(undefined4 *)(&DAT_2091c648 + param_1));
+                uVar2 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c644 + param_1),
+                                            *(undefined4 *)(&DAT_2091c648 + param_1));
                 local_44 = CONCAT22(uVar2,(undefined2)local_44);
               }
               uVar8 = 0;
@@ -894,8 +919,8 @@ void FUN_2013c32c(int param_1)
                 if (-1 < *(int *)(puVar6 + uVar8 * 0x10 + 0x24)) {
                   local_40 = CONCAT22(local_40._2_2_,
                                       (ushort)local_40 | (ushort)(1 << (uVar8 & 0xff)));
-                  uVar4 = FUN_2013bbb4(pbVar9,*(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x24),
-                                       *(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x28));
+                  uVar4 = hid_report_bits_get(pbVar9,*(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x24),
+                                              *(undefined4 *)(puVar6 + uVar8 * 0x10 + 0x28));
                   if ((*(int *)(puVar6 + uVar8 * 0x10 + 0x30) < 0) &&
                      ((uVar4 & 1 << (*(uint *)(puVar6 + uVar8 * 0x10 + 0x28) - 1 & 0xff)) != 0)) {
                     *(ushort *)((int)&local_40 + uVar8 * 2 + 2) =
@@ -912,8 +937,8 @@ void FUN_2013c32c(int param_1)
             else if (local_48 == 6) {
               if (-1 < *(int *)(&DAT_2091c62c + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c634)[param_1];
-                uVar1 = FUN_2013bbb4(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
-                                     *(undefined4 *)(&DAT_2091c630 + param_1));
+                uVar1 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
+                                            *(undefined4 *)(&DAT_2091c630 + param_1));
                 local_44._0_2_ = CONCAT11(uVar1,(undefined1)local_44);
               }
               if (-1 < *(int *)(&DAT_2091c63c + param_1)) {
@@ -936,9 +961,12 @@ void FUN_2013c32c(int param_1)
 }
 
 
-// ===== FUN_2013c6bc @ 2013c6bc (84 bytes)
+// ===== usbhid_class_register @ 2013c6bc (84 bytes)
 
-undefined4 FUN_2013c6bc(void)
+/* Clears the two HID device slots 0x2091CB78.. and registers the class table 0x204201FC with the
+   host stack (thunk_FUN_201384d4) [fact] */
+
+undefined4 usbhid_class_register(void)
 
 {
   int iVar1;
@@ -997,25 +1025,30 @@ void usbh_class_request(int param_1,undefined1 param_2,undefined1 param_3,undefi
 }
 
 
-// ===== FUN_2013c76c @ 2013c76c (44 bytes)
+// ===== usbhid_pipe_read @ 2013c76c (44 bytes)
 
-void FUN_2013c76c(int param_1,int param_2)
+/* (dev, pipe slot): starts a read on the device's interrupt pipe (usbh_pipe_xfer) [fact] */
+
+void usbhid_pipe_read(int param_1,int param_2)
 
 {
   int iVar1;
   
   iVar1 = (&DAT_2091cb78)[param_1 * 6];
   if (iVar1 != 0) {
-    FUN_20139624(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + param_2 * 4 + 0x8d8));
+    usbh_pipe_xfer(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + param_2 * 4 + 0x8d8));
     return;
   }
   return;
 }
 
 
-// ===== FUN_2013c798 @ 2013c798 (316 bytes)
+// ===== usbh_pipe_cancel @ 2013c798 (316 bytes)
 
-undefined4 FUN_2013c798(int param_1,int param_2)
+/* (port, pipe): with the CPU locked, waits for the pipe to go idle (about 50 ticks), clears it in
+   the controller and signals the port flag and semaphore [fact for the calls] */
+
+undefined4 usbh_pipe_cancel(int param_1,int param_2)
 
 {
   ushort uVar1;
@@ -1069,9 +1102,11 @@ undefined4 FUN_2013c798(int param_1,int param_2)
 }
 
 
-// ===== FUN_2013c7c4 @ 2013c7c4 (156 bytes)
+// ===== usbhid_find_int_in @ 2013c7c4 (156 bytes)
 
-undefined4 FUN_2013c7c4(undefined4 *param_1,int param_2)
+/* (slot, config): first interrupt (type 3) IN endpoint with max packet 1..256; -1 if none [fact] */
+
+undefined4 usbhid_find_int_in(undefined4 *param_1,int param_2)
 
 {
   int iVar1;
@@ -1099,9 +1134,13 @@ undefined4 FUN_2013c7c4(undefined4 *param_1,int param_2)
 }
 
 
-// ===== FUN_2013c860 @ 2013c860 (336 bytes)
+// ===== usbhid_class_attach @ 2013c860 (336 bytes)
 
-int FUN_2013c860(int param_1,int param_2,int param_3)
+/* Class attach/detach callback (port, address, config): detach stops the device
+   (usbhid_device_stop); attach finds the interrupt-IN endpoint (usbhid_find_int_in), fills a free
+   slot (max 2) and starts usbhid_device_task, waiting up to 1 s for it [fact] */
+
+int usbhid_class_attach(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -1119,7 +1158,7 @@ int FUN_2013c860(int param_1,int param_2,int param_3)
         return iVar4;
       }
     }
-    FUN_2013ba44();
+    usbhid_device_stop();
     (&DAT_2091cb78)[iVar4 * 6] = 0;
     return 0;
   }
@@ -1132,7 +1171,7 @@ int FUN_2013c860(int param_1,int param_2,int param_3)
       return iVar1;
     }
   }
-  iVar1 = FUN_2013c7c4(&DAT_2091cb84 + iVar4 * 6,param_3);
+  iVar1 = usbhid_find_int_in(&DAT_2091cb84 + iVar4 * 6,param_3);
   if (iVar1 < 0) {
     return iVar1;
   }
@@ -1183,9 +1222,11 @@ undefined4 FUN_2013c928(int param_1,int *param_2)
 }
 
 
-// ===== FUN_2013c960 @ 2013c960 (112 bytes)
+// ===== sd_cmd0_go_idle @ 2013c960 (112 bytes)
 
-undefined4 FUN_2013c960(int *param_1)
+/* CMD0 (GO_IDLE_STATE), 3 tries; clears the RCA +0x2AC first [fact] */
+
+undefined4 sd_cmd0_go_idle(int *param_1)
 
 {
   int iVar1;
@@ -1208,9 +1249,13 @@ undefined4 FUN_2013c960(int *param_1)
 }
 
 
-// ===== FUN_2013c9d0 @ 2013c9d0 (488 bytes)
+// ===== sd_init_v1_or_mmc @ 2013c9d0 (488 bytes)
 
-undefined4 FUN_2013c9d0(int *param_1)
+/* Initialisation without a CMD8 answer: ACMD41 (CMD55 + 41) polling until the busy bit 31 of the
+   OCR is set, or CMD1 (MMC, arg 0xFF8000) when CMD55 fails; MMC sets the card type +0x2C6 = 1
+   [fact] */
+
+undefined4 sd_init_v1_or_mmc(int *param_1)
 
 {
   int iVar1;
@@ -1231,7 +1276,7 @@ undefined4 FUN_2013c9d0(int *param_1)
         (**(code **)(param_1[1] + 0x4c))(3,*param_1);
         if ((*(uint *)(*param_1 + 0x2b0) & 0x80000000) != 0) break;
         uVar3 = uVar3 + 1;
-        FUN_2013fd3c(1);
+        sd_delay_ms(1);
         if (999 < uVar3) {
           return 0xffffffff;
         }
@@ -1262,7 +1307,7 @@ undefined4 FUN_2013c9d0(int *param_1)
             }
           }
           uVar4 = uVar4 + 1;
-          FUN_2013fd3c(1);
+          sd_delay_ms(1);
           if (999 < uVar4) {
             return 0xffffffff;
           }
@@ -1277,9 +1322,12 @@ undefined4 FUN_2013c9d0(int *param_1)
 }
 
 
-// ===== FUN_2013cbb8 @ 2013cbb8 (560 bytes)
+// ===== sd_init_v2 @ 2013cbb8 (560 bytes)
 
-int FUN_2013cbb8(int *param_1)
+/* CMD8 (arg 0x1AA, echo check), then ACMD41 with HCS (0x41000000 | OCR voltage bits) until ready;
+   returns 1 for a standard-capacity card (CCS clear) [fact] */
+
+int sd_init_v2(int *param_1)
 
 {
   int iVar1;
@@ -1330,7 +1378,7 @@ int FUN_2013cbb8(int *param_1)
                   }
                 }
                 uVar3 = uVar3 + 1;
-                FUN_2013fd3c(1);
+                sd_delay_ms(1);
                 if (999 < uVar3) {
                   return -1;
                 }
@@ -1384,14 +1432,14 @@ int FUN_2013cde8(int *param_1)
     return -9;
   }
   (**(code **)(param_1[1] + 0x38))();
-  FUN_2013fd3c(10);
+  sd_delay_ms(10);
   iVar2 = (**(code **)(param_1[1] + 0x14))();
   if (iVar2 != 0) {
     return iVar2;
   }
   iVar2 = FUN_2013c928(1,param_1);
   if (iVar2 == 0) {
-    FUN_2013fd3c(1);
+    sd_delay_ms(1);
     iVar2 = (**(code **)(param_1[1] + 0x10))();
     if (iVar2 != 3) {
       return -9;
@@ -1402,9 +1450,11 @@ int FUN_2013cde8(int *param_1)
 }
 
 
-// ===== FUN_2013cee8 @ 2013cee8 (152 bytes)
+// ===== sd_cmd2_all_send_cid @ 2013cee8 (152 bytes)
 
-undefined4 FUN_2013cee8(int *param_1)
+/* CMD2 (ALL_SEND_CID), 3 tries; copies the 16-byte CID to ctx +0x211 [fact] */
+
+undefined4 sd_cmd2_all_send_cid(int *param_1)
 
 {
   int iVar1;
@@ -1432,9 +1482,11 @@ undefined4 FUN_2013cee8(int *param_1)
 }
 
 
-// ===== FUN_2013d0bc @ 2013d0bc (156 bytes)
+// ===== sd_cmd9_send_csd @ 2013d0bc (156 bytes)
 
-undefined4 FUN_2013d0bc(int *param_1)
+/* CMD9 (SEND_CSD, RCA << 16), 3 tries; copies the 16-byte CSD to ctx +0x201 [fact] */
+
+undefined4 sd_cmd9_send_csd(int *param_1)
 
 {
   int iVar1;
@@ -1464,9 +1516,12 @@ undefined4 FUN_2013d0bc(int *param_1)
 }
 
 
-// ===== FUN_2013d158 @ 2013d158 (104 bytes)
+// ===== sd_csd_check @ 2013d158 (104 bytes)
 
-undefined4 FUN_2013d158(byte *param_1)
+/* (csd): range check of an SD CSD (structure < 2, TAAC, read/write-partial bits, READ_BL_LEN < 12,
+   file format); -5 when invalid [fact for the fields] */
+
+undefined4 sd_csd_check(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -1482,9 +1537,12 @@ undefined4 FUN_2013d158(byte *param_1)
 }
 
 
-// ===== FUN_2013d1c8 @ 2013d1c8 (112 bytes)
+// ===== mmc_csd_check @ 2013d1c8 (112 bytes)
 
-undefined4 FUN_2013d1c8(byte *param_1)
+/* (csd): the same check for an MMC CSD (structure < 4, SPEC_VERS < 5, also WRITE_BL_LEN); used when
+   the card type +0x2C6 = 1 [fact] */
+
+undefined4 mmc_csd_check(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -1501,9 +1559,11 @@ undefined4 FUN_2013d1c8(byte *param_1)
 }
 
 
-// ===== FUN_2013d238 @ 2013d238 (156 bytes)
+// ===== sd_cmd10_send_cid @ 2013d238 (156 bytes)
 
-undefined4 FUN_2013d238(int *param_1)
+/* CMD10 (SEND_CID, RCA << 16), 3 tries; CID to ctx +0x211 [fact] */
+
+undefined4 sd_cmd10_send_cid(int *param_1)
 
 {
   int iVar1;
@@ -1533,9 +1593,12 @@ undefined4 FUN_2013d238(int *param_1)
 }
 
 
-// ===== FUN_2013d398 @ 2013d398 (156 bytes)
+// ===== sd_cmd13_send_status @ 2013d398 (156 bytes)
 
-undefined4 FUN_2013d398(uint *param_1,int *param_2)
+/* CMD13 (SEND_STATUS, RCA << 16), checks the R1 bits against the mask table 0x2042022C by card type
+   [fact] */
+
+undefined4 sd_cmd13_send_status(uint *param_1,int *param_2)
 
 {
   int iVar1;
@@ -1567,9 +1630,12 @@ undefined4 FUN_2013d398(uint *param_1,int *param_2)
 }
 
 
-// ===== FUN_2013d434 @ 2013d434 (200 bytes)
+// ===== sd_cmd7_select @ 2013d434 (200 bytes)
 
-undefined4 FUN_2013d434(int param_1,int *param_2)
+/* (rca, ctx): CMD7 SELECT/DESELECT_CARD (rca 0 deselects), R1 checked against the mask table
+   0x20420224 [fact] */
+
+undefined4 sd_cmd7_select(int param_1,int *param_2)
 
 {
   int iVar1;
@@ -1608,9 +1674,12 @@ undefined4 FUN_2013d434(int param_1,int *param_2)
 }
 
 
-// ===== FUN_2013d4fc @ 2013d4fc (248 bytes)
+// ===== sd_select_card @ 2013d4fc (248 bytes)
 
-int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+/* (ctx, ...): makes sure the card is selected (sd_cmd7_select with the RCA +0x2AA); called before
+   data transfers (sd_read_sectors, sd_write_sectors, SCR/status/switch reads) [fact] */
+
+int sd_select_card(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
   int iVar1;
@@ -1618,13 +1687,13 @@ int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4
   uint local_10;
   
   local_10 = param_4;
-  iVar1 = FUN_2013d398(&local_10,param_1);
+  iVar1 = sd_cmd13_send_status(&local_10,param_1);
   if (iVar1 == 0) {
     if ((local_10 & 0x1e00) == 0x800) {
       return 0;
     }
     if ((local_10 & 0x1e00) == 0xa00) {
-      iVar1 = FUN_2013d434(0,param_1);
+      iVar1 = sd_cmd7_select(0,param_1);
       if (iVar1 != 0) {
         return iVar1;
       }
@@ -1632,7 +1701,7 @@ int FUN_2013d4fc(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4
     }
     if ((local_10 & 0x1e00) == 0x600) {
 LAB_2013d5d4:
-      iVar1 = FUN_2013d434(*(undefined2 *)(*param_1 + 0x2aa),param_1);
+      iVar1 = sd_cmd7_select(*(undefined2 *)(*param_1 + 0x2aa),param_1);
       return iVar1;
     }
     if ((local_10 & 0x1e00) == 0xc00) {
@@ -1640,7 +1709,7 @@ LAB_2013d5d4:
       if (iVar1 == 0) {
         uVar2 = 0;
         do {
-          iVar1 = FUN_2013d398(&local_10,param_1);
+          iVar1 = sd_cmd13_send_status(&local_10,param_1);
           if (iVar1 != 0) {
             return iVar1;
           }
@@ -1664,9 +1733,11 @@ LAB_2013d5d4:
 }
 
 
-// ===== FUN_2013d5f4 @ 2013d5f4 (336 bytes)
+// ===== sd_acmd51_read_scr @ 2013d5f4 (336 bytes)
 
-int FUN_2013d5f4(int *param_1)
+/* ACMD51 (SEND_SCR): CMD55 then CMD51, reads the 8-byte SCR into ctx +0x221 [fact] */
+
+int sd_acmd51_read_scr(int *param_1)
 
 {
   int iVar1;
@@ -1674,7 +1745,7 @@ int FUN_2013d5f4(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
-  iVar2 = FUN_2013d4fc(param_1);
+  iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(8,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -1715,9 +1786,12 @@ int FUN_2013d5f4(int *param_1)
 }
 
 
-// ===== FUN_2013d744 @ 2013d744 (212 bytes)
+// ===== sd_acmd6_set_bus_width @ 2013d744 (212 bytes)
 
-undefined4 FUN_2013d744(int *param_1)
+/* ACMD6 (SET_BUS_WIDTH) with the width code +0x2AC, then sets the host bus width (op +0x2C) [fact]
+    */
+
+undefined4 sd_acmd6_set_bus_width(int *param_1)
 
 {
   int iVar1;
@@ -1746,9 +1820,11 @@ undefined4 FUN_2013d744(int *param_1)
 }
 
 
-// ===== FUN_2013d818 @ 2013d818 (336 bytes)
+// ===== sd_acmd13_read_status @ 2013d818 (336 bytes)
 
-int FUN_2013d818(int *param_1)
+/* ACMD13 (SD_STATUS): CMD55 then CMD13 with data, 64 bytes into ctx +0x229 [fact] */
+
+int sd_acmd13_read_status(int *param_1)
 
 {
   int iVar1;
@@ -1756,7 +1832,7 @@ int FUN_2013d818(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
-  iVar2 = FUN_2013d4fc(param_1);
+  iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(0x40,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -1797,9 +1873,11 @@ int FUN_2013d818(int *param_1)
 }
 
 
-// ===== FUN_2013d968 @ 2013d968 (260 bytes)
+// ===== sd_cmd6_switch_func @ 2013d968 (260 bytes)
 
-int FUN_2013d968(undefined4 param_1,int *param_2)
+/* (arg, ctx): CMD6 (SWITCH_FUNC) with a 64-byte status read into ctx +0x269 [fact] */
+
+int sd_cmd6_switch_func(undefined4 param_1,int *param_2)
 
 {
   int iVar1;
@@ -1807,7 +1885,7 @@ int FUN_2013d968(undefined4 param_1,int *param_2)
   int iVar3;
   
   iVar1 = *param_2;
-  iVar2 = FUN_2013d4fc(param_2);
+  iVar2 = sd_select_card(param_2);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_2[1] + 0x50))(0x40,1,*param_2), iVar2 == 0)) {
     iVar2 = 0;
     do {
@@ -1841,9 +1919,12 @@ int FUN_2013d968(undefined4 param_1,int *param_2)
 }
 
 
-// ===== FUN_2013de60 @ 2013de60 (296 bytes)
+// ===== sd_switch_status_check @ 2013de60 (296 bytes)
 
-uint FUN_2013de60(int *param_1)
+/* Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a
+   speed switch [fact for the fields] */
+
+uint sd_switch_status_check(int *param_1)
 
 {
   uint uVar1;
@@ -1851,14 +1932,14 @@ uint FUN_2013de60(int *param_1)
   uint uVar3;
   
   (**(code **)(param_1[1] + 0x34))(0);
-  uVar1 = FUN_2013d968(0xffffff,param_1);
+  uVar1 = sd_cmd6_switch_func(0xffffff,param_1);
   if ((uVar1 == 0) &&
      (uVar1 = *(byte *)(*param_1 + 0x272) & 1, (*(byte *)(*param_1 + 0x272) & 1) != 0)) {
     iVar2 = (**(code **)(param_1[1] + 0x18))(0);
     if (iVar2 == 0) {
       uVar3 = 0;
       while ((uVar1 = (**(code **)(param_1[1] + 8))(), uVar1 == 0 &&
-             (uVar1 = FUN_2013d968(0xfff0ff,param_1), uVar1 == 0))) {
+             (uVar1 = sd_cmd6_switch_func(0xfff0ff,param_1), uVar1 == 0))) {
         iVar2 = *param_1;
         if (800 < CONCAT11(*(undefined1 *)(iVar2 + 0x269),*(undefined1 *)(iVar2 + 0x26a)))
         goto LAB_2013df04;
@@ -1866,7 +1947,7 @@ uint FUN_2013de60(int *param_1)
           if ((~*(byte *)(iVar2 + 0x278) & 0xf) == 0) {
             return 0;
           }
-          uVar1 = FUN_2013d968(0x80fff0ff,param_1);
+          uVar1 = sd_cmd6_switch_func(0x80fff0ff,param_1);
           if (uVar1 != 0) {
             return uVar1;
           }
@@ -1890,9 +1971,13 @@ LAB_2013df04:
 }
 
 
-// ===== FUN_2013df88 @ 2013df88 (1084 bytes)
+// ===== sd_select_bus_speed @ 2013df88 (1084 bytes)
 
-uint FUN_2013df88(int *param_1)
+/* For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants
+   0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 [fact]
+    */
+
+uint sd_select_bus_speed(int *param_1)
 
 {
   byte bVar1;
@@ -1912,11 +1997,11 @@ uint FUN_2013df88(int *param_1)
   if (((*(byte *)(iVar7 + 0x221) & 0xf) != 0) &&
      (uVar6 = *(byte *)(iVar7 + 0x205) & 0x40, (*(byte *)(iVar7 + 0x205) & 0x40) != 0)) {
     if ((*(byte *)(iVar7 + 0x2c0) & 4) == 0) {
-      uVar6 = FUN_2013d968(0xffffff,param_1);
+      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
       if ((uVar6 == 0) &&
          (uVar6 = *(byte *)(*param_1 + 0x276) & 2, (*(byte *)(*param_1 + 0x276) & 2) != 0)) {
         uVar8 = 0;
-        while (uVar6 = FUN_2013d968(0xfffff1,param_1), uVar6 == 0) {
+        while (uVar6 = sd_cmd6_switch_func(0xfffff1,param_1), uVar6 == 0) {
           iVar7 = *param_1;
           if (800 < CONCAT11(*(undefined1 *)(iVar7 + 0x269),*(undefined1 *)(iVar7 + 0x26a))) {
             return 0;
@@ -1925,7 +2010,7 @@ uint FUN_2013df88(int *param_1)
             if ((~*(byte *)(iVar7 + 0x279) & 0xf) == 0) {
               return 0;
             }
-            uVar6 = FUN_2013d968(0x80fffff1,param_1);
+            uVar6 = sd_cmd6_switch_func(0x80fffff1,param_1);
             if (uVar6 != 0) {
               return uVar6;
             }
@@ -1947,10 +2032,10 @@ uint FUN_2013df88(int *param_1)
       }
       return uVar6;
     }
-    uVar6 = FUN_2013de60();
+    uVar6 = sd_switch_status_check();
     if (uVar6 == 0) {
       (**(code **)(param_1[1] + 0x3c))(0);
-      uVar6 = FUN_2013d968(0xffffff,param_1);
+      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
       if (uVar6 == 0) {
         uVar6 = 0xfffff1;
         bVar1 = *(byte *)(*param_1 + 0x276);
@@ -1982,7 +2067,7 @@ uint FUN_2013df88(int *param_1)
           if (uVar3 != 0) {
             return uVar3;
           }
-          uVar3 = FUN_2013d968(uVar6,param_1);
+          uVar3 = sd_cmd6_switch_func(uVar6,param_1);
           if (uVar3 != 0) {
             return uVar3;
           }
@@ -2005,7 +2090,7 @@ uint FUN_2013df88(int *param_1)
               if ((~(*(byte *)(iVar4 + 0x278) >> 4) & 0xf) == 0) {
                 return 0;
               }
-              uVar5 = FUN_2013d968(uVar6 | 0x80000000,param_1);
+              uVar5 = sd_cmd6_switch_func(uVar6 | 0x80000000,param_1);
               if (uVar5 != 0) {
                 return uVar5;
               }
@@ -2097,12 +2182,12 @@ int sd_card_identify(int *param_1)
   if (iVar4 != 0) {
     return iVar4;
   }
-  FUN_2013fd3c(1);
-  iVar4 = FUN_2013c960(param_1);
+  sd_delay_ms(1);
+  iVar4 = sd_cmd0_go_idle(param_1);
   if (iVar4 != 0) {
     return iVar4;
   }
-  iVar4 = FUN_2013cbb8(param_1);
+  iVar4 = sd_init_v2(param_1);
   if (iVar4 == 0) {
     uVar1 = *(ushort *)(*param_1 + 0x2c0);
     *(ushort *)(*param_1 + 0x2c0) = uVar1 | 2;
@@ -2118,13 +2203,13 @@ int sd_card_identify(int *param_1)
       return iVar4;
     }
     *(ushort *)(*param_1 + 0x2c0) = *(ushort *)(*param_1 + 0x2c0) | 1;
-    iVar4 = FUN_2013c9d0(param_1);
+    iVar4 = sd_init_v1_or_mmc(param_1);
   }
   if (iVar4 != 0) {
     return iVar4;
   }
 LAB_2013e0c0:
-  iVar4 = FUN_2013cee8(param_1);
+  iVar4 = sd_cmd2_all_send_cid(param_1);
   if (iVar4 != 0) {
     return iVar4;
   }
@@ -2171,22 +2256,24 @@ LAB_2013e0c0:
 }
 
 
-// ===== FUN_2013e124 @ 2013e124 (304 bytes)
+// ===== sd_read_csd_cid @ 2013e124 (304 bytes)
 
-int FUN_2013e124(int *param_1)
+/* CMD9 with sd_csd_check / mmc_csd_check, then CMD10; -5 when the CID is all zero [fact] */
+
+int sd_read_csd_cid(int *param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d0bc();
+  iVar1 = sd_cmd9_send_csd();
   if (iVar1 == 0) {
     if (*(short *)(*param_1 + 0x2c6) == 1) {
-      iVar1 = FUN_2013d1c8(*param_1 + 0x201);
+      iVar1 = mmc_csd_check(*param_1 + 0x201);
     }
     else {
-      iVar1 = FUN_2013d158();
+      iVar1 = sd_csd_check();
     }
-    if ((iVar1 == 0) && (iVar1 = FUN_2013d238(param_1), iVar1 == 0)) {
+    if ((iVar1 == 0) && (iVar1 = sd_cmd10_send_cid(param_1), iVar1 == 0)) {
       iVar1 = *param_1;
       if ((((*(char *)(iVar1 + 0x211) != '\0') || (*(char *)(iVar1 + 0x212) != '\0')) ||
           (*(char *)(iVar1 + 0x213) != '\0')) &&
@@ -2207,31 +2294,37 @@ int FUN_2013e124(int *param_1)
 }
 
 
-// ===== FUN_2013e190 @ 2013e190 (84 bytes)
+// ===== sd_selected_op @ 2013e190 (84 bytes)
 
-void FUN_2013e190(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 *param_4)
+/* (rca, a, b, ctx): selects the card, runs op +0x50(a, b) (block length set-up) and deselects
+   [fact] */
+
+void sd_selected_op(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 *param_4)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d434(param_1,param_4);
+  iVar1 = sd_cmd7_select(param_1,param_4);
   if ((iVar1 == 0) &&
      (iVar1 = (**(code **)(param_4[1] + 0x50))(param_2,param_3,*param_4), iVar1 == 0)) {
-    FUN_2013d434(0,param_4);
+    sd_cmd7_select(0,param_4);
     return;
   }
   return;
 }
 
 
-// ===== FUN_2013e1e4 @ 2013e1e4 (76 bytes)
+// ===== sd_scr_bus_width @ 2013e1e4 (76 bytes)
 
-int FUN_2013e1e4(int *param_1)
+/* Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit)
+   [fact] */
+
+int sd_scr_bus_width(int *param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2013d5f4();
+  iVar1 = sd_acmd51_read_scr();
   if (iVar1 == 0) {
     iVar1 = *param_1;
     if ((*(byte *)(iVar1 + 0x222) & 4) == 0) {
@@ -2257,7 +2350,7 @@ uint sd_read_sectors(int param_1,uint param_2,uint param_3,int *param_4)
   if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
     param_1 = param_1 << 9;
   }
-  uVar1 = FUN_2013d4fc(param_4);
+  uVar1 = sd_select_card(param_4);
   if ((uVar1 == 0) &&
      ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
       (uVar1 = (**(code **)(param_4[1] + 0x40))(), uVar1 == 0)))) {
@@ -2284,7 +2377,7 @@ int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
     if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
       param_1 = param_1 << 9;
     }
-    iVar1 = FUN_2013d4fc(param_4);
+    iVar1 = sd_select_card(param_4);
     if ((iVar1 == 0) &&
        ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
         (iVar1 = (**(code **)(param_4[1] + 0x40))(), iVar1 == 0)))) {
@@ -2301,9 +2394,12 @@ int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
 }
 
 
-// ===== FUN_2013e35c @ 2013e35c (112 bytes)
+// ===== sd_vol_read @ 2013e35c (112 bytes)
 
-uint FUN_2013e35c(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
+/* (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3
+   tries of sd_read_sectors [fact] */
+
+uint sd_vol_read(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
 
 {
   uint uVar1;
@@ -2330,9 +2426,11 @@ uint FUN_2013e35c(int param_1,uint param_2,uint param_3,uint param_4,int *param_
 }
 
 
-// ===== FUN_2013e3cc @ 2013e3cc (112 bytes)
+// ===== sd_vol_write @ 2013e3cc (112 bytes)
 
-int FUN_2013e3cc(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
+/* (vol, sector, buf, n, ctx): partition write, bounds check, one sd_write_sectors try [fact] */
+
+int sd_vol_write(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
 
 {
   int iVar1;
@@ -2359,9 +2457,12 @@ int FUN_2013e3cc(int param_1,uint param_2,uint param_3,uint param_4,int *param_5
 }
 
 
-// ===== FUN_2013e43c @ 2013e43c (208 bytes)
+// ===== sd_mount_volume @ 2013e43c (208 bytes)
 
-uint FUN_2013e43c(int param_1,int *param_2)
+/* Reads sector 0 (MBR), finds the partition (fat_find_volume), reads its boot sector, fat_mount and
+   the FSInfo check (fat32_fsinfo_read) [fact] */
+
+uint sd_mount_volume(int param_1,int *param_2)
 
 {
   uint uVar1;
@@ -2369,7 +2470,7 @@ uint FUN_2013e43c(int param_1,int *param_2)
   
   uVar1 = sd_read_sectors(0,*param_2 + 1,1,param_2);
   if (uVar1 == 0) {
-    iVar2 = FUN_201490f8(param_1,*param_2 + 1);
+    iVar2 = fat_find_volume(param_1,*param_2 + 1);
     if (iVar2 == 0) {
       uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30),*param_2 + 1,1,param_2);
       if (uVar1 != 0) {
@@ -2383,7 +2484,7 @@ uint FUN_2013e43c(int param_1,int *param_2)
           if (uVar1 != 0) {
             return uVar1;
           }
-          FUN_20148f40(param_1,*param_2 + 1);
+          fat32_fsinfo_read(param_1,*param_2 + 1);
         }
         return 0;
       }
@@ -2394,9 +2495,13 @@ uint FUN_2013e43c(int param_1,int *param_2)
 }
 
 
-// ===== FUN_2013e71c @ 2013e71c (700 bytes)
+// ===== sd_driver_op @ 2013e71c (700 bytes)
 
-int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+/* Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount
+   (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume
+   mount), 8 unmount, others through a table; registered by sdhi_drv_init [fact] */
+
+int sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
                 undefined4 param_5,int *param_6)
 
 {
@@ -2409,19 +2514,19 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
     return -3;
   case 1:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = FUN_2013e35c(param_1,param_3,param_4,param_5,param_6);
+      iVar2 = sd_vol_read(param_1,param_3,param_4,param_5,param_6);
       return iVar2;
     }
     break;
   case 2:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = FUN_2013e3cc(param_1,param_3,param_4,param_5,param_6);
+      iVar2 = sd_vol_write(param_1,param_3,param_4,param_5,param_6);
       return iVar2;
     }
     break;
   case 5:
     iVar2 = (**(code **)(param_6[1] + 100))();
-    if ((iVar2 == 0) && (iVar2 = FUN_2013f9fc(param_1,*(undefined1 *)*param_6), iVar2 == 0)) {
+    if ((iVar2 == 0) && (iVar2 = sd_card_task_start(param_1,*(undefined1 *)*param_6), iVar2 == 0)) {
       *(int **)(param_1 + 0x24) = param_6;
       return 0;
     }
@@ -2434,18 +2539,19 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
         do {
           iVar2 = (**(code **)(param_6[1] + 0x20))(2);
           if ((((((iVar2 == 0) && (iVar2 = sd_card_identify(param_6), iVar2 == 0)) &&
-                (iVar2 = FUN_2013e124(param_6), iVar2 == 0)) &&
-               ((iVar2 = FUN_2013e190(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6), iVar2 == 0
-                && (iVar2 = FUN_2013d434(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
+                (iVar2 = sd_read_csd_cid(param_6), iVar2 == 0)) &&
+               ((iVar2 = sd_selected_op(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6),
+                iVar2 == 0 &&
+                (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
               && ((*(short *)(*param_6 + 0x2c6) == 1 ||
-                  (((iVar2 = FUN_2013e1e4(param_6), iVar2 == 0 &&
-                    (iVar2 = FUN_2013d744(param_6), iVar2 == 0)) &&
-                   ((iVar2 = FUN_2013df88(param_6), iVar2 == 0 &&
-                    (iVar2 = FUN_2013d818(param_6), iVar2 == 0)))))))) &&
+                  (((iVar2 = sd_scr_bus_width(param_6), iVar2 == 0 &&
+                    (iVar2 = sd_acmd6_set_bus_width(param_6), iVar2 == 0)) &&
+                   ((iVar2 = sd_select_bus_speed(param_6), iVar2 == 0 &&
+                    (iVar2 = sd_acmd13_read_status(param_6), iVar2 == 0)))))))) &&
              ((iVar2 = FUN_2013c928(1,param_6), iVar2 == 0 &&
               (((*(short *)(*param_6 + 0x2c2) != 2 && *(short *)(*param_6 + 0x2c2) != 3 ||
                 (iVar2 = (**(code **)(param_6[1] + 0x40))(), iVar2 == 0)) &&
-               (iVar2 = FUN_2013e43c(param_1,param_6), iVar2 == 0)))))) {
+               (iVar2 = sd_mount_volume(param_1,param_6), iVar2 == 0)))))) {
             itron_loc_cpu();
             *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) | 0x80;
             iVar2 = (**(code **)(param_6[1] + 0xc))();
@@ -2481,9 +2587,11 @@ int FUN_2013e71c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
 }
 
 
-// ===== FUN_2013e7e8 @ 2013e7e8 (24 bytes)
+// ===== sd_format_progress_dec @ 2013e7e8 (24 bytes)
 
-void FUN_2013e7e8(int param_1)
+/* Decrements the format progress counter ctx +0x2F4 while non-zero [fact] */
+
+void sd_format_progress_dec(int param_1)
 
 {
   if (*(int *)(param_1 + 0x2f4) != 0) {
@@ -2493,9 +2601,11 @@ void FUN_2013e7e8(int param_1)
 }
 
 
-// ===== FUN_2013e800 @ 2013e800 (12 bytes)
+// ===== sd_format_progress_set @ 2013e800 (12 bytes)
 
-void FUN_2013e800(undefined4 param_1,int param_2)
+/* (n, ctx): sets the format progress counters +0x2F4 and +0x2F8 to n [fact] */
+
+void sd_format_progress_set(undefined4 param_1,int param_2)
 
 {
   *(undefined4 *)(param_2 + 0x2f4) = param_1;
@@ -2504,9 +2614,13 @@ void FUN_2013e800(undefined4 param_1,int param_2)
 }
 
 
-// ===== FUN_2013e8d0 @ 2013e8d0 (420 bytes)
+// ===== fat_format_write_fats @ 2013e8d0 (420 bytes)
 
-int FUN_2013e8d0(int *param_1)
+/* Format step: writes the first sector of each FAT with the media entries (F8 FF FF / F8 FF FF FF /
+   F8 FF FF 0F FF FF FF 0F... from 0x20420254..) and zero sectors after them, counting progress
+   [fact] */
+
+int fat_format_write_fats(int *param_1)
 
 {
   char cVar1;
@@ -2544,7 +2658,7 @@ int FUN_2013e8d0(int *param_1)
         return iVar4;
       }
     }
-    FUN_2013e7e8(*param_1);
+    sd_format_progress_dec(*param_1);
     fs_memset(*param_1 + 1,0,0x200);
     iVar4 = *(int *)(iVar2 + 0x2e0);
     if ((*(char *)(iVar2 + 0x2dc) != '@') && (uVar5 = 0, iVar4 != 1)) {
@@ -2559,7 +2673,7 @@ int FUN_2013e8d0(int *param_1)
         if (iVar2 != 0) {
           return iVar2;
         }
-        FUN_2013e7e8(*param_1);
+        sd_format_progress_dec(*param_1);
         uVar5 = uVar5 + 1;
         iVar3 = 0;
       } while (uVar5 < iVar4 - 1U);
