@@ -11,7 +11,7 @@ sequenceDiagram
   participant FL as SPI flash 0x18000000
   participant L as image (loader role)
   participant A as image (application role)
-  ROM->>FL: boot mode 1, XIP from 0x18000000
+  ROM->>FL: boot mode 3 (serial flash), XIP from 0x18000000
   FL->>L: Reset_Handler: copy 0x20100000-0x20100BBF to RAM, jump reset_in_ram
   L->>L: spibsc0_init, boot_select_bank (SPIBSC1 0x3FEFB018 == 0)
   L->>L: write boot-info block 0x20000000, set 0x3FEFB018
@@ -22,8 +22,13 @@ sequenceDiagram
   A->>A: __rt_entry -> main 0x20117294
 ```
 
-**[fact]** for the code path (T06; `Reset_Handler` 0x2010002C, `reset_in_ram` 0x20100080, `boot_select_bank` 0x20100ABC). Boot mode 1 is
-**[inference]** (hardware.md). If neither bank flag is valid the loader keeps running its own copy, which shows `YAESU FT-710 BOOT LOADER V01-02`
+**[fact]** for the code path (T06; `Reset_Handler` 0x2010002C, `reset_in_ram` 0x20100080, `boot_select_bank` 0x20100ABC). The boot mode is
+**boot mode 3, serial flash booting** **[inference]**: R01UH0403EJ0700 Table 3.1 (section 3.2, p. 3-1) lists mode 3 (MD_BOOT2..0 = 1, 0, 1)
+as the only mode that boots from serial flash, from SPI multi-I/O bus channel 0 on P9_2..P9_5 (mode 1 is CS0-space 32-bit booting)
+**[fact, manual]**, and the W25Q128JV sits on exactly those SPIBSC0 pins (`QF_CLK` on P9_2, p62) **[fact]**. Open: the strap values
+themselves; `BOOT0`/`BOOT1`/`BOOT2` reach P0_0/P0_1/P7_0 on p62, which are MD_BOOT0/1/2 while RES is low
+(manual Table 1.5 notes) **[fact]**, but the strap resistors were not found on the page (hardware.md); would be
+settled by a readable copy of those straps or a probe of the three lines at reset. If neither bank flag is valid the loader keeps running its own copy, which shows `YAESU FT-710 BOOT LOADER V01-02`
 (`bootloader_screen` 0x2015938C) **[inference]**.
 
 `bootinfo_load` (0x20116C4C, called first in `task_root`) copies the 0x60-byte boot-info block from the address kept in SPIBSC1 reg 0x3FEFB018 into
