@@ -504,7 +504,7 @@ fffa19ac	sdr_upd_r12	Reg 0x12 = 0x8000 (constant; RX only)
 fffa19dd	sdr_upd_r13	Reg 0x13 = 0x8000 (constant; RX only)
 fffa1a0e	sdr_upd_r14_mode	Reg 0x14 = 0x2000/0x3200 (AM)/0x7800 (FM, DATA-FM)/0x3C00 (FM-N, DATA-FM-N) by TX-side mode
 fffa1a8a	sdr_init_r15	Reg 0x15 = 0x2000, sent once after the first full sync
-fffa1abb	sdr_upd_r16_filter	Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A
+fffa1abb	sdr_upd_r16_filter	Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A, the TX->RX AF-unmute delay (ms) that trx_sequencer adds to soft timer 0x0D [fact] (#205)
 fffa1c69	sdr_upd_r18_rx_freq	Regs 0x18/0x19 = 32-bit RX VFO frequency in Hz plus the mode offset (SSB 1500 Hz + shift, CW pitch, RTTY mark/shift, DATA offset, PSK) [inference: RX NCO]
 fffa1fd1	sdr_upd_r1a_nb_level	Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off
 fffa2049	sdr_upd_r1b	Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 [guess: NB parameter]
@@ -2220,8 +2220,9 @@ fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +
 fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
 fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
 # --- #205 (EEPROM leftovers)
-fff94bd9	ver_main_ext1	Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; build date/time [guess] (#205)
-fff94be5	ver_main_ext2	Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94bd9	ver_main_ext1	Returns 0xFFFFFF10, ROM "2101": 4 characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; meaning of 2101 open (#205)
+fff94be5	ver_main_ext2	Returns 0xFFFFFF20, ROM "24-02-16" (the MAIN V01-12 date): 8 characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94c0f	ver_display_date	Returns 0x143C, the 8-char DISPLAY date "yy-mm-dd" (ver_display_date_set); shown in SOFT VERSION when DBG MODE ENABLE is set [fact: disassembly 0xFFF94C11] (#205)
 fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C [fact] (#205)
 fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP [fact] (#205)
 fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
@@ -2356,6 +2357,8 @@ fffb3e6f	max_power_limit	(0..4): destination-dependent upper limit for HF / 50M 
 fffb3371	tx_band_of_freq	(f): index 0..10 of the first bound in ROM 0xFFF8870C (2.1 / 4.7 / 7.5 / 11.5 / 14.5 / 20.9 / 22 / 25.5 / 41.5 / 60 / 75 MHz) above f, else 0xFF [fact]
 fffb54a0	aess_level_ptr	Pointer to the active mode's AESS level byte (0x9C06 / 09 / 0A / 0B / 0C / 0E / 0F) [fact] (#157, CAT AS)
 fffb552c	aess_mode_ptr	Pointer to the active mode's AESS on/off byte (0x9C10..) [fact] (#157, CAT AS)
+fffec500	atu_ac_get	Returns 0x1B3AD, the internal tuner AC byte (/SST6 bits 8-15, relays C0..C7) [fact]; the antenna-side series C bank [inference, strong: p47 + bit order] (#205)
+fffec50f	atu_tc_get	Returns 0x1B3AF, the internal tuner TC byte (/SST6 bits 16-23, relays C8..CF) [fact]; the transmitter-side series C bank [inference, strong: p47 + bit order]. pa_relay_update sets TNRON only if this or atu_ac_get is non-zero [fact] (#205)
 fffec537	vfo_tuner_bit_set	(on): TX-side record rec+1 bit 2, the tuner bit that FUN_fffec55a reads for CAT AC [fact]
 fffec578	tuner_rearm	TUNER TYPE SELECT 0x9AB8 = 2 path: re-arms the tuner state 0x20B3F after VFO/band changes [fact for the callers] (cat-commands-primary.md)
 fffed206	tuner_tune_state_set	(s): 0x20F0C = s; 1 starts (0x1B3BE = 1), 2 swaps the meter (0x9C5B = 5) and CW WAVE SHAPE (0x9AA1 = 0) and opens pop-up 0x49, 0 restores both [fact]; a tune cycle [inference]
