@@ -169,7 +169,7 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 |---|---|---|---|---|
 | 0xE0 | 4 | `mainlink_send_key` 0x20113294, `mainlink_send_touch_key` 0x20120E9C, `mainlink_send_e0` 0x20121858 | `FUN_fff95829` → `key_event_filter(code, flags)` | **Key / soft-key event**: `flags` (bit 0 = release, 0x40/0x41 for code 0x1016), `code` u16 BE. The DISPLAY treats codes 0x0300 / 0x030F specially (power-key path **[guess]**) |
 | 0xE1 | 5 | `mainlink_send_enc` 0x20115780 (from `mainlink_renc_event` 0x20115B04) | `FUN_fff9588b` | **Encoder**: `id, delta s8, …`. id 1/6 = main dial (0xFF0), 2 → 0xFF1, 3 → 0xFF2, 4/5 = ADC knobs |
-| 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `FUN_20160ed8` | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
+| 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `mainlink_send_sd_absent` 0x20160ED8 (byte 1 = 0 when the SD menu finds no card) | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
 | 0xE3 | 7 | `mainlink_send_rtc` 0x20121D90 | `FUN_fff95ed3` (+0xAD..+0xB1) | **RTC date/time** (S-35190A read), when the minute changes |
 | 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `FUN_201217b0` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
 | 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |

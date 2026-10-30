@@ -25,7 +25,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); Ghidra steps open; HiFi4 not started |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
@@ -440,6 +440,30 @@ canonical projects).
 - Left unnamed in DISPLAY's top 60: the NORTi queue internals 0x20153A38 / 0x201539EC / 0x20154524 / 0x20154580 / 0x2015476C,
   the soft-float routine 0x201649D8, 0x20136398 (a wrapper whose arguments the decompiler lost), 0x20108BC8 (a 0x600-byte object
   initialiser), 0x20144950 and 0x2011D830 (purpose unclear).
+
+### Round 2 — DISPLAY (2026-10-30)
+- Start: DISPLAY 49.4 % named by code bytes (954 of 2,213 functions, README block); 1,259 `FUN_` functions left, 976 of them
+  with callers. Ranked by callers, then by size, so the big unnamed blocks (the FAT layer, 276 functions and about 60 KB) came first.
+- **365 names** in `tools/ghidra/names_display.T23e2.tsv`, appended to `names_display.tsv` under `# --- T23e round 2` (0 address
+  conflicts in `names_merge.py report`, no duplicate names against the TSV or the export, no existing row changed). They cover
+  **58,502 code bytes = 14.8 % of DISPLAY's 396,272**, so after the apply the by-bytes figure should read about **64 %** from this batch
+  alone (more with the first-round rows that are also still unapplied), and **1,138 call sites** (13.1 % of 8,669; 760 caller edges;
+  `naming_worklist.py display --coverage`).
+- Groups: NORTi kernel internals (`knl_queue_move` / `knl_queue_remove` / `knl_make_ready` / `knl_wait_enter` / `knl_dispatch`,
+  TCB links +6/+7), the armcc soft-float routines (`__aeabi_ddiv` / `dmul` / `dsub` / `dadd` / `d2iz` / `d2uiz`, from the constants in
+  `tsc2007_pressure` and `touch_cal_fit`), the whole FAT layer below `fs_fopen` (about 195 names: `fs_*` API and `*_work` bodies,
+  `fatcache_*` / `dircache_*`, `fat_entry_rw`, `fat_alloc_cluster`, `fat_chain_free`, `clmap_*`, long-name and Shift-JIS helpers,
+  `fs_opendir` / `fs_readdir` / `fs_mkdir` / `fs_remove` / `fs_fgets` / `fs_fsize`), the SDHI0 driver (`sdhi_*`), the SPIBSC0 flash
+  driver (`spibsc_*`, `sflash_*`: WREN, 0xD8 erase, 0x02 program, 0x0B read on the W25Q128), the 46 VDC5 interrupt handlers
+  (`vdc5_ch0_isr_s0_vi_vsync` … `vdc5_ch1_isr_iv8_vbuferr`: register bit, callback slot and type number checked by script against the
+  23-type r_vdc5 enum; 0x20118638 = ch0 GR3_VLINE as gui.md already had) and 12 more r_vdc5 API functions, USB host SETUP helpers
+  (`usbh_get_device_descriptor`, `usbh_set_address`, `usbkbd_set_leds` = HID SET_REPORT), small mutex/ring helpers, and
+  `scope3d_tables_init`, `cursor_window_update`, `mainlink_send_sd_absent`.
+- Settled on the way: `FUN_20133620` (gui.md "scope scale tables") builds the 3DSS line offset tables; the "FUN_201401dc–" SDHI range in
+  peripherals.md, the update.md file-API list and the input.md LED report now carry names; update.md has a short FAT-layer and
+  SPI-flash-driver paragraph.
+- Left unnamed on purpose: 0x20108BC8 (still unclear), the VDC5 shared-parameter getters 0x2011D57C..0x2011D77C (only the offsets are
+  clear), FAT internals whose role was not read end to end, and the 4-byte SDHI stubs.
 
 ### Open steps (Ghidra)
 1. Apply `names_main.tsv` / `names_display.tsv` with `ApplyNames.java` and re-export (`tools/bootstrap.sh --only ghidra,export`

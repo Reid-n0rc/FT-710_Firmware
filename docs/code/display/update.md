@@ -29,8 +29,16 @@ Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidr
 
 `sd_fs_init` (0x201039B0, from `task_root`) mounts the FAT volume and registers the SDHI driver, then `sd_task_create` starts `sdTask`
 **[fact, T11a]**. The update code uses the ordinary file API: `fs_fopen` 0x20141ABC, `fs_fread` 0x20142A58, `fs_fseek` 0x20143750,
-`FUN_20141ff0` (close), `thunk_FUN_2014af64` (file size), `FUN_2014aec8` (stat), `FUN_2014c410`/`FUN_2014ca4c`/`thunk_FUN_2014c474`
-(opendir/readdir/closedir) **[inference from use]**. Drive letter is `I:`. `FUN_20103bb0`/`FUN_20103ba0` return bits 7/6 of
+`fs_fclose` 0x20141FF0, `fs_fsize` 0x2014AF64 (file size), `fs_stat` 0x2014AEC8, `fs_opendir` 0x2014C410 / `fs_readdir` 0x2014CA4C /
+`fs_closedir` 0x2014C474 **[inference from use]**. Drive letter is `I:`.
+
+The FAT layer underneath (T23e round 2 names, **[fact]** for the code unless the TSV says otherwise): each call has a `fs_*_work` body
+that takes a buffer from the "FSYS Work" pool; files and directories are found by `fs_path_lookup` (`root_dir_find` for the FAT12/16
+root area, `subdir_find` for cluster chains, long names by `lfn_checksum`); sectors go through two caches per drive (FAT cache
+`fatcache_*` at drive +0x44, directory cache `dircache_*` at +0x4C, dirty bits written back by `fs_flush`); `fat_entry_rw` reads and
+writes FAT12/16/32 entries, `fat_alloc_cluster` / `fat_chain_free` allocate and free, and an optional cluster bitmap (`clmap_*`, drive
++0x58) speeds up the search. Shift-JIS names are converted with `sjis_to_ucs2_char` (tables 0x20420756 / 0x204244D0). The SDHI0 driver
+below it is `sdhi_*` (0x20140148..), with `sdhi_check_wp` giving the -7 (write-protected) error of `sd_write_sectors`. `FUN_20103bb0`/`FUN_20103ba0` return bits 7/6 of
 `DAT_20800094` (card state); the update screens wait on them **[fact]**, meaning "card present / ready" **[inference]**.
 
 The same SFL container is used for the user's **MemList / Menu backups** (`task_sdmenu` 0x2011010C, `sdmenu_load_file` 0x2010F81C,
@@ -168,7 +176,10 @@ mode until `system_reboot`, and the update can be repeated **[inference]**.
 Flag record (20 bytes) **[fact]**: `+0 0x11111111`, `+4 length`, `+8 0`, `+0xC 0`, `+0x10 ~CRC-32` of the **decoded** image (no salt).
 `boot_select_bank` only checks `+0 == 0x11111111` and `+4 != 0`, bank 1 first **[fact]**. `spiflash_erase` (*name*, 0x20103E74) erases
 64 KiB blocks; `spiflash_write` (0x20103DD0) writes and then compares a checksum of the data with the XIP window 0x18000000 + offset
-**[fact]**.
+**[fact]**. Underneath is a small SPIBSC0 flash driver (T23e round 2): `spibsc_enter_spi_mode` switches CMNCR to SPI mode,
+`sflash_erase_block` sends WREN + 0xD8, `sflash_page_program` WREN + 0x02 in 256-byte pages, `sflash_fast_read` 0x0B, and
+`spibsc_exit_spi_mode` restores XIP mode and flushes the read cache; the device object 0x20810D90 takes `r`/`e` commands
+(`sflash_dev_write`) **[fact]**.
 
 ### Write sequence (`fwobj_display_run`)
 
