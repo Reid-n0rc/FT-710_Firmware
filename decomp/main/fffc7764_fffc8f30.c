@@ -1,8 +1,11 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffc7764 @ fffc7764 (99 bytes)
+// ===== funcknob_anti_vox_step @ fffc7764 (99 bytes)
 
-void FUN_fffc7764(char param_1)
+/* (steps): ANTI VOX pop-up (id 0x2B): popup_duration_get(0x2B) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7764]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_anti_vox_step(char param_1)
 
 {
   short sStack_a;
@@ -30,20 +33,26 @@ void FUN_fffc7764(char param_1)
 }
 
 
-// ===== FUN_fffc77c7 @ fffc77c7 (24 bytes)
+// ===== funcknob_rf_power @ fffc77c7 (24 bytes)
 
-void FUN_fffc77c7(char param_1)
+/* FUNC-knob function for RF POWER: sets popup_code = 0x2C and calls funcknob_rf_power_step [fact:
+   fffc77c7]; called from funcknob_step */
+
+void funcknob_rf_power(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x2c;
-  FUN_fffc77df(param_1);
+  funcknob_rf_power_step(param_1);
   return;
 }
 
 
-// ===== FUN_fffc77df @ fffc77df (72 bytes)
+// ===== funcknob_rf_power_step @ fffc77df (72 bytes)
 
-void FUN_fffc77df(char param_1)
+/* (steps): RF POWER pop-up (id 0x2C): popup_duration_get(0x2C) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc77df]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_rf_power_step(char param_1)
 
 {
   byte *pbVar1;
@@ -55,7 +64,7 @@ void FUN_fffc77df(char param_1)
   local_1 = param_1;
   popup_duration_get(0x2c);
   popup_open_timed();
-  pbVar1 = FUN_fffc7827(abStack_9,&bStack_a);
+  pbVar1 = rf_power_ptr(abStack_9,&bStack_a);
   uStack_c = (ushort)*pbVar1 + (short)local_1;
   if ((short)(ushort)bStack_a < (short)uStack_c) {
     uStack_c = (ushort)bStack_a;
@@ -68,11 +77,14 @@ void FUN_fffc77df(char param_1)
 }
 
 
-// ===== FUN_fffc7827 @ fffc7827 (228 bytes)
+// ===== rf_power_ptr @ fffc7827 (228 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffc7908) */
+/* (*min, *max): returns &g_opstate.rf_power[i] for the TX band (0 HF, 1 50 MHz, 2 70 MHz, 3 AM)
+   with the band's MAX POWER (EX030401..030404, AM capped by max_power_limit) in *max and the
+   minimum from FUN_fffb3f0b [fact: fffc7827]; callers align_load_preset, funcknob_rf_power_step */
 
-void * FUN_fffc7827(void *param_1,byte *param_2)
+void * rf_power_ptr(void *param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -121,20 +133,26 @@ void * FUN_fffc7827(void *param_1,byte *param_2)
 }
 
 
-// ===== FUN_fffc790b @ fffc790b (24 bytes)
+// ===== funcknob_moni_level @ fffc790b (24 bytes)
 
-void FUN_fffc790b(char param_1)
+/* FUNC-knob function for MONI LEVEL: sets popup_code = 0x2D and calls funcknob_moni_level_step
+   [fact: fffc790b]; called from funcknob_step */
+
+void funcknob_moni_level(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x2d;
-  FUN_fffc7923((int)param_1);
+  funcknob_moni_level_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7923 @ fffc7923 (82 bytes)
+// ===== funcknob_moni_level_step @ fffc7923 (82 bytes)
 
-void FUN_fffc7923(char param_1)
+/* (steps): MONI LEVEL pop-up (id 0x2D): popup_duration_get(0x2D) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7923]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_moni_level_step(char param_1)
 
 {
   byte *pbVar1;
@@ -142,7 +160,7 @@ void FUN_fffc7923(char param_1)
   
   popup_duration_get(0x2d);
   popup_open_timed();
-  pbVar1 = (byte *)FUN_fff99669();
+  pbVar1 = (byte *)moni_level_ptr();
   if (pbVar1 != (byte *)0x0) {
     sStack_4 = (ushort)*pbVar1 + (short)param_1;
     if (sStack_4 < 0x65) {
@@ -161,9 +179,12 @@ void FUN_fffc7923(char param_1)
 }
 
 
-// ===== FUN_fffc7975 @ fffc7975 (67 bytes)
+// ===== funcknob_keyer_step @ fffc7975 (67 bytes)
 
-void FUN_fffc7975(char param_1)
+/* (steps): KEYER pop-up (id 0x46): popup_duration_get(0x46) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7975]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_keyer_step(char param_1)
 
 {
   popup_duration_get(0x46);
@@ -182,9 +203,12 @@ void FUN_fffc7975(char param_1)
 }
 
 
-// ===== FUN_fffc79b8 @ fffc79b8 (215 bytes)
+// ===== funcknob_bk_in_step @ fffc79b8 (215 bytes)
 
-void FUN_fffc79b8(char param_1)
+/* (steps): BK IN pop-up (id 0x2F): popup_duration_get(0x2F) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc79b8]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_bk_in_step(char param_1)
 
 {
   uint uVar1;
@@ -239,20 +263,26 @@ LAB_fffc7a7e:
 }
 
 
-// ===== FUN_fffc7a8f @ fffc7a8f (24 bytes)
+// ===== funcknob_cw_speed @ fffc7a8f (24 bytes)
 
-void FUN_fffc7a8f(char param_1)
+/* FUNC-knob function for CW SPEED: sets popup_code = 0x30 and calls funcknob_cw_speed_step [fact:
+   fffc7a8f]; called from funcknob_step */
+
+void funcknob_cw_speed(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x30;
-  FUN_fffc7aa7((int)param_1);
+  funcknob_cw_speed_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7aa7 @ fffc7aa7 (67 bytes)
+// ===== funcknob_cw_speed_step @ fffc7aa7 (67 bytes)
 
-void FUN_fffc7aa7(char param_1)
+/* (steps): CW SPEED pop-up (id 0x30): popup_duration_get(0x30) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7aa7]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_cw_speed_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -273,20 +303,26 @@ void FUN_fffc7aa7(char param_1)
 }
 
 
-// ===== FUN_fffc7aea @ fffc7aea (24 bytes)
+// ===== funcknob_cw_pitch @ fffc7aea (24 bytes)
 
-void FUN_fffc7aea(char param_1)
+/* FUNC-knob function for CW PITCH: sets popup_code = 0x31 and calls funcknob_cw_pitch_step [fact:
+   fffc7aea]; called from funcknob_step */
+
+void funcknob_cw_pitch(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x31;
-  FUN_fffc7b02((int)param_1);
+  funcknob_cw_pitch_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7b02 @ fffc7b02 (69 bytes)
+// ===== funcknob_cw_pitch_step @ fffc7b02 (69 bytes)
 
-void FUN_fffc7b02(char param_1)
+/* (steps): CW PITCH pop-up (id 0x31): popup_duration_get(0x31) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7b02]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_cw_pitch_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -307,20 +343,26 @@ void FUN_fffc7b02(char param_1)
 }
 
 
-// ===== FUN_fffc7b47 @ fffc7b47 (24 bytes)
+// ===== funcknob_bk_delay @ fffc7b47 (24 bytes)
 
-void FUN_fffc7b47(char param_1)
+/* FUNC-knob function for BK DELAY: sets popup_code = 0x32 and calls funcknob_bk_delay_step [fact:
+   fffc7b47]; called from funcknob_step */
+
+void funcknob_bk_delay(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x32;
-  FUN_fffc7b5f((int)param_1);
+  funcknob_bk_delay_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7b5f @ fffc7b5f (69 bytes)
+// ===== funcknob_bk_delay_step @ fffc7b5f (69 bytes)
 
-void FUN_fffc7b5f(char param_1)
+/* (steps): BK DELAY pop-up (id 0x32): popup_duration_get(0x32) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7b5f]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_bk_delay_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -341,20 +383,26 @@ void FUN_fffc7b5f(char param_1)
 }
 
 
-// ===== FUN_fffc7ba4 @ fffc7ba4 (24 bytes)
+// ===== funcknob_aess_level @ fffc7ba4 (24 bytes)
 
-void FUN_fffc7ba4(char param_1)
+/* FUNC-knob function for AESS: sets popup_code = 0x33 and calls funcknob_aess_level_step [fact:
+   fffc7ba4]; called from funcknob_step */
+
+void funcknob_aess_level(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x33;
-  FUN_fffc7bbc((int)param_1);
+  funcknob_aess_level_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7bbc @ fffc7bbc (65 bytes)
+// ===== funcknob_aess_level_step @ fffc7bbc (65 bytes)
 
-void FUN_fffc7bbc(char param_1)
+/* (steps): AESS pop-up (id 0x33): popup_duration_get(0x33) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7bbc]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_aess_level_step(char param_1)
 
 {
   byte *pbVar1;
@@ -377,20 +425,26 @@ void FUN_fffc7bbc(char param_1)
 }
 
 
-// ===== FUN_fffc7bfd @ fffc7bfd (24 bytes)
+// ===== funcknob_aess_cf @ fffc7bfd (24 bytes)
 
-void FUN_fffc7bfd(char param_1)
+/* FUNC-knob function for AESS CF: sets popup_code = 0x58 and calls funcknob_aess_cf_step [fact:
+   fffc7bfd]; called from funcknob_step */
+
+void funcknob_aess_cf(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x58;
-  FUN_fffc7c15((int)param_1);
+  funcknob_aess_cf_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7c15 @ fffc7c15 (64 bytes)
+// ===== funcknob_aess_cf_step @ fffc7c15 (64 bytes)
 
-void FUN_fffc7c15(char param_1)
+/* (steps): AESS CF pop-up (id 0x58): popup_duration_get(0x58) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7c15]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_aess_cf_step(char param_1)
 
 {
   byte *pbVar1;
@@ -453,9 +507,12 @@ void func_menu_cursor_step(char param_1)
 }
 
 
-// ===== FUN_fffc7cfd @ fffc7cfd (68 bytes)
+// ===== funcknob_nb_level_step @ fffc7cfd (68 bytes)
 
-void FUN_fffc7cfd(char param_1)
+/* (steps): NB LEVEL pop-up (id 0x38): popup_duration_get(0x38) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7cfd]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_nb_level_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -476,9 +533,12 @@ void FUN_fffc7cfd(char param_1)
 }
 
 
-// ===== FUN_fffc7d41 @ fffc7d41 (110 bytes)
+// ===== funcknob_dnr_level_step @ fffc7d41 (110 bytes)
 
-void FUN_fffc7d41(char param_1)
+/* (steps): DNR LEVEL pop-up (id 0x39): popup_duration_get(0x39) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7d41]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_dnr_level_step(char param_1)
 
 {
   vfo_rec *pvVar1;
@@ -532,7 +592,7 @@ void enc3_step(char param_1)
   if (PTR_g_ui_00025d58->func_panel_open == 1) {
     local_2 = PTR_g_ui_00025d58->dsp_knob_func;
     if (PTR_g_ui_00025d58->dsp_knob_edit == 1) {
-      FUN_fffc836a((int)param_1);
+      dsp_knob_turn((int)param_1);
       return;
     }
     if (param_1 < '\0') {
@@ -607,20 +667,20 @@ void FUN_fffc7eeb(byte param_1)
       }
     }
     if (PTR_g_ui_00025d58->cw_spot_on == 1) {
-      FUN_fffc5bb9(local_5);
+      vfo_dial_tune(local_5);
       return;
     }
     FUN_fffc81e5();
     return;
   }
   if (PTR_g_ui_00025d58->dl_req_popup_b != 1) {
-    FUN_fffc6800((int)(char)param_1);
+    memlist_knob_turn((int)(char)param_1);
     return;
   }
   if ((1 < PTR_g_ui_00025d58->popup_code - 0x44) && (PTR_g_ui_00025d58->popup_code != 0x55)) {
     return;
   }
-  FUN_fffc6800((int)(char)param_1);
+  memlist_knob_turn((int)(char)param_1);
   return;
 }
 
@@ -884,30 +944,34 @@ void FUN_fffc82b7(char param_1)
 }
 
 
-// ===== FUN_fffc836a @ fffc836a (199 bytes)
+// ===== dsp_knob_turn @ fffc836a (199 bytes)
 
-void FUN_fffc836a(char param_1)
+/* (steps): FUNC-panel knob turn for the DSP items: FUNC item 0x1D -> dsp_knob_shift_step
+   (dsp_knob_func 0), 0x1E width, 0x1F notch, 0x20 contour, 0x21 APF (func 3), then
+   func_display_open [fact: fffc836a]; only caller enc3_step */
+
+void dsp_knob_turn(char param_1)
 
 {
   if (PTR_g_ui_00025d58->func_panel_open == 1) {
     if (PTR_g_ui_00025d58->func_knob_item == 0x1d) {
-      FUN_fffc8431((int)param_1);
+      dsp_knob_shift_step((int)param_1);
       PTR_g_ui_00025d58->dsp_knob_func = 0;
     }
     else if (PTR_g_ui_00025d58->func_knob_item == 0x1e) {
-      FUN_fffc84f9(param_1);
+      dsp_knob_width_step(param_1);
       PTR_g_ui_00025d58->dsp_knob_func = 1;
     }
     else if (PTR_g_ui_00025d58->func_knob_item == 0x1f) {
-      FUN_fffc8685((int)param_1);
+      dsp_knob_notch_step((int)param_1);
       PTR_g_ui_00025d58->dsp_knob_func = 2;
     }
     else if (PTR_g_ui_00025d58->func_knob_item == 0x20) {
-      FUN_fffc87ab((int)param_1);
+      dsp_knob_contour_step((int)param_1);
       PTR_g_ui_00025d58->dsp_knob_func = 3;
     }
     else if (PTR_g_ui_00025d58->func_knob_item == 0x21) {
-      FUN_fffc8930((int)param_1);
+      dsp_knob_apf_step((int)param_1);
       PTR_g_ui_00025d58->dsp_knob_func = 3;
     }
   }
@@ -916,11 +980,13 @@ void FUN_fffc836a(char param_1)
 }
 
 
-// ===== FUN_fffc8431 @ fffc8431 (200 bytes)
+// ===== dsp_knob_shift_step @ fffc8431 (200 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffc84aa) */
+/* (steps): steps the IF SHIFT (shift_be) of the active VFO's mode block [fact: fffc8431]; called by
+   dsp_knob_turn for FUNC item 0x1D */
 
-void FUN_fffc8431(char param_1)
+void dsp_knob_shift_step(char param_1)
 
 {
   uint uVar1;
@@ -971,11 +1037,13 @@ LAB_fffc84a2:
 }
 
 
-// ===== FUN_fffc84f9 @ fffc84f9 (396 bytes)
+// ===== dsp_knob_width_step @ fffc84f9 (396 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffc860a) */
+/* (steps): steps the filter WIDTH (width_be) of the active VFO's mode block, first restoring the
+   width from vfo_filter_width_hz when NAR is on [fact: fffc84f9]; dsp_knob_turn item 0x1E */
 
-void FUN_fffc84f9(char param_1)
+void dsp_knob_width_step(char param_1)
 
 {
   uint uVar1;
@@ -1041,7 +1109,7 @@ void FUN_fffc84f9(char param_1)
   pbStack_10 = local_8->blk[3].width_be;
 LAB_fffc8602:
   uStack_12 = CONCAT11(*pbStack_10,pbStack_10[1]);
-  cStack_13 = FUN_fffb36ff(local_9,uStack_12);
+  cStack_13 = width_index_of_hz(local_9,uStack_12);
   if ((cStack_13 != -1) && (bStack_14 = FUN_fffb37cd(local_9), bStack_14 != 0xff)) {
     sStack_16 = (short)cStack_13 + (short)local_1;
     if (sStack_16 < 0) {
@@ -1053,7 +1121,7 @@ LAB_fffc8602:
     else {
       cStack_13 = (char)sStack_16;
     }
-    uVar3 = FUN_fffb3775(local_9,cStack_13);
+    uVar3 = width_hz_of_index(local_9,cStack_13);
     *pbStack_10 = (byte)((ushort)uVar3 >> 8);
     pbStack_10[1] = (byte)uVar3;
     PTR_g_ui_00025d58->freq_refresh_req = 1;
@@ -1063,11 +1131,13 @@ LAB_fffc8602:
 }
 
 
-// ===== FUN_fffc8685 @ fffc8685 (294 bytes)
+// ===== dsp_knob_notch_step @ fffc8685 (294 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffc875b) */
+/* (steps): steps the manual NOTCH frequency (notch_be) of the active VFO's mode block [fact:
+   fffc8685]; dsp_knob_turn item 0x1F */
 
-void FUN_fffc8685(char param_1)
+void dsp_knob_notch_step(char param_1)
 
 {
   bool bVar1;
@@ -1143,12 +1213,14 @@ LAB_fffc8753:
 }
 
 
-// ===== FUN_fffc87ab @ fffc87ab (389 bytes)
+// ===== dsp_knob_contour_step @ fffc87ab (389 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffc88b9) */
 /* WARNING: Removing unreachable block (ram,0xfffc88ac) */
+/* (steps): steps the CONTOUR frequency (contour_be) of the active VFO's mode block [fact:
+   fffc87ab]; dsp_knob_turn item 0x20 */
 
-void FUN_fffc87ab(char param_1)
+void dsp_knob_contour_step(char param_1)
 
 {
   ushort uVar1;
@@ -1262,9 +1334,11 @@ LAB_fffc88a4:
 }
 
 
-// ===== FUN_fffc8930 @ fffc8930 (128 bytes)
+// ===== dsp_knob_apf_step @ fffc8930 (128 bytes)
 
-void FUN_fffc8930(char param_1)
+/* (steps): steps g_opstate.apf_freq [fact: fffc8930]; dsp_knob_turn item 0x21 */
+
+void dsp_knob_apf_step(char param_1)
 
 {
   int local_8;

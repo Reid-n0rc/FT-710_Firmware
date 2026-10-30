@@ -176,9 +176,13 @@ uint tx_freq_repeater_shift(uint param_1)
 }
 
 
-// ===== FUN_fffb50d7 @ fffb50d7 (323 bytes)
+// ===== rptt_select_get @ fffb50d7 (323 bytes)
 
-byte FUN_fffb50d7(byte param_1)
+/* (mode): RPTT SELECT for the mode (EX010117 / 010217 / 010316 / 010417 / 010513 / 020113, or the
+   active PRESET), 0 for modes without one [fact: fffb50d7]; callers ptt_inputs_read,
+   tx_cw_keying_class */
+
+byte rptt_select_get(byte param_1)
 
 {
   uint uVar1;
@@ -289,7 +293,7 @@ byte tx_mod_gain(void)
   byte bStack_b;
   
   bVar2 = vfo_mode(g_ui.transmitting);
-  cVar3 = FUN_fffb3d11(bVar2);
+  cVar3 = tx_mod_source(bVar2);
   bStack_b = 0;
   uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {
@@ -381,9 +385,11 @@ LAB_fffb5345:
 }
 
 
-// ===== FUN_fffb548a @ fffb548a (22 bytes)
+// ===== qsk_delay_ticks @ fffb548a (22 bytes)
 
-char FUN_fffb548a(void)
+/* Returns EX020119 QSK DELAY TIME x 5 + 15 [fact: fffb548a]; callers trx_sequencer, keyer_task */
+
+char qsk_delay_ticks(void)
 
 {
   return g_opstate.ex020119_qsk_delay_time * '\x05' + '\x0f';
@@ -497,7 +503,7 @@ void rf_ctrl_task(void)
   atu_relay_update();
   main_dac_update();
   pa_dac_update();
-  FUN_fffb5d68();
+  audio_level_update();
   if (DAT_00012042 != '\0') {
     return;
   }
@@ -842,7 +848,7 @@ void pa_dac_update(void)
     DAT_00020fb6 = sVar6;
   }
   bVar5 = FUN_fffb4062();
-  sVar6 = FUN_fffb667a(uVar4,bVar5);
+  sVar6 = pa_falc_interp(uVar4,bVar5);
   sVar6 = SUB42(ROUND((float)(((int)sVar6 & 0x3fffU) << 2) *
                       *(float *)(BYTE_ARRAY_fff88a14 + (uint)bVar5 * 4 + 0x54) + 0.5),0);
   if ((DAT_00020faa == sVar6) && (DAT_00012042 != '\0')) {
@@ -955,9 +961,14 @@ void pa_dac_update(void)
 }
 
 
-// ===== FUN_fffb5d68 @ fffb5d68 (2322 bytes)
+// ===== audio_level_update @ fffb5d68 (2322 bytes)
 
-void FUN_fffb5d68(void)
+/* rf_ctrl_task's sixth sub-task: picks USB/REAR OUT LEVEL and the MOD GAIN (MIC / USB / REAR by
+   tx_mod_source) per RX mode, from the EX items or the active PRESET, and writes the 8-channel
+   audio level device with sst2_write12 when a value changes [fact: fffb5d68] (tx-protection.md #143
+   already describes this function) */
+
+void audio_level_update(void)
 
 {
   uint uVar1;
@@ -981,7 +992,7 @@ void FUN_fffb5d68(void)
   uVar8 = audio_route_state();
   bVar2 = vfo_mode(0);
   bVar3 = FUN_fffb2dfe();
-  FUN_fffb3d11(bVar2);
+  tx_mod_source(bVar2);
   bVar7 = g_ui.transmitting;
   bVar6 = false;
   bStack_e = 0;
@@ -991,7 +1002,7 @@ void FUN_fffb5d68(void)
   bStack_9 = 0;
   bStack_8 = 0;
   bStack_f = g_ui.spk_boost_level;
-  cVar4 = FUN_fffb3d11(bVar2);
+  cVar4 = tx_mod_source(bVar2);
   uVar1 = (uint)bVar2;
   if (uVar1 == 0xe) {
 LAB_fffb6009:
@@ -1387,9 +1398,13 @@ LAB_fffb6432:
 }
 
 
-// ===== FUN_fffb667a @ fffb667a (1636 bytes)
+// ===== pa_falc_interp @ fffb667a (1636 bytes)
 
-char FUN_fffb667a(undefined1 param_1,byte param_2)
+/* (band, watts) -> PA drive DAC value: picks the band's 100/50/20/10/5 W FALC alignment items
+   (g_cfg105.a070..a082 ...) and interpolates between the two that bracket the power [fact:
+   fffb667a]; only caller pa_dac_update (BU2505 ch2) */
+
+char pa_falc_interp(undefined1 param_1,byte param_2)
 
 {
   uint uVar1;
@@ -1875,13 +1890,13 @@ void io_task(void)
   }
   meter_task();
   io_poll();
-  FUN_fffb8d77();
+  lamp_map_update();
   FUN_fffb9605();
   cVar3 = supply_undervolt_check();
   if (cVar3 != '\x01') {
     if (g_ui.power_key_req == 2) {
       g_opstate.auto_power_on = 0;
-      FUN_fffd3d03();
+      menu_cursors_save();
       if (g_ui.zz_align_mode == 0) {
         eeprom_save_opstate();
       }

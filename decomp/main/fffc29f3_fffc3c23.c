@@ -660,7 +660,7 @@ void qmb_enter(byte param_1)
   }
   FUN_fffc31a7(param_1,1);
   FUN_fffc334c(param_1);
-  FUN_fffc33ef();
+  qmb_popup_open();
   eeprom_save_qmb_slot(0);
   tuner_rearm();
   return;
@@ -837,9 +837,12 @@ void FUN_fffc334c(int param_1)
 }
 
 
-// ===== FUN_fffc33ef @ fffc33ef (25 bytes)
+// ===== qmb_popup_open @ fffc33ef (25 bytes)
 
-void FUN_fffc33ef(void)
+/* Opens the QMB pop-up: popup_duration_get(0x43), popup_open_timed, popup_code = 0x43 [fact:
+   fffc33ef]; callers qmb_store, qmb_enter */
+
+void qmb_popup_open(void)
 
 {
   popup_duration_get(0x43);
@@ -923,9 +926,12 @@ void FUN_fffc3502(void)
 }
 
 
-// ===== FUN_fffc3503 @ fffc3503 (127 bytes)
+// ===== vfo_shift_reset @ fffc3503 (127 bytes)
 
-void FUN_fffc3503(int param_1)
+/* (side): IF SHIFT (shift_be) of the VFO's mode block = 0 [fact: fffc3503]; callers dsp_knob_reset,
+   key_step_mch_long, FUN_fffbdab2 */
+
+void vfo_shift_reset(int param_1)
 
 {
   uint uVar1;
@@ -964,9 +970,13 @@ void FUN_fffc3503(int param_1)
 }
 
 
-// ===== FUN_fffc3582 @ fffc3582 (215 bytes)
+// ===== vfo_width_reset @ fffc3582 (215 bytes)
 
-void FUN_fffc3582(int param_1)
+/* (side): WIDTH of the VFO's mode block = the table entry for 3000 Hz (SSB), 500 Hz (CW, RTTY),
+   3200 Hz (DATA/PSK) via width_hz_snap [fact: fffc3582]; callers dsp_knob_reset, key_step_mch_long,
+   width_reset_beep */
+
+void vfo_width_reset(int param_1)
 
 {
   uint uVar1;
@@ -985,7 +995,7 @@ void FUN_fffc3582(int param_1)
   uVar1 = (uint)bVar2;
   if (uVar1 != 0xe) {
     if (uVar1 - 2 < 2) {
-      sVar3 = FUN_fffc38cb(500,bVar2);
+      sVar3 = width_hz_snap(500,bVar2);
       if (sVar3 == 0) {
         return;
       }
@@ -996,7 +1006,7 @@ void FUN_fffc3582(int param_1)
     }
     if (1 < uVar1 - 8) {
       if (uVar1 - 0xc < 2) {
-        sVar3 = FUN_fffc38cb(500,bVar2);
+        sVar3 = width_hz_snap(500,bVar2);
         if (sVar3 == 0) {
           return;
         }
@@ -1008,7 +1018,7 @@ void FUN_fffc3582(int param_1)
       if (1 < uVar1) {
         return;
       }
-      sVar3 = FUN_fffc38cb(3000,bVar2);
+      sVar3 = width_hz_snap(3000,bVar2);
       if (sVar3 == 0) {
         return;
       }
@@ -1018,7 +1028,7 @@ void FUN_fffc3582(int param_1)
       return;
     }
   }
-  sVar3 = FUN_fffc38cb(0xc80,bVar2);
+  sVar3 = width_hz_snap(0xc80,bVar2);
   if (sVar3 == 0) {
     return;
   }
@@ -1029,9 +1039,13 @@ void FUN_fffc3582(int param_1)
 }
 
 
-// ===== FUN_fffc3659 @ fffc3659 (282 bytes)
+// ===== vfo_notch_reset @ fffc3659 (282 bytes)
 
-void FUN_fffc3659(int param_1)
+/* (side): manual NOTCH of the VFO's mode block = 0x0096 (150, i.e. 1500 Hz at /10) and the notch
+   flag 0x80 cleared [fact: fffc3659]; callers dsp_knob_reset, key_step_mch_long, notch_reset_beep
+    */
+
+void vfo_notch_reset(int param_1)
 
 {
   uint uVar1;
@@ -1088,9 +1102,12 @@ LAB_fffc3717:
 }
 
 
-// ===== FUN_fffc3773 @ fffc3773 (282 bytes)
+// ===== vfo_contour_reset @ fffc3773 (282 bytes)
 
-void FUN_fffc3773(int param_1)
+/* (side): CONTOUR of the VFO's mode block = 0x0096 and flag 0x40 cleared [fact: fffc3773]; callers
+   dsp_knob_reset, key_step_mch_long, contour_reset_beep */
+
+void vfo_contour_reset(int param_1)
 
 {
   uint uVar1;
@@ -1147,9 +1164,12 @@ LAB_fffc3831:
 }
 
 
-// ===== FUN_fffc388d @ fffc388d (62 bytes)
+// ===== vfo_apf_reset @ fffc388d (62 bytes)
 
-void FUN_fffc388d(int param_1)
+/* (side): g_opstate.apf_freq = 0 and bit 5 (APF on) of the VFO record's CW block (+0x14) cleared
+   [fact: fffc388d]; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdf75 */
+
+void vfo_apf_reset(int param_1)
 
 {
   undefined4 local_8;
@@ -1166,20 +1186,23 @@ void FUN_fffc388d(int param_1)
 }
 
 
-// ===== FUN_fffc38cb @ fffc38cb (47 bytes)
+// ===== width_hz_snap @ fffc38cb (47 bytes)
 
-undefined2 FUN_fffc38cb(undefined2 param_1,undefined1 param_2)
+/* (hz, mode): width_hz_of_index(width_index_of_hz(hz)), 0 when hz is not in the mode's table [fact:
+   fffc38cb]; only caller vfo_width_reset */
+
+undefined2 width_hz_snap(undefined2 param_1,undefined1 param_2)
 
 {
   char cVar1;
   undefined2 uStack_c;
   
-  cVar1 = FUN_fffb36ff(param_2,param_1);
+  cVar1 = width_index_of_hz(param_2,param_1);
   if (cVar1 == -1) {
     uStack_c = 0;
   }
   else {
-    uStack_c = FUN_fffb3775(param_2,cVar1);
+    uStack_c = width_hz_of_index(param_2,cVar1);
   }
   return uStack_c;
 }
@@ -1204,7 +1227,7 @@ void FUN_fffc38fa(void)
     beep_request(1);
     return;
   }
-  FUN_fffc20dd();
+  memlist_btn_press();
   PTR_g_ui_00025d54->key_consumed = 1;
   return;
 }
@@ -1225,7 +1248,7 @@ void FUN_fffc396d(void)
   }
   if (bVar1 != 0xb) {
     if (bVar1 == 5) {
-      FUN_fffc0c8f(PTR_g_ui_00025d54->popup_cursor + 0x77);
+      mode_key_select(PTR_g_ui_00025d54->popup_cursor + 0x77);
       PTR_g_ui_00025d54->key_consumed = 1;
       beep_request(1);
       return;
@@ -1330,10 +1353,10 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(1);
     return;
   case 2:
-    FUN_fffc3c9f();
+    func_marker_toggle();
     return;
   case 3:
-    FUN_fffc3cd9();
+    func_color_select();
     return;
   case 4:
     func_knob_assign(4);
@@ -1348,7 +1371,7 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(7);
     return;
   case 8:
-    FUN_fffc3d26();
+    func_mic_eq_toggle();
     return;
   case 9:
     func_knob_assign(9);
@@ -1372,10 +1395,10 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(0xf);
     return;
   case 0x10:
-    FUN_fffc3de8();
+    func_keyer_toggle();
     return;
   case 0x11:
-    FUN_fffc3eaa();
+    func_bk_in_toggle();
     return;
   case 0x12:
     func_knob_assign(0x12);
@@ -1387,16 +1410,16 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(0x14);
     return;
   case 0x15:
-    FUN_fffe3979();
+    func_message_open();
     return;
   case 0x16:
-    FUN_fffe2ee4();
+    func_record_toggle();
     return;
   case 0x17:
-    FUN_fffe2fa8();
+    func_play_open();
     return;
   case 0x18:
-    FUN_fffc3f9c();
+    func_txw_toggle();
     return;
   case 0x1a:
     func_knob_assign(0x15);
@@ -1405,23 +1428,23 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(0x3a);
     return;
   case 0x1c:
-    FUN_fffc1f2a(0);
+    func_menu_group_open(0);
     return;
   case 0x1d:
-    FUN_fffc1f2a(1);
+    func_menu_group_open(1);
     return;
   case 0x1e:
-    FUN_fffc1f2a(2);
+    func_menu_group_open(2);
     return;
   case 0x1f:
-    FUN_fffc1f2a(3);
+    func_menu_group_open(3);
     return;
   case 0x20:
-    FUN_fffc1f2a(4);
+    func_menu_group_open(4);
     return;
   case 0x21:
   case 0x22:
-    FUN_fffc1f94();
+    func_slot_empty();
   }
   PTR_g_ui_00025d54->key_consumed = 1;
   return;

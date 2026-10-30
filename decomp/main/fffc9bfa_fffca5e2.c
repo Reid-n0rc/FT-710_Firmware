@@ -354,14 +354,18 @@ void menu_ex010113_draw(undefined4 param_1)
       local_5 = 1;
     }
   }
-  FUN_fffca06d(param_1,local_5,1);
+  menu_draw_tx_bpf_sel(param_1,local_5,1);
   return;
 }
 
 
-// ===== FUN_fffca06d @ fffca06d (163 bytes)
+// ===== menu_draw_tx_bpf_sel @ fffca06d (163 bytes)
 
-void FUN_fffca06d(byte *param_1,byte param_2,byte param_3)
+/* (row, value, default) TX BPF SEL row: 10 chars from the menu text table, " 50-3050Hz".."
+   50-4000Hz" (0xFFF83715) or "TTBF".."400-2600Hz" (0xFFF83793) when 0x12272 != 0; callers
+   menu_ex010113/010213/010413_draw [fact: fffca06d] */
+
+void menu_draw_tx_bpf_sel(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -416,14 +420,17 @@ void menu_ex010114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca125(param_1,g_opstate.ex010114_mod_source,3,param_4,param_5,param_1);
+  menu_draw_mod_source(param_1,g_opstate.ex010114_mod_source,3,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffca125 @ fffca125 (119 bytes)
+// ===== menu_draw_mod_source @ fffca125 (119 bytes)
 
-void FUN_fffca125(byte *param_1,byte param_2,byte param_3)
+/* (row, value, default) MOD SOURCE row: MIC/USB/REAR/AUTO from 0xFFF837FC; callers
+   menu_ex010114/010214/010313/010414_draw [fact: fffca125] */
+
+void menu_draw_mod_source(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -463,14 +470,17 @@ void menu_ex010115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca1b2(param_1,g_opstate.ex010115_usb_mod_gain,0x32,param_4,param_5,param_1);
+  menu_draw_usb_mod_gain(param_1,g_opstate.ex010115_usb_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffca1b2 @ fffca1b2 (98 bytes)
+// ===== menu_draw_usb_mod_gain @ fffca1b2 (98 bytes)
 
-void FUN_fffca1b2(byte *param_1,char param_2,char param_3)
+/* (row, value, default) USB MOD GAIN row: 3 digits by dec_to_str_u8; callers
+   menu_ex010115/010215/010314/010415_draw [fact: fffca1b2] */
+
+void menu_draw_usb_mod_gain(byte *param_1,char param_2,char param_3)
 
 {
   if (param_2 == param_3) {
@@ -494,14 +504,17 @@ void menu_ex010116_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca22a(param_1,g_opstate.ex010116_rear_mod_gain,0x32,param_4,param_5,param_1);
+  menu_draw_rear_mod_gain(param_1,g_opstate.ex010116_rear_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffca22a @ fffca22a (98 bytes)
+// ===== menu_draw_rear_mod_gain @ fffca22a (98 bytes)
 
-void FUN_fffca22a(byte *param_1,char param_2,char param_3)
+/* (row, value, default) REAR MOD GAIN row: 3 digits by dec_to_str_u8; callers
+   menu_ex010116/010216/010315/010416_draw [fact: fffca22a] */
+
+void menu_draw_rear_mod_gain(byte *param_1,char param_2,char param_3)
 
 {
   if (param_2 == param_3) {
@@ -612,14 +625,17 @@ void menu_ex010119_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca3ab(param_1,g_opstate.ex010119_cw_auto_mode,0,param_4,param_5,param_1);
+  menu_draw_cw_auto_mode(param_1,g_opstate.ex010119_cw_auto_mode,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffca3ab @ fffca3ab (119 bytes)
+// ===== menu_draw_cw_auto_mode @ fffca3ab (119 bytes)
 
-void FUN_fffca3ab(byte *param_1,byte param_2,byte param_3)
+/* (row, value, default) CW AUTO MODE row: OFF/50M/ON from 0xFFF83C40; only caller
+   menu_ex010119_draw [fact: fffca3ab] */
+
+void menu_draw_cw_auto_mode(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -812,7 +828,7 @@ void menu_ex010213_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca06d(param_1,g_opstate.ex010213_tx_bpf_sel,0,param_4,param_5,param_1);
+  menu_draw_tx_bpf_sel(param_1,g_opstate.ex010213_tx_bpf_sel,0,param_4,param_5,param_1);
   return;
 }
 
@@ -825,7 +841,7 @@ void menu_ex010214_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca125(param_1,g_opstate.ex010214_mod_source,3,param_4,param_5,param_1);
+  menu_draw_mod_source(param_1,g_opstate.ex010214_mod_source,3,param_4,param_5,param_1);
   return;
 }
 
@@ -838,7 +854,7 @@ void menu_ex010215_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca1b2(param_1,g_opstate.ex010215_usb_mod_gain,0x32,param_4,param_5,param_1);
+  menu_draw_usb_mod_gain(param_1,g_opstate.ex010215_usb_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 
@@ -851,7 +867,7 @@ void menu_ex010216_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffca22a(param_1,g_opstate.ex010216_rear_mod_gain,0x32,param_4,param_5,param_1);
+  menu_draw_rear_mod_gain(param_1,g_opstate.ex010216_rear_mod_gain,0x32,param_4,param_5,param_1);
   return;
 }
 

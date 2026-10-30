@@ -51,11 +51,13 @@ ushort FUN_fffb3049(byte param_1)
 }
 
 
-// ===== FUN_fffb30b5 @ fffb30b5 (104 bytes)
+// ===== ascii2_to_bcd @ fffb30b5 (104 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffb30e6) */
+/* Two ASCII digits -> packed BCD byte (each digit only if '0'..'9', checked on the first char)
+   [fact: fffb30b5]; only caller cat_DT */
 
-byte FUN_fffb30b5(byte *param_1)
+byte ascii2_to_bcd(byte *param_1)
 
 {
   bool bVar1;
@@ -88,9 +90,12 @@ byte FUN_fffb30b5(byte *param_1)
 }
 
 
-// ===== FUN_fffb311d @ fffb311d (75 bytes)
+// ===== bcd_to_ascii2 @ fffb311d (75 bytes)
 
-void FUN_fffb311d(char *param_1,uint param_2)
+/* Packed BCD byte -> two ASCII digits from "0123456789ABCDEF", a space for a nibble above 9 [fact:
+   fffb311d]; only caller cat_DT */
+
+void bcd_to_ascii2(char *param_1,uint param_2)
 
 {
   byte bVar1;
@@ -588,9 +593,13 @@ uint vfo_freq_clar(byte which,byte side)
 }
 
 
-// ===== FUN_fffb36ff @ fffb36ff (118 bytes)
+// ===== width_index_of_hz @ fffb36ff (118 bytes)
 
-byte FUN_fffb36ff(byte param_1,short param_2)
+/* (mode, hz): index of a filter width in Hz in table 0xFFF88270 (+0x78: 21 entries for
+   CW/DATA/RTTY/PSK, +0x4A: 23 entries for LSB/USB), 0xFF if none [fact: fffb36ff]; callers cat_SH,
+   cat_ai_SH, dsp_knob_width_step */
+
+byte width_index_of_hz(byte param_1,short param_2)
 
 {
   uint uVar1;
@@ -615,9 +624,12 @@ byte FUN_fffb36ff(byte param_1,short param_2)
 }
 
 
-// ===== FUN_fffb3775 @ fffb3775 (88 bytes)
+// ===== width_hz_of_index @ fffb3775 (88 bytes)
 
-undefined2 FUN_fffb3775(byte param_1,byte param_2)
+/* (mode, index): filter width in Hz from the same tables at 0xFFF88270, 0xFFFF if out of range
+   [fact: fffb3775]; callers cat_SH, vfo_filter_width_hz, dsp_knob_width_step */
+
+undefined2 width_hz_of_index(byte param_1,byte param_2)
 
 {
   uint uVar1;
@@ -1012,9 +1024,14 @@ void dest_jumper_apply(void)
 }
 
 
-// ===== FUN_fffb3d11 @ fffb3d11 (324 bytes)
+// ===== tx_mod_source @ fffb3d11 (324 bytes)
 
-char FUN_fffb3d11(byte param_1)
+/* (mode): MOD SOURCE for the mode (EX010114 / 010214 / 010313 / 010414 or the active PRESET); while
+   DVS records 0; with PTT source 0/6 and VOX on the VOX SELECT source; AUTO (3) resolves by the PTT
+   source to 2 (rear), 1 (USB) or 0 (MIC) [fact: fffb3d11]; callers tx_mod_gain, audio_level_update,
+   tx_audio_select */
+
+char tx_mod_source(byte param_1)
 
 {
   uint uVar1;
@@ -2004,7 +2021,7 @@ char supply_undervolt_check(void)
     if (bVar1 == 1) {
       power_off_io();
       g_opstate.auto_power_on = 1;
-      FUN_fffd3d03();
+      menu_cursors_save();
       eeprom_save_opstate();
       g_ui.restart_req = 1;
       g_ui.power_cmd = 0x90;

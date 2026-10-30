@@ -207,7 +207,7 @@ void FUN_fffe4e6e(byte param_1)
     PTR_g_ui_00025d78->dvs_slot = param_1 - 1;
     PTR_g_ui_00025d78->msg_slot = param_1;
     PTR_g_ui_00025d78->dvs_armed = 1;
-    FUN_fffe4efc();
+    msg_tx_wait_start();
     return;
   }
   if (PTR_g_ui_00025d78->msgmem_type != 1) {
@@ -227,9 +227,12 @@ void FUN_fffe4e6e(byte param_1)
 }
 
 
-// ===== FUN_fffe4efc @ fffe4efc (25 bytes)
+// ===== msg_tx_wait_start @ fffe4efc (25 bytes)
 
-void FUN_fffe4efc(void)
+/* swtimer_start(0x37, 10000) and g_ui.msg_tx_wait = 1 [fact: fffe4efc]; callers cat_LM,
+   msg_type_select, FUN_fffe4e6e */
+
+void msg_tx_wait_start(void)
 
 {
   swtimer_start(0x37,10000);
@@ -461,7 +464,7 @@ void FUN_fffe5138(void)
   if (1 < PTR_g_ui_00025d78->msg_timer) {
     PTR_g_ui_00025d78->msg_timer = PTR_g_ui_00025d78->msg_timer - 1;
   }
-  FUN_fffba336(PTR_g_ui_00025d78->msg_timer);
+  contest_number_set(PTR_g_ui_00025d78->msg_timer);
   beep_request(1);
   return;
 }
@@ -640,15 +643,18 @@ void msg_cw_stop(void)
 }
 
 
-// ===== FUN_fffe5401 @ fffe5401 (323 bytes)
+// ===== cw_memory_length @ fffe5401 (323 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe551d) */
 /* WARNING: Removing unreachable block (ram,0xfffe5477) */
 /* WARNING: Removing unreachable block (ram,0xfffe54af) */
 /* WARNING: Removing unreachable block (ram,0xfffe54e6) */
 /* WARNING: Removing unreachable block (ram,0xfffe543f) */
+/* (n 1..5): length of CW MEMORY n: when its EX020206..EX020210 type is 0 the keyer-text length byte
+   (0x969F + (n-1)*0x33), else the u16 big-endian length of the recorded keying bitstream (0x93A7 +
+   (n-1)*0x98) [fact: fffe5401; layout from eeprom.md]; callers cat_KY, FUN_fffe55ab */
 
-ushort FUN_fffe5401(char param_1)
+ushort cw_memory_length(char param_1)
 
 {
   undefined2 local_c;
@@ -722,7 +728,7 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
   bool bVar1;
   int iVar2;
   
-  iVar2 = FUN_fffe564b();
+  iVar2 = keyer_can_send();
   if (iVar2 == 0) {
     PTR_g_ui_00025d78->ky_send_1 = 0;
     PTR_g_ui_00025d78->ky_send_0 = 0;
@@ -739,7 +745,7 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
       msg_cw_stop();
       return 0;
     }
-    iVar2 = FUN_fffe5401(param_1);
+    iVar2 = cw_memory_length(param_1);
     if (iVar2 == 0) {
       PTR_g_ui_00025d78->ky_send_1 = 0;
       PTR_g_ui_00025d78->ky_send_0 = 0;
@@ -752,9 +758,12 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
 }
 
 
-// ===== FUN_fffe564b @ fffe564b (69 bytes)
+// ===== keyer_can_send @ fffe564b (69 bytes)
 
-undefined1 FUN_fffe564b(void)
+/* Returns 0 while CW SPOT is on or keyer_state is 2..4, else 1 [fact: fffe564b]; callers cat_KY,
+   FUN_fffe55ab */
+
+undefined1 keyer_can_send(void)
 
 {
   uint uVar1;

@@ -584,14 +584,14 @@ void qmb_boot_init(void)
   FUN_fffc3501();
   if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
     bVar2 = true;
-    iVar3 = FUN_fff94fd5(0);
+    iVar3 = qmb_side_revalidate(0);
     if (iVar3 == 0) {
       bVar1 = true;
     }
   }
   if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
     bVar2 = true;
-    iVar3 = FUN_fff94fd5(1);
+    iVar3 = qmb_side_revalidate(1);
     if (iVar3 == 0) {
       bVar1 = true;
     }
@@ -751,9 +751,13 @@ void displink_task(void)
 }
 
 
-// ===== FUN_fff94fd5 @ fff94fd5 (294 bytes)
+// ===== qmb_side_revalidate @ fff94fd5 (294 bytes)
 
-undefined1 FUN_fff94fd5(uint param_1)
+/* (side): boot check of a VFO left in QMB state: clamps g_qmb_hdr.count to 10, repairs the side's
+   QMB pointer/depth pair for EX030112 QMB CH (5 or 10 slots), then FUN_fffc31a7(side, 1) and
+   FUN_fffc334c(side); returns 1 [fact: fff94fd5]; only caller qmb_boot_init */
+
+undefined1 qmb_side_revalidate(uint param_1)
 
 {
   byte bVar1;

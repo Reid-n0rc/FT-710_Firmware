@@ -430,7 +430,7 @@ void menu_draw_preset_lcut_freq(byte param_1,byte *param_2)
 void menu_ex060109_draw(void)
 
 {
-  FUN_fffd25c9(1);
+  menu_draw_preset_lcut_slope(1);
   return;
 }
 
@@ -442,7 +442,7 @@ void menu_ex060109_draw(void)
 void menu_ex060209_draw(void)
 
 {
-  FUN_fffd25c9(2);
+  menu_draw_preset_lcut_slope(2);
   return;
 }
 
@@ -454,7 +454,7 @@ void menu_ex060209_draw(void)
 void menu_ex060309_draw(void)
 
 {
-  FUN_fffd25c9(3);
+  menu_draw_preset_lcut_slope(3);
   return;
 }
 
@@ -466,7 +466,7 @@ void menu_ex060309_draw(void)
 void menu_ex060409_draw(void)
 
 {
-  FUN_fffd25c9(4);
+  menu_draw_preset_lcut_slope(4);
   return;
 }
 
@@ -478,14 +478,18 @@ void menu_ex060409_draw(void)
 void menu_ex060509_draw(void)
 
 {
-  FUN_fffd25c9(5);
+  menu_draw_preset_lcut_slope(5);
   return;
 }
 
 
-// ===== FUN_fffd25c9 @ fffd25c9 (234 bytes)
+// ===== menu_draw_preset_lcut_slope @ fffd25c9 (234 bytes)
 
-void FUN_fffd25c9(byte param_1,byte *param_2)
+/* PRESET n lcut_slope row (EX060n09): called by menu_ex06{01..05}09_draw with n = 1..5, reads
+   g_opstate.presets[n-1].lcut_slope, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd25c9] */
+
+void menu_draw_preset_lcut_slope(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -551,7 +555,7 @@ void FUN_fffd25c9(byte param_1,byte *param_2)
 void menu_ex060110_draw(void)
 
 {
-  FUN_fffd26f4(1);
+  menu_draw_preset_hcut_freq(1);
   return;
 }
 
@@ -563,7 +567,7 @@ void menu_ex060110_draw(void)
 void menu_ex060210_draw(void)
 
 {
-  FUN_fffd26f4(2);
+  menu_draw_preset_hcut_freq(2);
   return;
 }
 
@@ -575,7 +579,7 @@ void menu_ex060210_draw(void)
 void menu_ex060310_draw(void)
 
 {
-  FUN_fffd26f4(3);
+  menu_draw_preset_hcut_freq(3);
   return;
 }
 
@@ -587,7 +591,7 @@ void menu_ex060310_draw(void)
 void menu_ex060410_draw(void)
 
 {
-  FUN_fffd26f4(4);
+  menu_draw_preset_hcut_freq(4);
   return;
 }
 
@@ -599,14 +603,18 @@ void menu_ex060410_draw(void)
 void menu_ex060510_draw(void)
 
 {
-  FUN_fffd26f4(5);
+  menu_draw_preset_hcut_freq(5);
   return;
 }
 
 
-// ===== FUN_fffd26f4 @ fffd26f4 (236 bytes)
+// ===== menu_draw_preset_hcut_freq @ fffd26f4 (236 bytes)
 
-void FUN_fffd26f4(byte param_1,byte *param_2)
+/* PRESET n hcut_freq row (EX060n10): called by menu_ex06{01..05}10_draw with n = 1..5, reads
+   g_opstate.presets[n-1].hcut_freq, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd26f4] */
+
+void menu_draw_preset_hcut_freq(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -672,7 +680,7 @@ void FUN_fffd26f4(byte param_1,byte *param_2)
 void menu_ex060111_draw(void)
 
 {
-  FUN_fffd2821(1);
+  menu_draw_preset_hcut_slope(1);
   return;
 }
 
@@ -684,7 +692,7 @@ void menu_ex060111_draw(void)
 void menu_ex060211_draw(void)
 
 {
-  FUN_fffd2821(2);
+  menu_draw_preset_hcut_slope(2);
   return;
 }
 
@@ -696,7 +704,7 @@ void menu_ex060211_draw(void)
 void menu_ex060311_draw(void)
 
 {
-  FUN_fffd2821(3);
+  menu_draw_preset_hcut_slope(3);
   return;
 }
 
@@ -708,7 +716,7 @@ void menu_ex060311_draw(void)
 void menu_ex060411_draw(void)
 
 {
-  FUN_fffd2821(4);
+  menu_draw_preset_hcut_slope(4);
   return;
 }
 
@@ -720,14 +728,18 @@ void menu_ex060411_draw(void)
 void menu_ex060511_draw(void)
 
 {
-  FUN_fffd2821(5);
+  menu_draw_preset_hcut_slope(5);
   return;
 }
 
 
-// ===== FUN_fffd2821 @ fffd2821 (234 bytes)
+// ===== menu_draw_preset_hcut_slope @ fffd2821 (234 bytes)
 
-void FUN_fffd2821(byte param_1,byte *param_2)
+/* PRESET n hcut_slope row (EX060n11): called by menu_ex06{01..05}11_draw with n = 1..5, reads
+   g_opstate.presets[n-1].hcut_slope, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2821] */
+
+void menu_draw_preset_hcut_slope(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -793,7 +805,7 @@ void FUN_fffd2821(byte param_1,byte *param_2)
 void menu_ex060112_draw(void)
 
 {
-  FUN_fffd294c(1);
+  menu_draw_preset_usb_out_level(1);
   return;
 }
 
@@ -805,7 +817,7 @@ void menu_ex060112_draw(void)
 void menu_ex060212_draw(void)
 
 {
-  FUN_fffd294c(2);
+  menu_draw_preset_usb_out_level(2);
   return;
 }
 
@@ -817,7 +829,7 @@ void menu_ex060212_draw(void)
 void menu_ex060312_draw(void)
 
 {
-  FUN_fffd294c(3);
+  menu_draw_preset_usb_out_level(3);
   return;
 }
 
@@ -829,7 +841,7 @@ void menu_ex060312_draw(void)
 void menu_ex060412_draw(void)
 
 {
-  FUN_fffd294c(4);
+  menu_draw_preset_usb_out_level(4);
   return;
 }
 
@@ -841,14 +853,18 @@ void menu_ex060412_draw(void)
 void menu_ex060512_draw(void)
 
 {
-  FUN_fffd294c(5);
+  menu_draw_preset_usb_out_level(5);
   return;
 }
 
 
-// ===== FUN_fffd294c @ fffd294c (214 bytes)
+// ===== menu_draw_preset_usb_out_level @ fffd294c (214 bytes)
 
-void FUN_fffd294c(byte param_1,byte *param_2)
+/* PRESET n usb_out_level row (EX060n12): called by menu_ex06{01..05}12_draw with n = 1..5, reads
+   g_opstate.presets[n-1].usb_out_level, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd294c] */
+
+void menu_draw_preset_usb_out_level(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -901,7 +917,7 @@ void FUN_fffd294c(byte param_1,byte *param_2)
 void menu_ex060113_draw(void)
 
 {
-  FUN_fffd2a63(1);
+  menu_draw_preset_rear_out_level(1);
   return;
 }
 
@@ -913,7 +929,7 @@ void menu_ex060113_draw(void)
 void menu_ex060213_draw(void)
 
 {
-  FUN_fffd2a63(2);
+  menu_draw_preset_rear_out_level(2);
   return;
 }
 
@@ -925,7 +941,7 @@ void menu_ex060213_draw(void)
 void menu_ex060313_draw(void)
 
 {
-  FUN_fffd2a63(3);
+  menu_draw_preset_rear_out_level(3);
   return;
 }
 
@@ -937,7 +953,7 @@ void menu_ex060313_draw(void)
 void menu_ex060413_draw(void)
 
 {
-  FUN_fffd2a63(4);
+  menu_draw_preset_rear_out_level(4);
   return;
 }
 
@@ -949,14 +965,18 @@ void menu_ex060413_draw(void)
 void menu_ex060513_draw(void)
 
 {
-  FUN_fffd2a63(5);
+  menu_draw_preset_rear_out_level(5);
   return;
 }
 
 
-// ===== FUN_fffd2a63 @ fffd2a63 (214 bytes)
+// ===== menu_draw_preset_rear_out_level @ fffd2a63 (214 bytes)
 
-void FUN_fffd2a63(byte param_1,byte *param_2)
+/* PRESET n rear_out_level row (EX060n13): called by menu_ex06{01..05}13_draw with n = 1..5, reads
+   g_opstate.presets[n-1].rear_out_level, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2a63] */
+
+void menu_draw_preset_rear_out_level(byte param_1,byte *param_2)
 
 {
   bool bVar1;

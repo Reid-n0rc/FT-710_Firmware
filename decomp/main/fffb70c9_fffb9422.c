@@ -888,7 +888,7 @@ void io_poll(void)
   speaker_route();
   af_mute_update();
   linear_band_data();
-  FUN_fffb915e();
+  rtty_fsk_keying();
   return;
 }
 
@@ -967,9 +967,9 @@ void af_mute_update(void)
           g_ui.squelch_open = 0;
           return;
         }
-        FUN_fffb7cec();
+        fm_noise_squelch();
         if (bVar1 == 1) {
-          FUN_fffb7e61();
+          signal_level_squelch();
         }
       }
       if (g_ui.squelch_open != 1) {
@@ -999,9 +999,13 @@ void af_mute_update(void)
 }
 
 
-// ===== FUN_fffb7cec @ fffb7cec (373 bytes)
+// ===== fm_noise_squelch @ fffb7cec (373 bytes)
 
-void FUN_fffb7cec(void)
+/* FM modes: squelch threshold from the FM SQL alignment items (g_cfg105.a046/a047 THW/THN, a048 TI)
+   and the SQL knob g_ui.rf_gain, with hysteresis; dsp_fm_noise below it opens (squelch_open = 1, AF
+   mute off), above threshold + hysteresis closes [fact: fffb7cec]; only caller af_mute_update */
+
+void fm_noise_squelch(void)
 
 {
   uint uVar1;
@@ -1076,9 +1080,13 @@ void FUN_fffb7cec(void)
 }
 
 
-// ===== FUN_fffb7e61 @ fffb7e61 (270 bytes)
+// ===== signal_level_squelch @ fffb7e61 (270 bytes)
 
-void FUN_fffb7e61(void)
+/* SSB/CW/AM/DATA modes: threshold from g_cfg105.a041_rx_s_mtr_40 (+80 / +110) and the SQL knob
+   g_ui.rf_gain; dsp_signal_level below it opens the squelch (squelch_open = 1, AF mute off), above
+   threshold + 6 closes it [fact: fffb7e61]; only caller af_mute_update */
+
+void signal_level_squelch(void)
 
 {
   uint uVar1;
@@ -1147,7 +1155,7 @@ void ptt_inputs_read(void)
   byte bStack_2;
   
   bVar2 = vfo_mode(1);
-  bStack_2 = FUN_fffb50d7(bVar2);
+  bStack_2 = rptt_select_get(bVar2);
   bVar3 = tx_cw_keying_class();
   g_ui.ptt_data = 0;
   g_ui.ptt_usb_rts = 0;
@@ -1241,7 +1249,7 @@ void trx_sequencer(void)
   byte bStack_9;
   
   freq = g_ui.freq_tx;
-  bStack_9 = FUN_fffb548a();
+  bStack_9 = qsk_delay_ticks();
   bVar3 = g_opstate.ex020117_cw_wave_shape;
   bVar2 = tx_cw_keying_class();
   bVar3 = bVar3 * '\x02' + 4;
@@ -1772,7 +1780,7 @@ void tx_audio_select(void)
   char cStack_2;
   
   bVar2 = vfo_mode(1);
-  cStack_2 = FUN_fffb3d11(bVar2);
+  cStack_2 = tx_mod_source(bVar2);
   uVar1 = (uint)bVar2;
   if ((uVar1 - 2 < 2) || (uVar1 == 0xc || uVar1 == 0xd)) {
     cStack_2 = '\x03';
@@ -1968,9 +1976,13 @@ void speaker_route(void)
 }
 
 
-// ===== FUN_fffb8d77 @ fffb8d77 (518 bytes)
+// ===== lamp_map_update @ fffb8d77 (518 bytes)
 
-void FUN_fffb8d77(void)
+/* Builds g_ui.lamp_map: 0x10 squelch open, 0x80 VOX, 0x20 TX (blinking when TX is refused out of
+   band), VFO-A/B/memory/clar colour bits from EX040301..EX040304 VMI COLOR, 1 in split, 0x40 FUNC
+   panel; also sets g_ui.tx_lamp 0/1/2 [fact: fffb8d77]; only caller io_task */
+
+void lamp_map_update(void)
 
 {
   uint uVar1;
@@ -2257,9 +2269,14 @@ void linear_band_data(void)
 }
 
 
-// ===== FUN_fffb915e @ fffb915e (393 bytes)
+// ===== rtty_fsk_keying @ fffb915e (393 bytes)
 
-void FUN_fffb915e(void)
+/* While transmitting RTTY: reads the RPTT SELECT input (1 = PC5, 2 = PC6, 3 = P21; EX010513 or the
+   PRESET), applies EX010517 POLARITY TX and drives FSK_SHIFT PC4 with beep_request 9 / 0xB for the
+   two states; on RX or other modes stops the tone and sets PC4 [fact: fffb915e]; only caller
+   io_poll */
+
+void rtty_fsk_keying(void)
 
 {
   byte bVar1;

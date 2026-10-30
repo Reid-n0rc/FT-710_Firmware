@@ -261,7 +261,7 @@ void key_tune_short(void)
         beep_request(3);
         return;
       }
-      iVar2 = FUN_fffec55a();
+      iVar2 = vfo_tuner_bit_get();
       if (iVar2 == 0) {
         vfo_tuner_bit_set(1);
         g_ui.atu_state = 4;
@@ -276,7 +276,7 @@ void key_tune_short(void)
         FUN_fffec52d();
         return;
       }
-      iVar2 = FUN_fffec55a();
+      iVar2 = vfo_tuner_bit_get();
       if (iVar2 == 0) {
         vfo_tuner_bit_set(1);
         g_ui.atu_state = 1;
@@ -1036,7 +1036,7 @@ void key_m_to_v_short(void)
   char cVar1;
   
   msg_send_cancel();
-  cVar1 = FUN_fffc2426();
+  cVar1 = m_to_v_exec();
   if (cVar1 == '\x01') {
     return;
   }

@@ -278,42 +278,42 @@ void ladder_key_task(void)
       }
       else if (DAT_0001b554 == 1) {
         if (bVar2 == 0xf1) {
-          FUN_fffe46f3();
+          msg_cw_slot_key_latched_1();
         }
         else {
-          FUN_fffe435a();
+          msg_cw_slot_key_1();
         }
       }
       else if (DAT_0001b554 == 2) {
         if (bVar2 == 0xf2) {
-          FUN_fffe46f9();
+          msg_cw_slot_key_latched_2();
         }
         else {
-          FUN_fffe4360();
+          msg_cw_slot_key_2();
         }
       }
       else if (DAT_0001b554 == 3) {
         if (bVar2 == 0xf3) {
-          FUN_fffe46ff();
+          msg_cw_slot_key_latched_3();
         }
         else {
-          FUN_fffe4366();
+          msg_cw_slot_key_3();
         }
       }
       else if (DAT_0001b554 == 4) {
         if (bVar2 == 0xf4) {
-          FUN_fffe4705();
+          msg_cw_slot_key_latched_4();
         }
         else {
-          FUN_fffe436c();
+          msg_cw_slot_key_4();
         }
       }
       else if (DAT_0001b554 == 5) {
         if (bVar2 == 0xf5) {
-          FUN_fffe470b();
+          msg_cw_slot_key_latched_5();
         }
         else {
-          FUN_fffe4372();
+          msg_cw_slot_key_5();
         }
       }
       else if (DAT_0001b554 == 6) {
@@ -378,19 +378,19 @@ void ladder_key_task(void)
       else if (DAT_0001b554 == 0) {
         switch(bVar2) {
         case 1:
-          FUN_fffe41f3();
+          msg_slot_key_1();
           break;
         case 2:
-          FUN_fffe41f9();
+          msg_slot_key_2();
           break;
         case 3:
-          FUN_fffe41ff();
+          msg_slot_key_3();
           break;
         case 4:
-          FUN_fffe4205();
+          msg_slot_key_4();
           break;
         case 5:
-          FUN_fffe420b();
+          msg_slot_key_5();
           break;
         case 6:
           msg_type_select();
@@ -518,9 +518,12 @@ undefined1 ladder_key_delay(void)
 }
 
 
-// ===== FUN_fffe41f3 @ fffe41f3 (6 bytes)
+// ===== msg_slot_key_1 @ fffe41f3 (6 bytes)
 
-void FUN_fffe41f3(void)
+/* msg_slot_key(1) (6-byte wrapper) [fact: fffe41f3]; only caller ladder_key_task (remote-keypad key
+   code) */
+
+void msg_slot_key_1(void)
 
 {
   msg_slot_key(1);
@@ -528,9 +531,12 @@ void FUN_fffe41f3(void)
 }
 
 
-// ===== FUN_fffe41f9 @ fffe41f9 (6 bytes)
+// ===== msg_slot_key_2 @ fffe41f9 (6 bytes)
 
-void FUN_fffe41f9(void)
+/* msg_slot_key(2) (6-byte wrapper) [fact: fffe41f9]; only caller ladder_key_task (remote-keypad key
+   code) */
+
+void msg_slot_key_2(void)
 
 {
   msg_slot_key(2);
@@ -538,9 +544,12 @@ void FUN_fffe41f9(void)
 }
 
 
-// ===== FUN_fffe41ff @ fffe41ff (6 bytes)
+// ===== msg_slot_key_3 @ fffe41ff (6 bytes)
 
-void FUN_fffe41ff(void)
+/* msg_slot_key(3) (6-byte wrapper) [fact: fffe41ff]; only caller ladder_key_task (remote-keypad key
+   code) */
+
+void msg_slot_key_3(void)
 
 {
   msg_slot_key(3);
@@ -548,9 +557,12 @@ void FUN_fffe41ff(void)
 }
 
 
-// ===== FUN_fffe4205 @ fffe4205 (6 bytes)
+// ===== msg_slot_key_4 @ fffe4205 (6 bytes)
 
-void FUN_fffe4205(void)
+/* msg_slot_key(4) (6-byte wrapper) [fact: fffe4205]; only caller ladder_key_task (remote-keypad key
+   code) */
+
+void msg_slot_key_4(void)
 
 {
   msg_slot_key(4);
@@ -558,9 +570,12 @@ void FUN_fffe4205(void)
 }
 
 
-// ===== FUN_fffe420b @ fffe420b (6 bytes)
+// ===== msg_slot_key_5 @ fffe420b (6 bytes)
 
-void FUN_fffe420b(void)
+/* msg_slot_key(5) (6-byte wrapper) [fact: fffe420b]; only caller ladder_key_task (remote-keypad key
+   code) */
+
+void msg_slot_key_5(void)
 
 {
   msg_slot_key(5);
@@ -634,9 +649,12 @@ void msg_slot_key(byte param_1)
 }
 
 
-// ===== FUN_fffe435a @ fffe435a (6 bytes)
+// ===== msg_cw_slot_key_1 @ fffe435a (6 bytes)
 
-void FUN_fffe435a(void)
+/* msg_cw_slot_key(1) (6-byte wrapper) [fact: fffe435a]; only caller ladder_key_task (remote-keypad
+   key code) */
+
+void msg_cw_slot_key_1(void)
 
 {
   msg_cw_slot_key(1);
@@ -644,9 +662,12 @@ void FUN_fffe435a(void)
 }
 
 
-// ===== FUN_fffe4360 @ fffe4360 (6 bytes)
+// ===== msg_cw_slot_key_2 @ fffe4360 (6 bytes)
 
-void FUN_fffe4360(void)
+/* msg_cw_slot_key(2) (6-byte wrapper) [fact: fffe4360]; only caller ladder_key_task (remote-keypad
+   key code) */
+
+void msg_cw_slot_key_2(void)
 
 {
   msg_cw_slot_key(2);
@@ -654,9 +675,12 @@ void FUN_fffe4360(void)
 }
 
 
-// ===== FUN_fffe4366 @ fffe4366 (6 bytes)
+// ===== msg_cw_slot_key_3 @ fffe4366 (6 bytes)
 
-void FUN_fffe4366(void)
+/* msg_cw_slot_key(3) (6-byte wrapper) [fact: fffe4366]; only caller ladder_key_task (remote-keypad
+   key code) */
+
+void msg_cw_slot_key_3(void)
 
 {
   msg_cw_slot_key(3);
@@ -664,9 +688,12 @@ void FUN_fffe4366(void)
 }
 
 
-// ===== FUN_fffe436c @ fffe436c (6 bytes)
+// ===== msg_cw_slot_key_4 @ fffe436c (6 bytes)
 
-void FUN_fffe436c(void)
+/* msg_cw_slot_key(4) (6-byte wrapper) [fact: fffe436c]; only caller ladder_key_task (remote-keypad
+   key code) */
+
+void msg_cw_slot_key_4(void)
 
 {
   msg_cw_slot_key(4);
@@ -674,9 +701,12 @@ void FUN_fffe436c(void)
 }
 
 
-// ===== FUN_fffe4372 @ fffe4372 (6 bytes)
+// ===== msg_cw_slot_key_5 @ fffe4372 (6 bytes)
 
-void FUN_fffe4372(void)
+/* msg_cw_slot_key(5) (6-byte wrapper) [fact: fffe4372]; only caller ladder_key_task (remote-keypad
+   key code) */
+
+void msg_cw_slot_key_5(void)
 
 {
   msg_cw_slot_key(5);
@@ -799,7 +829,7 @@ void msg_type_select(void)
         if (PTR_g_ui_00025d78->msg_active != 1) {
           PTR_g_ui_00025d78->msgmem_type = 1;
           PTR_g_ui_00025d78->dvs_busy = 1;
-          FUN_fffe4efc();
+          msg_tx_wait_start();
           beep_request(1);
           return;
         }
@@ -823,7 +853,7 @@ void msg_type_select(void)
         PTR_g_ui_00025d78->msg_playing = 0;
         PTR_g_ui_00025d78->msg_state_1d0 = 0;
         PTR_g_ui_00025d78->dvs_busy = 1;
-        FUN_fffe4efc();
+        msg_tx_wait_start();
         beep_request(1);
         return;
       }
@@ -848,7 +878,7 @@ void FUN_fffe46b0(void)
   if (PTR_g_ui_00025d78->kbd_target != 5) {
     return;
   }
-  FUN_fffe291e(0x84);
+  kbd_edit_file_name(0x84);
   return;
 }
 
@@ -909,9 +939,12 @@ void FUN_fffe46f2(void)
 }
 
 
-// ===== FUN_fffe46f3 @ fffe46f3 (6 bytes)
+// ===== msg_cw_slot_key_latched_1 @ fffe46f3 (6 bytes)
 
-void FUN_fffe46f3(void)
+/* msg_cw_slot_key_latched(1) (6-byte wrapper) [fact: fffe46f3]; only caller ladder_key_task
+   (remote-keypad key code) */
+
+void msg_cw_slot_key_latched_1(void)
 
 {
   msg_cw_slot_key_latched(1);
@@ -919,9 +952,12 @@ void FUN_fffe46f3(void)
 }
 
 
-// ===== FUN_fffe46f9 @ fffe46f9 (6 bytes)
+// ===== msg_cw_slot_key_latched_2 @ fffe46f9 (6 bytes)
 
-void FUN_fffe46f9(void)
+/* msg_cw_slot_key_latched(2) (6-byte wrapper) [fact: fffe46f9]; only caller ladder_key_task
+   (remote-keypad key code) */
+
+void msg_cw_slot_key_latched_2(void)
 
 {
   msg_cw_slot_key_latched(2);
@@ -929,9 +965,12 @@ void FUN_fffe46f9(void)
 }
 
 
-// ===== FUN_fffe46ff @ fffe46ff (6 bytes)
+// ===== msg_cw_slot_key_latched_3 @ fffe46ff (6 bytes)
 
-void FUN_fffe46ff(void)
+/* msg_cw_slot_key_latched(3) (6-byte wrapper) [fact: fffe46ff]; only caller ladder_key_task
+   (remote-keypad key code) */
+
+void msg_cw_slot_key_latched_3(void)
 
 {
   msg_cw_slot_key_latched(3);
@@ -939,9 +978,12 @@ void FUN_fffe46ff(void)
 }
 
 
-// ===== FUN_fffe4705 @ fffe4705 (6 bytes)
+// ===== msg_cw_slot_key_latched_4 @ fffe4705 (6 bytes)
 
-void FUN_fffe4705(void)
+/* msg_cw_slot_key_latched(4) (6-byte wrapper) [fact: fffe4705]; only caller ladder_key_task
+   (remote-keypad key code) */
+
+void msg_cw_slot_key_latched_4(void)
 
 {
   msg_cw_slot_key_latched(4);
@@ -949,9 +991,12 @@ void FUN_fffe4705(void)
 }
 
 
-// ===== FUN_fffe470b @ fffe470b (6 bytes)
+// ===== msg_cw_slot_key_latched_5 @ fffe470b (6 bytes)
 
-void FUN_fffe470b(void)
+/* msg_cw_slot_key_latched(5) (6-byte wrapper) [fact: fffe470b]; only caller ladder_key_task
+   (remote-keypad key code) */
+
+void msg_cw_slot_key_latched_5(void)
 
 {
   msg_cw_slot_key_latched(5);
@@ -1019,20 +1064,20 @@ void FUN_fffe47c8(void)
   uVar1 = (uint)PTR_g_ui_00025d78->kbd_target;
   if (uVar1 != 6) {
     if (uVar1 == 1) {
-      FUN_fffe273a(0x85);
+      kbd_edit_memory_name(0x85);
     }
     else if (uVar1 == 2) {
-      FUN_fffe2811(0x85);
+      kbd_edit_cw_text(0x85);
     }
     else if (1 < uVar1 - 3) {
       if (uVar1 == 5) {
-        FUN_fffe291e(0x85);
+        kbd_edit_file_name(0x85);
       }
       else {
         if (uVar1 != 0) {
           return;
         }
-        FUN_fffe2680(0x85);
+        kbd_edit_mycall(0x85);
       }
     }
   }

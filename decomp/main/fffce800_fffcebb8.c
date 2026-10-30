@@ -467,8 +467,8 @@ void menu_ex020205_step(void)
   undefined2 uStack_2;
   
   uStack_2 = contest_number_get();
-  FUN_fffce495(1,&DAT_0000270f,&uStack_2);
-  FUN_fffba336(uStack_2);
+  menu_step_u16(1,&DAT_0000270f,&uStack_2);
+  contest_number_set(uStack_2);
   return;
 }
 

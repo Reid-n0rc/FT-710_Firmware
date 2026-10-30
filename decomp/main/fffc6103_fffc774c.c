@@ -12,7 +12,7 @@ bool FUN_fffc6103(byte param_1,uint *param_2,int *param_3)
   
   DAT_0001b4e5 = 1;
   DAT_0001b4e6 = '\0';
-  uStack_14 = FUN_fffc616e(param_1);
+  uStack_14 = dial_step_hz(param_1);
   DAT_0001b4e5 = 0;
   if (DAT_0001b4e6 == '\x01') {
     uStack_14 = uStack_14 * 10;
@@ -31,9 +31,13 @@ bool FUN_fffc6103(byte param_1,uint *param_2,int *param_3)
 }
 
 
-// ===== FUN_fffc616e @ fffc616e (320 bytes)
+// ===== dial_step_hz @ fffc616e (320 bytes)
 
-uint FUN_fffc616e(byte param_1)
+/* (side): tuning step of the VFO in Hz: 1 MHz / 1 kHz in digit-step mode, 100 kHz / .. with the
+   fast-step request, else the mode's step (dial_step_mode_hz) or the AM/FM channel step
+   (ch_step_hz) [fact: fffc616e] */
+
+uint dial_step_hz(byte param_1)
 
 {
   bool bVar1;
@@ -101,22 +105,22 @@ uint FUN_fffc616e(byte param_1)
         bVar1 = false;
       }
       if (bVar1) {
-        local_c = (undefined *)FUN_fffc63e6(local_d);
+        local_c = (undefined *)ch_step_hz(local_d);
       }
       else {
-        sVar2 = FUN_fffc62ae(local_d);
+        sVar2 = dial_step_mode_hz(local_d);
         local_c = (undefined *)(int)sVar2;
       }
     }
     else if (PTR_g_ui_00025d58->step_dial_req == 1) {
-      sVar2 = FUN_fffc62ae(local_d);
+      sVar2 = dial_step_mode_hz(local_d);
       local_c = (undefined *)(int)sVar2;
     }
     else if (PTR_g_ui_00025d58->step_ch_req == 1) {
-      local_c = (undefined *)FUN_fffc63e6(local_d);
+      local_c = (undefined *)ch_step_hz(local_d);
     }
     else {
-      sVar2 = FUN_fffc62ae(local_d);
+      sVar2 = dial_step_mode_hz(local_d);
       local_c = (undefined *)(int)sVar2;
     }
   }
@@ -124,9 +128,13 @@ uint FUN_fffc616e(byte param_1)
 }
 
 
-// ===== FUN_fffc62ae @ fffc62ae (312 bytes)
+// ===== dial_step_mode_hz @ fffc62ae (312 bytes)
 
-short FUN_fffc62ae(byte param_1)
+/* (mode): dial step in Hz by g_opstate.fn_select (1 = fine, 2 = x10): SSB/CW 1 or EX030501 SSB/CW
+   DIAL STEP 5/10/20 Hz; RTTY/PSK/DATA 1 or EX030502 5/10/20 Hz; AM 10/100/1000; FM 10/100/1000
+   [fact: fffc62ae]; only caller dial_step_hz */
+
+short dial_step_mode_hz(byte param_1)
 
 {
   uint uVar1;
@@ -201,9 +209,12 @@ LAB_fffc6393:
 }
 
 
-// ===== FUN_fffc63e6 @ fffc63e6 (166 bytes)
+// ===== ch_step_hz @ fffc63e6 (166 bytes)
 
-uint FUN_fffc63e6(byte param_1)
+/* (mode): AM / FM channel step from EX030504 AM CH STEP / EX030505 FM CH STEP via table 0xFFF88514
+   [fact: fffc63e6]; only caller dial_step_hz */
+
+uint ch_step_hz(byte param_1)
 
 {
   uint uVar1;
@@ -299,7 +310,7 @@ void enc2_step(char param_1)
           func_knob_turn((int)param_1);
           return;
         }
-        FUN_fffc6595((int)param_1);
+        playback_knob_turn((int)param_1);
         return;
       }
       FUN_fffbb963((int)param_1);
@@ -318,9 +329,13 @@ void enc2_step(char param_1)
 }
 
 
-// ===== FUN_fffc6595 @ fffc6595 (376 bytes)
+// ===== playback_knob_turn @ fffc6595 (376 bytes)
 
-void FUN_fffc6595(char param_1)
+/* (steps): knob turn on the PlayList / message-memory screens: while playing steps
+   g_opstate.play_volume 0..100, in the PlayList otherwise moves the file cursor (playlist_cursor_up
+   / _down) [fact: fffc6595]; only caller enc2_step */
+
+void playback_knob_turn(char param_1)
 
 {
   if (PTR_g_ui_00025d58->playlist_open == 1) {
@@ -340,11 +355,11 @@ void FUN_fffc6595(char param_1)
     }
     else {
       if (param_1 < '\0') {
-        FUN_fffe3121();
+        playlist_cursor_up();
         return;
       }
       if ('\0' < param_1) {
-        FUN_fffe32fd();
+        playlist_cursor_down();
         return;
       }
     }
@@ -421,48 +436,55 @@ void FUN_fffc670d(char param_1)
 }
 
 
-// ===== FUN_fffc6800 @ fffc6800 (111 bytes)
+// ===== memlist_knob_turn @ fffc6800 (111 bytes)
 
-void FUN_fffc6800(char param_1)
+/* (steps): knob turn in the memory list: moves the row (memlist_row_step) or the button
+   (memlist_group_step), or with a pop-up open steps MODE / SCAN / TYPE of the channel [fact:
+   fffc6800]; caller FUN_fffc7eeb (enc3_step) */
+
+void memlist_knob_turn(char param_1)
 
 {
   byte bVar1;
   
   if (PTR_g_ui_00025d58->memlist_edit_on == 0) {
     if (PTR_g_ui_00025d58->memlist_flag == 0) {
-      FUN_fffc686f((int)param_1);
+      memlist_row_step((int)param_1);
       return;
     }
     if (PTR_g_ui_00025d58->memlist_popup55 == 0) {
-      FUN_fffc6bd8((int)param_1);
+      memlist_group_step((int)param_1);
       return;
     }
   }
   bVar1 = PTR_g_ui_00025d58->memlist_group;
   if (bVar1 == 3) {
-    FUN_fffc6b86((int)param_1);
+    memlist_type_bit_step((int)param_1);
     return;
   }
   if (bVar1 != 2) {
     if (bVar1 == 1) {
-      FUN_fffc6ac4((int)param_1);
+      memlist_mode_step((int)param_1);
       return;
     }
     return;
   }
-  FUN_fffc6b34((int)param_1);
+  memlist_scan_bit_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc686f @ fffc686f (83 bytes)
+// ===== memlist_row_step @ fffc686f (83 bytes)
 
-void FUN_fffc686f(char param_1)
+/* (dir): moves the memory-list cursor row 0..3, scrolling the page at the ends, then
+   memlist_cursor_channel [fact: fffc686f] */
+
+void memlist_row_step(char param_1)
 
 {
   if (param_1 < '\x01') {
     if (PTR_g_ui_00025d58->memlist_row == 0) {
-      FUN_fffc6a0a();
+      memlist_page_up();
     }
     else {
       PTR_g_ui_00025d58->memlist_row = PTR_g_ui_00025d58->memlist_row - 1;
@@ -472,16 +494,19 @@ void FUN_fffc686f(char param_1)
     PTR_g_ui_00025d58->memlist_row = PTR_g_ui_00025d58->memlist_row + 1;
   }
   else {
-    FUN_fffc68c2();
+    memlist_page_down();
   }
   memlist_cursor_channel();
   return;
 }
 
 
-// ===== FUN_fffc68c2 @ fffc68c2 (328 bytes)
+// ===== memlist_page_down @ fffc68c2 (328 bytes)
 
-void FUN_fffc68c2(void)
+/* Scrolls the memory list down one channel (memlist_first + 1) up to 0x74 or the region's special
+   channels (dest 0x4380 / 0x020B) [fact: fffc68c2]; caller memlist_row_step */
+
+void memlist_page_down(void)
 
 {
   bool bVar1;
@@ -559,9 +584,12 @@ void FUN_fffc68c2(void)
 }
 
 
-// ===== FUN_fffc6a0a @ fffc6a0a (186 bytes)
+// ===== memlist_page_up @ fffc6a0a (186 bytes)
 
-void FUN_fffc6a0a(void)
+/* Scrolls the memory list up one channel (memlist_first - 1), wrapping by region (dest 0x315B /
+   0x50E2 to 0x83) [fact: fffc6a0a]; caller memlist_row_step */
+
+void memlist_page_up(void)
 
 {
   bool bVar1;
@@ -612,9 +640,12 @@ void FUN_fffc6a0a(void)
 }
 
 
-// ===== FUN_fffc6ac4 @ fffc6ac4 (112 bytes)
+// ===== memlist_mode_step @ fffc6ac4 (112 bytes)
 
-void FUN_fffc6ac4(char param_1)
+/* (dir): pop-up 0x55: steps the memory channel's mode (low nibble, 0..14), eeprom_save_memch [fact:
+   fffc6ac4] */
+
+void memlist_mode_step(char param_1)
 
 {
   vfo_rec *pvVar1;
@@ -638,9 +669,12 @@ void FUN_fffc6ac4(char param_1)
 }
 
 
-// ===== FUN_fffc6b34 @ fffc6b34 (82 bytes)
+// ===== memlist_scan_bit_step @ fffc6b34 (82 bytes)
 
-void FUN_fffc6b34(char param_1)
+/* (dir): pop-up 0x56: sets (dir > 0) or clears bit 7 of memch[memlist_ch].flags1 (SCAN/SKIP),
+   eeprom_save_memch [fact: fffc6b34] */
+
+void memlist_scan_bit_step(char param_1)
 
 {
   byte *pbVar1;
@@ -659,9 +693,12 @@ void FUN_fffc6b34(char param_1)
 }
 
 
-// ===== FUN_fffc6b86 @ fffc6b86 (82 bytes)
+// ===== memlist_type_bit_step @ fffc6b86 (82 bytes)
 
-void FUN_fffc6b86(char param_1)
+/* (dir): pop-up 0x57: steps the memory TYPE bit (FREQ/NAME), eeprom_save_memch [fact: fffc6b86 and
+   display gui.md] */
+
+void memlist_type_bit_step(char param_1)
 
 {
   byte *pbVar1;
@@ -680,9 +717,11 @@ void FUN_fffc6b86(char param_1)
 }
 
 
-// ===== FUN_fffc6bd8 @ fffc6bd8 (72 bytes)
+// ===== memlist_group_step @ fffc6bd8 (72 bytes)
 
-void FUN_fffc6bd8(char param_1)
+/* (dir): moves the selected memory-list button g_ui.memlist_group 0..5 [fact: fffc6bd8] */
+
+void memlist_group_step(char param_1)
 
 {
   if (param_1 < '\x01') {
@@ -707,28 +746,31 @@ void func_knob_turn(char param_1)
 
 {
   if (PTR_g_ui_00025d58->dl_req_popup_b != 1) {
-    FUN_fffc6f11(g_opstate.func_knob,(int)param_1);
+    funcknob_step(g_opstate.func_knob,(int)param_1);
     return;
   }
   if (PTR_g_ui_00025d58->popup_code < 0x1e) {
-    FUN_fffc6ca4((int)param_1);
+    funcknob_list_popup_step((int)param_1);
     return;
   }
   if (PTR_g_ui_00025d58->f_0x41c_u8 == 1) {
-    FUN_fffc6f11(g_opstate.func_knob,(int)param_1);
+    funcknob_step(g_opstate.func_knob,(int)param_1);
     return;
   }
   if (PTR_g_ui_00025d58->popup_code < 0x1e) {
     return;
   }
-  FUN_fffc6ddd(PTR_g_ui_00025d58->popup_code,(int)param_1);
+  funcknob_popup_step(PTR_g_ui_00025d58->popup_code,(int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc6ca4 @ fffc6ca4 (51 bytes)
+// ===== funcknob_list_popup_step @ fffc6ca4 (51 bytes)
 
-void FUN_fffc6ca4(char param_1)
+/* (steps): knob turn while a list pop-up (code < 0x1E) is open: code 0xC, 0xB or 5 -> its own step
+   function [fact: fffc6ca4]; caller func_knob_turn */
+
+void funcknob_list_popup_step(char param_1)
 
 {
   byte bVar1;
@@ -828,207 +870,222 @@ void FUN_fffc6d8c(char param_1)
 }
 
 
-// ===== FUN_fffc6ddd @ fffc6ddd (308 bytes)
+// ===== funcknob_popup_step @ fffc6ddd (308 bytes)
 
-void FUN_fffc6ddd(char param_1,char param_2)
+/* (popup id, steps): while a value pop-up owns the knob, steps the setting of popup id 0x1F..0x58
+   (funcknob_*_step) [fact: fffc6ddd]; caller func_knob_turn */
+
+void funcknob_popup_step(char param_1,char param_2)
 
 {
   if (param_1 == 'X') {
-    FUN_fffc7c15((int)param_2);
+    funcknob_aess_cf_step((int)param_2);
     return;
   }
   if (param_1 == '\x1f') {
-    FUN_fffc706b((int)param_2);
+    funcknob_peak_step((int)param_2);
     return;
   }
   if (param_1 == '\"') {
-    FUN_fffc70f3((int)param_2);
+    funcknob_contrast_step((int)param_2);
     return;
   }
   if (param_1 == '#') {
-    FUN_fffc715d((int)param_2);
+    funcknob_dimmer_step((int)param_2);
     return;
   }
   if (param_1 == '$') {
-    FUN_fffc71c7((int)param_2);
+    funcknob_mgroup_step((int)param_2);
     return;
   }
   if (param_1 == '%') {
-    FUN_fffc7506((int)param_2);
+    funcknob_mic_gain_step((int)param_2);
     return;
   }
   if (param_1 == '&') {
-    FUN_fffc754b((int)param_2);
+    funcknob_mic_eq_step((int)param_2);
     return;
   }
   if (param_1 == '\'') {
-    FUN_fffc75d4((int)param_2);
+    funcknob_proc_level_step((int)param_2);
     return;
   }
   if (param_1 == '(') {
-    FUN_fffc7631((int)param_2);
+    funcknob_amc_level_step((int)param_2);
     return;
   }
   if (param_1 == ')') {
-    FUN_fffc768c((int)param_2);
+    funcknob_vox_gain_step((int)param_2);
     return;
   }
   if (param_1 == '*') {
-    FUN_fffc76e9((int)param_2);
+    funcknob_vox_delay_step((int)param_2);
     return;
   }
   if (param_1 == '+') {
-    FUN_fffc7764((int)param_2);
+    funcknob_anti_vox_step((int)param_2);
     return;
   }
   if (param_1 == ',') {
-    FUN_fffc77df(param_2);
+    funcknob_rf_power_step(param_2);
     return;
   }
   if (param_1 == '-') {
-    FUN_fffc7923((int)param_2);
+    funcknob_moni_level_step((int)param_2);
     return;
   }
   if (param_1 == '/') {
-    FUN_fffc79b8((int)param_2);
+    funcknob_bk_in_step((int)param_2);
     return;
   }
   if (param_1 == '0') {
-    FUN_fffc7aa7((int)param_2);
+    funcknob_cw_speed_step((int)param_2);
     return;
   }
   if (param_1 == '1') {
-    FUN_fffc7b02((int)param_2);
+    funcknob_cw_pitch_step((int)param_2);
     return;
   }
   if (param_1 == '2') {
-    FUN_fffc7b5f((int)param_2);
+    funcknob_bk_delay_step((int)param_2);
     return;
   }
   if (param_1 == '3') {
-    FUN_fffc7bbc((int)param_2);
+    funcknob_aess_level_step((int)param_2);
     return;
   }
   if (param_1 == '8') {
-    FUN_fffc7cfd((int)param_2);
+    funcknob_nb_level_step((int)param_2);
     return;
   }
   if (param_1 == '9') {
-    FUN_fffc7d41((int)param_2);
+    funcknob_dnr_level_step((int)param_2);
     return;
   }
   if (param_1 == 'F') {
-    FUN_fffc7975((int)param_2);
+    funcknob_keyer_step((int)param_2);
     return;
   }
   if (param_1 != '\x1e') {
     return;
   }
-  FUN_fffc7016((int)param_2);
+  funcknob_scope_level_step((int)param_2);
   return;
 }
 
 
-// ===== FUN_fffc6f11 @ fffc6f11 (237 bytes)
+// ===== funcknob_step @ fffc6f11 (237 bytes)
 
-void FUN_fffc6f11(char param_1,char param_2)
+/* (func, steps): FUNC-knob turn by the assigned function g_opstate.func_knob: 1 PEAK, 3 opens popup
+   0xB, 4 CONTRAST, 5 DIMMER, 6 M-GROUP, 7 MIC GAIN, 9 PROC LEVEL, 10 AMC, 11 VOX GAIN, 12 VOX
+   DELAY, 13 ANTI VOX, 14 RF POWER, 15 MONI, 0x12 CW SPEED, 0x13 PITCH, 0x14 BK-DELAY, 0x15 AESS,
+   0x3A AESS-CF, else SCOPE LEVEL [fact: fffc6f11]; caller func_knob_turn */
+
+void funcknob_step(char param_1,char param_2)
 
 {
   PTR_g_ui_00025d58->f_0x41c_u8 = 0;
   if (param_1 == ':') {
-    FUN_fffc7bfd((int)param_2);
+    funcknob_aess_cf((int)param_2);
     return;
   }
   if (param_1 == '\x01') {
-    FUN_fffc7053((int)param_2);
+    funcknob_peak((int)param_2);
     return;
   }
   if (param_1 == '\x03') {
-    FUN_fffc70af();
+    funcknob_color_popup();
     return;
   }
   if (param_1 == '\x04') {
-    FUN_fffc70db((int)param_2);
+    funcknob_contrast((int)param_2);
     return;
   }
   if (param_1 == '\x05') {
-    FUN_fffc7145((int)param_2);
+    funcknob_dimmer((int)param_2);
     return;
   }
   if (param_1 == '\x06') {
-    FUN_fffc71af((int)param_2);
+    funcknob_mgroup((int)param_2);
     return;
   }
   if (param_1 == '\a') {
-    FUN_fffc74ee((int)param_2);
+    funcknob_mic_gain((int)param_2);
     return;
   }
   if (param_1 == '\t') {
-    FUN_fffc75bc((int)param_2);
+    funcknob_proc_level((int)param_2);
     return;
   }
   if (param_1 == '\n') {
-    FUN_fffc7619((int)param_2);
+    funcknob_amc_level((int)param_2);
     return;
   }
   if (param_1 == '\v') {
-    FUN_fffc7674((int)param_2);
+    funcknob_vox_gain((int)param_2);
     return;
   }
   if (param_1 == '\f') {
-    FUN_fffc76d1((int)param_2);
+    funcknob_vox_delay((int)param_2);
     return;
   }
   if (param_1 == '\r') {
-    FUN_fffc774c((int)param_2);
+    funcknob_anti_vox((int)param_2);
     return;
   }
   if (param_1 == '\x0e') {
-    FUN_fffc77c7((int)param_2);
+    funcknob_rf_power((int)param_2);
     return;
   }
   if (param_1 == '\x0f') {
-    FUN_fffc790b((int)param_2);
+    funcknob_moni_level((int)param_2);
     return;
   }
   if (param_1 == '\x12') {
-    FUN_fffc7a8f((int)param_2);
+    funcknob_cw_speed((int)param_2);
     return;
   }
   if (param_1 == '\x13') {
-    FUN_fffc7aea((int)param_2);
+    funcknob_cw_pitch((int)param_2);
     return;
   }
   if (param_1 == '\x14') {
-    FUN_fffc7b47((int)param_2);
+    funcknob_bk_delay((int)param_2);
     return;
   }
   if (param_1 == '\x15') {
-    FUN_fffc7ba4((int)param_2);
+    funcknob_aess_level((int)param_2);
     return;
   }
   if (param_1 != '\0') {
     return;
   }
-  FUN_fffc6ffe((int)param_2);
+  funcknob_scope_level((int)param_2);
   return;
 }
 
 
-// ===== FUN_fffc6ffe @ fffc6ffe (24 bytes)
+// ===== funcknob_scope_level @ fffc6ffe (24 bytes)
 
-void FUN_fffc6ffe(char param_1)
+/* FUNC-knob function for SCOPE LEVEL: sets popup_code = 0x1E and calls funcknob_scope_level_step
+   [fact: fffc6ffe]; called from funcknob_step */
+
+void funcknob_scope_level(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x1e;
-  FUN_fffc7016((int)param_1);
+  funcknob_scope_level_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7016 @ fffc7016 (61 bytes)
+// ===== funcknob_scope_level_step @ fffc7016 (61 bytes)
 
-void FUN_fffc7016(char param_1)
+/* (steps): SCOPE LEVEL pop-up (id 0x1E): popup_duration_get(0x1E) + popup_open_timed, then steps
+   and clamps the setting [fact: fffc7016]; setting per display gui.md popup-slot table (#178)
+   [fact] */
+
+void funcknob_scope_level_step(char param_1)
 
 {
   byte *pbVar1;
@@ -1036,7 +1093,7 @@ void FUN_fffc7016(char param_1)
   
   popup_duration_get(0x1e);
   popup_open_timed();
-  pbVar1 = (byte *)FUN_fff9c6ab();
+  pbVar1 = (byte *)scope_level_cur_ptr();
   uStack_4 = (ushort)*pbVar1 + (short)param_1;
   if (uStack_4 < 0x79) {
     if (uStack_4 < 0) {
@@ -1051,20 +1108,26 @@ void FUN_fffc7016(char param_1)
 }
 
 
-// ===== FUN_fffc7053 @ fffc7053 (24 bytes)
+// ===== funcknob_peak @ fffc7053 (24 bytes)
 
-void FUN_fffc7053(char param_1)
+/* FUNC-knob function for PEAK: sets popup_code = 0x1F and calls funcknob_peak_step [fact:
+   fffc7053]; called from funcknob_step */
+
+void funcknob_peak(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x1f;
-  FUN_fffc706b((int)param_1);
+  funcknob_peak_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc706b @ fffc706b (68 bytes)
+// ===== funcknob_peak_step @ fffc706b (68 bytes)
 
-void FUN_fffc706b(char param_1)
+/* (steps): PEAK pop-up (id 0x1F): popup_duration_get(0x1F) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc706b]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_peak_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -1085,9 +1148,13 @@ void FUN_fffc706b(char param_1)
 }
 
 
-// ===== FUN_fffc70af @ fffc70af (44 bytes)
+// ===== funcknob_color_popup @ fffc70af (44 bytes)
 
-void FUN_fffc70af(void)
+/* FUNC-knob function 3 (COLOR, function id 3 in display-link.md "0x37"): opens pop-up 0xB
+   (popup_duration_get(0xB), popup_open_timed), popup_code = 0xB, cursor = g_opstate.ss03_value
+   [fact: fffc70af] */
+
+void funcknob_color_popup(void)
 
 {
   popup_duration_get(0xb);
@@ -1098,20 +1165,26 @@ void FUN_fffc70af(void)
 }
 
 
-// ===== FUN_fffc70db @ fffc70db (24 bytes)
+// ===== funcknob_contrast @ fffc70db (24 bytes)
 
-void FUN_fffc70db(char param_1)
+/* FUNC-knob function for CONTRAST: sets popup_code = 0x22 and calls funcknob_contrast_step [fact:
+   fffc70db]; called from funcknob_step */
+
+void funcknob_contrast(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x22;
-  FUN_fffc70f3((int)param_1);
+  funcknob_contrast_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc70f3 @ fffc70f3 (82 bytes)
+// ===== funcknob_contrast_step @ fffc70f3 (82 bytes)
 
-void FUN_fffc70f3(char param_1)
+/* (steps): CONTRAST pop-up (id 0x22): popup_duration_get(0x22) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc70f3]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_contrast_step(char param_1)
 
 {
   short sStack_4;
@@ -1133,20 +1206,26 @@ void FUN_fffc70f3(char param_1)
 }
 
 
-// ===== FUN_fffc7145 @ fffc7145 (24 bytes)
+// ===== funcknob_dimmer @ fffc7145 (24 bytes)
 
-void FUN_fffc7145(char param_1)
+/* FUNC-knob function for DIMMER: sets popup_code = 0x23 and calls funcknob_dimmer_step [fact:
+   fffc7145]; called from funcknob_step */
+
+void funcknob_dimmer(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x23;
-  FUN_fffc715d((int)param_1);
+  funcknob_dimmer_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc715d @ fffc715d (82 bytes)
+// ===== funcknob_dimmer_step @ fffc715d (82 bytes)
 
-void FUN_fffc715d(char param_1)
+/* (steps): DIMMER pop-up (id 0x23): popup_duration_get(0x23) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc715d]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_dimmer_step(char param_1)
 
 {
   short sStack_4;
@@ -1168,20 +1247,26 @@ void FUN_fffc715d(char param_1)
 }
 
 
-// ===== FUN_fffc71af @ fffc71af (24 bytes)
+// ===== funcknob_mgroup @ fffc71af (24 bytes)
 
-void FUN_fffc71af(char param_1)
+/* FUNC-knob function for M GROUP: sets popup_code = 0x24 and calls funcknob_mgroup_step [fact:
+   fffc71af]; called from funcknob_step */
+
+void funcknob_mgroup(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x24;
-  FUN_fffc71c7((int)param_1);
+  funcknob_mgroup_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc71c7 @ fffc71c7 (213 bytes)
+// ===== funcknob_mgroup_step @ fffc71c7 (213 bytes)
 
-void FUN_fffc71c7(char param_1)
+/* (steps): M GROUP pop-up (id 0x24): popup_duration_get(0x24) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc71c7]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_mgroup_step(char param_1)
 
 {
   bool bVar1;
@@ -1252,7 +1337,7 @@ void FUN_fffc729c(byte param_1)
   
   local_1 = param_1;
   bStack_2 = memch_current(param_1);
-  bStack_3 = FUN_fff9bfe1(bStack_2);
+  bStack_3 = memch_group_of(bStack_2);
   while (bStack_3 = bStack_3 + 1, bStack_3 < 7) {
     if (bStack_3 == 6) {
       bStack_4 = 99;
@@ -1346,7 +1431,7 @@ void FUN_fffc73df(byte param_1)
   
   local_1 = param_1;
   bStack_2 = memch_current(param_1);
-  bStack_3 = FUN_fff9bfe1(bStack_2);
+  bStack_3 = memch_group_of(bStack_2);
   while( true ) {
     while( true ) {
       bStack_3 = bStack_3 - 1;
@@ -1398,20 +1483,26 @@ void FUN_fffc73df(byte param_1)
 }
 
 
-// ===== FUN_fffc74ee @ fffc74ee (24 bytes)
+// ===== funcknob_mic_gain @ fffc74ee (24 bytes)
 
-void FUN_fffc74ee(char param_1)
+/* FUNC-knob function for MIC GAIN: sets popup_code = 0x25 and calls funcknob_mic_gain_step [fact:
+   fffc74ee]; called from funcknob_step */
+
+void funcknob_mic_gain(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x25;
-  FUN_fffc7506((int)param_1);
+  funcknob_mic_gain_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7506 @ fffc7506 (69 bytes)
+// ===== funcknob_mic_gain_step @ fffc7506 (69 bytes)
 
-void FUN_fffc7506(char param_1)
+/* (steps): MIC GAIN pop-up (id 0x25): popup_duration_get(0x25) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7506]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_mic_gain_step(char param_1)
 
 {
   byte *pbVar1;
@@ -1419,7 +1510,7 @@ void FUN_fffc7506(char param_1)
   
   popup_duration_get(0x25);
   popup_open_timed();
-  pbVar1 = (byte *)FUN_fff99877();
+  pbVar1 = (byte *)mic_gain_ptr();
   if (pbVar1 != (byte *)0x0) {
     sStack_4 = (ushort)*pbVar1 + (short)param_1;
     if (sStack_4 < 0x65) {
@@ -1437,9 +1528,12 @@ void FUN_fffc7506(char param_1)
 }
 
 
-// ===== FUN_fffc754b @ fffc754b (113 bytes)
+// ===== funcknob_mic_eq_step @ fffc754b (113 bytes)
 
-void FUN_fffc754b(char param_1)
+/* (steps): MIC EQ pop-up (id 0x26): popup_duration_get(0x26) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc754b]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_mic_eq_step(char param_1)
 
 {
   bool bVar1;
@@ -1465,20 +1559,26 @@ void FUN_fffc754b(char param_1)
 }
 
 
-// ===== FUN_fffc75bc @ fffc75bc (24 bytes)
+// ===== funcknob_proc_level @ fffc75bc (24 bytes)
 
-void FUN_fffc75bc(char param_1)
+/* FUNC-knob function for PROC LEVEL: sets popup_code = 0x27 and calls funcknob_proc_level_step
+   [fact: fffc75bc]; called from funcknob_step */
+
+void funcknob_proc_level(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x27;
-  FUN_fffc75d4((int)param_1);
+  funcknob_proc_level_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc75d4 @ fffc75d4 (69 bytes)
+// ===== funcknob_proc_level_step @ fffc75d4 (69 bytes)
 
-void FUN_fffc75d4(char param_1)
+/* (steps): PROC LEVEL pop-up (id 0x27): popup_duration_get(0x27) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc75d4]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_proc_level_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -1499,20 +1599,26 @@ void FUN_fffc75d4(char param_1)
 }
 
 
-// ===== FUN_fffc7619 @ fffc7619 (24 bytes)
+// ===== funcknob_amc_level @ fffc7619 (24 bytes)
 
-void FUN_fffc7619(char param_1)
+/* FUNC-knob function for AMC LEVEL: sets popup_code = 0x28 and calls funcknob_amc_level_step [fact:
+   fffc7619]; called from funcknob_step */
+
+void funcknob_amc_level(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x28;
-  FUN_fffc7631((int)param_1);
+  funcknob_amc_level_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc7631 @ fffc7631 (67 bytes)
+// ===== funcknob_amc_level_step @ fffc7631 (67 bytes)
 
-void FUN_fffc7631(char param_1)
+/* (steps): AMC LEVEL pop-up (id 0x28): popup_duration_get(0x28) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc7631]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_amc_level_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -1533,20 +1639,26 @@ void FUN_fffc7631(char param_1)
 }
 
 
-// ===== FUN_fffc7674 @ fffc7674 (24 bytes)
+// ===== funcknob_vox_gain @ fffc7674 (24 bytes)
 
-void FUN_fffc7674(char param_1)
+/* FUNC-knob function for VOX GAIN: sets popup_code = 0x29 and calls funcknob_vox_gain_step [fact:
+   fffc7674]; called from funcknob_step */
+
+void funcknob_vox_gain(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x29;
-  FUN_fffc768c((int)param_1);
+  funcknob_vox_gain_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc768c @ fffc768c (69 bytes)
+// ===== funcknob_vox_gain_step @ fffc768c (69 bytes)
 
-void FUN_fffc768c(char param_1)
+/* (steps): VOX GAIN pop-up (id 0x29): popup_duration_get(0x29) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc768c]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_vox_gain_step(char param_1)
 
 {
   undefined2 uStack_4;
@@ -1567,20 +1679,26 @@ void FUN_fffc768c(char param_1)
 }
 
 
-// ===== FUN_fffc76d1 @ fffc76d1 (24 bytes)
+// ===== funcknob_vox_delay @ fffc76d1 (24 bytes)
 
-void FUN_fffc76d1(char param_1)
+/* FUNC-knob function for VOX DELAY: sets popup_code = 0x2A and calls funcknob_vox_delay_step [fact:
+   fffc76d1]; called from funcknob_step */
+
+void funcknob_vox_delay(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x2a;
-  FUN_fffc76e9((int)param_1);
+  funcknob_vox_delay_step((int)param_1);
   return;
 }
 
 
-// ===== FUN_fffc76e9 @ fffc76e9 (99 bytes)
+// ===== funcknob_vox_delay_step @ fffc76e9 (99 bytes)
 
-void FUN_fffc76e9(char param_1)
+/* (steps): VOX DELAY pop-up (id 0x2A): popup_duration_get(0x2A) + popup_open_timed, then steps and
+   clamps the setting [fact: fffc76e9]; setting per display gui.md popup-slot table (#178) [fact] */
+
+void funcknob_vox_delay_step(char param_1)
 
 {
   short sStack_a;
@@ -1608,13 +1726,16 @@ void FUN_fffc76e9(char param_1)
 }
 
 
-// ===== FUN_fffc774c @ fffc774c (24 bytes)
+// ===== funcknob_anti_vox @ fffc774c (24 bytes)
 
-void FUN_fffc774c(char param_1)
+/* FUNC-knob function for ANTI VOX: sets popup_code = 0x2B and calls funcknob_anti_vox_step [fact:
+   fffc774c]; called from funcknob_step */
+
+void funcknob_anti_vox(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x2b;
-  FUN_fffc7764((int)param_1);
+  funcknob_anti_vox_step((int)param_1);
   return;
 }
 

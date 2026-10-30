@@ -404,7 +404,7 @@ void sd_load_step(void)
   
   bVar1 = PTR_g_ui_00025d60->sd_step;
   if (bVar1 == 6) {
-    FUN_fffd077e();
+    sd_load_block_answer();
     return;
   }
   if (bVar1 == 3) {
@@ -534,7 +534,7 @@ undefined4 FUN_fffd0703(undefined4 param_1)
 }
 
 
-// ===== FUN_fffd077e @ fffd077e (388 bytes)
+// ===== sd_load_block_answer @ fffd077e (388 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffd08e9) */
 /* WARNING: Removing unreachable block (ram,0xfffd08ff) */
@@ -542,8 +542,12 @@ undefined4 FUN_fffd0703(undefined4 param_1)
 /* WARNING: Removing unreachable block (ram,0xfffd07b0) */
 /* WARNING: Removing unreachable block (ram,0xfffd07de) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* SD load step: when the DISPLAY's answer (g_ui.sd_answer) matches the expected offset/length
+   (0x1FF02 / 0x1FF04), stores the block, advances; after the last block checks the region code and
+   copies the loaded image into the memory / QMB headers, else requests the next block (sd_step = 6)
+   [fact: fffd077e]; only caller sd_load_step */
 
-uint FUN_fffd077e(uint param_1)
+uint sd_load_block_answer(uint param_1)
 
 {
   ushort uVar1;
