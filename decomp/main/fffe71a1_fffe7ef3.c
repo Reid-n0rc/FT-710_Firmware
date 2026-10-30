@@ -658,7 +658,7 @@ void ai_ex010317(void)
   byte n;
   undefined1 local_1;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_1 = g_opstate.vfo_a.flags2;
   }
   else {
@@ -723,7 +723,7 @@ void ai_ex010320(void)
   byte local_1;
   
   local_1 = g_opstate.vfo_a.flags3;
-  if (g_opstate.active_vfo != 0) {
+  if (g_opstate.active_vfo != VFO_A) {
     local_1 = g_opstate.vfo_b.flags3;
   }
   local_1 = local_1 & 0x38;
@@ -747,7 +747,7 @@ void ai_ex010321(void)
 {
   undefined1 local_1;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_1 = g_opstate.vfo_a.tone_num;
   }
   else {

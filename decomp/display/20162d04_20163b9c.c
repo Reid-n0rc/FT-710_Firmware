@@ -57,40 +57,37 @@ void FUN_20162d48(int param_1,undefined1 param_2)
 
 /* 1 byte -> RX ring, set_flg(obj+0x818, 1) */
 
-void scif_rxi_isr(int param_1)
+void scif_rxi_isr(scif_uart *uart)
 
 {
-  int iVar1;
+  scif_regs *psVar1;
   
-  *(int *)(param_1 + 0x81c) = *(int *)(param_1 + 0x81c) + 1;
-  iVar1 = *(int *)(param_1 + 4);
-  if ((*(ushort *)(iVar1 + 0x10) & 0xff9d) != 0) {
-    *(int *)(param_1 + 0x828) = *(int *)(param_1 + 0x828) + 1;
+  uart->rxi_count = uart->rxi_count + 1;
+  psVar1 = uart->regs;
+  if ((psVar1->scfsr & 0xff9d) != 0) {
+    uart->rx_errors = uart->rx_errors + 1;
   }
-  if ((*(ushort *)(iVar1 + 0x10) & 2) != 0) {
-    if (((*(ushort *)(param_1 + 10) < *(ushort *)(param_1 + 8)) ||
-        (0x3fe < (int)((uint)*(ushort *)(param_1 + 10) - (uint)*(ushort *)(param_1 + 8)))) &&
-       ((*(ushort *)(param_1 + 8) <= *(ushort *)(param_1 + 10) ||
-        ((int)((uint)*(ushort *)(param_1 + 8) - (uint)*(ushort *)(param_1 + 10)) < 2)))) {
-      *(ushort *)(iVar1 + 0x10) = *(ushort *)(iVar1 + 0x10) & 0xfffd;
-      *(int *)(param_1 + 0x820) = *(int *)(param_1 + 0x820) + 1;
-      *(int *)(param_1 + 0x824) = *(int *)(param_1 + 0x824) + 1;
+  if ((psVar1->scfsr & 2) != 0) {
+    if (((uart->rx_wr < uart->rx_rd) || (0x3fe < (int)((uint)uart->rx_wr - (uint)uart->rx_rd))) &&
+       ((uart->rx_rd <= uart->rx_wr || ((int)((uint)uart->rx_rd - (uint)uart->rx_wr) < 2)))) {
+      psVar1->scfsr = psVar1->scfsr & 0xfffd;
+      uart->rx_count = uart->rx_count + 1;
+      uart->rx_overflow = uart->rx_overflow + 1;
       return;
     }
-    *(undefined1 *)((uint)*(ushort *)(param_1 + 10) + param_1 + 0xc) = *(undefined1 *)(iVar1 + 0x14)
-    ;
+    uart->rx_buf[uart->rx_wr] = psVar1->scfrdr;
     DataMemoryBarrier(2);
-    *(ushort *)(param_1 + 10) = *(short *)(param_1 + 10) + 1U & 0x3ff;
-    *(ushort *)(*(int *)(param_1 + 4) + 0x10) = *(ushort *)(*(int *)(param_1 + 4) + 0x10) & 0xfffd;
-    if (*(int *)(param_1 + 0x818) != 0) {
-      gic_disable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+    uart->rx_wr = uart->rx_wr + 1 & 0x3ff;
+    uart->regs->scfsr = uart->regs->scfsr & 0xfffd;
+    if (uart->rx_flg != 0) {
+      gic_disable_irq(uart->rxi_isr->intno);
     }
-    itron_set_flg(*(undefined4 *)(param_1 + 0x818),1);
-    *(int *)(param_1 + 0x820) = *(int *)(param_1 + 0x820) + 1;
-    thunk_FUN_20114850(param_1 + 0x840);
+    itron_set_flg(uart->rx_flg,1);
+    uart->rx_count = uart->rx_count + 1;
+    thunk_FUN_20114850(&uart->rx_time);
     return;
   }
-  *(int *)(param_1 + 0x82c) = *(int *)(param_1 + 0x82c) + 1;
+  uart->rxi_no_data = uart->rxi_no_data + 1;
   return;
 }
 
@@ -99,52 +96,50 @@ void scif_rxi_isr(int param_1)
 
 /* TX ring -> SCFTDR */
 
-void scif_txi_isr(int param_1)
+void scif_txi_isr(scif_uart *uart)
 
 {
-  int iVar1;
+  scif_regs *psVar1;
   
-  *(int *)(param_1 + 0x830) = *(int *)(param_1 + 0x830) + 1;
-  iVar1 = *(int *)(param_1 + 4);
-  if ((*(ushort *)(iVar1 + 0x10) & 0x20) == 0) {
-    *(int *)(param_1 + 0x838) = *(int *)(param_1 + 0x838) + 1;
+  uart->txi_count = uart->txi_count + 1;
+  psVar1 = uart->regs;
+  if ((psVar1->scfsr & 0x20) == 0) {
+    uart->txi_not_ready = uart->txi_not_ready + 1;
     return;
   }
-  if (*(short *)(param_1 + 0x40c) != *(short *)(param_1 + 0x40e)) {
-    *(undefined1 *)(iVar1 + 0xc) =
-         *(undefined1 *)((uint)*(ushort *)(param_1 + 0x40c) + param_1 + 0x410);
+  if (uart->tx_rd != uart->tx_wr) {
+    psVar1->scftdr = uart->tx_buf[uart->tx_rd];
     DataMemoryBarrier(2);
-    *(ushort *)(param_1 + 0x40c) = *(short *)(param_1 + 0x40c) + 1U & 0x3ff;
-    *(ushort *)(*(int *)(param_1 + 4) + 0x10) = *(ushort *)(*(int *)(param_1 + 4) + 0x10) & 0xff9f;
-    *(int *)(param_1 + 0x834) = *(int *)(param_1 + 0x834) + 1;
-    thunk_FUN_20114850(param_1 + 0x848);
+    uart->tx_rd = uart->tx_rd + 1 & 0x3ff;
+    uart->regs->scfsr = uart->regs->scfsr & 0xff9f;
+    uart->tx_count = uart->tx_count + 1;
+    thunk_FUN_20114850(&uart->tx_time);
     return;
   }
-  *(ushort *)(iVar1 + 8) = *(ushort *)(iVar1 + 8) & 0xff7f;
+  psVar1->scscr = psVar1->scscr & 0xff7f;
   return;
 }
 
 
 // ===== uart_obj_init @ 20162fac (104 bytes)
 
-undefined4
-uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5)
+uint uart_obj_init(scif_uart *uart,scif_regs *regs,t_cisr *rxi,t_cisr *txi,uint flg)
 
 {
   uint uVar1;
   
-  if (*(int *)(param_1 + 4) == 0) {
-    *(undefined4 *)(param_1 + 4) = param_2;
-    *(undefined4 *)(param_1 + 0x818) = param_5;
-    *(undefined4 *)(param_1 + 0x810) = param_3;
-    *(int *)(param_1 + 0x814) = param_4;
-    uVar1 = itron_acre_isr(0,param_4);
-    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,*(int *)(param_1 + 0x810)), (int)uVar1 < 1)) {
+  if (uart->regs == (scif_regs *)0x0) {
+    uart->regs = regs;
+    uart->rx_flg = flg;
+    uart->rxi_isr = rxi;
+    uart->txi_isr = txi;
+    uVar1 = itron_acre_isr(0,txi);
+    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,uart->rxi_isr), (int)uVar1 < 1)) {
       return 0xffffffff;
     }
   }
   else {
-    *(undefined4 *)(param_1 + 0x818) = param_5;
+    uart->rx_flg = flg;
   }
   return 0;
 }
@@ -152,11 +147,11 @@ uart_obj_init(int param_1,undefined4 param_2,undefined4 param_3,int param_4,unde
 
 // ===== scif_irq_off @ 20163014 (36 bytes)
 
-void scif_irq_off(int param_1)
+void scif_irq_off(scif_uart *uart)
 
 {
-  gic_disable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_disable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  gic_disable_irq(uart->txi_isr->intno);
+  gic_disable_irq(uart->rxi_isr->intno);
   return;
 }
 
@@ -165,22 +160,21 @@ void scif_irq_off(int param_1)
 
 /* non-blocking read from the 1 KB RX ring */
 
-int scif_read(int param_1,undefined1 *param_2,int param_3)
+int scif_read(scif_uart *uart,byte *buf,int n)
 
 {
   int iVar1;
   bool bVar2;
   
   iVar1 = 0;
-  while ((bVar2 = param_3 != 0, param_3 = param_3 + -1, bVar2 &&
-         (*(short *)(param_1 + 10) != *(short *)(param_1 + 8)))) {
-    *param_2 = *(undefined1 *)((uint)*(ushort *)(param_1 + 8) + param_1 + 0xc);
+  while ((bVar2 = n != 0, n = n + -1, bVar2 && (uart->rx_wr != uart->rx_rd))) {
+    *buf = uart->rx_buf[uart->rx_rd];
     DataMemoryBarrier(2);
-    *(ushort *)(param_1 + 8) = *(short *)(param_1 + 8) + 1U & 0x3ff;
+    uart->rx_rd = uart->rx_rd + 1 & 0x3ff;
     iVar1 = iVar1 + 1;
-    param_2 = param_2 + 1;
+    buf = buf + 1;
   }
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  gic_enable_irq(uart->rxi_isr->intno);
   return iVar1;
 }
 
@@ -189,12 +183,12 @@ int scif_read(int param_1,undefined1 *param_2,int param_3)
 
 /* scif_open + enable RXI/TXI in the GIC */
 
-void scif_start(int param_1,uint param_2,int param_3,int param_4,uint param_5)
+void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 {
-  scif_open(param_1,param_2,param_3,param_4,param_5);
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  scif_open(uart,baud,bits,parity,stop);
+  gic_enable_irq(uart->txi_isr->intno);
+  gic_enable_irq(uart->rxi_isr->intno);
   return;
 }
 
@@ -203,63 +197,64 @@ void scif_start(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 /* (baud, bits, parity, stop): SCSMR, SCBRR (0x16 + SEMR 0x81 for 345600), FIFO reset */
 
-void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
+void scif_open(scif_uart *uart,uint param_2,int param_3,int param_4,uint param_5)
 
 {
   char cVar1;
-  ushort uVar2;
+  byte bVar2;
+  ushort uVar3;
   
-  uVar2 = 0;
+  uVar3 = 0;
   if (param_3 == 7) {
-    uVar2 = 0x40;
+    uVar3 = 0x40;
   }
   if (param_4 != 0) {
     if (param_4 == 1) {
-      uVar2 = uVar2 | 0x20;
+      uVar3 = uVar3 | 0x20;
     }
     else if (param_4 == 2) {
-      uVar2 = uVar2 | 0x30;
+      uVar3 = uVar3 | 0x30;
     }
   }
   if (param_5 != 1) {
-    uVar2 = uVar2 | 8;
+    uVar3 = uVar3 | 8;
   }
   if (param_2 < 0x54600) {
     cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
-    cVar1 = cVar1 + -1;
+    bVar2 = cVar1 - 1;
   }
   else {
-    cVar1 = '\x16';
+    bVar2 = 0x16;
   }
-  *(undefined2 *)(param_1 + 10) = 0;
-  *(undefined2 *)(param_1 + 8) = 0;
-  *(undefined2 *)(param_1 + 0x40e) = 0;
-  *(undefined2 *)(param_1 + 0x40c) = 0;
-  *(undefined4 *)(param_1 + 0x81c) = 0;
-  *(undefined4 *)(param_1 + 0x820) = 0;
-  *(undefined4 *)(param_1 + 0x828) = 0;
-  *(undefined4 *)(param_1 + 0x82c) = 0;
-  *(undefined4 *)(param_1 + 0x830) = 0;
-  *(undefined4 *)(param_1 + 0x834) = 0;
-  *(undefined4 *)(param_1 + 0x838) = 0;
-  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
-  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 6;
-  *(ushort *)(*(int *)(param_1 + 4) + 0x10) = *(ushort *)(*(int *)(param_1 + 4) + 0x10) & 0xff6e;
-  *(undefined2 *)(*(int *)(param_1 + 4) + 0x24) = 0;
-  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
-  **(ushort **)(param_1 + 4) = uVar2;
-  *(char *)(*(int *)(param_1 + 4) + 4) = cVar1;
+  uart->rx_wr = 0;
+  uart->rx_rd = 0;
+  uart->tx_wr = 0;
+  uart->tx_rd = 0;
+  uart->rxi_count = 0;
+  uart->rx_count = 0;
+  uart->rx_errors = 0;
+  uart->rxi_no_data = 0;
+  uart->txi_count = 0;
+  uart->tx_count = 0;
+  uart->txi_not_ready = 0;
+  uart->regs->scscr = 0;
+  uart->regs->scfcr = uart->regs->scfcr | 6;
+  uart->regs->scfsr = uart->regs->scfsr & 0xff6e;
+  uart->regs->sclsr = 0;
+  uart->regs->scscr = 0;
+  uart->regs->scsmr = uVar3;
+  uart->regs->scbrr = bVar2;
   if (param_2 < 0x54600) {
-    *(undefined2 *)(*(int *)(param_1 + 4) + 0x28) = 0;
+    uart->regs->scemr = 0;
   }
   else {
-    *(ushort *)(*(int *)(param_1 + 4) + 0x28) = *(ushort *)(*(int *)(param_1 + 4) + 0x28) | 0x81;
+    uart->regs->scemr = uart->regs->scemr | 0x81;
   }
   if ((param_5 & 0x80) != 0) {
-    *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 1;
+    uart->regs->scfcr = uart->regs->scfcr | 1;
   }
-  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) & 0xfff9;
-  *(ushort *)(*(int *)(param_1 + 4) + 8) = *(ushort *)(*(int *)(param_1 + 4) + 8) | 0xf8;
+  uart->regs->scfcr = uart->regs->scfcr & 0xfff9;
+  uart->regs->scscr = uart->regs->scscr | 0xf8;
   return;
 }
 
@@ -293,17 +288,17 @@ int scif_read_timeout(int *param_1,int param_2,int param_3,int param_4)
 
 // ===== scif_flush @ 20163280 (88 bytes)
 
-undefined4 scif_flush(int param_1)
+uint scif_flush(scif_uart *uart)
 
 {
-  gic_disable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_disable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
-  *(undefined2 *)(param_1 + 10) = 0;
-  *(undefined2 *)(param_1 + 8) = 0;
-  *(undefined2 *)(param_1 + 0x40e) = 0;
-  *(undefined2 *)(param_1 + 0x40c) = 0;
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x814) + 8));
-  gic_enable_irq(*(undefined4 *)(*(int *)(param_1 + 0x810) + 8));
+  gic_disable_irq(uart->txi_isr->intno);
+  gic_disable_irq(uart->rxi_isr->intno);
+  uart->rx_wr = 0;
+  uart->rx_rd = 0;
+  uart->tx_wr = 0;
+  uart->tx_rd = 0;
+  gic_enable_irq(uart->txi_isr->intno);
+  gic_enable_irq(uart->rxi_isr->intno);
   return 0;
 }
 
@@ -312,36 +307,36 @@ undefined4 scif_flush(int param_1)
 
 /* copy into the 1 KB TX ring, enable TIE */
 
-uint scif_write(int param_1,undefined1 *param_2,uint param_3)
+uint scif_write(scif_uart *uart,byte *buf,uint n)
 
 {
   uint uVar1;
   uint uVar2;
   uint uVar3;
   
-  uVar2 = (uint)*(ushort *)(param_1 + 0x40e);
-  uVar3 = (uint)*(ushort *)(param_1 + 0x40c);
+  uVar2 = (uint)uart->tx_wr;
+  uVar3 = (uint)uart->tx_rd;
   if (uVar2 < uVar3) {
     uVar3 = (uVar3 - uVar2) - 1;
   }
   else {
     uVar3 = 0x3ff - (uVar2 - uVar3);
   }
-  uVar1 = param_3;
-  if (uVar3 < param_3) {
-    param_3 = 0;
+  uVar1 = n;
+  if (uVar3 < n) {
+    n = 0;
   }
   else {
     for (; uVar1 != 0; uVar1 = uVar1 - 1) {
-      *(undefined1 *)(param_1 + uVar2 + 0x410) = *param_2;
+      uart->tx_buf[uVar2] = *buf;
       uVar2 = uVar2 + 1 & 0x3ff;
-      param_2 = param_2 + 1;
+      buf = buf + 1;
     }
-    *(short *)(param_1 + 0x40e) = (short)uVar2;
+    uart->tx_wr = (ushort)uVar2;
     DataMemoryBarrier(2);
-    *(ushort *)(*(int *)(param_1 + 4) + 8) = *(ushort *)(*(int *)(param_1 + 4) + 8) | 0x80;
+    uart->regs->scscr = uart->regs->scscr | 0x80;
   }
-  return param_3;
+  return n;
 }
 
 
@@ -444,8 +439,8 @@ uint fwname_pattern_match(int *param_1,int param_2,int param_3)
   int iVar1;
   uint uVar2;
   
-  if (((*param_1 == param_3) && (iVar1 = FUN_2014e250(param_1[1],param_2,param_1[3]), iVar1 == 0))
-     && (iVar1 = FUN_2014e250(param_1[2],param_1[4] + param_2,param_1[5]), iVar1 == 0)) {
+  if (((*param_1 == param_3) && (iVar1 = strncasecmp(param_1[1],param_2,param_1[3]), iVar1 == 0)) &&
+     (iVar1 = strncasecmp(param_1[2],param_1[4] + param_2,param_1[5]), iVar1 == 0)) {
     uVar2 = 1;
   }
   else {
@@ -459,10 +454,10 @@ uint fwname_pattern_match(int *param_1,int param_2,int param_3)
 
 /* RX event flag bound? */
 
-bool scif_has_flag(int param_1)
+byte scif_has_flag(scif_uart *uart)
 
 {
-  return *(int *)(param_1 + 0x818) != 0;
+  return uart->rx_flg != 0;
 }
 
 
@@ -532,9 +527,11 @@ void FUN_201636b8(undefined4 *param_1)
 }
 
 
-// ===== FUN_201636cc @ 201636cc (44 bytes)
+// ===== copy5 @ 201636cc (44 bytes)
 
-void FUN_201636cc(undefined1 *param_1,undefined1 *param_2)
+/* Copies 5 bytes (encoder events, E1/E2 frames) [fact] */
+
+void copy5(undefined1 *param_1,undefined1 *param_2)
 
 {
   *param_1 = *param_2;
@@ -809,8 +806,8 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
-  FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
-  iVar2 = FUN_20164c90();
+  __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+  iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
   iVar3 = (param_5[1] - 1) * uVar6;
@@ -828,8 +825,8 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   if (0 < param_6) {
     do {
       uVar8 = __aeabi_i2d(iVar4);
-      FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
-      iVar5 = FUN_20164c90();
+      __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
+      iVar5 = __aeabi_d2iz();
       iVar1 = iVar4 * uVar6;
       iVar4 = iVar4 + 1;
       *(undefined2 *)((int)param_1 + (param_7 - iVar5 * uVar6) * 2 + iVar3) =
@@ -980,8 +977,8 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
-  FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
-  iVar2 = FUN_20164c90();
+  __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+  iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
   iVar3 = (param_5[1] - 1) * uVar6;
@@ -999,8 +996,8 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   if (0 < param_6) {
     do {
       uVar8 = __aeabi_i2d(iVar4);
-      FUN_20164da8((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
-      iVar5 = FUN_20164c90();
+      __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
+      iVar5 = __aeabi_d2iz();
       iVar1 = iVar4 * uVar6;
       iVar4 = iVar4 + 1;
       *(undefined2 *)((int)param_1 + (param_7 - iVar5 * uVar6) * 2 + iVar3) =

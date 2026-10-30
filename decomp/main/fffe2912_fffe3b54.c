@@ -93,13 +93,13 @@ int FUN_fffe29b7(int param_1,char param_2)
     if (param_2 == -0x7e) {
       iVar2 = 1;
       beep_request(1);
-      PTR_g_ui_00025d6c->f_0x0c0_u8 = 0;
+      PTR_g_ui_00025d6c->kbd_layout = 0;
       return iVar2;
     }
     if (param_2 == -0x7d) {
       iVar2 = 1;
       beep_request(1);
-      PTR_g_ui_00025d6c->f_0x0c0_u8 = 2;
+      PTR_g_ui_00025d6c->kbd_layout = 2;
       return iVar2;
     }
     if (param_2 == -0x7c) {
@@ -125,12 +125,12 @@ int FUN_fffe29b7(int param_1,char param_2)
     else if (param_2 == -0x7f) {
       iVar2 = 1;
       beep_request(1);
-      if (PTR_g_ui_00025d6c->f_0x0c0_u8 == 0) {
-        PTR_g_ui_00025d6c->f_0x0c0_u8 = 1;
+      if (PTR_g_ui_00025d6c->kbd_layout == 0) {
+        PTR_g_ui_00025d6c->kbd_layout = 1;
         return iVar2;
       }
-      if (PTR_g_ui_00025d6c->f_0x0c0_u8 == 1) {
-        PTR_g_ui_00025d6c->f_0x0c0_u8 = 0;
+      if (PTR_g_ui_00025d6c->kbd_layout == 1) {
+        PTR_g_ui_00025d6c->kbd_layout = 0;
         return iVar2;
       }
     }
@@ -385,7 +385,7 @@ void FUN_fffe2ee4(void)
     scan_stop();
     return;
   }
-  if (PTR_g_ui_00025d70->f_0x46b_u8 != 1) {
+  if (PTR_g_ui_00025d70->ch_step_mode != 1) {
     if ((g_ui.dvs_state == 0) && (g_ui.dvs_busy != 1)) {
       bVar1 = false;
     }
@@ -412,7 +412,7 @@ void FUN_fffe2ee4(void)
     }
     return;
   }
-  PTR_g_ui_00025d70->f_0x46b_u8 = 0;
+  PTR_g_ui_00025d70->ch_step_mode = 0;
   PTR_g_ui_00025d70->mic_key_hold = 0;
   beep_request(6);
   return;
@@ -468,7 +468,7 @@ void FUN_fffe2fa8(void)
     }
     return;
   }
-  PTR_g_ui_00025d70->f_0x46b_u8 = 0;
+  PTR_g_ui_00025d70->ch_step_mode = 0;
   PTR_g_ui_00025d70->mic_key_hold = 0;
   beep_request(6);
   return;
@@ -826,7 +826,7 @@ void FUN_fffe356f(void)
 {
   if ((PTR_g_ui_00025d70->playlist_cmd != 1) && (PTR_g_ui_00025d70->playlist_row != 4)) {
     PTR_g_ui_00025d70->dialog_msg = 0x17;
-    PTR_g_ui_00025d70->f_0x448_u8 = 1;
+    PTR_g_ui_00025d70->dialog_has_choice = 1;
     PTR_g_ui_00025d70->dialog_shown = 1;
     PTR_g_ui_00025d70->key_consumed = 1;
     return;
@@ -1044,7 +1044,7 @@ int FUN_fffe3979(int param_1)
     scan_stop();
     return param_1;
   }
-  if (PTR_g_ui_00025d74->f_0x46b_u8 != 1) {
+  if (PTR_g_ui_00025d74->ch_step_mode != 1) {
     if ((PTR_g_ui_00025d74->dvs_busy == 1) || (PTR_g_ui_00025d74->dvs_state != 0)) {
       bVar1 = true;
     }
@@ -1114,7 +1114,7 @@ int FUN_fffe3979(int param_1)
     }
     return local_8;
   }
-  PTR_g_ui_00025d74->f_0x46b_u8 = 0;
+  PTR_g_ui_00025d74->ch_step_mode = 0;
   PTR_g_ui_00025d74->mic_key_hold = 0;
   iVar4 = 6;
   beep_request(6);

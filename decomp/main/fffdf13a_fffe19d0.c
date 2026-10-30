@@ -36,7 +36,7 @@ ushort FUN_fffdf13a(vfo_side param_1)
   undefined1 uStack_29;
   byte local_27;
   byte local_26;
-  byte local_25;
+  vfo_state local_25;
   byte abStack_24 [9];
   byte local_1b;
   byte local_1a;
@@ -106,13 +106,13 @@ ushort FUN_fffdf13a(vfo_side param_1)
                 "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                 + (uint)local_1a * 3 + 0x3d2d);
   }
-  if ((local_25 == 1) || (local_25 == 3)) {
+  if ((local_25 == VFO_STATE_VFO) || (local_25 == VFO_STATE_MEMTUNE)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (local_25 == 5)) {
+  if ((bVar1) || (local_25 == VFO_STATE_QMB)) {
     bVar1 = true;
   }
   else {
@@ -600,7 +600,7 @@ ushort FUN_fffdf9ec(char param_1)
   local_7 = ';';
   local_e = 0;
   if (param_1 == '\0') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_6 = g_opstate.vfo_a.mode & 0xf;
     }
     else {
@@ -614,7 +614,7 @@ ushort FUN_fffdf9ec(char param_1)
     local_b[2] = 0x30;
   }
   else if (param_1 == '\x01') {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_6 = g_opstate.vfo_b.mode & 0xf;
     }
     else {
@@ -899,9 +899,9 @@ ushort FUN_fffdfe0a(void)
   
   builtin_strncpy(local_7,"NA00;",5);
   local_a = 0;
-  if (DAT_0001b51d != g_opstate.f_0x23e_u8) {
-    DAT_0001b51d = g_opstate.f_0x23e_u8;
-    local_7[3] = nib2hex(g_opstate.f_0x23e_u8);
+  if (DAT_0001b51d != g_opstate.na_ai_value) {
+    DAT_0001b51d = g_opstate.na_ai_value;
+    local_7[3] = nib2hex(g_opstate.na_ai_value);
     local_a = 5;
   }
   if (local_a != 0) {
@@ -1058,7 +1058,7 @@ undefined2 FUN_fffe0016(void)
   local_9[2] = '0';
   local_9[4] = ';';
   local_9[5] = g_opstate.active_vfo;
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_3 = (char)((g_opstate.vfo_a.flags2 & 0xc) >> 2);
   }
   else {
@@ -2781,17 +2781,19 @@ void FUN_fffe186d(void)
     scan_stop();
     return;
   }
-  if (PTR_g_ui_00025d6c->f_0x46b_u8 == 1) {
+  if (PTR_g_ui_00025d6c->ch_step_mode == 1) {
     beep_request(1);
     return;
   }
-  if (g_opstate.active_vfo == 0) {
-    if ((g_opstate.vfo_state_a == 2) && ((memch[g_mem_hdr.chan_a].flags5 & 0x80) != 0)) {
+  if (g_opstate.active_vfo == VFO_A) {
+    if ((g_opstate.vfo_state_a == VFO_STATE_MEMORY) &&
+       ((memch[g_mem_hdr.chan_a].flags5 & 0x80) != 0)) {
       beep_request(1);
       return;
     }
   }
-  else if ((g_opstate.vfo_state_b == 2) && ((memch[g_mem_hdr.chan_b].flags5 & 0x80) != 0)) {
+  else if ((g_opstate.vfo_state_b == VFO_STATE_MEMORY) &&
+          ((memch[g_mem_hdr.chan_b].flags5 & 0x80) != 0)) {
     beep_request(1);
     return;
   }

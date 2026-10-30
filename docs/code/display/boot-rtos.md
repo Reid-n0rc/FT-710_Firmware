@@ -74,7 +74,7 @@ so the standby → on transition does not reboot the CPU **[fact for the code, i
 | 1 | `bootinfo_load` 0x20116C4C | see section 1 |
 | 2 | `fb_clear_all` 0x20132F84 | clears 0x60000000 + 0x2FF300 and the layer at 0x605048A0 |
 | 3 | `rtc_init` | creates a kernel object from {2,0,0} (event flag or mailbox) into 0x20800368, after `rtc_port_idle`/`rtc_write_reg` port set-up |
-| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`FUN_2014a4d0`), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
+| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`fs_init` 0x2014A4D0: drive and file tables, pools, semaphores), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
 | 5 | `fwdbg_init` 0x20111064 | self-update debug task (`fwdbg_task_create`) + `fwdbg_line` handler |
 | 6 | `loader_selfinstall` 0x20110F0C | only when 0xFCFF400C holds 0xAABBCCDD: erases flash 0..0x340000 and the two flag sectors, then writes this running image (from `vec_reset`) to flash 0 and new flags. This is how a new **loader** gets installed **[fact for the code, inference for the purpose]**. No code writes 0xFCFF400C; a JTAG factory script sets it ([update.md](update.md) §6) **[inference]** |
 | 7 | `gpio_p2_0_debounced`, `gpio_read_bit(8,12)` | mode inputs |
@@ -239,3 +239,162 @@ flowchart LR
 | 0x208DC1E0 | GIC handler table |
 | 0x20800110 / 0x20800114 | pointers to the two chain dispatchers |
 | 0x20800408 | system time in µs (+10000 per tick) |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2010002C | `Reset_Handler` | vector 0; copies image to 0x20100000 if not running there **[inference]** |
+| 0x20100080 | `reset_in_ram` | SPIBSC init, boot-bank select, copies rest of image **[inference]** |
+| 0x20100194 | `SVC_Handler` | names-file group "startup / armcc runtime"; no direct calls; 68 B, callers: 2 **[fact]** (code shape) |
+| 0x201001D8 | `IRQ_Handler` | GIC dispatch via 0x201176b4 **[inference]** |
+| 0x2010021C | `FIQ_Handler` | no direct calls; 4 B, callers: 3 **[fact]** (code shape) |
+| 0x20100220 | `Undef_Handler` | no direct calls; 4 B, callers: 3 **[fact]** (code shape) |
+| 0x20100224 | `PAbort_Handler` | no direct calls; 4 B, callers: 3 **[fact]** (code shape) |
+| 0x20100228 | `DAbort_Handler` | no direct calls; 4 B, callers: 3 **[fact]** (code shape) |
+| 0x20100828 | `spibsc0_init` | writes SPIBSC0 regs 0x3FEFA0xx **[inference]** |
+| 0x20100ABC | `boot_select_bank` | first boot: checks 0x183E0000/0x183F0000 flags, jumps to 0x18400000 or 0x18A00000 **[inference]** |
+| 0x20100BC0 | `__main` | names-file group "startup / armcc runtime"; calls `__decompress`, `__rt_entry`, `__scatterload`; 8 B, callers: 2 **[fact]** (code shape) |
+| 0x20100BC8 | `__scatterload` | names-file group "startup / armcc runtime"; calls `__decompress`; 44 B, callers: 1 **[fact]** (code shape) |
+| 0x20100BFC | `__decompress` | armcc LZ decompressor for RW regions **[inference]** |
+| 0x20100C60 | `__scatterload_zeroinit` | names-file group "startup / armcc runtime"; no direct calls; 28 B, callers: 0 **[fact]** (code shape) |
+| 0x20100CB4 | `__rt_lib_init` | armcc C library function, matched by idiom (score 0.850, T23d): called by __rt_entry after __user_setup_stackheap: __rt_locale, two clock/time inits, __cpp_initialize__aeabi_ **[inference]** |
+| 0x20100CD8 | `__rt_lib_shutdown` | armcc C library function, matched by idiom (score 0.800, T23d): empty push/pop; called on the exit path before _sys_exit **[inference]** |
+| 0x20100CDC | `__rt_entry` | names-file group "startup / armcc runtime"; calls `__rt_lib_init`, `__rt_lib_shutdown`, `__user_setup_stackheap`, `_sys_exit` and 2 more; 48 B, callers: 2 **[fact]** (code shape) |
+| 0x20101030 | `dcache_clean_range` | (addr, len): CP15 clean D-cache line by MVA over the range (line size from CTR), then DSB **[fact]** |
+| 0x20110388 | `sdmenu_init` | task "sdmenu" **[inference]** |
+| 0x20117294 | `main` | called from __rt_entry; creates tasks then idles **[inference]** |
+| 0x201172EC | `__user_initial_stackheap` | armcc C library function, matched by idiom (score 0.850, T23d): retarget hook: r0 = heap base (two literals), r2 = r3; called by __user_setup_stackheap **[inference]** |
+| 0x2011758C | `knl_addr_in_image` | 1 if p is within __main .. 0x20428834 (the code and rodata image) ; check of entry/name pointers in acre_* **[fact]** |
+| 0x201175B4 | `isr_desc_check` | intno < 0x24B, prio < 0x20 **[inference]** |
+| 0x2011761C | `gic_get_handler` | no direct calls; 16 B, callers: 2 **[fact]** (code shape) |
+| 0x201177E4 | `ostm_init` | OSTM 0xFCFEC000 (system tick) **[inference]** |
+| 0x2013B5BC | `usbh_create_objects` | m596* / udevtsk%d names **[inference]** |
+| 0x2014E2A4 | `strncmp` | names-file group "startup / armcc runtime"; no direct calls; 64 B, callers: 7 **[fact]** (code shape) |
+| 0x2014E5B0 | `os_create_tsk_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): copies a 6-word T_CTSK and appends the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named **[inference]** |
+| 0x2014E5E4 | `os_create_flg_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_flg **[inference]** |
+| 0x2014E610 | `os_create_mbf_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_mbf **[inference]** |
+| 0x2014E638 | `os_create_mbx_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_mbx **[inference]** |
+| 0x2014E664 | `os_create_mtx_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_mtx **[inference]** |
+| 0x2014E690 | `os_create_mpf_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_mpf **[inference]** |
+| 0x2014E6B8 | `os_create_mpl_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_mpl **[inference]** |
+| 0x2014E6E4 | `os_create_dtq_named` | NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around itron_acre_dtq **[inference]** |
+| 0x2014E73C | `itron_act_tsk` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): TCB table 0x208DBBA0, id 0 = self; dormant -> start like sta_tsk with exinf, else activation count +0x26 ++ (E_QOVR) **[inference]** |
+| 0x2014EC30 | `itron_acre_cyc` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): object table 0x208DBF64, max id 8; 0x20-byte block, cycatr/exinf/cychdr/cyctim/cycphs, TA_STA starts it on timer queue 0x208003C4; id 0 = auto … **[inference]** |
+| 0x2014EDF4 | `itron_acre_dtq` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table 0x208DBFA4, max id 8; id 0 = auto (E_NOID); same table as tsnd_dtq/trcv_dtq **[inference]** |
+| 0x2014F3E4 | `itron_acre_mbf` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table 0x208DBEC4, max id 8; allocates the buffer (E_NOMEM); same table as tsnd_mbf/trcv_mbf **[inference]** |
+| 0x2014F67C | `itron_acre_mbx` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table 0x208DBEA4, max id 8; same table as snd_mbx/trcv_mbx **[inference]** |
+| 0x2014F8B8 | `itron_acre_mpf` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table 0x208DBF24, max id 16; E_PAR on block count/size, E_NOMEM; same table as tget_mpf/rel_mpf **[inference]** |
+| 0x2014FB04 | `itron_acre_mpl` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.800, T23d): object table 0x208DBF04, max id 8; pool memory from pk+8 or the kernel heap (E_NOMEM); id 0 = auto **[inference]** |
+| 0x2014FD24 | `itron_acre_mtx` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table 0x208DBFC4, max id 32; E_RSATR, ceiling priority; same table as tloc_mtx/unl_mtx **[inference]** |
+| 0x201502F4 | `itron_del_mpf` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.800, T23d): mpf table 0x208DBF24: releases waiting tasks with E_DLT, frees the block and the pool **[inference]** |
+| 0x201504D0 | `itron_del_sem` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): sem table 0x208DBCA4: releases waiting tasks with E_DLT, frees the block **[inference]** |
+| 0x20150678 | `itron_dis_dsp` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): E_CTX in ISR/CPU-locked; sets the dispatch-disabled bits (\|= 9) of 0x208003DB **[inference]** |
+| 0x2015080C | `itron_ena_dsp` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): clears the dispatch-disabled bits of 0x208003DB, dispatches when a switch is pending (0x208003D9) **[inference]** |
+| 0x201508EC | `itron_ext_tsk` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): current task: back to the initial priority, unlocks its mutexes, dormant or restarts when the activation count +0x26 > 0 **[inference]** |
+| 0x20150AAC | `itron_get_pri` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.950, T23d): (tskid, p_tskpri): id 0 = self, E_OBJ when dormant, *p = TCB+4 **[inference]** |
+| 0x20150BD4 | `itron_get_tim` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (p_systim): SYSTIM {H utime, UW ltime} from 0x208003BC..C8 with carry **[inference]** |
+| 0x20150C3C | `itron_loc_cpu` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): masks interrupts and sets the CPU-locked state 0x13/0x1B in 0x208003DB **[inference]** |
+| 0x20151308 | `itron_tsnd_dtq` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (dtqid, data, tmout): dtq table 0x208DBFA4, hands data to a receiver or the ring buffer, E_TMOUT on polling, waits otherwise **[inference]** |
+| 0x20151520 | `itron_snd_mbx` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (mbxid, pk_msg): mbx table 0x208DBEA4, priority queues by msgpri (E_PAR), or wakes a receiver **[inference]** |
+| 0x20151680 | `itron_sta_cyc` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): cyc table 0x208DBF64: (re)inserts the handler into timer queue 0x208003C4, sets TCYC_STA **[inference]** |
+| 0x20151878 | `itron_stp_cyc` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): cyc table 0x208DBF64: removes it from the timer queue, clears TCYC_STA **[inference]** |
+| 0x20151934 | `itron_sus_tsk` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): id 0 = self, E_OBJ dormant, suspend count TCB+9 ++ (E_QOVR at 255), E_CTX for self with dispatch disabled **[inference]** |
+| 0x20151E68 | `itron_trcv_dtq` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (dtqid, p_data, tmout): dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT **[inference]** |
+| 0x201521A8 | `itron_trcv_mbf` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): (mbfid, msg, tmout): mbf table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size **[inference]** |
+| 0x20152434 | `itron_trcv_mbx` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (mbxid, ppk_msg, tmout): mbx table 0x208DBEA4, takes the first queued message, E_TMOUT **[inference]** |
+| 0x201526F4 | `itron_tsnd_mbf` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): (mbfid, msg, msgsz, tmout): mbf table 0x208DBEC4, E_PAR when msgsz > maxmsz, copies to a receiver or the ring **[inference]** |
+| 0x20152D28 | `itron_unl_cpu` | NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): clears the CPU-locked state of 0x208003DB and dispatches when pending **[inference]** |
+| 0x20153AD4 | `knl_timeout_remove` | (tcb, tskid): unlinks the TCB from its timer-wheel slot **[fact]** |
+| 0x20154498 | `knl_timeout_add` | (tmout, tcb, tskid): due time = tmout + system time 0x208003C8, links the TCB into the timer wheel 0x20800400 (mask 0x208003E0) **[fact]** |
+| 0x201545F0 | `knl_memcpy` | Byte copy used by the acre_* calls to copy the creation packet **[fact]** |
+| 0x20154974 | `__rt_ctype_table` | armcc C library function, matched by idiom (score 0.850, T23d): returns __rt_locale()+4; tolower indexes the table it points to **[inference]** |
+| 0x20154984 | `__aeabi_ldivmod` | armcc C library function, matched by idiom (score 0.950, T23d): A32: takes signs of r1/r3, negates 64-bit pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs **[inference]** |
+| 0x201549E4 | `tolower` | armcc C library function, matched by idiom (score 0.900, T23d): ctype bit 0x10 (upper) -> c+32 **[inference]** |
+| 0x20154A00 | `sprintf_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb sprintf 0x20154A08 **[inference]** |
+| 0x20154A08 | `sprintf` | names-file group "startup / armcc runtime"; calls `FUN_20155f72`, `_sputc`; 34 B, callers: 71 **[fact]** (code shape) |
+| 0x20154A30 | `snprintf` | armcc C library function, matched by idiom (score 0.900, T23d): (buf, n, fmt, ...): end = buf+n-1, output fn _snputc 0x20155FA3, NUL-terminates when n != 0 **[inference]** |
+| 0x20154A64 | `_printf_pre_padding` | armcc C library function, matched by idiom (score 0.800, T23d): emits width-1.. pad chars (0x30 if the 0 flag, else 0x20) unless the - flag (bit 0), counts in +0x20 **[inference]** |
+| 0x20154A90 | `_printf_post_padding` | armcc C library function, matched by idiom (score 0.800, T23d): emits trailing spaces when the - flag (bit 0) is set **[inference]** |
+| 0x20155058 | `strstr` | armcc C library function, matched by idiom (score 0.850, T23d): restarting byte compare of needle against haystack, returns start or 0 **[inference]** |
+| 0x2015507C | `memcmp` | (a, b, n): word compare when both are aligned, byte compare otherwise, returns the difference ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): word compare when both aligned (rev for ordering), then byte compare, returns … **[fact]** |
+| 0x201550D4 | `strcpy_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb strcpy 0x201550DC **[inference]** |
+| 0x201550DC | `strcpy` | (dst, src): word copy while aligned, then bytes up to the NUL ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): word copy while no zero byte (uqsub8 test), then byte tail; returns nothing used **[inference]** |
+| 0x20155122 | `strlen` | Word-at-a-time string length ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): byte loop to alignment, word loop with uqsub8 zero test, position of the zero byte **[fact]** |
+| 0x2015515C | `strcat` | armcc C library function, matched by idiom (score 0.900, T23d): scan dst to NUL, copy src including NUL **[inference]** |
+| 0x20155180 | `memcpy` | names-file group "startup / armcc runtime"; no direct calls; 212 B, callers: 168 **[fact]** (code shape) |
+| 0x20155254 | `__aeabi_memset_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memset 0x2015525C **[inference]** |
+| 0x2015525C | `__aeabi_memset` | (dst, n, c): replicates c into a word and joins the fill loop of __aeabi_memclr ; armcc argument order ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): (dst, n, c): replicates c (and #0xff, orr lsl 8/16) then joins … **[fact]** |
+| 0x2015526C | `__aeabi_memclr_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memclr 0x20155274 **[inference]** |
+| 0x20155274 | `__aeabi_memclr` | (dst, n): zero fill with alignment fix-up, 32-byte blocks ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): mov.w r2,#0 then _memset: byte/halfword head, word fill, tail via lsls #31 flags **[fact]** |
+| 0x201552B8 | `__aeabi_memclr4_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb __aeabi_memclr4 0x201552C0 **[inference]** |
+| 0x201552C0 | `__aeabi_memclr4` | armcc C library function, matched by idiom (score 0.950, T23d): renamed; r2=0, 32-byte stmia loop of {r2,r3,ip,lr}, tail by lsls #28/#2 flags (rt_memclr_w); aliases __aeabi_memclr8, __rt_memclr_w **[inference]** |
+| 0x20155310 | `__aeabi_memcpy4` | (dst, src, n): word copy in 32-byte blocks with preload, no alignment check ; the aligned memcpy entry ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): aligned path of memcpy 0x20155180 (beq when src word aligned): pld + … **[fact]** |
+| 0x2015538C | `strcmp` | names-file group "startup / armcc runtime"; no direct calls; 240 B, callers: 42 **[fact]** (code shape) |
+| 0x20155480 | `__aeabi_idivmod` | Signed divide: negates negative operands ((a \| b) < 0), then the shared unsigned loop ; was named __aeabi_uidivmod, which is the unsigned entry 0x20156260 ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): orrs r3,r0,r1; … **[fact]** |
+| 0x201556AC | `__cpp_initialize__aeabi_` | armcc C library function, matched by idiom (score 0.900, T23d): walks a table of self-relative offsets and calls each (C++ static constructors); called by __rt_lib_init **[inference]** |
+| 0x201556D0 | `__rt_locale` | armcc C library function, matched by idiom (score 0.800, T23d): returns 0x2091D530 (C library libspace); used by __rt_ctype_table and __rt_lib_init **[inference]** |
+| 0x201556E0 | `__aeabi_uldivmod` | armcc C library function, matched by idiom (score 0.850, T23d): (u64 n in r0:r1, u64 d in r2:r3) -> quotient r0:r1, remainder r2:r3; called by __aeabi_ldivmod **[inference]** |
+| 0x20155F98 | `_sputc` | armcc C library function, matched by idiom (score 0.850, T23d): *(*p)++ = c; the sprintf output function **[inference]** |
+| 0x20155FA2 | `_snputc` | armcc C library function, matched by idiom (score 0.850, T23d): stores c only while p < end; the snprintf output function **[inference]** |
+| 0x20155FDE | `__cxa_pure_virtual` | armcc C library function, matched by idiom (score 0.800, T23d): __rt_SIGPVFN, then _sys_exit **[inference]** |
+| 0x20155FEC | `__rt_udiv10` | armcc C library function, matched by idiom (score 0.900, T23d): n - n/4, +>>4, +>>8, +>>16, >>3, remainder fix-up: quotient and remainder of n/10 **[inference]** |
+| 0x20156018 | `__user_perproc_libspace` | armcc C library function, matched by idiom (score 0.800, T23d): returns 0x2091D510; called by __user_setup_stackheap **[inference]** |
+| 0x20156020 | `_printf_infnan` | armcc C library function, matched by idiom (score 0.900, T23d): prints inf/INF/nan/NAN with padding **[inference]** |
+| 0x20156184 | `__rt_SIGPVFN` | armcc C library function, matched by idiom (score 0.850, T23d): shows "SIGPVFN: Pure virtual fn called" and returns 1 **[inference]** |
+| 0x201561B4 | `_sys_exit` | armcc C library function, matched by idiom (score 0.850, T23d): semihosting svc 0xAB then b . (no return) **[inference]** |
+| 0x201561C0 | `__user_setup_stackheap` | armcc C library function, matched by idiom (score 0.900, T23d): gets __user_perproc_libspace, calls __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry **[inference]** |
+| 0x2015620A | `exit` | armcc C library function, matched by idiom (score 0.800, T23d): called by __rt_entry with main()s result (blx main; bl exit) **[inference]** |
+| 0x2015621C | `__default_signal_display` | armcc C library function, matched by idiom (score 0.800, T23d): writes a newline, the message and the extra string with _ttywrch **[inference]** |
+| 0x2015624E | `_ttywrch` | armcc C library function, matched by idiom (score 0.800, T23d): semihosting SYS_WRITEC (r0=3, svc 0xAB) of one character **[inference]** |
+| 0x20156260 | `__aeabi_uidivmod` | Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the shared loop at 0x201554DC ; the 71-caller divide ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): movs r2,#0 then the rsbs … **[fact]** |
+| 0x20164D54 | `__aeabi_i2d` | int -> IEEE double (sign, exponent 0x41D - clz, mantissa) **[fact]** |
+| 0x20164D82 | `__aeabi_ui2d` | unsigned int -> IEEE double **[fact]** |
+
+### C library string helpers (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): C library string helpers (armcc) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2014E208 | `strcasecmp` | Case-insensitive compare with tolower; cli_run_file, wav_list_dir **[fact]** |
+| 0x2014E250 | `strncasecmp` | Length-limited strcasecmp; fwname_pattern_match **[fact]** |
+| 0x2014E2E4 | `strncpy` | Copies up to n bytes and pads with 0 **[fact]** |
+| 0x2014E320 | `strtok_r` | (s, delims, &save): next token, 0 at the end; sfl_read_header, sdmenu_load_file, task_keycode **[fact]** |
+| 0x2014E3C4 | `str_to_long` | strtol/strtoul body: skips ctype spaces (__rt_ctype_table), sign, base 0 or 2..36 **[fact]** |
+| 0x2014E710 | `knl_current_task_id` | Running task id 0x208DC18C, 0 when it is the idle task (0x201659D0 + 1); task_root **[inference]** |
+
+### NORTi kernel internals (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): NORTi kernel internals **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201539EC | `knl_queue_remove` | Unlinks TCB param_1 (id param_2) from its ring (+6/+7 links, head at +0x10), the first half of knl_queue_move **[fact]** |
+| 0x20153A38 | `knl_queue_move` | Unlinks TCB param_2 (id param_3) from the id-linked ring it is in (+6 prev / +7 next, head byte at +0x10) and appends it to ring head param_1; TCB table 0x208DBBA0; used by the wait and ready paths of itron_* **[fact]** |
+| 0x20153B34 | `knl_freelist_alloc` | First-fit allocator on a free list {next, size}: rounds the size up to 8, splits or unlinks the block **[fact]** |
+| 0x20154524 | `knl_release_suspended` | Unlinks the woken task from the wait queue and returns without dispatch; itron_sig_sem takes this path when TCB +9 (suspend count) is non-zero **[fact]** |
+| 0x20154580 | `knl_make_ready` | Appends the TCB to ready queue 0x208DC18C + priority (TCB +4) and returns the dispatcher 0x2015655C if it beats the running priority 0x208003DF, else the plain return 0x201567F4; called by itron_sig_sem/set_flg/snd_mbx when a … **[fact]** |
+| 0x201545DC | `knl_wait_enter` | Moves the running task into an object's wait queue (knl_queue_move) and returns through 0x201566F0; the tail of every blocking itron_t* call (twai_sem, twai_flg, trcv_*, tsnd_*, tget_mpf, tloc_mtx) **[fact]** |
+| 0x2015476C | `knl_sys_alloc` | knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their control blocks here **[fact]** |
+| 0x2015655C | `knl_dispatch` | Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs **[fact]** |
+| 0x201567F4 | `knl_svc_return` | Returns from a service call with the saved PSR bits restored (0x208003CC \| spsr & ~0xC0); the no-dispatch exit of the itron_* calls **[fact]** |
+| 0x2015686C | `knl_int_disable` | Service call return that sets the I bit in the saved PSR (0x20156878); gic_enable_irq / gic_disable_irq / gic_def_inh wrap their register writes with it **[inference]** |
+| 0x2015688C | `knl_int_restore` | Service call return through 0x2015689C, which clears the I/F bits again **[inference]** |
+
+### armcc soft-float (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): armcc soft-float (double); operations from the constants in tsc2007_pressure (Rtouch = 400 * X/4096 * (Z2/Z1 - 1)) and touch_cal_fit (sum of 5 / 5.0) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20164888 | `__aeabi_dadd` | Double add: start + span*fraction in progress_scale, + 0.5 (0x3FE00000) rounding in touch_cal_apply **[inference]** |
+| 0x201649D8 | `__aeabi_ddiv` | Double divide: Z2/Z1 and X/4096.0 (0x40B00000) in tsc2007_pressure, sum/5.0 (0x40140000) in touch_cal_fit **[inference]** |
+| 0x20164C90 | `__aeabi_d2iz` | Double to signed int, truncating with saturation (0x7FFFFFFF ^ sign); follows "+ 0.5" in touch_cal_apply **[fact]** |
+| 0x20164CF0 | `__aeabi_d2uiz` | Double to unsigned int: negative gives 0, overflow 0xFFFFFFFF; tsc2007_pressure result **[fact]** |
+| 0x20164DA8 | `__aeabi_dmul` | Double multiply: 400.0 (0x40790000) * x in tsc2007_pressure, span * fraction in progress_scale, x * 100.0 in sd_format_request **[inference]** |
+| 0x20164EFC | `fp_nan_handler` | Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the caller's return address; armcc fplib internal **[fact]** |
+| 0x20164F98 | `fp_exception_stub` | Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) **[inference]** |
+| 0x20164FA4 | `__aeabi_dsub` | Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure **[inference]** |

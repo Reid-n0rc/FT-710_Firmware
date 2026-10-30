@@ -80,40 +80,40 @@ void FUN_fff982aa(byte param_1,uint param_2,uint param_3)
 
 // ===== FUN_fff982bb @ fff982bb (72 bytes)
 
-void FUN_fff982bb(byte param_1,undefined4 param_2)
+void FUN_fff982bb(vfo_side param_1,undefined4 param_2)
 
 {
   if (param_1 == g_opstate.active_vfo) {
     FUN_fff98303(param_1,param_2);
     return;
   }
-  if (PTR_g_ui_00025d38->f_0x41d_u8 != 1) {
+  if (PTR_g_ui_00025d38->popup7_open != 1) {
     FUN_fff98303(param_1,param_2);
     return;
   }
-  FUN_fff98363(param_1,&PTR_g_ui_00025d38->f_0x40f_u8,param_2);
+  FUN_fff98363(param_1,PTR_g_ui_00025d38->keypad_bcd,param_2);
   return;
 }
 
 
 // ===== FUN_fff98303 @ fff98303 (96 bytes)
 
-void FUN_fff98303(byte param_1,undefined4 param_2)
+void FUN_fff98303(vfo_side param_1,undefined4 param_2)
 
 {
   undefined1 auStack_d [5];
   undefined4 local_8;
-  byte local_1;
+  vfo_side local_1;
   
   local_8 = param_2;
   local_1 = param_1;
-  if (PTR_g_ui_00025d38->f_0x40d_u8 == 0) {
+  if (PTR_g_ui_00025d38->keypad_open == 0) {
     FUN_fff9810e(param_1,(uint)auStack_d);
     FUN_fff98363(local_1,auStack_d,local_8);
     return;
   }
-  if (param_1 == PTR_g_ui_00025d38->f_0x40e_u8) {
-    FUN_fff98363(param_1,&PTR_g_ui_00025d38->f_0x40f_u8,param_2);
+  if (param_1 == PTR_g_ui_00025d38->status_side) {
+    FUN_fff98363(param_1,PTR_g_ui_00025d38->keypad_bcd,param_2);
     return;
   }
   FUN_fff9810e(param_1,(uint)auStack_d);
@@ -124,7 +124,7 @@ void FUN_fff98303(byte param_1,undefined4 param_2)
 
 // ===== FUN_fff98363 @ fff98363 (283 bytes)
 
-void FUN_fff98363(byte param_1,byte *param_2,byte *param_3)
+void FUN_fff98363(vfo_side param_1,byte *param_2,byte *param_3)
 
 {
   bool bVar1;
@@ -134,7 +134,7 @@ void FUN_fff98363(byte param_1,byte *param_2,byte *param_3)
   if (param_1 == g_opstate.active_vfo) {
     iVar2 = FUN_fff9847e();
     if (iVar2 == 1) {
-      if (PTR_g_ui_00025d38->f_0x416_u8 == 1) {
+      if (PTR_g_ui_00025d38->digit_step_khz == 1) {
         bVar1 = (*param_2 & 0xf) != 0;
         if (bVar1) {
           bStack_d = *param_2 | 0xf0;
@@ -191,7 +191,7 @@ void FUN_fff98363(byte param_1,byte *param_2,byte *param_3)
 bool FUN_fff9847e(void)
 
 {
-  return PTR_g_ui_00025d38->f_0x423_u8 != 0;
+  return PTR_g_ui_00025d38->digit_step_blink_on != 0;
 }
 
 
@@ -268,7 +268,7 @@ void disp_put_op_freq(void *param_1)
   if (PTR_g_ui_00025d38->transmitting == 1) {
     local_8 = PTR_g_ui_00025d38->freq_dial;
   }
-  else if (g_opstate.active_vfo == 0) {
+  else if (g_opstate.active_vfo == VFO_A) {
     local_8 = PTR_g_ui_00025d38->freq_a;
   }
   else {
@@ -320,7 +320,7 @@ void disp_put_dial_freq(void *param_1)
     if (iVar1 == 0) {
       local_8 = PTR_g_ui_00025d38->freq_dial;
     }
-    else if (g_opstate.active_vfo == 0) {
+    else if (g_opstate.active_vfo == VFO_A) {
       local_8 = PTR_g_ui_00025d38->freq_a;
     }
     else {
@@ -382,10 +382,10 @@ void disp_put_scope_start(int param_1)
 void displink_tx_64(void)
 
 {
-  if (PTR_g_ui_00025d38->dl_64_value == PTR_g_ui_00025d38->f_0x0b9_u8) {
+  if (PTR_g_ui_00025d38->dl_64_value == PTR_g_ui_00025d38->dl_64_sent) {
     return;
   }
-  PTR_g_ui_00025d38->f_0x0b9_u8 = PTR_g_ui_00025d38->dl_64_value;
+  PTR_g_ui_00025d38->dl_64_sent = PTR_g_ui_00025d38->dl_64_value;
   DAT_00001456 = 100;
   DAT_00001457 = PTR_g_ui_00025d38->dl_64_value;
   DAT_0001b628 = 3;
@@ -732,8 +732,8 @@ void displink_build_req(void)
   mem_zero(0x98,0x16a0);
   mem_zero(0x24a,0x1741);
   DAT_00001741 = PTR_g_ui_00025d38->sdreq_type;
-  DAT_00001742 = PTR_g_ui_00025d38->f_0x1e4_u8;
-  if ((PTR_g_ui_00025d38->f_0x1e4_u8 & 0xf0) == 0) {
+  DAT_00001742 = PTR_g_ui_00025d38->sdreq_op;
+  if ((PTR_g_ui_00025d38->sdreq_op & 0xf0) == 0) {
     return;
   }
   FUN_fff98c75(2);
@@ -750,11 +750,11 @@ void FUN_fff98c75(ushort param_1)
   byte *pbVar2;
   uint uVar3;
   
-  uVar3 = PTR_g_ui_00025d38->f_0x1e4_u8 - 1 & 0xf;
+  uVar3 = PTR_g_ui_00025d38->sdreq_op - 1 & 0xf;
   if ((1 < uVar3 - 6) && (uVar3 != 4)) {
     if (uVar3 < 4) {
       uVar3 = (uint)PTR_g_ui_00025d38->sdreq_len;
-      pbVar2 = &PTR_g_ui_00025d38->f_0x1e5_u8;
+      pbVar2 = &PTR_g_ui_00025d38->sdreq_arg1;
       pbVar1 = &DAT_00001741 + param_1;
       while (uVar3 = uVar3 - 1, uVar3 != 0) {
         *pbVar1 = *pbVar2;
@@ -765,7 +765,7 @@ void FUN_fff98c75(ushort param_1)
     }
     return;
   }
-  *(undefined4 *)(&DAT_00001741 + param_1) = *(undefined4 *)&PTR_g_ui_00025d38->f_0x1e5_u8;
+  *(undefined4 *)(&DAT_00001741 + param_1) = *(undefined4 *)&PTR_g_ui_00025d38->sdreq_arg1;
   return;
 }
 
@@ -1025,13 +1025,13 @@ void displink_build_30(void)
   displink_copy_status();
   DAT_000017d9 = PTR_g_ui_00025d38->popup_code;
   if (PTR_g_ui_00025d38->popup_code != 0xff) {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       pvStack_8 = &g_opstate.vfo_a;
     }
     else {
       pvStack_8 = &g_opstate.vfo_b;
     }
-    bStack_9 = g_opstate.active_vfo != 0;
+    bStack_9 = g_opstate.active_vfo != VFO_A;
     switch(PTR_g_ui_00025d38->popup_code) {
     case 0:
       DAT_000017da = g_opstate.meter_sel;
@@ -1070,7 +1070,7 @@ void displink_build_30(void)
     case 5:
       DAT_000017da = pvStack_8->mode & 0xf;
       DAT_000017db = 0;
-      DAT_000017dc = PTR_g_ui_00025d38->band_cur;
+      DAT_000017dc = PTR_g_ui_00025d38->popup_cursor;
       return;
     case 6:
       DAT_000017da = scope_span_index(bStack_9);
@@ -1088,12 +1088,12 @@ void displink_build_30(void)
     case 0xb:
       DAT_000017da = g_opstate.ss03_value;
       DAT_000017db = 0;
-      DAT_000017dc = PTR_g_ui_00025d38->band_cur;
+      DAT_000017dc = PTR_g_ui_00025d38->popup_cursor;
       return;
     case 0xc:
       DAT_000017da = PTR_g_ui_00025d38->popup_band;
       DAT_000017db = 0;
-      DAT_000017dc = PTR_g_ui_00025d38->band_cur;
+      DAT_000017dc = PTR_g_ui_00025d38->popup_cursor;
       return;
     case 0xd:
       iVar2 = FUN_fffc4f8f();

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""List every field offset and access width of MAIN's big state blocks in the decompile (T23c).
+"""List every field offset and access width of the big state blocks in the MAIN or DISPLAY decompile (T23c).
 
 The MAIN decompile reaches its state blocks in two ways:
   * through the eleven `.data` pointer constants 0x25D38..0x25D7C (all = 0x20B04, the UI-state block) and
@@ -18,12 +18,18 @@ With `--access <tsv>` (the output of `tools/ghidra/StructAccessDump.java`, which
 decompiler's p-code) the rows also get the exact widths (`pcode` column, `size:count`), including the offsets that only
 appear inside a wider access.
 
+DISPLAY (`--image display`, BLOCKS_DISPLAY): the ARM code loads every global's address from a literal pool, so the
+decompiler prints absolute names (`DAT_208f0b2a`, `*(int *)(&DAT_208dbba0 + i * 4)`, `iRam208db284` for undefined RAM)
+rather than pointer-plus-offset forms; the same absolute patterns cover it. Its StructAccessDump.java run needs the RAM
+range as arguments (`... access.tsv 0x20A00000 0x20000000`). After ApplyStructs the accesses print as
+`gui_frame.cmd`, `knl_sys.last_ercd`, `uart->rx_wr`, `knl_tsk_tab[id]->state`.
+
 Usage (python3 -I):
-  tools/struct_offsets.py scan <decomp/main> <outdir> [--access access.tsv]
+  tools/struct_offsets.py scan <decomp/main> <outdir> [--access access.tsv] [--image main|display]
       one TSV per block + summary.tsv (outdir: build/ or scratch)
-  tools/struct_offsets.py fields <decomp/main> [header.h]
+  tools/struct_offsets.py fields <decomp/main> [header.h] [--image main|display]
       count the accesses that print as struct fields (named / neutral f_0x.. / Ghidra field_0x.. or partial) and the
-      raw block accesses left (header default: tools/ghidra/structs_main.h)
+      raw block accesses left (header default: tools/ghidra/structs_main.h, or structs_display.h with --image display)
 The output is derived from the firmware decompile and is not committed.
 """
 import collections
@@ -45,6 +51,26 @@ BLOCKS = [
     ('qmb_hdr', 0x9012, 0x11, [], 0),
     ('qmb', 0x9023, 10 * 0x5A, [], 0x5A),
     ('opstate', 0x9A2A, 0x45C, [], 0),
+]
+
+# DISPLAY V01-08 (tools/ghidra/structs_display.h): kernel tables, UART objects, MAIN-link state and frames
+BLOCKS_DISPLAY = [
+    ('g_ml', 0x20450024, 0x50, [], 0),
+    ('ml_rx_frame', 0x2045F260, 0x240, [], 0),
+    ('ml_gui_snapshot', 0x2045F8C0, 0x240, [], 0),
+    ('knl_sys', 0x208003A8, 0x58, [], 0),
+    ('scif3_uart', 0x208DA1E0, 0x850, [], 0),
+    ('scif4_uart', 0x208DAA30, 0x850, [], 0),
+    ('scif5_uart', 0x208DB280, 0x850, [], 0),
+    ('g_bootinfo', 0x208DBB44, 0x5C, [], 0),
+    ('knl_tsk_tab', 0x208DBBA0, 0x104, [], 0),
+    ('knl_sem_tab', 0x208DBCA4, 0x100, [], 0),
+    ('knl_flg_tab', 0x208DBDA4, 0x100, [], 0),
+    ('knl_mpf_tab', 0x208DBF24, 0x40, [], 0),
+    ('knl_mtx_tab', 0x208DBFC4, 0x80, [], 0),
+    ('knl_rdq', 0x208DC18C, 10, [], 0),
+    ('gui_frame', 0x208F0B2A, 0x240, [], 0),
+    ('gui_frame_saved', 0x208F0FCB, 0x240, [], 0),
 ]
 
 WIDTH = {}
@@ -156,6 +182,12 @@ def scan_function(name, body, acc):
         else:
             w, form = guess_width(body, m, decls), 'abs_wide'
         acc.add(b, off, w, form, name)
+    # 5. undefined RAM the decompiler names by its type (DISPLAY: iRam208db284, uRam208db28a)
+    for m in re.finditer(r'\b[a-z]{1,3}Ram([0-9a-f]{8})\b', body):
+        addr = int(m.group(1), 16)
+        b = block_of(addr)
+        if b:
+            acc.add(b, addr - b[1], '?', 'abs_ram', name)
 
 
 def guess_width(body, m, decls):
@@ -244,7 +276,7 @@ def header_names(path):
     """Field names declared in structs_main.h: named ones and neutral f_0x.. ones."""
     named, neutral = set(), set()
     for line in open(path, encoding='utf-8'):
-        m = re.match(r'\s+(?:struct \w+|\w+)\s*\*?\s*(\w+)(?:\[\d+\])*;\s*/\*\s*\+0x', line)
+        m = re.match(r'\s+(?:(?:struct|enum) \w+|\w+)\s*\*?\s*(\w+)(?:\[\d+\])*;\s*/\*\s*\+0x', line)
         if m:
             (neutral if m.group(1).startswith('f_0x') else named).add(m.group(1))
     return named, neutral
@@ -281,11 +313,22 @@ def fields(src, header):
 
 
 def main(argv):
+    image = 'main'
+    if '--image' in argv:
+        i = argv.index('--image')
+        image = argv[i + 1]
+        argv = argv[:i] + argv[i + 2:]
+    if image == 'display':
+        BLOCKS[:] = BLOCKS_DISPLAY
+    elif image != 'main':
+        print('unknown image %r (main, display)' % image)
+        return 2
     if len(argv) >= 4 and argv[1] == 'scan':
         access = argv[argv.index('--access') + 1] if '--access' in argv else None
         scan(argv[2], argv[3], access)
     elif len(argv) >= 3 and argv[1] == 'fields':
-        fields(argv[2], argv[3] if len(argv) > 3 else os.path.join(os.path.dirname(__file__), 'ghidra', 'structs_main.h'))
+        default = os.path.join(os.path.dirname(__file__), 'ghidra', 'structs_%s.h' % image)
+        fields(argv[2], argv[3] if len(argv) > 3 else default)
     else:
         print(__doc__)
         return 2

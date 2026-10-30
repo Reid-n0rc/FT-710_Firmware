@@ -596,11 +596,11 @@ void FUN_fffe273a(char param_1)
   }
   if (param_1 == -0x7b) {
     DAT_0001b550 = 1;
-    bVar1 = PTR_g_ui_00025d6c->f_0x43a_u8;
+    bVar1 = PTR_g_ui_00025d6c->memlist_ch;
     *(undefined4 *)(memch[bVar1].tag + 8) = g_ui.msg_text[0]._8_4_;
     *(undefined4 *)(memch[bVar1].tag + 4) = g_ui.msg_text[0]._4_4_;
     *(undefined4 *)memch[bVar1].tag = g_ui.msg_text[0]._0_4_;
-    eeprom_save_memch(PTR_g_ui_00025d6c->f_0x43a_u8);
+    eeprom_save_memch(PTR_g_ui_00025d6c->memlist_ch);
     return;
   }
   return;

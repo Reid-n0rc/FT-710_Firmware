@@ -550,6 +550,19 @@ RT_SCS = [
     (0xE000EF38, 'FPU', 'FPCAR', 32, 'Floating-point Context Address Register'),
     (0xE000EF3C, 'FPU', 'FPDSCR', 32, 'Floating-point Default Status Control Register'),
 ]
+# Registers the firmware uses that the SVD does not list (address, module, symbol, bits, name); also added at the secure
+# alias (module <P>_S). Each name says where it comes from; keep them few and sourced. fsl_power.c: https://github.com/
+# nxp-mcuxpresso/mcux-sdk/blob/8a289764d763ad06e0c3a05c885644ed98b970af/devices/MIMXRT685S/drivers/fsl_power.c,
+# SHA-256 99f490d627629e283ebc112d23ce7fcb30b402953885bc910f865bcef1f63914 (lines 183-196).
+RT_EXTRA = [
+    (0x40135020, 'PMC', 'BIASCFG', 32, 'PMC +0x20: body-bias (RBB/FBB) voltage level and RBB pull-down [not in the SVD; '
+     'symbol ours. NXP SDK fsl_power.c POWER_SetBiasConfig() writes PMC_REG(0x20) = 0x04040808 if it differs '
+     '(mcux-sdk 8a289764)]'),
+]
+# Not added: DISPLAY 0xE8205580 (read in ostm_time_us, bit 6). The RZ/A1H manual (Rev.7.00) has no register there: it
+# is offset 0x580 of the PFV0 window (PFV0 ends at 0xE820508C, PFV1 starts at 0xE8205800; Table 5.5 says only "I/O
+# area"). Bit 6 is OSTM0TINT (interrupt ID 134 = ICDISPR4 bit 6 at 0xE8201210), so the code most likely means "OSTM0
+# tick pending" [inference]; see docs/code/display/peripherals.md (OSTM).
 # Known registers (address, label), from docs/code/ifdsp/*.md (register names there are from the RT600 SDK).
 RT_KNOWN = [
     (0x4000200C, 'SYSCTL0_DSPSTALL'), (0x40033014, 'CACHE64_POLSEL_REG0_TOP'), (0x40033800, 'CACHE64_CCR'),
@@ -717,6 +730,8 @@ def rt_build(a):
     m33 = ns + rt_rows([p for p in periphs if p[1] < 0x50000000], True) + [
         dict(address=ad, module=m, symbol=s, bits=b, access=str(b), section='-',
              name=n + ' [Armv8-M system control space; not in the SVD]') for ad, m, s, b, n in RT_SCS if ad not in have]
+    m33 += [dict(address=ad + off, module=m + sfx, symbol=y, bits=b, access=str(b), section='-', name=n)
+            for ad, m, y, b, n in RT_EXTRA for off, sfx in ((0, ''), (RT_SECURE_OFFSET, '_S')) if ad not in have]
     only_m33 = sorted(set(svd_bases) - set(dsp_bases))
     only_dsp = cloned
     src = (f"# Sources: {RT_SOURCES['svd']['url']}\n#   SHA-256 {hashes['svd']}\n"

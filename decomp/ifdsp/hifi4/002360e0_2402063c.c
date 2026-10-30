@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 33 functions
 
-// ===== FUN_002360e0 @ 002360e0 (131 bytes)
+// ===== __lo0bits @ 002360e0 (131 bytes)
 
-int FUN_002360e0(uint *param_1)
+/* newlib mprec.c; called by __d2b [inference] */
+
+int __lo0bits(uint *param_1)
 
 {
   int iVar1;
@@ -51,9 +53,11 @@ int FUN_002360e0(uint *param_1)
 }
 
 
-// ===== FUN_00236170 @ 00236170 (74 bytes)
+// ===== __mcmp @ 00236170 (74 bytes)
 
-int FUN_00236170(int param_1,int param_2)
+/* newlib mprec.c; called by quorem, __mdiff, _dtoa_r [inference] */
+
+int __mcmp(int param_1,int param_2)
 
 {
   uint *puVar1;
@@ -186,9 +190,11 @@ undefined4 FUN_002362f0(void)
 }
 
 
-// ===== FUN_00236300 @ 00236300 (222 bytes)
+// ===== memmove @ 00236300 (222 bytes)
 
-undefined1  [12] FUN_00236300(byte *param_1,byte *param_2,uint param_3)
+/* newlib memmove; called by __sfvwrite_r and _realloc_r [inference] */
+
+undefined1  [12] memmove(byte *param_1,byte *param_2,uint param_3)
 
 {
   int iVar1;
@@ -274,18 +280,22 @@ undefined4 FUN_002363f0(undefined4 *param_1,undefined1 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00236420 @ 00236420 (7 bytes)
+// ===== _close_r @ 00236420 (7 bytes)
 
-undefined4 FUN_00236420(void)
+/* stub: returns 0; called by __sclose [fact for the code] */
+
+undefined4 _close_r(void)
 
 {
   return 0;
 }
 
 
-// ===== FUN_00236430 @ 00236430 (13 bytes)
+// ===== _lseek_r @ 00236430 (13 bytes)
 
-undefined4 FUN_00236430(undefined4 *param_1)
+/* stub: errno = 29 (ESPIPE), returns -1; called by __swrite / __sseek [fact for the code] */
+
+undefined4 _lseek_r(undefined4 *param_1)
 
 {
   *param_1 = 0x1d;
@@ -302,11 +312,12 @@ void FUN_00236440(void)
 }
 
 
-// ===== FUN_00236450 @ 00236450 (25 bytes)
+// ===== xthal_dcache_all_writeback @ 00236450 (25 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x0023645b) */
+/* Xtensa HAL: diwb over 256 lines [fact for the code] */
 
-void FUN_00236450(void)
+void xthal_dcache_all_writeback(void)
 
 {
   diwb(0);
@@ -314,9 +325,11 @@ void FUN_00236450(void)
 }
 
 
-// ===== FUN_00236470 @ 00236470 (8 bytes)
+// ===== xthal_get_ccount @ 00236470 (8 bytes)
 
-undefined4 FUN_00236470(void)
+/* Xtensa HAL: rsr.ccount; used by SDK_DelayAtLeastUs [fact for the code] */
+
+undefined4 xthal_get_ccount(void)
 
 {
   undefined4 uVar1;
@@ -369,11 +382,12 @@ undefined4 FUN_00236494(int param_1)
 }
 
 
-// ===== FUN_002364b0 @ 002364b0 (25 bytes)
+// ===== xthal_dcache_all_writeback_inv @ 002364b0 (25 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002364bb) */
+/* Xtensa HAL: diwbi over 256 lines; called by xthal_set_region_attribute [fact for the code] */
 
-void FUN_002364b0(void)
+void xthal_dcache_all_writeback_inv(void)
 
 {
   diwbi(0);
@@ -381,11 +395,12 @@ void FUN_002364b0(void)
 }
 
 
-// ===== FUN_002364d0 @ 002364d0 (36 bytes)
+// ===== xthal_icache_all_invalidate @ 002364d0 (36 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002364da) */
+/* Xtensa HAL: iii loop; called by xthal_set_region_attribute [fact for the code] */
 
-void FUN_002364d0(void)
+void xthal_icache_all_invalidate(void)
 
 {
   iii(0);
@@ -397,9 +412,11 @@ void FUN_002364d0(void)
 }
 
 
-// ===== FUN_002364f4 @ 002364f4 (10 bytes)
+// ===== __floatunsidf @ 002364f4 (10 bytes)
 
-undefined8 FUN_002364f4(int param_1)
+/* XCC soft double (4-instruction sequence equal to libgcc's) [inference] */
+
+undefined8 __floatunsidf(int param_1)
 
 {
   uint uVar1;
@@ -412,9 +429,11 @@ undefined8 FUN_002364f4(int param_1)
 }
 
 
-// ===== FUN_00236500 @ 00236500 (49 bytes)
+// ===== __floatsidf @ 00236500 (49 bytes)
 
-undefined8 FUN_00236500(uint param_1)
+/* XCC soft double (sequence match 0.92 with libgcc __floatsidf) [inference] */
+
+undefined8 __floatsidf(uint param_1)
 
 {
   uint uVar1;

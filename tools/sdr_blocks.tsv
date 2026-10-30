@@ -1,0 +1,32 @@
+# SDR FPGA block map for tools/sdr_progress.py (T23 "SDR progress"). Columns and seed syntax: see the tool's docstring.
+# Rows are in priority order: a cell belongs to the first block that reaches it, so the RTL-verified blocks come first
+# (their cell sets are the exact slices the RTL was checked against), then the specific blocks, then the broad ones.
+# Seeds are cell/site names from docs/code/sdr/netlist.md (which cites them); no netlist data is stored here.
+block	seeds	back	fwd	stop	within	doc	rtl	verified
+uart_a_rx	SLICE_X1Y92/AFF,SLICE_X1Y93/AFF,SLICE_X1Y93/B5FF,SLICE_X1Y93/BFF,SLICE_X1Y93/CFF,SLICE_X1Y93/DFF,SLICE_X2Y93/AFF,SLICE_X2Y93/BFF,SLICE_X2Y93/CFF	slice:4	-	-	-	docs/code/sdr/netlist.md#42-simulation-of-the-uart-receiver	hdl/sdr/uart_rx.v	yes
+uart_b_link	SLICE_X2Y101/AFF,IOB_X0Y9,IOB_X0Y10	slice:40	-	SLICE_X9Y67/AFF,SLICE_X13Y64/AFF,SLICE_X11Y66/AFF,SLICE_X12Y68/CFF,SLICE_X10Y67/AFF,SLICE_X12Y68/AFF,SLICE_X10Y67/BFF,SLICE_X11Y65/CFF,SLICE_X14Y66/CFF,SLICE_X10Y66/BFF,SLICE_X10Y66/AFF,SLICE_X14Y66/BFF,SLICE_X14Y66/DFF,SLICE_X12Y68/BFF,SLICE_X14Y70/AFF	SLICE_X0..X24Y98..Y125,type:IOB,type:ILOGIC_BYPASS,type:OLOGIC_BYPASS	docs/code/sdr/netlist.md#52-register-link-uart-b-fact-unless-marked	hdl/sdr/uart_link.v	yes
+uart_a_console	SLICE_X1Y94/A5FF,IOB_X0Y41,IOB_X0Y42	slice:40	-	-	SLICE_X0..X19Y80..Y99,type:IOB,type:ILOGIC_BYPASS,type:OLOGIC_BYPASS	docs/code/sdr/netlist.md#53-debug-console-uart-a-m18l18-fact-unless-marked	hdl/sdr/uart_console.v	yes
+scope_serializer	SLICE_X12Y48/AFF,SLICE_X5Y50/AFF,SLICE_X12Y49/AFF,SLICE_X15Y49/AFF,SLICE_X58Y49/AFF,SLICE_X58Y49/BFF,SLICE_X58Y49/B5FF,SLICE_X58Y49/CFF,SLICE_X58Y49/A5FF,SLICE_X58Y50/CFF,SLICE_X58Y50/AFF,SLICE_X58Y50/A5FF,SLICE_X58Y50/BFF,SLICE_X34Y53/AFF	slice:12	-	RAMB18_X2Y21,SLICE_X28Y73/A5FF,SLICE_X40Y60/BFF,SLICE_X1Y47/AFF	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186	hdl/sdr/scope_spi.v	yes
+clocks_reset	type:BUFGCTRL,type:BUFHCE,type:BUFR,type:BUFIO,type:MMCME2_ADV,IOB_X1Y73..Y76,IOB_X0Y33,SLICE_X10Y76/BFF,SLICE_X11Y59,SLICE_X2Y89/AFF	1	-	-	-	docs/code/sdr/netlist.md#32-clocks	-	no
+scope_writer	RAMB18_X2Y21,SLICE_X35Y127/BFF,SLICE_X35Y127/CLUT,SLICE_X35Y120,SLICE_X40Y120,SLICE_X41Y64,SLICE_X41Y65,SLICE_X40Y66,SLICE_X57Y53..Y55,SLICE_X58Y53..Y54,SLICE_X41Y110/AFF,SLICE_X28Y73/A5FF,SLICE_X33Y73/AFF,SLICE_X32Y73/AFF,SLICE_X40Y60/BFF,SLICE_X1Y47/AFF,SLICE_X13Y53/CLUT	1	-	-	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186	-	no
+scope_update_slave	SLICE_X1Y36/ALUT,SLICE_X1Y41/AFF,SLICE_X1Y57/D5FF,SLICE_X4Y59/CLUT,SLICE_X3Y52/CFF,SLICE_X11Y62,SLICE_X4Y61/AFF,IOB_X0Y23,IOB_X0Y34..Y36	1	1	-	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186	-	no
+flash_qspi	SLICE_X1Y60,SLICE_X1Y61,SLICE_X4Y62/CFF,SLICE_X4Y63,IOB_X0Y38,IOB_X0Y45..Y48	2	1	-	-	docs/code/sdr/netlist.md#33-pin-map-by-bank	-	no
+i2s_port	SLICE_X15Y42..Y43,SLICE_X59Y39,IOB_X0Y13,IOB_X0Y14,IOB_X0Y17,IOB_X0Y29	2	-	-	-	docs/code/sdr/netlist.md#55-what-starts-the-scope-spi-145	-	no
+powerup_spi	IOB_X0Y20,IOB_X0Y26,IOB_X0Y27	4	-	-	-	docs/code/sdr/netlist.md#33-pin-map-by-bank	-	no
+adc_config_spi	SLICE_X42Y80,IOB_X0Y95..Y97	2	-	-	-	docs/code/sdr/netlist.md#33-pin-map-by-bank	-	no
+adc_capture	type:IDDR,SLICE_X46Y56,SLICE_X46Y59,SLICE_X52Y66,SLICE_X56Y65,SLICE_X45Y58..Y61,SLICE_X7Y43..Y51,SLICE_X11Y45..Y46,SLICE_X13Y50,RAMB18_X0Y22..Y25	0	1	-	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172	-	no
+adc_dc_gain	SLICE_X44Y55..Y60,SLICE_X47Y54..Y64,SLICE_X45Y59..Y64,SLICE_X6Y41..Y46,SLICE_X7Y41..Y51,SLICE_X11Y41..Y46,SLICE_X38Y63/AFF,SLICE_X37Y62/AFF,SLICE_X41Y70/B5FF,DSP48_X1Y26,DSP48_X0Y17,SLICE_X40Y60..Y65,SLICE_X10Y45..Y51,SLICE_X29Y66/AFF,SLICE_X15Y55	1	1	-	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172	-	no
+ddc_mixers	DSP48_X1Y34..Y35,DSP48_X1Y38..Y39,DSP48_X0Y34..Y37,DSP48_X0Y40..Y41,DSP48_X0Y56..Y57,SLICE_X54Y126..Y131,SLICE_X39Y117..Y122,SLICE_X51Y83..Y89,SLICE_X13Y66..Y72,DSP48_X1Y48,DSP48_X1Y50	1	1	-	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172	-	no
+nco_cosine	RAMB18_X2Y20,DSP48_X1Y18,RAMB18_X2Y15	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+fir_1024	RAMB18_X2Y28,DSP48_X1Y31..Y33,RAMB18_X2Y25,RAMB18_X2Y30..Y31	1	1	-	-	docs/code/sdr/netlist.md#35-dsp-and-block-ram-structure	-	no
+tx_envelope	RAMB18_X2Y19,DSP48_X1Y16,DSP48_X1Y12	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+fir_bank	RAMB18_X1Y11,RAMB18_X1Y16..Y17,RAMB18_X2Y14,RAMB18_X2Y16,RAMB18_X2Y18,DSP48_X1Y0,DSP48_X1Y2,DSP48_X0Y9,DSP48_X1Y7	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+coef_roms	RAMB18_X1Y18..Y19,RAMB18_X2Y10,RAMB18_X0Y16,DSP48_X0Y8,DSP48_X1Y9,DSP48_X1Y13,RAMB18_X2Y24,RAMB18_X2Y29,RAMB18_X1Y31	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+scope_engine_x9	RAMB18_X0Y10..Y13,RAMB18_X1Y8..Y9,RAMB18_X1Y14..Y15,DSP48_X0Y23,RAMB18_X0Y0..Y9,RAMB18_X1Y2..Y7,DSP48_X1Y8,DSP48_X1Y1	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+phase_lanes	RAMB18_X0Y38..Y39,RAMB18_X2Y32..Y39,RAMB18_X0Y50..Y59,RAMB18_X1Y54..Y59,DSP48_X1Y39,DSP48_X1Y42,DSP48_X1Y44,DSP48_X1Y47,DSP48_X1Y49,DSP48_X1Y53..Y54,DSP48_X1Y57..Y59	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+const_tables	RAMB18_X0Y42..Y47,DSP48_X1Y36,DSP48_X1Y40	1	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+dac_output	type:ODDR	3	1	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+u17_adc_serializer	SLICE_X6Y64/BFF,IOB_X0Y16	5	-	-	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146	-	no
+t9_status_mux	SLICE_X36Y56/ALUT,IOB_X0Y2	1	-	-	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186	-	no
+register_bank	SLICE_X9..X14Y63..Y70,SLICE_X10..X15Y85..Y89,SLICE_X39Y60/BLUT,SLICE_X41Y71	1	-	-	-	docs/code/sdr/netlist.md#52-register-link-uart-b-fact-unless-marked	-	no
+io_pads	type:IOB,type:ILOGIC_BYPASS,type:OLOGIC_BYPASS	-	-	-	-	docs/code/sdr/netlist.md#33-pin-map-by-bank	-	no

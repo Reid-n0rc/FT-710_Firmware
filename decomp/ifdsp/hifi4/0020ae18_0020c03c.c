@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0020ae18 @ 0020ae18 (189 bytes)
+// ===== DMA_SubmitTransfer @ 0020ae18 (189 bytes)
 
-undefined * FUN_0020ae18(int param_1,undefined4 *param_2)
+/* fsl_dma.c; called by the DMA drivers [inference] */
+
+undefined * DMA_SubmitTransfer(int param_1,undefined4 *param_2)
 
 {
   int iVar1;
@@ -31,7 +33,7 @@ undefined * FUN_0020ae18(int param_1,undefined4 *param_2)
     memw();
     pdVar2[uVar3 * 4 + 0x100] = pdVar2[uVar3 * 4 + 0x100] | 1;
   }
-  FUN_0020a94c(puVar4,param_2 + 3,*param_2,param_2[1],param_2[2]);
+  DMA_CreateDescriptor(puVar4,param_2 + 3,*param_2,param_2[1],param_2[2]);
   memw();
   memw();
   *(undefined4 *)(*(int *)(param_1 + 8) + (uint)*(byte *)(param_1 + 0xc) * 0x10 + 0x408) = *puVar4;
@@ -39,9 +41,11 @@ undefined * FUN_0020ae18(int param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_0020aed8 @ 0020aed8 (96 bytes)
+// ===== DMA_StartTransfer @ 0020aed8 (96 bytes)
 
-void FUN_0020aed8(int param_1)
+/* fsl_dma.c; 9 callers [inference] */
+
+void DMA_StartTransfer(int param_1)
 
 {
   byte bVar1;
@@ -134,9 +138,11 @@ void DMA_IRQHandle(dword *param_1)
 }
 
 
-// ===== FUN_0020b050 @ 0020b050 (11 bytes)
+// ===== DMA0_DriverIRQHandler @ 0020b050 (11 bytes)
 
-void FUN_0020b050(void)
+/* fsl_dma.c: DMA_IRQHandle(DMA0 0x40104000) [fact for the code] */
+
+void DMA0_DriverIRQHandler(void)
 
 {
   DMA_IRQHandle(&DMA0_CTRL);
@@ -144,9 +150,11 @@ void FUN_0020b050(void)
 }
 
 
-// ===== FUN_0020b05c @ 0020b05c (11 bytes)
+// ===== DMA1_DriverIRQHandler @ 0020b05c (11 bytes)
 
-void FUN_0020b05c(void)
+/* fsl_dma.c: DMA_IRQHandle(DMA1 0x40105000) [fact for the code] */
+
+void DMA1_DriverIRQHandler(void)
 
 {
   DMA_IRQHandle(&DMA1_CTRL);
@@ -154,25 +162,29 @@ void FUN_0020b05c(void)
 }
 
 
-// ===== FUN_0020b070 @ 0020b070 (19 bytes)
+// ===== DMIC_GetInstance @ 0020b070 (19 bytes)
 
-bool FUN_0020b070(dword *param_1)
+/* fsl_dmic.c: DMIC0 0x40121000 [inference] */
+
+bool DMIC_GetInstance(dword *param_1)
 
 {
   return param_1 != &DMIC0_CHANNEL0_OSR;
 }
 
 
-// ===== FUN_0020b084 @ 0020b084 (220 bytes)
+// ===== DMIC_Init @ 0020b084 (220 bytes)
 
-void FUN_0020b084(int param_1)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_Init(int param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   uVar2 = *(uint *)(&DAT_002001ac + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
@@ -199,7 +211,7 @@ void FUN_0020b084(int param_1)
     memw();
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  FUN_00213910(0x318);
+  RESET_PeripheralReset(0x318);
   memw();
   *(undefined4 *)(param_1 + 0x80) = 0;
   memw();
@@ -218,16 +230,18 @@ void FUN_0020b084(int param_1)
 }
 
 
-// ===== FUN_0020b164 @ 0020b164 (150 bytes)
+// ===== DMIC_DeInit @ 0020b164 (150 bytes)
 
-void FUN_0020b164(undefined4 param_1)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_DeInit(undefined4 param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   uVar2 = *(uint *)(&DAT_002001ac + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
@@ -264,9 +278,11 @@ void FUN_0020b164(undefined4 param_1)
 }
 
 
-// ===== FUN_0020b1fc @ 0020b1fc (80 bytes)
+// ===== DMIC_SetOperationMode @ 0020b1fc (80 bytes)
 
-void FUN_0020b1fc(int param_1,int param_2)
+/* fsl_dmic.c order (DMIC_ConfigIO excluded, FSL_FEATURE_DMIC_HAS_NO_IOCFG) [inference] */
+
+void DMIC_SetOperationMode(int param_1,int param_2)
 
 {
   if (param_2 == 1) {
@@ -290,9 +306,11 @@ void FUN_0020b1fc(int param_1,int param_2)
 }
 
 
-// ===== FUN_0020b24c @ 0020b24c (138 bytes)
+// ===== DMIC_ConfigChannel @ 0020b24c (138 bytes)
 
-void FUN_0020b24c(int param_1,int param_2,uint param_3,undefined4 *param_4)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_ConfigChannel(int param_1,int param_2,uint param_3,undefined4 *param_4)
 
 {
   byte bVar1;
@@ -327,9 +345,11 @@ void FUN_0020b24c(int param_1,int param_2,uint param_3,undefined4 *param_4)
 }
 
 
-// ===== FUN_0020b2d8 @ 0020b2d8 (44 bytes)
+// ===== DMIC_CfgChannelDc @ 0020b2d8 (44 bytes)
 
-void FUN_0020b2d8(int param_1,int param_2,uint param_3,uint param_4,uint param_5)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_CfgChannelDc(int param_1,int param_2,uint param_3,uint param_4,uint param_5)
 
 {
   memw();
@@ -339,9 +359,11 @@ void FUN_0020b2d8(int param_1,int param_2,uint param_3,uint param_4,uint param_5
 }
 
 
-// ===== FUN_0020b304 @ 0020b304 (13 bytes)
+// ===== DMIC_Use2fs @ 0020b304 (13 bytes)
 
-void FUN_0020b304(int param_1,undefined4 param_2)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_Use2fs(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -350,9 +372,11 @@ void FUN_0020b304(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_0020b314 @ 0020b314 (25 bytes)
+// ===== DMIC_EnableChannnel @ 0020b314 (25 bytes)
 
-void FUN_0020b314(int param_1,uint param_2)
+/* fsl_dmic.c order (SDK spelling); called by DMIC_TransferReceiveDMA [inference] */
+
+void DMIC_EnableChannnel(int param_1,uint param_2)
 
 {
   memw();
@@ -362,9 +386,11 @@ void FUN_0020b314(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020b330 @ 0020b330 (59 bytes)
+// ===== DMIC_FifoChannel @ 0020b330 (59 bytes)
 
-void FUN_0020b330(int param_1,int param_2,uint param_3,uint param_4,uint param_5)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_FifoChannel(int param_1,int param_2,uint param_3,uint param_4,uint param_5)
 
 {
   param_1 = param_1 + param_2 * 0x100;
@@ -377,9 +403,11 @@ void FUN_0020b330(int param_1,int param_2,uint param_3,uint param_4,uint param_5
 }
 
 
-// ===== FUN_0020b36c @ 0020b36c (109 bytes)
+// ===== DMIC_ResetChannelDecimator @ 0020b36c (109 bytes)
 
-void FUN_0020b36c(int param_1,uint param_2,int param_3)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_ResetChannelDecimator(int param_1,uint param_2,int param_3)
 
 {
   uint uVar1;
@@ -401,61 +429,71 @@ void FUN_0020b36c(int param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_0020b3dc @ 0020b3dc (18 bytes)
+// ===== DMIC_EnableIntCallback @ 0020b3dc (18 bytes)
 
-void FUN_0020b3dc(undefined4 param_1,undefined4 param_2)
+/* fsl_dmic.c: callback table 0x238578 [inference] */
+
+void DMIC_EnableIntCallback(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   (&DAT_00238578)[iVar1] = param_2;
   return;
 }
 
 
-// ===== FUN_0020b3f0 @ 0020b3f0 (21 bytes)
+// ===== DMIC_DisableIntCallback @ 0020b3f0 (21 bytes)
 
-void FUN_0020b3f0(undefined4 param_1)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_DisableIntCallback(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   (&DAT_00238578)[iVar1] = 0;
   return;
 }
 
 
-// ===== FUN_0020b408 @ 0020b408 (18 bytes)
+// ===== DMIC_HwvadEnableIntCallback @ 0020b408 (18 bytes)
 
-void FUN_0020b408(undefined4 param_1,undefined4 param_2)
+/* fsl_dmic.c: table 0x23857C [inference] */
+
+void DMIC_HwvadEnableIntCallback(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   (&DAT_0023857c)[iVar1] = param_2;
   return;
 }
 
 
-// ===== FUN_0020b41c @ 0020b41c (21 bytes)
+// ===== DMIC_HwvadDisableIntCallback @ 0020b41c (21 bytes)
 
-void FUN_0020b41c(undefined4 param_1)
+/* fsl_dmic.c order [inference] */
+
+void DMIC_HwvadDisableIntCallback(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b070(param_1);
+  iVar1 = DMIC_GetInstance(param_1);
   (&DAT_0023857c)[iVar1] = 0;
   return;
 }
 
 
-// ===== FUN_0020b434 @ 0020b434 (15 bytes)
+// ===== DMIC0_DriverIRQHandler @ 0020b434 (15 bytes)
 
-void FUN_0020b434(void)
+/* fsl_dmic.c [inference] */
+
+void DMIC0_DriverIRQHandler(void)
 
 {
   if (DAT_00238578 != (code *)0x0) {
@@ -465,9 +503,11 @@ void FUN_0020b434(void)
 }
 
 
-// ===== FUN_0020b444 @ 0020b444 (15 bytes)
+// ===== HWVAD0_DriverIRQHandler @ 0020b444 (15 bytes)
 
-void FUN_0020b444(void)
+/* fsl_dmic.c [inference] */
+
+void HWVAD0_DriverIRQHandler(void)
 
 {
   if (DAT_0023857c != (code *)0x0) {
@@ -477,9 +517,11 @@ void FUN_0020b444(void)
 }
 
 
-// ===== FUN_0020b460 @ 0020b460 (39 bytes)
+// ===== DMIC_TransferReceiveDMACallback @ 0020b460 (39 bytes)
 
-void FUN_0020b460(undefined4 param_1,undefined4 *param_2)
+/* fsl_dmic_dma.c static; passed as the callback by DMIC_TransferCreateHandleDMA [inference] */
+
+void DMIC_TransferReceiveDMACallback(undefined4 param_1,undefined4 *param_2)
 
 {
   if (param_2[6] == 0) {
@@ -493,9 +535,11 @@ void FUN_0020b460(undefined4 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_0020b488 @ 0020b488 (9 bytes)
+// ===== DMIC_InstallDMADescriptorMemory @ 0020b488 (9 bytes)
 
-void FUN_0020b488(int param_1,undefined4 param_2,undefined4 param_3)
+/* fsl_dmic_dma.c order [inference] */
+
+void DMIC_InstallDMADescriptorMemory(int param_1,undefined4 param_2,undefined4 param_3)
 
 {
   *(undefined4 *)(param_1 + 0x18) = param_2;
@@ -504,11 +548,13 @@ void FUN_0020b488(int param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0020b494 @ 0020b494 (46 bytes)
+// ===== DMIC_TransferCreateHandleDMA @ 0020b494 (46 bytes)
+
+/* fsl_dmic_dma.c order [inference] */
 
 undefined4
-FUN_0020b494(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5
-            )
+DMIC_TransferCreateHandleDMA
+          (undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5)
 
 {
   memset(param_2,0,0x20);
@@ -517,14 +563,16 @@ FUN_0020b494(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_
   *(undefined4 *)(param_2 + 4) = param_5;
   memw();
   *(undefined1 *)(param_2 + 0x14) = 0;
-  FUN_0020ab28(param_5,FUN_0020b460,param_2);
+  DMA_SetCallback(param_5,DMIC_TransferReceiveDMACallback,param_2);
   return 0;
 }
 
 
-// ===== FUN_0020b4c4 @ 0020b4c4 (642 bytes)
+// ===== DMIC_TransferReceiveDMA @ 0020b4c4 (642 bytes)
 
-undefined * FUN_0020b4c4(int param_1,int param_2,undefined4 *param_3,uint param_4)
+/* fsl_dmic_dma.c order [inference] */
+
+undefined * DMIC_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3,uint param_4)
 
 {
   bool bVar1;
@@ -599,9 +647,10 @@ undefined * FUN_0020b4c4(int param_1,int param_2,undefined4 *param_3,uint param_
       if (!bVar1) {
         uVar6 = 1;
       }
-      FUN_0020a78c(*(int *)(param_2 + 0x18) + iVar3,
-                   uVar9 | uVar10 * 0x10000 & 0x3ff0000 |
-                   uStack_30 | (uint)bVar1 << 4 | uVar5 | (uVar6 & 1) << 5,iStack_44,*puVar4,uVar7);
+      DMA_SetupDescriptor(*(int *)(param_2 + 0x18) + iVar3,
+                          uVar9 | uVar10 * 0x10000 & 0x3ff0000 |
+                          uStack_30 | (uint)bVar1 << 4 | uVar5 | (uVar6 & 1) << 5,iStack_44,*puVar4,
+                          uVar7);
       bVar1 = !bVar1;
       iVar8 = iStack_44;
       uVar6 = uStack_28;
@@ -653,18 +702,19 @@ LAB_0020b674:
 LAB_0020b720:
     uVar7 = (uVar7 - 1) * 0x4000 & (uint)&DAT_0000c000;
   }
-  FUN_0020ac54(auStack_60,iVar8,*param_3,
-               uVar7 | (uStack_3c / uVar5 - 1) * 0x10000 & 0x3ff0000 |
-               uVar6 | (uint)bVar1 << 4 | uVar9 | 0x20,1,0,*(undefined4 *)(param_2 + 0x18));
-  puVar2 = (undefined *)FUN_0020ad78(*(undefined4 *)(param_2 + 4),auStack_60);
+  DMA_PrepareChannelTransfer
+            (auStack_60,iVar8,*param_3,
+             uVar7 | (uStack_3c / uVar5 - 1) * 0x10000 & 0x3ff0000 |
+             uVar6 | (uint)bVar1 << 4 | uVar9 | 0x20,1,0,*(undefined4 *)(param_2 + 0x18));
+  puVar2 = (undefined *)DMA_SubmitChannelTransfer(*(undefined4 *)(param_2 + 4),auStack_60);
   iVar3 = iStack_40;
   if (puVar2 != &DAT_00001388) {
-    FUN_0020b314(&DMIC0_CHANNEL0_OSR,1 << 0x20 - (0x20 - (uStack_48 & 0x1f)));
+    DMIC_EnableChannnel(&DMIC0_CHANNEL0_OSR,1 << 0x20 - (0x20 - (uStack_48 & 0x1f)));
     memw();
     memw();
     *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar3) =
          *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar3) | 8;
-    FUN_0020aed8(*(undefined4 *)(param_2 + 4));
+    DMA_StartTransfer(*(undefined4 *)(param_2 + 4));
     memw();
     *(undefined1 *)(param_2 + 0x14) = 1;
     return (undefined *)0x0;
@@ -674,21 +724,25 @@ LAB_0020b710:
 }
 
 
-// ===== FUN_0020b74c @ 0020b74c (18 bytes)
+// ===== DMIC_TransferAbortReceiveDMA @ 0020b74c (18 bytes)
 
-void FUN_0020b74c(undefined4 param_1,int param_2)
+/* fsl_dmic_dma.c: DMA_AbortTransfer [inference] */
+
+void DMIC_TransferAbortReceiveDMA(undefined4 param_1,int param_2)
 
 {
-  FUN_0020aa20(*(undefined4 *)(param_2 + 4));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 4));
   memw();
   *(undefined1 *)(param_2 + 0x14) = 0;
   return;
 }
 
 
-// ===== FUN_0020b760 @ 0020b760 (41 bytes)
+// ===== DMIC_TransferGetReceiveCountDMA @ 0020b760 (41 bytes)
 
-undefined4 FUN_0020b760(undefined4 param_1,int param_2,int *param_3)
+/* fsl_dmic_dma.c: DMA_GetRemainingBytes [inference] */
+
+undefined4 DMIC_TransferGetReceiveCountDMA(undefined4 param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -697,25 +751,31 @@ undefined4 FUN_0020b760(undefined4 param_1,int param_2,int *param_3)
   if (*(char *)(param_2 + 0x14) == '\0') {
     return 6;
   }
-  iVar1 = FUN_0020a73c(*(undefined4 *)(*(int *)(param_2 + 4) + 8),
-                       *(undefined1 *)(*(int *)(param_2 + 4) + 0xc));
+  iVar1 = DMA_GetRemainingBytes
+                    (*(undefined4 *)(*(int *)(param_2 + 4) + 8),
+                     *(undefined1 *)(*(int *)(param_2 + 4) + 0xc));
   *param_3 = *(int *)(param_2 + 0x10) - iVar1;
   return 0;
 }
 
 
-// ===== FUN_0020b790 @ 0020b790 (30 bytes)
+// ===== FLEXCOMM_GetInstance @ 0020b790 (30 bytes)
 
-bool FUN_0020b790(dword *param_1)
+/* fsl_flexcomm.c: index of base in s_flexcommBaseAddrs 0x2001D0; 12 callers [inference] */
+
+bool FLEXCOMM_GetInstance(dword *param_1)
 
 {
   return param_1 != &USART0_CFG;
 }
 
 
-// ===== FUN_0020b7b0 @ 0020b7b0 (305 bytes)
+// ===== FLEXCOMM_Init @ 0020b7b0 (305 bytes)
 
-undefined4 FUN_0020b7b0(int param_1,uint param_2)
+/* fsl_flexcomm.c: clock enable, reset, PSELID; called by I2S_TxInit/RxInit, SPI_MasterInit,
+   I2C/USART init [inference] */
+
+undefined4 FLEXCOMM_Init(int param_1,uint param_2)
 
 {
   bool bVar1;
@@ -723,7 +783,7 @@ undefined4 FUN_0020b7b0(int param_1,uint param_2)
   uint uVar3;
   uint uVar4;
   
-  iVar2 = FUN_0020b790(param_1);
+  iVar2 = FLEXCOMM_GetInstance(param_1);
   uVar3 = *(uint *)(&DAT_00200200 + iVar2 * 4);
   uVar4 = uVar3 >> 8 & 0xff;
   if (uVar4 == 0) {
@@ -750,7 +810,7 @@ undefined4 FUN_0020b7b0(int param_1,uint param_2)
     memw();
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
-  FUN_00213910(*(undefined4 *)(&DAT_00200230 + iVar2 * 4));
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200230 + iVar2 * 4));
   if (param_2 != 0) {
     if (param_2 < 5) {
       memw();
@@ -786,163 +846,188 @@ undefined4 FUN_0020b7b0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020b8e4 @ 0020b8e4 (30 bytes)
+// ===== FLEXCOMM_SetIRQHandler @ 0020b8e4 (30 bytes)
 
-void FUN_0020b8e4(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* fsl_flexcomm.c: s_flexcommIrqHandler 0x238580; called by the TransferCreateHandle functions
+   [inference] */
+
+void FLEXCOMM_SetIRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(param_1);
+  iVar1 = FLEXCOMM_GetInstance(param_1);
   *(undefined4 *)(&DAT_00238580 + iVar1 * 4) = param_2;
   *(undefined4 *)(&DAT_002385b0 + iVar1 * 4) = param_3;
   return;
 }
 
 
-// ===== FUN_0020b904 @ 0020b904 (44 bytes)
+// ===== FLEXCOMM0_DriverIRQHandler @ 0020b904 (44 bytes)
 
-void FUN_0020b904(void)
+/* fsl_flexcomm.c (FLEXCOMM0 0x40106000, handler table 0x2385B0) [inference] */
+
+void FLEXCOMM0_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&USART0_CFG);
+  iVar1 = FLEXCOMM_GetInstance(&USART0_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020b930 @ 0020b930 (44 bytes)
+// ===== FLEXCOMM1_DriverIRQHandler @ 0020b930 (44 bytes)
 
-void FUN_0020b930(void)
+/* fsl_flexcomm.c (0x40107000) [inference] */
+
+void FLEXCOMM1_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&SPI1_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&SPI1_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020b95c @ 0020b95c (44 bytes)
+// ===== FLEXCOMM2_DriverIRQHandler @ 0020b95c (44 bytes)
 
-void FUN_0020b95c(void)
+/* fsl_flexcomm.c (0x40108000) [inference] */
+
+void FLEXCOMM2_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&I2S2_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&I2S2_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020b988 @ 0020b988 (44 bytes)
+// ===== FLEXCOMM3_DriverIRQHandler @ 0020b988 (44 bytes)
 
-void FUN_0020b988(void)
+/* fsl_flexcomm.c (0x40109000) [inference] */
+
+void FLEXCOMM3_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&I2S3_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&I2S3_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020b9b4 @ 0020b9b4 (44 bytes)
+// ===== FLEXCOMM4_DriverIRQHandler @ 0020b9b4 (44 bytes)
 
-void FUN_0020b9b4(void)
+/* fsl_flexcomm.c (0x40122000) [inference] */
+
+void FLEXCOMM4_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&I2S4_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&I2S4_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020b9e0 @ 0020b9e0 (44 bytes)
+// ===== FLEXCOMM5_DriverIRQHandler @ 0020b9e0 (44 bytes)
 
-void FUN_0020b9e0(void)
+/* fsl_flexcomm.c (0x40123000) [inference] */
+
+void FLEXCOMM5_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&I2S5_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&I2S5_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020ba0c @ 0020ba0c (44 bytes)
+// ===== FLEXCOMM6_DriverIRQHandler @ 0020ba0c (44 bytes)
 
-void FUN_0020ba0c(void)
+/* fsl_flexcomm.c (0x40124000) [inference] */
+
+void FLEXCOMM6_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&USART6_CFG);
+  iVar1 = FLEXCOMM_GetInstance(&USART6_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020ba38 @ 0020ba38 (44 bytes)
+// ===== FLEXCOMM7_DriverIRQHandler @ 0020ba38 (44 bytes)
 
-void FUN_0020ba38(void)
+/* fsl_flexcomm.c (0x40125000) [inference] */
+
+void FLEXCOMM7_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&USART7_CFG);
+  iVar1 = FLEXCOMM_GetInstance(&USART7_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020ba64 @ 0020ba64 (44 bytes)
+// ===== FLEXCOMM14_DriverIRQHandler @ 0020ba64 (44 bytes)
 
-void FUN_0020ba64(void)
+/* fsl_flexcomm.c (0x40126000, high-speed SPI) [inference] */
+
+void FLEXCOMM14_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&FLEXCOMM14_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&FLEXCOMM14_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020ba90 @ 0020ba90 (44 bytes)
+// ===== FLEXCOMM15_DriverIRQHandler @ 0020ba90 (44 bytes)
 
-void FUN_0020ba90(void)
+/* fsl_flexcomm.c (0x40127000, PMIC I2C) [inference] */
+
+void FLEXCOMM15_DriverIRQHandler(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_0020b790(&FLEXCOMM15_BASE);
+  iVar1 = FLEXCOMM_GetInstance(&FLEXCOMM15_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
   return;
 }
 
 
-// ===== FUN_0020bac0 @ 0020bac0 (18 bytes)
+// ===== FLEXSPI_EnableInterrupts @ 0020bac0 (18 bytes)
 
-void FUN_0020bac0(int param_1,uint param_2)
+/* fsl_flexspi.h inline emitted out of line: INTEN (+0x10) |= mask [fact for the code] */
+
+void FLEXSPI_EnableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -952,9 +1037,11 @@ void FUN_0020bac0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020bad4 @ 0020bad4 (23 bytes)
+// ===== FLEXSPI_DisableInterrupts @ 0020bad4 (23 bytes)
 
-void FUN_0020bad4(int param_1,uint param_2)
+/* fsl_flexspi.h inline: INTEN &= ~mask [fact for the code] */
+
+void FLEXSPI_DisableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -964,9 +1051,11 @@ void FUN_0020bad4(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020baec @ 0020baec (18 bytes)
+// ===== FLEXSPI_ClearInterruptStatusFlags @ 0020baec (18 bytes)
 
-void FUN_0020baec(int param_1,uint param_2)
+/* fsl_flexspi.h inline: INTR (+0x14) |= mask [fact for the code] */
+
+void FLEXSPI_ClearInterruptStatusFlags(int param_1,uint param_2)
 
 {
   memw();
@@ -976,18 +1065,22 @@ void FUN_0020baec(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020bb00 @ 0020bb00 (19 bytes)
+// ===== FLEXSPI_GetInstance @ 0020bb00 (19 bytes)
 
-bool FUN_0020bb00(dword *param_1)
+/* fsl_flexspi.c: FLEXSPI 0x40134000 [inference] */
+
+bool FLEXSPI_GetInstance(dword *param_1)
 
 {
   return param_1 != &FLEXSPI_MCR0;
 }
 
 
-// ===== FUN_0020bb14 @ 0020bb14 (96 bytes)
+// ===== FLEXSPI_CheckAndClearError @ 0020bb14 (96 bytes)
 
-undefined * FUN_0020bb14(int param_1,uint param_2)
+/* fsl_flexspi.c: kStatus_FLEXSPI_* 7001..7003 [inference] */
+
+undefined * FLEXSPI_CheckAndClearError(int param_1,uint param_2)
 
 {
   undefined *puVar1;
@@ -1009,7 +1102,7 @@ undefined * FUN_0020bb14(int param_1,uint param_2)
   else {
     puVar1 = &DAT_00001b59;
   }
-  FUN_0020baec(param_1,param_2 & 0x80a);
+  FLEXSPI_ClearInterruptStatusFlags(param_1,param_2 & 0x80a);
   memw();
   memw();
   *(uint *)(param_1 + 0xbc) = *(uint *)(param_1 + 0xbc) | 1;
@@ -1020,9 +1113,11 @@ undefined * FUN_0020bb14(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020bb74 @ 0020bb74 (755 bytes)
+// ===== FLEXSPI_Init @ 0020bb74 (755 bytes)
 
-void FUN_0020bb74(uint *param_1,uint *param_2)
+/* fsl_flexspi.c: s_flexspiClock 0x20028C [inference] */
+
+void FLEXSPI_Init(uint *param_1,uint *param_2)
 
 {
   byte bVar1;
@@ -1030,7 +1125,7 @@ void FUN_0020bb74(uint *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
-  iVar2 = FUN_0020bb00(param_1);
+  iVar2 = FLEXSPI_GetInstance(param_1);
   uVar3 = *(uint *)(&DAT_0020028c + iVar2 * 4);
   uVar4 = uVar3 >> 8 & 0xff;
   if (uVar4 == 0) {
@@ -1118,9 +1213,11 @@ void FUN_0020bb74(uint *param_1,uint *param_2)
 }
 
 
-// ===== FUN_0020be6c @ 0020be6c (196 bytes)
+// ===== FLEXSPI_GetDefaultConfig @ 0020be6c (196 bytes)
 
-void FUN_0020be6c(undefined4 *param_1)
+/* fsl_flexspi.c order [inference] */
+
+void FLEXSPI_GetDefaultConfig(undefined4 *param_1)
 
 {
   *(undefined1 *)param_1 = 0;
@@ -1163,9 +1260,11 @@ void FUN_0020be6c(undefined4 *param_1)
 }
 
 
-// ===== FUN_0020bf30 @ 0020bf30 (42 bytes)
+// ===== FLEXSPI_Deinit @ 0020bf30 (42 bytes)
 
-void FUN_0020bf30(uint *param_1)
+/* fsl_flexspi.c order [inference] */
+
+void FLEXSPI_Deinit(uint *param_1)
 
 {
   uint uVar1;
@@ -1183,9 +1282,11 @@ void FUN_0020bf30(uint *param_1)
 }
 
 
-// ===== FUN_0020bf5c @ 0020bf5c (221 bytes)
+// ===== FLEXSPI_UpdateDllValue @ 0020bf5c (221 bytes)
 
-void FUN_0020bf5c(uint *param_1,uint *param_2,uint param_3)
+/* fsl_flexspi.c; called by FLEXSPI_SetFlashConfig [inference] */
+
+void FLEXSPI_UpdateDllValue(uint *param_1,uint *param_2,uint param_3)
 
 {
   uint uVar1;
@@ -1239,9 +1340,11 @@ LAB_0020bf6d:
 }
 
 
-// ===== FUN_0020c03c @ 0020c03c (485 bytes)
+// ===== FLEXSPI_SetFlashConfig @ 0020c03c (485 bytes)
 
-void FUN_0020c03c(uint *param_1,int param_2,uint param_3)
+/* fsl_flexspi.c order [inference] */
+
+void FLEXSPI_SetFlashConfig(uint *param_1,int param_2,uint param_3)
 
 {
   uint uVar1;
@@ -1279,7 +1382,7 @@ LAB_0020c050:
   }
   memw();
   param_1[param_3 + 0x20] = uVar2;
-  FUN_0020bf5c(param_1,param_2,param_3);
+  FLEXSPI_UpdateDllValue(param_1,param_2,param_3);
   memw();
   memw();
   uVar2 = (uint)*(byte *)(param_2 + 0x22);

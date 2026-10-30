@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_0021413c @ 0021413c (271 bytes)
+// ===== SPI_SlaveInit @ 0021413c (271 bytes)
 
-int FUN_0021413c(int param_1,char *param_2)
+/* fsl_spi.c order [inference] */
+
+int SPI_SlaveInit(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -10,11 +12,11 @@ int FUN_0021413c(int param_1,char *param_2)
   if ((param_1 == 0) || (param_2 == (char *)0x0)) {
     return 4;
   }
-  iVar1 = FUN_0020b7b0(param_1,2);
+  iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
   }
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();
   *(uint *)(param_1 + 0x400) =
@@ -33,7 +35,7 @@ int FUN_0021413c(int param_1,char *param_2)
   *(uint *)(param_1 + 0xe08) =
        *(uint *)(param_1 + 0xe08) & 0xfff0f0ff |
        ((byte)param_2[0x18] & 0xf) << 8 | ((byte)param_2[0x19] & 0xf) << 0x10 | 3;
-  FUN_00213f30(param_1,0xff);
+  SPI_SetDummyData(param_1,0xff);
   if (*param_2 != '\0') {
     memw();
     memw();
@@ -47,9 +49,11 @@ int FUN_0021413c(int param_1,char *param_2)
 }
 
 
-// ===== FUN_00214250 @ 00214250 (61 bytes)
+// ===== SPI_Deinit @ 00214250 (61 bytes)
 
-void FUN_00214250(int param_1)
+/* fsl_spi.c order [inference] */
+
+void SPI_Deinit(int param_1)
 
 {
   memw();
@@ -64,9 +68,11 @@ void FUN_00214250(int param_1)
 }
 
 
-// ===== FUN_00214290 @ 00214290 (52 bytes)
+// ===== SPI_EnableTxDMA @ 00214290 (52 bytes)
 
-void FUN_00214290(int param_1,int param_2)
+/* fsl_spi.c: FIFOCFG bit 12 [inference] */
+
+void SPI_EnableTxDMA(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -82,9 +88,11 @@ void FUN_00214290(int param_1,int param_2)
 }
 
 
-// ===== FUN_002142c4 @ 002142c4 (52 bytes)
+// ===== SPI_EnableRxDMA @ 002142c4 (52 bytes)
 
-void FUN_002142c4(int param_1,int param_2)
+/* fsl_spi.c: FIFOCFG bit 13 [inference] */
+
+void SPI_EnableRxDMA(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -100,9 +108,11 @@ void FUN_002142c4(int param_1,int param_2)
 }
 
 
-// ===== FUN_002142f8 @ 002142f8 (99 bytes)
+// ===== SPI_MasterSetBaud @ 002142f8 (99 bytes)
 
-undefined * FUN_002142f8(int param_1,uint param_2,int param_3)
+/* fsl_spi.c: kStatus_SPI_BaudrateNotSupport 5603; called by SPI_MasterInit [inference] */
+
+undefined * SPI_MasterSetBaud(int param_1,uint param_2,int param_3)
 
 {
   uint uVar1;
@@ -125,14 +135,16 @@ undefined * FUN_002142f8(int param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_0021435c @ 0021435c (77 bytes)
+// ===== SPI_WriteData @ 0021435c (77 bytes)
 
-void FUN_0021435c(int param_1,uint param_2,uint param_3)
+/* fsl_spi.c order [inference] */
+
+void SPI_WriteData(int param_1,uint param_2,uint param_3)
 
 {
   int iVar1;
   
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   memw();
   *(uint *)(param_1 + 0xe20) =
        param_2 | param_3 & 0xf0f00000 |
@@ -142,22 +154,25 @@ void FUN_0021435c(int param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_002143ac @ 002143ac (130 bytes)
+// ===== SPI_MasterTransferCreateHandle @ 002143ac (130 bytes)
 
-undefined4 FUN_002143ac(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_spi.c order [inference] */
+
+undefined4
+SPI_MasterTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   undefined4 uVar2;
   
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   memset(param_2,0,0x30);
   memw();
   if ((*(uint *)(param_1 + 0x400) & 4) == 0) {
-    FUN_0020b8e4(param_1,FUN_00213f00,param_2);
+    FLEXCOMM_SetIRQHandler(param_1,SPI_SlaveTransferHandleIRQ,param_2);
   }
   else {
-    FUN_0020b8e4(param_1,FUN_0021487c,param_2);
+    FLEXCOMM_SetIRQHandler(param_1,SPI_MasterTransferHandleIRQ,param_2);
   }
   uVar2 = *(undefined4 *)(&DAT_00238f54 + iVar1 * 8);
   *(char *)(param_2 + 0x24) = (char)*(undefined4 *)(&DAT_00238f50 + iVar1 * 8);
@@ -173,9 +188,11 @@ undefined4 FUN_002143ac(int param_1,int param_2,undefined4 param_3,undefined4 pa
 }
 
 
-// ===== FUN_00214430 @ 00214430 (445 bytes)
+// ===== SPI_MasterTransferBlocking @ 00214430 (445 bytes)
 
-undefined4 FUN_00214430(int param_1,undefined4 *param_2)
+/* fsl_spi.c order [inference] */
+
+undefined4 SPI_MasterTransferBlocking(int param_1,undefined4 *param_2)
 
 {
   uint uVar1;
@@ -219,7 +236,7 @@ undefined4 FUN_00214430(int param_1,undefined4 *param_2)
   else {
     uVar11 = param_2[3];
   }
-  iVar2 = FUN_00213f10();
+  iVar2 = SPI_GetInstance();
   uVar5 = *(uint *)(&DAT_00238f50 + iVar2 * 8);
   if ((7 < uVar5) && ((param_2[3] & 1) != 0)) {
     return 4;
@@ -299,9 +316,11 @@ LAB_00214577:
 }
 
 
-// ===== FUN_002145f0 @ 002145f0 (186 bytes)
+// ===== SPI_MasterTransferNonBlocking @ 002145f0 (186 bytes)
 
-undefined * FUN_002145f0(int param_1,int *param_2,int *param_3)
+/* fsl_spi.c order [inference] */
+
+undefined * SPI_MasterTransferNonBlocking(int param_1,int *param_2,int *param_3)
 
 {
   int iVar1;
@@ -351,9 +370,11 @@ undefined * FUN_002145f0(int param_1,int *param_2,int *param_3)
 }
 
 
-// ===== FUN_002146ac @ 002146ac (166 bytes)
+// ===== SPI_MasterHalfDuplexTransferBlocking @ 002146ac (166 bytes)
 
-int FUN_002146ac(undefined4 param_1,undefined4 *param_2)
+/* fsl_spi.c: calls SPI_MasterTransferBlocking [inference] */
+
+int SPI_MasterHalfDuplexTransferBlocking(undefined4 param_1,undefined4 *param_2)
 
 {
   int iVar1;
@@ -378,7 +399,7 @@ int FUN_002146ac(undefined4 param_1,undefined4 *param_2)
   else {
     uStack_28 = param_2[4] & 0xffefffff;
   }
-  iVar1 = FUN_00214430(param_1,&local_30);
+  iVar1 = SPI_MasterTransferBlocking(param_1,&local_30);
   if (iVar1 != 0) {
     return iVar1;
   }
@@ -393,14 +414,17 @@ int FUN_002146ac(undefined4 param_1,undefined4 *param_2)
     uStack_2c = param_2[1];
   }
   uStack_28 = param_2[4];
-  iVar1 = FUN_00214430(param_1,&local_30);
+  iVar1 = SPI_MasterTransferBlocking(param_1,&local_30);
   return iVar1;
 }
 
 
-// ===== FUN_00214754 @ 00214754 (167 bytes)
+// ===== SPI_MasterHalfDuplexTransferNonBlocking @ 00214754 (167 bytes)
 
-int FUN_00214754(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
+/* fsl_spi.c: calls SPI_MasterTransferNonBlocking [inference] */
+
+int SPI_MasterHalfDuplexTransferNonBlocking
+              (undefined4 param_1,undefined4 param_2,undefined4 *param_3)
 
 {
   int iVar1;
@@ -425,7 +449,7 @@ int FUN_00214754(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
   else {
     uStack_28 = param_3[4] & 0xffefffff;
   }
-  iVar1 = FUN_00214430(param_1,&local_30);
+  iVar1 = SPI_MasterTransferBlocking(param_1,&local_30);
   if (iVar1 != 0) {
     return iVar1;
   }
@@ -440,14 +464,16 @@ int FUN_00214754(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
     uStack_2c = param_3[1];
   }
   uStack_28 = param_3[4];
-  iVar1 = FUN_002145f0(param_1,param_2,&local_30);
+  iVar1 = SPI_MasterTransferNonBlocking(param_1,param_2,&local_30);
   return iVar1;
 }
 
 
-// ===== FUN_00214804 @ 00214804 (49 bytes)
+// ===== SPI_MasterTransferGetCount @ 00214804 (49 bytes)
 
-undefined4 FUN_00214804(undefined4 param_1,int param_2,int *param_3)
+/* fsl_spi.c order [inference] */
+
+undefined4 SPI_MasterTransferGetCount(undefined4 param_1,int param_2,int *param_3)
 
 {
   if (param_3 == (int *)0x0) {
@@ -464,9 +490,11 @@ undefined4 FUN_00214804(undefined4 param_1,int param_2,int *param_3)
 }
 
 
-// ===== FUN_00214838 @ 00214838 (68 bytes)
+// ===== SPI_MasterTransferAbort @ 00214838 (68 bytes)
 
-void FUN_00214838(int param_1,int param_2)
+/* fsl_spi.c order [inference] */
+
+void SPI_MasterTransferAbort(int param_1,int param_2)
 
 {
   memw();
@@ -485,9 +513,12 @@ void FUN_00214838(int param_1,int param_2)
 }
 
 
-// ===== FUN_0021487c @ 0021487c (932 bytes)
+// ===== SPI_MasterTransferHandleIRQ @ 0021487c (932 bytes)
 
-void FUN_0021487c(int param_1,int *param_2)
+/* fsl_spi.c: installed by SPI_MasterTransferCreateHandle (literal 0x21487C) [fact for the pointer]
+    */
+
+void SPI_MasterTransferHandleIRQ(int param_1,int *param_2)
 
 {
   byte bVar1;
@@ -521,7 +552,7 @@ void FUN_0021487c(int param_1,int *param_2)
     }
   }
   else {
-    iVar5 = FUN_00213f10(param_1);
+    iVar5 = SPI_GetInstance(param_1);
     memw();
     uVar9 = *(uint *)(param_1 + 0xe00);
     uVar7 = ((uint)param_2[10] >> 0x14 & 1) << 0x14;
@@ -687,18 +718,21 @@ LAB_00214a8c:
 }
 
 
-// ===== FUN_00214c30 @ 00214c30 (89 bytes)
+// ===== SPI_MasterTransferCreateHandleDMA @ 00214c30 (89 bytes)
+
+/* fsl_spi_dma.c: DMA callbacks 0x2151B8 / 0x2151F0; called by the app SPI setup [inference] */
 
 undefined4
-FUN_00214c30(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
-            undefined4 param_6)
+SPI_MasterTransferCreateHandleDMA
+          (int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
+          undefined4 param_6)
 
 {
   int iVar1;
   int *piVar2;
   
   if ((param_1 != 0) && (param_2 != 0)) {
-    iVar1 = FUN_00213f10(param_1);
+    iVar1 = SPI_GetInstance(param_1);
     memset(param_2,0,0x20);
     *(undefined4 *)(param_2 + 0x10) = param_3;
     *(undefined4 *)(param_2 + 0x14) = param_4;
@@ -708,17 +742,19 @@ FUN_00214c30(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undef
     piVar2 = (int *)(&DAT_00238fa0 + iVar1 * 8);
     *piVar2 = param_1;
     *(int *)(&DAT_00238fa4 + iVar1 * 8) = param_2;
-    FUN_0020ab28(param_5,FUN_002151f0,piVar2);
-    FUN_0020ab28(*(undefined4 *)(param_2 + 8),FUN_002151b8,piVar2);
+    DMA_SetCallback(param_5,SPI_TxDMACallback,piVar2);
+    DMA_SetCallback(*(undefined4 *)(param_2 + 8),SPI_RxDMACallback,piVar2);
     return 0;
   }
   return 4;
 }
 
 
-// ===== FUN_00214c8c @ 00214c8c (1149 bytes)
+// ===== SPI_MasterTransferDMA @ 00214c8c (1149 bytes)
 
-undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
+/* fsl_spi_dma.c (SPI_SetupDummy inlined); called by the app [inference] */
+
+undefined * SPI_MasterTransferDMA(int param_1,undefined1 *param_2,int *param_3)
 
 {
   byte bVar1;
@@ -768,7 +804,7 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
   if (((param_2 == (undefined1 *)0x0) || (param_3 == (int *)0x0)) || (param_3[3] == 0)) {
     return (undefined *)0x4;
   }
-  iStack_34 = FUN_00213f10(param_1);
+  iStack_34 = SPI_GetInstance(param_1);
   if (*(int *)(param_2 + 0x18) == 1) {
     return &DAT_000015e0;
   }
@@ -780,29 +816,29 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
   *(uint *)(param_1 + 0xe04) = *(uint *)(param_1 + 0xe04) | 3;
   memcpy(auStack_70,&DAT_00200570,0x1c);
   iStack_38 = param_1 + 0xd14;
-  puVar5 = (uint *)FUN_00213f48(param_1);
+  puVar5 = (uint *)SPI_GetConfig(param_1);
   *(int *)(param_2 + 0x1c) = param_3[3];
   *(undefined4 *)(param_2 + 0x18) = 1;
-  FUN_002142c4(param_1,1);
+  SPI_EnableRxDMA(param_1,1);
   uVar8 = 2;
   if (*puVar5 < 8) {
     uVar8 = 1;
   }
   if (param_3[1] == 0) {
-    FUN_0020ab34(auStack_70,param_1 + 0xe30,&DAT_20060710,uVar8,param_3[3],3,0);
+    DMA_PrepareTransfer(auStack_70,param_1 + 0xe30,&DAT_20060710,uVar8,param_3[3],3,0);
   }
   else {
-    FUN_0020ab34(auStack_70,param_1 + 0xe30,param_3[1],uVar8,param_3[3],1,0);
+    DMA_PrepareTransfer(auStack_70,param_1 + 0xe30,param_3[1],uVar8,param_3[3],1,0);
   }
   uVar8 = 1;
-  FUN_0020ae18(*(undefined4 *)(param_2 + 8),auStack_70);
+  DMA_SubmitTransfer(*(undefined4 *)(param_2 + 8),auStack_70);
   memw();
   param_2[1] = 1;
-  FUN_0020aed8(*(undefined4 *)(param_2 + 8));
-  FUN_00214290(param_1,1);
+  DMA_StartTransfer(*(undefined4 *)(param_2 + 8));
+  SPI_EnableTxDMA(param_1,1);
   uVar14 = param_3[2];
   if (*param_3 == 0) {
-    iVar11 = FUN_00213f10(param_1);
+    iVar11 = SPI_GetInstance(param_1);
     memw();
     memw();
     uVar10 = param_3[2];
@@ -859,7 +895,7 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
         iVar13 = iStack_34 * 0x10;
         uStack_45 = 0;
         uStack_43 = 0;
-        FUN_0020a94c(&DAT_20060750 + iVar13,&uStack_48,puVar7,iStack_30,0);
+        DMA_CreateDescriptor(&DAT_20060750 + iVar13,&uStack_48,puVar7,iStack_30,0);
         uVar9 = 2;
         if (*puVar5 < 8) {
           uVar9 = uVar8;
@@ -870,10 +906,11 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
         else {
           iVar11 = param_3[3] + -2;
         }
-        FUN_0020ab34(auStack_70,puStack_3c + 1,iStack_30,uVar9,iVar11,3,&DAT_20060750 + iVar13);
+        DMA_PrepareTransfer(auStack_70,puStack_3c + 1,iStack_30,uVar9,iVar11,3,
+                            &DAT_20060750 + iVar13);
         uStack_60 = 0;
         uStack_5f = 0;
-        puVar6 = (undefined *)FUN_0020ae18(*(undefined4 *)(param_2 + 4),auStack_70);
+        puVar6 = (undefined *)DMA_SubmitTransfer(*(undefined4 *)(param_2 + 4),auStack_70);
         if (puVar6 != (undefined *)0x0) {
           return puVar6;
         }
@@ -884,8 +921,8 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
     if (*puVar5 < 8) {
       uVar9 = uVar8;
     }
-    FUN_0020ab34(auStack_70,&DAT_00238ff4 + iVar13,param_1 + 0xe20,uVar9,uVar10,3,0);
-    puVar6 = (undefined *)FUN_0020ae18(*(undefined4 *)(param_2 + 4),auStack_70);
+    DMA_PrepareTransfer(auStack_70,&DAT_00238ff4 + iVar13,param_1 + 0xe20,uVar9,uVar10,3,0);
+    puVar6 = (undefined *)DMA_SubmitTransfer(*(undefined4 *)(param_2 + 4),auStack_70);
     if (puVar6 != (undefined *)0x0) {
       return puVar6;
     }
@@ -937,7 +974,8 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
         uStack_4f = 0;
         iVar13 = iStack_34 * 0x10;
         iStack_30 = param_1 + 0xe20;
-        FUN_0020a94c(&DAT_20060750 + iVar13,&uStack_54,&DAT_20060720 + iStack_34 * 4,iStack_30,0);
+        DMA_CreateDescriptor
+                  (&DAT_20060750 + iVar13,&uStack_54,&DAT_20060720 + iStack_34 * 4,iStack_30,0);
         uVar9 = 2;
         if (*puVar5 < 8) {
           uVar9 = uVar8;
@@ -948,10 +986,10 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
         else {
           iVar11 = param_3[3] + -2;
         }
-        FUN_0020ab34(auStack_70,*param_3,iStack_30,uVar9,iVar11,2,&DAT_20060750 + iVar13);
+        DMA_PrepareTransfer(auStack_70,*param_3,iStack_30,uVar9,iVar11,2,&DAT_20060750 + iVar13);
         uStack_60 = 0;
         uStack_5f = 0;
-        puVar6 = (undefined *)FUN_0020ae18(*(undefined4 *)(param_2 + 4),auStack_70);
+        puVar6 = (undefined *)DMA_SubmitTransfer(*(undefined4 *)(param_2 + 4),auStack_70);
         if (puVar6 != (undefined *)0x0) {
           return puVar6;
         }
@@ -962,8 +1000,8 @@ undefined * FUN_00214c8c(int param_1,undefined1 *param_2,int *param_3)
     if (*puVar5 < 8) {
       uVar9 = uVar8;
     }
-    FUN_0020ab34(auStack_70,*param_3,param_1 + 0xe20,uVar9,uVar10,2,0);
-    FUN_0020ae18(*(undefined4 *)(param_2 + 4),auStack_70);
+    DMA_PrepareTransfer(auStack_70,*param_3,param_1 + 0xe20,uVar9,uVar10,2,0);
+    DMA_SubmitTransfer(*(undefined4 *)(param_2 + 4),auStack_70);
   }
 LAB_00214e94:
   memw();
@@ -987,14 +1025,16 @@ LAB_00214f17:
   }
   *(ushort *)(iStack_38 + 0x10e) = uVar3 | uVar4;
 LAB_00214f20:
-  FUN_0020aed8(*(undefined4 *)(param_2 + 4));
+  DMA_StartTransfer(*(undefined4 *)(param_2 + 4));
   return (undefined *)0x0;
 }
 
 
-// ===== FUN_0021510c @ 0021510c (168 bytes)
+// ===== SPI_MasterHalfDuplexTransferDMA @ 0021510c (168 bytes)
 
-int FUN_0021510c(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
+/* fsl_spi_dma.c order [inference] */
+
+int SPI_MasterHalfDuplexTransferDMA(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
 
 {
   int iVar1;
@@ -1019,7 +1059,7 @@ int FUN_0021510c(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
   else {
     uStack_28 = param_3[4] & 0xffefffff;
   }
-  iVar1 = FUN_00214430(param_1,&local_30);
+  iVar1 = SPI_MasterTransferBlocking(param_1,&local_30);
   if (iVar1 != 0) {
     return iVar1;
   }
@@ -1034,14 +1074,16 @@ int FUN_0021510c(undefined4 param_1,undefined4 param_2,undefined4 *param_3)
     uStack_2c = param_3[1];
   }
   uStack_28 = param_3[4];
-  iVar1 = FUN_00214c8c(param_1,param_2,&local_30);
+  iVar1 = SPI_MasterTransferDMA(param_1,param_2,&local_30);
   return iVar1;
 }
 
 
-// ===== FUN_002151b8 @ 002151b8 (55 bytes)
+// ===== SPI_RxDMACallback @ 002151b8 (55 bytes)
 
-void FUN_002151b8(undefined4 param_1,undefined4 *param_2)
+/* fsl_spi_dma.c static [inference] */
+
+void SPI_RxDMACallback(undefined4 param_1,undefined4 *param_2)
 
 {
   char *pcVar1;
@@ -1065,9 +1107,11 @@ void FUN_002151b8(undefined4 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_002151f0 @ 002151f0 (55 bytes)
+// ===== SPI_TxDMACallback @ 002151f0 (55 bytes)
 
-void FUN_002151f0(undefined4 param_1,undefined4 *param_2)
+/* fsl_spi_dma.c static [inference] */
+
+void SPI_TxDMACallback(undefined4 param_1,undefined4 *param_2)
 
 {
   char *pcVar1;
@@ -1091,13 +1135,15 @@ void FUN_002151f0(undefined4 param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_00215228 @ 00215228 (31 bytes)
+// ===== SPI_MasterTransferAbortDMA @ 00215228 (31 bytes)
 
-void FUN_00215228(undefined4 param_1,undefined1 *param_2)
+/* fsl_spi_dma.c: DMA_AbortTransfer [inference] */
+
+void SPI_MasterTransferAbortDMA(undefined4 param_1,undefined1 *param_2)
 
 {
-  FUN_0020aa20(*(undefined4 *)(param_2 + 4));
-  FUN_0020aa20(*(undefined4 *)(param_2 + 8));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 4));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 8));
   memw();
   *param_2 = 0;
   memw();
@@ -1107,9 +1153,11 @@ void FUN_00215228(undefined4 param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_00215248 @ 00215248 (47 bytes)
+// ===== SPI_MasterTransferGetCountDMA @ 00215248 (47 bytes)
 
-undefined4 FUN_00215248(undefined4 param_1,int param_2,int *param_3)
+/* fsl_spi_dma.c: DMA_GetRemainingBytes [inference] */
+
+undefined4 SPI_MasterTransferGetCountDMA(undefined4 param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -1121,16 +1169,19 @@ undefined4 FUN_00215248(undefined4 param_1,int param_2,int *param_3)
     *param_3 = 0;
     return 6;
   }
-  iVar1 = FUN_0020a73c(*(undefined4 *)(*(int *)(param_2 + 8) + 8),
-                       *(undefined1 *)(*(int *)(param_2 + 8) + 0xc));
+  iVar1 = DMA_GetRemainingBytes
+                    (*(undefined4 *)(*(int *)(param_2 + 8) + 8),
+                     *(undefined1 *)(*(int *)(param_2 + 8) + 0xc));
   *param_3 = *(int *)(param_2 + 0x1c) - iVar1;
   return 0;
 }
 
 
-// ===== FUN_00215280 @ 00215280 (152 bytes)
+// ===== TRNG_GetDefaultConfig @ 00215280 (152 bytes)
 
-undefined4 FUN_00215280(undefined1 *param_1)
+/* fsl_trng.c: default limits (3200, 2500, ...) [inference] */
+
+undefined4 TRNG_GetDefaultConfig(undefined1 *param_1)
 
 {
   if (param_1 != (undefined1 *)0x0) {
@@ -1167,9 +1218,11 @@ undefined4 FUN_00215280(undefined1 *param_1)
 }
 
 
-// ===== FUN_00215318 @ 00215318 (692 bytes)
+// ===== trng_ApplyUserConfig @ 00215318 (692 bytes)
 
-undefined4 FUN_00215318(int param_1,int param_2,undefined4 *param_3)
+/* fsl_trng.c static; called by TRNG_Init [inference] */
+
+undefined4 trng_ApplyUserConfig(int param_1,int param_2,undefined4 *param_3)
 
 {
   uint uVar1;
@@ -1311,7 +1364,7 @@ undefined4 FUN_00215318(int param_1,int param_2,undefined4 *param_3)
 }
 
 
-// ===== FUN_002155d0 @ 002155d0 (687 bytes)
+// ===== TRNG_Init @ 002155d0 (687 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00215857) */
 /* WARNING: Removing unreachable block (ram,0x00215614) */
@@ -1323,8 +1376,9 @@ undefined4 FUN_00215318(int param_1,int param_2,undefined4 *param_3)
 /* WARNING: Removing unreachable block (ram,0x00215869) */
 /* WARNING: Removing unreachable block (ram,0x00215835) */
 /* WARNING: Removing unreachable block (ram,0x00215823) */
+/* fsl_trng.c: TRNG 0x40138000 [inference] */
 
-int FUN_002155d0(dword *param_1,char *param_2)
+int TRNG_Init(dword *param_1,char *param_2)
 
 {
   byte bVar1;
@@ -1349,16 +1403,16 @@ int FUN_002155d0(dword *param_1,char *param_2)
     iVar2 = 0;
   }
   if (iVar2 == 0) {
-    iVar2 = FUN_00215318(param_1,1,param_2 + 0x18);
+    iVar2 = trng_ApplyUserConfig(param_1,1,param_2 + 0x18);
   }
-  if ((((((iVar2 == 0) && (iVar2 = FUN_00215318(param_1,2,param_2 + 0x20), iVar2 == 0)) &&
-        (iVar2 = FUN_00215318(param_1,3,param_2 + 0x28), iVar2 == 0)) &&
-       ((iVar2 = FUN_00215318(param_1,4,param_2 + 0x30), iVar2 == 0 &&
-        (iVar2 = FUN_00215318(param_1,5,param_2 + 0x38), iVar2 == 0)))) &&
-      ((iVar2 = FUN_00215318(param_1,6,param_2 + 0x40), iVar2 == 0 &&
-       ((iVar2 = FUN_00215318(param_1,7,param_2 + 0x48), iVar2 == 0 &&
-        (iVar2 = FUN_00215318(param_1,8,param_2 + 0x50), iVar2 == 0)))))) &&
-     (iVar2 = FUN_00215318(param_1,9,param_2 + 0x58), iVar2 == 0)) {
+  if ((((((iVar2 == 0) && (iVar2 = trng_ApplyUserConfig(param_1,2,param_2 + 0x20), iVar2 == 0)) &&
+        (iVar2 = trng_ApplyUserConfig(param_1,3,param_2 + 0x28), iVar2 == 0)) &&
+       ((iVar2 = trng_ApplyUserConfig(param_1,4,param_2 + 0x30), iVar2 == 0 &&
+        (iVar2 = trng_ApplyUserConfig(param_1,5,param_2 + 0x38), iVar2 == 0)))) &&
+      ((iVar2 = trng_ApplyUserConfig(param_1,6,param_2 + 0x40), iVar2 == 0 &&
+       ((iVar2 = trng_ApplyUserConfig(param_1,7,param_2 + 0x48), iVar2 == 0 &&
+        (iVar2 = trng_ApplyUserConfig(param_1,8,param_2 + 0x50), iVar2 == 0)))))) &&
+     (iVar2 = trng_ApplyUserConfig(param_1,9,param_2 + 0x58), iVar2 == 0)) {
     memw();
     memw();
     *param_1 = *param_1 & 0xffffef7f | (*(uint *)(param_2 + 4) & 1) << 7;
@@ -1401,7 +1455,7 @@ int FUN_002155d0(dword *param_1,char *param_2)
 }
 
 
-// ===== FUN_00215880 @ 00215880 (233 bytes)
+// ===== TRNG_Deinit @ 00215880 (233 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00215947) */
 /* WARNING: Removing unreachable block (ram,0x00215903) */
@@ -1413,8 +1467,9 @@ int FUN_002155d0(dword *param_1,char *param_2)
 /* WARNING: Removing unreachable block (ram,0x00215958) */
 /* WARNING: Removing unreachable block (ram,0x00215936) */
 /* WARNING: Removing unreachable block (ram,0x00215925) */
+/* fsl_trng.c order [inference] */
 
-void FUN_00215880(dword *param_1)
+void TRNG_Deinit(dword *param_1)
 
 {
   uint uVar1;
@@ -1442,11 +1497,12 @@ void FUN_00215880(dword *param_1)
 }
 
 
-// ===== FUN_0021596c @ 0021596c (351 bytes)
+// ===== TRNG_GetRandomData @ 0021596c (351 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* fsl_trng.c order [inference] */
 
-undefined4 FUN_0021596c(uint *param_1,undefined1 *param_2,uint param_3)
+undefined4 TRNG_GetRandomData(uint *param_1,undefined1 *param_2,uint param_3)
 
 {
   undefined1 uVar1;
@@ -1540,9 +1596,11 @@ LAB_00215a81:
 }
 
 
-// ===== FUN_00215ad0 @ 00215ad0 (16 bytes)
+// ===== USART_EnableInterrupts @ 00215ad0 (16 bytes)
 
-void FUN_00215ad0(int param_1,uint param_2)
+/* fsl_usart.h inline: FIFOINTENSET (+0xE10) = mask & 0xF [fact for the code] */
+
+void USART_EnableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -1551,9 +1609,11 @@ void FUN_00215ad0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00215ae0 @ 00215ae0 (16 bytes)
+// ===== USART_DisableInterrupts @ 00215ae0 (16 bytes)
 
-void FUN_00215ae0(int param_1,uint param_2)
+/* fsl_usart.h inline: FIFOINTENCLR (+0xE14) [fact for the code] */
+
+void USART_DisableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -1562,9 +1622,11 @@ void FUN_00215ae0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00215af0 @ 00215af0 (13 bytes)
+// ===== USART_GetEnabledInterrupts @ 00215af0 (13 bytes)
 
-undefined4 FUN_00215af0(int param_1)
+/* fsl_usart.h inline: FIFOINTENSET [fact for the code] */
+
+undefined4 USART_GetEnabledInterrupts(int param_1)
 
 {
   memw();
@@ -1572,18 +1634,22 @@ undefined4 FUN_00215af0(int param_1)
 }
 
 
-// ===== FUN_00215b00 @ 00215b00 (30 bytes)
+// ===== USART_GetInstance @ 00215b00 (30 bytes)
 
-bool FUN_00215b00(dword *param_1)
+/* fsl_usart.c: 8 bases at 0x2005B0 [inference] */
+
+bool USART_GetInstance(dword *param_1)
 
 {
   return param_1 != &USART0_CFG;
 }
 
 
-// ===== FUN_00215b20 @ 00215b20 (34 bytes)
+// ===== USART_TransferGetRxRingBufferLength @ 00215b20 (34 bytes)
 
-int FUN_00215b20(int param_1)
+/* fsl_usart.c order [inference] */
+
+int USART_TransferGetRxRingBufferLength(int param_1)
 
 {
   uint uVar1;
@@ -1600,9 +1666,11 @@ int FUN_00215b20(int param_1)
 }
 
 
-// ===== FUN_00215b44 @ 00215b44 (36 bytes)
+// ===== USART_TransferStartRingBuffer @ 00215b44 (36 bytes)
 
-void FUN_00215b44(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_usart.c order [inference] */
+
+void USART_TransferStartRingBuffer(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   *(undefined4 *)(param_2 + 0x18) = param_3;
@@ -1617,9 +1685,11 @@ void FUN_00215b44(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 }
 
 
-// ===== FUN_00215b68 @ 00215b68 (66 bytes)
+// ===== USART_TransferStopRingBuffer @ 00215b68 (66 bytes)
 
-void FUN_00215b68(int param_1,int param_2)
+/* fsl_usart.c order [inference] */
+
+void USART_TransferStopRingBuffer(int param_1,int param_2)
 
 {
   memw();
@@ -1644,9 +1714,11 @@ void FUN_00215b68(int param_1,int param_2)
 }
 
 
-// ===== FUN_00215bac @ 00215bac (449 bytes)
+// ===== USART_Init @ 00215bac (449 bytes)
 
-undefined * FUN_00215bac(uint *param_1,uint *param_2,int param_3)
+/* fsl_usart.c: FLEXCOMM_Init, USART_SetBaudRate [inference] */
+
+undefined * USART_Init(uint *param_1,uint *param_2,int param_3)
 
 {
   uint uVar1;
@@ -1656,7 +1728,7 @@ undefined * FUN_00215bac(uint *param_1,uint *param_2,int param_3)
   if (((param_1 == (uint *)0x0) || (param_2 == (uint *)0x0)) || (param_3 == 0)) {
     return (undefined *)0x4;
   }
-  puVar2 = (undefined *)FUN_0020b7b0(param_1,1);
+  puVar2 = (undefined *)FLEXCOMM_Init(param_1,1);
   if (puVar2 != (undefined *)0x0) {
     return puVar2;
   }
@@ -1697,7 +1769,7 @@ undefined * FUN_00215bac(uint *param_1,uint *param_2,int param_3)
              (param_2[1] & 3) << 4 | (param_2[2] & 1) << 6 | 1;
   uVar3 = *param_2;
   if ((byte)uVar1 == 0) {
-    puVar2 = (undefined *)FUN_00215dfc(param_1,uVar3,param_3);
+    puVar2 = (undefined *)USART_SetBaudRate(param_1,uVar3,param_3);
     if (puVar2 != (undefined *)0x0) {
       return puVar2;
     }
@@ -1722,9 +1794,11 @@ undefined * FUN_00215bac(uint *param_1,uint *param_2,int param_3)
 }
 
 
-// ===== FUN_00215d70 @ 00215d70 (77 bytes)
+// ===== USART_Deinit @ 00215d70 (77 bytes)
 
-void FUN_00215d70(uint *param_1)
+/* fsl_usart.c order [inference] */
+
+void USART_Deinit(uint *param_1)
 
 {
   uint uVar1;
@@ -1747,9 +1821,11 @@ void FUN_00215d70(uint *param_1)
 }
 
 
-// ===== FUN_00215dc0 @ 00215dc0 (60 bytes)
+// ===== USART_GetDefaultConfig @ 00215dc0 (60 bytes)
 
-void FUN_00215dc0(undefined4 *param_1)
+/* fsl_usart.c: 115200 baud [fact for the constant] */
+
+void USART_GetDefaultConfig(undefined4 *param_1)
 
 {
   memset(param_1,0,0x28);
@@ -1771,9 +1847,11 @@ void FUN_00215dc0(undefined4 *param_1)
 }
 
 
-// ===== FUN_00215dfc @ 00215dfc (213 bytes)
+// ===== USART_SetBaudRate @ 00215dfc (213 bytes)
 
-undefined * FUN_00215dfc(uint *param_1,uint param_2,uint param_3)
+/* fsl_usart.c: kStatus_USART_BaudrateNotSupport 5713 [inference] */
+
+undefined * USART_SetBaudRate(uint *param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -1826,9 +1904,11 @@ undefined * FUN_00215dfc(uint *param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_00215ed4 @ 00215ed4 (150 bytes)
+// ===== USART_Enable32kMode @ 00215ed4 (150 bytes)
 
-undefined * FUN_00215ed4(uint *param_1,uint param_2,int param_3,undefined4 param_4)
+/* fsl_usart.c: 9600 baud, calls USART_SetBaudRate [inference] */
+
+undefined * USART_Enable32kMode(uint *param_1,uint param_2,int param_3,undefined4 param_4)
 
 {
   undefined *puVar1;
@@ -1840,7 +1920,7 @@ undefined * FUN_00215ed4(uint *param_1,uint param_2,int param_3,undefined4 param
     memw();
     memw();
     *param_1 = *param_1 & 0xffffff7f;
-    puVar1 = (undefined *)FUN_00215dfc(param_1,param_2,param_4);
+    puVar1 = (undefined *)USART_SetBaudRate(param_1,param_2,param_4);
     if (puVar1 != (undefined *)0x0) {
       return puVar1;
     }
@@ -1864,9 +1944,11 @@ undefined * FUN_00215ed4(uint *param_1,uint param_2,int param_3,undefined4 param
 }
 
 
-// ===== FUN_00215f70 @ 00215f70 (67 bytes)
+// ===== USART_Enable9bitMode @ 00215f70 (67 bytes)
 
-void FUN_00215f70(uint *param_1,int param_2)
+/* fsl_usart.c order [inference] */
+
+void USART_Enable9bitMode(uint *param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -1885,9 +1967,11 @@ void FUN_00215f70(uint *param_1,int param_2)
 }
 
 
-// ===== FUN_00215fb4 @ 00215fb4 (19 bytes)
+// ===== USART_SendAddress @ 00215fb4 (19 bytes)
 
-void FUN_00215fb4(int param_1,uint param_2)
+/* fsl_usart.c order [inference] */
+
+void USART_SendAddress(int param_1,uint param_2)
 
 {
   memw();
@@ -1896,9 +1980,11 @@ void FUN_00215fb4(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00215fc8 @ 00215fc8 (103 bytes)
+// ===== USART_WriteBlocking @ 00215fc8 (103 bytes)
 
-undefined4 FUN_00215fc8(int param_1,byte *param_2,int param_3)
+/* fsl_usart.c order [inference] */
+
+undefined4 USART_WriteBlocking(int param_1,byte *param_2,int param_3)
 
 {
   uint uVar1;
@@ -1928,9 +2014,11 @@ undefined4 FUN_00215fc8(int param_1,byte *param_2,int param_3)
 }
 
 
-// ===== FUN_00216034 @ 00216034 (193 bytes)
+// ===== USART_ReadBlocking @ 00216034 (193 bytes)
 
-undefined * FUN_00216034(int param_1,undefined1 *param_2,int param_3)
+/* fsl_usart.c: kStatus_USART_* 5709..5712 [inference] */
+
+undefined * USART_ReadBlocking(int param_1,undefined1 *param_2,int param_3)
 
 {
   uint uVar1;
@@ -1985,13 +2073,15 @@ undefined * FUN_00216034(int param_1,undefined1 *param_2,int param_3)
 }
 
 
-// ===== FUN_002160f8 @ 002160f8 (107 bytes)
+// ===== USART_TransferCreateHandle @ 002160f8 (107 bytes)
 
-undefined4 FUN_002160f8(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* fsl_usart.c: IRQ handler 0x21640C [inference] */
+
+undefined4 USART_TransferCreateHandle(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   if ((param_1 != 0) && (param_2 != 0)) {
-    FUN_00215b00(param_1);
+    USART_GetInstance(param_1);
     memset(param_2,0,0x30);
     memw();
     *(undefined1 *)(param_2 + 0x2d) = 2;
@@ -2003,16 +2093,18 @@ undefined4 FUN_002160f8(int param_1,int param_2,undefined4 param_3,undefined4 pa
     *(byte *)(param_2 + 0x2f) = (byte)((uint)*(undefined4 *)(param_1 + 0xe08) >> 0x10) & 0xf;
     memw();
     *(byte *)(param_2 + 0x2e) = (byte)((uint)*(undefined4 *)(param_1 + 0xe08) >> 8) & 0xf;
-    FUN_0020b8e4(param_1,FUN_0021640c,param_2);
+    FLEXCOMM_SetIRQHandler(param_1,USART_TransferHandleIRQ,param_2);
     return 0;
   }
   return 4;
 }
 
 
-// ===== FUN_00216164 @ 00216164 (93 bytes)
+// ===== USART_TransferSendNonBlocking @ 00216164 (93 bytes)
 
-undefined * FUN_00216164(int param_1,int *param_2,int *param_3)
+/* fsl_usart.c: kStatus_USART_TxBusy 5700 [inference] */
+
+undefined * USART_TransferSendNonBlocking(int param_1,int *param_2,int *param_3)
 
 {
   uint uVar1;
@@ -2024,8 +2116,8 @@ undefined * FUN_00216164(int param_1,int *param_2,int *param_3)
     if ((char)param_2[0xb] == '\x01') {
       return &DAT_00001644;
     }
-    uVar1 = FUN_00215af0(param_1);
-    FUN_00215ae0(param_1,uVar1);
+    uVar1 = USART_GetEnabledInterrupts(param_1);
+    USART_DisableInterrupts(param_1,uVar1);
     memw();
     *param_2 = *param_3;
     iVar2 = param_3[1];
@@ -2034,19 +2126,21 @@ undefined * FUN_00216164(int param_1,int *param_2,int *param_3)
     param_2[1] = iVar2;
     memw();
     *(undefined1 *)(param_2 + 0xb) = 1;
-    FUN_00215ad0(param_1,uVar1 | 4);
+    USART_EnableInterrupts(param_1,uVar1 | 4);
     return (undefined *)0x0;
   }
   return (undefined *)0x4;
 }
 
 
-// ===== FUN_002161c4 @ 002161c4 (52 bytes)
+// ===== USART_TransferAbortSend @ 002161c4 (52 bytes)
 
-void FUN_002161c4(int param_1,int param_2)
+/* fsl_usart.c order [inference] */
+
+void USART_TransferAbortSend(int param_1,int param_2)
 
 {
-  FUN_00215ae0(param_1,4);
+  USART_DisableInterrupts(param_1,4);
   memw();
   memw();
   *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00010000;
@@ -2058,9 +2152,11 @@ void FUN_002161c4(int param_1,int param_2)
 }
 
 
-// ===== FUN_002161f8 @ 002161f8 (61 bytes)
+// ===== USART_TransferGetSendCount @ 002161f8 (61 bytes)
 
-undefined4 FUN_002161f8(int param_1,int param_2,int *param_3)
+/* fsl_usart.c order [inference] */
+
+undefined4 USART_TransferGetSendCount(int param_1,int param_2,int *param_3)
 
 {
   memw();
@@ -2075,9 +2171,11 @@ undefined4 FUN_002161f8(int param_1,int param_2,int *param_3)
 }
 
 
-// ===== FUN_00216238 @ 00216238 (341 bytes)
+// ===== USART_TransferReceiveNonBlocking @ 00216238 (341 bytes)
 
-undefined * FUN_00216238(uint *param_1,int param_2,int *param_3,int *param_4)
+/* fsl_usart.c order [inference] */
+
+undefined * USART_TransferReceiveNonBlocking(uint *param_1,int param_2,int *param_3,int *param_4)
 
 {
   undefined4 uVar1;
@@ -2101,8 +2199,8 @@ undefined * FUN_00216238(uint *param_1,int param_2,int *param_3,int *param_4)
         return &DAT_00001645;
       }
       if (*(int *)(param_2 + 0x18) == 0) {
-        uVar1 = FUN_00215af0(param_1);
-        FUN_00215ae0(param_1,uVar1);
+        uVar1 = USART_GetEnabledInterrupts(param_1);
+        USART_DisableInterrupts(param_1,uVar1);
         memw();
         *(int *)(param_2 + 0xc) = *param_3;
         memw();
@@ -2112,13 +2210,13 @@ undefined * FUN_00216238(uint *param_1,int param_2,int *param_3,int *param_4)
         *(undefined1 *)(param_2 + 0x2d) = 3;
         memw();
         param_1[900] = 8;
-        FUN_00215ad0(param_1,uVar1);
+        USART_EnableInterrupts(param_1,uVar1);
         iVar4 = 0;
       }
       else {
-        uVar1 = FUN_00215af0(param_1);
-        FUN_00215ae0(param_1,uVar1);
-        uVar2 = FUN_00215b20(param_2);
+        uVar1 = USART_GetEnabledInterrupts(param_1);
+        USART_DisableInterrupts(param_1,uVar1);
+        uVar2 = USART_TransferGetRxRingBufferLength(param_2);
         uVar6 = uVar2;
         if (uVar3 < uVar2) {
           uVar6 = uVar3;
@@ -2158,7 +2256,7 @@ undefined * FUN_00216238(uint *param_1,int param_2,int *param_3,int *param_4)
           memw();
           *(undefined1 *)(param_2 + 0x2d) = 3;
         }
-        FUN_00215ad0(param_1,uVar1);
+        USART_EnableInterrupts(param_1,uVar1);
         if ((uVar3 == 0) && (*(code **)(param_2 + 0x24) != (code *)0x0)) {
           (**(code **)(param_2 + 0x24))
                     (param_1,param_2,&DAT_00001647,*(undefined4 *)(param_2 + 0x28));
@@ -2175,9 +2273,11 @@ undefined * FUN_00216238(uint *param_1,int param_2,int *param_3,int *param_4)
 }
 
 
-// ===== FUN_00216394 @ 00216394 (76 bytes)
+// ===== USART_TransferAbortReceive @ 00216394 (76 bytes)
 
-void FUN_00216394(int param_1,int param_2)
+/* fsl_usart.c order [inference] */
+
+void USART_TransferAbortReceive(int param_1,int param_2)
 
 {
   if (*(int *)(param_2 + 0x18) != 0) {
@@ -2187,7 +2287,7 @@ void FUN_00216394(int param_1,int param_2)
     *(undefined1 *)(param_2 + 0x2d) = 2;
     return;
   }
-  FUN_00215ae0(param_1,8);
+  USART_DisableInterrupts(param_1,8);
   memw();
   memw();
   *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00020000;
@@ -2199,9 +2299,11 @@ void FUN_00216394(int param_1,int param_2)
 }
 
 
-// ===== FUN_002163e4 @ 002163e4 (37 bytes)
+// ===== USART_TransferGetReceiveCount @ 002163e4 (37 bytes)
 
-undefined4 FUN_002163e4(undefined4 param_1,int param_2,int *param_3)
+/* fsl_usart.c order [inference] */
+
+undefined4 USART_TransferGetReceiveCount(undefined4 param_1,int param_2,int *param_3)
 
 {
   memw();
@@ -2214,9 +2316,12 @@ undefined4 FUN_002163e4(undefined4 param_1,int param_2,int *param_3)
 }
 
 
-// ===== FUN_0021640c @ 0021640c (729 bytes)
+// ===== USART_TransferHandleIRQ @ 0021640c (729 bytes)
 
-void FUN_0021640c(int param_1,int *param_2)
+/* fsl_usart.c; USART_TransferSendDMACallback (fsl_usart_dma.c, 0x2166F0) follows inside this
+   listing entry [inference] */
+
+void USART_TransferHandleIRQ(int param_1,int *param_2)
 
 {
   bool bVar1;
@@ -2261,11 +2366,11 @@ LAB_00216503:
           memw();
           if (param_2[4] == 0) {
             if (param_2[6] != 0) {
-              iVar3 = FUN_00215b20(param_2);
+              iVar3 = USART_TransferGetRxRingBufferLength(param_2);
               if ((iVar3 == param_2[7] + -1) && ((code *)param_2[9] != (code *)0x0)) {
                 (*(code *)param_2[9])(param_1,param_2,&DAT_0000164c,param_2[10]);
               }
-              iVar3 = FUN_00215b20(param_2);
+              iVar3 = USART_TransferGetRxRingBufferLength(param_2);
               if (iVar3 == param_2[7] + -1) {
                 memw();
                 sVar2 = 0;

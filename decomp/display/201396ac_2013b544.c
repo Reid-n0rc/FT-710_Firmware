@@ -81,7 +81,7 @@ void FUN_201396b0(int param_1,int param_2)
      (*(int *)(&DAT_2090bb28 + iVar1) = *(int *)(&DAT_2090bb28 + iVar1) + 1, (uVar4 & 0x1000) != 0))
   {
     uVar6 = uVar6 | 1;
-    FUN_2013b2f8(param_1,0);
+    usbh_pipe_mark_done(param_1,0);
     FUN_20139658(param_1,0);
   }
   if ((uVar3 & 0x20) != 0) {
@@ -121,7 +121,7 @@ undefined4 FUN_201398a0(int param_1,uint param_2)
   do {
     uVar5 = (&DAT_2042019c)[iVar4 * 7];
     if ((param_2 & uVar5) != 0) {
-      uVar1 = FUN_2013b524();
+      uVar1 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[iVar4 * 7]) =
            *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[iVar4 * 7]) & 0xf7ff;
       *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a8)[iVar4 * 7]) =
@@ -190,7 +190,7 @@ LAB_20139a10:
       uVar8 = uVar8 >> 1;
     } while (iVar7 < 10);
     if (!bVar2) {
-      uVar4 = FUN_2013b524();
+      uVar4 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x200;
       itron_unl_cpu(uVar4);
       return 0;
@@ -316,7 +316,7 @@ undefined4 FUN_20139c68(int param_1)
       uVar6 = uVar6 >> 1;
     } while (iVar5 < 10);
   } while (bVar2);
-  uVar4 = FUN_2013b524();
+  uVar4 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x400;
   itron_unl_cpu(uVar4);
   return 0;
@@ -374,7 +374,7 @@ void FUN_20139d78(int param_1)
           if ((((&DAT_204201a0)[iVar3 * 7] & local_c) != 0) &&
              ((*(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) & 0x1000)
               != 0)) {
-            uVar2 = FUN_2013b524();
+            uVar2 = usbh_loc_cpu();
             *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) =
                  *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) &
                  0xefff;
@@ -383,7 +383,7 @@ void FUN_20139d78(int param_1)
                  0xffef;
             itron_unl_cpu(uVar2);
             itron_dly_tsk(10);
-            uVar2 = FUN_2013b524();
+            uVar2 = usbh_loc_cpu();
             *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) =
                  *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[iVar3 * 7]) | 0x800
             ;
@@ -666,7 +666,7 @@ undefined4 FUN_2013a394(int param_1)
       uVar6 = uVar6 >> 1;
     } while (iVar5 < 10);
   } while (bVar2);
-  uVar3 = FUN_2013b524();
+  uVar3 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x100;
   itron_unl_cpu(uVar3);
   return 0;
@@ -728,13 +728,13 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) & 0xffbf | 0x10;
   itron_dly_tsk(2);
-  uVar2 = FUN_2014e1ec();
+  uVar2 = fs_get_tick();
   uVar3 = uVar2;
   do {
     while( true ) {
-      iVar4 = FUN_2014e1ec(uVar3);
+      iVar4 = fs_get_tick(uVar3);
       if (9 < iVar4 - uVar2) {
-        FUN_2013b524();
+        usbh_loc_cpu();
         *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) =
              *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) & 0xffef;
         *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) =
@@ -758,7 +758,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   } while (uVar5 != 3);
   uVar7 = 0;
 LAB_2013a5c8:
-  FUN_2013b524();
+  usbh_loc_cpu();
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) & 0xefff;
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[param_2 * 7]) =
@@ -997,7 +997,7 @@ undefined4 FUN_2013a9e8(int param_1)
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_2013b524();
+  uVar1 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x36) = *(ushort *)(*(int *)(param_1 + 8) + 0x36) | 0x3ff;
   *(ushort *)(*(int *)(param_1 + 8) + 0x38) = *(ushort *)(*(int *)(param_1 + 8) + 0x38) | 0x3ff;
   *(ushort *)(*(int *)(param_1 + 8) + 0x3a) = *(ushort *)(*(int *)(param_1 + 8) + 0x3a) | 0x3ff;
@@ -1332,19 +1332,19 @@ LAB_2013b058:
         *(byte *)(iVar7 + 0x17) = (byte)((param_2 << 0x14) >> 0x1c);
         *(char *)(iVar7 + 0x18) = (char)uVar9;
         *(undefined4 *)(iVar7 + 0x10) = 8;
-        iVar10 = FUN_2013b35c(iVar7,local_130,8);
+        iVar10 = usbh_get_device_descriptor(iVar7,local_130,8);
         if (iVar10 < 0) {
 LAB_2013b114:
           *(undefined4 *)(iVar7 + 0xc) = uVar4;
         }
         else {
           *(uint *)(iVar7 + 0x10) = (uint)local_129;
-          iVar10 = FUN_2013b3f4(iVar7,uVar4);
+          iVar10 = usbh_set_address(iVar7,uVar4);
           if (iVar10 < 0) goto LAB_2013b114;
           *(undefined4 *)(iVar7 + 0xc) = uVar4;
           itron_dly_tsk(10);
           iVar10 = 0;
-          while (iVar5 = FUN_2013b35c(iVar7,local_130,0x12), iVar5 < 0) {
+          while (iVar5 = usbh_get_device_descriptor(iVar7,local_130,0x12), iVar5 < 0) {
             iVar10 = iVar10 + 1;
             if (3 < iVar10) goto LAB_2013b058;
           }
@@ -1356,7 +1356,7 @@ LAB_2013b114:
           *(ushort *)(iVar7 + 0x20) = (ushort)local_126 + (ushort)local_125 * 0x100;
           *(ushort *)(iVar7 + 0x22) = (ushort)local_124 + (ushort)local_123 * 0x100;
           do {
-            iVar5 = FUN_2013b3a8(iVar7,local_130,0xff);
+            iVar5 = usbh_get_config_descriptor(iVar7,local_130,0xff);
             if (-1 < iVar5) {
               iVar8 = (uint)local_12e + (uint)local_12d * 0x100;
               do {
@@ -1447,9 +1447,11 @@ undefined4 FUN_2013b2b4(int param_1)
 }
 
 
-// ===== FUN_2013b2f8 @ 2013b2f8 (84 bytes)
+// ===== usbh_pipe_mark_done @ 2013b2f8 (84 bytes)
 
-void FUN_2013b2f8(int param_1,int param_2)
+/* Sets +0x30 = 1 in the pipe slot (0x2091C220, 0x34 each) whose +0x2C matches [fact] */
+
+void usbh_pipe_mark_done(int param_1,int param_2)
 
 {
   int iVar1;
@@ -1476,9 +1478,11 @@ void FUN_2013b34c(void)
 }
 
 
-// ===== FUN_2013b35c @ 2013b35c (76 bytes)
+// ===== usbh_get_device_descriptor @ 2013b35c (76 bytes)
 
-void FUN_2013b35c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* SETUP 0x80, 6 (GET_DESCRIPTOR), wValue 0x0100 (device), length n [fact] */
+
+void usbh_get_device_descriptor(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined1 local_10;
@@ -1492,14 +1496,16 @@ void FUN_2013b35c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   local_e = 0x100;
   local_c = 0;
   local_a = (undefined2)param_3;
-  FUN_20138f00(0,param_1,&local_10,param_2,param_3);
+  usbh_control_req(0,param_1,&local_10,param_2,param_3);
   return;
 }
 
 
-// ===== FUN_2013b3a8 @ 2013b3a8 (76 bytes)
+// ===== usbh_get_config_descriptor @ 2013b3a8 (76 bytes)
 
-void FUN_2013b3a8(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* SETUP 0x80, 6, wValue 0x0200 (configuration) [fact] */
+
+void usbh_get_config_descriptor(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined1 local_10;
@@ -1513,14 +1519,16 @@ void FUN_2013b3a8(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   local_e = 0x200;
   local_c = 0;
   local_a = (undefined2)param_3;
-  FUN_20138f00(0,param_1,&local_10,param_2,param_3);
+  usbh_control_req(0,param_1,&local_10,param_2,param_3);
   return;
 }
 
 
-// ===== FUN_2013b3f4 @ 2013b3f4 (72 bytes)
+// ===== usbh_set_address @ 2013b3f4 (72 bytes)
 
-void FUN_2013b3f4(undefined4 param_1,undefined2 param_2)
+/* SETUP 0x00, 5 (SET_ADDRESS), wValue = address [fact] */
+
+void usbh_set_address(undefined4 param_1,undefined2 param_2)
 
 {
   undefined1 local_10;
@@ -1534,14 +1542,16 @@ void FUN_2013b3f4(undefined4 param_1,undefined2 param_2)
   local_c = 0;
   local_a = 0;
   local_e = param_2;
-  FUN_20138f00(0,param_1,&local_10,0,0);
+  usbh_control_req(0,param_1,&local_10,0,0);
   return;
 }
 
 
-// ===== FUN_2013b43c @ 2013b43c (72 bytes)
+// ===== usbh_set_configuration @ 2013b43c (72 bytes)
 
-void FUN_2013b43c(undefined4 param_1,undefined2 param_2)
+/* SETUP 0x00, 9 (SET_CONFIGURATION), wValue = configuration [fact] */
+
+void usbh_set_configuration(undefined4 param_1,undefined2 param_2)
 
 {
   undefined1 local_10;
@@ -1555,14 +1565,17 @@ void FUN_2013b43c(undefined4 param_1,undefined2 param_2)
   local_c = 0;
   local_a = 0;
   local_e = param_2;
-  FUN_20138f00(0,param_1,&local_10,0,0);
+  usbh_control_req(0,param_1,&local_10,0,0);
   return;
 }
 
 
-// ===== FUN_2013b484 @ 2013b484 (72 bytes)
+// ===== usbh_get_hub_descriptor @ 2013b484 (72 bytes)
 
-void FUN_2013b484(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* SETUP 0xA0 (class, device), 6 (GET_DESCRIPTOR) [fact for the packet; hub class by the request
+   type] */
+
+void usbh_get_hub_descriptor(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined1 local_10;
@@ -1576,7 +1589,7 @@ void FUN_2013b484(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   local_c = 0;
   local_e = 0;
   local_a = (undefined2)param_3;
-  FUN_20138f00(0,param_1,&local_10,param_2,param_3);
+  usbh_control_req(0,param_1,&local_10,param_2,param_3);
   return;
 }
 
@@ -1596,9 +1609,11 @@ void FUN_2013b4cc(void)
 }
 
 
-// ===== FUN_2013b524 @ 2013b524 (16 bytes)
+// ===== usbh_loc_cpu @ 2013b524 (16 bytes)
 
-undefined4 FUN_2013b524(void)
+/* itron_loc_cpu, returns 0 (critical section of the USB host stack) [fact] */
+
+undefined4 usbh_loc_cpu(void)
 
 {
   itron_loc_cpu();

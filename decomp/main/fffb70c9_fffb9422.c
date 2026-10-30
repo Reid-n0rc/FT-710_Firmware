@@ -1888,7 +1888,7 @@ void speaker_route(void)
         bVar3 = PORTA_PODR;
         PORTA_PODR = bVar3 & 0xbf;
         g_ui.spk_boost_level = 0xff;
-        g_ui.f_0x02e_u8 = 0;
+        g_ui.spk_route_both = 0;
         if (g_ui.transmitting == 1) {
           g_ui.dsp_route_word = 0x2222;
           return;
@@ -1906,7 +1906,7 @@ void speaker_route(void)
         bVar3 = PORTA_PODR;
         PORTA_PODR = bVar3 & 0xbf;
         g_ui.spk_boost_level = 0xff;
-        g_ui.f_0x02e_u8 = 0;
+        g_ui.spk_route_both = 0;
         if (g_ui.transmitting == 1) {
           g_ui.dsp_route_word = 0x2222;
           return;
@@ -1924,7 +1924,7 @@ void speaker_route(void)
         bVar3 = PORTA_PODR;
         PORTA_PODR = bVar3 | 0x40;
         g_ui.spk_boost_level = FUN_fffb34f9(cVar1 * '\x05');
-        g_ui.f_0x02e_u8 = 1;
+        g_ui.spk_route_both = 1;
         if (g_ui.transmitting == 1) {
           g_ui.dsp_route_word = 0x2222;
           return;
@@ -1942,7 +1942,7 @@ void speaker_route(void)
         bVar3 = PORTA_PODR;
         PORTA_PODR = bVar3 & 0xbf;
         g_ui.spk_boost_level = 0;
-        g_ui.f_0x02e_u8 = 0;
+        g_ui.spk_route_both = 0;
         if (g_ui.transmitting == 1) {
           g_ui.dsp_route_word = 0x2222;
           return;
@@ -1957,7 +1957,7 @@ void speaker_route(void)
       bVar3 = PORT8_PODR;
       PORT8_PODR = bVar3 & 0xfe;
       g_ui.spk_boost_level = 0;
-      g_ui.f_0x02e_u8 = 0;
+      g_ui.spk_route_both = 0;
       if (g_ui.transmitting == 1) {
         g_ui.dsp_route_word = 0x2222;
         return;
@@ -1980,7 +1980,7 @@ void FUN_fffb8d77(void)
   byte bVar3;
   byte bVar4;
   byte bVar5;
-  byte bVar6;
+  vfo_side vVar6;
   radio_mode rVar7;
   bool bVar8;
   byte bVar9;
@@ -1988,11 +1988,11 @@ void FUN_fffb8d77(void)
   byte local_a;
   byte local_9;
   byte bStack_7;
-  byte bStack_6;
+  vfo_state vStack_6;
   byte local_5;
   
   uVar1 = g_ui.freq_tx;
-  bVar6 = g_opstate.active_vfo;
+  vVar6 = g_opstate.active_vfo;
   bVar5 = g_opstate.ex040304_vmi_color_clar;
   bVar4 = g_opstate.ex040303_vmi_color_memory;
   bVar3 = g_opstate.ex040302_vmi_color_vfo_b;
@@ -2027,12 +2027,12 @@ void FUN_fffb8d77(void)
         g_ui.tx_lamp = 2;
       }
     }
-    if (bVar6 == 0) {
-      bStack_6 = g_opstate.vfo_state_a;
+    if (vVar6 == VFO_A) {
+      vStack_6 = g_opstate.vfo_state_a;
       bStack_7 = g_ui.clar_flags_a;
     }
     else {
-      bStack_6 = g_opstate.vfo_state_b;
+      vStack_6 = g_opstate.vfo_state_b;
       bStack_7 = g_ui.clar_flags_b;
     }
     if (bVar2 == 2) {
@@ -2073,12 +2073,12 @@ void FUN_fffb8d77(void)
     }
     if (g_opstate.split_on == 0) {
       if (bStack_7 == 0) {
-        uVar1 = (uint)bStack_6;
+        uVar1 = (uint)vStack_6;
         if ((uVar1 - 7 < 2) || (uVar1 - 2 < 3)) {
           local_5 = local_5 | local_b;
         }
         else if ((uVar1 == 5) || (uVar1 == 1)) {
-          if (bVar6 == 0) {
+          if (vVar6 == VFO_A) {
             local_5 = local_5 | local_9;
           }
           else {

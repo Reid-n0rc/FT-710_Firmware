@@ -1,12 +1,20 @@
-// Apply the state-block structures of a C header (T23c) to the current program. Run after ApplySignatures.java.
-// Headless usage (from the repo root):
-//   tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis \
-//     -scriptPath tools/ghidra -postScript ApplyStructs.java tools/ghidra/structs_main.h
+// Apply the state-block structures of a C header (T23c) to the current program. Run after ApplySignatures.java and
+// ApplyEnums.java (the fields can use its enums). Headless usage (from the repo root):
+//   tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+//     -postScript ApplyEnums.java tools/ghidra/enums_main.h tools/ghidra/enum_uses_main.tsv \
+//     -postScript ApplyStructs.java tools/ghidra/structs_main.h
 // The header format is described at the top of tools/ghidra/structs_main.h. In short, line by line:
 //   struct NAME {  /* size 0xNN: ... */           opens a structure of that size, `};` closes it
 //       TYPE name[N]..;  /* +0xOFF ... */          a field at that offset (the comment becomes the field comment)
+//       TYPE name : N;  /* +0xOFF.B ... */         a bitfield of N bits at bit B (0 = LSB) of the TYPE-sized unit at +0xOFF
 //   TYPE name[N]..;  /* @0xADDR ... */             a typed global at that address (label `name` unless PTR_/DAT_)
 //   TYPE *func(...);  /* @0xADDR return ... */     sets the return type of the function at that address
+// TYPE is a C integer type, `struct NAME` (declared earlier in the header) or `enum NAME`, an enum that ApplyEnums.java
+// (enums_main.h) has already created under /FT710; its size is the enum's @size. A missing enum is an error.
+//   TYPE func(T a, struct S *b, ...);  /* @0xADDR params ... */   sets the type (and name) of every `struct S *name`
+//                                                  parameter at its position; other parameters stay as they are. A
+//                                                  function with fewer committed parameters than the line gets the
+//                                                  line's whole prototype (return type and every parameter)
 // The structures go to the program's data type manager under /FT710 (replacing an older version of the same name);
 // globals replace the data they cover (normally undefined; anything else is reported), so the script is idempotent.
 // Labels are added with source IMPORTED and do not replace a USER_DEFINED label (names_main.tsv keeps priority).
@@ -25,13 +33,20 @@ import java.util.regex.Pattern;
 
 public class ApplyStructs extends GhidraScript {
     static final CategoryPath CAT = new CategoryPath("/FT710");
+    static final String TYPE = "((?:struct|enum) \\w+|\\w+)";
     static final Pattern OPEN = Pattern.compile("^struct (\\w+) \\{\\s*/\\*\\s*size 0x([0-9A-Fa-f]+)");
     static final Pattern FIELD = Pattern.compile(
-            "^\\s+(struct \\w+|\\w+)\\s*(\\*?)\\s*(\\w+)((?:\\[\\d+\\])*);\\s*/\\*\\s*\\+0x([0-9A-Fa-f]+)\\s*(.*?)\\s*\\*/\\s*$");
+            "^\\s+" + TYPE + "\\s*(\\*?)\\s*(\\w+)((?:\\[\\d+\\])*);\\s*/\\*\\s*\\+0x([0-9A-Fa-f]+)\\s*(.*?)\\s*\\*/\\s*$");
+    static final Pattern BITFIELD = Pattern.compile(
+            "^\\s+" + TYPE + "\\s+(\\w+)\\s*:\\s*(\\d+);\\s*/\\*\\s*\\+0x([0-9A-Fa-f]+)\\.(\\d+)\\s*(.*?)\\s*\\*/\\s*$");
     static final Pattern GLOBAL = Pattern.compile(
-            "^(struct \\w+|\\w+)\\s*(\\*?)\\s*(\\w+)((?:\\[\\d+\\])*);\\s*/\\*\\s*@0x([0-9A-Fa-f]+)\\s*(.*?)\\s*\\*/\\s*$");
+            "^" + TYPE + "\\s*(\\*?)\\s*(\\w+)((?:\\[\\d+\\])*);\\s*/\\*\\s*@0x([0-9A-Fa-f]+)\\s*(.*?)\\s*\\*/\\s*$");
+    static final Pattern PARAMS = Pattern.compile(
+            "^(?:struct \\w+|\\w+)\\s*\\*?\\s*(\\w+)\\((.*)\\);\\s*/\\*\\s*@0x([0-9A-Fa-f]+)\\s+params\\b.*\\*/\\s*$");
+    static final Pattern PARAM = Pattern.compile("^\\s*struct (\\w+)\\s*\\*\\s*(\\w+)\\s*$");
+    static final Pattern PDECL = Pattern.compile("^\\s*(struct \\w+|\\w+)\\s*(\\*?)\\s*(\\w+)\\s*$");
     static final Pattern FUNC = Pattern.compile(
-            "^(struct \\w+|\\w+)\\s*(\\*?)\\s*(\\w+)\\(.*\\);\\s*/\\*\\s*@0x([0-9A-Fa-f]+)\\s+return\\b.*\\*/\\s*$");
+            "^" + TYPE + "\\s*(\\*?)\\s*(\\w+)\\(.*\\);\\s*/\\*\\s*@0x([0-9A-Fa-f]+)\\s+return\\b.*\\*/\\s*$");
 
     DataTypeManager dtm;
     Map<String, DataType> structs = new HashMap<>();
@@ -49,6 +64,11 @@ public class ApplyStructs extends GhidraScript {
         if (t.startsWith("struct ")) {
             DataType d = structs.get(t.substring(7));
             if (d != null) return d;
+        }
+        if (t.startsWith("enum ")) {
+            DataType d = dtm.getDataType(CAT, t.substring(5));
+            if (d instanceof ghidra.program.model.data.Enum) return d;
+            throw new IllegalArgumentException("'" + t + "' is not an enum under " + CAT + " (run ApplyEnums.java first)");
         }
         throw new IllegalArgumentException("unknown type '" + t + "'");
     }
@@ -68,8 +88,9 @@ public class ApplyStructs extends GhidraScript {
         Listing listing = currentProgram.getListing();
         SymbolTable st = currentProgram.getSymbolTable();
         List<String> lines = Files.readAllLines(Paths.get(getScriptArgs()[0]));
-        int nStruct = 0, nField = 0, nGlobal = 0, nLabel = 0, nFunc = 0, nCleared = 0, bad = 0;
+        int nStruct = 0, nField = 0, nEnumField = 0, nBits = 0, nGlobal = 0, nLabel = 0, nFunc = 0, nParam = 0, nCleared = 0, bad = 0;
         StructureDataType cur = null;
+        int curSize = 0;
         boolean inComment = false;
         int ln = 0;
         for (String line : lines) {
@@ -80,7 +101,8 @@ public class ApplyStructs extends GhidraScript {
             if (s.isEmpty() || s.startsWith("#") || s.startsWith("//")) continue;
             Matcher m;
             if (cur == null && (m = OPEN.matcher(line)).find()) {
-                cur = new StructureDataType(CAT, m.group(1), Integer.parseInt(m.group(2), 16), dtm);
+                curSize = Integer.parseInt(m.group(2), 16);
+                cur = new StructureDataType(CAT, m.group(1), curSize, dtm);
                 continue;
             }
             if (cur != null) {
@@ -91,6 +113,29 @@ public class ApplyStructs extends GhidraScript {
                     cur = null;
                     continue;
                 }
+                if ((m = BITFIELD.matcher(line)).matches()) {
+                    try {
+                        DataType d = base(m.group(1));
+                        int bits = Integer.parseInt(m.group(3));
+                        int off = Integer.parseInt(m.group(4), 16), bit = Integer.parseInt(m.group(5));
+                        if (bits < 1 || bit + bits > 8 * d.getLength()) throw new IllegalArgumentException("bitfield does not fit its type");
+                        if (off + d.getLength() > curSize) throw new IllegalArgumentException("field past the end");
+                        // the unit's bytes must be undefined filler, so that the bitfield takes their place instead of
+                        // shifting the components behind it
+                        DataTypeComponent c = cur.getComponentContaining(off);
+                        if (c != null && c.getDataType() != DataType.DEFAULT && !c.isBitFieldComponent())
+                            throw new IllegalArgumentException("+0x" + Integer.toHexString(off) + " is already " + c.getFieldName());
+                        cur.insertBitFieldAt(off, d.getLength(), bit, d, bits, m.group(2), m.group(6));
+                        if (cur.getLength() != curSize)
+                            throw new IllegalArgumentException("bitfield changed the size to 0x" + Integer.toHexString(cur.getLength()));
+                        nField++;
+                        nBits++;
+                        if (d instanceof ghidra.program.model.data.Enum) nEnumField++;
+                    } catch (Exception e) {
+                        printerr("ApplyStructs: line " + ln + ": " + e.getMessage()); bad++;
+                    }
+                    continue;
+                }
                 m = FIELD.matcher(line);
                 if (!m.matches()) { printerr("ApplyStructs: line " + ln + ": not a field: " + s); bad++; continue; }
                 try {
@@ -99,8 +144,51 @@ public class ApplyStructs extends GhidraScript {
                     if (off + d.getLength() > cur.getLength()) throw new IllegalArgumentException("field past the end");
                     cur.replaceAtOffset(off, d, d.getLength(), m.group(3), m.group(6));
                     nField++;
+                    if (m.group(1).startsWith("enum ")) nEnumField++;
                 } catch (Exception e) {
                     printerr("ApplyStructs: line " + ln + ": " + e.getMessage()); bad++;
+                }
+                continue;
+            }
+            if ((m = PARAMS.matcher(line)).matches()) {
+                Function f = getFunctionAt(toAddr(Long.parseLong(m.group(3), 16)));
+                if (f == null) { printerr("ApplyStructs: line " + ln + ": no function at 0x" + m.group(3)); bad++; continue; }
+                if (!f.getName().equals(m.group(1))) println("ApplyStructs: warning: " + f.getEntryPoint() + " is " + f.getName() + ", header says " + m.group(1));
+                String[] ps = m.group(2).trim().equals("void") ? new String[0] : m.group(2).split(",");
+                if (f.getParameterCount() < ps.length) {
+                    try {
+                        List<Variable> np = new ArrayList<>();
+                        for (String q : ps) {
+                            Matcher dm = PDECL.matcher(q);
+                            if (!dm.matches()) throw new IllegalArgumentException("parameter '" + q.trim() + "'");
+                            np.add(new ParameterImpl(dm.group(3), type(dm.group(1), dm.group(2), ""), currentProgram, SourceType.USER_DEFINED));
+                        }
+                        Matcher rm = Pattern.compile("^(struct \\w+|\\w+)\\s*(\\*?)").matcher(line);
+                        rm.find();
+                        DataType rt = rm.group(1).equals("void") && rm.group(2).isEmpty() ? VoidDataType.dataType
+                                : type(rm.group(1), rm.group(2), "");
+                        f.updateFunction(currentProgram.getCompilerSpec().getDefaultCallingConvention().getName(),
+                                new ReturnParameterImpl(rt, currentProgram), np,
+                                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS, true, SourceType.USER_DEFINED);
+                        nParam += np.size();
+                    } catch (Exception e) {
+                        printerr("ApplyStructs: line " + ln + ": " + f.getName() + ": " + e.getMessage()); bad++;
+                    }
+                    continue;
+                }
+                for (int i = 0; i < ps.length; i++) {
+                    Matcher pm = PARAM.matcher(ps[i]);
+                    if (!pm.matches()) continue;
+                    try {
+                        if (i >= f.getParameterCount()) throw new IllegalArgumentException("no parameter " + (i + 1));
+                        Parameter p = f.getParameter(i);
+                        DataType d = dtm.getPointer(base("struct " + pm.group(1)));
+                        if (!p.getDataType().isEquivalent(d)) p.setDataType(d, SourceType.USER_DEFINED);
+                        if (!p.getName().equals(pm.group(2))) p.setName(pm.group(2), SourceType.USER_DEFINED);
+                        nParam++;
+                    } catch (Exception e) {
+                        printerr("ApplyStructs: line " + ln + ": " + f.getName() + ": " + e.getMessage()); bad++;
+                    }
                 }
                 continue;
             }
@@ -149,7 +237,9 @@ public class ApplyStructs extends GhidraScript {
             printerr("ApplyStructs: line " + ln + ": not understood: " + s);
             bad++;
         }
-        println("ApplyStructs: " + nStruct + " structures, " + nField + " fields, " + nGlobal + " globals ("
-                + nCleared + " data units replaced, " + nLabel + " labels), " + nFunc + " return types, " + bad + " errors");
+        println("ApplyStructs: " + nStruct + " structures, " + nField + " fields (" + nEnumField + " enum-typed, " + nBits
+                + " bitfields), " + nGlobal + " globals (" + nCleared + " data units replaced, " + nLabel + " labels), "
+                + nFunc + " return types, " + bad + " errors");
+        if (nParam > 0) println("ApplyStructs: " + nParam + " parameter types");
     }
 }

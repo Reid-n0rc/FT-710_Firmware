@@ -84,11 +84,11 @@ void scan_step(void)
 void FUN_fffe5d8f(void)
 
 {
-  byte bVar1;
+  vfo_side vVar1;
   byte bVar2;
   int iVar3;
   
-  bVar1 = g_opstate.active_vfo;
+  vVar1 = g_opstate.active_vfo;
   bVar2 = vfo_is_memory(g_opstate.active_vfo);
   if (bVar2 == 1) {
     do {
@@ -98,7 +98,7 @@ void FUN_fffe5d8f(void)
     } while (iVar3 == 1);
     return;
   }
-  vfo_step_up(bVar1);
+  vfo_step_up(vVar1);
   return;
 }
 
@@ -108,11 +108,11 @@ void FUN_fffe5d8f(void)
 void FUN_fffe5dd5(void)
 
 {
-  byte bVar1;
+  vfo_side vVar1;
   byte bVar2;
   int iVar3;
   
-  bVar1 = g_opstate.active_vfo;
+  vVar1 = g_opstate.active_vfo;
   bVar2 = vfo_is_memory(g_opstate.active_vfo);
   if (bVar2 == 1) {
     do {
@@ -122,7 +122,7 @@ void FUN_fffe5dd5(void)
     } while (iVar3 == 1);
     return;
   }
-  vfo_step_down(bVar1);
+  vfo_step_down(vVar1);
   return;
 }
 
@@ -348,18 +348,19 @@ void FUN_fffe602e(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
-  byte bVar3;
+  vfo_side vVar2;
+  radio_mode rVar3;
+  byte bVar4;
   
-  bVar3 = g_opstate.active_vfo;
-  rVar2 = vfo_mode(VFO_RX);
-  bVar3 = vfo_is_memory(bVar3);
-  if (bVar3 == 1) {
+  vVar2 = g_opstate.active_vfo;
+  rVar3 = vfo_mode(VFO_RX);
+  bVar4 = vfo_is_memory(vVar2);
+  if (bVar4 == 1) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,200);
     return;
   }
-  uVar1 = (uint)rVar2;
+  uVar1 = (uint)rVar3;
   if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,10);
@@ -379,7 +380,7 @@ void FUN_fffe60a6(void)
   bool bVar1;
   int iVar2;
   
-  if ((PTR_g_ui_00025d7c->f_0x40d_u8 == 1) || (PTR_g_ui_00025d7c->dialog_shown == 1)) {
+  if ((PTR_g_ui_00025d7c->keypad_open == 1) || (PTR_g_ui_00025d7c->dialog_shown == 1)) {
     bVar1 = true;
   }
   else {
@@ -395,7 +396,7 @@ void FUN_fffe60a6(void)
     return;
   }
   if (PTR_g_ui_00025d7c->scan_running == 0) {
-    PTR_g_ui_00025d7c->f_0x46b_u8 = 1;
+    PTR_g_ui_00025d7c->ch_step_mode = 1;
     vfo_step_up(g_opstate.active_vfo);
     return;
   }
@@ -422,7 +423,7 @@ void FUN_fffe6138(void)
   bool bVar1;
   int iVar2;
   
-  if ((PTR_g_ui_00025d7c->f_0x40d_u8 == 1) || (PTR_g_ui_00025d7c->dialog_shown == 1)) {
+  if ((PTR_g_ui_00025d7c->keypad_open == 1) || (PTR_g_ui_00025d7c->dialog_shown == 1)) {
     bVar1 = true;
   }
   else {
@@ -438,7 +439,7 @@ void FUN_fffe6138(void)
     return;
   }
   if (PTR_g_ui_00025d7c->scan_running == 0) {
-    PTR_g_ui_00025d7c->f_0x46b_u8 = 1;
+    PTR_g_ui_00025d7c->ch_step_mode = 1;
     vfo_step_down(g_opstate.active_vfo);
     return;
   }

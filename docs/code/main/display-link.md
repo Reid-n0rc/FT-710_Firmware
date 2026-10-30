@@ -210,7 +210,7 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 6 | `FUN_fff97049` | 3DSS DISP SENSITIVITY 0x9B17 (bit 0) << 6 \| 2D DISP SENSITIVITY 0x9B16 << 7 (`EX040204` / `EX040203`, [menu.md](menu.md)) |
 | 7 | `FUN_fff97075` | *HI-SWR warning* UI +0x69 (0x20B6D, 2 bits: `swr_meter_protect` sets 1 or 2 by blink phase while the TX SWR is outside 1..5, 0 when it is back) << 4 \| +0x68 << 6 (no writer in MAIN, so always 0) \| **TX** (+0x67 = 0x20B6B) << 7 |
 | 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. **DISPLAY reader** **[fact]** (#179): `gui_screen_update` (0x2012EBB8) calls `led_set_mask(frame[8])` for each status-carrying frame, just before copying it to 0x208F0B2A (and `led_set_mask(0)` on power-off), so the byte drives the front-panel LEDs on P6, bit 0..7 = D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX ([display/peripherals.md](../display/peripherals.md)). So `ui_lamp_set` n = 1..8 is VOX, STEPCH, RXBUSY, D_BLUE, D_WHITE, D_GREEN, D_RED, TX, and LED DIMMER = 0 turns off RXBUSY, TX, STEPCH and VOX **[fact for the bits; the LED names are the schematic's]** |
-| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011** (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`FUN_201233d4`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011**, a touch on the filter graph (#212) (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`FUN_201233d4`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
 | 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
 | 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
 | 12 | `FUN_fff971fc` | ATT (rec+3 bits 0–1, `RA`) \| IPO/AMP1/AMP2 (rec+5 bits 0–1, minus 1, `PA`) << 2 \| {2 in FM modes, else DNF on = block+1 bit 7, `BC`} << 4 |
@@ -255,8 +255,13 @@ Bytes 97–102, 114 and 133–151 are **always 0** **[fact]**: every frame build
 0x208F0B9C, 0x208F0BAF..0x208F0BC1) **[fact]**; it reads the block mostly through a base pointer, so an indexed read cannot be ruled out
 from text alone. The gaps look like fields of the shared Yaesu status layout that the FT-710 does not use **[guess]**. Of the single bits
 listed in #179, UI +0x68 and +0x6F are always 0; 0x9C5C (byte 9 bit 3) is the soft-key-0x011 long-press toggle that the DISPLAY reads as
-the AF-FFT overlay of the filter graph, and byte 8 (+0x34) is the front-panel LED mask (`led_set_mask`) (see the rows above; #179); `affft_bins_get` and `filter_graph_affft_overlay` are new rows in `tools/ghidra/names_display.tsv` and appear in `decomp/display/` after the next Ghidra re-export). Which
-on-screen area sends soft key 0x011 is still open: it is in the DISPLAY's touch hit tables, which were not traced (#212).
+the AF-FFT overlay of the filter graph, and byte 8 (+0x34) is the front-panel LED mask (`led_set_mask`) (see the rows above; #179); `affft_bins_get` and `filter_graph_affft_overlay` are new rows in `tools/ghidra/names_display.tsv` and appear in `decomp/display/` after the next Ghidra re-export). Soft key
+0x011 is a **touch on the main screen's filter graph** (#212): the DISPLAY's main-screen hit table 0x20192748 holds the one rectangle
+x 443, y 109, w 356, h 69, code 0x1011, the same box `main_filter_graph` clears and draws, and `mainlink_send_touch_key` clears bit 12 so
+MAIN receives 0x011 **[fact]** (details in [display/input.md](../display/input.md#touch-hit-tables-212)). So a long touch on the filter
+graph switches the AF-FFT overlay inside that graph on and off, and a short touch toggles UI +0x70, the flag sent as status byte 35
+bit 7 (*FUNC panel open*, row 35 above) under which encoder 3 picks one of the items 0x1D..0x21 ([ui-keys.md](ui-keys.md)) **[fact for
+the code; that this is the filter's SHIFT/WIDTH/NOTCH/CONTOUR panel is an inference]**.
 
 ### Small frames and mode flags (#72)
 
@@ -674,7 +679,7 @@ Two DISPLAY-driven maintenance modes take over the link. Each runs as a blocking
 | 0xFFF98CEC / 0xFFF98D5B / 0xFFF98DCA | `FUN_fff98cec` / `FUN_fff98d5b` / `FUN_fff98dca` | `displink_70_msg` / `displink_70_msg2` / `displink_70_query` | `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text **[fact]** |
 | 0xFFF973BC / 0xFFF9921F | `FUN_fff973bc` / `FUN_fff9921f` | `mode_block_byte0` / `mode_block_byte1` | the active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) and +1 (BC, AGC) **[fact]** |
 | 0xFFF98727 | `FUN_fff98727` | `ui_lamp_set` | set or clear one bit of UI +0x34 (status byte 8), the front-panel LED mask the DISPLAY passes to `led_set_mask` **[fact]** (#179) |
-| 0xFFFBCB19 / 0xFFFBCB77 / 0xFFFBCBBD | `FUN_fffbcb19` / `FUN_fffbcb77` / `FUN_fffbcbbd` | `key_011_press` / `key_011_short` / `key_011_long` | soft key 0x011: press check, short = toggle UI +0x70, long = toggle 0x9C5C (status byte 9 bit 3, AF-FFT overlay) **[fact; overlay meaning inference]** (#179; in `names_main.tsv`, shown as `FUN_` until the next Ghidra re-export) |
+| 0xFFFBCB19 / 0xFFFBCB77 / 0xFFFBCBBD | `FUN_fffbcb19` / `FUN_fffbcb77` / `FUN_fffbcbbd` | `key_011_press` / `key_011_short` / `key_011_long` | soft key 0x011 (touch on the filter graph, #212): press check, short = toggle UI +0x70, long = toggle 0x9C5C (status byte 9 bit 3, AF-FFT overlay) **[fact; overlay meaning inference]** (#179; in `names_main.tsv`, shown as `FUN_` until the next Ghidra re-export) |
 | 0xFFF9C555 | `FUN_fff9c555` | `displink_62_value` | 3-character value of an alignment item for `0x62` **[fact]** |
 | 0xFFFE376A | `FUN_fffe376a` | `dispreq_e8_result` | E8 code actions (called by `dispreq_e8_task`) **[fact]** |
 | others | | `displink_rx_*`, `displink_tx_*`, `displink_build_*` | one per frame type, see the two frame tables (all proposed in the TSV) |
@@ -704,3 +709,82 @@ memory loads. They are the known RX SLEIGH `MOVU.B/W Rs,Rd` bug (a register zero
 | 0x1C63 / 0x1C8D | u8 | DSP-tunnel / SDR-bridge request |
 | 0x25D3C | u32 | numeric-entry counter (boot code 4 mode) |
 | 0x9DC5 | u8 | "power-up allowed after a DISPLAY restart" (see boot code 0x10) **[inference]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF94C4B | `ver_sdr` |  | Returns pointer to SDR version 0x144A (VE2) **[inference]** |
+| 0xFFF9541E | `displink_rx_ack` |  | ACK: clear outstanding; after the hello reply sets +0x400 (send 0x24) **[inference]** |
+| 0xFFF95469 | `displink_rx_nak` |  | NAK: no action **[inference]** |
+| 0xFFF957E6 | `displink_rx_F1_sys` |  | F1 sub: 01 SDR bridge, 02 DSP ISP tunnel, 03 CAT disable (0x20B46), 83 nop **[inference]** |
+| 0xFFF95BF4 | `displink_rx_E2` |  | E2: +0xA5..+0xA7 on/off state **[inference]** |
+| 0xFFF95C6A | `displink_rx_E4` |  | E4: answer to 0x7B (clears +0x82, set by caller) **[inference]** |
+| 0xFFF95C74 | `displink_rx_E5` |  | E5: clears +0x80 **[inference]** |
+| 0xFFF95C8A | `displink_rx_E6_beep` |  | E6: beep_request(b1+1) **[inference]** |
+| 0xFFF95CBC | `displink_rx_E7` |  | E7: result code in +0x488 **[inference]** |
+| 0xFFF95DAD | `displink_rx_E8` |  | E8: result code in +0x48C **[inference]** |
+| 0xFFF95E65 | `displink_rx_C3` |  | C3 reply (to 0x43): payload -> +0x2ED, +0x3F6=1 **[inference]** |
+| 0xFFF95E97 | `displink_rx_C4_C5` |  | C4/C5 replies (to 0x45/0x44): payload -> +0x2ED, +0x3F6=1 **[inference]** |
+| 0xFFF95ED3 | `displink_rx_E3_clock` |  | E3: 5 bytes -> +0xAD..+0xB1 (DISPLAY RTC date/time) **[inference]** |
+| 0xFFF96225 | `displink_tx_60_hello` |  | 0x60 hello reply (0xB6 bytes) **[inference]** |
+| 0xFFF96241 | `displink_build_60` |  | versions (MAIN/DISPLAY/DSP/SDR) + status block **[inference]** |
+| 0xFFF986E0 | `displink_tx_64` |  | 0x64 (3 bytes): +0xB8 when changed **[inference]** |
+| 0xFFF98869 | `displink_tx_7C` |  | 0x7C (5 bytes) **[inference]** |
+| 0xFFF9889C | `displink_tx_7B` |  | 0x7B (5 bytes), toggles +0x82 **[inference]** |
+| 0xFFF988F2 | `displink_tx_7A` |  | 0x7A (5 bytes) **[inference]** |
+| 0xFFF98925 | `displink_tx_70` |  | 0x70 (0xE3 bytes) **[inference]** |
+| 0xFFF9894F | `displink_build_70` |  | calls `displink_70_msg`, `displink_70_msg2`, `displink_70_query`, `displink_copy_status` and 1 more; 638 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98BCD | `displink_tx_req` |  | 0x43/0x44/0x45 request, type +0x1E0, length +0x1E2 **[inference]** |
+| 0xFFF98C1F | `displink_build_req` |  | calls `FUN_fff98c75`, `mem_zero`; 86 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98E39 | `displink_tx_23` |  | 0x23 (0x37 bytes) **[inference]** |
+| 0xFFF98E96 | `displink_build_23` |  | no direct calls; 51 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98ECB | `displink_tx_30_31` |  | 0x30 (0xA0) or 0x31 (0xA3) by +0x1C2 **[inference]** |
+| 0xFFF98F7C | `displink_tx_34` |  | 0x34 (0xA3 bytes) **[inference]** |
+| 0xFFF98FB1 | `displink_build_30` |  | calls `FUN_fffc4f8f`, `displink_copy_status`, `mem_zero`, `mode_block_byte1` and 1 more; 622 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF99297 | `displink_build_31` |  | calls `FUN_fff99475`, `FUN_fff9959f`, `FUN_fff995cc`, `FUN_fff9960e` and 27 more; 478 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF99E4A | `dec_to_str_n` |  | (v, maxdigits 2..4, buf): decimal without leading zeros, returns the length; used by the DISPLAY-link frame builders **[fact]** |
+| 0xFFF9A06E | `displink_build_34` |  | calls `displink_copy_status`, `mem_zero`; 94 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A0CC | `displink_tx_65_clock` |  | 0x65 (9 bytes): +0xB2..+0xB6 (clock set) **[inference]** |
+| 0xFFF9A100 | `displink_build_65` |  | calls `mem_zero`; 125 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A17D | `displink_tx_24` |  | 0x24 (0x9F bytes) settings **[inference]** |
+| 0xFFF9A1A7 | `displink_build_24` |  | calls `displink_copy_status`, `mem_zero`; 298 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A2D1 | `displink_tx_50` |  | 0x50 (0xF5 bytes) **[inference]** |
+| 0xFFF9A2FB | `displink_build_50` |  | calls `FUN_fff9a364`, `FUN_fff9a42f`, `FUN_fff9a4f4`, `FUN_fff9a55e` and 5 more; 105 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A7A2 | `kbd_fmt_char_pos` |  | Keyboard frame 0x50: "Char #nn", nn = cursor UI +0xC1 + 1 **[fact]** |
+| 0xFFF9A804 | `kbd_copy_text` |  | (src, dst, n): copies the keyboard text and marks the cursor character (+0xC1) with 0xFF unless UI +0x1BC **[fact]** |
+| 0xFFF9A89B | `displink_tx_3F` |  | 0x3F (5 bytes): +0x92 **[inference]** |
+| 0xFFF9A8E3 | `displink_tx_3A` |  | 0x3A (0xA2 bytes) **[inference]** |
+| 0xFFF9A925 | `displink_build_3A` |  | calls `displink_copy_status`, `mem_zero`; 392 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9AAAD | `displink_tx_40` |  | 0x40 (0x1FB bytes), rate-limited 100 units (timer 0x29) **[inference]** |
+| 0xFFF9AAF7 | `displink_build_40` |  | calls `displink_copy_status`, `mem_zero`, `menu_page_serialize`; 51 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9AB2A | `displink_tx_37` |  | 0x37 (0x240 bytes) **[inference]** |
+| 0xFFF9AB57 | `displink_build_37` |  | calls `FUN_fff9acf4`, `FUN_fff9ad39`, `FUN_fff9ad7e`, `FUN_fff9adde` and 31 more; 413 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9B69E | `displink_tx_39` |  | 0x39 (0xE9 bytes) **[inference]** |
+| 0xFFF9B6C8 | `displink_build_39` |  | calls `FUN_fffe5783`, `displink_39_keyer_texts`, `displink_39_rtty_labels`, `displink_copy_status` and 1 more; 848 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9BA18 | `displink_39_keyer_texts` |  | Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32) **[inference]** |
+| 0xFFF9BAA0 | `displink_39_rtty_labels` |  | Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes 0xC0..0xE7 (0x1801..) **[inference]** |
+| 0xFFF9BB23 | `displink_tx_41` |  | 0x41 (0x146 bytes) **[inference]** |
+| 0xFFF9BB50 | `displink_build_41` |  | calls `FUN_fff9bfe1`, `FUN_fff9c04a`, `FUN_fff9c089`, `FUN_fff9c1a1` and 7 more; 1128 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C42A | `displink_tx_20_status` |  | 0x20 (0x99 bytes) status, default frame, sent only when changed **[inference]** |
+| 0xFFF9C454 | `displink_build_20` |  | calls `displink_build_status`, `mem_zero`; 25 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C46D | `displink_tx_62` |  | 0x62 (0x197 bytes) **[inference]** |
+| 0xFFF9C49A | `displink_build_62` |  | calls `displink_62_value`, `displink_copy_status`, `mem_zero`; 187 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C6F0 | `dec_to_str_u8` |  | (v, buf): u8 as 1..3 ASCII digits without leading zeros; returns the length **[fact]** |
+| 0xFFF9C843 | `dec_to_str_u16` |  | (v, buf): u16 as 1..5 ASCII digits without leading zeros; returns the length **[fact]** |
+| 0xFFFBD326 | `popup0_refresh` |  | popup_open_2000 when the pop-up code UI +0x1C2 is 0 (METER) **[fact]** |
+| 0xFFFC078D | `popup_open_2000` |  | popup_mark_start, then popup_open_timed(2000) **[fact]** |
+| 0xFFFC0DF7 | `mode_popup_select` |  | (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode **[fact]** |
+| 0xFFFC21C7 | `ui_key_reject` |  | UI +0x43C = 0, +0x409 = 1 (key consumed), beep_request(3) (error beep) **[fact]** |
+| 0xFFFC8BEB | `popup_close` |  | UI +0x1C2 = 0xFF, +0x1C1 = 0, +0x1C0 = 1, 0x1B4EF = 0, clears +0x8F / +0x41C (+0x43B / +0x43C for codes 'U'/'D'/'E') **[fact]** |
+| 0xFFFC8CBB | `popup_duration_get` |  | (id): display time of pop-up id for POP-UP TIME 0x9B0E: index tables 0xFFF834BE (ids 0..0xD) / 0xFFF834D6 (0x1E..0x58) select a 3 x u16 row in 0xFFF8854E / 0xFFF88566; id 0x5E uses 0xFFF88578 (#157, listing check) **[fact]** |
+| 0xFFFC8D8C | `popup_open_timed` |  | (time): 0x1B4EF = 1 and soft timer 0x39 = time (0: no timer), UI +0x1C1 = 1 (shown), +0x1C0 = 1, +0x70 = 0; callers pass popup_duration_get(code) **[fact]** |
+| 0xFFFC909F | `popup_mark_start` |  | 0x1B4F2 = 1, soft timer 0x48 = 750; what the mark shows [unknown] **[fact]** |
+| 0xFFFC90B4 | `popup_mark_clear` |  | 0x1B4F2 = 0, UI +0x1C3 = 0 **[fact]** |
+| 0xFFFCF4D5 | `dialog_insert_fw_sd` |  | Dialog n = 2 (UI +0xBB; ROM text "INSERT FIRMWARE / SD CARD"), +0x448 = 0, dialog_open **[fact]** |
+| 0xFFFCF4F2 | `dialog_no_sd_card` |  | Dialog n = 3 (ROM text "NO SD CARD"), +0x448 = 0, dialog_open **[fact]** |
+| 0xFFFCF6AC | `dialog_open` |  | UI +0x86 = 1 (frame 0x70 due), selected button +0xBD = 0, clears +0x70 **[fact]** |
+| 0xFFFCFE77 | `dialog_close_to_menu_ok` |  | dialog_close_to_menu, returns 1; the SD-card dialog key handlers call it at step +0x3F7 = 2 **[fact]** |
+| 0xFFFD0149 | `dialog_close_to_menu` |  | Clears UI +0x88 (keyboard) and +0x86 (dialog), +0x3FF = 2 (the value menu_select_group also sets); back to the menu page **[fact]** |

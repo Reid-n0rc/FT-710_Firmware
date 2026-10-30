@@ -389,7 +389,7 @@ void FUN_fffc0d33(radio_mode mode)
     if (PTR_g_ui_00025d54->dl_req_popup_b == 1) {
       beep_request(1);
     }
-    PTR_g_ui_00025d54->band_cur = mode;
+    PTR_g_ui_00025d54->popup_cursor = mode;
     return;
   }
   return;
@@ -407,7 +407,7 @@ undefined1 vfo_edit_begin(void)
   byte bVar1;
   undefined1 local_4;
   bool local_3;
-  byte local_2;
+  vfo_state local_2;
   
   if (PTR_g_ui_00025d54->dvs_busy == 1) {
     local_4 = 0;
@@ -420,14 +420,14 @@ undefined1 vfo_edit_begin(void)
     local_4 = 0;
   }
   else {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_2 = g_opstate.vfo_state_a;
     }
     else {
       local_2 = g_opstate.vfo_state_b;
     }
-    local_3 = g_opstate.active_vfo != 0;
-    if (local_2 == 2) {
+    local_3 = g_opstate.active_vfo != VFO_A;
+    if (local_2 == VFO_STATE_MEMORY) {
       bVar1 = memch_current_is_special(local_3);
       if (bVar1 == 1) {
         return 0;
@@ -453,7 +453,7 @@ void mode_popup_select(radio_mode param_1)
   if (PTR_g_ui_00025d54->dl_req_popup_b == 1) {
     beep_request(1);
   }
-  PTR_g_ui_00025d54->band_cur = param_1;
+  PTR_g_ui_00025d54->popup_cursor = param_1;
   return;
 }
 
@@ -578,7 +578,7 @@ void vfo_mode_set(radio_mode mode)
   radio_mode rVar1;
   vfo_rec *local_8;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_8 = &g_opstate.vfo_a;
   }
   else {
@@ -733,7 +733,7 @@ uint freq_clamp(char param_1,uint param_2)
   local_8 = param_2;
   local_1 = param_1;
   if (param_1 == '\0') {
-    if (g_opstate.vfo_state_a == 4) {
+    if (g_opstate.vfo_state_a == VFO_STATE_PMS) {
       if ((g_ui.pms_lo == 0) || (g_ui.pms_hi == 0)) {
         bVar1 = true;
       }
@@ -747,7 +747,7 @@ uint freq_clamp(char param_1,uint param_2)
       return uVar3;
     }
   }
-  else if (g_opstate.vfo_state_b == 4) {
+  else if (g_opstate.vfo_state_b == VFO_STATE_PMS) {
     if ((g_ui.pms_lo == 0) || (g_ui.pms_hi == 0)) {
       bVar1 = true;
     }
@@ -826,10 +826,10 @@ void vfo_mark_tuned(byte param_1)
 
 {
   if (param_1 == 0) {
-    PTR_g_ui_00025d54->f_0x444_u8 = 1;
+    PTR_g_ui_00025d54->tuned_a = 1;
   }
   else {
-    PTR_g_ui_00025d54->f_0x446_u8 = 1;
+    PTR_g_ui_00025d54->tuned_b = 1;
   }
   qmb_exit_to_vfo(param_1);
   return;
@@ -846,26 +846,26 @@ void qmb_exit_to_vfo(byte param_1)
   bool bVar1;
   
   if (param_1 == 0) {
-    if ((g_opstate.vfo_state_a == 4) || (g_opstate.vfo_state_a != 3)) {
+    if ((g_opstate.vfo_state_a == VFO_STATE_PMS) || (g_opstate.vfo_state_a != VFO_STATE_MEMTUNE)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (g_opstate.vfo_state_a == 5)) {
-      g_opstate.vfo_state_a = 1;
+    if ((bVar1) && (g_opstate.vfo_state_a == VFO_STATE_QMB)) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
       return;
     }
   }
   else {
-    if ((g_opstate.vfo_state_b == 4) || (g_opstate.vfo_state_b != 3)) {
+    if ((g_opstate.vfo_state_b == VFO_STATE_PMS) || (g_opstate.vfo_state_b != VFO_STATE_MEMTUNE)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (g_opstate.vfo_state_b == 5)) {
-      g_opstate.vfo_state_b = 1;
+    if ((bVar1) && (g_opstate.vfo_state_b == VFO_STATE_QMB)) {
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
       return;
     }
   }
@@ -890,11 +890,11 @@ void freq_fix_below(void *param_1,void *param_2)
   if (iVar1 == 1) {
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x415_u8 == 1) {
+  if (PTR_g_ui_00025d54->digit_step_on == 1) {
     *(undefined4 *)param_1 = *(undefined4 *)param_2;
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x46a_u8 != 1) {
+  if (PTR_g_ui_00025d54->step_fast_req != 1) {
     if (PTR_g_ui_00025d54->scan_running != 1) {
       *(undefined4 *)param_1 = *(undefined4 *)param_2;
       return;
@@ -924,11 +924,11 @@ void freq_fix_above(void *param_1,void *param_2)
   if (iVar1 == 1) {
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x415_u8 == 1) {
+  if (PTR_g_ui_00025d54->digit_step_on == 1) {
     *(undefined4 *)param_1 = *(undefined4 *)((int)param_2 + 4);
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x46a_u8 != 1) {
+  if (PTR_g_ui_00025d54->step_fast_req != 1) {
     if (PTR_g_ui_00025d54->scan_running != 1) {
       *(undefined4 *)param_1 = *(undefined4 *)((int)param_2 + 4);
       return;
@@ -1024,9 +1024,9 @@ void FUN_fffc151d(ushort param_1)
     bVar1 = false;
   }
   if (!bVar1) {
-    PTR_g_ui_00025d54->f_0x41e_u8 = 1;
+    PTR_g_ui_00025d54->band_popup_pick = 1;
     PTR_g_ui_00025d54->popup_band = (char)param_1 + 0x95;
-    PTR_g_ui_00025d54->band_cur = PTR_g_ui_00025d54->popup_band;
+    PTR_g_ui_00025d54->popup_cursor = PTR_g_ui_00025d54->popup_band;
     if (g_opstate.split_on == 1) {
       g_opstate.split_on = 0;
       g_opstate.vfo_state_a = PTR_g_ui_00025d54->split_saved_state_a;
@@ -1047,8 +1047,8 @@ void FUN_fffc151d(ushort param_1)
 void FUN_fffc15d4(void)
 
 {
-  if ((PTR_g_ui_00025d54->f_0x41e_u8 == 1) && (PTR_g_ui_00025d54->popup_code == 0xc)) {
-    FUN_fffc1605(PTR_g_ui_00025d54->band_cur);
+  if ((PTR_g_ui_00025d54->band_popup_pick == 1) && (PTR_g_ui_00025d54->popup_code == 0xc)) {
+    FUN_fffc1605(PTR_g_ui_00025d54->popup_cursor);
     return;
   }
   return;
@@ -1060,7 +1060,7 @@ void FUN_fffc15d4(void)
 void FUN_fffc1605(byte param_1)
 
 {
-  PTR_g_ui_00025d54->f_0x41e_u8 = 1;
+  PTR_g_ui_00025d54->band_popup_pick = 1;
   if (0xb < param_1) {
     return;
   }
@@ -1096,16 +1096,16 @@ void FUN_fffc1625(band_idx param_1)
 void band_select(band_idx param_1)
 
 {
-  byte local_3;
+  vfo_state local_3;
   bool local_2;
   
   if (param_1 < BAND_GEN) {
-    PTR_g_ui_00025d54->band_cur = param_1;
+    PTR_g_ui_00025d54->popup_cursor = param_1;
   }
   else {
-    PTR_g_ui_00025d54->band_cur = 0xb;
+    PTR_g_ui_00025d54->popup_cursor = 0xb;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_3 = g_opstate.vfo_state_a;
     g_ui.clar_flags_a = 0;
   }
@@ -1113,17 +1113,17 @@ void band_select(band_idx param_1)
     local_3 = g_opstate.vfo_state_b;
     g_ui.clar_flags_b = 0;
   }
-  local_2 = g_opstate.active_vfo != 0;
+  local_2 = g_opstate.active_vfo != VFO_A;
   vfo_store_back(local_2);
-  if (local_3 == 4) {
+  if (local_3 == VFO_STATE_PMS) {
     band_select_pms(local_2,param_1);
     return;
   }
-  if (local_3 == 3) {
+  if (local_3 == VFO_STATE_MEMTUNE) {
     band_select_memtune(local_2,param_1);
     return;
   }
-  if (local_3 != 2) {
+  if (local_3 != VFO_STATE_MEMORY) {
     band_select_vfo(local_2,param_1);
     return;
   }
@@ -1142,16 +1142,16 @@ void vfo_store_back(byte param_1)
   bool bVar1;
   
   if (param_1 == 0) {
-    if (PTR_g_ui_00025d54->f_0x443_u8 == 0) {
+    if (PTR_g_ui_00025d54->edited_a == 0) {
       FUN_fffc17df();
       return;
     }
-    PTR_g_ui_00025d54->f_0x443_u8 = 0;
-    if (PTR_g_ui_00025d54->f_0x43d_u8 == 1) {
+    PTR_g_ui_00025d54->edited_a = 0;
+    if (PTR_g_ui_00025d54->force_bandstack_a == 1) {
       FUN_fffc18bf();
       return;
     }
-    if ((g_opstate.vfo_state_a == 3) || (g_opstate.vfo_state_a == 4)) {
+    if ((g_opstate.vfo_state_a == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_a == VFO_STATE_PMS)) {
       bVar1 = true;
     }
     else {
@@ -1161,22 +1161,22 @@ void vfo_store_back(byte param_1)
       FUN_fffc18c3();
       return;
     }
-    if (g_opstate.vfo_state_a != 2) {
+    if (g_opstate.vfo_state_a != VFO_STATE_MEMORY) {
       FUN_fffc18bf();
       return;
     }
   }
   else {
-    if (PTR_g_ui_00025d54->f_0x445_u8 == 0) {
+    if (PTR_g_ui_00025d54->edited_b == 0) {
       FUN_fffc184f();
       return;
     }
-    PTR_g_ui_00025d54->f_0x445_u8 = 0;
-    if (PTR_g_ui_00025d54->f_0x43e_u8 == 1) {
+    PTR_g_ui_00025d54->edited_b = 0;
+    if (PTR_g_ui_00025d54->force_bandstack_b == 1) {
       FUN_fffc18bf();
       return;
     }
-    if ((g_opstate.vfo_state_b == 3) || (g_opstate.vfo_state_b == 4)) {
+    if ((g_opstate.vfo_state_b == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_b == VFO_STATE_PMS)) {
       bVar1 = true;
     }
     else {
@@ -1186,7 +1186,7 @@ void vfo_store_back(byte param_1)
       FUN_fffc18e1();
       return;
     }
-    if (g_opstate.vfo_state_b != 2) {
+    if (g_opstate.vfo_state_b != VFO_STATE_MEMORY) {
       FUN_fffc18bf();
       return;
     }
@@ -1202,20 +1202,20 @@ void FUN_fffc17df(void)
 {
   bool bVar1;
   
-  PTR_g_ui_00025d54->f_0x443_u8 = 0;
-  PTR_g_ui_00025d54->f_0x444_u8 = 0;
-  if (PTR_g_ui_00025d54->f_0x43d_u8 == 1) {
+  PTR_g_ui_00025d54->edited_a = 0;
+  PTR_g_ui_00025d54->tuned_a = 0;
+  if (PTR_g_ui_00025d54->force_bandstack_a == 1) {
     bandstack_save();
     return;
   }
-  if ((g_opstate.vfo_state_a == 3) || (g_opstate.vfo_state_a == 4)) {
+  if ((g_opstate.vfo_state_a == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_a == VFO_STATE_PMS)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (!bVar1) {
-    if (g_opstate.vfo_state_a != 2) {
+    if (g_opstate.vfo_state_a != VFO_STATE_MEMORY) {
       bandstack_save();
       return;
     }
@@ -1233,20 +1233,20 @@ void FUN_fffc184f(void)
 {
   bool bVar1;
   
-  PTR_g_ui_00025d54->f_0x445_u8 = 0;
-  PTR_g_ui_00025d54->f_0x446_u8 = 0;
-  if (PTR_g_ui_00025d54->f_0x43e_u8 == 1) {
+  PTR_g_ui_00025d54->edited_b = 0;
+  PTR_g_ui_00025d54->tuned_b = 0;
+  if (PTR_g_ui_00025d54->force_bandstack_b == 1) {
     bandstack_save();
     return;
   }
-  if ((g_opstate.vfo_state_b == 3) || (g_opstate.vfo_state_b == 4)) {
+  if ((g_opstate.vfo_state_b == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_b == VFO_STATE_PMS)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (!bVar1) {
-    if (g_opstate.vfo_state_b != 2) {
+    if (g_opstate.vfo_state_b != VFO_STATE_MEMORY) {
       bandstack_save();
       return;
     }
@@ -1273,8 +1273,8 @@ void FUN_fffc18c3(void)
 
 {
   memtune_backup_a();
-  PTR_g_ui_00025d54->f_0x43f_u8 = 1;
-  PTR_g_ui_00025d54->f_0x441_u8 = 1;
+  PTR_g_ui_00025d54->memtune_valid_a = 1;
+  PTR_g_ui_00025d54->memtune_backup_a = 1;
   return;
 }
 
@@ -1285,8 +1285,8 @@ void FUN_fffc18e1(void)
 
 {
   memtune_backup_b();
-  PTR_g_ui_00025d54->f_0x440_u8 = 1;
-  PTR_g_ui_00025d54->f_0x442_u8 = 1;
+  PTR_g_ui_00025d54->memtune_valid_b = 1;
+  PTR_g_ui_00025d54->memtune_backup_b = 1;
   return;
 }
 

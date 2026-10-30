@@ -29,8 +29,16 @@ Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidr
 
 `sd_fs_init` (0x201039B0, from `task_root`) mounts the FAT volume and registers the SDHI driver, then `sd_task_create` starts `sdTask`
 **[fact, T11a]**. The update code uses the ordinary file API: `fs_fopen` 0x20141ABC, `fs_fread` 0x20142A58, `fs_fseek` 0x20143750,
-`FUN_20141ff0` (close), `thunk_FUN_2014af64` (file size), `FUN_2014aec8` (stat), `FUN_2014c410`/`FUN_2014ca4c`/`thunk_FUN_2014c474`
-(opendir/readdir/closedir) **[inference from use]**. Drive letter is `I:`. `FUN_20103bb0`/`FUN_20103ba0` return bits 7/6 of
+`fs_fclose` 0x20141FF0, `fs_fsize` 0x2014AF64 (file size), `fs_stat` 0x2014AEC8, `fs_opendir` 0x2014C410 / `fs_readdir` 0x2014CA4C /
+`fs_closedir` 0x2014C474 **[inference from use]**. Drive letter is `I:`.
+
+The FAT layer underneath (T23e round 2 names, **[fact]** for the code unless the TSV says otherwise): each call has a `fs_*_work` body
+that takes a buffer from the "FSYS Work" pool; files and directories are found by `fs_path_lookup` (`root_dir_find` for the FAT12/16
+root area, `subdir_find` for cluster chains, long names by `lfn_checksum`); sectors go through two caches per drive (FAT cache
+`fatcache_*` at drive +0x44, directory cache `dircache_*` at +0x4C, dirty bits written back by `fs_flush`); `fat_entry_rw` reads and
+writes FAT12/16/32 entries, `fat_alloc_cluster` / `fat_chain_free` allocate and free, and an optional cluster bitmap (`clmap_*`, drive
++0x58) speeds up the search. Shift-JIS names are converted with `sjis_to_ucs2_char` (tables 0x20420756 / 0x204244D0). The SDHI0 driver
+below it is `sdhi_*` (0x20140148..), with `sdhi_check_wp` giving the -7 (write-protected) error of `sd_write_sectors`. `FUN_20103bb0`/`FUN_20103ba0` return bits 7/6 of
 `DAT_20800094` (card state); the update screens wait on them **[fact]**, meaning "card present / ready" **[inference]**.
 
 The same SFL container is used for the user's **MemList / Menu backups** (`task_sdmenu` 0x2011010C, `sdmenu_load_file` 0x2010F81C,
@@ -168,7 +176,10 @@ mode until `system_reboot`, and the update can be repeated **[inference]**.
 Flag record (20 bytes) **[fact]**: `+0 0x11111111`, `+4 length`, `+8 0`, `+0xC 0`, `+0x10 ~CRC-32` of the **decoded** image (no salt).
 `boot_select_bank` only checks `+0 == 0x11111111` and `+4 != 0`, bank 1 first **[fact]**. `spiflash_erase` (*name*, 0x20103E74) erases
 64 KiB blocks; `spiflash_write` (0x20103DD0) writes and then compares a checksum of the data with the XIP window 0x18000000 + offset
-**[fact]**.
+**[fact]**. Underneath is a small SPIBSC0 flash driver (T23e round 2): `spibsc_enter_spi_mode` switches CMNCR to SPI mode,
+`sflash_erase_block` sends WREN + 0xD8, `sflash_page_program` WREN + 0x02 in 256-byte pages, `sflash_fast_read` 0x0B, and
+`spibsc_exit_spi_mode` restores XIP mode and flushes the read cache; the device object 0x20810D90 takes `r`/`e` commands
+(`sflash_dev_write`) **[fact]**.
 
 ### Write sequence (`fwobj_display_run`)
 
@@ -374,3 +385,72 @@ SFL-encoded payloads without a header **[inference]**.
 - MAIN-side handling of `F1 02` (DSP_UPDATE, RT685 reset) and of the 0xC3/0xE2 UI frames (docs/code/main).
 - Meaning of FPGA reg 0x32 commands 3/1/4/5 and the 0x240000 / 0x480000 slot layout (T15 netlist work).
 - The physical key behind key line 6 and the encoder on P3_3/P3_5 (T11f).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100A14 | `crc32_make_table` | reflected poly 0xEDB88320 **[inference]** |
+| 0x20100A5C | `crc32_update` | names-file group "startup / armcc runtime"; no direct calls; 44 B, callers: 11 **[fact]** (code shape) |
+| 0x20101C8C | `gpio_p8_5` | P8_5 (SDR_MOSI) port level, used by the reboot sequence **[inference]** |
+| 0x2010A918 | `be_bytes_to_u32` | big-endian bytes to integer **[inference]** |
+| 0x2010A940 | `sum8_neg_append` | appends the negated 8-bit sum **[inference]** |
+| 0x2010AA30 | `crc16_xmodem` | CRC-16 poly 0x1021 init 0 (NXP framing) **[inference]** |
+| 0x2010E624 | `hex2_parse` | two uppercase hex digits **[inference]** |
+| 0x201106F8 | `sdr_set_flash_addr` | regs 0x30 / 0x31 = flash address **[inference]** |
+| 0x20111174 | `work_buf_get` | (n): the shared 0xC0000-byte work buffer 0x20819560, n bytes cleared first (n < 0: all) **[fact]** |
+| 0x201140D0 | `progress_set` | progress percent 0x20800364 **[inference]** |
+| 0x201140DC | `progress_get` | progress percent **[inference]** |
+| 0x201140E8 | `progress_range_init` | {from, to} range **[inference]** |
+| 0x201140F4 | `progress_scale` | maps a fraction into the range **[inference]** |
+| 0x20126160 | `gui_scope_draw_hold_set` | (v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after; scope_draw_frame, main_filter_graph and FUN_201233d4 draw only while it is 0 ; pauses the scope drawing **[fact]** |
+| 0x201322AC | `fwupdate_insert_sd_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen **[inference]** |
+| 0x201322B4 | `fwupdate_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81) **[inference]** |
+| 0x201322BC | `fw_installed_versions_set_thunk` | r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81) **[inference]** |
+| 0x20158EC0 | `mainlink_send_ui_e2` | 0xE2 UI frame to MAIN **[inference]** |
+| 0x20158F28 | `mainlink_send_ui_c3` | 0xC3 UI state frame to MAIN **[inference]** |
+| 0x2015938C | `bootloader_screen` | YAESU FT-710 BOOT LOADER V01-02 **[inference]** |
+| 0x201595F0 | `fw_installed_versions_set` | installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) **[inference]** |
+| 0x20159714 | `fwupdate_screen` | MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) **[inference]** |
+| 0x2015AFB0 | `fwupdate_insert_sd_screen` | INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md) **[inference]** |
+| 0x201603D4 | `fwobj_sdr_ctor` | SDR object, vtable 0x20428070, +0xAB flag **[inference]** |
+| 0x201603F4 | `fwobj_build_path` | "%s%s" dir + file name **[inference]** |
+| 0x2016049C | `fwobj_set_status` | status text (Ready, failed, ...) **[inference]** |
+| 0x201604DC | `fwobj_select` | marks the object selected for update **[inference]** |
+| 0x201604F4 | `fwobj_base_ctor` | base update-object constructor, vtable 0x2042807C **[inference]** |
+| 0x20160558 | `fwname_pattern_init` | builds the name pattern (prefix, "NNNN", suffix) **[inference]** |
+| 0x201606A4 | `fwobj_main_ctor` | MAIN object, vtable 0x20428088 **[inference]** |
+| 0x201607C8 | `fwobj_ifdsp_ctor` | IFDSP object, vtable 0x20428094, +0xAB flag **[inference]** |
+| 0x20160C10 | `fwobj_display_ctor` | DISPLAY object, vtable 0x204280A0 **[inference]** |
+
+### SPI flash driver on SPIBSC0 (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI flash on SPIBSC0 (object 0x20810D90: +0 register base SPIBSC_CMNCR_0, +4 dual-flash flag, +0xC flash address; register offsets CMNCR 0, DRCR 0xC, SMCR 0x20, CMNSR 0x48 from the RZ/A1H manual) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20104104 | `spibsc_reg_read32` | *(base + off) for a register object {base,...} **[fact]** |
+| 0x20104110 | `spibsc_reg_write32` | *(base + off) = value **[fact]** |
+| 0x20104124 | `spibsc_reg_write16` | 16-bit register store **[fact]** |
+| 0x20104138 | `spibsc_reg_write8` | 8-bit register store **[fact]** |
+| 0x20104188 | `spibsc_ssl_negated` | 1 when CMNSR bit 1 (SSLF) is clear **[fact]** |
+| 0x201041A0 | `spibsc_wait_tend` | Polls CMNSR (0x48) bit 0 TEND, 100000 tries, -1 on timeout **[fact]** |
+| 0x201041F4 | `spibsc_ensure_idle` | Waits for TEND; if CMNSR is still not 1, pulses SMCR (0x20) and waits again; -1 on failure **[fact]** |
+| 0x2010427C | `spibsc_xfer` | SPI-mode transfer of n bytes through SMENR/SMWDR/SMRDR in 1/2/4-byte steps (size codes 0x2016525C), keeps SSL asserted between calls when asked **[inference]** |
+| 0x2010448C | `sflash_cmd_read` | Reads response bytes (spibsc_xfer read side) **[inference]** |
+| 0x2010474C | `sflash_cmd_write` | Sends command/address bytes; with two flash chips in parallel (+4) each byte is doubled **[fact]** |
+| 0x201047B4 | `sflash_wait_ready` | RDSR (0x05) until bits 0x81 (busy) are clear, 1000000 tries **[fact]** |
+| 0x20104848 | `sflash_wait_wel` | RDSR until WEL (bit 1) is set and not busy **[fact]** |
+| 0x201048E4 | `sflash_read_sr2` | Command 0x35, returns the byte; Read Status Register-2 of the W25Q128 (update.md flash layout) **[fact]** |
+| 0x20104944 | `spibsc_cmncr_set` | CMNCR = 0x81FFF320, \| 1 (BSZ) for dual flash **[fact]** |
+| 0x20104968 | `spibsc_enter_spi_mode` | Saves DRCR and CMNCR (+0x24/+0x20), sets DRCR, SMCR = 0, waits for TEND and SSL negate, sets CMNCR MD (bit 31) = SPI mode **[fact]** |
+| 0x20104A08 | `spibsc_exit_spi_mode` | Restores DRCR and CMNCR and flushes the read cache (DRCR RCF 0x200) back to XIP mode **[fact]** |
+| 0x20104A64 | `sflash_fast_read` | FAST_READ (0x0B) at the object's address +0xC, advances it (half the count with dual flash) **[fact]** |
+| 0x20104B20 | `sflash_erase_block` | WREN (0x06) and 64 KB block erase (0xD8) at the object's address, waits ready **[fact]** |
+| 0x20104BD8 | `sflash_page_program` | WREN and page program (0x02) in 256-byte pages (x2 for dual flash), with the partial-page buffer 0x20810DBC **[fact]** |
+| 0x20104D9C | `sflash_global_unlock` | WREN and command 0x98, waits ready; 0x98 = Global Block Unlock on the W25Q128 **[fact]** |
+| 0x20104E20 | `sflash_dev_read` | Read side of the flash device object (mode 0x20810D98: 1 = read data with sflash_fast_read, 2/3 = return a status byte, flushes a partial page) **[fact]** |
+| 0x20104F34 | `sflash_dev_write` | Command side: 'r' + address (read), 'e' + address (erase block), program data in the other mode **[fact]** |
+| 0x20105060 | `sflash_dev_open` | Object 0x20810D90 base = SPIBSC_CMNCR_0; spiflash_erase and spiflash_write start with it **[fact]** |

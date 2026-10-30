@@ -83,9 +83,9 @@ void task_keycode(void)
           } while (uStack_4 == 1);
           if (uStack_4 != 2) break;
           puStack_8 = &DAT_208d9960;
-          puVar3 = (uint *)FUN_2014e320(&DAT_208d9960," ",&puStack_8);
+          puVar3 = (uint *)strtok_r(&DAT_208d9960," ",&puStack_8);
           if ((puVar3 != (uint *)0x0) && (uVar4 = strcmp(puVar3,(uint *)0x20111a9c), uVar4 == 0)) {
-            pbVar5 = (byte *)FUN_2014e320(puStack_8," ",&puStack_8);
+            pbVar5 = (byte *)strtok_r(puStack_8," ",&puStack_8);
             if (pbVar5 == (byte *)0x0) {
               rtc_get_date(&uStack_10,auStack_14,&stack0xffffffe8);
             }
@@ -99,9 +99,9 @@ void task_keycode(void)
         }
         if (uStack_4 != 4) break;
         puStack_8 = &DAT_208d9960;
-        puVar3 = (uint *)FUN_2014e320(&DAT_208d9960," ",&puStack_8);
+        puVar3 = (uint *)strtok_r(&DAT_208d9960," ",&puStack_8);
         if ((puVar3 != (uint *)0x0) && (uVar4 = strcmp(puVar3,(uint *)"time"), uVar4 == 0)) {
-          pbVar5 = (byte *)FUN_2014e320(puStack_8," ",&puStack_8);
+          pbVar5 = (byte *)strtok_r(puStack_8," ",&puStack_8);
           if (pbVar5 == (byte *)0x0) {
             rtc_get_time(&uStack_10,auStack_14,&stack0xffffffe8);
           }
@@ -115,12 +115,12 @@ void task_keycode(void)
       }
       if (uStack_4 != 8) break;
       puStack_8 = &DAT_208d9960;
-      puVar3 = (uint *)FUN_2014e320(&DAT_208d9960," ",&puStack_8);
+      puVar3 = (uint *)strtok_r(&DAT_208d9960," ",&puStack_8);
       if (((puVar3 != (uint *)0x0) && (uVar4 = strcmp(puVar3,(uint *)0x20111aac), uVar4 == 0)) &&
-         (pbVar5 = (byte *)FUN_2014e320(puStack_8," ",&puStack_8), pbVar5 != (byte *)0x0)) {
+         (pbVar5 = (byte *)strtok_r(puStack_8," ",&puStack_8), pbVar5 != (byte *)0x0)) {
         uVar1 = hex_parse(pbVar5,2,&pbStack_c);
         if (((pbStack_c != pbVar5) &&
-            (pbVar5 = (byte *)FUN_2014e320(puStack_8," ",&puStack_8), pbVar5 != (byte *)0x0)) &&
+            (pbVar5 = (byte *)strtok_r(puStack_8," ",&puStack_8), pbVar5 != (byte *)0x0)) &&
            (uVar2 = hex_parse(pbVar5,4,&pbStack_c), pbStack_c != pbVar5)) {
           uStack_f = (undefined1)uVar2;
           uStack_e = (undefined1)(uVar2 >> 8);
@@ -316,12 +316,12 @@ void * keycode_init(void)
   code *pcVar1;
   uint uVar2;
   
-  DAT_208001d0 = itron_acre_flg(0,&DAT_20165548);
+  DAT_208001d0 = itron_acre_flg(0,&cflg_keycode);
   if ((int)DAT_208001d0 < 1) {
     pcVar1 = (code *)0x0;
   }
   else {
-    uVar2 = itron_acre_tsk(0,&DAT_2016552c);
+    uVar2 = itron_acre_tsk(0,&ctsk_keycode);
     if ((int)uVar2 < 1) {
       pcVar1 = (code *)0x0;
     }
@@ -610,7 +610,7 @@ void spi_slave_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&DAT_20165554);
+  uVar1 = itron_acre_tsk(0,&ctsk_spi_slave_task);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,0);
     return;
@@ -846,11 +846,11 @@ void pot_detect(void)
   undefined8 uVar4;
   
   uVar4 = adc_ring_average(&DAT_208d9a08);
-  FUN_20164888((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x3fe00000);
-  uVar1 = FUN_20164cf0();
+  __aeabi_dadd((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x3fe00000);
+  uVar1 = __aeabi_d2uiz();
   uVar4 = adc_ring_average(&DAT_208d99c8);
-  FUN_20164888((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x3fe00000);
-  uVar2 = FUN_20164cf0();
+  __aeabi_dadd((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x3fe00000);
+  uVar2 = __aeabi_d2uiz();
   uVar3 = adc_hysteresis((uint)uVar1,(uint)DAT_208001ea,(uint)DAT_208001ee);
   DAT_208001f0 = adc_hysteresis((uint)uVar2,(uint)DAT_208001ec,(uint)DAT_208001f0);
   DAT_2080020e = uVar1 >> 4;
@@ -966,21 +966,21 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
   
   FUN_201637d8(&DAT_20800208,0xff,param_3,param_4,param_4);
   FUN_201637d8(&DAT_2080020e,0xff);
-  DAT_208001f8 = itron_acre_flg(0,&DAT_201655e8);
-  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,&DAT_201655cc), 0 < (int)uVar2)) &&
+  DAT_208001f8 = itron_acre_flg(0,&cflg_renc);
+  if (((0 < (int)DAT_208001f8) && (uVar2 = itron_acre_tsk(0,&ctsk_renc), 0 < (int)uVar2)) &&
      (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) {
     renc_mtu2_init();
-    uVar2 = itron_acre_tsk(0,&DAT_20165594);
+    uVar2 = itron_acre_tsk(0,&ctsk_ad_renc);
     if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
       periodic_wakeup_register(uVar2,1);
-      uVar2 = itron_acre_tsk(0,&DAT_201655b0);
+      uVar2 = itron_acre_tsk(0,&ctsk_detect_renc);
       if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
         periodic_wakeup_register(uVar2,2);
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 & 0xfcff;
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 | 0x300;
-        uVar2 = itron_acre_isr(0,0x20165580);
+        uVar2 = itron_acre_isr(0,&cisr_renc_irq4_isr);
         if (0 < (int)uVar2) {
           gic_enable_irq(0x24);
           return;
@@ -1417,8 +1417,8 @@ LAB_2011343c:
     uVar4 = 5;
   }
   else {
-    if ((DAT_208f0b2a != '{') || (DAT_208f0b2b == '\0')) {
-      if ((DAT_2080049f == '\0') || (DAT_20450034 == '|')) {
+    if ((gui_frame.cmd != 0x7b) || (gui_frame.byte1 == 0)) {
+      if ((DAT_2080049f == '\0') || (g_ml.last_rx_cmd == 0x7c)) {
         if (DAT_20800219 == '\0') {
           if (local_20._1_1_ == '\0') {
             if ((local_20._2_1_ == '\x03') && (local_20._3_1_ == '\0')) {
@@ -1659,7 +1659,7 @@ void task_key(void)
     do {
       itron_tslp_tsk(0xffffffff);
     } while (DAT_20800217 != '\0');
-    if ((DAT_208f0b2a == '{') && (DAT_208f0b2b != '\0')) {
+    if ((gui_frame.cmd == 0x7b) && (gui_frame.byte1 != 0)) {
       DAT_20800218 = 1;
     }
     key_sample_all();
@@ -1837,7 +1837,7 @@ void key_init(void)
   uint uVar2;
   
   key_set_power_level(1);
-  uVar1 = itron_acre_tsk(0,&DAT_201656a8);
+  uVar1 = itron_acre_tsk(0,&ctsk_key);
   if ((0 < (int)uVar1) && (uVar2 = itron_sta_tsk(uVar1,0), uVar2 == 0)) {
     periodic_wakeup_register(uVar1,4);
     return;

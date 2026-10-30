@@ -517,7 +517,7 @@ undefined1 FUN_fff9ccd3(void)
   
   uVar2 = 0;
   if (g_opstate.split_on != 0) {
-    if ((g_opstate.split_on == 1) && (PTR_g_ui_00025d38->f_0x482_u8 == 1)) {
+    if ((g_opstate.split_on == 1) && (PTR_g_ui_00025d38->split_long_on == 1)) {
       bVar1 = true;
     }
     else {
@@ -532,9 +532,9 @@ undefined1 FUN_fff9ccd3(void)
 LAB_fff9cd2a:
   puVar3 = (uint *)(&DAT_00020824 + DAT_0001b3d7);
   if (bVar1) {
-    FUN_fff9cc77(g_opstate.active_vfo != 0,puVar3);
+    FUN_fff9cc77(g_opstate.active_vfo != VFO_A,puVar3);
   }
-  else if (g_opstate.active_vfo != 0) {
+  else if (g_opstate.active_vfo != VFO_A) {
     FUN_fff9cc77('\0',puVar3);
   }
   else {
@@ -563,13 +563,13 @@ void FUN_fff9cdb0(char param_1)
   uint uStack_8;
   char local_1;
   
-  local_a = g_opstate.active_vfo != 0;
+  local_a = g_opstate.active_vfo != VFO_A;
   local_1 = param_1;
   if (param_1 == '\0') {
     FUN_fff9cc77(local_a,&uStack_8);
   }
   else {
-    FUN_fff9cc77(g_opstate.active_vfo == 0,&uStack_8);
+    FUN_fff9cc77(g_opstate.active_vfo == VFO_A,&uStack_8);
   }
   for (bStack_9 = 0; bStack_9 < 0x14; bStack_9 = bStack_9 + 1) {
     (&DAT_00020824)[bStack_9] = uStack_8;
@@ -655,7 +655,7 @@ void freq_cache_update(void)
   }
   if (!bVar1) {
     if (PTR_g_ui_00025d38->func_knob_item == 0x21) {
-      if (g_opstate.active_vfo == 0) {
+      if (g_opstate.active_vfo == VFO_A) {
         local_4 = &g_opstate.vfo_a;
       }
       else {
@@ -670,7 +670,7 @@ void freq_cache_update(void)
       }
       if (bVar1) {
         PTR_g_ui_00025d38->func_knob_item = 0x20;
-        PTR_g_ui_00025d38->f_0x47a_u8 = 0;
+        PTR_g_ui_00025d38->dsp_knob_apf = 0;
       }
     }
     uVar4 = vfo_freq_clar(VFO_TX,VFO_SIDE_SEL);
@@ -681,7 +681,7 @@ void freq_cache_update(void)
     uVar4 = vfo_freq_clar(VFO_RX,VFO_B);
     PTR_g_ui_00025d38->freq_b = uVar4;
     if (PTR_g_ui_00025d38->transmitting == 0) {
-      if (g_opstate.active_vfo == 0) {
+      if (g_opstate.active_vfo == VFO_A) {
         uStack_8 = PTR_g_ui_00025d38->freq_a;
       }
       else {

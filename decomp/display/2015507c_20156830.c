@@ -2419,8 +2419,8 @@ void kernel_heap_init(void)
   
   uVar1 = gic_init();
   if (uVar1 == 0) {
-    DAT_208003ac = 0;
-    DAT_208003a8 = 0;
+    knl_sys.task_cpsr = 0;
+    knl_sys.f_0x00_u32 = 0;
     FUN_201530fc(&DAT_20980000,&stack0xfffffff8);
   }
   return;
@@ -2432,20 +2432,20 @@ void kernel_heap_init(void)
 ulonglong FUN_20156310(void)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   bool bVar2;
   undefined4 in_stack_00000000;
   undefined1 auStack_60 [52];
   undefined1 auStack_10 [4];
   
-  puVar1 = auStack_10;
-  bVar2 = DAT_208003da == '\0';
-  DAT_208003da = DAT_208003da + -1;
+  pbVar1 = auStack_10;
+  bVar2 = knl_sys.ctx_isr == 0;
+  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
   if (bVar2) {
-    **(int **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) = (int)auStack_60;
-    puVar1 = DAT_208003f0;
+    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_60;
+    pbVar1 = knl_sys.isr_area;
   }
-  return CONCAT44(puVar1,in_stack_00000000) & 0xfffffff8ffffffff;
+  return CONCAT44(pbVar1,in_stack_00000000) & 0xfffffff8ffffffff;
 }
 
 
@@ -2454,19 +2454,19 @@ ulonglong FUN_20156310(void)
 ulonglong FUN_2015632c(undefined4 param_1)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   bool bVar2;
   undefined1 auStack_58 [52];
   undefined1 auStack_8 [4];
   
-  puVar1 = auStack_8;
-  bVar2 = DAT_208003da == '\0';
-  DAT_208003da = DAT_208003da + -1;
+  pbVar1 = auStack_8;
+  bVar2 = knl_sys.ctx_isr == 0;
+  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
   if (bVar2) {
-    **(int **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) = (int)auStack_58;
-    puVar1 = DAT_208003f0;
+    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_58;
+    pbVar1 = knl_sys.isr_area;
   }
-  return CONCAT44(puVar1,param_1) & 0xfffffff8ffffffff;
+  return CONCAT44(pbVar1,param_1) & 0xfffffff8ffffffff;
 }
 
 
@@ -2476,7 +2476,7 @@ undefined8 FUN_201563ec(void)
 
 {
   uint uVar1;
-  undefined4 *puVar2;
+  knl_tcb *pkVar2;
   byte *pbVar3;
   undefined4 unaff_r4;
   undefined4 unaff_r5;
@@ -2486,60 +2486,63 @@ undefined8 FUN_201563ec(void)
   undefined4 unaff_r9;
   undefined4 unaff_r10;
   undefined4 unaff_r11;
-  int iVar4;
+  uint uVar4;
   int in_stack_00000010;
   uint in_stack_00000014;
   
   software_interrupt(0);
   gic_irq_exit();
-  DAT_208003da = DAT_208003da + '\x01';
-  if (DAT_208003da != '\0') {
+  knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
+  if (knl_sys.ctx_isr != 0) {
     return *(undefined8 *)(in_stack_00000010 + 8);
   }
-  pbVar3 = &DAT_208dc18c;
-  uVar1 = (uint)DAT_208003d8;
+  pbVar3 = knl_rdq;
+  uVar1 = (uint)knl_sys.f_0x30_u8;
   if ((uVar1 != 0) && (-1 < (int)(8 - uVar1))) {
-    DAT_208003de = DAT_208dc18c;
+    knl_sys.f_0x36_u8 = knl_rdq[0];
   }
   if (((in_stack_00000014 & 0xc0) == 0) && (uVar1 != 0)) {
-    uVar1 = (uint)DAT_208003dc;
+    uVar1 = (uint)knl_sys.f_0x34_u8;
     if (uVar1 == 0) {
-      if ((DAT_208003db != '\0') || (DAT_208003d9 == '\0')) goto LAB_201564f8;
-      DAT_208003d9 = '\0';
+      if ((knl_sys.dsp_state != 0) || (knl_sys.dsp_pending == 0)) goto LAB_201564f8;
+      knl_sys.dsp_pending = 0;
       do {
         pbVar3 = pbVar3 + 1;
         uVar1 = (uint)*pbVar3;
       } while (uVar1 == 0);
     }
-    if (uVar1 != DAT_208dc18c) {
-      iVar4 = **(int **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
-      *(undefined4 *)(iVar4 + 0x2c) = unaff_r11;
-      *(undefined4 *)(iVar4 + 0x28) = unaff_r10;
-      *(undefined4 *)(iVar4 + 0x24) = unaff_r9;
-      *(undefined4 *)(iVar4 + 0x20) = unaff_r8;
-      *(undefined4 *)(iVar4 + 0x1c) = unaff_r7;
-      *(undefined4 *)(iVar4 + 0x18) = unaff_r6;
-      *(undefined4 *)(iVar4 + 0x14) = unaff_r5;
-      *(undefined4 *)(iVar4 + 0x10) = unaff_r4;
-      DAT_208dc18c = (byte)uVar1;
-      puVar2 = *(undefined4 **)(&DAT_208dbba0 + uVar1 * 4);
+    if (uVar1 != knl_rdq[0]) {
+      uVar4 = knl_tsk_tab[knl_rdq[0]]->sp;
+      *(undefined4 *)(uVar4 + 0x2c) = unaff_r11;
+      *(undefined4 *)(uVar4 + 0x28) = unaff_r10;
+      *(undefined4 *)(uVar4 + 0x24) = unaff_r9;
+      *(undefined4 *)(uVar4 + 0x20) = unaff_r8;
+      *(undefined4 *)(uVar4 + 0x1c) = unaff_r7;
+      *(undefined4 *)(uVar4 + 0x18) = unaff_r6;
+      *(undefined4 *)(uVar4 + 0x14) = unaff_r5;
+      *(undefined4 *)(uVar4 + 0x10) = unaff_r4;
+      knl_rdq[0] = (byte)uVar1;
+      pkVar2 = knl_tsk_tab[uVar1];
       goto LAB_2015650c;
     }
   }
 LAB_201564f8:
-  puVar2 = *(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
+  pkVar2 = knl_tsk_tab[knl_rdq[0]];
 LAB_2015650c:
-  DAT_208003d8 = *(byte *)(puVar2 + 1);
-  if (DAT_208003d8 != '\0') {
-    DAT_208003df = DAT_208003d8;
+  knl_sys.f_0x30_u8 = pkVar2->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
   }
-  return *(undefined8 *)*puVar2;
+  return *(undefined8 *)pkVar2->sp;
 }
 
 
-// ===== FUN_2015655c @ 2015655c (404 bytes)
+// ===== knl_dispatch @ 2015655c (404 bytes)
 
-longlong FUN_2015655c(void)
+/* Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first
+   non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs [fact] */
+
+longlong knl_dispatch(void)
 
 {
   uint uVar1;
@@ -2548,35 +2551,35 @@ longlong FUN_2015655c(void)
   uint in_stack_00000004;
   undefined1 auStack_38 [16];
   
-  DAT_208003d9 = 1;
-  if (((((DAT_208003cc & 0x80) == 0) && (DAT_208003da == '\0')) && (DAT_208003db == '\0')) &&
-     (DAT_208003d8 != '\0')) {
-    uVar2 = (uint)DAT_208003dc;
-    pbVar3 = &DAT_208dc18c;
-    DAT_208003dc = 0;
-    uVar1 = (uint)DAT_208dc18c;
+  knl_sys.dsp_pending = 1;
+  if (((((knl_sys.f_0x24_u32 & 0x80) == 0) && (knl_sys.ctx_isr == 0)) && (knl_sys.dsp_state == 0))
+     && (knl_sys.f_0x30_u8 != 0)) {
+    uVar2 = (uint)knl_sys.f_0x34_u8;
+    pbVar3 = knl_rdq;
+    knl_sys.f_0x34_u8 = 0;
+    uVar1 = (uint)knl_rdq[0];
     if (uVar2 == 0) {
-      DAT_208003d9 = 0;
+      knl_sys.dsp_pending = 0;
       do {
         pbVar3 = pbVar3 + 1;
         uVar2 = (uint)*pbVar3;
       } while (uVar2 == 0);
     }
-    DAT_208dc18c = (byte)uVar2;
+    knl_rdq[0] = (byte)uVar2;
     if (uVar1 != uVar2) {
-      **(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) = auStack_38;
-      DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) + 1);
-      if (DAT_208003d8 != '\0') {
-        DAT_208003df = DAT_208003d8;
+      knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
+      knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+      if (knl_sys.f_0x30_u8 != 0) {
+        knl_sys.run_pri = knl_sys.f_0x30_u8;
       }
-      return *(longlong *)**(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
+      return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
     }
-    DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) + 1);
-    if (DAT_208003d8 != '\0') {
-      DAT_208003df = DAT_208003d8;
+    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
+    if (knl_sys.f_0x30_u8 != 0) {
+      knl_sys.run_pri = knl_sys.f_0x30_u8;
     }
   }
-  return (ulonglong)(in_stack_00000004 & 0xffffff3f | DAT_208003cc) << 0x20;
+  return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
 }
 
 
@@ -2591,33 +2594,33 @@ longlong FUN_201566f0(void)
   uint in_stack_00000004;
   undefined1 auStack_38 [16];
   
-  DAT_208003d9 = 1;
-  uVar2 = (uint)DAT_208003dc;
-  pbVar3 = &DAT_208dc18c;
-  DAT_208003dc = 0;
-  uVar1 = (uint)DAT_208dc18c;
+  knl_sys.dsp_pending = 1;
+  uVar2 = (uint)knl_sys.f_0x34_u8;
+  pbVar3 = knl_rdq;
+  knl_sys.f_0x34_u8 = 0;
+  uVar1 = (uint)knl_rdq[0];
   if (uVar2 == 0) {
-    DAT_208003d9 = 0;
+    knl_sys.dsp_pending = 0;
     do {
       pbVar3 = pbVar3 + 1;
       uVar2 = (uint)*pbVar3;
     } while (uVar2 == 0);
   }
-  DAT_208dc18c = (byte)uVar2;
+  knl_rdq[0] = (byte)uVar2;
   if (uVar1 == uVar2) {
-    DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) + 1);
-    if (DAT_208003d8 != '\0') {
-      DAT_208003df = DAT_208003d8;
+    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
+    if (knl_sys.f_0x30_u8 != 0) {
+      knl_sys.run_pri = knl_sys.f_0x30_u8;
     }
-    DAT_208003dc = 0;
-    return (ulonglong)(in_stack_00000004 & 0xffffff3f | DAT_208003cc) << 0x20;
+    knl_sys.f_0x34_u8 = 0;
+    return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
   }
-  **(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) = auStack_38;
-  DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) + 1);
-  if (DAT_208003d8 != '\0') {
-    DAT_208003df = DAT_208003d8;
+  knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
+  knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
   }
-  return *(longlong *)**(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
+  return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
 }
 
 
@@ -2632,31 +2635,31 @@ longlong FUN_20156748(void)
   uint in_stack_00000004;
   undefined1 auStack_38 [16];
   
-  uVar2 = (uint)DAT_208003dc;
-  pbVar3 = &DAT_208dc18c;
-  DAT_208003dc = 0;
-  uVar1 = (uint)DAT_208dc18c;
+  uVar2 = (uint)knl_sys.f_0x34_u8;
+  pbVar3 = knl_rdq;
+  knl_sys.f_0x34_u8 = 0;
+  uVar1 = (uint)knl_rdq[0];
   if (uVar2 == 0) {
-    DAT_208003d9 = 0;
+    knl_sys.dsp_pending = 0;
     do {
       pbVar3 = pbVar3 + 1;
       uVar2 = (uint)*pbVar3;
     } while (uVar2 == 0);
   }
-  DAT_208dc18c = (byte)uVar2;
+  knl_rdq[0] = (byte)uVar2;
   if (uVar1 == uVar2) {
-    DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) + 1);
-    if (DAT_208003d8 != '\0') {
-      DAT_208003df = DAT_208003d8;
+    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
+    if (knl_sys.f_0x30_u8 != 0) {
+      knl_sys.run_pri = knl_sys.f_0x30_u8;
     }
-    return (ulonglong)(in_stack_00000004 & 0xffffff3f | DAT_208003cc) << 0x20;
+    return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
   }
-  **(undefined4 **)(&DAT_208dbba0 + uVar1 * 4) = auStack_38;
-  DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) + 1);
-  if (DAT_208003d8 != '\0') {
-    DAT_208003df = DAT_208003d8;
+  knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
+  knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
   }
-  return *(longlong *)**(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
+  return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
 }
 
 
@@ -2667,16 +2670,16 @@ undefined8 FUN_2015677c(void)
 {
   byte *pbVar1;
   
-  pbVar1 = &DAT_208dc18c;
+  pbVar1 = knl_rdq;
   do {
     pbVar1 = pbVar1 + 1;
-    DAT_208dc18c = *pbVar1;
-  } while (DAT_208dc18c == 0);
-  DAT_208003d8 = *(char *)(*(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4) + 1);
-  if (DAT_208003d8 != '\0') {
-    DAT_208003df = DAT_208003d8;
+    knl_rdq[0] = *pbVar1;
+  } while (knl_rdq[0] == 0);
+  knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
   }
-  return *(undefined8 *)**(undefined4 **)(&DAT_208dbba0 + (uint)DAT_208dc18c * 4);
+  return *(undefined8 *)knl_tsk_tab[knl_rdq[0]]->sp;
 }
 
 
@@ -2696,19 +2699,22 @@ uint FUN_201567d4(void)
 {
   uint in_stack_00000004;
   
-  DAT_208003cc = in_stack_00000004 & 0xc0;
+  knl_sys.f_0x24_u32 = in_stack_00000004 & 0xc0;
   return in_stack_00000004 & 0xffffff3f | 0x80;
 }
 
 
-// ===== FUN_201567f4 @ 201567f4 (32 bytes)
+// ===== knl_svc_return @ 201567f4 (32 bytes)
 
-longlong FUN_201567f4(void)
+/* Returns from a service call with the saved PSR bits restored (0x208003CC | spsr & ~0xC0) [fact];
+   the no-dispatch exit of the itron_* calls [inference] */
+
+longlong knl_svc_return(void)
 
 {
   uint in_stack_00000004;
   
-  return (ulonglong)(DAT_208003cc | in_stack_00000004 & 0xffffff3f) << 0x20;
+  return (ulonglong)(knl_sys.f_0x24_u32 | in_stack_00000004 & 0xffffff3f) << 0x20;
 }
 
 

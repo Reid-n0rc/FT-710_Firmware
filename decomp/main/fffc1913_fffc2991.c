@@ -39,7 +39,7 @@ void bandstack_save(void)
   vfo_rec (*pavStack_c) [12];
   vfo_rec *pvStack_4;
   
-  local_13 = g_opstate.active_vfo == 0;
+  local_13 = g_opstate.active_vfo == VFO_A;
   if (local_13) {
     uVar1 = vfo_freq(VFO_RX,VFO_A);
     g_opstate.band_a = band_of_freq(uVar1);
@@ -80,7 +80,7 @@ void FUN_fffc1a0d(void)
 {
   g_opstate.memtune_a.mode = g_opstate.vfo_a.mode;
   g_opstate.memtune_a.freq_be = g_opstate.vfo_a.freq_be;
-  PTR_g_ui_00025d54->f_0x43f_u8 = 1;
+  PTR_g_ui_00025d54->memtune_valid_a = 1;
   return;
 }
 
@@ -92,7 +92,7 @@ void FUN_fffc1a35(void)
 {
   g_opstate.memtune_b.mode = g_opstate.vfo_b.mode;
   g_opstate.memtune_b.freq_be = g_opstate.vfo_b.freq_be;
-  PTR_g_ui_00025d54->f_0x43f_u8 = 1;
+  PTR_g_ui_00025d54->memtune_valid_a = 1;
   return;
 }
 
@@ -105,12 +105,12 @@ void band_select_pms(vfo_side param_1,band_idx param_2)
 
 {
   if (param_1 == VFO_A) {
-    if (g_opstate.vfo_state_a == 4) {
-      g_opstate.vfo_state_a = 1;
+    if (g_opstate.vfo_state_a == VFO_STATE_PMS) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
   }
-  else if (g_opstate.vfo_state_b == 4) {
-    g_opstate.vfo_state_b = 1;
+  else if (g_opstate.vfo_state_b == VFO_STATE_PMS) {
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
   }
   band_select_mem(param_1,param_2);
   return;
@@ -160,12 +160,12 @@ void band_select_vfo(vfo_side param_1,band_idx param_2)
 
 {
   if (param_1 == VFO_A) {
-    if (g_opstate.vfo_state_a == 5) {
-      g_opstate.vfo_state_a = 1;
+    if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
   }
-  else if (g_opstate.vfo_state_b == 5) {
-    g_opstate.vfo_state_b = 1;
+  else if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
   }
   band_select_stack(param_1,param_2);
   return;
@@ -229,18 +229,18 @@ void vfo_reload(byte param_1)
   bool bVar1;
   
   if (param_1 == 0) {
-    if (PTR_g_ui_00025d54->f_0x43d_u8 == 1) {
+    if (PTR_g_ui_00025d54->force_bandstack_a == 1) {
       vfo_reload_bandstack(0);
       return;
     }
-    if ((g_opstate.vfo_state_a == 3) || (g_opstate.vfo_state_a == 4)) {
+    if ((g_opstate.vfo_state_a == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_a == VFO_STATE_PMS)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (!bVar1) {
-      if (g_opstate.vfo_state_a == 2) {
+      if (g_opstate.vfo_state_a == VFO_STATE_MEMORY) {
         vfo_reload_memory(0);
         return;
       }
@@ -250,18 +250,18 @@ void vfo_reload(byte param_1)
     FUN_fffc1d95();
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x43e_u8 == 1) {
+  if (PTR_g_ui_00025d54->force_bandstack_b == 1) {
     vfo_reload_bandstack(1);
     return;
   }
-  if ((g_opstate.vfo_state_b == 3) || (g_opstate.vfo_state_b == 4)) {
+  if ((g_opstate.vfo_state_b == VFO_STATE_MEMTUNE) || (g_opstate.vfo_state_b == VFO_STATE_PMS)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (!bVar1) {
-    if (g_opstate.vfo_state_b == 2) {
+    if (g_opstate.vfo_state_b == VFO_STATE_MEMORY) {
       vfo_reload_memory(1);
       return;
     }
@@ -299,7 +299,7 @@ void bandstack_load(byte param_1)
   int iVar3;
   
   if (param_1 == 0) {
-    if (g_opstate.vfo_state_a != 5) {
+    if (g_opstate.vfo_state_a != VFO_STATE_QMB) {
       pvVar1 = &g_opstate.vfo_a;
       pvVar2 = bandstack_a[bandstack_level_a[g_opstate.band_a]] + g_opstate.band_a;
       for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
@@ -313,7 +313,7 @@ void bandstack_load(byte param_1)
     FUN_fffc334c(0);
     return;
   }
-  if (g_opstate.vfo_state_b != 5) {
+  if (g_opstate.vfo_state_b != VFO_STATE_QMB) {
     pvVar1 = &g_opstate.vfo_b;
     pvVar2 = bandstack_b[bandstack_level_b[g_opstate.band_b]] + g_opstate.band_b;
     for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
@@ -334,11 +334,11 @@ void bandstack_load(byte param_1)
 void FUN_fffc1d95(void)
 
 {
-  if (PTR_g_ui_00025d54->f_0x43f_u8 == 0) {
+  if (PTR_g_ui_00025d54->memtune_valid_a == 0) {
     vfo_reload_memory(0);
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x441_u8 != 1) {
+  if (PTR_g_ui_00025d54->memtune_backup_a != 1) {
     memch_load_to_vfo('\0');
     FUN_fffc1e37();
     return;
@@ -363,11 +363,11 @@ void FUN_fffc1dc6(void)
 void FUN_fffc1dca(void)
 
 {
-  if (PTR_g_ui_00025d54->f_0x440_u8 == 0) {
+  if (PTR_g_ui_00025d54->memtune_valid_b == 0) {
     vfo_reload_memory(1);
     return;
   }
-  if (PTR_g_ui_00025d54->f_0x442_u8 != 1) {
+  if (PTR_g_ui_00025d54->memtune_backup_b != 1) {
     memch_load_to_vfo('\x01');
     FUN_fffc1e52();
     return;
@@ -581,7 +581,7 @@ void memlist_key(byte param_1)
   bool bVar2;
   
   if (PTR_g_ui_00025d54->memlist_open != 0) {
-    PTR_g_ui_00025d54->f_0x43c_u8 = 0;
+    PTR_g_ui_00025d54->memlist_edit_on = 0;
     uVar1 = (uint)param_1;
     if (uVar1 == 9) {
       if (PTR_g_ui_00025d54->memlist_flag == 1) {
@@ -595,16 +595,16 @@ void memlist_key(byte param_1)
     }
     if (uVar1 - 4 < 4) {
       if (param_1 != 4) {
-        PTR_g_ui_00025d54->f_0x43c_u8 = 1;
+        PTR_g_ui_00025d54->memlist_edit_on = 1;
       }
-      if ((PTR_g_ui_00025d54->memlist_flag == 1) && (PTR_g_ui_00025d54->f_0x43b_u8 == 1)) {
+      if ((PTR_g_ui_00025d54->memlist_flag == 1) && (PTR_g_ui_00025d54->memlist_popup55 == 1)) {
         bVar2 = true;
       }
       else {
         bVar2 = false;
       }
       if (bVar2) {
-        PTR_g_ui_00025d54->f_0x43b_u8 = 0;
+        PTR_g_ui_00025d54->memlist_popup55 = 0;
         beep_request(1);
         return;
       }
@@ -617,13 +617,13 @@ void memlist_key(byte param_1)
     }
     if (uVar1 == 8) {
       FUN_fffc22de();
-      eeprom_save_memch(PTR_g_ui_00025d54->f_0x43a_u8);
+      eeprom_save_memch(PTR_g_ui_00025d54->memlist_ch);
       return;
     }
     if (uVar1 < 4) {
       PTR_g_ui_00025d54->memlist_row = param_1;
       PTR_g_ui_00025d54->memlist_flag = 0;
-      PTR_g_ui_00025d54->f_0x43b_u8 = 0;
+      PTR_g_ui_00025d54->memlist_popup55 = 0;
       memlist_cursor_channel();
       beep_request(1);
       return;
@@ -683,7 +683,7 @@ void FUN_fffc2137(void)
   int iVar5;
   byte *pbStack_4;
   
-  bVar3 = memch_valid(PTR_g_ui_00025d54->f_0x43a_u8,&pbStack_4);
+  bVar3 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
   if (bVar3) {
     PTR_g_ui_00025d54->kbd_open = 1;
     PTR_g_ui_00025d54->kbd_target = 1;
@@ -693,7 +693,7 @@ void FUN_fffc2137(void)
       (*pabVar4)[0] = 0x20;
       pabVar4 = (byte (*) [50])(*pabVar4 + 1);
     }
-    bVar1 = PTR_g_ui_00025d54->f_0x43a_u8;
+    bVar1 = PTR_g_ui_00025d54->memlist_ch;
     *(undefined4 *)(PTR_g_ui_00025d54->msg_text[0] + 8) = *(undefined4 *)(memch[bVar1].tag + 8);
     *(undefined4 *)(puVar2->msg_text[0] + 4) = *(undefined4 *)(memch[bVar1].tag + 4);
     *(undefined4 *)puVar2->msg_text[0] = *(undefined4 *)memch[bVar1].tag;
@@ -712,7 +712,7 @@ void FUN_fffc2137(void)
 void ui_key_reject(void)
 
 {
-  PTR_g_ui_00025d54->f_0x43c_u8 = 0;
+  PTR_g_ui_00025d54->memlist_edit_on = 0;
   PTR_g_ui_00025d54->key_consumed = 1;
   beep_request(3);
   return;
@@ -727,8 +727,8 @@ void FUN_fffc21e8(void)
   bool bVar1;
   byte *pbStack_4;
   
-  if ((PTR_g_ui_00025d54->f_0x43a_u8 < 0x75) &&
-     (bVar1 = memch_valid(PTR_g_ui_00025d54->f_0x43a_u8,&pbStack_4), bVar1)) {
+  if ((PTR_g_ui_00025d54->memlist_ch < 0x75) &&
+     (bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4), bVar1)) {
     bVar1 = false;
   }
   else {
@@ -738,7 +738,7 @@ void FUN_fffc21e8(void)
     ui_key_reject();
     return;
   }
-  PTR_g_ui_00025d54->f_0x43b_u8 = 1;
+  PTR_g_ui_00025d54->memlist_popup55 = 1;
   PTR_g_ui_00025d54->popup_code = 0x55;
   popup_duration_get(0x55);
   popup_open_timed();
@@ -755,9 +755,9 @@ void FUN_fffc224e(void)
   bool bVar1;
   byte *pbStack_4;
   
-  bVar1 = memch_valid(PTR_g_ui_00025d54->f_0x43a_u8,&pbStack_4);
+  bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
   if (bVar1) {
-    PTR_g_ui_00025d54->f_0x43b_u8 = 1;
+    PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x44;
     popup_duration_get(0x44);
     popup_open_timed();
@@ -777,9 +777,9 @@ void FUN_fffc2296(void)
   bool bVar1;
   byte *pbStack_4;
   
-  bVar1 = memch_valid(PTR_g_ui_00025d54->f_0x43a_u8,&pbStack_4);
+  bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
   if (bVar1) {
-    PTR_g_ui_00025d54->f_0x43b_u8 = 1;
+    PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x45;
     popup_duration_get(0x45);
     popup_open_timed();
@@ -799,15 +799,15 @@ void FUN_fffc22de(void)
   bool bVar1;
   byte *local_4;
   
-  if ((PTR_g_ui_00025d54->f_0x43a_u8 < 0x75) && (PTR_g_ui_00025d54->f_0x43a_u8 != 0)) {
+  if ((PTR_g_ui_00025d54->memlist_ch < 0x75) && (PTR_g_ui_00025d54->memlist_ch != 0)) {
     bVar1 = false;
   }
   else {
     bVar1 = true;
   }
   if (!bVar1) {
-    *local_4 = (byte)(1 << (PTR_g_ui_00025d54->f_0x43a_u8 & 7)) | *local_4;
-    bVar1 = memch_valid(PTR_g_ui_00025d54->f_0x43a_u8,&local_4);
+    *local_4 = (byte)(1 << (PTR_g_ui_00025d54->memlist_ch & 7)) | *local_4;
+    bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&local_4);
     if (bVar1) {
       *local_4 = 0;
     }
@@ -898,8 +898,8 @@ void popup8_close(void)
   if (bVar1) {
     popup_close();
   }
-  PTR_g_ui_00025d54->f_0x40d_u8 = 0;
-  PTR_g_ui_00025d54->f_0x414_u8 = 0;
+  PTR_g_ui_00025d54->keypad_open = 0;
+  PTR_g_ui_00025d54->keypad_set_fix = 0;
   return;
 }
 
@@ -929,18 +929,18 @@ undefined1 FUN_fffc2426(void)
   ushort uVar4;
   byte local_4;
   
-  bVar1 = g_opstate.active_vfo != 0;
+  bVar1 = g_opstate.active_vfo != VFO_A;
   if (PTR_g_ui_00025d54->memlist_open == 1) {
-    memch_current_set(bVar1,PTR_g_ui_00025d54->f_0x43a_u8);
-    local_4 = PTR_g_ui_00025d54->f_0x43a_u8;
+    memch_current_set(bVar1,PTR_g_ui_00025d54->memlist_ch);
+    local_4 = PTR_g_ui_00025d54->memlist_ch;
     if (g_opstate.split_on == 1) {
       g_opstate.split_on = 0;
-      g_opstate.vfo_state_a = 1;
-      g_opstate.vfo_state_b = 1;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
       PTR_g_ui_00025d54->txw_on = 0;
       g_ui.txw_swap = 0;
-      PTR_g_ui_00025d54->f_0x443_u8 = 1;
-      PTR_g_ui_00025d54->f_0x445_u8 = 1;
+      PTR_g_ui_00025d54->edited_a = 1;
+      PTR_g_ui_00025d54->edited_b = 1;
       PTR_g_ui_00025d54->freq_refresh_req = 1;
     }
   }
@@ -951,20 +951,20 @@ undefined1 FUN_fffc2426(void)
       g_opstate.vfo_state_b = PTR_g_ui_00025d54->split_saved_state_b;
       PTR_g_ui_00025d54->txw_on = 0;
       g_ui.txw_swap = 0;
-      PTR_g_ui_00025d54->f_0x443_u8 = 1;
-      PTR_g_ui_00025d54->f_0x445_u8 = 1;
+      PTR_g_ui_00025d54->edited_a = 1;
+      PTR_g_ui_00025d54->edited_b = 1;
       PTR_g_ui_00025d54->freq_refresh_req = 1;
       return 1;
     }
     if (bVar1) {
-      if (g_opstate.vfo_state_b == 5) {
-        g_opstate.vfo_state_b = 1;
+      if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
+        g_opstate.vfo_state_b = VFO_STATE_VFO;
         vfo_reload(1);
         return 1;
       }
     }
-    else if (g_opstate.vfo_state_a == 5) {
-      g_opstate.vfo_state_a = 1;
+    else if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
       vfo_reload(0);
       return 1;
     }
@@ -1005,11 +1005,11 @@ undefined1 FUN_fffc260c(byte param_1)
     uStack_3 = 0;
   }
   else {
-    if (g_opstate.vfo_state_a == 5) {
-      g_opstate.vfo_state_a = 1;
+    if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
-    if (g_opstate.vfo_state_b == 5) {
-      g_opstate.vfo_state_b = 1;
+    if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
     }
     qmb_set_depth(param_1);
     memch_load_to_vfo(param_1);
@@ -1117,7 +1117,7 @@ void vm_toggle_core(void)
 
 {
   bool bVar1;
-  byte bStack_2;
+  vfo_state vStack_2;
   byte bStack_1;
   
   popup_close();
@@ -1125,21 +1125,21 @@ void vm_toggle_core(void)
   func_panel_close();
   popup8_close();
   ui_clear_415_423();
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     bStack_1 = 0;
-    bStack_2 = g_opstate.vfo_state_a;
-    if (g_opstate.vfo_state_a != 5) {
+    vStack_2 = g_opstate.vfo_state_a;
+    if (g_opstate.vfo_state_a != VFO_STATE_QMB) {
       vfo_store_back(0);
     }
   }
   else {
     bStack_1 = 1;
-    bStack_2 = g_opstate.vfo_state_b;
-    if (g_opstate.vfo_state_b != 5) {
+    vStack_2 = g_opstate.vfo_state_b;
+    if (g_opstate.vfo_state_b != VFO_STATE_QMB) {
       vfo_store_back(1);
     }
   }
-  if ((bStack_2 == 4) || (bStack_2 == 3)) {
+  if ((vStack_2 == VFO_STATE_PMS) || (vStack_2 == VFO_STATE_MEMTUNE)) {
     bVar1 = true;
   }
   else {
@@ -1148,7 +1148,7 @@ void vm_toggle_core(void)
   if (bVar1) {
     FUN_fffc28eb(bStack_1);
   }
-  else if (bStack_2 == 2) {
+  else if (vStack_2 == VFO_STATE_MEMORY) {
     FUN_fffc296f(bStack_1);
     if (bStack_1 == 0) {
       PTR_g_ui_00025d54->clar_flags_a = 0;
@@ -1195,12 +1195,12 @@ void vfo_enter_mem_state(byte param_1)
 
 {
   if (param_1 != 0) {
-    g_opstate.vfo_state_b = 2;
-    PTR_g_ui_00025d54->f_0x43e_u8 = 0;
+    g_opstate.vfo_state_b = VFO_STATE_MEMORY;
+    PTR_g_ui_00025d54->force_bandstack_b = 0;
     return;
   }
-  g_opstate.vfo_state_a = 2;
-  PTR_g_ui_00025d54->f_0x43d_u8 = 0;
+  g_opstate.vfo_state_a = VFO_STATE_MEMORY;
+  PTR_g_ui_00025d54->force_bandstack_a = 0;
   return;
 }
 
@@ -1213,12 +1213,12 @@ void memtune_flags_clear(int param_1)
 
 {
   if (param_1 != 0) {
-    PTR_g_ui_00025d54->f_0x440_u8 = 0;
-    PTR_g_ui_00025d54->f_0x442_u8 = 0;
+    PTR_g_ui_00025d54->memtune_valid_b = 0;
+    PTR_g_ui_00025d54->memtune_backup_b = 0;
     return;
   }
-  PTR_g_ui_00025d54->f_0x43f_u8 = 0;
-  PTR_g_ui_00025d54->f_0x441_u8 = 0;
+  PTR_g_ui_00025d54->memtune_valid_a = 0;
+  PTR_g_ui_00025d54->memtune_backup_a = 0;
   return;
 }
 
@@ -1229,10 +1229,10 @@ void FUN_fffc296f(int param_1)
 
 {
   if (param_1 != 0) {
-    g_opstate.vfo_state_b = 1;
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
     return;
   }
-  g_opstate.vfo_state_a = 1;
+  g_opstate.vfo_state_a = VFO_STATE_VFO;
   return;
 }
 
@@ -1243,20 +1243,20 @@ void FUN_fffc2991(uint param_1)
 
 {
   if (param_1 == 0) {
-    if (g_opstate.vfo_state_a != 5) {
+    if (g_opstate.vfo_state_a != VFO_STATE_QMB) {
       memtune_flags_clear(0);
-      g_opstate.vfo_state_a = 2;
+      g_opstate.vfo_state_a = VFO_STATE_MEMORY;
       return;
     }
-    g_opstate.vfo_state_a = 1;
+    g_opstate.vfo_state_a = VFO_STATE_VFO;
     return;
   }
-  if (g_opstate.vfo_state_b != 5) {
+  if (g_opstate.vfo_state_b != VFO_STATE_QMB) {
     memtune_flags_clear(param_1 & 0xff);
-    g_opstate.vfo_state_b = 2;
+    g_opstate.vfo_state_b = VFO_STATE_MEMORY;
     return;
   }
-  g_opstate.vfo_state_b = 1;
+  g_opstate.vfo_state_b = VFO_STATE_VFO;
   return;
 }
 

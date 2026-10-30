@@ -1,8 +1,12 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_20118a98 @ 20118a98 (80 bytes)
+// ===== vdc5_ch0_isr_oir_vi_vsync @ 20118a98 (80 bytes)
 
-void FUN_20118a98(void)
+/* VDC5 ch0 interrupt 17: enabled in VDC50_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC50 with type 17 [fact]; type = VDC5_INT_TYPE_OIR_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vi_vsync(void)
 
 {
   uint uVar1;
@@ -20,9 +24,13 @@ void FUN_20118a98(void)
 }
 
 
-// ===== FUN_20118ae8 @ 20118ae8 (80 bytes)
+// ===== vdc5_ch0_isr_oir_lo_vsync @ 20118ae8 (80 bytes)
 
-void FUN_20118ae8(void)
+/* VDC5 ch0 interrupt 18: enabled in VDC50_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC54 with type 18 [fact]; type = VDC5_INT_TYPE_OIR_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_lo_vsync(void)
 
 {
   uint uVar1;
@@ -40,9 +48,13 @@ void FUN_20118ae8(void)
 }
 
 
-// ===== FUN_20118b50 @ 20118b50 (80 bytes)
+// ===== vdc5_ch0_isr_oir_vline @ 20118b50 (80 bytes)
 
-void FUN_20118b50(void)
+/* VDC5 ch0 interrupt 19: enabled in VDC50_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC58 with type 19 [fact]; type = VDC5_INT_TYPE_OIR_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vline(void)
 
 {
   uint uVar1;
@@ -60,9 +72,13 @@ void FUN_20118b50(void)
 }
 
 
-// ===== FUN_20118ba0 @ 20118ba0 (80 bytes)
+// ===== vdc5_ch0_isr_oir_vfield @ 20118ba0 (80 bytes)
 
-void FUN_20118ba0(void)
+/* VDC5 ch0 interrupt 20: enabled in VDC50_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC5C with type 20 [fact]; type = VDC5_INT_TYPE_OIR_VFIELD
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vfield(void)
 
 {
   uint uVar1;
@@ -80,9 +96,13 @@ void FUN_20118ba0(void)
 }
 
 
-// ===== FUN_20118bf0 @ 20118bf0 (80 bytes)
+// ===== vdc5_ch0_isr_iv7_vbuferr @ 20118bf0 (80 bytes)
 
-void FUN_20118bf0(void)
+/* VDC5 ch0 interrupt 21: enabled in VDC50_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC60 with type 21 [fact]; type = VDC5_INT_TYPE_IV7_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv7_vbuferr(void)
 
 {
   uint uVar1;
@@ -100,9 +120,13 @@ void FUN_20118bf0(void)
 }
 
 
-// ===== FUN_20118c40 @ 20118c40 (80 bytes)
+// ===== vdc5_ch0_isr_iv8_vbuferr @ 20118c40 (80 bytes)
 
-void FUN_20118c40(void)
+/* VDC5 ch0 interrupt 22: enabled in VDC50_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC64 with type 22 [fact]; type = VDC5_INT_TYPE_IV8_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv8_vbuferr(void)
 
 {
   uint uVar1;
@@ -120,9 +144,13 @@ void FUN_20118c40(void)
 }
 
 
-// ===== FUN_20118c90 @ 20118c90 (80 bytes)
+// ===== vdc5_ch1_isr_s0_vi_vsync @ 20118c90 (80 bytes)
 
-void FUN_20118c90(void)
+/* VDC5 ch1 interrupt 0: enabled in VDC51_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC68 with type 0 [fact]; type = VDC5_INT_TYPE_S0_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vi_vsync(void)
 
 {
   uint uVar1;
@@ -140,9 +168,13 @@ void FUN_20118c90(void)
 }
 
 
-// ===== FUN_20118ce0 @ 20118ce0 (80 bytes)
+// ===== vdc5_ch1_isr_s0_lo_vsync @ 20118ce0 (80 bytes)
 
-void FUN_20118ce0(void)
+/* VDC5 ch1 interrupt 1: enabled in VDC51_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC6C with type 1 [fact]; type = VDC5_INT_TYPE_S0_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_lo_vsync(void)
 
 {
   uint uVar1;
@@ -160,9 +192,13 @@ void FUN_20118ce0(void)
 }
 
 
-// ===== FUN_20118d30 @ 20118d30 (80 bytes)
+// ===== vdc5_ch1_isr_s0_vsyncerr @ 20118d30 (80 bytes)
 
-void FUN_20118d30(void)
+/* VDC5 ch1 interrupt 2: enabled in VDC51_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC70 with type 2 [fact]; type = VDC5_INT_TYPE_S0_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vsyncerr(void)
 
 {
   uint uVar1;
@@ -180,9 +216,13 @@ void FUN_20118d30(void)
 }
 
 
-// ===== FUN_20118d80 @ 20118d80 (80 bytes)
+// ===== vdc5_ch1_isr_gr3_vline @ 20118d80 (80 bytes)
 
-void FUN_20118d80(void)
+/* VDC5 ch1 interrupt 3: enabled in VDC51_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC74 with type 3 [fact]; type = VDC5_INT_TYPE_GR3_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_gr3_vline(void)
 
 {
   uint uVar1;
@@ -200,9 +240,13 @@ void FUN_20118d80(void)
 }
 
 
-// ===== FUN_20118dd0 @ 20118dd0 (80 bytes)
+// ===== vdc5_ch1_isr_s0_vfield @ 20118dd0 (80 bytes)
 
-void FUN_20118dd0(void)
+/* VDC5 ch1 interrupt 4: enabled in VDC51_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC78 with type 4 [fact]; type = VDC5_INT_TYPE_S0_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vfield(void)
 
 {
   uint uVar1;
@@ -220,9 +264,13 @@ void FUN_20118dd0(void)
 }
 
 
-// ===== FUN_20118e20 @ 20118e20 (80 bytes)
+// ===== vdc5_ch1_isr_iv1_vbuferr @ 20118e20 (80 bytes)
 
-void FUN_20118e20(void)
+/* VDC5 ch1 interrupt 5: enabled in VDC51_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC7C with type 5 [fact]; type = VDC5_INT_TYPE_IV1_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv1_vbuferr(void)
 
 {
   uint uVar1;
@@ -240,9 +288,13 @@ void FUN_20118e20(void)
 }
 
 
-// ===== FUN_20118e70 @ 20118e70 (80 bytes)
+// ===== vdc5_ch1_isr_iv3_vbuferr @ 20118e70 (80 bytes)
 
-void FUN_20118e70(void)
+/* VDC5 ch1 interrupt 6: enabled in VDC51_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC80 with type 6 [fact]; type = VDC5_INT_TYPE_IV3_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv3_vbuferr(void)
 
 {
   uint uVar1;
@@ -260,9 +312,13 @@ void FUN_20118e70(void)
 }
 
 
-// ===== FUN_20118ec0 @ 20118ec0 (80 bytes)
+// ===== vdc5_ch1_isr_iv5_vbuferr @ 20118ec0 (80 bytes)
 
-void FUN_20118ec0(void)
+/* VDC5 ch1 interrupt 7: enabled in VDC51_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC84 with type 7 [fact]; type = VDC5_INT_TYPE_IV5_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv5_vbuferr(void)
 
 {
   uint uVar1;
@@ -280,9 +336,13 @@ void FUN_20118ec0(void)
 }
 
 
-// ===== FUN_20118f10 @ 20118f10 (80 bytes)
+// ===== vdc5_ch1_isr_iv6_vbuferr @ 20118f10 (80 bytes)
 
-void FUN_20118f10(void)
+/* VDC5 ch1 interrupt 8: enabled in VDC51_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC88 with type 8 [fact]; type = VDC5_INT_TYPE_IV6_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv6_vbuferr(void)
 
 {
   uint uVar1;
@@ -300,9 +360,13 @@ void FUN_20118f10(void)
 }
 
 
-// ===== FUN_20118f60 @ 20118f60 (80 bytes)
+// ===== vdc5_ch1_isr_s0_wline @ 20118f60 (80 bytes)
 
-void FUN_20118f60(void)
+/* VDC5 ch1 interrupt 9: enabled in VDC51_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC8C with type 9 [fact]; type = VDC5_INT_TYPE_S0_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_wline(void)
 
 {
   uint uVar1;
@@ -320,9 +384,13 @@ void FUN_20118f60(void)
 }
 
 
-// ===== FUN_20118fb0 @ 20118fb0 (80 bytes)
+// ===== vdc5_ch1_isr_s1_vi_vsync @ 20118fb0 (80 bytes)
 
-void FUN_20118fb0(void)
+/* VDC5 ch1 interrupt 10: enabled in VDC51_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC90 with type 10 [fact]; type = VDC5_INT_TYPE_S1_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vi_vsync(void)
 
 {
   uint uVar1;
@@ -340,9 +408,13 @@ void FUN_20118fb0(void)
 }
 
 
-// ===== FUN_20119000 @ 20119000 (80 bytes)
+// ===== vdc5_ch1_isr_s1_lo_vsync @ 20119000 (80 bytes)
 
-void FUN_20119000(void)
+/* VDC5 ch1 interrupt 11: enabled in VDC51_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC94 with type 11 [fact]; type = VDC5_INT_TYPE_S1_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_lo_vsync(void)
 
 {
   uint uVar1;
@@ -360,9 +432,13 @@ void FUN_20119000(void)
 }
 
 
-// ===== FUN_20119050 @ 20119050 (80 bytes)
+// ===== vdc5_ch1_isr_s1_vsyncerr @ 20119050 (80 bytes)
 
-void FUN_20119050(void)
+/* VDC5 ch1 interrupt 12: enabled in VDC51_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC98 with type 12 [fact]; type = VDC5_INT_TYPE_S1_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vsyncerr(void)
 
 {
   uint uVar1;
@@ -380,9 +456,13 @@ void FUN_20119050(void)
 }
 
 
-// ===== FUN_201190a0 @ 201190a0 (80 bytes)
+// ===== vdc5_ch1_isr_s1_vfield @ 201190a0 (80 bytes)
 
-void FUN_201190a0(void)
+/* VDC5 ch1 interrupt 13: enabled in VDC51_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC9C with type 13 [fact]; type = VDC5_INT_TYPE_S1_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vfield(void)
 
 {
   uint uVar1;
@@ -400,9 +480,13 @@ void FUN_201190a0(void)
 }
 
 
-// ===== FUN_201190f0 @ 201190f0 (80 bytes)
+// ===== vdc5_ch1_isr_iv2_vbuferr @ 201190f0 (80 bytes)
 
-void FUN_201190f0(void)
+/* VDC5 ch1 interrupt 14: enabled in VDC51_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCCA0 with type 14 [fact]; type = VDC5_INT_TYPE_IV2_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv2_vbuferr(void)
 
 {
   uint uVar1;
@@ -420,9 +504,13 @@ void FUN_201190f0(void)
 }
 
 
-// ===== FUN_20119140 @ 20119140 (80 bytes)
+// ===== vdc5_ch1_isr_iv4_vbuferr @ 20119140 (80 bytes)
 
-void FUN_20119140(void)
+/* VDC5 ch1 interrupt 15: enabled in VDC51_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCCA4 with type 15 [fact]; type = VDC5_INT_TYPE_IV4_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv4_vbuferr(void)
 
 {
   uint uVar1;
@@ -440,9 +528,13 @@ void FUN_20119140(void)
 }
 
 
-// ===== FUN_20119190 @ 20119190 (80 bytes)
+// ===== vdc5_ch1_isr_s1_wline @ 20119190 (80 bytes)
 
-void FUN_20119190(void)
+/* VDC5 ch1 interrupt 16: enabled in VDC51_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCA8 with type 16 [fact]; type = VDC5_INT_TYPE_S1_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_wline(void)
 
 {
   uint uVar1;
@@ -460,9 +552,13 @@ void FUN_20119190(void)
 }
 
 
-// ===== FUN_201191e0 @ 201191e0 (80 bytes)
+// ===== vdc5_ch1_isr_oir_vi_vsync @ 201191e0 (80 bytes)
 
-void FUN_201191e0(void)
+/* VDC5 ch1 interrupt 17: enabled in VDC51_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCAC with type 17 [fact]; type = VDC5_INT_TYPE_OIR_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vi_vsync(void)
 
 {
   uint uVar1;
@@ -480,9 +576,13 @@ void FUN_201191e0(void)
 }
 
 
-// ===== FUN_20119230 @ 20119230 (80 bytes)
+// ===== vdc5_ch1_isr_oir_lo_vsync @ 20119230 (80 bytes)
 
-void FUN_20119230(void)
+/* VDC5 ch1 interrupt 18: enabled in VDC51_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB0 with type 18 [fact]; type = VDC5_INT_TYPE_OIR_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_lo_vsync(void)
 
 {
   uint uVar1;
@@ -500,9 +600,13 @@ void FUN_20119230(void)
 }
 
 
-// ===== FUN_20119280 @ 20119280 (80 bytes)
+// ===== vdc5_ch1_isr_oir_vline @ 20119280 (80 bytes)
 
-void FUN_20119280(void)
+/* VDC5 ch1 interrupt 19: enabled in VDC51_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB4 with type 19 [fact]; type = VDC5_INT_TYPE_OIR_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vline(void)
 
 {
   uint uVar1;
@@ -520,9 +624,13 @@ void FUN_20119280(void)
 }
 
 
-// ===== FUN_201192d0 @ 201192d0 (80 bytes)
+// ===== vdc5_ch1_isr_oir_vfield @ 201192d0 (80 bytes)
 
-void FUN_201192d0(void)
+/* VDC5 ch1 interrupt 20: enabled in VDC51_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB8 with type 20 [fact]; type = VDC5_INT_TYPE_OIR_VFIELD
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vfield(void)
 
 {
   uint uVar1;
@@ -540,9 +648,13 @@ void FUN_201192d0(void)
 }
 
 
-// ===== FUN_20119320 @ 20119320 (80 bytes)
+// ===== vdc5_ch1_isr_iv7_vbuferr @ 20119320 (80 bytes)
 
-void FUN_20119320(void)
+/* VDC5 ch1 interrupt 21: enabled in VDC51_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCBC with type 21 [fact]; type = VDC5_INT_TYPE_IV7_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv7_vbuferr(void)
 
 {
   uint uVar1;
@@ -560,9 +672,13 @@ void FUN_20119320(void)
 }
 
 
-// ===== FUN_20119370 @ 20119370 (80 bytes)
+// ===== vdc5_ch1_isr_iv8_vbuferr @ 20119370 (80 bytes)
 
-void FUN_20119370(void)
+/* VDC5 ch1 interrupt 22: enabled in VDC51_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCC0 with type 22 [fact]; type = VDC5_INT_TYPE_IV8_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv8_vbuferr(void)
 
 {
   uint uVar1;
@@ -682,7 +798,7 @@ void FUN_201195e8(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
   
   uVar3 = **(ushort **)(&DAT_20166a48 + param_1 * 0x20) & 0xfeff;
   **(ushort **)(&DAT_20166a48 + param_1 * 0x20) = uVar3;
-  iVar1 = FUN_2011d830(param_1,4,uVar3,param_4,param_4);
+  iVar1 = vdc5_shrd_get_state(param_1,4,uVar3,param_4,param_4);
   if ((iVar1 != 0) && (iVar1 = FUN_2011d5a8(), iVar1 == 0)) {
     uVar2 = LVDS_LCLKSELR;
     LVDS_LCLKSELR = uVar2 & 0xffffffef;

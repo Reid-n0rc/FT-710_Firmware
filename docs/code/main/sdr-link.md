@@ -425,3 +425,33 @@ bridge offsets above were checked in the disassembly.
 ## Note from the FPGA side (T15e)
 
 The FPGA answers a write with **one byte** (ACK 0x06), not 7, and answers a rejected frame with one byte `?` (0x3F). MAIN's 7-byte receive therefore completes only for reads. For writes, the SCI5 reply handling must be reading byte 0 before the receive count is reached. **Checked by T19h:** `sci5_rx_byte_hook` 0xFFF94962 sets the count to 1 when the first byte is 0x06 or `?` and to 7 when it is `r` **[fact]**, so both sides agree. Register 0 reads 0x0104 and register 1 reads 0x000F after reset. **[fact for the FPGA side, from the T15e netlist simulation, see [netlist.md §5](../sdr/netlist.md)]**
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFA15F3 | `sdr_upd_r04` |  | Reg 0x04 = 0xE519 (constant; RX only) **[inference]** |
+| 0xFFFA1738 | `sdr_upd_r0a_demod` |  | Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while 0x1204D != 0 **[inference]** |
+| 0xFFFA17DC | `sdr_upd_r0b_band` |  | Reg 0x0B = per-band word from 0xFFF87FFA (RX) / 0xFFF87FFE (TX), 8-byte rows **[inference]** |
+| 0xFFFA183D | `sdr_upd_r0c_rtty_shift` |  | Reg 0x0C = (RTTY shift 170/200/425/850 Hz from 0x9A8D)/5 << 8 \| 3 **[inference]** |
+| 0xFFFA18AE | `sdr_upd_r0d` |  | Reg 0x0D = 9/14/19 from setting 0x9AA1 (0..2) [meaning unknown] **[inference]** |
+| 0xFFFA18F8 | `sdr_upd_r0e` |  | Reg 0x0E = 0x1200 (constant) **[inference]** |
+| 0xFFFA1929 | `sdr_upd_r0f_band` |  | Reg 0x0F = per-band word 0xFFF87FFC/0xFFF88000, 0 when ADC 0x20B14 >= 0xE8B, unchanged between 0x9B3..0xE8A **[inference]** |
+| 0xFFFA19AC | `sdr_upd_r12` |  | Reg 0x12 = 0x8000 (constant; RX only) **[inference]** |
+| 0xFFFA19DD | `sdr_upd_r13` |  | Reg 0x13 = 0x8000 (constant; RX only) **[inference]** |
+| 0xFFFA1A0E | `sdr_upd_r14_mode` |  | Reg 0x14 = 0x2000/0x3200 (AM)/0x7800 (FM, DATA-FM)/0x3C00 (FM-N, DATA-FM-N) by TX-side mode **[inference]** |
+| 0xFFFA1A8A | `sdr_init_r15` |  | Reg 0x15 = 0x2000, sent once after the first full sync **[inference]** |
+| 0xFFFA1ABB | `sdr_upd_r16_filter` |  | Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A **[inference]** |
+| 0xFFFA1FD1 | `sdr_upd_r1a_nb_level` |  | Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off **[inference]** |
+| 0xFFFA2049 | `sdr_upd_r1b` |  | Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 **[guess]** |
+| 0xFFFA20AF | `sdr_upd_r1c` |  | Reg 0x1C = 2/5/10 from setting 0x9AD2 **[guess]** |
+| 0xFFFA20F7 | `sdr_upd_r1d_notch` |  | Reg 0x1D = notch offset/5 Hz (12 bits) \| 0x2000 or 0x1000 (width 0x9AD1), 0 when off **[inference]** |
+| 0xFFFA2478 | `sdr_upd_r1e_passband` |  | Reg 0x1E = signed passband centre / 5 Hz (negated for the upper-side modes) **[inference]** |
+| 0xFFFA26CF | `sdr_upd_r1f_width` |  | Reg 0x1F = filter width in Hz (AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N 9000, else the selected width) **[inference]** |
+| 0xFFFA28EA | `sdr_upd_r22_scope_span` |  | Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000) **[inference]** |
+| 0xFFFA2992 | `sdr_upd_r23` |  | Reg 0x23 = 0x8000/0x7000/0x5000 from setting 0x9B14 **[guess]** |
+| 0xFFFA29E5 | `sdr_init_r24` |  | Reg 0x24 = 0x0317, sent once after the first full sync **[inference]** |
+| 0xFFFA2A16 | `sdr_upd_r25_tx_drive` |  | Reg 0x25 = TX drive: power setting interpolated (5/10/20/50/100 W) in the per-band calibration in the 0x4659 (SPN) table, << 4 **[inference]** |
+| 0xFFFA2B8F | `sdr_upd_r26` |  | Reg 0x26 = 0x0610 in RX; in TX 0x0140/0x0610/0x0200/0xFF00 from 0x9C36/0x9B16/0x9B17 [meaning unknown] **[inference]** |

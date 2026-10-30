@@ -2,7 +2,7 @@
 
 // ===== FUN_20156860 @ 20156860 (12 bytes)
 
-code * FUN_20156860(undefined4 *param_1,undefined4 param_2,int *param_3,undefined4 param_4)
+code * FUN_20156860(undefined4 *param_1,undefined4 param_2,knl_tcb *param_3,byte param_4)
 
 {
   uint uVar1;
@@ -19,32 +19,35 @@ code * FUN_20156860(undefined4 *param_1,undefined4 param_2,int *param_3,undefine
   param_1[-4] = unaff_r6;
   param_1[-5] = unaff_r5;
   param_1[-6] = unaff_r4;
-  uVar2 = *(uint *)(param_3[6] + 8);
+  uVar2 = param_3->ctsk->task;
   param_1[0xc] = param_1 + 0x12;
   *param_1 = param_2;
-  uVar1 = DAT_208003ac;
+  uVar1 = knl_sys.task_cpsr;
   if ((uVar2 & 1) != 0) {
-    uVar1 = DAT_208003ac | 0x20;
+    uVar1 = knl_sys.task_cpsr | 0x20;
   }
   param_1[0xf] = uVar1;
   uVar1 = FUN_201568b8();
   param_1[0xf] = uVar1 | param_1[0xf];
   param_1[0xd] = itron_ext_tsk;
   param_1[0x11] = uVar2;
-  *param_3 = (int)param_1;
-  *(undefined1 *)(param_3 + 2) = 0;
-  *(undefined1 *)((int)param_3 + 9) = 0;
-  param_3[8] = 0;
-  *(undefined1 *)((int)param_3 + 5) = 0x10;
-  FUN_201538d4(&DAT_208dc18c + *(char *)((int)param_3 + 0x27),param_3,param_4);
+  param_3->sp = (uint)param_1;
+  param_3->f_0x08_u8 = 0;
+  param_3->f_0x09_u8 = 0;
+  param_3->f_0x20_u32 = 0;
+  param_3->state = 0x10;
+  FUN_201538d4(knl_rdq + param_3->bpri,param_3,param_4);
   software_interrupt(0);
   return FUN_2015677c;
 }
 
 
-// ===== FUN_2015686c @ 2015686c (12 bytes)
+// ===== knl_int_disable @ 2015686c (12 bytes)
 
-code * FUN_2015686c(void)
+/* Service call return that sets the I bit in the saved PSR (0x20156878); gic_enable_irq /
+   gic_disable_irq / gic_def_inh wrap their register writes with it [inference] */
+
+code * knl_int_disable(void)
 
 {
   software_interrupt(0);
@@ -63,9 +66,11 @@ ulonglong FUN_20156878(void)
 }
 
 
-// ===== FUN_2015688c @ 2015688c (16 bytes)
+// ===== knl_int_restore @ 2015688c (16 bytes)
 
-undefined8 FUN_2015688c(undefined4 param_1)
+/* Service call return through 0x2015689C, which clears the I/F bits again [inference] */
+
+undefined8 knl_int_restore(undefined4 param_1)
 
 {
   software_interrupt(0);
@@ -778,9 +783,11 @@ uint FUN_20157194(uint *param_1,uint param_2,uint param_3)
 }
 
 
-// ===== FUN_201571a4 @ 201571a4 (12 bytes)
+// ===== mutex_lock @ 201571a4 (12 bytes)
 
-void FUN_201571a4(undefined4 *param_1)
+/* itron_tloc_mtx(*obj, TMO_FEVR) [fact] */
+
+void mutex_lock(undefined4 *param_1)
 
 {
   itron_tloc_mtx(*param_1,0xffffffff);
@@ -788,9 +795,11 @@ void FUN_201571a4(undefined4 *param_1)
 }
 
 
-// ===== FUN_201571b0 @ 201571b0 (8 bytes)
+// ===== mutex_unlock @ 201571b0 (8 bytes)
 
-void FUN_201571b0(undefined4 *param_1)
+/* itron_unl_mtx(*obj) [fact] */
+
+void mutex_unlock(undefined4 *param_1)
 
 {
   itron_unl_mtx(*param_1);
@@ -798,25 +807,30 @@ void FUN_201571b0(undefined4 *param_1)
 }
 
 
-// ===== FUN_201571b8 @ 201571b8 (28 bytes)
+// ===== mutex_guard_ctor @ 201571b8 (28 bytes)
 
-undefined4 * FUN_201571b8(undefined4 *param_1,undefined4 param_2,int param_3)
+/* Scoped lock: stores the mutex id, locks it when the flag is set [fact]; used by usbkbd_* and the
+   TX pools [fact] */
+
+undefined4 * mutex_guard_ctor(undefined4 *param_1,undefined4 param_2,int param_3)
 
 {
   *param_1 = param_2;
   if (param_3 != 0) {
-    FUN_201571a4();
+    mutex_lock();
   }
   return param_1;
 }
 
 
-// ===== FUN_201571d4 @ 201571d4 (20 bytes)
+// ===== mutex_guard_dtor @ 201571d4 (20 bytes)
 
-undefined4 FUN_201571d4(undefined4 param_1)
+/* Scoped lock destructor: mutex_unlock [fact] */
+
+undefined4 mutex_guard_dtor(undefined4 param_1)
 
 {
-  FUN_201571b0();
+  mutex_unlock();
   return param_1;
 }
 
@@ -1244,7 +1258,7 @@ uint mainlink_tx_alloc(int param_1)
 {
   uint uVar1;
   
-  uVar1 = FUN_201644ac(param_1 + 0x811c);
+  uVar1 = txpool_next_slot(param_1 + 0x811c);
   return uVar1;
 }
 
@@ -1261,12 +1275,12 @@ void mainlink_tx_init(int param_1,uint param_2)
   int iVar3;
   
   *(uint *)(param_1 + 0x18) = param_2;
-  FUN_20164460();
+  txpool_init_mutex();
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x408;
     FUN_20158618(iVar3 + 0x1c);
-    FUN_201644a0(param_1 + 0x811c,uVar2 & 0xffff,iVar3 + 0x1c);
+    txpool_set_slot(param_1 + 0x811c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
   uVar1 = FUN_20162d10(param_1);
@@ -1322,13 +1336,13 @@ void task_mainlink_tx(int param_1)
 void mainlink_tx_post(int param_1,uint param_2)
 
 {
-  while (DAT_20450050 != 0) {
+  while (g_ml.pace_count != 0) {
     itron_dly_tsk(1);
   }
   FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x81a4),param_2);
-  itron_twai_sem(DAT_20450054,0xffffffff);
-  DAT_20450050 = 3;
-  itron_sig_sem(DAT_20450054);
+  itron_twai_sem(g_ml.pace_sem,0xffffffff);
+  g_ml.pace_count = 3;
+  itron_sig_sem(g_ml.pace_sem);
   return;
 }
 

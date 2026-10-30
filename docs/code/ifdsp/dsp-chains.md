@@ -17,10 +17,14 @@ side of each register is in [control-link.md](control-link.md#register-map).
 - Many settings use a **"bit 12 = on, bits 11–0 = value"** word (frequency in Hz ≤ 5999 for the 12 kHz stages) **[fact]**.
 - All arithmetic is float32 **[fact]**.
 
-Library helpers used below **[fact: code and polynomial tables]**: `vec_sum_sq` 0x234BE0 (Σx²), `sqrtf_` 0x235C8C, `divf_` 0x235BA8,
-`log10f_` 0x2190F0, `pow10f_` 0x218B70, `tanf_` 0x219690 (table 0x200890: 1/3, 0.1333, 0.0540), `cosf_` 0x218FC0, `sinf_` 0x219560,
-`atan2f_` 0x218E60, newlib `powf` 0x2294E0, `cosf` 0x2293E0 and `sinf` 0x229460 (#184), `i2f_scaled` 0x234730 (float(i)·2^s), `f2i_scaled` 0x234710, `vec_scale_f32` 0x234F40, `fir_init` 0x233984,
-`fir_process` 0x233A10, `iir_cascade_init` 0x2340FC, `iir_cascade_process` 0x2341C0.
+Library helpers used below **[fact: code and polynomial tables]**. Most are Cadence NatureDSP HiFi4 (NDSP) functions, named after
+NDSP since T23 because their tables match NDSP's word for word ([hifi4.md](hifi4.md#libraries-linked-into-the-hifi4-image-t23)): `vec_powerf` 0x234BE0 (Σx²),
+`__ieee754_sqrtf` 0x235C8C and `__divsf3` 0x235BA8 (XCC runtime), `scl_log10f` 0x2190F0, `scl_antilog10f` 0x218B70 (10^x), `scl_tanf` 0x219690
+(table 0x200890: 1/3, 0.1333, 0.0540), `scl_cosinef` 0x218FC0, `scl_sinef` 0x219560, `scl_atan2f` 0x218E60, newlib `powf` 0x2294E0, `cosf` 0x2293E0 and
+`sinf` 0x229460 (#184), `scl_int2float` 0x234730 (float(i)·2^s), `scl_float2int` 0x234710, `vec_scalef` 0x234F40, `bkfiraf_init` 0x233984,
+`bkfiraf_process` 0x233A10, `iir_cascade_init` 0x2340FC, `iir_cascade_process` 0x2341C0 (NDSP `bqriirf_df2` or `bqriirf_df2t`: same state layout, not
+told apart). Names before T23: `vec_sum_sq`, `sqrtf_`, `divf_`, `log10f_`, `pow10f_`, `tanf_`, `cosf_`, `sinf_`, `atan2f_`, `i2f_scaled`, `f2i_scaled`,
+`vec_scale_f32`, `fir_init`, `fir_process`.
 
 ## Receive chain
 
@@ -79,7 +83,7 @@ flowchart TB
 | 0x21F6D0 / 0x21F7EC / 0x21FA48 | `ctcss_init` / `ctcss_config` / `ctcss_detect` | LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. **Sliding Goertzel** over 200 samples (133 ms) at 0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init` 0x21F968 (on a tone change: also clears the 3 bin states and the 200-sample window) and `ctcss_goertzel_retune` 0x21F8BC (on every lock change): sin and 2·cos of 2π f_bin / 1500 (2π, 200, 1/200, 1/1500 at 0x204CB0..BC); **side bins at 0.985 / 1.015 f while unlocked and 0.98 / 1.02 f while locked** (0x3F7C28F6 / 0x3F81EB85 vs 0x3F7AE148 / 0x3F828F5C), so a locked tone may drift ±2 % before a side bin wins (#184) | 0x53: bit 12 on, tone index 1–50 into 0x204BE0 | [fact]; purpose of the wider locked spacing [inference] |
 | 0x21FD20 / 0x21FDBC (+0x220224) | `dcs_init` / `dcs_config` / `dcs_detect` | **DCS decoder.** Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted / either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search, slicing at ±0.7 × RMS. Result → reg 1 bit 7 | 0x51 (MAIN writes 0) | [fact: structure]; Golay [inference] |
 | 0x21E530 (+0x21E520) | `manual_notch` | Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 + α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz) | 0x52: type in bits 15–12, frequency bits 11–0 | [fact] |
-| 0x21E0F4 (+0x21DF20, 0x21DFE4, 0x21E24C) | `spectral_nr` | **STFT Wiener noise reduction.** 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add, complex FFT `fft512_cplx` 0x2174B0 with twiddles 0x200D00, inverse 0x217D10. Per bin γ = \|X\|² / N; **decision-directed** a-priori SNR ξ = 0.98·G²·γ₋₁ + 0.02·max(γ − 1, 0); G = ξ / (1 + ξ); out = \|X\|·(1 − β + β·G) with the input phase. Noise PSD N: mode 1 learns (pass-through), 2 freezes the average, 3 tracks N = 0.99 N + 0.01 \|X\|² | 0x4022: mode 0–3 (0 bypass); 0x4023: depth β in % (≤ 100) | [fact] |
+| 0x21E0F4 (+0x21DF20, 0x21DFE4, 0x21E24C) | `spectral_nr` | **STFT Wiener noise reduction.** 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add, complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie` 0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = \|X\|² / N; **decision-directed** a-priori SNR ξ = 0.98·G²·γ₋₁ + 0.02·max(γ − 1, 0); G = ξ / (1 + ξ); out = \|X\|·(1 − β + β·G) with the input phase. Noise PSD N: mode 1 learns (pass-through), 2 freezes the average, 3 tracks N = 0.99 N + 0.01 \|X\|² | 0x4022: mode 0–3 (0 bypass); 0x4023: depth β in % (≤ 100) | [fact] |
 | 0x21DBD0 (+0x21DBB0) | `lms_ale_nr` | **LMS adaptive line enhancer** (keeps the correlated part = signal). Input gain reg 0x4025, LP 0x236850; 128 taps, reference delayed 33 samples; y = Σw·x, e = d − y (both clipped ±10); w ← w·(1 − 1e-6·leak) + μ·e·x, μ = min(reg 0x400B / 1000, 1.8). Output y × reg 0x4026; 1 s cross-fade when switched on | 0x40 bit 0 on; 0x400B μ (default 8); 0x400D leak (default 512); 0x4025/0x4026 gains | [fact] |
 | 0x21C8BC (+0x21C890) | `nlms_auto_notch` | ×2 to 24 kHz (96 samples), LP 0x236850; **NLMS predictor**, 128 taps, delay ≈ 257 samples (10.7 ms); w ← leak·w + μ·e·x / max(Σx², 0.001), μ = reg 0x400C·1e-6, leak = 1 − reg 0x400E·1e-6. **Outputs the error** (removes steady tones), back to 12 kHz | 0x41 bit 0 on; 0x400C (1024), 0x400E (2) | [fact] |
 | 0x21CC68 (+0x21CC50) | `contour_peaking` | One peaking biquad (Zölzer boost/cut), K = tan(π f / 12000), V = 10^(dB/20); on boost the output is rescaled so the peak stays near unity | 0x42: bit 12 on + frequency; 0x43: level −40 … +20 dB; 0x44: Q 1–10 (0 → 0.5) | [fact: ranges]; rescaling [inference] |
@@ -192,8 +196,15 @@ The points left open by #86, answered from the firmware where possible. What nee
   need no phase accumulator or table, and the same carrier serves RX and TX **[inference]**. MAIN cannot be the one that moves the
   carrier: it tunes the SDR RX NCO with ±(1500 + shift) in SSB and no offset in AM/FM (SDR reg 0x18/0x19, `sdr_upd_r18_rx_freq`), and sends the modulation
   class in SDR reg 0x0A (0 CW, 1 AM, 2 FM, 3 LSB, 4 USB, 5 RTTY) ([main/sdr-link.md](../main/sdr-link.md)). A single fixed IF in the
-  FPGA cannot put the SSB carrier at 18 kHz and the FM carrier at 24 kHz, so the FPGA must shift the IF by class **[inference]**.
-  Confirming that needs the DDC in the netlist (#193).
+  FPGA cannot put the SSB carrier at 18 kHz and the FM carrier at 24 kHz, so the FPGA must shift the IF per mode **[inference]**.
+  #193 checked the netlist ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)):
+  reg 0x18/0x19 is the RX mixer LO (simulated: 10,000,000 → a 10.000 MHz LO), the samples are decimated to exactly 72.000 kHz
+  and leave on pin M17 (the same 32-bit word in both I2S slots) **[fact]**, but **reg 0x0A does not change the RX words**
+  (classes 0, 2 and 4 give bit-identical output in simulation; its flip-flops only reach the TX envelope multiplier and a
+  phase-table lane) **[fact]**. Reg 0x1E (passband centre) and reg 0x16 (filter class) do change the RX words, reg 0x08
+  does not **[fact, simulation]**. So the per-mode shift is not keyed by reg 0x0A; 0x1E / 0x16 are where it would come from
+  **[inference]**. The decimated words are not yet interpretable in simulation, so the
+  carrier positions themselves remain unconfirmed (#193).
 
 ### DNR: MAIN drives both noise reductions, split by level
 
@@ -255,7 +266,8 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
   EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
   [hardware.md](../../hardware.md)]**. The AESS level `AS1` is not sent to the DSP: MAIN applies it on the analog side
   (route 2 only when it is non-zero, and R2A20178 channel 8 from it; [main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact),
-  #203) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is still open in #193.
+  #203) **[fact]**. The SDR FPGA has no part in it: one RX data line with the same word in both slots, and MAIN sends it no
+  AESS value (#193, [sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is open (HiFi4 side).
 - **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
   (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
   skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the
@@ -329,4 +341,71 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement and the AESS branch delay: #193 (the AESS speaker, the AESS level (#203) and the reg 0x63 values are settled).
+- The SDR FPGA's per-mode IF placement: #193 found the RX LO (reg 0x18/0x19), the 72 kHz output (pin M17) and that reg 0x0A
+  does not steer the RX path, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)).
+  The AESS speaker, the AESS level (#203) and the reg 0x63 values are settled; the SDR side carries no AESS branch (#193). Why
+  branch B gets the extra reg 0x56 delay is a HiFi4-side question.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+### HiFi4 (`decomp/ifdsp/hifi4`)
+
+| Address | Ghidra name | What it computes | Registers | Tag |
+|---|---|---|---|---|
+| 0x002174B0 | `fft512_cplx` | no direct calls; 2144 B, callers: 2 (code shape) |  | fact |
+| 0x00217D10 | `ifft512_cplx` | no direct calls; 2329 B, callers: 1 (code shape) |  | fact |
+| 0x00218B70 | `pow10f_` | 10^x |  | inference |
+| 0x00218E60 | `atan2f_` | atan2 |  | inference |
+| 0x00218FC0 | `cosf_` | cos |  | inference |
+| 0x002190F0 | `log10f_` | log10 |  | inference |
+| 0x00219560 | `sinf_` | sin |  | inference |
+| 0x00219690 | `tanf_` | tan (polynomial table 0x200890) |  | inference |
+| 0x0021F8BC | `ctcss_goertzel_retune` | (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2 cos of 2 pi f / 1500 per bin (#184) |  | inference |
+| 0x0021F968 | `ctcss_goertzel_init` | (f): as ctcss_goertzel_retune, then clears the 3 Goertzel states and the 200-sample window (#184) |  | inference |
+| 0x00223A74 | `vox_state` | mic and not speaker |  | inference |
+| 0x00224604 | `codec_out_sink` | per-output gain, clip, into the codec-out object |  | inference |
+| 0x00225370 | `hilbert_iq` | 71-tap Hilbert FIR 0x205840, I delayed 35 |  | inference |
+| 0x002255B4 | `rec_resample_sink` | x2/9 to 16 kHz, int16 ring 0x266ED8 (#59, #154) |  | inference |
+| 0x00225834 | `playback_ring_fill` | calls `FUN_00234890`, `iir_cascade_process`, `memcpy`, `memset`; 426 B, callers: 1 (code shape) |  | fact |
+| 0x002293E0 | `cosf` | newlib cosf: \|x\| <= pi/4 -> kernel 0x22A610, else rem_pio2 switch (#184) |  | inference |
+| 0x00229460 | `sinf` | newlib sinf: \|x\| <= pi/4 -> kernel 0x22B420, else rem_pio2 0x22A320 switch (#184) |  | inference |
+| 0x002294E0 | `powf` | newlib w_powf wrapper (matherr name string powf at 0x206414): powf(aed0, aed1); tx_alc_update powf(0.5, reg 0x33), FUN_00223AB4 10^(x/20) (#184) |  | inference |
+| 0x00233580 | `xthal_get_cacheattr` | rdtlb1 of the 8 x 512 MB regions -> 8 attribute nibbles (#184) |  | inference |
+| 0x002335A0 | `xthal_set_cacheattr` | witlb (skipping its own region) and wdtlb for each 512 MB region, 4 bits each (#184) |  | inference |
+| 0x00233984 | `fir_init` | no direct calls; 126 B, callers: 7 (code shape) |  | fact |
+| 0x00233A10 | `fir_process` | no direct calls; 731 B, callers: 7 (code shape) |  | fact |
+| 0x00234710 | `f2i_scaled` | trunc(x * 2^-s) |  | inference |
+| 0x00234730 | `i2f_scaled` | float(i) * 2^s; s = -1 turns half-dB registers into dB |  | inference |
+| 0x00234BE0 | `vec_sum_sq` | sum of squares (madd.s loop) |  | inference |
+| 0x00234F40 | `vec_scale_f32` | y[i] = x[i] * scalar |  | inference |
+| 0x00235BA8 | `divf_` | float divide |  | inference |
+| 0x00235C8C | `sqrtf_` | sqrt |  | inference |
+
+### HiFi4 application helpers (T23e)
+
+Application helpers named in T23e (`tools/ghidra/names_hifi4.T23.tsv`, "application DSP code" section: each block init sits just before the block it prepares, in source-file order) **[inference]**.
+
+| Address | Ghidra name | What it computes | Registers | Tag |
+|---|---|---|---|---|
+| 0x0021F2D0 | `reg68_gain_apply` | if_agc_process helper: when reg 0x68 changed, gain = scl_antilog10f(scl_int2float(reg, -1) * 0.05), then vec_scalef over 24 samples |  | fact |
+| 0x002211D0 | `tx_param_eq_init` | clears the TX EQ states 0x25AC00..; called by tx_core_init |  | inference |
+| 0x00222034 | `tx_alc_meter_to_reg2` | tx_alc helper: scl_log10f of the gain, scl_float2int, high byte of reg 2 (docs: TX meters) |  | inference |
+| 0x002221C0 | `tx_bpf_init` | clears 0x25B810; placed before tx_bpf_select |  | inference |
+| 0x00222230 | `soft_knee_compressor_init` | memset 0x25B9C0; placed before soft_knee_compressor |  | inference |
+| 0x00222DF0 | `fm_tx_hpf_process` | iir_cascade_process on 0x25BFF0; called by fm_tx_audio (HPF 293 Hz) |  | inference |
+| 0x00223110 | `tx_chain_init` | tx_core_init, tx_alc_init, fm_post_lpf_init, ctcss/dcs encoder inits, two_tone_test_init; placed before tx_chain |  | inference |
+| 0x00223A90 | `noise_gen_seed` | srand wrapper |  | inference |
+| 0x00223AB4 | `noise_gen_set_level` | 10^(x / 20) with powf, then noise_gen_seed |  | inference |
+| 0x00223ADC | `gaussian_noise_gen` | Box-Muller: rand, scl_lognf, sqrt, scl_cosinef / scl_sinef, 2*pi |  | inference |
+| 0x00223BF0 | `spectrum_init` | create_Thread_Spi: window with scl_cosinef, buffers 0x25D350 / 0x25DB60 / 0x25EB60 |  | inference |
+| 0x002244E0 | `codec_out_init` | resets both codec-out FIFOs and the mute ramp; placed before codec_out_sink |  | inference |
+| 0x00224524 | `codec_out_fifo_reset_0` | clears count / read / write of the FIFO 0x2639F4 under PS.INTLEVEL 2 |  | fact |
+| 0x00224594 | `codec_out_fifo_reset_1` | same for the FIFO 0x263B84 |  | inference |
+| 0x00225340 | `hilbert_iq_init` | bkfiraf_init with the 71-tap Hilbert FIR 0x205840; called by cw_zero_in_init, am_demod_init, fm_demod_init |  | fact |
+| 0x002254EC | `rec_ring_reset_0` | clears the ring 0x268D1C indices under PS.INTLEVEL 2 |  | fact |
+| 0x00225550 | `rec_ring_reset_1` | same for 0x2C6928 |  | inference |
+| 0x00225AF0 | `txaf_out_init` | resets both TXAF FIFOs and the mute ramp; placed before txaf_out_push |  | inference |
+| 0x00225B30 | `txaf_fifo_reset_0` | clears the FIFO 0x2C7570 indices under PS.INTLEVEL 2 |  | fact |
+| 0x00225B8C | `txaf_fifo_reset_1` | same for 0x2C768C |  | inference |

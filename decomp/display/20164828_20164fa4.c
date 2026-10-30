@@ -29,9 +29,11 @@ int FUN_2016485c(int *param_1)
 }
 
 
-// ===== FUN_20164870 @ 20164870 (24 bytes)
+// ===== ring32_next @ 20164870 (24 bytes)
 
-short FUN_20164870(short *param_1)
+/* (idx + 1) mod 32 [fact] */
+
+short ring32_next(short *param_1)
 
 {
   short sVar1;
@@ -44,11 +46,13 @@ short FUN_20164870(short *param_1)
 }
 
 
-// ===== FUN_20164888 @ 20164888 (316 bytes)
+// ===== __aeabi_dadd @ 20164888 (316 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* Double add: start + span*fraction in progress_scale, + 0.5 (0x3FE00000) rounding in
+   touch_cal_apply [inference] */
 
-uint FUN_20164888(uint param_1,uint param_2,uint param_3,uint param_4)
+uint __aeabi_dadd(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   uint uVar1;
@@ -86,7 +90,7 @@ uint FUN_20164888(uint param_1,uint param_2,uint param_3,uint param_4)
         }
         return param_1;
       }
-      FUN_20164efc();
+      fp_nan_handler();
       do {
         software_interrupt(0x40);
       } while( true );
@@ -208,7 +212,7 @@ uint FUN_20164888(uint param_1,uint param_2,uint param_3,uint param_4)
       }
       return param_1;
     }
-    FUN_20164efc();
+    fp_nan_handler();
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
   }
@@ -232,7 +236,7 @@ LAB_20164994:
         if (param_2 * 2 < 0xffe00000) {
           return uVar3;
         }
-        uVar4 = FUN_20164f98(uVar3,param_2 + 0xa0000000);
+        uVar4 = fp_exception_stub(uVar3,param_2 + 0xa0000000);
         return uVar4;
       }
       bVar10 = CARRY4(uVar3,(uint)bVar12);
@@ -287,14 +291,17 @@ LAB_2016491c:
   if (param_2 << 1 < 0xffe00000) {
     return uVar3;
   }
-  uVar4 = FUN_20164f98(uVar3,param_2 + 0xa0000000);
+  uVar4 = fp_exception_stub(uVar3,param_2 + 0xa0000000);
   return uVar4;
 }
 
 
-// ===== FUN_201649d8 @ 201649d8 (538 bytes)
+// ===== __aeabi_ddiv @ 201649d8 (538 bytes)
 
-uint FUN_201649d8(uint param_1,uint param_2,uint param_3,uint param_4)
+/* Double divide: Z2/Z1 and X/4096.0 (0x40B00000) in tsc2007_pressure, sum/5.0 (0x40140000) in
+   touch_cal_fit [inference from the constants] */
+
+uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   longlong lVar1;
@@ -315,9 +322,9 @@ uint FUN_201649d8(uint param_1,uint param_2,uint param_3,uint param_4)
   undefined8 uVar14;
   
   if ((~(param_2 >> 4) & 0x7ff0000) == 0 || (~(param_4 >> 4) & 0x7ff0000) == 0) {
-    uVar14 = FUN_20164efc();
-    uVar6 = FUN_20164f98((int)uVar14,
-                         *(byte *)((int)((ulonglong)uVar14 >> 0x20) + 0x18) ^ extraout_r3);
+    uVar14 = fp_nan_handler();
+    uVar6 = fp_exception_stub((int)uVar14,
+                              *(byte *)((int)((ulonglong)uVar14 >> 0x20) + 0x18) ^ extraout_r3);
     return uVar6;
   }
   uVar7 = param_2 ^ param_4;
@@ -399,7 +406,7 @@ uint FUN_201649d8(uint param_1,uint param_2,uint param_3,uint param_4)
         if ((int)uVar6 < 0) {
           return 0;
         }
-        uVar6 = FUN_20164f98(uVar4,iVar5 + -0x60000000);
+        uVar6 = fp_exception_stub(uVar4,iVar5 + -0x60000000);
         return uVar6;
       }
       return uVar4;
@@ -407,7 +414,7 @@ uint FUN_201649d8(uint param_1,uint param_2,uint param_3,uint param_4)
     return uVar4;
   }
   if ((param_2 & 0x7ff00000) != 0) {
-    uVar6 = FUN_20164f98(param_1,param_2 ^ param_4);
+    uVar6 = fp_exception_stub(param_1,param_2 ^ param_4);
     return uVar6;
   }
   if ((param_4 & 0x7ff00000) == 0) {
@@ -417,9 +424,12 @@ uint FUN_201649d8(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20164c90 @ 20164c90 (92 bytes)
+// ===== __aeabi_d2iz @ 20164c90 (92 bytes)
 
-uint FUN_20164c90(uint param_1,uint param_2)
+/* Double to signed int, truncating with saturation (0x7FFFFFFF ^ sign) [fact for the code]; follows
+   "+ 0.5" in touch_cal_apply [inference] */
+
+uint __aeabi_d2iz(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -449,16 +459,19 @@ uint FUN_20164c90(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return (int)param_2 >> 0x20 ^ 0x7fffffff;
   }
-  FUN_20164efc(param_1);
+  fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
   } while( true );
 }
 
 
-// ===== FUN_20164cf0 @ 20164cf0 (88 bytes)
+// ===== __aeabi_d2uiz @ 20164cf0 (88 bytes)
 
-uint FUN_20164cf0(uint param_1,uint param_2)
+/* Double to unsigned int: negative gives 0, overflow 0xFFFFFFFF [fact for the code];
+   tsc2007_pressure result [inference] */
+
+uint __aeabi_d2uiz(uint param_1,uint param_2)
 
 {
   int iVar1;
@@ -487,7 +500,7 @@ uint FUN_20164cf0(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return 0xffffffff;
   }
-  FUN_20164efc(param_1);
+  fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
   } while( true );
@@ -533,9 +546,12 @@ undefined8 __aeabi_ui2d(int param_1)
 }
 
 
-// ===== FUN_20164da8 @ 20164da8 (300 bytes)
+// ===== __aeabi_dmul @ 20164da8 (300 bytes)
 
-longlong FUN_20164da8(uint param_1,uint param_2,uint param_3,uint param_4)
+/* Double multiply: 400.0 (0x40790000) * x in tsc2007_pressure, span * fraction in progress_scale, x
+   * 100.0 in sd_format_request [inference] */
+
+longlong __aeabi_dmul(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   longlong lVar1;
@@ -626,17 +642,20 @@ longlong FUN_20164da8(uint param_1,uint param_2,uint param_3,uint param_4)
     return CONCAT44(uVar5,uVar12);
   }
   if (uVar12 == 0x7ff0000 || (param_4 >> 4 & 0x7ff0000) == 0x7ff0000) {
-    uVar16 = FUN_20164efc();
-    lVar17 = FUN_20164f98((int)uVar16,(int)((ulonglong)uVar16 >> 0x20) << 2 ^ extraout_r3);
+    uVar16 = fp_nan_handler();
+    lVar17 = fp_exception_stub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20) << 2 ^ extraout_r3);
     return lVar17;
   }
   return (ulonglong)((param_2 ^ param_4) & 0x80000000) << 0x20;
 }
 
 
-// ===== FUN_20164efc @ 20164efc (152 bytes)
+// ===== fp_nan_handler @ 20164efc (152 bytes)
 
-int FUN_20164efc(int param_1,uint param_2,int param_3,uint param_4)
+/* Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the
+   caller's return address [fact for the code]; armcc fplib internal [inference] */
+
+int fp_nan_handler(int param_1,uint param_2,int param_3,uint param_4)
 
 {
   int iVar1;
@@ -693,20 +712,24 @@ switchD_20164f68_caseD_5:
 }
 
 
-// ===== FUN_20164f98 @ 20164f98 (12 bytes)
+// ===== fp_exception_stub @ 20164f98 (12 bytes)
 
-void FUN_20164f98(void)
+/* Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) [inference]
+    */
+
+void fp_exception_stub(void)
 
 {
   return;
 }
 
 
-// ===== FUN_20164fa4 @ 20164fa4 (464 bytes)
+// ===== __aeabi_dsub @ 20164fa4 (464 bytes)
 
 /* WARNING: Control flow encountered bad instruction data */
+/* Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure [inference] */
 
-ulonglong FUN_20164fa4(uint param_1,uint param_2,uint param_3,uint param_4)
+ulonglong __aeabi_dsub(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   uint uVar1;
@@ -746,7 +769,7 @@ ulonglong FUN_20164fa4(uint param_1,uint param_2,uint param_3,uint param_4)
         }
         return CONCAT44(param_2,param_1);
       }
-      FUN_20164efc();
+      fp_nan_handler();
       do {
         software_interrupt(0x40);
       } while( true );
@@ -878,7 +901,7 @@ ulonglong FUN_20164fa4(uint param_1,uint param_2,uint param_3,uint param_4)
       }
       return CONCAT44(param_2,param_1);
     }
-    FUN_20164efc();
+    fp_nan_handler();
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
   }
@@ -902,7 +925,7 @@ LAB_20164994:
         if (param_2 * 2 < 0xffe00000) {
           return CONCAT44(param_2,uVar5);
         }
-        uVar14 = FUN_20164f98(uVar5,param_2 + 0xa0000000);
+        uVar14 = fp_exception_stub(uVar5,param_2 + 0xa0000000);
         return uVar14;
       }
       bVar11 = CARRY4(uVar5,(uint)bVar13);
@@ -957,7 +980,7 @@ LAB_2016491c:
   if (param_2 << 1 < 0xffe00000) {
     return CONCAT44(param_2,uVar5);
   }
-  uVar14 = FUN_20164f98(uVar5,param_2 + 0xa0000000);
+  uVar14 = fp_exception_stub(uVar5,param_2 + 0xa0000000);
   return uVar14;
 }
 

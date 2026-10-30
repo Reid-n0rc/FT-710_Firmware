@@ -1,10 +1,12 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00207cf0 @ 00207cf0 (60 bytes)
+// ===== __do_global_dtors_aux @ 00207cf0 (60 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00207d1a) */
+/* crtbegin: once-flag 0x238400, runs the destructor list 0x236820, __deregister_frame_info (weak,
+   0) [inference] */
 
-void FUN_00207cf0(void)
+void __do_global_dtors_aux(void)
 
 {
   code *pcVar1;
@@ -24,30 +26,36 @@ void FUN_00207cf0(void)
 }
 
 
-// ===== FUN_00207d2c @ 00207d2c (25 bytes)
+// ===== frame_dummy @ 00207d2c (25 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00207d37) */
+/* crtbegin: __register_frame_info (weak, 0)(0x206484, object 0x238404) [inference] */
 
-void FUN_00207d2c(void)
+void frame_dummy(void)
 
 {
   return;
 }
 
 
-// ===== FUN_00207d50 @ 00207d50 (8 bytes)
+// ===== SystemInit @ 00207d50 (8 bytes)
 
-void FUN_00207d50(void)
+/* system_MIMXRT685S_dsp.c: calls SystemInitHook [inference] */
+
+void SystemInit(void)
 
 {
-  FUN_00208050();
+  SystemInitHook();
   return;
 }
 
 
-// ===== FUN_00207d58 @ 00207d58 (748 bytes)
+// ===== SystemCoreClockUpdate @ 00207d58 (748 bytes)
 
-void FUN_00207d58(void)
+/* system_MIMXRT685S_dsp.c: CLKCTL1 DSPCPUCLKSEL (0x40021200 + 0x234), FFRO/SysPLL/PFD paths, 16 MHz
+   FFRO, udivdi3 [inference] */
+
+void SystemCoreClockUpdate(void)
 
 {
   undefined4 uVar1;
@@ -255,16 +263,18 @@ void FUN_00207d58(void)
 }
 
 
-// ===== FUN_00208050 @ 00208050 (5 bytes)
+// ===== SystemInitHook @ 00208050 (5 bytes)
 
-void FUN_00208050(void)
+/* system_MIMXRT685S_dsp.c weak hook, empty [inference] */
+
+void SystemInitHook(void)
 
 {
   return;
 }
 
 
-// ===== FUN_00208060 @ 00208060 (259 bytes)
+// ===== ACMP_Init @ 00208060 (259 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00208140) */
 /* WARNING: Removing unreachable block (ram,0x0020809b) */
@@ -276,8 +286,10 @@ void FUN_00208050(void)
 /* WARNING: Removing unreachable block (ram,0x00208152) */
 /* WARNING: Removing unreachable block (ram,0x0020812d) */
 /* WARNING: Removing unreachable block (ram,0x00208116) */
+/* fsl_acmp.c (CMP 0x40139000, s_acmpClocks 0x200084 / bases 0x200088); first function of the file
+   [inference] */
 
-void FUN_00208060(dword *param_1,uint *param_2)
+void ACMP_Init(dword *param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -291,7 +303,7 @@ void FUN_00208060(dword *param_1,uint *param_2)
     memw();
     CLKCTL0_PSCCTL0_SET = 1;
   }
-  FUN_00208234(param_1,0);
+  ACMP_Enable(param_1,0);
   memw();
   uVar1 = param_1[2] & 0xf9ffe1fc;
   if ((char)param_2[1] != '\0') {
@@ -315,7 +327,7 @@ void FUN_00208060(dword *param_1,uint *param_2)
 }
 
 
-// ===== FUN_00208164 @ 00208164 (182 bytes)
+// ===== ACMP_Deinit @ 00208164 (182 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002081f8) */
 /* WARNING: Removing unreachable block (ram,0x002081b4) */
@@ -328,11 +340,12 @@ void FUN_00208060(dword *param_1,uint *param_2)
 /* WARNING: Removing unreachable block (ram,0x00208209) */
 /* WARNING: Removing unreachable block (ram,0x002081e7) */
 /* WARNING: Removing unreachable block (ram,0x002081c5) */
+/* fsl_acmp.c [inference] */
 
-void FUN_00208164(dword *param_1)
+void ACMP_Deinit(dword *param_1)
 
 {
-  FUN_00208234(param_1,0);
+  ACMP_Enable(param_1,0);
   if (param_1 != &CMP_VERID) {
     memw();
     CLKCTL0_PSCCTL0_CLR = 1;
@@ -344,9 +357,11 @@ void FUN_00208164(dword *param_1)
 }
 
 
-// ===== FUN_0020821c @ 0020821c (23 bytes)
+// ===== ACMP_GetDefaultConfig @ 0020821c (23 bytes)
 
-void FUN_0020821c(undefined4 *param_1)
+/* fsl_acmp.c [inference] */
+
+void ACMP_GetDefaultConfig(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -359,9 +374,11 @@ void FUN_0020821c(undefined4 *param_1)
 }
 
 
-// ===== FUN_00208234 @ 00208234 (50 bytes)
+// ===== ACMP_Enable @ 00208234 (50 bytes)
 
-void FUN_00208234(int param_1,int param_2)
+/* fsl_acmp.c; called by ACMP_Init/Deinit [inference] */
+
+void ACMP_Enable(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -377,9 +394,11 @@ void FUN_00208234(int param_1,int param_2)
 }
 
 
-// ===== FUN_00208268 @ 00208268 (44 bytes)
+// ===== ACMP_EnableLinkToDAC @ 00208268 (44 bytes)
 
-void FUN_00208268(int param_1,int param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_EnableLinkToDAC(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -395,9 +414,11 @@ void FUN_00208268(int param_1,int param_2)
 }
 
 
-// ===== FUN_00208294 @ 00208294 (51 bytes)
+// ===== ACMP_SetChannelConfig @ 00208294 (51 bytes)
 
-void FUN_00208294(int param_1,uint *param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetChannelConfig(int param_1,uint *param_2)
 
 {
   memw();
@@ -408,9 +429,11 @@ void FUN_00208294(int param_1,uint *param_2)
 }
 
 
-// ===== FUN_002082c8 @ 002082c8 (44 bytes)
+// ===== ACMP_EnableDMA @ 002082c8 (44 bytes)
 
-void FUN_002082c8(int param_1,int param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_EnableDMA(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -426,9 +449,11 @@ void FUN_002082c8(int param_1,int param_2)
 }
 
 
-// ===== FUN_002082f4 @ 002082f4 (44 bytes)
+// ===== ACMP_EnableWindowMode @ 002082f4 (44 bytes)
 
-void FUN_002082f4(int param_1,int param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_EnableWindowMode(int param_1,int param_2)
 
 {
   if (param_2 != 0) {
@@ -444,9 +469,11 @@ void FUN_002082f4(int param_1,int param_2)
 }
 
 
-// ===== FUN_00208320 @ 00208320 (64 bytes)
+// ===== ACMP_SetFilterConfig @ 00208320 (64 bytes)
 
-void FUN_00208320(int param_1,int param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetFilterConfig(int param_1,int param_2)
 
 {
   memw();
@@ -458,9 +485,11 @@ void FUN_00208320(int param_1,int param_2)
 }
 
 
-// ===== FUN_00208360 @ 00208360 (110 bytes)
+// ===== ACMP_SetDACConfig @ 00208360 (110 bytes)
 
-void FUN_00208360(int param_1,uint *param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetDACConfig(int param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -490,9 +519,11 @@ void FUN_00208360(int param_1,uint *param_2)
 }
 
 
-// ===== FUN_002083d0 @ 002083d0 (126 bytes)
+// ===== ACMP_SetRoundRobinConfig @ 002083d0 (126 bytes)
 
-void FUN_002083d0(int param_1,uint *param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetRoundRobinConfig(int param_1,uint *param_2)
 
 {
   if (param_2 != (uint *)0x0) {
@@ -513,9 +544,11 @@ void FUN_002083d0(int param_1,uint *param_2)
 }
 
 
-// ===== FUN_00208450 @ 00208450 (24 bytes)
+// ===== ACMP_SetRoundRobinPreState @ 00208450 (24 bytes)
 
-void FUN_00208450(int param_1,uint param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetRoundRobinPreState(int param_1,uint param_2)
 
 {
   memw();
@@ -525,9 +558,11 @@ void FUN_00208450(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00208468 @ 00208468 (27 bytes)
+// ===== ACMP_ClearRoundRobinStatusFlags @ 00208468 (27 bytes)
 
-void FUN_00208468(int param_1,int param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_ClearRoundRobinStatusFlags(int param_1,int param_2)
 
 {
   memw();
@@ -537,9 +572,11 @@ void FUN_00208468(int param_1,int param_2)
 }
 
 
-// ===== FUN_00208484 @ 00208484 (84 bytes)
+// ===== ACMP_EnableInterrupts @ 00208484 (84 bytes)
 
-void FUN_00208484(int param_1,uint param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_EnableInterrupts(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -564,9 +601,11 @@ void FUN_00208484(int param_1,uint param_2)
 }
 
 
-// ===== FUN_002084d8 @ 002084d8 (60 bytes)
+// ===== ACMP_DisableInterrupts @ 002084d8 (60 bytes)
 
-void FUN_002084d8(int param_1,uint param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_DisableInterrupts(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -591,9 +630,11 @@ void FUN_002084d8(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00208514 @ 00208514 (40 bytes)
+// ===== ACMP_GetStatusFlags @ 00208514 (40 bytes)
 
-uint FUN_00208514(int param_1)
+/* fsl_acmp.c order [inference] */
+
+uint ACMP_GetStatusFlags(int param_1)
 
 {
   uint uVar1;
@@ -612,9 +653,11 @@ uint FUN_00208514(int param_1)
 }
 
 
-// ===== FUN_0020853c @ 0020853c (45 bytes)
+// ===== ACMP_ClearStatusFlags @ 0020853c (45 bytes)
 
-void FUN_0020853c(int param_1,uint param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_ClearStatusFlags(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -633,9 +676,11 @@ void FUN_0020853c(int param_1,uint param_2)
 }
 
 
-// ===== FUN_0020856c @ 0020856c (109 bytes)
+// ===== ACMP_SetDiscreteModeConfig @ 0020856c (109 bytes)
 
-void FUN_0020856c(int param_1,char *param_2)
+/* fsl_acmp.c order [inference] */
+
+void ACMP_SetDiscreteModeConfig(int param_1,char *param_2)
 
 {
   uint uVar1;
@@ -653,9 +698,11 @@ void FUN_0020856c(int param_1,char *param_2)
 }
 
 
-// ===== FUN_002085dc @ 002085dc (26 bytes)
+// ===== ACMP_GetDefaultDiscreteModeConfig @ 002085dc (26 bytes)
 
-void FUN_002085dc(undefined4 *param_1)
+/* fsl_acmp.c, last of the file [inference] */
+
+void ACMP_GetDefaultDiscreteModeConfig(undefined4 *param_1)
 
 {
   param_1[1] = 0;
@@ -697,9 +744,11 @@ void CLOCK_AttachClk(uint param_1)
 }
 
 
-// ===== FUN_00208654 @ 00208654 (95 bytes)
+// ===== CLOCK_SetClkDiv @ 00208654 (95 bytes)
 
-void FUN_00208654(uint param_1,int param_2)
+/* fsl_clock.c: write divider, wait REQFLAG (bit 29) [inference] */
+
+void CLOCK_SetClkDiv(uint param_1,int param_2)
 
 {
   dword *pdVar1;
@@ -734,9 +783,11 @@ void FUN_00208654(uint param_1,int param_2)
 }
 
 
-// ===== FUN_002086b4 @ 002086b4 (43 bytes)
+// ===== CLOCK_GetFFroFreq @ 002086b4 (43 bytes)
 
-undefined4 FUN_002086b4(void)
+/* fsl_clock.c: 48 / 60 MHz by FFROCTL0 trim range; 14 callers [inference] */
+
+undefined4 CLOCK_GetFFroFreq(void)
 
 {
   uint uVar1;
@@ -753,9 +804,11 @@ undefined4 FUN_002086b4(void)
 }
 
 
-// ===== FUN_002086e0 @ 002086e0 (139 bytes)
+// ===== CLOCK_GetSysPllFreq @ 002086e0 (139 bytes)
 
-uint FUN_002086e0(void)
+/* fsl_clock.c: SYSPLL0CLKSEL (0x40001200), 64-bit numerator/denominator [inference] */
+
+uint CLOCK_GetSysPllFreq(void)
 
 {
   undefined4 uVar1;
@@ -788,7 +841,7 @@ uint FUN_002086e0(void)
     else {
       uVar2 = 0;
       if (uVar4 == 2) {
-        uVar4 = FUN_002086b4();
+        uVar4 = CLOCK_GetFFroFreq();
         uVar2 = uVar4 >> 1;
       }
     }
@@ -809,15 +862,17 @@ uint FUN_002086e0(void)
 }
 
 
-// ===== FUN_0020876c @ 0020876c (172 bytes)
+// ===== CLOCK_GetSysPfdFreq @ 0020876c (172 bytes)
 
-uint FUN_0020876c(int param_1)
+/* fsl_clock.c: PFD fields 0x3F << 8n [inference] */
+
+uint CLOCK_GetSysPfdFreq(int param_1)
 
 {
   uint uVar1;
   uint uVar2;
   
-  uVar1 = FUN_002086e0();
+  uVar1 = CLOCK_GetSysPllFreq();
   memw();
   uVar2 = CLKCTL0_SYSPLL0CTL0;
   if ((uVar2 & 1) != 0) {
@@ -854,9 +909,11 @@ uint FUN_0020876c(int param_1)
 }
 
 
-// ===== FUN_00208818 @ 00208818 (139 bytes)
+// ===== CLOCK_GetAudioPllFreq @ 00208818 (139 bytes)
 
-uint FUN_00208818(void)
+/* fsl_clock.c: AUDIOPLL0CLKSEL (0x40021200) [inference] */
+
+uint CLOCK_GetAudioPllFreq(void)
 
 {
   undefined4 uVar1;
@@ -889,7 +946,7 @@ uint FUN_00208818(void)
     else {
       uVar2 = 0;
       if (uVar4 == 2) {
-        uVar4 = FUN_002086b4();
+        uVar4 = CLOCK_GetFFroFreq();
         uVar2 = uVar4 >> 1;
       }
     }
@@ -910,15 +967,17 @@ uint FUN_00208818(void)
 }
 
 
-// ===== FUN_002088a8 @ 002088a8 (172 bytes)
+// ===== CLOCK_GetAudioPfdFreq @ 002088a8 (172 bytes)
 
-uint FUN_002088a8(int param_1)
+/* fsl_clock.c [inference] */
+
+uint CLOCK_GetAudioPfdFreq(int param_1)
 
 {
   uint uVar1;
   uint uVar2;
   
-  uVar1 = FUN_00208818();
+  uVar1 = CLOCK_GetAudioPllFreq();
   memw();
   uVar2 = CLKCTL1_AUDIOPLL0CTL0;
   if ((uVar2 & 1) != 0) {
@@ -955,9 +1014,11 @@ uint FUN_002088a8(int param_1)
 }
 
 
-// ===== FUN_00208958 @ 00208958 (156 bytes)
+// ===== CLOCK_GetMainClkFreq @ 00208958 (156 bytes)
 
-undefined * FUN_00208958(void)
+/* fsl_clock.c order, 9 callers [inference] */
+
+undefined * CLOCK_GetMainClkFreq(void)
 
 {
   int iVar1;
@@ -974,7 +1035,7 @@ undefined * FUN_00208958(void)
     uVar4 = CLKCTL0_MAINCLKSELA;
     uVar4 = uVar4 & 3;
     if (uVar4 == 0) {
-      uVar4 = FUN_002086b4();
+      uVar4 = CLOCK_GetFFroFreq();
       return (undefined *)(uVar4 >> 2);
     }
     if (uVar4 == 1) {
@@ -996,7 +1057,7 @@ undefined * FUN_00208958(void)
       return &DAT_000f4240;
     }
     if (uVar4 == 3) {
-      puVar2 = (undefined *)FUN_002086b4();
+      puVar2 = (undefined *)CLOCK_GetFFroFreq();
       return puVar2;
     }
   }
@@ -1005,7 +1066,7 @@ undefined * FUN_00208958(void)
       return (undefined *)0xf42400;
     }
     if (uVar4 == 2) {
-      uVar3 = FUN_0020876c(0);
+      uVar3 = CLOCK_GetSysPfdFreq(0);
       memw();
       uVar4 = CLKCTL0_MAINPLLCLKDIV;
       return (undefined *)(uVar3 / ((uVar4 & 0xff) + 1));
@@ -1023,9 +1084,11 @@ undefined * FUN_00208958(void)
 }
 
 
-// ===== FUN_002089f8 @ 002089f8 (173 bytes)
+// ===== CLOCK_GetDspMainClkFreq @ 002089f8 (173 bytes)
 
-undefined * FUN_002089f8(void)
+/* fsl_clock.c order [inference] */
+
+undefined * CLOCK_GetDspMainClkFreq(void)
 
 {
   int iVar1;
@@ -1042,7 +1105,7 @@ undefined * FUN_002089f8(void)
     uVar4 = CLKCTL1_DSPCPUCLKSELA;
     uVar4 = uVar4 & 3;
     if (uVar4 == 0) {
-      puVar2 = (undefined *)FUN_002086b4();
+      puVar2 = (undefined *)CLOCK_GetFFroFreq();
       return puVar2;
     }
     if (uVar4 == 1) {
@@ -1069,13 +1132,13 @@ undefined * FUN_002089f8(void)
   }
   else {
     if (uVar4 == 1) {
-      uVar3 = FUN_0020876c(0);
+      uVar3 = CLOCK_GetSysPfdFreq(0);
       memw();
       uVar4 = CLKCTL0_MAINPLLCLKDIV;
       return (undefined *)(uVar3 / ((uVar4 & 0xff) + 1));
     }
     if (uVar4 == 2) {
-      uVar3 = FUN_0020876c(1);
+      uVar3 = CLOCK_GetSysPfdFreq(1);
       memw();
       uVar4 = CLKCTL0_DSPPLLCLKDIV;
       return (undefined *)(uVar3 / ((uVar4 & 0xff) + 1));
@@ -1093,9 +1156,11 @@ undefined * FUN_002089f8(void)
 }
 
 
-// ===== FUN_00208aa8 @ 00208aa8 (311 bytes)
+// ===== CLOCK_GetAdcClkFreq @ 00208aa8 (311 bytes)
 
-uint FUN_00208aa8(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetAdcClkFreq(void)
 
 {
   int iVar1;
@@ -1142,7 +1207,7 @@ uint FUN_00208aa8(void)
       return (uint)&DAT_000f4240 / ((uVar5 & 0xff) + 1);
     }
     if (uVar5 == 3) {
-      uVar3 = FUN_002086b4();
+      uVar3 = CLOCK_GetFFroFreq();
       memw();
       uVar5 = CLKCTL0_ADC0FCLKDIV;
       return uVar3 / ((uVar5 & 0xff) + 1);
@@ -1150,7 +1215,7 @@ uint FUN_00208aa8(void)
   }
   else {
     if (uVar5 == 1) {
-      uVar4 = FUN_0020876c(0);
+      uVar4 = CLOCK_GetSysPfdFreq(0);
       memw();
       uVar5 = CLKCTL0_MAINPLLCLKDIV;
       memw();
@@ -1158,7 +1223,7 @@ uint FUN_00208aa8(void)
       return (uVar4 / ((uVar5 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
     }
     if (uVar5 == 3) {
-      uVar4 = FUN_0020876c(2);
+      uVar4 = CLOCK_GetSysPfdFreq(2);
       memw();
       uVar5 = CLKCTL0_AUX0PLLCLKDIV;
       memw();
@@ -1166,7 +1231,7 @@ uint FUN_00208aa8(void)
       return (uVar4 / ((uVar5 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
     }
     if (uVar5 == 5) {
-      uVar4 = FUN_0020876c(3);
+      uVar4 = CLOCK_GetSysPfdFreq(3);
       memw();
       uVar5 = CLKCTL0_AUX1PLLCLKDIV;
       memw();
@@ -1180,9 +1245,11 @@ uint FUN_00208aa8(void)
 }
 
 
-// ===== FUN_00208be0 @ 00208be0 (433 bytes)
+// ===== CLOCK_GetClockOutClkFreq @ 00208be0 (433 bytes)
 
-uint FUN_00208be0(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetClockOutClkFreq(void)
 
 {
   int iVar1;
@@ -1230,20 +1297,20 @@ uint FUN_00208be0(void)
         return (uint)&DAT_000f4240 / ((uVar6 & 0xff) + 1);
       }
       if (uVar6 == 3) {
-        uVar6 = FUN_002086b4();
+        uVar6 = CLOCK_GetFFroFreq();
       }
       else if (uVar6 == 4) {
-        uVar6 = FUN_00208958();
+        uVar6 = CLOCK_GetMainClkFreq();
       }
       else {
         if (uVar6 != 6) goto LAB_00208c1b;
-        uVar6 = FUN_002089f8();
+        uVar6 = CLOCK_GetDspMainClkFreq();
       }
     }
   }
   else {
     if (uVar6 == 1) {
-      uVar4 = FUN_0020876c(0);
+      uVar4 = CLOCK_GetSysPfdFreq(0);
       memw();
       uVar6 = CLKCTL0_MAINPLLCLKDIV;
       memw();
@@ -1251,7 +1318,7 @@ uint FUN_00208be0(void)
       return (uVar4 / ((uVar6 & 0xff) + 1)) / ((uVar2 & 0xff) + 1);
     }
     if (uVar6 == 2) {
-      uVar4 = FUN_0020876c(2);
+      uVar4 = CLOCK_GetSysPfdFreq(2);
       memw();
       uVar6 = CLKCTL0_AUX0PLLCLKDIV;
       memw();
@@ -1260,7 +1327,7 @@ uint FUN_00208be0(void)
     }
     if (uVar6 != 3) {
       if (uVar6 == 4) {
-        uVar4 = FUN_0020876c(3);
+        uVar4 = CLOCK_GetSysPfdFreq(3);
         memw();
         uVar6 = CLKCTL0_AUX1PLLCLKDIV;
         memw();
@@ -1268,7 +1335,7 @@ uint FUN_00208be0(void)
         return (uVar4 / ((uVar6 & 0xff) + 1)) / ((uVar2 & 0xff) + 1);
       }
       if (uVar6 == 5) {
-        uVar4 = FUN_002088a8(0);
+        uVar4 = CLOCK_GetAudioPfdFreq(0);
         memw();
         uVar6 = CLKCTL1_AUDIOPLLCLKDIV;
         memw();
@@ -1290,7 +1357,7 @@ LAB_00208c1b:
       uVar3 = CLKCTL1_CLKOUTDIV;
       return 0;
     }
-    uVar6 = FUN_0020876c(1);
+    uVar6 = CLOCK_GetSysPfdFreq(1);
     memw();
     uVar2 = CLKCTL0_DSPPLLCLKDIV;
     uVar6 = uVar6 / ((uVar2 & 0xff) + 1);
@@ -1301,9 +1368,11 @@ LAB_00208c1b:
 }
 
 
-// ===== FUN_00208d94 @ 00208d94 (248 bytes)
+// ===== CLOCK_GetFRGClock @ 00208d94 (248 bytes)
 
-undefined4 FUN_00208d94(uint param_1)
+/* fsl_clock.c order; called by CLOCK_GetFlexCommClkFreq [inference] */
+
+undefined4 CLOCK_GetFRGClock(uint param_1)
 
 {
   uint uVar1;
@@ -1325,7 +1394,7 @@ LAB_00208dc9:
       if (uVar5 == 1) {
         memw();
         uVar6 = CLKCTL1_FRGPLLCLKDIV;
-        uVar3 = FUN_0020876c(0);
+        uVar3 = CLOCK_GetSysPfdFreq(0);
         memw();
         uVar5 = CLKCTL0_MAINPLLCLKDIV;
         uVar6 = (uVar3 / ((uVar5 & 0xff) + 1)) / ((uVar6 & 0xff) + 1);
@@ -1336,7 +1405,7 @@ LAB_00208dc9:
       else {
         uVar6 = 0;
         if (uVar5 == 3) {
-          uVar6 = FUN_002086b4();
+          uVar6 = CLOCK_GetFFroFreq();
         }
       }
       goto LAB_00208ddb;
@@ -1370,7 +1439,7 @@ LAB_00208dc9:
     }
     uVar1 = 0;
   }
-  uVar6 = FUN_00208958();
+  uVar6 = CLOCK_GetMainClkFreq();
 LAB_00208ddb:
   uVar5 = uVar1 + 1;
   uVar2 = __udivdi3(uVar6 * uVar5,
@@ -1408,7 +1477,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
     return 16000000;
   }
   if (dVar3 == 1) {
-    uVar2 = FUN_002086b4();
+    uVar2 = CLOCK_GetFFroFreq();
     return uVar2;
   }
   if (dVar3 != 2) {
@@ -1417,21 +1486,23 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
       return DAT_00238424;
     }
     if (dVar3 == 4) {
-      uVar2 = FUN_00208d94(param_1);
+      uVar2 = CLOCK_GetFRGClock(param_1);
       return uVar2;
     }
     return 0;
   }
-  uVar1 = FUN_002088a8(0);
+  uVar1 = CLOCK_GetAudioPfdFreq(0);
   memw();
   uVar2 = CLKCTL1_AUDIOPLLCLKDIV;
   return uVar1 / ((uVar2 & 0xff) + 1);
 }
 
 
-// ===== FUN_00208f10 @ 00208f10 (99 bytes)
+// ===== CLOCK_GetCtimerClkFreq @ 00208f10 (99 bytes)
 
-undefined * FUN_00208f10(int param_1)
+/* fsl_clock.c order [inference] */
+
+undefined * CLOCK_GetCtimerClkFreq(int param_1)
 
 {
   undefined *puVar1;
@@ -1441,14 +1512,14 @@ undefined * FUN_00208f10(int param_1)
   memw();
   uVar3 = (&CLKCTL1_CT32BITFCLKSEL0)[param_1] & 7;
   if (uVar3 == 0) {
-    puVar1 = (undefined *)FUN_00208958();
+    puVar1 = (undefined *)CLOCK_GetMainClkFreq();
     return puVar1;
   }
   if (uVar3 == 1) {
     return (undefined *)0xf42400;
   }
   if (uVar3 == 2) {
-    puVar1 = (undefined *)FUN_002086b4();
+    puVar1 = (undefined *)CLOCK_GetFFroFreq();
     return puVar1;
   }
   if (uVar3 != 3) {
@@ -1461,16 +1532,18 @@ undefined * FUN_00208f10(int param_1)
     }
     return &DAT_000f4240;
   }
-  uVar2 = FUN_002088a8(0);
+  uVar2 = CLOCK_GetAudioPfdFreq(0);
   memw();
   uVar3 = CLKCTL1_AUDIOPLLCLKDIV;
   return (undefined *)(uVar2 / ((uVar3 & 0xff) + 1));
 }
 
 
-// ===== FUN_00208f78 @ 00208f78 (191 bytes)
+// ===== CLOCK_GetFlexspiClkFreq @ 00208f78 (191 bytes)
 
-uint FUN_00208f78(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetFlexspiClkFreq(void)
 
 {
   undefined4 uVar1;
@@ -1482,13 +1555,13 @@ uint FUN_00208f78(void)
   uVar4 = CLKCTL0_FLEXSPIFCLKSEL;
   uVar4 = uVar4 & 7;
   if (uVar4 == 0) {
-    uVar3 = FUN_00208958();
+    uVar3 = CLOCK_GetMainClkFreq();
     memw();
     uVar4 = CLKCTL0_FLEXSPIFCLKDIV;
     return uVar3 / ((uVar4 & 0xff) + 1);
   }
   if (uVar4 == 1) {
-    uVar2 = FUN_0020876c(0);
+    uVar2 = CLOCK_GetSysPfdFreq(0);
     memw();
     uVar4 = CLKCTL0_MAINPLLCLKDIV;
     memw();
@@ -1496,7 +1569,7 @@ uint FUN_00208f78(void)
     return (uVar2 / ((uVar4 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
   }
   if (uVar4 == 2) {
-    uVar2 = FUN_0020876c(2);
+    uVar2 = CLOCK_GetSysPfdFreq(2);
     memw();
     uVar4 = CLKCTL0_AUX0PLLCLKDIV;
     memw();
@@ -1509,23 +1582,25 @@ uint FUN_00208f78(void)
       uVar1 = CLKCTL0_FLEXSPIFCLKDIV;
       return 0;
     }
-    uVar2 = FUN_0020876c(3);
+    uVar2 = CLOCK_GetSysPfdFreq(3);
     memw();
     uVar4 = CLKCTL0_AUX1PLLCLKDIV;
     memw();
     uVar3 = CLKCTL0_FLEXSPIFCLKDIV;
     return (uVar2 / ((uVar4 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
   }
-  uVar3 = FUN_002086b4();
+  uVar3 = CLOCK_GetFFroFreq();
   memw();
   uVar4 = CLKCTL0_FLEXSPIFCLKDIV;
   return uVar3 / ((uVar4 & 0xff) + 1);
 }
 
 
-// ===== FUN_00209038 @ 00209038 (245 bytes)
+// ===== CLOCK_GetSctClkFreq @ 00209038 (245 bytes)
 
-uint FUN_00209038(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetSctClkFreq(void)
 
 {
   undefined4 uVar1;
@@ -1537,13 +1612,13 @@ uint FUN_00209038(void)
   uVar4 = CLKCTL0_SCTFCLKSEL;
   uVar4 = uVar4 & 7;
   if (uVar4 == 0) {
-    uVar3 = FUN_00208958();
+    uVar3 = CLOCK_GetMainClkFreq();
     memw();
     uVar4 = CLKCTL0_SCTFCLKDIV;
     return uVar3 / ((uVar4 & 0xff) + 1);
   }
   if (uVar4 == 1) {
-    uVar2 = FUN_0020876c(0);
+    uVar2 = CLOCK_GetSysPfdFreq(0);
     memw();
     uVar4 = CLKCTL0_MAINPLLCLKDIV;
     memw();
@@ -1551,7 +1626,7 @@ uint FUN_00209038(void)
     return (uVar2 / ((uVar4 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
   }
   if (uVar4 == 2) {
-    uVar2 = FUN_0020876c(2);
+    uVar2 = CLOCK_GetSysPfdFreq(2);
     memw();
     uVar4 = CLKCTL0_AUX0PLLCLKDIV;
     memw();
@@ -1560,7 +1635,7 @@ uint FUN_00209038(void)
   }
   if (uVar4 != 3) {
     if (uVar4 == 4) {
-      uVar2 = FUN_0020876c(3);
+      uVar2 = CLOCK_GetSysPfdFreq(3);
       memw();
       uVar4 = CLKCTL0_AUX1PLLCLKDIV;
       memw();
@@ -1572,23 +1647,25 @@ uint FUN_00209038(void)
       uVar1 = CLKCTL0_SCTFCLKDIV;
       return 0;
     }
-    uVar2 = FUN_002088a8(0);
+    uVar2 = CLOCK_GetAudioPfdFreq(0);
     memw();
     uVar3 = CLKCTL1_AUDIOPLLCLKDIV;
     memw();
     uVar4 = CLKCTL0_SCTFCLKDIV;
     return (uVar2 / ((uVar3 & 0xff) + 1)) / ((uVar4 & 0xff) + 1);
   }
-  uVar3 = FUN_002086b4();
+  uVar3 = CLOCK_GetFFroFreq();
   memw();
   uVar4 = CLKCTL0_SCTFCLKDIV;
   return uVar3 / ((uVar4 & 0xff) + 1);
 }
 
 
-// ===== FUN_00209130 @ 00209130 (100 bytes)
+// ===== CLOCK_GetMclkClkFreq @ 00209130 (100 bytes)
 
-uint FUN_00209130(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetMclkClkFreq(void)
 
 {
   uint uVar1;
@@ -1600,7 +1677,7 @@ uint FUN_00209130(void)
   memw();
   iVar2 = CLKCTL1_AUDIOMCLKSEL;
   if (iVar2 == 0) {
-    uVar5 = FUN_002086b4();
+    uVar5 = CLOCK_GetFFroFreq();
     memw();
     uVar1 = CLKCTL1_AUDIOMCLKDIV;
     return uVar5 / ((uVar1 & 0xff) + 1);
@@ -1612,7 +1689,7 @@ uint FUN_00209130(void)
     uVar3 = CLKCTL1_AUDIOMCLKDIV;
     return 0;
   }
-  uVar4 = FUN_002088a8(0);
+  uVar4 = CLOCK_GetAudioPfdFreq(0);
   memw();
   uVar1 = CLKCTL1_AUDIOPLLCLKDIV;
   memw();
@@ -1621,9 +1698,11 @@ uint FUN_00209130(void)
 }
 
 
-// ===== FUN_00209194 @ 00209194 (57 bytes)
+// ===== CLOCK_GetWdtClkFreq @ 00209194 (57 bytes)
 
-undefined * FUN_00209194(int param_1)
+/* fsl_clock.c order [inference] */
+
+undefined * CLOCK_GetWdtClkFreq(int param_1)
 
 {
   uint uVar1;
@@ -1635,7 +1714,7 @@ undefined * FUN_00209194(int param_1)
     if ((uVar1 & 7) == 0) {
       return &DAT_000f4240;
     }
-    puVar2 = (undefined *)FUN_00208958();
+    puVar2 = (undefined *)CLOCK_GetMainClkFreq();
     return puVar2;
   }
   memw();
@@ -1643,14 +1722,16 @@ undefined * FUN_00209194(int param_1)
   if ((uVar1 & 7) == 0) {
     return &DAT_000f4240;
   }
-  puVar2 = (undefined *)FUN_00208958();
+  puVar2 = (undefined *)CLOCK_GetMainClkFreq();
   return puVar2;
 }
 
 
-// ===== FUN_002091d0 @ 002091d0 (80 bytes)
+// ===== CLOCK_GetSystickClkFreq @ 002091d0 (80 bytes)
 
-undefined * FUN_002091d0(void)
+/* fsl_clock.c order [inference] */
+
+undefined * CLOCK_GetSystickClkFreq(void)
 
 {
   uint uVar1;
@@ -1661,7 +1742,7 @@ undefined * FUN_002091d0(void)
   memw();
   iVar2 = CLKCTL0_SYSTICKFCLKSEL;
   if (iVar2 == 0) {
-    uVar4 = FUN_00208958();
+    uVar4 = CLOCK_GetMainClkFreq();
     memw();
     uVar1 = CLKCTL0_SYSTICKFCLKDIV;
     return (undefined *)(uVar4 / ((uVar1 & 0xff) + 1));
@@ -1685,9 +1766,11 @@ undefined * FUN_002091d0(void)
 }
 
 
-// ===== FUN_00209220 @ 00209220 (208 bytes)
+// ===== CLOCK_GetSdioClkFreq @ 00209220 (208 bytes)
 
-uint FUN_00209220(int param_1)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetSdioClkFreq(int param_1)
 
 {
   uint *puVar1;
@@ -1706,12 +1789,12 @@ uint FUN_00209220(int param_1)
   memw();
   uVar4 = *puVar3 & 7;
   if (uVar4 == 0) {
-    uVar4 = FUN_00208958();
+    uVar4 = CLOCK_GetMainClkFreq();
     memw();
     return uVar4 / ((*puVar1 & 0xff) + 1);
   }
   if (uVar4 == 1) {
-    uVar2 = FUN_0020876c(0);
+    uVar2 = CLOCK_GetSysPfdFreq(0);
     memw();
     uVar4 = CLKCTL0_MAINPLLCLKDIV;
     memw();
@@ -1719,7 +1802,7 @@ uint FUN_00209220(int param_1)
   }
   if (uVar4 != 2) {
     if (uVar4 == 3) {
-      uVar4 = FUN_002086b4();
+      uVar4 = CLOCK_GetFFroFreq();
       memw();
       return uVar4 / ((*puVar1 & 0xff) + 1);
     }
@@ -1727,13 +1810,13 @@ uint FUN_00209220(int param_1)
       memw();
       return 0;
     }
-    uVar2 = FUN_0020876c(3);
+    uVar2 = CLOCK_GetSysPfdFreq(3);
     memw();
     uVar4 = CLKCTL0_AUX1PLLCLKDIV;
     memw();
     return (uVar2 / ((uVar4 & 0xff) + 1)) / ((*puVar1 & 0xff) + 1);
   }
-  uVar2 = FUN_0020876c(2);
+  uVar2 = CLOCK_GetSysPfdFreq(2);
   memw();
   uVar4 = CLKCTL0_AUX0PLLCLKDIV;
   memw();
@@ -1741,9 +1824,11 @@ uint FUN_00209220(int param_1)
 }
 
 
-// ===== FUN_002092f4 @ 002092f4 (77 bytes)
+// ===== CLOCK_GetI3cClkFreq @ 002092f4 (77 bytes)
 
-uint FUN_002092f4(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetI3cClkFreq(void)
 
 {
   uint uVar1;
@@ -1753,7 +1838,7 @@ uint FUN_002092f4(void)
   memw();
   uVar1 = CLKCTL1_I3C0FCLKSEL;
   if ((uVar1 & 7) == 0) {
-    uVar3 = FUN_00208958();
+    uVar3 = CLOCK_GetMainClkFreq();
     memw();
     uVar1 = CLKCTL1_I3C0FCLKDIV;
     return uVar3 / ((uVar1 & 0xff) + 1);
@@ -1763,16 +1848,18 @@ uint FUN_002092f4(void)
     uVar2 = CLKCTL1_I3C0FCLKDIV;
     return 0;
   }
-  uVar3 = FUN_002086b4();
+  uVar3 = CLOCK_GetFFroFreq();
   memw();
   uVar1 = CLKCTL1_I3C0FCLKDIV;
   return uVar3 / ((uVar1 & 0xff) + 1);
 }
 
 
-// ===== FUN_00209344 @ 00209344 (132 bytes)
+// ===== CLOCK_GetUsbClkFreq @ 00209344 (132 bytes)
 
-uint FUN_00209344(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetUsbClkFreq(void)
 
 {
   int iVar1;
@@ -1809,16 +1896,18 @@ uint FUN_00209344(void)
     uVar2 = CLKCTL0_USBHSFCLKDIV;
     return 0;
   }
-  uVar3 = FUN_00208958();
+  uVar3 = CLOCK_GetMainClkFreq();
   memw();
   uVar4 = CLKCTL0_USBHSFCLKDIV;
   return uVar3 / ((uVar4 & 0xff) + 1);
 }
 
 
-// ===== FUN_002093cc @ 002093cc (266 bytes)
+// ===== CLOCK_GetDmicClkFreq @ 002093cc (266 bytes)
 
-uint FUN_002093cc(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetDmicClkFreq(void)
 
 {
   undefined4 uVar1;
@@ -1836,13 +1925,13 @@ uint FUN_002093cc(void)
     return 16000000 / ((uVar4 & 0xff) + 1);
   }
   if (uVar4 == 1) {
-    uVar2 = FUN_002086b4();
+    uVar2 = CLOCK_GetFFroFreq();
     memw();
     uVar4 = CLKCTL1_DMIC0FCLKDIV;
     return uVar2 / ((uVar4 & 0xff) + 1);
   }
   if (uVar4 == 2) {
-    uVar3 = FUN_002088a8(0);
+    uVar3 = CLOCK_GetAudioPfdFreq(0);
     memw();
     uVar4 = CLKCTL1_AUDIOPLLCLKDIV;
     memw();
@@ -1886,9 +1975,11 @@ uint FUN_002093cc(void)
 }
 
 
-// ===== FUN_002094dc @ 002094dc (179 bytes)
+// ===== CLOCK_GetAcmpClkFreq @ 002094dc (179 bytes)
 
-uint FUN_002094dc(void)
+/* fsl_clock.c order [inference] */
+
+uint CLOCK_GetAcmpClkFreq(void)
 
 {
   undefined4 uVar1;
@@ -1900,7 +1991,7 @@ uint FUN_002094dc(void)
   uVar4 = CLKCTL1_ACMP0FCLKSEL;
   uVar4 = uVar4 & 7;
   if (uVar4 == 0) {
-    uVar3 = FUN_00208958();
+    uVar3 = CLOCK_GetMainClkFreq();
     memw();
     uVar4 = CLKCTL1_ACMP0FCLKDIV;
     return uVar3 / ((uVar4 & 0xff) + 1);
@@ -1911,7 +2002,7 @@ uint FUN_002094dc(void)
     return 16000000 / ((uVar4 & 0xff) + 1);
   }
   if (uVar4 == 2) {
-    uVar3 = FUN_002086b4();
+    uVar3 = CLOCK_GetFFroFreq();
     memw();
     uVar4 = CLKCTL1_ACMP0FCLKDIV;
     return uVar3 / ((uVar4 & 0xff) + 1);
@@ -1922,14 +2013,14 @@ uint FUN_002094dc(void)
       uVar1 = CLKCTL1_ACMP0FCLKDIV;
       return 0;
     }
-    uVar2 = FUN_0020876c(3);
+    uVar2 = CLOCK_GetSysPfdFreq(3);
     memw();
     uVar4 = CLKCTL0_AUX1PLLCLKDIV;
     memw();
     uVar3 = CLKCTL1_ACMP0FCLKDIV;
     return (uVar2 / ((uVar4 & 0xff) + 1)) / ((uVar3 & 0xff) + 1);
   }
-  uVar2 = FUN_0020876c(2);
+  uVar2 = CLOCK_GetSysPfdFreq(2);
   memw();
   uVar4 = CLKCTL0_AUX0PLLCLKDIV;
   memw();
@@ -1938,9 +2029,11 @@ uint FUN_002094dc(void)
 }
 
 
-// ===== FUN_00209590 @ 00209590 (264 bytes)
+// ===== CLOCK_GetFreq @ 00209590 (264 bytes)
 
-uint FUN_00209590(undefined4 param_1)
+/* fsl_clock.c: switch over clock names, calls the getters above [inference] */
+
+uint CLOCK_GetFreq(undefined4 param_1)
 
 {
   uint uVar1;
@@ -1949,56 +2042,56 @@ uint FUN_00209590(undefined4 param_1)
   switch(param_1) {
   case 0:
   case 1:
-    uVar2 = FUN_00208958();
+    uVar2 = CLOCK_GetMainClkFreq();
     memw();
     uVar1 = CLKCTL0_SYSCPUAHBCLKDIV;
     return uVar2 / ((uVar1 & 0xff) + 1);
   case 2:
-    uVar1 = FUN_00209130();
+    uVar1 = CLOCK_GetMclkClkFreq();
     return uVar1;
   case 3:
-    uVar1 = FUN_00208be0();
+    uVar1 = CLOCK_GetClockOutClkFreq();
     return uVar1;
   case 4:
-    uVar1 = FUN_00208aa8();
+    uVar1 = CLOCK_GetAdcClkFreq();
     return uVar1;
   case 5:
-    uVar1 = FUN_00208f78();
+    uVar1 = CLOCK_GetFlexspiClkFreq();
     return uVar1;
   case 6:
-    uVar1 = FUN_00209038();
+    uVar1 = CLOCK_GetSctClkFreq();
     return uVar1;
   case 7:
-    uVar1 = FUN_00209194(0);
+    uVar1 = CLOCK_GetWdtClkFreq(0);
     return uVar1;
   case 8:
-    uVar1 = FUN_00209194(1);
+    uVar1 = CLOCK_GetWdtClkFreq(1);
     return uVar1;
   case 9:
-    uVar1 = FUN_002091d0();
+    uVar1 = CLOCK_GetSystickClkFreq();
     return uVar1;
   case 10:
-    uVar1 = FUN_00209220(0);
+    uVar1 = CLOCK_GetSdioClkFreq(0);
     return uVar1;
   case 0xb:
-    uVar1 = FUN_00209220(1);
+    uVar1 = CLOCK_GetSdioClkFreq(1);
     return uVar1;
   case 0xc:
-    uVar1 = FUN_002092f4();
+    uVar1 = CLOCK_GetI3cClkFreq();
     return uVar1;
   case 0xd:
-    uVar1 = FUN_00209344();
+    uVar1 = CLOCK_GetUsbClkFreq();
     return uVar1;
   case 0xe:
-    uVar1 = FUN_002093cc();
+    uVar1 = CLOCK_GetDmicClkFreq();
     return uVar1;
   case 0xf:
-    uVar2 = FUN_002089f8();
+    uVar2 = CLOCK_GetDspMainClkFreq();
     memw();
     uVar1 = CLKCTL1_DSPCPUCLKDIV;
     return uVar2 / ((uVar1 & 0xff) + 1);
   case 0x10:
-    uVar1 = FUN_002094dc();
+    uVar1 = CLOCK_GetAcmpClkFreq();
     return uVar1;
   case 0x11:
     uVar1 = CLOCK_GetFlexCommClkFreq(0);
@@ -2036,9 +2129,11 @@ uint FUN_00209590(undefined4 param_1)
 }
 
 
-// ===== FUN_0020969c @ 0020969c (132 bytes)
+// ===== CLOCK_SetFRGClock @ 0020969c (132 bytes)
 
-void FUN_0020969c(byte *param_1)
+/* fsl_clock.c order (CLOCK_EnableFfroClk / EnableSfroClk are #ifndef __XCC__) [inference] */
+
+void CLOCK_SetFRGClock(byte *param_1)
 
 {
   byte bVar1;

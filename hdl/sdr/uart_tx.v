@@ -9,14 +9,16 @@
 `default_nettype none
 module ft710_uart_tx #(
   parameter integer DIV   = 1086,
-  parameter integer PHASE = 32
+  parameter integer PHASE = 32,
+  parameter integer STOPS = 1      // stop bits; the console sends 2 (byte period 11,949 clocks in the netlist, #204)
 ) (
   input  wire       clk,
   input  wire       rst,
   input  wire       req,          // level request; a rising edge starts a frame
   input  wire [7:0] data,
   output reg        busy = 1'b0,
-  output reg        tx = 1'b0     // INIT 0 in the bitstream, driven high by reset
+  output reg        tx = 1'b0,    // INIT 0 in the bitstream, driven high by reset
+  output wire       last_stop     // in the last stop bit (a new frame may start early; console echo, #204)
 );
   reg r1 = 1'b0, r2 = 1'b0;
   always @(posedge clk)
@@ -30,16 +32,17 @@ module ft710_uart_tx #(
     else cnt <= cnt + 16'd1;
   wire strobe = (cnt == PHASE);
 
-  reg [9:0] sh = 10'h3FF;         // {stop, d7..d0, start}, LSB goes out first
+  reg [10:0] sh = 11'h7FF;        // {stop, stop, d7..d0, start}, LSB goes out first
   reg [3:0] left = 4'd0;
+  assign last_stop = busy & (left == 4'd0);
   always @(posedge clk) begin
     if (rst) begin
-      sh <= 10'h3FF; left <= 4'd0; busy <= 1'b0; tx <= 1'b1;
+      sh <= 11'h7FF; left <= 4'd0; busy <= 1'b0; tx <= 1'b1;
     end else if (start) begin
-      sh <= {1'b1, data, 1'b0}; left <= 4'd10; busy <= 1'b1; tx <= 1'b1;
+      sh <= {2'b11, data, 1'b0}; left <= 4'd9 + STOPS; busy <= 1'b1; tx <= 1'b1;
     end else if (strobe) begin
       tx <= (left != 0) ? sh[0] : 1'b1;
-      sh <= {1'b1, sh[9:1]};
+      sh <= {1'b1, sh[10:1]};
       if (left != 0) left <= left - 4'd1;
       else busy <= 1'b0;
     end

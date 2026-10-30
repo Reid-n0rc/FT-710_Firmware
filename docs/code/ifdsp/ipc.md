@@ -427,3 +427,16 @@ inference: DSP ownership, see T12e]**
 - What reg 0x4000 = 1 and reg 1 bit 0 mean to the DSP (FLIX-hidden loads, or the 0x20070000 base, which the scanner does not track).
 - Whether the DSP's `Thread_Main` (reads a global ×100 in a loop of 10, then `cpu_load_to_regs_2000`) polls the register file. See T12e.
 - The 8-byte prefix of the 0x98-byte message.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+### HiFi4 (`decomp/ifdsp/hifi4`)
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0x0021AB94 | `env_lock_mutex` |  | no direct calls; 5 B, callers: 12 **[fact]** (code shape) |
+| 0x0021AB9C | `env_unlock_mutex` |  | no direct calls; 5 B, callers: 16 **[fact]** (code shape) |
+| 0x0021ABB0 | `env_register_isr` |  | isr_table entry store **[inference]** |
+| 0x00233410 | `xthal_set_region_attribute` |  | (vaddr, size, cattr, flags): Cadence HAL region-protection variant, 8 x 512 MB regions via xthal_get/set_cacheattr; flag bits 9-12 EXACT, NO_PARTIAL, NO_AUTO_WB, NO_AUTO_INV; returns 0, -2 (inexact), -3 (bad range). DSP main … **[inference]** |

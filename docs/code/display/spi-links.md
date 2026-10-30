@@ -365,3 +365,67 @@ not the SDR.
 - The SDR scope header (25 bytes), the meaning of the second 850 bytes of each SDR DMA frame, and DSP frame bytes 1–3 and 602–603 need the
   FPGA (T13/T15) or HiFi4 `Thread_Spi` side (T12).
 - The SDR frame rate could be measured from the overlay counters on a debug-enabled unit (do not touch the radio without approval).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011E1F0 | `rspi0_rx_isr` | SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 **[inference]** |
+| 0x2011E240 | `rspi1_rx_isr` | calls `reg_rmw8`; 80 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E290 | `rspi2_rx_isr` | clear SPRIE, flag **[inference]** |
+| 0x2011E2B8 | `rspi3_rx_isr` | calls `reg_rmw8`; 40 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E2E0 | `rspi4_rx_isr` | calls `reg_rmw8`; 40 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E308 | `rspi0_tx_isr` | clear SPTIE, flag 0x2080041D **[inference]** |
+| 0x2011E330 | `rspi1_tx_isr` | calls `reg_rmw8`; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E358 | `rspi2_tx_isr` | calls `reg_rmw8`; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E380 | `rspi3_tx_isr` | calls `reg_rmw8`; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E3A8 | `rspi4_tx_isr` | calls `reg_rmw8`; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E3D0 | `rspi0_tx_wait` | calls `reg_rmw8`; 44 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E3FC | `rspi0_read_burst` | dummy 0xFF writes, wait RX **[inference]** |
+| 0x2011E544 | `rspi1_tx_wait` | calls `reg_rmw8`; 44 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E570 | `rspi1_read_burst` | calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi1_clear_tx_flag` and 2 more; 320 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E6B0 | `rspi2_tx_wait` | calls `reg_rmw8`; 44 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E6DC | `rspi2_read_burst` | calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi2_clear_tx_flag` and 2 more; 328 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E824 | `rspi3_tx_wait` | calls `reg_rmw8`; 44 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E850 | `rspi3_read_burst` | calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi3_clear_tx_flag` and 2 more; 320 B, callers: 1 **[fact]** (code shape) |
+| 0x2011E990 | `rspi4_tx_wait` | calls `reg_rmw8`; 44 B, callers: 2 **[fact]** (code shape) |
+| 0x2011E9BC | `rspi4_read_burst` | calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi4_clear_tx_flag` and 2 more; 328 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EB58 | `rspi0_wait_tend` | SPSR.TEND **[inference]** |
+| 0x2011EB7C | `rspi1_wait_tend` | calls `reg_read8`; 36 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EBA0 | `rspi2_wait_tend` | calls `reg_read8`; 36 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EBC4 | `rspi3_wait_tend` | calls `reg_read8`; 36 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EBE8 | `rspi4_wait_tend` | calls `reg_read8`; 36 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EC0C | `rspi0_delay` | no direct calls; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EC34 | `rspi1_delay` | no direct calls; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EC5C | `rspi2_delay` | no direct calls; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011EC84 | `rspi3_delay` | no direct calls; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011ECAC | `rspi4_delay` | no direct calls; 40 B, callers: 1 **[fact]** (code shape) |
+| 0x2011ED24 | `rspi_hw_config_master` | (ch, spbr, brdv, loopback); no callers **[inference]** |
+| 0x20137080 | `dmac3_rspi4_tx_setup` | DMARS 0x131 **[inference]** |
+| 0x20137278 | `dmac5_rspi2_rx_setup` | DMARS 0x12A, 0x6A4 B **[inference]** |
+| 0x201374AC | `dmac4_rspi4_rx_setup` | DMARS 0x132, 0x11F8 B **[inference]** |
+| 0x201376D0 | `dmac8_m2m_init` | frame-buffer copy DMA **[inference]** |
+| 0x20137904 | `dmac9_register_isr` | calls `itron_acre_isr`; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137910 | `dmac9_rspi_tx_setup` | arg 1 RSPI0 (0x121), 0 RSPI1 **[inference]** |
+| 0x20137AF8 | `dmac10_register_isr` | calls `itron_acre_isr`; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137B04 | `dmac10_rspi_rx_setup` | arg 1 RSPI0 (0x122) **[inference]** |
+| 0x20137D50 | `dmac3_enable` | calls `reg_rmw32`; 20 B, callers: 1 **[fact]** (code shape) |
+| 0x20137D64 | `dmac3_disable` | writes 0 to SETEN (no-op?) **[inference]** |
+| 0x20137D84 | `dmac5_enable` | calls `reg_rmw32`; 20 B, callers: 3 **[fact]** (code shape) |
+| 0x20137D98 | `dmac5_disable` | calls `reg_rmw32`; 20 B, callers: 3 **[fact]** (code shape) |
+| 0x20137DAC | `dmac5_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137DB8 | `dmac4_enable` | calls `reg_rmw32`; 20 B, callers: 2 **[fact]** (code shape) |
+| 0x20137DCC | `dmac4_disable` | calls `reg_rmw32`; 20 B, callers: 1 **[fact]** (code shape) |
+| 0x20137DE0 | `dmac4_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137E00 | `dmac9_stop` | CHCTRL.CLREN **[inference]** |
+| 0x20137E34 | `dmac9_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137E40 | `dmac10_enable` | calls `reg_rmw32`; 20 B, callers: 3 **[fact]** (code shape) |
+| 0x20137E54 | `dmac10_stop` | calls `reg_rmw32`; 52 B, callers: 3 **[fact]** (code shape) |
+| 0x20137E88 | `dmac10_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20157138 | `reg_rmw8` | (reg, val, shift, mask): *reg = *reg & ~mask \| val << shift, 8-bit **[fact]** |
+| 0x2015714C | `reg_rmw16` | 16-bit read-modify-write, same arguments (spi-links.md) **[fact]** |
+| 0x20157160 | `reg_rmw32` | 32-bit read-modify-write, same arguments **[fact]** |
+| 0x20157174 | `reg_read8` | (reg, shift, mask): (*reg & mask) >> shift, 8-bit **[fact]** |
+| 0x20157184 | `reg_read16` | 16-bit field read (spi-links.md) **[fact]** |

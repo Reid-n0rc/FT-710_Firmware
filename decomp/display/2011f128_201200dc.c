@@ -698,9 +698,9 @@ void FUN_2011fc8c(void)
   reg_rmw8(&CPG_STBCR9,0,7,0x80,in_r3);
   FUN_2011fa90(0);
   FUN_2011f970(0);
-  uVar1 = itron_acre_isr(0,0x20166c28);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166c3c), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,0x20166c50), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_int191);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int190), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,&cisr_int189), 0 < (int)uVar1)) {
     gic_enable_irq(0xbf);
     gic_enable_irq(0xbe);
     gic_enable_irq(0xbd);
@@ -721,9 +721,9 @@ void FUN_2011fd1c(void)
   reg_rmw8(&CPG_STBCR9,0,6,0x40,in_r3);
   FUN_2011fa90(1);
   FUN_2011f970(1);
-  uVar1 = itron_acre_isr(0,0x20166c64);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166c78), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,0x20166c8c), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_int199);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int198), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,&cisr_int197), 0 < (int)uVar1)) {
     gic_enable_irq(199);
     gic_enable_irq(0xc6);
     gic_enable_irq(0xc5);
@@ -743,9 +743,9 @@ void FUN_2011fdac(void)
   
   reg_rmw8(&CPG_STBCR9,0,5,0x20,in_r3);
   FUN_2011f970(2);
-  uVar1 = itron_acre_isr(0,0x20166ca0);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166cb4), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,0x20166cc8), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_int207);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int206), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,&cisr_int205), 0 < (int)uVar1)) {
     gic_enable_irq(0xcf);
     gic_enable_irq(0xce);
     gic_enable_irq(0xcd);
@@ -765,9 +765,9 @@ void FUN_2011fe34(void)
   
   reg_rmw8(&CPG_STBCR9,0,4,0x10,in_r3);
   FUN_2011f970(3);
-  uVar1 = itron_acre_isr(0,0x20166cdc);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166cf0), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,0x20166d04), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_int215);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int214), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,&cisr_int213), 0 < (int)uVar1)) {
     gic_enable_irq(0xd7);
     gic_enable_irq(0xd6);
     gic_enable_irq(0xd5);

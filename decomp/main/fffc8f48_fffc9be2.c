@@ -36,8 +36,8 @@ void FUN_fffc8fa6(void)
   
   if ((PTR_g_ui_00025d5c->func_panel_open != 0) && (bVar1 = swtimer_expired(0x44), bVar1 == 1)) {
     PTR_g_ui_00025d5c->func_panel_open = 0;
-    PTR_g_ui_00025d5c->f_0x072_u8 = 0;
-    PTR_g_ui_00025d5c->f_0x071_u8 = 1;
+    PTR_g_ui_00025d5c->func_blink_en = 0;
+    PTR_g_ui_00025d5c->func_blink_on = 1;
     DAT_0001b4f3 = 1;
     swtimer_start(0x49,200);
     return;
@@ -53,13 +53,13 @@ void FUN_fffc8ff9(void)
 {
   byte bVar1;
   
-  if (((PTR_g_ui_00025d5c->func_panel_open != 0) && (PTR_g_ui_00025d5c->f_0x072_u8 != 0)) &&
+  if (((PTR_g_ui_00025d5c->func_panel_open != 0) && (PTR_g_ui_00025d5c->func_blink_en != 0)) &&
      (bVar1 = swtimer_expired(0x45), bVar1 == 1)) {
-    if (PTR_g_ui_00025d5c->f_0x071_u8 == 0) {
-      PTR_g_ui_00025d5c->f_0x071_u8 = 1;
+    if (PTR_g_ui_00025d5c->func_blink_on == 0) {
+      PTR_g_ui_00025d5c->func_blink_on = 1;
     }
     else {
-      PTR_g_ui_00025d5c->f_0x071_u8 = 0;
+      PTR_g_ui_00025d5c->func_blink_on = 0;
     }
     swtimer_start(0x45,0x1c2);
     return;
@@ -75,8 +75,8 @@ void FUN_fffc9046(void)
 {
   byte bVar1;
   
-  if ((PTR_g_ui_00025d5c->f_0x438_u8 != 0) && (bVar1 = swtimer_expired(0x41), bVar1 == 1)) {
-    PTR_g_ui_00025d5c->f_0x438_u8 = 0;
+  if ((PTR_g_ui_00025d5c->lamp_restore_req != 0) && (bVar1 = swtimer_expired(0x41), bVar1 == 1)) {
+    PTR_g_ui_00025d5c->lamp_restore_req = 0;
     ui_lamp_set(DAT_00012233,DAT_00012234);
     return;
   }

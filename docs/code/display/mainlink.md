@@ -169,7 +169,7 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 |---|---|---|---|---|
 | 0xE0 | 4 | `mainlink_send_key` 0x20113294, `mainlink_send_touch_key` 0x20120E9C, `mainlink_send_e0` 0x20121858 | `FUN_fff95829` → `key_event_filter(code, flags)` | **Key / soft-key event**: `flags` (bit 0 = release, 0x40/0x41 for code 0x1016), `code` u16 BE. The DISPLAY treats codes 0x0300 / 0x030F specially (power-key path **[guess]**) |
 | 0xE1 | 5 | `mainlink_send_enc` 0x20115780 (from `mainlink_renc_event` 0x20115B04) | `FUN_fff9588b` | **Encoder**: `id, delta s8, …`. id 1/6 = main dial (0xFF0), 2 → 0xFF1, 3 → 0xFF2, 4/5 = ADC knobs |
-| 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `FUN_20160ed8` | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
+| 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `mainlink_send_sd_absent` 0x20160ED8 (byte 1 = 0 when the SD menu finds no card) | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
 | 0xE3 | 7 | `mainlink_send_rtc` 0x20121D90 | `FUN_fff95ed3` (+0xAD..+0xB1) | **RTC date/time** (S-35190A read), when the minute changes |
 | 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `FUN_201217b0` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
 | 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
@@ -399,3 +399,78 @@ The full list (110 names, with the SCIF driver, the senders and the SCIF4 object
 | 0x20800495 | link in normal operation (encoders are sent only then) |
 | 0x2080049C | maintenance mode after a keyed 0x7F (only F0/F1 are sent) |
 | 0x208001D4..0x208001E0 | trace ring state |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201148D8 | `scif4_get` | UART object on SCIF4 (0xE8009000) **[inference]** |
+| 0x201148FC | `scif3_get` | UART object on SCIF3 (0xE8008800) **[inference]** |
+| 0x20114EDC | `uart4_wait_ready` | waits for 0x2045001C; no caller **[inference]** |
+| 0x20114F4C | `uart4_link_init` | creates the SCIF4 object 0x2045D4E0 and task "uart4"; no caller **[inference]** |
+| 0x20116334 | `mainlink_send_f1` | F1 frame with one sub-command byte; no caller in V01-08 **[inference]** |
+| 0x20116368 | `mainlink_stat_rx_resync` | RX task resync counter (obj+0x38) **[inference]** |
+| 0x2011637C | `mainlink_stat_nak_sent` | RX task NAK counter (obj+0x48) **[inference]** |
+| 0x20116660 | `mainlink_clear_status` | clears the 0x60 snapshot and the 0x24 settings copy **[inference]** |
+| 0x20121830 | `mainlink_send_e6` | calls `mainlink_queue_frame`; 40 B, callers: 13 **[fact]** (code shape) |
+| 0x20121858 | `mainlink_send_e0` | E0 with a given flag byte and 16-bit code **[inference]** |
+| 0x20121C3C | `scr_screen_saver` | packet 0x7B: YAESU logo hopping between 3 places every 180 frames **[inference]** |
+| 0x20121D00 | `mainlink_send_sd_state` | E2 SD card present, on change **[inference]** |
+| 0x20121D90 | `mainlink_send_rtc` | E3 RTC date/time, every 10th GUI pass when the minute changed **[inference]** |
+| 0x20125F6C | `scr_lcd_test` | packet 0x64: full-screen test colours and 8 colour bars **[inference]** |
+| 0x2012E8F4 | `rtc_set_from_main` | packet 0x65: BCD date/time -> RTC **[inference]** |
+| 0x201309C0 | `gui_link_error_popup` | draws the link error box with the unanswered command as hex **[inference]** |
+| 0x20130C40 | `mainlink_set_power_cmd` | 0x20800492 = 0x7F sub-command (0x10 / 0x11 end the GUI loop) **[inference]** |
+| 0x201351B8 | `debug_cmd_line_write` | writes one such line **[inference]** |
+| 0x201352E8 | `debug_log_recv_cmd` | appends a frame to RECV_CMD.TXT; no caller in V01-08 **[inference]** |
+| 0x2015863C | `mainlink_tx_init` | 32 x 0x408 B buffer pool + mailbox **[inference]** |
+| 0x2015869C | `mainlink_tx_clear_stats` | no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
+| 0x201587AC | `mainlink_tx_ctor` | vtbl 0x20427FAC **[inference]** |
+| 0x20158930 | `task_uart4_rx` | passes raw bytes to FUN_20131154 **[inference]** |
+| 0x201589F4 | `uart4_tx_alloc` | calls `FUN_201644ac`; 12 B, callers: 3 **[fact]** (code shape) |
+| 0x20158A00 | `uart4_tx_init` | calls `FUN_20158618`, `FUN_20162d10`, `FUN_20164460`, `FUN_201644a0`; 96 B, callers: 1 **[fact]** (code shape) |
+| 0x20158A70 | `task_uart4_tx` | calls `FUN_20158a60`, `itron_dly_tsk`, `itron_trcv_mbx`; 108 B, callers: 0 **[fact]** (code shape) |
+| 0x20158ADC | `uart4_tx_post` | calls `FUN_20162d3c`; 16 B, callers: 3 **[fact]** (code shape) |
+| 0x20158C44 | `uart4_obj_run` | 38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32 **[inference]** |
+| 0x20158E8C | `uart4_obj_ctor` | vtbl 0x20427FE4 **[inference]** |
+| 0x2015E16C | `mainlink_valid_7f` | byte & 0x7F <= 12 or == 0x7F **[inference]** |
+| 0x2015EB3C | `mainlink_valid_code` | small code-set check used by mainlink_status_valid **[inference]** |
+| 0x2015EB74 | `mainlink_rx_bind` | (uart, tx, dispatcher) **[inference]** |
+| 0x2015EB80 | `mainlink_rx_clear_stats` | no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
+| 0x2015EFE4 | `mainlink_rx_ctor` | vtbl 0x20427FF8 **[inference]** |
+| 0x2015FFF0 | `task_uart4_dispatch` | only counts **[inference]** |
+| 0x2016003C | `mainlink_disp_alloc` | calls `FUN_201644ac`; 12 B, callers: 2 **[fact]** (code shape) |
+| 0x20160048 | `mainlink_disp_init` | 32 x 0x408 B pool + mailbox **[inference]** |
+| 0x20160288 | `mainlink_disp_ctor` | vtbl 0x20428030 **[inference]** |
+
+### Mutex guard, TX pools and small rings (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): mutex guard and small rings (mainlink / uart4 TX pools, USB keyboard queue) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201571A4 | `mutex_lock` | itron_tloc_mtx(*obj, TMO_FEVR) **[fact]** |
+| 0x201571B0 | `mutex_unlock` | itron_unl_mtx(*obj) **[fact]** |
+| 0x201571B8 | `mutex_guard_ctor` | Scoped lock: stores the mutex id, locks it when the flag is set; used by usbkbd_* and the TX pools **[fact]** |
+| 0x201571D4 | `mutex_guard_dtor` | Scoped lock destructor: mutex_unlock **[fact]** |
+| 0x201643F0 | `ring32_post_inc` | Returns *idx and sets it to the next value mod 32 **[fact]** |
+| 0x20164460 | `txpool_init_mutex` | Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init / uart4_tx_init / mainlink_disp_init **[fact]** |
+| 0x201644A0 | `txpool_set_slot` | obj->slot[n] (obj+4+4n) = buffer **[fact]** |
+| 0x201644AC | `txpool_next_slot` | Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc / uart4_tx_alloc / mainlink_disp_alloc **[fact]** |
+| 0x201645A0 | `ring16_push` | Copies an 8-byte item into the slot at the tail if count < 16; usbkbd_queue_key **[fact]** |
+| 0x201645E4 | `ring16_reset` | Clears count, head and tail of a 16-entry ring {count, head, tail, slots} **[fact]** |
+| 0x201645F8 | `ring16_set_slot` | ring->slot[n] (obj+8+4n) = pointer **[fact]** |
+| 0x20164604 | `ring16_pop` | Returns the slot at the head and advances it (mod 16), 0 when empty; usbkbd_pop_key **[fact]** |
+| 0x20164638 | `ring16_ctor` | ring16_reset, returns this **[fact]** |
+| 0x20164870 | `ring32_next` | (idx + 1) mod 32 **[fact]** |
+
+### Other link helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20160ED8 | `mainlink_send_sd_absent` | E2 frame with byte 1 = 0 (SD card not present, mainlink.md); the SD menu screens send it when sd_state_bit7 reads 0 **[inference]** |
+| 0x201636CC | `copy5` | Copies 5 bytes (encoder events, E1/E2 frames) **[fact]** |

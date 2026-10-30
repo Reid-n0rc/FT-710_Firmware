@@ -91,7 +91,7 @@ void FUN_2013b58c(void)
   }
   if (((wVar3 & 0x1000) != 0) && (_DAT_2090bb28 = _DAT_2090bb28 + 1, (wVar1 & 0x1000) != 0)) {
     uVar5 = uVar5 | 1;
-    FUN_2013b2f8(0,0);
+    usbh_pipe_mark_done(0,0);
     FUN_20139658(0,0);
   }
   if ((wVar3 & 0x20) != 0) {
@@ -184,7 +184,7 @@ void FUN_2013b598(void)
   }
   if (((wVar3 & 0x1000) != 0) && (iRam2090c000 = iRam2090c000 + 1, (wVar1 & 0x1000) != 0)) {
     uVar5 = uVar5 | 1;
-    FUN_2013b2f8(1,0);
+    usbh_pipe_mark_done(1,0);
     FUN_20139658(1,0);
   }
   if ((wVar3 & 0x20) != 0) {
@@ -388,9 +388,13 @@ undefined4 FUN_2013ba44(int param_1)
 }
 
 
-// ===== FUN_2013baac @ 2013baac (264 bytes)
+// ===== usbkbd_set_leds @ 2013baac (264 bytes)
 
-undefined4 FUN_2013baac(int param_1,int param_2,byte *param_3)
+/* Builds the HID output report from the NumLock/CapsLock/ScrollLock state (report fields 1/2/3) and
+   sends it with usbh_class_request (SET_REPORT 0x21, 9, wValue 0x0200, 1 byte); input.md: sends the
+   LED report [fact] */
+
+undefined4 usbkbd_set_leds(int param_1,int param_2,byte *param_3)
 
 {
   uint uVar1;
@@ -425,8 +429,8 @@ LAB_2013bb6c:
         uVar1 = uVar1 + 1;
       } while ((int)uVar1 < *(int *)(&DAT_2091c660 + param_1));
     }
-    iVar2 = FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,9,0x200,
-                         (&DAT_2091c570)[param_1],local_14,1);
+    iVar2 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,9,0x200,
+                               (&DAT_2091c570)[param_1],local_14,1);
     if (iVar2 == 1) {
       return 0;
     }
@@ -836,10 +840,10 @@ void FUN_2013c32c(int param_1)
   puVar6 = &DAT_2091c568 + param_1;
   pbVar9 = &DAT_2091c66d + param_1;
   *(undefined4 *)(&DAT_2091c580 + param_1) = 1;
-  iVar3 = FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x80,6,0x200,0,pbVar9,9);
+  iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x80,6,0x200,0,pbVar9,9);
   if (((iVar3 == 9) && (uVar8 = (uint)*(ushort *)(&DAT_2091c66f + param_1), uVar8 < 0x100)) &&
-     (uVar4 = FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x80,6,0x200,0,pbVar9,uVar8),
-     uVar4 == uVar8)) {
+     (uVar4 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x80,6,0x200,0,pbVar9,
+                                 uVar8), uVar4 == uVar8)) {
     uVar7 = 0;
     pbVar9[uVar4] = 0;
     bVar10 = false;
@@ -855,15 +859,15 @@ void FUN_2013c32c(int param_1)
       uVar4 = uVar4 - uVar8;
     }
     if ((uVar7 != 0) && (uVar7 < 0x100)) {
-      FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,0xb,1,(&DAT_2091c570)[param_1],0,0)
-      ;
-      iVar3 = FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
-                           (&DAT_2091c570)[param_1],pbVar9,uVar7);
+      usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,0xb,1,
+                         (&DAT_2091c570)[param_1],0,0);
+      iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
+                                 (&DAT_2091c570)[param_1],pbVar9,uVar7);
       if (((-1 < iVar3) && (iVar3 = FUN_2013bd20(puVar6,pbVar9), -1 < iVar3)) &&
          ((iVar3 = *(int *)(&DAT_2091c588 + param_1), iVar3 == 2 || iVar3 == 4 ||
           (iVar3 == 5 || iVar3 == 6)))) {
-        FUN_2013c710(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,(&DAT_2091c570)[param_1],0,0
-                    );
+        usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,
+                           (&DAT_2091c570)[param_1],0,0);
         usbhid_attach_event(*(int *)(&DAT_2091c56c + param_1),*(int *)(&DAT_2091c588 + param_1));
         while ((*(int *)(&DAT_2091c57c + param_1) != 0 &&
                (iVar3 = FUN_2013c76c(*(undefined4 *)(&DAT_2091c56c + param_1),
@@ -963,10 +967,13 @@ undefined4 FUN_2013c6bc(void)
 }
 
 
-// ===== FUN_2013c710 @ 2013c710 (92 bytes)
+// ===== usbh_class_request @ 2013c710 (92 bytes)
 
-void FUN_2013c710(int param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4,
-                 undefined2 param_5,undefined4 param_6,undefined4 param_7)
+/* (device, bmRequestType, bRequest, wValue, wIndex, data, length) on device table 0x2091CB78 [fact]
+    */
+
+void usbh_class_request(int param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4,
+                       undefined2 param_5,undefined4 param_6,undefined4 param_7)
 
 {
   int iVar1;
@@ -983,8 +990,8 @@ void FUN_2013c710(int param_1,undefined1 param_2,undefined1 param_3,undefined2 p
     local_18 = param_2;
     local_17 = param_3;
     local_16 = param_4;
-    FUN_20138f00(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + 0x8d8),&local_18,param_6,param_7
-                );
+    usbh_control_req(*(undefined4 *)(iVar1 + 8),*(undefined4 *)(iVar1 + 0x8d8),&local_18,param_6,
+                     param_7);
   }
   return;
 }
@@ -1037,18 +1044,18 @@ undefined4 FUN_2013c798(int param_1,int param_2)
     iVar6 = (&DAT_20420144)[*(int *)(iVar3 + 0xc)];
     iVar7 = *(int *)(&DAT_2042016c + iVar4 * 4);
     uVar8 = *(undefined4 *)(iVar5 + iVar4 * 4 + 0x30);
-    uVar2 = FUN_2013b524();
+    uVar2 = usbh_loc_cpu();
     *(ushort *)(*(int *)(iVar5 + 8) + iVar6) = *(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0xfffc;
     itron_unl_cpu(uVar2);
-    iVar3 = FUN_2014e1ec();
-    while ((iVar4 = FUN_2014e1ec(), (uint)(iVar4 - iVar3) < 0x33 &&
+    iVar3 = fs_get_tick();
+    while ((iVar4 = fs_get_tick(), (uint)(iVar4 - iVar3) < 0x33 &&
            ((*(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0x1020) != 0))) {
       itron_dly_tsk(2);
     }
     itron_twai_sem(uVar8,0xffffffff);
     *(ushort *)(*(int *)(iVar5 + 8) + iVar7) = *(ushort *)(*(int *)(iVar5 + 8) + iVar7) & 0x100;
     reg_wait_bits27(iVar5,iVar7,0);
-    uVar2 = FUN_2013b524();
+    uVar2 = usbh_loc_cpu();
     uVar1 = *(ushort *)(*(int *)(iVar5 + 8) + iVar6);
     *(ushort *)(*(int *)(iVar5 + 8) + iVar6) = uVar1 | 0x200;
     cpu_delay_cycles4();

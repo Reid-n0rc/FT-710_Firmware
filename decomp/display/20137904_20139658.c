@@ -5,7 +5,7 @@
 void dmac9_register_isr(void)
 
 {
-  itron_acre_isr(0,0x204200ec);
+  itron_acre_isr(0,&cisr_dmac9_isr);
   return;
 }
 
@@ -80,7 +80,7 @@ void dmac9_isr(void)
 void dmac10_register_isr(void)
 
 {
-  itron_acre_isr(0,0x20420100);
+  itron_acre_isr(0,&cisr_dmac10_isr);
   return;
 }
 
@@ -388,7 +388,7 @@ undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
     *(undefined1 *)(iVar10 + -0x8d8) = *(undefined1 *)((int)param_3 + 0x26);
     __aeabi_memclr4(iVar10 + -0xa4,0x78);
     *param_3 = 1;
-    uVar12 = FUN_2013b3a8(param_3,iVar10 + -0x8b6,0x7ff);
+    uVar12 = usbh_get_config_descriptor(param_3,iVar10 + -0x8b6,0x7ff);
     if (-1 < (int)uVar12) {
       uVar17 = 0xffffffff;
       if ((int)(uint)*(ushort *)(iVar10 + -0x8b4) < (int)uVar12) {
@@ -411,7 +411,7 @@ undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
       }
       *(undefined1 *)(iVar20 + uVar12 + 0x4e) = 0;
       if (-1 < (int)uVar17) {
-        FUN_2013b43c(param_3);
+        usbh_set_configuration(param_3);
         iVar11 = 0;
         if (0 < DAT_20808ab4) {
           do {
@@ -952,10 +952,14 @@ undefined4 FUN_20138c84(int param_1)
 }
 
 
-// ===== FUN_20138cf0 @ 20138cf0 (504 bytes)
+// ===== usbh_control_transfer @ 20138cf0 (504 bytes)
+
+/* Control transfer on a pipe object under its semaphore (+0x4A8, TMO_FEVR): SETUP, data and status
+   stages [inference from the callers' SETUP packets] */
 
 undefined4
-FUN_20138cf0(undefined4 param_1,int param_2,byte *param_3,undefined4 param_4,undefined4 param_5)
+usbh_control_transfer
+          (undefined4 param_1,int param_2,byte *param_3,undefined4 param_4,undefined4 param_5)
 
 {
   undefined4 uVar1;
@@ -1034,12 +1038,14 @@ LAB_20138ea8:
 }
 
 
-// ===== FUN_20138f00 @ 20138f00 (20 bytes)
+// ===== usbh_control_req @ 20138f00 (20 bytes)
 
-void FUN_20138f00(void)
+/* Thin wrapper of usbh_control_transfer used by every request helper [fact] */
+
+void usbh_control_req(void)
 
 {
-  FUN_20138cf0();
+  usbh_control_transfer();
   return;
 }
 

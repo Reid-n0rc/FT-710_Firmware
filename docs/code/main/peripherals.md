@@ -344,3 +344,38 @@ speaker stays muted 10 ms longer after each transmission **[fact]**, presumably 
 | 0x9ABE / 0x9ABB | u8 | CAT-3 rate / stop-bit settings | **[fact]** |
 | 0x20B39, 0x20F4B | u8 | power/restart request codes 0x10 (PS0), 0x11 (restart), 0x90 (power fail) | **[fact]** for the values |
 | 0x20B43 | u8 | power-fail latched | **[fact]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF927DF | `R_IWDT_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_IWDT_Create **[inference]** |
+| 0xFFF92835 | `R_DA0_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): DA.DACR (0x88044) DAOE0 (bit 6) off; after R_DA0_Start **[inference]** |
+| 0xFFF92850 | `R_DA_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_DA_Create **[inference]** |
+| 0xFFF92B00 | `R_S12AD0_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_S12AD0_Create **[inference]** |
+| 0xFFF92E0E | `R_S12AD1_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_S12AD1_Create **[inference]** |
+| 0xFFF94A47 | `R_TPU0_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): IEN of TGI0A (0x87210 bit 2) off, TPU TSTR (0x88100) CST0 off; after R_TPU0_Start **[inference]** |
+| 0xFFF94A56 | `R_TPU0_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU0_Create **[inference]** |
+| 0xFFF94AEB | `R_TPU1_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU1_Create **[inference]** |
+| 0xFFFB24CA | `tone_stop` |  | calls `R_TPU1_Stop`; 14 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFB27C1 | `R_TPU3_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): IEN of TGI3A off, TSTR CST3 (bit 3) off; after R_TPU3_Start **[inference]** |
+| 0xFFFB27D0 | `R_TPU3_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU3_Create **[inference]** |
+| 0xFFFB284E | `adc0_done` |  | no direct calls; 10 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFB2894 | `adc1_done` |  | no direct calls; 10 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFB2E0D | `tone_idle` |  | calls `dac0_write`, `tone_stop`; 17 B, callers: 3 **[fact]** (code shape) |
+| 0xFFFB54A0 | `aess_level_ptr` |  | Pointer to the active mode's AESS level byte (0x9C06 / 09 / 0A / 0B / 0C / 0E / 0F) (#157, CAT AS) **[fact]** |
+| 0xFFFC91A2 | `R_MTU2_Start` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): MTU.TSTRA (0xC1280) CST2 (bit 2) on; after R_MTU2_Create **[inference]** |
+| 0xFFFC91AA | `R_MTU2_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): MTU.TSTRA CST2 off **[inference]** |
+| 0xFFFC91B2 | `R_MTU2_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_MTU2_Create **[inference]** |
+| 0xFFFC9288 | `R_SCI6_Start` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears IR, sets IEN of SCI6 TXI/RXI (0x8720A bits 7/6) and ICU.GENBL0 bits 12/13; after R_SCI6_Create_IIC **[inference]** |
+| 0xFFFC92C8 | `R_SCI6_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): reverse of R_SCI6_Start **[inference]** |
+| 0xFFFC9308 | `R_SCI6_IIC_StartCondition` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): SCI6.SIMR3 (0x8A0CB) = 0x51: IICSTAREQ with SDA/SCL as condition outputs **[inference]** |
+| 0xFFFC931A | `R_SCI6_IIC_Master_Send` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): (adr, tx_buf, tx_num): mode 0x80 (send) in 0x12235, address byte, count, buffer, then R_SCI6_IIC_StartCondition **[inference]** |
+| 0xFFFC935A | `R_SCI6_IIC_Master_Receive` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): (adr, rx_buf, rx_num): mode 0 (receive) in 0x12235, then R_SCI6_IIC_StartCondition **[inference]** |
+| 0xFFFC93A3 | `R_SCI6_Create_UserInit` |  | empty **[inference]** |
+| 0xFFFC93EF | `r_sci6_iic_tei` |  | TEI6 (cb 0x20), simple-I2C condition handling **[inference]** |
+| 0xFFFC95AF | `r_sci6_callback_transmitend` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty; called by r_sci6_iic_tei after the stop condition when the mode is send (0x80) **[inference]** |
+| 0xFFFC95B0 | `r_sci6_callback_receiveend` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty; called by r_sci6_iic_tei after the stop condition when the mode is receive (0) **[inference]** |
+| 0xFFFEDD8B | `R_TPU2_Create_UserInit` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU2_Create **[inference]** |

@@ -106,7 +106,7 @@ void mouse_cursor_init(void)
   
   __aeabi_memclr4(&DAT_208d9c40,0x5a0);
   DAT_20800330 = FUN_2015f040(&DAT_208d9c40);
-  uVar1 = itron_acre_tsk(0,&DAT_201656e4);
+  uVar1 = itron_acre_tsk(0,&ctsk_mouse_cursor_56e4);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,DAT_20800330);
     return;
@@ -299,11 +299,11 @@ void powon_init(void)
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 | 0xc00;
-  DAT_20800358 = itron_acre_flg(0,&DAT_20165738);
+  DAT_20800358 = itron_acre_flg(0,&cflg_powon);
   if (0 < (int)DAT_20800358) {
-    DAT_2080035c = itron_acre_tsk(0,&DAT_2016571c);
+    DAT_2080035c = itron_acre_tsk(0,&ctsk_powon);
     if (((0 < (int)DAT_2080035c) && (uVar2 = itron_sta_tsk(DAT_2080035c,0), uVar2 == 0)) &&
-       (uVar2 = itron_acre_isr(0,0x20165744), 0 < (int)uVar2)) {
+       (uVar2 = itron_acre_isr(0,&cisr_powon_isr), 0 < (int)uVar2)) {
       gic_enable_irq(0x25);
       return;
     }
@@ -367,9 +367,9 @@ uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined
   
   iVar3 = *param_1;
   uVar7 = __aeabi_i2d(param_1[1] - iVar3);
-  uVar7 = FUN_20164da8((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),param_3,param_4);
+  uVar7 = __aeabi_dmul((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),param_3,param_4);
   uVar8 = __aeabi_i2d(iVar3);
-  uVar7 = FUN_20164888((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar7,
+  uVar7 = __aeabi_dadd((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar7,
                        (int)((ulonglong)uVar7 >> 0x20));
   uVar1 = (uint)((ulonglong)uVar7 >> 0x20);
   iVar3 = ((uVar1 & 0x7fffffff) >> 0x14) - 0x400;
@@ -392,7 +392,7 @@ uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined
   if (-iVar3 != -0x3ff) {
     return (int)uVar1 >> 0x20 ^ 0x7fffffff;
   }
-  FUN_20164efc((uint)uVar7);
+  fp_nan_handler((uint)uVar7);
   do {
     *unaff_r4 = (short)unaff_r4;
   } while( true );
@@ -842,16 +842,14 @@ void rtc_int_setup(void)
 void rtc_init(void)
 
 {
-  undefined4 local_10;
-  undefined4 uStack_c;
-  undefined4 local_8;
+  t_cmtx local_10;
   
   rtc_port_idle();
   rtc_write_reg(0,2);
   rtc_write_reg(0x40,0);
-  local_10 = 2;
-  uStack_c = 0;
-  local_8 = 0;
+  local_10.mtxatr = 2;
+  local_10.ceilpri = 0;
+  local_10.name = (char *)0x0;
   DAT_20800368 = itron_acre_mtx(0,&local_10);
   return;
 }
@@ -892,32 +890,33 @@ int FUN_20114850(int *param_1)
 void scif3_rxi_isr(void)
 
 {
-  iRam208da9fc = iRam208da9fc + 1;
-  if ((*(ushort *)(iRam208da1e4 + 0x10) & 0xff9d) != 0) {
-    iRam208daa08 = iRam208daa08 + 1;
+  scif3_uart.rxi_count = scif3_uart.rxi_count + 1;
+  if (((scif3_uart.regs)->scfsr & 0xff9d) != 0) {
+    scif3_uart.rx_errors = scif3_uart.rx_errors + 1;
   }
-  if ((*(ushort *)(iRam208da1e4 + 0x10) & 2) != 0) {
-    if (((uRam208da1ea < uRam208da1e8) || (0x3fe < (int)((uint)uRam208da1ea - (uint)uRam208da1e8)))
-       && ((uRam208da1e8 <= uRam208da1ea || ((int)((uint)uRam208da1e8 - (uint)uRam208da1ea) < 2))))
-    {
-      *(ushort *)(iRam208da1e4 + 0x10) = *(ushort *)(iRam208da1e4 + 0x10) & 0xfffd;
-      iRam208daa00 = iRam208daa00 + 1;
-      iRam208daa04 = iRam208daa04 + 1;
+  if (((scif3_uart.regs)->scfsr & 2) != 0) {
+    if (((scif3_uart.rx_wr < scif3_uart.rx_rd) ||
+        (0x3fe < (int)((uint)scif3_uart.rx_wr - (uint)scif3_uart.rx_rd))) &&
+       ((scif3_uart.rx_rd <= scif3_uart.rx_wr ||
+        ((int)((uint)scif3_uart.rx_rd - (uint)scif3_uart.rx_wr) < 2)))) {
+      (scif3_uart.regs)->scfsr = (scif3_uart.regs)->scfsr & 0xfffd;
+      scif3_uart.rx_count = scif3_uart.rx_count + 1;
+      scif3_uart.rx_overflow = scif3_uart.rx_overflow + 1;
       return;
     }
-    *(undefined1 *)(uRam208da1ea + 0x208da1ec) = *(undefined1 *)(iRam208da1e4 + 0x14);
+    scif3_uart.rx_buf[scif3_uart.rx_wr] = (scif3_uart.regs)->scfrdr;
     DataMemoryBarrier(2);
-    uRam208da1ea = uRam208da1ea + 1 & 0x3ff;
-    *(ushort *)(iRam208da1e4 + 0x10) = *(ushort *)(iRam208da1e4 + 0x10) & 0xfffd;
-    if (iRam208da9f8 != 0) {
-      gic_disable_irq(*(undefined4 *)(iRam208da9f0 + 8));
+    scif3_uart.rx_wr = scif3_uart.rx_wr + 1 & 0x3ff;
+    (scif3_uart.regs)->scfsr = (scif3_uart.regs)->scfsr & 0xfffd;
+    if (scif3_uart.rx_flg != 0) {
+      gic_disable_irq((scif3_uart.rxi_isr)->intno);
     }
-    itron_set_flg(iRam208da9f8,1);
-    iRam208daa00 = iRam208daa00 + 1;
+    itron_set_flg(scif3_uart.rx_flg,1);
+    scif3_uart.rx_count = scif3_uart.rx_count + 1;
     thunk_FUN_20114850(0x208daa20);
     return;
   }
-  iRam208daa0c = iRam208daa0c + 1;
+  scif3_uart.rxi_no_data = scif3_uart.rxi_no_data + 1;
   return;
 }
 
@@ -927,7 +926,7 @@ void scif3_rxi_isr(void)
 void scif3_txi_isr(void)
 
 {
-  scif_txi_isr(&DAT_208da1e0);
+  scif_txi_isr(&scif3_uart);
   return;
 }
 
@@ -937,32 +936,33 @@ void scif3_txi_isr(void)
 void scif4_rxi_isr(void)
 
 {
-  DAT_208db24c = DAT_208db24c + 1;
-  if ((*(ushort *)(iRam208daa34 + 0x10) & 0xff9d) != 0) {
-    iRam208db258 = iRam208db258 + 1;
+  scif4_uart.rxi_count = scif4_uart.rxi_count + 1;
+  if (((scif4_uart.regs)->scfsr & 0xff9d) != 0) {
+    scif4_uart.rx_errors = scif4_uart.rx_errors + 1;
   }
-  if ((*(ushort *)(iRam208daa34 + 0x10) & 2) != 0) {
-    if (((uRam208daa3a < uRam208daa38) || (0x3fe < (int)((uint)uRam208daa3a - (uint)uRam208daa38)))
-       && ((uRam208daa38 <= uRam208daa3a || ((int)((uint)uRam208daa38 - (uint)uRam208daa3a) < 2))))
-    {
-      *(ushort *)(iRam208daa34 + 0x10) = *(ushort *)(iRam208daa34 + 0x10) & 0xfffd;
-      iRam208db250 = iRam208db250 + 1;
-      iRam208db254 = iRam208db254 + 1;
+  if (((scif4_uart.regs)->scfsr & 2) != 0) {
+    if (((scif4_uart.rx_wr < scif4_uart.rx_rd) ||
+        (0x3fe < (int)((uint)scif4_uart.rx_wr - (uint)scif4_uart.rx_rd))) &&
+       ((scif4_uart.rx_rd <= scif4_uart.rx_wr ||
+        ((int)((uint)scif4_uart.rx_rd - (uint)scif4_uart.rx_wr) < 2)))) {
+      (scif4_uart.regs)->scfsr = (scif4_uart.regs)->scfsr & 0xfffd;
+      scif4_uart.rx_count = scif4_uart.rx_count + 1;
+      scif4_uart.rx_overflow = scif4_uart.rx_overflow + 1;
       return;
     }
-    *(undefined1 *)(uRam208daa3a + 0x208daa3c) = *(undefined1 *)(iRam208daa34 + 0x14);
+    scif4_uart.rx_buf[scif4_uart.rx_wr] = (scif4_uart.regs)->scfrdr;
     DataMemoryBarrier(2);
-    uRam208daa3a = uRam208daa3a + 1 & 0x3ff;
-    *(ushort *)(iRam208daa34 + 0x10) = *(ushort *)(iRam208daa34 + 0x10) & 0xfffd;
-    if (iRam208db248 != 0) {
-      gic_disable_irq(*(undefined4 *)(iRam208db240 + 8));
+    scif4_uart.rx_wr = scif4_uart.rx_wr + 1 & 0x3ff;
+    (scif4_uart.regs)->scfsr = (scif4_uart.regs)->scfsr & 0xfffd;
+    if (scif4_uart.rx_flg != 0) {
+      gic_disable_irq((scif4_uart.rxi_isr)->intno);
     }
-    itron_set_flg(iRam208db248,1);
-    iRam208db250 = iRam208db250 + 1;
+    itron_set_flg(scif4_uart.rx_flg,1);
+    scif4_uart.rx_count = scif4_uart.rx_count + 1;
     thunk_FUN_20114850(0x208db270);
     return;
   }
-  iRam208db25c = iRam208db25c + 1;
+  scif4_uart.rxi_no_data = scif4_uart.rxi_no_data + 1;
   return;
 }
 
@@ -972,7 +972,7 @@ void scif4_rxi_isr(void)
 void scif4_txi_isr(void)
 
 {
-  scif_txi_isr(&DAT_208daa30);
+  scif_txi_isr(&scif4_uart);
   return;
 }
 

@@ -1,14 +1,16 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2014570c @ 2014570c (88 bytes)
+// ===== sfn_match_dotted @ 2014570c (88 bytes)
 
-undefined4 FUN_2014570c(char *param_1)
+/* 0 when an 11-byte 8.3 name equals sfn_from_dotted of a dotted name, -99 otherwise [fact] */
+
+undefined4 sfn_match_dotted(char *param_1)
 
 {
   char *pcVar1;
   char local_18 [12];
   
-  FUN_201450a4(local_18);
+  sfn_from_dotted(local_18);
   pcVar1 = local_18;
   while( true ) {
     if (local_18[0] == '\0') {
@@ -23,9 +25,12 @@ undefined4 FUN_2014570c(char *param_1)
 }
 
 
-// ===== FUN_20145764 @ 20145764 (384 bytes)
+// ===== sfn_numtail_match @ 20145764 (384 bytes)
 
-int FUN_20145764(char *param_1,char *param_2)
+/* Compares two 8.3 names whose base ends in a "~N" tail (same extension, same base before '~')
+   [fact for the compare] */
+
+int sfn_numtail_match(char *param_1,char *param_2)
 
 {
   char cVar1;
@@ -189,9 +194,11 @@ undefined4 FUN_201458e4(byte *param_1,byte *param_2)
 }
 
 
-// ===== FUN_20145afc @ 20145afc (232 bytes)
+// ===== lfn_entry_get_chars @ 20145afc (232 bytes)
 
-int FUN_20145afc(int param_1,char *param_2)
+/* Copies the 13 UTF-16 characters of a long-name entry (offsets 1, 0x0E, 0x1C) until a 0 [fact] */
+
+int lfn_entry_get_chars(int param_1,char *param_2)
 
 {
   char *pcVar1;
@@ -242,9 +249,11 @@ LAB_20145bd8:
 }
 
 
-// ===== FUN_20145be4 @ 20145be4 (512 bytes)
+// ===== root_lfn_collect @ 20145be4 (512 bytes)
 
-int FUN_20145be4(int param_1,int param_2,short *param_3,uint param_4,int param_5,int param_6)
+/* Gathers the long name stored before a root-directory entry [inference] */
+
+int root_lfn_collect(int param_1,int param_2,short *param_3,uint param_4,int param_5,int param_6)
 
 {
   int iVar1;
@@ -268,7 +277,7 @@ int FUN_20145be4(int param_1,int param_2,short *param_3,uint param_4,int param_5
   if ((param_2 != 0) && ((int)((ulonglong)uVar7 >> 0x20) == 0)) {
     iVar6 = __aeabi_uidivmod(param_2 + -1,uVar4);
   }
-  iVar1 = FUN_20144d04(param_1,iVar6,&local_50);
+  iVar1 = root_sector_get(param_1,iVar6,&local_50);
   if (iVar1 == 0) {
     uVar4 = *(uint *)(param_1 + 0x6c);
     __aeabi_uidivmod(param_2,uVar4 >> 5);
@@ -287,13 +296,13 @@ int FUN_20145be4(int param_1,int param_2,short *param_3,uint param_4,int param_5
       local_2c = param_4 - 1;
       do {
         pbVar5 = pbVar5 + -0x20;
-        iVar1 = FUN_20145afc(pbVar5,local_4c);
+        iVar1 = lfn_entry_get_chars(pbVar5,local_4c);
         psVar3 = local_4c;
         while (iVar1 != 0) {
           iVar1 = iVar1 + -1;
           if ((*param_3 != *psVar3) && (iVar2 = FUN_201458e4(param_3,psVar3), iVar2 == 0)) {
-            if ((iVar6 != param_5) && (iVar6 = FUN_20144d04(param_1,param_5,&local_50), iVar6 != 0))
-            {
+            if ((iVar6 != param_5) &&
+               (iVar6 = root_sector_get(param_1,param_5,&local_50), iVar6 != 0)) {
               return iVar6;
             }
             goto LAB_20145dac;
@@ -303,7 +312,7 @@ int FUN_20145be4(int param_1,int param_2,short *param_3,uint param_4,int param_5
         }
         if ((pbVar5 == local_50) && (uVar4 != local_2c)) {
           iVar6 = iVar6 + -1;
-          iVar1 = FUN_20144d04(param_1,iVar6,&local_50);
+          iVar1 = root_sector_get(param_1,iVar6,&local_50);
           if (iVar1 != 0) {
             return iVar1;
           }
@@ -315,7 +324,7 @@ int FUN_20145be4(int param_1,int param_2,short *param_3,uint param_4,int param_5
     if ((*pbVar5 & 0x40) != 0) {
       local_30 = 0;
     }
-    if (((iVar6 == param_5) || (iVar1 = FUN_20144d04(param_1,param_5,&local_50), iVar1 == 0)) &&
+    if (((iVar6 == param_5) || (iVar1 = root_sector_get(param_1,param_5,&local_50), iVar1 == 0)) &&
        (iVar1 = local_30, (char)*param_3 != '\0')) {
 LAB_20145dac:
       iVar1 = -99;
@@ -325,10 +334,13 @@ LAB_20145dac:
 }
 
 
-// ===== FUN_20145df0 @ 20145df0 (1340 bytes)
+// ===== root_dir_find @ 20145df0 (1340 bytes)
 
-int FUN_20145df0(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5,
-                uint *param_6,int param_7)
+/* Searches the fixed FAT12/16 root directory for a name (long or 8.3) [inference: called by
+   root_dir_find_locked, first step of fs_path_lookup on FAT12/16] */
+
+int root_dir_find(int param_1,undefined4 param_2,undefined4 param_3,int param_4,undefined4 param_5,
+                 uint *param_6,int param_7)
 
 {
   undefined2 uVar1;
@@ -374,7 +386,7 @@ int FUN_20145df0(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
   local_30 = param_2;
   local_2c = param_3;
   iStack_28 = param_4;
-  iVar3 = FUN_2014cb84(param_2,local_44,local_40);
+  iVar3 = sjis_to_ucs2_str(param_2,local_44,local_40);
   if (iVar3 == -99) {
     return -0x46;
   }
@@ -385,7 +397,7 @@ int FUN_20145df0(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
   else if (cVar2 == '\0') goto LAB_20145edc;
   if ((local_40[0] == '\0') && (param_4 == 0 || param_4 == 2)) {
     fs_memcpy(auStack_54,local_30,0xd);
-    FUN_2014d38c(auStack_70,auStack_54);
+    fs_stricmp(auStack_70,auStack_54);
   }
 LAB_20145edc:
   uVar7 = 0;
@@ -397,7 +409,7 @@ LAB_20145edc:
       uVar12 = __aeabi_uidivmod(uVar7,*(uint *)(local_34 + 0x6c) >> 5);
       uVar13 = (undefined4)uVar12;
       if (((int)((ulonglong)uVar12 >> 0x20) == 0) &&
-         (iVar3 = FUN_20144d04(local_34,uVar13,&local_3c), pcVar4 = local_3c, local_38 = uVar13,
+         (iVar3 = root_sector_get(local_34,uVar13,&local_3c), pcVar4 = local_3c, local_38 = uVar13,
          iVar3 != 0)) {
         return iVar3;
       }
@@ -425,10 +437,10 @@ LAB_20145edc:
             return -0x42;
           }
           if (uVar9 != 0) {
-            FUN_20145578(&local_60,uVar9);
+            fs_utoa6(&local_60,uVar9);
           }
           cVar2 = FUN_20145254(local_30,auStack_70,&local_60);
-          FUN_201450a4(local_80,auStack_70,local_34);
+          sfn_from_dotted(local_80,auStack_70,local_34);
           if (local_80[0] == -0x1b) {
             local_80[0] = '\x05';
           }
@@ -458,12 +470,12 @@ LAB_20145edc:
         }
         uVar10 = 0;
         if (((pcVar4[0xb] & 8U) == 0) && (param_4 != 3)) {
-          iVar3 = FUN_20145be4(local_34,uVar7,local_44,uVar6,local_38,param_7);
-          FUN_201450a4(local_80,auStack_70,local_34);
+          iVar3 = root_lfn_collect(local_34,uVar7,local_44,uVar6,local_38,param_7);
+          sfn_from_dotted(local_80,auStack_70,local_34);
           if (local_80[0] == -0x1b) {
             local_80[0] = '\x05';
           }
-          uVar5 = FUN_20145764(pcVar4,local_80);
+          uVar5 = sfn_numtail_match(pcVar4,local_80);
           if (uVar9 <= uVar5) {
             uVar9 = uVar5 + 1;
           }
@@ -474,7 +486,7 @@ LAB_201461a8:
             }
             fs_memcpy(local_2c,pcVar4,0x20);
             if (param_4 == 2) {
-              iVar3 = FUN_201455f8(local_34,uVar7,uVar6,param_7);
+              iVar3 = root_dirent_delete(local_34,uVar7,uVar6,param_7);
               return iVar3;
             }
             if (param_4 == 0) {
@@ -488,14 +500,14 @@ LAB_201461a8:
             uVar5 = fs_strlen(local_30);
             if (uVar5 < 0xd) {
               if (uVar9 != 0) {
-                FUN_20145578(&local_60,uVar9);
+                fs_utoa6(&local_60,uVar9);
               }
               FUN_20145254(local_30,auStack_70,&local_60);
-              FUN_201450a4(local_80,auStack_70,local_34);
+              sfn_from_dotted(local_80,auStack_70,local_34);
               if (local_80[0] == -0x1b) {
                 local_80[0] = '\x05';
               }
-              iVar3 = FUN_2014570c(pcVar4,local_80,local_34);
+              iVar3 = sfn_match_dotted(pcVar4,local_80,local_34);
               if (iVar3 == 0) goto LAB_201461a8;
             }
           }
@@ -511,10 +523,10 @@ LAB_201461a8:
         return -0x42;
       }
       if (uVar9 != 0) {
-        FUN_20145578(&local_60,uVar9);
+        fs_utoa6(&local_60,uVar9);
       }
       FUN_20145254(local_30,auStack_70,&local_60);
-      FUN_201450a4(local_80,auStack_70,local_34);
+      sfn_from_dotted(local_80,auStack_70,local_34);
       if (local_80[0] == -0x1b) {
         local_80[0] = '\x05';
       }
@@ -537,11 +549,14 @@ joined_r0x20146034:
 }
 
 
-// ===== FUN_20146338 @ 20146338 (108 bytes)
+// ===== root_dir_find_locked @ 20146338 (108 bytes)
+
+/* root_dir_find under fs_lock_a (-37 on lock failure) [fact] */
 
 undefined4
-FUN_20146338(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5,undefined4 param_6,undefined4 param_7)
+root_dir_find_locked
+          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+          undefined4 param_5,undefined4 param_6,undefined4 param_7)
 
 {
   int iVar1;
@@ -549,7 +564,7 @@ FUN_20146338(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   
   iVar1 = fs_lock_a();
   if (iVar1 == 0) {
-    uVar2 = FUN_20145df0(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
+    uVar2 = root_dir_find(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
     fs_unlock_a(param_1);
   }
   else {
@@ -570,7 +585,7 @@ int FUN_201463a4(int param_1,undefined4 param_2,int param_3,int param_4)
   int local_18;
   
   local_18 = param_4;
-  iVar1 = FUN_20149dec(param_1,param_2,&local_18,param_3);
+  iVar1 = fat_alloc_cluster_locked(param_1,param_2,&local_18,param_3);
   if (iVar1 == 0) {
     if (local_18 == 0) {
       fs_set_error(0xfffffff5,0);
@@ -650,7 +665,7 @@ undefined4 FUN_20146520(char *param_1)
   char local_18 [12];
   
   pcVar3 = local_18;
-  FUN_201450a4(local_18);
+  sfn_from_dotted(local_18);
   if (local_18[0] == -0x1b) {
     local_18[0] = '\x05';
   }
@@ -691,14 +706,14 @@ undefined4 FUN_201465ac(undefined4 param_1,undefined4 param_2,undefined4 param_3
   int iVar2;
   undefined1 auStack_18 [12];
   
-  iVar1 = FUN_20145764();
-  iVar2 = FUN_2014d834(param_3);
+  iVar1 = sfn_numtail_match();
+  iVar2 = fs_atoi_2(param_3);
   if (iVar2 <= iVar1) {
     if (0x98967e < iVar1) {
       return 0xffffffbe;
     }
-    FUN_2014d864(iVar1 + 1,auStack_18,10);
-    FUN_2014d270(param_3,auStack_18);
+    fs_itoa_2(iVar1 + 1,auStack_18,10);
+    fs_strcpy(param_3,auStack_18);
   }
   return 0;
 }
@@ -719,7 +734,7 @@ undefined4 FUN_20146608(int param_1,byte *param_2,short *param_3,int param_4)
   short local_40 [14];
   
   iVar7 = 0;
-  uVar2 = FUN_20144eb8(param_2);
+  uVar2 = lfn_checksum(param_2);
   do {
     pbVar1 = param_2;
     if (*(byte **)(param_1 + iVar7 * 4) == param_2) {
@@ -730,7 +745,7 @@ undefined4 FUN_20146608(int param_1,byte *param_2,short *param_3,int param_4)
     }
     param_2 = pbVar1 + -0x20;
     if ((pbVar1[-0x15] != 0xf) || (pbVar1[-0x13] != uVar2)) goto LAB_201466e0;
-    iVar3 = FUN_20145afc(param_2,local_40);
+    iVar3 = lfn_entry_get_chars(param_2,local_40);
     psVar6 = local_40;
     for (; 0 < iVar3; iVar3 = iVar3 + -1) {
       if ((*param_3 != *psVar6) && (iVar4 = FUN_201458e4(param_3,psVar6), iVar4 == 0))
@@ -765,7 +780,7 @@ void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int 
   iVar5 = 0;
   param_4[0xc] = '\0';
   local_28 = (byte *)(param_7 + 0x60c);
-  iVar2 = FUN_20144c5c(param_1,*param_2,&local_28);
+  iVar2 = dir_sector_get(param_1,*param_2,&local_28);
   if (iVar2 != 0) {
     return;
   }
@@ -776,22 +791,22 @@ void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int 
   fs_memcpy(pbVar3,param_4,0x20);
   param_6 = param_6 + -1;
   if (param_6 == 0) {
-    FUN_20144b74(param_1,*param_2,local_28);
+    dir_sector_dirty(param_1,*param_2,local_28);
     return;
   }
   if (pbVar3 == local_28) {
-    iVar2 = FUN_20144b74(param_1,*param_2);
+    iVar2 = dir_sector_dirty(param_1,*param_2);
     if (iVar2 != 0) {
       return;
     }
     iVar5 = 1;
-    iVar2 = FUN_20144c5c(param_1,param_2[1],&local_28);
+    iVar2 = dir_sector_get(param_1,param_2[1],&local_28);
     if (iVar2 != 0) {
       return;
     }
     pbVar3 = local_28 + (*(uint *)(param_1 + 0x6c) & 0xffffffe0);
   }
-  bVar1 = FUN_20144eb8(param_4);
+  bVar1 = lfn_checksum(param_4);
   bVar6 = 1;
   do {
     pbVar4 = pbVar3 + -0x20;
@@ -801,12 +816,12 @@ void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int 
     pbVar3[-0x15] = 0xf;
     pbVar3[-0x13] = bVar1;
     if ((pbVar4 == local_28) && (param_6 != 1)) {
-      iVar2 = FUN_20144b74(param_1,param_2[iVar5]);
+      iVar2 = dir_sector_dirty(param_1,param_2[iVar5]);
       if (iVar2 != 0) {
         return;
       }
       iVar5 = iVar5 + 1;
-      iVar2 = FUN_20144c5c(param_1,param_2[iVar5],&local_28);
+      iVar2 = dir_sector_get(param_1,param_2[iVar5],&local_28);
       if (iVar2 != 0) {
         return;
       }
@@ -817,16 +832,18 @@ void FUN_201466ec(int param_1,undefined4 *param_2,int param_3,char *param_4,int 
     pbVar3 = pbVar4;
     if (param_6 == 0) {
       *pbVar4 = *pbVar4 | 0x40;
-      FUN_20144b74(param_1,param_2[iVar5],local_28);
+      dir_sector_dirty(param_1,param_2[iVar5],local_28);
       return;
     }
   } while( true );
 }
 
 
-// ===== FUN_20146884 @ 20146884 (60 bytes)
+// ===== dirent_get_cluster @ 20146884 (60 bytes)
 
-int FUN_20146884(int param_1,int param_2)
+/* First cluster of an entry (+0x1A, | +0x14 << 16 except FAT12/16) [fact] */
+
+int dirent_get_cluster(int param_1,int param_2)
 
 {
   int iVar1;
@@ -842,12 +859,15 @@ int FUN_20146884(int param_1,int param_2)
 }
 
 
-// ===== FUN_201468c0 @ 201468c0 (2308 bytes)
+// ===== subdir_find @ 201468c0 (2308 bytes)
 
 /* WARNING: Type propagation algorithm not settling */
+/* Searches a directory cluster chain for a name: builds the 8.3 form, compares long-name entries
+   (lfn checksum), follows the FAT (fat_entry_rw_locked), returns the entry and its position
+   [inference] */
 
-uint FUN_201468c0(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,
-                 undefined4 param_6,uint *param_7,int *param_8,int param_9)
+uint subdir_find(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,
+                undefined4 param_6,uint *param_7,int *param_8,int param_9)
 
 {
   byte bVar1;
@@ -913,7 +933,7 @@ uint FUN_201468c0(int param_1,int param_2,undefined4 param_3,undefined4 param_4,
   local_87 = 0;
   uVar9 = 0;
   uVar10 = 0;
-  uVar3 = FUN_201497cc(param_1,local_3c,local_30,0,0x72,param_9);
+  uVar3 = fat_entry_rw_locked(param_1,local_3c,local_30,0,0x72,param_9);
   if (uVar3 == 0) {
     if (local_3c[0] == 0) {
 LAB_20146b94:
@@ -921,11 +941,11 @@ LAB_20146b94:
     }
     else {
       local_50 = param_9 + 0x40c;
-      iVar4 = FUN_2014cb84(local_2c,local_50,local_40);
+      iVar4 = sjis_to_ucs2_str(local_2c,local_50,local_40);
       if (iVar4 != -99) {
         if ((param_5 == 0 || param_5 == 2) && (uVar3 = fs_strlen(local_2c), uVar3 < 0xd)) {
-          FUN_2014d270(local_a0,local_2c);
-          FUN_2014d5b4(local_a0);
+          fs_strcpy(local_a0,local_2c);
+          fs_strlwr_sjis(local_a0);
         }
         if (local_a0[0] == '\0') {
           local_70 = FUN_20145254(local_2c,auStack_c8,&DWORD_20146dcc);
@@ -939,7 +959,7 @@ LAB_20146b94:
         local_90 = uVar11 + 1 & 0xffff;
         if (((local_70 != 0) && (local_40[0] == '\0')) && (param_5 == 0 || param_5 == 2)) {
           fs_memcpy(auStack_60,local_a0,0xd);
-          iVar4 = FUN_2014d38c(auStack_c8,auStack_60);
+          iVar4 = fs_stricmp(auStack_c8,auStack_60);
           if (iVar4 == 0) {
             local_70 = 0;
           }
@@ -952,7 +972,7 @@ LAB_20146b94:
           local_8c = 0;
           if (*(short *)(param_1 + 4) != 0) {
             do {
-              uVar3 = FUN_20144c5c(param_1,iVar4,local_b8);
+              uVar3 = dir_sector_get(param_1,iVar4,local_b8);
               pcVar12 = local_b8[0];
               if (uVar3 != 0) {
                 return uVar3;
@@ -960,9 +980,9 @@ LAB_20146b94:
               local_d4[0] = iVar4;
               if (local_44 == 1) {
                 if ((*(int *)(param_1 + 0x34) != local_30) &&
-                   ((iVar5 = FUN_2014d48c(local_b8[0],local_6c,0xb), iVar5 != 0 ||
-                    (iVar5 = FUN_20146884(pcVar12,(int)*(char *)(param_1 + 0x10)), iVar5 != local_30
-                    )))) goto LAB_20146b94;
+                   ((iVar5 = fs_strnicmp(local_b8[0],local_6c,0xb), iVar5 != 0 ||
+                    (iVar5 = dirent_get_cluster(pcVar12,(int)*(char *)(param_1 + 0x10)),
+                    iVar5 != local_30)))) goto LAB_20146b94;
                 local_44 = 0;
               }
               uVar3 = 0;
@@ -1004,7 +1024,7 @@ LAB_20146b94:
                     }
                     if (((bVar1 & 8) == 0) && (param_5 != 3)) {
                       if ((param_5 == 1) && (local_70 == 1)) {
-                        FUN_201450a4(local_ac,auStack_c8,param_1);
+                        sfn_from_dotted(local_ac,auStack_c8,param_1);
                         if (local_ac[0] == -0x1b) {
                           local_ac[0] = '\x05';
                         }
@@ -1046,7 +1066,7 @@ LAB_201470bc:
                             if (local_d4[iVar13] == 0) {
                               return 0;
                             }
-                            uVar10 = FUN_20144b74(param_1,local_d4[iVar13],local_b8[iVar13]);
+                            uVar10 = dir_sector_dirty(param_1,local_d4[iVar13],local_b8[iVar13]);
                             if (uVar10 != 0) break;
                             iVar13 = iVar13 + 1;
                             if (iVar4 <= iVar13) {
@@ -1059,7 +1079,7 @@ LAB_201470bc:
                       }
                       uVar11 = fs_strlen(local_2c);
                       if (uVar11 < 0xd) {
-                        FUN_201450a4(local_ac,auStack_c8,param_1);
+                        sfn_from_dotted(local_ac,auStack_c8,param_1);
                         if (local_ac[0] == -0x1b) {
                           local_ac[0] = '\x05';
                         }
@@ -1089,7 +1109,7 @@ LAB_201470bc:
               local_8c = local_8c + 1;
             } while (local_8c < (int)(uint)*(ushort *)(param_1 + 4));
           }
-          FUN_201497cc(param_1,&local_4c,local_30,0,0x72,param_9);
+          fat_entry_rw_locked(param_1,&local_4c,local_30,0,0x72,param_9);
           if (local_4c == 0xffffff7) {
             return 0xffffffc3;
           }
@@ -1100,7 +1120,7 @@ LAB_201470bc:
             if (-1 < (int)uVar14) {
 LAB_20146bf4:
               FUN_20145254(local_2c,auStack_c8,&local_88);
-              FUN_201450a4(local_ac,auStack_c8,param_1);
+              sfn_from_dotted(local_ac,auStack_c8,param_1);
               fs_memcpy(local_28,local_ac,0xb);
               if (-1 < (int)uVar14) {
                 *(short *)(local_74 + 0x20) = (short)uVar14;
@@ -1191,12 +1211,14 @@ LAB_20146d4c:
 }
 
 
-// ===== FUN_201471cc @ 201471cc (124 bytes)
+// ===== subdir_find_locked @ 201471cc (124 bytes)
+
+/* subdir_find under fs_lock_a [fact] */
 
 undefined4
-FUN_201471cc(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-            undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,
-            undefined4 param_9)
+subdir_find_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                  undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,
+                  undefined4 param_9)
 
 {
   int iVar1;
@@ -1209,8 +1231,8 @@ FUN_201471cc(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   uVar4 = param_4;
   iVar1 = fs_lock_a(param_1);
   if (iVar1 == 0) {
-    uVar2 = FUN_201468c0(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9,
-                         param_1,uVar2,uVar3,uVar4);
+    uVar2 = subdir_find(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9,
+                        param_1,uVar2,uVar3,uVar4);
     fs_unlock_a(param_1);
   }
   else {
@@ -1220,9 +1242,12 @@ FUN_201471cc(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 }
 
 
-// ===== FUN_20147248 @ 20147248 (96 bytes)
+// ===== path_next_component @ 20147248 (96 bytes)
 
-char * FUN_20147248(char *param_1,char *param_2)
+/* (p, out): copies the "\\name" component at p (Shift-JIS aware) to out and returns the pointer
+   after it, 0 when p does not start with '\\' [fact] */
+
+char * path_next_component(char *param_1,char *param_2)
 
 {
   int iVar1;
@@ -1253,9 +1278,11 @@ char * FUN_20147248(char *param_1,char *param_2)
 }
 
 
-// ===== FUN_201472a8 @ 201472a8 (108 bytes)
+// ===== path_components_len @ 201472a8 (108 bytes)
 
-int FUN_201472a8(int param_1)
+/* Length of a path rebuilt from its components plus separators and the 3-byte "X:\\" [fact] */
+
+int path_components_len(int param_1)
 
 {
   char cVar1;
@@ -1267,8 +1294,9 @@ int FUN_201472a8(int param_1)
   pcVar3 = (char *)(param_1 + 2);
   cVar1 = *(char *)(param_1 + 2);
   iVar4 = 0;
-  while (((cVar1 != '\0' && (pcVar3 = (char *)FUN_20147248(pcVar3,local_218), local_218[0] != '\0'))
-         && (*pcVar3 != '\0'))) {
+  while (((cVar1 != '\0' &&
+          (pcVar3 = (char *)path_next_component(pcVar3,local_218), local_218[0] != '\0')) &&
+         (*pcVar3 != '\0'))) {
     iVar2 = fs_strlen(local_218);
     iVar4 = iVar2 + iVar4 + 1;
     cVar1 = *pcVar3;
@@ -1277,9 +1305,12 @@ int FUN_201472a8(int param_1)
 }
 
 
-// ===== FUN_20147314 @ 20147314 (176 bytes)
+// ===== fs_name_check @ 20147314 (176 bytes)
 
-undefined4 FUN_20147314(char *param_1)
+/* -1 when a path component has a character of the invalid list 0x20808BA8 (outside Shift-JIS
+   pairs), is all spaces, or ends in '.' or ' ' [fact] */
+
+undefined4 fs_name_check(char *param_1)
 
 {
   bool bVar1;
@@ -1326,9 +1357,12 @@ undefined4 FUN_20147314(char *param_1)
 }
 
 
-// ===== FUN_201473c4 @ 201473c4 (224 bytes)
+// ===== fs_path_validate @ 201473c4 (224 bytes)
 
-int FUN_201473c4(char *param_1)
+/* -12 without a drive letter, -1 without ":\\", for more than 0x102 characters or a bad component
+   (fs_name_check) [fact] */
+
+int fs_path_validate(char *param_1)
 
 {
   char cVar1;
@@ -1359,10 +1393,10 @@ int FUN_201473c4(char *param_1)
     param_1 = param_1 + 2;
     while( true ) {
       if ((cVar1 == '\0') ||
-         (param_1 = (char *)FUN_20147248(param_1,local_218), local_218[0] == '\0')) {
+         (param_1 = (char *)path_next_component(param_1,local_218), local_218[0] == '\0')) {
         return 0;
       }
-      iVar2 = FUN_20147314(local_218);
+      iVar2 = fs_name_check(local_218);
       if (iVar2 != 0) break;
       cVar1 = *param_1;
     }
@@ -1375,9 +1409,12 @@ LAB_20147444:
 }
 
 
-// ===== FUN_201474a4 @ 201474a4 (228 bytes)
+// ===== dirent_set_time @ 201474a4 (228 bytes)
 
-void FUN_201474a4(int param_1,int param_2,uint param_3)
+/* Writes the FAT date/time from fs_get_time_tm into an entry: mask 1 = created (+0xE/+0x10), 2 =
+   written (+0x16/+0x18, also file +0x234), 4 = accessed date (+0x12) [fact] */
+
+void dirent_set_time(int param_1,int param_2,uint param_3)
 
 {
   int iVar1;
@@ -1390,7 +1427,7 @@ void FUN_201474a4(int param_1,int param_2,uint param_3)
   int iStack_30;
   int local_2c;
   
-  iVar1 = FUN_2014e1dc(&local_40);
+  iVar1 = fs_get_time_tm(&local_40);
   if (iVar1 == 0) {
     uVar2 = 0;
     uVar3 = 0;
@@ -1403,42 +1440,46 @@ void FUN_201474a4(int param_1,int param_2,uint param_3)
     }
   }
   if ((param_3 & 1) != 0) {
-    FUN_2014d8ec(param_1 + 0xe,uVar3 & 0xffff);
-    FUN_2014d8ec(param_1 + 0x10,uVar2 & 0xffff);
+    fat_st_word(param_1 + 0xe,uVar3 & 0xffff);
+    fat_st_word(param_1 + 0x10,uVar2 & 0xffff);
   }
   if ((param_3 & 2) != 0) {
-    FUN_2014d8ec(param_1 + 0x16,uVar3 & 0xffff);
-    FUN_2014d8ec(param_1 + 0x18,uVar2 & 0xffff);
+    fat_st_word(param_1 + 0x16,uVar3 & 0xffff);
+    fat_st_word(param_1 + 0x18,uVar2 & 0xffff);
     if (param_2 != 0) {
       *(short *)(param_2 + 0x234) = (short)uVar3;
       *(short *)(param_2 + 0x236) = (short)uVar2;
     }
   }
   if ((param_3 & 4) != 0) {
-    FUN_2014d8ec(param_1 + 0x12,uVar2 & 0xffff);
+    fat_st_word(param_1 + 0x12,uVar2 & 0xffff);
   }
   return;
 }
 
 
-// ===== FUN_20147588 @ 20147588 (72 bytes)
+// ===== dirent_set_cluster @ 20147588 (72 bytes)
 
-void FUN_20147588(int param_1,uint param_2,int param_3)
+/* Stores the first cluster in an entry (+0x1A, high word +0x14 except FAT12/16) [fact] */
+
+void dirent_set_cluster(int param_1,uint param_2,int param_3)
 
 {
   if (param_3 != 0xc && param_3 != 0x10) {
-    FUN_2014d8ec(param_1 + 0x1a,param_2 & 0xffff);
-    FUN_2014d8ec(param_1 + 0x14,param_2 >> 0x10);
+    fat_st_word(param_1 + 0x1a,param_2 & 0xffff);
+    fat_st_word(param_1 + 0x14,param_2 >> 0x10);
     return;
   }
-  FUN_2014d8ec(param_1 + 0x1a,param_2 & 0xffff);
+  fat_st_word(param_1 + 0x1a,param_2 & 0xffff);
   return;
 }
 
 
-// ===== FUN_201475d0 @ 201475d0 (112 bytes)
+// ===== fat_time_to_tm @ 201475d0 (112 bytes)
 
-void FUN_201475d0(int *param_1,undefined4 param_2,undefined4 param_3)
+/* FAT date/time words to struct tm (sec*2, min, hour, mday, mon-1, year+80) [fact] */
+
+void fat_time_to_tm(int *param_1,undefined4 param_2,undefined4 param_3)
 
 {
   uint uVar1;
@@ -1463,9 +1504,12 @@ void FUN_201475d0(int *param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_20147640 @ 20147640 (176 bytes)
+// ===== dirent_name_to_str @ 20147640 (176 bytes)
 
-undefined4 FUN_20147640(char *param_1,int param_2,uint param_3)
+/* 8.3 name of an entry to "NAME.EXT"; NT case flags 0x08 / 0x10 lower-case base / extension [fact]
+    */
+
+undefined4 dirent_name_to_str(char *param_1,int param_2,uint param_3)
 
 {
   char cVar1;
@@ -1479,7 +1523,7 @@ undefined4 FUN_20147640(char *param_1,int param_2,uint param_3)
       *param_1 = *(char *)(param_2 + iVar3);
     }
     else {
-      cVar1 = FUN_2014d374((int)*(char *)(param_2 + iVar3));
+      cVar1 = fs_tolower((int)*(char *)(param_2 + iVar3));
       *param_1 = cVar1;
     }
     param_1 = param_1 + 1;
@@ -1504,7 +1548,7 @@ undefined4 FUN_20147640(char *param_1,int param_2,uint param_3)
       cVar1 = *(char *)(param_2 + iVar3);
     }
     else {
-      cVar1 = FUN_2014d374((int)*(char *)(param_2 + iVar3));
+      cVar1 = fs_tolower((int)*(char *)(param_2 + iVar3));
     }
     iVar3 = iVar3 + 1;
     param_1 = pcVar2 + 1;
@@ -1516,9 +1560,11 @@ undefined4 FUN_20147640(char *param_1,int param_2,uint param_3)
 }
 
 
-// ===== FUN_201476f0 @ 201476f0 (12 bytes)
+// ===== fs_attr_check @ 201476f0 (12 bytes)
 
-undefined4 FUN_201476f0(uint param_1,uint param_2)
+/* -99 when the attribute mask has bits outside the allowed set [fact] */
+
+undefined4 fs_attr_check(uint param_1,uint param_2)
 
 {
   undefined4 uVar1;
@@ -1531,9 +1577,12 @@ undefined4 FUN_201476f0(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_201476fc @ 201476fc (120 bytes)
+// ===== sjis_fold_case @ 201476fc (120 bytes)
 
-uint FUN_201476fc(uint param_1)
+/* Full-width Shift-JIS lower-case Latin/Greek/Cyrillic to upper case, and 0xFA40.. to the 0x8754..
+   range [fact] */
+
+uint sjis_fold_case(uint param_1)
 
 {
   if (param_1 - 0x8281 < 0x1a) {
@@ -1558,9 +1607,11 @@ uint FUN_201476fc(uint param_1)
 }
 
 
-// ===== FUN_20147774 @ 20147774 (220 bytes)
+// ===== fs_stricmp_sjis_fold @ 20147774 (220 bytes)
 
-int FUN_20147774(char *param_1,char *param_2)
+/* Case-insensitive compare that also folds full-width Shift-JIS letters (sjis_fold_case) [fact] */
+
+int fs_stricmp_sjis_fold(char *param_1,char *param_2)
 
 {
   char cVar1;
@@ -1590,8 +1641,8 @@ int FUN_20147774(char *param_1,char *param_2)
     else {
       cVar1 = param_2[1];
       cVar2 = *param_2;
-      sVar3 = FUN_201476fc(CONCAT11(*param_1,param_1[1]));
-      sVar4 = FUN_201476fc(CONCAT11(cVar2,cVar1));
+      sVar3 = sjis_fold_case(CONCAT11(*param_1,param_1[1]));
+      sVar4 = sjis_fold_case(CONCAT11(cVar2,cVar1));
       if (sVar3 != sVar4) {
         return -1;
       }
@@ -1642,8 +1693,8 @@ int FUN_20147850(char *param_1,char *param_2,uint param_3)
       else {
         cVar1 = param_2[1];
         cVar2 = *param_2;
-        sVar3 = FUN_201476fc(CONCAT11(*param_1,param_1[1]));
-        sVar4 = FUN_201476fc(CONCAT11(cVar2,cVar1));
+        sVar3 = sjis_fold_case(CONCAT11(*param_1,param_1[1]));
+        sVar4 = sjis_fold_case(CONCAT11(cVar2,cVar1));
         if (sVar3 != sVar4) {
           return -1;
         }
@@ -1870,7 +1921,7 @@ int FUN_20147c7c(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
   uStack_30 = param_2;
   local_2c = param_3;
   iStack_28 = param_4;
-  iVar2 = FUN_2014cff4(param_2,iVar4,local_3c);
+  iVar2 = fs_wstrcpy_len(param_2,iVar4,local_3c);
   if (iVar2 == -99) {
     return -0x46;
   }
@@ -1885,7 +1936,7 @@ int FUN_20147c7c(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
       uVar11 = __aeabi_uidivmod(uVar7,*(uint *)(local_34 + 0x6c) >> 5);
       uVar12 = (undefined4)uVar11;
       if (((int)((ulonglong)uVar11 >> 0x20) == 0) &&
-         (iVar2 = FUN_20144d04(local_34,uVar12,&local_44), pcVar5 = local_44, local_40 = uVar12,
+         (iVar2 = root_sector_get(local_34,uVar12,&local_44), pcVar5 = local_44, local_40 = uVar12,
          iVar2 != 0)) {
         return iVar2;
       }
@@ -1936,7 +1987,7 @@ int FUN_20147c7c(int param_1,undefined4 param_2,undefined4 param_3,int param_4,u
         }
         uVar9 = 0;
         if (((pcVar5[0xb] & 8U) == 0) && (param_4 != 3)) {
-          iVar2 = FUN_20145be4(local_34,uVar7,iVar4,uVar6,local_40,param_7);
+          iVar2 = root_lfn_collect(local_34,uVar7,iVar4,uVar6,local_40,param_7);
           if (iVar2 == 0) {
 LAB_20147f14:
             if (param_4 == 1) {
@@ -1944,7 +1995,7 @@ LAB_20147f14:
             }
             fs_memcpy(local_2c,pcVar5,0x20);
             if (param_4 == 2) {
-              iVar2 = FUN_201455f8(local_34,uVar7,uVar6,param_7);
+              iVar2 = root_dirent_delete(local_34,uVar7,uVar6,param_7);
               return iVar2;
             }
             if (param_4 == 0) {
@@ -1955,9 +2006,9 @@ LAB_20147f14:
             }
           }
           else {
-            uVar3 = FUN_2014d248(iVar4);
+            uVar3 = fs_wstrlen_bytes(iVar4);
             if (uVar3 < 0x19) {
-              FUN_2014d050(auStack_54,iVar4);
+              fs_ucs2_to_ascii_upper(auStack_54,iVar4);
               iVar2 = FUN_20147c20(pcVar5,auStack_54,local_34);
               if (iVar2 == 0) goto LAB_20147f14;
             }
@@ -2134,7 +2185,7 @@ uint FUN_20148150(int param_1,int param_2,undefined4 param_3,undefined4 param_4,
   uVar10 = 0;
   uVar11 = 0;
   local_50 = 0;
-  uVar3 = FUN_201497cc(param_1,&local_40,local_30,0,0x72,param_9);
+  uVar3 = fat_entry_rw_locked(param_1,&local_40,local_30,0,0x72,param_9);
   if (uVar3 == 0) {
     if (local_40 == 0) {
 LAB_2014836c:
@@ -2142,7 +2193,7 @@ LAB_2014836c:
     }
     else {
       local_70 = param_9 + 0x40c;
-      iVar4 = FUN_2014cff4(param_3,local_70,local_3c);
+      iVar4 = fs_wstrcpy_len(param_3,local_70,local_3c);
       if (iVar4 != -99) {
         local_38 = 1;
         uVar3 = 0;
@@ -2154,7 +2205,7 @@ LAB_2014836c:
           local_84 = 0;
           if (*(short *)(param_1 + 4) != 0) {
             do {
-              uVar3 = FUN_20144c5c(param_1,iVar4,local_a0);
+              uVar3 = dir_sector_get(param_1,iVar4,local_a0);
               pcVar12 = local_a0[0];
               if (uVar3 != 0) {
                 return uVar3;
@@ -2162,9 +2213,9 @@ LAB_2014836c:
               local_b4[0] = iVar4;
               if (local_a4 == 1) {
                 if ((*(int *)(param_1 + 0x34) != local_30) &&
-                   ((iVar5 = FUN_2014d48c(local_a0[0],local_6c,0xb), iVar5 != 0 ||
-                    (iVar5 = FUN_20146884(pcVar12,(int)*(char *)(param_1 + 0x10)), iVar5 != local_30
-                    )))) goto LAB_2014836c;
+                   ((iVar5 = fs_strnicmp(local_a0[0],local_6c,0xb), iVar5 != 0 ||
+                    (iVar5 = dirent_get_cluster(pcVar12,(int)*(char *)(param_1 + 0x10)),
+                    iVar5 != local_30)))) goto LAB_2014836c;
                 local_a4 = 0;
               }
               uVar3 = 0;
@@ -2239,7 +2290,7 @@ LAB_20148840:
                             if (local_b4[iVar13] == 0) {
                               return 0;
                             }
-                            uVar11 = FUN_20144b74(param_1,local_b4[iVar13],local_a0[iVar13]);
+                            uVar11 = dir_sector_dirty(param_1,local_b4[iVar13],local_a0[iVar13]);
                             if (uVar11 != 0) break;
                             iVar13 = iVar13 + 1;
                             if (iVar4 <= iVar13) {
@@ -2250,9 +2301,9 @@ LAB_20148840:
                         }
                         return 0;
                       }
-                      uVar7 = FUN_2014d248(local_70);
+                      uVar7 = fs_wstrlen_bytes(local_70);
                       if (uVar7 < 0x19) {
-                        FUN_2014d050(auStack_60,local_70);
+                        fs_ucs2_to_ascii_upper(auStack_60,local_70);
                         iVar5 = FUN_201480b4(pcVar12,auStack_60,param_1);
                         if (iVar5 == 0) goto LAB_20148840;
                       }
@@ -2275,7 +2326,7 @@ LAB_20148840:
               local_50 = local_50 + 1;
             } while (local_84 < (int)(uint)*(ushort *)(param_1 + 4));
           }
-          FUN_201497cc(param_1,&local_4c,local_30,0,0x72,param_9);
+          fat_entry_rw_locked(param_1,&local_4c,local_30,0,0x72,param_9);
           if (local_4c == 0xffffff7) {
             return 0xffffffc3;
           }
@@ -2457,7 +2508,7 @@ int FUN_20148a88(int param_1)
   while ((((*pcVar2 != '\0' || (pcVar2[1] != '\0')) &&
           ((pcVar2 = (char *)FUN_20148a0c(pcVar2,&local_218), local_218 != '\0' ||
            (local_217 != '\0')))) && ((*pcVar2 != '\0' || (pcVar2[1] != '\0'))))) {
-    iVar1 = FUN_2014d248(&local_218);
+    iVar1 = fs_wstrlen_bytes(&local_218);
     iVar3 = iVar1 + iVar3 + 2;
   }
   return iVar3 + 6;
@@ -2857,9 +2908,12 @@ LAB_20148e80:
 }
 
 
-// ===== FUN_2014919c @ 2014919c (220 bytes)
+// ===== fat_table_sector_get @ 2014919c (220 bytes)
 
-int FUN_2014919c(int param_1,uint param_2,int *param_3,uint param_4)
+/* (vol, FAT sector, *ptr): pointer to a sector of the FAT through the FAT cache (or a direct read
+   without cache), -11 beyond the FAT size [fact] */
+
+int fat_table_sector_get(int param_1,uint param_2,int *param_3,uint param_4)
 
 {
   int iVar1;
@@ -2878,9 +2932,9 @@ int FUN_2014919c(int param_1,uint param_2,int *param_3,uint param_4)
       *param_3 = param_4 + 0xc0c;
     }
     else {
-      iVar2 = FUN_20143c48(param_1,iVar1);
+      iVar2 = fatcache_lookup(param_1,iVar1);
       if (iVar2 == 0) {
-        iVar1 = FUN_20143cbc(param_1,iVar1,&local_18);
+        iVar1 = fatcache_load(param_1,iVar1,&local_18);
         if (iVar1 != 0) {
           return iVar1;
         }
@@ -2892,7 +2946,7 @@ int FUN_2014919c(int param_1,uint param_2,int *param_3,uint param_4)
                  (uint)*(ushort *)(param_1 + 0x48) * 4;
       uVar3 = __aeabi_idivmod((local_18 & 0xffff) - 1,(uint)*(ushort *)(param_1 + 0x4a));
       local_18 = CONCAT22(local_18._2_2_,(short)uVar3 + 1);
-      FUN_20143e10(param_1);
+      fatcache_touch(param_1);
     }
     iVar1 = 0;
   }
@@ -2903,9 +2957,13 @@ int FUN_2014919c(int param_1,uint param_2,int *param_3,uint param_4)
 }
 
 
-// ===== FUN_20149278 @ 20149278 (196 bytes)
+// ===== fat_table_sector_dirty @ 20149278 (196 bytes)
 
-int FUN_20149278(int param_1,uint param_2,undefined4 param_3)
+/* After a FAT change: sets the dirty bit of the FAT cache slot, or without cache writes the sector
+   (fs_dev_op2) to the first and, with two FATs, the second FAT; -0x45 when the sector is not cached
+   [fact] */
+
+int fat_table_sector_dirty(int param_1,uint param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -2927,14 +2985,14 @@ int FUN_20149278(int param_1,uint param_2,undefined4 param_3)
       }
     }
     else {
-      iVar2 = FUN_20143c48(param_1,iVar2);
+      iVar2 = fatcache_lookup(param_1,iVar2);
       if (iVar2 == 0) {
         iVar1 = -0x45;
       }
       else {
         uVar4 = __aeabi_idivmod(iVar2 - 1,(uint)*(ushort *)(param_1 + 0x4a));
         uVar3 = (int)uVar4 + 1U & 0xffff;
-        FUN_20143e10(param_1,uVar3);
+        fatcache_touch(param_1,uVar3);
         iVar1 = iVar1 + uVar3 * 4;
         *(uint *)(iVar1 + -4) = *(uint *)(iVar1 + -4) | 0x80000000;
         iVar1 = 0;

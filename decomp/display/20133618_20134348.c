@@ -5,14 +5,18 @@
 void FUN_20133618(void)
 
 {
-  FUN_2015b9a8(&DAT_20907f78);
+  scope3d_history_clear(&DAT_20907f78);
   return;
 }
 
 
-// ===== FUN_20133620 @ 20133620 (340 bytes)
+// ===== scope3d_tables_init @ 20133620 (340 bytes)
 
-void FUN_20133620(void)
+/* Builds the 3DSS line offset tables 0x20907F7C/7FF4 (30 lines, mode 8) and 0x2090806C/80A8 (15
+   lines, mode 9), takes the work buffer and clears the history [fact for the stores; 3DSS from
+   gui.md] */
+
+void scope3d_tables_init(void)
 
 {
   int iVar1;
@@ -27,7 +31,7 @@ void FUN_20133620(void)
   iVar3 = 0;
   uVar2 = extraout_r3;
   do {
-    iVar1 = FUN_20134368(iVar3,8,0,uVar2,unaff_r4);
+    iVar1 = scope3d_line_offset(iVar3,8,0,uVar2,unaff_r4);
     iVar1 = iVar3 * -4 - iVar1;
     (&DAT_20907f7c)[iVar3] = iVar1 + 0xde;
     if (0 < iVar3) {
@@ -38,7 +42,7 @@ void FUN_20133620(void)
   } while (iVar3 < 0x1e);
   iVar3 = 0;
   do {
-    iVar1 = FUN_20134368(iVar3,8,1,uVar2,unaff_r4);
+    iVar1 = scope3d_line_offset(iVar3,8,1,uVar2,unaff_r4);
     iVar1 = iVar3 * -6 - iVar1;
     (&DAT_20907ff4)[iVar3] = iVar1 + 0x112;
     if (0 < iVar3) {
@@ -49,7 +53,7 @@ void FUN_20133620(void)
   } while (iVar3 < 0x1e);
   iVar3 = 0;
   do {
-    iVar1 = FUN_20134368(iVar3,9,0);
+    iVar1 = scope3d_line_offset(iVar3,9,0);
     iVar1 = iVar3 * -3 - iVar1;
     (&DAT_2090806c)[iVar3] = iVar1 + 0x68;
     if (0 < iVar3) {
@@ -59,7 +63,7 @@ void FUN_20133620(void)
   } while (iVar3 < 0xf);
   iVar3 = 0;
   do {
-    iVar1 = FUN_20134368(iVar3,9,1);
+    iVar1 = scope3d_line_offset(iVar3,9,1);
     iVar1 = iVar3 * -6 - iVar1;
     (&DAT_209080a8)[iVar3] = iVar1 + 0x9c;
     if (0 < iVar3) {
@@ -67,7 +71,7 @@ void FUN_20133620(void)
     }
     iVar3 = iVar3 + 1;
   } while (iVar3 < 0xf);
-  FUN_2015b9a8(&DAT_20907f78);
+  scope3d_history_clear(&DAT_20907f78);
   DAT_20907f78 = DAT_208085b4;
   return;
 }

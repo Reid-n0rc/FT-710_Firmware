@@ -20,9 +20,12 @@ undefined2 FUN_20134358(int param_1,int param_2)
 }
 
 
-// ===== FUN_20134368 @ 20134368 (88 bytes)
+// ===== scope3d_line_offset @ 20134368 (88 bytes)
 
-undefined2 FUN_20134368(int param_1,int param_2,int param_3)
+/* (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 /
+   0x203D9A9E [fact] */
+
+undefined2 scope3d_line_offset(int param_1,int param_2,int param_3)
 
 {
   undefined2 uVar1;
@@ -378,31 +381,31 @@ void screen_capture_bmp(void)
   uint local_10;
   uint local_c;
   
-  iVar1 = FUN_2014b880(0x49,&local_10,&local_c);
+  iVar1 = fs_disk_free(0x49,&local_10,&local_c);
   if ((iVar1 != 0) || (local_10 == 0 && (0x119435 < local_c) <= local_10)) goto LAB_20134794;
-  if (DAT_208f0b2a == 'z') {
+  if (gui_frame.cmd == 0x7a) {
     return;
   }
   screenshot_popup();
   gui_flip_one(0);
   itron_tslp_tsk(0xffffffff);
-  iVar1 = FUN_2014c410("I:\\FT-710\\Capture");
+  iVar1 = fs_opendir("I:\\FT-710\\Capture");
   if (iVar1 == 0) {
-    iVar1 = FUN_2014c410("I:\\FT-710");
+    iVar1 = fs_opendir("I:\\FT-710");
     if (iVar1 == 0) {
-      iVar1 = FUN_2014beec("I:\\FT-710");
+      iVar1 = fs_mkdir("I:\\FT-710");
       if (iVar1 == 0) goto LAB_201347b8;
     }
     else {
-      thunk_FUN_2014c474();
+      fs_closedir();
 LAB_201347b8:
-      iVar1 = FUN_2014beec("I:\\FT-710\\Capture");
+      iVar1 = fs_mkdir("I:\\FT-710\\Capture");
       if (iVar1 == 0) goto LAB_201346c0;
     }
     fs_task_ctx_get();
   }
   else {
-    thunk_FUN_2014c474();
+    fs_closedir();
 LAB_201346c0:
     rtc_get_datetime(local_28,local_24,local_20,local_1c,local_18,local_14);
     sprintf(auStack_68,"I:\\FT-710\\Capture\\20%02d%02d%02d_%02d%02d%02d.bmp",
@@ -543,7 +546,7 @@ void FUN_20134978(int param_1)
   DAT_20909cf0 = FUN_2010ef88(uVar5 != 1 && uVar5 != 2,&DAT_209096b0,100);
   iVar4 = sd_state_bit7();
   if (iVar4 == 0) {
-    FUN_20160ed8();
+    mainlink_send_sd_absent();
     return;
   }
   local_2c = 0;
@@ -609,11 +612,11 @@ void FUN_20134984(int param_1)
   gui_draw_runs(uVar2,0x1b7,0x250,&DAT_203e5e3c);
   if (uVar6 == 0xfe) {
     if (uVar5 == 0x42 || uVar5 == 0x44) {
-      FUN_20136398(uVar2,0x1a0,0x1d4,*DAT_20802290,DAT_20802290[1],3);
+      fb_draw_round_frame_wrap(uVar2,0x1a0,0x1d4,*DAT_20802290,DAT_20802290[1],3);
     }
   }
   else if (uVar6 == 0xff) {
-    FUN_20136398(uVar2,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
+    fb_draw_round_frame_wrap(uVar2,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
     goto LAB_20161e8c;
   }
   if ((int)uVar6 < iVar4) {
@@ -693,7 +696,7 @@ bool FUN_20134990(int param_1)
   else {
     iVar6 = sd_state_bit7();
     if (iVar6 == 0) {
-      FUN_20160ed8();
+      mainlink_send_sd_absent();
       return false;
     }
   }
@@ -762,13 +765,14 @@ void FUN_2013499c(int param_1)
   while( true ) {
     iVar4 = sd_state_bit7();
     if (iVar4 == 0) {
-      FUN_20160ed8();
+      mainlink_send_sd_absent();
       return;
     }
     iVar4 = sdmenu_xfer_len();
     uVar5 = __aeabi_idivmod(iVar4 * 100,d);
     gui_draw_progress_bar(uVar3,0xf0,0x129,(uint)uVar5 & 0xffff);
-    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs(param_1), bVar2)) break;
+    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs((ml_frame *)param_1), bVar2))
+    break;
     vdc5_wait_frames(1);
     gui_update_layers();
     itron_tslp_tsk(0xffffffff);
@@ -870,7 +874,7 @@ void FUN_201349b4(int param_1)
   iVar5 = 0;
   if (0 < DAT_20909cf0) {
     do {
-      iVar3 = FUN_2014e208(param_1 + 3,&DAT_209096b0 + iVar5 * 0x10);
+      iVar3 = strcasecmp(param_1 + 3,&DAT_209096b0 + iVar5 * 0x10);
       if (iVar3 == 0) {
         puVar6 = &DAT_209096b0 + iVar5 * 0x10;
         break;
@@ -906,7 +910,7 @@ void FUN_201349b4(int param_1)
 
 // ===== FUN_201349c0 @ 201349c0 (584 bytes)
 
-void FUN_201349c0(uint param_1)
+void FUN_201349c0(ml_frame *param_1)
 
 {
   byte bVar1;
@@ -930,8 +934,8 @@ void FUN_201349c0(uint param_1)
   undefined1 auStack_4b [39];
   
   uVar4 = fb_get_layer_addr(DAT_208085bc);
-  bVar1 = *(byte *)(param_1 + 1);
-  uVar3 = be16_load((byte *)(param_1 + 3));
+  bVar1 = param_1->byte1;
+  uVar3 = be16_load(&param_1->vfo_flags);
   fb_clear_rect(uVar4,0,0,800,0x1e0);
   fb_fill_rect(uVar4,0x3186,3,3,0x31a,0x18);
   gui_draw_runs(uVar4,3,3,&DAT_2016dc08);
@@ -957,7 +961,7 @@ void FUN_201349c0(uint param_1)
   while( true ) {
     iVar5 = sd_state_bit7();
     if (iVar5 == 0) {
-      FUN_20160ed8();
+      mainlink_send_sd_absent();
       return;
     }
     iVar5 = sdmenu_xfer_len(uVar6,1);
@@ -1052,7 +1056,7 @@ void FUN_201349cc(int param_1)
   else {
     iVar5 = sd_state_bit7();
     if (iVar5 == 0) {
-      FUN_20160ed8();
+      mainlink_send_sd_absent();
       return;
     }
   }
@@ -1181,7 +1185,7 @@ void FUN_201349e4(int param_1)
   gui_draw_runs(uVar3,0x1a0,0x247,DAT_20802290);
   gui_draw_runs(uVar3,0x1b7,0x250,&DAT_203e5e3c);
   if (cVar2 == -1) {
-    FUN_20136398(uVar3,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
+    fb_draw_round_frame_wrap(uVar3,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
   }
   gui_draw_text_centered(uVar3,0x20909cf4,0x38,400,0xf,0x20800b1c);
   fb_fill_box(uVar3,0x67,7,0x312,1,0x821);
@@ -1282,11 +1286,11 @@ void FUN_201349fc(int param_1)
   gui_draw_runs(uVar3,0x1b7,0x250,&DAT_203e5e6c);
   if (cVar2 != -2) {
     if (cVar2 == -1) {
-      FUN_20136398(uVar3,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
+      fb_draw_round_frame_wrap(uVar3,0x1a0,0x247,*DAT_20802290,DAT_20802290[1],3);
     }
     return;
   }
-  FUN_20136398(uVar3,0x1a0,0x1d4,*DAT_20802290,DAT_20802290[1],3);
+  fb_draw_round_frame_wrap(uVar3,0x1a0,0x1d4,*DAT_20802290,DAT_20802290[1],3);
   return;
 }
 
@@ -1333,7 +1337,7 @@ void FUN_20134a08(int param_1)
   }
   sd_format_done();
   if ((iVar3 != 1) && (local_28 == 5)) {
-    FUN_20160ed8();
+    mainlink_send_sd_absent();
     return;
   }
   local_5c = 0;
@@ -1415,27 +1419,28 @@ void meter_draw(void)
   uint uVar6;
   
   iVar1 = fb_get_layer_addr(DAT_208085b8);
-  if (DAT_208f0b2a == 0x3a) {
+  if (gui_frame.cmd == 0x3a) {
 LAB_20134b8c:
-    uVar6 = (uint)DAT_208f0b89;
+    uVar6 = (uint)gui_frame.meter;
   }
   else {
     uVar6 = DAT_20808640;
-    if (0x3a < DAT_208f0b2a) {
-      if (DAT_208f0b2a != 0x50) {
-        if (DAT_208f0b2a < 0x51) {
-          if (DAT_208f0b2a == 0x40 || DAT_208f0b2a == 0x41) goto LAB_20134b8c;
+    if (0x3a < gui_frame.cmd) {
+      if (gui_frame.cmd != 0x50) {
+        if (gui_frame.cmd < 0x51) {
+          if (gui_frame.cmd == 0x40 || gui_frame.cmd == 0x41) goto LAB_20134b8c;
         }
-        else if (DAT_208f0b2a == 0x62 || DAT_208f0b2a == 0x70) goto LAB_20134b8c;
+        else if (gui_frame.cmd == 0x62 || gui_frame.cmd == 0x70) goto LAB_20134b8c;
         goto LAB_20134b08;
       }
       goto LAB_20134b8c;
     }
-    if (DAT_208f0b2a == 0x31) goto LAB_20134b8c;
-    if (DAT_208f0b2a < 0x32) {
-      if ((DAT_208f0b2a == 0x20 || DAT_208f0b2a == 0x24) || DAT_208f0b2a == 0x30) goto LAB_20134b8c;
+    if (gui_frame.cmd == 0x31) goto LAB_20134b8c;
+    if (gui_frame.cmd < 0x32) {
+      if ((gui_frame.cmd == 0x20 || gui_frame.cmd == 0x24) || gui_frame.cmd == 0x30)
+      goto LAB_20134b8c;
     }
-    else if (DAT_208f0b2a == 0x37 || DAT_208f0b2a == 0x39) goto LAB_20134b8c;
+    else if (gui_frame.cmd == 0x37 || gui_frame.cmd == 0x39) goto LAB_20134b8c;
   }
 LAB_20134b08:
   iVar2 = FUN_20134a18(uVar6);
@@ -1499,11 +1504,11 @@ LAB_20134bbc:
       DAT_20808622 = DAT_20808622 - 0x21;
     }
   }
-  if ((DAT_208f0b31 & 0x30) == 0x10) {
+  if ((gui_frame.tx_swr & 0x30) == 0x10) {
     puVar5 = &DAT_203eea9c;
   }
   else {
-    if ((DAT_208f0b31 & 0x30) != 0x20) goto LAB_20134cec;
+    if ((gui_frame.tx_swr & 0x30) != 0x20) goto LAB_20134cec;
     puVar5 = &DAT_203eeaac;
   }
   if (puVar5 != (undefined *)0x0) {
@@ -1522,15 +1527,15 @@ LAB_20134cec:
 
 /* meter scale + type label on graphics 0 */
 
-void meter_draw_scale(int param_1,int param_2,int param_3)
+void meter_draw_scale(ml_frame *frame,ml_frame *old,int param_3)
 
 {
   int iVar1;
   uint uVar2;
   
   iVar1 = fb_get_layer_addr(0);
-  uVar2 = *(byte *)(param_1 + 0xb) & 7;
-  if (param_3 != 0 || uVar2 != (*(byte *)(param_2 + 0xb) & 7)) {
+  uVar2 = frame->meter_sel & 7;
+  if (param_3 != 0 || uVar2 != (old->meter_sel & 7)) {
     if (5 < uVar2) {
       uVar2 = 5;
     }
@@ -1552,17 +1557,15 @@ void test_disp_init(void)
 
 {
   uint uVar1;
-  undefined4 local_18;
-  undefined4 uStack_14;
-  undefined4 local_10;
+  t_cflg local_18;
   
-  local_18 = 2;
-  uStack_14 = 0;
-  local_10 = 0;
-  uVar1 = itron_acre_flg(0,(byte *)&local_18);
+  local_18.flgatr = 2;
+  local_18.iflgptn = 0;
+  local_18.name = (char *)0x0;
+  uVar1 = itron_acre_flg(0,&local_18);
   if (0 < (int)uVar1) {
     DAT_20808934 = uVar1;
-    uVar1 = itron_acre_tsk(0,&DAT_20420088);
+    uVar1 = itron_acre_tsk(0,&ctsk_test_disp);
     if (0 < (int)uVar1) {
       DAT_20808938 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -1626,7 +1629,7 @@ uint debug_cmd_line_read(short *param_1,uint param_2)
         do {
           local_38 = local_bf0[iVar5 * 3];
           local_37 = local_bf0[iVar5 * 3 + 1];
-          uVar1 = FUN_2014e3c4(puVar7 + 0x3b8,0,0x10);
+          uVar1 = str_to_long(puVar7 + 0x3b8,0,0x10);
           iVar6 = iVar5 + 1;
           *(undefined1 *)((int)param_1 + iVar5 + 4) = uVar1;
           iVar5 = iVar6;
@@ -1660,7 +1663,7 @@ undefined4 debug_replay_send_cmd(void)
   ushort local_e5c;
   undefined2 local_e5a;
   char local_e58 [3000];
-  char local_2a0 [576];
+  ml_frame local_2a0;
   undefined1 auStack_60 [64];
   
   iVar2 = sd_state_bit6();
@@ -1676,17 +1679,17 @@ undefined4 debug_replay_send_cmd(void)
         cVar1 = local_e58[0];
         if (uVar4 == 0xffffffff) break;
         if (uVar4 == 1) {
-          __aeabi_memclr4(local_2a0,0x240);
+          __aeabi_memclr4(&local_2a0,0x240);
           uVar4 = 0;
           do {
             if ((&DAT_2080893c)[uVar4 * 0xc] == cVar1) {
-              __aeabi_memcpy4(local_2a0,local_e58,local_e5a);
+              __aeabi_memcpy4(&local_2a0,local_e58,local_e5a);
               break;
             }
             uVar4 = uVar4 + 1;
           } while (uVar4 < 0x1a);
-          if (local_2a0[0] != '\0') {
-            mainlink_set_last_frame((uint)local_2a0);
+          if (local_2a0.cmd != 0) {
+            mainlink_set_last_frame(&local_2a0);
           }
           itron_dly_tsk(local_e5c / 10);
         }
@@ -1807,9 +1810,9 @@ undefined4 debug_log_recv_cmd(undefined1 *param_1,undefined4 param_2)
     snprintf(auStack_44,0x32,"%s\\%s","I:\\FT-710\\DEBUG_RECV_CMD","dummy.txt");
     uVar2 = fs_fopen((uint)auStack_44,0x201353d8);
     if ((uVar2 == 0) &&
-       (((iVar1 = FUN_2014beec("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0 &&
-         ((iVar1 = FUN_2014beec("I:\\FT-710"), iVar1 != 0 ||
-          (iVar1 = FUN_2014beec("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0)))) ||
+       (((iVar1 = fs_mkdir("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0 &&
+         ((iVar1 = fs_mkdir("I:\\FT-710"), iVar1 != 0 ||
+          (iVar1 = fs_mkdir("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0)))) ||
         (uVar2 = fs_fopen((uint)auStack_44,0x201353d8), uVar2 == 0)))) {
       fs_task_ctx_get();
       return 0xffffffff;

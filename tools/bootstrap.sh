@@ -35,7 +35,8 @@
 #           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
 #           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
-#           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
+#           model of the whole netlist, a UART smoke test and the SDR progress figures (tools/sdr_progress.py ->
+#           decomp/sdr/progress.tsv). Slow (about 5-10 min); not a default step.
 #
 # Settings (environment variables; defaults in brackets):
 #   BOOTSTRAP_OUT        root for build/, ghidra/ and the exported decomp/ [the repo root]. With the repo root the
@@ -377,7 +378,7 @@ build_main() {
     "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc" \
     "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyStructs, ApplyEnums, ApplySfr"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyEnums, ApplyStructs (struct fields use the enums), ApplySfr"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
@@ -387,17 +388,17 @@ build_main() {
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
     -postScript ApplySignatures.java "$G/signatures_main.tsv" \
-    -postScript ApplyStructs.java "$G/structs_main.h" \
     -postScript ApplyEnums.java "$G/enums_main.h" "$G/enum_uses_main.tsv" \
+    -postScript ApplyStructs.java "$G/structs_main.h" \
     -postScript ApplySfr.java "$G/sfr_rx651.tsv"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
   local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
-    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv")
+    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -411,7 +412,8 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis \
     -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
-    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv"
+    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv" \
+    -postScript ApplyStructs.java "$G/structs_display.h"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
@@ -575,11 +577,20 @@ step_sdr() {
     || { tail -20 "$SDR_OUT/build_full.log" >&2; die "Verilator build failed (log: $SDR_OUT/build_full.log)"; }
   info "UART smoke test (MAIN frame r0000 on UART B, console on UART A):"
   py "$REPO/tools/sdr_uart_sim.py" --bin "$SDR_OUT/vl/obj_full/Vft710_sdr" b:r0000 "a:=r 0000\r" | sed 's/^/   /'
+  info "SDR progress figures (cells per documented block, T23) -> $DECOMP_OUT/sdr/progress.tsv"
+  py "$REPO/tools/sdr_progress.py" "$SDR_OUT/netlist.json" --map "$REPO/tools/sdr_blocks.tsv" \
+    --out "$DECOMP_OUT/sdr/progress.tsv" | tail -n 1 | sed 's/^/   /'
+  if [ "$DECOMP_OUT/sdr/progress.tsv" -ef "$REPO/decomp/sdr/progress.tsv" ]; then
+    git -C "$REPO" diff --quiet -- decomp/sdr/progress.tsv \
+      || info "WARNING: decomp/sdr/progress.tsv changed: commit it and rerun tools/readability_stats.py readme"
+  elif ! cmp -s "$DECOMP_OUT/sdr/progress.tsv" "$REPO/decomp/sdr/progress.tsv"; then
+    info "WARNING: SDR progress differs from the committed decomp/sdr/progress.tsv"
+  fi
   info "sdr done in $((SECONDS - t0)) s"
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,47p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in

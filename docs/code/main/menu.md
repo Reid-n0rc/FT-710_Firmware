@@ -558,3 +558,74 @@ Same 18 items in each preset. RAM = 0x9B2E + 0x1F × (P2−1) + offset; EEPROM =
 | `060116` | USB MOD GAIN | 0..100 | 3 | 50 | 0x9b48 |  |
 | `060117` | REAR MOD GAIN | 0..100 | 3 | 50 | 0x9b49 |  |
 | `060118` | RPTT SELECT | 0..3 | 1 | 1 | 0x9b4a |  |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFB1193 | `menu_defaults_mode` |  | RADIO SETTING mode groups 0x9A2A..0x9A90 <- ROM **[inference]** |
+| 0xFFFB11F0 | `menu_defaults_cw` |  | CW SETTING 0x9A91..0x9AB4 <- ROM 0xFFF80EB1 **[inference]** |
+| 0xFFFB120D | `menu_defaults_operation` |  | OPERATION SETTING 0x9AB5.. <- ROM 0xFFF80ED5, then dest-dependent MAX POWER, KEYBOARD LANGUAGE, TX TOT **[inference]** |
+| 0xFFFB12E6 | `menu_defaults_display` |  | DISPLAY SETTING 0x9B01.. <- ROM 0xFFF80F21 **[inference]** |
+| 0xFFFB1325 | `menu_defaults_presets` |  | 5 x PRESET block 0x9B2E+0x1F*n <- ROM 0xFFF80F4E; names FT-8, PRESET2..5 **[inference]** |
+| 0xFFFB3E6F | `max_power_limit` |  | (0..4): destination-dependent upper limit for HF / 50M / 70M / AM MAX POWER (menu.md) **[fact]** |
+| 0xFFFBA30C | `contest_number_get` |  | CONTEST NUMBER (EX020205) as u16 BE from 0x9AAB / 0x9AAC **[fact]** |
+| 0xFFFBC638 | `menu_close_if_open` |  | menu_screen_close when UI +0x95 (menu screen, frame 0x40) is set; returns whether it was open **[fact]** |
+| 0xFFFC2356 | `menu_group_key` |  | (n): menu_select_group(n), beep on success; menu tab soft keys **[fact]** |
+| 0xFFFC2371 | `menu_row_key` |  | (n): menu_select_row(n), beep on success; menu row soft keys **[fact]** |
+| 0xFFFC9C29 | `menu_draw_agc_delay` |  | AGC FAST/MID/SLOW DELAY row: raw*20+20 in decimal + "msec", bit 7 on the default **[fact]** |
+| 0xFFFC9CEE | `menu_draw_lcut_freq` |  | LCUT FREQ row: OFF or the frequency (dec_to_str_u16) **[fact]** |
+| 0xFFFC9D9A | `menu_draw_lcut_slope` |  | LCUT SLOPE row: 6dB/oct / 18dB/oct (ROM 0xFFF836EB) **[fact]** |
+| 0xFFFC9E27 | `menu_draw_hcut_freq` |  | HCUT FREQ row: OFF or the frequency **[fact]** |
+| 0xFFFC9ED4 | `menu_draw_hcut_slope` |  | HCUT SLOPE row: 6dB/oct / 18dB/oct **[fact]** |
+| 0xFFFC9F61 | `menu_draw_out_level` |  | USB / REAR OUT LEVEL row: value via dec_to_str_u8 **[fact]** |
+| 0xFFFCA2A1 | `menu_draw_rptt_select` |  | RPTT SELECT / PC KEYING row: OFF / RTS / DTR / DAKY (ROM 0xFFF83850) **[fact]** |
+| 0xFFFCB34B | `menu_draw_off_on` |  | OFF / ON row (ROM 0xFFF842E5): CW INDICATOR, SCU-LAN10, EMERGENCY FREQ TX, TX INHIBIT, EXT DISPLAY **[fact]** |
+| 0xFFFCB672 | `menu_draw_cw_memory` |  | CW MEMORY 1..5 row: TEXT / MESSAGE (ROM 0xFFF8444A) **[fact]** |
+| 0xFFFCC04A | `menu_draw_mic_key` |  | MIC P1..P4 / UP / DOWN row: LOCK, QMB,.., AGC (21 labels, ROM 0xFFF84753) **[fact]** |
+| 0xFFFCC4AF | `menu_draw_eq_freq` |  | PRMTRC EQ1..3 FREQ row (also the P PRMTRC items) **[fact]** |
+| 0xFFFCC56B | `menu_draw_eq_level` |  | PRMTRC EQ1..3 LEVEL row: signed value (FUN_fff9c787) **[fact]** |
+| 0xFFFCC5E3 | `menu_draw_eq_bwth` |  | PRMTRC EQ1..3 BWTH row **[fact]** |
+| 0xFFFCD54D | `datetime_edit_load` |  | DATE&TIME draw: unless +0x3FF = 3, copies the clock UI +0xAD..+0xB1 to the edit copy +0xB2..+0xB6 (day/month 0 -> 1) **[fact]** |
+| 0xFFFCD803 | `menu_draw_done` |  | Action rows (SD CARD, CALIBRATION, RESET, CERTIFICATION): width 4, text "DONE" **[fact]** |
+| 0xFFFCD999 | `menu_select_group` |  | (n): P2 group n-1 of the current P1 (+0x41F) if it exists: group cursor 0x15E00[P1], +0x420, +0x3FF = 2 **[fact]** |
+| 0xFFFCDA51 | `menu_select_row` |  | (n): sets the row cursor of the current group (menu_cursor_of) and runs the row request **[fact]** |
+| 0xFFFCDC78 | `menu_enter_nop` |  | Empty menu on_enter (RTS), shared by 296 items (#74) **[inference]** |
+| 0xFFFCDECF | `menu_step_lcut_freq` |  | LCUT FREQ stepper: 0 = OFF, 1..19, clamps (menu.md) **[fact]** |
+| 0xFFFCDF37 | `menu_step_hcut_freq` |  | HCUT FREQ stepper: 1..67 and 0 = OFF above the top (menu.md) **[fact]** |
+| 0xFFFCE411 | `menu_fm_rptshift_set` |  | EX010317 accessor (set) **[inference]** |
+| 0xFFFCE53C | `menu_fm_encdec_get` |  | EX010320 accessor **[inference]** |
+| 0xFFFCE562 | `menu_fm_encdec_set` |  | EX010320 accessor (set) **[inference]** |
+| 0xFFFCE5BE | `menu_fm_tone_get` |  | EX010321 accessor **[inference]** |
+| 0xFFFCF38F | `menu_step_bcd` |  | (min, max, *v): +/-1 on a packed-BCD byte by direction +0x421, clamped; DATE&TIME items **[fact]** |
+| 0xFFFCF6DD | `sd_memlist_load_start` |  | MEM LIST LOAD after the confirmation: 0x15DE5 = 1 (memory list), op +0x1E4 = 1, sd_load_start (#65) **[inference]** |
+| 0xFFFCF6F7 | `sd_load_start` |  | Mode 1: +0x88 = 1, 0x15DE3 = 1, step +0x3F7 = 1, first request frame 0x43 (+0x1E0) (#65) **[inference]** |
+| 0xFFFCF78D | `sd_memlist_save_start` |  | MEM LIST SAVE: 0x15DE5 = 1, op 2, sd_save_start (#65) **[inference]** |
+| 0xFFFCF7A7 | `sd_save_start` |  | Mode 2: as sd_load_start with 0x15DE3 = 2 (#65) **[inference]** |
+| 0xFFFCF83D | `sd_menu_load_start` |  | MENU LOAD: 0x15DE5 = 0 (menu settings), op 3, sd_load_start (#65) **[inference]** |
+| 0xFFFCF864 | `sd_menu_save_start` |  | MENU SAVE: 0x15DE5 = 0, op 4, sd_save_start (#65) **[inference]** |
+| 0xFFFCF88B | `sd_info_start` |  | INFORMATIONS: mode 3, op 5, first frame 0x43 (#65) **[inference]** |
+| 0xFFFCF92E | `sd_op_clear` |  | +0x88 = 0, 0x15DE3 = 0: no SD operation running (#65) **[inference]** |
+| 0xFFFCF951 | `sd_format_start` |  | FORMAT: mode 4, op 8, first frame 0x43 (#65) **[inference]** |
+| 0xFFFD0279 | `menu_reset_exec` |  | Runs reset_select(0x20BC0) **[inference]** |
+| 0xFFFD04C1 | `sd_save_xfer_id` |  | 0x42 (memory list) or 0x44 (menu) by 0x15DE5 (display-link.md) **[fact]** |
+| 0xFFFD0566 | `sd_load_xfer_id` |  | 0x41 (memory list) or 0x43 (menu) by 0x15DE5 (display-link.md) **[fact]** |
+| 0xFFFD05CF | `sd_step_reset` |  | UI +0x3F7 (SD step) = 0, +0x406 = 0 **[fact]** |
+| 0xFFFD05EA | `sd_load_step` |  | Mode 1 step machine on +0x3F7; reads blocks with frame 0x44 (#65) **[inference]** |
+| 0xFFFD0979 | `sd_abort_no_card` |  | dialog_no_sd_card, then sd_step_reset **[fact]** |
+| 0xFFFD0A68 | `sd_save_step` |  | Mode 2 step machine; writes blocks with frame 0x45 (#65) **[inference]** |
+| 0xFFFD1394 | `sd_info_step` |  | Mode 3 step machine (#65) **[inference]** |
+| 0xFFFD14B9 | `sd_format_step` |  | Mode 4 step machine (#65) **[inference]** |
+| 0xFFFD1712 | `menu_screen_close` |  | Clears UI +0x95 (menu shown), +0x90, +0x88, +0x86, +0x1C5 and sets +0x96 = 1; in PRESET (P1 +0x41F = 5) opens the MODE pop-up 5 instead **[fact]** |
+| 0xFFFD1C25 | `menu_draw_preset_name` |  | PRESET1..5 PRESET NAME row (12 chars at 0x9B2E + 0x1F*(n-1)) **[fact]** |
+| 0xFFFD1D86 | `menu_draw_preset_cat_rate` |  | PRESET n CAT-1 RATE row: 4800..115200bps (ROM 0xFFF8455B) **[fact]** |
+| 0xFFFD1EB1 | `menu_draw_preset_cat_tot` |  | PRESET n CAT-1 TIME OUT TIMER row: 10/100/1000/3000msec (ROM 0xFFF845C4) **[fact]** |
+| 0xFFFD1FDD | `menu_draw_preset_stop_bit` |  | PRESET n CAT-1 CAT-3 STOP BIT row **[fact]** |
+| 0xFFFD2108 | `menu_draw_preset_agc_fast` |  | PRESET n AGC FAST DELAY row **[fact]** |
+| 0xFFFD2239 | `menu_draw_preset_agc_mid` |  | PRESET n AGC MID DELAY row **[fact]** |
+| 0xFFFD236B | `menu_draw_preset_agc_slow` |  | PRESET n AGC SLOW DELAY row **[fact]** |
+| 0xFFFD249D | `menu_draw_preset_lcut_freq` |  | PRESET n LCUT FREQ row: OFF / 100Hz / 150Hz.. (ROM 0xFFF8509B) **[fact]** |
+| 0xFFFD31E3 | `menu_step_nop` |  | Empty menu on_step (RTS), shared by 18 items (#74) **[inference]** |
+| 0xFFFD43B9 | `sd_menu_enter_check` |  | SD CARD action on_enter guard: refuses while +0x93 / +0x92 (PlayList, recording); with no card (+0xA6 != 1) shows dialog 2 (arg 1) or 3 and returns 0 with an error beep **[fact]** |

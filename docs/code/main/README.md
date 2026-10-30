@@ -320,6 +320,9 @@ To find all users of a field, search for both forms. Other pointers there: 0x25D
 | [radio-control.md](radio-control.md) | T10g | VFO/band/mode, memories, scan, frequency programming |
 | [tx-protection.md](tx-protection.md) | T10h | PTT/TX sequencing, protection, keyer, tuner |
 | [peripherals.md](peripherals.md) | T10h | ADC channels, DAC/tone, timers, SCI2 tuner port, SCI6 (simple I2C, pins not connected), GPIO map, power on/off |
+| [bsp.md](bsp.md) | T23g | BSP around the reset path: exception vectors, ICU group/software-interrupt helpers, CC-RX intrinsics and C library (lowsrc, stdio, heap) |
+| [cat-ai.md](cat-ai.md) | T23g | Catalogue of the 296 CAT AI change detectors for the EX menu (table 0xFFF8E1A0) and their formatters |
+| [menu-items.md](menu-items.md) | T23g | Catalogue of the 314 `menuitem_*` builders and the 624 `on_draw` / `on_step` / `on_enter` callbacks |
 
 Related: [DISPLAY overview](../display/README.md), [IFDSP overview](../ifdsp/README.md), [SDR overview](../sdr/README.md),
 custom-firmware feasibility [docs/custom-firmware.md](../../custom-firmware.md).

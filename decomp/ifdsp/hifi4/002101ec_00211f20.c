@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_002101ec @ 002101ec (558 bytes)
+// ===== I2S_AddTransferDMA @ 002101ec (558 bytes)
 
-void FUN_002101ec(int param_1,int *param_2)
+/* fsl_i2s_dma.c static [inference] */
+
+void I2S_AddTransferDMA(int param_1,int *param_2)
 
 {
   int iVar1;
@@ -93,10 +95,10 @@ LAB_002103e0:
 LAB_00210288:
       uVar10 = uVar10 << 0xe;
     }
-    FUN_0020a78c(&DAT_20060610 + uVar11 * 0x10,
-                 ((uint)puVar3 / (uint)*(byte *)(param_2 + 1) - 1) * 0x10000 & 0x3ff0000 |
-                 uVar5 | (uVar7 & 1) << 5 | 0x10 | uVar4 | uVar10 | 3,iVar8,iVar9,
-                 &DAT_20060610 + uVar6 * 0x10);
+    DMA_SetupDescriptor(&DAT_20060610 + uVar11 * 0x10,
+                        ((uint)puVar3 / (uint)*(byte *)(param_2 + 1) - 1) * 0x10000 & 0x3ff0000 |
+                        uVar5 | (uVar7 & 1) << 5 | 0x10 | uVar4 | uVar10 | 3,iVar8,iVar9,
+                        &DAT_20060610 + uVar6 * 0x10);
     memw();
     DAT_00238c7e = DAT_00238c7e + 1;
     memw();
@@ -122,9 +124,11 @@ LAB_00210288:
 }
 
 
-// ===== FUN_00210420 @ 00210420 (208 bytes)
+// ===== I2S_DMACallback @ 00210420 (208 bytes)
 
-void FUN_00210420(undefined4 param_1,undefined4 *param_2,int param_3)
+/* fsl_i2s_dma.c: DMA callback installed by I2S_TxTransferCreateHandleDMA [inference] */
+
+void I2S_DMACallback(undefined4 param_1,undefined4 *param_2,int param_3)
 
 {
   byte bVar1;
@@ -173,18 +177,20 @@ void FUN_00210420(undefined4 param_1,undefined4 *param_2,int param_3)
     memw();
     memw();
     if (piVar2[(uint)*(byte *)((int)piVar2 + 0x35) * 2 + 6] == 0) {
-      FUN_0020fd54(uVar3,piVar2);
+      I2S_TransferAbortDMA(uVar3,piVar2);
       return;
     }
-    FUN_002101ec(uVar3,piVar2);
+    I2S_AddTransferDMA(uVar3,piVar2);
   }
   return;
 }
 
 
-// ===== FUN_002104f0 @ 002104f0 (11 bytes)
+// ===== I3C_MasterGetErrorStatusFlags @ 002104f0 (11 bytes)
 
-undefined4 FUN_002104f0(int param_1)
+/* fsl_i3c.h inline: MERRWARN (+0x9C) [fact for the code] */
+
+undefined4 I3C_MasterGetErrorStatusFlags(int param_1)
 
 {
   memw();
@@ -192,9 +198,11 @@ undefined4 FUN_002104f0(int param_1)
 }
 
 
-// ===== FUN_002104fc @ 002104fc (38 bytes)
+// ===== I3C_MasterClearErrorStatusFlags @ 002104fc (38 bytes)
 
-void FUN_002104fc(int param_1,uint param_2)
+/* fsl_i3c.h inline: write MERRWARN, wait clear [fact for the code] */
+
+void I3C_MasterClearErrorStatusFlags(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -211,9 +219,11 @@ void FUN_002104fc(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210524 @ 00210524 (20 bytes)
+// ===== I3C_MasterEnableInterrupts @ 00210524 (20 bytes)
 
-void FUN_00210524(int param_1,uint param_2)
+/* fsl_i3c.h inline: MINTSET (+0x90) |= mask [fact for the code] */
+
+void I3C_MasterEnableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -223,9 +233,11 @@ void FUN_00210524(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210538 @ 00210538 (11 bytes)
+// ===== I3C_MasterDisableInterrupts @ 00210538 (11 bytes)
 
-void FUN_00210538(int param_1,undefined4 param_2)
+/* fsl_i3c.h inline: MINTCLR (+0x94) [fact for the code] */
+
+void I3C_MasterDisableInterrupts(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -234,9 +246,11 @@ void FUN_00210538(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00210544 @ 00210544 (11 bytes)
+// ===== I3C_MasterGetEnabledInterrupts @ 00210544 (11 bytes)
 
-undefined4 FUN_00210544(int param_1)
+/* fsl_i3c.h inline: MINTSET [fact for the code] */
+
+undefined4 I3C_MasterGetEnabledInterrupts(int param_1)
 
 {
   memw();
@@ -244,9 +258,11 @@ undefined4 FUN_00210544(int param_1)
 }
 
 
-// ===== FUN_00210550 @ 00210550 (11 bytes)
+// ===== I3C_MasterGetPendingInterrupts @ 00210550 (11 bytes)
 
-undefined4 FUN_00210550(int param_1)
+/* fsl_i3c.h inline: MINTMASKED (+0x98) [fact for the code] */
+
+undefined4 I3C_MasterGetPendingInterrupts(int param_1)
 
 {
   memw();
@@ -254,9 +270,11 @@ undefined4 FUN_00210550(int param_1)
 }
 
 
-// ===== FUN_0021055c @ 0021055c (10 bytes)
+// ===== I3C_SlaveGetErrorStatusFlags @ 0021055c (10 bytes)
 
-undefined4 FUN_0021055c(int param_1)
+/* fsl_i3c.h inline: SERRWARN (+0x1C) [fact for the code] */
+
+undefined4 I3C_SlaveGetErrorStatusFlags(int param_1)
 
 {
   memw();
@@ -264,9 +282,11 @@ undefined4 FUN_0021055c(int param_1)
 }
 
 
-// ===== FUN_00210568 @ 00210568 (10 bytes)
+// ===== I3C_SlaveClearErrorStatusFlags @ 00210568 (10 bytes)
 
-void FUN_00210568(int param_1,undefined4 param_2)
+/* fsl_i3c.h inline: SERRWARN write [fact for the code] */
+
+void I3C_SlaveClearErrorStatusFlags(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -275,9 +295,11 @@ void FUN_00210568(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00210574 @ 00210574 (18 bytes)
+// ===== I3C_SlaveEnableInterrupts @ 00210574 (18 bytes)
 
-void FUN_00210574(int param_1,uint param_2)
+/* fsl_i3c.h inline: SINTSET (+0x10) |= mask [fact for the code] */
+
+void I3C_SlaveEnableInterrupts(int param_1,uint param_2)
 
 {
   memw();
@@ -287,9 +309,11 @@ void FUN_00210574(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210588 @ 00210588 (10 bytes)
+// ===== I3C_SlaveDisableInterrupts @ 00210588 (10 bytes)
 
-void FUN_00210588(int param_1,undefined4 param_2)
+/* fsl_i3c.h inline: SINTCLR (+0x14) [fact for the code] */
+
+void I3C_SlaveDisableInterrupts(int param_1,undefined4 param_2)
 
 {
   memw();
@@ -298,9 +322,11 @@ void FUN_00210588(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_00210594 @ 00210594 (10 bytes)
+// ===== I3C_SlaveGetEnabledInterrupts @ 00210594 (10 bytes)
 
-undefined4 FUN_00210594(int param_1)
+/* fsl_i3c.h inline: SINTSET [fact for the code] */
+
+undefined4 I3C_SlaveGetEnabledInterrupts(int param_1)
 
 {
   memw();
@@ -308,9 +334,11 @@ undefined4 FUN_00210594(int param_1)
 }
 
 
-// ===== FUN_002105a0 @ 002105a0 (10 bytes)
+// ===== I3C_SlaveGetPendingInterrupts @ 002105a0 (10 bytes)
 
-undefined4 FUN_002105a0(int param_1)
+/* fsl_i3c.h inline: SINTMASKED (+0x18) [fact for the code] */
+
+undefined4 I3C_SlaveGetPendingInterrupts(int param_1)
 
 {
   memw();
@@ -318,18 +346,22 @@ undefined4 FUN_002105a0(int param_1)
 }
 
 
-// ===== FUN_002105ac @ 002105ac (19 bytes)
+// ===== I3C_GetInstance @ 002105ac (19 bytes)
 
-bool FUN_002105ac(undefined4 *param_1)
+/* fsl_i3c.c: I3C 0x40036000 [inference] */
+
+bool I3C_GetInstance(undefined4 *param_1)
 
 {
   return param_1 != &I3C_MCONFIG;
 }
 
 
-// ===== FUN_002105c0 @ 002105c0 (141 bytes)
+// ===== I3C_MasterCheckAndClearError @ 002105c0 (141 bytes)
 
-undefined * FUN_002105c0(int param_1,uint param_2)
+/* fsl_i3c.c: kStatus_I3C_* 0x1EDE.. [inference] */
+
+undefined * I3C_MasterCheckAndClearError(int param_1,uint param_2)
 
 {
   undefined *puVar1;
@@ -386,7 +418,7 @@ undefined * FUN_002105c0(int param_1,uint param_2)
   else {
     puVar1 = &DAT_00001ee7;
   }
-  FUN_002104fc(param_1,param_2 & (uint)&DAT_001f061c);
+  I3C_MasterClearErrorStatusFlags(param_1,param_2 & (uint)&DAT_001f061c);
   memw();
   memw();
   *(uint *)(param_1 + 0xac) = *(uint *)(param_1 + 0xac) | 3;
@@ -394,9 +426,11 @@ undefined * FUN_002105c0(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210650 @ 00210650 (83 bytes)
+// ===== I3C_MasterWaitForCtrlDone @ 00210650 (83 bytes)
 
-int FUN_00210650(int param_1,uint param_2)
+/* fsl_i3c.c static [inference] */
+
+int I3C_MasterWaitForCtrlDone(int param_1,uint param_2)
 
 {
   undefined4 uVar1;
@@ -409,8 +443,8 @@ int FUN_00210650(int param_1,uint param_2)
   do {
     memw();
     uVar3 = *(uint *)(param_1 + 0xac);
-    uVar1 = FUN_002104f0(param_1);
-    iVar2 = FUN_002105c0(param_1,uVar1);
+    uVar1 = I3C_MasterGetErrorStatusFlags(param_1);
+    iVar2 = I3C_MasterCheckAndClearError(param_1,uVar1);
     if (iVar2 != 0) {
       return iVar2;
     }
@@ -420,9 +454,11 @@ int FUN_00210650(int param_1,uint param_2)
 }
 
 
-// ===== FUN_002106a4 @ 002106a4 (72 bytes)
+// ===== I3C_MasterWaitForTxReady @ 002106a4 (72 bytes)
 
-int FUN_002106a4(int param_1,int param_2)
+/* fsl_i3c.c static [inference] */
+
+int I3C_MasterWaitForTxReady(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -433,25 +469,27 @@ int FUN_002106a4(int param_1,int param_2)
   do {
     memw();
     uVar4 = *(uint *)(param_1 + 0x88);
-    uVar1 = FUN_002104f0(param_1);
-    iVar2 = FUN_002105c0(param_1,uVar1);
+    uVar1 = I3C_MasterGetErrorStatusFlags(param_1);
+    iVar2 = I3C_MasterCheckAndClearError(param_1,uVar1);
     if ((uVar4 >> 10 & 1) != 0) break;
   } while (iVar2 == 0);
   memw();
   *(undefined4 *)(param_1 + 0x88) = 0x400;
   if (param_2 != 0) {
-    iVar3 = FUN_00210c20(param_1);
+    iVar3 = I3C_MasterGetState(param_1);
     while (iVar3 != 0) {
-      iVar3 = FUN_00210c20(param_1);
+      iVar3 = I3C_MasterGetState(param_1);
     }
   }
   return iVar2;
 }
 
 
-// ===== FUN_002106ec @ 002106ec (149 bytes)
+// ===== I3C_SlaveCheckAndClearError @ 002106ec (149 bytes)
 
-undefined * FUN_002106ec(int param_1,uint param_2)
+/* fsl_i3c.c static: slave status codes 0x1EEA.. [inference] */
+
+undefined * I3C_SlaveCheckAndClearError(int param_1,uint param_2)
 
 {
   undefined *puVar1;
@@ -513,7 +551,7 @@ undefined * FUN_002106ec(int param_1,uint param_2)
   else {
     puVar1 = &DAT_00001eea;
   }
-  FUN_00210568(param_1);
+  I3C_SlaveClearErrorStatusFlags(param_1);
   memw();
   memw();
   *(uint *)(param_1 + 0x2c) = *(uint *)(param_1 + 0x2c) | 3;
@@ -521,9 +559,11 @@ undefined * FUN_002106ec(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210784 @ 00210784 (104 bytes)
+// ===== I3C_MasterEmitStop @ 00210784 (104 bytes)
 
-undefined * FUN_00210784(int param_1,int param_2)
+/* fsl_i3c.c static [inference] */
+
+undefined * I3C_MasterEmitStop(int param_1,int param_2)
 
 {
   int iVar1;
@@ -531,7 +571,7 @@ undefined * FUN_00210784(int param_1,int param_2)
   undefined *puVar3;
   uint uVar4;
   
-  iVar1 = FUN_00210c20(param_1);
+  iVar1 = I3C_MasterGetState(param_1);
   if (iVar1 != 3) {
     return &DAT_00001ee6;
   }
@@ -541,8 +581,8 @@ undefined * FUN_00210784(int param_1,int param_2)
   do {
     memw();
     uVar4 = *(uint *)(param_1 + 0x88);
-    uVar2 = FUN_002104f0(param_1);
-    puVar3 = (undefined *)FUN_002105c0(param_1,uVar2);
+    uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+    puVar3 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
     if ((uVar4 >> 9 & 1) == 0) {
       if (param_2 != 0) goto LAB_002107de;
     }
@@ -553,7 +593,7 @@ undefined * FUN_00210784(int param_1,int param_2)
         return puVar3;
       }
 LAB_002107de:
-      iVar1 = FUN_00210c20(param_1);
+      iVar1 = I3C_MasterGetState(param_1);
       if (iVar1 == 0) {
         return puVar3;
       }
@@ -565,9 +605,11 @@ LAB_002107de:
 }
 
 
-// ===== FUN_002107ec @ 002107ec (39 bytes)
+// ===== I3C_GetIBIType @ 002107ec (39 bytes)
 
-undefined4 FUN_002107ec(int param_1)
+/* fsl_i3c.c static: table 0x20020C [inference] */
+
+undefined4 I3C_GetIBIType(int param_1)
 
 {
   uint uVar1;
@@ -581,9 +623,11 @@ undefined4 FUN_002107ec(int param_1)
 }
 
 
-// ===== FUN_00210814 @ 00210814 (32 bytes)
+// ===== I3C_CheckForBusyBus @ 00210814 (32 bytes)
 
-undefined * FUN_00210814(int param_1)
+/* fsl_i3c.c: kStatus_I3C_Busy 0x1EDC [inference] */
+
+undefined * I3C_CheckForBusyBus(int param_1)
 
 {
   undefined *puVar1;
@@ -602,9 +646,11 @@ undefined * FUN_00210814(int param_1)
 }
 
 
-// ===== FUN_00210834 @ 00210834 (101 bytes)
+// ===== I3C_GetDefaultConfig @ 00210834 (101 bytes)
 
-void FUN_00210834(undefined4 *param_1)
+/* fsl_i3c.c: 400 kHz / 1 / 2.5 / 12.5 MHz defaults [fact for the constants] */
+
+void I3C_GetDefaultConfig(undefined4 *param_1)
 
 {
   memset(param_1,0,0x40);
@@ -633,9 +679,11 @@ void FUN_00210834(undefined4 *param_1)
 }
 
 
-// ===== FUN_0021089c @ 0021089c (587 bytes)
+// ===== I3C_Init @ 0021089c (587 bytes)
 
-void FUN_0021089c(uint *param_1,uint *param_2,undefined4 param_3)
+/* fsl_i3c.c order [inference] */
+
+void I3C_Init(uint *param_1,uint *param_2,undefined4 param_3)
 
 {
   byte bVar1;
@@ -650,7 +698,7 @@ void FUN_0021089c(uint *param_1,uint *param_2,undefined4 param_3)
   uint uVar10;
   uint uVar11;
   
-  iVar8 = FUN_002105ac(param_1);
+  iVar8 = I3C_GetInstance(param_1);
   uVar9 = *(uint *)(&DAT_00200404 + iVar8 * 4);
   uVar10 = uVar9 >> 8 & 0xff;
   if (uVar10 == 0) {
@@ -677,7 +725,7 @@ void FUN_0021089c(uint *param_1,uint *param_2,undefined4 param_3)
     memw();
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
-  FUN_00213910(*(undefined4 *)(&DAT_00200408 + iVar8 * 4));
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar8 * 4));
   uVar9 = param_2[7];
   uVar10 = *param_2;
   if (((byte)uVar9 != 0) && (uVar10 == 1)) {
@@ -693,7 +741,7 @@ void FUN_0021089c(uint *param_1,uint *param_2,undefined4 param_3)
              (param_2[2] & 3) << 4 | uVar10 & 3 | ((byte)param_2[1] & 1) << 3;
   memw();
   param_1[0x2b] = 0x37;
-  FUN_00210d58(param_1,param_2 + 4,param_3);
+  I3C_MasterSetBaudRate(param_1,param_2 + 4,param_3);
   memw();
   bVar5 = *(byte *)((int)param_2 + 0x3b);
   bVar1 = *(byte *)((int)param_2 + 0x3a);
@@ -731,9 +779,11 @@ void FUN_0021089c(uint *param_1,uint *param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_00210ae8 @ 00210ae8 (40 bytes)
+// ===== I3C_MasterGetDefaultConfig @ 00210ae8 (40 bytes)
 
-void FUN_00210ae8(undefined4 *param_1)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterGetDefaultConfig(undefined4 *param_1)
 
 {
   param_1[6] = &DAT_002625a0;
@@ -748,16 +798,18 @@ void FUN_00210ae8(undefined4 *param_1)
 }
 
 
-// ===== FUN_00210b10 @ 00210b10 (271 bytes)
+// ===== I3C_MasterInit @ 00210b10 (271 bytes)
 
-void FUN_00210b10(uint *param_1,uint *param_2,undefined4 param_3)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterInit(uint *param_1,uint *param_2,undefined4 param_3)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   
-  iVar1 = FUN_002105ac(param_1);
+  iVar1 = I3C_GetInstance(param_1);
   uVar2 = *(uint *)(&DAT_00200404 + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
@@ -784,20 +836,22 @@ void FUN_00210b10(uint *param_1,uint *param_2,undefined4 param_3)
     memw();
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  FUN_00213910(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   memw();
   *param_1 = ((byte)param_2[3] & 1) << 6 | (*(byte *)((int)param_2 + 0xd) & 1) << 0x18 |
              (param_2[2] & 3) << 4 | *param_2 & 3 | ((byte)param_2[1] & 1) << 3;
   memw();
   param_1[0x2b] = 0x37;
-  FUN_00210d58(param_1,param_2 + 4,param_3);
+  I3C_MasterSetBaudRate(param_1,param_2 + 4,param_3);
   return;
 }
 
 
-// ===== FUN_00210c20 @ 00210c20 (22 bytes)
+// ===== I3C_MasterGetState @ 00210c20 (22 bytes)
 
-undefined4 FUN_00210c20(int param_1)
+/* fsl_i3c.c: state table 0x200420 [inference] */
+
+undefined4 I3C_MasterGetState(int param_1)
 
 {
   memw();
@@ -805,17 +859,19 @@ undefined4 FUN_00210c20(int param_1)
 }
 
 
-// ===== FUN_00210c38 @ 00210c38 (248 bytes)
+// ===== I3C_MasterDeinit @ 00210c38 (248 bytes)
 
-void FUN_00210c38(undefined4 param_1)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterDeinit(undefined4 param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   
-  iVar1 = FUN_002105ac(param_1);
-  FUN_00213910(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
+  iVar1 = I3C_GetInstance(param_1);
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   uVar2 = *(uint *)(&DAT_00200404 + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
@@ -859,9 +915,11 @@ void FUN_00210c38(undefined4 param_1)
 }
 
 
-// ===== FUN_00210d30 @ 00210d30 (39 bytes)
+// ===== I3C_CalcErrorRatio @ 00210d30 (39 bytes)
 
-uint FUN_00210d30(uint param_1,uint param_2)
+/* fsl_i3c.c static; called by I3C_MasterSetBaudRate [inference] */
+
+uint I3C_CalcErrorRatio(uint param_1,uint param_2)
 
 {
   if (param_2 < param_1) {
@@ -871,9 +929,11 @@ uint FUN_00210d30(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_00210d58 @ 00210d58 (223 bytes)
+// ===== I3C_MasterSetBaudRate @ 00210d58 (223 bytes)
 
-void FUN_00210d58(uint *param_1,uint *param_2,uint param_3)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterSetBaudRate(uint *param_1,uint *param_2,uint param_3)
 
 {
   uint uVar1;
@@ -911,9 +971,9 @@ void FUN_00210d58(uint *param_1,uint *param_2,uint param_3)
   if (param_3 / uVar6 != 0) {
     uVar3 = param_3 / uVar6;
   }
-  uVar4 = FUN_00210d30(param_3 / uVar3,uVar6);
+  uVar4 = I3C_CalcErrorRatio(param_3 / uVar3,uVar6);
   iVar7 = uVar3 * 2;
-  uVar1 = FUN_00210d30((param_3 << 1) / (iVar7 + 1U),uVar6);
+  uVar1 = I3C_CalcErrorRatio((param_3 << 1) / (iVar7 + 1U),uVar6);
   if ((uVar4 < 10) || (uVar1 < 10)) {
     iVar8 = iVar7 + -2;
     if (uVar1 <= uVar4) {
@@ -934,27 +994,31 @@ void FUN_00210d58(uint *param_1,uint *param_2,uint param_3)
 }
 
 
-// ===== FUN_00210e38 @ 00210e38 (63 bytes)
+// ===== I3C_MasterStart @ 00210e38 (63 bytes)
+
+/* fsl_i3c.c: GetState, then I3C_MasterRepeatedStart [inference] */
 
 undefined *
-FUN_00210e38(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+I3C_MasterStart(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
   undefined *puVar2;
   
-  iVar1 = FUN_00210c20(param_1);
+  iVar1 = I3C_MasterGetState(param_1);
   if ((iVar1 != 0) && (iVar1 != 3)) {
     return &DAT_00001edc;
   }
-  puVar2 = (undefined *)FUN_00210e7c(param_1,param_2,param_3,param_4);
+  puVar2 = (undefined *)I3C_MasterRepeatedStart(param_1,param_2,param_3,param_4);
   return puVar2;
 }
 
 
-// ===== FUN_00210e7c @ 00210e7c (77 bytes)
+// ===== I3C_MasterRepeatedStart @ 00210e7c (77 bytes)
 
-undefined4 FUN_00210e7c(int param_1,uint param_2,uint param_3,uint param_4)
+/* fsl_i3c.c order [inference] */
+
+undefined4 I3C_MasterRepeatedStart(int param_1,uint param_2,uint param_3,uint param_4)
 
 {
   memw();
@@ -968,9 +1032,11 @@ undefined4 FUN_00210e7c(int param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_00210ecc @ 00210ecc (96 bytes)
+// ===== I3C_MasterStop @ 00210ecc (96 bytes)
 
-undefined * FUN_00210ecc(int param_1)
+/* fsl_i3c.c order [inference] */
+
+undefined * I3C_MasterStop(int param_1)
 
 {
   int iVar1;
@@ -978,7 +1044,7 @@ undefined * FUN_00210ecc(int param_1)
   undefined *puVar3;
   uint uVar4;
   
-  iVar1 = FUN_00210c20(param_1);
+  iVar1 = I3C_MasterGetState(param_1);
   if (iVar1 != 3) {
     return &DAT_00001ee6;
   }
@@ -988,21 +1054,23 @@ undefined * FUN_00210ecc(int param_1)
   do {
     memw();
     uVar4 = *(uint *)(param_1 + 0x88);
-    uVar2 = FUN_002104f0(param_1);
-    puVar3 = (undefined *)FUN_002105c0(param_1,uVar2);
+    uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+    puVar3 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
     if ((uVar4 >> 9 & 1) != 0) {
       memw();
       *(undefined4 *)(param_1 + 0x88) = 0x200;
     }
-    iVar1 = FUN_00210c20(param_1);
+    iVar1 = I3C_MasterGetState(param_1);
   } while ((iVar1 != 0) && (puVar3 == (undefined *)0x0));
   return puVar3;
 }
 
 
-// ===== FUN_00210f34 @ 00210f34 (28 bytes)
+// ===== I3C_MasterEmitRequest @ 00210f34 (28 bytes)
 
-void FUN_00210f34(int param_1,uint param_2)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterEmitRequest(int param_1,uint param_2)
 
 {
   memw();
@@ -1012,9 +1080,11 @@ void FUN_00210f34(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00210f50 @ 00210f50 (83 bytes)
+// ===== I3C_MasterRegisterIBI @ 00210f50 (83 bytes)
 
-byte * FUN_00210f50(int param_1,byte *param_2)
+/* fsl_i3c.c order [inference] */
+
+byte * I3C_MasterRegisterIBI(int param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1029,11 +1099,12 @@ byte * FUN_00210f50(int param_1,byte *param_2)
 }
 
 
-// ===== FUN_00210fa4 @ 00210fa4 (310 bytes)
+// ===== I3C_MasterReceive @ 00210fa4 (310 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00211096) */
+/* fsl_i3c.c order [inference] */
 
-undefined * FUN_00210fa4(int param_1,undefined1 *param_2,int param_3,uint param_4)
+undefined * I3C_MasterReceive(int param_1,undefined1 *param_2,int param_3,uint param_4)
 
 {
   bool bVar1;
@@ -1053,8 +1124,8 @@ undefined * FUN_00210fa4(int param_1,undefined1 *param_2,int param_3,uint param_
   bVar1 = false;
 LAB_00210ffb:
   do {
-    uVar2 = FUN_002104f0(param_1);
-    puVar3 = (undefined *)FUN_002105c0(param_1,uVar2);
+    uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+    puVar3 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
     if (puVar3 != (undefined *)0x0) {
       return puVar3;
     }
@@ -1062,12 +1133,12 @@ LAB_00210ffb:
       memw();
       *(undefined4 *)(param_1 + 0x88) = 0x400;
       if ((param_4 & 4) == 0) {
-        iVar4 = FUN_00210c20(param_1);
+        iVar4 = I3C_MasterGetState(param_1);
         if (iVar4 == 4) {
-          FUN_00210f34(param_1,6);
+          I3C_MasterEmitRequest(param_1,6);
         }
         else {
-          iVar4 = FUN_00210c20(param_1);
+          iVar4 = I3C_MasterGetState(param_1);
           if (iVar4 == 3) {
             memw();
             memw();
@@ -1075,8 +1146,8 @@ LAB_00210ffb:
             do {
               memw();
               uVar5 = *(uint *)(param_1 + 0x88);
-              uVar2 = FUN_002104f0(param_1);
-              puVar3 = (undefined *)FUN_002105c0(param_1,uVar2);
+              uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+              puVar3 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
               if ((uVar5 & 0x200) != 0) {
                 memw();
                 *(undefined4 *)(param_1 + 0x88) = 0x200;
@@ -1111,9 +1182,9 @@ LAB_00210ffb:
     }
     if (bVar1) {
       if ((param_4 & 4) == 0) {
-        iVar4 = FUN_00210c20(param_1);
+        iVar4 = I3C_MasterGetState(param_1);
         while (iVar4 != 0) {
-          iVar4 = FUN_00210c20(param_1);
+          iVar4 = I3C_MasterGetState(param_1);
         }
       }
       return (undefined *)0x0;
@@ -1122,9 +1193,11 @@ LAB_00210ffb:
 }
 
 
-// ===== FUN_002110e4 @ 002110e4 (283 bytes)
+// ===== I3C_MasterSend @ 002110e4 (283 bytes)
 
-int FUN_002110e4(int param_1,byte *param_2,uint param_3,uint param_4)
+/* fsl_i3c.c order [inference] */
+
+int I3C_MasterSend(int param_1,byte *param_2,uint param_3,uint param_4)
 
 {
   byte bVar1;
@@ -1139,8 +1212,8 @@ int FUN_002110e4(int param_1,byte *param_2,uint param_3,uint param_4)
     do {
       memw();
       uVar4 = *(uint *)(param_1 + 0xac);
-      uVar2 = FUN_002104f0(param_1);
-      iVar3 = FUN_002105c0(param_1,uVar2);
+      uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+      iVar3 = I3C_MasterCheckAndClearError(param_1,uVar2);
       if (iVar3 != 0) {
         return iVar3;
       }
@@ -1167,23 +1240,25 @@ int FUN_002110e4(int param_1,byte *param_2,uint param_3,uint param_4)
     }
     param_2 = param_2 + 2;
   }
-  iVar3 = FUN_002106a4(param_1,0);
+  iVar3 = I3C_MasterWaitForTxReady(param_1,0);
   if ((iVar3 == 0) && ((param_4 & 4) == 0)) {
-    iVar3 = FUN_00210c20(param_1);
+    iVar3 = I3C_MasterGetState(param_1);
     if (iVar3 == 4) {
-      FUN_00210f34(param_1,6);
+      I3C_MasterEmitRequest(param_1,6);
       return 0;
     }
-    iVar3 = FUN_00210784(param_1,1);
+    iVar3 = I3C_MasterEmitStop(param_1,1);
     return iVar3;
   }
   return iVar3;
 }
 
 
-// ===== FUN_00211204 @ 00211204 (404 bytes)
+// ===== I3C_MasterProcessDAA @ 00211204 (404 bytes)
 
-undefined * FUN_00211204(int param_1,byte *param_2,int param_3)
+/* fsl_i3c.c order [inference] */
+
+undefined * I3C_MasterProcessDAA(int param_1,byte *param_2,int param_3)
 
 {
   byte bVar1;
@@ -1209,17 +1284,17 @@ undefined * FUN_00211204(int param_1,byte *param_2,int param_3)
   local_3c = 0xff;
   uStack_3b = 0xff;
   uStack_40 = 0xffffffff;
-  puVar2 = (undefined *)FUN_00210814(param_1);
+  puVar2 = (undefined *)I3C_CheckForBusyBus(param_1);
   if (puVar2 != (undefined *)0x0) {
     return puVar2;
   }
-  FUN_002104fc(param_1,&DAT_001f061c);
+  I3C_MasterClearErrorStatusFlags(param_1,&DAT_001f061c);
   memw();
   *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-  uVar3 = FUN_00210544(param_1);
-  FUN_00210538(param_1,uVar3);
+  uVar3 = I3C_MasterGetEnabledInterrupts(param_1);
+  I3C_MasterDisableInterrupts(param_1,uVar3);
   uStack_34 = uVar3;
-  FUN_00210f34(param_1,4);
+  I3C_MasterEmitRequest(param_1,4);
   uStack_30 = param_3 - 1;
   pbStack_2c = &DAT_00238e40;
   uStack_28 = 0;
@@ -1231,8 +1306,8 @@ undefined * FUN_00211204(int param_1,byte *param_2,int param_3)
       memw();
       uVar6 = (*(uint *)(param_1 + 0xac) & 0x1f000000) >> 0x18;
       uStack_38 = uVar6;
-      uVar3 = FUN_002104f0(param_1);
-      puVar2 = (undefined *)FUN_002105c0(param_1,uVar3);
+      uVar3 = I3C_MasterGetErrorStatusFlags(param_1);
+      puVar2 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar3);
       if (puVar2 != (undefined *)0x0) {
         return puVar2;
       }
@@ -1244,7 +1319,7 @@ undefined * FUN_00211204(int param_1,byte *param_2,int param_3)
     } while ((uVar5 & 0x200) == 0);
     memw();
     *(undefined4 *)(param_1 + 0x88) = 0x200;
-    iVar4 = FUN_00210c20(param_1);
+    iVar4 = I3C_MasterGetState(param_1);
     if ((iVar4 == 5) && (memw(), (*(uint *)(param_1 + 0x88) & 0x10) != 0)) {
       if ((uStack_30 < uStack_28) || (uVar6 = uStack_28 + 1, 10 < uVar6)) {
         return &DAT_00001ee8;
@@ -1260,25 +1335,27 @@ undefined * FUN_00211204(int param_1,byte *param_2,int param_3)
       memw();
       param_2 = param_2 + 1;
       *(uint *)(param_1 + 0xb0) = (uint)bVar1;
-      FUN_00210f34(param_1,4);
+      I3C_MasterEmitRequest(param_1,4);
       uStack_24 = 0;
       pbStack_2c = pbStack_2c + 0x14;
       uStack_28 = uVar6;
     }
     if ((uVar5 & 0x400) != 0) {
-      FUN_002104fc(param_1,&DAT_001f061c);
+      I3C_MasterClearErrorStatusFlags(param_1,&DAT_001f061c);
       memw();
       *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-      FUN_00210524(param_1,uStack_34);
+      I3C_MasterEnableInterrupts(param_1,uStack_34);
       return (undefined *)0x0;
     }
   } while( true );
 }
 
 
-// ===== FUN_0021139c @ 0021139c (493 bytes)
+// ===== I3C_MasterTransferBlocking @ 0021139c (493 bytes)
 
-undefined * FUN_0021139c(int param_1,uint *param_2)
+/* fsl_i3c.c order [inference] */
+
+undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
 
 {
   int iVar1;
@@ -1288,7 +1365,7 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
   uint uVar5;
   
   uVar5 = param_2[2];
-  iVar1 = FUN_00210c20(param_1);
+  iVar1 = I3C_MasterGetState(param_1);
   if ((iVar1 != 0) && (iVar1 != 3)) {
     return &DAT_00001edc;
   }
@@ -1297,7 +1374,7 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
   memw();
   memw();
   *(uint *)(param_1 + 0xac) = *(uint *)(param_1 + 0xac) | 3;
-  FUN_00210538(param_1,&DAT_0008af00);
+  I3C_MasterDisableInterrupts(param_1,&DAT_0008af00);
   if (param_2[7] != 2) {
     if (param_2[4] == 0) {
       uVar5 = param_2[2];
@@ -1307,7 +1384,7 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
     }
   }
   if ((*param_2 & 1) == 0) {
-    puVar3 = (undefined *)FUN_00210e38(param_1,param_2[7],(char)param_2[1],uVar5);
+    puVar3 = (undefined *)I3C_MasterStart(param_1,param_2[7],(char)param_2[1],uVar5);
     do {
       memw();
     } while ((*(uint *)(param_1 + 0xac) & (uint)&DAT_001f0000) != 0);
@@ -1315,7 +1392,7 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
     if ((*(uint *)(param_1 + 0x88) >> 0xd & 1) != 0) {
       memw();
       *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-      FUN_00210524(param_1,&DAT_0008af00);
+      I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
       return &DAT_00001ee9;
     }
   }
@@ -1331,19 +1408,19 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
       uVar5 = iVar1 * 8;
       do {
         uVar4 = param_2[3] >> (uVar5 & 0x1f) & 0xff;
-        puVar3 = (undefined *)FUN_00210650(param_1,1);
+        puVar3 = (undefined *)I3C_MasterWaitForCtrlDone(param_1,1);
         if ((uVar5 == 0) && (((param_2[2] == 1 || (param_2[6] == 0)) && (param_2[7] != 2)))) {
           memw();
           *(uint *)(param_1 + 0xb4) = uVar4;
-          puVar2 = (undefined *)FUN_002106a4(param_1,0);
+          puVar2 = (undefined *)I3C_MasterWaitForTxReady(param_1,0);
           puVar3 = (undefined *)0x0;
           if (puVar2 != (undefined *)0x0) {
             if (puVar2 == &DAT_00001ede) {
-              FUN_00210784(param_1,1);
+              I3C_MasterEmitStop(param_1,1);
             }
             memw();
             *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-            FUN_00210524(param_1,&DAT_0008af00);
+            I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
             return puVar2;
           }
         }
@@ -1357,12 +1434,12 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
     if (param_2[7] != 2) {
       uVar5 = param_2[2];
       if ((param_2[6] == 0) || (uVar5 != 1)) goto joined_r0x002114a4;
-      puVar2 = (undefined *)FUN_00210e7c(param_1,param_2[7],(char)param_2[1],1);
+      puVar2 = (undefined *)I3C_MasterRepeatedStart(param_1,param_2[7],(char)param_2[1],1);
       puVar3 = (undefined *)0x0;
       if (puVar2 != (undefined *)0x0) {
         memw();
         *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-        FUN_00210524(param_1,&DAT_0008af00);
+        I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
         return puVar2;
       }
     }
@@ -1370,63 +1447,66 @@ undefined * FUN_0021139c(int param_1,uint *param_2)
   }
 joined_r0x002114a4:
   if ((uVar5 == 0) && (param_2[6] != 0)) {
-    puVar3 = (undefined *)FUN_002110e4(param_1,param_2[5],param_2[6],*param_2);
+    puVar3 = (undefined *)I3C_MasterSend(param_1,param_2[5],param_2[6],*param_2);
   }
   else if ((uVar5 == 1) && (param_2[6] != 0)) {
-    puVar3 = (undefined *)FUN_00210fa4(param_1,param_2[5],param_2[6],*param_2);
+    puVar3 = (undefined *)I3C_MasterReceive(param_1,param_2[5],param_2[6],*param_2);
   }
   else if ((*param_2 & 4) == 0) {
-    puVar3 = (undefined *)FUN_00210784(param_1,1);
+    puVar3 = (undefined *)I3C_MasterEmitStop(param_1,1);
   }
   memw();
   *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
-  FUN_00210524(param_1,&DAT_0008af00);
+  I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
   return puVar3;
 }
 
 
-// ===== FUN_00211590 @ 00211590 (103 bytes)
+// ===== I3C_MasterTransferCreateHandle @ 00211590 (103 bytes)
 
-void FUN_00211590(int param_1,int param_2,undefined4 *param_3,undefined4 param_4)
+/* fsl_i3c.c: handler 0x2117DC [inference] */
+
+void I3C_MasterTransferCreateHandle(int param_1,int param_2,undefined4 *param_3,undefined4 param_4)
 
 {
   int iVar1;
   
   memset(param_2,0,0x4c);
-  iVar1 = FUN_002105ac(param_1);
+  iVar1 = I3C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x48) = param_4;
   *(undefined4 *)(param_2 + 0x44) = param_3[2];
   *(undefined4 *)(param_2 + 0x40) = param_3[1];
   *(undefined4 *)(param_2 + 0x3c) = *param_3;
   (&DAT_00238e38)[iVar1] = param_2;
-  DAT_00238e30 = FUN_002117dc;
-  FUN_002104fc(param_1,&DAT_001f061c);
+  DAT_00238e30 = I3C_MasterTransferHandleIRQ;
+  I3C_MasterClearErrorStatusFlags(param_1,&DAT_001f061c);
   memw();
   *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
   memw();
   memw();
   *(uint *)(param_1 + 0xac) = *(uint *)(param_1 + 0xac) | 3;
-  FUN_00210524(param_1,&DAT_0008af00);
+  I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
   return;
 }
 
 
-// ===== FUN_002115f8 @ 002115f8 (325 bytes)
+// ===== I3C_MasterTransferNonBlocking @ 002115f8 (325 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002116da) */
+/* fsl_i3c.c order [inference] */
 
-undefined * FUN_002115f8(int param_1,char *param_2,int param_3)
+undefined * I3C_MasterTransferNonBlocking(int param_1,char *param_2,int param_3)
 
 {
   int iVar1;
   char cVar2;
   int iVar3;
   
-  iVar1 = FUN_00210c20(param_1);
+  iVar1 = I3C_MasterGetState(param_1);
   if ((*param_2 != '\0') || ((iVar1 != 0 && (iVar1 != 3)))) {
     return &DAT_00001edc;
   }
-  FUN_00210538(param_1,&DAT_0008af00);
+  I3C_MasterDisableInterrupts(param_1,&DAT_0008af00);
   memcpy(param_2 + 8,param_3,0x24);
   *(undefined4 *)(param_2 + 4) = *(undefined4 *)(param_3 + 0x18);
   memw();
@@ -1435,7 +1515,7 @@ undefined * FUN_002115f8(int param_1,char *param_2,int param_3)
   memw();
   memw();
   *(uint *)(param_1 + 0x84) = *(uint *)(param_1 + 0x84) | (*(uint *)(param_3 + 0x20) & 3) << 6;
-  FUN_002104fc(param_1,&DAT_001f061c);
+  I3C_MasterClearErrorStatusFlags(param_1,&DAT_001f061c);
   memw();
   *(undefined **)(param_1 + 0x88) = &DAT_0008a700;
   memw();
@@ -1448,10 +1528,10 @@ undefined * FUN_002115f8(int param_1,char *param_2,int param_3)
   }
   if ((*(uint *)(param_2 + 8) & 1) == 0) {
     if ((*(uint *)(param_2 + 8) & 2) == 0) {
-      FUN_00210e38(param_1,iVar3,param_2[0xc],iVar1);
+      I3C_MasterStart(param_1,iVar3,param_2[0xc],iVar1);
     }
     else {
-      FUN_00210e7c(param_1,iVar3,param_2[0xc],iVar1);
+      I3C_MasterRepeatedStart(param_1,iVar3,param_2[0xc],iVar1);
     }
     cVar2 = '\x06';
     if (*(int *)(param_2 + 0x18) != 0) {
@@ -1472,21 +1552,23 @@ undefined * FUN_002115f8(int param_1,char *param_2,int param_3)
     else {
       *param_2 = '\x04';
     }
-    FUN_002117dc(param_1,param_2);
+    I3C_MasterTransferHandleIRQ(param_1,param_2);
   }
 LAB_00211707:
-  FUN_00210524(param_1,&DAT_0008af00);
+  I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
   if (*(int *)(param_3 + 8) == 0) {
-    FUN_00210524(param_1,&DAT_00001000);
+    I3C_MasterEnableInterrupts(param_1,&DAT_00001000);
     return (undefined *)0x0;
   }
   return (undefined *)0x0;
 }
 
 
-// ===== FUN_00211748 @ 00211748 (95 bytes)
+// ===== I3C_MasterTransferGetCount @ 00211748 (95 bytes)
 
-undefined4 FUN_00211748(undefined4 param_1,char *param_2,int *param_3)
+/* fsl_i3c.c order [inference] */
+
+undefined4 I3C_MasterTransferGetCount(undefined4 param_1,char *param_2,int *param_3)
 
 {
   char cVar1;
@@ -1498,12 +1580,12 @@ undefined4 FUN_00211748(undefined4 param_1,char *param_2,int *param_3)
     return 4;
   }
   if (*param_2 != '\0') {
-    uVar2 = FUN_00210544(param_1);
-    FUN_00210538(param_1,uVar2);
+    uVar2 = I3C_MasterGetEnabledInterrupts(param_1);
+    I3C_MasterDisableInterrupts(param_1,uVar2);
     iVar3 = *(int *)(param_2 + 4);
     cVar1 = *param_2;
     iVar4 = *(int *)(param_2 + 0x20);
-    FUN_00210524(param_1,uVar2);
+    I3C_MasterEnableInterrupts(param_1,uVar2);
     if ((cVar1 != '\0') && (cVar1 != '\x04')) {
       if (cVar1 != '\x06') {
         *param_3 = iVar4;
@@ -1520,17 +1602,19 @@ undefined4 FUN_00211748(undefined4 param_1,char *param_2,int *param_3)
 }
 
 
-// ===== FUN_002117a8 @ 002117a8 (49 bytes)
+// ===== I3C_MasterTransferAbort @ 002117a8 (49 bytes)
 
-void FUN_002117a8(int param_1,char *param_2)
+/* fsl_i3c.c order [inference] */
+
+void I3C_MasterTransferAbort(int param_1,char *param_2)
 
 {
   if (*param_2 != '\0') {
-    FUN_00210538(param_1,&DAT_0008af00);
+    I3C_MasterDisableInterrupts(param_1,&DAT_0008af00);
     memw();
     memw();
     *(uint *)(param_1 + 0xac) = *(uint *)(param_1 + 0xac) | 3;
-    FUN_00210ecc(param_1);
+    I3C_MasterStop(param_1);
     *param_2 = '\0';
     return;
   }
@@ -1538,9 +1622,11 @@ void FUN_002117a8(int param_1,char *param_2)
 }
 
 
-// ===== FUN_002117dc @ 002117dc (1031 bytes)
+// ===== I3C_MasterTransferHandleIRQ @ 002117dc (1031 bytes)
 
-void FUN_002117dc(int param_1,char *param_2)
+/* fsl_i3c.c (state machine inlined) [inference] */
+
+void I3C_MasterTransferHandleIRQ(int param_1,char *param_2)
 
 {
   bool bVar1;
@@ -1566,12 +1652,12 @@ void FUN_002117dc(int param_1,char *param_2)
   uVar6 = *(uint *)(param_1 + 0x60);
   memw();
   uVar5 = *(uint *)(param_1 + 0x88);
-  uVar2 = FUN_00210550(param_1);
+  uVar2 = I3C_MasterGetPendingInterrupts(param_1);
   memw();
   *(undefined4 *)(param_1 + 0x88) = uVar2;
-  iVar3 = FUN_00210c20(param_1);
-  uVar2 = FUN_002104f0(param_1);
-  puVar4 = (undefined *)FUN_002105c0(param_1,uVar2);
+  iVar3 = I3C_MasterGetState(param_1);
+  uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
+  puVar4 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
   if (puVar4 == (undefined *)0x0) {
     if (((uVar5 & 0x80000) != 0) && (*(code **)(param_2 + 0x3c) != (code *)0x0)) {
       (**(code **)(param_2 + 0x3c))(param_1,*(undefined4 *)(param_2 + 0x48));
@@ -1599,14 +1685,14 @@ LAB_002118f2:
     do {
       while( true ) {
         if (cVar7 == '\x02') {
-          FUN_00210e38(param_1,0,0x7e,0);
+          I3C_MasterStart(param_1,0,0x7e,0);
           cVar7 = '\x03';
           *param_2 = '\x03';
           bVar1 = false;
           goto LAB_00211940;
         }
         if (cVar7 == '\x03') {
-          FUN_00210784(param_1,0);
+          I3C_MasterEmitStop(param_1,0);
           cVar7 = '\0';
           *param_2 = '\0';
           bVar1 = false;
@@ -1614,7 +1700,7 @@ LAB_002118f2:
         }
         if (cVar7 != '\x01') break;
         if (iVar3 == 6) {
-          uVar2 = FUN_002107ec(param_1);
+          uVar2 = I3C_GetIBIType(param_1);
           *(undefined4 *)(param_2 + 0x38) = uVar2;
           if (*(code **)(param_2 + 0x40) == (code *)0x0) {
             memw();
@@ -1627,7 +1713,7 @@ LAB_002118f2:
         }
         if (uVar6 == 0) {
           if (uVar10 != 0) {
-            uVar2 = FUN_002107ec(param_1);
+            uVar2 = I3C_GetIBIType(param_1);
             puVar4 = &DAT_00001ee9;
             *(undefined4 *)(param_2 + 0x38) = uVar2;
             param_2[0x2c] = (byte)(uVar5 >> 0x18) & 0x7f;
@@ -1653,7 +1739,7 @@ LAB_00211bc0:
         cVar7 = *param_2;
       }
       if (cVar7 == '\x04') {
-        FUN_00210524(param_1,&DAT_00001000);
+        I3C_MasterEnableInterrupts(param_1,&DAT_00001000);
         iStack_28 = iStack_28 + -1;
         if (iStack_28 == -1) goto LAB_00211bc0;
         uVar11 = *(uint *)(param_2 + 0x18);
@@ -1696,8 +1782,8 @@ LAB_00211bc0:
       if (cVar7 == '\x05') {
         if (uVar10 != 0) {
           *param_2 = '\x06';
-          puVar4 = (undefined *)FUN_00210e7c(param_1,*(undefined4 *)(param_2 + 0x24),param_2[0xc],1)
-          ;
+          puVar4 = (undefined *)
+                   I3C_MasterRepeatedStart(param_1,*(undefined4 *)(param_2 + 0x24),param_2[0xc],1);
           if (*(int *)(param_2 + 4) == 1) {
             memw();
             memw();
@@ -1757,10 +1843,10 @@ LAB_00211bc0:
     if ((*(uint *)(param_2 + 8) & 4) == 0) {
       if (iStack_28 != 0) {
         if (*(int *)(param_2 + 0x24) == 2) {
-          FUN_00210f34(param_1,6);
+          I3C_MasterEmitRequest(param_1,6);
         }
         else {
-          FUN_00210784(param_1,0);
+          I3C_MasterEmitStop(param_1,0);
         }
         cVar7 = *param_2;
         goto LAB_0021193e;
@@ -1786,9 +1872,9 @@ LAB_00211940:
   }
 LAB_00211839:
   if ((puVar4 == &DAT_00001ede) || (puVar4 == &DAT_00001ee9)) {
-    FUN_00210784(param_1,0);
+    I3C_MasterEmitStop(param_1,0);
   }
-  FUN_00210538(param_1,&DAT_00001000);
+  I3C_MasterDisableInterrupts(param_1,&DAT_00001000);
   *param_2 = '\0';
   if ((puVar4 == &DAT_00001ee9) && (*(code **)(param_2 + 0x40) != (code *)0x0)) {
     (**(code **)(param_2 + 0x40))(param_1,param_2,*(undefined4 *)(param_2 + 0x38),0);
@@ -1800,9 +1886,11 @@ LAB_00211839:
 }
 
 
-// ===== FUN_00211bec @ 00211bec (58 bytes)
+// ===== I3C_SlaveGetDefaultConfig @ 00211bec (58 bytes)
 
-void FUN_00211bec(undefined4 *param_1)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveGetDefaultConfig(undefined4 *param_1)
 
 {
   param_1[2] = 0;
@@ -1826,9 +1914,11 @@ void FUN_00211bec(undefined4 *param_1)
 }
 
 
-// ===== FUN_00211c28 @ 00211c28 (444 bytes)
+// ===== I3C_SlaveInit @ 00211c28 (444 bytes)
 
-void FUN_00211c28(int param_1,byte *param_2,uint param_3)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveInit(int param_1,byte *param_2,uint param_3)
 
 {
   byte bVar1;
@@ -1847,7 +1937,7 @@ void FUN_00211c28(int param_1,byte *param_2,uint param_3)
   
   memw();
   uVar12 = *(uint *)(param_1 + 4);
-  iVar10 = FUN_002105ac(param_1);
+  iVar10 = I3C_GetInstance(param_1);
   uVar11 = *(uint *)(&DAT_00200404 + iVar10 * 4);
   uVar13 = uVar11 >> 8 & 0xff;
   if (uVar13 == 0) {
@@ -1874,7 +1964,7 @@ void FUN_00211c28(int param_1,byte *param_2,uint param_3)
     memw();
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
-  FUN_00213910(*(undefined4 *)(&DAT_00200408 + iVar10 * 4));
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar10 * 4));
   bVar1 = param_2[0x12];
   bVar5 = param_2[1];
   bVar2 = param_2[0x10];
@@ -1913,17 +2003,19 @@ void FUN_00211c28(int param_1,byte *param_2,uint param_3)
 }
 
 
-// ===== FUN_00211de8 @ 00211de8 (248 bytes)
+// ===== I3C_SlaveDeinit @ 00211de8 (248 bytes)
 
-void FUN_00211de8(undefined4 param_1)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveDeinit(undefined4 param_1)
 
 {
   int iVar1;
   uint uVar2;
   uint uVar3;
   
-  iVar1 = FUN_002105ac(param_1);
-  FUN_00213910(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
+  iVar1 = I3C_GetInstance(param_1);
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   uVar2 = *(uint *)(&DAT_00200404 + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
@@ -1967,9 +2059,11 @@ void FUN_00211de8(undefined4 param_1)
 }
 
 
-// ===== FUN_00211ee0 @ 00211ee0 (36 bytes)
+// ===== I3C_SlaveGetActivityState @ 00211ee0 (36 bytes)
 
-undefined4 FUN_00211ee0(int param_1)
+/* fsl_i3c.c: table 0x200450 [inference] */
+
+undefined4 I3C_SlaveGetActivityState(int param_1)
 
 {
   uint uVar1;
@@ -1983,9 +2077,11 @@ undefined4 FUN_00211ee0(int param_1)
 }
 
 
-// ===== FUN_00211f04 @ 00211f04 (26 bytes)
+// ===== I3C_SlaveRequestEvent @ 00211f04 (26 bytes)
 
-void FUN_00211f04(int param_1,uint param_2)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveRequestEvent(int param_1,uint param_2)
 
 {
   memw();
@@ -1995,9 +2091,11 @@ void FUN_00211f04(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00211f20 @ 00211f20 (69 bytes)
+// ===== I3C_SlaveRequestIBIWithData @ 00211f20 (69 bytes)
 
-void FUN_00211f20(int param_1,int param_2,byte *param_3,uint param_4)
+/* fsl_i3c.c order [inference] */
+
+void I3C_SlaveRequestIBIWithData(int param_1,int param_2,byte *param_3,uint param_4)
 
 {
   uint uVar1;

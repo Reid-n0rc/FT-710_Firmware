@@ -2088,12 +2088,13 @@ What the netlist shows for certain:
     exactly MAIN's `r` and `w` frames with checksum (chapter 2), answers reads with the value and writes with ACK, and
     answers anything else with `?`. An empty line repeats the previous command.
   - **UART A is a debug console** (`UART_DBG` on the connector; identified by its behaviour). After reset it prints the prompt `[IF]>`. It echoes
-    each character and takes `r AAAA` and `w AAAA VVVV` (space or comma) with exactly four hex digits. Anything else
-    prints `Err`.
+    each character into a 15-character line buffer (BS erases) and, at Enter, matches the end of the line: `r AAAA`
+    reads, `w AAAA VVVV` writes, `E AAAA` and `D AAAA` list registers without end (one or eight per line), and `#`
+    followed by one character switches to a quiet mode without echo or prompt. Anything else prints `Err`.
 - **Register 0 = `0x0104`** (V01-04, read-only). MAIN reads it at start-up and reports it as the SDR version.
-- **The `x` command.** Both UARTs' character tables accept the letter `x`, but every form of `x` that was tried in
-  simulation fails (`?` on the link, `Err` on the console). It has no reachable function in this bitstream with the other
-  input pins at 0 *(inference: unused, or enabled by an input pin)*.
+- **The `x` command.** Both UARTs' character tables accept the letter `x`, but it is not a command: on the console
+  the logic that decides what a line means never looks for `x` (traced in the netlist, #204), and on the link every
+  `x` frame answers `?`.
 
 A short session on the debug console, as the simulation shows it (line breaks simplified):
 

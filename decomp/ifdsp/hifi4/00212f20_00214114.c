@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00212f20 @ 00212f20 (19 bytes)
+// ===== OTFAD_GetDefaultConfig @ 00212f20 (19 bytes)
 
-void FUN_00212f20(undefined1 *param_1)
+/* fsl_otfad.c: zeroes the 4 config bytes [inference] */
+
+void OTFAD_GetDefaultConfig(undefined1 *param_1)
 
 {
   *param_1 = 0;
@@ -13,9 +15,11 @@ void FUN_00212f20(undefined1 *param_1)
 }
 
 
-// ===== FUN_00212f34 @ 00212f34 (105 bytes)
+// ===== OTFAD_Init @ 00212f34 (105 bytes)
 
-void FUN_00212f34(int param_1,int param_2)
+/* fsl_otfad.c: waits FlexSPI STS0 idle, then CR (+0xC00) |= flags [inference] */
+
+void OTFAD_Init(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -35,9 +39,11 @@ void FUN_00212f34(int param_1,int param_2)
 }
 
 
-// ===== FUN_00212fa0 @ 00212fa0 (28 bytes)
+// ===== OTFAD_Deinit @ 00212fa0 (28 bytes)
 
-void FUN_00212fa0(int param_1)
+/* fsl_otfad.c: CR &= ~GE (bit 31) [inference] */
+
+void OTFAD_Deinit(int param_1)
 
 {
   memw();
@@ -47,9 +53,11 @@ void FUN_00212fa0(int param_1)
 }
 
 
-// ===== FUN_00212fbc @ 00212fbc (173 bytes)
+// ===== OTFAD_SetEncryptionConfig @ 00212fbc (173 bytes)
 
-undefined * FUN_00212fbc(int param_1,byte *param_2)
+/* fsl_otfad.c: kStatus_OTFAD_* 15000/15001 [inference] */
+
+undefined * OTFAD_SetEncryptionConfig(int param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -92,9 +100,11 @@ undefined * FUN_00212fbc(int param_1,byte *param_2)
 }
 
 
-// ===== FUN_0021306c @ 0021306c (143 bytes)
+// ===== OTFAD_GetEncryptionConfig @ 0021306c (143 bytes)
 
-undefined * FUN_0021306c(int param_1,int param_2)
+/* fsl_otfad.c order [inference] */
+
+undefined * OTFAD_GetEncryptionConfig(int param_1,int param_2)
 
 {
   int iVar1;
@@ -124,9 +134,11 @@ undefined * FUN_0021306c(int param_1,int param_2)
 }
 
 
-// ===== FUN_00213100 @ 00213100 (109 bytes)
+// ===== OTFAD_HitDetermination @ 00213100 (109 bytes)
 
-undefined8 FUN_00213100(int param_1,uint param_2,undefined1 *param_3)
+/* fsl_otfad.c order [inference] */
+
+undefined8 OTFAD_HitDetermination(int param_1,uint param_2,undefined1 *param_3)
 
 {
   bool bVar1;
@@ -148,9 +160,11 @@ undefined8 FUN_00213100(int param_1,uint param_2,undefined1 *param_3)
 }
 
 
-// ===== FUN_00213170 @ 00213170 (19 bytes)
+// ===== PINT_PinInterruptClrFallFlag @ 00213170 (19 bytes)
 
-void FUN_00213170(int param_1,uint param_2)
+/* fsl_pint.h inline: FALL (+0x20) = 1 << pin [fact for the code] */
+
+void PINT_PinInterruptClrFallFlag(int param_1,uint param_2)
 
 {
   memw();
@@ -159,9 +173,11 @@ void FUN_00213170(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00213184 @ 00213184 (19 bytes)
+// ===== PINT_PinInterruptClrRiseFlag @ 00213184 (19 bytes)
 
-void FUN_00213184(int param_1,uint param_2)
+/* fsl_pint.h inline: RISE (+0x1C) = 1 << pin [fact for the code] */
+
+void PINT_PinInterruptClrRiseFlag(int param_1,uint param_2)
 
 {
   memw();
@@ -170,9 +186,11 @@ void FUN_00213184(int param_1,uint param_2)
 }
 
 
-// ===== FUN_00213198 @ 00213198 (112 bytes)
+// ===== PINT_Init @ 00213198 (112 bytes)
 
-void FUN_00213198(undefined4 *param_1)
+/* fsl_pint.c: PINT 0x40025000, callback table 0x238F20 [inference] */
+
+void PINT_Init(undefined4 *param_1)
 
 {
   if (param_1 != &PINT_ISEL) {
@@ -190,23 +208,25 @@ void FUN_00213198(undefined4 *param_1)
   DAT_00238f3c = 0;
   memw();
   CLKCTL1_PSCCTL2_SET = &RSTCTL0_SYSRSTSTAT;
-  FUN_00213910(0x51e);
+  RESET_PeripheralReset(0x51e);
   memw();
   PINT_PMCFG = 0x3600;
   return;
 }
 
 
-// ===== FUN_0021320c @ 0021320c (124 bytes)
+// ===== PINT_PinInterruptConfig @ 0021320c (124 bytes)
 
-void FUN_0021320c(uint *param_1,uint param_2,uint param_3,undefined4 param_4)
+/* fsl_pint.c order [inference] */
+
+void PINT_PinInterruptConfig(uint *param_1,uint param_2,uint param_3,undefined4 param_4)
 
 {
   uint uVar1;
   uint uVar2;
   
-  FUN_00213184(param_1,param_2);
-  FUN_00213170(param_1,param_2);
+  PINT_PinInterruptClrRiseFlag(param_1,param_2);
+  PINT_PinInterruptClrFallFlag(param_1,param_2);
   uVar2 = 1 << 0x20 - (0x20 - (param_2 & 0x1f));
   if (param_1 == &PINT_ISEL) {
     (&DAT_00238f20)[param_2] = param_4;
@@ -237,9 +257,11 @@ void FUN_0021320c(uint *param_1,uint param_2,uint param_3,undefined4 param_4)
 }
 
 
-// ===== FUN_00213288 @ 00213288 (105 bytes)
+// ===== PINT_PinInterruptGetConfig @ 00213288 (105 bytes)
 
-void FUN_00213288(uint *param_1,uint param_2,int *param_3,undefined4 *param_4)
+/* fsl_pint.c order [inference] */
+
+void PINT_PinInterruptGetConfig(uint *param_1,uint param_2,int *param_3,undefined4 *param_4)
 
 {
   bool bVar1;
@@ -281,9 +303,11 @@ void FUN_00213288(uint *param_1,uint param_2,int *param_3,undefined4 *param_4)
 }
 
 
-// ===== FUN_002132f4 @ 002132f4 (136 bytes)
+// ===== PINT_PatternMatchConfig @ 002132f4 (136 bytes)
 
-void FUN_002132f4(undefined4 *param_1,uint param_2,int *param_3)
+/* fsl_pint.c order [inference] */
+
+void PINT_PatternMatchConfig(undefined4 *param_1,uint param_2,int *param_3)
 
 {
   int iVar1;
@@ -317,9 +341,11 @@ void FUN_002132f4(undefined4 *param_1,uint param_2,int *param_3)
 }
 
 
-// ===== FUN_0021337c @ 0021337c (120 bytes)
+// ===== PINT_PatternMatchGetConfig @ 0021337c (120 bytes)
 
-void FUN_0021337c(undefined4 *param_1,uint param_2,uint *param_3)
+/* fsl_pint.c order [inference] */
+
+void PINT_PatternMatchGetConfig(undefined4 *param_1,uint param_2,uint *param_3)
 
 {
   uint uVar1;
@@ -347,9 +373,11 @@ void FUN_0021337c(undefined4 *param_1,uint param_2,uint *param_3)
 }
 
 
-// ===== FUN_002133f8 @ 002133f8 (33 bytes)
+// ===== PINT_PatternMatchResetDetectLogic @ 002133f8 (33 bytes)
 
-uint FUN_002133f8(int param_1)
+/* fsl_pint.c; called first by every PIN_INTn handler [inference] */
+
+uint PINT_PatternMatchResetDetectLogic(int param_1)
 
 {
   uint uVar1;
@@ -366,9 +394,11 @@ uint FUN_002133f8(int param_1)
 }
 
 
-// ===== FUN_0021341c @ 0021341c (44 bytes)
+// ===== PINT_PinInterruptClrStatus @ 0021341c (44 bytes)
 
-void FUN_0021341c(uint *param_1,uint param_2)
+/* fsl_pint.c (base, pin); called by the handlers [inference] */
+
+void PINT_PinInterruptClrStatus(uint *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -385,9 +415,11 @@ void FUN_0021341c(uint *param_1,uint param_2)
 }
 
 
-// ===== FUN_00213448 @ 00213448 (93 bytes)
+// ===== PINT_PinInterruptClrStatusAll @ 00213448 (93 bytes)
 
-void FUN_00213448(uint *param_1)
+/* fsl_pint.c order [inference] */
+
+void PINT_PinInterruptClrStatusAll(uint *param_1)
 
 {
   uint uVar1;
@@ -413,37 +445,11 @@ void FUN_00213448(uint *param_1)
 }
 
 
-// ===== FUN_002134a8 @ 002134a8 (32 bytes)
+// ===== PINT_EnableCallback @ 002134a8 (32 bytes)
 
-void FUN_002134a8(undefined4 *param_1)
+/* fsl_pint.c order [inference] */
 
-{
-  int iVar1;
-  
-  iVar1 = 0;
-  if (param_1 == &PINT_ISEL) {
-    do {
-      FUN_0021341c(&PINT_ISEL,iVar1);
-      iVar1 = iVar1 + 1;
-    } while (iVar1 != 8);
-  }
-  return;
-}
-
-
-// ===== FUN_002134c8 @ 002134c8 (14 bytes)
-
-void FUN_002134c8(undefined4 param_1,undefined4 param_2)
-
-{
-  FUN_0021341c(param_1,param_2);
-  return;
-}
-
-
-// ===== FUN_002134d8 @ 002134d8 (32 bytes)
-
-void FUN_002134d8(undefined4 *param_1)
+void PINT_EnableCallback(undefined4 *param_1)
 
 {
   int iVar1;
@@ -451,7 +457,7 @@ void FUN_002134d8(undefined4 *param_1)
   iVar1 = 0;
   if (param_1 == &PINT_ISEL) {
     do {
-      FUN_0021341c(&PINT_ISEL,iVar1);
+      PINT_PinInterruptClrStatus(&PINT_ISEL,iVar1);
       iVar1 = iVar1 + 1;
     } while (iVar1 != 8);
   }
@@ -459,25 +465,61 @@ void FUN_002134d8(undefined4 *param_1)
 }
 
 
-// ===== FUN_002134f8 @ 002134f8 (22 bytes)
+// ===== PINT_EnableCallbackByIndex @ 002134c8 (14 bytes)
 
-void FUN_002134f8(undefined4 *param_1,undefined4 param_2)
+/* fsl_pint.c order [inference] */
+
+void PINT_EnableCallbackByIndex(undefined4 param_1,undefined4 param_2)
+
+{
+  PINT_PinInterruptClrStatus(param_1,param_2);
+  return;
+}
+
+
+// ===== PINT_DisableCallback @ 002134d8 (32 bytes)
+
+/* fsl_pint.c order [inference] */
+
+void PINT_DisableCallback(undefined4 *param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = 0;
+  if (param_1 == &PINT_ISEL) {
+    do {
+      PINT_PinInterruptClrStatus(&PINT_ISEL,iVar1);
+      iVar1 = iVar1 + 1;
+    } while (iVar1 != 8);
+  }
+  return;
+}
+
+
+// ===== PINT_DisableCallbackByIndex @ 002134f8 (22 bytes)
+
+/* fsl_pint.c order [inference] */
+
+void PINT_DisableCallbackByIndex(undefined4 *param_1,undefined4 param_2)
 
 {
   if (param_1 != &PINT_ISEL) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,param_2);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,param_2);
   return;
 }
 
 
-// ===== FUN_00213514 @ 00213514 (56 bytes)
+// ===== PINT_Deinit @ 00213514 (56 bytes)
 
-void FUN_00213514(undefined4 *param_1)
+/* fsl_pint.c: DisableCallback, reset [inference] */
+
+void PINT_Deinit(undefined4 *param_1)
 
 {
-  FUN_002134d8(param_1);
+  PINT_DisableCallback(param_1);
   if (param_1 == &PINT_ISEL) {
     DAT_00238f20 = 0;
     DAT_00238f24 = 0;
@@ -489,21 +531,23 @@ void FUN_00213514(undefined4 *param_1)
     DAT_00238f3c = 0;
     memw();
     CLKCTL1_PSCCTL2_CLR = &RSTCTL0_SYSRSTSTAT;
-    FUN_00213910(0x51e);
+    RESET_PeripheralReset(0x51e);
   }
   return;
 }
 
 
-// ===== FUN_0021354c @ 0021354c (50 bytes)
+// ===== PIN_INT0_DriverIRQHandler @ 0021354c (50 bytes)
 
-void FUN_0021354c(void)
+/* fsl_pint.c: callback[0](0, status) [fact for the code] */
+
+void PIN_INT0_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f20 != (code *)0x0) {
     (*DAT_00238f20)(0,uVar2);
   }
@@ -512,20 +556,22 @@ void FUN_0021354c(void)
   if ((uVar1 & 1) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,0);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,0);
   return;
 }
 
 
-// ===== FUN_00213584 @ 00213584 (50 bytes)
+// ===== PIN_INT1_DriverIRQHandler @ 00213584 (50 bytes)
 
-void FUN_00213584(void)
+/* fsl_pint.c: callback[1] [fact for the code] */
+
+void PIN_INT1_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f24 != (code *)0x0) {
     (*DAT_00238f24)(1,uVar2);
   }
@@ -534,20 +580,22 @@ void FUN_00213584(void)
   if ((uVar1 & 2) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,1);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,1);
   return;
 }
 
 
-// ===== FUN_002135bc @ 002135bc (50 bytes)
+// ===== PIN_INT2_DriverIRQHandler @ 002135bc (50 bytes)
 
-void FUN_002135bc(void)
+/* fsl_pint.c: callback[2] [fact for the code] */
+
+void PIN_INT2_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f28 != (code *)0x0) {
     (*DAT_00238f28)(2,uVar2);
   }
@@ -556,20 +604,22 @@ void FUN_002135bc(void)
   if ((uVar1 & 4) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,2);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,2);
   return;
 }
 
 
-// ===== FUN_002135f0 @ 002135f0 (50 bytes)
+// ===== PIN_INT3_DriverIRQHandler @ 002135f0 (50 bytes)
 
-void FUN_002135f0(void)
+/* fsl_pint.c: callback[3] [fact for the code] */
+
+void PIN_INT3_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f2c != (code *)0x0) {
     (*DAT_00238f2c)(3,uVar2);
   }
@@ -578,20 +628,22 @@ void FUN_002135f0(void)
   if ((uVar1 & 8) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,3);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,3);
   return;
 }
 
 
-// ===== FUN_00213628 @ 00213628 (50 bytes)
+// ===== PIN_INT4_DriverIRQHandler @ 00213628 (50 bytes)
 
-void FUN_00213628(void)
+/* fsl_pint.c: callback[4] [inference] */
+
+void PIN_INT4_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f30 != (code *)0x0) {
     (*DAT_00238f30)(4,uVar2);
   }
@@ -600,20 +652,22 @@ void FUN_00213628(void)
   if ((uVar1 & 0x10) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,4);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,4);
   return;
 }
 
 
-// ===== FUN_0021365c @ 0021365c (50 bytes)
+// ===== PIN_INT5_DriverIRQHandler @ 0021365c (50 bytes)
 
-void FUN_0021365c(void)
+/* fsl_pint.c: callback[5] [inference] */
+
+void PIN_INT5_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f34 != (code *)0x0) {
     (*DAT_00238f34)(5,uVar2);
   }
@@ -622,20 +676,22 @@ void FUN_0021365c(void)
   if ((uVar1 & 0x20) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,5);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,5);
   return;
 }
 
 
-// ===== FUN_00213690 @ 00213690 (50 bytes)
+// ===== PIN_INT6_DriverIRQHandler @ 00213690 (50 bytes)
 
-void FUN_00213690(void)
+/* fsl_pint.c: callback[6] [inference] */
+
+void PIN_INT6_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f38 != (code *)0x0) {
     (*DAT_00238f38)(6,uVar2);
   }
@@ -644,20 +700,22 @@ void FUN_00213690(void)
   if ((uVar1 & 0x40) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,6);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,6);
   return;
 }
 
 
-// ===== FUN_002136c8 @ 002136c8 (50 bytes)
+// ===== PIN_INT7_DriverIRQHandler @ 002136c8 (50 bytes)
 
-void FUN_002136c8(void)
+/* fsl_pint.c: callback[7] [inference] */
+
+void PIN_INT7_DriverIRQHandler(void)
 
 {
   uint uVar1;
   undefined4 uVar2;
   
-  uVar2 = FUN_002133f8(&PINT_ISEL);
+  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f3c != (code *)0x0) {
     (*DAT_00238f3c)(7,uVar2);
   }
@@ -666,14 +724,16 @@ void FUN_002136c8(void)
   if ((uVar1 & 0x80) != 0) {
     return;
   }
-  FUN_0021341c(&PINT_ISEL,7);
+  PINT_PinInterruptClrStatus(&PINT_ISEL,7);
   return;
 }
 
 
-// ===== FUN_00213700 @ 00213700 (261 bytes)
+// ===== RESET_SetPeripheralReset @ 00213700 (261 bytes)
 
-void FUN_00213700(uint param_1)
+/* fsl_reset.c: RSTCTL0/1 PRSTCTL_SET, wait [inference] */
+
+void RESET_SetPeripheralReset(uint param_1)
 
 {
   uint uVar1;
@@ -765,9 +825,11 @@ void FUN_00213700(uint param_1)
 }
 
 
-// ===== FUN_00213808 @ 00213808 (261 bytes)
+// ===== RESET_ClearPeripheralReset @ 00213808 (261 bytes)
 
-void FUN_00213808(uint param_1)
+/* fsl_reset.c: PRSTCTL_CLR, wait [inference] */
+
+void RESET_ClearPeripheralReset(uint param_1)
 
 {
   uint uVar1;
@@ -859,20 +921,24 @@ void FUN_00213808(uint param_1)
 }
 
 
-// ===== FUN_00213910 @ 00213910 (15 bytes)
+// ===== RESET_PeripheralReset @ 00213910 (15 bytes)
 
-void FUN_00213910(undefined4 param_1)
+/* fsl_reset.c: set then clear; 16 callers (every driver Init) [inference] */
+
+void RESET_PeripheralReset(undefined4 param_1)
 
 {
-  FUN_00213700(param_1);
-  FUN_00213808(param_1);
+  RESET_SetPeripheralReset(param_1);
+  RESET_ClearPeripheralReset(param_1);
   return;
 }
 
 
-// ===== FUN_00213920 @ 00213920 (48 bytes)
+// ===== RTC_Init @ 00213920 (48 bytes)
 
-void FUN_00213920(uint *param_1)
+/* fsl_rtc.c (lpc_rtc) order [inference] */
+
+void RTC_Init(uint *param_1)
 
 {
   memw();
@@ -887,9 +953,11 @@ void FUN_00213920(uint *param_1)
 }
 
 
-// ===== FUN_00213950 @ 00213950 (296 bytes)
+// ===== RTC_SetDatetime @ 00213950 (296 bytes)
 
-undefined4 FUN_00213950(int param_1,ushort *param_2)
+/* fsl_rtc.c: days table 0x2004D0, year <= 2099, 86400 / 3600 s [fact for the constants] */
+
+undefined4 RTC_SetDatetime(int param_1,ushort *param_2)
 
 {
   ushort uVar1;
@@ -959,9 +1027,11 @@ undefined4 FUN_00213950(int param_1,ushort *param_2)
 }
 
 
-// ===== FUN_00213a78 @ 00213a78 (194 bytes)
+// ===== RTC_GetDatetime @ 00213a78 (194 bytes)
 
-void FUN_00213a78(int param_1,ushort *param_2)
+/* fsl_rtc.c order [inference] */
+
+void RTC_GetDatetime(int param_1,ushort *param_2)
 
 {
   uint uVar1;
@@ -1002,9 +1072,11 @@ void FUN_00213a78(int param_1,ushort *param_2)
 }
 
 
-// ===== FUN_00213b3c @ 00213b3c (283 bytes)
+// ===== RTC_SetAlarm @ 00213b3c (283 bytes)
 
-undefined4 FUN_00213b3c(int param_1,ushort *param_2)
+/* fsl_rtc.c order [inference] */
+
+undefined4 RTC_SetAlarm(int param_1,ushort *param_2)
 
 {
   ushort uVar1;
@@ -1079,9 +1151,11 @@ undefined4 FUN_00213b3c(int param_1,ushort *param_2)
 }
 
 
-// ===== FUN_00213c58 @ 00213c58 (179 bytes)
+// ===== RTC_GetAlarm @ 00213c58 (179 bytes)
 
-void FUN_00213c58(int param_1,ushort *param_2)
+/* fsl_rtc.c order [inference] */
+
+void RTC_GetAlarm(int param_1,ushort *param_2)
 
 {
   uint uVar1;
@@ -1298,47 +1372,56 @@ undefined4 SEMA42_ResetGate(int param_1,ushort param_2)
 }
 
 
-// ===== FUN_00213f00 @ 00213f00 (14 bytes)
+// ===== SPI_SlaveTransferHandleIRQ @ 00213f00 (14 bytes)
 
-void FUN_00213f00(undefined4 param_1,undefined4 param_2)
+/* fsl_spi.h inline emitted at the start of fsl_spi.c: forwards to SPI_MasterTransferHandleIRQ;
+   installed by SPI_MasterTransferCreateHandle for slave mode [inference] */
+
+void SPI_SlaveTransferHandleIRQ(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_0021487c(param_1,param_2);
+  SPI_MasterTransferHandleIRQ(param_1,param_2);
   return;
 }
 
 
-// ===== FUN_00213f10 @ 00213f10 (30 bytes)
+// ===== SPI_GetInstance @ 00213f10 (30 bytes)
 
-bool FUN_00213f10(dword *param_1)
+/* fsl_spi.c: 8 bases at 0x2004F0 [inference] */
+
+bool SPI_GetInstance(dword *param_1)
 
 {
   return param_1 != &USART0_CFG;
 }
 
 
-// ===== FUN_00213f30 @ 00213f30 (21 bytes)
+// ===== SPI_SetDummyData @ 00213f30 (21 bytes)
 
-void FUN_00213f30(undefined4 param_1,undefined1 param_2)
+/* fsl_spi.c: s_dummyData 0x238F40 [inference] */
+
+void SPI_SetDummyData(undefined4 param_1,undefined1 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   memw();
   (&DAT_00238f40)[iVar1] = param_2;
   return;
 }
 
 
-// ===== FUN_00213f48 @ 00213f48 (16 bytes)
+// ===== SPI_GetConfig @ 00213f48 (16 bytes)
 
-undefined * FUN_00213f48(undefined4 param_1)
+/* fsl_spi.c: g_configs 0x238F50 [inference] */
+
+undefined * SPI_GetConfig(undefined4 param_1)
 
 {
   int iVar1;
   
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   return &DAT_00238f50 + iVar1 * 8;
 }
 
@@ -1379,15 +1462,15 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (((param_1 == 0) || (param_2 == (byte *)0x0)) || (param_3 == 0)) {
     return 4;
   }
-  iVar1 = FUN_0020b7b0(param_1,2);
+  iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
   }
-  iVar1 = FUN_002142f8(param_1,*(undefined4 *)(param_2 + 0x10),param_3);
+  iVar1 = SPI_MasterSetBaud(param_1,*(undefined4 *)(param_2 + 0x10),param_3);
   if (iVar1 != 0) {
     return iVar1;
   }
-  iVar1 = FUN_00213f10(param_1);
+  iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();
   uVar2 = *(undefined4 *)(param_2 + 0x14);
@@ -1412,7 +1495,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   *(uint *)(param_1 + 0x404) =
        param_2[0x22] & 0xf | (param_2[0x23] & 0xf) << 4 |
        (param_2[0x24] & 0xf) << 8 | (param_2[0x25] & 0xf) << 0xc;
-  FUN_00213f30(param_1,0xff);
+  SPI_SetDummyData(param_1,0xff);
   if (param_2[1] != 0) {
     memw();
     memw();
@@ -1426,9 +1509,11 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
 }
 
 
-// ===== FUN_00214114 @ 00214114 (38 bytes)
+// ===== SPI_SlaveGetDefaultConfig @ 00214114 (38 bytes)
 
-void FUN_00214114(undefined4 *param_1)
+/* fsl_spi.c order [inference] */
+
+void SPI_SlaveGetDefaultConfig(undefined4 *param_1)
 
 {
   param_1[1] = 0;

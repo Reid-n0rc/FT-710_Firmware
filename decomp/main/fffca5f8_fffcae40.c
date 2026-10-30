@@ -167,7 +167,7 @@ void menu_ex010317_draw(byte *param_1)
   int iVar2;
   byte local_5;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_5 = g_opstate.vfo_a.flags2;
   }
   else {
@@ -267,7 +267,7 @@ void menu_ex010320_draw(byte *param_1)
   int iVar2;
   byte local_5;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_5 = g_opstate.vfo_a.flags3;
   }
   else {
@@ -311,7 +311,7 @@ void menu_ex010321_draw(byte *param_1)
   int iVar4;
   byte local_5;
   
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     local_5 = g_opstate.vfo_a.tone_num;
   }
   else {

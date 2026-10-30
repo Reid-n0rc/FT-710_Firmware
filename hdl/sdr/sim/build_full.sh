@@ -6,7 +6,9 @@
 # Env: NET=<netlist .v> (default build/sdr/ft710_sdr.v), OBJ=<obj dir name>, PROBE_W=<words> for a probed netlist,
 #      JOBS=<parallel compile jobs> (default 16; tools/bootstrap.sh passes nproc),
 #      TOP=cosim_top for the netlist + RTL co-simulation (adds hdl/sdr/sim/cosim_top.v and the RTL files),
-#      MAIN=pins_main.cpp for the pin-activity harness (#90),
+#      MAIN=pins_main.cpp for the pin-activity harness (#90), MAIN=ddc_main.cpp for the RX IF stream harness (#193),
+#      VDEFS="+define+MMCM_FRAC +define+IDDR_DDR" (Verilator defines) for an 18.432 MHz DSP_CLK (#193) and the DDR
+#      IDDR stand-in (#172),
 #      BRAM=yosys to use Yosys' RAMB18E1 declaration instead (no behaviour: every BRAM output reads 0; the pre-#164
 #      models, for comparing old runs; only works with a netlist written with --ramb18).
 set -e
@@ -43,6 +45,6 @@ EXTRA=""
 XC=""
 [ -n "$PROBE_W" ] && XC="-DPROBE_W=$PROBE_W"
 timeout 3000 verilator --cc --exe --build -j "${JOBS:-16}" -O3 --x-assign fast --x-initial fast \
-  -Wno-fatal -Wno-lint -Wno-style --top-module "$TOP" --prefix Vft710_sdr \
+  -Wno-fatal -Wno-lint -Wno-style $VDEFS --top-module "$TOP" --prefix Vft710_sdr \
   --output-split 30000 --output-split-cfuncs 3000 -CFLAGS "-O1 -fno-var-tracking $XC" -Mdir "$OBJ" \
   $EXTRA "$HERE/xc7_prims_vl.v" "$BRAMV" y_DSP48E1.v "$NET" "$HERE/${MAIN:-full_main.cpp}"

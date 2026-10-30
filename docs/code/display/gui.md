@@ -51,9 +51,10 @@ codes match it (9 = `ERR_RESOURCE_CLK`, 10 = `VSYNC`, 12 = `OUTPUT`, 13 = `LVDS_
 
 `gui_start` (0x20132CCC) runs, in order **[fact]**:
 
-1. `FUN_201340A4`, `FUN_201342B4` (scope/waterfall objects, see [spi-links.md](spi-links.md)), `FUN_20120D38`, `FUN_20133620` (scope scale
-   tables), `dmac8_m2m_init`, `sdr_dsp_link_init` (RSPI2/RSPI4 DMA set-up for scope data).
-2. `vdc5_isr_create`: `itron_acre_isr` with descriptor 0x203A706C → GIC ID **78** (VDC5 ch0 GR3_VLINE), handler 0x20118638.
+1. `FUN_201340A4`, `FUN_201342B4` (scope/waterfall objects, see [spi-links.md](spi-links.md)), `FUN_20120D38`, `scope3d_tables_init` 0x20133620 (3DSS line offset
+   tables, T23e round 2), `dmac8_m2m_init`, `sdr_dsp_link_init` (RSPI2/RSPI4 DMA set-up for scope data).
+2. `vdc5_isr_create`: `itron_acre_isr` with descriptor 0x203A706C → GIC ID **78** (VDC5 ch0 GR3_VLINE), handler 0x20118638 (`vdc5_ch0_isr_gr3_vline`; the 46 handlers 0x20118548–0x20119370 are
+   `vdc5_ch{0,1}_isr_<type>`, one per SYSCNT_INT bit, listed by `r_vdc5_get_isr`, T23e round 2).
 3. **Channel 0** (TFT): `r_vdc5_initialize`(0, {icksel = 4 = peripheral clock, dcdr = 1 = ÷2, no LVDS}, `vdc5_module_start`) →
    `vdc5_sync_setup`(0) → `vdc5_output_setup`(0) → `vdc5_vline_int_setup`(0).
 4. **Channel 1** (LVDS/DVI): `r_vdc5_initialize`(1, {icksel = 6 = LVDS PLL ÷7, dcdr = 0, lvds = `lvds_pll_cfg`(1, 0)}) → sync and output set-up
@@ -131,7 +132,7 @@ sequenceDiagram
 
 Per frame, `gui_main_loop` calls `gui_screen_update` (screen update), then `FUN_2012470C` / `FUN_20124528` + `FUN_201244D8` (RX/TX markers),
 `FUN_201233D4` or `main_filter_graph` (filter graph), `main_status_icons` (status icons), `meter_draw` (meter), `mainlink_send_rtc`, `mainlink_send_sd_state`,
-`FUN_201217B0`, `FUN_201218A4` or `scr_screen_saver` (screen saver), `FUN_20131638`, `pclink_stats_print`, `debug_overlay_draw` (debug overlay) and
+`FUN_201217B0`, `cursor_window_update` 0x201218A4 (mouse-cursor window, both channels) or `scr_screen_saver` (screen saver), `FUN_20131638`, `pclink_stats_print`, `debug_overlay_draw` (debug overlay) and
 `gui_update_layers` **[fact]**. Before the loop it handles the power-on cases (next section).
 
 ## Screen state machine
@@ -670,3 +671,176 @@ The screen handlers are in the packet table above; all names are in `tools/ghidr
 - Done (#83): the `.data2` coordinate words are decoded by `tools/display_layout.py` ([Screen layout](#screen-layout-data2-coordinate-words-83)). Done (#178): the value-popup slots are mapped from MAIN's popup id (slot = id − 0x1E, [table](#screen-layout-data2-coordinate-words-83)); the 2D / 3DSS-front / oscilloscope / AF-FFT renderers and the third (text) view are decoded ([Scope drawing](#scope-drawing-83)).
 - Done (#178, from the decoded image): every value-popup title is rendered and named, slot 8 corrected to MIC EQ, slots 28 / 34–36 named (DEC LVL, RX LEVEL, TX LEVEL, S.SPEED; never sent by MAIN V01-12) and slot 64's entries read (no title). The spectrum height table 0x203A1EE0 and the text-view layout words are decoded. `range` 0x208007D4 starts at 0 and only zero is ever stored (one literal, body 0x20123EC4).
 - Settled by the listing check (#178): MAIN never sets packet 0x20 byte 3 bit 2. The "unreachable block" at 0xFFF96F69 is the internal count==0 branch of `SHLL #7` (PcodeDump), `FUN_fff96f3e` sets only bits 7 and 4–6, and its result goes straight into frame byte 3 at 0xFFF964ED **[fact]**; so the text view is dormant. Creating the function at 0x20123EC4 (`names_display.tsv`) happens at the next re-export.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20117D8C | `vdc5_layer_to_gr` | layer id 3..8 -> graphics index 0..5 **[inference]** |
+| 0x20118364 | `vdc5_int_callbacks_clear` | clears the 23 per-channel interrupt callbacks **[inference]** |
+| 0x2011D84C | `r_vdc5_shrd_get_resource` | (ch, id): resource state 0x208DCE04[ch*9 + id] ; VDC5 driver shared parameters **[fact]** |
+| 0x2011D860 | `r_vdc5_shrd_rw_enable` | (ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use **[fact]** |
+| 0x2011D8B4 | `r_vdc5_shrd_rw_disable` | (ch, id): the same flag = 0 **[fact]** |
+| 0x20120D84 | `affft_bins_get` | 200 AF-FFT bins of 0x208DD73C through FUN_20157214 and the table 0x208DD23C; returns the bar height 0x2C  (#179) **[fact]** |
+| 0x201219B8 | `gui_draw_progress_bar` | (fb, x, y, percent): frame and bar 0xCE x 0x10, percent clamped to 100 **[fact]** |
+| 0x20121AF0 | `filter_graph_affft_overlay` | bars of affft_bins_get into empty pixels of the filter graph (row 129, x 521..720) when status byte 9 bit 3 (MAIN 0x9C5C) is set  (#179) **[fact]** |
+| 0x20121E88 | `main_status_icons` | REC/MSG/LOCK/... indicator row, scope SPAN/SPEED labels **[inference]** |
+| 0x20123C04 | `main_filter_graph` | SHIFT/WIDTH/NOTCH/CONTOUR/APF graph **[inference]** |
+| 0x20123EC4 | `scope_markers_draw` | (r0 = 1 MULTI / 0 large) red 0xF800 RX/TX marker frames on graphics 1; zeroes range 0x208007D4 **[inference]** |
+| 0x201244D8 | `scope_markers_update` | checks 0x20800482 / 0x208004D0, tail-branches to scope_markers_draw(layout) **[inference]** |
+| 0x20124528 | `scope_draw_frame` | per GUI frame: 3DSS (mode 8/9) or 2D renderers by 0x208004D0/D2 (gui.md Scope drawing) **[inference]** |
+| 0x20124744 | `mainlink_send_audio_error` | (code): E7 (PlayList owner 0x2080048E = 1) or E8 status frame with b1 = 0xFF and the error code (mainlink.md) **[fact]** |
+| 0x20124C24 | `scr_playlist` | packet 0x3A: voice/REC PLAY LIST **[inference]** |
+| 0x201261E0 | `scr_sd_menu` | packet 0x43: SD card load/save/format **[inference]** |
+| 0x201263E8 | `scr_info` | packet 0x34: information / CERTIFICATIONS, FCC ID K6620801X50 **[inference]** |
+| 0x201266EC | `gui_apply_display_cfg` | packet 0x24: DVI on/off, DVI resolution, LCD contrast **[inference]** |
+| 0x20126A58 | `confirm_dialog_draw` | OK? dialog (scr_confirm, update_error_screen) **[inference]** |
+| 0x20126EBC | `scr_confirm` | packet 0x70: OK / CANCEL dialog **[inference]** |
+| 0x20126F28 | `scr_setup_menu` | packet 0x62: MENU list, 8 rows of {5, 20, 3} chars **[inference]** |
+| 0x201271CC | `keyboard_draw_keys` | scr_keyboard key grid (CR/LF labels) **[inference]** |
+| 0x201275E8 | `scr_keyboard` | packet 0x50: on-screen keyboard (Caps, Space, ENT, ABC, #%^) **[inference]** |
+| 0x20127B24 | `scr_memory_list` | packet 0x41: MEMORY CH LIST **[inference]** |
+| 0x20128F4C | `text_list_draw` | scr_text_list body **[inference]** |
+| 0x20129054 | `scr_text_list` | packet 0x40: text list with LF/CR glyphs, DONE/BACK **[inference]** |
+| 0x201293F8 | `vfo_audio_status_draw` | REC/PLAY state on the VFO screen (%04d, %3d) (inference) **[inference]** |
+| 0x2012A6A4 | `scr_vfo` | packet 0x39: frequency digits **[inference]** |
+| 0x2012A9EC | `scr_func_panel` | packet 0x37: FUNC panel (CONTRAST, DIMMER, MIC GAIN, ...) **[inference]** |
+| 0x2012ADE0 | `scr_value_popup` | packet 0x31: setting name + value popup (tables at 0x208026DC..) **[inference]** |
+| 0x2012C1B4 | `scr_select_popup` | packet 0x30: METER / MODE selection popups **[inference]** |
+| 0x2012C4A0 | `audio_error_check` | audio_state/audio_error/audio_clear_error **[inference]** |
+| 0x2012D19C | `scope_area_frame_draw` | scope frame sprites (layout words 0x208004F4/F6) **[inference]** |
+| 0x2012D3B8 | `scope_mode_split` | byte 2 -> 0/1/2 spectrum/waterfall split (inference) **[inference]** |
+| 0x2012D404 | `scope_mode_sub` | byte 2 -> 0/1/2 sub-setting **[inference]** |
+| 0x2012D458 | `scope_mode_is_2d` | byte 2: 0-2 -> 0 (3DSS), 3-11 -> 1 **[inference]** |
+| 0x2012D4A4 | `scope_mode_decode` | packet 0x20 bytes 1-3 -> 0x20800482, 0x208004D0..D2 **[inference]** |
+| 0x2012D52C | `scope_area_setup` | packet 0x20 scope bytes changed: clear area, decode mode, reset history **[inference]** |
+| 0x2012E3E0 | `scr_main_layout` | main screen static parts (scope frame, mode/filter labels) **[inference]** |
+| 0x2012E6C8 | `screen_saver_exit` | layers back after 0x7B **[inference]** |
+| 0x2012E744 | `rec_start_stop` | packet 0x3F: start/stop recording to SD with a time-stamp name **[inference]** |
+| 0x20130024 | `mainlink_wait_status` | waits up to 5 s for the first MAIN status packet **[inference]** |
+| 0x201323FC | `lcd_tcon_cfg_ch0` | TCON pin table for the parallel RGB TFT (ch0) **[inference]** |
+| 0x20132440 | `dvi_tcon_cfg_ch1` | TCON pin table for the LVDS/DVI channel (ch1), 800x480 or 800x600 **[inference]** |
+| 0x20132680 | `cursor_rect_calc` | 12x21 mouse-cursor window for graphics 3 **[inference]** |
+| 0x20132B58 | `vdc5_layers_stop` | stop all layers and release **[inference]** |
+| 0x20132B94 | `vdc5_channel_shutdown` | stop layers, terminate the channel, clock off **[inference]** |
+| 0x20132F44 | `gui_area_dirty_set` | (i): 0x208F4D80[i] = 1 ; a redraw request per screen area (meter, scope) **[fact]** |
+| 0x2013304C | `vdc5_vline_int_setup` | VLINE interrupt, no callback **[inference]** |
+| 0x20133068 | `vdc5_vline_cb_enable` | VLINE callback = vdc5_vline_cb **[inference]** |
+| 0x2013307C | `vdc5_vline_cb_disable` | calls `FUN_20117c14`; 20 B, callers: 1 **[fact]** (code shape) |
+| 0x201335D8 | `scope3d_render_large_thunk` | -> scope3d_render_large (this = 0x20907F78) **[inference]** |
+| 0x201335F8 | `scope3d_render_small_thunk` | -> scope3d_render_small (this = 0x20907F78) **[inference]** |
+| 0x20133748 | `layer_alpha_rect_reapply` | calls `r_vdc5_alpha_blending_rect`; 36 B, callers: 4 **[fact]** (code shape) |
+| 0x2013376C | `layer_alpha_rect_hit` | pixel inside a layer's opaque alpha window (screen capture) **[inference]** |
+| 0x201337F8 | `layer_alpha_rect_off` | calls `layer_alpha_rect_set`; 120 B, callers: 6 **[fact]** (code shape) |
+| 0x20133870 | `layer_alpha_rect_opaque` | full-screen window, alpha 0xFF **[inference]** |
+| 0x20133C40 | `gui_flip_one` | flip only graphics 1 (0) or graphics 2 (1); brackets screen capture **[inference]** |
+| 0x20134318 | `scope3d_redraw_history` | every N frames: re-project lines 29..2 (14..2) **[inference]** |
+| 0x20134328 | `scope3d_add_line` | newest line = per-point max of the last N history rows **[inference]** |
+| 0x201344C8 | `capture_merge_row` | overlay one layer row; 0 = transparent unless inside an alpha window **[inference]** |
+| 0x20134520 | `rgb565_row_to_bgr24` | no direct calls; 76 B, callers: 1 **[fact]** (code shape) |
+| 0x2013518C | `test_disp_start` | set flag 1 -> task_test_disp runs the replay **[inference]** |
+| 0x2013519C | `test_disp_stop` | no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
+| 0x201351AC | `test_disp_state` | 1 = running, 2 = idle **[inference]** |
+| 0x201353F8 | `div10_round` | no direct calls; 80 B, callers: 5 **[fact]** (code shape) |
+| 0x20135458 | `bcd_to_bin` | no direct calls; 24 B, callers: 12 **[fact]** (code shape) |
+| 0x20135470 | `be16_load` | no direct calls; 24 B, callers: 26 **[fact]** (code shape) |
+| 0x20135498 | `be32_load` | no direct calls; 36 B, callers: 8 **[fact]** (code shape) |
+| 0x201354EC | `str_rtrim` | calls `strlen`; 60 B, callers: 9 **[fact]** (code shape) |
+| 0x2013558C | `fb_rect_in_bounds` | (y, x, w, h) inside 800x480 **[inference]** |
+| 0x20135604 | `fb_clear_rect_checked` | calls `fb_clear_rect`, `fb_rect_in_bounds`; 84 B, callers: 3 **[fact]** (code shape) |
+| 0x2015B9CC | `scope3d_render_large` | mode 8: 29 lines, 222/274 rows **[inference]** |
+| 0x2015BB7C | `scope3d_render_small` | mode 9: 14 lines, 104/156 rows **[inference]** |
+| 0x2015BC6C | `scope3d_draw_line` | line i at x = 5i+4, width 791-10i **[inference]** |
+
+### VDC5 driver API and shared state (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): VDC5 driver API and shared state (Renesas r_vdc5; API order and argument shapes as in the driver, gui.md "VDC5 set-up") **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20117AD4 | `r_vdc5_terminate` | (ch, quit_func): driver shutdown of a channel, then state 0 = 1 again **[inference]** |
+| 0x20117C14 | `r_vdc5_callback_isr_checked` | Checks channel states 0 and 2 (errors 9/10) and calls r_vdc5_callback_isr; the public R_VDC5_CallbackISR **[fact]** |
+| 0x20117C64 | `vdc5_layer_to_wr` | Layer id 0/1/2 (write layers) unchanged, other ids to 3 **[fact]** |
+| 0x20117C7C | `r_vdc5_write_data_control` | (ch, layer 0..2, param): checks resources (error 14/11), writes the scaler write registers (vdc5_config) and marks the resource **[inference]** |
+| 0x20117D2C | `r_vdc5_change_write_process` | (ch, layer, param): needs a busy write resource (error 14) **[inference]** |
+| 0x20117F88 | `r_vdc5_video_noise_reduction` | (ch, on, param): needs state 1 (error 11) **[inference]** |
+| 0x20117FC8 | `r_vdc5_image_color_matrix` | (ch, {module 0/1/2,...}): resource check by module, then the matrix registers **[inference]** |
+| 0x20118054 | `r_vdc5_image_enhancement` | (ch, imgimprv id 0/1, sharpness, area): resource 3 or 4 (error 14/8) **[inference]** |
+| 0x201180E0 | `r_vdc5_image_black_stretch` | (ch, imgimprv id, param): resource 3 or 4 **[inference]** |
+| 0x2011814C | `r_vdc5_alpha_blending` | (ch, layer, param): graphics index from vdc5_layer_to_gr, resource check (error 14) **[inference]** |
+| 0x20118284 | `r_vdc5_clut` | (ch, layer, param): same checks, CLUT write **[inference]** |
+| 0x2011830C | `r_vdc5_gamma_correction` | (ch, on, param): needs state 3 (error 12) **[inference]** |
+| 0x2011834C | `r_vdc5_get_isr` | (ch, type): ISR pointer from table 0x20165A74, 23 per channel (the vdc5_chN_isr_* handlers) **[fact]** |
+| 0x2011D788 | `vdc5_shrd_state_ptr` | (ch, n): pointer to state byte n (0..3) of channel ch at 0x20800410 + 4*ch, n = 4 gives 0x2080040C **[fact]** |
+| 0x2011D7D8 | `vdc5_shrd_set_state` | (ch, n, value): sets that state byte **[fact]** |
+| 0x2011D7F0 | `vdc5_shrd_set_resource` | (ch, id, value): resource state 0x208DCE04[ch*9 + id]; id -1 sets every resource not marked in use (0x208DCE16) **[fact]** |
+| 0x2011D830 | `vdc5_shrd_get_state` | (ch, n): state byte via vdc5_shrd_state_ptr, 0 for a bad n; the API calls check n = 0/1/2/3 == 1 before working (error codes 9/10/11/12) **[fact]** |
+| 0x2011D8E8 | `vdc5_shrd_res_idle` | 1 when resource id is set up (0x208DCE04) and not in use (0x208DCE16) **[fact]** |
+| 0x2011D920 | `vdc5_shrd_res_busy` | 1 when resource id is set up and in use **[fact]** |
+
+### VDC5 interrupt handlers (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): VDC5 interrupt handlers (r_vdc5 driver, 23 types per channel, callback table 0x208DCC0C, 23 words per channel) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20118548 | `vdc5_ch0_isr_s0_vi_vsync` | VDC5 ch0 interrupt 0: enabled in VDC50_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC0C with type 0; type = VDC5_INT_TYPE_S0_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118598 | `vdc5_ch0_isr_s0_lo_vsync` | VDC5 ch0 interrupt 1: enabled in VDC50_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC10 with type 1; type = VDC5_INT_TYPE_S0_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201185E8 | `vdc5_ch0_isr_s0_vsyncerr` | VDC5 ch0 interrupt 2: enabled in VDC50_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC14 with type 2; type = VDC5_INT_TYPE_S0_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118638 | `vdc5_ch0_isr_gr3_vline` | VDC5 ch0 interrupt 3: enabled in VDC50_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC18 with type 3; type = VDC5_INT_TYPE_GR3_VLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118688 | `vdc5_ch0_isr_s0_vfield` | VDC5 ch0 interrupt 4: enabled in VDC50_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC1C with type 4; type = VDC5_INT_TYPE_S0_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201186D8 | `vdc5_ch0_isr_iv1_vbuferr` | VDC5 ch0 interrupt 5: enabled in VDC50_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC20 with type 5; type = VDC5_INT_TYPE_IV1_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118728 | `vdc5_ch0_isr_iv3_vbuferr` | VDC5 ch0 interrupt 6: enabled in VDC50_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC24 with type 6; type = VDC5_INT_TYPE_IV3_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118778 | `vdc5_ch0_isr_iv5_vbuferr` | VDC5 ch0 interrupt 7: enabled in VDC50_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC28 with type 7; type = VDC5_INT_TYPE_IV5_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201187C8 | `vdc5_ch0_isr_iv6_vbuferr` | VDC5 ch0 interrupt 8: enabled in VDC50_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC2C with type 8; type = VDC5_INT_TYPE_IV6_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118818 | `vdc5_ch0_isr_s0_wline` | VDC5 ch0 interrupt 9: enabled in VDC50_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC30 with type 9; type = VDC5_INT_TYPE_S0_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118868 | `vdc5_ch0_isr_s1_vi_vsync` | VDC5 ch0 interrupt 10: enabled in VDC50_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC34 with type 10; type = VDC5_INT_TYPE_S1_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201188B8 | `vdc5_ch0_isr_s1_lo_vsync` | VDC5 ch0 interrupt 11: enabled in VDC50_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC38 with type 11; type = VDC5_INT_TYPE_S1_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118908 | `vdc5_ch0_isr_s1_vsyncerr` | VDC5 ch0 interrupt 12: enabled in VDC50_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC3C with type 12; type = VDC5_INT_TYPE_S1_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118958 | `vdc5_ch0_isr_s1_vfield` | VDC5 ch0 interrupt 13: enabled in VDC50_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC40 with type 13; type = VDC5_INT_TYPE_S1_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201189A8 | `vdc5_ch0_isr_iv2_vbuferr` | VDC5 ch0 interrupt 14: enabled in VDC50_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC44 with type 14; type = VDC5_INT_TYPE_IV2_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201189F8 | `vdc5_ch0_isr_iv4_vbuferr` | VDC5 ch0 interrupt 15: enabled in VDC50_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC48 with type 15; type = VDC5_INT_TYPE_IV4_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118A48 | `vdc5_ch0_isr_s1_wline` | VDC5 ch0 interrupt 16: enabled in VDC50_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC4C with type 16; type = VDC5_INT_TYPE_S1_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118A98 | `vdc5_ch0_isr_oir_vi_vsync` | VDC5 ch0 interrupt 17: enabled in VDC50_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC50 with type 17; type = VDC5_INT_TYPE_OIR_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118AE8 | `vdc5_ch0_isr_oir_lo_vsync` | VDC5 ch0 interrupt 18: enabled in VDC50_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC54 with type 18; type = VDC5_INT_TYPE_OIR_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118B50 | `vdc5_ch0_isr_oir_vline` | VDC5 ch0 interrupt 19: enabled in VDC50_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC58 with type 19; type = VDC5_INT_TYPE_OIR_VLINE of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118BA0 | `vdc5_ch0_isr_oir_vfield` | VDC5 ch0 interrupt 20: enabled in VDC50_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC5C with type 20; type = VDC5_INT_TYPE_OIR_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118BF0 | `vdc5_ch0_isr_iv7_vbuferr` | VDC5 ch0 interrupt 21: enabled in VDC50_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC60 with type 21; type = VDC5_INT_TYPE_IV7_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118C40 | `vdc5_ch0_isr_iv8_vbuferr` | VDC5 ch0 interrupt 22: enabled in VDC50_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC64 with type 22; type = VDC5_INT_TYPE_IV8_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118C90 | `vdc5_ch1_isr_s0_vi_vsync` | VDC5 ch1 interrupt 0: enabled in VDC51_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC68 with type 0; type = VDC5_INT_TYPE_S0_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118CE0 | `vdc5_ch1_isr_s0_lo_vsync` | VDC5 ch1 interrupt 1: enabled in VDC51_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC6C with type 1; type = VDC5_INT_TYPE_S0_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118D30 | `vdc5_ch1_isr_s0_vsyncerr` | VDC5 ch1 interrupt 2: enabled in VDC51_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC70 with type 2; type = VDC5_INT_TYPE_S0_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118D80 | `vdc5_ch1_isr_gr3_vline` | VDC5 ch1 interrupt 3: enabled in VDC51_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC74 with type 3; type = VDC5_INT_TYPE_GR3_VLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118DD0 | `vdc5_ch1_isr_s0_vfield` | VDC5 ch1 interrupt 4: enabled in VDC51_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC78 with type 4; type = VDC5_INT_TYPE_S0_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118E20 | `vdc5_ch1_isr_iv1_vbuferr` | VDC5 ch1 interrupt 5: enabled in VDC51_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC7C with type 5; type = VDC5_INT_TYPE_IV1_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118E70 | `vdc5_ch1_isr_iv3_vbuferr` | VDC5 ch1 interrupt 6: enabled in VDC51_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC80 with type 6; type = VDC5_INT_TYPE_IV3_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118EC0 | `vdc5_ch1_isr_iv5_vbuferr` | VDC5 ch1 interrupt 7: enabled in VDC51_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC84 with type 7; type = VDC5_INT_TYPE_IV5_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118F10 | `vdc5_ch1_isr_iv6_vbuferr` | VDC5 ch1 interrupt 8: enabled in VDC51_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC88 with type 8; type = VDC5_INT_TYPE_IV6_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118F60 | `vdc5_ch1_isr_s0_wline` | VDC5 ch1 interrupt 9: enabled in VDC51_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC8C with type 9; type = VDC5_INT_TYPE_S0_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118FB0 | `vdc5_ch1_isr_s1_vi_vsync` | VDC5 ch1 interrupt 10: enabled in VDC51_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC90 with type 10; type = VDC5_INT_TYPE_S1_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119000 | `vdc5_ch1_isr_s1_lo_vsync` | VDC5 ch1 interrupt 11: enabled in VDC51_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC94 with type 11; type = VDC5_INT_TYPE_S1_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119050 | `vdc5_ch1_isr_s1_vsyncerr` | VDC5 ch1 interrupt 12: enabled in VDC51_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC98 with type 12; type = VDC5_INT_TYPE_S1_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201190A0 | `vdc5_ch1_isr_s1_vfield` | VDC5 ch1 interrupt 13: enabled in VDC51_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC9C with type 13; type = VDC5_INT_TYPE_S1_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201190F0 | `vdc5_ch1_isr_iv2_vbuferr` | VDC5 ch1 interrupt 14: enabled in VDC51_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCCA0 with type 14; type = VDC5_INT_TYPE_IV2_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119140 | `vdc5_ch1_isr_iv4_vbuferr` | VDC5 ch1 interrupt 15: enabled in VDC51_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCCA4 with type 15; type = VDC5_INT_TYPE_IV4_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119190 | `vdc5_ch1_isr_s1_wline` | VDC5 ch1 interrupt 16: enabled in VDC51_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCA8 with type 16; type = VDC5_INT_TYPE_S1_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201191E0 | `vdc5_ch1_isr_oir_vi_vsync` | VDC5 ch1 interrupt 17: enabled in VDC51_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCAC with type 17; type = VDC5_INT_TYPE_OIR_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119230 | `vdc5_ch1_isr_oir_lo_vsync` | VDC5 ch1 interrupt 18: enabled in VDC51_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB0 with type 18; type = VDC5_INT_TYPE_OIR_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119280 | `vdc5_ch1_isr_oir_vline` | VDC5 ch1 interrupt 19: enabled in VDC51_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB4 with type 19; type = VDC5_INT_TYPE_OIR_VLINE of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201192D0 | `vdc5_ch1_isr_oir_vfield` | VDC5 ch1 interrupt 20: enabled in VDC51_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB8 with type 20; type = VDC5_INT_TYPE_OIR_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119320 | `vdc5_ch1_isr_iv7_vbuferr` | VDC5 ch1 interrupt 21: enabled in VDC51_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCBC with type 21; type = VDC5_INT_TYPE_IV7_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119370 | `vdc5_ch1_isr_iv8_vbuferr` | VDC5 ch1 interrupt 22: enabled in VDC51_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCC0 with type 22; type = VDC5_INT_TYPE_IV8_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+
+### Other GUI helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201218A4 | `cursor_window_update` | Mouse position -> cursor window 0x20808584 (cursor_rect_calc) and r_vdc5_change_read_process for both channels **[fact]** |
+| 0x20133620 | `scope3d_tables_init` | Builds the 3DSS line offset tables 0x20907F7C/7FF4 (30 lines, mode 8) and 0x2090806C/80A8 (15 lines, mode 9), takes the work buffer and clears the history **[fact]** |
+| 0x20134368 | `scope3d_line_offset` | (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 / 0x203D9A9E **[fact]** |
+| 0x20136398 | `fb_draw_round_frame_wrap` | Tail call to fb_draw_round_frame (arguments lost in the decompile); list and pop-up screens frame their boxes with it **[fact]** |
+| 0x2015B9A8 | `scope3d_history_clear` | Resets the history (0x20134310) and clears 0x6B080 bytes of the 3D buffer *0x208085B4 **[fact]** |

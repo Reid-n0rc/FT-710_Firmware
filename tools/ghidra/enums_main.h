@@ -1,5 +1,7 @@
 /* FT-710 MAIN V01-12 enums (T23f). Applied by tools/ghidra/ApplyEnums.java (category /FT710) to the parameters, returns
- * and globals listed in tools/ghidra/enum_uses_main.tsv, after ApplySignatures.java.
+ * and globals listed in tools/ghidra/enum_uses_main.tsv, after ApplySignatures.java. The struct fields that hold these
+ * values (opstate.active_vfo, vfo_state_a/b, band_a/b, ...) name them as `enum NAME` in structs_main.h, which
+ * ApplyStructs.java resolves under /FT710, so ApplyEnums.java runs first.
  *
  * Format (read by ApplyEnums.java, and plain C otherwise): each enum is preceded by a comment holding "@size N" (the
  * storage size in bytes; C gives no way to say it) and its evidence. Every value carries its own evidence comment, which
@@ -38,7 +40,8 @@ enum radio_mode {
 
 /* @size 1
  * Band index: band_of_freq 0xFFFB33E5 returns the row of band_table 0xFFF8876C (12 rows of lo/hi Hz), 0xFF if none;
- * current band of A/B at 0x9DC3/0x9DC4, of the active side at 0x20F28 (<= 11); band-stack rows 0..11
+ * current band of A/B at 0x9DC3/0x9DC4 (opstate.band_a/band_b, typed in structs_main.h); band_select also copies it
+ * (<= 11) to the pop-up cursor 0x20F28, which holds a mode or other values for other pop-ups and is not typed; band-stack rows 0..11
  * [fact: docs/code/main/radio-control.md, tools/eeprom_decode.py BANDS/BAND_LIMITS]. */
 enum band_idx {
     BAND_1_8MHZ = 0,     /* 1.800-2.000 MHz [fact: 0xFFF8876C row 0] */
@@ -52,7 +55,7 @@ enum band_idx {
     BAND_24MHZ  = 8,     /* 24.500-25.000 MHz [fact: row 8] */
     BAND_28MHZ  = 9,     /* 28.000-30.000 MHz [fact: row 9] */
     BAND_50MHZ  = 10,    /* 50.000-54.000 MHz [fact: row 10] */
-    BAND_GEN    = 11,    /* general coverage 0.030-75 MHz; band_select clamps 0x20F28 to 11 [fact: row 11, 0xFFFC1663] */
+    BAND_GEN    = 11,    /* general coverage 0.030-75 MHz; band_select clamps the pop-up cursor 0x20F28 to 11 [fact: row 11, 0xFFFC1663] */
     BAND_COUNT  = 12,    /* number of bands: the bound cat_BS/cat_BD/cat_BU check against (BS P1 00..11) [fact: decomp, docs/cat-commands-primary.md BS] */
     BAND_NONE   = 0xFF   /* band_of_freq: no row matches [fact: 0xFFFB33E5] */
 };

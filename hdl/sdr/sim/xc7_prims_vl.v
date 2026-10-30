@@ -81,7 +81,23 @@ module MMCME2_ADV #(parameter DIVCLK_DIVIDE = 1, parameter real CLKFBOUT_MULT_F 
    input wire [6:0] DADDR, input wire [15:0] DI,
    output wire CLKOUT0, CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKOUT5, CLKOUT6, CLKFBOUT, LOCKED);
   // stand-in: output = input clock (frequency not modelled), always locked
-  assign CLKOUT0 = CLKIN1; assign CLKFBOUT = CLKIN1; assign LOCKED = 1'b1;
+`ifdef MMCM_FRAC
+  // #193: the bottom MMCM (CLKOUT0_DIVIDE_F 51.125, the DSP_CLK pin) gives CLKIN1 x MMCM_FRAC_INC / 2^33 from a
+  // phase accumulator stepped on both CLKIN1 edges (default 633318697: 18.432 MHz from 125 MHz, +-4 ns jitter).
+  // The top MMCM still passes its input through.
+`ifndef MMCM_FRAC_INC
+`define MMCM_FRAC_INC 633318697
+`endif
+  reg [31:0] facc = 32'd0;
+  reg fclk = 1'b0;
+  always @(posedge CLKIN1 or negedge CLKIN1) begin
+    {fclk, facc} <= ({1'b0, facc} + {1'b0, 32'd`MMCM_FRAC_INC}) ^ {fclk, 32'd0};   // toggle on each wrap
+  end
+  assign CLKOUT0 = (CLKOUT0_DIVIDE_F > 20.0) ? fclk : CLKIN1;
+`else
+  assign CLKOUT0 = CLKIN1;
+`endif
+  assign CLKFBOUT = CLKIN1; assign LOCKED = 1'b1;
   assign {CLKOUT1, CLKOUT2, CLKOUT3, CLKOUT4, CLKOUT5, CLKOUT6} = 6'b0;
 endmodule
 // I/O

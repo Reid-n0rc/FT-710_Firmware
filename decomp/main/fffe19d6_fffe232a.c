@@ -80,13 +80,14 @@ void FUN_fffe19fa(void)
 void freq_keypad_key(char param_1)
 
 {
-  bool bVar1;
-  char cVar2;
+  byte bVar1;
+  bool bVar2;
   char cVar3;
   char cVar4;
   char cVar5;
-  int iVar6;
-  uint uVar7;
+  char cVar6;
+  int iVar7;
+  uint uVar8;
   byte local_9;
   byte local_1;
   
@@ -95,8 +96,8 @@ void freq_keypad_key(char param_1)
     DAT_0001880a = g_opstate.vfo_state_b;
     DAT_0001b54e = '\0';
   }
-  if (PTR_g_ui_00025d6c->f_0x468_u8 < 2) {
-    PTR_g_ui_00025d6c->f_0x468_u8 = 2;
+  if (PTR_g_ui_00025d6c->keypad_pos < 2) {
+    PTR_g_ui_00025d6c->keypad_pos = 2;
   }
   if (param_1 == '\n') {
     FUN_fffe1e85();
@@ -104,20 +105,20 @@ void freq_keypad_key(char param_1)
     return;
   }
   if (param_1 == '\v') {
-    if (PTR_g_ui_00025d6c->f_0x468_u8 == 3) {
-      PTR_g_ui_00025d6c->f_0x410_u8 = PTR_g_ui_00025d6c->f_0x410_u8 >> 4;
-      PTR_g_ui_00025d6c->f_0x468_u8 = 4;
+    if (PTR_g_ui_00025d6c->keypad_pos == 3) {
+      PTR_g_ui_00025d6c->keypad_bcd[1] = PTR_g_ui_00025d6c->keypad_bcd[1] >> 4;
+      PTR_g_ui_00025d6c->keypad_pos = 4;
       FUN_fffe1e70();
       beep_request(1);
       return;
     }
-    if (PTR_g_ui_00025d6c->f_0x468_u8 != 2) {
+    if (PTR_g_ui_00025d6c->keypad_pos != 2) {
       FUN_fffe1e70();
       beep_request(1);
       return;
     }
-    PTR_g_ui_00025d6c->f_0x410_u8 = 0;
-    PTR_g_ui_00025d6c->f_0x468_u8 = 4;
+    PTR_g_ui_00025d6c->keypad_bcd[1] = 0;
+    PTR_g_ui_00025d6c->keypad_pos = 4;
     FUN_fffe1e70();
     beep_request(1);
     return;
@@ -129,17 +130,17 @@ void freq_keypad_key(char param_1)
         if (local_1 == 10) {
           local_1 = 0;
         }
-        uVar7 = (uint)(PTR_g_ui_00025d6c->f_0x468_u8 >> 1);
-        if ((PTR_g_ui_00025d6c->f_0x468_u8 & 1) == 0) {
-          PTR_g_ui_00025d6c->popup_text[uVar7 - 0x18] =
-               PTR_g_ui_00025d6c->popup_text[uVar7 - 0x18] & 0xfU | local_1 << 4;
+        bVar1 = PTR_g_ui_00025d6c->keypad_pos >> 1;
+        if ((PTR_g_ui_00025d6c->keypad_pos & 1) == 0) {
+          PTR_g_ui_00025d6c->keypad_bcd[bVar1] =
+               PTR_g_ui_00025d6c->keypad_bcd[bVar1] & 0xf | local_1 << 4;
         }
         else {
-          PTR_g_ui_00025d6c->popup_text[uVar7 - 0x18] =
-               PTR_g_ui_00025d6c->popup_text[uVar7 - 0x18] & 0xf0U | local_1;
+          PTR_g_ui_00025d6c->keypad_bcd[bVar1] =
+               PTR_g_ui_00025d6c->keypad_bcd[bVar1] & 0xf0 | local_1;
         }
-        if (PTR_g_ui_00025d6c->f_0x468_u8 < 9) {
-          PTR_g_ui_00025d6c->f_0x468_u8 = PTR_g_ui_00025d6c->f_0x468_u8 + 1;
+        if (PTR_g_ui_00025d6c->keypad_pos < 9) {
+          PTR_g_ui_00025d6c->keypad_pos = PTR_g_ui_00025d6c->keypad_pos + 1;
         }
         FUN_fffe1e70();
         beep_request(1);
@@ -154,28 +155,26 @@ void freq_keypad_key(char param_1)
       return;
     }
     for (local_9 = 1; local_9 < 5; local_9 = local_9 + 1) {
-      if (0x90 < (PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] & 0xf0U)) {
-        PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] =
-             PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] & 0xf;
+      if (0x90 < (PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf0)) {
+        PTR_g_ui_00025d6c->keypad_bcd[local_9] = PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf;
       }
-      if (9 < (PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] & 0xfU)) {
-        PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] =
-             PTR_g_ui_00025d6c->popup_text[local_9 - 0x18] & 0xf0;
+      if (9 < (PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf)) {
+        PTR_g_ui_00025d6c->keypad_bcd[local_9] = PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf0;
       }
     }
-    cVar2 = bcd_to_bin(PTR_g_ui_00025d6c->f_0x410_u8);
-    cVar3 = bcd_to_bin(PTR_g_ui_00025d6c->f_0x411_u8);
-    cVar4 = bcd_to_bin(PTR_g_ui_00025d6c->f_0x412_u8);
-    cVar5 = bcd_to_bin(PTR_g_ui_00025d6c->f_0x413_u8);
-    iVar6 = FUN_fffe1dd7((int)cVar5 + cVar4 * 100 + cVar3 * 10000 + cVar2 * 1000000);
-    if (iVar6 != 0) {
-      uVar7 = PTR_g_ui_00025d6c->freq_clamp_result;
-      FUN_fffe1da4(uVar7);
-      if (PTR_g_ui_00025d6c->f_0x414_u8 == 1) {
-        FUN_fffe1d96(uVar7);
+    cVar3 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[1]);
+    cVar4 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[2]);
+    cVar5 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[3]);
+    cVar6 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[4]);
+    iVar7 = FUN_fffe1dd7((int)cVar6 + cVar5 * 100 + cVar4 * 10000 + cVar3 * 1000000);
+    if (iVar7 != 0) {
+      uVar8 = PTR_g_ui_00025d6c->freq_clamp_result;
+      FUN_fffe1da4(uVar8);
+      if (PTR_g_ui_00025d6c->keypad_set_fix == 1) {
+        FUN_fffe1d96(uVar8);
       }
       PTR_g_ui_00025d6c->freq_refresh_req = 1;
-      FUN_fffe1d88(uVar7);
+      FUN_fffe1d88(uVar8);
       popup8_close();
       vfo_mark_edited(g_opstate.active_vfo);
       vfo_store_back(g_opstate.active_vfo);
@@ -188,32 +187,31 @@ void freq_keypad_key(char param_1)
     beep_request(3);
     return;
   }
-  if (PTR_g_ui_00025d6c->f_0x468_u8 == 2) {
+  if (PTR_g_ui_00025d6c->keypad_pos == 2) {
     FUN_fffe1e70();
     beep_request(3);
     return;
   }
-  if ((PTR_g_ui_00025d6c->f_0x468_u8 == 9) && ((PTR_g_ui_00025d6c->f_0x413_u8 & 0xf) != 0xf)) {
-    bVar1 = true;
+  if ((PTR_g_ui_00025d6c->keypad_pos == 9) && ((PTR_g_ui_00025d6c->keypad_bcd[4] & 0xf) != 0xf)) {
+    bVar2 = true;
   }
   else {
-    bVar1 = false;
+    bVar2 = false;
   }
-  if (!bVar1) {
-    uVar7 = (uint)(PTR_g_ui_00025d6c->f_0x468_u8 >> 1);
-    if ((PTR_g_ui_00025d6c->f_0x468_u8 & 1) == 0) {
-      PTR_g_ui_00025d6c->popup_text[uVar7 - 0x19] =
-           PTR_g_ui_00025d6c->popup_text[uVar7 - 0x19] | 0xf;
+  if (!bVar2) {
+    uVar8 = (uint)(PTR_g_ui_00025d6c->keypad_pos >> 1);
+    if ((PTR_g_ui_00025d6c->keypad_pos & 1) == 0) {
+      PTR_g_ui_00025d6c->keypad_bcd[uVar8 - 1] = PTR_g_ui_00025d6c->keypad_bcd[uVar8 - 1] | 0xf;
     }
     else {
-      PTR_g_ui_00025d6c->popup_text[uVar7 - 0x18] = -1;
+      PTR_g_ui_00025d6c->keypad_bcd[uVar8] = 0xff;
     }
-    PTR_g_ui_00025d6c->f_0x468_u8 = PTR_g_ui_00025d6c->f_0x468_u8 - 1;
+    PTR_g_ui_00025d6c->keypad_pos = PTR_g_ui_00025d6c->keypad_pos - 1;
     FUN_fffe1e70();
     beep_request(1);
     return;
   }
-  PTR_g_ui_00025d6c->f_0x413_u8 = PTR_g_ui_00025d6c->f_0x413_u8 | 0xf;
+  PTR_g_ui_00025d6c->keypad_bcd[4] = PTR_g_ui_00025d6c->keypad_bcd[4] | 0xf;
   FUN_fffe1e70();
   beep_request(1);
   return;
@@ -263,23 +261,23 @@ void FUN_fffe1da4(uint param_1)
 bool FUN_fffe1dd7(uint param_1)
 
 {
-  byte bVar1;
+  vfo_side vVar1;
   ui_state *puVar2;
   uint uVar3;
   
   PTR_g_ui_00025d6c->freq_clamp_result = param_1;
-  bVar1 = g_opstate.active_vfo;
-  if (g_opstate.active_vfo == 0) {
-    if (g_opstate.vfo_state_a == 2) {
+  vVar1 = g_opstate.active_vfo;
+  if (g_opstate.active_vfo == VFO_A) {
+    if (g_opstate.vfo_state_a == VFO_STATE_MEMORY) {
       vfo_mem_to_memtune('\0');
     }
   }
-  else if (g_opstate.vfo_state_b == 2) {
+  else if (g_opstate.vfo_state_b == VFO_STATE_MEMORY) {
     vfo_mem_to_memtune(g_opstate.active_vfo);
   }
   PTR_g_ui_00025d6c->pms_inhibit = 1;
   puVar2 = PTR_g_ui_00025d6c;
-  uVar3 = freq_clamp(bVar1,param_1);
+  uVar3 = freq_clamp(vVar1,param_1);
   puVar2->freq_clamp_result = uVar3;
   PTR_g_ui_00025d6c->pms_inhibit = 0;
   return PTR_g_ui_00025d6c->freq_rejected != 1;
@@ -302,14 +300,14 @@ void FUN_fffe1e70(void)
 void FUN_fffe1e85(void)
 
 {
-  PTR_g_ui_00025d6c->f_0x40f_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x410_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x411_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x412_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x413_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x40d_u8 = 1;
+  PTR_g_ui_00025d6c->keypad_bcd[0] = 0xff;
+  PTR_g_ui_00025d6c->keypad_bcd[1] = 0xff;
+  PTR_g_ui_00025d6c->keypad_bcd[2] = 0xff;
+  PTR_g_ui_00025d6c->keypad_bcd[3] = 0xff;
+  PTR_g_ui_00025d6c->keypad_bcd[4] = 0xff;
+  PTR_g_ui_00025d6c->keypad_open = 1;
   FUN_fffe1e70();
-  PTR_g_ui_00025d6c->f_0x468_u8 = 0;
+  PTR_g_ui_00025d6c->keypad_pos = 0;
   return;
 }
 
@@ -323,7 +321,7 @@ void FUN_fffe1ee4(void)
   byte bVar2;
   
   if (DAT_00018808 != '\0') {
-    if ((PTR_g_ui_00025d6c->f_0x40d_u8 == 1) || (PTR_g_ui_00025d6c->f_0x41d_u8 == 1)) {
+    if ((PTR_g_ui_00025d6c->keypad_open == 1) || (PTR_g_ui_00025d6c->popup7_open == 1)) {
       bVar1 = true;
     }
     else {
@@ -345,10 +343,10 @@ void FUN_fffe1ee4(void)
 void FUN_fffe1f3d(void)
 
 {
-  if (PTR_g_ui_00025d6c->f_0x41d_u8 != 1) {
+  if (PTR_g_ui_00025d6c->popup7_open != 1) {
     return;
   }
-  PTR_g_ui_00025d6c->f_0x41d_u8 = 0;
+  PTR_g_ui_00025d6c->popup7_open = 0;
   popup_close();
   return;
 }
@@ -362,7 +360,7 @@ void FUN_fffe1f60(void)
   bool bVar1;
   ui_state *puVar2;
   
-  if (PTR_g_ui_00025d6c->f_0x41d_u8 == 1) {
+  if (PTR_g_ui_00025d6c->popup7_open == 1) {
     popup8_close();
     FUN_fffe1f3d();
     beep_request(1);
@@ -382,15 +380,15 @@ void FUN_fffe1f60(void)
   PTR_g_ui_00025d6c->dl_req_popup_b = 1;
   PTR_g_ui_00025d6c->dl_req_popup_a = 1;
   g_opstate.split_on = 1;
-  PTR_g_ui_00025d6c->f_0x41d_u8 = 1;
+  PTR_g_ui_00025d6c->popup7_open = 1;
   puVar2 = PTR_g_ui_00025d6c;
-  puVar2->f_0x40f_u8 = 0xff;
-  puVar2->f_0x410_u8 = 0xff;
-  puVar2->f_0x411_u8 = 0xff;
-  puVar2->f_0x412_u8 = 0xff;
+  puVar2->keypad_bcd[0] = 0xff;
+  puVar2->keypad_bcd[1] = 0xff;
+  puVar2->keypad_bcd[2] = 0xff;
+  puVar2->keypad_bcd[3] = 0xff;
   swtimer_start(0x46,10000);
   DAT_00018808 = 1;
-  PTR_g_ui_00025d6c->f_0x468_u8 = 0;
+  PTR_g_ui_00025d6c->keypad_pos = 0;
   return;
 }
 
@@ -562,18 +560,18 @@ void keypad_2digit_key(char param_1)
   
   beep_request(1);
   if (param_1 == '\n') {
-    PTR_g_ui_00025d6c->f_0x411_u8 = 0xff;
-    PTR_g_ui_00025d6c->f_0x412_u8 = 0xff;
-    PTR_g_ui_00025d6c->f_0x468_u8 = 0;
+    PTR_g_ui_00025d6c->keypad_bcd[2] = 0xff;
+    PTR_g_ui_00025d6c->keypad_bcd[3] = 0xff;
+    PTR_g_ui_00025d6c->keypad_pos = 0;
     FUN_fffe1e70();
     return;
   }
   if (param_1 == '\v') {
-    if ((PTR_g_ui_00025d6c->f_0x411_u8 & 0xf0) == 0xa0) {
-      PTR_g_ui_00025d6c->f_0x411_u8 = PTR_g_ui_00025d6c->f_0x411_u8 | 0xf0;
+    if ((PTR_g_ui_00025d6c->keypad_bcd[2] & 0xf0) == 0xa0) {
+      PTR_g_ui_00025d6c->keypad_bcd[2] = PTR_g_ui_00025d6c->keypad_bcd[2] | 0xf0;
     }
     else {
-      PTR_g_ui_00025d6c->f_0x411_u8 = PTR_g_ui_00025d6c->f_0x411_u8 & 0xaf | 0xa0;
+      PTR_g_ui_00025d6c->keypad_bcd[2] = PTR_g_ui_00025d6c->keypad_bcd[2] & 0xaf | 0xa0;
     }
     FUN_fffe1e70();
     return;
@@ -589,23 +587,23 @@ void keypad_2digit_key(char param_1)
       if (local_1 == 10) {
         local_1 = 0;
       }
-      if (PTR_g_ui_00025d6c->f_0x468_u8 == 0) {
-        PTR_g_ui_00025d6c->f_0x411_u8 = PTR_g_ui_00025d6c->f_0x411_u8 & 0xf0 | local_1;
+      if (PTR_g_ui_00025d6c->keypad_pos == 0) {
+        PTR_g_ui_00025d6c->keypad_bcd[2] = PTR_g_ui_00025d6c->keypad_bcd[2] & 0xf0 | local_1;
       }
       else {
-        PTR_g_ui_00025d6c->f_0x412_u8 = PTR_g_ui_00025d6c->f_0x412_u8 & 0xf | local_1 << 4;
+        PTR_g_ui_00025d6c->keypad_bcd[3] = PTR_g_ui_00025d6c->keypad_bcd[3] & 0xf | local_1 << 4;
       }
-      if (PTR_g_ui_00025d6c->f_0x468_u8 != 1) {
-        PTR_g_ui_00025d6c->f_0x468_u8 = PTR_g_ui_00025d6c->f_0x468_u8 + 1;
+      if (PTR_g_ui_00025d6c->keypad_pos != 1) {
+        PTR_g_ui_00025d6c->keypad_pos = PTR_g_ui_00025d6c->keypad_pos + 1;
       }
       FUN_fffe1e70();
       return;
     }
-    if (PTR_g_ui_00025d6c->f_0x412_u8 == 0xff) {
-      PTR_g_ui_00025d6c->f_0x412_u8 = PTR_g_ui_00025d6c->f_0x411_u8 << 4 | 0xf;
-      PTR_g_ui_00025d6c->f_0x411_u8 = PTR_g_ui_00025d6c->f_0x411_u8 & 0xf0;
+    if (PTR_g_ui_00025d6c->keypad_bcd[3] == 0xff) {
+      PTR_g_ui_00025d6c->keypad_bcd[3] = PTR_g_ui_00025d6c->keypad_bcd[2] << 4 | 0xf;
+      PTR_g_ui_00025d6c->keypad_bcd[2] = PTR_g_ui_00025d6c->keypad_bcd[2] & 0xf0;
     }
-    bVar2 = PTR_g_ui_00025d6c->f_0x411_u8 << 4 | PTR_g_ui_00025d6c->f_0x412_u8 >> 4;
+    bVar2 = PTR_g_ui_00025d6c->keypad_bcd[2] << 4 | PTR_g_ui_00025d6c->keypad_bcd[3] >> 4;
     if (0x20 < bVar2) {
       FUN_fffe2299();
       FUN_fffe1e70();
@@ -616,24 +614,24 @@ void keypad_2digit_key(char param_1)
     FUN_fffe1f3d();
     return;
   }
-  if (PTR_g_ui_00025d6c->f_0x468_u8 == 0) {
+  if (PTR_g_ui_00025d6c->keypad_pos == 0) {
     FUN_fffe1e70();
     return;
   }
-  if ((PTR_g_ui_00025d6c->f_0x468_u8 == 1) && ((PTR_g_ui_00025d6c->f_0x412_u8 & 0xf0) != 0xf0)) {
+  if ((PTR_g_ui_00025d6c->keypad_pos == 1) && ((PTR_g_ui_00025d6c->keypad_bcd[3] & 0xf0) != 0xf0)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (bVar1) {
-    PTR_g_ui_00025d6c->f_0x412_u8 = PTR_g_ui_00025d6c->f_0x412_u8 | 0xf0;
+    PTR_g_ui_00025d6c->keypad_bcd[3] = PTR_g_ui_00025d6c->keypad_bcd[3] | 0xf0;
     FUN_fffe1e70();
     return;
   }
-  PTR_g_ui_00025d6c->f_0x468_u8 = 0;
-  PTR_g_ui_00025d6c->f_0x411_u8 = PTR_g_ui_00025d6c->f_0x411_u8 | 0xf;
-  PTR_g_ui_00025d6c->f_0x412_u8 = 0xff;
+  PTR_g_ui_00025d6c->keypad_pos = 0;
+  PTR_g_ui_00025d6c->keypad_bcd[2] = PTR_g_ui_00025d6c->keypad_bcd[2] | 0xf;
+  PTR_g_ui_00025d6c->keypad_bcd[3] = 0xff;
   FUN_fffe1e70();
   return;
 }
@@ -644,9 +642,9 @@ void keypad_2digit_key(char param_1)
 void FUN_fffe2299(void)
 
 {
-  PTR_g_ui_00025d6c->f_0x411_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x412_u8 = 0xff;
-  PTR_g_ui_00025d6c->f_0x468_u8 = 0;
+  PTR_g_ui_00025d6c->keypad_bcd[2] = 0xff;
+  PTR_g_ui_00025d6c->keypad_bcd[3] = 0xff;
+  PTR_g_ui_00025d6c->keypad_pos = 0;
   return;
 }
 

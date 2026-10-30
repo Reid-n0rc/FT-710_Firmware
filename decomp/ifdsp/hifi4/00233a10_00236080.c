@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== fir_process @ 00233a10 (731 bytes)
+// ===== bkfiraf_process @ 00233a10 (731 bytes)
 
-void fir_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
+/* NDSP fir/firblkf (was fir_process) [inference] */
+
+void bkfiraf_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
 
 {
   float fVar1;
@@ -286,9 +288,12 @@ void fir_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint param
 }
 
 
-// ===== FUN_00233cf0 @ 00233cf0 (22 bytes)
+// ===== bkfirf_alloc @ 00233cf0 (22 bytes)
 
-int FUN_00233cf0(int param_1,int param_2)
+/* NDSP fir/firblkf: (M, extIR) -> 4M + (extIR ? 0 : 4M) + 23, exactly NDSP's formula [fact for the
+   code] */
+
+int bkfirf_alloc(int param_1,int param_2)
 
 {
   int iVar1;
@@ -301,9 +306,11 @@ int FUN_00233cf0(int param_1,int param_2)
 }
 
 
-// ===== FUN_00233d08 @ 00233d08 (102 bytes)
+// ===== bkfirf_init @ 00233d08 (102 bytes)
 
-undefined8 FUN_00233d08(int param_1,int param_2,int param_3,undefined4 *param_4)
+/* NDSP fir/firblkf [inference] */
+
+undefined8 bkfirf_init(int param_1,int param_2,int param_3,undefined4 *param_4)
 
 {
   undefined4 uVar1;
@@ -347,9 +354,11 @@ LAB_00233d44:
 }
 
 
-// ===== FUN_00233d70 @ 00233d70 (311 bytes)
+// ===== bkfirf_process @ 00233d70 (311 bytes)
 
-void FUN_00233d70(int *param_1,undefined4 param_2,int param_3,int param_4)
+/* NDSP fir/firblkf: circular delay line (ae_l32x2.xc) [inference] */
+
+void bkfirf_process(int *param_1,undefined4 param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -620,7 +629,7 @@ void FUN_00233eb0(undefined8 *param_1,int param_2,undefined8 *param_3,undefined8
   uVar17 = ae_l32_i(uVar1);
   ae_l32_i(uVar2);
   iVar22 = 0;
-  divf_();
+  __divsf3();
   uVar17 = ae_s32x2_i(uVar17);
   puVar3 = puVar14;
   do {
@@ -701,9 +710,12 @@ void FUN_00233eb0(undefined8 *param_1,int param_2,undefined8 *param_3,undefined8
 }
 
 
-// ===== FUN_002340f0 @ 002340f0 (11 bytes)
+// ===== iir_cascade_alloc @ 002340f0 (11 bytes)
 
-int FUN_002340f0(int param_1)
+/* NDSP iirf bqriirf_df2 / df2t alloc: 32 M + 30 bytes (both variants have this size; which one is
+   not settled) [inference] */
+
+int iir_cascade_alloc(int param_1)
 
 {
   return param_1 * 0x20 + 0x1e;
@@ -1233,11 +1245,11 @@ void iir_cascade_process(uint *param_1,undefined8 *param_2,undefined8 *param_3,u
 }
 
 
-// ===== f2i_scaled @ 00234710 (31 bytes)
+// ===== scl_float2int @ 00234710 (31 bytes)
 
-/* trunc(x * 2^-s) */
+/* NDSP mathf scl_float2int(x, t) (was f2i_scaled) [inference] */
 
-undefined4 f2i_scaled(int param_1)
+undefined4 scl_float2int(int param_1)
 
 {
   float in_aed0;
@@ -1248,11 +1260,11 @@ undefined4 f2i_scaled(int param_1)
 }
 
 
-// ===== i2f_scaled @ 00234730 (25 bytes)
+// ===== scl_int2float @ 00234730 (25 bytes)
 
-/* float(i) * 2^s; s = -1 turns half-dB registers into dB */
+/* NDSP mathf scl_int2float(x, t) = x * 2^t (was i2f_scaled) [inference] */
 
-void i2f_scaled(undefined4 param_1)
+void scl_int2float(undefined4 param_1)
 
 {
   float_s(param_1,0);
@@ -1260,9 +1272,12 @@ void i2f_scaled(undefined4 param_1)
 }
 
 
-// ===== FUN_00234750 @ 00234750 (309 bytes)
+// ===== vec_float2int @ 00234750 (309 bytes)
 
-void FUN_00234750(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
+/* NDSP mathf: trunc.sx2 loop; float -> Q31 for codec_out_sink, rec_resample_sink, txaf_out_push
+   [inference] */
+
+void vec_float2int(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
 
 {
   undefined8 *puVar1;
@@ -1364,9 +1379,11 @@ void FUN_00234750(undefined4 *param_1,undefined8 *param_2,int param_3,uint param
 }
 
 
-// ===== FUN_00234890 @ 00234890 (347 bytes)
+// ===== vec_int2float @ 00234890 (347 bytes)
 
-void FUN_00234890(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
+/* NDSP mathf: float.sx2 loop; Q31 -> float for codec_in_fifo_pop, playback_ring_fill [inference] */
+
+void vec_int2float(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
 
 {
   undefined8 *puVar1;
@@ -1481,9 +1498,11 @@ void FUN_00234890(undefined4 *param_1,undefined8 *param_2,int param_3,uint param
 }
 
 
-// ===== FUN_002349f0 @ 002349f0 (341 bytes)
+// ===== vec_addf @ 002349f0 (341 bytes)
 
-void FUN_002349f0(undefined4 *param_1,undefined8 *param_2,undefined4 param_3,uint param_4)
+/* NDSP vectorf: add.s loop [inference] */
+
+void vec_addf(undefined4 *param_1,undefined8 *param_2,undefined4 param_3,uint param_4)
 
 {
   float fVar1;
@@ -1679,9 +1698,11 @@ void FUN_002349f0(undefined4 *param_1,undefined8 *param_2,undefined4 param_3,uin
 }
 
 
-// ===== FUN_00234b50 @ 00234b50 (130 bytes)
+// ===== vec_dotf @ 00234b50 (130 bytes)
 
-void FUN_00234b50(undefined8 *param_1,undefined4 *param_2,uint param_3)
+/* NDSP vectorf: madd.s reduction [inference] */
+
+void vec_dotf(undefined8 *param_1,undefined4 *param_2,uint param_3)
 
 {
   undefined8 uVar1;
@@ -1726,11 +1747,11 @@ void FUN_00234b50(undefined8 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== vec_sum_sq @ 00234be0 (533 bytes)
+// ===== vec_powerf @ 00234be0 (533 bytes)
 
-/* sum of squares (madd.s loop) */
+/* NDSP vectorf: sum of squares (was vec_sum_sq) [inference] */
 
-void vec_sum_sq(undefined8 *param_1,uint param_2)
+void vec_powerf(undefined8 *param_1,uint param_2)
 
 {
   float fVar1;
@@ -1897,9 +1918,11 @@ void vec_sum_sq(undefined8 *param_1,uint param_2)
 }
 
 
-// ===== FUN_00234e00 @ 00234e00 (315 bytes)
+// ===== vec_scale_sf @ 00234e00 (315 bytes)
 
-void FUN_00234e00(undefined4 *param_1,undefined4 *param_2,uint param_3)
+/* NDSP vectorf: y = clamp(x * s, fmin, fmax) (mul.s, max.s, min.s) [inference] */
+
+void vec_scale_sf(undefined4 *param_1,undefined4 *param_2,uint param_3)
 
 {
   undefined8 uVar1;
@@ -2015,11 +2038,11 @@ void FUN_00234e00(undefined4 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== vec_scale_f32 @ 00234f40 (568 bytes)
+// ===== vec_scalef @ 00234f40 (568 bytes)
 
-/* y[i] = x[i] * scalar */
+/* NDSP vectorf: y = x * s (was vec_scale_f32) [inference] */
 
-void vec_scale_f32(undefined4 *param_1,undefined8 *param_2,uint param_3)
+void vec_scalef(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 {
   undefined8 *puVar1;
@@ -2272,9 +2295,11 @@ void vec_scale_f32(undefined4 *param_1,undefined8 *param_2,uint param_3)
 }
 
 
-// ===== FUN_00235190 @ 00235190 (472 bytes)
+// ===== vec_shiftf @ 00235190 (472 bytes)
 
-void FUN_00235190(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
+/* NDSP vectorf: y = x * 2^t [inference] */
+
+void vec_shiftf(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4)
 
 {
   undefined8 *puVar1;
@@ -2736,11 +2761,14 @@ void FUN_002354e0(undefined4 param_1)
 }
 
 
-// ===== FUN_00235510 @ 00235510 (92 bytes)
+// ===== __adddf3 @ 00235510 (92 bytes)
+
+/* XCC soft double using the HiFi4 f64 assist ops (f64cmpl/f64addc/f64rnd); first of the two calls
+   in rint [inference] */
 
 undefined8
-FUN_00235510(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined4 param_5,
-            uint param_6)
+__adddf3(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined4 param_5,
+        uint param_6)
 
 {
   uint uVar1;
@@ -2889,11 +2917,13 @@ FUN_00235510(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undef
 }
 
 
-// ===== FUN_00235570 @ 00235570 (189 bytes)
+// ===== __subdf3 @ 00235570 (189 bytes)
+
+/* XCC soft double; second call in rint (w - TWO52) [inference] */
 
 undefined8
-FUN_00235570(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined4 param_5,
-            uint param_6)
+__subdf3(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined4 param_5,
+        uint param_6)
 
 {
   uint uVar1;
@@ -3042,9 +3072,12 @@ FUN_00235570(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undef
 }
 
 
-// ===== FUN_00235630 @ 00235630 (392 bytes)
+// ===== __muldf3 @ 00235630 (392 bytes)
 
-undefined8 FUN_00235630(uint param_1,undefined4 param_2,uint param_3,undefined4 param_4)
+/* XCC soft double (mull/muluh on the significands); _mprec_log10 multiplies by 10.0 with it
+   [inference] */
+
+undefined8 __muldf3(uint param_1,undefined4 param_2,uint param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -3209,11 +3242,12 @@ undefined8 FUN_00235630(uint param_1,undefined4 param_2,uint param_3,undefined4 
 }
 
 
-// ===== FUN_002357c0 @ 002357c0 (275 bytes)
+// ===== __divdf3 @ 002357c0 (275 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00235800) */
+/* XCC soft double; __ratio and the 0/0 of the sqrtf wrapper [inference] */
 
-longlong FUN_002357c0(uint param_1,uint param_2,uint param_3,uint param_4)
+longlong __divdf3(uint param_1,uint param_2,uint param_3,uint param_4)
 
 {
   undefined1 auVar1 [12];
@@ -3347,9 +3381,11 @@ LAB_002357cf:
 }
 
 
-// ===== FUN_002358e0 @ 002358e0 (23 bytes)
+// ===== __muldi3 @ 002358e0 (23 bytes)
 
-undefined8 FUN_002358e0(uint param_1,int param_2,uint param_3,int param_4)
+/* 64 x 64 -> 64 multiply (mull/muluh); used by xos_get_cpu_load [fact for the code] */
+
+undefined8 __muldi3(uint param_1,int param_2,uint param_3,int param_4)
 
 {
   return CONCAT44((int)((ulonglong)param_1 * (ulonglong)param_3 >> 0x20) +
@@ -3537,9 +3573,11 @@ ulonglong __udivdi3(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_00235b80 @ 00235b80 (39 bytes)
+// ===== __recipsf2 @ 00235b80 (39 bytes)
 
-void FUN_00235b80(void)
+/* XCC/libgcc Xtensa ieee754-sf: 1/x with recip0.s + 2 Newton steps [fact for the code] */
+
+void __recipsf2(void)
 
 {
   undefined8 in_aed0;
@@ -3558,11 +3596,12 @@ void FUN_00235b80(void)
 }
 
 
-// ===== divf_ @ 00235ba8 (164 bytes)
+// ===== __divsf3 @ 00235ba8 (164 bytes)
 
-/* float divide */
+/* XCC/libgcc Xtensa ieee754-sf: div0.s / nexp01.s / divn.s sequence; 22 callers (was divf_) [fact
+   for the code] */
 
-void divf_(void)
+void __divsf3(void)
 
 {
   undefined8 in_aed0;
@@ -3603,9 +3642,11 @@ void divf_(void)
 }
 
 
-// ===== FUN_00235c50 @ 00235c50 (59 bytes)
+// ===== __rsqrtsf2 @ 00235c50 (59 bytes)
 
-void FUN_00235c50(void)
+/* XCC/libgcc Xtensa ieee754-sf: 1/sqrt(x) with rsqrt0.s [fact for the code] */
+
+void __rsqrtsf2(void)
 
 {
   float fVar1;
@@ -3631,11 +3672,12 @@ void FUN_00235c50(void)
 }
 
 
-// ===== sqrtf_ @ 00235c8c (160 bytes)
+// ===== __ieee754_sqrtf @ 00235c8c (160 bytes)
 
-/* sqrt */
+/* XCC/libgcc Xtensa ieee754-sf: sqrt0.s sequence; the core called by the newlib sqrtf wrapper
+   0x229A20 (was sqrtf_) [fact for the code] */
 
-void sqrtf_(void)
+void __ieee754_sqrtf(void)
 
 {
   undefined8 in_aed0;
@@ -3894,45 +3936,55 @@ LAB_00235f2e:
 }
 
 
-// ===== FUN_00235f40 @ 00235f40 (5 bytes)
+// ===== __sfp_lock_acquire @ 00235f40 (5 bytes)
 
-void FUN_00235f40(void)
+/* newlib findfp.c; called by __sfp, __fp_lock_all, _fclose_r [inference] */
 
-{
-  return;
-}
-
-
-// ===== FUN_00235f50 @ 00235f50 (5 bytes)
-
-void FUN_00235f50(void)
+void __sfp_lock_acquire(void)
 
 {
   return;
 }
 
 
-// ===== FUN_00235f60 @ 00235f60 (5 bytes)
+// ===== __sfp_lock_release @ 00235f50 (5 bytes)
 
-void FUN_00235f60(void)
+/* newlib findfp.c [inference] */
 
-{
-  return;
-}
-
-
-// ===== FUN_00235f70 @ 00235f70 (5 bytes)
-
-void FUN_00235f70(void)
+void __sfp_lock_release(void)
 
 {
   return;
 }
 
 
-// ===== FUN_00235fa0 @ 00235fa0 (84 bytes)
+// ===== __sinit_lock_acquire @ 00235f60 (5 bytes)
 
-uint FUN_00235fa0(int param_1,code *param_2)
+/* newlib findfp.c; called by __sinit [inference] */
+
+void __sinit_lock_acquire(void)
+
+{
+  return;
+}
+
+
+// ===== __sinit_lock_release @ 00235f70 (5 bytes)
+
+/* newlib findfp.c; called by __sinit [inference] */
+
+void __sinit_lock_release(void)
+
+{
+  return;
+}
+
+
+// ===== _fwalk @ 00235fa0 (84 bytes)
+
+/* newlib fwalk.c; called by _cleanup_r and __fp_lock_all / __fp_unlock_all [inference] */
+
+uint _fwalk(int param_1,code *param_2)
 
 {
   uint uVar1;
@@ -3965,9 +4017,11 @@ uint FUN_00235fa0(int param_1,code *param_2)
 }
 
 
-// ===== FUN_00236000 @ 00236000 (89 bytes)
+// ===== _fwalk_reent @ 00236000 (89 bytes)
 
-uint FUN_00236000(int param_1,code *param_2)
+/* newlib fwalk.c; fflush(NULL) walks with _fflush_r [inference] */
+
+uint _fwalk_reent(int param_1,code *param_2)
 
 {
   uint uVar1;
@@ -4000,9 +4054,11 @@ uint FUN_00236000(int param_1,code *param_2)
 }
 
 
-// ===== FUN_00236060 @ 00236060 (24 bytes)
+// ===== _Bfree @ 00236060 (24 bytes)
 
-void FUN_00236060(int param_1,int *param_2)
+/* newlib mprec.c (sequence match 0.95 with newlib's _Bfree) [inference] */
+
+void _Bfree(int param_1,int *param_2)
 
 {
   int *piVar1;
@@ -4017,9 +4073,11 @@ void FUN_00236060(int param_1,int *param_2)
 }
 
 
-// ===== FUN_00236080 @ 00236080 (80 bytes)
+// ===== __hi0bits @ 00236080 (80 bytes)
 
-int FUN_00236080(uint param_1)
+/* newlib mprec.c; called by __b2d, __d2b, _dtoa_r [inference] */
+
+int __hi0bits(uint param_1)
 
 {
   int iVar1;

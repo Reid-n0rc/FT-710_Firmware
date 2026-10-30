@@ -1,8 +1,10 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_00216718 @ 00216718 (55 bytes)
+// ===== USART_TransferReceiveDMACallback @ 00216718 (55 bytes)
 
-void FUN_00216718(undefined4 param_1,int *param_2)
+/* fsl_usart_dma.c static [inference] */
+
+void USART_TransferReceiveDMACallback(undefined4 param_1,int *param_2)
 
 {
   int iVar1;
@@ -22,17 +24,20 @@ void FUN_00216718(undefined4 param_1,int *param_2)
 }
 
 
-// ===== FUN_00216750 @ 00216750 (118 bytes)
+// ===== USART_TransferCreateHandleDMA @ 00216750 (118 bytes)
+
+/* fsl_usart_dma.c: callbacks 0x2166F0 / 0x216718, IRQ 0x216914 [inference] */
 
 undefined4
-FUN_00216750(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,int param_6)
+USART_TransferCreateHandleDMA
+          (int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,int param_6)
 
 {
   int iVar1;
   int *piVar2;
   
   if ((param_1 != 0) && (param_2 != 0)) {
-    iVar1 = FUN_00215b00(param_1);
+    iVar1 = USART_GetInstance(param_1);
     memset(param_2,0,0x20);
     piVar2 = (int *)(&DAT_00239040 + iVar1 * 8);
     *(int *)(&DAT_00239044 + iVar1 * 8) = param_2;
@@ -45,12 +50,12 @@ FUN_00216750(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int p
     *(int *)(param_2 + 0x18) = param_6;
     *(int *)(param_2 + 0x14) = param_5;
     *(undefined1 *)(param_2 + 0x1c) = 0;
-    FUN_0020b8e4(param_1,FUN_00216914,param_2);
+    FLEXCOMM_SetIRQHandler(param_1,USART_TransferDMAHandleIRQ,param_2);
     if (param_5 != 0) {
-      FUN_0020ab28(param_5,&LAB_002166f0,piVar2);
+      DMA_SetCallback(param_5,&LAB_002166f0,piVar2);
     }
     if (param_6 != 0) {
-      FUN_0020ab28(param_6,FUN_00216718,piVar2);
+      DMA_SetCallback(param_6,USART_TransferReceiveDMACallback,piVar2);
     }
     return 0;
   }
@@ -58,9 +63,11 @@ FUN_00216750(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int p
 }
 
 
-// ===== FUN_002167c8 @ 002167c8 (96 bytes)
+// ===== USART_TransferSendDMA @ 002167c8 (96 bytes)
 
-undefined * FUN_002167c8(int param_1,int param_2,undefined4 *param_3)
+/* fsl_usart_dma.c order [inference] */
+
+undefined * USART_TransferSendDMA(int param_1,int param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;
@@ -77,16 +84,18 @@ undefined * FUN_002167c8(int param_1,int param_2,undefined4 *param_3)
   memw();
   memw();
   *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00001000;
-  FUN_0020ab34(auStack_40,*param_3,param_1 + 0xe20,1,uVar1,2,0);
-  FUN_0020ae18(*(undefined4 *)(param_2 + 0x14),auStack_40);
-  FUN_0020aed8(*(undefined4 *)(param_2 + 0x14));
+  DMA_PrepareTransfer(auStack_40,*param_3,param_1 + 0xe20,1,uVar1,2,0);
+  DMA_SubmitTransfer(*(undefined4 *)(param_2 + 0x14),auStack_40);
+  DMA_StartTransfer(*(undefined4 *)(param_2 + 0x14));
   return (undefined *)0x0;
 }
 
 
-// ===== FUN_0021682c @ 0021682c (102 bytes)
+// ===== USART_TransferReceiveDMA @ 0021682c (102 bytes)
 
-undefined * FUN_0021682c(int param_1,int param_2,undefined4 *param_3)
+/* fsl_usart_dma.c order [inference] */
+
+undefined * USART_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3)
 
 {
   undefined4 uVar1;
@@ -103,40 +112,46 @@ undefined * FUN_0021682c(int param_1,int param_2,undefined4 *param_3)
   memw();
   memw();
   *(uint *)(param_1 + 0xe00) = *(uint *)(param_1 + 0xe00) | (uint)&DAT_00002000;
-  FUN_0020ab34(auStack_40,param_1 + 0xe30,*param_3,1,uVar1,1,0);
-  FUN_0020ae18(*(undefined4 *)(param_2 + 0x18),auStack_40);
-  FUN_0020aed8(*(undefined4 *)(param_2 + 0x18));
+  DMA_PrepareTransfer(auStack_40,param_1 + 0xe30,*param_3,1,uVar1,1,0);
+  DMA_SubmitTransfer(*(undefined4 *)(param_2 + 0x18),auStack_40);
+  DMA_StartTransfer(*(undefined4 *)(param_2 + 0x18));
   return (undefined *)0x0;
 }
 
 
-// ===== FUN_00216894 @ 00216894 (18 bytes)
+// ===== USART_TransferAbortSendDMA @ 00216894 (18 bytes)
 
-void FUN_00216894(undefined4 param_1,int param_2)
+/* fsl_usart_dma.c order [inference] */
+
+void USART_TransferAbortSendDMA(undefined4 param_1,int param_2)
 
 {
-  FUN_0020aa20(*(undefined4 *)(param_2 + 0x14));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x14));
   memw();
   *(undefined1 *)(param_2 + 0x1c) = 0;
   return;
 }
 
 
-// ===== FUN_002168a8 @ 002168a8 (18 bytes)
+// ===== USART_TransferAbortReceiveDMA @ 002168a8 (18 bytes)
 
-void FUN_002168a8(undefined4 param_1,int param_2)
+/* fsl_usart_dma.c order [inference] */
+
+void USART_TransferAbortReceiveDMA(undefined4 param_1,int param_2)
 
 {
-  FUN_0020aa20(*(undefined4 *)(param_2 + 0x18));
+  DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x18));
   memw();
   *(undefined1 *)(param_2 + 0x1d) = 2;
   return;
 }
 
 
-// ===== FUN_002168bc @ 002168bc (41 bytes)
+// ===== USART_TransferGetReceiveCountDMA @ 002168bc (41 bytes)
 
-undefined4 FUN_002168bc(undefined4 param_1,int param_2,int *param_3)
+/* fsl_usart_dma.c order [inference] */
+
+undefined4 USART_TransferGetReceiveCountDMA(undefined4 param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -145,16 +160,19 @@ undefined4 FUN_002168bc(undefined4 param_1,int param_2,int *param_3)
   if (*(char *)(param_2 + 0x1d) == '\x02') {
     return 6;
   }
-  iVar1 = FUN_0020a73c(*(undefined4 *)(*(int *)(param_2 + 0x18) + 8),
-                       *(undefined1 *)(*(int *)(param_2 + 0x18) + 0xc));
+  iVar1 = DMA_GetRemainingBytes
+                    (*(undefined4 *)(*(int *)(param_2 + 0x18) + 8),
+                     *(undefined1 *)(*(int *)(param_2 + 0x18) + 0xc));
   *param_3 = *(int *)(param_2 + 0xc) - iVar1;
   return 0;
 }
 
 
-// ===== FUN_002168e8 @ 002168e8 (41 bytes)
+// ===== USART_TransferGetSendCountDMA @ 002168e8 (41 bytes)
 
-undefined4 FUN_002168e8(undefined4 param_1,int param_2,int *param_3)
+/* fsl_usart_dma.c order [inference] */
+
+undefined4 USART_TransferGetSendCountDMA(undefined4 param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -163,16 +181,19 @@ undefined4 FUN_002168e8(undefined4 param_1,int param_2,int *param_3)
   if (*(char *)(param_2 + 0x1c) == '\0') {
     return 6;
   }
-  iVar1 = FUN_0020a73c(*(undefined4 *)(*(int *)(param_2 + 0x14) + 8),
-                       *(undefined1 *)(*(int *)(param_2 + 0x14) + 0xc));
+  iVar1 = DMA_GetRemainingBytes
+                    (*(undefined4 *)(*(int *)(param_2 + 0x14) + 8),
+                     *(undefined1 *)(*(int *)(param_2 + 0x14) + 0xc));
   *param_3 = *(int *)(param_2 + 0x10) - iVar1;
   return 0;
 }
 
 
-// ===== FUN_00216914 @ 00216914 (41 bytes)
+// ===== USART_TransferDMAHandleIRQ @ 00216914 (41 bytes)
 
-void FUN_00216914(int param_1,int param_2)
+/* fsl_usart_dma.c order [inference] */
+
+void USART_TransferDMAHandleIRQ(int param_1,int param_2)
 
 {
   int iVar1;
@@ -189,9 +210,11 @@ void FUN_00216914(int param_1,int param_2)
 }
 
 
-// ===== FUN_00216940 @ 00216940 (45 bytes)
+// ===== UTICK_SetTick @ 00216940 (45 bytes)
 
-void FUN_00216940(dword *param_1,int param_2,uint param_3,undefined4 param_4)
+/* fsl_utick.c: UTICK0 0x4000F000, callback 0x239084 [inference] */
+
+void UTICK_SetTick(dword *param_1,int param_2,uint param_3,undefined4 param_4)
 
 {
   (&DAT_00239084)[param_1 != &UTICK0_CTRL] = param_4;
@@ -201,7 +224,7 @@ void FUN_00216940(dword *param_1,int param_2,uint param_3,undefined4 param_4)
 }
 
 
-// ===== FUN_00216970 @ 00216970 (196 bytes)
+// ===== UTICK_Init @ 00216970 (196 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00216a12) */
 /* WARNING: Removing unreachable block (ram,0x002169a2) */
@@ -211,20 +234,21 @@ void FUN_00216940(dword *param_1,int param_2,uint param_3,undefined4 param_4)
 /* WARNING: Removing unreachable block (ram,0x00216a24) */
 /* WARNING: Removing unreachable block (ram,0x00216a00) */
 /* WARNING: Removing unreachable block (ram,0x002169e7) */
+/* fsl_utick.c order [inference] */
 
-void FUN_00216970(dword *param_1)
+void UTICK_Init(dword *param_1)
 
 {
   memw();
   CLKCTL0_PSCCTL2_SET =
        1 << 0x20 - (0x20 - ((byte)(&DAT_00200618)[(uint)(param_1 != &UTICK0_CTRL) * 4] & 0x1f));
-  FUN_00213910(*(undefined4 *)(&DAT_0020061c + (uint)(param_1 != &UTICK0_CTRL) * 4));
-  DAT_00239080 = FUN_00216b04;
+  RESET_PeripheralReset(*(undefined4 *)(&DAT_0020061c + (uint)(param_1 != &UTICK0_CTRL) * 4));
+  DAT_00239080 = UTICK_HandleIRQ;
   return;
 }
 
 
-// ===== FUN_00216a38 @ 00216a38 (180 bytes)
+// ===== UTICK_Deinit @ 00216a38 (180 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00216aca) */
 /* WARNING: Removing unreachable block (ram,0x00216a86) */
@@ -235,8 +259,9 @@ void FUN_00216970(dword *param_1)
 /* WARNING: Removing unreachable block (ram,0x00216adb) */
 /* WARNING: Removing unreachable block (ram,0x00216ab9) */
 /* WARNING: Removing unreachable block (ram,0x00216aa8) */
+/* fsl_utick.c order [inference] */
 
-void FUN_00216a38(dword *param_1)
+void UTICK_Deinit(dword *param_1)
 
 {
   memw();
@@ -252,9 +277,11 @@ void FUN_00216a38(dword *param_1)
 }
 
 
-// ===== FUN_00216aec @ 00216aec (10 bytes)
+// ===== UTICK_GetStatusFlags @ 00216aec (10 bytes)
 
-undefined4 FUN_00216aec(int param_1)
+/* fsl_utick.c order [inference] */
+
+undefined4 UTICK_GetStatusFlags(int param_1)
 
 {
   memw();
@@ -262,9 +289,11 @@ undefined4 FUN_00216aec(int param_1)
 }
 
 
-// ===== FUN_00216af8 @ 00216af8 (12 bytes)
+// ===== UTICK_ClearStatusFlags @ 00216af8 (12 bytes)
 
-void FUN_00216af8(int param_1)
+/* fsl_utick.c; called by UTICK_HandleIRQ [inference] */
+
+void UTICK_ClearStatusFlags(int param_1)
 
 {
   memw();
@@ -273,12 +302,14 @@ void FUN_00216af8(int param_1)
 }
 
 
-// ===== FUN_00216b04 @ 00216b04 (15 bytes)
+// ===== UTICK_HandleIRQ @ 00216b04 (15 bytes)
 
-void FUN_00216b04(undefined4 param_1,code *param_2)
+/* fsl_utick.c order [inference] */
+
+void UTICK_HandleIRQ(undefined4 param_1,code *param_2)
 
 {
-  FUN_00216af8(param_1);
+  UTICK_ClearStatusFlags(param_1);
   if (param_2 != (code *)0x0) {
     (*param_2)();
   }
@@ -286,9 +317,11 @@ void FUN_00216b04(undefined4 param_1,code *param_2)
 }
 
 
-// ===== FUN_00216b14 @ 00216b14 (18 bytes)
+// ===== UTICK0_DriverIRQHandler @ 00216b14 (18 bytes)
 
-void FUN_00216b14(void)
+/* fsl_utick.c order [inference] */
+
+void UTICK0_DriverIRQHandler(void)
 
 {
   (*DAT_00239080)(&UTICK0_CTRL,DAT_00239084);
@@ -296,9 +329,11 @@ void FUN_00216b14(void)
 }
 
 
-// ===== FUN_00216b30 @ 00216b30 (37 bytes)
+// ===== WWDT_GetDefaultConfig @ 00216b30 (37 bytes)
 
-void FUN_00216b30(undefined4 *param_1)
+/* fsl_wwdt.c order [inference] */
+
+void WWDT_GetDefaultConfig(undefined4 *param_1)
 
 {
   param_1[1] = 0xffffff;
@@ -314,9 +349,11 @@ void FUN_00216b30(undefined4 *param_1)
 }
 
 
-// ===== FUN_00216b58 @ 00216b58 (420 bytes)
+// ===== WWDT_Init @ 00216b58 (420 bytes)
 
-void FUN_00216b58(dword *param_1,byte *param_2)
+/* fsl_wwdt.c: clock 0x200628, SDK_DelayAtLeastUs [inference] */
+
+void WWDT_Init(dword *param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -361,7 +398,7 @@ void FUN_00216b58(dword *param_1,byte *param_2)
   if (param_1 != &WWDT0_MOD) {
     iVar5 = 4;
   }
-  FUN_00213910(*(undefined4 *)((int)&DAT_00200630 + iVar5));
+  RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200630 + iVar5));
   bVar2 = param_2[1];
   bVar3 = param_2[3];
   bVar1 = *param_2;
@@ -387,7 +424,7 @@ void FUN_00216b58(dword *param_1,byte *param_2)
     }
   }
   if ((param_2[2] != 0) && (memw(), (*param_1 & 0x10) == 0)) {
-    FUN_00209c70((uint)&DAT_002dc6c0 / *(uint *)(param_2 + 0x10) + 1,600000000);
+    SDK_DelayAtLeastUs((uint)&DAT_002dc6c0 / *(uint *)(param_2 + 0x10) + 1,600000000);
     memw();
     memw();
     *param_1 = *param_1 | 0x10;
@@ -397,9 +434,11 @@ void FUN_00216b58(dword *param_1,byte *param_2)
 }
 
 
-// ===== FUN_00216d00 @ 00216d00 (173 bytes)
+// ===== WWDT_Deinit @ 00216d00 (173 bytes)
 
-void FUN_00216d00(dword *param_1)
+/* fsl_wwdt.c order [inference] */
+
+void WWDT_Deinit(dword *param_1)
 
 {
   uint uVar1;
@@ -446,9 +485,11 @@ void FUN_00216d00(dword *param_1)
 }
 
 
-// ===== FUN_00216db0 @ 00216db0 (20 bytes)
+// ===== WWDT_Refresh @ 00216db0 (20 bytes)
 
-void FUN_00216db0(int param_1)
+/* fsl_wwdt.c order [inference] */
+
+void WWDT_Refresh(int param_1)
 
 {
   memw();
@@ -459,9 +500,11 @@ void FUN_00216db0(int param_1)
 }
 
 
-// ===== FUN_00216dc4 @ 00216dc4 (45 bytes)
+// ===== WWDT_ClearStatusFlags @ 00216dc4 (45 bytes)
 
-void FUN_00216dc4(uint *param_1,uint param_2)
+/* fsl_wwdt.c, last SDK driver function [inference] */
+
+void WWDT_ClearStatusFlags(uint *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -480,9 +523,12 @@ void FUN_00216dc4(uint *param_1,uint param_2)
 }
 
 
-// ===== FUN_00216e00 @ 00216e00 (1708 bytes)
+// ===== vec_complex2mag @ 00216e00 (1708 bytes)
 
-void FUN_00216e00(undefined4 *param_1,undefined8 *param_2,uint param_3)
+/* NDSP complexf/vec_complex2mag: |x| per bin (abs, max/min, sqrt0.s, divn.s, 0x400000); used by
+   spectral_nr_frame [inference] */
+
+void vec_complex2mag(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 {
   float fVar1;
@@ -917,13 +963,15 @@ void FUN_00216e00(undefined4 *param_1,undefined8 *param_2,uint param_3)
 }
 
 
-// ===== fft512_cplx @ 002174b0 (2144 bytes)
+// ===== fft_cplxf_ie @ 002174b0 (2144 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00217730) */
+/* NDSP fft/fft_ief: complex float FFT with external twiddles; its own sqrt(0.5) constant 0x200638
+   (was fft512_cplx) [inference] */
 
 undefined1  [16]
-fft512_cplx(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefined8 *param_4,
-           int param_5)
+fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefined8 *param_4,
+            int param_5)
 
 {
   float fVar1;
@@ -1556,14 +1604,16 @@ fft512_cplx(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefine
 }
 
 
-// ===== ifft512_cplx @ 00217d10 (2329 bytes)
+// ===== ifft_cplxf_ie @ 00217d10 (2329 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
 /* WARNING: Removing unreachable block (ram,0x00218632) */
+/* NDSP fft/fft_ief: inverse complex float FFT; sqrt(0.5) constant 0x20063C (was ifft512_cplx)
+   [inference] */
 
 undefined1  [16]
-ifft512_cplx(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int param_4,int param_5)
+ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int param_4,int param_5)
 
 {
   float fVar1;
@@ -2204,15 +2254,17 @@ void FUN_00218480(void)
 }
 
 
-// ===== FUN_00218640 @ 00218640 (1314 bytes)
+// ===== fft_spectrumf @ 00218640 (1314 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218738) */
 /* WARNING: Removing unreachable block (ram,0x0021880c) */
 /* WARNING: Removing unreachable block (ram,0x002188d0) */
 /* WARNING: Removing unreachable block (ram,0x00218986) */
 /* WARNING: Removing unreachable block (ram,0x002189a6) */
+/* NDSP fft/fft_spectrum: (y, x, N, mode): returns at once unless N is a power of 2 and mode is 0
+   (power) or 1 (magnitude, sqrt0.s) [fact for the checks] */
 
-void FUN_00218640(int param_1,int param_2,uint param_3,int param_4)
+void fft_spectrumf(int param_1,int param_2,uint param_3,int param_4)
 
 {
   float fVar1;
@@ -2397,11 +2449,12 @@ void FUN_00218640(int param_1,int param_2,uint param_3,int param_4)
 }
 
 
-// ===== pow10f_ @ 00218b70 (375 bytes)
+// ===== scl_antilog10f @ 00218b70 (375 bytes)
 
-/* 10^x */
+/* NDSP mathf: alog10fminmax 0x2006C8 and expftbl_Q30 0x200720 (was pow10f_) [fact for the tables]
+    */
 
-void pow10f_(void)
+void scl_antilog10f(void)
 
 {
   undefined4 *puVar1;
@@ -2428,7 +2481,7 @@ void pow10f_(void)
   
   uVar2 = un_s(in_aed0,in_aed0);
   if (SUB21(uVar2,0)) {
-    puVar1 = (undefined4 *)FUN_0022ba10();
+    puVar1 = (undefined4 *)__errno();
     *puVar1 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -2508,7 +2561,7 @@ void pow10f_(void)
   movt_s(uVar11,uVar18,bVar3 | bVar3 ^ 1);
   recip0_s(uVar13);
   float_s(uVar10,0);
-  puVar1 = (undefined4 *)FUN_0022ba10(0x7f7f7f7f);
+  puVar1 = (undefined4 *)__errno(0x7f7f7f7f);
   uVar7 = ae_l32x2_i(uVar7);
   *puVar1 = 0x22;
   ae_sel16i(uVar7,uVar7,1);
@@ -2516,9 +2569,12 @@ void pow10f_(void)
 }
 
 
-// ===== FUN_00218cf0 @ 00218cf0 (355 bytes)
+// ===== scl_antilognf @ 00218cf0 (355 bytes)
 
-void FUN_00218cf0(void)
+/* NDSP mathf: expftbl_Q30 0x200720, no alog10f table; used by soft_knee_compressor /
+   soft_knee_limiter [inference] */
+
+void scl_antilognf(void)
 
 {
   undefined4 *puVar1;
@@ -2544,7 +2600,7 @@ void FUN_00218cf0(void)
   uVar11 = ae_movda32(0xfe);
   uVar15 = ae_movvfcrfsr();
   if (SUB21(uVar2,0)) {
-    puVar1 = (undefined4 *)FUN_0022ba10();
+    puVar1 = (undefined4 *)__errno();
     *puVar1 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -2616,7 +2672,7 @@ void FUN_00218cf0(void)
   movt_s(uVar15,uVar12,bVar3 | bVar3 ^ 1);
   recip0_s(uVar7);
   float_s(uVar10,0);
-  puVar1 = (undefined4 *)FUN_0022ba10();
+  puVar1 = (undefined4 *)__errno();
   uVar11 = ae_l32x2_i(uVar11);
   *puVar1 = 0x22;
   ae_sel16i(uVar11,uVar11,1);
@@ -2624,11 +2680,12 @@ void FUN_00218cf0(void)
 }
 
 
-// ===== atan2f_ @ 00218e60 (346 bytes)
+// ===== scl_atan2f @ 00218e60 (346 bytes)
 
-/* atan2 */
+/* NDSP mathf: atanftbl 0x2006D0 / 0x2006F0, pi and pi/2 (pif_tbl) (was atan2f_) [fact for the
+   tables] */
 
-void atan2f_(void)
+void scl_atan2f(void)
 
 {
   float fVar1;
@@ -2656,7 +2713,7 @@ void atan2f_(void)
   uVar5 = (ulonglong)(uint)ABS(in_aed1);
   uVar13 = ae_movvfcrfsr();
   if (SUB21(uVar3,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -2719,7 +2776,7 @@ void atan2f_(void)
     return;
   }
   uVar13 = ae_s32x2_i(uVar14);
-  puVar2 = (undefined4 *)FUN_0022ba10();
+  puVar2 = (undefined4 *)__errno();
   uVar13 = ae_l32x2_i(uVar13);
   *puVar2 = 0x21;
   ae_sel16i(uVar13,uVar13,1);
@@ -2727,11 +2784,12 @@ void atan2f_(void)
 }
 
 
-// ===== cosf_ @ 00218fc0 (299 bytes)
+// ===== scl_cosinef @ 00218fc0 (299 bytes)
 
-/* cos */
+/* NDSP mathf: local range-reduction table 0x200650 and sinf_tbl 0x200830 (was cosf_) [fact for the
+   tables] */
 
-void cosf_(void)
+void scl_cosinef(void)
 
 {
   float fVar1;
@@ -2754,7 +2812,7 @@ void cosf_(void)
   
   uVar8 = un_s(in_aed0,in_aed0);
   if (SUB21(uVar8,0)) {
-    puVar7 = (undefined4 *)FUN_0022ba10();
+    puVar7 = (undefined4 *)__errno();
     *puVar7 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -2815,13 +2873,13 @@ void cosf_(void)
 }
 
 
-// ===== log10f_ @ 002190f0 (558 bytes)
+// ===== scl_log10f @ 002190f0 (558 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002192b0) */
 /* WARNING: Removing unreachable block (ram,0x00219251) */
-/* log10 */
+/* NDSP mathf: log10f_tbl 0x2007A0.., sqrt(0.5) (was log10f_) [fact for the tables] */
 
-undefined4 log10f_(undefined4 param_1)
+undefined4 scl_log10f(undefined4 param_1)
 
 {
   float fVar1;
@@ -2851,14 +2909,14 @@ undefined4 log10f_(undefined4 param_1)
   uVar15 = 0;
   uVar12 = const_s(0);
   if (SUB21(uVar4,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     ae_l32_i(0x7fc00000);
     return param_1;
   }
   uVar5 = olt_s(in_aed0,uVar12);
   if (SUB21(uVar5,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     uVar12 = const_s(1);
     bVar6 = bVar6 | bVar6 ^ 1;
@@ -2889,7 +2947,7 @@ undefined4 log10f_(undefined4 param_1)
   uVar15 = 0x4b000000;
   uVar12 = ae_movda32(0x800000);
   if (SUB21(uVar5,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x22;
     bVar7 = (byte)uVar4 & ((byte)uVar4 ^ 1);
     uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar7);
@@ -2972,12 +3030,13 @@ undefined4 log10f_(undefined4 param_1)
 }
 
 
-// ===== FUN_00219320 @ 00219320 (561 bytes)
+// ===== scl_lognf @ 00219320 (561 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x002194e5) */
 /* WARNING: Removing unreachable block (ram,0x00219484) */
+/* NDSP mathf: lognf_tbl 0x2007E0.. [fact for the tables] */
 
-undefined4 FUN_00219320(undefined4 param_1)
+undefined4 scl_lognf(undefined4 param_1)
 
 {
   float fVar1;
@@ -3006,14 +3065,14 @@ undefined4 FUN_00219320(undefined4 param_1)
   uVar15 = 0;
   uVar12 = const_s(0);
   if (SUB21(uVar4,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     ae_l32_i(0x7fc00000);
     return param_1;
   }
   uVar5 = olt_s(in_aed0,uVar12);
   if (SUB21(uVar5,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     uVar12 = const_s(1);
     bVar6 = bVar6 | bVar6 ^ 1;
@@ -3044,7 +3103,7 @@ undefined4 FUN_00219320(undefined4 param_1)
   uVar15 = 0x4b000000;
   uVar12 = ae_movda32(0x800000);
   if (SUB21(uVar5,0)) {
-    puVar2 = (undefined4 *)FUN_0022ba10();
+    puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x22;
     bVar7 = (byte)uVar4 & ((byte)uVar4 ^ 1);
     uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar7);
@@ -3125,11 +3184,11 @@ undefined4 FUN_00219320(undefined4 param_1)
 }
 
 
-// ===== sinf_ @ 00219560 (291 bytes)
+// ===== scl_sinef @ 00219560 (291 bytes)
 
-/* sin */
+/* NDSP mathf: local table 0x200670 and sinf_tbl (was sinf_) [fact for the tables] */
 
-void sinf_(void)
+void scl_sinef(void)
 
 {
   float fVar1;
@@ -3152,7 +3211,7 @@ void sinf_(void)
   
   uVar8 = un_s(in_aed0,in_aed0);
   if (SUB21(uVar8,0)) {
-    puVar7 = (undefined4 *)FUN_0022ba10();
+    puVar7 = (undefined4 *)__errno();
     *puVar7 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -3214,11 +3273,11 @@ void sinf_(void)
 }
 
 
-// ===== tanf_ @ 00219690 (363 bytes)
+// ===== scl_tanf @ 00219690 (363 bytes)
 
-/* tan (polynomial table 0x200890) */
+/* NDSP mathf: local table 0x200690, tanf_tbl 0x200890 (was tanf_) [fact for the tables] */
 
-void tanf_(void)
+void scl_tanf(void)
 
 {
   float fVar1;
@@ -3245,7 +3304,7 @@ void tanf_(void)
   
   uVar9 = un_s(in_aed0,in_aed0);
   if (SUB21(uVar9,0)) {
-    puVar7 = (undefined4 *)FUN_0022ba10();
+    puVar7 = (undefined4 *)__errno();
     *puVar7 = 0x21;
     ae_l32_i(0x7fc00000);
     return;
@@ -3316,9 +3375,11 @@ void tanf_(void)
 }
 
 
-// ===== FUN_00219800 @ 00219800 (2215 bytes)
+// ===== vec_atan2f @ 00219800 (2215 bytes)
 
-void FUN_00219800(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
+/* NDSP mathf: vector atan2 (recip0.s, atanftbl, pi); used by spectral_nr_frame [inference] */
+
+void vec_atan2f(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,uint param_4)
 
 {
   float fVar1;
@@ -4009,9 +4070,11 @@ void FUN_00219800(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,ui
 }
 
 
-// ===== FUN_0021a0b0 @ 0021a0b0 (1661 bytes)
+// ===== vec_log10f @ 0021a0b0 (1661 bytes)
 
-void FUN_0021a0b0(undefined4 *param_1,undefined4 *param_2,uint param_3)
+/* NDSP mathf: vector log10 (float.sx2, log10f_tbl) [inference] */
+
+void vec_log10f(undefined4 *param_1,undefined4 *param_2,uint param_3)
 
 {
   undefined8 *puVar1;
@@ -4540,9 +4603,11 @@ void FUN_0021a0b0(undefined4 *param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_0021a730 @ 0021a730 (97 bytes)
+// ===== scl_bexpf @ 0021a730 (97 bytes)
 
-int FUN_0021a730(void)
+/* NDSP vectorf: block exponent of one float (2^24 scaling for subnormals) [inference] */
+
+int scl_bexpf(void)
 
 {
   float fVar1;
@@ -4576,9 +4641,11 @@ int FUN_0021a730(void)
 }
 
 
-// ===== FUN_0021a7a0 @ 0021a7a0 (274 bytes)
+// ===== vec_bexpf @ 0021a7a0 (274 bytes)
 
-int FUN_0021a7a0(undefined4 *param_1,uint param_2)
+/* NDSP vectorf: max |x| over the vector, then exponent [inference] */
+
+int vec_bexpf(undefined4 *param_1,uint param_2)
 
 {
   undefined8 uVar1;
@@ -4680,9 +4747,11 @@ int FUN_0021a7a0(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_0021a8c0 @ 0021a8c0 (164 bytes)
+// ===== vec_maxf @ 0021a8c0 (164 bytes)
 
-void FUN_0021a8c0(undefined4 *param_1,uint param_2)
+/* NDSP vectorf: max.s loop from -inf (0x2008B8) [fact for the code] */
+
+void vec_maxf(undefined4 *param_1,uint param_2)
 
 {
   undefined8 uVar1;
@@ -4744,9 +4813,11 @@ void FUN_0021a8c0(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_0021a970 @ 0021a970 (169 bytes)
+// ===== vec_minf @ 0021a970 (169 bytes)
 
-void FUN_0021a970(undefined4 *param_1,uint param_2)
+/* NDSP vectorf: min.s loop from +inf (0x2008BC) [fact for the code] */
+
+void vec_minf(undefined4 *param_1,uint param_2)
 
 {
   undefined8 uVar1;
@@ -4834,14 +4905,16 @@ void FUN_0021aa20(void)
     ole_s(uVar2,in_aed0);
     return;
   }
-  atan2f_();
+  scl_atan2f();
   return;
 }
 
 
-// ===== FUN_0021aa90 @ 0021aa90 (46 bytes)
+// ===== env_init @ 0021aa90 (46 bytes)
 
-undefined4 FUN_0021aa90(void)
+/* rpmsg_env_bm.c: memset, platform_init [inference] */
+
+undefined4 env_init(void)
 
 {
   undefined4 uVar1;
@@ -4858,14 +4931,16 @@ undefined4 FUN_0021aa90(void)
     return 0;
   }
   memset(&DAT_002390a0,0,0x30);
-  uVar1 = FUN_0021adcc();
+  uVar1 = platform_init();
   return uVar1;
 }
 
 
-// ===== FUN_0021aac0 @ 0021aac0 (34 bytes)
+// ===== env_deinit @ 0021aac0 (34 bytes)
 
-undefined4 FUN_0021aac0(void)
+/* rpmsg_env_bm.c: platform_deinit [inference] */
+
+undefined4 env_deinit(void)
 
 {
   undefined4 uVar1;
@@ -4881,38 +4956,44 @@ undefined4 FUN_0021aac0(void)
   if (0 < DAT_00239090) {
     return 0;
   }
-  uVar1 = FUN_0021ade4();
+  uVar1 = platform_deinit();
   return uVar1;
 }
 
 
-// ===== FUN_0021aae4 @ 0021aae4 (12 bytes)
+// ===== env_allocate_memory @ 0021aae4 (12 bytes)
 
-undefined4 FUN_0021aae4(undefined4 param_1)
+/* rpmsg_env_bm.c: malloc [inference] */
+
+undefined4 env_allocate_memory(undefined4 param_1)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0022ba40(param_1);
+  uVar1 = malloc(param_1);
   return uVar1;
 }
 
 
-// ===== FUN_0021aaf0 @ 0021aaf0 (12 bytes)
+// ===== env_free_memory @ 0021aaf0 (12 bytes)
 
-void FUN_0021aaf0(int param_1)
+/* rpmsg_env_bm.c: free [inference] */
+
+void env_free_memory(int param_1)
 
 {
   if (param_1 != 0) {
-    FUN_0022ba60(param_1);
+    free(param_1);
   }
   return;
 }
 
 
-// ===== FUN_0021aafc @ 0021aafc (16 bytes)
+// ===== env_memset @ 0021aafc (16 bytes)
 
-void FUN_0021aafc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_env_bm.c [inference] */
+
+void env_memset(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   memset(param_1,param_2,param_3);
@@ -4920,9 +5001,11 @@ void FUN_0021aafc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0021ab0c @ 0021ab0c (16 bytes)
+// ===== env_memcpy @ 0021ab0c (16 bytes)
 
-void FUN_0021ab0c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_env_bm.c [inference] */
+
+void env_memcpy(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   memcpy(param_1,param_2,param_3);
@@ -4930,36 +5013,42 @@ void FUN_0021ab0c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_0021ab1c @ 0021ab1c (16 bytes)
+// ===== env_strcmp @ 0021ab1c (16 bytes)
 
-undefined4 FUN_0021ab1c(undefined4 param_1,undefined4 param_2)
+/* rpmsg_env_bm.c: strcmp [inference] */
+
+undefined4 env_strcmp(undefined4 param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0022c190(param_1,param_2);
+  uVar1 = strcmp(param_1,param_2);
   return uVar1;
 }
 
 
-// ===== FUN_0021ab2c @ 0021ab2c (16 bytes)
+// ===== env_strncpy @ 0021ab2c (16 bytes)
 
-void FUN_0021ab2c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_env_bm.c: strncpy [inference] */
+
+void env_strncpy(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  FUN_0022c3bc(param_1,param_2,param_3);
+  strncpy(param_1,param_2,param_3);
   return;
 }
 
 
-// ===== FUN_0021ab3c @ 0021ab3c (18 bytes)
+// ===== env_strncmp @ 0021ab3c (18 bytes)
 
-undefined4 FUN_0021ab3c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* rpmsg_env_bm.c: strncmp [inference] */
+
+undefined4 env_strncmp(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   undefined4 uVar1;
   
-  uVar1 = FUN_0022c2e0(param_1,param_2,param_3);
+  uVar1 = strncmp(param_1,param_2,param_3);
   return uVar1;
 }
 

@@ -898,7 +898,7 @@ void datetime_edit_load(void)
 
 {
   if (PTR_g_ui_00025d60->menu_state == 3) {
-    PTR_g_ui_00025d60->f_0x40a_u8 = 1;
+    PTR_g_ui_00025d60->rtc_edit_apply = 1;
     return;
   }
   PTR_g_ui_00025d60->rtc_set[1] = PTR_g_ui_00025d60->rtc_mm;

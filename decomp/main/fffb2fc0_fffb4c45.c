@@ -148,7 +148,7 @@ radio_mode vfo_mode(vfo_which which)
   if (which != VFO_RX) {
     local_a = g_opstate.split_on;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     if (local_a == 0) {
       local_9 = g_opstate.vfo_a.mode;
     }
@@ -196,7 +196,7 @@ vfo_rec * vfo_rec_ptr(vfo_which which)
   if (which != VFO_RX) {
     local_11 = g_opstate.split_on;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     if (local_11 == 0) {
       local_10 = &g_opstate.vfo_a;
     }
@@ -226,7 +226,7 @@ undefined1 FUN_fffb32aa(char param_1)
   if (param_1 != '\0') {
     local_9 = g_opstate.split_on;
   }
-  if (g_opstate.active_vfo == 0) {
+  if (g_opstate.active_vfo == VFO_A) {
     if (local_9 == 0) {
       local_a = 0;
     }
@@ -540,7 +540,7 @@ uint vfo_freq_clar(vfo_which which,vfo_side side)
     if (which != VFO_RX) {
       bStack_18 = g_opstate.split_on;
     }
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       if (bStack_18 == 0) {
         bStack_17 = g_ui.clar_flags_a;
       }
@@ -670,7 +670,7 @@ bool tx_freq_allowed(uint freq)
   undefined **ppuVar4;
   int iVar5;
   byte bStack_1c;
-  byte bStack_1b;
+  vfo_state vStack_1b;
   bool bStack_1a;
   byte bStack_19;
   byte bStack_18;
@@ -769,14 +769,14 @@ LAB_fffb397e:
         if (bVar2) {
           iVar5 = FUN_fffb32aa(1);
           if (iVar5 == 0) {
-            bStack_1b = g_opstate.vfo_state_a;
+            vStack_1b = g_opstate.vfo_state_a;
             bStack_1c = g_mem_hdr.chan_a;
           }
           else {
-            bStack_1b = g_opstate.vfo_state_b;
+            vStack_1b = g_opstate.vfo_state_b;
             bStack_1c = g_mem_hdr.chan_b;
           }
-          if ((bStack_1b == 2) && (0x74 < bStack_1c)) {
+          if ((vStack_1b == VFO_STATE_MEMORY) && (0x74 < bStack_1c)) {
             bVar2 = true;
           }
           else {
@@ -1433,7 +1433,7 @@ LAB_fffb41fc:
         return g_opstate.monitor[0];
       }
     }
-    local_9 = g_opstate.f_0x1d7_u8;
+    local_9 = g_opstate.monitor_fm;
   }
   return local_9;
 }
@@ -1853,7 +1853,7 @@ byte key_event_filter(ushort param_1,byte param_2)
       }
     }
   }
-  if (g_ui.f_0x40d_u8 != 0) {
+  if (g_ui.keypad_open != 0) {
     if (bVar2 == 4) {
       if (bVar4 == 1) {
         beep_request(3);
@@ -2030,13 +2030,13 @@ byte vfo_tune_locked(vfo_side param_1)
   bool bVar1;
   byte local_5;
   byte local_4;
-  byte local_3;
+  vfo_state local_3;
   vfo_side local_1;
   
   local_5 = 0;
   local_1 = param_1;
   if (param_1 == VFO_SIDE_SEL) {
-    if (g_opstate.active_vfo == 0) {
+    if (g_opstate.active_vfo == VFO_A) {
       local_1 = VFO_A;
     }
     else {
@@ -2051,7 +2051,7 @@ byte vfo_tune_locked(vfo_side param_1)
     local_3 = g_opstate.vfo_state_b;
     local_4 = g_mem_hdr.chan_b;
   }
-  if (local_3 == 2) {
+  if (local_3 == VFO_STATE_MEMORY) {
     if ((local_4 < 0x75) || (0x84 < local_4)) {
       bVar1 = false;
     }
@@ -2062,7 +2062,7 @@ byte vfo_tune_locked(vfo_side param_1)
       local_5 = 1;
     }
   }
-  else if (local_3 == 7 || local_3 == 8) {
+  else if (local_3 == VFO_STATE_LOCKED_7 || local_3 == VFO_STATE_LOCKED_8) {
     local_5 = 1;
   }
   return local_5;

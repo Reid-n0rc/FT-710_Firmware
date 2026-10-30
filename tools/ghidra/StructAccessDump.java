@@ -8,7 +8,9 @@
 //   tools/ghidra-headless.sh <projdir> FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly \
 //     -scriptPath tools/ghidra -postScript StructAccessDump.java build/t23c/access.tsv [maxram]
 // Output: function<TAB>kind<TAB>pointer<TAB>address<TAB>size<TAB>rw  (pointer "-" for abs/cptr; address = target for ptr
-// accesses is pointer value + offset, read from the program's memory). maxram defaults to 0x40000.
+// accesses is pointer value + offset, read from the program's memory). RAM is [minram, maxram): maxram defaults to
+// 0x40000 and minram to 0 (MAIN). DISPLAY (RZ/A1H, code and data in on-chip RAM from 0x20000000):
+//   ... -postScript StructAccessDump.java build/t23c/display_access.tsv 0x20A00000 0x20000000
 // @category FT710
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileOptions;
@@ -26,11 +28,11 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 public class StructAccessDump extends GhidraScript {
-    long maxRam = 0x40000;
+    long maxRam = 0x40000, minRam = 0;
 
     boolean ram(Varnode v) {
         return v != null && v.isAddress() && v.getAddress().getAddressSpace().isMemorySpace()
-                && v.getOffset() >= 0 && v.getOffset() < maxRam;
+                && v.getOffset() >= minRam && v.getOffset() < maxRam;
     }
 
     /** Pointer expression -> {pointer global address, constant offset}, or null. */
@@ -62,6 +64,7 @@ public class StructAccessDump extends GhidraScript {
     protected void run() throws Exception {
         String[] args = getScriptArgs();
         if (args.length > 1) maxRam = Long.decode(args[1]);
+        if (args.length > 2) minRam = Long.decode(args[2]);
         DecompInterface ifc = new DecompInterface();
         DecompileOptions opts = new DecompileOptions();
         opts.grabFromProgram(currentProgram);
@@ -87,7 +90,7 @@ public class StructAccessDump extends GhidraScript {
                         int size = oc == PcodeOp.LOAD ? op.getOutput().getSize() : op.getInput(2).getSize();
                         String rw = oc == PcodeOp.LOAD ? "r" : "w";
                         if (p.isConstant()) {
-                            if (p.getOffset() < maxRam) {
+                            if (p.getOffset() >= minRam && p.getOffset() < maxRam) {
                                 w.printf("%s\tcptr\t-\t0x%05X\t%d\t%s%n", fn, p.getOffset(), size, rw);
                                 nrows++;
                             }
@@ -101,7 +104,7 @@ public class StructAccessDump extends GhidraScript {
                             catch (Exception e) { v = -1L; }
                             ptrValue.put(b[0], v);
                         }
-                        if (v < 0 || v >= maxRam) continue;
+                        if (v < minRam || v >= maxRam) continue;
                         w.printf("%s\tptr\t0x%05X\t0x%05X\t%d\t%s%n", fn, b[0], v + b[1], size, rw);
                         nrows++;
                         continue;

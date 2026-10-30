@@ -5,10 +5,10 @@
 void FUN_fffcdbb8(void)
 
 {
-  if (PTR_g_ui_00025d60->f_0x40a_u8 != 1) {
+  if (PTR_g_ui_00025d60->rtc_edit_apply != 1) {
     return;
   }
-  PTR_g_ui_00025d60->f_0x40a_u8 = 0;
+  PTR_g_ui_00025d60->rtc_edit_apply = 0;
   PTR_g_ui_00025d60->rtc_mm = PTR_g_ui_00025d60->rtc_set[1];
   PTR_g_ui_00025d60->rtc_dd = PTR_g_ui_00025d60->rtc_set[2];
   PTR_g_ui_00025d60->rtc_yy = PTR_g_ui_00025d60->rtc_set[0];

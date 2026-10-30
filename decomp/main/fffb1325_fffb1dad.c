@@ -66,7 +66,7 @@ void FUN_fffb13e2(void)
   int iVar3;
   
   pcVar2 = "2222222222222222222222222222";
-  pbVar1 = &g_opstate.f_0x1a0_u8;
+  pbVar1 = g_opstate.scope_level_rx;
   for (iVar3 = 0x4d; iVar3 != 0; iVar3 = iVar3 + -1) {
     *pbVar1 = *pcVar2;
     pbVar1 = pbVar1 + 1;
@@ -484,7 +484,7 @@ tunlin_mode tunlin_port_mode(void)
   undefined1 local_2;
   
   local_2 = g_opstate.ex030103_tun_lin_port_select;
-  if (3 < g_opstate.ex030103_tun_lin_port_select) {
+  if (TUNLIN_GPO < g_opstate.ex030103_tun_lin_port_select) {
     local_2 = TUNLIN_EXT_TUNER;
   }
   return local_2;

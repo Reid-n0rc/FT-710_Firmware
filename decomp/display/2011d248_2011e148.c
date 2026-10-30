@@ -415,9 +415,12 @@ undefined1 FUN_2011d77c(void)
 }
 
 
-// ===== FUN_2011d788 @ 2011d788 (60 bytes)
+// ===== vdc5_shrd_state_ptr @ 2011d788 (60 bytes)
 
-undefined * FUN_2011d788(int param_1,undefined4 param_2)
+/* (ch, n): pointer to state byte n (0..3) of channel ch at 0x20800410 + 4*ch, n = 4 gives
+   0x2080040C [fact] */
+
+undefined * vdc5_shrd_state_ptr(int param_1,undefined4 param_2)
 
 {
   undefined *puVar1;
@@ -443,14 +446,16 @@ switchD_2011d794_caseD_0:
 }
 
 
-// ===== FUN_2011d7d8 @ 2011d7d8 (24 bytes)
+// ===== vdc5_shrd_set_state @ 2011d7d8 (24 bytes)
 
-void FUN_2011d7d8(undefined4 param_1,undefined4 param_2,undefined1 param_3)
+/* (ch, n, value): sets that state byte [fact] */
+
+void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_3)
 
 {
   undefined1 *puVar1;
   
-  puVar1 = (undefined1 *)FUN_2011d788();
+  puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
   if (puVar1 != (undefined1 *)0x0) {
     *puVar1 = param_3;
   }
@@ -458,9 +463,12 @@ void FUN_2011d7d8(undefined4 param_1,undefined4 param_2,undefined1 param_3)
 }
 
 
-// ===== FUN_2011d7f0 @ 2011d7f0 (64 bytes)
+// ===== vdc5_shrd_set_resource @ 2011d7f0 (64 bytes)
 
-void FUN_2011d7f0(int param_1,int param_2,undefined1 param_3)
+/* (ch, id, value): resource state 0x208DCE04[ch*9 + id]; id -1 sets every resource not marked in
+   use (0x208DCE16) [fact] */
+
+void vdc5_shrd_set_resource(int param_1,int param_2,undefined1 param_3)
 
 {
   uint uVar1;
@@ -482,16 +490,19 @@ void FUN_2011d7f0(int param_1,int param_2,undefined1 param_3)
 }
 
 
-// ===== FUN_2011d830 @ 2011d830 (28 bytes)
+// ===== vdc5_shrd_get_state @ 2011d830 (28 bytes)
 
-undefined1 FUN_2011d830(void)
+/* (ch, n): state byte via vdc5_shrd_state_ptr, 0 for a bad n; the API calls check n = 0/1/2/3 == 1
+   before working (error codes 9/10/11/12) [fact] */
+
+undefined1 vdc5_shrd_get_state(void)
 
 {
   undefined1 *puVar1;
   undefined1 uVar2;
   
   uVar2 = 0;
-  puVar1 = (undefined1 *)FUN_2011d788();
+  puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
   if (puVar1 != (undefined1 *)0x0) {
     uVar2 = *puVar1;
   }
@@ -539,9 +550,11 @@ void r_vdc5_shrd_rw_disable(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011d8e8 @ 2011d8e8 (56 bytes)
+// ===== vdc5_shrd_res_idle @ 2011d8e8 (56 bytes)
 
-undefined4 FUN_2011d8e8(int param_1,int param_2)
+/* 1 when resource id is set up (0x208DCE04) and not in use (0x208DCE16) [fact] */
+
+undefined4 vdc5_shrd_res_idle(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -557,9 +570,11 @@ undefined4 FUN_2011d8e8(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011d920 @ 2011d920 (56 bytes)
+// ===== vdc5_shrd_res_busy @ 2011d920 (56 bytes)
 
-undefined4 FUN_2011d920(int param_1,int param_2)
+/* 1 when resource id is set up and in use [fact] */
+
+undefined4 vdc5_shrd_res_busy(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -704,8 +719,8 @@ undefined4 rspi0_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
-  uVar1 = itron_acre_isr(0,0x20166a84);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_rspi0_spti_isr);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi0_spri_isr), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     uVar2 = rspi_hw_config(0,1);
@@ -727,8 +742,8 @@ undefined4 rspi1_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
-  uVar1 = itron_acre_isr(0,0x20166aac);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_rspi1_spti_isr);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi1_spri_isr), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     uVar2 = rspi_hw_config(1,0);
@@ -750,8 +765,8 @@ undefined4 rspi2_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
-  uVar1 = itron_acre_isr(0,0x20166ad4);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_rspi2_spti_isr);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi2_spri_isr), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
     uVar2 = rspi_hw_config(2,1);
@@ -773,8 +788,8 @@ undefined4 rspi3_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
-  uVar1 = itron_acre_isr(0,0x20166afc);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_rspi3_spti_isr);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi3_spri_isr), 0 < (int)uVar1)) {
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
@@ -797,8 +812,8 @@ undefined4 rspi4_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
-  uVar1 = itron_acre_isr(0,0x20166b24);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,&cisr_rspi4_spti_isr);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi4_spri_isr), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
     uVar2 = rspi_hw_config(4,1);

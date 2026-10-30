@@ -577,16 +577,16 @@ void qmb_boot_init(void)
   bVar1 = false;
   bVar2 = false;
   PTR_g_ui_00025d38->dl_64_value = 0xff;
-  PTR_g_ui_00025d38->f_0x0b9_u8 = 0xff;
+  PTR_g_ui_00025d38->dl_64_sent = 0xff;
   FUN_fffc3501();
-  if (g_opstate.vfo_state_a == 5) {
+  if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
     bVar2 = true;
     iVar3 = FUN_fff94fd5(0);
     if (iVar3 == 0) {
       bVar1 = true;
     }
   }
-  if (g_opstate.vfo_state_b == 5) {
+  if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
     bVar2 = true;
     iVar3 = FUN_fff94fd5(1);
     if (iVar3 == 0) {
@@ -602,8 +602,8 @@ void qmb_boot_init(void)
   FUN_fff950fb();
   PTR_g_ui_00025d38->vfo_refresh_req = 1;
   freq_cache_update();
-  PTR_g_ui_00025d38->f_0x072_u8 = 0;
-  PTR_g_ui_00025d38->f_0x071_u8 = 1;
+  PTR_g_ui_00025d38->func_blink_en = 0;
+  PTR_g_ui_00025d38->func_blink_on = 1;
   PTR_g_ui_00025d38->split_saved_state_a = g_opstate.split_saved_vfo_state_a;
   PTR_g_ui_00025d38->split_saved_state_b = g_opstate.split_saved_vfo_state_b;
   return;
@@ -1253,7 +1253,7 @@ void displink_rx_E0_key(int param_1)
   DAT_0001b3cc = 1;
   bVar2 = key_event_filter(uVar3,bVar1);
   if (bVar2 != 0) {
-    PTR_g_ui_00025d38->f_0x09c_u8 = bVar1 >> 4;
+    PTR_g_ui_00025d38->key_ev_src = bVar1 >> 4;
     PTR_g_ui_00025d38->key_ev_type = bVar1 & 0xf;
     PTR_g_ui_00025d38->key_ev_code = uVar3;
     PTR_g_ui_00025d38->key_ev_flag = 1;
@@ -1278,17 +1278,17 @@ void displink_rx_E1_encoder(int param_1)
     DAT_0001b3cc = 1;
     return;
   }
-  PTR_g_ui_00025d38->f_0x0a1_u8 = *(byte *)(param_1 + 1);
-  if ((PTR_g_ui_00025d38->f_0x0a1_u8 == 6) && (PTR_g_ui_00025d38->func_panel_open == 1)) {
+  PTR_g_ui_00025d38->enc_ev_id = *(byte *)(param_1 + 1);
+  if ((PTR_g_ui_00025d38->enc_ev_id == 6) && (PTR_g_ui_00025d38->func_panel_open == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) && (PTR_g_ui_00025d38->f_0x0a1_u8 = 3, PTR_g_ui_00025d38->f_0x074_u8 == 0)) {
+  if ((bVar1) && (PTR_g_ui_00025d38->enc_ev_id = 3, PTR_g_ui_00025d38->dsp_knob_edit == 0)) {
     *(byte *)(param_1 + 2) = ~*(byte *)(param_1 + 2) + 1;
   }
-  bVar2 = PTR_g_ui_00025d38->f_0x0a1_u8;
+  bVar2 = PTR_g_ui_00025d38->enc_ev_id;
   if (bVar2 != 1) {
     if (bVar2 == 2) {
       bVar2 = key_event_filter(0xff1,0);
@@ -1361,12 +1361,12 @@ void displink_rx_E1_encoder(int param_1)
   }
   bVar2 = key_event_filter(0xff0,0);
   if (bVar2 != 0) {
-    PTR_g_ui_00025d38->f_0x0a2_u8 = *(byte *)(param_1 + 2);
+    PTR_g_ui_00025d38->enc_ev_steps = *(byte *)(param_1 + 2);
     if (PTR_g_ui_00025d38->numentry_mode == 0) {
-      enc_main_dial(PTR_g_ui_00025d38->f_0x0a2_u8);
+      enc_main_dial(PTR_g_ui_00025d38->enc_ev_steps);
     }
     else {
-      ui_numentry_step(PTR_g_ui_00025d38->f_0x0a2_u8);
+      ui_numentry_step(PTR_g_ui_00025d38->enc_ev_steps);
     }
   }
   DAT_0001b3cc = 1;
@@ -1454,15 +1454,15 @@ void ui_numentry_to_bcd(void)
 void displink_rx_E2(int param_1)
 
 {
-  if (PTR_g_ui_00025d38->f_0x0a5_u8 == 0) {
-    PTR_g_ui_00025d38->f_0x0a5_u8 = 1;
+  if (PTR_g_ui_00025d38->sd_state_known == 0) {
+    PTR_g_ui_00025d38->sd_state_known = 1;
     if (*(char *)(param_1 + 1) == '\0') {
       PTR_g_ui_00025d38->sd_present = 0;
-      PTR_g_ui_00025d38->f_0x0a7_u8 = 0;
+      PTR_g_ui_00025d38->sd_present_prev = 0;
     }
     else {
       PTR_g_ui_00025d38->sd_present = 1;
-      PTR_g_ui_00025d38->f_0x0a7_u8 = 1;
+      PTR_g_ui_00025d38->sd_present_prev = 1;
     }
   }
   else if (*(char *)(param_1 + 1) == '\0') {

@@ -274,6 +274,33 @@ screen-dependent "back/close" code (`gui_right_key` 0x20121160, for example 0x31
 (FUNC) on menu-type screens (`gui_middle_key` 0x20120FE4) **[fact for the codes; "back" is an inference]**. The GUI side is documented in
 [gui.md](gui.md).
 
+### Touch hit tables (#212)
+
+`touch_key_poll` (0x201214B0) reads the touch source, applies the calibration and calls `touch_hit_test` (0x2015C048, through a thunk) with
+the calibrated (x, y). The hit test picks the tables by the open screen (0x208F0B2A: 0x30 menus by 0x208F0BC2, 0x34, 0x37, 0x39, 0x3A,
+0x40, 0x41, 0x43, 0x50, 0x70) and otherwise tests the main screen. Each table is an array of 10-byte entries `u16 x, y, w, h, code`,
+searched by `touch_hit_table` (0x2015BF88, first rectangle that contains the point, else 0x1FF); single rectangles go through
+`touch_hit_rect` (0x2015C6FC) **[fact]**. A touch is only sent when the code has bit 12 set; `mainlink_send_touch_key` then clears bit
+12 in the E0 frame, so table code 0x10nn reaches MAIN as soft key 0x0nn **[fact]**.
+
+Main-screen tables, in test order **[fact for rectangles and codes; area names from the drawers that fill the same rectangles]**:
+
+| Table | Rectangle(s) x, y, w, h | Code(s) → MAIN key | Area |
+|---|---|---|---|
+| 0x20192748 (skipped when 0x208F0B2F bit 5 is set or screen 0x37 is open) | 443, 109, 356, 69 | 0x1011 → **0x011** | **filter graph** (`main_filter_graph` clears and frames exactly this box: `fb_fill_rect(…, y 0x6D, x 0x1BB, w 0x164, h 0x45)`; manual item ⑧, digital filter passband display) |
+| 0x2042007C | 0, 10, 280, 80 | 0x1010 → 0x010 | top left (main band frequency area) **[inference]** |
+| 0x20350AC8 | 282, 10, 96, 50 | 0x1015 → 0x015 | top, right of it |
+| 0x2021CC58 | 382 / 491 / 648, 10, 104 / 152 / 152, 50 | 0x1012..0x1014 | top right row |
+| 0x2016E15C (bit 5 clear) | 1 + 110·n, 109, 110, 79 | 0x101A..0x101D | four boxes left of the filter graph |
+| 0x201AC45C (0x208F0B4D bit 7) | 443 + 89·n, 278, 88, 49; 759, 209, 30, 60 | 0x10C0..0x10C3, 0x10C5 (0x10C3 → 0x10C4 when 0x208F0B4D bit 2) | row under the filter graph |
+| `FUN_2015C558` (by 0x208F0B2B/2C/2D) | scope area 4, 128, 792, 157..275 etc. | 0x1016..0x1019 | scope (0x1016 = touch tuning, sent as E0 0x40/0x41) |
+| 0x2016E304 | 133·n, 420, 133, 60 | 0x1000 (→ 0x1000 + (0x208F0B4F & 0x7F), 0x1008 for 0x0B), 0x1003..0x1007 (0x1003 → 0x1009 when 0x208F0B50 & 0x7F = 0x0C) | bottom row of six |
+
+So **soft key 0x011 is a touch on the filter graph** of the main screen: a short touch toggles MAIN UI +0x70 (status byte 35 bit 7) and a long touch toggles
+0x9C5C, which the DISPLAY reads back as the AF-FFT overlay of that same graph (status byte 9 bit 3, `filter_graph_affft_overlay`)
+**[fact for the path; the overlay meaning is an inference]**. The operating manual does not describe touching the filter display
+**[fact for the Japanese OM, item ⑧]**.
+
 ## USB keyboard and mouse
 
 ```mermaid
@@ -295,7 +322,7 @@ sequenceDiagram
   0x2080010E (`usbkbd_set_layout`, 0..10 = JPN, US, UK, FRA(AZ), FRA(QW), DEU, POR, POR(BR), ESP, ESP(LA), ITA, names at 0x20800134). The GUI
   text editors (callsign, memory names, CW text, per the manual) use the 64-character buffer 0x20811240 (`kbd_text_append` / *`_backspace`* /
   *`_clear`*). `usbkbd_capslock_for_mode` (0x201073A4) turns CapsLock on for text modes 0, 3, 5, 8 and 10. Usage 0x53 toggles NumLock and
-  0x47 toggles ScrollLock; `FUN_2013baac` sends the LED report.
+  0x47 toggles ScrollLock; `usbkbd_set_leds` (0x2013BAAC) sends the LED report as HID SET_REPORT (0x21, 9, wValue 0x0200, 1 byte) **[fact]**.
 - **Mouse** **[fact]**: `mouse_cursor_run` (0x2015FD60). Type 1 (attach) shows the cursor (layer 6) at (400,240). Type 0 hides it. Type 2 moves
   it by dx·(s+150)/100, where s is a speed value **[inference: the MOUSE POINTER SPEED setting, 0–20]**. Button bit 0 = left (pointer source
   "mouse", like touch), bit 1 = right, bit 2 = middle. The wheel (+0x22, when flag 0x100 is set) goes to `mouse_wheel_event` (0x2015FAC4).
@@ -460,6 +487,7 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 | 0x20102348 / 0x2010239C / 0x20102478 / 0x201024B4 / 0x2010256C / 0x201025B4 | `mouse_set_down` / `mouse_set_up` / `mouse_right_down` / *`_up`* / `mouse_middle_down` / *`_up`* | mouse sources |
 | 0x20102138 / 0x201023BC / 0x201024C4 / 0x201025C4 | `pointer_get_event` / `mouse_right_get_event` / `mouse_middle_get_event` / `mouse_middle_is_func` | event readers |
 | 0x20120E9C / 0x20120FE4 / 0x20121160 | `mainlink_send_touch_key` / `gui_middle_key` / `gui_right_key` | soft keys → E0 |
+| 0x201214B0 / 0x2015C048 / 0x2015BF88 / 0x2015C6FC | `FUN_201214b0` / `FUN_2015c048` / `FUN_2015bf88` / `FUN_2015c6fc` → `touch_key_poll` / `touch_hit_test` / `touch_hit_table` / `touch_hit_rect` | touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export) |
 
 ### USB HID
 
@@ -541,3 +569,38 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 - Which pot is AF and which RF/SQL, and the exact knob ↔ encoder id mapping (needs MAIN's E1 handler or a schematic read of p62/p63).
 - What `task_tsc2007_irq` really guards (0x20800090 is read by `tsc2007_irq_flag`, whose caller was not traced).
 - The 16 unnamed ADC codes 0x343–0x358.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011593C | `minmax4` | min or max of 4 bytes **[inference]** |
+| 0x2013B928 | `usbh_hid_init` | UHHID **[inference]** |
+
+### USB host requests (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): USB host requests (standard SETUP packets: bmRequestType, bRequest, wValue, wIndex, wLength) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20138CF0 | `usbh_control_transfer` | Control transfer on a pipe object under its semaphore (+0x4A8, TMO_FEVR): SETUP, data and status stages **[inference]** |
+| 0x20138F00 | `usbh_control_req` | Thin wrapper of usbh_control_transfer used by every request helper **[fact]** |
+| 0x2013B2F8 | `usbh_pipe_mark_done` | Sets +0x30 = 1 in the pipe slot (0x2091C220, 0x34 each) whose +0x2C matches **[fact]** |
+| 0x2013B35C | `usbh_get_device_descriptor` | SETUP 0x80, 6 (GET_DESCRIPTOR), wValue 0x0100 (device), length n **[fact]** |
+| 0x2013B3A8 | `usbh_get_config_descriptor` | SETUP 0x80, 6, wValue 0x0200 (configuration) **[fact]** |
+| 0x2013B3F4 | `usbh_set_address` | SETUP 0x00, 5 (SET_ADDRESS), wValue = address **[fact]** |
+| 0x2013B43C | `usbh_set_configuration` | SETUP 0x00, 9 (SET_CONFIGURATION), wValue = configuration **[fact]** |
+| 0x2013B484 | `usbh_get_hub_descriptor` | SETUP 0xA0 (class, device), 6 (GET_DESCRIPTOR) **[fact]** |
+| 0x2013B524 | `usbh_loc_cpu` | itron_loc_cpu, returns 0 (critical section of the USB host stack) **[fact]** |
+| 0x2013BAAC | `usbkbd_set_leds` | Builds the HID output report from the NumLock/CapsLock/ScrollLock state (report fields 1/2/3) and sends it with usbh_class_request (SET_REPORT 0x21, 9, wValue 0x0200, 1 byte); input.md: sends the LED report **[fact]** |
+| 0x2013C710 | `usbh_class_request` | (device, bmRequestType, bRequest, wValue, wIndex, data, length) on device table 0x2091CB78 **[fact]** |
+
+### Other input helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20159320 | `pointer_touch_poll` | pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog) **[inference]** |

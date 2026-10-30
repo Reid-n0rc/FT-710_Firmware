@@ -606,18 +606,18 @@ void FUN_fffbda30(void)
 void FUN_fffbda47(void)
 
 {
-  if (PTR_g_ui_00025d54->f_0x074_u8 == 0) {
-    PTR_g_ui_00025d54->f_0x074_u8 = 1;
+  if (PTR_g_ui_00025d54->dsp_knob_edit == 0) {
+    PTR_g_ui_00025d54->dsp_knob_edit = 1;
     PTR_g_ui_00025d54->func_knob_item = 0x1d;
     PTR_g_ui_00025d54->dsp_knob_func = 0;
     func_display_open();
-    PTR_g_ui_00025d54->f_0x072_u8 = 1;
+    PTR_g_ui_00025d54->func_blink_en = 1;
     swtimer_start(0x45,0x1c2);
   }
   else {
-    PTR_g_ui_00025d54->f_0x074_u8 = 0;
-    PTR_g_ui_00025d54->f_0x072_u8 = 0;
-    PTR_g_ui_00025d54->f_0x071_u8 = 1;
+    PTR_g_ui_00025d54->dsp_knob_edit = 0;
+    PTR_g_ui_00025d54->func_blink_en = 0;
+    PTR_g_ui_00025d54->func_blink_on = 1;
   }
   beep_request(1);
   return;
@@ -629,7 +629,7 @@ void FUN_fffbda47(void)
 void FUN_fffbdab2(void)
 
 {
-  FUN_fffc3503(g_opstate.active_vfo != 0);
+  FUN_fffc3503(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
@@ -640,18 +640,18 @@ void FUN_fffbdab2(void)
 void FUN_fffbdad5(void)
 
 {
-  if (PTR_g_ui_00025d54->f_0x074_u8 == 0) {
-    PTR_g_ui_00025d54->f_0x074_u8 = 1;
+  if (PTR_g_ui_00025d54->dsp_knob_edit == 0) {
+    PTR_g_ui_00025d54->dsp_knob_edit = 1;
     PTR_g_ui_00025d54->func_knob_item = 0x1e;
     PTR_g_ui_00025d54->dsp_knob_func = 1;
     func_display_open();
-    PTR_g_ui_00025d54->f_0x072_u8 = 1;
+    PTR_g_ui_00025d54->func_blink_en = 1;
     swtimer_start(0x45,0x1c2);
   }
   else {
-    PTR_g_ui_00025d54->f_0x074_u8 = 0;
-    PTR_g_ui_00025d54->f_0x072_u8 = 0;
-    PTR_g_ui_00025d54->f_0x071_u8 = 1;
+    PTR_g_ui_00025d54->dsp_knob_edit = 0;
+    PTR_g_ui_00025d54->func_blink_en = 0;
+    PTR_g_ui_00025d54->func_blink_on = 1;
   }
   beep_request(1);
   return;
@@ -663,7 +663,7 @@ void FUN_fffbdad5(void)
 void FUN_fffbdb40(void)
 
 {
-  FUN_fffc3582(g_opstate.active_vfo != 0);
+  FUN_fffc3582(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
 }
