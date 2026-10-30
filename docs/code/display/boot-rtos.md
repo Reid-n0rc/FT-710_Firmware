@@ -442,3 +442,65 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 | 0x20153CD4 | `knl_mbf_put` | (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message size is 1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room **[fact]** |
 | 0x20154FCA | `qsort` | (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10; wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it **[fact for the code; the C library name is an inference from the signature]** |
 | 0x20154DEA | `qsort_partition` | (base, n, size, cmp): the quicksort stage of qsort for n > 10 **[inference: only caller qsort, swaps elements by size around a pivot]** |
+
+### NORTi tick processing (main's idle loop calls the three per tick) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201540C4 | `knl_tick_task_timeouts` | Per tick: walks the task time-out wheel slot 0x20800400[tick_lo & tmo_mask], unlinks every TCB whose tmo_due is now and releases it (with E_TMOUT; mutex waits adjust the owner's priority) **[fact for the wheel walk]** |
+| 0x20153788 | `knl_tick_cyclic` | Per tick: walks the cyclic-handler wheel slot 0x20800401[tick_lo & tmo_mask_1] of the cyc table 0x208DBF64 (itron_acre_cyc), re-arms each due handler by its period and runs it **[fact for the wheel walk and the re-arm]** |
+| 0x20153620 | `knl_tick_table_dbf84` | Per tick: the same wheel walk for the objects of table 0x208DBF84 (wheel slots 0x20800402, mask tmo_mask_2) **[fact]**; which uITRON object kind the table holds is open (it sits between the cyc table 0x208DBF64 and the dtq table 0x208DBFA4) |
+
+### L1 data cache maintenance (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201010E0 | `dcache_setway_all` | (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) **[fact for the CP15 operations]** |
+| 0x20100FD8 | `dcache_invalidate_range` | (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2)) when addr or size is 0 **[fact]** |
+| 0x20101088 | `dcache_clean_invalidate_range` | (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and sdhi_read_block use it **[fact]** |
+
+### CP15 cache control and small helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100EFC | `icache_disable` | SCTLR: clears the I bit (12) when it is set **[fact]** |
+| 0x20100F20 | `dcache_disable` | SCTLR: clears the C bit (2) when it is set **[fact]** |
+| 0x20100F44 | `icache_enable` | SCTLR: sets the I bit (12) **[fact]** |
+| 0x20100F64 | `dcache_enable` | SCTLR: sets the C bit (2) **[fact]** |
+| 0x2010101C | `dcache_invalidate_all` | dcache_setway_all(2) (invalidate by set/way) **[fact]** |
+| 0x201341CC | `clamp_add_u8` | (a, b): a + b clamped to 0..255 **[fact]** |
+| 0x20135448 | `xorshift32_step` | (x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 **[fact]** |
+| 0x20135488 | `be16_store` | (v, dst): stores v big-endian (high byte first) **[fact]** |
+| 0x201354BC | `u32_decimal_digits` | (v): number of decimal digits of v (1..10) **[fact]** |
+
+### NORTi memory and wait helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015460C | `knl_freelist_free` | (list, block, size): returns a block to an address-ordered free list {next, size}, merging with the neighbours; -17 when it overlaps a free block **[fact]**; the counterpart of knl_freelist_alloc |
+| 0x20154704 | `knl_stack_alloc` | knl_freelist_alloc on the system pool 0x208003FC; itron_acre_tsk takes the task stack with it **[fact]** |
+| 0x20154720 | `knl_pool_alloc` | knl_freelist_alloc on the system pool 0x208003FC for the buffers of itron_acre_mbf / acre_mpf / acre_mpl **[fact]** |
+| 0x20154710 | `knl_sys_free_a` | knl_freelist_free on the system pool 0x208003FC (no caller in the image) **[fact]** |
+| 0x20154744 | `knl_pool_free` | knl_freelist_free on the system pool 0x208003FC; itron_del_mpf frees the pool memory with it **[fact]** |
+| 0x20154790 | `knl_sys_free` | knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf and del_sem free control blocks with it **[fact]** |
+| 0x201545C8 | `knl_wait_self` | (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues at knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk **[fact]** |
+| 0x20154508 | `knl_ready_requeue` | (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem use it for released waiters **[fact]** |
+
+### Small library helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20163864 | `is_decimal_digit` | (c): 1 for '0'..'9'; _printf_core uses it for widths **[fact]** |
+| 0x20163808 | `fp_classify_double` | (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the exponent 0 / 0x7FF and the mantissa) **[fact for the tests]** |
+| 0x201637F0 | `fill8` | (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces **[fact]** |
+| 0x201640EC | `copy10` | (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields (fwfile_check_versions, fwobj_*) **[fact]** |
+| 0x20164104 | `copy32` | (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields **[fact]** |
+| 0x2016411C | `copy48` | (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor **[fact]** |
+| 0x201635E4 | `fwobj_version_text` | (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE); fwfile_check_versions, fwfile_status_text and fwupdate_poll use it **[fact]** |
+
+### NORTi interrupt entry and exit (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015632C | `knl_irq_enter` | IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack knl_sys.isr_area **[fact]** |
+| 0x201563EC | `knl_irq_exit` | Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns the new task's context, else the old one **[fact]** |

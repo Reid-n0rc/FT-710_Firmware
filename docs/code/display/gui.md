@@ -233,7 +233,7 @@ panel, origin top left, as in the drawing primitives. Main results:
 | Screen (handler) | Words | Layout **[fact: values and roles]** |
 |---|---|---|
 | Main screen status row (`main_status_icons`) | 0x208004A8–0x208004BE, 0x2080065C/5E | 12 icon slots at x = 2, 58, 125, 175, 230, 285, 314, 357, 512, 592, 662, 718; one more widget at (x 282, y 64) |
-| Main screen parts (`scr_main_layout` → `FUN_2012D8BC`, `cw_zero_in_draw`) | 0x208004C0, 0x20800508–0x2080051A | y 113 for one strip; two groups at (x 59, y 93) and (x 231, y 93) with a 4 × 8 cell box repeated every 6 px (+8, +6 offsets): a bar-graph style widget **[inference]** |
+| Main screen parts (`scr_main_layout` → `main_left_boxes_draw`, `cw_zero_in_draw`) | 0x208004C0, 0x20800508–0x2080051A | y 113 for one strip; two groups at (x 59, y 93) and (x 231, y 93) with a 4 × 8 cell box repeated every 6 px (+8, +6 offsets): the **CW zero-in indicator** (`cw_zero_in_draw` lights one cell per set bit of the 25-bit frame field +0x15, `zero_in`) **[fact]** |
 | Frequency display (`scr_vfo` → `vfo_clar_draw`) | 0x2080051C–0x2080052E | fields at (x 398, y 86), (x 544, y 73) and (x 650, y 86); text pitch 21; one 142-px wide clear |
 | FUNC panel (`scr_func_panel`, 0x37) | 0x20800530–0x20800542 | origin (x 59, y 17) added to the per-cell table at 0x208019D6; cells offset (x 2, y 29) and (x 2, y 17) with a 5 / 55 px grid |
 | Setup menu (`scr_setup_menu`, 0x62) | 0x208004A4–0x208004A6, 0x208004DC–0x208004F2 | 8 rows at y = 173 + row · **35**; columns at x = 9 (number), 24, 144, 489; the cursor line at x 4, y 200 + row · 35, 792 × 1; list height 161 |
@@ -902,7 +902,7 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x201217B0 | `gui_input_poll` | gui_main_loop: FUN_20120de4, sends E4 (leave screen saver) once on screen 0x7B, polls touch keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll **[fact]** |
+| 0x201217B0 | `gui_input_poll` | gui_main_loop: usbkbd_screen_settings, sends E4 (leave screen saver) once on screen 0x7B, polls touch keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll **[fact]** |
 | 0x2015C558 | `touch_hit_scope` | Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2), expanded flag; input.md lists it for soft keys 0x1016..0x1019 **[fact]** |
 
 ### Main screen parts and screen helpers (T23e round 3)
@@ -1029,6 +1029,78 @@ Each `r_vdc5_*` API function calls exactly one function of the block 0x201193EC.
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x20157D3C | `scope_obj_wf_add_row` | (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), maps each point through the level colour map (FUN_201341cc) into the current waterfall bank (gui.md: scope_wf_add_row) **[fact for the calls]** |
+| 0x20157D3C | `scope_obj_wf_add_row` | (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), adds the level offset to each point (clamp_add_u8, 0..255) into the current waterfall bank (gui.md: scope_wf_add_row) **[fact for the calls]** |
 | 0x20157C50 | `scope_obj_levels_get` | (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while SPEED STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method behind scope_levels_get) **[fact]** |
 | 0x20134424 | `scope_wf_add_row_mode` | (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0 **[fact]** |
+
+### GUI buffers and scope state (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20120D4C | `affft_wf_freeze_set` | (v): 0x208DD994 = v; affft_wf_add_row adds no row while it is set; gui_screen_update sets it **[fact]** |
+| 0x20131130 | `textterm_rx_push` | (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC); decode_text_rx feeds it **[fact]** |
+| 0x201322C8 | `fwupdate_menu_screen_thunk` | mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of the update-UI thunks of update.md **[fact: words at 0x201322C8..0x201322D4]** |
+| 0x201322D8 | `fwupdate_select_screen_thunk` | fwupdate_select_screen(0x208F4BF4, frame) **[fact]** |
+| 0x20133618 | `scope3d_history_clear_thunk` | scope3d_history_clear(0x20907F78); scope_area_setup calls it **[fact]** |
+| 0x20133640 | `scope3d_buf_get` | Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels use it as a back buffer **[fact]** |
+| 0x20133D7C | `fb_layer2_save` | (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf **[fact]** |
+| 0x20133DA8 | `fb_layer2_restore` | (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC **[fact]** |
+| 0x20132F6C | `clmap_buf_get` | Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan **[fact]** |
+| 0x201342F8 | `scope_freeze_a_set` | (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md); gui_screen_update sets it **[fact]** |
+| 0x20134304 | `scope_freeze_b_set` | (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it **[fact]** |
+| 0x20132EE8 | `fb_cache_clean_buf` | (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800, 0x602EE000), 0xBB800 bytes each except the last **[fact]** |
+
+### R_vdc5 colour helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011C360 | `rgb5_to_8` | (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) **[fact]** |
+| 0x2011C37C | `rgb4_to_8` | (v): 4-bit colour component scaled to 8 bits (v * 0x11) **[fact]** |
+| 0x2011C388 | `rgb6_to_8` | (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) **[fact]** |
+
+### Ring indices of the scope and AF-FFT histories (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20164758 | `ring100_offset` | (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring **[fact]** |
+| 0x20164788 | `ring100_next` | (idx): *idx + 1, wrapping at 100 **[fact]** |
+| 0x20164360 | `ring100_advance` | (idx): returns *idx and advances it with ring100_next; affft_wf_add_row **[fact]** |
+| 0x2016479C | `ring133_offset` | (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) **[fact]** |
+| 0x201647D0 | `ring133_next` | (idx): *idx + 1, wrapping at 133 **[fact]** |
+| 0x20164388 | `ring133_advance` | (idx): returns *idx and advances it; scope_obj_wf_add_row **[fact]** |
+| 0x201647E4 | `ring20_offset` | (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line) **[fact]** |
+| 0x20164814 | `ring20_next` | (idx): *idx + 1, wrapping at 20 **[fact]** |
+| 0x201643B0 | `ring20_advance` | (idx): returns *idx and advances it; scope_history_push **[fact]** |
+| 0x20164828 | `ring30_offset` | (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history) **[fact]** |
+| 0x2016485C | `ring30_next` | (idx): *idx + 1, wrapping at 30 **[fact]** |
+| 0x201643CC | `ring30_advance` | (idx): returns *idx and advances it; scope3d_redraw_history **[fact]** |
+| 0x201643A4 | `ring133_reset` | (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it **[fact]** |
+| 0x20164334 | `scope3d_widths_init` | (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide) **[fact]** |
+| 0x201577F8 | `copy_inverted_words_b` | (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words); scope_history_push uses it **[fact]** |
+| 0x201571E8 | `afscope_obj_clear` | (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8 **[fact]** |
+| 0x20120D58 | `afscope_clear` | afscope_obj_clear(0x208DCE3C); scope_area_setup calls it **[fact]** |
+
+### Debug overlay and touch waits (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201360B0 | `debug_dump_rx_frame` | (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200 bytes) at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change **[fact]** |
+| 0x20136188 | `debug_dump_rx_buf2` | (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus the last received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 **[fact]** |
+| 0x20158FD0 | `touch_wait_tap` | Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or 4), a release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and fwupdate_insert_sd_screen wait with it **[fact]** |
+
+### AF-FFT / oscilloscope level maps built by afscope_init (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20160C70 | `afscope_map0_init` | Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on 0x27 (39, the AF-FFT spectrum height of gui.md) **[fact]** |
+| 0x20160D50 | `afscope_map1_init` | Map 1 (obj +0x100): the same curve as map 0 **[fact]** |
+| 0x20160CF0 | `afscope_map2_init` | Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 **[fact]** |
+| 0x20160DE4 | `afscope_map3_init` | Map 3 (obj +0x300): the same curve as map 2 **[fact]** |
+| 0x20160E44 | `afscope_map4_init` | Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the bar height affft_bins_get returns) **[fact]** |
+
+### Main-screen soft-key rows (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2012D8BC | `main_left_boxes_draw` | scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte entry of 0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when ATT/IPO/DNF (+0x0C), the CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change **[fact for the table and fields]** |
+| 0x2012DBF8 | `main_bottom_row_draw` | scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of 0x2016E304, the touch table of keys 0x1000..0x1009 (input.md) **[fact for the table]** |

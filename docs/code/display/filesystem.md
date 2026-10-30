@@ -509,3 +509,10 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x201407BC | `sdhi_error_reset` | Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) **[fact]** |
 | 0x20140B68 | `sdhi_open` | SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers 0x20808B78 / 0x20808B84 with gic_def_inh **[fact]** |
 | 0x20140BE8 | `file_buf_sync` | (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new position (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect / fat_sect2clust); used by fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work **[fact for the calls]** |
+
+### FAT helpers (2) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20147850 | `fs_strnicmp_sjis_b` | (a, b, n): case-insensitive compare of n bytes, Shift-JIS aware (two-byte characters folded with sjis_fold_case, single bytes with fs_toupper); no caller in the image; a second copy next to fs_strnicmp_sjis 0x2014D770 **[fact]** |
+| 0x20148A88 | `wpath_dir_len` | (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the last, with separators) plus 6 **[fact for the loop]** |

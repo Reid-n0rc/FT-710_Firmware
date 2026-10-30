@@ -612,9 +612,9 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | 0x2013B97C | `usbh_hid_class_init` | Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on error (boot-rtos.md init list) **[fact]** |
 | 0x2013B58C | `usbh0_isr` | USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in 0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C **[fact]** |
 | 0x2013B598 | `usbh1_isr` | USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) **[fact for the vector]** |
-| 0x2013A394 | `usbh_brdy_handler` | (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to FUN_20139f6c (read) or FUN_2013a198 (write); then re-enables BRDYE in INTENB0 **[fact]** |
+| 0x2013A394 | `usbh_brdy_handler` | (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to usbh_brdy_pipe_read (read) or usbh_brdy_pipe_write (write); then re-enables BRDYE in INTENB0 **[fact]** |
 | 0x201385B4 | `usbh_ports_init` | For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0.., starts the two port tasks and FUN_2013b2b4 (boot-rtos.md init list) **[fact]** |
-| 0x2013B4CC | `usbh_hw_init` | Registers the USBI0/USBI1 handlers (GIC 73/74) and calls FUN_2013ab9c for USB0 (SYSCFG0 0xE8010000) and USB1 (peripherals.md: host mode on both ports) **[fact]** |
+| 0x2013B4CC | `usbh_hw_init` | Registers the USBI0/USBI1 handlers (GIC 73/74) and calls usbh_port_open for USB0 (SYSCFG0 0xE8010000) and USB1 (peripherals.md: host mode on both ports) **[fact]** |
 | 0x20107E9C | `usbkbd_init` | Creates the keyboard mutex 0x20800118, initialises the two 0xD0-byte keyboard objects 0x20811080 and the layout tables (kbd_layout_tables_init) **[fact]** |
 | 0x201090A0 | `kbd_layout_jpn_init` | kbd_layout_base_fill(0) only: table 0 is JPN in the usbkbd_set_layout list (input.md); called from kbd_layout_tables_init **[fact]** |
 
@@ -647,11 +647,11 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x20139624 | `usbh_pipe_xfer` | (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read uses it **[fact]** |
-| 0x20139344 | `usbh_pipe_write` | (pipe, buf, len): when the buffer needs a bounce (FUN_20139330) copies it in 0x2000-byte pieces into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf **[fact]** |
+| 0x20139344 | `usbh_pipe_write` | (pipe, buf, len): when the buffer needs a bounce (usbh_buf_needs_bounce) copies it in 0x2000-byte pieces into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf **[fact]** |
 | 0x20139590 | `usbh_pipe_read` | (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces (usbh_pipe_read_buf) and copies out, stopping at a short packet **[fact]** |
 | 0x2013927C | `usbh_pipe_write_buf` | (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet when needed **[fact for the calls]** |
 | 0x201393D4 | `usbh_pipe_read_buf` | (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on the port event flag, under the port semaphore **[fact for the calls]** |
-| 0x20137FAC | `usbh_enumerate_config` | Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the configuration and walks its interfaces and endpoints to set up pipes and the class driver (FUN_20137eac, FUN_2013a90c) **[fact for the calls]** |
+| 0x20137FAC | `usbh_enumerate_config` | Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the configuration and walks its interfaces and endpoints to set up pipes and the class driver (FUN_20137eac, usbh_open_endpoint_pipes) **[fact for the calls]** |
 
 ### USB keyboard layout tables (T23e round 3)
 
@@ -681,3 +681,48 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | 0x2015C750 | `touch_hit_sd_menu` | touch_hit_test for screen 0x43 (SD-card menu) **[fact for the dispatch]** |
 | 0x2015CA14 | `touch_hit_dialog` | touch_hit_test for screen 0x70 (dialog / confirm screen) **[fact for the dispatch]** |
 | 0x2015C81C | `touch_hit_scope_drag` | (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 / step) while the finger moves; called by touch_hit_scope **[fact for the calls]** |
+
+### USB host controller tasks (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201396B0 | `usbh_port_isr` | (port): USB interrupt body behind usbh0_isr / usbh1_isr (peripherals.md: GIC 73/74 -> usbh_port_isr(port)): reads and clears the status, marks pipe 0 done and sets the port event flags 0x2090B674 / 680 / 67C **[fact]** |
+| 0x20139D78 | `usbh_port_task` | (port): port task: waits on the port event flag, handles attach (200-tick debounce, bus reset, enumeration events) and detach, then the pipe, control and class events (FUN_201398a0, FUN_20139c68, FUN_20139970) **[fact for the calls]** |
+| 0x2013A444 | `usbh_brdy_task` | (port): waits on the BRDY event flag and runs usbh_brdy_handler for the port **[fact]** |
+| 0x20139F6C | `usbh_brdy_pipe_read` | (port, pipe): BRDY on a receive pipe: reads the FIFO into the pipe buffer under the port semaphore, completes the transfer on a short packet and sets the pipe's event bit **[fact for the calls]** |
+| 0x2013A198 | `usbh_brdy_pipe_write` | (port, pipe): BRDY on a send pipe: writes the next packet from the pipe buffer into the FIFO under the port semaphore **[fact for the calls]** |
+
+### Keyboard settings and power-down (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20120DE4 | `usbkbd_screen_settings` | Every GUI frame (gui_input_poll): on the keyboard screen 0x50 with a 0x24 settings frame, sets the layout from settings byte 1 (usbkbd_set_layout) and CapsLock by the text mode of payload byte 0 (table 0x20801D44, usbkbd_capslock_for_mode); on other screens usbkbd_reset **[fact]** |
+| 0x20107D8C | `usbkbd_leds_refresh` | scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device, usbkbd_set_leds) **[fact]** |
+| 0x20117030 | `display_power_down` | Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off, stops the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and QF lines, else switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low **[fact]** |
+
+### Flags and small state accessors (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011727C | `radio_on_flag_get` | Returns the radio-on flag 0x208003A0 (radio_on_flag_set); mainlink_wait_status, gui_main_loop and task_mainlink_dispatch read it **[fact]** |
+| 0x201309B4 | `power_key_flag_get` | Returns 0x20800493, which power_key_on sets while the radio is on; pot_resend_all reads it **[fact]** |
+| 0x20103BC8 | `sd_monitor_request` | (v): 0x20800098 = v, the card-monitor request flag of sd_card_monitor (filesystem.md); sd_make_dirs uses it **[fact]** |
+| 0x2011503C | `mainlink_get_last21` | (out): copies the last 0x21 frame payload and its two following bytes (g_ml.last21, +0x12, +0x13) to out, returns the got21 flag **[fact]** |
+| 0x20114920 | `scif5_rxi_count_get` | Returns scif5_uart.rxi_count; debug_overlay_draw shows it **[fact]** |
+| 0x2011492C | `scif4_rxi_count_get` | Returns scif4_uart.rxi_count; debug_overlay_draw shows it **[fact]** |
+
+### USB host helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013A9D4 | `usbh_port_ctx` | (port): 0x2090B660 + 0x4D8 * port, the port context **[fact]** |
+| 0x20139330 | `usbh_buf_needs_bounce` | (addr): -1 when addr has a bit of the mask 0x20808AB8 set (the buffer must be copied through the pipe buffer), else 0 **[fact]** |
+
+### USB host enumeration (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013AFA4 | `usbh_enumerate_device` | (task ctx, event): device attach: bus reset (FUN_2013a4bc), GET_DESCRIPTOR device (8 bytes), SET_ADDRESS, GET_DESCRIPTOR device (18 bytes) and configuration, then usbh_enumerate_config **[fact for the request sequence]** |
+| 0x2013B238 | `usbh_enum_task` | (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs usbh_enumerate_device for each; 500-tick retry on a queue error **[fact]** |
+| 0x2013AB9C | `usbh_port_open` | (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 **[fact for the calls]** |
+| 0x2013A90C | `usbh_open_endpoint_pipes` | (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and sets it up (FUN_2013a690) **[fact for the ranges]**; on the RZ/A1H USB controller pipes 6..9 are the interrupt pipes **[inference]** |

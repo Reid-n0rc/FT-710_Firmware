@@ -197,7 +197,7 @@ rows also against its TINT pin table (TINT33 = P2_9, TINT119 = P8_4).
 | 37 (0x25) | IRQ5, PWR_SW P2_0 | `powon_isr` 0x20113FDC | 5 | `powon_init` | [boot-rtos.md](boot-rtos.md) |
 | 44 / 45 / 46 (0x2C–0x2E) | DMAC ch3 / ch4 / ch5 end | 0x20137490 (sets a flag) / 0x201376C4 / 0x201374A0 (callback pointers) | 5 | `dmac4_rspi4_rx_setup`… (DMA set-up) | [spi-links.md](spi-links.md) |
 | 50 / 51 (0x32, 0x33) | DMAC ch9 / ch10 end | 0x20137AEC / 0x20137D1C (callbacks) | 5 | `dmac9_rspi_tx_setup` | [spi-links.md](spi-links.md) |
-| 73 / 74 (0x49, 0x4A) | USBI0 / USBI1 | 0x2013B58C / 0x2013B598 → `FUN_201396b0(port)` | 8 | `gic_def_inh` in `usbh_brdy_handler` area | [input.md](input.md) |
+| 73 / 74 (0x49, 0x4A) | USBI0 / USBI1 | 0x2013B58C / 0x2013B598 → `usbh_port_isr(port)` | 8 | `gic_def_inh` in `usbh_brdy_handler` area | [input.md](input.md) |
 | 78 (0x4E) | VDC5 ch0 **GR3_VLINE0** (graphics 3 line interrupt) | `FUN_20118638` | 5 | `textterm_clear` area | [gui.md](gui.md) |
 | 134 (0x86) | OSTM0 | `ostm0_tick_isr` (10 ms tick) | 5 | `ostm_init` | [boot-rtos.md](boot-rtos.md) |
 | 135 (0x87) | OSTM1 | `periodic_wakeup_isr` (1 ms) | 5 | `periodic_wakeup_start` | [boot-rtos.md](boot-rtos.md) |
@@ -524,3 +524,14 @@ The channel numbers, flag bytes and mode arguments match the Renesas RZ/A1H RIIC
 | 0x2012041C | `riic3_ri_isr` | ISR stub: R_RIIC_RiInterrupt(3); RIIC3 RI vector per peripherals.md **[fact]** |
 | 0x20120424 | `riic3_ti_isr` | ISR stub: R_RIIC_TiInterrupt(3); RIIC3 TI vector **[fact]** |
 | 0x2012042C | `riic3_tei_isr` | ISR stub: R_RIIC_TeiInterrupt(3) (inlined); RIIC3 TEI vector **[fact]** |
+
+### GPIO pin helpers (PSR writes: mask in the upper half) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20101C44 | `gpio_p4_7` | (v): PORT_PSR4 = 0x800000 / 0x800080: P4_7 low / high **[fact]** |
+| 0x20101F74 | `gpio_p2_7` | (v): PORT_PSR2 = 0x800000 / 0x800080: P2_7 low / high **[fact]** |
+| 0x20101D40 | `gpio_p8_6to9_3` | PORT_PSR8 = 0x3C000C0: P8_6..P8_9 = 0b0011 (P8_6, P8_7 high) **[fact]** |
+| 0x20101D50 | `gpio_p8_6to9_8` | PORT_PSR8 = 0x3C00200: P8_6..P8_9 = 0b1000 (P8_9 high) **[fact]** |
+| 0x20101D60 | `gpio_p8_6to9_6` | PORT_PSR8 = 0x3C00180: P8_6..P8_9 = 0b0110 (P8_7, P8_8 high) **[fact]** |
+| 0x20117260 | `gpio_p8_12_high` | Returns 1 when P8_12 reads high (gpio_read_bit(8, 12)); display_power_down branches on the same pin **[fact]** |
