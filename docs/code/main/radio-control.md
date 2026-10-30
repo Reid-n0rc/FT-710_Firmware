@@ -608,7 +608,7 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
 | 0x18873..0x18877 | u8 | `scan_*` | scan timers' running flags, direction, state **[fact]** |
 | 0x20B04 | ~0x480 | `rt` | runtime block. The offsets used here are listed under the frequency cache **[fact]** |
 | 0x20F1C / 0x20F1D | u8 | `scan_run` / `scan_paused` | **[fact]** |
-| 0x20F28 | u8 | `band_cur` | band index of the active side, ≤ 11 **[fact]** |
+| 0x20F28 | u8 | `popup_cursor` (UI +0x424) | cursor of the open select pop-up: a mode, an SS03 value or a band, depending on the pop-up; not only a band (earlier name `band_cur`) **[fact, T23c]** |
 | 0x20F29 / 0x20F2A | u8 | `clar_flags_a/b` | bit 0 RX clarifier, bit 1 TX clarifier **[fact]** |
 | 0x1B784 / 0x1B786 | u16 | `sdr_wr_reg` / `sdr_wr_val` | SDR register frame argument **[fact]** |
 
