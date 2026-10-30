@@ -217,9 +217,9 @@ rows also against its TINT pin table (TINT33 = P2_9, TINT119 = P8_4).
 | 449 (0x1C1) | TINT33 = **P2_9**, the DSP link's SS pin (SSL40) | 0x20133418 → `rspi_start`(4)`, frame counter 0x208085AC | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
 | 535 (0x217) | TINT119 = **P8_4**, the SDR link's SS pin (SSL20) | 0x201333F0 → `rspi_start`(2)`, frame counter 0x208085A8 | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
 
-The two TINT rows: the TINT numbers follow from IDs 416 + n **[inference]**. The DSP/SDR assignment rests on the RSPI channel the ISR serves: RSPI4 carries
-the DSP audio frames (DMA to/from 0xE800E804, section 5) and RSPI2 is then the SDR link **[inference]**. Which pin of the group it is (most likely SS, the end-of-frame
-edge) is **[guess]**. Most ISR entries above are not functions in the current project; `entries_display.T11g.tsv` adds them.
+The two TINT rows: R01UH0403EJ0700 Table 7.3 (p. 217 of the PDF) lists ID 449 = TINT33 on pin **P2_9** and ID 535 = TINT119 on pin **P8_4**
+**[fact, manual]**. P2_9 is `DSP_SS` (alt 8 = SSL40) and P8_4 is `SDR_SS` (SSL20) on p62 **[fact]**, so each interrupt fires on its link's
+slave-select pin, and the ISR that restarts RSPI4 / RSPI2 matches it **[fact]**. Most ISR entries above are not functions in the current project; `entries_display.T11g.tsv` adds them.
 
 ## 4. RTC: S-35190A on P1_0..P1_2
 
