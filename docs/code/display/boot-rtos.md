@@ -27,7 +27,7 @@ sequenceDiagram
 as the only mode that boots from serial flash, from SPI multi-I/O bus channel 0 on P9_2..P9_5 (mode 1 is CS0-space 32-bit booting)
 **[fact, manual]**, and the W25Q128JV sits on exactly those SPIBSC0 pins (`QF_CLK` on P9_2, p62) **[fact]**. Open: the strap values
 themselves; `BOOT0`/`BOOT1`/`BOOT2` reach P0_0/P0_1/P7_0 on p62, which are MD_BOOT0/1/2 while RES is low
-(manual Table 1.5 notes) **[fact]**, but the strap resistors were not found on the page (hardware.md); would be
+(manual Table 54.11 note 2 and the P7 table note) **[fact]**, but the strap resistors were not found on the page (hardware.md); would be
 settled by a readable copy of those straps or a probe of the three lines at reset. If neither bank flag is valid the loader keeps running its own copy, which shows `YAESU FT-710 BOOT LOADER V01-02`
 (`bootloader_screen` 0x2015938C) **[inference]**.
 
