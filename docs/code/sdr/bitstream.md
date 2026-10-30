@@ -80,5 +80,5 @@ features; `bramcfg` and `sites` summarize them (see [resources.md](resources.md)
   see [netlist.md](netlist.md).)*
 - The package (cpg236/csg324/ftg256/fgg484) is not in the bitstream; IOB tile positions are the same for every
   XC7A50T package, but the package pin (and so the J2002 pin) behind each used IOB is unknown. *(T15: the used IOBs are
-  bonded only in CSG324 and FGG484 [fact]; CSG324 is the likelier package [guess]; [netlist.md §3.1](netlist.md#31-package).
+  bonded only in CSG324 and FGG484 [fact]; which of the two is fitted is open and is settled by the FPGA's package marking; [netlist.md §3.1](netlist.md#31-package).
   The J2002 pin behind each FPGA pin is still unknown, apart from the two UARTs.)*

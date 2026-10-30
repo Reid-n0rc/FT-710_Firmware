@@ -139,7 +139,8 @@ names in `build/sdr/netlist.json` and in the Verilog of section 4.
 ### 3.1 Package
 
 Every used IOB is bonded only in the **CSG324** and **FGG484** packages of the XC7A50T. CPG236, CSG325 and FTG256 lack
-19 to 59 of them **[fact]**. Pin names below use CSG324 (15 x 15 mm, the likelier one on a small module) **[guess]**.
+19 to 59 of them **[fact]**. Pin names below use CSG324 as a naming convention only; which of the two packages is fitted is
+open and is settled by the FPGA's package marking.
 `io xc7a50tfgg484-1` gives the FGG484 names.
 
 ### 3.2 Clocks
@@ -166,11 +167,13 @@ flowchart LR
 - **Two cascaded MMCMs** **[fact]**. MMCM_X0Y2 takes the 125 MHz clock, and MMCM_X0Y0 takes MMCM_X0Y2's CLKOUT0. With
   T13's divider reading (XAPP888 encoding) that is 125 x 36 / 5 / 4.25 = 211.76 MHz, then x 34 / 5 / 51.125 =
   **28.17 MHz** **[inference]**. A second VCO at 1,440 MHz needs a -2 speed grade, so one divider may be misread. This
-  clock drives 166 flip-flops and goes straight to pin **P14** (a BUFHCE output on an OBUF). That fits the `DSP_CLK`
-  line to the RT685 (J2002 pin 22) **[guess]**. Both MMCM resets come from the global reset flip-flop.
+  clock drives 166 flip-flops and goes straight to pin **P14** (a BUFHCE output on an OBUF) **[fact]**. Open: whether P14 is the
+  `DSP_CLK` line to the RT685 (J2002 pin 22). For: P14 is the only pin an MMCM clock reaches (figure above), and `DSP_CLK` is a
+  free-running clock from the module into the RT685's PIO2_30/CLKIN (p19). Against: its frequency (below). Settled by measuring J2002 pin 22 (O8).
+  Both MMCM resets come from the global reset flip-flop.
   *T19h note:* the RT685's M33 code is built for CLKIN = `DSP_CLK` = **18.432 MHz** **[fact, [ifdsp/m33-platform.md](../ifdsp/m33-platform.md)]**,
-  which 28.17 MHz does not match. If MMCM_X0Y0's feedback multiplier were 22.25 instead of 34 (same DIVCLK 5 and CLKOUT0 51.125), the
-  chain would give 18.4323 MHz (18 ppm off) with a legal 942 MHz VCO **[guess]**.
+  which 28.17 MHz does not match. A feedback multiplier of 22.25 instead of 34 in MMCM_X0Y0 would give 18.4323 MHz; #67 ruled that
+  reading out (next note).
   *#67 re-check:* the reading is right. The 40-bit `LKTABLE` of both MMCMs is `1111111111 0100010011 1111101001 0000000001`, which is
   XAPP888's `mmcm_lock_lookup` value for M = 34..36 (M = 22 would be `…0111000010…`); Vivado fills it from the feedback multiplier, so
   M = 22.25 is ruled out. The FASM counter bits: top (X8Y113) FB 18+18 = 36, DIVCLK 2+3 (edge) = 5, CLKOUT0 2+2 + frac 2/8 = 4.25; bottom
@@ -193,7 +196,7 @@ flowchart LR
 | 14 | **M18 in / L18 out** (`IO_L4N/L4P_T0_D05/D04`) | **UART A = debug console** (`UART_DBG`, prompt `[IF]>`): 115,200 8N1 receiver, transmitter and ASCII command parser (3.4, 5.3) | [fact] |
 | 14 | **V12 in / U12 out** (`IO_L20N/L20P_T3`) | **UART B = MAIN's UART5** register link: same receiver, 11-character frame window (3.4, 5.2) | [fact] |
 | 14 | **N14 (data), T18 (select), R18 (clock) in/out** | **Scope link to the DISPLAY** (#186, `FFT_DAT/FFT_FRM/FFT_CLK`): one tri-state net `SLICE_X1Y36/ALUT = ~R15` drives all three T pins, so the FPGA drives them while input **R15** is high. Out: the scope frame serializer in the `dsp_clk` domain (5.6), 1,700-byte frames every 614,400 `dsp_clk` cycles. In (R15 low, update): an SPI slave in the 125 MHz domain that samples N14 on falling R18 edges. Earlier read as open-drain lines | [fact] wiring and behaviour, [inference] J2002 pins |
-| 14 | P14 out | forwarded MMCM clock (`DSP_CLK`?) | [guess] |
+| 14 | P14 out | forwarded MMCM_X0Y0 clock (28.17 MHz by the divider reading, 3.2); whether it is `DSP_CLK` is open (O8) | [fact] wiring, open net |
 | 14 | **U16 out, V17 out, V16 out** | **I2S-style serial port, running from reset** (#90, simulation): U16 toggles every 2 cycles (31.25 MHz bit clock), V17 every 128 cycles (frame, 64 bit clocks = 2 × 32-bit slots, 125 MHz / 256 = 488.28 kHz), V16 data from clock 65,541. Fits J2002 24 `TX_CLKA` / 26 `TX_FRMA` (the shared RX/TX audio clock and frame) and 33 `RX_DATA`, the RX IQ/audio stream to the RT685  *#154:* the U16 and V17 flip-flops are clocked by `BUFHCE_X0Y9`, the buffer that drives the `dsp_clk` pin (MMCM_X0Y0), and the simulation's MMCM stand-in passes 125 MHz through, so the real frame is `dsp_clk` / 256 (72 kHz at 18.432 MHz), not 488 kHz | [fact] behaviour and clocking, [inference] J2002 pins |
 | 14 | **R16 out (clock), P17 out (select), N16 out (data)** | **16-bit SPI write sequence at power-up** (14 words, clocks 155–13,979, same on either edge): `0002 0000` (bit 1 of reg 0 set then cleared: soft reset), then reg 0x10 = C0, 11 = 00, 12 = 2D, 13 = 10, 14 = 20, 16 = 00, 17 = 00, 18 = 00, 19 = 00, 1A = 80, 1B = 03, 1D = 00 (8-bit address + 8-bit data). A 3.3 V chip on the module configured once; which part is open | [fact] words, open part |
 | 14 | **M17 out** | **Second data line of the U16/V17 port** (#145): a shift register in the `dsp_clk` domain (`SLICE_X59Y39`) loaded from bit 15 of the SDP x36 buffer RAMB18_X2Y15, which is written from DSP48_X1Y18 (the mixer after the cosine NCO, 3.6). Sampled on the rising U16 edge in 32-bit V17 half-frames it carries bursts of ~10 words (`051EBC00 051EBB85 451EBB85 ... 64196F85 5F410385 ... 40000000`) every 4,096 `dsp_clk` cycles (16 frames), from cycle 6,920 after reset, with no MAIN frame and the ADC at 0. Earlier runs saw it idle because the block RAMs read 0 (#164) Not the DISPLAY scope link (that is N14/T18/R18, 5.6, #186) | [fact] wiring and behaviour |
@@ -332,8 +335,10 @@ pseudo-random ADC bits (#91), U17 and V16 start toggling at clock ~65,500.
 **DAC output pairs (bank 34).** 16 of the 17 ODDR pairs take their data from **DSP48_X1Y26.P** 3 registers back,
 the same DSP that ADC group 1 reaches first and that RAMB18_X2Y24 feeds (A input, 2 registers): one multiplier
 drives the whole output bus **[fact]**, so it is the TX output scaling stage, with ADC group 1 reaching it through a
-mux (loop-back or feedback path) **[inference]**. The 17th pair (R7/T6, OLOGIC_X1Y4) is fed from the inputs T13 and P15
-(4 registers); R1 is held at 1.
+mux (loop-back or feedback path) **[inference]**. The 17th pair (R7/T6, OLOGIC_X1Y4) is a **forwarded clock**: its ODDR has D1 = D2 = 1 with
+D2 inverted, so it drives 1 then 0 on every BUFR_X1Y1 clock **[fact: `netlist.json` cell OLOGIC_X1Y4]**. Only its output
+enable (T1, through `SLICE_X65Y4/BFF`) is logic, reached from the inputs T13 and P15 (4 registers), so the clock is switched
+on and off by those inputs **[fact for the wiring]**; R1 is held at 1.
 
 **Block-RAM tables.** First hard block on the data outputs (DO, through at most 1 register) and on the address inputs
 (back, at most 3 registers). Table names from [bram-tables.md](bram-tables.md):
@@ -488,7 +493,7 @@ time, a second receiver path (scope or lane) **[inference]**.
   edges with the I2S one-bit delay, **both 32-bit slots of every frame carry the same word** (correlation 1.0 over 460
   frames). With the ADC at 0 every word is 0; with a tone on the ADC the words are non-zero. So **M17 is the RX IF data
   line (J2002 pin 33 `RX_DATA`, FC3 on the RT685)** **[inference, strong; the module's pin routing is not in the
-  service manual]**, not the scope port as 5.5 guessed. The HiFi4's `rxif_dma_to_fifo` de-interleaves two slots; it gets
+  service manual]**, not the scope port as 5.5 first read it. The HiFi4's `rxif_dma_to_fifo` de-interleaves two slots; it gets
   the same sample twice.
 - The FIFO only balances if the frame rate equals the write rate: frame = `DSP_CLK` / 256 must be 72 kHz, i.e.
   **`DSP_CLK` = 18.432 MHz**, the value the RT685 code assumes, and not the 28.17 MHz the MMCM settings read as (3.2,
@@ -496,7 +501,9 @@ time, a second receiver path (scope or lane) **[inference]**.
 - **V16 is not RX data [fact].** Its flip-flop `SLICE_X6Y68/BFF` is the carry out of a 13-bit accumulator
   (`SLICE_X6Y65..68`) that adds a 13-bit register (`SLICE_X7Y66/67`, loaded from `SLICE_X5Y66`...) each 125 MHz clock: a
   first-order sigma-delta (pulse-density) output of a 13-bit level. With the ADC at 0 it stays 0, with noise it toggles
-  (4.4). A 1-bit DAC for an analog level such as `FADC0/1` or `ENV_S/ENV_H` toward MAIN fits **[guess]**.
+  (4.4). Open: where V16 goes. A pulse-density bit stream becomes an analog level only through an RC filter, and the module
+  lines that carry levels toward MAIN are `FADC0/1` (J2002 34/44) and `ENV_S/ENV_H` (30/32) ([interfaces.md](interfaces.md#j2002-pin-map));
+  nothing in the netlist or the manual links V16 to any of them. Settled by tracing V16 on the module or probing those pins.
 - The FIFO input word is a 2-to-1 mux (`SLICE_X43Y42`, `X44Y41`, `X47Y40`, `X50Y39`, select **`SLICE_X40Y62/AFF`**, a
   register-bank bit written from bus bit 11, 0 after reset): 0 = the decimation chain (DSP48_X0Y12 via `SLICE_X33Y32`),
   1 = DSP48_X1Y18's product (via `SLICE_X47Y43`), the TX-audio / tone multiplier below. MAIN never sets it as far as the
@@ -916,9 +923,10 @@ U16/V17 port, most likely toward the RT685 **[inference]**. Reproduce:
 **Power-up SPI part on R16/P17/N16 [open].** The 14 writes are the only traffic on these pins: N16 is output-only, so
 the part is written, never read back. Format: 16 bits, MSB first, 8-bit address + 8-bit data, a soft-reset bit (bit 1
 of register 0) set and cleared, then registers 0x10-0x1B and 0x1D, on 3.3 V bank 14 **[fact]**. The TX DAC behind the 16
-LVDS DDR output pairs (2.5 V bank 34) is the obvious candidate, since nothing else on the module needs configuring and
-the ADC has its own 1.8 V port **[guess]**. No register map checked here matches the values; the part needs the
-module's IC marking (follow-up #191). Candidates with the evidence for and against them (none confirmed):
+LVDS DDR output pairs (2.5 V bank 34) is one candidate **[inference]**: it is the only other converter the netlist shows
+(16 data pairs from one multiplier plus a forwarded clock pair, 3.6), and the netlist reads the 1.8 V port as the ADC's.
+Against it: the module's other parts (clock divider, ADC driver, dither D/A) are unknown, so they cannot be excluded, and
+no DAC register map checked matches the values. Open: which part this is; settled by the module's IC marking (#191). Candidates with the evidence for and against them (none confirmed):
 [hardware.md](../../hardware.md#candidates-not-confirmed-171-191).
 
 ### 5.6 Scope frame serializer: the DISPLAY's RSPI2 link (#186)
