@@ -480,3 +480,15 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x2010EF88 | `sdmenu_list_files` | (kind, list, max): opens the SD folder for the kind (0x208001AC table), collects the names of the ".dat" files without the extension in 16-byte slots (work buffer 0x8350 bytes, at most 100), sorts them with qsort/strcasecmp and copies them to list; holds the scope drawing meanwhile; returns the count **[fact]** |
+
+### SPI flash chip erase by vendor (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20104000 | `sflash_read_mfr_id` | Switches SPIBSC0 external reads to command 0x9F (READ JEDEC ID, DRCMR/DRENR), reads the first byte at 0x18000000 and restores the registers: the manufacturer id **[fact]** |
+| 0x20104050 | `sflash_erase_chip` | (progress): manufacturer 0xBF -> sflash_erase_chip_sst, else sflash_erase_chip_uniform **[fact]**; 0xBF is the SST/Microchip JEDEC id **[inference]** |
+| 0x20103CFC | `sflash_erase_chip_sst` | (progress): erases 136 blocks with the sizes of sflash_sst_block_size (4 x 8 KiB, 32 KiB, 126 x 64 KiB, 32 KiB, 4 x 8 KiB = 8 MiB), progress bar and a yield every 8 blocks **[fact]**; the block map of an SST26-type 64-Mbit flash **[inference]** |
+| 0x20103F44 | `sflash_erase_chip_uniform` | (progress): erases 256 blocks of 64 KiB (16 MiB) with a progress bar and a yield every 16 blocks **[fact]** |
+| 0x20103BDC | `sflash_sst_block_size` | (i): block size of block i from the table 0x20165204 (blocks 0-3 and 132-135: 8 KiB, 4 and 131: 32 KiB), else 64 KiB **[fact]** |
+| 0x20103C14 | `sflash_cmd_bp` | Sends the 2-byte device command "bp" (0x62 0x70) through sflash_dev_write and reads one status byte (1 on a write error); the erase loops send it first **[fact]** |
+| 0x20103C70 | `sflash_cmd_erase` | (addr): sends the device command "er" (0x65 0x72) with the block address and reads one status byte **[fact]** |

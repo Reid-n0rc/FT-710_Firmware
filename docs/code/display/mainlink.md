@@ -490,3 +490,10 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 |---|---|---|
 | 0x20130968 | `mainlink_audio_ack` | On ACK/NAK (mainlink.md): copies the E7/E8 send state 0x208F1220 (1 or 0xFF) into 0x208F1221, else clears it **[fact]** |
 | 0x20130C70 | `textterm_clear` | Clears the text-terminal block 0x208F4896 (0x35E bytes) keeping 0x208F4BAA (gui.md "third view") **[fact]** |
+
+### SCIF UART objects (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20163360 | `uart_obj_ctor` | (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) **[fact]** |
+| 0x20114938 | `scif_uarts_ctor` | Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller (run from the init table) **[fact for the calls]** |

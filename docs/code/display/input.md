@@ -726,3 +726,12 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | 0x2013B238 | `usbh_enum_task` | (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs usbh_enumerate_device for each; 500-tick retry on a queue error **[fact]** |
 | 0x2013AB9C | `usbh_port_open` | (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 **[fact for the calls]** |
 | 0x2013A90C | `usbh_open_endpoint_pipes` | (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and sets it up (FUN_2013a690) **[fact for the ranges]**; on the RZ/A1H USB controller pipes 6..9 are the interrupt pipes **[inference]** |
+
+### USB keyboard object methods (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015F098 | `kbdobj_set_device` | (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active flag +0x80 when not present; usbkbd_attach / usbkbd_detach **[fact]** |
+| 0x2015F0B4 | `kbdobj_activate` | (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) **[fact]** |
+| 0x2015F0C4 | `kbdobj_flush` | (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all **[fact]** |
+| 0x2015F0CC | `kbdobj_ctor` | (obj): constructs the key ring at +0x88 (ring16_ctor) **[fact]** |
