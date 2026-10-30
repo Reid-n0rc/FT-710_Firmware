@@ -35,7 +35,8 @@
 #           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
 #           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
-#           model of the whole netlist and a UART smoke test. Slow (about 5-10 min); not a default step.
+#           model of the whole netlist, a UART smoke test and the SDR progress figures (tools/sdr_progress.py ->
+#           decomp/sdr/progress.tsv). Slow (about 5-10 min); not a default step.
 #
 # Settings (environment variables; defaults in brackets):
 #   BOOTSTRAP_OUT        root for build/, ghidra/ and the exported decomp/ [the repo root]. With the repo root the
@@ -575,11 +576,20 @@ step_sdr() {
     || { tail -20 "$SDR_OUT/build_full.log" >&2; die "Verilator build failed (log: $SDR_OUT/build_full.log)"; }
   info "UART smoke test (MAIN frame r0000 on UART B, console on UART A):"
   py "$REPO/tools/sdr_uart_sim.py" --bin "$SDR_OUT/vl/obj_full/Vft710_sdr" b:r0000 "a:=r 0000\r" | sed 's/^/   /'
+  info "SDR progress figures (cells per documented block, T23) -> $DECOMP_OUT/sdr/progress.tsv"
+  py "$REPO/tools/sdr_progress.py" "$SDR_OUT/netlist.json" --map "$REPO/tools/sdr_blocks.tsv" \
+    --out "$DECOMP_OUT/sdr/progress.tsv" | tail -n 1 | sed 's/^/   /'
+  if [ "$DECOMP_OUT/sdr/progress.tsv" -ef "$REPO/decomp/sdr/progress.tsv" ]; then
+    git -C "$REPO" diff --quiet -- decomp/sdr/progress.tsv \
+      || info "WARNING: decomp/sdr/progress.tsv changed: commit it and rerun tools/readability_stats.py readme"
+  elif ! cmp -s "$DECOMP_OUT/sdr/progress.tsv" "$REPO/decomp/sdr/progress.tsv"; then
+    info "WARNING: SDR progress differs from the committed decomp/sdr/progress.tsv"
+  fi
   info "sdr done in $((SECONDS - t0)) s"
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,47p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in
