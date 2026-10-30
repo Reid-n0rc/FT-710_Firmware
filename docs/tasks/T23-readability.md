@@ -23,8 +23,8 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
-| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); Ghidra steps open; HiFi4 not started |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
+| T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); HiFi4 libraries identified 2026-10-30 (`names_hifi4.T23.tsv`, below); Ghidra steps open |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
@@ -328,7 +328,8 @@ Findings:
 Open steps:
 - **T23d-1** apply: MAIN and DISPLAY with `ApplyNames.java` (`names_<image>.tsv`), IFDSP with `IfdspM33Names.java`, on the
   canonical projects; re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together (rules above).
-- **T23d-2** HiFi4 NatureDSP-like kernels (FLIX patterns in `decomp/ifdsp/hifi4/flix.dis`): not started.
+- **T23d-2** HiFi4: **done 2026-10-30** as a table (section [T23d/T23e HiFi4](#t23dt23e--hifi4-library-identification-and-naming) below); the
+  apply to the canonical project and the re-export are open (T23d-1 rules).
 - **T23d-3** optional: Ghidra FunctionID `.fidb` from the same FreeRTOS objects, for porting to other firmware with Ghidra's
   own matcher (`lib_match.py` already covers this image).
 
@@ -341,6 +342,57 @@ Redo:
 - DISPLAY, MAIN: the tables are reviewed by hand; on new firmware port the rows by function matcher (the evidence column says
   what to look for), then `lib_match.py totsv names_<image>.lib.tsv > names_<image>.T23d.tsv` and
   `names_merge.py merge names_<image>.tsv names_<image>.tsv names_<image>.T23d.tsv`.
+
+## T23d/T23e — HiFi4 library identification and naming
+
+**Status:** table done and tested on a per-task copy (2026-10-30, worktree agent, branch `worktree-agent-a7ab29c705de1e3f8`); the apply to
+the canonical `ghidra/FT710_IFDSP` and the re-export of `decomp/ifdsp/hifi4/` are open (parent session).
+
+### Plan
+1. Lay out `.text` by region from `flix.dis` (call graph, literal pools, peripheral bases) and find which library each region is.
+2. Match each library against its source in link order, file by file (sources and commits in
+   [docs/tooling.md](../tooling.md#hifi4-library-sources-t23dt23e-hifi4-2026-10-30)); newlib by distinctive constants against a
+   newlib/libgcc build of the Zephyr SDK RT600 toolchain; NatureDSP by its constant tables.
+3. Name the application helpers next to the documented chain functions (block inits, FIFOs, SPI buffers), skip the unclear ones.
+4. Write `tools/ghidra/names_hifi4.T23.tsv`, merge into `IfdspHifi4Names.java` under a "T23 HiFi4" block, test on a copy.
+
+### Findings
+- The HiFi4 image links whole driver sources: **NXP MCUXpresso SDK 2.10** (all RT685 `fsl_*.c` in file-name order, also the
+  unused ones), **rpmsg-lite v3.1.1** (bare-metal env, `imxrt600_hifi4` platform), **Cadence NatureDSP HiFi4** (float library,
+  two blocks), **newlib** (libm with matherr wrappers, dlmalloc, full `vfprintf`/`vfiprintf`/`dtoa`), **Cadence XOS** with its
+  clib glue, the Xtensa HAL and the XCC runtime **[fact: per-region evidence in hifi4.md]**. Version evidence for the SDK:
+  `SDK_Malloc` overflow checks (2.9+), `I2C_MasterSetTimeoutValue` called from `I2C_MasterInit` (2.10+), no I2S loop-DMA
+  functions (added in 2.11) **[fact]**.
+- **Rows:** 749 in `names_hifi4.T23.tsv`: 733 new names and 16 renames of #86 names to their library names (`fft512_cplx` →
+  `fft_cplxf_ie`, `pow10f_` → `scl_antilog10f`, `cosf_` → `scl_cosinef`, `sinf_`, `tanf_`, `atan2f_`, `log10f_` → `scl_*`,
+  `fir_init`/`fir_process` → `bkfiraf_init`/`bkfiraf_process`, `i2f_scaled`/`f2i_scaled` → `scl_int2float`/`scl_float2int`,
+  `vec_sum_sq` → `vec_powerf`, `vec_scale_f32` → `vec_scalef`, `divf_` → `__divsf3`, `sqrtf_` → `__ieee754_sqrtf`). By region: SDK 440,
+  crt/system 5, rpmsg-lite 70, NatureDSP 22 (+14 renamed), newlib 106, XOS 11, HAL/runtime 13 (+2 renamed), application 66.
+  No duplicate names, no address named twice, every address is a function entry of `decomp/ifdsp/hifi4/functions.tsv`.
+- **Coverage:** named HiFi4 functions **221 → 954 of 1,083 (88 %)**, code bytes **30.7 % → 94.2 %** (169,784 of 180,186 bytes in the
+  per-task export) **[fact]**.
+- **Ghidra test** on `/home/user/ghidra_tasks/D` (copy of `ghidra/FT710_IFDSP`, owner set to root): `IfdspHifi4Names: 942 functions
+  named`; `ExportDecomp`: 1,083 functions, 0 failed; `decomp_quality.py compare` against `decomp/ifdsp/hifi4/quality.tsv`: no metric
+  got worse **[fact]**.
+- Corrections on the way: the "twiddle table 0x201000 used by 0x209B30" in hifi4.md was the USBPHY `PLL_SIC` bit mask in
+  `CLOCK_EnableUsbhsPhyClock` **[fact]**; the rodata block 0x200650–0x2008BF is NatureDSP's tables, not libm's **[fact]**.
+- Some listing entries hold two functions (Ghidra has no entry for the second): `CRC_Reset` 0x209DB8, `I2C_MasterInit` 0x20D530,
+  `USART_TransferSendDMACallback` 0x2166F0, `fclose` 0x2325D0; the comment of the entry names them **[fact]**.
+- Not named (129 functions, 5.8 % of the bytes): listed in [hifi4.md](../code/ifdsp/hifi4.md#libraries-linked-into-the-hifi4-image-t23).
+- Method note: `tools/naming_worklist.py` was not extended; the ranking and the library comparison were done with throw-away
+  scripts over `flix.dis` (call graph, literals) because the HiFi4 evidence is in the FLIX listing, not in the C.
+
+### Open steps (Ghidra)
+1. Apply `IfdspHifi4Names.java` to the canonical `ghidra/FT710_IFDSP` (`-process FT-710_IFDSP_V0101_hifi4.bin -noanalysis
+   -postScript IfdspHifi4Names.java`), re-export `decomp/ifdsp/hifi4/` with `ExportDecomp.java`, regenerate `flix.dis`
+   (`tools/ifdsp_hifi4_dis.py`, it takes the names from the Java file), `decomp_quality.py compare`, `readability_stats.py readme`.
+2. Optional: tell `bqriirf_df2` from `bqriirf_df2t` for `iir_cascade_*` (same init and state size; needs the process loop compared).
+
+### Redo (new firmware)
+- SDK: find the first and last driver function by their peripheral bases, then walk the `fsl_*.c` files of the matching SDK tag in
+  file-name order (header inline functions are emitted at the start of each file, static helpers are often inlined).
+- NatureDSP: the rodata tables give the function set; code follows NDSP's file-name order.
+- newlib: rebuild the reference ELF (`t.c` with the function list, Zephyr SDK GCC, `-nostartfiles -nostdlib`) and compare literals.
 
 ## T23e — Name the most-called functions
 

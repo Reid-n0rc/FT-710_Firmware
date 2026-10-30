@@ -12,7 +12,7 @@ from `tools/flix_stats.py` and the files named.
 | Measure | Value |
 |---|---|
 | Functions | 1,065 (49,389 instructions, 188,006 bytes) in the FLIX listing **[fact]** |
-| Named | **99 (9 %)**, also 9 % of the code bytes; the five largest unnamed functions are 8,320, 5,168, 4,208, 3,376 and 2,224 bytes (`FUN_0022c5b0`, `FUN_00231040`, `FUN_0022e990`, `FUN_0022a6f0`, `FUN_00219800`) **[fact]** |
+| Named | **954 of 1,083 Ghidra functions (88 %), 94 % of the code bytes** since T23 (2026-10-30; was 221 / 31 %): the libraries are identified ([Libraries linked into the HiFi4 image](#libraries-linked-into-the-hifi4-image-t23)) and the application block inits are named; checked on a per-task copy (`IfdspHifi4Names: 942 functions named`, `decomp_quality.py compare`: no metric worse). Before #86 it was 99 (9 %) **[fact]** |
 | Described in the IFDSP docs | about 96 functions (9 %) mentioned by name or address in this page, [control-link.md](control-link.md) or [ipc.md](ipc.md) **[fact: text search]** |
 | Readable as decompiled C | **since T21g (2026-10-28): all 1,067 functions decompile**, 0 failures, 982 of 1,081 exported functions without any decompiler warning, 1 `halt_baddata()` (data). Ghidra bodies cover 93 % of the listing's bytes (14 % before). Control flow, base-ISA and FPU operations and the simple HiFi4 loads/stores are real C; most `ae_*` operations are named calls with the right inputs and outputs but no arithmetic. Before T21, with the stock language: **none in practice** (891 functions, 84 %, contain FLIX bundles it could not decode) **[fact: `decomp/ifdsp/hifi4/quality.tsv`, [ghidra-flix.md](ghidra-flix.md)]** |
 | Signal-processing algorithms | **documented stage by stage since #86** in [dsp-chains.md](dsp-chains.md): IF AGC, Weaver SSB/CW, AM and FM demodulators, CW zero-in, CTCSS/DCS decoders, manual notch, STFT Wiener NR, LMS line-enhancer NR, NLMS auto-notch, contour, APF, AF limiter, hi/lo-cut, RX EQ, CW FIR; TX EQ, speech processor, compressor, BPF, ALC, VOX/anti-VOX, CTCSS/DCS encoders, modulators. There is no noise blanker on the HiFi4 **[fact: stage list; inference: NB in the FPGA]** |
@@ -366,14 +366,53 @@ FLIX) are the generic cascade engine **[inference]**.
 | 0x204BE0, 0x204DD0 | **CTCSS tone list**: 88.5 (default) then the 50 standard tones 67.0 … 254.1 Hz **[fact: values]** | 0x21F6D0/0x21F7EC (decoder side), 0x222510 (TX encoder side) |
 | 0x201900 | 1536 floats = cos/sin pairs, step 2π/1024 (radix-4 twiddles) | 0x21C140, 0x223C8C (Spi) — FFT **[inference]** |
 | 0x200D00 | 192 floats, cos/sin step 2π/512 | 0x21E24C, 0x223C8C |
-| 0x201000 | 576 floats, twiddles starting cos(π/8) | 0x209B30 (NatureDSP-style FFT **[guess]**) |
+| 0x201000 | 576 floats, twiddles starting cos(π/8) | no code reference found: the only literal 0x201000 (at 0x209B88) is the USBPHY PLL_SIC bit mask in `CLOCK_EnableUsbhsPhyClock` **[fact]** (this row used to say "0x209B30, NatureDSP-style FFT [guess]") |
 | 0x2375D0 | 73 floats 0 → 1, raised-cosine ramp | 0x225408 (TX), keying/ALC ramp **[inference]** |
-| 0x200650–0x200890 | polynomial coefficients (log, exp, atan, sqrt; 0.693147, π, π/2, 1/ln10) | libm-style float helpers 0x218B70–0x21A0B0 |
+| 0x200650–0x2008BF | **NatureDSP tables** (T23): the local range-reduction tables of `scl_cosinef`/`scl_sinef`/`scl_tanf` (0x200650/70/90), then `alog10f_tbl`, `atanf_tbl`, `expf_tbl` (`expftbl_Q30` 0x200720, `log2_e`), `inff_tbl`, `inv2pif_tbl`, `log10f_tbl`, `lognf_tbl`, `nanf_tbl`, `pif_tbl`, `sinf_tbl`, `sqrt2f_tbl`, `tanf_tbl`, in NDSP file-name order and equal word for word to NDSP v4.30 **[fact]** | NDSP `scl_*`/`vec_*` 0x218B70–0x21A970 |
 | 0x237500 | 52 int16 pairs, decreasing 600 → … | 0x224ED8 (regs 2) — AGC/ALC curve **[guess]** |
 | 0x204D10 | int32 {0, 600, 1600, 2600, 3600} | 0x22111C (SPI) — scope span/offset steps **[guess]** |
 
 No Q15/Q31 coefficient tables were found: all signal processing is in **float32** (the HiFi4 FPU) **[fact: every table is
 float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
+
+## Libraries linked into the HiFi4 image (T23)
+
+T23d/T23e (2026-10-30) identified the library code of the image: about two thirds of the functions are library code, linked whole and in
+source-file order, so each block was matched file by file against the library sources (commits in
+[docs/tooling.md](../../tooling.md#hifi4-library-sources-t23dt23e-hifi4-2026-10-30)). The names are in
+`tools/ghidra/names_hifi4.T23.tsv` (evidence per row) and the "T23 HiFi4" block of `IfdspHifi4Names.java`.
+
+| Range | Library, version | Functions named | How it was matched |
+|---|---|---|---|
+| 0x207CF0–0x207D58, 0x208050 | crtbegin (`__do_global_dtors_aux`, `frame_dummy`), `system_MIMXRT685S_dsp.c` (`SystemInit`, `SystemCoreClockUpdate`, `SystemInitHook`) | 5 | crtstuff shape (once flag, weak `__register_frame_info` = 0); system file order **[inference]** |
+| 0x208060–0x216DC4 | **NXP MCUXpresso SDK 2.10** RT685 drivers, every `fsl_*.c` in file-name order: acmp, clock, common, crc, ctimer, dma, dmic, dmic_dma, flexcomm, flexspi, flexspi_dma, fmeas, gpio, i2c, i2c_dma, i2s, i2s_dma, i3c, iap, inputmux, lpadc, mrt, mu, otfad, pint, reset, rtc, sema42, spi, spi_dma, trng, usart, usart_dma, utick, wwdt | 440 new (+26 named before) | function order per file, peripheral base and clock/reset tables, `kStatus_*` codes, callers. Version: `SDK_Malloc` has the 2.9+ overflow checks, `I2C_MasterInit` calls `I2C_MasterSetTimeoutValue` (2.10+), the I2S DMA driver lacks the loop-DMA functions of 2.11 **[fact]**. `CLOCK_EnableFfroClk`/`EnableSfroClk` are `#ifndef __XCC__` and absent **[fact]**; hashcrypt, casper, power, puf, sctimer, usdhc are not linked |
+| 0x21AA90–0x21BD24 | **rpmsg-lite v3.1.1** (`rpmsg_env_bm.c`, platform `imxrt600_hifi4`, `rpmsg_lite.c`, `rpmsg_ns.c`, `virtqueue.c`) | 70 new (+15 named before) | one-to-one source order; `RL_ERR_PARAM` −5003; `virtqueue_dump` prints "VQ: %s - size=%d; …" 0x2062E4 **[fact]**. The env is the bare-metal one (`env_lock_mutex` is empty) **[fact]** |
+| 0x216E00–0x21A970, 0x233670–0x235190 | **Cadence NatureDSP HiFi4** (NDSP, float32): `vec_complex2mag`, `fft_cplxf_ie`, `ifft_cplxf_ie`, `fft_spectrumf`, `fft_realf_ie`, `scl_antilog10f`, `scl_antilognf`, `scl_atan2f`, `scl_cosinef`, `scl_log10f`, `scl_lognf`, `scl_sinef`, `scl_tanf`, `vec_atan2f`, `vec_log10f`, `scl_bexpf`, `vec_bexpf`, `vec_maxf`, `vec_minf`, `bkfiraf_*`, `bkfirf_*`, a `bqriirf_df2`/`df2t` biquad cascade (`iir_cascade_*`), `scl_/vec_float2int`, `scl_/vec_int2float`, `vec_addf`, `vec_dotf`, `vec_powerf`, `vec_scale_sf`, `vec_scalef`, `vec_shiftf` | 22 new, 14 renamed from their #86 names (`fft512_cplx`, `pow10f_`, `cosf_`, `fir_init`, `vec_sum_sq`, …) | rodata tables equal NDSP's word for word (above); code in NDSP file-name order in two blocks; `bkfirf_alloc` is NDSP's size formula; `fft_spectrumf` checks N = 2^k and mode 0/1 **[fact]** |
+| 0x2293E0–0x233250, 0x235F40–0x236430 | **newlib** (libm single precision with `_LIB_VERSION`/matherr wrappers, libc: dlmalloc, stdio, `_vfprintf_r`/`_vfiprintf_r`, `_dtoa_r` and mprec, locale, exit) | 106 new (+3 named before: `powf`, `cosf`, `sinf`) | distinctive constants against newlib built with the Zephyr SDK RT600 toolchain (`__ieee754_powf` 36 of 43, `_dtoa_r` 14 of 15, `rand`'s 6364136223846793005), call graph **[fact for the constants]** |
+| 0x2266FC–0x229380 | **Cadence XOS** kernel and its clib glue | 11 new (13 named before) | XOS error codes 0xFFFF0000 + n (0x0C msgq full, 0x0D empty, 0x0E deleted, 0x04 mutex locked, 0x07 mutex deleted), `__malloc_lock` on an XOS mutex, per-thread `_reent` init **[inference]**; the scheduler internals stay unnamed |
+| 0x233410–0x2364D0 | Xtensa HAL and the XCC runtime: `xthal_*` cache/region functions, soft double (`__adddf3`, `__subdf3`, `__muldf3`, `__divdf3` with the HiFi4 `f64*` assist ops), `__divsf3`/`__recipsf2`/`__rsqrtsf2`/`__ieee754_sqrtf` (FPU `div0.s`/`recip0.s`/`rsqrt0.s`/`sqrt0.s` sequences), `__muldi3`, `__udivdi3`, `memcpy`/`memset`/`memmove` | 13 new, `divf_`/`sqrtf_` renamed `__divsf3`/`__ieee754_sqrtf` | instruction sequences **[fact for the code]** |
+| 0x21BD40–0x2266FC | application (the DSP chains of #86) | 66 new | block init functions sit just before the block they prepare (`apf_init`, `contour_init`, `lms_ale_nr_init`, `tx_chain_init`, …), FIFO helpers, SPI buffer helpers, spectrum, Gaussian noise generator **[inference]** |
+
+```mermaid
+flowchart LR
+    subgraph text[".text 0x207000-0x2367FF, link order"]
+        crt["crt + system<br/>0x207CF0"] --> sdk["NXP SDK 2.10 drivers<br/>0x208060-0x216DC4"]
+        sdk --> ndsp1["NatureDSP block 1<br/>0x216E00-0x21AA20"]
+        ndsp1 --> rpmsg["rpmsg-lite 3.1.1<br/>0x21AA90-0x21BD24"]
+        rpmsg --> app["application<br/>0x21BD40-0x2266FC"]
+        app --> xos["XOS + clib glue<br/>0x2266FC-0x2293C0"]
+        xos --> libc["newlib libm / libc<br/>0x2293E0-0x233250"]
+        libc --> hal["HAL<br/>0x233410"]
+        hal --> ndsp2["NatureDSP block 2<br/>0x233670-0x235190"]
+        ndsp2 --> rt["XCC runtime, string, stdio locks<br/>0x235370-0x2367FF"]
+    end
+```
+
+Still unnamed (129 functions, 6 % of the bytes): XOS internals (scheduler, timers, thread API without a caller), most stdio and
+locale accessors that the image never calls, a few NDSP-adjacent functions (0x218480 is not code: its bytes do not decode;
+0x21AA20, 0x233818, 0x233EB0), the soft-double compare helpers 0x22B838–0x22B874 (`f64cmph` modes 5–10, ABI names not
+settled), and application helpers whose role is unclear (scope/spectrum sub-steps 0x22419C, 0x22439C, 0x224DF0, mute-ramp
+state setters 0x225478/0x22548C) **[fact: list from the export]**.
 
 ## Function table (HiFi4)
 

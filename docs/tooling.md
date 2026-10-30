@@ -435,6 +435,18 @@ Remove: `rm -rf ~/opt/rizin-0.9.1 ~/opt/dl/rizin-0.9.1`.
 | Matcher | `tools/lib_match.py` (stdlib Python + objdump; no Ghidra FunctionID database needed) |
 | Remove | `apt-get remove gcc-arm-none-eabi; rm -rf ~/opt/t23d` |
 
+### HiFi4 library sources (T23d/T23e HiFi4, 2026-10-30)
+
+Read-only references for `tools/ghidra/names_hifi4.T23.tsv`; nothing was compiled into the repo. Cloned into a scratch
+directory of the cloud session (not kept), so redo with the commits below.
+
+| Library | Source and commit | How it was used |
+|---|---|---|
+| NXP MCUXpresso SDK drivers | https://github.com/nxp-mcuxpresso/mcux-sdk tag **MCUX_2.10.0** = `1e97870ccc900b4431c91f229e83c65f17d8376f` (`drivers/`, `devices/MIMXRT685S/drivers/`). Compared: MCUX_2.9.0 `f3923a74d187cf8d4d62d56d851794cf610cc960` (no `I2C_MasterSetTimeoutValue`), MCUX_2.11.0 `34e0779171551fc9e4a20f7993ca8fa037a0bc63` (adds the I2S loop-DMA functions the image lacks); Zephyr `hal_nxp` commits `06f57f87`/`4b5b3c74`/`56915d29` (SDK 2.8.0/2.8.2/2.8.3, no overflow check in `SDK_Malloc`) | the image links every RT685 `fsl_*.c` in file-name order; function order, peripheral bases, status codes and callers per file |
+| rpmsg-lite | https://github.com/nxp-mcuxpresso/rpmsg-lite tag **v3.1.1** = `f12ffe998a9b52f0327e109b5b3005a2ef787770` (env `rpmsg_env_bm.c`, platform `imxrt600_hifi4`) | one-to-one source order of env, platform, `rpmsg_lite.c`, `rpmsg_ns.c`, `virtqueue.c` |
+| Cadence NatureDSP HiFi4 | https://github.com/foss-xtensa/ndsplib-hifi4 commit `8ec7552f670456b46249ee30be96dc6003b1285f`, `NDSP_HiFi4/NDSP_HiFi4_v430.zip` (SHA-256 `9e966f0c625cb9462f68cb5a21b57bfd3f52fd76edc3f8fc6f2a24b2e63efb57`), extracted read-only | the rodata tables 0x200650..0x2008BF equal NDSP's `library/tables/*.c` and local tables word for word; code is in NDSP file-name order |
+| newlib, libgcc | the Zephyr SDK 0.17.0 RT600 toolchain above (`xtensa-nxp_rt600_adsp_zephyr-elf/lib/libc.a`, `libm.a`, GCC 12.2.0 `libgcc.a`): a 40-line C file referencing ~110 libc/libm functions, linked `-nostartfiles -nostdlib` with stub syscalls, then `objdump -d` / `-s` | distinctive literal constants per function (e.g. `__ieee754_powf` 36 of 43, `_dtoa_r` 14 of 15) and instruction-sequence similarity for the tiny ones |
+
 ## Python
 
 Use the system `python3` for the tools in `tools/`. Run scripts that read firmware data with `python3 -I`.
