@@ -17,7 +17,7 @@ Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidr
 | File must be in `I:\FT-710\`, name = `FT-710_<IMG>_V` + **4 any chars** + `.sfl` (case-insensitive, exact length), FAT **ARCHIVE** attribute set; the lexicographically highest name wins | `fwfile_status_text` 0x2010DFD0, `fwname_pattern_match` 0x20163600, `fwobj_match_name` 0x20160418 | [fact]. A file copied by a PC has the archive bit set. The 4 chars become the shown version ("0108" → "01-08") |
 | Header: 9 × 64-byte blocks read; the tag line (block 8) must be exactly 64 chars with no NUL; it is split on spaces; the **3rd token** parsed as hex (≤ 8 digits) must equal the salted CRC-32 of bytes 0x240..EOF | `sfl_read_header` 0x20114CA0, `sfl_crc` 0x20114A64 | [fact]. The **tag (`MC`/`PC`/`ID`/`SR`) and the length field are not checked**. Only the CRC matters ("Ready" vs "(Broken file)") |
 | Comment box: not checked, except block 3 (`[PRODUCT NAME]`) in the DISPLAY file: `" : "` followed by `"#UP0    "` turns the update into a **loader** write — only when F1 is held on a USB keyboard | `fwobj_display_run` 0x201607E8 (*name*), `DAT_20800181` | [fact] (F1 = HID usage 0x3A) |
-| Version: shown, and rows whose file version is higher than the installed one (from MAIN's 0x60 status frame) are pre-marked; any "Ready" row can be ticked | `fwupdate_menu_screen` 0x2015A500 (*name*), format `%04X` | [fact for the pre-mark]; downgrades are allowed **[inference]** (only the Ready bit gates the tick box, `FUN_2015a910`) |
+| Version: shown, and rows whose file version is higher than the installed one (from MAIN's 0x60 status frame) are pre-marked; any "Ready" row can be ticked | `fwupdate_menu_screen` 0x2015A500 (*name*), format `%04X` | [fact for the pre-mark]; downgrades are allowed **[inference]** (only the Ready bit gates the tick box, `fwupdate_select_loop`) |
 | **SDR**: SFL file size must be exactly **0x43075A = 4 392 794** bytes; 536 bitstream blocks of 4 KiB are written, then the 4 KiB header block (537 block writes) | `fwobj_sdr_run` 0x201602AC, `sdr_flash_write` 0x20110AB8 | [fact]. A custom bitstream must be padded/fitted to the same size |
 | **DISPLAY**: file size ≥ 0x242; decoded byte count must equal size − 0x240; no upper limit vs. the 6 MiB bank | `fwobj_display_run` | [fact]. A payload over 6 MiB would run into the next region **[inference]** |
 | **IFDSP**: erase region fixed at 0x08000000 + 0xA0000 (640 KiB) | `dsp_isp_erase_region` 0x2010B0F4 | [fact]. A larger image would be written into unerased flash **[inference]** |
@@ -106,8 +106,8 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
 **[inference]**. There is no rollback: a failed target stays as written, and the user retries **[fact for the code]**.
 
 ### Other entry points
-- **Power-on with key line 6 held** (`power_on_request` 0x2012FFCC, `gui_main_loop`): boot-info word +8 = 2, then `FUN_201322e4` →
-  `FUN_20159058` → `bootloader_screen` 0x2015938C **[fact]**. On that screen, more than 4 net steps of the encoder on P3_3/P3_5
+- **Power-on with key line 6 held** (`power_on_request` 0x2012FFCC, `gui_main_loop`): boot-info word +8 = 2, then `bootloader_entry_screen_thunk` →
+  `bootloader_entry_screen` → `bootloader_screen` 0x2015938C **[fact]**. On that screen, more than 4 net steps of the encoder on P3_3/P3_5
   (ISR `renc_irq4_isr` → `DAT_208001e4`) make `bootloader_unlock_wait` return 1: the title becomes
   `YAESU FT-710 BOOT LOADER V01-02`, boot-info word 0 = 0xBBBB and word +8 stays 2, so a DISPLAY update then goes to the **loader**
   region (section 6). Otherwise word +8 is reset to 1 and it is a normal update screen **[fact]**. Which physical key is line 6 is for T11f.
@@ -116,7 +116,7 @@ OFF" is this reset: `system_reboot` sets RX_UPDATE low, pulses P7_9/P7_11, P8_5,
   `fw_installed_versions_set` 0x201595F0, `fwupdate_menu_screen` 0x2015A500, 0x2015A8DC, 0x20159058 and 0x20159D98 (the last one,
   through 0x201322F0, is the `YAESU FT-710 FIRMWARE UPDATE` screen).
 - **MAIN asks for update mode**: at power-on `opening_check_main` reads MAIN's 0x60 status frame; if byte 1 has 0xF0 set it opens
-  `YAESU FT-710 FIRMWARE UPDATE` (`FUN_201322f0`), else it stores the installed versions (`fw_installed_versions_set` 0x201595F0, through the thunk 0x201322BC:
+  `YAESU FT-710 FIRMWARE UPDATE` (`fwupdate_title_screen_thunk`), else it stores the installed versions (`fw_installed_versions_set` 0x201595F0, through the thunk 0x201322BC:
   BE16 at +0, +2, +4, +10 → 0x208F4BF4..0x208F4BFA) **[fact]**.
 - **MAIN not answering** (`DAT_2045005c` set, `mainlink_got_esc`): `fwupdate_screen` 0x20159714 (called through the thunk 0x201322B4), the 2-step recovery screen. It requires
   both the MAIN and the DISPLAY files to be Ready ("MAIN FIRMWARE FILE [ OK ]", "DISPLAY FIRMWARE FILE"), then runs MAIN first
@@ -405,7 +405,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x201140DC | `progress_get` | progress percent **[inference]** |
 | 0x201140E8 | `progress_range_init` | {from, to} range **[inference]** |
 | 0x201140F4 | `progress_scale` | maps a fraction into the range **[inference]** |
-| 0x20126160 | `gui_scope_draw_hold_set` | (v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after; scope_draw_frame, main_filter_graph and FUN_201233d4 draw only while it is 0 ; pauses the scope drawing **[fact]** |
+| 0x20126160 | `gui_scope_draw_hold_set` | (v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after; scope_draw_frame, main_filter_graph and filter_graph_small draw only while it is 0 ; pauses the scope drawing **[fact]** |
 | 0x201322AC | `fwupdate_insert_sd_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen **[inference]** |
 | 0x201322B4 | `fwupdate_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81) **[inference]** |
 | 0x201322BC | `fw_installed_versions_set_thunk` | r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81) **[inference]** |
@@ -454,3 +454,29 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI
 | 0x20104E20 | `sflash_dev_read` | Read side of the flash device object (mode 0x20810D98: 1 = read data with sflash_fast_read, 2/3 = return a status byte, flushes a partial page) **[fact]** |
 | 0x20104F34 | `sflash_dev_write` | Command side: 'r' + address (read), 'e' + address (erase block), program data in the other mode **[fact]** |
 | 0x20105060 | `sflash_dev_open` | Object 0x20810D90 base = SPIBSC_CMNCR_0; spiflash_erase and spiflash_write start with it **[fact]** |
+
+### Update / boot-loader screens (update.md) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20159058 | `bootloader_entry_screen` | Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT ERROR" forever, else bootloader_screen (update.md) **[fact]** |
+| 0x201322E4 | `bootloader_entry_screen_thunk` | ldr r0, =0x208F4BF4; b bootloader_entry_screen (update.md update-UI thunks) **[fact]** |
+| 0x201322F0 | `fwupdate_title_screen_thunk` | fwupdate_ui_run(0x208F4BF4, "YAESU FT-710 FIRMWARE UPDATE") (update.md) **[fact]** |
+| 0x2015A8DC | `fwupdate_select_screen` | Update-UI method (thunk 0x201322D8), packet step 1: four target rows with tick boxes and the OK/CANCEL keys; 2: "UPDATE?"; 3: runs fwupdate_poll with per-row progress bars, then update_error_screen on failure and system_reboot **[fact]** |
+
+### Firmware-update screen loop (update.md) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20159D98 | `fwupdate_ui_run` | Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation (fwupdate_confirm_loop), then fwupdate_progress_screen; card-missing and error texts **[fact]** |
+| 0x2015A910 | `fwupdate_select_loop` | Touch/mouse loop of the target list (pointer_get_event, touch_cal_apply, mouse cursor): toggles the tick boxes of the four rows, OK / CANCEL keys, redraws with fwupdate_select_draw, mirrors the state to MAIN (mainlink_send_ui_c3, E6) **[fact]** |
+| 0x2015A17C | `fwupdate_confirm_loop` | Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with fwupdate_confirm_draw **[fact]** |
+| 0x2015B450 | `fwupdate_select_draw` | (ui, state, title): title bar, four target rows (name, status text, tick sprite 0x203A5684/94, cursor frame) and the OK / CANCEL buttons **[fact]** |
+| 0x2015B748 | `fwupdate_confirm_draw` | (ui, state): "UPDATE?" box with the YES / NO buttons and the cursor frame **[fact]** |
+| 0x20159630 | `pointer_idle_loop` | Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor, gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it **[fact]** |
+
+### SD menu file list (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2010EF88 | `sdmenu_list_files` | (kind, list, max): opens the SD folder for the kind (0x208001AC table), collects the names of the ".dat" files without the extension in 16-byte slots (work buffer 0x8350 bytes, at most 100), sorts them with qsort/strcasecmp and copies them to list; holds the scope drawing meanwhile; returns the count **[fact]** |

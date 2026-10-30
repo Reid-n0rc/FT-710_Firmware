@@ -100,14 +100,14 @@ same for 3 polls (0x2080021C reaches 2) **[fact]**. A level of 0 means pressed (
 
 - **One key at a time:** the flag 0x20800214 allows only one press until that key is released. The first four held codes are kept in
   0x2080023C (`key_held_list_update` 0x20112F3C), and these feed the boot key combinations **[fact]**.
-- The matrix and ADC keys are only scanned when the full-mode flag 0x208003A4 (`FUN_20116dac`) or 0x2080049B is set. Direct keys are always
+- The matrix and ADC keys are only scanned when the full-mode flag 0x208003A4 (`full_mode_get`) or 0x2080049B is set. Direct keys are always
   scanned **[fact]**.
 - `mainlink_send_key` drops everything while 0x208003A4 is 0, that is in standby. Before the GUI link is up (0x20800495 = 0) it only lets through
   LOCK/PWR (press, hold) and FUNC (press, hold, release), and those only when 0x20450026 is set (`mainlink_got_frame60`) **[fact]**.
 - **Screen saver:** while the current screen id (first byte of the 0x240-byte screen state at 0x208F0B2A, received from MAIN) is 0x7B and
   0x208F0B2B is set, the first key or knob action only sends the one-byte frame **E4** (wake up) and is otherwise swallowed **[fact; "screen saver"
   is an inference]**.
-- **Power key:** state 2 of 0x300 calls `FUN_2011722c`. In standby that sets 0x208003A0 = 1 (full mode), which `task_root` turns into
+- **Power key:** state 2 of 0x300 calls `power_key_on`. In standby that sets 0x208003A0 = 1 (full mode), which `task_root` turns into
   `power_on_full_init` ([boot-rtos.md](boot-rtos.md)). In full mode it sets 0x20800493, the shutdown flag that the GUI waits on. So holding
   LOCK/PWR for about 1 s switches the radio on or off, and a short press is a normal key event (LOCK) **[fact for the code; inference for the
   meaning]**.
@@ -227,7 +227,7 @@ flowchart LR
 
 | Item | Value |
 |---|---|
-| Bus | RIIC channel 2 (`FUN_20120454(2)` init), slave 0x48 (write 0x90 / read 0x91) **[fact]** |
+| Bus | RIIC channel 2 (`R_RIIC_Init(2)` init), slave 0x48 (write 0x90 / read 0x91) **[fact]** |
 | Pen IRQ | TINT on P1_3 = IRQ3, falling edge. `tsc2007_tint_isr` (0x201033E8, Ghidra `tsc2007_tint_isr`) wakes the task and counts 0x20800074 ("irq" in the debug overlay) **[fact]** |
 | Setup | command 0xB0 once at start (TSC2007 "setup" command; reserved on TSC2003) **[fact for the byte; inference for the meaning]** |
 | Conversions | 0xD4 (Y), 0xC4 (X), 0xE4 (Z1), 0xF4 (Z2): 12-bit, ADC on and pen IRQ off during the conversion (`tsc2007_read12` 0x201031F8: write the command, 1 ms, read 2 bytes, `(b0<<4)|(b1>>4)`) **[fact]** |
@@ -293,7 +293,7 @@ Main-screen tables, in test order **[fact for rectangles and codes; area names f
 | 0x2021CC58 | 382 / 491 / 648, 10, 104 / 152 / 152, 50 | 0x1012..0x1014 | top right row |
 | 0x2016E15C (bit 5 clear) | 1 + 110·n, 109, 110, 79 | 0x101A..0x101D | four boxes left of the filter graph |
 | 0x201AC45C (0x208F0B4D bit 7) | 443 + 89·n, 278, 88, 49; 759, 209, 30, 60 | 0x10C0..0x10C3, 0x10C5 (0x10C3 → 0x10C4 when 0x208F0B4D bit 2) | row under the filter graph |
-| `FUN_2015C558` (by 0x208F0B2B/2C/2D) | scope area 4, 128, 792, 157..275 etc. | 0x1016..0x1019 | scope (0x1016 = touch tuning, sent as E0 0x40/0x41) |
+| `touch_hit_scope` (by 0x208F0B2B/2C/2D) | scope area 4, 128, 792, 157..275 etc. | 0x1016..0x1019 | scope (0x1016 = touch tuning, sent as E0 0x40/0x41) |
 | 0x2016E304 | 133·n, 420, 133, 60 | 0x1000 (→ 0x1000 + (0x208F0B4F & 0x7F), 0x1008 for 0x0B), 0x1003..0x1007 (0x1003 → 0x1009 when 0x208F0B50 & 0x7F = 0x0C) | bottom row of six |
 
 So **soft key 0x011 is a touch on the filter graph** of the main screen: a short touch toggles MAIN UI +0x70 (status byte 35 bit 7) and a long touch toggles
@@ -479,7 +479,7 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 | 0x201033E8 | `tsc2007_tint_isr` → `tsc2007_tint_isr` | IRQ3 ISR (misnamed in names_display.tsv) |
 | 0x20103198 / 0x201031F8 / 0x201032F0 | `tsc2007_write_cmd` / `tsc2007_read12` / `tsc2007_pressure` | chip access |
 | 0x201037EC | `tsc2007_irq_flag` | 20 ms delay, returns 0x20800090 |
-| 0x20120224 | `riic_init` | RIIC driver |
+| 0x20120224 | `userdef_riic0_wait_bus_master` | RIIC ch0 bus-busy wait (was `riic_init`; the RIIC driver is in [peripherals.md](peripherals.md)) |
 | 0x20102F34 / 0x20102708 / 0x20102774 | `touch_cal_init` / `touch_cal_load` / `touch_cal_save` | calibration record |
 | 0x201027F8 / 0x20102FD0 / 0x20102F8C / 0x20103060 / 0x20103164 | `touch_cal_fit` / `touch_cal_store_points` / `touch_cal_set_point` / `touch_cal_apply` / `touch_cal_selftest` | calibration math |
 | 0x20125E78 / 0x20130768 / 0x2013071C | `touch_calibration` / `touch_cal_step` / `touch_cal_hit` | calibration screen 0x7C |
@@ -604,3 +604,80 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x20159320 | `pointer_touch_poll` | pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog) **[inference]** |
+
+### USB host (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013B97C | `usbh_hid_class_init` | Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on error (boot-rtos.md init list) **[fact]** |
+| 0x2013B58C | `usbh0_isr` | USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in 0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C **[fact]** |
+| 0x2013B598 | `usbh1_isr` | USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) **[fact for the vector]** |
+| 0x2013A394 | `usbh_brdy_handler` | (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to FUN_20139f6c (read) or FUN_2013a198 (write); then re-enables BRDYE in INTENB0 **[fact]** |
+| 0x201385B4 | `usbh_ports_init` | For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0.., starts the two port tasks and FUN_2013b2b4 (boot-rtos.md init list) **[fact]** |
+| 0x2013B4CC | `usbh_hw_init` | Registers the USBI0/USBI1 handlers (GIC 73/74) and calls FUN_2013ab9c for USB0 (SYSCFG0 0xE8010000) and USB1 (peripherals.md: host mode on both ports) **[fact]** |
+| 0x20107E9C | `usbkbd_init` | Creates the keyboard mutex 0x20800118, initialises the two 0xD0-byte keyboard objects 0x20811080 and the layout tables (kbd_layout_tables_init) **[fact]** |
+| 0x201090A0 | `kbd_layout_jpn_init` | kbd_layout_base_fill(0) only: table 0 is JPN in the usbkbd_set_layout list (input.md); called from kbd_layout_tables_init **[fact]** |
+
+### Power / mode flags (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20117288 | `radio_on_flag_set` | (v): 0x208003A0 = v; task_mainlink_dispatch sets 1 for CAT PS1 (mainlink.md 0x60) **[fact]** |
+| 0x2011722C | `power_key_on` | Power key: in standby sets 0x208003A0 = 1 (full mode) and clears 0x208003A1, else sets 0x20800493 (input.md) **[fact]** |
+| 0x20116DAC | `full_mode_get` | Returns the full-mode flag 0x208003A4 (input.md: matrix and ADC keys scanned only while set) **[fact]** |
+| 0x20116DA0 | `full_mode_set` | (v): 0x208003A4 = v (boot-rtos.md: force flag) **[fact]** |
+
+### USB host HID class driver ("UHHID", input.md) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013C32C | `usbhid_device_task` | Per-device HID task: GET_DESCRIPTOR configuration (0x80/6/0x200), SET_PROTOCOL (0x21/0x0B), GET_DESCRIPTOR report (0x81/6/0x2200), hid_report_desc_parse, SET_IDLE (0x21/0x0A), usbhid_attach_event, then reads interrupt reports and passes the extracted fields to usbhid_report_event; detach event and itron_ext_tsk at the end **[fact]** |
+| 0x2013BD20 | `hid_report_desc_parse` | (dev, desc): walks a HID report descriptor item by item (hid_item_data) and records the report id, usage and the bit offsets and sizes of the fields the driver uses (buttons, X/Y, wheel, keys) **[fact for the item walk; inference for the field roles from usbhid_device_task]** |
+| 0x2013BC30 | `hid_item_data` | (*pos, *out, signed): reads the data of one short HID item (size code 0/1/2/4 bytes from the low two bits of the prefix), sign-extends when asked, advances the pointer **[fact]** |
+| 0x2013BBB4 | `hid_report_bits_get` | (report, bit offset, bit count): little-endian bit-field extract from a HID report **[fact]** |
+| 0x2013C76C | `usbhid_pipe_read` | (dev, pipe slot): starts a read on the device's interrupt pipe (usbh_pipe_xfer) **[fact]** |
+| 0x2013C6BC | `usbhid_class_register` | Clears the two HID device slots 0x2091CB78.. and registers the class table 0x204201FC with the host stack (thunk_FUN_201384d4) **[fact]** |
+| 0x2013C860 | `usbhid_class_attach` | Class attach/detach callback (port, address, config): detach stops the device (usbhid_device_stop); attach finds the interrupt-IN endpoint (usbhid_find_int_in), fills a free slot (max 2) and starts usbhid_device_task, waiting up to 1 s for it **[fact]** |
+| 0x2013C7C4 | `usbhid_find_int_in` | (slot, config): first interrupt (type 3) IN endpoint with max packet 1..256; -1 if none **[fact]** |
+| 0x2013BA44 | `usbhid_device_stop` | (slot): stops a running HID device: clears its run flag, cancels the pipe (usbh_pipe_cancel) and waits up to 1 s for the task to end **[fact]** |
+| 0x2013C798 | `usbh_pipe_cancel` | (port, pipe): with the CPU locked, waits for the pipe to go idle (about 50 ticks), clears it in the controller and signals the port flag and semaphore **[fact for the calls]** |
+
+### USB host pipes (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20139624 | `usbh_pipe_xfer` | (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read uses it **[fact]** |
+| 0x20139344 | `usbh_pipe_write` | (pipe, buf, len): when the buffer needs a bounce (FUN_20139330) copies it in 0x2000-byte pieces into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf **[fact]** |
+| 0x20139590 | `usbh_pipe_read` | (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces (usbh_pipe_read_buf) and copies out, stopping at a short packet **[fact]** |
+| 0x2013927C | `usbh_pipe_write_buf` | (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet when needed **[fact for the calls]** |
+| 0x201393D4 | `usbh_pipe_read_buf` | (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on the port event flag, under the port semaphore **[fact for the calls]** |
+| 0x20137FAC | `usbh_enumerate_config` | Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the configuration and walks its interfaces and endpoints to set up pipes and the class driver (FUN_20137eac, FUN_2013a90c) **[fact for the calls]** |
+
+### USB keyboard layout tables (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20108BC8 | `kbd_layout_base_fill` | (layout): fills layout table 0x20450290 + 0x600*layout with the common entries (digits usage 0x1E.. -> '1'.., letters usage 4.. -> 'A'.., Enter, Esc, Backspace, Tab, Space, arrows) that the per-layout builders then override **[fact]** |
+| 0x201090A8 | `kbd_layout_us_init` | kbd_layout_base_fill(1) plus the overrides of table 1; id 1 is US in the usbkbd_set_layout list (input.md) and kbd_char_lookup indexes the table by that id **[fact]** |
+| 0x20109258 | `kbd_layout_uk_init` | kbd_layout_base_fill(2) plus the overrides of table 2 (UK in the usbkbd_set_layout list) **[fact]** |
+| 0x2010940C | `kbd_layout_fra_azerty_init` | kbd_layout_base_fill(3) plus the overrides of table 3 (FRA(AZ)) **[fact]** |
+| 0x2010973C | `kbd_layout_fra_qwerty_init` | kbd_layout_base_fill(4) plus the overrides of table 4 (FRA(QW)) **[fact]** |
+| 0x20109944 | `kbd_layout_fra_qwerty_init_alt` | Second builder of table 4 with no caller in the image: kbd_layout_base_fill(4) and a different override set **[fact]** |
+| 0x20109B14 | `kbd_layout_deu_init` | kbd_layout_base_fill(5) plus the overrides of table 5 (DEU) **[fact]** |
+| 0x20109D24 | `kbd_layout_por_init` | kbd_layout_base_fill(6) plus the overrides of table 6 (POR) **[fact]** |
+| 0x20109EF4 | `kbd_layout_por_br_init` | kbd_layout_base_fill(7) plus the overrides of table 7 (POR(BR)) **[fact]** |
+| 0x2010A08C | `kbd_layout_esp_init` | kbd_layout_base_fill(8) plus the overrides of table 8 (ESP) **[fact]** |
+| 0x2010A274 | `kbd_layout_esp_la_init` | kbd_layout_base_fill(9) plus the overrides of table 9 (ESP(LA)) **[fact]** |
+| 0x2010A438 | `kbd_layout_ita_init` | kbd_layout_base_fill(10) plus the overrides of table 10 (ITA) **[fact]** |
+| 0x2010A684 | `kbd_char_lookup` | (usage, modifier, layout): searches the 12-byte entries of layout table 0x20450290 + 0x600*layout, letters also match with the shift state, modifier 0xFE matches any; returns the character; usbkbd_get_char (layout 0x2080010E) and kbdtest_record call it **[fact]** |
+
+### Touch hit tests per screen (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015C34C | `touch_hit_text_list` | touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through touch_hit_text_list_rows) **[fact for the dispatch]** |
+| 0x2015CDD4 | `touch_hit_text_list_rows` | (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row (0x208F0C5B + 0x2D*row) gives its own code **[fact]** |
+| 0x2015C43C | `touch_hit_select_popup` | touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) **[fact for the dispatch]** |
+| 0x2015C750 | `touch_hit_sd_menu` | touch_hit_test for screen 0x43 (SD-card menu) **[fact for the dispatch]** |
+| 0x2015CA14 | `touch_hit_dialog` | touch_hit_test for screen 0x70 (dialog / confirm screen) **[fact for the dispatch]** |
+| 0x2015C81C | `touch_hit_scope_drag` | (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 / step) while the finger moves; called by touch_hit_scope **[fact for the calls]** |

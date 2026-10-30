@@ -19,7 +19,7 @@ below); other bit meanings from that manual are still tagged **[inference]**.
 | SD user files | `I:\FT-710\{Capture, MemList, Menu, PlayList, MESSAGE}`: BMP screenshots, memory-channel and menu backups (`.dat`), WAV recordings | `task_sdmenu`, `sdmenu_save_file` |
 | Backlight / LEDs | MTU2 PWM for the TFT backlight (BLPWM) and the LED dimmer, 9 front-panel LEDs on P6 | `backlight_set`, `dimmer_set`, `led_set_mask` |
 | Watchdog | Not used as a watchdog. The WDT is only used to **reset the chip** (WTCNT = 0xFF in reset mode) | `wdt_system_reset` |
-| USB | USB0 and USB1 in **host** mode only. The only class driver is HID (`UHHID`); details are in [input.md](input.md) | `FUN_2013b4cc` |
+| USB | USB0 and USB1 in **host** mode only. The only class driver is HID (`UHHID`); details are in [input.md](input.md) | `usbh_hw_init` |
 
 ```mermaid
 flowchart LR
@@ -76,7 +76,7 @@ OSTM0 counts 320000 per 10 ms and OSTM1 32000 per 1 ms (`ostm_init`, `periodic_w
 | STBCR11 | 0xFF | 0xC0 | none |
 | STBCR12 | 0xF7 | 0xF0 | SDHI00 (bit 3) |
 
-Other CPG users: `FUN_2011fc8c`/`fd1c`/`fdac`/`fe34` clear the RIIC0..3 bits in STBCR9 (bits 7..4) before they open the bus. `vdc5_module_start` /
+Other CPG users: `userdef_riic0_init`/`fd1c`/`fdac`/`fe34` clear the RIIC0..3 bits in STBCR9 (bits 7..4) before they open the bus. `vdc5_module_start` /
 `vdc5_module_stop` (0x20132320 / 0x20132398) use STBREQ2 (0xFCFE0034) / STBACK2 (0xFCFE0044) and STBCR9 bits 1–0 for the VDC5. `sdhi0_clock_on`
 (0x2013FE50) clears STBCR12 bits 3–2 **[fact for the register writes]**.
 
@@ -197,14 +197,14 @@ rows also against its TINT pin table (TINT33 = P2_9, TINT119 = P8_4).
 | 37 (0x25) | IRQ5, PWR_SW P2_0 | `powon_isr` 0x20113FDC | 5 | `powon_init` | [boot-rtos.md](boot-rtos.md) |
 | 44 / 45 / 46 (0x2C–0x2E) | DMAC ch3 / ch4 / ch5 end | 0x20137490 (sets a flag) / 0x201376C4 / 0x201374A0 (callback pointers) | 5 | `dmac4_rspi4_rx_setup`… (DMA set-up) | [spi-links.md](spi-links.md) |
 | 50 / 51 (0x32, 0x33) | DMAC ch9 / ch10 end | 0x20137AEC / 0x20137D1C (callbacks) | 5 | `dmac9_rspi_tx_setup` | [spi-links.md](spi-links.md) |
-| 73 / 74 (0x49, 0x4A) | USBI0 / USBI1 | 0x2013B58C / 0x2013B598 → `FUN_201396b0(port)` | 8 | `gic_def_inh` in `FUN_2013a394` area | [input.md](input.md) |
-| 78 (0x4E) | VDC5 ch0 **GR3_VLINE0** (graphics 3 line interrupt) | `FUN_20118638` | 5 | `FUN_20130c70` area | [gui.md](gui.md) |
+| 73 / 74 (0x49, 0x4A) | USBI0 / USBI1 | 0x2013B58C / 0x2013B598 → `FUN_201396b0(port)` | 8 | `gic_def_inh` in `usbh_brdy_handler` area | [input.md](input.md) |
+| 78 (0x4E) | VDC5 ch0 **GR3_VLINE0** (graphics 3 line interrupt) | `FUN_20118638` | 5 | `textterm_clear` area | [gui.md](gui.md) |
 | 134 (0x86) | OSTM0 | `ostm0_tick_isr` (10 ms tick) | 5 | `ostm_init` | [boot-rtos.md](boot-rtos.md) |
 | 135 (0x87) | OSTM1 | `periodic_wakeup_isr` (1 ms) | 5 | `periodic_wakeup_start` | [boot-rtos.md](boot-rtos.md) |
-| 189 / 190 / 191 | RIIC0 TEI / RI / TI | 0x201203E4 / 0x201203D4 / 0x201203DC → 0x20120CB0 / 0x20120C04 / 0x20120C54 (ch 0) | 9 | `FUN_2011fc8c` | [input.md](input.md) |
-| 197 / 198 / 199 | RIIC1 TEI / RI / TI | 0x201203FC / 0x201203EC / 0x201203F4 (ch 1) | 9 | `FUN_2011fd1c` | |
-| 205 / 206 / 207 | RIIC2 TEI / RI / TI | 0x20120414 / 0x20120404 / 0x2012040C (ch 2) | 9 | `FUN_2011fdac` | |
-| 213 / 214 / 215 | RIIC3 TEI / RI / TI | 0x2012042C / 0x2012041C / 0x20120424 (ch 3) | 9 | `FUN_2011fe34` | |
+| 189 / 190 / 191 | RIIC0 TEI / RI / TI | 0x201203E4 / 0x201203D4 / 0x201203DC → 0x20120CB0 / 0x20120C04 / 0x20120C54 (ch 0) | 9 | `userdef_riic0_init` | [input.md](input.md) |
+| 197 / 198 / 199 | RIIC1 TEI / RI / TI | 0x201203FC / 0x201203EC / 0x201203F4 (ch 1) | 9 | `userdef_riic1_init` | |
+| 205 / 206 / 207 | RIIC2 TEI / RI / TI | 0x20120414 / 0x20120404 / 0x2012040C (ch 2) | 9 | `userdef_riic2_init` | |
+| 213 / 214 / 215 | RIIC3 TEI / RI / TI | 0x2012042C / 0x2012041C / 0x20120424 (ch 3) | 9 | `userdef_riic3_init` | |
 | 235 / 236 | SCIF3 RXI / TXI | 0x20114884 / 0x2011488C | 10 | `uart_obj_init` (0x208DA1E0) | [mainlink.md](mainlink.md) |
 | 239 / 240 | SCIF4 RXI / TXI | 0x20114894 / 0x2011489C | 10 | `uart_obj_init` (0x208DAA30) | [mainlink.md](mainlink.md) |
 | 243 / 244 | SCIF5 RXI / TXI (MAIN link) | 0x201148A4 / 0x201148AC | 10 | `uart_obj_init` (0x208DB280) | [mainlink.md](mainlink.md) |
@@ -213,7 +213,7 @@ rows also against its TINT pin table (TINT33 = P2_9, TINT119 = P8_4).
 | 277 / 278 | RSPI2 SPRI / SPTI | 0x2011ECFC / 0x2011ECF4 | 10 | | |
 | 279 / 280 / 281 | RSPI3 SPEI / SPRI / SPTI | 0x2011ED0C (SPRI) / 0x2011ED04 (SPTI); 279 is enabled with no handler of its own | 10 | | |
 | 283 / 284 | RSPI4 SPRI / SPTI | 0x2011ED1C / 0x2011ED14 | 10 | | |
-| 303 (0x12F) | SDHI0 **SDHI0_0** (302 = SDHI0_3, 304 = SDHI0_1) | 0x2013FDE0 → `FUN_20140b9c` | 7 | `gic_def_inh` in `FUN_2013fde8` area | [update.md](update.md) |
+| 303 (0x12F) | SDHI0 **SDHI0_0** (302 = SDHI0_3, 304 = SDHI0_1) | 0x2013FDE0 → `sdhi0_buf_isr` | 7 | `gic_def_inh` in `sdhi0_irq_enable` area | [update.md](update.md) |
 | 449 (0x1C1) | TINT33 = **P2_9**, the DSP link's SS pin (SSL40) | 0x20133418 → `rspi_start`(4)`, frame counter 0x208085AC | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
 | 535 (0x217) | TINT119 = **P8_4**, the SDR link's SS pin (SSL20) | 0x201333F0 → `rspi_start`(2)`, frame counter 0x208085A8 | 5 | `link_ss_irq_init` | [spi-links.md](spi-links.md) |
 
@@ -295,7 +295,7 @@ sequenceDiagram
 
 ## 6. SD card user files
 
-Drive `I:` is the SD card on SDHI0 (driver `sdhi_*` 0x20140148–`FUN_20140b9c`, T23e round 2, power `sd_power`, detect `sd_card_detect`). The FAT layer (FAT12/16/32
+Drive `I:` is the SD card on SDHI0 (driver `sdhi_*` 0x20140148–`sdhi0_buf_isr`, T23e round 2, power `sd_power`, detect `sd_card_detect`). The FAT layer (FAT12/16/32
 and exFAT names at 0x20148F20, the `fsys_*` semaphores and `fs_fopen`/`fs_fread`/`fs_fwrite`/`fs_fseek`) is summarised in [update.md](update.md) **[fact for the
 strings]**. Files and folders the DISPLAY reads or writes:
 
@@ -348,9 +348,9 @@ The LED bits for `led_set_mask` are byte 8 of the status block that every "statu
   refreshes the WDT, so there is no watchdog supervision.
 - **ADC** **[fact]**: `adc_start_scan` (ADCSR 0xE8005860 = 0x20FF) and `adc_read_all` (ADDRA..H >> 4, 12-bit). Used by the `ad renc` task and a GUI test
   screen ([input.md](input.md)).
-- **USB**: `FUN_2013b4cc` touches both USB0 (0xE8010000) and USB1 (0xE8207000), and the ISRs for IDs 73/74 go to one host-controller handler. The only class string is `UHHID`, so there is **no USB device mode and no mass-storage host** **[inference]**.
+- **USB**: `usbh_hw_init` touches both USB0 (0xE8010000) and USB1 (0xE8207000), and the ISRs for IDs 73/74 go to one host-controller handler. The only class string is `UHHID`, so there is **no USB device mode and no mass-storage host** **[inference]**.
   USB0 VBUS is switched by `gpio_usb0_en` (P8_10) **[fact for the pin write]**.
-- **LVDS / DVI**: `FUN_201193ec` programs the LVDS PLL (LCLKSELR/LPLLSETR 0xFCFF7A50/54). `lvds_pins_enable` switches P5_0..7, and `gpio_dvr` drives DVR0/DVR1
+- **LVDS / DVI**: `vdc5_reg_initialize` programs the LVDS PLL (LCLKSELR/LPLLSETR 0xFCFF7A50/54). `lvds_pins_enable` switches P5_0..7, and `gpio_dvr` drives DVR0/DVR1
   towards the DVI encoder on MAIN. The VDC5 side is in [gui.md](gui.md).
 - **System control** 0xFCFF400C: used only by `loader_selfinstall` (magic 0xAABBCCDD, see [update.md](update.md)).
 - **Not used** **[fact: no register references]**: on-chip RTC (RTC_X1 grounded), SSIF, SCUX, SPDIF, CEU, JCU, Ethernet, MMC, PWM (0xFCFF50xx), deep standby.
@@ -407,7 +407,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x2010F2C8 | `sdmenu_xfer_len` | no direct calls; 32 B, callers: 4 **[fact]** (code shape) |
 | 0x2010F2E8 | `sdmenu_select` | calls `memcpy`; 24 B, callers: 1 **[fact]** (code shape) |
 | 0x2010F300 | `sdmenu_select_load` | calls `memcpy`; 92 B, callers: 1 **[fact]** (code shape) |
-| 0x2010F35C | `sd_present` | calls `FUN_20103bc0`; 20 B, callers: 2 **[fact]** (code shape) |
+| 0x2010F35C | `sd_present` | calls `sd_drive_flag5`; 20 B, callers: 2 **[fact]** (code shape) |
 | 0x201101E8 | `sdmenu_request` | starts save (flag 1) or load (flag 2), polls result **[inference]** |
 | 0x20110278 | `sd_format_request` | flag 3 (sd_make_dirs), progress percent **[inference]** |
 | 0x20110368 | `sd_format_done` | calls `itron_chg_pri`; 32 B, callers: 1 **[fact]** (code shape) |
@@ -430,3 +430,97 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x20138740 | `reg_wait_bits27` | (base, off, val): cpu_delay_cycles4, then waits until (*(base->regs + off) & 0x27) == (val & 0x27) **[fact]** |
 | 0x2013B54C | `cpu_delay_cycles4` | Spins on the CP15 cycle counter until 4 counts have passed **[fact]** |
 | 0x201568E0 | `gic_default_handler` | unregistered interrupt IDs **[inference]** |
+
+### Rename (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20120224 | `userdef_riic0_wait_bus_master` | (mode): spins on RIIC0CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) **[fact]**; was riic_init, but it opens nothing (the channel open is userdef_riic0_init 0x2011FC8C); Renesas RZ/A1H RIIC sample riic_userdef.c **[inference: same call structure, per-channel flag bytes and mode arguments]** |
+
+### RIIC driver (T23e round 3)
+
+The channel numbers, flag bytes and mode arguments match the Renesas RZ/A1H RIIC sample driver (`riic.c` / `riic_userdef.c`) one for one, so the rows use its function names **[inference: same call structure, per-channel flag bytes and mode arguments]**. The flags are bytes: receive-full 0x20800454 + ch, transmit-empty 0x20800458 + ch, transmit-end 0x2080045C + ch.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011FEBC | `userdef_riic0_init_rx_full` | Clears the ch0 receive-full flag 0x20800454 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FEFC | `userdef_riic0_init_tx_empty` | Clears the ch0 transmit-empty flag 0x20800458 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FECC | `userdef_riic1_init_rx_full` | Clears the ch1 receive-full flag 0x20800455 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF0C | `userdef_riic1_init_tx_empty` | Clears the ch1 transmit-empty flag 0x20800459 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FEDC | `userdef_riic2_init_rx_full` | Clears the ch2 receive-full flag 0x20800456 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF1C | `userdef_riic2_init_tx_empty` | Clears the ch2 transmit-empty flag 0x2080045A **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FEEC | `userdef_riic3_init_rx_full` | Clears the ch3 receive-full flag 0x20800457 **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF2C | `userdef_riic3_init_tx_empty` | Clears the ch3 transmit-empty flag 0x2080045B **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF3C | `userdef_riic0_init_tx_end` | (mode): clears the ch0 transmit-end flag 0x2080045C (mode 0) or receive-full flag 0x20800454 (mode 1) **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF54 | `userdef_riic1_init_tx_end` | (mode): clears the ch1 transmit-end flag 0x2080045D (mode 0) or receive-full flag 0x20800455 (mode 1) **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF6C | `userdef_riic2_init_tx_end` | (mode): clears the ch2 transmit-end flag 0x2080045E (mode 0) or receive-full flag 0x20800456 (mode 1) **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF84 | `userdef_riic3_init_tx_end` | (mode): clears the ch3 transmit-end flag 0x2080045F (mode 0) or receive-full flag 0x20800457 (mode 1) **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FF9C | `userdef_riic0_set_rx_full` | Sets the ch0 receive-full flag 0x20800454; called from the RI interrupt dispatcher R_RIIC_RiInterrupt **[fact]** |
+| 0x2011FFAC | `userdef_riic1_set_rx_full` | Sets the ch1 receive-full flag 0x20800455; called from the RI interrupt dispatcher R_RIIC_RiInterrupt **[fact]** |
+| 0x2011FFBC | `userdef_riic2_set_rx_full` | Sets the ch2 receive-full flag 0x20800456; called from the RI interrupt dispatcher R_RIIC_RiInterrupt **[fact]** |
+| 0x2011FFCC | `userdef_riic3_set_rx_full` | Sets the ch3 receive-full flag 0x20800457; called from the RI interrupt dispatcher R_RIIC_RiInterrupt **[fact]** |
+| 0x2011FFDC | `userdef_riic0_set_tx_empty` | Sets the ch0 transmit-empty flag 0x20800458; called from R_RIIC_TiInterrupt **[fact]** |
+| 0x2011FFEC | `userdef_riic1_set_tx_empty` | Sets the ch1 transmit-empty flag 0x20800459; called from R_RIIC_TiInterrupt **[fact]** |
+| 0x2011FFFC | `userdef_riic2_set_tx_empty` | Sets the ch2 transmit-empty flag 0x2080045A and counts it in 0x20800462 (read by userdef_riic2_tx_count for task_tsc2007_irq); called from R_RIIC_TiInterrupt **[fact]** |
+| 0x20120028 | `userdef_riic3_set_tx_empty` | Sets the ch3 transmit-empty flag 0x2080045B; called from R_RIIC_TiInterrupt **[fact]** |
+| 0x2012001C | `userdef_riic2_tx_count` | Returns the byte counter 0x20800462 that userdef_riic2_set_tx_empty increments (RIIC2 = touch controller bus, input.md) **[fact]** |
+| 0x20120038 | `userdef_riic0_set_tx_end` | Sets the ch0 transmit-end flag 0x2080045C; called from R_RIIC_TeiInterrupt **[fact]** |
+| 0x20120048 | `userdef_riic1_set_tx_end` | Sets the ch1 transmit-end flag 0x2080045D; called from R_RIIC_TeiInterrupt **[fact]** |
+| 0x20120058 | `userdef_riic2_set_tx_end` | Sets the ch2 transmit-end flag 0x2080045E; called from R_RIIC_TeiInterrupt **[fact]** |
+| 0x20120068 | `userdef_riic3_set_tx_end` | Sets the ch3 transmit-end flag 0x2080045F; called from R_RIIC_TeiInterrupt **[fact]** |
+| 0x20120078 | `userdef_riic0_wait_rx_full` | Spins until the ch0 receive-full flag 0x20800454 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x2012008C | `userdef_riic1_wait_rx_full` | Spins until the ch1 receive-full flag 0x20800455 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201200A0 | `userdef_riic2_wait_rx_full` | Spins until the ch2 receive-full flag 0x20800456 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201200B4 | `userdef_riic3_wait_rx_full` | Spins until the ch3 receive-full flag 0x20800457 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201200C8 | `userdef_riic0_wait_tx_empty` | Spins until the ch0 transmit-empty flag 0x20800458 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201200DC | `userdef_riic1_wait_tx_empty` | Spins until the ch1 transmit-empty flag 0x20800459 is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201200F0 | `userdef_riic2_wait_tx_empty` | Spins until the ch2 transmit-empty flag 0x2080045A is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x20120104 | `userdef_riic3_wait_tx_empty` | Spins until the ch3 transmit-empty flag 0x2080045B is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x20120118 | `userdef_riic0_wait_tx_end` | (mode): spins until the ch0 transmit-end flag (mode 0) or receive-full flag (mode 1) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x20120148 | `userdef_riic1_wait_tx_end` | (mode): spins until the ch1 transmit-end flag (mode 0) or receive-full flag (mode 1) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201201C4 | `userdef_riic2_wait_tx_end` | (mode): spins until the ch2 transmit-end flag (mode 0) or receive-full flag (mode 1) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201201F4 | `userdef_riic3_wait_tx_end` | (mode): spins until the ch3 transmit-end flag (mode 0) or receive-full flag (mode 1) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x2012026C | `userdef_riic1_wait_bus_master` | (mode): spins on RIIC1CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) **[fact]** (Renesas sample name **[inference]**) |
+| 0x201202B4 | `userdef_riic2_wait_bus_master` | (mode): spins on RIIC2CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) **[fact]** (Renesas sample name **[inference]**) |
+| 0x201202FC | `userdef_riic3_wait_bus_master` | (mode): spins on RIIC3CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) **[fact]** (Renesas sample name **[inference]**) |
+| 0x20120344 | `userdef_riic0_wait_stop` | Spins until RIIC0SR2 bit 3 (STOP) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x20120368 | `userdef_riic1_wait_stop` | Spins until RIIC1SR2 bit 3 (STOP) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x2012038C | `userdef_riic2_wait_stop` | Spins until RIIC2SR2 bit 3 (STOP) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x201203B0 | `userdef_riic3_wait_stop` | Spins until RIIC3SR2 bit 3 (STOP) is set **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FC8C | `userdef_riic0_init` | RIIC0 open: clears STBCR9 bit 7 (module clock on) and the P1 pin functions (riic_port_init), riic_regs_init(0), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FD1C | `userdef_riic1_init` | RIIC1 open: clears STBCR9 bit 6 (module clock on) and the P1 pin functions (riic_port_init), riic_regs_init(1), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FDAC | `userdef_riic2_init` | RIIC2 open: clears STBCR9 bit 5 (module clock on), riic_regs_init(2), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011FE34 | `userdef_riic3_init` | RIIC3 open: clears STBCR9 bit 4 (module clock on), riic_regs_init(3), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids **[fact]** (Renesas sample name **[inference]**) |
+| 0x2011F970 | `riic_regs_init` | (ch 0..3): RIIC register set-up from the per-channel pointer table 0x20166D18 (0x24 B each): ICCR1 ICE/IICRST sequence, ICMR1 CKS, ICBRL/ICBRH, ICMR3, ICFER, ICIER TIE/RIE/TEIE **[fact for the stores]** |
+| 0x2011FA90 | `riic_port_init` | (ch 0/1 only): P1_0 and P1_1 to alternative function 1 with bidirectional mode (PIBC/PBDC/PM/PMC/PIPC/PFC/PFCE/PFCAE of port 1) **[fact]**; RZ/A1H RIIC0/1 SCL/SDA pins **[inference]** |
+| 0x20120454 | `R_RIIC_Init` | (ch 0..3): calls userdef_riic{ch}_init, returns 0, or -1 for ch > 3; task_tsc2007 opens ch 2 (input.md) **[fact]**; Renesas sample R_RIIC_Init **[inference]** |
+| 0x201204D4 | `riic_transmit_stop` | (ch): clears ICSR2 STOP (bit 3), sets ICCR2 SP (bit 3) **[fact]**; Renesas sample riic_transmit_stop **[inference]** |
+| 0x2012050C | `riic_transmit_restart` | (ch): waits for bus busy, clears the flags, sets ICCR2 RS (bit 2) **[fact]**; Renesas sample riic_transmit_restart **[inference]** |
+| 0x201205C0 | `riic_transmit_start` | (ch): waits for bus free, clears the flags, sets ICCR2 ST (bit 1) **[fact]**; Renesas sample riic_transmit_start **[inference]** |
+| 0x20120674 | `R_RIIC_SendCond` | (ch, cond): 0 start, 1 restart, 2 stop condition; -1 for a bad argument **[fact]**; Renesas sample R_RIIC_SendCond **[inference]** |
+| 0x201206C0 | `riic_transmit` | (ch, byte): returns -2 on NACK (ICSR2 bit 4), else waits for transmit-empty and writes ICDRT (+0x3C) **[fact]** |
+| 0x20120750 | `R_RIIC_WriteSlaveAddr` | (ch, addr byte, mode): riic_transmit then waits for transmit end (mode 0) or receive full (mode 1); -2 on NACK **[fact]**; tsc2007_write_cmd / tsc2007_read12 call it **[fact]**; Renesas sample name **[inference]** |
+| 0x2012081C | `R_RIIC_Write` | (ch, buf, n): riic_transmit per byte, then waits for transmit end; -2 on NACK **[fact]**; Renesas sample name **[inference]** |
+| 0x20120904 | `riic_clear_nack` | (base): clears ICSR2 NACKF (bit 4) **[fact]** |
+| 0x20120918 | `riic_detect_stop` | (ch): waits for the STOP flag, clears NACKF and STOP **[fact]**; Renesas sample riic_detect_stop **[inference]** |
+| 0x2012097C | `riic_receive` | (ch, mode, *out): waits for receive full; mode 1/2/3 set ICMR3 ACKBT/WAIT bits, 4 issues the stop condition; reads ICDRR (+0x40) **[fact]** |
+| 0x20120A88 | `riic_receive_dummy` | (ch): only computes the channel base in this build (the dummy ICDRR read is gone in the decompile) **[fact]** |
+| 0x20120A9C | `R_RIIC_Read` | (ch, buf, n): n-byte master receive with ICMR3 WAIT/ACKBT handling for the last two bytes, then stop and riic_detect_stop **[fact]**; Renesas sample name **[inference]** |
+| 0x20120BAC | `R_RIIC_ReadDummy` | (ch): riic_receive_dummy; -1 for ch > 3 **[fact]** |
+| 0x20120BC8 | `R_RIIC_DetectStop` | (ch): riic_detect_stop; -1 for ch > 3 **[fact]** |
+| 0x20120BE4 | `R_RIIC_ClearNack` | (ch): riic_clear_nack; -1 for ch > 3 **[fact]** |
+| 0x20120C04 | `R_RIIC_RiInterrupt` | (ch): userdef_riic{ch}_set_rx_full; target of the RI ISR stubs (GIC 190/198/206/214, peripherals.md) **[fact]** |
+| 0x20120C54 | `R_RIIC_TiInterrupt` | (ch): userdef_riic{ch}_set_tx_empty; target of the TI ISR stubs (GIC 191/199/207/215) **[fact]** |
+| 0x20120CB0 | `R_RIIC_TeiInterrupt` | (ch): userdef_riic{ch}_set_tx_end, then clears ICSR2 TEND (bit 6) **[fact]**; target of the TEI ISR stubs (GIC 189/197/205/213) |
+| 0x201203D4 | `riic0_ri_isr` | ISR stub: R_RIIC_RiInterrupt(0); RIIC0 RI vector per peripherals.md **[fact]** |
+| 0x201203DC | `riic0_ti_isr` | ISR stub: R_RIIC_TiInterrupt(0); RIIC0 TI vector **[fact]** |
+| 0x201203E4 | `riic0_tei_isr` | ISR stub: R_RIIC_TeiInterrupt(0) (inlined); RIIC0 TEI vector **[fact]** |
+| 0x201203EC | `riic1_ri_isr` | ISR stub: R_RIIC_RiInterrupt(1); RIIC1 RI vector per peripherals.md **[fact]** |
+| 0x201203F4 | `riic1_ti_isr` | ISR stub: R_RIIC_TiInterrupt(1); RIIC1 TI vector **[fact]** |
+| 0x201203FC | `riic1_tei_isr` | ISR stub: R_RIIC_TeiInterrupt(1) (inlined); RIIC1 TEI vector **[fact]** |
+| 0x20120404 | `riic2_ri_isr` | ISR stub: R_RIIC_RiInterrupt(2); RIIC2 RI vector per peripherals.md **[fact]** |
+| 0x2012040C | `riic2_ti_isr` | ISR stub: R_RIIC_TiInterrupt(2); RIIC2 TI vector **[fact]** |
+| 0x20120414 | `riic2_tei_isr` | ISR stub: R_RIIC_TeiInterrupt(2) (inlined); RIIC2 TEI vector **[fact]** |
+| 0x2012041C | `riic3_ri_isr` | ISR stub: R_RIIC_RiInterrupt(3); RIIC3 RI vector per peripherals.md **[fact]** |
+| 0x20120424 | `riic3_ti_isr` | ISR stub: R_RIIC_TiInterrupt(3); RIIC3 TI vector **[fact]** |
+| 0x2012042C | `riic3_tei_isr` | ISR stub: R_RIIC_TeiInterrupt(3) (inlined); RIIC3 TEI vector **[fact]** |

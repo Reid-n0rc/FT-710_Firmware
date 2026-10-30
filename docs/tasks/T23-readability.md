@@ -25,7 +25,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN and DISPLAY headers, scripts and per-task tests done; canonical apply + re-export open (both) |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); HiFi4 libraries identified 2026-10-30 (`names_hifi4.T23.tsv`, below); Ghidra steps open |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365), DISPLAY round 3 (386 rows); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
@@ -621,6 +621,34 @@ canonical projects).
   SPI-flash-driver paragraph.
 - Left unnamed on purpose: 0x20108BC8 (still unclear), the VDC5 shared-parameter getters 0x2011D57C..0x2011D77C (only the offsets are
   clear), FAT internals whose role was not read end to end, and the 4-byte SDHI stubs.
+
+### Round 3 — DISPLAY (2026-10-30)
+- Start: the README block after the round-2 apply: DISPLAY 64.7 % named and 63.1 % documented by code bytes; 890 of 2,213 functions
+  `FUN_` (139,914 code bytes). Worked biggest first and by cluster, with the unnamed functions the docs already described
+  (`FUN_…` in `docs/code/display`, 111 of them) first.
+- **386 rows** in `tools/ghidra/names_display.T23e3.tsv` (385 new names and 1 rename), merged into `names_display.tsv` under
+  `# --- T23e round 3` (`names_merge.py report`: the rename is the only differing address; no duplicate names against the TSV or the
+  export). They cover **94,240 code bytes = 23.8 % of DISPLAY's 396,272**, so after the apply the by-bytes figure should read about
+  **88 %** named (`naming_worklist.py display --coverage`: 661 call sites, 533 caller edges).
+- Every row is in a function table (`### … (T23e round 3)` sections at the end of `gui.md`, `filesystem.md`, `peripherals.md`,
+  `input.md`, `boot-rtos.md`, `update.md`, `mainlink.md`), so "documented" follows "named" after the apply. Prose mentions
+  `FUN_<addr>` of the new names were replaced by the names (136 places in the display pages, `display-link.md` and the batch comments).
+- Groups: the whole RIIC driver (Renesas RZ/A1H sample `riic.c` / `riic_userdef.c` shape: `R_RIIC_*`, `riic_*`,
+  `userdef_riicN_*`, 12 ISR stubs), the r_vdc5 register part (`vdc5_reg_*`, one per `r_vdc5_*` API) and shared-parameter setters
+  (`vdc5_shrd_*`), the SD protocol layer (CMD0/2/7/9/10/13, ACMD6/13/41/51, CMD6 speed switch, `sd_driver_op`), the SD formatter
+  (MBR, boot sector, FSInfo, FAT, geometry tables), SDHI DMA and sector commands, FAT long-name and directory-entry helpers, the
+  SD-menu sub-screens (packet 0x43), the scope / 3DSS / AF-FFT object methods named in gui.md, the firmware-update screen loop, the
+  USB HID class driver and USB pipes, the eleven USB keyboard layout builders, the filter graph, the text list, the scope-area text
+  terminal on SCIF4, NORTi message-buffer ring helpers, `qsort`, and the armcc printf float path.
+- **Rename:** 0x20120224 `riic_init` → `userdef_riic0_wait_bus_master`: the body only polls RIIC0CR2 bit 7 (BBSY) until it is set
+  or clear, like its ch1..3 siblings 0x2012026C / 0x201202B4 / 0x201202FC; the channel open is `userdef_riic0_init` 0x2011FC8C
+  **[fact]**. `signatures_display.tsv` and input.md carry the new name.
+- Settled on the way: the main-screen "bar-graph style widget" of gui.md is the CW zero-in indicator (`cw_zero_in_draw`, 25 bits of
+  frame +0x15); `scope2d_spectrum_height` returns the spectrum heights of the gui.md table; the 0x43 sub-screens answer MAIN with
+  0xC3 frames (`sdmenu_scr_*`).
+- Left unnamed on purpose: the main-screen strips 0x2012D8BC / 0x2012DBF8 (only the sprite tables are clear), the filter-graph base
+  drawer 0x20122B48 / 0x201227D8, NORTi scheduler internals 0x20153F28 / 0x20153B8C / 0x20153DEC / 0x201547D0, the USB control
+  stages 0x20138774 / 0x20138A18, the soft-float cores 0x20156AA4 / 0x20156EF2, and 0x2013CDE8 (SD command index 0x0B).
 
 ### Open steps (Ghidra)
 1. Apply `names_main.tsv` / `names_display.tsv` with `ApplyNames.java` and re-export (`tools/bootstrap.sh --only ghidra,export`

@@ -171,17 +171,17 @@ All go through `mainlink_queue_frame` 0x20115494 → `mainlink_submit`. The MAIN
 | 0xE1 | 5 | `mainlink_send_enc` 0x20115780 (from `mainlink_renc_event` 0x20115B04) | `FUN_fff9588b` | **Encoder**: `id, delta s8, …`. id 1/6 = main dial (0xFF0), 2 → 0xFF1, 3 → 0xFF2, 4/5 = ADC knobs |
 | 0xE2 | 5 | `mainlink_send_sd_state` 0x20121D00, `mainlink_send_ui_e2`, `mainlink_send_sd_absent` 0x20160ED8 (byte 1 = 0 when the SD menu finds no card) | `FUN_fff95bf4` (+0xA6) | **SD card present** (byte 1), on change |
 | 0xE3 | 7 | `mainlink_send_rtc` 0x20121D90 | `FUN_fff95ed3` (+0xAD..+0xB1) | **RTC date/time** (S-35190A read), when the minute changes |
-| 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `FUN_201217b0` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
-| 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `FUN_20121318`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
+| 0xE4 | 3 | `mainlink_queue_frame` (while 0x7B is shown), `mainlink_renc_event`, `gui_input_poll` | `FUN_fff95c6a` (clears +0x82) | **leave the screen saver** |
+| 0xE5 | 3 | `mainlink_send_key` (after 0x7C), `gui_mouse_right_poll`, `touch_cal_step` | `FUN_fff95c74` (clears +0x80) | **leave touch calibration / a modal screen** **[inference]** |
 | 0xE6 | 3 | `mainlink_send_e6` 0x20121830 | `FUN_fff95c8a` → `FUN_fffb2da6(1..3)` | **beep request**: MAIN calls `beep_request`(1..3) **[inference from the MAIN handler]** |
-| 0xE7 / 0xE8 | 8 | `FUN_20124744`, `FUN_20124848`, `FUN_201248a4`, `FUN_20124adc`, `FUN_20124bc0` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **audio status** of the PlayList (E7) and voice-message (E8) screens: b1 = 0 file count, 1 state (0 stopped, 1 playing, 2 recording), 0xFF error index **[fact]**; MAIN's per-code actions in [E7 / E8 result codes](../main/display-link.md#e7--e8-result-codes-179) (#179) |
-| 0xC3 | 0x21 | `FUN_20134978`..`FUN_20134a08`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | 0x21-byte settings/name record **[guess]** |
+| 0xE7 / 0xE8 | 8 | `FUN_20124744`, `mainlink_send_e7_state`, `mainlink_send_e8_state`, `playlist_delete_file`, `playlist_list_files` | `FUN_fff95cbc` / `FUN_fff95dad` (+0x488 / +0x48C states 1..5) | **audio status** of the PlayList (E7) and voice-message (E8) screens: b1 = 0 file count, 1 state (0 stopped, 1 playing, 2 recording), 0xFF error index **[fact]**; MAIN's per-code actions in [E7 / E8 result codes](../main/display-link.md#e7--e8-result-codes-179) (#179) |
+| 0xC3 | 0x21 | `sdmenu_scr_search_files`..`sdmenu_scr_format_run`, `mainlink_send_ui_c3` | `FUN_fff95e65` (copies into +0x2ED) | 0x21-byte settings/name record **[guess]** |
 | 0xC4 | 0x105 | `mainlink_rx_block_read` | `FUN_fff95e97` | reply to 'D': `id, off, len, data` |
 | 0xC5 | 5 | `mainlink_rx_block_write` | `FUN_fff95e97` | reply to 'E': `id, off, len` |
 | 0xF0 | 8 | `mainlink_send_hello` 0x201162A4 | `FUN_fff9546a` | **Hello**: `01 08` (version V01-08), `20 23 06 29` (date), key code at power-up. MAIN stores the version/date text and answers with 0x60. Key code 1 = `settings_defaults(0)` (**reset**), 7 = `dest_code_set` (swap destination code), 2 = start 0x62 page, 4/5 = other start modes, 6 = sent only by `mainlink_hello_key6` 0x2011668C from `logo_fade_in` (boot combination 6, maintenance/loader screen) and by the MAIN-update writer to the new MAIN; MAIN then marks the link down and stays off **[fact for the call path; T14]** |
 | 0xF1 | 6 | update code (`0x2010dcbc…` / `0x201090a0…` files, T11c). `mainlink_send_f1` has no caller | `FUN_fff957e6`: sub 1 → `FUN_fffa1576`, 2 → `FUN_fff9d94d`, 3, 0x83 | **Bridge / update control**: switches MAIN into the 'Z'-frame tunnel used to update other CPUs (MAIN `FUN_fffa0c79`, ended by F1 82) **[inference]** |
 | 0xFA | 1 | none found | none (MAIN `FUN_fff95277` has no 0xFA, so a frame would be NAKed) | **[unknown]**, unused |
-| 0xB3 | 0 | `FUN_20131638` (cmd + sum only) | in `FUN_fff95331` (`FUN_fff95ec9`) but `FUN_fff95277` returns length 0 → NAK | not in the DISPLAY table. Probably dead in this firmware pair **[inference]** |
+| 0xB3 | 0 | `textterm_tx_poll` (cmd + sum only) | in `FUN_fff95331` (`FUN_fff95ec9`) but `FUN_fff95277` returns length 0 → NAK | not in the DISPLAY table. Probably dead in this firmware pair **[inference]** |
 | 0x06 / 0x15 | — | `mainlink_send_ack` 0x2015EE40 / `mainlink_send_nak` 0x2015EE84 | `FUN_fff9541e` / nothing | ACK / NAK |
 
 MAIN's RX length table (`FUN_fff95277`) and the DISPLAY table agree for every command they share (C3 0x23, C4 0x107, C5 7, E0 6, E1 7, E2 7,
@@ -271,13 +271,13 @@ to the dispatcher. `task_mainlink_dispatch` 0x201600A8 (r7 = 0x2045006D, r6 = 0x
 
 | cmd | Action |
 |---|---|
-| 0x06 / 0x15 | `FUN_20130968`, then `mainlink_on_ack` / `mainlink_on_nak` |
+| 0x06 / 0x15 | `mainlink_audio_ack`, then `mainlink_on_ack` / `mainlink_on_nak` |
 | 0x1B | 0x2045005C = 1 |
 | 0x20 / 0x43 | counters only |
 | 0x21 | payload → 0x20450035, flag 0x20450025 |
 | 0x23 | 0x208084D4 = 1 |
 | 0x24 | 6 bytes from +0x98 → 0x2045006D, flag 0x20450024 |
-| 0x60 | flag 0x20450026, copy → 0x2045FB00. On the 2nd and later 0x60 with byte 0xB3 = 1 and the radio off, `FUN_20117288(1)` (radio-on flag 0x208003A0). Byte 0xB3 is MAIN's 0x9DC5, which `PS1;` sets before it sends this frame: this is how CAT `PS1;` powers the radio on (#57) |
+| 0x60 | flag 0x20450026, copy → 0x2045FB00. On the 2nd and later 0x60 with byte 0xB3 = 1 and the radio off, `radio_on_flag_set(1)` (radio-on flag 0x208003A0). Byte 0xB3 is MAIN's 0x9DC5, which `PS1;` sets before it sends this frame: this is how CAT `PS1;` powers the radio on (#57) |
 | all but 06/15/1B | copy → 0x2045F260 and **0x2045F8C0** (the GUI snapshot, 0x240 bytes) |
 
 ## 8. How the GUI is driven
@@ -319,8 +319,8 @@ MAIN had sent it**, which redraws the previous screen. It does not transmit anyt
 
 `uart4_link_init` 0x20114F4C would build a second link object (0x2045D4E0, vtbl 0x20427FE4, tasks `uart4`) on SCIF4 at 38400 baud.
 `uart4_obj_run` 0x20158C44 probes with 0xF0 bytes (5 two-byte answers), sets 0x2045001C, then sends `1E 00 31` and `1F 00 32`. It has **no
-caller** (B/BL/literal scan of the whole image), so in V01-08 SCIF4 is never started, and `uart4_send` (used by `task_keycode`, `FUN_20130c90`,
-`FUN_20131638`) would use a null object pointer **[inference: those paths must not be reached]**. `update_dsp` waits on 0x2045001C/0x2045001D
+caller** (B/BL/literal scan of the whole image), so in V01-08 SCIF4 is never started, and `uart4_send` (used by `task_keycode`, `textterm_send_setting`,
+`textterm_tx_poll`) would use a null object pointer **[inference: those paths must not be reached]**. `update_dsp` waits on 0x2045001C/0x2045001D
 for it (T11c). The SCIF4 pins probably go to the unpopulated `ACC_UMOSI/UMISO` accessory bus **[guess]**.
 
 ## 11. Functions
@@ -430,9 +430,9 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x201587AC | `mainlink_tx_ctor` | vtbl 0x20427FAC **[inference]** |
 | 0x20158930 | `task_uart4_rx` | passes raw bytes to FUN_20131154 **[inference]** |
 | 0x201589F4 | `uart4_tx_alloc` | calls `FUN_201644ac`; 12 B, callers: 3 **[fact]** (code shape) |
-| 0x20158A00 | `uart4_tx_init` | calls `FUN_20158618`, `FUN_20162d10`, `FUN_20164460`, `FUN_201644a0`; 96 B, callers: 1 **[fact]** (code shape) |
+| 0x20158A00 | `uart4_tx_init` | calls `msgbuf_init`, `os_mbx_create_fifo`, `FUN_20164460`, `FUN_201644a0`; 96 B, callers: 1 **[fact]** (code shape) |
 | 0x20158A70 | `task_uart4_tx` | calls `FUN_20158a60`, `itron_dly_tsk`, `itron_trcv_mbx`; 108 B, callers: 0 **[fact]** (code shape) |
-| 0x20158ADC | `uart4_tx_post` | calls `FUN_20162d3c`; 16 B, callers: 3 **[fact]** (code shape) |
+| 0x20158ADC | `uart4_tx_post` | calls `os_mbx_send`; 16 B, callers: 3 **[fact]** (code shape) |
 | 0x20158C44 | `uart4_obj_run` | 38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32 **[inference]** |
 | 0x20158E8C | `uart4_obj_ctor` | vtbl 0x20427FE4 **[inference]** |
 | 0x2015E16C | `mainlink_valid_7f` | byte & 0x7F <= 12 or == 0x7F **[inference]** |
@@ -474,3 +474,19 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 |---|---|---|
 | 0x20160ED8 | `mainlink_send_sd_absent` | E2 frame with byte 1 = 0 (SD card not present, mainlink.md); the SD menu screens send it when sd_state_bit7 reads 0 **[inference]** |
 | 0x201636CC | `copy5` | Copies 5 bytes (encoder events, E1/E2 frames) **[fact]** |
+
+### PlayList / voice-message audio status frames E7/E8 (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20124BC0 | `playlist_list_files` | Lists the .wav files (wav_list_dir 0x208F1234) and answers E7 b1 = 0 with the count, or mainlink_send_audio_error (display-link.md) **[fact]** |
+| 0x20124ADC | `playlist_delete_file` | Builds the file name from frame +0x9B/+0x9D plus ".wav", wav_delete, answers E7 b1 = 0 with the new count; -6 when the list is empty (display-link.md) **[fact]** |
+| 0x201248A4 | `mainlink_send_e8_state` | (state): E8 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0 (mainlink.md 0xE7/0xE8 audio status) **[fact]** |
+| 0x20124848 | `mainlink_send_e7_state` | (state): E7 frame b1 = 1, b2 = state; 0x208F1220 = 1, 0x208F1221 = 0x7F; returns 1 (mainlink.md) **[fact]** |
+
+### Main link (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20130968 | `mainlink_audio_ack` | On ACK/NAK (mainlink.md): copies the E7/E8 send state 0x208F1220 (1 or 0xFF) into 0x208F1221, else clears it **[fact]** |
+| 0x20130C70 | `textterm_clear` | Clears the text-terminal block 0x208F4896 (0x35E bytes) keeping 0x208F4BAA (gui.md "third view") **[fact]** |

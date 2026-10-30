@@ -168,7 +168,7 @@ mode until the next reset **[inference: nothing switches it back]**.
   25 B) or 0x2048360D–… / +0x339..+0x351 (trailer, 25 B). The record goes to three places, all as a block **[fact: every reference to
   0x204832BB, 0x2048360D, 0x204832D4]**:
   1. `scope_history_push` takes only the 800 points at +0x19 (→ GUI, [gui.md](gui.md#scope-drawing-83)).
-  2. `FUN_20134390` copies all 850 bytes to 0x2048360D, the copy the GUI draws from while the scope is on hold (0x20800498).
+  2. `scope_record_hold_copy` copies all 850 bytes to 0x2048360D, the copy the GUI draws from while the scope is on hold (0x20800498).
   3. `pclink_tx_copy_scope` (0x20112128) copies all 850 bytes, header included, to offset 0 of the 4096-byte FT4222 frame for the PC
      (Link 3 below), every 4 ms.
 
@@ -244,7 +244,7 @@ enabled. Each SS edge (GIC 449) calls `rspi_start(4)`.
 | Offset | Size | Contents |
 |---|---|---|
 | 0 | 1 | type: `afscope_store_frame` keeps the scope part only when byte 0 == 1 |
-| 0..599 | 600 | AF-FFT / audio-scope record, copied to **0x208DD73C**. Bytes 0–1 are then overwritten with 0xFF. Its first 200 bytes are the AF-FFT bins (`FUN_20120D60`/`FUN_20120D84`/`FUN_20120D90` stretch 200 points to 391 pixels through the colour tables at 0x208DCE3C) **[inference for "AF-FFT"]**. The debug test pattern is 200 B (0x20166DE8) + 400 B (0x20166EB0) |
+| 0..599 | 600 | AF-FFT / audio-scope record, copied to **0x208DD73C**. Bytes 0–1 are then overwritten with 0xFF. Its first 200 bytes are the AF-FFT bins (`affft_spectrum_columns`/`FUN_20120D84`/`affft_wf_add_row` stretch 200 points to 391 pixels through the colour tables at 0x208DCE3C) **[inference for "AF-FFT"]**. The debug test pattern is 200 B (0x20166DE8) + 400 B (0x20166EB0) |
 | 602 | 2 | halfword stored at 0x2080858E (purpose unknown) |
 | 600..4599 | 4000 | audio PCM. `task_audio_codec` writes it as a WAV with **fmt 1 (PCM), 2 channels, 16000 Hz, 16 bit** (`rec_open_wav`, RIFF/WAVE/LIST/ICMT header) |
 

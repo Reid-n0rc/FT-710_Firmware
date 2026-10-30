@@ -74,7 +74,7 @@ so the standby → on transition does not reboot the CPU **[fact for the code, i
 | 1 | `bootinfo_load` 0x20116C4C | see section 1 |
 | 2 | `fb_clear_all` 0x20132F84 | clears 0x60000000 + 0x2FF300 and the layer at 0x605048A0 |
 | 3 | `rtc_init` | creates a kernel object from {2,0,0} (event flag or mailbox) into 0x20800368, after `rtc_port_idle`/`rtc_write_reg` port set-up |
-| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`fs_init` 0x2014A4D0: drive and file tables, pools, semaphores), SDHI driver registration (`FUN_20103934`, callback `FUN_2013fd98`), `sd_task_create` |
+| 4 | `sd_fs_init` 0x201039B0 | FAT volume (`fs_init` 0x2014A4D0: drive and file tables, pools, semaphores), SDHI driver registration (`sd_drive_register`, callback `sdhi_drv_init`), `sd_task_create` |
 | 5 | `fwdbg_init` 0x20111064 | self-update debug task (`fwdbg_task_create`) + `fwdbg_line` handler |
 | 6 | `loader_selfinstall` 0x20110F0C | only when 0xFCFF400C holds 0xAABBCCDD: erases flash 0..0x340000 and the two flag sectors, then writes this running image (from `vec_reset`) to flash 0 and new flags. This is how a new **loader** gets installed **[fact for the code, inference for the purpose]**. No code writes 0xFCFF400C; a JTAG factory script sets it ([update.md](update.md) §6) **[inference]** |
 | 7 | `gpio_p2_0_debounced`, `gpio_read_bit(8,12)` | mode inputs |
@@ -84,8 +84,8 @@ so the standby → on transition does not reboot the CPU **[fact for the code, i
 | 11 | `gpio_rx_reset(1)` 0x20101C5C | sets P7_10 = `RX_RESET` (hardware.md) **[fact for the pin write, inference for the net]** |
 
 ### Full path (in order)
-`gpio_p8_14(1)`, `FUN_20116da0(1)` (force flag), `dimmer_init`, `backlight_enable`(0)`, `backlight_init`, `FUN_20107e9c`, `mouse_cursor_init`, USB host
-(`FUN_201385b4`, `FUN_2013b97c`, `FUN_2013b4cc`), `adc_start_scan`, `uptest_init`, `cli_init`, `touch_init`, `keycode_init`, `kbdtest_init`,
+`gpio_p8_14(1)`, `full_mode_set(1)` (force flag), `dimmer_init`, `backlight_enable`(0)`, `backlight_init`, `usbkbd_init`, `mouse_cursor_init`, USB host
+(`usbh_ports_init`, `usbh_hid_class_init`, `usbh_hw_init`), `adc_start_scan`, `uptest_init`, `cli_init`, `touch_init`, `keycode_init`, `kbdtest_init`,
 `mainlink_init`, `renc_init`, `link_ss_irq_init`, `sdr_debug_init`, `spi_slave_init`, `fwupdate_init`, `sdmenu_init`, `periodic_wakeup_register(self, 0)`,
 `periodic_wakeup_start`, `touch_cal_init`, `audio_codec_init`, `gui_start` **[fact]**. The unnamed ones are for the subsystem sub-tasks.
 
@@ -314,7 +314,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x20154984 | `__aeabi_ldivmod` | armcc C library function, matched by idiom (score 0.950, T23d): A32: takes signs of r1/r3, negates 64-bit pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs **[inference]** |
 | 0x201549E4 | `tolower` | armcc C library function, matched by idiom (score 0.900, T23d): ctype bit 0x10 (upper) -> c+32 **[inference]** |
 | 0x20154A00 | `sprintf_veneer` | armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip -> Thumb sprintf 0x20154A08 **[inference]** |
-| 0x20154A08 | `sprintf` | names-file group "startup / armcc runtime"; calls `FUN_20155f72`, `_sputc`; 34 B, callers: 71 **[fact]** (code shape) |
+| 0x20154A08 | `sprintf` | names-file group "startup / armcc runtime"; calls `_sprintf_body`, `_sputc`; 34 B, callers: 71 **[fact]** (code shape) |
 | 0x20154A30 | `snprintf` | armcc C library function, matched by idiom (score 0.900, T23d): (buf, n, fmt, ...): end = buf+n-1, output fn _snputc 0x20155FA3, NUL-terminates when n != 0 **[inference]** |
 | 0x20154A64 | `_printf_pre_padding` | armcc C library function, matched by idiom (score 0.800, T23d): emits width-1.. pad chars (0x30 if the 0 flag, else 0x20) unless the - flag (bit 0), counts in +0x20 **[inference]** |
 | 0x20154A90 | `_printf_post_padding` | armcc C library function, matched by idiom (score 0.800, T23d): emits trailing spaces when the - flag (bit 0) is set **[inference]** |
@@ -398,3 +398,47 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 | 0x20164EFC | `fp_nan_handler` | Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the caller's return address; armcc fplib internal **[fact]** |
 | 0x20164F98 | `fp_exception_stub` | Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) **[inference]** |
 | 0x20164FA4 | `__aeabi_dsub` | Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure **[inference]** |
+
+### Boot / MMU (boot-rtos.md) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100D48 | `mmu_l1_table_init` | Fills the 4096-entry L1 table 0x2044C000 with flat 1-MB sections (VA = PA, attributes 0x10C02) **[fact]**; called from Reset_Handler and reset_in_ram |
+| 0x20100E24 | `mmu_set_cacheable` | (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in 0x2044C000, then invalidates the TLB and the I-cache **[fact]** |
+
+### NORTi / armcc helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015689C | `knl_psr_clear_if` | Service-call return helper: saved PSR with the I and F bits cleared (boot-rtos.md knl_int_restore) **[fact]** |
+| 0x20156878 | `knl_psr_set_i` | Service-call return helper: saved PSR with bit 7 (I) set (boot-rtos.md knl_int_disable) **[fact]** |
+| 0x201566F0 | `knl_resched` | Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) **[fact]** |
+| 0x20162D10 | `os_mbx_create_fifo` | itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init, uart4_tx_init, mainlink_disp_init, mouse_cursor_obj_init **[fact]** |
+| 0x20162D3C | `os_mbx_send` | (this, mbxid, msg): itron_snd_mbx(mbxid, msg) **[fact]** |
+| 0x20158618 | `msgbuf_init` | (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX objects **[fact]** |
+
+### MMU (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100E8C | `mmu_map_range` | (va, pa, size): rewrites the section base addresses of the L1 table 0x2044C000 for the range, keeping the attribute bits **[fact]** |
+
+### Kernel start-up and armcc printf internals (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201530FC | `knl_sys_init` | Kernel start-up called by kernel_heap_init: sets the NORTi system variables 0x208003A8.. (structs_display.h knl_sys: all set by knl_sys_init) and ends with svc 0 **[fact]** |
+| 0x20100C7C | `_printf_fp_dec` | %e/%f/%g conversion of the armcc printf core: inf/nan (_printf_infnan), decimal digits (_fp_digits, __rt_udiv10), padding (_printf_pre_padding / _printf_post_padding), locale point (__rt_locale) **[inference: armcc C library _printf_fp_dec_real, from these callees]** |
+| 0x20154C48 | `_printf_core` | Format loop called by the sprintf family (through 0x20155F72): reads the format string and dispatches conversions, floating point through _printf_fp_dec **[inference: armcc C library __printf]** |
+| 0x20155F72 | `_sprintf_body` | Builds the string-output descriptor with the _sputc callback 0x20155F69 and runs _printf_core; sprintf, sprintf_veneer and snprintf call it **[fact]** |
+| 0x20155A10 | `_ll_udiv10` | 64-bit unsigned divide by 10 by shifts and adds (quotient in r0:r1) **[fact for the arithmetic]** |
+| 0x20155B5C | `_fp_digits` | (out, buf, *exp, ...): decimal digit generation for _printf_fp_dec using the soft-float helpers and _ll_udiv10 **[inference: callers and callees]** |
+
+### NORTi message buffer ring and armcc qsort (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201520B0 | `knl_mbf_get` | (mbf, buf): copies the next message out of the message-buffer ring (16-bit length prefix, wrap at the ring size) and returns its size; itron_trcv_mbf calls it (boot-rtos.md) **[fact]** |
+| 0x20153CD4 | `knl_mbf_put` | (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message size is 1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room **[fact]** |
+| 0x20154FCA | `qsort` | (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10; wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it **[fact for the code; the C library name is an inference from the signature]** |
+| 0x20154DEA | `qsort_partition` | (base, n, size, cmp): the quicksort stage of qsort for n > 10 **[inference: only caller qsort, swaps elements by size around a pivot]** |
