@@ -122,7 +122,7 @@ Other DISPLAY RAM structures found by T11 **[fact]**:
 | 0x208DC1E0 | GIC handler table, 587 entries (filled with `gic_default_handler` by `gic_init`, 39 sources registered). IDs used: SCIF5 RXI/TXI 0xF3/0xF4 (MAIN link), SCIF4 0xEF/0xF0, IRQ3 = 35 (touch), IRQ4 = 0x24 (encoder 3), IRQ5 = 37 (power key) | [peripherals.md](code/display/peripherals.md#3-interrupts-gic), [mainlink.md](code/display/mainlink.md) |
 | 0x60500000–0x60503FFF, 0x605C00A0, 0x605C0780 | uncached SPI DMA buffers (RSPI0 FT4222H RX/TX, RSPI2 SDR scope) | [spi-links.md](code/display/spi-links.md#dma-channels) |
 | 0x208F4DE0 | recorder/player audio slots, 16 × 0x11F8 (4600 B) | [peripherals.md](code/display/peripherals.md) |
-| 0x183D0000 (SPI flash) | 48-byte settings record (magic 0xA5C30001, CRC-32; probably touch calibration **[guess]**) | [peripherals.md](code/display/peripherals.md) |
+| 0x183D0000 (SPI flash) | 48-byte touch-screen calibration record (magic 0xA5C30001, 6 doubles, CRC-32; `touch_cal_load` / `touch_cal_save` 0x20102708 / 0x20102774) **[fact]** | [peripherals.md](code/display/peripherals.md) |
 
 The peripheral ranges cover every I/O page the analysis referenced (88 pages, see `tools/ghidra/DisplayReport.java`). The peripheral names come from the RZ/A1H
 address map **[inference from the datasheet map; base addresses were cross-checked against code use]**.

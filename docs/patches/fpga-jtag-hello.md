@@ -4,7 +4,7 @@
 only; it never touches the module's QSPI config flash, and a power cycle restores the stock design. Even so, it is a
 write to the radio and needs the owner's explicit approval (AGENTS.md).
 
-Claims are tagged **[fact]**, **[inference]** or **[guess]**. Sources: [interfaces.md](../code/sdr/interfaces.md) (J2002
+Claims are tagged **[fact]** or **[inference]**; anything unsupported is an open question. Sources: [interfaces.md](../code/sdr/interfaces.md) (J2002
 pin map), [resources.md](../code/sdr/resources.md) (I/O, clocks), [update.md](../code/display/update.md) section 8 (update
 path), `docs/hardware.md` (J2001), and the new package fit below.
 
@@ -38,8 +38,9 @@ Two readings follow **[inference]**:
 
 **Which J2002 signal sits on which ball is unknown.** That needs the routing walk of T15 (IOB → logic), or probing.
 *(Update, T15/T15e: the routing walk is done. UART A on **M18 in / L18 out** is `UART_DBG`, the stock `[IF]>` debug console; UART B on
-V12/U12 is MAIN's UART5; the fabric clock enters on F4/F3 (`IO_L13_MRCC_35`) at 125 MHz [inference, high]. Ball names are CSG324
-[guess for the package]. See [netlist.md §3.3, §5.3](../code/sdr/netlist.md). Other J2002 signals are still unmapped.)*
+V12/U12 is MAIN's UART5; the fabric clock enters on F4/F3 (`IO_L13_MRCC_35`) at 125 MHz [inference, high]. Ball names are given in CSG324
+naming: every used IOB is bonded only in CSG324 and FGG484 [fact, netlist.md §3.1]; open: which of the two the module has, settled by the
+part marking. See [netlist.md §3.3, §5.3](../code/sdr/netlist.md). Other J2002 signals are still unmapped.)*
 
 ## Stage 1 — JTAG-only hello (no outputs at all)
 
@@ -90,8 +91,9 @@ Only after T15 identifies the IOB of a harmless net and the board clock input. *
 - Candidate output: `UART_DBG_TX` (J2002 pin 47 → `SDR_DBG_OUT` on MAIN, through R2088 470 Ω) **[fact for the net]**;
   its MAIN-side load is not known yet, which is the reason to wait. Send `HELLO\r\n` at 115200 baud; observe with a 3.3 V
   logic analyser or USB-serial adapter on the net.
-- Clock: the board clock (125 MHz per the service-manual block diagram, p6) on the MRCC pin that T15 finds feeding the
-  MMCMs **[guess for the frequency at the pin]**, or keep CFGMCLK and calibrate the baud rate against it.
+- Clock: the board clock on the MRCC pair F4/F3 (125 MHz per the service-manual block diagram, p6). That this pin carries
+  125 MHz is **[inference, high]**: the stock UART bit timer, clocked from it, counts 1,086 clocks per bit, which is 115,200 baud only at
+  125 MHz ([netlist.md §3.2](../code/sdr/netlist.md)). Or keep CFGMCLK and calibrate the baud rate against it.
 - Copy the stock design's I/O standard and drive for that site (LVCMOS33, 12/16 mA, slow slew in banks 14/15) **[fact
   for the stock settings]**. Every other pin stays unused.
 - Same rollback: power cycle.
