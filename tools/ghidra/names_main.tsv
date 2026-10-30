@@ -2790,3 +2790,39 @@ fff9a869	dl50_msg_text	Frame 0x50: kbd_fmt_char_pos and the 50-char text of slot
 fff9c089	memch_label_fmt	(buf, ch): channel label text: 'M-nn' for 1..99, 'M-PL'/'M-PU' n for the PMS pairs 0x63..0x74, '5-nn' for 60 m 0x75..0x83, 'EMG' above [fact: fff9c089; display-link.md frame 0x41]
 fff9bfe1	memch_group_of	(ch): memory group 1..5 from the group sizes at ROM 0xFFF804D3, 6 PMS (99..0x74), 7 60 m (0x75..0x83), 8 EMG [fact: fff9bfe1]
 fff9c04a	memch_special_limit	Upper channel limit of the region's 60 m / EMG channels: 0x75 for dest 0x020B / 0x1CB9 / 0x4380 / 0x60E6, 0x84 for 0x315B / 0x50E2, 0 otherwise [fact: fff9c04a]
+fffec62b	tuner_int_task	tuner_task for TUNER TYPE SELECT 0/1 (INT, INT(FAST); ROM labels at 0xFFF84530..): sets g_ui.tuner_indicator from atu_state (blinking while tune_cycle_3d = 2), then runs the internal-tuner state 0x1B3AC (cases 1..0x10, one step function each) [fact: fffec62b and tuner_task's test]
+fffed62a	tuner_ext_task	tuner_task for TUNER TYPE SELECT 2 (EXT): with the TUN/LIN port in EXT-TUNER mode sets the tuner indicator from atu_state 5, then runs the external-tuner state 0x1B3C8 (cases 1..0x10) [fact: fffed62a and tuner_task's test]
+fffed165	tuner_atas_task	tuner_task for TUNER TYPE SELECT 3 (ATAS) [fact: tuner_task's test; label from ROM 0xFFF84546]
+fffc6595	playback_knob_turn	(steps): knob turn on the PlayList / message-memory screens: while playing steps g_opstate.play_volume 0..100, in the PlayList otherwise moves the file cursor (playlist_cursor_up / _down) [fact: fffc6595]; only caller enc2_step
+fffe3121	playlist_cursor_up	Moves the PlayList cursor up one file (playlist_row, scrolling playlist_first when the list holds more than 4 WAV files), requests a redraw (playlist_req, sub-state 1) [fact: fffe3121]
+fffe32fd	playlist_cursor_down	Moves the PlayList cursor down one file, scrolling while wav_count > 4, requests a redraw [fact: fffe32fd]
+fffc5a84	dial_steps_scale	(dir, counts): divides the main-dial encoder counts by 4 / 2 / 1 for EX030506 MAIN STEPS PER REV 0 / 1 / 2 (digit-step mode: by 4), keeps the remainder in 0x1FF6A, then calls vfo_dial_tune with the step count [fact: fffc5a84]; only caller enc_main_dial
+fffc5bb9	vfo_dial_tune	(steps): tunes the operating VFO (the other one with TXW swap): during a scan hands the steps to the scan, refuses while transmitting without split; a memory channel first becomes memory tune (vfo_mem_to_memtune), then FUN_fffc5e0a(side, steps) [fact: fffc5bb9]; callers dial_steps_scale, FUN_fffc7eeb (enc3_step)
+fffc4dec	dsp_knob_reset	DSP key long press in the FUNC panel: resets the value of the current DSP-knob function: 0 shift, 1 width, 2 notch, 3 contour (or APF when dsp_knob_apf) of the active VFO [fact: fffc4dec]; only caller key_dsp_release
+fffc3503	vfo_shift_reset	(side): IF SHIFT (shift_be) of the VFO's mode block = 0 [fact: fffc3503]; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdab2
+fffc3582	vfo_width_reset	(side): WIDTH of the VFO's mode block = the table entry for 3000 Hz (SSB), 500 Hz (CW, RTTY), 3200 Hz (DATA/PSK) via width_hz_snap [fact: fffc3582]; callers dsp_knob_reset, key_step_mch_long, width_reset_beep
+fffc3659	vfo_notch_reset	(side): manual NOTCH of the VFO's mode block = 0x0096 (150, i.e. 1500 Hz at /10) and the notch flag 0x80 cleared [fact: fffc3659]; callers dsp_knob_reset, key_step_mch_long, notch_reset_beep
+fffc3773	vfo_contour_reset	(side): CONTOUR of the VFO's mode block = 0x0096 and flag 0x40 cleared [fact: fffc3773]; callers dsp_knob_reset, key_step_mch_long, contour_reset_beep
+fffc388d	vfo_apf_reset	(side): g_opstate.apf_freq = 0 and bit 5 (APF on) of the VFO record's CW block (+0x14) cleared [fact: fffc388d]; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdf75
+fffc38cb	width_hz_snap	(hz, mode): width_hz_of_index(width_index_of_hz(hz)), 0 when hz is not in the mode's table [fact: fffc38cb]; only caller vfo_width_reset
+fffbdc8d	notch_reset_beep	vfo_notch_reset(active VFO), beep 2 [fact: fffbdc8d]; no direct caller (reached through a table)
+fffbdb40	width_reset_beep	vfo_width_reset(active VFO), beep 2 [fact: fffbdb40]; no direct caller (reached through a table)
+fffbde35	contour_reset_beep	vfo_contour_reset(active VFO), beep 2 [fact: fffbde35]; no direct caller (reached through a table)
+fffbdab2	shift_reset_beep	vfo_shift_reset(active VFO), beep 2 [fact: fffbdab2]; no direct caller (reached through a table)
+fffbdf75	apf_reset_beep	vfo_apf_reset(active VFO), beep 2 [fact: fffbdf75]; no direct caller (reached through a table)
+fff94fd5	qmb_side_revalidate	(side): boot check of a VFO left in QMB state: clamps g_qmb_hdr.count to 10, repairs the side's QMB pointer/depth pair for EX030112 QMB CH (5 or 10 slots), then FUN_fffc31a7(side, 1) and FUN_fffc334c(side); returns 1 [fact: fff94fd5]; only caller qmb_boot_init
+fffe41f3	msg_slot_key_1	msg_slot_key(1) (6-byte wrapper) [fact: fffe41f3]; only caller ladder_key_task (remote-keypad key code)
+fffe41f9	msg_slot_key_2	msg_slot_key(2) (6-byte wrapper) [fact: fffe41f9]; only caller ladder_key_task (remote-keypad key code)
+fffe41ff	msg_slot_key_3	msg_slot_key(3) (6-byte wrapper) [fact: fffe41ff]; only caller ladder_key_task (remote-keypad key code)
+fffe4205	msg_slot_key_4	msg_slot_key(4) (6-byte wrapper) [fact: fffe4205]; only caller ladder_key_task (remote-keypad key code)
+fffe420b	msg_slot_key_5	msg_slot_key(5) (6-byte wrapper) [fact: fffe420b]; only caller ladder_key_task (remote-keypad key code)
+fffe435a	msg_cw_slot_key_1	msg_cw_slot_key(1) (6-byte wrapper) [fact: fffe435a]; only caller ladder_key_task (remote-keypad key code)
+fffe4360	msg_cw_slot_key_2	msg_cw_slot_key(2) (6-byte wrapper) [fact: fffe4360]; only caller ladder_key_task (remote-keypad key code)
+fffe4366	msg_cw_slot_key_3	msg_cw_slot_key(3) (6-byte wrapper) [fact: fffe4366]; only caller ladder_key_task (remote-keypad key code)
+fffe436c	msg_cw_slot_key_4	msg_cw_slot_key(4) (6-byte wrapper) [fact: fffe436c]; only caller ladder_key_task (remote-keypad key code)
+fffe4372	msg_cw_slot_key_5	msg_cw_slot_key(5) (6-byte wrapper) [fact: fffe4372]; only caller ladder_key_task (remote-keypad key code)
+fffe46f3	msg_cw_slot_key_latched_1	msg_cw_slot_key_latched(1) (6-byte wrapper) [fact: fffe46f3]; only caller ladder_key_task (remote-keypad key code)
+fffe46f9	msg_cw_slot_key_latched_2	msg_cw_slot_key_latched(2) (6-byte wrapper) [fact: fffe46f9]; only caller ladder_key_task (remote-keypad key code)
+fffe46ff	msg_cw_slot_key_latched_3	msg_cw_slot_key_latched(3) (6-byte wrapper) [fact: fffe46ff]; only caller ladder_key_task (remote-keypad key code)
+fffe4705	msg_cw_slot_key_latched_4	msg_cw_slot_key_latched(4) (6-byte wrapper) [fact: fffe4705]; only caller ladder_key_task (remote-keypad key code)
+fffe470b	msg_cw_slot_key_latched_5	msg_cw_slot_key_latched(5) (6-byte wrapper) [fact: fffe470b]; only caller ladder_key_task (remote-keypad key code)

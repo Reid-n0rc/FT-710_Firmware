@@ -377,6 +377,9 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFE5401 | `cw_memory_length` |  | (n 1..5): length of CW MEMORY n: when its EX020206..EX020210 type is 0 the keyer-text length byte (0x969F + (n-1)*0x33), else the u16 big-endian length of the recorded keying bitstream (0x93A7 + (n-1)*0x98) **[fact: fffe5401; layout from eeprom.md]**; callers cat_KY, FUN_fffe55ab |
 | 0xFFFE564B | `keyer_can_send` |  | Returns 0 while CW SPOT is on or keyer_state is 2..4, else 1 **[fact: fffe564b]**; callers cat_KY, FUN_fffe55ab |
 | 0xFFFEC55A | `vfo_tuner_bit_get` |  | Returns bit 2 of the TX VFO record's flags1 (the tuner bit that vfo_tuner_bit_set writes) **[fact: fffec55a]**; callers cat_AC, key_tune_short, cat_ai_AC, tuner_rearm |
+| 0xFFFEC62B | `tuner_int_task` |  | tuner_task for TUNER TYPE SELECT 0/1 (INT, INT(FAST); ROM labels at 0xFFF84530..): sets g_ui.tuner_indicator from atu_state (blinking while tune_cycle_3d = 2), then runs the internal-tuner state 0x1B3AC (cases 1..0x10, one step function each) **[fact: fffec62b and tuner_task's test]** |
+| 0xFFFED165 | `tuner_atas_task` |  | tuner_task for TUNER TYPE SELECT 3 (ATAS) **[fact: tuner_task's test; label from ROM 0xFFF84546]** |
 | 0xFFFED24E | `tuner_result_set` |  | (code): 0x1B3C3 = 1, timer 0x22 = 50, g_ui.tuner_result = 2 (code 1), 3 (code 2) or 1; ends a tune cycle (tuner_tune_state_set(0)) **[fact: fffed24e]**; only caller cat_AC |
+| 0xFFFED62A | `tuner_ext_task` |  | tuner_task for TUNER TYPE SELECT 2 (EXT): with the TUN/LIN port in EXT-TUNER mode sets the tuner indicator from atu_state 5, then runs the external-tuner state 0x1B3C8 (cases 1..0x10) **[fact: fffed62a and tuner_task's test]** |
 
 <!-- T23e3:end -->

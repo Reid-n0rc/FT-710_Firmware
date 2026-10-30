@@ -25,7 +25,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
 | T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN and DISPLAY headers, scripts and per-task tests done; canonical apply + re-export open (both) |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); HiFi4 libraries identified 2026-10-30 (`names_hifi4.T23.tsv`, below); Ghidra steps open |
-| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
+| T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365), MAIN round 3 (427, 19.1 % of MAIN code bytes); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 
@@ -621,6 +621,29 @@ canonical projects).
   SPI-flash-driver paragraph.
 - Left unnamed on purpose: 0x20108BC8 (still unclear), the VDC5 shared-parameter getters 0x2011D57C..0x2011D77C (only the offsets are
   clear), FAT internals whose role was not read end to end, and the 4-byte SDHI stubs.
+
+### Round 3 — MAIN (2026-10-30)
+- Plan: start from the export's MAIN figures (67.4 % named, 67.3 % documented; 1,442 `FUN_` functions = 126 KB not in
+  `names_main.tsv`), rank them by **code bytes** (`naming_worklist.py main --format tsv --top 5000 --min-callers 0`, sorted on the size
+  column), and work biggest-first, taking whole families at once where one table or doc already gives the evidence. Every row carries
+  `[fact: <addr>]` (seen in that function) or `[inference]` with the reason; nothing where the evidence is thin.
+- **427 names** in `tools/ghidra/names_main.T23e3.tsv`, merged into `names_main.tsv` with `names_merge.py merge` (0 address conflicts,
+  no duplicate names against the TSV or the export, no existing row changed). They cover **73,845 code bytes = 19.1 % of MAIN's
+  387,054**, so after the apply MAIN should read about **86.5 % named** (with the earlier unapplied rows), and 940 call sites
+  (11.9 %; `naming_worklist.py main --coverage`). Each name is in a "More functions (T23e round 3)" table on its `docs/code/main/` page
+  (between `<!-- T23e3:begin/end -->` markers), so the documented figure moves with it.
+- Groups: all 55 **CAT AI change detectors** of `cat_ai_poll` (`cat_ai_AC` … `cat_ai_VX`, from the answer strings/constants they build),
+  the 18 shared **PRESET-row AI detectors** and the PRESET menu draw/step helpers (`ai_ex_preset_*`, `menu_draw_preset_*`,
+  `menu_step_preset_*`), the **FUNC-knob / value pop-up** handlers and their `displink_build_31` formatters (`funcknob_*`,
+  `popup_fmt_*`, from the popup-slot table in [display/gui.md](../code/display/gui.md)), the 29 **status-block byte builders**
+  (`dlstat_*`, from the status-block table in display-link.md), the 33 **FUNC-panel slot fillers** of frame 0x37 (`dl37_slot_*`) and the
+  FUNC menu slot actions (`func_*`), the keyboard frame 0x50 payloads and editors (`dl50_*`, `kbd_*`), DSP-knob toggle/step/reset
+  handlers, keyer internals (element ring, sidetone, straight/bug and ELEKEY keyers, text encoder), the **Renesas BSP** locks,
+  software interrupt open/close, `R_BSP_SoftwareDelay`, clock set-up and register protection, memory-list buttons, tuning-step and
+  squelch helpers, mode selection used by `cat_MD`/`cat_NA`, the filter-width tables used by `cat_SH`.
+- Left unnamed on purpose (read, but the role was not clear enough): the internal/external tuner state steps under `tuner_int_task` /
+  `tuner_ext_task`, the SD save/load answer steps, the ladder-key (remote keypad) handlers other than the message-slot wrappers, the
+  display-link status helpers `FUN_fff97ebf` / `FUN_fff9752b`, `FUN_fffbdf98`, `FUN_fffecba2`, `FUN_fffb9605`.
 
 ### Open steps (Ghidra)
 1. Apply `names_main.tsv` / `names_display.tsv` with `ApplyNames.java` and re-export (`tools/bootstrap.sh --only ghidra,export`

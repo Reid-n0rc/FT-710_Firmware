@@ -316,15 +316,21 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
+| 0xFFF94FD5 | `qmb_side_revalidate` |  | (side): boot check of a VFO left in QMB state: clamps g_qmb_hdr.count to 10, repairs the side's QMB pointer/depth pair for EX030112 QMB CH (5 or 10 slots), then FUN_fffc31a7(side, 1) and FUN_fffc334c(side); returns 1 **[fact: fff94fd5]**; only caller qmb_boot_init |
 | 0xFFF99669 | `moni_level_ptr` |  | Returns the address of the MONI LEVEL byte for the TX mode: 0x9BFC SSB, 0x9BFD CW, 0x9BFE RTTY, 0x9BFF DATA/PSK, 0x9C00 AM, 0 for FM **[fact: fff99669]**; callers popup_fmt_moni_level, funcknob_moni_level_step, displink frame code |
 | 0xFFF99877 | `mic_gain_ptr` |  | Returns the address of the MIC GAIN byte for the TX mode: 0x9BEC (LSB/USB), 0x9BED (DATA-L/U, PSK), 0x9BEE (AM), 0x9BEF (FM, DATA-FM), 0 for CW and RTTY **[fact: fff99877]**; callers popup_fmt_mic_gain, funcknob_mic_gain_step |
 | 0xFFF99DBF | `bk_in_bit_get` |  | Returns bit 1 of mode_block_byte0() (the BI / break-in bit of the TX mode block) **[fact: fff99dbf]**; callers popup_fmt_bk_in, dl37_slot_bk_in |
 | 0xFFF9C6AB | `scope_level_cur_ptr` |  | Returns the scope level byte for the RX dial frequency: 0x9BCA (RX) or 0x9BD8 (while transmitting) + freq_range_index **[fact: fff9c6ab]**; the same tables as scope_level_ptr |
 | 0xFFFBDA47 | `dsp_knob_shift_toggle` |  | DSP key short press with knob function 0 (SHIFT): toggles g_ui.dsp_knob_edit, FUNC item 0x1D **[fact: fffbda47]**; caller key_dsp_release (structs_main.h dsp_knob_func 0 SHIFT) |
+| 0xFFFBDAB2 | `shift_reset_beep` |  | vfo_shift_reset(active VFO), beep 2 **[fact: fffbdab2]**; no direct caller (reached through a table) |
 | 0xFFFBDAD5 | `dsp_knob_width_toggle` |  | DSP key short press with knob function 1 (WIDTH): toggles dsp_knob_edit, FUNC item 0x1E **[fact: fffbdad5]**; caller key_dsp_release |
+| 0xFFFBDB40 | `width_reset_beep` |  | vfo_width_reset(active VFO), beep 2 **[fact: fffbdb40]**; no direct caller (reached through a table) |
 | 0xFFFBDB63 | `dsp_knob_notch_toggle` |  | DSP key short press with knob function 2 (NOTCH): toggles dsp_knob_edit, FUNC item 0x1F, and in edit mode bit 0x80 of the active VFO mode-block flags **[fact: fffbdb63]**; caller key_dsp_release |
+| 0xFFFBDC8D | `notch_reset_beep` |  | vfo_notch_reset(active VFO), beep 2 **[fact: fffbdc8d]**; no direct caller (reached through a table) |
 | 0xFFFBDCB0 | `dsp_knob_contour_toggle` |  | DSP key short press with knob function 3 and APF off: toggles dsp_knob_edit, FUNC item 0x20 (CONTOUR), changes bit 0x40 of the active VFO mode-block flags **[fact: fffbdcb0]**; caller key_dsp_release |
+| 0xFFFBDE35 | `contour_reset_beep` |  | vfo_contour_reset(active VFO), beep 2 **[fact: fffbde35]**; no direct caller (reached through a table) |
 | 0xFFFBDE58 | `dsp_knob_apf_toggle` |  | DSP key short press with knob function 3 and dsp_knob_apf set: toggles dsp_knob_edit, FUNC item 0x21 (APF) **[fact: fffbde58]**; caller key_dsp_release |
+| 0xFFFBDF75 | `apf_reset_beep` |  | vfo_apf_reset(active VFO), beep 2 **[fact: fffbdf75]**; no direct caller (reached through a table) |
 | 0xFFFC0C8F | `mode_key_select` |  | (code 0x77..0x86): mode buttons: popup_open_timed(1000) then the same per-mode selection as vfo_mode_select **[fact: fffc0c8f]**; caller FUN_fffc396d |
 | 0xFFFC0D33 | `mode_select_simple` |  | (mode): if vfo_edit_begin succeeds, vfo_mode_set(mode), beep while a pop-up is shown, popup_cursor = mode **[fact: fffc0d33]** |
 | 0xFFFC0E31 | `mode_select_am` |  | vfo_edit_begin, then mode_popup_select(4 = AM) **[fact: fffc0e31]** |
@@ -345,6 +351,12 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFC2426 | `m_to_v_exec` |  | M>V: from the open memory list copies its channel (memch_current_set), else leaves split / QMB state first; refuses channels 0x75..0x83 for region 0x315B; then memch_to_vfo_copy **[fact: fffc2426]**; only caller key_m_to_v_short |
 | 0xFFFC260C | `memch_to_vfo_copy` |  | (side): if memch_current_valid, leaves QMB, qmb_set_depth, memch_load_to_vfo, vfo_clear_tag, vfo_enter_vfo_state, memlist_close, VFO refresh; returns 1, else 0 **[fact: fffc260c]** |
 | 0xFFFC33EF | `qmb_popup_open` |  | Opens the QMB pop-up: popup_duration_get(0x43), popup_open_timed, popup_code = 0x43 **[fact: fffc33ef]**; callers qmb_store, qmb_enter |
+| 0xFFFC3503 | `vfo_shift_reset` |  | (side): IF SHIFT (shift_be) of the VFO's mode block = 0 **[fact: fffc3503]**; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdab2 |
+| 0xFFFC3582 | `vfo_width_reset` |  | (side): WIDTH of the VFO's mode block = the table entry for 3000 Hz (SSB), 500 Hz (CW, RTTY), 3200 Hz (DATA/PSK) via width_hz_snap **[fact: fffc3582]**; callers dsp_knob_reset, key_step_mch_long, width_reset_beep |
+| 0xFFFC3659 | `vfo_notch_reset` |  | (side): manual NOTCH of the VFO's mode block = 0x0096 (150, i.e. 1500 Hz at /10) and the notch flag 0x80 cleared **[fact: fffc3659]**; callers dsp_knob_reset, key_step_mch_long, notch_reset_beep |
+| 0xFFFC3773 | `vfo_contour_reset` |  | (side): CONTOUR of the VFO's mode block = 0x0096 and flag 0x40 cleared **[fact: fffc3773]**; callers dsp_knob_reset, key_step_mch_long, contour_reset_beep |
+| 0xFFFC388D | `vfo_apf_reset` |  | (side): g_opstate.apf_freq = 0 and bit 5 (APF on) of the VFO record's CW block (+0x14) cleared **[fact: fffc388d]**; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdf75 |
+| 0xFFFC38CB | `width_hz_snap` |  | (hz, mode): width_hz_of_index(width_index_of_hz(hz)), 0 when hz is not in the mode's table **[fact: fffc38cb]**; only caller vfo_width_reset |
 | 0xFFFC3C9F | `func_marker_toggle` |  | FUNC menu slot 2 (MARKER): toggles g_opstate.ss02_marker, beep **[fact: fffc3c9f]**; case 2 of func_menu_select (slot order of frame 0x37) |
 | 0xFFFC3CD9 | `func_color_select` |  | FUNC menu slot 3 (COLOR): assigns the FUNC knob to function 3, opens pop-up 0xB with cursor g_opstate.ss03_value, closes the FUNC panel **[fact: fffc3cd9]** |
 | 0xFFFC3D26 | `func_mic_eq_toggle` |  | FUNC menu item 8 (MIC EQ): if mic_eq_mode_ok, toggles 0x9BF0 (struct field proc_on; the parametric-EQ flag per display gui.md), VFO refresh, beep **[fact: fffc3d26]**; case 8 of func_menu_select |
@@ -354,9 +366,13 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFC3F1B | `rec_mode_is_voice` |  | (*rec): 1 when the record's mode nibble is LSB/USB or AM..FM-N (0, 1, 4..7) **[fact: fffc3f1b]**; callers dl37_slot_bk_in, func_bk_in_toggle |
 | 0xFFFC3F40 | `vfo_bk_in_bit_toggle` |  | (*rec): toggles bit 1 (BI) of the record's mode block for its mode (SSB +10, CW +0x14, AM +0x32, FM +0x3C) **[fact: fffc3f40]**; only caller func_bk_in_toggle |
 | 0xFFFC3F9C | `func_txw_toggle` |  | FUNC menu slot 24 (TXW): in split toggles g_ui.txw_on (on: func_assigned = 1, FUN_fffc8e0e(500)), beep **[fact: fffc3f9c]** |
+| 0xFFFC4DEC | `dsp_knob_reset` |  | DSP key long press in the FUNC panel: resets the value of the current DSP-knob function: 0 shift, 1 width, 2 notch, 3 contour (or APF when dsp_knob_apf) of the active VFO **[fact: fffc4dec]**; only caller key_dsp_release |
+| 0xFFFC5A84 | `dial_steps_scale` |  | (dir, counts): divides the main-dial encoder counts by 4 / 2 / 1 for EX030506 MAIN STEPS PER REV 0 / 1 / 2 (digit-step mode: by 4), keeps the remainder in 0x1FF6A, then calls vfo_dial_tune with the step count **[fact: fffc5a84]**; only caller enc_main_dial |
+| 0xFFFC5BB9 | `vfo_dial_tune` |  | (steps): tunes the operating VFO (the other one with TXW swap): during a scan hands the steps to the scan, refuses while transmitting without split; a memory channel first becomes memory tune (vfo_mem_to_memtune), then FUN_fffc5e0a(side, steps) **[fact: fffc5bb9]**; callers dial_steps_scale, FUN_fffc7eeb (enc3_step) |
 | 0xFFFC616E | `dial_step_hz` |  | (side): tuning step of the VFO in Hz: 1 MHz / 1 kHz in digit-step mode, 100 kHz / .. with the fast-step request, else the mode's step (dial_step_mode_hz) or the AM/FM channel step (ch_step_hz) **[fact: fffc616e]** |
 | 0xFFFC62AE | `dial_step_mode_hz` |  | (mode): dial step in Hz by g_opstate.fn_select (1 = fine, 2 = x10): SSB/CW 1 or EX030501 SSB/CW DIAL STEP 5/10/20 Hz; RTTY/PSK/DATA 1 or EX030502 5/10/20 Hz; AM 10/100/1000; FM 10/100/1000 **[fact: fffc62ae]**; only caller dial_step_hz |
 | 0xFFFC63E6 | `ch_step_hz` |  | (mode): AM / FM channel step from EX030504 AM CH STEP / EX030505 FM CH STEP via table 0xFFF88514 **[fact: fffc63e6]**; only caller dial_step_hz |
+| 0xFFFC6595 | `playback_knob_turn` |  | (steps): knob turn on the PlayList / message-memory screens: while playing steps g_opstate.play_volume 0..100, in the PlayList otherwise moves the file cursor (playlist_cursor_up / _down) **[fact: fffc6595]**; only caller enc2_step |
 | 0xFFFC6800 | `memlist_knob_turn` |  | (steps): knob turn in the memory list: moves the row (memlist_row_step) or the button (memlist_group_step), or with a pop-up open steps MODE / SCAN / TYPE of the channel **[fact: fffc6800]**; caller FUN_fffc7eeb (enc3_step) |
 | 0xFFFC686F | `memlist_row_step` |  | (dir): moves the memory-list cursor row 0..3, scrolling the page at the ends, then memlist_cursor_channel **[fact: fffc686f]** |
 | 0xFFFC68C2 | `memlist_page_down` |  | Scrolls the memory list down one channel (memlist_first + 1) up to 0x74 or the region's special channels (dest 0x4380 / 0x020B) **[fact: fffc68c2]**; caller memlist_row_step |
@@ -431,6 +447,23 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFE2C33 | `kbd_edit_preset_name` |  | Keyboard target 6 (PRESET NAME) editor; uses menu_preset_name_ptr **[fact: kbd_key_dispatch target 6]** |
 | 0xFFFE2EE4 | `func_record_toggle` |  | FUNC menu slot 22 (RECORD/STOP): stops a scan; unless DVS is busy toggles g_ui.dvs_lm1_flag (which dl37_slot_record shows as id 0x35 STOP) **[fact: fffe2ee4]** |
 | 0xFFFE2FA8 | `func_play_open` |  | FUNC menu slot 23 (PLAY): stops a scan; unless recording / DVS / keyer send runs, opens the PlayList (playlist_open = playlist_req = 1, sub-state and row 0) and closes the FUNC panel **[fact: fffe2fa8]** |
+| 0xFFFE3121 | `playlist_cursor_up` |  | Moves the PlayList cursor up one file (playlist_row, scrolling playlist_first when the list holds more than 4 WAV files), requests a redraw (playlist_req, sub-state 1) **[fact: fffe3121]** |
+| 0xFFFE32FD | `playlist_cursor_down` |  | Moves the PlayList cursor down one file, scrolling while wav_count > 4, requests a redraw **[fact: fffe32fd]** |
 | 0xFFFE3979 | `func_message_open` |  | FUNC menu item 0x15 (case 0x15 of func_menu_select): stops a scan, refuses while DVS / keyer send / recording / PlayList run; otherwise opens the message-memory screen (g_ui.msgmem_open = 1, msgmem_type 0 voice by msg_voice_mode_ok or 1 CW with the contest number) and closes the FUNC panel; beep 3 when neither **[fact: fffe3979]** |
+| 0xFFFE41F3 | `msg_slot_key_1` |  | msg_slot_key(1) (6-byte wrapper) **[fact: fffe41f3]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE41F9 | `msg_slot_key_2` |  | msg_slot_key(2) (6-byte wrapper) **[fact: fffe41f9]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE41FF | `msg_slot_key_3` |  | msg_slot_key(3) (6-byte wrapper) **[fact: fffe41ff]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE4205 | `msg_slot_key_4` |  | msg_slot_key(4) (6-byte wrapper) **[fact: fffe4205]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE420B | `msg_slot_key_5` |  | msg_slot_key(5) (6-byte wrapper) **[fact: fffe420b]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE435A | `msg_cw_slot_key_1` |  | msg_cw_slot_key(1) (6-byte wrapper) **[fact: fffe435a]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE4360 | `msg_cw_slot_key_2` |  | msg_cw_slot_key(2) (6-byte wrapper) **[fact: fffe4360]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE4366 | `msg_cw_slot_key_3` |  | msg_cw_slot_key(3) (6-byte wrapper) **[fact: fffe4366]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE436C | `msg_cw_slot_key_4` |  | msg_cw_slot_key(4) (6-byte wrapper) **[fact: fffe436c]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE4372 | `msg_cw_slot_key_5` |  | msg_cw_slot_key(5) (6-byte wrapper) **[fact: fffe4372]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE46F3 | `msg_cw_slot_key_latched_1` |  | msg_cw_slot_key_latched(1) (6-byte wrapper) **[fact: fffe46f3]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE46F9 | `msg_cw_slot_key_latched_2` |  | msg_cw_slot_key_latched(2) (6-byte wrapper) **[fact: fffe46f9]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE46FF | `msg_cw_slot_key_latched_3` |  | msg_cw_slot_key_latched(3) (6-byte wrapper) **[fact: fffe46ff]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE4705 | `msg_cw_slot_key_latched_4` |  | msg_cw_slot_key_latched(4) (6-byte wrapper) **[fact: fffe4705]**; only caller ladder_key_task (remote-keypad key code) |
+| 0xFFFE470B | `msg_cw_slot_key_latched_5` |  | msg_cw_slot_key_latched(5) (6-byte wrapper) **[fact: fffe470b]**; only caller ladder_key_task (remote-keypad key code) |
 
 <!-- T23e3:end -->
