@@ -424,3 +424,33 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x201606A4 | `fwobj_main_ctor` | MAIN object, vtable 0x20428088 **[inference]** |
 | 0x201607C8 | `fwobj_ifdsp_ctor` | IFDSP object, vtable 0x20428094, +0xAB flag **[inference]** |
 | 0x20160C10 | `fwobj_display_ctor` | DISPLAY object, vtable 0x204280A0 **[inference]** |
+
+### SPI flash driver on SPIBSC0 (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI flash on SPIBSC0 (object 0x20810D90: +0 register base SPIBSC_CMNCR_0, +4 dual-flash flag, +0xC flash address; register offsets CMNCR 0, DRCR 0xC, SMCR 0x20, CMNSR 0x48 from the RZ/A1H manual) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20104104 | `spibsc_reg_read32` | *(base + off) for a register object {base,...} **[fact]** |
+| 0x20104110 | `spibsc_reg_write32` | *(base + off) = value **[fact]** |
+| 0x20104124 | `spibsc_reg_write16` | 16-bit register store **[fact]** |
+| 0x20104138 | `spibsc_reg_write8` | 8-bit register store **[fact]** |
+| 0x20104188 | `spibsc_ssl_negated` | 1 when CMNSR bit 1 (SSLF) is clear **[fact]** |
+| 0x201041A0 | `spibsc_wait_tend` | Polls CMNSR (0x48) bit 0 TEND, 100000 tries, -1 on timeout **[fact]** |
+| 0x201041F4 | `spibsc_ensure_idle` | Waits for TEND; if CMNSR is still not 1, pulses SMCR (0x20) and waits again; -1 on failure **[fact]** |
+| 0x2010427C | `spibsc_xfer` | SPI-mode transfer of n bytes through SMENR/SMWDR/SMRDR in 1/2/4-byte steps (size codes 0x2016525C), keeps SSL asserted between calls when asked **[inference]** |
+| 0x2010448C | `sflash_cmd_read` | Reads response bytes (spibsc_xfer read side) **[inference]** |
+| 0x2010474C | `sflash_cmd_write` | Sends command/address bytes; with two flash chips in parallel (+4) each byte is doubled **[fact]** |
+| 0x201047B4 | `sflash_wait_ready` | RDSR (0x05) until bits 0x81 (busy) are clear, 1000000 tries **[fact]** |
+| 0x20104848 | `sflash_wait_wel` | RDSR until WEL (bit 1) is set and not busy **[fact]** |
+| 0x201048E4 | `sflash_read_sr2` | Command 0x35, returns the byte; Read Status Register-2 of the W25Q128 (update.md flash layout) **[fact]** |
+| 0x20104944 | `spibsc_cmncr_set` | CMNCR = 0x81FFF320, \| 1 (BSZ) for dual flash **[fact]** |
+| 0x20104968 | `spibsc_enter_spi_mode` | Saves DRCR and CMNCR (+0x24/+0x20), sets DRCR, SMCR = 0, waits for TEND and SSL negate, sets CMNCR MD (bit 31) = SPI mode **[fact]** |
+| 0x20104A08 | `spibsc_exit_spi_mode` | Restores DRCR and CMNCR and flushes the read cache (DRCR RCF 0x200) back to XIP mode **[fact]** |
+| 0x20104A64 | `sflash_fast_read` | FAST_READ (0x0B) at the object's address +0xC, advances it (half the count with dual flash) **[fact]** |
+| 0x20104B20 | `sflash_erase_block` | WREN (0x06) and 64 KB block erase (0xD8) at the object's address, waits ready **[fact]** |
+| 0x20104BD8 | `sflash_page_program` | WREN and page program (0x02) in 256-byte pages (x2 for dual flash), with the partial-page buffer 0x20810DBC **[fact]** |
+| 0x20104D9C | `sflash_global_unlock` | WREN and command 0x98, waits ready; 0x98 = Global Block Unlock on the W25Q128 **[fact]** |
+| 0x20104E20 | `sflash_dev_read` | Read side of the flash device object (mode 0x20810D98: 1 = read data with sflash_fast_read, 2/3 = return a status byte, flushes a partial page) **[fact]** |
+| 0x20104F34 | `sflash_dev_write` | Command side: 'r' + address (read), 'e' + address (erase block), program data in the other mode **[fact]** |
+| 0x20105060 | `sflash_dev_open` | Object 0x20810D90 base = SPIBSC_CMNCR_0; spiflash_erase and spiflash_write start with it **[fact]** |

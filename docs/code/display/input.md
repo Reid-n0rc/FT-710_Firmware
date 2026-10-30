@@ -578,3 +578,29 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 |---|---|---|
 | 0x2011593C | `minmax4` | min or max of 4 bytes **[inference]** |
 | 0x2013B928 | `usbh_hid_init` | UHHID **[inference]** |
+
+### USB host requests (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): USB host requests (standard SETUP packets: bmRequestType, bRequest, wValue, wIndex, wLength) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20138CF0 | `usbh_control_transfer` | Control transfer on a pipe object under its semaphore (+0x4A8, TMO_FEVR): SETUP, data and status stages **[inference]** |
+| 0x20138F00 | `usbh_control_req` | Thin wrapper of usbh_control_transfer used by every request helper **[fact]** |
+| 0x2013B2F8 | `usbh_pipe_mark_done` | Sets +0x30 = 1 in the pipe slot (0x2091C220, 0x34 each) whose +0x2C matches **[fact]** |
+| 0x2013B35C | `usbh_get_device_descriptor` | SETUP 0x80, 6 (GET_DESCRIPTOR), wValue 0x0100 (device), length n **[fact]** |
+| 0x2013B3A8 | `usbh_get_config_descriptor` | SETUP 0x80, 6, wValue 0x0200 (configuration) **[fact]** |
+| 0x2013B3F4 | `usbh_set_address` | SETUP 0x00, 5 (SET_ADDRESS), wValue = address **[fact]** |
+| 0x2013B43C | `usbh_set_configuration` | SETUP 0x00, 9 (SET_CONFIGURATION), wValue = configuration **[fact]** |
+| 0x2013B484 | `usbh_get_hub_descriptor` | SETUP 0xA0 (class, device), 6 (GET_DESCRIPTOR) **[fact]** |
+| 0x2013B524 | `usbh_loc_cpu` | itron_loc_cpu, returns 0 (critical section of the USB host stack) **[fact]** |
+| 0x2013BAAC | `usbkbd_set_leds` | Builds the HID output report from the NumLock/CapsLock/ScrollLock state (report fields 1/2/3) and sends it with usbh_class_request (SET_REPORT 0x21, 9, wValue 0x0200, 1 byte); input.md: sends the LED report **[fact]** |
+| 0x2013C710 | `usbh_class_request` | (device, bmRequestType, bRequest, wValue, wIndex, data, length) on device table 0x2091CB78 **[fact]** |
+
+### Other input helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20159320 | `pointer_touch_poll` | pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog) **[inference]** |

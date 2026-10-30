@@ -371,3 +371,30 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00234F40 | `vec_scale_f32` | y[i] = x[i] * scalar |  | inference |
 | 0x00235BA8 | `divf_` | float divide |  | inference |
 | 0x00235C8C | `sqrtf_` | sqrt |  | inference |
+
+### HiFi4 application helpers (T23e)
+
+Application helpers named in T23e (`tools/ghidra/names_hifi4.T23.tsv`, "application DSP code" section: each block init sits just before the block it prepares, in source-file order) **[inference]**.
+
+| Address | Ghidra name | What it computes | Registers | Tag |
+|---|---|---|---|---|
+| 0x0021F2D0 | `reg68_gain_apply` | if_agc_process helper: when reg 0x68 changed, gain = scl_antilog10f(scl_int2float(reg, -1) * 0.05), then vec_scalef over 24 samples |  | fact |
+| 0x002211D0 | `tx_param_eq_init` | clears the TX EQ states 0x25AC00..; called by tx_core_init |  | inference |
+| 0x00222034 | `tx_alc_meter_to_reg2` | tx_alc helper: scl_log10f of the gain, scl_float2int, high byte of reg 2 (docs: TX meters) |  | inference |
+| 0x002221C0 | `tx_bpf_init` | clears 0x25B810; placed before tx_bpf_select |  | inference |
+| 0x00222230 | `soft_knee_compressor_init` | memset 0x25B9C0; placed before soft_knee_compressor |  | inference |
+| 0x00222DF0 | `fm_tx_hpf_process` | iir_cascade_process on 0x25BFF0; called by fm_tx_audio (HPF 293 Hz) |  | inference |
+| 0x00223110 | `tx_chain_init` | tx_core_init, tx_alc_init, fm_post_lpf_init, ctcss/dcs encoder inits, two_tone_test_init; placed before tx_chain |  | inference |
+| 0x00223A90 | `noise_gen_seed` | srand wrapper |  | inference |
+| 0x00223AB4 | `noise_gen_set_level` | 10^(x / 20) with powf, then noise_gen_seed |  | inference |
+| 0x00223ADC | `gaussian_noise_gen` | Box-Muller: rand, scl_lognf, sqrt, scl_cosinef / scl_sinef, 2*pi |  | inference |
+| 0x00223BF0 | `spectrum_init` | create_Thread_Spi: window with scl_cosinef, buffers 0x25D350 / 0x25DB60 / 0x25EB60 |  | inference |
+| 0x002244E0 | `codec_out_init` | resets both codec-out FIFOs and the mute ramp; placed before codec_out_sink |  | inference |
+| 0x00224524 | `codec_out_fifo_reset_0` | clears count / read / write of the FIFO 0x2639F4 under PS.INTLEVEL 2 |  | fact |
+| 0x00224594 | `codec_out_fifo_reset_1` | same for the FIFO 0x263B84 |  | inference |
+| 0x00225340 | `hilbert_iq_init` | bkfiraf_init with the 71-tap Hilbert FIR 0x205840; called by cw_zero_in_init, am_demod_init, fm_demod_init |  | fact |
+| 0x002254EC | `rec_ring_reset_0` | clears the ring 0x268D1C indices under PS.INTLEVEL 2 |  | fact |
+| 0x00225550 | `rec_ring_reset_1` | same for 0x2C6928 |  | inference |
+| 0x00225AF0 | `txaf_out_init` | resets both TXAF FIFOs and the mute ramp; placed before txaf_out_push |  | inference |
+| 0x00225B30 | `txaf_fifo_reset_0` | clears the FIFO 0x2C7570 indices under PS.INTLEVEL 2 |  | fact |
+| 0x00225B8C | `txaf_fifo_reset_1` | same for 0x2C768C |  | inference |

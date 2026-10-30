@@ -380,7 +380,8 @@ float; kernels use `add.s`/`mul.s`/`ae_l32.i`]**.
 T23d/T23e (2026-10-30) identified the library code of the image: about two thirds of the functions are library code, linked whole and in
 source-file order, so each block was matched file by file against the library sources (commits in
 [docs/tooling.md](../../tooling.md#hifi4-library-sources-t23dt23e-hifi4-2026-10-30)). The names are in
-`tools/ghidra/names_hifi4.T23.tsv` (evidence per row) and the "T23 HiFi4" block of `IfdspHifi4Names.java`.
+`tools/ghidra/names_hifi4.T23.tsv` (evidence per row) and the "T23 HiFi4" block of `IfdspHifi4Names.java`. Every library function named there has a row on [hifi4-libraries.md](hifi4-libraries.md) (one table per source file, with
+the calls between the libraries and the SDK functions the application uses) unless a table on this page or [ipc.md](ipc.md) lists it.
 
 | Range | Library, version | Functions named | How it was matched |
 |---|---|---|---|
@@ -492,3 +493,33 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x240205DC | `_Vector_5dc` |  | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
 | 0x2402061C | `_Vector_61c` |  | no direct calls; 24 B, callers: 3 **[fact]** (code shape) |
 | 0x2402063C | `_Vector_63c` |  | no direct calls; 6 B, callers: 2 **[fact]** (code shape) |
+
+### HiFi4 application helpers (T23e)
+
+Application helpers named in T23e (`tools/ghidra/names_hifi4.T23.tsv`, "application DSP code" section: each block init sits just before the block it prepares, in source-file order) **[inference]**.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0x0021C140 | `sincos_fft_tables_init` |  | DSP main: memset 0x239100, 2*pi constant, fft_realf_ie and fft_spectrumf on tables 0x200CF8 / 0x201900, manual_notch_init **[inference]** |
+| 0x0021C560 | `deinterleave2_u32` |  | (dst0, dst1, src, n): src[2i] -> dst0[i], src[2i+1] -> dst1[i]; used by codec_in_from_dma and rxif_dma_to_fifo **[fact]** |
+| 0x0021C598 | `interleave2_u32` |  | (dst, src0, src1, n): the inverse; used by codec_out_fill_dma and txaf_fifo_pop_to_dma **[fact]** |
+| 0x0021C600 | `apf_init` |  | clears the APF state 0x244510; called by rx_audio_chain_init, placed before apf_config **[inference]** |
+| 0x0021F410 | `rx_audio_chain_init` |  | calls the init of every Rx_Audio block (decimator 0x2373D0, fm_audio_post_init, cw_zero_in_init, NR, notch, APF,...); placed before rx_audio_chain **[inference]** |
+| 0x00220C68 | `rx_audio_init` |  | create_Thread_Rx_Audio: state word 0x2576E4 = 0xFFFF, then rx_audio_chain_init **[inference]** |
+| 0x00220D14 | `rx_audio_fifo_pop` |  | pops 12 blocks of 96 bytes from the FIFO 0x2572A4 under PS.INTLEVEL 2, or zero-fills and returns 0; pairs with rx_audio_fifo_push **[fact]** |
+| 0x00220DA4 | `rx_audio_out_fifo_push` |  | (ch, src): pushes 12 blocks of 96 bytes into FIFO ch (0x258074 + ch * 0x908, max 13 entries) **[fact]** |
+| 0x00220E34 | `rx_audio_out_fifo_pop` |  | (ch, dst): the matching pop; called by rx_audio_push_block **[fact]** |
+| 0x002210A4 | `spi_fc1_dma_init` |  | Thread_Spi: SPI_MasterTransferCreateHandleDMA on FLEXCOMM1 (0x40107000), buffers 0x200607E0 / 0x200619E0 (0x11F8 bytes), callback 0x22118C **[fact]** |
+| 0x002210DC | `spi_fc1_start` |  | SPI_MasterTransferDMA of the 0x200607E0 buffer **[inference]** |
+| 0x0022111C | `spi_fc1_dma_done` |  | restarts SPI_MasterTransferDMA, then spi_post_tx_done **[inference]** |
+| 0x0022118C | `spi_fc1_dma_callback` |  | SPI DMA callback: if status == 0, spi_fc1_dma_done **[fact]** |
+| 0x00221198 | `spi_tx_buffer_write` |  | (offset, src, len): memcpy into 0x200607E0 if offset + len <= 0x11F8 **[fact]** |
+| 0x002211B8 | `spi_tx_buffer_ptr` |  | returns 0x200607E0 **[fact]** |
+| 0x002211C0 | `spi_rx_buffer_ptr` |  | returns 0x200619E0 **[fact]** |
+| 0x00222DD4 | `fm_tx_hpf_init` |  | iir_cascade_init(0x25C030, coefficients 0x2371F0) **[inference]** |
+| 0x00223C8C | `spectrum_frame` |  | Thread_Spi: window, fft_realf_ie, fft_spectrumf, vec_log10f, vec_scale_sf (regs 0x5C/0x5D, docs) **[inference]** |
+| 0x002249B0 | `routing_regs_init` |  | clears the 7 selector words 0x263D50 used by routing_regs_decode **[fact]** |
+| 0x00225250 | `test_tone_init` |  | state 0x266EA8; placed before test_tone_gen **[inference]** |
+| 0x002254A0 | `rec_resample_init` |  | ring resets, iir_cascade_init(0x237700); placed before rec_resample_sink **[inference]** |
+| 0x00225790 | `rec_ring_read_to_spi` |  | Thread_Spi: reads the int16 recording ring 0x266ED8 (4000 bytes) **[inference]** |
+| 0x00225D48 | `rxif_fifo_pop` |  | Thread_Rx_Path: pops a block and converts Q31 -> float with vec_int2float **[inference]** |

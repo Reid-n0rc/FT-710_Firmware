@@ -48,10 +48,10 @@ NAME_FILES = {
              'names_main.T10h.tsv', 'names_main.T23e.tsv', 'names_main.T23d.tsv', 'names_main.lib.tsv'],
     'display': ['names_display.tsv', 'names_display.T11b.tsv', 'names_display.T11c.tsv', 'names_display.T11d.tsv',
                 'names_display.T11e.tsv', 'names_display.T11f.tsv', 'names_display.T11g.tsv',
-                'names_display.T23e.tsv', 'names_display.T23d.tsv', 'names_display.lib.tsv'],
+                'names_display.T23e.tsv', 'names_display.T23e2.tsv', 'names_display.T23d.tsv', 'names_display.lib.tsv'],
     'ifdsp/m33': ['IfdspM33Names.java', 'names_ifdsp.T12b.tsv', 'names_ifdsp.T12c.tsv', 'names_ifdsp.T12d.tsv',
                   'names_ifdsp.T23d.tsv', 'names_ifdsp.lib.tsv'],
-    'ifdsp/hifi4': ['IfdspHifi4Names.java', 'names_ifdsp.T12b.tsv', 'names_ifdsp.T12c.tsv'],
+    'ifdsp/hifi4': ['IfdspHifi4Names.java', 'names_hifi4.T23.tsv', 'names_ifdsp.T12b.tsv', 'names_ifdsp.T12c.tsv'],
 }
 # names-file section header (regex, case-insensitive) or file name -> page; first match wins
 SECTION_HINTS = {
@@ -69,7 +69,9 @@ SECTION_HINTS = {
                 (r'NORTi|uITRON|RTOS|startup|armcc|runtime|C library', 'boot-rtos.md')],
     'ifdsp/m33': [(r'docs/code/ifdsp/([a-z-]+\.md)', None), (r'T12b|console|regfile|codec|aic3204', 'control-link.md'),
                   (r'T12c|IPC|rpmsg|MU\b|SEMA', 'ipc.md'), (r'.', 'm33-platform.md')],
-    'ifdsp/hifi4': [(r'docs/code/ifdsp/([a-z-]+\.md)', None), (r'T12c|IPC|rpmsg|MU\b|SEMA|srtm', 'ipc.md')],
+    'ifdsp/hifi4': [(r'docs/code/ifdsp/([a-z-]+\.md)', None),
+                    (r'MCUXpresso|rpmsg-lite|NatureDSP|newlib|Cadence XOS|XCC|Xtensa|C runtime', 'hifi4-libraries.md'),
+                    (r'T12c|IPC|rpmsg|MU\b|SEMA|srtm', 'ipc.md')],
 }
 # Curated rules (name regex -> page), checked before the votes: families whose page the votes cannot see, such as a new
 # page that has no table yet. Keep them short; a rule only says where a function is described, not what it does.

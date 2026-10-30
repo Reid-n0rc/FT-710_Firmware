@@ -444,3 +444,33 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x2016003C | `mainlink_disp_alloc` | calls `FUN_201644ac`; 12 B, callers: 2 **[fact]** (code shape) |
 | 0x20160048 | `mainlink_disp_init` | 32 x 0x408 B pool + mailbox **[inference]** |
 | 0x20160288 | `mainlink_disp_ctor` | vtbl 0x20428030 **[inference]** |
+
+### Mutex guard, TX pools and small rings (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): mutex guard and small rings (mainlink / uart4 TX pools, USB keyboard queue) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201571A4 | `mutex_lock` | itron_tloc_mtx(*obj, TMO_FEVR) **[fact]** |
+| 0x201571B0 | `mutex_unlock` | itron_unl_mtx(*obj) **[fact]** |
+| 0x201571B8 | `mutex_guard_ctor` | Scoped lock: stores the mutex id, locks it when the flag is set; used by usbkbd_* and the TX pools **[fact]** |
+| 0x201571D4 | `mutex_guard_dtor` | Scoped lock destructor: mutex_unlock **[fact]** |
+| 0x201643F0 | `ring32_post_inc` | Returns *idx and sets it to the next value mod 32 **[fact]** |
+| 0x20164460 | `txpool_init_mutex` | Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init / uart4_tx_init / mainlink_disp_init **[fact]** |
+| 0x201644A0 | `txpool_set_slot` | obj->slot[n] (obj+4+4n) = buffer **[fact]** |
+| 0x201644AC | `txpool_next_slot` | Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc / uart4_tx_alloc / mainlink_disp_alloc **[fact]** |
+| 0x201645A0 | `ring16_push` | Copies an 8-byte item into the slot at the tail if count < 16; usbkbd_queue_key **[fact]** |
+| 0x201645E4 | `ring16_reset` | Clears count, head and tail of a 16-entry ring {count, head, tail, slots} **[fact]** |
+| 0x201645F8 | `ring16_set_slot` | ring->slot[n] (obj+8+4n) = pointer **[fact]** |
+| 0x20164604 | `ring16_pop` | Returns the slot at the head and advances it (mod 16), 0 when empty; usbkbd_pop_key **[fact]** |
+| 0x20164638 | `ring16_ctor` | ring16_reset, returns this **[fact]** |
+| 0x20164870 | `ring32_next` | (idx + 1) mod 32 **[fact]** |
+
+### Other link helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20160ED8 | `mainlink_send_sd_absent` | E2 frame with byte 1 = 0 (SD card not present, mainlink.md); the SD menu screens send it when sd_state_bit7 reads 0 **[inference]** |
+| 0x201636CC | `copy5` | Copies 5 bytes (encoder events, E1/E2 frames) **[fact]** |

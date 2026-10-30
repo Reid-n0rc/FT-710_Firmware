@@ -352,3 +352,49 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x20156260 | `__aeabi_uidivmod` | Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the shared loop at 0x201554DC ; the 71-caller divide ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): movs r2,#0 then the rsbs … **[fact]** |
 | 0x20164D54 | `__aeabi_i2d` | int -> IEEE double (sign, exponent 0x41D - clz, mantissa) **[fact]** |
 | 0x20164D82 | `__aeabi_ui2d` | unsigned int -> IEEE double **[fact]** |
+
+### C library string helpers (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): C library string helpers (armcc) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2014E208 | `strcasecmp` | Case-insensitive compare with tolower; cli_run_file, wav_list_dir **[fact]** |
+| 0x2014E250 | `strncasecmp` | Length-limited strcasecmp; fwname_pattern_match **[fact]** |
+| 0x2014E2E4 | `strncpy` | Copies up to n bytes and pads with 0 **[fact]** |
+| 0x2014E320 | `strtok_r` | (s, delims, &save): next token, 0 at the end; sfl_read_header, sdmenu_load_file, task_keycode **[fact]** |
+| 0x2014E3C4 | `str_to_long` | strtol/strtoul body: skips ctype spaces (__rt_ctype_table), sign, base 0 or 2..36 **[fact]** |
+| 0x2014E710 | `knl_current_task_id` | Running task id 0x208DC18C, 0 when it is the idle task (0x201659D0 + 1); task_root **[inference]** |
+
+### NORTi kernel internals (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): NORTi kernel internals **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201539EC | `knl_queue_remove` | Unlinks TCB param_1 (id param_2) from its ring (+6/+7 links, head at +0x10), the first half of knl_queue_move **[fact]** |
+| 0x20153A38 | `knl_queue_move` | Unlinks TCB param_2 (id param_3) from the id-linked ring it is in (+6 prev / +7 next, head byte at +0x10) and appends it to ring head param_1; TCB table 0x208DBBA0; used by the wait and ready paths of itron_* **[fact]** |
+| 0x20153B34 | `knl_freelist_alloc` | First-fit allocator on a free list {next, size}: rounds the size up to 8, splits or unlinks the block **[fact]** |
+| 0x20154524 | `knl_release_suspended` | Unlinks the woken task from the wait queue and returns without dispatch; itron_sig_sem takes this path when TCB +9 (suspend count) is non-zero **[fact]** |
+| 0x20154580 | `knl_make_ready` | Appends the TCB to ready queue 0x208DC18C + priority (TCB +4) and returns the dispatcher 0x2015655C if it beats the running priority 0x208003DF, else the plain return 0x201567F4; called by itron_sig_sem/set_flg/snd_mbx when a … **[fact]** |
+| 0x201545DC | `knl_wait_enter` | Moves the running task into an object's wait queue (knl_queue_move) and returns through 0x201566F0; the tail of every blocking itron_t* call (twai_sem, twai_flg, trcv_*, tsnd_*, tget_mpf, tloc_mtx) **[fact]** |
+| 0x2015476C | `knl_sys_alloc` | knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their control blocks here **[fact]** |
+| 0x2015655C | `knl_dispatch` | Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs **[fact]** |
+| 0x201567F4 | `knl_svc_return` | Returns from a service call with the saved PSR bits restored (0x208003CC \| spsr & ~0xC0); the no-dispatch exit of the itron_* calls **[fact]** |
+| 0x2015686C | `knl_int_disable` | Service call return that sets the I bit in the saved PSR (0x20156878); gic_enable_irq / gic_disable_irq / gic_def_inh wrap their register writes with it **[inference]** |
+| 0x2015688C | `knl_int_restore` | Service call return through 0x2015689C, which clears the I/F bits again **[inference]** |
+
+### armcc soft-float (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): armcc soft-float (double); operations from the constants in tsc2007_pressure (Rtouch = 400 * X/4096 * (Z2/Z1 - 1)) and touch_cal_fit (sum of 5 / 5.0) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20164888 | `__aeabi_dadd` | Double add: start + span*fraction in progress_scale, + 0.5 (0x3FE00000) rounding in touch_cal_apply **[inference]** |
+| 0x201649D8 | `__aeabi_ddiv` | Double divide: Z2/Z1 and X/4096.0 (0x40B00000) in tsc2007_pressure, sum/5.0 (0x40140000) in touch_cal_fit **[inference]** |
+| 0x20164C90 | `__aeabi_d2iz` | Double to signed int, truncating with saturation (0x7FFFFFFF ^ sign); follows "+ 0.5" in touch_cal_apply **[fact]** |
+| 0x20164CF0 | `__aeabi_d2uiz` | Double to unsigned int: negative gives 0, overflow 0xFFFFFFFF; tsc2007_pressure result **[fact]** |
+| 0x20164DA8 | `__aeabi_dmul` | Double multiply: 400.0 (0x40790000) * x in tsc2007_pressure, span * fraction in progress_scale, x * 100.0 in sd_format_request **[inference]** |
+| 0x20164EFC | `fp_nan_handler` | Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the caller's return address; armcc fplib internal **[fact]** |
+| 0x20164F98 | `fp_exception_stub` | Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) **[inference]** |
+| 0x20164FA4 | `__aeabi_dsub` | Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure **[inference]** |
