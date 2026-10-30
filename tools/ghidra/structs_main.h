@@ -1,9 +1,11 @@
 /* tools/ghidra/structs_main.h -- typed state blocks of the FT-710 MAIN firmware V01-12 (T23c).
  *
  * Source of truth for the structures and typed globals that tools/ghidra/ApplyStructs.java puts into the Ghidra
- * project (category /FT710). Apply after ApplySignatures.java:
- *   tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis \
- *     -scriptPath tools/ghidra -postScript ApplyStructs.java tools/ghidra/structs_main.h
+ * project (category /FT710). Apply after ApplySignatures.java and ApplyEnums.java (which creates the enums of
+ * enums_main.h that some fields use):
+ *   tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+ *     -postScript ApplyEnums.java tools/ghidra/enums_main.h tools/ghidra/enum_uses_main.tsv \
+ *     -postScript ApplyStructs.java tools/ghidra/structs_main.h
  *
  * First drafted (2026-10-29) from `tools/struct_offsets.py scan decomp/main <out> --access <StructAccessDump.tsv>`
  * (every offset and access width per block), the docs in docs/code/main/, the menu descriptors
@@ -14,9 +16,12 @@
  *   - `struct NAME {  / * size 0xNN: description * /` opens a structure of that size; `};` closes it.
  *   - one field per line: `TYPE name[N][M];  / * +0xOFF [tag] evidence * /`. The offset comment is required, fields are
  *     placed at that offset, and bytes no field covers stay undefined (Ghidra shows them as field_0x..).
- *   - TYPE is uint8_t int8_t char uint16_t int16_t uint32_t int32_t, `struct NAME` (declared earlier) or a pointer
- *     (`TYPE *`). The target is little-endian; the radio's records keep big-endian values, so those are byte arrays
- *     named *_be.
+ *   - TYPE is uint8_t int8_t char uint16_t int16_t uint32_t int32_t, `struct NAME` (declared earlier), `enum NAME`
+ *     (from enums_main.h; ApplyStructs looks it up under /FT710, so ApplyEnums.java must have run, and the field takes
+ *     the enum's @size, not C's int) or a pointer (`TYPE *`). The target is little-endian; the radio's records keep
+ *     big-endian values, so those are byte arrays named *_be.
+ *   - a bitfield: `TYPE name : N;  / * +0xOFF.B [tag] evidence * /` puts N bits at bit B (0 = LSB) of the TYPE-sized
+ *     unit at +0xOFF; the other bits of that unit stay undefined.
  *   - a top-level `TYPE name[N];  / * @0xADDRESS ... * /` places a typed global (struct instance, array, scalar or
  *     pointer) at that address, clearing the undefined data it covers, and labels it `name`. A name that starts with
  *     PTR_ or DAT_ keeps the default label (a retyped pointer then reads PTR_<target>_<address>, e.g. PTR_g_ui_00025d54).
@@ -28,6 +33,7 @@
  */
 
 #include <stdint.h>
+#include "enums_main.h"
 
 struct mode_blk {  /* size 0xA: one per-mode block of the channel record (radio-control.md "Per-mode block layout") */
     uint8_t flags;                               /* +0x000 [fact] bit 7 manual NOTCH on (BP), bit 6 CONTOUR on (CO), bit 5 APF on (CW block), bit 1 BI flag (cat_BP, cat_CO, cat_BI; radio-control.md per-mode block) */
@@ -39,7 +45,7 @@ struct mode_blk {  /* size 0xA: one per-mode block of the channel record (radio-
 };
 
 struct vfo_rec {  /* size 0x5A: the 90-byte VFO / memory / band-stack / QMB record; multi-byte values are big-endian (radio-control.md, eeprom.md) */
-    uint8_t mode;                                /* +0x000 [fact] bits 0-3 mode index (cat_mode_codes 0xFFF806D0: LSB USB CW-L CW-U AM AM-N FM FM-N DATA-L DATA-U DATA-FM DATA-FM-N RTTY-L RTTY-U PSK); bits 4-7 no reader (vfo_mode 0xFFFB3196) */
+    uint8_t mode;                                /* +0x000 [fact] bits 0-3 mode index (cat_mode_codes 0xFFF806D0: LSB USB CW-L CW-U AM AM-N FM FM-N DATA-L DATA-U DATA-FM DATA-FM-N RTTY-L RTTY-U PSK); bits 4-7 no reader (vfo_mode 0xFFFB3196). Kept a byte: as `enum radio_mode mode : 4` (+0x000.0) the export printed the whole-record copies as *(undefined1 *)p = *(undefined1 *)q and memch[n]._0_1_ = 9, and no compare got a MODE_ name (T23f, 2026-10-30) */
     uint8_t flags1;                              /* +0x001 [fact] bit 4 RX clarifier on, bit 3 TX clarifier on, bit 7 memory-scan SKIP (FUN_fffe5e3b); bit 2 read by AC (ATU on [inference]) */
     uint8_t flags2;                              /* +0x002 [fact] bits 2-3 repeater shift (0 minus, 1 simplex, 2 plus; cat_MW), bit 1 NB on (cat_NB, sdr_upd_r1a_nb_level) */
     uint8_t flags3;                              /* +0x003 [fact] bits 0-1 ATT (0 off, 6/12/18 dB; cat_RA, rf_bpf_update 0xFFFB56A5); bits 3-5 tone mode (cat_CT; values [inference]) */
@@ -107,7 +113,7 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t keyer_state;                         /* +0x02B 0x20B2F [fact] keyer / message-send state; 7 = stop, 5 = queued (cat_KY, FUN_fffe53c0) */
     uint8_t power_key_req;                       /* +0x02C 0x20B30 [fact] 2 = power-off requested by the power key (io_task 0xFFFB6D56; README.md) */
     uint8_t spk_boost_level;                     /* +0x02D 0x20B31 [fact] curve 0xFFF8117D value sent to R2A20178 channel 8 (speaker_route, FUN_fffb5d68; peripherals.md) */
-    uint8_t f_0x02e_u8;                          /* +0x02E 0x20B32 [fact: accessed] widths 1:27; speaker_route */
+    uint8_t spk_route_both;                      /* +0x02E 0x20B32 [fact] 1 only in speaker route 2 (internal + external speaker, PA6 set, AESS crossover), else 0 (speaker_route 0xFFFB8A8C; peripherals.md "Speaker routing"); no reader in V01-12 */
     uint16_t dsp_route_word;                     /* +0x030 0x20B34 [fact] route word for DSP reg 8: 0x2222 in TX, 0x3233/0x3263 by output select in RX (speaker_route, dsp_route_param; dsp-link.md) */
     uint16_t boot_error;                         /* +0x032 0x20B36 [fact] 2 = DSP missing, 3 = SDR/FPGA missing (dsp_link_init, sdr_init); frame 0x60 bytes 13..14 (display-link.md) */
     uint8_t lamp_map;                            /* +0x034 0x20B38 [fact] 8-bit map sent as status byte 8; FUN_fff98727 sets/clears one bit ("lamp" is [inference]; display-link.md) */
@@ -116,11 +122,11 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t spk_off_req;                         /* +0x037 0x20B3B [inference] speakers all off while set (speaker_route; peripherals.md route table) */
     uint8_t tuner_result;                        /* +0x038 0x20B3C [inference] tuner sub-state read by cat_AC (2/3 while 0x20F0C = 2) */
     uint8_t tx_lamp;                             /* +0x039 0x20B3D [fact] TX lamp state, a CAT busy guard (cat_SV, cat_RM, cat_RI; cat-commands-primary.md) */
-    uint8_t f_0x03a_u8;                          /* +0x03A 0x20B3E [fact: accessed] widths 1:22; FUN_fffed2a9 FUN_fffc4238 FUN_fffc42ef FUN_fffc43ec */
+    uint8_t tuner_key_req;                       /* +0x03A 0x20B3E [fact] tuner request with TUNER TYPE SELECT 0x9AB8 = 3: 1 (FUN_fffc4238) / 2 (FUN_fffc43ec) while the TX lamp is on, 3 + timer 0x20 = 1 s while the tune cycle 0x20F0C = 2 (FUN_fffc42ef, FUN_fffc44a3); FUN_fffed2a9 turns 1/2/3 into tuner_result 2/3/1 and clears it [inference: the key handlers are the tuner keys] */
     uint8_t atu_state;                           /* +0x03B 0x20B3F [fact] antenna tuner state, re-armed by FUN_fffec578 (radio-control.md) */
     uint8_t tune_cycle_3c;                       /* +0x03C 0x20B40 [inference] tune cycle state; vfo_mode forces CW-L while it is 2 (cat_AC P3=3 sets 1) */
     uint8_t tune_cycle_3d;                       /* +0x03D 0x20B41 [inference] tune cycle state; vfo_mode forces CW-L while it is 2 (cat_AC P3=3 sets 1) */
-    uint8_t f_0x03e_u8;                          /* +0x03E 0x20B42 [fact: accessed] widths 1:5; key_dsp_release key_dsp_short key_dsp_long FUN_fffc56cd */
+    uint8_t dsp_key_state;                       /* +0x03E 0x20B42 [fact] DSP key 0x312 outside the FUNC panel: 1 short (key_dsp_short), 2 long (key_dsp_long), 0 after key_dsp_release; while non-zero FUN_fffc56cd steps both sides (FUN_fffc5e0a(0) and (1)) */
     uint8_t power_fail_latch;                    /* +0x03F 0x20B43 [fact] power fail handled once (supply_undervolt_check; eeprom.md) */
     uint8_t pb3_last;                            /* +0x040 0x20B44 [inference] last PB3 state compared by io_task with timer 0x2A (README.md) */
     uint8_t defaults_loaded;                     /* +0x041 0x20B45 [fact] settings defaults were loaded at boot (eeprom_load_all, app_main) */
@@ -135,17 +141,17 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t hi_swr;                              /* +0x069 0x20B6D [inference] SWR alarm: set by swr_meter_protect, RI P1 (cat_RI) */
     uint8_t freq_settled_a;                      /* +0x06A 0x20B6E [fact] frequency settled, checked every 100 ms by FUN_fff9ccd3 (display-link.md) */
     uint8_t freq_settled_b;                      /* +0x06B 0x20B6F [fact] frequency settled, checked every 100 ms by FUN_fff9ccd3 */
-    uint8_t f_0x06c_u8;                          /* +0x06C 0x20B70 [fact: accessed] widths 1:1; FUN_fff97105 */
+    uint8_t status_bit_6c;                       /* +0x06C 0x20B70 [fact] status byte bit 4 (FUN_fff97105); no writer in MAIN, always 0 */
     uint8_t tuner_indicator;                     /* +0x06D 0x20B71 [fact] 1 = tuner on, blinking while it tunes (tuner_task, FUN_fffec62b; display-link.md) */
     uint8_t fm_tone_mode;                        /* +0x06E 0x20B72 [fact] FM tone mode in use (rec+3 bits 3-5 in FM/DATA-FM; dsp_set_ctcss_dec) */
     uint8_t status_bit_6f;                       /* +0x06F 0x20B73 [fact] status byte 16 bit 4; no writer in MAIN, always 0 */
     uint8_t func_panel_open;                     /* +0x070 0x20B74 [fact] FUNC-knob function display open, 5 s timer 0x44 (FUN_fffc89b0) */
-    uint8_t f_0x071_u8;                          /* +0x071 0x20B75 [fact: accessed] widths 1:15; FUN_fffc8ff9 FUN_fff97abc qmb_boot_init FUN_fffbda47 */
-    uint8_t f_0x072_u8;                          /* +0x072 0x20B76 [fact: accessed] widths 1:19; FUN_fffbda47 FUN_fffbdad5 FUN_fffbdb63 FUN_fffbdcb0 */
+    uint8_t func_blink_on;                       /* +0x071 0x20B75 [fact] FUNC-panel blink phase, sent as bit 6 of the FUNC status byte (FUN_fff97abc); toggled every 450 ms (timer 0x45 = 0x1C2) by FUN_fffc8ff9 while func_blink_en is set; 1 when the panel is closed */
+    uint8_t func_blink_en;                       /* +0x072 0x20B76 [fact] FUNC-panel blinking on: set by the DSP-knob function handlers (FUN_fffbda47..FUN_fffbdf98, key_dsp_release) with timer 0x45, cleared when they leave edit (FUN_fff97abc, FUN_fffc3a10) */
     uint8_t dsp_knob_func;                       /* +0x073 0x20B77 [fact] DSP knob function: 0 SHIFT, 1 WIDTH, 2 NOTCH, 3 CONTOUR/APF (cat_SF P1=1) */
-    uint8_t f_0x074_u8;                          /* +0x074 0x20B78 [fact: accessed] widths 1:23; FUN_fffbda47 FUN_fffbdad5 FUN_fffbdb63 FUN_fffbdcb0 */
-    uint8_t f_0x075_u8;                          /* +0x075 0x20B79 [fact: accessed] widths 1:4; key_dsp_release key_dsp_short */
-    uint8_t f_0x076_u8;                          /* +0x076 0x20B7A [fact: accessed] widths 1:3; key_dsp_release key_dsp_long */
+    uint8_t dsp_knob_edit;                       /* +0x074 0x20B78 [fact] toggled by the DSP-knob function handlers FUN_fffbda47 (SHIFT), FUN_fffbdad5 (WIDTH), FUN_fffbdb63 (NOTCH), FUN_fffbdcb0/FUN_fffbde58 (CONTOUR/APF), FUN_fffbdf98; enc3_step and displink_rx_E1_encoder test it, func_display_open clears it [inference: the function value is being edited] */
+    uint8_t dsp_key_func_short;                  /* +0x075 0x20B79 [fact] DSP key short press while the FUNC panel is open (key_dsp_short); key_dsp_release acts on it and clears it */
+    uint8_t dsp_key_func_long;                   /* +0x076 0x20B7A [fact] DSP key long press while the FUNC panel is open (key_dsp_long); key_dsp_release then calls FUN_fffc4dec and clears it */
     uint8_t dvs_state;                           /* +0x078 0x20B7C [fact] voice-message state: 2 = playing (cat_LM, cat_PB, E8 status) */
     uint8_t dvs_slot;                            /* +0x079 0x20B7D [fact] voice-message slot n-1 (cat_LM) */
     uint8_t func_knob_item;                      /* +0x07A 0x20B7E [fact] FUNC item code 0x1D..0x21 (cat_SF P1=1, cat_SH) */
@@ -177,18 +183,18 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t dl_req_34;                           /* +0x099 0x20B9D [fact] request: frame 0x34 (displink_tx_34 0xFFF98F7C) */
     uint8_t dl_block_34;                         /* +0x09A 0x20B9E [fact] blocks after frame 0x34; also clears the PTT requests (tx_freq_allowed) */
     uint8_t power_on_reason;                     /* +0x09B 0x20B9F [fact] power-on reason byte from the F0 hello (README.md) */
-    uint8_t f_0x09c_u8;                          /* +0x09C 0x20BA0 [fact: accessed] widths 1:3; displink_rx_E0_key key_task key_cancel_check */
+    uint8_t key_ev_src;                          /* +0x09C 0x20BA0 [fact] key mailbox: high nibble of the DISPLAY E0 event byte (displink_rx_E0_key); 4 = touch on the scope, which key_task sends to key_touch_scope_tune; key_cancel_check ignores source 4 */
     uint8_t key_ev_type;                         /* +0x09D 0x20BA1 [fact] key mailbox: event type (displink_rx_E0_key -> key_task) */
     uint16_t key_ev_code;                        /* +0x09E 0x20BA2 [fact] key mailbox: key code */
     uint8_t key_ev_flag;                         /* +0x0A0 0x20BA4 [fact] key mailbox: new event */
-    uint8_t f_0x0a1_u8;                          /* +0x0A1 0x20BA5 [fact: accessed] widths 1:5; displink_rx_E1_encoder enc_main_dial */
-    uint8_t f_0x0a2_u8;                          /* +0x0A2 0x20BA6 [fact: accessed] widths 1:2; displink_rx_E1_encoder */
+    uint8_t enc_ev_id;                           /* +0x0A1 0x20BA5 [fact] encoder id from DISPLAY frame E1 byte 1 (displink_rx_E1_encoder): 1 main dial, 2/3 other knobs, 6 = FUNC knob while the panel is open (then handled as 3); enc_main_dial tests 6 */
+    uint8_t enc_ev_steps;                        /* +0x0A2 0x20BA6 [fact] signed step count of the main-dial E1 frame (byte 2), passed to enc_main_dial or ui_numentry_step (displink_rx_E1_encoder) */
     uint8_t rf_gain;                             /* +0x0A3 0x20BA7 [fact] RF gain (cat_RG; 0x464D instead when 0x9AB6 != 0) */
     uint8_t af_gain;                             /* +0x0A4 0x20BA8 [fact] AF gain (cat_AG), through table 0xFFF81362 to the speaker amp */
-    uint8_t f_0x0a5_u8;                          /* +0x0A5 0x20BA9 [fact: accessed] widths 1:3; displink_rx_E2 FUN_fffcf45c */
+    uint8_t sd_state_known;                      /* +0x0A5 0x20BA9 [fact] set by the first DISPLAY E2 frame (SD-card state, displink_rx_E2); FUN_fffcf45c reacts to SD changes only after it */
     uint8_t sd_present;                          /* +0x0A6 0x20BAA [fact] SD card present (displink_rx_E2 0xFFF95BF4) */
-    uint8_t f_0x0a7_u8;                          /* +0x0A7 0x20BAB [fact: accessed] widths 1:4; displink_rx_E2 FUN_fffcf45c */
-    uint8_t f_0x0a8_u8;                          /* +0x0A8 0x20BAC [fact: accessed] widths 1:5; displink_rx_E7 displink_rx_E8 */
+    uint8_t sd_present_prev;                     /* +0x0A7 0x20BAB [fact] previous sd_present, for change detection in FUN_fffcf45c (displink_rx_E2 sets both at the first E2) */
+    uint8_t audio_ev_kind;                       /* +0x0A8 0x20BAC [fact] byte 1 of the last DISPLAY E7/E8 frame: 0 file count, 1 play status, 0xFF error (displink_rx_E7, displink_rx_E8) */
     uint8_t wav_count;                           /* +0x0AA 0x20BAE [fact] number of .wav files (E7 status 1) */
     uint8_t audio_playing;                       /* +0x0AB 0x20BAF [fact] E7/E8 playback status (0 = stopped); with 0x20F01 the TX audio is muted (dsp_set_tx_gain) */
     uint8_t audio_error;                         /* +0x0AC 0x20BB0 [fact] E7/E8 error index (status 5) */
@@ -200,14 +206,14 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t rtc_set[5];                          /* +0x0B2 0x20BB6 [fact] clock to set on the DISPLAY RTC (frame 0x65; cat_DT mirrors) */
     uint8_t dl_req_64;                           /* +0x0B7 0x20BBB [fact] request: frame 0x64 */
     uint8_t dl_64_value;                         /* +0x0B8 0x20BBC [fact] frame 0x64 b1, sent when it changes (displink_tx_64 0xFFF986E0) */
-    uint8_t f_0x0b9_u8;                          /* +0x0B9 0x20BBD [fact: accessed] widths 1:4; displink_tx_64 qmb_boot_init FUN_fffc82b7 */
+    uint8_t dl_64_sent;                          /* +0x0B9 0x20BBD [fact] last value sent in frame 0x64; displink_tx_64 sends only when dl_64_value differs; 0xFF = none (qmb_boot_init, FUN_fffc82b7) */
     uint8_t zz_align_mode;                       /* +0x0BA 0x20BBE [fact] factory alignment mode (ZZPE071000, boot code 2; #76) */
     uint8_t dialog_msg;                          /* +0x0BB 0x20BBF [fact] dialog ROM text number for frame 0x70 */
     uint8_t reset_kind;                          /* +0x0BC 0x20BC0 [fact] menu reset selection passed to reset_select (menu_reset_exec) */
     uint8_t dialog_button;                       /* +0x0BD 0x20BC1 [fact] selected dialog button (frame 0x70 byte 0x9A) */
     uint8_t kbd_target;                          /* +0x0BE 0x20BC2 [fact] on-screen keyboard target (displink_build_50, cat_KM) */
     uint8_t msg_slot_idx;                        /* +0x0BF 0x20BC3 [fact] message slot n-1 (FUN_fffe538f) */
-    uint8_t f_0x0c0_u8;                          /* +0x0C0 0x20BC4 [fact: accessed] widths 1:19; FUN_fffe29b7 FUN_fff9a364 FUN_fff9a42f FUN_fff9a5c8 */
+    uint8_t kbd_layout;                          /* +0x0C0 0x20BC4 [fact] on-screen keyboard layout 0/1/2 (FUN_fffe29b7: key 0x81 toggles 0/1, 0x82 sets 0, 0x83 sets 2), frame 0x50 byte 0x98 (FUN_fff9a364..FUN_fff9a6f9); 0 lower case, 1 Caps, 2 symbols is [inference] (display-link.md) */
     uint8_t kbd_cursor;                          /* +0x0C1 0x20BC5 [fact] keyboard cursor (FUN_fffe29b7) */
     uint8_t msg_text[5][50];                     /* +0x0C2 0x20BC6 [fact] 5 x 50-byte message texts edited by the keyboard and sent in frame 0x39 */
     uint8_t kbd_show_cursor_char;                /* +0x1BC 0x20CC0 [fact] the character under the cursor is sent as 0xFF unless set */
@@ -216,9 +222,9 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t dl_req_popup_b;                      /* +0x1C1 0x20CC5 [fact] pop-up request (frame 0x30/0x31, entry 16) */
     uint8_t popup_code;                          /* +0x1C2 0x20CC6 [fact] pop-up code: frame 0x30 when < 0x1E or 0xFF, 0x31 when < 0x5F (displink_tx_30_31 0xFFF98ECB) */
     uint8_t popup_sel;                           /* +0x1C3 0x20CC7 [fact] selection shown in the 0x30 pop-up (ATT, IPO/AMP, BC rows) */
-    uint8_t f_0x1c4_u8;                          /* +0x1C4 0x20CC8 [fact: accessed] widths 1:2; displink_build_37 */
-    uint8_t f_0x1c5_u8;                          /* +0x1C5 0x20CC9 [fact: accessed] widths 1:6; displink_build_37 FUN_fffc3a10 FUN_fffc3c23 FUN_fffc3c85 */
-    uint8_t f_0x1c6_u8;                          /* +0x1C6 0x20CCA [fact: accessed] widths 1:2; displink_build_37 */
+    uint8_t dl37_bit7;                           /* +0x1C4 0x20CC8 [fact] frame 0x37 byte 0x98 bit 7; displink_build_37 sets it to 1 before every build */
+    uint8_t func_assigned;                       /* +0x1C5 0x20CC9 [fact] frame 0x37 byte 0x98 bit 6: set by func_knob_assign and by the TXW-on branch of FUN_fffc3f9c (both with FUN_fffc8e0e(500)), cleared by func_panel_close and FUN_fffc3a10 [inference: confirmation shown after a FUNC assignment] */
+    uint8_t dl37_bit5;                           /* +0x1C6 0x20CCA [fact] frame 0x37 byte 0x98 bit 5; displink_build_37 clears it before every build */
     uint8_t msgmem_type;                         /* +0x1C7 0x20CCB [fact] message-memory screen type (2 = EM text slots; frame 0x39) */
     uint8_t msg_slot;                            /* +0x1C8 0x20CCC [fact] message slot n (FUN_fffe538f) */
     uint8_t msg_rec_active;                      /* +0x1C9 0x20CCD [inference] message recording active (cat_LM busy guard, RI P2) */
@@ -236,21 +242,20 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t memlist_flag;                        /* +0x1D9 0x20CDD [fact] MEMORY CH LIST byte 0x98 bit 6 */
     uint8_t memlist_group;                       /* +0x1DA 0x20CDE [fact] MEMORY CH LIST byte 0x99 high nibble */
     uint8_t memlist_row;                         /* +0x1DB 0x20CDF [fact] MEMORY CH LIST cursor row */
-    uint8_t popup_band;                          /* +0x1DC 0x20CE0 [fact] band shown in the BAND pop-up */
+    enum band_idx popup_band;                    /* +0x1DC 0x20CE0 [fact] band shown in the BAND pop-up: FUN_fffc3006 (band_of_freq of the dial, BAND_GEN if none) in key_band_short, cursor - 0x6B in FUN_fffc151d; frame 0x30 code 0xC byte 1 (displink_build_30) */
     uint8_t align_cursor_row;                    /* +0x1DD 0x20CE1 [fact] alignment menu cursor row 0..8 (frame 0x62) */
     uint16_t align_item;                         /* +0x1DE 0x20CE2 [fact] alignment item 0..0x104 (align_store, align_load_preset 0xFFFBB567) */
     uint8_t sdreq_type;                          /* +0x1E0 0x20CE4 [fact] SD request frame type 0x43/0x44/0x45 */
     uint16_t sdreq_len;                          /* +0x1E2 0x20CE6 [fact] SD request frame length */
-    uint8_t f_0x1e4_u8;                          /* +0x1E4 0x20CE8 [fact: accessed] widths 1:21; displink_build_req FUN_fff98c75 sd_memlist_load_start sd_memlist_save_start */
-    uint8_t f_0x1e5_u8;                          /* +0x1E5 0x20CE9 [fact: accessed] widths 1:17,4:1; FUN_fff98c75 sd_load_start sd_save_start sd_info_start */
-    uint8_t f_0x1e6_u8;                          /* +0x1E6 0x20CEA [fact: accessed] widths 1:16; FUN_fffd0c59 sd_load_start sd_save_start sd_info_start */
-    uint8_t f_0x1e7_u8;                          /* +0x1E7 0x20CEB [fact: accessed] widths 1:15; sd_load_start sd_save_start sd_info_start sd_format_start */
-    uint8_t f_0x1e8_u8;                          /* +0x1E8 0x20CEC [fact: accessed] widths 1:14; sd_load_start sd_save_start sd_info_start sd_format_start */
-    uint8_t f_0x1e9_u8;                          /* +0x1E9 0x20CED [fact: accessed] widths -; FUN_fffd1078 FUN_fffd1252 */
-    uint8_t f_0x1f8_u8;                          /* +0x1F8 0x20CFC [fact: accessed] widths 1:1; FUN_fffd1252 */
+    uint8_t sdreq_op;                            /* +0x1E4 0x20CE8 [fact] SD request byte 1: 0x43 op (1 MEM LIST LOAD, 2 MEM LIST SAVE, 3 MENU LOAD, 4 MENU SAVE, 5 INFORMATIONS, 8 FORMAT; sd_*_start) or the transfer id 0x41..0x44 (sd_save_xfer_id, FUN_fffd0566); displink_build_req sends it after the type (display-link.md "SD CARD transfers") */
+    uint8_t sdreq_arg1;                          /* +0x1E5 0x20CE9 [fact] SD request byte 2: 0x43 sub-command (1 list page, 0x10 open file, 4 save value), 0x44/0x45 offset high byte (FUN_fffd0980, FUN_fffd0fde from 0x1FF02) */
+    uint8_t sdreq_arg2;                          /* +0x1E6 0x20CEA [fact] SD request byte 3: 0x43 page 0x15DE7 (+ row 0x15DE8 for sub 0x10), 0x44/0x45 offset low byte */
+    uint8_t sdreq_arg3;                          /* +0x1E7 0x20CEB [fact] SD request byte 4: 0x43 row 0x15DE8 or 0x50, 0x44/0x45 length high byte (0x1FF04) */
+    uint8_t sdreq_arg4;                          /* +0x1E8 0x20CEC [fact] SD request byte 5: 0x44/0x45 length low byte, 0 in the 0x43 frames */
+    uint8_t sdreq_data[256];                     /* +0x1E9 0x20CED [fact] SD request data: 0x100 bytes of the image block in frame 0x45 (FUN_fffd1078 copies 0x1FF04 bytes), or 15 bytes from 0x15DEA plus a 0 at +0x1F8 in the 0x43 sub 0x10 frame (FUN_fffd1252); display-link.md "SD CARD transfers" */
     uint8_t sd_answer[265];                      /* +0x2ED 0x20DF1 [fact] answer of DISPLAY frames C3/C4/C5 (displink_rx_C3, displink_rx_C4_C5) */
     uint8_t sd_answer_ready;                     /* +0x3F6 0x20EFA [fact] set when an answer arrived */
-    uint8_t f_0x3f7_u8;                          /* +0x3F7 0x20EFB [fact: accessed] widths 1:43; sd_format_step FUN_fffd077e sd_save_step sd_load_start */
+    uint8_t sd_step;                             /* +0x3F7 0x20EFB [fact] step of the SD-menu operation run by sd_menu_task: 1 at sd_*_start, then 2..11, 99 (FUN_fffcfe2d); sd_step_reset clears it (docs/code/main/README.md task 13) */
     uint8_t playlist_req;                        /* +0x3F8 0x20EFC [fact] request: send frame 0x3A once */
     uint8_t playlist_substate;                   /* +0x3F9 0x20EFD [fact] PlayList sub-state (3 = delete) */
     uint16_t playlist_first;                     /* +0x3FA 0x20EFE [fact] first file shown (sent big-endian) */
@@ -261,58 +266,54 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint8_t dl_req_24;                           /* +0x400 0x20F04 [fact] request: frame 0x24 display settings (cat_DA) */
     uint8_t dl_req_24_later;                     /* +0x401 0x20F05 [fact] frame 0x24 again after timer 0x2B */
     uint8_t txw_swap;                            /* +0x405 0x20F09 [fact] TS swap flag: A/B records swapped (cat_TS) */
-    uint8_t f_0x406_u8;                          /* +0x406 0x20F0A [fact: accessed] widths 1:7; FUN_fffd0194 FUN_fffd04a6 FUN_fffd05cf FUN_fffd077e */
+    uint8_t sd_busy;                             /* +0x406 0x20F0A [fact] set with sd_step 5 (FUN_fffd0194), 8 (FUN_fffd04a6) and 3 (FUN_fffd16f7), cleared by sd_step_reset, FUN_fffd077e, FUN_fffd12fd and sd_format_step; no reader in V01-12 [inference: a transfer is in progress] */
     uint8_t cw_spot_on;                          /* +0x407 0x20F0B [fact] CS flag (cat_CS, beep_request(4)) */
     uint8_t tune_cycle;                          /* +0x408 0x20F0C [fact] tune / EXT-PA cycle: 1 requested, 2 running (cat_AC, vfo_mode) */
     uint8_t key_consumed;                        /* +0x409 0x20F0D [fact] set by the press handlers; key_task skips key_call_short/key_call_long while it is set (FUN_fffc0b2f, key_task 0xFFFBBD58) */
-    uint8_t f_0x40a_u8;                          /* +0x40A 0x20F0E [fact: accessed] widths 1:3; FUN_fffcdbb8 FUN_fffcd54d */
+    uint8_t rtc_edit_apply;                      /* +0x40A 0x20F0E [fact] set by datetime_edit_load in menu state 3; FUN_fffcdbb8 then copies rtc_set[] into rtc_yy..rtc_min and clears it */
     uint8_t vfo_refresh_req;                     /* +0x40B 0x20F0F [inference] refresh request read by freq_cache_update; set after an EX menu apply and by the TS swap (T10f) */
     uint8_t freq_refresh_req;                    /* +0x40C 0x20F10 [fact] frequency-cache refresh request for freq_cache_update (set by ~90 functions; T10g) */
-    uint8_t f_0x40d_u8;                          /* +0x40D 0x20F11 [fact: accessed] widths 1:197; FUN_fff97e1d FUN_fff98303 cat_AB cat_BA */
-    uint8_t f_0x40e_u8;                          /* +0x40E 0x20F12 [fact: accessed] widths 1:4; displink_build_status FUN_fffe1a00 FUN_fff97e1d FUN_fff98303 */
-    uint8_t f_0x40f_u8;                          /* +0x40F 0x20F13 [fact: accessed] widths 1:1,4:2; FUN_fffe1a00 FUN_fffe1f60 FUN_fff982bb FUN_fff98303 */
-    uint8_t f_0x410_u8;                          /* +0x410 0x20F14 [fact: accessed] widths 1:5; FUN_fffe1a00 FUN_fffe1e85 */
-    uint8_t f_0x411_u8;                          /* +0x411 0x20F15 [fact: accessed] widths 1:17; FUN_fffe207f FUN_fffe1a00 FUN_fffe1e85 FUN_fffe2299 */
-    uint8_t f_0x412_u8;                          /* +0x412 0x20F16 [fact: accessed] widths 1:13; FUN_fffe207f FUN_fffe1a00 FUN_fffe1e85 FUN_fffe2299 */
-    uint8_t f_0x413_u8;                          /* +0x413 0x20F17 [fact: accessed] widths 1:6; FUN_fffe1a00 FUN_fffbc782 FUN_fffe1e85 */
-    uint8_t f_0x414_u8;                          /* +0x414 0x20F18 [fact: accessed] widths 1:3; FUN_fffbc782 FUN_fffc23b6 FUN_fffe1a00 */
-    uint8_t f_0x415_u8;                          /* +0x415 0x20F19 [fact: accessed] widths 1:16; FUN_fffbcbea FUN_fffbcc6f FUN_fffc8e26 freq_fix_below */
-    uint8_t f_0x416_u8;                          /* +0x416 0x20F1A [fact: accessed] widths 1:4; FUN_fff98363 FUN_fffbcbea FUN_fffbcc6f FUN_fffc616e */
+    uint8_t keypad_open;                         /* +0x40D 0x20F11 [fact] direct-frequency keypad (pop-up 8) open: set by FUN_fffbc782 and FUN_fffe1e85, cleared by popup8_close; a CAT busy guard (cat_FA_FB, cat_MD, cat_BS, ... reply ?; while 1) and key_event_filter blocks keys */
+    enum vfo_side status_side;                   /* +0x40E 0x20F12 [fact] side of the record in the last status frame: displink_build_status alternates VFO-A (0) and VFO-B (1); FUN_fff97e1d / FUN_fff98303 compare their side argument with it */
+    uint8_t keypad_bcd[5];                       /* +0x40F 0x20F13 [fact] keypad digits, packed BCD, 0xF = empty: freq_keypad_key writes nibble (count >> 1) and converts bytes +1..+4 with bcd_to_bin (x1000000, x10000, x100, x1) into the frequency; FUN_fffe1e85 / FUN_fffe1f60 fill them with 0xFF */
+    uint8_t keypad_set_fix;                      /* +0x414 0x20F18 [fact] set by FUN_fffbc782 when it opens the keypad, cleared by popup8_close; while 1 the entered frequency is also stored as the FIX-mode scope start (freq_keypad_key -> FUN_fffe1d96 = bandmem_set(2)) */
+    uint8_t digit_step_on;                       /* +0x415 0x20F19 [fact] big-step tuning: toggled by FUN_fffbcbea / FUN_fffbcc6f, cleared after 6 blink periods of timer 0x3D (FUN_fffc8e26) and by ui_clear_415_423; FUN_fffc616e then steps 1 MHz or 1 kHz (digit_step_khz); freq_fix_below/above */
+    uint8_t digit_step_khz;                      /* +0x416 0x20F1A [fact] step of digit_step_on: 0 = 1 MHz (FUN_fffbcbea), 1 = 1 kHz (FUN_fffbcc6f) (FUN_fffc616e); FUN_fff98363 blanks a digit by it */
     uint8_t dvs_busy;                            /* +0x417 0x20F1B [inference] voice-message play/record busy: set with playback start by cat_LM / cat_PB, a CAT busy guard (blocks FT/MD) */
     uint8_t scan_running;                        /* +0x418 0x20F1C [fact] scan running (cat_SC, scan_task) */
     uint8_t scan_hold;                           /* +0x419 0x20F1D [inference] scan stopped on a signal (scan_task; RI P6 = 2) */
     uint8_t scope_skip;                          /* +0x41A 0x20F1E [fact] scope fields not sent while set (FUN_fff97ba6) */
     uint8_t ss08_value;                          /* +0x41B 0x20F1F [fact] SS P2=8 value 0/1 (cat_SS) */
-    uint8_t f_0x41c_u8;                          /* +0x41C 0x20F20 [fact: accessed] widths 1:3; FUN_fffc6c20 FUN_fffc6f11 FUN_fffc8beb */
-    uint8_t f_0x41d_u8;                          /* +0x41D 0x20F21 [fact: accessed] widths 1:7; FUN_fffe1f3d FUN_fffe1f60 FUN_fff97e1d FUN_fff982bb */
-    uint8_t f_0x41e_u8;                          /* +0x41E 0x20F22 [fact: accessed] widths 1:4; key_band_short FUN_fffc151d FUN_fffc15d4 FUN_fffc1605 */
+    uint8_t f_0x41c_u8;                          /* +0x41C 0x20F20 [fact: accessed] func_knob_turn sends the turn to FUN_fffc6f11 while it is 1; FUN_fffc6f11 and popup_close clear it; no code sets it to 1 in V01-12 */
+    uint8_t popup7_open;                         /* +0x41D 0x20F21 [fact] pop-up 7 open: FUN_fffe1f60 opens it with split_on = 1, empty keypad digits and timer 0x46 = 10 s; FUN_fffe1f3d closes it; a busy guard next to keypad_open (FUN_fffe60a6) */
+    uint8_t band_popup_pick;                     /* +0x41E 0x20F22 [fact] a band was picked in the BAND pop-up (code 0xC): set by FUN_fffc151d and FUN_fffc1605, cleared by key_band_short; FUN_fffc15d4 then selects popup_cursor */
     uint8_t menu_p1;                             /* +0x41F 0x20F23 [fact] current menu P1 (menu.md) */
     uint8_t menu_p2;                             /* +0x420 0x20F24 [fact] current menu local P2 */
     uint8_t menu_step_dir;                       /* +0x421 0x20F25 [fact] on_step direction, 0 = up */
-    uint8_t f_0x422_u8;                          /* +0x422 0x20F26 [fact: accessed] widths 1:5; FUN_fffc8e26 FUN_fffc8ebc */
-    uint8_t f_0x423_u8;                          /* +0x423 0x20F27 [fact: accessed] widths 1:5; FUN_fffc8e26 FUN_fff9847e FUN_fffc4caa FUN_fffc8ebc */
-    uint8_t band_cur;                            /* +0x424 0x20F28 [fact] band of the active side, <= 11 (band_select) */
+    uint8_t digit_step_blinks;                   /* +0x422 0x20F26 [fact] blink counter of digit_step_on: FUN_fffc8e26 counts the timer 0x3D periods and clears digit_step_on after 6; FUN_fffc8ebc restarts it */
+    uint8_t digit_step_blink_on;                 /* +0x423 0x20F27 [fact] blink phase of the selected digit (FUN_fffc8e26), returned by FUN_fff9847e for the status frame (FUN_fff98363) */
+    uint8_t popup_cursor;                        /* +0x424 0x20F28 [fact] cursor item of the open pop-up, frame 0x30 byte 3 (displink_build_30): the mode 0..15 for code 5 (key_mode_short, mode_popup_select, FUN_fffc6cd7 steps it 0..15), the SS03 value for code 0xB (FUN_fffc3cd9), the band 0..11 for code 0xC (key_band_short, band_select clamps it to 11); FUN_fffc396d acts on it. So not a band_idx */
     uint8_t clar_flags_a;                        /* +0x425 0x20F29 [fact] clarifier VFO-A: bit 0 RX, bit 1 TX (cat_CF, vfo_freq_clar) */
     uint8_t clar_flags_b;                        /* +0x426 0x20F2A [fact] clarifier VFO-B: bit 0 RX, bit 1 TX */
     char popup_text[9];                          /* +0x427 0x20F2B [inference] free-text pop-up, 9 characters (FUN_fff9a044) */
     uint8_t numentry_mode;                       /* +0x437 0x20F3B [fact] numeric-entry / adjust mode (F0 boot code 4; #72) */
-    uint8_t f_0x438_u8;                          /* +0x438 0x20F3C [fact: accessed] widths 1:2; FUN_fffc9046 */
+    uint8_t lamp_restore_req;                    /* +0x438 0x20F3C [fact] FUN_fffc9046 restores the lamps (ui_lamp_set(0x12233, 0x12234)) when timer 0x41 expires while it is set, and clears it; no writer of 1 in V01-12 */
     uint8_t memlist_first;                       /* +0x439 0x20F3D [fact] first channel row of the MEMORY CH LIST (frame 0x41) */
-    uint8_t f_0x43a_u8;                          /* +0x43A 0x20F3E [fact: accessed] widths 1:36; FUN_fffc22de FUN_fffc2b94 FUN_fffc4064 FUN_fffc2137 */
-    uint8_t f_0x43b_u8;                          /* +0x43B 0x20F3F [fact: accessed] widths 1:11; FUN_fffc1fb6 FUN_fffc38fa FUN_fffc21e8 FUN_fffc224e */
-    uint8_t f_0x43c_u8;                          /* +0x43C 0x20F40 [fact: accessed] widths 1:6; FUN_fffc1fb6 FUN_fffc21c7 FUN_fffc38fa FUN_fffc6800 */
-    uint8_t f_0x43d_u8;                          /* +0x43D 0x20F41 [fact: accessed] widths 1:4; vfo_store_back FUN_fffc17df vfo_reload vfo_enter_mem_state */
-    uint8_t f_0x43e_u8;                          /* +0x43E 0x20F42 [fact: accessed] widths 1:4; vfo_store_back FUN_fffc184f vfo_reload vfo_enter_mem_state */
-    uint8_t f_0x43f_u8;                          /* +0x43F 0x20F43 [fact: accessed] widths 1:5; FUN_fffc18c3 FUN_fffc1a0d FUN_fffc1a35 FUN_fffc1d95 */
-    uint8_t f_0x440_u8;                          /* +0x440 0x20F44 [fact: accessed] widths 1:3; FUN_fffc18e1 FUN_fffc1dca FUN_fffc2937 */
-    uint8_t f_0x441_u8;                          /* +0x441 0x20F45 [fact: accessed] widths 1:3; FUN_fffc18c3 FUN_fffc1d95 FUN_fffc2937 */
-    uint8_t f_0x442_u8;                          /* +0x442 0x20F46 [fact: accessed] widths 1:3; FUN_fffc18e1 FUN_fffc1dca FUN_fffc2937 */
-    uint8_t f_0x443_u8;                          /* +0x443 0x20F47 [fact: accessed] widths 1:12; vfo_ab_toggle vfo_store_back FUN_fffc2426 qmb_recall */
-    uint8_t f_0x444_u8;                          /* +0x444 0x20F48 [fact: accessed] widths 1:6; FUN_fffc568a qmb_recall vfo_mark_tuned FUN_fffc17df */
-    uint8_t f_0x445_u8;                          /* +0x445 0x20F49 [fact: accessed] widths 1:12; vfo_ab_toggle vfo_store_back FUN_fffc2426 qmb_recall */
-    uint8_t f_0x446_u8;                          /* +0x446 0x20F4A [fact: accessed] widths 1:4; qmb_recall vfo_mark_tuned FUN_fffc184f FUN_fffc30af */
+    uint8_t memlist_ch;                          /* +0x43A 0x20F3E [fact] channel index (into memch[]) under the MEMORY CH LIST cursor (memlist_cursor_channel); the list handlers read, tag and store that channel (memch_valid, eeprom_save_memch, memch_current_set) */
+    uint8_t memlist_popup55;                     /* +0x43B 0x20F3F [fact] pop-up 0x55 opened from the MEMORY CH LIST for a valid channel (FUN_fffc21e8, FUN_fffc224e, FUN_fffc2296); memlist_key / FUN_fffc38fa / popup_close clear it [inference: a confirmation] */
+    uint8_t memlist_edit_on;                     /* +0x43C 0x20F40 [fact] set by memlist_key for keys 5..7 (group 1..3); FUN_fffc6800 then sends dial turns to the group editor (FUN_fffc6ac4 / FUN_fffc6b34 / FUN_fffc6b86) instead of moving the cursor */
+    uint8_t force_bandstack_a;                   /* +0x43D 0x20F41 [fact] VFO-A: while 1, vfo_store_back / FUN_fffc17df / vfo_reload use the band stack whatever the state; cleared by vfo_enter_mem_state; no writer of 1 in V01-12 */
+    uint8_t force_bandstack_b;                   /* +0x43E 0x20F42 [fact] VFO-B: as force_bandstack_a (vfo_store_back, FUN_fffc184f, vfo_reload) */
+    uint8_t memtune_valid_a;                     /* +0x43F 0x20F43 [fact] VFO-A memory-tune copy made: set by FUN_fffc18c3 (with memtune_backup_a), FUN_fffc1a0d, FUN_fffc1a35; FUN_fffc1d95 reloads the memory channel instead while 0; memtune_flags_clear */
+    uint8_t memtune_valid_b;                     /* +0x440 0x20F44 [fact] VFO-B: as memtune_valid_a (FUN_fffc18e1, FUN_fffc1dca, memtune_flags_clear) */
+    uint8_t memtune_backup_a;                    /* +0x441 0x20F45 [fact] VFO-A memtune_backup_a done (FUN_fffc18c3); FUN_fffc1d95 restores the backup while 1, else memch_load_to_vfo */
+    uint8_t memtune_backup_b;                    /* +0x442 0x20F46 [fact] VFO-B: as memtune_backup_a (FUN_fffc18e1, FUN_fffc1dca) */
+    uint8_t edited_a;                            /* +0x443 0x20F47 [fact] VFO-A record edited: set by vfo_mark_edited(0), vfo_mark_edited_if_vfo, vfo_ab_toggle, FUN_fffc2426, FUN_fffc4a8e; vfo_store_back(0) stores the record back only while it is set and clears it */
+    uint8_t tuned_a;                             /* +0x444 0x20F48 [fact] VFO-A tuned: set by vfo_mark_tuned(0) and FUN_fffc568a, cleared by FUN_fffc17df and qmb_recall; FUN_fffc30af tests it with edited_a */
+    uint8_t edited_b;                            /* +0x445 0x20F49 [fact] VFO-B: as edited_a (vfo_mark_edited(1), vfo_store_back(1)) */
+    uint8_t tuned_b;                             /* +0x446 0x20F4A [fact] VFO-B: as tuned_a (vfo_mark_tuned(1), FUN_fffc184f) */
     uint8_t restart_req;                         /* +0x447 0x20F4B [fact] power-down / restart request, frame 0x7F (cat_PS, cat_ext_ZZ; #76) */
-    uint8_t f_0x448_u8;                          /* +0x448 0x20F4C [fact: accessed] widths 1:16; enc2_step FUN_fffcf4b8 FUN_fffcf4d5 FUN_fffcf4f2 */
+    uint8_t dialog_has_choice;                   /* +0x448 0x20F4C [fact] 1 for dialog messages 1, 7 and 9 (FUN_fffcf4b8, FUN_fffcf549, FUN_fffcf5a0), 0 for the others; enc2_step moves dialog_button only while 1 [inference: a two-button dialog] */
     uint32_t freq_tx;                            /* +0x44C 0x20F50 [fact] frequency cache: TX frequency (freq_cache_update 0xFFF9CEE1) */
     uint32_t freq_a;                             /* +0x450 0x20F54 [fact] frequency cache: VFO-A (FA) */
     uint32_t freq_b;                             /* +0x454 0x20F58 [fact] frequency cache: VFO-B (FB) */
@@ -320,26 +321,26 @@ struct ui_state {  /* size 0x494: the UI / radio state block at 0x20B04, reached
     uint32_t scope_cursor_start;                 /* +0x45C 0x20F60 [fact] scope start in CURSOR mode (FD n=1), mirrored at 0x9E82 */
     uint8_t pms_inhibit;                         /* +0x460 0x20F64 [fact] PMS path of freq_clamp rejects while 1 (FUN_fffe1dd7) */
     uint32_t freq_clamp_result;                  /* +0x464 0x20F68 [fact] result of freq_clamp (cat_FA_FB) */
-    uint8_t f_0x468_u8;                          /* +0x468 0x20F6C [fact: accessed] widths 1:27; FUN_fffe1a00 FUN_fffe207f FUN_fffbc782 FUN_fffe1e85 */
+    uint8_t keypad_pos;                          /* +0x468 0x20F6C [fact] keypad digit position 2..9 (nibble index into keypad_bcd): freq_keypad_key advances it per digit and steps back on delete; 0 after FUN_fffe1e85 / FUN_fffe1f60 */
     uint8_t freq_rejected;                       /* +0x469 0x20F6D [fact] set when freq_clamp rejects (freq_clamp_pms) */
-    uint8_t f_0x46a_u8;                          /* +0x46A 0x20F6E [fact: accessed] widths 1:7; FUN_fffe5302 freq_fix_below freq_fix_above FUN_fffc5ec4 */
-    uint8_t f_0x46b_u8;                          /* +0x46B 0x20F6F [fact: accessed] widths 1:53; FUN_fffc0210 FUN_fffc42ef FUN_fffc44a3 FUN_fffe2ee4 */
+    uint8_t step_fast_req;                       /* +0x46A 0x20F6E [fact] set by FUN_fffe5302 around one FUN_fffc5c8f step: FUN_fffc616e then steps 1 MHz, or 100 kHz with step_fast_100k; freq_fix_below/above, FUN_fffc5ec4, FUN_fffc6073 */
+    uint8_t ch_step_mode;                        /* +0x46B 0x20F6F [fact] set by FUN_fffe60a6 / FUN_fffe6138, cleared by cat_UP / cat_DN, FUN_fffc0210, FUN_fffe2ee4 and others; in memory state the UP/DOWN steps move the channel while 1 (vfo_step_up/down -> memch_step_up), and dsp_set_agc / FUN_fffc616e treat it like scan_running; with mic_key_hold the up/down keys start a scan (FUN_fffc42ef, FUN_fffc44a3) */
     uint8_t mic_key_hold;                        /* +0x46C 0x20F70 [inference] timed flag of the MIC/remote-keypad handlers, a CAT busy guard (#69) */
-    uint8_t f_0x46d_u8;                          /* +0x46D 0x20F71 [fact: accessed] widths 1:3; FUN_fffc5e0a FUN_fffc616e */
+    uint8_t step_dial_req;                       /* +0x46D 0x20F71 [fact] set by FUN_fffc5e0a while it steps a record: FUN_fffc616e then uses the dial step FUN_fffc62ae */
     uint32_t pms_lo;                             /* +0x470 0x20F74 [fact] PMS lower limit (pms_load_limits) */
     uint32_t pms_hi;                             /* +0x474 0x20F78 [fact] PMS upper limit */
-    uint8_t f_0x478_u8;                          /* +0x478 0x20F7C [fact: accessed] widths 1:3; FUN_fffc7fcc FUN_fffc616e */
-    uint8_t f_0x479_u8;                          /* +0x479 0x20F7D [fact: accessed] widths 1:3; FUN_fffe5302 FUN_fffc616e */
-    uint8_t f_0x47a_u8;                          /* +0x47A 0x20F7E [fact: accessed] widths 1:9; FUN_fffbdf98 FUN_fff97abc freq_cache_update FUN_fffbdcb0 */
-    uint8_t f_0x47b_u8;                          /* +0x47B 0x20F7F [fact: accessed] widths 1:3; displink_tx_40 FUN_fffcfaff */
+    uint8_t step_ch_req;                         /* +0x478 0x20F7C [fact] set by FUN_fffc7fcc around FUN_fffc807e: FUN_fffc616e then uses the channel step FUN_fffc63e6 (AM/FM CH STEP menus) */
+    uint8_t step_fast_100k;                      /* +0x479 0x20F7D [fact] with step_fast_req: 100 kHz instead of 1 MHz (FUN_fffe5302, FUN_fffc616e) */
+    uint8_t dsp_knob_apf;                        /* +0x47A 0x20F7E [fact] DSP-knob function 3 shows APF (FUNC item 0x21) instead of CONTOUR (0x20): set by FUN_fffbdcb0 in the CW block, cleared by FUN_fffbde58 and freq_cache_update; sent as bit 2 of the FUNC status byte (FUN_fff97abc) */
+    uint8_t dl_40_force;                         /* +0x47B 0x20F7F [fact] set by FUN_fffcfaff on dialog answer 0x166: displink_tx_40 then sends frame 0x40 once even when unchanged, and clears it */
     uint8_t ch_knob_mode;                        /* +0x47C 0x20F80 [fact] CH set value 0/1 (cat_CH; #157) */
     uint8_t qmb_pending_slot;                    /* +0x47F 0x20F83 [fact] QMB slot to save (FUN_fff9513c, qmb_store) */
     uint8_t svc_brightness;                      /* +0x480 0x20F84 [fact] service-mode brightness/dimmer index (frame 0x24) */
     uint8_t svc_contrast;                        /* +0x481 0x20F85 [fact] service-mode contrast (frame 0x24) */
-    uint8_t f_0x482_u8;                          /* +0x482 0x20F86 [fact: accessed] widths 1:10; FUN_fff97ebf key_split_long FUN_fff9ccd3 split_toggle */
+    uint8_t split_long_on;                       /* +0x482 0x20F86 [fact] toggled by key_split_long (SPLIT long press, FUN_fff9cdb0 copies the other VFO frequency); split_toggle, FUN_fff97ebf, FUN_fff9ccd3, FUN_fffc56cd, FUN_fffc7fcc test it together with split_on */
     uint8_t txw_on;                              /* +0x483 0x20F87 [fact] TXW flag, not cleared by split (cat_TS) */
-    uint8_t split_saved_state_a;                 /* +0x484 0x20F88 [fact] VFO-A state saved by split_toggle 0xFFFBECA5 */
-    uint8_t split_saved_state_b;                 /* +0x485 0x20F89 [fact] VFO-B state saved by split_toggle */
+    enum vfo_state split_saved_state_a;          /* +0x484 0x20F88 [fact] VFO-A state saved by split_toggle 0xFFFBECA5 */
+    enum vfo_state split_saved_state_b;          /* +0x485 0x20F89 [fact] VFO-B state saved by split_toggle */
     uint32_t e7_status;                          /* +0x488 0x20F8C [fact] command word from DISPLAY frame E7 (displink_rx_E7, dispreq_e7_task) */
     uint32_t e8_status;                          /* +0x48C 0x20F90 [fact] command word from DISPLAY frame E8 (displink_rx_E8, dispreq_e8_task) */
     uint8_t func_cursor_locked;                  /* +0x490 0x20F94 [fact] FUNC-knob cursor locked (FUN_fffc3c23, FUN_fffc7c55) */
@@ -622,8 +623,7 @@ struct mem_hdr {  /* size 0x87: memory-channel header at 0x60C9 (EEPROM 0x1A7A),
 };
 
 struct qmb_hdr {  /* size 0x11: QMB header at 0x9012 (EEPROM 0x49C3) */
-    uint8_t f_0x000_u8;                          /* +0x000 0x09012 [fact: accessed] widths 1:19; qmb_store eeprom_save_qmb eeprom_save_qmb_slot defaults_qmb */
-    uint8_t f_0x001_u8;                          /* +0x001 0x09013 [fact: accessed] widths 1:19; qmb_recall qmb_store FUN_fffc31c0 */
+    uint8_t used_mask_be[2];                     /* +0x000 0x09012 [fact] big-endian bit mask of the filled QMB slots: qmb_recall / qmb_store test CONCAT11(+0, +1) & 0x3FF (0x3FF = all ten full), FUN_fffc31c0 tests bit n */
     uint8_t count;                               /* +0x002 0x09014 [inference] number of stored QMB records (eeprom.md) */
     uint8_t order[10];                           /* +0x003 0x09015 [inference] QMB order list */
     uint8_t ptr_a[2];                            /* +0x00D 0x0901F [inference] QMB pointer VFO-A (0x901F..0x9020) */
@@ -762,7 +762,7 @@ struct opstate {  /* size 0x45C: operating state at 0x9A2A (EEPROM 0x53DB): menu
     uint8_t menu_cursor_9ab3[2];                 /* +0x089 0x09AB3 [fact] {top, row} cursor of a P2 menu group (FUN_fffd405e / FUN_fffd3d03; eeprom.md) */
     uint8_t ex030101_beep_level;                 /* +0x08B 0x09AB5 [fact] menu 030101 OPERATION SETTING / GENERAL / BEEP LEVEL, u8, range 0..100 (menu descriptor, tools/main_menu_table.py) */
     uint8_t ex030102_rf_sql_vr;                  /* +0x08C 0x09AB6 [fact] menu 030102 OPERATION SETTING / GENERAL / RF/SQL VR, u8, range 0..2 (menu descriptor, tools/main_menu_table.py) */
-    uint8_t ex030103_tun_lin_port_select;        /* +0x08D 0x09AB7 [fact] menu 030103 OPERATION SETTING / GENERAL / TUN/LIN PORT SELECT, u8, range 0..3 (menu descriptor, tools/main_menu_table.py) */
+    enum tunlin_mode ex030103_tun_lin_port_select; /* +0x08D 0x09AB7 [fact] menu 030103 OPERATION SETTING / GENERAL / TUN/LIN PORT SELECT, u8, range 0..3 (menu descriptor, tools/main_menu_table.py) */
     uint8_t ex030104_tuner_type_select;          /* +0x08E 0x09AB8 [fact] menu 030104 OPERATION SETTING / GENERAL / TUNER TYPE SELECT, u8, range 0..3 (menu descriptor, tools/main_menu_table.py) */
     uint8_t ex030105_cat_1_rate;                 /* +0x08F 0x09AB9 [fact] menu 030105 OPERATION SETTING / GENERAL / CAT-1 RATE, u8, range 0..4 (menu descriptor, tools/main_menu_table.py) */
     uint8_t ex030106_cat_1_time_out_timer;       /* +0x090 0x09ABA [fact] menu 030106 OPERATION SETTING / GENERAL / CAT-1 TIME OUT TIMER, u8, range 0..3 (menu descriptor, tools/main_menu_table.py) */
@@ -858,8 +858,8 @@ struct opstate {  /* size 0x45C: operating state at 0x9A2A (EEPROM 0x53DB): menu
     uint8_t menu_cursor_9b2c[2];                 /* +0x102 0x09B2C [fact] {top, row} cursor of a P2 menu group (FUN_fffd405e / FUN_fffd3d03; eeprom.md) */
     struct preset presets[5];                    /* +0x104 0x09B2E [fact] PRESET1..5 (EX06), 0x1F bytes each */
     uint8_t preset_sel;                          /* +0x19F 0x09BC9 [inference] preset selection; FUN_fffc4d93 copies presets[n] to the UI state +0x48 */
-    uint8_t f_0x1a0_u8;                          /* +0x1A0 0x09BCA [fact: accessed] widths -; FUN_fff9c6ab FUN_fffb13e2 FUN_fffde180 FUN_fffdfbe4 */
-    uint8_t f_0x1ae_u8;                          /* +0x1AE 0x09BD8 [fact: accessed] widths -; FUN_fff9c6ab */
+    uint8_t scope_level_rx[14];                  /* +0x1A0 0x09BCA [fact] SCOPE LEVEL per frequency range in RX: FUN_fff9c6ab returns 0x9BCA + freq_range_index (display-link.md frame 0x37 item 0); FUN_fffb13e2 fills 0x9BCA..0x9C16 from ROM */
+    uint8_t scope_level_tx[14];                  /* +0x1AE 0x09BD8 [fact] SCOPE LEVEL per frequency range in TX: FUN_fff9c6ab returns 0x9BD8 + freq_range_index while transmitting */
     uint8_t ss01_peak;                           /* +0x1BC 0x09BE6 [fact] scope PEAK (SS01; FUN_fff976d2) */
     uint8_t ss02_marker;                         /* +0x1BD 0x09BE7 [fact] scope MARKER (SS02) */
     uint8_t ss03_value;                          /* +0x1BE 0x09BE8 [fact] SS P2=3 value (cat_SS) */
@@ -874,7 +874,7 @@ struct opstate {  /* size 0x45C: operating state at 0x9A2A (EEPROM 0x53DB): menu
     uint8_t antivox[2];                          /* +0x1CC 0x09BF6 [fact] anti-VOX (AV, dsp_set_antivox) */
     uint8_t rf_power[4];                         /* +0x1CE 0x09BF8 [fact] RF power per band group (PC, MAX POWER on_draw EX030401..04) */
     uint8_t monitor[5];                          /* +0x1D2 0x09BFC [inference] monitor level / on (ML) */
-    uint8_t f_0x1d7_u8;                          /* +0x1D7 0x09C01 [fact: accessed] widths 1:42; cat_ML FUN_fffb418a */
+    uint8_t monitor_fm;                          /* +0x1D7 0x09C01 [fact] monitor level of FM / FM-N / DATA-FM / DATA-FM-N (modes 6, 7, 10, 11): cat_ML answers from it but rejects a set (docs/cat-commands-primary.md ML), FUN_fffb418a; the sixth entry after monitor[5] */
     uint8_t keyer_on;                            /* +0x1D8 0x09C02 [fact] keyer on (KR, keyer_task) */
     uint8_t key_speed;                           /* +0x1D9 0x09C03 [fact] key speed (KS, keyer_task) */
     uint8_t cw_pitch;                            /* +0x1DA 0x09C04 [fact] CW pitch, x10 + 300 Hz (KP, dsp_set_cw_pitch) */
@@ -905,24 +905,24 @@ struct opstate {  /* size 0x45C: operating state at 0x9A2A (EEPROM 0x53DB): menu
     uint8_t fn_select;                           /* +0x237 0x09C61 [fact] FN value 0/1/2 (cat_FN, key_fine_fast_short) */
     uint8_t lock_on;                             /* +0x238 0x09C62 [fact] front-panel lock (LK, key_lock_pwr_short) */
     uint16_t f_0x23b_u16;                        /* +0x23B 0x09C65 [fact: accessed] widths 4:3; FUN_fffdfe0a settings_defaults */
-    uint8_t f_0x23e_u8;                          /* +0x23E 0x09C68 [fact: accessed] widths 1:5; FUN_fffdfe0a */
+    uint8_t na_ai_value;                         /* +0x23E 0x09C68 [fact] FUN_fffdfe0a sends the auto-information NA0<n>; when it changes (shadow 0x1B51D); only settings_defaults writes it (0) */
     uint32_t bandmem_cursor[12];                 /* +0x23F 0x09C69 [fact] per-band scope start in CURSOR mode, big-endian (bandmem_get/bandmem_set; radio-control.md) */
     uint32_t bandmem_fix[12];                    /* +0x26F 0x09C99 [fact] per-band scope start in FIX mode */
     uint32_t bandmem_fix_gen[16];                /* +0x29F 0x09CC9 [fact] FIX-mode sub-slots of the general-coverage band */
     struct vfo_rec vfo_a;                        /* +0x2DF 0x09D09 [fact] VFO-A working record */
     struct vfo_rec vfo_b;                        /* +0x339 0x09D63 [fact] VFO-B working record */
-    uint8_t active_vfo;                          /* +0x393 0x09DBD [fact] active VFO, 0 = A, 1 = B (vfo_rec_ptr) */
-    uint8_t vfo_state_a;                         /* +0x394 0x09DBE [fact] VFO-A state: 1 VFO, 2 memory, 3 memory tune, 4 PMS, 5 QMB, 7/8 locked (radio-control.md) */
-    uint8_t vfo_state_b;                         /* +0x395 0x09DBF [fact] VFO-B state, same values */
+    enum vfo_side active_vfo;                    /* +0x393 0x09DBD [fact] active VFO, 0 = A, 1 = B (vfo_rec_ptr) */
+    enum vfo_state vfo_state_a;                  /* +0x394 0x09DBE [fact] VFO-A state: 1 VFO, 2 memory, 3 memory tune, 4 PMS, 5 QMB, 7/8 locked (radio-control.md) */
+    enum vfo_state vfo_state_b;                  /* +0x395 0x09DBF [fact] VFO-B state, same values */
     uint8_t nb_level;                            /* +0x396 0x09DC0 [fact] NB level 0..10 (NL, sdr_upd_r1a_nb_level) */
     uint8_t play_volume;                         /* +0x397 0x09DC1 [fact] PlayList volume 0..100 (FUN_fffc6595, frame 0x3A) */
     uint8_t level_9dc2;                          /* +0x398 0x09DC2 [fact] a second level in frame 0x39, TX gain in state 14 (dsp_set_tx_gain); not traced */
-    uint8_t band_a;                              /* +0x399 0x09DC3 [fact] current band index VFO-A (band_select_stack) */
-    uint8_t band_b;                              /* +0x39A 0x09DC4 [fact] current band index VFO-B */
+    enum band_idx band_a;                        /* +0x399 0x09DC3 [fact] current band index VFO-A (band_select_stack) */
+    enum band_idx band_b;                        /* +0x39A 0x09DC4 [fact] current band index VFO-B */
     uint8_t auto_power_on;                       /* +0x39B 0x09DC5 [fact] 1 = come back on after the reset (power_down_save, cat_PS) */
     uint8_t preset_on;                           /* +0x39C 0x09DC6 [fact] use the preset copy at UI +0x48 instead of the menu values (dsp_set_agc, sci3_set_baud) */
-    uint8_t split_saved_vfo_state_a;             /* +0x39D 0x09DC7 [fact] VFO state saved by split_toggle */
-    uint8_t split_saved_vfo_state_b;             /* +0x39E 0x09DC8 [fact] VFO state saved by split_toggle */
+    enum vfo_state split_saved_vfo_state_a;      /* +0x39D 0x09DC7 [fact] VFO state saved by split_toggle */
+    enum vfo_state split_saved_vfo_state_b;      /* +0x39E 0x09DC8 [fact] VFO state saved by split_toggle */
     uint8_t func_knob;                           /* +0x39F 0x09DC9 [fact] FUNC-knob function (SF P1=0, copied to 0x9C08) */
     struct vfo_rec memtune_a;                    /* +0x3A4 0x09DCE [fact] memory-tune backup of VFO-A (cat_MR, memtune_backup) */
     struct vfo_rec memtune_b;                    /* +0x3FE 0x09E28 [fact] memory-tune backup of VFO-B (memtune_backup_b 0xFFFC1913) */

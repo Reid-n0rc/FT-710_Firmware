@@ -2,6 +2,8 @@
 # address<TAB>name (checked: function name, or the label for a global)<TAB>kind: "param N" (1-based) / "return" / "global"<TAB>enum<TAB>evidence
 # A param or return keeps the function's storage and only changes the type (the size must match the enum's); a global
 # becomes a data item of the enum type (only over undefined data or a plain integer of the same size).
+# Globals inside a structs_main.h block (0x9DBD..0x9DC8, 0x9AB7 in opstate) get their enum as the struct field's type
+# instead (ApplyStructs.java, run after this script); only the two shadows outside any block are listed here.
 # cat_ext_cmd is not applied: cat_parse shares one loop counter between the primary (0..103) and extended (0..9)
 # lookups, which then printed as CATX_ values (T23f export check).
 fffb3196	vfo_mode	return	radio_mode	returns (record byte +0 & 0xF), or 2 (CW-L) in a tune cycle [fact, 0xFFFB3196]
@@ -14,7 +16,7 @@ fffb35d7	vfo_freq_clar	param 2	vfo_side	passed on to vfo_freq [fact, 0xFFFB35D7]
 fffb4bba	vfo_tune_locked	param 1	vfo_side	0 = A (0x9DBE), 1 = B (0x9DBF), 2 = the active side 0x9DBD [fact, 0xFFFB4BBA]
 fffc2d93	vfo_is_memory	param 1	vfo_side	0 reads 0x9DBE, else 0x9DBF [fact, 0xFFFC2D93]
 fffa1738	sdr_upd_r0a_demod	param 1	vfo_which	passed to vfo_mode [fact, 0xFFFA1738]
-fffc0eb8	FUN_fffc0eb8	param 1	radio_mode	*rec = *rec & 0xF0 | mode on the active record [fact, 0xFFFC0EB8]
+fffc0eb8	vfo_mode_set	param 1	radio_mode	*rec = *rec & 0xF0 | mode on the active record [fact, 0xFFFC0EB8]
 fffc0d33	FUN_fffc0d33	param 1	radio_mode	passed to FUN_fffc0eb8 and stored in UI +0x424 [fact, 0xFFFC0D33]
 fffc0f10	FUN_fffc0f10	param 1	radio_mode	old mode (record byte & 0xF) from FUN_fffc0eb8 [fact, 0xFFFC0EB8]
 fffc0f10	FUN_fffc0f10	param 2	radio_mode	new mode from FUN_fffc0eb8 [fact, 0xFFFC0EB8]
@@ -37,14 +39,5 @@ fffb0303	eeprom_save_bandstack	param 1	vfo_side	0 = A block 0x112, else B block 
 fffb0303	eeprom_save_bandstack	param 2	band_idx	band * 0x5A [fact, 0xFFFB0303]
 fffa3b6e	cat_dispatch	param 2	cat_cmd	switch on the cat_mnemonics index [fact, 0xFFFA3B6E]
 fffb1900	tunlin_port_mode	return	tunlin_mode	0x9AB7, 0 if > 3 [fact, 0xFFFB1900]
-00009dbd	DAT_00009dbd	global	vfo_side	active VFO, 0 = A, 1 = B [fact: radio-control.md]
-00009dbe	DAT_00009dbe	global	vfo_state	VFO-A state [fact: radio-control.md, #173]
-00009dbf	DAT_00009dbf	global	vfo_state	VFO-B state [fact: radio-control.md, #173]
-00009dc7	DAT_00009dc7	global	vfo_state	VFO-A state saved at split entry [fact: radio-control.md, split_toggle]
-00009dc8	DAT_00009dc8	global	vfo_state	VFO-B state saved at split entry [fact: radio-control.md, split_toggle]
-00009dc3	DAT_00009dc3	global	band_idx	current band of VFO-A [fact: radio-control.md]
-00009dc4	DAT_00009dc4	global	band_idx	current band of VFO-B [fact: radio-control.md]
-00020f28	DAT_00020f28	global	band_idx	band of the active side (UI +0x424), <= 11 [fact: radio-control.md, 0xFFFC1663]
-00009ab7	DAT_00009ab7	global	tunlin_mode	TUN/LIN PORT SELECT [fact: peripherals.md]
 0001b742	DAT_0001b742	global	sdr_mod_class	SDR register 0x0A shadow [fact: 0xFFFA1738 compares it, sdr_shadow_update writes it]
 0001b63e	DAT_0001b63e	global	dsp_demod	DSP register 6 shadow [fact: 0xFFF9D9A7 compares it, the DSP shadow update writes it]

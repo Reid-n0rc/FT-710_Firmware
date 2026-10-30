@@ -244,7 +244,7 @@ def header_names(path):
     """Field names declared in structs_main.h: named ones and neutral f_0x.. ones."""
     named, neutral = set(), set()
     for line in open(path, encoding='utf-8'):
-        m = re.match(r'\s+(?:struct \w+|\w+)\s*\*?\s*(\w+)(?:\[\d+\])*;\s*/\*\s*\+0x', line)
+        m = re.match(r'\s+(?:(?:struct|enum) \w+|\w+)\s*\*?\s*(\w+)(?:\[\d+\])*;\s*/\*\s*\+0x', line)
         if m:
             (neutral if m.group(1).startswith('f_0x') else named).add(m.group(1))
     return named, neutral

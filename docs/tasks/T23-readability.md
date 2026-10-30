@@ -276,9 +276,34 @@ if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
    commit the project and `decomp/main` together. `build_main` in `tools/bootstrap.sh` already runs `ApplyStructs.java`
    after `ApplySignatures.java` (both files are in its stamp list).
 2. Docs that cite `PTR_DAT_00025dxx[0x..]` or `DAT_0000464a` can keep doing so; new text should use the field names.
-3. Name the 76 neutral fields as their meaning is found (the largest: UI +0x3F7 (44 uses), +0x43A (36), +0x46B (32),
-   +0x468 (29)); 0x1FF12 (301 references, the value a menu `on_step` returns) and 0x464E are scalars outside these blocks.
+3. ~~Name the 76 neutral fields~~ done 2026-10-30 (below); two stay neutral (UI +0x41C, opstate +0x23B: nothing in V01-12
+   sets them to a non-zero value). 0x1FF12 (301 references, the value a menu `on_step` returns) and 0x464E are scalars
+   outside these blocks.
 4. DISPLAY: the same scan and header for its big blocks (`struct_offsets.py` takes a different `BLOCKS` table).
+5. Parent: apply the 2026-10-30 header to the canonical project together with T23f's enum fix (one run:
+   `-postScript ApplyEnums.java tools/ghidra/enums_main.h tools/ghidra/enum_uses_main.tsv -postScript ApplyStructs.java
+   tools/ghidra/structs_main.h`), re-export, `decomp_quality.py compare`, `readability_stats.py readme`, commit together.
+6. `docs/code/main/radio-control.md` (globals table, 0x20F28 `band_cur`) and docs that cite the old neutral names should
+   follow the new names after the re-export (UI +0x424 is now `popup_cursor`; it is not only a band, see below).
+
+### Neutral fields named (2026-10-30, worktree agent)
+74 of the 76 neutral `f_0x..` fields have names, each with its evidence in `structs_main.h` (users read in `decomp/main`,
+`docs/code/main/display-link.md`, `README.md` task 13, `tx-protection.md`, `cat-commands-primary.md`). Three groups became
+arrays: UI +0x1E9 `sdreq_data[256]` (the 0x45 block, swallowing +0x1F8), UI +0x40F `keypad_bcd[5]` (the direct-entry digits;
+`freq_keypad_key` reached them as `popup_text[n - 0x18]`), `qmb_hdr` +0 `used_mask_be[2]` (QMB slot mask, read as
+`CONCAT11(+0, +1) & 0x3FF`); opstate +0x1A0 / +0x1AE are `scope_level_rx[14]` / `scope_level_tx[14]` (`FUN_fff9c6ab`).
+Groups: the SD-menu request and step (`sd_step` +0x3F7, `sdreq_op`, `sdreq_arg1..4`, `sd_busy`), the frequency keypad
+(`keypad_open` +0x40D, `keypad_pos` +0x468, `keypad_set_fix`), tuning steps (`digit_step_on/_khz/_blinks/_blink_on`
++0x415/+0x416/+0x422/+0x423, `step_fast_req`, `step_fast_100k`, `step_dial_req`, `step_ch_req`, `ch_step_mode` +0x46B),
+the VFO store-back flags (`edited_a/b`, `tuned_a/b`, `force_bandstack_a/b`, `memtune_valid_a/b`, `memtune_backup_a/b`),
+the MEMORY CH LIST (`memlist_ch` +0x43A, `memlist_popup55`, `memlist_edit_on`), the DSP/FUNC knob
+(`dsp_key_state`, `dsp_key_func_short/long`, `dsp_knob_edit`, `dsp_knob_apf`, `func_blink_on/en`, `func_assigned`), the
+DISPLAY event mailboxes (`key_ev_src`, `enc_ev_id`, `enc_ev_steps`, `audio_ev_kind`, `sd_state_known`, `sd_present_prev`)
+and single flags. Tags: [fact] for what the code does with the field; names that go beyond it carry an [inference] in the
+comment (`tuner_key_req`, `sd_busy`, `dsp_knob_edit`, `func_assigned`, `memlist_popup55`, `dialog_has_choice`, `kbd_layout`
+values). **UI +0x424 is not a band:** it is the cursor of the open select pop-up (frame 0x30 byte 0x9B): the mode for
+pop-up 5 (`key_mode_short`, `mode_popup_select`, `FUN_fffc6cd7` steps it 0..15), the SS03 value for 0x0B, the band for
+0x0C (`key_band_short`, `band_select`) **[fact]**, so it was renamed from `band_cur` to `popup_cursor` and gets no enum.
 
 ### Redo
 - New firmware: re-run `StructAccessDump.java` and `struct_offsets.py scan --access` on the new export; offsets that are new
@@ -464,12 +489,30 @@ canonical projects).
 2. Redraft after naming batches (T23e): `CallArgCheck.java` on a project without the ARM signatures, then
    `python3 -I tools/signatures_draft.py protos.tsv - tools/ghidra/signatures_display.tsv mismatch.tsv display`
    (or `... signatures_m33.tsv ... m33`); check the export and turn any row that makes it worse into a `skip` row.
-3. More enum uses once T23c's structs exist (per-mode block fields, UI +0x424, the record's mode nibble).
-4. Canonical apply (2026-10-29, parent): done for 30 parameters and 3 returns; 9 of the 11 enum globals failed
-   ("not undefined/plain integer data") because `ApplyStructs.java` had already typed them as fields of `opstate`
-   (0x9DBD..0x9DC8, 0x9AB7) and `ui_state` (0x20F28). Fix: give those struct fields the enum types in `structs_main.h`
-   (ApplyStructs would need to look the enum up under /FT710, so ApplyEnums must create the enums first) and drop the
-   global rows from `enum_uses_main.tsv`.
+3. ~~More enum uses once T23c's structs exist~~ done 2026-10-30 (step 4).
+4. ~~Canonical apply (2026-10-29, parent): 9 of the 11 enum globals failed~~ ("not undefined/plain integer data") because
+   `ApplyStructs.java` had already typed them as fields of `opstate` (0x9DBD..0x9DC8, 0x9AB7) and `ui_state` (0x20F28).
+   **Fixed 2026-10-30 (worktree agent):** `structs_main.h` fields may now be `enum NAME` (the header `#include`s
+   `enums_main.h`, so `gcc -fsyntax-only` still passes); `ApplyStructs.java` looks the enum up under `/FT710` and fails
+   the line if ApplyEnums has not created it. Order: ApplyEnums, then ApplyStructs (`build_main` in `tools/bootstrap.sh`
+   swapped). The 9 global rows are gone from `enum_uses_main.tsv` (35 rows left: 30 parameters, 3 returns, the shadows
+   0x1B742 / 0x1B63E); its stale name `FUN_fffc0eb8` is now `vfo_mode_set`. 12 enum-typed fields: opstate `active_vfo`
+   (`vfo_side`), `vfo_state_a/b`, `split_saved_vfo_state_a/b`, UI `split_saved_state_a/b` (`vfo_state`), `band_a/b`, UI
+   `popup_band` (`band_idx`), `ex030103_tun_lin_port_select` (`tunlin_mode`), UI `status_side` +0x40E (`vfo_side`).
+   Not typed, with reasons: UI +0x424 holds a mode, an SS03 value or a band depending on the pop-up (T23c, now
+   `popup_cursor`), so its global row was wrong; the per-mode block (`mode_blk`) has no field that holds a mode, band or
+   VFO state (it is indexed by mode class); the record's mode nibble was tried as a bitfield
+   (`enum radio_mode mode : 4; /* +0x000.0 */`, which `ApplyStructs.java` now supports): the reads lost their `& 0xf` but
+   no compare got a `MODE_` name (193 → 194), and the whole-record byte copies printed as `*(undefined1 *)p =
+   *(undefined1 *)q` and `memch[0x84]._0_1_ = 1` (329 changed lines), so `vfo_rec.mode` stays a `uint8_t`.
+   **Check** (per-task copy of the canonical MAIN project, `-postScript ApplyEnums.java … -postScript ApplyStructs.java …`
+   twice, then ExportDecomp): `ApplyEnums: 30 parameters, 3 returns, 2 globals typed, 0 failed`; `ApplyStructs: 9
+   structures, 867 fields (12 enum-typed, 0 bitfields), 29 globals (0 data units replaced, 0 labels), 1 return types, 0
+   errors` on both runs; `decomp_quality.py compare decomp/main/quality.tsv` → no metric worse (warnings 1246, unchanged);
+   `struct_offsets.py fields`: 9,504 accesses print as named fields, 4 as neutral (was 8,835 / 672 in the committed
+   export). The export now reads `if (g_opstate.active_vfo == VFO_A)` (90 times), `g_opstate.vfo_state_a =
+   VFO_STATE_VFO`, `(vVar1 == VFO_STATE_LOCKED_7 || vVar1 == VFO_STATE_LOCKED_8)`, `if (TUNLIN_GPO <
+   g_opstate.ex030103_tun_lin_port_select)`. The parent's canonical apply is T23c open step 5.
 
 ## T23g — Readable view (optional)
 - `decomp/<image>/readable/<subsystem>.c`: the same functions grouped by the `docs/code/<image>/` subsystem pages, each
