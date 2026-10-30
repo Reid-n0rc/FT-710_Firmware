@@ -364,7 +364,7 @@
 2011f19c	rspi_spe_clear	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/5 call sites read r0, writes r0 0, return void
 2011f230	rspi_base	void *	uint32	asm	asm: live-in r0:L (= decompiler 1), 2/2 call sites read r0, writes r0 1, return value
 2011f758	rspi_fifo_reset	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
-20120224	riic_init	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
+20120224	userdef_riic0_wait_bus_master	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 201204a4	riic_base	void *	int32	asm	asm: live-in r0:L (= decompiler 1), 11/12 call sites read r0, writes r0 1, return value
 2012081c	FUN_2012081c	int32	uint32, int32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 2/2 call sites read r0, writes r0 1, return value
 20120a88	FUN_20120a88	void	uint32	asm	asm: live-in r0:L (> decompiler 0), 0/2 call sites read r0, writes r0 1, return void

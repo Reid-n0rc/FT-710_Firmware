@@ -13,9 +13,9 @@ code) or **[inference]** (evidence and reasoning given); anything not supported 
 ## Overview
 
 - **Start-up.** `task_root` step 4 calls `sd_fs_init` 0x201039B0: `FUN_2014a4d0(&DAT_20808c4c, 2)` sets up the file-system layer,
-  then `FUN_20103934(&DAT_20809984, 0x49 = 'I', FUN_2013fd98, ...)` registers drive `I:` with the SDHI driver; only when both return
+  then `sd_drive_register(&DAT_20809984, 0x49 = 'I', sdhi_drv_init, ...)` registers drive `I:` with the SDHI driver; only when both return
   0 does it call `sd_task_create` 0x20103B68, which creates and starts the task `sdTask` (`os_create_tsk_named`, `itron_act_tsk`)
-  **[fact]**. A card-state word `DAT_20800094` is polled by the card monitor (`FUN_20103adc`, 10 ms sleeps); `sd_state_bit7` /
+  **[fact]**. A card-state word `DAT_20800094` is polled by the card monitor (`sd_card_monitor`, 10 ms sleeps); `sd_state_bit7` /
   `sd_state_bit6` return its bits 7 / 6 and the update screens wait on them **[fact]**, meaning "card present / ready"
   **[inference]** ([update.md](update.md#2-sd-card-and-file-system-summary)).
 - **File API.** `fs_fopen`, `fs_fread`, `fs_fwrite`, `fs_fseek` and `fs_fclose` all have the same shape: take a work buffer from
@@ -37,7 +37,7 @@ code) or **[inference]** (evidence and reasoning given); anything not supported 
 flowchart TD
   ROOT["task_root step 4"] --> INIT["sd_fs_init 0x201039B0"]
   INIT --> FSL["FUN_2014a4d0<br/>file-system layer set-up"]
-  INIT --> REG["FUN_20103934<br/>drive I: + SDHI driver"]
+  INIT --> REG["sd_drive_register<br/>drive I: + SDHI driver"]
   INIT --> TSK["sd_task_create<br/>sdTask"]
   APP["updater, recorder, capture,<br/>sdmenu, cli scripts"] --> API["fs_fopen / fs_fread / fs_fwrite<br/>fs_fseek / fs_fclose"]
   API --> WORK["fs_work_alloc / fs_work_free<br/>pool 0x20808BC8"]
@@ -110,13 +110,13 @@ to the same driver / FAT library is an **[inference]** from the address range an
 | Address | Meaning |
 |---|---|
 | 0x20800094 | card state word: bit 7 / bit 6 read by `sd_state_bit7` / `sd_state_bit6` **[fact]**, "present / ready" **[inference]** |
-| 0x20800098 | card-monitor request flag: while set the monitor clears bit 7 and calls `FUN_2013fd50` **[fact]** |
+| 0x20800098 | card-monitor request flag: while set the monitor clears bit 7 and calls `sd_card_unmount` **[fact]** |
 | 0x20808B90 | file-system layer initialised (`fs_check_ready`) **[fact]** |
 | 0x20808BA0 | drive list head (`fs_find_drive`, letter at +0x11) **[fact]** |
 | 0x20808BA4 | last file-system error (`fs_set_error`) **[fact]** |
 | 0x20808BC8 | fixed-size memory pool of work buffers (`fs_work_alloc` / `fs_work_free`) **[fact]** |
 | 0x20808C4C | argument of the layer set-up `FUN_2014a4d0` in `sd_fs_init` **[fact]** |
-| 0x20809984 | drive `I:` registration record (0x74 bytes per drive, `FUN_20103a4c`) **[fact]** |
+| 0x20809984 | drive `I:` registration record (0x74 bytes per drive, `sd_drive_flush`) **[fact]** |
 | 0x2091D0BC | per-task file-system contexts, indexed by task ID (`fs_task_ctx_get`) **[fact]** |
 | 0x2091D4C0 / 0x2091D4E8 | per-drive semaphore tables (`fs_lock_a` / `fs_lock_b`) **[fact]** |
 
@@ -386,3 +386,135 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2014E1B4 | `fs_work_pool_delete` |  | itron_del_mpf of pool 0x20808BC8 **[fact]** |
 | 0x2014E1DC | `fs_get_time_tm` |  | rtc_get_tm into the caller's struct tm, returns 1 (time stamps of FAT entries) **[fact]** |
 | 0x2014E1EC | `fs_get_tick` |  | Low word of itron_get_tim **[fact]** |
+
+### SD card / FAT glue (filesystem.md) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20103934 | `sd_drive_register` | (drive rec, letter, driver init, cache bufs): fs_drive_attach (512-B sectors), FAT cache and directory cache set-up; sd_fs_init registers I: with it (filesystem.md) **[fact]** |
+| 0x2013FD98 | `sdhi_drv_init` | Driver init callback of drive I:: clears 0x2091CBA8, links the SDHI op table 0x20420564 and calls sd_driver_op (filesystem.md) **[fact]** |
+| 0x20140B9C | `sdhi0_buf_isr` | SDHI0 SDHI0_0 interrupt (GIC 303, peripherals.md): SD_INFO2 BRE (bit 8) -> sdhi_flag_set(1), BWE (bit 9) -> sdhi_flag_set(2), clearing the bit **[fact]** |
+| 0x20103BC0 | `sd_drive_flag5` | Bit 5 of the drive record byte +0x68 of 0x20808B60 when the drive is attached (+0x24), else 0; fs_drive_check_writable returns -58 on the same bit (filesystem.md) **[fact]** |
+
+### SDHI / SD card monitor (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013FDE8 | `sdhi0_irq_enable` | Registers the SDHI0 handler for GIC id 303 (0x12F) once (flag 0x20808B70), sets its ICDIPR75 priority byte and enables it in ICDISER9 (bit 15) **[fact]** |
+| 0x2013FD50 | `sd_card_unmount` | (drive): for an attached removable drive (+0x68 bit 0) runs driver op 8 and clears the mounted bit 7; error to fs_set_error; the card monitor calls it on request 0x20800098 (filesystem.md) **[fact]** |
+| 0x20103ADC | `sd_card_monitor` | Task body: polls the card state every 10 ms (sd_card_poll -> 0x20800094) and on request 0x20800098 clears bit 7 and calls sd_card_unmount (filesystem.md) **[fact]** |
+| 0x20103A4C | `sd_drive_flush` | (drive index): fs_sync, then fs_cache_invalidate of the drive record 0x20809984 + 0x74*i **[fact]** |
+
+### SD card protocol layer (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013E71C | `sd_driver_op` | Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume mount), 8 unmount, others through a table; registered by sdhi_drv_init **[fact]** |
+| 0x2013C960 | `sd_cmd0_go_idle` | CMD0 (GO_IDLE_STATE), 3 tries; clears the RCA +0x2AC first **[fact]** |
+| 0x2013C9D0 | `sd_init_v1_or_mmc` | Initialisation without a CMD8 answer: ACMD41 (CMD55 + 41) polling until the busy bit 31 of the OCR is set, or CMD1 (MMC, arg 0xFF8000) when CMD55 fails; MMC sets the card type +0x2C6 = 1 **[fact]** |
+| 0x2013CBB8 | `sd_init_v2` | CMD8 (arg 0x1AA, echo check), then ACMD41 with HCS (0x41000000 / OCR voltage bits) until ready; returns 1 for a standard-capacity card (CCS clear) **[fact]** |
+| 0x2013CEE8 | `sd_cmd2_all_send_cid` | CMD2 (ALL_SEND_CID), 3 tries; copies the 16-byte CID to ctx +0x211 **[fact]** |
+| 0x2013D0BC | `sd_cmd9_send_csd` | CMD9 (SEND_CSD, RCA << 16), 3 tries; copies the 16-byte CSD to ctx +0x201 **[fact]** |
+| 0x2013D238 | `sd_cmd10_send_cid` | CMD10 (SEND_CID, RCA << 16), 3 tries; CID to ctx +0x211 **[fact]** |
+| 0x2013D158 | `sd_csd_check` | (csd): range check of an SD CSD (structure < 2, TAAC, read/write-partial bits, READ_BL_LEN < 12, file format); -5 when invalid **[fact for the fields]** |
+| 0x2013D1C8 | `mmc_csd_check` | (csd): the same check for an MMC CSD (structure < 4, SPEC_VERS < 5, also WRITE_BL_LEN); used when the card type +0x2C6 = 1 **[fact]** |
+| 0x2013E124 | `sd_read_csd_cid` | CMD9 with sd_csd_check / mmc_csd_check, then CMD10; -5 when the CID is all zero **[fact]** |
+| 0x2013D398 | `sd_cmd13_send_status` | CMD13 (SEND_STATUS, RCA << 16), checks the R1 bits against the mask table 0x2042022C by card type **[fact]** |
+| 0x2013D434 | `sd_cmd7_select` | (rca, ctx): CMD7 SELECT/DESELECT_CARD (rca 0 deselects), R1 checked against the mask table 0x20420224 **[fact]** |
+| 0x2013D4FC | `sd_select_card` | (ctx, ...): makes sure the card is selected (sd_cmd7_select with the RCA +0x2AA); called before data transfers (sd_read_sectors, sd_write_sectors, SCR/status/switch reads) **[fact]** |
+| 0x2013D5F4 | `sd_acmd51_read_scr` | ACMD51 (SEND_SCR): CMD55 then CMD51, reads the 8-byte SCR into ctx +0x221 **[fact]** |
+| 0x2013D744 | `sd_acmd6_set_bus_width` | ACMD6 (SET_BUS_WIDTH) with the width code +0x2AC, then sets the host bus width (op +0x2C) **[fact]** |
+| 0x2013D818 | `sd_acmd13_read_status` | ACMD13 (SD_STATUS): CMD55 then CMD13 with data, 64 bytes into ctx +0x229 **[fact]** |
+| 0x2013D968 | `sd_cmd6_switch_func` | (arg, ctx): CMD6 (SWITCH_FUNC) with a 64-byte status read into ctx +0x269 **[fact]** |
+| 0x2013DE60 | `sd_switch_status_check` | Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a speed switch **[fact for the fields]** |
+| 0x2013DF88 | `sd_select_bus_speed` | For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants 0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 **[fact]** |
+| 0x2013E1E4 | `sd_scr_bus_width` | Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit) **[fact]** |
+| 0x2013E190 | `sd_selected_op` | (rca, a, b, ctx): selects the card, runs op +0x50(a, b) (block length set-up) and deselects **[fact]** |
+| 0x2013E35C | `sd_vol_read` | (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3 tries of sd_read_sectors **[fact]** |
+| 0x2013E3CC | `sd_vol_write` | (vol, sector, buf, n, ctx): partition write, bounds check, one sd_write_sectors try **[fact]** |
+| 0x2013E43C | `sd_mount_volume` | Reads sector 0 (MBR), finds the partition (fat_find_volume), reads its boot sector, fat_mount and the FSInfo check (fat32_fsinfo_read) **[fact]** |
+| 0x2013E8D0 | `fat_format_write_fats` | Format step: writes the first sector of each FAT with the media entries (F8 FF FF / F8 FF FF FF / F8 FF FF 0F FF FF FF 0F... from 0x20420254..) and zero sectors after them, counting progress **[fact]** |
+| 0x2013E7E8 | `sd_format_progress_dec` | Decrements the format progress counter ctx +0x2F4 while non-zero **[fact]** |
+| 0x2013E800 | `sd_format_progress_set` | (n, ctx): sets the format progress counters +0x2F4 and +0x2F8 to n **[fact]** |
+
+### SD format (sd_fat_format / fat_clear_root_dir), card task and SDHI DMA (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013EA74 | `fat32_format_write_fsinfo` | Format step: FSInfo sector (lead and struct signatures from 0x20808B4C / 0x20808B50, free count and next-free 0xFFFFFFFF) at sectors 1 and 7 of the volume, zero sectors 2 and 8 **[fact]** |
+| 0x2013EC30 | `fat_format_write_boot` | Format step: boot sector from the FAT12/16 template 0x2042025B (0x3E bytes) or the FAT32 template 0x20420299 (0x5A bytes) with the computed BPB fields and the volume id; FAT32 also writes the backup at +6 **[fact]** |
+| 0x2013EBC0 | `fat_format_volume_id` | Volume serial number from the current date and time (fs_get_time_tm) **[fact]** |
+| 0x2013F088 | `fat_format_write_mbr` | Format step: writes sector 0 with one partition entry at 0x1BE (CHS start/end fields, type, LBA start, size) **[fact]** |
+| 0x2013EE64 | `mbr_chs_head` | (geometry, *out): CHS head of the partition start, 0xFE beyond the CHS limit 0xFB0400 **[fact]** |
+| 0x2013EEBC | `mbr_chs_sector_cyl` | (geometry, *out): CHS sector/cylinder bytes of the partition start **[fact]** |
+| 0x2013EF3C | `mbr_partition_type` | (geometry, *out): partition type 1 / 4 / 6 for FAT12/16 by size, 0x0B / 0x0C for FAT32 (below / above the CHS limit) **[fact]** |
+| 0x2013EF9C | `mbr_chs_end_head` | (geometry, *out): CHS head of the partition end (start + size - 1) **[fact]** |
+| 0x2013F000 | `mbr_chs_end_sector_cyl` | (geometry, *out): CHS sector/cylinder of the partition end **[fact for the arithmetic]** |
+| 0x2013F340 | `fat_format_layout` | Computes the format layout from the CSD capacity: geometry record (fat_format_geometry_small / fat_format_geometry), sectors per cluster, reserved sectors, FAT size and data start, and the progress count **[fact]** |
+| 0x2013F210 | `fat_format_geometry_small` | (sectors, out): 0x2C-byte geometry record 0x20420300 below 0x7E0000 sectors, else 0x2042032C **[fact]** |
+| 0x2013F238 | `fat_format_geometry` | (sectors, out): 0x2C-byte geometry record from the capacity table 0x20420358..0x20420510 **[fact]** |
+| 0x2013F15C | `csd_read_bl_len` | (csd): READ_BL_LEN 10 / 11 -> 1024 / 2048, else 512 **[fact]** |
+| 0x2013F180 | `csd_c_size` | (csd): the 12-bit C_SIZE field of a version-1 CSD **[fact]** |
+| 0x2013F1A4 | `csd_c_size_mult` | (csd): 2^(C_SIZE_MULT + 2), 4..512 **[fact]** |
+| 0x2013F9FC | `sd_card_task_start` | (drive rec, index): stores the drive in 0x20808B60[i] and creates and starts the "SDInsCheck" task once **[fact]** |
+| 0x2013FA60 | `sd_ins_check_task` | Task "SDInsCheck": every 50 ticks asks the driver (op +8) for the card and sets / clears bit 6 of the drive byte +0x68 on a change **[fact]** |
+| 0x2013FC68 | `sd_card_poll` | (index, state): card detect state machine of the card monitor: mounts on insertion (fs_cache_invalidate, fs_drive_mount under the mutex 0x20808B6C) and unmounts on removal; returns the new state **[fact]** |
+| 0x2013FAF4 | `sd_card_remount` | (index): fs_cache_invalidate + fs_drive_mount, or fs_drive_unmount, as the card state asks **[fact]** |
+| 0x2013FB8C | `sd_clmap_state_set` | (v): 0x20808B64 = v (card mounted), clears the cluster-map flag 0x20808B68 **[fact]** |
+| 0x2013FBA0 | `sd_clmap_prepare` | Once per mount: at priority 6 builds the cluster map of drive I: (fs_clmap_attach_scan with a 0x20000-byte buffer) and sets 0x20808B68 **[fact]** |
+| 0x2013FC10 | `sd_mutex_create` | Creates the SD mutex 0x20808B6C (TA_INHERIT) **[fact]** |
+| 0x2013FC4C | `sd_mutex_lock` | (lock): tloc_mtx when lock != 0, then unl_mtx **[fact for the calls]** |
+| 0x2013FD3C | `sd_delay_ms` | (ms): itron_dly_tsk(ms / 10) **[fact]** |
+| 0x2013FFEC | `sdhi_dma_read_start` | (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start **[fact]** |
+| 0x20140030 | `sdhi_dma_read_wait` | Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear **[fact]** |
+| 0x20140060 | `sdhi_dma_write_start` | (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start **[fact]** |
+| 0x201400A4 | `sdhi_dma_write_wait` | Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear **[fact]** |
+| 0x201403D8 | `sdhi_clock_set_0x200` | SD_CLK_CTRL = 0x200 **[fact]** |
+
+### FAT layer: long names, directory entries, volume detection (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20144D5C | `lfn_entry_fill` | (entry, name part, vol): fills one 32-byte long-name directory entry: zeroed, 0xFF padding in the three name fields, then the UCS-2 characters **[fact for the fills]** |
+| 0x20144EF4 | `root_dir_write_lfn` | (vol, slot, sfn entry, long name, n, ...): writes the 8.3 entry and the n long-name entries before it (lfn_checksum, lfn_entry_fill) into the root directory sectors, marking each sector dirty **[fact]** |
+| 0x201466EC | `subdir_write_lfn` | (vol, sector list, slot, sfn entry, long name, ...): the same for a sub-directory, across up to three sectors (dir_sector_get / dir_sector_dirty) **[fact]** |
+| 0x20145254 | `sfn_matches_long` | (long name, entry, ...): compares a dotted 8.3 candidate with a name using Shift-JIS lead bytes and case folding (fs_char_lfn_only, sjis_fold_case_pair) **[fact for the calls]** |
+| 0x201458E4 | `ucs2_eq_nocase` | (a, b): case-insensitive equality of two UCS-2 code units for ASCII, full-width (page 0xFF), Greek (page 3) and Cyrillic (page 4) letters **[fact]** |
+| 0x20146608 | `subdir_lfn_match` | (vol, entry, long name): checksum and long-name characters of an entry chain compared with ucs2_eq_nocase **[fact for the calls]** |
+| 0x20146470 | `dir_entries_mark_deleted` | (entry, sector list, count, vol): writes 0xE5 into the 8.3 entry and its long-name entries, walking back over up to three directory sectors **[fact]** |
+| 0x20146520 | `sfn_equals` | (entry name, dotted name): converts the dotted name to 8.3 (sfn_from_dotted, leading 0xE5 -> 0x05) and compares, Shift-JIS aware **[fact]** |
+| 0x201465AC | `sfn_numtail_next` | (..., tail string): keeps the next free numeric tail: when the entry's tail (sfn_numtail_match) is >= the current one, stores tail + 1 as a decimal string; -66 above 9999998 **[fact]** |
+| 0x201463A4 | `dir_cluster_alloc_zeroed` | (vol, cluster, work): allocates a cluster for a directory (fat_alloc_cluster_locked) and writes zero sectors to it (fs_dev_op2); errors to fs_set_error **[fact]** |
+| 0x20147950 | `fs_utoa_zeropad` | (value, buf, width): decimal digits of value, zero-padded to width (max 10 digits) **[fact]** |
+| 0x20147B14 | `sfn_pack` | (out, name, vol): 11-byte space-padded 8.3 form of a name **[fact for the 0x20 fill; inference for the rest]** |
+| 0x20147C7C | `root_dir_add_entry` | Creates a directory entry with long name in the root directory: counts the needed long-name entries, scans the root sectors for a free run, builds the numeric-tail alias (fs_utoa_zeropad) and writes it with root_dir_write_lfn; an existing name is replaced (root_dirent_delete) **[inference: the calls and the free-slot scan]** |
+| 0x20148048 | `root_dir_add_entry_locked` | fs_lock_a, root_dir_add_entry, fs_unlock_a **[fact]** |
+| 0x20148150 | `subdir_add_entry` | Sub-directory counterpart of root_dir_add_entry: checks the '.' entry, then scans the cluster chain for a run of free entries (0xE5 / end) for the long-name count, allocates a cluster if needed (dir_cluster_alloc_zeroed) and writes the entries (subdir_write_lfn) **[inference: the calls and the free-slot scan]** |
+| 0x20148990 | `subdir_add_entry_locked` | fs_lock_a, subdir_add_entry, fs_unlock_a **[fact]** |
+| 0x20148A0C | `wpath_next_component` | (path, out): copies the next UCS-2 path component up to '\' or the end **[fact]** |
+| 0x20148B10 | `lfn_name_valid` | (UCS-2 name): rejects characters of the invalid set *0x20808BA8 and a trailing '.' or ' ' **[fact for the checks]** |
+| 0x20148C5C | `fs_wstrlen_max` | (UCS-2 string): length in bytes, at most 0x204 **[fact]** |
+| 0x20148C94 | `ucs2_to_upper` | (code): upper-case of a UCS-2 code for ASCII, full-width, Greek and Cyrillic letters (the pages of ucs2_eq_nocase) **[fact]** |
+| 0x20148D74 | `fs_wstricmp_ucs2` | (a, b): case-insensitive UCS-2 string compare through ucs2_to_upper (also Greek, Cyrillic, full-width; fs_wstricmp 0x2014D3F8 folds only < 0x100); file_sync_shared uses it **[fact]** |
+| 0x20148DEC | `fs_wstrnicmp_ucs2` | (a, b, n): bounded variant of fs_wstricmp_ucs2 **[fact]** |
+| 0x20148F40 | `fat32_fsinfo_read` | (vol, sector): checks the FSInfo signatures "RRaA" / "rrAa" and takes the free count and next-free cluster **[fact]** |
+| 0x201490F8 | `fat_find_volume` | (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT", identifies "FAT32" / "FAT12" / "FAT16" by the type strings **[fact]** |
+
+### SDHI sector transfers and the file sector buffer (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201407E0 | `sdhi_read_sectors_cmd` | (addr, buf, n, ctx): CMD16 block length 512, then CMD17 (one block) or CMD18 (several, with stop), sdhi_read_block per block and access-end wait **[fact]** |
+| 0x201409EC | `sdhi_write_sectors_cmd` | (addr, buf, n, ctx): CMD16, then CMD24 (one block) or CMD25 (several), sdhi_write_block per block and access-end wait **[fact]** |
+| 0x2014091C | `sdhi_read_op` | (addr, buf, n, ctx): read op of the SDHI op table: two blocks are read one at a time (block or byte address by card type +0x2C0), else sdhi_read_sectors_cmd; on error sdhi_error_reset **[fact]** |
+| 0x20140B50 | `sdhi_write_op` | sdhi_write_sectors_cmd, on error sdhi_error_reset **[fact]** |
+| 0x201407BC | `sdhi_error_reset` | Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) **[fact]** |
+| 0x20140B68 | `sdhi_open` | SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers 0x20808B78 / 0x20808B84 with gic_def_inh **[fact]** |
+| 0x20140BE8 | `file_buf_sync` | (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new position (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect / fat_sect2clust); used by fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work **[fact for the calls]** |
+
+### FAT helpers (2) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20147850 | `fs_strnicmp_sjis_b` | (a, b, n): case-insensitive compare of n bytes, Shift-JIS aware (two-byte characters folded with sjis_fold_case, single bytes with fs_toupper); no caller in the image; a second copy next to fs_strnicmp_sjis 0x2014D770 **[fact]** |
+| 0x20148A88 | `wpath_dir_len` | (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the last, with separators) plus 6 **[fact for the loop]** |

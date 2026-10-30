@@ -210,7 +210,7 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 6 | `FUN_fff97049` | 3DSS DISP SENSITIVITY 0x9B17 (bit 0) << 6 \| 2D DISP SENSITIVITY 0x9B16 << 7 (`EX040204` / `EX040203`, [menu.md](menu.md)) |
 | 7 | `FUN_fff97075` | *HI-SWR warning* UI +0x69 (0x20B6D, 2 bits: `swr_meter_protect` sets 1 or 2 by blink phase while the TX SWR is outside 1..5, 0 when it is back) << 4 \| +0x68 << 6 (no writer in MAIN, so always 0) \| **TX** (+0x67 = 0x20B6B) << 7 |
 | 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. **DISPLAY reader** **[fact]** (#179): `gui_screen_update` (0x2012EBB8) calls `led_set_mask(frame[8])` for each status-carrying frame, just before copying it to 0x208F0B2A (and `led_set_mask(0)` on power-off), so the byte drives the front-panel LEDs on P6, bit 0..7 = D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX ([display/peripherals.md](../display/peripherals.md)). So `ui_lamp_set` n = 1..8 is VOX, STEPCH, RXBUSY, D_BLUE, D_WHITE, D_GREEN, D_RED, TX, and LED DIMMER = 0 turns off RXBUSY, TX, STEPCH and VOX **[fact for the bits; the LED names are the schematic's]** |
-| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011**, a touch on the filter graph (#212) (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`FUN_201233d4`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011**, a touch on the filter graph (#212) (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`filter_graph_small`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
 | 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
 | 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
 | 12 | `FUN_fff971fc` | ATT (rec+3 bits 0–1, `RA`) \| IPO/AMP1/AMP2 (rec+5 bits 0–1, minus 1, `PA`) << 2 \| {2 in FM modes, else DNF on = block+1 bit 7, `BC`} << 4 |
@@ -421,10 +421,10 @@ earlier unsupported reading "five message memories" is withdrawn.
 
 | +0x3F9 | 0x9B..0x9C | 0x9D | 0x9E | DISPLAY action **[fact, DISPLAY]** |
 |---|---|---|---|---|
-| 0 open | 0x9B = 0x9DC1 (volume) | | | lists the `.wav` files (`FUN_20124bc0` → `wav_list_dir`) and answers E7 b1 = 0 with the count |
+| 0 open | 0x9B = 0x9DC1 (volume) | | | lists the `.wav` files (`playlist_list_files` → `wav_list_dir`) and answers E7 b1 = 0 with the count |
 | 1 list | UI +0x3FA (u16 BE): first file shown | cursor row +0x3FC (0..4) | 0 | redraws the list |
 | 2 command | as 1 | as 1 | +0x3FD: 0 stop/pause, 1 play, 2 and 3 the wind keys (3 = `play_ffwd`) | starts or stops playback and answers E7 b1 = 1 |
-| 3 delete | as 1 | as 1 | | `FUN_20124adc` deletes the selected file (`wav_delete`) and answers E7 b1 = 0 with the new count **[inference for the call path]** |
+| 3 delete | as 1 | as 1 | | `playlist_delete_file` deletes the selected file (`wav_delete`) and answers E7 b1 = 0 with the new count **[inference for the call path]** |
 | 4 volume | 0x9B = +0x3FE & 1 (playing), 0x9C = 0x9DC1 (volume) | | | redraws the volume |
 
 #### `0x40` menu page (0x1FB bytes; DISPLAY main screen, `scr_text_list`)
@@ -540,7 +540,7 @@ dialogs (names from T23e).
 `displink_rx_E7` and `displink_rx_E8` turn the DISPLAY's audio status into a code in UI +0x488 / +0x48C. `dispreq_e7_task` (task 11) and
 `dispreq_e8_task` (task 10, through `dispreq_e8_result` 0xFFFE376A) act on the code and clear it **[fact]**. On the DISPLAY, E7 comes from the
 PlayList (0x2080048E = 1) and E8 from the voice-message (`MSG_CH%d`) screens. The senders are `FUN_20124744` (b1 = 0xFF, error),
-`FUN_20124848` / `FUN_201248a4` (b1 = 1, state) and `FUN_20124adc` / `FUN_20124bc0` (b1 = 0, file count) **[fact, DISPLAY]**.
+`mainlink_send_e7_state` / `mainlink_send_e8_state` (b1 = 1, state) and `playlist_delete_file` / `playlist_list_files` (b1 = 0, file count) **[fact, DISPLAY]**.
 
 ```mermaid
 sequenceDiagram
@@ -562,7 +562,7 @@ sequenceDiagram
 
 The DISPLAY's error index **[fact, DISPLAY `FUN_20124744`]**: the argument −1..−6, −8, −9 maps to 0..7 (−7 has no slot and sends 0xFF).
 The callers pass −1 when `FUN_20103ba0` (bit 6 of the SD-card status 0x20800094) is 0, which reads as *no SD card* **[inference]**; −3 when
-`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set (once read as *write-protected* without evidence, but see below); −4 when the `MSG_CHn` file is missing; −6 when
+`sd_drive_flag5` (bit 5 of the card's +0x68 byte) is set (once read as *write-protected* without evidence, but see below); −4 when the `MSG_CHn` file is missing; −6 when
 there is nothing to delete; −8 / −7 when a file cannot be opened to play or wind; −9 when the matching `MSG_CHn` directory entry has a
 non-zero field +0x30 (meaning open). With the [0x70 texts](#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) the
 error index i gives **[fact for the mapping]**: 0 (−1) `INSERT SD CARD`, 1 (−2) `SD CARD FULL`, 2 (−3) `SD CARD ERROR`, 3 (−4) `NO FILE`,

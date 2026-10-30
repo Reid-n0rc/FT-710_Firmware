@@ -51,7 +51,7 @@ codes match it (9 = `ERR_RESOURCE_CLK`, 10 = `VSYNC`, 12 = `OUTPUT`, 13 = `LVDS_
 
 `gui_start` (0x20132CCC) runs, in order **[fact]**:
 
-1. `FUN_201340A4`, `FUN_201342B4` (scope/waterfall objects, see [spi-links.md](spi-links.md)), `FUN_20120D38`, `scope3d_tables_init` 0x20133620 (3DSS line offset
+1. `FUN_201340A4`, `scope_objects_init` (scope/waterfall objects, see [spi-links.md](spi-links.md)), `afscope_init`, `scope3d_tables_init` 0x20133620 (3DSS line offset
    tables, T23e round 2), `dmac8_m2m_init`, `sdr_dsp_link_init` (RSPI2/RSPI4 DMA set-up for scope data).
 2. `vdc5_isr_create`: `itron_acre_isr` with descriptor 0x203A706C → GIC ID **78** (VDC5 ch0 GR3_VLINE), handler 0x20118638 (`vdc5_ch0_isr_gr3_vline`; the 46 handlers 0x20118548–0x20119370 are
    `vdc5_ch{0,1}_isr_<type>`, one per SYSCNT_INT bit, listed by `r_vdc5_get_isr`, T23e round 2).
@@ -131,8 +131,8 @@ sequenceDiagram
 ```
 
 Per frame, `gui_main_loop` calls `gui_screen_update` (screen update), then `FUN_2012470C` / `FUN_20124528` + `FUN_201244D8` (RX/TX markers),
-`FUN_201233D4` or `main_filter_graph` (filter graph), `main_status_icons` (status icons), `meter_draw` (meter), `mainlink_send_rtc`, `mainlink_send_sd_state`,
-`FUN_201217B0`, `cursor_window_update` 0x201218A4 (mouse-cursor window, both channels) or `scr_screen_saver` (screen saver), `FUN_20131638`, `pclink_stats_print`, `debug_overlay_draw` (debug overlay) and
+`filter_graph_small` or `main_filter_graph` (filter graph), `main_status_icons` (status icons), `meter_draw` (meter), `mainlink_send_rtc`, `mainlink_send_sd_state`,
+`gui_input_poll`, `cursor_window_update` 0x201218A4 (mouse-cursor window, both channels) or `scr_screen_saver` (screen saver), `textterm_tx_poll`, `pclink_stats_print`, `debug_overlay_draw` (debug overlay) and
 `gui_update_layers` **[fact]**. Before the loop it handles the power-on cases (next section).
 
 ## Screen state machine
@@ -206,7 +206,7 @@ overlay modes (scope expanded, popup open) **[fact for the variables, inference 
 ### Power-on and boot-loader path (in `gui_main_loop`)
 
 - **Key combination 6** held at power-on (`key_scan_first() == 6`, the same check that forces the full start in [boot-rtos.md](boot-rtos.md)):
-  `logo_fade_in` fades the YAESU logo in, then `FUN_201322E4` → `FUN_20159058`: it shows the boot-loader screen if the boot-info status is 2, else
+  `logo_fade_in` fades the YAESU logo in, then `bootloader_entry_screen_thunk` → `bootloader_entry_screen`: it shows the boot-loader screen if the boot-info status is 2, else
   `FIRMWARE BOOT ERROR` forever **[fact]**. Combination 6 is key codes {0x304, 0x30A, 0x30E} all held (table 0x20165678, 3 codes per combo) **[fact]**.
 - **Normal**: `opening_screen` fades the logo in on graphics 1 and waits up to about 5 s (`4999 < n·33`) for MAIN's 0x60 packet;
   if MAIN asks for an update it calls `fwupdate_screen`. On a timeout it calls `fwupdate_insert_sd_screen_thunk` 0x201322AC → `fwupdate_insert_sd_screen` 0x2015AFB0, which shows `INSERT FIRMWARE SD CARD.` /
@@ -233,14 +233,14 @@ panel, origin top left, as in the drawing primitives. Main results:
 | Screen (handler) | Words | Layout **[fact: values and roles]** |
 |---|---|---|
 | Main screen status row (`main_status_icons`) | 0x208004A8–0x208004BE, 0x2080065C/5E | 12 icon slots at x = 2, 58, 125, 175, 230, 285, 314, 357, 512, 592, 662, 718; one more widget at (x 282, y 64) |
-| Main screen parts (`scr_main_layout` → `FUN_2012D8BC`, `FUN_2012E27C`) | 0x208004C0, 0x20800508–0x2080051A | y 113 for one strip; two groups at (x 59, y 93) and (x 231, y 93) with a 4 × 8 cell box repeated every 6 px (+8, +6 offsets): a bar-graph style widget **[inference]** |
-| Frequency display (`scr_vfo` → `FUN_20129CF0`) | 0x2080051C–0x2080052E | fields at (x 398, y 86), (x 544, y 73) and (x 650, y 86); text pitch 21; one 142-px wide clear |
+| Main screen parts (`scr_main_layout` → `main_left_boxes_draw`, `cw_zero_in_draw`) | 0x208004C0, 0x20800508–0x2080051A | y 113 for one strip; two groups at (x 59, y 93) and (x 231, y 93) with a 4 × 8 cell box repeated every 6 px (+8, +6 offsets): the **CW zero-in indicator** (`cw_zero_in_draw` lights one cell per set bit of the 25-bit frame field +0x15, `zero_in`) **[fact]** |
+| Frequency display (`scr_vfo` → `vfo_clar_draw`) | 0x2080051C–0x2080052E | fields at (x 398, y 86), (x 544, y 73) and (x 650, y 86); text pitch 21; one 142-px wide clear |
 | FUNC panel (`scr_func_panel`, 0x37) | 0x20800530–0x20800542 | origin (x 59, y 17) added to the per-cell table at 0x208019D6; cells offset (x 2, y 29) and (x 2, y 17) with a 5 / 55 px grid |
 | Setup menu (`scr_setup_menu`, 0x62) | 0x208004A4–0x208004A6, 0x208004DC–0x208004F2 | 8 rows at y = 173 + row · **35**; columns at x = 9 (number), 24, 144, 489; the cursor line at x 4, y 200 + row · 35, 792 × 1; list height 161 |
 | Selection popup (`scr_select_popup`, 0x30) | 0x208004C2–0x208004C4, 0x208004F8–0x20800506, 0x20800658/5A | box origin (x 137 + 0xDA, y 8 + 0xA1), item cells 349 × 23; items placed from the per-item tables 0x2016D358 / 0x2016DFFC / 0x2016E01A / 0x2016E038 / 0x2016DD44 / 0x2016ED68 plus (x 10, y 14) |
 | On-screen keyboard (`scr_keyboard`, 0x50; keys `keyboard_draw_keys`) | 0x20800544–0x2080058A | whole layer 800 × 454 at (0, 26); key grid from (x 25, y 45) with 15-px text pitch; input line (x 7, y 34) 786 × 42; caret 2 × 24; three buttons at y 2 (x 80, 400, 635); key labels at x 20, 9, 15, 10, 17, 7, 75, 39 + row/column table |
 | Memory list (`scr_memory_list`, 0x41) | 0x2080058C–0x208005C2 | list area (1, 184) 798 × 296; row bar (4, 187) 792 × 22; scroll arrows at x 665 and 739, y 190; five columns at x 5, 28, 112, 271, 385 (row y from the table 0x2016DB9A); side buttons at x 8 + 0x244 / 0x2B4, y 22 + 0xD3 / 0x15D / 0x1A2 |
-| Text list (`scr_text_list`, 0x40; `text_list_draw` → `FUN_20128E94`, `FUN_201281C0`, `FUN_20128860`, `FUN_20128D00`, row helpers `FUN_201283FC` / `FUN_20128564` / `FUN_20128704`) | 0x208005C4–0x2080064E | title centred at x 400, y 4; left pane (2, 28) 260 × 452, right pane (280, 28) 518 × 450; rows every **75** px (0x2080064E) from y 36 / 56 / 103; `BACK` / `DONE` buttons at (698, 31), (733, 55), (698, 416), (733, 438) |
+| Text list (`scr_text_list`, 0x40; `text_list_draw` → `text_list_background`, `text_list_plain_rows`, `text_list_item_rows`, `text_list_left_pane`, row helpers `text_list_row_value` / `text_list_row_slider` / `text_list_row_done`) | 0x208005C4–0x2080064E | title centred at x 400, y 4; left pane (2, 28) 260 × 452, right pane (280, 28) 518 × 450; rows every **75** px (0x2080064E) from y 36 / 56 / 103; `BACK` / `DONE` buttons at (698, 31), (733, 55), (698, 416), (733, 438) |
 | Information screen (`scr_info`, 0x34) | 0x208005F0–0x20800606 (shared with the text list) | same button positions; text block (700, 96) 94 × 315 **[inference: last four words are not in a draw call]** |
 | Confirm dialog (`scr_confirm` → `confirm_dialog_draw`, also `update_error_screen`) | 0x20800650, 0x20800654 | dialog anchored at x 258 / 770 **[inference]** |
 | Opening screen (`opening_screen`, `logo_fade_in`) | 0x208004D4–0x208004DA | logo at (x 157, y 213); status text centred at x 400, y 351 |
@@ -339,9 +339,9 @@ bits 0–2 change) **[fact: code]**:
 | byte 2 → `scope_mode_split` (`FUN_2012D3B8`) | 0x208004D2 | 0 for {3, 6, 9}, 2 for {5, 8, 11}, 1 otherwise; the small layout forces 1. This is the **waterfall size** (MAIN 0x9C38: 1 NORMAL, 2 EXPAND; 0 is never written) |
 | byte 3 bit 2 | 0x208004D0 = 3 | a third view, the scope-area text terminal (below); `FUN_2012470C` returns early unless 0x208004D0 = 3 |
 | byte 5 bit 5 | expanded | scope area starts at y 0x80 (128) and is 0x124 (292) high, else y 0xB4 (180) and 0xF0 (240) high for the 3DSS, y 0xC9 (201) and 0xDB (219) for 2D. MAIN sends the EXPAND flag 0x9C3D |
-| byte 7 bit 7 | | resets the 3D engine object (`FUN_201342D0`(0)) |
-| byte 0x10 bits 0–2 (clamped to 4) | | **PEAK** LV1–LV5 (MAIN 0x9BE6), passed to the two 3D objects 0x20470294 / 0x20474C68 by `FUN_20133DEC` |
-| byte 0x12 bits 0–3 (clamped to 10) | 0x208084CC | **COLOR** 1–11 (MAIN 0x9BE8, `FUN_2012E3C8`): the 3D palette (`FUN_201342DC`) and the 2D spectrum fill colour (`FUN_2015D2A8`: 0xB5BF for 0, 1, 4; 0xFFFF for 2, 8; 0xFEF0 for 3, 10; 0xFDB6, 0xE71F, 0xFE1F, 0x6FED for 5, 6, 7, 9) |
+| byte 7 bit 7 | | resets the 3D engine object (`scope_obj_bank_reset`(0)) |
+| byte 0x10 bits 0–2 (clamped to 4) | | **PEAK** LV1–LV5 (MAIN 0x9BE6), passed to the two 3D objects 0x20470294 / 0x20474C68 by `scope_peak_set` |
+| byte 0x12 bits 0–3 (clamped to 10) | 0x208084CC | **COLOR** 1–11 (MAIN 0x9BE8, `scope_color_decode`): the 3D palette (`scope_palette_set`) and the 2D spectrum fill colour (`FUN_2015D2A8`: 0xB5BF for 0, 1, 4; 0xFFFF for 2, 8; 0xFEF0 for 3, 10; 0xFDB6, 0xE71F, 0xFE1F, 0x6FED for 5, 6, 7, 9) |
 | byte 0x12 bits 4–7 (clamped to 5) | 0x208085B0, 0x208084CE / D2 | **SPEED** SLOW1, SLOW2, FAST1, FAST2, FAST3, STOP (MAIN 0x9C5A; 0x50 for STOP). 3DSS: a new line every N GUI frames, N = {20, 17, 13, 9, 5, 0} from 0x203A70A8. 2D: `FUN_2015D1C4` (below) |
 
 MAIN builds byte 2 in `FUN_fff96dde`: 3DSS (0x9C36 = 1) → 0x9C35 (0–2); waterfall → 3 + 3 · 0x9C35 + 0x9C38. During TX (UI +0x67) CURSOR and
@@ -361,7 +361,7 @@ mode 9) **[fact: code]**:
    (mode 9) one step further back.
 4. Line *i* is drawn by `scope3d_draw_line` (`FUN_2015BC6C`) at x = 5 · *i* + 4 with width **791 − 10 · *i*** (0x317 − 10 · *i*), so each older
    line is 10 px narrower and shifted 5 px right: the perspective of the 3DSS. The y of each line comes from the object's per-line table;
-   the vertical scaling from `FUN_20134358` (tables at 0x20450278 for mode 8, 0x2045027C for mode 9).
+   the vertical scaling from `scope3d_vscale` (tables at 0x20450278 for mode 8, 0x2045027C for mode 9).
 5. The finished image (0xDE = 222 or 0x112 = 274 rows for mode 8, 0x68 = 104 or 0x9C = 156 rows for mode 9) is copied into graphics 1
    at the scope origin.
 
@@ -389,7 +389,7 @@ The 2D renderers share one body. With waterfall height *h* and spectrum height *
 
 **Spectrum height table 0x203A1EE0** (#178). The table is in the flash image, not in a scatter-loaded region, so it is read at file offset
 0x2A1EE0 **[fact]**. Only the four 2D renderers reference it (literal-pool words at 0x2015D490, 0x2015D5DC, 0x2015D94C, 0x2015DA30; no other
-word in the image holds 0x203A1EE0..0x203A1EF7) **[fact]**. The index is also the level-object mode passed to `FUN_2013437C`:
+word in the image holds 0x203A1EE0..0x203A1EF7) **[fact]**. The index is also the level-object mode passed to `scope_levels_get`:
 
 | Index | Renderer, layout | Spectrum *s* | Waterfall *h* | *s* + *h* | Spectrum top (bottom − *h* − *s* − 1) |
 |---|---|---|---|---|---|
@@ -409,22 +409,22 @@ EXPAND 60/140 (expanded 140/133, 210/63, 60/213) **[fact: arithmetic]**. Entries
 and 9 (MULTI 80, `exp` 144), which `FUN_2015D49C` / `FUN_2015D5E8` hard-code instead **[fact: values; inference: that they belong to modes 8, 9]**.
 
 1. `FUN_2015DB80` draws the **spectrum** as a filled graph at y = bottom − *h* − *s* − 1. For each of the 791 columns, the level comes from
-   `FUN_2013437C`(index) (the 3D object 0x2047963C, `FUN_20157C50`). Pixels up to the level get the COLOR fill 0x208084CC, the rest get 0 (black).
+   `scope_levels_get`(index) (the 3D object 0x2047963C, `scope_obj_levels_get`). Pixels up to the level get the COLOR fill 0x208084CC, the rest get 0 (black).
    The code has an "inside `range`" and an "outside" branch, but they are identical, so `range` has no visible effect in 2D.
-2. `scope_history_push`(depth 0x208084D2) adds the record to the history ring. If the frame flag `0x208F463E[phase]` is set, `FUN_20134414`
-   (`FUN_20157D3C` on the same object) adds a **waterfall row**. Then phase = (phase + 1) mod 0x208084CE, with `FUN_20156260` as the divmod
+2. `scope_history_push`(depth 0x208084D2) adds the record to the history ring. If the frame flag `0x208F463E[phase]` is set, `scope_wf_add_row`
+   (`scope_obj_wf_add_row` on the same object) adds a **waterfall row**. Then phase = (phase + 1) mod 0x208084CE, with `FUN_20156260` as the divmod
    helper.
 3. `FUN_2015DA9C` draws the **waterfall** at y = bottom − *h*: a black line at y − 1, then *h* / 2 rows from the row ring, each drawn **twice**
-   (2 px per row), plus one more if *h* is odd. Row *i* comes from `FUN_20134434`(i) = 0x2049476C + 0x20450280 · 0x33F40 + slot · 0x640, so
+   (2 px per row), plus one more if *h* is odd. Row *i* comes from `scope_wf_row_addr`(i) = 0x2049476C + 0x20450280 · 0x33F40 + slot · 0x640, so
    there are two banks of 133 rows × 800 RGB565 pixels.
 
-**Waterfall speed** (`FUN_2015D1C4`, from `FUN_2012C6C4` when byte 0x12 bits 4–7 change): SPEED 0–4 set the period 0x208084CE = 600, 450, 300,
+**Waterfall speed** (`FUN_2015D1C4`, from `scope_speed_update` when byte 0x12 bits 4–7 change): SPEED 0–4 set the period 0x208084CE = 600, 450, 300,
 150, 30 GUI frames and the history depth 0x208084D2 = 20, 15, 10, 5, 1. STOP falls to the last case (30 / 1). The flag table
 0x208F463E[i] = (⌊100 · i / P⌋ > ⌊100 · (i − 1) / P⌋), so **exactly 100 waterfall rows are added per period** **[fact]**. At about 30 GUI frames
 a second, that is 100 rows per 20 s (SLOW1) … 100 rows per second (FAST3) **[inference: frame time from the 33 ms count in `opening_screen`]**.
 
-**3DSS front trace** (`FUN_2015D70C`): it takes the per-column levels for mode 8 / 9 from `FUN_2013437C` and two per-row colour ramps: one from the
-same call, and one from `FUN_20134398`(mode), the objects 0x20474D04 / 0x20478550. It fills each column from its level down to the bottom with
+**3DSS front trace** (`FUN_2015D70C`): it takes the per-column levels for mode 8 / 9 from `scope_levels_get` and two per-row colour ramps: one from the
+same call, and one from `scope_ramp_get`(mode), the objects 0x20474D04 / 0x20478550. It fills each column from its level down to the bottom with
 the ramp, using the second ramp inside `range`. Nothing above the level is cleared, so it is painted over the 3D image **[fact]**. So it is the
 newest, nearest line of the 3DSS drawn as a solid gradient trace **[inference]**.
 
@@ -444,9 +444,9 @@ it.
 
 | Part | Function | Position | Content |
 |---|---|---|---|
-| oscilloscope | `FUN_2015D650` | (x 4, y 325), 391 × 79 | per column a {max, min} pair from the 400-byte half at 0x208DD804 (`FUN_20120DA4`), drawn as a vertical bar in 0x065F (cyan). This is a min/max waveform envelope **[inference]** |
-| AF-FFT spectrum | `FUN_2015DC90` | (x 405, y 325), 391 × 39 | the 200 AF-FFT bins stretched to 391 columns (`FUN_20120D60`, height 0x27), filled in 0x529B |
-| AF-FFT waterfall | `FUN_20120D90` + `FUN_2015DA3C` | (x 405, y 365), 391 × 39 | `FUN_20120D90` writes one colour-mapped row (0x208DD53C palette) into the ring 0x208DD99C (0x30E B per row). `FUN_2015DA3C` blits the 39 newest rows (`FUN_20120D98`), 1 px each |
+| oscilloscope | `FUN_2015D650` | (x 4, y 325), 391 × 79 | per column a {max, min} pair from the 400-byte half at 0x208DD804 (`osc_column_pairs`), drawn as a vertical bar in 0x065F (cyan). This is a min/max waveform envelope **[inference]** |
+| AF-FFT spectrum | `FUN_2015DC90` | (x 405, y 325), 391 × 39 | the 200 AF-FFT bins stretched to 391 columns (`affft_spectrum_columns`, height 0x27), filled in 0x529B |
+| AF-FFT waterfall | `affft_wf_add_row` + `FUN_2015DA3C` | (x 405, y 365), 391 × 39 | `affft_wf_add_row` writes one colour-mapped row (0x208DD53C palette) into the ring 0x208DD99C (0x30E B per row). `FUN_2015DA3C` blits the 39 newest rows (`affft_wf_row_addr`), 1 px each |
 
 So the panel's left half is the **oscilloscope** and its right half is the **AF-FFT** with its own waterfall. This matches the manual's MULTI
 description and `SS` sel 7 (AF-FFT ATT, OSC level / time) **[inference]**.
@@ -473,9 +473,9 @@ straight into frame byte 3 (fff964e4 `bsr`, fff964ed `mov.b r1, [0x16A0 + 3]`) a
 MAIN V01-12 never sets byte 3 bit 2, and the text view cannot be selected from MAIN **[fact for MAIN; inference that the view is unreachable]**.
 
 Its layout words (`.data2`, values from the image via `tools/display_layout.py … --range 208084E8 2080850C`) **[fact: values and uses]**:
-RX area (x 4, y 212) 688 × 170 and TX area (4, 385) 688 × 30, both cleared each frame. `FUN_20131F74` works from (x − 3, y − 3) with a height of 170 + 30 + 3, so it spans both areas **[fact: operands; inference: a frame]**. RX text starts at
+RX area (x 4, y 212) 688 × 170 and TX area (4, 385) 688 × 30, both cleared each frame. `textterm_view_frame` works from (x − 3, y − 3) with a height of 170 + 30 + 3, so it spans both areas **[fact: operands; inference: a frame]**. RX text starts at
 (10, 215) with a line pitch of 28 px (0x2080850A), so about 6 of the 16 history lines fit **[inference]**. The TX text is at (10, 388) with a
-17-px character step (0x20808508). Four more words, (35, 23) and (94, 78) at 0x20808500–06, are offsets that `FUN_20131F74` combines with
+17-px character step (0x20808508). Four more words, (35, 23) and (94, 78) at 0x20808500–06, are offsets that `textterm_view_frame` combines with
 0x20808518–0x2080851E **[fact]**; what they place is not traced. The popup slot 28 `DEC LVL` title (above) belongs to this decoder
 **[inference]**.
 
@@ -684,7 +684,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x2011D84C | `r_vdc5_shrd_get_resource` | (ch, id): resource state 0x208DCE04[ch*9 + id] ; VDC5 driver shared parameters **[fact]** |
 | 0x2011D860 | `r_vdc5_shrd_rw_enable` | (ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use **[fact]** |
 | 0x2011D8B4 | `r_vdc5_shrd_rw_disable` | (ch, id): the same flag = 0 **[fact]** |
-| 0x20120D84 | `affft_bins_get` | 200 AF-FFT bins of 0x208DD73C through FUN_20157214 and the table 0x208DD23C; returns the bar height 0x2C  (#179) **[fact]** |
+| 0x20120D84 | `affft_bins_get` | 200 AF-FFT bins of 0x208DD73C through copy_inverted_words and the table 0x208DD23C; returns the bar height 0x2C  (#179) **[fact]** |
 | 0x201219B8 | `gui_draw_progress_bar` | (fb, x, y, percent): frame and bar 0xCE x 0x10, percent clamped to 100 **[fact]** |
 | 0x20121AF0 | `filter_graph_affft_overlay` | bars of affft_bins_get into empty pixels of the filter graph (row 129, x 521..720) when status byte 9 bit 3 (MAIN 0x9C5C) is set  (#179) **[fact]** |
 | 0x20121E88 | `main_status_icons` | REC/MSG/LOCK/... indicator row, scope SPAN/SPEED labels **[inference]** |
@@ -845,3 +845,263 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | 0x20134368 | `scope3d_line_offset` | (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 / 0x203D9A9E **[fact]** |
 | 0x20136398 | `fb_draw_round_frame_wrap` | Tail call to fb_draw_round_frame (arguments lost in the decompile); list and pop-up screens frame their boxes with it **[fact]** |
 | 0x2015B9A8 | `scope3d_history_clear` | Resets the history (0x20134310) and clears 0x6B080 bytes of the 3D buffer *0x208085B4 **[fact]** |
+
+### SD-card menu sub-screens (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20134978 | `sdmenu_scr_search_files` | scr_sd_menu byte 1 = 1..4: title from 0x208085FC, "Searching files...", builds the file list (sdmenu_list_files -> 0x209096B0, count 0x20909CF0) and answers 0xC3 (byte 1 + 0x40); mainlink_send_sd_absent without a card **[fact]** |
+| 0x20134984 | `sdmenu_scr_file_list` | scr_sd_menu 0x41..0x44 step 1: draws the file rows (75-px pitch, highlight frame 0xF980 for the selected row, scroll bar gui_scrollbar_draw with count 0x20909CF0) **[fact]** |
+| 0x20134990 | `sdmenu_scr_loading` | scr_sd_menu 0x41/0x43 step 0x10: "LOADING", sdmenu_select_load + sdmenu_request loop with progress bar, then sdmenu_req_save; returns non-zero when the transfer to MAIN follows **[fact]** |
+| 0x2013499C | `sdmenu_scr_load_wait` | scr_sd_menu step 0x10 after sdmenu_scr_loading: "PROCESSING", progress bar from sdmenu_xfer_len until all bytes went or MAIN's frame changes **[fact]** |
+| 0x201349A8 | `sdmenu_scr_name_check` | scr_sd_menu 0x42/0x44 step 2: default file name (sdmenu_default_name) or sdmenu_file_exists for the chosen row, answer in a 0xC3 frame **[fact]** |
+| 0x201349B4 | `sdmenu_scr_name_lookup` | scr_sd_menu 0x42/0x44 step 3: finds the typed name (strcasecmp over the 16-byte list 0x209096B0) and checks sdmenu_file_exists, answer in 0xC3 **[fact]** |
+| 0x201349C0 | `sdmenu_scr_save_xfer` | scr_sd_menu 0x42/0x44 step 4: "PROCESSING", sdmenu_req_load, progress from sdmenu_xfer_len until done or MAIN's frame changes **[fact]** |
+| 0x201349CC | `sdmenu_scr_saving` | scr_sd_menu 0x42/0x44 step 0x10: "SAVING", blank name -> sdmenu_default_name, sdmenu_select + sdmenu_request loop with progress bar, answer 0xC3 **[fact]** |
+| 0x201349D8 | `sdmenu_scr_info` | scr_sd_menu byte 1 = 5: sd_info_screen(0x20909CF4) and a 0xC3 answer **[fact]** |
+| 0x201349E4 | `sdmenu_scr_info_text` | scr_sd_menu 0x45: draws the two text lines 0x20909CF4 / 0x20909D34 that sd_info_screen filled, with separators **[fact]** |
+| 0x201349F0 | `sdmenu_scr_card_check` | scr_sd_menu byte 1 = 8: sd_present -> 0xC3 answer with status 1 (card) or 0 **[fact]** |
+| 0x201349FC | `sdmenu_scr_format_confirm` | scr_sd_menu 0x48 step 1: "FORMAT SD CARD" confirmation screen **[fact]** |
+| 0x20134A08 | `sdmenu_scr_format_run` | scr_sd_menu 0x48 step 0x10: "Now format in progress...", sd_format_request loop with progress bar, sd_format_done, answer 0xC3 **[fact]** |
+
+### Scope / 3DSS / AF-FFT objects (gui.md "Scope drawing") (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20134310 | `scope_history_reset` | Calls scope_obj_history_clear on the scope object 0x2047963C; scope3d_history_clear uses it (gui.md) **[fact]** |
+| 0x201342D0 | `scope_obj_bank_reset` | (mode): scope_wf_bank_set(0x2047963C, mode); packet 0x20 byte 7 bit 7 calls it with 0 (gui.md "resets the 3D engine object") **[fact]** |
+| 0x201342DC | `scope_palette_set` | (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68 from the ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12 bits 0-3) **[fact]** |
+| 0x201342B4 | `scope_objects_init` | gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and its hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default ramps and resets the waterfall banks **[fact]** |
+| 0x20133DEC | `scope_peak_set` | (level): passes the PEAK level to both 3D objects 0x20470294 / 0x20474C68 (gui.md: packet 0x20 byte 0x10) **[fact]** |
+| 0x2012E3C8 | `scope_color_decode` | (byte, *a, *b): low nibble clamped to 10 into both outputs; the COLOR field of packet 0x20 byte 0x12 (gui.md) **[fact]** |
+| 0x2012C6C4 | `scope_speed_update` | (frame, old, force): on a change of byte 0x12 bits 4-7 (SPEED, clamped to 5) calls scope2d_set_speed and, unless drawing is held, the 3DSS line period 0x208085B0 from ROM 0x203A70A8 **[fact]** |
+| 0x20120D38 | `afscope_init` | gui_start: clears the AF-FFT ring indices, builds the colour tables of 0x208DCE3C / 0x208DD53C and sets the 600-byte record 0x208DD73C (first 200 bytes 0xFF) **[fact]** |
+| 0x20120D98 | `affft_wf_row_addr` | (i): address of the i-th newest AF-FFT waterfall row in the ring 0x208DD99C (0x30E bytes per row, index object 0x208F0B14) **[fact]** |
+| 0x20120DA4 | `osc_column_pairs` | (colour set, out): the oscilloscope {max, min} pairs of the 400-byte half 0x208DD804 stretched to 391 columns and mapped through 0x208DD03C or 0x208DD13C (gui.md osc_draw) **[fact]** |
+| 0x20120D60 | `affft_spectrum_columns` | (colour set, out): the 200 AF-FFT bins stretched to 391 columns through 0x208DCE3C / 0x208DCF3C; returns the height 0x27 (gui.md) **[fact]** |
+| 0x20120D90 | `affft_wf_add_row` | Writes one colour-mapped AF-FFT row (palette 0x208DD53C) into the next slot of the ring 0x208DD99C unless 0x208DD994 is set (gui.md) **[fact]** |
+| 0x20134358 | `scope3d_vscale` | (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9) (gui.md 3DSS step 4) **[fact]** |
+| 0x2013437C | `scope_levels_get` | (index, out): per-column levels of the scope object for layout index / mode (method 0x20157C50, gui.md) **[fact]** |
+| 0x20134390 | `scope_record_hold_copy` | Copies the 850-byte scope record to the hold copy 0x2048360D (spi-links.md) **[fact for the doc; the 8-byte body tail-calls into 0x20157C50]** |
+| 0x20134398 | `scope_ramp_get` | (mode 8/9/other): second colour ramp from the objects 0x20474D04 / 0x20478550 / 0x20474C78 (gui.md 3DSS front trace) **[fact]** |
+| 0x20134408 | `scope3d_line_markers` | (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line) **[fact]** |
+| 0x20134414 | `scope_wf_add_row` | (record): adds a waterfall row to the scope object (method 0x20157D3C, gui.md 2D renderer step 2) **[fact]** |
+| 0x20134434 | `scope_wf_row_addr` | (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row (gui.md) **[fact]** |
+| 0x20134480 | `scope3d_layout_set` | (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables 0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) **[fact]** |
+| 0x201576F4 | `scope_wf_bank_set` | (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 = 0), 1 selects bank 1, 2 clears both banks **[fact]** |
+| 0x20157778 | `scope_obj_history_clear` | (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope object **[fact]** |
+| 0x201578C8 | `scope_obj_reset_bank0` | (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) **[fact]** |
+| 0x20158568 | `scope_obj_reset_bank1` | (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) **[fact]** |
+| 0x20158590 | `scope_obj_indices_clear` | (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 **[fact]** |
+| 0x2013448C | `scope_reset_bank0` | scope_obj_reset_bank0(0x2047963C) **[fact]** |
+| 0x20134498 | `scope_reset_bank1` | scope_obj_reset_bank1(0x2047963C) **[fact]** |
+| 0x201344A8 | `scope_indices_clear` | scope_obj_indices_clear(0x2047963C) **[fact]** |
+| 0x201587FC | `scope3d_obj_init` | (obj): resets the three sub-objects (+0x10, +0x9C, +0x38E8) and byte 0; used for the 3D objects 0x20470294 / 0x20474C68 by scope_objects_init **[fact]** |
+| 0x20157214 | `copy_inverted_words` | (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record **[fact]** |
+
+### Input / GUI polling (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201217B0 | `gui_input_poll` | gui_main_loop: usbkbd_screen_settings, sends E4 (leave screen saver) once on screen 0x7B, polls touch keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll **[fact]** |
+| 0x2015C558 | `touch_hit_scope` | Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2), expanded flag; input.md lists it for soft keys 0x1016..0x1019 **[fact]** |
+
+### Main screen parts and screen helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20129CF0 | `vfo_clar_draw` | scr_vfo part: clarifier field from main_vfo.side (+0x42) and main_vfo.clar_be (+0x43), drawn while byte 0x49 low nibble = 9; offset text by clar_offset_format (gui.md frequency display words 0x2080051C..) **[fact for the fields]** |
+| 0x20129C44 | `clar_offset_format` | (hz, buf): signed offset clamped to -9999..9999 as up to 4 digits right-aligned at buf+4 with a leading '+' or '-' **[fact]** |
+| 0x2012E1A4 | `vfo_mode_state_draw` | scr_main_layout part: draws the mode label (table 0x20802FF4 by main_vfo.mode) and the VFO-state / channel indicator (vfo_state_label_draw) when main_vfo mode/state/channel or vfo_flags bit 7 change **[fact]** |
+| 0x20129F64 | `vfo_sub_draw` | scr_vfo part: the other side's VFO block (frame +0x46.., digits +0x4A, tag +0x4F) with its state labels, redrawn on change **[fact for the fields]** |
+| 0x20129E4C | `vfo_digits_draw` | (digits, mode, layout, glyph table): draws the frequency digits of a VFO block with the per-mode digit positions from the layout record **[fact]** |
+| 0x2012CAAC | `multi_panel_labels_update` | scr_main_layout part: when byte 1, scope mode, vfo_flags bits or osc (+0x71) change, redraws the panel labels with multi_panel_label_draw (text view: part 0; MULTI layout: parts 2 and 3) **[fact]** |
+| 0x2012C2D8 | `gui_payload_changed` | (frame, old): 1 when the screen payload differs from the previous frame for screens 0x30/0x31/0x37/0x39/0x41/0x70 (compare lengths 7/10/0x1A7/0x50/0xAD/0x4A), 0 if not, -1 for a new screen or other ids **[fact]** |
+| 0x20125D8C | `playlist_play_poll` | gui_screen_update: PlayList playback supervision: owner 0x2080048E, stops playback at 100 % (play_progress) or when the screen leaves 0x3A or the card goes, error E7 on loss **[fact]** |
+| 0x2012910C | `voice_msg_play_rec` | Voice-message screen action: "MSG_CH%d" file in the .wav list: play_start, or rec_start with the TX frequency "%08d" as tag, rec_stop / play_stop; reports E8 states and audio errors **[fact]** |
+| 0x20124A74 | `playlist_entry_size` | (top, row, *out): word +0x30 of the 0x34-byte PlayList entry 0x208F1234[top + row] **[fact]** |
+| 0x20124A98 | `playlist_entry_name` | (top, row, dst): strcpy of the file name of PlayList entry 0x208F1234[top + row] (0x34 bytes per entry) **[fact]** |
+| 0x20124AB8 | `playlist_entry_text` | (top, row, dst): strcpy of the text at +0x26 of PlayList entry top + row **[fact]** |
+| 0x2012681C | `gui_button_draw` | (fb, y, x, sprite index): button box (outline boxes) with the sprite from the table 0x208022A0 **[fact]** |
+| 0x20126914 | `gui_button_draw_shadow` | (fb, y, x, sprite index): like gui_button_draw with a 0x4A69 drop shadow, sprites from 0x2080228C; used by confirm_dialog_draw and the update screens **[fact]** |
+| 0x2012B0F0 | `select_popup_frame_draw` | (row, x): frame and fill of one item cell of the selection popup (cell sizes 0x2016E620) **[fact]** |
+| 0x2012CB60 | `gui_draw_number_runs` | (fb, y, x, value): draws a number digit by digit from the glyph table 0x2080092C (value % 10), with a leading glyph 0x20800924 **[fact]** |
+
+### 3DSS line renderer callbacks (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2015B8F8 | `scope3d_line_render` | (buf, i, y, x0, mode, ...): one 3DSS line: levels (FUN_201343c4), colour ramp scope_ramp_get, markers scope3d_line_markers, scale scope3d_vscale, then scope3d_draw_line at x = 5i + x0, width 0x317 - 10i (gui.md 3DSS step 4) **[fact]** |
+| 0x2015BACC | `scope3d_line_render_alt` | Identical copy of scope3d_line_render that scope3d_render_large uses when its third argument is non-zero **[fact]** |
+
+### r_vdc5 driver: register part and shared parameters (T23e round 3)
+
+Each `r_vdc5_*` API function calls exactly one function of the block 0x201193EC..0x2011CA00 after its checks (the register part, `vdc5_reg_*`) and one of 0x2011D080..0x2011D514 that writes only the shared tables 0x208DCxxx (`vdc5_shrd_*`). The order matches the Renesas r_vdc5 driver files `r_vdc5_register.c` / `r_vdc5_shared_param.c` **[inference]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201193EC | `vdc5_reg_initialize` | Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR, peripherals.md) **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Initialize **[inference: one register function per API, same order as the API functions]** |
+| 0x201197C0 | `vdc5_reg_terminate` | Register part of r_vdc5_terminate: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Terminate **[inference: one register function per API, same order as the API functions]** |
+| 0x20119990 | `vdc5_reg_sync_control` | Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_SyncControl **[inference: one register function per API, same order as the API functions]** |
+| 0x20119E60 | `vdc5_reg_display_output` | Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_DisplayOutput **[inference: one register function per API, same order as the API functions]** |
+| 0x2011A6C8 | `vdc5_reg_change_write_process` | Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ChangeWriteProcess **[inference: one register function per API, same order as the API functions]** |
+| 0x2011AF34 | `vdc5_reg_read_data_control` | Register part of r_vdc5_read_data_control: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ReadDataControl **[inference: one register function per API, same order as the API functions]** |
+| 0x2011B498 | `vdc5_reg_change_read_process` | Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ChangeReadProcess **[inference: one register function per API, same order as the API functions]** |
+| 0x2011B8B8 | `vdc5_reg_start_process` | Register part of r_vdc5_start_process: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_StartProcess **[inference: one register function per API, same order as the API functions]** |
+| 0x2011B988 | `vdc5_reg_stop_process` | Register part of r_vdc5_stop_process: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_StopProcess **[inference: one register function per API, same order as the API functions]** |
+| 0x2011BB84 | `vdc5_reg_video_noise_reduction` | Register part of r_vdc5_video_noise_reduction: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_VideoNoiseReduction **[inference: one register function per API, same order as the API functions]** |
+| 0x2011BC8C | `vdc5_reg_image_color_matrix` | Register part of r_vdc5_image_color_matrix: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ImageColorMatrix **[inference: one register function per API, same order as the API functions]** |
+| 0x2011BF00 | `vdc5_reg_image_enhancement` | Register part of r_vdc5_image_enhancement: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ImageEnhancement **[inference: one register function per API, same order as the API functions]** |
+| 0x2011BFC4 | `vdc5_reg_image_black_stretch` | Register part of r_vdc5_image_black_stretch: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ImageBlackStretch **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C068 | `vdc5_reg_alpha_blending` | Register part of r_vdc5_alpha_blending: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_AlphaBlending **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C22C | `vdc5_reg_alpha_blending_rect` | Register part of r_vdc5_alpha_blending_rect: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_AlphaBlendingRect **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C4D4 | `vdc5_reg_chromakey` | Register part of r_vdc5_chromakey: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Chromakey **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C5E4 | `vdc5_reg_clut` | Register part of r_vdc5_clut: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Clut **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C6EC | `vdc5_reg_display_calibration` | Register part of r_vdc5_display_calibration: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_DisplayCalibration **[inference: one register function per API, same order as the API functions]** |
+| 0x2011C950 | `vdc5_reg_gamma_correction` | Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_GammaCorrection **[inference: one register function per API, same order as the API functions]** |
+| 0x2011D080 | `vdc5_shrd_init` | Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states 0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4 and the read records 0x208DCD2C **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D19C | `vdc5_shrd_set_init_param` | Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param byte 0; 5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D1F4 | `vdc5_shrd_terminate` | Shared-parameter update of r_vdc5_terminate (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D248 | `vdc5_shrd_set_sync_param` | Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 + 0x10*ch **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D2B4 | `vdc5_shrd_set_output_param` | Shared-parameter update of r_vdc5_display_output (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D374 | `vdc5_shrd_set_write_param` | Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record 0x208DCCE4[ch][layer] (format, swap, frame buffer, size) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D3F0 | `vdc5_shrd_set_chg_write_param` | Shared-parameter update of r_vdc5_change_write_process (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D438 | `vdc5_shrd_set_read_param` | Shared-parameter update of r_vdc5_read_data_control (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D514 | `vdc5_shrd_set_chg_read_param` | Shared-parameter update of r_vdc5_change_read_process (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+
+### Scope-area text terminal on SCIF4 (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20131638 | `textterm_tx_poll` | gui_main_loop: state machine 0x208F4BAA of the text terminal on the SCIF4 link: ESC (0x1B) setting frames with the text sets (frame +0x70), 0x10 / 0x110 commands and the TX text one character at a time (0x1D + character from 0x208F489F), waiting for the answer bytes (textterm_rx_expect) **[fact]** |
+| 0x20130C90 | `textterm_send_setting` | (item 0..15, frame, force): sends one terminal setting as a 3-byte frame (item + 0x11, value) over uart4_send when the frame field changed (text sets, osc +0x71, RTTY/PSK bytes +0x67..+0x6F) **[fact]** |
+| 0x201310EC | `textterm_send_all` | Sends settings 0..15 except 11 and 12 with textterm_send_setting **[fact]** |
+| 0x201315A4 | `textterm_rx_clear` | Clears the 64-byte answer ring 0x208F4BAC and its indices 0x208F4BEC/ED **[fact]** |
+| 0x201315C0 | `textterm_rx_expect` | (byte): pops the next byte of the answer ring; 1 when it equals byte **[fact]** |
+
+### Text list screen (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20128E94 | `text_list_background` | Clears layer 2 and draws the title bar, the left pane and the right pane boxes from the layout words 0x208005C4.. **[fact]** |
+| 0x20128D00 | `text_list_left_pane` | Left pane of the text list: up to 8 entries of 13 characters from payload +0xB1 (0x68 bytes compared for changes) with their icon sprites from the table 0x2016DC7A **[fact]** |
+| 0x201281C0 | `text_list_plain_rows` | Right pane, plain form: 30-byte text rows from payload +0x119 at the 75-px row pitch 0x2080064E, plus the BACK button **[fact]** |
+| 0x20128860 | `text_list_item_rows` | Right pane, item form: 45-byte rows from payload +0x119; a row whose value text is "DONE" -> text_list_row_done, type 3 with a flag -> text_list_row_slider, else text_list_row_value; scroll bar, page arrows and BACK **[fact]** |
+| 0x201283FC | `text_list_row_value` | (row, frame): row label (21 characters at +0x11C) and its value text (+0x131, length in +0x11A), right-trimmed, with the value box sprite **[fact]** |
+| 0x20128564 | `text_list_row_slider` | (row, frame): row label and value text with the three bar sprites 0x208022B4 / B8 / BC around the value **[fact]** |
+| 0x20128704 | `text_list_row_done` | (row, frame): row label and a "DONE" button box; text_list_item_rows frames it when selected **[fact]** |
+
+### Filter graph (main_filter_graph and its small variant) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201233D4 | `filter_graph_small` | gui_main_loop draws it instead of main_filter_graph while 0x208F4633 is 0: the same passband computation (filter_graph_state_update, filter_passband_calc) and curve/edge drawing in the 0x164 x 0x45 box at (x 0x1BB, y 0x6D), without the value texts and buttons; skipped while gui_scope_draw_hold_set holds **[fact]** |
+| 0x20123088 | `filter_graph_state_update` | (state 0x208F4600): reads IF SHIFT, NOTCH and CONTOUR from the current frame (shift_be, notch_be, contour_be) and derives the per-mode graph values **[fact for the fields]** |
+| 0x20122D00 | `filter_passband_calc` | (out, mode, ...): passband edge pixels for the mode group (SSB/CW/AM/FM/DATA cases; DATA uses data_offset_be) into the records 0x208007DC / 0x208007E2 **[fact for the fields]** |
+| 0x20122638 | `filter_graph_draw_edges` | (fb, mode, ...): draws the passband slopes and edges for the mode group (FUN_20136670 lines, FUN_20121B90 edge sprites) **[fact for the calls]** |
+| 0x201224C8 | `filter_graph_draw_markers` | (fb, mode): marker sprites on row 0x81 at the computed positions (0x208007E4 + 0x1B1 ...) **[fact]** |
+| 0x2012384C | `filter_graph_value_text` | (fb, sel): value line under the graph: tick marks and the "%dHz" values of the selected function (0x208F460A / 4612 / 461A / 461E / 4626) right-aligned at y 0xE2 **[fact]** |
+| 0x201235AC | `filter_graph_buttons` | Bottom row of main_filter_graph: four 0x58 x 0x31 sprite buttons at y 0x116, x 0x1BB / 0x214 / 0x26D / 0x2C6 with on/off sprites from the tables 0x208008C8.. **[fact]** |
+
+### GUI widgets and input (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201363C0 | `gui_scrollbar_draw` | (fb, y, x, w, h, pos, count, min, colour): framed track with a 0x632C thumb sized and placed from pos / count (idivmod); used by scr_info, text_list_item_rows and the SD-menu file screens **[fact]** |
+| 0x2012DDC4 | `vfo_state_label_draw` | (state, channel, flag): VFO-state indicator next to the mode label: sprite by state 1..10 (VFO, memory, memory tune, PMS, QMB, 60 m, EMG, split RX/TX per ml_vfo.state) with the channel number **[fact for the state switch]** |
+| 0x2012EA74 | `gui_frame_save` | gui_screen_update: copies the frame into gui_frame_saved (0x240 bytes), runs gui_change_flags_update and copies 0x12 bytes 0x208F462C -> 0x208F0B18 **[fact]** |
+| 0x201248F8 | `audio_screen_poll` | gui_screen_update: voice-message / PlayList supervision: stops record or playback when the card goes or an audio error occurs and reports it (mainlink_send_audio_error, E7/E8 states) **[fact]** |
+| 0x20121318 | `gui_mouse_right_poll` | Right mouse button events (mouse_right_get_event): soft key from gui_right_key, press / long press / release sent with mainlink_send_touch_key **[fact]** |
+| 0x20121044 | `gui_mouse_middle_poll` | Middle mouse button events (mouse_middle_get_event): soft key from gui_middle_key, sent with mainlink_send_touch_key **[fact]** |
+
+### Main screen parts (2) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2012E27C | `cw_zero_in_draw` | scr_main_layout part: when the CW indicator (frame +0x0D bit 7) or the 4-byte zero_in field (+0x15) changes, draws the CW sprite and one white cell per set bit of the 25-bit zero-in bar at the layout words 0x20800508..0x2080051A (gui.md "main screen parts") **[fact]** |
+| 0x2012D318 | `scope2d_spectrum_height` | (expanded): 2D spectrum height for the current layout (0x208004D0, MULTI 0x20800482, waterfall size 0x208004D2): 100 / 140 / 60 / 210 / 40 / 80, the values of the spectrum height table in gui.md **[fact]** |
+| 0x2012E9A8 | `gui_change_flags_update` | (frame, old): sets the change flags 0x208F4638..0x208F463D (expanded area, two settings bytes, filter-graph switch, screens 0x40/0x43/0x3A, popup 0x30 with payload 0xFF, ...) from the saved copy 0x208F0B18 **[fact]** |
+| 0x2012E678 | `textterm_frame_update` | (frame, old): P2_15 = 1, resets the terminal TX line when the text view or the VFO bits change, then textterm_send_all **[fact]** |
+| 0x2012CF30 | `scope_freq_scale_draw` | scr_main_layout part: frequency scale of the scope area from op_freq_be, dial_freq_be, scope_start_be and span_ccf (redrawn on change): numbers with gui_draw_number_runs at the span step table 0x2016D6E8 **[fact for the fields]** |
+| 0x2012C71C | `multi_panel_label_draw` | (frame, part): labels of the MULTI panel parts (oscilloscope / AF-FFT, from the osc byte +0x71) or the text-view header (part 0) at the layout words 0x20800722..0x2080074E **[fact for the callers; inference for the part roles]** |
+| 0x20131F74 | `textterm_view_frame` | scope_area_setup: frame of the text-terminal view (RX area, TX area, two buttons) from the layout words 0x208084DC.. / 0x20808500.. (gui.md "third view"); clears the terminal state first **[fact]** |
+
+### Scope object methods (2) (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20157D3C | `scope_obj_wf_add_row` | (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), adds the level offset to each point (clamp_add_u8, 0..255) into the current waterfall bank (gui.md: scope_wf_add_row) **[fact for the calls]** |
+| 0x20157C50 | `scope_obj_levels_get` | (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while SPEED STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method behind scope_levels_get) **[fact]** |
+| 0x20134424 | `scope_wf_add_row_mode` | (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0 **[fact]** |
+
+### GUI buffers and scope state (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20120D4C | `affft_wf_freeze_set` | (v): 0x208DD994 = v; affft_wf_add_row adds no row while it is set; gui_screen_update sets it **[fact]** |
+| 0x20131130 | `textterm_rx_push` | (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC); decode_text_rx feeds it **[fact]** |
+| 0x201322C8 | `fwupdate_menu_screen_thunk` | mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of the update-UI thunks of update.md **[fact: words at 0x201322C8..0x201322D4]** |
+| 0x201322D8 | `fwupdate_select_screen_thunk` | fwupdate_select_screen(0x208F4BF4, frame) **[fact]** |
+| 0x20133618 | `scope3d_history_clear_thunk` | scope3d_history_clear(0x20907F78); scope_area_setup calls it **[fact]** |
+| 0x20133640 | `scope3d_buf_get` | Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels use it as a back buffer **[fact]** |
+| 0x20133D7C | `fb_layer2_save` | (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf **[fact]** |
+| 0x20133DA8 | `fb_layer2_restore` | (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC **[fact]** |
+| 0x20132F6C | `clmap_buf_get` | Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan **[fact]** |
+| 0x201342F8 | `scope_freeze_a_set` | (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md); gui_screen_update sets it **[fact]** |
+| 0x20134304 | `scope_freeze_b_set` | (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it **[fact]** |
+| 0x20132EE8 | `fb_cache_clean_buf` | (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800, 0x602EE000), 0xBB800 bytes each except the last **[fact]** |
+
+### R_vdc5 colour helpers (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011C360 | `rgb5_to_8` | (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) **[fact]** |
+| 0x2011C37C | `rgb4_to_8` | (v): 4-bit colour component scaled to 8 bits (v * 0x11) **[fact]** |
+| 0x2011C388 | `rgb6_to_8` | (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) **[fact]** |
+
+### Ring indices of the scope and AF-FFT histories (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20164758 | `ring100_offset` | (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring **[fact]** |
+| 0x20164788 | `ring100_next` | (idx): *idx + 1, wrapping at 100 **[fact]** |
+| 0x20164360 | `ring100_advance` | (idx): returns *idx and advances it with ring100_next; affft_wf_add_row **[fact]** |
+| 0x2016479C | `ring133_offset` | (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) **[fact]** |
+| 0x201647D0 | `ring133_next` | (idx): *idx + 1, wrapping at 133 **[fact]** |
+| 0x20164388 | `ring133_advance` | (idx): returns *idx and advances it; scope_obj_wf_add_row **[fact]** |
+| 0x201647E4 | `ring20_offset` | (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line) **[fact]** |
+| 0x20164814 | `ring20_next` | (idx): *idx + 1, wrapping at 20 **[fact]** |
+| 0x201643B0 | `ring20_advance` | (idx): returns *idx and advances it; scope_history_push **[fact]** |
+| 0x20164828 | `ring30_offset` | (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history) **[fact]** |
+| 0x2016485C | `ring30_next` | (idx): *idx + 1, wrapping at 30 **[fact]** |
+| 0x201643CC | `ring30_advance` | (idx): returns *idx and advances it; scope3d_redraw_history **[fact]** |
+| 0x201643A4 | `ring133_reset` | (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it **[fact]** |
+| 0x20164334 | `scope3d_widths_init` | (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide) **[fact]** |
+| 0x201577F8 | `copy_inverted_words_b` | (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words); scope_history_push uses it **[fact]** |
+| 0x201571E8 | `afscope_obj_clear` | (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8 **[fact]** |
+| 0x20120D58 | `afscope_clear` | afscope_obj_clear(0x208DCE3C); scope_area_setup calls it **[fact]** |
+
+### Debug overlay and touch waits (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201360B0 | `debug_dump_rx_frame` | (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200 bytes) at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change **[fact]** |
+| 0x20136188 | `debug_dump_rx_buf2` | (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus the last received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 **[fact]** |
+| 0x20158FD0 | `touch_wait_tap` | Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or 4), a release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and fwupdate_insert_sd_screen wait with it **[fact]** |
+
+### AF-FFT / oscilloscope level maps built by afscope_init (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20160C70 | `afscope_map0_init` | Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on 0x27 (39, the AF-FFT spectrum height of gui.md) **[fact]** |
+| 0x20160D50 | `afscope_map1_init` | Map 1 (obj +0x100): the same curve as map 0 **[fact]** |
+| 0x20160CF0 | `afscope_map2_init` | Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 **[fact]** |
+| 0x20160DE4 | `afscope_map3_init` | Map 3 (obj +0x300): the same curve as map 2 **[fact]** |
+| 0x20160E44 | `afscope_map4_init` | Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the bar height affft_bins_get returns) **[fact]** |
+
+### Main-screen soft-key rows (T23e round 3)
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2012D8BC | `main_left_boxes_draw` | scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte entry of 0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when ATT/IPO/DNF (+0x0C), the CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change **[fact for the table and fields]** |
+| 0x2012DBF8 | `main_bottom_row_draw` | scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of 0x2016E304, the touch table of keys 0x1000..0x1009 (input.md) **[fact for the table]** |
