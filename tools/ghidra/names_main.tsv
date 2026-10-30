@@ -2220,8 +2220,8 @@ fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +
 fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
 fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
 # --- #205 (EEPROM leftovers)
-fff94bd9	ver_main_ext1	Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; build date/time [guess] (#205)
-fff94be5	ver_main_ext2	Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94bd9	ver_main_ext1	Returns 0xFFFFFF10, ROM string "2101", shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact: MAIN image]; meaning open (#205)
+fff94be5	ver_main_ext2	Returns 0xFFFFFF20, ROM string "24-02-16" (release date, = SFL header [DATE] 2024/02/16), shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
 fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C [fact] (#205)
 fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP [fact] (#205)
 fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)
