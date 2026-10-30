@@ -3,7 +3,7 @@
 Back to [hifi4.md](hifi4.md) (threads, I/O, register file, tables) and the [IFDSP overview](README.md). This page says **what each signal
 stage computes**, with its constants and the registers that steer it. Sources: the decompiled C in `decomp/ifdsp/hifi4/` and, for every
 kernel, the FLIX-aware listing `decomp/ifdsp/hifi4/flix.dis` (the decompiler drops many loops and the `ae_*` arithmetic). Literal values
-are decoded from the L32R pools. Tags: **[fact]** = seen in code or data (address given), **[inference]**, **[guess]**. Function names are
+are decoded from the L32R pools. Tags: **[fact]** = seen in code or data (address given), **[inference]** (evidence and reasoning stated); unsettled points are written as *Open: …; would be settled by …*. Function names are
 the ones applied in Ghidra by this issue (`tools/ghidra/IfdspHifi4Names.java`). Register numbers are DSP register-file indexes; the MAIN
 side of each register is in [control-link.md](control-link.md#register-map).
 
@@ -94,7 +94,7 @@ flowchart TB
 | 0x220AA4 / 0x220470 (+0x220420, band 0x220790) | `rx_eq_3band` / `rx_eq_update` | Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10 | 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50 | [fact] |
 | 0x21E82C | `branch_a_align_delay` | 128-sample delay, active only while the branch-B FIR is on: (257 − 1) / 2 = 128 = the FIR's group delay, so both branches stay time-aligned | (0x4020) | [fact] |
 | 0x21E754 (+0x21E740) | `aess_lowpass_fir` (was `cw_fir_lowpass`) | **AESS crossover low-pass** on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle: 0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four tables; steep: −12.2 dB at 1000 Hz (700) and −13.5 dB at 1500 Hz (1000), −40.7 / −31.4 dB at 3 kHz; gentle ≈ −6 dB/octave). MAIN's `dsp_set_aess` sends 0x2000 \| 700 or 0x2000 \| 1000 (steep), 0 when the AESS level is 0 | 0x4020 | [fact: responses computed from the tables]; AESS crossover [inference, strong] |
-| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms) | 0x56 | [fact]; why (acoustic alignment of the two speakers) [guess] |
+| 0x21E6C4 (+0x21E6B0) | `branch_b_delay` | Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms) | 0x56 | [fact]. Open: why only branch B (the AESS feed, see [below](#rx_audio-branch-b-is-the-aess-speaker-feed-reg-6--10-is-an-external-audio-mode)) gets this delay; would be settled by Yaesu's AESS description or by measuring the two codec outputs |
 
 **No noise blanker on the HiFi4.** None of the stages above is an impulse blanker, and MAIN sends its NB level to the SDR FPGA
 (register 0x1A, [main/sdr-link.md](../main/sdr-link.md)), so the NB runs in the FPGA **[inference]**.
