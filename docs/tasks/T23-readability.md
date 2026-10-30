@@ -209,7 +209,7 @@ canonical projects and the re-export are left to the parent session.
      `devices/MIMXRT685S/drivers/fsl_power.c` lines 183-196) has `POWER_SetBiasConfig()`, "configure bias voltage level
      [RBB & FBB] and enable/disable pull-down", which writes `PMC_REG(0x20) = 0x04040808U` if it differs and then
      `PMC->SLEEPCTRL = CORELVL(0xA)` (0.7 V deep sleep) **[fact]**. That is exactly the M33 function at 0x00080030
-     (`power_set_deepsleep_pmc_cfg`, so its SDK name is `POWER_SetBiasConfig`). New `RT_EXTRA` list in
+     (first named `power_set_deepsleep_pmc_cfg`, now `POWER_SetBiasConfig`). New `RT_EXTRA` list in
      `tools/sfr_table.py`: `PMC_BIASCFG` (our symbol) at 0x40135020 and `PMC_S_BIASCFG` at 0x50135020; `build --chip rt685`
      rewrote `sfr_rt685.tsv` with these two rows only (HiFi4 table unchanged, PMC is not in the DSP view); checks pass;
      M33 coverage is now 100 %. Applying it needs the next canonical `ApplySfr.java` run.
@@ -679,7 +679,7 @@ canonical projects).
   whose following bytes were their return use; they are now left out of the stats (DISPLAY lost_ret 170 → 17, M33 13 → 0
   before any signature). A call reads its callee's live-in (wrappers pass r0..r3 on), PUSH counts as no use (armcc and
   gcc push r0-r3 to reserve stack). The M33 code is built with gcc `-fipa-ra`: callers keep r0..r3 across a callee that
-  never writes them (`power_set_deepsleep_pmc_cfg` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
+  never writes them (`POWER_SetBiasConfig` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
   (transitive over the call graph) and `sites_keep_scratch` (r2/r3/r12 live after the call, or r0/r1 the callee never
   writes), and the drafter leaves such functions out.
 - **Signatures**: `signatures_display.tsv` 578 rows (575 asm, 1 doc `__aeabi_uidivmod` as uint64 per the RTABI,
