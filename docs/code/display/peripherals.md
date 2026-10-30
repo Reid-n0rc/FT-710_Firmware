@@ -342,7 +342,7 @@ The LED bits for `led_set_mask` are byte 8 of the status block that every "statu
 ## 8. Other blocks
 
 - **OSTM** **[fact]**: OSTM0 is the 10 ms kernel tick and OSTM1 the 1 ms periodic wake-up (boot-rtos.md). `ostm_time_us` (0x20117860) interpolates the system time
-  from the OSTM0 counter (320000 counts per tick). `delay_us` busy-waits on it.
+  from the OSTM0 counter (320000 counts per tick). `delay_us` busy-waits on it. Its wrap correction tests bit 6 of 0xE8205580, which is not a register in the manual (offset 0x580 of the PFV0 window); bit 6 matches OSTM0TINT (ID 134, `INTC_ICDISPR4` 0xE8201210 bit 6), so it is most likely meant as "OSTM0 tick pending" **[inference]** ([T23b](../../tasks/T23-readability.md)).
 - **WDT** **[fact]**: the only access is `wdt_system_reset` (0x20100268): WRCSR = 0xA500, 0x5A5F (reset enable), WTCNT = 0x5AFF, WTCSR = 0xA578
   (watchdog mode, start). It resets the chip within a few counts. Callers: `system_reboot` and the debug `reset` command (`keycode_line`). Nothing
   refreshes the WDT, so there is no watchdog supervision.

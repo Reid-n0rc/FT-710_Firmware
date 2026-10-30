@@ -838,6 +838,11 @@
 20131354	pkt23_tx_text	packet 0x23: TX text line 0x208F489F
 20120d84	affft_bins_get	200 AF-FFT bins of 0x208DD73C through FUN_20157214 and the table 0x208DD23C; returns the bar height 0x2C [fact] (#179)
 20121af0	filter_graph_affft_overlay	bars of affft_bins_get into empty pixels of the filter graph (row 129, x 521..720) when status byte 9 bit 3 (MAIN 0x9C5C) is set [fact] (#179)
+# --- #212: touch hit test (soft key codes 0x1xxx; E0 clears bit 12)
+201214b0	touch_key_poll	touch events (pointer_get_event src 1, touch_cal_apply) -> touch_hit_test -> mainlink_send_touch_key 0x2080046C [fact] (#212)
+2015c048	touch_hit_test	(x, y) -> soft key code per screen 0x208F0B2A, 0x1FF = none; main screen: 0x20192748 (0x1011 filter graph), 0x2042007C, 0x20350AC8, 0x2021CC58, 0x2016E15C, 0x201AC45C, 0x2016E304 [fact] (#212)
+2015bf88	touch_hit_table	first entry of u16 {x, y, w, h, code} [n] containing (x, y), else 0x1FF [fact] (#212)
+2015c6fc	touch_hit_rect	one u16 {x, y, w, h, code} rectangle (r3 = 1: y from 0) [fact] (#212)
 # --- #178 (image read): scope marker code; 0x20123EC4 has no function yet, ApplyNames creates it; show in decomp/ after the next re-export
 20123ec4	scope_markers_draw	(r0 = 1 MULTI / 0 large) red 0xF800 RX/TX marker frames on graphics 1; zeroes range 0x208007D4
 201244d8	scope_markers_update	checks 0x20800482 / 0x208004D0, tail-branches to scope_markers_draw(layout)
