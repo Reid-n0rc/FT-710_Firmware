@@ -652,49 +652,97 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
 ### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
 
 - After reset it prints the prompt **`[IF]>`** (no CR/LF before it).
-- Every character is echoed at once; characters outside its set come back as `?` (e.g. `q`). LF is echoed and does nothing.
-- **`#` and BS are hex digits** (#89, `hdl/sdr/sim/pins_main.cpp` with `CONSOLE=`) **[fact]**: the console's hex decoder reads
-  `#` (0x23) as **E** and BS (0x08) as **B**. `#` is echoed as 0x06, BS as `B`. So `r 000#` reads register 0x0E (`1200`),
-  `r 000<BS>` reads 0x0B (`0058`), `w 0015 12<BS>4` stores 0x12B4 (read back as `12B4`), and BS does not edit the line. The
-  earlier "`#` then `Err`" came from lines whose digit count the extra character broke; `r ####` reads 0xEEEE (unmapped,
-  `CCCC`). Unmapped registers read `CCCC`.
-- On CR: `r AAAA` prints CR LF `VVVV ` CR LF `[IF]>`; `w AAAA VVVV` or `w AAAA,VVVV` writes silently and prints CR LF
-  `[IF]>`. Exactly four hex digits and one separator (space or comma) are required; anything else (`r0`, `r 15`,
-  `r  0001`, trailing space, `0x` prefixes, two operands for `r`) prints `Err` CR LF `[IF]>`.
+- Every character other than CR and BS is echoed at once: the character set as itself, `a-f` in upper case, `#` as
+  0x06, `s` as `:` (in every position, not only after `r`), everything else as `?` (e.g. `q`). Under the quiet mode
+  below nothing is echoed.
+- **Structure (#204) [fact: netlist equations, `tools/xc7_blocks.py` logic, checked by simulation].** The console is a
+  **line editor with a 15-character buffer and a CR pattern matcher**, not a character-by-character parser:
+
+  ```mermaid
+  flowchart LR
+    RX[receiver byte SLICE_X1Y93 / X2Y93] --> ENC[code LUTs 5 bit]
+    ENC -->|push, every byte but CR/BS| LB[line buffer 15 x 5 FFs<br/>CE SLICE_X5Y95/BLUT]
+    BS[BS] -->|pop| LB
+    LB -->|positions 0 1 4 5 9 10| M[CR matcher -> SLICE_X5Y89/AFF<br/>X5Y87/CFF, X5Y87/BFF]
+    M --> F[command FSM SLICE_X2Y91 A/B, X4Y92 A/B,<br/>X5Y90 A/B, X4Y91/AFF, X5Y91/AFF]
+    F --> TX[reply / echo transmitter]
+    F -->|clear after CR| LB
+  ```
+
+  - *Byte register.* Bit order of the receiver's byte FFs: bit 0 `SLICE_X2Y93/AFF`, 1 `X1Y93/AFF`, 2 `X1Y93/BFF`,
+    3 `X1Y93/CFF`, 4 `X1Y93/DFF`, 5 `X2Y93/BFF`, 6 `X1Y93/B5FF`, 7 `X2Y93/CFF`. `SLICE_X0Y92/AFF` and `/BFF` delay the
+    byte strobe `X1Y92/AFF`; `SLICE_X0Y92/ALUT` = `~AFF | BFF` is 0 for one clock after each byte.
+  - *Code.* The chain-head LUTs (`SLICE_X3Y92/BLUT.O5`, `X3Y93/ALUT.O6`, `X1Y93/BLUT.O6`, `X4Y92/CLUT.O5`,
+    `X3Y94/CLUT`) turn the byte into a 5-bit code, evaluated over all 256 bytes: `0-9 A-F a-f` = 0x00-0x0F, space 0x10,
+    CR 0x11, LF 0x12, BS 0x13, `x` 0x14, `w` 0x15, `r` 0x16, `,` 0x17, `G` 0x1C, `s` 0x1D, `#` 0x1E, **every other
+    byte 0x1F, the value of an empty slot**. Hex fields are read as the low nibble of the code, which is why `G` = **C**
+    (`w 0015 G0#0` reads back `C0E0`) and `#` = E.
+  - *Line buffer.* 5 shift chains of 15 FFs, one bit of the code each (head to tail):
+    `X3Y92/AFF > X4Y90/CFF > X4Y86/A,B,A5,B5 > X3Y87/A,B,A5,B5,C,D,C5,D5 > X3Y88/BFF`,
+    `X3Y95/AFF > X4Y88/CFF > X6Y88/A,B,A5,B5,C,D,C5,D5 > X2Y88/A,B,A5,B5 > X3Y88/AFF`,
+    `X3Y95/BFF > X4Y88/DFF > X4Y87/A,B,A5,B5 > X4Y88/A,B,A5,B5 > X3Y89/A,B,A5,B5 > X3Y88/CFF`,
+    `X4Y87/CFF > X3Y86/B5,A,B,A5,C,D,C5,D5 > X2Y87/A,B,C,B5,C5 > X3Y88/DFF`,
+    `X4Y90/AFF > X4Y90/BFF > X5Y88/A,B,A5,B5,C,D,C5,D5 > X2Y90/A,B,A5,B5 > X2Y92/AFF`.
+    Every D LUT is `clear | (~ALUT0 & previous) | (ALUT0 & next)` with enable `SLICE_X5Y95/BLUT`: a received byte
+    other than CR/BS (`X3Y93/DLUT` = 0 only for CR and BS) shifts its code in at position 0; the BS handler (FSM state
+    `01011000`, term `SLICE_X3Y95/CLUT`) shifts the other way (pop, the tail refilled with 0x1F by its set pin
+    `X3Y95/DLUT`); `SLICE_X3Y90/ALUT` sets all 75 FFs to 1 (empty) in FSM state `00001000`, i.e. after every CR.
+    A 16th character pushes the oldest out.
+  - *CR matcher.* At CR the three FFs `SLICE_X5Y89/AFF`, `X5Y87/CFF`, `X5Y87/BFF` load a command code; their cones
+    read **only buffer positions 0, 1, 4, 5, 9 and 10** (0 = newest). Checked exhaustively over all 23 codes at
+    positions 0/1/4/5 for five (9, 10) pairs (5 x 614,656 evaluations of the netlist LUTs, 0 mismatches), the code is,
+    in this order of priority:
+
+    | Buffer (0 = last character before CR) | Code | Command |
+    |---|---|---|
+    | pos 10 = `w`, pos 9 = space | 100 | **write**: address = pos 8..5, value = pos 3..0 |
+    | pos 5 = `r`, pos 4 = space | 001 | **read** pos 3..0 |
+    | pos 5 = `E`/`e`, pos 4 = space | 010 | **examine** (new, #204) |
+    | pos 5 = `D`/`d`, pos 4 = space | 101 | **dump** (new, #204) |
+    | pos 1 = `#` | 011 | **quiet mode** (new, #204) |
+    | pos 0 = empty (0x1F: nothing typed, or an unknown byte last) | 000 | nothing: CR LF prompt |
+    | anything else | 111 | `Err` |
+
+    The FSM then branches on `SLICE_X2Y91/AFF,BFF` (`AFF <= a & (~c | b)` via `X1Y91/BLUT`, `BFF` via `X1Y91/DLUT`
+    from state `00001000`; 111 -> `11`, the `Err` path).
+  - **Consequences [fact, simulation]:** positions 2, 3, 6-8 are never checked, so any character there is taken as
+    its code's low nibble (`r 000r` reads register 6, `r 0 01` reads register 1, the `w` separator can be any
+    character: `w 0015x1234` writes). An unknown byte as the last character makes the line "empty" (`r 0000q` prints
+    only the prompt) unless a command still matches (position 0 is not part of the `r`/`w`/`E`/`D` tests). Junk before the command does not matter
+    as long as the command is the last 6 / 11 characters.
+- **`x` [fact, settled #204]:** code 0x14 is pushed like any character, but the matcher compares no position with
+  0x14 and the eighth code (110) is never produced, so **`x` has no command in this bitstream**: every line ending in
+  `x...` (or with `x` at the command position) is `Err`, as every form tried since #147 showed. Its entry in the
+  character tables only gives it a code and an echo. No input pin or register state can change this: the matcher's
+  inputs are the buffer, the byte register and the FSM.
+- **New commands (#204) [fact, simulation]:**
+  - `E AAAA` (or `e`): CR LF, then `VVVV ` CR LF for AAAA, AAAA+1, ... without end. `D AAAA` (or `d`): CR LF, then lines
+    `AAAA : ` + 8 x `VVVV ` + CR LF, the address counting on (`D 0015` -> `0015 : ...`, `001D : ...`). Both run until
+    the next CR line restarts the engine; characters typed meanwhile are echoed into the running output and garble
+    it (two senders on one transmitter). Power-up values listed this way (other inputs 0): 0x06 = 020A, 0x07 = 0,
+    0x08 = 00D5, 0x09 = 9F80, 0x0A = 0, 0x0B = 0058, 0x0C = 220E, 0x0D = 000E, 0x0E = 1200, 0x0F = 1000, 0x10/0x11 =
+    FF00, 0x12/0x13 = 8000, 0x14 = 2000, 0x16 = 0010, 0x17 = 2000, 0x18 = 0089, 0x19 = 5440, 0x1A-0x1C = 0.
+  - `#` as the second-to-last character (`#0`, `a#0`) switches the console into a **quiet mode** and prints nothing:
+    from then on no echo, no CR LF, no prompt and no `Err`; `r AAAA` answers the bare 4 hex digits (`0104`), `w`
+    writes silently. A second `#0` does not switch it back; only reset does [fact for the sequences tried]. This
+    looks like a mode for a program on the other end [inference].
+- **BS [fact, settled #204]:** BS is an edit key, not a hex digit. With the transmitter idle it is echoed as
+  **BS SP BS** and removes the last character (`r 0001`, pause, BS, CR -> `Err`, three digits left). If it arrives while
+  an echo is still being sent (always the case for characters typed back to back at full speed), the FSM waits in
+  state `01010000` for a transmitter-idle edge it has already missed: the following CR sends one BS and handles the
+  line **without** the pop (`r 0001<BS><CR>` reads register 1, `r 000<BS><CR>` = Err), and a further character makes
+  the netlist send a burst of garbage bytes and lose the line (`w 0015 12<BS>4` writes nothing). #89's reading of BS
+  as hex B came from a harness with a different gap and is superseded.
+- On CR: `r AAAA` prints CR LF `VVVV ` CR LF `[IF]>`; `w AAAA VVVV` writes silently and prints CR LF `[IF]>`; an
+  empty line prints CR LF `[IF]>`; everything else `Err` CR LF `[IF]>`. LF is code 0x12 (`r 0000<LF><CR>` = Err:
+  the read no longer sits at positions 0-5).
 - It reads the same register bank as the link (register 0 = 0104, writes to 0x15 read back) **[fact]**; the two
   command engines meet at the shared bus flip-flops around `SLICE_X10..X15Y85..Y89` **[inference]**.
-- **`x`** (re-checked in #147 with working block RAMs and DSP polarity: still `Err` for every form below; open in #204):
-  accepted by the echo filter, but every form tried (`x`, `x 0000`, `x 0000 0000`, `x 00000000`,
-  `x 0000,0000`, `x 0000 0000 0000`, `x0015`, also after `w 0037 BCC5`) gives `Err`, as on the link. So `x` is in the
-  character tables of both engines but has **no reachable function** in this bitstream with the other inputs at 0
-  **[fact for the tried forms]**. **Not gated by an input pin** (#89): with each of the 12 unassigned inputs (U13, T13, V10,
-  T11, T14, R15, P15, L15, B18, A14, A13, A16) held high in turn, and with all of them high, `x` and `x 0000` still give `Err`
-  **[fact, simulation]**; so `x` is unused in this bitstream, or needs a register state no tried sequence reaches **[inference]**.
-- The "garbled BS echo" was the echo `B` overlapping the next frame in the old harness; with a gap between characters
-  it is a clean `B` (above).
-- **Line grammar and echo (#147) [fact, whole-netlist simulation with the #164/#91 models, 255-byte echo sweep and 35
-  directed lines].** The console does not buffer the line; it parses character by character:
-
-  | Input | Effect |
-  |---|---|
-  | `r`, `w`, `x` | start a new command wherever they appear: `qr 0000`, `rr 0000`, `wr 0001`, `\nr 0004` all execute the last read |
-  | space | after `r` / `w`: field separator; anywhere else an error (`r  0000` = Err) |
-  | `,` | only between the two `w` fields (`w 0003,ABCD` works, `r,0000` and `w,0015 ...` = Err) |
-  | hex digit `0-9 A-F a-f`, `#` (= E), `G` (value unknown) | 4 per field; a 5th, or one outside a field, is an error |
-  | LF | echoed; makes the line an error (`r 0000<LF><CR>` = Err) |
-  | any other byte | echoed `?`; drops the command silently (`r 0000q<CR>` prints only CR LF prompt; digits after it are errors) |
-  | `s` right after `r` | echoed `:`, error (meaning open) |
-  | CR | `r` SP hhhh: CR LF `vvvv ` CR LF prompt; `w` SP hhhh (SP or `,`) hhhh: write, CR LF prompt; nothing pending: CR LF prompt; else `Err` CR LF prompt |
-
-  Echo: the character set comes back as itself, `a-f` in upper case, `#` as 0x06, everything else as `?` (all 255 bytes
-  other than CR swept). `x` lines always end in `Err`. BS (0x08) is echoed as 0x08 and behaves unlike #89's reading in the
-  current models (`r 000<BS>` = Err; `w 0015 12<BS>4` makes the netlist send garbage); BS, TAB, the `rs` echo and `x` are
-  open in **#204**.
-- **RTL (#147).** `hdl/sdr/uart_console.v` (`ft710_uart_console`, with `uart_console_echo.vh`, `uart_rx.v`, `uart_tx.v`)
-  implements the table above. `tools/sdr_console_check.py` plays `hdl/sdr/sim/console_lines.txt` (33 lines in 11 groups that each start from reset and run as parallel netlist processes, cached per group: reads, writes,
-  every error class, restarts, dropped commands, `#`, `G`, `x`) into the Verilator netlist and into the RTL testbench
-  `hdl/sdr/tb_uart_console.v` and compares the UART A bytes: **all 11 groups identical** (whole run ~6 min with the groups in parallel) **[fact]**. The RTL is byte-level, not cycle-accurate,
-  and its testbench register bank models only the registers listed in 5.2.
+- **RTL (#147, #204).** `hdl/sdr/uart_console.v` (`ft710_uart_console`, with `uart_console_echo.vh`, `uart_rx.v`,
+  `uart_tx.v`) models the buffer, the matcher with its priorities, E/D, quiet mode and both BS cases (not the garbage
+  burst). `tools/sdr_console_check.py` plays `hdl/sdr/sim/console_lines.txt` (58 lines in 20 groups that each start from reset: reads, writes, every error class, restarts, dropped commands, `#`/`G` digits, `s`, BS in both cases, quiet mode, `E`, `D`, `x`) into the Verilator netlist and into the
+  RTL testbench `hdl/sdr/tb_uart_console.v` and compares the UART A bytes: **all 20 groups identical** **[fact]**. Reply bytes have 2 stop bits (11,949 clocks each, as in the netlist); an echo may start in the second stop bit, because the netlist's echo keeps the input's rhythm (10,850 clocks per byte). The RTL is byte-level, not
+  cycle-accurate; its testbench register bank models the registers listed in 5.2 and above.
 - **How to reach it on the radio [fact: schematic p19].** TP2025 = UART OUT (`SDR_DBG_OUT`, J2002 pin 47) and TP2024 = UART IN
   (`SDR_DBG_IN`, J2002 pin 45) on the MAIN unit's "DEBUG UART" test points ([interfaces.md](interfaces.md)).
 - N14, T18, R18 are not console lines: they are the scope link (5.6). Their shared tri-state net is `~R15`; the register
