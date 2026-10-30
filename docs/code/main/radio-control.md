@@ -673,6 +673,7 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
+| 0xFFFB01DF | `memch_mark_used` |  | (ch): g_mem_hdr.chan_used[ch] = 1 **[fact: fffb01df]**; only caller cat_MW |
 | 0xFFFB0664 | `vfo_rec_mode_defaults` |  | Writes the per-mode block defaults of one VFO / memory record (radio-control.md "Defaults") **[fact: fffb0664]**; callers defaults_vfo, defaults_memch, defaults_bandstack_set |
 
 <!-- T23e3:end -->

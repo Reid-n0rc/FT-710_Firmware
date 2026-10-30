@@ -350,6 +350,8 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
+| 0xFFFB3D11 | `tx_mod_source` |  | (mode): MOD SOURCE for the mode (EX010114 / 010214 / 010313 / 010414 or the active PRESET); while DVS records 0; with PTT source 0/6 and VOX on the VOX SELECT source; AUTO (3) resolves by the PTT source to 2 (rear), 1 (USB) or 0 (MIC) **[fact: fffb3d11]**; callers tx_mod_gain, audio_level_update, tx_audio_select |
+| 0xFFFB50D7 | `rptt_select_get` |  | (mode): RPTT SELECT for the mode (EX010117 / 010217 / 010316 / 010417 / 010513 / 020113, or the active PRESET), 0 for modes without one **[fact: fffb50d7]**; callers ptt_inputs_read, tx_cw_keying_class |
 | 0xFFFB548A | `qsk_delay_ticks` |  | Returns EX020119 QSK DELAY TIME x 5 + 15 **[fact: fffb548a]**; callers trx_sequencer, keyer_task |
 | 0xFFFB5D68 | `audio_level_update` |  | rf_ctrl_task's sixth sub-task: picks USB/REAR OUT LEVEL and the MOD GAIN (MIC / USB / REAR by tx_mod_source) per RX mode, from the EX items or the active PRESET, and writes the 8-channel audio level device with sst2_write12 when a value changes **[fact: fffb5d68]** (tx-protection.md #143 already describes this function) |
 | 0xFFFB667A | `pa_falc_interp` |  | (band, watts) -> PA drive DAC value: picks the band's 100/50/20/10/5 W FALC alignment items (g_cfg105.a070..a082 ...) and interpolates between the two that bracket the power **[fact: fffb667a]**; only caller pa_dac_update (BU2505 ch2) |
@@ -371,5 +373,10 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFBB283 | `keyer_paddles_read` |  | (*dot, *dash): ckey_dot / ckey_dash, swapped when EX020202 KEYER DOT/DASH is reversed **[fact: fffbb283]** |
 | 0xFFFBB2BF | `contest_cut_digit` |  | Cut-number substitution by EX020204 NUMBER STYLE: '1' -> 'A', '2' -> 'U', '9' -> 'N', '0' -> 'T' or 'O', others unchanged **[fact: fffbb2bf]** |
 | 0xFFFBB338 | `keyer_text_msg_encode` |  | (n): turns keyer memory text n (0x969F + n*0x33: length + 50 chars, eeprom.md) into elements via the Morse table 0xFFF815C3 (2 bytes per char), '#' inserts the contest number **[fact: fffbb338]** |
+| 0xFFFE4EFC | `msg_tx_wait_start` |  | swtimer_start(0x37, 10000) and g_ui.msg_tx_wait = 1 **[fact: fffe4efc]**; callers cat_LM, msg_type_select, FUN_fffe4e6e |
+| 0xFFFE5401 | `cw_memory_length` |  | (n 1..5): length of CW MEMORY n: when its EX020206..EX020210 type is 0 the keyer-text length byte (0x969F + (n-1)*0x33), else the u16 big-endian length of the recorded keying bitstream (0x93A7 + (n-1)*0x98) **[fact: fffe5401; layout from eeprom.md]**; callers cat_KY, FUN_fffe55ab |
+| 0xFFFE564B | `keyer_can_send` |  | Returns 0 while CW SPOT is on or keyer_state is 2..4, else 1 **[fact: fffe564b]**; callers cat_KY, FUN_fffe55ab |
+| 0xFFFEC55A | `vfo_tuner_bit_get` |  | Returns bit 2 of the TX VFO record's flags1 (the tuner bit that vfo_tuner_bit_set writes) **[fact: fffec55a]**; callers cat_AC, key_tune_short, cat_ai_AC, tuner_rearm |
+| 0xFFFED24E | `tuner_result_set` |  | (code): 0x1B3C3 = 1, timer 0x22 = 50, g_ui.tuner_result = 2 (code 1), 3 (code 2) or 1; ends a tune cycle (tuner_tune_state_set(0)) **[fact: fffed24e]**; only caller cat_AC |
 
 <!-- T23e3:end -->

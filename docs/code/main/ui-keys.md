@@ -318,12 +318,24 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 |---|---|---|---|
 | 0xFFF99669 | `moni_level_ptr` |  | Returns the address of the MONI LEVEL byte for the TX mode: 0x9BFC SSB, 0x9BFD CW, 0x9BFE RTTY, 0x9BFF DATA/PSK, 0x9C00 AM, 0 for FM **[fact: fff99669]**; callers popup_fmt_moni_level, funcknob_moni_level_step, displink frame code |
 | 0xFFF99877 | `mic_gain_ptr` |  | Returns the address of the MIC GAIN byte for the TX mode: 0x9BEC (LSB/USB), 0x9BED (DATA-L/U, PSK), 0x9BEE (AM), 0x9BEF (FM, DATA-FM), 0 for CW and RTTY **[fact: fff99877]**; callers popup_fmt_mic_gain, funcknob_mic_gain_step |
+| 0xFFF99DBF | `bk_in_bit_get` |  | Returns bit 1 of mode_block_byte0() (the BI / break-in bit of the TX mode block) **[fact: fff99dbf]**; callers popup_fmt_bk_in, dl37_slot_bk_in |
 | 0xFFF9C6AB | `scope_level_cur_ptr` |  | Returns the scope level byte for the RX dial frequency: 0x9BCA (RX) or 0x9BD8 (while transmitting) + freq_range_index **[fact: fff9c6ab]**; the same tables as scope_level_ptr |
 | 0xFFFBDA47 | `dsp_knob_shift_toggle` |  | DSP key short press with knob function 0 (SHIFT): toggles g_ui.dsp_knob_edit, FUNC item 0x1D **[fact: fffbda47]**; caller key_dsp_release (structs_main.h dsp_knob_func 0 SHIFT) |
 | 0xFFFBDAD5 | `dsp_knob_width_toggle` |  | DSP key short press with knob function 1 (WIDTH): toggles dsp_knob_edit, FUNC item 0x1E **[fact: fffbdad5]**; caller key_dsp_release |
 | 0xFFFBDB63 | `dsp_knob_notch_toggle` |  | DSP key short press with knob function 2 (NOTCH): toggles dsp_knob_edit, FUNC item 0x1F, and in edit mode bit 0x80 of the active VFO mode-block flags **[fact: fffbdb63]**; caller key_dsp_release |
 | 0xFFFBDCB0 | `dsp_knob_contour_toggle` |  | DSP key short press with knob function 3 and APF off: toggles dsp_knob_edit, FUNC item 0x20 (CONTOUR), changes bit 0x40 of the active VFO mode-block flags **[fact: fffbdcb0]**; caller key_dsp_release |
 | 0xFFFBDE58 | `dsp_knob_apf_toggle` |  | DSP key short press with knob function 3 and dsp_knob_apf set: toggles dsp_knob_edit, FUNC item 0x21 (APF) **[fact: fffbde58]**; caller key_dsp_release |
+| 0xFFFC0C8F | `mode_key_select` |  | (code 0x77..0x86): mode buttons: popup_open_timed(1000) then the same per-mode selection as vfo_mode_select **[fact: fffc0c8f]**; caller FUN_fffc396d |
+| 0xFFFC0D33 | `mode_select_simple` |  | (mode): if vfo_edit_begin succeeds, vfo_mode_set(mode), beep while a pop-up is shown, popup_cursor = mode **[fact: fffc0d33]** |
+| 0xFFFC0E31 | `mode_select_am` |  | vfo_edit_begin, then mode_popup_select(4 = AM) **[fact: fffc0e31]** |
+| 0xFFFC0E3E | `mode_select_am_n` |  | vfo_edit_begin, then mode_popup_select(5 = AM-N) **[fact: fffc0e3e]** |
+| 0xFFFC0E4B | `mode_select_fm` |  | vfo_edit_begin, then mode_popup_select(6 = FM) **[fact: fffc0e4b]** |
+| 0xFFFC0E58 | `mode_select_fm_n` |  | vfo_edit_begin, then mode_popup_select(7 = FM-N) **[fact: fffc0e58]** |
+| 0xFFFC0E65 | `mode_select_data_fm` |  | vfo_edit_begin, then mode_popup_select(10 = DATA-FM) **[fact: fffc0e65]** |
+| 0xFFFC0E72 | `mode_select_data_fm_n` |  | vfo_edit_begin, then mode_popup_select(11 = DATA-FM-N) **[fact: fffc0e72]** |
+| 0xFFFC0E7F | `preset_toggle` |  | popup_open_timed(3000), toggles g_opstate.preset_on, sci3_set_baud, beep **[fact: fffc0e7f]**; the baud reset follows the PRESET's own CAT-1 RATE (presets[].cat1_rate) **[inference]**; reached as mode 15 from vfo_mode_select and mode_key_select |
+| 0xFFFC1F2A | `func_menu_group_open` |  | (group 0..4): opens the setting menu at P1 = group (RADIO / CW / OPERATION / DISPLAY / EXTENSION SETTING, FUNC slots 28..32), closes the FUNC panel **[fact: fffc1f2a]**; callers func_menu_select, FUN_fffbd8c9, FUN_fffc4c8b |
+| 0xFFFC1F94 | `func_slot_empty` |  | FUNC menu slots 0x21/0x22 (empty): closes the FUNC panel, beep unless 0x1B4DA is set **[fact: fffc1f94]** |
 | 0xFFFC20DD | `memlist_btn_press` |  | Memory-list button by g_ui.memlist_group: 0 NAME (FUN_fffc2137), 1 MODE, 2 SCAN, 3 TYPE, 4 memlist_btn_valid_toggle, 5 close (memlist_flag = 0) **[fact: fffc20dd]**; callers memlist_key, FUN_fffc38fa (display gui.md button order) |
 | 0xFFFC2137 | `memlist_btn_name` |  | Memory-list button 0 NAME: for a valid channel opens the text keyboard (kbd_open, kbd_target 1) preloaded with the channel's 12-char tag **[fact: fffc2137]** |
 | 0xFFFC21E8 | `memlist_btn_mode` |  | Memory-list button 1: for a valid channel < 0x75 opens the MODE pop-up 0x55 (memlist_popup55 = 1), else ui_key_reject **[fact: fffc21e8]** |
@@ -333,6 +345,15 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFC2426 | `m_to_v_exec` |  | M>V: from the open memory list copies its channel (memch_current_set), else leaves split / QMB state first; refuses channels 0x75..0x83 for region 0x315B; then memch_to_vfo_copy **[fact: fffc2426]**; only caller key_m_to_v_short |
 | 0xFFFC260C | `memch_to_vfo_copy` |  | (side): if memch_current_valid, leaves QMB, qmb_set_depth, memch_load_to_vfo, vfo_clear_tag, vfo_enter_vfo_state, memlist_close, VFO refresh; returns 1, else 0 **[fact: fffc260c]** |
 | 0xFFFC33EF | `qmb_popup_open` |  | Opens the QMB pop-up: popup_duration_get(0x43), popup_open_timed, popup_code = 0x43 **[fact: fffc33ef]**; callers qmb_store, qmb_enter |
+| 0xFFFC3C9F | `func_marker_toggle` |  | FUNC menu slot 2 (MARKER): toggles g_opstate.ss02_marker, beep **[fact: fffc3c9f]**; case 2 of func_menu_select (slot order of frame 0x37) |
+| 0xFFFC3CD9 | `func_color_select` |  | FUNC menu slot 3 (COLOR): assigns the FUNC knob to function 3, opens pop-up 0xB with cursor g_opstate.ss03_value, closes the FUNC panel **[fact: fffc3cd9]** |
+| 0xFFFC3D26 | `func_mic_eq_toggle` |  | FUNC menu item 8 (MIC EQ): if mic_eq_mode_ok, toggles 0x9BF0 (struct field proc_on; the parametric-EQ flag per display gui.md), VFO refresh, beep **[fact: fffc3d26]**; case 8 of func_menu_select |
+| 0xFFFC3D75 | `mic_eq_mode_ok` |  | Returns 1 when the RX mode is LSB, USB, AM, AM-N, FM or FM-N **[fact: fffc3d75]**; callers dl37_slot_mic_eq (grey flag), func_mic_eq_toggle |
+| 0xFFFC3DE8 | `func_keyer_toggle` |  | FUNC menu slot 16 (KEYER): in a keyer TX mode toggles g_opstate.keyer_on, keyer_init, beep **[fact: fffc3de8]** |
+| 0xFFFC3EAA | `func_bk_in_toggle` |  | FUNC menu item 0x11 (BK-IN): for a voice or keyer TX mode and not transmitting, toggles the BI bit (FUN_fffc3f40), keyer_init, beep **[fact: fffc3eaa]**; case 0x11 of func_menu_select |
+| 0xFFFC3F1B | `rec_mode_is_voice` |  | (*rec): 1 when the record's mode nibble is LSB/USB or AM..FM-N (0, 1, 4..7) **[fact: fffc3f1b]**; callers dl37_slot_bk_in, func_bk_in_toggle |
+| 0xFFFC3F40 | `vfo_bk_in_bit_toggle` |  | (*rec): toggles bit 1 (BI) of the record's mode block for its mode (SSB +10, CW +0x14, AM +0x32, FM +0x3C) **[fact: fffc3f40]**; only caller func_bk_in_toggle |
+| 0xFFFC3F9C | `func_txw_toggle` |  | FUNC menu slot 24 (TXW): in split toggles g_ui.txw_on (on: func_assigned = 1, FUN_fffc8e0e(500)), beep **[fact: fffc3f9c]** |
 | 0xFFFC616E | `dial_step_hz` |  | (side): tuning step of the VFO in Hz: 1 MHz / 1 kHz in digit-step mode, 100 kHz / .. with the fast-step request, else the mode's step (dial_step_mode_hz) or the AM/FM channel step (ch_step_hz) **[fact: fffc616e]** |
 | 0xFFFC62AE | `dial_step_mode_hz` |  | (mode): dial step in Hz by g_opstate.fn_select (1 = fine, 2 = x10): SSB/CW 1 or EX030501 SSB/CW DIAL STEP 5/10/20 Hz; RTTY/PSK/DATA 1 or EX030502 5/10/20 Hz; AM 10/100/1000; FM 10/100/1000 **[fact: fffc62ae]**; only caller dial_step_hz |
 | 0xFFFC63E6 | `ch_step_hz` |  | (mode): AM / FM channel step from EX030504 AM CH STEP / EX030505 FM CH STEP via table 0xFFF88514 **[fact: fffc63e6]**; only caller dial_step_hz |
@@ -351,7 +372,7 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFC7016 | `funcknob_scope_level_step` |  | (steps): SCOPE LEVEL pop-up (id 0x1E): popup_duration_get(0x1E) + popup_open_timed, then steps and clamps the setting **[fact: fffc7016]**; setting per display gui.md popup-slot table (#178) **[fact]** |
 | 0xFFFC7053 | `funcknob_peak` |  | FUNC-knob function for PEAK: sets popup_code = 0x1F and calls funcknob_peak_step **[fact: fffc7053]**; called from funcknob_step |
 | 0xFFFC706B | `funcknob_peak_step` |  | (steps): PEAK pop-up (id 0x1F): popup_duration_get(0x1F) + popup_open_timed, then steps and clamps the setting **[fact: fffc706b]**; setting per display gui.md popup-slot table (#178) **[fact]** |
-| 0xFFFC70AF | `funcknob_ss03_popup` |  | FUNC-knob function 3: opens pop-up 0xB (popup_duration_get(0xB), popup_open_timed), popup_code = 0xB, cursor = g_opstate.ss03_value **[fact: fffc70af]** |
+| 0xFFFC70AF | `funcknob_color_popup` |  | FUNC-knob function 3 (COLOR, function id 3 in display-link.md "0x37"): opens pop-up 0xB (popup_duration_get(0xB), popup_open_timed), popup_code = 0xB, cursor = g_opstate.ss03_value **[fact: fffc70af]** |
 | 0xFFFC70DB | `funcknob_contrast` |  | FUNC-knob function for CONTRAST: sets popup_code = 0x22 and calls funcknob_contrast_step **[fact: fffc70db]**; called from funcknob_step |
 | 0xFFFC70F3 | `funcknob_contrast_step` |  | (steps): CONTRAST pop-up (id 0x22): popup_duration_get(0x22) + popup_open_timed, then steps and clamps the setting **[fact: fffc70f3]**; setting per display gui.md popup-slot table (#178) **[fact]** |
 | 0xFFFC7145 | `funcknob_dimmer` |  | FUNC-knob function for DIMMER: sets popup_code = 0x23 and calls funcknob_dimmer_step **[fact: fffc7145]**; called from funcknob_step |
@@ -396,6 +417,20 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | 0xFFFC8685 | `dsp_knob_notch_step` |  | (steps): steps the manual NOTCH frequency (notch_be) of the active VFO's mode block **[fact: fffc8685]**; dsp_knob_turn item 0x1F |
 | 0xFFFC87AB | `dsp_knob_contour_step` |  | (steps): steps the CONTOUR frequency (contour_be) of the active VFO's mode block **[fact: fffc87ab]**; dsp_knob_turn item 0x20 |
 | 0xFFFC8930 | `dsp_knob_apf_step` |  | (steps): steps g_opstate.apf_freq **[fact: fffc8930]**; dsp_knob_turn item 0x21 |
+| 0xFFFE2680 | `kbd_edit_mycall` |  | Keyboard target 0 (MY CALL) editor: keeps a copy of EX040101 MY CALL, kbd_edit_key on the text, key 0x84 restores the copy, 0x85 stores the edited text **[fact: fffe2680]**; callers kbd_key_dispatch (target 0), FUN_fffe47c8 |
+| 0xFFFE273A | `kbd_edit_memory_name` |  | Keyboard target 1 (MEMORY NAME) editor **[fact: kbd_key_dispatch target 1; title per display-link.md frame 0x50]** |
+| 0xFFFE2811 | `kbd_edit_cw_text` |  | Keyboard target 2 (CW TEXT) editor; calls kbd_edit_key and keyer_text_endmark **[fact: kbd_key_dispatch target 2]** |
+| 0xFFFE2912 | `kbd_edit_rtty_text` |  | Keyboard target 3 (RTTY TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 **[fact: fffe2912]** |
+| 0xFFFE2918 | `kbd_edit_psk_text` |  | Keyboard target 4 (PSK TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 **[fact: fffe2918]** |
+| 0xFFFE291E | `kbd_edit_file_name` |  | Keyboard target 5 (FILE NAME) editor **[fact: kbd_key_dispatch target 5]** |
+| 0xFFFE29B7 | `kbd_edit_key` |  | (text, key): the on-screen keyboard key handler: 0x08 backspace, 0x81 toggles layout 0/1, 0x82 layout 0, 0x83 layout 2, 0x84/0x85 close (cancel / ENT), 0x86/0x87 cursor left/right, else stores the character at the cursor **[fact: fffe29b7; display-link.md frame 0x50]** |
+| 0xFFFE2ADD | `kbd_backspace` |  | (text): deletes the character before the cursor (shifts the rest left, pads with a space; at the last position clears it), beep 3 at position 0 **[fact: fffe2add]** |
+| 0xFFFE2B7A | `kbd_max_cursor` |  | Last cursor position for the keyboard target: 0xB (12 chars) for targets 0, 1, 6, 0x31 (50) for CW TEXT, 0xE (15) for the others **[fact: fffe2b7a]** |
+| 0xFFFE2BCD | `kbd_cursor_left` |  | Moves g_ui.kbd_cursor left while above 0; returns whether it moved **[fact: fffe2bcd]** |
+| 0xFFFE2BFD | `kbd_cursor_right` |  | Moves g_ui.kbd_cursor right while below kbd_max_cursor; returns whether it moved **[fact: fffe2bfd]** |
+| 0xFFFE2C33 | `kbd_edit_preset_name` |  | Keyboard target 6 (PRESET NAME) editor; uses menu_preset_name_ptr **[fact: kbd_key_dispatch target 6]** |
+| 0xFFFE2EE4 | `func_record_toggle` |  | FUNC menu slot 22 (RECORD/STOP): stops a scan; unless DVS is busy toggles g_ui.dvs_lm1_flag (which dl37_slot_record shows as id 0x35 STOP) **[fact: fffe2ee4]** |
+| 0xFFFE2FA8 | `func_play_open` |  | FUNC menu slot 23 (PLAY): stops a scan; unless recording / DVS / keyer send runs, opens the PlayList (playlist_open = playlist_req = 1, sub-state and row 0) and closes the FUNC panel **[fact: fffe2fa8]** |
 | 0xFFFE3979 | `func_message_open` |  | FUNC menu item 0x15 (case 0x15 of func_menu_select): stops a scan, refuses while DVS / keyer send / recording / PlayList run; otherwise opens the message-memory screen (g_ui.msgmem_open = 1, msgmem_type 0 voice by msg_voice_mode_ok or 1 CW with the contest number) and closes the FUNC panel; beep 3 when neither **[fact: fffe3979]** |
 
 <!-- T23e3:end -->

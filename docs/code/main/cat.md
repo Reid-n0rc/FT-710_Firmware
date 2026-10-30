@@ -330,6 +330,13 @@ Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
 | 0xFFFB1D79 | `cat_tx_busy` |  | Returns the CAT TX busy flag of a port: 1 -> 0x11FEA (SCI3), 2 -> 0x11FE8 (SCI0), else 0x11FE9 (SCI2) **[fact: fffb1d79]**; cat_ai_poll sends only when all three are 0 |
+| 0xFFFB30B5 | `ascii2_to_bcd` |  | Two ASCII digits -> packed BCD byte (each digit only if '0'..'9', checked on the first char) **[fact: fffb30b5]**; only caller cat_DT |
+| 0xFFFB311D | `bcd_to_ascii2` |  | Packed BCD byte -> two ASCII digits from "0123456789ABCDEF", a space for a nibble above 9 **[fact: fffb311d]**; only caller cat_DT |
+| 0xFFFB36FF | `width_index_of_hz` |  | (mode, hz): index of a filter width in Hz in table 0xFFF88270 (+0x78: 21 entries for CW/DATA/RTTY/PSK, +0x4A: 23 entries for LSB/USB), 0xFF if none **[fact: fffb36ff]**; callers cat_SH, cat_ai_SH, dsp_knob_width_step |
+| 0xFFFB3775 | `width_hz_of_index` |  | (mode, index): filter width in Hz from the same tables at 0xFFF88270, 0xFFFF if out of range **[fact: fffb3775]**; callers cat_SH, vfo_filter_width_hz, dsp_knob_width_step |
+| 0xFFFC0335 | `mic_up_key_press` |  | key_slot_press(EX030124 MIC UP assignment) **[fact: fffc0335]**; only caller cat_UP |
+| 0xFFFC037B | `mic_down_key_press` |  | key_slot_press(EX030125 MIC DOWN assignment) **[fact: fffc037b]**; only caller cat_DN |
+| 0xFFFC4BD5 | `vfo_mode_select` |  | (mode): per-mode switch used by cat_MD and cat_NA: LSB/USB/CW/DATA/RTTY/PSK -> mode_select_simple(mode); AM, AM-N, FM, FM-N, DATA-FM, DATA-FM-N -> their mode_popup_select wrappers; 15 -> preset_toggle **[fact: fffc4bd5]** |
 | 0xFFFDDCB5 | `cat_ai_AC` |  | AI change detector for AC (called from cat_ai_poll): compares with its shadow, on a change builds the AC answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: tuner type, tune cycle and result (frame built from 'A','C' chars) **[fact: fffddcb5]** |
 | 0xFFFDDE79 | `cat_ai_AG` |  | AI change detector for AG (called from cat_ai_poll): compares with its shadow, on a change builds the AG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.af_gain; ignores jitter: keeps the last 4 values and needs a spread of 3 (max4_u8/min4_u8) between 3 and 252 **[fact: fffdde79]** |
 | 0xFFFDDFC3 | `cat_ai_AO` |  | AI change detector for AO (called from cat_ai_poll): compares with its shadow, on a change builds the AO answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.amc_level (constant "AO00") **[fact: fffddfc3]** |
