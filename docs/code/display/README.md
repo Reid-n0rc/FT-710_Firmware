@@ -97,6 +97,7 @@ Full table: `docs/memory-maps.md` → DISPLAY.
 | [gui.md](gui.md) | T11e | VDC5, layers, draw primitives, bitmap descriptors, screens, screen capture | done |
 | [input.md](input.md) | T11f | Touch, keys, encoders, USB HID | done |
 | [peripherals.md](peripherals.md) | T11g | RTC, timers, GPIO, backlight, DVI, user files on SD | done |
+| [filesystem.md](filesystem.md) | T23g | SD card start-up (`sdTask`), file API, FAT layer, SDHI driver: function table and globals | done |
 
 ## Key findings so far
 

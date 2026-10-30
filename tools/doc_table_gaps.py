@@ -93,8 +93,9 @@ RULES = {
     ],
     'display': [
         (r'^\w+_Handler$', 'boot-rtos.md'),
-        (r'^(sd_(fs_init|task_create|card_identify|read_sectors|write_sectors|fat_format|format|make_dirs)|sdhi\w*|'
-         r'fs_\w+|fat_\w+|fsys_\w+|sjis_is_lead)$', 'filesystem.md'),
+        (r'^(sd_(fs_init|task_create|card_identify|read_sectors|write_sectors|fat_format|format|make_dirs|state_bit\d)|sdhi\w*|'
+         r'fs_\w+|fat_\w+|fsys_\w+|sjis_is_lead|sd_info_screen|fmt_size_str)$', 'filesystem.md'),
+        (r'^(itron_\w+|os_create_\w+|knl_\w+)$', 'boot-rtos.md'),
         (r'^(__\w+|_printf\w*|_sputc|_snputc|_ttywrch|_sys_exit|exit|str(cpy|cat|cmp|ncmp|len|str)(_veneer)?|'
          r'mem(cpy|cmp|set)(_veneer)?|s?n?printf(_veneer)?|tolower)$', 'boot-rtos.md'),
     ],
@@ -149,10 +150,14 @@ def load_comments(image):
             if fn.endswith('.lib.tsv'):
                 if len(cols) >= 8:
                     ev = cols[7].strip()
-                    ev = '' if re.match(r'(same|was|new)?;?\s*size \d', ev) or ev.startswith('same;') else f': {ev}'
+                    ev = '' if re.match(r'(same|was|new)?;?\s*size \d', ev) or ev.startswith('same;') else ev
+                    ev = re.sub(r'^(new|same|was \S+);\s*', '', ev)
+                    ev = f': {ev}' if ev else ''
+                    lib = cols[2] + (' ' + cols[3] if len(cols[3]) < 12 else '')  # long version strings repeat the name
+                    lib += ' function' if lib.endswith('library') else ' library function'
                     out.setdefault(int(cols[0], 16), []).append(
-                        (cols[1].strip(), f'{cols[2]} {cols[3]} library function, matched by {cols[4]} '
-                         f'(score {cols[5]}, T23d){ev} [inference]', section + ' | ' + fn, fn))
+                        (cols[1].strip(), f'{lib}, matched by {cols[4]} (score {cols[5]}, T23d){ev} [inference]',
+                         section + ' | ' + fn, fn))
                 continue
             out.setdefault(int(cols[0], 16), []).append(
                 (cols[1].strip(), cols[2].strip() if len(cols) > 2 else '', section + ' | ' + fn, fn))
