@@ -274,6 +274,33 @@ screen-dependent "back/close" code (`gui_right_key` 0x20121160, for example 0x31
 (FUNC) on menu-type screens (`gui_middle_key` 0x20120FE4) **[fact for the codes; "back" is an inference]**. The GUI side is documented in
 [gui.md](gui.md).
 
+### Touch hit tables (#212)
+
+`touch_key_poll` (0x201214B0) reads the touch source, applies the calibration and calls `touch_hit_test` (0x2015C048, through a thunk) with
+the calibrated (x, y). The hit test picks the tables by the open screen (0x208F0B2A: 0x30 menus by 0x208F0BC2, 0x34, 0x37, 0x39, 0x3A,
+0x40, 0x41, 0x43, 0x50, 0x70) and otherwise tests the main screen. Each table is an array of 10-byte entries `u16 x, y, w, h, code`,
+searched by `touch_hit_table` (0x2015BF88, first rectangle that contains the point, else 0x1FF); single rectangles go through
+`touch_hit_rect` (0x2015C6FC) **[fact]**. A touch is only sent when the code has bit 12 set; `mainlink_send_touch_key` then clears bit
+12 in the E0 frame, so table code 0x10nn reaches MAIN as soft key 0x0nn **[fact]**.
+
+Main-screen tables, in test order **[fact for rectangles and codes; area names from the drawers that fill the same rectangles]**:
+
+| Table | Rectangle(s) x, y, w, h | Code(s) → MAIN key | Area |
+|---|---|---|---|
+| 0x20192748 (skipped when 0x208F0B2F bit 5 is set or screen 0x37 is open) | 443, 109, 356, 69 | 0x1011 → **0x011** | **filter graph** (`main_filter_graph` clears and frames exactly this box: `fb_fill_rect(…, y 0x6D, x 0x1BB, w 0x164, h 0x45)`; manual item ⑧, digital filter passband display) |
+| 0x2042007C | 0, 10, 280, 80 | 0x1010 → 0x010 | top left (main band frequency area) **[inference]** |
+| 0x20350AC8 | 282, 10, 96, 50 | 0x1015 → 0x015 | top, right of it |
+| 0x2021CC58 | 382 / 491 / 648, 10, 104 / 152 / 152, 50 | 0x1012..0x1014 | top right row |
+| 0x2016E15C (bit 5 clear) | 1 + 110·n, 109, 110, 79 | 0x101A..0x101D | four boxes left of the filter graph |
+| 0x201AC45C (0x208F0B4D bit 7) | 443 + 89·n, 278, 88, 49; 759, 209, 30, 60 | 0x10C0..0x10C3, 0x10C5 (0x10C3 → 0x10C4 when 0x208F0B4D bit 2) | row under the filter graph |
+| `FUN_2015C558` (by 0x208F0B2B/2C/2D) | scope area 4, 128, 792, 157..275 etc. | 0x1016..0x1019 | scope (0x1016 = touch tuning, sent as E0 0x40/0x41) |
+| 0x2016E304 | 133·n, 420, 133, 60 | 0x1000 (→ 0x1000 + (0x208F0B4F & 0x7F), 0x1008 for 0x0B), 0x1003..0x1007 (0x1003 → 0x1009 when 0x208F0B50 & 0x7F = 0x0C) | bottom row of six |
+
+So **soft key 0x011 is a touch on the filter graph** of the main screen: a short touch toggles MAIN UI +0x70 (status byte 35 bit 7) and a long touch toggles
+0x9C5C, which the DISPLAY reads back as the AF-FFT overlay of that same graph (status byte 9 bit 3, `filter_graph_affft_overlay`)
+**[fact for the path; the overlay meaning is an inference]**. The operating manual does not describe touching the filter display
+**[fact for the Japanese OM, item ⑧]**.
+
 ## USB keyboard and mouse
 
 ```mermaid
@@ -460,6 +487,7 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 | 0x20102348 / 0x2010239C / 0x20102478 / 0x201024B4 / 0x2010256C / 0x201025B4 | `mouse_set_down` / `mouse_set_up` / `mouse_right_down` / *`_up`* / `mouse_middle_down` / *`_up`* | mouse sources |
 | 0x20102138 / 0x201023BC / 0x201024C4 / 0x201025C4 | `pointer_get_event` / `mouse_right_get_event` / `mouse_middle_get_event` / `mouse_middle_is_func` | event readers |
 | 0x20120E9C / 0x20120FE4 / 0x20121160 | `mainlink_send_touch_key` / `gui_middle_key` / `gui_right_key` | soft keys → E0 |
+| 0x201214B0 / 0x2015C048 / 0x2015BF88 / 0x2015C6FC | `FUN_201214b0` / `FUN_2015c048` / `FUN_2015bf88` / `FUN_2015c6fc` → `touch_key_poll` / `touch_hit_test` / `touch_hit_table` / `touch_hit_rect` | touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export) |
 
 ### USB HID
 

@@ -169,8 +169,8 @@ canonical projects and the re-export are left to the parent session.
 
   | Image | Unnamed I/O refs (addresses) | On a table register | Left after the Ghidra test |
   |---|---:|---:|---|
-  | DISPLAY | 985 (295) | 980 (99.5 %) | 5: `DAT_3fe99999`/`DAT_3fe33333` (high words of the doubles 0.8/0.6, not registers), `DAT_e8205580` (read in `ostm_time_us`, bit 6; no register there in the manual, open) |
-  | IFDSP M33 | 619 (213) | 617 (99.7 %) | 2: `DAT_40135020` (PMC +0x20, set to 0x04040808 if it differs, in the first code file; not in the SVD, open) |
+  | DISPLAY | 985 (295) | 980 (99.5 %) | 5: `DAT_3fe99999`/`DAT_3fe33333` (high words of the doubles 0.8/0.6, not registers), `DAT_e8205580` (read in `ostm_time_us`, bit 6; no register there in the manual, see the resolved step 2 below) |
+  | IFDSP M33 | 619 (213) | 617 (99.7 %) | 2: `DAT_40135020` (PMC +0x20, set to 0x04040808 if it differs, in the first code file; not in the SVD; now the `RT_EXTRA` row `PMC_BIASCFG`, see step 2 below) |
   | IFDSP HiFi4 | 711 (164) | 708 (99.6 %) | 3: `DAT_40060a92` and `DAT_40140000` (outside every peripheral block) |
 
 - **Ghidra test** (per-task copies `ghidra/FT710_DISPLAY_T23b`, `FT710_IFDSP_T23b`, owner `root`, `-noanalysis`,
@@ -191,7 +191,24 @@ canonical projects and the re-export are left to the parent session.
 1. Apply to the canonical projects (DISPLAY, then IFDSP M33 and HiFi4, as in the test above), re-export `decomp/display`
    and `decomp/ifdsp/{m33,hifi4}`, run `decomp_quality.py compare`, `python3 -I tools/readability_stats.py readme`, and
    commit the projects with the re-export.
-2. Look up `0xE8205580` (DISPLAY) and PMC `+0x20` (M33) in other sources; add sourced rows if found.
+2. ~~Look up `0xE8205580` (DISPLAY) and PMC `+0x20` (M33) in other sources; add sourced rows if found.~~ Done (2026-10-30):
+   - **PMC +0x20 (0x40135020) is a register** the SVD omits: NXP's SDK `fsl_power.c` (mcux-sdk 8a289764,
+     `devices/MIMXRT685S/drivers/fsl_power.c` lines 183-196) has `POWER_SetBiasConfig()`, "configure bias voltage level
+     [RBB & FBB] and enable/disable pull-down", which writes `PMC_REG(0x20) = 0x04040808U` if it differs and then
+     `PMC->SLEEPCTRL = CORELVL(0xA)` (0.7 V deep sleep) **[fact]**. That is exactly the M33 function at 0x00080030
+     (`power_set_deepsleep_pmc_cfg`, so its SDK name is `POWER_SetBiasConfig`). New `RT_EXTRA` list in
+     `tools/sfr_table.py`: `PMC_BIASCFG` (our symbol) at 0x40135020 and `PMC_S_BIASCFG` at 0x50135020; `build --chip rt685`
+     rewrote `sfr_rt685.tsv` with these two rows only (HiFi4 table unchanged, PMC is not in the DSP view); checks pass;
+     M33 coverage is now 100 %. Applying it needs the next canonical `ApplySfr.java` run.
+   - **0xE8205580 (DISPLAY) is not a documented register.** The literal really is 0xE8205580 (pool word 0x201179B0, loaded
+     by `ldr ip` at 0x2011786C). In the RZ/A1H manual Rev.7.00 it is offset 0x580 of the PFV0 window: PFV0's last register is
+     0xE820508C, PFV1 starts at 0xE8205800, and Table 5.5 only says "I/O area" for 0xE8200000..0xE822FFFF **[fact]**.
+     `ostm_time_us` tests bit 6 of it while OSTM0 runs and, if set, adds one more 320000-count period. Bit 6 of the GIC
+     word 4 is interrupt ID 134 = **OSTM0TINT** (manual Table 7.3, "List of Interrupt IDs"), whose pending flag is `INTC_ICDISPR4` (0xE8201210)
+     bit 6, so the code means "OSTM0 tick pending, the counter has already wrapped" **[inference]**, and the address looks
+     like a slip in Yaesu's code **[guess]**; if the location reads 0, the correction never fires and the time can step
+     back by up to one 10 ms tick between the wrap and the tick interrupt **[inference]**. No row added (the TSVs list
+     only documented or sourced registers); the reason is a comment next to `RT_EXTRA`.
 
 ### Redo
 - New RZ/A1H manual revision: `python3 -I tools/sfr_table.py build --chip rza1h --pdf <new.pdf>` (finds Table N.1

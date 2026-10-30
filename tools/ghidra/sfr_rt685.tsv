@@ -3557,6 +3557,7 @@
 40135010	PMC_RUNCTRL	PMC	RUNCTRL	32	32	1	0	-	PMC controls used during run mode
 40135014	PMC_SLEEPCTRL	PMC	SLEEPCTRL	32	32	1	0	-	PMC controls used during deep sleep mode
 40135018	PMC_LVDCORECTRL	PMC	LVDCORECTRL	32	32	1	0	-	Active vddcore LVD monitor trip adjust
+40135020	PMC_BIASCFG	PMC	BIASCFG	32	32	1	0	-	PMC +0x20: body-bias (RBB/FBB) voltage level and RBB pull-down [not in the SVD; symbol ours. NXP SDK fsl_power.c POWER_SetBiasConfig() writes PMC_REG(0x20) = 0x04040808 if it differs (mcux-sdk 8a289764)]
 40135024	PMC_AUTOWKUP	PMC	AUTOWKUP	32	32	1	0	-	Automatic wakeup from deepsleep / deep powerdown modes
 40135028	PMC_PMICCFG	PMC	PMICCFG	32	32	1	0	-	PMIC power mode select control configuration to let PMC know when vddcore or vdd1v8 will power of...
 4013502C	PMC_PADVRANGE	PMC	PADVRANGE	32	32	1	0	-	GPIO vdde range selection control
@@ -8466,6 +8467,7 @@
 50135010	PMC_S_RUNCTRL	PMC_S	RUNCTRL	32	32	1	0	-	PMC controls used during run mode
 50135014	PMC_S_SLEEPCTRL	PMC_S	SLEEPCTRL	32	32	1	0	-	PMC controls used during deep sleep mode
 50135018	PMC_S_LVDCORECTRL	PMC_S	LVDCORECTRL	32	32	1	0	-	Active vddcore LVD monitor trip adjust
+50135020	PMC_S_BIASCFG	PMC_S	BIASCFG	32	32	1	0	-	PMC +0x20: body-bias (RBB/FBB) voltage level and RBB pull-down [not in the SVD; symbol ours. NXP SDK fsl_power.c POWER_SetBiasConfig() writes PMC_REG(0x20) = 0x04040808 if it differs (mcux-sdk 8a289764)]
 50135024	PMC_S_AUTOWKUP	PMC_S	AUTOWKUP	32	32	1	0	-	Automatic wakeup from deepsleep / deep powerdown modes
 50135028	PMC_S_PMICCFG	PMC_S	PMICCFG	32	32	1	0	-	PMIC power mode select control configuration to let PMC know when vddcore or vdd1v8 will power of...
 5013502C	PMC_S_PADVRANGE	PMC_S	PADVRANGE	32	32	1	0	-	GPIO vdde range selection control
