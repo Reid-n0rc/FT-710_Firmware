@@ -441,6 +441,139 @@ half-cycle alignment of odd and even bits. The simulation uses a SAME_EDGE_PIPEL
 (3) The SRL depth: the address reads `A[0] = 1` on all 28 (2 clocks), but an unrouted LUT input also reads 1, so 1 or 2
 clocks.
 
+### 3.8 RX IF stream to the DSP, reg 0x0A, the TX AF input (#193)
+
+#193 asked where the FPGA puts the signal for the HiFi4, which expects the SSB/CW carrier at 18 kHz and the FM carrier
+at 24 kHz in its 72 kHz RX IF stream ([ifdsp/dsp-chains.md](../ifdsp/dsp-chains.md#answers-to-the-86-open-points-184)).
+Static tracing over `netlist.json` plus whole-netlist runs with `hdl/sdr/sim/ddc_main.cpp` (built with
+`VDEFS="+define+MMCM_FRAC +define+IDDR_DDR"`: `DSP_CLK` at 18.432 MHz from a phase accumulator in the MMCM stand-in, DDR
+ADC capture, and the #172 DSP-inverter fix). MAIN's frames go in on UART B; the ADC is driven with a 14-bit sine in the
+#172 bit map; the output port is decoded per half-frame.
+
+```mermaid
+flowchart LR
+  ADC["ADC A/B<br/>(3.7)"] --> MIX["mixers X1Y34/35, X1Y38/39<br/>(X0Y34..37 for B)"]
+  NCO["LO words DSP48_X1Y48 / X1Y50<br/>= reg 0x18/0x19 (Hz)"] --> MIX
+  MIX --> DEC["decimation chain<br/>... DSP48_X0Y11/X0Y12"]
+  DEC --> SEL{"SLICE_X40Y62/AFF<br/>(register bit, 0 at reset)"}
+  TX["T11 serial in (TX AF)<br/>dsp_clk shift register"] --> TSEL{"SLICE_X40Y60/CFF"}
+  COS["cosine table RAMB18_X2Y20"] --> TSEL
+  TSEL --> G["DSP48_X1Y18<br/>x gain register"]
+  G --> SEL
+  G --> TXC["TX chain DSP48_X1Y22..24"]
+  SEL --> FIFO["RAMB18_X2Y15<br/>16 x 32 bit, written at 72.000 kHz"]
+  FIFO --> SR["64-bit shift register<br/>dsp_clk domain"] --> M17["pin M17<br/>(RX_DATA)"]
+  R0A["reg 0x0A flops"] --> ENV["DSP48_X1Y16 A operand<br/>(TX envelope multiplier)"]
+```
+
+**The RX NCO is reg 0x18/0x19 [fact, simulation].** With `w00180098 w00199680` (10,000,000 Hz) and a 10.002 MHz tone
+on the ADC, the local-oscillator words that #172 found shared by both channels' mixers, DSP48_X1Y48.P and DSP48_X1Y50.P,
+are sinusoids at 10.000 MHz, the gain DSP48_X1Y26 carries the 10.002 MHz tone, and the upper partial products of the
+mixers (DSP48_X1Y35, DSP48_X1Y39) peak at 20.0 MHz (sum product; the 2 kHz difference is the wanted output) in a
+16,000-clock dump (`DUMP=56-77:...`). So MAIN's reg 0x18/0x19 value, RX frequency plus the mode offset (SSB
+±(1500 + shift), none in AM/FM), is the frequency the ADC samples are mixed down by **[fact]**: the passband centre goes
+to 0 Hz (complex baseband) in the mixers. A further set of DSPs (DSP48_X1Y42..44) shows a 14.0 MHz LO at the same
+time, a second receiver path (scope or lane) **[inference]**.
+
+**The 72 kHz output and its pin [fact, simulation and netlist].**
+
+- The RX samples leave the 125 MHz domain through **RAMB18_X2Y15**, an SDP 36-bit RAM used as a 16 × 32-bit FIFO
+  (write address `SLICE_X60Y35`, 4 bits, clock `BUFHCE_X1Y9` = 125 MHz; read address `SLICE_X55Y35`, clock
+  `BUFHCE_X1Y8` = `DSP_CLK`). Its write enable `SLICE_X31Y30/A5FF` pulses every **1,736 or 1,737 clocks** (8 × 1,736
+  + 1,737 = 15,625 clocks per 9 samples), i.e. **exactly 72.000 kHz** of the 125 MHz clock (1,323 intervals measured).
+  The decimation to 72 kHz is therefore done in the 125 MHz domain with a fractional 1,736 1/9 cadence; the word
+  rate does not depend on `DSP_CLK`.
+- The read side loads a 64-flip-flop shift register (`SLICE_X56Y38`, `X58Y36..39`, `X59Y37..39`, `X61Y38`; load strobe
+  `SLICE_X15Y42/DLUT` from the same 7-bit counter as U16/V17) and shifts it out on **pin M17**. Decoded on rising U16
+  edges with the I2S one-bit delay, **both 32-bit slots of every frame carry the same word** (correlation 1.0 over 460
+  frames). With the ADC at 0 every word is 0; with a tone on the ADC the words are non-zero. So **M17 is the RX IF data
+  line (J2002 pin 33 `RX_DATA`, FC3 on the RT685)** **[inference, strong; the module's pin routing is not in the
+  service manual]**, not the scope port as 5.5 guessed. The HiFi4's `rxif_dma_to_fifo` de-interleaves two slots; it gets
+  the same sample twice.
+- The FIFO only balances if the frame rate equals the write rate: frame = `DSP_CLK` / 256 must be 72 kHz, i.e.
+  **`DSP_CLK` = 18.432 MHz**, the value the RT685 code assumes, and not the 28.17 MHz the MMCM settings read as (3.2,
+  [system.md O8](../system.md#8-contradictions-and-open-questions)) **[inference, strong]**.
+- **V16 is not RX data [fact].** Its flip-flop `SLICE_X6Y68/BFF` is the carry out of a 13-bit accumulator
+  (`SLICE_X6Y65..68`) that adds a 13-bit register (`SLICE_X7Y66/67`, loaded from `SLICE_X5Y66`...) each 125 MHz clock: a
+  first-order sigma-delta (pulse-density) output of a 13-bit level. With the ADC at 0 it stays 0, with noise it toggles
+  (4.4). A 1-bit DAC for an analog level such as `FADC0/1` or `ENV_S/ENV_H` toward MAIN fits **[guess]**.
+- The FIFO input word is a 2-to-1 mux (`SLICE_X43Y42`, `X44Y41`, `X47Y40`, `X50Y39`, select **`SLICE_X40Y62/AFF`**, a
+  register-bank bit written from bus bit 11, 0 after reset): 0 = the decimation chain (DSP48_X0Y12 via `SLICE_X33Y32`),
+  1 = DSP48_X1Y18's product (via `SLICE_X47Y43`), the TX-audio / tone multiplier below. MAIN never sets it as far as the
+  tested registers go; the address of that register is not mapped yet.
+
+**Reg 0x0A's flip-flops and where they go [fact].** Writing reg 0x0A pulses one write enable, `SLICE_X33Y76/DLUT`
+(net n51794), and only that one among the 42 enables of the register bank (simulation, writes to 0x0A, 0x18, 0x19, 0x08,
+0x09). The register is 16 flip-flops: bit 0 = `SLICE_X61Y75/BFF`, bit 1 = `SLICE_X61Y75/CFF`, bit 2 =
+`SLICE_X53Y76/AFF`, plus `SLICE_X46Y70/BFF`, `X58Y80/B,C,C5,DFF`, `X50Y76/A,B,CFF`, `X49Y75/A..DFF`, `X52Y77/DFF` for
+the upper bits (bus bits from the same simulation; bits 3/5, 7/9/11/15, 8/14 and 10/13 are not told apart). The class
+values decode in LUTs: `SLICE_X46Y62/ALUT.O5` = class ≥ 3 (LSB, USB, RTTY), `SLICE_X46Y62/BLUT.O5` = class 2 or 3,
+`SLICE_X46Y63/ALUT.O5` = not class 4, `SLICE_X49Y62/ALUT.O5` = class 0 (CW, gated by `SLICE_X54Y66/C5FF`),
+`SLICE_X56Y63/ALUT.O5` = class 1 or 3. They drive:
+
+- `SLICE_X44Y61/AFF`, `X44Y61/BFF`, `X46Y62/CFF`, `X46Y62/DFF`, `X46Y63/CFF`, `X42Y61/AFF`, whose only hard-block load is
+  the **A operand of DSP48_X1Y16**, the multiplier whose B operand is the raised-cosine ramp (RAMB18_X2Y19), i.e. the TX
+  keying envelope. Per class the A bits come from different words: USB from `SLICE_X52Y71`, LSB from `SLICE_X52Y73`, FM
+  from `SLICE_X44Y64`, a constant for CW (`X46Y63/CFF` set by the class-0 decode), 0 for AM and RTTY on the four word bits
+  **[fact, equations]**. So reg 0x0A selects the **TX modulation source** that the envelope multiplier shapes
+  **[inference]**; DSP48_X1Y16/17 feed DSP48_X1Y23, which also takes the TX-audio product of DSP48_X1Y18.
+- Through two registers, the address counter (`SLICE_X59Y92..94`, `X62Y92..94`) of the fourth phase-table lane
+  (RAMB18_X0Y56..59, X1Y58/59 → DSP48_X1Y58/59) **[fact, routing]**; what that lane does is open.
+
+**Reg 0x0A does not change the RX IF stream [fact, simulation].** The same run (ADC tone 10.002 MHz, NCO 10 MHz, writes
+0x0A / 0x18 / 0x19 at the same clocks) with class 4, 2 and 0 gives **bit-identical** M17 words for all 922 half-frames
+after clock 700,000. Controls with one extra write after the same three (compared from clock 900,000 on, 692 half-frames): reg 0x08 = 0x0098
+(TX frequency) leaves every word identical, while reg 0x1E = 0xFED4 (the USB passband centre, −300 × 5 Hz), reg 0x16 =
+0x0031 (FM filter class) and reg 0x19 + 1 Hz each change all of them **[fact, simulation]**. So the RX path listens to
+0x18/0x19, 0x1E and 0x16, not to 0x0A or 0x08.
+
+**What the words contain is not settled.** With the tone on the ADC the 72 kHz words look like white noise near full
+scale (spectral peak < 10 % of the power), from 40 LSB (−46 dBFS) to 4,000 LSB input, while the stages up to the mixers
+are clean sinusoids (above). So something between the mixers and the FIFO does not work in this simulation as it does on
+the radio: a register MAIN writes and these runs did not (the full RX set is reg 0x03, 0x04, 0x0B..0x16, 0x1A..0x1F,
+0x20..0x27, [main/sdr-link.md](../main/sdr-link.md)), or a model gap (the LUT-RAM/SRL "SMALL mode" approximation of
+section 4, the IDDR edge mode, BRAM corner cases) **[open]**. Therefore the IF placement itself (where the carrier lands
+in the 72 kHz stream per mode) is **not confirmed by simulation**. What the evidence says **[inference]**:
+
+- The FPGA mixes the passband centre that MAIN puts in reg 0x18/0x19 to 0 Hz, then decimates to 72 kHz. To give the
+  HiFi4 a real stream with the SSB carrier at 18 kHz and inverted sideband, the passband centre (dial ± 1500 Hz) must land
+  at 18 − 1.5 = 16.5 kHz (USB) or 19.5 kHz (LSB), and an FM carrier (reg 0x18 = dial, no offset) at 24 kHz. Since reg
+  0x0A does not touch the RX words, that per-mode shift is **not** taken from reg 0x0A. The RX-only registers MAIN
+  sends per mode and that do change the RX words (above), reg 0x1E (signed passband centre / 5 Hz, sign flipped for the USB-side modes) and reg 0x16 (filter class:
+  0x0n CW, 0x1n SSB/data, 0x2n AM, 0x3n FM), are the candidates for the final shift and filter.
+- So the inference in dsp-chains.md "the FPGA shifts by class (reg 0x0A)" is replaced by "the FPGA's RX output does not
+  depend on reg 0x0A; the per-mode placement must come from reg 0x1E / 0x16 (or the DSP side)".
+
+**TX AF input: T11, taken as audio [fact for the wiring, inference for the meaning].** Pin **T11** (`IOB_X0Y12`) is the
+only input sampled in the `DSP_CLK` domain: `SLICE_X62Y50/AFF` (clock `BUFHCE_X1Y20` = `DSP_CLK`) shifts it in, on the
+U16/V17 timing, through `SLICE_X62Y50/51`, `X63Y51`, `X64Y51/52` and the SRLs of `SLICE_X60Y49`; the word is latched at
+the frame strobe `SLICE_X15Y42/DLUT` (`SLICE_X61Y52`, `X62Y48`, `X62Y51/DFF`, `X64Y52`). So T11 is J2002 pin 28 `TX_DATA`
+(FC2 `TX_AF`) **[inference, strong]**. Its word goes to the A operand of **DSP48_X1Y18** through the mux
+`SLICE_X60Y50/51`, `SLICE_X61Y51` (select `SLICE_X40Y60/CFF`, a register bit from bus bit 15, 0 after reset: 0 = TX
+audio, 1 = the cosine table RAMB18_X2Y20), and DSP48_X1Y18's B operand is a register (`SLICE_X30Y67`, `X30Y71`, `X30Y73`,
+the bank written through enable `SLICE_X29Y70/CLUT`). The product feeds DSP48_X1Y22/23/24 and the TX side, where reg
+0x0A's class words and the keying envelope (DSP48_X1Y16) also arrive. The audio sample is scaled as it is, with no NCO
+or mixer before DSP48_X1Y18: the FPGA takes the TX AF stream as **baseband audio** and modulates it itself, which is what
+the HiFi4 side showed (its modulators are gated off by reg 0x4006 = 0) **[inference]**. A TX simulation (PTT, TX
+registers 0x08/0x09, an I2S tone on T11, DAC pins) was not run.
+
+**The AESS branch (#193 point 2) [fact].** Nothing on the SDR side carries it: the FPGA has one RX data line (M17) with
+the same word in both slots, and MAIN sends the SDR no AESS value (the only AESS read among the SDR updaters,
+`FUN_fffb54a0` in `sdr_upd_r16_filter`, sets MAIN's own TX→RX unmute delay 0x20B4A, not the reg 0x16 value). The AESS
+split (branches A/B, reg 0x4020 low-pass, reg 0x56 delay) is in the HiFi4, and the speaker routing and AESS level are
+on MAIN's analog side ([main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact)).
+
+Reproduce:
+
+```sh
+python3 -I tools/xc7_probe_netlist.py build/sdr/netlist.json build/sdr/ft710_sdr.v OUT.v OUT.names @PROBES
+NET=OUT.v PROBE_W=<words> MAIN=ddc_main.cpp OBJ=obj_ddc VDEFS="+define+MMCM_FRAC +define+IDDR_DDR" hdl/sdr/sim/build_full.sh
+ADC=tone:10002000:40 HALF_FROM=600000 build/sdr/vl/obj_ddc/Vft710_sdr 1500000 w000A0004 w00180098 w00199680
+```
+
+(`H` lines: half-frame words on M17; `DUMP=W0-W1:FROM:TO:EVERY` prints probe words for time series; `PROBE_COUNT=1`
+counts toggles per probe.)
+
 ## 4. Structural Verilog, smoke test and simulation (T15d)
 
 ```sh
@@ -759,6 +892,8 @@ wrong lengths, junk prefixes, lines split by idle gaps) show **0 mismatching clo
 read-back) and a CR during a running reply.
 
 ### 5.5 What starts the "scope SPI" (#145)
+
+*#193:* with `DSP_CLK` at 18.432 MHz and an ADC tone, M17 carries the 72 kHz RX samples (0 with the ADC at 0), the same word in both slots: it is the RX IF data line, not the scope port (3.8).
 
 **Nothing has to start it [fact, simulation].** #62/#90 looked for a three-pin scope port (`FFT_CLK/FRM/DAT`, J2002
 23/25/27) among the idle bank-14 outputs and found none active. With working block RAMs (#164) the only new output is

@@ -196,8 +196,15 @@ The points left open by #86, answered from the firmware where possible. What nee
   need no phase accumulator or table, and the same carrier serves RX and TX **[inference]**. MAIN cannot be the one that moves the
   carrier: it tunes the SDR RX NCO with ±(1500 + shift) in SSB and no offset in AM/FM (SDR reg 0x18/0x19, `sdr_upd_r18_rx_freq`), and sends the modulation
   class in SDR reg 0x0A (0 CW, 1 AM, 2 FM, 3 LSB, 4 USB, 5 RTTY) ([main/sdr-link.md](../main/sdr-link.md)). A single fixed IF in the
-  FPGA cannot put the SSB carrier at 18 kHz and the FM carrier at 24 kHz, so the FPGA must shift the IF by class **[inference]**.
-  Confirming that needs the DDC in the netlist (#193).
+  FPGA cannot put the SSB carrier at 18 kHz and the FM carrier at 24 kHz, so the FPGA must shift the IF per mode **[inference]**.
+  #193 checked the netlist ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)):
+  reg 0x18/0x19 is the RX mixer LO (simulated: 10,000,000 → a 10.000 MHz LO), the samples are decimated to exactly 72.000 kHz
+  and leave on pin M17 (the same 32-bit word in both I2S slots) **[fact]**, but **reg 0x0A does not change the RX words**
+  (classes 0, 2 and 4 give bit-identical output in simulation; its flip-flops only reach the TX envelope multiplier and a
+  phase-table lane) **[fact]**. Reg 0x1E (passband centre) and reg 0x16 (filter class) do change the RX words, reg 0x08
+  does not **[fact, simulation]**. So the per-mode shift is not keyed by reg 0x0A; 0x1E / 0x16 are where it would come from
+  **[inference]**. The decimated words are not yet interpretable in simulation, so the
+  carrier positions themselves remain unconfirmed (#193).
 
 ### DNR: MAIN drives both noise reductions, split by level
 
@@ -259,7 +266,8 @@ defaults (0x400B = 8, 0x400D = 512) are never used while DNR is on.
   EXT SP and branch A (DAC channel 1) → LOL → internal speaker/phones** **[inference, strong;
   [hardware.md](../../hardware.md)]**. The AESS level `AS1` is not sent to the DSP: MAIN applies it on the analog side
   (route 2 only when it is non-zero, and R2A20178 channel 8 from it; [main/peripherals.md](../main/peripherals.md#speaker-routing-speaker_route-0x20fcc-fact),
-  #203) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is still open in #193.
+  #203) **[fact]**. The SDR FPGA has no part in it: one RX data line with the same word in both slots, and MAIN sends it no
+  AESS value (#193, [sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact]**. Why B gets 32 more samples of delay (reg 0x56) is open (HiFi4 side).
 - **reg 6 = 10** (never sent by MAIN): `Thread_Rx_Path_entry` 0x2262FC feeds Rx_Audio from **codec ADC channel 1** × reg 0x60
   (`rx_aux_in_gain`) instead of the demodulator, if reg 10 n0 = 1. Routing source 4 then gets the raw SDR block, `rx_audio_chain`
   skips both the FM post-processing and the zero-in, the TX side takes ADC channel 1 as source 5 (`aux_in_gain_lp`, reg 0x23), and the
@@ -333,7 +341,10 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement and the AESS branch delay: #193 (the AESS speaker, the AESS level (#203) and the reg 0x63 values are settled).
+- The SDR FPGA's per-mode IF placement: #193 found the RX LO (reg 0x18/0x19), the 72 kHz output (pin M17) and that reg 0x0A
+  does not steer the RX path, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)).
+  The AESS speaker, the AESS level (#203) and the reg 0x63 values are settled; the SDR side carries no AESS branch (#193). Why
+  branch B gets the extra reg 0x56 delay is a HiFi4-side question.
 
 ## Further functions (T23g)
 
