@@ -22,7 +22,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 |---|---|---|---|
 | T23a | MAIN: RX651 peripheral-register labels and types (`tools/sfr_table.py`, `tools/ghidra/sfr_rx651.tsv`, `tools/ghidra/ApplySfr.java`) | apply + re-export | table and script done; Ghidra steps open |
 | T23b | DISPLAY (RZ/A1H) and IFDSP M33/HiFi4 (RT685) register labels (`tools/sfr_table.py --chip rza1h/rt685`, `sfr_rza1h.tsv`, `sfr_rt685.tsv`, `sfr_rt685_hifi4.tsv`) | apply + re-export | tables, bootstrap steps and Ghidra test done; canonical apply open |
-| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN header, scripts and per-task test done; canonical apply + re-export open; DISPLAY todo |
+| T23c | Global state structs: MAIN first (`PTR_DAT_00025d54`, `PTR_DAT_00025d6c`, `DAT_0000464a`, …), then DISPLAY | struct import + re-export | MAIN and DISPLAY headers, scripts and per-task tests done; canonical apply + re-export open (both) |
 | T23d | Library identification by signature: CC-RX runtime (MAIN), armcc runtime and NORTi (DISPLAY), FreeRTOS/Redlib (M33), NatureDSP (HiFi4) | apply + re-export | tables merged (218 rows, 147 new names, 5 renames); Ghidra steps open; HiFi4 not started |
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
@@ -206,7 +206,8 @@ canonical projects and the re-export are left to the parent session.
 ## T23c — Global state structs
 
 **Status:** MAIN done in a per-task Ghidra copy (2026-10-29); the apply to the canonical project and the re-export of
-`decomp/main` are the parent's step (below). DISPLAY is open.
+`decomp/main` are the parent's step (below). DISPLAY done in a per-task copy (2026-10-30, [DISPLAY part](#t23c-display));
+its canonical apply and re-export are open as well.
 
 ### Approach
 1. `tools/ghidra/StructAccessDump.java` (read-only) decompiles every function and lists each RAM global access with its
@@ -278,7 +279,7 @@ if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
 2. Docs that cite `PTR_DAT_00025dxx[0x..]` or `DAT_0000464a` can keep doing so; new text should use the field names.
 3. Name the 76 neutral fields as their meaning is found (the largest: UI +0x3F7 (44 uses), +0x43A (36), +0x46B (32),
    +0x468 (29)); 0x1FF12 (301 references, the value a menu `on_step` returns) and 0x464E are scalars outside these blocks.
-4. DISPLAY: the same scan and header for its big blocks (`struct_offsets.py` takes a different `BLOCKS` table).
+4. DISPLAY: done, see [T23c DISPLAY](#t23c-display).
 
 ### Redo
 - New firmware: re-run `StructAccessDump.java` and `struct_offsets.py scan --access` on the new export; offsets that are new
@@ -286,6 +287,110 @@ if (DAT_00020f09 == '\x01')  ->  if (g_ui.txw_swap == 1)
   pointer table in `.data` (`tools/ghidra/StructAccessDump.java` output, kind `ptr`) and the menu table first.
 - New information: edit the field in `structs_main.h` (name, type, tag, evidence) and re-apply; `ApplyStructs.java`
   replaces the structures in place.
+
+## T23c DISPLAY
+
+**Status:** header, script changes, bootstrap step and a per-task test done (2026-10-30); the apply to the canonical
+project and the re-export of `decomp/display` are the parent's step.
+
+### Plan
+1. Widths: `StructAccessDump.java` with a RAM range argument (DISPLAY data lives at 0x20000000..0x209FFFFF, next to its
+   code), on a per-task copy: 2,213 functions, 44,569 accesses.
+2. `struct_offsets.py --image display`: DISPLAY's block table. The ARM code loads every address from a literal pool, so
+   the decompiler prints absolute names (`DAT_208f0b2a`, `*(int *)(&DAT_208dbba0 + i * 4)`, `iRam208db284`), not
+   MAIN's pointer-plus-offset forms; the script got the `xRam` form, the rest was already covered.
+3. Type the blocks with clear evidence: the NORTi kernel (packets in `.rodata`, control blocks, tables, system
+   variables), the SCIF UART objects, the boot-info copy, the MAIN-link frame (the status block is mapped byte by byte
+   on the MAIN side, display-link.md #72) and the MAIN-link driver variables (mainlink.md section 12).
+4. `ApplyStructs.java`: one small generalisation, `params` lines, so that functions which take a frame, a UART object or
+   a kernel packet get the struct pointer type (most of DISPLAY's block accesses go through such parameters).
+
+### Findings
+- **The frame is the key type.** `gui_screen_update` copies the snapshot into a local 0x240-byte buffer and hands
+  `(new, old = 0x208F0B2A, flag)` to every screen handler; `scr_main_layout` passes the same three arguments to nine
+  drawers **[fact]**. With `struct ml_frame` on those parameters the decompiler types the local too: `local_269 & 0x80`
+  reads `local_270.tx_swr & 0x80` (frame byte 7 bit 7 = TX). Short frames (0x21, 0x23, 0x3F, 0x43, 0x64, 0x65,
+  0x7A..0x7C) use bytes 1.. for their own data; their handlers stay untyped, and byte 1 is named `byte1` because the
+  GUI tests it mostly for 0x7B (screen saver on) **[fact]**.
+- **MAIN sends 0 in bytes the DISPLAY reads**: `FUN_20130C90` compares frame bytes 103 and 107..112 with the previous
+  frame, and `FUN_20131638` takes the low nibble of byte 112 as the text-view set (gui.md), but MAIN V01-12 always
+  writes 0 there (display-link.md) **[fact]**; neutral `f_0x6b_u8`.. names, `text_view_sets` for byte 112.
+- **NORTi control blocks** (layouts from the kernel code; NORTi's sources are not public): the TCB is 0x28 bytes, the
+  ready and wait queues are circular lists of task ids through TCB +6/+7 with a head byte (`FUN_201538D4` inserts,
+  `FUN_201539EC` unlinks, `FUN_20153A38` moves), the time-out wheel uses +0x0A/+0x0B/+0x0C, and +0x24 chains the held
+  mutexes through mutex +0x08; semaphore, flag, mutex and pool blocks end in a 1- or 8-byte wait queue (TA_TPRI) ended
+  by 0xFE/0xFF **[fact]**. The object tables are indexed by id from 1, so each table's slot 0 is unused and the last id
+  lands on the next table's slot 0: 0x208DBBA0 tasks, 0x208DBCA4 semaphores, 0x208DBDA4 flags, 0x208DBEA4 mailboxes,
+  0x208DBEC4 message buffers, 0x208DBEE4 (8, no creator in the image), 0x208DBF04 variable pools, 0x208DBF24 fixed
+  pools, 0x208DBF64 / 0x208DBF84 cyclic handlers, 0x208DBFA4 data queues, 0x208DBFC4 mutexes, 0x208DC044 ISRs,
+  0x208DC144 (8, unknown) **[fact: FUN_201530FC clears every table with its count, each `itron_acre_*` uses its table]**.
+  0x208DC18C[0] is the running task id (max id + 1 when idle), [1..8] the ready-queue heads **[fact]**.
+- **System variables 0x208003A8..0x208003FF** are one block, all set by `FUN_201530FC`: SYSTIM = offset 0x208003BC/C0 +
+  tick counter 0x208003C4/C8 (`itron_get_tim`), and the tick counter is also the time-out base (`knl_timeout_add`)
+  **[fact]**. So boot-rtos.md's "idle passes in 0x208003C4/0x208003C8" is the tick counter, not an idle count
+  **[inference]**. 0x208003D4 is the last error code: every service call stores E_xxx there (117 references in the C).
+- **The boot-info copy is 0x5C + 4 bytes**: `bootinfo_load` copies 0x60 bytes to 0x208DBB44, and the last word lands in
+  slot 0 of the task table at 0x208DBBA0, which the kernel never uses **[fact]**.
+- **SCIF objects** (0x850 bytes at 0x208DA1E0 / 0x208DAA30 / 0x208DB280): register pointer, two 1 KB rings, the two ISR
+  descriptors, the RX event flag, nine counters and two cycle-count stamps (`FUN_20114850` reads the CP15 PMCCNTR)
+  **[fact]**; the `scifN_rxi_isr` thunks inline `scif_rxi_isr` on the global object.
+- After the frame at 0x208F0B2A come 0x208F0D6A (`gui_screen_update` compares its 0x21 bytes with bytes 1..0x21 of a new 0x43 frame)
+  and the saved frame 0x208F0FCB. The GUI's other `.bss` (0x208F120C.., 0x208F4630..) and the `.data2` layout
+  words (0x208004A4.., gui.md "Screen layout", `tools/display_layout.py`) are separate variables, not one block, and
+  stay as they are.
+
+### Result (per-task copy `/home/user/ghidra_tasks/B`)
+| Structure | Size | Fields | Neutral | Instances / users |
+|---|---|---|---|---|
+| `t_ctsk`, `t_cisr`, `t_csem`, `t_cflg`, `t_cmtx`, `t_cmpf` | 0x1C, 0x14, 0x10, 0xC, 0xC, 0x14 | 27 | 0 | 29 `ctsk_*`, 41 `cisr_*`, 6 `cflg_*`, 1 `cmtx_*` in `.rodata`; `itron_acre_*` parameters |
+| `knl_tcb`, `knl_sem`, `knl_flg`, `knl_mtx`, `knl_mpf` | 0x28, 0x11, 0x12, 0x15, 0x1B | 38 | 4 | `knl_tsk_tab`, `knl_sem_tab`, `knl_flg_tab`, `knl_mtx_tab`, `knl_mpf_tab`; `knl_rdq` |
+| `knl_sys` | 0x58 | 30 | 10 | 0x208003A8 |
+| `boot_info` | 0x5C | 6 | 0 | `g_bootinfo` 0x208DBB44 |
+| `scif_uart`, `scif_regs`, `cyc_stamp` | 0x850, 0x2C, 8 | 34 | 0 | `scif3_uart`, `scif4_uart`, `scif5_uart`; 13 `scif_*` prototypes |
+| `ml_frame`, `ml_vfo` | 0x240, 0x19 | 65 | 7 | `gui_frame` 0x208F0B2A, `gui_frame_saved`, `ml_rx_frame`, `ml_gui_snapshot`; 33 frame-handler prototypes |
+| `ml_state` | 0x50 | 32 | 2 | `g_ml` 0x20450024 |
+
+`ApplyStructs: 19 structures, 232 fields, 93 globals (128 data units replaced, 93 labels), 2 return types, 0 errors`,
+`102 parameter types`; only undefined data was replaced, and a second run replaces nothing (idempotent) **[fact]**.
+`tools/struct_offsets.py fields <export> --image display`: **2,086 accesses print as named fields** and 152 as neutral
+ones (2 and 0 before); the 1,328 raw block accesses of the committed `decomp/display` (`DAT_208f0b2a`, `DAT_208003d4`,
+`*(int *)(&DAT_208dbba0 + i * 4)`, `iRam208db284`, ...) are all gone. `tools/decomp_quality.py compare
+decomp/display/quality.tsv` → **no metric worse**: functions with `extraout_` 68 → 67 (`FUN_201547D0`), with any of
+`in_`/`unaff_`/`extraout_` 159 → 158; warnings stay at 212. (A first run had 26 "Unknown calling convention -- yet
+parameter storage is locked" warnings: a prototype set with `replaceParameters` has no calling convention. ApplyStructs
+now sets the whole prototype with `updateFunction` and the default convention, and `scif3_get`, which has no committed
+prototype, uses a `params` line instead of `return`.)
+
+Before / after (`gui_screen_update`, `itron_sig_sem`, `scif5_rxi_isr`, `itron_chg_pri`, `main`):
+```c
+byte local_269; ...  bVar6 = (local_269 & 0x80) != 0;                       /* before */
+ml_frame local_270;  bVar5 = (local_270.tx_swr & 0x80) != 0;                /* after */
+iVar2 = *(int *)(&DAT_208dbba0 + uVar5 * 4); ... *(undefined1 *)(iVar2 + 5) = 0x10;
+pkVar6 = knl_tsk_tab[uVar5]; ... pkVar6->state = 0x10;
+if ((*(ushort *)(iRam208db284 + 0x10) & 2) != 0) { ... uRam208db28a = uRam208db28a + 1 & 0x3ff;
+if (((scif5_uart.regs)->scfsr & 2) != 0) { ... scif5_uart.rx_wr = scif5_uart.rx_wr + 1 & 0x3ff;
+*(char *)((int)piVar10 + 0x27) = cVar2;  ->  tcb->bpri = bVar3;
+DAT_208003d4 = 0xffffffee;  ->  knl_sys.last_ercd = -0x12;
+uVar1 = itron_acre_tsk(0,&DAT_20165a44);  ->  uVar1 = itron_acre_tsk(0,&ctsk_root);
+```
+
+### Open steps
+1. Parent: apply to the canonical project:
+   `tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra -postScript ApplyStructs.java tools/ghidra/structs_display.h`,
+   then re-export (`tools/bootstrap.sh --only export`), `decomp_quality.py compare`, `readability_stats.py readme`, and
+   commit the project and `decomp/display` together. `build_display` in `tools/bootstrap.sh` already runs
+   `ApplyStructs.java` after `ApplySfr.java` (both files are in its stamp list).
+2. Not typed yet: the link object 0x2045FD40 (C++, 0x103C0 bytes: vtable, RX part +0x18, dispatcher +0x58, TX +0x8218;
+   pointer `g_ml.link_obj`), the 0x60 frame 0x2045FB00 (versions first, the status block at another offset), the FAT/SD
+   driver state, the periodic wake-up slots 0x208DBAD0 (only indexed) and the GUI's `.bss` at 0x208F120C.. / 0x208F4630...
+3. Name the neutral fields as their meaning is found (`knl_sys` has 10; TCB +0x08, +0x09, +0x1C, +0x20).
+4. docs/code/display/boot-rtos.md can take the new names and the tick-counter finding above.
+
+### Redo
+- New firmware: re-run `StructAccessDump.java <out> 0x20A00000 0x20000000` and `struct_offsets.py scan --image display`;
+  update `BLOCKS_DISPLAY` and the `@0x` addresses (the kernel tables follow from `FUN_201530FC`, the descriptors from the
+  `itron_acre_*` callers). The function addresses in the `params` lines move as well.
+- New information: edit the field in `structs_display.h` and re-apply.
 
 ## T23d — Library identification
 Done 2026-10-29 (worktree agent, branch `worktree-agent-a00920445fc29dc23`) as tables merged into the name TSVs; the Ghidra

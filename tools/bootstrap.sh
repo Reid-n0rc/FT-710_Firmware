@@ -395,9 +395,9 @@ build_main() {
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
   local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
-    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv")
+    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -411,7 +411,8 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis \
     -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
-    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv"
+    -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv" \
+    -postScript ApplyStructs.java "$G/structs_display.h"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
