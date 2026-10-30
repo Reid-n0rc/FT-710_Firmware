@@ -753,3 +753,94 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x2015B9CC | `scope3d_render_large` | mode 8: 29 lines, 222/274 rows **[inference]** |
 | 0x2015BB7C | `scope3d_render_small` | mode 9: 14 lines, 104/156 rows **[inference]** |
 | 0x2015BC6C | `scope3d_draw_line` | line i at x = 5i+4, width 791-10i **[inference]** |
+
+### VDC5 driver API and shared state (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): VDC5 driver API and shared state (Renesas r_vdc5; API order and argument shapes as in the driver, gui.md "VDC5 set-up") **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20117AD4 | `r_vdc5_terminate` | (ch, quit_func): driver shutdown of a channel, then state 0 = 1 again **[inference]** |
+| 0x20117C14 | `r_vdc5_callback_isr_checked` | Checks channel states 0 and 2 (errors 9/10) and calls r_vdc5_callback_isr; the public R_VDC5_CallbackISR **[fact]** |
+| 0x20117C64 | `vdc5_layer_to_wr` | Layer id 0/1/2 (write layers) unchanged, other ids to 3 **[fact]** |
+| 0x20117C7C | `r_vdc5_write_data_control` | (ch, layer 0..2, param): checks resources (error 14/11), writes the scaler write registers (vdc5_config) and marks the resource **[inference]** |
+| 0x20117D2C | `r_vdc5_change_write_process` | (ch, layer, param): needs a busy write resource (error 14) **[inference]** |
+| 0x20117F88 | `r_vdc5_video_noise_reduction` | (ch, on, param): needs state 1 (error 11) **[inference]** |
+| 0x20117FC8 | `r_vdc5_image_color_matrix` | (ch, {module 0/1/2,...}): resource check by module, then the matrix registers **[inference]** |
+| 0x20118054 | `r_vdc5_image_enhancement` | (ch, imgimprv id 0/1, sharpness, area): resource 3 or 4 (error 14/8) **[inference]** |
+| 0x201180E0 | `r_vdc5_image_black_stretch` | (ch, imgimprv id, param): resource 3 or 4 **[inference]** |
+| 0x2011814C | `r_vdc5_alpha_blending` | (ch, layer, param): graphics index from vdc5_layer_to_gr, resource check (error 14) **[inference]** |
+| 0x20118284 | `r_vdc5_clut` | (ch, layer, param): same checks, CLUT write **[inference]** |
+| 0x2011830C | `r_vdc5_gamma_correction` | (ch, on, param): needs state 3 (error 12) **[inference]** |
+| 0x2011834C | `r_vdc5_get_isr` | (ch, type): ISR pointer from table 0x20165A74, 23 per channel (the vdc5_chN_isr_* handlers) **[fact]** |
+| 0x2011D788 | `vdc5_shrd_state_ptr` | (ch, n): pointer to state byte n (0..3) of channel ch at 0x20800410 + 4*ch, n = 4 gives 0x2080040C **[fact]** |
+| 0x2011D7D8 | `vdc5_shrd_set_state` | (ch, n, value): sets that state byte **[fact]** |
+| 0x2011D7F0 | `vdc5_shrd_set_resource` | (ch, id, value): resource state 0x208DCE04[ch*9 + id]; id -1 sets every resource not marked in use (0x208DCE16) **[fact]** |
+| 0x2011D830 | `vdc5_shrd_get_state` | (ch, n): state byte via vdc5_shrd_state_ptr, 0 for a bad n; the API calls check n = 0/1/2/3 == 1 before working (error codes 9/10/11/12) **[fact]** |
+| 0x2011D8E8 | `vdc5_shrd_res_idle` | 1 when resource id is set up (0x208DCE04) and not in use (0x208DCE16) **[fact]** |
+| 0x2011D920 | `vdc5_shrd_res_busy` | 1 when resource id is set up and in use **[fact]** |
+
+### VDC5 interrupt handlers (T23e round 2)
+
+From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): VDC5 interrupt handlers (r_vdc5 driver, 23 types per channel, callback table 0x208DCC0C, 23 words per channel) **[fact per the names file]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20118548 | `vdc5_ch0_isr_s0_vi_vsync` | VDC5 ch0 interrupt 0: enabled in VDC50_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC0C with type 0; type = VDC5_INT_TYPE_S0_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118598 | `vdc5_ch0_isr_s0_lo_vsync` | VDC5 ch0 interrupt 1: enabled in VDC50_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC10 with type 1; type = VDC5_INT_TYPE_S0_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201185E8 | `vdc5_ch0_isr_s0_vsyncerr` | VDC5 ch0 interrupt 2: enabled in VDC50_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC14 with type 2; type = VDC5_INT_TYPE_S0_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118638 | `vdc5_ch0_isr_gr3_vline` | VDC5 ch0 interrupt 3: enabled in VDC50_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC18 with type 3; type = VDC5_INT_TYPE_GR3_VLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118688 | `vdc5_ch0_isr_s0_vfield` | VDC5 ch0 interrupt 4: enabled in VDC50_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC1C with type 4; type = VDC5_INT_TYPE_S0_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201186D8 | `vdc5_ch0_isr_iv1_vbuferr` | VDC5 ch0 interrupt 5: enabled in VDC50_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC20 with type 5; type = VDC5_INT_TYPE_IV1_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118728 | `vdc5_ch0_isr_iv3_vbuferr` | VDC5 ch0 interrupt 6: enabled in VDC50_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC24 with type 6; type = VDC5_INT_TYPE_IV3_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118778 | `vdc5_ch0_isr_iv5_vbuferr` | VDC5 ch0 interrupt 7: enabled in VDC50_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC28 with type 7; type = VDC5_INT_TYPE_IV5_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201187C8 | `vdc5_ch0_isr_iv6_vbuferr` | VDC5 ch0 interrupt 8: enabled in VDC50_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC2C with type 8; type = VDC5_INT_TYPE_IV6_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118818 | `vdc5_ch0_isr_s0_wline` | VDC5 ch0 interrupt 9: enabled in VDC50_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC30 with type 9; type = VDC5_INT_TYPE_S0_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118868 | `vdc5_ch0_isr_s1_vi_vsync` | VDC5 ch0 interrupt 10: enabled in VDC50_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC34 with type 10; type = VDC5_INT_TYPE_S1_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201188B8 | `vdc5_ch0_isr_s1_lo_vsync` | VDC5 ch0 interrupt 11: enabled in VDC50_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC38 with type 11; type = VDC5_INT_TYPE_S1_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118908 | `vdc5_ch0_isr_s1_vsyncerr` | VDC5 ch0 interrupt 12: enabled in VDC50_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC3C with type 12; type = VDC5_INT_TYPE_S1_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118958 | `vdc5_ch0_isr_s1_vfield` | VDC5 ch0 interrupt 13: enabled in VDC50_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC40 with type 13; type = VDC5_INT_TYPE_S1_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201189A8 | `vdc5_ch0_isr_iv2_vbuferr` | VDC5 ch0 interrupt 14: enabled in VDC50_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC44 with type 14; type = VDC5_INT_TYPE_IV2_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201189F8 | `vdc5_ch0_isr_iv4_vbuferr` | VDC5 ch0 interrupt 15: enabled in VDC50_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC48 with type 15; type = VDC5_INT_TYPE_IV4_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118A48 | `vdc5_ch0_isr_s1_wline` | VDC5 ch0 interrupt 16: enabled in VDC50_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC4C with type 16; type = VDC5_INT_TYPE_S1_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118A98 | `vdc5_ch0_isr_oir_vi_vsync` | VDC5 ch0 interrupt 17: enabled in VDC50_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC50 with type 17; type = VDC5_INT_TYPE_OIR_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118AE8 | `vdc5_ch0_isr_oir_lo_vsync` | VDC5 ch0 interrupt 18: enabled in VDC50_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC54 with type 18; type = VDC5_INT_TYPE_OIR_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118B50 | `vdc5_ch0_isr_oir_vline` | VDC5 ch0 interrupt 19: enabled in VDC50_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC58 with type 19; type = VDC5_INT_TYPE_OIR_VLINE of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118BA0 | `vdc5_ch0_isr_oir_vfield` | VDC5 ch0 interrupt 20: enabled in VDC50_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC5C with type 20; type = VDC5_INT_TYPE_OIR_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118BF0 | `vdc5_ch0_isr_iv7_vbuferr` | VDC5 ch0 interrupt 21: enabled in VDC50_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC60 with type 21; type = VDC5_INT_TYPE_IV7_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118C40 | `vdc5_ch0_isr_iv8_vbuferr` | VDC5 ch0 interrupt 22: enabled in VDC50_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCC64 with type 22; type = VDC5_INT_TYPE_IV8_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118C90 | `vdc5_ch1_isr_s0_vi_vsync` | VDC5 ch1 interrupt 0: enabled in VDC51_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC68 with type 0; type = VDC5_INT_TYPE_S0_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118CE0 | `vdc5_ch1_isr_s0_lo_vsync` | VDC5 ch1 interrupt 1: enabled in VDC51_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC6C with type 1; type = VDC5_INT_TYPE_S0_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118D30 | `vdc5_ch1_isr_s0_vsyncerr` | VDC5 ch1 interrupt 2: enabled in VDC51_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC70 with type 2; type = VDC5_INT_TYPE_S0_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118D80 | `vdc5_ch1_isr_gr3_vline` | VDC5 ch1 interrupt 3: enabled in VDC51_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC74 with type 3; type = VDC5_INT_TYPE_GR3_VLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118DD0 | `vdc5_ch1_isr_s0_vfield` | VDC5 ch1 interrupt 4: enabled in VDC51_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC78 with type 4; type = VDC5_INT_TYPE_S0_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118E20 | `vdc5_ch1_isr_iv1_vbuferr` | VDC5 ch1 interrupt 5: enabled in VDC51_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC7C with type 5; type = VDC5_INT_TYPE_IV1_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118E70 | `vdc5_ch1_isr_iv3_vbuferr` | VDC5 ch1 interrupt 6: enabled in VDC51_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC80 with type 6; type = VDC5_INT_TYPE_IV3_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118EC0 | `vdc5_ch1_isr_iv5_vbuferr` | VDC5 ch1 interrupt 7: enabled in VDC51_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the status bit, calls callback slot 0x208DCC84 with type 7; type = VDC5_INT_TYPE_IV5_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20118F10 | `vdc5_ch1_isr_iv6_vbuferr` | VDC5 ch1 interrupt 8: enabled in VDC51_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC88 with type 8; type = VDC5_INT_TYPE_IV6_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118F60 | `vdc5_ch1_isr_s0_wline` | VDC5 ch1 interrupt 9: enabled in VDC51_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC8C with type 9; type = VDC5_INT_TYPE_S0_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x20118FB0 | `vdc5_ch1_isr_s1_vi_vsync` | VDC5 ch1 interrupt 10: enabled in VDC51_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC90 with type 10; type = VDC5_INT_TYPE_S1_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119000 | `vdc5_ch1_isr_s1_lo_vsync` | VDC5 ch1 interrupt 11: enabled in VDC51_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC94 with type 11; type = VDC5_INT_TYPE_S1_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119050 | `vdc5_ch1_isr_s1_vsyncerr` | VDC5 ch1 interrupt 12: enabled in VDC51_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC98 with type 12; type = VDC5_INT_TYPE_S1_VSYNCERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201190A0 | `vdc5_ch1_isr_s1_vfield` | VDC5 ch1 interrupt 13: enabled in VDC51_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCC9C with type 13; type = VDC5_INT_TYPE_S1_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201190F0 | `vdc5_ch1_isr_iv2_vbuferr` | VDC5 ch1 interrupt 14: enabled in VDC51_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCCA0 with type 14; type = VDC5_INT_TYPE_IV2_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119140 | `vdc5_ch1_isr_iv4_vbuferr` | VDC5 ch1 interrupt 15: enabled in VDC51_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the status bit, calls callback slot 0x208DCCA4 with type 15; type = VDC5_INT_TYPE_IV4_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119190 | `vdc5_ch1_isr_s1_wline` | VDC5 ch1 interrupt 16: enabled in VDC51_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCA8 with type 16; type = VDC5_INT_TYPE_S1_WLINE of the Renesas r_vdc5 enum, 0x20118638 = ch0 … **[fact]** |
+| 0x201191E0 | `vdc5_ch1_isr_oir_vi_vsync` | VDC5 ch1 interrupt 17: enabled in VDC51_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCAC with type 17; type = VDC5_INT_TYPE_OIR_VI_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119230 | `vdc5_ch1_isr_oir_lo_vsync` | VDC5 ch1 interrupt 18: enabled in VDC51_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB0 with type 18; type = VDC5_INT_TYPE_OIR_LO_VSYNC of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119280 | `vdc5_ch1_isr_oir_vline` | VDC5 ch1 interrupt 19: enabled in VDC51_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB4 with type 19; type = VDC5_INT_TYPE_OIR_VLINE of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x201192D0 | `vdc5_ch1_isr_oir_vfield` | VDC5 ch1 interrupt 20: enabled in VDC51_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCB8 with type 20; type = VDC5_INT_TYPE_OIR_VFIELD of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119320 | `vdc5_ch1_isr_iv7_vbuferr` | VDC5 ch1 interrupt 21: enabled in VDC51_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCBC with type 21; type = VDC5_INT_TYPE_IV7_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+| 0x20119370 | `vdc5_ch1_isr_iv8_vbuferr` | VDC5 ch1 interrupt 22: enabled in VDC51_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the status bit, calls callback slot 0x208DCCC0 with type 22; type = VDC5_INT_TYPE_IV8_VBUFERR of the Renesas r_vdc5 enum, 0x20118638 = … **[fact]** |
+
+### Other GUI helpers (T23e round 2)
+
+Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201218A4 | `cursor_window_update` | Mouse position -> cursor window 0x20808584 (cursor_rect_calc) and r_vdc5_change_read_process for both channels **[fact]** |
+| 0x20133620 | `scope3d_tables_init` | Builds the 3DSS line offset tables 0x20907F7C/7FF4 (30 lines, mode 8) and 0x2090806C/80A8 (15 lines, mode 9), takes the work buffer and clears the history **[fact]** |
+| 0x20134368 | `scope3d_line_offset` | (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 / 0x203D9A9E **[fact]** |
+| 0x20136398 | `fb_draw_round_frame_wrap` | Tail call to fb_draw_round_frame (arguments lost in the decompile); list and pop-up screens frame their boxes with it **[fact]** |
+| 0x2015B9A8 | `scope3d_history_clear` | Resets the history (0x20134310) and clears 0x6B080 bytes of the 3D buffer *0x208085B4 **[fact]** |

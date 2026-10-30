@@ -793,5 +793,21 @@ callees, first string, size, callers) where the names files have no comment. Exi
 "Documented" in the README block goes from 37.5 % to 53.6 % of the code bytes. Redo after a naming pass: `python3 -I
 tools/doc_table_gaps.py summary`, then `rows IMAGE PAGE` for the pages it proposes, review, paste.
 
+**Second round (2026-10-30, after T23e round 2 and the HiFi4 library naming).** 1,074 more rows, so that every named function
+is again in a function table (`doc_table_gaps.py summary`: 0 for every image). DISPLAY (365 rows): the FAT layer and the SDHI0
+driver on `filesystem.md`, the SPIBSC0 serial-flash driver on `update.md`, the r_vdc5 interrupt handlers and driver API on
+`gui.md`, NORTi kernel internals, armcc soft-float and string helpers on `boot-rtos.md`, USB host requests on `input.md`, the
+mutex guard and TX-pool rings on `mainlink.md`; each group under its `names_display.T23e2.tsv` section header. HiFi4 (709 rows):
+new page `docs/code/ifdsp/hifi4-libraries.md` (666 rows: crt/system file, the 35 SDK 2.10 `fsl_*.c` files one table each with a
+per-file summary, rpmsg-lite by source file, NatureDSP, XOS glue, newlib libm/libc, HAL and XCC runtime; two Mermaid figures:
+calls between the libraries, SDK functions the application uses), and the 43 application helpers on `hifi4.md` /
+`dsp-chains.md`. `doc_table_gaps.py` now also reads `names_display.T23e2.tsv` and `names_hifi4.T23.tsv` and sends HiFi4 library
+sections to `hifi4-libraries.md`.
+
+| Image | Assigned before | After | Rows added |
+|---|---:|---:|---:|
+| display | 976 | 1,341 | 365 |
+| ifdsp/hifi4 | 247 | 956 | 709 |
+
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.
