@@ -75,7 +75,7 @@ with identical contents. Sites are prjxray names (`RAMB36_X*Y*` / `RAMB18_X*Y*`)
 | RAMB36_X1Y4 | x9 | 4096 | 16 rows of 256: each row is a straight line modulo 512 whose slope grows with the row number (about -0.37 x row per step): `phase(r, c) ~ p0(r) - k r c`, a 2-D **twiddle-style phase table** | [inference, medium] |
 | RAMB36_X1Y9 | x18 | 1527 / 2048 | Piecewise-smooth 18-bit signed values (-66097..98095) with steps in blocks | [fact], purpose unknown |
 | RAMB18_X2Y29 | x18 (16) | 1024 | Two 6-bit fields like X0Y19; smooth hump peaking at entry 711 | [fact], purpose unknown |
-| RAMB36_X1Y7 | x9 (5-bit used) | 4096 | Stepped table: 15 for entries 0-749, then 14, 13 ... 0 with step widths shrinking from 366 to about 145, then 31, 30, 29 (= -1, -2, -3 as 5-bit): a **quantizer / level-threshold table** | [fact for steps], [guess] for use |
+| RAMB36_X1Y7 | x9 (5-bit used) | 4096 | Stepped table: 15 for entries 0-749, then 14, 13 ... 0 with step widths shrinking from 366 to about 145, then 31, 30, 29 (= -1, -2, -3 as 5-bit): a **step table** | [fact for steps]. Use open: netlist 3.6 shows it merged in fabric with X0Y5/X0Y6/X1Y4 and addressed from DSP48_X0Y23.P; what the steps encode is settled by simulating that block |
 | RAMB18_X2Y24, RAMB18_X2Y25 | x18 | 1024, 789 | X2Y24 contains a rising segment 0, 1019, 1782, 2800 ... from entry 512 and 18-bit values elsewhere; X2Y25 holds values only at even entries, slowly decaying (362, 346, 331 ... at 512) | [fact], purpose unknown |
 | RAMB18_X1Y16 | x18 | 868 | Sparse 18-bit values at even entries (odd entries 0 / -1), repeating 128-entry blocks | [fact], coefficient-like |
 | RAMB18_X0Y16 | x18 (16) | 1024 | Word pairs; bytes stay <= 0x3F (6-bit fields), e.g. pairs (0x3E,0x00), (0x3C,0x02), (0x3A,0x04), (0x38,0x08) ... | [fact], purpose unknown |
@@ -107,14 +107,21 @@ flowchart TB
   end
 ```
 
-Readings of the purposes **[guess]**: the 720-step raised-cosine ramp is the classic shape for a **CW keying / TX
-envelope** edge; the 0.5-degree cosine fits a phase-to-amplitude stage (NCO or display); the six symmetric low-pass
-filters of different lengths fit **selectable IF filter widths** or decimation stages; the quadratic phase tables fit
-a chirp-based transform (for example a zoomable spectrum scope) and the 2-D product phase table fits FFT twiddles.
-#146 traced the routing from every table to the multiplier it feeds and to what drives its address
-([netlist.md 3.6](netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146)): the four phase-table
-lanes each feed their own DSP pair, the cosine table sits between a phase-accumulator DSP and a mixer DSP, and the
-raised-cosine ramp feeds a multiplier's B input. The purposes above remain readings, not proofs.
+Readings of the purposes **[inference]**, each from the table's shape plus the routing #146 traced from every table to the
+multiplier it feeds and to what drives its address
+([netlist.md 3.6](netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146)) **[fact for the routing]**:
+
+- The 0.5-degree cosine sits between a phase-accumulator DSP (DSP48_X1Y38, address) and a mixer DSP (DSP48_X1Y18, data),
+  so it is the NCO of a mixer.
+- The 720-step raised-cosine ramp feeds a multiplier's B input (DSP48_X1Y16), so it scales a signal by a rising or
+  falling edge: the shape of a CW keying / TX envelope. Which signal it scales is not traced, so "TX envelope" stays an
+  inference until a simulation shows the ramp running on key-down.
+- The four phase-table lanes each feed their own DSP pair, and the quadratic and 2-D product phase tables feed the
+  FIR-bank multipliers and the sample-RAM write addresses through DSP48_X0Y23: the structure of a chirp/zoom transform
+  (the scope engine), as netlist 3.6 reads it.
+
+Open: whether the six symmetric low-pass half-FIRs are selectable IF widths or fixed decimation stages; settled by
+simulating the FIR bank with each filter-select register value.
 
 ## MicroBlaze question
 
