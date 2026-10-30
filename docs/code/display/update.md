@@ -385,3 +385,42 @@ SFL-encoded payloads without a header **[inference]**.
 - MAIN-side handling of `F1 02` (DSP_UPDATE, RT685 reset) and of the 0xC3/0xE2 UI frames (docs/code/main).
 - Meaning of FPGA reg 0x32 commands 3/1/4/5 and the 0x240000 / 0x480000 slot layout (T15 netlist work).
 - The physical key behind key line 6 and the encoder on P3_3/P3_5 (T11f).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100A14 | `crc32_make_table` | reflected poly 0xEDB88320 **[inference]** |
+| 0x20100A5C | `crc32_update` | names-file group "startup / armcc runtime"; no direct calls; 44 B, callers: 11 **[fact]** (code shape) |
+| 0x20101C8C | `gpio_p8_5` | P8_5 (SDR_MOSI) port level, used by the reboot sequence **[inference]** |
+| 0x2010A918 | `be_bytes_to_u32` | big-endian bytes to integer **[inference]** |
+| 0x2010A940 | `sum8_neg_append` | appends the negated 8-bit sum **[inference]** |
+| 0x2010AA30 | `crc16_xmodem` | CRC-16 poly 0x1021 init 0 (NXP framing) **[inference]** |
+| 0x2010E624 | `hex2_parse` | two uppercase hex digits **[inference]** |
+| 0x201106F8 | `sdr_set_flash_addr` | regs 0x30 / 0x31 = flash address **[inference]** |
+| 0x20111174 | `work_buf_get` | (n): the shared 0xC0000-byte work buffer 0x20819560, n bytes cleared first (n < 0: all) **[fact]** |
+| 0x201140D0 | `progress_set` | progress percent 0x20800364 **[inference]** |
+| 0x201140DC | `progress_get` | progress percent **[inference]** |
+| 0x201140E8 | `progress_range_init` | {from, to} range **[inference]** |
+| 0x201140F4 | `progress_scale` | maps a fraction into the range **[inference]** |
+| 0x20126160 | `gui_scope_draw_hold_set` | (v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after; scope_draw_frame, main_filter_graph and FUN_201233d4 draw only while it is 0 ; pauses the scope drawing **[fact]** |
+| 0x201322AC | `fwupdate_insert_sd_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen **[inference]** |
+| 0x201322B4 | `fwupdate_screen_thunk` | r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81) **[inference]** |
+| 0x201322BC | `fw_installed_versions_set_thunk` | r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81) **[inference]** |
+| 0x20158EC0 | `mainlink_send_ui_e2` | 0xE2 UI frame to MAIN **[inference]** |
+| 0x20158F28 | `mainlink_send_ui_c3` | 0xC3 UI state frame to MAIN **[inference]** |
+| 0x2015938C | `bootloader_screen` | YAESU FT-710 BOOT LOADER V01-02 **[inference]** |
+| 0x201595F0 | `fw_installed_versions_set` | installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) **[inference]** |
+| 0x20159714 | `fwupdate_screen` | MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) **[inference]** |
+| 0x2015AFB0 | `fwupdate_insert_sd_screen` | INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md) **[inference]** |
+| 0x201603D4 | `fwobj_sdr_ctor` | SDR object, vtable 0x20428070, +0xAB flag **[inference]** |
+| 0x201603F4 | `fwobj_build_path` | "%s%s" dir + file name **[inference]** |
+| 0x2016049C | `fwobj_set_status` | status text (Ready, failed, ...) **[inference]** |
+| 0x201604DC | `fwobj_select` | marks the object selected for update **[inference]** |
+| 0x201604F4 | `fwobj_base_ctor` | base update-object constructor, vtable 0x2042807C **[inference]** |
+| 0x20160558 | `fwname_pattern_init` | builds the name pattern (prefix, "NNNN", suffix) **[inference]** |
+| 0x201606A4 | `fwobj_main_ctor` | MAIN object, vtable 0x20428088 **[inference]** |
+| 0x201607C8 | `fwobj_ifdsp_ctor` | IFDSP object, vtable 0x20428094, +0xAB flag **[inference]** |
+| 0x20160C10 | `fwobj_display_ctor` | DISPLAY object, vtable 0x204280A0 **[inference]** |

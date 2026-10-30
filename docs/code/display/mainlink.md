@@ -399,3 +399,48 @@ The full list (110 names, with the SCIF driver, the senders and the SCIF4 object
 | 0x20800495 | link in normal operation (encoders are sent only then) |
 | 0x2080049C | maintenance mode after a keyed 0x7F (only F0/F1 are sent) |
 | 0x208001D4..0x208001E0 | trace ring state |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201148D8 | `scif4_get` | UART object on SCIF4 (0xE8009000) **[inference]** |
+| 0x201148FC | `scif3_get` | UART object on SCIF3 (0xE8008800) **[inference]** |
+| 0x20114EDC | `uart4_wait_ready` | waits for 0x2045001C; no caller **[inference]** |
+| 0x20114F4C | `uart4_link_init` | creates the SCIF4 object 0x2045D4E0 and task "uart4"; no caller **[inference]** |
+| 0x20116334 | `mainlink_send_f1` | F1 frame with one sub-command byte; no caller in V01-08 **[inference]** |
+| 0x20116368 | `mainlink_stat_rx_resync` | RX task resync counter (obj+0x38) **[inference]** |
+| 0x2011637C | `mainlink_stat_nak_sent` | RX task NAK counter (obj+0x48) **[inference]** |
+| 0x20116660 | `mainlink_clear_status` | clears the 0x60 snapshot and the 0x24 settings copy **[inference]** |
+| 0x20121830 | `mainlink_send_e6` | calls `mainlink_queue_frame`; 40 B, callers: 13 **[fact]** (code shape) |
+| 0x20121858 | `mainlink_send_e0` | E0 with a given flag byte and 16-bit code **[inference]** |
+| 0x20121C3C | `scr_screen_saver` | packet 0x7B: YAESU logo hopping between 3 places every 180 frames **[inference]** |
+| 0x20121D00 | `mainlink_send_sd_state` | E2 SD card present, on change **[inference]** |
+| 0x20121D90 | `mainlink_send_rtc` | E3 RTC date/time, every 10th GUI pass when the minute changed **[inference]** |
+| 0x20125F6C | `scr_lcd_test` | packet 0x64: full-screen test colours and 8 colour bars **[inference]** |
+| 0x2012E8F4 | `rtc_set_from_main` | packet 0x65: BCD date/time -> RTC **[inference]** |
+| 0x201309C0 | `gui_link_error_popup` | draws the link error box with the unanswered command as hex **[inference]** |
+| 0x20130C40 | `mainlink_set_power_cmd` | 0x20800492 = 0x7F sub-command (0x10 / 0x11 end the GUI loop) **[inference]** |
+| 0x201351B8 | `debug_cmd_line_write` | writes one such line **[inference]** |
+| 0x201352E8 | `debug_log_recv_cmd` | appends a frame to RECV_CMD.TXT; no caller in V01-08 **[inference]** |
+| 0x2015863C | `mainlink_tx_init` | 32 x 0x408 B buffer pool + mailbox **[inference]** |
+| 0x2015869C | `mainlink_tx_clear_stats` | no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
+| 0x201587AC | `mainlink_tx_ctor` | vtbl 0x20427FAC **[inference]** |
+| 0x20158930 | `task_uart4_rx` | passes raw bytes to FUN_20131154 **[inference]** |
+| 0x201589F4 | `uart4_tx_alloc` | calls `FUN_201644ac`; 12 B, callers: 3 **[fact]** (code shape) |
+| 0x20158A00 | `uart4_tx_init` | calls `FUN_20158618`, `FUN_20162d10`, `FUN_20164460`, `FUN_201644a0`; 96 B, callers: 1 **[fact]** (code shape) |
+| 0x20158A70 | `task_uart4_tx` | calls `FUN_20158a60`, `itron_dly_tsk`, `itron_trcv_mbx`; 108 B, callers: 0 **[fact]** (code shape) |
+| 0x20158ADC | `uart4_tx_post` | calls `FUN_20162d3c`; 16 B, callers: 3 **[fact]** (code shape) |
+| 0x20158C44 | `uart4_obj_run` | 38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32 **[inference]** |
+| 0x20158E8C | `uart4_obj_ctor` | vtbl 0x20427FE4 **[inference]** |
+| 0x2015E16C | `mainlink_valid_7f` | byte & 0x7F <= 12 or == 0x7F **[inference]** |
+| 0x2015EB3C | `mainlink_valid_code` | small code-set check used by mainlink_status_valid **[inference]** |
+| 0x2015EB74 | `mainlink_rx_bind` | (uart, tx, dispatcher) **[inference]** |
+| 0x2015EB80 | `mainlink_rx_clear_stats` | no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
+| 0x2015EFE4 | `mainlink_rx_ctor` | vtbl 0x20427FF8 **[inference]** |
+| 0x2015FFF0 | `task_uart4_dispatch` | only counts **[inference]** |
+| 0x2016003C | `mainlink_disp_alloc` | calls `FUN_201644ac`; 12 B, callers: 2 **[fact]** (code shape) |
+| 0x20160048 | `mainlink_disp_init` | 32 x 0x408 B pool + mailbox **[inference]** |
+| 0x20160288 | `mainlink_disp_ctor` | vtbl 0x20428030 **[inference]** |

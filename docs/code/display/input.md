@@ -569,3 +569,12 @@ wrong address can crash the CPU. Per AGENTS.md, nothing of this may be tried on 
 - Which pot is AF and which RF/SQL, and the exact knob ↔ encoder id mapping (needs MAIN's E1 handler or a schematic read of p62/p63).
 - What `task_tsc2007_irq` really guards (0x20800090 is read by `tsc2007_irq_flag`, whose caller was not traced).
 - The 16 unnamed ADC codes 0x343–0x358.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2011593C | `minmax4` | min or max of 4 bytes **[inference]** |
+| 0x2013B928 | `usbh_hid_init` | UHHID **[inference]** |

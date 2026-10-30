@@ -600,3 +600,30 @@ The RX SLEIGH module decodes **`MOVU.B/W Rs,Rd`** (opcode 0x5B/0x5F, ld = 11, re
 - **Here.** The decompile shows `eeprom_write(*(u16*)(0x1B01 + ch*0x5A), …)`, but the code really computes `(u16)(0x1B01 + ch*0x5A)`: the bytes at 0xFFFB03B0 are `5F 11`.
 - **Size.** `tools/ghidra/T10eMovuRegCount.java` finds **107** such instructions in 49 functions.
 - **SP checksum.** At 0xFFFA3867, 0xFFFA38C4, 0xFFFA39BB and 0xFFFA510A (`60 22 5F 22` = `SUB #2,R2; MOVU.W R2,R2`), the checksum length is simply **`len − 2`**. **The "binary SP checksum bug" in [cat.md](cat.md) is this decoder artifact, so SPR/SPW/SPM/SPN/SPA work normally.**
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF94BD9 | `ver_main_ext1` |  | Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set; build date/time (#205) **[fact]** |
+| 0xFFF94BE5 | `ver_main_ext2` |  | Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set (#205) **[fact]** |
+| 0xFFF94C1B | `ver_display_date_set` |  | Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C (#205) **[fact]** |
+| 0xFFFB0636 | `reset_memch` |  | -> defaults_memch **[inference]** |
+| 0xFFFB063A | `reset_menu` |  | -> defaults_menu **[inference]** |
+| 0xFFFB06E5 | `defaults_vfo` |  | Default VFO-A/B working records 0x9D09/0x9D63 (dest-dependent byte +0x46) **[inference]** |
+| 0xFFFB0A28 | `defaults_bandstack` |  | Clears 0x4761..0x60C8 and fills 6 band-stack sets (FUN_fffb0779 per set) **[inference]** |
+| 0xFFFB0A7C | `defaults_qmb` |  | Clears the QMB block 0x9012 (0x395) **[inference]** |
+| 0xFFFB0A8F | `defaults_memch` |  | Clears 0x60C9 (0x2F49), default records for 117 channels, dest-specific 60 m channels **[inference]** |
+| 0xFFFB10A4 | `defaults_msg` |  | Clears 0x93A7 (0x4F1), keyer texts from ROM 0xFFF80C53.. **[inference]** |
+| 0xFFFBBA9F | `align_ialc_park` |  | (item): while an I-ALC item (index 0x3A..0x44) is selected, saves the band's 100 W FALC/TXG (50 W on 70 MHz) to 0x12167/0x12168 and sets them to 0xFF; restores them on leaving **[fact]** |
+| 0xFFFBBC54 | `align_store_ui4` |  | cal[item] = UI-state +4 (0x20B08) >> 4 (item 0) **[inference]** |
+| 0xFFFBBC8E | `align_store_ui2` |  | cal[item] = UI-state +2 (0x20B06) >> 4 (54 items from 70) **[inference]** |
+| 0xFFFBBCB8 | `align_store_dsp_async` |  | Starts a DSP status read (dsp_status1_raw, timer 0x42 30 ms); the result goes to cal[item] later (items 45..47) **[inference]** |
+| 0xFFFBBCFF | `align_store_ui8_scaled` |  | cal[item] = (0x20B0C >> 4) * 0x4666 / 137 rounded (item 245) **[inference]** |
+| 0xFFFC47DD | `preamp_step` |  | Record +0x05 bits 0-1: IPO(0) -> AMP1(2) -> AMP2(3) -> IPO, beep 1; the IPO key (#205) **[fact]** |
+| 0xFFFC4850 | `preamp_ipo` |  | Record +0x05 bits 0-1 = 0 (IPO), beep 2 (#205) **[fact]** |
+| 0xFFFC4B3D | `vfo_filter_byte_ptr` |  | Returns VFO-A/B record (0x9D09/0x9D63) + the per-mode filter byte offset (+0x0B/+0x15/+0x1F/+0x29/+0x33/+0x3D by mode nibble); the decompile shows void (#205) **[fact]** |
+| 0xFFFE5E1B | `memch_current_skip` |  | memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set (#205) **[fact]** |
+| 0xFFFE5E3B | `memch_skip_get` |  | Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP (#205) **[fact]** |

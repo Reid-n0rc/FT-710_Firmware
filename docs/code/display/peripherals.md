@@ -376,3 +376,57 @@ The LED bits for `led_set_mask` are byte 8 of the status block that every "statu
 | 0x208001A8 | sdmenu event flag; results 0x2080019F–0x208001A2 |
 | 0x208001AC | folder pointer table for the sdmenu kinds (MemList, Menu) |
 | 0x20819524..40 | last ADC results AN0..AN7 |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x201002AC | `gpio_cfg_mask` | (Pn ptr, mask\|value<<16, flag): bulk port-mode pin set-up **[inference]** |
+| 0x20100348 | `system_reset_select` | 1: WDT reset; 2: P0 pin set-up then WDT reset **[inference]** |
+| 0x20100458 | `gpio_early_init` | from cpg_early_init: P7_11 (RZ_PWR_ON) output low **[inference]** |
+| 0x20100534 | `gpio_set_alt_func` | (port,pin,func 1..8): PFC/PFCE/PFCAE bits = func-1 **[inference]** |
+| 0x2010079C | `spibsc0_pins_init` | P9_2..P9_7 alt 2 (QF_CLK/CSn/DAT0..3) **[inference]** |
+| 0x20101BBC | `lcd_pins_enable` | P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5 (or inputs) **[inference]** |
+| 0x20101CD4 | `gpio_p2_4_5_select` | 3-way select on P2_4/P2_5/P10_1 **[inference]** |
+| 0x20101D14 | `gpio_p2_4_5_clear` | P2_4, P2_5 and P10_1 low **[inference]** |
+| 0x20101DA4 | `gpio_usb0_en` | (port, on): P8_10 USB0_EN **[inference]** |
+| 0x20101F44 | `rtc_dt_output` | P1_0 (RTC_DT) back to output **[inference]** |
+| 0x20101F50 | `rtc_dt_input` | P1_0 (RTC_DT) as input for reading **[inference]** |
+| 0x20101F5C | `gpio_p2_15` | P2_15 (ACC_MOSI) port level **[inference]** |
+| 0x201058CC | `audio_clear_error` | no direct calls; 16 B, callers: 8 **[fact]** (code shape) |
+| 0x20105BE8 | `play_progress` | "%02d:%02d:%02d" + percent **[inference]** |
+| 0x20105EE0 | `play_advance` | no direct calls; 76 B, callers: 2 **[fact]** (code shape) |
+| 0x20105FA0 | `play_prime` | calls `dcache_clean_range`, `play_advance`, `play_read_block`; 120 B, callers: 1 **[fact]** (code shape) |
+| 0x20106588 | `sd_is_full` | drive 'I' free space == 0 **[inference]** |
+| 0x2010F0DC | `sdmenu_default_name` | "20YY_MM_DD_NN" from the RTC date **[inference]** |
+| 0x2010F1E0 | `sdmenu_file_exists` | calls `FUN_201476f0`, `FUN_2014af14`, `sprintf`; string "%s\\%s.dat"; 84 B, callers: 2 **[fact]** (code shape) |
+| 0x2010F240 | `sdmenu_req_save` | MAIN transfer code 0x41 (MemList) / 0x43 (Menu) **[inference]** |
+| 0x2010F284 | `sdmenu_req_load` | MAIN transfer code 0x42 (MemList) / 0x44 (Menu) **[inference]** |
+| 0x2010F2C8 | `sdmenu_xfer_len` | no direct calls; 32 B, callers: 4 **[fact]** (code shape) |
+| 0x2010F2E8 | `sdmenu_select` | calls `memcpy`; 24 B, callers: 1 **[fact]** (code shape) |
+| 0x2010F300 | `sdmenu_select_load` | calls `memcpy`; 92 B, callers: 1 **[fact]** (code shape) |
+| 0x2010F35C | `sd_present` | calls `FUN_20103bc0`; 20 B, callers: 2 **[fact]** (code shape) |
+| 0x201101E8 | `sdmenu_request` | starts save (flag 1) or load (flag 2), polls result **[inference]** |
+| 0x20110278 | `sd_format_request` | flag 3 (sd_make_dirs), progress percent **[inference]** |
+| 0x20110368 | `sd_format_done` | calls `itron_chg_pri`; 32 B, callers: 1 **[fact]** (code shape) |
+| 0x201110CC | `adc_read_all` | ADDRA..ADDRH (AN0..AN7) >> 4 **[inference]** |
+| 0x2011115C | `adc_start_scan` | ADCSR = 0x20FF (start, continuous scan) **[inference]** |
+| 0x20114144 | `rtc_delay` | ~20-loop spin **[inference]** |
+| 0x201141C0 | `rtc_send_bytes` | calls `rtc_send_byte`; 36 B, callers: 3 **[fact]** (code shape) |
+| 0x20114244 | `rtc_recv_bytes` | calls `rtc_recv_byte`; 36 B, callers: 2 **[fact]** (code shape) |
+| 0x20114328 | `rtc_port_idle` | CK high, CS low **[inference]** |
+| 0x20116CCC | `cpg_early_init` | Reset_Handler: PL310 power ctrl, FRQCR 0x0035, FRQCR2 1, SYSCR3 0x0F, STBCR2..12 **[inference]** |
+| 0x20117300 | `gic_set_priority` | GICD_IPRIORITYR byte = prio << 3 **[inference]** |
+| 0x2011733C | `gic_init` | distributor/CPU interface set-up, 587 handler slots = gic_default_handler **[inference]** |
+| 0x201175DC | `gic_install_isr_stub` | copies a 0x58-byte ISR stub, sets priority and handler slot **[inference]** |
+| 0x2011762C | `gic_def_inh` | (intno, {attr, handler, prio}) direct handler, no stub **[inference]** |
+| 0x20117728 | `gic_irq_exit` | pops nesting stack, EOIR + PMR restore **[inference]** |
+| 0x201177A0 | `gic_disable_irq` | GICD_ICENABLER bit **[inference]** |
+| 0x20117860 | `ostm_time_us` | system time (us) interpolated from the OSTM0 counter **[inference]** |
+| 0x201178F4 | `delay_us` | busy-wait on ostm_time_us **[inference]** |
+| 0x201204A4 | `riic_base` | (ch 0..3): RIIC register base 0xFCFEE000 + 0x400*ch (docs/memory-maps.md) **[fact]** |
+| 0x20138740 | `reg_wait_bits27` | (base, off, val): cpu_delay_cycles4, then waits until (*(base->regs + off) & 0x27) == (val & 0x27) **[fact]** |
+| 0x2013B54C | `cpu_delay_cycles4` | Spins on the CP15 cycle counter until 4 counts have passed **[fact]** |
+| 0x201568E0 | `gic_default_handler` | unregistered interrupt IDs **[inference]** |

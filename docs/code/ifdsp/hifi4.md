@@ -426,3 +426,30 @@ The signal-chain stages (about 95 functions named in #86) are listed in [dsp-cha
   ([ghidra-flix.md](ghidra-flix.md); numbers in `decomp/ifdsp/INDEX.md`). Still open: exact arithmetic for the `ae_*` operations of
   the filter kernels, and memory semantics for the aligning `ae_la*`/`ae_sa*` loads/stores; until then the arithmetic is read from
   `flix.dis`.
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+### HiFi4 (`decomp/ifdsp/hifi4`)
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0x0021C090 | `regfile_capture_init` |  | capture block table 0x2390E0 = {0x2007E000, 0x2007F000} (regs 0x7000/0x7800), memset 4 KB each **[inference]** |
+| 0x0021C0B8 | `regfile_capture_clear` |  | memset(block[idx], 0, 0x1000) **[inference]** |
+| 0x0021C0D4 | `regfile_capture_set_ctrl` |  | *(u16 *)block[idx] = v (control word); no caller **[inference]** |
+| 0x0021C5CC | `regfile_gpio_sel` |  | (reg 0xC & 0xF000) == 0x1000 -> GPIO P0_4 byte **[inference]** |
+| 0x00226254 | `fc3_rxif_dma_done` |  | names-file group "audio I/O: I2S FLEXCOMM2-5 + DMA1, SPI FLEXCOMM1 + DMA0"; calls `I2S_RxTransferReceiveDMA`, `rxif_dma_to_fifo`; 47 B, callers: 1 **[fact]** (code shape) |
+| 0x00226284 | `fc5_codec_out_dma_done` |  | names-file group "audio I/O: I2S FLEXCOMM2-5 + DMA1, SPI FLEXCOMM1 + DMA0"; calls `I2S_TxTransferSendDMA`, `codec_out_fill_dma`, `xos_msgq_put`; 59 B, callers: 1 **[fact]** (code shape) |
+| 0x24020400 | `_WindowOverflow4` |  | no direct calls; 15 B, callers: 2 **[fact]** (code shape) |
+| 0x24020440 | `_WindowUnderflow4` |  | no direct calls; 15 B, callers: 2 **[fact]** (code shape) |
+| 0x24020480 | `_WindowOverflow8` |  | no direct calls; 30 B, callers: 1 **[fact]** (code shape) |
+| 0x240204C0 | `_WindowUnderflow8` |  | no direct calls; 30 B, callers: 2 **[fact]** (code shape) |
+| 0x24020500 | `_WindowOverflow12` |  | no direct calls; 42 B, callers: 1 **[fact]** (code shape) |
+| 0x24020540 | `_WindowUnderflow12` |  | no direct calls; 42 B, callers: 2 **[fact]** (code shape) |
+| 0x2402057C | `_Vector_57c` |  | no direct calls; 26 B, callers: 1 **[fact]** (code shape) |
+| 0x2402059C | `_Vector_59c` |  | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x240205BC | `_Vector_5bc` |  | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x240205DC | `_Vector_5dc` |  | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x2402061C | `_Vector_61c` |  | no direct calls; 24 B, callers: 3 **[fact]** (code shape) |
+| 0x2402063C | `_Vector_63c` |  | no direct calls; 6 B, callers: 2 **[fact]** (code shape) |

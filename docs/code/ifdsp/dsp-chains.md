@@ -330,3 +330,40 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
 - The SDR FPGA's per-mode IF placement and the AESS branch delay: #193 (the AESS speaker, the AESS level (#203) and the reg 0x63 values are settled).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+### HiFi4 (`decomp/ifdsp/hifi4`)
+
+| Address | Ghidra name | What it computes | Registers | Tag |
+|---|---|---|---|---|
+| 0x002174B0 | `fft512_cplx` | no direct calls; 2144 B, callers: 2 (code shape) |  | fact |
+| 0x00217D10 | `ifft512_cplx` | no direct calls; 2329 B, callers: 1 (code shape) |  | fact |
+| 0x00218B70 | `pow10f_` | 10^x |  | inference |
+| 0x00218E60 | `atan2f_` | atan2 |  | inference |
+| 0x00218FC0 | `cosf_` | cos |  | inference |
+| 0x002190F0 | `log10f_` | log10 |  | inference |
+| 0x00219560 | `sinf_` | sin |  | inference |
+| 0x00219690 | `tanf_` | tan (polynomial table 0x200890) |  | inference |
+| 0x0021F8BC | `ctcss_goertzel_retune` | (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2 cos of 2 pi f / 1500 per bin (#184) |  | inference |
+| 0x0021F968 | `ctcss_goertzel_init` | (f): as ctcss_goertzel_retune, then clears the 3 Goertzel states and the 200-sample window (#184) |  | inference |
+| 0x00223A74 | `vox_state` | mic and not speaker |  | inference |
+| 0x00224604 | `codec_out_sink` | per-output gain, clip, into the codec-out object |  | inference |
+| 0x00225370 | `hilbert_iq` | 71-tap Hilbert FIR 0x205840, I delayed 35 |  | inference |
+| 0x002255B4 | `rec_resample_sink` | x2/9 to 16 kHz, int16 ring 0x266ED8 (#59, #154) |  | inference |
+| 0x00225834 | `playback_ring_fill` | calls `FUN_00234890`, `iir_cascade_process`, `memcpy`, `memset`; 426 B, callers: 1 (code shape) |  | fact |
+| 0x002293E0 | `cosf` | newlib cosf: \|x\| <= pi/4 -> kernel 0x22A610, else rem_pio2 switch (#184) |  | inference |
+| 0x00229460 | `sinf` | newlib sinf: \|x\| <= pi/4 -> kernel 0x22B420, else rem_pio2 0x22A320 switch (#184) |  | inference |
+| 0x002294E0 | `powf` | newlib w_powf wrapper (matherr name string powf at 0x206414): powf(aed0, aed1); tx_alc_update powf(0.5, reg 0x33), FUN_00223AB4 10^(x/20) (#184) |  | inference |
+| 0x00233580 | `xthal_get_cacheattr` | rdtlb1 of the 8 x 512 MB regions -> 8 attribute nibbles (#184) |  | inference |
+| 0x002335A0 | `xthal_set_cacheattr` | witlb (skipping its own region) and wdtlb for each 512 MB region, 4 bits each (#184) |  | inference |
+| 0x00233984 | `fir_init` | no direct calls; 126 B, callers: 7 (code shape) |  | fact |
+| 0x00233A10 | `fir_process` | no direct calls; 731 B, callers: 7 (code shape) |  | fact |
+| 0x00234710 | `f2i_scaled` | trunc(x * 2^-s) |  | inference |
+| 0x00234730 | `i2f_scaled` | float(i) * 2^s; s = -1 turns half-dB registers into dB |  | inference |
+| 0x00234BE0 | `vec_sum_sq` | sum of squares (madd.s loop) |  | inference |
+| 0x00234F40 | `vec_scale_f32` | y[i] = x[i] * scalar |  | inference |
+| 0x00235BA8 | `divf_` | float divide |  | inference |
+| 0x00235C8C | `sqrtf_` | sqrt |  | inference |

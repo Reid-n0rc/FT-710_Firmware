@@ -326,3 +326,18 @@ The bus is `SDAT0` PA4 / `SCLK0` PA5 with one strobe per device **[fact for the 
 | 0x12043..0x1204C | u8 | meter bytes | see the meter table **[fact]** |
 | 0x4659..0x475D | 0x105 | `cfg105` (CAT `SPN`) = the **factory alignment table**: 261 items named by the firmware's alignment menu (`001 [GN] VDD MTR` … `261 [TX] IDD MTR`), e.g. fan threshold 0x465A `FAN`, FADJ 0x465B `REF FREQ`, TX inhibit 0x465C `TX INH`; map in [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact) | **[fact]** (#203) |
 | 0x20F98..0x20FB6 | | shadow copies of every shift-register / DAC value | **[fact]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFB3371 | `tx_band_of_freq` |  | (f): index 0..10 of the first bound in ROM 0xFFF8870C (2.1 / 4.7 / 7.5 / 11.5 / 14.5 / 20.9 / 22 / 25.5 / 41.5 / 60 / 75 MHz) above f, else 0xFF **[fact]** |
+| 0xFFFB6FBF | `send_a_get` |  | no direct calls; 19 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFB711C | `gpo_b_dir_out` |  | PDR P12 **[inference]** |
+| 0xFFFB730A | `ear_det` |  | PF5 low **[inference]** |
+| 0xFFFBA192 | `tx_cw_keying_class` |  | 0 voice, 1 CW mode, 2/3 CW in SSB (CW AUTO MODE 0x9A3C; value 1 only on band 0xB) by PTT source against PC KEYING 0x9A9F / RPTT SELECT; also sets 0x1215D **[fact]** |
+| 0xFFFEC578 | `tuner_rearm` |  | TUNER TYPE SELECT 0x9AB8 = 2 path: re-arms the tuner state 0x20B3F after VFO/band changes (cat-commands-primary.md) **[fact]** |
+| 0xFFFED206 | `tuner_tune_state_set` |  | (s): 0x20F0C = s; 1 starts (0x1B3BE = 1), 2 swaps the meter (0x9C5B = 5) and CW WAVE SHAPE (0x9AA1 = 0) and opens pop-up 0x49, 0 restores both; a tune cycle **[fact]** |
+| 0xFFFEDC27 | `tuner_port_send` |  | SCI2 tuner port: sends 0xFF, after soft timer 0x23 the frame at 0x1B3C4 (sci2_send) and restarts timers 7, 0x25, 0x24 **[fact]** |

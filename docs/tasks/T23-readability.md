@@ -619,5 +619,22 @@ canonical projects).
 - Only function **tables** count; a function named only in the prose of a page stays unassigned. Moving prose-only
   functions into the tables raises the assigned share without touching the script.
 
+### Table gaps filled (2026-10-30)
+`tools/doc_table_gaps.py` lists the named functions that no function table lists and proposes a page for each (names-file
+section, prose mentions, assigned callers/callees, neighbours, name prefix, a few curated name rules). Every named function
+(3,950) is now in a table: 2,567 rows added, each with the names-file plate comment as purpose, or the code shape (direct
+callees, first string, size, callers) where the names files have no comment. Existing pages got a `## Further functions
+(T23g)` section at the end; new pages: `docs/code/main/bsp.md`, `cat-ai.md`, `menu-items.md`, `docs/code/display/filesystem.md`.
+
+| Image | Assigned before | After | Rows added |
+|---|---:|---:|---:|
+| main | 524 | 2,359 | 1,835 |
+| display | 572 | 972 | 400 |
+| ifdsp/m33 | 143 | 424 | 281 |
+| ifdsp/hifi4 | 196 | 247 | 51 |
+
+"Documented" in the README block goes from 37.5 % to 53.6 % of the code bytes. Redo after a naming pass: `python3 -I
+tools/doc_table_gaps.py summary`, then `rows IMAGE PAGE` for the pages it proposes, review, paste.
+
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.

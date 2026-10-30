@@ -353,3 +353,76 @@ returns with P72 still high and the DSP in ISP mode; the radio is presumably res
 - The routing values (regs 8, 9, 10) are decoded on the DSP side in [ifdsp/control-link.md](../ifdsp/control-link.md#audio-routing-registers-8-9-10-77-fact) (#77): per-sink source selectors. The sinks and the constants are traced in #151 (tables above and [ifdsp/control-link.md](../ifdsp/control-link.md#where-the-sinks-go-151)).
   Still open (#176): the board connectors behind the codec's two DAC and ADC channels, and the effect of reg 0x3B.
 - The tick period of the soft timers (100 µs) should be checked against the CMT setup (T10a/T10h).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF94C2D | `ver_dsp` |  | Returns pointer to DSP version 0x1444 (VE3) **[inference]** |
+| 0xFFF9DA09 | `dsp_set_r08` |  | reg 8: route word (0x2022 / 0x2222 / 0x20B34) **[inference]** |
+| 0xFFF9DA3C | `dsp_set_r09` |  | reg 9: route constant 0/2 **[inference]** |
+| 0xFFF9DA6F | `dsp_set_r0a` |  | reg 10: route/input select **[inference]** |
+| 0xFFF9DAA2 | `dsp_set_r0c` |  | reg 0x0C = 0 (once) **[inference]** |
+| 0xFFF9DAD1 | `dsp_set_r0d` |  | reg 0x0D: 0xF000 in CW TX route, else 0 **[inference]** |
+| 0xFFF9DB04 | `dsp_set_r0e` |  | reg 0x0E: 0xF000 in CW TX route, else 0 **[inference]** |
+| 0xFFF9DB37 | `dsp_set_r0f` |  | reg 0x0F = 0x2B (once) **[inference]** |
+| 0xFFF9DB66 | `dsp_set_r11` |  | reg 0x11 = 0xFFA2 (once) **[inference]** |
+| 0xFFF9DB97 | `dsp_set_r12` |  | reg 0x12 = 8 (once) **[inference]** |
+| 0xFFF9DBC6 | `dsp_set_r13` |  | reg 0x13 = 0xFFF8 (once) **[inference]** |
+| 0xFFF9DBF7 | `dsp_set_tx_gain` |  | reg 0x20: modulation gain curve value (MIC/USB/REAR gain) **[inference]** |
+| 0xFFF9DC8A | `dsp_set_vox_gain` |  | reg 0x21: -(VOX GAIN + curve + 29) **[inference]** |
+| 0xFFF9DCE4 | `dsp_set_antivox` |  | reg 0x22: anti-VOX vs AF gain, 0xFF when PF5 low **[inference]** |
+| 0xFFF9DD6A | `dsp_set_peq_freq` |  | regs 0x25/0x28/0x2B: parametric mic EQ band frequency \| 0x1000 enable **[inference]** |
+| 0xFFF9DEE6 | `dsp_set_peq_level` |  | regs 0x26/0x29/0x2C: parametric mic EQ band level (signed) **[inference]** |
+| 0xFFF9DFD5 | `dsp_set_peq_bw` |  | regs 0x27/0x2A/0x2D: parametric mic EQ band width **[inference]** |
+| 0xFFF9E0AD | `dsp_set_proc` |  | reg 0x2E: speech processor level \| 0x1000 (SSB only) **[inference]** |
+| 0xFFF9E12B | `dsp_set_tx_bpf` |  | reg 0x2F: TX BPF SEL + 1 (SSB/AM/DATA) **[inference]** |
+| 0xFFF9E21F | `dsp_set_r30` |  | reg 0x30 = 0xFF in FM modes (never cleared) **[inference]** |
+| 0xFFF9E26B | `dsp_set_r31` |  | reg 0x31: per-mode constant (-43/-54/-56) **[inference]** |
+| 0xFFF9E330 | `dsp_set_r32` |  | reg 0x32: per-mode constant (-43/-54/-56) **[inference]** |
+| 0xFFF9E3F5 | `dsp_set_amc_release` |  | reg 0x33: AMC RELEASE TIME 0x11/0x12/0x13, FM 0x0C **[inference]** |
+| 0xFFF9E480 | `dsp_set_amc_level` |  | reg 0x34: AMC OUTPUT LEVEL \| 0x1000 **[inference]** |
+| 0xFFF9E51C | `dsp_set_ctcss_enc` |  | reg 0x35: TX tone index+1 \| 0x1000 (FM, tone on) **[inference]** |
+| 0xFFF9E5B4 | `dsp_set_r36` |  | reg 0x36 = 0 (once) **[inference]** |
+| 0xFFF9E5E4 | `dsp_set_r37` |  | reg 0x37 = 0 (once) **[inference]** |
+| 0xFFF9E614 | `dsp_set_r38` |  | reg 0x38 = 0 (once) **[inference]** |
+| 0xFFF9E644 | `dsp_set_fm_flag` |  | reg 0x3A: 1 in FM modes **[inference]** |
+| 0xFFF9E6B9 | `dsp_set_r3b` |  | reg 0x3B: per-mode constant (-39/-50/-52) **[inference]** |
+| 0xFFF9E750 | `dsp_set_dnr_r40` |  | reg 0x40: DNR table (levels 8-15 -> 1) **[inference]** |
+| 0xFFF9E7C4 | `dsp_set_dnf` |  | reg 0x41: auto notch (BC) on/off **[inference]** |
+| 0xFFF9E871 | `dsp_set_contour` |  | reg 0x42: contour freq \| 0x1000 on **[inference]** |
+| 0xFFF9E9A4 | `dsp_set_contour_level` |  | reg 0x43: CONTOUR LEVEL (signed) **[inference]** |
+| 0xFFF9E9FA | `dsp_set_contour_width` |  | reg 0x44: 11 - CONTOUR WIDTH **[inference]** |
+| 0xFFF9EA39 | `dsp_set_apf` |  | reg 0x45: APF centre (pitch + APF offset) \| width<<12 when APF on **[inference]** |
+| 0xFFF9EAE7 | `dsp_set_hcut` |  | reg 0x46: HCUT freq (700+50(n-1)) \| slope<<12 **[inference]** |
+| 0xFFF9ED0E | `dsp_set_lcut` |  | reg 0x47: LCUT freq (100+50(n-1)) \| slope<<12 **[inference]** |
+| 0xFFF9EF34 | `dsp_set_tone_freq` |  | regs 0x48/0x4B/0x4E: AF tone band frequency 200/400/1200 Hz \| 0x1000 **[inference]** |
+| 0xFFF9F0B1 | `dsp_set_tone_gain` |  | regs 0x49/0x4C/0x4F: AF BASS/MIDDLE/TREBLE GAIN (signed) **[inference]** |
+| 0xFFF9F291 | `dsp_set_tone_type` |  | regs 0x4A/0x4D/0x50: AF tone band type 2/1/1 **[inference]** |
+| 0xFFF9F400 | `dsp_set_r51` |  | reg 0x51 = 0 (once) **[inference]** |
+| 0xFFF9F430 | `dsp_set_am_notch` |  | reg 0x52: manual notch freq \| width<<12 (AM only) **[inference]** |
+| 0xFFF9F4C8 | `dsp_set_ctcss_dec` |  | reg 0x53: RX tone index+1 \| 0x1000 (FM, tone on); sets 0x20B72 **[inference]** |
+| 0xFFF9F54B | `dsp_set_r56` |  | reg 0x56 = 0x20 **[inference]** |
+| 0xFFF9F57B | `dsp_set_affft_att` |  | reg 0x5C: AF-FFT attenuator (SS07 P3) <<8 \| 0x1000 **[inference]** |
+| 0xFFF9F5C6 | `dsp_set_osc` |  | reg 0x5D: oscilloscope level (RX/TX) <<8 \| 0x1000 \| time **[inference]** |
+| 0xFFF9F638 | `dsp_set_cw_pitch` |  | reg 0x61: (KEY PITCH + 30)*10 \| 0x1000 **[inference]** |
+| 0xFFF9F681 | `dsp_set_agc` |  | reg 0x62 AGC on, reg 0x66 AGC delay (20n+20 ms; scan 200/40/4) **[inference]** |
+| 0xFFF9FC2A | `dsp_set_rf_gain` |  | reg 0x67: RF gain curve (0xFF when knob is SQL) **[inference]** |
+| 0xFFF9FCA0 | `dsp_set_r68` |  | reg 0x68 = 0x94 (once) **[inference]** |
+| 0xFFF9FCD0 | `dsp_set_dnr_400b` |  | reg 0x400B: DNR table by level **[inference]** |
+| 0xFFF9FD51 | `dsp_set_dnr_400d` |  | reg 0x400D: DNR table by level **[inference]** |
+| 0xFFF9FDD2 | `dsp_set_aess` |  | reg 0x4020: 0 / 0x2000\|700 / 0x2000\|1000 (AESS on, centre) **[inference]** |
+| 0xFFF9FE2A | `dsp_set_dnr_4022` |  | reg 0x4022: DNR table by level **[inference]** |
+| 0xFFF9FEAF | `dsp_set_dnr_4023` |  | reg 0x4023: DNR table by level **[inference]** |
+| 0xFFF9FF30 | `dsp_set_dnr_4025` |  | reg 0x4025: DNR table by level **[inference]** |
+| 0xFFFA0140 | `dsp_status2_filter` |  | reg2: 32-sample average of each byte -> 0x1B6E2 **[inference]** |
+| 0xFFFA01F2 | `dsp_status3_filter` |  | reg3: 16-sample average of low byte -> 0x1C62 **[inference]** |
+| 0xFFFA0265 | `dsp_status4_filter` |  | reg4: most frequent of last 8 samples -> 0x1B6E4 (100 if none repeats) **[inference]** |
+| 0xFFFB1A9E | `sci4_rx_set_ready` |  | 0xA2AB=1 **[inference]** |
+| 0xFFFB1AA8 | `sci4_rx_buf` |  | Returns the SCI4 receive buffer (0xA0AB) [decompiler lost the return value] **[inference]** |
+| 0xFFFB1ADB | `sci4_rx_set_len` |  | 0x1B78A=len **[inference]** |
+| 0xFFFB1AE9 | `sci4_rx_len` |  | Returns 0x1B78A **[inference]** |
+| 0xFFFBBC6F | `align_store_dsp_level` |  | cal[item] = dsp_signal_level() (11 items from 32) **[inference]** |
+| 0xFFFE419A | `ladder_key_delay` |  | Remote-keypad helper: the first call starts soft timer 0x38 (200), later calls return 1 once it expired; keys 0xF7/0xF9 in ladder_key_task **[fact]** |

@@ -166,3 +166,58 @@ Also registered there: index 10 → 0xFFF8F65D and index 7 → 0xFFF927E0 (not S
 | 0x9E86 | 0x204 B | DISPLAY rx buffer | **[fact]** |
 | 0xA08A | u8 | DISPLAY rx-complete flag | **[fact]** |
 | 0x209BC / 0x20890 / 0x11FED | u32[75] / u32[75] / u8[75] | soft timers | reload, elapsed, expired flag **[fact]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF9340E | `r_sci0_transmit_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF9345A | `r_sci0_transmitend_interrupt` |  | TEI0 (GROUPBL0 cb 0x14): TXD pin to GPIO, clear TIE/TE/TEIE, transmit-end callback **[inference]** |
+| 0xFFF9347F | `r_sci0_receive_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls `r_sci0_callback_receiveend`, `r_sci0_rx_byte_hook`; 114 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF934F1 | `r_sci0_receiveerror_interrupt` |  | ERI0 (cb 0x15): error callback, clear ORER/FER/PER **[inference]** |
+| 0xFFF9351D | `r_sci0_callback_receiveend` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls `cat_rx_complete`; 15 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9362F | `R_SCI1_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears SCI1.SCR (0x8A022) TE/RE/TIE/RIE, IEN/IR of SCI1 TXI/RXI/TEI (0x87207, 0x8703C..D, ICU.GENBL0 0x87670); 104 B like R_SCI0/2/3/5_Stop, sits after R_SCI1_Start **[inference]** |
+| 0xFFF9373A | `R_SCI1_Create_UserInit` |  | empty **[inference]** |
+| 0xFFF93787 | `r_sci1_transmitend_interrupt` |  | TEI1 (cb 0x16) **[inference]** |
+| 0xFFF9381E | `r_sci1_receiveerror_interrupt` |  | ERI1 (cb 0x17) **[inference]** |
+| 0xFFF93BD1 | `R_SCI2_Serial_Receive` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 68 B, callers: 3 **[fact]** (code shape) |
+| 0xFFF93C15 | `R_SCI2_Serial_Send` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 102 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF93C7B | `R_SCI2_Create_UserInit` |  | empty **[inference]** |
+| 0xFFF93C7C | `r_sci2_transmit_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF93CC8 | `r_sci2_transmitend_interrupt` |  | TEI2 (cb 0x18) **[inference]** |
+| 0xFFF93CED | `r_sci2_receive_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls `r_sci2_callback_receiveend`, `sci2_rx_byte_hook`; 114 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF93D5F | `r_sci2_receiveerror_interrupt` |  | ERI2 (cb 0x19) **[inference]** |
+| 0xFFF93DB3 | `r_sci2_callback_receiveerror` |  | empty **[inference]** |
+| 0xFFF94058 | `R_SCI3_Serial_Receive` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 68 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF9409C | `R_SCI3_Serial_Send` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 95 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF940FB | `R_SCI3_Create_UserInit` |  | empty **[inference]** |
+| 0xFFF940FC | `r_sci3_transmit_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF94148 | `r_sci3_transmitend_interrupt` |  | TEI3 (cb 0x1A) **[inference]** |
+| 0xFFF9416D | `r_sci3_receive_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls `r_sci3_callback_receiveend`, `sci3_rx_byte_hook`; 114 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF941DF | `r_sci3_receiveerror_interrupt` |  | ERI3 (cb 0x1B) **[inference]** |
+| 0xFFF9421A | `r_sci3_callback_receiveerror` |  | empty **[inference]** |
+| 0xFFF9431F | `R_SCI4_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): SCI4 (0x8A082) and its IER/IR bits; 104 B like the other R_SCIn_Stop, after R_SCI4_Start **[inference]** |
+| 0xFFF9442A | `R_SCI4_Create_UserInit` |  | empty **[inference]** |
+| 0xFFF94477 | `r_sci4_transmitend_interrupt` |  | TEI4 (cb 0x1C) **[inference]** |
+| 0xFFF9450E | `r_sci4_receiveerror_interrupt` |  | ERI4 (cb 0x1D) **[inference]** |
+| 0xFFF94535 | `r_sci4_callback_transmitend` |  | empty **[inference]** |
+| 0xFFF94547 | `r_sci4_callback_receiveerror` |  | empty **[inference]** |
+| 0xFFF94850 | `R_SCI5_Create_UserInit` |  | empty **[inference]** |
+| 0xFFF94851 | `r_sci5_transmit_interrupt` |  | names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers: 2 **[fact]** (code shape) |
+| 0xFFF9489D | `r_sci5_transmitend_interrupt` |  | TEI5 (cb 0x1E) **[inference]** |
+| 0xFFF94934 | `r_sci5_receiveerror_interrupt` |  | ERI5 (cb 0x1F) **[inference]** |
+| 0xFFF9495B | `r_sci5_callback_transmitend` |  | empty **[inference]** |
+| 0xFFF94961 | `r_sci5_callback_receiveerror` |  | empty **[inference]** |
+| 0xFFFB195A | `sci2_send` |  | R_SCI2_Serial_Send(buf, n), FUN_fffb192d(result), 0xA0AA = 1 **[fact]** |
+| 0xFFFC9654 | `R_SCI7_Start` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears IR, sets IEN of SCI7 TXI/RXI (0x8720C) and ICU.GENBL0 TEI/ERI bits 14/15 (0x87670); 64 B like R_SCIn_Start, after R_SCI7_Create **[inference]** |
+| 0xFFFC9694 | `R_SCI7_Stop` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): reverse of R_SCI7_Start plus SCI7.SCR (0x8A0E2); 104 B like the other R_SCIn_Stop **[inference]** |
+| 0xFFFC96FC | `R_SCI7_Serial_Receive` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): (buf, num): 0x81 (MD_ARGERROR) when num == 0, sets SCR RIE\|RE (0x8A0E2 \|= 0x50); same 68 B shape as R_SCIn_Serial_Receive **[inference]** |
+| 0xFFFC9740 | `R_SCI7_Serial_Send` |  | Renesas Code Generator r_cg_* / Smart Configurator (RX651): (buf, num): 0x81 when num == 0, 0x80 when busy, SCR TIE\|TE (\|= 0xA0); same shape as R_SCIn_Serial_Send **[inference]** |
+| 0xFFFC979F | `R_SCI7_Create_UserInit` |  | empty **[inference]** |
+| 0xFFFC97EC | `r_sci7_transmitend_interrupt` |  | TEI7 (cb 0x22) **[inference]** |
+| 0xFFFC9880 | `r_sci7_receiveerror_interrupt` |  | ERI7 (cb 0x23) **[inference]** |
+| 0xFFFC98A7 | `r_sci7_callback_transmitend` |  | empty **[inference]** |
+| 0xFFFC98A8 | `r_sci7_callback_receiveend` |  | empty (SCI7 is never started) **[inference]** |
+| 0xFFFC98A9 | `r_sci7_callback_receiveerror` |  | empty **[inference]** |

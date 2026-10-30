@@ -628,3 +628,39 @@ The QMB block is at 0x9012 (EEPROM 0x49C3, 0x395 bytes = 0x11 header + 10 × 0x5
 - The front-panel paths (dial encoder `FUN_fffc5e0a` → `FUN_fffc5ec4`/`FUN_fffc6073`, keys through the 0xFFF89D94
   table) were only followed as far as the shared helpers.
 - The meaning of SDR reg 0x20/0x21 while transmitting (the 62.5 MHz term).
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Proposed name | Purpose |
+|---|---|---|---|
+| 0xFFFB552C | `aess_mode_ptr` |  | Pointer to the active mode's AESS on/off byte (0x9C10..) (#157, CAT AS) **[fact]** |
+| 0xFFFC0B2F | `ui_softkey_dispatch` |  | (key): dialog (+0x86): scan_stop + FUN_fffd0046(key); keyboard (+0x88): FUN_fffcfaa9; PlayList / message-screen guards; with a pop-up shown (+0x1C1) and code +0x1C2 <= 0x0D: handler table 0xFFF89D54[code](key); otherwise +0x409 = … **[fact]** |
+| 0xFFFC0D69 | `vfo_edit_begin` |  | Returns 0 while a message plays (+0x417) or +0x67; stops a scan; memory state -> memory tune unless a special channel; returns 1 **[fact]** |
+| 0xFFFC0EB8 | `vfo_mode_set` |  | (mode): active record rec+0 = rec+0 & 0xF0 \| mode, FUN_fffc0f10(old, new, rec), UI +0x40B = 1 **[fact]** |
+| 0xFFFC23B6 | `popup8_close` |  | Closes pop-up 8 if it is shown, clears UI +0x40D and +0x414 **[fact]** |
+| 0xFFFC2794 | `memlist_close` |  | UI +0x97 = 0 (MEMORY CH LIST, frame 0x41) and +0x90 = 0 **[fact]** |
+| 0xFFFC2937 | `memtune_flags_clear` |  | (side): UI +0x43F/+0x441 (A) or +0x440/+0x442 (B) = 0 **[inference]** |
+| 0xFFFC2B12 | `memlist_cursor_channel` |  | UI +0x43A = FUN_fffc2b2e(top +0x439, row +0x1DB): the channel under the list cursor, destination-filtered **[fact]** |
+| 0xFFFC2CDF | `memch_current_set` |  | (side, ch): 0x60C9 (A) / 0x60CA (B) = ch **[fact]** |
+| 0xFFFC2EFB | `vfo_enter_memtune_state` |  | (side): 0x9DBE / 0x9DBF = 3 (memory tune) **[fact]** |
+| 0xFFFC311A | `qmb_set_depth` |  | 0x901F/0x9021 = stored count (max 5 if 0x9AC0==0) **[inference]** |
+| 0xFFFC316C | `qmb_enter` |  | state = 5, load QMB slot, save header **[inference]** |
+| 0xFFFC3C85 | `func_panel_close` |  | UI +0x96 = 0 (FUNC panel, frame 0x37) and +0x1C5 = 0 (FUNC item highlighted) **[fact]** |
+| 0xFFFC3E3C | `keyer_mode_class` |  | (rec): 1 in CW (mode 2/3); in SSB 2 when CW AUTO MODE 0x9A3C allows it, else 0 **[fact]** |
+| 0xFFFC4756 | `ui_close_overlays` |  | menu_close_if_open, func_panel_close, popup8_close, ui_clear_415_423, +0x70 = 0; stops a running scan (+0x418) and sets +0x409; returns false if it stopped a scan **[fact]** |
+| 0xFFFC4E4F | `vfo_filter_width_hz` |  | Selected filter width in Hz of the active side's mode (docs/code/main/sdr-link.md) **[inference]** |
+| 0xFFFC4FCE | `qmb_current_slot` |  | (*slot): in QMB state (5) the QMB slot record 0x9023 + 0x5A*n for the current recall depth (0x9020 / 0x9022), else 0 **[fact]** |
+| 0xFFFC5290 | `vfo_mark_edited_if_vfo` |  | Sets UI +0x443 (A) / +0x445 (B) only when the active side is in VFO state 1 **[fact]** |
+| 0xFFFC54CC | `memch_step` |  | (n, side): n channel steps up (+0x47C = 0) or down, skipping SKIP channels while scanning, then eeprom_save_memch (CAT CH) **[fact]** |
+| 0xFFFC5541 | `memch_step_up` |  | (side): memory channel +1, wrapping to the first (#157, cat-commands-primary.md CH) **[fact]** |
+| 0xFFFC55D7 | `memch_step_down` |  | (side): memory channel -1 (#157) **[fact]** |
+| 0xFFFC809D | `vfo_step_up` |  | (side): memory state: channel up (+0x46B) or memory tune; then rec+0x4A frequency = FUN_fffc5ec4(side, f), the dial step up **[fact]** |
+| 0xFFFC8141 | `vfo_step_down` |  | (side): as vfo_step_up with channel down and FUN_fffc6073 (dial step down) **[fact]** |
+| 0xFFFE3D24 | `msg_send_cancel` |  | Cancels a running keyer/message send (+0x94 / +0x1CC / +0x1CD / +0x1D1), keyer state +0x2B = 7 (cat-commands-primary.md) **[fact]** |
+| 0xFFFE4DE5 | `msg_cw_send_start` |  | (ch): CW only; the same slot running -> msg_cw_stop, else sets +0x1CC / +0x1CD and starts slot ch **[fact]** |
+| 0xFFFE53C0 | `msg_cw_stop` |  | Clears +0x1CC, +0x1CD, +0x417, +0x1D1; keyer state +0x2B = 7 (idle) **[fact]** |
+| 0xFFFE5690 | `vfo_mode_is_cw` |  | vfo_mode(1) is 2 or 3 **[fact]** |
+| 0xFFFE56BF | `msg_voice_mode_ok` |  | 1 when the TX mode class (vfo_mode(1)) is < 2 or 4..7, i.e. not CW **[fact]** |
+| 0xFFFEC537 | `vfo_tuner_bit_set` |  | (on): TX-side record rec+1 bit 2, the tuner bit that FUN_fffec55a reads for CAT AC **[fact]** |
