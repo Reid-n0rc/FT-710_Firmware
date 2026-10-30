@@ -90,6 +90,11 @@ RULES = {
         (r'^dsp_set_', 'dsp-link.md'),
         (r'^sdr_(upd|init)_', 'sdr-link.md'),
         (r'^cat_[A-Z0-9]{2}$', 'cat.md'),
+        (r'^(kbd_key_dispatch|msg_\w*slot_key\w*|memlist_key|keypad_2digit_key|freq_keypad_key|func_(menu|knob)_\w+)$',
+         'ui-keys.md'),
+        (r'^(dialog_\w+|popup_\w+)$', 'display-link.md'),
+        (r'^tuner_\w+$', 'tx-protection.md'),
+        (r'^(contest_number_get|datetime_edit_load)$', 'menu.md'),
     ],
     'display': [
         (r'^\w+_Handler$', 'boot-rtos.md'),
@@ -104,6 +109,9 @@ RULES = {
     ],
     'ifdsp/hifi4': [],
 }
+# Damping of the calls/near votes per page: an overview or a catalogue page (one row per generated callback) is the
+# neighbour and the caller of many helpers that belong elsewhere.
+DAMP = {'README.md': 0.4, 'menu-items.md': 0.0, 'cat-ai.md': 0.0}
 JAVA_ROW = re.compile(r'\{\s*0x([0-9A-Fa-f]+)L?\s*,\s*"([A-Za-z_][A-Za-z0-9_]*)"\s*(?:,\s*"((?:[^"\\]|\\.)*)")?\s*\}')
 CALL = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 STRING = re.compile(r'"((?:[^"\\]|\\.){3,40})"')
@@ -268,7 +276,8 @@ def analyse(image):
                 nb[home[b]] = nb.get(home[b], 0) + 1
         tot = sum(nb.values())
         for p, n in nb.items():
-            vote(p, WEIGHTS['calls'] * 4 * n / max(tot, 1) * (0.4 if p == 'README.md' else 1), 'calls')
+            if DAMP.get(p, 1):
+                vote(p, WEIGHTS['calls'] * 4 * n / max(tot, 1) * DAMP.get(p, 1), 'calls')
         i = pos[a]
         for step in (-1, 1):
             j = i + step
@@ -278,7 +287,8 @@ def analyse(image):
                 b = order[j]
                 dist = abs(j - i)
                 w = WEIGHTS['near'] * (1 if funcs[b]['file'] == f['file'] else 0.5) / (1 + dist / 8)
-                vote(home[b], w * (0.4 if home[b] == 'README.md' else 1), 'near')
+                if DAMP.get(home[b], 1):
+                    vote(home[b], w * DAMP.get(home[b], 1), 'near')
         k = prefix_of(f['name'])
         if k and k in pref:
             n = sum(pref[k].values())
@@ -317,6 +327,7 @@ def purpose(r):
     if m:
         tag = m.group(1).lower()
         c = TAG_IN.sub('', c).strip(' ;,.')
+        c = re.sub(r'\s{2,}', ' ', re.sub(r'\s+([;,.)])', r'\1', c))
     c = c.replace('|', '\\|').strip()
     if len(c) > 230:
         cut = c[:230]

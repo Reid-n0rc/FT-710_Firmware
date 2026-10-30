@@ -227,3 +227,83 @@ multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs 
 | 0x1216A / 0x1216B / 0x1216C / 0x1FA40 | u8 / u8 / u8 / u16 | | `key_task` source, state, class, code |
 | 0x1B4DB / 0x1B4DC | u8 | | long-press timer armed (timer 0x3F) / repeat armed (timer 0x40) |
 | 0x9AC8..0x9ACD | u8 × 6 | | assignable-key settings |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFBBD52 | `align_store_nop` |  | Empty store handler (191 of the 261 items) **[inference]** |
+| 0xFFFBE582 | `key_lock_pwr_press` |  | Front-panel key 0x300 LOCK/PWR, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE593 | `key_lock_pwr_short` |  | Front-panel key 0x300 LOCK/PWR, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE63D | `key_lock_pwr_long` |  | Front-panel key 0x300 LOCK/PWR, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE680 | `key_tune_press` |  | Front-panel key 0x301 TUNE, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE6BC | `key_tune_short` |  | Front-panel key 0x301 TUNE, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE794 | `key_tune_long` |  | Front-panel key 0x301 TUNE, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE7E7 | `key_mox_vox_press` |  | Front-panel key 0x302 MOX/VOX, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE83F | `key_mox_vox_short` |  | Front-panel key 0x302 MOX/VOX, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE8D2 | `key_mox_vox_long` |  | Front-panel key 0x302 MOX/VOX, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE92F | `key_nb_press` |  | Front-panel key 0x303 NB, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE96B | `key_nb_short` |  | Front-panel key 0x303 NB, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBE9D6 | `key_nb_long` |  | Front-panel key 0x303 NB, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEA9C | `key_dnr_press` |  | Front-panel key 0x304 DNR, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEB2C | `key_dnr_short` |  | Front-panel key 0x304 DNR, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEBA3 | `key_dnr_long` |  | Front-panel key 0x304 DNR, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEC6C | `key_split_press` |  | Front-panel key 0x305 SPLIT, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEE05 | `key_split_long` |  | Front-panel key 0x305 SPLIT, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEE52 | `key_clar_press` |  | Front-panel key 0x306 CLAR, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEEA9 | `key_clar_short` |  | Front-panel key 0x306 CLAR, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBEFA0 | `key_clar_long` |  | Front-panel key 0x306 CLAR, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF00D | `key_zin_spot_press` |  | Front-panel key 0x307 ZIN/SPOT, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF0B6 | `key_zin_spot_short` |  | Front-panel key 0x307 ZIN/SPOT, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF1D4 | `key_zin_spot_long` |  | Front-panel key 0x307 ZIN/SPOT, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF20B | `key_m_to_v_press` |  | Front-panel key 0x308 M>V, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF234 | `key_m_to_v_short` |  | Front-panel key 0x308 M>V, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF24E | `key_m_to_v_long` |  | Front-panel key 0x308 M>V, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF3F6 | `key_vm_mw_press` |  | Front-panel key 0x309 V/M W, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF43B | `key_vm_mw_long` |  | Front-panel key 0x309 V/M W, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF482 | `key_a_b_press` |  | Front-panel key 0x30A A/B, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF5D6 | `key_a_b_long` |  | Front-panel key 0x30A A/B, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF600 | `key_band_press` |  | Front-panel key 0x30B BAND, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF62F | `key_band_short` |  | Front-panel key 0x30B BAND, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF6C1 | `key_mode_press` |  | Front-panel key 0x30C MODE, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF6C8 | `key_mode_short` |  | Front-panel key 0x30C MODE, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF7A7 | `key_mode_long` |  | Front-panel key 0x30C MODE, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF7D7 | `key_nar_press` |  | Front-panel key 0x30D NAR, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF807 | `key_nar_short` |  | Front-panel key 0x30D NAR, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBF8EE | `key_qmb_press` |  | Front-panel key 0x30E QMB, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFC37 | `key_func_press` |  | Front-panel key 0x30F FUNC, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFD17 | `key_func_short` |  | Front-panel key 0x30F FUNC, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFD21 | `key_func_long` |  | Front-panel key 0x30F FUNC, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFD7E | `key_func_release` |  | Front-panel key 0x30F FUNC, release handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFE14 | `key_step_mch_press` |  | Front-panel key 0x310 STEP/MCH, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFE5E | `key_step_mch_short` |  | Front-panel key 0x310 STEP/MCH, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFE8E | `key_step_mch_long` |  | Front-panel key 0x310 STEP/MCH, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFEE9 | `key_fine_fast_press` |  | Front-panel key 0x311 FINE/FAST, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFF22 | `key_fine_fast_short` |  | Front-panel key 0x311 FINE/FAST, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFF57 | `key_fine_fast_long` |  | Front-panel key 0x311 FINE/FAST, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFBFF93 | `key_dsp_press` |  | Front-panel key 0x312 DSP, press handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFC0003 | `key_dsp_short` |  | Front-panel key 0x312 DSP, short handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFC0047 | `key_dsp_long` |  | Front-panel key 0x312 DSP, long handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFC008F | `key_dsp_release` |  | Front-panel key 0x312 DSP, release handler (key tables, display/input.md key codes) (#70) **[inference]** |
+| 0xFFFC1EDE | `func_knob_assign_key` |  | (key 0xD0..0xF3): 0x9C08 (FUNC knob function) = ROM table[key - 0xD0] unless -1, then the FUNC item action FUN_fffc3b22 **[fact]** |
+| 0xFFFC1FB6 | `memlist_key` |  | (key 4..9): MEMORY CH LIST (+0x97) keys: cursor and select (+0x1D9..+0x1DB, +0x43A..+0x43C), stores with eeprom_save_memch, 9 closes **[fact]** |
+| 0xFFFC3B22 | `func_menu_select` |  | FUNC menu: runs the item at cursor 0x9C08 (func_knob_assign(n) for adjustable items, one-shot actions otherwise) **[inference]** |
+| 0xFFFC3C23 | `func_knob_assign` |  | (n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +0x1C5 = 1, beep **[inference]** |
+| 0xFFFC40D7 | `key_slot_press` |  | Mic/slot key, press role: slots 0..0xC via the code list 0xFFF88534 into key_press_table, 0xD..0x14 via 0xFFF8E0CC (ui-keys.md) **[fact]** |
+| 0xFFFC410A | `key_slot_short` |  | Same for the short role (key_short_table, 0xFFF8E0EC) **[fact]** |
+| 0xFFFC413D | `key_slot_long` |  | Same for the long role (key_long_table, 0xFFF8E10C) **[fact]** |
+| 0xFFFC4170 | `key_slot_repeat` |  | Same for the repeat role (key_repeat_table, 0xFFF8E12C) **[fact]** |
+| 0xFFFC41A3 | `key_slot_release` |  | Same for the release role (key_release_table) **[fact]** |
+| 0xFFFC4CAA | `ui_clear_415_423` |  | UI +0x415 = 0 (dial x4, ui-keys.md) and +0x423 = 0; purpose of +0x423 [unknown] **[fact]** |
+| 0xFFFC519D | `key_dest_allowed` |  | (code, flag): on destinations 0x315B/0x50E2 with UI +0x9A set, refuses every key when flag != 0, else the front-panel keys 0x300..0x30E and 0x310..0x312; true elsewhere; the gate before each key handler call (ui-keys.md) **[fact]** |
+| 0xFFFC6C20 | `func_knob_turn` |  | (step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob **[inference]** |
+| 0xFFFC7C55 | `func_menu_cursor_step` |  | (step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1 **[inference]** |
+| 0xFFFC89B0 | `func_display_open` |  | Opens the FUNC-knob function display: closes pop-up, menu and FUNC panel, UI +0x70 = 1, +0x74 = 0, 5 s timer 0x44 (cat-commands-primary.md SF) **[fact]** |
+| 0xFFFE1A00 | `freq_keypad_key` |  | (key): direct frequency entry: digits 0..9 into BCD UI +0x40F..+0x413 (count +0x468), 0x0A..0x0E edit / enter / cancel; enter converts with bcd_to_bin and stores the VFO (vfo_store_back) **[fact]** |
+| 0xFFFE207F | `keypad_2digit_key` |  | (key): two-digit BCD entry in UI +0x411/+0x412 (count +0x468); enter accepts 0..20 (bcd_to_bin), else FUN_fffe2299; what the value selects [unknown] **[fact]** |
+| 0xFFFE2622 | `kbd_key_dispatch` |  | (key): on-screen keyboard key, dispatched on the keyboard target UI +0xBE (0 MY CALL.. 6 PRESET NAME, display-link.md frame 0x50) to seven editors **[fact]** |
+| 0xFFFE4211 | `msg_slot_key` |  | (ch 1..5): message-memory key: in voice modes plays or stops voice message ch (+0x78 = 1, +0x79 = ch - 1, PTT source 0x20B2E), during a recording FUN_fffe4e6e; in CW +0x1C7 = 1 **[fact]** |
+| 0xFFFE4378 | `msg_cw_slot_key` |  | (ch): stops a latched send (+0x1D1) or msg_cw_send_start(ch) **[fact]** |
+| 0xFFFE4711 | `msg_cw_slot_key_latched` |  | (ch): like msg_cw_slot_key but sets +0x1D1 = 1 after a start; a repeating send **[fact]** |

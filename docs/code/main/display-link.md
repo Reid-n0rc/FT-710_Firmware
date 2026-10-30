@@ -704,3 +704,82 @@ memory loads. They are the known RX SLEIGH `MOVU.B/W Rs,Rd` bug (a register zero
 | 0x1C63 / 0x1C8D | u8 | DSP-tunnel / SDR-bridge request |
 | 0x25D3C | u32 | numeric-entry counter (boot code 4 mode) |
 | 0x9DC5 | u8 | "power-up allowed after a DISPLAY restart" (see boot code 0x10) **[inference]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF94C4B | `ver_sdr` |  | Returns pointer to SDR version 0x144A (VE2) **[inference]** |
+| 0xFFF9541E | `displink_rx_ack` |  | ACK: clear outstanding; after the hello reply sets +0x400 (send 0x24) **[inference]** |
+| 0xFFF95469 | `displink_rx_nak` |  | NAK: no action **[inference]** |
+| 0xFFF957E6 | `displink_rx_F1_sys` |  | F1 sub: 01 SDR bridge, 02 DSP ISP tunnel, 03 CAT disable (0x20B46), 83 nop **[inference]** |
+| 0xFFF95BF4 | `displink_rx_E2` |  | E2: +0xA5..+0xA7 on/off state **[inference]** |
+| 0xFFF95C6A | `displink_rx_E4` |  | E4: answer to 0x7B (clears +0x82, set by caller) **[inference]** |
+| 0xFFF95C74 | `displink_rx_E5` |  | E5: clears +0x80 **[inference]** |
+| 0xFFF95C8A | `displink_rx_E6_beep` |  | E6: beep_request(b1+1) **[inference]** |
+| 0xFFF95CBC | `displink_rx_E7` |  | E7: result code in +0x488 **[inference]** |
+| 0xFFF95DAD | `displink_rx_E8` |  | E8: result code in +0x48C **[inference]** |
+| 0xFFF95E65 | `displink_rx_C3` |  | C3 reply (to 0x43): payload -> +0x2ED, +0x3F6=1 **[inference]** |
+| 0xFFF95E97 | `displink_rx_C4_C5` |  | C4/C5 replies (to 0x45/0x44): payload -> +0x2ED, +0x3F6=1 **[inference]** |
+| 0xFFF95ED3 | `displink_rx_E3_clock` |  | E3: 5 bytes -> +0xAD..+0xB1 (DISPLAY RTC date/time) **[inference]** |
+| 0xFFF96225 | `displink_tx_60_hello` |  | 0x60 hello reply (0xB6 bytes) **[inference]** |
+| 0xFFF96241 | `displink_build_60` |  | versions (MAIN/DISPLAY/DSP/SDR) + status block **[inference]** |
+| 0xFFF986E0 | `displink_tx_64` |  | 0x64 (3 bytes): +0xB8 when changed **[inference]** |
+| 0xFFF98869 | `displink_tx_7C` |  | 0x7C (5 bytes) **[inference]** |
+| 0xFFF9889C | `displink_tx_7B` |  | 0x7B (5 bytes), toggles +0x82 **[inference]** |
+| 0xFFF988F2 | `displink_tx_7A` |  | 0x7A (5 bytes) **[inference]** |
+| 0xFFF98925 | `displink_tx_70` |  | 0x70 (0xE3 bytes) **[inference]** |
+| 0xFFF9894F | `displink_build_70` |  | calls `displink_70_msg`, `displink_70_msg2`, `displink_70_query`, `displink_copy_status` and 1 more; 638 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98BCD | `displink_tx_req` |  | 0x43/0x44/0x45 request, type +0x1E0, length +0x1E2 **[inference]** |
+| 0xFFF98C1F | `displink_build_req` |  | calls `FUN_fff98c75`, `mem_zero`; 86 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98E39 | `displink_tx_23` |  | 0x23 (0x37 bytes) **[inference]** |
+| 0xFFF98E96 | `displink_build_23` |  | no direct calls; 51 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF98ECB | `displink_tx_30_31` |  | 0x30 (0xA0) or 0x31 (0xA3) by +0x1C2 **[inference]** |
+| 0xFFF98F7C | `displink_tx_34` |  | 0x34 (0xA3 bytes) **[inference]** |
+| 0xFFF98FB1 | `displink_build_30` |  | calls `FUN_fffc4f8f`, `displink_copy_status`, `mem_zero`, `mode_block_byte1` and 1 more; 622 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF99297 | `displink_build_31` |  | calls `FUN_fff99475`, `FUN_fff9959f`, `FUN_fff995cc`, `FUN_fff9960e` and 27 more; 478 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF99E4A | `dec_to_str_n` |  | (v, maxdigits 2..4, buf): decimal without leading zeros, returns the length; used by the DISPLAY-link frame builders **[fact]** |
+| 0xFFF9A06E | `displink_build_34` |  | calls `displink_copy_status`, `mem_zero`; 94 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A0CC | `displink_tx_65_clock` |  | 0x65 (9 bytes): +0xB2..+0xB6 (clock set) **[inference]** |
+| 0xFFF9A100 | `displink_build_65` |  | calls `mem_zero`; 125 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A17D | `displink_tx_24` |  | 0x24 (0x9F bytes) settings **[inference]** |
+| 0xFFF9A1A7 | `displink_build_24` |  | calls `displink_copy_status`, `mem_zero`; 298 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A2D1 | `displink_tx_50` |  | 0x50 (0xF5 bytes) **[inference]** |
+| 0xFFF9A2FB | `displink_build_50` |  | calls `FUN_fff9a364`, `FUN_fff9a42f`, `FUN_fff9a4f4`, `FUN_fff9a55e` and 5 more; 105 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9A7A2 | `kbd_fmt_char_pos` |  | Keyboard frame 0x50: "Char #nn", nn = cursor UI +0xC1 + 1 **[fact]** |
+| 0xFFF9A804 | `kbd_copy_text` |  | (src, dst, n): copies the keyboard text and marks the cursor character (+0xC1) with 0xFF unless UI +0x1BC **[fact]** |
+| 0xFFF9A89B | `displink_tx_3F` |  | 0x3F (5 bytes): +0x92 **[inference]** |
+| 0xFFF9A8E3 | `displink_tx_3A` |  | 0x3A (0xA2 bytes) **[inference]** |
+| 0xFFF9A925 | `displink_build_3A` |  | calls `displink_copy_status`, `mem_zero`; 392 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9AAAD | `displink_tx_40` |  | 0x40 (0x1FB bytes), rate-limited 100 units (timer 0x29) **[inference]** |
+| 0xFFF9AAF7 | `displink_build_40` |  | calls `displink_copy_status`, `mem_zero`, `menu_page_serialize`; 51 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9AB2A | `displink_tx_37` |  | 0x37 (0x240 bytes) **[inference]** |
+| 0xFFF9AB57 | `displink_build_37` |  | calls `FUN_fff9acf4`, `FUN_fff9ad39`, `FUN_fff9ad7e`, `FUN_fff9adde` and 31 more; 413 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9B69E | `displink_tx_39` |  | 0x39 (0xE9 bytes) **[inference]** |
+| 0xFFF9B6C8 | `displink_build_39` |  | calls `FUN_fffe5783`, `displink_39_keyer_texts`, `displink_39_rtty_labels`, `displink_copy_status` and 1 more; 848 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9BA18 | `displink_39_keyer_texts` |  | Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32) **[inference]** |
+| 0xFFF9BAA0 | `displink_39_rtty_labels` |  | Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes 0xC0..0xE7 (0x1801..) **[inference]** |
+| 0xFFF9BB23 | `displink_tx_41` |  | 0x41 (0x146 bytes) **[inference]** |
+| 0xFFF9BB50 | `displink_build_41` |  | calls `FUN_fff9bfe1`, `FUN_fff9c04a`, `FUN_fff9c089`, `FUN_fff9c1a1` and 7 more; 1128 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C42A | `displink_tx_20_status` |  | 0x20 (0x99 bytes) status, default frame, sent only when changed **[inference]** |
+| 0xFFF9C454 | `displink_build_20` |  | calls `displink_build_status`, `mem_zero`; 25 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C46D | `displink_tx_62` |  | 0x62 (0x197 bytes) **[inference]** |
+| 0xFFF9C49A | `displink_build_62` |  | calls `displink_62_value`, `displink_copy_status`, `mem_zero`; 187 B, callers: 1 **[fact]** (code shape) |
+| 0xFFF9C6F0 | `dec_to_str_u8` |  | (v, buf): u8 as 1..3 ASCII digits without leading zeros; returns the length **[fact]** |
+| 0xFFF9C843 | `dec_to_str_u16` |  | (v, buf): u16 as 1..5 ASCII digits without leading zeros; returns the length **[fact]** |
+| 0xFFFBD326 | `popup0_refresh` |  | popup_open_2000 when the pop-up code UI +0x1C2 is 0 (METER) **[fact]** |
+| 0xFFFC078D | `popup_open_2000` |  | popup_mark_start, then popup_open_timed(2000) **[fact]** |
+| 0xFFFC0DF7 | `mode_popup_select` |  | (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode **[fact]** |
+| 0xFFFC21C7 | `ui_key_reject` |  | UI +0x43C = 0, +0x409 = 1 (key consumed), beep_request(3) (error beep) **[fact]** |
+| 0xFFFC8BEB | `popup_close` |  | UI +0x1C2 = 0xFF, +0x1C1 = 0, +0x1C0 = 1, 0x1B4EF = 0, clears +0x8F / +0x41C (+0x43B / +0x43C for codes 'U'/'D'/'E') **[fact]** |
+| 0xFFFC8CBB | `popup_duration_get` |  | (id): display time of pop-up id for POP-UP TIME 0x9B0E: index tables 0xFFF834BE (ids 0..0xD) / 0xFFF834D6 (0x1E..0x58) select a 3 x u16 row in 0xFFF8854E / 0xFFF88566; id 0x5E uses 0xFFF88578 (#157, listing check) **[fact]** |
+| 0xFFFC8D8C | `popup_open_timed` |  | (time): 0x1B4EF = 1 and soft timer 0x39 = time (0: no timer), UI +0x1C1 = 1 (shown), +0x1C0 = 1, +0x70 = 0; callers pass popup_duration_get(code) **[fact]** |
+| 0xFFFC909F | `popup_mark_start` |  | 0x1B4F2 = 1, soft timer 0x48 = 750; what the mark shows [unknown] **[fact]** |
+| 0xFFFC90B4 | `popup_mark_clear` |  | 0x1B4F2 = 0, UI +0x1C3 = 0 **[fact]** |
+| 0xFFFCF4D5 | `dialog_insert_fw_sd` |  | Dialog n = 2 (UI +0xBB; ROM text "INSERT FIRMWARE / SD CARD"), +0x448 = 0, dialog_open **[fact]** |
+| 0xFFFCF4F2 | `dialog_no_sd_card` |  | Dialog n = 3 (ROM text "NO SD CARD"), +0x448 = 0, dialog_open **[fact]** |
+| 0xFFFCF6AC | `dialog_open` |  | UI +0x86 = 1 (frame 0x70 due), selected button +0xBD = 0, clears +0x70 **[fact]** |
+| 0xFFFCFE77 | `dialog_close_to_menu_ok` |  | dialog_close_to_menu, returns 1; the SD-card dialog key handlers call it at step +0x3F7 = 2 **[fact]** |
+| 0xFFFD0149 | `dialog_close_to_menu` |  | Clears UI +0x88 (keyboard) and +0x86 (dialog), +0x3FF = 2 (the value menu_select_group also sets); back to the menu page **[fact]** |

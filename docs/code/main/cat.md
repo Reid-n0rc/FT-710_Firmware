@@ -203,3 +203,120 @@ Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (exten
 | 0x20B46 | u8 | `cat_disabled` | set from the DISPLAY link **[fact]** |
 | 0x20BBE | u8 | `zz_mode0` | set by `ZZPE071000`: **factory alignment mode** (UI-state +0xBA). TX band limits off, DSP key stores calibration item 0x20CE2 ([cat-commands.md](../../cat-commands.md#ext-zz), #76) **[fact]** |
 | 0x20F4B, 0x20B39 | u8 | restart request | UI-state +0x447 / +0x35. `power_down_save`: frame `0x7F`, EEPROM save, `sw_reset`; 0x10 = power off, 0x11 = restart (radio on again), 0x90 = undervoltage (#76) **[fact]** |
+
+## Further functions (T23g)
+
+Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.
+
+| Address | Ghidra name | Inferred name / role | Purpose |
+|---|---|---|---|
+| 0xFFF94BCD | `ver_main` |  | Returns pointer to MAIN version string 0xFFFFFF00 (VE0) **[inference]** |
+| 0xFFF94BF1 | `ver_display` |  | Returns pointer to DISPLAY version 0x1436 (VE1) **[inference]** |
+| 0xFFF9C2CD | `dest_has_5mhz_channels` |  | 1 for destination codes 0x315B / 0x50E2 / 0xA4C5 / 0xD950, which have the 60 m (5 MHz) channels 501..515 (cat_MC, displink_build_41) **[fact]** |
+| 0xFFFA53A4 | `cat_ext_E8` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `cat_rand8`; 271 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFA54B3 | `cat_ext_VE` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `ver_display`, `ver_dsp`, `ver_main`, `ver_sdr`; 184 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFA556B | `cat_ext_JP` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `byte2hex`, `dest_code_get`, `dest_code_set`, `hex2byte` and 1 more; 822 B, callers: 2 **[fact]** (code shape) |
+| 0xFFFA58A1 | `cat_ext_ZZ` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `eeprom_save_cfg105`, `eeprom_save_dest`, `hex2byte`, `hex2word` and 2 more; 228 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFA5985 | `cat_ext_E9` |  | Extended E9, reached only from the second input path in cat_parse **[inference]** |
+| 0xFFFA5A51 | `cat_ext_FD` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `band_of_freq`, `bandmem_get`, `bandmem_set`, `freq_in_range` and 2 more; 575 B, callers: 2 **[fact]** (code shape) |
+| 0xFFFA5C90 | `cat_ext_EO` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `enc2_step`, `enc3_step`, `hex2nib`, `vfo_freq` and 1 more; 847 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFA5FDF | `cat_ext_PE` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `cat_ai_holdoff`, `hex2nib`, `nib2hex`; 1166 B, callers: 2 **[fact]** (code shape) |
+| 0xFFFA646D | `cat_AB` |  | Handler of CAT command `AB`: entry of the command dispatch table (CatDispatch.java); 359 B **[fact]** |
+| 0xFFFA65D4 | `cat_AC` |  | Handler of CAT command `AC`: entry of the command dispatch table (CatDispatch.java); 659 B **[fact]** |
+| 0xFFFA6867 | `cat_AG` |  | Handler of CAT command `AG`: entry of the command dispatch table (CatDispatch.java); 223 B **[fact]** |
+| 0xFFFA6946 | `cat_AI` |  | Handler of CAT command `AI`: entry of the command dispatch table (CatDispatch.java); 224 B **[fact]** |
+| 0xFFFA6A26 | `cat_AM` |  | Handler of CAT command `AM`: entry of the command dispatch table (CatDispatch.java); 329 B **[fact]** |
+| 0xFFFA6B6F | `cat_AO` |  | Handler of CAT command `AO`: entry of the command dispatch table (CatDispatch.java); 302 B **[fact]** |
+| 0xFFFA6C9D | `cat_AS` |  | Handler of CAT command `AS`: entry of the command dispatch table (CatDispatch.java); 575 B **[fact]** |
+| 0xFFFA6EDC | `cat_AV` |  | Handler of CAT command `AV`: entry of the command dispatch table (CatDispatch.java); 316 B **[fact]** |
+| 0xFFFA7018 | `cat_BA` |  | Handler of CAT command `BA`: entry of the command dispatch table (CatDispatch.java); 359 B **[fact]** |
+| 0xFFFA717F | `cat_BC` |  | Handler of CAT command `BC`: entry of the command dispatch table (CatDispatch.java); 346 B **[fact]** |
+| 0xFFFA72D9 | `cat_BD` |  | Handler of CAT command `BD`: entry of the command dispatch table (CatDispatch.java); 659 B **[fact]** |
+| 0xFFFA756C | `cat_BU` |  | Handler of CAT command `BU`: entry of the command dispatch table (CatDispatch.java); 640 B **[fact]** |
+| 0xFFFA77EC | `cat_BI` |  | Handler of CAT command `BI`: entry of the command dispatch table (CatDispatch.java); 316 B **[fact]** |
+| 0xFFFA7928 | `cat_BM` |  | Handler of CAT command `BM`: entry of the command dispatch table (CatDispatch.java); 329 B **[fact]** |
+| 0xFFFA7A71 | `cat_BP` |  | Handler of CAT command `BP`: entry of the command dispatch table (CatDispatch.java); 836 B **[fact]** |
+| 0xFFFA7DB5 | `cat_BS` |  | Handler of CAT command `BS`: entry of the command dispatch table (CatDispatch.java); 492 B **[fact]** |
+| 0xFFFA7FA1 | `cat_CF` |  | Handler of CAT command `CF`: entry of the command dispatch table (CatDispatch.java); 980 B **[fact]** |
+| 0xFFFA8375 | `cat_CH` |  | Handler of CAT command `CH`: entry of the command dispatch table (CatDispatch.java); 414 B **[fact]** |
+| 0xFFFA8513 | `cat_CN` |  | Handler of CAT command `CN`: entry of the command dispatch table (CatDispatch.java); 389 B **[fact]** |
+| 0xFFFA8698 | `cat_CO` |  | Handler of CAT command `CO`: entry of the command dispatch table (CatDispatch.java); 1280 B **[fact]** |
+| 0xFFFA8B98 | `cat_CS` |  | Handler of CAT command `CS`: entry of the command dispatch table (CatDispatch.java); 225 B **[fact]** |
+| 0xFFFA8C79 | `cat_CT` |  | Handler of CAT command `CT`: entry of the command dispatch table (CatDispatch.java); 273 B **[fact]** |
+| 0xFFFA8D8A | `cat_DA` |  | Handler of CAT command `DA`: entry of the command dispatch table (CatDispatch.java); 671 B **[fact]** |
+| 0xFFFA9029 | `cat_DN` |  | Handler of CAT command `DN`: entry of the command dispatch table (CatDispatch.java); 300 B **[fact]** |
+| 0xFFFA9155 | `cat_UP` |  | Handler of CAT command `UP`: entry of the command dispatch table (CatDispatch.java); 300 B **[fact]** |
+| 0xFFFA9281 | `cat_DT` |  | Handler of CAT command `DT`: entry of the command dispatch table (CatDispatch.java); 967 B **[fact]** |
+| 0xFFFA9648 | `cat_EM` |  | Handler of CAT command `EM`: entry of the command dispatch table (CatDispatch.java); 736 B **[fact]** |
+| 0xFFFA9928 | `cat_EN` |  | Handler of CAT command `EN`: entry of the command dispatch table (CatDispatch.java); 15 B **[fact]** |
+| 0xFFFA99BD | `cat_FA_FB` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `freq_clamp`, `freq_in_range`, `nib2hex`, `vfo_mark_edited` and 3 more; 729 B, callers: 2 **[fact]** (code shape) |
+| 0xFFFA9C96 | `cat_FN` |  | Handler of CAT command `FN`: entry of the command dispatch table (CatDispatch.java); 167 B **[fact]** |
+| 0xFFFA9D3D | `cat_FS` |  | Handler of CAT command `FS`: entry of the command dispatch table (CatDispatch.java); 17 B **[fact]** |
+| 0xFFFA9D4E | `cat_FT` |  | Handler of CAT command `FT`: entry of the command dispatch table (CatDispatch.java); 469 B **[fact]** |
+| 0xFFFA9F23 | `cat_GT` |  | Handler of CAT command `GT`: entry of the command dispatch table (CatDispatch.java); 764 B **[fact]** |
+| 0xFFFAA21F | `cat_GP` |  | Handler of CAT command `GP`: entry of the command dispatch table (CatDispatch.java); 326 B **[fact]** |
+| 0xFFFAA365 | `cat_ID` |  | Handler of CAT command `ID`: entry of the command dispatch table (CatDispatch.java); 55 B **[fact]** |
+| 0xFFFAA39C | `cat_IF_OI` |  | names-file group "CAT command handlers (from CatDispatch.java)"; calls `nib2hex`, `vfo_freq`; 839 B, callers: 1 **[fact]** (code shape) |
+| 0xFFFAA6E3 | `cat_IS` |  | Handler of CAT command `IS`: entry of the command dispatch table (CatDispatch.java); 546 B **[fact]** |
+| 0xFFFAA905 | `cat_KM` |  | Handler of CAT command `KM`: entry of the command dispatch table (CatDispatch.java); 817 B **[fact]** |
+| 0xFFFAAC36 | `cat_KP` |  | Handler of CAT command `KP`: entry of the command dispatch table (CatDispatch.java); 284 B **[fact]** |
+| 0xFFFAAD52 | `cat_KR` |  | Handler of CAT command `KR`: entry of the command dispatch table (CatDispatch.java); 152 B **[fact]** |
+| 0xFFFAADEA | `cat_KS` |  | Handler of CAT command `KS`: entry of the command dispatch table (CatDispatch.java); 303 B **[fact]** |
+| 0xFFFAAF19 | `cat_KY` |  | Handler of CAT command `KY`: entry of the command dispatch table (CatDispatch.java); 390 B **[fact]** |
+| 0xFFFAB09F | `cat_LK` |  | Handler of CAT command `LK`: entry of the command dispatch table (CatDispatch.java); 208 B **[fact]** |
+| 0xFFFAB16F | `cat_LM` |  | Handler of CAT command `LM`: entry of the command dispatch table (CatDispatch.java); 654 B **[fact]** |
+| 0xFFFAB3FD | `cat_MA` |  | Handler of CAT command `MA`: entry of the command dispatch table (CatDispatch.java); 123 B **[fact]** |
+| 0xFFFAB478 | `cat_MB` |  | Handler of CAT command `MB`: entry of the command dispatch table (CatDispatch.java); 123 B **[fact]** |
+| 0xFFFAB4F3 | `cat_MC` |  | Handler of CAT command `MC`: entry of the command dispatch table (CatDispatch.java); 734 B **[fact]** |
+| 0xFFFAB7D1 | `cat_MD` |  | Handler of CAT command `MD`: entry of the command dispatch table (CatDispatch.java); 659 B **[fact]** |
+| 0xFFFABA64 | `cat_MG` |  | Handler of CAT command `MG`: entry of the command dispatch table (CatDispatch.java); 406 B **[fact]** |
+| 0xFFFABBFA | `cat_ML` |  | Handler of CAT command `ML`: entry of the command dispatch table (CatDispatch.java); 683 B **[fact]** |
+| 0xFFFABEA5 | `cat_MR` |  | Handler of CAT command `MR`: entry of the command dispatch table (CatDispatch.java); 992 B **[fact]** |
+| 0xFFFAC285 | `cat_MT` |  | Handler of CAT command `MT`: entry of the command dispatch table (CatDispatch.java); 561 B **[fact]** |
+| 0xFFFAC4B6 | `cat_MS` |  | Handler of CAT command `MS`: entry of the command dispatch table (CatDispatch.java); 126 B **[fact]** |
+| 0xFFFAC534 | `cat_MW` |  | Handler of CAT command `MW`: entry of the command dispatch table (CatDispatch.java); 1145 B **[fact]** |
+| 0xFFFAC9AD | `cat_MX` |  | Handler of CAT command `MX`: entry of the command dispatch table (CatDispatch.java); 154 B **[fact]** |
+| 0xFFFACA47 | `cat_NA` |  | Handler of CAT command `NA`: entry of the command dispatch table (CatDispatch.java); 542 B **[fact]** |
+| 0xFFFACC65 | `cat_NB` |  | Handler of CAT command `NB`: entry of the command dispatch table (CatDispatch.java); 131 B **[fact]** |
+| 0xFFFACCE8 | `cat_NL` |  | Handler of CAT command `NL`: entry of the command dispatch table (CatDispatch.java); 313 B **[fact]** |
+| 0xFFFACE21 | `cat_NR` |  | Handler of CAT command `NR`: entry of the command dispatch table (CatDispatch.java); 157 B **[fact]** |
+| 0xFFFACEBE | `cat_OS` |  | Handler of CAT command `OS`: entry of the command dispatch table (CatDispatch.java); 323 B **[fact]** |
+| 0xFFFAD001 | `cat_PA` |  | Handler of CAT command `PA`: entry of the command dispatch table (CatDispatch.java); 161 B **[fact]** |
+| 0xFFFAD0A2 | `cat_PB` |  | Handler of CAT command `PB`: entry of the command dispatch table (CatDispatch.java); 415 B **[fact]** |
+| 0xFFFAD241 | `cat_PC` |  | Handler of CAT command `PC`: entry of the command dispatch table (CatDispatch.java); 550 B **[fact]** |
+| 0xFFFAD467 | `cat_PL` |  | Handler of CAT command `PL`: entry of the command dispatch table (CatDispatch.java); 302 B **[fact]** |
+| 0xFFFAD595 | `cat_PR` |  | Handler of CAT command `PR`: entry of the command dispatch table (CatDispatch.java); 257 B **[fact]** |
+| 0xFFFAD696 | `cat_PS` |  | Handler of CAT command `PS`: entry of the command dispatch table (CatDispatch.java); 110 B **[fact]** |
+| 0xFFFAD704 | `cat_QI` |  | Handler of CAT command `QI`: entry of the command dispatch table (CatDispatch.java); 5 B **[fact]** |
+| 0xFFFAD709 | `cat_QR` |  | Handler of CAT command `QR`: entry of the command dispatch table (CatDispatch.java); 5 B **[fact]** |
+| 0xFFFAD70E | `cat_QS` |  | Handler of CAT command `QS`: entry of the command dispatch table (CatDispatch.java); 10 B **[fact]** |
+| 0xFFFAD718 | `cat_RA` |  | Handler of CAT command `RA`: entry of the command dispatch table (CatDispatch.java); 150 B **[fact]** |
+| 0xFFFAD7AE | `cat_RG` |  | Handler of CAT command `RG`: entry of the command dispatch table (CatDispatch.java); 309 B **[fact]** |
+| 0xFFFAD8E3 | `cat_RI` |  | Handler of CAT command `RI`: entry of the command dispatch table (CatDispatch.java); 355 B **[fact]** |
+| 0xFFFADA46 | `cat_RL` |  | Handler of CAT command `RL`: entry of the command dispatch table (CatDispatch.java); 311 B **[fact]** |
+| 0xFFFADCD6 | `cat_SC` |  | Handler of CAT command `SC`: entry of the command dispatch table (CatDispatch.java); 196 B **[fact]** |
+| 0xFFFADD9A | `cat_SD` |  | Handler of CAT command `SD`: entry of the command dispatch table (CatDispatch.java); 284 B **[fact]** |
+| 0xFFFADEB6 | `cat_SF` |  | Handler of CAT command `SF`: entry of the command dispatch table (CatDispatch.java); 1044 B **[fact]** |
+| 0xFFFAE2CA | `cat_SH` |  | Handler of CAT command `SH`: entry of the command dispatch table (CatDispatch.java); 897 B **[fact]** |
+| 0xFFFAE6CC | `cat_SQ` |  | Handler of CAT command `SQ`: entry of the command dispatch table (CatDispatch.java); 388 B **[fact]** |
+| 0xFFFAE850 | `cat_SS` |  | Handler of CAT command `SS`: entry of the command dispatch table (CatDispatch.java); 2917 B **[fact]** |
+| 0xFFFAF3B5 | `cat_ST` |  | Handler of CAT command `ST`: entry of the command dispatch table (CatDispatch.java); 185 B **[fact]** |
+| 0xFFFAF46E | `cat_SV` |  | Handler of CAT command `SV`: entry of the command dispatch table (CatDispatch.java); 345 B **[fact]** |
+| 0xFFFAF5C7 | `cat_TS` |  | Handler of CAT command `TS`: entry of the command dispatch table (CatDispatch.java); 497 B **[fact]** |
+| 0xFFFAF874 | `cat_VD` |  | Handler of CAT command `VD`: entry of the command dispatch table (CatDispatch.java); 332 B **[fact]** |
+| 0xFFFAF9C0 | `cat_VG` |  | Handler of CAT command `VG`: entry of the command dispatch table (CatDispatch.java); 283 B **[fact]** |
+| 0xFFFAFADB | `cat_VM` |  | Handler of CAT command `VM`: entry of the command dispatch table (CatDispatch.java); 738 B **[fact]** |
+| 0xFFFAFDBD | `cat_VS` |  | Handler of CAT command `VS`: entry of the command dispatch table (CatDispatch.java); 483 B **[fact]** |
+| 0xFFFAFFA0 | `cat_VX` |  | Handler of CAT command `VX`: entry of the command dispatch table (CatDispatch.java); 206 B **[fact]** |
+| 0xFFFB006E | `cat_ZI` |  | Handler of CAT command `ZI`: entry of the command dispatch table (CatDispatch.java); 190 B **[fact]** |
+| 0xFFFB012C | `mem_find_byte` |  | (buf, c, n): pointer to the first byte == c in buf[0..n), else buf itself; returned in R1 (EM, KM) **[fact]** |
+| 0xFFFB2FC0 | `bcd_to_bin` |  | Packed BCD byte -> binary: ROM table 0xFFF880C2 (0, 10,.., 90 at stride 2)[high nibble] + low nibble **[fact]** |
+| 0xFFFB521A | `tx_breakin_on` |  | Bit 1 (BI break-in flag) of the TX VFO per-mode byte (vfo_rec_ptr(1)/vfo_mode(1)) **[inference]** |
+| 0xFFFBB567 | `align_load_preset` |  | Sets up the radio for the current alignment item from preset 0xFFF88CD4[item] (VFO A/B, band memory, mode bits, optional frequency, TX power for items 0x45..0xDA) **[inference]** |
+| 0xFFFBBA0F | `align_store` |  | DSP key in alignment mode: runs the store handler 0xFFF89910[item] for the current item (+0x1DE) **[inference]** |
+| 0xFFFDECEC | `cat_ai_ex` |  | AI change detector for the EX menu (one of cat_ai_poll's detectors): cat_ai_ex_scan, copies the frame to cat_ai_buf 0x15E06 **[inference]** |
+| 0xFFFE4407 | `msg_type_select` |  | Sets UI +0x1C7 (message type) from vfo_mode(1): CW 1, RTTY 2, PSK 3, voice modes 0 **[inference]** |
+| 0xFFFE481D | `keyer_text_endmark` |  | Front-panel keyer text editor: length up to the first } (0x7D) or appends } after the last non-space char **[inference]** |
+| 0xFFFE538F | `msg_slot_select` |  | (n): UI +0x1C8 = n, +0xBF = +0x1CE = n-1 (KY) **[inference]** |
+| 0xFFFE6D7A | `cat_ai_ex_scan` |  | Calls the 296 detectors in 0xFFF8E1A0 until one sets the length 0x1FF12; builds "EXnnnnnn" + value at 0x1B235; held off while 0x1B299 = 1 and timer 0x32 runs **[inference]** |
+| 0xFFFE6E26 | `cat_ai_ex_holdoff` |  | After an EX set: timer 0x32 = 200, 0x1B299 = 1 (like cat_ai_holdoff, own flag) **[inference]** |
