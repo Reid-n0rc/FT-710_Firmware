@@ -3,7 +3,8 @@
 **There is no CPU code to decompile.** The decoded image is a Xilinx Artix-7 **XC7A50T** configuration bitstream (a
 standard, uncompressed, unencrypted Vivado `.bin`) behind a 4 KiB Yaesu header sector holding a CRC-32. No soft-CPU
 firmware can be pulled out as code: the FPGA fabric is not disassembled, and the BRAM contents are bit-interleaved
-across frames (see "Soft CPU?" below). This directory therefore has only this summary. The image layout table is in
+across frames (see "Soft CPU?" below). This directory therefore has only this summary and `progress.tsv`, the netlist
+cells per documented block for the README progress figures (T23, `tools/sdr_progress.py`; counts only, no netlist data). The image layout table is in
 [`docs/memory-maps.md` (SDR section)](../../docs/memory-maps.md). The analysis task is
 [`docs/tasks/T08-decomp-sdr.md`](../../docs/tasks/T08-decomp-sdr.md).
 
