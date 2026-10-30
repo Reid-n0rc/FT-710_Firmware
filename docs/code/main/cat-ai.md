@@ -7,7 +7,7 @@ the catalogue of the 296 per-item change detectors behind that and their two val
 
 Sources: `decomp/main/` (0xFFFE6D7A..0xFFFEC46C), the plate comments in `tools/ghidra/names_main.tsv` (section "CAT AI for the EX
 menu (#70/#71)"), the table at 0xFFF8E1A0 and the ID list at 0xFFF872B1 (described in [ui-keys.md](ui-keys.md), where the table was
-first told apart from the key tables). Claims are tagged **[fact]** (seen in code or data), **[inference]** or **[guess]**.
+first told apart from the key tables). Claims are tagged **[fact]** (seen in code or data) or **[inference]** (evidence given); unsettled points are open questions.
 
 ## Overview
 

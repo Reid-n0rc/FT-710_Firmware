@@ -8,7 +8,7 @@ the Code Generator peripheral drivers are on [sci.md](sci.md) and [peripherals.m
 
 Sources: `decomp/main/` (0xFFF8F658..0xFFF92014 and 0xFFFEDD9A..0xFFFEE2B0), the plate comments in `tools/ghidra/names_main.tsv`
 (sections "boot / runtime", "CC-RX intrinsic helpers" T21h/T21i, "CC-RX C library" #78) and `names_main.T10a.tsv`. Claims are tagged
-**[fact]** (seen in code), **[inference]** or **[guess]**; the library names are **[inference]** from the code shape (the image has no
+**[fact]** (seen in code) or **[inference]** (evidence given), and unsettled points are open questions; the library names are **[inference]** from the code shape (the image has no
 symbols).
 
 ## Overview

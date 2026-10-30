@@ -28,7 +28,8 @@
  *   - `TYPE *function(...);  / * @0xADDRESS return ... * /` only changes the return type of the function there.
  *   - field names: from the docs or a CAT handler; unknown fields that the code accesses are f_0xOFF_u8/u16/u32
  *     (width = the most common access width seen in the decompiler's p-code).
- * Tags as in AGENTS.md: [fact] (seen in code or data, with the address or function), [inference], [guess].
+ * Tags as in AGENTS.md: [fact] (seen in code or data, with the address or function), [inference] (evidence given);
+ *   unsettled meanings are left open (neutral name) rather than guessed.
  * [fact: accessed] on a neutral field only says that code reads or writes it, with the widths and some users.
  */
 
