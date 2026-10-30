@@ -429,8 +429,8 @@ uint ver_main(void)
 
 // ===== ver_main_ext1 @ fff94bd9 (12 bytes)
 
-/* Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE
-   (0x4660) is set [fact]; build date/time [guess] (#205) */
+/* Returns 0xFFFFFF10, ROM string "2101", shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE
+   (0x4660) is set [fact: MAIN image]; meaning open (#205) */
 
 undefined4 ver_main_ext1(void)
 
@@ -441,8 +441,8 @@ undefined4 ver_main_ext1(void)
 
 // ===== ver_main_ext2 @ fff94be5 (12 bytes)
 
-/* Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set
-   [fact] (#205) */
+/* Returns 0xFFFFFF20, ROM string "24-02-16" (release date, = SFL header [DATE] 2024/02/16), shown
+   in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205) */
 
 undefined4 ver_main_ext2(void)
 

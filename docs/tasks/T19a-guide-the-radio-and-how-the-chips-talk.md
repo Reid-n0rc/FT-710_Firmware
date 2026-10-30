@@ -96,7 +96,7 @@ committed.
 ## Reference issues
 1. **FPGA reply format and length.** [system.md §3](../code/system.md#3-inter-cpu-protocol-summary), row MAIN → SDR, says "reply always
    7 B" and "reply 0x06 for a write, `x VVVV ss` for a read". [main/sdr-link.md](../code/main/sdr-link.md) Overview and "Reply" table
-   also say the FPGA "always answers with 7 bytes" and call reply byte 0 "probably an echo [guess]". The T15e note at the end of
+   also say the FPGA "always answers with 7 bytes" and call reply byte 0 "probably an echo" (settled in T19h a1: a read reply starts with `r`, a write gets one byte 0x06; `sci5_rx_byte_hook` 0xFFF94962). The T15e note at the end of
    sdr-link.md and [sdr/netlist.md §5.2](../code/sdr/netlist.md) show (simulation fact) that the FPGA answers a write with **one** byte
    0x06 and a read with `r` + value + sum (byte 0 is `r`, e.g. `r010437`). The guide follows T15e. The older text should be updated.
 2. **ADC sample rate.** [system.md §2.3](../code/system.md#23-signal-path-receive-and-transmit) and [sdr/README.md](../code/sdr/README.md)

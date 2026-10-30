@@ -82,7 +82,7 @@ Multi-byte values are **big-endian**. Offsets are from the start of the record.
 | +0x32..+0x3B | 10 | **per-mode block, AM** (4/5). +0x32 bit 1 and +0x33 bit 7 are used by BI/BC | `cat_BI`, `cat_BC` **[fact]** |
 | +0x3C..+0x45 | 10 | **per-mode block, FM and DATA-FM** (6/7, 10/11). Same layout as the other blocks ([below](#per-mode-block-layout)); in FM only the AGC byte and the BI bit have an effect | `cat_BP`/`cat_BI`/`cat_CO`/`cat_GT`/`cat_IS` map modes 6/7 and 10/11 to +0x3C **[fact]** |
 | +0x46 | u8 | CTCSS/DCS tone number (`CN`, 0..49) | `cat_CN` **[fact]** |
-| +0x47 | u8 | **unused** in V01-12: no field access; the default (ROM 0xFFF80948) is 0 | **[fact for the absence of users]**; reserved, perhaps for a DCS code the FT-710 does not offer **[guess]** |
+| +0x47 | u8 | **unused** in V01-12: no field access; the default (ROM 0xFFF80948) is 0 | **[fact for the absence of users]** |
 | +0x48..+0x49 | s16 | **clarifier offset** in Hz, two's complement (CF: ±9999) | `vfo_freq_clar`, `cat_CF` **[fact]** |
 | +0x4A..+0x4D | u32 | **frequency in Hz** (dial frequency, without clarifier) | `vfo_freq`, `cat_FA_FB` **[fact]** |
 | +0x4E..+0x59 | 12 | memory tag, ASCII 0x20..0x7D, padded with spaces | `cat_MT`, `vfo_clear_tag` **[fact]** |
@@ -224,7 +224,7 @@ Related ROM tables **[fact]**:
 | 0xFFF89D4C | `{30000, 75000000}`: the tuning limits | `freq_clamp` |
 | (code) | `29999 < f < 75000001` | `freq_in_range` `freq_in_range`, used by FA/FB/FD/MW/ZI and touch-tune |
 | 0xFFF887CC | 18 ascending u32 boundaries: 1.7, 2.1, 4.1, 6.9, 8.2, 11.8, 15.0, 15.8, 17.8, 20.0, 20.9, 25.0, 30, 48, 56, 69, 75.000001, 108.000001 MHz | `gen_subband_of_freq` `gen_subband_of_freq`. It returns the first i with f < table[i], clamped to 15. This is the GEN sub-slot for the FIX band memory |
-| 0xFFF88814 | 14 boundaries: 1.7, 3.0, 4.5, 6.0, 9.0, 13.0 MHz, … | `freq_range_index`, a frequency → range index. This may be a filter-bank index **[guess]** |
+| 0xFFF88814 | 14 boundaries: 1.7, 3.0, 4.5, 6.0, 9.0, 13.0, 17.0, 20.0, 23.0, 27.0, 31.0, 49.0, 56.0, 75.000001 MHz **[fact: MAIN image]** | `freq_range_index` (0xFFFB3480): frequency → range 0..13, 0xFF above. Its only callers are scope code: the per-range SCOPE LEVEL bytes 0x9BCA (RX) / 0x9BD8 (TX) (`FUN_fff9c6ab`, `scope_level_ptr`) and the per-range span indexes (`scope_span_index`, `scope_span_ptr`, `FUN_fffc052b`, `sdr_upd_r22_scope_span`), so it is the **scope's per-band memory index** **[fact: callers]** |
 | 0xFFF88598 | 7.5, 14.5, 21.5, 41.5, 75 MHz | `dsp_set_freq_range_param`: picks one of the cfg105 bytes 0x4674..0x4678 and writes it to SCI4 device register 99 when it changes **[fact]**. They are the alignment items `028..032 [RX] IF-AGC 7/14/21/28/50` (#203, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)) **[fact]** |
 | 0xFFF89D24 | 10 × u32: 1k, 2k, 5k, 10k, 20k, 50k, 100k, 200k, 500k, 1M | scope span in Hz, indexed by `scope_span_index`(side)` |
 
@@ -357,7 +357,7 @@ These globals belong to a large runtime block at **0x20B04**. The compiler reach
 | Reg | Setter | Value **[fact]** |
 |---|---|---|
 | 0x18 / 0x19 | `sdr_upd_r18_rx_freq` `sdr_upd_r18_rx_freq` | high / low 16 bits of the RX NCO frequency: `vfo_freq_clar(0, 2)` plus a mode offset. SSB: ∓(+0x12 + 1500). CW: from +0x1C and the pitch. DATA: ±(0x9A7A×10 + +0x30). RTTY: ±(0x9A8D base + +0x26). PSK: + +0x30. The low word is resent only when the high word is unchanged. RX-only: skipped while 0x20B6B = 1 |
-| 0x08 / 0x09 | `sdr_upd_r08_tx_freq` `sdr_upd_r08_tx_freq` | high / low 16 of 0x20F50. PSK: −1500/2000/1000 Hz by setting 0x9A79. When `FUN_fffba192()` == 3: −(pitch×10 + 300) in LSB, + in USB (perhaps CW keying in an SSB mode **[guess]**) |
+| 0x08 / 0x09 | `sdr_upd_r08_tx_freq` `sdr_upd_r08_tx_freq` | high / low 16 of 0x20F50. PSK: −1500/2000/1000 Hz by setting 0x9A79. When `tx_cw_keying_class` (0xFFFBA192) returns 3: −(pitch×10 + 300) in LSB, + in USB. It returns 3 only with the TX VFO in LSB/USB, CW AUTO MODE (0x9A3C) = 2 ON, or = 1 (50MHz, CAT manual 2306-C menu table) with the TX frequency in band 0xB, and a key as the PTT source, i.e. **CW keyed in an SSB mode** **[fact: decomp fffb948b_fffbc3bd.c]** |
 | 0x20 / 0x21 | `sdr_upd_r20_scope_freq` `sdr_upd_r20_scope_freq` | scope centre. CENTER: dial + `vfo_display_offset`. CURSOR/FIX: start + span/2. While TX: a value derived from 62.5 MHz − `tx_freq_repeater_shift(f)` |
 
 ```mermaid
@@ -426,7 +426,7 @@ sequenceDiagram
 | 99..116 (0x63..0x74) | PMS P1L, P1U … P9L, P9U (odd = L, even = U) | `cat_pms_names` 0xFFF806E9 |
 | 117..131 (0x75..0x83) | 5 MHz channels 501..515 | `cat_5mhz_names` 0xFFF8071B |
 | 132 (0x84) | EMG | `EMG` |
-| 133 (0x85) | always "valid". Probably "no channel" **[guess]** | |
+| 133 (0x85) | `memch_valid` returns valid for it, but no record exists (records are 0..132) **[fact]**. Open: what 133 stands for; would be settled by finding code that stores 0x85 into 0x60C9/0x60CA or passes it to `memch_valid` (disassembly search for the immediate) | |
 
 **Layout.** The settings image at 0x60C9 (EEPROM 0x1A7A, 0x2F49 bytes = 0x87 + 133×0x5A) holds **[fact]**:
 

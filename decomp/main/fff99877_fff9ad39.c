@@ -5,12 +5,12 @@
 uint FUN_fff99877(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   uint local_8;
   uint uVar2;
   
-  rVar1 = vfo_mode(VFO_TX);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(1);
+  uVar2 = (uint)bVar1;
   if (uVar2 == 0xe) {
 LAB_fff998d0:
     local_8 = 0x9bed;
@@ -390,11 +390,11 @@ void FUN_fff99d48(ushort param_1)
 void FUN_fff99d82(ushort param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = FUN_fff99dbf(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = FUN_fff99dbf(pbVar1);
   iVar2 = (uint)(iVar2 != 0) * 9;
   (&DAT_00001749)[param_1] = BYTE_ARRAY_fff800f3[iVar2 + 0x261];
   *(undefined4 *)(&DAT_00001745 + param_1) = *(undefined4 *)(BYTE_ARRAY_fff800f3 + iVar2 + 0x25d);

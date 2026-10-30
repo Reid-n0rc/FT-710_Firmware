@@ -7,7 +7,7 @@ stock Ghidra 12.1.4 could not decode most of the IF DSP's HiFi4 code, so `decomp
 known mainly from an objdump listing (`decomp/ifdsp/hifi4/flix.dis`). They measure the gap, say exactly what was missing, and
 propose how to close it. Issues: [#97](https://github.com/Reid-n0rc/FT-710_Firmware/issues/97) (the decompile) and
 [FT-710_Custom_Firmware#1](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/1) (RADE in the DSP, formerly #102, which needs this code understood). Claims are
-tagged **[fact]**, **[inference]** or **[guess]**; counts come from `flix.dis` (V01-01, 1,065 functions) and the core's ISA
+tagged **[fact]** or **[inference]** (evidence and reasoning stated), and unsettled points are written as *Open: …; would be settled by …*; counts come from `flix.dis` (V01-01, 1,065 functions) and the core's ISA
 description, and are reproducible with the commands at the end.
 
 ## The gap in numbers
@@ -75,7 +75,7 @@ SLEIGH generated from it can be committed **[fact: file header]**.
 
 ## How to get there
 
-| Option | What it gives | Effort **[guess]** |
+| Option | What it gives | Effort (plan estimate, written before T21) |
 |---|---|---|
 | **A. Generator** (recommended): a script that reads `xtensa-modules.c` and writes a SLEIGH extension (`.sinc` files plus language and pspec entries) for this core | correct disassembly of all 49,389 instructions; decompiler data flow through `ae_*` ops as named operations; re-runnable for other Xtensa cores | large: a few thousand lines of generator, mostly mechanical, because the C file is regular generated code |
 | **B. Length and control flow only**: the 7 formats with correct lengths plus the branch and loop slots; every other slot a single opaque operation | function boundaries and control-flow graphs right, so the decompiler no longer breaks; no data flow through HiFi4 ops | small to medium, and a first step of A |
@@ -84,6 +84,8 @@ SLEIGH generated from it can be committed **[fact: file header]**.
 Recommended order: B as the first milestone of A (it already fixes the 84 % of functions that break), then the `ae_*` ops as named
 operations with correct in/out, then the parallel commit, then exact semantics only where an algorithm needs them. Every step is
 checked against `flix.dis`. Nothing here touches the radio.
+
+Outcome **[fact]**: option A was built (T21). The generator `tools/xtensa_sleigh_gen.py` is 1,253 lines, with the ISA dump `tools/xtensa_isa_dump.c` (262) and `tools/flix_oracle.sh` (64) (`wc -l`, 2026-10-30).
 
 The open points of this plan are answered in the next section (T21a).
 
@@ -154,10 +156,14 @@ flowchart TB
   them. Every slot therefore computes into global staging registers `w<position>_<output>_<size>` (overlapping 1/2/4/8/16-byte
   names), and a second sub-table per slot, `S<slot>w`, with the same patterns, copies them to the real operands. `build` runs in the
   order written, so the bundle builds every compute part, then every commit part, with the slot that can hold a branch or loop
-  (always position 0 in this core) last. Memory stores are not staged (no bundle in the firmware stores and loads the same address
-  is known **[guess]**).
+  (always position 0 in this core) last. Memory stores are not staged. In `flix.dis`, 624 bundles hold both a load and a store slot, and in none of them do the two use
+  the same base register with overlapping immediate offsets **[fact: scan of the bundle text, 2026-10-30]**. Open: whether a load
+  and a store through *different* base registers in one bundle ever hit the same address at run time (a static scan cannot rule it
+  out); would be settled by checking those bundles' base registers against their data flow.
 - **Semantics levels** **[fact: generator tables]**: base-ISA operations in slots (`add`, `l32i`, `extui`, `movi`, `s32i`, …) and
-  the 30 FPU operations (single precision in the low 32 bits of `aed`, upper half written as 0 **[guess]**) have real p-code from a
+  the 30 FPU operations (single precision in the low 32 bits of `aed` **[inference: the firmware stores FP results with the low-lane
+  `ae_s32.l.*` forms, e.g. `mul.s aed8` then `ae_s32.l.ip aed8` at 0x21C7DE/0x21C7E1]**; the p-code writes the upper half as 0, a
+  modelling choice, see the open point below) have real p-code from a
   hand table; `.w15` branches use the base branch conditions with targets relative to the bundle start; `loop`/`loopgtz`/`loopnez`
   in slots use the stock module's loop context trick. The simple HiFi4 loads and stores (`ae_l*`/`ae_s*` with `.i .x .iu .xu .ip
   .xp .xc .xc1`) have a real memory access and a real base-register update (circular `.xc` updates are `ae_circ0`/`ae_circ1`
@@ -172,7 +178,8 @@ flowchart TB
 - Exact arithmetic for the HiFi4 operations that matter (multiply-accumulates in the filter kernels) — by hand, per kernel (#86, #102).
 - The aligning loads/stores (`ae_la*`, `ae_sa*` with `AE_VALIGN`) and the `.ri*`/`.ic*` forms are named operations without a
   memory access yet.
-- The FPU lane layout (whether the `.s` operations also act on the high half) is a guess; the FP compares write a BR pair (`b0:b1`)
+- Open: whether the `.s` operations also act on (or preserve) the high half of `aed`; the generator writes it as 0. Would be settled by
+  the Cadence HiFi4 ISA reference for the FPU operations or a run on the hardware/ISS. The FP compares write a BR pair (`b0:b1`)
   and are named operations.
 
 ### In the canonical project (T21g)

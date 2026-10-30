@@ -511,7 +511,8 @@ SEM = {
     "s32i": "*:4 ({r1} + {r2}) = {r0};", "s32i.n": "*:4 ({r1} + {r2}) = {r0};",
     "s16i": "*:2 ({r1} + {r2}) = {r0}:2;", "s8i": "*:1 ({r1} + {r2}) = {r0}:1;",
     # FPU on the AE_DR registers (single precision in the low 32 bits) [inference: operand register files];
-    # the upper half of the destination is written as zero [guess].
+    # the upper half of the destination is written as zero. Open: the ISA reference for these ops would settle whether
+    # the hardware zeroes or keeps the upper half; only the decompiler's view of the upper half depends on it.
     "add.s": "{w0} = zext({r1}:4 f+ {r2}:4);", "sub.s": "{w0} = zext({r1}:4 f- {r2}:4);",
     "mul.s": "{w0} = zext({r1}:4 f* {r2}:4);",
     "madd.s": "{w0} = zext({r0}:4 f+ ({r1}:4 f* {r2}:4));",

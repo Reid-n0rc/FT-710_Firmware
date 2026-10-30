@@ -281,10 +281,10 @@ undefined1 FUN_fffe5f4d(void)
 bool FUN_fffe5f82(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   
-  rVar1 = vfo_mode(g_opstate.active_vfo);
-  return rVar1 < MODE_AM;
+  bVar1 = vfo_mode(g_opstate.active_vfo);
+  return bVar1 < 4;
 }
 
 
@@ -294,11 +294,11 @@ undefined1 FUN_fffe5fab(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   undefined1 uStack_4;
   
-  rVar2 = vfo_mode(g_opstate.active_vfo);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(g_opstate.active_vfo);
+  uVar1 = (uint)bVar2;
   if ((uVar1 - 4 < 4) || (uVar1 == 10 || uVar1 == 0xb)) {
     uStack_4 = 1;
   }
@@ -315,11 +315,11 @@ undefined1 FUN_fffe5fdd(void)
 
 {
   uint uVar1;
-  radio_mode rVar2;
+  byte bVar2;
   undefined1 uStack_4;
   
-  rVar2 = vfo_mode(g_opstate.active_vfo);
-  uVar1 = (uint)rVar2;
+  bVar2 = vfo_mode(g_opstate.active_vfo);
+  uVar1 = (uint)bVar2;
   if ((uVar1 - 6 < 2) || (uVar1 == 10 || uVar1 == 0xb)) {
     uStack_4 = 1;
   }
@@ -335,10 +335,10 @@ undefined1 FUN_fffe5fdd(void)
 bool FUN_fffe600f(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_RX);
-  return (pvVar1->flags3 & 8) != 0;
+  pbVar1 = vfo_rec_ptr(0);
+  return (pbVar1[3] & 8) != 0;
 }
 
 
@@ -349,18 +349,18 @@ void FUN_fffe602e(void)
 {
   uint uVar1;
   vfo_side vVar2;
-  radio_mode rVar3;
+  byte bVar3;
   byte bVar4;
   
   vVar2 = g_opstate.active_vfo;
-  rVar3 = vfo_mode(VFO_RX);
+  bVar3 = vfo_mode(0);
   bVar4 = vfo_is_memory(vVar2);
   if (bVar4 == 1) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,200);
     return;
   }
-  uVar1 = (uint)rVar3;
+  uVar1 = (uint)bVar3;
   if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
     PTR_g_ui_00025d7c->mic_key_hold = 1;
     swtimer_start(0x40,10);

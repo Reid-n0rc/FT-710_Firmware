@@ -5,15 +5,15 @@
 
 /* -----------------------------------------------------------------------------
  * ver_main_ext1 @ fff94bd9  (12 bytes, 1 callers, export file fff94851_fff95bf4.c)
- * Purpose: Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660)
- *     is set; build date/time (#205) [fact]
+ * Purpose: Returns 0xFFFFFF10, the ROM string `"2101"`, shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE
+ *     (0x4660) is set (#205) [fact]; its meaning is open (see above)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/eeprom.md
  */
 // ===== ver_main_ext1 @ fff94bd9 (12 bytes)
 
-/* Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE
-   (0x4660) is set [fact]; build date/time [guess] (#205) */
+/* Returns 0xFFFFFF10, ROM string "2101", shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE
+   (0x4660) is set [fact: MAIN image]; meaning open (#205) */
 
 undefined4 ver_main_ext1(void)
 
@@ -24,15 +24,15 @@ undefined4 ver_main_ext1(void)
 
 /* -----------------------------------------------------------------------------
  * ver_main_ext2 @ fff94be5  (12 bytes, 1 callers, export file fff94851_fff95bf4.c)
- * Purpose: Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set (#205)
- *     [fact]
+ * Purpose: Returns 0xFFFFFF20, the ROM string `"24-02-16"` (the release date, as in the SFL header), shown in SOFT
+ *     VERSION when DBG MODE ENABLE (0x4660) is set (#205) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/eeprom.md
  */
 // ===== ver_main_ext2 @ fff94be5 (12 bytes)
 
-/* Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set
-   [fact] (#205) */
+/* Returns 0xFFFFFF20, ROM string "24-02-16" (release date, = SFL header [DATE] 2024/02/16), shown
+   in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205) */
 
 undefined4 ver_main_ext2(void)
 
@@ -242,7 +242,7 @@ void eeprom_save_opstate(void)
 
 /* One band-stack entry to EEPROM 0x112/0xDBA + level*0x438 + band*0x5A */
 
-void eeprom_save_bandstack(vfo_side param_1,band_idx param_2,byte param_3,uint param_4)
+void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint param_4)
 
 {
   char cVar1;
@@ -251,7 +251,7 @@ void eeprom_save_bandstack(vfo_side param_1,band_idx param_2,byte param_3,uint p
   local_a = 0x112;
   cVar1 = supply_undervolt_check();
   if (cVar1 != '\x01') {
-    if (param_1 != VFO_A) {
+    if (param_1 != '\0') {
       local_a = 0xdba;
     }
     eeprom_hdr_update(0);
@@ -1377,8 +1377,10 @@ byte eeprom_spi_rx(void)
 
 /* -----------------------------------------------------------------------------
  * dest_jumper_apply @ fffb3ba6  (363 bytes, 2 callers, export file fffb2fc0_fffb4c45.c)
- * Purpose: Swaps between paired destination codes by `jp_p51_get`()` (a hardware option?) [guess]
- * Tag: [guess]
+ * Purpose: Swaps between paired destination codes (restricted ↔ wide TX coverage) by `jp_p51_get`, the P51 input on
+ *     net `JP_P51` (schematic, peripherals.md); runs only from `displink_rx_F0_hello` for start modes 1 and 7 fact,
+ *     see [tx-protection.md]
+ * Tag: [fact]
  * Doc: ../../../docs/code/main/eeprom.md
  * Also on: tx-protection.md
  */
@@ -1761,7 +1763,7 @@ void bandstack_save(void)
   
   local_13 = g_opstate.active_vfo == VFO_A;
   if (local_13) {
-    uVar1 = vfo_freq(VFO_RX,VFO_A);
+    uVar1 = vfo_freq(0,0);
     g_opstate.band_a = band_of_freq(uVar1);
     pvStack_4 = &g_opstate.vfo_a;
     bStack_12 = bandstack_level_a[g_opstate.band_a];
@@ -1769,7 +1771,7 @@ void bandstack_save(void)
     bStack_11 = g_opstate.band_a;
   }
   else {
-    uVar1 = vfo_freq(VFO_RX,VFO_B);
+    uVar1 = vfo_freq(0,1);
     g_opstate.band_b = band_of_freq(uVar1);
     pvStack_4 = &g_opstate.vfo_b;
     bStack_12 = bandstack_level_b[g_opstate.band_b];

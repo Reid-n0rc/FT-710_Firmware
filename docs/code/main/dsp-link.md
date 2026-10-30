@@ -8,7 +8,7 @@ This page covers the MAIN (RX651) side of the control link to the IF DSP, **Q200
 register file at SRAM `0x20070000` (index = (addr − 0x20070000)/2), the same numbering T12b uses.
 
 The Ghidra names are the current ones in `ghidra/FT710_MAIN`. Function names are the names applied in Ghidra (`tools/ghidra/names_main.tsv`, merged by T17) and match `decomp/main/`; a name still in *italics* is a description that was not applied as a Ghidra name. Tags follow AGENTS.md:
-**[fact]** = seen in code or data at the address given, **[inference]**, **[guess]**.
+**[fact]** = seen in code or data at the address given, **[inference]** = evidence and reasoning given; unsettled points are written as open questions.
 
 ## Summary
 
@@ -230,8 +230,8 @@ The RX DSP group starts at 0x9AD1: IF NOTCH WIDTH, NB REJECTION, NB WIDTH, APF W
 | Reg | Shadow | Setter | Value | Source | Grp | Meaning |
 |---|---|---|---|---|---|---|
 | 6 | 0x1B63E | `dsp_set_demod` | 3 LSB/DATA-L/RTTY-L, 2 USB/DATA-U/RTTY-U/PSK, 1 CW-L, 0 CW-U, 8 AM, 9 FM | RX mode | B | demodulator / sideband select **[inference, high]** |
-| 8 | 0x1B640 | `dsp_set_r08` | route table: 0x2022 (states 3–7, 10–12), 0x2222 (13, 14), else 0x20B34 | route state; 0x20B34 = 0x2222 in TX, 0x3233 / 0x3263 by output select 0x20FCC in RX | A | AF routing word, nibble-coded **[guess]** |
-| 9 | 0x1B642 | `dsp_set_r09` | 2 in states 13, 14, else 0 | route state | A | TX audio path flag **[guess]** |
+| 8 | 0x1B640 | `dsp_set_r08` | route table: 0x2022 (states 3–7, 10–12), 0x2222 (13, 14), else 0x20B34 | route state; 0x20B34 = 0x2222 in TX, 0x3233 / 0x3263 by output select 0x20FCC in RX | A | **AF routing word**, one selector nibble per sink: n3 → block stream to the DISPLAY, n2 → second input of the adaptive (NLMS) pair, n1 → codec DAC channel 0, n0 → codec DAC channel 1; MAIN's values put RX block 3 on all sinks in RX (0x3263 moves DAC 0 to RX block 6) and TX block 2 in TX **[fact: HiFi4 `FUN_002249D0`, [ifdsp/control-link.md](../ifdsp/control-link.md#audio-routing-registers-8-9-10-77-fact)]** |
+| 9 | 0x1B642 | `dsp_set_r09` | 2 in states 13, 14, else 0 | route state | A | **TX audio to the SDR** selector (nibble n0 of the sink `FUN_00225BE8`, the FC2 I2S TX AF stream): 2 = TX-chain output 0x2CAFB0, so only voice TX (states 13/14) feeds the SDR's AF input; 0 = nothing **[fact: [ifdsp/control-link.md](../ifdsp/control-link.md#where-the-sinks-go-151)]** |
 | 10 | 0x1B644 | `dsp_set_r0a` | 0x52 (0, 2, 8), 0x50 (1, 9), 2 (3, 4), 3 (5, 11, 12, 14), 0x22 (6, 7, 10, 13) | route state | A | input/route select **[inference]**. T12b: the M33 also writes codec reg P1/0x37 from it (low nibble 1 → IN1R); no value MAIN sends has low nibble 1 **[fact]** |
 | 0x0C | 0x1B646 | `dsp_set_r0c` | 0 | constant | C | DSP: top nibble ≠ 1 keeps the output mute on GPIO P0_4 (`regfile_gpio_sel`); low nibble configures the adaptive (NLMS) blocks `FUN_002233FC`/`FUN_00223734` (bit 0 copied as their enable, a change resets their state); bit 8 tested by `FUN_0022309C` **[fact: DSP reads]**. MAIN's 0 = mute by P0_4, adaptive blocks off **[inference]** |
 | 0x0D, 0x0E | 0x1B648, 0x1B64A | `dsp_set_r0d`, `dsp_set_r0e` | 0xF000 in state 6, else 0 | route state | A | **gain in dB of codec DAC channel 1 / channel 0** (the two routing outputs): `FUN_00224814` converts each with 10^(x/20) for `FUN_00224604`. 0xF000 = −4096 dB, i.e. both codec outputs muted in state 6 **[fact: DSP use]** |
@@ -258,7 +258,7 @@ The RX DSP group starts at 0x9AD1: IF NOTCH WIDTH, NB REJECTION, NB WIDTH, APF W
 | 0x47 | 0x1B696 | `dsp_set_lcut` | n=0 → 0; else (100 + 50(n−1)) \| (slope+1)<<12 | LCUT FREQ/SLOPE (0x9A30/31 SSB, …), or 0x20B5E/5F | B | LCUT |
 | 0x48, 0x4B, 0x4E | 0x1B698, 0x1B69A, 0x1B69C | `dsp_set_tone_freq`(0..2)` | 200 / 400 / 1200 Hz \| 0x1000 | constants | B | AF tone band centre **[inference]** |
 | 0x49, 0x4C, 0x4F | 0x1B69E, 0x1B6A0, 0x1B6A2 | `dsp_set_tone_gain`(0..2)` | signed | RX mode block AF BASS / MIDDLE / TREBLE (0x9A2C/2B/2A SSB, …) | B | AF tone gains (−20..+10) |
-| 0x4A, 0x4D, 0x50 | 0x1B6A4, 0x1B6A6, 0x1B6A8 | `dsp_set_tone_type`(0..2)` | 2 / 1 / 1 | constants | B | AF tone band type **[guess]** |
+| 0x4A, 0x4D, 0x50 | 0x1B6A4, 0x1B6A6, 0x1B6A8 | `dsp_set_tone_q(0..2)` | 2 / 1 / 1 (the same in every mode) | constants | B | **Q of the BASS / MIDDLE / TREBLE peaking band**: the HiFi4's `rx_eq_band_update` (0x220790) reads the third register of each triple, maps 0 to 0.5, clamps 1..10 and divides by it as Q **[fact: decomp/ifdsp/hifi4/0021f7ec_00222244.c]** (renamed from `dsp_set_tone_type`) |
 | 0x52 | 0x1B6AC | `dsp_set_am_notch` | AM modes only: freq·10 \| 0x1000 (0x9AD1=0) or \| 0x2000; else 0 | RX VFO AM manual-notch flag rec+0x32 bit7 and freq rec+0x36/37 (`BP`), IF NOTCH WIDTH 0x9AD1 | B | manual notch in AM. Other modes are not sent to the DSP (probably done in the SDR FPGA) **[inference]** |
 | 0x62 | 0x1B6C2 | `dsp_set_agc` | per-mode AGC byte bit6 (AGC on); forced 1 while timer 0x2A runs | RX VFO AGC byte (`GT`) | B | AGC on |
 | 0x66 | 0x1B6CA | `dsp_set_agc` (after 0x62) | 20·n + 20 ms for the selected speed (bits 4–5: 1 FAST, 2 MID, 3 SLOW); 20 ms while timer 0x2A runs; during scan (0x20F1C or 0x20F6F) 200, or 40 (AM/FM/DATA-FM), or 4 | AGC FAST/MID/SLOW DELAY of the mode block (0x9A2D..2F SSB, …), or 0x20B5B..5D | B | AGC decay time |
@@ -291,7 +291,7 @@ The RX DSP group starts at 0x9AD1: IF NOTCH WIDTH, NB REJECTION, NB WIDTH, APF W
 | 0x3A | 0x1B684 | `dsp_set_fm_flag` | 1 in FM modes | PTT VFO mode | A | bit 0 switches in an 8-section IIR (`iir_cascade_init(…, 8, 0x237240, …)`) in the TX block `FUN_00222D34`, and a filter in the RX block `FUN_00220B5C` **[fact]**: FM pre-/de-emphasis **[inference]** |
 
 Shadows that exist in `dsp_shadow_store` but that no setter writes: regs 0x10, 0x54, 0x55, 0x57, 0x58, 0x60, 0x64, 0x65 **[fact]**
-(probably left over from removed features **[guess]**).
+The DSP does read some of them: 0x10 (output / TX-audio mute bits, `FUN_00225DC4`), 0x54 / 0x55 (high-/low-cut of the AESS branch B), 0x57 / 0x58 (RX AF peak limiter), so those stay at their DSP defaults (off) **[fact: [ifdsp/control-link.md](../ifdsp/control-link.md)]**. Open: why MAIN keeps shadows for registers it never writes; would be settled by a MAIN version that writes them, or by Yaesu documentation.
 
 Decompile caveat **[fact]**: setters `dsp_set_vox_gain`, `dsp_set_hcut`, `dsp_set_lcut` and `dsp_set_cw_pitch` show loads such as
 `*(short *)(n - 1)` or `*(byte *)(100 - x)`. These are `MOVU.B/W Rs,Rd` register zero-extends that the RX SLEIGH module
@@ -342,9 +342,11 @@ returns with P72 still high and the DSP in ISP mode; the radio is presumably res
 - SCR is never set again, so TE/RE stay off. The ISR globals (count 0x1FA48 / 0x1FA4A / 0x1FA4C, pointers 0x21054 / 0x21058)
   are written only by the two ISRs; there is no `R_SCI7_Serial_Send/Receive` and no other reference to the SCI7 registers
   (0x8A0E0..) **[fact: decomp search]**.
-- So **SCI7 carries no traffic in V01-12**. The DSP control traffic uses SCI4 instead. The "C4" bus name and its
-  `C4_BUSY_DSP`/`C4_BOOT`/`C4_RESET` lines (service manual p17) suggest SCI7 was meant for the RT685 earlier in the design
-  **[guess]**.
+- So **SCI7 carries no traffic in V01-12**. The DSP control traffic uses SCI4 instead. SCI7's pins carry the nets
+  `C4_UMOSI`/`C4_UMISO`, part of the "C4" bus with `C4_BUSY_DSP`/`C4_BOOT`/`C4_RESET` (service manual p17) **[fact: schematic,
+  [peripherals.md](peripherals.md)]**. Open: which device the C4 bus reaches (hardware.md's RT685 reading is an unconfirmed
+  inference) and why SCI7 is set up but never started; would be settled by tracing the C4 nets past p17 in the service manual
+  or a continuity check on the board.
 
 ## Open points
 
@@ -400,7 +402,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFF9ED0E | `dsp_set_lcut` |  | reg 0x47: LCUT freq (100+50(n-1)) \| slope<<12 **[inference]** |
 | 0xFFF9EF34 | `dsp_set_tone_freq` |  | regs 0x48/0x4B/0x4E: AF tone band frequency 200/400/1200 Hz \| 0x1000 **[inference]** |
 | 0xFFF9F0B1 | `dsp_set_tone_gain` |  | regs 0x49/0x4C/0x4F: AF BASS/MIDDLE/TREBLE GAIN (signed) **[inference]** |
-| 0xFFF9F291 | `dsp_set_tone_type` |  | regs 0x4A/0x4D/0x50: AF tone band type 2/1/1 **[inference]** |
+| 0xFFF9F291 | `dsp_set_tone_q` |  | regs 0x4A/0x4D/0x50: Q of the three AF tone bands, constant 2/1/1 **[fact: HiFi4 `rx_eq_band_update`]** (was `dsp_set_tone_type`) |
 | 0xFFF9F400 | `dsp_set_r51` |  | reg 0x51 = 0 (once) **[inference]** |
 | 0xFFF9F430 | `dsp_set_am_notch` |  | reg 0x52: manual notch freq \| width<<12 (AM only) **[inference]** |
 | 0xFFF9F4C8 | `dsp_set_ctcss_dec` |  | reg 0x53: RX tone index+1 \| 0x1000 (FM, tone on); sets 0x20B72 **[inference]** |

@@ -122,7 +122,7 @@ uint FUN_fff9c6ab(void)
   uint freq;
   undefined4 uStack_10;
   
-  freq = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+  freq = vfo_freq(0,2);
   bVar1 = freq_range_index(freq);
   if (g_ui.transmitting == 0) {
     uStack_10 = 0x9bca;
@@ -673,12 +673,12 @@ void freq_cache_update(void)
         PTR_g_ui_00025d38->dsp_knob_apf = 0;
       }
     }
-    uVar4 = vfo_freq_clar(VFO_TX,VFO_SIDE_SEL);
+    uVar4 = vfo_freq_clar(1,2);
     uVar4 = tx_freq_repeater_shift(uVar4);
     PTR_g_ui_00025d38->freq_tx = uVar4;
-    uVar4 = vfo_freq_clar(VFO_RX,VFO_A);
+    uVar4 = vfo_freq_clar(0,0);
     PTR_g_ui_00025d38->freq_a = uVar4;
-    uVar4 = vfo_freq_clar(VFO_RX,VFO_B);
+    uVar4 = vfo_freq_clar(0,1);
     PTR_g_ui_00025d38->freq_b = uVar4;
     if (PTR_g_ui_00025d38->transmitting == 0) {
       if (g_opstate.active_vfo == VFO_A) {
@@ -921,9 +921,9 @@ void dsp_link_poll(void)
          ((((dsp_set_tone_gain('\0'), DAT_00001c5e == '\0' &&
             (dsp_set_tone_gain('\x01'), DAT_00001c5e == '\0')) &&
            (dsp_set_tone_gain('\x02'), DAT_00001c5e == '\0')) &&
-          ((dsp_set_tone_type('\0'), DAT_00001c5e == '\0' &&
-           (dsp_set_tone_type('\x01'), DAT_00001c5e == '\0')))))))) &&
-       ((dsp_set_tone_type('\x02'), DAT_00001c5e == '\0' &&
+          ((dsp_set_tone_q('\0'), DAT_00001c5e == '\0' &&
+           (dsp_set_tone_q('\x01'), DAT_00001c5e == '\0')))))))) &&
+       ((dsp_set_tone_q('\x02'), DAT_00001c5e == '\0' &&
         (((((dsp_set_am_notch(), DAT_00001c5e == '\0' && (dsp_set_ctcss_dec(), DAT_00001c5e == '\0')
             ) && (dsp_set_r56(), DAT_00001c5e == '\0')) &&
           ((dsp_set_agc(), DAT_00001c5e == '\0' &&
@@ -1006,11 +1006,11 @@ ushort dsp_status1_raw(void)
 byte dsp_fm_noise(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   byte bVar2;
   
-  rVar1 = vfo_mode(VFO_RX);
-  if (((rVar1 == MODE_FM_N) || (bVar2 = DAT_00001c60, rVar1 == MODE_DATA_FM_N)) &&
+  bVar1 = vfo_mode(0);
+  if (((bVar1 == 7) || (bVar2 = DAT_00001c60, bVar1 == 0xb)) &&
      (bVar2 = DAT_00001c60 << 1, 0xff < (uint)DAT_00001c60 * 2)) {
     bVar2 = 0xff;
   }
@@ -1229,36 +1229,36 @@ void dsp_read_status4(void)
 void dsp_set_demod(void)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   dsp_demod dStack_2;
   
-  rVar1 = vfo_mode(VFO_RX);
-  switch(rVar1) {
-  case MODE_LSB:
-  case MODE_DATA_L:
-  case MODE_RTTY_L:
+  bVar1 = vfo_mode(0);
+  switch(bVar1) {
+  case 0:
+  case 8:
+  case 0xc:
     dStack_2 = DSP_DEMOD_LSB;
     break;
-  case MODE_USB:
-  case MODE_DATA_U:
-  case MODE_RTTY_U:
-  case MODE_PSK:
+  case 1:
+  case 9:
+  case 0xd:
+  case 0xe:
     dStack_2 = DSP_DEMOD_USB;
     break;
-  case MODE_CW_L:
+  case 2:
     dStack_2 = DSP_DEMOD_CW_L;
     break;
   default:
     dStack_2 = DSP_DEMOD_CW_U;
     break;
-  case MODE_AM:
-  case MODE_AM_N:
+  case 4:
+  case 5:
     dStack_2 = DSP_DEMOD_AM;
     break;
-  case MODE_FM:
-  case MODE_FM_N:
-  case MODE_DATA_FM:
-  case MODE_DATA_FM_N:
+  case 6:
+  case 7:
+  case 10:
+  case 0xb:
     dStack_2 = DSP_DEMOD_FM;
   }
   if (dsp_demod_0001b63e == dStack_2) {

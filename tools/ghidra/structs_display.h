@@ -18,7 +18,8 @@
  * DISPLAY is a little-endian ARM (RZ/A1H, armcc). The kernel is NORTi 4 (MiSPO, uITRON 4.0; T23d), whose sources are
  * not public: the uITRON 4.0 packet layouts (T_CTSK, T_CISR, ...) are from the spec, the control-block layouts from the
  * kernel code here. Unknown fields that code accesses are f_0xOFF_u8/u16/u32 (width from the p-code).
- * Tags as in AGENTS.md: [fact] (seen in code or data, with the address or function), [inference], [guess].
+ * Tags as in AGENTS.md: [fact] (seen in code or data, with the address or function) or [inference] (evidence given);
+ * an unsupported meaning is written as "open".
  */
 
 #include <stdint.h>
@@ -78,8 +79,8 @@ struct knl_tcb {  /* size 0x28: task control block, allocated by itron_acre_tsk 
     uint8_t state;                               /* +0x005 [fact] 0 dormant (act_tsk starts it, chg_pri E_OBJ), 0x10 ready, 0x32 dly_tsk, 0x90/0x92 sem, 0x94/0x96 mutex, 0xD0/0xD2 mpf; bit 1 = with time-out (sig_sem calls knl_timeout_remove) */
     uint8_t q_next;                              /* +0x006 [fact] next task id in the circular queue the task is in (FUN_20153A38 links it; rot_rdq makes it the queue head) */
     uint8_t q_prev;                              /* +0x007 [fact] previous task id in that queue (FUN_201538D4 inserts before the head, FUN_201539EC unlinks) */
-    uint8_t f_0x08_u8;                           /* +0x008 [fact: accessed] cleared when the task starts (act_tsk) */
-    uint8_t f_0x09_u8;                           /* +0x009 [fact: accessed] cleared at start; sig_sem and chg_pri take another path while it is set (suspend count [guess]) */
+    uint8_t f_0x08_u8;                           /* +0x008 [fact] wake-up request count: cleared when the task starts (act_tsk); itron_iwup_tsk 0x20152FAC increments it (E_QOVR at 255) when the task is not sleeping, itron_tslp_tsk 0x201525F8 consumes one instead of sleeping */
+    uint8_t f_0x09_u8;                           /* +0x009 [fact: accessed] cleared at start; sig_sem and chg_pri take another path while it is set. Suspend count [fact: itron_sus_tsk 0x20151934 increments it, E_QOVR at 255, and suspends the task when it becomes 1] */
     uint8_t tmo_next;                            /* +0x00A [fact] next task id in the time-out wheel slot (knl_timeout_add) */
     uint8_t tmo_prev;                            /* +0x00B [fact] previous task id in the time-out wheel slot (knl_timeout_add) */
     uint32_t tmo_due;                            /* +0x00C [fact] time-out tick: tmout + knl_sys.tick_lo (knl_timeout_add), wheel slot = tmo_due & knl_sys.tmo_mask */
@@ -87,7 +88,7 @@ struct knl_tcb {  /* size 0x28: task control block, allocated by itron_acre_tsk 
     uint8_t *stk;                                /* +0x014 [fact] stack (T_CTSK.stk or allocated; acre_tsk fills it with the task id) */
     struct t_ctsk *ctsk;                         /* +0x018 [fact] creation packet, or its copy behind the TCB when it is not in the image (acre_tsk, knl_addr_in_image) */
     uint32_t f_0x1c_u32;                         /* +0x01C [fact: accessed] 0 at create (acre_tsk) */
-    uint32_t f_0x20_u32;                         /* +0x020 [fact: accessed] 0 at start (act_tsk); wake-up count [guess] */
+    uint32_t f_0x20_u32;                         /* +0x020 [fact: accessed] 0 at start (act_tsk); no read of it in decomp/display (only stores of 0). Not the wake-up count, which is +0x008 [fact]. Open: its use; would be settled by a kernel path that reads TCB+0x20 */
     int16_t mtx_held;                            /* +0x024 [fact] id of the last mutex the task locked; that mutex's +0x08 holds the one before (tloc_mtx, chg_pri walks the list) */
     uint8_t act_cnt;                             /* +0x026 [fact] queued activations: act_tsk on a running task increments it, E_QOVR at 0xFF */
     int8_t bpri;                                 /* +0x027 [fact] base priority: acre_tsk itskpri, chg_pri sets it; tloc_mtx checks a ceiling against it */
@@ -135,7 +136,7 @@ struct knl_sys {  /* size 0x58: NORTi system variables 0x208003A8..0x208003FF, a
     uint32_t tim_base_lo;                        /* +0x018 0x208003C0 [fact] SYSTIM offset, low 32 bits (itron_get_tim) */
     uint16_t tick_hi;                            /* +0x01C 0x208003C4 [fact] tick counter, high 16 bits (itron_get_tim) */
     uint32_t tick_lo;                            /* +0x020 0x208003C8 [fact] tick counter, low 32 bits: the time-out base (knl_timeout_add) and SYSTIM (itron_get_tim) */
-    uint32_t f_0x24_u32;                         /* +0x024 0x208003CC [fact: accessed] dis_dsp returns E_CTX when bit 7 is set, unl_cpu clears bits 6-7 (saved interrupt mask [guess]) */
+    uint32_t f_0x24_u32;                         /* +0x024 0x208003CC [fact: accessed] dis_dsp returns E_CTX when bit 7 is set, unl_cpu clears bits 6-7. Holds PSR bits 7-6 (the ARM I/F interrupt-disable bits) [fact: FUN_201567D4 stores spsr & 0xC0 here and returns with I set; knl_svc_return 0x201567F4 and knl_dispatch OR it back into the PSR]; so it is the interrupt mask kept across service calls while the CPU is locked [inference] */
     uint32_t f_0x28_u32;                         /* +0x028 0x208003D0 [fact: accessed] the idle loop in main stores an inverted value here */
     int32_t last_ercd;                           /* +0x02C 0x208003D4 [fact] error code of the last failed service call: every itron_* stores E_xxx here before returning it */
     uint8_t f_0x30_u8;                           /* +0x030 0x208003D8 [fact: accessed] chg_pri stores the new priority of the running task here */

@@ -8,7 +8,7 @@ Part of T11 (document the DISPLAY firmware). Deliverable: `docs/code/display/REA
 ## Plan
 Find the functions for this subsystem from strings, peripheral registers and call graphs in `decomp/display/`; name them in
 `tools/ghidra/names_display.tsv`, re-apply with `ApplyNames.java` and re-export `decomp/display/` (separate commit); write the page with function
-tables (address, Ghidra name, inferred name, purpose), data structures, globals and Mermaid figures; tag claims [fact]/[inference]/[guess].
+tables (address, Ghidra name, inferred name, purpose), data structures, globals and Mermaid figures; tag claims [fact]/[inference] (or an open question; the former guess tag is retired).
 
 ## Findings
 - Pages: `docs/code/display/README.md` (overview, block diagram, boot flowchart, memory map summary, subsystem index) and

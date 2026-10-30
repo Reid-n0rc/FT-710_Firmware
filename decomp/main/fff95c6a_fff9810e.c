@@ -1295,17 +1295,17 @@ byte FUN_fff97430(void)
   char cVar2;
   byte bVar3;
   byte bVar4;
-  vfo_rec *pvVar5;
+  byte *pbVar5;
   int iVar6;
   int iVar7;
   char *pcVar8;
   byte bStack_a;
   char cStack_9;
   
-  pvVar5 = vfo_rec_ptr(VFO_TX);
-  bVar3 = pvVar5->mode & 0xf;
-  iVar6 = FUN_fff9752b(pvVar5);
-  iVar7 = keyer_mode_class(pvVar5);
+  pbVar5 = vfo_rec_ptr(1);
+  bVar3 = *pbVar5 & 0xf;
+  iVar6 = FUN_fff9752b(pbVar5);
+  iVar7 = keyer_mode_class(pbVar5);
   if ((iVar7 == 0) || (g_opstate.keyer_on != 1)) {
     cVar2 = '\0';
   }
@@ -1322,7 +1322,7 @@ byte FUN_fff97430(void)
   else {
     cStack_9 = '\x01';
   }
-  bVar4 = mode_block_byte0(pvVar5);
+  bVar4 = mode_block_byte0(pbVar5);
   bStack_a = ((bVar4 & 2) != 0) << 2 | cStack_9 << 4 | cVar2 << 5 | (iVar6 != 0) << 6;
   if ((bVar3 == 6) || (bVar3 == 7)) {
     bVar1 = true;
@@ -1343,7 +1343,7 @@ byte FUN_fff97430(void)
     bVar1 = false;
   }
   if (bVar1) {
-    bStack_a = bStack_a | (pvVar5->flags2 >> 2 & 3) + 1;
+    bStack_a = bStack_a | (pbVar5[2] >> 2 & 3) + 1;
   }
   return bStack_a;
 }
@@ -1498,7 +1498,7 @@ byte scope_span_index(byte param_1)
   uint freq;
   byte bStack_9;
   
-  freq = vfo_freq_clar(VFO_RX,param_1);
+  freq = vfo_freq_clar(0,param_1);
   bVar1 = freq_range_index(freq);
   if (bVar1 == 0xff) {
     bStack_9 = 0;
@@ -2048,7 +2048,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
   byte bStack_5;
   byte local_4;
   byte local_2;
-  vfo_side local_1;
+  byte local_1;
   
   bVar2 = param_2 & 0xf0;
   local_4 = bVar2 | 0xd4;
@@ -2089,7 +2089,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
     if (g_opstate.split_on == 1) {
       bVar1 = PTR_g_ui_00025d38->split_long_on != 0;
       if (g_opstate.active_vfo == VFO_A) {
-        if ((bVar1) || (local_1 != VFO_B)) {
+        if ((bVar1) || (local_1 != 1)) {
           bVar1 = false;
         }
         else {
@@ -2098,7 +2098,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         if (bVar1) {
           local_4 = local_4 & 0xf0 | 5;
         }
-        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == VFO_A)) {
+        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == 0)) {
           bVar1 = true;
         }
         else {
@@ -2109,7 +2109,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         }
       }
       else {
-        if ((bVar1) || (local_1 != VFO_A)) {
+        if ((bVar1) || (local_1 != 0)) {
           bVar1 = false;
         }
         else {
@@ -2118,7 +2118,7 @@ byte FUN_fff97ebf(char param_1,byte param_2)
         if (bVar1) {
           local_4 = local_4 & 0xf0 | 5;
         }
-        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == VFO_B)) {
+        if ((PTR_g_ui_00025d38->split_long_on == 1) && (local_1 == 1)) {
           bVar1 = true;
         }
         else {
@@ -2130,15 +2130,15 @@ byte FUN_fff97ebf(char param_1,byte param_2)
       }
     }
     if (g_opstate.active_vfo == VFO_A) {
-      if ((PTR_g_ui_00025d38->clar_flags_a != 0) && (local_1 == VFO_B)) {
+      if ((PTR_g_ui_00025d38->clar_flags_a != 0) && (local_1 == 1)) {
         local_4 = local_4 & 0xf0 | 9;
       }
     }
-    else if ((PTR_g_ui_00025d38->clar_flags_b != 0) && (local_1 == VFO_A)) {
+    else if ((PTR_g_ui_00025d38->clar_flags_b != 0) && (local_1 == 0)) {
       local_4 = local_4 & 0xf0 | 9;
     }
   }
-  if (local_1 == VFO_A) {
+  if (local_1 == 0) {
     bStack_5 = g_opstate.vfo_a.flags5;
   }
   else {

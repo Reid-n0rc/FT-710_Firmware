@@ -6,8 +6,9 @@ Page numbers below are **PDF page numbers** (1-based). The manual's own labels a
 The schematic, block diagram and layout pages are vector drawings with no extractable text. They were read from
 cropped renders (`pdftoppm`). The parts lists (p24–46, p50–61, p64–71, p74) are text.
 
-Confidence tags: **[fact]** = printed in the manual; **[inference]** = follows from what is printed;
-**[guess]** = from outside knowledge or weak evidence, so verify it.
+Confidence tags: **[fact]** = printed in the manual or in a cited datasheet, or seen in the firmware or the netlist (the
+citation says which); **[inference]** = follows from cited evidence, with the reasoning stated. Anything without such support
+is written as an open question ("Open: …; settled by …"), not as a claim.
 
 ## Manual layout (p1)
 
@@ -36,10 +37,10 @@ documented anywhere in the manual (p6: it appears only as a box; none of its par
 | Ref | Part | Board | Role (manual label) | Architecture | SFL image |
 |---|---|---|---|---|---|
 | Q1001 | Renesas **R5F56514ADFB** (block diagram: "R5F56514AFFB") | MAIN | "MAIN CPU" (p6) | Renesas **RX651** (RXv2 core with FPU, 144-pin LFQFP) | **MC** (MAIN) |
-| Q6009 | Renesas **R7S721001VCBG** | DISPLAY | "CPU" (p6) | Renesas **RZ/A1H**: ARM **Cortex-A9** (ARMv7-A) with 10 MB on-chip SRAM [guess for the specs] | **PC** (DISPLAY) |
-| Q2002 | NXP **MIMXRT685SFVKB** | MAIN | "DSP MAIN/TX" (p6) | NXP **i.MX RT685**: ARM **Cortex-M33** (ARMv8-M) + Cadence **Tensilica HiFi 4** DSP (Xtensa) [core types are a guess from the part number] | **ID** (IFDSP) |
+| Q6009 | Renesas **R7S721001VCBG** | DISPLAY | "CPU" (p6) | Renesas **RZ/A1H**: ARM **Cortex-A9** (ARMv7-A) with 10 MB on-chip RAM [fact: HWM R01UH0403EJ0700 Table 1.1 pp1-2, 1-9; Table 1.2 p1-10] | **PC** (DISPLAY) |
+| Q2002 | NXP **MIMXRT685SFVKB** | MAIN | "DSP MAIN/TX" (p6) | NXP **i.MX RT685**: ARM **Cortex-M33** (ARMv8-M) + Cadence **Tensilica HiFi 4** DSP (Xtensa) [fact: firmware, the ID image holds ARMv8-M Thumb code that sets MSPLIM and Xtensa code with HiFi4 `ae_*` ops and rpmsg-lite platform `imxrt600_hifi4`; memory-maps.md, code/ifdsp/hifi4.md] | **ID** (IFDSP) |
 | (none) | ADC + FPGA, part numbers not given | SDR module (plugs into MAIN J2002/J3003) | "ADC/FPGA, Operating clock 125MHz, Divide 250MHz by 2" (p6) | Xilinx Artix-7 **XC7A50T** (IDCODE 0x0362C093, from bitstream, T08) | **SR** (SDR) |
-| Q1805 | Explore **EPF021M-YM** | MAIN | "MICRO CNTL" in the DVI/HDMI chain (p6) | small MCU of unknown core [guess] | none known (probably mask/OTP) |
+| Q1805 | Explore **EPF021M-YM** | MAIN | "MICRO CNTL" in the DVI/HDMI chain (p6) | not documented (manual: "MICRO CNTL", p6). Open: its core and whether it holds firmware; settled by an EPF021M datasheet | none: the four SFL tags map to the other four processors (below) **[fact]** |
 
 No processors were found on the PA or JACK units (their IC lists contain only regulators, op-amps, a DAC and shift
 registers: p56–57, p74).
@@ -51,7 +52,7 @@ registers: p56–57, p74).
 ### Q1001: main CPU, Renesas RX651 (image MC)
 - Part: **R5F56514ADFB** in the parts list, Yaesu P/N G1095803, side A, D3 (p36). The schematic also says R5F56514ADFB (p17).
   The block diagram prints "R5F56514AFFB" (p6), which is probably a drawing typo or a variant. **[fact]**
-- Package: 144-pin, with pin numbers up to 144 on the schematic (p17) **[fact]**. "FB" = 144-pin LFQFP **[guess, Renesas naming]**.
+- Package: 144-pin, with pin numbers up to 144 on the schematic (p17) **[fact]**. "FB" = LFQFP/144/0.50 **[fact: datasheet R01DS0276EJ0240 Figure 1.1 p26]**.
 - Memory: R5F56514**ADFB** = 512 KB code flash, 256 KB RAM, **no data flash**, no encryption (TSIP), no SDHI/SDSI, no dual bank, PLQP0144KA-B (144-pin LFQFP), −40 to +85 °C **[fact: datasheet R01DS0276EJ0240 Table 1.3 p19, Table 1.2 p12; T18]**. Data flash and the dual bank exist only on the 1.5/2 MB parts.
 - Clock: X1001 **24.000 MHz** crystal DSX321G, connected to P37/XTAL and P36/EXTAL (pins 20/22) (p46, p6, p17). **[fact]**
 - External EEPROM: Q1008 **ROHM BR25G256FVT-3GE2**, a 256 Kbit SPI EEPROM (p36, labelled "EEPROM" on p6) **[fact]**. It has its own
@@ -110,7 +111,10 @@ registers: p56–57, p74).
 - Flash: Q2008 **Winbond W25Q128JVSIM**, 128 Mbit (16 MB) QSPI NOR (parts list p37 and schematic p19). The block diagram instead
   shows "MT25QL128ABA1ESE" (Micron, also 128 Mbit) (p6), so the two are probably alternate parts. It connects to **FlexSPI A** (PIO1_18 SCLK, PIO1_19 SS0_N,
   PIO1_20..23 DATA0..3; nets `QFLS_*`) (p19). **[fact]**
-- No external RAM. The RT685 has 4.5 MB of on-chip SRAM **[guess]**.
+- No external RAM: the MAIN parts list has no RAM IC near the DSP (p37: Q2001 codec, Q2002 RT685, Q2008 flash, Q2011 PMIC,
+  Q2013 reset) **[fact]**. The firmware uses on-chip SRAM at 0x00080000–0x000A1EF8, 0x00200000–0x002383B3 and
+  0x20020000–0x200431DF ([memory-maps.md](memory-maps.md)) **[fact]**. Open: the RT685's total SRAM size; it is not printed in
+  the manual and no RT600 document is in `Manuals/`; settled by NXP's RT600 datasheet.
 - Boot configuration (p19, printed note): `BootConf_ISP[2:0]` on PIO1_15..17 (pins N3/M4/N4): "111 Serial Master Boot,
   110 Serial ISP, **011 FlexSPI A**". The `DSP_UPDATE` signal (through Q2010/Q2006) selects "L: Normal (FlexSPI) / H: Update (Serial ISP)". **[fact]**
   So in normal operation the code runs from the QSPI flash. For an update, the RT685 ROM serial ISP is used (UART on FC0): DISPLAY sends NXP
@@ -163,8 +167,8 @@ registers: p56–57, p74).
   not a part identification, so whether the two channels are one dual part (DC4KU) or two chips stays open. The constraint the part must meet
   is the netlist's: 14 LVDS data pairs captured DDR in bank 35 by a source-synchronous `adc_dco` clock, plus an LVDS sample clock
   `adc_clk` at 125 MHz ([code/sdr/netlist.md](code/sdr/netlist.md)) **[fact for the FPGA side]**. Several dual 14-bit 125 MSPS
-  converters with DDR LVDS outputs would fit; none is stated as the part, and the candidates are listed as **[guess]**es in
-  [Candidates (not confirmed)](#candidates-not-confirmed-171-191) below. The marking is the only way to settle it (#171); the two-channel front end in
+  converters with DDR LVDS outputs would fit; none is stated as the part, and the candidates are listed, with the
+  datasheet evidence for and against each, in [Candidates (not confirmed)](#candidates-not-confirmed-171-191) below. The marking is the only way to settle it (#171); the two-channel front end in
   the netlist is traced in #172 (where the channels are summed is still open).
 - **Yaesu's receiver diagram** (reproduced as Figure 1 of the DC4KU report in `Manuals/`): RX unit ATT → BPF → RF AMP → **divider**
   → **two A/D converters** → FPGA, which **sums** the two channels; a **D/A** in the SDR block makes the dithering signal fed into both
@@ -177,8 +181,9 @@ registers: p56–57, p74).
   drawing]**. It is drawn without its own part number, so it appears to come with the MAIN assembly CS2712704 (USA) / CS2712705 (EU)
   **[inference]**. It mates with the MAIN board through a board-to-board connector, and a short wire assembly **TT9207967** runs
   between the two boards **[fact for the drawing]**. That this board is the SDR module is an **[inference, strong]**: it is the only
-  separate board under MAIN, J2002 is labelled "SDR MODULE", and it is cooled the way an FPGA/ADC board would be. That TT9207967
-  carries the J3003 RF/analog lines (RX, TX, DITHER, SCOPE) while J2002 carries power, clocks and logic is a **[guess]**.
+  separate board under MAIN, J2002 is labelled "SDR MODULE", and it is cooled the way an FPGA/ADC board would be. Open: what TT9207967 connects. J3003 (SSL00-10S-1500, the RF/analog
+  lines RX, TX, DITHER, SCOPE) sits on side B, d4, the same side as J2002 (side B, b3) (p35) **[fact]**, but the exploded view gives
+  TT9207967 no "Connect to" note (p5) **[fact]**. Settled by a photo of the module and the cable's two ends.
 - Connections: J2002 = **Panasonic AXK6S60647YG, 60-pin board-to-board**, labelled "SDR MODULE" (p35, p19). J3003 (SSL00-10S,
   TX1_P/N, RX_P/N, DITHER, SCOPE_IN) carries the RF and analog lines (p6, p35). J2002 signals (p19):
   `SDR_SCLK/SS/MOSI/MISO` (SPI from the DISPLAY CPU), `SDR_UMOSI/UMISO` (UART to the MAIN CPU SCI5), `SDR_DBG_IN/OUT` ("UART DBG RX/TX"),
@@ -201,7 +206,8 @@ registers: p56–57, p74).
 **Nothing in this subsection is a part identification.** No public source names the ADC or the power-up SPI part, and only
 a photo of the IC markings on the module can settle either (#171, #191). This subsection lists the candidates that fit the
 recovered interfaces, with the evidence for and against each, so that a photo can confirm or rule them out quickly. Every part
-name here is a **[guess]**; the reasoning is **[inference]**.
+name here is a candidate only: each row states its evidence, and a part is either **ruled out [fact]** by a cited datasheet page
+or stays **open**.
 
 **Search, 2026-10-29 (no part number found) [fact].** Web searches for FT-710, FT-DX10 and FTDX101 SDR-module teardowns, board
 photos, parts lists and forum posts (groups.io `ftdx-10` and `FTDX101D`, eham, retailer and review pages) found no photo of the
@@ -262,7 +268,8 @@ words of **0x1F9**. 0x1F9 is the power-on default of the full-scale-current word
 DAC1/DAC2 FSC at 0x0B/0x0C and 0x0F/0x10 (Table 11, p21) and AD9122 I/Q DAC FS adjust at 0x40/0x41 and 0x44/0x45 (Table 10, p22)
 *(datasheet)*. Two LSB/MSB pairs holding the default full-scale word look like the full-scale registers of a **dual DAC**, which
 no ADC has. So the 1.8 V port may configure an **ADI DAC** with a 16-bit instruction (13-bit address) and full-scale registers at
-0x018-0x01B, perhaps the TX DAC on bank 34, rather than the ADC **[guess]**. If so, the ADC might be pin-strapped (LTC2145-14 has a
+0x018-0x01B rather than the ADC **[inference, weak]**: the evidence is the 0x1F9 word pairs alone, against it stand the
+netlist's reading of this port as the ADC's (3.3) and the DAC maps below. If so, the ADC might be pin-strapped (LTC2145-14 has a
 parallel programming mode, p27) or sit on the 3.3 V port. **The two follow-up DACs do not have that layout** *(datasheet)*:
 
 - **AD9737A/AD9739A** (`Manuals/ADI/AD9737A_AD9739A_RevD.pdf`): an 8-bit instruction header, R/W + A6:A0 (p40), so 16-bit frames,
@@ -273,15 +280,18 @@ parallel programming mode, p27) or sit on the 3.3 V port. **The two follow-up DA
   FSC word, at 0x20/0x21 (Table 17, p55). Its data port is **P0_D[13:0] and P1_D[13:0]**, two 14-bit DDR LVDS ports (p1): 28 pairs.
   **Ruled out** for the 1.8 V port and as the bank-34 DAC.
 
-So no datasheet read combines a 16-bit instruction with full-scale words at 0x018-0x01B. The lead stays a **[guess]**: it needs an
-ADI DAC whose SPI has 13-bit addresses, or the module's marking.
+So no datasheet read combines a 16-bit instruction with full-scale words at 0x018-0x01B **[fact]**. Open: which part the 1.8 V
+port configures; settled by the module's IC marking, or by finding an ADI DAC whose SPI has 13-bit addresses and full-scale words
+at 0x018-0x01B.
 
 ##### Power-up SPI part on R16/P17/N16 (#191)
 
 Constraint from the likeliest consumer, the bank-34 output bus (2.5 V LVDS): **16 data pairs** fed by one multiplier, a 17th ODDR pair fed
-from the inputs T13/P15, and an 18th pair held at 1 **[fact, routing]**. A 16-bit LVDS DAC with a data clock input and one static
-control pair (FRAME, SYNC or SELIQ) would use exactly 18 pairs; the 17th pair, gated by two inputs, could be a data clock that runs only
-while transmitting **[guess]**.
+from the inputs T13/P15, and an 18th pair held at 1 **[fact, routing]**. The 17th pair is a **forwarded clock**: its ODDR (OLOGIC_X1Y4) has D1 = D2 = 1
+with D2 inverted, so it drives 1 then 0 every clock, and only its output enable is logic, reached from the inputs T13 and P15
+**[fact: `build/sdr/netlist.json`, code/sdr/netlist.md 3.6]**. P15 most likely follows TX/RX (J2002 43 `TRX`, netlist.md 5.6)
+**[inference]**, so the clock may run only while transmitting; open until a simulation toggles T13/P15. 16 data pairs, a data clock
+and one static control pair (FRAME, SYNC or SELIQ) is the pair count of a 16-bit LVDS DAC interface **[inference]**.
 
 | Candidate | Fits | Does not fit (checked against every 3.3 V write) | Verdict |
 |---|---|---|---|
@@ -300,7 +310,9 @@ Reading **[inference]**: the reset in bit 1 of register 0x00 is TI's ADC serial-
 part read puts its reset in bit 5. So the 3.3 V part is more likely a TI device, or one that copies TI's serial port, than any
 ADI DAC read. None of the ten datasheets read has writable registers at 0x10-0x1D that fit the values (AD9739A comes closest, at
 0x12-0x14 only), so **no candidate matches**.
-The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**. Still open: the part needs the module's IC marking (#191).
+Whether the 3.3 V port configures the bank-34 converter is **open**: that converter has the shape of a 16-bit LVDS TX DAC
+(above) **[inference]**, but no DAC map read fits the writes, and the module's other parts are unknown. Settled by the module's IC
+marking (#191).
 
 ### USB / CAT path (MAIN, AF sheet p20)
 - J2602: USB **Type-B** jack (SUB-110HB-B2N, p35) → Q2607 **Cypress/Infineon CY7C65631-56LTXIT** USB 2.0 4-port hub (HX2VL),
@@ -361,7 +373,8 @@ The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**. Still op
 ### DVI/HDMI external display (MAIN, DVI sheet p18)
 - Q1801 **EP102C** ("LVDS RCV"), Q1803 **EP952** ("HDMI TRX"), Q1805 **EPF021M-YM** ("MICRO CNTL") with X1801 24 MHz (p37, p46, p6).
   The output connector is J1803 DVIR-25SIAAABH0, the "DISPLAY" DVI-type jack (p35, p6). LVDS from the DISPLAY CPU arrives over J6002/J1801 (p62). **[fact]**
-- The EPF021M is a small controller with its own firmware, which is not in any SFL image as far as we know **[guess]**.
+- No SFL image targets the EPF021M: the four images map to Q1001, Q6009, Q2002 and the SDR FPGA (image table below) **[fact]**.
+  Open: whether it runs firmware of its own (mask, OTP or flash); settled by an EPF021M datasheet or the chip's markings.
 
 ### MAIN power / reset
 - Q2013 BU4228FVE reset IC for the DSP (p6, p37). Q2011 MP5470GL PMIC for the DSP rails: 1.1 V VCORE, D1.8 V, D3.3 V, D5 V (p6). Q1028 NJM2835 → CPU3.3V (p6).
@@ -371,13 +384,18 @@ The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**. Still op
 ## DISPLAY unit (p62; parts p64–71)
 
 ### Q6009: display CPU, Renesas RZ/A1H (image PC)
-- Part: **R7S721001VCBG** (Yaesu P/N G1095582, side B, f2) (p67). The block diagram labels it "CPU" (p6). R7S7210**01** = RZ/A1H, "BG" = BGA (324-pin) **[guess for the decode]**.
-- External memory: **no SDRAM is in the parts list**, so the CPU runs from on-chip SRAM (10 MB on RZ/A1H) **[inference + guess]**.
+- Part: **R7S721001VCBG** (Yaesu P/N G1095582, side B, f2) (p67). The block diagram labels it "CPU" (p6). R7S721001VCBG = RZ/A1H, 324-pin BGA (PRBG0324GA-A), −40 to +85 °C **[fact: HWM R01UH0403EJ0700 Table 1.2 p1-10]**.
+- External memory: **no RAM IC is in the DISPLAY parts list** (its ICs are Q6002/6004–6010/6015/6018/6020: reset, regulators, PMIC,
+  touch controller, CPU, backlight, RTC, flash, FT4222H; p67) **[fact]**, so the CPU runs from its 10 MB on-chip RAM (HWM Table 1.1
+  p1-9) **[inference]**. The firmware uses 0x20000000–0x209FFFFF, the 10 MB on-chip RAM space ([memory-maps.md](memory-maps.md)) **[fact]**.
 - Flash: Q6018 **Winbond W25Q128JVFIQ**, 128 Mbit (16 MB) SPI NOR (two lot codes listed, -YR2340 / -YR2513) (p67). It connects to the
   SPI multi-I/O bus controller (SPIBSC0) pins P9_2..P9_7 (`QF_CLK`, `QF_CSn`, `QF_DAT0..3`), plus `QF_RESETn` on P11_2 (p62). **[fact]**
 - Boot pins: `BOOT0`/`BOOT1` (P0_0/P0_1), `BOOT2`, `MD_CLK`, `MD_CLKS` set by resistor straps R6084–R6104. Some of these are marked
-  "***" (not fitted), and the drawing notes "MD_CLK:1" (p62). I could not resolve exactly which straps are fitted. Because the flash is on SPIBSC0, the board most likely uses
-  **RZ/A1 boot mode 1, serial flash boot**, which maps the flash at 0x18000000 **[inference/guess]**.
+  "***" (not fitted), and the drawing notes "MD_CLK:1" (p62). I could not resolve exactly which straps are fitted. Serial-flash boot is RZ/A1 **boot mode 3**
+  (MD_BOOT2..0 = 1, 0, 1), only from SPI multi-I/O channel 0 on P9_2..P9_5; its on-chip boot program branches to 0x18000000
+  **[fact: HWM Table 3.1 p3-1, §3.5.2 p3-4]**. (Earlier versions of this page said "boot mode 1", which is CS0 32-bit boot.) The board
+  uses boot mode 3 **[inference]**: the flash is on exactly those pins (p62), the parts list has no CS0 memory, and `Reset_Handler`
+  handles running from the 0x18000000 window ([memory-maps.md](memory-maps.md)).
 - Clocks: X6001 **48 MHz** on USB_X1/X2 (also the CPU clock source in clock mode MD_CLK=1), X6002 **27 MHz** on VIDEO_X1/X2,
   X6003 **32.768 kHz** for the RTC, X6004 **12 MHz** for the FT4222H (p71, p62). EXTAL is not connected (p62). **[fact]**
   `AUDIO_X1` and `RTC_X1` of the RZ/A1H are grounded, so the on-chip audio clock and RTC are not used (the S-35190A is the RTC) (p62) **[fact]**.
@@ -467,8 +485,8 @@ The TX DAC behind bank 34 stays the likeliest **consumer** **[guess]**. Still op
 | FT-710_IFDSP | ID | Q2002 i.MX RT685 | Labelled "DSP MAIN/TX". It takes the RX_IF / TX_AF I2S streams (p6, p19). It is the only DSP. Its 16 MB QSPI flash and FlexSPI boot need an image. | High |
 | FT-710_SDR | SR | FPGA in the SDR module | Labelled "SDR MODULE ADC/FPGA" (p6). It has `SDR_UPDATE` and its own JTAG (p19). Decoded as a Xilinx XC7A50T bitstream (T08). | High |
 
-Side note for T03/T04 **[guess]**: each SFL header's length field equals the file size. MAIN is 1,355,160 bytes, about 2.6× the guessed
-512 KB code flash. That ratio fits a text encoding (for example Motorola S-records with 32-byte data lines, about 2.4×) better than raw binary.
+Side note for T03/T04: each SFL header's length field equals the file size, and the MAIN plaintext is a Motorola S-record
+(S0/S3/S7) file, which explains why MAIN (1,355,160 bytes) is about 2.6× its 512 KB code flash **[fact: [sfl-format.md](sfl-format.md)]**.
 
 ## Implications for Ghidra (T05–T08)
 
@@ -477,9 +495,9 @@ Ghidra 12.1.4 as installed (Homebrew) ships **ARM, Xtensa**, M16C, SuperH, V850,
 
 | Task | Image | Language ID | Probable load / flash base | Notes |
 |---|---|---|---|---|
-| T05 | MAIN (MC) | **none in stock Ghidra.** RX needs a third-party SLEIGH module (community "RX" / RXv2 extensions exist) **[guess]** | RX651 code flash is mapped at the top of the 32-bit space. For 512 KB that is **0xFFF80000–0xFFFFFFFF**, with the reset vector at 0xFFFFFFFC and the data flash at 0x00100000 **[guess, from the RX65N/651 memory map]** | Little-endian instructions. Get an RX module first (follow-up). Fallback: the RX disassembler in Renesas CC-RX/GNU binutils `rx-elf-objdump`. |
-| T06 | DISPLAY (PC) | **`ARM:LE:32:v7`** (ARM + Thumb-2, Cortex-A9) | If the image is a raw flash dump: the SPI XIP window at **0x18000000** (RZ/A1 boot mode 1). The application is probably copied into on-chip SRAM at **0x20000000** (10 MB) by a loader **[guess]** | Look for an ARM vector table / `LDR PC` branches at offset 0, and a loader at the start of the flash. |
-| T07 | IFDSP (ID) | **`ARM:LE:32:v8-m`** (Cortex-M33) for the M33 code. Any HiFi4 DSP code inside is **`Xtensa:LE:32:default`** | FlexSPI A XIP: **0x08000000** (non-secure alias; secure alias 0x18000000). The RT600 boot ROM expects the FCB at flash offset 0x400 and the image vector table at the start of the image **[guess, from the RT600 boot ROM docs]** | The file is small (415 KB), so it may be just the application. Check for an initial SP/reset vector pair in the first 8 bytes. |
+| T05 | MAIN (MC) | **none in stock Ghidra.** T05 used the community SLEIGH module `rx62t:LE:32:default` ([tooling.md](tooling.md)) **[fact]** | RX651 512 KB code flash is **0xFFF80000–0xFFFFFFFF** **[fact: HWM r01uh0590 Figure 4.1 p189]**, reset vector at 0xFFFFFFFC = 0xFFF8FBDB (memory-maps.md) **[fact]**. This part has no data flash (datasheet Table 1.3 p19) **[fact]** | Little-endian instructions. Get an RX module first (follow-up). Fallback: the RX disassembler in Renesas CC-RX/GNU binutils `rx-elf-objdump`. |
+| T06 | DISPLAY (PC) | **`ARM:LE:32:v7`** (ARM + Thumb-2, Cortex-A9) | If the image is a raw flash dump: the SPI XIP window at **0x18000000** (RZ/A1 boot mode 3, HWM §3.5.2 p3-4). The image is linked at **0x20100000** in on-chip RAM, and `Reset_Handler` copies itself there from the 0x18000000 window ([memory-maps.md](memory-maps.md)) **[fact]** | Look for an ARM vector table / `LDR PC` branches at offset 0, and a loader at the start of the flash. |
+| T07 | IFDSP (ID) | **`ARM:LE:32:v8-m`** (Cortex-M33) for the M33 code. Any HiFi4 DSP code inside is **`Xtensa:LE:32:default`** | FlexSPI A XIP: **0x08000000** (non-secure alias; secure alias 0x18000000). The image holds an `FCFB` block at offset 0x400 and the M33 vector table with the RT600 boot-header fields at 0x1000 ([memory-maps.md](memory-maps.md), [sfl-format.md](sfl-format.md)) **[fact]** | The file is small (415 KB), so it may be just the application. Check for an initial SP/reset vector pair in the first 8 bytes. |
 | T08 | SDR (SR) | FPGA bitstream, probably **not CPU code**. If there is a soft core (Nios II / MicroBlaze / RISC-V), use the matching language later. | Not applicable | First identify the FPGA vendor from bitstream sync words (Xilinx `AA 99 55 66`, Intel/Altera, Lattice `FF FF BD B3`, and so on) after decoding. |
 
 ## Unresolved / not in the manual

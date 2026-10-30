@@ -222,14 +222,14 @@ void FUN_fffec52d(void)
 void vfo_tuner_bit_set(char param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
+  pbVar1 = vfo_rec_ptr(1);
   if (param_1 != '\0') {
-    pvVar1->flags1 = pvVar1->flags1 | 4;
+    pbVar1[1] = pbVar1[1] | 4;
     return;
   }
-  pvVar1->flags1 = pvVar1->flags1 & 0xfb;
+  pbVar1[1] = pbVar1[1] & 0xfb;
   return;
 }
 
@@ -239,10 +239,10 @@ void vfo_tuner_bit_set(char param_1)
 bool FUN_fffec55a(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  return (pvVar1->flags1 & 4) != 0;
+  pbVar1 = vfo_rec_ptr(1);
+  return (pbVar1[1] & 4) != 0;
 }
 
 
@@ -1354,15 +1354,14 @@ void FUN_fffed62a(void)
 
 {
   bool bVar1;
-  tunlin_mode tVar2;
-  byte bVar3;
+  byte bVar2;
   
   g_ui.tuner_indicator = 0;
-  tVar2 = tunlin_port_mode();
-  if (tVar2 == TUNLIN_EXT_TUNER) {
+  bVar2 = tunlin_port_mode();
+  if (bVar2 == 0) {
     if (g_ui.atu_state == 5) {
       g_ui.tuner_indicator = 1;
-      if ((g_ui.tune_cycle_3c == 2) && (bVar3 = blink_phase(0), bVar3 == 0)) {
+      if ((g_ui.tune_cycle_3c == 2) && (bVar2 = blink_phase(0), bVar2 == 0)) {
         bVar1 = true;
       }
       else {

@@ -507,14 +507,14 @@ fffa1a8a	sdr_init_r15	Reg 0x15 = 0x2000, sent once after the first full sync
 fffa1abb	sdr_upd_r16_filter	Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A
 fffa1c69	sdr_upd_r18_rx_freq	Regs 0x18/0x19 = 32-bit RX VFO frequency in Hz plus the mode offset (SSB 1500 Hz + shift, CW pitch, RTTY mark/shift, DATA offset, PSK) [inference: RX NCO]
 fffa1fd1	sdr_upd_r1a_nb_level	Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off
-fffa2049	sdr_upd_r1b	Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 [guess: NB parameter]
-fffa20af	sdr_upd_r1c	Reg 0x1C = 2/5/10 from setting 0x9AD2 [guess: NB parameter]
+fffa2049	sdr_upd_r1b	Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by NB WIDTH 0x9AD3 (EX030203) [fact]; NB width parameter [inference: only input]
+fffa20af	sdr_upd_r1c	Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 (EX030202) [fact]; NB rejection parameter [inference: only input]
 fffa20f7	sdr_upd_r1d_notch	Reg 0x1D = notch offset/5 Hz (12 bits) | 0x2000 or 0x1000 (width 0x9AD1), 0 when off [inference: manual notch]
 fffa2478	sdr_upd_r1e_passband	Reg 0x1E = signed passband centre / 5 Hz (negated for the upper-side modes) [inference]
 fffa26cf	sdr_upd_r1f_width	Reg 0x1F = filter width in Hz (AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N 9000, else the selected width)
 fffa2758	sdr_upd_r20_scope_freq	Regs 0x20/0x21 = 32-bit scope centre frequency (centre mode: RX freq + offset; fixed/cursor: start + half span); TX: |f - 62.5 MHz|
 fffa28ea	sdr_upd_r22_scope_span	Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000)
-fffa2992	sdr_upd_r23	Reg 0x23 = 0x8000/0x7000/0x5000 from setting 0x9B14 [guess: scope/gain]
+fffa2992	sdr_upd_r23	Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 (EX040201) [fact]; scope RBW parameter [inference: only input]
 fffa29e5	sdr_init_r24	Reg 0x24 = 0x0317, sent once after the first full sync
 fffa2a16	sdr_upd_r25_tx_drive	Reg 0x25 = TX drive: power setting interpolated (5/10/20/50/100 W) in the per-band calibration in the 0x4659 (SPN) table, << 4
 fffa2b8f	sdr_upd_r26	Reg 0x26 = 0x0610 in RX; in TX 0x0140/0x0610/0x0200/0xFF00 from 0x9C36/0x9B16/0x9B17 [meaning unknown]
@@ -596,7 +596,7 @@ fff9eae7	dsp_set_hcut	reg 0x46: HCUT freq (700+50(n-1)) | slope<<12
 fff9ed0e	dsp_set_lcut	reg 0x47: LCUT freq (100+50(n-1)) | slope<<12
 fff9ef34	dsp_set_tone_freq	regs 0x48/0x4B/0x4E: AF tone band frequency 200/400/1200 Hz | 0x1000
 fff9f0b1	dsp_set_tone_gain	regs 0x49/0x4C/0x4F: AF BASS/MIDDLE/TREBLE GAIN (signed)
-fff9f291	dsp_set_tone_type	regs 0x4A/0x4D/0x50: AF tone band type 2/1/1
+fff9f291	dsp_set_tone_q	regs 0x4A/0x4D/0x50: Q of the three AF tone (BASS/MIDDLE/TREBLE) peaking bands, constant 2/1/1 in every mode [fact: HiFi4 rx_eq_band_update 0x220790 uses the third reg of each triple as Q, 0 -> 0.5 else clamped 1..10]; was dsp_set_tone_type
 fff9f400	dsp_set_r51	reg 0x51 = 0 (once)
 fff9f430	dsp_set_am_notch	reg 0x52: manual notch freq | width<<12 (AM only)
 fff9f4c8	dsp_set_ctcss_dec	reg 0x53: RX tone index+1 | 0x1000 (FM, tone on); sets 0x20B72
@@ -2220,8 +2220,8 @@ fffc3c23	func_knob_assign	(n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +
 fffc6c20	func_knob_turn	(step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
 fffc7c55	func_menu_cursor_step	(step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1
 # --- #205 (EEPROM leftovers)
-fff94bd9	ver_main_ext1	Returns 0xFFFFFF10: 4 ROM characters shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact]; build date/time [guess] (#205)
-fff94be5	ver_main_ext2	Returns 0xFFFFFF20: 8 ROM characters shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
+fff94bd9	ver_main_ext1	Returns 0xFFFFFF10, ROM string "2101", shown after "V01-12-" in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact: MAIN image]; meaning open (#205)
+fff94be5	ver_main_ext2	Returns 0xFFFFFF20, ROM string "24-02-16" (release date, = SFL header [DATE] 2024/02/16), shown in SOFT VERSION when DBG MODE ENABLE (0x4660) is set [fact] (#205)
 fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd" (from F0 hello bytes 4..6) at 0x143C [fact] (#205)
 fffe5e3b	memch_skip_get	Memory channel n: record +0x01 bit 7 (0x6151 + n*0x5A) = memory-scan SKIP [fact] (#205)
 fffe5e1b	memch_current_skip	memch_skip_get(memch_current(active VFO)); the scan steps repeat while it is set [fact] (#205)

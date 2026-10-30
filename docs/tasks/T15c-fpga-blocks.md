@@ -18,7 +18,8 @@ Documented in [`docs/code/sdr/netlist.md` section 3](../code/sdr/netlist.md#3-re
 - **One 125 MHz fabric clock** from the LVDS pair F4/F3 (`IO_L13_MRCC_35`) feeds all 119 DSPs, the BRAMs and ~31,100
   flip-flops; 125 MHz follows from the UART divisor 1,086 = 115,200 baud **[inference, high]**. A second LVDS clock
   (E3/D3) clocks the 14 ADC IDDRs through a BUFIO. Two cascaded MMCMs make ~28.17 MHz, forwarded to pin P14
-  (`DSP_CLK`?) **[inference/guess]**.
+  (whether this is `DSP_CLK` is open: #67 confirmed the ~28.17 MHz divider reading [fact], which is not the 18.432 MHz the
+  RT685 code is built for; O8 in docs/code/system.md §8, would be settled by measuring J2002 pin 22).
 - **Pins:** bank 35 = ADC (14 LVDS DDR pairs + 2 clocks), bank 34 = 17 LVDS DDR outputs (TX DAC?), bank 14 = QSPI
   master on the config-flash pins (FCS_B, D00-D03, quad reads) + two UARTs + control lines, bank 15 (1.8 V) = a 3-wire
   SPI master (ADC configuration?) + control lines **[fact for wiring]**.

@@ -8,7 +8,7 @@ user path (menu **SD CARD → FIRMWARE UPDATE**), the power-on maintenance and l
 every check a file has to pass. It is a key input for custom-firmware work ([custom-firmware.md](../../custom-firmware.md), T16).
 
 Addresses are CPU addresses (image base 0x20100000). Names are the current Ghidra names. Function names are the names applied in Ghidra (`tools/ghidra/names_display.tsv`, merged by T17) and match `decomp/display/`; a name still in *italics* is a description that was not applied as a Ghidra name. Code is in `decomp/display/` (see `functions.tsv`). Claims are tagged
-**[fact]** (seen in code, address given), **[inference]** or **[guess]**.
+**[fact]** (seen in code, address given) or **[inference]** (evidence and reasoning given); anything not supported is an open question.
 
 ## 1. Summary for custom firmware
 
@@ -264,7 +264,7 @@ FPGA registers used **[fact for the accesses, inference for the names]**:
 | 0x30 / 0x31 | flash address bits 31..16 / 15..0 |
 | 0x32 | write: 3, 1, 4, 5 (command sequence per block); read: status, ready when bits 15..12 are 0 or 8 |
 | 0x33 | read: CRC-16 of the block the FPGA received |
-| `reg | 0x1000` | alternate target, used when the object flag at +0xAB is 0 (debug `sdr2up`?) **[guess]** |
+| `reg | 0x1000` | used when the SDR object's flag +0xAB is 0 (`sdr_flash_write` 0x20110AB8 picks 0x1000 for 0, else 0). `fwobj_create_all` 0x2010DD24, the only caller of `fwobj_sdr_ctor`, passes 1, and `sdr_flash_write`'s only caller passes +0xAB, so V01-08 never uses these registers **[fact]**. Open: what the 0x10xx registers address; would be settled by the FPGA's register decoder in the netlist |
 
 ```mermaid
 sequenceDiagram

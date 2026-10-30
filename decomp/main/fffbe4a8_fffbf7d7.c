@@ -349,7 +349,7 @@ void key_mox_vox_short(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   uint uVar3;
   
   if (g_ui.memlist_open == 1) {
@@ -365,8 +365,8 @@ void key_mox_vox_short(void)
     DAT_0001b4d9 = 0;
     return;
   }
-  rVar2 = vfo_mode(VFO_TX);
-  uVar3 = (uint)rVar2;
+  bVar2 = vfo_mode(1);
+  uVar3 = (uint)bVar2;
   if ((1 < uVar3 - 2) && (uVar3 != 0xc && uVar3 != 0xd)) {
     g_opstate.vox_on = g_opstate.vox_on == 0;
     beep_request(1);
@@ -517,7 +517,7 @@ void key_dnr_press(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   
   popup_close();
   menu_close_if_open();
@@ -529,20 +529,20 @@ void key_dnr_press(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  rVar2 = vfo_mode(VFO_RX);
-  if ((rVar2 == MODE_FM) || (rVar2 == MODE_FM_N)) {
+  bVar2 = vfo_mode(0);
+  if ((bVar2 == 6) || (bVar2 == 7)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM)) {
+  if ((bVar1) || (bVar2 == 10)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rVar2 == MODE_DATA_FM_N)) {
+  if ((bVar1) || (bVar2 == 0xb)) {
     bVar1 = true;
   }
   else {
@@ -776,7 +776,7 @@ void key_clar_press(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  bVar1 = vfo_tune_locked(VFO_SIDE_SEL);
+  bVar1 = vfo_tune_locked('\x02');
   if (bVar1 != 1) {
     beep_request(1);
     return;
@@ -885,8 +885,7 @@ void key_zin_spot_press(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  vfo_rec *pvVar3;
+  byte *pbVar2;
   
   popup_close();
   menu_close_if_open();
@@ -898,9 +897,8 @@ void key_zin_spot_press(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  pvVar3 = vfo_rec_ptr(PTR_g_ui_00025d54->transmitting);
-  bVar2 = pvVar3->mode & 0xf;
-  if ((bVar2 == 2) || (bVar2 == 3)) {
+  pbVar2 = vfo_rec_ptr(PTR_g_ui_00025d54->transmitting);
+  if (((*pbVar2 & 0xf) == 2) || ((*pbVar2 & 0xf) == 3)) {
     bVar1 = true;
   }
   else {
@@ -996,12 +994,12 @@ void key_zin_spot_short(void)
 void key_zin_spot_long(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   int iVar2;
   
   PTR_g_ui_00025d54->key_consumed = 1;
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  iVar2 = keyer_mode_class(pvVar1);
+  pbVar1 = vfo_rec_ptr(1);
+  iVar2 = keyer_mode_class(pbVar1);
   if (iVar2 == 0) {
     return;
   }

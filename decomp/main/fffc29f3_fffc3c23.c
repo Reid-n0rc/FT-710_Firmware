@@ -288,14 +288,14 @@ undefined1 FUN_fffc2d05(void)
 
 /* state 2, 7 or 8 */
 
-byte vfo_is_memory(vfo_side param_1)
+byte vfo_is_memory(byte param_1)
 
 {
   bool bVar1;
   byte bVar2;
   vfo_state local_3;
   
-  if (param_1 == VFO_A) {
+  if (param_1 == 0) {
     local_3 = g_opstate.vfo_state_a;
   }
   else {
@@ -518,16 +518,16 @@ void vfo_mark_edited(byte param_1)
 
 // ===== FUN_fffc3006 @ fffc3006 (37 bytes)
 
-band_idx FUN_fffc3006(void)
+byte FUN_fffc3006(void)
 
 {
   uint freq;
   undefined1 uStack_9;
   
-  freq = vfo_freq_clar(VFO_RX,VFO_SIDE_SEL);
+  freq = vfo_freq_clar(0,2);
   uStack_9 = band_of_freq(freq);
-  if (uStack_9 == BAND_NONE) {
-    uStack_9 = BAND_GEN;
+  if (uStack_9 == 0xff) {
+    uStack_9 = 0xb;
   }
   return uStack_9;
 }

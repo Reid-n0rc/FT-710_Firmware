@@ -947,12 +947,15 @@ void DSP_CopyImage(void *param_1)
 }
 
 
-// ===== hashcrypt_get_digest @ 00086ec4 (44 bytes)
+// ===== hashcrypt_save_running_hash @ 00086ec4 (44 bytes)
 
-/* Reads 5 (SHA-1) or 8 words from HASHCRYPT DIGEST (0x40158040) into the context; only used by the
-   HASHCRYPT IRQ handler [guess] */
+/* n = 5 if ctx byte +0x44 == 1 (kHASHCRYPT_Sha1) else 8; wait HASHCRYPT STATUS bit 1 (DIGEST); copy
+   DIGEST0[0..n) (base+0x40) to ctx+0x58 [fact: 0x86EC4]. Only caller 0x8425A in the HASHCRYPT IRQ
+   handler after INTENCLR/MEMCTRL=0 [fact]. Same as static hashcrypt_save_running_hash in
+   mcux-sdk@8a289764 drivers/hashcrypt/fsl_hashcrypt.c, minus its ERROR check and status return
+   (older SDK version) [inference] */
 
-void hashcrypt_get_digest(int param_1,int param_2)
+void hashcrypt_save_running_hash(int param_1,int param_2)
 
 {
   undefined4 *puVar1;
@@ -1356,11 +1359,14 @@ void BOARD_FlexspiClockSafeConfig(void)
 }
 
 
-// ===== BOARD_InitDebugConsole @ 00087240 (2 bytes)
+// ===== app_init_nop @ 00087240 (2 bytes)
 
-/* Empty stub called from app_main right after BOARD_BootClockRUN [guess] */
+/* body is only bx lr [fact: 0x87240]; one caller, app_main 0x81098, between BOARD_BootClockRUN and
+   regfile_clear [fact]. Open: which source function this was (SDK examples call
+   BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the
+   vendor's source or link map */
 
-void BOARD_InitDebugConsole(void)
+void app_init_nop(void)
 
 {
   return;

@@ -288,7 +288,7 @@ fff9eae7	dsp_set_hcut	void	void	asm	asm: live-in -, 0/1 call sites read R1, retu
 fff9ed0e	dsp_set_lcut	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff9ef34	dsp_set_tone_freq	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
 fff9f0b1	dsp_set_tone_gain	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
-fff9f291	dsp_set_tone_type	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
+fff9f291	dsp_set_tone_q	void	char	asm	asm: live-in R1:B, 0/3 call sites read R1, return load -
 fff9f400	dsp_set_r51	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff9f430	dsp_set_am_notch	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -
 fff9f4c8	dsp_set_ctcss_dec	void	void	asm	asm: live-in -, 0/1 call sites read R1, return load -

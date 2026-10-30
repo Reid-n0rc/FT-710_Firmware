@@ -70,12 +70,12 @@ void FUN_fffc052b(byte param_1)
   
   PTR_g_ui_00025d54->freq_refresh_req = 1;
   if (g_opstate.scope_mode == 2) {
-    uVar2 = vfo_freq(VFO_RX,VFO_SIDE_SEL);
+    uVar2 = vfo_freq(0,2);
     bVar1 = freq_range_index(uVar2);
     g_opstate.scope_span_idx_b[bVar1] = param_1;
     return;
   }
-  uVar2 = vfo_freq_clar(VFO_RX,VFO_SIDE_SEL);
+  uVar2 = vfo_freq_clar(0,2);
   bVar1 = freq_range_index(uVar2);
   if (bVar1 == 0xff) {
     return;
@@ -237,7 +237,7 @@ void ui_softkey_dispatch(ushort param_1)
 {
   bool bVar1;
   char cVar2;
-  radio_mode rVar3;
+  byte bVar3;
   
   if (PTR_g_ui_00025d54->dialog_shown == 1) {
     scan_stop();
@@ -277,8 +277,8 @@ void ui_softkey_dispatch(ushort param_1)
         bVar1 = true;
       }
       if (bVar1) {
-        rVar3 = vfo_mode(VFO_RX);
-        if ((rVar3 == MODE_CW_L) || (rVar3 == MODE_CW_U)) {
+        bVar3 = vfo_mode(0);
+        if ((bVar3 == 2) || (bVar3 == 3)) {
           bVar1 = true;
         }
         else {
@@ -323,16 +323,16 @@ void FUN_fffc0c8f(ushort param_1)
     popup_open_timed(1000);
     switch(param_1) {
     case 0x77:
-      FUN_fffc0d33(MODE_LSB);
+      FUN_fffc0d33(0);
       return;
     case 0x78:
-      FUN_fffc0d33(MODE_USB);
+      FUN_fffc0d33(1);
       return;
     case 0x79:
-      FUN_fffc0d33(MODE_CW_L);
+      FUN_fffc0d33(2);
       return;
     case 0x7a:
-      FUN_fffc0d33(MODE_CW_U);
+      FUN_fffc0d33(3);
       return;
     case 0x7b:
       FUN_fffc0e31();
@@ -347,10 +347,10 @@ void FUN_fffc0c8f(ushort param_1)
       FUN_fffc0e58();
       return;
     case 0x7f:
-      FUN_fffc0d33(MODE_DATA_L);
+      FUN_fffc0d33(8);
       return;
     case 0x80:
-      FUN_fffc0d33(MODE_DATA_U);
+      FUN_fffc0d33(9);
       return;
     case 0x81:
       FUN_fffc0e65();
@@ -359,13 +359,13 @@ void FUN_fffc0c8f(ushort param_1)
       FUN_fffc0e72();
       return;
     case 0x83:
-      FUN_fffc0d33(MODE_RTTY_L);
+      FUN_fffc0d33(0xc);
       return;
     case 0x84:
-      FUN_fffc0d33(MODE_RTTY_U);
+      FUN_fffc0d33(0xd);
       return;
     case 0x85:
-      FUN_fffc0d33(MODE_PSK);
+      FUN_fffc0d33(0xe);
       return;
     case 0x86:
       FUN_fffc0e7f();
@@ -378,7 +378,7 @@ void FUN_fffc0c8f(ushort param_1)
 
 // ===== FUN_fffc0d33 @ fffc0d33 (54 bytes)
 
-void FUN_fffc0d33(radio_mode mode)
+void FUN_fffc0d33(byte mode)
 
 {
   int iVar1;
@@ -445,7 +445,7 @@ undefined1 vfo_edit_begin(void)
 /* (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode [fact]
     */
 
-void mode_popup_select(radio_mode param_1)
+void mode_popup_select(byte param_1)
 
 {
   PTR_g_ui_00025d54->msg_active = 0;
@@ -572,10 +572,10 @@ void FUN_fffc0e7f(void)
 /* (mode): active record rec+0 = rec+0 & 0xF0 | mode, FUN_fffc0f10(old, new, rec), UI +0x40B = 1
    [fact] */
 
-void vfo_mode_set(radio_mode mode)
+void vfo_mode_set(byte mode)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   vfo_rec *local_8;
   
   if (g_opstate.active_vfo == VFO_A) {
@@ -584,9 +584,9 @@ void vfo_mode_set(radio_mode mode)
   else {
     local_8 = &g_opstate.vfo_b;
   }
-  rVar1 = local_8->mode;
-  local_8->mode = rVar1 & ~MODE_15 | mode;
-  FUN_fffc0f10(rVar1 & MODE_15,mode,&local_8->mode);
+  bVar1 = local_8->mode;
+  local_8->mode = bVar1 & 0xf0 | mode;
+  FUN_fffc0f10(bVar1 & 0xf,mode,&local_8->mode);
   PTR_g_ui_00025d54->vfo_refresh_req = 1;
   return;
 }
@@ -594,7 +594,7 @@ void vfo_mode_set(radio_mode mode)
 
 // ===== FUN_fffc0f10 @ fffc0f10 (188 bytes)
 
-void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
+void FUN_fffc0f10(byte old_mode,byte new_mode,byte *rec)
 
 {
   uint uVar1;
@@ -604,12 +604,12 @@ void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
   if (g_opstate.ex020118_cw_freq_display != 0) {
     uVar1 = (uint)old_mode;
     if (uVar1 - 4 < 0xb) {
-      if (new_mode == MODE_USB) {
+      if (new_mode == 1) {
         iVar3 = FUN_fffc10ad();
         FUN_fffc0fcc(-iVar3,rec);
         return;
       }
-      if (new_mode == MODE_LSB) {
+      if (new_mode == 0) {
         uVar2 = FUN_fffc10ad();
         FUN_fffc0fcc(uVar2,rec);
         return;
@@ -628,12 +628,12 @@ void FUN_fffc0f10(radio_mode old_mode,radio_mode new_mode,byte *rec)
       }
     }
     else if (uVar1 - 2 < 2) {
-      if (new_mode == MODE_USB) {
+      if (new_mode == 1) {
         iVar3 = FUN_fffc10ad();
         FUN_fffc0fcc(-iVar3,rec);
         return;
       }
-      if (new_mode == MODE_LSB) {
+      if (new_mode == 0) {
         uVar2 = FUN_fffc10ad();
         FUN_fffc0fcc(uVar2,rec);
         return;
@@ -1071,7 +1071,7 @@ void FUN_fffc1605(byte param_1)
 
 // ===== FUN_fffc1625 @ fffc1625 (62 bytes)
 
-void FUN_fffc1625(band_idx param_1)
+void FUN_fffc1625(byte param_1)
 
 {
   if (PTR_g_ui_00025d54->scan_running != 1) {
@@ -1093,13 +1093,13 @@ void FUN_fffc1625(band_idx param_1)
 
 /* Band key on the active side; 0x20F28 = min(band,11); dispatch by state */
 
-void band_select(band_idx param_1)
+void band_select(byte param_1)
 
 {
   vfo_state local_3;
   bool local_2;
   
-  if (param_1 < BAND_GEN) {
+  if (param_1 < 0xb) {
     PTR_g_ui_00025d54->popup_cursor = param_1;
   }
   else {

@@ -4259,7 +4259,7 @@ void key_011_press(void)
 
 {
   bool bVar1;
-  radio_mode rVar2;
+  byte bVar2;
   uint uVar3;
   
   bVar1 = false;
@@ -4271,8 +4271,8 @@ void key_011_press(void)
     bVar1 = true;
   }
   else {
-    rVar2 = vfo_mode(VFO_RX);
-    uVar3 = (uint)rVar2;
+    bVar2 = vfo_mode(0);
+    uVar3 = (uint)bVar2;
     if ((uVar3 - 6 < 2) || (uVar3 == 10 || uVar3 == 0xb)) {
       bVar1 = true;
     }
@@ -4395,7 +4395,7 @@ void popup_open_2000(void)
 /* (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode [fact]
     */
 
-void mode_popup_select(radio_mode param_1)
+void mode_popup_select(byte param_1)
 
 {
   PTR_g_ui_00025d54->msg_active = 0;

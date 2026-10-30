@@ -138,14 +138,14 @@ void toupper_inplace(char *c)
 
 /* (which): mode nibble (rec+0) of vfo_rec_ptr(which); forced to 2 during tune cycles */
 
-radio_mode vfo_mode(vfo_which which)
+byte vfo_mode(byte which)
 
 {
   undefined1 local_a;
   undefined1 local_9;
   
   local_a = 0;
-  if (which != VFO_RX) {
+  if (which != 0) {
     local_a = g_opstate.split_on;
   }
   if (g_opstate.active_vfo == VFO_A) {
@@ -163,21 +163,21 @@ radio_mode vfo_mode(vfo_which which)
     local_9 = g_opstate.vfo_a.mode;
   }
   if (g_ui.tune_cycle == 1) {
-    local_9 = MODE_CW_L;
+    local_9 = 2;
   }
   else if (g_ui.tune_cycle == 2) {
-    local_9 = MODE_CW_L;
+    local_9 = 2;
   }
   else if (g_ui.tune_cycle_3c == 2) {
-    local_9 = MODE_CW_L;
+    local_9 = 2;
   }
   else if (g_ui.tune_cycle_3d == 2) {
-    local_9 = MODE_CW_L;
+    local_9 = 2;
   }
   else if (g_ui.ptt_extpa == 1) {
-    local_9 = MODE_CW_L;
+    local_9 = 2;
   }
-  return local_9 & MODE_15;
+  return local_9 & 0xf;
 }
 
 
@@ -186,14 +186,14 @@ radio_mode vfo_mode(vfo_which which)
 /* (which): 0 = active VFO record (0x9DBD), !=0 = TX record (other VFO while split 0x9C5E); returns
    0x9D09/0x9D63 in R1 */
 
-vfo_rec * vfo_rec_ptr(vfo_which which)
+byte * vfo_rec_ptr(byte which)
 
 {
   byte local_11;
   vfo_rec *local_10;
   
   local_11 = 0;
-  if (which != VFO_RX) {
+  if (which != 0) {
     local_11 = g_opstate.split_on;
   }
   if (g_opstate.active_vfo == VFO_A) {
@@ -210,7 +210,7 @@ vfo_rec * vfo_rec_ptr(vfo_which which)
   else {
     local_10 = &g_opstate.vfo_a;
   }
-  return local_10;
+  return &local_10->mode;
 }
 
 
@@ -329,16 +329,16 @@ byte FUN_fffb33ab(uint param_1)
 /* WARNING: Removing unreachable block (ram,0xfffb3403) */
 /* Band index 0..11 of a frequency (ranges at 0xFFF8876C), 0xFF if none */
 
-band_idx band_of_freq(uint freq)
+byte band_of_freq(uint freq)
 
 {
   bool bVar1;
-  band_idx local_11;
+  byte local_11;
   
-  local_11 = BAND_1_8MHZ;
+  local_11 = 0;
   while( true ) {
-    if (BAND_GEN < local_11) {
-      return BAND_NONE;
+    if (0xb < local_11) {
+      return 0xff;
     }
     if ((freq < *(uint *)(BYTE_ARRAY_fff886c8 + (uint)local_11 * 8 + 0xa4)) ||
        (*(uint *)(BYTE_ARRAY_fff886c8 + (uint)local_11 * 8 + 0xa8) <= freq)) {
@@ -348,7 +348,7 @@ band_idx band_of_freq(uint freq)
       bVar1 = true;
     }
     if (bVar1) break;
-    local_11 = local_11 + BAND_3_5MHZ;
+    local_11 = local_11 + 1;
   }
   return local_11;
 }
@@ -485,21 +485,21 @@ byte FUN_fffb3564(byte param_1)
 
 /* (which, side): BE u32 at rec+0x4A; side 0=A 1=B 2=vfo_rec_ptr(which) */
 
-uint vfo_freq(vfo_which which,vfo_side side)
+uint vfo_freq(byte which,byte side)
 
 {
   byte local_15;
   uint uStack_14;
   vfo_rec *local_10;
   
-  if (side == VFO_A) {
+  if (side == 0) {
     local_10 = &g_opstate.vfo_a;
   }
-  else if (side == VFO_B) {
+  else if (side == 1) {
     local_10 = &g_opstate.vfo_b;
   }
   else {
-    local_10 = vfo_rec_ptr(which);
+    local_10 = (vfo_rec *)vfo_rec_ptr(which);
   }
   for (local_15 = 0; local_15 < 4; local_15 = local_15 + 1) {
     uStack_14 = (uint)local_10->freq_be[local_15] | uStack_14 << 8;
@@ -513,7 +513,7 @@ uint vfo_freq(vfo_which which,vfo_side side)
 /* WARNING: Removing unreachable block (ram,0xfffb36cf) */
 /* (which, side): vfo_freq + clar offset rec+0x48 if RX/TX clar bit set in 0x20F29/0x20F2A */
 
-uint vfo_freq_clar(vfo_which which,vfo_side side)
+uint vfo_freq_clar(byte which,byte side)
 
 {
   bool bVar1;
@@ -527,17 +527,17 @@ uint vfo_freq_clar(vfo_which which,vfo_side side)
   uStack_14 = vfo_freq(which,side);
   bStack_18 = 0;
   bVar2 = false;
-  if (side == VFO_A) {
+  if (side == 0) {
     bStack_17 = g_ui.clar_flags_a;
     pvStack_10 = &g_opstate.vfo_a;
   }
-  else if (side == VFO_B) {
+  else if (side == 1) {
     bStack_17 = g_ui.clar_flags_b;
     pvStack_10 = &g_opstate.vfo_b;
   }
   else {
-    pvStack_10 = vfo_rec_ptr(which);
-    if (which != VFO_RX) {
+    pvStack_10 = (vfo_rec *)vfo_rec_ptr(which);
+    if (which != 0) {
       bStack_18 = g_opstate.split_on;
     }
     if (g_opstate.active_vfo == VFO_A) {
@@ -555,7 +555,7 @@ uint vfo_freq_clar(vfo_which which,vfo_side side)
       bStack_17 = g_ui.clar_flags_a;
     }
   }
-  if ((which == VFO_RX) || ((bStack_17 & 2) == 0)) {
+  if ((which == 0) || ((bStack_17 & 2) == 0)) {
     bVar1 = false;
   }
   else {
@@ -565,7 +565,7 @@ uint vfo_freq_clar(vfo_which which,vfo_side side)
     bVar2 = true;
   }
   else {
-    if ((which == VFO_RX) && ((bStack_17 & 1) != 0)) {
+    if ((which == 0) && ((bStack_17 & 1) != 0)) {
       bVar1 = true;
     }
     else {
@@ -1309,17 +1309,17 @@ byte FUN_fffb4062(void)
 {
   bool bVar1;
   byte bVar2;
-  radio_mode rVar3;
+  byte bVar3;
   char cVar4;
   ushort uVar5;
   uint uVar6;
   byte bStack_f;
   
-  uVar6 = vfo_freq(VFO_TX,VFO_SIDE_SEL);
-  rVar3 = vfo_mode(VFO_TX);
+  uVar6 = vfo_freq(1,2);
+  bVar3 = vfo_mode(1);
   cVar4 = tx_band_of_freq(uVar6);
   bVar2 = g_opstate.rf_power[3];
-  if ((rVar3 == MODE_AM) || (rVar3 == MODE_AM_N)) {
+  if ((bVar3 == 4) || (bVar3 == 5)) {
     bVar1 = true;
   }
   else {
@@ -1396,20 +1396,20 @@ uint FUN_fffb4135(uint param_1)
 
 // ===== FUN_fffb418a @ fffb418a (143 bytes)
 
-byte FUN_fffb418a(vfo_which param_1)
+byte FUN_fffb418a(byte param_1)
 
 {
-  radio_mode rVar1;
+  byte bVar1;
   byte local_9;
-  vfo_which local_1;
+  byte local_1;
   uint uVar2;
   
   local_1 = param_1;
   if (g_opstate.split_on != 0) {
-    local_1 = VFO_TX;
+    local_1 = 1;
   }
-  rVar1 = vfo_mode(local_1);
-  uVar2 = (uint)rVar1;
+  bVar1 = vfo_mode(local_1);
+  uVar2 = (uint)bVar1;
   if (uVar2 == 0xe) {
 LAB_fffb41fc:
     local_9 = g_opstate.monitor[3];
@@ -1457,11 +1457,11 @@ uint audio_route_state(void)
   byte bVar8;
   byte bVar9;
   byte bVar10;
-  radio_mode rStack_b;
+  byte bStack_b;
   uint uStack_8;
   
   bVar2 = g_ui.tx_lamp;
-  rStack_b = vfo_mode(g_ui.transmitting);
+  bStack_b = vfo_mode(g_ui.transmitting);
   bVar9 = FUN_fffb2dfe();
   bVar8 = g_ui.ky_send_1;
   bVar7 = g_ui.ky_send_0;
@@ -1477,7 +1477,7 @@ uint audio_route_state(void)
     bVar1 = false;
   }
   if (bVar1) {
-    rStack_b = vfo_mode(VFO_RX);
+    bStack_b = vfo_mode(0);
   }
   else {
     if ((bVar3 == 0) && (bVar7 != 1)) {
@@ -1505,22 +1505,22 @@ uint audio_route_state(void)
       bVar1 = false;
     }
     if (bVar1) {
-      rStack_b = vfo_mode(VFO_TX);
+      bStack_b = vfo_mode(1);
     }
   }
-  if ((rStack_b == MODE_CW_U) || (rStack_b == MODE_CW_L)) {
+  if ((bStack_b == 3) || (bStack_b == 2)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rStack_b == MODE_RTTY_U)) {
+  if ((bVar1) || (bStack_b == 0xd)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (rStack_b == MODE_RTTY_L)) {
+  if ((bVar1) || (bStack_b == 0xc)) {
     bVar1 = true;
   }
   else {
@@ -1918,7 +1918,7 @@ LAB_fffb48f7:
       g_ui.func_panel_open = 0;
     }
   }
-  bVar5 = vfo_tune_locked(VFO_SIDE_SEL);
+  bVar5 = vfo_tune_locked('\x02');
   if (bVar5 == 1) {
     if (bVar2 == 4) {
       if (bVar4 == 1) {
@@ -2024,26 +2024,26 @@ char supply_undervolt_check(void)
 
 /* 1 if side is in state 7/8 or on 5 MHz/EMG memory (ch 117..132) */
 
-byte vfo_tune_locked(vfo_side param_1)
+byte vfo_tune_locked(char param_1)
 
 {
   bool bVar1;
   byte local_5;
   byte local_4;
   vfo_state local_3;
-  vfo_side local_1;
+  char local_1;
   
   local_5 = 0;
   local_1 = param_1;
-  if (param_1 == VFO_SIDE_SEL) {
+  if (param_1 == '\x02') {
     if (g_opstate.active_vfo == VFO_A) {
-      local_1 = VFO_A;
+      local_1 = '\0';
     }
     else {
-      local_1 = VFO_B;
+      local_1 = '\x01';
     }
   }
-  if (local_1 == VFO_A) {
+  if (local_1 == '\0') {
     local_3 = g_opstate.vfo_state_a;
     local_4 = g_mem_hdr.chan_a;
   }
@@ -2084,23 +2084,22 @@ ushort vfo_display_offset(void)
 {
   uint uVar1;
   byte bVar2;
-  radio_mode rVar3;
-  short sVar4;
-  vfo_rec *pvVar5;
+  short sVar3;
+  byte *pbVar4;
   ushort uStack_e;
   ushort uStack_a;
   
-  pvVar5 = vfo_rec_ptr(VFO_RX);
-  rVar3 = vfo_mode(VFO_RX);
+  pbVar4 = vfo_rec_ptr(0);
+  bVar2 = vfo_mode(0);
   uStack_e = 0;
   if (g_opstate.ex040202_scope_ctr == 0) {
-    uVar1 = (uint)rVar3;
+    uVar1 = (uint)bVar2;
     if (uVar1 == 0xe) {
-      uStack_e = CONCAT11(pvVar5->blk[3].shift_be[0],pvVar5->blk[3].shift_be[1]);
+      uStack_e = CONCAT11(pbVar4[0x30],pbVar4[0x31]);
     }
     else if (uVar1 - 2 < 2) {
-      uStack_a = CONCAT11(pvVar5->blk[1].shift_be[0],pvVar5->blk[1].shift_be[1]);
-      if (rVar3 == MODE_CW_L) {
+      uStack_a = CONCAT11(pbVar4[0x1c],pbVar4[0x1d]);
+      if (bVar2 == 2) {
         uStack_a = ~uStack_a + 1;
       }
       uStack_e = uStack_a;
@@ -2108,54 +2107,53 @@ ushort vfo_display_offset(void)
     else if (uVar1 - 8 < 2) {
       uStack_a = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                           g_opstate.ex010420_data_shift_ssb_be[1]) * 10 +
-                 CONCAT11(pvVar5->blk[3].shift_be[0],pvVar5->blk[3].shift_be[1]);
-      if (rVar3 == MODE_DATA_L) {
+                 CONCAT11(pbVar4[0x30],pbVar4[0x31]);
+      if (bVar2 == 8) {
         uStack_a = ~uStack_a + 1;
       }
       uStack_e = uStack_a;
     }
     else if (uVar1 - 0xc < 2) {
-      sVar4 = CONCAT11(pvVar5->blk[2].shift_be[0],pvVar5->blk[2].shift_be[1]);
+      sVar3 = CONCAT11(pbVar4[0x26],pbVar4[0x27]);
       if (g_opstate.ex010516_shift_frequency == 1) {
-        if (rVar3 == MODE_RTTY_L) {
-          uStack_a = sVar4 + 0x69;
+        if (bVar2 == 0xc) {
+          uStack_a = sVar3 + 0x69;
         }
         else {
-          uStack_a = 0x69 - sVar4;
+          uStack_a = 0x69 - sVar3;
         }
       }
       else if (g_opstate.ex010516_shift_frequency == 2) {
-        if (rVar3 == MODE_RTTY_L) {
-          uStack_a = sVar4 + 0xd7;
+        if (bVar2 == 0xc) {
+          uStack_a = sVar3 + 0xd7;
         }
         else {
-          uStack_a = 0xd7 - sVar4;
+          uStack_a = 0xd7 - sVar3;
         }
       }
       else if (g_opstate.ex010516_shift_frequency == 3) {
-        if (rVar3 == MODE_RTTY_L) {
-          uStack_a = sVar4 + 0x1a9;
+        if (bVar2 == 0xc) {
+          uStack_a = sVar3 + 0x1a9;
         }
         else {
-          uStack_a = 0x1a9 - sVar4;
+          uStack_a = 0x1a9 - sVar3;
         }
       }
-      else if (rVar3 == MODE_RTTY_L) {
-        uStack_a = sVar4 + 0x55;
+      else if (bVar2 == 0xc) {
+        uStack_a = sVar3 + 0x55;
       }
       else {
-        uStack_a = 0x55 - sVar4;
+        uStack_a = 0x55 - sVar3;
       }
       uStack_e = ~uStack_a + 1;
     }
     else if (uVar1 < 2) {
-      bVar2 = pvVar5->blk[0].shift_be[0];
-      uStack_a = CONCAT11(bVar2,pvVar5->blk[0].shift_be[1]);
-      if ((bVar2 & 0x80) != 0) {
+      uStack_a = CONCAT11(pbVar4[0x12],pbVar4[0x13]);
+      if ((pbVar4[0x12] & 0x80) != 0) {
         uStack_a = -(~uStack_a + 1);
       }
       uStack_a = uStack_a + 0x5dc;
-      if (rVar3 == MODE_LSB) {
+      if (bVar2 == 0) {
         uStack_a = ~uStack_a + 1;
       }
       uStack_e = uStack_a;

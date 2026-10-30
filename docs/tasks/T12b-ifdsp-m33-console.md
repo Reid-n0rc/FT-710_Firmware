@@ -43,7 +43,7 @@ Page: [`docs/code/ifdsp/control-link.md`](../code/ifdsp/control-link.md).
 - Use the RT600 objdump in T12e (much better than Ghidra's base-ISA decode).
 
 ## Proposed shared-file edits
-- `docs/cat-commands.md` row `SPDRaaaa;`/`SPDWaaaavvvv;`: replace "device unknown; perhaps the IF-DSP [guess]" with "IFDSP register file
+- `docs/cat-commands.md` row `SPDRaaaa;`/`SPDWaaaavvvv;`: replace the old guessed text ("device unknown; perhaps the IF-DSP") with "IFDSP register file
   (see docs/code/ifdsp/control-link.md) [fact]".
 - `tools/ghidra/names_main.tsv` (T10 owners): `fff9d8a4 ifdsp_reg_access`, `fffa4e8f cat_SP_ifdsp_reg`, `fffa0b4c ifdsp_send_frame`,
   `fffa0ad6 ifdsp_wait_reply`, `fffa0c01 ifdsp_checksum`, `fffa037a ifdsp_store_shadow`, `fff9d06c ifdsp_link_init`, `fff9d1b9 ifdsp_link_poll`,

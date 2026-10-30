@@ -384,10 +384,10 @@ void r_sci2_receiveerror_interrupt(void)
 void r_sci2_callback_transmitend(void)
 
 {
-  tunlin_mode tVar1;
+  byte bVar1;
   
-  tVar1 = tunlin_port_mode();
-  if (tVar1 != TUNLIN_CAT3) {
+  bVar1 = tunlin_port_mode();
+  if (bVar1 != 2) {
     FUN_fffb1976();
     return;
   }
@@ -403,10 +403,10 @@ void r_sci2_callback_transmitend(void)
 void r_sci2_callback_receiveend(void)
 
 {
-  tunlin_mode tVar1;
+  byte bVar1;
   
-  tVar1 = tunlin_port_mode();
-  if (tVar1 != TUNLIN_CAT3) {
+  bVar1 = tunlin_port_mode();
+  if (bVar1 != 2) {
     FUN_fffb1944();
     return;
   }
@@ -437,12 +437,11 @@ void sci2_rx_byte_hook(void)
 {
   char cVar1;
   bool bVar2;
-  tunlin_mode tVar3;
-  byte bVar4;
+  byte bVar3;
   
-  tVar3 = tunlin_port_mode();
-  if (tVar3 != TUNLIN_CAT3) {
-    if ((DAT_0001b612 == 0) || (bVar4 = swtimer_expired(8), bVar4 != 1)) {
+  bVar3 = tunlin_port_mode();
+  if (bVar3 != 2) {
+    if ((DAT_0001b612 == 0) || (bVar3 = swtimer_expired(8), bVar3 != 1)) {
       bVar2 = false;
     }
     else {

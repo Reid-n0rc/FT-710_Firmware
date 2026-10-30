@@ -3,7 +3,7 @@
 Image `FT-710_IFDSP_V0101.SFL` (V01-01, 2023-03-23) runs on **Q2002, NXP i.MX RT685** (Cortex-M33 + Cadence HiFi4 DSP),
 the "DSP MAIN/TX" chip on the MAIN unit (service manual p6, p19). Decompile: [`decomp/ifdsp/`](../../../decomp/ifdsp/INDEX.md)
 (M33 in `m33/`, HiFi4 in `hifi4/`). Memory map derivation: [`docs/memory-maps.md`](../../memory-maps.md) (IFDSP section).
-Claims are tagged **[fact]** (seen in code/data, address cited), **[inference]** or **[guess]**. Tasks: T07 (decompile), T12 (this).
+Claims are tagged **[fact]** (seen in code/data, address cited) or **[inference]** (evidence and reasoning stated); anything not settled is written as *Open: …; would be settled by …*. Tasks: T07 (decompile), T12 (this).
 
 ## Purpose
 

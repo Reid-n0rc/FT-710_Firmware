@@ -409,21 +409,20 @@ void sci2_configure(void)
 {
   uint uVar1;
   byte bVar2;
-  tunlin_mode tVar3;
   byte bStack_3;
   byte bStack_1;
   
-  tVar3 = tunlin_port_mode();
+  bVar2 = tunlin_port_mode();
   R_SCI2_Stop();
   do {
   } while (DAT_00011fe9 != '\0');
-  if (tVar3 != TUNLIN_LINEAR) {
+  if (bVar2 != 1) {
     gpo_a_set(0);
     gpo_b_set(0);
     gpo_c_set(0);
     gpo_d_set(0);
   }
-  if ((tVar3 == TUNLIN_GPO) || (tVar3 == TUNLIN_LINEAR)) {
+  if ((bVar2 == 3) || (bVar2 == 1)) {
     uVar1 = SYSTEM_MSTPCRB;
     SYSTEM_MSTPCRB = uVar1 | 0x20000000;
     MPC_P12PFS = 0;
@@ -437,7 +436,7 @@ void sci2_configure(void)
     rem_key_sel_set(1);
     return;
   }
-  if (tVar3 == TUNLIN_CAT3) {
+  if (bVar2 == 2) {
     R_SCI2_Create();
     bStack_1 = g_opstate.ex030110_cat_3_rate;
     if (4 < g_opstate.ex030110_cat_3_rate) {
@@ -461,7 +460,7 @@ void sci2_configure(void)
     rem_key_sel_set(0);
     return;
   }
-  if (tVar3 == TUNLIN_EXT_TUNER) {
+  if (bVar2 == 0) {
     R_SCI2_Create();
     R_SCI2_Start();
     gpo_c_dir('\0');
@@ -478,7 +477,7 @@ void sci2_configure(void)
 
 /* setting 0x9AB7: 0 EXT-TUNER 1 LINEAR 2 CAT-3 3 GPO */
 
-tunlin_mode tunlin_port_mode(void)
+byte tunlin_port_mode(void)
 
 {
   undefined1 local_2;

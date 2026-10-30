@@ -117,7 +117,7 @@ void HASHCRYPT_DriverIRQHandler(void)
     }
     HASHCRYPT_INTENCLR = 6;
     HASHCRYPT_MEMCTRL = 0;
-    hashcrypt_get_digest(0x40158000,DAT_00088ab0);
+    hashcrypt_save_running_hash(0x40158000,DAT_00088ab0);
     uVar3 = 0;
   }
   if (*(code **)(iVar2 + 0x50) == (code *)0x0) {

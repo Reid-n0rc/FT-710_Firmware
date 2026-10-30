@@ -86,7 +86,7 @@ Mermaid: one `sequenceDiagram` (knob step, 4 participants) and one `stateDiagram
    `displink_tx_schedule` on 0x20F4B. The guide follows system.md §4.2 and stays at the level both agree on.
 3. **Encoder id 6.** [display/input.md](../code/display/input.md#rotary-encoders-and-pots) says id 6 is the mouse wheel on the main screen;
    [main/ui-keys.md](../code/main/ui-keys.md#encoders-e1) guesses id 6 is the main dial in a high-resolution or alternate mode. Not used in
-   the guide.
+   the guide. (Settled in T19h b3: id 6 is the USB mouse wheel on the main screen, `mouse_wheel_event` 0x2015FAC4 [fact].)
 4. **E1 frame wording (minor).** [display/input.md](../code/display/input.md#rotary-encoders-and-pots) writes the E1 frame as
    `AA 00 | 07 00 | E1 …`, which reads like wire bytes; [display/mainlink.md](../code/display/mainlink.md#1-summary) says the 0xAA marker and
    length are only an in-memory header and never sent. The guide uses the wire form `E1 id step 0 0 0 sum`.

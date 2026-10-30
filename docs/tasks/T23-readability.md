@@ -209,7 +209,7 @@ canonical projects and the re-export are left to the parent session.
      `devices/MIMXRT685S/drivers/fsl_power.c` lines 183-196) has `POWER_SetBiasConfig()`, "configure bias voltage level
      [RBB & FBB] and enable/disable pull-down", which writes `PMC_REG(0x20) = 0x04040808U` if it differs and then
      `PMC->SLEEPCTRL = CORELVL(0xA)` (0.7 V deep sleep) **[fact]**. That is exactly the M33 function at 0x00080030
-     (`power_set_deepsleep_pmc_cfg`, so its SDK name is `POWER_SetBiasConfig`). New `RT_EXTRA` list in
+     (first named `power_set_deepsleep_pmc_cfg`, now `POWER_SetBiasConfig`). New `RT_EXTRA` list in
      `tools/sfr_table.py`: `PMC_BIASCFG` (our symbol) at 0x40135020 and `PMC_S_BIASCFG` at 0x50135020; `build --chip rt685`
      rewrote `sfr_rt685.tsv` with these two rows only (HiFi4 table unchanged, PMC is not in the DSP view); checks pass;
      M33 coverage is now 100 %. Applying it needs the next canonical `ApplySfr.java` run.
@@ -219,7 +219,8 @@ canonical projects and the re-export are left to the parent session.
      `ostm_time_us` tests bit 6 of it while OSTM0 runs and, if set, adds one more 320000-count period. Bit 6 of the GIC
      word 4 is interrupt ID 134 = **OSTM0TINT** (manual Table 7.3, "List of Interrupt IDs"), whose pending flag is `INTC_ICDISPR4` (0xE8201210)
      bit 6, so the code means "OSTM0 tick pending, the counter has already wrapped" **[inference]**, and the address looks
-     like a slip in Yaesu's code **[guess]**; if the location reads 0, the correction never fires and the time can step
+     like a slip in Yaesu's code (**open**: `ostm_time_us` 0x20117860 is the only DISPLAY code that reads it (grep of decomp/display) to 0xE8205580; reading it on
+     a running radio over JTAG, with the owner's approval, would settle it); if the location reads 0, the correction never fires and the time can step
      back by up to one 10 ms tick between the wrap and the tick interrupt **[inference]**. No row added (the TSVs list
      only documented or sourced registers); the reason is a comment next to `RT_EXTRA`.
 
@@ -678,7 +679,7 @@ canonical projects).
   whose following bytes were their return use; they are now left out of the stats (DISPLAY lost_ret 170 → 17, M33 13 → 0
   before any signature). A call reads its callee's live-in (wrappers pass r0..r3 on), PUSH counts as no use (armcc and
   gcc push r0-r3 to reserve stack). The M33 code is built with gcc `-fipa-ra`: callers keep r0..r3 across a callee that
-  never writes them (`power_set_deepsleep_pmc_cfg` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
+  never writes them (`POWER_SetBiasConfig` "returns" the caller's r0), so CallArgCheck now writes `writes_ret`
   (transitive over the call graph) and `sites_keep_scratch` (r2/r3/r12 live after the call, or r0/r1 the callee never
   writes), and the drafter leaves such functions out.
 - **Signatures**: `signatures_display.tsv` 578 rows (575 asm, 1 doc `__aeabi_uidivmod` as uint64 per the RTABI,
@@ -753,7 +754,7 @@ canonical projects).
   listed as "Also on". Unlisted functions go to `unassigned.c`, in sections by export file.
 - **Header comment** per function: Ghidra name, address, size, callers, export file; the doc's name if it differs from
   the Ghidra name (so a stale doc name after a rename is visible), the inferred/proposed name, the purpose columns,
-  the tags found in the row (`[fact]`, `[inference]`, `[guess]`, or a `Tag` column; "none in the table row" when the
+  the tags found in the row (`[fact]`, `[inference]`, the former guess tag, or a `Tag` column; "none in the table row" when the
   page tags the claim elsewhere), the page link. The body from the marker line to the next marker is copied byte for
   byte (the script asserts that the chunks rebuild each export file exactly).
 - **Bootstrap:** `step_export` runs `readable_view.py build` after `readability_stats.py readme` when `DECOMP_OUT` is the

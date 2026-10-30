@@ -164,7 +164,7 @@ include type and sum and match the DISPLAY's table **[fact]**. Payload meanings 
 | 1 | 0x60 | 0xB6 | 0x1B3D0 (after F0) | `displink_tx_60_hello` 0xFFF96225 / 0xFFF96241 | b1..b8: MAIN, DISPLAY, DSP, SDR versions as BCD pairs (from `ver_main`, `ver_display`, `ver_dsp`, `ver_sdr`); b13..b14 = +0x32 (0xDB when 0x4660 set); then the 0x97-byte status block (same as `0x20`) and a few settings (0x9B0D, 0x9B09, 0x9B05, 0x9B01, 0x9DC5) **[fact]** |
 | 2 | 0x64 | 3 | +0xB7 | 0xFFF986E0 | b1 = +0xB8, sent only when it changed **[fact]** |
 | 3 | 0x24 | 0x9F | +0x400 (after the hello ACK; again 0x2B timer after +0x401) | 0xFFF9A17D / 0xFFF9A1A7 | display settings: EXT DISPLAY / PIXEL / SCU-LAN10, keyboard language, mouse speed, TFT brightness, LED dimmer, contrast, see [0x24](#0x24-display-settings-0x9f-bytes-display-mainlink_get_settings24-gui_apply_display_cfg) **[fact]** |
-| 4 | 0x7F | 0x0B | +0x447 | `power_down_save` 0xFFF98797 | b1 = +0x35 & 0x7F, then the constant `9B BA F6 38 FF 25 73 1F`. +0x35 (= 0x20B39) is the power command: 0x10 power off (`PS0;`), 0x11 restart (`dest_code_set`, resets), 0x90 low-voltage off (also waits 2000 units) **[fact for the values; the constant looks like a guard against accidental matches, guess]** |
+| 4 | 0x7F | 0x0B | +0x447 | `power_down_save` 0xFFF98797 | b1 = +0x35 & 0x7F, then the constant `9B BA F6 38 FF 25 73 1F`. +0x35 (= 0x20B39) is the power command: 0x10 power off (`PS0;`), 0x11 restart (`dest_code_set`, resets), 0x90 low-voltage off (also waits 2000 units) **[fact for the values]**. The DISPLAY acts on sub 0x10 / 0x11 only when these 8 bytes equal its copy at 0x20450285 (`memcmp`, else the frame is ignored) **[fact: DISPLAY decomp 2015c278_2015f0ec.c; [display/mainlink.md](../display/mainlink.md)]** |
 | 5 | 0x62 / 0x30 / 0x31 | 0x197 / 0xA0 / 0xA3 | +0xBA (boot code 2) | 0xFFF9C46D / 0xFFF98ECB | `0x62`: nine alignment-menu lines, see [0x62](#0x62-alignment-menu-0x197-bytes-display-scr_setup_menu) **[fact]** |
 | 6 | 0x7C | 5 | +0x81 | 0xFFF98869 | zeros; +0x80 then blocks until `E5` **[fact]** |
 | 7 | 0x7B | 5 | +0x83 (`screensaver_toggle_req`, set by `io_task`) | 0xFFF9889C | b1 = toggled +0x82 (`screensaver_on`); while +0x82 = 1 the frames below are not sent, until `E4` **[fact]**. Screen saver on/off ([README.md](README.md#screen-saver-timer-slow-timer-0)) |
@@ -253,7 +253,7 @@ Bytes 97–102, 114 and 133–151 are **always 0** **[fact]**: every frame build
 `displink_build_status` (`displink_build_60` runs after a builder that did), and no code in MAIN stores to 0x1701..0x1706, 0x1712 or
 0x1725..0x1737 under any address form. The DISPLAY has no absolute reference to the matching snapshot bytes (0x208F0B8B..0x208F0B90,
 0x208F0B9C, 0x208F0BAF..0x208F0BC1) **[fact]**; it reads the block mostly through a base pointer, so an indexed read cannot be ruled out
-from text alone. The gaps look like fields of the shared Yaesu status layout that the FT-710 does not use **[guess]**. Of the single bits
+from text alone. Open: whether any DISPLAY code reads these bytes and why MAIN reserves them; would be settled by tracing the DISPLAY's base-pointer reads of the snapshot (Ghidra data-flow from the snapshot base pointer) or by a firmware version that fills them. Of the single bits
 listed in #179, UI +0x68 and +0x6F are always 0; 0x9C5C (byte 9 bit 3) is the soft-key-0x011 long-press toggle that the DISPLAY reads as
 the AF-FFT overlay of the filter graph, and byte 8 (+0x34) is the front-panel LED mask (`led_set_mask`) (see the rows above; #179); `affft_bins_get` and `filter_graph_affft_overlay` are new rows in `tools/ghidra/names_display.tsv` and appear in `decomp/display/` after the next Ghidra re-export). Soft key
 0x011 is a **touch on the main screen's filter graph** (#212): the DISPLAY's main-screen hit table 0x20192748 holds the one rectangle
@@ -390,7 +390,7 @@ Function ids, in slot order **[fact for the sources; the names 0..0x14 match the
 | 0x16 | MESSAGE | greyed in DATA/RTTY/PSK, no text (opens the message-memory screen `0x39`) |
 | 0x17 / 0x35 | RECORD / STOP | 0x35 replaces 0x17 while recording (UI +0x92) |
 | 0x18 | PLAY | no text (opens the PlayList `0x3A`) |
-| 0x2D | TXW | TX watch (listen on the TX frequency in split) **[guess from the label]** |
+| 0x2D | TXW | TX watch: in split, after FUNC → [TXW], holding the FUNC knob receives on the TX frequency **[fact: OM JPN p.36]**; the `TS` CAT command sets the same state (UI +0x483, A/B swap flag 0x20F09; [cat-commands-primary.md](../../cat-commands-primary.md#ts)) |
 | 0x30..0x34 | RADIO / CW / OPERATION / DISPLAY / EXTENSION | no text, and the DISPLAY adds an icon: shortcuts to the five setting-menu groups RADIO SETTING … EXTENSION SETTING |
 | 0xFF | (empty slot) | |
 
@@ -398,7 +398,7 @@ Labels **[fact]**: rendered from the DISPLAY V01-08 image, sprite table 0x208019
 flag bit 7 is set; it has sprites only for ids 6, 8, 0x10, 0x11, 0x14–0x16, 0x2D, 0x3A and 0x40), read by `scr_func_panel` 0x2012A9EC. Ids 0x19..0x2C,
 0x2E, 0x2F, 0x36..0x39 and 0x3B..0x40 have no normal label. The `SF` command does not list ids above 0x14. That MESSAGE / PLAY open those screens,
 and that 0x30..0x34 jump to the menu groups (named like MAIN's P1 titles at ROM `RADIO SETTING`…), is an **[inference]** from the labels; the
-"five message memories" guess is withdrawn.
+earlier unsupported reading "five message memories" is withdrawn.
 
 #### `0x39` message-memory screen (0xE9 bytes; DISPLAY `scr_vfo` / `FUN_201293f8`)
 
@@ -529,7 +529,7 @@ from 0xFFF80000 (the first bytes of the MAIN image), and some numbers share or s
 | other | — | nothing after the status block (all 0) | — | — |
 
 All texts are space-padded to 22 characters **[fact]**. The questions (`?`, and `DELETE`) use button set 0 (2 for `SETUP?`) and the
-notices use 4, so 4 is most likely a single OK button and 0/2 the YES/NO kinds **[guess]**; the names `displink_70_msg`/`_query` were
+notices use 4. The DISPLAY's `confirm_dialog_draw` (0x20126A58) takes the button count from 0x20800650[set] = 2, 1, 2 for sets 0, 1, 2 and the labels from the sprite pointers 0x208022F0[set·2 + i]: set 0 = **OK / CANCEL**, set 1 = **OK**, set 2 = **YES / NO**; `scr_confirm` clamps the set to 3 and sets ≥ 3 draw **no buttons**, so the notices (4) are text-only boxes **[fact: DISPLAY decomp 20124a74_2012cb60.c, `.data` and sprites decoded with tools/display_assets.py]**; the names `displink_70_msg`/`_query` were
 given before the texts were known and do not follow this split. After the texts the ROM continues at 0xFFF80268 with the 44-character
 warnings `Memory channels are   overwritten.` and `Menu settings are     overwritten.` **[fact]**; their user was not traced.
 So `dialog_insert_fw_sd` (0xFFFCF4D5, n = 2) and `dialog_no_sd_card` (0xFFFCF4F2, n = 3) are the SD CARD menu's "no card"
@@ -562,7 +562,7 @@ sequenceDiagram
 
 The DISPLAY's error index **[fact, DISPLAY `FUN_20124744`]**: the argument −1..−6, −8, −9 maps to 0..7 (−7 has no slot and sends 0xFF).
 The callers pass −1 when `FUN_20103ba0` (bit 6 of the SD-card status 0x20800094) is 0, which reads as *no SD card* **[inference]**; −3 when
-`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set (once guessed as *write-protected*, but see below); −4 when the `MSG_CHn` file is missing; −6 when
+`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set (once read as *write-protected* without evidence, but see below); −4 when the `MSG_CHn` file is missing; −6 when
 there is nothing to delete; −8 / −7 when a file cannot be opened to play or wind; −9 when the matching `MSG_CHn` directory entry has a
 non-zero field +0x30 (meaning open). With the [0x70 texts](#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) the
 error index i gives **[fact for the mapping]**: 0 (−1) `INSERT SD CARD`, 1 (−2) `SD CARD FULL`, 2 (−3) `SD CARD ERROR`, 3 (−4) `NO FILE`,
@@ -637,7 +637,7 @@ Two DISPLAY-driven maintenance modes take over the link. Each runs as a blocking
   **[inference]**), sends `5A A6` (NXP ISP ping) on SCI4, ACKs the DISPLAY, then forwards: DISPLAY `Z len16 data… sum` → payload to SCI4; every
   SCI4 packet → `Z len16 packet sum` to the DISPLAY. `F1 82` leaves. **[fact]** So the DISPLAY updates the IF-DSP flash **through MAIN**, with
   MAIN as a transparent UART bridge to the RT685 boot ROM **[inference, high]**. Details: T10d.
-- `F1 03` sets 0x20B46, which makes `cat_parse` return at once (CAT disabled) **[fact]**; it is probably sent before a firmware update **[guess]**.
+- `F1 03` sets 0x20B46, which makes `cat_parse` return at once (CAT disabled) **[fact]**; the DISPLAY sends `F1 03` at the start of its own firmware update (`fwobj_display_run`, before it erases flash) and `F1 83` at the end **[fact: [display/update.md](../display/update.md#write-sequence-fwobj_display_run)]**; MAIN treats `F1 83` as a no-op and nothing in MAIN clears 0x20B46, so CAT stays off until the next reset **[fact: `displink_rx_F1_sys` 0xFFF957E6, no other store to 0x20B46]**.
 
 ## Cross-image notes
 

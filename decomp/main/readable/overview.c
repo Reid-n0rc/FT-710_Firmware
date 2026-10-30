@@ -1012,11 +1012,11 @@ void keyer_task(void)
     swtimer_start(0x19,(ushort)DAT_0001215c);
     swtimer_start(0x1b,10000);
     FUN_fffbaff6();
-    DAT_00021040 = vfo_rec_ptr(VFO_TX);
+    DAT_00021040 = vfo_rec_ptr(1);
     iVar7 = tx_breakin_on();
     if (iVar7 == 1) {
       DAT_00012166 = '\x01';
-      DAT_00021040->blk[1].flags = DAT_00021040->blk[1].flags & 0xfd;
+      DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
     }
     else {
       DAT_00012166 = '\0';
@@ -1029,7 +1029,7 @@ void keyer_task(void)
   case 4:
     if (DAT_00012166 == '\x01') {
       DAT_00012166 = '\0';
-      DAT_00021040->blk[1].flags = DAT_00021040->blk[1].flags | 2;
+      DAT_00021040[0x14] = DAT_00021040[0x14] | 2;
     }
     DAT_0001fa3a = DAT_0001fa38;
     if (DAT_0001fa38 != 0) {
@@ -1437,7 +1437,9 @@ void dispreq_e8_task(void)
  * ladder_key_task @ fffe3e2a  (699 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
  * Role: Acts on key code 0x1204C (1..6, 0xF7..0xFA; `remote_keypad_scan` ORs 0xF0 in after the key is held for 100
  *     passes, i.e. a long press [inference]), produced by `remote_keypad_scan` from ADC channel 0x20B10 (a 12-level
- *     resistor ladder) [fact for the decode; guess: microphone or remote-keypad keys]
+ *     resistor ladder) [fact for the decode]. The input is AN108 on PD0, net `REM_KEY` (schematic, peripherals.md
+ *     pin table), and the operating manual connects the optional FH-2 remote keypad to the REM jack (OM JPN p.8,
+ *     p.102), so these are FH-2 keys [fact: schematic + manual]
  * Page: ui-keys.md
  * Tag: [inference] [fact]
  * Doc: ../../../docs/code/main/README.md

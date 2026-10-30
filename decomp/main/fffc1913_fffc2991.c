@@ -41,7 +41,7 @@ void bandstack_save(void)
   
   local_13 = g_opstate.active_vfo == VFO_A;
   if (local_13) {
-    uVar1 = vfo_freq(VFO_RX,VFO_A);
+    uVar1 = vfo_freq(0,0);
     g_opstate.band_a = band_of_freq(uVar1);
     pvStack_4 = &g_opstate.vfo_a;
     bStack_12 = bandstack_level_a[g_opstate.band_a];
@@ -49,7 +49,7 @@ void bandstack_save(void)
     bStack_11 = g_opstate.band_a;
   }
   else {
-    uVar1 = vfo_freq(VFO_RX,VFO_B);
+    uVar1 = vfo_freq(0,1);
     g_opstate.band_b = band_of_freq(uVar1);
     pvStack_4 = &g_opstate.vfo_b;
     bStack_12 = bandstack_level_b[g_opstate.band_b];
@@ -101,10 +101,10 @@ void FUN_fffc1a35(void)
 
 /* Band key in PMS state */
 
-void band_select_pms(vfo_side param_1,band_idx param_2)
+void band_select_pms(char param_1,byte param_2)
 
 {
-  if (param_1 == VFO_A) {
+  if (param_1 == '\0') {
     if (g_opstate.vfo_state_a == VFO_STATE_PMS) {
       g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
@@ -121,7 +121,7 @@ void band_select_pms(vfo_side param_1,band_idx param_2)
 
 /* Band key in memory state */
 
-void band_select_mem(vfo_side param_1,band_idx param_2)
+void band_select_mem(byte param_1,byte param_2)
 
 {
   byte bVar1;
@@ -142,7 +142,7 @@ void band_select_mem(vfo_side param_1,band_idx param_2)
 
 /* Band key in memory-tune state */
 
-void band_select_memtune(vfo_side param_1,band_idx param_2)
+void band_select_memtune(byte param_1,byte param_2)
 
 {
   vfo_enter_vfo_state(param_1);
@@ -156,10 +156,10 @@ void band_select_memtune(vfo_side param_1,band_idx param_2)
 
 /* Band key in VFO/QMB state */
 
-void band_select_vfo(vfo_side param_1,band_idx param_2)
+void band_select_vfo(char param_1,byte param_2)
 
 {
-  if (param_1 == VFO_A) {
+  if (param_1 == '\0') {
     if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
       g_opstate.vfo_state_a = VFO_STATE_VFO;
     }
@@ -178,14 +178,14 @@ void band_select_vfo(vfo_side param_1,band_idx param_2)
 /* WARNING: Removing unreachable block (ram,0xfffc1b7d) */
 /* (side, band): same band steps stack level mod 3 (if 0x9AC1), then vfo_reload */
 
-void band_select_stack(vfo_side param_1,band_idx param_2)
+void band_select_stack(char param_1,byte param_2)
 
 {
   band_idx bVar1;
   band_idx bVar2;
   byte local_3;
   
-  if (param_1 == VFO_A) {
+  if (param_1 == '\0') {
     bVar1 = param_2;
     bVar2 = g_opstate.band_b;
     if (g_opstate.band_a == param_2) {

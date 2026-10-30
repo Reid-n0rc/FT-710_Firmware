@@ -190,14 +190,14 @@ void menu_ex010317_step(void)
 {
   bool local_9;
   byte *local_8;
-  vfo_rec *local_4;
+  byte *local_4;
   
-  local_4 = vfo_rec_ptr(VFO_TX);
-  local_8 = &local_4->flags2;
+  local_4 = vfo_rec_ptr(1);
+  local_8 = local_4 + 2;
   local_9 = (bool)(*local_8 >> 2 & 3);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 0xf3 | (local_9 & 3U) << 2;
-  local_9 = local_4 != &g_opstate.vfo_a;
+  local_9 = (vfo_rec *)local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;
@@ -211,10 +211,10 @@ void menu_ex010317_step(void)
 byte menu_fm_rptshift_get(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  return pvVar1->flags2 >> 2 & 3;
+  pbVar1 = vfo_rec_ptr(1);
+  return pbVar1[2] >> 2 & 3;
 }
 
 
@@ -226,10 +226,10 @@ byte menu_fm_rptshift_get(void)
 void menu_fm_rptshift_set(byte param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  pvVar1->flags2 = pvVar1->flags2 & 0xf3 | (param_1 & 3) << 2;
+  pbVar1 = vfo_rec_ptr(1);
+  pbVar1[2] = pbVar1[2] & 0xf3 | (param_1 & 3) << 2;
   return;
 }
 
@@ -297,14 +297,14 @@ void menu_ex010320_step(void)
 {
   bool local_9;
   byte *local_8;
-  vfo_rec *local_4;
+  byte *local_4;
   
-  local_4 = vfo_rec_ptr(VFO_TX);
-  local_8 = &local_4->flags3;
+  local_4 = vfo_rec_ptr(1);
+  local_8 = local_4 + 3;
   local_9 = (bool)(*local_8 >> 3 & 7);
   menu_step_u8(0,2,&local_9);
   *local_8 = *local_8 & 199 | (local_9 & 7U) << 3;
-  local_9 = local_4 != &g_opstate.vfo_a;
+  local_9 = (vfo_rec *)local_4 != &g_opstate.vfo_a;
   vfo_mark_edited(local_9);
   vfo_store_back(local_9);
   return;
@@ -318,10 +318,10 @@ void menu_ex010320_step(void)
 byte menu_fm_encdec_get(void)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  return pvVar1->flags3 >> 3 & 7;
+  pbVar1 = vfo_rec_ptr(1);
+  return pbVar1[3] >> 3 & 7;
 }
 
 
@@ -333,10 +333,10 @@ byte menu_fm_encdec_get(void)
 void menu_fm_encdec_set(byte param_1)
 
 {
-  vfo_rec *pvVar1;
+  byte *pbVar1;
   
-  pvVar1 = vfo_rec_ptr(VFO_TX);
-  pvVar1->flags3 = pvVar1->flags3 & 199 | (param_1 & 7) << 3;
+  pbVar1 = vfo_rec_ptr(1);
+  pbVar1[3] = pbVar1[3] & 199 | (param_1 & 7) << 3;
   return;
 }
 

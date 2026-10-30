@@ -530,7 +530,7 @@ fff9eae7	dsp_set_hcut	551	1	fff9db97_fff9ffb1.c
 fff9ed0e	dsp_set_lcut	550	1	fff9db97_fff9ffb1.c
 fff9ef34	dsp_set_tone_freq	381	3	fff9db97_fff9ffb1.c
 fff9f0b1	dsp_set_tone_gain	480	3	fff9db97_fff9ffb1.c
-fff9f291	dsp_set_tone_type	367	3	fff9db97_fff9ffb1.c
+fff9f291	dsp_set_tone_q	367	3	fff9db97_fff9ffb1.c
 fff9f400	dsp_set_r51	48	1	fff9db97_fff9ffb1.c
 fff9f430	dsp_set_am_notch	152	1	fff9db97_fff9ffb1.c
 fff9f4c8	dsp_set_ctcss_dec	131	1	fff9db97_fff9ffb1.c

@@ -880,13 +880,13 @@ uint FUN_fffe3615(void)
 {
   byte bVar1;
   ui_state *puVar2;
-  radio_mode rVar3;
+  byte bVar3;
   uint uVar4;
   uint uStack_c;
   
   bVar1 = g_ui.keyer_state;
-  rVar3 = vfo_mode(VFO_TX);
-  if ((rVar3 == MODE_CW_U) || (rVar3 == MODE_CW_L)) {
+  bVar3 = vfo_mode(1);
+  if ((bVar3 == 3) || (bVar3 == 2)) {
     uStack_c = 0;
   }
   else {
