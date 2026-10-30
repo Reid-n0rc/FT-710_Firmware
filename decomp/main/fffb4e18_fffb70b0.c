@@ -526,8 +526,8 @@ void pa_relay_update(void)
   bVar4 = FUN_fffb3337(g_ui.freq_tx);
   uStack_8 = 1 << (bVar4 & 0x1f);
   if (g_ui.atu_state == 2) {
-    iVar6 = FUN_fffec50f();
-    if ((iVar6 == 0) && (iVar6 = FUN_fffec500(), iVar6 == 0)) {
+    iVar6 = atu_tc_get();
+    if ((iVar6 == 0) && (iVar6 = atu_ac_get(), iVar6 == 0)) {
       bVar1 = false;
     }
     else {
@@ -640,8 +640,8 @@ void atu_relay_update(void)
   bVar2 = send_a_get();
   uStack_8 = 0;
   if (g_ui.atu_state == 2) {
-    iVar3 = FUN_fffec50f();
-    uVar4 = FUN_fffec500();
+    iVar3 = atu_tc_get();
+    uVar4 = atu_ac_get();
     uStack_8 = FUN_fffec51e();
     uStack_8 = uStack_8 | (uVar4 | iVar3 << 8) << 8;
   }

@@ -473,9 +473,12 @@ void FUN_fff94bfd(undefined4 *param_1)
 }
 
 
-// ===== FUN_fff94c0f @ fff94c0f (12 bytes)
+// ===== ver_display_date @ fff94c0f (12 bytes)
 
-void FUN_fff94c0f(void)
+/* Returns 0x143C, the 8-char DISPLAY date "yy-mm-dd" (ver_display_date_set); shown in SOFT VERSION
+   when DBG MODE ENABLE is set [fact: disassembly 0xFFF94C11] (#205) */
+
+void ver_display_date(void)
 
 {
   return;

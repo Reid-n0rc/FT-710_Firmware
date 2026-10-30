@@ -1711,7 +1711,8 @@ void sdr_init_r15(void)
 
 /* WARNING: Removing unreachable block (ram,0xfffa1ae7) */
 /* Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM
-   0x30/0x31); also sets 0x20B4A */
+   0x30/0x31); also sets 0x20B4A, the TX->RX AF-unmute delay (ms) that trx_sequencer adds to soft
+   timer 0x0D [fact] (#205) */
 
 void sdr_upd_r16_filter(void)
 

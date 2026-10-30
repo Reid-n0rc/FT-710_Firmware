@@ -224,7 +224,7 @@ fff94bd9	ver_main_ext1	12	1	fff94851_fff95bf4.c
 fff94be5	ver_main_ext2	12	1	fff94851_fff95bf4.c
 fff94bf1	ver_display	12	3	fff94851_fff95bf4.c
 fff94bfd	FUN_fff94bfd	18	1	fff94851_fff95bf4.c
-fff94c0f	FUN_fff94c0f	12	1	fff94851_fff95bf4.c
+fff94c0f	ver_display_date	12	1	fff94851_fff95bf4.c
 fff94c1b	ver_display_date_set	18	1	fff94851_fff95bf4.c
 fff94c2d	ver_dsp	12	3	fff94851_fff95bf4.c
 fff94c39	ver_dsp_set	18	1	fff94851_fff95bf4.c
@@ -3706,8 +3706,8 @@ fffec46c	tuner_init	7	1	fffec2df_fffed6f5.c
 fffec473	tuner_task	32	2	fffec2df_fffed6f5.c
 fffec493	FUN_fffec493	72	2	fffec2df_fffed6f5.c
 fffec4db	FUN_fffec4db	37	3	fffec2df_fffed6f5.c
-fffec500	FUN_fffec500	15	2	fffec2df_fffed6f5.c
-fffec50f	FUN_fffec50f	15	2	fffec2df_fffed6f5.c
+fffec500	atu_ac_get	15	2	fffec2df_fffed6f5.c
+fffec50f	atu_tc_get	15	2	fffec2df_fffed6f5.c
 fffec51e	FUN_fffec51e	15	1	fffec2df_fffed6f5.c
 fffec52d	FUN_fffec52d	10	1	fffec2df_fffed6f5.c
 fffec537	vfo_tuner_bit_set	35	11	fffec2df_fffed6f5.c

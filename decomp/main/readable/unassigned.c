@@ -1452,10 +1452,13 @@ void FUN_fff94bfd(undefined4 *param_1)
 }
 
 
-/* -- FUN_fff94c0f: 1 callers, export file fff94851_fff95bf4.c; not on a subsystem page */
-// ===== FUN_fff94c0f @ fff94c0f (12 bytes)
+/* -- ver_display_date: 1 callers, export file fff94851_fff95bf4.c; not on a subsystem page */
+// ===== ver_display_date @ fff94c0f (12 bytes)
 
-void FUN_fff94c0f(void)
+/* Returns 0x143C, the 8-char DISPLAY date "yy-mm-dd" (ver_display_date_set); shown in SOFT VERSION
+   when DBG MODE ENABLE is set [fact: disassembly 0xFFF94C11] (#205) */
+
+void ver_display_date(void)
 
 {
   return;
@@ -36814,20 +36817,27 @@ void FUN_fffec4db(void)
 }
 
 
-/* -- FUN_fffec500: 2 callers, export file fffec2df_fffed6f5.c; not on a subsystem page */
-// ===== FUN_fffec500 @ fffec500 (15 bytes)
+/* -- atu_ac_get: 2 callers, export file fffec2df_fffed6f5.c; not on a subsystem page */
+// ===== atu_ac_get @ fffec500 (15 bytes)
 
-undefined1 FUN_fffec500(void)
+/* Returns 0x1B3AD, the internal tuner AC byte (/SST6 bits 8-15, relays C0..C7) [fact]; the
+   antenna-side series C bank [inference, strong: p47 + bit order] (#205) */
+
+undefined1 atu_ac_get(void)
 
 {
   return DAT_0001b3ad;
 }
 
 
-/* -- FUN_fffec50f: 2 callers, export file fffec2df_fffed6f5.c; not on a subsystem page */
-// ===== FUN_fffec50f @ fffec50f (15 bytes)
+/* -- atu_tc_get: 2 callers, export file fffec2df_fffed6f5.c; not on a subsystem page */
+// ===== atu_tc_get @ fffec50f (15 bytes)
 
-undefined1 FUN_fffec50f(void)
+/* Returns 0x1B3AF, the internal tuner TC byte (/SST6 bits 16-23, relays C8..CF) [fact]; the
+   transmitter-side series C bank [inference, strong: p47 + bit order]. pa_relay_update sets TNRON
+   only if this or atu_ac_get is non-zero [fact] (#205) */
+
+undefined1 atu_tc_get(void)
 
 {
   return DAT_0001b3af;
