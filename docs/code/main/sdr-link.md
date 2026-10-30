@@ -116,7 +116,7 @@ the same units as `cat_ai_holdoff`'s 200 = 200 ms) **[fact for the call; inferen
 
 `sdr_send_cmd` arms a receive of up to 7 bytes, but `sci5_rx_byte_hook` 0xFFF94962 (called by the SCI5 RXI ISR for each byte) looks at the
 first byte: 0x06 or `?` sets the length to 1, `r` keeps 7, and any other first byte is dropped **[fact]**. (Corrected by T19h: this section
-used to say "always 7 bytes" and guessed byte 0 was an echo; T15e's simulation and this code agree.)
+used to say "always 7 bytes" and took byte 0 for an echo without evidence; T15e's simulation and this code agree.)
 
 | Request | Reply layout | Check |
 |---|---|---|
@@ -205,13 +205,13 @@ column is tagged per row.
 | 0x04 | 0x1B73C | `sdr_upd_r04` | RX | 0xE519 | constant **[meaning unknown]** |
 | 0x08 / 0x09 | 0x1B73E / 0x1B740 | `sdr_upd_r08_tx_freq` | all | high/low word of 0x20F50 (Hz). PSK: −1000/1500/2000 (0x9A79). CW keying in an SSB mode (`FUN_fffba192`==3): ∓(300 + 10·KP 0x9C04) | **TX NCO frequency** **[inference]** |
 | 0x0A | 0x1B742 | `sdr_upd_r0a_demod` | all, only while 0x1204D≠0 | 0 = CW (modes 2,3, or CW in SSB), 1 = AM (4,5), 2 = FM (6,7,10,11), 3 = LSB/DATA-L (0,8), 4 = USB/DATA-U/PSK (1,9,14), 5 = RTTY (12,13) | **Modulation class** of the active side **[inference]** |
-| 0x0B | 0x1B744 | `sdr_upd_r0b_band` | all | per-band word, table 0xFFF87FFA (RX: 105…117) / 0xFFF87FFE (TX: 96…128), 8-byte rows | Per-band gain/level calibration **[guess]** |
+| 0x0B | 0x1B744 | `sdr_upd_r0b_band` | all | per-band word, table 0xFFF87FFA (RX: 105…117) / 0xFFF87FFE (TX: 96…128), 8-byte rows | Open: what the FPGA does with it (the values are constants from the ROM table 0xFFF87FFA, not from the EEPROM alignment table); would be settled by an FPGA netlist simulation that traces this register's flip-flops ([sdr/netlist.md](../sdr/netlist.md)) |
 | 0x0C | 0x1B746 | `sdr_upd_r0c_rtty_shift` | all | `(shift/5) << 8 | 3`, shift = 170/200/425/850 Hz from 0x9A8D | **RTTY shift** **[inference]** |
 | 0x0D | 0x1B748 | `sdr_upd_r0d` | all | 9 / 14 / 19 for 0x9AA1 = 0 / 1 / 2 | 0x9AA1 is **CW WAVE SHAPE** (`EX020117`, #74), so reg 0x0D is the CW envelope rise/fall. 0x9AA1 also sets a TX-sequencer delay (2·v+4) **[fact]**; envelope meaning **[inference]** |
 | 0x0E | 0x1B74A | `sdr_upd_r0e` | all | 0x1200 | constant |
-| 0x0F | 0x1B74C | `sdr_upd_r0f_band` | all | per-band word 0xFFF87FFC (RX 0x1800) / 0xFFF88000 (TX 0x0A00). 0 when ADC 0x20B14 (`adc_results[8]`) ≥ 0xE8B, unchanged while it is 0x9B3…0xE8A (hysteresis) | Unknown; disabled by an analog condition **[guess]** |
+| 0x0F | 0x1B74C | `sdr_upd_r0f_band` | all | per-band word 0xFFF87FFC (RX 0x1800) / 0xFFF88000 (TX 0x0A00). 0 when ADC 0x20B14 (`adc_results[8]`) ≥ 0xE8B, unchanged while it is 0x9B3…0xE8A (hysteresis) | ADC 0x20B14 is AN115, net `SDR_DET` (the SDR-module detect voltage; [peripherals.md](peripherals.md)), so the register is forced to 0 by that voltage **[fact]**. Open: what the register does; would be settled by an FPGA netlist simulation that traces this register's flip-flops ([sdr/netlist.md](../sdr/netlist.md)) |
 | 0x12, 0x13 | 0x1B74E, 0x1B750 | `sdr_upd_r12`, `sdr_upd_r13` | RX | 0x8000 each | **Gains of ADC channel A (0x12) and B (0x13)**: 16-bit B operands of DSP48_X1Y26 / DSP48_X0Y17 after the DC removal; 0x8000 is also their reset value ([sdr/netlist.md 3.7](../sdr/netlist.md), #172) **[fact, simulation]** |
-| 0x14 | 0x1B752 | `sdr_upd_r14_mode` | all | 0x2000 default, 0x3200 AM/AM-N, 0x7800 FM/DATA-FM, 0x3C00 FM-N/DATA-FM-N | Mode-dependent level (FM deviation scale?) **[guess]** |
+| 0x14 | 0x1B752 | `sdr_upd_r14_mode` | all | 0x2000 default, 0x3200 AM/AM-N, 0x7800 FM/DATA-FM, 0x3C00 FM-N/DATA-FM-N | Open: a per-mode value (AM, FM, FM-N differ from the rest) whose effect is unknown; would be settled by an FPGA netlist simulation that traces this register's flip-flops ([sdr/netlist.md](../sdr/netlist.md)) |
 | 0x15 | 0x1B754 | `sdr_init_r15` | once | 0x2000 | constant |
 | 0x16 | 0x1B756 | `sdr_upd_r16_filter` | RX | CW: 0/1/2 for width <251/<800/≥800 Hz; SSB, DATA, RTTY, PSK: 0x10/0x11/0x12 for <1101/<2000/≥2000 Hz; AM 0x21, AM-N 0x20, FM-N 0x30, FM and DATA-FM 0x31 | **Filter (FIR) class selection** **[inference]**. It also sets 0x20B4A, the TX→RX AF-unmute delay in ms that `trx_sequencer` adds to timer 0x0D (#205): CW 74/39/23 (narrow → wide), SSB/DATA/RTTY/PSK 31/23/21, AM/FM 30; +10 when the mode's AESS level is non-zero (not for AM/FM) **[fact]**. That it covers the filter's group delay is **[inference]** |
 | 0x18 / 0x19 | 0x1B758 / 0x1B75A | `sdr_upd_r18_rx_freq` | RX | high/low word of the RX-side frequency (Hz) plus a mode offset: SSB ±(1500 + shift), CW pitch, RTTY mark/shift (0x9A8C/0x9A8D), DATA offset 10·0x9A7A, PSK | **RX NCO frequency** **[inference]** |
@@ -226,9 +226,9 @@ column is tagged per row.
 | 0x23 | 0x1B76E | `sdr_upd_r23` | all | 0x8000 / 0x7000 / 0x5000 for 0x9B14 = 0 / 1 / 2 | 0x9B14 is the scope **RBW** (`EX040201`, #74), so reg 0x23 is a scope resolution-bandwidth parameter **[fact for the setting, inference for the register]** |
 | 0x24 | 0x1B770 | `sdr_init_r24` | once | 0x0317 | constant |
 | 0x25 | 0x1B772 | `sdr_upd_r25_tx_drive` | all | linear interpolation of the power setting (`FUN_fffb4062`) between the 5/10/20/50/100 W points of the per-band record (pointer table 0xFFF8861C → 0x469E…0x4734, 15 bytes per band, inside the `SPN` table 0x4659), × 16 | **TX drive level** **[inference]**. The bytes it uses (record +2, +5, +8, +11, +14) are the alignment items `[TX] 100W…5W TXG <band>` (`SPN` 072, 075, …; 50/20/10/5 W only for the 70 MHz record), named by MAIN's alignment menu **[fact, #203]** ([eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)) |
-| 0x26 | 0x1B774 | `sdr_upd_r26` | all | RX 0x0610. TX: 0x9C36=0 → 0x0140 if 0x9B16 else 0x0610; 0x9C36≠0 → 0xFF00 if 0x9B17 else 0x0200. 0x9B16/0x9B17 are the scope's **2D / 3DSS DISP SENSITIVITY** (`EX040203`/`EX040204`, #74) | Unknown. TX-only value tied to the scope settings (TX monitor?) **[guess]** |
+| 0x26 | 0x1B774 | `sdr_upd_r26` | all | RX 0x0610. TX: 0x9C36=0 → 0x0140 if 0x9B16 else 0x0610; 0x9C36≠0 → 0xFF00 if 0x9B17 else 0x0200. 0x9B16/0x9B17 are the scope's **2D / 3DSS DISP SENSITIVITY** (`EX040203`/`EX040204`, #74) | Open: changes only in TX and follows the scope's display-sensitivity settings; would be settled by an FPGA netlist simulation that traces this register's flip-flops ([sdr/netlist.md](../sdr/netlist.md)) |
 | 0x27 | 0x1B776 | `sdr_upd_r27_scope_level` | all | `0x8000 | (−(L) + 0/2/4)`. RX: L = scope ref-level byte (SS sel 4) + 0x4689 + 0x44; TX: L = byte − 0x37 | **Scope reference level** **[inference]** |
-| 0x30, 0x31 | 0x1B778, 0x1B77A | no updater | | written only by the bridge or `SPSW` | update data path? **[guess]** |
+| 0x30, 0x31 | 0x1B778, 0x1B77A | no updater | | written only by the bridge or `SPSW` | During an SDR update the DISPLAY writes them through the bridge with the 4 KiB block address 0x240000 + i·0x1000, high / low word, before each block **[fact: [display/update.md](../display/update.md), [sdr/interfaces.md](../sdr/interfaces.md)]**: the flash address of the block **[inference]** |
 | 0x32, 0x33 | 0x1B77C, 0x1B77E | no updater | bridge | the only registers the bridge lets the DISPLAY read | update status words **[inference]** |
 | 0x37 | 0x1B780 | `sdr_bridge_mode` | bridge entry | 0xBCC5 | **Update unlock key** **[inference]** |
 | 0xFFFF | 0x1B782 | (pseudo) | CAT | | Result slot for `SPSR`/`SPSW`. `sdr_wait_reply(…,1)` forces register 0xFFFF before the shadow update, so CAT frames never touch the real shadows **[fact]** |
@@ -324,12 +324,11 @@ What the bridge tells us about the update **[inference unless marked]**:
 - The FPGA design itself handles the update. It answers on the UART right after the reset with `SDR_UPDATE` low, and it
   takes the unlock write. So the update is done by the running SDR design, which writes its own QSPI flash, and not by
   a separate loader or by JTAG.
-- The DISPLAY sees only register writes and the status registers 0x32/0x33. Either the whole image is streamed as
-  register writes (registers 0x30/0x31 are the candidates: they have shadow slots but no updater), or the bulk data goes
-  over the DISPLAY's SPI link to the module's FFT port, and the bridge carries only the control and status traffic.
-  At 115200 baud with 12-byte frames for 2 data bytes, the 2.19 MB image would need about 20 minutes on the UART alone
-  **[guess: arithmetic]**, so the SPI path for the bulk data is plausible. The DISPLAY side (T11c, `sdr_flash_write`)
-  must settle this.
+- The DISPLAY sees only register writes and the status registers 0x32/0x33. The bulk data does **not** go through MAIN:
+  the DISPLAY's `sdr_flash_write` sends each 4 KiB block over RSPI2 on the FFT-port pins, and the bridge carries only the
+  register traffic (reg 0x30/0x31 block address, reg 0x32 commands, reg 0x33 CRC) **[fact: DISPLAY side,
+  [display/update.md](../display/update.md)]**. (Streaming the 2.19 MB image as 12-byte UART frames with 2 data bytes at
+  115200 baud would take 2.19e6 / 2 × 12 × 10 / 115200 ≈ 1140 s, about 19 minutes **[fact: arithmetic]**.)
 - If the unlock fails, the bridge returns without releasing `DSP_RESET` and without raising `SDR_UPDATE` **[fact]**.
   The radio then has no IF DSP until it is power-cycled **[inference]**.
 - After the update the DSP is held in reset until the FPGA has rebooted. The reason is most likely that `DSP_CLK` comes
@@ -445,13 +444,13 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFA1A8A | `sdr_init_r15` |  | Reg 0x15 = 0x2000, sent once after the first full sync **[inference]** |
 | 0xFFFA1ABB | `sdr_upd_r16_filter` |  | Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31); also sets 0x20B4A **[inference]** |
 | 0xFFFA1FD1 | `sdr_upd_r1a_nb_level` |  | Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off **[inference]** |
-| 0xFFFA2049 | `sdr_upd_r1b` |  | Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by setting 0x9AD3 **[guess]** |
-| 0xFFFA20AF | `sdr_upd_r1c` |  | Reg 0x1C = 2/5/10 from setting 0x9AD2 **[guess]** |
+| 0xFFFA2049 | `sdr_upd_r1b` |  | Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by NB WIDTH 0x9AD3 (`EX030203`) **[fact]**; the FPGA noise blanker's width parameter **[inference: that setting is its only input]** |
+| 0xFFFA20AF | `sdr_upd_r1c` |  | Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 (`EX030202`) **[fact]**; the noise blanker's rejection parameter **[inference: that setting is its only input]** |
 | 0xFFFA20F7 | `sdr_upd_r1d_notch` |  | Reg 0x1D = notch offset/5 Hz (12 bits) \| 0x2000 or 0x1000 (width 0x9AD1), 0 when off **[inference]** |
 | 0xFFFA2478 | `sdr_upd_r1e_passband` |  | Reg 0x1E = signed passband centre / 5 Hz (negated for the upper-side modes) **[inference]** |
 | 0xFFFA26CF | `sdr_upd_r1f_width` |  | Reg 0x1F = filter width in Hz (AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N 9000, else the selected width) **[inference]** |
 | 0xFFFA28EA | `sdr_upd_r22_scope_span` |  | Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000) **[inference]** |
-| 0xFFFA2992 | `sdr_upd_r23` |  | Reg 0x23 = 0x8000/0x7000/0x5000 from setting 0x9B14 **[guess]** |
+| 0xFFFA2992 | `sdr_upd_r23` |  | Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 (`EX040201`) **[fact]**; a scope resolution-bandwidth parameter **[inference: that setting is its only input]** |
 | 0xFFFA29E5 | `sdr_init_r24` |  | Reg 0x24 = 0x0317, sent once after the first full sync **[inference]** |
 | 0xFFFA2A16 | `sdr_upd_r25_tx_drive` |  | Reg 0x25 = TX drive: power setting interpolated (5/10/20/50/100 W) in the per-band calibration in the 0x4659 (SPN) table, << 4 **[inference]** |
 | 0xFFFA2B8F | `sdr_upd_r26` |  | Reg 0x26 = 0x0610 in RX; in TX 0x0140/0x0610/0x0200/0xFF00 from 0x9C36/0x9B16/0x9B17 [meaning unknown] **[inference]** |
