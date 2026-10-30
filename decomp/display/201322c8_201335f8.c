@@ -1,10 +1,12 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_201322c8 @ 201322c8 (16 bytes)
+// ===== fwupdate_menu_screen_thunk @ 201322c8 (16 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015a584) */
+/* mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of
+   the update-UI thunks of update.md [fact: words at 0x201322C8..0x201322D4] */
 
-void FUN_201322c8(undefined4 param_1)
+void fwupdate_menu_screen_thunk(undefined4 param_1)
 
 {
   byte bVar1;
@@ -137,32 +139,38 @@ void FUN_201322c8(undefined4 param_1)
 }
 
 
-// ===== FUN_201322d8 @ 201322d8 (12 bytes)
+// ===== fwupdate_select_screen_thunk @ 201322d8 (12 bytes)
 
-void FUN_201322d8(undefined4 param_1)
+/* fwupdate_select_screen(0x208F4BF4, frame) [fact] */
+
+void fwupdate_select_screen_thunk(undefined4 param_1)
 
 {
-  FUN_2015a8dc(&DAT_208f4bf4,param_1);
+  fwupdate_select_screen(&DAT_208f4bf4,param_1);
   return;
 }
 
 
-// ===== FUN_201322e4 @ 201322e4 (12 bytes)
+// ===== bootloader_entry_screen_thunk @ 201322e4 (12 bytes)
 
-void FUN_201322e4(undefined4 param_1)
+/* ldr r0, =0x208F4BF4; b bootloader_entry_screen (update.md update-UI thunks) [fact] */
+
+void bootloader_entry_screen_thunk(undefined4 param_1)
 
 {
-  FUN_20159058(&DAT_208f4bf4,param_1);
+  bootloader_entry_screen(&DAT_208f4bf4,param_1);
   return;
 }
 
 
-// ===== FUN_201322f0 @ 201322f0 (12 bytes)
+// ===== fwupdate_title_screen_thunk @ 201322f0 (12 bytes)
 
-void FUN_201322f0(void)
+/* fwupdate_ui_run(0x208F4BF4, "YAESU FT-710 FIRMWARE UPDATE") (update.md) [fact] */
+
+void fwupdate_title_screen_thunk(void)
 
 {
-  FUN_20159d98(&DAT_208f4bf4,"YAESU FT-710 FIRMWARE UPDATE");
+  fwupdate_ui_run(&DAT_208f4bf4,"YAESU FT-710 FIRMWARE UPDATE");
   return;
 }
 
@@ -705,8 +713,8 @@ void gui_start(void)
   undefined4 local_1c;
   
   FUN_201340a4();
-  FUN_201342b4();
-  FUN_20120d38();
+  scope_objects_init();
+  afscope_init();
   scope3d_tables_init();
   dmac8_m2m_init();
   sdr_dsp_link_init();
@@ -792,9 +800,12 @@ void * fb_get_front_addr(uint param_1)
 }
 
 
-// ===== FUN_20132ee8 @ 20132ee8 (16 bytes)
+// ===== fb_cache_clean_buf @ 20132ee8 (16 bytes)
 
-void FUN_20132ee8(undefined4 param_1)
+/* (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000,
+   0x60232800, 0x602EE000), 0xBB800 bytes each except the last [fact] */
+
+void fb_cache_clean_buf(undefined4 param_1)
 
 {
   switch(param_1) {
@@ -907,9 +918,11 @@ undefined4 FUN_20132f54(int param_1)
 }
 
 
-// ===== FUN_20132f6c @ 20132f6c (8 bytes)
+// ===== clmap_buf_get @ 20132f6c (8 bytes)
 
-undefined * FUN_20132f6c(void)
+/* Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan [fact] */
+
+undefined * clmap_buf_get(void)
 
 {
   return &DAT_605c0c60;
@@ -1067,7 +1080,7 @@ int vdc5_isr_create(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,&cisr_int78);
+  uVar1 = itron_acre_isr(0,0x203a706c);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x4e);
     uVar1 = 0;
@@ -1260,10 +1273,10 @@ void link_ss_irq_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,&cisr_sdr_ss_isr);
+  uVar1 = itron_acre_isr(0,0x203a7080);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x217);
-    uVar1 = itron_acre_isr(0,&cisr_dsp_ss_isr);
+    uVar1 = itron_acre_isr(0,0x203a7094);
     if (0 < (int)uVar1) {
       gic_enable_irq(0x1c1);
       return;

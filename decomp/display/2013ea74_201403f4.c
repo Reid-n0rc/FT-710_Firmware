@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2013ea74 @ 2013ea74 (332 bytes)
+// ===== fat32_format_write_fsinfo @ 2013ea74 (332 bytes)
 
-void FUN_2013ea74(int *param_1)
+/* Format step: FSInfo sector (lead and struct signatures from 0x20808B4C / 0x20808B50, free count
+   and next-free 0xFFFFFFFF) at sectors 1 and 7 of the volume, zero sectors 2 and 8 [fact] */
+
+void fat32_format_write_fsinfo(int *param_1)
 
 {
   int iVar1;
@@ -34,9 +37,11 @@ void FUN_2013ea74(int *param_1)
 }
 
 
-// ===== FUN_2013ebc0 @ 2013ebc0 (112 bytes)
+// ===== fat_format_volume_id @ 2013ebc0 (112 bytes)
 
-uint FUN_2013ebc0(void)
+/* Volume serial number from the current date and time (fs_get_time_tm) [fact] */
+
+uint fat_format_volume_id(void)
 
 {
   uint local_28;
@@ -52,9 +57,13 @@ uint FUN_2013ebc0(void)
 }
 
 
-// ===== FUN_2013ec30 @ 2013ec30 (564 bytes)
+// ===== fat_format_write_boot @ 2013ec30 (564 bytes)
 
-void FUN_2013ec30(int *param_1)
+/* Format step: boot sector from the FAT12/16 template 0x2042025B (0x3E bytes) or the FAT32 template
+   0x20420299 (0x5A bytes) with the computed BPB fields and the volume id; FAT32 also writes the
+   backup at +6 [fact] */
+
+void fat_format_write_boot(int *param_1)
 
 {
   int iVar1;
@@ -78,7 +87,7 @@ void FUN_2013ec30(int *param_1)
     else {
       fat_st_dword(*param_1 + 0x21);
     }
-    uVar2 = FUN_2013ebc0();
+    uVar2 = fat_format_volume_id();
     fat_st_dword(*param_1 + 0x28,uVar2);
     if (*(char *)(iVar1 + 0x2dc) == '\f') {
       *(undefined1 *)(*param_1 + 0x3b) = 0x32;
@@ -97,7 +106,7 @@ void FUN_2013ec30(int *param_1)
   fat_st_dword(*param_1 + 0x1d,*(undefined4 *)(iVar1 + 0x2d0));
   fat_st_dword(*param_1 + 0x21,*(undefined4 *)(iVar1 + 0x2d4));
   fat_st_dword(*param_1 + 0x25,*(undefined4 *)(iVar1 + 0x2e0));
-  uVar2 = FUN_2013ebc0();
+  uVar2 = fat_format_volume_id();
   fat_st_dword(*param_1 + 0x44,uVar2);
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
@@ -111,9 +120,11 @@ void FUN_2013ec30(int *param_1)
 }
 
 
-// ===== FUN_2013ee64 @ 2013ee64 (88 bytes)
+// ===== mbr_chs_head @ 2013ee64 (88 bytes)
 
-void FUN_2013ee64(ushort *param_1,undefined1 *param_2)
+/* (geometry, *out): CHS head of the partition start, 0xFE beyond the CHS limit 0xFB0400 [fact] */
+
+void mbr_chs_head(ushort *param_1,undefined1 *param_2)
 
 {
   undefined1 uVar1;
@@ -136,9 +147,11 @@ void FUN_2013ee64(ushort *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_2013eebc @ 2013eebc (128 bytes)
+// ===== mbr_chs_sector_cyl @ 2013eebc (128 bytes)
 
-void FUN_2013eebc(ushort *param_1,byte *param_2)
+/* (geometry, *out): CHS sector/cylinder bytes of the partition start [fact] */
+
+void mbr_chs_sector_cyl(ushort *param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -166,9 +179,12 @@ void FUN_2013eebc(ushort *param_1,byte *param_2)
 }
 
 
-// ===== FUN_2013ef3c @ 2013ef3c (96 bytes)
+// ===== mbr_partition_type @ 2013ef3c (96 bytes)
 
-void FUN_2013ef3c(int param_1,undefined1 *param_2)
+/* (geometry, *out): partition type 1 / 4 / 6 for FAT12/16 by size, 0x0B / 0x0C for FAT32 (below /
+   above the CHS limit) [fact] */
+
+void mbr_partition_type(int param_1,undefined1 *param_2)
 
 {
   char cVar1;
@@ -201,9 +217,11 @@ void FUN_2013ef3c(int param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_2013ef9c @ 2013ef9c (100 bytes)
+// ===== mbr_chs_end_head @ 2013ef9c (100 bytes)
 
-void FUN_2013ef9c(ushort *param_1,undefined1 *param_2)
+/* (geometry, *out): CHS head of the partition end (start + size - 1) [fact] */
+
+void mbr_chs_end_head(ushort *param_1,undefined1 *param_2)
 
 {
   undefined1 uVar1;
@@ -226,9 +244,11 @@ void FUN_2013ef9c(ushort *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_2013f000 @ 2013f000 (136 bytes)
+// ===== mbr_chs_end_sector_cyl @ 2013f000 (136 bytes)
 
-void FUN_2013f000(ushort *param_1,byte *param_2)
+/* (geometry, *out): CHS sector/cylinder of the partition end [fact for the arithmetic] */
+
+void mbr_chs_end_sector_cyl(ushort *param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -256,9 +276,12 @@ void FUN_2013f000(ushort *param_1,byte *param_2)
 }
 
 
-// ===== FUN_2013f088 @ 2013f088 (184 bytes)
+// ===== fat_format_write_mbr @ 2013f088 (184 bytes)
 
-void FUN_2013f088(int *param_1)
+/* Format step: writes sector 0 with one partition entry at 0x1BE (CHS start/end fields, type, LBA
+   start, size) [fact] */
+
+void fat_format_write_mbr(int *param_1)
 
 {
   int iVar1;
@@ -269,11 +292,11 @@ void FUN_2013f088(int *param_1)
   iVar3 = iVar1 + 0x2c8;
   fs_memset(iVar1 + 1,0,0x200);
   iVar2 = *param_1;
-  FUN_2013ee64(iVar3,iVar2 + 0x1c0);
-  FUN_2013eebc(iVar3,iVar2 + 0x1c1);
-  FUN_2013ef3c(iVar3,iVar2 + 0x1c3);
-  FUN_2013ef9c(iVar3,iVar2 + 0x1c4);
-  FUN_2013f000(iVar3,iVar2 + 0x1c5);
+  mbr_chs_head(iVar3,iVar2 + 0x1c0);
+  mbr_chs_sector_cyl(iVar3,iVar2 + 0x1c1);
+  mbr_partition_type(iVar3,iVar2 + 0x1c3);
+  mbr_chs_end_head(iVar3,iVar2 + 0x1c4);
+  mbr_chs_end_sector_cyl(iVar3,iVar2 + 0x1c5);
   fat_st_dword(iVar2 + 0x1c7,*(undefined4 *)(iVar1 + 0x2d0));
   fat_st_dword(iVar2 + 0x1cb,*(undefined4 *)(iVar1 + 0x2d4));
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
@@ -283,9 +306,11 @@ void FUN_2013f088(int *param_1)
 }
 
 
-// ===== FUN_2013f15c @ 2013f15c (36 bytes)
+// ===== csd_read_bl_len @ 2013f15c (36 bytes)
 
-undefined4 FUN_2013f15c(int param_1)
+/* (csd): READ_BL_LEN 10 / 11 -> 1024 / 2048, else 512 [fact] */
+
+undefined4 csd_read_bl_len(int param_1)
 
 {
   byte bVar1;
@@ -305,9 +330,11 @@ undefined4 FUN_2013f15c(int param_1)
 }
 
 
-// ===== FUN_2013f180 @ 2013f180 (36 bytes)
+// ===== csd_c_size @ 2013f180 (36 bytes)
 
-uint FUN_2013f180(int param_1)
+/* (csd): the 12-bit C_SIZE field of a version-1 CSD [fact] */
+
+uint csd_c_size(int param_1)
 
 {
   return (*(byte *)(param_1 + 8) & 0xc0 |
@@ -315,9 +342,11 @@ uint FUN_2013f180(int param_1)
 }
 
 
-// ===== FUN_2013f1a4 @ 2013f1a4 (108 bytes)
+// ===== csd_c_size_mult @ 2013f1a4 (108 bytes)
 
-undefined4 FUN_2013f1a4(int param_1)
+/* (csd): 2^(C_SIZE_MULT + 2), 4..512 [fact] */
+
+undefined4 csd_c_size_mult(int param_1)
 
 {
   uint uVar1;
@@ -352,9 +381,12 @@ undefined4 FUN_2013f1a4(int param_1)
 }
 
 
-// ===== FUN_2013f210 @ 2013f210 (40 bytes)
+// ===== fat_format_geometry_small @ 2013f210 (40 bytes)
 
-void FUN_2013f210(uint param_1,undefined4 param_2)
+/* (sectors, out): 0x2C-byte geometry record 0x20420300 below 0x7E0000 sectors, else 0x2042032C
+   [fact] */
+
+void fat_format_geometry_small(uint param_1,undefined4 param_2)
 
 {
   if (param_1 < 0x7e0000) {
@@ -366,9 +398,12 @@ void FUN_2013f210(uint param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2013f238 @ 2013f238 (264 bytes)
+// ===== fat_format_geometry @ 2013f238 (264 bytes)
 
-void FUN_2013f238(uint param_1,undefined4 param_2)
+/* (sectors, out): 0x2C-byte geometry record from the capacity table 0x20420358..0x20420510 [fact]
+    */
+
+void fat_format_geometry(uint param_1,undefined4 param_2)
 
 {
   param_1 = param_1 >> 9;
@@ -417,9 +452,13 @@ void FUN_2013f238(uint param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2013f340 @ 2013f340 (1116 bytes)
+// ===== fat_format_layout @ 2013f340 (1116 bytes)
 
-undefined4 FUN_2013f340(int *param_1)
+/* Computes the format layout from the CSD capacity: geometry record (fat_format_geometry_small /
+   fat_format_geometry), sectors per cluster, reserved sectors, FAT size and data start, and the
+   progress count [fact] */
+
+undefined4 fat_format_layout(int *param_1)
 
 {
   undefined2 uVar1;
@@ -445,7 +484,7 @@ undefined4 FUN_2013f340(int *param_1)
   if (*pbVar9 >> 6 == 1) {
     uVar10 = (uint)CONCAT21(CONCAT11(*(undefined1 *)(iVar3 + 0x208),*(undefined1 *)(iVar3 + 0x209)),
                             *(undefined1 *)(iVar3 + 0x20a)) * 0x400 + 0x400;
-    FUN_2013f210(uVar10,iVar3 + 0x2c8);
+    fat_format_geometry_small(uVar10,iVar3 + 0x2c8);
     if (uVar10 < 0x4000000) {
       *(uint *)(iVar3 + 0x2d4) = uVar10;
       iVar4 = (int)*(char *)(iVar3 + 0x2dc);
@@ -514,7 +553,7 @@ undefined4 FUN_2013f340(int *param_1)
             *(int *)(iVar3 + 0x2f0) = iVar6;
           } while (*(int *)(iVar3 + 0x2e0) != iVar6);
         }
-        FUN_2013e800(*(int *)(iVar3 + 0x2e0) + uVar11,*param_1);
+        sd_format_progress_set(*(int *)(iVar3 + 0x2e0) + uVar11,*param_1);
       }
       *(int *)(iVar3 + 0x2d4) = *(int *)(iVar3 + 0x2d4) - *(int *)(iVar3 + 0x2cc);
     }
@@ -523,11 +562,11 @@ undefined4 FUN_2013f340(int *param_1)
     }
   }
   else if (*pbVar9 >> 6 == 0) {
-    iVar4 = FUN_2013f15c(pbVar9);
-    iVar5 = FUN_2013f180(pbVar9);
-    iVar6 = FUN_2013f1a4(pbVar9);
+    iVar4 = csd_read_bl_len(pbVar9);
+    iVar5 = csd_c_size(pbVar9);
+    iVar6 = csd_c_size_mult(pbVar9);
     uVar10 = (iVar5 + 1) * iVar6 * iVar4;
-    FUN_2013f238(uVar10,iVar3 + 0x2c8);
+    fat_format_geometry(uVar10,iVar3 + 0x2c8);
     uVar10 = uVar10 >> 9;
     *(uint *)(iVar3 + 0x2d4) = uVar10;
     uVar1 = *(undefined2 *)(iVar3 + 0x2d8);
@@ -592,7 +631,7 @@ undefined4 FUN_2013f340(int *param_1)
         *(uint *)(iVar3 + 0x2f0) = uVar11;
       } while (*(uint *)(iVar3 + 0x2e0) != uVar11);
     }
-    FUN_2013e800(*(int *)(iVar3 + 0x2e0) + 0x20,*param_1);
+    sd_format_progress_set(*(int *)(iVar3 + 0x2e0) + 0x20,*param_1);
     *(int *)(iVar3 + 0x2d4) = *(int *)(iVar3 + 0x2d4) - *(int *)(iVar3 + 0x2d0);
   }
   else {
@@ -617,12 +656,13 @@ int fat_clear_root_dir(int *param_1)
   uint uVar5;
   
   fs_memset(*param_1 + 0x2c8,0,0x2c);
-  iVar3 = FUN_2013f340(param_1);
-  if ((((iVar3 == 0) && (iVar3 = FUN_2013f088(param_1), iVar3 == 0)) &&
+  iVar3 = fat_format_layout(param_1);
+  if ((((iVar3 == 0) && (iVar3 = fat_format_write_mbr(param_1), iVar3 == 0)) &&
       ((*(char *)(*param_1 + 0x2dc) == '@' ||
-       ((iVar3 = FUN_2013ec30(param_1), iVar3 == 0 &&
-        ((*(char *)(*param_1 + 0x2dc) != ' ' || (iVar3 = FUN_2013ea74(param_1), iVar3 == 0))))))))
-     && (iVar3 = FUN_2013e8d0(param_1), iVar3 == 0)) {
+       ((iVar3 = fat_format_write_boot(param_1), iVar3 == 0 &&
+        ((*(char *)(*param_1 + 0x2dc) != ' ' ||
+         (iVar3 = fat32_format_write_fsinfo(param_1), iVar3 == 0)))))))) &&
+     (iVar3 = fat_format_write_fats(param_1), iVar3 == 0)) {
     iVar3 = *param_1;
     fs_memset(iVar3 + 1,0,0x200,0,unaff_r4);
     cVar1 = *(char *)(iVar3 + 0x2dc);
@@ -646,7 +686,7 @@ int fat_clear_root_dir(int *param_1)
         if (iVar2 != 0) {
           return iVar2;
         }
-        FUN_2013e7e8(*param_1);
+        sd_format_progress_dec(*param_1);
         uVar4 = uVar4 + 1;
         iVar3 = iVar3 + 1;
       } while (uVar4 < uVar5);
@@ -678,13 +718,13 @@ int sd_fat_format(int *param_1)
       if (*(short *)(*param_1 + 0x2c6) == 1) {
         return -5;
       }
-      iVar2 = FUN_2013e124(param_1);
+      iVar2 = sd_read_csd_cid(param_1);
       if ((((((iVar2 == 0) &&
-             (iVar2 = FUN_2013e190(*(undefined2 *)(*param_1 + 0x2aa),0x200,1,param_1), iVar2 == 0))
-            && (iVar2 = FUN_2013d434(*(undefined2 *)(*param_1 + 0x2aa),param_1), iVar2 == 0)) &&
-           ((iVar2 = FUN_2013e1e4(param_1), iVar2 == 0 &&
-            (iVar2 = FUN_2013d744(param_1), iVar2 == 0)))) &&
-          ((iVar2 = FUN_2013df88(param_1), iVar2 == 0 &&
+             (iVar2 = sd_selected_op(*(undefined2 *)(*param_1 + 0x2aa),0x200,1,param_1), iVar2 == 0)
+             ) && (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_1 + 0x2aa),param_1), iVar2 == 0))
+           && ((iVar2 = sd_scr_bus_width(param_1), iVar2 == 0 &&
+               (iVar2 = sd_acmd6_set_bus_width(param_1), iVar2 == 0)))) &&
+          ((iVar2 = sd_select_bus_speed(param_1), iVar2 == 0 &&
            (iVar2 = FUN_2013c928(1,param_1), iVar2 == 0)))) &&
          (((*(short *)(*param_1 + 0x2c2) != 2 && *(short *)(*param_1 + 0x2c2) != 3 ||
            (iVar2 = (**(code **)(param_1[1] + 0x40))(), iVar2 == 0)) &&
@@ -732,9 +772,12 @@ uint sd_format(char param_1)
 }
 
 
-// ===== FUN_2013f9fc @ 2013f9fc (80 bytes)
+// ===== sd_card_task_start @ 2013f9fc (80 bytes)
 
-undefined4 FUN_2013f9fc(undefined4 param_1,int param_2)
+/* (drive rec, index): stores the drive in 0x20808B60[i] and creates and starts the "SDInsCheck"
+   task once [fact] */
+
+undefined4 sd_card_task_start(undefined4 param_1,int param_2)
 
 {
   int iVar1;
@@ -753,9 +796,12 @@ undefined4 FUN_2013f9fc(undefined4 param_1,int param_2)
 }
 
 
-// ===== FUN_2013fa60 @ 2013fa60 (148 bytes)
+// ===== sd_ins_check_task @ 2013fa60 (148 bytes)
 
-void FUN_2013fa60(void)
+/* Task "SDInsCheck": every 50 ticks asks the driver (op +8) for the card and sets / clears bit 6 of
+   the drive byte +0x68 on a change [fact] */
+
+void sd_ins_check_task(void)
 
 {
   int iVar1;
@@ -790,9 +836,12 @@ LAB_2013fadc:
 }
 
 
-// ===== FUN_2013faf4 @ 2013faf4 (152 bytes)
+// ===== sd_card_remount @ 2013faf4 (152 bytes)
 
-int FUN_2013faf4(int param_1)
+/* (index): fs_cache_invalidate + fs_drive_mount, or fs_drive_unmount, as the card state asks [fact]
+    */
+
+int sd_card_remount(int param_1)
 
 {
   int iVar1;
@@ -828,9 +877,11 @@ joined_r0x2013fb7c:
 }
 
 
-// ===== FUN_2013fb8c @ 2013fb8c (20 bytes)
+// ===== sd_clmap_state_set @ 2013fb8c (20 bytes)
 
-void FUN_2013fb8c(undefined4 param_1)
+/* (v): 0x20808B64 = v (card mounted), clears the cluster-map flag 0x20808B68 [fact] */
+
+void sd_clmap_state_set(undefined4 param_1)
 
 {
   DAT_20808b64 = param_1;
@@ -839,9 +890,12 @@ void FUN_2013fb8c(undefined4 param_1)
 }
 
 
-// ===== FUN_2013fba0 @ 2013fba0 (112 bytes)
+// ===== sd_clmap_prepare @ 2013fba0 (112 bytes)
 
-int FUN_2013fba0(void)
+/* Once per mount: at priority 6 builds the cluster map of drive I: (fs_clmap_attach_scan with a
+   0x20000-byte buffer) and sets 0x20808B68 [fact] */
+
+int sd_clmap_prepare(void)
 
 {
   undefined4 uVar1;
@@ -849,7 +903,7 @@ int FUN_2013fba0(void)
   
   if ((DAT_20808b64 != 0) && (DAT_20808b68 == 0)) {
     itron_chg_pri(0,6);
-    uVar1 = FUN_20132f6c();
+    uVar1 = clmap_buf_get();
     iVar2 = fs_clmap_attach_scan(0x49,uVar1,0x20000);
     itron_chg_pri(0);
     if (iVar2 == 0) {
@@ -861,9 +915,11 @@ int FUN_2013fba0(void)
 }
 
 
-// ===== FUN_2013fc10 @ 2013fc10 (60 bytes)
+// ===== sd_mutex_create @ 2013fc10 (60 bytes)
 
-void FUN_2013fc10(void)
+/* Creates the SD mutex 0x20808B6C (TA_INHERIT) [fact] */
+
+void sd_mutex_create(void)
 
 {
   t_cmtx tStack_10;
@@ -876,9 +932,11 @@ void FUN_2013fc10(void)
 }
 
 
-// ===== FUN_2013fc4c @ 2013fc4c (28 bytes)
+// ===== sd_mutex_lock @ 2013fc4c (28 bytes)
 
-void FUN_2013fc4c(int param_1)
+/* (lock): tloc_mtx when lock != 0, then unl_mtx [fact for the calls] */
+
+void sd_mutex_lock(int param_1)
 
 {
   if (param_1 != 0) {
@@ -890,9 +948,13 @@ void FUN_2013fc4c(int param_1)
 }
 
 
-// ===== FUN_2013fc68 @ 2013fc68 (212 bytes)
+// ===== sd_card_poll @ 2013fc68 (212 bytes)
 
-uint FUN_2013fc68(int param_1,uint param_2)
+/* (index, state): card detect state machine of the card monitor: mounts on insertion
+   (fs_cache_invalidate, fs_drive_mount under the mutex 0x20808B6C) and unmounts on removal; returns
+   the new state [fact] */
+
+uint sd_card_poll(int param_1,uint param_2)
 
 {
   int iVar1;
@@ -912,7 +974,7 @@ uint FUN_2013fc68(int param_1,uint param_2)
           if (iVar1 != 0) {
             return 0x40;
           }
-          FUN_2013fb8c(1);
+          sd_clmap_state_set(1);
         }
         param_2 = 0xc0;
       }
@@ -920,7 +982,7 @@ uint FUN_2013fc68(int param_1,uint param_2)
     else {
       param_2 = (int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0xffffff3f;
       if (((int)*(char *)((&DAT_20808b60)[param_1] + 0x68) & 0x80U) != 0) {
-        FUN_2013fb8c(0);
+        sd_clmap_state_set(0);
         iVar1 = fs_drive_unmount((&DAT_20808b60)[param_1]);
         if (iVar1 == 0) {
           param_2 = 0;
@@ -932,9 +994,11 @@ uint FUN_2013fc68(int param_1,uint param_2)
 }
 
 
-// ===== FUN_2013fd3c @ 2013fd3c (20 bytes)
+// ===== sd_delay_ms @ 2013fd3c (20 bytes)
 
-void FUN_2013fd3c(int param_1)
+/* (ms): itron_dly_tsk(ms / 10) [fact] */
+
+void sd_delay_ms(int param_1)
 
 {
   itron_dly_tsk(param_1 / 10);
@@ -942,9 +1006,13 @@ void FUN_2013fd3c(int param_1)
 }
 
 
-// ===== FUN_2013fd50 @ 2013fd50 (32 bytes)
+// ===== sd_card_unmount @ 2013fd50 (32 bytes)
 
-void FUN_2013fd50(int param_1)
+/* (drive): for an attached removable drive (+0x68 bit 0) runs driver op 8 and clears the mounted
+   bit 7; error to fs_set_error; the card monitor calls it on request 0x20800098 (filesystem.md)
+   [fact] */
+
+void sd_card_unmount(int param_1)
 
 {
   int iVar1;
@@ -974,15 +1042,18 @@ void FUN_2013fd50(int param_1)
 }
 
 
-// ===== FUN_2013fd98 @ 2013fd98 (60 bytes)
+// ===== sdhi_drv_init @ 2013fd98 (60 bytes)
 
-void FUN_2013fd98(void)
+/* Driver init callback of drive I:: clears 0x2091CBA8, links the SDHI op table 0x20420564 and calls
+   sd_driver_op (filesystem.md) [fact] */
+
+void sdhi_drv_init(void)
 
 {
   DAT_2091cba8 = 0;
   DAT_20808b44 = &DAT_2091cba8;
   DAT_20808b48 = &PTR_sdhi_wait_idle_20420564;
-  FUN_2013e71c();
+  sd_driver_op();
   return;
 }
 
@@ -996,9 +1067,12 @@ void FUN_2013fde4(void)
 }
 
 
-// ===== FUN_2013fde8 @ 2013fde8 (104 bytes)
+// ===== sdhi0_irq_enable @ 2013fde8 (104 bytes)
 
-undefined4 FUN_2013fde8(void)
+/* Registers the SDHI0 handler for GIC id 303 (0x12F) once (flag 0x20808B70), sets its ICDIPR75
+   priority byte and enables it in ICDISER9 (bit 15) [fact] */
+
+undefined4 sdhi0_irq_enable(void)
 
 {
   uint uVar1;
@@ -1044,9 +1118,11 @@ void FUN_2013ffdc(void)
 }
 
 
-// ===== FUN_2013ffec @ 2013ffec (68 bytes)
+// ===== sdhi_dma_read_start @ 2013ffec (68 bytes)
 
-void FUN_2013ffec(undefined4 param_1,undefined4 param_2)
+/* (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start [fact] */
+
+void sdhi_dma_read_start(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -1065,9 +1141,11 @@ void FUN_2013ffec(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20140030 @ 20140030 (48 bytes)
+// ===== sdhi_dma_read_wait @ 20140030 (48 bytes)
 
-void FUN_20140030(void)
+/* Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_read_wait(void)
 
 {
   uint uVar1;
@@ -1085,9 +1163,11 @@ void FUN_20140030(void)
 }
 
 
-// ===== FUN_20140060 @ 20140060 (68 bytes)
+// ===== sdhi_dma_write_start @ 20140060 (68 bytes)
 
-void FUN_20140060(undefined4 param_1,undefined4 param_2)
+/* (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start [fact] */
+
+void sdhi_dma_write_start(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -1106,9 +1186,11 @@ void FUN_20140060(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_201400a4 @ 201400a4 (48 bytes)
+// ===== sdhi_dma_write_wait @ 201400a4 (48 bytes)
 
-void FUN_201400a4(void)
+/* Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_write_wait(void)
 
 {
   uint uVar1;
@@ -1227,11 +1309,11 @@ undefined4 sdhi_read_block(undefined1 *param_1)
   if (((uint)param_1 & 0x1f) != 0) {
     puVar3 = &DAT_2091cec0;
   }
-  thunk_FUN_20101088(puVar3,0x200);
-  FUN_2013ffec(puVar3,&SDHI_SD_CMD_0);
+  dcache_clean_invalidate_range(puVar3,0x200);
+  sdhi_dma_read_start(puVar3,&SDHI_SD_CMD_0);
   iVar1 = sdhi_flag_wait(4,500);
-  FUN_20140030();
-  thunk_FUN_20101088(puVar3,0x200);
+  sdhi_dma_read_wait();
+  dcache_clean_invalidate_range(puVar3,0x200);
   if (iVar1 == 0) {
     if (((uint)param_1 & 0x1f) != 0) {
       iVar1 = 0x1ff;
@@ -1279,9 +1361,9 @@ undefined4 sdhi_write_block(undefined1 *param_1)
     param_1 = &DAT_2091cec0;
   }
   dcache_clean_range(param_1,0x200);
-  FUN_20140060(&SDHI_SD_CMD_0,param_1);
+  sdhi_dma_write_start(&SDHI_SD_CMD_0,param_1);
   iVar2 = sdhi_flag_wait(4,500);
-  FUN_201400a4();
+  sdhi_dma_write_wait();
   uVar3 = 0;
   if (iVar2 != 0) {
     uVar3 = 0xfffffff0;
@@ -1371,9 +1453,11 @@ LAB_201403cc:
 }
 
 
-// ===== FUN_201403d8 @ 201403d8 (16 bytes)
+// ===== sdhi_clock_set_0x200 @ 201403d8 (16 bytes)
 
-void FUN_201403d8(void)
+/* SD_CLK_CTRL = 0x200 [fact] */
+
+void sdhi_clock_set_0x200(void)
 
 {
   SDHI_SD_CLK_CTRL_0 = 0x200;

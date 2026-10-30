@@ -401,9 +401,11 @@ undefined4 sd_cmd12_stop(int param_1)
 }
 
 
-// ===== FUN_201407bc @ 201407bc (36 bytes)
+// ===== sdhi_error_reset @ 201407bc (36 bytes)
 
-void FUN_201407bc(undefined4 param_1,undefined4 param_2)
+/* Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) [fact] */
+
+void sdhi_error_reset(undefined4 param_1,undefined4 param_2)
 
 {
   undefined2 uVar1;
@@ -419,9 +421,12 @@ void FUN_201407bc(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_201407e0 @ 201407e0 (316 bytes)
+// ===== sdhi_read_sectors_cmd @ 201407e0 (316 bytes)
 
-int FUN_201407e0(undefined4 param_1,int param_2,uint param_3,int param_4)
+/* (addr, buf, n, ctx): CMD16 block length 512, then CMD17 (one block) or CMD18 (several, with
+   stop), sdhi_read_block per block and access-end wait [fact] */
+
+int sdhi_read_sectors_cmd(undefined4 param_1,int param_2,uint param_3,int param_4)
 
 {
   ushort uVar1;
@@ -485,17 +490,21 @@ LAB_20140880:
 }
 
 
-// ===== FUN_2014091c @ 2014091c (124 bytes)
+// ===== sdhi_read_op @ 2014091c (124 bytes)
 
-int FUN_2014091c(int param_1,int param_2,int param_3,int param_4)
+/* (addr, buf, n, ctx): read op of the SDHI op table: two blocks are read one at a time (block or
+   byte address by card type +0x2C0), else sdhi_read_sectors_cmd; on error sdhi_error_reset [fact]
+    */
+
+int sdhi_read_op(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
   
   if (param_3 == 2) {
-    iVar1 = FUN_201407e0(param_1,param_2,1);
+    iVar1 = sdhi_read_sectors_cmd(param_1,param_2,1);
     if (iVar1 != 0) {
-      FUN_201407bc();
+      sdhi_error_reset();
       return iVar1;
     }
     if (*(short *)(param_4 + 0x2c0) == 2) {
@@ -504,13 +513,13 @@ int FUN_2014091c(int param_1,int param_2,int param_3,int param_4)
     else {
       param_1 = param_1 + 0x200;
     }
-    iVar1 = FUN_201407e0(param_1,param_2 + 0x200,1,param_4);
+    iVar1 = sdhi_read_sectors_cmd(param_1,param_2 + 0x200,1,param_4);
   }
   else {
-    iVar1 = FUN_201407e0();
+    iVar1 = sdhi_read_sectors_cmd();
   }
   if (iVar1 != 0) {
-    FUN_201407bc();
+    sdhi_error_reset();
   }
   return iVar1;
 }
@@ -540,9 +549,12 @@ undefined4 FUN_20140998(undefined1 *param_1,uint param_2)
 }
 
 
-// ===== FUN_201409ec @ 201409ec (316 bytes)
+// ===== sdhi_write_sectors_cmd @ 201409ec (316 bytes)
 
-int FUN_201409ec(undefined4 param_1,int param_2,uint param_3,int param_4)
+/* (addr, buf, n, ctx): CMD16, then CMD24 (one block) or CMD25 (several), sdhi_write_block per block
+   and access-end wait [fact] */
+
+int sdhi_write_sectors_cmd(undefined4 param_1,int param_2,uint param_3,int param_4)
 
 {
   ushort uVar1;
@@ -606,24 +618,29 @@ LAB_20140a8c:
 }
 
 
-// ===== FUN_20140b50 @ 20140b50 (24 bytes)
+// ===== sdhi_write_op @ 20140b50 (24 bytes)
 
-int FUN_20140b50(void)
+/* sdhi_write_sectors_cmd, on error sdhi_error_reset [fact] */
+
+int sdhi_write_op(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_201409ec();
+  iVar1 = sdhi_write_sectors_cmd();
   if (iVar1 != 0) {
-    FUN_201407bc();
+    sdhi_error_reset();
   }
   return iVar1;
 }
 
 
-// ===== FUN_20140b68 @ 20140b68 (424 bytes)
+// ===== sdhi_open @ 20140b68 (424 bytes)
 
-uint FUN_20140b68(void)
+/* SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers
+   0x20808B78 / 0x20808B84 with gic_def_inh [fact] */
+
+uint sdhi_open(void)
 
 {
   uint uVar1;
@@ -632,7 +649,7 @@ uint FUN_20140b68(void)
   
   sdhi0_clock_on();
   sdhi_soft_reset(2);
-  uVar2 = FUN_2013fde8();
+  uVar2 = sdhi0_irq_enable();
   if ((uVar2 == 0) && (uVar2 = sdhi_init(), uVar2 == 0)) {
     DAT_20808b82 = 0;
     DAT_20808b8e = 0;
@@ -680,9 +697,12 @@ uint FUN_20140b68(void)
 }
 
 
-// ===== FUN_20140b9c @ 20140b9c (76 bytes)
+// ===== sdhi0_buf_isr @ 20140b9c (76 bytes)
 
-void FUN_20140b9c(void)
+/* SDHI0 SDHI0_0 interrupt (GIC 303, peripherals.md): SD_INFO2 BRE (bit 8) -> sdhi_flag_set(1), BWE
+   (bit 9) -> sdhi_flag_set(2), clearing the bit [fact] */
+
+void sdhi0_buf_isr(void)
 
 {
   ushort uVar1;
@@ -702,9 +722,14 @@ void FUN_20140b9c(void)
 }
 
 
-// ===== FUN_20140be8 @ 20140be8 (940 bytes)
+// ===== file_buf_sync @ 20140be8 (940 bytes)
 
-int FUN_20140be8(int *param_1,uint param_2,int param_3,undefined4 param_4)
+/* (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new
+   position (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect /
+   fat_sect2clust); used by fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work
+   [fact for the calls] */
+
+int file_buf_sync(int *param_1,uint param_2,int param_3,undefined4 param_4)
 
 {
   bool bVar1;
@@ -1296,7 +1321,7 @@ void fs_fopen_work(char *param_1,char *param_2,int param_3)
               uVar4 = uVar6;
             }
             if (((*param_2 == 'a') && (piVar7 != (int *)0x0)) &&
-               (uVar6 = FUN_20140be8(piVar7,0,2,param_3), uVar6 != 0)) {
+               (uVar6 = file_buf_sync(piVar7,0,2,param_3), uVar6 != 0)) {
               if ((int *)piVar7[1] != piVar7 + 0xd) {
                 fs_mpf_free();
               }
@@ -1358,7 +1383,7 @@ undefined4 file_sync_shared(undefined4 *param_1)
       do {
         if (*(char *)((int)param_1 + 0x44d) == '\x01') {
           if ((((*(short *)(puVar4 + 0x8f) != 0) &&
-               (iVar2 = FUN_20148d74(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
+               (iVar2 = fs_wstricmp_ucs2(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
               (param_1 != puVar4)) && (*(char *)((int)puVar4 + 0x442) == '\x01')) {
             if (puVar4[7] != param_1[7]) {
               puVar4[7] = param_1[7];
@@ -2169,7 +2194,7 @@ LAB_20142cec:
     goto LAB_20143008;
   }
   if ((*(char *)((int)param_4 + 0x442) == ' ' || *(char *)((int)param_4 + 0x442) == '!') &&
-     (iVar5 = FUN_20140be8(param_4,0,2,param_5), iVar5 != 0)) goto LAB_20142d60;
+     (iVar5 = file_buf_sync(param_4,0,2,param_5), iVar5 != 0)) goto LAB_20142d60;
   local_50 = param_4[10];
   __aeabi_uidivmod(local_50,uVar6);
   local_5c = uVar6 - extraout_r1_00;
@@ -2434,7 +2459,7 @@ file_write_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3,int *
   int local_1c;
   
   if (((*(char *)((int)param_4 + 0x442) == ' ' || *(char *)((int)param_4 + 0x442) == '!') &&
-      (param_4[10] != param_4[0xb])) && (iVar1 = FUN_20140be8(param_4,0,2,param_5), iVar1 != 0)) {
+      (param_4[10] != param_4[0xb])) && (iVar1 = file_buf_sync(param_4,0,2,param_5), iVar1 != 0)) {
 LAB_201434f8:
     fs_set_error(iVar1,param_4);
     return 0;

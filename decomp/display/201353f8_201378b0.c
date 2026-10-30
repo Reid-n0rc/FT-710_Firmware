@@ -29,9 +29,11 @@ int div10_round(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20135448 @ 20135448 (16 bytes)
+// ===== xorshift32_step @ 20135448 (16 bytes)
 
-uint FUN_20135448(uint param_1)
+/* (x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 [fact] */
+
+uint xorshift32_step(uint param_1)
 
 {
   param_1 = param_1 ^ param_1 << 0xd;
@@ -58,9 +60,11 @@ ushort be16_load(byte *param_1)
 }
 
 
-// ===== FUN_20135488 @ 20135488 (16 bytes)
+// ===== be16_store @ 20135488 (16 bytes)
 
-void FUN_20135488(undefined4 param_1,undefined1 *param_2)
+/* (v, dst): stores v big-endian (high byte first) [fact] */
+
+void be16_store(undefined4 param_1,undefined1 *param_2)
 
 {
   *param_2 = (char)((uint)param_1 >> 8);
@@ -79,9 +83,11 @@ uint be32_load(byte *param_1)
 }
 
 
-// ===== FUN_201354bc @ 201354bc (48 bytes)
+// ===== u32_decimal_digits @ 201354bc (48 bytes)
 
-char FUN_201354bc(uint param_1)
+/* (v): number of decimal digits of v (1..10) [fact] */
+
+char u32_decimal_digits(uint param_1)
 
 {
   char cVar1;
@@ -784,9 +790,12 @@ void FUN_2013608c(void)
 }
 
 
-// ===== FUN_201360b0 @ 201360b0 (216 bytes)
+// ===== debug_dump_rx_frame @ 201360b0 (216 bytes)
 
-void FUN_201360b0(int param_1,int param_2,int param_3)
+/* (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200
+   bytes) at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change [fact] */
+
+void debug_dump_rx_frame(int param_1,int param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -835,9 +844,12 @@ void FUN_201360b0(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_20136188 @ 20136188 (264 bytes)
+// ===== debug_dump_rx_buf2 @ 20136188 (264 bytes)
 
-void FUN_20136188(int param_1,int param_2,int param_3)
+/* (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus
+   the last received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 [fact] */
+
+void debug_dump_rx_buf2(int param_1,int param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -931,10 +943,14 @@ void fb_draw_round_frame_wrap(void)
 }
 
 
-// ===== FUN_201363c0 @ 201363c0 (452 bytes)
+// ===== gui_scrollbar_draw @ 201363c0 (452 bytes)
 
-void FUN_201363c0(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
-                 uint param_7,int param_8,uint param_9)
+/* (fb, y, x, w, h, pos, count, min, colour): framed track with a 0x632C thumb sized and placed from
+   pos / count (idivmod); used by scr_info, text_list_item_rows and the SD-menu file screens [fact]
+    */
+
+void gui_scrollbar_draw(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6,
+                       uint param_7,int param_8,uint param_9)
 
 {
   int iVar1;
@@ -975,7 +991,7 @@ void FUN_201363c0(uint param_1,uint param_2,int param_3,int param_4,uint param_5
 void FUN_20136584(void)
 
 {
-  FUN_201363c0();
+  gui_scrollbar_draw();
   return;
 }
 
@@ -1152,7 +1168,7 @@ void debug_overlay_draw(int param_1)
                                  ),3,2,0xa5);
       }
       gui_draw_text(iVar3,DWORD_ARRAY_20136c44,2,0xd2,10,&DAT_20803730);
-      uVar4 = FUN_20114920();
+      uVar4 = scif5_rxi_count_get();
       gui_draw_dec(iVar3,uVar4,4,2,0xe1);
       gui_draw_text(iVar3,0x20136c48,2,0x118,10,&DAT_20803730);
       gui_draw_dec(iVar3,DAT_208085a8,3,2,0x127);
@@ -1169,7 +1185,7 @@ void debug_overlay_draw(int param_1)
       gui_draw_text(iVar3,0x20136c60,2,0x1fe,10,&DAT_20803730);
       gui_draw_hex(iVar3,bVar7 | bVar1,1,2,0x20d);
       gui_draw_text(iVar3,0x20136c64,2,0x230,10,&DAT_20803730);
-      uVar4 = FUN_2011492c();
+      uVar4 = scif4_rxi_count_get();
       gui_draw_dec(iVar3,uVar4,4,2,0x23f);
       gui_draw_text(iVar3,0x20136c68,0xd2,0x32,10,&DAT_20803730);
       gui_draw_dec(iVar3,DAT_20800474,2,0xd2,0x69);
@@ -1192,12 +1208,12 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 2) != 0) {
       iVar6 = memcmp(&ml_rx_frame,&DAT_20909db4,0x200);
       if (iVar6 != 0) {
-        FUN_201360b0(&ml_rx_frame,&DAT_20909db4,0x200);
+        debug_dump_rx_frame(&ml_rx_frame,&DAT_20909db4,0x200);
         memcpy(&DAT_20909db4,&ml_rx_frame,0x240);
       }
       iVar6 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
       if (iVar6 != 0) {
-        FUN_20136188(&DAT_2045f4a0,&DAT_20909ff4,0x20);
+        debug_dump_rx_buf2(&DAT_2045f4a0,&DAT_20909ff4,0x20);
         memcpy(&DAT_20909ff4,&DAT_2045f4a0,0x401);
       }
     }
@@ -1290,7 +1306,7 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_3 = param_2;
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac3_isr);
+  uVar1 = itron_acre_isr(0,0x204200b0);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2c);
     return;
@@ -1342,7 +1358,7 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_5 = param_2;
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac5_isr);
+  uVar1 = itron_acre_isr(0,0x204200d8);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2e);
     reg_rmw32(&DMAC_CHCTRL_5,1,0);
@@ -1421,7 +1437,7 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_4 = param_2;
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac4_isr);
+  uVar1 = itron_acre_isr(0,0x204200c4);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2d);
     reg_rmw32(&DMAC_CHCTRL_4,1,0);

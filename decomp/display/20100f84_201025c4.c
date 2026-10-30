@@ -29,9 +29,12 @@ void FUN_20100f84(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20100fd8 @ 20100fd8 (68 bytes)
+// ===== dcache_invalidate_range @ 20100fd8 (68 bytes)
 
-uint FUN_20100fd8(uint param_1,int param_2)
+/* (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2))
+   when addr or size is 0 [fact] */
+
+uint dcache_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -49,17 +52,19 @@ uint FUN_20100fd8(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(2);
+  dcache_setway_all(2);
   return param_1;
 }
 
 
-// ===== FUN_2010101c @ 2010101c (20 bytes)
+// ===== dcache_invalidate_all @ 2010101c (20 bytes)
 
-undefined4 FUN_2010101c(undefined4 param_1)
+/* dcache_setway_all(2) (invalidate by set/way) [fact] */
+
+undefined4 dcache_invalidate_all(undefined4 param_1)
 
 {
-  FUN_201010e0(2);
+  dcache_setway_all(2);
   return param_1;
 }
 
@@ -87,14 +92,17 @@ uint dcache_clean_range(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(1);
+  dcache_setway_all(1);
   return param_1;
 }
 
 
-// ===== FUN_20101088 @ 20101088 (88 bytes)
+// ===== dcache_clean_invalidate_range @ 20101088 (88 bytes)
 
-uint FUN_20101088(uint param_1,int param_2)
+/* (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and
+   sdhi_read_block use it [fact] */
+
+uint dcache_clean_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -112,14 +120,17 @@ uint FUN_20101088(uint param_1,int param_2)
     DataSynchronizationBarrier(0xf);
     return uVar2;
   }
-  FUN_201010e0(0);
+  dcache_setway_all(0);
   return param_1;
 }
 
 
-// ===== FUN_201010e0 @ 201010e0 (164 bytes)
+// ===== dcache_setway_all @ 201010e0 (164 bytes)
 
-longlong FUN_201010e0(int param_1,uint param_2)
+/* (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate
+   (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations] */
+
+longlong dcache_setway_all(int param_1,uint param_2)
 
 {
   bool bVar1;
@@ -434,9 +445,11 @@ void lcd_power(uint param_1)
 }
 
 
-// ===== FUN_20101c44 @ 20101c44 (24 bytes)
+// ===== gpio_p4_7 @ 20101c44 (24 bytes)
 
-void FUN_20101c44(int param_1)
+/* (v): PORT_PSR4 = 0x800000 / 0x800080: P4_7 low / high [fact] */
+
+void gpio_p4_7(int param_1)
 
 {
   undefined4 uVar1;
@@ -607,9 +620,11 @@ void gpio_rx_update_off(int param_1)
 }
 
 
-// ===== FUN_20101d40 @ 20101d40 (16 bytes)
+// ===== gpio_p8_6to9_3 @ 20101d40 (16 bytes)
 
-void FUN_20101d40(void)
+/* PORT_PSR8 = 0x3C000C0: P8_6..P8_9 = 0b0011 (P8_6, P8_7 high) [fact] */
+
+void gpio_p8_6to9_3(void)
 
 {
   PORT_PSR8 = 0x3c000c0;
@@ -617,9 +632,11 @@ void FUN_20101d40(void)
 }
 
 
-// ===== FUN_20101d50 @ 20101d50 (16 bytes)
+// ===== gpio_p8_6to9_8 @ 20101d50 (16 bytes)
 
-void FUN_20101d50(void)
+/* PORT_PSR8 = 0x3C00200: P8_6..P8_9 = 0b1000 (P8_9 high) [fact] */
+
+void gpio_p8_6to9_8(void)
 
 {
   PORT_PSR8 = 0x3c00200;
@@ -627,9 +644,11 @@ void FUN_20101d50(void)
 }
 
 
-// ===== FUN_20101d60 @ 20101d60 (16 bytes)
+// ===== gpio_p8_6to9_6 @ 20101d60 (16 bytes)
 
-void FUN_20101d60(void)
+/* PORT_PSR8 = 0x3C00180: P8_6..P8_9 = 0b0110 (P8_7, P8_8 high) [fact] */
+
+void gpio_p8_6to9_6(void)
 
 {
   PORT_PSR8 = 0x3c00180;
@@ -826,9 +845,11 @@ void gpio_p2_15(int param_1)
 }
 
 
-// ===== FUN_20101f74 @ 20101f74 (24 bytes)
+// ===== gpio_p2_7 @ 20101f74 (24 bytes)
 
-void FUN_20101f74(int param_1)
+/* (v): PORT_PSR2 = 0x800000 / 0x800080: P2_7 low / high [fact] */
+
+void gpio_p2_7(int param_1)
 
 {
   undefined4 uVar1;

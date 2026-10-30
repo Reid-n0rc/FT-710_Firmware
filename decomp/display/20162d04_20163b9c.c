@@ -14,9 +14,12 @@ void cpp_task_thunk(void *param_1)
 }
 
 
-// ===== FUN_20162d10 @ 20162d10 (40 bytes)
+// ===== os_mbx_create_fifo @ 20162d10 (40 bytes)
 
-void FUN_20162d10(void)
+/* itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init,
+   uart4_tx_init, mainlink_disp_init, mouse_cursor_obj_init [fact] */
+
+void os_mbx_create_fifo(void)
 
 {
   undefined4 local_18;
@@ -33,9 +36,11 @@ void FUN_20162d10(void)
 }
 
 
-// ===== FUN_20162d3c @ 20162d3c (12 bytes)
+// ===== os_mbx_send @ 20162d3c (12 bytes)
 
-void FUN_20162d3c(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (this, mbxid, msg): itron_snd_mbx(mbxid, msg) [fact] */
+
+void os_mbx_send(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   itron_snd_mbx(param_2,param_3);
@@ -133,8 +138,8 @@ uint uart_obj_init(scif_uart *uart,scif_regs *regs,t_cisr *rxi,t_cisr *txi,uint 
     uart->rx_flg = flg;
     uart->rxi_isr = rxi;
     uart->txi_isr = txi;
-    uVar1 = itron_acre_isr(0,txi);
-    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,uart->rxi_isr), (int)uVar1 < 1)) {
+    uVar1 = itron_acre_isr(0,(int)txi);
+    if (((int)uVar1 < 1) || (uVar1 = itron_acre_isr(0,(int)uart->rxi_isr), (int)uVar1 < 1)) {
       return 0xffffffff;
     }
   }
@@ -186,7 +191,7 @@ int scif_read(scif_uart *uart,byte *buf,int n)
 void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 {
-  scif_open(uart,baud,bits,parity,stop);
+  scif_open((int)uart,baud,bits,parity,stop);
   gic_enable_irq(uart->txi_isr->intno);
   gic_enable_irq(uart->rxi_isr->intno);
   return;
@@ -197,64 +202,63 @@ void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 /* (baud, bits, parity, stop): SCSMR, SCBRR (0x16 + SEMR 0x81 for 345600), FIFO reset */
 
-void scif_open(scif_uart *uart,uint param_2,int param_3,int param_4,uint param_5)
+void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 {
   char cVar1;
-  byte bVar2;
-  ushort uVar3;
+  ushort uVar2;
   
-  uVar3 = 0;
+  uVar2 = 0;
   if (param_3 == 7) {
-    uVar3 = 0x40;
+    uVar2 = 0x40;
   }
   if (param_4 != 0) {
     if (param_4 == 1) {
-      uVar3 = uVar3 | 0x20;
+      uVar2 = uVar2 | 0x20;
     }
     else if (param_4 == 2) {
-      uVar3 = uVar3 | 0x30;
+      uVar2 = uVar2 | 0x30;
     }
   }
   if (param_5 != 1) {
-    uVar3 = uVar3 | 8;
+    uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
     cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
-    bVar2 = cVar1 - 1;
+    cVar1 = cVar1 + -1;
   }
   else {
-    bVar2 = 0x16;
+    cVar1 = '\x16';
   }
-  uart->rx_wr = 0;
-  uart->rx_rd = 0;
-  uart->tx_wr = 0;
-  uart->tx_rd = 0;
-  uart->rxi_count = 0;
-  uart->rx_count = 0;
-  uart->rx_errors = 0;
-  uart->rxi_no_data = 0;
-  uart->txi_count = 0;
-  uart->tx_count = 0;
-  uart->txi_not_ready = 0;
-  uart->regs->scscr = 0;
-  uart->regs->scfcr = uart->regs->scfcr | 6;
-  uart->regs->scfsr = uart->regs->scfsr & 0xff6e;
-  uart->regs->sclsr = 0;
-  uart->regs->scscr = 0;
-  uart->regs->scsmr = uVar3;
-  uart->regs->scbrr = bVar2;
+  *(undefined2 *)(param_1 + 10) = 0;
+  *(undefined2 *)(param_1 + 8) = 0;
+  *(undefined2 *)(param_1 + 0x40e) = 0;
+  *(undefined2 *)(param_1 + 0x40c) = 0;
+  *(undefined4 *)(param_1 + 0x81c) = 0;
+  *(undefined4 *)(param_1 + 0x820) = 0;
+  *(undefined4 *)(param_1 + 0x828) = 0;
+  *(undefined4 *)(param_1 + 0x82c) = 0;
+  *(undefined4 *)(param_1 + 0x830) = 0;
+  *(undefined4 *)(param_1 + 0x834) = 0;
+  *(undefined4 *)(param_1 + 0x838) = 0;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 6;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x10) = *(ushort *)(*(int *)(param_1 + 4) + 0x10) & 0xff6e;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 0x24) = 0;
+  *(undefined2 *)(*(int *)(param_1 + 4) + 8) = 0;
+  **(ushort **)(param_1 + 4) = uVar2;
+  *(char *)(*(int *)(param_1 + 4) + 4) = cVar1;
   if (param_2 < 0x54600) {
-    uart->regs->scemr = 0;
+    *(undefined2 *)(*(int *)(param_1 + 4) + 0x28) = 0;
   }
   else {
-    uart->regs->scemr = uart->regs->scemr | 0x81;
+    *(ushort *)(*(int *)(param_1 + 4) + 0x28) = *(ushort *)(*(int *)(param_1 + 4) + 0x28) | 0x81;
   }
   if ((param_5 & 0x80) != 0) {
-    uart->regs->scfcr = uart->regs->scfcr | 1;
+    *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) | 1;
   }
-  uart->regs->scfcr = uart->regs->scfcr & 0xfff9;
-  uart->regs->scscr = uart->regs->scscr | 0xf8;
+  *(ushort *)(*(int *)(param_1 + 4) + 0x18) = *(ushort *)(*(int *)(param_1 + 4) + 0x18) & 0xfff9;
+  *(ushort *)(*(int *)(param_1 + 4) + 8) = *(ushort *)(*(int *)(param_1 + 4) + 8) | 0xf8;
   return;
 }
 
@@ -340,9 +344,11 @@ uint scif_write(scif_uart *uart,byte *buf,uint n)
 }
 
 
-// ===== FUN_20163360 @ 20163360 (12 bytes)
+// ===== uart_obj_ctor @ 20163360 (12 bytes)
 
-void FUN_20163360(undefined4 *param_1)
+/* (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) [fact] */
+
+void uart_obj_ctor(undefined4 *param_1)
 
 {
   *param_1 = &PTR_uart_obj_init_2042803c;
@@ -369,7 +375,7 @@ void FUN_201633a0(int param_1,int param_2,int param_3,int param_4,uint param_5)
   }
   iVar2 = 0;
   do {
-    iVar1 = FUN_201341cc(*(byte *)(param_3 + iVar2) ^ param_5,param_4);
+    iVar1 = clamp_add_u8(*(byte *)(param_3 + iVar2) ^ param_5,param_4);
     *(undefined1 *)(param_2 + iVar2) = *(undefined1 *)(param_1 + iVar1);
     iVar2 = iVar2 + 1;
   } while (iVar2 < 800);
@@ -419,9 +425,12 @@ void FUN_201635b8(int param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_201635e4 @ 201635e4 (24 bytes)
+// ===== fwobj_version_text @ 201635e4 (24 bytes)
 
-void FUN_201635e4(int param_1,undefined4 param_2)
+/* (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
+   fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact] */
+
+void fwobj_version_text(int param_1,undefined4 param_2)
 
 {
   sprintf_veneer(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
@@ -643,9 +652,11 @@ void FUN_201637d8(ushort *param_1,ushort param_2)
 }
 
 
-// ===== FUN_201637f0 @ 201637f0 (24 bytes)
+// ===== fill8 @ 201637f0 (24 bytes)
 
-void FUN_201637f0(uint *param_1,uint param_2)
+/* (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact] */
+
+void fill8(uint *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -658,9 +669,12 @@ void FUN_201637f0(uint *param_1,uint param_2)
 }
 
 
-// ===== FUN_20163808 @ 20163808 (40 bytes)
+// ===== fp_classify_double @ 20163808 (40 bytes)
 
-uint FUN_20163808(int param_1,uint param_2)
+/* (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the
+   exponent 0 / 0x7FF and the mantissa) [fact for the tests] */
+
+uint fp_classify_double(int param_1,uint param_2)
 
 {
   uint uVar1;
@@ -692,9 +706,11 @@ void FUN_2016385a(void)
 }
 
 
-// ===== FUN_20163864 @ 20163864 (14 bytes)
+// ===== is_decimal_digit @ 20163864 (14 bytes)
 
-undefined4 FUN_20163864(int param_1)
+/* (c): 1 for '0'..'9'; _printf_core uses it for widths [fact] */
+
+undefined4 is_decimal_digit(int param_1)
 
 {
   if (param_1 - 0x30U < 10) {

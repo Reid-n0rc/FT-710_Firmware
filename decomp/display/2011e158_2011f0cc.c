@@ -847,8 +847,8 @@ undefined4 rspi0_open_irq_only(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi0_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi0_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     return 0;
@@ -868,8 +868,8 @@ undefined4 rspi1_open_irq_only(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi1_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi1_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     return 0;

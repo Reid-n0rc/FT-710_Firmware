@@ -111,7 +111,7 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
 
 {
   uint uVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   undefined4 extraout_r1;
   undefined4 extraout_r1_00;
@@ -132,22 +132,22 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
   }
   else {
     mainlink_rx_ctrl(1);
-    psVar2 = scif5_get(0);
+    piVar2 = scif5_get(0);
     uVar1 = progress_scale(&DAT_20800178);
     progress_set(uVar1);
     DAT_2080016c = 0x1e4;
     local_18 = 2;
-    (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
+    (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
     uVar1 = progress_scale(&DAT_20800178,extraout_r1_00,0,0x3fe00000);
     progress_set(uVar1);
-    uVar3 = isp_relay_mode_cmd((int *)psVar2,'\x02');
+    uVar3 = isp_relay_mode_cmd(piVar2,'\x02');
     uVar1 = 0;
-    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-        (uVar3 = dsp_isp_fill_option((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-       (((uVar3 = dsp_isp_configure_memory((int *)psVar2), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = dsp_isp_erase_region((int *)psVar2), uVar1 = 0, uVar3 != 0)) &&
-        ((uVar3 = dsp_isp_write_image((int *)psVar2,param_1), uVar1 = 0, uVar3 != 0 &&
-         (uVar3 = isp_relay_mode_cmd((int *)psVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
+    if ((((uVar3 != 0) && (uVar3 = dsp_isp_ping(piVar2), uVar1 = 0, uVar3 != 0)) &&
+        (uVar3 = dsp_isp_fill_option(piVar2), uVar1 = 0, uVar3 != 0)) &&
+       (((uVar3 = dsp_isp_configure_memory(piVar2), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = dsp_isp_erase_region(piVar2), uVar1 = 0, uVar3 != 0)) &&
+        ((uVar3 = dsp_isp_write_image(piVar2,param_1), uVar1 = 0, uVar3 != 0 &&
+         (uVar3 = isp_relay_mode_cmd(piVar2,-0x7e), uVar1 = 0, uVar3 != 0)))))) {
       uVar1 = 1;
     }
   }
@@ -1317,7 +1317,7 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
 
 {
   char *pcVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   int iVar4;
   int iVar5;
@@ -1346,48 +1346,48 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
   progress_range_init(&local_130,0,100);
   DAT_20800178 = local_130;
   DAT_2080017c = puStack_12c;
-  psVar2 = scif5_get(0);
+  piVar2 = scif5_get(0);
   local_130 = (uint *)0x1;
-  (*(code *)psVar2->vtbl[1])(psVar2,0x2580,8,0);
-  uVar3 = rx_boot_sync((int *)psVar2);
+  (**(code **)(*piVar2 + 4))(piVar2,0x2580,8,0);
+  uVar3 = rx_boot_sync(piVar2);
   uVar6 = 0;
   if (uVar3 != 0) {
-    uVar3 = rx_boot_signature((int *)psVar2);
+    uVar3 = rx_boot_signature(piVar2);
     uVar6 = 0;
     if (uVar3 != 0) {
-      uVar3 = rx_boot_endian((int *)psVar2);
+      uVar3 = rx_boot_endian(piVar2);
       uVar6 = 0;
       if (uVar3 != 0) {
-        uVar3 = rx_boot_set_freq((int *)psVar2);
+        uVar3 = rx_boot_set_freq(piVar2);
         uVar6 = 0;
         if (uVar3 != 0) {
           progress_set(5);
-          uVar3 = rx_boot_set_baud((int *)psVar2);
+          uVar3 = rx_boot_set_baud(piVar2);
           uVar6 = 0;
           if (uVar3 != 0) {
-            (*(code *)psVar2->vtbl[2])(psVar2);
+            (**(code **)(*piVar2 + 8))(piVar2);
             local_130 = (uint *)0x1;
-            (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0);
+            (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0);
             itron_dly_tsk(0x32);
             progress_set(6);
-            uVar3 = rx_boot_sync_cmd((int *)psVar2);
+            uVar3 = rx_boot_sync_cmd(piVar2);
             uVar6 = 0;
             if (uVar3 != 0) {
               progress_set(7);
-              uVar3 = rx_boot_cmd_2c((int *)psVar2);
+              uVar3 = rx_boot_cmd_2c(piVar2);
               uVar6 = 0;
               if (uVar3 != 0) {
-                uVar3 = rx_boot_id_auth((int *)psVar2);
+                uVar3 = rx_boot_id_auth(piVar2);
                 uVar6 = 0;
                 if (uVar3 != 0) {
                   progress_set(8);
                   local_3c = 0;
-                  uVar3 = rx_boot_area_count((int *)psVar2,&local_3c);
+                  uVar3 = rx_boot_area_count(piVar2,&local_3c);
                   uVar6 = 0;
                   if (uVar3 != 0) {
                     progress_set(9);
                     __aeabi_memclr4(local_128,0xe0);
-                    uVar3 = rx_boot_area_info((int *)psVar2,local_3c,(int)local_128);
+                    uVar3 = rx_boot_area_info(piVar2,local_3c,(int)local_128);
                     uVar6 = 0;
                     if (uVar3 != 0) {
                       DAT_20800164 = 0;
@@ -1421,16 +1421,16 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                           }
                         }
                       }
-                      uVar3 = rx_boot_erase((int *)psVar2);
+                      uVar3 = rx_boot_erase(piVar2);
                       uVar6 = 0;
                       if (uVar3 != 0) {
                         progress_set(10);
                         local_130 = param_2;
-                        iVar5 = rx_boot_write_areas(psVar2,local_3c,local_128,local_2c);
+                        iVar5 = rx_boot_write_areas(piVar2,local_3c,local_128,local_2c);
                         uVar6 = 0;
                         if (iVar5 != 0) {
                           local_130 = param_2;
-                          iVar5 = rx_boot_verify_areas(psVar2,local_3c,local_128,local_2c);
+                          iVar5 = rx_boot_verify_areas(piVar2,local_3c,local_128,local_2c);
                           uVar6 = 0;
                           if (iVar5 != 0) {
                             progress_set(100);
@@ -1440,10 +1440,10 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                             itron_dly_tsk(10);
                             gpio_rx_reset(1);
                             itron_dly_tsk(500);
-                            (*(code *)psVar2->vtbl[2])(psVar2);
+                            (**(code **)(*piVar2 + 8))(piVar2);
                             local_130 = (uint *)0x2;
-                            pcVar8 = (code *)psVar2->vtbl[1];
-                            (*pcVar8)(psVar2,0x54600,8,0);
+                            pcVar8 = *(code **)(*piVar2 + 4);
+                            (*pcVar8)(piVar2,0x54600,8,0);
                             local_48[0] = -0x10;
                             local_48[1] = 1;
                             local_48[2] = 8;
@@ -1467,11 +1467,12 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                               bVar10 = pcVar8 == (code *)0x0;
                               pcVar8 = pcVar8 + -1;
                               if ((bVar10) ||
-                                 (local_130 = (uint *)(*(code *)psVar2->vtbl[9])(psVar2,local_48,10)
-                                 , local_130 != (uint *)0xa)) {
+                                 (local_130 = (uint *)(**(code **)(*piVar2 + 0x24))
+                                                                (piVar2,local_48,10),
+                                 local_130 != (uint *)0xa)) {
                                 return 0;
                               }
-                              iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_38,1,5);
+                              iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_38,1,5);
                             } while ((iVar5 == -1) || (local_38[0] != '\x06'));
                             uVar6 = 1;
                           }
@@ -1618,15 +1619,17 @@ undefined8 dspup_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (0 < (int)uVar1) {
     DAT_20800168 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_dspup);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_dspup);
     if ((0 < (int)uVar1) && (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
       pcVar2 = dsp_debug_cmd;
       goto LAB_2010dd14;
@@ -1634,7 +1637,7 @@ undefined8 dspup_init(void)
   }
   pcVar2 = (code *)0x0;
 LAB_2010dd14:
-  return CONCAT44(local_10.flgatr,pcVar2);
+  return CONCAT44(local_10,pcVar2);
 }
 
 
@@ -1672,13 +1675,13 @@ void fwfile_check_versions(int param_1)
   undefined1 auStack_28 [16];
   
   fwobj_create_all();
-  uVar1 = FUN_201640ec(auStack_28,"MAIN");
+  uVar1 = copy10(auStack_28,"MAIN");
   memcpy(DAT_2081166c + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"DISPLAY");
+  uVar1 = copy10(auStack_28,"DISPLAY");
   memcpy(DAT_20811670 + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"DSP");
+  uVar1 = copy10(auStack_28,"DSP");
   memcpy(DAT_20811674 + 4,uVar1,10);
-  uVar1 = FUN_201640ec(auStack_28,"SDR");
+  uVar1 = copy10(auStack_28,"SDR");
   memcpy(DAT_20811678 + 4,uVar1,10);
   fwname_pattern_init((int *)(DAT_2081166c + 0x14),0x2010df70,0x2010df68);
   fwname_pattern_init((int *)(DAT_20811670 + 0x14),0x2010df80,0x2010df68);
@@ -1693,7 +1696,7 @@ void fwfile_check_versions(int param_1)
     *(undefined1 *)((&DAT_2081166c)[iVar2] + 0xa9) = 0;
     *(undefined4 *)(iVar3 + 0x34) = 0;
     *(undefined4 *)(iVar3 + 0x38) = 0;
-    FUN_201635e4((&DAT_2081166c)[iVar2],iVar3 + 1);
+    fwobj_version_text((&DAT_2081166c)[iVar2],iVar3 + 1);
     FUN_201635b8((&DAT_2081166c)[iVar2],iVar3 + 0x29);
     iVar2 = iVar2 + 1;
   } while (iVar2 < 4);
@@ -1768,7 +1771,7 @@ uint fwfile_status_text(int param_1,int param_2)
             }
           }
           iVar1 = param_1 + iVar5 * 0x48;
-          FUN_201635e4((&DAT_2081166c)[iVar5],iVar1 + 1);
+          fwobj_version_text((&DAT_2081166c)[iVar5],iVar1 + 1);
           strcpy(iVar1 + 0x15,(&DAT_2081166c)[iVar5] + 0x89);
           FUN_201635b8((&DAT_2081166c)[iVar5],iVar1 + 0x29);
           FUN_20163770(iVar1 + 0x3c,(&DAT_2081166c)[iVar5] + 0x2c);
@@ -1864,7 +1867,7 @@ byte fwupdate_poll(int param_1)
       strcpy(iVar6 + 0x15,(&DAT_2081166c)[iVar5] + 0x89);
       uVar4 = progress_get();
       *(uint *)(iVar6 + 0x38) = uVar4;
-      FUN_201635e4((&DAT_2081166c)[iVar5],iVar6 + 1);
+      fwobj_version_text((&DAT_2081166c)[iVar5],iVar6 + 1);
       FUN_201635b8((&DAT_2081166c)[iVar5],iVar6 + 0x29);
       iVar5 = iVar5 + 1;
     } while (iVar5 < 4);
@@ -1878,7 +1881,7 @@ byte fwupdate_poll(int param_1)
       *(undefined1 *)(param_1 + iVar5 * 0x48) = *(undefined1 *)((&DAT_2081166c)[iVar5] + 0xa9);
       uVar4 = progress_get();
       *(uint *)(iVar6 + 0x38) = uVar4;
-      FUN_201635e4((&DAT_2081166c)[iVar5],iVar6 + 1);
+      fwobj_version_text((&DAT_2081166c)[iVar5],iVar6 + 1);
       FUN_201635b8((&DAT_2081166c)[iVar5],iVar6 + 0x29);
       iVar5 = iVar5 + 1;
     } while (iVar5 < 4);
@@ -1929,16 +1932,18 @@ void fwupdate_init(void)
 
 {
   uint uVar1;
-  t_cflg local_18;
+  undefined4 local_18;
+  undefined4 uStack_14;
+  undefined4 local_10;
   
   fwobj_create_all();
-  local_18.flgatr = 2;
-  local_18.iflgptn = 0;
-  local_18.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_18);
+  local_18 = 2;
+  uStack_14 = 0;
+  local_10 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_18);
   if (0 < (int)uVar1) {
     DAT_20800188 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_fwupdate);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_fwupdate);
     if (0 < (int)uVar1) {
       DAT_20800184 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -1956,7 +1961,7 @@ uint mainlink_fw_mode_cmd(char param_1)
 
 {
   byte bVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   int iVar3;
   int iVar4;
   int iVar5;
@@ -1969,9 +1974,9 @@ uint mainlink_fw_mode_cmd(char param_1)
   local_18 = 0;
   iVar5 = 0;
   mainlink_rx_ctrl(1);
-  psVar2 = scif5_get(0);
+  piVar2 = scif5_get(0);
   iVar4 = 2;
-  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2,iVar5);
+  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2,iVar5);
   bVar1 = mainlink_got_frame60();
   if (bVar1 == 0) {
     return 1;
@@ -1980,11 +1985,12 @@ uint mainlink_fw_mode_cmd(char param_1)
   iVar3 = 0;
   local_14 = CONCAT13(param_1 + -0xf,(undefined3)local_14);
   while( true ) {
-    iVar4 = (*(code *)psVar2->vtbl[9])(psVar2,&local_18,8,(code *)psVar2->vtbl[9],iVar4,iVar5);
+    iVar4 = (**(code **)(*piVar2 + 0x24))(piVar2,&local_18,8,*(code **)(*piVar2 + 0x24),iVar4,iVar5)
+    ;
     if (iVar4 != 8) {
       return 0;
     }
-    iVar5 = (*(code *)psVar2->vtbl[6])(psVar2,local_20,1,0xdc);
+    iVar5 = (**(code **)(*piVar2 + 0x18))(piVar2,local_20,1,0xdc);
     if ((iVar5 != -1) && (local_20[0] == '\x06')) break;
     iVar3 = iVar3 + 1;
     if (4 < iVar3) {
@@ -2463,14 +2469,16 @@ uint uptest_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (((0 < (int)uVar1) &&
-      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,&ctsk_uptest), 0 < (int)uVar1)) &&
+      (DAT_20800190 = uVar1, uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uptest), 0 < (int)uVar1)) &&
      (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
     return 0x2010ec44;
   }
@@ -2543,9 +2551,14 @@ undefined4 mainlink_rx_block_read(char *param_1)
 }
 
 
-// ===== FUN_2010ef88 @ 2010ef88 (320 bytes)
+// ===== sdmenu_list_files @ 2010ef88 (320 bytes)
 
-int FUN_2010ef88(int param_1,int param_2,int param_3)
+/* (kind, list, max): opens the SD folder for the kind (0x208001AC table), collects the names of the
+   ".dat" files without the extension in 16-byte slots (work buffer 0x8350 bytes, at most 100),
+   sorts them with qsort/strcasecmp and copies them to list; holds the scope drawing meanwhile;
+   returns the count [fact] */
+
+int sdmenu_list_files(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -2595,7 +2608,7 @@ LAB_2010efc4:
 LAB_2010f068:
     fs_closedir(iVar2);
     if (iVar5 != 0) {
-      FUN_20154fca(iVar3,iVar5,0x10,strcasecmp);
+      qsort(iVar3,iVar5,0x10,strcasecmp);
       iVar2 = 0;
       if (0 < iVar5) {
         do {

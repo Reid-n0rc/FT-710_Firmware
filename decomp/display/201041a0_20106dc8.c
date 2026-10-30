@@ -1173,7 +1173,7 @@ LAB_20105660:
         iVar2 = -4;
       }
       else {
-        FUN_20154fca(iVar4,iVar2,0x34,strcasecmp);
+        qsort(iVar4,iVar2,0x34,strcasecmp);
         __aeabi_memclr4(local_30,0x33cc);
         iVar6 = 0;
         do {
@@ -1513,12 +1513,14 @@ void audio_codec_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 local_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  local_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (0 < (int)uVar1) {
     DAT_2081104c = 0;
     DAT_20811050 = 0;
@@ -1534,7 +1536,7 @@ void audio_codec_init(void)
     DAT_20811078 = 0;
     DAT_2081107c = 0;
     DAT_208000c8 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_audio_codec);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_audio_codec);
     if (0 < (int)uVar1) {
       itron_sta_tsk(uVar1,0);
     }
@@ -2089,7 +2091,7 @@ void task_audio_codec(void)
                   }
                   break;
                 }
-                FUN_20101088(local_5c,4000);
+                dcache_clean_invalidate_range(local_5c,4000);
                 DAT_208000e4 = DAT_208000e4 + iVar7 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
               }

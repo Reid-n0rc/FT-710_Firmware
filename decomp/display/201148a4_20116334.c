@@ -50,7 +50,7 @@ void scif5_txi_isr(void)
 
 /* UART object @0x208DB280 on SCIF5 (0xE8009800), MAIN link */
 
-scif_uart * scif5_get(uint param_1)
+void * scif5_get(uint param_1)
 
 {
   uart_obj_init(&scif5_uart,(scif_regs *)&SCIF_SCSMR_5,&cisr_scif5_rxi_isr,&cisr_scif5_txi_isr,
@@ -63,7 +63,7 @@ scif_uart * scif5_get(uint param_1)
 
 /* UART object on SCIF4 (0xE8009000) */
 
-scif_uart * scif4_get(uint param_1)
+void * scif4_get(uint param_1)
 
 {
   uart_obj_init(&scif4_uart,(scif_regs *)&SCIF_SCSMR_4,&cisr_scif4_rxi_isr,&cisr_scif4_txi_isr,
@@ -84,32 +84,39 @@ scif_uart * scif3_get(uint flg)
 }
 
 
-// ===== FUN_20114920 @ 20114920 (12 bytes)
+// ===== scif5_rxi_count_get @ 20114920 (12 bytes)
 
-uint FUN_20114920(void)
+/* Returns scif5_uart.rxi_count; debug_overlay_draw shows it [fact] */
+
+uint scif5_rxi_count_get(void)
 
 {
   return scif5_uart.rxi_count;
 }
 
 
-// ===== FUN_2011492c @ 2011492c (12 bytes)
+// ===== scif4_rxi_count_get @ 2011492c (12 bytes)
 
-uint FUN_2011492c(void)
+/* Returns scif4_uart.rxi_count; debug_overlay_draw shows it [fact] */
+
+uint scif4_rxi_count_get(void)
 
 {
   return scif4_uart.rxi_count;
 }
 
 
-// ===== FUN_20114938 @ 20114938 (32 bytes)
+// ===== scif_uarts_ctor @ 20114938 (32 bytes)
 
-void FUN_20114938(void)
+/* Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller
+   (run from the init table) [fact for the calls] */
+
+void scif_uarts_ctor(void)
 
 {
-  FUN_20163360(&scif3_uart);
-  FUN_20163360(&scif4_uart);
-  FUN_20163360(&scif5_uart);
+  uart_obj_ctor(&scif3_uart);
+  uart_obj_ctor(&scif4_uart);
+  uart_obj_ctor(&scif5_uart);
   return;
 }
 
@@ -443,16 +450,16 @@ void uart4_link_init(void)
 {
   uint uVar1;
   uint uVar2;
-  scif_uart *psVar3;
+  void *pvVar3;
   
   __aeabi_memclr4(&DAT_2045d4e0,0x1ae0);
   DAT_20450020 = uart4_obj_ctor(&DAT_2045d4e0);
-  uVar1 = itron_acre_tsk(0,&ctsk_uart4_57dc);
-  if ((0 < (int)uVar1) && (uVar2 = itron_acre_flg(0,&cflg_uart4), 0 < (int)uVar2)) {
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uart4_57dc);
+  if ((0 < (int)uVar1) && (uVar2 = itron_acre_flg(0,(byte *)&cflg_uart4), 0 < (int)uVar2)) {
     *(uint *)(DAT_20450020 + 0x14) = uVar2;
-    psVar3 = scif4_get(uVar2);
+    pvVar3 = scif4_get(uVar2);
     uVar2 = DAT_20450020;
-    *(scif_uart **)(DAT_20450020 + 0x10) = psVar3;
+    *(void **)(DAT_20450020 + 0x10) = pvVar3;
     itron_sta_tsk(uVar1,uVar2);
     return;
   }
@@ -616,10 +623,10 @@ LAB_2015116c:
 
 /* copy of the newest MAIN frame (0x2045F8C0, 0x240 B) */
 
-void mainlink_get_last_frame(ml_frame *dst)
+void mainlink_get_last_frame(uint param_1)
 
 {
-  memcpy(dst,&ml_gui_snapshot,0x240);
+  memcpy(param_1,&ml_gui_snapshot,0x240);
   return;
 }
 
@@ -659,9 +666,12 @@ byte mainlink_get_settings24(uint param_1)
 }
 
 
-// ===== FUN_2011503c @ 2011503c (36 bytes)
+// ===== mainlink_get_last21 @ 2011503c (36 bytes)
 
-byte FUN_2011503c(byte *param_1)
+/* (out): copies the last 0x21 frame payload and its two following bytes (g_ml.last21, +0x12, +0x13)
+   to out, returns the got21 flag [fact] */
+
+byte mainlink_get_last21(byte *param_1)
 
 {
   *param_1 = g_ml.last21;
@@ -684,12 +694,12 @@ uint mainlink_got_esc(void)
 
 // ===== mainlink_last_frame_differs @ 2011506c (32 bytes)
 
-bool mainlink_last_frame_differs(ml_frame *frame)
+bool mainlink_last_frame_differs(uint param_1)
 
 {
   int iVar1;
   
-  iVar1 = memcmp(&ml_gui_snapshot,frame,0x240);
+  iVar1 = memcmp(&ml_gui_snapshot,param_1,0x240);
   return iVar1 != 0;
 }
 
@@ -698,10 +708,10 @@ bool mainlink_last_frame_differs(ml_frame *frame)
 
 /* writes the 0x2045F8C0 snapshot (debug replay, GUI) */
 
-void mainlink_set_last_frame(ml_frame *src)
+void mainlink_set_last_frame(uint param_1)
 
 {
-  memcpy(&ml_gui_snapshot,src,0x240);
+  memcpy(&ml_gui_snapshot,param_1,0x240);
   return;
 }
 
@@ -1180,7 +1190,7 @@ void mainlink_renc_event(byte *param_1,undefined4 param_2,undefined4 param_3,und
     return;
   }
   local_10 = param_4;
-  iVar2 = FUN_20116dac();
+  iVar2 = full_mode_get();
   if (iVar2 == 0) {
     return;
   }
