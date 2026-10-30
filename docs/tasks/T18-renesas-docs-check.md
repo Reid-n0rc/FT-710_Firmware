@@ -5,7 +5,7 @@
 ## Goal
 The owner added the Renesas documentation in `Manuals/Renesas/`: the RX651 hardware manual r01uh0590 Rev.2.40, the datasheet
 r01ds0276 Rev.2.40, the handbook, the RXv2 software manual r01us0071, and technical updates TN-RX*-A0267/A0276/A0280/A0291. Check every
-MAIN claim still tagged [guess]/[inference] that these documents can settle, correct anything they contradict, and say whether the
+MAIN claim still tagged guess or [inference] that these documents can settle, correct anything they contradict, and say whether the
 technical updates affect this firmware.
 
 ## Plan

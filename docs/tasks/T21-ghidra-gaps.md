@@ -132,7 +132,8 @@ p-code ops with iclass in/out for the rest. (5) Bundle parallelism through stagi
 **Left / follow-ups.** T21g: switch `build_ifdsp` (bootstrap) and the canonical `FT710_IFDSP` HiFi4 program to
 `Xtensa:LE:32:rt600hifi4` (with `--only hifi4` before `ghidra`) and re-export `decomp/ifdsp/hifi4`. Later, per need: exact
 arithmetic for the filter kernels' `ae_*` ops, memory semantics for the aligning `ae_la*`/`ae_sa*` loads/stores, the FPU lane
-layout (now a guess: low 32 bits).
+layout (open: the SLEIGH writes the low 32 bits and zero-extends [fact: p-code, T22]; what the hardware does would be settled
+by the Cadence HiFi4 ISA reference).
 
 ### T21b
 **Status:** done. The oracle, B10 and B9 are checked on the stock language and on T21a's first `Xtensa:LE:32:rt600hifi4` (installed
@@ -584,7 +585,7 @@ SLEIGH without signatures.
   (unreferenced CC-RX functions: 54, mostly after a `RTS` in the BSP/driver code, e.g. 0xFFF92475, 0xFFFC9654, 0xFFFEE1BE); a flow
   with a bad instruction is cleared again with its bookmarks. What is left in the const area (0xFFF80000..0xFFF8F657) are numeric tables
   that no decoded code reads directly: `float[n]` if ≥ 90 % of the words are 0 or normal floats, `uint16[n]` if ≥ 80 % of the
-  half-words have a zero high byte, else `byte[n]`, each with a plate comment that the layout is a guess **[guess for the layouts]**.
+  half-words have a zero high byte, else `byte[n]`, each with a plate comment that the layout is unverified (**open** for each table until the code that reads it is found; see below).
 - Test [fact, full re-import with the recipe into scratch, T21c + RTSD SLEIGH, then ApplySignatures and ExportDecomp]:
 
 | | before | after |

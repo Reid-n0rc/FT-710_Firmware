@@ -251,7 +251,7 @@ uses the pre-bundle value, for example `{ s32i a6, a2, 132; movi a2, 0 }` stores
 ae_l32.ip aed8, a2, 4; madd.s aed14, aed8, aed12 }` reads the old `a2` and the old `aed8`, and `{ ae_mov aed2, aed13; …; maddmux.s
 aed13, … }` swaps through the staging registers. Stores to memory happen in slot order; no checked bundle has a load and a store
 to the same address. Two side notes: `mul.s`/`madd.s` write the full 64-bit `aed` with `INT_ZEXT` of the 32-bit result (the
-upper half becomes 0) **[fact: p-code]**, whether the hardware keeps the upper half is not known **[guess]**. And 7 bundles in
+upper half becomes 0) **[fact: p-code]**, whether the hardware keeps the upper half is **open** (would be settled by the Cadence HiFi4 ISA reference). And 7 bundles in
 `flix.dis` have two slots writing one register (0x209C01, 0x212B6D, 0x21E7E2, 0x22F9CB, 0x2317E8, 0x2358D0, 0x2360C1). That is
 not a legal bundle, and none of them is in Ghidra's listing: all 7 are `flix.dis` desync artefacts (0x209C01 sits in a
 `l32r a3; j 0x209B88` case table) **[fact: listing; inference: illegal]**. One of them (0x209C01) was in the 40-bundle sample:

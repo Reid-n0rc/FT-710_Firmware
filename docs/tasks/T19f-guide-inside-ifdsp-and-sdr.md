@@ -68,7 +68,8 @@ flowchart (7.8, captioned Figure 7.8). Plus a simulated `[IF]>` console transcri
 - **DSP_CLK frequency vs the FPGA's output clock.** `docs/code/ifdsp/m33-platform.md` and `README.md` state the RT685's CLKIN
   (`DSP_CLK`, from the SDR module) is 18.432 MHz [fact from the M33 code]. `docs/code/sdr/netlist.md` §3.2 guesses that the
   ~28.17 MHz MMCM clock on pin P14 is `DSP_CLK`, and `resources.md` §Clocking guesses a ~16.6 MHz CLKOUT0 for the same role.
-  Neither figure matches 18.432 MHz; the netlist page already doubts one MMCM divider. The guide calls the pin's role open.
+  Neither figure matches 18.432 MHz; the netlist page already doubts one MMCM divider. The guide calls the pin's role open. (Later: #67 confirmed 28.17 MHz on P14 [fact]; `DSP_CLK` is still open, O8 in
+  docs/code/system.md §8, to be settled by measuring J2002 pin 22.)
 - **`docs/code/sdr/README.md` key findings** still say "119 of 120 DSP48E1 (all fully pipelined)" and `resources.md`'s body
   says no DSP uses the pre-adder; both were corrected by T15b (`Z<reg>` inverted; 12 DSPs use the pre-adder). Only the
   correction box in `resources.md` reflects it.

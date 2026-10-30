@@ -5,7 +5,7 @@
 ## Goal
 While writing the guide, the chapter writers found 26 issues in the reference pages: two pages disagreeing, stale text superseded by
 later tasks, and small slips. They are listed under `## Reference issues` in T19a–T19g. For each one, check the code or data, fix the
-reference page(s) with the correct [fact]/[inference]/[guess] tag and evidence, and correct the guide (`docs/guide/README.md`) wherever
+reference page(s) with the correct [fact]/[inference] (or an open question; the former guess tag is retired) tag and evidence, and correct the guide (`docs/guide/README.md`) wherever
 it states, or deliberately avoids, the point.
 
 ## Plan
@@ -27,7 +27,7 @@ Groups: (1) MAIN ADC/power/encoder (b1/e1, b2, b3, b4); (2) SDR link + clocks (a
 fix** beyond a cross-reference (e3, g2). Guide text changed for b1, b2 (incl. figure 3.2), b3, a2, f1, f4, c2, d3 and f3 ("Where to look").
 
 - a1 SDR reply format: **settled**, 1 byte (0x06 or `?`) for a write, 7 bytes `r`+value+sum for a read. MAIN's `sci5_rx_byte_hook` 0xFFF94962 sets the SCI5 receive length from byte 0 (agrees with T15e). Fixed system.md §3, main/sdr-link.md (overview, figure, reply table, sequence, function table, T15e note), sdr/netlist.md §5.2, main/cat.md. Guide already right.
-- a2 ADC 250 vs 125 MSPS: **open** (O7). Fabric 125 MHz [inference, high], 250 MHz clock [fact, SM p6]; ADC rate not decidable (no part number, IDDR edge mode undecoded); reg 0x03's 62.5 MHz may be a DAC limit [guess]. Diagram labels, hardware.md, sdr-link.md reg 0x03 marked; guide says it is not known.
+- a2 ADC 250 vs 125 MSPS: **open** (O7). Fabric 125 MHz [inference, high], 250 MHz clock [fact, SM p6]; ADC rate not decidable (no part number, IDDR edge mode undecoded); reg 0x03's 62.5 MHz limit (settled later in O7 / #172: it is fs/2 of two 125 MSPS ADC channels, the Nyquist boundary [inference, strong; docs/code/system.md §8 O7], not a DAC limit). Diagram labels, hardware.md, sdr-link.md reg 0x03 marked; guide says it is not known.
 - a3 DSP boot retry: **settled**, reg 1 is read once, bit 0 clear → boot_error 2 (`dsp_link_init` 0xFFF9D06C; `dsp_check_reply` clears 0x1C5F). ifdsp/control-link.md diagram fixed. Guide already right.
 - b1/e1 supply ADC channel: **settled**, AN003 `PA_VDD` (`adc0_store` 0xFFFB27FB: `R_S12AD0_Get_ValueResult(3, 0x20B08)`). Fixed main/eeprom.md and main/README.md; guide now says "13.8 V supply on one ADC input".
 - b2 PS0 power-off path: **settled**, 0x20F4B is read only by `displink_tx_schedule` 0xFFF95F58 → `power_down_save` 0xFFF98797 (0x7F frame, `eeprom_save_all`, 2 s wait for 0x90, `sw_reset`); the power key (0x20B30 = 2) exits in `io_task` with no 0x7F frame. Fixed peripherals.md diagram + bullet, system.md §4.2, main/README.md. **Guide changed:** the 0x7F frame is sent on the PS0 and low-voltage paths only (text, caption and figure 03-power-off.svg).
@@ -43,7 +43,7 @@ fix** beyond a cross-reference (e3, g2). Guide text changed for b1, b2 (incl. fi
 - d4 XT manual revision: **settled**, documented in both 2211-A and 2306-C (p. 23, pdftotext). main/cat.md updated.
 - e2 frame buffers at 0x60000000: **open** (O9). A plain alias of 0x20000000 is ruled out [inference from fact]: `task_root` runs `fb_clear_all` (memclr 0x60000000, 0x2FF300; literals at 0x20132B30/0x20132FD0) while executing from 0x20100000+, and the MMU table at 0x2044C000 is flat (0x20100D48). Needs the RZ/A1H address map. memory-maps.md and display/gui.md marked. Guide unaffected (it never placed them).
 - e3 debug-console gate wording: **no fix**, reference is right (32-bit word 0xA0B9C8E7); guide follows it.
-- f1 DSP_CLK: **open** (O8). 18.432 MHz is what the M33 code assumes [fact]; T13's 16.6 MHz superseded by T15's cascade; T15's 28.17 MHz needs a 1,440 MHz VCO; a feedback multiplier of 22.25 instead of 34 would give 18.4323 MHz [guess]. netlist.md, resources.md marked; guide mentions the possible misread.
+- f1 DSP_CLK: **open** (O8). 18.432 MHz is what the M33 code assumes [fact]; T13's 16.6 MHz superseded by T15's cascade; T15's 28.17 MHz needs a 1,440 MHz VCO; a feedback multiplier of 22.25 instead of 34 would have given 18.4323 MHz (ruled out in #67: the LKTABLE and counter bits decode to M = 34 and 36 [fact], so P14 is 28.17 MHz; `DSP_CLK` stays open, O8). netlist.md, resources.md marked; guide mentions the possible misread.
 - f2 DSP48 counts: **settled**, T15b supersedes T13 ("all fully pipelined", "no pre-adder"); sdr/README.md and resources.md body marked.
 - f3 `dev4_reg_access`: **settled**, Ghidra name is `dsp_reg_access` (decomp); control-link.md renamed and its FUN_ names given current names; guide "Where to look" updated.
 - f4 IFDSP register count: **settled**, 113 registers listed (0x0000–0x4026 rows, excluding the 0x2000–0x200F block and the two capture blocks), 98 with a known access. control-link.md and ifdsp/README.md fixed; **guide** caption changed from "about 110 live".

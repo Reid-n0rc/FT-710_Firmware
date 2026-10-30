@@ -23,7 +23,7 @@ Owner: T11g fan-out agent (worktree branch), 2026-10-27. Own Ghidra copy `ghidra
 ## Old plan (T11 template)
 Find the functions for this subsystem from strings, peripheral registers and call graphs in `decomp/display/`; name them in
 `tools/ghidra/names_display.tsv`, re-apply with `ApplyNames.java` and re-export `decomp/display/` (separate commit); write the page with function
-tables (address, Ghidra name, inferred name, purpose), data structures, globals and Mermaid figures; tag claims [fact]/[inference]/[guess].
+tables (address, Ghidra name, inferred name, purpose), data structures, globals and Mermaid figures; tag claims [fact]/[inference] (or an open question; the former guess tag is retired).
 
 ## Findings
 Page: [docs/code/display/peripherals.md](../code/display/peripherals.md). 125 name proposals in `tools/ghidra/names_display.T11g.tsv`,
