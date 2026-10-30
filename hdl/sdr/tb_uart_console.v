@@ -1,7 +1,8 @@
 // Testbench for ft710_uart_console (#147): plays console lines (from +lines=FILE, one per line, C escapes \r \n \b
 // \xHH; CR is added) back to back, then 440 idle bits, like tools/sdr_uart_sim.py --gap 40 with "w:400" after each line and prints every byte the
 // console sends as "A TX hh", for comparison with the whole-netlist simulation (hdl/sdr/README.md).
-// The register bank is a small model with the power-up values seen in the netlist (netlist.md 5.2).
+// The register bank is a small model with the power-up values seen in the netlist (netlist.md 5.2; 0x06..0x1C from
+// the netlist's "E 0000" / "D 0000" listings, #204).
 `timescale 1ns/1ps
 module tb_uart_console;
   localparam real BIT = 125.0e6 / 115200.0;
@@ -19,7 +20,12 @@ module tb_uart_console;
     case (a)
       16'h0000: regv = 16'h0104; 16'h0001: regv = 16'h000F; 16'h0002: regv = 16'h0000; 16'h0003: regv = r03;
       16'h0004: regv = 16'h8810; 16'h0005: regv = 16'h0000; 16'h0006: regv = 16'h020A; 16'h0007: regv = 16'h0000;
-      16'h000A: regv = 16'h0000; 16'h000B: regv = 16'h0058; 16'h000E: regv = 16'h1200; 16'h0015: regv = r15;
+      16'h0008: regv = 16'h00D5; 16'h0009: regv = 16'h9F80; 16'h000A: regv = 16'h0000; 16'h000B: regv = 16'h0058;
+      16'h000C: regv = 16'h220E; 16'h000D: regv = 16'h000E; 16'h000E: regv = 16'h1200; 16'h000F: regv = 16'h1000;
+      16'h0010: regv = 16'hFF00; 16'h0011: regv = 16'hFF00; 16'h0012: regv = 16'h8000; 16'h0013: regv = 16'h8000;
+      16'h0014: regv = 16'h2000; 16'h0015: regv = r15;      16'h0016: regv = 16'h0010; 16'h0017: regv = 16'h2000;
+      16'h0018: regv = 16'h0089; 16'h0019: regv = 16'h5440; 16'h001A: regv = 16'h0000; 16'h001B: regv = 16'h0000;
+      16'h001C: regv = 16'h0000;
       16'h0030: regv = r30; 16'h0031: regv = r31;
       default: regv = 16'hCCCC;
     endcase
