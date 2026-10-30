@@ -224,7 +224,7 @@ flowchart TD
 
 0x9A2A..0x9BC9 is therefore one linear image of ROM 0xFFF80E4A..0xFFF80FE9, apart from the overrides. The tool prints
 these ROM defaults. Each P2 group ends with 2 bytes that hold the group's `{top, row}` menu cursor (saved at power-off, see [eeprom.md](eeprom.md#menu-block-0x9a2a0x9c34-eeprom-0x53db0x55e5-fact-73), #73), and 0x9AF2 (between AM MAX POWER and VOX SELECT) is a single
-unused byte, maybe a removed item **[guess]**. No code references 0x9AF2 directly. **[fact]**
+unused byte. No code references 0x9AF2 directly. **[fact]**
 
 ## Diff against the CAT manual (2306-C, Table 2)
 
@@ -264,7 +264,7 @@ All other ranges, scalings (AGC 20..4000 step 20, RPT SHIFT ×10 kHz, DATA SHIFT
 | 4.17.5 | SD CARD / FIRMWARE UPDATE | 0xFFFCF921 | Action (starts the SD update, see T13 docs) |
 | 4.17.6 | SD CARD / FORMAT | 0xFFFCF944 | Action |
 | 4.18.0 | SOFT VERSION / SOFTVERSION | RTS | Display only |
-| 4.19.0 | CALIBRATION / CALIBRATION | 0xFFFCF9E7 | Action (touch-panel calibration? **[guess]**) |
+| 4.19.0 | CALIBRATION / CALIBRATION | 0xFFFCF9E7 | Action: **touch-panel calibration**. `menu_m4_19_0_enter` (after `sd_menu_enter_check`) blocks the encoders and requests DISPLAY frame `0x7C`, which the DISPLAY handles with `touch_calibration(1)` and leaves with `E5` **[fact: MAIN decomp fffcf6dd_fffd016f.c; [display/mainlink.md](../display/mainlink.md)]**; the manual describes the item as calibration of the display touch position with three "+" targets **[fact: OM JPN p.96]** |
 | 4.20.0..2 | RESET: MEMORY CLEAR, MENU CLEAR, ALL RESET | 0xFFFCFA17 / 0xFFFCFA74 / 0xFFFCFA83 | Action |
 | 4.21.0 | CERTIFICATION / CERTIFICATION | 0xFFFD3CD5 | **`dest_mask` 2**: only for destination codes 0x315B and 0x50E2 (the only destination-restricted item). The tested radio is 0x50E2, so it should show this item **[inference]** |
 
