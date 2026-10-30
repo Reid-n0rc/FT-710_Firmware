@@ -370,9 +370,13 @@ void HASHCRYPT_IRQHandler(void)
 }
 
 
-// ===== FUN_08001414 @ 08001414 (28 bytes)
+// ===== getFFroFreq @ 08001414 (28 bytes)
 
-undefined4 FUN_08001414(void)
+/* FFROCTL0 trim range 0 -> 48 MHz, 3 -> 60 MHz, else 0 [fact: 0x08001414]; its 3 callers are the 3
+   FFRO cases of SystemCoreClockUpdate; same as static getFFroFreq in mcux-sdk@8a289764
+   devices/MIMXRT685S/system_MIMXRT685S_cm33.c [inference] */
+
+undefined4 getFFroFreq(void)
 
 {
   uint uVar1;
@@ -422,7 +426,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       }
     }
     else if (uVar8 == 2) {
-      uVar6 = FUN_08001414();
+      uVar6 = getFFroFreq();
       uVar6 = uVar6 >> 1;
     }
     else {
@@ -462,7 +466,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       puVar5 = &DAT_000f4240;
     }
     else if (uVar8 == 3) {
-      puVar5 = (undefined *)FUN_08001414();
+      puVar5 = (undefined *)getFFroFreq();
     }
     else if (uVar8 == 1) {
       iVar7 = CLKCTL0_SYSOSCBYPASS;
@@ -475,7 +479,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       }
     }
     else {
-      uVar8 = FUN_08001414();
+      uVar8 = getFFroFreq();
       puVar5 = (undefined *)(uVar8 >> 2);
     }
   }
@@ -515,14 +519,18 @@ void SystemInit(void)
     InstructionSynchronizationBarrier(0xf);
     DataSynchronizationBarrier(0xf);
   }
-  FUN_080015d4();
+  SystemInitHook();
   return;
 }
 
 
-// ===== FUN_080015d4 @ 080015d4 (2 bytes)
+// ===== SystemInitHook @ 080015d4 (2 bytes)
 
-void FUN_080015d4(void)
+/* empty (bx lr) [fact: 0x080015D4]; the last call in SystemInit 0x08001540, as the weak
+   SystemInitHook() at the end of SystemInit in mcux-sdk@8a289764 system_MIMXRT685S_cm33.c
+   [inference] */
+
+void SystemInitHook(void)
 
 {
   return;

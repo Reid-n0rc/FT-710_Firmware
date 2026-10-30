@@ -57,8 +57,8 @@ sequenceDiagram
 - `SystemInit` (flash 0x08001540) **[fact]**: SCB CPACR/NSACR enable CP10/CP11; SYSCTL0 DSPSTALL (0x4000200C) = 1; if executing
   from FlexSPI and CACHE64 is off, CACHE64_POLSEL (0x40033000) REG0_TOP = 0x07FFFC00, POLSEL = 1, CACHE64_CTRL CCR invalidate
   (0x05000000 | GO) then CCR = 3 (cache + write buffer on); then the empty `SystemInitHook` (0x080015D4).
-- Flash also holds `SystemCoreClockUpdate` (0x0800143C) and a copy of `CLOCK_GetFFroFreq` (0x08001414); the main code only uses
-  the SRAM copies **[fact]**.
+- Flash also holds `SystemCoreClockUpdate` (0x0800143C) and `getFFroFreq` (0x08001414, the static helper of `system_MIMXRT685S_cm33.c`, same body as `CLOCK_GetFFroFreq`); the main code only uses
+  the SRAM `CLOCK_GetFFroFreq` (0x82FB4) **[fact]**.
 - After the copy-down nothing executes from flash except the IRQ stubs and veneers (section 7) **[fact]**.
 
 ## 3. Clock tree (`BOARD_BootClockRUN` 0x0008494C)
@@ -333,6 +333,11 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00082C80 | `xTimerCreateTimerTask` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.867, T23d) **[inference]** |
 | 0x00082DB0 | `prvTimerTask` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.920, T23d) **[inference]** |
 | 0x00083470 | `CLOCK_GetFlexCommClkFreq` |  | names-file group "NXP SDK drivers"; calls `CLOCK_GetAudioPllClkFreq`, `CLOCK_GetFFroFreq`, `CLOCK_GetMainClkFreq`, `CLOCK_GetMainPllClkFreq` and 1 more; 238 B, callers: 2 **[fact]** (code shape) |
+| 0x00082F70 | `CLOCK_GetOsc32KFreq` |  | OSC32KHZCTL0 bit 0 ? 32768 : 0 **[fact: 0x82F70]**; same as CLOCK_GetOsc32KFreq in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_clock.c **[inference]** |
+| 0x00082F88 | `CLOCK_GetXtalInClkFreq` |  | SYSOSCBYPASS 0 -> word 0x88930, 1 -> word 0x88928, else 0 **[fact: 0x82F88]**; same as CLOCK_GetXtalInClkFreq (g_xtalFreq / g_clkinFreq) in mcux-sdk@8a289764 fsl_clock.c **[inference]** |
+| 0x00086716 | `vListInitialise` |  | list+8 (xListEnd) = item value 0xFFFFFFFF, pxIndex/next/previous = &xListEnd, count = 0 **[fact: 0x86716]**; same as vListInitialise in FreeRTOS 10.3.0 list.c without the integrity-check fields **[inference]** |
+| 0x0008672C | `vListInitialiseItem` |  | item+0x10 (pvContainer) = 0 **[fact: 0x8672C]**; same as vListInitialiseItem in FreeRTOS 10.3.0 list.c **[inference]** |
+| 0x0008674A | `vListInsert` |  | value 0xFFFFFFFF goes before xListEnd, else walk from xListEnd while next value <= new value, link in, set pvContainer, count+1 **[fact: 0x8674A]**; same as vListInsert in FreeRTOS 10.3.0 list.c **[inference]** |
 | 0x000837A8 | `CLOCK_GetFreq` |  | names-file group "NXP SDK drivers"; calls `CLOCK_GetAudioPllClkFreq`, `CLOCK_GetAux0PllClkFreq`, `CLOCK_GetAux1PllClkFreq`, `CLOCK_GetDspMainClkFreq` and 7 more; 214 B, callers: 2 **[fact]** (code shape) |
 | 0x000838A8 | `CLOCK_SetFRGClock` |  | FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15 **[inference]** |
 | 0x00083D40 | `DMA_GetInstance` |  | 0x40104000 -> 0, 0x40105000 -> 1 **[fact]** |
@@ -424,7 +429,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00086F8A | `SCTIMER_UpdatePwmDutycycle` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `__aeabi_uldivmod`; 98 B, callers: 1 **[fact]** (code shape) |
 | 0x0008702C | `USART_GetDefaultConfig` |  | names-file group "NXP SDK drivers"; calls `memset`; 34 B, callers: 1 **[fact]** (code shape) |
 | 0x00087100 | `USART_Init` |  | names-file group "NXP SDK drivers"; calls `FLEXCOMM_Init`, `USART_SetBaudRate`; 306 B, callers: 1 **[fact]** (code shape) |
-| 0x00087240 | `app_init_nop` |  | body is only bx lr **[fact: 0x87240]**; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear **[fact]**. Open: which source function this was (SDK examples call BOARD_InitDebugConsole at this point, but that one is not empty); would be settled by the vendor's source or link map |
+| 0x00087240 | `app_init_nop` |  | body is only bx lr **[fact: 0x87240]**; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear **[fact]**. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232 **[fact: literal 0x80A10]**. Open: which source function this was; would be settled by the vendor's source or link map |
 | 0x000872C4 | `free` |  | Marks block 0x10000000 and merges free successors **[inference]** |
 | 0x000872F8 | `setvbuf` |  | _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 **[inference]** |
 | 0x00087336 | `strcmp` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 68 B, callers: 3 **[fact]** (code shape) |
@@ -517,6 +522,9 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x08001404 | `PMC_PMIC_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800140C | `HASHCRYPT_IRQHandler` |  | calls `__HASHCRYPT_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800143C | `SystemCoreClockUpdate` |  | flash copy; entry fixed by entries_m33.tsv (T21j), docs/code/ifdsp/m33-platform.md **[inference]** |
+| 0x08001414 | `getFFroFreq` |  | FFROCTL0 trim range 0 -> 48 MHz, 3 -> 60 MHz, else 0 **[fact: 0x08001414]**; its 3 callers are the 3 FFRO cases of SystemCoreClockUpdate; same as static getFFroFreq in mcux-sdk@8a289764 devices/MIMXRT685S/system_MIMXRT685S_cm33.c **[inference]** |
+| 0x080015D4 | `SystemInitHook` |  | empty (bx lr) **[fact: 0x080015D4]**; the last call in SystemInit 0x08001540, as the weak SystemInitHook() at the end of SystemInit in mcux-sdk@8a289764 system_MIMXRT685S_cm33.c **[inference]** |
+| 0x00087232 | `BOARD_InitDebugConsole` |  | empty (bx lr), no callers **[fact: 0x87232]**; its address (0x87233, Thumb bit) is the literal at 0x80A10 that BOARD_SetFlexspiClock masks with 0xE8000000 and compares with 0x08000000 before BOARD_DeinitXip/BOARD_InitXip **[fact: 0x809BC..0x80A06]**, which is the BOARD_IS_XIP_FLEXSPI() test on &BOARD_InitDebugConsole in mcux-sdk@8a289764 boards/evkmimxrt685/board.c **[inference]**; the vendor built it empty |
 | 0x080015D8 | `__FLEXCOMM2_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x00083fb9; mov ip,r0; pop {r0}; bx ip **[inference]** |
 | 0x080015E8 | `__USDHC0_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x00084905; mov ip,r0; pop {r0}; bx ip **[inference]** |
 | 0x080015F8 | `__OS_EVENT_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x000842d9; mov ip,r0; pop {r0}; bx ip **[inference]** |
