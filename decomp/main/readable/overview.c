@@ -556,7 +556,7 @@ void icu_select_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * app_main @ fff94afa  (145 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * app_main @ fff94afa  (145 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: —
  * Purpose: Init, power-off loop, post-power init, `main_loop`
  * Tag: none in the table row
@@ -617,7 +617,7 @@ void app_main(void)
 
 
 /* -----------------------------------------------------------------------------
- * main_loop @ fff94b8b  (66 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * main_loop @ fff94b8b  (66 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Inferred name: —
  * Purpose: 16-task super-loop
  * Tag: none in the table row
@@ -661,7 +661,7 @@ void main_loop(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_F0_hello @ fff9546a  (892 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_F0_hello @ fff9546a  (892 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: Frame 0xF0: DISPLAY version, radio on
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/README.md
@@ -840,7 +840,7 @@ void displink_rx_F0_hello(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * power_on_request @ fff9cb8e  (22 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * power_on_request @ fff9cb8e  (22 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: `PS1` path
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/README.md
@@ -859,7 +859,7 @@ void power_on_request(void)
 
 
 /* -----------------------------------------------------------------------------
- * slowtimer_start @ fffb2604  (57 bytes, 4 callers, export file fffb1f42_fffb2f9e.c)
+ * slowtimer_start @ fffb2604  (57 bytes, 4 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: (id 0..3, seconds)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/README.md
@@ -883,7 +883,7 @@ void slowtimer_start(int param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * screensaver_timer_expired @ fffb267f  (15 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * screensaver_timer_expired @ fffb267f  (15 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: → flag 0x1203A
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/README.md
@@ -900,7 +900,7 @@ undefined1 screensaver_timer_expired(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb27df @ fffb27df  (1 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * FUN_fffb27df @ fffb27df  (1 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name: —
  * Phase: pre-power
  * Role: empty stub [fact]
@@ -917,7 +917,7 @@ void FUN_fffb27df(void)
 
 
 /* -----------------------------------------------------------------------------
- * dac_init_idle @ fffb28d1  (17 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * dac_init_idle @ fffb28d1  (17 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Phase: post-power
  * Role: DAC output = 0x1FF1C, `R_DA0_Start` (DA control 0x88044) [fact]
  * Tag: [fact]
@@ -937,7 +937,7 @@ void dac_init_idle(void)
 
 
 /* -----------------------------------------------------------------------------
- * wdt_kick @ fffb3e6a  (5 bytes, 6 callers, export file fffb2fc0_fffb4c45.c)
+ * wdt_kick @ fffb3e6a  (5 bytes, 6 callers, export file fffb2f9e_fffb4bba.c)
  * Phase: pre-power
  * Role: → `iwdt_refresh`: writes 0x00 then 0xFF to 0x88030 (IWDTRR, the IWDT refresh sequence) [fact: code + RX651
  *     HWM r01uh0590 §33.2.1]
@@ -957,7 +957,7 @@ void wdt_kick(void)
 
 
 /* -----------------------------------------------------------------------------
- * portctl_init @ fffb55b8  (10 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * portctl_init @ fffb55b8  (10 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Phase: post-power
  * Role: 0x12042 = 0 [fact]
  * Tag: [fact]
@@ -976,7 +976,7 @@ void portctl_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_init @ fffb98c8  (33 bytes, 6 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_init @ fffb98c8  (33 bytes, 6 callers, export file fffb9422_fffbc38e.c)
  * Phase: post-power
  * Role: Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [fact]
  * Tag: [fact]
@@ -1004,7 +1004,7 @@ void keyer_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_task @ fffb98e9  (2120 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_task @ fffb98e9  (2120 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Role: CW keyer: uses key speed 0x9C03 (also `cat_KS`), 0x20B97 (also `cat_KY`), timer 0x13 [inference]
  * Page: tx-protection.md
  * Tag: [inference]
@@ -1430,7 +1430,7 @@ void keyer_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_menu_task @ fffd0582  (77 bytes, 1 callers, export file fffd0194_fffd1252.c)
+ * sd_menu_task @ fffd0582  (77 bytes, 1 callers, export file fffd016f_fffd1130.c)
  * Role: SD CARD menu operations. The `on_enter` callbacks of EXTENSION SETTING / SD CARD start a mode in 0x15DE3:
  *     MEM LIST LOAD / MENU LOAD → 1 (`sd_load_start`), MEM LIST SAVE / MENU SAVE → 2 (`sd_save_start`),
  *     INFORMATIONS → 3, FORMAT → 4; 0x15DE5 = 1 selects the memory list, 0 the menu settings. While +0x88 (0x20B8C)
@@ -1481,7 +1481,7 @@ void sd_menu_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * dispreq_e7_task @ fffe2cd0  (532 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * dispreq_e7_task @ fffe2cd0  (532 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Role: Same for frame 0xE7 (`displink_rx_E7`, status in +0x488): the PlayList recorder/player (receive-audio WAV
  *     files on the SD card). The DISPLAY sends it from the PlayList code (`FUN_20124744` errors, `FUN_20124848`,
  *     `FUN_20124adc` after `wav_delete`, `FUN_20124bc0` after `wav_list_dir`); status 1/2 update the PlayList state
@@ -1576,7 +1576,7 @@ void dispreq_e7_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * dispreq_e8_task @ fffe360e  (7 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * dispreq_e8_task @ fffe360e  (7 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Role: `FUN_fffe376a` acts on the status 1..5 that DISPLAY frame 0xE8 (`displink_rx_E8`) leaves in +0x48C, then
  *     `FUN_fffe3615`. E8 is the status of the DISPLAY's audio screens other than the PlayList: the DISPLAY sends E7
  *     when its audio owner flag 0x2080048E is 1 (PlayList recorder/player, `scr_playlist`, `rec_start_stop`) and E8
@@ -1603,7 +1603,7 @@ void dispreq_e8_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * ladder_key_task @ fffe3e2a  (699 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * ladder_key_task @ fffe3e2a  (699 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Role: Acts on key code 0x1204C (1..6, 0xF7..0xFA; `remote_keypad_scan` ORs 0xF0 in after the key is held for 100
  *     passes, i.e. a long press [inference]), produced by `remote_keypad_scan` from ADC channel 0x20B10 (a 12-level
  *     resistor ladder) [fact for the decode]. The input is AN108 on PD0, net `REM_KEY` (schematic, peripherals.md
@@ -1825,7 +1825,7 @@ void ladder_key_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_init @ fffec46c  (7 bytes, 1 callers, export file fffec2df_fffed6f5.c)
+ * tuner_init @ fffec46c  (7 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Phase: post-power
  * Role: One `tuner_task` pass, then `FUN_fffec578` [fact]
  * Tag: [fact]
@@ -1846,7 +1846,7 @@ void tuner_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_task @ fffec473  (32 bytes, 2 callers, export file fffec2df_fffed6f5.c)
+ * tuner_task @ fffec473  (32 bytes, 2 callers, export file fffec2d9_fffed62a.c)
  * Role: Antenna tuner: dispatch on tuner-select setting 0x9AB8 (also read by `cat_AC`): 3 → `FUN_fffed165`, 2 →
  *     `FUN_fffed62a`, else `FUN_fffec62b` (state machine 0x1B3AC) [fact; tuner inference]
  * Page: tx-protection.md, peripherals.md
@@ -1877,7 +1877,7 @@ void tuner_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * _INITSCT @ fffededa  (74 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * _INITSCT @ fffededa  (74 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Inferred name: —
  * Purpose: CC-RX section init: BTBL zero-fill, DTBL ROM→RAM copy [fact]
  * Tag: [fact]

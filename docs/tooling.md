@@ -260,6 +260,24 @@ keeps R3 at 0–40 for these two ops so the emulated loop ends (28,772 cases, 0 
 `MVTACHI`/`MVTACLO` bodies: ACC bits 63..32 / 31..0 = Rs (manual pp. 267-268; the module's ACC is 64 bits, no guard bits). sleigh
 now reports 6 NOP constructors (was 8).
 
+### Forms only the GCC-built code uses (T24 MAIN round 2, 2026-11-01): `tools/ghidra/rx62t-gccforms-fix.patch`
+
+T22a checked the module's p-code on the forms the MAIN image uses. The recreated MAIN source (GCC 13.3.0 for RX) also uses
+3-operand `SUB`/`MUL`/`OR`, `SCGTU.L`, `MOV.B Rs,[Rd+]`, `ROTL Rs,Rd`, `BRA.A`, `JMP Rs` and `REVL Rd,Rd`, and libgcc a few
+more. `tools/rx_semcheck_forms.sh <workdir>` assembles 12 random instances of each form in `rx_semcheck.py`'s `GCC_FORMS` (43
+forms, 516 instructions; also the two T22a left unchecked, `JMP Rs` and `BNOT Rs,Rd`, and the same-register cases), imports the
+binary raw into a scratch project, decodes it with `ExportListing.java decode` and runs the T22a model check with 8 start
+states per instruction. On the T21i module (`73d417d2…8290`): **4,136 cases, 3,272 ok, 864 fail in four classes, all SLEIGH
+bugs** [fact]: `JMP Rs` does not branch (`PC = Rs`; manual p. 112); `BNOT Rs,Rd` XORs `Rs & 31` instead of
+`1 << (Rs & 31)` (p. 68); `MOV.size Rs,[Rd+]` / `[-Rd]` with Rs = Rd stores the updated register (the `rd_post`
+sub-constructor runs before the source is read; p. 121 note 3: the value before the update is stored); `REVL`/`REVW Rd,Rd`
+read bytes they have already overwritten (p. 163/164). The patch (eighth `--only rx` stage, `73d417d2…8290` →
+`RX_SINC_FIXED` `8451ead0…8ed7`) fixes the four; with it **4,136 / 4,136 agree**. MAIN has none of these forms [fact:
+`rx-elf-objdump` of 0xFFF8FBDB..0xFFFEE2B7: no `jmp`, no `bnot Rs,Rd`, no post-increment or pre-decrement store, no
+`revl`/`revw`], so MAIN's decompile does not change. The forms that passed already (3-operand `SUB`/`MUL`/`OR` with the
+manual's operand order, p. 296; `SCCnd.L`, `ROTL`, `ROTR`, `BRA.A`, `ABS`, `NEG`/`NOT Rs,Rd`, `REVL`/`REVW` with two
+registers, `XOR`, `EMUL`/`EMULU`, post-increment loads) needed no change.
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9

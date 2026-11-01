@@ -1,0 +1,651 @@
+// FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
+
+// ===== ai_ex060303 @ fffec1ad (6 bytes)
+
+/* AI change detector for menu item EX060303 (table 0xFFF8E1A0[244]) */
+
+void ai_ex060303(void)
+
+{
+                    /* Shared AI detector for EX060n03 [doc] */
+  ai_ex_preset_cat1_tot(3);
+  return;
+}
+
+
+// ===== ai_ex060304 @ fffec1b3 (6 bytes)
+
+/* AI change detector for menu item EX060304 (table 0xFFF8E1A0[245]) */
+
+void ai_ex060304(void)
+
+{
+                    /* Shared AI detector for EX060n04 [doc] */
+  ai_ex_preset_cat1_cat3_stop_bit(3);
+  return;
+}
+
+
+// ===== ai_ex060305 @ fffec1b9 (6 bytes)
+
+/* AI change detector for menu item EX060305 (table 0xFFF8E1A0[246]) */
+
+void ai_ex060305(void)
+
+{
+                    /* Shared AI detector for EX060n05 [doc] */
+  ai_ex_preset_agc_fast_delay(3);
+  return;
+}
+
+
+// ===== ai_ex060306 @ fffec1bf (6 bytes)
+
+/* AI change detector for menu item EX060306 (table 0xFFF8E1A0[247]) */
+
+void ai_ex060306(void)
+
+{
+                    /* Shared AI detector for EX060n06 [doc] */
+  ai_ex_preset_agc_mid_delay(3);
+  return;
+}
+
+
+// ===== ai_ex060307 @ fffec1c5 (6 bytes)
+
+/* AI change detector for menu item EX060307 (table 0xFFF8E1A0[248]) */
+
+void ai_ex060307(void)
+
+{
+                    /* Shared AI detector for EX060n07 [doc] */
+  ai_ex_preset_agc_slow_delay(3);
+  return;
+}
+
+
+// ===== ai_ex060308 @ fffec1cb (6 bytes)
+
+/* AI change detector for menu item EX060308 (table 0xFFF8E1A0[249]) */
+
+void ai_ex060308(void)
+
+{
+                    /* Shared AI detector for EX060n08 [doc] */
+  ai_ex_preset_lcut_freq(3);
+  return;
+}
+
+
+// ===== ai_ex060309 @ fffec1d1 (6 bytes)
+
+/* AI change detector for menu item EX060309 (table 0xFFF8E1A0[250]) */
+
+void ai_ex060309(void)
+
+{
+                    /* Shared AI detector for EX060n09 [doc] */
+  ai_ex_preset_lcut_slope(3);
+  return;
+}
+
+
+// ===== ai_ex060310 @ fffec1d7 (6 bytes)
+
+/* AI change detector for menu item EX060310 (table 0xFFF8E1A0[251]) */
+
+void ai_ex060310(void)
+
+{
+                    /* Shared AI detector for EX060n10 [doc] */
+  ai_ex_preset_hcut_freq(3);
+  return;
+}
+
+
+// ===== ai_ex060311 @ fffec1dd (6 bytes)
+
+/* AI change detector for menu item EX060311 (table 0xFFF8E1A0[252]) */
+
+void ai_ex060311(void)
+
+{
+                    /* Shared AI detector for EX060n11 [doc] */
+  ai_ex_preset_hcut_slope(3);
+  return;
+}
+
+
+// ===== ai_ex060312 @ fffec1e3 (6 bytes)
+
+/* AI change detector for menu item EX060312 (table 0xFFF8E1A0[253]) */
+
+void ai_ex060312(void)
+
+{
+                    /* Shared AI detector for EX060n12 [doc] */
+  ai_ex_preset_usb_out_level(3);
+  return;
+}
+
+
+// ===== ai_ex060313 @ fffec1e9 (6 bytes)
+
+/* AI change detector for menu item EX060313 (table 0xFFF8E1A0[254]) */
+
+void ai_ex060313(void)
+
+{
+                    /* Shared AI detector for EX060n13 [doc] */
+  ai_ex_preset_rear_out_level(3);
+  return;
+}
+
+
+// ===== ai_ex060314 @ fffec1ef (6 bytes)
+
+/* AI change detector for menu item EX060314 (table 0xFFF8E1A0[255]) */
+
+void ai_ex060314(void)
+
+{
+                    /* Shared AI detector for EX060n14 [doc] */
+  ai_ex_preset_tx_bpf_sel(3);
+  return;
+}
+
+
+// ===== ai_ex060315 @ fffec1f5 (6 bytes)
+
+/* AI change detector for menu item EX060315 (table 0xFFF8E1A0[256]) */
+
+void ai_ex060315(void)
+
+{
+                    /* Shared AI detector for EX060n15 [doc] */
+  ai_ex_preset_mod_source(3);
+  return;
+}
+
+
+// ===== ai_ex060316 @ fffec1fb (6 bytes)
+
+/* AI change detector for menu item EX060316 (table 0xFFF8E1A0[257]) */
+
+void ai_ex060316(void)
+
+{
+                    /* Shared AI detector for EX060n16 [doc] */
+  ai_ex_preset_usb_mod_gain(3);
+  return;
+}
+
+
+// ===== ai_ex060317 @ fffec201 (6 bytes)
+
+/* AI change detector for menu item EX060317 (table 0xFFF8E1A0[258]) */
+
+void ai_ex060317(void)
+
+{
+                    /* Shared AI detector for EX060n17 [doc] */
+  ai_ex_preset_rear_mod_gain(3);
+  return;
+}
+
+
+// ===== ai_ex060318 @ fffec207 (6 bytes)
+
+/* AI change detector for menu item EX060318 (table 0xFFF8E1A0[259]) */
+
+void ai_ex060318(void)
+
+{
+                    /* Shared AI detector for EX060n18 [doc] */
+  ai_ex_preset_rptt_select(3);
+  return;
+}
+
+
+// ===== ai_ex060401 @ fffec20d (6 bytes)
+
+/* AI change detector for menu item EX060401 (table 0xFFF8E1A0[260]) */
+
+void ai_ex060401(void)
+
+{
+                    /* Shared AI detector for EX060n01 [doc] */
+  ai_ex_preset_name(4);
+  return;
+}
+
+
+// ===== ai_ex060402 @ fffec213 (6 bytes)
+
+/* AI change detector for menu item EX060402 (table 0xFFF8E1A0[261]) */
+
+void ai_ex060402(void)
+
+{
+                    /* Shared AI detector for EX060n02 [doc] */
+  ai_ex_preset_cat1_rate(4);
+  return;
+}
+
+
+// ===== ai_ex060403 @ fffec219 (6 bytes)
+
+/* AI change detector for menu item EX060403 (table 0xFFF8E1A0[262]) */
+
+void ai_ex060403(void)
+
+{
+                    /* Shared AI detector for EX060n03 [doc] */
+  ai_ex_preset_cat1_tot(4);
+  return;
+}
+
+
+// ===== ai_ex060404 @ fffec21f (6 bytes)
+
+/* AI change detector for menu item EX060404 (table 0xFFF8E1A0[263]) */
+
+void ai_ex060404(void)
+
+{
+                    /* Shared AI detector for EX060n04 [doc] */
+  ai_ex_preset_cat1_cat3_stop_bit(4);
+  return;
+}
+
+
+// ===== ai_ex060405 @ fffec225 (6 bytes)
+
+/* AI change detector for menu item EX060405 (table 0xFFF8E1A0[264]) */
+
+void ai_ex060405(void)
+
+{
+                    /* Shared AI detector for EX060n05 [doc] */
+  ai_ex_preset_agc_fast_delay(4);
+  return;
+}
+
+
+// ===== ai_ex060406 @ fffec22b (6 bytes)
+
+/* AI change detector for menu item EX060406 (table 0xFFF8E1A0[265]) */
+
+void ai_ex060406(void)
+
+{
+                    /* Shared AI detector for EX060n06 [doc] */
+  ai_ex_preset_agc_mid_delay(4);
+  return;
+}
+
+
+// ===== ai_ex060407 @ fffec231 (6 bytes)
+
+/* AI change detector for menu item EX060407 (table 0xFFF8E1A0[266]) */
+
+void ai_ex060407(void)
+
+{
+                    /* Shared AI detector for EX060n07 [doc] */
+  ai_ex_preset_agc_slow_delay(4);
+  return;
+}
+
+
+// ===== ai_ex060408 @ fffec237 (6 bytes)
+
+/* AI change detector for menu item EX060408 (table 0xFFF8E1A0[267]) */
+
+void ai_ex060408(void)
+
+{
+                    /* Shared AI detector for EX060n08 [doc] */
+  ai_ex_preset_lcut_freq(4);
+  return;
+}
+
+
+// ===== ai_ex060409 @ fffec23d (6 bytes)
+
+/* AI change detector for menu item EX060409 (table 0xFFF8E1A0[268]) */
+
+void ai_ex060409(void)
+
+{
+                    /* Shared AI detector for EX060n09 [doc] */
+  ai_ex_preset_lcut_slope(4);
+  return;
+}
+
+
+// ===== ai_ex060410 @ fffec243 (6 bytes)
+
+/* AI change detector for menu item EX060410 (table 0xFFF8E1A0[269]) */
+
+void ai_ex060410(void)
+
+{
+                    /* Shared AI detector for EX060n10 [doc] */
+  ai_ex_preset_hcut_freq(4);
+  return;
+}
+
+
+// ===== ai_ex060411 @ fffec249 (6 bytes)
+
+/* AI change detector for menu item EX060411 (table 0xFFF8E1A0[270]) */
+
+void ai_ex060411(void)
+
+{
+                    /* Shared AI detector for EX060n11 [doc] */
+  ai_ex_preset_hcut_slope(4);
+  return;
+}
+
+
+// ===== ai_ex060412 @ fffec24f (6 bytes)
+
+/* AI change detector for menu item EX060412 (table 0xFFF8E1A0[271]) */
+
+void ai_ex060412(void)
+
+{
+                    /* Shared AI detector for EX060n12 [doc] */
+  ai_ex_preset_usb_out_level(4);
+  return;
+}
+
+
+// ===== ai_ex060413 @ fffec255 (6 bytes)
+
+/* AI change detector for menu item EX060413 (table 0xFFF8E1A0[272]) */
+
+void ai_ex060413(void)
+
+{
+                    /* Shared AI detector for EX060n13 [doc] */
+  ai_ex_preset_rear_out_level(4);
+  return;
+}
+
+
+// ===== ai_ex060414 @ fffec25b (6 bytes)
+
+/* AI change detector for menu item EX060414 (table 0xFFF8E1A0[273]) */
+
+void ai_ex060414(void)
+
+{
+                    /* Shared AI detector for EX060n14 [doc] */
+  ai_ex_preset_tx_bpf_sel(4);
+  return;
+}
+
+
+// ===== ai_ex060415 @ fffec261 (6 bytes)
+
+/* AI change detector for menu item EX060415 (table 0xFFF8E1A0[274]) */
+
+void ai_ex060415(void)
+
+{
+                    /* Shared AI detector for EX060n15 [doc] */
+  ai_ex_preset_mod_source(4);
+  return;
+}
+
+
+// ===== ai_ex060416 @ fffec267 (6 bytes)
+
+/* AI change detector for menu item EX060416 (table 0xFFF8E1A0[275]) */
+
+void ai_ex060416(void)
+
+{
+                    /* Shared AI detector for EX060n16 [doc] */
+  ai_ex_preset_usb_mod_gain(4);
+  return;
+}
+
+
+// ===== ai_ex060417 @ fffec26d (6 bytes)
+
+/* AI change detector for menu item EX060417 (table 0xFFF8E1A0[276]) */
+
+void ai_ex060417(void)
+
+{
+                    /* Shared AI detector for EX060n17 [doc] */
+  ai_ex_preset_rear_mod_gain(4);
+  return;
+}
+
+
+// ===== ai_ex060418 @ fffec273 (6 bytes)
+
+/* AI change detector for menu item EX060418 (table 0xFFF8E1A0[277]) */
+
+void ai_ex060418(void)
+
+{
+                    /* Shared AI detector for EX060n18 [doc] */
+  ai_ex_preset_rptt_select(4);
+  return;
+}
+
+
+// ===== ai_ex060501 @ fffec279 (6 bytes)
+
+/* AI change detector for menu item EX060501 (table 0xFFF8E1A0[278]) */
+
+void ai_ex060501(void)
+
+{
+                    /* Shared AI detector for EX060n01 [doc] */
+  ai_ex_preset_name(5);
+  return;
+}
+
+
+// ===== ai_ex060502 @ fffec27f (6 bytes)
+
+/* AI change detector for menu item EX060502 (table 0xFFF8E1A0[279]) */
+
+void ai_ex060502(void)
+
+{
+                    /* Shared AI detector for EX060n02 [doc] */
+  ai_ex_preset_cat1_rate(5);
+  return;
+}
+
+
+// ===== ai_ex060503 @ fffec285 (6 bytes)
+
+/* AI change detector for menu item EX060503 (table 0xFFF8E1A0[280]) */
+
+void ai_ex060503(void)
+
+{
+                    /* Shared AI detector for EX060n03 [doc] */
+  ai_ex_preset_cat1_tot(5);
+  return;
+}
+
+
+// ===== ai_ex060504 @ fffec28b (6 bytes)
+
+/* AI change detector for menu item EX060504 (table 0xFFF8E1A0[281]) */
+
+void ai_ex060504(void)
+
+{
+                    /* Shared AI detector for EX060n04 [doc] */
+  ai_ex_preset_cat1_cat3_stop_bit(5);
+  return;
+}
+
+
+// ===== ai_ex060505 @ fffec291 (6 bytes)
+
+/* AI change detector for menu item EX060505 (table 0xFFF8E1A0[282]) */
+
+void ai_ex060505(void)
+
+{
+                    /* Shared AI detector for EX060n05 [doc] */
+  ai_ex_preset_agc_fast_delay(5);
+  return;
+}
+
+
+// ===== ai_ex060506 @ fffec297 (6 bytes)
+
+/* AI change detector for menu item EX060506 (table 0xFFF8E1A0[283]) */
+
+void ai_ex060506(void)
+
+{
+                    /* Shared AI detector for EX060n06 [doc] */
+  ai_ex_preset_agc_mid_delay(5);
+  return;
+}
+
+
+// ===== ai_ex060507 @ fffec29d (6 bytes)
+
+/* AI change detector for menu item EX060507 (table 0xFFF8E1A0[284]) */
+
+void ai_ex060507(void)
+
+{
+                    /* Shared AI detector for EX060n07 [doc] */
+  ai_ex_preset_agc_slow_delay(5);
+  return;
+}
+
+
+// ===== ai_ex060508 @ fffec2a3 (6 bytes)
+
+/* AI change detector for menu item EX060508 (table 0xFFF8E1A0[285]) */
+
+void ai_ex060508(void)
+
+{
+                    /* Shared AI detector for EX060n08 [doc] */
+  ai_ex_preset_lcut_freq(5);
+  return;
+}
+
+
+// ===== ai_ex060509 @ fffec2a9 (6 bytes)
+
+/* AI change detector for menu item EX060509 (table 0xFFF8E1A0[286]) */
+
+void ai_ex060509(void)
+
+{
+                    /* Shared AI detector for EX060n09 [doc] */
+  ai_ex_preset_lcut_slope(5);
+  return;
+}
+
+
+// ===== ai_ex060510 @ fffec2af (6 bytes)
+
+/* AI change detector for menu item EX060510 (table 0xFFF8E1A0[287]) */
+
+void ai_ex060510(void)
+
+{
+                    /* Shared AI detector for EX060n10 [doc] */
+  ai_ex_preset_hcut_freq(5);
+  return;
+}
+
+
+// ===== ai_ex060511 @ fffec2b5 (6 bytes)
+
+/* AI change detector for menu item EX060511 (table 0xFFF8E1A0[288]) */
+
+void ai_ex060511(void)
+
+{
+                    /* Shared AI detector for EX060n11 [doc] */
+  ai_ex_preset_hcut_slope(5);
+  return;
+}
+
+
+// ===== ai_ex060512 @ fffec2bb (6 bytes)
+
+/* AI change detector for menu item EX060512 (table 0xFFF8E1A0[289]) */
+
+void ai_ex060512(void)
+
+{
+                    /* Shared AI detector for EX060n12 [doc] */
+  ai_ex_preset_usb_out_level(5);
+  return;
+}
+
+
+// ===== ai_ex060513 @ fffec2c1 (6 bytes)
+
+/* AI change detector for menu item EX060513 (table 0xFFF8E1A0[290]) */
+
+void ai_ex060513(void)
+
+{
+                    /* Shared AI detector for EX060n13 [doc] */
+  ai_ex_preset_rear_out_level(5);
+  return;
+}
+
+
+// ===== ai_ex060514 @ fffec2c7 (6 bytes)
+
+/* AI change detector for menu item EX060514 (table 0xFFF8E1A0[291]) */
+
+void ai_ex060514(void)
+
+{
+                    /* Shared AI detector for EX060n14 [doc] */
+  ai_ex_preset_tx_bpf_sel(5);
+  return;
+}
+
+
+// ===== ai_ex060515 @ fffec2cd (6 bytes)
+
+/* AI change detector for menu item EX060515 (table 0xFFF8E1A0[292]) */
+
+void ai_ex060515(void)
+
+{
+                    /* Shared AI detector for EX060n15 [doc] */
+  ai_ex_preset_mod_source(5);
+  return;
+}
+
+
+// ===== ai_ex060516 @ fffec2d3 (6 bytes)
+
+/* AI change detector for menu item EX060516 (table 0xFFF8E1A0[293]) */
+
+void ai_ex060516(void)
+
+{
+                    /* Shared AI detector for EX060n16 [doc] */
+  ai_ex_preset_usb_mod_gain(5);
+  return;
+}
+

@@ -4,7 +4,7 @@
 // 316 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * ai_ex010101 @ fffe6e3a  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010101 @ fffe6e3a  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010101`, entry 0 of 0xFFF8E1A0: compares `g_opstate.ex010101_af_treble_gain` with its shadow 0x1B29A;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -28,7 +28,7 @@ void ai_ex010101(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010102 @ fffe6e77  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010102 @ fffe6e77  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010102`, entry 1 of 0xFFF8E1A0: compares `g_opstate.ex010102_af_middle_tone_gain` with its shadow
  *     0x1B29B; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -52,7 +52,7 @@ void ai_ex010102(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010103 @ fffe6eb4  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010103 @ fffe6eb4  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010103`, entry 2 of 0xFFF8E1A0: compares `g_opstate.ex010103_af_bass_gain` with its shadow 0x1B29C;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -76,7 +76,7 @@ void ai_ex010103(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010104 @ fffe6ef1  (72 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010104 @ fffe6ef1  (72 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010104`, entry 3 of 0xFFF8E1A0: compares `g_opstate.ex010104_agc_fast_delay` with its shadow 0x1B29D;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -100,7 +100,7 @@ void ai_ex010104(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010105 @ fffe6f39  (72 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010105 @ fffe6f39  (72 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010105`, entry 4 of 0xFFF8E1A0: compares `g_opstate.ex010105_agc_mid_delay` with its shadow 0x1B29E;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -124,7 +124,7 @@ void ai_ex010105(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010106 @ fffe6f81  (72 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010106 @ fffe6f81  (72 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010106`, entry 5 of 0xFFF8E1A0: compares `g_opstate.ex010106_agc_slow_dely` with its shadow 0x1B29F;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -148,7 +148,7 @@ void ai_ex010106(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010107 @ fffe6fc9  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010107 @ fffe6fc9  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010107`, entry 6 of 0xFFF8E1A0: compares `g_opstate.ex010107_lcut_freq` with its shadow 0x1B2A0; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -172,7 +172,7 @@ void ai_ex010107(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010108 @ fffe7006  (76 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010108 @ fffe7006  (76 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010108`, entry 7 of 0xFFF8E1A0: compares `g_opstate.ex010108_lcut_slope` with its shadow 0x1B2A1; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -197,7 +197,7 @@ void ai_ex010108(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010109 @ fffe7052  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010109 @ fffe7052  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010109`, entry 8 of 0xFFF8E1A0: compares `g_opstate.ex010109_hcut_freq` with its shadow 0x1B2A2; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -221,7 +221,7 @@ void ai_ex010109(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010110 @ fffe708f  (76 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010110 @ fffe708f  (76 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010110`, entry 9 of 0xFFF8E1A0: compares `g_opstate.ex010110_hcut_slope` with its shadow 0x1B2A3; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -246,7 +246,7 @@ void ai_ex010110(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010111 @ fffe70db  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010111 @ fffe70db  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010111`, entry 10 of 0xFFF8E1A0: compares `g_opstate.ex010111_usb_out_level` with its shadow 0x1B2A4;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -270,7 +270,7 @@ void ai_ex010111(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010112 @ fffe7118  (61 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010112 @ fffe7118  (61 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `EX010112`, entry 11 of 0xFFF8E1A0: compares `g_opstate.ex010112_rear_out_level` with its shadow
  *     0x1B2A5; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -292,9 +292,8 @@ void ai_ex010112(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex010113 @ fffe7155  (76 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ai_ex010113 @ fffe7155  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010113`, entry 12 of 0xFFF8E1A0: compares `g_opstate.ex010113_tx_bpf_sel` with its shadow 0x1B2A6; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -317,8 +316,9 @@ void ai_ex010113(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex010114 @ fffe71a1  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010114 @ fffe71a1  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010114`, entry 13 of 0xFFF8E1A0: compares `g_opstate.ex010114_mod_source` with its shadow 0x1B2A7; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -343,7 +343,7 @@ void ai_ex010114(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010115 @ fffe71ed  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010115 @ fffe71ed  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010115`, entry 14 of 0xFFF8E1A0: compares `g_opstate.ex010115_usb_mod_gain` with its shadow 0x1B2A8;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -367,7 +367,7 @@ void ai_ex010115(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010116 @ fffe722a  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010116 @ fffe722a  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010116`, entry 15 of 0xFFF8E1A0: compares `g_opstate.ex010116_rear_mod_gain` with its shadow 0x1B2A9;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -391,7 +391,7 @@ void ai_ex010116(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010117 @ fffe7267  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010117 @ fffe7267  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010117`, entry 16 of 0xFFF8E1A0: compares `g_opstate.ex010117_rptt_select` with its shadow 0x1B2AA;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -416,7 +416,7 @@ void ai_ex010117(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010118 @ fffe72b3  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010118 @ fffe72b3  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010118`, entry 17 of 0xFFF8E1A0: compares `g_opstate.ex010118_nar_width` with its shadow 0x1B2AB; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -440,7 +440,7 @@ void ai_ex010118(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010119 @ fffe72f0  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010119 @ fffe72f0  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010119`, entry 18 of 0xFFF8E1A0: compares `g_opstate.ex010119_cw_auto_mode` with its shadow 0x1B2AC;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -465,7 +465,7 @@ void ai_ex010119(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010201 @ fffe733c  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010201 @ fffe733c  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010201`, entry 19 of 0xFFF8E1A0: compares `g_opstate.ex010201_af_treble_gain` with its shadow
  *     0x1B2AD; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -489,7 +489,7 @@ void ai_ex010201(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010202 @ fffe7379  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010202 @ fffe7379  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010202`, entry 20 of 0xFFF8E1A0: compares `g_opstate.ex010202_af_middle_tone_gain` with its shadow
  *     0x1B2AE; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -513,7 +513,7 @@ void ai_ex010202(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010203 @ fffe73b6  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010203 @ fffe73b6  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010203`, entry 21 of 0xFFF8E1A0: compares `g_opstate.ex010203_af_bass_gain` with its shadow 0x1B2AF;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -537,7 +537,7 @@ void ai_ex010203(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010204 @ fffe73f3  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010204 @ fffe73f3  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010204`, entry 22 of 0xFFF8E1A0: compares `g_opstate.ex010204_agc_fast_delay` with its shadow
  *     0x1B2B0; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -561,7 +561,7 @@ void ai_ex010204(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010205 @ fffe743b  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010205 @ fffe743b  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010205`, entry 23 of 0xFFF8E1A0: compares `g_opstate.ex010205_agc_mid_delay` with its shadow 0x1B2B1;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -585,7 +585,7 @@ void ai_ex010205(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010206 @ fffe7483  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010206 @ fffe7483  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010206`, entry 24 of 0xFFF8E1A0: compares `g_opstate.ex010206_agc_slow_delay` with its shadow
  *     0x1B2B2; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -609,7 +609,7 @@ void ai_ex010206(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010207 @ fffe74cb  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010207 @ fffe74cb  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010207`, entry 25 of 0xFFF8E1A0: compares `g_opstate.ex010207_lcut_freq` with its shadow 0x1B2B3; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -633,7 +633,7 @@ void ai_ex010207(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010208 @ fffe7508  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010208 @ fffe7508  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010208`, entry 26 of 0xFFF8E1A0: compares `g_opstate.ex010208_lcut_slope` with its shadow 0x1B2B4; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -658,7 +658,7 @@ void ai_ex010208(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010209 @ fffe7554  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010209 @ fffe7554  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010209`, entry 27 of 0xFFF8E1A0: compares `g_opstate.ex010209_hcut_freq` with its shadow 0x1B2B5; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -682,7 +682,7 @@ void ai_ex010209(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010210 @ fffe7591  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010210 @ fffe7591  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010210`, entry 28 of 0xFFF8E1A0: compares `g_opstate.ex010210_hcut_slope` with its shadow 0x1B2B6; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -707,7 +707,7 @@ void ai_ex010210(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010211 @ fffe75dd  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010211 @ fffe75dd  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010211`, entry 29 of 0xFFF8E1A0: compares `g_opstate.ex010211_usb_out_level` with its shadow 0x1B2B7;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -731,7 +731,7 @@ void ai_ex010211(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010212 @ fffe761a  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010212 @ fffe761a  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010212`, entry 30 of 0xFFF8E1A0: compares `g_opstate.ex010212_rear_out_level` with its shadow
  *     0x1B2B8; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -755,7 +755,7 @@ void ai_ex010212(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010213 @ fffe7657  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010213 @ fffe7657  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010213`, entry 31 of 0xFFF8E1A0: compares `g_opstate.ex010213_tx_bpf_sel` with its shadow 0x1B2B9; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -780,7 +780,7 @@ void ai_ex010213(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010214 @ fffe76a3  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010214 @ fffe76a3  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010214`, entry 32 of 0xFFF8E1A0: compares `g_opstate.ex010214_mod_source` with its shadow 0x1B2BA; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -805,7 +805,7 @@ void ai_ex010214(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010215 @ fffe76ef  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010215 @ fffe76ef  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010215`, entry 33 of 0xFFF8E1A0: compares `g_opstate.ex010215_usb_mod_gain` with its shadow 0x1B2BB;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -829,7 +829,7 @@ void ai_ex010215(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010216 @ fffe772c  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010216 @ fffe772c  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010216`, entry 34 of 0xFFF8E1A0: compares `g_opstate.ex010216_rear_mod_gain` with its shadow 0x1B2BC;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -853,7 +853,7 @@ void ai_ex010216(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010217 @ fffe7769  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010217 @ fffe7769  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010217`, entry 35 of 0xFFF8E1A0: compares `g_opstate.ex010217_rptt_select` with its shadow 0x1B2BD;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -878,7 +878,7 @@ void ai_ex010217(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010301 @ fffe77b5  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010301 @ fffe77b5  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010301`, entry 36 of 0xFFF8E1A0: compares `g_opstate.ex010301_af_treble_gain` with its shadow
  *     0x1B2BE; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -902,7 +902,7 @@ void ai_ex010301(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010302 @ fffe77f2  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010302 @ fffe77f2  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010302`, entry 37 of 0xFFF8E1A0: compares `g_opstate.ex010302_af_middle_tone_gain` with its shadow
  *     0x1B2BF; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -926,7 +926,7 @@ void ai_ex010302(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010303 @ fffe782f  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010303 @ fffe782f  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010303`, entry 38 of 0xFFF8E1A0: compares `g_opstate.ex010303_af_bass_gain` with its shadow 0x1B2C0;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -950,7 +950,7 @@ void ai_ex010303(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010304 @ fffe786c  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010304 @ fffe786c  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010304`, entry 39 of 0xFFF8E1A0: compares `g_opstate.ex010304_agc_fast_delay` with its shadow
  *     0x1B2C1; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -974,7 +974,7 @@ void ai_ex010304(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010305 @ fffe78b4  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010305 @ fffe78b4  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010305`, entry 40 of 0xFFF8E1A0: compares `g_opstate.ex010305_agc_mid_delay` with its shadow 0x1B2C2;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -998,7 +998,7 @@ void ai_ex010305(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010306 @ fffe78fc  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010306 @ fffe78fc  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010306`, entry 41 of 0xFFF8E1A0: compares `g_opstate.ex010306_agc_slow_delay` with its shadow
  *     0x1B2C3; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -1022,7 +1022,7 @@ void ai_ex010306(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010307 @ fffe7944  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010307 @ fffe7944  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010307`, entry 42 of 0xFFF8E1A0: compares `g_opstate.ex010307_lcut_freq` with its shadow 0x1B2C4; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1046,7 +1046,7 @@ void ai_ex010307(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010308 @ fffe7981  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010308 @ fffe7981  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010308`, entry 43 of 0xFFF8E1A0: compares `g_opstate.ex010308_lcut_slope` with its shadow 0x1B2C5; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1071,7 +1071,7 @@ void ai_ex010308(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010309 @ fffe79cd  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010309 @ fffe79cd  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010309`, entry 44 of 0xFFF8E1A0: compares `g_opstate.ex010309_hcut_freq` with its shadow 0x1B2C6; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1095,7 +1095,7 @@ void ai_ex010309(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010310 @ fffe7a0a  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010310 @ fffe7a0a  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010310`, entry 45 of 0xFFF8E1A0: compares `g_opstate.ex010310_hcut_slope` with its shadow 0x1B2C7; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1120,7 +1120,7 @@ void ai_ex010310(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010311 @ fffe7a56  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010311 @ fffe7a56  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010311`, entry 46 of 0xFFF8E1A0: compares `g_opstate.ex010311_usb_out_level` with its shadow 0x1B2C8;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1144,7 +1144,7 @@ void ai_ex010311(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010312 @ fffe7a93  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010312 @ fffe7a93  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010312`, entry 47 of 0xFFF8E1A0: compares `g_opstate.ex010312_rear_out_level` with its shadow
  *     0x1B2C9; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1168,7 +1168,7 @@ void ai_ex010312(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010313 @ fffe7ad0  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010313 @ fffe7ad0  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010313`, entry 48 of 0xFFF8E1A0: compares `g_opstate.ex010313_mod_source` with its shadow 0x1B2CA; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1193,7 +1193,7 @@ void ai_ex010313(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010314 @ fffe7b1c  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010314 @ fffe7b1c  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010314`, entry 49 of 0xFFF8E1A0: compares `g_opstate.ex010314_usb_mod_gain` with its shadow 0x1B2CB;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1217,7 +1217,7 @@ void ai_ex010314(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010315 @ fffe7b59  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010315 @ fffe7b59  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010315`, entry 50 of 0xFFF8E1A0: compares `g_opstate.ex010315_rear_mod_gain` with its shadow 0x1B2CC;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1241,7 +1241,7 @@ void ai_ex010315(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010316 @ fffe7b96  (76 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010316 @ fffe7b96  (76 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010316`, entry 51 of 0xFFF8E1A0: compares `g_opstate.ex010316_rptt_select` with its shadow 0x1B2CD;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1266,7 +1266,7 @@ void ai_ex010316(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010317 @ fffe7be2  (106 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010317 @ fffe7be2  (106 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010317`, entry 52 of 0xFFF8E1A0: compares `n` (derived from `g_opstate.active_vfo`,
  *     `g_opstate.vfo_a.flags2`, `g_opstate.vfo_b.flags2`) with its shadow 0x1B2CE; on a change copies it and
  *     formats the value (`nib2hex`) [fact]
@@ -1302,7 +1302,7 @@ void ai_ex010317(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010318 @ fffe7c4c  (67 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010318 @ fffe7c4c  (67 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010318`, entry 53 of 0xFFF8E1A0: compares `g_opstate.ex010318_rpt_shift_28mhz` with its shadow
  *     0x1B2CF; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -1326,7 +1326,7 @@ void ai_ex010318(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010319 @ fffe7c8f  (82 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010319 @ fffe7c8f  (82 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010319`, entry 54 of 0xFFF8E1A0: compares `sVar1` (derived from
  *     `g_opstate.ex010319_rpt_shift_50mhz_be[0]`, `g_opstate.ex010319_rpt_shift_50mhz_be[1]`) with its shadow
  *     0x1FF14; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
@@ -1356,7 +1356,7 @@ void ai_ex010319(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010320 @ fffe7ce1  (114 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010320 @ fffe7ce1  (114 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010320`, entry 55 of 0xFFF8E1A0: compares `local_1` (derived from `g_opstate.active_vfo`,
  *     `g_opstate.vfo_a.flags3`, `g_opstate.vfo_b.flags3`) with its shadow 0x1B2D0; on a change copies it and
  *     formats the value (`nib2hex`) [fact]
@@ -1389,7 +1389,7 @@ void ai_ex010320(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010321 @ fffe7d53  (89 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010321 @ fffe7d53  (89 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010321`, entry 56 of 0xFFF8E1A0: compares `local_1` (derived from `g_opstate.active_vfo`,
  *     `g_opstate.vfo_a.tone_num`, `g_opstate.vfo_b.tone_num`) with its shadow 0x1B2D1; on a change copies it and
  *     formats the value (`ai_ex_fmt_u8`) [fact]
@@ -1422,7 +1422,7 @@ void ai_ex010321(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010401 @ fffe7dac  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010401 @ fffe7dac  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010401`, entry 57 of 0xFFF8E1A0: compares `g_opstate.ex010401_af_treble_gain` with its shadow
  *     0x1B2D2; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1446,7 +1446,7 @@ void ai_ex010401(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010402 @ fffe7de9  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010402 @ fffe7de9  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010402`, entry 58 of 0xFFF8E1A0: compares `g_opstate.ex010402_af_middle_tone_gain` with its shadow
  *     0x1B2D3; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1470,7 +1470,7 @@ void ai_ex010402(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010403 @ fffe7e26  (61 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010403 @ fffe7e26  (61 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010403`, entry 59 of 0xFFF8E1A0: compares `g_opstate.ex010403_af_bass_gain` with its shadow 0x1B2D4;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1494,7 +1494,7 @@ void ai_ex010403(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010404 @ fffe7e63  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010404 @ fffe7e63  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010404`, entry 60 of 0xFFF8E1A0: compares `g_opstate.ex010404_agc_fast_delay` with its shadow
  *     0x1B2D5; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -1518,7 +1518,7 @@ void ai_ex010404(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010405 @ fffe7eab  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010405 @ fffe7eab  (72 bytes, 1 callers, export file fffe7155_fffe7eab.c)
  * Purpose: `EX010405`, entry 61 of 0xFFF8E1A0: compares `g_opstate.ex010405_agc_mid_delay` with its shadow 0x1B2D6;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -1540,9 +1540,8 @@ void ai_ex010405(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex010406 @ fffe7ef3  (72 bytes, 1 callers, export file fffe71a1_fffe7ef3.c)
+ * ai_ex010406 @ fffe7ef3  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010406`, entry 62 of 0xFFF8E1A0: compares `g_opstate.ex010406_agc_slow_delay` with its shadow
  *     0x1B2D7; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -1564,8 +1563,9 @@ void ai_ex010406(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex010407 @ fffe7f3b  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010407 @ fffe7f3b  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010407`, entry 63 of 0xFFF8E1A0: compares `g_opstate.ex010407_lcut_freq` with its shadow 0x1B2D8; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1589,7 +1589,7 @@ void ai_ex010407(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010408 @ fffe7f78  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010408 @ fffe7f78  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010408`, entry 64 of 0xFFF8E1A0: compares `g_opstate.ex010408_lcut_slope` with its shadow 0x1B2D9; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1614,7 +1614,7 @@ void ai_ex010408(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010409 @ fffe7fc4  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010409 @ fffe7fc4  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010409`, entry 65 of 0xFFF8E1A0: compares `g_opstate.ex010409_hcut_freq` with its shadow 0x1B2DA; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1638,7 +1638,7 @@ void ai_ex010409(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010410 @ fffe8001  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010410 @ fffe8001  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010410`, entry 66 of 0xFFF8E1A0: compares `g_opstate.ex010410_hcut_slope` with its shadow 0x1B2DB; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1663,7 +1663,7 @@ void ai_ex010410(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010411 @ fffe804d  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010411 @ fffe804d  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010411`, entry 67 of 0xFFF8E1A0: compares `g_opstate.ex010411_usb_out_level` with its shadow 0x1B2DC;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1687,7 +1687,7 @@ void ai_ex010411(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010412 @ fffe808a  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010412 @ fffe808a  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010412`, entry 68 of 0xFFF8E1A0: compares `g_opstate.ex010412_rear_out_level` with its shadow
  *     0x1B2DD; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1711,7 +1711,7 @@ void ai_ex010412(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010413 @ fffe80c7  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010413 @ fffe80c7  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010413`, entry 69 of 0xFFF8E1A0: compares `g_opstate.ex010413_tx_bpf_sel` with its shadow 0x1B2DE; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1736,7 +1736,7 @@ void ai_ex010413(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010414 @ fffe8113  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010414 @ fffe8113  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010414`, entry 70 of 0xFFF8E1A0: compares `g_opstate.ex010414_mod_source` with its shadow 0x1B2DF; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1761,7 +1761,7 @@ void ai_ex010414(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010415 @ fffe815f  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010415 @ fffe815f  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010415`, entry 71 of 0xFFF8E1A0: compares `g_opstate.ex010415_usb_mod_gain` with its shadow 0x1B2E0;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1785,7 +1785,7 @@ void ai_ex010415(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010416 @ fffe819c  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010416 @ fffe819c  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010416`, entry 72 of 0xFFF8E1A0: compares `g_opstate.ex010416_rear_mod_gain` with its shadow 0x1B2E1;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1809,7 +1809,7 @@ void ai_ex010416(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010417 @ fffe81d9  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010417 @ fffe81d9  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010417`, entry 73 of 0xFFF8E1A0: compares `g_opstate.ex010417_rptt_select` with its shadow 0x1B2E2;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1834,7 +1834,7 @@ void ai_ex010417(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010418 @ fffe8225  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010418 @ fffe8225  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010418`, entry 74 of 0xFFF8E1A0: compares `g_opstate.ex010418_nar_width` with its shadow 0x1B2E3; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1858,7 +1858,7 @@ void ai_ex010418(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010419 @ fffe8262  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010419 @ fffe8262  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010419`, entry 75 of 0xFFF8E1A0: compares `g_opstate.ex010419_psk_tone` with its shadow 0x1B2E4; on a
  *     change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -1883,7 +1883,7 @@ void ai_ex010419(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010420 @ fffe82ae  (82 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010420 @ fffe82ae  (82 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010420`, entry 76 of 0xFFF8E1A0: compares `sVar1` (derived from
  *     `g_opstate.ex010420_data_shift_ssb_be[0]`, `g_opstate.ex010420_data_shift_ssb_be[1]`) with its shadow
  *     0x1FF16; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
@@ -1912,7 +1912,7 @@ void ai_ex010420(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010501 @ fffe8300  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010501 @ fffe8300  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010501`, entry 77 of 0xFFF8E1A0: compares `g_opstate.ex010501_af_treble_gain` with its shadow
  *     0x1B2E5; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1936,7 +1936,7 @@ void ai_ex010501(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010502 @ fffe833d  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010502 @ fffe833d  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010502`, entry 78 of 0xFFF8E1A0: compares `g_opstate.ex010502_af_middle_tone_gain` with its shadow
  *     0x1B2E6; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1960,7 +1960,7 @@ void ai_ex010502(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010503 @ fffe837a  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010503 @ fffe837a  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010503`, entry 79 of 0xFFF8E1A0: compares `g_opstate.ex010503_af_bass_gain` with its shadow 0x1B2E7;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -1984,7 +1984,7 @@ void ai_ex010503(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010504 @ fffe83b7  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010504 @ fffe83b7  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010504`, entry 80 of 0xFFF8E1A0: compares `g_opstate.ex010504_agc_fast_delay` with its shadow
  *     0x1B2E8; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2008,7 +2008,7 @@ void ai_ex010504(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010505 @ fffe83ff  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010505 @ fffe83ff  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010505`, entry 81 of 0xFFF8E1A0: compares `g_opstate.ex010505_agc_mid_delay` with its shadow 0x1B2E9;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2032,7 +2032,7 @@ void ai_ex010505(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010506 @ fffe8447  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010506 @ fffe8447  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010506`, entry 82 of 0xFFF8E1A0: compares `g_opstate.ex010506_agc_slow_delay` with its shadow
  *     0x1B2EA; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2056,7 +2056,7 @@ void ai_ex010506(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010507 @ fffe848f  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010507 @ fffe848f  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010507`, entry 83 of 0xFFF8E1A0: compares `g_opstate.ex010507_lcut_freq` with its shadow 0x1B2EB; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2080,7 +2080,7 @@ void ai_ex010507(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010508 @ fffe84cc  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010508 @ fffe84cc  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010508`, entry 84 of 0xFFF8E1A0: compares `g_opstate.ex010508_lcut_slope` with its shadow 0x1B2EC; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2105,7 +2105,7 @@ void ai_ex010508(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010509 @ fffe8518  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010509 @ fffe8518  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010509`, entry 85 of 0xFFF8E1A0: compares `g_opstate.ex010509_hcut_freq` with its shadow 0x1B2ED; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2129,7 +2129,7 @@ void ai_ex010509(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010510 @ fffe8555  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010510 @ fffe8555  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010510`, entry 86 of 0xFFF8E1A0: compares `g_opstate.ex010510_hcut_slope` with its shadow 0x1B2EE; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2154,7 +2154,7 @@ void ai_ex010510(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010511 @ fffe85a1  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010511 @ fffe85a1  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010511`, entry 87 of 0xFFF8E1A0: compares `g_opstate.ex010511_usb_out_level` with its shadow 0x1B2EF;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2178,7 +2178,7 @@ void ai_ex010511(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010512 @ fffe85de  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010512 @ fffe85de  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010512`, entry 88 of 0xFFF8E1A0: compares `g_opstate.ex010512_rear_out_level` with its shadow
  *     0x1B2F0; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2202,7 +2202,7 @@ void ai_ex010512(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010513 @ fffe861b  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010513 @ fffe861b  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010513`, entry 89 of 0xFFF8E1A0: compares `g_opstate.ex010513_rptt_select` with its shadow 0x1B2F1;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2227,7 +2227,7 @@ void ai_ex010513(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010514 @ fffe8667  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010514 @ fffe8667  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010514`, entry 90 of 0xFFF8E1A0: compares `g_opstate.ex010514_nar_width` with its shadow 0x1B2F2; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2251,7 +2251,7 @@ void ai_ex010514(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010515 @ fffe86a4  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010515 @ fffe86a4  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010515`, entry 91 of 0xFFF8E1A0: compares `g_opstate.ex010515_mark_frequency` with its shadow
  *     0x1B2F3; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2276,7 +2276,7 @@ void ai_ex010515(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010516 @ fffe86f0  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010516 @ fffe86f0  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010516`, entry 92 of 0xFFF8E1A0: compares `g_opstate.ex010516_shift_frequency` with its shadow
  *     0x1B2F4; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2301,7 +2301,7 @@ void ai_ex010516(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex010517 @ fffe873c  (82 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex010517 @ fffe873c  (82 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX010517`, entry 93 of 0xFFF8E1A0: compares `g_opstate.ex010517_polarity_tx` with its shadow 0x1B2F5
  *     and formats it with `nib2hex` [fact]; the decompile reads an uninitialised `local_1`, a register-use artefact
  *     [inference]
@@ -2330,7 +2330,7 @@ void ai_ex010517(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020101 @ fffe878e  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020101 @ fffe878e  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020101`, entry 94 of 0xFFF8E1A0: compares `g_opstate.ex020101_af_treble_gain` with its shadow
  *     0x1B2F6; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2354,7 +2354,7 @@ void ai_ex020101(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020102 @ fffe87cb  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020102 @ fffe87cb  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020102`, entry 95 of 0xFFF8E1A0: compares `g_opstate.ex020102_af_middle_tone_gain` with its shadow
  *     0x1B2F7; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2378,7 +2378,7 @@ void ai_ex020102(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020103 @ fffe8808  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020103 @ fffe8808  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020103`, entry 96 of 0xFFF8E1A0: compares `g_opstate.ex020103_af_bass_gain` with its shadow 0x1B2F8;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2402,7 +2402,7 @@ void ai_ex020103(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020104 @ fffe8845  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020104 @ fffe8845  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020104`, entry 97 of 0xFFF8E1A0: compares `g_opstate.ex020104_agc_fast_delay` with its shadow
  *     0x1B2F9; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2426,7 +2426,7 @@ void ai_ex020104(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020105 @ fffe888d  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020105 @ fffe888d  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020105`, entry 98 of 0xFFF8E1A0: compares `g_opstate.ex020105_agc_mid_delay` with its shadow 0x1B2FA;
  *     on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2450,7 +2450,7 @@ void ai_ex020105(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020106 @ fffe88d5  (72 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020106 @ fffe88d5  (72 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020106`, entry 99 of 0xFFF8E1A0: compares `g_opstate.ex020106_agc_slow_delay` with its shadow
  *     0x1B2FB; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
  * Tag: [fact]
@@ -2474,7 +2474,7 @@ void ai_ex020106(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020107 @ fffe891d  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020107 @ fffe891d  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020107`, entry 100 of 0xFFF8E1A0: compares `g_opstate.ex020107_lcut_freq` with its shadow 0x1B2FC; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2498,7 +2498,7 @@ void ai_ex020107(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020108 @ fffe895a  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020108 @ fffe895a  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020108`, entry 101 of 0xFFF8E1A0: compares `g_opstate.ex020108_lcut_slope` with its shadow 0x1B2FD;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2523,7 +2523,7 @@ void ai_ex020108(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020109 @ fffe89a6  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020109 @ fffe89a6  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020109`, entry 102 of 0xFFF8E1A0: compares `g_opstate.ex020109_hcut_freq` with its shadow 0x1B2FE; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2547,7 +2547,7 @@ void ai_ex020109(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020110 @ fffe89e3  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020110 @ fffe89e3  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020110`, entry 103 of 0xFFF8E1A0: compares `g_opstate.ex020110_hcut_slope` with its shadow 0x1B2FF;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2572,7 +2572,7 @@ void ai_ex020110(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020111 @ fffe8a2f  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020111 @ fffe8a2f  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020111`, entry 104 of 0xFFF8E1A0: compares `g_opstate.ex020111_usb_out_level` with its shadow
  *     0x1B300; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2596,7 +2596,7 @@ void ai_ex020111(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020112 @ fffe8a6c  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020112 @ fffe8a6c  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020112`, entry 105 of 0xFFF8E1A0: compares `g_opstate.ex020112_rear_out_level` with its shadow
  *     0x1B301; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2620,7 +2620,7 @@ void ai_ex020112(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020113 @ fffe8aa9  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020113 @ fffe8aa9  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020113`, entry 106 of 0xFFF8E1A0: compares `g_opstate.ex020113_rptt_select` with its shadow 0x1B302;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2645,7 +2645,7 @@ void ai_ex020113(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020114 @ fffe8af5  (61 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020114 @ fffe8af5  (61 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020114`, entry 107 of 0xFFF8E1A0: compares `g_opstate.ex020114_nar_width` with its shadow 0x1B303; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2669,7 +2669,7 @@ void ai_ex020114(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020115 @ fffe8b32  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020115 @ fffe8b32  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020115`, entry 108 of 0xFFF8E1A0: compares `g_opstate.ex020115_pc_keying` with its shadow 0x1B304; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2694,7 +2694,7 @@ void ai_ex020115(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020116 @ fffe8b7e  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020116 @ fffe8b7e  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020116`, entry 109 of 0xFFF8E1A0: compares `g_opstate.ex020116_cw_bk_in_type` with its shadow
  *     0x1B305; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2719,7 +2719,7 @@ void ai_ex020116(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020117 @ fffe8bca  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020117 @ fffe8bca  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020117`, entry 110 of 0xFFF8E1A0: compares `g_opstate.ex020117_cw_wave_shape` with its shadow
  *     0x1B306; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2744,7 +2744,7 @@ void ai_ex020117(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020118 @ fffe8c16  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020118 @ fffe8c16  (76 bytes, 1 callers, export file fffe7ef3_fffe8c16.c)
  * Purpose: `EX020118`, entry 111 of 0xFFF8E1A0: compares `g_opstate.ex020118_cw_freq_display` with its shadow
  *     0x1B307; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2767,9 +2767,8 @@ void ai_ex020118(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex020119 @ fffe8c62  (76 bytes, 1 callers, export file fffe7f3b_fffe8c62.c)
+ * ai_ex020119 @ fffe8c62  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020119`, entry 112 of 0xFFF8E1A0: compares `g_opstate.ex020119_qsk_delay_time` with its shadow
  *     0x1B308; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2792,8 +2791,9 @@ void ai_ex020119(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex020120 @ fffe8cae  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020120 @ fffe8cae  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020120`, entry 113 of 0xFFF8E1A0: compares `g_opstate.ex020120_cw_indicator` with its shadow 0x1B309;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2818,7 +2818,7 @@ void ai_ex020120(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020201 @ fffe8cfa  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020201 @ fffe8cfa  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020201`, entry 114 of 0xFFF8E1A0: compares `g_opstate.ex020201_keyer_type` with its shadow 0x1B30A;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2843,7 +2843,7 @@ void ai_ex020201(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020202 @ fffe8d46  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020202 @ fffe8d46  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020202`, entry 115 of 0xFFF8E1A0: compares `g_opstate.ex020202_keyer_dot_dash` with its shadow
  *     0x1B30B; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2868,7 +2868,7 @@ void ai_ex020202(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020203 @ fffe8d92  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020203 @ fffe8d92  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020203`, entry 116 of 0xFFF8E1A0: compares `g_opstate.ex020203_cw_weight` with its shadow 0x1B30C; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -2892,7 +2892,7 @@ void ai_ex020203(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020204 @ fffe8dcf  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020204 @ fffe8dcf  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020204`, entry 117 of 0xFFF8E1A0: compares `g_opstate.ex020204_number_style` with its shadow 0x1B30D;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2917,7 +2917,7 @@ void ai_ex020204(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020205 @ fffe8e1b  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020205 @ fffe8e1b  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020205`, entry 118 of 0xFFF8E1A0: compares `sVar1` (derived from
  *     `g_opstate.ex020205_contest_number_be[0]`, `g_opstate.ex020205_contest_number_be[1]`) with its shadow
  *     0x1FF18; on a change copies it and formats the value (`ai_ex_fmt_u16_4`) [fact]
@@ -2946,7 +2946,7 @@ void ai_ex020205(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020206 @ fffe8e67  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020206 @ fffe8e67  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020206`, entry 119 of 0xFFF8E1A0: compares `g_opstate.ex020206_cw_memory_1` with its shadow 0x1B30E;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2971,7 +2971,7 @@ void ai_ex020206(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020207 @ fffe8eb3  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020207 @ fffe8eb3  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020207`, entry 120 of 0xFFF8E1A0: compares `g_opstate.ex020207_cw_memory_2` with its shadow 0x1B30F;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -2996,7 +2996,7 @@ void ai_ex020207(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020208 @ fffe8eff  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020208 @ fffe8eff  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020208`, entry 121 of 0xFFF8E1A0: compares `g_opstate.ex020208_cw_memory_3` with its shadow 0x1B310;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3021,7 +3021,7 @@ void ai_ex020208(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020209 @ fffe8f4b  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020209 @ fffe8f4b  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020209`, entry 122 of 0xFFF8E1A0: compares `g_opstate.ex020209_cw_memory_4` with its shadow 0x1B311;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3046,7 +3046,7 @@ void ai_ex020209(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020210 @ fffe8f97  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020210 @ fffe8f97  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020210`, entry 123 of 0xFFF8E1A0: compares `g_opstate.ex020210_cw_memory_5` with its shadow 0x1B312;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3071,7 +3071,7 @@ void ai_ex020210(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex020211 @ fffe8fe3  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex020211 @ fffe8fe3  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX020211`, entry 124 of 0xFFF8E1A0: compares `g_opstate.ex020211_repeat_interval` with its shadow
  *     0x1B313; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3095,7 +3095,7 @@ void ai_ex020211(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030101 @ fffe9020  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030101 @ fffe9020  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030101`, entry 125 of 0xFFF8E1A0: compares `g_opstate.ex030101_beep_level` with its shadow 0x1B314;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3119,7 +3119,7 @@ void ai_ex030101(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030102 @ fffe905d  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030102 @ fffe905d  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030102`, entry 126 of 0xFFF8E1A0: compares `g_opstate.ex030102_rf_sql_vr` with its shadow 0x1B315; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3144,7 +3144,7 @@ void ai_ex030102(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030103 @ fffe90a9  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030103 @ fffe90a9  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030103`, entry 127 of 0xFFF8E1A0: compares `g_opstate.ex030103_tun_lin_port_select` with its shadow
  *     0x1B316; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3169,7 +3169,7 @@ void ai_ex030103(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030104 @ fffe90f5  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030104 @ fffe90f5  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030104`, entry 128 of 0xFFF8E1A0: compares `g_opstate.ex030104_tuner_type_select` with its shadow
  *     0x1B317; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3194,7 +3194,7 @@ void ai_ex030104(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030105 @ fffe9141  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030105 @ fffe9141  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030105`, entry 129 of 0xFFF8E1A0: compares `g_opstate.ex030105_cat_1_rate` with its shadow 0x1B318;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3219,7 +3219,7 @@ void ai_ex030105(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030106 @ fffe918d  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030106 @ fffe918d  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030106`, entry 130 of 0xFFF8E1A0: compares `g_opstate.ex030106_cat_1_time_out_timer` with its shadow
  *     0x1B319; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3244,7 +3244,7 @@ void ai_ex030106(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030107 @ fffe91d9  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030107 @ fffe91d9  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030107`, entry 131 of 0xFFF8E1A0: compares `g_opstate.ex030107_cat_1_cat_3_stop_bit` with its shadow
  *     0x1B31A; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3269,7 +3269,7 @@ void ai_ex030107(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030108 @ fffe9225  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030108 @ fffe9225  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030108`, entry 132 of 0xFFF8E1A0: compares `g_opstate.ex030108_cat_2_rate` with its shadow 0x1B31B;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3294,7 +3294,7 @@ void ai_ex030108(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030109 @ fffe9271  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030109 @ fffe9271  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030109`, entry 133 of 0xFFF8E1A0: compares `g_opstate.ex030109_cat_2_time_out_timer` with its shadow
  *     0x1B31C; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3319,7 +3319,7 @@ void ai_ex030109(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030110 @ fffe92bd  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030110 @ fffe92bd  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030110`, entry 134 of 0xFFF8E1A0: compares `g_opstate.ex030110_cat_3_rate` with its shadow 0x1B31D;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3344,7 +3344,7 @@ void ai_ex030110(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030111 @ fffe9309  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030111 @ fffe9309  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030111`, entry 135 of 0xFFF8E1A0: compares `g_opstate.ex030111_cat_3_time_out_timer` with its shadow
  *     0x1B31E; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3369,7 +3369,7 @@ void ai_ex030111(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030112 @ fffe9355  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030112 @ fffe9355  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030112`, entry 136 of 0xFFF8E1A0: compares `g_opstate.ex030112_qmb_ch` with its shadow 0x1B31F; on a
  *     change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3394,7 +3394,7 @@ void ai_ex030112(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030113 @ fffe93a1  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030113 @ fffe93a1  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030113`, entry 137 of 0xFFF8E1A0: compares `g_opstate.ex030113_band_stack` with its shadow 0x1B320;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3419,7 +3419,7 @@ void ai_ex030113(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030114 @ fffe93ed  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030114 @ fffe93ed  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030114`, entry 138 of 0xFFF8E1A0: compares `g_opstate.ex030114_mem_group` with its shadow 0x1B321; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3444,7 +3444,7 @@ void ai_ex030114(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030115 @ fffe9439  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030115 @ fffe9439  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030115`, entry 139 of 0xFFF8E1A0: compares `g_opstate.ex030115_tx_time_out_timer` with its shadow
  *     0x1B322; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3468,7 +3468,7 @@ void ai_ex030115(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030116 @ fffe9476  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030116 @ fffe9476  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030116`, entry 140 of 0xFFF8E1A0: compares `g_opstate.ex030116_mic_scan` with its shadow 0x1B323; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3493,7 +3493,7 @@ void ai_ex030116(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030117 @ fffe94c2  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030117 @ fffe94c2  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030117`, entry 141 of 0xFFF8E1A0: compares `g_opstate.ex030117_mic_scan_resume` with its shadow
  *     0x1B324; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3518,7 +3518,7 @@ void ai_ex030117(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030118 @ fffe950e  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030118 @ fffe950e  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030118`, entry 142 of 0xFFF8E1A0: compares `g_opstate.ex030118_ref_freq_fine_adj` with its shadow
  *     0x1B325; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3542,7 +3542,7 @@ void ai_ex030118(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030119 @ fffe954b  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030119 @ fffe954b  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030119`, entry 143 of 0xFFF8E1A0: compares `g_opstate.ex030119_keyboard_language` with its shadow
  *     0x1B326; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3566,7 +3566,7 @@ void ai_ex030119(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030120 @ fffe9588  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030120 @ fffe9588  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030120`, entry 144 of 0xFFF8E1A0: compares `g_opstate.ex030120_mic_p1` with its shadow 0x1B327; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3590,7 +3590,7 @@ void ai_ex030120(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030121 @ fffe95c5  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030121 @ fffe95c5  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030121`, entry 145 of 0xFFF8E1A0: compares `g_opstate.ex030121_mic_p2` with its shadow 0x1B328; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3614,7 +3614,7 @@ void ai_ex030121(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030122 @ fffe9602  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030122 @ fffe9602  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030122`, entry 146 of 0xFFF8E1A0: compares `g_opstate.ex030122_mic_p3` with its shadow 0x1B329; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3638,7 +3638,7 @@ void ai_ex030122(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030123 @ fffe963f  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030123 @ fffe963f  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030123`, entry 147 of 0xFFF8E1A0: compares `g_opstate.ex030123_mic_p4` with its shadow 0x1B32A; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3662,7 +3662,7 @@ void ai_ex030123(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030124 @ fffe967c  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030124 @ fffe967c  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030124`, entry 148 of 0xFFF8E1A0: compares `g_opstate.ex030124_mic_up` with its shadow 0x1B32B; on a
  *     change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3686,7 +3686,7 @@ void ai_ex030124(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030125 @ fffe96b9  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030125 @ fffe96b9  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030125`, entry 149 of 0xFFF8E1A0: compares `g_opstate.ex030125_mic_down` with its shadow 0x1B32C; on
  *     a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3710,7 +3710,7 @@ void ai_ex030125(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030126 @ fffe96f6  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030126 @ fffe96f6  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030126`, entry 150 of 0xFFF8E1A0: compares `g_opstate.ex030126_scu_lan10` with its shadow 0x1B32D; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3735,7 +3735,7 @@ void ai_ex030126(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030201 @ fffe9742  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030201 @ fffe9742  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030201`, entry 151 of 0xFFF8E1A0: compares `g_opstate.ex030201_if_notch_width` with its shadow
  *     0x1B32E; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3760,7 +3760,7 @@ void ai_ex030201(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030202 @ fffe978e  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030202 @ fffe978e  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030202`, entry 152 of 0xFFF8E1A0: compares `g_opstate.ex030202_nb_rejection` with its shadow 0x1B32F;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3785,7 +3785,7 @@ void ai_ex030202(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030203 @ fffe97da  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030203 @ fffe97da  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030203`, entry 153 of 0xFFF8E1A0: compares `g_opstate.ex030203_nb_width` with its shadow 0x1B330; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3810,7 +3810,7 @@ void ai_ex030203(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030204 @ fffe9826  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030204 @ fffe9826  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030204`, entry 154 of 0xFFF8E1A0: compares `g_opstate.ex030204_apf_width` with its shadow 0x1B331; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3835,7 +3835,7 @@ void ai_ex030204(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030205 @ fffe9872  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030205 @ fffe9872  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030205`, entry 155 of 0xFFF8E1A0: compares `g_opstate.ex030205_contour_level` with its shadow
  *     0x1B332; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3859,7 +3859,7 @@ void ai_ex030205(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030206 @ fffe98af  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030206 @ fffe98af  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030206`, entry 156 of 0xFFF8E1A0: compares `g_opstate.ex030206_contour_width` with its shadow
  *     0x1B333; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3883,7 +3883,7 @@ void ai_ex030206(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030301 @ fffe98ec  (76 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030301 @ fffe98ec  (76 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030301`, entry 157 of 0xFFF8E1A0: compares `g_opstate.ex030301_amc_release_time` with its shadow
  *     0x1B334; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -3908,7 +3908,7 @@ void ai_ex030301(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030302 @ fffe9938  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030302 @ fffe9938  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030302`, entry 158 of 0xFFF8E1A0: compares `g_opstate.ex030302_prmtrc_eq1_freq` with its shadow
  *     0x1B335; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3932,7 +3932,7 @@ void ai_ex030302(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030303 @ fffe9975  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030303 @ fffe9975  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030303`, entry 159 of 0xFFF8E1A0: compares `g_opstate.ex030303_prmtrc_eq1_level` with its shadow
  *     0x1B336; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3956,7 +3956,7 @@ void ai_ex030303(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030304 @ fffe99b2  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030304 @ fffe99b2  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030304`, entry 160 of 0xFFF8E1A0: compares `g_opstate.ex030304_prmtrc_eq1_bwth` with its shadow
  *     0x1B337; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -3980,7 +3980,7 @@ void ai_ex030304(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030305 @ fffe99ef  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030305 @ fffe99ef  (61 bytes, 1 callers, export file fffe8c62_fffe99ef.c)
  * Purpose: `EX030305`, entry 161 of 0xFFF8E1A0: compares `g_opstate.ex030305_prmtrc_eq2_freq` with its shadow
  *     0x1B338; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4002,9 +4002,8 @@ void ai_ex030305(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex030306 @ fffe9a2c  (61 bytes, 1 callers, export file fffe8cae_fffe9a2c.c)
+ * ai_ex030306 @ fffe9a2c  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030306`, entry 162 of 0xFFF8E1A0: compares `g_opstate.ex030306_prmtrc_eq2_level` with its shadow
  *     0x1B339; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4026,8 +4025,9 @@ void ai_ex030306(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex030307 @ fffe9a69  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030307 @ fffe9a69  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030307`, entry 163 of 0xFFF8E1A0: compares `g_opstate.ex030307_prmtrc_eq2_bwth` with its shadow
  *     0x1B33A; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4051,7 +4051,7 @@ void ai_ex030307(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030308 @ fffe9aa6  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030308 @ fffe9aa6  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030308`, entry 164 of 0xFFF8E1A0: compares `g_opstate.ex030308_prmtrc_eq3_freq` with its shadow
  *     0x1B33B; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4075,7 +4075,7 @@ void ai_ex030308(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030309 @ fffe9ae3  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030309 @ fffe9ae3  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030309`, entry 165 of 0xFFF8E1A0: compares `g_opstate.ex030309_prmtrc_eq3_level` with its shadow
  *     0x1B33C; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4099,7 +4099,7 @@ void ai_ex030309(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030310 @ fffe9b20  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030310 @ fffe9b20  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030310`, entry 166 of 0xFFF8E1A0: compares `g_opstate.ex030310_prmtrc_eq3_bwth` with its shadow
  *     0x1B33D; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4123,7 +4123,7 @@ void ai_ex030310(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030311 @ fffe9b5d  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030311 @ fffe9b5d  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030311`, entry 167 of 0xFFF8E1A0: compares `g_opstate.ex030311_p_prmtrc_eq1_freq` with its shadow
  *     0x1B33E; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4147,7 +4147,7 @@ void ai_ex030311(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030312 @ fffe9b9a  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030312 @ fffe9b9a  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030312`, entry 168 of 0xFFF8E1A0: compares `g_opstate.ex030312_p_prmtrc_eq1_level` with its shadow
  *     0x1B33F; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4171,7 +4171,7 @@ void ai_ex030312(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030313 @ fffe9bd7  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030313 @ fffe9bd7  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030313`, entry 169 of 0xFFF8E1A0: compares `g_opstate.ex030313_p_prmtrc_eq1_bwth` with its shadow
  *     0x1B340; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4195,7 +4195,7 @@ void ai_ex030313(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030314 @ fffe9c14  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030314 @ fffe9c14  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030314`, entry 170 of 0xFFF8E1A0: compares `g_opstate.ex030314_p_prmtrc_eq2_freq` with its shadow
  *     0x1B341; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4219,7 +4219,7 @@ void ai_ex030314(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030315 @ fffe9c51  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030315 @ fffe9c51  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030315`, entry 171 of 0xFFF8E1A0: compares `g_opstate.ex030315_p_prmtrc_eq2_level` with its shadow
  *     0x1B342; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4243,7 +4243,7 @@ void ai_ex030315(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030316 @ fffe9c8e  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030316 @ fffe9c8e  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030316`, entry 172 of 0xFFF8E1A0: compares `g_opstate.ex030316_p_prmtrc_eq2_bwth` with its shadow
  *     0x1B343; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4267,7 +4267,7 @@ void ai_ex030316(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030317 @ fffe9ccb  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030317 @ fffe9ccb  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030317`, entry 173 of 0xFFF8E1A0: compares `g_opstate.ex030317_p_prmtrc_eq3_freq` with its shadow
  *     0x1B344; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4291,7 +4291,7 @@ void ai_ex030317(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030318 @ fffe9d08  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030318 @ fffe9d08  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030318`, entry 174 of 0xFFF8E1A0: compares `g_opstate.ex030318_p_prmtrc_eq3_level` with its shadow
  *     0x1B345; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4315,7 +4315,7 @@ void ai_ex030318(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030319 @ fffe9d45  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030319 @ fffe9d45  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030319`, entry 175 of 0xFFF8E1A0: compares `g_opstate.ex030319_p_prmtrc_eq3_bwth` with its shadow
  *     0x1B346; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4339,7 +4339,7 @@ void ai_ex030319(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030401 @ fffe9d82  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030401 @ fffe9d82  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030401`, entry 176 of 0xFFF8E1A0: compares `g_opstate.ex030401_hf_max_power` with its shadow 0x1B347;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4363,7 +4363,7 @@ void ai_ex030401(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030402 @ fffe9dbf  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030402 @ fffe9dbf  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030402`, entry 177 of 0xFFF8E1A0: compares `g_opstate.ex030402_50m_max_power` with its shadow
  *     0x1B348; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4387,7 +4387,7 @@ void ai_ex030402(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030403 @ fffe9dfc  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030403 @ fffe9dfc  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030403`, entry 178 of 0xFFF8E1A0: compares `g_opstate.ex030403_70m_max_power` with its shadow
  *     0x1B349; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4411,7 +4411,7 @@ void ai_ex030403(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030404 @ fffe9e39  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030404 @ fffe9e39  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030404`, entry 179 of 0xFFF8E1A0: compares `g_opstate.ex030404_am_max_power` with its shadow 0x1B34A;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4435,7 +4435,7 @@ void ai_ex030404(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030405 @ fffe9e76  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030405 @ fffe9e76  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030405`, entry 180 of 0xFFF8E1A0: compares `g_opstate.ex030405_vox_select` with its shadow 0x1B34B;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4460,7 +4460,7 @@ void ai_ex030405(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030406 @ fffe9ec2  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030406 @ fffe9ec2  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030406`, entry 181 of 0xFFF8E1A0: compares `g_opstate.ex030406_emergency_freq_tx` with its shadow
  *     0x1B34C; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4485,7 +4485,7 @@ void ai_ex030406(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030407 @ fffe9f0e  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030407 @ fffe9f0e  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030407`, entry 182 of 0xFFF8E1A0: compares `g_opstate.ex030407_tx_inhitbit` with its shadow 0x1B34D;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4510,7 +4510,7 @@ void ai_ex030407(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030408 @ fffe9f5a  (77 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030408 @ fffe9f5a  (77 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030408`, entry 183 of 0xFFF8E1A0: compares `g_opstate.ex030408_meter_detector` with its shadow
  *     0x1B34E; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4535,7 +4535,7 @@ void ai_ex030408(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030501 @ fffe9fa7  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030501 @ fffe9fa7  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030501`, entry 184 of 0xFFF8E1A0: compares `g_opstate.ex030501_ssb_cw_dial_step` with its shadow
  *     0x1B34F; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4560,7 +4560,7 @@ void ai_ex030501(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030502 @ fffe9ff3  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030502 @ fffe9ff3  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030502`, entry 185 of 0xFFF8E1A0: compares `g_opstate.ex030502_rtty_psk_dial_step` with its shadow
  *     0x1B350; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4585,7 +4585,7 @@ void ai_ex030502(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030503 @ fffea03f  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030503 @ fffea03f  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030503`, entry 186 of 0xFFF8E1A0: compares `g_opstate.ex030503_ch_step` with its shadow 0x1B351; on a
  *     change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4610,7 +4610,7 @@ void ai_ex030503(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030504 @ fffea08b  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030504 @ fffea08b  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030504`, entry 187 of 0xFFF8E1A0: compares `g_opstate.ex030504_am_ch_step` with its shadow 0x1B352;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4635,7 +4635,7 @@ void ai_ex030504(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030505 @ fffea0d7  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030505 @ fffea0d7  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030505`, entry 188 of 0xFFF8E1A0: compares `g_opstate.ex030505_fm_ch_step` with its shadow 0x1B353;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4660,7 +4660,7 @@ void ai_ex030505(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex030506 @ fffea123  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex030506 @ fffea123  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX030506`, entry 189 of 0xFFF8E1A0: compares `g_opstate.ex030506_main_steps_per_rev` with its shadow
  *     0x1B354; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4685,7 +4685,7 @@ void ai_ex030506(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040101 @ fffea16f  (122 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040101 @ fffea16f  (122 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040101` (MY CALL), entry 190 of 0xFFF8E1A0: `strncmp` of the 12-character shadow 0x1B355 with 0x9B01;
  *     on a change copies the call sign to the shadow and to the reply 0x1B23D, length 0x15 [fact]
  * Tag: [fact]
@@ -4727,7 +4727,7 @@ void ai_ex040101(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040102 @ fffea1e9  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040102 @ fffea1e9  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040102`, entry 191 of 0xFFF8E1A0: compares `g_opstate.ex040102_my_call_time` with its shadow 0x1B361;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4752,7 +4752,7 @@ void ai_ex040102(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040103 @ fffea235  (71 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040103 @ fffea235  (71 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040103`, entry 192 of 0xFFF8E1A0: compares `g_opstate.ex040103_pop_up_time` with its shadow 0x1B362;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4777,7 +4777,7 @@ void ai_ex040103(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040104 @ fffea27c  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040104 @ fffea27c  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040104`, entry 193 of 0xFFF8E1A0: compares `g_opstate.ex040104_screen_saver` with its shadow 0x1B363;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4802,7 +4802,7 @@ void ai_ex040104(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040105 @ fffea2c8  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040105 @ fffea2c8  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040105`, entry 194 of 0xFFF8E1A0: compares `g_opstate.ex040105_led_dimmer` with its shadow 0x1B364;
  *     on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4826,7 +4826,7 @@ void ai_ex040105(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040106 @ fffea305  (61 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040106 @ fffea305  (61 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040106`, entry 195 of 0xFFF8E1A0: compares `g_opstate.ex040106_mouse_pointer_speed` with its shadow
  *     0x1B365; on a change copies it and formats the value (`ai_ex_fmt_u8`) [fact]
  * Tag: [fact]
@@ -4850,7 +4850,7 @@ void ai_ex040106(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040201 @ fffea342  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040201 @ fffea342  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040201`, entry 196 of 0xFFF8E1A0: compares `g_opstate.ex040201_rbw` with its shadow 0x1B366; on a
  *     change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4875,7 +4875,7 @@ void ai_ex040201(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040202 @ fffea38e  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040202 @ fffea38e  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040202`, entry 197 of 0xFFF8E1A0: compares `g_opstate.ex040202_scope_ctr` with its shadow 0x1B367; on
  *     a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4900,7 +4900,7 @@ void ai_ex040202(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040203 @ fffea3da  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040203 @ fffea3da  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040203`, entry 198 of 0xFFF8E1A0: compares `g_opstate.ex040203_2d_disp_sensitivity` with its shadow
  *     0x1B368; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4925,7 +4925,7 @@ void ai_ex040203(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040204 @ fffea426  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040204 @ fffea426  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040204`, entry 199 of 0xFFF8E1A0: compares `g_opstate.ex040204_3dss_disp_sensitivity` with its shadow
  *     0x1B369; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4950,7 +4950,7 @@ void ai_ex040204(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040301 @ fffea472  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040301 @ fffea472  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040301`, entry 200 of 0xFFF8E1A0: compares `g_opstate.ex040301_vmi_color_vfo_a` with its shadow
  *     0x1B36A; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -4975,7 +4975,7 @@ void ai_ex040301(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040302 @ fffea4be  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040302 @ fffea4be  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040302`, entry 201 of 0xFFF8E1A0: compares `g_opstate.ex040302_vmi_color_vfo_b` with its shadow
  *     0x1B36B; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -5000,7 +5000,7 @@ void ai_ex040302(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040303 @ fffea50a  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040303 @ fffea50a  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040303`, entry 202 of 0xFFF8E1A0: compares `g_opstate.ex040303_vmi_color_memory` with its shadow
  *     0x1B36C; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -5025,7 +5025,7 @@ void ai_ex040303(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040304 @ fffea556  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040304 @ fffea556  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040304`, entry 203 of 0xFFF8E1A0: compares `g_opstate.ex040304_vmi_color_clar` with its shadow
  *     0x1B36D; on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -5050,7 +5050,7 @@ void ai_ex040304(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040401 @ fffea5a2  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040401 @ fffea5a2  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040401`, entry 204 of 0xFFF8E1A0: compares `g_opstate.ex040401_ext_display` with its shadow 0x1B36E;
  *     on a change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -5075,7 +5075,7 @@ void ai_ex040401(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex040402 @ fffea5ee  (76 bytes, 1 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex040402 @ fffea5ee  (76 bytes, 1 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: `EX040402`, entry 205 of 0xFFF8E1A0: compares `g_opstate.ex040402_pixel` with its shadow 0x1B36F; on a
  *     change copies it and formats the value (`nib2hex`) [fact]
  * Tag: [fact]
@@ -5100,7 +5100,7 @@ void ai_ex040402(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_name @ fffea63a  (594 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_name @ fffea63a  (594 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n01 (PRESET n name): called by ai_ex06{01..05}01 with n = 1..5; compares
  *     g_opstate.presets[n-1].name with its shadow, strncmp on the 12-char name, copies it to its shadow, length
  *     0x15 [fact: fffea63a]
@@ -5283,7 +5283,7 @@ void ai_ex_preset_name(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_cat1_rate @ fffea88c  (380 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_cat1_rate @ fffea88c  (380 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n02 (PRESET n cat1_rate): called by ai_ex06{01..05}02 with n = 1..5;
  *     compares g_opstate.presets[n-1].cat1_rate with its shadow, formats with nib2hex [fact: fffea88c]
  * Tag: [fact]
@@ -5337,7 +5337,7 @@ void ai_ex_preset_cat1_rate(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_cat1_tot @ fffeaa08  (380 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_cat1_tot @ fffeaa08  (380 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n03 (PRESET n cat1_tot): called by ai_ex06{01..05}03 with n = 1..5; compares
  *     g_opstate.presets[n-1].cat1_tot with its shadow, formats with nib2hex [fact: fffeaa08]
  * Tag: [fact]
@@ -5391,7 +5391,7 @@ void ai_ex_preset_cat1_tot(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_cat1_cat3_stop_bit @ fffeab84  (380 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_cat1_cat3_stop_bit @ fffeab84  (380 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n04 (PRESET n cat1_cat3_stop_bit): called by ai_ex06{01..05}04 with n =
  *     1..5; compares g_opstate.presets[n-1].cat1_cat3_stop_bit with its shadow, formats with nib2hex [fact:
  *     fffeab84]
@@ -5446,7 +5446,7 @@ void ai_ex_preset_cat1_cat3_stop_bit(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_agc_fast_delay @ fffead00  (375 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_agc_fast_delay @ fffead00  (375 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n05 (PRESET n agc_fast_delay): called by ai_ex06{01..05}05 with n = 1..5;
  *     compares g_opstate.presets[n-1].agc_fast_delay with its shadow, formats with ai_ex_fmt_u16_4 [fact: fffead00]
  * Tag: [fact]
@@ -5500,7 +5500,7 @@ void ai_ex_preset_agc_fast_delay(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_agc_mid_delay @ fffeae77  (375 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_agc_mid_delay @ fffeae77  (375 bytes, 5 callers, export file fffe9a2c_fffeae77.c)
  * Purpose: Shared AI detector for EX060n06 (PRESET n agc_mid_delay): called by ai_ex06{01..05}06 with n = 1..5;
  *     compares g_opstate.presets[n-1].agc_mid_delay with its shadow, formats with ai_ex_fmt_u16_4 [fact: fffeae77]
  * Tag: [fact]
@@ -5552,9 +5552,8 @@ void ai_ex_preset_agc_mid_delay(char param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_agc_slow_delay @ fffeafee  (375 bytes, 5 callers, export file fffe9a69_fffeafee.c)
+ * ai_ex_preset_agc_slow_delay @ fffeafee  (375 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n07 (PRESET n agc_slow_delay): called by ai_ex06{01..05}07 with n = 1..5;
  *     compares g_opstate.presets[n-1].agc_slow_delay with its shadow, formats with ai_ex_fmt_u16_4 [fact: fffeafee]
  * Tag: [fact]
@@ -5606,8 +5605,9 @@ void ai_ex_preset_agc_slow_delay(char param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_lcut_freq @ fffeb165  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_lcut_freq @ fffeb165  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n08 (PRESET n lcut_freq): called by ai_ex06{01..05}08 with n = 1..5;
  *     compares g_opstate.presets[n-1].lcut_freq with its shadow, formats with ai_ex_fmt_u8 [fact: fffeb165]
  * Tag: [fact]
@@ -5661,7 +5661,7 @@ void ai_ex_preset_lcut_freq(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_lcut_slope @ fffeb2b9  (380 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_lcut_slope @ fffeb2b9  (380 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n09 (PRESET n lcut_slope): called by ai_ex06{01..05}09 with n = 1..5;
  *     compares g_opstate.presets[n-1].lcut_slope with its shadow, formats with nib2hex [fact: fffeb2b9]
  * Tag: [fact]
@@ -5715,7 +5715,7 @@ void ai_ex_preset_lcut_slope(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_hcut_freq @ fffeb435  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_hcut_freq @ fffeb435  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n10 (PRESET n hcut_freq): called by ai_ex06{01..05}10 with n = 1..5;
  *     compares g_opstate.presets[n-1].hcut_freq with its shadow, formats with ai_ex_fmt_u8 [fact: fffeb435]
  * Tag: [fact]
@@ -5769,7 +5769,7 @@ void ai_ex_preset_hcut_freq(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_hcut_slope @ fffeb589  (380 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_hcut_slope @ fffeb589  (380 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n11 (PRESET n hcut_slope): called by ai_ex06{01..05}11 with n = 1..5;
  *     compares g_opstate.presets[n-1].hcut_slope with its shadow, formats with nib2hex [fact: fffeb589]
  * Tag: [fact]
@@ -5823,7 +5823,7 @@ void ai_ex_preset_hcut_slope(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_usb_out_level @ fffeb705  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_usb_out_level @ fffeb705  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n12 (PRESET n usb_out_level): called by ai_ex06{01..05}12 with n = 1..5;
  *     compares g_opstate.presets[n-1].usb_out_level with its shadow, formats with ai_ex_fmt_u8 [fact: fffeb705]
  * Tag: [fact]
@@ -5877,7 +5877,7 @@ void ai_ex_preset_usb_out_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_rear_out_level @ fffeb859  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_rear_out_level @ fffeb859  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n13 (PRESET n rear_out_level): called by ai_ex06{01..05}13 with n = 1..5;
  *     compares g_opstate.presets[n-1].rear_out_level with its shadow, formats with ai_ex_fmt_u8 [fact: fffeb859]
  * Tag: [fact]
@@ -5931,7 +5931,7 @@ void ai_ex_preset_rear_out_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_tx_bpf_sel @ fffeb9ad  (380 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_tx_bpf_sel @ fffeb9ad  (380 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n14 (PRESET n tx_bpf_sel): called by ai_ex06{01..05}14 with n = 1..5;
  *     compares g_opstate.presets[n-1].tx_bpf_sel with its shadow, formats with nib2hex [fact: fffeb9ad]
  * Tag: [fact]
@@ -5985,7 +5985,7 @@ void ai_ex_preset_tx_bpf_sel(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_mod_source @ fffebb29  (380 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_mod_source @ fffebb29  (380 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n15 (PRESET n mod_source): called by ai_ex06{01..05}15 with n = 1..5;
  *     compares g_opstate.presets[n-1].mod_source with its shadow, formats with nib2hex [fact: fffebb29]
  * Tag: [fact]
@@ -6039,7 +6039,7 @@ void ai_ex_preset_mod_source(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_usb_mod_gain @ fffebca5  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_usb_mod_gain @ fffebca5  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n16 (PRESET n usb_mod_gain): called by ai_ex06{01..05}16 with n = 1..5;
  *     compares g_opstate.presets[n-1].usb_mod_gain with its shadow, formats with ai_ex_fmt_u8 [fact: fffebca5]
  * Tag: [fact]
@@ -6093,7 +6093,7 @@ void ai_ex_preset_usb_mod_gain(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_rear_mod_gain @ fffebdf9  (340 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_rear_mod_gain @ fffebdf9  (340 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n17 (PRESET n rear_mod_gain): called by ai_ex06{01..05}17 with n = 1..5;
  *     compares g_opstate.presets[n-1].rear_mod_gain with its shadow, formats with ai_ex_fmt_u8 [fact: fffebdf9]
  * Tag: [fact]
@@ -6147,7 +6147,7 @@ void ai_ex_preset_rear_mod_gain(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_preset_rptt_select @ fffebf4d  (380 bytes, 5 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex_preset_rptt_select @ fffebf4d  (380 bytes, 5 callers, export file fffeafee_fffec1a7.c)
  * Purpose: Shared AI detector for EX060n18 (PRESET n rptt_select): called by ai_ex06{01..05}18 with n = 1..5;
  *     compares g_opstate.presets[n-1].rptt_select with its shadow, formats with nib2hex [fact: fffebf4d]
  * Tag: [fact]
@@ -6201,7 +6201,7 @@ void ai_ex_preset_rptt_select(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060101 @ fffec0c9  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060101 @ fffec0c9  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060101`, entry 206 of 0xFFF8E1A0: only calls `FUN_fffea63a(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6221,7 +6221,7 @@ void ai_ex060101(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060102 @ fffec0cf  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060102 @ fffec0cf  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060102`, entry 207 of 0xFFF8E1A0: only calls `FUN_fffea88c(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6241,7 +6241,7 @@ void ai_ex060102(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060103 @ fffec0d5  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060103 @ fffec0d5  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060103`, entry 208 of 0xFFF8E1A0: only calls `FUN_fffeaa08(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6261,7 +6261,7 @@ void ai_ex060103(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060104 @ fffec0db  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060104 @ fffec0db  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060104`, entry 209 of 0xFFF8E1A0: only calls `FUN_fffeab84(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6281,7 +6281,7 @@ void ai_ex060104(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060105 @ fffec0e1  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060105 @ fffec0e1  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060105`, entry 210 of 0xFFF8E1A0: only calls `FUN_fffead00(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6301,7 +6301,7 @@ void ai_ex060105(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060106 @ fffec0e7  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060106 @ fffec0e7  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060106`, entry 211 of 0xFFF8E1A0: only calls `FUN_fffeae77(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6321,7 +6321,7 @@ void ai_ex060106(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060107 @ fffec0ed  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060107 @ fffec0ed  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060107`, entry 212 of 0xFFF8E1A0: only calls `FUN_fffeafee(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6341,7 +6341,7 @@ void ai_ex060107(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060108 @ fffec0f3  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060108 @ fffec0f3  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060108`, entry 213 of 0xFFF8E1A0: only calls `FUN_fffeb165(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6361,7 +6361,7 @@ void ai_ex060108(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060109 @ fffec0f9  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060109 @ fffec0f9  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060109`, entry 214 of 0xFFF8E1A0: only calls `FUN_fffeb2b9(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6381,7 +6381,7 @@ void ai_ex060109(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060110 @ fffec0ff  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060110 @ fffec0ff  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060110`, entry 215 of 0xFFF8E1A0: only calls `FUN_fffeb435(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6401,7 +6401,7 @@ void ai_ex060110(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060111 @ fffec105  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060111 @ fffec105  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060111`, entry 216 of 0xFFF8E1A0: only calls `FUN_fffeb589(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6421,7 +6421,7 @@ void ai_ex060111(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060112 @ fffec10b  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060112 @ fffec10b  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060112`, entry 217 of 0xFFF8E1A0: only calls `FUN_fffeb705(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6441,7 +6441,7 @@ void ai_ex060112(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060113 @ fffec111  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060113 @ fffec111  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060113`, entry 218 of 0xFFF8E1A0: only calls `FUN_fffeb859(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6461,7 +6461,7 @@ void ai_ex060113(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060114 @ fffec117  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060114 @ fffec117  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060114`, entry 219 of 0xFFF8E1A0: only calls `FUN_fffeb9ad(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6481,7 +6481,7 @@ void ai_ex060114(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060115 @ fffec11d  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060115 @ fffec11d  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060115`, entry 220 of 0xFFF8E1A0: only calls `FUN_fffebb29(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6501,7 +6501,7 @@ void ai_ex060115(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060116 @ fffec123  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060116 @ fffec123  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060116`, entry 221 of 0xFFF8E1A0: only calls `FUN_fffebca5(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6521,7 +6521,7 @@ void ai_ex060116(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060117 @ fffec129  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060117 @ fffec129  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060117`, entry 222 of 0xFFF8E1A0: only calls `FUN_fffebdf9(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6541,7 +6541,7 @@ void ai_ex060117(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060118 @ fffec12f  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060118 @ fffec12f  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060118`, entry 223 of 0xFFF8E1A0: only calls `FUN_fffebf4d(1)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6561,7 +6561,7 @@ void ai_ex060118(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060201 @ fffec135  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060201 @ fffec135  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060201`, entry 224 of 0xFFF8E1A0: only calls `FUN_fffea63a(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6581,7 +6581,7 @@ void ai_ex060201(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060202 @ fffec13b  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060202 @ fffec13b  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060202`, entry 225 of 0xFFF8E1A0: only calls `FUN_fffea88c(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6601,7 +6601,7 @@ void ai_ex060202(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060203 @ fffec141  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060203 @ fffec141  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060203`, entry 226 of 0xFFF8E1A0: only calls `FUN_fffeaa08(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6621,7 +6621,7 @@ void ai_ex060203(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060204 @ fffec147  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060204 @ fffec147  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060204`, entry 227 of 0xFFF8E1A0: only calls `FUN_fffeab84(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6641,7 +6641,7 @@ void ai_ex060204(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060205 @ fffec14d  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060205 @ fffec14d  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060205`, entry 228 of 0xFFF8E1A0: only calls `FUN_fffead00(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6661,7 +6661,7 @@ void ai_ex060205(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060206 @ fffec153  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060206 @ fffec153  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060206`, entry 229 of 0xFFF8E1A0: only calls `FUN_fffeae77(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6681,7 +6681,7 @@ void ai_ex060206(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060207 @ fffec159  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060207 @ fffec159  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060207`, entry 230 of 0xFFF8E1A0: only calls `FUN_fffeafee(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6701,7 +6701,7 @@ void ai_ex060207(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060208 @ fffec15f  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060208 @ fffec15f  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060208`, entry 231 of 0xFFF8E1A0: only calls `FUN_fffeb165(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6721,7 +6721,7 @@ void ai_ex060208(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060209 @ fffec165  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060209 @ fffec165  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060209`, entry 232 of 0xFFF8E1A0: only calls `FUN_fffeb2b9(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6741,7 +6741,7 @@ void ai_ex060209(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060210 @ fffec16b  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060210 @ fffec16b  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060210`, entry 233 of 0xFFF8E1A0: only calls `FUN_fffeb435(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6761,7 +6761,7 @@ void ai_ex060210(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060211 @ fffec171  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060211 @ fffec171  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060211`, entry 234 of 0xFFF8E1A0: only calls `FUN_fffeb589(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6781,7 +6781,7 @@ void ai_ex060211(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060212 @ fffec177  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060212 @ fffec177  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060212`, entry 235 of 0xFFF8E1A0: only calls `FUN_fffeb705(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6801,7 +6801,7 @@ void ai_ex060212(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060213 @ fffec17d  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060213 @ fffec17d  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060213`, entry 236 of 0xFFF8E1A0: only calls `FUN_fffeb859(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6821,7 +6821,7 @@ void ai_ex060213(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060214 @ fffec183  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060214 @ fffec183  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060214`, entry 237 of 0xFFF8E1A0: only calls `FUN_fffeb9ad(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6841,7 +6841,7 @@ void ai_ex060214(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060215 @ fffec189  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060215 @ fffec189  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060215`, entry 238 of 0xFFF8E1A0: only calls `FUN_fffebb29(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6861,7 +6861,7 @@ void ai_ex060215(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060216 @ fffec18f  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060216 @ fffec18f  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060216`, entry 239 of 0xFFF8E1A0: only calls `FUN_fffebca5(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6881,7 +6881,7 @@ void ai_ex060216(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060217 @ fffec195  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060217 @ fffec195  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060217`, entry 240 of 0xFFF8E1A0: only calls `FUN_fffebdf9(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6901,7 +6901,7 @@ void ai_ex060217(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060218 @ fffec19b  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060218 @ fffec19b  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060218`, entry 241 of 0xFFF8E1A0: only calls `FUN_fffebf4d(2)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6921,7 +6921,7 @@ void ai_ex060218(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060301 @ fffec1a1  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060301 @ fffec1a1  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060301`, entry 242 of 0xFFF8E1A0: only calls `FUN_fffea63a(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6941,7 +6941,7 @@ void ai_ex060301(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060302 @ fffec1a7  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060302 @ fffec1a7  (6 bytes, 1 callers, export file fffeafee_fffec1a7.c)
  * Purpose: `EX060302`, entry 243 of 0xFFF8E1A0: only calls `FUN_fffea88c(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6959,9 +6959,8 @@ void ai_ex060302(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex060303 @ fffec1ad  (6 bytes, 1 callers, export file fffeb165_fffec1ad.c)
+ * ai_ex060303 @ fffec1ad  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060303`, entry 244 of 0xFFF8E1A0: only calls `FUN_fffeaa08(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -6979,8 +6978,9 @@ void ai_ex060303(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex060304 @ fffec1b3  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060304 @ fffec1b3  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060304`, entry 245 of 0xFFF8E1A0: only calls `FUN_fffeab84(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7000,7 +7000,7 @@ void ai_ex060304(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060305 @ fffec1b9  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060305 @ fffec1b9  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060305`, entry 246 of 0xFFF8E1A0: only calls `FUN_fffead00(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7020,7 +7020,7 @@ void ai_ex060305(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060306 @ fffec1bf  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060306 @ fffec1bf  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060306`, entry 247 of 0xFFF8E1A0: only calls `FUN_fffeae77(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7040,7 +7040,7 @@ void ai_ex060306(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060307 @ fffec1c5  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060307 @ fffec1c5  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060307`, entry 248 of 0xFFF8E1A0: only calls `FUN_fffeafee(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7060,7 +7060,7 @@ void ai_ex060307(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060308 @ fffec1cb  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060308 @ fffec1cb  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060308`, entry 249 of 0xFFF8E1A0: only calls `FUN_fffeb165(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7080,7 +7080,7 @@ void ai_ex060308(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060309 @ fffec1d1  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060309 @ fffec1d1  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060309`, entry 250 of 0xFFF8E1A0: only calls `FUN_fffeb2b9(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7100,7 +7100,7 @@ void ai_ex060309(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060310 @ fffec1d7  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060310 @ fffec1d7  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060310`, entry 251 of 0xFFF8E1A0: only calls `FUN_fffeb435(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7120,7 +7120,7 @@ void ai_ex060310(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060311 @ fffec1dd  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060311 @ fffec1dd  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060311`, entry 252 of 0xFFF8E1A0: only calls `FUN_fffeb589(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7140,7 +7140,7 @@ void ai_ex060311(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060312 @ fffec1e3  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060312 @ fffec1e3  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060312`, entry 253 of 0xFFF8E1A0: only calls `FUN_fffeb705(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7160,7 +7160,7 @@ void ai_ex060312(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060313 @ fffec1e9  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060313 @ fffec1e9  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060313`, entry 254 of 0xFFF8E1A0: only calls `FUN_fffeb859(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7180,7 +7180,7 @@ void ai_ex060313(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060314 @ fffec1ef  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060314 @ fffec1ef  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060314`, entry 255 of 0xFFF8E1A0: only calls `FUN_fffeb9ad(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7200,7 +7200,7 @@ void ai_ex060314(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060315 @ fffec1f5  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060315 @ fffec1f5  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060315`, entry 256 of 0xFFF8E1A0: only calls `FUN_fffebb29(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7220,7 +7220,7 @@ void ai_ex060315(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060316 @ fffec1fb  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060316 @ fffec1fb  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060316`, entry 257 of 0xFFF8E1A0: only calls `FUN_fffebca5(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7240,7 +7240,7 @@ void ai_ex060316(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060317 @ fffec201  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060317 @ fffec201  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060317`, entry 258 of 0xFFF8E1A0: only calls `FUN_fffebdf9(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7260,7 +7260,7 @@ void ai_ex060317(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060318 @ fffec207  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060318 @ fffec207  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060318`, entry 259 of 0xFFF8E1A0: only calls `FUN_fffebf4d(3)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7280,7 +7280,7 @@ void ai_ex060318(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060401 @ fffec20d  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060401 @ fffec20d  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060401`, entry 260 of 0xFFF8E1A0: only calls `FUN_fffea63a(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7300,7 +7300,7 @@ void ai_ex060401(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060402 @ fffec213  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060402 @ fffec213  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060402`, entry 261 of 0xFFF8E1A0: only calls `FUN_fffea88c(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7320,7 +7320,7 @@ void ai_ex060402(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060403 @ fffec219  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060403 @ fffec219  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060403`, entry 262 of 0xFFF8E1A0: only calls `FUN_fffeaa08(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7340,7 +7340,7 @@ void ai_ex060403(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060404 @ fffec21f  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060404 @ fffec21f  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060404`, entry 263 of 0xFFF8E1A0: only calls `FUN_fffeab84(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7360,7 +7360,7 @@ void ai_ex060404(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060405 @ fffec225  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060405 @ fffec225  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060405`, entry 264 of 0xFFF8E1A0: only calls `FUN_fffead00(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7380,7 +7380,7 @@ void ai_ex060405(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060406 @ fffec22b  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060406 @ fffec22b  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060406`, entry 265 of 0xFFF8E1A0: only calls `FUN_fffeae77(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7400,7 +7400,7 @@ void ai_ex060406(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060407 @ fffec231  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060407 @ fffec231  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060407`, entry 266 of 0xFFF8E1A0: only calls `FUN_fffeafee(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7420,7 +7420,7 @@ void ai_ex060407(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060408 @ fffec237  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060408 @ fffec237  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060408`, entry 267 of 0xFFF8E1A0: only calls `FUN_fffeb165(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7440,7 +7440,7 @@ void ai_ex060408(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060409 @ fffec23d  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060409 @ fffec23d  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060409`, entry 268 of 0xFFF8E1A0: only calls `FUN_fffeb2b9(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7460,7 +7460,7 @@ void ai_ex060409(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060410 @ fffec243  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060410 @ fffec243  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060410`, entry 269 of 0xFFF8E1A0: only calls `FUN_fffeb435(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7480,7 +7480,7 @@ void ai_ex060410(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060411 @ fffec249  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060411 @ fffec249  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060411`, entry 270 of 0xFFF8E1A0: only calls `FUN_fffeb589(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7500,7 +7500,7 @@ void ai_ex060411(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060412 @ fffec24f  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060412 @ fffec24f  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060412`, entry 271 of 0xFFF8E1A0: only calls `FUN_fffeb705(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7520,7 +7520,7 @@ void ai_ex060412(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060413 @ fffec255  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060413 @ fffec255  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060413`, entry 272 of 0xFFF8E1A0: only calls `FUN_fffeb859(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7540,7 +7540,7 @@ void ai_ex060413(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060414 @ fffec25b  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060414 @ fffec25b  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060414`, entry 273 of 0xFFF8E1A0: only calls `FUN_fffeb9ad(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7560,7 +7560,7 @@ void ai_ex060414(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060415 @ fffec261  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060415 @ fffec261  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060415`, entry 274 of 0xFFF8E1A0: only calls `FUN_fffebb29(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7580,7 +7580,7 @@ void ai_ex060415(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060416 @ fffec267  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060416 @ fffec267  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060416`, entry 275 of 0xFFF8E1A0: only calls `FUN_fffebca5(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7600,7 +7600,7 @@ void ai_ex060416(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060417 @ fffec26d  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060417 @ fffec26d  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060417`, entry 276 of 0xFFF8E1A0: only calls `FUN_fffebdf9(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7620,7 +7620,7 @@ void ai_ex060417(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060418 @ fffec273  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060418 @ fffec273  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060418`, entry 277 of 0xFFF8E1A0: only calls `FUN_fffebf4d(4)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7640,7 +7640,7 @@ void ai_ex060418(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060501 @ fffec279  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060501 @ fffec279  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060501`, entry 278 of 0xFFF8E1A0: only calls `FUN_fffea63a(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7660,7 +7660,7 @@ void ai_ex060501(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060502 @ fffec27f  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060502 @ fffec27f  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060502`, entry 279 of 0xFFF8E1A0: only calls `FUN_fffea88c(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7680,7 +7680,7 @@ void ai_ex060502(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060503 @ fffec285  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060503 @ fffec285  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060503`, entry 280 of 0xFFF8E1A0: only calls `FUN_fffeaa08(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7700,7 +7700,7 @@ void ai_ex060503(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060504 @ fffec28b  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060504 @ fffec28b  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060504`, entry 281 of 0xFFF8E1A0: only calls `FUN_fffeab84(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7720,7 +7720,7 @@ void ai_ex060504(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060505 @ fffec291  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060505 @ fffec291  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060505`, entry 282 of 0xFFF8E1A0: only calls `FUN_fffead00(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7740,7 +7740,7 @@ void ai_ex060505(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060506 @ fffec297  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060506 @ fffec297  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060506`, entry 283 of 0xFFF8E1A0: only calls `FUN_fffeae77(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7760,7 +7760,7 @@ void ai_ex060506(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060507 @ fffec29d  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060507 @ fffec29d  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060507`, entry 284 of 0xFFF8E1A0: only calls `FUN_fffeafee(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7780,7 +7780,7 @@ void ai_ex060507(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060508 @ fffec2a3  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060508 @ fffec2a3  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060508`, entry 285 of 0xFFF8E1A0: only calls `FUN_fffeb165(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7800,7 +7800,7 @@ void ai_ex060508(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060509 @ fffec2a9  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060509 @ fffec2a9  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060509`, entry 286 of 0xFFF8E1A0: only calls `FUN_fffeb2b9(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7820,7 +7820,7 @@ void ai_ex060509(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060510 @ fffec2af  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060510 @ fffec2af  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060510`, entry 287 of 0xFFF8E1A0: only calls `FUN_fffeb435(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7840,7 +7840,7 @@ void ai_ex060510(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060511 @ fffec2b5  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060511 @ fffec2b5  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060511`, entry 288 of 0xFFF8E1A0: only calls `FUN_fffeb589(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7860,7 +7860,7 @@ void ai_ex060511(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060512 @ fffec2bb  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060512 @ fffec2bb  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060512`, entry 289 of 0xFFF8E1A0: only calls `FUN_fffeb705(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7880,7 +7880,7 @@ void ai_ex060512(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060513 @ fffec2c1  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060513 @ fffec2c1  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060513`, entry 290 of 0xFFF8E1A0: only calls `FUN_fffeb859(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7900,7 +7900,7 @@ void ai_ex060513(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060514 @ fffec2c7  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060514 @ fffec2c7  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060514`, entry 291 of 0xFFF8E1A0: only calls `FUN_fffeb9ad(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7920,7 +7920,7 @@ void ai_ex060514(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060515 @ fffec2cd  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060515 @ fffec2cd  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060515`, entry 292 of 0xFFF8E1A0: only calls `FUN_fffebb29(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7940,7 +7940,7 @@ void ai_ex060515(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex060516 @ fffec2d3  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060516 @ fffec2d3  (6 bytes, 1 callers, export file fffec1ad_fffec2d3.c)
  * Purpose: `EX060516`, entry 293 of 0xFFF8E1A0: only calls `FUN_fffebca5(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7958,9 +7958,8 @@ void ai_ex060516(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ai_ex060517 @ fffec2d9  (6 bytes, 1 callers, export file fffec1b3_fffec2d9.c)
+ * ai_ex060517 @ fffec2d9  (6 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Purpose: `EX060517`, entry 294 of 0xFFF8E1A0: only calls `FUN_fffebdf9(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7978,8 +7977,9 @@ void ai_ex060517(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ai_ex060518 @ fffec2df  (6 bytes, 1 callers, export file fffec2df_fffed6f5.c)
+ * ai_ex060518 @ fffec2df  (6 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Purpose: `EX060518`, entry 295 of 0xFFF8E1A0: only calls `FUN_fffebf4d(5)` (6 B) [fact], the detector shared by
  *     the rows of PRESET1..5; the argument is the PRESET number [inference]
  * Tag: [fact] [inference]
@@ -7999,7 +7999,7 @@ void ai_ex060518(void)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_fmt_u8 @ fffec2e5  (275 bytes, 123 callers, export file fffec2df_fffed6f5.c)
+ * ai_ex_fmt_u8 @ fffec2e5  (275 bytes, 123 callers, export file fffec2d9_fffed62a.c)
  * Purpose: CAT AI EX reply value at 0x1B23D: u8 as 2 (arg 0) or 3 (arg 1) digits, or signed +/- 2 digits (3rd arg
  *     0), then ';'; returns the reply length that the ai_ex* detectors store to 0x1FF12 [fact]
  * Tag: [fact]
@@ -8075,7 +8075,7 @@ short ai_ex_fmt_u8(byte param_1,char param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ai_ex_fmt_u16_4 @ fffec3f8  (116 bytes, 37 callers, export file fffec2df_fffed6f5.c)
+ * ai_ex_fmt_u16_4 @ fffec3f8  (116 bytes, 37 callers, export file fffec2d9_fffed62a.c)
  * Purpose: CAT AI EX reply value at 0x1B23D: u16 as 4 digits + ';'; returns the reply length [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat-ai.md

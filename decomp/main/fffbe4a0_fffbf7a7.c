@@ -1,0 +1,1466 @@
+// FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
+
+// ===== FUN_fffbe4a0 @ fffbe4a0 (8 bytes)
+
+void FUN_fffbe4a0(void)
+
+{
+  ui_softkey_dispatch(0x154);
+  return;
+}
+
+
+// ===== FUN_fffbe4a8 @ fffbe4a8 (8 bytes)
+
+void FUN_fffbe4a8(void)
+
+{
+  ui_softkey_dispatch(0x155);
+  return;
+}
+
+
+// ===== FUN_fffbe4b0 @ fffbe4b0 (8 bytes)
+
+void FUN_fffbe4b0(void)
+
+{
+  ui_softkey_dispatch(0x156);
+  return;
+}
+
+
+// ===== FUN_fffbe4b8 @ fffbe4b8 (8 bytes)
+
+void FUN_fffbe4b8(void)
+
+{
+  ui_softkey_dispatch(0x157);
+  return;
+}
+
+
+// ===== FUN_fffbe4c0 @ fffbe4c0 (8 bytes)
+
+void FUN_fffbe4c0(void)
+
+{
+  ui_softkey_dispatch(0x159);
+  return;
+}
+
+
+// ===== FUN_fffbe4c8 @ fffbe4c8 (8 bytes)
+
+void FUN_fffbe4c8(void)
+
+{
+  ui_softkey_dispatch(0x166);
+  return;
+}
+
+
+// ===== FUN_fffbe4d0 @ fffbe4d0 (8 bytes)
+
+void FUN_fffbe4d0(void)
+
+{
+  ui_softkey_dispatch(0x170);
+  return;
+}
+
+
+// ===== FUN_fffbe4d8 @ fffbe4d8 (8 bytes)
+
+void FUN_fffbe4d8(void)
+
+{
+  ui_softkey_dispatch(0x180);
+  return;
+}
+
+
+// ===== FUN_fffbe4e0 @ fffbe4e0 (8 bytes)
+
+void FUN_fffbe4e0(void)
+
+{
+  ui_softkey_dispatch(0x181);
+  return;
+}
+
+
+// ===== FUN_fffbe4e8 @ fffbe4e8 (46 bytes)
+
+void FUN_fffbe4e8(void)
+
+{
+  byte bVar1;
+  
+  bVar1 = FUN_fff9cc3d();
+  if (1 < bVar1) {
+    FUN_fff9cc4c(bVar1 - 1);
+    PTR_g_ui_00025d54->dl_req_34 = 1;
+  }
+  beep_request(1);
+  return;
+}
+
+
+// ===== FUN_fffbe516 @ fffbe516 (46 bytes)
+
+void FUN_fffbe516(void)
+
+{
+  byte bVar1;
+  
+  bVar1 = FUN_fff9cc3d();
+  if (bVar1 < 3) {
+    FUN_fff9cc4c(bVar1 + 1);
+    PTR_g_ui_00025d54->dl_req_34 = 1;
+  }
+  beep_request(1);
+  return;
+}
+
+
+// ===== FUN_fffbe544 @ fffbe544 (62 bytes)
+
+/* WARNING: Removing unreachable block (ram,0xfffbe57f) */
+
+undefined4 FUN_fffbe544(void)
+
+{
+  undefined4 uVar1;
+  ui_state *p_ui_state;
+  
+  PTR_g_ui_00025d54->dl_block_34 = 0;
+  FUN_fff9cc4c(1);
+  PTR_g_ui_00025d54->menu_state = 2;
+  beep_request(1);
+  p_ui_state = PTR_g_ui_00025d54;
+  uVar1 = FUN_fffc523a(0,1,0);
+  p_ui_state->rf_gain = (byte)uVar1;
+  return uVar1;
+}
+
+
+// ===== key_lock_pwr_press @ fffbe582 (17 bytes)
+
+/* Front-panel key 0x300 LOCK/PWR, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_lock_pwr_press(void)
+
+{
+  if (g_ui.memlist_open != 1) {
+    return;
+  }
+  memlist_close();
+  return;
+}
+
+
+// ===== key_lock_pwr_short @ fffbe593 (170 bytes)
+
+/* Front-panel key 0x300 LOCK/PWR, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_lock_pwr_short(void)
+
+{
+  PTR_g_ui_00025d54->power_key_req = 1;
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate.lock_on == 0) {
+    g_opstate.lock_on = 1;
+    PTR_g_ui_00025d54->popup_code = 0x47;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
+    popup_duration_get(0x47);
+    popup_open_timed();
+  }
+  else {
+    g_opstate.lock_on = 0;
+    PTR_g_ui_00025d54->popup_code = 0x48;
+    popup_duration_get(0x48);
+    popup_open_timed();
+  }
+  beep_request(1);
+  return;
+}
+
+
+// ===== key_lock_pwr_long @ fffbe63d (67 bytes)
+
+/* Front-panel key 0x300 LOCK/PWR, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_lock_pwr_long(void)
+
+{
+  if (DAT_0001fa40 == 0x300) {
+    if (PTR_g_ui_00025d54->dvs_lm1_flag == 1) {
+      PTR_g_ui_00025d54->dvs_lm1_flag = 0;
+      PTR_g_ui_00025d54->dl_req_3f = 1;
+    }
+    PTR_g_ui_00025d54->power_key_req = 2;
+    return;
+  }
+  return;
+}
+
+
+// ===== key_tune_press @ fffbe680 (60 bytes)
+
+/* Front-panel key 0x301 TUNE, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_tune_press(void)
+
+{
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    beep_request(1);
+                    /* Sets UI +0x443 [doc] */
+    vfo_mark_edited_if_vfo();
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== key_tune_short @ fffbe6bc (216 bytes)
+
+/* Front-panel key 0x301 TUNE, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_tune_short(void)
+
+{
+  int iVar1;
+  byte g_opstate_ex030104_tuner_type_select_val;
+  
+  g_opstate_ex030104_tuner_type_select_val = g_opstate.ex030104_tuner_type_select;
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate_ex030104_tuner_type_select_val == 3) {
+    if (PTR_g_ui_00025d54->tune_cycle == 0) {
+      tuner_tune_state_set(1);
+      return;
+    }
+    if (PTR_g_ui_00025d54->tune_cycle == 1) {
+      tuner_tune_state_set(0);
+      return;
+    }
+  }
+  else {
+    if (g_opstate_ex030104_tuner_type_select_val == 2) {
+      iVar1 = FUN_fffed6f5();
+      if (iVar1 != 1) {
+        beep_request(3);
+        return;
+      }
+      iVar1 = vfo_tuner_bit_get();
+      if (iVar1 == 0) {
+        vfo_tuner_bit_set(1);
+        g_ui.atu_state = 4;
+        return;
+      }
+      vfo_tuner_bit_set(0);
+      g_ui.atu_state = 6;
+      return;
+    }
+    if (g_opstate_ex030104_tuner_type_select_val < 2) {
+      if (g_ui.tune_cycle_3d != 0) {
+        FUN_fffec52d();
+        return;
+      }
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
+      iVar1 = vfo_tuner_bit_get();
+      if (iVar1 == 0) {
+        vfo_tuner_bit_set(1);
+        g_ui.atu_state = 1;
+        return;
+      }
+      vfo_tuner_bit_set(0);
+      g_ui.atu_state = 3;
+      return;
+    }
+  }
+  return;
+}
+
+
+// ===== key_tune_long @ fffbe794 (83 bytes)
+
+/* Front-panel key 0x301 TUNE, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_tune_long(void)
+
+{
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate.ex030104_tuner_type_select < 2) {
+    if (g_ui.tx_lamp != 0) {
+      beep_request(3);
+      return;
+    }
+    g_ui.tune_cycle_3d = 1;
+  }
+  else if (g_opstate.ex030104_tuner_type_select == 2) {
+    g_ui.tune_cycle_3c = 1;
+  }
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_mox_vox_press @ fffbe7e7 (88 bytes)
+
+/* Front-panel key 0x302 MOX/VOX, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_mox_vox_press(void)
+
+{
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  if ((DAT_0001b4d9 != '\0') && (DAT_0001b4d9 != '\x01')) {
+    PTR_g_ui_00025d54->ptt_mox = 0;
+    return;
+  }
+  return;
+}
+
+
+// ===== key_mox_vox_short @ fffbe83f (147 bytes)
+
+/* Front-panel key 0x302 MOX/VOX, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_mox_vox_short(void)
+
+{
+  bool bVar1;
+  byte vfo_mode_ret_2;
+  uint vfo_mode_ret;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if ((DAT_0001b4d9 == '\0') || (DAT_0001b4d9 == '\x01')) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (!bVar1) {
+    DAT_0001b4d9 = 0;
+    return;
+  }
+  vfo_mode_ret_2 = vfo_mode(1);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if ((1 < vfo_mode_ret - 2) && (vfo_mode_ret != 0xc && vfo_mode_ret != 0xd)) {
+    g_opstate.vox_on = g_opstate.vox_on == 0;
+    beep_request(1);
+    swtimer_start(0x2f,100);
+    return;
+  }
+  beep_request(3);
+  return;
+}
+
+
+// ===== key_mox_vox_long @ fffbe8d2 (93 bytes)
+
+/* Front-panel key 0x302 MOX/VOX, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_mox_vox_long(void)
+
+{
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (DAT_0001b4d9 == '\0') {
+    DAT_0001b4d9 = 2;
+    PTR_g_ui_00025d54->ptt_mox = 1;
+    return;
+  }
+  if (DAT_0001b4d9 == '\x01') {
+    DAT_0001b4d9 = 2;
+    PTR_g_ui_00025d54->ptt_mox = 1;
+    return;
+  }
+  DAT_0001b4d9 = 0;
+  return;
+}
+
+
+// ===== key_nb_press @ fffbe92f (60 bytes)
+
+/* Front-panel key 0x303 NB, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_nb_press(void)
+
+{
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    beep_request(1);
+                    /* Sets UI +0x443 [doc] */
+    vfo_mark_edited_if_vfo();
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== key_nb_short @ fffbe96b (107 bytes)
+
+/* Front-panel key 0x303 NB, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_nb_short(void)
+
+{
+  byte bVar1;
+  byte *local_4;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (PTR_g_ui_00025d54->dl_req_37 == 1) {
+    func_panel_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  local_4 = &p_vfo_rec->flags2;
+  bVar1 = *local_4;
+  if ((bVar1 & 2) == 0) {
+    *local_4 = bVar1 | 2;
+  }
+  else {
+    *local_4 = bVar1 & 0xfd;
+  }
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  return;
+}
+
+
+// ===== key_nb_long @ fffbe9d6 (198 bytes)
+
+/* Front-panel key 0x303 NB, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_nb_long(void)
+
+{
+  bool bVar1;
+  byte *pbStack_4;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (PTR_g_ui_00025d54->dl_req_37 == 1) {
+    func_panel_close();
+  }
+  if ((PTR_g_ui_00025d54->dl_req_popup_b == 1) && (PTR_g_ui_00025d54->popup_code == 0x38)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    g_opstate.nb_level = 0;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
+    popup_duration_get(0x38);
+    popup_open_timed();
+    beep_request(1);
+    return;
+  }
+  PTR_g_ui_00025d54->popup_code = 0x38;
+  popup_duration_get(0x38);
+  popup_open_timed();
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  pbStack_4 = &p_vfo_rec->flags2;
+  *pbStack_4 = *pbStack_4 | 2;
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_dnr_press @ fffbea9c (144 bytes)
+
+/* Front-panel key 0x304 DNR, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_dnr_press(void)
+
+{
+  bool bVar1;
+  byte vfo_mode_ret;
+  
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  vfo_mode_ret = vfo_mode(0);
+  if ((vfo_mode_ret == 6) || (vfo_mode_ret == 7)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if ((bVar1) || (vfo_mode_ret == 10)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if ((bVar1) || (vfo_mode_ret == 0xb)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  beep_request(1);
+                    /* Sets UI +0x443 [doc] */
+  vfo_mark_edited_if_vfo();
+  return;
+}
+
+
+// ===== key_dnr_short @ fffbeb2c (119 bytes)
+
+/* Front-panel key 0x304 DNR, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_dnr_short(void)
+
+{
+  byte bVar1;
+  bool local_5;
+  byte *local_4;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (PTR_g_ui_00025d54->dl_req_37 == 1) {
+    func_panel_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  local_4 = &p_vfo_rec->dnr;
+  bVar1 = *local_4;
+  local_5 = (bVar1 & 0x10) != 0;
+  if (local_5) {
+    *local_4 = bVar1 & 0xef;
+  }
+  else {
+    *local_4 = bVar1 | 0x10;
+  }
+  local_5 = !local_5;
+  FUN_fffc5127(local_5);
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  return;
+}
+
+
+// ===== key_dnr_long @ fffbeba3 (201 bytes)
+
+/* Front-panel key 0x304 DNR, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_dnr_long(void)
+
+{
+  bool bVar1;
+  byte *local_4;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (PTR_g_ui_00025d54->dl_req_37 == 1) {
+    func_panel_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  local_4 = &p_vfo_rec->dnr;
+  if ((PTR_g_ui_00025d54->dl_req_popup_b == 1) && (PTR_g_ui_00025d54->popup_code == 0x39)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    *local_4 = *local_4 & 0xf1 | 1;
+    PTR_g_ui_00025d54->freq_refresh_req = 1;
+  }
+  else {
+    PTR_g_ui_00025d54->popup_code = 0x39;
+    if ((*local_4 & 0x10) == 0) {
+      *local_4 = *local_4 | 0x10;
+      PTR_g_ui_00025d54->freq_refresh_req = 1;
+    }
+  }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
+  popup_duration_get(0x39);
+  popup_open_timed();
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_split_press @ fffbec6c (57 bytes)
+
+/* Front-panel key 0x305 SPLIT, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_split_press(void)
+
+{
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    beep_request(1);
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== split_toggle @ fffbeca5 (352 bytes)
+
+/* FT/ST: toggle 0x9C5E, save/restore 0x9DBE/0x9DBF */
+
+void split_toggle(void)
+
+{
+  vfo_state vVar1;
+  vfo_state *pvStack_4;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  msg_send_cancel();
+  if (g_opstate.split_on == 1) {
+    g_opstate.split_on = 0;
+    g_opstate.vfo_state_a = PTR_g_ui_00025d54->split_saved_state_a;
+    g_opstate.vfo_state_b = PTR_g_ui_00025d54->split_saved_state_b;
+    PTR_g_ui_00025d54->txw_on = 0;
+    g_ui.txw_swap = 0;
+    FUN_fff9cdb0('\0');
+    goto LAB_fffbede9;
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    pvStack_4 = &g_opstate.vfo_state_a;
+  }
+  else {
+    pvStack_4 = &g_opstate.vfo_state_b;
+  }
+  vVar1 = *pvStack_4;
+  if (vVar1 == VFO_STATE_MEMORY) {
+LAB_fffbed59:
+    vm_toggle_core();
+  }
+  else if (vVar1 == VFO_STATE_PMS) {
+    *pvStack_4 = VFO_STATE_VFO;
+  }
+  else if ((vVar1 == VFO_STATE_QMB) || (vVar1 == VFO_STATE_LOCKED_7 || vVar1 == VFO_STATE_LOCKED_8))
+  goto LAB_fffbed59;
+  g_opstate.split_on = 1;
+  PTR_g_ui_00025d54->split_saved_state_a = g_opstate.vfo_state_a;
+  PTR_g_ui_00025d54->split_saved_state_b = g_opstate.vfo_state_b;
+  g_opstate.split_saved_vfo_state_a = g_opstate.vfo_state_a;
+  g_opstate.split_saved_vfo_state_b = g_opstate.vfo_state_b;
+  if (g_opstate.active_vfo == VFO_A) {
+    PTR_g_ui_00025d54->clar_flags_a = 0;
+  }
+  else {
+    PTR_g_ui_00025d54->clar_flags_b = 0;
+  }
+  if (PTR_g_ui_00025d54->split_long_on == 1) {
+    FUN_fff9cdb0('\0');
+  }
+  else {
+    FUN_fff9cdb0('\x01');
+  }
+LAB_fffbede9:
+  PTR_g_ui_00025d54->clar_flags_a = 0;
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  return;
+}
+
+
+// ===== key_split_long @ fffbee05 (77 bytes)
+
+/* Front-panel key 0x305 SPLIT, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_split_long(void)
+
+{
+  if (g_opstate.split_on == 1) {
+    if (g_ui.memlist_open == 1) {
+      memlist_close();
+    }
+    if (PTR_g_ui_00025d54->split_long_on == 0) {
+      PTR_g_ui_00025d54->split_long_on = 1;
+      FUN_fff9cdb0('\0');
+    }
+    else {
+      PTR_g_ui_00025d54->split_long_on = 0;
+      FUN_fff9cdb0('\x01');
+    }
+    beep_request(2);
+    return;
+  }
+  return;
+}
+
+
+// ===== key_clar_press @ fffbee52 (87 bytes)
+
+/* Front-panel key 0x306 CLAR, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_clar_press(void)
+
+{
+  byte vfo_tune_locked_ret;
+  
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  vfo_tune_locked_ret = vfo_tune_locked('\x02');
+  if (vfo_tune_locked_ret != 1) {
+    beep_request(1);
+    return;
+  }
+  beep_request(3);
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== key_clar_short @ fffbeea9 (247 bytes)
+
+/* Front-panel key 0x306 CLAR, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_clar_short(void)
+
+{
+  bool bVar1;
+  byte memch_current_valid_ret;
+  byte *local_c;
+  byte *local_8;
+  vfo_state local_2;
+  bool local_1;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    local_8 = &PTR_g_ui_00025d54->clar_flags_a;
+    p_vfo_rec = &g_opstate.vfo_a;
+    local_2 = g_opstate.vfo_state_a;
+  }
+  else {
+    local_8 = &PTR_g_ui_00025d54->clar_flags_b;
+    p_vfo_rec = &g_opstate.vfo_b;
+    local_2 = g_opstate.vfo_state_b;
+  }
+  local_c = &p_vfo_rec->flags1;
+  local_1 = g_opstate.active_vfo != VFO_A;
+  if ((local_2 == VFO_STATE_MEMORY) &&
+     (memch_current_valid_ret = memch_current_valid(local_1), memch_current_valid_ret == 0)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    beep_request(3);
+    return;
+  }
+  if (*local_8 == 0) {
+    *local_8 = 1;
+    *local_c = *local_c | 0x10;
+    FUN_fffc3502();
+  }
+  else if (*local_8 == 1) {
+    *local_8 = *local_8 + 1;
+    *local_c = *local_c & 0xef | 8;
+  }
+  else if (*local_8 == 2) {
+    *local_8 = *local_8 + 1;
+    *local_c = *local_c | 0x18;
+  }
+  else {
+    *local_8 = 0;
+    *local_c = *local_c & 0xe7;
+  }
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  return;
+}
+
+
+// ===== key_clar_long @ fffbefa0 (109 bytes)
+
+/* Front-panel key 0x306 CLAR, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_clar_long(void)
+
+{
+  bool local_1;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    g_opstate.vfo_a.clar_offset_be[0] = 0;
+    g_opstate.vfo_a.clar_offset_be[1] = 0;
+  }
+  else {
+    g_opstate.vfo_b.clar_offset_be[0] = 0;
+    g_opstate.vfo_b.clar_offset_be[1] = 0;
+  }
+  local_1 = g_opstate.active_vfo != VFO_A;
+  vfo_mark_edited(local_1);
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_zin_spot_press @ fffbf00d (169 bytes)
+
+/* Front-panel key 0x307 ZIN/SPOT, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_zin_spot_press(void)
+
+{
+  bool bVar1;
+  byte *vfo_rec_ptr_ret;
+  
+  popup_close();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  vfo_rec_ptr_ret = vfo_rec_ptr(PTR_g_ui_00025d54->transmitting);
+  if (((*vfo_rec_ptr_ret & 0xf) == 2) || ((*vfo_rec_ptr_ret & 0xf) == 3)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (!bVar1) {
+    PTR_g_ui_00025d54->key_consumed = 1;
+    if (g_ui.memlist_open == 1) {
+      memlist_close();
+      beep_request(1);
+      return;
+    }
+    beep_request(3);
+    return;
+  }
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  beep_request(1);
+  return;
+}
+
+
+// ===== key_zin_spot_short @ fffbf0b6 (286 bytes)
+
+/* WARNING: Removing unreachable block (ram,0xfffbf119) */
+/* WARNING: Removing unreachable block (ram,0xfffbf120) */
+/* Front-panel key 0x307 ZIN/SPOT, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_zin_spot_short(void)
+
+{
+  int iVar1;
+  bool bVar2;
+  ushort dsp_tune_offset_ret;
+  uint freq_clamp_ret;
+  uint local_c;
+  bool local_5;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  local_5 = g_opstate.active_vfo != VFO_A;
+  dsp_tune_offset_ret = dsp_tune_offset();
+  if (((short)dsp_tune_offset_ret < -0x23) || (0x23 < (short)dsp_tune_offset_ret)) {
+    bVar2 = true;
+  }
+  else {
+    bVar2 = false;
+  }
+  if (!bVar2) {
+    iVar1 = (int)(short)(dsp_tune_offset_ret * 10);
+    if ((p_vfo_rec->mode & 0xf) == 2) {
+      iVar1 = -iVar1;
+    }
+    local_c = ((uint)p_vfo_rec->freq_be[0] << 0x18 | (uint)p_vfo_rec->freq_be[1] << 0x10 |
+               (uint)p_vfo_rec->freq_be[2] << 8 | (uint)p_vfo_rec->freq_be[3]) + iVar1;
+    DAT_0001b4e2 = 1;
+    freq_clamp_ret = freq_clamp(local_5,local_c);
+    DAT_0001b4e2 = 0;
+    if (PTR_g_ui_00025d54->freq_rejected != 1) {
+      p_vfo_rec->freq_be[0] = (byte)(freq_clamp_ret >> 0x18);
+      p_vfo_rec->freq_be[1] = (byte)(freq_clamp_ret >> 0x10);
+      p_vfo_rec->freq_be[2] = (byte)(freq_clamp_ret >> 8);
+      local_c._0_1_ = (byte)freq_clamp_ret;
+      p_vfo_rec->freq_be[3] = (byte)local_c;
+      if (local_5) {
+        if (g_opstate.vfo_state_b == VFO_STATE_MEMORY) {
+          vfo_enter_memtune_state(1);
+        }
+      }
+      else if (g_opstate.vfo_state_a == VFO_STATE_MEMORY) {
+        vfo_enter_memtune_state(0);
+      }
+      vfo_mark_edited(local_5);
+      vfo_store_back(local_5);
+      PTR_g_ui_00025d54->freq_refresh_req = 1;
+      return;
+    }
+  }
+  return;
+}
+
+
+// ===== key_zin_spot_long @ fffbf1d4 (55 bytes)
+
+/* Front-panel key 0x307 ZIN/SPOT, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_zin_spot_long(void)
+
+{
+  byte *vfo_rec_ptr_ret;
+  int iVar1;
+  
+  PTR_g_ui_00025d54->key_consumed = 1;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  iVar1 = keyer_mode_class(vfo_rec_ptr_ret);
+  if (iVar1 == 0) {
+    return;
+  }
+  PTR_g_ui_00025d54->cw_spot_on = 1;
+  beep_request(4);
+  return;
+}
+
+
+// ===== key_m_to_v_press @ fffbf20b (41 bytes)
+
+/* Front-panel key 0x308 M>V, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_m_to_v_press(void)
+
+{
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    beep_request(1);
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== key_m_to_v_short @ fffbf234 (26 bytes)
+
+/* Front-panel key 0x308 M>V, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_m_to_v_short(void)
+
+{
+  char cVar1;
+  
+  msg_send_cancel();
+  cVar1 = m_to_v_exec();
+  if (cVar1 == '\x01') {
+    return;
+  }
+  beep_request(3);
+  return;
+}
+
+
+// ===== key_m_to_v_long @ fffbf24e (424 bytes)
+
+/* Front-panel key 0x308 M>V, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_m_to_v_long(void)
+
+{
+  bool bVar1;
+  ushort dest_code_get_ret;
+  vfo_rec *p_vfo_rec_2;
+  vfo_rec *p_vfo_rec_3;
+  int iVar2;
+  byte *pbStack_c;
+  vfo_rec *p_vfo_rec;
+  byte local_2;
+  vfo_side local_1;
+  
+  local_1 = g_opstate.active_vfo;
+  if (g_opstate.active_vfo == VFO_A) {
+    if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+      vfo_reload(0);
+      beep_request(2);
+      return;
+    }
+  }
+  else if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
+    vfo_reload(1);
+    beep_request(2);
+    return;
+  }
+  if (PTR_g_ui_00025d54->memlist_open == 1) {
+    local_2 = PTR_g_ui_00025d54->memlist_ch;
+  }
+  else if (g_opstate.active_vfo == VFO_A) {
+    local_2 = g_mem_hdr.chan_b;
+  }
+  else {
+    local_2 = g_mem_hdr.chan_a;
+  }
+  if (g_opstate.split_on == 1) {
+    g_opstate.split_on = 0;
+    if (g_opstate.active_vfo == VFO_A) {
+      g_opstate.vfo_state_a = g_ui.split_saved_state_a;
+      g_opstate.vfo_state_b = VFO_STATE_VFO;
+    }
+    else {
+      g_opstate.vfo_state_b = g_ui.split_saved_state_b;
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+    }
+  }
+  else if (g_opstate.active_vfo == VFO_A) {
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
+  }
+  else {
+    g_opstate.vfo_state_a = VFO_STATE_VFO;
+  }
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0x315b) {
+    if ((local_2 < 0x75) || (0x83 < local_2)) {
+      bVar1 = false;
+    }
+    else {
+      bVar1 = true;
+    }
+    if (bVar1) {
+      beep_request(3);
+      return;
+    }
+  }
+  bVar1 = memch_valid(local_2,&pbStack_c);
+  if (!bVar1) {
+    beep_request(3);
+    return;
+  }
+  p_vfo_rec = memch + local_2;
+  if (local_1 == VFO_A) {
+    p_vfo_rec_2 = &g_opstate.vfo_b;
+    p_vfo_rec_3 = p_vfo_rec;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec_2->mode = p_vfo_rec_3->mode;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
+      p_vfo_rec_3 = (vfo_rec *)&p_vfo_rec_3->flags1;
+    }
+    vfo_store_back(0);
+  }
+  else {
+    p_vfo_rec_2 = &g_opstate.vfo_a;
+    p_vfo_rec_3 = p_vfo_rec;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec_2->mode = p_vfo_rec_3->mode;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
+      p_vfo_rec_3 = (vfo_rec *)&p_vfo_rec_3->flags1;
+    }
+    vfo_store_back(1);
+  }
+  memlist_close();
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_vm_mw_press @ fffbf3f6 (41 bytes)
+
+/* Front-panel key 0x309 V/M W, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_vm_mw_press(void)
+
+{
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    beep_request(1);
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== vm_toggle @ fffbf41f (28 bytes)
+
+/* V/M key */
+
+void vm_toggle(void)
+
+{
+  if (g_ui.memlist_open != 1) {
+    msg_send_cancel();
+    vm_toggle_core();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
+    tuner_rearm();
+    return;
+  }
+  memlist_close();
+  return;
+}
+
+
+// ===== key_vm_mw_long @ fffbf43b (71 bytes)
+
+/* Front-panel key 0x309 V/M W, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_vm_mw_long(void)
+
+{
+  if (PTR_g_ui_00025d54->func_panel_open == 1) {
+    PTR_g_ui_00025d54->func_panel_open = 0;
+  }
+  if (PTR_g_ui_00025d54->memlist_open == 0) {
+    menu_close_if_open();
+    func_panel_close();
+    popup8_close();
+    ui_clear_415_423();
+    FUN_fffc29f3();
+    memlist_cursor_channel();
+    beep_request(2);
+    return;
+  }
+  FUN_fffc2b94();
+  return;
+}
+
+
+// ===== key_a_b_press @ fffbf482 (57 bytes)
+
+/* Front-panel key 0x30A A/B, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_a_b_press(void)
+
+{
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    popup_close();
+    menu_close_if_open();
+    func_panel_close();
+    popup8_close();
+    ui_clear_415_423();
+    beep_request(1);
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== vfo_ab_toggle @ fffbf4bb (283 bytes)
+
+/* SV/VS: flip 0x9DBD in VFO state, else step toward VFO */
+
+void vfo_ab_toggle(void)
+
+{
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  msg_send_cancel();
+  g_opstate.split_on = 0;
+  if (g_opstate.active_vfo == VFO_A) {
+    if (g_opstate.vfo_state_a == VFO_STATE_MEMTUNE) {
+      vm_toggle();
+      vm_toggle();
+    }
+    else if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
+      g_opstate.vfo_state_a = VFO_STATE_VFO;
+      vfo_reload(0);
+    }
+    else if (g_opstate.vfo_state_a == VFO_STATE_VFO) {
+      g_opstate.active_vfo = VFO_B;
+      PTR_g_ui_00025d54->edited_a = 1;
+      PTR_g_ui_00025d54->edited_b = 1;
+    }
+    else {
+      vm_toggle();
+    }
+  }
+  else if (g_opstate.vfo_state_b == VFO_STATE_MEMTUNE) {
+    vm_toggle();
+    vm_toggle();
+  }
+  else if (g_opstate.vfo_state_b == VFO_STATE_QMB) {
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
+    vfo_reload(1);
+  }
+  else if (g_opstate.vfo_state_b == VFO_STATE_VFO) {
+    g_opstate.active_vfo = VFO_A;
+    PTR_g_ui_00025d54->edited_a = 1;
+    PTR_g_ui_00025d54->edited_b = 1;
+  }
+  else {
+    vm_toggle();
+  }
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
+  tuner_rearm();
+  PTR_g_ui_00025d54->freq_refresh_req = 1;
+  return;
+}
+
+
+// ===== key_a_b_long @ fffbf5d6 (42 bytes)
+
+/* Front-panel key 0x30A A/B, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_a_b_long(void)
+
+{
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    FUN_fffc2d05();
+  }
+  else {
+    FUN_fffc2f50();
+  }
+  beep_request(2);
+  return;
+}
+
+
+// ===== key_band_press @ fffbf600 (47 bytes)
+
+/* Front-panel key 0x30B BAND, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_band_press(void)
+
+{
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running != 1) {
+    return;
+  }
+  scan_stop();
+  PTR_g_ui_00025d54->key_consumed = 1;
+  return;
+}
+
+
+// ===== key_band_short @ fffbf62f (146 bytes)
+
+/* WARNING: Removing unreachable block (ram,0xfffbf6be) */
+/* Front-panel key 0x30B BAND, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_band_short(void)
+
+{
+  bool bVar1;
+  band_idx bVar2;
+  ui_state *p_ui_state;
+  
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  msg_send_cancel();
+  if ((PTR_g_ui_00025d54->dl_req_popup_b == 1) && (PTR_g_ui_00025d54->popup_code == 0xc)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    popup_close();
+  }
+  else {
+    PTR_g_ui_00025d54->band_popup_pick = 0;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
+    popup_duration_get(0xc);
+    popup_open_timed();
+    PTR_g_ui_00025d54->popup_code = 0xc;
+    p_ui_state = PTR_g_ui_00025d54;
+    bVar2 = FUN_fffc3006();
+    p_ui_state->popup_band = bVar2;
+    PTR_g_ui_00025d54->popup_cursor = PTR_g_ui_00025d54->popup_band;
+  }
+  beep_request(1);
+  return;
+}
+
+
+// ===== key_mode_press @ fffbf6c1 (7 bytes)
+
+/* Front-panel key 0x30C MODE, press handler (key tables, display/input.md key codes) (#70) */
+
+void key_mode_press(void)
+
+{
+  beep_request(1);
+  return;
+}
+
+
+// ===== key_mode_short @ fffbf6c8 (223 bytes)
+
+/* Front-panel key 0x30C MODE, short handler (key tables, display/input.md key codes) (#70) */
+
+void key_mode_short(void)
+
+{
+  bool bVar1;
+  vfo_rec *p_vfo_rec;
+  
+  if (g_ui.playlist_open != 0) {
+    g_ui.playlist_open = 0;
+  }
+  msg_send_cancel();
+  menu_close_if_open();
+  func_panel_close();
+  popup8_close();
+  ui_clear_415_423();
+  if (PTR_g_ui_00025d54->scan_running == 1) {
+    scan_stop();
+    PTR_g_ui_00025d54->key_consumed = 1;
+    return;
+  }
+  if (g_ui.memlist_open == 1) {
+    memlist_close();
+  }
+  if ((PTR_g_ui_00025d54->dl_req_popup_b == 1) && (PTR_g_ui_00025d54->popup_code == 5)) {
+    bVar1 = true;
+  }
+  else {
+    bVar1 = false;
+  }
+  if (bVar1) {
+    popup_close();
+    return;
+  }
+  if (g_opstate.active_vfo == VFO_A) {
+    p_vfo_rec = &g_opstate.vfo_a;
+  }
+  else {
+    p_vfo_rec = &g_opstate.vfo_b;
+  }
+  PTR_g_ui_00025d54->popup_cursor = p_vfo_rec->mode & 0xf;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
+  popup_duration_get(5);
+  popup_open_timed();
+  PTR_g_ui_00025d54->popup_code = 5;
+  return;
+}
+
+
+// ===== key_mode_long @ fffbf7a7 (48 bytes)
+
+/* Front-panel key 0x30C MODE, long handler (key tables, display/input.md key codes) (#70) */
+
+void key_mode_long(void)
+
+{
+  if (PTR_g_ui_00025d54->sd_present != 0) {
+    PTR_g_ui_00025d54->dl_req_7a = 1;
+    FUN_fffc8f8b(1000);
+    beep_request(2);
+    return;
+  }
+  beep_request(3);
+  return;
+}
+

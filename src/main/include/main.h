@@ -43,4 +43,102 @@ void sdr_rx_done_cb(void);
 void swtimer_start(int32_t id, uint16_t n);
 uint8_t swtimer_expired(int32_t id);
 
+/* --- EEPROM driver and settings store (docs/code/main/eeprom.md; drivers/eeprom.c, app/settings.c) --- */
+void eeprom_spi_tx(uint8_t b);
+uint8_t eeprom_spi_rx(void);
+void eeprom_read(uint16_t addr, uint8_t *buf, uint16_t n);
+void eeprom_write(uint16_t addr, uint8_t *buf, uint16_t n);
+void eeprom_init(void);
+void eeprom_load_all(void);
+void eeprom_hdr_update(uint8_t state);
+void eeprom_save_all(void);
+void eeprom_save_opstate(void);
+void eeprom_save_bandstack(uint8_t vfo_b, uint8_t band, uint8_t slot, uint8_t *rec);
+void eeprom_save_image(void);
+void eeprom_save_memch(uint8_t ch);
+void eeprom_save_qmb(void);
+void eeprom_save_qmb_slot(uint8_t slot);
+void eeprom_save_msg(int32_t type, int32_t n);
+void eeprom_save_atu_mem(void);
+void eeprom_save_cfg105(void);
+void eeprom_save_dest(void);
+void settings_defaults(uint8_t factory);
+void reset_memch(void);
+void reset_menu(void);
+void eeprom_read_raw(uint16_t addr, uint8_t *buf, uint16_t n);
+void eeprom_write_raw(uint16_t addr, uint8_t *buf, uint16_t n);
+uint8_t supply_undervolt_check(void);    /* 1 = supply too low, skip the save (eeprom.md) */
+void defaults_vfo(void);
+void defaults_bandstack(void);
+void defaults_qmb(void);
+void defaults_memch(void);
+void defaults_msg(void);
+void menu_defaults_load(void);
+
+/* --- helpers, DSP link (docs/code/main/dsp-link.md; app/dsp_link.c) --- */
+void byte2hex(char *out, uint8_t v);               /* two upper-case hex digits */
+void word2hex(int32_t out, uint16_t v);            /* four hex digits at address out */
+uint8_t vfo_mode(uint8_t which);                   /* mode code of VFO which (radio-control.md) */
+uint8_t sci4_rx_ready(void);
+uint32_t sci4_rx_buf(void);
+void sci4_send(uint32_t buf, uint16_t len);
+uint16_t dsp_route_param(uint16_t reg);
+uint8_t dsp_sum8(const uint8_t *p, uint8_t n);
+uint8_t dsp_reply_sum_ok(const uint8_t *p, uint8_t n);
+uint8_t dsp_check_reply(uint8_t kind, uint8_t **reply);
+void dsp_send_frame(uint8_t kind);
+
+/* --- SDR link (docs/code/main/sdr-link.md; app/sdr_link.c) --- */
+uint32_t vfo_freq(uint8_t which, uint8_t side);    /* Hz; side 0 = A, 1 = B, 2 = vfo_rec_ptr(which) */
+uint8_t *vfo_rec_ptr(uint8_t which);
+void sdr_link_start(void);
+uint8_t sdr_rx_ready(void);
+uint32_t sdr_rx_buf(void);
+void sdr_send_cmd(uint32_t buf, uint16_t len);
+uint8_t sdr_sum8(const uint8_t *p, uint8_t n);
+uint8_t sdr_check_hex_sum(const uint8_t *p, uint8_t n);
+uint8_t sdr_poll_reply(uint8_t kind, uint8_t **reply);
+void sdr_send_frame(uint8_t kind);
+
+/* --- CAT glue (docs/code/main/cat.md; app/cat_link.c) --- */
+uint8_t sum8(const uint8_t *p, uint16_t n);
+uint8_t cat_checksum_ok(const uint8_t *p, uint16_t n);
+uint8_t cat_ring_head(void);
+uint8_t cat_ring_tail(void);
+void cat_ring_unpop(void);
+uint8_t *cat_ring_pop(void);
+uint8_t *cat_e9_slot(void);
+void cat_send_reply(int32_t port, uint8_t *buf, uint16_t len);
+uint8_t cat_tx_busy(int32_t port);
+void cat_reply_error(void);
+void qmb_store(void);
+void qmb_recall(void);
+
+/* --- DISPLAY link (docs/code/main/display-link.md; app/display_link.c) --- */
+void displink_uart_send(uint8_t *buf, uint16_t len);
+void displink_tx_resend(void);
+void displink_put_sum(uint8_t *frame, uint16_t len);
+void displink_tx_start(uint16_t len);
+void mem_zero(uint16_t n, uint8_t *p);
+uint8_t displink_copy_if_changed(const uint8_t *src, uint8_t *dst, uint16_t n);
+void displink_build_status(void);
+void displink_build_20(void);
+void displink_build_23(void);
+void displink_build_24(void);
+void displink_build_37(void);
+void displink_build_39(void);
+void displink_build_41(void);
+void displink_build_50(void);
+void displink_build_60(void);
+void displink_build_62(void);
+void displink_build_70(void);
+
+/* --- keyer and tuner (app/keyer.c, app/tuner.c) --- */
+void beep_stop(void);
+void tuner_atas_task(void);
+void tuner_ext_task(void);
+void tuner_int_task(void);
+void tuner_rearm(void);
+void tuner_task(void);
+
 #endif

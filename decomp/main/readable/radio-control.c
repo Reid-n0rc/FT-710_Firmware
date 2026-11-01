@@ -4,7 +4,7 @@
 // 108 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * scope_span_index @ fff9772f  (85 bytes, 5 callers, export file fff95c6a_fff9810e.c)
+ * scope_span_index @ fff9772f  (85 bytes, 5 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: index into 0xFFF89D24
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -37,7 +37,7 @@ byte scope_span_index(byte side)
 
 
 /* -----------------------------------------------------------------------------
- * range_cmp3 @ fff97784  (47 bytes, 3 callers, export file fff95c6a_fff9810e.c)
+ * range_cmp3 @ fff97784  (47 bytes, 3 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: 0 below, 1 above, 2 inside `{lo,hi}`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -65,7 +65,7 @@ byte range_cmp3(uint *v,uint *range)
 
 
 /* -----------------------------------------------------------------------------
- * disp_put_op_freq @ fff98566  (95 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * disp_put_op_freq @ fff98566  (95 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: DISPLAY frame fields (T10b)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -97,7 +97,7 @@ void disp_put_op_freq(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * disp_put_tx_freq @ fff985c5  (48 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * disp_put_tx_freq @ fff985c5  (48 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Proposed name: `_tx_freq`
  * Purpose: DISPLAY frame fields (T10b)
  * Tag: none in the table row
@@ -124,7 +124,7 @@ void disp_put_tx_freq(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * disp_put_dial_freq @ fff985f5  (116 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * disp_put_dial_freq @ fff985f5  (116 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Proposed name: `_dial_freq`
  * Purpose: DISPLAY frame fields (T10b)
  * Tag: none in the table row
@@ -164,7 +164,7 @@ void disp_put_dial_freq(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * disp_put_scope_start @ fff98691  (79 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * disp_put_scope_start @ fff98691  (79 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Proposed name: `_scope_start`
  * Purpose: DISPLAY frame fields (T10b)
  * Tag: none in the table row
@@ -194,7 +194,7 @@ void disp_put_scope_start(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * freq_cache_update @ fff9cee1  (395 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * freq_cache_update @ fff9cee1  (395 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Purpose: recompute 0x20F50..0x20F5C on refresh flags
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -272,7 +272,7 @@ void freq_cache_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_freq_range_param @ fff9fb6e  (188 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_freq_range_param @ fff9fb6e  (188 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: SCI4 reg 99 by frequency range
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -329,7 +329,7 @@ LAB_fff9fba9:
 
 
 /* -----------------------------------------------------------------------------
- * sdr_task @ fffa11ed  (664 bytes, 2 callers, export file fffa0032_fffa3083.c)
+ * sdr_task @ fffa11ed  (664 bytes, 2 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: SDR register refresh chain (shared with T10c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -450,7 +450,7 @@ void sdr_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r08_tx_freq @ fffa162c  (268 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r08_tx_freq @ fffa162c  (268 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg 8/9
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -521,7 +521,7 @@ void sdr_upd_r08_tx_freq(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r18_rx_freq @ fffa1c69  (872 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r18_rx_freq @ fffa1c69  (872 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg 0x18/0x19
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -704,7 +704,7 @@ void sdr_upd_r18_rx_freq(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r20_scope_freq @ fffa2758  (402 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r20_scope_freq @ fffa2758  (402 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg 0x20/0x21
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -811,7 +811,7 @@ void sdr_upd_r20_scope_freq(char which)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_send_frame @ fffa30f9  (181 bytes, 38 callers, export file fffa30f9_fffa9928.c)
+ * sdr_send_frame @ fffa30f9  (181 bytes, 38 callers, export file fffa3083_fffa9648.c)
  * Purpose: send `r`/`w` frame for 0x1B784/0x1B786
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -849,7 +849,7 @@ void sdr_send_frame(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_mark_used @ fffb01df  (20 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * memch_mark_used @ fffb01df  (20 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: (ch): g_mem_hdr.chan_used[ch] = 1 [fact: fffb01df]; only caller cat_MW
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -867,7 +867,7 @@ void memch_mark_used(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_rec_mode_defaults @ fffb0664  (129 bytes, 43 callers, export file fffae2ca_fffb1303.c)
+ * vfo_rec_mode_defaults @ fffb0664  (129 bytes, 43 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Writes the per-mode block defaults of one VFO / memory record (radio-control.md "Defaults") [fact:
  *     fffb0664]; callers defaults_vfo, defaults_memch, defaults_bandstack_set
  * Tag: [fact]
@@ -904,7 +904,7 @@ void vfo_rec_mode_defaults(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mode @ fffb3196  (182 bytes, 116 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_mode @ fffb3196  (182 bytes, 116 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: *`vfo_mode(which)`*
  * Purpose: Mode nibble of `vfo_rec_ptr(which)`. Forced to 2 during a tune cycle [fact]
  * Tag: [fact]
@@ -958,7 +958,7 @@ byte vfo_mode(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_rec_ptr @ fffb324c  (94 bytes, 83 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_rec_ptr @ fffb324c  (94 bytes, 83 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: *`vfo_rec_ptr(which)`*
  * Purpose: `which` = 0: record of the active VFO (0x9DBD). `which` ≠ 0: the TX record, which is the *other* VFO
  *     while split (0x9C5E) is on. Returns 0x9D09 or 0x9D63 in R1. The decompile loses the return [fact]
@@ -1000,7 +1000,7 @@ byte * vfo_rec_ptr(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * band_of_freq @ fffb33e5  (96 bytes, 10 callers, export file fffb2fc0_fffb4c45.c)
+ * band_of_freq @ fffb33e5  (96 bytes, 10 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: (kept)
  * Purpose: band index 0..11
  * Tag: none in the table row
@@ -1038,7 +1038,7 @@ byte band_of_freq(uint freq)
 
 
 /* -----------------------------------------------------------------------------
- * gen_subband_of_freq @ fffb3445  (59 bytes, 5 callers, export file fffb2fc0_fffb4c45.c)
+ * gen_subband_of_freq @ fffb3445  (59 bytes, 5 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: GEN sub-slot 0..15 (table 0xFFF887CC)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1065,7 +1065,7 @@ byte gen_subband_of_freq(uint freq)
 
 
 /* -----------------------------------------------------------------------------
- * freq_range_index @ fffb3480  (58 bytes, 7 callers, export file fffb2fc0_fffb4c45.c)
+ * freq_range_index @ fffb3480  (58 bytes, 7 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: index in table 0xFFF88814
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1092,7 +1092,7 @@ byte freq_range_index(uint freq)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_freq @ fffb357c  (91 bytes, 33 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_freq @ fffb357c  (91 bytes, 33 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: *`vfo_freq(which, side)`*
  * Purpose: side 0 = A, 1 = B, 2 = `vfo_rec_ptr(which)`. Returns BE u32 at +0x4A [fact] (disassembly)
  * Tag: [fact]
@@ -1126,7 +1126,7 @@ uint vfo_freq(byte which,byte side)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_freq_clar @ fffb35d7  (296 bytes, 8 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_freq_clar @ fffb35d7  (296 bytes, 8 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: *`vfo_freq_clar(which, side)`*
  * Purpose: `vfo_freq` plus the clarifier offset +0x48 (s16). RX (`which`=0) adds it if bit 0 of the clarifier flags
  *     is set, TX if bit 1 is set. The flags are 0x20F29 for A and 0x20F2A for B, chosen by side or by `vfo_rec_ptr`
@@ -1215,7 +1215,7 @@ uint vfo_freq_clar(byte which,byte side)
 
 
 /* -----------------------------------------------------------------------------
- * freq_in_range @ fffb3aa1  (77 bytes, 4 callers, export file fffb2fc0_fffb4c45.c)
+ * freq_in_range @ fffb3aa1  (77 bytes, 4 callers, export file fffb2f9e_fffb4bba.c)
  * Proposed name: *`freq_in_range(f)`*
  * Purpose: 29999 < f < 75000001 [fact]
  * Tag: [fact]
@@ -1241,7 +1241,7 @@ byte freq_in_range(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_tune_locked @ fffb4bba  (139 bytes, 8 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_tune_locked @ fffb4bba  (139 bytes, 8 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: 1 if the side may not be retuned (5 MHz/EMG memory, state 7/8)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1294,9 +1294,8 @@ byte vfo_tune_locked(char param_1)
   return local_5;
 }
 
-
 /* -----------------------------------------------------------------------------
- * vfo_display_offset @ fffb4c45  (467 bytes, 2 callers, export file fffb2fc0_fffb4c45.c)
+ * vfo_display_offset @ fffb4c45  (467 bytes, 2 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Mode-dependent signed offset (SSB ±(+0x12 + 1500), DATA/PSK +0x30 (+ 0x9A7A×10), RTTY, CW). It is 0 when
  *     setting 0x9B15 ≠ 0. Added to give 0x20F5C [fact]; that it is the carrier-point display offset is [inference]
  * Tag: [fact] [inference]
@@ -1395,8 +1394,9 @@ ushort vfo_display_offset(void)
   return uStack_e;
 }
 
+
 /* -----------------------------------------------------------------------------
- * bandmem_set @ fffb4e18  (166 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * bandmem_set @ fffb4e18  (166 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * Purpose: store a scope start in the kind 1/2 band memory
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1441,7 +1441,7 @@ void bandmem_set(char param_1,uint freq_2)
 
 
 /* -----------------------------------------------------------------------------
- * bandmem_get @ fffb4ebe  (148 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * bandmem_get @ fffb4ebe  (148 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * Purpose: read the kind 1/2 band memory for the current band
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1487,7 +1487,7 @@ uint bandmem_get(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tx_freq_repeater_shift @ fffb4f52  (389 bytes, 3 callers, export file fffb4e18_fffb70b0.c)
+ * tx_freq_repeater_shift @ fffb4f52  (389 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Proposed name: *`tx_freq_repeater_shift(f)`*
  * Purpose: FM/DATA-FM only: ± shift according to +0x02 bits 2–3. The shift is setting 0x9A62 × 10 kHz on 28 MHz and
  *     a 16-bit setting × 10 kHz on 50 MHz. No shift if the result leaves the band [fact] for the structure
@@ -1593,7 +1593,7 @@ uint tx_freq_repeater_shift(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * aess_mode_ptr @ fffb552c  (140 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * aess_mode_ptr @ fffb552c  (140 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Pointer to the active mode's AESS on/off byte (0x9C10..) (#157, CAT AS) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1640,7 +1640,7 @@ uint aess_mode_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_cursor_follow @ fffbc29f  (192 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * scope_cursor_follow @ fffbc29f  (192 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: keep the dial inside the CURSOR window
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1686,7 +1686,7 @@ void scope_cursor_follow(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_cursor_center @ fffbc6e9  (149 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * scope_cursor_center @ fffbc6e9  (149 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: keep the dial inside the CURSOR window
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1728,7 +1728,7 @@ void scope_cursor_center(void)
 
 
 /* -----------------------------------------------------------------------------
- * split_toggle @ fffbeca5  (352 bytes, 5 callers, export file fffbe4a8_fffbf7d7.c)
+ * split_toggle @ fffbeca5  (352 bytes, 5 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: FT/ST
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1797,7 +1797,7 @@ LAB_fffbede9:
 
 
 /* -----------------------------------------------------------------------------
- * vm_toggle @ fffbf41f  (28 bytes, 13 callers, export file fffbe4a8_fffbf7d7.c)
+ * vm_toggle @ fffbf41f  (28 bytes, 13 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: V/M key (VM)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1822,7 +1822,7 @@ void vm_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_ab_toggle @ fffbf4bb  (283 bytes, 4 callers, export file fffbe4a8_fffbf7d7.c)
+ * vfo_ab_toggle @ fffbf4bb  (283 bytes, 4 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: SV/VS
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1881,7 +1881,7 @@ void vfo_ab_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_recall @ fffbf924  (416 bytes, 2 callers, export file fffbf807_fffc0492.c)
+ * qmb_recall @ fffbf924  (416 bytes, 2 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: QR
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -1970,7 +1970,7 @@ void qmb_recall(void)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_store @ fffbfac4  (371 bytes, 2 callers, export file fffbf807_fffc0492.c)
+ * qmb_store @ fffbfac4  (371 bytes, 2 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: QI
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2049,7 +2049,7 @@ void qmb_store(void)
 
 
 /* -----------------------------------------------------------------------------
- * ui_softkey_dispatch @ fffc0b2f  (352 bytes, 116 callers, export file fffc04a0_fffc18ff.c)
+ * ui_softkey_dispatch @ fffc0b2f  (352 bytes, 116 callers, export file fffc0492_fffc18e1.c)
  * Purpose: (key): dialog (+0x86): scan_stop + FUN_fffd0046(key); keyboard (+0x88): FUN_fffcfaa9; PlayList /
  *     message-screen guards; with a pop-up shown (+0x1C1) and code +0x1C2 <= 0x0D: handler table 0xFFF89D54code;
  *     otherwise +0x409 = … [fact]
@@ -2138,7 +2138,7 @@ void ui_softkey_dispatch(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_edit_begin @ fffc0d69  (142 bytes, 7 callers, export file fffc04a0_fffc18ff.c)
+ * vfo_edit_begin @ fffc0d69  (142 bytes, 7 callers, export file fffc0492_fffc18e1.c)
  * Purpose: Returns 0 while a message plays (+0x417) or +0x67; stops a scan; memory state -> memory tune unless a
  *     special channel; returns 1 [fact]
  * Tag: [fact]
@@ -2189,7 +2189,7 @@ undefined1 vfo_edit_begin(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mode_set @ fffc0eb8  (88 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * vfo_mode_set @ fffc0eb8  (88 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: (mode): active record rec+0 = rec+0 & 0xF0 | mode, FUN_fffc0f10(old, new, rec), UI +0x40B = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2220,7 +2220,7 @@ void vfo_mode_set(byte mode)
 
 
 /* -----------------------------------------------------------------------------
- * freq_clamp @ fffc10c3  (229 bytes, 7 callers, export file fffc04a0_fffc18ff.c)
+ * freq_clamp @ fffc10c3  (229 bytes, 7 callers, export file fffc0492_fffc18e1.c)
  * Proposed name: *`freq_clamp(side, f)`*
  * Purpose: Out-of-range handling against 0xFFF89D4C, or against the PMS limits 0x20F74/0x20F78 in state 4. Below
  *     the limit it gives the lower limit, or wraps to the upper one while scanning (0x20F1C). Above the limit it is
@@ -2287,7 +2287,7 @@ uint freq_clamp(char param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * freq_clamp_pms @ fffc11a8  (178 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * freq_clamp_pms @ fffc11a8  (178 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: PMS-limit variant
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2340,7 +2340,7 @@ uint freq_clamp_pms(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mark_tuned @ fffc125a  (33 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * vfo_mark_tuned @ fffc125a  (33 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: rt+0x444/0x446 = 1, QMB → VFO (dial path)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2364,7 +2364,7 @@ void vfo_mark_tuned(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_exit_to_vfo @ fffc127b  (144 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * qmb_exit_to_vfo @ fffc127b  (144 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: state 5 → 1
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2407,7 +2407,7 @@ void qmb_exit_to_vfo(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * freq_fix_below @ fffc130b  (109 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * freq_fix_below @ fffc130b  (109 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: clamp or wrap
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2447,7 +2447,7 @@ void freq_fix_below(void *param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * freq_fix_above @ fffc1378  (111 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * freq_fix_above @ fffc1378  (111 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: clamp or wrap
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2487,7 +2487,7 @@ void freq_fix_above(void *param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * band_select @ fffc1663  (147 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * band_select @ fffc1663  (147 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: band key on the active side, dispatched by state
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2536,7 +2536,7 @@ void band_select(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_store_back @ fffc16f6  (233 bytes, 30 callers, export file fffc04a0_fffc18ff.c)
+ * vfo_store_back @ fffc16f6  (233 bytes, 30 callers, export file fffc0492_fffc18e1.c)
  * Purpose: write the record back to band stack or memory-tune backup, by state
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2605,7 +2605,7 @@ void vfo_store_back(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memtune_backup_a @ fffc18ff  (20 bytes, 1 callers, export file fffc04a0_fffc18ff.c)
+ * memtune_backup_a @ fffc18ff  (20 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: record → 0x9DCE / 0x9E28
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2631,8 +2631,9 @@ void memtune_backup_a(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * memtune_backup_b @ fffc1913  (20 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memtune_backup_b @ fffc1913  (20 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Proposed name: `_b`
  * Purpose: record → 0x9DCE / 0x9E28
  * Tag: none in the table row
@@ -2661,7 +2662,7 @@ void memtune_backup_b(void)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_pms @ fffc1a5f  (73 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * band_select_pms @ fffc1a5f  (73 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Proposed name: `_pms`
  * Purpose: per-state band key
  * Tag: none in the table row
@@ -2688,7 +2689,7 @@ void band_select_pms(char param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_mem @ fffc1aa8  (39 bytes, 2 callers, export file fffc1913_fffc2991.c)
+ * band_select_mem @ fffc1aa8  (39 bytes, 2 callers, export file fffc18ff_fffc296f.c)
  * Proposed name: `_mem`
  * Purpose: per-state band key
  * Tag: none in the table row
@@ -2716,7 +2717,7 @@ void band_select_mem(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_memtune @ fffc1acf  (23 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * band_select_memtune @ fffc1acf  (23 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Proposed name: `_memtune`
  * Purpose: per-state band key
  * Tag: none in the table row
@@ -2737,7 +2738,7 @@ void band_select_memtune(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_vfo @ fffc1ae6  (73 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * band_select_vfo @ fffc1ae6  (73 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: per-state band key
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2763,7 +2764,7 @@ void band_select_vfo(char param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_stack @ fffc1b2f  (213 bytes, 3 callers, export file fffc1913_fffc2991.c)
+ * band_select_stack @ fffc1b2f  (213 bytes, 3 callers, export file fffc18ff_fffc296f.c)
  * Purpose: set the band, step the stack level, reload
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2816,7 +2817,7 @@ void band_select_stack(char param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_reload @ fffc1c04  (186 bytes, 16 callers, export file fffc1913_fffc2991.c)
+ * vfo_reload @ fffc1c04  (186 bytes, 16 callers, export file fffc18ff_fffc296f.c)
  * Purpose: reload the record by state (band stack / memory / memory tune)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2876,7 +2877,7 @@ void vfo_reload(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_reload_bandstack @ fffc1cbe  (27 bytes, 4 callers, export file fffc1913_fffc2991.c)
+ * vfo_reload_bandstack @ fffc1cbe  (27 bytes, 4 callers, export file fffc18ff_fffc296f.c)
  * Purpose: `bandstack_load` + `vfo_retune`, split off
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2896,7 +2897,7 @@ void vfo_reload_bandstack(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * bandstack_load @ fffc1cd9  (188 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * bandstack_load @ fffc1cd9  (188 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: band-stack slot → record (QMB in state 5)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2944,7 +2945,7 @@ void bandstack_load(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_reload_memory @ fffc1dff  (16 bytes, 4 callers, export file fffc1913_fffc2991.c)
+ * vfo_reload_memory @ fffc1dff  (16 bytes, 4 callers, export file fffc18ff_fffc296f.c)
  * Purpose: `memch_load_to_vfo` + `vfo_retune`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2963,7 +2964,7 @@ void vfo_reload_memory(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memtune_restore_a @ fffc1e0f  (20 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memtune_restore_a @ fffc1e0f  (20 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: 0x9DCE / 0x9E28 → record
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -2991,7 +2992,7 @@ void memtune_restore_a(void)
 
 
 /* -----------------------------------------------------------------------------
- * memtune_restore_b @ fffc1e23  (20 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memtune_restore_b @ fffc1e23  (20 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Proposed name: `_b`
  * Purpose: 0x9DCE / 0x9E28 → record
  * Tag: none in the table row
@@ -3020,7 +3021,7 @@ void memtune_restore_b(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup8_close @ fffc23b6  (77 bytes, 48 callers, export file fffc1913_fffc2991.c)
+ * popup8_close @ fffc23b6  (77 bytes, 48 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Closes pop-up 8 if it is shown, clears UI +0x40D and +0x414 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3050,7 +3051,7 @@ void popup8_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_load_to_vfo @ fffc2681  (189 bytes, 4 callers, export file fffc1913_fffc2991.c)
+ * memch_load_to_vfo @ fffc2681  (189 bytes, 4 callers, export file fffc18ff_fffc296f.c)
  * Purpose: memory record → operating record
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3106,7 +3107,7 @@ void memch_load_to_vfo(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_clear_tag @ fffc273e  (86 bytes, 3 callers, export file fffc1913_fffc2991.c)
+ * vfo_clear_tag @ fffc273e  (86 bytes, 3 callers, export file fffc18ff_fffc296f.c)
  * Purpose: blank the tag of the operating record
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3134,7 +3135,7 @@ void vfo_clear_tag(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_close @ fffc2794  (25 bytes, 34 callers, export file fffc1913_fffc2991.c)
+ * memlist_close @ fffc2794  (25 bytes, 34 callers, export file fffc18ff_fffc296f.c)
  * Purpose: UI +0x97 = 0 (MEMORY CH LIST, frame 0x41) and +0x90 = 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3153,7 +3154,7 @@ void memlist_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * vm_toggle_core @ fffc27ad  (318 bytes, 3 callers, export file fffc1913_fffc2991.c)
+ * vm_toggle_core @ fffc27ad  (318 bytes, 3 callers, export file fffc18ff_fffc296f.c)
  * Purpose: state change VFO ↔ memory
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3226,7 +3227,7 @@ void vm_toggle_core(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_enter_mem_state @ fffc28fb  (60 bytes, 5 callers, export file fffc1913_fffc2991.c)
+ * vfo_enter_mem_state @ fffc28fb  (60 bytes, 5 callers, export file fffc18ff_fffc296f.c)
  * Purpose: state = 2
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3250,7 +3251,7 @@ void vfo_enter_mem_state(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memtune_flags_clear @ fffc2937  (56 bytes, 7 callers, export file fffc1913_fffc2991.c)
+ * memtune_flags_clear @ fffc2937  (56 bytes, 7 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (side): UI +0x43F/+0x441 (A) or +0x440/+0x442 (B) = 0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3274,7 +3275,7 @@ void memtune_flags_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_cursor_channel @ fffc2b12  (28 bytes, 6 callers, export file fffc29f3_fffc3c23.c)
+ * memlist_cursor_channel @ fffc2b12  (28 bytes, 6 callers, export file fffc2991_fffc3b22.c)
  * Purpose: UI +0x43A = FUN_fffc2b2e(top +0x439, row +0x1DB): the channel under the list cursor,
  *     destination-filtered [fact]
  * Tag: [fact]
@@ -3300,7 +3301,7 @@ undefined4 memlist_cursor_channel(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_current_set @ fffc2cdf  (38 bytes, 6 callers, export file fffc29f3_fffc3c23.c)
+ * memch_current_set @ fffc2cdf  (38 bytes, 6 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side, ch): 0x60C9 (A) / 0x60CA (B) = ch [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3322,7 +3323,7 @@ void memch_current_set(char param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_is_memory @ fffc2d93  (86 bytes, 16 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_is_memory @ fffc2d93  (86 bytes, 16 callers, export file fffc2991_fffc3b22.c)
  * Purpose: state 2/7/8
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3361,7 +3362,7 @@ byte vfo_is_memory(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_current_valid @ fffc2de9  (24 bytes, 5 callers, export file fffc29f3_fffc3c23.c)
+ * memch_current_valid @ fffc2de9  (24 bytes, 5 callers, export file fffc2991_fffc3b22.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
  */
@@ -3383,7 +3384,7 @@ byte memch_current_valid(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_valid @ fffc2e01  (100 bytes, 19 callers, export file fffc29f3_fffc3c23.c)
+ * memch_valid @ fffc2e01  (100 bytes, 19 callers, export file fffc2991_fffc3b22.c)
  * Purpose: channel exists
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3419,7 +3420,7 @@ bool memch_valid(byte ch,byte **rec)
 
 
 /* -----------------------------------------------------------------------------
- * memch_current @ fffc2e65  (40 bytes, 18 callers, export file fffc29f3_fffc3c23.c)
+ * memch_current @ fffc2e65  (40 bytes, 18 callers, export file fffc2991_fffc3b22.c)
  * Purpose: 0x60C9 / 0x60CA
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3444,7 +3445,7 @@ byte memch_current(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_dest_blocked @ fffc2e8d  (62 bytes, 7 callers, export file fffc29f3_fffc3c23.c)
+ * memch_dest_blocked @ fffc2e8d  (62 bytes, 7 callers, export file fffc2991_fffc3b22.c)
  * Purpose: 5 MHz/EMG blocked by destination
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3471,7 +3472,7 @@ byte memch_dest_blocked(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_current_is_special @ fffc2ecb  (22 bytes, 11 callers, export file fffc29f3_fffc3c23.c)
+ * memch_current_is_special @ fffc2ecb  (22 bytes, 11 callers, export file fffc2991_fffc3b22.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
  */
@@ -3490,7 +3491,7 @@ byte memch_current_is_special(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_is_special @ fffc2ee1  (26 bytes, 2 callers, export file fffc29f3_fffc3c23.c)
+ * memch_is_special @ fffc2ee1  (26 bytes, 2 callers, export file fffc2991_fffc3b22.c)
  * Purpose: ch ≥ 117
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3507,7 +3508,7 @@ bool memch_is_special(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_enter_memtune_state @ fffc2efb  (34 bytes, 5 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_enter_memtune_state @ fffc2efb  (34 bytes, 5 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): 0x9DBE / 0x9DBF = 3 (memory tune) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3529,7 +3530,7 @@ void vfo_enter_memtune_state(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mark_edited @ fffc2fde  (40 bytes, 24 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_mark_edited @ fffc2fde  (40 bytes, 24 callers, export file fffc2991_fffc3b22.c)
  * Purpose: rt+0x443/0x445 = 1, QMB → VFO
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3553,7 +3554,7 @@ void vfo_mark_edited(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_enter_vfo_state @ fffc3081  (46 bytes, 4 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_enter_vfo_state @ fffc3081  (46 bytes, 4 callers, export file fffc2991_fffc3b22.c)
  * Purpose: state = 1 (via memory flags reset)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3577,7 +3578,7 @@ void vfo_enter_vfo_state(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_set_depth @ fffc311a  (82 bytes, 6 callers, export file fffc29f3_fffc3c23.c)
+ * qmb_set_depth @ fffc311a  (82 bytes, 6 callers, export file fffc2991_fffc3b22.c)
  * Purpose: 0x901F/0x9021 = stored count (max 5 if 0x9AC0==0) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3612,7 +3613,7 @@ void qmb_set_depth(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_enter @ fffc316c  (59 bytes, 2 callers, export file fffc29f3_fffc3c23.c)
+ * qmb_enter @ fffc316c  (59 bytes, 2 callers, export file fffc2991_fffc3b22.c)
  * Purpose: state = 5, load QMB slot, save header [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3641,7 +3642,7 @@ void qmb_enter(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_retune @ fffc3287  (197 bytes, 4 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_retune @ fffc3287  (197 bytes, 4 callers, export file fffc2991_fffc3b22.c)
  * Purpose: `freq_clamp` the record frequency, apply
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3698,7 +3699,7 @@ void vfo_retune(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_panel_close @ fffc3c85  (26 bytes, 54 callers, export file fffc3c85_fffc4a47.c)
+ * func_panel_close @ fffc3c85  (26 bytes, 54 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: UI +0x96 = 0 (FUNC panel, frame 0x37) and +0x1C5 = 0 (FUNC item highlighted) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3718,7 +3719,7 @@ void func_panel_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_mode_class @ fffc3e3c  (110 bytes, 7 callers, export file fffc3c85_fffc4a47.c)
+ * keyer_mode_class @ fffc3e3c  (110 bytes, 7 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: (rec): 1 in CW (mode 2/3); in SSB 2 when CW AUTO MODE 0x9A3C allows it, else 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3769,7 +3770,7 @@ undefined1 keyer_mode_class(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ui_close_overlays @ fffc4756  (75 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * ui_close_overlays @ fffc4756  (75 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: menu_close_if_open, func_panel_close, popup8_close, ui_clear_415_423, +0x70 = 0; stops a running scan
  *     (+0x418) and sets +0x409; returns false if it stopped a scan [fact]
  * Tag: [fact]
@@ -3801,7 +3802,7 @@ bool ui_close_overlays(void)
 
 
 /* -----------------------------------------------------------------------------
- * band_select_on @ fffc4c4e  (61 bytes, 5 callers, export file fffc4a8d_fffc6073.c)
+ * band_select_on @ fffc4c4e  (61 bytes, 5 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: `band_select` for a given side (BS/BU/BD)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3827,7 +3828,7 @@ void band_select_on(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_filter_width_hz @ fffc4e4f  (320 bytes, 7 callers, export file fffc4a8d_fffc6073.c)
+ * vfo_filter_width_hz @ fffc4e4f  (320 bytes, 7 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: Selected filter width in Hz of the active side's mode (docs/code/main/sdr-link.md) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3920,7 +3921,7 @@ LAB_fffc4f4c:
 
 
 /* -----------------------------------------------------------------------------
- * qmb_current_slot @ fffc4fce  (157 bytes, 6 callers, export file fffc4a8d_fffc6073.c)
+ * qmb_current_slot @ fffc4fce  (157 bytes, 6 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (*slot): in QMB state (5) the QMB slot record 0x9023 + 0x5A*n for the current recall depth (0x9020 /
  *     0x9022), else 0 [fact]
  * Tag: [fact]
@@ -3969,7 +3970,7 @@ uint qmb_current_slot(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mark_edited_if_vfo @ fffc5290  (71 bytes, 9 callers, export file fffc4a8d_fffc6073.c)
+ * vfo_mark_edited_if_vfo @ fffc5290  (71 bytes, 9 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: Sets UI +0x443 (A) / +0x445 (B) only when the active side is in VFO state 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -3996,7 +3997,7 @@ void vfo_mark_edited_if_vfo(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_step @ fffc54cc  (117 bytes, 7 callers, export file fffc4a8d_fffc6073.c)
+ * memch_step @ fffc54cc  (117 bytes, 7 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (n, side): n channel steps up (+0x47C = 0) or down, skipping SKIP channels while scanning, then
  *     eeprom_save_memch (CAT CH) [fact]
  * Tag: [fact]
@@ -4044,7 +4045,7 @@ void memch_step(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * memch_step_up @ fffc5541  (150 bytes, 2 callers, export file fffc4a8d_fffc6073.c)
+ * memch_step_up @ fffc5541  (150 bytes, 2 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (side): memory channel +1, wrapping to the first (#157, cat-commands-primary.md CH) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4103,7 +4104,7 @@ void memch_step_up(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_step_down @ fffc55d7  (150 bytes, 2 callers, export file fffc4a8d_fffc6073.c)
+ * memch_step_down @ fffc55d7  (150 bytes, 2 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (side): memory channel -1 (#157) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4162,7 +4163,7 @@ void memch_step_down(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mem_to_memtune @ fffc5ce0  (51 bytes, 6 callers, export file fffc4a8d_fffc6073.c)
+ * vfo_mem_to_memtune @ fffc5ce0  (51 bytes, 6 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: state 2 → 3 or 4
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4194,7 +4195,7 @@ void vfo_mem_to_memtune(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * pms_load_limits @ fffc5d13  (247 bytes, 3 callers, export file fffc4a8d_fffc6073.c)
+ * pms_load_limits @ fffc5d13  (247 bytes, 3 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: P-pair → 0x20F74/0x20F78
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4259,7 +4260,7 @@ byte pms_load_limits(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_step_up @ fffc809d  (164 bytes, 7 callers, export file fffc7764_fffc8f30.c)
+ * vfo_step_up @ fffc809d  (164 bytes, 7 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (side): memory state: channel up (+0x46B) or memory tune; then rec+0x4A frequency = FUN_fffc5ec4(side,
  *     f), the dial step up [fact]
  * Tag: [fact]
@@ -4317,7 +4318,7 @@ void vfo_step_up(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_step_down @ fffc8141  (164 bytes, 7 callers, export file fffc7764_fffc8f30.c)
+ * vfo_step_down @ fffc8141  (164 bytes, 7 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (side): as vfo_step_up with channel down and FUN_fffc6073 (dial step down) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4373,7 +4374,7 @@ void vfo_step_down(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_send_cancel @ fffe3d24  (262 bytes, 7 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_send_cancel @ fffe3d24  (262 bytes, 7 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: Cancels a running keyer/message send (+0x94 / +0x1CC / +0x1CD / +0x1D1), keyer state +0x2B = 7
  *     (cat-commands-primary.md) [fact]
  * Tag: [fact]
@@ -4435,7 +4436,7 @@ void msg_send_cancel(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_send_start @ fffe4de5  (137 bytes, 2 callers, export file fffe4c55_fffe5caf.c)
+ * msg_cw_send_start @ fffe4de5  (137 bytes, 2 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: (ch): CW only; the same slot running -> msg_cw_stop, else sets +0x1CC / +0x1CD and starts slot ch [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4491,7 +4492,7 @@ undefined1 msg_cw_send_start(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_stop @ fffe53c0  (65 bytes, 7 callers, export file fffe4c55_fffe5caf.c)
+ * msg_cw_stop @ fffe53c0  (65 bytes, 7 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: Clears +0x1CC, +0x1CD, +0x417, +0x1D1; keyer state +0x2B = 7 (idle) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4513,7 +4514,7 @@ void msg_cw_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mode_is_cw @ fffe5690  (47 bytes, 6 callers, export file fffe4c55_fffe5caf.c)
+ * vfo_mode_is_cw @ fffe5690  (47 bytes, 6 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: vfo_mode(1) is 2 or 3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4541,7 +4542,7 @@ bool vfo_mode_is_cw(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_voice_mode_ok @ fffe56bf  (37 bytes, 6 callers, export file fffe4c55_fffe5caf.c)
+ * msg_voice_mode_ok @ fffe56bf  (37 bytes, 6 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: 1 when the TX mode class (vfo_mode(1)) is < 2 or 4..7, i.e. not CW [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4568,7 +4569,7 @@ undefined1 msg_voice_mode_ok(void)
 
 
 /* -----------------------------------------------------------------------------
- * scan_task @ fffe587f  (411 bytes, 1 callers, export file fffe4c55_fffe5caf.c)
+ * scan_task @ fffe587f  (411 bytes, 1 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: scan state machine (main loop)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4711,7 +4712,7 @@ void scan_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * scan_allowed @ fffe5aff  (82 bytes, 6 callers, export file fffe4c55_fffe5caf.c)
+ * scan_allowed @ fffe5aff  (82 bytes, 6 callers, export file fffe4c04_fffe5c7e.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
  */
@@ -4745,7 +4746,7 @@ byte scan_allowed(void)
 
 
 /* -----------------------------------------------------------------------------
- * scan_start_up @ fffe5c7e  (49 bytes, 6 callers, export file fffe4c55_fffe5caf.c)
+ * scan_start_up @ fffe5c7e  (49 bytes, 6 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: SC1/SC2
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4766,9 +4767,8 @@ void scan_start_up(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scan_start_down @ fffe5caf  (49 bytes, 6 callers, export file fffe4c55_fffe5caf.c)
+ * scan_start_down @ fffe5caf  (49 bytes, 6 callers, export file fffe5caf_fffe7118.c)
  * Purpose: SC1/SC2
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4789,8 +4789,9 @@ void scan_start_down(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * scan_stop @ fffe5ce0  (46 bytes, 48 callers, export file fffe5ce0_fffe7155.c)
+ * scan_stop @ fffe5ce0  (46 bytes, 48 callers, export file fffe5caf_fffe7118.c)
  * Purpose: SC0
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4811,7 +4812,7 @@ void scan_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * scan_step @ fffe5d7c  (19 bytes, 3 callers, export file fffe5ce0_fffe7155.c)
+ * scan_step @ fffe5d7c  (19 bytes, 3 callers, export file fffe5caf_fffe7118.c)
  * Purpose: one step in the current direction
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/radio-control.md
@@ -4833,7 +4834,7 @@ void scan_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_tuner_bit_set @ fffec537  (35 bytes, 11 callers, export file fffec2df_fffed6f5.c)
+ * vfo_tuner_bit_set @ fffec537  (35 bytes, 11 callers, export file fffec2d9_fffed62a.c)
  * Purpose: (on): TX-side record rec+1 bit 2, the tuner bit that FUN_fffec55a reads for CAT AC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/radio-control.md

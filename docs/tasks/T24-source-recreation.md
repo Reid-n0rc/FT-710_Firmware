@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 12.42 % re-implemented, round 6; MAIN 2.82 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 12.42 % re-implemented, round 6; MAIN 4.28 % re-implemented, round 2; the hybrid image links in place, into the gap and into RAM2, passes linkcheck and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -799,7 +799,7 @@ TPU start/stop functions came out byte-identical at their original addresses [fa
   the next instruction; T22a had listed it as known and unfixed because MAIN has none]; the engine executes JMP
   itself. Still unchecked (they agree in every trial, but T22a has not modelled them): 3-operand `mul`/`or`/`sub`
   and `scgtu.l` (libgcc's `__udivdi3`), `mov.b Rs, [Rd+]`, `rotl Rs, Rd`, `bra.a`. *Open: their semantics; would be
-  settled by `tools/rx_semcheck.py` cases for these forms.*
+  settled by `tools/rx_semcheck.py` cases for these forms.* Settled in round 2 ("MAIN: semantics of the GCC-only forms"): all of them agree with the manual; JMP Rs, BNOT Rs,Rd, same-register post-increment stores and REVL/REVW Rd,Rd were SLEIGH bugs, fixed by `rx62t-gccforms-fix.patch`.
 
 **Mutation test** (a one-off script, not committed: one source change, rebuild, `check` with 200 trials, restore):
 
@@ -1017,6 +1017,157 @@ python3 -I tools/readability_stats.py readme
 
 After the re-export the alias rows of the round-6 names in `src/display/aliases.tsv` are redundant.
 
+## MAIN, round 2 (2026-11-01)
+
+### Plan (MAIN round 2)
+
+1. Harness soundness: semantics cases for the RX forms only the GCC code uses (3-operand `SUB`/`MUL`/`OR`,
+   `SCGTU.L`, `MOV.B Rs,[Rd+]`, `ROTL`, `BRA.A`, and `JMP Rs`), checked against the RXv2 manual like T22a; a SLEIGH
+   patch for any bug, wired into `bootstrap.sh --only rx`.
+2. More MAIN code, biggest self-contained first: the EEPROM settings store, the DSP and SDR link frame layers, the
+   CAT glue and handlers, the DISPLAY link, the TX/RX sequencer, tuner and keyer.
+3. Ghidra entries and names of the unlisted intrinsic setters and 0xFFF927E0.
+4. `status.tsv` and the README progress block.
+
+### MAIN: semantics of the GCC-only forms (`tools/rx_semcheck_forms.sh`)
+
+`rx_semcheck.py forms` writes 12 random instances of each of 40 forms (`GCC_FORMS`: the forms the recreated
+objects use and MAIN does not, from `equiv_main_emu.py`'s per-function list, libgcc's, the two T22a left
+unchecked, `JMP Rs` and `BNOT Rs,Rd`, and the same-register cases the manual singles out). The script assembles them
+(`rx-elf-as`/`ld` at 0xFFF00000), imports the binary raw into a scratch Ghidra project, decodes each instruction
+with `ExportListing.java decode` and runs T22a's model check (`gen`, `RxEmuStep.java`, `check`; 8 start states
+per instruction). The model gained ROTL/ROTR (manual p. 169/170), ABS (p. 58), NEG/NOT Rs,Rd (p. 144/146), REVL
+(p. 163), XOR (p. 206), EMUL/EMULU (p. 82/85), JMP (p. 112) and the SCC/SCNC/SCZ/SCNZ aliases (p. 182). The
+operand order of the 3-operand forms is the manual's: `SUB Rs, Rs2, Rd` is `FF 0 rd / rs rs2` and Rd = Rs2 - Rs
+(p. 296, p. 195), as Ghidra and binutils print and decode it.
+
+| Module | Cases | ok | fail |
+|---|---:|---:|---:|
+| T21i (`73d417d2…8290`, the module of round 1) | 3,848 | 3,176 | 672 |
+| with `rx62t-gccforms-fix.patch` (`11fbb030…0e14`) | 3,848 | **3,848** | **0** |
+
+The 672 failures fall in three classes, all SLEIGH bugs **[fact]**: `JMP Rs` is `PC = Rs` without a branch (96
+cases; manual p. 112: PC = src; round 1 had worked around it in EquivMainEmu.java); `BNOT Rs,Rd` XORs `Rs & 31`
+instead of `1 << (Rs & 31)` (96; p. 68); `MOV.size Rs,[Rd+]` and `[-Rd]` with Rs = Rd store the updated register,
+because the `rd_post` sub-constructor runs before the source is read (480 = 5 forms x 96; p. 121 note 3: the value
+before the update is stored). Everything else, among it the round-1 list (3-operand `SUB`/`MUL`/`OR`, `SCGTU.L`,
+`MOV.B Rs,[Rd+]` with different registers, `ROTL`, `BRA.A`), agrees with the manual without a change.
+`tools/ghidra/rx62t-gccforms-fix.patch` fixes the three (`goto [Rs]`; `1 << (Rs & 31)`; source read into a local,
+then `build rd_post`) and is the eighth stage of `bootstrap.sh --only rx` (`RX_SINC_MVTAC` → `RX_SINC_FIXED`
+`11fbb030…0e14`; checked on a private Ghidra copy: patch, sleigh compile and the idempotent second run). MAIN has
+none of the three forms **[fact: rx-elf-objdump of 0xFFF8FBDB..0xFFFEE2B7: no `jmp`, no `bnot Rs,Rd`, no
+post-increment or pre-decrement store]**, so MAIN's decompile does not change and `decomp/` is not re-exported. The
+patch is **not installed into the shared Ghidra** of this container (other sessions' bootstraps check the old hash);
+`tools/bootstrap.sh --only rx` installs it. EquivMainEmu.java keeps its own JMP execution, so results do not depend
+on whether the patch is installed; the GCC code uses neither `BNOT Rs,Rd` nor a same-register store
+[fact: forms of the recreated objects].
+
+### MAIN: harness changes (round 2)
+
+- **EEPROM transfers as stubs.** `eeprom_read` / `eeprom_write` are stubbed for every other function
+  (`STUBS`): the settings store moves up to 0x5837 bytes per call through the bit-banged SPI, millions of
+  emulated instructions; the calls (address, buffer, length) are compared instead. The two are still checked on
+  their own (a function is never stubbed in its own check).
+- **Presets** from the callers: `buffer_args` keeps the buffer of `sum8`, `cat_checksum_ok`, `dsp_sum8`,
+  `sdr_sum8`, `dsp_reply_sum_ok`, `sdr_check_hex_sum`, `displink_put_sum` non-NULL (a NULL buffer with n = 0x15AB
+  summed the stack, where the original keeps its locals: a difference on a call that never happens), and
+  `copy_if_changed_args` gives `displink_copy_if_changed` two separate buffers and the callers' lengths (every
+  caller copies a staging buffer to 0x1456, n <= 0x23F). *Open: why the original's SMOVF and the recreated byte
+  loop disagree when the two buffers overlap (a random trial with n > 0x800); would be settled by a trace of such a
+  trial.*
+- A stack local whose address leaves the function is observable: `displink_send_ack`/`_nak` pass a pointer to a
+  one-byte buffer that `R_SCI1_Serial_Send` keeps in `gp_sci1_tx_address`, so the recreated code keeps the byte
+  where the image does (last byte of a 4-byte frame).
+
+### MAIN: recreated (src/main, round 2)
+
+All in `src/main/app/` (src/main/README.md lists the functions):
+
+- `settings.c`: the settings store. The whole EEPROM is mirrored at RAM 0x464F, so each save is
+  `eeprom_write(ee, &ee_mirror[ee], n)` [fact: every call loads 0x464F + the EEPROM address]; the saves bracketed by
+  `eeprom_hdr_update(0/1)` (state byte 0 while saving), the power-fail check, the boot load and the defaults.
+- `reglink.h`, `dsp_link.c`, `sdr_link.c`: the DSP (SCI4) and SDR (SCI5) links are the same code over different
+  buffers, flags and timers [fact: `dsp_send_frame`/`sdr_send_frame`, `dsp_check_reply`/`sdr_poll_reply`,
+  `dsp_sum8`/`sdr_sum8` match instruction for instruction apart from the addresses], written once over a constant
+  link description and folded per link; the frame layer and the register setters whose value is a constant, a
+  route-table entry or one menu setting.
+- `cat_link.c`: the CAT receive ring, the three ports and their busy flags, the sums and the handlers that do not
+  touch the radio state (`ID`, `QI`, `QR`, and `QS`/`EN`/`FS`, which answer `?;` in this firmware [fact]).
+- `display_link.c`: the SCI1 glue, ACK/NAK, the send path (sum byte, outstanding flag, resend) and the frame senders
+  that build into a staging buffer and send only when the frame changed.
+- `trx_lines.c`, `tuner.c`, `keyer.c`: the sequencer's port lines (SEND_A/B gated by ETUN_TXINH_REQ and TX), the
+  tuner task dispatch and relay bytes, the keyer resets and ring index.
+
+New RAM and ROM names are in `src/main/data_symbols.tsv`, each with the instruction that shows the address.
+
+### MAIN: Ghidra (round 2)
+
+`tools/ghidra/entries_main.T24m2.tsv` (FixFuncEntries `nolate`; in bootstrap's `build_main` and its stamp) lists the
+intrinsic helpers between the getters, `chg_pmusr` 0xFFF91228, `set_bpsw` 0xFFF91248, `set_bpc` 0xFFF9125F,
+`set_extb` 0xFFF91276, `set_acc_hi` 0xFFF9128D, `set_acc_lo` 0xFFF91291, `byte_bset`/`byte_bclr`/`byte_bnot`
+0xFFF912BB/BF/C3 (the current project already has them as 4-byte `FUN_` functions; the rows make them independent
+of auto-analysis), and **0xFFF927E0, which was no function**: `iwdt_error_nmi_cb`, `BSR.A sw_reset; RTS`,
+registered by `R_Systeminit` as `R_BSP_InterruptWrite(7, 0xFFF927E0)` at 0xFFF8F6DD and called by `NMI` 0xFFF9061B
+when NMISR bit 3 (IWDTST, IWDT underflow/refresh error; RX651 hardware manual 15.2.14) is set **[fact]**. Names in
+`names_main.tsv`, signatures in `signatures_main.tsv`. The names of the setters follow the getters' (inference from
+the instruction each one wraps); `chg_pmusr` is CC-RX's name for the code at 0xFFF91228 **[inference: it tests and
+sets PSW.PM and returns through RTE]**. Proved on a copy of `/home/user/ghidra_tasks/t24main/proj` [fact: the
+script log]: FixFuncEntries 10 created, 0 late starts removed, 0 failed; ApplyNames 2,805 applied, 0 failed;
+ApplySignatures 1,230 applied, 0 failed; the decompile of 0xFFF927E0 is `iwdt_error_nmi_cb() { sw_reset(); }`.
+Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_main.T24m2.tsv nolate \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv \
+  -postScript ApplySignatures.java tools/ghidra/signatures_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export `iwdt_error_nmi_cb` is a function of `decomp/main/functions.tsv`, and the setters keep their
+addresses under their new names.
+
+### MAIN: results (status.tsv, round 2)
+
+`equiv_main_emu.py status --trials 200 --jobs 3`, run on a Ghidra copy with `rx62t-gccforms-fix.patch` installed
+(`GHIDRA_HEADLESS` pointing at it; about 30 minutes):
+
+| Verdict | Ghidra functions | Bytes (of 387,054) |
+|---|---:|---:|
+| identical | 43 | 259 |
+| equivalent | 213 | 16,323 |
+| differs | 0 | 0 |
+| not yet | 3,537 | 370,472 |
+
+**Re-implemented: 4.28 %** (2.82 % after round 1). Round 2 added 123 functions (5,671 bytes counted): DSP link 24
+(1,523), settings store 19 (1,258), SDR link 19 (1,121), DISPLAY link 26 (811), CAT glue and handlers 21 (560),
+sequencer lines 6 (197), keyer 4 (132), tuner 4 (69). The 133 functions of round 1 still pass with the new compiler
+flag and the stubs. Found on the way, all fixed before the run: two RAM addresses computed wrong at first
+(`menu_affft_att` 0x9C39 and `menu_cw_pitch` 0x9C04: 21994 and 21941 are 0x55EA and 0x55B5), and the REVL bug above
+(`eeprom_hdr_update` differed until the patch).
+
+### MAIN: blockers and next steps (round 2)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- **The shared Ghidra here still has the T21i module**: the results above need the round-2 patch for the GCC code
+  that uses `REVL Rd,Rd` (`eeprom_hdr_update`); `tools/bootstrap.sh --only rx` installs it. Installing it into the
+  container's shared Ghidra changes `rx62t.sinc`, which the bootstrap of a branch without this patch then rejects,
+  so it was left to the merge.
+- **Ghidra:** the round-2 entries and names are not applied to the canonical project (commands above).
+- Next, by size and self-containment: the rest of the DSP setters (`dsp_set_agc` 1,261 bytes, the EQ, contour,
+  tone and DNR setters, about 9 KB) and the SDR updaters (`sdr_upd_r18_rx_freq`, `_r1d_notch`, `_r1e_passband`,
+  about 4 KB), `dsp_shadow_store`/`sdr_shadow_update`, the DISPLAY frame builders and receive handlers, `cat_parse`
+  and the CAT handlers that change the radio state, `trx_sequencer`, `keyer_task`, the tuner tasks.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -1036,9 +1187,9 @@ After the re-export the alias rows of the round-6 names in `src/display/aliases.
    `vdc5_vline_cb_entry`); *Open: a general rule in display_link.py; would be settled by resolving the ABS32 and
    MOVW/MOVT references to linked functions from data stores to their original entries.*
 6. HiFi4 (Ghidra p-code): `tools/ghidra/EquivMainEmu.java` is the model (a headless p-code emulator server).
-7. MAIN: the next functions (BSP, soft timers, C library, then the links and the CAT code), the semantics of the
-   instruction forms only the GCC code uses, the Ghidra entries of the unlisted helpers, and the CC-RX version if the
-   owner can obtain CC-RX ("MAIN, round 1").
+7. MAIN: apply the round-2 Ghidra entries and names (command block in "MAIN: Ghidra (round 2)"), install
+   `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), then the next functions ("MAIN: blockers and next steps
+   (round 2)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
 
 5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation. Open:
    calls through function pointers for `abicheck` (direct calls only so far); the functions the emulated boot does

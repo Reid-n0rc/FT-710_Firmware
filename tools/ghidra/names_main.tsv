@@ -1179,6 +1179,18 @@ fff91263	get_bpc	CC-RX intrinsic: return BPC in R1 (SUB #8,SP; save via [SP]; RT
 fff9127a	get_extb	CC-RX intrinsic: return EXTB in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
 fff91295	get_acc_hi	CC-RX intrinsic: return ACC bits 63..32 (MVFACHI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
 fff912a8	get_acc_mi	CC-RX intrinsic: return ACC bits 47..16 (MVFACMI #0,A0) in R1 (SUB #8,SP; save via [SP]; RTSD #8); no callers [inference for the name]
+# --- T24 MAIN round 2: the setters and byte bit helpers between the getters (entries_main.T24m2.tsv); unreferenced like them
+fff91228	chg_pmusr	CC-RX intrinsic: switch to user mode: if PSW.PM (bit 20) is clear, set it and return through RTE with the caller's PC (XCHG builds the frame); no callers [inference for the name: CC-RX's chg_pmusr does this; the code at 0xFFF91228..0xFFF91247 is a fact]
+fff91248	set_bpsw	CC-RX intrinsic: BPSW = R1 (MVTC R1,BPSW; RTS); no callers [inference for the name]
+fff9125f	set_bpc	CC-RX intrinsic: BPC = R1 (MVTC R1,BPC; RTS); no callers [inference for the name]
+fff91276	set_extb	CC-RX intrinsic: EXTB = R1 (MVTC R1,EXTB; RTS); no callers [inference for the name]
+fff9128d	set_acc_hi	ACC bits 63..32 = R1 (MVTACHI R1,A0; RTS); no callers [inference for the name]
+fff91291	set_acc_lo	ACC bits 31..0 = R1 (MVTACLO R1,A0; RTS); no callers [inference for the name]
+fff912bb	byte_bset	*p |= 1 << (bit & 7) (BSET R2,[R1].B; RTS); no callers [fact for the code]
+fff912bf	byte_bclr	*p &= ~(1 << (bit & 7)) (BCLR R2,[R1].B; RTS); no callers [fact for the code]
+fff912c3	byte_bnot	*p ^= 1 << (bit & 7) (BNOT R2,[R1].B; RTS); no callers [fact for the code]
+# --- T24 MAIN round 2: the IWDT error callback
+fff927e0	iwdt_error_nmi_cb	BSP callback 7 (R_BSP_InterruptWrite(7, ...) at 0xFFF8F6DD), called by NMI 0xFFF9061B when NMISR.IWDTST (bit 3, IWDT underflow/refresh error; RX651 hardware manual 15.2.14) is set: sw_reset [fact]
 # --- CC-RX C library: lowsrc I/O, stdio FILE handling, heap (#78). Only _INIT_IOLIB (freopen of the 3 std streams) and
 # _CLOSEALL (fclose) are reached; malloc and its helpers are linked but never called (the FILE allocator is unreferenced)
 fff8fa1b	open	lowsrc open(name, mode): matches "C:\stdin"/"C:\stdout"/"C:\stderr" (0xFFF8F2E9/F4/0x300), stores the mode in the fd flag bytes 0x1404..0x1406 [inference for the name]

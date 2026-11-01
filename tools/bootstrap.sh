@@ -17,7 +17,7 @@
 #           Ghidra, apply tools/ghidra/rx62t-movu-fix.patch (T17), tools/ghidra/rx62t-rxv2-fix.patch (T21c) and
 #           tools/ghidra/rx62t-rtsd-fix.patch (T21d), tools/ghidra/rx62t-mvfac-fix.patch (T21h),
 #           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch and
-#           tools/ghidra/rx62t-mvtac-fix.patch (T21i) and compile it.
+#           tools/ghidra/rx62t-mvtac-fix.patch (T21i), tools/ghidra/rx62t-gccforms-fix.patch (T24) and compile it.
 #           Skipped when already installed and patched.
 #   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
 #           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
@@ -124,7 +124,8 @@ RX_SINC_RTSD=618938bbd851134261c441cdfd2d34dca327b261c2c5acb49d63651b219e4b36
 RX_SINC_MVFAC=9efea07b76390e708c29f7e2ed8a7a044976d58d67a991cf4687319954b882a5
 RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3d0
 RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
-RX_SINC_FIXED=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
+RX_SINC_MVTAC=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
+RX_SINC_FIXED=8451ead043aaa1e400539775cc986c0e0a8b4388247736046bbe6a3dff9c8ed7
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -337,7 +338,11 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-mvtac-fix.patch")
     info "applied tools/ghidra/rx62t-mvtac-fix.patch (T21i: MVTACHI/MVTACLO write ACC)"
   fi
-  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i-patched file"
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_MVTAC" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-gccforms-fix.patch")
+    info "applied tools/ghidra/rx62t-gccforms-fix.patch (T24: JMP Rs branches, BNOT Rs,Rd, MOV Rs,[Rd+]/[-Rd] source first, REVL/REVW Rd = Rs)"
+  fi
+  [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i/T24-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
     || { tail -20 "$OUT/logs/sleigh.txt" >&2; die "sleigh compile failed"; }
@@ -377,7 +382,7 @@ step_hifi4() {
 G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
-  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
+  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/entries_main.T24m2.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
     "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc" \
     "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv" "$G/NameVariables.java")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
@@ -388,6 +393,7 @@ build_main() {
     -preScript SetupRX651.java copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
     -postScript FixFuncEntries.java "$G/entries_main.tsv" nolate \
     -postScript FixFuncEntries.java "$G/entries_main_menu.tsv" nolate \
+    -postScript FixFuncEntries.java "$G/entries_main.T24m2.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
     -postScript ApplySignatures.java "$G/signatures_main.tsv" \

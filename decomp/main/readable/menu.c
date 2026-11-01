@@ -4,7 +4,7 @@
 // 152 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * dec_to_str_s8 @ fff9c787  (188 bytes, 4 callers, export file fff9c555_fff9db66.c)
+ * dec_to_str_s8 @ fff9c787  (188 bytes, 4 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Signed byte to decimal text: '-' for negatives, then up to 3 digits without leading zeros; returns the
  *     length [fact: fff9c787]
  * Tag: [fact]
@@ -54,7 +54,7 @@ char dec_to_str_s8(byte param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_EX @ fffa9937  (134 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_EX @ fffa9937  (134 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Inferred name: —
  * Purpose: Calls `ex_command(text, is_set, len, 0x1C8E, …)`. Sets error flag 0x464A from the result, and after a
  *     set calls `cat_ai_holdoff` when AI is on [fact]
@@ -105,7 +105,7 @@ void cat_EX(uint text,char is_set,ushort len)
 
 
 /* -----------------------------------------------------------------------------
- * menu_defaults_load @ fffb1168  (43 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * menu_defaults_load @ fffb1168  (43 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Called from `settings_defaults`. Its callees fill 0x9A2A..0x9BC9 (below) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -141,7 +141,7 @@ void menu_defaults_load(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_defaults_mode @ fffb1193  (93 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * menu_defaults_mode @ fffb1193  (93 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: RADIO SETTING mode groups 0x9A2A..0x9A90 <- ROM [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -198,7 +198,7 @@ void menu_defaults_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_defaults_cw @ fffb11f0  (29 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * menu_defaults_cw @ fffb11f0  (29 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: CW SETTING 0x9A91..0x9AB4 <- ROM 0xFFF80EB1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -226,7 +226,7 @@ void menu_defaults_cw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_defaults_operation @ fffb120d  (217 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * menu_defaults_operation @ fffb120d  (217 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: OPERATION SETTING 0x9AB5.. <- ROM 0xFFF80ED5, then dest-dependent MAX POWER, KEYBOARD LANGUAGE, TX TOT
  *     [inference]
  * Tag: [inference]
@@ -306,7 +306,7 @@ void menu_defaults_operation(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_defaults_display @ fffb12e6  (29 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * menu_defaults_display @ fffb12e6  (29 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: DISPLAY SETTING 0x9B01.. <- ROM 0xFFF80F21 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -332,9 +332,8 @@ void menu_defaults_display(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_defaults_presets @ fffb1325  (189 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * menu_defaults_presets @ fffb1325  (189 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: 5 x PRESET block 0x9B2E+0x1F*n <- ROM 0xFFF80F4E; names FT-8, PRESET2..5 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -396,7 +395,7 @@ void menu_defaults_presets(void)
 
 
 /* -----------------------------------------------------------------------------
- * max_power_limit @ fffb3e6f  (156 bytes, 14 callers, export file fffb2fc0_fffb4c45.c)
+ * max_power_limit @ fffb3e6f  (156 bytes, 14 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: (0..4): destination-dependent upper limit for HF / 50M / 70M / AM MAX POWER (menu.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -463,7 +462,7 @@ LAB_fffb3ef4:
 
 
 /* -----------------------------------------------------------------------------
- * contest_number_get @ fffba30c  (42 bytes, 13 callers, export file fffb948b_fffbc3bd.c)
+ * contest_number_get @ fffba30c  (42 bytes, 13 callers, export file fffb9422_fffbc38e.c)
  * Purpose: CONTEST NUMBER (EX020205) as u16 BE from 0x9AAB / 0x9AAC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -481,7 +480,7 @@ undefined2 contest_number_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_close_if_open @ fffbc638  (35 bytes, 47 callers, export file fffbc406_fffbd249.c)
+ * menu_close_if_open @ fffbc638  (35 bytes, 47 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: menu_screen_close when UI +0x95 (menu screen, frame 0x40) is set; returns whether it was open [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -506,7 +505,7 @@ bool menu_close_if_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_group_key @ fffc2356  (27 bytes, 8 callers, export file fffc1913_fffc2991.c)
+ * menu_group_key @ fffc2356  (27 bytes, 8 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (n): menu_select_group(n), beep on success; menu tab soft keys [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -530,7 +529,7 @@ void menu_group_key(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_row_key @ fffc2371  (27 bytes, 5 callers, export file fffc1913_fffc2991.c)
+ * menu_row_key @ fffc2371  (27 bytes, 5 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (n): menu_select_row(n), beep on success; menu row soft keys [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -555,7 +554,7 @@ void menu_row_key(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_subsys_init @ fffc98aa  (9 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * menu_subsys_init @ fffc98aa  (9 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Called from `app_main`: `FUN_fffd405e` (UI state), then `menu_init` [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -575,7 +574,7 @@ void menu_subsys_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_page_serialize @ fffc98f9  (626 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * menu_page_serialize @ fffc98f9  (626 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Builds the menu page for the DISPLAY into the 0x1741 frame (type byte 0x40) at +0x98: P1 title (20
  *     chars), up to 8 P2 tabs (13 chars each), then up to 5 rows of 45 bytes (name + `on_draw` output). Called by
  *     `displink_build_40` [fact]. The frame protocol is covered on the DISPLAY link page (T10b)
@@ -699,7 +698,7 @@ void menu_page_serialize(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_flags @ fffc9b83  (95 bytes, 18 callers, export file fffc8f48_fffc9be2.c)
+ * menu_draw_flags @ fffc9b83  (95 bytes, 18 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: `on_draw` helper. Row flag byte: bit 7 when its argument is 0, bit 6 when the row is being edited
  *     (0x12271) [fact]; meaning of bit 7 [inference]
  * Tag: [fact] [inference]
@@ -725,9 +724,8 @@ void menu_draw_flags(byte *param_1,char param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_draw_agc_delay @ fffc9c29  (130 bytes, 18 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_agc_delay @ fffc9c29  (130 bytes, 18 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: AGC FAST/MID/SLOW DELAY row: raw*20+20 in decimal + "msec", bit 7 on the default [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -763,7 +761,7 @@ void menu_draw_agc_delay(byte *param_1,byte param_2,short param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_lcut_freq @ fffc9cee  (151 bytes, 6 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_lcut_freq @ fffc9cee  (151 bytes, 6 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: LCUT FREQ row: OFF or the frequency (dec_to_str_u16) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -802,7 +800,7 @@ void menu_draw_lcut_freq(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_lcut_slope @ fffc9d9a  (119 bytes, 6 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_lcut_slope @ fffc9d9a  (119 bytes, 6 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: LCUT SLOPE row: 6dB/oct / 18dB/oct (ROM 0xFFF836EB) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -844,7 +842,7 @@ void menu_draw_lcut_slope(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_hcut_freq @ fffc9e27  (152 bytes, 6 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_hcut_freq @ fffc9e27  (152 bytes, 6 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: HCUT FREQ row: OFF or the frequency [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -883,7 +881,7 @@ void menu_draw_hcut_freq(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_hcut_slope @ fffc9ed4  (119 bytes, 6 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_hcut_slope @ fffc9ed4  (119 bytes, 6 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: HCUT SLOPE row: 6dB/oct / 18dB/oct [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -925,7 +923,7 @@ void menu_draw_hcut_slope(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_out_level @ fffc9f61  (98 bytes, 12 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_out_level @ fffc9f61  (98 bytes, 12 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: USB / REAR OUT LEVEL row: value via dec_to_str_u8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -952,7 +950,7 @@ void menu_draw_out_level(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_tx_bpf_sel @ fffca06d  (163 bytes, 3 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_tx_bpf_sel @ fffca06d  (163 bytes, 3 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: (row, value, default) TX BPF SEL row: 10 chars from the menu text table, " 50-3050Hz".." 50-4000Hz"
  *     (0xFFF83715) or "TTBF".."400-2600Hz" (0xFFF83793) when 0x12272 != 0; callers menu_ex010113/010213/010413_draw
  *     [fact: fffca06d]
@@ -1013,7 +1011,7 @@ void menu_draw_tx_bpf_sel(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_mod_source @ fffca125  (119 bytes, 4 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_mod_source @ fffca125  (119 bytes, 4 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: (row, value, default) MOD SOURCE row: MIC/USB/REAR/AUTO from 0xFFF837FC; callers
  *     menu_ex010114/010214/010313/010414_draw [fact: fffca125]
  * Tag: [fact]
@@ -1057,7 +1055,7 @@ void menu_draw_mod_source(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_usb_mod_gain @ fffca1b2  (98 bytes, 4 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_usb_mod_gain @ fffca1b2  (98 bytes, 4 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: (row, value, default) USB MOD GAIN row: 3 digits by dec_to_str_u8; callers
  *     menu_ex010115/010215/010314/010415_draw [fact: fffca1b2]
  * Tag: [fact]
@@ -1086,7 +1084,7 @@ void menu_draw_usb_mod_gain(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_rear_mod_gain @ fffca22a  (98 bytes, 4 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_rear_mod_gain @ fffca22a  (98 bytes, 4 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: (row, value, default) REAR MOD GAIN row: 3 digits by dec_to_str_u8; callers
  *     menu_ex010116/010216/010315/010416_draw [fact: fffca22a]
  * Tag: [fact]
@@ -1115,7 +1113,7 @@ void menu_draw_rear_mod_gain(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_rptt_select @ fffca2a1  (119 bytes, 7 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_rptt_select @ fffca2a1  (119 bytes, 7 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: RPTT SELECT / PC KEYING row: OFF / RTS / DTR / DAKY (ROM 0xFFF83850) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1157,7 +1155,7 @@ void menu_draw_rptt_select(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_cw_auto_mode @ fffca3ab  (119 bytes, 1 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_draw_cw_auto_mode @ fffca3ab  (119 bytes, 1 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: (row, value, default) CW AUTO MODE row: OFF/50M/ON from 0xFFF83C40; only caller menu_ex010119_draw
  *     [fact: fffca3ab]
  * Tag: [fact]
@@ -1201,7 +1199,7 @@ void menu_draw_cw_auto_mode(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_nar_width @ fffcabc2  (120 bytes, 3 callers, export file fffca5f8_fffcae40.c)
+ * menu_draw_nar_width @ fffcabc2  (120 bytes, 3 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: (row, value, default) NAR WIDTH row: 50Hz..4000Hz (21 entries) from 0xFFF83A87; callers
  *     menu_ex010418/010514/020114_draw [fact: fffcabc2]
  * Tag: [fact]
@@ -1245,7 +1243,7 @@ void menu_draw_nar_width(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_off_on @ fffcb34b  (119 bytes, 5 callers, export file fffcae56_fffcbb67.c)
+ * menu_draw_off_on @ fffcb34b  (119 bytes, 5 callers, export file fffcae40_fffcbb52.c)
  * Purpose: OFF / ON row (ROM 0xFFF842E5): CW INDICATOR, SCU-LAN10, EMERGENCY FREQ TX, TX INHIBIT, EXT DISPLAY
  *     [fact]
  * Tag: [fact]
@@ -1289,7 +1287,7 @@ void menu_draw_off_on(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_cw_memory @ fffcb672  (119 bytes, 5 callers, export file fffcae56_fffcbb67.c)
+ * menu_draw_cw_memory @ fffcb672  (119 bytes, 5 callers, export file fffcae40_fffcbb52.c)
  * Purpose: CW MEMORY 1..5 row: TEXT / MESSAGE (ROM 0xFFF8444A) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1331,7 +1329,7 @@ void menu_draw_cw_memory(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_cat_rate @ fffcb9ba  (119 bytes, 3 callers, export file fffcae56_fffcbb67.c)
+ * menu_draw_cat_rate @ fffcb9ba  (119 bytes, 3 callers, export file fffcae40_fffcbb52.c)
  * Purpose: (row, value, default) CAT RATE row: 4800..115200bps from 0xFFF8455B; callers
  *     menu_ex030105/030108/030110_draw [fact: fffcb9ba]
  * Tag: [fact]
@@ -1375,7 +1373,7 @@ void menu_draw_cat_rate(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_cat_tot @ fffcba46  (119 bytes, 3 callers, export file fffcae56_fffcbb67.c)
+ * menu_draw_cat_tot @ fffcba46  (119 bytes, 3 callers, export file fffcae40_fffcbb52.c)
  * Purpose: (row, value, default) CAT TIME OUT TIMER row: 10/100/1000/3000msec from 0xFFF845C4; callers
  *     menu_ex030106/030109/030111_draw [fact: fffcba46]
  * Tag: [fact]
@@ -1419,7 +1417,7 @@ void menu_draw_cat_tot(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_mic_key @ fffcc04a  (120 bytes, 6 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_draw_mic_key @ fffcc04a  (120 bytes, 6 callers, export file fffcbb67_fffcc899.c)
  * Purpose: MIC P1..P4 / UP / DOWN row: LOCK, QMB,.., AGC (21 labels, ROM 0xFFF84753) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1461,7 +1459,7 @@ void menu_draw_mic_key(byte *param_1,byte param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_eq_freq @ fffcc4af  (167 bytes, 6 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_draw_eq_freq @ fffcc4af  (167 bytes, 6 callers, export file fffcbb67_fffcc899.c)
  * Purpose: PRMTRC EQ1..3 FREQ row (also the P PRMTRC items) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1503,7 +1501,7 @@ void menu_draw_eq_freq(byte *param_1,short param_2,byte param_3,byte param_4)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_eq_level @ fffcc56b  (99 bytes, 6 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_draw_eq_level @ fffcc56b  (99 bytes, 6 callers, export file fffcbb67_fffcc899.c)
  * Purpose: PRMTRC EQ1..3 LEVEL row: signed value (FUN_fff9c787) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1530,7 +1528,7 @@ void menu_draw_eq_level(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_eq_bwth @ fffcc5e3  (98 bytes, 6 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_draw_eq_bwth @ fffcc5e3  (98 bytes, 6 callers, export file fffcbb67_fffcc899.c)
  * Purpose: PRMTRC EQ1..3 BWTH row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1557,7 +1555,7 @@ void menu_draw_eq_bwth(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_max_power @ fffcc7dc  (116 bytes, 4 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_draw_max_power @ fffcc7dc  (116 bytes, 4 callers, export file fffcbb67_fffcc899.c)
  * Purpose: (row, value, default) MAX POWER row: dec_to_str_u8 then 'W'; callers menu_ex030401..030404_draw
  *     (HF/50M/70M/AM MAX POWER) [fact: fffcc7dc]
  * Tag: [fact]
@@ -1589,7 +1587,7 @@ void menu_draw_max_power(byte *param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * datetime_edit_load @ fffcd54d  (136 bytes, 5 callers, export file fffcc93c_fffcdb6b.c)
+ * datetime_edit_load @ fffcd54d  (136 bytes, 5 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: DATE&TIME draw: unless +0x3FF = 3, copies the clock UI +0xAD..+0xB1 to the edit copy +0xB2..+0xB6
  *     (day/month 0 -> 1) [fact]
  * Tag: [fact]
@@ -1623,7 +1621,7 @@ void datetime_edit_load(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_done @ fffcd803  (98 bytes, 12 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_draw_done @ fffcd803  (98 bytes, 12 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Action rows (SD CARD, CALIBRATION, RESET, CERTIFICATION): width 4, text "DONE" [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1650,7 +1648,7 @@ void menu_draw_done(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_select_group @ fffcd999  (184 bytes, 1 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_select_group @ fffcd999  (184 bytes, 1 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: (n): P2 group n-1 of the current P1 (+0x41F) if it exists: group cursor 0x15E00[P1], +0x420, +0x3FF = 2
  *     [fact]
  * Tag: [fact]
@@ -1703,7 +1701,7 @@ undefined1 menu_select_group(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_select_row @ fffcda51  (213 bytes, 1 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_select_row @ fffcda51  (213 bytes, 1 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: (n): sets the row cursor of the current group (menu_cursor_of) and runs the row request [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1763,7 +1761,7 @@ undefined1 menu_select_row(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ui_enter @ fffcdc1f  (89 bytes, 3 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ui_enter @ fffcdc1f  (89 bytes, 3 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Runs the selected row's `on_enter` [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -1796,7 +1794,7 @@ void menu_ui_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_enter_nop @ fffcdc78  (1 bytes, 592 callers, export file fffcdbb8_fffce26d.c)
+ * menu_enter_nop @ fffcdc78  (1 bytes, 592 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Empty menu on_enter (RTS), shared by 296 items (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -1813,7 +1811,7 @@ void menu_enter_nop(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ui_step @ fffcdd7e  (93 bytes, 7 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ui_step @ fffcdd7e  (93 bytes, 7 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Front-panel dial on the selected row: timer 3000, flag 0x20F0F, `menu_call_step` [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1847,7 +1845,7 @@ void menu_ui_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_apply_from_cat @ fffcdddb  (42 bytes, 1 callers, export file fffcdbb8_fffce26d.c)
+ * menu_apply_from_cat @ fffcdddb  (42 bytes, 1 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: `0x15DFC = 1; menu_call_step(key); 0x15DFC = 0; state[0x40B] = 1` [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1868,7 +1866,7 @@ void menu_apply_from_cat(uint key)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_s8 @ fffcde18  (74 bytes, 26 callers, export file fffcdbb8_fffce26d.c)
+ * menu_step_s8 @ fffcde18  (74 bytes, 26 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: (min, max, ptr) ±1 by direction state+0x421. Returns at once when 0x15DFC = 1 [fact] for s8; u8 is
  *     [inference]
  * Tag: [fact] [inference]
@@ -1899,7 +1897,7 @@ void menu_step_s8(char param_1,char param_2,char *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_lcut_freq @ fffcdecf  (72 bytes, 6 callers, export file fffcdbb8_fffce26d.c)
+ * menu_step_lcut_freq @ fffcdecf  (72 bytes, 6 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: LCUT FREQ stepper: 0 = OFF, 1..19, clamps (menu.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1929,7 +1927,7 @@ void menu_step_lcut_freq(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_hcut_freq @ fffcdf37  (92 bytes, 6 callers, export file fffcdbb8_fffce26d.c)
+ * menu_step_hcut_freq @ fffcdf37  (92 bytes, 6 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: HCUT FREQ stepper: 1..67 and 0 = OFF above the top (menu.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -1964,7 +1962,7 @@ void menu_step_hcut_freq(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_u8 @ fffcdfb8  (72 bytes, 181 callers, export file fffcdbb8_fffce26d.c)
+ * menu_step_u8 @ fffcdfb8  (72 bytes, 181 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: (min, max, ptr) ±1 by direction state+0x421. Returns at once when 0x15DFC = 1 [fact] for s8; u8 is
  *     [inference]
  * Tag: [fact] [inference]
@@ -1994,7 +1992,7 @@ void menu_step_u8(byte param_1,byte param_2,byte *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_rptshift_get @ fffce3eb  (38 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_rptshift_get @ fffce3eb  (38 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Inferred name: *menu_fm_rptshift/encdec/tone_get/set*
  * Purpose: VFO-backed FM items [fact] for the call; that the fields belong to the current VFO is [inference]
  * Tag: [fact] [inference]
@@ -2015,7 +2013,7 @@ byte menu_fm_rptshift_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_rptshift_set @ fffce411  (37 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_rptshift_set @ fffce411  (37 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Purpose: EX010317 accessor (set) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2037,7 +2035,7 @@ void menu_fm_rptshift_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_u16 @ fffce495  (74 bytes, 3 callers, export file fffce280_fffce7ed.c)
+ * menu_step_u16 @ fffce495  (74 bytes, 3 callers, export file fffce26d_fffce7da.c)
  * Purpose: (min, max, *u16): +1/-1 by the step direction g_ui.menu_step_dir, clamped; no-op when 0x15DFC = 1 (CAT
  *     apply), the 16-bit twin of menu_step_u8 [fact: fffce495]
  * Tag: [fact]
@@ -2068,7 +2066,7 @@ void menu_step_u16(ushort param_1,ushort param_2,ushort *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_encdec_get @ fffce53c  (38 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_encdec_get @ fffce53c  (38 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Purpose: EX010320 accessor [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2088,7 +2086,7 @@ byte menu_fm_encdec_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_encdec_set @ fffce562  (38 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_encdec_set @ fffce562  (38 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Purpose: EX010320 accessor (set) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2110,7 +2108,7 @@ void menu_fm_encdec_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_tone_get @ fffce5be  (55 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_tone_get @ fffce5be  (55 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Purpose: EX010321 accessor [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2137,7 +2135,7 @@ byte menu_fm_tone_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_fm_tone_set @ fffce5f5  (52 bytes, 1 callers, export file fffce280_fffce7ed.c)
+ * menu_fm_tone_set @ fffce5f5  (52 bytes, 1 callers, export file fffce26d_fffce7da.c)
  * Inferred name: *menu_fm_rptshift/encdec/tone_get/set*
  * Purpose: VFO-backed FM items [fact] for the call; that the fields belong to the current VFO is [inference]
  * Tag: [fact] [inference]
@@ -2166,7 +2164,7 @@ void menu_fm_tone_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_bcd @ fffcf38f  (108 bytes, 5 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_step_bcd @ fffcf38f  (108 bytes, 5 callers, export file fffceff1_fffcf68f.c)
  * Purpose: (min, max, *v): +/-1 on a packed-BCD byte by direction +0x421, clamped; DATE&TIME items [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2195,7 +2193,7 @@ void menu_step_bcd(byte param_1,byte param_2,byte *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * sd_memlist_load_start @ fffcf6dd  (26 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_memlist_load_start @ fffcf6dd  (26 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: MEM LIST LOAD after the confirmation: 0x15DE5 = 1 (memory list), op +0x1E4 = 1, sd_load_start (#65)
  *     [inference]
  * Tag: [inference]
@@ -2217,7 +2215,7 @@ void sd_memlist_load_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_load_start @ fffcf6f7  (137 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * sd_load_start @ fffcf6f7  (137 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Mode 1: +0x88 = 1, 0x15DE3 = 1, step +0x3F7 = 1, first request frame 0x43 (+0x1E0) (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2245,7 +2243,7 @@ void sd_load_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_memlist_save_start @ fffcf78d  (26 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_memlist_save_start @ fffcf78d  (26 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: MEM LIST SAVE: 0x15DE5 = 1, op 2, sd_save_start (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2265,7 +2263,7 @@ void sd_memlist_save_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_save_start @ fffcf7a7  (137 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * sd_save_start @ fffcf7a7  (137 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Mode 2: as sd_load_start with 0x15DE3 = 2 (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2293,7 +2291,7 @@ void sd_save_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_menu_load_start @ fffcf83d  (26 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_menu_load_start @ fffcf83d  (26 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: MENU LOAD: 0x15DE5 = 0 (menu settings), op 3, sd_load_start (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2313,7 +2311,7 @@ void sd_menu_load_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_menu_save_start @ fffcf864  (26 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_menu_save_start @ fffcf864  (26 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: MENU SAVE: 0x15DE5 = 0, op 4, sd_save_start (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2333,7 +2331,7 @@ void sd_menu_save_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_info_start @ fffcf88b  (150 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_info_start @ fffcf88b  (150 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: INFORMATIONS: mode 3, op 5, first frame 0x43 (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2362,7 +2360,7 @@ void sd_info_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_op_clear @ fffcf92e  (22 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_op_clear @ fffcf92e  (22 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: +0x88 = 0, 0x15DE3 = 0: no SD operation running (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2381,7 +2379,7 @@ void sd_op_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_format_start @ fffcf951  (150 bytes, 1 callers, export file fffcf6dd_fffd016f.c)
+ * sd_format_start @ fffcf951  (150 bytes, 1 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: FORMAT: mode 4, op 8, first frame 0x43 (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2410,7 +2408,7 @@ void sd_format_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_reset_exec @ fffd0279  (15 bytes, 1 callers, export file fffd0194_fffd1252.c)
+ * menu_reset_exec @ fffd0279  (15 bytes, 1 callers, export file fffd016f_fffd1130.c)
  * Purpose: Runs reset_select(0x20BC0) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2428,7 +2426,7 @@ void menu_reset_exec(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_save_xfer_id @ fffd04c1  (28 bytes, 12 callers, export file fffd0194_fffd1252.c)
+ * sd_save_xfer_id @ fffd04c1  (28 bytes, 12 callers, export file fffd016f_fffd1130.c)
  * Purpose: 0x42 (memory list) or 0x44 (menu) by 0x15DE5 (display-link.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2453,7 +2451,7 @@ undefined1 sd_save_xfer_id(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_load_xfer_id @ fffd0566  (28 bytes, 5 callers, export file fffd0194_fffd1252.c)
+ * sd_load_xfer_id @ fffd0566  (28 bytes, 5 callers, export file fffd016f_fffd1130.c)
  * Purpose: 0x41 (memory list) or 0x43 (menu) by 0x15DE5 (display-link.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2478,7 +2476,7 @@ undefined1 sd_load_xfer_id(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_step_reset @ fffd05cf  (27 bytes, 15 callers, export file fffd0194_fffd1252.c)
+ * sd_step_reset @ fffd05cf  (27 bytes, 15 callers, export file fffd016f_fffd1130.c)
  * Purpose: UI +0x3F7 (SD step) = 0, +0x406 = 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2497,7 +2495,7 @@ void sd_step_reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_load_step @ fffd05ea  (45 bytes, 1 callers, export file fffd0194_fffd1252.c)
+ * sd_load_step @ fffd05ea  (45 bytes, 1 callers, export file fffd016f_fffd1130.c)
  * Purpose: Mode 1 step machine on +0x3F7; reads blocks with frame 0x44 (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2533,7 +2531,7 @@ void sd_load_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_abort_no_card @ fffd0979  (7 bytes, 11 callers, export file fffd0194_fffd1252.c)
+ * sd_abort_no_card @ fffd0979  (7 bytes, 11 callers, export file fffd016f_fffd1130.c)
  * Purpose: dialog_no_sd_card, then sd_step_reset [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2552,7 +2550,7 @@ void sd_abort_no_card(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_save_step @ fffd0a68  (138 bytes, 1 callers, export file fffd0194_fffd1252.c)
+ * sd_save_step @ fffd0a68  (138 bytes, 1 callers, export file fffd016f_fffd1130.c)
  * Purpose: Mode 2 step machine; writes blocks with frame 0x45 (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2612,7 +2610,7 @@ void sd_save_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_info_step @ fffd1394  (20 bytes, 1 callers, export file fffd12fd_fffd20ee.c)
+ * sd_info_step @ fffd1394  (20 bytes, 1 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Mode 3 step machine (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2633,7 +2631,7 @@ void sd_info_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_format_step @ fffd14b9  (324 bytes, 1 callers, export file fffd12fd_fffd20ee.c)
+ * sd_format_step @ fffd14b9  (324 bytes, 1 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Mode 4 step machine (#65) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -2702,7 +2700,7 @@ void sd_format_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_screen_close @ fffd1712  (126 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_screen_close @ fffd1712  (126 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Clears UI +0x95 (menu shown), +0x90, +0x88, +0x86, +0x1C5 and sets +0x96 = 1; in PRESET (P1 +0x41F = 5)
  *     opens the MODE pop-up 5 instead [fact]
  * Tag: [fact]
@@ -2735,7 +2733,7 @@ void menu_screen_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_name @ fffd1c25  (288 bytes, 5 callers, export file fffd12fd_fffd20ee.c)
+ * menu_draw_preset_name @ fffd1c25  (288 bytes, 5 callers, export file fffd1252_fffd20e1.c)
  * Purpose: PRESET1..5 PRESET NAME row (12 chars at 0x9B2E + 0x1F*(n-1)) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2797,7 +2795,7 @@ void menu_draw_preset_name(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_cat_rate @ fffd1d86  (234 bytes, 5 callers, export file fffd12fd_fffd20ee.c)
+ * menu_draw_preset_cat_rate @ fffd1d86  (234 bytes, 5 callers, export file fffd1252_fffd20e1.c)
  * Purpose: PRESET n CAT-1 RATE row: 4800..115200bps (ROM 0xFFF8455B) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2866,7 +2864,7 @@ void menu_draw_preset_cat_rate(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_cat_tot @ fffd1eb1  (235 bytes, 5 callers, export file fffd12fd_fffd20ee.c)
+ * menu_draw_preset_cat_tot @ fffd1eb1  (235 bytes, 5 callers, export file fffd1252_fffd20e1.c)
  * Purpose: PRESET n CAT-1 TIME OUT TIMER row: 10/100/1000/3000msec (ROM 0xFFF845C4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -2935,7 +2933,7 @@ void menu_draw_preset_cat_tot(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_stop_bit @ fffd1fdd  (234 bytes, 5 callers, export file fffd12fd_fffd20ee.c)
+ * menu_draw_preset_stop_bit @ fffd1fdd  (234 bytes, 5 callers, export file fffd1252_fffd20e1.c)
  * Purpose: PRESET n CAT-1 CAT-3 STOP BIT row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -3004,7 +3002,7 @@ void menu_draw_preset_stop_bit(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_agc_fast @ fffd2108  (240 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_agc_fast @ fffd2108  (240 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n AGC FAST DELAY row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -3067,7 +3065,7 @@ void menu_draw_preset_agc_fast(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_agc_mid @ fffd2239  (241 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_agc_mid @ fffd2239  (241 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n AGC MID DELAY row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -3130,7 +3128,7 @@ void menu_draw_preset_agc_mid(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_agc_slow @ fffd236b  (241 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_agc_slow @ fffd236b  (241 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n AGC SLOW DELAY row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -3193,7 +3191,7 @@ void menu_draw_preset_agc_slow(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_lcut_freq @ fffd249d  (235 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_lcut_freq @ fffd249d  (235 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n LCUT FREQ row: OFF / 100Hz / 150Hz.. (ROM 0xFFF8509B) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -3262,7 +3260,7 @@ void menu_draw_preset_lcut_freq(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_lcut_slope @ fffd25c9  (234 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_lcut_slope @ fffd25c9  (234 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n lcut_slope row (EX060n09): called by menu_ex06{01..05}09_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].lcut_slope, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd25c9]
@@ -3335,7 +3333,7 @@ void menu_draw_preset_lcut_slope(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_hcut_freq @ fffd26f4  (236 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_hcut_freq @ fffd26f4  (236 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n hcut_freq row (EX060n10): called by menu_ex06{01..05}10_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].hcut_freq, sets the default flag 0x80, writes the value text at +0x18 [fact: fffd26f4]
  * Tag: [fact]
@@ -3407,7 +3405,7 @@ void menu_draw_preset_hcut_freq(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_hcut_slope @ fffd2821  (234 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_hcut_slope @ fffd2821  (234 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n hcut_slope row (EX060n11): called by menu_ex06{01..05}11_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].hcut_slope, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2821]
@@ -3480,7 +3478,7 @@ void menu_draw_preset_hcut_slope(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_usb_out_level @ fffd294c  (214 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_usb_out_level @ fffd294c  (214 bytes, 5 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: PRESET n usb_out_level row (EX060n12): called by menu_ex06{01..05}12_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].usb_out_level, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd294c]
@@ -3541,7 +3539,7 @@ void menu_draw_preset_usb_out_level(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_rear_out_level @ fffd2a63  (214 bytes, 5 callers, export file fffd20fb_fffd2a63.c)
+ * menu_draw_preset_rear_out_level @ fffd2a63  (214 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n rear_out_level row (EX060n13): called by menu_ex06{01..05}13_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].rear_out_level, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2a63]
@@ -3600,8 +3598,9 @@ void menu_draw_preset_rear_out_level(byte param_1,byte *param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_tx_bpf_sel @ fffd2b7a  (234 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_draw_preset_tx_bpf_sel @ fffd2b7a  (234 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n tx_bpf_sel row (EX060n14): called by menu_ex06{01..05}14_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].tx_bpf_sel, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2b7a]
@@ -3674,7 +3673,7 @@ void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_mod_source @ fffd2ca5  (234 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_draw_preset_mod_source @ fffd2ca5  (234 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n mod_source row (EX060n15): called by menu_ex06{01..05}15_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].mod_source, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2ca5]
@@ -3747,7 +3746,7 @@ void menu_draw_preset_mod_source(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_usb_mod_gain @ fffd2dd0  (214 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_draw_preset_usb_mod_gain @ fffd2dd0  (214 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n usb_mod_gain row (EX060n16): called by menu_ex06{01..05}16_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].usb_mod_gain, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2dd0]
@@ -3808,7 +3807,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_rear_mod_gain @ fffd2ee7  (214 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_draw_preset_rear_mod_gain @ fffd2ee7  (214 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n rear_mod_gain row (EX060n17): called by menu_ex06{01..05}17_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].rear_mod_gain, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2ee7]
@@ -3869,7 +3868,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_draw_preset_rptt_select @ fffd2ffe  (234 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_draw_preset_rptt_select @ fffd2ffe  (234 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n rptt_select row (EX060n18): called by menu_ex06{01..05}18_draw with n = 1..5, reads
  *     g_opstate.presets[n-1].rptt_select, sets the default flag 0x80, writes the value text at +0x18 [fact:
  *     fffd2ffe]
@@ -3942,7 +3941,7 @@ void menu_draw_preset_rptt_select(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_preset_name_ptr @ fffd30e8  (138 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_preset_name_ptr @ fffd30e8  (138 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Returns the RAM address of the open PRESET's name: menu_p2_global 0x16..0x1A (PRESET1..5) ->
  *     0x9B2E/0x9B4D/0x9B6C/0x9B8B/0x9BAA, default 0x9B2E [fact: fffd30e8]; 0x9B2E is presets[0].name
  *     (ai_ex_preset_name compares it)
@@ -3985,7 +3984,7 @@ uint menu_preset_name_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_nop @ fffd31e3  (1 bytes, 36 callers, export file fffd2b39_fffd3340.c)
+ * menu_step_nop @ fffd31e3  (1 bytes, 36 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Empty menu on_step (RTS), shared by 18 items (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu.md
@@ -4002,7 +4001,7 @@ void menu_step_nop(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_cat1_rate @ fffd3202  (132 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_step_preset_cat1_rate @ fffd3202  (132 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n cat1_rate on_step (EX060n02): called by menu_ex06{01..05}02_step with n = 1..5, menu_step_u8 on
  *     &g_opstate.presets[n-1].cat1_rate [fact: fffd3202]
  * Tag: [fact]
@@ -4052,7 +4051,7 @@ void menu_step_preset_cat1_rate(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_cat1_tot @ fffd32a4  (132 bytes, 5 callers, export file fffd2b39_fffd3340.c)
+ * menu_step_preset_cat1_tot @ fffd32a4  (132 bytes, 5 callers, export file fffd2a63_fffd333a.c)
  * Purpose: PRESET n cat1_tot on_step (EX060n03): called by menu_ex06{01..05}03_step with n = 1..5, menu_step_u8 on
  *     &g_opstate.presets[n-1].cat1_tot [fact: fffd32a4]
  * Tag: [fact]
@@ -4102,7 +4101,7 @@ void menu_step_preset_cat1_tot(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_cat1_cat3_stop_bit @ fffd3346  (132 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_cat1_cat3_stop_bit @ fffd3346  (132 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n cat1_cat3_stop_bit on_step (EX060n04): called by menu_ex06{01..05}04_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].cat1_cat3_stop_bit [fact: fffd3346]
  * Tag: [fact]
@@ -4152,7 +4151,7 @@ void menu_step_preset_cat1_cat3_stop_bit(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_agc_fast_delay @ fffd33e8  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_agc_fast_delay @ fffd33e8  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n agc_fast_delay on_step (EX060n05): called by menu_ex06{01..05}05_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].agc_fast_delay [fact: fffd33e8]
  * Tag: [fact]
@@ -4202,7 +4201,7 @@ void menu_step_preset_agc_fast_delay(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_agc_mid_delay @ fffd348b  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_agc_mid_delay @ fffd348b  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n agc_mid_delay on_step (EX060n06): called by menu_ex06{01..05}06_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].agc_mid_delay [fact: fffd348b]
  * Tag: [fact]
@@ -4252,7 +4251,7 @@ void menu_step_preset_agc_mid_delay(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_agc_slow_delay @ fffd352e  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_agc_slow_delay @ fffd352e  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n agc_slow_delay on_step (EX060n07): called by menu_ex06{01..05}07_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].agc_slow_delay [fact: fffd352e]
  * Tag: [fact]
@@ -4302,7 +4301,7 @@ void menu_step_preset_agc_slow_delay(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_lcut_freq @ fffd35d1  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_lcut_freq @ fffd35d1  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n lcut_freq on_step (EX060n08): called by menu_ex06{01..05}08_step with n = 1..5, menu_step_u8 on
  *     &g_opstate.presets[n-1].lcut_freq [fact: fffd35d1]
  * Tag: [fact]
@@ -4352,7 +4351,7 @@ void menu_step_preset_lcut_freq(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_lcut_slope @ fffd3674  (132 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_lcut_slope @ fffd3674  (132 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n lcut_slope on_step (EX060n09): called by menu_ex06{01..05}09_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].lcut_slope [fact: fffd3674]
  * Tag: [fact]
@@ -4402,7 +4401,7 @@ void menu_step_preset_lcut_slope(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_hcut_freq @ fffd3716  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_hcut_freq @ fffd3716  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n hcut_freq on_step (EX060n10): called by menu_ex06{01..05}10_step with n = 1..5, menu_step_u8 on
  *     &g_opstate.presets[n-1].hcut_freq [fact: fffd3716]
  * Tag: [fact]
@@ -4452,7 +4451,7 @@ void menu_step_preset_hcut_freq(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_hcut_slope @ fffd37b9  (132 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_hcut_slope @ fffd37b9  (132 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n hcut_slope on_step (EX060n11): called by menu_ex06{01..05}11_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].hcut_slope [fact: fffd37b9]
  * Tag: [fact]
@@ -4502,7 +4501,7 @@ void menu_step_preset_hcut_slope(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_usb_out_level @ fffd385b  (133 bytes, 5 callers, export file fffd3346_fffd38e0.c)
+ * menu_step_preset_usb_out_level @ fffd385b  (133 bytes, 5 callers, export file fffd3340_fffd385b.c)
  * Purpose: PRESET n usb_out_level on_step (EX060n12): called by menu_ex06{01..05}12_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].usb_out_level [fact: fffd385b]
  * Tag: [fact]
@@ -4550,9 +4549,8 @@ void menu_step_preset_usb_out_level(byte param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_step_preset_rear_out_level @ fffd38fe  (133 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_rear_out_level @ fffd38fe  (133 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n rear_out_level on_step (EX060n13): called by menu_ex06{01..05}13_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].rear_out_level [fact: fffd38fe]
  * Tag: [fact]
@@ -4602,7 +4600,7 @@ void menu_step_preset_rear_out_level(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_tx_bpf_sel @ fffd39a1  (132 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_tx_bpf_sel @ fffd39a1  (132 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n tx_bpf_sel on_step (EX060n14): called by menu_ex06{01..05}14_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].tx_bpf_sel [fact: fffd39a1]
  * Tag: [fact]
@@ -4652,7 +4650,7 @@ void menu_step_preset_tx_bpf_sel(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_mod_source @ fffd3a43  (132 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_mod_source @ fffd3a43  (132 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n mod_source on_step (EX060n15): called by menu_ex06{01..05}15_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].mod_source [fact: fffd3a43]
  * Tag: [fact]
@@ -4702,7 +4700,7 @@ void menu_step_preset_mod_source(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_usb_mod_gain @ fffd3ae5  (133 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_usb_mod_gain @ fffd3ae5  (133 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n usb_mod_gain on_step (EX060n16): called by menu_ex06{01..05}16_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].usb_mod_gain [fact: fffd3ae5]
  * Tag: [fact]
@@ -4752,7 +4750,7 @@ void menu_step_preset_usb_mod_gain(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_rear_mod_gain @ fffd3b88  (133 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_rear_mod_gain @ fffd3b88  (133 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n rear_mod_gain on_step (EX060n17): called by menu_ex06{01..05}17_step with n = 1..5,
  *     menu_step_u8 on &g_opstate.presets[n-1].rear_mod_gain [fact: fffd3b88]
  * Tag: [fact]
@@ -4802,7 +4800,7 @@ void menu_step_preset_rear_mod_gain(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_step_preset_rptt_select @ fffd3c2b  (132 bytes, 5 callers, export file fffd38e6_fffd49da.c)
+ * menu_step_preset_rptt_select @ fffd3c2b  (132 bytes, 5 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: PRESET n rptt_select on_step (EX060n18): called by menu_ex06{01..05}18_step with n = 1..5, menu_step_u8
  *     on &g_opstate.presets[n-1].rptt_select [fact: fffd3c2b]
  * Tag: [fact]
@@ -4852,7 +4850,7 @@ void menu_step_preset_rptt_select(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_cursors_save @ fffd3d03  (859 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_cursors_save @ fffd3d03  (859 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Copies the RAM menu cursors 0x12238..0x1226D back into g_opstate before the power-off save [fact:
  *     fffd3d03]; callers io_task, supply_undervolt_check (eeprom.md "Menu cursors")
  * Tag: [fact]
@@ -4923,7 +4921,7 @@ void menu_cursors_save(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_cursors_load @ fffd405e  (859 bytes, 1 callers, export file fffd38e6_fffd49da.c)
+ * menu_cursors_load @ fffd405e  (859 bytes, 1 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Copies the per-group menu {top,row} cursors from g_opstate (0x9A3D .. presets[n].menu_cursor) into the
  *     RAM copy 0x12238..0x1226D [fact: fffd405e]; only caller menu_subsys_init (eeprom.md "Menu cursors")
  * Tag: [fact]
@@ -4995,7 +4993,7 @@ void menu_cursors_load(void)
 
 
 /* -----------------------------------------------------------------------------
- * sd_menu_enter_check @ fffd43b9  (118 bytes, 11 callers, export file fffd38e6_fffd49da.c)
+ * sd_menu_enter_check @ fffd43b9  (118 bytes, 11 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: SD CARD action on_enter guard: refuses while +0x93 / +0x92 (PlayList, recording); with no card (+0xA6 !=
  *     1) shows dialog 2 (arg 1) or 3 and returns 0 with an error beep [fact]
  * Tag: [fact]
@@ -5045,7 +5043,7 @@ char sd_menu_enter_check(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_register @ fffd442f  (377 bytes, 314 callers, export file fffd38e6_fffd49da.c)
+ * menu_register @ fffd442f  (377 bytes, 314 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Copies the descriptor, appends it to the per-P1 list, count++ (capped at 0x15F) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5117,7 +5115,7 @@ byte menu_register(byte *desc)
 
 
 /* -----------------------------------------------------------------------------
- * menu_group_visible @ fffd45a8  (169 bytes, 1 callers, export file fffd38e6_fffd49da.c)
+ * menu_group_visible @ fffd45a8  (169 bytes, 1 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: (P1, P2) has at least one item for this destination [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5162,7 +5160,7 @@ byte menu_group_visible(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_find @ fffd4651  (324 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_find @ fffd4651  (324 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Key {P1, P2, P3} → index. Scans the 100-entry P1 list, checks `valid` and `dest_mask`. Returns 0xFFFF if
  *     not found [fact]
  * Tag: [fact]
@@ -5238,7 +5236,7 @@ ushort menu_find(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_get_desc @ fffd4795  (85 bytes, 6 callers, export file fffd38e6_fffd49da.c)
+ * menu_get_desc @ fffd4795  (85 bytes, 6 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Key → 0x38-byte copy [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5285,7 +5283,7 @@ byte menu_get_desc(char *key,byte *desc)
 
 
 /* -----------------------------------------------------------------------------
- * menu_get_name @ fffd47ea  (87 bytes, 1 callers, export file fffd38e6_fffd49da.c)
+ * menu_get_name @ fffd47ea  (87 bytes, 1 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Key → 21-char name [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5332,7 +5330,7 @@ byte menu_get_name(char *key,char *name)
 
 
 /* -----------------------------------------------------------------------------
- * menu_count_items @ fffd4841  (144 bytes, 6 callers, export file fffd38e6_fffd49da.c)
+ * menu_count_items @ fffd4841  (144 bytes, 6 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Rows in a P2 group / groups in a P1 (destination-filtered) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5375,7 +5373,7 @@ char menu_count_items(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_count_groups @ fffd48d1  (207 bytes, 3 callers, export file fffd38e6_fffd49da.c)
+ * menu_count_groups @ fffd48d1  (207 bytes, 3 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Rows in a P2 group / groups in a P1 (destination-filtered) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5422,7 +5420,7 @@ char menu_count_groups(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_call_draw @ fffd49a0  (32 bytes, 1 callers, export file fffd38e6_fffd49da.c)
+ * menu_call_draw @ fffd49a0  (32 bytes, 1 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Fetch the descriptor and `JSR` its +0x1C / +0x20 / +0x24 pointer [fact] (disassembly; the decompile
  *     loses the call)
  * Tag: [fact]
@@ -5453,7 +5451,7 @@ void menu_call_draw(uint key,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_call_step @ fffd49c0  (26 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_call_step @ fffd49c0  (26 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Fetch the descriptor and `JSR` its +0x1C / +0x20 / +0x24 pointer [fact] (disassembly; the decompile
  *     loses the call)
  * Tag: [fact]
@@ -5480,9 +5478,8 @@ void menu_call_step(uint key)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_call_enter @ fffd49da  (26 bytes, 1 callers, export file fffd38e6_fffd49da.c)
+ * menu_call_enter @ fffd49da  (26 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Fetch the descriptor and `JSR` its +0x1C / +0x20 / +0x24 pointer [fact] (disassembly; the decompile
  *     loses the call)
  * Tag: [fact]
@@ -5509,8 +5506,9 @@ void menu_call_enter(uint key)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_p2_global @ fffd49f4  (91 bytes, 11 callers, export file fffd49f4_fffd61d7.c)
+ * menu_p2_global @ fffd49f4  (91 bytes, 11 callers, export file fffd49da_fffd616b.c)
  * Purpose: (P1, local P2) → global P2, using the bases 0/5/7/12/16/22 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5547,7 +5545,7 @@ char menu_p2_global(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * menu_dest_mask @ fffd4a4f  (139 bytes, 4 callers, export file fffd49f4_fffd61d7.c)
+ * menu_dest_mask @ fffd4a4f  (139 bytes, 4 callers, export file fffd49da_fffd616b.c)
  * Purpose: `dest_code_get()` → item mask bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5604,7 +5602,7 @@ LAB_fffd4ab8:
 
 
 /* -----------------------------------------------------------------------------
- * menu_cursor_of @ fffd4ada  (317 bytes, 8 callers, export file fffd49f4_fffd61d7.c)
+ * menu_cursor_of @ fffd4ada  (317 bytes, 8 callers, export file fffd49da_fffd616b.c)
  * Purpose: Global P2 → pointer to that group's {top, row} cursor (27-case switch) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -5708,7 +5706,7 @@ uint menu_cursor_of(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_build_all @ fffd4c30  (961 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_build_all @ fffd4c30  (961 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: 314 `BSR menuitem_*` in order. Registration order = table index [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6039,7 +6037,7 @@ void menu_build_all(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_init @ fffd4ff1  (13 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_init @ fffd4ff1  (13 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: → `menu_build_all` [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6059,7 +6057,7 @@ void menu_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_get_limits @ fffd4ffe  (78 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_get_limits @ fffd4ffe  (78 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Key → descriptor bytes 0x28..0x37 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6112,7 +6110,7 @@ byte menu_get_limits(char *key,byte *lim)
 
 
 /* -----------------------------------------------------------------------------
- * menu_value_rw @ fffd504c  (343 bytes, 2 callers, export file fffd49f4_fffd61d7.c)
+ * menu_value_rw @ fffd504c  (343 bytes, 2 callers, export file fffd49da_fffd616b.c)
  * Purpose: (key, 0 = read / 1 = write, u16 *). Byte or big-endian word at `store`, or the FM accessors [fact]
  *     (disassembly; the decompile shows a bogus `uRam00000000 = 1`)
  * Tag: [fact]
@@ -6233,7 +6231,7 @@ byte menu_value_rw(int key,char param_2,ushort *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_value_get @ fffd51a3  (39 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_value_get @ fffd51a3  (39 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Wrappers [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6258,7 +6256,7 @@ byte menu_value_get(char *key,ushort *val)
 
 
 /* -----------------------------------------------------------------------------
- * menu_value_set @ fffd51ca  (39 bytes, 2 callers, export file fffd49f4_fffd61d7.c)
+ * menu_value_set @ fffd51ca  (39 bytes, 2 callers, export file fffd49da_fffd616b.c)
  * Purpose: Wrappers [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6283,7 +6281,7 @@ byte menu_value_set(char *key,ushort *val)
 
 
 /* -----------------------------------------------------------------------------
- * menu_string_rw @ fffd51f1  (156 bytes, 2 callers, export file fffd49f4_fffd61d7.c)
+ * menu_string_rw @ fffd51f1  (156 bytes, 2 callers, export file fffd49da_fffd616b.c)
  * Inferred name: *menu_string_rw / get / set*
  * Purpose: Text items. Set clears 12 bytes, then copies [fact]
  * Tag: [fact]
@@ -6365,7 +6363,7 @@ byte menu_string_rw(int key,char param_2,int param_3,byte param_4)
 
 
 /* -----------------------------------------------------------------------------
- * menu_string_get @ fffd528d  (41 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_string_get @ fffd528d  (41 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Inferred name: *menu_string_rw / get / set*
  * Purpose: Text items. Set clears 12 bytes, then copies [fact]
  * Tag: [fact]
@@ -6391,7 +6389,7 @@ byte menu_string_get(int key,uint param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_string_set @ fffd52b6  (41 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_string_set @ fffd52b6  (41 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Inferred name: *menu_string_rw / get / set*
  * Purpose: Text items. Set clears 12 bytes, then copies [fact]
  * Tag: [fact]
@@ -6417,7 +6415,7 @@ byte menu_string_set(int key,uint param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * menu_p1_range @ fffd52df  (148 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menu_p1_range @ fffd52df  (148 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: P1 → first and last global P2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6476,7 +6474,7 @@ byte menu_p1_range(char param_1,void *param_2,void *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ex_command @ fffe61e7  (178 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_command @ fffe61e7  (178 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: `ex_parse_key` → `ex_read_or_write` → after a set `menu_apply_from_cat` → copies the reply from 0x18878
  *     (length 0x1FF10) [fact]
  * Tag: [fact]
@@ -6542,7 +6540,7 @@ byte ex_command(char *text,byte is_set,ushort len,byte *reply,ushort *reply_len)
 
 
 /* -----------------------------------------------------------------------------
- * ex_read_or_write @ fffe6299  (156 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_read_or_write @ fffe6299  (156 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: String or numeric, read or set [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6647,7 +6645,7 @@ bool ex_read_or_write(char *key,char *text,byte is_set,ushort len)
 
 
 /* -----------------------------------------------------------------------------
- * ex_read_string @ fffe6335  (198 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_read_string @ fffe6335  (198 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: 12-char items [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6713,7 +6711,7 @@ byte ex_read_string(int key,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ex_write_string @ fffe63fb  (113 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_write_string @ fffe63fb  (113 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: 12-char items [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6761,7 +6759,7 @@ LAB_fffe6458:
 
 
 /* -----------------------------------------------------------------------------
- * ex_read_value @ fffe646c  (228 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_read_value @ fffe646c  (228 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: Format or parse P4 using `digits`, `signed`, `is_word` and `scale`. The total length must be exactly 9 +
  *     digits (+1 with a sign), and the value must lie within [min, max] scaled. Otherwise `?;` [fact]
  * Tag: [fact]
@@ -6823,7 +6821,7 @@ byte ex_read_value(char *key,char *out,byte lim [16])
 
 
 /* -----------------------------------------------------------------------------
- * ex_write_value @ fffe6550  (314 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_write_value @ fffe6550  (314 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: Format or parse P4 using `digits`, `signed`, `is_word` and `scale`. The total length must be exactly 9 +
  *     digits (+1 with a sign), and the value must lie within [min, max] scaled. Otherwise `?;` [fact]
  * Tag: [fact]
@@ -6924,7 +6922,7 @@ byte ex_write_value(char *key,char *text,ushort len,byte lim [16])
 
 
 /* -----------------------------------------------------------------------------
- * ex_value_allowed @ fffe668a  (88 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_value_allowed @ fffe668a  (88 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: Refuses key {0,0,12} (EX010113, SSB TX BPF SEL) with value 5 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/menu.md
@@ -6972,7 +6970,7 @@ byte ex_value_allowed(char *param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ex_fmt_byte @ fffe66e2  (275 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_fmt_byte @ fffe66e2  (275 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Inferred name: *ex_fmt_byte, ex_fmt_4digits, ex_parse_4digits, ex_parse_byte*
  * Purpose: Decimal format and parse helpers [fact]
  * Tag: [fact]
@@ -7046,7 +7044,7 @@ short ex_fmt_byte(byte param_1,char param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ex_fmt_4digits @ fffe67f5  (116 bytes, 3 callers, export file fffe5ce0_fffe7155.c)
+ * ex_fmt_4digits @ fffe67f5  (116 bytes, 3 callers, export file fffe5caf_fffe7118.c)
  * Inferred name: *ex_fmt_byte, ex_fmt_4digits, ex_parse_4digits, ex_parse_byte*
  * Purpose: Decimal format and parse helpers [fact]
  * Tag: [fact]
@@ -7090,7 +7088,7 @@ short ex_fmt_4digits(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ex_parse_4digits @ fffe6869  (210 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_parse_4digits @ fffe6869  (210 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Inferred name: *ex_fmt_byte, ex_fmt_4digits, ex_parse_4digits, ex_parse_byte*
  * Purpose: Decimal format and parse helpers [fact]
  * Tag: [fact]
@@ -7148,7 +7146,7 @@ bool ex_parse_4digits(char *text,ushort *out,ushort min,ushort max,byte digits,u
 
 
 /* -----------------------------------------------------------------------------
- * ex_parse_byte @ fffe693b  (748 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_parse_byte @ fffe693b  (748 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Inferred name: *ex_fmt_byte, ex_fmt_4digits, ex_parse_4digits, ex_parse_byte*
  * Purpose: Decimal format and parse helpers [fact]
  * Tag: [fact]
@@ -7328,7 +7326,7 @@ byte ex_parse_byte(char *text,byte *out,byte digits,byte is_signed,byte min,byte
 
 
 /* -----------------------------------------------------------------------------
- * ex_parse_key @ fffe6c27  (339 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * ex_parse_key @ fffe6c27  (339 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: Requires 6 decimal digits. P1 internal = P1 − 1. P2 internal = P2 + {−1, +4, +6, +11, —, +21}[P1 − 1].
  *     P3 internal = P3 − 1. P1 05 and P1 > 06 return 0 (`?;`) [fact]
  * Tag: [fact]

@@ -4,7 +4,7 @@
 // 45 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Serial_Receive @ fff947ad  (68 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Serial_Receive @ fff947ad  (68 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Code Generator driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -36,7 +36,7 @@ ushort R_SCI5_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Serial_Send @ fff947f1  (95 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Serial_Send @ fff947f1  (95 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Code Generator driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -77,9 +77,8 @@ ushort R_SCI5_Serial_Send(uint param_1,short param_2)
   return local_a;
 }
 
-
 /* -----------------------------------------------------------------------------
- * r_sci5_receive_interrupt @ fff948c2  (114 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_receive_interrupt @ fff948c2  (114 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Purpose: Stores bytes and calls the receive-end callback after n bytes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -121,7 +120,7 @@ void r_sci5_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_init @ fffa1132  (187 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_init @ fffa1132  (187 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Boot sequence above [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -192,7 +191,7 @@ void sdr_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_level_ptr @ fffa150c  (53 bytes, 4 callers, export file fffa0032_fffa3083.c)
+ * scope_level_ptr @ fffa150c  (53 bytes, 4 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Per-band scope setting pointers (also used by `cat_SS`) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -220,7 +219,7 @@ uint scope_level_ptr(uint freq,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_span_ptr @ fffa1541  (53 bytes, 4 callers, export file fffa0032_fffa3083.c)
+ * scope_span_ptr @ fffa1541  (53 bytes, 4 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Per-band scope setting pointers (also used by `cat_SS`) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -251,7 +250,7 @@ uint scope_span_ptr(uint freq)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_req_reg0 @ fffa1580  (16 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_req_reg0 @ fffa1580  (16 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Version reads [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -270,7 +269,7 @@ void sdr_req_reg0(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_req_reg1 @ fffa1590  (16 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_req_reg1 @ fffa1590  (16 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Version reads [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -289,7 +288,7 @@ void sdr_req_reg1(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r03 @ fffa15a0  (83 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r03 @ fffa15a0  (83 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Inferred name: *sdr_upd_rXX_…*
  * Purpose: 29 register updaters, see the register map; one name per function in `names_main.T10c.tsv`
  * Tag: none in the table row
@@ -323,7 +322,7 @@ void sdr_upd_r03(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r04 @ fffa15f3  (57 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r04 @ fffa15f3  (57 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x04 = 0xE519 (constant; RX only) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -347,7 +346,7 @@ void sdr_upd_r04(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0a_demod @ fffa1738  (164 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0a_demod @ fffa1738  (164 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while 0x1204D
  *     != 0 [inference]
  * Tag: [inference]
@@ -421,7 +420,7 @@ LAB_fffa17b2:
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0b_band @ fffa17dc  (97 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0b_band @ fffa17dc  (97 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0B = per-band word from 0xFFF87FFA (RX) / 0xFFF87FFE (TX), 8-byte rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -458,7 +457,7 @@ void sdr_upd_r0b_band(char which)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0c_rtty_shift @ fffa183d  (113 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0c_rtty_shift @ fffa183d  (113 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0C = (RTTY shift 170/200/425/850 Hz from 0x9A8D)/5 << 8 | 3 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -499,7 +498,7 @@ void sdr_upd_r0c_rtty_shift(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0d @ fffa18ae  (74 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0d @ fffa18ae  (74 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0D = 9/14/19 from setting 0x9AA1 (0..2) [meaning unknown] [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -533,7 +532,7 @@ void sdr_upd_r0d(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0e @ fffa18f8  (49 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0e @ fffa18f8  (49 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0E = 0x1200 (constant) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -556,7 +555,7 @@ void sdr_upd_r0e(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r0f_band @ fffa1929  (131 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r0f_band @ fffa1929  (131 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x0F = per-band word 0xFFF87FFC/0xFFF88000, 0 when ADC 0x20B14 >= 0xE8B, unchanged between
  *     0x9B3..0xE8A [inference]
  * Tag: [inference]
@@ -603,7 +602,7 @@ void sdr_upd_r0f_band(char which)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r12 @ fffa19ac  (49 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r12 @ fffa19ac  (49 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x12 = 0x8000 (constant; RX only) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -626,7 +625,7 @@ void sdr_upd_r12(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r13 @ fffa19dd  (49 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r13 @ fffa19dd  (49 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x13 = 0x8000 (constant; RX only) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -649,7 +648,7 @@ void sdr_upd_r13(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r14_mode @ fffa1a0e  (124 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r14_mode @ fffa1a0e  (124 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x14 = 0x2000/0x3200 (AM)/0x7800 (FM, DATA-FM)/0x3C00 (FM-N, DATA-FM-N) by TX-side mode [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -707,7 +706,7 @@ void sdr_upd_r14_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_init_r15 @ fffa1a8a  (49 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_init_r15 @ fffa1a8a  (49 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x15 = 0x2000, sent once after the first full sync [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -730,7 +729,7 @@ void sdr_init_r15(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r16_filter @ fffa1abb  (430 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r16_filter @ fffa1abb  (430 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x16 = filter class by mode and width (CW 0..2, SSB/data 0x10..0x12, AM 0x20/0x21, FM 0x30/0x31)
  *     [inference]; also sets 0x20B4A, the TX→RX AF-unmute delay read by `trx_sequencer` [fact] (#205)
  * Tag: [inference] [fact]
@@ -851,7 +850,7 @@ LAB_fffa1c3f:
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1a_nb_level @ fffa1fd1  (120 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1a_nb_level @ fffa1fd1  (120 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1A = NB level (NL 0x9DC0) mapped through 0xFFF8808A (AM) / 0xFFF880A0, 0 when NB is off
  *     [inference]
  * Tag: [inference]
@@ -894,7 +893,7 @@ void sdr_upd_r1a_nb_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1b @ fffa2049  (102 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1b @ fffa2049  (102 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1B = table 0xFFF880B6 (AM) / 0xFFF880BC indexed by NB WIDTH 0x9AD3 (`EX030203`) [fact]; the FPGA
  *     noise blanker's width parameter [inference: that setting is its only input]
  * Tag: [fact] [inference]
@@ -932,7 +931,7 @@ void sdr_upd_r1b(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1c @ fffa20af  (72 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1c @ fffa20af  (72 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 (`EX030202`) [fact]; the noise blanker's rejection parameter
  *     [inference: that setting is its only input]
  * Tag: [fact] [inference]
@@ -968,7 +967,7 @@ void sdr_upd_r1c(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1d_notch @ fffa20f7  (897 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1d_notch @ fffa20f7  (897 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1D = notch offset/5 Hz (12 bits) | 0x2000 or 0x1000 (width 0x9AD1), 0 when off [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1129,7 +1128,7 @@ void sdr_upd_r1d_notch(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1e_passband @ fffa2478  (599 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1e_passband @ fffa2478  (599 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1E = signed passband centre / 5 Hz (negated for the upper-side modes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1250,7 +1249,7 @@ void sdr_upd_r1e_passband(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r1f_width @ fffa26cf  (137 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r1f_width @ fffa26cf  (137 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x1F = filter width in Hz (AM 9000, AM-N 6000, FM/DATA-FM 16000, FM-N 9000, else the selected width)
  *     [inference]
  * Tag: [inference]
@@ -1311,7 +1310,7 @@ LAB_fffa272e:
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r22_scope_span @ fffa28ea  (168 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r22_scope_span @ fffa28ea  (168 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1379,7 +1378,7 @@ void sdr_upd_r22_scope_span(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r23 @ fffa2992  (83 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r23 @ fffa2992  (83 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 (`EX040201`) [fact]; a scope resolution-bandwidth
  *     parameter [inference: that setting is its only input]
  * Tag: [fact] [inference]
@@ -1415,7 +1414,7 @@ void sdr_upd_r23(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_init_r24 @ fffa29e5  (49 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_init_r24 @ fffa29e5  (49 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x24 = 0x0317, sent once after the first full sync [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1438,7 +1437,7 @@ void sdr_init_r24(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r25_tx_drive @ fffa2a16  (377 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r25_tx_drive @ fffa2a16  (377 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x25 = TX drive: power setting interpolated (5/10/20/50/100 W) in the per-band calibration in the
  *     0x4659 (SPN) table, << 4 [inference]
  * Tag: [inference]
@@ -1528,7 +1527,7 @@ void sdr_upd_r25_tx_drive(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r26 @ fffa2b8f  (116 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r26 @ fffa2b8f  (116 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Reg 0x26 = 0x0610 in RX; in TX 0x0140/0x0610/0x0200/0xFF00 from 0x9C36/0x9B16/0x9B17 [meaning unknown]
  *     [inference]
  * Tag: [inference]
@@ -1572,7 +1571,7 @@ void sdr_upd_r26(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_upd_r27_scope_level @ fffa2c03  (156 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_upd_r27_scope_level @ fffa2c03  (156 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Inferred name: *sdr_upd_rXX_…*
  * Purpose: 29 register updaters, see the register map; one name per function in `names_main.T10c.tsv`
  * Tag: none in the table row
@@ -1624,7 +1623,7 @@ void sdr_upd_r27_scope_level(char which)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_shadow_update @ fffa2c9f  (856 bytes, 3 callers, export file fffa0032_fffa3083.c)
+ * sdr_shadow_update @ fffa2c9f  (856 bytes, 3 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Register → shadow slot (compare chain) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1798,7 +1797,7 @@ void sdr_shadow_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_wait_reply @ fffa2ff7  (140 bytes, 7 callers, export file fffa0032_fffa3083.c)
+ * sdr_wait_reply @ fffa2ff7  (140 bytes, 7 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Blocking reply wait, used by boot, CAT and the bridge [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1849,9 +1848,8 @@ byte sdr_wait_reply(char param_1,char param_2)
   return local_9;
 }
 
-
 /* -----------------------------------------------------------------------------
- * sdr_poll_reply @ fffa3083  (118 bytes, 3 callers, export file fffa0032_fffa3083.c)
+ * sdr_poll_reply @ fffa3083  (118 bytes, 3 callers, export file fffa3083_fffa9648.c)
  * Purpose: Non-blocking reply check with timeout [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1897,8 +1895,9 @@ byte sdr_poll_reply(char param_1,void *param_2)
   return local_e;
 }
 
+
 /* -----------------------------------------------------------------------------
- * sdr_sum8 @ fffa31ae  (45 bytes, 4 callers, export file fffa30f9_fffa9928.c)
+ * sdr_sum8 @ fffa31ae  (45 bytes, 4 callers, export file fffa3083_fffa9648.c)
  * Purpose: Frame checksum [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1922,7 +1921,7 @@ char sdr_sum8(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_check_hex_sum @ fffa31db  (75 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * sdr_check_hex_sum @ fffa31db  (75 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Reply checksum test [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1956,7 +1955,7 @@ byte sdr_check_hex_sum(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_link_start @ fffb1af8  (14 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sdr_link_start @ fffb1af8  (14 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Clears 0xA2B3 and starts SCI5. Part of the SCI start-up chain `sci_start_all` [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1976,7 +1975,7 @@ void sdr_link_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_ready @ fffb1b06  (15 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sdr_rx_ready @ fffb1b06  (15 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Returns 0xA2B3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -1993,7 +1992,7 @@ byte sdr_rx_ready(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_done_cb @ fffb1b15  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sdr_rx_done_cb @ fffb1b15  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: 0xA2B3 = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -2011,7 +2010,7 @@ void sdr_rx_done_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_buf @ fffb1b1f  (12 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sdr_rx_buf @ fffb1b1f  (12 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Returns 0xA2AC (`MOV.L #0xA2AC,R1`; the decompile lost the return) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sdr-link.md
@@ -2028,7 +2027,7 @@ uint sdr_rx_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_send_cmd @ fffb1b2b  (37 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sdr_send_cmd @ fffb1b2b  (37 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Send, then arm a receive of up to 7 bytes into 0xA2AC; `sci5_rx_byte_hook` 0xFFF94962 trims it to 1 byte
  *     for 0x06/`?` [fact]
  * Tag: [fact]
@@ -2049,7 +2048,7 @@ void sdr_send_cmd(uint param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_a_dir_out @ fffb7110  (12 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_a_dir_out @ fffb7110  (12 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Port (pin): PDR5.0, P13/P12, P50, P22, PDR1.3/1.2
  * Net (p17): not traced
  * Use in code: Not SDR (tuner and other ports); left to the owning T10 pages
@@ -2073,7 +2072,7 @@ void gpo_a_dir_out(void)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_c_dir @ fffb7128  (37 bytes, 3 callers, export file fffb70c9_fffb9422.c)
+ * gpo_c_dir @ fffb7128  (37 bytes, 3 callers, export file fffb70b0_fffb93b9.c)
  * Port (pin): PDR5.0, P13/P12, P50, P22, PDR1.3/1.2
  * Net (p17): not traced
  * Use in code: Not SDR (tuner and other ports); left to the owning T10 pages

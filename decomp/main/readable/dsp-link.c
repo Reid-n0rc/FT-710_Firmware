@@ -4,7 +4,7 @@
 // 109 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Create @ fff9423c  (163 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Create @ fff9423c  (163 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas code-generator SCI4 driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -62,7 +62,7 @@ void R_SCI4_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Serial_Receive @ fff94387  (68 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Serial_Receive @ fff94387  (68 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas code-generator SCI4 driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -94,7 +94,7 @@ ushort R_SCI4_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Serial_Send @ fff943cb  (95 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Serial_Send @ fff943cb  (95 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas code-generator SCI4 driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -137,7 +137,7 @@ ushort R_SCI4_Serial_Send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_transmit_interrupt @ fff9442b  (76 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci4_transmit_interrupt @ fff9442b  (76 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas code-generator SCI4 driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -170,7 +170,7 @@ void r_sci4_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_receive_interrupt @ fff9449c  (114 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci4_receive_interrupt @ fff9449c  (114 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas code-generator SCI4 driver [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -213,7 +213,7 @@ void r_sci4_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_frame_done @ fff94536  (17 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * sci4_rx_frame_done @ fff94536  (17 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: Frame complete: 0xA2AB=1, length → 0x1B78A [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -233,7 +233,7 @@ void sci4_rx_frame_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_frame_len @ fff94548  (282 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * sci4_rx_frame_len @ fff94548  (282 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: SCI4 per-byte receive callback (frame length detector, below) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -290,7 +290,7 @@ void sci4_rx_frame_len(void)
 
 
 /* -----------------------------------------------------------------------------
- * ver_dsp @ fff94c2d  (12 bytes, 3 callers, export file fff94851_fff95bf4.c)
+ * ver_dsp @ fff94c2d  (12 bytes, 3 callers, export file fff94850_fff95ace.c)
  * Purpose: Returns pointer to DSP version 0x1444 (VE3) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -307,7 +307,7 @@ uint ver_dsp(void)
 
 
 /* -----------------------------------------------------------------------------
- * ver_dsp_set @ fff94c39  (18 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * ver_dsp_set @ fff94c39  (18 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: Stores the 6-char version text at 0x1444, read by `ver_dsp` (CAT `VE`) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -326,7 +326,7 @@ void ver_dsp_set(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_link_init @ fff9d06c  (333 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_link_init @ fff9d06c  (333 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Called by `app_main` after the SDR init. Boot handshake, see the sequence below [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -423,7 +423,7 @@ LAB_fff9d1a6:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_link_poll @ fff9d1b9  (1591 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * dsp_link_poll @ fff9d1b9  (1591 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Purpose: `main_loop` task: finishes the pending transaction, runs the ISP bridge if requested, polls status, then
  *     walks the setter chain [fact]
  * Tag: [fact]
@@ -636,7 +636,7 @@ void dsp_link_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_status1_raw @ fff9d7f0  (16 bytes, 3 callers, export file fff9c555_fff9db66.c)
+ * dsp_status1_raw @ fff9d7f0  (16 bytes, 3 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -653,7 +653,7 @@ ushort dsp_status1_raw(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_fm_noise @ fff9d800  (56 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_fm_noise @ fff9d800  (56 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -679,7 +679,7 @@ byte dsp_fm_noise(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_tone_detect @ fff9d838  (15 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_tone_detect @ fff9d838  (15 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -696,7 +696,7 @@ byte dsp_tone_detect(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_comp_level @ fff9d857  (15 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * dsp_comp_level @ fff9d857  (15 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -713,7 +713,7 @@ ushort dsp_comp_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_signal_level @ fff9d866  (16 bytes, 3 callers, export file fff9c555_fff9db66.c)
+ * dsp_signal_level @ fff9d866  (16 bytes, 3 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -730,7 +730,7 @@ ushort dsp_signal_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_tune_offset @ fff9d895  (15 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * dsp_tune_offset @ fff9d895  (15 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Getters for the filtered status values [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -747,7 +747,7 @@ ushort dsp_tune_offset(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_read_version @ fff9d957  (16 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_read_version @ fff9d957  (16 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: `dsp_read_version`, *dsp_read_status1..4*
  * (The page describes the range 0xFFF9D957..0xFFF9D997 in one row.)
  * Purpose: Send a read of reg 0, 1, 2, 3, 4 [fact]
@@ -768,7 +768,7 @@ void dsp_read_version(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_read_status1 @ fff9d967  (16 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * dsp_read_status1 @ fff9d967  (16 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: `dsp_read_version`, *dsp_read_status1..4*
  * (The page describes the range 0xFFF9D957..0xFFF9D997 in one row.)
  * Purpose: Send a read of reg 0, 1, 2, 3, 4 [fact]
@@ -789,7 +789,7 @@ void dsp_read_status1(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_read_status2 @ fff9d977  (16 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_read_status2 @ fff9d977  (16 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: `dsp_read_version`, *dsp_read_status1..4*
  * (The page describes the range 0xFFF9D957..0xFFF9D997 in one row.)
  * Purpose: Send a read of reg 0, 1, 2, 3, 4 [fact]
@@ -810,7 +810,7 @@ void dsp_read_status2(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_read_status3 @ fff9d987  (16 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_read_status3 @ fff9d987  (16 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: `dsp_read_version`, *dsp_read_status1..4*
  * (The page describes the range 0xFFF9D957..0xFFF9D997 in one row.)
  * Purpose: Send a read of reg 0, 1, 2, 3, 4 [fact]
@@ -831,7 +831,7 @@ void dsp_read_status3(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_read_status4 @ fff9d997  (16 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_read_status4 @ fff9d997  (16 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: `dsp_read_version`, *dsp_read_status1..4*
  * (The page describes the range 0xFFF9D957..0xFFF9D997 in one row.)
  * Purpose: Send a read of reg 0, 1, 2, 3, 4 [fact]
@@ -852,7 +852,7 @@ void dsp_read_status4(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_demod @ fff9d9a7  (98 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_demod @ fff9d9a7  (98 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name: *dsp_set_…*
  * Purpose: One setter per register (table below)
  * Tag: none in the table row
@@ -908,7 +908,7 @@ void dsp_set_demod(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r08 @ fff9da09  (51 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r08 @ fff9da09  (51 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 8: route word (0x2022 / 0x2222 / 0x20B34) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -935,7 +935,7 @@ void dsp_set_r08(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r09 @ fff9da3c  (51 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r09 @ fff9da3c  (51 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 9: route constant 0/2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -962,7 +962,7 @@ void dsp_set_r09(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r0a @ fff9da6f  (51 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r0a @ fff9da6f  (51 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 10: route/input select [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -989,7 +989,7 @@ void dsp_set_r0a(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r0c @ fff9daa2  (47 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r0c @ fff9daa2  (47 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 0x0C = 0 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1012,7 +1012,7 @@ void dsp_set_r0c(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r0d @ fff9dad1  (51 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r0d @ fff9dad1  (51 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 0x0D: 0xF000 in CW TX route, else 0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1039,7 +1039,7 @@ void dsp_set_r0d(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r0e @ fff9db04  (51 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r0e @ fff9db04  (51 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 0x0E: 0xF000 in CW TX route, else 0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1066,7 +1066,7 @@ void dsp_set_r0e(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r0f @ fff9db37  (47 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r0f @ fff9db37  (47 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: reg 0x0F = 0x2B (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1087,9 +1087,8 @@ void dsp_set_r0f(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * dsp_set_r11 @ fff9db66  (49 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_set_r11 @ fff9db66  (49 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x11 = 0xFFA2 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1110,8 +1109,9 @@ void dsp_set_r11(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * dsp_set_r12 @ fff9db97  (47 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r12 @ fff9db97  (47 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x12 = 8 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1134,7 +1134,7 @@ void dsp_set_r12(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r13 @ fff9dbc6  (49 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r13 @ fff9dbc6  (49 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x13 = 0xFFF8 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1157,7 +1157,7 @@ void dsp_set_r13(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_tx_gain @ fff9dbf7  (147 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_tx_gain @ fff9dbf7  (147 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x20: modulation gain curve value (MIC/USB/REAR gain) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1202,7 +1202,7 @@ void dsp_set_tx_gain(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_vox_gain @ fff9dc8a  (90 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_vox_gain @ fff9dc8a  (90 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x21: -(VOX GAIN + curve + 29) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1231,7 +1231,7 @@ void dsp_set_vox_gain(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_antivox @ fff9dce4  (134 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_antivox @ fff9dce4  (134 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x22: anti-VOX vs AF gain, 0xFF when PF5 low [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1274,7 +1274,7 @@ void dsp_set_antivox(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_peq_freq @ fff9dd6a  (380 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_peq_freq @ fff9dd6a  (380 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x25/0x28/0x2B: parametric mic EQ band frequency | 0x1000 enable [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1372,7 +1372,7 @@ void dsp_set_peq_freq(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_peq_level @ fff9dee6  (239 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_peq_level @ fff9dee6  (239 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x26/0x29/0x2C: parametric mic EQ band level (signed) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1439,7 +1439,7 @@ void dsp_set_peq_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_peq_bw @ fff9dfd5  (216 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_peq_bw @ fff9dfd5  (216 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x27/0x2A/0x2D: parametric mic EQ band width [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1499,7 +1499,7 @@ void dsp_set_peq_bw(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_proc @ fff9e0ad  (126 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_proc @ fff9e0ad  (126 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x2E: speech processor level | 0x1000 (SSB only) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1545,7 +1545,7 @@ void dsp_set_proc(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_tx_bpf @ fff9e12b  (244 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_tx_bpf @ fff9e12b  (244 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x2F: TX BPF SEL + 1 (SSB/AM/DATA) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1616,7 +1616,7 @@ LAB_fff9e1c6:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r30 @ fff9e21f  (76 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r30 @ fff9e21f  (76 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x30 = 0xFF in FM modes (never cleared) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1643,7 +1643,7 @@ void dsp_set_r30(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r31 @ fff9e26b  (197 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r31 @ fff9e26b  (197 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x31: per-mode constant (-43/-54/-56) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1713,7 +1713,7 @@ LAB_fff9e2da:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r32 @ fff9e330  (197 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r32 @ fff9e330  (197 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x32: per-mode constant (-43/-54/-56) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1783,7 +1783,7 @@ LAB_fff9e39f:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_amc_release @ fff9e3f5  (139 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_amc_release @ fff9e3f5  (139 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x33: AMC RELEASE TIME 0x11/0x12/0x13, FM 0x0C [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1834,7 +1834,7 @@ void dsp_set_amc_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_amc_level @ fff9e480  (156 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_amc_level @ fff9e480  (156 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x34: AMC OUTPUT LEVEL | 0x1000 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1888,7 +1888,7 @@ LAB_fff9e4bd:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_ctcss_enc @ fff9e51c  (152 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_ctcss_enc @ fff9e51c  (152 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x35: TX tone index+1 | 0x1000 (FM, tone on) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1936,7 +1936,7 @@ void dsp_set_ctcss_enc(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r36 @ fff9e5b4  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r36 @ fff9e5b4  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x36 = 0 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1959,7 +1959,7 @@ void dsp_set_r36(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r37 @ fff9e5e4  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r37 @ fff9e5e4  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x37 = 0 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -1982,7 +1982,7 @@ void dsp_set_r37(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r38 @ fff9e614  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r38 @ fff9e614  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x38 = 0 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2005,7 +2005,7 @@ void dsp_set_r38(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_fm_flag @ fff9e644  (117 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_fm_flag @ fff9e644  (117 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x3A: 1 in FM modes [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2048,7 +2048,7 @@ void dsp_set_fm_flag(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r3b @ fff9e6b9  (151 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r3b @ fff9e6b9  (151 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x3B: per-mode constant (-39/-50/-52) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2108,7 +2108,7 @@ LAB_fff9e725:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_r40 @ fff9e750  (116 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_r40 @ fff9e750  (116 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x40: DNR table (levels 8-15 -> 1) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2146,7 +2146,7 @@ void dsp_set_dnr_r40(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnf @ fff9e7c4  (173 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnf @ fff9e7c4  (173 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x41: auto notch (BC) on/off [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2201,7 +2201,7 @@ LAB_fff9e83e:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_contour @ fff9e871  (307 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_contour @ fff9e871  (307 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x42: contour freq | 0x1000 on [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2271,7 +2271,7 @@ LAB_fff9e968:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_contour_level @ fff9e9a4  (86 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_contour_level @ fff9e9a4  (86 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x43: CONTOUR LEVEL (signed) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2302,7 +2302,7 @@ void dsp_set_contour_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_contour_width @ fff9e9fa  (63 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_contour_width @ fff9e9fa  (63 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x44: 11 - CONTOUR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2325,7 +2325,7 @@ void dsp_set_contour_width(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_apf @ fff9ea39  (174 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_apf @ fff9ea39  (174 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x45: APF centre (pitch + APF offset) | width<<12 when APF on [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2377,7 +2377,7 @@ void dsp_set_apf(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_hcut @ fff9eae7  (551 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_hcut @ fff9eae7  (551 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x46: HCUT freq (700+50(n-1)) | slope<<12 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2491,7 +2491,7 @@ LAB_fff9ecb6:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_lcut @ fff9ed0e  (550 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_lcut @ fff9ed0e  (550 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x47: LCUT freq (100+50(n-1)) | slope<<12 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2605,7 +2605,7 @@ LAB_fff9eedd:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_tone_freq @ fff9ef34  (381 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_tone_freq @ fff9ef34  (381 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x48/0x4B/0x4E: AF tone band frequency 200/400/1200 Hz | 0x1000 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2740,7 +2740,7 @@ LAB_fff9f078:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_tone_gain @ fff9f0b1  (480 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_tone_gain @ fff9f0b1  (480 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x49/0x4C/0x4F: AF BASS/MIDDLE/TREBLE GAIN (signed) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -2875,7 +2875,7 @@ LAB_fff9f24f:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_tone_q @ fff9f291  (367 bytes, 3 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_tone_q @ fff9f291  (367 bytes, 3 callers, export file fff9db66_fff9ff30.c)
  * Purpose: regs 0x4A/0x4D/0x50: Q of the three AF tone bands, constant 2/1/1 [fact: HiFi4 `rx_eq_band_update`] (was
  *     `dsp_set_tone_type`)
  * Tag: [fact]
@@ -3006,7 +3006,7 @@ LAB_fff9f3d5:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r51 @ fff9f400  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r51 @ fff9f400  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x51 = 0 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3029,7 +3029,7 @@ void dsp_set_r51(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_am_notch @ fff9f430  (152 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_am_notch @ fff9f430  (152 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x52: manual notch freq | width<<12 (AM only) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3075,7 +3075,7 @@ void dsp_set_am_notch(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_ctcss_dec @ fff9f4c8  (131 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_ctcss_dec @ fff9f4c8  (131 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x53: RX tone index+1 | 0x1000 (FM, tone on); sets 0x20B72 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3115,7 +3115,7 @@ void dsp_set_ctcss_dec(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r56 @ fff9f54b  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r56 @ fff9f54b  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x56 = 0x20 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3138,7 +3138,7 @@ void dsp_set_r56(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_affft_att @ fff9f57b  (75 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_affft_att @ fff9f57b  (75 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x5C: AF-FFT attenuator (SS07 P3) <<8 | 0x1000 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3165,7 +3165,7 @@ void dsp_set_affft_att(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_osc @ fff9f5c6  (114 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_osc @ fff9f5c6  (114 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x5D: oscilloscope level (RX/TX) <<8 | 0x1000 | time [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3199,7 +3199,7 @@ void dsp_set_osc(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_cw_pitch @ fff9f638  (73 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_cw_pitch @ fff9f638  (73 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x61: (KEY PITCH + 30)*10 | 0x1000 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3225,7 +3225,7 @@ void dsp_set_cw_pitch(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_agc @ fff9f681  (1261 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_agc @ fff9f681  (1261 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x62 AGC on, reg 0x66 AGC delay (20n+20 ms; scan 200/40/4) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3493,7 +3493,7 @@ LAB_fff9fa98:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_rf_gain @ fff9fc2a  (118 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_rf_gain @ fff9fc2a  (118 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x67: RF gain curve (0xFF when knob is SQL) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3531,7 +3531,7 @@ void dsp_set_rf_gain(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_r68 @ fff9fca0  (48 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_r68 @ fff9fca0  (48 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x68 = 0x94 (once) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3554,7 +3554,7 @@ void dsp_set_r68(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_400b @ fff9fcd0  (129 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_400b @ fff9fcd0  (129 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x400B: DNR table by level [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3589,7 +3589,7 @@ void dsp_set_dnr_400b(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_400d @ fff9fd51  (129 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_400d @ fff9fd51  (129 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x400D: DNR table by level [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3624,7 +3624,7 @@ void dsp_set_dnr_400d(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_aess @ fff9fdd2  (88 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_aess @ fff9fdd2  (88 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x4020: 0 / 0x2000|700 / 0x2000|1000 (AESS on, centre) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3664,7 +3664,7 @@ void dsp_set_aess(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_4022 @ fff9fe2a  (133 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_4022 @ fff9fe2a  (133 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x4022: DNR table by level [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3702,7 +3702,7 @@ void dsp_set_dnr_4022(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_4023 @ fff9feaf  (129 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_4023 @ fff9feaf  (129 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x4023: DNR table by level [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3737,7 +3737,7 @@ void dsp_set_dnr_4023(byte which)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_4025 @ fff9ff30  (129 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_4025 @ fff9ff30  (129 bytes, 1 callers, export file fff9db66_fff9ff30.c)
  * Purpose: reg 0x4025: DNR table by level [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3770,9 +3770,8 @@ void dsp_set_dnr_4025(byte which)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * dsp_set_dnr_4026 @ fff9ffb1  (129 bytes, 1 callers, export file fff9db97_fff9ffb1.c)
+ * dsp_set_dnr_4026 @ fff9ffb1  (129 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Inferred name: *dsp_set_…*
  * Purpose: One setter per register (table below)
  * Tag: none in the table row
@@ -3806,8 +3805,9 @@ void dsp_set_dnr_4026(byte which)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * dsp_status1_filter @ fffa0032  (270 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_status1_filter @ fffa0032  (270 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Inferred name: *dsp_statusN_filter*
  * Purpose: Filters for regs 1–4 (see "Registers read") [fact]
  * Tag: [fact]
@@ -3866,7 +3866,7 @@ void dsp_status1_filter(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_status2_filter @ fffa0140  (178 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_status2_filter @ fffa0140  (178 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg2: 32-sample average of each byte -> 0x1B6E2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3903,7 +3903,7 @@ void dsp_status2_filter(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_status3_filter @ fffa01f2  (115 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_status3_filter @ fffa01f2  (115 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg3: 16-sample average of low byte -> 0x1C62 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3933,7 +3933,7 @@ void dsp_status3_filter(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_status4_filter @ fffa0265  (277 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_status4_filter @ fffa0265  (277 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: reg4: most frequent of last 8 samples -> 0x1B6E4 (100 if none repeats) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -3999,7 +3999,7 @@ void dsp_status4_filter(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_shadow_store @ fffa037a  (1884 bytes, 4 callers, export file fffa0032_fffa3083.c)
+ * dsp_shadow_store @ fffa037a  (1884 bytes, 4 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: `if/else` chain over the register number: stores 0x1B6E0 into the register's shadow; for regs 1–4 it
  *     also runs the status filters [fact]
  * Tag: [fact]
@@ -4366,7 +4366,7 @@ void dsp_shadow_store(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_check_reply @ fffa0ad6  (118 bytes, 6 callers, export file fffa0032_fffa3083.c)
+ * dsp_check_reply @ fffa0ad6  (118 bytes, 6 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: If a frame is complete (0xA2AB): clears both busy flags; read → 1 if the checksum matches; write → 1 if
  *     the first byte is 0x06. If not complete and timer 3 has expired: clears both flags (gives up) [fact]
  * Tag: [fact]
@@ -4415,7 +4415,7 @@ byte dsp_check_reply(char param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_send_frame @ fffa0b4c  (181 bytes, 67 callers, export file fffa0032_fffa3083.c)
+ * dsp_send_frame @ fffa0b4c  (181 bytes, 67 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Builds the frame at 0x1A5E from address 0x1B6DE and data 0x1B6E0, sets busy flag 0x1C5E (write) or
  *     0x1C5F (read), sends it, and starts timer 3 = 6 ms [fact]
  * Tag: [fact]
@@ -4454,7 +4454,7 @@ void dsp_send_frame(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_sum8 @ fffa0c01  (45 bytes, 3 callers, export file fffa0032_fffa3083.c)
+ * dsp_sum8 @ fffa0c01  (45 bytes, 3 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: 8-bit sum of n bytes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4478,7 +4478,7 @@ char dsp_sum8(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_reply_sum_ok @ fffa0c2e  (75 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_reply_sum_ok @ fffa0c2e  (75 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Compares `sum8(buf,5)` with the two hex characters after it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4513,7 +4513,7 @@ byte dsp_reply_sum_ok(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_route_param @ fffa0e3a  (760 bytes, 7 callers, export file fffa0032_fffa3083.c)
+ * dsp_route_param @ fffa0e3a  (760 bytes, 7 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: Constant tables per audio-route state (`audio_route_state`) for regs 8, 9, 10, 0x0D/0x0E, 0x20 and the
  *     mic-EQ enables. Calling it for reg 0x20 sets 0x20B49=1 [fact]
  * Tag: [fact]
@@ -4752,7 +4752,7 @@ ushort dsp_route_param(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_ready @ fffb1a8f  (15 bytes, 2 callers, export file fffb1325_fffb1dad.c)
+ * sci4_rx_ready @ fffb1a8f  (15 bytes, 2 callers, export file fffb1303_fffb1d79.c)
  * Inferred name: `sci4_rx_ready` / *_set_ready* / *_buf* / *_set_len* / *_len*
  * Purpose: Accessors for 0xA2AB, buffer 0xA0AB, length 0x1B78A [fact]
  * Tag: [fact]
@@ -4770,7 +4770,7 @@ byte sci4_rx_ready(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_set_ready @ fffb1a9e  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sci4_rx_set_ready @ fffb1a9e  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: 0xA2AB=1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4788,7 +4788,7 @@ void sci4_rx_set_ready(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_buf @ fffb1aa8  (12 bytes, 2 callers, export file fffb1325_fffb1dad.c)
+ * sci4_rx_buf @ fffb1aa8  (12 bytes, 2 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Returns the SCI4 receive buffer (0xA0AB) [decompiler lost the return value] [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4805,7 +4805,7 @@ uint sci4_rx_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_send @ fffb1ab4  (39 bytes, 7 callers, export file fffb1325_fffb1dad.c)
+ * sci4_send @ fffb1ab4  (39 bytes, 7 callers, export file fffb1303_fffb1d79.c)
  * Purpose: `R_SCI4_Serial_Send(buf,len)`, then clears 0xA2AB and re-arms `R_SCI4_Serial_Receive(0xA0AB, 0x200)`
  *     [fact]
  * Tag: [fact]
@@ -4826,7 +4826,7 @@ void sci4_send(uint param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_set_len @ fffb1adb  (14 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sci4_rx_set_len @ fffb1adb  (14 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: 0x1B78A=len [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4844,7 +4844,7 @@ void sci4_rx_set_len(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sci4_rx_len @ fffb1ae9  (15 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sci4_rx_len @ fffb1ae9  (15 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Returns 0x1B78A [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -4861,7 +4861,7 @@ ushort sci4_rx_len(void)
 
 
 /* -----------------------------------------------------------------------------
- * swtimer_tick @ fffb2288  (242 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * swtimer_tick @ fffb2288  (242 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Soft timers 0..0x4A. Start: count = ms·10 (or (µs+50)/100); flag 0x11FED[id] = expired. Tick period 100
  *     µs [inference] from the two scalings
  * Tag: [inference]
@@ -4907,7 +4907,7 @@ void swtimer_tick(void)
 
 
 /* -----------------------------------------------------------------------------
- * swtimer_start @ fffb237a  (58 bytes, 161 callers, export file fffb1f42_fffb2f9e.c)
+ * swtimer_start @ fffb237a  (58 bytes, 161 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Soft timers 0..0x4A. Start: count = ms·10 (or (µs+50)/100); flag 0x11FED[id] = expired. Tick period 100
  *     µs [inference] from the two scalings
  * Tag: [inference]
@@ -4932,7 +4932,7 @@ void swtimer_start(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * timer_start_us @ fffb23b4  (63 bytes, 6 callers, export file fffb1f42_fffb2f9e.c)
+ * timer_start_us @ fffb23b4  (63 bytes, 6 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Soft timers 0..0x4A. Start: count = ms·10 (or (µs+50)/100); flag 0x11FED[id] = expired. Tick period 100
  *     µs [inference] from the two scalings
  * Tag: [inference]
@@ -4957,7 +4957,7 @@ void timer_start_us(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * swtimer_expired @ fffb23f3  (19 bytes, 115 callers, export file fffb1f42_fffb2f9e.c)
+ * swtimer_expired @ fffb23f3  (19 bytes, 115 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Soft timers 0..0x4A. Start: count = ms·10 (or (µs+50)/100); flag 0x11FED[id] = expired. Tick period 100
  *     µs [inference] from the two scalings
  * Tag: [inference]
@@ -4976,7 +4976,7 @@ byte swtimer_expired(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * audio_route_state @ fffb4219  (734 bytes, 5 callers, export file fffb2fc0_fffb4c45.c)
+ * audio_route_state @ fffb4219  (734 bytes, 5 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: Returns the audio-route state 0..14 (below). The decompile is broken (return value lost); read from the
  *     disassembly [fact]
  * Tag: [fact]
@@ -5219,7 +5219,7 @@ uint audio_route_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_mod_gain @ fffb527c  (526 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * tx_mod_gain @ fffb527c  (526 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Purpose: MIC GAIN (0x9BEC..0x9BEF by mode) or the per-mode USB/REAR MOD GAIN, picked by MOD SOURCE
  *     (`FUN_fffb3d11`) [fact]; menu names [inference]
  * Tag: [fact] [inference]
@@ -5331,7 +5331,7 @@ LAB_fffb5345:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_reset_set @ fffb7080  (24 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * dsp_reset_set @ fffb7080  (24 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Write P71 / P72 (PODR 0x8C027 bits 1/2) [fact]; P71=0 = DSP in reset, P72=1 = ISP boot [inference]
  *     (matches `DSP_RESET18`/`DSP_UPDATE`, service manual p19)
  * Tag: [fact] [inference]
@@ -5356,7 +5356,7 @@ void dsp_reset_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_update_set @ fffb7098  (24 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * dsp_update_set @ fffb7098  (24 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Write P71 / P72 (PODR 0x8C027 bits 1/2) [fact]; P71=0 = DSP in reset, P72=1 = ISP boot [inference]
  *     (matches `DSP_RESET18`/`DSP_UPDATE`, service manual p19)
  * Tag: [fact] [inference]
@@ -5379,9 +5379,8 @@ void dsp_update_set(byte param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * align_store_dsp_level @ fffbbc6f  (31 bytes, 11 callers, export file fffb948b_fffbc3bd.c)
+ * align_store_dsp_level @ fffbbc6f  (31 bytes, 11 callers, export file fffb9422_fffbc38e.c)
  * Purpose: cal[item] = dsp_signal_level() (11 items from 32) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -5408,7 +5407,7 @@ ushort align_store_dsp_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI7_Create @ fffc95b1  (163 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Create @ fffc95b1  (163 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: SCI7 driver, unused (see SCI7) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -5468,7 +5467,7 @@ void R_SCI7_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_transmit_interrupt @ fffc97a0  (76 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_transmit_interrupt @ fffc97a0  (76 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: SCI7 driver, unused (see SCI7) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -5501,7 +5500,7 @@ void r_sci7_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_receive_interrupt @ fffc9811  (111 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_receive_interrupt @ fffc9811  (111 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: SCI7 driver, unused (see SCI7) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/dsp-link.md
@@ -5542,7 +5541,7 @@ void r_sci7_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * ladder_key_delay @ fffe419a  (89 bytes, 6 callers, export file fffe3b5b_fffe4c04.c)
+ * ladder_key_delay @ fffe419a  (89 bytes, 6 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: Remote-keypad helper: the first call starts soft timer 0x38 (200), later calls return 1 once it expired;
  *     keys 0xF7/0xF9 in ladder_key_task [fact]
  * Tag: [fact]

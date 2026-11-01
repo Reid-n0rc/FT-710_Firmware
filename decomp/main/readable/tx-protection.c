@@ -4,7 +4,7 @@
 // 94 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * cat_RM @ fffadb7d  (345 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_RM @ fffadb7d  (345 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: meter reads
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -111,7 +111,7 @@ void cat_RM(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SM @ fffae64b  (129 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * cat_SM @ fffae64b  (129 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: meter reads
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -155,7 +155,7 @@ void cat_SM(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_TX @ fffaf7b8  (188 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_TX @ fffaf7b8  (188 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: TX0/TX1 set (flag 0x20B28), read TX0/1/2
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -210,7 +210,7 @@ void cat_TX(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * shreg_bus_init @ fffb1f83  (108 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * shreg_bus_init @ fffb1f83  (108 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: bus primitives
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -263,7 +263,7 @@ void shreg_bus_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * bu2505_write @ fffb1fef  (158 bytes, 10 callers, export file fffb1f42_fffb2f9e.c)
+ * bu2505_write @ fffb1fef  (158 bytes, 10 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: bus primitives
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -326,7 +326,7 @@ void bu2505_write(int param_1,byte param_2,short param_3)
 
 
 /* -----------------------------------------------------------------------------
- * sst2_write12 @ fffb208d  (191 bytes, 8 callers, export file fffb1f42_fffb2f9e.c)
+ * sst2_write12 @ fffb208d  (191 bytes, 8 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: bus primitives
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -402,7 +402,7 @@ void sst2_write12(char param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * shreg_write24 @ fffb214c  (196 bytes, 3 callers, export file fffb1f42_fffb2f9e.c)
+ * shreg_write24 @ fffb214c  (196 bytes, 3 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: bus primitives
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -485,7 +485,7 @@ void shreg_write24(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tot_start @ fffb268e  (49 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tot_start @ fffb268e  (49 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: TX time-out
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -510,7 +510,7 @@ void tot_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * tot_expired @ fffb26bf  (38 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tot_expired @ fffb26bf  (38 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: TX time-out
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -533,7 +533,7 @@ byte tot_expired(void)
 
 
 /* -----------------------------------------------------------------------------
- * tot_prewarn @ fffb26e5  (51 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tot_prewarn @ fffb26e5  (51 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: TX time-out
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -559,7 +559,7 @@ char tot_prewarn(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_band_of_freq @ fffb3371  (58 bytes, 11 callers, export file fffb2fc0_fffb4c45.c)
+ * tx_band_of_freq @ fffb3371  (58 bytes, 11 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: (f): index 0..10 of the first bound in ROM 0xFFF8870C (2.1 / 4.7 / 7.5 / 11.5 / 14.5 / 20.9 / 22 / 25.5
  *     / 41.5 / 60 / 75 MHz) above f, else 0xFF [fact]
  * Tag: [fact]
@@ -588,7 +588,7 @@ byte tx_band_of_freq(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tx_freq_allowed @ fffb37fe  (675 bytes, 9 callers, export file fffb2fc0_fffb4c45.c)
+ * tx_freq_allowed @ fffb37fe  (675 bytes, 9 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: inhibit flags + region tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -775,7 +775,7 @@ LAB_fffb397e:
 
 
 /* -----------------------------------------------------------------------------
- * tx_mod_source @ fffb3d11  (324 bytes, 4 callers, export file fffb2fc0_fffb4c45.c)
+ * tx_mod_source @ fffb3d11  (324 bytes, 4 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: (mode): MOD SOURCE for the mode (EX010114 / 010214 / 010313 / 010414 or the active PRESET); while DVS
  *     records 0; with PTT source 0/6 and VOX on the VOX SELECT source; AUTO (3) resolves by the PTT source to 2
  *     (rear), 1 (USB) or 0 (MIC) [fact: fffb3d11]; callers tx_mod_gain, audio_level_update, tx_audio_select
@@ -875,7 +875,7 @@ LAB_fffb3de6:
 
 
 /* -----------------------------------------------------------------------------
- * rptt_select_get @ fffb50d7  (323 bytes, 2 callers, export file fffb4e18_fffb70b0.c)
+ * rptt_select_get @ fffb50d7  (323 bytes, 2 callers, export file fffb4c45_fffb7098.c)
  * Purpose: (mode): RPTT SELECT for the mode (EX010117 / 010217 / 010316 / 010417 / 010513 / 020113, or the active
  *     PRESET), 0 for modes without one [fact: fffb50d7]; callers ptt_inputs_read, tx_cw_keying_class
  * Tag: [fact]
@@ -946,7 +946,7 @@ LAB_fffb51ed:
 
 
 /* -----------------------------------------------------------------------------
- * qsk_delay_ticks @ fffb548a  (22 bytes, 2 callers, export file fffb4e18_fffb70b0.c)
+ * qsk_delay_ticks @ fffb548a  (22 bytes, 2 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Returns EX020119 QSK DELAY TIME x 5 + 15 [fact: fffb548a]; callers trx_sequencer, keyer_task
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -963,7 +963,7 @@ char qsk_delay_ticks(void)
 
 
 /* -----------------------------------------------------------------------------
- * rf_ctrl_task @ fffb55c2  (41 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * rf_ctrl_task @ fffb55c2  (41 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  * Also on: README.md
@@ -991,7 +991,7 @@ void rf_ctrl_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * pa_relay_update @ fffb55eb  (186 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * pa_relay_update @ fffb55eb  (186 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: 24-bit registers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -1055,7 +1055,7 @@ void pa_relay_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * rf_bpf_update @ fffb56a5  (225 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * rf_bpf_update @ fffb56a5  (225 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: 24-bit registers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -1122,7 +1122,7 @@ void rf_bpf_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * atu_relay_update @ fffb5786  (238 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * atu_relay_update @ fffb5786  (238 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: 24-bit registers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -1187,7 +1187,7 @@ void atu_relay_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * main_dac_update @ fffb5874  (258 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * main_dac_update @ fffb5874  (258 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: BU2505 DACs
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -1253,7 +1253,7 @@ void main_dac_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * pa_dac_update @ fffb5976  (1010 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * pa_dac_update @ fffb5976  (1010 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: BU2505 DACs
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -1472,7 +1472,7 @@ void pa_dac_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * audio_level_update @ fffb5d68  (2322 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * audio_level_update @ fffb5d68  (2322 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: rf_ctrl_task's sixth sub-task: picks USB/REAR OUT LEVEL and the MOD GAIN (MIC / USB / REAR by
  *     tx_mod_source) per RX mode, from the EX items or the active PRESET, and writes the 8-channel audio level
  *     device with sst2_write12 when a value changes [fact: fffb5d68] (tx-protection.md #143 already describes this
@@ -1919,7 +1919,7 @@ LAB_fffb6432:
 
 
 /* -----------------------------------------------------------------------------
- * pa_falc_interp @ fffb667a  (1636 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * pa_falc_interp @ fffb667a  (1636 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: (band, watts) -> PA drive DAC value: picks the band's 100/50/20/10/5 W FALC alignment items
  *     (g_cfg105.a070..a082 ...) and interpolates between the two that bracket the power [fact: fffb667a]; only
  *     caller pa_dac_update (BU2505 ch2)
@@ -2375,7 +2375,7 @@ char pa_falc_interp(undefined1 param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * trx_init @ fffb6cde  (120 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * trx_init @ fffb6cde  (120 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: trx_state = 4, timer 0x13 = 2.5 s, AF_MUTE on
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2408,7 +2408,7 @@ void trx_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * io_task @ fffb6d56  (173 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * io_task @ fffb6d56  (173 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: main-loop task: AF mute, meters, I/O, power-fail, restart
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2471,7 +2471,7 @@ void io_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_vdd @ fffb6e03  (15 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_vdd @ fffb6e03  (15 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2488,7 +2488,7 @@ byte meter_get_vdd(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_idd @ fffb6e12  (15 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_idd @ fffb6e12  (15 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2505,7 +2505,7 @@ byte meter_get_idd(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_alc @ fffb6e21  (15 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_alc @ fffb6e21  (15 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2522,7 +2522,7 @@ byte meter_get_alc(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_swr @ fffb6e30  (15 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_swr @ fffb6e30  (15 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2539,7 +2539,7 @@ byte meter_get_swr(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_swr_raw @ fffb6e3f  (15 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_swr_raw @ fffb6e3f  (15 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2556,7 +2556,7 @@ byte meter_get_swr_raw(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6e4e @ fffb6e4e  (14 bytes, 3 callers, export file fffb4e18_fffb70b0.c)
+ * FUN_fffb6e4e @ fffb6e4e  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2573,7 +2573,7 @@ void FUN_fffb6e4e(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6e5c @ fffb6e5c  (14 bytes, 3 callers, export file fffb4e18_fffb70b0.c)
+ * FUN_fffb6e5c @ fffb6e5c  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2590,7 +2590,7 @@ void FUN_fffb6e5c(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_po @ fffb6e6a  (46 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_po @ fffb6e6a  (46 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2615,7 +2615,7 @@ byte meter_get_po(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_comp @ fffb6e98  (15 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_comp @ fffb6e98  (15 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2632,7 +2632,7 @@ byte meter_get_comp(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_get_s @ fffb6ea7  (15 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * meter_get_s @ fffb6ea7  (15 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2649,7 +2649,7 @@ byte meter_get_s(void)
 
 
 /* -----------------------------------------------------------------------------
- * remote_key_get @ fffb6eb6  (15 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * remote_key_get @ fffb6eb6  (15 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
@@ -2666,7 +2666,7 @@ byte remote_key_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * ptt_source_get @ fffb6ec5  (15 bytes, 6 callers, export file fffb4e18_fffb70b0.c)
+ * ptt_source_get @ fffb6ec5  (15 bytes, 6 callers, export file fffb4c45_fffb7098.c)
  * Purpose: 0x1204D
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2683,7 +2683,7 @@ byte ptt_source_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_line_get @ fffb6fac  (19 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * tx_line_get @ fffb6fac  (19 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Purpose: P73 / PB7
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2705,7 +2705,7 @@ byte tx_line_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * send_a_get @ fffb6fbf  (19 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * send_a_get @ fffb6fbf  (19 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * Purpose: no direct calls; 19 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2724,7 +2724,7 @@ byte send_a_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * send_a_set @ fffb6fd2  (63 bytes, 20 callers, export file fffb4e18_fffb70b0.c)
+ * send_a_set @ fffb6fd2  (63 bytes, 20 callers, export file fffb4c45_fffb7098.c)
  * Purpose: SEND_A PA2 / SEND_B PB4 with inhibit gating
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2761,7 +2761,7 @@ void send_a_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * send_b_set @ fffb7011  (64 bytes, 20 callers, export file fffb4e18_fffb70b0.c)
+ * send_b_set @ fffb7011  (64 bytes, 20 callers, export file fffb4c45_fffb7098.c)
  * Purpose: SEND_A PA2 / SEND_B PB4 with inhibit gating
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2798,7 +2798,7 @@ void send_b_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_b_dir_out @ fffb711c  (12 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_b_dir_out @ fffb711c  (12 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: PDR P12 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2820,7 +2820,7 @@ void gpo_b_dir_out(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_line_get @ fffb721a  (17 bytes, 3 callers, export file fffb70c9_fffb9422.c)
+ * rx_line_get @ fffb721a  (17 bytes, 3 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: P73 / PB7
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2842,7 +2842,7 @@ byte rx_line_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_mute_get @ fffb722b  (24 bytes, 21 callers, export file fffb70c9_fffb9422.c)
+ * af_mute_get @ fffb722b  (24 bytes, 21 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: AF_MUTE PB3
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2863,7 +2863,7 @@ bool af_mute_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_mute_set @ fffb7243  (199 bytes, 19 callers, export file fffb70c9_fffb9422.c)
+ * af_mute_set @ fffb7243  (199 bytes, 19 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: AF_MUTE PB3
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2932,7 +2932,7 @@ void af_mute_set(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ear_det @ fffb730a  (24 bytes, 13 callers, export file fffb70c9_fffb9422.c)
+ * ear_det @ fffb730a  (24 bytes, 13 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: PF5 low [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2953,7 +2953,7 @@ bool ear_det(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_task @ fffb73dd  (65 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_task @ fffb73dd  (65 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: 5 / 10 ms scheduler
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -2990,7 +2990,7 @@ void meter_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * vdd_scale_calc @ fffb742b  (81 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * vdd_scale_calc @ fffb742b  (81 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3008,7 +3008,7 @@ void vdd_scale_calc(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_vdd @ fffb747c  (60 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_vdd @ fffb747c  (60 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3036,7 +3036,7 @@ void meter_vdd(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_idd @ fffb74b8  (71 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_idd @ fffb74b8  (71 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3064,7 +3064,7 @@ void meter_idd(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_alc @ fffb74ff  (70 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_alc @ fffb74ff  (70 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3092,7 +3092,7 @@ void meter_alc(void)
 
 
 /* -----------------------------------------------------------------------------
- * swr_meter_protect @ fffb7545  (557 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * swr_meter_protect @ fffb7545  (557 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: SWR meter + HI-SWR flag
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -3218,7 +3218,7 @@ void swr_meter_protect(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_po @ fffb7772  (247 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_po @ fffb7772  (247 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3275,7 +3275,7 @@ LAB_fffb7837:
 
 
 /* -----------------------------------------------------------------------------
- * meter_comp @ fffb7869  (240 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_comp @ fffb7869  (240 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3334,7 +3334,7 @@ void meter_comp(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_s @ fffb7959  (231 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * meter_s @ fffb7959  (231 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
@@ -3393,7 +3393,7 @@ LAB_fffb79e0:
 
 
 /* -----------------------------------------------------------------------------
- * remote_keypad_scan @ fffb7a40  (259 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * remote_keypad_scan @ fffb7a40  (259 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: FH-2 keypad
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -3458,7 +3458,7 @@ LAB_fffb7abb:
 
 
 /* -----------------------------------------------------------------------------
- * io_poll @ fffb7b43  (34 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * io_poll @ fffb7b43  (34 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: runs the I/O subtasks once timer 0x13 expires
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -3489,7 +3489,7 @@ void io_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_mute_update @ fffb7b65  (391 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * af_mute_update @ fffb7b65  (391 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: AF_MUTE PB3
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -3603,7 +3603,7 @@ void af_mute_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_noise_squelch @ fffb7cec  (373 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * fm_noise_squelch @ fffb7cec  (373 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: FM modes: squelch threshold from the FM SQL alignment items (g_cfg105.a046/a047 THW/THN, a048 TI) and
  *     the SQL knob g_ui.rf_gain, with hysteresis; dsp_fm_noise below it opens (squelch_open = 1, AF mute off),
  *     above threshold + hysteresis closes [fact: fffb7cec]; only caller af_mute_update
@@ -3692,7 +3692,7 @@ void fm_noise_squelch(void)
 
 
 /* -----------------------------------------------------------------------------
- * signal_level_squelch @ fffb7e61  (270 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * signal_level_squelch @ fffb7e61  (270 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: SSB/CW/AM/DATA modes: threshold from g_cfg105.a041_rx_s_mtr_40 (+80 / +110) and the SQL knob
  *     g_ui.rf_gain; dsp_signal_level below it opens the squelch (squelch_open = 1, AF mute off), above threshold +
  *     6 closes it [fact: fffb7e61]; only caller af_mute_update
@@ -3758,7 +3758,7 @@ void signal_level_squelch(void)
 
 
 /* -----------------------------------------------------------------------------
- * ptt_inputs_read @ fffb7f6f  (394 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * ptt_inputs_read @ fffb7f6f  (394 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: ports → 0x20B24..0x20B29
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -3859,7 +3859,7 @@ LAB_fffb80ab:
 
 
 /* -----------------------------------------------------------------------------
- * trx_sequencer @ fffb80f9  (1193 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * trx_sequencer @ fffb80f9  (1193 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: state machine above
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -4174,7 +4174,7 @@ void trx_sequencer(void)
 
 
 /* -----------------------------------------------------------------------------
- * ptt_source_select @ fffb85a2  (326 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * ptt_source_select @ fffb85a2  (326 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: priority → 0x1204D, 0x12050
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -4261,7 +4261,7 @@ byte ptt_source_select(void)
 
 
 /* -----------------------------------------------------------------------------
- * ptt_arbiter @ fffb86e8  (794 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * ptt_arbiter @ fffb86e8  (794 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: TXINH, debounce, hang, TOT
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -4451,7 +4451,7 @@ LAB_fffb89c6:
 
 
 /* -----------------------------------------------------------------------------
- * tx_audio_select @ fffb8a02  (138 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * tx_audio_select @ fffb8a02  (138 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: TX_SEL_A/B
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -4508,7 +4508,7 @@ void tx_audio_select(void)
 
 
 /* -----------------------------------------------------------------------------
- * lamp_map_update @ fffb8d77  (518 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * lamp_map_update @ fffb8d77  (518 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: Builds g_ui.lamp_map: 0x10 squelch open, 0x80 VOX, 0x20 TX (blinking when TX is refused out of band),
  *     VFO-A/B/memory/clar colour bits from EX040301..EX040304 VMI COLOR, 1 in split, 0x40 FUNC panel; also sets
  *     g_ui.tx_lamp 0/1/2 [fact: fffb8d77]; only caller io_task
@@ -4654,7 +4654,7 @@ void lamp_map_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * rtty_fsk_keying @ fffb915e  (393 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * rtty_fsk_keying @ fffb915e  (393 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: While transmitting RTTY: reads the RPTT SELECT input (1 = PC5, 2 = PC6, 3 = P21; EX010513 or the
  *     PRESET), applies EX010517 POLARITY TX and drives FSK_SHIFT PC4 with beep_request 9 / 0xB for the two states;
  *     on RX or other modes stops the tone and sets PC4 [fact: fffb915e]; only caller io_poll
@@ -4771,7 +4771,7 @@ void rtty_fsk_keying(void)
 
 
 /* -----------------------------------------------------------------------------
- * pc_keying @ fffb9774  (340 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * pc_keying @ fffb9774  (340 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: CW from DAKY/RTS/DTR: SEND + sidetone
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -4862,7 +4862,7 @@ void pc_keying(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_cw_keying_class @ fffba192  (378 bytes, 11 callers, export file fffb948b_fffbc3bd.c)
+ * tx_cw_keying_class @ fffba192  (378 bytes, 11 callers, export file fffb9422_fffbc38e.c)
  * Purpose: 0 voice, 1 CW mode, 2/3 CW in SSB (CW AUTO MODE 0x9A3C; value 1 only on band 0xB) by PTT source against
  *     PC KEYING 0x9A9F / RPTT SELECT; also sets 0x1215D [fact]
  * Tag: [fact]
@@ -5005,7 +5005,7 @@ LAB_fffba271:
 
 
 /* -----------------------------------------------------------------------------
- * contest_number_set @ fffba336  (38 bytes, 7 callers, export file fffb948b_fffbc3bd.c)
+ * contest_number_set @ fffba336  (38 bytes, 7 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Stores a u16 big-endian into g_opstate.ex020205_contest_number_be [fact: fffba336]; the setter twin of
  *     contest_number_get
  * Tag: [fact]
@@ -5026,7 +5026,7 @@ void contest_number_set(undefined2 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_elekey @ fffba377  (1225 bytes, 2 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_elekey @ fffba377  (1225 bytes, 2 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Keyer for KEYER TYPE 2..5 (ELEKEY-A, -B, -Y, ACS): keyer_task calls it when the type - 2 < 4; iambic
  *     squeeze memory for types 3 and 4 [fact: fffba377 and the caller's test]
  * Tag: [fact]
@@ -5313,7 +5313,7 @@ void keyer_elekey(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_straight_bug @ fffba840  (387 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_straight_bug @ fffba840  (387 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Keyer for KEYER TYPE 0/1 (OFF = straight key, BUG): keyer_task calls it when the type (0x1215F) < 2;
  *     times elements with timer 0x17 and puts them with keyer_elem_put [fact: fffba840 and the caller's test; type
  *     labels from ROM 0xFFF84339 OFF/BUG/ELEKEY-A/-B/-Y/ACS]
@@ -5404,7 +5404,7 @@ void keyer_straight_bug(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_output_step @ fffbaa81  (1397 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_output_step @ fffbaa81  (1397 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Plays the element ring 0x120BC from the read index 0x1FA3A up to the write index 0x1FA38: raises/clears
  *     g_ui.ptt_keyer (break-in), keyer_key_out, sidetone in state 6 [fact: fffbaa81]
  * Tag: [fact]
@@ -5679,7 +5679,7 @@ void keyer_output_step(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_state_clear @ fffbaff6  (46 bytes, 3 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_state_clear @ fffbaff6  (46 bytes, 3 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Clears the keyer bytes 0x12160..0x12164 [fact: fffbaff6]; keyer_task states 0 and 2
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -5701,7 +5701,7 @@ void keyer_state_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_elem_put @ fffbb024  (231 bytes, 22 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_elem_put @ fffbb024  (231 bytes, 22 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Appends to the keyer element ring 0x120BC (index 0x1FA38): arg 1 = one mark bit + sidetone on, 0 = one
  *     space bit + sidetone off, 2 = three mark bits (dash) [fact: fffbb024]; matches eeprom.md's description of the
  *     ring
@@ -5763,7 +5763,7 @@ undefined4 keyer_elem_put(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_ring_limit @ fffbb10b  (96 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_ring_limit @ fffbb10b  (96 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Helper of keyer_elekey: when timer 0x1B expires drops the last 7 elements and returns 1; caps the ring
  *     at 0x4B0 elements (returns 1) [fact: fffbb10b]
  * Tag: [fact]
@@ -5799,7 +5799,7 @@ undefined1 keyer_ring_limit(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_ring_next @ fffbb16b  (26 bytes, 12 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_ring_next @ fffbb16b  (26 bytes, 12 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Ring index + 1, wraps to 0 above 0x4FF [fact: fffbb16b]; the keyer element ring 0x120BC
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -5822,7 +5822,7 @@ ushort keyer_ring_next(short param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_sidetone_on @ fffbb185  (61 bytes, 4 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_sidetone_on @ fffbb185  (61 bytes, 4 callers, export file fffb9422_fffbc38e.c)
  * Purpose: When MONITOR (g_opstate.monitor[0] for SSB/AM-type modes, [1] from CW) is on: beep_request(4), flag
  *     0x1215E = 1 [fact: fffbb185]
  * Tag: [fact]
@@ -5856,7 +5856,7 @@ void keyer_sidetone_on(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_sidetone_off @ fffbb1c2  (27 bytes, 5 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_sidetone_off @ fffbb1c2  (27 bytes, 5 callers, export file fffb9422_fffbc38e.c)
  * Purpose: If flag 0x1215E is set: beep_stop, flag = 0 [fact: fffbb1c2]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -5878,7 +5878,7 @@ void keyer_sidetone_off(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_key_out @ fffbb1dd  (166 bytes, 4 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_key_out @ fffbb1dd  (166 bytes, 4 callers, export file fffb9422_fffbc38e.c)
  * Purpose: (on): sets SEND_A/SEND_B (send_a_set / send_b_set) when the PTT source / CW keying class asks for it,
  *     and handles EX020116 CW BK-IN TYPE [fact: fffbb1dd]; only caller keyer_output_step
  * Tag: [fact]
@@ -5946,7 +5946,7 @@ LAB_fffbb21f:
 
 
 /* -----------------------------------------------------------------------------
- * keyer_paddles_read @ fffbb283  (60 bytes, 5 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_paddles_read @ fffbb283  (60 bytes, 5 callers, export file fffb9422_fffbc38e.c)
  * Purpose: (*dot, *dash): ckey_dot / ckey_dash, swapped when EX020202 KEYER DOT/DASH is reversed [fact: fffbb283]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -5979,7 +5979,7 @@ void keyer_paddles_read(void *param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * contest_cut_digit @ fffbb2bf  (121 bytes, 2 callers, export file fffb948b_fffbc3bd.c)
+ * contest_cut_digit @ fffbb2bf  (121 bytes, 2 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Cut-number substitution by EX020204 NUMBER STYLE: '1' -> 'A', '2' -> 'U', '9' -> 'N', '0' -> 'T' or 'O',
  *     others unchanged [fact: fffbb2bf]
  * Tag: [fact]
@@ -6034,7 +6034,7 @@ LAB_fffbb32d:
 
 
 /* -----------------------------------------------------------------------------
- * keyer_text_msg_encode @ fffbb338  (559 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * keyer_text_msg_encode @ fffbb338  (559 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: (n): turns keyer memory text n (0x969F + n*0x33: length + 50 chars, eeprom.md) into elements via the
  *     Morse table 0xFFF815C3 (2 bytes per char), '#' inserts the contest number [fact: fffbb338]
  * Tag: [fact]
@@ -6186,7 +6186,7 @@ void keyer_text_msg_encode(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_tx_wait_start @ fffe4efc  (25 bytes, 4 callers, export file fffe4c55_fffe5caf.c)
+ * msg_tx_wait_start @ fffe4efc  (25 bytes, 4 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: swtimer_start(0x37, 10000) and g_ui.msg_tx_wait = 1 [fact: fffe4efc]; callers cat_LM, msg_type_select,
  *     FUN_fffe4e6e
  * Tag: [fact]
@@ -6207,7 +6207,7 @@ void msg_tx_wait_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * cw_memory_length @ fffe5401  (323 bytes, 2 callers, export file fffe4c55_fffe5caf.c)
+ * cw_memory_length @ fffe5401  (323 bytes, 2 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: (n 1..5): length of CW MEMORY n: when its EX020206..EX020210 type is 0 the keyer-text length byte
  *     (0x969F + (n-1)*0x33), else the u16 big-endian length of the recorded keying bitstream (0x93A7 + (n-1)*0x98)
  *     [fact: fffe5401; layout from eeprom.md]; callers cat_KY, FUN_fffe55ab
@@ -6269,7 +6269,7 @@ ushort cw_memory_length(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_can_send @ fffe564b  (69 bytes, 2 callers, export file fffe4c55_fffe5caf.c)
+ * keyer_can_send @ fffe564b  (69 bytes, 2 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: Returns 0 while CW SPOT is on or keyer_state is 2..4, else 1 [fact: fffe564b]; callers cat_KY,
  *     FUN_fffe55ab
  * Tag: [fact]
@@ -6302,7 +6302,7 @@ undefined1 keyer_can_send(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_tuner_bit_get @ fffec55a  (30 bytes, 6 callers, export file fffec2df_fffed6f5.c)
+ * vfo_tuner_bit_get @ fffec55a  (30 bytes, 6 callers, export file fffec2d9_fffed62a.c)
  * Purpose: Returns bit 2 of the TX VFO record's flags1 (the tuner bit that vfo_tuner_bit_set writes) [fact:
  *     fffec55a]; callers cat_AC, key_tune_short, cat_ai_AC, tuner_rearm
  * Tag: [fact]
@@ -6324,7 +6324,7 @@ bool vfo_tuner_bit_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_rearm @ fffec578  (179 bytes, 8 callers, export file fffec2df_fffed6f5.c)
+ * tuner_rearm @ fffec578  (179 bytes, 8 callers, export file fffec2d9_fffed62a.c)
  * Purpose: TUNER TYPE SELECT 0x9AB8 = 2 path: re-arms the tuner state 0x20B3F after VFO/band changes
  *     (cat-commands-primary.md) [fact]
  * Tag: [fact]
@@ -6388,7 +6388,7 @@ void tuner_rearm(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_int_task @ fffec62b  (223 bytes, 1 callers, export file fffec2df_fffed6f5.c)
+ * tuner_int_task @ fffec62b  (223 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Purpose: tuner_task for TUNER TYPE SELECT 0/1 (INT, INT(FAST); ROM labels at 0xFFF84530..): sets
  *     g_ui.tuner_indicator from atu_state (blinking while tune_cycle_3d = 2), then runs the internal-tuner state
  *     0x1B3AC (cases 1..0x10, one step function each) [fact: fffec62b and tuner_task's test]
@@ -6484,7 +6484,7 @@ void tuner_int_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_atas_task @ fffed165  (161 bytes, 1 callers, export file fffec2df_fffed6f5.c)
+ * tuner_atas_task @ fffed165  (161 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Purpose: tuner_task for TUNER TYPE SELECT 3 (ATAS) [fact: tuner_task's test; label from ROM 0xFFF84546]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/tx-protection.md
@@ -6533,7 +6533,7 @@ void tuner_atas_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_tune_state_set @ fffed206  (72 bytes, 11 callers, export file fffec2df_fffed6f5.c)
+ * tuner_tune_state_set @ fffed206  (72 bytes, 11 callers, export file fffec2d9_fffed62a.c)
  * Purpose: (s): 0x20F0C = s; 1 starts (0x1B3BE = 1), 2 swaps the meter (0x9C5B = 5) and CW WAVE SHAPE (0x9AA1 = 0)
  *     and opens pop-up 0x49, 0 restores both; a tune cycle [fact]
  * Tag: [fact]
@@ -6564,7 +6564,7 @@ void tuner_tune_state_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_result_set @ fffed24e  (91 bytes, 3 callers, export file fffec2df_fffed6f5.c)
+ * tuner_result_set @ fffed24e  (91 bytes, 3 callers, export file fffec2d9_fffed62a.c)
  * Purpose: (code): 0x1B3C3 = 1, timer 0x22 = 50, g_ui.tuner_result = 2 (code 1), 3 (code 2) or 1; ends a tune cycle
  *     (tuner_tune_state_set(0)) [fact: fffed24e]; only caller cat_AC
  * Tag: [fact]
@@ -6598,7 +6598,7 @@ void tuner_result_set(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tuner_ext_task @ fffed62a  (203 bytes, 1 callers, export file fffec2df_fffed6f5.c)
+ * tuner_ext_task @ fffed62a  (203 bytes, 1 callers, export file fffec2d9_fffed62a.c)
  * Purpose: tuner_task for TUNER TYPE SELECT 2 (EXT): with the TUN/LIN port in EXT-TUNER mode sets the tuner
  *     indicator from atu_state 5, then runs the external-tuner state 0x1B3C8 (cases 1..0x10) [fact: fffed62a and
  *     tuner_task's test]
@@ -6685,9 +6685,8 @@ void tuner_ext_task(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * tuner_port_send @ fffedc27  (142 bytes, 6 callers, export file fffed704_fffee29c.c)
+ * tuner_port_send @ fffedc27  (142 bytes, 6 callers, export file fffed6f5_fffee29c.c)
  * Purpose: SCI2 tuner port: sends 0xFF, after soft timer 0x23 the frame at 0x1B3C4 (sci2_send) and restarts timers
  *     7, 0x25, 0x24 [fact]
  * Tag: [fact]

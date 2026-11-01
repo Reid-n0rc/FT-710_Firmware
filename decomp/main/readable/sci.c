@@ -36,7 +36,7 @@ uint R_BSP_InterruptWrite(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Create @ fff9321f  (163 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Create @ fff9321f  (163 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: SCI0 4800 8N1, P32/P33, IPR 8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sci.md
@@ -95,7 +95,7 @@ void R_SCI0_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Start @ fff932c2  (64 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Start @ fff932c2  (64 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: IR clear, IER/GENBL0 enable; Stop also clears SCR TE/RE/TIE/RIE
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -129,7 +129,7 @@ void R_SCI0_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Stop @ fff93302  (104 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Stop @ fff93302  (104 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: IR clear, IER/GENBL0 enable; Stop also clears SCR TE/RE/TIE/RIE
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -175,7 +175,7 @@ void R_SCI0_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Serial_Receive @ fff9336a  (68 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Serial_Receive @ fff9336a  (68 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Purpose: arm a receive / start a send
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -207,7 +207,7 @@ ushort R_SCI0_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Serial_Send @ fff933ae  (95 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Serial_Send @ fff933ae  (95 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: arm a receive / start a send
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -250,7 +250,7 @@ ushort R_SCI0_Serial_Send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI0_Create_UserInit @ fff9340d  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI0_Create_UserInit @ fff9340d  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: empty (same for SCI1..7: 0xFFF9373A, 0xFFF93C7B, 0xFFF940FB, 0xFFF9442A, 0xFFF94850, 0xFFFC93A3,
  *     0xFFFC979F)
  * Tag: none in the table row
@@ -268,7 +268,7 @@ void R_SCI0_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_transmit_interrupt @ fff9340e  (76 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_sci0_transmit_interrupt @ fff9340e  (76 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -302,7 +302,7 @@ void r_sci0_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_transmitend_interrupt @ fff9345a  (37 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_transmitend_interrupt @ fff9345a  (37 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: TEI0 (GROUPBL0 cb 0x14): TXD pin to GPIO, clear TIE/TE/TEIE, transmit-end callback [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -332,7 +332,7 @@ void r_sci0_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_receive_interrupt @ fff9347f  (114 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_sci0_receive_interrupt @ fff9347f  (114 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls
  *     `r_sci0_callback_receiveend`, `r_sci0_rx_byte_hook`; 114 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -375,7 +375,7 @@ void r_sci0_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_receiveerror_interrupt @ fff934f1  (39 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_receiveerror_interrupt @ fff934f1  (39 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: ERI0 (cb 0x15): error callback, clear ORER/FER/PER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -398,7 +398,7 @@ void r_sci0_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_callback_transmitend @ fff93518  (5 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_callback_transmitend @ fff93518  (5 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -415,7 +415,7 @@ void r_sci0_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_callback_receiveend @ fff9351d  (15 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_callback_receiveend @ fff9351d  (15 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls `cat_rx_complete`; 15 B,
  *     callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -432,7 +432,7 @@ void r_sci0_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_callback_receiveerror @ fff9352c  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_callback_receiveerror @ fff9352c  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -448,7 +448,7 @@ void r_sci0_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci0_rx_byte_hook @ fff9352d  (33 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci0_rx_byte_hook @ fff9352d  (33 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: calls `cat_rx_byte_hook(&cnt, &len, ptr, 5)`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -467,7 +467,7 @@ void r_sci0_rx_byte_hook(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Create @ fff9354e  (161 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Create @ fff9354e  (161 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: SCI1 ≈340.9k 8N2, P26/P30, IPR 10 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sci.md
@@ -526,7 +526,7 @@ void R_SCI1_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Start @ fff935ef  (64 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Start @ fff935ef  (64 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -559,7 +559,7 @@ void R_SCI1_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Stop @ fff9362f  (104 bytes, 0 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Stop @ fff9362f  (104 bytes, 0 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears SCI1.SCR (0x8A022) TE/RE/TIE/RIE,
  *     IEN/IR of SCI1 TXI/RXI/TEI (0x87207, 0x8703C..D, ICU.GENBL0 0x87670); 104 B like R_SCI0/2/3/5_Stop, sits
  *     after R_SCI1_Start [inference]
@@ -611,7 +611,7 @@ void R_SCI1_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Serial_Receive @ fff93697  (68 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Serial_Receive @ fff93697  (68 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -642,7 +642,7 @@ ushort R_SCI1_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Serial_Send @ fff936db  (95 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Serial_Send @ fff936db  (95 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -684,7 +684,7 @@ ushort R_SCI1_Serial_Send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI1_Create_UserInit @ fff9373a  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_SCI1_Create_UserInit @ fff9373a  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -701,7 +701,7 @@ void R_SCI1_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci1_transmit_interrupt @ fff9373b  (76 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_sci1_transmit_interrupt @ fff9373b  (76 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -733,7 +733,7 @@ void r_sci1_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci1_transmitend_interrupt @ fff93787  (37 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci1_transmitend_interrupt @ fff93787  (37 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: TEI1 (cb 0x16) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -763,7 +763,7 @@ void r_sci1_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci1_receive_interrupt @ fff937ac  (114 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_sci1_receive_interrupt @ fff937ac  (114 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -804,7 +804,7 @@ void r_sci1_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci1_receiveerror_interrupt @ fff9381e  (39 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci1_receiveerror_interrupt @ fff9381e  (39 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: ERI1 (cb 0x17) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -827,7 +827,7 @@ void r_sci1_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci1_callback_transmitend @ fff93845  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci1_callback_transmitend @ fff93845  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -841,9 +841,8 @@ void r_sci1_callback_transmitend(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * r_sci1_callback_receiveend @ fff93846  (5 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * r_sci1_callback_receiveend @ fff93846  (5 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -858,8 +857,9 @@ void r_sci1_callback_receiveend(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * r_sci1_callback_receiveerror @ fff9384b  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci1_callback_receiveerror @ fff9384b  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -875,7 +875,7 @@ void r_sci1_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_frame_len @ fff9384c  (570 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * displink_rx_frame_len @ fff9384c  (570 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: rx byte hook: frame length by first byte, resync on timeout (see display-link.md)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -983,7 +983,7 @@ void displink_rx_frame_len(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Create @ fff93a86  (163 bytes, 3 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Create @ fff93a86  (163 bytes, 3 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI2_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1042,7 +1042,7 @@ void R_SCI2_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Start @ fff93b29  (64 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Start @ fff93b29  (64 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI2_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1076,7 +1076,7 @@ void R_SCI2_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Stop @ fff93b69  (104 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Stop @ fff93b69  (104 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI2_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1122,7 +1122,7 @@ void R_SCI2_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Serial_Receive @ fff93bd1  (68 bytes, 3 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Serial_Receive @ fff93bd1  (68 bytes, 3 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 68 B, callers:
  *     3 [fact] (code shape)
  * Tag: [fact]
@@ -1155,7 +1155,7 @@ ushort R_SCI2_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Serial_Send @ fff93c15  (102 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Serial_Send @ fff93c15  (102 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 102 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -1200,7 +1200,7 @@ ushort R_SCI2_Serial_Send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI2_Create_UserInit @ fff93c7b  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI2_Create_UserInit @ fff93c7b  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1217,7 +1217,7 @@ void R_SCI2_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_transmit_interrupt @ fff93c7c  (76 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci2_transmit_interrupt @ fff93c7c  (76 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -1251,7 +1251,7 @@ void r_sci2_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_transmitend_interrupt @ fff93cc8  (37 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci2_transmitend_interrupt @ fff93cc8  (37 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: TEI2 (cb 0x18) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1281,7 +1281,7 @@ void r_sci2_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_receive_interrupt @ fff93ced  (114 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci2_receive_interrupt @ fff93ced  (114 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls
  *     `r_sci2_callback_receiveend`, `sci2_rx_byte_hook`; 114 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -1324,7 +1324,7 @@ void r_sci2_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_receiveerror_interrupt @ fff93d5f  (39 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci2_receiveerror_interrupt @ fff93d5f  (39 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: ERI2 (cb 0x19) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1347,7 +1347,7 @@ void r_sci2_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_callback_transmitend @ fff93d86  (17 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci2_callback_transmitend @ fff93d86  (17 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: CAT or tuner, by `tunlin_port_mode`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1372,7 +1372,7 @@ void r_sci2_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_callback_receiveend @ fff93d97  (28 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci2_callback_receiveend @ fff93d97  (28 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: CAT or tuner, by `tunlin_port_mode`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1397,7 +1397,7 @@ void r_sci2_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci2_callback_receiveerror @ fff93db3  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci2_callback_receiveerror @ fff93db3  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1414,7 +1414,7 @@ void r_sci2_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci2_rx_byte_hook @ fff93db4  (345 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * sci2_rx_byte_hook @ fff93db4  (345 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: CAT or tuner, by `tunlin_port_mode`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1492,7 +1492,7 @@ void sci2_rx_byte_hook(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Create @ fff93f0d  (163 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Create @ fff93f0d  (163 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI3_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1551,7 +1551,7 @@ void R_SCI3_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Start @ fff93fb0  (64 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Start @ fff93fb0  (64 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI3_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1585,7 +1585,7 @@ void R_SCI3_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Stop @ fff93ff0  (104 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Stop @ fff93ff0  (104 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI3_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1631,7 +1631,7 @@ void R_SCI3_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Serial_Receive @ fff94058  (68 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Serial_Receive @ fff94058  (68 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 68 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -1664,7 +1664,7 @@ ushort R_SCI3_Serial_Receive(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Serial_Send @ fff9409c  (95 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Serial_Send @ fff9409c  (95 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 95 B, callers:
  *     1 [fact] (code shape)
  * Tag: [fact]
@@ -1708,7 +1708,7 @@ ushort R_SCI3_Serial_Send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI3_Create_UserInit @ fff940fb  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI3_Create_UserInit @ fff940fb  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1725,7 +1725,7 @@ void R_SCI3_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_transmit_interrupt @ fff940fc  (76 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci3_transmit_interrupt @ fff940fc  (76 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -1759,7 +1759,7 @@ void r_sci3_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_transmitend_interrupt @ fff94148  (37 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci3_transmitend_interrupt @ fff94148  (37 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: TEI3 (cb 0x1A) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1789,7 +1789,7 @@ void r_sci3_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_receive_interrupt @ fff9416d  (114 bytes, 2 callers, export file fff9384b_fff94850.c)
+ * r_sci3_receive_interrupt @ fff9416d  (114 bytes, 2 callers, export file fff93846_fff947f1.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; calls
  *     `r_sci3_callback_receiveend`, `sci3_rx_byte_hook`; 114 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -1832,7 +1832,7 @@ void r_sci3_receive_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_receiveerror_interrupt @ fff941df  (39 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci3_receiveerror_interrupt @ fff941df  (39 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: ERI3 (cb 0x1B) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1855,7 +1855,7 @@ void r_sci3_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_callback_transmitend @ fff94206  (5 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci3_callback_transmitend @ fff94206  (5 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -1872,7 +1872,7 @@ void r_sci3_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_callback_receiveend @ fff9420b  (15 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci3_callback_receiveend @ fff9420b  (15 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -1889,7 +1889,7 @@ void r_sci3_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci3_callback_receiveerror @ fff9421a  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci3_callback_receiveerror @ fff9421a  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -1906,7 +1906,7 @@ void r_sci3_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci3_rx_byte_hook @ fff9421b  (33 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * sci3_rx_byte_hook @ fff9421b  (33 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -1924,7 +1924,7 @@ void sci3_rx_byte_hook(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Start @ fff942df  (64 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Start @ fff942df  (64 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI4_Start`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -1958,7 +1958,7 @@ void R_SCI4_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Stop @ fff9431f  (104 bytes, 0 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Stop @ fff9431f  (104 bytes, 0 callers, export file fff93846_fff947f1.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): SCI4 (0x8A082) and its IER/IR bits; 104 B
  *     like the other R_SCIn_Stop, after R_SCI4_Start [inference]
  * Tag: [inference]
@@ -2009,7 +2009,7 @@ void R_SCI4_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI4_Create_UserInit @ fff9442a  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI4_Create_UserInit @ fff9442a  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2026,7 +2026,7 @@ void R_SCI4_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_transmitend_interrupt @ fff94477  (37 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci4_transmitend_interrupt @ fff94477  (37 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: TEI4 (cb 0x1C) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2056,7 +2056,7 @@ void r_sci4_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_receiveerror_interrupt @ fff9450e  (39 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci4_receiveerror_interrupt @ fff9450e  (39 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: ERI4 (cb 0x1D) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2079,7 +2079,7 @@ void r_sci4_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_callback_transmitend @ fff94535  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci4_callback_transmitend @ fff94535  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2096,7 +2096,7 @@ void r_sci4_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci4_callback_receiveerror @ fff94547  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * r_sci4_callback_receiveerror @ fff94547  (1 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2113,7 +2113,7 @@ void r_sci4_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Create @ fff94662  (163 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Create @ fff94662  (163 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI5_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2173,7 +2173,7 @@ void R_SCI5_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Start @ fff94705  (64 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Start @ fff94705  (64 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI5_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2210,7 +2210,7 @@ void R_SCI5_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Stop @ fff94745  (104 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Stop @ fff94745  (104 bytes, 1 callers, export file fff93846_fff947f1.c)
  * Inferred name: / `R_SCI5_Start` /
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2257,7 +2257,7 @@ void R_SCI5_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI5_Create_UserInit @ fff94850  (1 bytes, 1 callers, export file fff9384b_fff94850.c)
+ * R_SCI5_Create_UserInit @ fff94850  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2272,8 +2272,9 @@ void R_SCI5_Create_UserInit(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * r_sci5_transmit_interrupt @ fff94851  (76 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_transmit_interrupt @ fff94851  (76 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Purpose: names-file group "SCI drivers (Renesas Code Generator r_cg_sci style)"; no direct calls; 76 B, callers:
  *     2 [fact] (code shape)
  * Tag: [fact]
@@ -2307,7 +2308,7 @@ void r_sci5_transmit_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci5_transmitend_interrupt @ fff9489d  (37 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_transmitend_interrupt @ fff9489d  (37 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: TEI5 (cb 0x1E) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2337,7 +2338,7 @@ void r_sci5_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci5_receiveerror_interrupt @ fff94934  (39 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_receiveerror_interrupt @ fff94934  (39 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: ERI5 (cb 0x1F) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2360,7 +2361,7 @@ void r_sci5_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci5_callback_transmitend @ fff9495b  (1 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_callback_transmitend @ fff9495b  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2377,7 +2378,7 @@ void r_sci5_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci5_callback_receiveend @ fff9495c  (5 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_callback_receiveend @ fff9495c  (5 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  * Also on: sdr-link.md
@@ -2395,7 +2396,7 @@ void r_sci5_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci5_callback_receiveerror @ fff94961  (1 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * r_sci5_callback_receiveerror @ fff94961  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2412,7 +2413,7 @@ void r_sci5_callback_receiveerror(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci5_rx_byte_hook @ fff94962  (82 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * sci5_rx_byte_hook @ fff94962  (82 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
  */
@@ -2444,7 +2445,7 @@ void sci5_rx_byte_hook(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci_start_all @ fffb1632  (19 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * sci_start_all @ fffb1632  (19 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: called once from `app_main`: SCI0 baud, SCI1 start, SCI2 configure, SCI3 baud, SCI4/SCI5 start
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2470,7 +2471,7 @@ void sci_start_all(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci0_set_baud @ fffb1645  (189 bytes, 2 callers, export file fffb1325_fffb1dad.c)
+ * sci0_set_baud @ fffb1645  (189 bytes, 2 callers, export file fffb1303_fffb1d79.c)
  * Purpose: waits for SCI0 idle (0x11FE8), Stop, applies table entry 0x9ABC (>4 → 0), Start, Receive
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2516,7 +2517,7 @@ void sci0_set_baud(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci2_send @ fffb195a  (28 bytes, 2 callers, export file fffb1325_fffb1dad.c)
+ * sci2_send @ fffb195a  (28 bytes, 2 callers, export file fffb1303_fffb1d79.c)
  * Purpose: R_SCI2_Serial_Send(buf, n), FUN_fffb192d(result), 0xA0AA = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/sci.md
@@ -2538,7 +2539,7 @@ void sci2_send(uint param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sci3_set_baud @ fffb198f  (242 bytes, 5 callers, export file fffb1325_fffb1dad.c)
+ * sci3_set_baud @ fffb198f  (242 bytes, 5 callers, export file fffb1303_fffb1d79.c)
  * Purpose: as SCI0, from 0x9AB9 (or 0x20B58 when 0x9DC6 set), stop bits from 0x9ABB
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2596,7 +2597,7 @@ void sci3_set_baud(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_tx_done_sci0 @ fffb1d5b  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_tx_done_sci0 @ fffb1d5b  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: clear the per-port busy flag set by `cat_send_reply` (0x11FE8 / 0x11FE9 / 0x11FEA)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2614,7 +2615,7 @@ void cat_tx_done_sci0(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_tx_done_sci2 @ fffb1d65  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_tx_done_sci2 @ fffb1d65  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: clear the per-port busy flag set by `cat_send_reply` (0x11FE8 / 0x11FE9 / 0x11FEA)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2632,7 +2633,7 @@ void cat_tx_done_sci2(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_tx_done_sci3 @ fffb1d6f  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_tx_done_sci3 @ fffb1d6f  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: clear the per-port busy flag set by `cat_send_reply` (0x11FE8 / 0x11FE9 / 0x11FEA)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2650,7 +2651,7 @@ void cat_tx_done_sci3(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_rx_byte_hook @ fffb1dad  (405 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * cat_rx_byte_hook @ fffb1dad  (405 bytes, 3 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: CAT framing, see above
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/sci.md
@@ -2771,8 +2772,9 @@ LAB_fffb1ea5:
   return (uint)local_c;
 }
 
+
 /* -----------------------------------------------------------------------------
- * R_SCI7_Start @ fffc9654  (64 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Start @ fffc9654  (64 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears IR, sets IEN of SCI7 TXI/RXI
  *     (0x8720C) and ICU.GENBL0 TEI/ERI bits 14/15 (0x87670); 64 B like R_SCIn_Start, after R_SCI7_Create
  *     [inference]
@@ -2812,7 +2814,7 @@ void R_SCI7_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI7_Stop @ fffc9694  (104 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Stop @ fffc9694  (104 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): reverse of R_SCI7_Start plus SCI7.SCR
  *     (0x8A0E2); 104 B like the other R_SCIn_Stop [inference]
  * Tag: [inference]
@@ -2862,7 +2864,7 @@ void R_SCI7_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI7_Serial_Receive @ fffc96fc  (68 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Serial_Receive @ fffc96fc  (68 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): (buf, num): 0x81 (MD_ARGERROR) when num ==
  *     0, sets SCR RIE|RE (0x8A0E2 |= 0x50); same 68 B shape as R_SCIn_Serial_Receive [inference]
  * Tag: [inference]
@@ -2899,7 +2901,7 @@ undefined2 R_SCI7_Serial_Receive(undefined4 param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI7_Serial_Send @ fffc9740  (95 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Serial_Send @ fffc9740  (95 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): (buf, num): 0x81 when num == 0, 0x80 when
  *     busy, SCR TIE|TE (|= 0xA0); same shape as R_SCIn_Serial_Send [inference]
  * Tag: [inference]
@@ -2947,7 +2949,7 @@ undefined2 R_SCI7_Serial_Send(undefined4 param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI7_Create_UserInit @ fffc979f  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI7_Create_UserInit @ fffc979f  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2964,7 +2966,7 @@ void R_SCI7_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_transmitend_interrupt @ fffc97ec  (37 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_transmitend_interrupt @ fffc97ec  (37 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: TEI7 (cb 0x22) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -2994,7 +2996,7 @@ void r_sci7_transmitend_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_receiveerror_interrupt @ fffc9880  (39 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_receiveerror_interrupt @ fffc9880  (39 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: ERI7 (cb 0x23) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -3017,7 +3019,7 @@ void r_sci7_receiveerror_interrupt(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_callback_transmitend @ fffc98a7  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_callback_transmitend @ fffc98a7  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -3034,7 +3036,7 @@ void r_sci7_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_callback_receiveend @ fffc98a8  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_callback_receiveend @ fffc98a8  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: empty (SCI7 is never started) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md
@@ -3051,7 +3053,7 @@ void r_sci7_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci7_callback_receiveerror @ fffc98a9  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci7_callback_receiveerror @ fffc98a9  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/sci.md

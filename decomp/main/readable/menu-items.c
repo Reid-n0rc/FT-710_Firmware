@@ -4,7 +4,7 @@
 // 938 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * menu_ex010101_draw @ fffc9b6b  (24 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * menu_ex010101_draw @ fffc9b6b  (24 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Menu item ex010101 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22,7 +22,7 @@ void menu_ex010101_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010102_draw @ fffc9be2  (24 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * menu_ex010102_draw @ fffc9be2  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010102 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -38,8 +38,9 @@ void menu_ex010102_draw(byte *param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex010103_draw @ fffc9bfa  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010103_draw @ fffc9bfa  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010103 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -57,7 +58,7 @@ void menu_ex010103_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010104_draw @ fffc9c12  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010104_draw @ fffc9c12  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010104 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -76,7 +77,7 @@ void menu_ex010104_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010105_draw @ fffc9cab  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010105_draw @ fffc9cab  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010105 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -95,7 +96,7 @@ void menu_ex010105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010106_draw @ fffc9cc2  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010106_draw @ fffc9cc2  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010106 AGC SLOW DELY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -114,7 +115,7 @@ void menu_ex010106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010107_draw @ fffc9cd9  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010107_draw @ fffc9cd9  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010107 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -133,7 +134,7 @@ void menu_ex010107_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010108_draw @ fffc9d85  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010108_draw @ fffc9d85  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010108 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -152,7 +153,7 @@ void menu_ex010108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010109_draw @ fffc9e11  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010109_draw @ fffc9e11  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010109 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -171,7 +172,7 @@ void menu_ex010109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010110_draw @ fffc9ebf  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010110_draw @ fffc9ebf  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010110 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -190,7 +191,7 @@ void menu_ex010110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010111_draw @ fffc9f4b  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010111_draw @ fffc9f4b  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010111 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -210,7 +211,7 @@ void menu_ex010111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010112_draw @ fffc9fc3  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010112_draw @ fffc9fc3  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010112 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -230,7 +231,7 @@ void menu_ex010112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010113_draw @ fffc9fd9  (148 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010113_draw @ fffc9fd9  (148 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010113 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -281,7 +282,7 @@ void menu_ex010113_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010114_draw @ fffca110  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010114_draw @ fffca110  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010114 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -300,7 +301,7 @@ void menu_ex010114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010115_draw @ fffca19c  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010115_draw @ fffca19c  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010115 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -319,7 +320,7 @@ void menu_ex010115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010116_draw @ fffca214  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010116_draw @ fffca214  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010116 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -338,7 +339,7 @@ void menu_ex010116_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010117_draw @ fffca28c  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010117_draw @ fffca28c  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010117 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -358,7 +359,7 @@ void menu_ex010117_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010118_draw @ fffca318  (126 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010118_draw @ fffca318  (126 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010118 NAR WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -402,7 +403,7 @@ void menu_ex010118_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010119_draw @ fffca396  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010119_draw @ fffca396  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010119 CW AUTO MODE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -421,7 +422,7 @@ void menu_ex010119_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010201_draw @ fffca422  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010201_draw @ fffca422  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010201 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -439,7 +440,7 @@ void menu_ex010201_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010202_draw @ fffca43a  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010202_draw @ fffca43a  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010202 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -457,7 +458,7 @@ void menu_ex010202_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010203_draw @ fffca452  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010203_draw @ fffca452  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010203 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -475,7 +476,7 @@ void menu_ex010203_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010204_draw @ fffca46a  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010204_draw @ fffca46a  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010204 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -494,7 +495,7 @@ void menu_ex010204_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010205_draw @ fffca481  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010205_draw @ fffca481  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010205 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -513,7 +514,7 @@ void menu_ex010205_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010206_draw @ fffca498  (23 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010206_draw @ fffca498  (23 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010206 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -532,7 +533,7 @@ void menu_ex010206_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010207_draw @ fffca4af  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010207_draw @ fffca4af  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010207 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -551,7 +552,7 @@ void menu_ex010207_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010208_draw @ fffca4c4  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010208_draw @ fffca4c4  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010208 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -570,7 +571,7 @@ void menu_ex010208_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010209_draw @ fffca4d9  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010209_draw @ fffca4d9  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010209 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -589,7 +590,7 @@ void menu_ex010209_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010210_draw @ fffca4ee  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010210_draw @ fffca4ee  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010210 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -608,7 +609,7 @@ void menu_ex010210_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010211_draw @ fffca503  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010211_draw @ fffca503  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010211 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -628,7 +629,7 @@ void menu_ex010211_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010212_draw @ fffca519  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010212_draw @ fffca519  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010212 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -648,7 +649,7 @@ void menu_ex010212_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010213_draw @ fffca52f  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010213_draw @ fffca52f  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010213 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -667,7 +668,7 @@ void menu_ex010213_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010214_draw @ fffca544  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010214_draw @ fffca544  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010214 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -686,7 +687,7 @@ void menu_ex010214_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010215_draw @ fffca559  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010215_draw @ fffca559  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010215 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -705,7 +706,7 @@ void menu_ex010215_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010216_draw @ fffca56f  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010216_draw @ fffca56f  (22 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010216 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -724,7 +725,7 @@ void menu_ex010216_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010217_draw @ fffca585  (21 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010217_draw @ fffca585  (21 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010217 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -744,7 +745,7 @@ void menu_ex010217_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010301_draw @ fffca59a  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010301_draw @ fffca59a  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010301 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -762,7 +763,7 @@ void menu_ex010301_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010302_draw @ fffca5b2  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010302_draw @ fffca5b2  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010302 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -780,7 +781,7 @@ void menu_ex010302_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010303_draw @ fffca5ca  (24 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010303_draw @ fffca5ca  (24 bytes, 2 callers, export file fffc9be2_fffca5ca.c)
  * Purpose: Menu item ex010303 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -796,9 +797,8 @@ void menu_ex010303_draw(byte *param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex010304_draw @ fffca5e2  (22 bytes, 2 callers, export file fffc9bfa_fffca5e2.c)
+ * menu_ex010304_draw @ fffca5e2  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010304 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -815,8 +815,9 @@ void menu_ex010304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex010305_draw @ fffca5f8  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010305_draw @ fffca5f8  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010305 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -835,7 +836,7 @@ void menu_ex010305_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010306_draw @ fffca60f  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010306_draw @ fffca60f  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010306 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -854,7 +855,7 @@ void menu_ex010306_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010307_draw @ fffca626  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010307_draw @ fffca626  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010307 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -873,7 +874,7 @@ void menu_ex010307_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010308_draw @ fffca63b  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010308_draw @ fffca63b  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010308 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -892,7 +893,7 @@ void menu_ex010308_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010309_draw @ fffca650  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010309_draw @ fffca650  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010309 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -911,7 +912,7 @@ void menu_ex010309_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010310_draw @ fffca666  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010310_draw @ fffca666  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010310 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -930,7 +931,7 @@ void menu_ex010310_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010311_draw @ fffca67b  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010311_draw @ fffca67b  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010311 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -950,7 +951,7 @@ void menu_ex010311_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010312_draw @ fffca691  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010312_draw @ fffca691  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010312 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -970,7 +971,7 @@ void menu_ex010312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010313_draw @ fffca6a7  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010313_draw @ fffca6a7  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010313 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -989,7 +990,7 @@ void menu_ex010313_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010314_draw @ fffca6bc  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010314_draw @ fffca6bc  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010314 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1008,7 +1009,7 @@ void menu_ex010314_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010315_draw @ fffca6d2  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010315_draw @ fffca6d2  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010315 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1027,7 +1028,7 @@ void menu_ex010315_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010316_draw @ fffca6e8  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010316_draw @ fffca6e8  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010316 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1047,7 +1048,7 @@ void menu_ex010316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010317_draw @ fffca6fd  (160 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010317_draw @ fffca6fd  (160 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010317 RPT SHIFT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1095,7 +1096,7 @@ void menu_ex010317_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010318_draw @ fffca79d  (132 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010318_draw @ fffca79d  (132 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010318 RPT SHIFT(28MHz): on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1130,7 +1131,7 @@ void menu_ex010318_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010319_draw @ fffca821  (149 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010319_draw @ fffca821  (149 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010319 RPT SHIFT(50MHz): on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1167,7 +1168,7 @@ void menu_ex010319_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010320_draw @ fffca8b6  (160 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010320_draw @ fffca8b6  (160 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010320 ENC/DEC: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1215,7 +1216,7 @@ void menu_ex010320_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010321_draw @ fffca956  (223 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010321_draw @ fffca956  (223 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010321 TONE FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1282,7 +1283,7 @@ void menu_ex010321_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010401_draw @ fffcaa35  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010401_draw @ fffcaa35  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010401 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1300,7 +1301,7 @@ void menu_ex010401_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010402_draw @ fffcaa4d  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010402_draw @ fffcaa4d  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010402 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1318,7 +1319,7 @@ void menu_ex010402_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010403_draw @ fffcaa65  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010403_draw @ fffcaa65  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010403 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1336,7 +1337,7 @@ void menu_ex010403_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010404_draw @ fffcaa7d  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010404_draw @ fffcaa7d  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010404 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1355,7 +1356,7 @@ void menu_ex010404_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010405_draw @ fffcaa93  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010405_draw @ fffcaa93  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010405 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1374,7 +1375,7 @@ void menu_ex010405_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010406_draw @ fffcaaaa  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010406_draw @ fffcaaaa  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010406 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1393,7 +1394,7 @@ void menu_ex010406_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010407_draw @ fffcaac1  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010407_draw @ fffcaac1  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010407 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1412,7 +1413,7 @@ void menu_ex010407_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010408_draw @ fffcaad6  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010408_draw @ fffcaad6  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010408 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1431,7 +1432,7 @@ void menu_ex010408_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010409_draw @ fffcaaeb  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010409_draw @ fffcaaeb  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010409 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1450,7 +1451,7 @@ void menu_ex010409_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010410_draw @ fffcab01  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010410_draw @ fffcab01  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010410 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1469,7 +1470,7 @@ void menu_ex010410_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010411_draw @ fffcab16  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010411_draw @ fffcab16  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010411 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1489,7 +1490,7 @@ void menu_ex010411_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010412_draw @ fffcab2c  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010412_draw @ fffcab2c  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010412 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1509,7 +1510,7 @@ void menu_ex010412_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010413_draw @ fffcab42  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010413_draw @ fffcab42  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010413 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1528,7 +1529,7 @@ void menu_ex010413_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010414_draw @ fffcab57  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010414_draw @ fffcab57  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010414 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1547,7 +1548,7 @@ void menu_ex010414_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010415_draw @ fffcab6c  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010415_draw @ fffcab6c  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010415 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1566,7 +1567,7 @@ void menu_ex010415_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010416_draw @ fffcab82  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010416_draw @ fffcab82  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010416 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1585,7 +1586,7 @@ void menu_ex010416_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010417_draw @ fffcab98  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010417_draw @ fffcab98  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010417 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1605,7 +1606,7 @@ void menu_ex010417_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010418_draw @ fffcabad  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010418_draw @ fffcabad  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010418 NAR WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1624,7 +1625,7 @@ void menu_ex010418_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010419_draw @ fffcac3a  (125 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010419_draw @ fffcac3a  (125 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010419 PSK TONE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1668,7 +1669,7 @@ void menu_ex010419_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010420_draw @ fffcacb7  (146 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010420_draw @ fffcacb7  (146 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010420 DATA SHIFT (SSB): on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1702,7 +1703,7 @@ void menu_ex010420_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010501_draw @ fffcad49  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010501_draw @ fffcad49  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010501 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1720,7 +1721,7 @@ void menu_ex010501_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010502_draw @ fffcad61  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010502_draw @ fffcad61  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010502 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1738,7 +1739,7 @@ void menu_ex010502_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010503_draw @ fffcad79  (24 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010503_draw @ fffcad79  (24 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010503 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1756,7 +1757,7 @@ void menu_ex010503_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010504_draw @ fffcad91  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010504_draw @ fffcad91  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010504 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1775,7 +1776,7 @@ void menu_ex010504_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010505_draw @ fffcada7  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010505_draw @ fffcada7  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010505 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1794,7 +1795,7 @@ void menu_ex010505_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010506_draw @ fffcadbe  (23 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010506_draw @ fffcadbe  (23 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010506 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1813,7 +1814,7 @@ void menu_ex010506_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010507_draw @ fffcadd5  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010507_draw @ fffcadd5  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010507 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1832,7 +1833,7 @@ void menu_ex010507_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010508_draw @ fffcadea  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010508_draw @ fffcadea  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010508 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1851,7 +1852,7 @@ void menu_ex010508_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010509_draw @ fffcadff  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010509_draw @ fffcadff  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010509 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1870,7 +1871,7 @@ void menu_ex010509_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010510_draw @ fffcae15  (21 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010510_draw @ fffcae15  (21 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010510 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1889,7 +1890,7 @@ void menu_ex010510_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010511_draw @ fffcae2a  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010511_draw @ fffcae2a  (22 bytes, 2 callers, export file fffca5e2_fffcae2a.c)
  * Purpose: Menu item ex010511 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1907,9 +1908,8 @@ void menu_ex010511_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex010512_draw @ fffcae40  (22 bytes, 2 callers, export file fffca5f8_fffcae40.c)
+ * menu_ex010512_draw @ fffcae40  (22 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010512 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1927,8 +1927,9 @@ void menu_ex010512_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex010513_draw @ fffcae56  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex010513_draw @ fffcae56  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010513 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1948,7 +1949,7 @@ void menu_ex010513_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010514_draw @ fffcae6b  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex010514_draw @ fffcae6b  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010514 NAR WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -1967,7 +1968,7 @@ void menu_ex010514_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010515_draw @ fffcae80  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex010515_draw @ fffcae80  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010515 MARK FREQUENCY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2011,7 +2012,7 @@ void menu_ex010515_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010516_draw @ fffcaefd  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex010516_draw @ fffcaefd  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010516 SHIFT FREQUENCY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2055,7 +2056,7 @@ void menu_ex010516_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010517_draw @ fffcaf7a  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex010517_draw @ fffcaf7a  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex010517 POLARITY TX: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2099,7 +2100,7 @@ void menu_ex010517_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020101_draw @ fffcaff7  (24 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020101_draw @ fffcaff7  (24 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020101 AF TREBLE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2117,7 +2118,7 @@ void menu_ex020101_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020102_draw @ fffcb00f  (24 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020102_draw @ fffcb00f  (24 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020102 AF MIDDLE TONE GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2135,7 +2136,7 @@ void menu_ex020102_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020103_draw @ fffcb027  (24 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020103_draw @ fffcb027  (24 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020103 AF BASS GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2153,7 +2154,7 @@ void menu_ex020103_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020104_draw @ fffcb03f  (22 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020104_draw @ fffcb03f  (22 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020104 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2172,7 +2173,7 @@ void menu_ex020104_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020105_draw @ fffcb055  (23 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020105_draw @ fffcb055  (23 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020105 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2191,7 +2192,7 @@ void menu_ex020105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020106_draw @ fffcb06c  (23 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020106_draw @ fffcb06c  (23 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020106 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2210,7 +2211,7 @@ void menu_ex020106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020107_draw @ fffcb083  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020107_draw @ fffcb083  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020107 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2229,7 +2230,7 @@ void menu_ex020107_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020108_draw @ fffcb098  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020108_draw @ fffcb098  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020108 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2248,7 +2249,7 @@ void menu_ex020108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020109_draw @ fffcb0ad  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020109_draw @ fffcb0ad  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020109 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2267,7 +2268,7 @@ void menu_ex020109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020110_draw @ fffcb0c2  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020110_draw @ fffcb0c2  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020110 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2286,7 +2287,7 @@ void menu_ex020110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020111_draw @ fffcb0d7  (22 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020111_draw @ fffcb0d7  (22 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020111 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2306,7 +2307,7 @@ void menu_ex020111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020112_draw @ fffcb0ed  (22 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020112_draw @ fffcb0ed  (22 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020112 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2326,7 +2327,7 @@ void menu_ex020112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020113_draw @ fffcb103  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020113_draw @ fffcb103  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020113 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2346,7 +2347,7 @@ void menu_ex020113_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020114_draw @ fffcb118  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020114_draw @ fffcb118  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020114 NAR WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2365,7 +2366,7 @@ void menu_ex020114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020115_draw @ fffcb12d  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020115_draw @ fffcb12d  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020115 PC KEYING: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2385,7 +2386,7 @@ void menu_ex020115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020116_draw @ fffcb142  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020116_draw @ fffcb142  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020116 CW BK-IN TYPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2429,7 +2430,7 @@ void menu_ex020116_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020117_draw @ fffcb1bf  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020117_draw @ fffcb1bf  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020117 CW WAVE SHAPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2473,7 +2474,7 @@ void menu_ex020117_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020118_draw @ fffcb23c  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020118_draw @ fffcb23c  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020118 CW FREQ DISPLAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2517,7 +2518,7 @@ void menu_ex020118_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020119_draw @ fffcb2b9  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020119_draw @ fffcb2b9  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020119 QSK DELAY TIME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2561,7 +2562,7 @@ void menu_ex020119_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020120_draw @ fffcb336  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020120_draw @ fffcb336  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020120 CW INDICATOR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2580,7 +2581,7 @@ void menu_ex020120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020201_draw @ fffcb3c2  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020201_draw @ fffcb3c2  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020201 KEYER TYPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2624,7 +2625,7 @@ void menu_ex020201_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020202_draw @ fffcb43f  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020202_draw @ fffcb43f  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020202 KEYER DOT/DASH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2668,7 +2669,7 @@ void menu_ex020202_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020203_draw @ fffcb4bc  (190 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020203_draw @ fffcb4bc  (190 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020203 CW WEIGHT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2722,7 +2723,7 @@ void menu_ex020203_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020204_draw @ fffcb57a  (125 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020204_draw @ fffcb57a  (125 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020204 NUMBER STYLE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2766,7 +2767,7 @@ void menu_ex020204_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020205_draw @ fffcb5f7  (102 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020205_draw @ fffcb5f7  (102 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020205 CONTEST NUMBER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2796,7 +2797,7 @@ void menu_ex020205_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020206_draw @ fffcb65d  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020206_draw @ fffcb65d  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020206 CW MEMORY 1: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2815,7 +2816,7 @@ void menu_ex020206_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020207_draw @ fffcb6e9  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020207_draw @ fffcb6e9  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020207 CW MEMORY 2: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2834,7 +2835,7 @@ void menu_ex020207_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020208_draw @ fffcb6fe  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020208_draw @ fffcb6fe  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020208 CW MEMORY 3: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2853,7 +2854,7 @@ void menu_ex020208_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020209_draw @ fffcb713  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020209_draw @ fffcb713  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020209 CW MEMORY 4: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2872,7 +2873,7 @@ void menu_ex020209_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020210_draw @ fffcb728  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020210_draw @ fffcb728  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020210 CW MEMORY 5: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2891,7 +2892,7 @@ void menu_ex020210_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020211_draw @ fffcb73d  (124 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex020211_draw @ fffcb73d  (124 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex020211 REPEAT INTERVAL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2925,7 +2926,7 @@ void menu_ex020211_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030101_draw @ fffcb7b9  (108 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030101_draw @ fffcb7b9  (108 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030101 BEEP LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2955,7 +2956,7 @@ void menu_ex030101_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030102_draw @ fffcb825  (128 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030102_draw @ fffcb825  (128 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030102 RF/SQL VR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -2999,7 +3000,7 @@ void menu_ex030102_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030103_draw @ fffcb8a5  (128 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030103_draw @ fffcb8a5  (128 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030103 TUN/LIN PORT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3043,7 +3044,7 @@ void menu_ex030103_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030104_draw @ fffcb925  (128 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030104_draw @ fffcb925  (128 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030104 TUNER TYPE SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3087,7 +3088,7 @@ void menu_ex030104_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030105_draw @ fffcb9a5  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030105_draw @ fffcb9a5  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030105 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3106,7 +3107,7 @@ void menu_ex030105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030106_draw @ fffcba31  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030106_draw @ fffcba31  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030106 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3125,7 +3126,7 @@ void menu_ex030106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030107_draw @ fffcbabd  (128 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030107_draw @ fffcbabd  (128 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030107 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3169,7 +3170,7 @@ void menu_ex030107_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030108_draw @ fffcbb3d  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030108_draw @ fffcbb3d  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030108 CAT-2 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3188,7 +3189,7 @@ void menu_ex030108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030109_draw @ fffcbb52  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030109_draw @ fffcbb52  (21 bytes, 2 callers, export file fffcae40_fffcbb52.c)
  * Purpose: Menu item ex030109 CAT-2 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3205,9 +3206,8 @@ void menu_ex030109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex030110_draw @ fffcbb67  (21 bytes, 2 callers, export file fffcae56_fffcbb67.c)
+ * menu_ex030110_draw @ fffcbb67  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030110 CAT-3 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3224,8 +3224,9 @@ void menu_ex030110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex030111_draw @ fffcbb7c  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030111_draw @ fffcbb7c  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030111 CAT-3 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3244,7 +3245,7 @@ void menu_ex030111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030112_draw @ fffcbb91  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030112_draw @ fffcbb91  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030112 QMB CH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3288,7 +3289,7 @@ void menu_ex030112_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030113_draw @ fffcbc11  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030113_draw @ fffcbc11  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030113 BAND STACK: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3332,7 +3333,7 @@ void menu_ex030113_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030114_draw @ fffcbc91  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030114_draw @ fffcbc91  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030114 MEM GROUP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3376,7 +3377,7 @@ void menu_ex030114_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030115_draw @ fffcbd11  (218 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030115_draw @ fffcbd11  (218 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030115 TX TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3430,7 +3431,7 @@ void menu_ex030115_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030116_draw @ fffcbdeb  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030116_draw @ fffcbdeb  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030116 MIC SCAN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3474,7 +3475,7 @@ void menu_ex030116_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030117_draw @ fffcbe6b  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030117_draw @ fffcbe6b  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030117 MIC SCAN RESUME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3518,7 +3519,7 @@ void menu_ex030117_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030118_draw @ fffcbeeb  (107 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030118_draw @ fffcbeeb  (107 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030118 REF FREQ FINE ADJ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3548,7 +3549,7 @@ void menu_ex030118_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030119_draw @ fffcbf56  (223 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030119_draw @ fffcbf56  (223 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030119 KEYBOARD LANGUAGE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3623,7 +3624,7 @@ LAB_fffcbfc7:
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030120_draw @ fffcc035  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030120_draw @ fffcc035  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030120 MIC P1: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3643,7 +3644,7 @@ void menu_ex030120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030121_draw @ fffcc0c2  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030121_draw @ fffcc0c2  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030121 MIC P2: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3663,7 +3664,7 @@ void menu_ex030121_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030122_draw @ fffcc0d7  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030122_draw @ fffcc0d7  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030122 MIC P3: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3683,7 +3684,7 @@ void menu_ex030122_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030123_draw @ fffcc0ec  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030123_draw @ fffcc0ec  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030123 MIC P4: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3703,7 +3704,7 @@ void menu_ex030123_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030124_draw @ fffcc101  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030124_draw @ fffcc101  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030124 MIC UP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3723,7 +3724,7 @@ void menu_ex030124_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030125_draw @ fffcc116  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030125_draw @ fffcc116  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030125 MIC DOWN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3743,7 +3744,7 @@ void menu_ex030125_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030126_draw @ fffcc12b  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030126_draw @ fffcc12b  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030126 SCU-LAN10: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3762,7 +3763,7 @@ void menu_ex030126_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030201_draw @ fffcc140  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030201_draw @ fffcc140  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030201 IF NOTCH WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3806,7 +3807,7 @@ void menu_ex030201_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030202_draw @ fffcc1c0  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030202_draw @ fffcc1c0  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030202 NB REJECTION: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3850,7 +3851,7 @@ void menu_ex030202_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030203_draw @ fffcc240  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030203_draw @ fffcc240  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030203 NB WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3894,7 +3895,7 @@ void menu_ex030203_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030204_draw @ fffcc2c0  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030204_draw @ fffcc2c0  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030204 APF WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3938,7 +3939,7 @@ void menu_ex030204_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030205_draw @ fffcc340  (108 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030205_draw @ fffcc340  (108 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030205 CONTOUR LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3968,7 +3969,7 @@ void menu_ex030205_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030206_draw @ fffcc3ac  (107 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030206_draw @ fffcc3ac  (107 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030206 CONTOUR WIDTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -3998,7 +3999,7 @@ void menu_ex030206_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030301_draw @ fffcc417  (128 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030301_draw @ fffcc417  (128 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030301 AMC RELEASE TIME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4042,7 +4043,7 @@ void menu_ex030301_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030302_draw @ fffcc497  (24 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030302_draw @ fffcc497  (24 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030302 PRMTRC EQ1 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4063,7 +4064,7 @@ void menu_ex030302_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030303_draw @ fffcc556  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030303_draw @ fffcc556  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030303 PRMTRC EQ1 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4083,7 +4084,7 @@ void menu_ex030303_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030304_draw @ fffcc5ce  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030304_draw @ fffcc5ce  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030304 PRMTRC EQ1 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4103,7 +4104,7 @@ void menu_ex030304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030305_draw @ fffcc645  (25 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030305_draw @ fffcc645  (25 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030305 PRMTRC EQ2 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4124,7 +4125,7 @@ void menu_ex030305_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030306_draw @ fffcc65e  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030306_draw @ fffcc65e  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030306 PRMTRC EQ2 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4144,7 +4145,7 @@ void menu_ex030306_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030307_draw @ fffcc673  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030307_draw @ fffcc673  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030307 PRMTRC EQ2 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4164,7 +4165,7 @@ void menu_ex030307_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030308_draw @ fffcc688  (25 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030308_draw @ fffcc688  (25 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030308 PRMTRC EQ3 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4185,7 +4186,7 @@ void menu_ex030308_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030309_draw @ fffcc6a1  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030309_draw @ fffcc6a1  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030309 PRMTRC EQ3 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4205,7 +4206,7 @@ void menu_ex030309_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030310_draw @ fffcc6b6  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030310_draw @ fffcc6b6  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030310 PRMTRC EQ3 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4225,7 +4226,7 @@ void menu_ex030310_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030311_draw @ fffcc6cb  (24 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030311_draw @ fffcc6cb  (24 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030311 P PRMTRC EQ1 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4246,7 +4247,7 @@ void menu_ex030311_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030312_draw @ fffcc6e3  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030312_draw @ fffcc6e3  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030312 P PRMTRC EQ1 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4266,7 +4267,7 @@ void menu_ex030312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030313_draw @ fffcc6f8  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030313_draw @ fffcc6f8  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030313 P PRMTRC EQ1 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4286,7 +4287,7 @@ void menu_ex030313_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030314_draw @ fffcc70d  (25 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030314_draw @ fffcc70d  (25 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030314 P PRMTRC EQ2 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4307,7 +4308,7 @@ void menu_ex030314_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030315_draw @ fffcc726  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030315_draw @ fffcc726  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030315 P PRMTRC EQ2 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4327,7 +4328,7 @@ void menu_ex030315_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030316_draw @ fffcc73b  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030316_draw @ fffcc73b  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030316 P PRMTRC EQ2 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4347,7 +4348,7 @@ void menu_ex030316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030317_draw @ fffcc750  (25 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030317_draw @ fffcc750  (25 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030317 P PRMTRC EQ3 FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4368,7 +4369,7 @@ void menu_ex030317_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030318_draw @ fffcc769  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030318_draw @ fffcc769  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030318 P PRMTRC EQ3 LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4388,7 +4389,7 @@ void menu_ex030318_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030319_draw @ fffcc77e  (21 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030319_draw @ fffcc77e  (21 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030319 P PRMTRC EQ3 BWTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4408,7 +4409,7 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030401_draw @ fffcc793  (73 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030401_draw @ fffcc793  (73 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030401 HF MAX POWER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4438,7 +4439,7 @@ undefined4 menu_ex030401_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030402_draw @ fffcc850  (73 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030402_draw @ fffcc850  (73 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030402 50M MAX POWER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4468,7 +4469,7 @@ undefined4 menu_ex030402_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030403_draw @ fffcc899  (73 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030403_draw @ fffcc899  (73 bytes, 2 callers, export file fffcbb67_fffcc899.c)
  * Purpose: Menu item ex030403 70M MAX POWER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4496,9 +4497,8 @@ undefined4 menu_ex030403_draw(undefined4 param_1)
   return 0x9af0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex030404_draw @ fffcc8e2  (90 bytes, 2 callers, export file fffcbb7c_fffcc8e2.c)
+ * menu_ex030404_draw @ fffcc8e2  (90 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030404 AM MAX POWER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4535,8 +4535,9 @@ undefined4 menu_ex030404_draw(undefined4 param_1)
   return 0x9af1;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex030405_draw @ fffcc93c  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030405_draw @ fffcc93c  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030405 VOX SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4580,7 +4581,7 @@ void menu_ex030405_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030406_draw @ fffcc9bc  (21 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030406_draw @ fffcc9bc  (21 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030406 EMERGENCY FREQ TX: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4599,7 +4600,7 @@ void menu_ex030406_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030407_draw @ fffcc9d1  (21 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030407_draw @ fffcc9d1  (21 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030407 TX INHITBIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4618,7 +4619,7 @@ void menu_ex030407_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030408_draw @ fffcc9e6  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030408_draw @ fffcc9e6  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030408 METER DETECTOR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4662,7 +4663,7 @@ void menu_ex030408_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030501_draw @ fffcca66  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030501_draw @ fffcca66  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030501 SSB/CW DIAL STEP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4706,7 +4707,7 @@ void menu_ex030501_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030502_draw @ fffccae6  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030502_draw @ fffccae6  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030502 RTTY/PSK DIAL STEP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4750,7 +4751,7 @@ void menu_ex030502_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030503_draw @ fffccb66  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030503_draw @ fffccb66  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030503 CH STEP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4794,7 +4795,7 @@ void menu_ex030503_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030504_draw @ fffccbe6  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030504_draw @ fffccbe6  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030504 AM CH STEP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4838,7 +4839,7 @@ void menu_ex030504_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030505_draw @ fffccc66  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030505_draw @ fffccc66  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030505 FM CH STEP: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4882,7 +4883,7 @@ void menu_ex030505_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030506_draw @ fffccce6  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex030506_draw @ fffccce6  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex030506 MAIN STEPS PER REV.: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4926,7 +4927,7 @@ void menu_ex030506_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040101_draw @ fffccd66  (103 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040101_draw @ fffccd66  (103 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040101 MY CALL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4951,7 +4952,7 @@ void menu_ex040101_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040102_draw @ fffccdcd  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040102_draw @ fffccdcd  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040102 MY CALL TIME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -4995,7 +4996,7 @@ void menu_ex040102_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040103_draw @ fffcce4d  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040103_draw @ fffcce4d  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040103 POP-UP TIME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5039,7 +5040,7 @@ void menu_ex040103_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040104_draw @ fffccecd  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040104_draw @ fffccecd  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040104 SCREEN SAVER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5083,7 +5084,7 @@ void menu_ex040104_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040105_draw @ fffccf4d  (129 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040105_draw @ fffccf4d  (129 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040105 LED DIMMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5119,7 +5120,7 @@ void menu_ex040105_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040106_draw @ fffccfce  (107 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040106_draw @ fffccfce  (107 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040106 MOUSE POINTER SPEED: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5149,7 +5150,7 @@ void menu_ex040106_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040201_draw @ fffcd039  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040201_draw @ fffcd039  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040201 RBW: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5193,7 +5194,7 @@ void menu_ex040201_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040202_draw @ fffcd0b9  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040202_draw @ fffcd0b9  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040202 SCOPE CTR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5237,7 +5238,7 @@ void menu_ex040202_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040203_draw @ fffcd139  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040203_draw @ fffcd139  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040203 2D DISP SENSITIVITY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5281,7 +5282,7 @@ void menu_ex040203_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040204_draw @ fffcd1b9  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040204_draw @ fffcd1b9  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040204 3DSS DISP SENSITIVITY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5325,7 +5326,7 @@ void menu_ex040204_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040301_draw @ fffcd239  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040301_draw @ fffcd239  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040301 VMI COLOR VFO-A: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5369,7 +5370,7 @@ void menu_ex040301_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040302_draw @ fffcd2b9  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040302_draw @ fffcd2b9  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040302 VMI COLOR VFO-B: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5413,7 +5414,7 @@ void menu_ex040302_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040303_draw @ fffcd339  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040303_draw @ fffcd339  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040303 VMI COLOR MEMORY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5457,7 +5458,7 @@ void menu_ex040303_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040304_draw @ fffcd3b9  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040304_draw @ fffcd3b9  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040304 VMI COLOR CLAR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5501,7 +5502,7 @@ void menu_ex040304_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040401_draw @ fffcd439  (21 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040401_draw @ fffcd439  (21 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040401 EXT DISPLAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5520,7 +5521,7 @@ void menu_ex040401_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040402_draw @ fffcd44e  (128 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_ex040402_draw @ fffcd44e  (128 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item ex040402 PIXEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5564,7 +5565,7 @@ void menu_ex040402_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_0_draw @ fffcd4ce  (127 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_16_0_draw @ fffcd4ce  (127 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_16_0 DAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5589,7 +5590,7 @@ void menu_m4_16_0_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_1_draw @ fffcd5d5  (136 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_16_1_draw @ fffcd5d5  (136 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_16_1 MONTH: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5630,7 +5631,7 @@ void menu_m4_16_1_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_2_draw @ fffcd65d  (159 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_16_2_draw @ fffcd65d  (159 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_16_2 YEAR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5657,7 +5658,7 @@ void menu_m4_16_2_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_3_draw @ fffcd6fc  (127 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_16_3_draw @ fffcd6fc  (127 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_16_3 HOUR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5682,7 +5683,7 @@ void menu_m4_16_3_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_4_draw @ fffcd77b  (127 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_16_4_draw @ fffcd77b  (127 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_16_4 MINUTE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5707,7 +5708,7 @@ void menu_m4_16_4_draw(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_0_draw @ fffcd7fa  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_0_draw @ fffcd7fa  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_0 MEM LIST LOAD: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5725,7 +5726,7 @@ void menu_m4_17_0_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_1_draw @ fffcd865  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_1_draw @ fffcd865  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_1 MEM LIST SAVE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5743,7 +5744,7 @@ void menu_m4_17_1_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_2_draw @ fffcd86e  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_2_draw @ fffcd86e  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_2 MENU LOAD: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5761,7 +5762,7 @@ void menu_m4_17_2_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_3_draw @ fffcd877  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_3_draw @ fffcd877  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_3 MENU SAVE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5779,7 +5780,7 @@ void menu_m4_17_3_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_4_draw @ fffcd880  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_4_draw @ fffcd880  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_4 INFORMATIONS: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5797,7 +5798,7 @@ void menu_m4_17_4_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_5_draw @ fffcd889  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_5_draw @ fffcd889  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_5 FIRMWARE UPDATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5815,7 +5816,7 @@ void menu_m4_17_5_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_6_draw @ fffcd892  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_17_6_draw @ fffcd892  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_17_6 FORMAT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5833,7 +5834,7 @@ void menu_m4_17_6_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_18_0_draw @ fffcd89b  (209 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_18_0_draw @ fffcd89b  (209 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_18_0 SOFTVERSION: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5904,7 +5905,7 @@ char * menu_m4_18_0_draw(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_19_0_draw @ fffcd96c  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_19_0_draw @ fffcd96c  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_19_0 CALIBRATION: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5922,7 +5923,7 @@ void menu_m4_19_0_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_0_draw @ fffcd975  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_20_0_draw @ fffcd975  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_20_0 MEMORY CLEAR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5940,7 +5941,7 @@ void menu_m4_20_0_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_1_draw @ fffcd97e  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_20_1_draw @ fffcd97e  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_20_1 MENU CLEAR: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5958,7 +5959,7 @@ void menu_m4_20_1_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_2_draw @ fffcd987  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_20_2_draw @ fffcd987  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_20_2 ALL RESET: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5976,7 +5977,7 @@ void menu_m4_20_2_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_21_0_draw @ fffcd990  (9 bytes, 2 callers, export file fffcc93c_fffcdb6b.c)
+ * menu_m4_21_0_draw @ fffcd990  (9 bytes, 2 callers, export file fffcc8e2_fffcdb26.c)
  * Purpose: Menu item m4_21_0 CERTIFICATION: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -5994,7 +5995,7 @@ void menu_m4_21_0_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010101_step @ fffcde05  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010101_step @ fffcde05  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010101 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6012,7 +6013,7 @@ void menu_ex010101_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010102_step @ fffcde62  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010102_step @ fffcde62  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010102 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6030,7 +6031,7 @@ void menu_ex010102_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010103_step @ fffcde75  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010103_step @ fffcde75  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010103 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6048,7 +6049,7 @@ void menu_ex010103_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010104_step @ fffcde88  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010104_step @ fffcde88  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010104 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6066,7 +6067,7 @@ void menu_ex010104_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010105_step @ fffcde9b  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010105_step @ fffcde9b  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010105 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6084,7 +6085,7 @@ void menu_ex010105_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010106_step @ fffcdeae  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010106_step @ fffcdeae  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010106 AGC SLOW DELY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6102,7 +6103,7 @@ void menu_ex010106_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010107_step @ fffcdec1  (14 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010107_step @ fffcdec1  (14 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010107 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6120,7 +6121,7 @@ void menu_ex010107_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010108_step @ fffcdf17  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010108_step @ fffcdf17  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010108 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6138,7 +6139,7 @@ void menu_ex010108_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010109_step @ fffcdf29  (14 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010109_step @ fffcdf29  (14 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010109 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6156,7 +6157,7 @@ void menu_ex010109_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010110_step @ fffcdf93  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010110_step @ fffcdf93  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010110 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6174,7 +6175,7 @@ void menu_ex010110_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010111_step @ fffcdfa5  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010111_step @ fffcdfa5  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010111 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6192,7 +6193,7 @@ void menu_ex010111_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010112_step @ fffce000  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010112_step @ fffce000  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010112 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6210,7 +6211,7 @@ void menu_ex010112_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010113_step @ fffce013  (183 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010113_step @ fffce013  (183 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010113 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6261,7 +6262,7 @@ void menu_ex010113_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010114_step @ fffce0ca  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010114_step @ fffce0ca  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010114 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6279,7 +6280,7 @@ void menu_ex010114_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010115_step @ fffce0dc  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010115_step @ fffce0dc  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010115 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6297,7 +6298,7 @@ void menu_ex010115_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010116_step @ fffce0ef  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010116_step @ fffce0ef  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010116 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6315,7 +6316,7 @@ void menu_ex010116_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010117_step @ fffce102  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010117_step @ fffce102  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010117 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6333,7 +6334,7 @@ void menu_ex010117_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010118_step @ fffce114  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010118_step @ fffce114  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010118 NAR WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6351,7 +6352,7 @@ void menu_ex010118_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010119_step @ fffce127  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010119_step @ fffce127  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010119 CW AUTO MODE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6369,7 +6370,7 @@ void menu_ex010119_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010201_step @ fffce139  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010201_step @ fffce139  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010201 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6387,7 +6388,7 @@ void menu_ex010201_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010202_step @ fffce14c  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010202_step @ fffce14c  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010202 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6405,7 +6406,7 @@ void menu_ex010202_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010203_step @ fffce15f  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010203_step @ fffce15f  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010203 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6423,7 +6424,7 @@ void menu_ex010203_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010204_step @ fffce172  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010204_step @ fffce172  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010204 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6441,7 +6442,7 @@ void menu_ex010204_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010205_step @ fffce185  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010205_step @ fffce185  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010205 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6459,7 +6460,7 @@ void menu_ex010205_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010206_step @ fffce198  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010206_step @ fffce198  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010206 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6477,7 +6478,7 @@ void menu_ex010206_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010207_step @ fffce1ab  (14 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010207_step @ fffce1ab  (14 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010207 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6495,7 +6496,7 @@ void menu_ex010207_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010208_step @ fffce1b9  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010208_step @ fffce1b9  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010208 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6513,7 +6514,7 @@ void menu_ex010208_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010209_step @ fffce1cb  (14 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010209_step @ fffce1cb  (14 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010209 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6531,7 +6532,7 @@ void menu_ex010209_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010210_step @ fffce1d9  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010210_step @ fffce1d9  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010210 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6549,7 +6550,7 @@ void menu_ex010210_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010211_step @ fffce1eb  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010211_step @ fffce1eb  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010211 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6567,7 +6568,7 @@ void menu_ex010211_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010212_step @ fffce1fe  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010212_step @ fffce1fe  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010212 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6585,7 +6586,7 @@ void menu_ex010212_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010213_step @ fffce211  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010213_step @ fffce211  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010213 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6603,7 +6604,7 @@ void menu_ex010213_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010214_step @ fffce223  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010214_step @ fffce223  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010214 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6621,7 +6622,7 @@ void menu_ex010214_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010215_step @ fffce235  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010215_step @ fffce235  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010215 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6639,7 +6640,7 @@ void menu_ex010215_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010216_step @ fffce248  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010216_step @ fffce248  (19 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010216 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6657,7 +6658,7 @@ void menu_ex010216_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010217_step @ fffce25b  (18 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010217_step @ fffce25b  (18 bytes, 2 callers, export file fffcdb6b_fffce25b.c)
  * Purpose: Menu item ex010217 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6673,9 +6674,8 @@ void menu_ex010217_step(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex010301_step @ fffce26d  (19 bytes, 2 callers, export file fffcdbb8_fffce26d.c)
+ * menu_ex010301_step @ fffce26d  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010301 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6691,8 +6691,9 @@ void menu_ex010301_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex010302_step @ fffce280  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010302_step @ fffce280  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010302 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6710,7 +6711,7 @@ void menu_ex010302_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010303_step @ fffce293  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010303_step @ fffce293  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010303 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6728,7 +6729,7 @@ void menu_ex010303_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010304_step @ fffce2a6  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010304_step @ fffce2a6  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010304 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6746,7 +6747,7 @@ void menu_ex010304_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010305_step @ fffce2b9  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010305_step @ fffce2b9  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010305 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6764,7 +6765,7 @@ void menu_ex010305_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010306_step @ fffce2cc  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010306_step @ fffce2cc  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010306 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6782,7 +6783,7 @@ void menu_ex010306_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010307_step @ fffce2df  (14 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010307_step @ fffce2df  (14 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010307 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6800,7 +6801,7 @@ void menu_ex010307_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010308_step @ fffce2ed  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010308_step @ fffce2ed  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010308 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6818,7 +6819,7 @@ void menu_ex010308_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010309_step @ fffce2ff  (14 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010309_step @ fffce2ff  (14 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010309 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6836,7 +6837,7 @@ void menu_ex010309_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010310_step @ fffce30d  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010310_step @ fffce30d  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010310 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6854,7 +6855,7 @@ void menu_ex010310_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010311_step @ fffce31f  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010311_step @ fffce31f  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010311 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6872,7 +6873,7 @@ void menu_ex010311_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010312_step @ fffce332  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010312_step @ fffce332  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010312 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6890,7 +6891,7 @@ void menu_ex010312_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010313_step @ fffce345  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010313_step @ fffce345  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010313 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6908,7 +6909,7 @@ void menu_ex010313_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010314_step @ fffce357  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010314_step @ fffce357  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010314 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6926,7 +6927,7 @@ void menu_ex010314_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010315_step @ fffce36a  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010315_step @ fffce36a  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010315 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6944,7 +6945,7 @@ void menu_ex010315_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010316_step @ fffce37d  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010316_step @ fffce37d  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010316 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6962,7 +6963,7 @@ void menu_ex010316_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010317_step @ fffce38f  (92 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010317_step @ fffce38f  (92 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010317 RPT SHIFT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -6992,7 +6993,7 @@ void menu_ex010317_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010318_step @ fffce436  (26 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010318_step @ fffce436  (26 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010318 RPT SHIFT(28MHz): on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7010,7 +7011,7 @@ void menu_ex010318_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010319_step @ fffce450  (69 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010319_step @ fffce450  (69 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010319 RPT SHIFT(50MHz): on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7037,7 +7038,7 @@ void menu_ex010319_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010320_step @ fffce4df  (93 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010320_step @ fffce4df  (93 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010320 ENC/DEC: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7067,7 +7068,7 @@ void menu_ex010320_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010321_step @ fffce588  (54 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010321_step @ fffce588  (54 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010321 TONE FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7095,7 +7096,7 @@ void menu_ex010321_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010401_step @ fffce629  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010401_step @ fffce629  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010401 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7113,7 +7114,7 @@ void menu_ex010401_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010402_step @ fffce63c  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010402_step @ fffce63c  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010402 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7131,7 +7132,7 @@ void menu_ex010402_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010403_step @ fffce64f  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010403_step @ fffce64f  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010403 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7149,7 +7150,7 @@ void menu_ex010403_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010404_step @ fffce662  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010404_step @ fffce662  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010404 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7167,7 +7168,7 @@ void menu_ex010404_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010405_step @ fffce675  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010405_step @ fffce675  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010405 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7185,7 +7186,7 @@ void menu_ex010405_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010406_step @ fffce688  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010406_step @ fffce688  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010406 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7203,7 +7204,7 @@ void menu_ex010406_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010407_step @ fffce69b  (14 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010407_step @ fffce69b  (14 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010407 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7221,7 +7222,7 @@ void menu_ex010407_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010408_step @ fffce6a9  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010408_step @ fffce6a9  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010408 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7239,7 +7240,7 @@ void menu_ex010408_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010409_step @ fffce6bb  (14 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010409_step @ fffce6bb  (14 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010409 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7257,7 +7258,7 @@ void menu_ex010409_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010410_step @ fffce6c9  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010410_step @ fffce6c9  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010410 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7275,7 +7276,7 @@ void menu_ex010410_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010411_step @ fffce6db  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010411_step @ fffce6db  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010411 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7293,7 +7294,7 @@ void menu_ex010411_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010412_step @ fffce6ee  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010412_step @ fffce6ee  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010412 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7311,7 +7312,7 @@ void menu_ex010412_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010413_step @ fffce701  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010413_step @ fffce701  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010413 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7329,7 +7330,7 @@ void menu_ex010413_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010414_step @ fffce713  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010414_step @ fffce713  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010414 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7347,7 +7348,7 @@ void menu_ex010414_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010415_step @ fffce725  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010415_step @ fffce725  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010415 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7365,7 +7366,7 @@ void menu_ex010415_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010416_step @ fffce738  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010416_step @ fffce738  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010416 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7383,7 +7384,7 @@ void menu_ex010416_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010417_step @ fffce74b  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010417_step @ fffce74b  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010417 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7401,7 +7402,7 @@ void menu_ex010417_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010418_step @ fffce75d  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010418_step @ fffce75d  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010418 NAR WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7419,7 +7420,7 @@ void menu_ex010418_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010419_step @ fffce770  (18 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010419_step @ fffce770  (18 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010419 PSK TONE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7437,7 +7438,7 @@ void menu_ex010419_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010420_step @ fffce782  (69 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010420_step @ fffce782  (69 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010420 DATA SHIFT (SSB): on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7464,7 +7465,7 @@ void menu_ex010420_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010501_step @ fffce7c7  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010501_step @ fffce7c7  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010501 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7482,7 +7483,7 @@ void menu_ex010501_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010502_step @ fffce7da  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010502_step @ fffce7da  (19 bytes, 2 callers, export file fffce26d_fffce7da.c)
  * Purpose: Menu item ex010502 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7498,9 +7499,8 @@ void menu_ex010502_step(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex010503_step @ fffce7ed  (19 bytes, 2 callers, export file fffce280_fffce7ed.c)
+ * menu_ex010503_step @ fffce7ed  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010503 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7516,8 +7516,9 @@ void menu_ex010503_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex010504_step @ fffce800  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010504_step @ fffce800  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010504 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7535,7 +7536,7 @@ void menu_ex010504_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010505_step @ fffce813  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010505_step @ fffce813  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010505 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7553,7 +7554,7 @@ void menu_ex010505_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010506_step @ fffce826  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010506_step @ fffce826  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010506 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7571,7 +7572,7 @@ void menu_ex010506_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010507_step @ fffce839  (14 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010507_step @ fffce839  (14 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010507 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7589,7 +7590,7 @@ void menu_ex010507_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010508_step @ fffce847  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010508_step @ fffce847  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010508 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7607,7 +7608,7 @@ void menu_ex010508_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010509_step @ fffce859  (14 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010509_step @ fffce859  (14 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010509 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7625,7 +7626,7 @@ void menu_ex010509_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010510_step @ fffce867  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010510_step @ fffce867  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010510 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7643,7 +7644,7 @@ void menu_ex010510_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010511_step @ fffce879  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010511_step @ fffce879  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010511 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7661,7 +7662,7 @@ void menu_ex010511_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010512_step @ fffce88c  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010512_step @ fffce88c  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010512 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7679,7 +7680,7 @@ void menu_ex010512_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010513_step @ fffce89f  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010513_step @ fffce89f  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010513 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7697,7 +7698,7 @@ void menu_ex010513_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010514_step @ fffce8b1  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010514_step @ fffce8b1  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010514 NAR WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7715,7 +7716,7 @@ void menu_ex010514_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010515_step @ fffce8c4  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010515_step @ fffce8c4  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010515 MARK FREQUENCY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7733,7 +7734,7 @@ void menu_ex010515_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010516_step @ fffce8d6  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010516_step @ fffce8d6  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010516 SHIFT FREQUENCY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7751,7 +7752,7 @@ void menu_ex010516_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex010517_step @ fffce8e8  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex010517_step @ fffce8e8  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex010517 POLARITY TX: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7769,7 +7770,7 @@ void menu_ex010517_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020101_step @ fffce8fa  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020101_step @ fffce8fa  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020101 AF TREBLE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7787,7 +7788,7 @@ void menu_ex020101_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020102_step @ fffce90d  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020102_step @ fffce90d  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020102 AF MIDDLE TONE GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7805,7 +7806,7 @@ void menu_ex020102_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020103_step @ fffce920  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020103_step @ fffce920  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020103 AF BASS GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7823,7 +7824,7 @@ void menu_ex020103_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020104_step @ fffce933  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020104_step @ fffce933  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020104 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7841,7 +7842,7 @@ void menu_ex020104_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020105_step @ fffce946  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020105_step @ fffce946  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020105 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7859,7 +7860,7 @@ void menu_ex020105_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020106_step @ fffce959  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020106_step @ fffce959  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020106 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7877,7 +7878,7 @@ void menu_ex020106_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020107_step @ fffce96c  (14 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020107_step @ fffce96c  (14 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020107 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7895,7 +7896,7 @@ void menu_ex020107_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020108_step @ fffce97a  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020108_step @ fffce97a  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020108 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7913,7 +7914,7 @@ void menu_ex020108_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020109_step @ fffce98c  (14 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020109_step @ fffce98c  (14 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020109 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7931,7 +7932,7 @@ void menu_ex020109_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020110_step @ fffce99a  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020110_step @ fffce99a  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020110 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7949,7 +7950,7 @@ void menu_ex020110_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020111_step @ fffce9ac  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020111_step @ fffce9ac  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020111 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7967,7 +7968,7 @@ void menu_ex020111_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020112_step @ fffce9bf  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020112_step @ fffce9bf  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020112 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -7985,7 +7986,7 @@ void menu_ex020112_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020113_step @ fffce9d2  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020113_step @ fffce9d2  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020113 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8003,7 +8004,7 @@ void menu_ex020113_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020114_step @ fffce9e4  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020114_step @ fffce9e4  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020114 NAR WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8021,7 +8022,7 @@ void menu_ex020114_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020115_step @ fffce9f7  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020115_step @ fffce9f7  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020115 PC KEYING: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8039,7 +8040,7 @@ void menu_ex020115_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020116_step @ fffcea09  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020116_step @ fffcea09  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020116 CW BK-IN TYPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8057,7 +8058,7 @@ void menu_ex020116_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020117_step @ fffcea1b  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020117_step @ fffcea1b  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020117 CW WAVE SHAPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8075,7 +8076,7 @@ void menu_ex020117_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020118_step @ fffcea2d  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020118_step @ fffcea2d  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020118 CW FREQ DISPLAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8093,7 +8094,7 @@ void menu_ex020118_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020119_step @ fffcea3f  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020119_step @ fffcea3f  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020119 QSK DELAY TIME: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8111,7 +8112,7 @@ void menu_ex020119_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020120_step @ fffcea51  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020120_step @ fffcea51  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020120 CW INDICATOR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8129,7 +8130,7 @@ void menu_ex020120_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020201_step @ fffcea63  (22 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020201_step @ fffcea63  (22 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020201 KEYER TYPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8149,7 +8150,7 @@ void menu_ex020201_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020202_step @ fffcea79  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020202_step @ fffcea79  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020202 KEYER DOT/DASH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8167,7 +8168,7 @@ void menu_ex020202_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020203_step @ fffcea8b  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020203_step @ fffcea8b  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020203 CW WEIGHT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8185,7 +8186,7 @@ void menu_ex020203_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020204_step @ fffcea9e  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020204_step @ fffcea9e  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020204 NUMBER STYLE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8203,7 +8204,7 @@ void menu_ex020204_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020205_step @ fffceab0  (28 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020205_step @ fffceab0  (28 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020205 CONTEST NUMBER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8226,7 +8227,7 @@ void menu_ex020205_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020206_step @ fffceacc  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020206_step @ fffceacc  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020206 CW MEMORY 1: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8244,7 +8245,7 @@ void menu_ex020206_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020207_step @ fffceade  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020207_step @ fffceade  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020207 CW MEMORY 2: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8262,7 +8263,7 @@ void menu_ex020207_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020208_step @ fffceaf0  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020208_step @ fffceaf0  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020208 CW MEMORY 3: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8280,7 +8281,7 @@ void menu_ex020208_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020209_step @ fffceb02  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020209_step @ fffceb02  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020209 CW MEMORY 4: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8298,7 +8299,7 @@ void menu_ex020209_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020210_step @ fffceb14  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020210_step @ fffceb14  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020210 CW MEMORY 5: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8316,7 +8317,7 @@ void menu_ex020210_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex020211_step @ fffceb26  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex020211_step @ fffceb26  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex020211 REPEAT INTERVAL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8334,7 +8335,7 @@ void menu_ex020211_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030101_step @ fffceb39  (19 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex030101_step @ fffceb39  (19 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex030101 BEEP LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8352,7 +8353,7 @@ void menu_ex030101_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030102_step @ fffceb4c  (18 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex030102_step @ fffceb4c  (18 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex030102 RF/SQL VR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8370,7 +8371,7 @@ void menu_ex030102_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030103_step @ fffceb5e  (22 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex030103_step @ fffceb5e  (22 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex030103 TUN/LIN PORT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8389,7 +8390,7 @@ void menu_ex030103_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030104_step @ fffceb74  (68 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex030104_step @ fffceb74  (68 bytes, 2 callers, export file fffce7ed_fffceb74.c)
  * Purpose: Menu item ex030104 TUNER TYPE SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8415,9 +8416,8 @@ void menu_ex030104_step(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex030105_step @ fffcebb8  (22 bytes, 2 callers, export file fffce800_fffcebb8.c)
+ * menu_ex030105_step @ fffcebb8  (22 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030105 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8434,8 +8434,9 @@ void menu_ex030105_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex030106_step @ fffcebce  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030106_step @ fffcebce  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030106 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8453,7 +8454,7 @@ void menu_ex030106_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030107_step @ fffcebe0  (26 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030107_step @ fffcebe0  (26 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030107 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8473,7 +8474,7 @@ void menu_ex030107_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030108_step @ fffcebfa  (22 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030108_step @ fffcebfa  (22 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030108 CAT-2 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8492,7 +8493,7 @@ void menu_ex030108_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030109_step @ fffcec10  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030109_step @ fffcec10  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030109 CAT-2 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8510,7 +8511,7 @@ void menu_ex030109_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030110_step @ fffcec22  (22 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030110_step @ fffcec22  (22 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030110 CAT-3 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8529,7 +8530,7 @@ void menu_ex030110_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030111_step @ fffcec38  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030111_step @ fffcec38  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030111 CAT-3 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8547,7 +8548,7 @@ void menu_ex030111_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030112_step @ fffcec4a  (22 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030112_step @ fffcec4a  (22 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030112 QMB CH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8566,7 +8567,7 @@ void menu_ex030112_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030113_step @ fffcec60  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030113_step @ fffcec60  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030113 BAND STACK: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8584,7 +8585,7 @@ void menu_ex030113_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030114_step @ fffcec72  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030114_step @ fffcec72  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030114 MEM GROUP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8602,7 +8603,7 @@ void menu_ex030114_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030115_step @ fffcec84  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030115_step @ fffcec84  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030115 TX TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8620,7 +8621,7 @@ void menu_ex030115_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030116_step @ fffcec97  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030116_step @ fffcec97  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030116 MIC SCAN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8638,7 +8639,7 @@ void menu_ex030116_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030117_step @ fffceca9  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030117_step @ fffceca9  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030117 MIC SCAN RESUME: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8656,7 +8657,7 @@ void menu_ex030117_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030118_step @ fffcecbb  (20 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030118_step @ fffcecbb  (20 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030118 REF FREQ FINE ADJ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8674,7 +8675,7 @@ void menu_ex030118_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030119_step @ fffceccf  (78 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030119_step @ fffceccf  (78 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030119 KEYBOARD LANGUAGE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8698,7 +8699,7 @@ void menu_ex030119_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030120_step @ fffced1d  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030120_step @ fffced1d  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030120 MIC P1: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8716,7 +8717,7 @@ void menu_ex030120_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030121_step @ fffced30  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030121_step @ fffced30  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030121 MIC P2: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8734,7 +8735,7 @@ void menu_ex030121_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030122_step @ fffced43  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030122_step @ fffced43  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030122 MIC P3: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8752,7 +8753,7 @@ void menu_ex030122_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030123_step @ fffced56  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030123_step @ fffced56  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030123 MIC P4: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8770,7 +8771,7 @@ void menu_ex030123_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030124_step @ fffced69  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030124_step @ fffced69  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030124 MIC UP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8788,7 +8789,7 @@ void menu_ex030124_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030125_step @ fffced7c  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030125_step @ fffced7c  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030125 MIC DOWN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8806,7 +8807,7 @@ void menu_ex030125_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030126_step @ fffced8f  (78 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030126_step @ fffced8f  (78 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030126 SCU-LAN10: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8830,7 +8831,7 @@ void menu_ex030126_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030201_step @ fffceddd  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030201_step @ fffceddd  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030201 IF NOTCH WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8848,7 +8849,7 @@ void menu_ex030201_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030202_step @ fffcedef  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030202_step @ fffcedef  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030202 NB REJECTION: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8866,7 +8867,7 @@ void menu_ex030202_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030203_step @ fffcee01  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030203_step @ fffcee01  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030203 NB WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8884,7 +8885,7 @@ void menu_ex030203_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030204_step @ fffcee13  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030204_step @ fffcee13  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030204 APF WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8902,7 +8903,7 @@ void menu_ex030204_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030205_step @ fffcee25  (20 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030205_step @ fffcee25  (20 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030205 CONTOUR LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8920,7 +8921,7 @@ void menu_ex030205_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030206_step @ fffcee39  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030206_step @ fffcee39  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030206 CONTOUR WIDTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8938,7 +8939,7 @@ void menu_ex030206_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030301_step @ fffcee4b  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030301_step @ fffcee4b  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030301 AMC RELEASE TIME: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8956,7 +8957,7 @@ void menu_ex030301_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030302_step @ fffcee5d  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030302_step @ fffcee5d  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030302 PRMTRC EQ1 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8974,7 +8975,7 @@ void menu_ex030302_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030303_step @ fffcee6f  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030303_step @ fffcee6f  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030303 PRMTRC EQ1 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -8992,7 +8993,7 @@ void menu_ex030303_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030304_step @ fffcee82  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030304_step @ fffcee82  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030304 PRMTRC EQ1 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9010,7 +9011,7 @@ void menu_ex030304_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030305_step @ fffcee94  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030305_step @ fffcee94  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030305 PRMTRC EQ2 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9028,7 +9029,7 @@ void menu_ex030305_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030306_step @ fffceea6  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030306_step @ fffceea6  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030306 PRMTRC EQ2 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9046,7 +9047,7 @@ void menu_ex030306_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030307_step @ fffceeb9  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030307_step @ fffceeb9  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030307 PRMTRC EQ2 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9064,7 +9065,7 @@ void menu_ex030307_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030308_step @ fffceecb  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030308_step @ fffceecb  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030308 PRMTRC EQ3 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9082,7 +9083,7 @@ void menu_ex030308_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030309_step @ fffceede  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030309_step @ fffceede  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030309 PRMTRC EQ3 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9100,7 +9101,7 @@ void menu_ex030309_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030310_step @ fffceef1  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030310_step @ fffceef1  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030310 PRMTRC EQ3 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9118,7 +9119,7 @@ void menu_ex030310_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030311_step @ fffcef03  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030311_step @ fffcef03  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030311 P PRMTRC EQ1 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9136,7 +9137,7 @@ void menu_ex030311_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030312_step @ fffcef15  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030312_step @ fffcef15  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030312 P PRMTRC EQ1 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9154,7 +9155,7 @@ void menu_ex030312_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030313_step @ fffcef28  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030313_step @ fffcef28  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030313 P PRMTRC EQ1 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9172,7 +9173,7 @@ void menu_ex030313_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030314_step @ fffcef3a  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030314_step @ fffcef3a  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030314 P PRMTRC EQ2 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9190,7 +9191,7 @@ void menu_ex030314_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030315_step @ fffcef4c  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030315_step @ fffcef4c  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030315 P PRMTRC EQ2 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9208,7 +9209,7 @@ void menu_ex030315_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030316_step @ fffcef5f  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030316_step @ fffcef5f  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030316 P PRMTRC EQ2 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9226,7 +9227,7 @@ void menu_ex030316_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030317_step @ fffcef71  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030317_step @ fffcef71  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030317 P PRMTRC EQ3 FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9244,7 +9245,7 @@ void menu_ex030317_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030318_step @ fffcef84  (19 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030318_step @ fffcef84  (19 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030318 P PRMTRC EQ3 LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9262,7 +9263,7 @@ void menu_ex030318_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030319_step @ fffcef97  (18 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030319_step @ fffcef97  (18 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030319 P PRMTRC EQ3 BWTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9280,7 +9281,7 @@ void menu_ex030319_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030401_step @ fffcefa9  (24 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030401_step @ fffcefa9  (24 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030401 HF MAX POWER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9301,7 +9302,7 @@ void menu_ex030401_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030402_step @ fffcefc1  (24 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030402_step @ fffcefc1  (24 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030402 50M MAX POWER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9322,7 +9323,7 @@ void menu_ex030402_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030403_step @ fffcefd9  (24 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030403_step @ fffcefd9  (24 bytes, 2 callers, export file fffcebb8_fffcefd9.c)
  * Purpose: Menu item ex030403 70M MAX POWER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9341,9 +9342,8 @@ void menu_ex030403_step(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex030404_step @ fffceff1  (43 bytes, 2 callers, export file fffcebce_fffceff1.c)
+ * menu_ex030404_step @ fffceff1  (43 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030404 AM MAX POWER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9371,8 +9371,9 @@ void menu_ex030404_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex030405_step @ fffcf01c  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030405_step @ fffcf01c  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030405 VOX SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9390,7 +9391,7 @@ void menu_ex030405_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030406_step @ fffcf02e  (64 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030406_step @ fffcf02e  (64 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030406 EMERGENCY FREQ TX: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9418,7 +9419,7 @@ void menu_ex030406_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030407_step @ fffcf06e  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030407_step @ fffcf06e  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030407 TX INHITBIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9436,7 +9437,7 @@ void menu_ex030407_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030408_step @ fffcf080  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030408_step @ fffcf080  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030408 METER DETECTOR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9454,7 +9455,7 @@ void menu_ex030408_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030501_step @ fffcf092  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030501_step @ fffcf092  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030501 SSB/CW DIAL STEP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9472,7 +9473,7 @@ void menu_ex030501_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030502_step @ fffcf0a4  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030502_step @ fffcf0a4  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030502 RTTY/PSK DIAL STEP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9490,7 +9491,7 @@ void menu_ex030502_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030503_step @ fffcf0b6  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030503_step @ fffcf0b6  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030503 CH STEP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9508,7 +9509,7 @@ void menu_ex030503_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030504_step @ fffcf0c8  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030504_step @ fffcf0c8  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030504 AM CH STEP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9526,7 +9527,7 @@ void menu_ex030504_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030505_step @ fffcf0da  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030505_step @ fffcf0da  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030505 FM CH STEP: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9544,7 +9545,7 @@ void menu_ex030505_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex030506_step @ fffcf0ec  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex030506_step @ fffcf0ec  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex030506 MAIN STEPS PER REV.: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9562,7 +9563,7 @@ void menu_ex030506_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040101_step @ fffcf0fe  (1 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040101_step @ fffcf0fe  (1 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040101 MY CALL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9579,7 +9580,7 @@ void menu_ex040101_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040102_step @ fffcf0ff  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040102_step @ fffcf0ff  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040102 MY CALL TIME: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9597,7 +9598,7 @@ void menu_ex040102_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040103_step @ fffcf111  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040103_step @ fffcf111  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040103 POP-UP TIME: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9615,7 +9616,7 @@ void menu_ex040103_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040104_step @ fffcf123  (22 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040104_step @ fffcf123  (22 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040104 SCREEN SAVER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9635,7 +9636,7 @@ void menu_ex040104_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040105_step @ fffcf139  (79 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040105_step @ fffcf139  (79 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040105 LED DIMMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9659,7 +9660,7 @@ void menu_ex040105_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040106_step @ fffcf188  (79 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040106_step @ fffcf188  (79 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040106 MOUSE POINTER SPEED: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9683,7 +9684,7 @@ void menu_ex040106_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040201_step @ fffcf1d7  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040201_step @ fffcf1d7  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040201 RBW: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9701,7 +9702,7 @@ void menu_ex040201_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040202_step @ fffcf1e9  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040202_step @ fffcf1e9  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040202 SCOPE CTR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9719,7 +9720,7 @@ void menu_ex040202_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040203_step @ fffcf1fb  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040203_step @ fffcf1fb  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040203 2D DISP SENSITIVITY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9737,7 +9738,7 @@ void menu_ex040203_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040204_step @ fffcf20d  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040204_step @ fffcf20d  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040204 3DSS DISP SENSITIVITY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9755,7 +9756,7 @@ void menu_ex040204_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040301_step @ fffcf21f  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040301_step @ fffcf21f  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040301 VMI COLOR VFO-A: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9773,7 +9774,7 @@ void menu_ex040301_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040302_step @ fffcf231  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040302_step @ fffcf231  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040302 VMI COLOR VFO-B: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9791,7 +9792,7 @@ void menu_ex040302_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040303_step @ fffcf243  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040303_step @ fffcf243  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040303 VMI COLOR MEMORY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9809,7 +9810,7 @@ void menu_ex040303_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040304_step @ fffcf255  (18 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040304_step @ fffcf255  (18 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040304 VMI COLOR CLAR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9827,7 +9828,7 @@ void menu_ex040304_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040401_step @ fffcf267  (78 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040401_step @ fffcf267  (78 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040401 EXT DISPLAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9851,7 +9852,7 @@ void menu_ex040401_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040402_step @ fffcf2b5  (78 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040402_step @ fffcf2b5  (78 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040402 PIXEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9875,7 +9876,7 @@ void menu_ex040402_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex040101_enter @ fffcf303  (119 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_ex040101_enter @ fffcf303  (119 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item ex040101 MY CALL: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9916,7 +9917,7 @@ void menu_ex040101_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_0_step @ fffcf37a  (21 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_16_0_step @ fffcf37a  (21 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_16_0 DAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9935,7 +9936,7 @@ void menu_m4_16_0_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_1_step @ fffcf3fb  (21 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_16_1_step @ fffcf3fb  (21 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_16_1 MONTH: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9954,7 +9955,7 @@ void menu_m4_16_1_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_2_step @ fffcf410  (21 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_16_2_step @ fffcf410  (21 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_16_2 YEAR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9973,7 +9974,7 @@ void menu_m4_16_2_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_3_step @ fffcf425  (21 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_16_3_step @ fffcf425  (21 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_16_3 HOUR: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -9992,7 +9993,7 @@ void menu_m4_16_3_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_16_4_step @ fffcf43a  (21 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_16_4_step @ fffcf43a  (21 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_16_4 MINUTE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10011,7 +10012,7 @@ void menu_m4_16_4_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_0_enter @ fffcf44f  (13 bytes, 2 callers, export file fffcf01c_fffcf6ac.c)
+ * menu_m4_17_0_enter @ fffcf44f  (13 bytes, 2 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Menu item m4_17_0 MEM LIST LOAD: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10037,7 +10038,7 @@ void menu_m4_17_0_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_1_enter @ fffcf780  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_1_enter @ fffcf780  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_1 MEM LIST SAVE: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10062,7 +10063,7 @@ void menu_m4_17_1_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_2_enter @ fffcf830  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_2_enter @ fffcf830  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_2 MENU LOAD: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10087,7 +10088,7 @@ void menu_m4_17_2_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_3_enter @ fffcf857  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_3_enter @ fffcf857  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_3 MENU SAVE: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10112,7 +10113,7 @@ void menu_m4_17_3_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_4_enter @ fffcf87e  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_4_enter @ fffcf87e  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_4 INFORMATIONS: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10138,7 +10139,7 @@ void menu_m4_17_4_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_5_enter @ fffcf921  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_5_enter @ fffcf921  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_5 FIRMWARE UPDATE: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10163,7 +10164,7 @@ void menu_m4_17_5_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_17_6_enter @ fffcf944  (13 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_17_6_enter @ fffcf944  (13 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_17_6 FORMAT: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10189,7 +10190,7 @@ void menu_m4_17_6_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_19_0_enter @ fffcf9e7  (48 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_19_0_enter @ fffcf9e7  (48 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_19_0 CALIBRATION: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10216,7 +10217,7 @@ void menu_m4_19_0_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_0_enter @ fffcfa17  (15 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_20_0_enter @ fffcfa17  (15 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_20_0 MEMORY CLEAR: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10241,7 +10242,7 @@ void menu_m4_20_0_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_1_enter @ fffcfa74  (15 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_20_1_enter @ fffcfa74  (15 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_20_1 MENU CLEAR: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10266,7 +10267,7 @@ void menu_m4_20_1_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_20_2_enter @ fffcfa83  (15 bytes, 2 callers, export file fffcf6dd_fffd016f.c)
+ * menu_m4_20_2_enter @ fffcfa83  (15 bytes, 2 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Menu item m4_20_2 ALL RESET: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10291,7 +10292,7 @@ void menu_m4_20_2_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060101_draw @ fffd1be4  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060101_draw @ fffd1be4  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060101 PRESET NAME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10309,7 +10310,7 @@ void menu_ex060101_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060201_draw @ fffd1bf1  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060201_draw @ fffd1bf1  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060201 PRESET NAME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10327,7 +10328,7 @@ void menu_ex060201_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060301_draw @ fffd1bfe  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060301_draw @ fffd1bfe  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060301 PRESET NAME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10345,7 +10346,7 @@ void menu_ex060301_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060401_draw @ fffd1c0b  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060401_draw @ fffd1c0b  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060401 PRESET NAME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10363,7 +10364,7 @@ void menu_ex060401_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060501_draw @ fffd1c18  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060501_draw @ fffd1c18  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060501 PRESET NAME: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10381,7 +10382,7 @@ void menu_ex060501_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060102_draw @ fffd1d45  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060102_draw @ fffd1d45  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060102 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10399,7 +10400,7 @@ void menu_ex060102_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060202_draw @ fffd1d52  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060202_draw @ fffd1d52  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060202 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10417,7 +10418,7 @@ void menu_ex060202_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060302_draw @ fffd1d5f  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060302_draw @ fffd1d5f  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060302 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10435,7 +10436,7 @@ void menu_ex060302_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060402_draw @ fffd1d6c  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060402_draw @ fffd1d6c  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060402 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10453,7 +10454,7 @@ void menu_ex060402_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060502_draw @ fffd1d79  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060502_draw @ fffd1d79  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060502 CAT-1 RATE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10471,7 +10472,7 @@ void menu_ex060502_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060103_draw @ fffd1e70  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060103_draw @ fffd1e70  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060103 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10490,7 +10491,7 @@ void menu_ex060103_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060203_draw @ fffd1e7d  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060203_draw @ fffd1e7d  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060203 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10509,7 +10510,7 @@ void menu_ex060203_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060303_draw @ fffd1e8a  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060303_draw @ fffd1e8a  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060303 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10528,7 +10529,7 @@ void menu_ex060303_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060403_draw @ fffd1e97  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060403_draw @ fffd1e97  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060403 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10547,7 +10548,7 @@ void menu_ex060403_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060503_draw @ fffd1ea4  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060503_draw @ fffd1ea4  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060503 CAT-1 TIME OUT TIMER: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10566,7 +10567,7 @@ void menu_ex060503_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060104_draw @ fffd1f9c  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060104_draw @ fffd1f9c  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060104 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10584,7 +10585,7 @@ void menu_ex060104_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060204_draw @ fffd1fa9  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060204_draw @ fffd1fa9  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060204 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10602,7 +10603,7 @@ void menu_ex060204_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060304_draw @ fffd1fb6  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060304_draw @ fffd1fb6  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060304 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10620,7 +10621,7 @@ void menu_ex060304_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060404_draw @ fffd1fc3  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060404_draw @ fffd1fc3  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060404 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10638,7 +10639,7 @@ void menu_ex060404_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060504_draw @ fffd1fd0  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060504_draw @ fffd1fd0  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060504 CAT-1 CAT-3 STOP BIT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10656,7 +10657,7 @@ void menu_ex060504_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060105_draw @ fffd20c7  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060105_draw @ fffd20c7  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060105 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10674,7 +10675,7 @@ void menu_ex060105_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060205_draw @ fffd20d4  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060205_draw @ fffd20d4  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060205 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10692,7 +10693,7 @@ void menu_ex060205_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060305_draw @ fffd20e1  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060305_draw @ fffd20e1  (13 bytes, 2 callers, export file fffd1252_fffd20e1.c)
  * Purpose: Menu item ex060305 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10708,9 +10709,8 @@ void menu_ex060305_draw(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex060405_draw @ fffd20ee  (13 bytes, 2 callers, export file fffd12fd_fffd20ee.c)
+ * menu_ex060405_draw @ fffd20ee  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060405 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10726,8 +10726,9 @@ void menu_ex060405_draw(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex060505_draw @ fffd20fb  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060505_draw @ fffd20fb  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060505 AGC FAST DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10745,7 +10746,7 @@ void menu_ex060505_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060106_draw @ fffd21f8  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060106_draw @ fffd21f8  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060106 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10763,7 +10764,7 @@ void menu_ex060106_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060206_draw @ fffd2205  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060206_draw @ fffd2205  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060206 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10781,7 +10782,7 @@ void menu_ex060206_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060306_draw @ fffd2212  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060306_draw @ fffd2212  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060306 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10799,7 +10800,7 @@ void menu_ex060306_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060406_draw @ fffd221f  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060406_draw @ fffd221f  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060406 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10817,7 +10818,7 @@ void menu_ex060406_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060506_draw @ fffd222c  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060506_draw @ fffd222c  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060506 AGC MID DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10835,7 +10836,7 @@ void menu_ex060506_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060107_draw @ fffd232a  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060107_draw @ fffd232a  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060107 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10853,7 +10854,7 @@ void menu_ex060107_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060207_draw @ fffd2337  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060207_draw @ fffd2337  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060207 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10871,7 +10872,7 @@ void menu_ex060207_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060307_draw @ fffd2344  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060307_draw @ fffd2344  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060307 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10889,7 +10890,7 @@ void menu_ex060307_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060407_draw @ fffd2351  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060407_draw @ fffd2351  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060407 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10907,7 +10908,7 @@ void menu_ex060407_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060507_draw @ fffd235e  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060507_draw @ fffd235e  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060507 AGC SLOW DELAY: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10925,7 +10926,7 @@ void menu_ex060507_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060108_draw @ fffd245c  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060108_draw @ fffd245c  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060108 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10943,7 +10944,7 @@ void menu_ex060108_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060208_draw @ fffd2469  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060208_draw @ fffd2469  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060208 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10961,7 +10962,7 @@ void menu_ex060208_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060308_draw @ fffd2476  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060308_draw @ fffd2476  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060308 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10979,7 +10980,7 @@ void menu_ex060308_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060408_draw @ fffd2483  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060408_draw @ fffd2483  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060408 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -10997,7 +10998,7 @@ void menu_ex060408_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060508_draw @ fffd2490  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060508_draw @ fffd2490  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060508 LCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11015,7 +11016,7 @@ void menu_ex060508_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060109_draw @ fffd2588  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060109_draw @ fffd2588  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060109 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11034,7 +11035,7 @@ void menu_ex060109_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060209_draw @ fffd2595  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060209_draw @ fffd2595  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060209 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11053,7 +11054,7 @@ void menu_ex060209_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060309_draw @ fffd25a2  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060309_draw @ fffd25a2  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060309 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11072,7 +11073,7 @@ void menu_ex060309_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060409_draw @ fffd25af  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060409_draw @ fffd25af  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060409 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11091,7 +11092,7 @@ void menu_ex060409_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060509_draw @ fffd25bc  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060509_draw @ fffd25bc  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060509 LCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11110,7 +11111,7 @@ void menu_ex060509_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060110_draw @ fffd26b3  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060110_draw @ fffd26b3  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060110 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11129,7 +11130,7 @@ void menu_ex060110_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060210_draw @ fffd26c0  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060210_draw @ fffd26c0  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060210 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11148,7 +11149,7 @@ void menu_ex060210_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060310_draw @ fffd26cd  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060310_draw @ fffd26cd  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060310 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11167,7 +11168,7 @@ void menu_ex060310_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060410_draw @ fffd26da  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060410_draw @ fffd26da  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060410 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11186,7 +11187,7 @@ void menu_ex060410_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060510_draw @ fffd26e7  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060510_draw @ fffd26e7  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060510 HCUT FREQ: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11205,7 +11206,7 @@ void menu_ex060510_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060111_draw @ fffd27e0  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060111_draw @ fffd27e0  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060111 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11224,7 +11225,7 @@ void menu_ex060111_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060211_draw @ fffd27ed  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060211_draw @ fffd27ed  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060211 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11243,7 +11244,7 @@ void menu_ex060211_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060311_draw @ fffd27fa  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060311_draw @ fffd27fa  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060311 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11262,7 +11263,7 @@ void menu_ex060311_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060411_draw @ fffd2807  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060411_draw @ fffd2807  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060411 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11281,7 +11282,7 @@ void menu_ex060411_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060511_draw @ fffd2814  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060511_draw @ fffd2814  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060511 HCUT SLOPE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11300,7 +11301,7 @@ void menu_ex060511_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060112_draw @ fffd290b  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060112_draw @ fffd290b  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060112 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11319,7 +11320,7 @@ void menu_ex060112_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060212_draw @ fffd2918  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060212_draw @ fffd2918  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060212 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11338,7 +11339,7 @@ void menu_ex060212_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060312_draw @ fffd2925  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060312_draw @ fffd2925  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060312 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11357,7 +11358,7 @@ void menu_ex060312_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060412_draw @ fffd2932  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060412_draw @ fffd2932  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060412 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11376,7 +11377,7 @@ void menu_ex060412_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060512_draw @ fffd293f  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060512_draw @ fffd293f  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060512 USB OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11395,7 +11396,7 @@ void menu_ex060512_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060113_draw @ fffd2a22  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060113_draw @ fffd2a22  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060113 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11414,7 +11415,7 @@ void menu_ex060113_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060213_draw @ fffd2a2f  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060213_draw @ fffd2a2f  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060213 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11433,7 +11434,7 @@ void menu_ex060213_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060313_draw @ fffd2a3c  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060313_draw @ fffd2a3c  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060313 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11452,7 +11453,7 @@ void menu_ex060313_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060413_draw @ fffd2a49  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060413_draw @ fffd2a49  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060413 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11471,7 +11472,7 @@ void menu_ex060413_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060513_draw @ fffd2a56  (13 bytes, 2 callers, export file fffd20fb_fffd2a63.c)
+ * menu_ex060513_draw @ fffd2a56  (13 bytes, 2 callers, export file fffd20ee_fffd2a56.c)
  * Purpose: Menu item ex060513 REAR OUT LEVEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11488,9 +11489,8 @@ void menu_ex060513_draw(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex060114_draw @ fffd2b39  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060114_draw @ fffd2b39  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060114 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11509,7 +11509,7 @@ void menu_ex060114_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060214_draw @ fffd2b46  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060214_draw @ fffd2b46  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060214 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11528,7 +11528,7 @@ void menu_ex060214_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060314_draw @ fffd2b53  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060314_draw @ fffd2b53  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060314 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11547,7 +11547,7 @@ void menu_ex060314_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060414_draw @ fffd2b60  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060414_draw @ fffd2b60  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060414 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11566,7 +11566,7 @@ void menu_ex060414_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060514_draw @ fffd2b6d  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060514_draw @ fffd2b6d  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060514 TX BPF SEL: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11585,7 +11585,7 @@ void menu_ex060514_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060115_draw @ fffd2c64  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060115_draw @ fffd2c64  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060115 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11604,7 +11604,7 @@ void menu_ex060115_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060215_draw @ fffd2c71  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060215_draw @ fffd2c71  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060215 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11623,7 +11623,7 @@ void menu_ex060215_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060315_draw @ fffd2c7e  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060315_draw @ fffd2c7e  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060315 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11642,7 +11642,7 @@ void menu_ex060315_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060415_draw @ fffd2c8b  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060415_draw @ fffd2c8b  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060415 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11661,7 +11661,7 @@ void menu_ex060415_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060515_draw @ fffd2c98  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060515_draw @ fffd2c98  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060515 MOD SOURCE: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11680,7 +11680,7 @@ void menu_ex060515_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060116_draw @ fffd2d8f  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060116_draw @ fffd2d8f  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060116 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11699,7 +11699,7 @@ void menu_ex060116_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060216_draw @ fffd2d9c  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060216_draw @ fffd2d9c  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060216 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11718,7 +11718,7 @@ void menu_ex060216_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060316_draw @ fffd2da9  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060316_draw @ fffd2da9  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060316 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11737,7 +11737,7 @@ void menu_ex060316_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060416_draw @ fffd2db6  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060416_draw @ fffd2db6  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060416 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11756,7 +11756,7 @@ void menu_ex060416_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060516_draw @ fffd2dc3  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060516_draw @ fffd2dc3  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060516 USB MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11775,7 +11775,7 @@ void menu_ex060516_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060117_draw @ fffd2ea6  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060117_draw @ fffd2ea6  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060117 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11794,7 +11794,7 @@ void menu_ex060117_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060217_draw @ fffd2eb3  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060217_draw @ fffd2eb3  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060217 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11813,7 +11813,7 @@ void menu_ex060217_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060317_draw @ fffd2ec0  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060317_draw @ fffd2ec0  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060317 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11832,7 +11832,7 @@ void menu_ex060317_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060417_draw @ fffd2ecd  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060417_draw @ fffd2ecd  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060417 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11851,7 +11851,7 @@ void menu_ex060417_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060517_draw @ fffd2eda  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060517_draw @ fffd2eda  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060517 REAR MOD GAIN: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11870,7 +11870,7 @@ void menu_ex060517_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060118_draw @ fffd2fbd  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060118_draw @ fffd2fbd  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060118 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11889,7 +11889,7 @@ void menu_ex060118_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060218_draw @ fffd2fca  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060218_draw @ fffd2fca  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060218 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11908,7 +11908,7 @@ void menu_ex060218_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060318_draw @ fffd2fd7  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060318_draw @ fffd2fd7  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060318 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11927,7 +11927,7 @@ void menu_ex060318_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060418_draw @ fffd2fe4  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060418_draw @ fffd2fe4  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060418 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11946,7 +11946,7 @@ void menu_ex060418_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060518_draw @ fffd2ff1  (13 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060518_draw @ fffd2ff1  (13 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060518 RPTT SELECT: on_draw (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -11965,7 +11965,7 @@ void menu_ex060518_draw(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060101_enter @ fffd3172  (113 bytes, 10 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060101_enter @ fffd3172  (113 bytes, 10 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060101 PRESET NAME: on_enter; also ex060201, ex060301, ex060401, ex060501 (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12009,7 +12009,7 @@ void menu_ex060101_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060102_step @ fffd31e4  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060102_step @ fffd31e4  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060102 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12028,7 +12028,7 @@ void menu_ex060102_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060202_step @ fffd31ea  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060202_step @ fffd31ea  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060202 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12047,7 +12047,7 @@ void menu_ex060202_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060302_step @ fffd31f0  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060302_step @ fffd31f0  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060302 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12066,7 +12066,7 @@ void menu_ex060302_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060402_step @ fffd31f6  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060402_step @ fffd31f6  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060402 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12085,7 +12085,7 @@ void menu_ex060402_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060502_step @ fffd31fc  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060502_step @ fffd31fc  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060502 CAT-1 RATE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12104,7 +12104,7 @@ void menu_ex060502_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060103_step @ fffd3286  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060103_step @ fffd3286  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060103 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12123,7 +12123,7 @@ void menu_ex060103_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060203_step @ fffd328c  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060203_step @ fffd328c  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060203 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12142,7 +12142,7 @@ void menu_ex060203_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060303_step @ fffd3292  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060303_step @ fffd3292  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060303 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12161,7 +12161,7 @@ void menu_ex060303_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060403_step @ fffd3298  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060403_step @ fffd3298  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060403 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12180,7 +12180,7 @@ void menu_ex060403_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060503_step @ fffd329e  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060503_step @ fffd329e  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060503 CAT-1 TIME OUT TIMER: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12199,7 +12199,7 @@ void menu_ex060503_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060104_step @ fffd3328  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060104_step @ fffd3328  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060104 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12218,7 +12218,7 @@ void menu_ex060104_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060204_step @ fffd332e  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060204_step @ fffd332e  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060204 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12237,7 +12237,7 @@ void menu_ex060204_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060304_step @ fffd3334  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060304_step @ fffd3334  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060304 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12256,7 +12256,7 @@ void menu_ex060304_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060404_step @ fffd333a  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060404_step @ fffd333a  (6 bytes, 2 callers, export file fffd2a63_fffd333a.c)
  * Purpose: Menu item ex060404 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12273,9 +12273,8 @@ void menu_ex060404_step(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menu_ex060504_step @ fffd3340  (6 bytes, 2 callers, export file fffd2b39_fffd3340.c)
+ * menu_ex060504_step @ fffd3340  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060504 CAT-1 CAT-3 STOP BIT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12292,8 +12291,9 @@ void menu_ex060504_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex060105_step @ fffd33ca  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060105_step @ fffd33ca  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060105 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12312,7 +12312,7 @@ void menu_ex060105_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060205_step @ fffd33d0  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060205_step @ fffd33d0  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060205 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12331,7 +12331,7 @@ void menu_ex060205_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060305_step @ fffd33d6  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060305_step @ fffd33d6  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060305 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12350,7 +12350,7 @@ void menu_ex060305_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060405_step @ fffd33dc  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060405_step @ fffd33dc  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060405 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12369,7 +12369,7 @@ void menu_ex060405_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060505_step @ fffd33e2  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060505_step @ fffd33e2  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060505 AGC FAST DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12388,7 +12388,7 @@ void menu_ex060505_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060106_step @ fffd346d  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060106_step @ fffd346d  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060106 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12407,7 +12407,7 @@ void menu_ex060106_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060206_step @ fffd3473  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060206_step @ fffd3473  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060206 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12426,7 +12426,7 @@ void menu_ex060206_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060306_step @ fffd3479  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060306_step @ fffd3479  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060306 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12445,7 +12445,7 @@ void menu_ex060306_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060406_step @ fffd347f  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060406_step @ fffd347f  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060406 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12464,7 +12464,7 @@ void menu_ex060406_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060506_step @ fffd3485  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060506_step @ fffd3485  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060506 AGC MID DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12483,7 +12483,7 @@ void menu_ex060506_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060107_step @ fffd3510  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060107_step @ fffd3510  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060107 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12502,7 +12502,7 @@ void menu_ex060107_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060207_step @ fffd3516  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060207_step @ fffd3516  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060207 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12521,7 +12521,7 @@ void menu_ex060207_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060307_step @ fffd351c  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060307_step @ fffd351c  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060307 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12540,7 +12540,7 @@ void menu_ex060307_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060407_step @ fffd3522  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060407_step @ fffd3522  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060407 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12559,7 +12559,7 @@ void menu_ex060407_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060507_step @ fffd3528  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060507_step @ fffd3528  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060507 AGC SLOW DELAY: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12578,7 +12578,7 @@ void menu_ex060507_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060108_step @ fffd35b3  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060108_step @ fffd35b3  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060108 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12597,7 +12597,7 @@ void menu_ex060108_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060208_step @ fffd35b9  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060208_step @ fffd35b9  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060208 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12616,7 +12616,7 @@ void menu_ex060208_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060308_step @ fffd35bf  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060308_step @ fffd35bf  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060308 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12635,7 +12635,7 @@ void menu_ex060308_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060408_step @ fffd35c5  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060408_step @ fffd35c5  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060408 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12654,7 +12654,7 @@ void menu_ex060408_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060508_step @ fffd35cb  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060508_step @ fffd35cb  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060508 LCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12673,7 +12673,7 @@ void menu_ex060508_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060109_step @ fffd3656  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060109_step @ fffd3656  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060109 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12692,7 +12692,7 @@ void menu_ex060109_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060209_step @ fffd365c  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060209_step @ fffd365c  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060209 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12711,7 +12711,7 @@ void menu_ex060209_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060309_step @ fffd3662  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060309_step @ fffd3662  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060309 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12730,7 +12730,7 @@ void menu_ex060309_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060409_step @ fffd3668  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060409_step @ fffd3668  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060409 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12749,7 +12749,7 @@ void menu_ex060409_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060509_step @ fffd366e  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060509_step @ fffd366e  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060509 LCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12768,7 +12768,7 @@ void menu_ex060509_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060110_step @ fffd36f8  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060110_step @ fffd36f8  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060110 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12787,7 +12787,7 @@ void menu_ex060110_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060210_step @ fffd36fe  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060210_step @ fffd36fe  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060210 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12806,7 +12806,7 @@ void menu_ex060210_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060310_step @ fffd3704  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060310_step @ fffd3704  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060310 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12825,7 +12825,7 @@ void menu_ex060310_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060410_step @ fffd370a  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060410_step @ fffd370a  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060410 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12844,7 +12844,7 @@ void menu_ex060410_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060510_step @ fffd3710  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060510_step @ fffd3710  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060510 HCUT FREQ: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12863,7 +12863,7 @@ void menu_ex060510_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060111_step @ fffd379b  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060111_step @ fffd379b  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060111 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12882,7 +12882,7 @@ void menu_ex060111_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060211_step @ fffd37a1  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060211_step @ fffd37a1  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060211 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12901,7 +12901,7 @@ void menu_ex060211_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060311_step @ fffd37a7  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060311_step @ fffd37a7  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060311 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12920,7 +12920,7 @@ void menu_ex060311_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060411_step @ fffd37ad  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060411_step @ fffd37ad  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060411 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12939,7 +12939,7 @@ void menu_ex060411_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060511_step @ fffd37b3  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060511_step @ fffd37b3  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060511 HCUT SLOPE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12958,7 +12958,7 @@ void menu_ex060511_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060112_step @ fffd383d  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060112_step @ fffd383d  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060112 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12977,7 +12977,7 @@ void menu_ex060112_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060212_step @ fffd3843  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060212_step @ fffd3843  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060212 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -12996,7 +12996,7 @@ void menu_ex060212_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060312_step @ fffd3849  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060312_step @ fffd3849  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060312 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13015,7 +13015,7 @@ void menu_ex060312_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060412_step @ fffd384f  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060412_step @ fffd384f  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060412 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13034,7 +13034,7 @@ void menu_ex060412_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060512_step @ fffd3855  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060512_step @ fffd3855  (6 bytes, 2 callers, export file fffd3340_fffd385b.c)
  * Purpose: Menu item ex060512 USB OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13053,7 +13053,7 @@ void menu_ex060512_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060113_step @ fffd38e0  (6 bytes, 2 callers, export file fffd3346_fffd38e0.c)
+ * menu_ex060113_step @ fffd38e0  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060113 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13070,8 +13070,9 @@ void menu_ex060113_step(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menu_ex060213_step @ fffd38e6  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060213_step @ fffd38e6  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060213 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13090,7 +13091,7 @@ void menu_ex060213_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060313_step @ fffd38ec  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060313_step @ fffd38ec  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060313 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13109,7 +13110,7 @@ void menu_ex060313_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060413_step @ fffd38f2  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060413_step @ fffd38f2  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060413 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13128,7 +13129,7 @@ void menu_ex060413_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060513_step @ fffd38f8  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060513_step @ fffd38f8  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060513 REAR OUT LEVEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13147,7 +13148,7 @@ void menu_ex060513_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060114_step @ fffd3983  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060114_step @ fffd3983  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060114 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13166,7 +13167,7 @@ void menu_ex060114_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060214_step @ fffd3989  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060214_step @ fffd3989  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060214 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13185,7 +13186,7 @@ void menu_ex060214_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060314_step @ fffd398f  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060314_step @ fffd398f  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060314 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13204,7 +13205,7 @@ void menu_ex060314_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060414_step @ fffd3995  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060414_step @ fffd3995  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060414 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13223,7 +13224,7 @@ void menu_ex060414_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060514_step @ fffd399b  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060514_step @ fffd399b  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060514 TX BPF SEL: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13242,7 +13243,7 @@ void menu_ex060514_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060115_step @ fffd3a25  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060115_step @ fffd3a25  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060115 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13261,7 +13262,7 @@ void menu_ex060115_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060215_step @ fffd3a2b  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060215_step @ fffd3a2b  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060215 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13280,7 +13281,7 @@ void menu_ex060215_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060315_step @ fffd3a31  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060315_step @ fffd3a31  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060315 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13299,7 +13300,7 @@ void menu_ex060315_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060415_step @ fffd3a37  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060415_step @ fffd3a37  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060415 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13318,7 +13319,7 @@ void menu_ex060415_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060515_step @ fffd3a3d  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060515_step @ fffd3a3d  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060515 MOD SOURCE: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13337,7 +13338,7 @@ void menu_ex060515_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060116_step @ fffd3ac7  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060116_step @ fffd3ac7  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060116 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13356,7 +13357,7 @@ void menu_ex060116_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060216_step @ fffd3acd  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060216_step @ fffd3acd  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060216 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13375,7 +13376,7 @@ void menu_ex060216_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060316_step @ fffd3ad3  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060316_step @ fffd3ad3  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060316 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13394,7 +13395,7 @@ void menu_ex060316_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060416_step @ fffd3ad9  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060416_step @ fffd3ad9  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060416 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13413,7 +13414,7 @@ void menu_ex060416_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060516_step @ fffd3adf  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060516_step @ fffd3adf  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060516 USB MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13432,7 +13433,7 @@ void menu_ex060516_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060117_step @ fffd3b6a  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060117_step @ fffd3b6a  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060117 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13451,7 +13452,7 @@ void menu_ex060117_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060217_step @ fffd3b70  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060217_step @ fffd3b70  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060217 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13470,7 +13471,7 @@ void menu_ex060217_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060317_step @ fffd3b76  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060317_step @ fffd3b76  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060317 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13489,7 +13490,7 @@ void menu_ex060317_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060417_step @ fffd3b7c  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060417_step @ fffd3b7c  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060417 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13508,7 +13509,7 @@ void menu_ex060417_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060517_step @ fffd3b82  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060517_step @ fffd3b82  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060517 REAR MOD GAIN: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13527,7 +13528,7 @@ void menu_ex060517_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060118_step @ fffd3c0d  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060118_step @ fffd3c0d  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060118 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13546,7 +13547,7 @@ void menu_ex060118_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060218_step @ fffd3c13  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060218_step @ fffd3c13  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060218 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13565,7 +13566,7 @@ void menu_ex060218_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060318_step @ fffd3c19  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060318_step @ fffd3c19  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060318 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13584,7 +13585,7 @@ void menu_ex060318_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060418_step @ fffd3c1f  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060418_step @ fffd3c1f  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060418 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13603,7 +13604,7 @@ void menu_ex060418_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_ex060518_step @ fffd3c25  (6 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_ex060518_step @ fffd3c25  (6 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item ex060518 RPTT SELECT: on_step (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13622,7 +13623,7 @@ void menu_ex060518_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * menu_m4_21_0_enter @ fffd3cd5  (46 bytes, 2 callers, export file fffd38e6_fffd49da.c)
+ * menu_m4_21_0_enter @ fffd3cd5  (46 bytes, 2 callers, export file fffd38e0_fffd49c0.c)
  * Purpose: Menu item m4_21_0 CERTIFICATION: on_enter (#74) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13645,7 +13646,7 @@ void menu_m4_21_0_enter(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010101 @ fffd5373  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010101 @ fffd5373  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.0 RADIO SETTING / MODE SSB / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13705,7 +13706,7 @@ void menuitem_EX010101(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010102 @ fffd53e1  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010102 @ fffd53e1  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.1 RADIO SETTING / MODE SSB / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13765,7 +13766,7 @@ void menuitem_EX010102(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010103 @ fffd544f  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010103 @ fffd544f  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.2 RADIO SETTING / MODE SSB / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13825,7 +13826,7 @@ void menuitem_EX010103(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010104 @ fffd54bd  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010104 @ fffd54bd  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.3 RADIO SETTING / MODE SSB / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13885,7 +13886,7 @@ void menuitem_EX010104(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010105 @ fffd5529  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010105 @ fffd5529  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.4 RADIO SETTING / MODE SSB / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -13945,7 +13946,7 @@ void menuitem_EX010105(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010106 @ fffd5595  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010106 @ fffd5595  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.5 RADIO SETTING / MODE SSB / AGC SLOW DELY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14005,7 +14006,7 @@ void menuitem_EX010106(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010107 @ fffd5601  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010107 @ fffd5601  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.6 RADIO SETTING / MODE SSB / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14065,7 +14066,7 @@ void menuitem_EX010107(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010108 @ fffd566d  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010108 @ fffd566d  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.7 RADIO SETTING / MODE SSB / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14125,7 +14126,7 @@ void menuitem_EX010108(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010109 @ fffd56d9  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010109 @ fffd56d9  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.8 RADIO SETTING / MODE SSB / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14185,7 +14186,7 @@ void menuitem_EX010109(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010110 @ fffd5745  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010110 @ fffd5745  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.9 RADIO SETTING / MODE SSB / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14245,7 +14246,7 @@ void menuitem_EX010110(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010111 @ fffd57b1  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010111 @ fffd57b1  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.10 RADIO SETTING / MODE SSB / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14305,7 +14306,7 @@ void menuitem_EX010111(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010112 @ fffd581d  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010112 @ fffd581d  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.11 RADIO SETTING / MODE SSB / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14365,7 +14366,7 @@ void menuitem_EX010112(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010113 @ fffd5889  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010113 @ fffd5889  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.12 RADIO SETTING / MODE SSB / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14425,7 +14426,7 @@ void menuitem_EX010113(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010114 @ fffd58f5  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010114 @ fffd58f5  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.13 RADIO SETTING / MODE SSB / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14485,7 +14486,7 @@ void menuitem_EX010114(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010115 @ fffd5961  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010115 @ fffd5961  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.14 RADIO SETTING / MODE SSB / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14545,7 +14546,7 @@ void menuitem_EX010115(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010116 @ fffd59cd  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010116 @ fffd59cd  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.15 RADIO SETTING / MODE SSB / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14605,7 +14606,7 @@ void menuitem_EX010116(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010117 @ fffd5a39  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010117 @ fffd5a39  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.16 RADIO SETTING / MODE SSB / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14665,7 +14666,7 @@ void menuitem_EX010117(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010118 @ fffd5aa5  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010118 @ fffd5aa5  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.17 RADIO SETTING / MODE SSB / NAR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14725,7 +14726,7 @@ void menuitem_EX010118(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010119 @ fffd5b11  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010119 @ fffd5b11  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.0.18 RADIO SETTING / MODE SSB / CW AUTO MODE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14785,7 +14786,7 @@ void menuitem_EX010119(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010201 @ fffd5b7d  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010201 @ fffd5b7d  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.0 RADIO SETTING / MODE AM / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14845,7 +14846,7 @@ void menuitem_EX010201(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010202 @ fffd5beb  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010202 @ fffd5beb  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.1 RADIO SETTING / MODE AM / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14905,7 +14906,7 @@ void menuitem_EX010202(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010203 @ fffd5c59  (110 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010203 @ fffd5c59  (110 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.2 RADIO SETTING / MODE AM / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -14965,7 +14966,7 @@ void menuitem_EX010203(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010204 @ fffd5cc7  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010204 @ fffd5cc7  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.3 RADIO SETTING / MODE AM / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15025,7 +15026,7 @@ void menuitem_EX010204(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010205 @ fffd5d33  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010205 @ fffd5d33  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.4 RADIO SETTING / MODE AM / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15085,7 +15086,7 @@ void menuitem_EX010205(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010206 @ fffd5d9f  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010206 @ fffd5d9f  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.5 RADIO SETTING / MODE AM / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15145,7 +15146,7 @@ void menuitem_EX010206(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010207 @ fffd5e0b  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010207 @ fffd5e0b  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.6 RADIO SETTING / MODE AM / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15205,7 +15206,7 @@ void menuitem_EX010207(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010208 @ fffd5e77  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010208 @ fffd5e77  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.7 RADIO SETTING / MODE AM / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15265,7 +15266,7 @@ void menuitem_EX010208(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010209 @ fffd5ee3  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010209 @ fffd5ee3  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.8 RADIO SETTING / MODE AM / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15325,7 +15326,7 @@ void menuitem_EX010209(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010210 @ fffd5f4f  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010210 @ fffd5f4f  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.9 RADIO SETTING / MODE AM / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15385,7 +15386,7 @@ void menuitem_EX010210(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010211 @ fffd5fbb  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010211 @ fffd5fbb  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.10 RADIO SETTING / MODE AM / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15445,7 +15446,7 @@ void menuitem_EX010211(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010212 @ fffd6027  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010212 @ fffd6027  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.11 RADIO SETTING / MODE AM / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15505,7 +15506,7 @@ void menuitem_EX010212(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010213 @ fffd6093  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010213 @ fffd6093  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.12 RADIO SETTING / MODE AM / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15565,7 +15566,7 @@ void menuitem_EX010213(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010214 @ fffd60ff  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010214 @ fffd60ff  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.13 RADIO SETTING / MODE AM / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15625,7 +15626,7 @@ void menuitem_EX010214(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010215 @ fffd616b  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010215 @ fffd616b  (108 bytes, 1 callers, export file fffd49da_fffd616b.c)
  * Purpose: Menu item 0.1.14 RADIO SETTING / MODE AM / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15683,9 +15684,8 @@ void menuitem_EX010215(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX010216 @ fffd61d7  (108 bytes, 1 callers, export file fffd49f4_fffd61d7.c)
+ * menuitem_EX010216 @ fffd61d7  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.1.15 RADIO SETTING / MODE AM / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15743,8 +15743,9 @@ void menuitem_EX010216(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX010217 @ fffd6243  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010217 @ fffd6243  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.1.16 RADIO SETTING / MODE AM / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15804,7 +15805,7 @@ void menuitem_EX010217(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010301 @ fffd62af  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010301 @ fffd62af  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.0 RADIO SETTING / MODE FM / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15864,7 +15865,7 @@ void menuitem_EX010301(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010302 @ fffd631d  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010302 @ fffd631d  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.1 RADIO SETTING / MODE FM / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15924,7 +15925,7 @@ void menuitem_EX010302(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010303 @ fffd638b  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010303 @ fffd638b  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.2 RADIO SETTING / MODE FM / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -15984,7 +15985,7 @@ void menuitem_EX010303(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010304 @ fffd63f9  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010304 @ fffd63f9  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.3 RADIO SETTING / MODE FM / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16044,7 +16045,7 @@ void menuitem_EX010304(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010305 @ fffd6465  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010305 @ fffd6465  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.4 RADIO SETTING / MODE FM / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16104,7 +16105,7 @@ void menuitem_EX010305(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010306 @ fffd64d1  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010306 @ fffd64d1  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.5 RADIO SETTING / MODE FM / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16164,7 +16165,7 @@ void menuitem_EX010306(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010307 @ fffd653d  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010307 @ fffd653d  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.6 RADIO SETTING / MODE FM / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16224,7 +16225,7 @@ void menuitem_EX010307(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010308 @ fffd65a9  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010308 @ fffd65a9  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.7 RADIO SETTING / MODE FM / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16284,7 +16285,7 @@ void menuitem_EX010308(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010309 @ fffd6615  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010309 @ fffd6615  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.8 RADIO SETTING / MODE FM / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16344,7 +16345,7 @@ void menuitem_EX010309(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010310 @ fffd6681  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010310 @ fffd6681  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.9 RADIO SETTING / MODE FM / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16404,7 +16405,7 @@ void menuitem_EX010310(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010311 @ fffd66ed  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010311 @ fffd66ed  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.10 RADIO SETTING / MODE FM / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16464,7 +16465,7 @@ void menuitem_EX010311(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010312 @ fffd6759  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010312 @ fffd6759  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.11 RADIO SETTING / MODE FM / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16524,7 +16525,7 @@ void menuitem_EX010312(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010313 @ fffd67c5  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010313 @ fffd67c5  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.12 RADIO SETTING / MODE FM / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16584,7 +16585,7 @@ void menuitem_EX010313(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010314 @ fffd6831  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010314 @ fffd6831  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.13 RADIO SETTING / MODE FM / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16644,7 +16645,7 @@ void menuitem_EX010314(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010315 @ fffd689d  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010315 @ fffd689d  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.14 RADIO SETTING / MODE FM / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16704,7 +16705,7 @@ void menuitem_EX010315(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010316 @ fffd6909  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010316 @ fffd6909  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.15 RADIO SETTING / MODE FM / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16764,7 +16765,7 @@ void menuitem_EX010316(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010317 @ fffd6975  (99 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010317 @ fffd6975  (99 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.16 RADIO SETTING / MODE FM / RPT SHIFT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16824,7 +16825,7 @@ void menuitem_EX010317(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010318 @ fffd69d8  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010318 @ fffd69d8  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.17 RADIO SETTING / MODE FM / RPT SHIFT(28MHz) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16884,7 +16885,7 @@ void menuitem_EX010318(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010319 @ fffd6a44  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010319 @ fffd6a44  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.18 RADIO SETTING / MODE FM / RPT SHIFT(50MHz) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -16944,7 +16945,7 @@ void menuitem_EX010319(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010320 @ fffd6ab2  (99 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010320 @ fffd6ab2  (99 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.19 RADIO SETTING / MODE FM / ENC/DEC [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17004,7 +17005,7 @@ void menuitem_EX010320(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010321 @ fffd6b15  (99 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010321 @ fffd6b15  (99 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.2.20 RADIO SETTING / MODE FM / TONE FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17064,7 +17065,7 @@ void menuitem_EX010321(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010401 @ fffd6b78  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010401 @ fffd6b78  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.0 RADIO SETTING / MODE PSK/DATA / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17124,7 +17125,7 @@ void menuitem_EX010401(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010402 @ fffd6be6  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010402 @ fffd6be6  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.1 RADIO SETTING / MODE PSK/DATA / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17184,7 +17185,7 @@ void menuitem_EX010402(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010403 @ fffd6c54  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010403 @ fffd6c54  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.2 RADIO SETTING / MODE PSK/DATA / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17244,7 +17245,7 @@ void menuitem_EX010403(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010404 @ fffd6cc2  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010404 @ fffd6cc2  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.3 RADIO SETTING / MODE PSK/DATA / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17304,7 +17305,7 @@ void menuitem_EX010404(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010405 @ fffd6d2e  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010405 @ fffd6d2e  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.4 RADIO SETTING / MODE PSK/DATA / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17364,7 +17365,7 @@ void menuitem_EX010405(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010406 @ fffd6d9a  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010406 @ fffd6d9a  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.5 RADIO SETTING / MODE PSK/DATA / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17424,7 +17425,7 @@ void menuitem_EX010406(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010407 @ fffd6e06  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010407 @ fffd6e06  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.6 RADIO SETTING / MODE PSK/DATA / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17484,7 +17485,7 @@ void menuitem_EX010407(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010408 @ fffd6e72  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010408 @ fffd6e72  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.7 RADIO SETTING / MODE PSK/DATA / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17544,7 +17545,7 @@ void menuitem_EX010408(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010409 @ fffd6ede  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010409 @ fffd6ede  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.8 RADIO SETTING / MODE PSK/DATA / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17604,7 +17605,7 @@ void menuitem_EX010409(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010410 @ fffd6f4a  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010410 @ fffd6f4a  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.9 RADIO SETTING / MODE PSK/DATA / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17664,7 +17665,7 @@ void menuitem_EX010410(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010411 @ fffd6fb6  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010411 @ fffd6fb6  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.10 RADIO SETTING / MODE PSK/DATA / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17724,7 +17725,7 @@ void menuitem_EX010411(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010412 @ fffd7022  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010412 @ fffd7022  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.11 RADIO SETTING / MODE PSK/DATA / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17784,7 +17785,7 @@ void menuitem_EX010412(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010413 @ fffd708e  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010413 @ fffd708e  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.12 RADIO SETTING / MODE PSK/DATA / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17844,7 +17845,7 @@ void menuitem_EX010413(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010414 @ fffd70fa  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010414 @ fffd70fa  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.13 RADIO SETTING / MODE PSK/DATA / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17904,7 +17905,7 @@ void menuitem_EX010414(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010415 @ fffd7166  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010415 @ fffd7166  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.14 RADIO SETTING / MODE PSK/DATA / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -17964,7 +17965,7 @@ void menuitem_EX010415(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010416 @ fffd71d2  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010416 @ fffd71d2  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.15 RADIO SETTING / MODE PSK/DATA / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18024,7 +18025,7 @@ void menuitem_EX010416(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010417 @ fffd723e  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010417 @ fffd723e  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.16 RADIO SETTING / MODE PSK/DATA / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18084,7 +18085,7 @@ void menuitem_EX010417(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010418 @ fffd72aa  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010418 @ fffd72aa  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.17 RADIO SETTING / MODE PSK/DATA / NAR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18144,7 +18145,7 @@ void menuitem_EX010418(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010419 @ fffd7316  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010419 @ fffd7316  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.18 RADIO SETTING / MODE PSK/DATA / PSK TONE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18204,7 +18205,7 @@ void menuitem_EX010419(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010420 @ fffd7382  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010420 @ fffd7382  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.3.19 RADIO SETTING / MODE PSK/DATA / DATA SHIFT (SSB) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18264,7 +18265,7 @@ void menuitem_EX010420(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010501 @ fffd73f0  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010501 @ fffd73f0  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.0 RADIO SETTING / MODE RTTY / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18324,7 +18325,7 @@ void menuitem_EX010501(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010502 @ fffd745e  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010502 @ fffd745e  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.1 RADIO SETTING / MODE RTTY / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18384,7 +18385,7 @@ void menuitem_EX010502(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010503 @ fffd74cc  (110 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010503 @ fffd74cc  (110 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.2 RADIO SETTING / MODE RTTY / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18444,7 +18445,7 @@ void menuitem_EX010503(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010504 @ fffd753a  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010504 @ fffd753a  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.3 RADIO SETTING / MODE RTTY / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18504,7 +18505,7 @@ void menuitem_EX010504(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010505 @ fffd75a6  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010505 @ fffd75a6  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.4 RADIO SETTING / MODE RTTY / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18564,7 +18565,7 @@ void menuitem_EX010505(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010506 @ fffd7612  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010506 @ fffd7612  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.5 RADIO SETTING / MODE RTTY / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18624,7 +18625,7 @@ void menuitem_EX010506(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010507 @ fffd767e  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010507 @ fffd767e  (108 bytes, 1 callers, export file fffd61d7_fffd767e.c)
  * Purpose: Menu item 0.4.6 RADIO SETTING / MODE RTTY / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18682,9 +18683,8 @@ void menuitem_EX010507(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX010508 @ fffd76ea  (108 bytes, 1 callers, export file fffd6243_fffd76ea.c)
+ * menuitem_EX010508 @ fffd76ea  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.7 RADIO SETTING / MODE RTTY / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18742,8 +18742,9 @@ void menuitem_EX010508(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX010509 @ fffd7756  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010509 @ fffd7756  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.8 RADIO SETTING / MODE RTTY / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18803,7 +18804,7 @@ void menuitem_EX010509(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010510 @ fffd77c2  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010510 @ fffd77c2  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.9 RADIO SETTING / MODE RTTY / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18863,7 +18864,7 @@ void menuitem_EX010510(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010511 @ fffd782e  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010511 @ fffd782e  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.10 RADIO SETTING / MODE RTTY / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18923,7 +18924,7 @@ void menuitem_EX010511(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010512 @ fffd789a  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010512 @ fffd789a  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.11 RADIO SETTING / MODE RTTY / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -18983,7 +18984,7 @@ void menuitem_EX010512(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010513 @ fffd7906  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010513 @ fffd7906  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.12 RADIO SETTING / MODE RTTY / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19043,7 +19044,7 @@ void menuitem_EX010513(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010514 @ fffd7972  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010514 @ fffd7972  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.13 RADIO SETTING / MODE RTTY / NAR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19103,7 +19104,7 @@ void menuitem_EX010514(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010515 @ fffd79de  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010515 @ fffd79de  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.14 RADIO SETTING / MODE RTTY / MARK FREQUENCY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19163,7 +19164,7 @@ void menuitem_EX010515(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010516 @ fffd7a4a  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010516 @ fffd7a4a  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.15 RADIO SETTING / MODE RTTY / SHIFT FREQUENCY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19223,7 +19224,7 @@ void menuitem_EX010516(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX010517 @ fffd7ab6  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX010517 @ fffd7ab6  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 0.4.16 RADIO SETTING / MODE RTTY / POLARITY TX [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19283,7 +19284,7 @@ void menuitem_EX010517(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020101 @ fffd7b22  (110 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020101 @ fffd7b22  (110 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.0 CW SETTING / MODE CW / AF TREBLE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19343,7 +19344,7 @@ void menuitem_EX020101(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020102 @ fffd7b90  (110 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020102 @ fffd7b90  (110 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.1 CW SETTING / MODE CW / AF MIDDLE TONE GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19403,7 +19404,7 @@ void menuitem_EX020102(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020103 @ fffd7bfe  (110 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020103 @ fffd7bfe  (110 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.2 CW SETTING / MODE CW / AF BASS GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19463,7 +19464,7 @@ void menuitem_EX020103(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020104 @ fffd7c6c  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020104 @ fffd7c6c  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.3 CW SETTING / MODE CW / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19523,7 +19524,7 @@ void menuitem_EX020104(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020105 @ fffd7cd8  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020105 @ fffd7cd8  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.4 CW SETTING / MODE CW / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19583,7 +19584,7 @@ void menuitem_EX020105(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020106 @ fffd7d44  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020106 @ fffd7d44  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.5 CW SETTING / MODE CW / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19643,7 +19644,7 @@ void menuitem_EX020106(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020107 @ fffd7db0  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020107 @ fffd7db0  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.6 CW SETTING / MODE CW / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19703,7 +19704,7 @@ void menuitem_EX020107(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020108 @ fffd7e1c  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020108 @ fffd7e1c  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.7 CW SETTING / MODE CW / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19763,7 +19764,7 @@ void menuitem_EX020108(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020109 @ fffd7e88  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020109 @ fffd7e88  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.8 CW SETTING / MODE CW / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19823,7 +19824,7 @@ void menuitem_EX020109(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020110 @ fffd7ef4  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020110 @ fffd7ef4  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.9 CW SETTING / MODE CW / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19883,7 +19884,7 @@ void menuitem_EX020110(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020111 @ fffd7f60  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020111 @ fffd7f60  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.10 CW SETTING / MODE CW / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -19943,7 +19944,7 @@ void menuitem_EX020111(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020112 @ fffd7fcc  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020112 @ fffd7fcc  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.11 CW SETTING / MODE CW / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20003,7 +20004,7 @@ void menuitem_EX020112(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020113 @ fffd8038  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020113 @ fffd8038  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.12 CW SETTING / MODE CW / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20063,7 +20064,7 @@ void menuitem_EX020113(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020114 @ fffd80a4  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020114 @ fffd80a4  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.13 CW SETTING / MODE CW / NAR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20123,7 +20124,7 @@ void menuitem_EX020114(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020115 @ fffd8110  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020115 @ fffd8110  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.14 CW SETTING / MODE CW / PC KEYING [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20183,7 +20184,7 @@ void menuitem_EX020115(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020116 @ fffd817c  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020116 @ fffd817c  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.15 CW SETTING / MODE CW / CW BK-IN TYPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20243,7 +20244,7 @@ void menuitem_EX020116(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020117 @ fffd81e8  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020117 @ fffd81e8  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.16 CW SETTING / MODE CW / CW WAVE SHAPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20303,7 +20304,7 @@ void menuitem_EX020117(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020118 @ fffd8254  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020118 @ fffd8254  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.17 CW SETTING / MODE CW / CW FREQ DISPLAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20363,7 +20364,7 @@ void menuitem_EX020118(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020119 @ fffd82c0  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020119 @ fffd82c0  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.18 CW SETTING / MODE CW / QSK DELAY TIME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20423,7 +20424,7 @@ void menuitem_EX020119(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020120 @ fffd832c  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020120 @ fffd832c  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.5.19 CW SETTING / MODE CW / CW INDICATOR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20483,7 +20484,7 @@ void menuitem_EX020120(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020201 @ fffd8398  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020201 @ fffd8398  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.0 CW SETTING / KEYER / KEYER TYPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20543,7 +20544,7 @@ void menuitem_EX020201(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020202 @ fffd8404  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020202 @ fffd8404  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.1 CW SETTING / KEYER / KEYER DOT/DASH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20603,7 +20604,7 @@ void menuitem_EX020202(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020203 @ fffd8470  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020203 @ fffd8470  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.2 CW SETTING / KEYER / CW WEIGHT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20663,7 +20664,7 @@ void menuitem_EX020203(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020204 @ fffd84dc  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020204 @ fffd84dc  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.3 CW SETTING / KEYER / NUMBER STYLE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20723,7 +20724,7 @@ void menuitem_EX020204(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020205 @ fffd8548  (110 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020205 @ fffd8548  (110 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.4 CW SETTING / KEYER / CONTEST NUMBER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20783,7 +20784,7 @@ void menuitem_EX020205(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020206 @ fffd85b6  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020206 @ fffd85b6  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.5 CW SETTING / KEYER / CW MEMORY 1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20843,7 +20844,7 @@ void menuitem_EX020206(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020207 @ fffd8622  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020207 @ fffd8622  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.6 CW SETTING / KEYER / CW MEMORY 2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20903,7 +20904,7 @@ void menuitem_EX020207(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020208 @ fffd868e  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020208 @ fffd868e  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.7 CW SETTING / KEYER / CW MEMORY 3 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -20963,7 +20964,7 @@ void menuitem_EX020208(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020209 @ fffd86fa  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020209 @ fffd86fa  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.8 CW SETTING / KEYER / CW MEMORY 4 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21023,7 +21024,7 @@ void menuitem_EX020209(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020210 @ fffd8766  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020210 @ fffd8766  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.9 CW SETTING / KEYER / CW MEMORY 5 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21083,7 +21084,7 @@ void menuitem_EX020210(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX020211 @ fffd87d2  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX020211 @ fffd87d2  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 1.6.10 CW SETTING / KEYER / REPEAT INTERVAL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21143,7 +21144,7 @@ void menuitem_EX020211(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030101 @ fffd883e  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030101 @ fffd883e  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.0 OPERATION SETTING / GENERAL / BEEP LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21203,7 +21204,7 @@ void menuitem_EX030101(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030102 @ fffd88aa  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030102 @ fffd88aa  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.1 OPERATION SETTING / GENERAL / RF/SQL VR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21263,7 +21264,7 @@ void menuitem_EX030102(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030103 @ fffd8916  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030103 @ fffd8916  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.2 OPERATION SETTING / GENERAL / TUN/LIN PORT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21323,7 +21324,7 @@ void menuitem_EX030103(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030104 @ fffd8982  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030104 @ fffd8982  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.3 OPERATION SETTING / GENERAL / TUNER TYPE SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21383,7 +21384,7 @@ void menuitem_EX030104(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030105 @ fffd89ee  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030105 @ fffd89ee  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.4 OPERATION SETTING / GENERAL / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21443,7 +21444,7 @@ void menuitem_EX030105(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030106 @ fffd8a5a  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030106 @ fffd8a5a  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.5 OPERATION SETTING / GENERAL / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21503,7 +21504,7 @@ void menuitem_EX030106(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030107 @ fffd8ac6  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030107 @ fffd8ac6  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.6 OPERATION SETTING / GENERAL / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21563,7 +21564,7 @@ void menuitem_EX030107(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030108 @ fffd8b32  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030108 @ fffd8b32  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.7 OPERATION SETTING / GENERAL / CAT-2 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21623,7 +21624,7 @@ void menuitem_EX030108(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030109 @ fffd8b9e  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030109 @ fffd8b9e  (108 bytes, 1 callers, export file fffd76ea_fffd8b9e.c)
  * Purpose: Menu item 2.7.8 OPERATION SETTING / GENERAL / CAT-2 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21681,9 +21682,8 @@ void menuitem_EX030109(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX030110 @ fffd8c0a  (108 bytes, 1 callers, export file fffd7756_fffd8c0a.c)
+ * menuitem_EX030110 @ fffd8c0a  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.9 OPERATION SETTING / GENERAL / CAT-3 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21741,8 +21741,9 @@ void menuitem_EX030110(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX030111 @ fffd8c76  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030111 @ fffd8c76  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.10 OPERATION SETTING / GENERAL / CAT-3 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21802,7 +21803,7 @@ void menuitem_EX030111(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030112 @ fffd8ce2  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030112 @ fffd8ce2  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.11 OPERATION SETTING / GENERAL / QMB CH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21862,7 +21863,7 @@ void menuitem_EX030112(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030113 @ fffd8d4e  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030113 @ fffd8d4e  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.12 OPERATION SETTING / GENERAL / BAND STACK [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21922,7 +21923,7 @@ void menuitem_EX030113(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030114 @ fffd8dba  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030114 @ fffd8dba  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.13 OPERATION SETTING / GENERAL / MEM GROUP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -21982,7 +21983,7 @@ void menuitem_EX030114(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030115 @ fffd8e26  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030115 @ fffd8e26  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.14 OPERATION SETTING / GENERAL / TX TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22042,7 +22043,7 @@ void menuitem_EX030115(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030116 @ fffd8e92  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030116 @ fffd8e92  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.15 OPERATION SETTING / GENERAL / MIC SCAN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22102,7 +22103,7 @@ void menuitem_EX030116(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030117 @ fffd8efe  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030117 @ fffd8efe  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.16 OPERATION SETTING / GENERAL / MIC SCAN RESUME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22162,7 +22163,7 @@ void menuitem_EX030117(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030118 @ fffd8f6a  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030118 @ fffd8f6a  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.17 OPERATION SETTING / GENERAL / REF FREQ FINE ADJ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22222,7 +22223,7 @@ void menuitem_EX030118(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030119 @ fffd8fd8  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030119 @ fffd8fd8  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.18 OPERATION SETTING / GENERAL / KEYBOARD LANGUAGE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22282,7 +22283,7 @@ void menuitem_EX030119(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030120 @ fffd9044  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030120 @ fffd9044  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.19 OPERATION SETTING / GENERAL / MIC P1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22342,7 +22343,7 @@ void menuitem_EX030120(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030121 @ fffd90b0  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030121 @ fffd90b0  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.20 OPERATION SETTING / GENERAL / MIC P2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22402,7 +22403,7 @@ void menuitem_EX030121(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030122 @ fffd911c  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030122 @ fffd911c  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.21 OPERATION SETTING / GENERAL / MIC P3 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22462,7 +22463,7 @@ void menuitem_EX030122(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030123 @ fffd9188  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030123 @ fffd9188  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.22 OPERATION SETTING / GENERAL / MIC P4 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22522,7 +22523,7 @@ void menuitem_EX030123(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030124 @ fffd91f4  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030124 @ fffd91f4  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.23 OPERATION SETTING / GENERAL / MIC UP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22582,7 +22583,7 @@ void menuitem_EX030124(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030125 @ fffd9260  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030125 @ fffd9260  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.24 OPERATION SETTING / GENERAL / MIC DOWN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22642,7 +22643,7 @@ void menuitem_EX030125(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030126 @ fffd92cc  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030126 @ fffd92cc  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.7.25 OPERATION SETTING / GENERAL / SCU-LAN10 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22702,7 +22703,7 @@ void menuitem_EX030126(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030201 @ fffd9338  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030201 @ fffd9338  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.0 OPERATION SETTING / RX DSP / IF NOTCH WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22762,7 +22763,7 @@ void menuitem_EX030201(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030202 @ fffd93a4  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030202 @ fffd93a4  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.1 OPERATION SETTING / RX DSP / NB REJECTION [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22822,7 +22823,7 @@ void menuitem_EX030202(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030203 @ fffd9410  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030203 @ fffd9410  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.2 OPERATION SETTING / RX DSP / NB WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22882,7 +22883,7 @@ void menuitem_EX030203(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030204 @ fffd947c  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030204 @ fffd947c  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.3 OPERATION SETTING / RX DSP / APF WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -22942,7 +22943,7 @@ void menuitem_EX030204(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030205 @ fffd94e8  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030205 @ fffd94e8  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.4 OPERATION SETTING / RX DSP / CONTOUR LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23002,7 +23003,7 @@ void menuitem_EX030205(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030206 @ fffd9556  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030206 @ fffd9556  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.8.5 OPERATION SETTING / RX DSP / CONTOUR WIDTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23062,7 +23063,7 @@ void menuitem_EX030206(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030301 @ fffd95c2  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030301 @ fffd95c2  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.0 OPERATION SETTING / TX AUDIO / AMC RELEASE TIME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23122,7 +23123,7 @@ void menuitem_EX030301(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030302 @ fffd962e  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030302 @ fffd962e  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.1 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23182,7 +23183,7 @@ void menuitem_EX030302(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030303 @ fffd969a  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030303 @ fffd969a  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.2 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23242,7 +23243,7 @@ void menuitem_EX030303(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030304 @ fffd9708  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030304 @ fffd9708  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.3 OPERATION SETTING / TX AUDIO / PRMTRC EQ1 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23302,7 +23303,7 @@ void menuitem_EX030304(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030305 @ fffd9774  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030305 @ fffd9774  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.4 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23362,7 +23363,7 @@ void menuitem_EX030305(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030306 @ fffd97e0  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030306 @ fffd97e0  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.5 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23422,7 +23423,7 @@ void menuitem_EX030306(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030307 @ fffd984e  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030307 @ fffd984e  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.6 OPERATION SETTING / TX AUDIO / PRMTRC EQ2 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23482,7 +23483,7 @@ void menuitem_EX030307(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030308 @ fffd98ba  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030308 @ fffd98ba  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.7 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23542,7 +23543,7 @@ void menuitem_EX030308(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030309 @ fffd9926  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030309 @ fffd9926  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.8 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23602,7 +23603,7 @@ void menuitem_EX030309(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030310 @ fffd9994  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030310 @ fffd9994  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.9 OPERATION SETTING / TX AUDIO / PRMTRC EQ3 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23662,7 +23663,7 @@ void menuitem_EX030310(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030311 @ fffd9a00  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030311 @ fffd9a00  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.10 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23722,7 +23723,7 @@ void menuitem_EX030311(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030312 @ fffd9a6c  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030312 @ fffd9a6c  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.11 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23782,7 +23783,7 @@ void menuitem_EX030312(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030313 @ fffd9ada  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030313 @ fffd9ada  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.12 OPERATION SETTING / TX AUDIO / P PRMTRC EQ1 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23842,7 +23843,7 @@ void menuitem_EX030313(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030314 @ fffd9b46  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030314 @ fffd9b46  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.13 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23902,7 +23903,7 @@ void menuitem_EX030314(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030315 @ fffd9bb2  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030315 @ fffd9bb2  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.14 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -23962,7 +23963,7 @@ void menuitem_EX030315(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030316 @ fffd9c20  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030316 @ fffd9c20  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.15 OPERATION SETTING / TX AUDIO / P PRMTRC EQ2 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24022,7 +24023,7 @@ void menuitem_EX030316(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030317 @ fffd9c8c  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030317 @ fffd9c8c  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.16 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24082,7 +24083,7 @@ void menuitem_EX030317(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030318 @ fffd9cf8  (110 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030318 @ fffd9cf8  (110 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.17 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24142,7 +24143,7 @@ void menuitem_EX030318(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030319 @ fffd9d66  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030319 @ fffd9d66  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.9.18 OPERATION SETTING / TX AUDIO / P PRMTRC EQ3 BWTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24202,7 +24203,7 @@ void menuitem_EX030319(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030401 @ fffd9dd2  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030401 @ fffd9dd2  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.0 OPERATION SETTING / TX GENERAL / HF MAX POWER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24262,7 +24263,7 @@ void menuitem_EX030401(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030402 @ fffd9e3e  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030402 @ fffd9e3e  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.1 OPERATION SETTING / TX GENERAL / 50M MAX POWER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24322,7 +24323,7 @@ void menuitem_EX030402(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030403 @ fffd9eaa  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030403 @ fffd9eaa  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.2 OPERATION SETTING / TX GENERAL / 70M MAX POWER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24382,7 +24383,7 @@ void menuitem_EX030403(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030404 @ fffd9f16  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030404 @ fffd9f16  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.3 OPERATION SETTING / TX GENERAL / AM MAX POWER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24442,7 +24443,7 @@ void menuitem_EX030404(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030405 @ fffd9f82  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030405 @ fffd9f82  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.4 OPERATION SETTING / TX GENERAL / VOX SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24502,7 +24503,7 @@ void menuitem_EX030405(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030406 @ fffd9fee  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030406 @ fffd9fee  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.5 OPERATION SETTING / TX GENERAL / EMERGENCY FREQ TX [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24562,7 +24563,7 @@ void menuitem_EX030406(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030407 @ fffda05a  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030407 @ fffda05a  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.6 OPERATION SETTING / TX GENERAL / TX INHITBIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24622,7 +24623,7 @@ void menuitem_EX030407(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030408 @ fffda0c6  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030408 @ fffda0c6  (108 bytes, 1 callers, export file fffd8c0a_fffda0c6.c)
  * Purpose: Menu item 2.10.7 OPERATION SETTING / TX GENERAL / METER DETECTOR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24680,9 +24681,8 @@ void menuitem_EX030408(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX030501 @ fffda132  (108 bytes, 1 callers, export file fffd8c76_fffda132.c)
+ * menuitem_EX030501 @ fffda132  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.0 OPERATION SETTING / TUNING / SSB/CW DIAL STEP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24740,8 +24740,9 @@ void menuitem_EX030501(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX030502 @ fffda19e  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX030502 @ fffda19e  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.1 OPERATION SETTING / TUNING / RTTY/PSK DIAL STEP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24801,7 +24802,7 @@ void menuitem_EX030502(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030503 @ fffda20a  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX030503 @ fffda20a  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.2 OPERATION SETTING / TUNING / CH STEP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24861,7 +24862,7 @@ void menuitem_EX030503(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030504 @ fffda276  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX030504 @ fffda276  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.3 OPERATION SETTING / TUNING / AM CH STEP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24921,7 +24922,7 @@ void menuitem_EX030504(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030505 @ fffda2e2  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX030505 @ fffda2e2  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.4 OPERATION SETTING / TUNING / FM CH STEP [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -24981,7 +24982,7 @@ void menuitem_EX030505(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX030506 @ fffda34e  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX030506 @ fffda34e  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 2.11.5 OPERATION SETTING / TUNING / MAIN STEPS PER REV. [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25041,7 +25042,7 @@ void menuitem_EX030506(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040101 @ fffda3ba  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040101 @ fffda3ba  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.0 DISPLAY SETTING / DISPLAY / MY CALL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25101,7 +25102,7 @@ void menuitem_EX040101(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040102 @ fffda426  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040102 @ fffda426  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.1 DISPLAY SETTING / DISPLAY / MY CALL TIME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25161,7 +25162,7 @@ void menuitem_EX040102(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040103 @ fffda492  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040103 @ fffda492  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.2 DISPLAY SETTING / DISPLAY / POP-UP TIME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25221,7 +25222,7 @@ void menuitem_EX040103(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040104 @ fffda4fe  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040104 @ fffda4fe  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.3 DISPLAY SETTING / DISPLAY / SCREEN SAVER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25281,7 +25282,7 @@ void menuitem_EX040104(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040105 @ fffda56a  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040105 @ fffda56a  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.4 DISPLAY SETTING / DISPLAY / LED DIMMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25341,7 +25342,7 @@ void menuitem_EX040105(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040106 @ fffda5d6  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040106 @ fffda5d6  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.12.5 DISPLAY SETTING / DISPLAY / MOUSE POINTER SPEED [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25401,7 +25402,7 @@ void menuitem_EX040106(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040201 @ fffda642  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040201 @ fffda642  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.13.0 DISPLAY SETTING / SCOPE / RBW [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25461,7 +25462,7 @@ void menuitem_EX040201(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040202 @ fffda6ae  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040202 @ fffda6ae  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.13.1 DISPLAY SETTING / SCOPE / SCOPE CTR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25521,7 +25522,7 @@ void menuitem_EX040202(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040203 @ fffda71a  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040203 @ fffda71a  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.13.2 DISPLAY SETTING / SCOPE / 2D DISP SENSITIVITY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25581,7 +25582,7 @@ void menuitem_EX040203(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040204 @ fffda786  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040204 @ fffda786  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.13.3 DISPLAY SETTING / SCOPE / 3DSS DISP SENSITIVITY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25641,7 +25642,7 @@ void menuitem_EX040204(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040301 @ fffda7f2  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040301 @ fffda7f2  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.14.0 DISPLAY SETTING / VFO IND COLOR / VMI COLOR VFO-A [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25701,7 +25702,7 @@ void menuitem_EX040301(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040302 @ fffda85e  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040302 @ fffda85e  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.14.1 DISPLAY SETTING / VFO IND COLOR / VMI COLOR VFO-B [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25761,7 +25762,7 @@ void menuitem_EX040302(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040303 @ fffda8ca  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040303 @ fffda8ca  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.14.2 DISPLAY SETTING / VFO IND COLOR / VMI COLOR MEMORY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25821,7 +25822,7 @@ void menuitem_EX040303(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040304 @ fffda936  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040304 @ fffda936  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.14.3 DISPLAY SETTING / VFO IND COLOR / VMI COLOR CLAR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25881,7 +25882,7 @@ void menuitem_EX040304(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040401 @ fffda9a2  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040401 @ fffda9a2  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.15.0 DISPLAY SETTING / EXT MONITOR / EXT DISPLAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -25941,7 +25942,7 @@ void menuitem_EX040401(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX040402 @ fffdaa0e  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX040402 @ fffdaa0e  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 3.15.1 DISPLAY SETTING / EXT MONITOR / PIXEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26001,7 +26002,7 @@ void menuitem_EX040402(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_16_00 @ fffdaa7a  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_16_00 @ fffdaa7a  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.16.0 EXTENSION SETTING / DATE&TIME / DAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26061,7 +26062,7 @@ void menuitem_int4_16_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_16_01 @ fffdaadd  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_16_01 @ fffdaadd  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.16.1 EXTENSION SETTING / DATE&TIME / MONTH [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26121,7 +26122,7 @@ void menuitem_int4_16_01(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_16_02 @ fffdab40  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_16_02 @ fffdab40  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.16.2 EXTENSION SETTING / DATE&TIME / YEAR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26181,7 +26182,7 @@ void menuitem_int4_16_02(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_16_03 @ fffdaba3  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_16_03 @ fffdaba3  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.16.3 EXTENSION SETTING / DATE&TIME / HOUR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26241,7 +26242,7 @@ void menuitem_int4_16_03(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_16_04 @ fffdac06  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_16_04 @ fffdac06  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.16.4 EXTENSION SETTING / DATE&TIME / MINUTE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26301,7 +26302,7 @@ void menuitem_int4_16_04(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_00 @ fffdac69  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_00 @ fffdac69  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.0 EXTENSION SETTING / SD CARD / MEM LIST LOAD [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26361,7 +26362,7 @@ void menuitem_int4_17_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_01 @ fffdaccc  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_01 @ fffdaccc  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.1 EXTENSION SETTING / SD CARD / MEM LIST SAVE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26421,7 +26422,7 @@ void menuitem_int4_17_01(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_02 @ fffdad2f  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_02 @ fffdad2f  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.2 EXTENSION SETTING / SD CARD / MENU LOAD [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26481,7 +26482,7 @@ void menuitem_int4_17_02(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_03 @ fffdad92  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_03 @ fffdad92  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.3 EXTENSION SETTING / SD CARD / MENU SAVE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26541,7 +26542,7 @@ void menuitem_int4_17_03(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_04 @ fffdadf5  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_04 @ fffdadf5  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.4 EXTENSION SETTING / SD CARD / INFORMATIONS [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26601,7 +26602,7 @@ void menuitem_int4_17_04(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_05 @ fffdae58  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_05 @ fffdae58  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.5 EXTENSION SETTING / SD CARD / FIRMWARE UPDATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26661,7 +26662,7 @@ void menuitem_int4_17_05(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_17_06 @ fffdaebb  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_17_06 @ fffdaebb  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.17.6 EXTENSION SETTING / SD CARD / FORMAT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26721,7 +26722,7 @@ void menuitem_int4_17_06(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_18_00 @ fffdaf1e  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_18_00 @ fffdaf1e  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.18.0 EXTENSION SETTING / SOFT VERSION / SOFTVERSION [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26781,7 +26782,7 @@ void menuitem_int4_18_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_19_00 @ fffdaf81  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_19_00 @ fffdaf81  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.19.0 EXTENSION SETTING / CALIBRATION / CALIBRATION [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26841,7 +26842,7 @@ void menuitem_int4_19_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_20_00 @ fffdafe4  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_20_00 @ fffdafe4  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.20.0 EXTENSION SETTING / RESET / MEMORY CLEAR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26901,7 +26902,7 @@ void menuitem_int4_20_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_20_01 @ fffdb047  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_20_01 @ fffdb047  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.20.1 EXTENSION SETTING / RESET / MENU CLEAR [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -26961,7 +26962,7 @@ void menuitem_int4_20_01(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_20_02 @ fffdb0aa  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_20_02 @ fffdb0aa  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.20.2 EXTENSION SETTING / RESET / ALL RESET [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27021,7 +27022,7 @@ void menuitem_int4_20_02(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_int4_21_00 @ fffdb10d  (99 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_int4_21_00 @ fffdb10d  (99 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 4.21.0 EXTENSION SETTING / CERTIFICATION / CERTIFICATION [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27081,7 +27082,7 @@ void menuitem_int4_21_00(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060101 @ fffdb170  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060101 @ fffdb170  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.0 PRESET / PRESET1 / PRESET NAME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27141,7 +27142,7 @@ void menuitem_EX060101(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060102 @ fffdb1dc  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060102 @ fffdb1dc  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.1 PRESET / PRESET1 / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27201,7 +27202,7 @@ void menuitem_EX060102(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060103 @ fffdb248  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060103 @ fffdb248  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.2 PRESET / PRESET1 / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27261,7 +27262,7 @@ void menuitem_EX060103(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060104 @ fffdb2b4  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060104 @ fffdb2b4  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.3 PRESET / PRESET1 / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27321,7 +27322,7 @@ void menuitem_EX060104(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060105 @ fffdb320  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060105 @ fffdb320  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.4 PRESET / PRESET1 / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27381,7 +27382,7 @@ void menuitem_EX060105(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060106 @ fffdb38c  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060106 @ fffdb38c  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.5 PRESET / PRESET1 / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27441,7 +27442,7 @@ void menuitem_EX060106(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060107 @ fffdb3f8  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060107 @ fffdb3f8  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.6 PRESET / PRESET1 / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27501,7 +27502,7 @@ void menuitem_EX060107(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060108 @ fffdb464  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060108 @ fffdb464  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.7 PRESET / PRESET1 / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27561,7 +27562,7 @@ void menuitem_EX060108(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060109 @ fffdb4d0  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060109 @ fffdb4d0  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.8 PRESET / PRESET1 / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27621,7 +27622,7 @@ void menuitem_EX060109(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060110 @ fffdb53c  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060110 @ fffdb53c  (108 bytes, 1 callers, export file fffda132_fffdb53c.c)
  * Purpose: Menu item 5.22.9 PRESET / PRESET1 / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27679,9 +27680,8 @@ void menuitem_EX060110(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX060111 @ fffdb5a8  (108 bytes, 1 callers, export file fffda19e_fffdb5a8.c)
+ * menuitem_EX060111 @ fffdb5a8  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.10 PRESET / PRESET1 / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27739,8 +27739,9 @@ void menuitem_EX060111(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX060112 @ fffdb614  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060112 @ fffdb614  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.11 PRESET / PRESET1 / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27800,7 +27801,7 @@ void menuitem_EX060112(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060113 @ fffdb680  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060113 @ fffdb680  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.12 PRESET / PRESET1 / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27860,7 +27861,7 @@ void menuitem_EX060113(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060114 @ fffdb6ec  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060114 @ fffdb6ec  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.13 PRESET / PRESET1 / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27920,7 +27921,7 @@ void menuitem_EX060114(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060115 @ fffdb758  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060115 @ fffdb758  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.14 PRESET / PRESET1 / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -27980,7 +27981,7 @@ void menuitem_EX060115(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060116 @ fffdb7c4  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060116 @ fffdb7c4  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.15 PRESET / PRESET1 / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28040,7 +28041,7 @@ void menuitem_EX060116(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060117 @ fffdb830  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060117 @ fffdb830  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.16 PRESET / PRESET1 / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28100,7 +28101,7 @@ void menuitem_EX060117(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060118 @ fffdb89c  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060118 @ fffdb89c  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.22.17 PRESET / PRESET1 / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28160,7 +28161,7 @@ void menuitem_EX060118(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060201 @ fffdb908  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060201 @ fffdb908  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.0 PRESET / PRESET2 / PRESET NAME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28220,7 +28221,7 @@ void menuitem_EX060201(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060202 @ fffdb974  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060202 @ fffdb974  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.1 PRESET / PRESET2 / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28280,7 +28281,7 @@ void menuitem_EX060202(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060203 @ fffdb9e0  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060203 @ fffdb9e0  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.2 PRESET / PRESET2 / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28340,7 +28341,7 @@ void menuitem_EX060203(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060204 @ fffdba4c  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060204 @ fffdba4c  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.3 PRESET / PRESET2 / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28400,7 +28401,7 @@ void menuitem_EX060204(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060205 @ fffdbab8  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060205 @ fffdbab8  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.4 PRESET / PRESET2 / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28460,7 +28461,7 @@ void menuitem_EX060205(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060206 @ fffdbb24  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060206 @ fffdbb24  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.5 PRESET / PRESET2 / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28520,7 +28521,7 @@ void menuitem_EX060206(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060207 @ fffdbb90  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060207 @ fffdbb90  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.6 PRESET / PRESET2 / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28580,7 +28581,7 @@ void menuitem_EX060207(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060208 @ fffdbbfc  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060208 @ fffdbbfc  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.7 PRESET / PRESET2 / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28640,7 +28641,7 @@ void menuitem_EX060208(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060209 @ fffdbc68  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060209 @ fffdbc68  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.8 PRESET / PRESET2 / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28700,7 +28701,7 @@ void menuitem_EX060209(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060210 @ fffdbcd4  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060210 @ fffdbcd4  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.9 PRESET / PRESET2 / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28760,7 +28761,7 @@ void menuitem_EX060210(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060211 @ fffdbd40  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060211 @ fffdbd40  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.10 PRESET / PRESET2 / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28820,7 +28821,7 @@ void menuitem_EX060211(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060212 @ fffdbdac  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060212 @ fffdbdac  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.11 PRESET / PRESET2 / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28880,7 +28881,7 @@ void menuitem_EX060212(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060213 @ fffdbe18  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060213 @ fffdbe18  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.12 PRESET / PRESET2 / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -28940,7 +28941,7 @@ void menuitem_EX060213(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060214 @ fffdbe84  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060214 @ fffdbe84  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.13 PRESET / PRESET2 / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29000,7 +29001,7 @@ void menuitem_EX060214(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060215 @ fffdbef0  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060215 @ fffdbef0  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.14 PRESET / PRESET2 / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29060,7 +29061,7 @@ void menuitem_EX060215(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060216 @ fffdbf5c  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060216 @ fffdbf5c  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.15 PRESET / PRESET2 / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29120,7 +29121,7 @@ void menuitem_EX060216(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060217 @ fffdbfc8  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060217 @ fffdbfc8  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.16 PRESET / PRESET2 / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29180,7 +29181,7 @@ void menuitem_EX060217(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060218 @ fffdc034  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060218 @ fffdc034  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.23.17 PRESET / PRESET2 / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29240,7 +29241,7 @@ void menuitem_EX060218(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060301 @ fffdc0a0  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060301 @ fffdc0a0  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.0 PRESET / PRESET3 / PRESET NAME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29300,7 +29301,7 @@ void menuitem_EX060301(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060302 @ fffdc10c  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060302 @ fffdc10c  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.1 PRESET / PRESET3 / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29360,7 +29361,7 @@ void menuitem_EX060302(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060303 @ fffdc178  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060303 @ fffdc178  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.2 PRESET / PRESET3 / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29420,7 +29421,7 @@ void menuitem_EX060303(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060304 @ fffdc1e4  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060304 @ fffdc1e4  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.3 PRESET / PRESET3 / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29480,7 +29481,7 @@ void menuitem_EX060304(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060305 @ fffdc250  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060305 @ fffdc250  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.4 PRESET / PRESET3 / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29540,7 +29541,7 @@ void menuitem_EX060305(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060306 @ fffdc2bc  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060306 @ fffdc2bc  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.5 PRESET / PRESET3 / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29600,7 +29601,7 @@ void menuitem_EX060306(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060307 @ fffdc328  (108 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060307 @ fffdc328  (108 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.6 PRESET / PRESET3 / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29660,7 +29661,7 @@ void menuitem_EX060307(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060308 @ fffdc394  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060308 @ fffdc394  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.7 PRESET / PRESET3 / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29720,7 +29721,7 @@ void menuitem_EX060308(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060309 @ fffdc401  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060309 @ fffdc401  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.8 PRESET / PRESET3 / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29780,7 +29781,7 @@ void menuitem_EX060309(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060310 @ fffdc46e  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060310 @ fffdc46e  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.9 PRESET / PRESET3 / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29840,7 +29841,7 @@ void menuitem_EX060310(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060311 @ fffdc4db  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060311 @ fffdc4db  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.10 PRESET / PRESET3 / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29900,7 +29901,7 @@ void menuitem_EX060311(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060312 @ fffdc548  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060312 @ fffdc548  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.11 PRESET / PRESET3 / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -29960,7 +29961,7 @@ void menuitem_EX060312(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060313 @ fffdc5b5  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060313 @ fffdc5b5  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.12 PRESET / PRESET3 / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30020,7 +30021,7 @@ void menuitem_EX060313(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060314 @ fffdc622  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060314 @ fffdc622  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.13 PRESET / PRESET3 / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30080,7 +30081,7 @@ void menuitem_EX060314(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060315 @ fffdc68f  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060315 @ fffdc68f  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.14 PRESET / PRESET3 / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30140,7 +30141,7 @@ void menuitem_EX060315(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060316 @ fffdc6fc  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060316 @ fffdc6fc  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.15 PRESET / PRESET3 / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30200,7 +30201,7 @@ void menuitem_EX060316(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060317 @ fffdc769  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060317 @ fffdc769  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.16 PRESET / PRESET3 / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30260,7 +30261,7 @@ void menuitem_EX060317(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060318 @ fffdc7d6  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060318 @ fffdc7d6  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.24.17 PRESET / PRESET3 / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30320,7 +30321,7 @@ void menuitem_EX060318(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060401 @ fffdc843  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060401 @ fffdc843  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.0 PRESET / PRESET4 / PRESET NAME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30380,7 +30381,7 @@ void menuitem_EX060401(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060402 @ fffdc8b0  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060402 @ fffdc8b0  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.1 PRESET / PRESET4 / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30440,7 +30441,7 @@ void menuitem_EX060402(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060403 @ fffdc91d  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060403 @ fffdc91d  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.2 PRESET / PRESET4 / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30500,7 +30501,7 @@ void menuitem_EX060403(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060404 @ fffdc98a  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060404 @ fffdc98a  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.3 PRESET / PRESET4 / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30560,7 +30561,7 @@ void menuitem_EX060404(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060405 @ fffdc9f7  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060405 @ fffdc9f7  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.4 PRESET / PRESET4 / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30620,7 +30621,7 @@ void menuitem_EX060405(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060406 @ fffdca64  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060406 @ fffdca64  (109 bytes, 1 callers, export file fffdb5a8_fffdca64.c)
  * Purpose: Menu item 5.25.5 PRESET / PRESET4 / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30678,9 +30679,8 @@ void menuitem_EX060406(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * menuitem_EX060407 @ fffdcad1  (109 bytes, 1 callers, export file fffdb614_fffdcad1.c)
+ * menuitem_EX060407 @ fffdcad1  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.6 PRESET / PRESET4 / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30738,8 +30738,9 @@ void menuitem_EX060407(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * menuitem_EX060408 @ fffdcb3e  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060408 @ fffdcb3e  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.7 PRESET / PRESET4 / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30799,7 +30800,7 @@ void menuitem_EX060408(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060409 @ fffdcbab  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060409 @ fffdcbab  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.8 PRESET / PRESET4 / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30859,7 +30860,7 @@ void menuitem_EX060409(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060410 @ fffdcc18  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060410 @ fffdcc18  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.9 PRESET / PRESET4 / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30919,7 +30920,7 @@ void menuitem_EX060410(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060411 @ fffdcc85  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060411 @ fffdcc85  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.10 PRESET / PRESET4 / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -30979,7 +30980,7 @@ void menuitem_EX060411(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060412 @ fffdccf2  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060412 @ fffdccf2  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.11 PRESET / PRESET4 / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31039,7 +31040,7 @@ void menuitem_EX060412(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060413 @ fffdcd5f  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060413 @ fffdcd5f  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.12 PRESET / PRESET4 / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31099,7 +31100,7 @@ void menuitem_EX060413(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060414 @ fffdcdcc  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060414 @ fffdcdcc  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.13 PRESET / PRESET4 / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31159,7 +31160,7 @@ void menuitem_EX060414(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060415 @ fffdce39  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060415 @ fffdce39  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.14 PRESET / PRESET4 / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31219,7 +31220,7 @@ void menuitem_EX060415(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060416 @ fffdcea6  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060416 @ fffdcea6  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.15 PRESET / PRESET4 / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31279,7 +31280,7 @@ void menuitem_EX060416(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060417 @ fffdcf13  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060417 @ fffdcf13  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.16 PRESET / PRESET4 / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31339,7 +31340,7 @@ void menuitem_EX060417(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060418 @ fffdcf80  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060418 @ fffdcf80  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.25.17 PRESET / PRESET4 / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31399,7 +31400,7 @@ void menuitem_EX060418(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060501 @ fffdcfed  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060501 @ fffdcfed  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.0 PRESET / PRESET5 / PRESET NAME [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31459,7 +31460,7 @@ void menuitem_EX060501(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060502 @ fffdd05a  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060502 @ fffdd05a  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.1 PRESET / PRESET5 / CAT-1 RATE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31519,7 +31520,7 @@ void menuitem_EX060502(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060503 @ fffdd0c7  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060503 @ fffdd0c7  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.2 PRESET / PRESET5 / CAT-1 TIME OUT TIMER [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31579,7 +31580,7 @@ void menuitem_EX060503(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060504 @ fffdd134  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060504 @ fffdd134  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.3 PRESET / PRESET5 / CAT-1 CAT-3 STOP BIT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31639,7 +31640,7 @@ void menuitem_EX060504(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060505 @ fffdd1a1  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060505 @ fffdd1a1  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.4 PRESET / PRESET5 / AGC FAST DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31699,7 +31700,7 @@ void menuitem_EX060505(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060506 @ fffdd20e  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060506 @ fffdd20e  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.5 PRESET / PRESET5 / AGC MID DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31759,7 +31760,7 @@ void menuitem_EX060506(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060507 @ fffdd27b  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060507 @ fffdd27b  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.6 PRESET / PRESET5 / AGC SLOW DELAY [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31819,7 +31820,7 @@ void menuitem_EX060507(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060508 @ fffdd2e8  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060508 @ fffdd2e8  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.7 PRESET / PRESET5 / LCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31879,7 +31880,7 @@ void menuitem_EX060508(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060509 @ fffdd355  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060509 @ fffdd355  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.8 PRESET / PRESET5 / LCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31939,7 +31940,7 @@ void menuitem_EX060509(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060510 @ fffdd3c2  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060510 @ fffdd3c2  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.9 PRESET / PRESET5 / HCUT FREQ [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -31999,7 +32000,7 @@ void menuitem_EX060510(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060511 @ fffdd42f  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060511 @ fffdd42f  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.10 PRESET / PRESET5 / HCUT SLOPE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32059,7 +32060,7 @@ void menuitem_EX060511(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060512 @ fffdd49c  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060512 @ fffdd49c  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.11 PRESET / PRESET5 / USB OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32119,7 +32120,7 @@ void menuitem_EX060512(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060513 @ fffdd509  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060513 @ fffdd509  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.12 PRESET / PRESET5 / REAR OUT LEVEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32179,7 +32180,7 @@ void menuitem_EX060513(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060514 @ fffdd576  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060514 @ fffdd576  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.13 PRESET / PRESET5 / TX BPF SEL [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32239,7 +32240,7 @@ void menuitem_EX060514(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060515 @ fffdd5e3  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060515 @ fffdd5e3  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.14 PRESET / PRESET5 / MOD SOURCE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32299,7 +32300,7 @@ void menuitem_EX060515(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060516 @ fffdd650  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060516 @ fffdd650  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.15 PRESET / PRESET5 / USB MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32359,7 +32360,7 @@ void menuitem_EX060516(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060517 @ fffdd6bd  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060517 @ fffdd6bd  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.16 PRESET / PRESET5 / REAR MOD GAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
@@ -32419,7 +32420,7 @@ void menuitem_EX060517(void)
 
 
 /* -----------------------------------------------------------------------------
- * menuitem_EX060518 @ fffdd72a  (109 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * menuitem_EX060518 @ fffdd72a  (109 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: Menu item 5.26.17 PRESET / PRESET5 / RPTT SELECT [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/menu-items.md
