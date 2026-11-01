@@ -66,6 +66,11 @@ SECTIONS
         . = ALIGN(4);
     } > SRAM
 
+    /* C library heap (Redlib _sbrk): 4 KB from the end of .bss [fact: 0xA1EF8..0xA2EF8, literal pools 0x85D7C,
+       0x85F84] */
+    _pvHeapStart = ALIGN(ADDR(.bss) + SIZEOF(.bss), 4);
+    _pvHeapLimit = _pvHeapStart + 0x1000;
+
     /DISCARD/ : { *(.ARM.exidx*) *(.ARM.attributes) *(.comment) }
 
     _image_size = LOADADDR(.data) + SIZEOF(.data) - ORIGIN(FLASH);   /* boot header +0x20 (0x642EC in the image) */

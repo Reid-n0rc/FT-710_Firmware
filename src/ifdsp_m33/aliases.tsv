@@ -32,3 +32,7 @@ BOARD_InitBootPins	BOARD_InitPins	[inference] 0x87294 calls the five pin groups;
 vsprintf	sprintf	[fact] 0x85B80 takes (buffer, format, va_list): console_printf and uart0_printf pass the address of their variadic arguments
 sprintf	siprintf	[fact] 0x85A9C is variadic (push {r1-r3}) with (buffer, format, ...) and no length
 sct0_pwm_start	SCTIMER_StartTimer	[fact] 12 bytes: SCT0->CTRL &= ~HALT_L, no arguments; an application wrapper of the SDK inline SCTIMER_StartTimer
+rpmsg_queue_nocopy_free	-	[fact] not in the image: 0x81BE8, which Ghidra called rpmsg_queue_nocopy_free, is byte-identical to rpmsg_lite_release_rx_buffer (T24 round 2)
+memcpy_body	0x878cc	[fact] the loop memcpy 0x872BC branches to (Ghidra: memcpy; IfdspM33Names.java renames it memcpy_body, T24 round 2)
+memset_body	0x87900	[fact] the loop memset 0x872C0 branches to (Ghidra: memset; renamed memset_body, T24 round 2)
+printf_float_none	0x872f4	[fact] the hook sprintf/snprintf/vsprintf pass to the printf core (literal 0x872F5 in their pools); not a Ghidra function

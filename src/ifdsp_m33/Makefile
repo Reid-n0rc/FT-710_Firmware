@@ -47,10 +47,13 @@ VENDOR_SRC := \
                      rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.c common/llist.c)
 
 # Recreated sources (this directory).
-OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c)
+OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c libc/redlib/*.c)
+
+# Hand-written assembly of the C library (libc/redlib/*.S).
+OWN_ASM := $(wildcard libc/redlib/*.S)
 
 SRC := $(VENDOR_SRC) $(OWN_SRC)
-OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRC))
+OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRC)) $(patsubst %.S,$(OUT)/obj/%.o,$(OWN_ASM))
 
 # The HiFi4 images (Yaesu's DSP code, never committed), decoded by tools/bootstrap.sh into build/.
 BUILD ?= ../../build
@@ -69,7 +72,7 @@ LINK_OBJ := \
   $(foreach f,portable/MemMang/heap_4 portable/GCC/ARM_CM33_NTZ/non_secure/port event_groups list queue tasks timers,$(call o,$(FR)/$(f))) \
   $(sort $(filter $(OUT)/obj/$(SDK)/%,$(OBJ))) \
   $(foreach f,board clock_config dsp_ipc dsp_support peripherals pin_mux,$(call o,board/$(f))) \
-  $(foreach f,crt ctype stdio stdlib string,$(call o,libc/$(f))) \
+  $(foreach f,crt ctype string,$(call o,libc/$(f))) $(sort $(filter $(OUT)/obj/libc/redlib/%,$(OBJ))) \
   $(OUT)/obj/board/dsp_image.o
 
 all: $(OBJ) $(OUT)/ifdsp_m33.elf
@@ -82,6 +85,10 @@ $(OUT)/ifdsp_m33.elf: $(LINK_OBJ) ifdsp_m33.ld
 	$(CC) $(CPUFLAGS) -nostdlib -Wl,--gc-sections -Wl,-Map,$(OUT)/ifdsp_m33.map -T ifdsp_m33.ld $(LINK_OBJ) -lgcc -o $@
 	$(CROSS)objcopy -O binary $@ $(OUT)/ifdsp_m33_0x08001000.bin
 	$(CROSS)size $@
+
+$(OUT)/obj/libc/redlib/%.o: libc/redlib/%.S
+	@mkdir -p $(dir $@)
+	$(CC) $(CPUFLAGS) -c $< -o $@
 
 $(OUT)/obj/%.o: %.c
 	@mkdir -p $(dir $@)

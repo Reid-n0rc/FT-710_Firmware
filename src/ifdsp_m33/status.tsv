@@ -26,32 +26,32 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00080ac0	PendSV_Handler	68	PendSV_Handler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	68	bytes and relocations match (size 84, Ghidra size 68)
 00080b20	SVC_Handler	18	SVC_Handler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	18	bytes and relocations match (size 36, Ghidra size 18)
 00080b44	delay_us	32	delay_us	app/codec.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
-00080b68	aic3204_spi_write	100	aic3204_spi_write	app/codec.o	equivalent	96	96 of 100 bytes covered; differential emulation: 200 trials agree (200 returned normally); bytes: 61 bytes differ, first at +0x8; +0x14 not a branch in the original; +0x2a not a branch in the original; +0x46 not a branch in the original
-00080bd0	aic3204_init	72	aic3204_init	app/codec.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally); bytes: 24 bytes differ, first at +0x3; +0x34 not a branch in the original
+00080b68	aic3204_spi_write	100	aic3204_spi_write	app/codec.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached); bytes: 61 bytes differ, first at +0x8; +0x14 not a branch in the original; +0x2a not a branch in the original; +0x46 not a branch in the original
+00080bd0	aic3204_init	72	aic3204_init	app/codec.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached); bytes: 24 bytes differ, first at +0x3; +0x34 not a branch in the original
 00080c20	regfile_clear	12	regfile_clear	app/regfile.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
 00080c30	regfile_read	22	regfile_read	app/regfile.o	identical	22	bytes and relocations match (size 28, Ghidra size 22)
-00080c4c	regfile_write	40	regfile_write	app/regfile.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally); bytes: 10 bytes differ, first at +0xe; +0x20 not a branch in the original
+00080c4c	regfile_write	40	regfile_write	app/regfile.o	equivalent	40	differential emulation: 200 trials agree (199 returned normally, 100% of 4 blocks reached); bytes: 10 bytes differ, first at +0xe; +0x20 not a branch in the original
 00080c78	regfile_set_bits	40	regfile_set_bits	app/regfile.o	identical	40	bytes and relocations match (size 44, Ghidra size 40)
-00080ca4	uart0_write	94	uart0_write	app/uart.o	equivalent	94	differential emulation: 200 trials agree (184 returned normally); bytes: 82 bytes differ, first at +0x0; +0x58 not a branch in the original; +0x64 literal 0x40106000, uart.o:.bss.s_tx is at 0x882d4+0x0
+00080ca4	uart0_write	94	uart0_write	app/uart.o	equivalent	94	differential emulation: 200 trials agree (180 returned normally, 86% of 7 blocks reached); bytes: 82 bytes differ, first at +0x0; +0x58 not a branch in the original; +0x64 literal 0x40106000, uart.o:.bss.s_tx is at 0x882d4+0x0
 00080d0c	uart0_init	86	uart0_init	app/uart.o	identical	86	bytes and relocations match (size 108, Ghidra size 86)
 00080d78	CommandTask	152	CommandTask	app/uart.o	identical	152	bytes and relocations match (size 168, Ghidra size 152)
 00080e20	create_CommandTask	38	create_CommandTask	app/uart.o	identical	38	bytes and relocations match (size 48, Ghidra size 38)
-00080e50	FLEXCOMM0_IRQHandler	172	FLEXCOMM0_IRQHandler	app/uart.o	differs	0	0 of 172 bytes covered; emulation trial 0: calls differs (orig ended return, new return); bytes: 149 bytes differ, first at +0x0; +0x68 not a branch in the original; +0xac literal 0x40106000, uart.o:.bss.s_tx is at 0x882d4+0x0
+00080e50	FLEXCOMM0_IRQHandler	172	FLEXCOMM0_IRQHandler	app/uart.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 77% of 13 blocks reached); bytes: 149 bytes differ, first at +0x0; +0x68 not a branch in the original; +0xac literal 0x40106000, uart.o:.bss.s_tx is at 0x882d4+0x0
 00080f0c	-	48	uart0_printf	app/uart.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 00080f3c	uart0_tx_pending	14	uart0_tx_pending	app/uart.o	identical	14	bytes and relocations match (size 20, Ghidra size 14)
 00080f50	IpcSendTask	42	IpcSendTask	app/ipc.o	identical	42	bytes and relocations match (size 48, Ghidra size 42)
-00080f80	create_IpcTasks	82	create_IpcTasks	app/ipc.o	differs	0	0 of 82 bytes covered; emulation trial 0: calls differs (orig ended budget, new budget); bytes: 59 bytes differ, first at +0xc; +0x24 not a branch in the original; +0x40 not a branch in the original; +0x50 literal 0xbf00bd30, ipc.o:.bss.s_ipcSendQueue is at 0x886e0+0x0
-00080fe8	ipc_print_dsp_reply	130	ipc_print_dsp_reply,get_task_handles	app/ipc.o	equivalent	130	differential emulation: 200 trials agree (189 returned normally); bytes: 36 bytes differ, first at +0x1e; +0x58 literal 0x87b75: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x0; +0x5c literal 0x87b94: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x1f; +0x60 literal 0x87bcb: bytes di
+00080f80	create_IpcTasks	82	create_IpcTasks	app/ipc.o	equivalent	82	differential emulation: 200 trials agree (30 returned normally, 100% of 5 blocks reached); bytes: 59 bytes differ, first at +0xc; +0x24 not a branch in the original; +0x40 not a branch in the original; +0x50 literal 0xbf00bd30, ipc.o:.bss.s_ipcSendQueue is at 0x886e0+0x0
+00080fe8	ipc_print_dsp_reply	130	ipc_print_dsp_reply,get_task_handles	app/ipc.o	equivalent	130	differential emulation: 200 trials agree (200 returned normally, 100% of 21 blocks reached); bytes: 36 bytes differ, first at +0x1e; +0x58 literal 0x87b75: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x0; +0x5c literal 0x87b94: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x1f; +0x6
 00081064	get_task_handles	4	get_task_handles	app/ipc.o	identical	4	bytes and relocations match (size 8, Ghidra size 4)
 0008106c	app_main	218	main	app/main.o	identical	218	bytes and relocations match (size 248, Ghidra size 218)
-00081164	sct0_pwm_callback	108	sct0_pwm_callback	app/pwm.o	not yet	0	0 of 108 bytes covered; emulation: only 3 of 200 trials returned normally; bytes: 92 bytes differ, first at +0x0; +0x48 not a branch in the original; +0x68 not a branch in the original; +0x70 literal 0x886f0, pwm.o:.bss.s_pwmTicks is at 0x886f4+0x0
+00081164	sct0_pwm_callback	108	sct0_pwm_callback	app/pwm.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached); bytes: 92 bytes differ, first at +0x0; +0x48 not a branch in the original; +0x68 not a branch in the original; +0x70 literal 0x886f0, pwm.o:.bss.s_pwmTicks is at 0x886f4+0x0
 000811e0	sct0_pwm_init	110	sct0_pwm_init	app/pwm.o	identical	110	bytes and relocations match (size 132, Ghidra size 110)
 00081264	SCTIMER_StartTimer	12	sct0_pwm_start	app/pwm.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
-00081274	console_cmd_i	60	console_cmd_i	app/console.o	equivalent	60	differential emulation: 200 trials agree (196 returned normally); bytes: 14 bytes differ, first at +0x28; +0x3c literal 0x87c5f: bytes differ from .rodata.console_cmd_i.str1.1+0x0; +0x48 literal 0x87c64: bytes differ from .rodata.console_cmd_i.str1.1+0x5
+00081274	console_cmd_i	60	console_cmd_i	app/console.o	equivalent	60	differential emulation: 200 trials agree (199 returned normally, 67% of 6 blocks reached); bytes: 14 bytes differ, first at +0x28; +0x3c literal 0x87c5f: bytes differ from .rodata.console_cmd_i.str1.1+0x0; +0x48 literal 0x87c64: bytes differ from .rodata.console_cmd_i.str1.1+0x5
 000812c4	console_cmd_w	50	console_cmd_w	app/console.o	identical	50	bytes and relocations match (size 56, Ghidra size 50)
-000812fc	console_cmd_d	128	console_cmd_d	app/console.o	equivalent	52	52 of 128 bytes covered; differential emulation: 200 trials agree (199 returned normally); bytes: 26 bytes differ, first at +0x2; +0x16 not a branch in the original; +0x1e not a branch in the original; +0x28 literal 0xfbf0f004: bytes differ from .rodata.console_cmd_d.str1.1+0x0
+000812fc	console_cmd_d	128	console_cmd_d	app/console.o	equivalent	128	differential emulation: 200 trials agree (197 returned normally, 100% of 9 blocks reached); bytes: 26 bytes differ, first at +0x2; +0x16 not a branch in the original; +0x1e not a branch in the original; +0x28 literal 0xfbf0f004: bytes differ from .rodata.console_cmd_d.str1.1+0x0
 0008138c	console_printf	36	console_printf	app/console.o	identical	36	bytes and relocations match (size 40, Ghidra size 36)
-000813b4	console_cmd_r	48	console_cmd_r	app/console.o	equivalent	48	differential emulation: 200 trials agree (199 returned normally); bytes: 36 bytes differ, first at +0x2; +0x18 not a branch in the original; +0x22 calls 0x8138c, regfile_read is at 0x80c30; +0x38 literal 0x4a0b4b0a: bytes differ from .rodata.console_cmd_d.str1.1+0x0
+000813b4	console_cmd_r	48	console_cmd_r	app/console.o	equivalent	48	differential emulation: 200 trials agree (197 returned normally, 100% of 3 blocks reached); bytes: 36 bytes differ, first at +0x2; +0x18 not a branch in the original; +0x22 calls 0x8138c, regfile_read is at 0x80c30; +0x38 literal 0x4a0b4b0a: bytes differ from .rodata.console_cmd_d.str1.1+0x0
 000813ec	console_init	44	console_init	app/console.o	identical	44	bytes and relocations match (size 68, Ghidra size 44)
 00081430	console_rx_char	1058	console_rx_char	app/console.o	differs	0	0 of 1058 bytes covered; emulation trial 0: end differs (orig ended return, new fault); bytes: 744 bytes differ, first at +0x8; +0x2c not a branch in the original; +0x78 not a branch in the original; +0x8c calls 0x85fc2, console_puts is at 0x85fae
 000818b8	MU_A_IRQHandler	46	MU_A_IRQHandler,platform_init_interrupt	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	46	bytes and relocations match (size 24, Ghidra size 46); bytes and relocations match (size 68, Ghidra size 54)
@@ -201,29 +201,29 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00084934	UTICK0_DriverIRQHandler	12	UTICK0_DriverIRQHandler	vendor/mcux-sdk/drivers/utick/fsl_utick.o	identical	12	bytes and relocations match (size 24, Ghidra size 12)
 0008494c	BOARD_BootClockRUN	204	BOARD_BootClockRUN	board/clock_config.o	identical	204	bytes and relocations match (size 260, Ghidra size 204)
 00084a50	ipc_init	46	ipc_init	board/dsp_ipc.o	identical	46	bytes and relocations match (size 60, Ghidra size 46)
-00084a8c	ipc_send	30	ipc_send	board/dsp_ipc.o	equivalent	30	differential emulation: 200 trials agree (200 returned normally); bytes: 15 bytes differ, first at +0x2
+00084a8c	ipc_send	30	ipc_send	board/dsp_ipc.o	equivalent	30	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached); bytes: 15 bytes differ, first at +0x2
 00084ab0	ipc_recv	34	ipc_recv	board/dsp_ipc.o	identical	34	bytes and relocations match (size 40, Ghidra size 34)
 00084ad8	BOARD_DSP_Init	114	BOARD_DSP_Init	board/dsp_support.o	identical	114	bytes and relocations match (size 160, Ghidra size 114)
 00084b78	BOARD_InitPins_P0	108	BOARD_InitPins_P0	board/pin_mux.o	identical	108	bytes and relocations match (size 116, Ghidra size 108)
 00084bec	BOARD_InitPins_codec_spi	150	BOARD_InitPins_codec_spi	board/pin_mux.o	identical	150	bytes and relocations match (size 164, Ghidra size 150)
 00084c90	BOARD_InitPins_debug_gpio	164	BOARD_InitPins_debug_gpio	board/pin_mux.o	identical	164	bytes and relocations match (size 172, Ghidra size 164)
-00084d3c	malloc	194			not yet	0	
-00084e04	_Csys_alloc	26			not yet	0	
+00084d3c	malloc	194	malloc	libc/redlib/heap.o	equivalent	194	differential emulation: 200 trials agree (93 returned normally, 100% of 23 blocks reached); bytes: 179 bytes differ, first at +0x2; +0x1e not a branch in the original; +0xa2 not a branch in the original; +0xc0 literal 0xbf00e7f3, heap.o:.bss.s_heapList is at 0x88b70+0x0
+00084e04	_Csys_alloc	26	_Csys_alloc	libc/redlib/csys_alloc.o	identical	26	bytes and relocations match (size 32, Ghidra size 26)
 00084e24	tolower	16	tolower	libc/ctype.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
-00084e38	stdio_init	94			not yet	0	
-00084eb0	vsnprintf_core	2778			not yet	0	
-00085a9c	siprintf	102	sprintf	libc/stdio.o	equivalent	26	26 of 102 bytes covered; differential emulation: 200 trials agree (181 returned normally); bytes: 18 bytes differ, first at +0x2; +0xc not a branch in the original
-00085b08	snprintf	114	snprintf	libc/stdio.o	differs	0	0 of 114 bytes covered; emulation trial 8: ret differs (orig ended return, new return); bytes: 19 bytes differ, first at +0x2; +0xc not a branch in the original
-00085b80	sprintf	88	vsprintf	libc/stdio.o	differs	0	0 of 88 bytes covered; emulation trial 4: ret differs (orig ended return, new return); bytes: 8 bytes differ, first at +0x0; +0x8 not a branch in the original
-00085bdc	_Cdigit_value	44			not yet	0	
-00085c0c	_strtoul_core	172			not yet	0	
-00085cc0	strtoul	128	strtoul	libc/stdlib.o	differs	0	0 of 128 bytes covered; emulation trial 0: end differs (orig ended return, new budget); bytes: 176 bytes differ, first at +0x3; +0x46 not a branch in the original; +0x62 not a branch in the original; +0xc0 literal 0x88b74, redlib_ctype is at 0x87d04+0x80
-00085d48	_sbrk	48			not yet	0	
-00085d84	_Cwrite_buffer	102			not yet	0	
-00085df0	fflush	50			not yet	0	
-00085e2c	fseek	252			not yet	0	
-00085f2c	ftell	64			not yet	0	
-00085f70	__check_heap_overflow	18			not yet	0	
+00084e38	stdio_init	94	stdio_init	libc/redlib/stdio_init.o	equivalent	94	differential emulation: 200 trials agree (163 returned normally, 67% of 3 blocks reached); bytes: 63 bytes differ, first at +0x0; +0xc not a branch in the original; +0x20 not a branch in the original; +0x2a not a branch in the original
+00084eb0	vsnprintf_core	2778	vsnprintf_core	libc/redlib/vsnprintf_core.o	differs	0	0 of 2778 bytes covered; emulation trial 1: ret differs (orig ended return, new return); bytes: 326 bytes differ, first at +0x4; +0x28 not a branch in the original; +0x9e not a branch in the original; +0xdc not a branch in the original
+00085a9c	siprintf	102	sprintf	libc/redlib/printf.o	equivalent	102	differential emulation: 200 trials agree (173 returned normally, 50% of 4 blocks reached); bytes: 31 bytes differ, first at +0x1a; +0x4e not a branch in the original
+00085b08	snprintf	114	snprintf	libc/redlib/printf.o	equivalent	114	differential emulation: 200 trials agree (167 returned normally, 75% of 8 blocks reached); bytes: 24 bytes differ, first at +0x50; +0x56 not a branch in the original
+00085b80	sprintf	88	vsprintf	libc/redlib/printf.o	equivalent	88	differential emulation: 200 trials agree (174 returned normally, 50% of 4 blocks reached); bytes: 25 bytes differ, first at +0x14; +0x46 not a branch in the original
+00085bdc	_Cdigit_value	44	_Cdigit_value	libc/redlib/cdigit_value.o	equivalent	44	differential emulation: 200 trials agree (193 returned normally, 83% of 6 blocks reached); bytes: 39 bytes differ, first at +0x0; +0x28 literal 0xe7f03837, redlib_ctype is at 0x87d04+0x80
+00085c0c	_strtoul_core	172	_strtoul_core	libc/redlib/strtoul_core.o	equivalent	172	differential emulation: 200 trials agree (170 returned normally, 82% of 22 blocks reached); bytes: 140 bytes differ, first at +0x4; +0x42 not a branch in the original; +0xa8 literal 0xe7d4400a, redlib_ctype is at 0x87d04+0x80; +0xac literal 0x87d04, errno is at 0x88b74+0x0
+00085cc0	strtoul	128	strtoul	libc/redlib/strtoul.o	equivalent	128	differential emulation: 200 trials agree (170 returned normally, 92% of 13 blocks reached); bytes: 108 bytes differ, first at +0x4; +0x3a not a branch in the original; +0x78 literal 0xe7de460c, errno is at 0x88b74+0x0; +0x7c literal 0xe7dc461e, redlib_ctype is at 0x87d04+0x80
+00085d48	_sbrk	48	_sbrk	libc/redlib/sbrk.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 67% of 6 blocks reached); bytes: 18 bytes differ, first at +0x1c
+00085d84	_Cwrite_buffer	102	_Cwrite_buffer	libc/redlib/cwrite_buffer.o	equivalent	102	differential emulation: 200 trials agree (181 returned normally, 100% of 8 blocks reached); bytes: 44 bytes differ, first at +0x22; +0x50 not a branch in the original
+00085df0	fflush	50	fflush	libc/redlib/fflush.o	equivalent	50	differential emulation: 200 trials agree (180 returned normally, 100% of 6 blocks reached); bytes: 34 bytes differ, first at +0x0; +0xc not a branch in the original; +0x30 literal 0xbf00e7ed, __redlib_streams is at 0x88b78+0x0; +0x2a not a branch in the original
+00085e2c	fseek	252	fseek	libc/redlib/fseek.o	equivalent	252	differential emulation: 200 trials agree (193 returned normally, 73% of 22 blocks reached); bytes: 195 bytes differ, first at +0x4; +0x32 not a branch in the original; +0xa0 not a branch in the original
+00085f2c	ftell	64	ftell	libc/redlib/ftell.o	identical	64	bytes and relocations match (size 68, Ghidra size 64)
+00085f70	__check_heap_overflow	18	__check_heap_overflow	libc/redlib/check_heap.o	identical	18	bytes and relocations match (size 24, Ghidra size 18)
 00085f88	aic3204_select_right_input	38	aic3204_select_right_input	app/codec.o	identical	38	bytes and relocations match
 00085fae	console_puts	20	console_puts	app/uart.o	identical	20	bytes and relocations match
 00085fc6	IpcRecvTask	36	IpcRecvTask	app/ipc.o	identical	36	bytes and relocations match
@@ -332,34 +332,35 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00087242	BOARD_InitPins_flexcomm	42	BOARD_InitPins_flexcomm	board/pin_mux.o	identical	42	bytes and relocations match
 0008726c	BOARD_InitPins_i2s	40	BOARD_InitPins_i2s	board/pin_mux.o	identical	40	bytes and relocations match
 00087294	BOARD_InitPins	26	BOARD_InitBootPins	board/pin_mux.o	identical	26	bytes and relocations match
-000872ae	main	14	__main	libc/crt.o	differs	0	0 of 14 bytes covered; emulation trial 0: end differs (orig ended return, new budget); bytes: 2 bytes differ, first at +0x6; +0x2 calls 0x84e38, main is at 0x8106c
-000872bc	-	4	memcpy	libc/string.o	equivalent	0	differential emulation: 200 trials agree (92 returned normally); bytes: 70 bytes differ, first at +0x0
-000872c0	-	4	memset	libc/string.o	equivalent	0	differential emulation: 200 trials agree (93 returned normally); bytes: 62 bytes differ, first at +0x0
-000872c4	free	48			not yet	0	
-000872f8	setvbuf	62			not yet	0	
-00087336	strcmp	68	strcmp	libc/string.o	equivalent	20	20 of 68 bytes covered; differential emulation: 200 trials agree (181 returned normally); bytes: 19 bytes differ, first at +0x0
-0008737a	strlen	72	strlen	libc/string.o	equivalent	16	16 of 72 bytes covered; differential emulation: 200 trials agree (189 returned normally); bytes: 16 bytes differ, first at +0x0
-000873c2	strncmp	86	strncmp	libc/string.o	equivalent	36	36 of 86 bytes covered; differential emulation: 200 trials agree (181 returned normally); bytes: 36 bytes differ, first at +0x0
-00087418	strncpy	88	strncpy	libc/string.o	equivalent	36	36 of 88 bytes covered; differential emulation: 200 trials agree (92 returned normally); bytes: 35 bytes differ, first at +0x0
-00087470	file_clear_flag20	64			not yet	0	
-000874b0	fputc	320			not yet	0	
-000875f0	_Cfdopen	104			not yet	0	
-00087658	file_flush_write_buffer	82			not yet	0	
-000876aa	_Cfclose	88			not yet	0	
-00087702	remove	20			not yet	0	
-00087716	_Cfflush1	64			not yet	0	
-00087756	__aeabi_uldivmod	252			not yet	0	
-00087850	udiv64by32_helper	122			not yet	0	
-000878cc	memcpy	52			not yet	0	
-00087900	memset	50			not yet	0	
-00087932	__sys_appexit	2			not yet	0	
-00087934	__sys_close	6			not yet	0	
-0008793a	__sys_flen	6			not yet	0	
-00087940	__sys_istty	6			not yet	0	
-00087946	__sys_remove	6			not yet	0	
-0008794c	__sys_seek	6			not yet	0	
-00087952	__sys_tmpnam	6			not yet	0	
-00087958	__sys_write	4			not yet	0	
+000872ae	main	14	__main	libc/crt.o	identical	14	bytes and relocations match
+000872bc	-	4	memcpy	libc/string.o	identical	0	bytes and relocations match
+000872c0	-	4	memset	libc/string.o	identical	0	bytes and relocations match
+000872c4	free	48	free	libc/redlib/heap.o	identical	48	bytes and relocations match
+000872f4	-	4	printf_float_none	libc/redlib/printf_hook.o	identical	0	bytes and relocations match
+000872f8	setvbuf	62	setvbuf	libc/redlib/setvbuf.o	equivalent	62	differential emulation: 200 trials agree (193 returned normally, 60% of 10 blocks reached); bytes: 43 bytes differ, first at +0x6
+00087336	strcmp	68	strcmp	libc/string.o	equivalent	68	differential emulation: 200 trials agree (178 returned normally, 89% of 9 blocks reached); bytes: 19 bytes differ, first at +0x0
+0008737a	strlen	72	strlen	libc/string.o	equivalent	72	differential emulation: 200 trials agree (193 returned normally, 90% of 10 blocks reached); bytes: 16 bytes differ, first at +0x0
+000873c2	strncmp	86	strncmp	libc/string.o	equivalent	86	differential emulation: 200 trials agree (178 returned normally, 86% of 14 blocks reached); bytes: 36 bytes differ, first at +0x0
+00087418	strncpy	88	strncpy	libc/string.o	equivalent	88	differential emulation: 200 trials agree (82 returned normally, 100% of 14 blocks reached); bytes: 35 bytes differ, first at +0x0
+00087470	file_clear_flag20	64	file_clear_flag20	libc/redlib/file_clear_flag20.o	identical	64	bytes and relocations match
+000874b0	fputc	320	fputc	libc/redlib/fputc.o	equivalent	320	differential emulation: 200 trials agree (182 returned normally, 93% of 29 blocks reached); bytes: 163 bytes differ, first at +0xe; +0x9a not a branch in the original; +0xee not a branch in the original; +0x132 not a branch in the original
+000875f0	_Cfdopen	104	_Cfdopen	libc/redlib/cfdopen.o	equivalent	104	differential emulation: 200 trials agree (156 returned normally, 64% of 14 blocks reached); bytes: 57 bytes differ, first at +0x12; +0x5c not a branch in the original
+00087658	file_flush_write_buffer	82	file_flush_write_buffer	libc/redlib/file_flush_write_buffer.o	equivalent	82	differential emulation: 200 trials agree (193 returned normally, 100% of 8 blocks reached); bytes: 27 bytes differ, first at +0x4
+000876aa	_Cfclose	88	_Cfclose	libc/redlib/cfclose.o	identical	88	bytes and relocations match
+00087702	remove	20	remove	libc/redlib/remove.o	identical	20	bytes and relocations match
+00087716	_Cfflush1	64	_Cfflush1	libc/redlib/cfflush1.o	equivalent	64	differential emulation: 200 trials agree (193 returned normally, 100% of 6 blocks reached); bytes: 8 bytes differ, first at +0x7
+00087756	__aeabi_uldivmod	252	__aeabi_uldivmod,udiv64by32_helper	libc/redlib/uldivmod.o	identical	252	bytes and relocations match (size 250, Ghidra size 252); bytes and relocations match (size 124, Ghidra size 122)
+00087850	udiv64by32_helper	122	udiv64by32_helper	libc/redlib/uldivmod.o	identical	122	bytes and relocations match (size 124, Ghidra size 122)
+000878cc	memcpy	52	memcpy_body	libc/redlib/memcpy_body.o	identical	52	bytes and relocations match (size 52, Ghidra size 0)
+00087900	memset	50	memset_body	libc/redlib/memcpy_body.o	identical	50	bytes and relocations match (size 50, Ghidra size 0)
+00087932	__sys_appexit	2	__sys_appexit	libc/redlib/sys.o	identical	2	bytes and relocations match
+00087934	__sys_close	6	__sys_close	libc/redlib/sys.o	identical	6	bytes and relocations match
+0008793a	__sys_flen	6	__sys_flen	libc/redlib/sys.o	identical	6	bytes and relocations match
+00087940	__sys_istty	6	__sys_istty	libc/redlib/sys.o	identical	6	bytes and relocations match
+00087946	__sys_remove	6	__sys_remove	libc/redlib/sys.o	identical	6	bytes and relocations match
+0008794c	__sys_seek	6	__sys_seek	libc/redlib/sys.o	identical	6	bytes and relocations match
+00087952	__sys_tmpnam	6	__sys_tmpnam	libc/redlib/sys.o	identical	6	bytes and relocations match
+00087958	__sys_write	4	__sys_write	libc/redlib/sys.o	identical	4	bytes and relocations match
 080011a8	ResetISR	76	ResetISR	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	76	bytes and relocations match (size 100, Ghidra size 76)
 0800120c	NMI_Handler	2	NMI_Handler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 4, Ghidra size 2)
 08001210	MemManage_Handler	2	MemManage_Handler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match

@@ -22,3 +22,10 @@ console.o:.bss.s_printBuf	00088df0	console_printf formats into 0x88DF0
 console.o:.rodata.s_commands	0008795c	console_rx_char: command table, 4 x {name[16], handler}
 codec.o:.rodata.s_aic3204InitSequence	00087a1c	aic3204_init: 67 x {reg, value, delay}
 redlib_ctype	00087d04	tolower: table + 0x80; console_rx_char: 0x87D84
+__redlib_streams	00088b78	stdio_init: _Cfdopen/setvbuf on 0x88B78, 0x88BB4, 0x88BF0 (0x3C each); fflush(NULL) walks them
+heap.o:.bss.s_heapList	00088b70	malloc: list head (literal 0x84E00)
+sbrk.o:.bss.s_heapEnd	00088b6c	_sbrk: current heap end (literal 0x85D78)
+errno	00088b74	_sbrk (12), ftell (33), _strtoul_core (34) store there
+_pvHeapStart	000a1ef8	_sbrk: first heap end (literal 0x85D7C), the end of .bss
+_pvHeapLimit	000a2ef8	__check_heap_overflow: limit (literal 0x85F84)
+ipc.o:.rodata.create_IpcTasks.str1.1	00087b5d	create_IpcTasks: the task names "IpcRecvTask", "IpcSendTask" (same order in the image)
