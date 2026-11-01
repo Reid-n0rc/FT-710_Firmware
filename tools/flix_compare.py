@@ -17,7 +17,7 @@ usage:
 <ghidra.tsv> comes from tools/ghidra/ExportListing.java (columns addr, len, mnemonic, operands, bytes), either the
 analysed listing (mode listing) or a flow-independent decode at every flix.dis address (mode decode).
 
-Reference: every instruction line of flix.dis (49,389 instructions in 1,065 functions). The 461 `.byte` lines (padding
+Reference: every instruction line of flix.dis (49,374 instructions in 1,063 functions). The 454 `.byte` lines (padding
 bytes objdump could not decode) are not instructions and are not compared. An instruction matches when Ghidra has an
 instruction at the same address with the same length, the same mnemonic and the same operands after these rules (each
 rule is counted in summary.txt, so it is visible how many matches depend on it):
@@ -295,8 +295,38 @@ def classify(a, ref):
     return "padding in %s" % f
 
 
+REJECTED = re.compile(r";; entries rejected [^:]*:(.*)")
+CUT = re.compile(r"\s+([0-9a-f]+):\t\s*\t")   # an instruction objdump cut at --stop-address (empty byte column)
+
+
 def entries(dis):
+    """Every flix.dis function plus EXTRA_ENTRIES. Refuses (exit 1) when flix.dis lists a function whose entry is also in
+    the `entries rejected` footer of tools/ifdsp_hifi4_dis.py (its `entry` byte is inside a reached instruction of the
+    previous function, like 0x218480 and 0x233818), and warns on stderr about every entry that the previous function's
+    sweep cut (empty byte column), so a stale flix.dis cannot bring such an entry back."""
     _, _, funcs = parse_flix(dis)
+    rejected, cut, prev = set(), {}, None
+    for ln in open(dis):
+        m = REJECTED.match(ln)
+        if m:
+            rejected |= {int(x, 16) for x in re.findall(r"\b([0-9a-f]{8})\b \(in", m.group(1))}
+        h = HEAD.match(ln)
+        if h:
+            if prev is not None:
+                cut[int(h.group(1), 16)] = prev
+            prev = None
+            continue
+        c = CUT.match(ln)
+        prev = int(c.group(1), 16) if c else (prev if not LINE.match(ln) else None)
+    bad = sorted(rejected & set(funcs))
+    if bad:
+        sys.stderr.write("flix.dis lists rejected entries %s; regenerate it with tools/ifdsp_hifi4_dis.py\n"
+                         % " ".join("%08x" % a for a in bad))
+        return 1
+    for a in sorted(cut):
+        sys.stderr.write("note: entry %08x: the previous function's sweep ends in an instruction at %08x that runs past "
+                         "it (alignment padding unless that instruction is reached; tools/ifdsp_hifi4_dis.py checks)\n"
+                         % (a, cut[a]))
     out = ["entry\tsource\tnote"]
     rows = [(a, "flix.dis", "") for a in funcs] + [(a, "extra", n) for a, n in EXTRA_ENTRIES]
     for a, src, note in sorted(rows):

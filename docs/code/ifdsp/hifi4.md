@@ -11,7 +11,7 @@ from `tools/flix_stats.py` and the files named.
 
 | Measure | Value |
 |---|---|
-| Functions | 1,065 (49,389 instructions, 188,006 bytes) in the FLIX listing **[fact]** |
+| Functions | 1,063 (49,374 instructions, 188,019 bytes) in the FLIX listing **[fact]** |
 | Named | **954 of 1,083 Ghidra functions (88 %), 94 % of the code bytes** since T23 (2026-10-30; was 221 / 31 %): the libraries are identified ([Libraries linked into the HiFi4 image](#libraries-linked-into-the-hifi4-image-t23)) and the application block inits are named; checked on a per-task copy (`IfdspHifi4Names: 942 functions named`, `decomp_quality.py compare`: no metric worse). Before #86 it was 99 (9 %) **[fact]** |
 | Described in the IFDSP docs | about 96 functions (9 %) mentioned by name or address in this page, [control-link.md](control-link.md) or [ipc.md](ipc.md) **[fact: text search]** |
 | Readable as decompiled C | **since T21g (2026-10-28): all 1,067 functions decompile**, 0 failures, 982 of 1,081 exported functions without any decompiler warning, 1 `halt_baddata()` (data). Ghidra bodies cover 93 % of the listing's bytes (14 % before). Control flow, base-ISA and FPU operations and the simple HiFi4 loads/stores are real C; most `ae_*` operations are named calls with the right inputs and outputs but no arithmetic. Before T21, with the stock language: **none in practice** (891 functions, 84 %, contain FLIX bundles it could not decode) **[fact: `decomp/ifdsp/hifi4/quality.tsv`, [ghidra-flix.md](ghidra-flix.md)]** |
@@ -37,7 +37,7 @@ built for, so the decode is exact, not a guess at the FLIX formats.
 ```sh
 OD=~/opt/zephyr-sdk-0.17.0/xtensa-nxp_rt600_adsp_zephyr-elf/bin/xtensa-nxp_rt600_adsp_zephyr-elf-objdump
 python3 -I tools/ifdsp_hifi4_dis.py $OD build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin decomp/ifdsp/hifi4/functions.tsv \
-  decomp/ifdsp/hifi4/flix.dis tools/ghidra/IfdspHifi4Names.java     # 1065 functions, ~52k lines, ~5 s; committed
+  decomp/ifdsp/hifi4/flix.dis tools/ghidra/IfdspHifi4Names.java     # 1063 functions, ~52k lines, ~12 s; committed
 python3 -I tools/ifdsp_coef_tables.py build/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin --dis decomp/ifdsp/hifi4/flix.dis
 ```
 
@@ -50,7 +50,7 @@ but working out every algorithm needs more time than T12e had; the tables below 
 |---|---|
 | 0x00200000–0x002062D3 | rodata: SDK tables, **float coefficient tables** (0x200CD0–0x205844), strings (0x2062D4..) **[fact]** |
 | 0x00206498–0x00206FFF | L32R literal pools **[fact]** |
-| 0x00207000–0x002367FF | .text (1065 functions with `entry`) **[fact]** |
+| 0x00207000–0x002367FF | .text (1063 functions with `entry`) **[fact]** |
 | 0x00236800–0x002383B3 | .data: **IIR biquad sets** (0x236830–0x23773C), XOS/rpmsg objects, msgq pointers **[fact]** |
 | 0x002383B4–0x002CBFFF | .bss: thread stacks and TCBs, FIFOs, filter states (e.g. TCB `Thread_Rx_Path` 0x2C7890) **[fact: addresses in the thread-create calls]** |
 | 0x20020000 | rpmsg-lite shared memory (`rpmsg_lite_remote_init` arg) **[fact]** |
@@ -409,10 +409,11 @@ flowchart LR
     end
 ```
 
-Still unnamed (129 functions, 6 % of the bytes): XOS internals (scheduler, timers, thread API without a caller), most stdio and
-locale accessors that the image never calls, a few NDSP-adjacent functions (0x218480 is not code: its bytes do not decode;
-0x21AA20, 0x233818, 0x233EB0), the soft-double compare helpers 0x22B838–0x22B874 (`f64cmph` modes 5–10, ABI names not
-settled), and application helpers whose role is unclear (scope/spectrum sub-steps 0x22419C, 0x22439C, 0x224DF0, mute-ramp
+Still unnamed (127 functions): XOS internals (scheduler, timers, thread API without a caller), most stdio and
+locale accessors that the image never calls, a few NDSP-adjacent functions (0x21AA20, 0x233EB0; 0x218480 and 0x233818 were
+false entries, `entry` bytes inside the bundles 0x21847D of `ifft_cplxf_ie` and 0x233815 of `fft_realf_ie`, and are gone
+**[fact: continuous objdump decode]**), the soft-double compare helpers 0x22B838–0x22B874 (`f64cmph` modes 5–10, ABI names
+not settled), and application helpers whose role is unclear (scope/spectrum sub-steps 0x22419C, 0x22439C, 0x224DF0, mute-ramp
 state setters 0x225478/0x22548C) **[fact: list from the export]**.
 
 ## Function table (HiFi4)
