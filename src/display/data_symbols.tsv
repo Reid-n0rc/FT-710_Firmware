@@ -1,0 +1,4 @@
+# Original addresses of the data the recreated DISPLAY functions refer to by name (globals) or by section
+# (<object>:<section> for file-local data). Columns: symbol, address, evidence.
+symbol	address	evidence
+crc_table	208d9560	[fact] crc16_a001_table_init and crc32_make_table store their 256 words there (literal 0x20100A90); crc16_a001 and crc32_update read it
