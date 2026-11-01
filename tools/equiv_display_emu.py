@@ -978,6 +978,40 @@ def vdc5_read_args(rng, args, kind):
     return fill
 
 
+RSPI_FLAGS = 0x20800418     # rspi_rx_done[5], rspi_tx_done[5] (src/display/data_symbols.tsv)
+
+
+def rspi_args(rng, args, kind):
+    """The RSPI driver core (round 7). Nothing raises the transmit and receive interrupts in a trial, so every wait
+    for the ISR flags would spin for ever after the first access (each access clears its flag): the flags are set
+    (1, sometimes 0: then both builds spin and the trial is inconclusive) and the transfers kept to one burst: ch
+    0..4 (5 now and then: the checks), a buffer, an access count 0..2, a trigger 0..7 or 0xFF (keep); the bursts
+    (bytes 0, 1, 2, 4, fewer-than-trigger 0/1); rspi_hw_config's mode 0..2, rspi_hw_config_master's SPBR, BRDV 0..3
+    and loopback 0/1; rspi_fifo_reset a channel base."""
+    regs = args['regs']
+    regs[0] = rng.choice([0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 7])
+    flags = bytes(rng.choice([1, 1, 1, 1, 0]) for _ in range(10))
+    if kind == 'xfer':
+        regs[2] = rng.choice([0, 1, 1, 1, 2])
+        regs[3] = rng.choice([0, 1, 2, 3, 4, 7, 8, 0xFF, 0xFF, 0x100, 0xFFFFFFFF])
+    elif kind == 'burst':
+        regs[0], regs[1] = rng.choice([0, 1, 1, 2, 4, 4]), rng.choice([0, 1, 1, 2])
+    elif kind == 'config':
+        regs[1] = rng.choice([0, 0, 1, 1, 2])
+        regs[0] = rng.choice([0, 1, 2, 3, 4, 4, 5, 6])
+    elif kind == 'master':
+        regs[0], regs[2], regs[3] = rng.randrange(5), rng.randrange(4), rng.randrange(2)
+    elif kind == 'base':
+        regs[0] = 0xE800C800 + 0x800 * rng.randrange(5)
+    return [(RSPI_FLAGS, flags)]
+
+
+def dmac_args(rng, args):
+    """The DMAC set-ups (round 7): the five end callbacks (0x20808AA0) an empty function, so that the ISRs that call
+    them return; the arguments as drawn (addresses and counts only go to registers)."""
+    return [(0x20808AA0, struct.pack('<5I', *[VDC5_STUB_FN] * 5))]
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -1088,6 +1122,13 @@ def preset_for(fname):
     if fname in ('vdc5_reg_read_data_control', 'vdc5_reg_change_read_process', 'vdc5_change_graphics_vin'):
         kind = {'vdc5_reg_change_read_process': 'chg', 'vdc5_change_graphics_vin': 'vin'}.get(fname, 'read')
         return lambda rng, args: vdc5_read_args(rng, args, kind)
+    if fname.startswith('dmac'):
+        return dmac_args
+    if fname.startswith('rspi'):
+        kind = ('xfer' if fname in ('rspi_read', 'rspi_read_pio', 'rspi_write', 'rspi_write_pio') else
+                'burst' if fname.endswith('_read_burst') else 'config' if fname == 'rspi_hw_config' else
+                'master' if fname == 'rspi_hw_config_master' else 'base' if fname == 'rspi_fifo_reset' else 'ch')
+        return lambda rng, args: rspi_args(rng, args, kind)
     if fname in VDC5_TABLE_ARGS:
         return lambda rng, args: vdc5_table_args(rng, args, *VDC5_TABLE_ARGS[fname])
     if fname == 'vdc5_color_conversion':      # (graphics format, colour): every case of the switch and past it
@@ -1167,6 +1208,14 @@ def byte_check(res, obj, fname, shndx, off, oaddr):
     return None
 
 
+def ref_span(res, a):
+    """Bytes of random fill at a data symbol the recreated code refers to: 64, but not into the next table that the
+    trials keep (round 7: the fill of rspi_rx_done 0x20800418 ran over the RSPI trigger tables 0x20800424/34, so
+    nearly every rspi_read trial failed its trigger check and a mutation passed)."""
+    nxt = [k for k in res.keep if a < k < a + 64]
+    return min(nxt) - a if nxt else 64
+
+
 def check(res, obj, fname, shndx, off, seed=1, trials=200):
     img = res.img
     f = res.func(fname)
@@ -1214,7 +1263,7 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
     rng = random.Random(seed)
     for t in range(trials):
         args = draw_args(rng)
-        fill = [(a, bytes(rng.getrandbits(8) for _ in range(64))) for a in sorted(refs)]
+        fill = [(a, bytes(rng.getrandbits(8) for _ in range(ref_span(res, a)))) for a in sorted(refs)]
         pre = preset_for(fname)
         if pre:
             fill += pre(rng, args)

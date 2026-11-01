@@ -105,3 +105,9 @@ vdc5_set_scaler_graphics	0x2011acd8	[fact] the scaler (0, 1 or OIR by graphics i
 vdc5_confirm_graphics_enlargement	0x2011aecc	[fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4; Ghidra FUN_2011aecc
 __aeabi_uidiv	0x20156260	[inference] GCC calls __aeabi_uidiv for an unsigned division; the image's divisions call __aeabi_uidivmod 0x20156260 (e.g. 0x2011AAD8), whose quotient in r0 is __aeabi_uidiv's result (RTABI)
 vdc5_change_graphics_vin	0x2011b374	[fact] the tail call of vdc5_reg_change_read_process (b 0x2011B374 at 0x2011B6CC): the cascade and the VIN layer of the change path (drivers/vdc5_reg.c); Ghidra counts its body into vdc5_reg_change_read_process
+rspi_read_pio	0x2011f278	[fact] the body of rspi_read behind its checks (b 0x2011F278 at 0x2011F4D0); Ghidra calls it rspi_read (drivers/rspi.c)
+rspi_read	0x2011f494	[fact] the argument checks (ch < 5, RX trigger 0..7 or 0xFF, count != 0), then b 0x2011F278; Ghidra FUN_2011f494, no caller
+rspi_write_pio	0x2011f4d4	[fact] the body of rspi_write behind its checks (b 0x2011F4D4 at 0x2011F754); no Ghidra entry (counted into rspi_write)
+rspi_nop_2011dea0	0x2011dea0	[fact] bx lr between rspi_hw_config and rspi0_open, no caller; Ghidra FUN_2011dea0
+dmac9_enable	0x20137dec	[fact] reg_rmw32(CHCTRL_9 0xE8200468, 1, 0, 1) between dmac4_set_callback and dmac9_stop; no Ghidra entry (drivers/dmac.c)
+dmac3_set_callback	0x20137d78	[inference] stores r0 at 0x20808AA0, the first of the five callback slots (4: +4, 5: +8, 9: +0xC, 10: +0x10, set by the named setters), right after dmac3_disable; no caller; Ghidra FUN_20137d78
